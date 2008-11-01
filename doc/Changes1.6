@@ -1,10 +1,16 @@
-$Id: Changes1.6,v 1.10 2008/11/01 00:40:03 tothwolf Exp $
+$Id: Changes1.6,v 1.11 2008/11/01 20:41:10 tothwolf Exp $
 
 Eggdrop Changes (since version 1.6.0)
 
     _____________________________________________________________________
 
 1.6.20 (CVS):
+
+  - Added support to BADARGS macro to accept -1 for unlimited arguments.
+  - Modified tcl_getuser(), tcl_setuser(), and tcl_channel() to use -1 for
+    BADARGS instead of 999.
+  - Changed FLGS to FLAGS in tell_binds() for .binds command output.
+    Patch by: Tothwolf
 
   - Modified tell_user() to use YYYY-MM-DD ISO 8601 date format. This
     corrects the LAST date shown for the .whois and .match commands.
@@ -16,8 +22,8 @@ Eggdrop Changes (since version 1.6.0)
     Found by: wanderer / Patch by: Tothwolf
 
   - Fixed global variable names used with Tcl_SetVar() / Tcl_VarEval() --
-    Made assoc module use $_chan instead of $chan 
-    Made tell_user() use $_user instead of $user 
+  - Made assoc module use $_chan instead of $chan 
+  - Made tell_user() use $_user instead of $user 
     Patch by: Tothwolf
 
   - Moved the variable declaration for tcl_maskhost() to the top of the
@@ -92,8 +98,7 @@ Eggdrop Changes (since version 1.6.0)
     when joining channels that didn't require a key.
     Found by: simple / Patch by: Tothwolf
 
-  - Make the JOIN in check_expired_chanstuff() use DP_SERVER instead of
-    DP_MODE to prevent the bot from sending multiple JOIN requests.
+  - Make check_expired_chanstuff() use DP_SERVER instead of DP_MODE for JOIN.
     Found by: simple / Patch by: thommey
 
   - Refactored reset_chan_info() to make it a little easier on maintainers.
@@ -111,9 +116,9 @@ Eggdrop Changes (since version 1.6.0)
     extra WHO requests to the server if a WHO was already sent.
     Found by: Tothwolf / Patch by: thommey
 
-  - always send a "WHO chname" instead of sending a "WHO nick" which doesn't
+  - Always send a "WHO chname" instead of sending a "WHO nick" which doesn't
     have the same behaviour across all irc daemons.
-  - improved use_354 support as we weren't using it everywhere we could
+  - Improved use_354 support as we weren't using it everywhere we could.
     Patch by: thommey
 
   - Minor documentation updates

@@ -1,7 +1,7 @@
 /*
  * tclchan.c -- part of channels.mod
  *
- * $Id: tclchan.c,v 1.98 2008/07/01 00:20:03 tothwolf Exp $
+ * $Id: tclchan.c,v 1.99 2008/11/01 20:41:10 tothwolf Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -1046,7 +1046,7 @@ static int tcl_channel STDVAR
 {
   struct chanset_t *chan;
 
-  BADARGS(2, 999, " command ?options?");
+  BADARGS(2, -1, " command ?options?");
 
   if (!strcmp(argv[1], "add")) {
     BADARGS(3, 4, " add channel-name ?options-list?");
@@ -1056,7 +1056,7 @@ static int tcl_channel STDVAR
     return tcl_channel_add(irp, argv[2], argv[3]);
   }
   if (!strcmp(argv[1], "set")) {
-    BADARGS(3, 999, " set channel-name ?options?");
+    BADARGS(3, -1, " set channel-name ?options?");
 
     chan = findchan_by_dname(argv[2]);
     if (chan == NULL) {

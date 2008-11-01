@@ -2,7 +2,7 @@
  * tclegg.h
  *   stuff used by tcl.c and tclhash.c
  *
- * $Id: tclegg.h,v 1.32 2008/02/16 21:41:04 guppy Exp $
+ * $Id: tclegg.h,v 1.33 2008/11/01 20:41:10 tothwolf Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -113,7 +113,7 @@ typedef struct timer_str {
         char *argv[];
 
 #define BADARGS(nl, nh, example) do {                                   \
-        if ((argc < (nl)) || (argc > (nh))) {                           \
+        if ((argc < (nl)) || ((argc > (nh)) && ((nh) != -1))) {         \
                 Tcl_AppendResult(irp, "wrong # args: should be \"",     \
                                  argv[0], (example), "\"", NULL);       \
                 return TCL_ERROR;                                       \

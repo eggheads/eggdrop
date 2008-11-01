@@ -2,7 +2,7 @@
  * tcluser.c -- handles:
  *   Tcl stubs for the user-record-oriented commands
  *
- * $Id: tcluser.c,v 1.44 2008/02/16 21:41:04 guppy Exp $
+ * $Id: tcluser.c,v 1.45 2008/11/01 20:41:10 tothwolf Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -239,7 +239,7 @@ static int tcl_matchattr STDVAR
     get_user_flagrec(u, &user, argv[3]);
     plus.match = user.match;
     break_down_flags(argv[2], &plus, &minus);
-    f = (minus.global ||minus.udef_global || minus.chan || minus.udef_chan ||
+    f = (minus.global || minus.udef_global || minus.chan || minus.udef_chan ||
          minus.bot);
     if (flagrec_eq(&plus, &user)) {
       if (!f)
@@ -505,7 +505,7 @@ static int tcl_getuser STDVAR
   struct userrec *u;
   struct user_entry *e;
 
-  BADARGS(3, 999, " handle type");
+  BADARGS(3, -1, " handle type");
 
   if (!(et = find_entry_type(argv[2])) && egg_strcasecmp(argv[2], "HANDLE")) {
     Tcl_AppendResult(irp, "No such info type: ", argv[2], NULL);
@@ -536,7 +536,7 @@ static int tcl_setuser STDVAR
   int r;
   module_entry *me;
 
-  BADARGS(3, 999, " handle type ?setting....?");
+  BADARGS(3, -1, " handle type ?setting....?");
 
   if (!(et = find_entry_type(argv[2]))) {
     Tcl_AppendResult(irp, "No such info type: ", argv[2], NULL);

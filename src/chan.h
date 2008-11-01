@@ -3,7 +3,7 @@
  *   stuff common to chan.c and mode.c
  *   users.h needs to be loaded too
  *
- * $Id: chan.h,v 1.45 2008/02/16 21:41:03 guppy Exp $
+ * $Id: chan.h,v 1.46 2008/11/01 20:41:10 tothwolf Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -229,8 +229,8 @@ struct chanset_t {
 #define CHAN_NODESYNCH      0x40000    /* +nodesynch      */
 #define CHAN_AUTOHALFOP     0x80000    /* +autohalfop     */
 #define CHAN_PROTECTHALFOPS 0x100000   /* +protecthalfops */
-#define CHAN_ACTIVE         0x1000000  /* -inactive       */
 
+#define CHAN_ACTIVE         0x1000000  /* -inactive       */
 #define CHAN_PEND           0x2000000  /* waiting for end of WHO list      */
 #define CHAN_FLAGGED        0x4000000  /* flagged for delete during rehash */
 #define CHAN_STATIC         0x8000000  /* non-dynamic channel              */

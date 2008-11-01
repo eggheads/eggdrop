@@ -7,7 +7,7 @@
  *   (non-Tcl) procedure lookups for msg/dcc/file commands
  *   (Tcl) binding internal procedures to msg/dcc/file commands
  *
- * $Id: tclhash.c,v 1.61 2008/02/16 21:41:04 guppy Exp $
+ * $Id: tclhash.c,v 1.62 2008/11/01 20:41:10 tothwolf Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -1145,7 +1145,7 @@ void tell_binds(int idx, char *par)
     patmatc = 1;
 
   dprintf(idx, MISC_CMDBINDS);
-  dprintf(idx, "  TYPE FLGS     COMMAND              HITS BINDING (TCL)\n");
+  dprintf(idx, "  TYPE FLAGS    COMMAND              HITS BINDING (TCL)\n");
 
   for (tl = tl_kind ? tl_kind : bind_table_list; tl;
        tl = tl_kind ? 0 : tl->next) {

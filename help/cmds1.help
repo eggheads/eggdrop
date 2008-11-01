@@ -89,11 +89,11 @@ See also: reload, rehash, save
 ###  %bbinds%b [type/match] [all]
    Shows the Tcl bindings in effect, in a list similar to this:
       Command bindings:
-        TYPE FLGS COMMAND              HITS BINDING (TCL)
-        msg  -|-  rose                    0 msg_rose
-        msg  -|-  go                      0 msg_go
-        dcc  m|-  bind                    0 cmd_bind
-        pub  -|-  gross                   0 pub_gross
+        TYPE FLAGS    COMMAND              HITS BINDING (TCL)
+        msg  -|-      rose                    0 msg_rose
+        msg  -|-      go                      0 msg_go
+        dcc  m|-      bind                    0 cmd_bind
+        pub  -|-      gross                   0 pub_gross
    The fields should be self-explanatory, except for HITS, which records the
    number of times that binding has been called. If not, go read the file
    %b'doc/tcl-commands.doc'%b for help on the Tcl bind command. Note that the
