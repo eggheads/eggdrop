@@ -2,7 +2,7 @@
  * channels.c -- part of channels.mod
  *   support for channels within the bot
  *
- * $Id: channels.c,v 1.96 2008/02/16 21:41:06 guppy Exp $
+ * $Id: channels.c,v 1.97 2008/11/02 03:19:57 tothwolf Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -570,129 +570,166 @@ static cmd_t my_chon[] = {
 
 static void channels_report(int idx, int details)
 {
-  struct chanset_t *chan;
   int i;
-  char s[1024], s2[100];
+  char s[1024], s1[100], s2[100];
+  struct chanset_t *chan;
   struct flag_record fr = { FR_CHAN | FR_GLOBAL, 0, 0, 0, 0, 0 };
 
   for (chan = chanset; chan; chan = chan->next) {
+
+    /* Get user's flags if output isn't going to stdout */
     if (idx != DP_STDOUT)
       get_user_flagrec(dcc[idx].user, &fr, chan->dname);
-    if ((idx == DP_STDOUT) || glob_master(fr) || chan_master(fr)) {
-      s[0] = 0;
-      if (channel_greet(chan))
-        strcat(s, "greet, ");
-      if (channel_autoop(chan))
-        strcat(s, "auto-op, ");
-      if (channel_bitch(chan))
-        strcat(s, "bitch, ");
-      if (s[0])
-        s[strlen(s) - 2] = 0;
-      if (!s[0])
-        strcpy(s, MISC_LURKING);
+
+    /* Don't show channel information to someone who isn't a master */
+    if ((idx != DP_STDOUT) && !glob_master(fr) && !chan_master(fr))
+      continue;
+
+    s[0] = 0;
+
+    sprintf(s, "    %-20s: ", chan->dname);
+
+    if (channel_inactive(chan))
+      strcat(s, "(inactive)");
+    else if (channel_pending(chan))
+      strcat(s, "(pending)");
+    else if (!channel_active(chan))
+      strcat(s, "(not on channel)");
+    else {
+
+      s1[0] = 0;
+      sprintf(s1, "%3d member%s", chan->channel.members,
+              (chan->channel.members == 1) ? "" : "s");
+      strcat(s, s1);
+
+      s2[0] = 0;
       get_mode_protect(chan, s2);
-      if (!channel_inactive(chan)) {
-        if (channel_active(chan)) {
-          /* If it's a !chan, we want to display it's unique name too <cybah> */
-          if (chan->dname[0] == '!') {
-            dprintf(idx, "    %-20s: %3d member%s enforcing \"%s\" (%s), "
-                    "unique name %s\n", chan->dname, chan->channel.members,
-                    (chan->channel.members == 1) ? "," : "s,", s2, s,
-                    chan->name);
-          } else {
-            dprintf(idx, "    %-20s: %3d member%s enforcing \"%s\" (%s)\n",
-                    chan->dname, chan->channel.members,
-                    chan->channel.members == 1 ? "," : "s,", s2, s);
-          }
-        } else {
-          dprintf(idx, "    %-20s: (%s), enforcing \"%s\"  (%s)\n", chan->dname,
-                  channel_pending(chan) ? "pending" : "not on channel", s2, s);
-        }
-      } else {
-        dprintf(idx, "    %-20s: channel is set +inactive\n", chan->dname);
+
+      if (s2[0]) {
+        s1[0] = 0;
+        sprintf(s1, ", enforcing \"%s\"", s2);
+        strcat(s, s1);
       }
-      if (details) {
-        s[0] = 0;
-        i = 0;
-        if (channel_enforcebans(chan))
-          i += my_strcpy(s + i, "enforcebans ");
-        if (channel_dynamicbans(chan))
-          i += my_strcpy(s + i, "dynamicbans ");
-        if (!channel_nouserbans(chan))
-          i += my_strcpy(s + i, "userbans ");
-        if (channel_autoop(chan))
-          i += my_strcpy(s + i, "autoop ");
-        if (channel_bitch(chan))
-          i += my_strcpy(s + i, "bitch ");
-        if (channel_greet(chan))
-          i += my_strcpy(s + i, "greet ");
-        if (channel_protectops(chan))
-          i += my_strcpy(s + i, "protectops ");
-        if (channel_protecthalfops(chan))
-          i += my_strcpy(s + i, "protecthalfops ");
-        if (channel_protectfriends(chan))
-          i += my_strcpy(s + i, "protectfriends ");
-        if (channel_dontkickops(chan))
-          i += my_strcpy(s + i, "dontkickops ");
-        if (channel_logstatus(chan))
-          i += my_strcpy(s + i, "statuslog ");
-        if (channel_revenge(chan))
-          i += my_strcpy(s + i, "revenge ");
-        if (channel_revenge(chan))
-          i += my_strcpy(s + i, "revengebot ");
-        if (channel_secret(chan))
-          i += my_strcpy(s + i, "secret ");
-        if (channel_shared(chan))
-          i += my_strcpy(s + i, "shared ");
-        if (!channel_static(chan))
-          i += my_strcpy(s + i, "dynamic ");
-        if (channel_autovoice(chan))
-          i += my_strcpy(s + i, "autovoice ");
-        if (channel_autohalfop(chan))
-          i += my_strcpy(s + i, "autohalfop ");
-        if (channel_cycle(chan))
-          i += my_strcpy(s + i, "cycle ");
-        if (channel_seen(chan))
-          i += my_strcpy(s + i, "seen ");
-        if (channel_dynamicexempts(chan))
-          i += my_strcpy(s + i, "dynamicexempts ");
-        if (!channel_nouserexempts(chan))
-          i += my_strcpy(s + i, "userexempts ");
-        if (channel_dynamicinvites(chan))
-          i += my_strcpy(s + i, "dynamicinvites ");
-        if (!channel_nouserinvites(chan))
-          i += my_strcpy(s + i, "userinvites ");
-        if (channel_inactive(chan))
-          i += my_strcpy(s + i, "inactive ");
-        if (channel_nodesynch(chan))
-          i += my_strcpy(s + i, "nodesynch ");
-        dprintf(idx, "      Options: %s\n", s);
-        if (chan->need_op[0])
-          dprintf(idx, "      To get ops, I do: %s\n", chan->need_op);
-        if (chan->need_invite[0])
-          dprintf(idx, "      To get invited, I do: %s\n", chan->need_invite);
-        if (chan->need_limit[0])
-          dprintf(idx, "      To get the channel limit raised, I do: %s\n",
-                  chan->need_limit);
-        if (chan->need_unban[0])
-          dprintf(idx, "      To get unbanned, I do: %s\n", chan->need_unban);
-        if (chan->need_key[0])
-          dprintf(idx, "      To get the channel key, I do: %s\n",
-                  chan->need_key);
-        if (chan->idle_kick)
-          dprintf(idx, "      Kicking idle users after %d minute%s\n",
-                  chan->idle_kick, (chan->idle_kick != 1) ? "s" : "");
-        if (chan->stopnethack_mode)
-          dprintf(idx, "      stopnethack-mode: %d\n", chan->stopnethack_mode);
-        if (chan->revenge_mode)
-          dprintf(idx, "      revenge-mode: %d\n", chan->revenge_mode);
-        dprintf(idx, "      Bans last %d minute%s.\n", chan->ban_time,
-                 (chan->ban_time != 1) ? "s" : "");
-        dprintf(idx, "      Exemptions last %d minute%s.\n", chan->exempt_time,
-                 (chan->exempt_time != 1) ? "s" : "");
-        dprintf(idx, "      Invitations last %d minute%s.\n", chan->invite_time,
-                 (chan->invite_time != 1) ? "s" : "");
+
+      s2[0] = 0;
+
+      if (channel_greet(chan))
+        strcat(s2, "greet, ");
+      if (channel_autoop(chan))
+        strcat(s2, "auto-op, ");
+      if (channel_bitch(chan))
+        strcat(s2, "bitch, ");
+
+      if (s2[0]) {
+        s2[strlen(s2) - 2] = 0;
+
+        s1[0] = 0;
+        sprintf(s1, " (%s)", s2);
+        strcat(s, s1);
       }
+
+      /* If it's a !chan, we want to display it's unique name too <cybah> */
+      if (chan->dname[0] == '!') {
+        s1[0] = 0;
+        sprintf(s1, ", unique name %s", chan->name);
+        strcat(s, s1);
+      }
+    }
+
+    dprintf(idx, "%s\n", s);
+
+    if (details) {
+      s[0] = 0;
+      i = 0;
+
+      if (channel_enforcebans(chan))
+        i += my_strcpy(s + i, "enforcebans ");
+      if (channel_dynamicbans(chan))
+        i += my_strcpy(s + i, "dynamicbans ");
+      if (!channel_nouserbans(chan))
+        i += my_strcpy(s + i, "userbans ");
+      if (channel_autoop(chan))
+        i += my_strcpy(s + i, "autoop ");
+      if (channel_bitch(chan))
+        i += my_strcpy(s + i, "bitch ");
+      if (channel_greet(chan))
+        i += my_strcpy(s + i, "greet ");
+      if (channel_protectops(chan))
+        i += my_strcpy(s + i, "protectops ");
+      if (channel_protecthalfops(chan))
+        i += my_strcpy(s + i, "protecthalfops ");
+      if (channel_protectfriends(chan))
+        i += my_strcpy(s + i, "protectfriends ");
+      if (channel_dontkickops(chan))
+        i += my_strcpy(s + i, "dontkickops ");
+      if (channel_logstatus(chan))
+        i += my_strcpy(s + i, "statuslog ");
+      if (channel_revenge(chan))
+        i += my_strcpy(s + i, "revenge ");
+      if (channel_revenge(chan))
+        i += my_strcpy(s + i, "revengebot ");
+      if (channel_secret(chan))
+        i += my_strcpy(s + i, "secret ");
+      if (channel_shared(chan))
+        i += my_strcpy(s + i, "shared ");
+      if (!channel_static(chan))
+        i += my_strcpy(s + i, "dynamic ");
+      if (channel_autovoice(chan))
+        i += my_strcpy(s + i, "autovoice ");
+      if (channel_autohalfop(chan))
+        i += my_strcpy(s + i, "autohalfop ");
+      if (channel_cycle(chan))
+        i += my_strcpy(s + i, "cycle ");
+      if (channel_seen(chan))
+        i += my_strcpy(s + i, "seen ");
+      if (channel_dynamicexempts(chan))
+        i += my_strcpy(s + i, "dynamicexempts ");
+      if (!channel_nouserexempts(chan))
+        i += my_strcpy(s + i, "userexempts ");
+      if (channel_dynamicinvites(chan))
+        i += my_strcpy(s + i, "dynamicinvites ");
+      if (!channel_nouserinvites(chan))
+        i += my_strcpy(s + i, "userinvites ");
+      if (channel_inactive(chan))
+        i += my_strcpy(s + i, "inactive ");
+      if (channel_nodesynch(chan))
+        i += my_strcpy(s + i, "nodesynch ");
+
+      dprintf(idx, "      Options: %s\n", s);
+
+      if (chan->need_op[0])
+        dprintf(idx, "      To get ops, I do: %s\n", chan->need_op);
+
+      if (chan->need_invite[0])
+        dprintf(idx, "      To get invited, I do: %s\n", chan->need_invite);
+
+      if (chan->need_limit[0])
+        dprintf(idx, "      To get the channel limit raised, I do: %s\n",
+                chan->need_limit);
+
+      if (chan->need_unban[0])
+        dprintf(idx, "      To get unbanned, I do: %s\n", chan->need_unban);
+
+      if (chan->need_key[0])
+        dprintf(idx, "      To get the channel key, I do: %s\n",
+                chan->need_key);
+
+      if (chan->idle_kick)
+        dprintf(idx, "      Kicking idle users after %d minute%s\n",
+                chan->idle_kick, (chan->idle_kick != 1) ? "s" : "");
+
+      if (chan->stopnethack_mode)
+        dprintf(idx, "      stopnethack-mode: %d\n", chan->stopnethack_mode);
+
+      if (chan->revenge_mode)
+        dprintf(idx, "      revenge-mode: %d\n", chan->revenge_mode);
+
+      dprintf(idx, "      Bans last %d minute%s.\n", chan->ban_time,
+               (chan->ban_time == 1) ? "" : "s");
+      dprintf(idx, "      Exemptions last %d minute%s.\n", chan->exempt_time,
+               (chan->exempt_time == 1) ? "" : "s");
+      dprintf(idx, "      Invitations last %d minute%s.\n", chan->invite_time,
+               (chan->invite_time == 1) ? "" : "s");
     }
   }
 }

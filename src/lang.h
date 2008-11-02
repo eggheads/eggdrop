@@ -2,7 +2,7 @@
  * lang.h
  *   Conversion definitions for language support
  *
- * $Id: lang.h,v 1.37 2008/02/16 21:41:03 guppy Exp $
+ * $Id: lang.h,v 1.38 2008/11/02 03:19:57 tothwolf Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -95,7 +95,7 @@
 /* was: MISC_TRYINGMISTAKE      0x525            */
 #define MISC_PENDING            get_language(0x526)
 #define MISC_WANTOPS            get_language(0x527)
-#define MISC_LURKING            get_language(0x528)
+/* was: MISC_LURKING            0x528            */
 #define MISC_BACKGROUND         get_language(0x529)
 #define MISC_TERMMODE           get_language(0x52a)
 #define MISC_STATMODE           get_language(0x52b)

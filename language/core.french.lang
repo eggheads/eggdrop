@@ -1,7 +1,7 @@
 # core.french.lang
 #   core language messages for eggdrop
 #
-# $Id: core.french.lang,v 1.33 2005/09/05 03:38:31 wcc Exp $
+# $Id: core.french.lang,v 1.34 2008/11/02 03:19:57 tothwolf Exp $
 
 
 # General stuff
@@ -108,7 +108,6 @@ consultez le ficher de configuration initiale pour plus de renseignements.\n
 0x522,<addresse>:<numéro de port>[/<numéro de port-relais>]
 0x526,en suspens
 0x527,je ne suis pas op
-0x528,caché
 0x529,arrière plan
 0x52a,mode terminal
 0x52b,mode statut

@@ -1,7 +1,7 @@
 # core.english.lang
 #   core language messages for eggdrop
 #
-# $Id: core.english.lang,v 1.45 2008/11/01 20:41:10 tothwolf Exp $
+# $Id: core.english.lang,v 1.46 2008/11/02 03:19:57 tothwolf Exp $
 
 # General stuff
 0x001,Usage
@@ -107,7 +107,6 @@ module, please consult the default config file for info.\n
 0x522,<address>:<port#>[/<relay-port#>]
 0x526,pending
 0x527,need ops
-0x528,lurking
 0x529,background
 0x52a,terminal mode
 0x52b,status mode

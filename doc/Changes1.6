@@ -1,10 +1,14 @@
-$Id: Changes1.6,v 1.13 2008/11/01 23:23:08 tothwolf Exp $
+$Id: Changes1.6,v 1.14 2008/11/02 03:19:57 tothwolf Exp $
 
 Eggdrop Changes (since version 1.6.0)
 
     _____________________________________________________________________
 
 1.6.20 (CVS):
+
+  - Refactored channels_report() and simplified the channel status
+    information for the .status command.
+    Patch by: Tothwolf
 
   - Added support for irc numeric 465 ERR_YOUREBANNEDCREEP so a server ban
     reason (for a Kline, Gline, etc) can be seen and logged.
@@ -98,7 +102,7 @@ Eggdrop Changes (since version 1.6.0)
 
   - Fixed EGG_PROG_HEAD_1 autoconf macro cache checking. You can't use
     AC_MSG_RESULT() within AC_CACHE_VAL().
-  - Moved --enable-strip configure check from EGG_PROG_STRIP to it's own
+  - Moved --enable-strip configure check from EGG_PROG_STRIP to its own
     macro: EGG_ENABLE_STRIP()
     Patch by: Tothwolf
 
