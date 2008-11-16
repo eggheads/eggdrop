@@ -1,4 +1,4 @@
-$Id: Changes1.4,v 1.1 2008/07/05 02:14:02 tothwolf Exp $
+$Id: Changes1.4,v 1.2 2008/11/16 06:33:17 tothwolf Exp $
 
 Eggdrop Changes (since version 1.4.0)
 
@@ -57,7 +57,7 @@ Eggdrop Changes (since version 1.4.0)
 
   - Changed the priority of a WHO done when users are de-opped to DP_HELP
     from DP_MODE
-    Found by: Ben / Patch by: Eugene
+    Found by: Ben Dover / Patch by: Eugene
 
   - Increased the size of whois_fields to 1024.
     Patch by: Tothwolf
@@ -123,7 +123,7 @@ Eggdrop Changes (since version 1.4.0)
     Found by: Charvel / Patch by: Fabian
 
   - New in u_addban: if (expire_time==now) return 1;
-    Found by: Ben / Patch by: Eule
+    Found by: Ben Dover / Patch by: Eule
 
   - Added for cmd_botattr DCC_FORK_BOT-check.
     Found by: Tothwolf / Patch by: Eule
@@ -176,13 +176,13 @@ Eggdrop Changes (since version 1.4.0)
 
   - Lowered server-queue priority of nick-regain commands from DP_MODE to
     DP_SERVER (both ISON and TRACE methods)
-    Found by: Ben / Patch by: Fabian, guppy
+    Found by: Ben Dover / Patch by: Fabian, guppy
 
   - bind flud was getting the nickname passed in the user@host information.
-    Patch by: blaster
+    Patch by: blaster^
 
   - Changed the userinfo version from 1.05 to 1.06.
-    Found by: kirben / Patch by: guppy
+    Found by: Kirben / Patch by: guppy
 
   - Added three new events, 'init-server', 'connect-server' and
     'disconnect-server'.
@@ -232,7 +232,7 @@ Eggdrop Changes (since version 1.4.0)
     Patch by: guppy
 
   - Added HTML documentation to doc/web_docs/.
-    Patch by: Jason
+    Patch by: Jason Ede
 
   - 'make install' didn't install the html files
     Patch by: Fabian
@@ -273,7 +273,7 @@ Eggdrop Changes (since version 1.4.0)
     Patch by: Tothwolf
 
   - Multiple exempts were not set correctly
-    Patch by: Jason
+    Patch by: Jason Ede
 
   - tcl_chanmask's time output was broken
     Found by: Wiktor / Patch by: Eule
@@ -281,8 +281,9 @@ Eggdrop Changes (since version 1.4.0)
   - rand_nick used wrong random number generator family
     Found by: BarkerJr / Patch by: Fabian
 
-  - tcl_setuser was not saving console settings correctly
-    Patch by: david
+  - tcl_setuser() was not saving console settings correctly due to a missing
+    set_user() call in console_tcl_set().
+    Patch by: David Newhall II
 
   - Bot was removing non-existant +I/+e/+b masks.
     Found by: toot / Patch by: drummer
@@ -295,7 +296,7 @@ Eggdrop Changes (since version 1.4.0)
     Found by: Tom / Patch by: Fabian
 
   - .binds now supports wildcard matches
-    Patch by: david
+    Patch by: David Newhall II
 
   - Changed "This command can only be used on IRCnet" to say they need
     use-exempts/invites and fixed hybrid net-type to not use invites by
@@ -332,7 +333,7 @@ Eggdrop Changes (since version 1.4.0)
 
   - use_exempts and use_invites wasn't checked when setting the modes on
     joining a channel and getting ops.
-    Patch by: Jason
+    Patch by: Jason Ede
 
   - Botmasters (+m) could not .chinfo bot info.
     Patch by: dw
@@ -378,7 +379,7 @@ Eggdrop Changes (since version 1.4.0)
     Patch by: dw
 
   - botattr was interpreting relay'ed bots as linked
-    Found by: david / Patch by: Fabian
+    Found by: David Newhall II / Patch by: Fabian
 
   - Fixed typo in transfer.mod
     Patch by: Wiktor
@@ -388,7 +389,7 @@ Eggdrop Changes (since version 1.4.0)
 
   - +I modes used the wrong queue and was not stacked also fixed a minor +e
     prob.
-    Found by: Eugene / Patch by: Jason
+    Found by: Eugene / Patch by: Jason Ede
 
   - Updated INSTALL & compiling.FAQ documents
     Patch by: Wiktor
@@ -606,7 +607,7 @@ Eggdrop Changes (since version 1.4.0)
     Patch by: Tothwolf
 
   - Now properly uses and adjusts altnicks
-    Found by: Ben / Patch by: Fabian
+    Found by: Ben Dover / Patch by: Fabian
 
   - Note bug that killed the listening ports
     Found by: SuperS / Patch by: drummer
@@ -648,12 +649,12 @@ Eggdrop Changes (since version 1.4.0)
     Patch by: Tothwolf
 
   - Major rewrite of configure.in and all the Makefiles, including better
-    Tcl detection and support for more Tcl versons. better support for irix,
-    osf, lynx, and cygwin (however support for cygwin is unsupported)
+    Tcl detection and support for more Tcl versons. better support for IRIX,
+    OSF, Lynx, and Cygwin (however support for Cygwin is unsupported)
     Patch by: Tothwolf
 
   - Sticky invite/exempt sharing fix
-    Patch by: Jason
+    Patch by: Jason Ede
 
   - dcc_get forgot to update dcc[idx].timeval
     Found by: various / Patch by: guppy
@@ -836,7 +837,7 @@ Eggdrop Changes (since version 1.4.0)
 
   - cmd_su doesn't require a passwd for the target user if called by an
     owner
-    Found by: Ben / Patch by: Fabian
+    Found by: Ben Dover / Patch by: Fabian
 
   - Some messages were still sent too all logfiles; only nightly time stamps
     should go to there.
@@ -898,7 +899,7 @@ Eggdrop Changes (since version 1.4.0)
     Patch by: Fabian
 
   - eggdrop.conf.dist now talks positively about allow-resync
-    Found by: Ben / Patch by: Fabian
+    Found by: Ben Dover / Patch by: Fabian
 
   - Fixed .console to not allow channels starting with '*'.
     Patch by: rtc
@@ -965,7 +966,7 @@ Eggdrop Changes (since version 1.4.0)
     Patch by: dw
 
   - Minor doc changes to eggdrop.conf.dist
-    Found by: Ben / Patch by: Fabian
+    Found by: Ben Dover / Patch by: Fabian
 
   - Fixed .whois to properly display local channels in console records
     Patch by: rtc
@@ -997,8 +998,7 @@ Eggdrop Changes (since version 1.4.0)
     Patch by: guppy
 
   - The bot now logs syntax errors in the config-file after a
-   .rehash/.restart before it exits.
-
+    .rehash/.restart before it exits.
     Patch by: rtc
 
   - More configure.in fixes, removed two out of three warnings
@@ -1021,7 +1021,7 @@ Eggdrop Changes (since version 1.4.0)
 
   - got_op/got_deop were not setting the flags correctly before calling
     add_mode
-    Found by: charvel / Patch by: Fabian
+    Found by: Charvel / Patch by: Fabian
 
   - Added doc/BUG-REPORT
     Patch by: Fabian, flash
@@ -1055,7 +1055,7 @@ Eggdrop Changes (since version 1.4.0)
     Found by: Wiktor / Patch by: Fabian
 
   - Made the code check the ismember result everywhere now
-    Found by: charvel / Patch by: Fabian
+    Found by: Charvel / Patch by: Fabian
 
   - Removed debug message in notes module
     Found by: toot / Patch by: Fabian
@@ -1102,7 +1102,7 @@ Eggdrop Changes (since version 1.4.0)
     Found by: SuperS / Patch by: Fabian
 
   - New .stick handling
-    Patch by: Jason
+    Patch by: Jason Ede
 
   - Adjusted +revenge to be sane; added +revengebot flag
     Patch by: Fabian
@@ -1159,7 +1159,7 @@ Eggdrop Changes (since version 1.4.0)
     Patch by: drummer
 
   - doc/BOTNET update.
-    Patch by: Johoho, Ben
+    Patch by: Wiktor, Ben Dover
 
   - refresh_ban_kick() doesn't kick friends anymore
     Found by: arthur2 / Patch by: Fabian
@@ -1267,7 +1267,7 @@ Eggdrop Changes (since version 1.4.0)
     Patch by: Fabian
 
   - Don't share exempt and invite lists with bots which don't support these.
-    Found by: Ben, Mixter / Patch by: Fabian
+    Found by: Ben Dover, Mixter / Patch by: Fabian
 
   - newsplit() now removes _all_ spaces between the two parts
     Patch by: Fabian, Ian

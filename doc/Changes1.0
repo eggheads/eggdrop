@@ -1,4 +1,4 @@
-$Id: Changes1.0,v 1.1 2008/07/05 02:14:02 tothwolf Exp $
+$Id: Changes1.0,v 1.2 2008/11/16 06:33:17 tothwolf Exp $
 
 Eggdrop Changes (since version 0.9)
 
@@ -21,7 +21,7 @@ Eggdrop Changes (since version 0.9)
   - 437 numeric (nickname/channel is juped) has been changed to reflect
     whether it is specfically the channel or the nickname, bot will not
     change nicknames if the channel is juped :)
-    Found by: ernesto baschny / Patch by: robey pointer
+    Found by: Ernst / Patch by: Robey
 
   - Botnet routing has been changed, no longer bothers sending out botnet
     commands to bots that don't exist
@@ -31,14 +31,14 @@ Eggdrop Changes (since version 0.9)
     Patch by: cmwagner
 
   - Long nickname mask in whois command caused bot to crash
-    Found by: ernesto baschny / Patch by: cmwagner
+    Found by: Ernst / Patch by: cmwagner
 
   - Downlink can no longer unlink uplink and cause a nasty amount of noise
     on the botnet
-    Found by: eraseme / Patch by: cmwagner
+    Found by: EraseMe / Patch by: cmwagner
 
   - Long filename in dcc send caused bot to crash
-    Found by: mike hammarin / Patch by: cmwagner
+    Found by: Mike Hammarin / Patch by: cmwagner
 
   - Sharebots aborting xfers would cause the bot to kill off the wrong
     socket
@@ -83,11 +83,11 @@ Eggdrop Changes (since version 0.9)
   BUG REPORTS:
 
   - dcc chat with firewalled bot doesn't seem to work (error 2)
-    Submitted by: rajat goel
+    Reported by: Rajat Goel
   - Changing nicks every 60 seconds on the undernet (which eggdrop does when
     it can't get its nick) can be perceived as a flood; suggested fix is to
     use ISON to determine if the name is available
-    Submitted by: troy davis
+    Reported by: Troy Davis
   - killdcc <idx> "on a relay to another bot that was stuck (I had lost the
     connection to my ISP) and the bot went haywire ('Can't find user for
     relay!')"
@@ -108,12 +108,12 @@ Eggdrop Changes (since version 0.9)
     Patch by: dunk
 
   - 'kick'/'kickban' won't kick other channel bots
-    Suggested by: mikael hammarin
+    Suggested by: Mikael Hammarin
 
   - ctcp quoting removed (eggdrop was the only client that correctly did it
     according to the ctcp-1 spec -- the new ctcp-2 quoting will be
     introduced once the ctcp-2 draft is finalized in a month or so)
-    Patch by: butchbub
+    Patch by: ButchBub
 
   - Server renaming was case sensitive and could sometimes cause a crash
     (fixed)
@@ -122,6 +122,8 @@ Eggdrop Changes (since version 0.9)
     Patch by: poptix
 
   - Other bots can't use msg 'ident' command
+
+    Maintainer: Robey
 
   TO-DO:
 
@@ -144,11 +146,11 @@ Eggdrop Changes (since version 0.9)
   BUG REPORTS:
 
   - dcc chat with firewalled bot doesn't seem to work (error 2)
-    Submitted by: rajat goel
+    Reported by: Rajat Goel
   - Changing nicks every 60 seconds on the undernet (which eggdrop does when
     it can't get its nick) can be perceived as a flood; suggested fix is to
     use ISON to determine if the name is available
-    Submitted by: troy davis
+    Reported by: Troy Davis
   - killdcc <idx> "on a relay to another bot that was stuck (I had lost the
     connection to my ISP) and the bot went haywire ('Can't find user for
     relay!')"
@@ -171,7 +173,7 @@ Eggdrop Changes (since version 0.9)
     Patch by: os2warp@invlogic.com
 
   - Nick flood was broken (fixed)
-    Patch by: mrwizard
+    Patch by: Mr. Wizard
 
   - mIRC ctcps and colors stripped from party-line chatter
 
@@ -179,14 +181,14 @@ Eggdrop Changes (since version 0.9)
 
   - Changing the nick of a directly-connected bot could befuddle the dcc
     tables (fixed)
-    Found by: beldin
+    Found by: Beldin
 
   - Some servers apparently give broken pong replies (copes with it now)
 
   - Won't reverse -b modes if they weren't bot-protected bans
 
   - 'chnick' wouldn't let you change capitalization (fixed)
-    Found by: xerxes
+    Found by: Xerxes
 
   - '+bot' will not let spaces be part of the address any more
     Suggested by: vince@who.net
@@ -194,10 +196,10 @@ Eggdrop Changes (since version 0.9)
   - Turns control characters into '?' in a password
 
   - Was letting users change nicks to the bot's nick (fixed)
-    Found by: dan anatol
+    Found by: Dan Anatol
 
   - 'init-server' is delayed until 001 numeric is received from the server
-    Suggested by: troy davis
+    Suggested by: Troy Davis
 
   - 'ispermban' Tcl command wasn't working (fixed)
     Found by: void
@@ -208,14 +210,14 @@ Eggdrop Changes (since version 0.9)
 
   - '.topic' was sometimes refusing to change the topic when the bot wasn't
     op'd, even if the channel was not +t (fixed)
-    Found by: james colton
+    Found by: James Colton
 
   - +c common users were not able to use 'hello' msg command (code was all
     gibberish) (fixed)
-    Found by: aaron zollman
+    Found by: Aaron Zollman
 
   - GNU configure file updated to handle Tcl 8.0
-    Patch by: tom rini
+    Patch by: Tom Rini
 
   - +secret/-secret channel settings weren't listed in sample config file
     (fixed)
@@ -225,41 +227,43 @@ Eggdrop Changes (since version 0.9)
 
   - Initial ban checking would try to de-ban a number instead of a detested
     ban (fixed)
-    Found by: jesse schachter
+    Found by: Jesse Schachter
 
   - console.tcl will filter out c/x/r/o/d/1-5 console modes for non-masters
 
   - Console modes weren't removed when a user's +m flag was removed and
     he/she was still online (fixed)
-    Found by: eraseme
+    Found by: EraseMe
 
   - compile-time option to allow lowercase ctcps
 
   - Nick flood protection streamlined and no longer kicks the same user
     multiple times
-    Patch by: mike mclagan
+    Patch by: Mike McLagan
 
   - Better checking of recently-placed bans (to avoid constantly refreshing
     a group of bans that are under a minute old and probably pending in the
     queue)
-    Patch by: mike mclagan
+    Patch by: Mike McLagan
 
   - Some changes to support Cygnus Windows/NT environment
-    Patch by: darkshde/ blap
+    Patch by: darkshde, garbanzo
 
   - ctcp flood sent directly to the bot wasn't getting completely ignored
     (fixed)
-    Found by: dejan oklobdzija
+    Found by: Dejan Oklobdzija
 
   - Tcl 'dccsimul' no longer gives the user a temporary +n ('dccsimul' will
     now only let the user do commands he/she would normally be able to use)
 
   - Motd display could barf on long %C output (fixed)
-    Found by: seth mattinen
+    Found by: Seth Mattinen
 
   - Nick jupe on Euronet will get treated like "nickname in use"
 
   - Updated the README file
+
+    Maintainer: Robey
 
   TO-DO:
 
@@ -282,11 +286,11 @@ Eggdrop Changes (since version 0.9)
   BUG REPORTS:
 
   - dcc chat with firewalled bot doesn't seem to work (error 2)
-    Submitted by: rajat goel
+    Reported by: Rajat Goel
   - Changing nicks every 60 seconds on the undernet (which eggdrop does when
     it can't get its nick) can be perceived as a flood; suggested fix is to
     use ISON to determine if the name is available
-    Submitted by: troy davis
+    Reported by: Troy Davis
   - killdcc <idx> "on a relay to another bot that was stuck (I had lost the
     connection to my ISP) and the bot went haywire ('Can't find user for
     relay!')"
@@ -310,13 +314,13 @@ Eggdrop Changes (since version 0.9)
     kick or deop the channel server", bots that attempted to do this would
     think they were i-lined (a concept that does not exist on undernet) and
     jump -- now uses umode +r to detect
-    Found by: emmanuel marty
+    Found by: Emmanuel Marty
 
   - 'banner' could send blank message (fixed)
-    Found by: eraseme
+    Found by: EraseMe
 
   - 'adduser' existed for limbo bots (fixed)
-    Found by: eraseme
+    Found by: EraseMe
 
   - Access check removed from filedb (not all OS's understand it)
 
@@ -330,7 +334,7 @@ Eggdrop Changes (since version 0.9)
     Suggested by: bingony
 
   - Nick flood protection was horribly broken (fixed)
-    Found by: dejan oklobdzija
+    Found by: Dejan Oklobdzija
 
   - Console masktype buffer could overflow (fixed)
     Found by: nitemoon
@@ -352,7 +356,9 @@ Eggdrop Changes (since version 0.9)
     Suggested by: xerox@foonet.net
 
   - whom info wouldn't get updated on a Tcl 'setchan' (fixed)
-    Patch by: beldin
+    Patch by: Beldin
+
+    Maintainer: Robey
 
   TO-DO:
 
@@ -375,11 +381,11 @@ Eggdrop Changes (since version 0.9)
   BUG REPORTS:
 
   - dcc chat with firewalled bot doesn't seem to work (error 2)
-    Submitted by: rajat goel
+    Reported by: Rajat Goel
   - Changing nicks every 60 seconds on the undernet (which eggdrop does when
     it can't get its nick) can be perceived as a flood; suggested fix is to
     use ISON to determine if the name is available
-    Submitted by: troy davis
+    Reported by: Troy Davis
   - killdcc <idx> "on a relay to another bot that was stuck (I had lost the
     connection to my ISP) and the bot went haywire ('Can't find user for
     relay!')"
@@ -404,7 +410,7 @@ Eggdrop Changes (since version 0.9)
 
   - When using filedb-path, sometimes filenames would get spurious trailing
     dots added (fixed)
-    Found by: trond refsnes
+    Found by: Trond Refsnes
 
   - NCSA telnet was causing eggdrop to think two linefeeds happened instead
     of one (fixed, i think)
@@ -412,10 +418,10 @@ Eggdrop Changes (since version 0.9)
 
   - Mass deop detection was broken with respect to +o-o+o-o etc on nets that
     allow huge numbers of modes per line (fixed)
-    Found by: sean t
+    Found by: Sean T.
 
   - ctcp flood to channel wasn't causing kick (fixed)
-    Found by: dejan oklobdzija
+    Found by: Dejan Oklobdzija
 
   - configure was checking for 'awk' and it didn't need to (fixed)
 
@@ -423,7 +429,7 @@ Eggdrop Changes (since version 0.9)
     Found by: imoq
 
   - 'whom' info wasn't updated on dcc floods (fixed)
-    Found by: beldin
+    Found by: Beldin
 
   - Fixed some weirdness with read-only vars
 
@@ -441,10 +447,10 @@ Eggdrop Changes (since version 0.9)
     Found by: gord-
 
   - dcc 'kick' command follows 'kickban'-style checking now
-    Suggested by: bert bohla
+    Suggested by: Bert Bohla
 
   - 'die' will wait a little longer for the server to catch up
-    Suggested by: bruce gingery
+    Suggested by: Bruce Gingery
 
   - ctcp avalanche detection couldn't be turned off (fixed, now can be
     turned off by setting flood-ctcp to 0)
@@ -468,7 +474,7 @@ Eggdrop Changes (since version 0.9)
   - Matching ignores are now displayed in 'match'
 
   - 'ignores' can take an argument: a mask for matching only certain ignores
-    Suggested by: xerxes
+    Suggested by: Xerxes
 
   - Ban list would prematurely end if there were no global bans (wouldn't
     show channel-specific bans) (fixed)
@@ -476,14 +482,14 @@ Eggdrop Changes (since version 0.9)
   - Better handling of IPs (doesn't depend on size of long)
 
   - Ignored users still get flood checked
-    Suggested by: neale pickett
+    Suggested by: Neale Pickett
 
   - Compile-time option to let ignored users still trigger many bindings
-    Suggested by: neale pickett
+    Suggested by: Neale Pickett
 
   - Channel-specific bans wouldn't get expired if there were no global bans
     (fixed)
-    Found by: gaven cohen
+    Found by: Gaven Cohen
 
   - Warning about permbans given to ops/masters made more specific
     Suggested by: nick_
@@ -495,18 +501,18 @@ Eggdrop Changes (since version 0.9)
 
   - ctcps from channels with '.' in the name weren't triggering bindings
     (fixed)
-    Found by: gaven cohen
+    Found by: Gaven Cohen
 
   - File descriptors could get lost in help system (fixed)
 
   - filedb checks ctime when updating too
 
   - Note bindings won't be triggered by notices from other bots
-    Found by: eraseme
+    Found by: EraseMe
 
   - Wasn't echoing successfully sent notes that got trapped by bindings
     (fixed)
-    Found by: eraseme
+    Found by: EraseMe
 
   - Tcl 'killchanban' was using wrong args for sending the deban (fixed)
     Found by: darkshde
@@ -517,19 +523,21 @@ Eggdrop Changes (since version 0.9)
   - Nick flood protection wasn't passing the whole hostmask, so the bot
     might sometimes fail to recognize itself, and would punish itself for
     nick floods (fixed)
-    Found by: nicholas j dear
+    Found by: Nicholas J. Dear
 
   - Random number generator wasn't seeded until after config file (and any
     scripts that load on startup) were loaded (fixed)
-    Found by: troy davis
+    Found by: Troy Davis
 
   - '+host'/'-host' accepted incomplete parameters (fixed)
     Found by: rawdon
 
   - refresh_ban_kick() was mangling the kick reason (fixed)
-    Found by: gaven cohen
+    Found by: Gaven Cohen
 
   - Better i-line detection
+
+    Maintainer: Robey
 
   TO-DO:
 
@@ -552,11 +560,11 @@ Eggdrop Changes (since version 0.9)
   BUG REPORTS:
 
   - dcc chat with firewalled bot doesn't seem to work (error 2)
-    Submitted by: rajat goel
+    Reported by: Rajat Goel
   - Changing nicks every 60 seconds on the undernet (which eggdrop does when
     it can't get its nick) can be perceived as a flood; suggested fix is to
     use ISON to determine if the name is available
-    Submitted by: troy davis
+    Reported by: Troy Davis
   - Some people say their bot thinks it's i-lined when it's not, but i can't
     duplicate it, and those people won't send me logs or info
 
@@ -580,26 +588,26 @@ Eggdrop Changes (since version 0.9)
   - If expired dynamic bans weren't removed quickly enough by the server,
     the bot would obsessively deban once a minute until the server reacted
     (fixed)
-    Found by: bruce s
+    Found by: Bruce S.
 
   - expire-time for bans and ignores was displayed weird (fixed)
 
   - When kicked from a channel, queue the join to avoid excess flood
-    Found by: xerox@foonet
+    Found by: xerox@foonet.net
 
   - Changing nicks on the party line wouldn't update whom info on other bots
     (fixed)
-    Found by: michele
+    Found by: Michele
 
   - First word of ban comment was stripped off in the kick comment (fixed)
-    Found by: gaven cohen
+    Found by: Gaven Cohen
 
   - Idle time was always 15 mins for remote users in whom right after a
     connect (fixed)
 
   - +autoop will make the bot op a user after he/she idents or is .adduser'd
     (if they're +o)
-    Suggested by: jesse schachter
+    Suggested by: Jesse Schachter
 
   - New Tcl command 'whom'
     Suggested by: gord-
@@ -617,7 +625,7 @@ Eggdrop Changes (since version 0.9)
     Found by: dorgan
 
   - Access to help files wasn't following chattr changes (fixed)
-    Found by: stephen hunter
+    Found by: Stephen Hunter
 
   - People with only +p can now ask for help on specific items
 
@@ -663,7 +671,7 @@ Eggdrop Changes (since version 0.9)
   - When restructuring botnet to get to a +sh bot, if the direct uplink is
     not +sh, this bot will disconnect from the uplink instead of asking the
     remote +sh to unlink
-    Suggested by: gord-/genady
+    Suggested by: gord-, genady
 
   - Sharebots will share hostmasks & addresses for bots (and ONLY that info)
 
@@ -675,6 +683,8 @@ Eggdrop Changes (since version 0.9)
     Suggested by: gord-
 
   - Added 'flush' command to flush resync buffers
+
+    Maintainer: Robey
 
   TO-DO:
 
@@ -697,11 +707,11 @@ Eggdrop Changes (since version 0.9)
   BUG REPORTS:
 
   - dcc chat with firewalled bot doesn't seem to work (error 2)
-    Submitted by: rajat goel
+    Reported by: Rajat Goel
   - Changing nicks every 60 seconds on the undernet (which eggdrop does when
     it can't get its nick) can be perceived as a flood; suggested fix is to
     use ISON to determine if the name is available
-    Submitted by: troy davis
+    Reported by: Troy Davis
   - Some people say their bot thinks it's i-lined when it's not, but i can't
     duplicate it, and those people won't send me logs or info
 
@@ -722,11 +732,11 @@ Eggdrop Changes (since version 0.9)
   - ctcp clientinfo now returns error messages like epic
 
   - 'whoz' shows the idle time in minutes now
-    Suggested by: lsc
+    Suggested by: LSC
 
   - Blank line (just return) was being interpreted in dcc chat as the user
     saying something (a blank line) (fixed)
-    Found by: lsc
+    Found by: LSC
 
   - ctcp clientinfo for 'action' was incorrect (fixed)
     Patch by: peace
@@ -739,15 +749,15 @@ Eggdrop Changes (since version 0.9)
   - Note sent to a local user from the bot was displayed incorrectly (fixed)
 
   - Tcl 'chhandle' would let you create null handles (fixed)
-    Found by: stephen p clouse
+    Found by: Stephen P. Clouse
 
   - Ban code would attempt to kick even after avoiding a desync re-ban
     (fixed)
-    Patch by: hue truong
+    Patch by: Hue Truong
 
   - Changed i-line detection algorithm slightly, although it probably makes
     no difference
-    Suggested by: hue truong
+    Suggested by: Hue Truong
 
   - Blowfish would run out of boxes because it wasn't checking timestamps
     correctly (fixed)
@@ -768,7 +778,7 @@ Eggdrop Changes (since version 0.9)
     Patch by: cmwagner
 
   - whom info wasn't updated to the botnet after a 'killdcc' (fixed)
-    Found by: xerxes
+    Found by: Xerxes
 
   - Put strong connections back cos some people claimed it made a difference
 
@@ -780,14 +790,14 @@ Eggdrop Changes (since version 0.9)
 
   - Banned users were only getting kicked on join if +enforcebans was set
     (fixed)
-    Found by: bert bohla
+    Found by: Bert Bohla
 
   - Failed userfile transfers would sometimes cause a resync buffer to start
     up (fixed)
     Found by: danny
 
   - Checking for +v after -o wasn't queued (fixed)
-    Found by: xerox@foonet
+    Found by: xerox@foonet.net
 
   - Tcl 'sendnote' has more extensive return codes
 
@@ -799,17 +809,17 @@ Eggdrop Changes (since version 0.9)
     Suggested by: cmwagner
 
   - Fixed sunos/solaris detection in configure
-    Found by: joe morris
+    Found by: Joe Morris
 
   - Think i finally fixed the problem with IPs getting sent out in reverse
     byte order over IRC
 
   - Matching bans show up when doing '.match'
-    Suggested by: nicholas j dear
+    Suggested by: Nicholas J. Dear
 
   - When masking user@hosts, quoting ? or * in username could overflow
     buffer (fixed)
-    Patch by: gilles d'andrea, cmwagner
+    Patch by: Gilles d'Andrea, cmwagner
 
   - Made lots of dangerous and slightly incompatable changes to the way bans
     are stored and created
@@ -833,6 +843,8 @@ Eggdrop Changes (since version 0.9)
   - Spelling error in "incompatible" (fixed)
     Found by: dvlsadvct
 
+    Maintainer: Robey
+
   TO-DO:
 
   - Allow dynamic bans to be marked as "forced"?  (ie, most bans are dynamic
@@ -848,13 +860,13 @@ Eggdrop Changes (since version 0.9)
   BUG REPORTS:
 
   - +a bots are not getting linked if +h bots are down
-    Submitted by: genady
+    Reported by: genady
   - dcc chat with firewalled bot doesn't seem to work (error 2)
-    Submitted by: rajat goel
+    Reported by: Rajat Goel
   - Changing nicks every 60 seconds on the undernet (which eggdrop does when
     it can't get its nick) can be perceived as a flood; suggested fix is to
     use ISON to determine if the name is available
-    Submitted by: troy davis
+    Reported by: Troy Davis
   - Some people say their bot thinks it's i-lined when it's not, but i can't
     duplicate it, and those people won't send me logs or info
   - Occasional explosions of .filedb for no reason
@@ -892,7 +904,7 @@ Eggdrop Changes (since version 0.9)
     Suggested by: ayman
 
   - Slightly better algorithm to stack outgoing mode changes
-    Suggested by: mr. wizard
+    Suggested by: Mr. Wizard
 
   - Changing telnet port on the fly might lose a socket (fixed)
 
@@ -910,28 +922,28 @@ Eggdrop Changes (since version 0.9)
 
   - If channel has no ops, and there are some humans there, 'need-op' will
     be run just in case it has a magical oper command or something
-    Suggested by: bruce s
+    Suggested by: Bruce S.
 
   - Directories are given more space for filename length in the 'ls' listing
     since they don't need the other info displayed
     Suggested by: stomper
 
   - Made 'configure' look for new-style Tcl library names (ie libtcl75.a)
-    Suggested by: kendrick vegas
+    Suggested by: Kendrick Vegas
 
   - New command 'getaddr' to get a bot's address; 'getinfo' on bots will
     always return a blank string now (this should keep scripts from getting
     confused)
 
   - Added Tcl commands 'addignore', 'addpermignore', 'delignore', 'isignore'
-    Patch by: hue truong
+    Patch by: Hue Truong
 
   - Added 'flud' binding to catch and react to floods as the bot detects
     them, replacing the bot's normal punishments
-    Patch by: hue truong
+    Patch by: Hue Truong
 
   - Help files typos and errors fixed
-    Found by: bruce s
+    Found by: Bruce S.
 
   - FreeBSD uses non-standard names for the Tcl library -- added to
     configure script
@@ -944,7 +956,7 @@ Eggdrop Changes (since version 0.9)
     strings
 
   - 'weed' was sometimes losing part of the xtra field (fixed)
-    Patch by: bruce s
+    Patch by: Bruce S.
 
   - Tcl 'getdccidle' added
     Patch by: cmwagner
@@ -955,16 +967,16 @@ Eggdrop Changes (since version 0.9)
   - Idle times are actually updated for dcc chat/files/script now
 
   - 'chemail' didn't complain about nonexistent users (fixed)
-    Found by: chucky burnett
+    Found by: Chucky Burnett
 
   - Tcl 'rand' would accept and explode on argument of 0 (fixed)
-    Found by: chucky burnett
+    Found by: Chucky Burnett
 
   - Bot could get confused about its current nickname during rehash (fixed)
 
   - recheck-channel would skip bot's nickname, but not if it wasn't using
     its desired nick (fixed)
-    Found by: chucky burnett
+    Found by: Chucky Burnett
 
   - Console was getting set to gibberish channel on limbo bots (fixed)
     Patch by: cmwagner
@@ -978,6 +990,8 @@ Eggdrop Changes (since version 0.9)
   - User is notified if they receive a note while away
 
   - getmyip() returned to normal behavior (see note in net.c)
+
+    Maintainer: Robey
 
   TO-DO:
 
@@ -995,13 +1009,13 @@ Eggdrop Changes (since version 0.9)
   BUG REPORTS:
 
   - +a bots are not getting linked if +h bots are down
-    Submitted by: genady
+    Reported by: genady
   - dcc chat with firewalled bot doesn't seem to work (error 2)
-    Submitted by: rajat goel
+    Reported by: Rajat Goel
   - Changing nicks every 60 seconds on the undernet (which eggdrop does when
     it can't get its nick) can be perceived as a flood; suggested fix is to
     use ISON to determine if the name is available
-    Submitted by: troy davis
+    Reported by: Troy Davis
   - Some people say their bot thinks it's i-lined when it's not, but i can't
     duplicate it, and those people won't send me logs or info
 
@@ -1059,7 +1073,7 @@ Eggdrop Changes (since version 0.9)
     (fixed)
     Found by: darkshde
 
-  - Cleaned up some of the IP conversion code in net.c (at fred1's prodding)
+  - Cleaned up some of the IP conversion code in net.c (at Fred1's prodding)
 
   - Majorly overhauled the Tcl command stubs and spread them out over 4
     files
@@ -1069,7 +1083,7 @@ Eggdrop Changes (since version 0.9)
 
   - Added 'reserved-port' setting for using a certain port for dcc file
     transfers
-    Suggested by: jordy
+    Suggested by: Jordy
 
   - Flood settings can now specify the time-lapse (# of seconds) which still
     defaults to 60 (probably too high)
@@ -1091,11 +1105,11 @@ Eggdrop Changes (since version 0.9)
 
   - File system 'chdir' wasn't checking error returns on filedb's sometimes
     (fixed)
-    Found by: fred1
+    Found by: Fred1
 
   - Filedb code was using wrong match routines (case insensitive, bad)
     (fixed)
-    Found by: fred1
+    Found by: Fred1
 
   - Slightly better rejection of unsupported telnet IACs (thanks to ken
     keys)
@@ -1136,6 +1150,8 @@ Eggdrop Changes (since version 0.9)
 
   - Handles FPE signal
 
+    Maintainer: Robey
+
   TO-DO:
 
   - Allow dynamic bans to be marked as "forced"?  (ie, most bans are dynamic
@@ -1172,7 +1188,7 @@ Eggdrop Changes (since version 0.9)
 
   - protect-ops doesn't reop if the deop was caused by another bot (stops
     some desync wars)
-    Suggested by: xerxes
+    Suggested by: Xerxes
 
   - Bans were checked on the wrong hostmask during nick changes (fixed)
     Found by: tris
@@ -1213,7 +1229,7 @@ Eggdrop Changes (since version 0.9)
   - Rudimentary socks firewall support (outbound connections only so far)
 
   - Repetitive ban checking used wrong timestamp (fixed)
-    Patch by: hue truong
+    Patch by: Hue Truong
 
   - Wasn't really switching between m/h queues when dumping to server
     (fixed)
@@ -1229,7 +1245,7 @@ Eggdrop Changes (since version 0.9)
     '.whom' in a few versions
 
   - '.chinfo' pretended to change info of non-existent users (fixed)
-    Found by: aaron
+    Found by: Aaron Zollman
 
   - Support for sun firewalls (as much as there can be) -- will barely work,
     if at all, since "telnet passthru" wasn't meant for machine use
@@ -1246,6 +1262,8 @@ Eggdrop Changes (since version 0.9)
 
   - Updated 'weed' for new userfile format
 
+    Maintainer: Robey
+
   TO-DO:
 
   - Allow dynamic bans to be marked as "forced"?  (ie, most bans are dynamic
@@ -1260,7 +1278,7 @@ Eggdrop Changes (since version 0.9)
 
   - None (HA!)
   - Some complaints that a large filedb file gets created (fixed? maybe?):
-    + fred1 says it happens in /gifs/abpem, suggesting that the removal/
+    + Fred1 says it happens in /gifs/abpem, suggesting that the removal/
       addition of directories might be a culprit
   - Channel bans aren't saved in the userfile, or downloaded to other bots:
     they probably should be.
@@ -1272,7 +1290,7 @@ Eggdrop Changes (since version 0.9)
 
   - Various patches to fix socket 1 getting treated special when the bot is
     in the background
-    Some by: cmwagner
+    Patches by: cmwagner
 
   - msg 'whois' command had possible nick overrun (fixed)
     Patch by: cmwagner
@@ -1328,6 +1346,8 @@ Eggdrop Changes (since version 0.9)
   - Could possibly flood itself off with channel joins when starting up
     (fixed)
 
+    Maintainer: Robey
+
   TO-DO:
 
   - Allow dynamic bans to be marked as "forced"?  (ie, most bans are dynamic
@@ -1343,7 +1363,7 @@ Eggdrop Changes (since version 0.9)
 
   - None (HA!)
   - Some complaints that a large filedb file gets created (fixed? maybe?):
-    + fred1 says it happens in /gifs/abpem, suggesting that the removal/
+    + Fred1 says it happens in /gifs/abpem, suggesting that the removal/
       addition of directories might be a culprit
   - Option SOCK_STRONGCONN currently appears to be a no-op
 
@@ -1355,7 +1375,7 @@ Eggdrop Changes (since version 0.9)
   - Might confuse lag for a desync, and not kick people who joined while a
     ban was being placed ("after" the ban was placed, from the bot's point
     of view) (fixed)
-    Found by: fred1
+    Found by: Fred1
 
   - Stupid new '+', '-', '^', '=' preceding usernames are stripped unless
     strict-host is on
@@ -1374,14 +1394,14 @@ Eggdrop Changes (since version 0.9)
     Found by: cmwagner
 
   - Race condition on userfile send and receive at the same time (fixed)
-    Found by: fred1
+    Found by: Fred1
 
   - Got rid of some HPUX warnings
     Patches by: cmwagner
 
   - copyfile() would only copy part of a file if it ran out of disk space
     (now it aborts)
-    Found by: mr. wizard
+    Found by: Mr. Wizard
 
   - Added 'pushmode' and 'flushmode' Tcl commands
 
@@ -1397,7 +1417,7 @@ Eggdrop Changes (since version 0.9)
 
   - Identity change (changing the bot's nick and then reloading the config
     file) would wait a while before changing nicks on the server (fixed)
-    Found by: laurens v alphen
+    Found by: Laurens v. Alphen
 
   - Colorization (^B/^V/^_) in bans was considered bogus (fixed)
     Found by: topcat
@@ -1416,6 +1436,8 @@ Eggdrop Changes (since version 0.9)
   - Tries harder to disassociate controlling terminal when running in the
     background (ie, most of the time) and re-uses fd's 0-2 (server will
     generally be socket 0 now)
+
+    Maintainer: Robey
 
   TO-DO:
 
@@ -1437,7 +1459,7 @@ Eggdrop Changes (since version 0.9)
   - Tcl 'sign' bindings sometimes crash (?)
   - Some complaints that a large filedb file gets created (can't duplicate,
     might be just a rumor):
-    + fred1 says it happens in /gifs/abpem, suggesting that the removal/
+    + Fred1 says it happens in /gifs/abpem, suggesting that the removal/
       addition of directories might be a culprit
   - Aborting a userfile transfer is usually fatal now (why?)
 
@@ -1468,9 +1490,11 @@ Eggdrop Changes (since version 0.9)
 
   - Added sets 'my-ip' and 'my-hostname' to override auto-detect in odd
     cases
-    Suggested by: rok papez
+    Suggested by: Rok Papez
 
   - Might have fixed OSF/1 problems with DNS
+
+    Maintainer: Robey
 
   TO-DO:
 
@@ -1520,7 +1544,7 @@ Eggdrop Changes (since version 0.9)
   - Just does slow bot ping all the time now
 
   - console.tcl wasn't restoring console channel correctly (fixed)
-    Found by: ben barton
+    Found by: Ben Barton
 
   - Really dumps bots when they abort the userfile transfer now
 
@@ -1537,13 +1561,13 @@ Eggdrop Changes (since version 0.9)
 
   - Can set maximum number of notes to save for a user (default 50) to
     prevent someone being flooded by stored notes
-    Suggested by: robert brice
+    Suggested by: Robert Brice
 
   - Added Tcl: 'getchanmode'
-    Suggested by: roger yerramsetti
+    Suggested by: Roger Yerramsetti
 
   - Can mark a bot +sa now
-    Suggested by: nate gardner
+    Suggested by: Nate Gardner
 
   - Revenge is a channel option now, not a global option
 
@@ -1569,6 +1593,8 @@ Eggdrop Changes (since version 0.9)
 
   - sharebot_boots wasn't really checking for sharebots (fixed)
     Found by: blackjac
+
+    Maintainer: Robey
 
   TO-DO:
 
@@ -1656,6 +1682,8 @@ Eggdrop Changes (since version 0.9)
   - Could send fake bot rejections (fixed)
     Patch by: cmwagner
 
+    Maintainer: Robey
+
   TO-DO:
 
   - Allow dynamic bans to be marked as "forced"?  (ie, most bans are dynamic
@@ -1680,20 +1708,20 @@ Eggdrop Changes (since version 0.9)
   # New version from Robey Pointer <robey@acolyte.slip.netcom.com>
 
   - Can use 'ENABLE_TCL' to turn off the '.tcl' command now
-    Suggested by: jay s monk
+    Suggested by: Jay S. Monk
 
   - New 'ntalk.irc' (v4.1)
-    Submitted by: fred1
+    Submitted by: Fred1
 
   - Bind string matching could get locked up
-    Fixed by: fred1
+    Fixed by: Fred1
 
   - DALnet fixes
     Patch by: cmwagner
 
   - Copying a file into a directory where it already existed caused
     duplicate records (fixed)
-    Found by: fred1
+    Found by: Fred1
 
   - Couldn't hide/unhide dirs in the file system (fixed)
     Found by: imoq
@@ -1704,13 +1732,13 @@ Eggdrop Changes (since version 0.9)
   - Desyncs were causing the bot to repetitively kickban people who joined
     the channel on a side of the net where the ban did not exist, which
     would sometimes make the bot flood itself off (fixed)
-    Found by: nate gardner
+    Found by: Nate Gardner
 
   - Setting the 'xtra' field blank would crash the bot (fixed)
     Found by: dan
 
   - Small fix to quesedilla
-    Patch by: gord
+    Patch by: gord-
 
   - Dropped relay connections weren't REALLY reseting echo (fixed)
     Found by: imoq
@@ -1744,7 +1772,7 @@ Eggdrop Changes (since version 0.9)
 
   - Can detect and use the new standard Tcl 7.5 shared library (hint hint)
 
-  - Annoying roommate: xerxes
+  - Annoying roommate: Xerxes
 
   - '.dump' was op-level not master-level (fixed)
     Found by: skyline
@@ -1756,7 +1784,7 @@ Eggdrop Changes (since version 0.9)
 
   - Stackable bindings weren't being checked by their individual flag
     requirements (fixed)
-    Found by: chad fawcett
+    Found by: Chad Fawcett
 
   - CTCP responses use secondary queue now
 
@@ -1772,6 +1800,8 @@ Eggdrop Changes (since version 0.9)
 
   - Some socket/fd leaks in the file system could lead to unpredictable
     filedbs i think (fixed)
+
+    Maintainer: Robey
 
   TO-DO:
 
@@ -1843,7 +1873,7 @@ Eggdrop Changes (since version 0.9)
     (downside: no way to tell memory leak unless debugging is on)
 
   - Bot link/etc notices were going to users who had '.chat off' (fixed)
-    Found by: xerxes
+    Found by: Xerxes
 
   - Added Tcl 'setlaston', 'echo', 'addglban', 'delglban'
 
@@ -1882,7 +1912,7 @@ Eggdrop Changes (since version 0.9)
   - Better DALnet support (maybe not perfect, but...)
 
   - Password checking is case-sensitive now
-    Suggested by: jay s monk
+    Suggested by: Jay S. Monk
 
   - Removed helpbot support (useless)
 
@@ -1900,7 +1930,7 @@ Eggdrop Changes (since version 0.9)
 
   - Aborting a relay, when a password was being asked for, could keep echo
     off indefinitely (fixed)
-    Found by: chad wagner
+    Found by: cmwagner
 
   - New Tcl command 'getting-users'
 
@@ -1963,7 +1993,7 @@ Eggdrop Changes (since version 0.9)
   - Lots of Tcl commands to support the file system
 
   - Flags '6'-'0' weren't getting loaded correctly (fixed)
-    Found by: dave guzeman
+    Found by: Dave Guzeman
 
   - '.email' was spazzing out (fixed)
     Found by: slix
@@ -1971,7 +2001,7 @@ Eggdrop Changes (since version 0.9)
   - Sockets are non-blocking after a connect now
 
   - Something stupid about not being able to leave notes for bots
-    Found by: xerxes
+    Found by: Xerxes
 
   - The xtra field is transmitted between sharebots differently, and should
     now have no effective size limit
@@ -1998,11 +2028,11 @@ Eggdrop Changes (since version 0.9)
     Found by: shadow
 
   - 'switch-logfiles-at' in lamestbot was set to octal value (oops)
-    Found by: xerxes
+    Found by: Xerxes
 
   - Bans were overwriting other memory when sent to Tcl to trigger bindings
     ("yer a dork!") (fixed)
-    Found by: fred1
+    Found by: Fred1
 
   - Better way to prevent the bot from going "idle"
 
@@ -2010,7 +2040,7 @@ Eggdrop Changes (since version 0.9)
     Found by: cmwagner
 
   - Owners couldn't even boot themselves (fixed)
-    Found by: gord
+    Found by: gord-
 
   - 'chattr' was letting you do +b/-b when it shouldn't (fixed)
 
@@ -2033,7 +2063,7 @@ Eggdrop Changes (since version 0.9)
 
   - 'unlink *' forces the bot tables and assoc records to be cleared to a
     sane state
-    Suggested by: fred1
+    Suggested by: Fred1
 
   - filt wasn't working for file system (fixed)
     Found by: dorgan
@@ -2041,18 +2071,20 @@ Eggdrop Changes (since version 0.9)
   - Missing linefeed was causing bot tree chaos (fixed by cmwagner)
 
   - Was possible to nick-ban the bot with +ban (fixed)
-    Found by: luke detering
+    Found by: Luke Detering
 
   - Better username testing on startup
 
   - Few problems with crashing when unlinking bots (fixed)
-    Found by: xerxes
+    Found by: Xerxes
 
   - Hack: Tcl 'putserv' and 'puthelp' truncate embedded linefeeds now, to
     keep braindead scripts from shooting themselves in the foot
 
   - Excessive repetitive invites are no longer logged
     Suggested by: derrick
+
+    Maintainer: Robey
 
   TO-DO:
 
@@ -2084,6 +2116,8 @@ Eggdrop Changes (since version 0.9)
 
   - Bugfix patch
 
+    Maintainer: Robey
+
 
 1.0beta-turtle (April 1, 1996):
 
@@ -2095,7 +2129,7 @@ Eggdrop Changes (since version 0.9)
     Found by: cmwagner
 
   - Owners couldn't even boot themselves (fixed)
-    Found by: gord
+    Found by: gord-
 
   - 'chattr' was letting you do +b/-b when it shouldn't (fixed)
 
@@ -2115,6 +2149,8 @@ Eggdrop Changes (since version 0.9)
     loading-userfile phase will be faster
 
   - New console level 's' to record server connect/disconnect/etc
+
+    Maintainer: Robey
 
   TO-DO:
 
@@ -2154,11 +2190,13 @@ Eggdrop Changes (since version 0.9)
     Found by: shadow
 
   - 'switch-logfiles-at' in lamestbot was set to octal value (oops)
-    Found by: xerxes
+    Found by: Xerxes
 
   - Bans were overwriting other memory when sent to Tcl to trigger bindings
     ("yer a dork!") (fixed)
-    Found by: fred1
+    Found by: Fred1
+
+    Maintainer: Robey
 
   TO-DO:
 
@@ -2224,7 +2262,7 @@ Eggdrop Changes (since version 0.9)
     (downside: no way to tell memory leak unless debugging is on)
 
   - Bot link/etc notices were going to users who had '.chat off' (fixed)
-    Found by: xerxes
+    Found by: Xerxes
 
   - Added Tcl 'setlaston', 'echo', 'addglban', 'delglban'
 
@@ -2263,7 +2301,7 @@ Eggdrop Changes (since version 0.9)
   - Better DALnet support (maybe not perfect, but...)
 
   - Password checking is case-sensitive now
-    Suggested by: jay s monk
+    Suggested by: Jay S. Monk
 
   - Removed helpbot support (useless)
 
@@ -2281,7 +2319,7 @@ Eggdrop Changes (since version 0.9)
 
   - Aborting a relay, when a password was being asked for, could keep echo
     off indefinitely (fixed)
-    Found by: chad wagner
+    Found by: cmwagner
 
   - New Tcl command 'getting-users'
 
@@ -2344,7 +2382,7 @@ Eggdrop Changes (since version 0.9)
   - Lots of Tcl commands to support the file system
 
   - Flags '6'-'0' weren't getting loaded correctly (fixed)
-    Found by: dave guzeman
+    Found by: Dave Guzeman
 
   - '.email' was spazzing out (fixed)
     Found by: slix
@@ -2352,7 +2390,7 @@ Eggdrop Changes (since version 0.9)
   - Sockets are non-blocking after a connect now
 
   - Something stupid about not being able to leave notes for bots
-    Found by: xerxes
+    Found by: Xerxes
 
   - The xtra field is transmitted between sharebots differently, and should
     now have no effective size limit
@@ -2366,6 +2404,8 @@ Eggdrop Changes (since version 0.9)
     Found by: dorgan
 
   - Moved ' local-only chat to a Tcl script so it's optional
+
+    Maintainer: Robey
 
   TO-DO:
 

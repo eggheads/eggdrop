@@ -1,4 +1,4 @@
-$Id: Changes1.2,v 1.2 2008/07/10 09:22:04 tothwolf Exp $
+$Id: Changes1.2,v 1.3 2008/11/16 06:33:17 tothwolf Exp $
 
 Eggdrop Changes (since version 1.2.0)
 
@@ -26,7 +26,7 @@ Eggdrop Changes (since version 1.2.0)
     Found by: ^You^ / Patch by: Beldin
 
   - Minor fixes to my own stupidity
-    Found by: Dtm / Patch by: Beldin
+    Found by: dtM / Patch by: Beldin
 
   - Static portions should work in Makefile now, also BSDI's gmake is called
     all the time now
@@ -43,7 +43,7 @@ Eggdrop Changes (since version 1.2.0)
     Patch by: Kirk
 
   - You could .link to an already '.link'n bot, causing quite a few problems
-    Found by: BB / Patch by: Beldin
+    Found by: ButchBub / Patch by: Beldin
 
   - Remove userfile upgrading support, weed does that now
     Patch by: Beldin
@@ -55,7 +55,7 @@ Eggdrop Changes (since version 1.2.0)
     Found by: |mmortal / Patch by: Beldin
 
   - Nick changes on the botnet were sick
-    Found by: Bogus / Patch by: Beldin
+    Found by: BoGuS / Patch by: Beldin
 
 
 1.3.0gamma:
@@ -113,10 +113,10 @@ Eggdrop Changes (since version 1.2.0)
     Found by: |mmortal / Patch by: Beldin
 
   - Language'ized wire.mod.
-    Patch by: BB
+    Patch by: ButchBub
 
   - I forget.
-    Patch by: BB
+    Patch by: ButchBub
 
   - Moved JOINs to the MODE queue
     Patch by: Beldin
@@ -131,13 +131,13 @@ Eggdrop Changes (since version 1.2.0)
     Found by: |mmortal / Patch by: Beldin
 
   - user-get, user-set slightly hosed, map to getuser/setuser
-    Found by: BB / Patch by: Beldin
+    Found by: ButchBub / Patch by: Beldin
 
   - Renamed module could be reloaded.
     Found by: |mmortal / Patch by: Beldin
 
   - tcl_loadlanguage was logging incorrectly
-    Found by: BB / Patch by: Beldin
+    Found by: ButchBub / Patch by: Beldin
 
   - Ident lookups were causing SEGV's at bizarre times
     Patch by: Beldin
@@ -167,14 +167,14 @@ Eggdrop Changes (since version 1.2.0)
     Found by: TheGhost / Patch by: Beldin
 
   - Owners could be boot by non-owners
-    Found by: Bogus / Patch by: Beldin
+    Found by: BoGuS / Patch by: Beldin
 
   - Missing break; in strip_mirc_codes
-    Found by: BB / Patch by: Beldin
+    Found by: ButchBub / Patch by: Beldin
 
   - Optimized periodic_timers, dcc_activity, eof_dcc & call_hook just a
     little, removing [at least] a few function calls
-    Found by: BB, Beldin / Patch by: Beldin
+    Found by: ButchBub, Beldin / Patch by: Beldin
 
   - Who replies were not handling strict-host properly
     Patch by: Beldin
@@ -182,20 +182,20 @@ Eggdrop Changes (since version 1.2.0)
 
 1.3.0pre+bel1:
 
-  - Tweaked seen.so to work they way I like it, Sorry BB :)
+  - Tweaked seen.so to work they way I like it, Sorry ButchBub :)
     Patch by: Beldin
 
   - newbotname wasn't being initialized in server.so
-    Found by: dtm / Patch by: Beldin
+    Found by: dtM / Patch by: Beldin
 
   - -bc wasn't being passed correctly on the botnet
-    Found by: BB / Patch by: Beldin
+    Found by: ButchBub / Patch by: Beldin
 
   - Double dependency modules need to cleanup after themselves
-    Found by: BB / Patch by: Beldin
+    Found by: ButchBub / Patch by: Beldin
 
   - xtra_unpack was slooooooooooooooooooooow
-    Found by: BB / Patch by: Beldin
+    Found by: ButchBub / Patch by: Beldin
 
   - Fix of xtra_unpack can cleanup all other xtra handling to include
     sharing (minor incompatibility with previous versions)
@@ -241,20 +241,20 @@ Eggdrop Changes (since version 1.2.0)
 1.3.0pre+BBub1: (does not affect Eggdrop patchlevel)
 
   - First hashing of install rule in Makefile.
-    Patch by: BB
+    Patch by: ButchBub
 
   - Inclusion of Ode_To_Beldin.
-    Patch by: BB
+    Patch by: ButchBub
 
   - Rework of wire.mod for the current, and changing of internal tables from
     idx to sock.
-    Patch by: BB
+    Patch by: ButchBub
 
   - gamespak.mod reworked for current (dist'd separately).
-    Patch by: BB
+    Patch by: ButchBub
 
   - putegg relegated to obsolete/ -- kept, JIC...
-    Patch by: BB
+    Patch by: ButchBub
 
 
 1.3.0pre:  <- getting closer <G>
@@ -293,7 +293,7 @@ Eggdrop Changes (since version 1.2.0)
     Patch by: Beldin
 
   - Dolt, it helps to check your nick minutely
-    Found by: BB / Patch by: Beldin
+    Found by: ButchBub / Patch by: Beldin
 
   - Booted .page'rs were being booted using bots IRC nick
     Found by: poptix / Patch by: Beldin
@@ -308,7 +308,7 @@ Eggdrop Changes (since version 1.2.0)
     Patch by: Beldin
 
   - tcl_killdcc wasn't kill anything
-    Found by: BB / Patch by: Beldin
+    Found by: ButchBub / Patch by: Beldin
 
   - Major help file lookup overhaul, added %b/%v/%_/%f for
     bold/inverse/underline/flash with ircII or ansi codings depending on the
@@ -342,10 +342,10 @@ Eggdrop Changes (since version 1.2.0)
     Found by: Daklop / Patch by: Beldin
 
   - INVITE wasn't working
-    Found by: BB / Patch by: Beldin
+    Found by: ButchBub / Patch by: Beldin
 
   - MODE #channel wasn't working
-    Found by: BB / Patch by: Beldin
+    Found by: ButchBub / Patch by: Beldin
 
 
 1.2.2+bel3:
@@ -373,7 +373,7 @@ Eggdrop Changes (since version 1.2.0)
 
   - module_depend now returns the module function table for ereet fast
     setting of values
-    Found by: BB / Patch by: Beldin
+    Found by: ButchBub / Patch by: Beldin
 
   - doembeddedmode was calling get_op with wrong args
     Patch by: Q
@@ -400,7 +400,7 @@ Eggdrop Changes (since version 1.2.0)
     Found by: |mmortal / Patch by: Beldin
 
   - Bots were pinging out sometimes (-ve clock adjustment)
-    Found by: BB / Patch by: Beldin
+    Found by: ButchBub / Patch by: Beldin
 
   - Info line wasn't showing up on local bot if enable in console.so
     Found by: Melvan / Patch by: Beldin
@@ -422,10 +422,10 @@ Eggdrop Changes (since version 1.2.0)
     Patch by: Beldin
 
   - Wrong displayed message on eggdrop -m
-    Found by: Zarni / Patch by: Beldin
+    Found by: zarni / Patch by: Beldin
 
   - Wrongly added hosts on NEW from telnet (: != . doofus)
-    Found by: Zarni / Patch by: Beldin
+    Found by: zarni / Patch by: Beldin
 
   - Pseudo-memory leak in channels.c
     Patch by: Beldin
@@ -447,7 +447,7 @@ Eggdrop Changes (since version 1.2.0)
 1.2.2+bel1:
 
   - Error in list item 1 of tcl_botlist
-    Found by: Zarni / Patch by: Beldin
+    Found by: zarni / Patch by: Beldin
 
   - console.so wasn't sending a botnet join
     Patch by: Beldin
@@ -464,7 +464,7 @@ Eggdrop Changes (since version 1.2.0)
 
   - Since some bindings are called multi-levelled, we need different
     variable names for each binding
-    Found by: Zarni / Patch by: Beldin
+    Found by: zarni / Patch by: Beldin
 
   - tcl_botlist added, returns all locally stored info on bots (this ones
     for the llamas ;)
@@ -477,10 +477,10 @@ Eggdrop Changes (since version 1.2.0)
     Found by: Melvan / Patch by: Beldin
 
   - Ctcp replies weren't happening
-    Found by: Zarni / Patch by: Beldin
+    Found by: zarni / Patch by: Beldin
 
   - Nuke pre 7.3 Tcl support
-    Patch by: BB
+    Patch by: ButchBub
 
   - Segv in .tcl servers
     Patch by: Beldin
@@ -498,7 +498,7 @@ Eggdrop Changes (since version 1.2.0)
     Patch by: Beldin
 
   - '.+chan' was setting channels static
-    Found by: BB / Patch by: Beldin
+    Found by: ButchBub / Patch by: Beldin
 
 
 1.2.0+bel26:
@@ -517,22 +517,22 @@ Eggdrop Changes (since version 1.2.0)
     Patch by: Beldin
 
   - Various header file problems with the new tables
-    Found by: Zarni / Patch by: Beldin
+    Found by: zarni / Patch by: Beldin
 
   - '.fwd'n code was fr0ke
-    Found by: Zarni / Patch by: Beldin
+    Found by: zarni / Patch by: Beldin
 
   - Unset +l/-l mode protect wasn't handled right.
-    Found by: melvan / Patch by: Beldin
+    Found by: Melvan / Patch by: Beldin
 
 
 1.2.0+bel25:
 
   - New telnet users weren't having their dcc[].user record updated
-    Found by: melvan / Patch by: Beldin
+    Found by: Melvan / Patch by: Beldin
 
   - /msg's weren't being logged correctly
-    Found by: melvan / Patch by: Beldin
+    Found by: Melvan / Patch by: Beldin
 
   - Add *!user@host for bots rather than *!user@*.domain
     Found by: Q / Patch by: Beldin
@@ -541,7 +541,7 @@ Eggdrop Changes (since version 1.2.0)
     Found by: dk / Patch by: Beldin
 
   - tcl_userlist takes a channel argument now
-    Found by: |mm / Patch by: Beldin
+    Found by: |mmortal / Patch by: Beldin
 
   - tcl_chanbans returns who & age values now
     Patch by: Beldin
@@ -557,38 +557,38 @@ Eggdrop Changes (since version 1.2.0)
 1.2.0+BBub5:
 
   - tcl_chanlist wasn't working.
-    Patch by: BB
+    Patch by: ButchBub
 
   - Pitched all the vanity do-nothing commands from woobie.so.   This
     novelty has worn off.  woobie.so is a skeletal/example module for
     programming.
-    Patch by: BB
+    Patch by: ButchBub
 
   - Fix in servmsg.c for reversed args to strcpy.
     Patch by: Beldin
 
   - Moved eggdrop.conf to eggdrop.conf.dist.  It is unusable as distributed,
     and prompts to "overwrite?" are silly.
-    Patch by: BB
+    Patch by: ButchBub
 
   - Slight fix and change for message when creating chanfile.
-    Patch by: BB
+    Patch by: ButchBub
 
   - Continued language system conversion.
-    Patch by: BB
+    Patch by: ButchBub
 
   - Missing declarative for KICK binding in tclhash.h.
-    Found by: BB / Patch by: Beldin
+    Found by: ButchBub / Patch by: Beldin
 
   - Fixed message when changing password vi /MSG.
-    Found by: zarni / Patch by: BB
+    Found by: zarni / Patch by: ButchBub
 
   - Fixed MSGb1f message when linking.
-    Patch by: BB
+    Patch by: ButchBub
 
   - botchk is in scripts where it belongs.  Copying it to the base install
     directory is pointless, since it is unusable as distributed.
-    Patch by: BB
+    Patch by: ButchBub
 
   - Missing <errno.h> in dcc.c.
     Patch by: Beldin
@@ -603,22 +603,22 @@ Eggdrop Changes (since version 1.2.0)
     Patch by: Beldin
 
   - Implemented note forwarding in notes.so
-    Found by: Zarni / Patch by: Beldin
+    Found by: zarni / Patch by: Beldin
 
   - A blank setting of fstat caused mucho spewo
     Patch by: Beldin
 
   - +n's should be able to change just about anything
-    Found by: BB / Patch by: Beldin
+    Found by: ButchBub / Patch by: Beldin
 
   - Chan +m's couldn't kick/kickban +o's (now they can)
-    Found by: BB / Patch by: Beldin
+    Found by: ButchBub / Patch by: Beldin
 
   - '.link <thisbot> otherbot' said no such bot online
-    Found by: BB / Patch by: Beldin
+    Found by: ButchBub / Patch by: Beldin
 
   - Squelched the bot change messages on share startup
-    Found by: BB / Patch by: Beldin
+    Found by: ButchBub / Patch by: Beldin
 
   - You can no longer set a bot +as (you're asking for trouble if you do
     anyway ;)
@@ -652,7 +652,7 @@ Eggdrop Changes (since version 1.2.0)
 1.2.0+bel23:
 
   - '.restart' is fragged again :/
-    Found by: BB / Patch by: Beldin
+    Found by: ButchBub / Patch by: Beldin
 
   - Server queue not being flush in .restart
     Patch by: Beldin
@@ -667,7 +667,7 @@ Eggdrop Changes (since version 1.2.0)
     Found by: dtM / Patch by: Beldin
 
   - Some parts need to be silent still
-    Found by: BB / Patch by: Beldin
+    Found by: ButchBub / Patch by: Beldin
 
   - '.+user' could still have invalid handles
     Found by: Q / Patch by: Beldin
@@ -677,10 +677,10 @@ Eggdrop Changes (since version 1.2.0)
     Patch by: Beldin
 
   - You can leave notes to the bot with /msg notes
-    Found by: Bogus / Patch by: Beldin
+    Found by: BoGuS / Patch by: Beldin
 
   - '.+host <handle> ""' should give help response
-    Found by: BB / Patch by: Beldin
+    Found by: ButchBub / Patch by: Beldin
 
 
 1.2.0+kk4:
@@ -701,16 +701,16 @@ Eggdrop Changes (since version 1.2.0)
 1.2.0+bel22:
 
   - '.vbottree' show patchlevel now
-    Patch by: BB
+    Patch by: ButchBub
 
   - '.su' didn't update .user record
-    Found by: BB / Patch by: Beldin
+    Found by: ButchBub / Patch by: Beldin
 
   - '.die' was trying to re-connect server immediately
-    Found by: BB / Patch by: Beldin
+    Found by: ButchBub / Patch by: Beldin
 
   - '.jump' eof'n straight after connect
-    Found by: BB / Patch by: Beldin
+    Found by: ButchBub / Patch by: Beldin
 
   - Removed the user of Tcl hashtables from tclhash.c hence (a) sorting the
     binding list (b) allow some bindings to be quited before check *every*
@@ -725,7 +725,7 @@ Eggdrop Changes (since version 1.2.0)
 
   - Was check wrong user when it got a ban, therefore kicking *any* user
     when banned
-    Found by: BB / Patch by: Beldin
+    Found by: ButchBub / Patch by: Beldin
 
 
 1.2.0+kk3:
@@ -738,23 +738,23 @@ Eggdrop Changes (since version 1.2.0)
 1.2.0+bel21:
 
   - Whoops bind blah "m" command was letting *anyone* execute it
-    Found by: BB / Patch by: Beldin
+    Found by: ButchBub / Patch by: Beldin
 
   - servidx is unreliable since idx's move :/
-    Found by: BB / Patch by: Beldin
+    Found by: ButchBub / Patch by: Beldin
 
   - Added server-online r/o variable for how long the current server has
     been up
     Patch by: Beldin
 
   - +ban over sharenet wasn't logging
-    Found by: BB / Patch by: Beldin
+    Found by: ButchBub / Patch by: Beldin
 
   - gotjoin wasn't rebuilding the nick!user@host before testing bans
-    Found by: BB / Patch by: Beldin
+    Found by: ButchBub / Patch by: Beldin
 
   - Nicer def_display
-    Patch by: BB
+    Patch by: ButchBub
 
 
 1.2.0+bel20:
@@ -769,7 +769,7 @@ Eggdrop Changes (since version 1.2.0)
     Patch by: Scuzzi, Beldin
 
   - Not all Tcl's have TCL_PATCH_LEVEL, use TCL_VERSION
-    Found by: Zarni / Patch by: Beldin
+    Found by: zarni / Patch by: Beldin
 
   - dcc[].user entries need to be cleared during .rehash/.reload & partially
     cleared on finish_share
@@ -782,13 +782,13 @@ Eggdrop Changes (since version 1.2.0)
     Found by: ??? / Patch by: Beldin
 
   - Segv in cmd_mv_cp
-    Patch by: BB
+    Patch by: ButchBub
 
   - Typo in .filestats
-    Patch by: BB
+    Patch by: ButchBub
 
   - '.nick' was logging to old nick
-    Patch by: BB
+    Patch by: ButchBub
 
   - Error in tcl-commands.doc about time binding
     Found by: LSC / Patch by: Beldin
@@ -800,10 +800,10 @@ Eggdrop Changes (since version 1.2.0)
     Found by: Kinslayer / Patch by: Beldin
 
   - cp <file> <dir> && .tcl cp <file> <dir> were a bit sick
-    Found by: BB / Patch by: Beldin
+    Found by: ButchBub / Patch by: Beldin
 
   - '.modulestat <module>' was fr0k3
-    Found by: BB / Patch by: Beldin
+    Found by: ButchBub / Patch by: Beldin
 
   - queue_sockets only reallocs a buffer when something is sent, not every
     call, also detects EOF on socket
@@ -851,13 +851,13 @@ Eggdrop Changes (since version 1.2.0)
     Patch by: Beldin
 
   - Display Tcl library version in .status & DEBUG
-    Found by: BB / Patch by: Beldin
+    Found by: ButchBub / Patch by: Beldin
 
   - Display compile/link/strip flags in DEBUG
-    Found by: BB / Patch by: Beldin
+    Found by: ButchBub / Patch by: Beldin
 
   - Display Tcl include file version in DEBUG
-    Found by: BB / Patch by: Beldin
+    Found by: ButchBub / Patch by: Beldin
 
   - +g strip flag (for ^g's)
     Found by: EraseMe / Patch by: Beldin
@@ -866,19 +866,19 @@ Eggdrop Changes (since version 1.2.0)
 1.2.0+bel18:
 
   - '.rehash' / '.reload' was broadcast -ban/ignore
-    Found by: BB / Patch by: Beldin
+    Found by: ButchBub / Patch by: Beldin
 
   - '.relay's from telnet showed passwords up
     Found by: Prez / Patch by: Beldin
 
   - '.who' showed wrong sock # for users to owners
-    Found by: Zarni / Patch by: Beldin
+    Found by: zarni / Patch by: Beldin
 
   - /msg who fix *again *
-    Patch by: BB
+    Patch by: ButchBub
 
   - Unlinks were passing chat msgs incorrectly
-    Found by: BB / Patch by: Beldin
+    Found by: ButchBub / Patch by: Beldin
 
   - autolink_cycle was fr0k3
     Found by: Prez / Patch by: Beldin
@@ -887,7 +887,7 @@ Eggdrop Changes (since version 1.2.0)
     Patch by: Beldin
 
   - private_owner needed work
-    Found by: Zarni / Patch by: Beldin
+    Found by: zarni / Patch by: Beldin
 
   - Whoops potential buffer overflow in dcc_ident
     Patch by: Beldin
@@ -896,10 +896,10 @@ Eggdrop Changes (since version 1.2.0)
     Patch by: Beldin
 
   - '.+ignore' sharing was corrupting
-    Found by: BB / Patch by: Beldin
+    Found by: ButchBub / Patch by: Beldin
 
   - /dcc send with no filesys was being interpreted as failed dcc chat
-    Found by: BB / Patch by: Beldin
+    Found by: ButchBub / Patch by: Beldin
 
 
 1.2.0+bel17:
@@ -932,20 +932,20 @@ Eggdrop Changes (since version 1.2.0)
     Found by: |mmortal / Patch by: Beldin
 
   - /msg info segv'd
-    Patch by: BB
+    Patch by: ButchBub
 
   - unlink in 1.2.1 portion of a botnet might cause fake msg's in other
     sections
-    Found by: BB / Patch by: Beldin
+    Found by: ButchBub / Patch by: Beldin
 
   - '.flush' context'd (wally)
-    Found by: BB / Patch by: Beldin
+    Found by: ButchBub / Patch by: Beldin
 
   - /dcc chat for non require_p + !+o was sick
-    Found by: BB / Patch by: Beldin
+    Found by: ButchBub / Patch by: Beldin
 
   - '.relay' was going ballistic if it couldn't find the port
-    Found by: BB / Patch by: Beldin
+    Found by: ButchBub / Patch by: Beldin
 
 
 1.2.0+kk2:
@@ -963,7 +963,7 @@ Eggdrop Changes (since version 1.2.0)
 1.2.0+bel15:
 
   - dcc chat's where nick != handle caused segv's
-    Found by: BB / Patch by: Beldin
+    Found by: ButchBub / Patch by: Beldin
 
   - dcc chatters show up in who as files users
     Found by: KingKurly / Patch by: Beldin
@@ -1023,10 +1023,10 @@ Eggdrop Changes (since version 1.2.0)
     Found by: OldGroo / Patch by: Beldin
 
   - tcl_getchanhost was returning nick as well
-    Patch by: BB
+    Patch by: ButchBub
 
   - tcl_matchattr wasn't handling no -ve flags
-    Found by: BB / Patch by: Beldin
+    Found by: ButchBub / Patch by: Beldin
 
   - '.-ban' wasn't deleting the 1st ban
     Found by: OldGroo / Patch by: Beldin
@@ -1041,7 +1041,7 @@ Eggdrop Changes (since version 1.2.0)
     Found by: EraseMe / Patch by: Beldin
 
   - msg_who forgot the unknowns!
-    Found by: BB / Patch by: Beldin
+    Found by: ButchBub / Patch by: Beldin
 
 
 1.2.0+bel12:
@@ -1050,10 +1050,10 @@ Eggdrop Changes (since version 1.2.0)
     Patch by: Beldin
 
   - /msg who <channel> segv's
-    Found by: BB / Patch by: Beldin
+    Found by: ButchBub / Patch by: Beldin
 
   - *slap* tcl_userlist crash *slap*
-    Found by: BB / Patch by: Beldin
+    Found by: ButchBub / Patch by: Beldin
 
   - filedb overhauled, bye bye 230 redundant lines
     Patch by: Beldin
@@ -1090,8 +1090,8 @@ Eggdrop Changes (since version 1.2.0)
     Patch by: Beldin
 
   - simple_sprintf %c needed to use int not char [with thanks to Mr.
-    gdb-via-irc Oldgroo]
-    Found by: Oldgroo / Patch by: Beldin
+    gdb-via-irc OldGroo]
+    Found by: OldGroo / Patch by: Beldin
 
   - Index doesn't return the same on SunOS, use strchr
     Patch by: Beldin
@@ -1139,13 +1139,13 @@ Eggdrop Changes (since version 1.2.0)
     Patch by: Beldin
 
   - Fixed '.op'
-    Patch by: BB
+    Patch by: ButchBub
 
   - Fixed +o-f deopping himself and being -o'd in the userfile on +bitch
     Patch by: Beldin
 
   - Fixed '.kickban'
-    Patch by: BB
+    Patch by: ButchBub
 
 
 1.2.0+bel9:
@@ -1163,9 +1163,9 @@ Eggdrop Changes (since version 1.2.0)
   - Removed chanout, all calls can use chanout_but
     Patch by: Beldin
 
-  - Fixed a bug in check_chanlist (->next twice) [beldin] <--- Thief! [BB]
-    (can I put it down to absent mindedness pwease? [beldin])
-    Patch by: BB
+  - Fixed a bug in check_chanlist (->next twice) [Beldin] <--- Thief! [ButchBub]
+    (can I put it down to absent mindedness pwease? [Beldin])
+    Patch by: ButchBub
 
   - '.+host' wasn't letting owners add their own hostmask
     Patch by: Beldin
@@ -1207,32 +1207,32 @@ Eggdrop Changes (since version 1.2.0)
 1.2.0+BBlang3:
 
   - Fixed crash on non-ident'd MSG OP requests
-    Patch by: BB
+    Patch by: ButchBub
 
   - Fixed spewed info line length on channel
-    Patch by: BB
+    Patch by: ButchBub
 
   - Moved setlaston below showinfo - time(NULL) - laston was always 0.
     (broke in bel6)
-    Patch by: BB
+    Patch by: ButchBub
 
   - Fixed a silly bug in action.fix.tcl
-    Patch by: BB
+    Patch by: ButchBub
 
   - Insignificant change to ques3.tcl, and really not worth mention
-    Patch by: BB
+    Patch by: ButchBub
 
   - Yet another insignificant change. This time in wire.mod
-    Patch by: BB
+    Patch by: ButchBub
 
   - Fixed woobie.mod for missing DCC command parameters
-    Patch by: BB
+    Patch by: ButchBub
 
   - Minor fixes to seen
-    Patch by: BB
+    Patch by: ButchBub
 
   - wire.mod fully operational
-    Patch by: BB
+    Patch by: ButchBub
 
 
 1.2.0+bel7+pop1:
@@ -1248,10 +1248,10 @@ Eggdrop Changes (since version 1.2.0)
     Patch by: Beldin
 
   - Yet more language conversion stuff
-    Patch by: BB
+    Patch by: ButchBub
 
   - Added HOOK_SECONDLY for adding the equivalent of Tcl 'utimer'
-    Patch by: BB, Beldin
+    Patch by: ButchBub, Beldin
 
   - botinfo/bottree are bot +t commands, llamas may gain unwanted info from
     them
@@ -1318,25 +1318,25 @@ Eggdrop Changes (since version 1.2.0)
 1.2.0+BBlang2:
 
   - Yet more language conversion stuff
-    Patch by: BB
+    Patch by: ButchBub
 
   - Fixed '.su'
-    Patch by: BB
+    Patch by: ButchBub
 
   - Fixed '.relay'
-    Patch by: BB
+    Patch by: ButchBub
 
   - Fixed NICKLEN (We needed to add 1)
-    Patch by: BB
+    Patch by: ButchBub
 
   - Changed NEAT_BOTNET to 1020107 from 1020100 to handle pre-bel5 bots
-    Patch by: BB
+    Patch by: ButchBub
 
 
 1.2.0+bel5:
 
-  - Dunno... ask beldin
-    Patch by: BB
+  - Dunno... ask Beldin
+    Patch by: ButchBub
 
   - Honest, I did lotsa work!
     Patch by: Beldin
@@ -1344,7 +1344,7 @@ Eggdrop Changes (since version 1.2.0)
 
 1.2.0+bel4:
 
-  - assoc.so now uses zapf & Tcl calls rather than 5 hooks (robey was right
+  - assoc.so now uses zapf & Tcl calls rather than 5 hooks (Robey was right
     about that ;)
     Patch by: Beldin
 
@@ -1353,7 +1353,7 @@ Eggdrop Changes (since version 1.2.0)
     Patch by: Beldin
 
   - Fix to add_server
-    Patch by: BB
+    Patch by: ButchBub
 
   - Fix to clearq
     Patch by: Beldin
@@ -1450,24 +1450,24 @@ Eggdrop Changes (since version 1.2.0)
 1.2.0+bel2+BBlang:
 
   - Tcl "language" command for startup script language loading.
-    Patch by: BB
+    Patch by: ButchBub
 
   - dcc '.ldump' command for debugging messages.
-    Patch by: BB
+    Patch by: ButchBub
 
   - Implemented language.so and new function get_language() for accessing
     the message language system.
-    Patch by: BB
+    Patch by: ButchBub
 
   - More changes converting text output messages to #defines for language
     support.
-    Patch by: BB
+    Patch by: ButchBub
 
-  - Pondered correcting beldin's grammar regarding a particular soft-drink,
+  - Pondered correcting Beldin's grammar regarding a particular soft-drink,
     but didn't get THAT anal. (Them Ozzies are so lazy, they can't even
     bother pushing the shift-key when they should *Sn0rT* TWO occurrences,
     BTW :)
-    Patch by: BB
+    Patch by: ButchBub
 
   - Changed rembot back, since order DID matter
     Patch by: Beldin
@@ -1487,7 +1487,7 @@ Eggdrop Changes (since version 1.2.0)
   - Fixed a whole pile of OSF warnings
     Patch by: Beldin
 
-  - Fixed eraseme's whines: '.filestats' is now a '.files' command,
+  - Fixed EraseMe's whines: '.filestats' is now a '.files' command,
    '.chaninfo' restricts +m ness
     Patch by: Beldin
 
@@ -1532,10 +1532,10 @@ Eggdrop Changes (since version 1.2.0)
 
 1.2.0alpha:
 
-  + Unofficial "1.2.0" release on August 7, 2007 of tarball'd CVS code
+  # Unofficial "1.2.0" release on August 7, 2007 of tarball'd CVS code
 
   - Legendary seen.so
-    Patch by: BB
+    Patch by: ButchBub
 
   - +/-chanrec should propagate on the sharebot's now
     Patch by: Beldin
@@ -1679,13 +1679,13 @@ Eggdrop Changes (since version 1.2.0)
 
   - Made global variable to specify whether the server connection should be
     closed when an ERROR from the server is received.
-    Found by: EraseMe / Patch by: BB
+    Found by: EraseMe / Patch by: ButchBub
 
   - Merged hash.c into tclhash.c
     Patch by: Beldin
 
   - '.save' now displays a confirmation
-    Patch by: robey
+    Patch by: Robey
 
   - Modules can now create their own hash tables
     Patch by: Beldin
@@ -1696,88 +1696,88 @@ Eggdrop Changes (since version 1.2.0)
 
   - Added MODULE hooks in blowfish for 'encrypt_string' and
     'decrypt_string'.
-    Patch by: BB
+    Patch by: ButchBub
 
   - New module 'woobie' to serve as a skeletal/sample module.
-    Patch by: BB
+    Patch by: ButchBub
 
   - New module 'wire.so' which replaces 'wire.tcl'.
-    Patch by: BB
+    Patch by: ButchBub
 
   - Minor fixes for NO_IRC.
-    Patch by: BB
+    Patch by: ButchBub
 
   - More work on converting messages to 'english.h' definitions for language
     support. Currently, only user messages are being converted (not Tcl or
     party-line messages).
-    Patch by: Raistlin, BB
+    Patch by: Raistlin, ButchBub
 
   - Moved CLIENTINFO definitions to 'english.h' for language support.
-    Patch by: BB
+    Patch by: ButchBub
 
   - QUIET_REJECTION definition has been changed from a compile-time option
     to a run-time variable 'quiet-reject.'
-    Patch by: BB
+    Patch by: ButchBub
 
   - If MODULES are being compiled, the NO_FILE_SYSTEM definition is now
     undefined. (e.g. just don't 'loadmodule filesystem')
-    Patch by: BB
+    Patch by: ButchBub
 
   - 'CHECK_STONED' definition has been changed from a compile-time option to
     a run-time variable 'check-stoned.'
-    Patch by: BB
+    Patch by: ButchBub
 
   - Installed a working wire.tcl for 1.1+ bots. (Yes, it was still broke
     here)
-    Patch by: BB
+    Patch by: ButchBub
 
   - FEATURES.1.1.x added, and README updated with MODULE information.
-    Patch by: BB
+    Patch by: ButchBub
 
   - 'userinfo1.0.tcl' script added to add commands and 'whois' output fields
     for additional user information.
-    Patch by: BB
+    Patch by: ButchBub
 
   - New global variable 'numversion' containing the numeric source version
     from 'version.'
-    Patch by: BB
+    Patch by: ButchBub
 
   - New global variable 'lastbind' for identifying what bound command
     triggered a Tcl routine.
-    Patch by: BB
+    Patch by: ButchBub
 
   - If a permanent owner was -mn'ed, the +n would be retained, but that
     owner would not be able to effect .chattr's because he would not have a
     +m himself. Hence, he could not even +m himself to fix it.
-    Patch by: BB
+    Patch by: ButchBub
 
   - '.who' now reports DCC socket numbers to OWNERs.
-    Patch by: BB
+    Patch by: ButchBub
 
   - DCC socket numbers ONCE AGAIN removed from inter-bot note displays.
-    Patch by: BB
+    Patch by: ButchBub
 
   - Bug in filesys module when no files-path caused a crash. (added a new
     call to the filesys module: FILESYS_ISVALID).
-    Patch by: BB
+    Patch by: ButchBub
 
   - Makefiles modified and cleaned to not relink when unnecessary. (eggdrop
     and *.so's are no longer mv'd, but are -o'd to the base source directory
     for dependency)
-    Patch by: BB
+    Patch by: ButchBub
 
   - Added 'strict-servernames' variable to not update the server list when
     servers identify themselves differently.
-    Patch by: BB
+    Patch by: ButchBub
 
   - More fun help file grammar changes... Still not done yet.
-    Patch by: BB
+    Patch by: ButchBub
 
   - New Tcl variable: dcc-flood-thr - dcc flood threshold
-    Patch by: BB, Beldin
+    Patch by: ButchBub, Beldin
 
   - Removed #define OWNER - always an owner now
-    Patch by: BB, Beldin
+    Patch by: ButchBub, Beldin
 
   - tcl_chpass needed 16 byte password buffers
     Patch by: paranorml

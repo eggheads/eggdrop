@@ -1,4 +1,4 @@
-$Id: Changes1.3,v 1.2 2008/07/10 09:22:04 tothwolf Exp $
+$Id: Changes1.3,v 1.3 2008/11/16 06:33:17 tothwolf Exp $
 
 Eggdrop Changes (since version 1.3.0)
 
@@ -7,7 +7,7 @@ Eggdrop Changes (since version 1.3.0)
 1.3.28 (August 10, 1999):
 
   - Telnet banner added to config file
-    Found by: dude / Patch by: Fabian
+    Found by: Dude / Patch by: Fabian
 
   - 64 bit *nix fix for dcc chat problems
     Found by: jkw / Patch by: jkw
@@ -35,7 +35,7 @@ Eggdrop Changes (since version 1.3.0)
 
   - Default for Linux is now to make debugmem when you type make, this will
     help debug better.
-    Patch by: SegFault
+    Patch by: Segfault
 
   - Changed debug msg to an url instead of an email addy.
     Patch by: dw
@@ -63,7 +63,7 @@ Eggdrop Changes (since version 1.3.0)
     Found by: arthur2 / Patch by: Rufus
 
   - Rewrote doc/BOTNET and doc/patch.howto
-    Patch by: Johoho
+    Patch by: Wiktor
 
   - arg instead of args in tcl-commands.doc
     Patch by: Rufus
@@ -75,7 +75,7 @@ Eggdrop Changes (since version 1.3.0)
     Found by: various / Patch by: guppy
 
   - More exempt/invite fixes/changes
-    Patch by: Jason
+    Patch by: Jason Ede
 
   - Using chattr to change chanflags w/o a '|' made the bot wipe botflags
     from the chan.
@@ -119,13 +119,13 @@ Eggdrop Changes (since version 1.3.0)
     Found by: John / Patch by: guppy
 
   - Share exempts/invites when sharebots first link
-    Found by: Jason / Patch by: guppy
+    Found by: Jason Ede / Patch by: guppy
 
   - Fixes problem with -cycle/-autovoice channel settings.
     Found by: raeK / Patch by: arthur2
 
   - -userbans doesn't have to unban server bans (on rejoin).
-    Found by: Jason / Patch by: arthur2, Rufus, Jason
+    Found by: Jason Ede / Patch by: arthur2, Rufus, Jason Ede
 
   - help_subst wasn't using botname for irc help.
     Found by: John` / Patch by: guppy
@@ -143,7 +143,7 @@ Eggdrop Changes (since version 1.3.0)
   - Adds use-exempts/use-invites. +I modes set when a user wants to join a
     +i channel (by messaging the bot). +e modes set when a matching ban is
     set, and expires after the ban has been removed.
-    Found by: \-\iTman / Patch by: Jason
+    Found by: \-\itman / Patch by: Jason Ede
 
   - Lots of changes to userinfo1.0.tcl (too many to name).
     Patch by: Dude
@@ -153,7 +153,7 @@ Eggdrop Changes (since version 1.3.0)
 
   - chan->ircnet_status &= ~CHAN_ASKED_EXEMPTS/INVITED and not
     chan->status &= ~CHAN_ASKED_EXEMPTS/INVITED (chan.c)
-    Found by: Jason / Patch by: arthur2
+    Found by: Jason Ede / Patch by: arthur2
 
   - '.botinfo' buffer overflows (remote/local), cosmetic fixes.
     Patch by: poptix
@@ -191,7 +191,7 @@ Eggdrop Changes (since version 1.3.0)
     Patch by: poptix
 
   - 0x660 language file fix.
-    Found by: dude / Patch by: poptix
+    Found by: Dude / Patch by: poptix
 
   - Minor language file fixes
     Patch by: matt
@@ -200,7 +200,7 @@ Eggdrop Changes (since version 1.3.0)
     Patch by: Mixter
 
   - New channel settings for the +e/+I support.
-    Patch by: Jason
+    Patch by: Jason Ede
 
   - Removed unused 'recycle' stuff.
     Patch by: slennox
@@ -209,7 +209,7 @@ Eggdrop Changes (since version 1.3.0)
     Patch by: arthur2
 
   - Adds +e/+I mode support in userfile and partyline.
-    Patch by: Jason
+    Patch by: Jason Ede
 
   - A bug in the note system
     Patch by: drummer
@@ -249,7 +249,7 @@ Eggdrop Changes (since version 1.3.0)
 
   - cmd/msg_status reported origbotname not botnetnick when saying "I am
     <bot>, running eggdrop <ver> blah"
-    Patch by: guppy
+    Found by: simple / Patch by: guppy
 
   - Typo by poptix in configure.in
     Found by: John` / Patch by: arthur2
@@ -305,7 +305,7 @@ Eggdrop Changes (since version 1.3.0)
 
   - If started with -m and userfile exists, warn and continue instead of
     exiting. Minor cosmetic lang fixes
-    Patch by: Alex
+    Patch by: Al3X
 
   - Added setting to allow +f users to override telnet flood protection
     Patch by: dw
@@ -338,13 +338,13 @@ Eggdrop Changes (since version 1.3.0)
     Patch by: arthur2
 
   - Fixed problems with lang patch.
-    Found by: michael / Patch by: Cybah
+    Found by: Michael / Patch by: Cybah
 
   - Update to man pages - still had Robey's mail address.
-    Patch by: michael
+    Patch by: Michael
 
   - Modified dcc.c for better language support.
-    Patch by: michael
+    Patch by: Michael
 
   - Share fixes.
     Patch by: arthur2
@@ -623,7 +623,7 @@ Eggdrop Changes (since version 1.3.0)
     Patch by: arthur2
 
   - Adds wire module to eggdrop.conf.dist file.
-    Patch by: Hath
+    Patch by: hath
 
   - Fixed 'read/write integer couplets' in tcl.c no more corrupted set var
     x:y read from the conf file now should global-flood-..setting for .+chan
@@ -739,7 +739,7 @@ Eggdrop Changes (since version 1.3.0)
     Patch by: guppy
 
   - english.lang, number 0x906 was screwy ..
-    Found by: bass / Patch by: guppy
+    Found by: Bass / Patch by: guppy
 
   - Added stealth-telnets option to config, so the banner doesn't get
     displayed when people telnet the bot.
@@ -837,7 +837,7 @@ Eggdrop Changes (since version 1.3.0)
     Patch by: Cybah
 
   - Small share helpfile update.
-    Patch by: michael
+    Patch by: Michael
 
   - deop for join flood was buggy.
     Found by: mho / Patch by: arthur2
@@ -990,7 +990,7 @@ Eggdrop Changes (since version 1.3.0)
 
 1.3.24 (March 5, 1999):
 
-  + 1.3.24i -- First eggheads.org release
+  # 1.3.24i -- First eggheads.org release
 
   - Adds a ban-fun flag.
     Patch by: arthur2
@@ -1215,7 +1215,7 @@ Eggdrop Changes (since version 1.3.0)
     Patch by: Beldin
 
   - .unload wire didn't clean up the dcc bindings
-    Found by: Eraseme / Patch by: Beldin
+    Found by: EraseMe / Patch by: Beldin
 
   - More HP-UX fixes
     Patch by: Kirk
@@ -1224,7 +1224,7 @@ Eggdrop Changes (since version 1.3.0)
     Patch by: smok
 
   - msg info would add info for non-existant channels.
-    Found by: Unknown / Patch by: smok
+    Found by: TheUnknown / Patch by: smok
 
   - Simple Quoting of silly channel names in channel files implemented.
     Patch by: vod, capster
@@ -1241,7 +1241,7 @@ Eggdrop Changes (since version 1.3.0)
 
   - Added a 5th element returned from Tcl dcclist function giving additional
     (e.g. script) information.
-    Found by: Tothwolf / Patch by: BB
+    Found by: Tothwolf / Patch by: ButchBub
 
   - chan.c was missing another '\n' concerning +k support
     Patch by: guppy
@@ -1260,7 +1260,7 @@ Eggdrop Changes (since version 1.3.0)
 
   - Someone puked write_userfile with unfinished "quick" code.   It's
     commented out now.
-    Found by: Tothwolf / Patch by: BB
+    Found by: Tothwolf / Patch by: ButchBub
 
   - Implemented a config file option (sort-users) to determine whether the
     user wants their userlist to be bubble sorted when they save it
@@ -1343,16 +1343,16 @@ Eggdrop Changes (since version 1.3.0)
 
   - +stopnethack works decently now, any *valid* pre-split op is allowed
     *ALL* other ops are de-opped.
-    Patch by: BB, Beldin
+    Patch by: ButchBub, Beldin
 
   - Update idle-time on a mode change
-    Patch by: BB, Beldin
+    Patch by: ButchBub, Beldin
 
   - chon bindings that used killdcc were sending an unwanted part message
-    Patch by: BB, Beldin
+    Patch by: ButchBub, Beldin
 
   - get <Dir>/<file> SEGV'n in file sys (legcay of the cmd_chdir fixes)
-    Found by: Brian T / Patch by: Beldin
+    Found by: Brian T. / Patch by: Beldin
 
   - '.unload filesys' + '.files' caused SEGV
     Found by: Michael / Patch by: Beldin
@@ -1374,7 +1374,7 @@ Eggdrop Changes (since version 1.3.0)
     Found by: Tothwolf / Patch by: Beldin
 
   - .resetbans SEGV on invalid console channel
-    Patch by: Roger Stone
+    Patch by: vod
 
   - take_revenge needed to update a channel members user entry otherwise
     many extra bad users could be created.
@@ -1414,13 +1414,13 @@ Eggdrop Changes (since version 1.3.0)
     Found by: Q / Patch by: Beldin
 
   - .deluser was deleting nick, not handle
-    Patch by: RogerStone
+    Patch by: vod
 
   - .status was missing online time
-    Found by: QuakeMstr / Patch by: Vod
+    Found by: QuakeMstr / Patch by: vod
 
   - Tcl8.1 fixes
-    Patch by: Vod
+    Patch by: vod
 
   - Seen module unload was causing SEGV on irc module reload
     Found by: [secret] / Patch by: Raistlin
@@ -1429,7 +1429,7 @@ Eggdrop Changes (since version 1.3.0)
     Patch by: SuperS
 
   - private-global flags
-    Patch by: AdamSpiers
+    Patch by: Adam Spiers
 
   - bye messages on botnet now reported
     Patch by: Beldin
@@ -1454,7 +1454,7 @@ Eggdrop Changes (since version 1.3.0)
     Found by: Flattie / Patch by: Beldin
 
   - adduser /msg addhost command, and unbound /msg indent by default
-    Patch by: BB, Beldin
+    Patch by: ButchBub, Beldin
 
   - Buffer overflow in cmd_setstick
     Found by: Hunger / Patch by: Beldin
@@ -1465,11 +1465,10 @@ Eggdrop Changes (since version 1.3.0)
   - Buffer overflows in botnet version handling, +ignore, .note, .+ban,
    .-ban(similar to .-ignore bug), HOSTNAME, .jump, & mkdir (to some
     degree)
-
     Found by: PaulBoehm / Patch by: Beldin
 
   - ctcp_reply had an obscure SEGV case
-    Found by: Fasticus / Patch by: Beldin
+    Found by: fasticus / Patch by: Beldin
 
   - allow-desync variable added.
     Patch by: smok
@@ -1484,10 +1483,10 @@ Eggdrop Changes (since version 1.3.0)
     Patch by: smok
 
   - private_owner was not being handled in finish_share
-    Found by: smok / Patch by: beldin
+    Found by: smok / Patch by: Beldin
 
   - notes2.tcl fixes
-    Patch by: mht
+    Patch by: MHT
 
   - Refinement of maskhost to deal with that nasty 4 component hosts
     Found by: Daklop / Patch by: Beldin
@@ -1496,13 +1495,13 @@ Eggdrop Changes (since version 1.3.0)
     Patch by: Kirk
 
   - args for mode bind tabe seperate mode change from victim
-    Found by: BB / Patch by: Beldin
+    Found by: ButchBub / Patch by: Beldin
 
   - gamespak wants me_op exported from irc.mod
-    Found by: BB / Patch by: Beldin
+    Found by: ButchBub / Patch by: Beldin
 
   - '.channel' differentiates global vs channel flags
-    Patch by: BB
+    Patch by: ButchBub
 
   - Ban cleanup code was unbanning & rebanning existing bans
     Patch by: Beldin
@@ -1511,7 +1510,7 @@ Eggdrop Changes (since version 1.3.0)
 1.3.16 (June 15, 1998):
 
   - +m's can .deluser +n's (actually the fix is much shorter, add an else I
-    forgot - beldin :)
+    forgot - Beldin :)
     Found by: various / Patch by: Segfault
 
   - Adds a KEY msg command to get the key for +k channels and a variable
@@ -1578,7 +1577,7 @@ Eggdrop Changes (since version 1.3.0)
   - Shared no-perm/no-sticky bans were missing an arg
     Patch by: NC
 
-  - botname is better than origbotname for whoto /msg to (beldin: I moved
+  - botname is better than origbotname for whoto /msg to (Beldin: I moved
     botname back to the core, notes & filesys shouldn't NEED server)
     Patch by: NC
 
@@ -1611,7 +1610,7 @@ Eggdrop Changes (since version 1.3.0)
     Patch by: Beldin
 
   - Bots were sending incorrect 'thisbot' messages to 1.3.x's
-    Found by: MrBond / Patch by: Beldin
+    Found by: mrbond / Patch by: Beldin
 
   - Ban fixes
     Patch by: Ernst
@@ -1670,7 +1669,7 @@ Eggdrop Changes (since version 1.3.0)
     Found by: various / Patch by: Beldin
 
   - GO should not be sent to self
-    Patch by: Roger Stone
+    Patch by: vod
 
   - Incoming shared chanrec were not being handled correctly
     Found by: NC / Patch by: Beldin
@@ -1700,7 +1699,7 @@ Eggdrop Changes (since version 1.3.0)
     Patch by: Mloe
 
   - Display of invalid nick char was wrong
-    Found by: Absnthe / Patch by: easton
+    Found by: Absinthe / Patch by: easton
 
   - Bots was checking nickname for bogus username
     Found by: Giga / Patch by: Beldin
@@ -1786,7 +1785,7 @@ Eggdrop Changes (since version 1.3.0)
     Found by: wheely / Patch by: Beldin
 
   - Console flags for a user were'nt being unset on certain .su's
-    Found by: Roger S / Patch by: Beldin
+    Found by: vod / Patch by: Beldin
 
   - Shared channel-changes immediately after a shared newuser were being
     ignored
@@ -1801,8 +1800,8 @@ Eggdrop Changes (since version 1.3.0)
   - chanlist wasn't returning non-userlisted people on -ve mtchs
     Found by: Ernst / Patch by: Beldin
 
-  - %{cols=} settings which didn't fill a line were lost, (beldin "I modded
-    %this slightly so you can still have tags after %{end}")
+  - %{cols=} settings which didn't fill a line were lost, (Beldin: "I modded
+    this slightly so you can still have tags after %{end}")
     Patch by: Kirk
 
   - +/-host for +t's with chan +m wasn't allowing them to change non-bots
@@ -1822,10 +1821,10 @@ Eggdrop Changes (since version 1.3.0)
     Found by: numerous / Patch by: Beldin
 
   - Some makes have both EBADSLT & ENOTCONN
-    Patch by: B.Jamison
+    Patch by: B. Jamison
 
   - Couple of fixes to voicing code
-    Patch by: dagmar
+    Patch by: Dagmar
 
   - Receiving an unlink for a non-linked bot would crash the bot
     Found by: fasticus / Patch by: Beldin
@@ -1882,13 +1881,13 @@ Eggdrop Changes (since version 1.3.0)
 
   - Made the chon binding require a return value (0 = cont, 1 = stop
     handling)
-    Found by: tdemarti / Patch by: Beldin
+    Found by: tdmarti / Patch by: Beldin
 
   - Also made chon handlers verify they are using DCC_CHAT's
-    Found by: tdemarti / Patch by: Beldin
+    Found by: tdmarti / Patch by: Beldin
 
   - Part messages were still being passed on for unkown users
-    Found by: tdemarti / Patch by: Beldin
+    Found by: tdmarti / Patch by: Beldin
 
   - HP-UX module support (does it even work?)
     Patch by: ??? (unknown HP-UX guy)
@@ -1973,7 +1972,7 @@ Eggdrop Changes (since version 1.3.0)
     Patch by: Beldin
 
   - '.match +<unknown flag>' will tell you that now :P
-    Found by: BB / Patch by: Beldin
+    Found by: ButchBub / Patch by: Beldin
 
   - filedb's were not being updated correctly when files were dcc sent, this
     was do to module version # mismatches, several other cases of this found
@@ -1981,7 +1980,7 @@ Eggdrop Changes (since version 1.3.0)
     Found by: deadgrrrl / Patch by: Beldin
 
   - New getops-2.0
-    Patch by: Darkdruid
+    Patch by: DarkDruid
 
   - tcl_setchan wasn't broadcasting a part for localbot chans
     Found by: wheely / Patch by: Beldin
@@ -2022,22 +2021,22 @@ Eggdrop Changes (since version 1.3.0)
     Found by: mrbond / Patch by: Beldin
 
   - GLOBAL_CHANS was defined wrong in tandem.h
-    Found by: melvan / Patch by: Beldin
+    Found by: Melvan / Patch by: Beldin
 
   - Default .fwd binding was wrong
-    Found by: C.massam / Patch by: Beldin
+    Found by: C. Massam / Patch by: Beldin
 
   - Finally the dissapearing channel bans are fixed
     Patch by: dk
 
   - Kicked ops were not being revenged
-    Found by: BB / Patch by: Beldin
+    Found by: ButchBub / Patch by: Beldin
 
   - Lets get make install right
-    Found by: BB / Patch by: Beldin
+    Found by: ButchBub / Patch by: Beldin
 
   - '.ignores' are check before even ident lookup occurs
-    Patch by: BB
+    Patch by: ButchBub
 
   - getuser LASTON #channel was sick (wrong arg)
     Found by: GSCEGO / Patch by: Beldin
@@ -2070,16 +2069,16 @@ Eggdrop Changes (since version 1.3.0)
     Found by: Daklop / Patch by: Beldin
 
   - post-identd ignores check was broken
-    Patch by: BB
+    Patch by: ButchBub
 
   - '.simul' was reporting incorrect user
-    Patch by: BB
+    Patch by: ButchBub
 
   - Lets just merge in -DEBUG, it'll help debugging errors
-    Found by: BB / Patch by: Beldin
+    Found by: ButchBub / Patch by: Beldin
 
   - nkch binding was being called as link binding
-    Found by: Bogus / Patch by: Beldin
+    Found by: BoGuS / Patch by: Beldin
 
   - Remote motds now show relevant highlighting
     Patch by: Beldin
@@ -2098,7 +2097,7 @@ Eggdrop Changes (since version 1.3.0)
     Patch by: aXs
 
   - Messed up the protect modes
-    Found by: wheely / Patch by: beldin
+    Found by: wheely / Patch by: Beldin
 
   - Stuff to fix the borg [NeXT]
     Patch by: dk
@@ -2176,7 +2175,7 @@ Eggdrop Changes (since version 1.3.0)
     Patch by: Kirk
 
   - FreeBSD uses SA_RESETHAND
-    Found by: BB / Patch by: Beldin
+    Found by: ButchBub / Patch by: Beldin
 
   - Various help file tweakes wrt userinfo1.0.tcl
     Patch by: Beldin
@@ -2220,7 +2219,7 @@ Eggdrop Changes (since version 1.3.0)
 
 1.3.1 (November 10, 1997):
 
-  + 1.3.0+bel1 - The omigod how did I don't believe i forgot that patch
+  # 1.3.0+bel1 - The omigod how did I don't believe i forgot that patch
 
   - Some machines don't have SA_ONESHOT, DOH :/
     Found by: David / Patch by: Beldin
@@ -2247,7 +2246,7 @@ Eggdrop Changes (since version 1.3.0)
     Patch by: TheGhost
 
   - The Kewl new default motd
-    Patch by: KK, TheGhost
+    Patch by: KingKurly, TheGhost
 
   - Fixed tcl-commands.doc
     Found by: |mmortal / Patch by: TheGhost
@@ -2285,18 +2284,18 @@ Eggdrop Changes (since version 1.3.0)
     Patch by: Beldin
 
   - Bands of the form 6!*@* cause *major* headstress with share
-    Found by: Bogus / Patch by: Beldin
+    Found by: BoGuS / Patch by: Beldin
 
   - Bowed to pressure like the llama I am, chattr nick +o #channel now works
     the old way
     Patch by: Beldin
 
   - Anybody could use console +th, +/- in .console was fr0ke
-    Found by: Bogus / Patch by: Beldin
+    Found by: BoGuS / Patch by: Beldin
 
   - tcl_newchanban was doing wrong comment, 'none' wasn't a valid newban
     option
-    Found by: |mm / Patch by: Beldin
+    Found by: |mmortal / Patch by: Beldin
 
   - Updated userinfo1.0 and moved email into it
     Patch by: Beldin

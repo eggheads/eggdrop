@@ -1,4 +1,4 @@
-$Id: Changes1.1,v 1.1 2008/07/05 02:14:02 tothwolf Exp $
+$Id: Changes1.1,v 1.2 2008/11/16 06:33:17 tothwolf Exp $
 
 Eggdrop Changes (since version 1.0)
 
@@ -8,65 +8,65 @@ Eggdrop Changes (since version 1.0)
 
   - putegg will now handle "Text file busy" conditions when trying to copy
     eggdrop
-    Patch by: BB
+    Patch by: ButchBub
 
   - putegg now has options of saving old binary as oeggdrop and options to
     copy botchk and eggdrop.conf
-    Patch by: Ghost, BB
+    Patch by: TheGhost, ButchBub
 
   - putegg now backs up modules aswell as eggdrop
-    Patch by: beldin
+    Patch by: Beldin
 
   - /msg whois now return slightly more useful info
-    Patch by: beldin
+    Patch by: Beldin
 
   - configure & Makefile improvements -- Forces you to "make clean" when
     remaking from non-module to module version, etc.
-    Patch by: BB
+    Patch by: ButchBub
 
   - chattr was sending twice to sharebots
-    Patch by: beldin
+    Patch by: Beldin
 
   - Bot's IRC nick can now be NICKLEN long
-    Patch by: beldin
+    Patch by: Beldin
 
   - .restart now kinda works right
-    Patch by: beldin
+    Patch by: Beldin
 
   - loadmodule/unloadmodule/modules now return non-fatal errors when used on
     non-module executables (You can leave the loadmodule <module> lines in
     the config file)
-    Patch by: BB
+    Patch by: ButchBub
 
   - Start of help file grammar cleanup
-    Patch by: BB
+    Patch by: ButchBub
 
   - People are gunna hate me for it, but I ran the code through indent :P
-    Patch by: beldin
+    Patch by: Beldin
 
   - Fixed large-file turbo-dcc send crashes
-    Patch by: beldin
+    Patch by: Beldin
 
   - Removed %N sock number in remote help.
-    Patch by: beldin
+    Patch by: Beldin
 
   Modules only:
 
   - Tweaking filesys module hooks
-    Patch by: beldin
+    Patch by: Beldin
 
   - .files/.help is fixed
-    Patch by: beldin
+    Patch by: Beldin
 
   - minutely/hourly/daily/userfile hooks added
-    Patch by: beldin
+    Patch by: Beldin
 
   - Filesys is now transfer + filesys
-    Patch by: beldin
+    Patch by: Beldin
 
   - Finally got the Makefiles working nicely so new modules need only add a
     new directory
-    Patch by: beldin
+    Patch by: Beldin
 
   TO-DO: LEAVE THIS HERE WHERE WE CAN SEE IT :)
 
@@ -97,25 +97,25 @@ Eggdrop Changes (since version 1.0)
 
   - WOOP modules seems to work on Linux, FreeBSD, SunOS, BSD3.0, now we just
     gotta debug each module...
-    Patch by: beldin
+    Patch by: Beldin
 
   - Some minor fixes to nick changing
-    Patch by: beldin
+    Patch by: Beldin
 
   - Fixed dcc_chat wasn't cleaning up control chars propery
-    Patch by: beldin
+    Patch by: Beldin
 
   - Fixed .dccsimul usage
-    Patch by: beldin
+    Patch by: Beldin
 
   - Fixed .chattr <user>
-    Patch by: beldin
+    Patch by: Beldin
 
   - .adduser only ops non @'s on chan
-    Patch by: beldin
+    Patch by: Beldin
 
   - Passwords can now be up to 15 characters long
-    Patch by: beldin
+    Patch by: Beldin
 
   TO-DO: LEAVE THIS HERE WHERE WE CAN SEE IT :)
 
@@ -123,7 +123,7 @@ Eggdrop Changes (since version 1.0)
     Suggested by: andrej
   - '.sort' to sort files
   - Fix .restart to reset tcl_interp right, recycle modules, do chon's again
-    (beldin is working on this one...:)
+    (Beldin is working on this one...:)
 
   BUG REPORTS:
 
@@ -149,49 +149,49 @@ Eggdrop Changes (since version 1.0)
     Patch by: Bill Brandt
 
   - stickybans will now be sent over the botnet
-    Patch by: beldin
+    Patch by: Beldin
 
   - You should be able to -DEBUG_MEM again no problems
-    Patch by: beldin
+    Patch by: Beldin
 
   - .bots/.set should truncate right now
-    Patch by: beldin
+    Patch by: Beldin
 
   - .status all shows dynamic channels
-    Patch by: beldin
+    Patch by: Beldin
 
   - .chattr user +o (global) now rechecks channels
-    Patch by: beldin
+    Patch by: Beldin
 
   - getops-1.8.tcl
-    Patch by: dtm
+    Patch by: dtM
 
   - More alltools
-    Patch by: david
+    Patch by: David Sesno
 
 
 1.1.3+pl2:
 
   - Minor fixes
-    Patch by: beldin
+    Patch by: Beldin
 
   - Encryption module - bot requires AN encryption module
-    Patch by: beldin
+    Patch by: Beldin
 
   - Additions to action.fix.tcl, console.tcl + addition of alltools.tcl
-    Patch by: david
+    Patch by: David Sesno
 
   - Fixed my dprintf messups, it's now you're generic output friend
-    Patch by: beldin
+    Patch by: Beldin
 
   - dccputchan works for local chans now
-    Patch by: david
+    Patch by: David Sesno
 
   - .channel should now display the channel topic
-    Patch by: Eraseme
+    Patch by: EraseMe
 
   - Whoops, the filedb size was wrong
-    Patch by: beldin
+    Patch by: Beldin
 
 
 1.1.3+pl1:
@@ -200,8 +200,7 @@ Eggdrop Changes (since version 1.0)
     Patch by: EraseMe
 
   - Upgraded weed to 1.1 format
-    Patch by: dtm, eclipse
-
+    Patch by: dtM, Ec|ipse
 
 1.1.3:
 
@@ -214,48 +213,48 @@ Eggdrop Changes (since version 1.0)
       creating 2 example modules assoc & filesys
     *THIS WILL ONLY WORK CURRENTLY ON SYSTEMS WITH dlopen*
     so don't try it if you don't have dlopen ;)
-    Patch by: beldin
+    Patch by: Beldin
 
   - Tcl binds wasn't return all the bindings on error
-    Patch by: beldin
+    Patch by: Beldin
 
   - Doc updates to various function
-    Patch by: beldin
+    Patch by: Beldin
 
   - msg info shouldn't need a password if the user doesn't have one
-    Patch by: beldin
+    Patch by: Beldin
 
-  - Fixes to dtm's fixes <G>
-    Patch by: beldin
+  - Fixes to dtM's fixes <G>
+    Patch by: Beldin
 
   - Makefiles now use Makefile.dep and have a general cleanup
-    Patch by: beldin
+    Patch by: Beldin
 
   - Checks in dcc_telnet_new/cmd_chnick/cmd_nick to prevent nicks starting
     with characters that will screw up the userfile
-    Found by: robey / Patch by: beldin
+    Found by: Robey / Patch by: Beldin
 
   - su now fixes your nick correctly
-    Patch by: robey
+    Patch by: Robey
 
   - filestat wasn't logging
-    Found by: robey / Patch by: beldin
+    Found by: Robey / Patch by: Beldin
 
   - dprintf does everything now, buts (go directly to tputs) & server
-    Patch by: beldin
+    Patch by: Beldin
 
   - lostdcc pops the last dcc entry into the lost ones place rather than
     copying them all down 1
-    Patch by: beldin
+    Patch by: Beldin
 
   - new_dcc & new_fork for creating new dcc entries
-    Patch by: beldin
+    Patch by: Beldin
 
   - Neatened init_builtins
-    Patch by: beldin
+    Patch by: Beldin
 
   - Global ops can do GO now too
-    Patch by: beldin
+    Patch by: Beldin
 
 
 1.1.2+pl2:
@@ -271,75 +270,75 @@ Eggdrop Changes (since version 1.0)
 
 1.1.2+pl1 (June 10, 1997):
 
-  # Patch by dtm / beldin
+  # Patch by dtM / Beldin
 
   - Botnet version now sends the version number and this is used to check
     for userfile sharing (won't share with a bot with version < min_share in
     main.c)
-    Patch by: beldin
+    Patch by: Beldin
 
   - Sharebots now pass chattr as flags rather than an int
-    Patch by: beldin
+    Patch by: Beldin
 
   - filedb's now store flags as flags rather than an int
     [NOTE: this changes the way the filedb info is stored and may cause some
     lost settings, and require you to rm .filedb files]
-    Patch by: beldin
+    Patch by: Beldin
 
   - Channel add & .+chan won't let you set non #/& channels
-    Patch by: beldin
+    Patch by: Beldin
 
   - Only 1 bit per userflag please! *doh*
-    Patch by: beldin
+    Patch by: Beldin
 
   - Some tclegg.h prototypes needed PROTO()' & therefore tclegg.h incudes
     proto.h now
-    Patch by: beldin
+    Patch by: Beldin
 
   - Copied a few detail in nick updating the were missed when it returned to
     the old method
-    Patch by: beldin
+    Patch by: Beldin
 
   - GO will work for global +o now
-    Patch by: beldin
+    Patch by: Beldin
 
   - Strip will now strip ansi codes too (+a)
-    Patch by: beldin
+    Patch by: Beldin
 
   - kick/ban comments starting with @ will not be displayed
-    Patch by: beldin
+    Patch by: Beldin
 
-  - dtm's fixes for Tcl 8.0 & non-argument commands
-    Patch by: dtm
+  - dtM's fixes for Tcl 8.0 & non-argument commands
+    Patch by: dtM
 
 
 1.1.2 (June 6, 1997):
 
   - .assoc wasn't working right for local channels
-    Found by: David- / Patch by: beldin
+    Found by: David- / Patch by: Beldin
 
   - Minor fix to getop-1.7.tcl
-    Patch by: dtm
+    Patch by: dtM
 
   - Change optimization back to -O2 saving executable size & sunos/bsd
     crashes
-    Patch by: beldin
+    Patch by: Beldin
 
   - Version number is now in the form 'abbccdd' a = major ver. (1 atm) bb =
     minor ver (1 atm) cc = revision (2 atm) dd = patch count
-    Patch by: beldin
+    Patch by: Beldin
 
   - Tcl assoc "channel name" return channel number
-    Suggested by: Eraseme / Patch by: beldin
+    Suggested by: EraseMe / Patch by: Beldin
 
   - Made .banner neater (1 line)
-    Suggested by: Eraseme / Patch by: beldin
+    Suggested by: EraseMe / Patch by: Beldin
 
   - -chan was leaving dccchat users with that channel in a mess
-    Patch by: beldin
+    Patch by: Beldin
 
   - More help files
-    Patch by: beldin
+    Patch by: Beldin
 
   TO-DO: LEAVE THIS HERE WHERE WE CAN SEE IT :)
 
@@ -365,75 +364,76 @@ Eggdrop Changes (since version 1.0)
 
 1.1.1+pl2:
 
-  # Patch by wild / beldin
+  # Patch by Wild / Beldin
 
   - Made ctcp_version default acutally SAY eggdrop, and sanity check on
     string lengths
-    Patch by: beldin
+    Patch by: Beldin
 
   - Tcl isdynamic & Tcl notes commands added
-    Patch by: beldin
+    Patch by: Beldin
 
   - resolve_dir belongs in proto.h not files.h
-    Patch by: wild
+    Patch by: Wild
 
   - Many minor code neatenings
-    Patch by: wild
+    Patch by: Wild
 
   - -chan would cause the bot to leave & rejoin & get confused
-    Patch by: wild
+    Patch by: Wild
 
   - All the trace functions (got206/401/402) merge into trace_failed
-    Patch by: wild
+    Patch by: Wild
 
   - +f/+d/+k are now global flags, also chan-specific +d/+o should override
     global settings
-    Patch by: beldin
+    Patch by: Beldin
 
   - Enforced channel key was not being set if no key at all was set
-    Patch by: beldin
+    Patch by: Beldin
 
   - Put the socks in the parts you fix weenie!
-    Patch by: wild
+    Patch by: Wild
 
   - Channel creation wasn't clearing the mode stack properly
-    Found by: TheGhost / Patch by: beldin
+    Found by: TheGhost / Patch by: Beldin
 
 
 1.1.1+pl1 (May 28, 1997):
 
   - Long topics mess up channel info
-    Found by: Randy Summerfiled / Patch by: beldin
+    Found by: Randy Summerfiled / Patch by: Beldin
 
   - A binding causing a Tcl error returning too long a string crashed (now
     truncated)
-    Patch by: beldin
+    Patch by: Beldin
 
   - Tcl whom * returns all users on the botnet, with a extra element per
     user indicating channel
-    Suggested by: eraseme, dtm / Patch by: beldin
+    Suggested by: EraseMe, dtM / Patch by: Beldin
 
   - .status shows shared setting now
-    Found by: TheGhost / Patch by: beldin
+    Found by: TheGhost / Patch by: Beldin
 
   - +shared shows up in .chaninfo, can't be set via .chanset, added to
     eggdrop.conf
-    Patch by: beldin
+    Patch by: Beldin
 
   - +ban should work now for channel+o's
-    Patch by: beldin
+    Patch by: Beldin
 
   - chanadd/chandel now +chan/-chan (fits the pattern)
-    Found by: [idea stolen from CFusion <G>] / Patch by: beldin
+    [idea stolen from CFusion <G>]
+    Found by: CFusion / Patch by: Beldin
 
   - New Tcl commands mv, cp, mkdir, rmdir, setflags, getflags
-    Patch by: beldin
+    Patch by: Beldin
 
   - New Tcl command strftime
     Patch by: panasync
 
   - Including using now
-    Patch by: beldin
+    Patch by: Beldin
 
 
 1.1.1:
@@ -452,24 +452,24 @@ Eggdrop Changes (since version 1.0)
     Patch by: Raistlin
 
   - Fixed a bug in /msg op & /msg notes where long args were causing SEGV's
-    Found by: guppy / Patch by: beldin
+    Found by: guppy / Patch by: Beldin
 
   - Moved the following settings from eggdrop.h to eggdrop.conf
     modes-per-line, max-queue-msg, wait-split, wait-info, xfer-timeout,
     default-port & note-life
-    Patch by: beldin
+    Patch by: Beldin
 
   - Made it so it *should* compile under sunos and still allow full
     prototypes for real compilers :)
-    Patch by: beldin
+    Patch by: Beldin
 
   - Fixed the fixes in bottree/page code so it'll compile on some sunos
     boxes (at the expense of speed :(
-    Patch by: beldin
+    Patch by: Beldin
 
   - Cleaned up help/dcc/set (since set is now a +n command) & added info
     about recent new Tcl variables
-    Patch by: beldin
+    Patch by: Beldin
 
   - Includes Getops-1.7
     Patch by: dtM
@@ -479,99 +479,99 @@ Eggdrop Changes (since version 1.0)
 
   - Commented out the desynch "fixing" in getops-1.5.tcl, it *doesn't* work
     on a lagged network
-    Found by: OldGhost / Patch by: beldin
+    Found by: OldGhost / Patch by: Beldin
 
   - Fixed to places where IP #'s were backwards in .dccstat
-    Patch by: beldin
+    Patch by: Beldin
 
   - Fixed tell_bottree so it sends a line at a time, therefore not confusing
     the paging code
-    Patch by: beldin
+    Patch by: Beldin
 
   - Fixed the paging code so flooders didn't crash it
-    Found by: ??? / Patch by: beldin
+    Found by: ??? / Patch by: Beldin
 
   - Was forgetting to free up store lines when a .page'n dcc chatter left
     early
-    Patch by: beldin
+    Patch by: Beldin
 
   - A couple of part messages were missing the sock #'s
-    Patch by: beldin
+    Patch by: Beldin
 
   - Botnet version now put's <> around the network
-    Suggested by: EraseMe? / Patch by: beldin
+    Suggested by: EraseMe? / Patch by: Beldin
 
   - Fixed global laston time in .whois so it now displays accurately
-    Patch by: beldin
+    Patch by: Beldin
 
   - Tcl page was crashing
-    Found by: somni / Patch by: beldin
+    Found by: somni / Patch by: Beldin
 
   - Tcl bind was crashing (with no args)
-    Found by: somni / Patch by: beldin
+    Found by: somni / Patch by: Beldin
 
   - Added another ifdef EBUG (for stridx)
-    Patch by: beldin
+    Patch by: Beldin
 
   - Fixed ^H bug in dcc chat
-    Found by: ???anybody??? / Patch by: beldin
+    Found by: ???anybody??? / Patch by: Beldin
 
   - Made putdcc use dumplots
-    Found by: Donovan Long / Patch by: beldin
+    Found by: Donovan Long / Patch by: Beldin
 
   - '.restart' now totally restarts Tcl by delaying restart of Tcl till it's
     outside of Tcl
-    Patch by: beldin
+    Patch by: Beldin
 
   - 16 context list when -DEBUG works now
-    Patch by: beldin
+    Patch by: Beldin
 
 
 1.1.0+pl2:
 
   - Made MAXNOTES a Tcl variable (max-notes) added to config file also
-    Patch by: wild
+    Patch by: Wild
 
   - Output debugging now checks for linefeeds and trims them, instead of
     assuming the last char is a linefeed, marked the type also e.g. tprintf
     is [!t] instead of [!]
-    Patch by: wild
+    Patch by: Wild
 
   - Channel ops and such couldn't remove a channel ban if a global ban that
     matched existed
-    Patch by: wild
+    Patch by: Wild
 
   - -ban now also removes bans that are on a channel, but not in the banlist
     (the code was there but not being used)
-    Patch by: wild
+    Patch by: Wild
 
   - When sharing, leaf-bots were getting dupes of channel bans, they are now
     removed first if the hub is sharing bans for that channel
-    Patch by: wild, beldin
+    Patch by: Wild, Beldin
 
   - Added some more ifdef EBUG 's
-    Patch by: wild
+    Patch by: Wild
 
   - ifdef EBUG_OUTPUT in eggdrop.h was supposed to define EBUG, but it was
     defining DEBUG instead (whoops :)
-    Patch by: wild
+    Patch by: Wild
 
   - Various functions in cmds.c concerning global/channel op commands were
     improved.
-    Patch by: wild
+    Patch by: Wild
 
   - Moved putlogs in bot_pls_banchan and bot_mns_banchan to not show if the
     bot isn't guarding that channel
-    Patch by: wild
+    Patch by: Wild
 
   - Debugs to hide password's in tclhash.c now work proper.
-    Patch by: wild
+    Patch by: Wild
 
 
 1.1.0+pl1 (May 26, 1997):
 
   - Tcl adduser wasn't truncating nick to 9 characters
-    Found by: CFusion / Patch by: beldin
+    Found by: CFusion / Patch by: Beldin
 
   - Fixed getops-1.2.tcl->getops-1.5.tcl
     Submitted by: dtM
@@ -579,17 +579,17 @@ Eggdrop Changes (since version 1.0)
   - Removed getops-1.1.tcl, gainops1.tcl (old scripts)
 
   - Fixed Tcl chpass, so chpass <nick> "" will remove passwords
-    Found by: madhack / Patch by: beldin
+    Found by: madhack / Patch by: Beldin
 
   - Fixed .newpass <pass> error (needed 2 arguments to work)
-    Found by: guppy / Patch by: beldin
+    Found by: guppy / Patch by: Beldin
 
   - Fixed chon bug with console.tcl
     Found by: Jerry Sutton / Patch by: dk
 
   - Fixed small compiler bugs with DIE_SIGHUP and DIE_TERM. fatal had the
     wrong number of args.
-    Found by: Alex / Patch by: dk
+    Found by: garbanzo / Patch by: dk
 
   - Put <> around the network in botinfo
     Suggested by: LuckyStar / Patch by: dk
@@ -601,7 +601,7 @@ Eggdrop Changes (since version 1.0)
     Patch by: Mastr
 
   - Added help file for .fixcodes
-    Patch by: beldin
+    Patch by: Beldin
 
 
 1.1.0 (May 24, 1997):
@@ -643,7 +643,7 @@ Eggdrop Changes (since version 1.0)
     Patch by: dk
 
   - Some more clean-up (typos, code, etc)
-    Patch by: wild
+    Patch by: Wild
 
   - Fixed problems created with the addition of dynamic channels:
     + Added flag CHANSTATIC for channels defined in the config file
@@ -654,102 +654,102 @@ Eggdrop Changes (since version 1.0)
       channels)
     + Dynamic channel commands changed to reflect difference between dynamic
       channels, and config-file channels (static)
-    + Chandel can no longer remove channels marked CHANSTATIC
-    Patch by: wild
+    + chandel can no longer remove channels marked CHANSTATIC
+    Patch by: Wild
 
   - Commented out joins in connect_server (main.c) this was causing the bot
     to get numeric 451 and jump servers (do we really need 451 and 206?)
-    Patch by: wild
+    Patch by: Wild
 
   - Added SILENCE define for ircdu's silence command
-    Patch by: wild
+    Patch by: Wild
 
   - Changed channel defalts to +DYNAMICBANS instead of +ENFORCBANS (my test
     bot kept dumping 200+ bans to channels that i added, even when it wasn't
     opped :/ )
-    Patch by: wild
+    Patch by: Wild
 
   - Bot was confused about current channel modes with new added channels
     before it recieved channel mode info back from the server
-    Patch by: wild
+    Patch by: Wild
 
   - The last patch messed up tell_user (so sue me :)
-    Patch by: wild
+    Patch by: Wild
 
   - Changed NICK to TRACE in chanprog(), and nick_change(new)
-    Patch by: wild
+    Patch by: Wild
 
   - Added an #ifdef EBUG to tcl_builtin
-    Suggested by: beldin
+    Suggested by: Beldin
 
   - kill -USR1 was leaving a socket (file) used to write DEBUG around after
     finishing
-    Patch by: beldin
+    Patch by: Beldin
 
   - Moved last 16 context's stuff into DEBUG
-    Patch by: beldin
+    Patch by: Beldin
 
   - Added command logging for the .chan commands
-    Patch by: beldin
+    Patch by: Beldin
 
   - Fixed compiler warnings in cmds.c and tcldcc.c for cmd_pls_ban,
     tcl_rehash, and tcl_restart
-    Patch by: wild
+    Patch by: Wild
 
   - Now compiles with NO_IRC defined
-    Patch by: wild
+    Patch by: Wild
 
   - Fixed missing prototypes
-    Patch by: wild
+    Patch by: Wild
 
   - Did some help file and tcl-command.doc updates
-    Patch by: wild
+    Patch by: Wild
 
   - Some code clean-up
-    Patch by: wild
+    Patch by: Wild
 
   - Added Tcl validchan
-    Patch by: wild
+    Patch by: Wild
 
   - Piped got401 into got402 (they are the same :)
-    Patch by: wild
+    Patch by: Wild
 
   - Removed unvia recursively calling itslef (finally)
-    Suggested by: beldin
+    Suggested by: Beldin
 
   - refresh_ban_kick was losing the sticky feature of bans
-    Patch by: wild
+    Patch by: Wild
 
   - check_tcl_chpt wasn't working again (now leave it be!)
-    Patch by: wild
+    Patch by: Wild
 
   - Removed extra line feeds in debug_output debugging
-    Patch by: wild
+    Patch by: Wild
 
   - Added a rotating buffer of 16 context's, allowing a list of the last 16
     contexts passed report, useful for debuging strange errors
-    Patch by: beldin
+    Patch by: Beldin
 
   - Fixed a bug in .files due to paging code
-    Patch by: beldin
+    Patch by: Beldin
 
   - Added command logging of '.page' (yup, didn't get it right the first
     time ;)
-    Patch by: beldin
+    Patch by: Beldin
 
   - Added a counter for messages stored, booting users off if they hit 1000
     lines, heck, if they get that high they're trying to cause trouble :)
-    Patch by: beldin
+    Patch by: Beldin
 
   - Added a check in write_debug to prevent recursive calls to it, (munching
     cpu & eventually crashing ) writes a simpler DEBUG.DEBUG
-    Patch by: beldin
+    Patch by: Beldin
 
   - Added a whole pile of '\n's I forgot :)
-    Patch by: beldin
+    Patch by: Beldin
 
   - auto-op wasn't opping global ops
-    Patch by: beldin
+    Patch by: Beldin
 
   - Fixed an .unlink bug introduced in pl3+bel where a remote unlink
     wouldn't work.
@@ -770,38 +770,38 @@ Eggdrop Changes (since version 1.0)
 
   - Fixed a minor bug in the mode storage by wild (wasn't maintaining
     +l limit correctly)
-    Patch by: beldin
+    Patch by: Beldin
 
   - Started (done blowfish.c) making full prototypes in proto.h
-    Patch by: beldin
+    Patch by: Beldin
 
   - Added a .page command (and related Tcl page) when a user has paging on
     (.page <number>) then every number lines the bot stops sending the info
     and queues for later sending (useful in telnet where there's normally
     no way to look back)
-    Patch by: beldin
+    Patch by: Beldin
 
   - Add .chanadd, .chandell, .chaninfo, .chanset, .chansave, .chanload (+
     Tcl savechannels, loadchannels) to modify channel settings from the
     console, +n for add/del, +N for save/load/set, +M for info
-    Patch by: beldin
+    Patch by: Beldin
 
   - Added channel-file Tcl variable for saving channel info
-    Patch by: beldin
+    Patch by: Beldin
 
   - Added docs for all of the above
-    Patch by: beldin
+    Patch by: Beldin
 
   - Added EVEN MORE space to the version string, since we just broke 256
     chars
-    Patch by: beldin
+    Patch by: Beldin
 
   - Added a time binding, "min hour day month year" is the match, and the
     parameters
-    Patch by: beldin
+    Patch by: Beldin
 
   - Somewhere along the line someone lost a ! in cmd_boot
-    Found by: melvan
+    Found by: Melvan
 
   - Greatly improved the way the bot keeps track of its nick (it doesn't
     assume it's going to get the nick anymore, it waits for the NICK from
@@ -812,7 +812,7 @@ Eggdrop Changes (since version 1.0)
     numerics the VERSION numeric is used to check the bots current nick and
     the TRACESERVER numeric is what ircu2.9.30 and up respond with instead
     of TRACEFAILED (which was part of the NICK problems)
-    Found/Patch by: poptix
+    Patch by: poptix
 
   - Updated get-in-ops to v1.2
     Patch by: poptix
@@ -834,45 +834,45 @@ Eggdrop Changes (since version 1.0)
     Patch by: poptix
 
   - Added more output debugging
-    Patch by: wild
+    Patch by: Wild
 
   - Killed extra line feeds in for output debug's
-    Patch by: wild
+    Patch by: Wild
 
   - The bot was sending mode #channel (protect modes) with almost every mode
     change, and even console changes, now keeps a current modes for each
     channel, and sends the modes when they do not match
-    Patch by: wild
+    Patch by: Wild
 
   - Unsetting of read only variables from Tcl scripts is no longer possible
     hmm must I do everything the hard way the first time around? :)
-    Patch by: wild
+    Patch by: Wild
 
   - A little better enforcement of sticky bans (bot will keep them active as
     long as it is in the channel and opped)
-    Suggested by: ??? / Patch by: wild
+    Suggested by: ??? / Patch by: Wild
 
   - Removed unvia recursivey calling itself
-    Suggested by beldin
+    Suggested by: Beldin
 
   - A couple other minor things with passwords masking and proto.h
 
   - Fixed '.act' and '.say' to not cut out the first word
-    Found by: pattyt / Patch by: beldin
+    Found by: pattyt / Patch by: Beldin
 
   - Fixed a bug in '.unlink <bot>' with no reason
-    Patch by: beldin
+    Patch by: Beldin
 
   - Made bot_unlinked split off first arg when parsing
-    Patch by: beldin
+    Patch by: Beldin
 
   - Fixed the showinfo on join, so that nasty '@' wouldnt show up, also, a
     globaly locked info line will overide a channel one, unless the channel
     one is locked too (comments???)
-    Patch by: beldin
+    Patch by: Beldin
 
   - unvia now recursively calls itself to unvia all bots behind it
-    Patch by: beldin
+    Patch by: Beldin
 
   - Okay tcl_chanlist works now, and works proper.
     Examples to use it are:
@@ -1031,15 +1031,15 @@ Eggdrop Changes (since version 1.0)
 
   - Fixed defines for "BEL_LOCAL_CHANNELS" (it was 'BEL_LOCAL_CHANNEL' in
     some instances and 'BEL_LOCAL_CHANNELS' in others
-    Found/Patch by: poptix
+    Patch by: poptix
 
   - Fixed defines for "REJECT_FROM_HUBS" in some places it was
     'REJECT_FROM_HUBS' in others it was 'REJECT_FROM_HUBS_ONLY'.
-    Found/Patch by: poptix
+    Patch by: poptix
 
   - Fixed defines for "BEL_LINK_REASON" was 'LINK' in some places and
     'UNLINK' in others.
-    Found/Patch by: poptix
+    Patch by: poptix
 
   - Fixed an op/deop flood making the bot flood off, the bot was sending a
     'WHO #chan' and a 'MODE #chan +b' everytime it saw a 'o'
@@ -1113,8 +1113,8 @@ Eggdrop Changes (since version 1.0)
 
   - Fixed a few things (I won't say what so it isnt abused) that were making
     the bot flood off when you did certain things :) (e-mail me and I might
-    tell you)
-    Patch by: poptix@WildStar.Net
+    tell you poptix@WildStar.Net)
+    Patch by: poptix
 
   - Added information for crontabbing a bot without receiving emails from
     cron
@@ -1203,7 +1203,7 @@ Eggdrop Changes (since version 1.0)
     Found by: TheGhost / Patch by: dk
 
   - Fixed the msg_op bug
-    Found by: Jerry Sunton / Patch by: dk
+    Found by: Jerry Sutton / Patch by: dk
 
   - Fixed chanlist bug
     Found by: LuckyStar / Patch by: dk
@@ -1223,6 +1223,7 @@ Eggdrop Changes (since version 1.0)
   - Various fixes to previous UPDATES entries
 
   - Updated The Net info from EraseMe
+    Submitted by: EraseMe
 
   - Removed the joins in got001. Appeared to be making the bot crash
     whenever it tried to run gain-ops on a channel it had ops on already.
@@ -1270,10 +1271,10 @@ Eggdrop Changes (since version 1.0)
     Patch by: dk
 
   - Fixed compile time warnings in cmds.c
-    Patch by: beldin
+    Patch by: Beldin
 
   - Added a Tcl command resetchan
-    Patch by: beldin
+    Patch by: Beldin
 
   - You can now set the bot to strip various codes which may prove to be
     annoying to you
@@ -1312,14 +1313,14 @@ Eggdrop Changes (since version 1.0)
   - Changed .topic command so that if no arguements are provided, it returns
     the channel's current topic. also added Tcl command topic <channel> that
     returns the topic of that channel.
-    Suggested by: Ernesto / Patch by: dk
+    Suggested by: Ernst / Patch by: dk
 
   - Fixed bug of sharing out null users
     Patch by: Wild
 
   - Fixed revenge bug where it said "Banning so and so now...", it was
     setting the ban
-    Found by: DeathHand / Patch by: dk
+    Found by: deathhand / Patch by: dk
 
   - Removed function get_tcl_vars since it was just a stub
     Patch by: dk
@@ -1347,10 +1348,10 @@ Eggdrop Changes (since version 1.0)
   - Added feature that bot notifies users in the bot or on a channel that
     they have notes every hour. minute after the hour that this is done can
     be set in the bot config file with notify-users-at.
-    Suggested by: BlackJac / Patch by: dk
+    Suggested by: blackjac / Patch by: dk
 
   - Added variable timezone to config file to be used by Tcl scripts
-    Suggested by: Ernesto / Patch by: DK
+    Suggested by: Ernst / Patch by: dk
 
   - Fixed recycling logfiles bug for keep-all-logs
     Found by: BoGuS / Patch by: dk
@@ -1368,7 +1369,7 @@ Eggdrop Changes (since version 1.0)
 
   - Extened Tcl dcclist command to include bots, files receiving, files
     sending, and files send pending.
-    Suggested by: Ernesto / Patch by: dk
+    Suggested by: Ernst / Patch by: dk
 
   - Changed botnet flags so that channel masters get master flag in whom and
     channel owners get owner flag in whom.
@@ -1376,7 +1377,7 @@ Eggdrop Changes (since version 1.0)
 
   - Only owners can change the passwords, addresses, nicks to shared bots or
     delete hostmasks from shared bots or -user shared bots.
-    Suggested by: DeathHand / Patch by: DK
+    Suggested by: deathhand / Patch by: dk
 
   - Allowed for 8-bit channel names
     Patch by: David Brauman
@@ -1388,7 +1389,7 @@ Eggdrop Changes (since version 1.0)
     Patch by: dk
 
   - Updated info for Russian Net in nets.list
-    Patch by: info from LuckyStar
+    Submitted by: LuckyStar
 
   TO-DO:
 
@@ -1404,9 +1405,9 @@ Eggdrop Changes (since version 1.0)
   BUG REPORTS:
 
   - dcc chat with firewalled bot doesn't seem to work (error 2)
-    Submitted by: rajat goel
+    Reported by: Rajat Goel
   - Telnet port sometimes gets lost
-    Submitted by: genady
+    Reported by: genady
 
   SUGGESTIONS:
 
@@ -1420,66 +1421,66 @@ Eggdrop Changes (since version 1.0)
 
   - A whole slew of stuff fixing channel-specific flags with respect to
     bans/kicks/ops, ie checking both global & channel-specific op flags etc
-    Patch by: beldin
+    Patch by: Beldin
 
   - binds for bot broadcasts (#define BEL_BROADCAST_BIND)
-    Patch by: beldin
+    Patch by: Beldin
 
   - binds for botnet channel join/parts (#define BEL_JOINS_PARTS)
-    Patch by: beldin
+    Patch by: Beldin
 
   - Bots can broadcast unlink reason (#define BEL_UNLINK_REASON)
-    Patch by: beldin
+    Patch by: Beldin
 
   - Channel *0-*99999 (100000->199999 to Tcl scripts) are local-to-the-bot
     (#define BEL_LOCAL_CHANNELS)
-    Patch by: beldin
+    Patch by: Beldin
 
   - Rejects can be restricted (#define REJECT_FROM_NOWHERE, #define
     REJECT_FROM_HUBS)
-    Patch by: beldin
+    Patch by: Beldin
 
   - Much better handling of assoc on botlink (ie they get passed ;) (#define
     BEL_BETTER_ASSOC)
-    Patch by: beldin
+    Patch by: Beldin
 
   - Handle botlinking differently - all bots TRY to link to new bot before
     unlinking old bot, priority is +sh, +h, +a (#define BEL_NEWLINKS) can
     try to link all +sh's (#define BEL_LINK_SHAREHUBS)
-    Patch by: beldin
+    Patch by: Beldin
 
   - +ban <hostname> [channel] [reason] <- channel option added (#define
     BEL_CHAN_BANS)
-    Patch by: beldin
+    Patch by: Beldin
 
   - +/- chrec for adding/removing channel records (#define BEL_CHAN_REC)
     (also Tcl commands addchanrec & delchanrec)
-    Patch by: beldin
+    Patch by: Beldin
 
-    .filestats <nick> & .filestats <nick> clear for view file stats from dcc (#define BEL_FILE_STATS)
-    Patch by: beldin
+  - .filestats <nick> & .filestats <nick> clear for view file stats from dcc (#define BEL_FILE_STATS)
+    Patch by: Beldin
 
   - Fixed a bug in DCC_GET timeout's
-    Patch by: beldin
+    Patch by: Beldin
 
   - Included check for global +o's in stopnethack
-    Patch by: beldin
+    Patch by: Beldin
 
   - Added the BOUNCE_SERVER_BANS define
     Patch by: poptix
 
   - Fixed multiple /ctcp chat replies
-    Patch by: beldin
+    Patch by: Beldin
 
   - Added Tcl commands to maniplulate laston times & global laston info
     (#define BEL_LASTON)
-    Patch by: beldin
+    Patch by: Beldin
 
   - files-path, incoming-path & filedb-path are read-only
-    Patch by: beldin
+    Patch by: Beldin
 
   - Add a Tcl boot command (can do remote boots also) (#define BEL_BOOTS)
-    Patch by: beldin
+    Patch by: Beldin
 
   - Added cmw+pl1-3 patchesa
     Patch by: cmwagner
@@ -1554,13 +1555,13 @@ Eggdrop Changes (since version 1.0)
     + 437 numeric (nickname/channel is juped) has been changed to reflect
       whether it is specfically the channel or the nickname, bot will not
       change nicknames if the channel is juped :)
-      Found by: ernesto baschny / Patch by: robey pointer
+      Found by: Ernst / Patch by: Robey
 
     + Added 'restart' command, this may cause some problems
       Patch by: cmwagner
 
     + Long nickname mask in whois command caused bot to crash
-      Found by: ernesto baschny / Patch by: cmwagner
+      Found by: Ernst / Patch by: cmwagner
 
     + Space before ctcp commands would be stripped off, could be used to
       detect eggdrop bots
@@ -1637,9 +1638,9 @@ Eggdrop Changes (since version 1.0)
   BUG REPORTS:
 
   - dcc chat with firewalled bot doesn't seem to work (error 2)
-    Submitted by: rajat goel
+    Reported by: Rajat Goel
   - Telnet port sometimes gets lost
-    Submitted by: genady
+    Reported by: genady
 
 
 1.1alpha+grant (February 5, 1997):
@@ -1653,7 +1654,7 @@ Eggdrop Changes (since version 1.0)
 
   - Can compile without including the file system now (for a moderate disk
     and memory savings)
-    Patch by: robey
+    Patch by: Robey
 
   - Can specify a parting comment with '.quit'
     Suggested by: a person
@@ -1810,15 +1811,15 @@ Eggdrop Changes (since version 1.0)
     Suggested by: tyson
 
   - +g users can get ops even without +o on that channel (doh!)
-    Patch by: butchbub
+    Patch by: ButchBub
 
   - Can specify a separate port in a bot's link address to use for relay
     connections (separated by a '/')
-    Patch by: butchbub
+    Patch by: ButchBub
 
   - Tries to take advantage of ircdu's 'SILENCE' command when ignoring msgs
     & ctcps
-    Suggested by: timothy barbeisch
+    Suggested by: Timothy Barbeisch
 
   - Tcl 'bind' without a procname will return all procnames currently bound
     to that (ignoring required-flags)
@@ -1832,7 +1833,9 @@ Eggdrop Changes (since version 1.0)
 
   - 'listen' mask restriction that starts with '@' is a restriction on
     hostname not nick
-    Suggested by: blap
+    Suggested by: garbanzo
+
+    Maintainer: Robey
 
   TO-DO:
 
@@ -1872,9 +1875,9 @@ Eggdrop Changes (since version 1.0)
   BUG REPORTS:
 
   - dcc chat with firewalled bot doesn't seem to work (error 2)
-    Submitted by: rajat goel
+    Reported by: Rajat Goel
   - Telnet port sometimes gets lost
-    Submitted by: genady
+    Reported by: genady
 
 
 1.1alpha+lincoln:
@@ -1886,59 +1889,59 @@ Eggdrop Changes (since version 1.0)
   - Info lines can use euro characters now
 
   - msg 'info' command requires a password
-    Patch by: butchbub
+    Patch by: ButchBub
 
   - Stupid bug that made all Tcl ints appear as "uptime" (fixed)
-    Patch by: butchbub
+    Patch by: ButchBub
 
   - Tcl 'unbind' was broke (fixed)
-    Patch by: butchbub
+    Patch by: ButchBub
 
   - xtra field had a zillion "created" entries in it (fixed)
-    Patch by: butchbub
+    Patch by: ButchBub
 
   - 'bans all' would crash (fixed)
-    Patch by: butchbub
+    Patch by: ButchBub
 
   - Sharebots now share channel flags
-    Patch by: jeff hartman
+    Patch by: Jeff Hartman
 
   - pid file is named after the botnet nick now
-    Patch by: gaven cohen
+    Patch by: Gaven Cohen
 
   - gainops fixed for 1.1
     Patch by: jonte
 
   - +bitch mode was deop'ing all server ops, regardless of whether they had
     ops before the split (fixed)
-    Found by: butchbub
+    Found by: ButchBub
 
   - Global op switched back to +o from +g
 
   - Sharebots now share chan-specific info lines
-    Patch by: beldin
+    Patch by: Beldin
 
   - Tcl 'getjointime' added [called getchanjoin ;)]
-    Suggested by: gaven cohen
+    Suggested by: Gaven Cohen
 
   - '.match' can scan for chan-specific flags
-    Patch by: beldin
+    Patch by: Beldin
 
   - '.info', '.chinfo' support changing chan-specific info lines now
-    Patch by: beldin, robey
+    Patch by: Beldin, Robey
 
   - msg 'info' supports chan-specific info lines too
-    Patch by: beldin, robey
+    Patch by: Beldin, Robey
 
   - Tcl 'getchaninfo', 'setchaninfo' added
-    Patch by: beldin
+    Patch by: Beldin
 
   - Was reaffirming owners before switching to the new userfile after a
     sharebot download (fixed)
-    Patch by: beldin
+    Patch by: Beldin
 
-  - '.match' can accept "+m-g" etc (based on patch by beldin)
-    Suggested by: tyson / Patch by: beldin, robey
+  - '.match' can accept "+m-g" etc (based on patch by Beldin)
+    Suggested by: tyson / Patch by: Beldin, Robey
 
   - msg 'who' uses chan-specific info lines when appropriate
 
@@ -1956,25 +1959,27 @@ Eggdrop Changes (since version 1.0)
   - Host removal for bot records over botnet wasn't working (fixed)
 
   - Bug in assoc removal (fixed)
-    Patch by: beldin
+    Patch by: Beldin
 
   - On reload, aggressive bot will send userfile to passive sharebots again
-    Patch by: beldin
+    Patch by: Beldin
 
   - Bots can't use msgs to set a password
-    Patch by: beldin
+    Patch by: Beldin
 
-  - Tracks uploads/dnloads per user (based on patch by beldin)
-    Found by: beldin / Patch by: beldin, robey
+  - Tracks uploads/dnloads per user (based on patch by Beldin)
+    Found by: Beldin / Patch by: Beldin, Robey
 
   - Can set the 5 chanflags by 'chanflag#'
-    Patch by: beldin
+    Patch by: Beldin
 
   - Tcl 'chnick' can have the password omitted (to reset it)
-    Patch by: beldin
+    Patch by: Beldin
 
   - Local users going to the file system just look "away" to remote users
     Patch by: poptix
+
+    Maintainer: Robey
 
   TO-DO:
 
@@ -1990,6 +1995,6 @@ Eggdrop Changes (since version 1.0)
   BUG REPORTS:
 
   - dcc chat with firewalled bot doesn't seem to work (error 2)
-    Submitted by: rajat goel
+    Reported by: Rajat Goel
   - Telnet port sometimes gets lost
-    Submitted by: genady
+    Reported by: genady

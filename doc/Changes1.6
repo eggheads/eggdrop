@@ -1,10 +1,17 @@
-$Id: Changes1.6,v 1.14 2008/11/02 03:19:57 tothwolf Exp $
+$Id: Changes1.6,v 1.15 2008/11/16 06:33:17 tothwolf Exp $
 
 Eggdrop Changes (since version 1.6.0)
 
     _____________________________________________________________________
 
 1.6.20 (CVS):
+
+  - Fixed tons of typos and formatting problems in the doc/Changes files.
+  - Corrected and unified tons of duplicate contributor names; Robey used
+    lowercase names in earlier versions and Beldin tended to use camel case.
+  - These changes will allow for semi-automated processing of the
+    doc/Changes files to build a much more complete contributors list.
+    Patch by: Tothwolf
 
   - Refactored channels_report() and simplified the channel status
     information for the .status command.
@@ -16,7 +23,7 @@ Eggdrop Changes (since version 1.6.0)
 
   - Added missing fclose() to tout_dcc_send()
     Fixes the socket leak in the transfer module.             
-    Found by: C4thY (and others) / Patch by: bryand     
+    Found by: C4thY, various / Patch by: bryand     
 
   - Added support to BADARGS macro to accept -1 for unlimited arguments.
   - Modified tcl_getuser(), tcl_setuser(), and tcl_channel() to use -1 for
@@ -31,7 +38,7 @@ Eggdrop Changes (since version 1.6.0)
 
   - Added .vbottree command help section to cmds2.help.
     Fixes Bugzilla Bug # 464 ".help vbottree not working"
-    Found by: wanderer / Patch by: Tothwolf
+    Found by: Wanderer / Patch by: Tothwolf
 
   - Fixed global variable names used with Tcl_SetVar() / Tcl_VarEval() --
   - Made assoc module use $_chan instead of $chan 
@@ -39,8 +46,8 @@ Eggdrop Changes (since version 1.6.0)
     Patch by: Tothwolf
 
   - Moved the variable declaration for tcl_maskhost() to the top of the
-    function where it should be. FireEgl's tcl_maskhost patch prevented
-    tcl_maskhost() from compiling with many non-GCC and older GCC compilers.
+    function where it should be. The tcl_maskhost patch prevented
+    tcl_maskhost() from compiling with many non-GCC and older GCC compilers. 
     Found by: simple / Patch by: Tothwolf
 
   - Removed Solaris RANDMAX autoconf hack.
@@ -183,7 +190,7 @@ Eggdrop Changes (since version 1.6.0)
     Found by: simple / Patch by: guppy
 
   - tcl_maskhost could crash the bot
-    Patch by: FireEgl
+    Patch by: pseudo
 
   - Changed some JOINs to use DP_SERVER instead of DP_MODE
     Found by: Komandar / Patch by: guppy
@@ -202,17 +209,17 @@ Eggdrop Changes (since version 1.6.0)
     Patch by: guppy
 
   - Added a Tcl script to handle the PONG :<cookie> junk on some EFnet servers
-    Patch by: [sL], guppy
+    Coded by: simple, [sL], guppy
 
   - Add a simple Tcl script to handle the PASS <numbers> junk on some Undernet
     servers
-    Patch by: guppy
+    Coded by: simple, [sL], guppy, Freeder
 
   - Add support for chanmode +T
-    Patch by: Thomas "thommey" Sader
+    Patch by: thommey
 
   - CTCP parsing was broken by the servmsg.c buffer overflow patch
-    Patch by: Thomas "thommey" Sader
+    Patch by: thommey
 
   - Fixed a couple of typos in the FEATURES file.
     Patch by: Tomas Szaniszlo
@@ -235,7 +242,7 @@ Eggdrop Changes (since version 1.6.0)
   - Look for Tcl in /lib64 and /usr/lib64.
     Patch by: Kuja
 
-  + RC1 released on April 3rd, 2006.
+  # RC1 released on April 3rd, 2006.
 
   - Fixed a type conversion problem in snprintf.c causing Eggdrop to not
     compile on OSF1.
@@ -249,7 +256,7 @@ Eggdrop Changes (since version 1.6.0)
   - Fixed a memleak / other nasty stuff when MODES_PER_LINE_MAX != 6.
   - Fixed putlog() of an uninitialized (and incorrect) variable in
     dcc_telnet_hostresolved().
-    Patch by: lordares
+    Patch by: bryand
 
   - Valgrind doesn't bitch about init_uptime() now.
     Patch by: Wcc
@@ -262,7 +269,7 @@ Eggdrop Changes (since version 1.6.0)
     Found by: BarkerJr / Patch by: Wcc
 
   - Don't allow realname to be blank or whitespace.
-    Found by: Jesse M / Patch by: BarkerJr, Wcc
+    Found by: Jesse M. / Patch by: BarkerJr, Wcc
 
   - Fixed an error in channel get. You can now, correctly, do a
     channel get #channel stopnethack-mode.
@@ -275,16 +282,16 @@ Eggdrop Changes (since version 1.6.0)
     Found by: bUrN / Patch by: thommey
 
   - Request topic on channel reset.
-    Found by: De Kus / Patch by: Darko
+    Found by: De Kus / Patch by: darko``
 
   - Fixed a situation where noshare could be set to 1 and never restored.
-    Patch by: lordares
+    Patch by: bryand
 
   - Fixed a socklist leak in net.c.
-    Patch by: lordares
+    Patch by: bryand
 
   - Hopefully fixed dns lockups.
-    Found by: various / Patch by: Sven Trenkel
+    Found by: various / Patch by: Sven
 
   - Fixed remote note bug in add_note() that was introduced in 1.6.17.
     Fixes Bugzilla Bug # 433 "Remote Notes Always Say User is Offline"
@@ -343,7 +350,8 @@ Eggdrop Changes (since version 1.6.0)
     Patch by: Tothwolf
 
   - Use CHANMETA to define valid channel prefixes in gotmsg().
-    Found by: zathras3 at hotmail.com / Patch by: Wcc
+    Fixes Bugzilla Bug # 422 "channel prefix bug in src/mod/irc.mod/chan.c?"
+    Found by: zathras3@hotmail.com / Patch by: Wcc
 
   - Fix for problems created when loading long user-defined channel setting
     names from the channel file.
@@ -359,7 +367,7 @@ Eggdrop Changes (since version 1.6.0)
     Patch by: Paladin
 
   - Fixed 3 invalid reads in notes.c.
-    Patch by: rush at winkey.oompah.org
+    Patch by: winkey
 
   - Corrected a few of the error messages in neterror().
     Found by: Steven Nikkel / Patch by: Wcc
@@ -374,7 +382,7 @@ Eggdrop Changes (since version 1.6.0)
   - Lots of doc updates.
     Patch by: dollar, Wcc
 
-  + RC1 released on August 2nd, 2004.
+  # RC1 released on August 2nd, 2004.
 
   - Added a "stripcodes" Tcl command. See doc/tcl-commands.doc for more
     information.
@@ -400,7 +408,7 @@ Eggdrop Changes (since version 1.6.0)
     Found by: various / Patch by: Wcc
 
   - Don't try to call tcl_notes if the notes module isn't loaded.
-    Found by: Chris Northwood / Patch by: lordares
+    Found by: Chris Northwood / Patch by: bryand
 
   - Show a more descriptive error message when a listen socket can't be
     opened.
@@ -414,7 +422,7 @@ Eggdrop Changes (since version 1.6.0)
 
   - time_t isn't unsigned, and therefor %lu should not be used as a
     conversion specifier.
-    Patch by: lordares
+    Patch by: bryand
 
   - Fixed a gcc warning in dcc.c.
     Patch by: BarkerJr
@@ -423,10 +431,10 @@ Eggdrop Changes (since version 1.6.0)
     Patch by: thommey
 
   - Removed an invalid killsock() in dcc.c.
-    Patch by: lordares
+    Patch by: bryand
 
   - Fixed extra spaces being written to chan file.
-    Patch by: lordares
+    Patch by: bryand
 
   - Reworked 'make config' / module configure process.
     Found by: various / Patch by: Wcc
@@ -474,7 +482,7 @@ Eggdrop Changes (since version 1.6.0)
 
 1.6.16 (May 31, 2004):
 
-  + Final released on May 31, 2004.
+  # Final released on May 31, 2004.
 
   - Added back a missing alarm call (removed accidentally with IPv6).
     Patch by: TaKeDa
@@ -504,7 +512,7 @@ Eggdrop Changes (since version 1.6.0)
     compiler now.
     Patch by: stdarg
 
-  + RC1 released on April 9th, 2004.
+  # RC1 released on April 9th, 2004.
 
   - Missing '\n' on language entry in notes.mod.
     Found by: dollar / Patch by: Wcc
@@ -549,7 +557,7 @@ Eggdrop Changes (since version 1.6.0)
 
   - Don't check the bot's own user record when looking for a hub/althub to
     link to.
-    Found by: poptix / Patch by: lordares
+    Found by: poptix / Patch by: bryand
 
   - Portibility and build process fixes/updates.
     Patch by: Wcc
@@ -568,11 +576,11 @@ Eggdrop Changes (since version 1.6.0)
 
   - Added a new EVNT type, "userfile-loaded", which is called after the
     bot's userfile has been loaded.
-    Found by: wanderer / Patch by: darko``
+    Found by: Wanderer / Patch by: darko``
 
   - Fixed a few places where chan->name was being used instead of
     chan->dname.
-    Found by: wanderer / Patch by: Wcc
+    Found by: Wanderer / Patch by: Wcc
 
   - hand2idx works for bots now
     Found by: BarkerJr / Patch by: Wcc
@@ -581,7 +589,7 @@ Eggdrop Changes (since version 1.6.0)
     Patch by: Sven
 
   - Properly escape IPv6 masks in write_exempts() and write_invites().
-    Found by: J Lehto / Patch by: TaKeDa
+    Found by: J. Lehto / Patch by: TaKeDa
 
   - Fix for nonworking 'head -1' in GNU Coreutils 5.0.
     Patch by: Tothwolf
@@ -600,7 +608,7 @@ Eggdrop Changes (since version 1.6.0)
     Found by: BarkerJr / Patch by: Wcc
 
   - Fixed the very very horrible handling of arguments by tcl_dnslookup().
-    Found by: wanderer / Patch by: KuNgFo0, Wcc
+    Found by: Wanderer / Patch by: KuNgFo0, Wcc
 
   - Don't rejoin +inactive channels when kicked from them. This can be
     caused by bot-server connection lag or full queues.
@@ -665,7 +673,7 @@ Eggdrop Changes (since version 1.6.0)
     Patch by: tchaika
 
   - Fixed output of tcl_duration to not return extra spaces.
-    Found by: wanderer / Patch by: Wcc
+    Found by: Wanderer / Patch by: Wcc
 
   - cmd_topic works for halfops now.
     Patch by: stdarg
@@ -886,7 +894,7 @@ Eggdrop Changes (since version 1.6.0)
 
   - Removed quoting support from wild_match() which fixes several bugs with
     '\' characters
-    Found by: various / Wcc, zip
+    Found by: various / Patch by: Wcc, zip
 
   - Show who unlinked a bot when unlinked remotely
     Patch by: BarkerJr
@@ -899,7 +907,7 @@ Eggdrop Changes (since version 1.6.0)
     Patch by: The_Dawn
 
   - Exported MD5 functions to modules
-    Found by: Paladin / Wcc
+    Found by: Paladin / Patch by: Wcc
 
   - Exported me_voice() in irc_table
     Patch by: Wcc
@@ -939,7 +947,7 @@ Eggdrop Changes (since version 1.6.0)
     Patch by: BarkerJr
 
   - Halfops were not honored in flush_modes()
-    Found by: Eule / Wcc
+    Found by: Eule / Patch by: Wcc
 
   - Fixed cosmetic problems with logging in some irc module commands
     Patch by: NeoN
@@ -985,7 +993,7 @@ Eggdrop Changes (since version 1.6.0)
     Patch by: darko``
 
   - Channel set #chan chanmode $var corrupted $var in Tcl8.x
-    Found by: [sL] / Patch by: Wcc
+    Found by: [sL] / Patch by: [sL], Wcc
 
   - Don't log "joined #chan but didn't want to" in certain cases where the
     channel was newly removed or set inactive
@@ -995,7 +1003,7 @@ Eggdrop Changes (since version 1.6.0)
     Patch by: Wcc
 
   - msg_key and msg_invite did not work properly for !channels
-    Found by: J Lehto / Patch by: TaKeDa
+    Found by: J. Lehto / Patch by: TaKeDa
 
   - Show the number of hops in .trace's output
     Patch by: BarkerJr
@@ -1012,25 +1020,25 @@ Eggdrop Changes (since version 1.6.0)
 
   - Friends/ops/bots are now correctly unbanned when a ban is set on a
     channel that matches their host
-    Found by: KuNgFo0 / Patch by: Wcc, [sL]
+    Found by: KuNgFo0 / Patch by: [sL], Wcc
 
   - Compile fix for systems that do not support snprintf()
-    Patch by: BHAB
+    Patch by: bhab
 
   - Fixed a bug where if the bot is kicked while channel information is
     still being received, the bot will think it's still on the channel and
     not rejoin
-    Found by: various / Patch by: Wcc, [sL]
+    Found by: various / Patch by: [sL], Wcc
 
   - Removed names parsing, as it causes many problems and was only added for
     compatability with an old version of unrealircd
-    Found by: ble / Patch by: Wcc
+    Found by: Ble / Patch by: Wcc
 
   - More broken dprintf's in irc commands
     Found by: [sL] / Patch by: Wcc
 
   - Fixed a broken dprintf in cmd_kick()
-    Found by: ble / Patch by: Wcc
+    Found by: Ble / Patch by: Wcc
 
   - Made [ban/invite/exempt]-time a channel int
     Patch by: Wcc
@@ -1063,7 +1071,7 @@ Eggdrop Changes (since version 1.6.0)
 
   - Fixed a bug causing "[HH:MM] !!! OVER MAXIMUM <queue> QUEUE" to be
     logged to LOG_SVROUT
-    Patch by: Wcc, [sL]
+    Found by: [sL] / Patch by: [sL], Wcc
 
   - Log PINGs/PONGs sent to the server in LOG_SVROUT
     Patch by: Wcc
@@ -1138,7 +1146,7 @@ Eggdrop Changes (since version 1.6.0)
 1.6.10 (March 29, 2002):
 
   - protect(ops|friends) works with +bitch now
-    Found by: (^Baron^) / Patch by: Eule
+    Found by: ^Baron^ / Patch by: Eule
 
   - Reverted the handlen friendly patches
     Patch by: guppy
@@ -1184,7 +1192,7 @@ Eggdrop Changes (since version 1.6.0)
 
   - Added a few channels to the README and readme.html and made references
     to other docs in the html files links to their respective html files.
-    Patch by: Wcc, SiDEWiNDR
+    Patch by: Wcc, SiD3WiNDR
 
   - modes-per-line is limited to a max of 6 modes per line
     Found by: various / Patch by: Eule
@@ -1196,20 +1204,20 @@ Eggdrop Changes (since version 1.6.0)
     Patch by: Wcc
 
   - Fixed a problem with uff not adding entries properly
-    Patch by: Amir
+    Patch by: Amir Shalem
 
   - Made cmd_channel, cmd_dccstat, cmd_who, cmd_whois, cmd_match handlen
     friendly
     Patch by: Boing
 
   - botlink() now safely copies the linker string
-    Patch by: Amir
+    Patch by: Amir Shalem
 
   - Fixed crashes relating to flushmodes
     Found by: various / Patch by: Eule
 
   - Tcl command modules missing in doc/tcl-commands.doc
-    Found by: Wanderer| / Patch by: dw
+    Found by: Wanderer / Patch by: dw
 
   - Users with only +x can now only login via dcc chat, they cannot use
     telnet
@@ -1253,7 +1261,7 @@ Eggdrop Changes (since version 1.6.0)
   - Removed gban_total, gexempt_total and ginvite_total since they were unused
     Patch by: Eule
 
-  - configure should recognize a dynamic Tcl library now on cygwin
+  - configure should recognize a dynamic Tcl library now on Cygwin
     Patch by: TaKeDa, ITE
 
   - Fixed a crash that would happen when we disconnected from our server but
@@ -1261,7 +1269,7 @@ Eggdrop Changes (since version 1.6.0)
     Found by: dw / Patch by: guppy
 
   - Lets compile on solaris now
-    Patch by: BHAB
+    Patch by: bhab
 
   - Update a bot's laston info when the bot unlinks
     Found by: BarkerJr / Patch by: TaKeDa
@@ -1475,7 +1483,7 @@ Eggdrop Changes (since version 1.6.0)
 
   - Documentation doesn't cover how to connect to servers with a password;
     documentation added to sample config files.
-    Found by: ziffie / Patch by: BHAB
+    Found by: ziffie / Patch by: bhab
 
   - Made tcl_hand2nick _a lot_ faster
     Found by: |^Raven^| / Patch by: guppy
@@ -1511,7 +1519,7 @@ Eggdrop Changes (since version 1.6.0)
   - Don't show status_log if we don't have a server
     Patch by: guppy
 
-  - Lets make Eggdrop work on cygwin again
+  - Lets make Eggdrop work on Cygwin again
     Found by: Wcc / Patch by: ITE
 
   - Fixed a mixed up transfer language entry that caused a crash
@@ -1570,7 +1578,7 @@ Eggdrop Changes (since version 1.6.0)
     Patch by: Lam
 
   - Fixed tcl_botattr
-    Patch by: TaKaDa
+    Patch by: TaKeDa
 
   - Fixed a bogus memory leak
     Found by: various / Patch by: stdarg
@@ -1626,7 +1634,7 @@ Eggdrop Changes (since version 1.6.0)
     Patch by: poptix
 
   - 'chattr hand' no longer crashes (legacy bug)
-    Found by: dfrank / Patch by: stdarg
+    Found by: DFrank / Patch by: stdarg
 
   - Finally fixed the banreason bug
     Patch by: poptix
@@ -1728,7 +1736,7 @@ Eggdrop Changes (since version 1.6.0)
   - The documentation for the need bind was slightly screwy
     Found by: various / Patch by: guppy
 
-  - Don't check for static Tcl under cygwin
+  - Don't check for static Tcl under Cygwin
     Patch by: Kirben
 
   - Helpfile says nodesync (invalid mode) instead of nodesynch.
@@ -1751,16 +1759,16 @@ Eggdrop Changes (since version 1.6.0)
     Patch by: TaKeDa
 
   - Fixed tcl_md5, it was broken on Tcl 8.1+
-    Patch by: TaKaDa
+    Patch by: TaKeDa
 
-  - Check whether cygwin requires -mwin32 to support old versions of cygwin
+  - Check whether Cygwin requires -mwin32 to support old versions of Cygwin
     Patch by: Kirben
 
-  - Check for bind in /usr/local/bind when using cygwin
+  - Check for bind in /usr/local/bind when using Cygwin
     Patch by: Kirben
 
   - A banreason wasn't used in some cases.
-    Found by: NeoN- / Patch by: dw
+    Found by: NeoN / Patch by: dw
 
   - Bot sent a useless TOPIC command to the server when it joined a channel.
     Found by: Noyga / Patch by: Sup
@@ -1863,7 +1871,7 @@ Eggdrop Changes (since version 1.6.0)
     Patch by: guppy
 
   - Small fix to what nickname we can use when we type "new"
-    Found by: SegFault / Patch by: guppy
+    Found by: Segfault / Patch by: guppy
 
   - We should use errno to detect EAGAIN in net.c
     Patch by: zip
@@ -1872,9 +1880,9 @@ Eggdrop Changes (since version 1.6.0)
     Patch by: guppy
 
   - Changed the wording of %bantime <XdXhXm>
-    Found by: BenDover / Patch by: guppy
+    Found by: Ben Dover / Patch by: guppy
 
-  - Mount the Eggdrop directory as binary in cygwin
+  - Mount the Eggdrop directory as binary in Cygwin
     Patch by: Kirben
 
   - compress.mod/dns.mod now check for the compiler also
@@ -2053,8 +2061,8 @@ Eggdrop Changes (since version 1.6.0)
   - Added matchbotattr to alltools.tcl.
     Found by: guruz / Patch by: Sup
 
-  - Removed some legacy cygwin compatibility
-    Patch by: kirben
+  - Removed some legacy Cygwin compatibility
+    Patch by: Kirben
 
   - cmd_stick activates the bans now
     Patch by: dw
@@ -2066,7 +2074,7 @@ Eggdrop Changes (since version 1.6.0)
     Patch by: ITE
 
   - Fixed a small dns.c bug with hostname resolving
-    Found by: blaster / Patch by: ITE
+    Found by: blaster^ / Patch by: ITE
 
   - Removed debug-tcl, since this is something noone uses and is more bloat
     than anything
@@ -2095,7 +2103,7 @@ Eggdrop Changes (since version 1.6.0)
     Patch by: slennox
 
   - Actually remove a ban from irc when a sharebot removes it
-    Patch by: Jason
+    Patch by: Jason Ede
 
   - Do not allow Eggdrop to run as root
     Patch by: Tothwolf
@@ -2106,7 +2114,7 @@ Eggdrop Changes (since version 1.6.0)
 
   - Fixed misformed notices in notes module. Corrected use of language file,
     and fixed lang file entry.
-    Patch by: Jason
+    Patch by: Jason Ede
 
   - Shutdown once getting a SIGTERM by default
     Patch by: Tothwolf
@@ -2115,7 +2123,7 @@ Eggdrop Changes (since version 1.6.0)
     Patch by: Tothwolf
 
   - Updated the help channels in README.
-    Found by: habeeb / Patch by: Sup
+    Found by: Habeeb / Patch by: Sup
 
   - +revengebot no longer requires that the bot has a user-record for itself.
     Found by: PPSlim / Patch by: PPSlim, guppy, Fabian
@@ -2134,7 +2142,7 @@ Eggdrop Changes (since version 1.6.0)
 
   - Fixed it so that +d or +k users cannot remove hosts and thus circumvent
     auto-kick or deop
-    Patch by: Jason
+    Patch by: Jason Ede
 
   - Fixed cmd_binds when called with no argument
     Found by: GregMo / Patch by: guppy
@@ -2149,7 +2157,7 @@ Eggdrop Changes (since version 1.6.0)
     Found by: S Wilcox / Patch by: Sup
 
   - Fixed cmd_binds when doing '.binds all'
-    Patch by: blaster
+    Patch by: blaster^
 
   - cmd_chaddr was broken thanks to a patch of mine
     Found by: various / Patch by: guppy
@@ -2393,7 +2401,7 @@ Eggdrop Changes (since version 1.6.0)
     Found by: Abraham / Patch by: Eule
 
   - DCC send and chat requests send to channels are now ignored.
-    Found by: zart / Patch by: Sup
+    Found by: Zart / Patch by: Sup
 
   - Fixed typo in irc.mod/irc.h me_op export macro.
     Patch by: Looser^
@@ -2488,7 +2496,7 @@ Eggdrop Changes (since version 1.6.0)
     Found by: Karsten / Patch by: Fabian
 
   - Minor correction to the list of used flags in flag.h.
-    Found by: Johnny-, Mnemonic / Patch by: Fabian
+    Found by: Johnny Mnemonic / Patch by: Fabian
 
   - Added language support to assoc.mod, console.mod and notes.mod.
   - Cosmetic fix to "module loaded" message.
@@ -2504,7 +2512,7 @@ Eggdrop Changes (since version 1.6.0)
     Patch by: guppy
 
   - Added IPv6-masks support (bans/exempts/invites/ignores).
-    Found by: Ben / Patch by: Fabian
+    Found by: Ben Dover / Patch by: Fabian
 
   - Fixed minor, newly introduced mess-up in '.chaninfo' output.
     Found by: Abraham / Patch by: Fabian
@@ -2617,7 +2625,7 @@ Eggdrop Changes (since version 1.6.0)
     Found by: various / Patch by: Fabian
 
   - Fixed crash in splitc().
-    Patch by: blaster
+    Patch by: blaster^
 
   - Removed checks for bogus masks in +ban, +exempt, and +invite.
   - Minor error message fixes.
@@ -2631,4 +2639,4 @@ Eggdrop Changes (since version 1.6.0)
     Patch by: Cybah
 
   - Fixed crash with handles larger than 19 characters.
-    Patch by: Shaun
+    Patch by: Shaun Brown

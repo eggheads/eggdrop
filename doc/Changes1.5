@@ -1,4 +1,4 @@
-$Id: Changes1.5,v 1.1 2008/07/05 02:14:02 tothwolf Exp $
+$Id: Changes1.5,v 1.2 2008/11/16 06:33:17 tothwolf Exp $
 
 Eggdrop Changes (since version 1.5.0)
 
@@ -75,7 +75,7 @@ Eggdrop Changes (since version 1.5.0)
 
   - Fixed bug where handle changes with handles longer than 15 characters
     crashed the bot.
-    Patch by: Shaun
+    Patch by: Shaun Brown
 
   - 'share_newuser' failed to correctly pass on data from new users over the
     botnet.
@@ -92,7 +92,7 @@ Eggdrop Changes (since version 1.5.0)
 
   - Enhanced channel key logic. Bot now first tries last set channel key
     when re-joining.
-    Found by: Ben / Patch by: Eule
+    Found by: Ben Dover / Patch by: Eule
 
   - add_bot_hostmask now uses maskhost to get the right hostmask format.
     Patch by: Sup
@@ -142,7 +142,7 @@ Eggdrop Changes (since version 1.5.0)
     Patch by: Wiktor
 
   - Removed silence left-overs. Minor other fixes.
-    Found by: blaster / Patch by: Fabian
+    Found by: blaster^ / Patch by: Fabian
 
   - Replace all spaces in logfilenames by underscores and changed default
     suffix to '.%d%b%Y'.
@@ -157,7 +157,7 @@ Eggdrop Changes (since version 1.5.0)
 
   - Added tcl_channame2dname and tcl_chandname2name to allow Tcl scripts to
     support !channels.
-    Found by: JoKeR / Patch by: Fabian
+    Found by: Joker / Patch by: Fabian
 
   - Removed ircu silence support.
     Patch by: guppy
@@ -179,7 +179,7 @@ Eggdrop Changes (since version 1.5.0)
     Found by: Georg Schwarz / Patch by: Wiktor
 
   - Changed *.conf.dist a bit and added chnick and nick to help.
-    Found by: Ben, Lucas / Patch by: Wiktor
+    Found by: Ben Dover, Lucas / Patch by: Wiktor
 
   - Moved some lines from the login procedure to the motd file.
     Patch by: Wiktor
@@ -187,16 +187,16 @@ Eggdrop Changes (since version 1.5.0)
   - Illegal definition of egg_snprintf fixed for STDC systems.
     Found by: Joker / Patch by: Fabian
 
-  - Removed the 'BOOL FreeConsole' cygwin hack from main.c.
+  - Removed the 'BOOL FreeConsole' Cygwin hack from main.c.
     Found by: various / Patch by: Tothwolf
 
-  - Print 'Launched' message when compiled with cygwin.
+  - Print 'Launched' message when compiled with Cygwin.
     Found by: FireEgl / Patch by: Tothwolf
 
   - Use opendir() instead of fopen() in files.c.
     Patch by: RebuM
 
-  - Use binary mode when opening userfile with cygwin.
+  - Use binary mode when opening userfile with Cygwin.
     Patch by: RebuM
 
   - Removed private-owner from config files.
@@ -247,7 +247,7 @@ Eggdrop Changes (since version 1.5.0)
 
   - Under certain circumstances Eggdrop would immediately reconnect to irc
     servers, causing massive connect flooding.
-    Found by: Jason / Patch by: Fabian
+    Found by: Jason Ede / Patch by: Fabian
 
   - Minor lang fix to 'cmds.c'.
     Patch by: Fabian
@@ -272,14 +272,14 @@ Eggdrop Changes (since version 1.5.0)
     Patch by: Wiktor
 
   - Moved web_docs to html to keep proper naming
-    Patch by: Jason
+    Patch by: Jason Ede
 
   - Added textfile substitutions to web based docs.
     Patch by: Tothwolf
 
   - Updated web docs to include config file settings. Includes tidying of
     some files by Toth.
-    Patch by: Jason, Wiktor, Tothwolf
+    Patch by: Jason Ede, Wiktor, Tothwolf
 
   - Tcl must-be-owner caused crash because of multiple defs.
     Patch by: Fabian
@@ -338,7 +338,7 @@ Eggdrop Changes (since version 1.5.0)
     Found by: various / Patch by: Fabian, Tothwolf
 
   - Updated web docs for 1.5. Adjusted various text docs.
-    Patch by: Jason
+    Patch by: Jason Ede
 
   - Added information about -next parameter to tcl_put*.
     Patch by: Wiktor
@@ -378,7 +378,7 @@ Eggdrop Changes (since version 1.5.0)
     Found by: Wiktor / Patch by: Fabian
 
   - Tiny '.binds' fix.
-    Patch by: david
+    Patch by: David Newhall II
 
   - Adjusted share module to support more flexible user file handling
     functions. changed 'compress' to use that support. added mmap() support
@@ -394,7 +394,7 @@ Eggdrop Changes (since version 1.5.0)
   - Modified .+host so normal users could use it to add hosts to their own
     record as they can already use .-host. Only allows hosts that don't
     match other users.
-    Patch by: Jason
+    Patch by: Jason Ede
 
   - Added module 'compress' which allows compressed user file sending; based
     on zlib
@@ -423,7 +423,7 @@ Eggdrop Changes (since version 1.5.0)
     Found by: Webbie, Joker / Patch by: Fabian, TheQ
 
   - The dcc cmd '.binds' now supports wildcards
-    Found by: jay / Patch by: david
+    Found by: jay / Patch by: David Newhall II
 
   - Portability fixes to configure and modtool
     Found by: SuperS / Patch by: Fabian
@@ -461,7 +461,7 @@ Eggdrop Changes (since version 1.5.0)
 
   - Stopped flooding of partyline with channel juped messages. Added display
     to .status and a ischanjuped Tcl command.
-    Patch by: Jason
+    Patch by: Jason Ede
 
   - Tiny configure error caused version number search to fail
     Found by: Webbie / Patch by: Fabian
@@ -495,7 +495,7 @@ Eggdrop Changes (since version 1.5.0)
     Patch by: dw
 
   - Added reasons to several botnet quit messages
-    Patch by: david
+    Patch by: David Newhall II
 
   - Optimized kick sending.
     Patch by: G`Quann
@@ -558,7 +558,7 @@ Eggdrop Changes (since version 1.5.0)
 
   - Missing a way to get the users handle as it is saved in the userfile.
     Added getuser type HANDLE
-    Found by: Johnny-, Mnemonic / Patch by: dw
+    Found by: Johnny Mnemonic / Patch by: dw
 
   - Fixed dns findhost() SEGV
     Found by: guppy / Patch by: Fabian
@@ -640,7 +640,7 @@ Eggdrop Changes (since version 1.5.0)
     Patch by: G`Quann
 
   - Further filesys db3 engine fixes
-    Found by: Jason, dw / Patch by: Fabian
+    Found by: Jason Ede, dw / Patch by: Fabian
 
   - Fixes mem leak and stack corruption in udef chan settings
     Patch by: G`Quann
@@ -670,7 +670,7 @@ Eggdrop Changes (since version 1.5.0)
 
   - The listening socket wasn't passed on correctly during the login
     procedure
-    Found by: Jason / Patch by: Fabian
+    Found by: Jason Ede / Patch by: Fabian
 
   - Rewritten filesys.mod to allow unlimited filename, description, etc.
     lengths.
