@@ -1,4 +1,4 @@
-$Id: Changes1.0,v 1.2 2008/11/16 06:33:17 tothwolf Exp $
+$Id: Changes1.0,v 1.3 2008/11/19 01:47:43 tothwolf Exp $
 
 Eggdrop Changes (since version 0.9)
 
@@ -57,10 +57,10 @@ Eggdrop Changes (since version 0.9)
 
   - Topic command was not letting users change the topic on a non +t channel
     when the bot was opless
-    Found by: deathhand / Patch by: cmwagner
+    Found by: DeathHand / Patch by: cmwagner
 
   - Users were not being deopped when channel is set +revenge and they deop
-    Found by: deathhand / Patch by: cmwagner
+    Found by: DeathHand / Patch by: cmwagner
 
   TO-DO:
 
@@ -102,7 +102,7 @@ Eggdrop Changes (since version 0.9)
 
 1.0o (February 4, 1997):
 
-  # New version from Robey Pointer <robey@netcom.com>
+  # Released by: Robey Pointer <robey@netcom.com>
 
   - Solaris sigaction thingy fixed
     Patch by: dunk
@@ -165,7 +165,7 @@ Eggdrop Changes (since version 0.9)
 
 1.0n (Jauary 6, 1997):
 
-  # New version from Robey Pointer <robey@netcom.com>
+  # Released by: Robey Pointer <robey@netcom.com>
 
   - Moved to GNU GPL licensing
 
@@ -305,7 +305,7 @@ Eggdrop Changes (since version 0.9)
 
 1.0m (December 4, 1996):
 
-  # New version from Robey Pointer <robey@netcom.com>
+  # Released by: Robey Pointer <robey@netcom.com>
 
   - '.kick' was broken (that's what i get for meddling) (fixed)
     Found by: tuvix
@@ -400,7 +400,7 @@ Eggdrop Changes (since version 0.9)
 
 1.0l (November 11, 1996):
 
-  # New version from Robey Pointer <robey@netcom.com>
+  # Released by: Robey Pointer <robey@netcom.com>
 
   - Typo in ques3 (fixed)
     Found by: gord-
@@ -578,7 +578,7 @@ Eggdrop Changes (since version 0.9)
 
 1.0k (October 17, 1996):
 
-  # New version from Robey Pointer <robey@netcom.com>
+  # Released by: Robey Pointer <robey@netcom.com>
 
   - Spelling fixes
 
@@ -725,7 +725,7 @@ Eggdrop Changes (since version 0.9)
 
 1.0j (October 8, 1996):
 
-  # New version from Robey Pointer <robey@netcom.com>
+  # Released by: Robey Pointer <robey@netcom.com>
 
   - Bug in limbo bots (wouldn't compile) (fixed)
 
@@ -881,7 +881,7 @@ Eggdrop Changes (since version 0.9)
 
 1.0i (September 10, 1996):
 
-  # New version from Robey Pointer <robey@netcom.com>
+  # Released by: Robey Pointer <robey@netcom.com>
 
   - New Tcl commands 'encrypt' and 'decrypt' to interface blowfish
 
@@ -1031,7 +1031,7 @@ Eggdrop Changes (since version 0.9)
 
 1.0h (August 7, 1996):
 
-  # New version from Robey Pointer <robey@netcom.com>
+  # Released by: Robey Pointer <robey@netcom.com>
 
   - Spelling mistake
     Found by: blackjac
@@ -1176,7 +1176,7 @@ Eggdrop Changes (since version 0.9)
 
 1.0g (July 23, 1996):
 
-  # New version from Robey Pointer <robey@netcom.com>
+  # Released by: Robey Pointer <robey@netcom.com>
 
   - Tcl 'killdcc' could kill off the terminal (HQ) user in -nt mode (fixed)
     Found by: cmwagner
@@ -1286,7 +1286,7 @@ Eggdrop Changes (since version 0.9)
 
 1.0f (July 6, 1996):
 
-  # New version from Robey Pointer <robey@netcom.com>
+  # Released by: Robey Pointer <robey@netcom.com>
 
   - Various patches to fix socket 1 getting treated special when the bot is
     in the background
@@ -1370,7 +1370,7 @@ Eggdrop Changes (since version 0.9)
 
 1.0e (Jul 2, 1996):
 
-  # New version from Robey Pointer <robey@netcom.com>
+  # Released by: Robey Pointer <robey@netcom.com>
 
   - Might confuse lag for a desync, and not kick people who joined while a
     ban was being placed ("after" the ban was placed, from the bot's point
@@ -1466,7 +1466,7 @@ Eggdrop Changes (since version 0.9)
 
 1.0d (June 12, 1996):
 
-  # New version from Robey Pointer <robey@netcom.com>
+  # Released by: Robey Pointer <robey@netcom.com>
 
   - Turning off flood protection wasn't working for dcc chat (fixed)
 
@@ -1521,7 +1521,7 @@ Eggdrop Changes (since version 0.9)
 
 1.0c (June 1, 1996):
 
-  # New version from Robey Pointer <robey@netcom.com>
+  # Released by: Robey Pointer <robey@netcom.com>
 
   - Remote 'who' info was putting garbage before the channel list (fixed)
 
@@ -1618,7 +1618,7 @@ Eggdrop Changes (since version 0.9)
 
 1.0b (May 20, 1996):
 
-  # New version from Robey Pointer <robey@netcom.com>
+  # Released by: Robey Pointer <robey@netcom.com>
 
   - Owners couldn't add hostmasks to each other with '+host' (fixed)
     Found by: waxmaster
@@ -1705,7 +1705,7 @@ Eggdrop Changes (since version 0.9)
 
 1.0a (May 4, 1996):
 
-  # New version from Robey Pointer <robey@acolyte.slip.netcom.com>
+  # Released by: Robey Pointer <robey@acolyte.slip.netcom.com>
 
   - Can use 'ENABLE_TCL' to turn off the '.tcl' command now
     Suggested by: Jay S. Monk
@@ -1823,7 +1823,7 @@ Eggdrop Changes (since version 0.9)
 
 1.0 (April 7, 1996):
 
-  # New version from Robey Pointer <robey@acolyte.slip.netcom.com>
+  # Released by: Robey Pointer <robey@acolyte.slip.netcom.com>
 
   - Security patch for 'pass' command
     Patch by: cyberscape
@@ -2121,7 +2121,7 @@ Eggdrop Changes (since version 0.9)
 
 1.0beta-turtle (April 1, 1996):
 
-  # New version from Robey Pointer <robey@acolyte.slip.netcom.com>
+  # Released by: Robey Pointer <robey@acolyte.slip.netcom.com>
 
   - Better way to prevent the bot from going "idle"
 
@@ -2176,7 +2176,7 @@ Eggdrop Changes (since version 0.9)
 
 1.0beta-stegosaurus (March 28, 1996):
 
-  # New version from Robey Pointer <robey@acolyte.slip.netcom.com>
+  # Released by: Robey Pointer <robey@acolyte.slip.netcom.com>
 
   - Userfile transfers happen via a DCC send connection now (might be
     faster)
@@ -2212,7 +2212,7 @@ Eggdrop Changes (since version 0.9)
 
 1.0beta-rabbit (Mar 25, 1996):
 
-  # New version from Robey Pointer <robey@acolyte.slip.netcom.com>
+  # Released by: Robey Pointer <robey@acolyte.slip.netcom.com>
 
   - Security patch for 'pass' command
     Patch by: cyberscape

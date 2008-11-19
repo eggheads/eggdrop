@@ -1,4 +1,4 @@
-$Id: Changes1.1,v 1.2 2008/11/16 06:33:17 tothwolf Exp $
+$Id: Changes1.1,v 1.3 2008/11/19 01:47:43 tothwolf Exp $
 
 Eggdrop Changes (since version 1.0)
 
@@ -14,7 +14,7 @@ Eggdrop Changes (since version 1.0)
     copy botchk and eggdrop.conf
     Patch by: TheGhost, ButchBub
 
-  - putegg now backs up modules aswell as eggdrop
+  - putegg now backs up modules as well as eggdrop
     Patch by: Beldin
 
   - /msg whois now return slightly more useful info
@@ -270,7 +270,7 @@ Eggdrop Changes (since version 1.0)
 
 1.1.2+pl1 (June 10, 1997):
 
-  # Patch by dtM / Beldin
+  # Patch by: dtM, Beldin <beldin@light.iinet.net.au>
 
   - Botnet version now sends the version number and this is used to check
     for userfile sharing (won't share with a bot with version < min_share in
@@ -313,6 +313,8 @@ Eggdrop Changes (since version 1.0)
 
 
 1.1.2 (June 6, 1997):
+
+  # Released by: Beldin <beldin@light.iinet.net.au>
 
   - .assoc wasn't working right for local channels
     Found by: David- / Patch by: Beldin
@@ -364,7 +366,7 @@ Eggdrop Changes (since version 1.0)
 
 1.1.1+pl2:
 
-  # Patch by Wild / Beldin
+  # Patch by: Wild <jmcleod@pris.bc.ca>, Beldin <beldin@light.iinet.net.au>
 
   - Made ctcp_version default acutally SAY eggdrop, and sanity check on
     string lengths
@@ -606,6 +608,8 @@ Eggdrop Changes (since version 1.0)
 
 1.1.0 (May 24, 1997):
 
+  # Released by: dk <spackard@moran.mines.edu>
+
   - Fixed nick tracing bug on EFnet. Reverted back to old style tracing.
     Added support for 401 and 206 numerics for trace failed
     Patch by: dk
@@ -714,7 +718,7 @@ Eggdrop Changes (since version 1.0)
   - Piped got401 into got402 (they are the same :)
     Patch by: Wild
 
-  - Removed unvia recursively calling itslef (finally)
+  - Removed unvia recursively calling itself (finally)
     Suggested by: Beldin
 
   - refresh_ban_kick was losing the sticky feature of bans
@@ -727,7 +731,7 @@ Eggdrop Changes (since version 1.0)
     Patch by: Wild
 
   - Added a rotating buffer of 16 context's, allowing a list of the last 16
-    contexts passed report, useful for debuging strange errors
+    contexts passed report, useful for debugging strange errors
     Patch by: Beldin
 
   - Fixed a bug in .files due to paging code
@@ -764,7 +768,7 @@ Eggdrop Changes (since version 1.0)
   - Fixed multiple numeric discrepancies between EFnet and the RFC
     Patch by: poptix
 
-  - Fixed another 'chanlist bug' so that bots arent overlooked in channel
+  - Fixed another 'chanlist bug' so that bots aren't overlooked in channel
     specific flag matches
     Patch by: poptix
 
@@ -781,7 +785,7 @@ Eggdrop Changes (since version 1.0)
     no way to look back)
     Patch by: Beldin
 
-  - Add .chanadd, .chandell, .chaninfo, .chanset, .chansave, .chanload (+
+  - Add .chanadd, .chandel, .chaninfo, .chanset, .chansave, .chanload (+
     Tcl savechannels, loadchannels) to modify channel settings from the
     console, +n for add/del, +N for save/load/set, +M for info
     Patch by: Beldin
@@ -943,7 +947,146 @@ Eggdrop Changes (since version 1.0)
   - Move more things into NO_IRC such as bans and hostmasks
 
 
+1.1alpha+hayes+pop+pl5 (May 12, 1997):
+
+  # Patch by: poptix <poptix@wildstar.net>
+    [included in 1.1.0]
+
+  - Greatly improved the way the bot keeps track of its nick (it doesn't
+    assume it's going to get the nick anymore, it waits for the NICK from
+    the server)
+    Patch by: poptix
+
+  - Added support for the 206 (RPL_TRACESERVER) and 351 (RPL_VERSION)
+    numerics the VERSION numeric is used to check the bots current nick and
+    the TRACESERVER numeric is what ircu2.9.30 and up respond with instead
+    of TRACEFAILED (which was part of the NICK problems)
+    Patch by: poptix
+
+  - Updated get-in-ops to v1.2
+    Patch by: poptix
+
+  - Added adbseen.tcl and adbtools.tcl to the scripts directory.
+    Patch by: poptix
+
+  - Added Tcl command "putidx" for use in script connections it's a bit
+    faster than putdcc and uses qprintf (new) much like tprintf except you
+    provide it with an idx instead of port.
+    Patch by: poptix
+
+  - Added '.fixcodes' command to fix the telnet codes when they aren't right
+    (say if you didn't really telnet to the bot but it thought you had it
+    still sent the nasty codes)
+    Patch by: poptix
+
+  - Fixed another /ctcp chat bug where the '\n' was left out
+    Patch by: poptix
+
+
+1.1alpha+hayes+wild+pl4 (May 12, 1997):
+
+  # Patch by: Wild <jmcleod@pris.bc.ca>
+    [included in 1.1.0]
+
+  - Added more output debugging
+    Patch by: Wild
+
+  - Killed extra line feeds in for output debug's
+    Patch by: Wild
+
+  - The bot was sending mode #channel (protect modes) with almost every mode
+    change, and even console changes, now keeps a current modes for each
+    channel, and sends the modes when they do not match
+    Patch by: Wild
+
+  - Unsetting of read only variables from Tcl scripts is no longer possible
+    hmm must I do everything the hard way the first time around? :)
+    Patch by: Wild
+
+  - A little better enforcement of sticky bans (bot will keep them active as
+    long as it is in the channel and opped)
+    Suggested by: ??? / Patch by: Wild
+
+  - Removed unvia recursivey calling itself
+    Suggested by: Beldin
+
+  - A couple other minor things with passwords masking and proto.h
+
+
+1.1alpha+hayes+bel+pl3 (May 12, 1997):
+
+  # Patch by: Beldin <beldin@light.iinet.net.au>
+    [included in 1.1.0]
+
+  - Fixed '.act' and '.say' to not cut out the first word
+    Found by: pattyt / Patch by: Beldin
+
+  - Fixed a bug in '.unlink <bot>' with no reason
+    Patch by: Beldin
+
+  - Made bot_unlinked split off first arg when parsing
+    Patch by: Beldin
+
+  - Fixed the showinfo on join, so that nasty '@' wouldnt show up, also, a
+    globaly locked info line will overide a channel one, unless the channel
+    one is locked too (comments???)
+    Patch by: Beldin
+
+  - unvia now recursively calls itself to unvia all bots behind it
+    Patch by: Beldin
+
+
+1.1alpha+hayes+wild+pl2 (May 9, 2007):
+
+  # Patch by: Wild <jmcleod@pris.bc.ca>
+    [included in 1.1.0]
+
+  - Okay tcl_chanlist works now, and works proper.
+    Examples to use it are:
+      chanlist #channel n    (owner)
+      chanlist #channel n&n  (owner, Channel owner)
+      chanlist #channel &o   (Channel op)
+      chanlist #channel omnB&omn123567890  etc. etc.
+    first read flags are globals, the '&' denotes channel specific flags
+    Patch by: Wild
+
+  - +O bound dcc commands are now working proper when checking for +o flag
+    either global or for a specific channel (I shoulda seen this)
+    Patch by: Wild
+
+
+1.1alpha+hayes+wild+pl1 (May 8, 2007):
+
+  # Patch by: Wild <jmcleod@pris.bc.ca>
+    [included in 1.1.0]
+
+  - check_tcl_chpt should be fixed now (was being called from botcmd.c with
+    (bot,sock))
+    Patch by: Wild
+
+  - Routine to check for global_op/channel op status on channel (now also
+    checks for global owner/master), for +O bound dcc commands, affects
+    -/+ban, act, channel, deop, op, invite, kick, kickban, resetbans, say,
+    and topic.
+    [RE: This was in there...so I put the changes back in. - Wild]
+    Patch by: Wild
+
+  - Idle info wasn't updated for ignored users talking in the channel
+    Patch by: Wild
+
+  - Started out got302 (someone finish me :)
+    Patch by: Wild
+
+  - Fixed a problem I left with masking passwords in debug.
+    Patch by: Wild
+
+  - Cleaned up tcl_chanlist
+    Patch by: Wild
+
+
 1.1alpha+hayes (May 7, 1997):
+
+  # Released by: Wade
 
   - Had to comment out the chpt code in tclhash.c since it was crashing
     everytime it was triggered, someone fix this please :)
@@ -973,8 +1116,8 @@ Eggdrop Changes (since version 1.0)
     Patch by: Wild
 
   - Using console +d you were able to see acutal passwords when changed, now
-    just shows as
-    Found by: something / Patch by: Wild
+    just shows as [something].
+    Patch by: Wild
 
   - Bot would crash with Tcl chpass <nick> "" (so far i have seen this on
     Tcl ver's 7.5 and 7.6)
@@ -1020,7 +1163,7 @@ Eggdrop Changes (since version 1.0)
   - Implicit declaration of gotwall during compile
     Patch by: poptix
 
-  - Bug in tclchan.c which cause the bot to crash
+  - Bug in tclchan.c which caused the bot to crash
     Patch by: Wild
 
   - Routine to check for global_op/channel op status on channel (now also
@@ -1095,7 +1238,7 @@ Eggdrop Changes (since version 1.0)
     Patch by: poptix
 
   - Moved joins back to got001 because it was causing problems with nospoof
-    servers when the JOIN was send before the PONG (besides, if gain-ops if
+    servers when the JOIN was send before the PONG (besides, if gain-ops is
     crashing the bots then gainops should be fixed :)
     Patch by: poptix
 
@@ -1320,7 +1463,7 @@ Eggdrop Changes (since version 1.0)
 
   - Fixed revenge bug where it said "Banning so and so now...", it was
     setting the ban
-    Found by: deathhand / Patch by: dk
+    Found by: DeathHand / Patch by: dk
 
   - Removed function get_tcl_vars since it was just a stub
     Patch by: dk
@@ -1377,7 +1520,7 @@ Eggdrop Changes (since version 1.0)
 
   - Only owners can change the passwords, addresses, nicks to shared bots or
     delete hostmasks from shared bots or -user shared bots.
-    Suggested by: deathhand / Patch by: dk
+    Suggested by: DeathHand / Patch by: dk
 
   - Allowed for 8-bit channel names
     Patch by: David Brauman
@@ -1414,7 +1557,388 @@ Eggdrop Changes (since version 1.0)
   - Fix 'white space' where there is a space inbetween a "(" and some data
 
 
-1.1alpha+julius (April 1, 1997):
+1.1alpha+julius+pl6 (May 4, 2007):
+
+  # Patch by: Wild <jmcleod@pris.bc.ca>
+    [included in 1.1alpha+hayes]
+
+  - Fixed memory usage growing when using .restart
+    Patch by: Wild
+
+  - Using console +d you were able to see acutal passwords when changed, now
+    just shows as [something].
+    Patch by: Wild
+
+  - Bot would crash with Tcl chpass <nick> "" (so far i have seen this on
+    Tcl ver's 7.5 and 7.6)
+    Patch by: Wild
+
+  - No longer able to unset read-only variables
+    Patch by: Wild
+
+
+1.1alpha+julius+pop+pl5 (May 4, 2007):
+
+  # Patch by: poptix <poptix@wildstar.net>
+    [included in 1.1alpha+hayes]
+
+  - Fixed it when you sent the bot a CTCP CHAT it was sending a 'NOTICE'
+    instead of a `PRIVMSG` (so you got a DCC CHAT reply :P)
+    Patch by: poptix
+
+  - Added a small 'program' to add patches for you it's called 'addpatch'
+    just run 'addpatch [patch]' and it will install it for you then check
+    for rejects for you etc.
+    Patch by: poptix
+
+  - Updated some more of the docs and the man page (what? eggdrop has a man
+    page?)
+    Patch by: poptix
+
+  - Changed all references to 'lamestbot' to 'eggdrop.conf'
+    Patch by: poptix
+
+  - Fixed the setting of 'laston' during a QUIT
+    Found by: ??? / Patch by: poptix
+
+
+1.1alpha+julius+pl4 (April 28, 2007):
+
+  # Patch by: Wild <jmcleod@pris.bc.ca>, poptix <poptix@wildstar.net>
+    [included in 1.1alpha+hayes]
+
+  - Implicit declaration of gotwall during compile
+    Patch by: poptix
+
+  - Bug in tclchan.c which caused the bot to crash
+    Patch by: Wild
+
+  - Routine to check for global_op/channel op status on channel (now also
+    checks for global owner/master), for +O bound dcc commands, affects
+    -/+ban, act, channel, deop, op, invite, kick, kickban, resetbans, say,
+    and topic.
+    Patch by: Wild
+
+
+1.1alpha+julius+pl3 (April 27, 2007):
+
+  # Patch by: dk <spackard@moran.mines.edu>
+    [included in 1.1alpha+hayes]
+ 
+  - Added information for crontabbing a bot without receiving emails from
+    cron
+    Patch by: LuckyStar
+
+  - Added a check to botchk for the bot userfile. If one doesn't exist, look
+    for the ~new and then the ~bak userfile.
+    Suggested by: LuckyStar / Patch by: dk
+
+  - Updated flag information in eggdrop.doc
+    Suggested by: LuckyStar / Patch by: dk
+
+  - Added information on Beldin's broadcast, channel join, and channel part
+    binds
+    Patch by: LuckyStar
+
+  - Updated the tricks file for the new style of binding built-in commands
+    in version 1.1.
+    Suggested by: LuckyStar / Patch by: dk
+
+  - Updated the eggdrop.conf file to include console info on wallops
+    Suggested by: LuckyStar / Patch by: dk
+
+  - Fixed bug where bot wouldn't compile with BEL_UNLINK_REASON undefed
+    Found by: EraseMe / Patch by: dk
+
+  - Removed BEL_NEWLINKS code from botnet.c as it really was of no use
+    Suggested by: LuckyStar / Patch by: dk
+
+  - Fixed relay bug of bot relaying from still showed the relayer as being
+    on the bot
+    Found by: LuckyStar / Patch by: dk
+
+  - Reduced topic array to 255 characters for memory concerns.
+    Patch by: dk
+
+  - Allowed botnet masters and channel masters to use .status, but only bot
+    masters can use .status all
+    Suggested by: LuckyStar / Patch by: dk
+
+  - Botnet masters can't boot bot masters
+    Suggested by: LuckyStar / Patch by: dk
+
+  - Allowed channel masters to be able to .reset #chan on channels they have
+    channel master
+    Suggested by: LuckyStar / Patch by: dk
+
+  - Fixed all DEFAULT_PORT log bugs
+    Found by: LuckyStar / Patch by: dk
+
+  - Added botnet master in dcc_check_attrs for reseting party-line flags
+    Patch by: dk
+
+  - Added wallops and log levels 6-8 to check_dcc_attrs for master console
+    modes
+    Patch by: dk
+
+  - Added dcc_check_chanattrs for all channel flags that operates similar to
+    dcc_check_attrs
+    Patch by: dk
+
+  - Fixed setting of channel flags bug for botnet masters
+    Found by: LuckyStar / Patch by: dk
+
+  - Modified command chattr to include implementation of dcc_check_chanattrs
+    Patch by: dk
+
+  - Fixed bug in +chrec that set flags +okm12 for that user on that channel
+    Found by: LuckyStar / Patch by: dk
+
+  - Fixed icon bug for user with no flags. Should be ' ' not '-'.
+    Found by: EraseMe / Patch by: dk
+
+  - Modified finding of console channel to prioritizing to find channel
+    owner if it exists, then channel master, then channel op
+    Suggested by: LuckyStar / Patch by: dk
+
+  - Allowed botnet masters to use dccstat
+    Suggested by: LuckyStar / Patch by: dk
+
+  - Made .msg command a global ops only command
+    Suggested by: LuckyStar / Patch by: dk
+
+  - Made msg_ident return if someone tried to ident the bots name. This
+    could be used as a detection method
+    Found by: TheGhost / Patch by: dk
+
+  - Fixed the msg_op bug
+    Found by: Jerry Sutton / Patch by: dk
+
+  - Fixed chanlist bug
+    Found by: LuckyStar / Patch by: dk
+
+  - Fixed dcclist bug
+    Patch by: Wild
+
+  - Fixed memory leak in userrec.c
+    Found by: peace / Patch by: dk
+
+
+1.1alpha+julius+pl2 (April 17, 1997):
+
+  # Patch by: dk <spackard@moran.mines.edu>
+    [included in 1.1alpha+hayes]
+
+  - Fixed the timezone and gotwall compiler errors
+    Patch by: dk
+
+  - Added check_tcl_wall code for bindings
+    Patch by: dk
+
+  - Various fixes to previous UPDATES entries
+
+  - Updated The Net info from EraseMe
+    Submitted by: EraseMe
+
+  - Removed the joins in got001. Appeared to be making the bot crash
+    whenever it tried to run gain-ops on a channel it had ops on already.
+    Patch by: dk
+
+  - Fixed "DEFAULT PORT" bug in loging of server jumps
+    Found by: LuckyStar / Patch by: dk
+
+  - Fixed botnet master help bug when botmaster had no global ops
+    Found by: LuckyStar / Patch by: dk
+
+  - Fixed botnet master to not require +p for partyline access
+    Found by: LuckyStar / Patch by: dk
+
+  - Fixed channel owner to also be channel master in sanity_check
+    Patch by: dk
+
+  - Fixed channel master bug being able to change attributes on other
+    channels
+    Found by: LuckyStar / Patch by: dk
+
+  - Fixed channel master bug being able to set +n on his channel
+    Found by: LuckyStar / Patch by: dk
+
+  - Added a fun little useless command (see if you can find it ;*)
+
+  - Put define BEL_NEWLINKS back into eggdrop.h (don't know how it
+    disappeared in the first place...)
+    Found by: LuckyStar / Patch by: dk
+
+  - Removed define BEL_LINK_SHAREBOTS since it wasn't being used anymore
+    Found by: LuckyStar / Patch by: dk
+
+  - Fixed bug in the hourly note notice code. It was sending a notice for
+    every potr being used on the bot.
+    Patch by: dk
+
+  - Fixed typo in BEL_NEWLINKS autolink function
+    Found by: LuckyStar / Patch by: dk
+
+  - Fixed new telnet users being able to use bot's nick
+    Found by: EraseMe / Patch by: dk
+
+  - Added a lot of context lines to help tracibility of bugs
+    Patch by: dk
+
+
+1.1alpha+julius+pl1 (April 14, 1997):
+
+  # Patch by: dk <spackard@moran.mines.edu>
+    [included in 1.1alpha+hayes]
+
+  - Fixed compile time warnings in cmds.c
+    Patch by: Beldin
+
+  - Added a Tcl command resetchan
+    Patch by: Beldin
+
+  - You can now set the bot to strip various codes which may prove to be
+    annoying to you
+    Patch by: billyjoe
+
+  - Bot will send the join command for each channel upon getting a 001
+    numeric, in case an anti-spoofing server rejected them
+    Patch by: garbanzo
+
+  - New console (+w) added, will let +m's see the wallops, three more log
+    levels added for a total of 8
+    Patch by: garbanzo
+
+  - Implemented +n channel flag for channel owner. channel owner can add and
+    remove channel masters and have access to all channel master commands.
+    Patch by: dk
+
+  - Implemented +B botnet master commands. botnet masters have access to all
+    commands that affect bots or the botnet.
+    Patch by: dk
+
+  - Added commands +/- bothost and chbotattr for botnet masters.
+    Patch by: dk
+
+  - Allowed channel masters to use status and +/- host for users on their
+    channel. +/- host checks if user has any flags for the channel the
+    channel master has master access on.
+    Patch by: dk
+
+  - Implemented psuedo flags +O/M/N for Tcl commands binds against channel
+    op, master, and owner flags respectively. Binds that came with a channel
+    check against that channel's flags. Binds that don't, check against all
+    channel's flags. +M/N/O cannot be set to a user in the bot.
+    Patch by: dk
+
+  - Changed .topic command so that if no arguements are provided, it returns
+    the channel's current topic. also added Tcl command topic <channel> that
+    returns the topic of that channel.
+    Suggested by: Ernst / Patch by: dk
+
+  - Fixed bug of sharing out null users
+    Patch by: Wild
+
+  - Fixed revenge bug where it said "Banning so and so now...", it was
+    setting the ban
+    Found by: DeathHand / Patch by: dk
+
+  - Removed function get_tcl_vars since it was just a stub
+    Patch by: dk
+
+  - Updated help files to reflect new +O/N/M flags
+    Patch by: dk
+
+  - Modified console command so that channel ops and channel masters that
+    don't have global ops or master access can't change their console to a
+    channel where they don't have channel ops or master
+    Patch by: dk
+
+  - Console channel set to the first channel where channel op/master/owner
+    flag is detected if user doesn't have respective global attributes when
+    first connecting to bot. Console set back to default if no channel flag
+    was detected.
+    Patch by: dk
+
+  - Added master_anywhere and owner_anywhere functions
+    Patch by: dk
+
+  - Set ENABLE_TCL to undefined by default
+    Suggested by: alot of people
+
+  - Added feature that bot notifies users in the bot or on a channel that
+    they have notes every hour. minute after the hour that this is done can
+    be set in the bot config file with notify-users-at.
+    Suggested by: blackjac / Patch by: dk
+
+  - Added variable timezone to config file to be used by Tcl scripts
+    Suggested by: Ernst / Patch by: dk
+
+  - Fixed recycling logfiles bug for keep-all-logs
+    Found by: BoGuS / Patch by: dk
+
+  - Changed msg_op command so that if a user has no password set, he can't
+    get opped for extra security
+    Patch by: dk
+
+  - Fixed a coding error in tputs in net.c when logging an error
+    Patch by: dk
+
+  - Fixed Tcl chanlist bug. Checks against channel flags and global flags
+    now.
+    Found by: LSC / Patch by: dk
+
+  - Extened Tcl dcclist command to include bots, files receiving, files
+    sending, and files send pending.
+    Suggested by: Ernst / Patch by: dk
+
+  - Changed botnet flags so that channel masters get master flag in whom and
+    channel owners get owner flag in whom.
+    Patch by: dk
+
+  - Only owners can change the passwords, addresses, nicks to shared bots or
+    delete hostmasks from shared bots or -user shared bots.
+    Suggested by: DeathHand / Patch by: dk
+
+  - Allowed for 8-bit channel names
+    Patch by: David Brauman
+
+  - Added botnet icon '%' for botnet masters
+    Patch by: dk
+
+  - Removed +g for global ops
+    Patch by: dk
+
+  - Updated info for Russian Net in nets.list
+    Submitted by: LuckyStar
+
+
+1.1alpha+julius+garbanzo (April 7, 1997):
+
+  # Patch by: garbanzo <garbanzo@hooked.net>
+    [partially included in 1.1alpha+hayes]
+
+  - You can now set the bot to strip various codes which may prove to be
+    annoying to you
+    Patch by: billyjoe
+
+  - Bot can be set not to boot people or not to boot masters on partyline
+    floods
+    [not included in 1.1alpha+hayes]
+    Patch by: garbanzo
+
+  - Bot will send the join command for each channel upon getting a 001
+    numeric, in case an anti-spoofing server rejected them
+    Patch by: garbanzo
+
+  - New console (+w) added, will let +m's see the wallops, three more log
+    levels added for a total of 8
+    Patch by: garbanzo
+
+
+1.1alpha+julius (April 2, 1997):
+
+  # Released by: dk <spackard@moran.mines.edu>
 
   - The nice little warning in case youre silly enough to eggdrop as root
     Patch by: poptix
@@ -1457,7 +1981,8 @@ Eggdrop Changes (since version 1.0)
     (also Tcl commands addchanrec & delchanrec)
     Patch by: Beldin
 
-  - .filestats <nick> & .filestats <nick> clear for view file stats from dcc (#define BEL_FILE_STATS)
+  - .filestats <nick> & .filestats <nick> clear for view file stats from dcc
+    (#define BEL_FILE_STATS)
     Patch by: Beldin
 
   - Fixed a bug in DCC_GET timeout's
@@ -1524,7 +2049,7 @@ Eggdrop Changes (since version 1.0)
     code
     Patch by: dk
 
-  - Added command .deluser which deletes a user from the hosthask of his
+  - Added command .deluser which deletes a user from the hostmask of his
     nick (main purpose is for channel masters to be able to remove users,
     but to only users currently on the channel. Channel masters cannot
     deluser bots, bot masters, or bot owners)
@@ -1576,11 +2101,11 @@ Eggdrop Changes (since version 1.0)
 
     + topic command was not letting users change the topic on a non +t
       channel when the bot was opless
-      Found by: deathhand / Patch by: cmwagner
+      Found by: DeathHand / Patch by: cmwagner
 
     + Users were not being deopped when channel is set +revenge and they
       deop
-      Found by: deathhand / Patch by: cmwagner
+      Found by: DeathHand / Patch by: cmwagner
 
   - Fixed major bug in +/-chrec
     Patch by: dk
@@ -1591,8 +2116,8 @@ Eggdrop Changes (since version 1.0)
   - Fixed bug in .restart, bot died on Tcl_DeleteInterp(interp);
     Patch by: dk
 
-  - Fixed bug in .trace, multiple traced responses (Reported by LSC)
-    Patch by: dk
+  - Fixed bug in .trace, multiple traced responses
+    Reported by: LSC / Patch by: dk
 
   - Fixed Channel Flag bug
     Reported by: Preston / Patch by: dk
@@ -1626,6 +2151,23 @@ Eggdrop Changes (since version 1.0)
 
   TO-DO:
 
+  - chanflags aren't treated right in tcl (to prevent overlap)
+  - dcc table should be used to cache user records
+
+  - File system:
+    + export directories to other bots. a notice is broadcast on the botnet
+      once each hour for your exported directories (to let other bots know)
+    + if 'auto-import' is on, send out an export-list-request when linking
+      to a new bot. whenever other bots broadcast exported directories,
+      auto-add those directories to the specified place
+    + set dcc-import-path "dcc/public/"
+      Snowbot exports "/gifs/party" as "pgifs" --> "dcc/public/Snowbot/pgifs"
+    + quota per-directory
+    + change required-flags spec from integer to chars (doh!)
+    + re-implement directory headers
+
+  TO-DO:
+
   - Tcl commands for:
       move/copy a file
       make/remove a dir
@@ -1643,9 +2185,464 @@ Eggdrop Changes (since version 1.0)
     Reported by: genady
 
 
+1.1alpha+grant+dk+pl3 (March 28, 1997):
+
+  # Patch by: dk <spackard@moran.mines.edu>
+    [included in 1.1alpha+julius]
+
+  - Allowed channel masters to use .adduser
+    Patch by: dk
+
+  - Allowed channel masters to use .chattr to modify channel flags only
+    Patch by: dk
+
+  - Allowed channel masters to use .save
+    Patch by: dk
+
+  - Allowed channel masters to use .reload
+    Patch by: dk
+
+  - Allowed channel masters to change their console to +oc (misc and
+    commands)
+    Patch by: dk
+
+  - Changed +/-ban for global bans to be a bot master only function
+    Patch by: dk
+
+  - Removed define BEL_CHAN_BANS. Made code for channel bans integrated in
+    code
+    Patch by: dk
+
+  - Added command .deluser which deletes a user from the hostmask of his
+    nick (main purpose is for channel masters to be able to remove users,
+    but to only users currently on the channel. Channel masters cannot
+    deluser bots, bot masters, or bot owners)
+    Patch by: dk
+
+  - Allowed all partyline users to use .nick
+    Patch by: dk
+
+  - Added ANSI style defines in header files to reduce compiling overhead
+    Patch by: dk
+
+  - Included any bug fixes in 1.0o+cmw+pl1-7 not included in grant+cmw+pl1-3
+    Patch by: cmwagner
+
+  - Included following updates from 1.0o to 1.0p:
+
+    + kickban reasons are now being included in the kick
+      Patch by: ???
+
+    + kickban will now let owner's kickban anyone, and masters can kickban
+      ops
+      Patch by: ???
+
+    + 437 numeric on DALnet/Undernet means you can't change your nickname
+      because your nickname is banned, plus some buffer overflow fixes
+      Patch by: cmwagner
+
+    + 437 numeric (nickname/channel is juped) has been changed to reflect
+      whether it is specfically the channel or the nickname, bot will not
+      change nicknames if the channel is juped :)
+      Found by: Ernst / Patch by: Robey
+
+    + Added 'restart' command, this may cause some problems
+      Patch by: cmwagner
+
+    + Long nickname mask in whois command caused bot to crash
+      Found by: Ernst / Patch by: cmwagner
+
+    + Space before ctcp commands would be stripped off, could be used to
+      detect eggdrop bots
+      Patch by: cmwagner
+
+    + When rehashing and the bot was using the alternate nickname it would
+      result in the bot thinking the nickname was in use and changing it
+      Found by: seth / Patch by: cmwagner
+
+    + Party line wasn't being updated when attributes were being changed
+      Found by: imoq / Patch by: cmwagner
+
+    + topic command was not letting users change the topic on a non +t
+      channel when the bot was opless
+      Found by: DeathHand / Patch by: cmwagner
+
+    + Users were not being deopped when channel is set +revenge and they
+      deop
+      Found by: DeathHand / Patch by: cmwagner
+
+  - Fixed major bug in +/-chrec
+    Patch by: dk
+
+  - Fixed bug in notes, sock # appearing in from
+    Reported by: LSC / Patch by: dk
+
+  - Fixed bug in .restart, bot died on Tcl_DeleteInterp(interp);
+    Patch by: dk
+
+
+1.1alpha+grant+dk+pl2 (March 25, 1997):
+
+  # Patch by: dk <spackard@moran.mines.edu>
+    [included in 1.1alpha+julius]
+
+  - Fixed kickban bug
+    Reported by: Jim Marco / Patch by: dk
+
+
+1.1alpha+grant+dk+pl1 (March 25, 1997):
+
+  # Patch by: dk <spackard@moran.mines.edu>
+    [included in 1.1alpha+julius]
+
+  - Fixed DL library detection in configure script after Tcl version
+    detection
+    Patch by: dk
+
+  - Fixed .nick bug
+    Patch by: dk
+
+
+1.1alpha+grant+pteron+pl1 (March 23, 1997):
+
+  # Patch by: pteron
+    [included in 1.1alpha+julius]
+
+  - Fixed msg help command to display ops only commands to channel ops
+    Patch by: pteron
+
+  - Fixed bitch mode to make bot not deop masters or bots
+    Patch by: pteron
+
+
+1.1alpha+grant+beldin4a/b/c/d/e:
+
+  # Patch by: Beldin <beldin@light.iinet.net.au>
+    [included in 1.1alpha+julius]
+
+  - Miscelaneous bug fixes + adding cmw's patches
+    Patch by: Beldin
+
+
+1.1alpha+grant+beldin1 (February 18, 1997):
+
+  # Patch by: Beldin <beldin@light.iinet.net.au>
+    [included in 1.1alpha+julius]
+
+  - The nice little warning in case youre silly enough to eggdrop as root
+    Patch by: poptix
+
+  - A whole slew of stuff fixing channel-specific flags with respect to
+    bans/kicks/ops, ie checking both global & channel-specific op flags etc
+    Patch by: Beldin
+
+  - binds for bot broadcasts (#define BEL_BROADCAST_BIND)
+    Patch by: Beldin
+
+  - binds for botnet channel join/parts (#define BEL_JOINS_PARTS)
+    Patch by: Beldin
+
+  - Bots can broadcast unlink reason (#define BEL_UNLINK_REASON)
+    Patch by: Beldin
+
+  - Channel *0-*99999 (100000->199999 to Tcl scripts) are local-to-the-bot
+    (#define BEL_LOCAL_CHANNELS)
+    Patch by: Beldin
+
+  - Rejects can be restricted (#define REJECT_FROM_NOWHERE, #define
+    REJECT_FROM_HUBS)
+    Patch by: Beldin
+
+  - Much better handling of assoc on botlink (ie they get passed ;) (#define
+    BEL_BETTER_ASSOC)
+    Patch by: Beldin
+
+  - Handle botlinking differently - all bots TRY to link to new bot before
+    unlinking old bot, priority is +sh, +h, +a (#define BEL_NEWLINKS) can
+    try to link all +sh's (#define BEL_LINK_SHAREHUBS)
+    Patch by: Beldin
+
+  - +ban <hostname> [channel] [reason] <- channel option added (#define
+    BEL_CHAN_BANS)
+    Patch by: Beldin
+
+  - +/- chrec for adding/removing channel records (#define BEL_CHAN_REC)
+    (also Tcl commands addchanrec & delchanrec)
+    Patch by: Beldin
+
+  - .filestats <nick> & .filestats <nick> clear for view file stats from dcc
+    (#define BEL_FILE_STATS)
+    Patch by: Beldin
+
+  - Fixed a bug in DCC_GET timeout's
+    Patch by: Beldin
+
+  - Included check for global +o's in stopnethack
+    Patch by: Beldin
+
+  - Added the BOUNCE_SERVER_BANS define
+    Patch by: poptix
+
+  - Fixed multiple /ctcp chat replies
+    Patch by: Beldin
+
+  - Added Tcl commands to maniplulate laston times & global laston info
+    (#define BEL_LASTON)
+    Patch by: Beldin
+
+  - files-path, incoming-path & filedb-path are read-only
+    Patch by: Beldin
+
+  - Add a Tcl boot command (can do remote boots also) (#define BEL_BOOTS)
+    Patch by: Beldin
+
+
+1.1alpha+grant+cmw+pl3 (February 11, 1997):
+
+  # Patch by: cmwagner <cmwagner@nando.sodre.net>
+    [included in 1.1alpha+julius]
+
+  - Missing idx for assoc tandout_but()
+    Patch by: cmwagner
+
+
+1.1alpha+grant+cmw+pl2 (February 11, 1997) (re-released February 13, 1997):
+
+  # Patch by: cmwagner <cmwagner@nando.sodre.net>
+    [included in 1.1alpha+julius]
+
+  - Use dcc[i].sock instead of idx for tandout_but()
+    Patch by: cmwagner
+
+
+1.1alpha+grant+cmw+pl1 (February 11, 1997) (revised February 13, 1997):
+
+  # Patch by: cmwagner <cmwagner@nando.sodre.net>
+    [included in 1.1alpha+julius]
+
+  - Correct the DL library bug in configure for systems that don't have the
+    DL libraries. DL libraries aren't needed even though the script thinks
+    they are.
+    Patch by: cmwagner
+
+
 1.1alpha+grant (February 5, 1997):
 
-  # New version from Robey Pointer <robey@netcom.com>
+  # Released by: Robey Pointer <robey@netcom.com>
+
+  - Address in '.dccstat' for telnet connections was reversed (fixed)
+
+  - Info lines can use euro characters now
+
+  - msg 'info' command requires a password
+    Patch by: ButchBub
+
+  - Stupid bug that made all Tcl ints appear as "uptime" (fixed)
+    Patch by: ButchBub
+
+  - Tcl 'unbind' was broke (fixed)
+    Patch by: ButchBub
+
+  - xtra field had a zillion "created" entries in it (fixed)
+    Patch by: ButchBub
+
+  - 'bans all' would crash (fixed)
+    Found by: Lefty / Patch by: Lefty, ButchBub
+
+  - Sharebots now share channel flags
+    Patch by: Lefty
+
+  - pid file is named after the botnet nick now
+    Patch by: Gaven Cohen
+
+  - gainops fixed for 1.1
+    Patch by: jonte
+
+  - +bitch mode was deop'ing all server ops, regardless of whether they had
+    ops before the split (fixed)
+    Found by: ButchBub
+
+  - Global op switched back to +o from +g
+
+  - Sharebots now share chan-specific info lines
+    Patch by: Beldin
+
+  - Tcl 'getjointime' added [called getchanjoin ;)]
+    Suggested by: Gaven Cohen
+
+  - '.match' can scan for chan-specific flags
+    Patch by: Beldin
+
+  - '.info', '.chinfo' support changing chan-specific info lines now
+    Patch by: Beldin, Robey
+
+  - msg 'info' supports chan-specific info lines too
+    Patch by: Beldin, Robey
+
+  - Tcl 'getchaninfo', 'setchaninfo' added
+    Patch by: Beldin
+
+  - Was reaffirming owners before switching to the new userfile after a
+    sharebot download (fixed)
+    Patch by: Beldin
+
+  - '.match' can accept "+m-g" etc (based on patch by Beldin)
+    Suggested by: tyson / Patch by: Beldin, Robey
+
+  - msg 'who' uses chan-specific info lines when appropriate
+
+  - Tcl 'listen' could screw up the dcc table on error (fixed)
+
+  - Logfiles stay open continuously now
+
+  - Sharebots will share bot's user-flags now
+    Suggested by: genady
+
+  - Finished converting help files
+
+  - Userfile gets backed up at midnight again
+
+  - Host removal for bot records over botnet wasn't working (fixed)
+
+  - Bug in assoc removal (fixed)
+    Patch by: Beldin
+
+  - On reload, aggressive bot will send userfile to passive sharebots again
+    Patch by: Beldin
+
+  - Bots can't use msgs to set a password
+    Patch by: Beldin
+
+  - Tracks uploads/dnloads per user (based on patch by Beldin)
+    Found by: Beldin / Patch by: Beldin, Robey
+
+  - Can set the 5 chanflags by 'chanflag#'
+    Patch by: Beldin
+
+  - Tcl 'chnick' can have the password omitted (to reset it)
+    Patch by: Beldin
+
+  - Local users going to the file system just look "away" to remote users
+    Patch by: poptix
+
+    Maintainer: Robey
+
+  TO-DO:
+
+  - chanflags aren't treated right in tcl (to prevent overlap)
+  - when checking flags for dcc commands, take console channel settings into
+    account (local channel +o, +m)
+  - dcc table should be used to cache user records
+  - link to +sh bots the way a +h link works
+    Suggested by: genady
+  - channel master
+    Suggested by: by-tor
+  - +ban/-ban to be specific to your console channel: +gban/-gban for global
+    bans
+
+  - File system:
+    + export directories to other bots. a notice is broadcast on the botnet
+      once each hour for your exported directories (to let other bots know)
+    + if 'auto-import' is on, send out an export-list-request when linking
+      to a new bot. whenever other bots broadcast exported directories,
+      auto-add those directories to the specified place
+    + set dcc-import-path "dcc/public/"
+      Snowbot exports "/gifs/party" as "pgifs" --> "dcc/public/Snowbot/pgifs"
+    + quota per-directory
+    + change required-flags spec from integer to chars (doh!)
+    + re-implement directory headers
+
+  TO-DO:
+
+  - Tcl commands for:
+      move/copy a file
+      make/remove a dir
+      get/set a dir's required flags
+      get # of downloads for a file
+  - files '.mv' move directories
+    Suggested by: andrej
+  - '.sort' to sort files
+
+  BUG REPORTS:
+
+  - dcc chat with firewalled bot doesn't seem to work (error 2)
+    Reported by: Rajat Goel
+  - Telnet port sometimes gets lost
+    Reported by: genady
+
+
+1.1alpha+lincoln+beldin1 (January 26, 1997):
+
+  # Patch by: Beldin <beldin@light.iinet.net.au>
+
+  - Info line needs to be password protected
+    [not included in 1.1alpha+grant]
+    Patch by: Beldin
+
+  - Let users set their own chan-specific info lines
+    [partially included in 1.1alpha+grant]
+    Patch by: Beldin
+
+  - Tcl commands to:
+      get info line for one channel 
+      set info line for one channel
+    [included in 1.1alpha+grant]
+    Patch by: Beldin
+
+  - Display channel-specific info lines
+    [partially included in 1.1alpha+grant]
+    Patch by: Beldin
+
+  - A non-elegant solution to the {created #} problem
+    [not included in 1.1alpha+grant]
+    Patch by: Beldin
+
+  - similar problem with NO_IRC (fixed)
+    [not included in 1.1alpha+grant]
+    Patch by: Beldin
+
+
+1.1alpha+lincoln+kin1 (January 16, 1997):
+
+  # Patch by: Gaven Cohen <kinslayer@nxp.co.za>
+
+  - {created [unixtime]} extra field added everytime userfile is loaded.
+    (disabled until someone who knows C fixes up)
+    [not included in 1.1alpha+grant]
+    Patch by: Gaven Cohen
+
+  - Defining NO_FILE_SYSTEM would result in the bot not recognizing normal
+    commands (fixed)
+    [not included in 1.1alpha+grant]
+    Patch by: Gaven Cohen
+
+  - Added compile time option in eggdrop.h to specify whether to use
+    pid.origbotname or pid.botnetnick for the pid file
+    [partially included in 1.1alpha+grant]
+    Patch by: Gaven Cohen
+
+
+1.1alpha+lincoln+lefty2:
+
+  # Patch by: Lefty <lefty@sojourn.com>
+    [included in 1.1alpha+grant]
+
+  - "chattr nick +flg #chan" botnet not working (fixed)
+    Patch by: Lefty
+
+
+1.1alpha+lincoln+lefty1 (January 10, 1997):
+
+  # Patch by: Lefty <lefty@sojourn.com>
+    [partially included in 1.1alpha+grant]
+
+  - ".bans all" would crash the bot w/SEGMENT VIOLATION (fixed)
+    Patch by: Lefty
+
+
+1.1alpha+lincoln (January 5, 1997):
+
+  # Released by: Robey Pointer <robey@netcom.com>
 
   - Notes tell you if they're going to expire soon
 
@@ -1839,147 +2836,41 @@ Eggdrop Changes (since version 1.0)
 
   TO-DO:
 
-  - Chanflags aren't treated right in Tcl (to prevent overlap)
-  - When checking flags for dcc commands, take console channel settings into
-    account (local channel +o, +m)
   - dcc table should be used to cache user records
-  - Link to +sh bots the way a +h link works
+  - info line needs to be password protected
+  - link to +sh bots the way a +h link works
     Suggested by: genady
-  - Channel master
+  - way to retrieve join-time for a user on a channel
+    Suggested by: Gaven Cohen
+  - '.match' ought to have a way to scan for chan-specific flags
+  - '.match' accept "+m-g" etc?
+    Suggested by: tyson
+  - help files: fix up the rest of dcc/ (filesys/ done.  set/ done.)
+    need finishing: m and on
+  - tcl commands to:
+    get info line for one channel
+    set info line for one channel
+    get laston for one channel
+    set laston for one channel
+  - display channel-specific info lines
+  - let users set their own chan-specific info lines
+  - sharebots share user-flags for bots
+    Suggested by: genady
+  - channel master
     Suggested by: by-tor
-  - +ban/-ban to be specific to your console channel: +gban/-gban for global
-    bans
+
   - File system:
     + export directories to other bots. a notice is broadcast on the botnet
       once each hour for your exported directories (to let other bots know)
     + if 'auto-import' is on, send out an export-list-request when linking
       to a new bot. whenever other bots broadcast exported directories,
       auto-add those directories to the specified place
-    + set dcc-import-path "dcc/public/" Snowbot exports "/gifs/party" as
-      "pgifs" --> "dcc/public/Snowbot/pgifs"
+    + set dcc-import-path "dcc/public/"
+      Snowbot exports "/gifs/party" as "pgifs" --> "dcc/public/Snowbot/pgifs"
     + quota per-directory
     + change required-flags spec from integer to chars (doh!)
+    + track upload-k/download-k/upload-files/download-files per user
     + re-implement directory headers
-
-  TO-DO:
-
-  - Tcl commands for:
-      move/copy a file
-      make/remove a dir
-      get/set a dir's required flags
-      get # of downloads for a file
-  - files '.mv' move directories
-    Suggested by: andrej
-  - '.sort' to sort files
-
-  BUG REPORTS:
-
-  - dcc chat with firewalled bot doesn't seem to work (error 2)
-    Reported by: Rajat Goel
-  - Telnet port sometimes gets lost
-    Reported by: genady
-
-
-1.1alpha+lincoln:
-
-  # New version from Robey Pointer <robey@netcom.com>
-
-  - Address in '.dccstat' for telnet connections was reversed (fixed)
-
-  - Info lines can use euro characters now
-
-  - msg 'info' command requires a password
-    Patch by: ButchBub
-
-  - Stupid bug that made all Tcl ints appear as "uptime" (fixed)
-    Patch by: ButchBub
-
-  - Tcl 'unbind' was broke (fixed)
-    Patch by: ButchBub
-
-  - xtra field had a zillion "created" entries in it (fixed)
-    Patch by: ButchBub
-
-  - 'bans all' would crash (fixed)
-    Patch by: ButchBub
-
-  - Sharebots now share channel flags
-    Patch by: Jeff Hartman
-
-  - pid file is named after the botnet nick now
-    Patch by: Gaven Cohen
-
-  - gainops fixed for 1.1
-    Patch by: jonte
-
-  - +bitch mode was deop'ing all server ops, regardless of whether they had
-    ops before the split (fixed)
-    Found by: ButchBub
-
-  - Global op switched back to +o from +g
-
-  - Sharebots now share chan-specific info lines
-    Patch by: Beldin
-
-  - Tcl 'getjointime' added [called getchanjoin ;)]
-    Suggested by: Gaven Cohen
-
-  - '.match' can scan for chan-specific flags
-    Patch by: Beldin
-
-  - '.info', '.chinfo' support changing chan-specific info lines now
-    Patch by: Beldin, Robey
-
-  - msg 'info' supports chan-specific info lines too
-    Patch by: Beldin, Robey
-
-  - Tcl 'getchaninfo', 'setchaninfo' added
-    Patch by: Beldin
-
-  - Was reaffirming owners before switching to the new userfile after a
-    sharebot download (fixed)
-    Patch by: Beldin
-
-  - '.match' can accept "+m-g" etc (based on patch by Beldin)
-    Suggested by: tyson / Patch by: Beldin, Robey
-
-  - msg 'who' uses chan-specific info lines when appropriate
-
-  - Tcl 'listen' could screw up the dcc table on error (fixed)
-
-  - Logfiles stay open continuously now
-
-  - Sharebots will share bot's user-flags now
-    Suggested by: genady
-
-  - Finished converting help files
-
-  - Userfile gets backed up at midnight again
-
-  - Host removal for bot records over botnet wasn't working (fixed)
-
-  - Bug in assoc removal (fixed)
-    Patch by: Beldin
-
-  - On reload, aggressive bot will send userfile to passive sharebots again
-    Patch by: Beldin
-
-  - Bots can't use msgs to set a password
-    Patch by: Beldin
-
-  - Tracks uploads/dnloads per user (based on patch by Beldin)
-    Found by: Beldin / Patch by: Beldin, Robey
-
-  - Can set the 5 chanflags by 'chanflag#'
-    Patch by: Beldin
-
-  - Tcl 'chnick' can have the password omitted (to reset it)
-    Patch by: Beldin
-
-  - Local users going to the file system just look "away" to remote users
-    Patch by: poptix
-
-    Maintainer: Robey
 
   TO-DO:
 
