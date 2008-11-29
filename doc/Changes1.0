@@ -1,12 +1,146 @@
-$Id: Changes1.0,v 1.3 2008/11/19 01:47:43 tothwolf Exp $
+$Id: Changes1.0,v 1.4 2008/11/29 14:39:45 tothwolf Exp $
 
 Eggdrop Changes (since version 0.9)
 
     _____________________________________________________________________
 
+
+1.0t  (June 8, 1998):
+
+  # Released by: KingKurly <kurly@mindless.com>
+
+  - Added 'make install' to the 1.0 series. You can still use putegg if you
+    insist, but make install is just too cool to pass up.
+
+  - Fixed a few annoying little warnings at compile time. Doesn't change
+    functionality at all. How exciting.
+
+  - Fixed a spelling error or two in the config. Now this is PROOF that I'm
+    bored.
+
+  - If you already run a happy 1.0p fully patched, or a 1.0s, this is really
+    an unneeded version. I only put it together in boredom. Note how the
+    last two versions I put out were also products of the summer boredom.
+
+
+1.0s (July 14, 1997):
+
+  # Released by: KingKurly <kurly@mindless.com>
+
+  - Directory/file structure more like 1.1.x.
+
+  - More tcl scripts loaded by default.
+
+
+1.0r (July 13, 1997):
+
+  # Released by: KingKurly <kurly@mindless.com>
+    [not public, unreleased due to unplugged security hole]
+
+  - Fixed a small compilation time warning from main.c
+
+
+1.0q (June 1997):
+
+  # Released by: KingKurly <kurly@mindless.com>
+    [not public, internal testing] (basically just 1.0p+dk+pl6)
+
+  - Added info to README and botchk on how to setup a cron without receiving
+    emails from cron.
+
+  - Added check for a userfile in botchk. Move the ~new or ~bak file over
+    if one doesn't exist.
+
+  - Fixed flag bindings for help files.
+
+  - Added console wallops to log wallops sent to bot. Also added user def'd
+    log levels 6-8.
+
+  - Updated nets.list for RussianNet and The-Net.
+
+  - Added action.fix.tcl to the standard tcl scripts.
+
+  - Added tcl command topic that returns the topic of the channel given to
+    it. Also .topic without arguments returns the console channel's topic.
+
+  - Fixed nulluser from being shared out.
+
+  - Added define for the default irc port to connect to in eggdrop.h
+
+  - Fixed revenge bug of "Banning so and so now..." not setting a ban.
+
+  - Made +ban be able to set channel specific bans. Also -ban <hostmask>
+    will remove matching channel bans.
+
+  - Made it so only owners can change a shared bot's password.
+
+  - New telnet users can't use the bot's name as a username.
+
+  - Ported beldin's NEWLINKS code from 1.1
+
+  - Made .nick be able to be used by any partyline users
+
+  - Added feature that bot msgs users on channel and partyline that they
+    have notes every hour. The time after the hour is set in the config file
+    with set notify-users-at.
+
+  - Added an extra * in front of the username in maskhost in case of users
+    not running ident.
+
+  - msg_ident returns if person tries to ident with bot's name. Could be
+    used for detection.
+
+  - msg_op requires a password to be set in order to op a user. Also,
+    msg_op can take a channel as an arguement and only op the user in that
+    channel instead of all the channels.
+
+  - Fixed bug in tputs with logging an invalid socket.
+
+  - Added setting timezone in config for scripting purposes to keep track of
+    the bots timezone.
+
+  - Added tcl command resetchan from julius+bel1.
+
+  - Expanded tcl command dcclist to include bots, files receiving, files
+    sending, and files send pending.
+
+  - Fixed memory leak in userrec.c
+
+  - Allowed channels with 8-bit characters in channels.
+
+  - Undoes the fix in dk+pl4 for the broken file system.
+
+  - Includes the corrected patch by poptix to change users going to the file
+    system from parting to just being away. Fixes .whom bug.
+
+  - Fix in altnick suggested by Wild
+
+  - .whom bug fix for users going to a broken file system
+
+  - Fix for notes coming in from 1.1 Eggies
+
+  - Implementation of -user -host and chattr on shared bots for bot entries,
+    but will not affect bots marked +s.
+
+  - Added share-greet to config file. 0 means do not send out info
+    change to shared bots, 1 do.
+
+  - Fix for the telnet (dropping a relay) bug reported by DK.
+
+  - Changes the structure of the "special" character handling code in the
+    dcc_chat function in dcc.c to a for loop instead of a while loop.
+
+  - Added the code for ESC characters from beldin4e.
+
+  - Updated nets.list
+
+  - Fix for new 1.1 partyline join/part stuff, 1.1 - 1.0 - 1.1 botnets now
+    work properly.
+
+
 1.0p (March 16, 1997):
 
-  # Maintenance release from Wade
+  # Released by: Wade
 
   - Kickban reasons are now being included in the kick
     Patch by: ???
@@ -102,7 +236,7 @@ Eggdrop Changes (since version 0.9)
 
 1.0o (February 4, 1997):
 
-  # Released by: Robey Pointer <robey@netcom.com>
+  # Released by: Robey [Robey Pointer <robey@netcom.com>]
 
   - Solaris sigaction thingy fixed
     Patch by: dunk
@@ -122,8 +256,6 @@ Eggdrop Changes (since version 0.9)
     Patch by: poptix
 
   - Other bots can't use msg 'ident' command
-
-    Maintainer: Robey
 
   TO-DO:
 
@@ -165,7 +297,7 @@ Eggdrop Changes (since version 0.9)
 
 1.0n (Jauary 6, 1997):
 
-  # Released by: Robey Pointer <robey@netcom.com>
+  # Released by: Robey [Robey Pointer <robey@netcom.com>]
 
   - Moved to GNU GPL licensing
 
@@ -263,8 +395,6 @@ Eggdrop Changes (since version 0.9)
 
   - Updated the README file
 
-    Maintainer: Robey
-
   TO-DO:
 
   - Allow dynamic bans to be marked as "forced"?  (ie, most bans are dynamic
@@ -305,7 +435,7 @@ Eggdrop Changes (since version 0.9)
 
 1.0m (December 4, 1996):
 
-  # Released by: Robey Pointer <robey@netcom.com>
+  # Released by: Robey [Robey Pointer <robey@netcom.com>]
 
   - '.kick' was broken (that's what i get for meddling) (fixed)
     Found by: tuvix
@@ -358,8 +488,6 @@ Eggdrop Changes (since version 0.9)
   - whom info wouldn't get updated on a Tcl 'setchan' (fixed)
     Patch by: Beldin
 
-    Maintainer: Robey
-
   TO-DO:
 
   - Allow dynamic bans to be marked as "forced"?  (ie, most bans are dynamic
@@ -400,10 +528,10 @@ Eggdrop Changes (since version 0.9)
 
 1.0l (November 11, 1996):
 
-  # Released by: Robey Pointer <robey@netcom.com>
+  # Released by: Robey [Robey Pointer <robey@netcom.com>]
 
   - Typo in ques3 (fixed)
-    Found by: gord-
+    Found by: Gord-
 
   - Limbo bot had compilation error (fixed)
     Found by: imoq
@@ -444,7 +572,7 @@ Eggdrop Changes (since version 0.9)
 
   - Tcl 'getinfo' was stripping off the leading @ on an info line if it was
     locked (fixed)
-    Found by: gord-
+    Found by: Gord-
 
   - dcc 'kick' command follows 'kickban'-style checking now
     Suggested by: Bert Bohla
@@ -457,7 +585,7 @@ Eggdrop Changes (since version 0.9)
     Found by: edmiester
 
   - Remote boot was getting logged incorrectly (fixed)
-    Found by: gord-
+    Found by: Gord-
 
   - Display of ban in 'match' is better looking now
 
@@ -537,8 +665,6 @@ Eggdrop Changes (since version 0.9)
 
   - Better i-line detection
 
-    Maintainer: Robey
-
   TO-DO:
 
   - Allow dynamic bans to be marked as "forced"?  (ie, most bans are dynamic
@@ -578,12 +704,12 @@ Eggdrop Changes (since version 0.9)
 
 1.0k (October 17, 1996):
 
-  # Released by: Robey Pointer <robey@netcom.com>
+  # Released by: Robey [Robey Pointer <robey@netcom.com>]
 
   - Spelling fixes
 
   - Whom signoff notice was mangled when relaying off the bot (fixed)
-    Found by: gord-
+    Found by: Gord-
 
   - If expired dynamic bans weren't removed quickly enough by the server,
     the bot would obsessively deban once a minute until the server reacted
@@ -610,7 +736,7 @@ Eggdrop Changes (since version 0.9)
     Suggested by: Jesse Schachter
 
   - New Tcl command 'whom'
-    Suggested by: gord-
+    Suggested by: Gord-
 
   - Fake connections trapped by net module now (was causing failed connects
     to look like successful connects that got immediately dropped)
@@ -671,7 +797,7 @@ Eggdrop Changes (since version 0.9)
   - When restructuring botnet to get to a +sh bot, if the direct uplink is
     not +sh, this bot will disconnect from the uplink instead of asking the
     remote +sh to unlink
-    Suggested by: gord-, genady
+    Suggested by: Gord-, genady
 
   - Sharebots will share hostmasks & addresses for bots (and ONLY that info)
 
@@ -680,11 +806,9 @@ Eggdrop Changes (since version 0.9)
   - weed will expire old bans and ignores if you want it to
 
   - 'setlaston' will take an optional timestamp argument
-    Suggested by: gord-
+    Suggested by: Gord-
 
   - Added 'flush' command to flush resync buffers
-
-    Maintainer: Robey
 
   TO-DO:
 
@@ -725,7 +849,7 @@ Eggdrop Changes (since version 0.9)
 
 1.0j (October 8, 1996):
 
-  # Released by: Robey Pointer <robey@netcom.com>
+  # Released by: Robey [Robey Pointer <robey@netcom.com>]
 
   - Bug in limbo bots (wouldn't compile) (fixed)
 
@@ -843,8 +967,6 @@ Eggdrop Changes (since version 0.9)
   - Spelling error in "incompatible" (fixed)
     Found by: dvlsadvct
 
-    Maintainer: Robey
-
   TO-DO:
 
   - Allow dynamic bans to be marked as "forced"?  (ie, most bans are dynamic
@@ -881,7 +1003,7 @@ Eggdrop Changes (since version 0.9)
 
 1.0i (September 10, 1996):
 
-  # Released by: Robey Pointer <robey@netcom.com>
+  # Released by: Robey [Robey Pointer <robey@netcom.com>]
 
   - New Tcl commands 'encrypt' and 'decrypt' to interface blowfish
 
@@ -991,8 +1113,6 @@ Eggdrop Changes (since version 0.9)
 
   - getmyip() returned to normal behavior (see note in net.c)
 
-    Maintainer: Robey
-
   TO-DO:
 
   - Allow dynamic bans to be marked as "forced"?  (ie, most bans are dynamic
@@ -1031,7 +1151,7 @@ Eggdrop Changes (since version 0.9)
 
 1.0h (August 7, 1996):
 
-  # Released by: Robey Pointer <robey@netcom.com>
+  # Released by: Robey [Robey Pointer <robey@netcom.com>]
 
   - Spelling mistake
     Found by: blackjac
@@ -1150,8 +1270,6 @@ Eggdrop Changes (since version 0.9)
 
   - Handles FPE signal
 
-    Maintainer: Robey
-
   TO-DO:
 
   - Allow dynamic bans to be marked as "forced"?  (ie, most bans are dynamic
@@ -1176,7 +1294,7 @@ Eggdrop Changes (since version 0.9)
 
 1.0g (July 23, 1996):
 
-  # Released by: Robey Pointer <robey@netcom.com>
+  # Released by: Robey [Robey Pointer <robey@netcom.com>]
 
   - Tcl 'killdcc' could kill off the terminal (HQ) user in -nt mode (fixed)
     Found by: cmwagner
@@ -1258,11 +1376,9 @@ Eggdrop Changes (since version 0.9)
     to announce that the user had rejoined the party line (fixed)
 
   - PRIVATE_OWNER define wasn't actually working (fixed)
-    Found by: gord-
+    Found by: Gord-
 
   - Updated 'weed' for new userfile format
-
-    Maintainer: Robey
 
   TO-DO:
 
@@ -1286,7 +1402,7 @@ Eggdrop Changes (since version 0.9)
 
 1.0f (July 6, 1996):
 
-  # Released by: Robey Pointer <robey@netcom.com>
+  # Released by: Robey [Robey Pointer <robey@netcom.com>]
 
   - Various patches to fix socket 1 getting treated special when the bot is
     in the background
@@ -1346,8 +1462,6 @@ Eggdrop Changes (since version 0.9)
   - Could possibly flood itself off with channel joins when starting up
     (fixed)
 
-    Maintainer: Robey
-
   TO-DO:
 
   - Allow dynamic bans to be marked as "forced"?  (ie, most bans are dynamic
@@ -1370,7 +1484,7 @@ Eggdrop Changes (since version 0.9)
 
 1.0e (Jul 2, 1996):
 
-  # Released by: Robey Pointer <robey@netcom.com>
+  # Released by: Robey [Robey Pointer <robey@netcom.com>]
 
   - Might confuse lag for a desync, and not kick people who joined while a
     ban was being placed ("after" the ban was placed, from the bot's point
@@ -1437,8 +1551,6 @@ Eggdrop Changes (since version 0.9)
     background (ie, most of the time) and re-uses fd's 0-2 (server will
     generally be socket 0 now)
 
-    Maintainer: Robey
-
   TO-DO:
 
   - Allow dynamic bans to be marked as "forced"?  (ie, most bans are dynamic
@@ -1466,7 +1578,7 @@ Eggdrop Changes (since version 0.9)
 
 1.0d (June 12, 1996):
 
-  # Released by: Robey Pointer <robey@netcom.com>
+  # Released by: Robey [Robey Pointer <robey@netcom.com>]
 
   - Turning off flood protection wasn't working for dcc chat (fixed)
 
@@ -1494,8 +1606,6 @@ Eggdrop Changes (since version 0.9)
 
   - Might have fixed OSF/1 problems with DNS
 
-    Maintainer: Robey
-
   TO-DO:
 
   - Allow dynamic bans to be marked as "forced"?  (ie, most bans are dynamic
@@ -1521,7 +1631,7 @@ Eggdrop Changes (since version 0.9)
 
 1.0c (June 1, 1996):
 
-  # Released by: Robey Pointer <robey@netcom.com>
+  # Released by: Robey [Robey Pointer <robey@netcom.com>]
 
   - Remote 'who' info was putting garbage before the channel list (fixed)
 
@@ -1549,7 +1659,7 @@ Eggdrop Changes (since version 0.9)
   - Really dumps bots when they abort the userfile transfer now
 
   - Userfile sends were choking (fixed)
-    Found by: gord-
+    Found by: Gord-
 
   - Was checking for connect timeout even when between servers (fixed)
 
@@ -1594,8 +1704,6 @@ Eggdrop Changes (since version 0.9)
   - sharebot_boots wasn't really checking for sharebots (fixed)
     Found by: blackjac
 
-    Maintainer: Robey
-
   TO-DO:
 
   - Allow dynamic bans to be marked as "forced"?  (ie, most bans are dynamic
@@ -1618,7 +1726,7 @@ Eggdrop Changes (since version 0.9)
 
 1.0b (May 20, 1996):
 
-  # Released by: Robey Pointer <robey@netcom.com>
+  # Released by: Robey [Robey Pointer <robey@netcom.com>]
 
   - Owners couldn't add hostmasks to each other with '+host' (fixed)
     Found by: waxmaster
@@ -1682,8 +1790,6 @@ Eggdrop Changes (since version 0.9)
   - Could send fake bot rejections (fixed)
     Patch by: cmwagner
 
-    Maintainer: Robey
-
   TO-DO:
 
   - Allow dynamic bans to be marked as "forced"?  (ie, most bans are dynamic
@@ -1705,7 +1811,7 @@ Eggdrop Changes (since version 0.9)
 
 1.0a (May 4, 1996):
 
-  # Released by: Robey Pointer <robey@acolyte.slip.netcom.com>
+  # Released by: Robey [Robey Pointer <robey@acolyte.slip.netcom.com>]
 
   - Can use 'ENABLE_TCL' to turn off the '.tcl' command now
     Suggested by: Jay S. Monk
@@ -1738,7 +1844,7 @@ Eggdrop Changes (since version 0.9)
     Found by: dan
 
   - Small fix to quesedilla
-    Patch by: gord-
+    Patch by: Gord-
 
   - Dropped relay connections weren't REALLY reseting echo (fixed)
     Found by: imoq
@@ -1801,8 +1907,6 @@ Eggdrop Changes (since version 0.9)
   - Some socket/fd leaks in the file system could lead to unpredictable
     filedbs i think (fixed)
 
-    Maintainer: Robey
-
   TO-DO:
 
   - Allow dynamic bans to be marked as "forced"?  (ie, most bans are dynamic
@@ -1823,7 +1927,7 @@ Eggdrop Changes (since version 0.9)
 
 1.0 (April 7, 1996):
 
-  # Released by: Robey Pointer <robey@acolyte.slip.netcom.com>
+  # Released by: Robey [Robey Pointer <robey@acolyte.slip.netcom.com>]
 
   - Security patch for 'pass' command
     Patch by: cyberscape
@@ -2040,7 +2144,7 @@ Eggdrop Changes (since version 0.9)
     Found by: cmwagner
 
   - Owners couldn't even boot themselves (fixed)
-    Found by: gord-
+    Found by: Gord-
 
   - 'chattr' was letting you do +b/-b when it shouldn't (fixed)
 
@@ -2084,8 +2188,6 @@ Eggdrop Changes (since version 0.9)
   - Excessive repetitive invites are no longer logged
     Suggested by: derrick
 
-    Maintainer: Robey
-
   TO-DO:
 
   - Allow dynamic bans to be marked as "forced"?  (ie, most bans are dynamic
@@ -2112,16 +2214,14 @@ Eggdrop Changes (since version 0.9)
 
 1.0beta-turtle-patched (April 3, 1996):
 
-  # Patch from Robey Pointer <robey@acolyte.slip.netcom.com>
+  # Patch by: Robey [Robey Pointer <robey@acolyte.slip.netcom.com>]
 
   - Bugfix patch
-
-    Maintainer: Robey
 
 
 1.0beta-turtle (April 1, 1996):
 
-  # Released by: Robey Pointer <robey@acolyte.slip.netcom.com>
+  # Released by: Robey [Robey Pointer <robey@acolyte.slip.netcom.com>]
 
   - Better way to prevent the bot from going "idle"
 
@@ -2129,7 +2229,7 @@ Eggdrop Changes (since version 0.9)
     Found by: cmwagner
 
   - Owners couldn't even boot themselves (fixed)
-    Found by: gord-
+    Found by: Gord-
 
   - 'chattr' was letting you do +b/-b when it shouldn't (fixed)
 
@@ -2149,8 +2249,6 @@ Eggdrop Changes (since version 0.9)
     loading-userfile phase will be faster
 
   - New console level 's' to record server connect/disconnect/etc
-
-    Maintainer: Robey
 
   TO-DO:
 
@@ -2176,7 +2274,7 @@ Eggdrop Changes (since version 0.9)
 
 1.0beta-stegosaurus (March 28, 1996):
 
-  # Released by: Robey Pointer <robey@acolyte.slip.netcom.com>
+  # Released by: Robey [Robey Pointer <robey@acolyte.slip.netcom.com>]
 
   - Userfile transfers happen via a DCC send connection now (might be
     faster)
@@ -2196,8 +2294,6 @@ Eggdrop Changes (since version 0.9)
     ("yer a dork!") (fixed)
     Found by: Fred1
 
-    Maintainer: Robey
-
   TO-DO:
 
   - Allow dynamic bans to be marked as "forced"?  (ie, most bans are dynamic
@@ -2212,7 +2308,7 @@ Eggdrop Changes (since version 0.9)
 
 1.0beta-rabbit (Mar 25, 1996):
 
-  # Released by: Robey Pointer <robey@acolyte.slip.netcom.com>
+  # Released by: Robey [Robey Pointer <robey@acolyte.slip.netcom.com>]
 
   - Security patch for 'pass' command
     Patch by: cyberscape
@@ -2404,8 +2500,6 @@ Eggdrop Changes (since version 0.9)
     Found by: dorgan
 
   - Moved ' local-only chat to a Tcl script so it's optional
-
-    Maintainer: Robey
 
   TO-DO:
 

@@ -1,4 +1,4 @@
-$Id: Versions,v 1.5 2008/11/19 01:47:44 tothwolf Exp $
+$Id: Versions,v 1.6 2008/11/29 14:39:46 tothwolf Exp $
 
 This file lists the release dates for most of the officially released
 versions of Eggdrop and notes forks, bug fix patches and maintenance
@@ -92,11 +92,11 @@ Version    Release date
 1.3.0gamma
 1.3.0beta
 1.3.0pre+bel1
-1.3.0pre+TG2      
+1.3.0pre+TG2
 1.3.0pre+TG
 1.3.0pre+BBub1
 1.3.0pre
-1.2.2+bel5     
+1.2.2+bel5
 1.2.2+bel4
 1.2.2+bel3
 1.2.2+bel2
@@ -124,9 +124,9 @@ Version    Release date
 1.2.0+bel11
 1.2.0+kkdoc
 1.2.0+bel10
-1.2.0+BBub4 
+1.2.0+BBub4
 1.2.0+bel9
-1.2.0+bel8 
+1.2.0+bel8
 1.2.0+ident              Support telnet identd verification to stop botscans
 1.2.0+BBlang3
 1.2.0+bel7+pop1
@@ -135,7 +135,7 @@ Version    Release date
 1.2.0+bel5
 1.2.0+bel4
 1.2.0+bel3+BBlang+kk
-1.2.0+bel2+BBlang      
+1.2.0+bel2+BBlang
 1.2.0+bel1
 1.2.0      Aug  7, 1997  alpha code, premature unofficial release
                          Beginning of language file support
@@ -143,8 +143,10 @@ Version    Release date
   The exact dates for most of the 1.2.x series are unknown. 1.2 was never
   intended to be a release tree but 1.2.0 was released by a 3rd party.
 
-1.1.5      Jun 29, 1997
-1.1.4      Jun 22, 1997
+1.1.6+w1   Oct  3, 1999  Maintenance patch by Wild
+1.1.6      Jun 17, 1999  Maintenance patch by Wild
+1.1.5      Jun 29, 1997  Released by Beldin
+1.1.4      Jun 22, 1997  Released by Beldin
 1.1.3+pl3
 1.1.3+pl2
 1.1.3+pl1
@@ -163,14 +165,15 @@ Version    Release date
 1.1alpha versions:
 
   Most of the 1.1 alpha versions were named after former US presidents. The
-  majority of the earlier versions done by Robey never saw a general
-  release. Many of the later 1.1 alphas were made available as gzip'd tar
-  archives and patches. Because of this, the exact release dates for many of
-  these versions are unknown.
+  1.1 alpha versions prior to 'lincoln' never saw a general release and may
+  have never even existed. (The first reference to any 1.1alpha versions
+  prior to 'lincoln' is in one of dk's patches.) Many of the later 1.1
+  alphas were made available as gzip'd tar archives and patches. Release or
+  creation dates that are known are included below.
 
   The 'a.johnson' name had been used by the lincoln
-  +lefty1+lefty2+kin1+beldin1 patchset and was skipped by for the next
-  version, which was released by Robey as 'grant'.
+  +lefty1+lefty2+kin1+beldin1 patchset and was skipped for the next version,
+  which Robey released as 'grant'.
 
   There was a naming scheme deviation after 'grant'. The next version before
   'hayes' was named 'julius'. This note is from the main.c file in 'hayes':
@@ -207,7 +210,7 @@ grant+dk+pl2       Mar 25, 1997  Patch by dk
 grant+dk+pl1       Mar 25, 1997  Patch by dk
 grant+pteron+pl1   Mar 23, 1997  Patch by pteron
 grant+beldin4e                   Patch by Beldin
-grant+beldin4d                   Patch by Beldin
+grant+beldin4d     Feb 26, 1997  Patch by Beldin
 grant+beldin4c                   Patch by Beldin
 grant+beldin4b                   Patch by Beldin
 grant+beldin4a                   Patch by Beldin
@@ -223,19 +226,19 @@ lincoln+lefty2                   Patch by Lefty
 lincoln+lefty1     Jan 10, 1997  Patch by Lefty
 lincoln            Jan  5, 1997  Released by Robey
 buchanan
-pierce  
-fillmore 
-taylor   
-polk      
-tyler     
-harrison  
-vanburen  
-jackson   
-jq.adams  
-monroe    
-madison   
-jefferson 
-j.adams   
+pierce
+fillmore
+taylor
+polk
+tyler
+harrison
+vanburen
+jackson
+jq.adams
+monroe
+madison
+jefferson
+j.adams
 washington
 
   Version 1.0n was forked for 1.1alpha:
@@ -243,12 +246,12 @@ washington
   1.0n (Jan 6, 1997) -> 1.0o (Feb 4, 1997) -> 1.0p (Mar 16, 1997)
     +-> 1.1alpha
 
-1.0t                     Unofficial version by KingKurly
-1.0s                     Unofficial version by KingKurly
-1.0r                     Unofficial version by KingKurly, not released
-1.0q                     Unofficial version by KingKurly, not released
-1.0p       Mar 16, 1997  Released by Wade
-1.0o       Feb  4, 1997  Last 1.0 release by Robey
+1.0t       Jun  8, 1998  Released by KingKurly
+1.0s       Jul 14, 1997  Released by KingKurly
+1.0r       Jul 13, 1997  Released by KingKurly
+1.0q       Jun     1997  Released by KingKurly
+1.0p       Mar 16, 1997  Released by Wade, maintenance release
+1.0o       Feb  4, 1997  Last 1.0 release by Robey, maintenance release
 1.0n       Jan  6, 1997  Relicensed under GNU GPL, 1.0n forked for 1.1alpha
 1.0m       Dec  4, 1996
 1.0l       Nov 11, 1996
@@ -261,7 +264,7 @@ washington
 1.0e       Jul  2, 1996
 1.0d       Jun 12, 1996
 1.0c       Jun  1, 1996
-1.0c-pr e  May 23, 1996  prerelease
+1.0c-pre   May 23, 1996  prerelease
 1.0b       May 20, 1996
 1.0a       May  4, 1996
 1.0+p1     Apr  7, 1996  Bugfix patch
@@ -338,7 +341,7 @@ washington
 2.0.0-ALPHA19990108
 2.0.0-ALPHA19981225
 2.0.0-ALPHA19981031
-2.0.0-snap19981029 
+2.0.0-snap19981029
 2.0.0-snap19981014
 2.0.0-snap19980914
 2.0.0-snap19980815   merge eggdrop 1.3.15, 1.3.16

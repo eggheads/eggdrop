@@ -1,10 +1,77 @@
-$Id: Changes1.1,v 1.3 2008/11/19 01:47:43 tothwolf Exp $
+$Id: Changes1.1,v 1.4 2008/11/29 14:39:45 tothwolf Exp $
 
 Eggdrop Changes (since version 1.0)
 
     _____________________________________________________________________
 
+1.1.6+w1 (October 3, 1999)
+
+  # Patch by: Wild <wild@klondike.com>
+
+  - hrm, enforce_stick was broken, seems i regressed a patch to an older
+    version of the routine, only affected stick bans when restarting a
+    channel and enforced global stick bans on channels marked -global.
+
+  - No need to check for +v status on deop, eggdrop does a who for each
+    deop, not necessary since it flags +v status to a user anyway.
+
+  - No longer use a userfile if it is 0 length, will attempt to use the
+    backup also.
+
+  - Added the "Last message repeated x times" to the logging.
+
+  - chmod 600 logfiles,notefile,pid file.
+
+  - Bounds checking on hostmasks for ignores/bans/users (9!10@63), you can
+    easily crash an entire shared botnet.
+
+  - whois was broke with legal full length hostmasks.
+
+  - Fixed broken join +k channels
+
+
+1.1.6 (June 17, 1999)
+
+  # Patch by: Wild <wild@klondike.com>
+
+  - Fix broken ban/ignore mask handling, no longer allows things like ":" in
+    ban masks
+
+  - If a DNS lookup fails (usually a two minute hang) let's not increment
+    ports 3+ times (timer spin of ten minutes)
+
+  - When bot A's address is the same as bot B's, use 'localhost', handy when
+    behind a firewall, while still allowing relay/linking
+
+  - Added +/-global to channel options, -global allows global bans not to
+    affect that channel.
+
+  - Added +/-cycle, don't bother trying to cycle the channel when opless
+
+  - Added config option server-update, don't bother updating the serverlist
+
+  - Added a wait time when too many nicks numeric is encountered.
+
+  - Changed nick tracing to use ISON, will wait if above is active (5 min)
+
+  - Fixed up using bots in terminal mode, checks/adds HQ user if necessary,
+    with +n flag, and a pass (random), no hosts.
+
+  - Fixed fr0ked -MEM_DEBUG, blowfish/assoc/fileq were sending
+    /mod/somedir/myfile.c, completely fucked up debug (non-module)
+
+  - Fixed fr0ked .un/stick #, it was copying the host back over the number,
+    crashed soon as you sent anything more to the bot. (If 1 is one byte,
+    how do you expect the real host to fit into that one byte?)
+
+  - stick sharing was broken.
+
+  - Add channel option +/-stickban for improved stickban handling
+
+
 1.1.5 (June 29, 1997):
+
+  # Released by: Beldin [Darrin Smith <beldin@light.iinet.net.au>]
 
   - putegg will now handle "Text file busy" conditions when trying to copy
     eggdrop
@@ -94,6 +161,8 @@ Eggdrop Changes (since version 1.0)
 
 
 1.1.4 (June 22, 1997):
+
+  # Released by: Beldin [Darrin Smith <beldin@light.iinet.net.au>]
 
   - WOOP modules seems to work on Linux, FreeBSD, SunOS, BSD3.0, now we just
     gotta debug each module...
@@ -270,7 +339,7 @@ Eggdrop Changes (since version 1.0)
 
 1.1.2+pl1 (June 10, 1997):
 
-  # Patch by: dtM, Beldin <beldin@light.iinet.net.au>
+  # Patch by: dtM, Beldin [Darrin Smith <beldin@light.iinet.net.au>]
 
   - Botnet version now sends the version number and this is used to check
     for userfile sharing (won't share with a bot with version < min_share in
@@ -314,7 +383,7 @@ Eggdrop Changes (since version 1.0)
 
 1.1.2 (June 6, 1997):
 
-  # Released by: Beldin <beldin@light.iinet.net.au>
+  # Released by: Beldin [Darrin Smith <beldin@light.iinet.net.au>]
 
   - .assoc wasn't working right for local channels
     Found by: David- / Patch by: Beldin
@@ -366,7 +435,7 @@ Eggdrop Changes (since version 1.0)
 
 1.1.1+pl2:
 
-  # Patch by: Wild <jmcleod@pris.bc.ca>, Beldin <beldin@light.iinet.net.au>
+  # Patch by: Wild <jmcleod@pris.bc.ca>, Beldin [Darrin Smith <beldin@light.iinet.net.au>]
 
   - Made ctcp_version default acutally SAY eggdrop, and sanity check on
     string lengths
@@ -599,7 +668,7 @@ Eggdrop Changes (since version 1.0)
   - Owners can't su to other owners without a pass (saw as a security risk)
     Patch by: Mastr
 
-  - Can't su to a Bots
+  - Can't su to a bot
     Patch by: Mastr
 
   - Added help file for .fixcodes
@@ -608,7 +677,7 @@ Eggdrop Changes (since version 1.0)
 
 1.1.0 (May 24, 1997):
 
-  # Released by: dk <spackard@moran.mines.edu>
+  # Released by: dk [Steven Packard <spackard@moran.mines.edu>]
 
   - Fixed nick tracing bug on EFnet. Reverted back to old style tracing.
     Added support for 401 and 206 numerics for trace failed
@@ -649,7 +718,7 @@ Eggdrop Changes (since version 1.0)
   - Some more clean-up (typos, code, etc)
     Patch by: Wild
 
-  - Fixed problems created with the addition of dynamic channels:
+    Fixed problems created with the addition of dynamic channels:
     + Added flag CHANSTATIC for channels defined in the config file
     + Added a '\n' to one of the fprintf statements in the save channel's
       routine (was cuasing a crash if there were no dynamic channels)
@@ -772,7 +841,7 @@ Eggdrop Changes (since version 1.0)
     specific flag matches
     Patch by: poptix
 
-  - Fixed a minor bug in the mode storage by wild (wasn't maintaining
+  - Fixed a minor bug in the mode storage by Wild (wasn't maintaining
     +l limit correctly)
     Patch by: Beldin
 
@@ -1015,7 +1084,7 @@ Eggdrop Changes (since version 1.0)
 
 1.1alpha+hayes+bel+pl3 (May 12, 1997):
 
-  # Patch by: Beldin <beldin@light.iinet.net.au>
+  # Patch by: Beldin [Darrin Smith <beldin@light.iinet.net.au>]
     [included in 1.1.0]
 
   - Fixed '.act' and '.say' to not cut out the first word
@@ -1622,9 +1691,9 @@ Eggdrop Changes (since version 1.0)
 
 1.1alpha+julius+pl3 (April 27, 2007):
 
-  # Patch by: dk <spackard@moran.mines.edu>
+  # Patch by: dk [Steven Packard <spackard@moran.mines.edu>]
     [included in 1.1alpha+hayes]
- 
+
   - Added information for crontabbing a bot without receiving emails from
     cron
     Patch by: LuckyStar
@@ -1726,7 +1795,7 @@ Eggdrop Changes (since version 1.0)
 
 1.1alpha+julius+pl2 (April 17, 1997):
 
-  # Patch by: dk <spackard@moran.mines.edu>
+  # Patch by: dk [Steven Packard <spackard@moran.mines.edu>]
     [included in 1.1alpha+hayes]
 
   - Fixed the timezone and gotwall compiler errors
@@ -1788,7 +1857,7 @@ Eggdrop Changes (since version 1.0)
 
 1.1alpha+julius+pl1 (April 14, 1997):
 
-  # Patch by: dk <spackard@moran.mines.edu>
+  # Patch by: dk [Steven Packard <spackard@moran.mines.edu>]
     [included in 1.1alpha+hayes]
 
   - Fixed compile time warnings in cmds.c
@@ -1936,9 +2005,21 @@ Eggdrop Changes (since version 1.0)
     Patch by: garbanzo
 
 
+1.1alpha+bel1 (April 4, 1997):
+
+  # Patch by: Beldin [Darrin Smith <beldin@light.iinet.net.au>]
+    [included in 1.1alpha+hayes and 1.1alpha+julius+pl1 patch]
+
+  - Fixed compile time warnings in cmds.c
+    Patch by: Beldin
+
+  - Added a Tcl command resetchan
+    Patch by: Beldin
+
+
 1.1alpha+julius (April 2, 1997):
 
-  # Released by: dk <spackard@moran.mines.edu>
+  # Released by: dk [Steven Packard <spackard@moran.mines.edu>]
 
   - The nice little warning in case youre silly enough to eggdrop as root
     Patch by: poptix
@@ -2064,7 +2145,7 @@ Eggdrop Changes (since version 1.0)
   - Included any bug fixes in 1.0o+cmw+pl1-7 not included in grant+cmw+pl1-3
     Patch by: cmwagner
 
-  - Included following updates from 1.0o to 1.0p:
+    Included following updates from 1.0o to 1.0p:
 
     + kickban reasons are now being included in the kick
       Patch by: ???
@@ -2187,7 +2268,7 @@ Eggdrop Changes (since version 1.0)
 
 1.1alpha+grant+dk+pl3 (March 28, 1997):
 
-  # Patch by: dk <spackard@moran.mines.edu>
+  # Patch by: dk [Steven Packard <spackard@moran.mines.edu>]
     [included in 1.1alpha+julius]
 
   - Allowed channel masters to use .adduser
@@ -2283,7 +2364,7 @@ Eggdrop Changes (since version 1.0)
 
 1.1alpha+grant+dk+pl2 (March 25, 1997):
 
-  # Patch by: dk <spackard@moran.mines.edu>
+  # Patch by: dk [Steven Packard <spackard@moran.mines.edu>]
     [included in 1.1alpha+julius]
 
   - Fixed kickban bug
@@ -2292,7 +2373,7 @@ Eggdrop Changes (since version 1.0)
 
 1.1alpha+grant+dk+pl1 (March 25, 1997):
 
-  # Patch by: dk <spackard@moran.mines.edu>
+  # Patch by: dk [Steven Packard <spackard@moran.mines.edu>]
     [included in 1.1alpha+julius]
 
   - Fixed DL library detection in configure script after Tcl version
@@ -2317,7 +2398,7 @@ Eggdrop Changes (since version 1.0)
 
 1.1alpha+grant+beldin4a/b/c/d/e:
 
-  # Patch by: Beldin <beldin@light.iinet.net.au>
+  # Patch by: Beldin [Darrin Smith <beldin@light.iinet.net.au>]
     [included in 1.1alpha+julius]
 
   - Miscelaneous bug fixes + adding cmw's patches
@@ -2326,7 +2407,7 @@ Eggdrop Changes (since version 1.0)
 
 1.1alpha+grant+beldin1 (February 18, 1997):
 
-  # Patch by: Beldin <beldin@light.iinet.net.au>
+  # Patch by: Beldin [Darrin Smith <beldin@light.iinet.net.au>]
     [included in 1.1alpha+julius]
 
   - The nice little warning in case youre silly enough to eggdrop as root
@@ -2399,7 +2480,7 @@ Eggdrop Changes (since version 1.0)
 
 1.1alpha+grant+cmw+pl3 (February 11, 1997):
 
-  # Patch by: cmwagner <cmwagner@nando.sodre.net>
+  # Patch by: cmwagner [Chad Wagner <cmwagner@nando.sodre.net>]
     [included in 1.1alpha+julius]
 
   - Missing idx for assoc tandout_but()
@@ -2408,7 +2489,7 @@ Eggdrop Changes (since version 1.0)
 
 1.1alpha+grant+cmw+pl2 (February 11, 1997) (re-released February 13, 1997):
 
-  # Patch by: cmwagner <cmwagner@nando.sodre.net>
+  # Patch by: cmwagner [Chad Wagner <cmwagner@nando.sodre.net>]
     [included in 1.1alpha+julius]
 
   - Use dcc[i].sock instead of idx for tandout_but()
@@ -2417,7 +2498,7 @@ Eggdrop Changes (since version 1.0)
 
 1.1alpha+grant+cmw+pl1 (February 11, 1997) (revised February 13, 1997):
 
-  # Patch by: cmwagner <cmwagner@nando.sodre.net>
+  # Patch by: cmwagner [Chad Wagner <cmwagner@nando.sodre.net>]
     [included in 1.1alpha+julius]
 
   - Correct the DL library bug in configure for systems that don't have the
@@ -2428,7 +2509,7 @@ Eggdrop Changes (since version 1.0)
 
 1.1alpha+grant (February 5, 1997):
 
-  # Released by: Robey Pointer <robey@netcom.com>
+  # Released by: Robey [Robey Pointer <robey@netcom.com>]
 
   - Address in '.dccstat' for telnet connections was reversed (fixed)
 
@@ -2525,8 +2606,6 @@ Eggdrop Changes (since version 1.0)
   - Local users going to the file system just look "away" to remote users
     Patch by: poptix
 
-    Maintainer: Robey
-
   TO-DO:
 
   - chanflags aren't treated right in tcl (to prevent overlap)
@@ -2573,7 +2652,8 @@ Eggdrop Changes (since version 1.0)
 
 1.1alpha+lincoln+beldin1 (January 26, 1997):
 
-  # Patch by: Beldin <beldin@light.iinet.net.au>
+  # Patch by: Beldin [Darrin Smith <beldin@light.iinet.net.au>]
+    [partially included in 1.1alpha+grant]
 
   - Info line needs to be password protected
     [not included in 1.1alpha+grant]
@@ -2584,7 +2664,7 @@ Eggdrop Changes (since version 1.0)
     Patch by: Beldin
 
   - Tcl commands to:
-      get info line for one channel 
+      get info line for one channel
       set info line for one channel
     [included in 1.1alpha+grant]
     Patch by: Beldin
@@ -2605,6 +2685,7 @@ Eggdrop Changes (since version 1.0)
 1.1alpha+lincoln+kin1 (January 16, 1997):
 
   # Patch by: Gaven Cohen <kinslayer@nxp.co.za>
+    [partially included in 1.1alpha+grant]
 
   - {created [unixtime]} extra field added everytime userfile is loaded.
     (disabled until someone who knows C fixes up)
@@ -2642,7 +2723,7 @@ Eggdrop Changes (since version 1.0)
 
 1.1alpha+lincoln (January 5, 1997):
 
-  # Released by: Robey Pointer <robey@netcom.com>
+  # Released by: Robey [Robey Pointer <robey@netcom.com>]
 
   - Notes tell you if they're going to expire soon
 
@@ -2831,8 +2912,6 @@ Eggdrop Changes (since version 1.0)
   - 'listen' mask restriction that starts with '@' is a restriction on
     hostname not nick
     Suggested by: garbanzo
-
-    Maintainer: Robey
 
   TO-DO:
 

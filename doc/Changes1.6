@@ -1,10 +1,15 @@
-$Id: Changes1.6,v 1.16 2008/11/19 01:47:44 tothwolf Exp $
+$Id: Changes1.6,v 1.17 2008/11/29 14:39:46 tothwolf Exp $
 
 Eggdrop Changes (since version 1.6.0)
 
     _____________________________________________________________________
 
 1.6.20 (CVS):
+
+  - Removed 'Maintainer:' hacks from the doc/Changes files. Switched to
+    using '# Released by:' and '# Patch by:' for processing now.
+  - Further expanded 1.0, 1.1alpha, and 1.1.x information.
+    Patch by: Tothwolf
 
   - Fixed even more typos and other errors in the doc/Changes files.
   - Greatly expanded the 1.1alpha sections in Changes1.1 and Versions.
@@ -28,8 +33,8 @@ Eggdrop Changes (since version 1.6.0)
     Found by: Tothwolf / Patch by: bryand, Tothwolf
 
   - Added missing fclose() to tout_dcc_send()
-    Fixes the socket leak in the transfer module.             
-    Found by: C4thY, various / Patch by: bryand     
+    Fixes the socket leak in the transfer module.
+    Found by: C4thY, various / Patch by: bryand
 
   - Added support to BADARGS macro to accept -1 for unlimited arguments.
   - Modified tcl_getuser(), tcl_setuser(), and tcl_channel() to use -1 for
@@ -47,13 +52,13 @@ Eggdrop Changes (since version 1.6.0)
     Found by: Wanderer / Patch by: Tothwolf
 
   - Fixed global variable names used with Tcl_SetVar() / Tcl_VarEval() --
-  - Made assoc module use $_chan instead of $chan 
-  - Made tell_user() use $_user instead of $user 
+  - Made assoc module use $_chan instead of $chan
+  - Made tell_user() use $_user instead of $user
     Patch by: Tothwolf
 
   - Moved the variable declaration for tcl_maskhost() to the top of the
     function where it should be. The tcl_maskhost patch prevented
-    tcl_maskhost() from compiling with many non-GCC and older GCC compilers. 
+    tcl_maskhost() from compiling with many non-GCC and older GCC compilers.
     Found by: simple / Patch by: Tothwolf
 
   - Removed Solaris RANDMAX autoconf hack.
@@ -243,7 +248,7 @@ Eggdrop Changes (since version 1.6.0)
     Patch by: mrBuG
 
 
-1.6.18 (July 09, 2006):
+1.6.18 (July 9, 2006):
 
   - Look for Tcl in /lib64 and /usr/lib64.
     Patch by: Kuja
@@ -695,13 +700,13 @@ Eggdrop Changes (since version 1.6.0)
     Patch by: Wcc
 
 
-1.6.15 (May 04, 2003):
+1.6.15 (May 4, 2003):
 
   - Fixed a patch.h compile error
     Found by: MORA / Patch by: Wcc
 
 
-1.6.14 (May 04, 2003):
+1.6.14 (May 4, 2003):
 
   - Added support for the IPv6 protocol
     Patch by: poptix, Wcc
