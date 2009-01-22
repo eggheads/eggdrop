@@ -1,10 +1,18 @@
-$Id: Changes1.6,v 1.17 2008/11/29 14:39:46 tothwolf Exp $
+$Id: Changes1.6,v 1.18 2009/01/22 02:14:45 tothwolf Exp $
 
 Eggdrop Changes (since version 1.6.0)
 
     _____________________________________________________________________
 
 1.6.20 (CVS):
+
+  - Reverted "Allow any user to .whois their own handle." 1.6.16 changes. 
+    These changes broke '.whois' behavior in that previously a global op or
+    channel op had full access to '.whois'. After the changes only a global
+    op or channel master could use '.whois' on other handles. The hard
+    coded access flag checks also made it impossible to rebind the '.whois'
+    command with different access flags.
+    Patch by: Tothwolf
 
   - Removed 'Maintainer:' hacks from the doc/Changes files. Switched to
     using '# Released by:' and '# Patch by:' for processing now.
