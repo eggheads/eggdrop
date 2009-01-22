@@ -1,10 +1,14 @@
-$Id: Changes1.6,v 1.18 2009/01/22 02:14:45 tothwolf Exp $
+$Id: Changes1.6,v 1.19 2009/01/22 03:12:45 tothwolf Exp $
 
 Eggdrop Changes (since version 1.6.0)
 
     _____________________________________________________________________
 
 1.6.20 (CVS):
+
+  - Added scripts/dccwhois.tcl Tcl script. This script enhances the built-in
+    dcc '.whois' command to allow all users to '.whois' their own handle.
+    Patch by: Tothwolf
 
   - Reverted "Allow any user to .whois their own handle." 1.6.16 changes. 
     These changes broke '.whois' behavior in that previously a global op or
