@@ -1,7 +1,7 @@
 /*
  * servmsg.c -- part of server.mod
  *
- * $Id: servmsg.c,v 1.100 2008/11/02 03:19:57 tothwolf Exp $
+ * $Id: servmsg.c,v 1.101 2009/05/06 19:17:52 tothwolf Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -496,9 +496,9 @@ static int gotmsg(char *from, char *msg)
       *p = 0;
       strncpyz(ctcpbuf, p1, sizeof(ctcpbuf));
       ctcp = ctcpbuf;
-      /* copy the part after the second : in front of it after
-       * the first :, this is temporary copied to ctcpbuf */
-      strncpy(p1 - 1, p + 1, strlen(ctcpbuf) - 1);
+
+      /* remove the ctcp in msg */
+      memmove(p1 - 1, p + 1, strlen(p + 1) + 1);
 
       if (!ignoring)
         detect_flood(nick, uhost, from,
