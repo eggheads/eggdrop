@@ -1,5 +1,5 @@
 # Makefile for scripts/
-# $Id: Makefile.in,v 1.15 2008/02/16 06:00:17 guppy Exp $
+# $Id: Makefile.in,v 1.16 2009/05/06 18:11:39 tothwolf Exp $
 
 SHELL = @SHELL@
 top_srcdir = @top_srcdir@
@@ -14,7 +14,7 @@ INSTALL_SCRIPT = @INSTALL_SCRIPT@
 
 DOCS = CONTENTS
 
-SCRIPTS = action.fix.tcl alltools.tcl compat.tcl getops.tcl \
+SCRIPTS = action.fix.tcl alltools.tcl compat.tcl dccwhois.tcl getops.tcl \
 klined.tcl notes2.tcl ques5.tcl sentinel.tcl userinfo.tcl cmd_resolve.tcl \
 quotepass.tcl quotepong.tcl
 
