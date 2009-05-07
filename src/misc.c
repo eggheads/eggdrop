@@ -7,7 +7,7 @@
  *   help system
  *   motd display and %var substitution
  *
- * $Id: misc.c,v 1.79 2008/02/16 21:41:04 guppy Exp $
+ * $Id: misc.c,v 1.80 2009/05/07 22:01:41 tothwolf Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -289,106 +289,129 @@ char *newsplit(char **rest)
   return r;
 }
 
-/* Convert "abc!user@a.b.host" into "*!user@*.b.host"
- * or "abc!user@1.2.3.4" into "*!user@1.2.3.*"
- * or "abc!user@0:0:0:0:0:ffff:1.2.3.4" into "*!user@0:0:0:0:0:ffff:1.2.3.*"
- * or "abc!user@3ffe:604:2:b02e:6174:7265:6964:6573" into
- *    "*!user@3ffe:604:2:b02e:6174:7265:6964:*"
+/* maskhost(), modified to support custom mask types, as defined
+ * by mIRC.
+ * Does not require a proper hostmask in 's'. Accepts any strings,
+ * including empty ones and attempts to provide meaningful results.
+ *
+ * Strings containing no '@' character will be parsed as if the 
+ * whole string is a host.
+ * Strings containing no '!' character will be interpreted as if
+ * there is no nick.
+ * '!' as a nick/user separator must precede any '@' characters.
+ * Otherwise it will be considered a part of the host.
+ * Supported types are listed in tcl-commands.doc in the maskhost
+ * command section. Type 3 resembles the older maskhost() most closely.
+ * 
+ * Specific examples (with type=3):
+ * 
+ * "nick!user@is.the.lamest.bg"  -> *!*user@*.the.lamest.bg (ccTLD)
+ * "nick!user@is.the.lamest.com" -> *!*user@*.lamest.com (gTLD)
+ * "lamest.example"	         -> *!*@lamest.example
+ * "whatever@lamest.example"     -> *!*whatever@lamest.example
+ * "com.example@user!nick"       -> *!*com.example@user!nick
+ * "!"			         -> *!*@!
+ * "@"			         -> *!*@*
+ * ""				 -> *!*@*
+ * "abc!user@2001:db8:618:5c0:263:15:dead:babe"
+ * -> *!*user@2001:db8:618:5c0:263:15:dead:*
+ * "abc!user@0:0:0:0:0:ffff:1.2.3.4"
+ * -> *!*user@0:0:0:0:0:ffff:1.2.3.*
  */
-void _maskhost(const char *s, char *nw, int host)
+void maskaddr(const char *s, char *nw, int type)
 {
-  register const char *p, *q, *e, *f;
-  int i;
+  int d = type % 5, num = 1;
+  register char *p, *u = 0, *h = 0, *ss;
 
-  *nw++ = '*';
-  *nw++ = '!';
-  p = (q = strchr(s, '!')) ? q + 1 : s;
-  /* Strip of any nick, if a username is found, use last 8 chars */
-  if ((q = strchr(p, '@'))) {
-    int fl = 0;
-
-    if ((q - p) > 9) {
-      nw[0] = '*';
-      p = q - 7;
-      i = 1;
-    } else
-      i = 0;
-    while (*p != '@') {
-      if (!fl && strchr("~+-^=", *p)) {
-        if (strict_host)
-          nw[i] = '?';
-        else if (!host)
-          nw[i] = '*';
-        else
-          i--;
-      } else
-        nw[i] = *p;
-      fl++;
-      p++;
-      i++;
-    }
-    nw[i++] = '@';
-    q++;
-  } else {
-    nw[0] = '*';
-    nw[1] = '@';
-    i = 2;
-    q = s;
+  /* Look for user and host.. */
+  ss = (char *)s;
+  u = strchr(s, '!');
+  if (u)
+    h = strchr(u, '@');
+  if (!h){
+    h = strchr(s, '@');
+    u = 0;
   }
-  nw += i;
-  e = NULL;
-  /* Now q points to the hostname, i point to where to put the mask */
-  if ((!(p = strchr(q, '.')) || !(e = strchr(p + 1, '.'))) && !strchr(q, ':'))
-    /* TLD or 2 part host */
-    strcpy(nw, q);
+
+  /* Print nick if required and available */
+  if (!u || (type % 10) < 5)
+    *nw++ = '*';
   else {
-    if (e == NULL) {            /* IPv6 address?                */
-      const char *mask_str;
+    strncpy(nw, s, u - s);
+    nw += u - s;
+  }
+  *nw++ = '!';
 
-      f = strrchr(q, ':');
-      if (strchr(f, '.')) {     /* IPv4 wrapped in an IPv6?     */
-        f = strrchr(f, '.');
-        mask_str = ".*";
-      } else                      /* ... no, true IPv6.               */
-        mask_str = ":*";
-      strncpy(nw, q, f - q);
-      /* No need to nw[f-q] = 0 here, as the strcpy below will
-       * terminate the string for us.
-       */
-      nw += (f - q);
-      strcpy(nw, mask_str);
-    } else {
-      for (f = e; *f; f++);
-      f--;
-      if (*f >= '0' && *f <= '9') {     /* Numeric IP address */
-        while (*f != '.')
-          f--;
-        strncpy(nw, q, f - q);
-        /* No need to nw[f-q] = 0 here, as the strcpy below will
-         * terminate the string for us.
-         */
-        nw += (f - q);
-        strcpy(nw, ".*");
-      } else {                    /* Normal host >= 3 parts */
-        /*    a.b.c  -> *.b.c
-         *    a.b.c.d ->  *.b.c.d if tld is a country (2 chars)
-         *             OR   *.c.d if tld is com/edu/etc (3 chars)
-         *    a.b.c.d.e -> *.c.d.e   etc
-         */
-        const char *x = strchr(e + 1, '.');
+  /* Write user if required and available */
+  u = (u ? u + 1 : ss);
+  if (!h || (d == 2) || (d == 4))
+    *nw++ = '*';
+  else {
+    if (d) {
+      *nw++ = '*';
+      if (strchr("~+-^=", *u))
+        u++; /* trim leading crap */
+    }
+    strncpy(nw, u, h - u);
+    nw += h - u;
+  }
+  *nw++ = '@';
 
-        if (!x)
-          x = p;
-        else if (strchr(x + 1, '.'))
-          x = e;
-        else if (strlen(x) == 3)
-          x = p;
-        else
-          x = e;
-        sprintf(nw, "*%s", x);
+  /* The rest is for the host */
+  h = (h ? h + 1 : ss);
+  for (p = h; *p; p++) /* hostname? */
+    if ((*p > '9' || *p < '0') && *p != '.') {
+      num = 0;
+      break;
+    }
+  p = strrchr(h, ':'); /* IPv6? */
+  /* Mask out after the last colon/dot */
+  if (p && d > 2) {
+    if ((u = strrchr(p, '.')))
+      p = u;
+    strncpy(nw, h, ++p - h);
+    nw += p - h;
+    strcpy(nw, "*");
+  } else if (!p && !num && type >= 10) {
+      /* we have a hostname and type
+       requires us to replace numbers */
+    num = 0;
+    for (p = h; *p; p++) {
+      if (*p < '0' || *p > '9') {
+        *nw++ = *p;
+        num = 0;
+      } else {
+        if (type < 20)
+          *nw++ = '?';
+        else if (!num) {
+          *nw++ = '*';
+          num = 1; /* place only one '*'
+                      per numeric sequence */
+        }
       }
     }
-  }
+    *nw = 0;
+  } else if (d > 2 && (p = strrchr(h, '.'))) {
+    if (num) { /* IPv4 */
+      strncpy(nw, h, p - h);
+      nw += p - h;
+      strcpy(nw, ".*");
+      return;
+    }
+    for (u = h, d = 0; (u = strchr(++u, '.')); d++);
+    if (d < 2) { /* types < 2 don't mask the host */
+      strcpy(nw, h);
+      return;
+    }
+    u = strchr(h, '.');
+    if (d > 3 || (d == 3 && strlen(p) > 3))
+      u = strchr(++u, '.'); /* ccTLD or not? Look above. */
+    sprintf(nw, "*%s", u);
+  } else if (!*h)
+      /* take care if the mask is empty or contains only '@' */
+      strcpy(nw, "*");
+    else
+      strcpy(nw, h);
 }
 
 /* Dump a potentially super-long string of text.

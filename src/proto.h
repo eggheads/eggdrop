@@ -7,7 +7,7 @@
  * because they use structures in those
  * (saves including those .h files EVERY time) - Beldin
  *
- * $Id: proto.h,v 1.73 2008/07/10 10:06:53 tothwolf Exp $
+ * $Id: proto.h,v 1.74 2009/05/07 22:01:41 tothwolf Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -235,9 +235,9 @@ void str_unescape(char *, register const char);
 int str_isdigit(const char *);
 void kill_bot(char *, char *);
 
-void _maskhost(const char *, char *, int);
-#define maskhost(a,b) _maskhost((a),(b),1)
-#define maskban(a,b)  _maskhost((a),(b),0)
+void maskaddr(const char *, char *, int);
+#define maskhost(a,b) maskaddr((a),(b),3)
+#define maskban(a,b)  maskaddr((a),(b),3)
 
 /* net.c */
 IP my_atoul(char *);

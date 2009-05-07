@@ -1,4 +1,4 @@
-$Id: tcl-commands.doc,v 1.122 2006/03/27 06:48:58 wcc Exp $
+$Id: tcl-commands.doc,v 1.123 2009/05/07 22:01:41 tothwolf Exp $
 
 Eggdrop Tcl Commands
 Last revised: August 02, 2004
@@ -1310,9 +1310,24 @@ marked with vertical bars (|) on the left.
       list of logfiles such as: {mco * eggdrop.log} {jp #lame lame.log}
     Module: core
 
-  maskhost <nick!user@host>
-    Returns: masked hostmask for the string given ("n!u@1.2.3.4" -> "*!u@1.2.3.*",
-      "n!u@lame.com" -> "*!u@lame.com", "n!u@a.b.edu" -> "*!u@*.b.edu")
+  maskhost <nick!user@host> [masktype]
+    Returns: masked hostmask for the string given according to the masktype
+      (the default is 3).
+      Available types are:
+	0: *!user@host
+	1: *!*user@host
+	2: *!*@host
+	3: *!*user@*.host
+	4: *!*@*.host
+	5: nick!user@host
+	6: nick!*user@host
+	7: nick!*@host
+	8: nick!*user@*.host
+	9: nick!*@*.host
+      You can also specify types from 10 to 19 which correspond to types
+      0 to 9, with the exception that numbers in hostnames are replaced with
+      the '?' wildcard, or 20 to 29, which works like 10 to 19 but using '*'
+      for numbers, instead of '?'.
     Module: core
 
   timer <minutes> <tcl-command>

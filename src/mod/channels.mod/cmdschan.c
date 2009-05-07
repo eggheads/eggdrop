@@ -2,7 +2,7 @@
  * cmdschan.c -- part of channels.mod
  *   commands from a user via dcc that cause server interaction
  *
- * $Id: cmdschan.c,v 1.76 2008/07/10 10:06:54 tothwolf Exp $
+ * $Id: cmdschan.c,v 1.77 2009/05/07 22:01:41 tothwolf Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -1282,6 +1282,7 @@ static void cmd_chaninfo(struct userrec *u, int idx, char *par)
       dprintf(idx, "revenge-mode: %d\n", chan->revenge_mode);
     else
       dprintf(idx, "revenge-mode: 0\n");
+    dprintf(idx, "ban-type: %d\n", chan->ban_type);
     if (chan->ban_time)
       dprintf(idx, "ban-time: %d\n", chan->ban_time);
     else

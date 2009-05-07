@@ -1,7 +1,7 @@
 /*
  * tclirc.c -- part of irc.mod
  *
- * $Id: tclirc.c,v 1.53 2008/07/11 23:29:28 tothwolf Exp $
+ * $Id: tclirc.c,v 1.54 2009/05/07 22:01:42 tothwolf Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -497,11 +497,13 @@ static int tcl_maskhost STDVAR
 {
   char *new;
   
-  BADARGS(2, 2, " nick!user@host");
+  BADARGS(2, 3, " nick!user@host ?type?");
 
   new = nmalloc(strlen(argv[1]) + 5);
-
-  maskban(argv[1], new);
+  if (argc == 3)
+    maskaddr(argv[1], new, atoi(argv[2]));
+  else
+    maskban(argv[1], new);
   Tcl_AppendResult(irp, new, NULL);
   nfree(new);
   return TCL_OK;

@@ -1,5 +1,5 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
-<!-- $Id: tcl-commands.html,v 1.56 2008/06/23 22:50:45 tothwolf Exp $ -->
+<!-- $Id: tcl-commands.html,v 1.57 2009/05/07 22:01:41 tothwolf Exp $ -->
 
 <html>
   <head>
@@ -2899,13 +2899,128 @@
           <p><strong>Module:</strong> core</p>
         </dd>
 
-        <dt><strong><a name="cmd_maskhost"></a>maskhost &lt;nick!user@host&gt;</strong></dt>
+        <dt><strong><a name="cmd_maskhost"></a>maskhost &lt;nick!user@host&gt;
+        [masktype]</strong></dt>
 
         <dd>
+          <p><strong>Description:</strong> masks the given irc hostmask, so
+          that it can match a wider set of nick/user/host combinations. The
+          masktypes supported are compatible with mIRC's standard types.</p>
+	  <p> Available types are: <br>
+          <blockquote>
+            <table>
+              <tr valign="top">
+                <td>
+                  <p><strong>0</strong></p>
+                </td>
+
+                <td>
+                  <p>*!user@host</p>
+
+                </td>
+              </tr>
+
+              <tr valign="top">
+                <td>
+                  <p><strong>1</strong></p>
+                </td>
+
+                <td>
+
+                  <p>*!*user@host</p>
+                </td>
+              </tr>
+
+              <tr valign="top">
+                <td>
+                  <p><strong>2</strong></p>
+                </td>
+
+                <td>
+                  <p>*!*@host</p>
+                </td>
+              </tr>
+
+              <tr valign="top">
+                <td>
+                  <p><strong>3</strong></p>
+
+                </td>
+
+                <td>
+                  <p>*!*user@*.host</p>
+                </td>
+              </tr>
+
+              <tr valign="top">
+                <td>
+                  <p><strong>4</strong></p>
+                </td>
+
+                <td>
+                  <p>*!*@*.host</p>
+                </td>
+              </tr>
+
+              <tr valign="top">
+                <td>
+                  <p><strong>5</strong></p>
+                </td>
+
+                <td>
+                  <p>nick!user@host</p>
+                </td>
+              </tr>
+
+              <tr valign="top">
+                <td>
+                  <p><strong>6</strong></p>
+                </td>
+
+                <td>
+                  <p>nick!*user@host</p>
+                </td>
+              </tr>
+
+              <tr valign="top">
+                <td>
+                  <p><strong>7</strong></p>
+                </td>
+
+                <td>
+                  <p>nick!*@host</p>
+                </td>
+              </tr>
+
+              <tr valign="top">
+                <td>
+                  <p><strong>8</strong></p>
+                </td>
+
+                <td>
+                  <p>nick!*user@*.host</p>
+                </td>
+              </tr>
+
+              <tr valign="top">
+                <td>
+                  <p><strong>9</strong></p>
+                </td>
+
+                <td>
+                  <p>nick!*@*.host</p>
+                </td>
+              </tr>
+            </table>
+          </blockquote>
+	  </p>
+	  <p> You can also specify types from 10 to 19 which correspond to types
+	  0 to 9, with the exception that numbers in hostnames are replaced with
+	  the '?' wildcard, or 20 to 29, which works like 10 to 19 but using '*'
+	  for numbers, instead of '?'.</p>
+
           <p><strong>Returns:</strong> masked hostmask for the string
-          given (&quot;n!u@1.2.3.4&quot; -&gt; &quot;*!u@1.2.3.*&quot;,
-          &quot;n!u@lame.com&quot; -&gt; &quot;*!u@lame.com&quot;,
-          &quot;n!u@a.b.edu&quot; -&gt; &quot;*!u@*.b.edu&quot;)</p>
+          given according to the masktype. </p>
 
           <p><strong>Module:</strong> core</p>
         </dd>

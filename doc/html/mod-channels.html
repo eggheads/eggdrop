@@ -1,5 +1,5 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
-<!-- $Id: mod-channels.html,v 1.26 2008/02/16 21:40:58 guppy Exp $ -->
+<!-- $Id: mod-channels.html,v 1.27 2009/05/07 22:01:41 tothwolf Exp $ -->
 
 <html>
   <head>
@@ -179,6 +179,83 @@
                   </tr>
                 </table>
               </dd>
+
+
+              <dt><strong>ban-type 3</strong></dt>
+
+	      <dd>
+	      	<p> This setting defines what type of bans should eggdrop
+	      	place for +k users or when revenge-mode is 3.<br>
+	      	Available types are:</p>
+
+                <table border=0>
+                  <tr>
+                    <td>0</td>
+
+                    <td>*!user@host</td>
+                  </tr>
+
+                  <tr>
+                    <td>1</td>
+
+                    <td>*!*user@host</td>
+                  </tr>
+
+                  <tr>
+                    <td>2</td>
+
+                    <td>*!*@host</td>
+                  </tr>
+
+                  <tr>
+                    <td>3</td>
+
+                    <td>*!*user@*.host</td>
+                  </tr>
+
+                  <tr>
+                    <td>4</td>
+
+                    <td>*!*@*.host</td>
+                  </tr>
+
+                  <tr>
+                    <td>5</td>
+
+                    <td>nick!user@host</td>
+                  </tr>
+
+                  <tr>
+                    <td>6</td>
+
+                    <td>nick!*user@host</td>
+                  </tr>
+
+                  <tr>
+                    <td>7</td>
+
+                    <td>nick!*@host</td>
+                  </tr>
+
+                  <tr>
+                    <td>8</td>
+
+                    <td>nick!*user@*.host</td>
+                  </tr>
+
+                  <tr>
+                    <td>9</td>
+
+                    <td>nick!*@*.host</td>
+                  </tr>
+                </table>
+
+		<p>You can also specify types from 10 to 19 which correspond
+		to types 0 to 9, with the exception that numbers in hostnames
+		are replaced with the '?' wildcard, or 20 to 29, which works
+		like 10 to 19 but using '*' for numbers, instead of '?'.</p>
+
+	      </dd>
 
               <dt><strong>ban-time 120</strong></dt>
               

@@ -2,7 +2,7 @@
  * irc.c -- part of irc.mod
  *   support for channels within the bot
  *
- * $Id: irc.c,v 1.111 2008/07/01 00:20:04 tothwolf Exp $
+ * $Id: irc.c,v 1.112 2009/05/07 22:01:42 tothwolf Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -173,7 +173,7 @@ static void punish_badguy(struct chanset_t *chan, char *whobad,
     /* ... or creating new user and setting that to deop */
     else {
       strcpy(s1, whobad);
-      maskban(s1, s);
+      maskaddr(s1, s, chan->ban_type);
       strcpy(s1, badnick);
       /* If that handle exists use "badX" (where X is an increasing number)
        * instead.
@@ -209,7 +209,7 @@ static void punish_badguy(struct chanset_t *chan, char *whobad,
     char s[UHOSTLEN], s1[UHOSTLEN];
 
     splitnick(&whobad);
-    maskban(whobad, s1);
+    maskaddr(whobad, s1, chan->ban_type);
     simple_sprintf(s, "(%s) %s", ct, reason);
     u_addban(chan, s1, botnetnick, s, now + (60 * chan->ban_time), 0);
     if (!mevictim && HALFOP_CANDOMODE('b')) {

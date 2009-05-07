@@ -1,7 +1,7 @@
 /*
  * tclchan.c -- part of channels.mod
  *
- * $Id: tclchan.c,v 1.99 2008/11/01 20:41:10 tothwolf Exp $
+ * $Id: tclchan.c,v 1.100 2009/05/07 22:01:41 tothwolf Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -786,6 +786,8 @@ static int tcl_channel_info(Tcl_Interp *irp, struct chanset_t *chan)
   Tcl_AppendElement(irp, s);
   simple_sprintf(s, "%d:%d", chan->aop_min, chan->aop_max);
   Tcl_AppendElement(irp, s);
+  simple_sprintf(s, "%d", chan->ban_type);
+  Tcl_AppendElement(irp, s);
   simple_sprintf(s, "%d", chan->ban_time);
   Tcl_AppendElement(irp, s);
   simple_sprintf(s, "%d", chan->exempt_time);
@@ -959,6 +961,8 @@ static int tcl_channel_get(Tcl_Interp *irp, struct chanset_t *chan,
     simple_sprintf(s, "%d", chan->stopnethack_mode);
   else if (!strcmp(setting, "revenge-mode"))
     simple_sprintf(s, "%d", chan->revenge_mode);
+  else if (!strcmp(setting, "ban-type"))
+    simple_sprintf(s, "%d", chan->ban_type);
   else if (!strcmp(setting, "ban-time"))
     simple_sprintf(s, "%d", chan->ban_time);
   else if (!strcmp(setting, "exempt-time"))
@@ -1199,6 +1203,14 @@ static int tcl_channel_modify(Tcl_Interp *irp, struct chanset_t *chan,
         return TCL_ERROR;
       }
       chan->revenge_mode = atoi(item[i]);
+    } else if (!strcmp(item[i], "ban-type")) {
+      i++;
+      if (i >= items) {
+        if (irp)
+          Tcl_AppendResult(irp, "channel ban-type needs argument", NULL);
+        return TCL_ERROR;
+      }
+      chan->ban_type = atoi(item[i]);
     } else if (!strcmp(item[i], "ban-time")) {
       i++;
       if (i >= items) {
@@ -1899,6 +1911,7 @@ static int tcl_channel_add(Tcl_Interp *irp, char *newname, char *options)
     chan->flood_nick_time = gfld_nick_time;
     chan->stopnethack_mode = global_stopnethack_mode;
     chan->revenge_mode = global_revenge_mode;
+    chan->ban_type = global_ban_type;
     chan->ban_time = global_ban_time;
     chan->exempt_time = global_exempt_time;
     chan->invite_time = global_invite_time;

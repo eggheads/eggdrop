@@ -4,7 +4,7 @@
  *
  * by Darrin Smith (beldin@light.iinet.net.au)
  *
- * $Id: modules.c,v 1.99 2008/02/16 21:41:04 guppy Exp $
+ * $Id: modules.c,v 1.100 2009/05/07 22:01:41 tothwolf Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -388,7 +388,7 @@ Function global_table[] = {
   /* 152 - 155 */
   (Function) makepass,
   (Function) _wild_match,
-  (Function) _maskhost,
+  (Function) maskaddr,
   (Function) show_motd,
   /* 156 - 159 */
   (Function) tellhelp,

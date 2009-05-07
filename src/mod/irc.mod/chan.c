@@ -6,7 +6,7 @@
  *   user kickban, kick, op, deop
  *   idle kicking
  *
- * $Id: chan.c,v 1.128 2008/07/10 10:56:23 tothwolf Exp $
+ * $Id: chan.c,v 1.129 2009/05/07 22:01:41 tothwolf Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -354,7 +354,7 @@ static char *quickban(struct chanset_t *chan, char *uhost)
 {
   static char s1[512];
 
-  maskban(uhost, s1);
+  maskaddr(uhost, s1, chan->ban_type);
   do_mask(chan, chan->channel.ban, s1, 'b');
   return s1;
 }

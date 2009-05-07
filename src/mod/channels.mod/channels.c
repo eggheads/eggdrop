@@ -2,7 +2,7 @@
  * channels.c -- part of channels.mod
  *   support for channels within the bot
  *
- * $Id: channels.c,v 1.97 2008/11/02 03:19:57 tothwolf Exp $
+ * $Id: channels.c,v 1.98 2009/05/07 22:01:41 tothwolf Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -39,7 +39,7 @@ static struct udef_struct *udef;
 static int setstatic, use_info, chan_hack, quiet_save, global_revenge_mode,
            global_stopnethack_mode, global_idle_kick, global_aop_min,
            global_aop_max, global_ban_time, global_exempt_time,
-           global_invite_time;
+           global_invite_time, global_ban_type;
 
 /* Global channel settings (drummer/dw) */
 static char glob_chanset[512];
@@ -415,12 +415,12 @@ static void write_channels()
 "channel %s %s%schanmode %s idle-kick %d stopnethack-mode %d revenge-mode %d \
 need-op %s need-invite %s need-key %s need-unban %s need-limit %s \
 flood-chan %d:%d flood-ctcp %d:%d flood-join %d:%d flood-kick %d:%d \
-flood-deop %d:%d flood-nick %d:%d aop-delay %d:%d ban-time %d exempt-time %d \
-invite-time %d %cenforcebans %cdynamicbans %cuserbans %cautoop %cautohalfop \
-%cbitch %cgreet %cprotectops %cprotecthalfops %cprotectfriends %cdontkickops \
-%cstatuslog %crevenge %crevengebot %cautovoice %csecret %cshared %ccycle \
-%cseen %cinactive %cdynamicexempts %cuserexempts %cdynamicinvites \
-%cuserinvites %cnodesynch ",
+flood-deop %d:%d flood-nick %d:%d aop-delay %d:%d ban-type %d ban-time %d \
+exempt-time %d invite-time %d %cenforcebans %cdynamicbans %cuserbans %cautoop \
+%cautohalfop %cbitch %cgreet %cprotectops %cprotecthalfops %cprotectfriends \
+%cdontkickops %cstatuslog %crevenge %crevengebot %cautovoice %csecret \
+%cshared %ccycle %cseen %cinactive %cdynamicexempts %cuserexempts \
+%cdynamicinvites %cuserinvites %cnodesynch ",
             channel_static(chan) ? "set" : "add", name, channel_static(chan) ?
             " " : " { ", w2, chan->idle_kick, chan->stopnethack_mode,
             chan->revenge_mode, need1, need2, need3, need4, need5,
@@ -430,7 +430,7 @@ invite-time %d %cenforcebans %cdynamicbans %cuserbans %cautoop %cautohalfop \
             chan->flood_kick_thr, chan->flood_kick_time,
             chan->flood_deop_thr, chan->flood_deop_time,
             chan->flood_nick_thr, chan->flood_nick_time,
-            chan->aop_min, chan->aop_max, chan->ban_time,
+            chan->aop_min, chan->aop_max, chan->ban_type, chan->ban_time,
             chan->exempt_time, chan->invite_time,
             PLSMNS(channel_enforcebans(chan)),
             PLSMNS(channel_dynamicbans(chan)),
@@ -724,6 +724,7 @@ static void channels_report(int idx, int details)
       if (chan->revenge_mode)
         dprintf(idx, "      revenge-mode: %d\n", chan->revenge_mode);
 
+      dprintf(idx, "      ban-type: %d\n", chan->ban_type);
       dprintf(idx, "      Bans last %d minute%s.\n", chan->ban_time,
                (chan->ban_time == 1) ? "" : "s");
       dprintf(idx, "      Exemptions last %d minute%s.\n", chan->exempt_time,
@@ -828,6 +829,7 @@ static tcl_ints my_tcl_ints[] = {
   {"global-ban-time",         &global_ban_time,         0},
   {"global-exempt-time",      &global_exempt_time,      0},
   {"global-invite-time",      &global_invite_time,      0},
+  {"global-ban-type",         &global_ban_type,         0},
   /* keeping [ban|exempt|invite]-time for compatability <Wcc[07/20/02]> */
   {"ban-time",                &global_ban_time,         0},
   {"exempt-time",             &global_exempt_time,      0},
@@ -974,6 +976,7 @@ char *channels_start(Function *global_funcs)
   udef = NULL;
   global_stopnethack_mode = 0;
   global_revenge_mode = 0;
+  global_ban_type = 3;
   global_ban_time = 120;
   global_exempt_time = 60;
   global_invite_time = 60;
