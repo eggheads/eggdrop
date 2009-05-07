@@ -1,4 +1,4 @@
-$Id: Changes1.3,v 1.4 2008/11/29 14:39:45 tothwolf Exp $
+$Id: Changes1.3,v 1.5 2009/05/07 01:07:05 tothwolf Exp $
 
 Eggdrop Changes (since version 1.3.0)
 
@@ -44,7 +44,7 @@ Eggdrop Changes (since version 1.3.0)
     Patch by: drummer
 
   - Expired function didn't test for use_exempts/invites.
-    Found by: matt / Patch by: arthur2
+    Found by: Dude / Patch by: arthur2
 
   - Fixed channels.c file printf when flood settings were 0.
     Patch by: drummer
@@ -69,7 +69,7 @@ Eggdrop Changes (since version 1.3.0)
     Patch by: Rufus
 
   - "last message repeated" flood fixed
-    Patch by: Kimmo
+    Patch by: Kimmo Varis
 
   - Removed the static Tcl check for now
     Found by: various / Patch by: guppy
@@ -116,13 +116,13 @@ Eggdrop Changes (since version 1.3.0)
     Patch by: guppy
 
   - Share channel bans/exempts/invites correctly upon linking.
-    Found by: John / Patch by: guppy
+    Found by: John` / Patch by: guppy
 
   - Share exempts/invites when sharebots first link
     Found by: Jason Ede / Patch by: guppy
 
   - Fixes problem with -cycle/-autovoice channel settings.
-    Found by: raeK / Patch by: arthur2
+    Found by: daimonic / Patch by: arthur2
 
   - -userbans doesn't have to unban server bans (on rejoin).
     Found by: Jason Ede / Patch by: arthur2, Rufus, Jason Ede
@@ -176,7 +176,7 @@ Eggdrop Changes (since version 1.3.0)
     Found by: various / Patch by: guppy
 
   - Typo in '.-chan' command (channels.mod/cmdschan.c).
-    Patch by: F|ame
+    Patch by: Flame
 
   - Added default chanset's for .+chan
     Patch by: dw
@@ -194,7 +194,7 @@ Eggdrop Changes (since version 1.3.0)
     Found by: Dude / Patch by: poptix
 
   - Minor language file fixes
-    Patch by: matt
+    Patch by: Dude
 
   - Fix for the Tcl static check
     Patch by: Mixter
@@ -261,14 +261,14 @@ Eggdrop Changes (since version 1.3.0)
     Patch by: guppy
 
   - Missing 'cvs login' in the README
-    Found by: matt / Patch by: guppy
+    Found by: Dude / Patch by: guppy
 
   - Updates README: basic cvs usage, mailing list, how to obtain Eggdrop,
     upgrading Eggdrop, getting help.
     Found by: Lobo^Loco, John` / Patch by: John`
 
   - Cosmetic changes to eggdrop.conf.dist, lots of little fixes :P
-    Found by: hath, John` / Patch by: John`
+    Found by: Hath, John` / Patch by: John`
 
   - Updates for tcl-commands.doc, gives a fix for the changed MODE bind (the
     fix is by guppy)
@@ -442,7 +442,7 @@ Eggdrop Changes (since version 1.3.0)
     Patch by: drummer
 
   - Fixed bug in /msg <bot> key
-    Found by: hath / Patch by: drummer
+    Found by: Hath / Patch by: drummer
 
   - /me (CTCP ACTION) floods are now treated as privmsg floods.
     Patch by: drummer
@@ -589,7 +589,7 @@ Eggdrop Changes (since version 1.3.0)
     Patch by: arthur2
 
   - '.su' .quit rejoined message was redundant.
-    Found by: hath / Patch by: arthur2
+    Found by: Hath / Patch by: arthur2
 
   - Fix for bot sending back an error on some bogus dcc's even though
     quiet_reject was turned on.
@@ -600,10 +600,10 @@ Eggdrop Changes (since version 1.3.0)
     Patch by: drummer
 
   - More spelling mistakes in cmds1.help.
-    Patch by: hath
+    Patch by: Hath
 
   - Spelling mistakes in notes.help.
-    Patch by: hath
+    Patch by: Hath
 
   - private-user now works much more effectively
     Patch by: slennox
@@ -623,7 +623,7 @@ Eggdrop Changes (since version 1.3.0)
     Patch by: arthur2
 
   - Adds wire module to eggdrop.conf.dist file.
-    Patch by: hath
+    Patch by: Hath
 
   - Fixed 'read/write integer couplets' in tcl.c no more corrupted set var
     x:y read from the conf file now should global-flood-..setting for .+chan
@@ -673,7 +673,7 @@ Eggdrop Changes (since version 1.3.0)
     Patch by: Q
 
   - Minor doc changes
-    Found by: hath / Patch by: guppy
+    Found by: Hath / Patch by: guppy
 
   - Patch to avoid +s-p +p-s floods, and .status will now show "xx members"
     or "inactive" or "pending"
@@ -1532,7 +1532,7 @@ Eggdrop Changes (since version 1.3.0)
     Found by: MANY / Patch by: Beldin
 
   - filesys.help typo
-    Patch by: Wylie
+    Patch by: wylie
 
   - Only ban 1st ban on banlist of a joiner
     Found by: plan9 / Patch by: Beldin
@@ -1720,10 +1720,10 @@ Eggdrop Changes (since version 1.3.0)
     Patch by: easton
 
   - Bot was still accepting assocs for chans > GLOBAL_CHANS
-    Found by: Wylie / Patch by: Beldin
+    Found by: wylie / Patch by: Beldin
 
   - Away note respone missing nick
-    Found by: Wylie / Patch by: Beldin
+    Found by: wylie / Patch by: Beldin
 
   - More "SENTKICK" checks before kicking, to avoid sending the same kick
     more than once (making the bot flood off)
@@ -1805,7 +1805,7 @@ Eggdrop Changes (since version 1.3.0)
     Patch by: Kirk
 
   - +/-host for +t's with chan +m wasn't allowing them to change non-bots
-    Found by: Waulok / Patch by: Beldin
+    Found by: WauloK / Patch by: Beldin
 
   - time binding args were not formatting properly
     Found by: Ernst / Patch by: Beldin

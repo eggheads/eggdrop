@@ -1,4 +1,4 @@
-$Id: Versions,v 1.6 2008/11/29 14:39:46 tothwolf Exp $
+$Id: Versions,v 1.7 2009/05/07 01:07:05 tothwolf Exp $
 
 This file lists the release dates for most of the officially released
 versions of Eggdrop and notes forks, bug fix patches and maintenance
@@ -147,19 +147,20 @@ Version    Release date
 1.1.6      Jun 17, 1999  Maintenance patch by Wild
 1.1.5      Jun 29, 1997  Released by Beldin
 1.1.4      Jun 22, 1997  Released by Beldin
-1.1.3+pl3
-1.1.3+pl2
-1.1.3+pl1
-1.1.3                    First version with module support
-1.1.2+pl2
+1.1.3+pl3                Patch by Beldin
+1.1.3+pl2                Patch by Beldin, EraseMe
+1.1.3+pl1                Patch by EraseMe
+1.1.3                    Released by Beldin
+                         First version with module support
+1.1.2+pl2                Patch by EraseMe
 1.1.2+pl1  Jun 10, 1997  Patch by dtM, Beldin
 1.1.2      Jun  6, 1997  Released by Beldin
 1.1.1+pl2                Patch by Wild, Beldin
-1.1.1+pl1  May 28, 1997
+1.1.1+pl1  May 28, 1997  Patch by Beldin
 1.1.1
-1.1.0+pl3
-1.1.0+pl2
-1.1.0+pl1  May 26, 1997
+1.1.0+pl3                Patch by Beldin
+1.1.0+pl2                Patch by Wild
+1.1.0+pl1  May 26, 1997  Patch by Beldin, dk
 1.1.0      May 24, 1997  Released by dk
 
 1.1alpha versions:

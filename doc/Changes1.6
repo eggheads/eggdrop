@@ -1,10 +1,16 @@
-$Id: Changes1.6,v 1.20 2009/05/06 19:17:51 tothwolf Exp $
+$Id: Changes1.6,v 1.21 2009/05/07 01:07:05 tothwolf Exp $
 
 Eggdrop Changes (since version 1.6.0)
 
     _____________________________________________________________________
 
 1.6.20 (CVS):
+
+  - Corrected and unified even more duplicate contributor names in the
+    doc/Changes files.
+  - Added some missing contributor names and patch information.
+  - Further expanded 1.1.x information in doc/Versions.
+    Patch by: Tothwolf
 
   - Fixed another bug in the CTCP parsing code introduced by the servmsg.c
     buffer overflow patch in 1.6.19.
@@ -129,9 +135,9 @@ Eggdrop Changes (since version 1.6.0)
   - Renamed DEBCFLAGS to DEBCFLGS
   - Moved -g3 compiler flag to DEBCFLGS variable.
   - Removed double quoting "`command`" in autoconf macro tests.
-  - Changed autoconf macro 'test ! foo = bar' tests to 'test foo !=  bar'.
-    Both are portable but '!=' is now more common in autoconf macros and
-    is easier to read.
+  - Changed autoconf macro 'test ! foo = bar' tests to 'test foo != bar'. 
+    Both are portable but '!=' is now more common in autoconf macros and is
+    easier to read.
     Patch by: Tothwolf
 
   - Fixed EGG_PROG_HEAD_1 autoconf macro cache checking. You can't use
@@ -442,7 +448,7 @@ Eggdrop Changes (since version 1.6.0)
     Found by: various / Patch by: Wcc
 
   - Fixed Tcl encoding issues with .tcl and .set.
-    Found by: fabulous, Miguel Ventura / Patch by: CoderX2
+    Found by: Fabulous, Miguel Ventura / Patch by: CoderX2
 
   - Added a set of Finnish language files and a Finnish MOTD.
     Patch by: Mikko Vester
@@ -485,7 +491,7 @@ Eggdrop Changes (since version 1.6.0)
 
   - Fixed performance issues with mv/cp when a lot of files are in the file
     area.
-    Found by: fabulous / Patch by: Wingman
+    Found by: Fabulous / Patch by: Wingman
 
   - Typo in doc/COMPILING-FAQ, It's LD_LIBRARY_PATH, not LB_LIBRARY_PATH
     Found by: NoPleX / Patch by: Wcc
@@ -494,7 +500,7 @@ Eggdrop Changes (since version 1.6.0)
     Found by: various / Patch by: darko``
 
   - Don't let .tcl mkdir create duplicate filedb entries.
-    Found by: fabulous, Ze / Patch by: Wingman
+    Found by: Fabulous, Ze / Patch by: Wingman
 
   - Fixed a compile error related to varargs when using old Tcl versions.
     Found by: Thomas Neumayer / Patch by: Wcc
@@ -562,8 +568,8 @@ Eggdrop Changes (since version 1.6.0)
   - Terminate wire_bot[] in wire.mod, fixing a crash.
     Patch by: Bryan Dolan
 
-  - Fixed a segfault in dcc.c.
-    Patch by: daimonic
+  - Check for empty password in dcc_bot_check_digest().
+    Found by: azurIt / Patch by: daimonic
 
   - Various crash fixes:
   - Fixed _wild_match() to not try to read before the beginning of the mask.
@@ -593,13 +599,13 @@ Eggdrop Changes (since version 1.6.0)
     Found by: hobb / Patch by: Wcc
 
   - Truncate passwords at 30 chars instead of 15.
-    Found by: ting / Patch by: Paladin
+    Found by: Ting / Patch by: Paladin
 
   - Be aware of 'cp/mv * this.file' possibility in filesys.mod.
-    Found by: fabulous / Patch by: stdarg
+    Found by: Fabulous / Patch by: stdarg
 
   - Allow any user to .whois their own handle.
-    Found by: ZeveRoaRe / Patch by: Wcc
+    Found by: ZeveRoaRe RoeLt / Patch by: Wcc
 
   - Added a new EVNT type, "userfile-loaded", which is called after the
     bot's userfile has been loaded.
@@ -683,7 +689,7 @@ Eggdrop Changes (since version 1.6.0)
     Patch by: Paul E., stdarg
 
   - Check to make sure file we want to send exists when resuming a transfer.
-    Found by: fbs / Patch by: stdarg
+    Found by: Fabulous / Patch by: stdarg
 
   - Removed unnecessary quiet_reject checks in msg_ident() that have been
     present since 1.3.0+bel17.
@@ -799,7 +805,7 @@ Eggdrop Changes (since version 1.6.0)
 
   - Kill a transfer connection after sending a TRANSFER_DCC_IGNORED notice
     to a user
-    Found by: fbs / Patch by: Wcc
+    Found by: Fabulous / Patch by: Wcc
 
   - flood-pub should be flood-chan when using 'channel get'
     Patch by: PPSlim
@@ -862,7 +868,7 @@ Eggdrop Changes (since version 1.6.0)
 
   - Use movefile() instead of copyfile() and unlink() when moving files in
     filesys.mod
-    Found by: fbs / Patch by: Wcc
+    Found by: Fabulous / Patch by: Wcc
 
   - Changed EFnet's max-bans/max-modes to 25
     Patch by: Wcc
@@ -893,7 +899,7 @@ Eggdrop Changes (since version 1.6.0)
 
   - Open file descriptors are now closed when the killdcc Tcl command is
     used on a transfer socket
-    Found by: fbs / Patch by: fbs, Wcc
+    Found by: Fabulous / Patch by: Fabulous, Wcc
 
   - unixtime was not increased when Eggdrop was blocked during a series of
     in-line Tcl commands
@@ -1035,7 +1041,7 @@ Eggdrop Changes (since version 1.6.0)
   - Show the number of hops in .trace's output
     Patch by: BarkerJr
 
-  - Use the proper dynamic lib extention on Mac OSX
+  - Use the proper dynamic lib extention on Mac OS X
     Patch by: Mo-Ize
 
   - Return 5 from dccsend if the file exists in the temp directory and
@@ -1132,7 +1138,7 @@ Eggdrop Changes (since version 1.6.0)
 
   - Don't allow channels containing commas to be added.. also made an error
     message more clear
-    Found by: MaSsKilla / Patch by: Wcc
+    Found by: masskilla / Patch by: Wcc
 
   - Updates to doc/MODULES
     Patch by: BarkerJr
@@ -1148,6 +1154,9 @@ Eggdrop Changes (since version 1.6.0)
 
   - Added 'channel get <chan> <setting>' (backported from 1.7)
     Found by: various / Patch by: stdarg, Mo-Ize
+
+  - Small fix to uptime.mod that caused it to crash on startup
+    Found by: Turner@Undernet, wheely / Patch by: guppy
 
   - uptime.mod will not unload now once loaded (this prevents you from
     losing your stats on a .restart .. to remove, you have to .die)
@@ -1179,7 +1188,7 @@ Eggdrop Changes (since version 1.6.0)
     Patch by: guppy
 
   - Fixed a crash when trying to add an invalid chan using .+chan
-    Found by: MaSsKilla / Patch by: dw
+    Found by: masskilla / Patch by: dw
 
   - nick2hand didn't return "" on a nick that wasn't in the channel
     Found by: various / Patch by: guppy
@@ -1207,7 +1216,7 @@ Eggdrop Changes (since version 1.6.0)
     Found by: MC_8 / Patch by: Wcc
 
   - cd_cmd_table was missing a null entry at the end of the list
-    Patch by: Uwe
+    Patch by: Uwe Schindler
 
 
 1.6.9 (March 10, 2002):
@@ -1219,7 +1228,7 @@ Eggdrop Changes (since version 1.6.0)
 
   - Added a few channels to the README and readme.html and made references
     to other docs in the html files links to their respective html files.
-    Patch by: Wcc, SiD3WiNDR
+    Patch by: Wcc, sid3windr
 
   - modes-per-line is limited to a max of 6 modes per line
     Found by: various / Patch by: Eule
@@ -1274,7 +1283,7 @@ Eggdrop Changes (since version 1.6.0)
 
   - "channel remove" will not crash the bot anymore if you are removing the
     channel for which the bind was called
-    Found by: Xerxes / Patch by: guppy
+    Found by: udf-xerxes@barrysworld.com / Patch by: guppy
 
   - "channel info" will properly list all user-defined settings
     Found by: MC_8 / Patch by: stdarg
@@ -1333,10 +1342,10 @@ Eggdrop Changes (since version 1.6.0)
 
   - Couldn't introduce new users through telnet if a handle named "new"
     existed.
-    Found by: MaSsKilla / Patch by: dw
+    Found by: masskilla / Patch by: dw
 
   - MISC_USERFCREATE1 should use origbotname instead of botnetnick
-    Found by: SiD3WiNDR / Patch by: Wcc
+    Found by: sid3windr / Patch by: Wcc
 
   - Added a warning about allow-resync in the config file
     Patch by: Wcc
@@ -1458,9 +1467,9 @@ Eggdrop Changes (since version 1.6.0)
 
   - Don't try to open a dcc chat when people do /ctcp <bot> chat without a
     password set, instead send an error message
-    Found by: VYOinlove / Patch by: guppy
+    Found by: VYOinLove / Patch by: guppy
 
-  - Fixed a problem on osx with files being shown as bytecount/-1
+  - Fixed a problem on Mac OS X with files being shown as bytecount/-1
     Patch by: quest, stdarg
 
   - Log the remote .who command
@@ -2059,7 +2068,7 @@ Eggdrop Changes (since version 1.6.0)
     Patch by: Eugene
 
   - Dcc resumes with no requested data are now ignored properly
-    Found by: fabulous / Patch by: guppy
+    Found by: Fabulous / Patch by: guppy
 
   - Call sync() after saving the userfile
     Patch by: Krome
@@ -2237,7 +2246,7 @@ Eggdrop Changes (since version 1.6.0)
 
   - Two calls to fclose() were missing in transfer.mod, causing Eggdrop to
     leak file descriptors.
-    Found by: fabulous / Patch by: Fabian
+    Found by: Fabulous / Patch by: Fabian
 
   - Hopefully fixed the cycle-flood problem on some EFnet servers
     Patch by: Eule
@@ -2381,7 +2390,7 @@ Eggdrop Changes (since version 1.6.0)
   - The filesys module did not support remotely linked files. Instead, the
     bot crashed in various places and didn't even attempt to save/load the
     link information.
-    Found by: fabulous / Patch by: Fabian
+    Found by: Fabulous / Patch by: Fabian
 
   - Removed duplicate servlimit check from irc.mod.
     Patch by: Eule

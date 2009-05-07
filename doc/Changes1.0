@@ -1,4 +1,4 @@
-$Id: Changes1.0,v 1.4 2008/11/29 14:39:45 tothwolf Exp $
+$Id: Changes1.0,v 1.5 2009/05/07 01:07:05 tothwolf Exp $
 
 Eggdrop Changes (since version 0.9)
 
@@ -206,7 +206,7 @@ Eggdrop Changes (since version 0.9)
       get/set a dir's required flags
       get # of downloads for a file
   - files '.mv' move directories
-    Suggested by: andrej
+    Suggested by: Andrej
   - '.sort' to sort files
   - Remote sharing of directories (large project)
   - Channel-specific flags (large project, v1.1)
@@ -267,7 +267,7 @@ Eggdrop Changes (since version 0.9)
       get/set a dir's required flags
       get # of downloads for a file
   - files '.mv' move directories
-    Suggested by: andrej
+    Suggested by: Andrej
   - '.sort' to sort files
   - Remote sharing of directories (large project)
   - Channel-specific flags (large project, v1.1)
@@ -405,7 +405,7 @@ Eggdrop Changes (since version 0.9)
       get/set a dir's required flags
       get # of downloads for a file
   - files '.mv' move directories
-    Suggested by: andrej
+    Suggested by: Andrej
   - '.sort' to sort files
   - Remote sharing of directories (large project)
   - Channel-specific flags (large project, v1.1)
@@ -498,7 +498,7 @@ Eggdrop Changes (since version 0.9)
       get/set a dir's required flags
       get # of downloads for a file
   - files '.mv' move directories
-    Suggested by: andrej
+    Suggested by: Andrej
   - '.sort' to sort files
   - Remote sharing of directories (large project)
   - Channel-specific flags (large project, v1.1)
@@ -620,7 +620,7 @@ Eggdrop Changes (since version 0.9)
     Found by: Gaven Cohen
 
   - Warning about permbans given to ops/masters made more specific
-    Suggested by: nick_
+    Suggested by: Nick_
 
   - Would take revenge on itself for deop'ing itself (fixed)
     Found by: cuentero
@@ -675,7 +675,7 @@ Eggdrop Changes (since version 0.9)
       get/set a dir's required flags
       get # of downloads for a file
   - files '.mv' move directories
-    Suggested by: andrej
+    Suggested by: Andrej
   - '.sort' to sort files
   - Remote sharing of directories (large project)
   - Channel-specific flags (large project, v1.1)
@@ -778,7 +778,7 @@ Eggdrop Changes (since version 0.9)
     directory modification time hasn't changed (some changes in the
     directory, like file-size changes, won't change the directory
     modification time)
-    Suggested by: andrej
+    Suggested by: Andrej
 
   - Bots will pass idle-time hints on connect burst
 
@@ -820,7 +820,7 @@ Eggdrop Changes (since version 0.9)
       get/set a dir's required flags
       get # of downloads for a file
   - files '.mv' move directories
-    Suggested by: andrej
+    Suggested by: Andrej
   - '.sort' to sort files
   - Remote sharing of directories (large project)
   - Channel-specific flags (large project, v1.1)
@@ -1199,7 +1199,7 @@ Eggdrop Changes (since version 0.9)
     files
 
   - Tcl 'matchban' command would crash when given a channel (fixed)
-    Found by: gumbie
+    Found by: Gumbie
 
   - Added 'reserved-port' setting for using a certain port for dcc file
     transfers
