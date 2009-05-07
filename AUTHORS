@@ -1,7 +1,7 @@
-$Id: AUTHORS,v 1.1 2009/05/07 01:18:47 tothwolf Exp $
+$Id: AUTHORS,v 1.2 2009/05/07 02:35:42 tothwolf Exp $
 
 Authors of Eggdrop
-Last revised: December 22, 2008
+Last revised: May 6, 2009
 
 ------------------------------------------------------------------------------
 
@@ -69,7 +69,7 @@ by eggheads.org on March 5, 1999:
   Niggurath, paralyse, Shayne, slennox, TheUnknown, TiTi, Tothwolf, vod,
   Whicked
 
-Eggdrop development after 1.3.24i has continued under eggheads.org up though
+Eggdrop development after 1.3.24i has continued under eggheads.org up through
 versions 1.4.x, 1.5.x and currently 1.6.x.
 
 Below are lists of major contributors and core Eggdrop community members for
@@ -101,4 +101,4 @@ See also: THANKS, doc/Versions, doc/Changes
 ------------------------------------------------------------------------------
 
 Copyright (C) 1997 Robey Pointer
-Copyright (C) 1999 - 2008 Eggheads Development Team
+Copyright (C) 1999 - 2009 Eggheads Development Team
