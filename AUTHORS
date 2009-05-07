@@ -1,0 +1,104 @@
+$Id: AUTHORS,v 1.1 2009/05/07 01:18:47 tothwolf Exp $
+
+Authors of Eggdrop
+Last revised: December 22, 2008
+
+------------------------------------------------------------------------------
+
+This file documents the developers, major contributors, and groups who've
+developed and maintained Eggdrop. A full list of contributors can be found
+in the file THANKS. Contributor information for specific versions of Eggdrop
+can be found in the corresponding doc/Changes files.
+
+Eggdrop was originally written by Robey Pointer. Versions 0.6 through 1.0o
+and 1.1alpha-lincoln through 1.1alpha-grant were developed by Robey from
+December 1993 through February 1997. As of version 1.0n, Robey relicensed
+Eggdrop under the GNU GPL. Robey's relicensing also allows for earlier
+versions of Eggdrop to be licensed under the GNU GPL. After version
+1.1alpha-grant, Robey gave up his position as Eggdrop's maintainer.
+
+Version 1.0p was a maintenance release put together by Wade in March 1997
+made from Eggdrop community patches. Later 1.0 series bugfix and maintenance
+releases were made by other Eggdrop community members.
+
+Eggdrop 1.1 development continued after 1.1alpha-grant with significant
+contributions from many Eggdrop community members. While it would be
+impossible to include a full list of contributors for each version in this
+file, below is a list of some of the major contributors and core Eggdrop
+community during 1.1alpha and 1.1.x:
+
+  Beldin, ButchBub, cmwagner, dk, dtM, EraseMe, Ernst, Lefty, LuckyStar,
+  poptix, Robey, Wade, Wild
+
+Around version 1.1.1, Beldin took on Robey's former role of lead developer
+and maintainer. Beldin and many other developers later regrouped as
+eggdrop.org and developed Eggdrop up through version 1.3.23.
+
+Below is a partial list of major contributors and core Eggdrop community
+members during 1.2 and 1.3 up through version 1.3.23:
+
+  Beldin, BoGuS, ButchBub, Daklop, dk, dtM, easton, Ernst, KingKurly, Kirk,
+  Melvan, |mmortal, NC, poptix, Q, Raistlin, smok, tdmarti, TheGhost, vod,
+  wheely, zarni
+
+After version 1.3.23, Beldin decided to discontinue development of the 1.3.x
+branch and instead focus solely on 'Eggdrop2' development.
+
+Unfortunately, 'Eggdrop2' took more resources to compile and run than 1.3.x.
+Most users also found it difficult and sometimes impossible to compile
+because it lacked the portability of previous versions due to having been
+written in C++ instead of C. Because of its limitations, users continued to
+favor the more established 1.3.x codebase.
+
+After Beldin and a number of other developers publicly stated their intent
+to discontinue all development of 1.3.x after 1.3.23, a new development
+group began to form made up of other Eggdrop community members. This group
+eventually organized as eggheads.org.
+
+Because of the large number of outstanding bugs in 1.3.23 and community
+interest in continuing 1.3.x development, a new version was created from the
+numerous patches that had piled up after work on 1.3.x had stopped. This new
+version was released as 1.3.24i. The 'i' stood for independent and was
+intended to show that this release was independent of the "official"
+development group. The 'i' was dropped for the 1.3.25 and later releases.
+
+Below is a list of developers and contributors for version 1.3.24i released
+by eggheads.org on March 5, 1999:
+
+  arthur2, Bass, Beige, Crotale, Daemus, deadgrrrl, Dude, guppy, Lobo^Loco,
+  Niggurath, paralyse, Shayne, slennox, TheUnknown, TiTi, Tothwolf, vod,
+  Whicked
+
+Eggdrop development after 1.3.24i has continued under eggheads.org up though
+versions 1.4.x, 1.5.x and currently 1.6.x.
+
+Below are lists of major contributors and core Eggdrop community members for
+versions 1.3.24i-1.3.28, 1.4.x, 1.5.x and 1.6.x.
+
+1.3.24i-1.3.28:
+
+  arthur2, Crotale, Cybah, Daemus, drummer, dw, Eule, Fabian, guppy, Jason
+  Ede, John`, Michael, Mixter, poptix, Tothwolf
+
+1.4:
+
+  arthur2, drummer, dw, Eugene, Eule, Fabian, guppy, Jason Ede, Lucas, rtc,
+  Sup, toot, Tothwolf, Wiktor
+
+1.5:
+
+  drummer, Eule, Fabian, G`Quann, guppy, Jason Ede, Sup, Tothwolf, Wiktor
+
+1.6:
+
+  Abraham, BarkerJr, bryand, darko``, drummer, dw, Eugene, Eule, Fabian,
+  guppy, ITE, Kirben, Noyga, poptix, PPSlim, [sL], stdarg, Sup, SuperS,
+  Sven, TaKeDa, thommey, Tothwolf, Wcc, Wiktor, Wingman
+
+
+See also: THANKS, doc/Versions, doc/Changes
+
+------------------------------------------------------------------------------
+
+Copyright (C) 1997 Robey Pointer
+Copyright (C) 1999 - 2008 Eggheads Development Team

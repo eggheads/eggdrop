@@ -1,5 +1,5 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
-<!-- $Id: patch-howto.html,v 1.12 2008/04/19 14:57:10 guppy Exp $ -->
+<!-- $Id: patch-howto.html,v 1.13 2009/05/07 01:18:48 tothwolf Exp $ -->
 
 <html>
   <head>
@@ -132,19 +132,20 @@ diff -urN eggdrop1.6.original eggdrop1.6.modified &gt; patchname.patch
 
           <blockquote>PATCH1.6: my-patch-filename.patch</blockquote>
 
-          <p>You should also include the nick/handle/name you would like to be
-          used in the UPDATES1.6 file (if applicable).</p>
+          <p>You should also include the nick/handle, name, and email
+          address you would like used for attribution in the Changes1.6 and
+          THANKS files.</p>
         </li>
       </ol>
 
-      <p>Never modify src/patch.h or one of the UPDATES files. We will do it.
+      <p>Never modify src/patch.h or one of the Changes files. We will do it.
       If your patch includes changes related to autotools (./configure, etc),
       do <strong>NOT</strong> run autoconf, autoheader, etc; we will do this
       as well.</p>
 
       <p>Also, please don&#39;t add credit lines all over the source when
-      patching. Patch contributors will receive credit in UPDATES1.6 and
-      ChangeLog.</p>
+      patching. Patch contributors will receive credit in Changes1.6 and
+      THANKS.</p>
 
       <p>CVS diff&#39;s are also perfectly fine (and actually, prefered, as the
       patch will be against the most current version of Eggdrop). To create a

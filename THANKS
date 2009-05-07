@@ -1,0 +1,603 @@
+$Id: THANKS,v 1.1 2009/05/07 01:18:47 tothwolf Exp $:
+
+Eggdrop Developers and Contributors
+Last revised: December 18, 2008
+
+------------------------------------------------------------------------------
+
+This file contains a list people who have contributed to Eggdrop. These
+contributors sent bug reports, improved the code or documentation, or
+otherwise offered support to the Eggdrop project. Individual contributions
+are listed in the doc/Changes files included with Eggdrop.
+
+If you feel your name is missing from this list, if you'd rather not be
+listed, or if your information is incorrect, please send an email to
+bugs@eggheads.org.
+
+Developers and major contributors:
+
+arthur2        Jerome Carre                    arthur2@demoniak.hay-france.com
+BarkerJr       Bryon Eldridge                  barkerjr@barkerjr.net
+Beldin         Darrin Smith                    beldin@beldin.org
+bryand         Bryan Drewery                   bryan@shatow.net
+ButchBub       Scott G. Taylor                 staylor@mrynet.com
+cmwagner       Chad Wagner                     cmwagner@sodre.net
+Cybah          Jonathan Miles                  jon@zetnet.net
+Daklop
+darko``        Darko Ilic                      darko@onvol.net
+dk             Steven Packard (Dynamite Kid)   spackard@moran.mines.edu
+drummer        Dobos Lorant                    drummer@buli.sk
+dw             Per Johansson                   dw@lixom.nu
+EraseMe                                        pyro@imag.net
+Ernst          Ernesto Baschny                 ernst@baschny.de
+Eugene         Michael Ortmann                 eugene3@web.de
+Eule           Axel Franke                     eule@berlin.snafu.de
+Fabian         Fabian Knittel                  fabian.knittel@avona.com
+Fred1          Chris Fuller
+G`Quann        Florian Sander                  gquann@gmx.de
+guppy          Jeff Fisher                     guppy@techmonkeys.org
+ITE            Federico Mennite                ite@freex.ch
+Jason          Jason Ede                       j.d.ede@sheffield.ac.uk
+John`          John                            Johnny@technik.sth.ac.at
+KingKurly      Gregory Kubaryk                 kurly@mindless.com
+Kirben         Travis Howell                   kirben@optushome.com.au
+Kirk           Ian Kaney                       ikaney@crisiant.com
+LuckyStar                                      lucky@binet.lv
+NC
+poptix         Matthew Hallacy                 poptix@poptix.net
+Q                                              Q@ping.be
+Robey          Robey Pointer                   robey@lag.net
+rtc            Peter 'Rattacresh' Backes       rtc@helen.plasma.xg8.de
+stdarg                                         stdarg@yahoo.com
+Sup            Teemu Hjelt                     sup@techmonkeys.org
+SuperS         Kevin Lamothe                   supers@starblaze.2y.net
+Sven           Sven Trenkel                    list@semidefinite.de
+TaKeDa         Dariusz Kulinski                takeda3@netzero.net
+TheGhost       James Simmons                   tg@linuxpackages.net
+thommey        Thomas Sader                    thommey@laxin.de
+toot           Toby Verrall                    toot@holborn.melnet.co.uk
+Tothwolf                                       tothwolf@techmonkeys.org
+Wcc            Will Buckner                    wcc@techmonkeys.org
+Wiktor         Wiktor Wodecki                  wodecki@gmx.de
+Wild           Mike Hartman                    wild@klondike.com
+
+Contributors:
+
+               a person
+               Aaron Zollman
+aaronwl
+aba
+abfab
+Abraham
+Absinthe
+               Adam Spiers
+Adze
+Al3X           Alex                            alex@bmotel.com
+alex323
+               Amir Shalem                     amir@boom.org.il
+AmnesiAc
+Amun
+Andrej         Andrej Presern                  andrejp@luz.fe.uni-lj.si
+Andy
+anonymous
+answer
+archimede
+archon
+argg           Paul Anderson                   xerox@foonet.net
+Armand                                         udf-xerxes@barrysworld.com
+axel_v
+aXs
+ayman
+azurIt
+               B. Jamison
+^Baron^        Zev Toledano                    eggdrop@thelastexit.net
+Bass
+Beige
+               Ben Barton
+               Ben Dover                       eggdrop_soup@hotmail.com
+Benny
+               Bert Bohla
+bhab           Kelsey Hudson                   khudson@compendium.us
+bill
+               Bill Brandt
+bill-tcl
+billyjoe
+bingony
+blackjac
+Blacky
+blaster^                                       blasterb@wanadoo.fr
+Ble            Bruce                           brucee_ca@yahoo.com
+bleah
+Bob
+BoGuS
+Boing
+boro
+Bosko
+               Bow Sineath
+               Brad Edwards
+brenny
+Brian
+               Brian T.
+               Bruce Gingery
+               Bruce S.
+               Bryan Dolan
+bUrN
+Butthead
+By-Tor                                         bytor@netside.com
+               C. Massam
+C4thY
+capster
+CFusion
+               Chad Fawcett
+CHaiNeSS
+chaos
+Charvel
+Chriphil
+               Chris Northwood
+               Chucky Burnett
+ClearlyJa
+ClubCX
+clusters
+CoderX2
+               cold fusion
+C_Olli
+coolio
+coop
+Cosmo
+Creative1      Joaquin Grech                   creative1@bigfoot.com
+Crotale
+cuentero
+               Curt Lewis
+cyberscape
+CyberTech
+Daemus
+Dagmar
+daimonic       Gary Wall                       gary@daimonic.org
+dalbien
+dan
+               Dan Anatol
+               Dania Stolfi
+Daniel
+danny
+dannyboy
+DarkDruid
+darkfall
+Darkfox
+Darki
+darknight
+DarkReap1
+darkshde
+Darude
+data
+davd           David Newhall II                david@sleepers.net
+               Dave Guzeman
+David
+David-
+               David Brauman
+               David Brown
+               David Sesno
+               De Kus
+deadgrrrl
+deaf
+DeathHand
+debaser
+               Dejan Oklobdzija
+               Del Carter
+d-e-m
+demon
+denali
+DennisMV
+derrick
+DFrank
+Dicctr0s
+digital
+dirtymac
+DocSavag       Jerry Sutton                    jerrystn@ccse.net
+dollar
+               Donovan Long
+dorgan
+dork
+dracwolf
+DrDeath
+drnet          Justin W. Pauler                justin@jwpauler.org
+dtM
+Dude           Matthew Stiefel                 matt@snip.net
+dunk
+dvlsadvct
+DVS01          Denis                           dvs01@dvs01.net
+easton
+[Eazy|E]
+Ec|ipse
+Eden
+edmiester
+Ehrenberg
+ejm
+               Emmanuel Marty
+Evo|ver
+exile
+eye
+Fabulous                                       fabulous@brasnet.org
+fasticus
+FeaRx
+Felix
+Felix3339
+FirebaII                                       fireball@lanparty.ch
+FireEgl        Philip Moore                    fireegl@gmail.com
+Flame          Lee Hardy                       flame@melnet.co.uk
+flammable      Dan Pike                        flammable@start.com.au
+flash
+Flattie
+               flyin lion
+foxmulder
+Fraggle        J√©r√¥me Benoit                   jerome.benoit@grenouille.com
+Freeder                                        freeder@techmonkeys.org
+fuchs          Bjoern Krombholz                bjkro@gmx.de
+FumBa
+FuzzBuster     Scott R. Godin                  mactech@webdragon.net
+fx2
+garbanzo       Alex Zepeda                     garbanzo@hooked.net
+gavroche       Jamie Rishaw                    jamie@arpa.com
+genady
+               Georg Schwarz
+Giga
+               Gilles d'Andrea
+Gisselle
+               Giuseppe Caulo
+goo
+GoodGuy
+Gord-          Gordon Lloyd Goldberg           ggold@panix.com
+GregMo         Greg Mosier                     me@gregmo.us
+GSCEGO
+GTo            Grigoris Ntotsis                gto@the.forthnet.gr
+Gumbie                                         gumbie@sunspot.tiac.net
+guruz
+guy
+gwyn
+Habeeb
+hal
+Hanno
+Hath                                           hath@cyberops.org
+hdclown
+herz
+hobb
+hoopycat
+               Hue Truong
+Hunger
+Ian            Ian Campbell                    ian@damnit.org
+iceman
+Igmar
+illi
+imoq
+IpAddress
+islandic
+\-\itman
+               J. Lehto
+James
+               James Colton
+jay
+               Jay Maynard
+               Jay S. Monk
+jedis
+jeffx
+Jerome
+jerrold
+               Jesse M.
+               Jesse Schachter
+               Jim Marco
+jkw
+jman
+[joco]
+               Joe Morris
+               John Fulton
+Johnny
+               Johnny Mnemonic                 johnny@themnemonic.org
+Joker
+jonte
+Jordan
+Jordy
+Julie
+junkie
+Juvenal
+Jz
+Karsten
+               Keith Tyler
+Kelvin
+               Kendrick Vegas
+keyoke
+kibbles
+KingBob
+Kinslayer      Gaven Cohen                     dragon@wastelands.net
+Koach
+Komandar
+               Kool Cat                        kool_cat@softhome.net
+Krome
+Kuja
+KuNgFo0                                        kungfo0@techmonkeys.org
+L0RE
+labtec
+Lam
+Larry
+lasher-
+               Laurens v. Alphen
+ledpighp
+lee
+Lefty          Jeff Hartman                    lefty@sojourn.com
+LethalWP
+Lobo^Loco
+Looser^
+LSC
+LtGen
+               Luca De Roberto
+Lucas          Lucas Nussbaum                  lucas@lucas-nussbaum.net
+               Luke Detering
+               M. Koszik
+madhack
+               Manual Hernandez
+masskilla
+Mastr
+MBroLad
+mc             Rico Gloeckner                  mc@verdinet.de
+MC_8           Carl M. Gregory                 mc8@purehype.net
+Melvan
+metatron
+mho                                            mtl@videotron.ca
+MHT            ManHatTan                       mht@mygale.org
+Michael
+Michele
+               Miguel Ventura
+Mikael
+               Mikael Hammarin
+               Mikael Hedberg
+               Mike Hammarin
+               Mike McLagan
+               Mikko Vester
+miltrypet
+mish           Lev                             mish@mydestiny.net
+Mixter                                         mixter@mixter.org
+mjg
+Mloe
+|mmortal
+               modus operandi
+               Mohammad Ali Rezaei
+Mo-Ize         Guillaume Leclanche             mo-ize@nul-en.info
+moonwolf
+MORA
+               Mr. Wizard
+mrbond
+mrBuG                                          mrbug@eggdrop.org.ru
+Mr_Jode
+MsingLnk
+MULTITUDE
+Murf
+nakee          Ely Levy                        elylevy@cs.huji.ac.il
+NaTaS
+               Nate Gardner
+               Neale Pickett
+NeO-MeTaL
+NeoN
+nervous
+NESS
+NetG0D
+NetIrc
+neuro
+never
+               Nicholas J. Dear
+Nick_                                          nick@null.net
+               Nico Golde
+Nidhogg
+Niggurath      Shub Niggurath                  rm@fh-worms.de
+NigtHuntr
+               Nils ÿstbjerg                   shorty@business.auc.dk
+nitemoon
+NML_375
+Nobody
+node
+NoPleX
+Noyga
+offspring
+okey
+OldGhost
+OldGroo
+Oliver
+Olrick
+OpTiC-?X
+                                               os2warp@invlogic.com
+Paladin        Alan Cameron                    paladin@techmonkeys.org
+Paladinz
+panasync
+paralyse
+paran0id
+paranorml
+paravoid
+partek
+pattyt
+               Paul E.
+PaulBoehm
+peace                                          peace@shell.webmaster.com
+                                               pepsi@gear.torque.net
+Phoenix
+piglet
+pinchaser
+plan9
+Plex
+plof
+poseidon
+PPSlim         Phil Richardson                 ppslim@acarr.plus.com
+Preston
+Prez
+Prime
+project10
+proton
+prox
+^PRS4^         James P.                        prs4@hotmail.com
+pseudo         Rumen Stoyanov                  pseudo@egg6.net
+pteron         Andy Repton                     eggdrop@pteron.org
+QuakeMstr
+quest                                          quest@mac.com
+               R. Brooklyn
+               R. Ramos
+RaakQ          Kimmo Varis                     kimmov@gmail.com
+ragtop
+Raistlin       Jason Slagle (Raistlin Majere)  raistlin@tacorp.net
+RandomAPB
+               Randy Summerfiled
+ranjha
+rastam0n
+|^Raven^|
+rawdon
+ReBEL
+RebuM          Martin Matuska                  rebum@gmx.at
+redbird
+ReDDawG        Mike Chambers                   mike@netlyncs.com
+reed
+Rich
+               Rick Cuoto
+ridens
+               Robert Brice
+               Roger Yerramsetti
+               Rok Papez
+romulus
+Rufus
+               S Wilcox
+S7reaM
+sabi
+Sandoz
+sandvik
+scipio
+Scorpius
+scott
+ScottDrake
+Scuzzi
+seadawg
+               Sean T.
+[secret]
+Segfault       Ryan Butler                     rbutler@tsss.org
+seljo
+seth
+               Seth Mattinen
+shadow
+Shane
+Shane0
+Shaun          Shaun Brown                     mastr@irrelevant.net
+Shawn888
+Shayne
+shovon
+shrike
+sid3windr      Tom Laermans                    tom.laermans@powersource.cx
+simple         Jonathan G. Rudolph             skralg@gmail.com
+skiidoo        Thomas Faucher                  aza.skiidoo@gmail.com
+Skorpion
+SKY
+|SKY|
+skyline
+[sL]                                           strikelight@tclscript.com
+slennox        Shayne Lennox                   slennox@egghelp.org
+slenny
+slix
+sloot
+slt
+slug
+|SmAsH|
+smok
+softlord
+Solal
+somni
+sorta
+Souperman      Graeme Donaldson                webmonster@eggdrop.za.net
+spacey
+sprite
+stary
+station
+               Stephen Hunter
+               Stephen P. Clouse
+stephenc
+SteppenWolf
+               Steven Nikkel
+stomper
+Stream
+strolchi
+Stu
+               Stu Jones
+suizide
+symband
+symbands
+               T. Salom‰ki
+tabo
+tartarus
+taz-man
+tchaika
+tdmarti
+TheAvatar
+The_Dawn
+thembones
+TheQ
+TheUnknown                                     TheUnknown@Bigfoot.com
+Thomas
+               Thomas Neumayer
+thx-1138
+timothy
+               Timothy Barbeisch
+Ting           Ronny VÂrdal                    rv@umbraco.nu
+Tit00n
+TiTi
+Toblerone
+tolim
+               Tom Rini
+               Tomas Szaniszlo
+Toon
+topcat
+Tori
+trey
+tris
+trojan
+               Trond Refsnes
+troy
+               Troy Davis
+                                               Turner@Undernet
+tuvix
+tyson
+upstream       Christian Larsen                upstream@shell2.lomag.net
+               Uwe Schindler                   uwe@thetaphi.de
+Vassago        Ryan Addams                     rowan@unix.mclv.net
+vern-n
+vertex
+                                               vince@who.net
+vod            Roger Stone                     capsterx@hotmail.com
+void
+VYOinLove      Olbosanu Viorel                 vyoinlove@yahoo.com
+Wade
+Wanderer                                       wanderer@telenet.be
+Warmage
+WauloK         Jason Oakley                    waulok@bangrocks.com
+waxmaster
+wayhigh        Kevin Lynn                      klynn@kevinlynn.com
+Webbie         Peter Chiu                      webbie@ipfw.org
+wheely         Kevin Walker                    kevin@racbot.dot.org
+Whicked
+Whilor         Arne Beyer                      whilor@whilor.de
+Wingman        Christian Birkl                 wingman@techmonkeys.org
+winkey         Brian Case                      rush@winkey.org
+wrath
+Wull                                           wnelson@enterprise.net
+wylie          Todd Wright                     wylie@geekasylum.org
+xberry         BBerry                          xberry@slo.net
+Xerxes         Lonnie Denison
+XGen
+xian
+Xtoper
+^You^
+zamf
+zarni                                          zarni@weirdness.com
+Zart           Konstantin Zemlyak              zart@zartsoft.ru
+                                               zathras3@hotmail.com
+Ze             Yann Richard                    ze@nbox.org
+zenoran
+               ZeveRoaRe RoeLt                 zeveroar@phreaker.net
+ziffie
+ZiMiaS
+zip            Ian Campbell                    zip@techmonkeys.org
+
+------------------------------------------------------------------------------
+
+Copyright (C) 1997 Robey Pointer
+Copyright (C) 1999 - 2008 Eggheads Development Team

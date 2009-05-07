@@ -1,4 +1,4 @@
-$Id: CONTENTS,v 1.21 2008/02/16 21:40:54 guppy Exp $
+$Id: CONTENTS,v 1.22 2009/05/07 01:18:47 tothwolf Exp $
 
 Directory Contents - /
 Last revised: April 16, 2003
@@ -37,6 +37,9 @@ Last revised: April 16, 2003
   configure.ac
     These are scripts for automatic configure of the bot.
 
+  AUTHORS
+    Contains a list of Eggdrop developers and major contributors.
+
   ChangeLog
     Contains CVS commit logs from each change made to Eggdrop in CVS.
 
@@ -63,6 +66,9 @@ Last revised: April 16, 2003
 
   README
     You should read this file before even trying to compile Eggdrop.
+
+  THANKS
+    Contains a full list of Eggdrop contributors.
     _____________________________________________________________________
 
   Copyright (C) 2003 - 2008 Eggheads Development Team

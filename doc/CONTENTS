@@ -1,4 +1,4 @@
-$Id: CONTENTS,v 1.25 2008/02/16 21:40:56 guppy Exp $
+$Id: CONTENTS,v 1.26 2009/05/07 01:18:47 tothwolf Exp $
 
 Directory Contents - doc/
 Last revised: August 04, 2004
@@ -20,15 +20,15 @@ Last revised: August 04, 2004
   ABOUT
     Information about Eggdrop and a brief history can be found in this file.
 
-  AUTHORS
-    A list of Eggdrop developers and contributors is in this file.
-
   BOTNET
     This is a guide to flags and bot user file sharing.
 
   BUG-REPORT
     Fill out this form and e-mail it to bugs@eggheads.org if you find a bug
     in Eggdrop.
+
+  Changes
+    These files document the changes made to each version of Eggdrop.
 
   COMPILE-GUIDE
     If you have trouble compiling your Eggdrop, take a look in this file.
@@ -61,8 +61,9 @@ Last revised: August 04, 2004
     Some advanced tips on making Eggdrop do what you want it to do can be found
     here. It also contains tweaking tips for your config file.
 
-  UPDATES1.6
-    This is a complete list of changes made to Eggdrop 1.6.
+  Versions
+    Contains a list of Eggdrop versions, release dates, and other important
+    notes in reverse chronological order.
     _____________________________________________________________________
 
   Copyright (C) 2003 - 2008 Eggheads Development Team
