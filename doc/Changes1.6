@@ -1,10 +1,16 @@
-$Id: Changes1.6,v 1.24 2009/05/16 11:25:27 tothwolf Exp $
+$Id: Changes1.6,v 1.25 2009/05/16 13:16:55 tothwolf Exp $
 
 Eggdrop Changes (since version 1.6.0)
 
     _____________________________________________________________________
 
 1.6.20 (CVS):
+
+  - Fixed potential buffer overflow in readuserfile() that can occur on a
+    leaf bot when a hub attempts to share ban/invite/exempt masks for a
+    large number of channels that the leaf does not monitor.
+    Fixes Bugzilla Bug # 471 "Buffer overflow in src/users.c"
+    Found by: FireEgl / Patch by: pseudo
 
   - Updated masktype selection documentation for tcl_maskhost and ban-type.
     Patch by: pseudo

@@ -10,7 +10,7 @@
  *
  * dprintf'ized, 9nov1995
  *
- * $Id: users.c,v 1.53 2008/11/01 00:40:03 tothwolf Exp $
+ * $Id: users.c,v 1.54 2009/05/16 13:16:55 tothwolf Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -674,7 +674,7 @@ int readuserfile(char *file, struct userrec **ret)
   struct userrec *bu, *u = NULL;
   struct chanset_t *cst = NULL;
   int i;
-  char ignored[512];
+  char ignored[LOGLINEMAX]; /* putlog() will truncate anything larger anyway */
   struct flag_record fr;
   struct chanuserrec *cr;
 
@@ -794,8 +794,10 @@ int readuserfile(char *file, struct userrec **ret)
             strcpy(s1, lasthand);
             strcat(s1, " ");
             if (strstr(ignored, s1) == NULL) {
-              strcat(ignored, lasthand);
-              strcat(ignored, " ");
+              strncat(ignored, lasthand,
+                      sizeof(ignored) - 1 - strlen(ignored));
+              strncat(ignored, " ",
+                      sizeof(ignored) - 1 - strlen(ignored));
             }
             lasthand[0] = 0;
           } else {
@@ -820,8 +822,10 @@ int readuserfile(char *file, struct userrec **ret)
             strcpy(s1, lasthand);
             strcat(s1, " ");
             if (strstr(ignored, s1) == NULL) {
-              strcat(ignored, lasthand);
-              strcat(ignored, " ");
+              strncat(ignored, lasthand,
+                      sizeof(ignored) - 1 - strlen(ignored));
+              strncat(ignored, " ",
+                      sizeof(ignored) - 1 - strlen(ignored));
             }
             lasthand[0] = 0;
           } else {
@@ -846,8 +850,10 @@ int readuserfile(char *file, struct userrec **ret)
             strcpy(s1, lasthand);
             strcat(s1, " ");
             if (strstr(ignored, s1) == NULL) {
-              strcat(ignored, lasthand);
-              strcat(ignored, " ");
+              strncat(ignored, lasthand,
+                      sizeof(ignored) - 1 - strlen(ignored));
+              strncat(ignored, " ",
+                      sizeof(ignored) - 1 - strlen(ignored));
             }
             lasthand[0] = 0;
           } else {
