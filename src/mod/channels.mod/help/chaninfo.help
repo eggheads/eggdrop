@@ -57,10 +57,11 @@
                             8 nick!*user@*.host
                             9 nick!*@*.host
                           You can also specify types from 10 to 19 which
-                          correspond to types 0 to 9, with the exception that
+                          correspond to types 0 to 9, but instead of using a *
+                          wildcard to replace portions of the host, only
                           numbers in hostnames are replaced with the '?'
-                          wildcard, or 20 to 29, which works like 10 to 19 but
-                          using '*' for numbers, instead of '?'.
+                          wildcard. Same is valid for types 20-29, but instead
+                          of '?', the '*' wildcard will be used.
         %bban-time%b          Set here how long temporary bans will last (in
                           minutes). If you set this setting to 0, the bot will
                           never remove them.

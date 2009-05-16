@@ -1,4 +1,4 @@
-$Id: mod.channels,v 1.22 2009/05/07 22:01:41 tothwolf Exp $
+$Id: mod.channels,v 1.23 2009/05/16 11:25:28 tothwolf Exp $
 
 Channels Module
 Last revised: February 12, 2003
@@ -86,9 +86,10 @@ Last revised: February 12, 2003
 	  8 nick!*user@*.host
 	  9 nick!*@*.host
 	You can also specify types from 10 to 19 which correspond to types
-	0 to 9, with the exception that numbers in hostnames are replaced with
-	the '?' wildcard, or 20 to 29, which works like 10 to 19 but using '*'
-	for numbers, instead of '?'.
+	0 to 9, but instead of using a * wildcard to replace portions of the
+	host, only numbers in hostnames are replaced with the '?' wildcard.
+	Same is valid for types 20-29, but instead of '?', the '*' wildcard
+	will be used.
 
       ban-time 120
         Set here how long temporary bans will last (in minutes). If you
