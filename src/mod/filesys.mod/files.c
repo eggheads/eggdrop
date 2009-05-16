@@ -2,7 +2,7 @@
  * files.c - part of filesys.mod
  *   handles all file system commands
  *
- * $Id: files.c,v 1.53 2008/02/16 21:41:08 guppy Exp $
+ * $Id: files.c,v 1.54 2009/05/16 14:16:07 tothwolf Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -1014,7 +1014,7 @@ static void cmd_mkdir(int idx, char *par)
 
       break_down_flags(flags, &fr, NULL);
       build_flags(buffer, &fr, NULL);
-      malloc_strcpy(fdbe->flags_req, buffer);
+      malloc_strcpy_nocheck(fdbe->flags_req, buffer);
       dprintf(idx, FILES_CHGACCESS, name, buffer);
     } else if (!chan[0]) {
       my_free(fdbe->flags_req);

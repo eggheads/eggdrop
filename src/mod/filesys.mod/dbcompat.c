@@ -4,7 +4,7 @@
  *
  * Written for filedb3 by Fabian Knittel <fknittel@gmx.de>
  *
- * $Id: dbcompat.c,v 1.21 2008/02/16 21:41:08 guppy Exp $
+ * $Id: dbcompat.c,v 1.22 2009/05/16 14:16:07 tothwolf Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -119,7 +119,7 @@ static int convert_old_files(char *path, char *newfiledb)
                 break_down_flags(nick + 1, &fr, NULL);
                 build_flags(x, &fr, NULL);
                 /* We only want valid flags */
-                malloc_strcpy(fdbe->flags_req, x);
+                malloc_strcpy_nocheck(fdbe->flags_req, x);
               }
             }
             fdbe->size = st.st_size;
@@ -165,7 +165,7 @@ static void convert_version1(FILE *fdb_s, FILE *fdb_t)
         if (fdb1.uploader[0])
           malloc_strcpy(fdbe->uploader, fdb1.uploader);
         if (fdb1.flags_req[0])
-          malloc_strcpy(fdbe->flags_req, fdb1.flags_req);
+          malloc_strcpy(fdbe->flags_req, (char *) fdb1.flags_req);
         fdbe->uploaded = fdb1.uploaded;
         fdbe->size = fdb1.size;
         fdbe->gots = fdb1.gots;

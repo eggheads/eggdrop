@@ -4,7 +4,7 @@
  *   Tcl initialization
  *   getting and setting Tcl/eggdrop variables
  *
- * $Id: tcl.c,v 1.88 2008/02/16 21:41:04 guppy Exp $
+ * $Id: tcl.c,v 1.89 2009/05/16 14:16:06 tothwolf Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -728,7 +728,7 @@ void do_tcl(char *whatzit, char *script)
 int readtclprog(char *fname)
 {
   int code;
-  char *result;
+  EGG_CONST char *result;
 #ifdef USE_TCL_ENCODING
   Tcl_DString dstr;
 #endif

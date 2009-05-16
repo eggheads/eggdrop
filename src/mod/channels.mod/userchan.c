@@ -1,7 +1,7 @@
 /*
  * userchan.c -- part of channels.mod
  *
- * $Id: userchan.c,v 1.50 2008/02/16 21:41:07 guppy Exp $
+ * $Id: userchan.c,v 1.51 2009/05/16 14:16:06 tothwolf Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -1077,7 +1077,7 @@ static int write_bans(FILE *f, int idx)
         fprintf(f, "- %s:%s%lu%s:+%lu:%lu:%s:%s\n", mask,
                 (b->flags & MASKREC_PERM) ? "+" : "", expire,
                 (b->flags & MASKREC_STICKY) ? "*" : "", added,
-                b->lastactive, b->user ? b->user : botnetnick,
+                (long) b->lastactive, b->user ? b->user : botnetnick,
                 b->desc ? b->desc : "requested") == EOF) {
       if (mask)
         nfree(mask);
@@ -1104,7 +1104,7 @@ static int write_bans(FILE *f, int idx)
               fprintf(f, "- %s:%s%lu%s:+%lu:%lu:%s:%s\n", mask,
                       (b->flags & MASKREC_PERM) ? "+" : "", expire,
                       (b->flags & MASKREC_STICKY) ? "*" : "", added,
-                      b->lastactive, b->user ? b->user : botnetnick,
+                      (long) b->lastactive, b->user ? b->user : botnetnick,
                       b->desc ? b->desc : "requested") == EOF) {
             if (mask)
               nfree(mask);
@@ -1137,7 +1137,7 @@ static int write_exempts(FILE *f, int idx)
         fprintf(f, "%s %s:%s%lu%s:+%lu:%lu:%s:%s\n", "%", mask,
                 (e->flags & MASKREC_PERM) ? "+" : "", expire,
                 (e->flags & MASKREC_STICKY) ? "*" : "", added,
-                e->lastactive, e->user ? e->user : botnetnick,
+                (long) e->lastactive, e->user ? e->user : botnetnick,
                 e->desc ? e->desc : "requested") == EOF) {
       if (mask)
         nfree(mask);
@@ -1164,7 +1164,7 @@ static int write_exempts(FILE *f, int idx)
               fprintf(f, "%s %s:%s%lu%s:+%lu:%lu:%s:%s\n", "%", mask,
                       (e->flags & MASKREC_PERM) ? "+" : "", expire,
                       (e->flags & MASKREC_STICKY) ? "*" : "", added,
-                      e->lastactive, e->user ? e->user : botnetnick,
+                      (long) e->lastactive, e->user ? e->user : botnetnick,
                       e->desc ? e->desc : "requested") == EOF) {
             if (mask)
               nfree(mask);
@@ -1197,7 +1197,7 @@ static int write_invites(FILE *f, int idx)
         fprintf(f, "@ %s:%s%lu%s:+%lu:%lu:%s:%s\n", mask,
                 (ir->flags & MASKREC_PERM) ? "+" : "", expire,
                 (ir->flags & MASKREC_STICKY) ? "*" : "", added,
-                ir->lastactive, ir->user ? ir->user : botnetnick,
+                (long) ir->lastactive, ir->user ? ir->user : botnetnick,
                 ir->desc ? ir->desc : "requested") == EOF) {
       if (mask)
         nfree(mask);
@@ -1224,7 +1224,7 @@ static int write_invites(FILE *f, int idx)
               fprintf(f, "@ %s:%s%lu%s:+%lu:%lu:%s:%s\n", mask,
                       (ir->flags & MASKREC_PERM) ? "+" : "", expire,
                       (ir->flags & MASKREC_STICKY) ? "*" : "", added,
-                      ir->lastactive, ir->user ? ir->user : botnetnick,
+                      (long) ir->lastactive, ir->user ? ir->user : botnetnick,
                       ir->desc ? ir->desc : "requested") == EOF) {
             if (mask)
               nfree(mask);

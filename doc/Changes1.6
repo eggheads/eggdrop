@@ -1,10 +1,14 @@
-$Id: Changes1.6,v 1.25 2009/05/16 13:16:55 tothwolf Exp $
+$Id: Changes1.6,v 1.26 2009/05/16 14:16:06 tothwolf Exp $
 
 Eggdrop Changes (since version 1.6.0)
 
     _____________________________________________________________________
 
 1.6.20 (CVS):
+
+  - Fixed a number of compiler warnings due to recent versions of GCC.
+    Fixes Bugzilla Bug # 450 "some warning during compile"
+    Patch by: pseudo
 
   - Fixed potential buffer overflow in readuserfile() that can occur on a
     leaf bot when a hub attempts to share ban/invite/exempt masks for a

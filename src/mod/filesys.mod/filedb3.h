@@ -4,7 +4,7 @@
  *
  * Written by Fabian Knittel <fknittel@gmx.de>
  *
- * $Id: filedb3.h,v 1.22 2008/02/16 21:41:08 guppy Exp $
+ * $Id: filedb3.h,v 1.23 2009/05/16 14:16:07 tothwolf Exp $
  */
 /*
  * Copyright (C) 1999 - 2008 Eggheads Development Team
@@ -97,6 +97,12 @@ do {                                                                    \
     strcpy((target), (entry));                                          \
   } else                                                                \
     my_free(target);                                                    \
+} while (0)
+
+#define malloc_strcpy_nocheck(target, entry)                            \
+do {                                                                    \
+  (target) = nrealloc((target), strlen(entry) + 1);                     \
+  strcpy((target), (entry));                                            \
 } while (0)
 
 /* Macro to calculate the total length of dynamic data. */

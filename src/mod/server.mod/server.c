@@ -2,7 +2,7 @@
  * server.c -- part of server.mod
  *   basic irc server support
  *
- * $Id: server.c,v 1.128 2008/02/16 21:41:10 guppy Exp $
+ * $Id: server.c,v 1.129 2009/05/16 14:16:07 tothwolf Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -943,7 +943,7 @@ static void queue_server(int which, char *buf, int len)
 
 /* Add a new server to the server_list.
  */
-static void add_server(char *ss)
+static void add_server(const char *ss)
 {
   struct server_list *x, *z;
   char *p, *q;

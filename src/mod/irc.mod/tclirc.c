@@ -1,7 +1,7 @@
 /*
  * tclirc.c -- part of irc.mod
  *
- * $Id: tclirc.c,v 1.54 2009/05/07 22:01:42 tothwolf Exp $
+ * $Id: tclirc.c,v 1.55 2009/05/16 14:16:07 tothwolf Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -627,7 +627,7 @@ static int tcl_getchanjoin STDVAR
     Tcl_AppendResult(irp, argv[1], " is not on ", argv[2], NULL);
     return TCL_ERROR;
   }
-  sprintf(s, "%lu", m->joined);
+  sprintf(s, "%lu", (unsigned long) m->joined);
   Tcl_AppendResult(irp, s, NULL);
   return TCL_OK;
 }

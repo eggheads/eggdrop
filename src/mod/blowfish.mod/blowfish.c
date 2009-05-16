@@ -2,7 +2,7 @@
  * blowfish.c -- part of blowfish.mod
  *   encryption and decryption of passwords
  *
- * $Id: blowfish.c,v 1.34 2008/02/16 21:41:06 guppy Exp $
+ * $Id: blowfish.c,v 1.35 2009/05/16 14:16:06 tothwolf Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -216,7 +216,7 @@ static void blowfish_init(u_8bit_t *key, int keybytes)
   bf_P = box[bx].P;
   bf_S = box[bx].S;
   box[bx].keybytes = keybytes;
-  strncpy(box[bx].key, key, keybytes);
+  strncpy(box[bx].key, (char *) key, keybytes);
   box[bx].key[keybytes] = 0;
   box[bx].lastuse = now;
   /* Robey: Reset blowfish boxes to initial state
@@ -319,14 +319,14 @@ static char *encrypt_string(char *key, char *str)
   strcpy(s, str);
   if ((!key) || (!key[0]))
     return s;
-  p = s;
+  p = (unsigned char *) s;
   dest = nmalloc((strlen(str) + 9) * 2);
   while (*p)
     p++;
   for (i = 0; i < 8; i++)
     *p++ = 0;
   blowfish_init((unsigned char *) key, strlen(key));
-  p = s;
+  p = (unsigned char *) s;
   d = dest;
   while (*p) {
     left = ((*p++) << 24);

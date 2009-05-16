@@ -2,7 +2,7 @@
  * filesys.c -- part of filesys.mod
  *   main file of the filesys eggdrop module
  *
- * $Id: filesys.c,v 1.74 2008/02/16 21:41:09 guppy Exp $
+ * $Id: filesys.c,v 1.75 2009/05/16 14:16:07 tothwolf Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -464,7 +464,7 @@ static int do_dcc_send(int idx, char *dir, char *fn, char *nick, int resend)
   if (at_limit(nick)) {
     char xxx[1024];
 
-    sprintf(xxx, "%d*%s%s", strlen(dccdir), dccdir, dir);
+    sprintf(xxx, "%d*%s%s", (int) strlen(dccdir), dccdir, dir);
     queue_file(xxx, fn, dcc[idx].nick, nick);
     dprintf(idx, "Queued: %s to %s\n", fn, nick);
     my_free(s);

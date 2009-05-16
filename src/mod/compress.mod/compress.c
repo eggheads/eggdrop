@@ -6,7 +6,7 @@
  * Written by Fabian Knittel <fknittel@gmx.de>. Based on zlib examples
  * by Jean-loup Gailly and Miguel Albrecht.
  *
- * $Id: compress.c,v 1.28 2008/02/16 21:41:07 guppy Exp $
+ * $Id: compress.c,v 1.29 2009/05/16 14:16:07 tothwolf Exp $
  */
 /*
  * Copyright (C) 2000 - 2008 Eggheads Development Team
@@ -368,9 +368,9 @@ static uff_table_t compress_uff_table[] = {
  */
 
 static tcl_ints my_tcl_ints[] = {
-  {"share-compressed", &share_compressed},
-  {"compress-level",     &compress_level},
-  {NULL,                            NULL}
+  {"share-compressed", (int *)&share_compressed},
+  {"compress-level",     (int *)&compress_level},
+  {NULL,                                   NULL}
 };
 
 static int compress_expmem(void)

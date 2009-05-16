@@ -3,7 +3,7 @@
  *   commands that comes across the botnet
  *   userfile transfer and update commands from sharebots
  *
- * $Id: botcmd.c,v 1.47 2008/02/16 21:41:03 guppy Exp $
+ * $Id: botcmd.c,v 1.48 2009/05/16 14:16:06 tothwolf Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -99,7 +99,7 @@ static void fake_alert(int idx, char *item, char *extra)
  */
 static void bot_chan2(int idx, char *msg)
 {
-  char *from, *p;
+  char *from, *p, *s;
   int i, chan;
 
   if (bot_flags(dcc[idx].user) & BOT_ISOLATE)
@@ -113,15 +113,13 @@ static void bot_chan2(int idx, char *msg)
 #endif
     chan = base64_to_int(p);
   /* Strip annoying control chars */
-  for (p = from; *p;) {
-    if ((*p < 32) || (*p == 127))
-      strcpy(p, p + 1);
-    else
-      p++;
-  }
+  for (p = s = from; *s; s++)
+    if ((*s > 31) && (*s != 127))
+      *p++ = *s;
+  *p = 0;
   p = strchr(from, '@');
   if (p) {
-    sprintf(TBUF, "<%s> %s", from, msg);
+    snprintf(TBUF, sizeof(TBUF), "<%s> %s", from, msg);
     *p = 0;
     if (!partyidle(p + 1, from)) {
       *p = '@';
@@ -178,7 +176,7 @@ static void bot_chat(int idx, char *par)
  */
 static void bot_actchan(int idx, char *par)
 {
-  char *from, *p;
+  char *from, *p, *s;
   int i, chan;
 
   if (bot_flags(dcc[idx].user) & BOT_ISOLATE)
@@ -210,12 +208,10 @@ static void bot_actchan(int idx, char *par)
   else
 #endif
     chan = base64_to_int(p);
-  for (p = from; *p;) {
-    if ((*p < 32) || (*p == 127))
-      strcpy(p, p + 1);
-    else
-      p++;
-  }
+  for (p = s = from; *s; s++)
+    if ((*s > 31) && (*s != 127))
+      *p++ = *s;
+  *p = 0;
   chanout_but(-1, chan, "* %s %s\n", from, par);
   botnet_send_act(idx, from, NULL, chan, par);
   check_tcl_act(from, chan, par);

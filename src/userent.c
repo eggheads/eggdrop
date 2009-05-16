@@ -1,8 +1,8 @@
 /*
  * userent.c -- handles:
- *   user-entry handling, new stylem more versatile.
+ *   user-entry handling, new style more versatile.
  *
- * $Id: userent.c,v 1.36 2008/02/16 21:41:05 guppy Exp $
+ * $Id: userent.c,v 1.37 2009/05/16 14:16:06 tothwolf Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -684,7 +684,7 @@ int xtra_set(struct userrec *u, struct user_entry *e, void *buf)
     shareout(NULL, "c XTRA %s %s %s\n", u->handle, new->key,
              new->data ? new->data : "");
   if ((old && old != new) || !new->data || !new->data[0]) {
-    list_delete((struct list_type **) (&e->u.extra), (struct list_type *) old);
+    list_delete(&e->u.list, (struct list_type *) old);
     nfree(old->key);
     nfree(old->data);
     nfree(old);

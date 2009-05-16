@@ -2,7 +2,7 @@
  * net.c -- handles:
  *   all raw network i/o
  *
- * $Id: net.c,v 1.80 2008/02/16 21:41:04 guppy Exp $
+ * $Id: net.c,v 1.81 2009/05/16 14:16:06 tothwolf Exp $
  */
 /*
  * This is hereby released into the public domain.
@@ -1080,7 +1080,8 @@ void tell_netdebug(int idx)
       if (socklist[i].flags & SOCK_NONSOCK)
         strcat(s, " (file)");
       if (socklist[i].inbuf != NULL)
-        sprintf(&s[strlen(s)], " (inbuf: %04X)", strlen(socklist[i].inbuf));
+        sprintf(&s[strlen(s)], " (inbuf: %04X)",
+                (unsigned int) strlen(socklist[i].inbuf));
       if (socklist[i].outbuf != NULL)
         sprintf(&s[strlen(s)], " (outbuf: %06lX)", socklist[i].outbuflen);
       strcat(s, ",");

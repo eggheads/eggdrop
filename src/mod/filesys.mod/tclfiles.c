@@ -2,7 +2,7 @@
  * tclfiles.c -- part of filesys.mod
  *   Tcl stubs for file system commands moved here to support modules
  *
- * $Id: tclfiles.c,v 1.28 2008/02/16 21:41:09 guppy Exp $
+ * $Id: tclfiles.c,v 1.29 2009/05/16 14:16:07 tothwolf Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -237,7 +237,7 @@ static int tcl_setflags STDVAR
 
     break_down_flags(argv[2], &fr, NULL);
     build_flags(f, &fr, NULL);
-    malloc_strcpy(fdbe->flags_req, f);
+    malloc_strcpy_nocheck(fdbe->flags_req, f);
   } else
     my_free(fdbe->flags_req);
   if (argc == 4)
@@ -350,7 +350,7 @@ static int tcl_mkdir STDVAR
 
     break_down_flags(argv[2], &fr, NULL);
     build_flags(f, &fr, NULL);
-    malloc_strcpy(fdbe->flags_req, f);
+    malloc_strcpy_nocheck(fdbe->flags_req, f);
   } else if (fdbe->flags_req) {
     my_free(fdbe->flags_req);
   }

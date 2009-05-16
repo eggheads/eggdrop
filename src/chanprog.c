@@ -7,7 +7,7 @@
  *   telling the current programmed settings
  *   initializing a lot of stuff and loading the tcl scripts
  *
- * $Id: chanprog.c,v 1.61 2008/02/16 21:41:03 guppy Exp $
+ * $Id: chanprog.c,v 1.62 2009/05/16 14:16:06 tothwolf Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -668,7 +668,7 @@ int isowner(char *name)
 {
   register char *ptr = NULL, *s = NULL, *n = NULL;
 
-  if (!owner || !name)
+  if (!name)
     return 0;
 
   ptr = owner - 1;
