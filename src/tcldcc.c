@@ -2,7 +2,7 @@
  * tcldcc.c -- handles:
  *   Tcl stubs for the dcc commands
  *
- * $Id: tcldcc.c,v 1.62 2008/10/31 22:07:14 tothwolf Exp $
+ * $Id: tcldcc.c,v 1.63 2009/09/22 00:09:10 thommey Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -1040,7 +1040,7 @@ static int tcl_boot STDVAR
 
 static int tcl_rehash STDVAR
 {
-  BADARGS(1, 1, " ");
+  BADARGS(1, 1, "");
 
   if (make_userfile) {
     putlog(LOG_MISC, "*", USERF_NONEEDNEW);
@@ -1055,7 +1055,7 @@ static int tcl_rehash STDVAR
 
 static int tcl_restart STDVAR
 {
-  BADARGS(1, 1, " ");
+  BADARGS(1, 1, "");
 
   if (!backgrd) {
     Tcl_AppendResult(interp, "You can't restart a -n bot", NULL);
