@@ -2,7 +2,7 @@
  * msgcmds.c -- part of irc.mod
  *   all commands entered via /MSG
  *
- * $Id: msgcmds.c,v 1.53 2008/02/16 21:41:09 guppy Exp $
+ * $Id: msgcmds.c,v 1.54 2009/09/22 20:30:47 thommey Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -674,10 +674,10 @@ static int msg_key(char *nick, char *host, struct userrec *u, char *par)
           if (chan->channel.key[0]) {
             dprintf(DP_SERVER, "NOTICE %s :%s: key is %s\n", nick, par,
                     chan->channel.key);
+            putlog(LOG_CMDS, "*", "(%s!%s) !%s! KEY %s", nick, host, u->handle,
+                   par);
             if (invite_key && (chan->channel.mode & CHANINV)) {
               dprintf(DP_SERVER, "INVITE %s %s\n", nick, chan->name);
-              putlog(LOG_CMDS, "*", "(%s!%s) !%s! KEY %s",
-                     nick, host, u->handle, par);
             }
           } else {
             dprintf(DP_HELP, "NOTICE %s :%s: no key set for this channel\n",
