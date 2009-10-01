@@ -2,7 +2,7 @@
  * server.c -- part of server.mod
  *   basic irc server support
  *
- * $Id: server.c,v 1.130 2009/10/01 15:52:33 pseudo Exp $
+ * $Id: server.c,v 1.131 2009/10/01 21:33:33 pseudo Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -1012,8 +1012,6 @@ static void next_server(int *ptr, char *serv, unsigned int *port, char *pass)
   struct server_list *x = serverlist;
   int i = 0;
 
-  if (x == NULL)
-    return;
   /* -1  -->  Go to specified server */
   if (*ptr == -1) {
     for (; x; x = x->next) {
@@ -1047,6 +1045,8 @@ static void next_server(int *ptr, char *serv, unsigned int *port, char *pass)
     return;
   }
   /* Find where i am and boogie */
+  if (x == NULL)
+    return;
   i = (*ptr);
   while (i > 0 && x != NULL) {
     x = x->next;
@@ -1414,7 +1414,8 @@ static char *tcl_eggserver(ClientData cdata, Tcl_Interp *irp,
         int servidx = findanyidx(serv);
 
         curserv = -1;
-        next_server(&curserv, dcc[servidx].host, &dcc[servidx].port, "");
+        if (serverlist)
+          next_server(&curserv, dcc[servidx].host, &dcc[servidx].port, "");
       }
       Tcl_Free((char *) list);
     }

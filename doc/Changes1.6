@@ -1,10 +1,15 @@
-$Id: Changes1.6,v 1.34 2009/10/01 15:52:33 pseudo Exp $
+$Id: Changes1.6,v 1.35 2009/10/01 21:33:33 pseudo Exp $
 
 Eggdrop Changes (since version 1.6.0)
 
     _____________________________________________________________________
 
 1.6.20 (CVS):
+
+  - Fixed bugs in the tcl_eggserver() and next_server() logic.
+    Fixes Bugzilla entry #468 ".jump fails if the server list is empty,
+    even when a server name is supplied."
+    Found by: Dan / Patch by: pseudo
 
   - Added a msg-rate config variable, to replace the current #define msgrate
     in server.mod.

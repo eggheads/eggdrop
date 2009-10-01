@@ -1,7 +1,7 @@
 /*
  * servmsg.c -- part of server.mod
  *
- * $Id: servmsg.c,v 1.101 2009/05/06 19:17:52 tothwolf Exp $
+ * $Id: servmsg.c,v 1.102 2009/10/01 21:33:33 pseudo Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -1237,13 +1237,16 @@ static void connect_server(void)
     newserverport = 0;
     newserverpass[0] = 0;
     oldserv = -1;
-  } else
+  } else {
+    if (curserv == -1)
+      curserv = 999;
     pass[0] = 0;
+  }
   if (!cycle_time) {
     struct chanset_t *chan;
     struct server_list *x = serverlist;
 
-    if (!x) {
+    if (!x && !botserverport) {
       putlog(LOG_SERV, "*", "No servers in server list");
       cycle_time = 300;
       return;
