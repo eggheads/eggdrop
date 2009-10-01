@@ -1,4 +1,4 @@
-$Id: Changes1.6,v 1.33 2009/10/01 15:24:00 pseudo Exp $
+$Id: Changes1.6,v 1.34 2009/10/01 15:52:33 pseudo Exp $
 
 Eggdrop Changes (since version 1.6.0)
 
@@ -6,8 +6,14 @@ Eggdrop Changes (since version 1.6.0)
 
 1.6.20 (CVS):
 
+  - Added a msg-rate config variable, to replace the current #define msgrate
+    in server.mod.
+  - Added new command [putnow] for bypassing the queueing system to be used
+    instead of [putdccraw]. Equivalent to [putserv noqueue] in eggdrop 1.9.
+    Patch by: pseudo
+
   - Fixed a reversed pointer check in join_notes().
-    Fixes Bugzilla Bug # 455: "Possible segment violation in join_notes"
+    Fixes Bugzilla Bug # 455 "Possible segment violation in join_notes"
     Patch by: pseudo
 
   - Made eggdrop request ban/invite exception lists when (half)opped,

@@ -1,4 +1,4 @@
-$Id: mod.server,v 1.38 2008/02/16 21:41:01 guppy Exp $
+$Id: mod.server,v 1.39 2009/10/01 15:52:33 pseudo Exp $
 
 Server Module
 Last revised: February 12, 2003
@@ -95,6 +95,10 @@ Last revised: February 12, 2003
       Set the default port which should be used if none is specified with
       '.jump' or in 'set servers'.
 
+    set msg-rate 2
+      Number of seconds to wait between transmitting queued lines to the
+      server. Lower this value at your own risk.  ircd is known to start
+      flood control at 512 bytes/2 seconds.
 
     set server-cycle-wait 60
       This setting defines how long Eggdrop should wait before moving from one

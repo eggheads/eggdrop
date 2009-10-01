@@ -2,7 +2,7 @@
  * server.c -- part of server.mod
  *   basic irc server support
  *
- * $Id: server.c,v 1.129 2009/05/16 14:16:07 tothwolf Exp $
+ * $Id: server.c,v 1.130 2009/10/01 15:52:33 pseudo Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -95,7 +95,8 @@ static int nick_len;            /* Maximal nick length allowed on the
                                  * network. */
 static int kick_method;
 static int optimize_kicks;
-
+static int msgrate;             /* Number of seconds between sending
+                                 * queued lines to server. */
 
 static p_tcl_bind_list H_wall, H_raw, H_notc, H_msgm, H_msg, H_flud, H_ctcr,
                        H_ctcp;
@@ -118,12 +119,6 @@ static char *realservername;
 #include "servmsg.c"
 
 #define MAXPENALTY 10
-
-/* Number of seconds to wait between transmitting queued lines to the server
- * lower this value at your own risk.  ircd is known to start flood control
- * at 512 bytes/2 seconds.
- */
-#define msgrate 2
 
 /* Maximum messages to store in each queue. */
 static int maxqmsg;
@@ -1365,6 +1360,7 @@ static tcl_ints my_tcl_ints[] = {
   {"isjuped",           &nick_juped,                0},
   {"stack-limit",       &stack_limit,               0},
   {"exclusive-binds",   &exclusive_binds,           0},
+  {"msg-rate",          &msgrate,                   0},
   {NULL,                NULL,                       0}
 };
 
@@ -1895,6 +1891,7 @@ char *server_start(Function *global_funcs)
   optimize_kicks = 0;
   stack_limit = 4;
   realservername = 0;
+  msgrate = 2;
 
   server_table[4] = (Function) botname;
   module_register(MODULE_NAME, server_table, 1, 2);

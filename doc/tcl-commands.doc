@@ -1,4 +1,4 @@
-$Id: tcl-commands.doc,v 1.124 2009/05/16 11:25:27 tothwolf Exp $
+$Id: tcl-commands.doc,v 1.125 2009/10/01 15:52:33 pseudo Exp $
 
 Eggdrop Tcl Commands
 Last revised: August 02, 2004
@@ -49,6 +49,12 @@ marked with vertical bars (|) on the left.
       -normal: no effect
     Returns: nothing
     Module: server
+
+| putnow <text>
+|   Description: sends unqueued text to the server immediately.
+|     Use with caution, as the bot may easily flood itself off the server.
+|   Returns: nothing
+|   Module: server
 
   putkick <channel> <nick,nick,...> [reason]
     Description: sends kicks to the server and tries to put as many nicks

@@ -162,6 +162,11 @@ see also: set flood-ctcp
    %bdefault-port%b setting.
 
 see also: default-port
+%{help=set msg-rate}%{+n}
+###  %bset msg-rate%b <#seconds>
+   Number of seconds to wait between transmitting queued lines
+   to the server. Lower this value at your own risk.  ircd is
+   known to start flood control at 512 bytes/2 seconds.
 %{help=set botname}%{+n}
 ###  %bset botname%b
    This read-only variable returns the current nick!user@host of
@@ -186,4 +191,4 @@ see also: default-port
      %bserverror-quit%b       %banswer-ctcp%b    %baltnick%b
      %btrigger-on-ignore%b    %bdefault-port%b   %brealname%b
      %bserver-cycle-wait%b    %bcheck-stoned%b   %bflood-msg%b
-     %bquiet-reject%b         %bkeep-nick
+     %bquiet-reject%b         %bkeep-nick%b      %bmsg-rate

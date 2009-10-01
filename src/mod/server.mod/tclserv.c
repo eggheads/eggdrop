@@ -1,7 +1,7 @@
 /*
  * tclserv.c -- part of server.mod
  *
- * $Id: tclserv.c,v 1.21 2008/02/16 21:41:10 guppy Exp $
+ * $Id: tclserv.c,v 1.22 2009/10/01 15:52:33 pseudo Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -30,6 +30,25 @@ static int tcl_isbotnick STDVAR
     Tcl_AppendResult(irp, "1", NULL);
   else
     Tcl_AppendResult(irp, "0", NULL);
+  return TCL_OK;
+}
+
+static int tcl_putnow STDVAR
+{
+  int len;
+  char s[511], *p;
+  
+  BADARGS(2, 2, " text");
+
+  strncpyz(s, argv[1], 511);
+  if ((p = strchr(s, '\n')))
+    *p = 0;
+  if ((p = strchr(s, '\r')))
+    *p = 0;
+  if (raw_log)
+    putlog(LOG_SRVOUT, "*", "[r->] %s", s);
+  len = strlen(s);
+  write_to_server(s, len);
   return TCL_OK;
 }
 
@@ -261,5 +280,6 @@ static tcl_cmds my_tcl_cmds[] = {
   {"puthelp",    tcl_puthelp},
   {"putserv",    tcl_putserv},
   {"putquick",   tcl_putquick},
+  {"putnow",     tcl_putnow},
   {NULL,         NULL}
 };

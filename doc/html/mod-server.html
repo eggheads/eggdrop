@@ -1,5 +1,5 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
-<!-- $Id: mod-server.html,v 1.38 2008/02/16 21:40:59 guppy Exp $ -->
+<!-- $Id: mod-server.html,v 1.39 2009/10/01 15:52:33 pseudo Exp $ -->
 
 <html>
   <head>
@@ -155,6 +155,14 @@
         <dd>
           <p>Set the default port which should be used if none is specified
           with &#39;.jump&#39; or in &#39;set servers&#39;.</p>
+        </dd>
+
+        <dt><strong>set msg-rate 2</strong></dt>
+
+        <dd>
+          <p>Number of seconds to wait between transmitting queued lines to
+          the server. Lower this value at your own risk.  ircd is known to
+          start flood control at 512 bytes/2 seconds.</p>
         </dd>
 
         <dt><strong>set server-cycle-wait 60</strong></dt>

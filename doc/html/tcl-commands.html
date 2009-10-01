@@ -1,5 +1,5 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
-<!-- $Id: tcl-commands.html,v 1.58 2009/05/16 11:25:28 tothwolf Exp $ -->
+<!-- $Id: tcl-commands.html,v 1.59 2009/10/01 15:52:33 pseudo Exp $ -->
 
 <html>
   <head>
@@ -122,6 +122,19 @@
             queue<br>
             <strong>-normal</strong>: no effect</p>
           </blockquote>
+
+          <p><strong>Returns:</strong> nothing</p>
+
+          <p><strong>Module:</strong> server</p>
+        </dd>
+
+        <dt><strong><a name="cmd_putnow"></a>putnow &lt;text&gt;</strong></dt>*
+
+        <dd>
+          <p><strong>Description:</strong> sends unqueued text to the server
+          immediately.
+          Use with caution, as the bot may easily flood itself off
+          the server.</p>
 
           <p><strong>Returns:</strong> nothing</p>
 
