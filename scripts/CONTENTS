@@ -1,4 +1,4 @@
-$Id: CONTENTS,v 1.15 2008/02/16 21:41:02 guppy Exp $
+$Id: CONTENTS,v 1.16 2009/10/01 14:50:38 pseudo Exp $
 
 Directory Contents - scripts/
 Last revised: August 08, 2004
@@ -32,6 +32,10 @@ Last revised: August 08, 2004
     Maps old Tcl functions to new ones, for lazy people who can't be bothered
     updating their scripts.
 
+  dccwhois.tcl
+    Enhances Eggdrop's built-in dcc '.whois' command to allow all
+    users to '.whois' their own handle.
+
   getops.tcl
     A way for bots to get ops from other bots on the botnet (if they're on the
     same channel).
@@ -46,6 +50,16 @@ Last revised: August 08, 2004
   ques5.tcl
     Makes web pages of who's on each channel, updated periodically (requires
     alltools.tcl).
+
+  quotepass.tcl
+    Some servers on the Undernet will make you send 'PASS <numbers>' before
+    you can connect if you did not return an identd response. This script will
+    handle sending that for you.
+
+  quotepong.tcl
+    Some EFnet servers require the user to type /quote pong :<cookie>
+    when identd is broken or disabled. This will send pong :<cookie> to
+    the server when connecting.
 
   sentinel.tcl (by slennox)
     Flood protection script for Eggdrop with integrated BitchX CTCP simulation.
