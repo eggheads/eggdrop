@@ -6,7 +6,7 @@
  *   user kickban, kick, op, deop
  *   idle kicking
  *
- * $Id: chan.c,v 1.129 2009/05/07 22:01:41 tothwolf Exp $
+ * $Id: chan.c,v 1.130 2009/10/01 15:02:14 pseudo Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -873,6 +873,13 @@ static void recheck_channel(struct chanset_t *chan, int dobans)
     m->flags &= ~(SENTHALFOP | SENTKICK);
     check_this_member(chan, m->nick, &fr);
   }
+  /* Most IRCDs nowadays require +h/+o for getting e/I lists,
+   * so if we're still waiting for these, we'll request them here.
+   * In case we got them on join, nothing will be done */
+  if ((chan->ircnet_status & CHAN_ASKED_EXEMPTS) && use_exempts == 1)
+    dprintf(DP_MODE, "MODE %s +e\n", chan->name);
+  if ((chan->ircnet_status & CHAN_ASKED_INVITED) && use_invites == 1)
+    dprintf(DP_MODE, "MODE %s +I\n", chan->name);
   if (dobans) {
     if (channel_nouserbans(chan) && !stop_reset)
       resetbans(chan);
