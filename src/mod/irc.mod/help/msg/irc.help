@@ -7,8 +7,10 @@ This makes the bot leave a channel if not currently opped.
 %{help=help}
 %b/MSG%b commands for %b%B%b:
 All users: ADDHOST HELP IDENT INFO PASS VOICE WHO WHOIS
+%{+l|l}
+Channel/global halfops: HALFOP INVITE KEY
 %{+o|o}
-Channel/global ops: OP INVITE GO KEY
+Channel/global ops: OP GO
 %{+m}
 Global masters: DIE JUMP MEMORY SAVE REHASH RESET
 %{+m|m}
@@ -27,7 +29,7 @@ This lets the bot recognize you from a new address. You don't need to specify a 
 Whatever you set as your info line will be usually be displayed when you join a channel, as long as you haven't been there in the past three minutes. It's also shown when a %bWHO%b or %bWHOIS%b. You may set an info line specific to a channel. If no channel-specific info line exists for a channel, your global info line will be displayed.
 %b/MSG%b %B %bINFO%b <password> [channel] %bNONE%b
 This erases your info line.
-%{help=invite}%{+o|o}
+%{help=invite}%{+l|l}
 %b/MSG%b %B %bINVITE%b <password> <channel>
 This will invite you to a channel (if the bot is on the specified channel).
 %{help=jump}%{+m}
@@ -39,10 +41,13 @@ This displays the bot's memory usage information.
 %{help=op}%{+o|o}
 %b/MSG%b %B %bOP%b <password> [channel]
 Ops you on any channel where I have ops and you don't. If a channel name is specified, you will only be opped on that channel.
+%{help=halfop}%{+l|l}
+%b/MSG%b %B %bHALFOP%b <password> [channel]
+Gives you halfop on any channel where I have ops and you don't have halfops. If a channel name is specified, you will only be halfopped on that channel.
 %{help=voice}%{+o|o}
 %b/MSG%b %B %bVOICE%b <password> [channel]
 Voices you on any channel where I have ops and you don't have voice. If a channel name is specified, you will only be voiced on that channel.
-%{help=key}%{+o|o}
+%{help=key}%{+l|l}
 %b/MSG%b %B %bKEY%b <password> <channel>
 This will send you the key for a channel that is +k and possibly also invite you to that channel if it is +i (if the bot is on the specified channel).
 %{help=pass}
