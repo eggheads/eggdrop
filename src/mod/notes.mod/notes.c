@@ -5,7 +5,7 @@
  *   note cmds
  *   note ignores
  *
- * $Id: notes.c,v 1.58 2009/05/16 14:16:07 tothwolf Exp $
+ * $Id: notes.c,v 1.59 2009/10/01 15:24:00 pseudo Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -898,7 +898,7 @@ static void join_notes(char *nick, char *uhost, char *handle, char *par)
           (!egg_strcasecmp(dcc[j].nick, handle)))
         return;                 /* They already know they have notes */
 
-    while (!chan) {
+    while (chan) {
       if (ismember(chan, nick))
         return;                 /* They already know they have notes */
       chan = chan->next;

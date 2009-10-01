@@ -1,10 +1,14 @@
-$Id: Changes1.6,v 1.32 2009/10/01 15:02:14 pseudo Exp $
+$Id: Changes1.6,v 1.33 2009/10/01 15:24:00 pseudo Exp $
 
 Eggdrop Changes (since version 1.6.0)
 
     _____________________________________________________________________
 
 1.6.20 (CVS):
+
+  - Fixed a reversed pointer check in join_notes().
+    Fixes Bugzilla Bug # 455: "Possible segment violation in join_notes"
+    Patch by: pseudo
 
   - Made eggdrop request ban/invite exception lists when (half)opped,
     if getting them on join fails.
