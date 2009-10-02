@@ -1,4 +1,4 @@
-$Id: Changes1.6,v 1.35 2009/10/01 21:33:33 pseudo Exp $
+$Id: Changes1.6,v 1.36 2009/10/02 09:47:28 pseudo Exp $
 
 Eggdrop Changes (since version 1.6.0)
 
@@ -6,10 +6,13 @@ Eggdrop Changes (since version 1.6.0)
 
 1.6.20 (CVS):
 
+  - Added bugreporter names for recent patches to doc/Changes1.6.
+    Patch by: pseudo
+
   - Fixed bugs in the tcl_eggserver() and next_server() logic.
     Fixes Bugzilla entry #468 ".jump fails if the server list is empty,
     even when a server name is supplied."
-    Found by: Dan / Patch by: pseudo
+    Found by: dan@dannet.org / Patch by: pseudo
 
   - Added a msg-rate config variable, to replace the current #define msgrate
     in server.mod.
@@ -19,12 +22,12 @@ Eggdrop Changes (since version 1.6.0)
 
   - Fixed a reversed pointer check in join_notes().
     Fixes Bugzilla Bug # 455 "Possible segment violation in join_notes"
-    Patch by: pseudo
+    Found by: Fredrik Löhr / Patch by: pseudo
 
   - Made eggdrop request ban/invite exception lists when (half)opped,
     if getting them on join fails.
     Fixes Bugzilla Bug # 465 "channel exempts not loaded properly on EFNET"
-    Patch by: pseudo
+    Found by: bugzilla@logicalsolutns.com / Patch by: pseudo
 
   - Replaced a mistaken typecast with the proper one and eliminates the last
     remaining compile warning.
@@ -33,12 +36,12 @@ Eggdrop Changes (since version 1.6.0)
 
   - Added dccwhois.tcl, quotepass.tcl and quotepong.tcl to scripts/CONTENTS.
     Fixes Bugzilla Bug # 480 "scripts/CONTENTS missing data"
-    Patch by: pseudo
+    Found by: Aric / Patch by: pseudo
 
   - Updated msg/irc.help to include /MSG commands available to halfops.
     Fixes Bugzilla Bug # 475 "halfop and dehalfop missing from message
     help display"
-    Patch by: pseudo
+    Found by: mike.ds@tiscali.co.uk / Patch by: pseudo
 
   - The KEY msg command now logs on success. Fixes Bugzilla # 482
     Found by: Rickard Utgren / Patch by: Freeder
@@ -48,7 +51,7 @@ Eggdrop Changes (since version 1.6.0)
 
   - Fixed a number of compiler warnings due to recent versions of GCC.
     Fixes Bugzilla Bug # 450 "some warning during compile"
-    Patch by: pseudo
+    Found by: Stoebi / Patch by: pseudo
 
   - Fixed potential buffer overflow in readuserfile() that can occur on a
     leaf bot when a hub attempts to share ban/invite/exempt masks for a
