@@ -2,7 +2,7 @@
  * msgcmds.c -- part of irc.mod
  *   all commands entered via /MSG
  *
- * $Id: msgcmds.c,v 1.54 2009/09/22 20:30:47 thommey Exp $
+ * $Id: msgcmds.c,v 1.55 2009/10/02 11:16:59 pseudo Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -1028,14 +1028,14 @@ static int msg_go(char *nick, char *host, struct userrec *u, char *par)
     if (!chan)
       return 0;
     if (!(chan->status & CHAN_ACTIVE)) {
-      putlog(LOG_CMDS, "*", "(%s!%s) !%s! failed GO (i'm blind)", nick, host,
-             u->handle);
+      putlog(LOG_CMDS, "*", "(%s!%s) !%s! failed GO %s (i'm blind)", nick,
+             host, u->handle, par);
       return 1;
     }
     get_user_flagrec(u, &fr, par);
     if (!chan_op(fr) && !(glob_op(fr) && !chan_deop(fr))) {
-      putlog(LOG_CMDS, "*", "(%s!%s) !%s! failed GO (not op)", nick, host,
-             u->handle);
+      putlog(LOG_CMDS, "*", "(%s!%s) !%s! failed GO %s (not op)", nick, host,
+             u->handle, par);
       return 1;
     }
     if (!me_op(chan)) {
@@ -1061,13 +1061,13 @@ static int msg_go(char *nick, char *host, struct userrec *u, char *par)
     }
   }
   if (ok) {
-    putlog(LOG_CMDS, "*", "(%s!%s) !%s! GO", nick, host, u->handle);
+    putlog(LOG_CMDS, "*", "(%s!%s) !%s! GO %s", nick, host, u->handle, par);
   } else if (ok2) {
-    putlog(LOG_CMDS, "*", "(%s!%s) !%s! failed GO (i'm chop)", nick, host,
-           u->handle);
+    putlog(LOG_CMDS, "*", "(%s!%s) !%s! failed GO %s (i'm chop)", nick, host,
+           u->handle, par);
   } else {
-    putlog(LOG_CMDS, "*", "(%s!%s) !%s! failed GO (not op)", nick, host,
-           u->handle);
+    putlog(LOG_CMDS, "*", "(%s!%s) !%s! failed GO %s (not op)", nick, host,
+           u->handle, par);
   }
   return 1;
 }
