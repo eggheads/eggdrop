@@ -2,7 +2,7 @@
  * tclmisc.c -- handles:
  *   Tcl stubs for everything else
  *
- * $Id: tclmisc.c,v 1.63 2009/10/01 14:56:30 pseudo Exp $
+ * $Id: tclmisc.c,v 1.64 2009/10/09 11:16:58 pseudo Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -86,17 +86,28 @@ static int tcl_logfile STDVAR
     /* They just want a list of the logfiles and modes */
     for (i = 0; i < max_logs; i++)
       if (logs[i].filename != NULL) {
-        strcpy(s, masktype(logs[i].mask));
-        strcat(s, " ");
-        strcat(s, logs[i].chname);
-        strcat(s, " ");
-        strcat(s, logs[i].filename);
+        snprintf(s, sizeof s, "%s %s %s", masktype(logs[i].mask),
+                 logs[i].chname, logs[i].filename);
         Tcl_AppendElement(interp, s);
       }
       return TCL_OK;
   }
 
   BADARGS(4, 4, " ?logModes channel logFile?");
+
+  if (*argv[1] && !*argv[2]) {
+    Tcl_AppendResult(interp,
+                     "log modes set, but no channel specified", NULL);
+    return TCL_ERROR;
+  }
+  if (*argv[2] && !strchr(CHANMETA, *argv[2]) && strcmp(argv[2], "*")) {
+    Tcl_AppendResult(interp, "invalid channel prefix", NULL);
+    return TCL_ERROR;
+  }
+  if (*argv[2] && strchr(argv[2], ' ')) {
+    Tcl_AppendResult(interp, "channel names cannot contain spaces", NULL);
+    return TCL_ERROR;
+  }
 
   for (i = 0; i < max_logs; i++)
     if ((logs[i].filename != NULL) && (!strcmp(logs[i].filename, argv[3]))) {

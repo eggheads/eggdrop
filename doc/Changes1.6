@@ -1,10 +1,15 @@
-$Id: Changes1.6,v 1.37 2009/10/02 11:16:59 pseudo Exp $
+$Id: Changes1.6,v 1.38 2009/10/09 11:16:58 pseudo Exp $
 
 Eggdrop Changes (since version 1.6.0)
 
     _____________________________________________________________________
 
 1.6.20 (CVS):
+
+  - Added stricter argument checking to tcl_logfile().
+    Fixes Bugzilla Bug # 432 "Logfile Tcl Command Lacks Validation"
+  - Replaced a sequence of unsafe calls to strcat() with a snprintf().
+    Found by: TothWolf / Patch by: pseudo
 
   - Made eggdrop log the channel name for /MSG GO commands.
     Fixes Bugzilla Bug # 452 "Failed GO Messages Should Include Channel Name"
