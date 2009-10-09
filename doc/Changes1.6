@@ -1,4 +1,4 @@
-$Id: Changes1.6,v 1.38 2009/10/09 11:16:58 pseudo Exp $
+$Id: Changes1.6,v 1.39 2009/10/09 22:24:22 pseudo Exp $
 
 Eggdrop Changes (since version 1.6.0)
 
@@ -6,10 +6,18 @@ Eggdrop Changes (since version 1.6.0)
 
 1.6.20 (CVS):
 
+  - Added a new bind "OUT" to server.mod. Triggered when a message is sent to
+    the server.
+  - Modified tcl_putnow() to support sending of multiple lines at once.
+  - Changed tcl_putdccraw() to always return an error. It's deprecated
+    in favor of putdcc / putnow.
+  - Added a putdccraw replacement to scripts/compat.tcl
+    Patch by: pseudo
+
   - Added stricter argument checking to tcl_logfile().
     Fixes Bugzilla Bug # 432 "Logfile Tcl Command Lacks Validation"
   - Replaced a sequence of unsafe calls to strcat() with a snprintf().
-    Found by: TothWolf / Patch by: pseudo
+    Found by: Tothwolf / Patch by: pseudo
 
   - Made eggdrop log the channel name for /MSG GO commands.
     Fixes Bugzilla Bug # 452 "Failed GO Messages Should Include Channel Name"

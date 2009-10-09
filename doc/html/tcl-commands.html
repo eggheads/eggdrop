@@ -1,5 +1,5 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
-<!-- $Id: tcl-commands.html,v 1.59 2009/10/01 15:52:33 pseudo Exp $ -->
+<!-- $Id: tcl-commands.html,v 1.60 2009/10/09 22:24:22 pseudo Exp $ -->
 
 <html>
   <head>
@@ -128,13 +128,20 @@
           <p><strong>Module:</strong> server</p>
         </dd>
 
-        <dt><strong><a name="cmd_putnow"></a>putnow &lt;text&gt;</strong></dt>*
+        <dt><strong><a name="cmd_putnow"></a>putnow &lt;text&gt; [-oneline]</strong></dt>*
 
         <dd>
-          <p><strong>Description:</strong> sends unqueued text to the server
-          immediately.
+          <p><strong>Description:</strong> sends text to the server
+          immediately, bypassing all queues.
           Use with caution, as the bot may easily flood itself off
           the server.</p>
+          
+          <p><strong>Options:</strong></p>
+          
+          <blockquote>
+            <p><strong>-oneline</strong>: send text up to the first \r or \n,
+            discarding the rest</p>
+          </blockquote>
 
           <p><strong>Returns:</strong> nothing</p>
 
@@ -4668,6 +4675,26 @@
 
               <p><strong>Module:</strong> transfer</p>
             </li>
+
+            <li>
+              <p><a name="binda_out"></a><strong>OUT (stackable)</strong></p>
+
+              <p><strong>bind out &lt;flags&gt; &lt;mask&gt; &lt;proc&gt;<br>
+              proc-name &lt;queue&gt; &lt;text&gt; &lt;queued|sent&gt;
+              </strong></p>
+
+              <p><strong>Description:</strong> triggered triggered whenever
+              output is sent to the server. Normally the event will occur
+              twice for each line sent: once before entering a server queue
+              and once after the message is actually sent. This allows for more
+              flexible logging of server output and introduces the ability to
+              cancel the message.
+              Mask is matched against "queue status", where status is either
+              'queued' or 'sent'. Queues are: mode, server, help, noqueue.
+              noqueue is only used by the putnow tcl command.</p>
+
+              <p><strong>Module:</strong> server</p>
+            </li>
           </ol>
         </li>
 
@@ -4808,6 +4835,14 @@
 
               <p>Return 1 to make Eggdrop not log the message that
               triggered this bind.</p>
+            </li>
+            
+            <li>
+              <p><a name="bindb_out"></a><strong>OUT</strong></p>
+            
+              <p>Return 1 to make Eggdrop drop the message instead of
+              sending it. Only meaningful for messages with status
+              &quot;queued&quot;.</p>
             </li>
           </ol>
         </li>

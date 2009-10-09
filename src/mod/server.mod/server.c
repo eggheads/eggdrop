@@ -2,7 +2,7 @@
  * server.c -- part of server.mod
  *   basic irc server support
  *
- * $Id: server.c,v 1.131 2009/10/01 21:33:33 pseudo Exp $
+ * $Id: server.c,v 1.132 2009/10/09 22:24:23 pseudo Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -99,7 +99,7 @@ static int msgrate;             /* Number of seconds between sending
                                  * queued lines to server. */
 
 static p_tcl_bind_list H_wall, H_raw, H_notc, H_msgm, H_msg, H_flud, H_ctcr,
-                       H_ctcp;
+                       H_ctcp, H_out;
 
 static void empty_msgq(void);
 static void next_server(int *, char *, unsigned int *, char *);
@@ -172,6 +172,7 @@ static void deq_msg()
         burst++;
         continue;
       }
+      check_tcl_out(DP_MODE, modeq.head->msg, 1);
       write_to_server(modeq.head->msg, modeq.head->len);
       if (raw_log)
         putlog(LOG_SRVOUT, "*", "[m->] %s", modeq.head->msg);
@@ -201,6 +202,7 @@ static void deq_msg()
     if (fast_deq(DP_SERVER))
       return;
 
+    check_tcl_out(DP_SERVER, mq.head->msg, 1);
     write_to_server(mq.head->msg, mq.head->len);
     if (raw_log)
       putlog(LOG_SRVOUT, "*", "[s->] %s", mq.head->msg);
@@ -227,6 +229,7 @@ static void deq_msg()
   if (fast_deq(DP_HELP))
     return;
 
+  check_tcl_out(DP_HELP, hq.head->msg, 1);
   write_to_server(hq.head->msg, hq.head->len);
   if (raw_log)
     putlog(LOG_SRVOUT, "*", "[h->] %s", hq.head->msg);
@@ -477,6 +480,7 @@ static int fast_deq(int which)
   if (doit) {
     simple_sprintf(tosend, "%s %s %s", cmd, victims, msg);
     len = strlen(tosend);
+    check_tcl_out(which, tosend, 1);
     write_to_server(tosend, len);
     if (raw_log) {
       switch (which) {
@@ -740,6 +744,7 @@ static int deq_kick(int which)
   }
   egg_snprintf(newmsg, sizeof newmsg, "KICK %s %s %s", chan, newnicks + 1,
                reason);
+  check_tcl_out(which, newmsg, 1);
   write_to_server(newmsg, strlen(newmsg));
   if (raw_log) {
     switch (which) {
@@ -778,11 +783,12 @@ static void empty_msgq()
 
 /* Queues outgoing messages so there's no flooding.
  */
-static void queue_server(int which, char *buf, int len)
+static void queue_server(int which, char *msg, int len)
 {
   struct msgq_head *h = NULL, tempq;
   struct msgq *q, *tq, *tqq;
   int doublemsg = 0, qnext = 0;
+  char buf[511];
 
   /* Don't even BOTHER if there's no server online. */
   if (serv < 0)
@@ -791,7 +797,9 @@ static void queue_server(int which, char *buf, int len)
   /* Remove \r\n. We will add these back when we send the text to the server.
    * - Wcc [01/09/2004]
    */
-  remove_crlf(&buf);
+  strncpy(buf, msg, sizeof buf);
+  msg = buf;
+  remove_crlf(&msg);
   buf[510] = 0;
   len = strlen(buf);
 
@@ -799,6 +807,7 @@ static void queue_server(int which, char *buf, int len)
   if (!egg_strncasecmp(buf, "PING", 4) || !egg_strncasecmp(buf, "PONG", 4)) {
     if (buf[1] == 'I' || buf[1] == 'i')
       lastpingtime = now;
+    check_tcl_out(which, buf, 1);
     write_to_server(buf, len);
     if (raw_log)
       putlog(LOG_SRVOUT, "*", "[m->] %s", buf);
@@ -858,6 +867,9 @@ static void queue_server(int which, char *buf, int len)
         }
       }
     }
+
+    if (check_tcl_out(which, buf, 0))
+      return; /* a Tcl proc requested not to send the message */
 
     q = nmalloc(sizeof(struct msgq));
 
@@ -1123,6 +1135,17 @@ static int server_raw STDVAR
 
   CHECKVALIDITY(server_raw);
   Tcl_AppendResult(irp, int_to_base10(F(argv[1], argv[3])), NULL);
+  return TCL_OK;
+}
+
+static int server_out STDVAR
+{
+  Function F = (Function) cd;
+
+  BADARGS(4, 4, " queue message sent");
+
+  CHECKVALIDITY(server_out);
+  F(argv[1], argv[2], argv[3]);
   return TCL_OK;
 }
 
@@ -1739,6 +1762,7 @@ static char *server_close()
   del_bind_table(H_flud);
   del_bind_table(H_ctcr);
   del_bind_table(H_ctcp);
+  del_bind_table(H_out);
   rem_tcl_coups(my_tcl_coups);
   rem_tcl_strings(my_tcl_strings);
   rem_tcl_ints(my_tcl_ints);
@@ -1828,7 +1852,9 @@ static Function server_table[] = {
   (Function) get_altbotnick,    /* char *                               */
   (Function) & nick_len,        /* int                                  */
   (Function) check_tcl_notc,
-  (Function) & exclusive_binds  /* int                                  */
+  (Function) & exclusive_binds, /* int                                  */
+  /* 40 - 43 */
+  (Function) & H_out            /* p_tcl_bind_list                      */
 };
 
 char *server_start(Function *global_funcs)
@@ -1936,6 +1962,7 @@ char *server_start(Function *global_funcs)
   H_flud = add_bind_table("flud", HT_STACKABLE, server_5char);
   H_ctcr = add_bind_table("ctcr", HT_STACKABLE, server_6char);
   H_ctcp = add_bind_table("ctcp", HT_STACKABLE, server_6char);
+  H_out = add_bind_table("out", HT_STACKABLE, server_out);
   add_builtins(H_raw, my_raw_binds);
   add_builtins(H_dcc, C_dcc_serv);
   add_builtins(H_ctcp, my_ctcps);

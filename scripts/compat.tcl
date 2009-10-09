@@ -9,8 +9,9 @@
 # Tothwolf  25May1999: cleanup
 # Tothwolf  06Oct1999: optimized
 # rtc       10Oct1999: added [set|get][dn|up]loads functions
+# pseudo    04Oct2009: added putdccraw
 #
-# $Id: compat.tcl,v 1.15 2008/02/16 21:41:02 guppy Exp $
+# $Id: compat.tcl,v 1.16 2009/10/09 22:24:22 pseudo Exp $
 
 proc gethosts {hand} {
   getuser $hand HOSTS
@@ -101,6 +102,17 @@ proc setuploads {hand {c 0} {k 0}} {
 
 proc getuploads {hand} {
   getuser $hand FSTAT u
+}
+
+proc putdccraw {idx size text} {
+  if {!$idx} {
+    putloglev o * "Warning! putdccraw is deprecated. Use putnow instead!"
+    putnow $text
+    return -code ok
+  }
+  putloglev o * "Warning! putdccraw is deprecated. Use putdcc instead!"
+  if {![valididx $idx]} {return -code error "invalid idx"}
+  putdcc $idx $text
 }
 
 # as you can see it takes a lot of effort to simulate all the old commands

@@ -1,4 +1,4 @@
-$Id: tcl-commands.doc,v 1.125 2009/10/01 15:52:33 pseudo Exp $
+$Id: tcl-commands.doc,v 1.126 2009/10/09 22:24:22 pseudo Exp $
 
 Eggdrop Tcl Commands
 Last revised: August 02, 2004
@@ -50,9 +50,11 @@ marked with vertical bars (|) on the left.
     Returns: nothing
     Module: server
 
-| putnow <text>
-|   Description: sends unqueued text to the server immediately.
+| putnow <text> [-oneline]
+|   Description: sends text to the server immediately, bypassing all queues.
 |     Use with caution, as the bot may easily flood itself off the server.
+|   Options:
+|     -oneline: send text up to the first \r or \n, discarding the rest
 |   Returns: nothing
 |   Module: server
 
@@ -2163,6 +2165,19 @@ marked with vertical bars (|) on the left.
            because the data transfer stalled for some reason.
          Module: transfer
 
+|   (45) OUT (stackable)
+|        bind out <flags> <mask> <proc>
+|        proc-name <queue> <message> <queued|sent>
+|
+|        Description: triggered whenever output is sent to the server. Normally
+|          the event will occur twice for each line sent: once before entering
+|          a server queue and once after the message is actually sent. This
+|          allows for more flexible logging of server output and introduces
+|          the ability to cancel the message.
+|          Mask is matched against "queue status", where status is either
+|          'queued' or 'sent'. Queues are: mode, server, help, noqueue.
+|          noqueue is only used by the putnow tcl command.
+|        Module: server
 
   (B) RETURN VALUES
 
@@ -2224,6 +2239,9 @@ marked with vertical bars (|) on the left.
 
 |   (15) NOTC  Return 1 to make Eggdrop not log the message that triggered
 |              this bind.
+
+|   (16) OUT   Return 1 to make Eggdrop drop the message instead of sending
+|              it. Only meaningful for messages with status "queued".
 
 *** CONTROL PROCEDURES ***
 

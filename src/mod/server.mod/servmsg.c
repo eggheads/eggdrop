@@ -1,7 +1,7 @@
 /*
  * servmsg.c -- part of server.mod
  *
- * $Id: servmsg.c,v 1.102 2009/10/01 21:33:33 pseudo Exp $
+ * $Id: servmsg.c,v 1.103 2009/10/09 22:24:23 pseudo Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -242,6 +242,37 @@ static int check_tcl_flud(char *nick, char *uhost, struct userrec *u,
   x = check_tcl_bind(H_flud, ftype, 0,
                      " $_flud1 $_flud2 $_flud3 $_flud4 $_flud5",
                      MATCH_MASK | BIND_STACKABLE | BIND_WANTRET);
+  return (x == BIND_EXEC_LOG);
+}
+
+static int check_tcl_out(int which, char *msg, int sent)
+{
+  int x;
+  char args[32], *queue;
+
+  switch (which) {
+  case DP_MODE:
+  case DP_MODE_NEXT:
+    queue = "mode";
+    break;
+  case DP_SERVER:
+  case DP_SERVER_NEXT:
+    queue = "server";
+    break;
+  case DP_HELP:
+  case DP_HELP_NEXT:
+    queue = "help";
+    break;
+  default:
+    queue = "noqueue";
+  }
+  snprintf(args, sizeof args, "%s %s", queue, sent ? "sent" : "queued");
+  Tcl_SetVar(interp, "_out1", queue, 0);
+  Tcl_SetVar(interp, "_out2", msg, 0);
+  Tcl_SetVar(interp, "_out3", sent ? "sent" : "queued", 0);
+  x = check_tcl_bind(H_out, args, 0, " $_out1 $_out2 $_out3",
+                     MATCH_MASK | BIND_STACKABLE | BIND_WANTRET);
+
   return (x == BIND_EXEC_LOG);
 }
 

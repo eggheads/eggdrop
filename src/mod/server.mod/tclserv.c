@@ -1,7 +1,7 @@
 /*
  * tclserv.c -- part of server.mod
  *
- * $Id: tclserv.c,v 1.22 2009/10/01 15:52:33 pseudo Exp $
+ * $Id: tclserv.c,v 1.23 2009/10/09 22:24:23 pseudo Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -36,19 +36,51 @@ static int tcl_isbotnick STDVAR
 static int tcl_putnow STDVAR
 {
   int len;
-  char s[511], *p;
-  
-  BADARGS(2, 2, " text");
+  char buf[512], *p, *q, *r;
 
-  strncpyz(s, argv[1], 511);
-  if ((p = strchr(s, '\n')))
-    *p = 0;
-  if ((p = strchr(s, '\r')))
-    *p = 0;
-  if (raw_log)
-    putlog(LOG_SRVOUT, "*", "[r->] %s", s);
-  len = strlen(s);
-  write_to_server(s, len);
+  BADARGS(2, 3, " text ?options?");
+
+  if ((argc == 3) && egg_strcasecmp(argv[2], "-oneline")) {
+    Tcl_AppendResult(irp, "unknown putnow option: should be ",
+                     "-oneline", NULL);
+    return TCL_ERROR;
+  }
+  if (!serv) /* no server - no output */
+        return TCL_OK;
+
+  for (p = r = argv[1], q = buf; ; p++) {
+    if (*p && *p != '\r' && *p != '\n')
+      continue; /* look for message delimiters */
+    if (p == r) { /* empty message */
+      if (*p) {
+        r++;
+        continue;
+      } else
+        break;
+    }
+    if ((p - r) > (sizeof(buf) - 2 - (q - buf)))
+      break; /* That's all folks, no space left */
+    len = p - r + 1; /* leave space for '\0' */
+    strncpyz(q, r, len);
+    if (check_tcl_out(0, q, 0)) {
+      if (!*p || ((argc == 3) && !egg_strcasecmp(argv[2], "-oneline")))
+        break;
+      r = p + 1;
+      continue;
+    }
+    check_tcl_out(0, q, 1);
+    if (q == buf)
+      putlog(LOG_SRVOUT, "*", "[r->] %s", q);
+    else
+      putlog(LOG_SRVOUT, "*", "[+r->] %s", q);
+    q += len - 1; /* the '\0' must be overwritten */
+    *q++ = '\r';
+    *q++ = '\n'; /* comply with the RFC */
+    if (!*p || ((argc == 3) && !egg_strcasecmp(argv[2], "-oneline")))
+      break; /* cut on newline requested or message ended */
+    r = p + 1;
+  }
+  tputs(serv, buf, q - buf); /* q points after the last '\n' */
   return TCL_OK;
 }
 

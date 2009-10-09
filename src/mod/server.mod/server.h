@@ -1,7 +1,7 @@
 /*
  * server.h -- part of server.mod
  *
- * $Id: server.h,v 1.26 2008/02/16 21:41:10 guppy Exp $
+ * $Id: server.h,v 1.27 2009/10/09 22:24:23 pseudo Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -74,6 +74,8 @@
 #define nick_len (*(int *)(server_funcs[37]))
 #define check_tcl_notc ((int (*)(char *,char *,struct userrec *,char *,char *))server_funcs[38])
 #define exclusive_binds (*(int *)(server_funcs[39]))
+/* 40 - 43 */
+#define H_out (*(p_tcl_bind_list *)(server_funcs[40]))
 #else /* MAKING_SERVER */
 
 /* Macros for commonly used commands. */

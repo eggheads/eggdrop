@@ -2,7 +2,7 @@
  * tcldcc.c -- handles:
  *   Tcl stubs for the dcc commands
  *
- * $Id: tcldcc.c,v 1.63 2009/09/22 00:09:10 thommey Exp $
+ * $Id: tcldcc.c,v 1.64 2009/10/09 22:24:23 pseudo Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -85,6 +85,7 @@ static int tcl_putdcc STDVAR
  */
 static int tcl_putdccraw STDVAR
 {
+#if 0
   int i, j = 0, z;
 
   BADARGS(4, 4, " idx size text");
@@ -105,6 +106,11 @@ static int tcl_putdccraw STDVAR
   }
   tputs(j, argv[3], atoi(argv[2]));
   return TCL_OK;
+#endif
+
+  Tcl_AppendResult(irp, "putdccraw is deprecated. "
+                   "Please use putdcc/putnow instead.", NULL);
+  return TCL_ERROR;
 }
 
 static int tcl_dccsimul STDVAR
