@@ -7,7 +7,7 @@
  *   telling the current programmed settings
  *   initializing a lot of stuff and loading the tcl scripts
  *
- * $Id: chanprog.c,v 1.62 2009/05/16 14:16:06 tothwolf Exp $
+ * $Id: chanprog.c,v 1.63 2009/10/12 14:10:32 thommey Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -346,13 +346,13 @@ void tell_verbose_status(int idx)
   /* info library */
   dprintf(idx, "%s %s\n", MISC_TCLLIBRARY,
           ((interp) && (Tcl_Eval(interp, "info library") == TCL_OK)) ?
-          interp->result : "*unknown*");
+          tcl_resultstring() : "*unknown*");
 
   /* info tclversion/patchlevel */
   dprintf(idx, "%s %s (%s %s)\n", MISC_TCLVERSION,
           ((interp) && (Tcl_Eval(interp, "info patchlevel") == TCL_OK)) ?
-          interp->result : (Tcl_Eval(interp, "info tclversion") == TCL_OK) ?
-          interp->result : "*unknown*", MISC_TCLHVERSION,
+          tcl_resultstring() : (Tcl_Eval(interp, "info tclversion") == TCL_OK) ?
+          tcl_resultstring() : "*unknown*", MISC_TCLHVERSION,
           TCL_PATCH_LEVEL ? TCL_PATCH_LEVEL : "*unknown*");
 
 #ifdef HAVE_TCL_THREADS

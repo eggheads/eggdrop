@@ -5,7 +5,7 @@
  *
  * by Darrin Smith (beldin@light.iinet.net.au)
  *
- * $Id: botmsg.c,v 1.37 2008/02/16 21:41:03 guppy Exp $
+ * $Id: botmsg.c,v 1.38 2009/10/12 14:10:32 thommey Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -925,7 +925,7 @@ int add_note(char *to, char *from, char *msg, int idx, int echo)
   if (Tcl_VarEval(interp, "storenote", " $_from $_to $_data $_idx", NULL) ==
       TCL_OK) {
 
-    if (interp->result && interp->result[0])
+    if (!tcl_resultempty())
       status = NOTE_FWD;
 
     /* User is away in all sessions -- just notify the user that a

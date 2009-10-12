@@ -7,7 +7,7 @@
  *   help system
  *   motd display and %var substitution
  *
- * $Id: misc.c,v 1.80 2009/05/07 22:01:41 tothwolf Exp $
+ * $Id: misc.c,v 1.81 2009/10/12 14:10:32 thommey Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -416,9 +416,9 @@ void maskaddr(const char *s, char *nw, int type)
 
 /* Dump a potentially super-long string of text.
  */
-void dumplots(int idx, const char *prefix, char *data)
+void dumplots(int idx, const char *prefix, const char *data)
 {
-  char *p = data, *q, *n, c;
+  const char *p = data, *q, *n;
   const int max_data_len = 500 - strlen(prefix);
 
   if (!*data) {
@@ -431,9 +431,7 @@ void dumplots(int idx, const char *prefix, char *data)
     n = strchr(p, '\n');
     if (n && n < q) {
       /* Great! dump that first line then start over */
-      *n = 0;
-      dprintf(idx, "%s%s\n", prefix, p);
-      *n = '\n';
+      dprintf(idx, "%s%.*s\n", prefix, n - p, p);
       p = n + 1;
     } else {
       /* Search backwards for the last space */
@@ -441,21 +439,16 @@ void dumplots(int idx, const char *prefix, char *data)
         q--;
       if (q == p)
         q = p + max_data_len;
-      c = *q;
-      *q = 0;
-      dprintf(idx, "%s%s\n", prefix, p);
-      *q = c;
+      dprintf(idx, "%s%.*s\n", prefix, q - p, p);
       p = q;
-      if (c == ' ')
+      if (*q == ' ')
         p++;
     }
   }
   /* Last trailing bit: split by linefeeds if possible */
   n = strchr(p, '\n');
   while (n) {
-    *n = 0;
-    dprintf(idx, "%s%s\n", prefix, p);
-    *n = '\n';
+    dprintf(idx, "%s%.*s\n", prefix, n - p, p);
     p = n + 1;
     n = strchr(p, '\n');
   }

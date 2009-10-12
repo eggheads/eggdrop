@@ -7,7 +7,7 @@
  *   (non-Tcl) procedure lookups for msg/dcc/file commands
  *   (Tcl) binding internal procedures to msg/dcc/file commands
  *
- * $Id: tclhash.c,v 1.62 2008/11/01 20:41:10 tothwolf Exp $
+ * $Id: tclhash.c,v 1.63 2009/10/12 14:10:32 thommey Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -696,10 +696,7 @@ static inline int trigger_bind(const char *proc, const char *param,
 
   if (x == TCL_ERROR) {
     /* FIXME: we really should be able to log longer errors */
-    if (strlen(interp->result) > 400)
-      interp->result[400] = 0;
-
-    putlog(LOG_MISC, "*", "Tcl error [%s]: %s", proc, interp->result);
+    putlog(LOG_MISC, "*", "Tcl error [%s]: %.*s", proc, 400, tcl_resultstring());
 
     return BIND_EXECUTED;
   }
@@ -707,10 +704,10 @@ static inline int trigger_bind(const char *proc, const char *param,
   /* FIXME: This is an ugly hack. It is not documented as a
    *        'feature' because it will eventually go away.
    */
-  if (!strcmp(interp->result, "break"))
+  if (!strcmp(tcl_resultstring(), "break"))
     return BIND_QUIT;
 
-  return (atoi(interp->result) > 0) ? BIND_EXEC_LOG : BIND_EXECUTED;
+  return (tcl_resultint() > 0) ? BIND_EXEC_LOG : BIND_EXECUTED;
 }
 
 
@@ -824,7 +821,7 @@ int check_tcl_bind(tcl_bind_list_t *tl, const char *match,
           x = trigger_bind(tc->func_name, param, tm->mask);
 
           if (match_type & BIND_ALTER_ARGS) {
-            if (interp->result == NULL || !interp->result[0])
+            if (tcl_resultempty())
               return x;
           } else if ((match_type & BIND_STACKRET) && x == BIND_EXEC_LOG) {
             /* If we have multiple commands/triggers, and if any of the
@@ -988,10 +985,10 @@ const char *check_tcl_filt(int idx, const char *text)
                      MATCH_MASK | BIND_USE_ATTR | BIND_STACKABLE |
                      BIND_WANTRET | BIND_ALTER_ARGS);
   if (x == BIND_EXECUTED || x == BIND_EXEC_LOG) {
-    if (interp->result == NULL || !interp->result[0])
+    if (tcl_resultempty())
       return "";
     else
-      return interp->result;
+      return tcl_resultstring();
   } else
     return text;
 }
@@ -1019,7 +1016,7 @@ void check_tcl_listen(const char *cmd, int idx)
   Tcl_SetVar(interp, "_n", (char *) s, 0);
   x = Tcl_VarEval(interp, cmd, " $_n", NULL);
   if (x == TCL_ERROR)
-    putlog(LOG_MISC, "*", "error on listen: %s", interp->result);
+    putlog(LOG_MISC, "*", "error on listen: %s", tcl_resultstring());
 }
 
 void check_tcl_chjn(const char *bot, const char *nick, int chan,

@@ -7,7 +7,7 @@
  *   linking, unlinking, and relaying to another bot
  *   pinging the bots periodically and checking leaf status
  *
- * $Id: botnet.c,v 1.62 2008/02/16 21:41:03 guppy Exp $
+ * $Id: botnet.c,v 1.63 2009/10/12 14:10:32 thommey Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -437,12 +437,12 @@ void answer_local_whom(int idx, int chan)
             BOT_LOCALCHAN);
   else if (chan > 0) {
     simple_sprintf(idle, "assoc %d", chan);
-    if ((Tcl_Eval(interp, idle) != TCL_OK) || !interp->result[0])
+    if ((Tcl_Eval(interp, idle) != TCL_OK) || tcl_resultempty())
       dprintf(idx, "%s %s%d:\n", BOT_USERSONCHAN,
               (chan < GLOBAL_CHANS) ? "" : "*", chan % GLOBAL_CHANS);
     else
       dprintf(idx, "%s '%s%s' (%s%d):\n", BOT_USERSONCHAN,
-              (chan < GLOBAL_CHANS) ? "" : "*", interp->result,
+              (chan < GLOBAL_CHANS) ? "" : "*", tcl_resultstring(),
               (chan < GLOBAL_CHANS) ? "" : "*", chan % GLOBAL_CHANS);
   }
   /* Find longest nick and botnick */

@@ -4,7 +4,7 @@
  *   disconnect on a dcc socket
  *   ...and that's it!  (but it's a LOT)
  *
- * $Id: dcc.c,v 1.88 2008/02/16 21:41:03 guppy Exp $
+ * $Id: dcc.c,v 1.89 2009/10/12 14:10:32 thommey Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -1719,10 +1719,10 @@ static int call_tcl_func(char *name, int idx, char *args)
   Tcl_SetVar(interp, "_n", s, 0);
   Tcl_SetVar(interp, "_a", args, 0);
   if (Tcl_VarEval(interp, name, " $_n $_a", NULL) == TCL_ERROR) {
-    putlog(LOG_MISC, "*", DCC_TCLERROR, name, interp->result);
+    putlog(LOG_MISC, "*", DCC_TCLERROR, name, tcl_resultstring());
     return -1;
   }
-  return (atoi(interp->result));
+  return tcl_resultint();
 }
 
 static void dcc_script(int idx, char *buf, int len)

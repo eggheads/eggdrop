@@ -2,7 +2,7 @@
  * tcldcc.c -- handles:
  *   Tcl stubs for the dcc commands
  *
- * $Id: tcldcc.c,v 1.64 2009/10/09 22:24:23 pseudo Exp $
+ * $Id: tcldcc.c,v 1.65 2009/10/12 14:10:32 thommey Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -211,11 +211,11 @@ static int tcl_setchan STDVAR
     else {
       Tcl_SetVar(irp, "_chan", argv[2], 0);
       if (Tcl_VarEval(irp, "assoc ", "$_chan", NULL) != TCL_OK ||
-          !interp->result[0]) {
+          tcl_resultempty()) {
         Tcl_AppendResult(irp, "channel name is invalid", NULL);
         return TCL_ERROR;
       }
-      chan = atoi(interp->result);
+      chan = tcl_resultint();
     }
   } else
     chan = atoi(argv[2]);
@@ -666,11 +666,11 @@ static int tcl_whom STDVAR
     if ((argv[1][0] < '0') || (argv[1][0] > '9')) {
       Tcl_SetVar(interp, "_chan", argv[1], 0);
       if ((Tcl_VarEval(interp, "assoc ", "$_chan", NULL) != TCL_OK) ||
-          !interp->result[0]) {
+          tcl_resultempty()) {
         Tcl_AppendResult(irp, "channel name is invalid", NULL);
         return TCL_ERROR;
       }
-      chan = atoi(interp->result);
+      chan = tcl_resultint();
     } else
       chan = atoi(argv[1]);
     if ((chan < 0) || (chan > 199999)) {

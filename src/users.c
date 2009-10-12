@@ -10,7 +10,7 @@
  *
  * dprintf'ized, 9nov1995
  *
- * $Id: users.c,v 1.54 2009/05/16 13:16:55 tothwolf Exp $
+ * $Id: users.c,v 1.55 2009/10/12 14:10:32 thommey Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -487,7 +487,7 @@ void tell_user(int idx, struct userrec *u, int master)
   if (module_find("notes", 0, 0)) {
     Tcl_SetVar(interp, "_user", u->handle, 0);
     if (Tcl_VarEval(interp, "notes ", "$_user", NULL) == TCL_OK)
-      n = atoi(interp->result);
+      n = tcl_resultint();
   }
   li = get_user(&USERENTRY_LASTON, u);
   if (!li || !li->laston)

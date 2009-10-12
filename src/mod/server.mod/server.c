@@ -2,7 +2,7 @@
  * server.c -- part of server.mod
  *   basic irc server support
  *
- * $Id: server.c,v 1.132 2009/10/09 22:24:23 pseudo Exp $
+ * $Id: server.c,v 1.133 2009/10/12 14:10:32 thommey Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -1426,7 +1426,7 @@ static char *tcl_eggserver(ClientData cdata, Tcl_Interp *irp,
     if (slist != NULL) {
       code = Tcl_SplitList(interp, slist, &lc, &list);
       if (code == TCL_ERROR)
-        return interp->result;
+        return "variable must be a list";
       for (i = 0; i < lc && i < 50; i++)
         add_server((char *) list[i]);
 

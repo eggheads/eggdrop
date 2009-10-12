@@ -3,7 +3,7 @@
  *   commands from a user via dcc
  *   (split in 2, this portion contains no-irc commands)
  *
- * $Id: cmds.c,v 1.118 2009/01/22 02:14:45 tothwolf Exp $
+ * $Id: cmds.c,v 1.119 2009/10/12 14:10:32 thommey Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -97,13 +97,13 @@ static void tell_who(struct userrec *u, int idx, int chan)
             "^ = halfop)\n", BOT_PARTYMEMBS);
   else {
     simple_sprintf(s, "assoc %d", chan);
-    if ((Tcl_Eval(interp, s) != TCL_OK) || !interp->result[0])
+    if ((Tcl_Eval(interp, s) != TCL_OK) || tcl_resultempty())
       dprintf(idx, "%s %s%d: (* = owner, + = master, %% = botmaster, @ = op, "
               "^ = halfop)\n", BOT_PEOPLEONCHAN, (chan < GLOBAL_CHANS) ? "" :
               "*", chan % GLOBAL_CHANS);
     else
       dprintf(idx, "%s '%s' (%s%d): (* = owner, + = master, %% = botmaster, @ = op, "
-              "^ = halfop)\n", BOT_PEOPLEONCHAN, interp->result,
+              "^ = halfop)\n", BOT_PEOPLEONCHAN, tcl_resultstring(),
               (chan < GLOBAL_CHANS) ? "" : "*", chan % GLOBAL_CHANS);
   }
 
@@ -308,8 +308,8 @@ static void cmd_whom(struct userrec *u, int idx, char *par)
     if ((par[0] < '0') || (par[0] > '9')) {
       Tcl_SetVar(interp, "_chan", par, 0);
       if ((Tcl_VarEval(interp, "assoc ", "$_chan", NULL) == TCL_OK) &&
-          interp->result[0]) {
-        chan = atoi(interp->result);
+          !tcl_resultempty()) {
+        chan = tcl_resultint();
       }
       if (chan <= 0) {
         dprintf(idx, "No such channel exists.\n");
@@ -1798,8 +1798,8 @@ static void cmd_chat(struct userrec *u, int idx, char *par)
         else {
           Tcl_SetVar(interp, "_chan", arg, 0);
           if ((Tcl_VarEval(interp, "assoc ", "$_chan", NULL) == TCL_OK) &&
-              interp->result[0])
-            newchan = atoi(interp->result);
+              !tcl_resultempty())
+            newchan = tcl_resultint();
           else
             newchan = -1;
         }
@@ -1821,8 +1821,8 @@ static void cmd_chat(struct userrec *u, int idx, char *par)
         else {
           Tcl_SetVar(interp, "_chan", arg, 0);
           if ((Tcl_VarEval(interp, "assoc ", "$_chan", NULL) == TCL_OK) &&
-              interp->result[0])
-            newchan = atoi(interp->result);
+              !tcl_resultempty())
+            newchan = tcl_resultint();
           else
             newchan = -1;
         }
@@ -2217,11 +2217,11 @@ static void cmd_tcl(struct userrec *u, int idx, char *msg)
 #ifdef USE_TCL_ENCODING
   /* properly convert string to system encoding. */
   Tcl_DStringInit(&dstr);
-  Tcl_UtfToExternalDString(NULL, interp->result, -1, &dstr);
+  Tcl_UtfToExternalDString(NULL, tcl_resultstring(), -1, &dstr);
   result = Tcl_DStringValue(&dstr);
 #else
   /* use old pre-Tcl 8.1 way. */
-  result = interp->result;
+  result = tcl_resultstring();
 #endif
 
   if (code == TCL_OK)
@@ -2253,7 +2253,7 @@ static void cmd_set(struct userrec *u, int idx, char *msg)
   if (!msg[0]) {
     strcpy(s, "info globals");
     Tcl_Eval(interp, s);
-    dumplots(idx, "Global vars: ", interp->result);
+    dumplots(idx, "Global vars: ", tcl_resultstring());
     return;
   }
   strcpy(s + 4, msg);
@@ -2262,11 +2262,11 @@ static void cmd_set(struct userrec *u, int idx, char *msg)
 #ifdef USE_TCL_ENCODING
   /* properly convert string to system encoding. */
   Tcl_DStringInit(&dstr);
-  Tcl_UtfToExternalDString(NULL, interp->result, -1, &dstr);
+  Tcl_UtfToExternalDString(NULL, tcl_resultstring(), -1, &dstr);
   result = Tcl_DStringValue(&dstr);
 #else
   /* use old pre-Tcl 8.1 way. */
-  result = interp->result;
+  result = tcl_resultstring();
 #endif
 
   if (code == TCL_OK) {

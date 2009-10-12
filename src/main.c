@@ -5,7 +5,7 @@
  *   command line arguments
  *   context and assert debugging
  *
- * $Id: main.c,v 1.126 2008/07/10 10:56:23 tothwolf Exp $
+ * $Id: main.c,v 1.127 2009/10/12 14:10:32 thommey Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -280,13 +280,13 @@ static void write_debug()
     /* info library */
     dprintf(-x, "Tcl library: %s\n",
             ((interp) && (Tcl_Eval(interp, "info library") == TCL_OK)) ?
-            interp->result : "*unknown*");
+            tcl_resultstring() : "*unknown*");
 
     /* info tclversion/patchlevel */
     dprintf(-x, "Tcl version: %s (header version %s)\n",
             ((interp) && (Tcl_Eval(interp, "info patchlevel") == TCL_OK)) ?
-            interp->result : (Tcl_Eval(interp, "info tclversion") == TCL_OK) ?
-            interp->result : "*unknown*", TCL_PATCH_LEVEL ? TCL_PATCH_LEVEL :
+            tcl_resultstring() : (Tcl_Eval(interp, "info tclversion") == TCL_OK) ?
+            tcl_resultstring() : "*unknown*", TCL_PATCH_LEVEL ? TCL_PATCH_LEVEL :
             "*unknown*");
 
 #ifdef HAVE_TCL_THREADS

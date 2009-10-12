@@ -4,7 +4,7 @@
  *   Tcl initialization
  *   getting and setting Tcl/eggdrop variables
  *
- * $Id: tcl.c,v 1.89 2009/05/16 14:16:06 tothwolf Exp $
+ * $Id: tcl.c,v 1.90 2009/10/12 14:10:32 thommey Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -222,7 +222,7 @@ static char *tcl_eggint(ClientData cdata, Tcl_Interp *irp,
         return "read-only variable";
       else {
         if (Tcl_ExprLong(interp, s, &l) == TCL_ERROR)
-          return interp->result;
+          return "variable must have integer value";
         if ((int *) ii->var == &max_dcc) {
           if (l < max_dcc)
             return "you can't DECREASE max-dcc";
@@ -445,6 +445,37 @@ void add_tcl_objcommands(tcl_cmds *table)
                          NULL);
 }
 #endif
+
+/* Get the current tcl result string. */
+const char *tcl_resultstring()
+{
+  const char *result;
+#ifdef USE_TCL_OBJ
+  result = Tcl_GetStringResult(interp);
+#else
+  result = interp->result;
+#endif
+  return result;
+}
+
+int tcl_resultempty() {
+  const char *result;
+  result = tcl_resultstring();
+  return (result && result[0]) ? 0 : 1;
+}
+
+/* Get the current tcl result as int. replaces atoi(interp->result) */
+int tcl_resultint()
+{
+  int result;
+#ifdef USE_TCL_OBJ
+  if (Tcl_GetIntFromObj(interp, Tcl_GetObjResult(interp), &result) != TCL_OK)
+#else
+  if (Tcl_GetInt(interp, interp->result, &result) != TCL_OK)
+#endif
+    result = 0;
+  return result;
+}
 
 static tcl_strings def_tcl_strings[] = {
   {"botnet-nick",     botnetnick,     HANDLEN,                 0},
@@ -704,11 +735,11 @@ void do_tcl(char *whatzit, char *script)
 #ifdef USE_TCL_ENCODING
   /* properly convert string to system encoding. */
   Tcl_DStringInit(&dstr);
-  Tcl_UtfToExternalDString(NULL, interp->result, -1, &dstr);
+  Tcl_UtfToExternalDString(NULL, tcl_resultstring(), -1, &dstr);
   result = Tcl_DStringValue(&dstr);
 #else
   /* use old pre-Tcl 8.1 way. */
-  result = interp->result;
+  result = tcl_resultstring();
 #endif
 
   if (code != TCL_OK) {
