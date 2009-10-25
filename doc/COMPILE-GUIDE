@@ -1,4 +1,4 @@
-$Id: COMPILE-GUIDE,v 1.9 2008/04/19 14:57:10 guppy Exp $
+$Id: COMPILE-GUIDE,v 1.10 2009/10/25 15:19:05 pseudo Exp $
 
 Eggdrop Compile Guide and FAQ
 Last revised: August 20, 2004
@@ -135,7 +135,7 @@ Last revised: August 20, 2004
 
     C. Ultrix
       There are some known problems with 'make' and Eggdrop on Ultrix systems.
-      We recomend using 'gmake' (GNU make) for this reason, as in the steps
+      We recommend using 'gmake' (GNU make) for this reason, as in the steps
       below.
 
       If your system does not have 'gmake', you can download it from:
@@ -236,7 +236,7 @@ Last revised: August 20, 2004
 
 
     H. Cygwin / Windows
-      To compile and install Eggdrop on windows, preform the steps listed
+      To compile and install Eggdrop on windows, perform the steps listed
       below.
 
         1. Download and install Cygwin (www.cygwin.com). Make sure to install
@@ -274,7 +274,7 @@ Last revised: August 20, 2004
            Make sure to enclose the destination directory/folder in single
            quotes (''), especially if it contains spaces.
 
-        8. Preform the following commands:
+        8. Perform the following commands:
 
              cd 'C:/<install path>/' (example: cd 'C:/eggdrop')
              rm modules
@@ -305,7 +305,7 @@ Last revised: August 20, 2004
     I. Tcl Detection and Installation
         If ./configure does not correctly detect the location of your Tcl
         library and header file, or if you experience errors related to Tcl
-        during linking, preform these steps:
+        during linking, perform these steps:
 
           1. Depending on what shell your using:
 

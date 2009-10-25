@@ -1,7 +1,7 @@
 # core.english.lang
 #   core language messages for eggdrop
 #
-# $Id: core.english.lang,v 1.46 2008/11/02 03:19:57 tothwolf Exp $
+# $Id: core.english.lang,v 1.47 2009/10/25 15:19:06 pseudo Exp $
 
 # General stuff
 0x001,Usage
@@ -272,7 +272,7 @@ Options:\n\
 
 # CHAN_
 0x900,No such channel defined
-0x902,* Mode change on %s for nonexistant %s!
+0x902,* Mode change on %s for nonexistent %s!
 0x903,Mass deop on %s by %s
 0x904,Mass deop.  Go sit in a corner.
 0x907,Oops.   Someone made me join %s... leaving...

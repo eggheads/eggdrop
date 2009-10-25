@@ -1,4 +1,4 @@
-$Id: TRICKS,v 1.7 2008/02/16 21:40:56 guppy Exp $
+$Id: TRICKS,v 1.8 2009/10/25 15:19:05 pseudo Exp $
 
 Eggdrop Tricks
 Last revised: December 08, 2003
@@ -33,7 +33,7 @@ Last revised: December 08, 2003
     and link it with the 'source' Tcl command, similar to a script. The
     advantage of this is that you have to edit/upload only the small file
     instead of the big one. This technique is also useful if you want to
-    maintain the same channel settings, etc accross your botnet.
+    maintain the same channel settings, etc across your botnet.
 
   - You can use variables in your config file, since it's really just a normal
     Tcl file. For example, you can set 'userfile' and 'chanfile' to

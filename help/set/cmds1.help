@@ -196,8 +196,8 @@
 %{help=set sort-users}%{+n}
 ###  %bset sort-users%b <0/1>
    If you want your userfile to be sorted upon saving, enable this
-   setting. This causes the bot to use bit more CPU when saving the
-   usefile.
+   setting. This causes the bot to use a bit more CPU when saving the
+   userfile.
 %{help=set die-on-sighup}%{+n}
 ###  %bset die-on-sighup%b <0/1>
    Enable this setting if you want your Eggdrop to die upon receiving

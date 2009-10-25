@@ -1,4 +1,4 @@
-$Id: ABOUT,v 1.17 2008/06/21 03:49:14 guppy Exp $
+$Id: ABOUT,v 1.18 2009/10/25 15:19:05 pseudo Exp $
 
 About Eggdrop
 Last revised: January 12, 2002
@@ -19,7 +19,7 @@ Last revised: January 12, 2002
   both novice and advanced IRC users on a variety of hardware and software
   platforms.
 
-  An IRC bot is a program that sits on an IRC channel and preforms automated
+  An IRC bot is a program that sits on an IRC channel and performs automated
   tasks while looking just like a normal user on the channel. Some of these
   functions include protecting the channel from abuse, allowing privileged
   users to gain op or voice status, logging channel events, providing
@@ -27,7 +27,7 @@ Last revised: January 12, 2002
 
   One of the features that makes Eggdrop stand out from other bots is module
   and Tcl scripting support. With scripts and modules, you can make the bot
-  preform almost any task you want. They can do anything from preventing
+  perform almost any task you want. They can do anything from preventing
   floods to greeting users and banning advertisers from channels.
 
   You can also link multiple Eggdrop bots together to form a botnet.

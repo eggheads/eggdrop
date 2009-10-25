@@ -1,4 +1,4 @@
-$Id: tcl-commands.doc,v 1.126 2009/10/09 22:24:22 pseudo Exp $
+$Id: tcl-commands.doc,v 1.127 2009/10/25 15:19:05 pseudo Exp $
 
 Eggdrop Tcl Commands
 Last revised: August 02, 2004
@@ -750,7 +750,8 @@ marked with vertical bars (|) on the left.
 
   getchanjoin <nickname> <channel>
     Returns: timestamp (unixtime format) of when the specified nickname
-      joined the channel
+      joined the channel if available, 0 otherwise. Note that after a channel
+      reset this information will be lost, even if previously available.
     Module: irc
 
   onchansplit <nick> [channel]
@@ -1571,7 +1572,7 @@ marked with vertical bars (|) on the left.
  server
    Value: the current server's real name (what server calls itself)
      and port bot is connected to (for example: "irc.math.ufl.edu:6667")
-     Note that this does not nececerilly match the servers internet address.
+     Note that this does not necessarily match the servers internet address.
    Module: server
 
  serveraddress
@@ -1688,7 +1689,7 @@ marked with vertical bars (|) on the left.
 |          spoken anywhere within a line of text. If the proc returns 1,
 |          Eggdrop will not log the message that triggered this bind.
 |          MSGM binds are processed before MSG binds. If the exclusive-binds
-|          setting is enabled, MSG binds will not be trigged by text that
+|          setting is enabled, MSG binds will not be triggered by text that
 |          a MSGM bind has already handled.
          Module: server
 
@@ -1702,7 +1703,7 @@ marked with vertical bars (|) on the left.
 |          contain wildcards. If the proc returns 1, Eggdrop will not log
 |          the message that triggered this bind. PUBM binds are processed
 |          before PUB binds. If the exclusive-binds setting is enabled,
-|          PUB binds will not be trigged by text that a PUBM bind has
+|          PUB binds will not be triggered by text that a PUBM bind has
 |          already handled.
          Module: irc
 
