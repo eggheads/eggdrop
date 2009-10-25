@@ -1,10 +1,15 @@
-$Id: Changes1.6,v 1.40 2009/10/12 14:10:31 thommey Exp $
+$Id: Changes1.6,v 1.41 2009/10/25 10:57:51 pseudo Exp $
 
 Eggdrop Changes (since version 1.6.0)
 
     _____________________________________________________________________
 
 1.6.20 (CVS):
+
+  - Modified cmd_mns_host() to allow masters use -host even if they are +d/+k.
+    Fixes Bugzilla Bug # 446 "channel flag +d/+k prevents using of .-host even
+    if using against others"
+    Found by: De Kus / Patch by: pseudo
 
   - Replace deprecated Tcl result access method. Fixes Bug # 472.
     Patch by: thommey
