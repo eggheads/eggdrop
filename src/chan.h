@@ -3,7 +3,7 @@
  *   stuff common to chan.c and mode.c
  *   users.h needs to be loaded too
  *
- * $Id: chan.h,v 1.47 2009/05/07 22:01:41 tothwolf Exp $
+ * $Id: chan.h,v 1.48 2009/10/30 16:02:20 thommey Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -176,7 +176,7 @@ struct chanset_t {
   int flood_nick_time;
   int aop_min;
   int aop_max;
-  int status;
+  long status;
   int ircnet_status;
   int idle_kick;
   int stopnethack_mode;
@@ -230,8 +230,9 @@ struct chanset_t {
 #define CHAN_NODESYNCH      0x40000    /* +nodesynch      */
 #define CHAN_AUTOHALFOP     0x80000    /* +autohalfop     */
 #define CHAN_PROTECTHALFOPS 0x100000   /* +protecthalfops */
+#define CHAN_ACTIVE         0x200000   /* -inactive       */
 
-#define CHAN_ACTIVE         0x1000000  /* -inactive       */
+#define CHAN_WHINED         0x1000000  /* whined about opless channel      */
 #define CHAN_PEND           0x2000000  /* waiting for end of WHO list      */
 #define CHAN_FLAGGED        0x4000000  /* flagged for delete during rehash */
 #define CHAN_STATIC         0x8000000  /* non-dynamic channel              */
@@ -287,6 +288,7 @@ struct chanset_t *findchan_by_dname(const char *name);
 #define channel_nouserinvites(chan) (chan->ircnet_status & CHAN_NOUSERINVITES)
 #define channel_juped(chan) (chan->status & CHAN_JUPED)
 #define channel_stop_cycle(chan) (chan->status & CHAN_STOP_CYCLE)
+#define channel_whined(chan) (chan->status & CHAN_WHINED)
 
 struct msgq_head {
   struct msgq *head;

@@ -2,7 +2,7 @@
  * irc.c -- part of irc.mod
  *   support for channels within the bot
  *
- * $Id: irc.c,v 1.112 2009/05/07 22:01:42 tothwolf Exp $
+ * $Id: irc.c,v 1.113 2009/10/30 16:02:20 thommey Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -523,7 +523,6 @@ static void check_lonely_channel(struct chanset_t *chan)
   memberlist *m;
   char s[UHOSTLEN];
   int i = 0;
-  static int whined = 0;
 
   if (channel_pending(chan) || !channel_active(chan) || me_op(chan) ||
       channel_inactive(chan) || (chan->channel.mode & CHANANON))
@@ -544,10 +543,10 @@ static void check_lonely_channel(struct chanset_t *chan)
       else
         dprintf(DP_MODE, "JOIN %s%s\n", (chan->dname[0] == '!') ? "!" : "",
                 chan->dname);
-      whined = 0;
+      chan->status &= ~CHAN_WHINED;
     }
   } else if (any_ops(chan)) {
-    whined = 0;
+    chan->status &= ~CHAN_WHINED;
     check_tcl_need(chan->dname, "op");
     if (chan->need_op[0])
       do_tcl("need-op", chan->need_op);
@@ -558,13 +557,13 @@ static void check_lonely_channel(struct chanset_t *chan)
     int ok = 1;
     struct userrec *u;
 
-    if (!whined) {
+    if (!channel_whined(chan)) {
       /* + is opless. Complaining about no ops when without special
        * help(services), we cant get them - Raist
        */
       if (chan->name[0] != '+' && channel_logstatus(chan))
         putlog(LOG_MISC, "*", "%s is active but has no ops :(", chan->dname);
-      whined = 1;
+      chan->status |= CHAN_WHINED;
     }
     for (m = chan->channel.member; m && m->nick[0]; m = m->next) {
       sprintf(s, "%s!%s", m->nick, m->userhost);
