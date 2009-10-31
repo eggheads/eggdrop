@@ -1,7 +1,7 @@
 /*
  * irc.h -- part of irc.mod
  *
- * $Id: irc.h,v 1.31 2008/06/29 16:39:42 guppy Exp $
+ * $Id: irc.h,v 1.32 2009/10/31 14:43:09 thommey Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -31,16 +31,14 @@
 #define check_tcl_sign(a,b,c,d,e) check_tcl_signtopcnick(a,b,c,d,e,H_sign)
 #define check_tcl_topc(a,b,c,d,e) check_tcl_signtopcnick(a,b,c,d,e,H_topc)
 #define check_tcl_nick(a,b,c,d,e) check_tcl_signtopcnick(a,b,c,d,e,H_nick)
-#define check_tcl_mode(a,b,c,d,e,f) check_tcl_kickmode(a,b,c,d,e,f,H_mode)
-#define check_tcl_kick(a,b,c,d,e,f) check_tcl_kickmode(a,b,c,d,e,f,H_kick)
 
 #define REVENGE_KICK 1          /* Kicked victim        */
 #define REVENGE_DEOP 2          /* Took op              */
 
 #ifdef MAKING_IRC
 static void check_tcl_need(char *, char *);
-static void check_tcl_kickmode(char *, char *, struct userrec *, char *,
-                               char *, char *, p_tcl_bind_list);
+static void check_tcl_kick(char *, char *, struct userrec *, char *, char *, char *);
+static void check_tcl_mode(char *, char *, struct userrec *, char *, char *, char *);
 static void check_tcl_joinspltrejn(char *, char *, struct userrec *, char *,
                                    p_tcl_bind_list);
 static void check_tcl_part(char *, char *, struct userrec *, char *, char *);

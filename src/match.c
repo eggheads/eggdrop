@@ -2,7 +2,7 @@
  * match.c
  *   wildcard matching functions
  *
- * $Id: match.c,v 1.11 2004/04/06 06:56:38 wcc Exp $
+ * $Id: match.c,v 1.12 2009/10/31 14:43:09 thommey Exp $
  *
  * Once this code was working, I added support for % so that I could
  * use the same code both in Eggdrop and in my IrcII client.
@@ -34,7 +34,23 @@
 #define MATCH (match+sofar)
 #define PERMATCH (match+saved+sofar)
 
-int _wild_match_per(register unsigned char *m, register unsigned char *n)
+int casecharcmp(unsigned char a, unsigned char b)
+{
+  return (rfc_toupper(a) - rfc_toupper(b));
+}
+
+int charcmp(unsigned char a, unsigned char b)
+{
+  return (a - b);
+}
+
+/* Wildcard-matches mask m to n. Uses the comparison function cmp1. If chgpoint
+ * isn't NULL, it points at the first character in n where we start using cmp2.
+ */
+int _wild_match_per(register unsigned char *m, register unsigned char *n,
+                           int (*cmp1)(unsigned char, unsigned char),
+                           int (*cmp2)(unsigned char, unsigned char),
+                           unsigned char *chgpoint)
 {
   unsigned char *ma = m, *lsm = 0, *lsn = 0, *lpm = 0, *lpn = 0;
   int match = 1, saved = 0, space;
@@ -43,6 +59,11 @@ int _wild_match_per(register unsigned char *m, register unsigned char *n)
   /* null strings should never match */
   if ((m == 0) || (n == 0) || (!*n))
     return NOMATCH;
+
+  if (!cmp1)                    /* default: RFC-non-casesensitive matching */
+    cmp1 = casecharcmp;
+  if (!cmp2)
+    chgpoint = NULL;
 
   while (*n) {
     if (*m == WILDT) {          /* Match >=1 space */
@@ -99,7 +120,8 @@ int _wild_match_per(register unsigned char *m, register unsigned char *n)
       case QUOTE:
         m++;                    /* Handle quoting */
       }
-      if (rfc_toupper(*m) == rfc_toupper(*n)) { /* If matching */
+      if (((!chgpoint || n < chgpoint) && !(*cmp1)(*m, *n)) ||
+          (chgpoint && n >= chgpoint && !(*cmp2)(*m, *n))) { /* If matching */
         m++;
         n++;
         sofar++;

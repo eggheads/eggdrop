@@ -2,7 +2,7 @@
  * tclegg.h
  *   stuff used by tcl.c and tclhash.c
  *
- * $Id: tclegg.h,v 1.34 2009/10/12 14:10:32 thommey Exp $
+ * $Id: tclegg.h,v 1.35 2009/10/31 14:43:09 thommey Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -45,16 +45,17 @@
 #define MATCH_EXACT     1
 #define MATCH_MASK      2
 #define MATCH_CASE      3
+#define MATCH_MODE      4
 
 /*
  * Bitwise 'or' these:
  */
 
 /* Check flags; make sure the user has the flags required. */
-#define BIND_USE_ATTR       0x04
+#define BIND_USE_ATTR       0x010
 
 /* Bind is stackable; more than one bind can have the same name. */
-#define BIND_STACKABLE      0x08
+#define BIND_STACKABLE      0x020
 
 /* Additional flag checking; check for +d, +k, etc.
  * Currently used for dcc, fil, msg, and pub bind types.
@@ -69,21 +70,21 @@
 /* FIXME: This type actually seems to be obsolete. This was originally
  *        used to check built-in types in Eggdrop version 1.0.
  */
-#define BIND_HAS_BUILTINS   0x10
+#define BIND_HAS_BUILTINS   0x040
 
 /* Want return; we want to know if the proc returns 1.
  * Side effect: immediate return; don't do any further
  * processing of stacked binds.
  */
-#define BIND_WANTRET        0x20
+#define BIND_WANTRET        0x080
 
 /* Alternate args; replace args with the return result from the Tcl proc. */
-#define BIND_ALTER_ARGS     0x40
+#define BIND_ALTER_ARGS     0x100
 
 /* Stacked return; we want to know if any proc returns 1,
  * and also want to process all stacked binds.
  */
-#define BIND_STACKRET       0x80
+#define BIND_STACKRET       0x200
 
 
 /* Return values. */

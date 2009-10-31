@@ -7,7 +7,7 @@
  * because they use structures in those
  * (saves including those .h files EVERY time) - Beldin
  *
- * $Id: proto.h,v 1.75 2009/10/12 14:10:32 thommey Exp $
+ * $Id: proto.h,v 1.76 2009/10/31 14:43:09 thommey Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -182,11 +182,17 @@ void eggAssert(const char *, int, const char *);
 void backup_userfile(void);
 
 /* match.c */
+int casecharcmp(unsigned char, unsigned char);
+int charcmp(unsigned char, unsigned char);
 int _wild_match(register unsigned char *, register unsigned char *);
-int _wild_match_per(register unsigned char *, register unsigned char *);
+int _wild_match_per(register unsigned char *, register unsigned char *,
+                    int (*)(unsigned char, unsigned char),
+                    int (*)(unsigned char, unsigned char),
+                    unsigned char *);
 
 #define wild_match(a,b) _wild_match((unsigned char *)(a),(unsigned char *)(b))
-#define wild_match_per(a,b) _wild_match_per((unsigned char *)(a),(unsigned char *)(b))
+#define wild_match_per(a,b) _wild_match_per((unsigned char *)(a),(unsigned char *)(b),casecharcmp,NULL,NULL)
+#define wild_match_partial_case(a,b) _wild_match_per((unsigned char *)(a),(unsigned char *)(b),casecharcmp,charcmp,(unsigned char *)strchr((b),' '))
 
 /* mem.c */
 void *n_malloc(int, const char *, int);

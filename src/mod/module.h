@@ -1,7 +1,7 @@
 /*
  * module.h
  *
- * $Id: module.h,v 1.87 2009/05/07 22:01:41 tothwolf Exp $
+ * $Id: module.h,v 1.88 2009/10/31 14:43:09 thommey Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -52,6 +52,7 @@
 #undef get_data_ptr
 #undef wild_match
 #undef wild_match_per
+#undef wild_match_partial_case
 #undef maskhost
 #undef maskban
 #undef user_realloc

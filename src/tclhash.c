@@ -7,7 +7,7 @@
  *   (non-Tcl) procedure lookups for msg/dcc/file commands
  *   (Tcl) binding internal procedures to msg/dcc/file commands
  *
- * $Id: tclhash.c,v 1.63 2009/10/12 14:10:32 thommey Exp $
+ * $Id: tclhash.c,v 1.64 2009/10/31 14:43:09 thommey Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -719,7 +719,7 @@ static inline int trigger_bind(const char *proc, const char *param,
 static inline int check_bind_match(const char *match, char *mask,
                                    int match_type)
 {
-  switch (match_type & 0x03) {
+  switch (match_type & 0x07) {
   case MATCH_PARTIAL:
     return (!egg_strncasecmp(match, mask, strlen(match)));
     break;
@@ -731,6 +731,9 @@ static inline int check_bind_match(const char *match, char *mask,
     break;
   case MATCH_MASK:
     return (wild_match_per(mask, match));
+    break;
+  case MATCH_MODE:
+    return (wild_match_partial_case(mask, match));
     break;
   default:
     /* Do nothing */
@@ -796,7 +799,7 @@ int check_tcl_bind(tcl_bind_list_t *tl, const char *match,
             /* Either this is a non-partial match, which means we
              * only want to execute _one_ bind ...
              */
-            if ((match_type & 0x03) != MATCH_PARTIAL ||
+            if ((match_type & 0x07) != MATCH_PARTIAL ||
               /* ... or this happens to be an exact match. */
               !egg_strcasecmp(match, tm->mask)) {
               cnt = 1;
@@ -848,7 +851,7 @@ int check_tcl_bind(tcl_bind_list_t *tl, const char *match,
   if (result)           /* BIND_STACKRET */
     return result;
 
-  if ((match_type & 0x03) == MATCH_MASK || (match_type & 0x03) == MATCH_CASE)
+  if ((match_type & 0x07) == MATCH_MASK || (match_type & 0x07) == MATCH_CASE)
     return BIND_EXECUTED;
 
   /* Hit counter */

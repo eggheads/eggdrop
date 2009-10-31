@@ -2,7 +2,7 @@
  * irc.c -- part of irc.mod
  *   support for channels within the bot
  *
- * $Id: irc.c,v 1.113 2009/10/30 16:02:20 thommey Exp $
+ * $Id: irc.c,v 1.114 2009/10/31 14:43:09 thommey Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -802,25 +802,40 @@ static void check_tcl_signtopcnick(char *nick, char *uhost, struct userrec *u,
                  MATCH_MASK | BIND_USE_ATTR | BIND_STACKABLE);
 }
 
-static void check_tcl_kickmode(char *nick, char *uhost, struct userrec *u,
-                               char *chname, char *dest, char *reason,
-                               p_tcl_bind_list table)
+static void check_tcl_mode(char *nick, char *uhost, struct userrec *u,
+                           char *chname, char *mode, char *target)
 {
   struct flag_record fr = { FR_GLOBAL | FR_CHAN, 0, 0, 0, 0, 0 };
   char args[512];
 
   get_user_flagrec(u, &fr, chname);
-  if (table == H_mode)
-    simple_sprintf(args, "%s %s", chname, dest);
-  else
-    simple_sprintf(args, "%s %s %s", chname, dest, reason);
+  simple_sprintf(args, "%s %s", chname, mode);
+  Tcl_SetVar(interp, "_mode1", nick, 0);
+  Tcl_SetVar(interp, "_mode2", uhost, 0);
+  Tcl_SetVar(interp, "_mode3", u ? u->handle : "*", 0);
+  Tcl_SetVar(interp, "_mode4", chname, 0);
+  Tcl_SetVar(interp, "_mode5", mode, 0);
+  Tcl_SetVar(interp, "_mode6", target, 0);
+  check_tcl_bind(H_mode, args, &fr,
+                 " $_mode1 $_mode2 $_mode3 $_mode4 $_mode5 $_mode6",
+                 MATCH_MODE | BIND_USE_ATTR | BIND_STACKABLE);
+}
+
+static void check_tcl_kick(char *nick, char *uhost, struct userrec *u,
+                           char *chname, char *dest, char *reason)
+{
+  struct flag_record fr = { FR_GLOBAL | FR_CHAN, 0, 0, 0, 0, 0 };
+  char args[512];
+
+  get_user_flagrec(u, &fr, chname);
+  simple_sprintf(args, "%s %s %s", chname, dest, reason);
   Tcl_SetVar(interp, "_kick1", nick, 0);
   Tcl_SetVar(interp, "_kick2", uhost, 0);
   Tcl_SetVar(interp, "_kick3", u ? u->handle : "*", 0);
   Tcl_SetVar(interp, "_kick4", chname, 0);
   Tcl_SetVar(interp, "_kick5", dest, 0);
   Tcl_SetVar(interp, "_kick6", reason, 0);
-  check_tcl_bind(table, args, &fr,
+  check_tcl_bind(H_kick, args, &fr,
                  " $_kick1 $_kick2 $_kick3 $_kick4 $_kick5 $_kick6",
                  MATCH_MASK | BIND_USE_ATTR | BIND_STACKABLE);
 }
