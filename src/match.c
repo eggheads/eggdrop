@@ -2,7 +2,7 @@
  * match.c
  *   wildcard matching functions
  *
- * $Id: match.c,v 1.12 2009/10/31 14:43:09 thommey Exp $
+ * $Id: match.c,v 1.13 2009/10/31 15:18:03 thommey Exp $
  *
  * Once this code was working, I added support for % so that I could
  * use the same code both in Eggdrop and in my IrcII client.
@@ -57,12 +57,10 @@ int _wild_match_per(register unsigned char *m, register unsigned char *n,
   register unsigned int sofar = 0;
 
   /* null strings should never match */
-  if ((m == 0) || (n == 0) || (!*n))
+  if ((m == 0) || (n == 0) || (!*n) || (!cmp1))
     return NOMATCH;
 
-  if (!cmp1)                    /* default: RFC-non-casesensitive matching */
-    cmp1 = casecharcmp;
-  if (!cmp2)
+  if (!cmp2)                    /* Don't change cmpfunc if it's not valid */
     chgpoint = NULL;
 
   while (*n) {
