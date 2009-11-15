@@ -2,7 +2,7 @@
  * flags.c -- handles:
  *   all the flag matching/conversion functions in one neat package :)
  *
- * $Id: flags.c,v 1.34 2008/02/16 21:41:03 guppy Exp $
+ * $Id: flags.c,v 1.35 2009/11/15 13:10:34 pseudo Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -479,6 +479,8 @@ static int bot2str(char *string, int bot)
     x++;
     bot >>= 1;
   }
+  if (string == old)
+    *string++ = '-';
   return string - old;
 }
 
@@ -514,16 +516,6 @@ int build_flags(char *string, struct flag_record *plus,
     if (minus && (minus->chan || minus->udef_chan)) {
       *string++ = '-';
       string += flag2str(string, minus->global, minus->udef_chan);
-    }
-  }
-  if ((plus->match & (FR_BOT | FR_CHAN)) == (FR_BOT | FR_CHAN)) {
-    *string++ = (plus->match & FR_AND) ? '&' : '|';
-    if (minus && plus->bot)
-      *string++ = '+';
-    string += bot2str(string, plus->bot);
-    if (minus && minus->bot) {
-      *string++ = '-';
-      string += bot2str(string, minus->bot);
     }
   }
   if (string == old) {

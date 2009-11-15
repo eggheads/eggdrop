@@ -3,7 +3,7 @@
  *   commands from a user via dcc
  *   (split in 2, this portion contains no-irc commands)
  *
- * $Id: cmds.c,v 1.120 2009/10/25 10:57:52 pseudo Exp $
+ * $Id: cmds.c,v 1.121 2009/11/15 13:10:34 pseudo Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -1757,6 +1757,7 @@ static void cmd_botattr(struct userrec *u, int idx, char *par)
     user.match = FR_CHAN;
     get_user_flagrec(u2, &user, par);
     user.chan &= BOT_SHARE;
+    user.udef_chan = 0; /* udef chan flags are user only */
     build_flags(work, &user, NULL);
     if (work[0] != '-')
       dprintf(idx, "Bot flags for %s on %s are now +%s.\n", hand,

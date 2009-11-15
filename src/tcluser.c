@@ -2,7 +2,7 @@
  * tcluser.c -- handles:
  *   Tcl stubs for the user-record-oriented commands
  *
- * $Id: tcluser.c,v 1.45 2008/11/01 20:41:10 tothwolf Exp $
+ * $Id: tcluser.c,v 1.46 2009/11/15 13:10:34 pseudo Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -121,6 +121,7 @@ static int tcl_chattr STDVAR
     Tcl_AppendResult(irp, "no such channel", NULL);
     return TCL_ERROR;
   }
+  /* Retrieve current flags */
   get_user_flagrec(u, &user, chan);
   /* Make changes */
   if (chg) {
@@ -145,7 +146,8 @@ static int tcl_chattr STDVAR
     }
     set_user_flagrec(u, &user, chan);
   }
-  /* Retrieve current flags and return them */
+  user.chan &= ~BOT_SHARE; /* actually not an user flag, hide it */
+  /* Build flag string */
   build_flags(work, &user, NULL);
   Tcl_AppendResult(irp, work, NULL);
   return TCL_OK;
@@ -203,6 +205,7 @@ static int tcl_botattr STDVAR
     Tcl_AppendResult(irp, "no such channel", NULL);
     return TCL_ERROR;
   }
+  /* Retrieve current flags */
   get_user_flagrec(u, &user, chan);
   /* Make changes */
   if (chg) {
@@ -220,7 +223,12 @@ static int tcl_botattr STDVAR
     }
     set_user_flagrec(u, &user, chan);
   }
-  /* Retrieve current flags and return them */
+  /* Only user flags can be set per channel, not bot ones,
+     so BOT_SHARE is a hack to allow botattr |+s */
+  user.chan &= BOT_SHARE;
+  user.udef_chan = 0; /* User definable bot flags are global only,
+                         anything here is a regular flag, so hide it. */
+  /* Build flag string */
   build_flags(work, &user, NULL);
   Tcl_AppendResult(irp, work, NULL);
   return TCL_OK;

@@ -1,10 +1,18 @@
-$Id: Changes1.6,v 1.45 2009/10/31 15:18:03 thommey Exp $
+$Id: Changes1.6,v 1.46 2009/11/15 13:10:34 pseudo Exp $
 
 Eggdrop Changes (since version 1.6.0)
 
     _____________________________________________________________________
 
 1.6.20 (CVS):
+
+  - Modified build_flags() to not repeat global bot flags when both bot
+    and chan flags are requested.
+  - Fixed tcl_botattr() and tcl_chattr() to return only bot-specific or
+    user-specific flags respectively.
+    Fixes Bugzilla Bug # 484 "botattr tcl command returns bot channel flags
+    incorrectly"
+    Found by: Pixelz / Patch by: pseudo
 
   - Make _wild_match_per more flexible with dynamic comparison functions.
   - Make mode binds case-sensitive for the mode change. Fixes Bug # 476.
