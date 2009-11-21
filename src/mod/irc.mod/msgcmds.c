@@ -2,7 +2,7 @@
  * msgcmds.c -- part of irc.mod
  *   all commands entered via /MSG
  *
- * $Id: msgcmds.c,v 1.55 2009/10/02 11:16:59 pseudo Exp $
+ * $Id: msgcmds.c,v 1.56 2009/11/21 23:12:30 pseudo Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -1001,13 +1001,13 @@ static int msg_reset(char *nick, char *host, struct userrec *u, char *par)
     }
     putlog(LOG_CMDS, "*", "(%s!%s) !%s! RESET %s", nick, host, u->handle, par);
     dprintf(DP_HELP, "NOTICE %s :%s: %s\n", nick, par, IRC_RESETCHAN);
-    reset_chan_info(chan);
+    reset_chan_info(chan, CHAN_RESETALL);
     return 1;
   }
   putlog(LOG_CMDS, "*", "(%s!%s) !%s! RESET ALL", nick, host, u->handle);
   dprintf(DP_HELP, "NOTICE %s :%s\n", nick, IRC_RESETCHAN);
   for (chan = chanset; chan; chan = chan->next)
-    reset_chan_info(chan);
+    reset_chan_info(chan, CHAN_RESETALL);
   return 1;
 }
 

@@ -2,7 +2,7 @@
  * chancmds.c -- part of irc.mod
  *   handles commands directly relating to channel interaction
  *
- * $Id: cmdsirc.c,v 1.62 2008/02/16 21:41:09 guppy Exp $
+ * $Id: cmdsirc.c,v 1.63 2009/11/21 23:12:30 pseudo Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -1143,7 +1143,7 @@ static void cmd_reset(struct userrec *u, int idx, char *par)
       else {
         putlog(LOG_CMDS, "*", "#%s# reset %s", dcc[idx].nick, par);
         dprintf(idx, "Resetting channel info for %s...\n", chan->dname);
-        reset_chan_info(chan);
+        reset_chan_info(chan, CHAN_RESETALL);
       }
     }
   } else if (!(u->flags & USER_MASTER))
@@ -1153,7 +1153,7 @@ static void cmd_reset(struct userrec *u, int idx, char *par)
     dprintf(idx, "Resetting channel info for all channels...\n");
     for (chan = chanset; chan; chan = chan->next) {
       if (channel_active(chan))
-        reset_chan_info(chan);
+        reset_chan_info(chan, CHAN_RESETALL);
     }
   }
 }

@@ -1,7 +1,7 @@
 /*
  * tclchan.c -- part of channels.mod
  *
- * $Id: tclchan.c,v 1.100 2009/05/07 22:01:41 tothwolf Exp $
+ * $Id: tclchan.c,v 1.101 2009/11/21 23:12:30 pseudo Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -1794,27 +1794,35 @@ static void init_masklist(masklist *m)
  */
 static void init_channel(struct chanset_t *chan, int reset)
 {
-  chan->channel.maxmembers = 0;
-  chan->channel.mode = 0;
-  chan->channel.members = 0;
+  int flags = reset ? reset : CHAN_RESETALL;
+
   if (!reset) {
     chan->channel.key = nmalloc(1);
     chan->channel.key[0] = 0;
+    chan->channel.members = 0;
+    chan->channel.member = nmalloc(sizeof(memberlist));
+    chan->channel.member->nick[0] = 0;
+    chan->channel.member->next = NULL;
   }
-
-  chan->channel.ban = nmalloc(sizeof(masklist));
-  init_masklist(chan->channel.ban);
-
-  chan->channel.exempt = nmalloc(sizeof(masklist));
-  init_masklist(chan->channel.exempt);
-
-  chan->channel.invite = nmalloc(sizeof(masklist));
-  init_masklist(chan->channel.invite);
-
-  chan->channel.member = nmalloc(sizeof(memberlist));
-  chan->channel.member->nick[0] = 0;
-  chan->channel.member->next = NULL;
-  chan->channel.topic = NULL;
+  if (flags & CHAN_RESETMODES) {
+    if (!reset)
+    chan->channel.mode = 0;
+    chan->channel.maxmembers = 0;
+  }
+  if (flags & CHAN_RESETBANS) {
+    chan->channel.ban = nmalloc(sizeof(masklist));
+    init_masklist(chan->channel.ban);
+  }
+  if (flags & CHAN_RESETEXEMPTS) {
+    chan->channel.exempt = nmalloc(sizeof(masklist));
+    init_masklist(chan->channel.exempt);
+  }
+  if (flags & CHAN_RESETINVITED) {
+    chan->channel.invite = nmalloc(sizeof(masklist));
+    init_masklist(chan->channel.invite);
+  }
+  if (flags & CHAN_RESETTOPIC)
+    chan->channel.topic = NULL;
 }
 
 static void clear_masklist(masklist *m)
@@ -1835,24 +1843,34 @@ static void clear_masklist(masklist *m)
  */
 static void clear_channel(struct chanset_t *chan, int reset)
 {
+  int flags = reset ? reset : CHAN_RESETALL;
   memberlist *m, *m1;
 
-  if (chan->channel.topic)
-    nfree(chan->channel.topic);
-  for (m = chan->channel.member; m; m = m1) {
-    m1 = m->next;
-    nfree(m);
+  if (flags & CHAN_RESETWHO) {
+    for (m = chan->channel.member; m; m = m1) {
+      m1 = m->next;
+      if (reset)
+         m->flags &= ~WHO_SYNCED;
+      else
+        nfree(m);
+    }
   }
-
-  clear_masklist(chan->channel.ban);
-  chan->channel.ban = NULL;
-  clear_masklist(chan->channel.exempt);
-  chan->channel.exempt = NULL;
-  clear_masklist(chan->channel.invite);
-  chan->channel.invite = NULL;
-
+  if (flags & CHAN_RESETBANS) {
+    clear_masklist(chan->channel.ban);
+    chan->channel.ban = NULL;
+  }
+  if (flags & CHAN_RESETEXEMPTS) {
+    clear_masklist(chan->channel.exempt);
+    chan->channel.exempt = NULL;
+  }
+  if (flags & CHAN_RESETINVITED) {
+    clear_masklist(chan->channel.invite);
+    chan->channel.invite = NULL;
+  }
+  if ((flags & CHAN_RESETTOPIC) && chan->channel.topic)
+    nfree(chan->channel.topic);
   if (reset)
-    init_channel(chan, 1);
+    init_channel(chan, reset);
 }
 
 /* Create new channel and parse commands.

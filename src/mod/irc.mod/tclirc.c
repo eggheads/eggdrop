@@ -1,7 +1,7 @@
 /*
  * tclirc.c -- part of irc.mod
  *
- * $Id: tclirc.c,v 1.55 2009/05/16 14:16:07 tothwolf Exp $
+ * $Id: tclirc.c,v 1.56 2009/11/21 23:12:30 pseudo Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -750,18 +750,105 @@ static int tcl_resetinvites STDVAR
   return TCL_OK;
 }
 
+static int tcl_resetchanidle STDVAR
+{
+  memberlist *m;
+  struct chanset_t *chan;
+  
+  BADARGS(2, 3, " ?nick? channel");
+  
+  chan = findchan_by_dname((argc == 2) ? argv[1] : argv[2]);
+  if (chan == NULL) {
+    Tcl_AppendResult(irp, "invalid channel ",
+                     (argc == 2) ? argv[1] : argv[2], NULL);
+    return TCL_ERROR;
+  }
+  
+  if (argc == 2)
+    for (m = chan->channel.member; m; m = m->next)
+      m->last = now;
+  else {
+    if (!(m = ismember(chan, argv[1]))) {
+      Tcl_AppendResult(irp, argv[1], " is not on ", argv[2], NULL);
+      return TCL_ERROR;
+    }
+    m->last = now;
+  }
+  return TCL_OK;
+}
+
+static int tcl_resetchanjoin STDVAR
+{
+  memberlist *m;
+  struct chanset_t *chan;
+  
+  BADARGS(2, 3, " ?nick? channel");
+  
+  chan = findchan_by_dname((argc == 2) ? argv[1] : argv[2]);
+  if (chan == NULL) {
+    Tcl_AppendResult(irp, "invalid channel ",
+                     (argc == 2) ? argv[1] : argv[2], NULL);
+    return TCL_ERROR;
+  }
+  
+  if (argc == 2)
+    for (m = chan->channel.member; m; m = m->next)
+      m->joined = now;
+  else {
+    if (!(m = ismember(chan, argv[1]))) {
+      Tcl_AppendResult(irp, argv[1], " is not on ", argv[2], NULL);
+      return TCL_ERROR;
+    }
+    m->joined = now;
+  }
+  return TCL_OK;
+}
+
 static int tcl_resetchan STDVAR
 {
+  char *c;
+  int flags = 0;
   struct chanset_t *chan;
 
-  BADARGS(2, 2, " channel");
+  BADARGS(2, 3, " channel ?flags?");
 
   chan = findchan_by_dname(argv[1]);
   if (chan == NULL) {
     Tcl_AppendResult(irp, "invalid channel ", argv[1], NULL);
     return TCL_ERROR;
   }
-  reset_chan_info(chan);
+
+  if (argc == 2) {
+    reset_chan_info(chan, CHAN_RESETALL);
+    return TCL_OK;
+  }
+  for (c = argv[2]; *c; c++) {
+    switch(*c) {
+    case 'w':
+      flags |= CHAN_RESETWHO;
+      break;
+    case 'm':
+      flags |= CHAN_RESETMODES;
+      break;
+    case 'b':
+      flags |= CHAN_RESETBANS;
+      break;
+    case 'e':
+      flags |= CHAN_RESETEXEMPTS;
+      break;
+    case 'I':
+      flags |= CHAN_RESETINVITED;
+      break;
+    case 't':
+      flags |= CHAN_RESETTOPIC;
+      break;
+    default:
+      Tcl_AppendResult(irp, "invalid reset flags: ", argv[2], NULL);
+      return TCL_ERROR;
+    }
+  }
+  if (flags)
+    reset_chan_info(chan, flags);
   return TCL_OK;
 }
 
@@ -941,6 +1028,8 @@ static tcl_cmds tclchan_cmds[] = {
   {"resetbans",      tcl_resetbans},
   {"resetexempts",   tcl_resetexempts},
   {"resetinvites",   tcl_resetinvites},
+  {"resetchanidle",  tcl_resetchanidle},
+  {"resetchanjoin",  tcl_resetchanjoin},
   {"resetchan",      tcl_resetchan},
   {"topic",          tcl_topic},
   {"botonchan",      tcl_botonchan},

@@ -1,7 +1,7 @@
 /*
  * irc.h -- part of irc.mod
  *
- * $Id: irc.h,v 1.32 2009/10/31 14:43:09 thommey Exp $
+ * $Id: irc.h,v 1.33 2009/11/21 23:12:30 pseudo Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -35,6 +35,15 @@
 #define REVENGE_KICK 1          /* Kicked victim        */
 #define REVENGE_DEOP 2          /* Took op              */
 
+/* Flags for reset_chan_info() */
+#define CHAN_RESETMODES   0x01
+#define CHAN_RESETWHO     0x02
+#define CHAN_RESETTOPIC   0x04
+#define CHAN_RESETBANS    0x08
+#define CHAN_RESETEXEMPTS 0x10
+#define CHAN_RESETINVITED 0x20
+#define CHAN_RESETALL     0x3F
+
 #ifdef MAKING_IRC
 static void check_tcl_need(char *, char *);
 static void check_tcl_kick(char *, char *, struct userrec *, char *, char *, char *);
@@ -66,7 +75,7 @@ static void refresh_who_chan(char *);
 #define resetinvites(chan)  resetmasks((chan), (chan)->channel.invite,       \
                                        (chan)->invites, global_invites, 'I')
 
-static void reset_chan_info(struct chanset_t *);
+static void reset_chan_info(struct chanset_t *, int);
 static void recheck_channel(struct chanset_t *, int);
 static void set_key(struct chanset_t *, char *);
 static void maybe_revenge(struct chanset_t *, char *, char *, int);
@@ -88,7 +97,6 @@ static int gotmode(char *, char *);
                                                 who)
 #define newinvite(chan, mask, who)      newmask((chan)->channel.invite, mask, \
                                                 who)
-
 #else
 /* 4 - 7 */
 #define H_splt (*(p_tcl_bind_list*)(irc_funcs[4]))

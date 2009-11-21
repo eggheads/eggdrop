@@ -26,7 +26,7 @@ This lets the bot recognize you from a new hostmask. The hostmask specified must
 This lets the bot recognize you from a new address. You don't need to specify a handle if your handle is the same as your nickname on IRC.
 %{help=info}
 %b/MSG%b %B %bINFO%b <password> [channel] [info line]
-Whatever you set as your info line will be usually be displayed when you join a channel, as long as you haven't been there in the past three minutes. It's also shown when a %bWHO%b or %bWHOIS%b. You may set an info line specific to a channel. If no channel-specific info line exists for a channel, your global info line will be displayed.
+Whatever you set as your info line will be usually displayed when you join a channel, as long as you haven't been there in the past three minutes. It's also shown when a %bWHO%b or %bWHOIS%b. You may set an info line specific to a channel. If no channel-specific info line exists for a channel, your global info line will be displayed.
 %b/MSG%b %B %bINFO%b <password> [channel] %bNONE%b
 This erases your info line.
 %{help=invite}%{+l|l}

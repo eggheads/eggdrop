@@ -2,7 +2,7 @@
  * irc.c -- part of irc.mod
  *   support for channels within the bot
  *
- * $Id: irc.c,v 1.114 2009/10/31 14:43:09 thommey Exp $
+ * $Id: irc.c,v 1.115 2009/11/21 23:12:30 pseudo Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -410,10 +410,11 @@ static int any_ops(struct chanset_t *chan)
   return 1;
 }
 
-/* Reset the channel information.
+/* Reset channel information.
  */
-static void reset_chan_info(struct chanset_t *chan)
+static void reset_chan_info(struct chanset_t *chan, int reset)
 {
+  char beI[4] = "\0";
   /* Leave the channel if we aren't supposed to be there */
   if (channel_inactive(chan)) {
     dprintf(DP_MODE, "PART %s\n", chan->name);
@@ -424,29 +425,39 @@ static void reset_chan_info(struct chanset_t *chan)
   if (channel_pending(chan))
     return;
 
-  nfree(chan->channel.key);
-  chan->channel.key = (char *) channel_malloc(1);
-  chan->channel.key[0] = 0;
-  clear_channel(chan, 1);
-  chan->status |= CHAN_PEND;
-  chan->status &= ~(CHAN_ACTIVE | CHAN_ASKEDMODES);
-  if (!(chan->status & CHAN_ASKEDBANS)) {
+  clear_channel(chan, reset);
+  if ((reset & CHAN_RESETBANS) && !(chan->status & CHAN_ASKEDBANS)) {
     chan->status |= CHAN_ASKEDBANS;
-    dprintf(DP_MODE, "MODE %s +b\n", chan->name);
+    strcat(beI, "b");
   }
-  if (!(chan->ircnet_status & CHAN_ASKED_EXEMPTS) && use_exempts == 1) {
+  if ((reset & CHAN_RESETEXEMPTS) &&
+      !(chan->ircnet_status & CHAN_ASKED_EXEMPTS) && (use_exempts == 1)) {
     chan->ircnet_status |= CHAN_ASKED_EXEMPTS;
-    dprintf(DP_MODE, "MODE %s +e\n", chan->name);
+    strcat(beI, "e");
   }
-  if (!(chan->ircnet_status & CHAN_ASKED_INVITED) && use_invites == 1) {
+  if ((reset & CHAN_RESETINVITED) &&
+      !(chan->ircnet_status & CHAN_ASKED_INVITED) && (use_invites == 1)) {
     chan->ircnet_status |= CHAN_ASKED_INVITED;
-    dprintf(DP_MODE, "MODE %s +I\n", chan->name);
+    strcat(beI, "I");
   }
-  /* These 2 need to get out asap, so into the mode queue */
-  dprintf(DP_MODE, "MODE %s\n", chan->name);
-  refresh_who_chan(chan->name);
-  /* clear_channel nuked the data...so */
-  dprintf(DP_MODE, "TOPIC %s\n", chan->name);
+  if (beI[0])
+    dprintf(DP_MODE, "MODE %s +%s\n", chan->name, beI);
+  if (reset & CHAN_RESETMODES) {
+    /* done here to keep expmem happy, as this is accounted in
+       irc.mod, not channels.mod where clear_channel() resides */
+    nfree(chan->channel.key);
+    chan->channel.key = (char *) channel_malloc (1);
+    chan->channel.key[0] = 0;
+    chan->status &= ~CHAN_ASKEDMODES;
+    dprintf(DP_MODE, "MODE %s\n", chan->name);
+  }
+  if (reset & CHAN_RESETWHO) {
+    chan->status |= CHAN_PEND;
+    chan->status &= ~CHAN_ACTIVE;
+    refresh_who_chan(chan->name);
+  }
+  if (reset & CHAN_RESETTOPIC)
+    dprintf(DP_MODE, "TOPIC %s\n", chan->name);
 }
 
 /* Leave the specified channel and notify registered Tcl procs. This

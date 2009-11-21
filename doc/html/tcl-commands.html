@@ -1,5 +1,5 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
-<!-- $Id: tcl-commands.html,v 1.61 2009/10/25 15:19:05 pseudo Exp $ -->
+<!-- $Id: tcl-commands.html,v 1.62 2009/11/21 23:12:30 pseudo Exp $ -->
 
 <html>
   <head>
@@ -1552,13 +1552,100 @@
           <p><strong>Module:</strong> irc</p>
         </dd>
 
-        <dt><strong><a name="cmd_resetchan"></a>resetchan &lt;channel&gt;</strong></dt>
+        <dt><strong><a name="cmd_resetchanidle"></a>resetchanidle [nick]
+        &lt;channel&gt;</strong></dt>
 
         <dd>
-          <p><strong>Description:</strong> </p>
+          <p><strong>Description:</strong> resets the channel idle time for
+          the given nick or for all nicks on the channel if no nick is
+          specified.</p>
 
-          <p><strong>Returns:</strong> rereads in the channel info from the
-          server</p>
+          <p><strong>Returns:</strong> nothing</p>
+
+          <p><strong>Module:</strong> irc</p>
+        </dd>
+
+        <dt><strong><a name="cmd_resetchanjoin"></a>resetchanjoin [nick]
+        &lt;channel&gt;</strong></dt>
+
+        <dd>
+          <p><strong>Description:</strong> resets the channel join time for
+          the given nick or for all nicks on the channel if no nick is
+          specified.</p>
+
+          <p><strong>Returns:</strong> nothing</p>
+
+          <p><strong>Module:</strong> irc</p>
+        </dd>
+
+        <dt><strong><a name="cmd_resetchan"></a>resetchan &lt;channel&gt;
+	[flags]</strong></dt>
+
+        <dd>
+          <p><strong>Description:</strong> rereads in the channel info from
+          the server. If flags are specified, only the required information
+          will be reset, according to the given flags. Available flags are:</p>
+          
+          <blockquote>
+          <table>
+          <tr valign="top">
+            <td>
+              <p><strong>b</strong></p>
+            </td>
+
+            <td>
+              <p>reset channel bans</p>
+            </td>
+          </tr>
+          <tr valign="top">
+            <td>
+              <p><strong>e</strong></p>
+            </td>
+
+            <td>
+              <p>reset channel exempts</p>
+            </td>
+          </tr>
+          <tr valign="top">
+            <td>
+              <p><strong>I</strong></p>
+            </td>
+
+            <td>
+              <p>reset channel invites</p>
+            </td>
+          </tr>
+          <tr valign="top">
+            <td>
+              <p><strong>m</strong></p>
+            </td>
+
+            <td>
+              <p>reset channel modes</p>
+            </td>
+          </tr>
+          <tr valign="top">
+            <td>
+              <p><strong>t</strong></p>
+            </td>
+
+            <td>
+              <p>refresh channel topic</p>
+            </td>
+          </tr>
+          <tr valign="top">
+            <td>
+              <p><strong>w</strong></p>
+            </td>
+
+            <td>
+              <p>refresh memberlist</p>
+            </td>
+          </tr>
+          </table>
+          </blockquote>
+
+          <p><strong>Returns:</strong> nothing </p>
 
           <p><strong>Module:</strong> irc</p>
         </dd>

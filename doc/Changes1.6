@@ -1,10 +1,24 @@
-$Id: Changes1.6,v 1.46 2009/11/15 13:10:34 pseudo Exp $
+$Id: Changes1.6,v 1.47 2009/11/21 23:12:29 pseudo Exp $
 
 Eggdrop Changes (since version 1.6.0)
 
     _____________________________________________________________________
 
 1.6.20 (CVS):
+
+  - Modified reset_chan_info() to support independent reset of various
+    information through flags. Updated tcl_resetchan() to make use of this.
+  - Removed redundant TOPIC requests and optimized the channel join/reset code
+    to ask for b/e/I modes in one message.
+  - Added safety checks after some mode bind triggers to avoid accessing freed
+    memory and not up-to-date flag records.
+  - Added two new Tcl commands: resetchanidle and resetchanjoin.
+  - Modified the channel reset logic to perform live updates on the member list
+    without deleting and readding members. Channel mode changes with the bot as
+    a target now trigger mode binds without initial blind delays during channel
+    join/reset.
+    Fixes Bugzilla Bug # 385 "MODE - bug, when bot just joined the chan"
+    Found by: gernot@rockstarvienna.com / Patch by: pseudo
 
   - Modified build_flags() to not repeat global bot flags when both bot
     and chan flags are requested.

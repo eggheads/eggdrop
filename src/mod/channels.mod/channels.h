@@ -1,7 +1,7 @@
 /*
  * channels.h -- part of channels.mod
  *
- * $Id: channels.h,v 1.29 2008/02/16 21:41:06 guppy Exp $
+ * $Id: channels.h,v 1.30 2009/11/21 23:12:30 pseudo Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -33,6 +33,14 @@
 #define MASKREASON_MAX 307    /* Max length of ban/invite/exempt/etc reasons. */
 #define MASKREASON_LEN (MASKREASON_MAX + 1)
 
+/* Flags for reset_chan_info() */
+#define CHAN_RESETMODES   0x01
+#define CHAN_RESETWHO     0x02
+#define CHAN_RESETTOPIC   0x04
+#define CHAN_RESETBANS    0x08
+#define CHAN_RESETEXEMPTS 0x10
+#define CHAN_RESETINVITED 0x20
+#define CHAN_RESETALL     0x3F
 
 #ifdef MAKING_CHANNELS
 

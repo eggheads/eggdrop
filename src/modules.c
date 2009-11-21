@@ -4,7 +4,7 @@
  *
  * by Darrin Smith (beldin@light.iinet.net.au)
  *
- * $Id: modules.c,v 1.100 2009/05/07 22:01:41 tothwolf Exp $
+ * $Id: modules.c,v 1.101 2009/11/21 23:12:30 pseudo Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -974,7 +974,7 @@ void mod_free(void *ptr, const char *modname, const char *filename, int line)
   n_free(ptr, x, line);
 }
 
-/* Hooks, various tables of functions to call on ceratin events
+/* Hooks, various tables of functions to call on certain events
  */
 void add_hook(int hook_num, Function func)
 {

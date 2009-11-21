@@ -6,7 +6,7 @@
  *   user kickban, kick, op, deop
  *   idle kicking
  *
- * $Id: chan.c,v 1.130 2009/10/01 15:02:14 pseudo Exp $
+ * $Id: chan.c,v 1.131 2009/11/21 23:12:30 pseudo Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -52,6 +52,25 @@ static memberlist *newmember(struct chanset_t *chan)
   x->next->delay = 0L;
   chan->channel.members++;
   return x;
+}
+
+/* Remove channel members for which no WHO reply was received */
+static inline void sync_members(struct chanset_t *chan)
+{
+  memberlist *m, *next, *prev;
+
+  for (m = chan->channel.member, prev = 0; m && m->nick[0]; m = next) {
+    next = m->next;
+    if (!chan_whosynced(m)) {
+      if (prev)
+        prev->next = next;
+      else
+        chan->channel.member = next;
+      nfree(m);
+      chan->channel.members--;
+    } else
+      prev = m;
+  }
 }
 
 /* Always pass the channel dname (display name) to this function <cybah>
@@ -876,10 +895,10 @@ static void recheck_channel(struct chanset_t *chan, int dobans)
   /* Most IRCDs nowadays require +h/+o for getting e/I lists,
    * so if we're still waiting for these, we'll request them here.
    * In case we got them on join, nothing will be done */
-  if ((chan->ircnet_status & CHAN_ASKED_EXEMPTS) && use_exempts == 1)
-    dprintf(DP_MODE, "MODE %s +e\n", chan->name);
-  if ((chan->ircnet_status & CHAN_ASKED_INVITED) && use_invites == 1)
-    dprintf(DP_MODE, "MODE %s +I\n", chan->name);
+  if (chan->ircnet_status & (CHAN_ASKED_EXEMPTS | CHAN_ASKED_INVITED)) {
+    chan->ircnet_status &= ~(CHAN_ASKED_EXEMPTS | CHAN_ASKED_INVITED);
+    reset_chan_info(chan, CHAN_RESETEXEMPTS | CHAN_RESETINVITED);
+  }
   if (dobans) {
     if (channel_nouserbans(chan) && !stop_reset)
       resetbans(chan);
@@ -1029,10 +1048,9 @@ static int got352or4(struct chanset_t *chan, char *user, char *host,
   simple_sprintf(userhost, "%s!%s", nick, m->userhost);
   /* Combine n!u@h */
   m->user = NULL;               /* No handle match (yet) */
-  if (match_my_nick(nick)) {    /* Is it me? */
+  if (match_my_nick(nick))      /* Is it me? */
     strcpy(botuserhost, m->userhost);   /* Yes, save my own userhost */
-    m->joined = now;            /* set this to keep the whining masses happy */
-  }
+  m->flags |= WHO_SYNCED;
   if (strpbrk(flags, opchars) != NULL)
     m->flags |= (CHANOP | WASOP);
   else
@@ -1101,6 +1119,7 @@ static int got354(char *from, char *msg)
   return 0;
 }
 
+
 /* got 315: end of who
  * <server> 315 <to> <chan> :End of /who
  */
@@ -1115,6 +1134,7 @@ static int got315(char *from, char *msg)
   if (!chan || !channel_pending(chan)) /* Left channel before we got a 315? */
     return 0;
 
+  sync_members(chan);
   chan->status |= CHAN_ACTIVE;
   chan->status &= ~CHAN_PEND;
   if (!ismember(chan, botname)) {      /* Am I on the channel now?          */
@@ -1733,7 +1753,7 @@ static int gotjoin(char *from, char *chname)
              chan->dname);
       chan->status |= CHAN_ACTIVE;
       chan->status &= ~CHAN_PEND;
-      reset_chan_info(chan);
+      reset_chan_info(chan, CHAN_RESETALL);
     } else {
       m = ismember(chan, nick);
       if (m && m->split && !egg_strcasecmp(m->userhost, uhost)) {
@@ -1814,7 +1834,7 @@ static int gotjoin(char *from, char *chname)
           else
             putlog(LOG_JOIN | LOG_MISC, chan->dname, "%s joined %s.", nick,
                    chname);
-          reset_chan_info(chan);
+          reset_chan_info(chan, (CHAN_RESETALL & ~CHAN_RESETTOPIC));
         } else {
           struct chanuserrec *cr;
 
@@ -1966,7 +1986,7 @@ static int gotpart(char *from, char *msg)
              chan->dname);
       chan->status |= CHAN_ACTIVE;
       chan->status &= ~CHAN_PEND;
-      reset_chan_info(chan);
+      reset_chan_info(chan, CHAN_RESETALL);
     }
     set_handle_laston(chan->dname, u, now);
     /* This must be directly above the killmember, in case we're doing anything

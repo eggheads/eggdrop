@@ -1,4 +1,4 @@
-$Id: tcl-commands.doc,v 1.127 2009/10/25 15:19:05 pseudo Exp $
+$Id: tcl-commands.doc,v 1.128 2009/11/21 23:12:30 pseudo Exp $
 
 Eggdrop Tcl Commands
 Last revised: August 02, 2004
@@ -736,8 +736,28 @@ marked with vertical bars (|) on the left.
     Returns: nothing
     Module: irc
 
-  resetchan <channel>
-    Description: rereads in the channel info from the server
+  resetchanidle [nick] <channel>
+    Description: resets the channel idle time for the given nick or for all
+      nicks on the channel if no nick is specified.
+    Returns: nothing
+    Module: irc
+
+  resetchanjoin [nick] <channel>
+    Description: resets the channel join time for the given nick or for all
+      nicks on the channel if no nick is specified.
+    Returns: nothing
+    Module: irc
+
+  resetchan <channel> [flags]
+    Description: rereads in the channel info from the server. If flags are
+      specified, only the required information will be reset, according to
+      the given flags. Available flags:
+	b - reset channel bans
+	e - reset channel exempts
+	I - reset channel invites
+	m - refresh channel modes 
+	t - refresh channel topic
+	w - refresh memberlist
     Returns: nothing
     Module: irc
 

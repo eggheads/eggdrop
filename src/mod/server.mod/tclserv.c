@@ -1,7 +1,7 @@
 /*
  * tclserv.c -- part of server.mod
  *
- * $Id: tclserv.c,v 1.23 2009/10/09 22:24:23 pseudo Exp $
+ * $Id: tclserv.c,v 1.24 2009/11/21 23:12:30 pseudo Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -46,7 +46,7 @@ static int tcl_putnow STDVAR
     return TCL_ERROR;
   }
   if (!serv) /* no server - no output */
-        return TCL_OK;
+    return TCL_OK;
 
   for (p = r = argv[1], q = buf; ; p++) {
     if (*p && *p != '\r' && *p != '\n')

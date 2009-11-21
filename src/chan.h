@@ -3,7 +3,7 @@
  *   stuff common to chan.c and mode.c
  *   users.h needs to be loaded too
  *
- * $Id: chan.h,v 1.48 2009/10/30 16:02:20 thommey Exp $
+ * $Id: chan.h,v 1.49 2009/11/21 23:12:30 pseudo Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -73,6 +73,7 @@ typedef struct memstruct {
 #define SENTHALFOP   0x04000 /* a mode +h was already sent out for this user */
 #define SENTDEHALFOP 0x08000 /* a mode -h was already sent out for this user */
 #define WASHALFOP    0x10000 /* was a halfop before a split                  */
+#define WHO_SYNCED   0x20000 /* who reply received for this member           */
 
 #define chan_hasvoice(x)     (x->flags & CHANVOICE)
 #define chan_hasop(x)        (x->flags & CHANOP)
@@ -90,6 +91,7 @@ typedef struct memstruct {
 #define chan_wasop(x)        (x->flags & WASOP)
 #define chan_washalfop(x)    (x->flags & WASHALFOP)
 #define chan_stopcheck(x)    (x->flags & STOPCHECK)
+#define chan_whosynced(x)    (x->flags & WHO_SYNCED)
 
 /* Why duplicate this struct for exempts and invites only under another
  * name? <cybah>
