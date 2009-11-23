@@ -1,4 +1,4 @@
-$Id: mod.channels,v 1.23 2009/05/16 11:25:28 tothwolf Exp $
+$Id: mod.channels,v 1.24 2009/11/23 09:42:01 pseudo Exp $
 
 Channels Module
 Last revised: February 12, 2003
@@ -37,6 +37,11 @@ Last revised: February 12, 2003
     set use-info 1
       Set this setting to 1 if you want to allow users to store an info line.
 
+    set allow-ps 0
+      Set this setting to 1 if you want to allow both +p and +s channel modes
+      to be enforced at the same time by the chanmode channel setting.
+      Make sure your server supports +ps mixing or you may get endless mode
+      floods.
 
     channel add #channel { SETTINGS }
       Add each static channel you want your bot to sit in using this command.

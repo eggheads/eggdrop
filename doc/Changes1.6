@@ -1,10 +1,15 @@
-$Id: Changes1.6,v 1.47 2009/11/21 23:12:29 pseudo Exp $
+$Id: Changes1.6,v 1.48 2009/11/23 09:42:01 pseudo Exp $
 
 Eggdrop Changes (since version 1.6.0)
 
     _____________________________________________________________________
 
 1.6.20 (CVS):
+
+  - Introduced new config variable allow-ps to allow chanmode optionally
+    enforce both +ps at the same time.
+    Fixes Bugzilla Bug # 414  "channel modes +s and +p on ts5 network" 
+    Found by: Ofloo / Patch by: pseudo
 
   - Modified reset_chan_info() to support independent reset of various
     information through flags. Updated tcl_resetchan() to make use of this.

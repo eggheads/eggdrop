@@ -9,3 +9,9 @@
 %{+n}
 ###  %bset use-info%b <0/1>
    Set this setting to 1 if you want to allow users to store an info line.
+%{help=set allow-ps}%{+n}
+###  %bset allow-ps%b <0/1>
+   Set this setting to 1 if you want to allow both +p and +s channel modes to
+   be enforced at the same time by the chanmode channel setting.
+   Make sure your server supports +ps mixing or you may get endless mode
+   floods.

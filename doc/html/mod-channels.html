@@ -1,5 +1,5 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
-<!-- $Id: mod-channels.html,v 1.28 2009/05/16 11:25:28 tothwolf Exp $ -->
+<!-- $Id: mod-channels.html,v 1.29 2009/11/23 09:42:01 pseudo Exp $ -->
 
 <html>
   <head>
@@ -63,6 +63,15 @@
         <dd>
           <p>Set this setting to 1 if you want to allow users to store an
           info line.</p>
+        </dd>
+
+        <dt><strong>set allow-ps 0</strong></dt>
+
+        <dd>
+          <p>Set this setting to 1 if you want to allow both +p and +s channel
+          modes to be enforced at the same time by the chanmode channel setting.
+          Make sure your server supports +ps mixing or you may get endless mode
+          floods.</p>
         </dd>
 
         <dt><strong>channel add #channel { SETTINGS }</strong></dt>

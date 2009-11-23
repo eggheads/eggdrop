@@ -2,7 +2,7 @@
  * channels.c -- part of channels.mod
  *   support for channels within the bot
  *
- * $Id: channels.c,v 1.98 2009/05/07 22:01:41 tothwolf Exp $
+ * $Id: channels.c,v 1.99 2009/11/23 09:42:01 pseudo Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -39,7 +39,7 @@ static struct udef_struct *udef;
 static int setstatic, use_info, chan_hack, quiet_save, global_revenge_mode,
            global_stopnethack_mode, global_idle_kick, global_aop_min,
            global_aop_max, global_ban_time, global_exempt_time,
-           global_invite_time, global_ban_type;
+           global_invite_time, global_ban_type, allow_ps;
 
 /* Global channel settings (drummer/dw) */
 static char glob_chanset[512];
@@ -168,7 +168,7 @@ static void set_mode_protect(struct chanset_t *chan, char *set)
     }
   }
   /* Prevents a +s-p +p-s flood  (fixed by drummer) */
-  if (chan->mode_pls_prot & CHANSEC)
+  if (chan->mode_pls_prot & CHANSEC && !allow_ps)
     chan->mode_pls_prot &= ~CHANPRIV;
 }
 
@@ -823,6 +823,7 @@ static tcl_ints my_tcl_ints[] = {
   {"share-greet",             NULL,                     0},
   {"use-info",                &use_info,                0},
   {"quiet-save",              &quiet_save,              0},
+  {"allow-ps",                &allow_ps,                0},
   {"global-stopnethack-mode", &global_stopnethack_mode, 0},
   {"global-revenge-mode",     &global_revenge_mode,     0},
   {"global-idle-kick",        &global_idle_kick,        0},
@@ -966,6 +967,7 @@ char *channels_start(Function *global_funcs)
   global_idle_kick = 0;
   global_aop_min = 5;
   global_aop_max = 30;
+  allow_ps = 0;
   setstatic = 0;
   lastdeletedmask = 0;
   use_info = 1;
