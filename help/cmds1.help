@@ -244,6 +244,7 @@ See also: chhandle
      %bc%b  commands
      %bo%b  misc info, errors, etc (IMPORTANT STUFF)
      %bw%b  wallops (make sure the bot sets +w in init-server)
+     %bx%b  file transfers and file-area commands
 
 %{+n}
    Owners only (these have to be enabled in the config file via "set raw-log"):

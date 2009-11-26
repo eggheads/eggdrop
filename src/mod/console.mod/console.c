@@ -3,7 +3,7 @@
  *   saved console settings based on console.tcl
  *   by cmwagner/billyjoe/D. Senso
  *
- * $Id: console.c,v 1.35 2008/02/16 21:41:07 guppy Exp $
+ * $Id: console.c,v 1.36 2009/11/26 09:32:28 pseudo Exp $
  */
 /*
  * Copyright (C) 1999 - 2008 Eggheads Development Team
@@ -244,13 +244,15 @@ static struct user_entry_type USERENTRY_CONSOLE = {
 
 static int console_chon(char *handle, int idx)
 {
+  struct flag_record fr = { FR_GLOBAL | FR_CHAN, 0, 0, 0, 0, 0 };
   struct console_info *i = get_user(&USERENTRY_CONSOLE, dcc[idx].user);
 
   if (dcc[idx].type == &DCC_CHAT) {
     if (i) {
       if (i->channel && i->channel[0])
         strcpy(dcc[idx].u.chat->con_chan, i->channel);
-      dcc[idx].u.chat->con_flags = i->conflags;
+      get_user_flagrec(dcc[idx].user, &fr, i->channel);
+      dcc[idx].u.chat->con_flags = check_conflags(&fr, i->conflags);
       dcc[idx].u.chat->strip_flags = i->stripflags;
       if (i->echoflags)
         dcc[idx].status |= STAT_ECHO;

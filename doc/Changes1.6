@@ -1,10 +1,20 @@
-$Id: Changes1.6,v 1.48 2009/11/23 09:42:01 pseudo Exp $
+$Id: Changes1.6,v 1.49 2009/11/26 09:32:27 pseudo Exp $
 
 Eggdrop Changes (since version 1.6.0)
 
     _____________________________________________________________________
 
 1.6.20 (CVS):
+
+  - Moved console flags validation from cmd_console() to a separate function
+    check_conflags().
+  - Added calls to check_dcc_attrs() / check_dcc_chanattrs in tcl_chattr()
+    to make the behaviour consistent between all chattr functions.
+  - Added calls to check_conflags() in check_dcc_attrs/check_dcc_chanattrs()
+    and chon_console() in order to ensure users will not retain privileged
+    console flags if their access gets downgraded.
+    Fixes Bugzilla Bug # 133 ".chattr / .console bug"
+    Found by: DarkReap1 / Patch by: pseudo
 
   - Introduced new config variable allow-ps to allow chanmode optionally
     enforce both +ps at the same time.

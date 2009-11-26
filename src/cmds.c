@@ -3,7 +3,7 @@
  *   commands from a user via dcc
  *   (split in 2, this portion contains no-irc commands)
  *
- * $Id: cmds.c,v 1.121 2009/11/15 13:10:34 pseudo Exp $
+ * $Id: cmds.c,v 1.122 2009/11/26 09:32:27 pseudo Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -646,7 +646,7 @@ static void cmd_boot(struct userrec *u, int idx, char *par)
 static void cmd_console(struct userrec *u, int idx, char *par)
 {
   char *nick, s[2], s1[512];
-  int dest = 0, i, ok = 0, pls, md;
+  int dest = 0, i, ok = 0, pls;
   struct flag_record fr = { FR_GLOBAL | FR_CHAN, 0, 0, 0, 0, 0 };
   module_entry *me;
 
@@ -694,9 +694,8 @@ static void cmd_console(struct userrec *u, int idx, char *par)
     }
     strncpyz(dcc[dest].u.chat->con_chan, nick, 81);
     nick[0] = 0;
-    if ((dest == idx) && !glob_master(fr) && !chan_master(fr))
-      /* Consoling to another channel for self */
-      dcc[dest].u.chat->con_flags &= ~(LOG_MISC | LOG_CMDS | LOG_WALL);
+    if (dest != idx)
+      get_user_flagrec(dcc[dest].user, &fr, dcc[dest].u.chat->con_chan);
   }
   if (!nick[0])
     nick = newsplit(&par);
@@ -712,28 +711,15 @@ static void cmd_console(struct userrec *u, int idx, char *par)
       else {
         s[0] = *nick;
         s[1] = 0;
-        md = logmodes(s);
-        if ((dest == idx) && !glob_master(fr) && pls) {
-          if (chan_master(fr))
-            md &= ~(LOG_FILES | LOG_LEV1 | LOG_LEV2 | LOG_LEV3 |
-                    LOG_LEV4 | LOG_LEV5 | LOG_LEV6 | LOG_LEV7 |
-                    LOG_LEV8 | LOG_DEBUG);
-          else
-            md &= ~(LOG_MISC | LOG_CMDS | LOG_FILES | LOG_LEV1 |
-                    LOG_LEV2 | LOG_LEV3 | LOG_LEV4 | LOG_LEV5 |
-                    LOG_LEV6 | LOG_LEV7 | LOG_LEV8 | LOG_WALL | LOG_DEBUG);
-        }
-        if (!glob_owner(fr) && pls)
-          md &= ~(LOG_RAW | LOG_SRVOUT | LOG_BOTNET | LOG_BOTSHARE);
-        if (!glob_botmast(fr) && pls)
-          md &= ~LOG_BOTS;
         if (pls)
-          dcc[dest].u.chat->con_flags |= md;
+          dcc[dest].u.chat->con_flags |= logmodes(s);
         else
-          dcc[dest].u.chat->con_flags &= ~md;
+          dcc[dest].u.chat->con_flags &= ~logmodes(s);
       }
     }
   }
+  dcc[dest].u.chat->con_flags = check_conflags(&fr,
+                                               dcc[dest].u.chat->con_flags);
   putlog(LOG_CMDS, "*", "#%s# console %s", dcc[idx].nick, s1);
   if (dest == idx) {
     dprintf(idx, "Set your console to %s: %s (%s).\n",
@@ -1269,6 +1255,7 @@ static void cmd_banner(struct userrec *u, int idx, char *par)
 int check_dcc_attrs(struct userrec *u, int oatr)
 {
   int i, stat;
+  struct flag_record fr = { FR_GLOBAL | FR_CHAN, 0, 0, 0, 0, 0 };
 
   if (!u)
     return 0;
@@ -1286,16 +1273,6 @@ int check_dcc_attrs(struct userrec *u, int oatr)
         botnet_send_join_idx(i, -1);
       }
       if ((oatr & USER_MASTER) && !(u->flags & USER_MASTER)) {
-        struct flag_record fr = { FR_CHAN | FR_ANYWH, 0, 0, 0, 0, 0 };
-
-        dcc[i].u.chat->con_flags &= ~(LOG_MISC | LOG_CMDS | LOG_RAW |
-                                      LOG_FILES | LOG_LEV1 | LOG_LEV2 |
-                                      LOG_LEV3 | LOG_LEV4 | LOG_LEV5 |
-                                      LOG_LEV6 | LOG_LEV7 | LOG_LEV8 |
-                                      LOG_WALL | LOG_DEBUG);
-        get_user_flagrec(u, &fr, NULL);
-        if (!chan_master(fr))
-          dcc[i].u.chat->con_flags |= (LOG_MISC | LOG_CMDS);
         dprintf(i, "*** POOF! ***\n");
         dprintf(i, "You are no longer a master on this bot.\n");
       }
@@ -1320,6 +1297,9 @@ int check_dcc_attrs(struct userrec *u, int oatr)
         dprintf(i, "@@@ POOF! @@@\n");
         dprintf(i, "You are no longer an owner of this bot.\n");
       }
+      get_user_flagrec(u, &fr, dcc[i].u.chat->con_chan);
+      dcc[i].u.chat->con_flags = check_conflags(&fr,
+                                                dcc[i].u.chat->con_flags);
       if ((stat & STAT_PARTY) && (u->flags & USER_OP))
         stat &= ~STAT_PARTY;
       if (!(stat & STAT_PARTY) && !(u->flags & USER_OP) &&
@@ -1379,7 +1359,8 @@ int check_dcc_attrs(struct userrec *u, int oatr)
 int check_dcc_chanattrs(struct userrec *u, char *chname, int chflags,
                         int ochatr)
 {
-  int i, found = 0, atr = u ? u->flags : 0;
+  int i, found = 0;
+  struct flag_record fr = { FR_CHAN, 0, 0, 0, 0, 0 };
   struct chanset_t *chan;
 
   if (!u)
@@ -1392,19 +1373,11 @@ int check_dcc_chanattrs(struct userrec *u, char *chname, int chflags,
           (ochatr & (USER_OP | USER_MASTER | USER_OWNER))))
         botnet_send_join_idx(i, -1);
       if ((ochatr & USER_MASTER) && !(chflags & USER_MASTER)) {
-        if (!(atr & USER_MASTER))
-          dcc[i].u.chat->con_flags &= ~(LOG_MISC | LOG_CMDS);
         dprintf(i, "*** POOF! ***\n");
         dprintf(i, "You are no longer a master on %s.\n", chname);
       }
       if (!(ochatr & USER_MASTER) && (chflags & USER_MASTER)) {
         dcc[i].u.chat->con_flags |= conmask;
-        if (!(atr & USER_MASTER))
-          dcc[i].u.chat->con_flags &= ~(LOG_LEV1 | LOG_LEV2 | LOG_LEV3 |
-                                        LOG_LEV4 | LOG_LEV5 | LOG_LEV6 |
-                                        LOG_LEV7 | LOG_LEV8 | LOG_RAW |
-                                        LOG_DEBUG | LOG_WALL | LOG_FILES |
-                                        LOG_SRVOUT);
         dprintf(i, "*** POOF! ***\n");
         dprintf(i, "You are now a master on %s.\n", chname);
       }
@@ -1420,7 +1393,6 @@ int check_dcc_chanattrs(struct userrec *u, char *chname, int chflags,
           (!(chflags & (USER_OP | USER_MASTER | USER_OWNER)))) ||
           ((chflags & (USER_OP | USER_MASTER | USER_OWNER)) &&
           (!(ochatr & (USER_OP | USER_MASTER | USER_OWNER))))) {
-        struct flag_record fr = { FR_CHAN, 0, 0, 0, 0, 0 };
 
         for (chan = chanset; chan && !found; chan = chan->next) {
           get_user_flagrec(u, &fr, chan->dname);
@@ -1434,6 +1406,10 @@ int check_dcc_chanattrs(struct userrec *u, char *chname, int chflags,
         else
           strcpy(dcc[i].u.chat->con_chan, "*");
       }
+      fr.match = (FR_CHAN | FR_GLOBAL);
+      get_user_flagrec(u, &fr, dcc[i].u.chat->con_chan);
+      dcc[i].u.chat->con_flags = check_conflags(&fr,
+                                                dcc[i].u.chat->con_flags);
     }
   }
   return chflags;
@@ -1615,7 +1591,6 @@ static void cmd_chattr(struct userrec *u, int idx, char *par)
   }
   if (chg && (me = module_find("irc", 0, 0))) {
     Function *func = me->funcs;
-
     (func[IRC_CHECK_THIS_USER]) (hand, 0, NULL);
   }
   if (tmpchg)

@@ -4,7 +4,7 @@
  *
  * by Darrin Smith (beldin@light.iinet.net.au)
  *
- * $Id: modules.c,v 1.101 2009/11/21 23:12:30 pseudo Exp $
+ * $Id: modules.c,v 1.102 2009/11/26 09:32:27 pseudo Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -570,7 +570,8 @@ Function global_table[] = {
   (Function) oatoi,
   /* 292 - 295 */
   (Function) str_isdigit,
-  (Function) remove_crlf
+  (Function) remove_crlf,
+  (Function) check_conflags
 };
 
 void init_modules(void)

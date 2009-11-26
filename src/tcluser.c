@@ -2,7 +2,7 @@
  * tcluser.c -- handles:
  *   Tcl stubs for the user-record-oriented commands
  *
- * $Id: tcluser.c,v 1.46 2009/11/15 13:10:34 pseudo Exp $
+ * $Id: tcluser.c,v 1.47 2009/11/26 09:32:28 pseudo Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -78,6 +78,7 @@ static int tcl_passwdOk STDVAR
 
 static int tcl_chattr STDVAR
 {
+  int of, ocf = 0;
   char *chan, *chg, work[100];
   struct flag_record pls, mns, user;
   struct userrec *u;
@@ -125,6 +126,7 @@ static int tcl_chattr STDVAR
   get_user_flagrec(u, &user, chan);
   /* Make changes */
   if (chg) {
+    of = user.global;
     pls.match = user.match;
     break_down_flags(chg, &pls, &mns);
     /* No-one can change these flags on-the-fly */
@@ -140,13 +142,18 @@ static int tcl_chattr STDVAR
     user.udef_global = (user.udef_global | pls.udef_global)
                        & ~mns.udef_global;
     if (chan) {
+      ocf = user.chan;
       user.chan = chan_sanity_check((user.chan | pls.chan) & ~mns.chan,
                                     user.global);
       user.udef_chan = (user.udef_chan | pls.udef_chan) & ~mns.udef_chan;
+      
     }
     set_user_flagrec(u, &user, chan);
+    check_dcc_attrs(u, of);
+    if (chan)
+      check_dcc_chanattrs(u, chan, user.chan, ocf);
   }
-  user.chan &= ~BOT_SHARE; /* actually not an user flag, hide it */
+  user.chan &= ~BOT_SHARE; /* actually not a user flag, hide it */
   /* Build flag string */
   build_flags(work, &user, NULL);
   Tcl_AppendResult(irp, work, NULL);

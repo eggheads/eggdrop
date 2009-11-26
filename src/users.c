@@ -10,7 +10,7 @@
  *
  * dprintf'ized, 9nov1995
  *
- * $Id: users.c,v 1.55 2009/10/12 14:10:32 thommey Exp $
+ * $Id: users.c,v 1.56 2009/11/26 09:32:28 pseudo Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -969,7 +969,7 @@ int readuserfile(char *file, struct userrec **ret)
     struct user_entry *e;
 
     if (!(u->flags & USER_BOT) && !egg_strcasecmp(u->handle, botnetnick)) {
-      putlog(LOG_MISC, "*", "(!) I have an user record, but without +b");
+      putlog(LOG_MISC, "*", "(!) I have a user record, but without +b");
       /* u->flags |= USER_BOT; */
     }
 
