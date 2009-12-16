@@ -1,4 +1,4 @@
-$Id: COMPILE-GUIDE,v 1.10 2009/10/25 15:19:05 pseudo Exp $
+$Id: COMPILE-GUIDE,v 1.11 2009/12/16 17:55:07 tothwolf Exp $
 
 Eggdrop Compile Guide and FAQ
 Last revised: August 20, 2004
@@ -251,7 +251,7 @@ Last revised: August 20, 2004
              cd /
              tar -zxf tcl-8.4.1.tar.gz
 
-        3. Download Eggdrop from www.geteggdrop.com to your home directory.
+        3. Download Eggdrop from geteggdrop.com to your home directory.
            This is usually something like 'C:\cygwin\home\<username>\'. After
            downloading, extract the Eggdrop tarball:
 
