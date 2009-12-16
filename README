@@ -1,4 +1,4 @@
-$Id: README,v 1.48 2009/10/25 15:19:05 pseudo Exp $
+$Id: README,v 1.49 2009/12/16 17:56:14 tothwolf Exp $
 
 Readme
 Last revised: June 5, 2002
@@ -120,7 +120,7 @@ Last revised: June 5, 2002
     Currently, the 1.6 tree of Eggdrop is developed at eggheads.org. You can
     get the latest version of Eggdrop from the following url:
 
-      http://www.geteggdrop.com
+      http://geteggdrop.com/
 
     You might try www.eggheads.org for help and information.
 
