@@ -2,7 +2,7 @@
  * language.c -- handles:
  *   language support code
  *
- * $Id: language.c,v 1.28 2008/02/16 21:41:03 guppy Exp $
+ * $Id: language.c,v 1.29 2009/12/24 10:31:06 pseudo Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -217,8 +217,9 @@ static void read_lang(char *langfile)
   char *ltext = NULL;
   char *ctmp, *ctmp1;
   int lidx;
-  int lline = 0;
-  int lskip;
+  int lnew = 1;
+  int lline = 1;
+  int lskip = 0;
   int ltexts = 0;
   int ladd = 0, lupdate = 0;
 
@@ -229,62 +230,56 @@ static void read_lang(char *langfile)
     return;
   }
 
-  lskip = 0;
-  while (fgets(lbuf, 511, FLANG)) {
-    lline++;
-    if (lbuf[0] != '#' || lskip) {
-      ltext = nrealloc(ltext, 512);
-      if (sscanf(lbuf, "%s", ltext) != EOF) {
-#ifdef LIBSAFE_HACKS
-        if (sscanf(lbuf, "0x%x,%500c", &lidx, ltext) != 1) {
-#else
-        if (sscanf(lbuf, "0x%x,%500c", &lidx, ltext) != 2) {
-#endif
-          putlog(LOG_MISC, "*", "Malformed text line in %s at %d.",
-                 langfile, lline);
-        } else {
-          ltexts++;
-          ctmp = strchr(ltext, '\n');
-          *ctmp = 0;
-          while (ltext[strlen(ltext) - 1] == '\\') {
-            ltext[strlen(ltext) - 1] = 0;
-            if (fgets(lbuf, 511, FLANG)) {
-              lline++;
-              ctmp = strchr(lbuf, '\n');
-              *ctmp = 0;
-              ltext = nrealloc(ltext, strlen(lbuf) + strlen(ltext) + 1);
-              strcpy(strchr(ltext, 0), lbuf);
-            }
-          }
+  for (*(ltext = nmalloc(sizeof lbuf)) = 0; fgets(lbuf, sizeof lbuf, FLANG);
+       ltext = nrealloc(ltext, strlen(ltext) + sizeof lbuf), lskip = 0) {
+    if (lnew) {
+      if ((lbuf[0] == '#') || (sscanf(lbuf, "%s", ltext) == EOF))
+        lskip = 1;
+      else if (sscanf(lbuf, "0x%x,", &lidx) != 1) {
+        putlog(LOG_MISC, "*", "LANG: Malformed text line in %s at %d.",
+               langfile, lline);
+        lskip = 1;
+      }
+      if (lskip) {
+        while (!strchr(lbuf, '\n')) {
+          fgets(lbuf, 511, FLANG);
+          lline++;
         }
-        /* We gotta fix \n's here as, being arguments to sprintf(),
-         * they won't get translated.
-         */
-        ctmp = ltext;
-        ctmp1 = ltext;
-        while (*ctmp1) {
-          if ((*ctmp1 == '\\') && (*(ctmp1 + 1) == 'n')) {
+        lline++;
+        lnew = 1;
+        continue;
+      }
+      strcpy(ltext, strchr(lbuf, ',') + 1);
+    } else
+      strcpy(strchr(ltext, 0), lbuf);
+    if ((ctmp = strchr(ltext, '\n'))) {
+      lline++;
+      *ctmp = 0;
+      if (ctmp[-1] == '\\') {
+        lnew = 0;
+        ctmp[-1] = 0;
+      } else {
+      	ltexts++;
+      	lnew = 1;
+      	/* Convert literal \n and \t escapes */
+      	for (ctmp1 = ctmp = ltext; *ctmp1; ctmp++, ctmp1++) {
+          if ((*ctmp1 == '\\') && ctmp1[1] == 'n') {
             *ctmp = '\n';
             ctmp1++;
-          } else if ((*ctmp1 == '\\') && (*(ctmp1 + 1) == 't')) {
+          } else if ((*ctmp1 == '\\') && ctmp1[1] == 't') {
             *ctmp = '\t';
             ctmp1++;
           } else
             *ctmp = *ctmp1;
-          ctmp++;
-          ctmp1++;
         }
-        *ctmp = '\0';
+        *ctmp = 0;
         if (add_message(lidx, ltext)) {
           lupdate++;
         } else
           ladd++;
       }
-    } else {
-      ctmp = strchr(lbuf, '\n');
-      if (lskip && (strlen(lbuf) == 1 || *(ctmp - 1) != '\\'))
-        lskip = 0;
-    }
+    } else
+      lnew = 0;
   }
   nfree(ltext);
   fclose(FLANG);

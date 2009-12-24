@@ -1,10 +1,14 @@
-$Id: Changes1.6,v 1.49 2009/11/26 09:32:27 pseudo Exp $
+$Id: Changes1.6,v 1.50 2009/12/24 10:31:05 pseudo Exp $
 
 Eggdrop Changes (since version 1.6.0)
 
     _____________________________________________________________________
 
 1.6.20 (CVS):
+
+  - Fixed a potential crash in read_lang() with lines > 512 characters in
+    language files. Added support for lines of unlimited size.
+    Patch by: pseudo
 
   - Moved console flags validation from cmd_console() to a separate function
     check_conflags().
