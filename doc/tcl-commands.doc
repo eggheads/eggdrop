@@ -1,7 +1,7 @@
-$Id: tcl-commands.doc,v 1.129 2010/01/03 13:27:22 pseudo Exp $
+$Id: tcl-commands.doc,v 1.130 2010/01/03 14:48:39 pseudo Exp $
 
 Eggdrop Tcl Commands
-Last revised: August 02, 2004
+Last revised: November 23, 2009
     _____________________________________________________________________
 
                            Eggdrop Tcl Commands
@@ -736,30 +736,30 @@ marked with vertical bars (|) on the left.
     Returns: nothing
     Module: irc
 
-  resetchanidle [nick] <channel>
-    Description: resets the channel idle time for the given nick or for all
-      nicks on the channel if no nick is specified.
-    Returns: nothing
-    Module: irc
+| resetchanidle [nick] <channel>
+|   Description: resets the channel idle time for the given nick or for all
+|     nicks on the channel if no nick is specified.
+|   Returns: nothing
+|   Module: irc
 
-  resetchanjoin [nick] <channel>
-    Description: resets the channel join time for the given nick or for all
-      nicks on the channel if no nick is specified.
-    Returns: nothing
-    Module: irc
+| resetchanjoin [nick] <channel>
+|   Description: resets the channel join time for the given nick or for all
+|     nicks on the channel if no nick is specified.
+|   Returns: nothing
+|   Module: irc
 
-  resetchan <channel> [flags]
-    Description: rereads in the channel info from the server. If flags are
-      specified, only the required information will be reset, according to
-      the given flags. Available flags:
-	b - reset channel bans
-	e - reset channel exempts
-	I - reset channel invites
-	m - refresh channel modes 
-	t - refresh channel topic
-	w - refresh memberlist
-    Returns: nothing
-    Module: irc
+| resetchan <channel> [flags]
+|   Description: rereads in the channel info from the server. If flags are
+|     specified, only the required information will be reset, according to
+|     the given flags. Available flags:
+|       b - reset channel bans
+|       e - reset channel exempts
+|       I - reset channel invites
+|       m - refresh channel modes 
+|       t - refresh channel topic
+|       w - refresh memberlist
+|   Returns: nothing
+|   Module: irc
 
   getchanhost <nickname> [channel]
     Returns: user@host of the specified nickname (the nickname is not included
@@ -1339,26 +1339,26 @@ marked with vertical bars (|) on the left.
       list of logfiles such as: {mco * eggdrop.log} {jp #lame lame.log}
     Module: core
 
-  maskhost <nick!user@host> [masktype]
-    Returns: masked hostmask for the string given according to the masktype
-      (the default is 3).
-      Available types are:
-	0: *!user@host
-	1: *!*user@host
-	2: *!*@host
-	3: *!*user@*.host
-	4: *!*@*.host
-	5: nick!user@host
-	6: nick!*user@host
-	7: nick!*@host
-	8: nick!*user@*.host
-	9: nick!*@*.host
-      You can also specify types from 10 to 19 which correspond to types
-      0 to 9, but instead of using a * wildcard to replace portions of the
-      host, only numbers in hostnames are replaced with the '?' wildcard.
-      Same is valid for types 20-29, but instead of '?', the '*' wildcard
-      will be used.
-    Module: core
+| maskhost <nick!user@host> [masktype]
+|   Returns: masked hostmask for the string given according to the masktype
+|     (the default is 3).
+|     Available types are:
+|       0: *!user@host
+|       1: *!*user@host
+|       2: *!*@host
+|       3: *!*user@*.host
+|       4: *!*@*.host
+|       5: nick!user@host
+|       6: nick!*user@host
+|       7: nick!*@host
+|       8: nick!*user@*.host
+|       9: nick!*@*.host
+|     You can also specify types from 10 to 19 which correspond to types
+|     0 to 9, but instead of using a * wildcard to replace portions of the
+|     host, only numbers in hostnames are replaced with the '?' wildcard.
+|     Same is valid for types 20-29, but instead of '?', the '*' wildcard
+|     will be used.
+|   Module: core
 
   timer <minutes> <tcl-command>
     Description: executes the given Tcl command after a certain number of
