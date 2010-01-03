@@ -2,11 +2,11 @@
  * cmdschan.c -- part of channels.mod
  *   commands from a user via dcc that cause server interaction
  *
- * $Id: cmdschan.c,v 1.77 2009/05/07 22:01:41 tothwolf Exp $
+ * $Id: cmdschan.c,v 1.78 2010/01/03 13:27:40 pseudo Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2008 Eggheads Development Team
+ * Copyright (C) 1999 - 2010 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License

@@ -2,11 +2,11 @@
  * irc.c -- part of irc.mod
  *   support for channels within the bot
  *
- * $Id: irc.c,v 1.115 2009/11/21 23:12:30 pseudo Exp $
+ * $Id: irc.c,v 1.116 2010/01/03 13:27:54 pseudo Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2008 Eggheads Development Team
+ * Copyright (C) 1999 - 2010 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License

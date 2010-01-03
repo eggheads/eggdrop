@@ -1,11 +1,11 @@
 /*
  * flags.h
  *
- * $Id: flags.h,v 1.18 2008/02/16 21:41:03 guppy Exp $
+ * $Id: flags.h,v 1.19 2010/01/03 13:27:32 pseudo Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2008 Eggheads Development Team
+ * Copyright (C) 1999 - 2010 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License

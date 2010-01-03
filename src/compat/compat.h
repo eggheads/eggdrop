@@ -2,10 +2,10 @@
  * compat.h
  *   wrap-around header for all compability functions.
  *
- * $Id: compat.h,v 1.13 2008/02/16 21:41:05 guppy Exp $
+ * $Id: compat.h,v 1.14 2010/01/03 13:27:40 pseudo Exp $
  */
 /*
- * Copyright (C) 2000 - 2008 Eggheads Development Team
+ * Copyright (C) 2000 - 2010 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License

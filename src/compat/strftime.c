@@ -2,10 +2,10 @@
  * strftime.c
  *   Portable strftime implementation. Uses GNU's strftime().
  *
- * $Id: strftime.c,v 1.11 2008/02/16 21:41:05 guppy Exp $
+ * $Id: strftime.c,v 1.12 2010/01/03 13:27:40 pseudo Exp $
  */
 /*
- * Copyright (C) 2000 - 2008 Eggheads Development Team
+ * Copyright (C) 2000 - 2010 Eggheads Development Team
  * Written by Fabian Knittel
  *
  * This program is free software; you can redistribute it and/or

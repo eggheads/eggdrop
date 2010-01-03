@@ -2,11 +2,11 @@
  * cmdsnote.c -- part of notes.mod
  *   handles all notes interaction over the party line
  *
- * $Id: cmdsnote.c,v 1.22 2008/02/16 21:41:09 guppy Exp $
+ * $Id: cmdsnote.c,v 1.23 2010/01/03 13:27:55 pseudo Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2008 Eggheads Development Team
+ * Copyright (C) 1999 - 2010 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License

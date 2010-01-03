@@ -1,11 +1,11 @@
 /*
  * uptime.h - part of the uptime module
  *
- * $Id: uptime.h,v 1.15 2008/02/16 21:41:11 guppy Exp $
+ * $Id: uptime.h,v 1.16 2010/01/03 13:27:55 pseudo Exp $
  */
 /*
  * Copyright (C) 2001 proton
- * Copyright (C) 2001 - 2008 Eggheads Development Team
+ * Copyright (C) 2001 - 2010 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License

@@ -10,11 +10,11 @@
  *
  * dprintf'ized, 9nov1995
  *
- * $Id: users.c,v 1.56 2009/11/26 09:32:28 pseudo Exp $
+ * $Id: users.c,v 1.57 2010/01/03 13:27:32 pseudo Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2008 Eggheads Development Team
+ * Copyright (C) 1999 - 2010 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License

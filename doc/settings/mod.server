@@ -1,4 +1,4 @@
-$Id: mod.server,v 1.39 2009/10/01 15:52:33 pseudo Exp $
+$Id: mod.server,v 1.40 2010/01/03 13:27:23 pseudo Exp $
 
 Server Module
 Last revised: February 12, 2003
@@ -236,5 +236,5 @@ Last revised: February 12, 2003
 
     _____________________________________________________________________
 
-  Copyright (C) 2000 - 2008 Eggheads Development Team
+  Copyright (C) 2000 - 2010 Eggheads Development Team
 

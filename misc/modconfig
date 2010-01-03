@@ -2,7 +2,7 @@
 #
 # modconfig
 #
-# Copyright (C) 2000 - 2008 Eggheads Development Team
+# Copyright (C) 2000 - 2010 Eggheads Development Team
 # Written by Fabian Knittel
 #
 # This program is free software; you can redistribute it and/or
@@ -19,7 +19,7 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #
-# $Id: modconfig,v 1.19 2008/02/16 21:41:02 guppy Exp $
+# $Id: modconfig,v 1.20 2010/01/03 13:27:23 pseudo Exp $
 
 
 mc_pn=`echo $0 | sed -e 's/^.*\///'`

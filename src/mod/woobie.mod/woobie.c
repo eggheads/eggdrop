@@ -5,10 +5,10 @@
  * Originally written by ButchBub         15 July     1997
  * Comments by Fabian Knittel             29 December 1999
  *
- * $Id: woobie.c,v 1.27 2008/02/16 21:41:11 guppy Exp $
+ * $Id: woobie.c,v 1.28 2010/01/03 13:27:55 pseudo Exp $
  */
 /*
- * Copyright (C) 1999 - 2008 Eggheads Development Team
+ * Copyright (C) 1999 - 2010 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License

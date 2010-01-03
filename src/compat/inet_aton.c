@@ -1,10 +1,10 @@
 /*
  * inet_aton.c -- provides inet_aton() if necessary.
  *
- * $Id: inet_aton.c,v 1.19 2008/02/16 21:41:05 guppy Exp $
+ * $Id: inet_aton.c,v 1.20 2010/01/03 13:27:40 pseudo Exp $
  */
 /*
- * Portions Copyright (C) 2000 - 2008 Eggheads Development Team
+ * Portions Copyright (C) 2000 - 2010 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License

@@ -3,7 +3,7 @@
 #   use this is you are to lazy to get of your butt and update your scripts :D
 #   by the way it binds some old command to the new ones
 #
-# Copyright (C) 2002 - 2008 Eggheads Development Team
+# Copyright (C) 2002 - 2010 Eggheads Development Team
 #
 # Wiktor    31Mar2000: added binds and chnick proc
 # Tothwolf  25May1999: cleanup
@@ -11,7 +11,7 @@
 # rtc       10Oct1999: added [set|get][dn|up]loads functions
 # pseudo    04Oct2009: added putdccraw
 #
-# $Id: compat.tcl,v 1.16 2009/10/09 22:24:22 pseudo Exp $
+# $Id: compat.tcl,v 1.17 2010/01/03 13:27:31 pseudo Exp $
 
 proc gethosts {hand} {
   getuser $hand HOSTS

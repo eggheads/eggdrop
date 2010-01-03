@@ -1,4 +1,4 @@
-$Id: mod.filesys,v 1.18 2008/02/16 21:41:01 guppy Exp $
+$Id: mod.filesys,v 1.19 2010/01/03 13:27:23 pseudo Exp $
 
 Filesys Module
 Last revised: May 26, 2004
@@ -54,4 +54,4 @@ Last revised: May 26, 2004
 
     _____________________________________________________________________
 
-  Copyright (C) 2000 - 2008 Eggheads Development Team
+  Copyright (C) 2000 - 2010 Eggheads Development Team
