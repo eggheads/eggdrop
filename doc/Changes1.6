@@ -1,10 +1,15 @@
-$Id: Changes1.6,v 1.53 2010/01/04 13:15:11 pseudo Exp $
+$Id: Changes1.6,v 1.54 2010/01/04 18:38:26 pseudo Exp $
 
 Eggdrop Changes (since version 1.6.0)
 
     _____________________________________________________________________
 
 1.6.20 (CVS):
+
+  - Changed GetInt / GetIntFromObj's Tcl_Interp argument to NULL in
+    tcl_resultint() to avoid an unneeded error message being stored in the
+    interp result.
+    Patch by: pseudo
 
   - Modified various checks to allow non-latin characters in handles. Added
     missing checks to tcl_adduser() and tcl_chhand().

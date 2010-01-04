@@ -4,7 +4,7 @@
  *   Tcl initialization
  *   getting and setting Tcl/eggdrop variables
  *
- * $Id: tcl.c,v 1.91 2010/01/03 13:27:32 pseudo Exp $
+ * $Id: tcl.c,v 1.92 2010/01/04 18:38:26 pseudo Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -469,9 +469,9 @@ int tcl_resultint()
 {
   int result;
 #ifdef USE_TCL_OBJ
-  if (Tcl_GetIntFromObj(interp, Tcl_GetObjResult(interp), &result) != TCL_OK)
+  if (Tcl_GetIntFromObj(NULL, Tcl_GetObjResult(interp), &result) != TCL_OK)
 #else
-  if (Tcl_GetInt(interp, interp->result, &result) != TCL_OK)
+  if (Tcl_GetInt(NULL, interp->result, &result) != TCL_OK)
 #endif
     result = 0;
   return result;
