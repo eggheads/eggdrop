@@ -1,10 +1,18 @@
-$Id: Changes1.6,v 1.52 2010/01/03 14:48:39 pseudo Exp $
+$Id: Changes1.6,v 1.53 2010/01/04 13:15:11 pseudo Exp $
 
 Eggdrop Changes (since version 1.6.0)
 
     _____________________________________________________________________
 
 1.6.20 (CVS):
+
+  - Modified various checks to allow non-latin characters in handles. Added
+    missing checks to tcl_adduser() and tcl_chhand().
+  - Added telnet autodetection to src/dcc.c. Made changes to stop interpreting
+    telnet codes from bots. Reworked telnet handlers to properly understand
+    and escape character 0xff in data.
+    Fixes Bugzilla Bug # 419 "droped chars when sharing"
+    Patch by: pseudo
 
   - Various minor docfixes.
     Patch by: pseudo

@@ -3,7 +3,7 @@
  *   commands that comes across the botnet
  *   userfile transfer and update commands from sharebots
  *
- * $Id: botcmd.c,v 1.50 2010/01/03 13:27:31 pseudo Exp $
+ * $Id: botcmd.c,v 1.51 2010/01/04 13:15:11 pseudo Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -116,7 +116,8 @@ static void bot_chan2(int idx, char *msg)
   for (p = s = from; *s; s++)
     if ((*s > 31) && (*s != 127))
       *p++ = *s;
-  *p = 0;
+  if (*p)
+    *p = 0;
   p = strchr(from, '@');
   if (p) {
     snprintf(TBUF, sizeof(TBUF), "<%s> %s", from, msg);
@@ -211,7 +212,8 @@ static void bot_actchan(int idx, char *par)
   for (p = s = from; *s; s++)
     if ((*s > 31) && (*s != 127))
       *p++ = *s;
-  *p = 0;
+  if (*p)
+    *p = 0;
   chanout_but(-1, chan, "* %s %s\n", from, par);
   botnet_send_act(idx, from, NULL, chan, par);
   check_tcl_act(from, chan, par);

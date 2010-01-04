@@ -3,7 +3,7 @@
  *   commands from a user via dcc
  *   (split in 2, this portion contains no-irc commands)
  *
- * $Id: cmds.c,v 1.123 2010/01/03 13:27:31 pseudo Exp $
+ * $Id: cmds.c,v 1.124 2010/01/04 13:15:11 pseudo Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -834,7 +834,7 @@ static void cmd_chhandle(struct userrec *u, int idx, char *par)
     return;
   }
   for (i = 0; i < strlen(newhand); i++)
-    if ((newhand[i] <= 32) || (newhand[i] >= 127) || (newhand[i] == '@'))
+    if (((unsigned char) newhand[i] <= 32) || (newhand[i] == '@'))
       newhand[i] = '?';
   if (strchr(BADHANDCHARS, newhand[0]) != NULL)
     dprintf(idx, "Bizarre quantum forces prevent nicknames from starting with "
@@ -878,7 +878,7 @@ static void cmd_handle(struct userrec *u, int idx, char *par)
     return;
   }
   for (i = 0; i < strlen(newhandle); i++)
-    if ((newhandle[i] <= 32) || (newhandle[i] >= 127) || (newhandle[i] == '@'))
+    if (((unsigned char) newhandle[i] <= 32) || (newhandle[i] == '@'))
       newhandle[i] = '?';
   if (strchr(BADHANDCHARS, newhandle[0]) != NULL)
     dprintf(idx,

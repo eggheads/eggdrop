@@ -2,7 +2,7 @@
  * chancmds.c -- part of irc.mod
  *   handles commands directly relating to channel interaction
  *
- * $Id: cmdsirc.c,v 1.64 2010/01/03 13:27:54 pseudo Exp $
+ * $Id: cmdsirc.c,v 1.65 2010/01/04 13:15:11 pseudo Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -1001,12 +1001,12 @@ static void cmd_adduser(struct userrec *u, int idx, char *par)
     int ok = 1;
 
     for (p = par; *p; p++)
-      if ((*p <= 32) || (*p >= 127))
+      if ((unsigned char) *p <= 32)
         ok = 0;
     if (!ok) {
       dprintf(idx, "You can't have strange characters in a nick.\n");
       return;
-    } else if (strchr("-,+*=:!.@#;$", par[0]) != NULL) {
+    } else if (strchr(BADHANDCHARS, par[0]) != NULL) {
       dprintf(idx, "You can't start a nick with '%c'.\n", par[0]);
       return;
     }

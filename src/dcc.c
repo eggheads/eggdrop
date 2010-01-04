@@ -4,7 +4,7 @@
  *   disconnect on a dcc socket
  *   ...and that's it!  (but it's a LOT)
  *
- * $Id: dcc.c,v 1.90 2010/01/03 13:27:31 pseudo Exp $
+ * $Id: dcc.c,v 1.91 2010/01/04 13:15:11 pseudo Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -69,6 +69,22 @@ static void dcc_telnet_got_ident(int, char *);
 static void dcc_telnet_pass(int, int);
 
 
+/* Escape telnet IAC and prepend CR to LF */
+static char *escape_telnet(char *s)
+{
+  static char buf[1024];
+  char *p;
+
+  for (p = buf; *s && (p < (buf + sizeof(buf) - 2)); *p++ = *s++)
+    if ((unsigned char) *s == TLN_IAC)
+      *p++ = *s;
+    else if (*s == '\n')
+      *p++ = '\r';
+  *p = 0;
+
+  return buf;
+}
+
 static void strip_telnet(int sock, char *buf, int *len)
 {
   unsigned char *p = (unsigned char *) buf, *o = (unsigned char *) buf;
@@ -86,27 +102,28 @@ static void strip_telnet(int sock, char *buf, int *len)
         mark = 3;
         if (!*(p + 1))
           mark = 2;             /* bogus */
-      }
-      if (*p == TLN_WILL) {
+      } else if (*p == TLN_WILL) {
         /* WILL X -> response: DONT X */
         /* except WILL ECHO which we just smile and ignore */
         if (*(p + 1) != TLN_ECHO) {
           write(sock, TLN_IAC_C TLN_DONT_C, 2);
           write(sock, p + 1, 1);
         }
-      }
-      if (*p == TLN_DO) {
+      } else if (*p == TLN_DO) {
         /* DO X -> response: WONT X */
         /* except DO ECHO which we just smile and ignore */
         if (*(p + 1) != TLN_ECHO) {
           write(sock, TLN_IAC_C TLN_WONT_C, 2);
           write(sock, p + 1, 1);
         }
-      }
-      if (*p == TLN_AYT) {
-        /* "are you there?" */
-        /* response is: "hell yes!" */
+      } else if (*p == TLN_AYT) {
+        /* "Are You There?" */
+        /* response is: "Hell, yes!" */
         write(sock, "\r\nHell, yes!\r\n", 14);
+      } else if (*p == TLN_IAC) {
+        /* IAC character in data, escaped with another IAC */
+        *o++ = *p++;
+        mark = 1;
       }
       /* Anything else can probably be ignored */
       p += mark - 1;
@@ -317,7 +334,6 @@ static void dcc_bot_new(int idx, char *buf, int x)
   struct userrec *u = get_user_by_handle(userlist, dcc[idx].nick);
   char *code;
 
-  strip_telnet(dcc[idx].sock, buf, &x);
   code = newsplit(&buf);
   if (!egg_strcasecmp(code, "*hello!"))
     greet_new_bot(idx);
@@ -404,7 +420,6 @@ static void dcc_bot(int idx, char *code, int i)
   char *msg;
   int f;
 
-  strip_telnet(dcc[idx].sock, code, &i);
   if (raw_log) {
     if (code[0] == 's')
       putlog(LOG_BOTSHARE, "*", "{%s} %s", dcc[idx].nick, code + 2);
@@ -540,7 +555,8 @@ static void dcc_chat_pass(int idx, char *buf, int atr)
 {
   if (!atr)
     return;
-  strip_telnet(dcc[idx].sock, buf, &atr);
+  if (dcc[idx].status & STAT_TELNET)
+    strip_telnet(dcc[idx].sock, buf, &atr);
   atr = dcc[idx].user ? dcc[idx].user->flags : 0;
 
   /* Check for MD5 digest from remote _bot_. <cybah> */
@@ -587,7 +603,7 @@ static void dcc_chat_pass(int idx, char *buf, int atr)
       dcc[idx].u.chat->channel = -2;
       /* Turn echo back on for telnet sessions (send IAC WON'T ECHO). */
       if (dcc[idx].status & STAT_TELNET)
-        dprintf(idx, TLN_IAC_C TLN_WONT_C TLN_ECHO_C "\n");
+        tputs(dcc[idx].sock, TLN_IAC_C TLN_WONT_C TLN_ECHO_C "\n", 4);
       dcc_chatter(idx);
     }
   } else {
@@ -600,7 +616,7 @@ static void dcc_chat_pass(int idx, char *buf, int atr)
     if (dcc[idx].u.chat->away) {        /* su from a dumb user */
       /* Turn echo back on for telnet sessions (send IAC WON'T ECHO). */
       if (dcc[idx].status & STAT_TELNET)
-        dprintf(idx, TLN_IAC_C TLN_WONT_C TLN_ECHO_C "\n");
+        tputs(dcc[idx].sock, TLN_IAC_C TLN_WONT_C TLN_ECHO_C "\n", 4);
       dcc[idx].user = get_user_by_handle(userlist, dcc[idx].u.chat->away);
       strcpy(dcc[idx].nick, dcc[idx].u.chat->away);
       nfree(dcc[idx].u.chat->away);
@@ -772,7 +788,7 @@ static void append_line(int idx, char *line)
     }
     c->buffer = 0;
     dcc[idx].status &= ~STAT_PAGE;
-    do_boot(idx, botnetnick, "too many pages - senq full");
+    do_boot(idx, botnetnick, "too many pages - sendq full");
     return;
   }
   if ((c->line_count < c->max_line) && (c->buffer == NULL)) {
@@ -798,6 +814,7 @@ static void append_line(int idx, char *line)
   }
 }
 
+
 static void out_dcc_general(int idx, char *buf, void *x)
 {
   register struct chat_info *p = (struct chat_info *) x;
@@ -805,7 +822,7 @@ static void out_dcc_general(int idx, char *buf, void *x)
 
   strip_mirc_codes(p->strip_flags, buf);
   if (dcc[idx].status & STAT_TELNET)
-    y = add_cr(buf);
+    y = escape_telnet(buf);
   if (dcc[idx].status & STAT_PAGE)
     append_line(idx, y);
   else
@@ -867,7 +884,8 @@ static void dcc_chat(int idx, char *buf, int i)
   int nathan = 0, doron = 0, fixed = 0;
   char *v, *d, filtbuf[2048];
 
-  strip_telnet(dcc[idx].sock, buf, &i);
+  if (dcc[idx].status & STAT_TELNET)
+    strip_telnet(dcc[idx].sock, buf, &i);
   if (buf[0] && (buf[0] != '.') &&
       detect_dcc_flood(&dcc[idx].timeval, dcc[idx].u.chat, idx))
     return;
@@ -1320,12 +1338,33 @@ void dupwait_notify(char *who)
     }
 }
 
+/* This is not a universal telnet detector. You need to send WILL STATUS to the
+ * other side and pass the reply to this function. A telnet client will respond
+ * to this with either DO or DONT STATUS.
+ */
+static int detect_telnet(unsigned char *buf)
+{
+  if (!buf || !buf[0] || !buf[1])
+    return 0;
+  while (buf[2]) {
+    if (buf[0] == TLN_IAC && (buf[1] == TLN_DO || buf[1] == TLN_DONT) &&
+        buf[2] == TLN_STATUS)
+      return 1;
+    buf++;
+  }
+  return 0;
+}
+
 static void dcc_telnet_id(int idx, char *buf, int atr)
 {
   int ok = 0;
   struct flag_record fr = { FR_GLOBAL | FR_CHAN | FR_ANYWH, 0, 0, 0, 0, 0 };
 
-  strip_telnet(dcc[idx].sock, buf, &atr);
+  if (detect_telnet((unsigned char *) buf)) {
+    dcc[idx].status |= STAT_TELNET;
+    strip_telnet(dcc[idx].sock, buf, &atr);
+  } else
+    dcc[idx].status &= ~STAT_TELNET;
   buf[HANDLEN] = 0;
   /* Toss out bad nicknames */
   if (dcc[idx].nick[0] != '@' && !wild_match(dcc[idx].nick, buf)) {
@@ -1484,7 +1523,13 @@ static void dcc_telnet_pass(int idx, int atr)
      */
 
     /* Turn off remote telnet echo (send IAC WILL ECHO). */
-    dprintf(idx, "\n%s" TLN_IAC_C TLN_WILL_C TLN_ECHO_C "\n", DCC_ENTERPASS);
+    if (dcc[idx].status & STAT_TELNET) {
+      char buf[1030];
+      snprintf(buf, sizeof buf, "\n%s%s\r\n", escape_telnet(DCC_ENTERPASS),
+               TLN_IAC_C TLN_WILL_C TLN_ECHO_C);
+      tputs(dcc[idx].sock, buf, strlen(buf));
+    } else
+      dprintf(idx, "\n%s\n", DCC_ENTERPASS);
   }
 }
 
@@ -1530,7 +1575,8 @@ static void dcc_telnet_new(int idx, char *buf, int x)
   char work[1024], *p, *q, *r;
 
   buf[HANDLEN] = 0;
-  strip_telnet(dcc[idx].sock, buf, &x);
+  if (dcc[idx].status & STAT_TELNET)
+    strip_telnet(dcc[idx].sock, buf, &x);
   dcc[idx].timeval = now;
   for (x = 0; x < strlen(buf); x++)
     if ((buf[x] <= 32) || (buf[x] >= 127))
@@ -1538,7 +1584,7 @@ static void dcc_telnet_new(int idx, char *buf, int x)
   if (!ok) {
     dprintf(idx, "\nYou can't use weird symbols in your nick.\n");
     dprintf(idx, "Try another one please:\n");
-  } else if (strchr("-,+*=:!.@#;$", buf[0]) != NULL) {
+  } else if (strchr(BADHANDCHARS, buf[0]) != NULL) {
     dprintf(idx, "\nYou can't start your nick with the character '%c'\n",
             buf[0]);
     dprintf(idx, "Try another one please:\n");
@@ -1595,7 +1641,8 @@ static void dcc_telnet_pw(int idx, char *buf, int x)
   char *newpass;
   int ok;
 
-  strip_telnet(dcc[idx].sock, buf, &x);
+  if (dcc[idx].status & STAT_TELNET)
+    strip_telnet(dcc[idx].sock, buf, &x);
   buf[16] = 0;
   ok = 1;
   if (strlen(buf) < 4) {
@@ -1729,7 +1776,8 @@ static void dcc_script(int idx, char *buf, int len)
 {
   long oldsock;
 
-  strip_telnet(dcc[idx].sock, buf, &len);
+  if (dcc[idx].status & STAT_TELNET)
+    strip_telnet(dcc[idx].sock, buf, &len);
   if (!len)
     return;
 
@@ -2052,6 +2100,11 @@ static void dcc_telnet_got_ident(int i, char *host)
   dcc[i].type = &DCC_TELNET_ID;
   dcc[i].u.chat = get_data_ptr(sizeof(struct chat_info));
   egg_bzero(dcc[i].u.chat, sizeof(struct chat_info));
+
+  /* Note: we don't really care about telnet status here. We use the
+   * STATUS option as a hopefully harmless way to detect if the other
+   * side is a telnet client or not. */
+  dprintf(i, TLN_IAC_C TLN_WILL_C TLN_STATUS_C "\n");
 
   /* Copy acceptable-nick/host mask */
   dcc[i].status = STAT_TELNET | STAT_ECHO;

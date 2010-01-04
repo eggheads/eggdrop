@@ -2,7 +2,7 @@
  * tcldcc.c -- handles:
  *   Tcl stubs for the dcc commands
  *
- * $Id: tcldcc.c,v 1.66 2010/01/03 13:27:32 pseudo Exp $
+ * $Id: tcldcc.c,v 1.67 2010/01/04 13:15:11 pseudo Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -59,17 +59,16 @@ int expmem_tcldcc(void)
 
 static int tcl_putdcc STDVAR
 {
-  int i, j;
+  int j;
 
   BADARGS(3, 3, " idx text");
 
-  i = atoi(argv[1]);
-  j = findidx(i);
+  j = findidx(atoi(argv[1]));
   if (j < 0) {
     Tcl_AppendResult(irp, "invalid idx", NULL);
     return TCL_ERROR;
   }
-  dumplots(-i, "", argv[2]);
+  dumplots(j, "", argv[2]);
 
   return TCL_OK;
 }

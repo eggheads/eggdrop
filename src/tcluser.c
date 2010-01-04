@@ -2,7 +2,7 @@
  * tcluser.c -- handles:
  *   Tcl stubs for the user-record-oriented commands
  *
- * $Id: tcluser.c,v 1.48 2010/01/03 13:27:32 pseudo Exp $
+ * $Id: tcluser.c,v 1.49 2010/01/04 13:15:11 pseudo Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -272,11 +272,18 @@ static int tcl_matchattr STDVAR
 
 static int tcl_adduser STDVAR
 {
+  unsigned char *p;
+
   BADARGS(2, 3, " handle ?hostmask?");
 
   if (strlen(argv[1]) > HANDLEN)
     argv[1][HANDLEN] = 0;
-  if ((argv[1][0] == '*') || get_user_by_handle(userlist, argv[1]))
+  for (p = (unsigned char *) argv[1]; *p; p++)
+    if (*p <= 32 || *p == '@')
+      *p = '?';
+
+  if ((argv[1][0] == '*') || strchr(BADHANDCHARS, argv[1][0]) ||
+      get_user_by_handle(userlist, argv[1]))
     Tcl_AppendResult(irp, "0", NULL);
   else {
     userlist = adduser(userlist, argv[1], argv[2], "-", default_flags);
@@ -294,9 +301,12 @@ static int tcl_addbot STDVAR
 
   if (strlen(argv[1]) > HANDLEN)
     argv[1][HANDLEN] = 0;
-  if (get_user_by_handle(userlist, argv[1]))
-    Tcl_AppendResult(irp, "0", NULL);
-  else if (argv[1][0] == '*')
+  for (p = argv[1]; *p; p++)
+    if ((unsigned char) *p <= 32 || *p == '@')
+      *p = '?';
+  
+  if ((argv[1][0] == '*') || strchr(BADHANDCHARS, argv[1][0]) ||
+      get_user_by_handle(userlist, argv[1]))
     Tcl_AppendResult(irp, "0", NULL);
   else {
     userlist = adduser(userlist, argv[1], "none", "-", USER_BOT);
@@ -409,7 +419,7 @@ static int tcl_chhandle STDVAR
   else {
     strncpyz(newhand, argv[2], sizeof newhand);
     for (i = 0; i < strlen(newhand); i++)
-      if ((newhand[i] <= 32) || (newhand[i] >= 127) || (newhand[i] == '@'))
+      if (((unsigned char) newhand[i] <= 32) || (newhand[i] == '@'))
         newhand[i] = '?';
     if (strchr(BADHANDCHARS, newhand[0]) != NULL)
       x = 0;

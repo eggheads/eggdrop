@@ -1,4 +1,4 @@
-$Id: README,v 1.51 2010/01/03 14:48:39 pseudo Exp $
+$Id: README,v 1.52 2010/01/04 13:15:10 pseudo Exp $
 
 Readme
 Last revised: June 5, 2002
@@ -478,7 +478,7 @@ Last revised: June 5, 2002
     the Eggdrop source code and any related files are Copyright (C) by Eggheads
     Development Team. The source code will still be distributed according to
     the GNU General Public License as Robey Pointer did in the past.
-an
+
     Releases previous to 1.0m were made using a different licensing scheme.
     You may, at your option, use the GNU General Public License on those
     versions (instead of the license packaged with them) with my blessing.

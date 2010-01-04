@@ -4,7 +4,7 @@
  *
  *   IF YOU ALTER THIS FILE, YOU NEED TO RECOMPILE THE BOT.
  *
- * $Id: eggdrop.h,v 1.71 2010/01/03 13:27:32 pseudo Exp $
+ * $Id: eggdrop.h,v 1.72 2010/01/04 13:15:11 pseudo Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -681,6 +681,8 @@ enum {
 
 /* Telnet codes.  See "TELNET Protocol Specification" (RFC 854) and
  * "TELNET Echo Option" (RFC 875) for details. */
+
+/* Telnet commands */
 #define TLN_AYT         246     /* Are You There        */
 #define TLN_WILL        251     /* Will                 */
 #define TLN_WILL_C      "\373"
@@ -693,7 +695,10 @@ enum {
 #define TLN_IAC         255     /* Interpret As Command */
 #define TLN_IAC_C       "\377"
 
-#define TLN_ECHO        1       /* Echo                 */
+/* Telnet options */
+#define TLN_ECHO        1       /* Echo (RFC 875)        */
 #define TLN_ECHO_C      "\001"
+#define TLN_STATUS      5       /* STATUS (RFC 859)      */
+#define TLN_STATUS_C    "\005"
 
 #endif /* _EGG_EGGDROP_H */
