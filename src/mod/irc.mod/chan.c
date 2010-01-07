@@ -6,7 +6,7 @@
  *   user kickban, kick, op, deop
  *   idle kicking
  *
- * $Id: chan.c,v 1.132 2010/01/03 13:27:54 pseudo Exp $
+ * $Id: chan.c,v 1.133 2010/01/07 13:48:31 pseudo Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -153,7 +153,7 @@ static void check_exemptlist(struct chanset_t *chan, char *from)
     return;
 
   for (e = chan->channel.exempt; e->mask[0]; e = e->next)
-    if (wild_match(e->mask, from)) {
+    if (match_addr(e->mask, from)) {
       add_mode(chan, '-', 'e', e->mask);
       ok = 1;
     }
@@ -169,7 +169,7 @@ static void check_exemptlist(struct chanset_t *chan, char *from)
 static void do_mask(struct chanset_t *chan, masklist *m, char *mask, char mode)
 {
   for (; m && m->mask[0]; m = m->next)
-    if (wild_match(mask, m->mask) && rfc_casecmp(mask, m->mask))
+    if (cmp_masks(mask, m->mask) && rfc_casecmp(mask, m->mask))
       add_mode(chan, '-', mode, m->mask);
   add_mode(chan, '+', mode, mask);
   flush_mode(chan, QUICK);
@@ -399,7 +399,7 @@ static void kick_all(struct chanset_t *chan, char *hostmask, char *comment,
     sprintf(s, "%s!%s", m->nick, m->userhost);
     get_user_flagrec(m->user ? m->user : get_user_by_host(s), &fr, chan->dname);
     if ((me_op(chan) || (me_halfop(chan) && !chan_hasop(m))) &&
-        wild_match(hostmask, s) && !chan_sentkick(m) &&
+        match_addr(hostmask, s) && !chan_sentkick(m) &&
         !match_my_nick(m->nick) && !chan_issplit(m) &&
         !glob_friend(fr) && !chan_friend(fr) && !(use_exempts && ((bantype &&
         isexempted(chan, s)) || (u_match_mask(global_exempts, s) ||
@@ -442,7 +442,7 @@ static void refresh_ban_kick(struct chanset_t *chan, char *user, char *nick)
   /* Check global bans in first cycle and channel bans in second cycle. */
   for (cycle = 0; cycle < 2; cycle++) {
     for (b = cycle ? chan->bans : global_bans; b; b = b->next) {
-      if (wild_match(b->mask, user)) {
+      if (match_addr(b->mask, user)) {
         struct flag_record fr = { FR_GLOBAL | FR_CHAN, 0, 0, 0, 0, 0 };
         char c[512];            /* The ban comment.     */
         char s[UHOSTLEN];
@@ -479,9 +479,9 @@ static void refresh_exempt(struct chanset_t *chan, char *user)
   /* Check global exempts in first cycle and channel exempts in second cycle. */
   for (cycle = 0; cycle < 2; cycle++) {
     for (e = cycle ? chan->exempts : global_exempts; e; e = e->next) {
-      if (wild_match(user, e->mask) || wild_match(e->mask, user)) {
+      if (mask_match(user, e->mask)) {
         for (b = chan->channel.ban; b && b->mask[0]; b = b->next) {
-          if (wild_match(b->mask, user) || wild_match(user, b->mask)) {
+          if (mask_match(b->mask, user)) {
             if (e->lastactive < now - 60 && !isexempted(chan, e->mask)) {
               do_mask(chan, chan->channel.exempt, e->mask, 'e');
               e->lastactive = now;
@@ -501,7 +501,7 @@ static void refresh_invite(struct chanset_t *chan, char *user)
   /* Check global invites in first cycle and channel invites in second cycle. */
   for (cycle = 0; cycle < 2; cycle++) {
     for (i = cycle ? chan->invites : global_invites; i; i = i->next) {
-      if (wild_match(i->mask, user) &&
+      if (match_addr(i->mask, user) &&
           ((i->flags & MASKREC_STICKY) || (chan->channel.mode & CHANINV))) {
         if (i->lastactive < now - 60 && !isinvited(chan, i->mask)) {
           do_mask(chan, chan->channel.invite, i->mask, 'I');
@@ -526,7 +526,7 @@ static void enforce_bans(struct chanset_t *chan)
   simple_sprintf(me, "%s!%s", botname, botuserhost);
   /* Go through all bans, kicking the users. */
   for (b = chan->channel.ban; b && b->mask[0]; b = b->next) {
-    if (!wild_match(b->mask, me))
+    if (!match_addr(b->mask, me))
       if (!isexempted(chan, b->mask))
         kick_all(chan, b->mask, IRC_YOUREBANNED, 1);
   }
@@ -569,7 +569,7 @@ static void recheck_exempts(struct chanset_t *chan)
           (!channel_dynamicexempts(chan) || (e->flags & MASKREC_STICKY)))
         add_mode(chan, '+', 'e', e->mask);
       for (b = chan->channel.ban; b && b->mask[0]; b = b->next) {
-        if ((wild_match(b->mask, e->mask) || wild_match(e->mask, b->mask)) &&
+        if (mask_match(b->mask, e->mask) &&
             !isexempted(chan, e->mask))
           add_mode(chan, '+', 'e', e->mask);
         /* do_mask(chan, chan->channel.exempt, e->mask, 'e'); */
@@ -645,7 +645,7 @@ static void check_this_ban(struct chanset_t *chan, char *banmask, int sticky)
 
   for (m = chan->channel.member; m && m->nick[0]; m = m->next) {
     sprintf(user, "%s!%s", m->nick, m->userhost);
-    if (wild_match(banmask, user) &&
+    if (match_addr(banmask, user) &&
         !(use_exempts &&
           (u_match_mask(global_exempts, user) ||
            u_match_mask(chan->exempts, user))))
@@ -855,7 +855,7 @@ static void check_this_user(char *hand, int delete, char *host)
       sprintf(s, "%s!%s", m->nick, m->userhost);
       u = m->user ? m->user : get_user_by_host(s);
       if ((u && !egg_strcasecmp(u->handle, hand) && delete < 2) ||
-          (!u && delete == 2 && wild_match(host, fixfrom(s)))) {
+          (!u && delete == 2 && match_addr(host, fixfrom(s)))) {
         u = delete ? NULL : u;
         get_user_flagrec(u, &fr, chan->dname);
         check_this_member(chan, m->nick, &fr);
@@ -1891,7 +1891,7 @@ static int gotjoin(char *from, char *chname)
               (!use_exempts || !isexempted(chan, from)) && (me_op(chan) ||
               (me_halfop(chan) && !chan_hasop(m)))) {
             for (b = chan->channel.ban; b->mask[0]; b = b->next) {
-              if (wild_match(b->mask, from)) {
+              if (match_addr(b->mask, from)) {
                 dprintf(DP_SERVER, "KICK %s %s :%s\n", chname, m->nick,
                         IRC_YOUREBANNED);
                 m->flags |= SENTKICK;

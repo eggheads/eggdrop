@@ -235,6 +235,14 @@
 ###  %bset share-unlinks%b 0/1
    This setting prohibits remote bots from telling your Eggdrop to
    unlink from share bots.
+%{help=set cidr-support}%{+n}
+###  %bset cidr-support%b <0/1>
+   Enables cidr support for b/e/I modes if set to 1. This means the
+   bot will understand and match modes in cidr notation, and will
+   be able to put and enforce such bans or unban itself, if banned 
+   with a cidr mask.
+     Warning: enabling this on servers which don't support cidr may
+   result in kick floods or other problems.
 %{help=set allow-dk-cmds}%{+n}
 ###  %bset allow-dk-cmds%b <0/1>
    Enable this setting if you want +d & +k users to use commands

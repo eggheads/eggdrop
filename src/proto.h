@@ -7,7 +7,7 @@
  * because they use structures in those
  * (saves including those .h files EVERY time) - Beldin
  *
- * $Id: proto.h,v 1.78 2010/01/03 13:27:32 pseudo Exp $
+ * $Id: proto.h,v 1.79 2010/01/07 13:48:31 pseudo Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -189,10 +189,20 @@ int _wild_match_per(register unsigned char *, register unsigned char *,
                     int (*)(unsigned char, unsigned char),
                     int (*)(unsigned char, unsigned char),
                     unsigned char *);
+int addr_match(char *, char *, int, int);
+int mask_match(char *, char *);
+int cidr_match(char *, char *, int);
 
 #define wild_match(a,b) _wild_match((unsigned char *)(a),(unsigned char *)(b))
-#define wild_match_per(a,b) _wild_match_per((unsigned char *)(a),(unsigned char *)(b),casecharcmp,NULL,NULL)
-#define wild_match_partial_case(a,b) _wild_match_per((unsigned char *)(a),(unsigned char *)(b),casecharcmp,charcmp,(unsigned char *)strchr((b),' '))
+#define wild_match_per(a,b) _wild_match_per((unsigned char *)(a),              \
+                            (unsigned char *)(b),casecharcmp,NULL,NULL)
+#define wild_match_partial_case(a,b) _wild_match_per((unsigned char *)(a),     \
+                            (unsigned char *)(b),casecharcmp,charcmp,          \
+                            (unsigned char *)strchr((b),' '))
+#define match_addr(a,b) addr_match((char *)(a),(char *)(b),0,0)
+#define match_useraddr(a,b) addr_match((char *)(a),(char *)(b),1,0)
+#define cmp_masks(a,b) addr_match((char *)(a),(char *)(b),0,1)
+#define cmp_usermasks(a,b) addr_match((char *)(a),(char *)(b),1,1)
 
 /* mem.c */
 void *n_malloc(int, const char *, int);

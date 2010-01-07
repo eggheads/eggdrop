@@ -4,7 +4,7 @@
  *   a bunch of functions to find and change user records
  *   change and check user (and channel-specific) flags
  *
- * $Id: userrec.c,v 1.59 2010/01/03 13:27:32 pseudo Exp $
+ * $Id: userrec.c,v 1.60 2010/01/07 13:48:31 pseudo Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -327,7 +327,7 @@ struct userrec *get_user_by_host(char *host)
   for (u = userlist; u; u = u->next) {
     q = get_user(&USERENTRY_HOSTS, u);
     for (; q; q = q->next) {
-      i = wild_match(q->extra, host);
+      i = match_useraddr(q->extra, host);
       if (i > cnt) {
         ret = u;
         cnt = i;

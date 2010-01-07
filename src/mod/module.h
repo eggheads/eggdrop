@@ -1,7 +1,7 @@
 /*
  * module.h
  *
- * $Id: module.h,v 1.90 2010/01/03 13:27:40 pseudo Exp $
+ * $Id: module.h,v 1.91 2010/01/07 13:48:31 pseudo Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -479,11 +479,18 @@
 /* 292 - 295 */
 #define str_isdigit ((int (*) (const char *))global[292])
 #define remove_crlf ((void (*) (char **))global[293])
-#define check_conflags ((int (*) (struct flag_record *, int))global[294])
+#define addr_match ((int (*)(const char *, const char *, int, int))global[294])
+#define mask_match ((int (*)(const char *, const char *))global[295])
+/* 296 - 299 */
+#define check_conflags ((int (*) (struct flag_record *, int))global[296])
 
 /* hostmasking */
 #define maskhost(a,b) maskaddr((a),(b),3)
 #define maskban(a,b) maskaddr((a),(b),3)
+
+/* host matching */
+#define match_addr(a,b) addr_match((a),(b),0,0)
+#define cmp_masks(a,b) addr_match((a),(b),0,1)
 
 /* This is for blowfish module, couldnt be bothered making a whole new .h
  * file for it ;)

@@ -1,4 +1,4 @@
-$Id: tcl-commands.doc,v 1.130 2010/01/03 14:48:39 pseudo Exp $
+$Id: tcl-commands.doc,v 1.131 2010/01/07 13:48:30 pseudo Exp $
 
 Eggdrop Tcl Commands
 Last revised: November 23, 2009
@@ -1574,6 +1574,18 @@ marked with vertical bars (|) on the left.
     Returns: the stripped string.
     Module: core
 
+| matchaddr <hostmask> <address>
+|   Description: checks if the address matches the hostmask given. The
+|     address should be in the form nick!user@host.
+|   Returns: 1 if the address matches the hostmask, 0 otherwise.
+|   Module: core
+
+|  matchcidr <block> <address> <prefix>
+|   Description: performs a cidr match on the specified ip addresses.
+|     IPv6 is supported, if enabled at compile time.
+|       Example: matchcidr 192.168.0.0 192.168.1.17 16
+|   Returns: 1 if the address matches the block prefix, 0 otherwise.
+|   Module: core
 
 *** GLOBAL VARIABLES ***
 

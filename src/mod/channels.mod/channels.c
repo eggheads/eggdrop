@@ -2,7 +2,7 @@
  * channels.c -- part of channels.mod
  *   support for channels within the bot
  *
- * $Id: channels.c,v 1.100 2010/01/03 13:27:40 pseudo Exp $
+ * $Id: channels.c,v 1.101 2010/01/07 13:48:31 pseudo Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -258,7 +258,7 @@ static int ismodeline(masklist *m, char *user)
 static int ismasked(masklist *m, char *user)
 {
   for (; m && m->mask[0]; m = m->next)
-    if (wild_match(m->mask, user))
+    if (match_addr(m->mask, user))
       return 1;
   return 0;
 }

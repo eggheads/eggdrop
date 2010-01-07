@@ -1,7 +1,7 @@
 /*
  * userchan.c -- part of channels.mod
  *
- * $Id: userchan.c,v 1.52 2010/01/03 13:27:41 pseudo Exp $
+ * $Id: userchan.c,v 1.53 2010/01/07 13:48:31 pseudo Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -228,7 +228,7 @@ static int u_equals_mask(maskrec *u, char *mask)
 static int u_match_mask(maskrec *rec, char *mask)
 {
   for (; rec; rec = rec->next)
-    if (wild_match(rec->mask, mask))
+    if (match_addr(rec->mask, mask))
       return 1;
   return 0;
 }
@@ -428,7 +428,7 @@ static int u_addban(struct chanset_t *chan, char *ban, char *from, char *note,
                    me->funcs[SERVER_BOTUSERHOST]);
   else
     simple_sprintf(s, "%s!%s@%s", origbotname, botuser, hostname);
-  if (wild_match(host, s)) {
+  if (match_addr(host, s)) {
     putlog(LOG_MISC, "*", IRC_IBANNEDME);
     return 0;
   }
@@ -822,7 +822,7 @@ static void tell_bans(int idx, int show_inact, char *match)
     dprintf(idx, "%s:\n", BANS_GLOBAL);
   for (u = global_bans; u; u = u->next) {
     if (match[0]) {
-      if ((wild_match(match, u->mask)) ||
+      if ((match_addr(match, u->mask)) ||
           (wild_match(match, u->desc)) || (wild_match(match, u->user)))
         display_ban(idx, k, u, chan, 1);
       k++;
@@ -838,7 +838,7 @@ static void tell_bans(int idx, int show_inact, char *match)
               BANS_BYCHANNEL, chan->dname, MODES_NOTBYBOT);
     for (u = chan->bans; u; u = u->next) {
       if (match[0]) {
-        if ((wild_match(match, u->mask)) ||
+        if ((match_addr(match, u->mask)) ||
             (wild_match(match, u->desc)) || (wild_match(match, u->user)))
           display_ban(idx, k, u, chan, 1);
         k++;
@@ -866,7 +866,7 @@ static void tell_bans(int idx, int show_inact, char *match)
             sprintf(s, " (active %02d:%02d)", min, sec);
             strcat(fill, s);
           }
-          if ((!match[0]) || (wild_match(match, b->mask)))
+          if ((!match[0]) || (match_addr(match, b->mask)))
             dprintf(idx, "* [%3d] %s\n", k, fill);
           k++;
         }
@@ -911,7 +911,7 @@ static void tell_exempts(int idx, int show_inact, char *match)
     dprintf(idx, "%s:\n", EXEMPTS_GLOBAL);
   for (u = global_exempts; u; u = u->next) {
     if (match[0]) {
-      if ((wild_match(match, u->mask)) ||
+      if ((match_addr(match, u->mask)) ||
           (wild_match(match, u->desc)) || (wild_match(match, u->user)))
         display_exempt(idx, k, u, chan, 1);
       k++;
@@ -927,7 +927,7 @@ static void tell_exempts(int idx, int show_inact, char *match)
               EXEMPTS_BYCHANNEL, chan->dname, MODES_NOTBYBOT);
     for (u = chan->exempts; u; u = u->next) {
       if (match[0]) {
-        if ((wild_match(match, u->mask)) ||
+        if ((match_addr(match, u->mask)) ||
             (wild_match(match, u->desc)) || (wild_match(match, u->user)))
           display_exempt(idx, k, u, chan, 1);
         k++;
@@ -955,7 +955,7 @@ static void tell_exempts(int idx, int show_inact, char *match)
             sprintf(s, " (active %02d:%02d)", min, sec);
             strcat(fill, s);
           }
-          if ((!match[0]) || (wild_match(match, e->mask)))
+          if ((!match[0]) || (match_addr(match, e->mask)))
             dprintf(idx, "* [%3d] %s\n", k, fill);
           k++;
         }
@@ -1000,7 +1000,7 @@ static void tell_invites(int idx, int show_inact, char *match)
     dprintf(idx, "%s:\n", INVITES_GLOBAL);
   for (u = global_invites; u; u = u->next) {
     if (match[0]) {
-      if ((wild_match(match, u->mask)) ||
+      if ((match_addr(match, u->mask)) ||
           (wild_match(match, u->desc)) || (wild_match(match, u->user)))
         display_invite(idx, k, u, chan, 1);
       k++;
@@ -1016,7 +1016,7 @@ static void tell_invites(int idx, int show_inact, char *match)
               INVITES_BYCHANNEL, chan->dname, MODES_NOTBYBOT);
     for (u = chan->invites; u; u = u->next) {
       if (match[0]) {
-        if ((wild_match(match, u->mask)) ||
+        if ((match_addr(match, u->mask)) ||
             (wild_match(match, u->desc)) || (wild_match(match, u->user)))
           display_invite(idx, k, u, chan, 1);
         k++;
@@ -1044,7 +1044,7 @@ static void tell_invites(int idx, int show_inact, char *match)
             sprintf(s, " (active %02d:%02d)", min, sec);
             strcat(fill, s);
           }
-          if ((!match[0]) || (wild_match(match, i->mask)))
+          if ((!match[0]) || (match_addr(match, i->mask)))
             dprintf(idx, "* [%3d] %s\n", k, fill);
           k++;
         }
@@ -1372,7 +1372,7 @@ static void check_expired_exempts(void)
         match = 0;
         b = chan->channel.ban;
         while (b->mask[0] && !match) {
-          if (wild_match(b->mask, u->mask) || wild_match(u->mask, b->mask))
+          if (mask_match(b->mask, u->mask))
             match = 1;
           else
             b = b->next;
@@ -1400,7 +1400,7 @@ static void check_expired_exempts(void)
         match = 0;
         b = chan->channel.ban;
         while (b->mask[0] && !match) {
-          if (wild_match(b->mask, u->mask) || wild_match(u->mask, b->mask))
+          if (mask_match(b->mask, u->mask))
             match = 1;
           else
             b = b->next;

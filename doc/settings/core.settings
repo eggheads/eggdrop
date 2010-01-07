@@ -1,4 +1,4 @@
-$Id: core.settings,v 1.39 2010/01/03 13:27:23 pseudo Exp $
+$Id: core.settings,v 1.40 2010/01/07 13:48:30 pseudo Exp $
 
 Eggdrop Core Settings
 Last revised: April 17, 2003
@@ -493,6 +493,12 @@ Last revised: April 17, 2003
       dupwait-timeout seconds before it checks again and then finally
       reject the bot.
 
+
+    set cidr-support 0
+      Enables cidr support for b/e/I modes if set to 1. This means the bot
+      will understand and match modes in cidr notation, and will be able to
+      put and enforce such bans or unban itself, if banned with a cidr mask.
+      Do NOT set this, if your network/server does not support cidr!
 
 
   ##### MODULES #####

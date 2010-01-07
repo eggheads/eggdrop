@@ -2,7 +2,7 @@
  * cmdschan.c -- part of channels.mod
  *   commands from a user via dcc that cause server interaction
  *
- * $Id: cmdschan.c,v 1.78 2010/01/03 13:27:40 pseudo Exp $
+ * $Id: cmdschan.c,v 1.79 2010/01/07 13:48:31 pseudo Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -114,7 +114,7 @@ static void cmd_pls_ban(struct userrec *u, int idx, char *par)
                    me->funcs[SERVER_BOTUSERHOST]);
     else
       egg_snprintf(s1, sizeof s1, "%s!%s@%s", origbotname, botuser, hostname);
-    if (wild_match(s, s1)) {
+    if (match_addr(s, s1)) {
       dprintf(idx, "I'm not going to ban myself.\n");
       putlog(LOG_CMDS, "*", "#%s# attempted +ban %s", dcc[idx].nick, s);
     } else {

@@ -10,7 +10,7 @@
  *
  * dprintf'ized, 9nov1995
  *
- * $Id: users.c,v 1.57 2010/01/03 13:27:32 pseudo Exp $
+ * $Id: users.c,v 1.58 2010/01/07 13:48:31 pseudo Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -58,7 +58,7 @@ int match_ignore(char *uhost)
   struct igrec *ir;
 
   for (ir = global_ign; ir; ir = ir->next)
-    if (wild_match(ir->igmask, uhost))
+    if (match_useraddr(ir->igmask, uhost))
       return 1;
   return 0;
 }
@@ -204,7 +204,7 @@ void tell_ignores(int idx, char *match)
   dprintf(idx, "%s:\n", IGN_CURRENT);
   for (; u; u = u->next) {
     if (match[0]) {
-      if (wild_match(match, u->igmask) ||
+      if (cmp_usermasks(match, u->igmask) ||
           wild_match(match, u->msg) || wild_match(match, u->user))
         display_ignore(idx, k, u);
       k++;

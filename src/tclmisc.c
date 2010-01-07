@@ -2,7 +2,7 @@
  * tclmisc.c -- handles:
  *   Tcl stubs for everything else
  *
- * $Id: tclmisc.c,v 1.65 2010/01/03 13:27:32 pseudo Exp $
+ * $Id: tclmisc.c,v 1.66 2010/01/07 13:48:31 pseudo Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -723,6 +723,28 @@ static int tcl_md5 STDVAR
   return TCL_OK;
 }
 
+static int tcl_matchaddr STDVAR
+{
+  BADARGS(3, 3, " mask address");
+
+  if (match_addr(argv[1], argv[2]))
+    Tcl_AppendResult(irp, "1", NULL);
+  else
+    Tcl_AppendResult(irp, "0", NULL);
+  return TCL_OK;
+}
+
+static int tcl_matchcidr STDVAR
+{
+  BADARGS(4, 4, " block address prefix");
+
+  if (cidr_match(argv[1], argv[2], atoi(argv[3])))
+    Tcl_AppendResult(irp, "1", NULL);
+  else
+    Tcl_AppendResult(irp, "0", NULL);
+  return TCL_OK;
+}
+                    
 tcl_cmds tclmisc_objcmds[] = {
 #ifdef USE_TCL_OBJ
   {"md5", tcl_md5},
@@ -768,5 +790,7 @@ tcl_cmds tclmisc_cmds[] = {
   {"binds",               tcl_binds},
   {"callevent",       tcl_callevent},
   {"stripcodes",     tcl_stripcodes},
+  {"matchaddr",       tcl_matchaddr},
+  {"matchcidr",       tcl_matchcidr},
   {NULL,                       NULL}
 };

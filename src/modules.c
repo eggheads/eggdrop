@@ -4,7 +4,7 @@
  *
  * by Darrin Smith (beldin@light.iinet.net.au)
  *
- * $Id: modules.c,v 1.103 2010/01/03 13:27:32 pseudo Exp $
+ * $Id: modules.c,v 1.104 2010/01/07 13:48:31 pseudo Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -571,6 +571,9 @@ Function global_table[] = {
   /* 292 - 295 */
   (Function) str_isdigit,
   (Function) remove_crlf,
+  (Function) addr_match,
+  (Function) mask_match,
+  /* 296 - 299 */
   (Function) check_conflags
 };
 

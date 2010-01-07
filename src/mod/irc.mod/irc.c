@@ -2,7 +2,7 @@
  * irc.c -- part of irc.mod
  *   support for channels within the bot
  *
- * $Id: irc.c,v 1.116 2010/01/03 13:27:54 pseudo Exp $
+ * $Id: irc.c,v 1.117 2010/01/07 13:48:31 pseudo Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -633,8 +633,7 @@ static void check_expired_chanstuff()
               int match = 0;
 
               for (b = chan->channel.ban; b->mask[0]; b = b->next)
-                if (wild_match(b->mask, e->mask) ||
-                    wild_match(e->mask, b->mask)) {
+                if (mask_match(b->mask, e->mask)) {
                   match = 1;
                   break;
                 }

@@ -4,7 +4,7 @@
  *   Tcl initialization
  *   getting and setting Tcl/eggdrop variables
  *
- * $Id: tcl.c,v 1.92 2010/01/04 18:38:26 pseudo Exp $
+ * $Id: tcl.c,v 1.93 2010/01/07 13:48:31 pseudo Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -59,7 +59,7 @@ extern int flood_telnet_thr, flood_telnet_time, shtime, share_greet,
            die_on_sigterm, max_logs, max_logsize, dcc_total, raw_log,
            identtimeout, dcc_sanitycheck, dupwait_timeout, egg_numver,
            share_unlinks, protect_telnet, sort_users, strict_host,
-           resolve_timeout, default_uflags, userfile_perm;
+           resolve_timeout, default_uflags, userfile_perm, cidr_support;
 
 extern struct dcc_t *dcc;
 extern tcl_timer_t *timer, *utimer;
@@ -549,6 +549,7 @@ static tcl_ints def_tcl_ints[] = {
   {"userfile-perm",         &userfile_perm,        0},
   {"copy-to-tmp",           &copy_to_tmp,          0},
   {"quiet-reject",          &quiet_reject,         0},
+  {"cidr-support",          &cidr_support,         0},
   {"strict-servernames",    &strict_servernames,   0}, /* compat */
   {"enable-simul",          &enable_simul,         0}, /* compat */
   {"debug-output",          &debug_output,         0}, /* compat */

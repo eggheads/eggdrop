@@ -1,5 +1,5 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
-<!-- $Id: tcl-commands.html,v 1.64 2010/01/03 14:48:39 pseudo Exp $ -->
+<!-- $Id: tcl-commands.html,v 1.65 2010/01/07 13:48:30 pseudo Exp $ -->
 
 <html>
   <head>
@@ -3643,7 +3643,34 @@
           </blockquote>
 
           <p><strong>Returns:</strong> the stripped string</p>
+        </dd>
 
+
+        <dt><strong><a name="cmd_matchaddr"></a>matchaddr &lt;hostmask&gt;
+        &lt;address&gt;</strong></dt>*
+
+        <dd>
+          <p><strong>Description:</strong> checks if the address matches the
+          hostmask given. The address should be in the form nick!user@host.</p>
+
+          <p><strong>Returns:</strong> 1 if the address matches the
+          hostmask, 0 otherwise.</p>
+          
+          <p><strong>Module:</strong> core</p>
+        </dd>
+
+
+        <dt><strong><a name="cmd_matchcidr"></a>matchcidr &lt;block&gt;
+        &lt;address&gt; &lt;prefix&gt;</strong></dt>*
+
+        <dd>
+          <p><strong>Description:</strong> performs a cidr match on the
+          specified ip addresses. IPv6 is supported, if enabled at compile
+          time.</p>
+
+          <p><strong>Returns:</strong> 1 if the address matches the
+          block prefix, 0 otherwise.</p>
+          
           <p><strong>Module:</strong> core</p>
         </dd>
       </dl>

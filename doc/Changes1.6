@@ -1,10 +1,17 @@
-$Id: Changes1.6,v 1.54 2010/01/04 18:38:26 pseudo Exp $
+$Id: Changes1.6,v 1.55 2010/01/07 13:48:30 pseudo Exp $
 
 Eggdrop Changes (since version 1.6.0)
 
     _____________________________________________________________________
 
 1.6.20 (CVS):
+
+  - Added CIDR support to eggdrop. This includes accepting and matching b/e/I
+    masks and user hosts in cidr notation.
+  - Moved rfc_toupper from wild_match() to the new addr_match().
+  - Added two new Tcl commands - matchaddr and matchcidr to provide interface
+    to the new internal host matching.
+    Patch by: pseudo
 
   - Changed GetInt / GetIntFromObj's Tcl_Interp argument to NULL in
     tcl_resultint() to avoid an unneeded error message being stored in the

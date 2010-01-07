@@ -4,7 +4,7 @@
  *   channel mode changes and the bot's reaction to them
  *   setting and getting the current wanted channel modes
  *
- * $Id: mode.c,v 1.88 2010/01/03 13:27:55 pseudo Exp $
+ * $Id: mode.c,v 1.89 2010/01/07 13:48:31 pseudo Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -772,7 +772,7 @@ static void got_ban(struct chanset_t *chan, char *nick, char *from, char *who,
   if (channel_pending(chan) || HALFOP_CANTDOMODE('b'))
     return;
 
-  if (wild_match(who, me) && !isexempted(chan, me)) {
+  if (match_addr(who, me) && !isexempted(chan, me)) {
     add_mode(chan, '-', 'b', who);
     reversing = 1;
     return;
@@ -785,7 +785,7 @@ static void got_ban(struct chanset_t *chan, char *nick, char *from, char *who,
     }
     for (m = chan->channel.member; m && m->nick[0]; m = m->next) {
       egg_snprintf(s1, sizeof s1, "%s!%s", m->nick, m->userhost);
-      if (wild_match(who, s1)) {
+      if (match_addr(who, s1)) {
         targ = get_user_by_host(s1);
         if (targ) {
           get_user_flagrec(targ, &victim, chan->dname);
@@ -807,7 +807,7 @@ static void got_ban(struct chanset_t *chan, char *nick, char *from, char *who,
 
     for (cycle = 0; cycle < 2; cycle++) {
       for (b = cycle ? chan->bans : global_bans; b; b = b->next) {
-        if (wild_match(b->mask, who)) {
+        if (match_addr(b->mask, who)) {
           if (b->desc && b->desc[0] != '@')
             egg_snprintf(resn, sizeof resn, "%s %s", IRC_PREBANNED, b->desc);
           else
@@ -919,7 +919,7 @@ static void got_unexempt(struct chanset_t *chan, char *nick, char *from,
   if (!nick[0] && glob_bot(user) && !glob_master(user) && !chan_master(user)) {
     b = chan->channel.ban;
     while (b->mask[0] && !match) {
-      if (wild_match(b->mask, who) || wild_match(who, b->mask)) {
+      if (mask_match(b->mask, who)) {
         add_mode(chan, '+', 'e', who);
         match = 1;
       } else

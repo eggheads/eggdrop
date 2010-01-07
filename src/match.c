@@ -1,8 +1,10 @@
 /*
  * match.c
  *   wildcard matching functions
+ *   hostmask matching
+ *   cidr matching
  *
- * $Id: match.c,v 1.13 2009/10/31 15:18:03 thommey Exp $
+ * $Id: match.c,v 1.14 2010/01/07 13:48:31 pseudo Exp $
  *
  * Once this code was working, I added support for % so that I could
  * use the same code both in Eggdrop and in my IrcII client.
@@ -33,6 +35,8 @@
 #define NOMATCH 0
 #define MATCH (match+sofar)
 #define PERMATCH (match+saved+sofar)
+
+int cidr_support = 0;
 
 int casecharcmp(unsigned char a, unsigned char b)
 {
@@ -149,6 +153,7 @@ int _wild_match_per(register unsigned char *m, register unsigned char *n,
   return (*m) ? NOMATCH : PERMATCH;     /* End of both = match */
 }
 
+/* Generic string matching, use addr_match() for hostmasks! */
 int _wild_match(register unsigned char *m, register unsigned char *n)
 {
   unsigned char *ma = m, *na = n, *lsm = 0, *lsn = 0;
@@ -196,7 +201,7 @@ int _wild_match(register unsigned char *m, register unsigned char *n)
       n--;
       continue;                 /* '?' always matches */
     }
-    if (rfc_toupper(*m) == rfc_toupper(*n)) {   /* If matching char */
+    if (toupper(*m) == toupper(*n)) {   /* If matching char */
       m--;
       n--;
       sofar++;                  /* Tally the match */
@@ -215,4 +220,146 @@ int _wild_match(register unsigned char *m, register unsigned char *n)
   while ((m >= ma) && (*m == WILDS))
     m--;                        /* Zap leftover %s & *s */
   return (m >= ma) ? NOMATCH : MATCH;   /* Start of both = match */
+}
+
+/* cidr and RFC1459 compatible host matching
+ * Returns: 1 if the address in n matches the hostmask in m.
+ * If cmp != 0, m and n will be compared as masks. Returns 1
+ * if m is broader, 0 otherwise.
+ * If user != 0, the masks are eggdrop user hosts and should
+ * be matched regardless of the cidr_support variable.
+ * This is required as userhost matching shouldn't depend on
+ * server support of cidr.
+ */
+int addr_match(char *m, char *n, int user, int cmp)
+{
+  char *p, *q, *r = 0, *s = 0;
+  char mu[UHOSTLEN], nu[UHOSTLEN];
+
+  /* copy the strings into our own buffers
+     and convert to rfc uppercase */
+  for (p = mu; *m && (p - mu < UHOSTLEN - 1); m++) {
+    if (*m == '@')
+      r = p;
+    *p++ = rfc_toupper(*m);
+  }
+  for (q = nu; *n && (q - nu < UHOSTLEN - 1); n++) {
+    if (*n == '@')
+      s = q;
+    *q++ = rfc_toupper(*n);
+  }
+  *p = *q = 0;
+  if ((!user && !cidr_support) || !r || !s)
+    return wild_match(mu, nu) ? 1 : NOMATCH;
+  
+  *r++ = *s++ = 0;
+  if (!wild_match(mu, nu))
+    return NOMATCH; /* nick!ident parts don't match */
+  if (!*r && !*s)
+    return 1; /* end of nonempty strings */
+
+  /* check for CIDR notation and perform
+     generic string matching if not found */
+  if (!(p = strrchr(r, '/')))
+    return wild_match(r, s) ? 1 : NOMATCH;
+  /* if the two strings are both cidr masks,
+     use the broader prefix */
+  if (cmp && (q = strrchr(s, '/'))) {
+    if (atoi(p + 1) > atoi(q + 1))
+      return NOMATCH;
+    *q = 0;
+  }
+  *p = 0;
+  /* looks like a cidr mask */
+  return cidr_match(r, s, atoi(p + 1));
+}
+
+/* Checks for overlapping masks
+ * Returns: > 0 if the two masks in m and n overlap, 0 otherwise.
+ */
+int mask_match(char *m, char *n)
+{
+  int prefix;
+  char *p, *q, *r = 0, *s = 0;
+  char mu[UHOSTLEN], nu[UHOSTLEN];
+
+  for (p = mu; *m && (p - mu < UHOSTLEN - 1); m++) {
+    if (*m == '@')
+      r = p;
+    *p++ = rfc_toupper(*m);
+  }
+  for (q = nu; *n && (q - nu < UHOSTLEN - 1); n++) {
+    if (*n == '@')
+      s = q;
+    *q++ = rfc_toupper(*n);
+  }
+  *p = *q = 0;
+  if (!cidr_support || !r || !s)
+    return (wild_match(mu, nu) || wild_match(nu, mu));
+  
+  *r++ = *s++ = 0;
+  if (!wild_match(mu, nu) && !wild_match(nu, mu))
+    return 0;
+
+  if (!*r && !*s)
+    return 1;
+  p = strrchr(r, '/');
+  q = strrchr(s, '/');
+  if (!p && !q)
+    return (wild_match(r, s) || wild_match(s, r));
+
+  if (p) {
+    *p = 0;
+    prefix = atoi(p + 1);
+  } else
+    prefix = (strchr(r, ':') ? 128 : 32);
+  if (q) {
+    *q = 0;
+    if (atoi(q + 1) < prefix)
+      prefix = atoi(q + 1);
+  }
+  return cidr_match(r, s, prefix);
+}
+
+/* Performs bitwise comparison of two IP addresses stored in presentation
+ * (string) format. IPs are first internally converted to binary form.
+ * Returns: 1 if the first count bits are equal, 0 otherwise.
+ */
+int cidr_match(char *m, char *n, int count)
+{
+#ifdef IPV6
+  int c, af = AF_INET;
+  u_8bit_t block[16], addr[16];
+  
+  if (count < 1)
+    return NOMATCH;
+  if (strchr(m, ':') || strchr(n, ':')) {
+    af = AF_INET6;
+    if (count > 128)
+      return NOMATCH;
+  } else if (count > 32)
+      return NOMATCH;
+  if (inet_pton(af, m, &block) != 1 ||
+      inet_pton(af, n, &addr) != 1)
+    return NOMATCH;
+  for (c = 0; c < (count / 8); c++)
+    if (block[c] != addr[c])
+      return NOMATCH;
+  if (!(count % 8))
+    return 1;
+  count = 8 - (count % 8);
+  return ((block[c] >> count) == (addr[c] >> count));
+  
+#else
+  IP block, addr;
+  
+  if (count < 1 || count > 32)
+    return NOMATCH;
+  block = ntohl(inet_addr(m));
+  addr = ntohl(inet_addr(n));
+  if (block == INADDR_NONE || addr == INADDR_NONE)
+    return NOMATCH;
+  count = 32 - count;
+  return ((block >> count) == (addr >> count));
+#endif
 }

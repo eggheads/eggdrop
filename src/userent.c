@@ -2,7 +2,7 @@
  * userent.c -- handles:
  *   user-entry handling, new style more versatile.
  *
- * $Id: userent.c,v 1.38 2010/01/03 13:27:32 pseudo Exp $
+ * $Id: userent.c,v 1.39 2010/01/07 13:48:31 pseudo Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -1012,7 +1012,7 @@ static int hosts_set(struct userrec *u, struct user_entry *e, void *buf)
     /* I'm surprised Raistlin hasn't gotten involved in this controversy */
     t = &(e->u.list);
     while (*t) {
-      if (wild_match(host, (*t)->extra)) {
+      if (cmp_usermasks(host, (*t)->extra)) {
         struct list_type *u;
 
         u = *t;
