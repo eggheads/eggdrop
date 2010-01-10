@@ -4,7 +4,7 @@
  *   a bunch of functions to find and change user records
  *   change and check user (and channel-specific) flags
  *
- * $Id: userrec.c,v 1.60 2010/01/07 13:48:31 pseudo Exp $
+ * $Id: userrec.c,v 1.61 2010/01/10 22:28:57 pseudo Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -45,7 +45,7 @@ struct userrec *lastuser = NULL;   /* last accessed user record     */
 maskrec *global_bans = NULL, *global_exempts = NULL, *global_invites = NULL;
 struct igrec *global_ign = NULL;
 int cache_hit = 0, cache_miss = 0; /* temporary cache accounting    */
-int strict_host = 0;
+int strict_host = 1;
 int userfile_perm = 0600;         /* Userfile permissions
                                    * (default rw-------) */
 
@@ -168,21 +168,22 @@ int count_users(struct userrec *bu)
  */
 char *fixfrom(char *s)
 {
-  char *p = NULL;
+  static char uhost[UHOSTLEN];
+  char *p = uhost;
 
   if (!s || !*s || strict_host)
     return s;
 
-  if ((p = strchr(s, '!'))) {
-    if (!*(++p))
-      return s;	/* There's nothing following "!". */
-  } else
-    p = s; /* There's no nick. */
+  while (*s) {
+    *p++ = *s;
+    if (*s == '!' && strchr("~+-^=", s[1]) && s[2] != '@') {
+      strcpy(p, s + 2);
+      break;
+    }
+    s++;
+  }
 
-  if (strchr("~+-^=", *p) && *(p + 1) != '@')
-    memmove(p, p + 1, strlen(p)); /* NUL is included without +1. */
-
-  return s;
+  return uhost;
 }
 
 struct userrec *check_dcclist_hand(char *handle)
@@ -323,7 +324,7 @@ struct userrec *get_user_by_host(char *host)
   }
   cache_miss++;
   strncpyz(host2, host, sizeof host2);
-  fixfrom(host);
+  host = fixfrom(host);
   for (u = userlist; u; u = u->next) {
     q = get_user(&USERENTRY_HOSTS, u);
     for (; q; q = q->next) {
@@ -657,7 +658,7 @@ struct userrec *adduser(struct userrec *bu, char *handle, char *host,
      *   but its much easier to use here...  (drummer)
      *   Only use it if we have a host :) (dw)
      */
-    fixfrom(host);
+    host = fixfrom(host);
 
     p = strchr(host, ',');
     while (p != NULL) {

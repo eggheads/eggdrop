@@ -1,5 +1,5 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
-<!-- $Id: egg-core.html,v 1.46 2010/01/07 13:48:30 pseudo Exp $ -->
+<!-- $Id: egg-core.html,v 1.47 2010/01/10 22:28:57 pseudo Exp $ -->
 
 <html>
   <head>
@@ -846,6 +846,16 @@
           then finally reject the bot.</p>
         </dd>
         
+        <dt><strong>set strict-host 1</strong></dt>
+
+        <dd>
+          <p>Set this to 0 if you want the bot to strip &#39;~+-^=&#39;
+          characters from user@hosts before matching them. This setting is
+          currently kept for compatibility, but will be removed from the next
+          release. Please leave it set to 1 for now to avoid problems with your
+          user files in the future.</p>
+        </dd>
+
         <dt><strong>set cidr-support 0</strong></dt>
         
         <dd>

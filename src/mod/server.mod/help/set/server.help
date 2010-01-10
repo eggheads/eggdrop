@@ -45,14 +45,6 @@ see also: set username
    This read-only variables returns the unix-time that the bot
    successfully connected to the server, so if you can read unix
    time, you'll be in luck ;)
-%{help=set strict-host}%{+n}
-###  %bset strict-host%b <0/1>
-   specifies whether the bot should leave leading ~ in users' host-
-   names.  if this is on, leading ~ will be left in (the bot will
-   differentiate between valid-ident usernames and invalid ones).
-   typically this is set off, since most sites are not running the
-   ident protocol, and therefore may get ~ put in front of their
-   username when their username is valid.
 %{help=set never-give-up}%{+n}
 ###  %bset never-give-up%b <0/1>
    specifies whether the bot should loop forever.  if never-give-up
@@ -185,10 +177,10 @@ see also: default-port
    %b'.help server module'%b.
      %bserver-online%b        %bservlimit%b      %bnick%b
      %bnever-give-up%b        %bflood-ctcp%b     %bserver%b
-     %bmax-queue-msg%b        %bstrict-host%b    %bbotnick%b
+     %bmax-queue-msg%b        %bmsg-rate%b       %bbotnick%b
      %bserver-timeout%b       %binit-server%b    %bservers%b
      %blowercase-ctcp%b       %bnet-type%b       %bbotname%b
      %bserverror-quit%b       %banswer-ctcp%b    %baltnick%b
      %btrigger-on-ignore%b    %bdefault-port%b   %brealname%b
      %bserver-cycle-wait%b    %bcheck-stoned%b   %bflood-msg%b
-     %bquiet-reject%b         %bkeep-nick%b      %bmsg-rate
+     %bquiet-reject%b         %bkeep-nick%b

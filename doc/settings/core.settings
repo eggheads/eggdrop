@@ -1,4 +1,4 @@
-$Id: core.settings,v 1.40 2010/01/07 13:48:30 pseudo Exp $
+$Id: core.settings,v 1.41 2010/01/10 22:28:57 pseudo Exp $
 
 Eggdrop Core Settings
 Last revised: April 17, 2003
@@ -492,6 +492,13 @@ Last revised: April 17, 2003
       over the botnet due to lag, use this setting. The bot will wait
       dupwait-timeout seconds before it checks again and then finally
       reject the bot.
+
+
+    set strict-host 1
+      Set this to 0 if you want the bot to strip '~+-^=' characters from
+      user@hosts before matching them. This setting is currently kept for
+      compatibility, but will be removed from the next release. Please leave
+      it set to 1 for now to avoid problems with your user files in the future.
 
 
     set cidr-support 0

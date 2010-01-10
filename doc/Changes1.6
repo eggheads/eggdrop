@@ -1,10 +1,16 @@
-$Id: Changes1.6,v 1.55 2010/01/07 13:48:30 pseudo Exp $
+$Id: Changes1.6,v 1.56 2010/01/10 22:28:56 pseudo Exp $
 
 Eggdrop Changes (since version 1.6.0)
 
     _____________________________________________________________________
 
 1.6.20 (CVS):
+
+  - Moved strict-host documentation to the core section, where it belongs and
+    added a warning to discourage it's usage in the future.
+  - Rewrote fixfrom() to not modify it's string argument.
+    Fixes Bugzilla Bug # 423 "Enforcement of Non-matching Bans"
+    Found by: BarkerJr / Patch by: pseudo
 
   - Added CIDR support to eggdrop. This includes accepting and matching b/e/I
     masks and user hosts in cidr notation.
