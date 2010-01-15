@@ -4,7 +4,7 @@
  *   Tcl initialization
  *   getting and setting Tcl/eggdrop variables
  *
- * $Id: tcl.c,v 1.93 2010/01/07 13:48:31 pseudo Exp $
+ * $Id: tcl.c,v 1.94 2010/01/15 19:51:49 pseudo Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -48,8 +48,8 @@ extern time_t online_since;
 extern char origbotname[], botuser[], motdfile[], admin[], userfile[],
             firewall[], helpdir[], notify_new[], hostname[], myip[], moddir[],
             tempdir[], owner[], network[], botnetnick[], bannerfile[],
-            egg_version[], natip[], configfile[], logfile_suffix[], textdir[],
-            pid_file[];
+            egg_version[], natip[], configfile[], logfile_suffix[], log_ts[],
+            textdir[], pid_file[];
 
 extern int flood_telnet_thr, flood_telnet_time, shtime, share_greet,
            require_p, keep_all_logs, allow_new_telnets, stealth_telnets,
@@ -501,6 +501,7 @@ static tcl_strings def_tcl_strings[] = {
   {"config",          configfile,     0,                       0},
   {"telnet-banner",   bannerfile,     120,           STR_PROTECT},
   {"logfile-suffix",  logfile_suffix, 20,                      0},
+  {"timestamp-format",log_ts,         32,                      0},
   {"pidfile",         pid_file,       120,           STR_PROTECT},
   {NULL,              NULL,           0,                       0}
 };

@@ -5,7 +5,7 @@
  *   command line arguments
  *   context and assert debugging
  *
- * $Id: main.c,v 1.128 2010/01/03 13:27:32 pseudo Exp $
+ * $Id: main.c,v 1.129 2010/01/15 19:51:49 pseudo Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -73,7 +73,8 @@
 #endif
 
 extern char origbotname[], userfile[], botnetnick[];
-extern int dcc_total, conmask, cache_hit, cache_miss, max_logs, quick_logs;
+extern int dcc_total, conmask, cache_hit, cache_miss, max_logs, quick_logs,
+           quiet_save;
 extern struct dcc_t *dcc;
 extern struct userrec *userlist;
 extern struct chanset_t *chanset;
@@ -501,7 +502,8 @@ void backup_userfile(void)
 {
   char s[125];
 
-  putlog(LOG_MISC, "*", USERF_BACKUP);
+  if (quiet_save < 2)
+    putlog(LOG_MISC, "*", USERF_BACKUP);
   egg_snprintf(s, sizeof s, "%s~bak", userfile);
   copyfile(userfile, s);
 }
@@ -565,7 +567,8 @@ static void core_secondly()
         int j;
 
         strncpyz(s, ctime(&now), sizeof s);
-        putlog(LOG_ALL, "*", "--- %.11s%s", s, s + 20);
+        if (quiet_save < 3)
+          putlog(LOG_ALL, "*", "--- %.11s%s", s, s + 20);
         call_hook(HOOK_BACKUP);
         for (j = 0; j < max_logs; j++) {
           if (logs[j].filename != NULL && logs[j].f != NULL) {
@@ -583,7 +586,8 @@ static void core_secondly()
     if (miltime == switch_logfiles_at) {
       call_hook(HOOK_DAILY);
       if (!keep_all_logs) {
-        putlog(LOG_MISC, "*", MISC_LOGSWITCH);
+        if (quiet_save < 3)
+          putlog(LOG_MISC, "*", MISC_LOGSWITCH);
         for (i = 0; i < max_logs; i++)
           if (logs[i].filename) {
             char s[1024];

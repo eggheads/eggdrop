@@ -2,7 +2,7 @@
  * channels.c -- part of channels.mod
  *   support for channels within the bot
  *
- * $Id: channels.c,v 1.101 2010/01/07 13:48:31 pseudo Exp $
+ * $Id: channels.c,v 1.102 2010/01/15 19:51:49 pseudo Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -524,7 +524,8 @@ static void backup_chanfile()
 {
   char s[125];
 
-  putlog(LOG_MISC, "*", "Backing up channel file...");
+  if (quiet_save < 2)
+    putlog(LOG_MISC, "*", "Backing up channel file...");
   egg_snprintf(s, sizeof s, "%s~bak", chanfile);
   copyfile(chanfile, s);
 }

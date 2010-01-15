@@ -7,7 +7,7 @@
  *   help system
  *   motd display and %var substitution
  *
- * $Id: misc.c,v 1.83 2010/01/03 13:27:32 pseudo Exp $
+ * $Id: misc.c,v 1.84 2010/01/15 19:51:49 pseudo Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -55,6 +55,7 @@ extern int  backgrd, con_chan, term_z, use_stderr, dcc_total, keep_all_logs,
 extern time_t now;
 extern Tcl_Interp *interp;
 
+char log_ts[32] = "[%H:%M:%S]"; /* Timestamp format for logfile entries */
 
 int shtime = 1;                 /* Display the time with console output */
 log_t *logs = 0;                /* Logfiles */
@@ -529,7 +530,7 @@ void putlog EGG_VARARGS_DEF(int, arg1)
   /* Create the timestamp */
   t = localtime(&now2);
   if (shtime) {
-    egg_strftime(stamp, sizeof(stamp) - 2, LOG_TS, t);
+    egg_strftime(stamp, sizeof(stamp) - 2, log_ts, t);
     strcat(stamp, " ");
     tsl = strlen(stamp);
   }
@@ -707,7 +708,7 @@ void flushlogs()
          */
         char stamp[33];
 
-        egg_strftime(stamp, sizeof(stamp) - 1, LOG_TS, localtime(&now));
+        egg_strftime(stamp, sizeof(stamp) - 1, log_ts, localtime(&now));
         fprintf(logs[i].f, "%s ", stamp);
         fprintf(logs[i].f, MISC_LOGREPEAT, logs[i].repeats);
         /* Reset repeats */

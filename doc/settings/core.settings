@@ -1,4 +1,4 @@
-$Id: core.settings,v 1.41 2010/01/10 22:28:57 pseudo Exp $
+$Id: core.settings,v 1.42 2010/01/15 19:51:49 pseudo Exp $
 
 Eggdrop Core Settings
 Last revised: April 17, 2003
@@ -166,6 +166,12 @@ Last revised: April 17, 2003
       Use this feature to timestamp entries in the log file.
 
 
+    set timestamp-format "[%H:%M:%S]"
+      Set the following to the timestamp for the logfile entries. Popular times
+      might be "[%H:%M]" (hour, min), or "[%H:%M:%S]" (hour, min, sec).
+      Read `man strftime' for more formatting options.  Keep it below 32 chars.
+
+
     set keep-all-logs 0
       If you want to keep your logfiles forever, turn this setting on. All
       logfiles will get the suffix
@@ -181,8 +187,11 @@ Last revised: April 17, 2003
 
 
     set quiet-save 0
-      Those nasty "Writing user file..." and "Writing channel file..." messages
-      won't be logged anymore if this option is enabled.
+      "Writing user file..." and "Writing channel file..." messages won't be
+      logged anymore if this option is enabled. If you set it to 2, the
+      "Backing up user file..." and "Backing up channel file..." messages will
+      also not be logged. In addition to this, you can disable the "Switching
+      logfiles..." and the new date message at midnight, by setting this to 3.
 
 
     set logfile-suffix ".%d%b%Y"

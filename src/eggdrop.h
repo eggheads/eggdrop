@@ -4,7 +4,7 @@
  *
  *   IF YOU ALTER THIS FILE, YOU NEED TO RECOMPILE THE BOT.
  *
- * $Id: eggdrop.h,v 1.72 2010/01/04 13:15:11 pseudo Exp $
+ * $Id: eggdrop.h,v 1.73 2010/01/15 19:51:49 pseudo Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -35,13 +35,6 @@
 #undef NO_OLD_BOTNET
 
 /* DEBUG_CONTEXT is now set in config.h by configure */
-
-/*
- * Set the following to the timestamp for the logfile entries.
- * Popular times might be "[%H:%M]" (hour, min), or "[%H:%M:%S]" (hour, min, sec)
- * Read `man strftime' for more formatting options.  Keep it below 32 chars.
- */
-#define LOG_TS "[%H:%M]"
 
 /*
  * HANDLEN note:

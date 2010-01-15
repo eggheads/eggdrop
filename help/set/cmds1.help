@@ -169,6 +169,12 @@
 %{help=set log-time}%{+n}
 ###  %bset log-time%b <0/1>
    Use this feature to timestamp entries in the log file.
+%{help=set timestamp-format}%{+n}
+###  %bset timestamp-format%b <format>
+   Set the following to the timestamp for the logfile entries. Popular
+   times might be "[%H:%M]" (hour,min), or "[%H:%M:%S]" (hour, min, sec).
+   Read `man strftime' for more formatting options.  Keep it below 32
+   chars.
 %{help=set max-logsize}%{+n}
 ###  %bset max-logsize%b <filesize>
    This is the maximum size of your logfiles. Set it to 0 to disable.
@@ -190,9 +196,13 @@
    strftime manpages for more options. NOTE: On systems which don't
    support strftime, the default format will be used _always_.
 %{help=set quiet-save}%{+n}
-###  %bset quiet-save%b <0/1>
-   "Writing user file..." and "Writing channel file..." messages
-   won't be logged anymore if this option is enabled.
+###  %bset quiet-save%b <0/1/2/3>
+   "Writing user file..." and "Writing channel file..." messages won't
+   be logged anymore if this option is enabled. If you set it to 2, the
+   "Backing up user file..." and "Backing up channel file..." messages
+   will also not be logged. In addition to this, you can disable the
+   "Switching logfiles..." and the new date message at midnight, by
+   setting this to 3.
 %{help=set sort-users}%{+n}
 ###  %bset sort-users%b <0/1>
    If you want your userfile to be sorted upon saving, enable this

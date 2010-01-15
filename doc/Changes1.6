@@ -1,10 +1,16 @@
-$Id: Changes1.6,v 1.56 2010/01/10 22:28:56 pseudo Exp $
+$Id: Changes1.6,v 1.57 2010/01/15 19:51:49 pseudo Exp $
 
 Eggdrop Changes (since version 1.6.0)
 
     _____________________________________________________________________
 
 1.6.20 (CVS):
+
+  - Replaced the LOG_TS definition with a config variable "timestamp-format",
+    defaulting to "[%H:%M:%S]".
+  - Added support for silent backups and logfile switching with higher
+    quiet-save values.
+    Patch by: pseudo
 
   - Moved strict-host documentation to the core section, where it belongs and
     added a warning to discourage it's usage in the future.

@@ -1,5 +1,5 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
-<!-- $Id: egg-core.html,v 1.47 2010/01/10 22:28:57 pseudo Exp $ -->
+<!-- $Id: egg-core.html,v 1.48 2010/01/15 19:51:49 pseudo Exp $ -->
 
 <html>
   <head>
@@ -379,6 +379,15 @@
           <p>Use this feature to timestamp entries in the log file.</p>
         </dd>
 
+        <dt><strong>set timestamp-format &quot;[%H:%M:%S]&quot;</strong></dt>
+
+        <dd>
+          <p>Set the following to the timestamp for the logfile entries.
+          Popular times might be "[%H:%M]" (hour,min), or "[%H:%M:%S]"
+          (hour, min, sec). Read `man strftime' for more formatting
+          options. Keep it below 32 chars.</p>
+        </dd>
+
         <dt><strong>set keep-all-logs 0</strong></dt>
 
         <dd>
@@ -400,9 +409,13 @@
         <dt><strong>set quiet-save 0</strong></dt>
 
         <dd>
-          <p>Those nasty &quot;Writing user file...&quot; and &quot;Writing
-          channel file...&quot; messages won&#39;t be logged anymore if this
-          option is enabled.</p>
+          <p>&quot;Writing user file...&quot; and &quot;Writing channel
+          file...&quot; messages won't be logged anymore if this option is
+          enabled. If you set it to 2, the &quot;Backing up user file...&quot;
+          and &quot;Backing up channel file...&quot; messages will also not be
+          logged. In addition to this, you can disable the &quot;Switching
+          logfiles...&quot; and the new date message at midnight, by setting
+          this to 3.</p>
         </dd>
 
         <dt><strong>set logfile-suffix &quot;.%d%b%Y&quot;</strong></dt>

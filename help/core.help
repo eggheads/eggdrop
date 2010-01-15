@@ -176,6 +176,7 @@ reserved-portrange
 console
 default-flags
 log-time
+timestamp-format
 max-logsize
 quick-logs
 logfile-suffix
