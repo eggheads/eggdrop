@@ -4,7 +4,7 @@
  *   disconnect on a dcc socket
  *   ...and that's it!  (but it's a LOT)
  *
- * $Id: dcc.c,v 1.91 2010/01/04 13:15:11 pseudo Exp $
+ * $Id: dcc.c,v 1.92 2010/01/25 20:11:55 pseudo Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -68,6 +68,23 @@ static void dcc_telnet_hostresolved(int);
 static void dcc_telnet_got_ident(int, char *);
 static void dcc_telnet_pass(int, int);
 
+
+/* This is not a universal telnet detector. You need to send WILL STATUS to the
+ * other side and pass the reply to this function. A telnet client will respond
+ * to this with either DO or DONT STATUS.
+ */
+static int detect_telnet(unsigned char *buf)
+{
+  if (!buf || !buf[0] || !buf[1])
+    return 0;
+  while (buf[2]) {
+    if (buf[0] == TLN_IAC && (buf[1] == TLN_DO || buf[1] == TLN_DONT) &&
+        buf[2] == TLN_STATUS)
+      return 1;
+    buf++;
+  }
+  return 0;
+}
 
 /* Escape telnet IAC and prepend CR to LF */
 static char *escape_telnet(char *s)
@@ -557,6 +574,8 @@ static void dcc_chat_pass(int idx, char *buf, int atr)
     return;
   if (dcc[idx].status & STAT_TELNET)
     strip_telnet(dcc[idx].sock, buf, &atr);
+  else if (detect_telnet((unsigned char *) buf))
+    buf += 3; /* 'IAC','DO(DONT)','STATUS' */
   atr = dcc[idx].user ? dcc[idx].user->flags : 0;
 
   /* Check for MD5 digest from remote _bot_. <cybah> */
@@ -1336,23 +1355,6 @@ void dupwait_notify(char *who)
       dcc_telnet_pass(idx, dcc[idx].u.dupwait->atr);
       break;
     }
-}
-
-/* This is not a universal telnet detector. You need to send WILL STATUS to the
- * other side and pass the reply to this function. A telnet client will respond
- * to this with either DO or DONT STATUS.
- */
-static int detect_telnet(unsigned char *buf)
-{
-  if (!buf || !buf[0] || !buf[1])
-    return 0;
-  while (buf[2]) {
-    if (buf[0] == TLN_IAC && (buf[1] == TLN_DO || buf[1] == TLN_DONT) &&
-        buf[2] == TLN_STATUS)
-      return 1;
-    buf++;
-  }
-  return 0;
 }
 
 static void dcc_telnet_id(int idx, char *buf, int atr)

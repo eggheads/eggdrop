@@ -1,10 +1,17 @@
-$Id: Changes1.6,v 1.57 2010/01/15 19:51:49 pseudo Exp $
+$Id: Changes1.6,v 1.58 2010/01/25 20:11:55 pseudo Exp $
 
 Eggdrop Changes (since version 1.6.0)
 
     _____________________________________________________________________
 
 1.6.20 (CVS):
+
+  - Fixed a bug in fixfrom(), breaking userhost matching.
+    Found by: Tothwolf, thommey
+  - Fixed a bug in telnet autodetection, which prevented cvs bots from linking
+    reliably with bots running older versions.
+    Found by: FireEgl, Tothwolf
+    Patch by: pseudo
 
   - Replaced the LOG_TS definition with a config variable "timestamp-format",
     defaulting to "[%H:%M:%S]".

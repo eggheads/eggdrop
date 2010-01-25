@@ -4,7 +4,7 @@
  *   a bunch of functions to find and change user records
  *   change and check user (and channel-specific) flags
  *
- * $Id: userrec.c,v 1.61 2010/01/10 22:28:57 pseudo Exp $
+ * $Id: userrec.c,v 1.62 2010/01/25 20:11:55 pseudo Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -178,11 +178,12 @@ char *fixfrom(char *s)
     *p++ = *s;
     if (*s == '!' && strchr("~+-^=", s[1]) && s[2] != '@') {
       strcpy(p, s + 2);
-      break;
+      return uhost;
     }
     s++;
   }
 
+  *p = 0;
   return uhost;
 }
 
