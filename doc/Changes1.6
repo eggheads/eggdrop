@@ -1,10 +1,16 @@
-$Id: Changes1.6,v 1.58 2010/01/25 20:11:55 pseudo Exp $
+$Id: Changes1.6,v 1.59 2010/01/26 03:12:15 tothwolf Exp $
 
 Eggdrop Changes (since version 1.6.0)
 
     _____________________________________________________________________
 
 1.6.20 (CVS):
+
+  - Added runtime check using Tcl_GetCurrentThread() to autodetect a
+    threaded Tcl library when compiled and linked against Tcl 8.1 and later.
+  - Replaced EGG_TCL_ENABLE_THREADS and EGG_TCL_CHECK_THREADS autoconf
+    macros with EGG_TCL_CHECK_GETCURRENTTHREAD.
+    Patch by: Tothwolf
 
   - Fixed a bug in fixfrom(), breaking userhost matching.
     Found by: Tothwolf, thommey

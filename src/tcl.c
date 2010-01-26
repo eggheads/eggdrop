@@ -4,7 +4,7 @@
  *   Tcl initialization
  *   getting and setting Tcl/eggdrop variables
  *
- * $Id: tcl.c,v 1.94 2010/01/15 19:51:49 pseudo Exp $
+ * $Id: tcl.c,v 1.95 2010/01/26 03:12:15 tothwolf Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -916,4 +916,16 @@ void rem_tcl_coups(tcl_coups *list)
                    tcl_eggcouplet, (ClientData) cp);
     nfree(cp);
   }
+}
+
+/* Check if the Tcl library supports threads
+*/
+int tcl_threaded()
+{
+#ifdef HAVE_TCL_GETCURRENTTHREAD
+  if (Tcl_GetCurrentThread() != (Tcl_ThreadId)0)
+    return 1;
+#endif
+
+  return 0;
 }

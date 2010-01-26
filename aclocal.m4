@@ -16,7 +16,7 @@ dnl You should have received a copy of the GNU General Public License
 dnl along with this program; if not, write to the Free Software
 dnl Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 dnl
-dnl $Id: aclocal.m4,v 1.113 2010/01/03 13:27:22 pseudo Exp $
+dnl $Id: aclocal.m4,v 1.114 2010/01/26 03:12:15 tothwolf Exp $
 dnl
 
 
@@ -1371,94 +1371,23 @@ AC_DEFUN([EGG_TCL_CHECK_FREE],
 ])
 
 
-dnl EGG_TCL_ENABLE_THREADS()
+dnl EGG_TCL_CHECK_GETCURRENTTHREAD
 dnl
-AC_DEFUN([EGG_TCL_ENABLE_THREADS],
-[
-  AC_ARG_ENABLE(tcl-threads, [  --enable-tcl-threads    enable threaded Tcl library support (autodetect)], [enable_tcl_threads="$enableval"], [enable_tcl_threads="auto"])
-  AC_ARG_ENABLE(tcl-threads, [  --disable-tcl-threads   disable threaded Tcl library support], [enable_tcl_threads="$enableval"], [enable_tcl_threads="auto"])
-])
-
-
-dnl EGG_TCL_CHECK_THREADS()
-dnl
-AC_DEFUN([EGG_TCL_CHECK_THREADS],
+AC_DEFUN([EGG_TCL_CHECK_GETCURRENTTHREAD],
 [
   if test "$egg_tcl_changed" = yes; then
-    EGG_CACHE_UNSET(egg_cv_var_tcl_threaded)
+    EGG_CACHE_UNSET(egg_cv_var_tcl_getcurrentthread)
   fi
 
-  # Check for TclpFinalizeThreadData()
-  AC_CHECK_LIB($TCL_TEST_LIB, TclpFinalizeThreadData, [egg_cv_var_tcl_threaded="yes"], [egg_cv_var_tcl_threaded="no"], $TCL_TEST_OTHERLIBS)
-
-  WANT_TCL_THREADS=0
-
-  # Do this check first just in case someone tries to use both
-  # --enable-tcl-threads and --disable-tcl-threads or gives an
-  # invalid --enable-tcl-threads=foo option.
-  if test "$egg_cv_var_tcl_threaded" = yes; then
-    WANT_TCL_THREADS=1
-  fi
-
-  # Check if either --enable-tcl-threads or --disable-tcl-threads was used
-  if test "$enable_tcl_threads" != auto; then
-
-    # Make sure an invalid option wasn't passed as --enable-tcl-threads=foo
-    if test "$enable_tcl_threads" != yes && test "$enable_tcl_threads" != no; then
-      AC_MSG_WARN([Invalid option '$enable_tcl_threads' passed to --enable-tcl-threads, defaulting to 'yes'])
-
-      enable_tcl_threads=yes
-    fi
-
-    # The --enable-tcl-threads option was used
-    if test "$enable_tcl_threads" = yes; then
-      WANT_TCL_THREADS=1
-
-      if test "$egg_cv_var_tcl_threaded" = no; then
-        cat << 'EOF' >&2
-configure: WARNING:
-
-  You have enabled threaded Tcl library support but a threaded
-  Tcl library was not detected.
-
-  Eggdrop may fail to compile or run properly if threaded Tcl
-  library support is enabled and the Tcl library isn't threaded.
-
-EOF
-      fi        
-    fi
-
-    # The --disable-tcl-threads option was used
-    if test "$enable_tcl_threads" = no; then
-      WANT_TCL_THREADS=0
-
-      if test "$egg_cv_var_tcl_threaded" = yes; then
-        cat << 'EOF' >&2
-configure: WARNING:
-
-  You have disabled threaded Tcl library support but a threaded
-  Tcl library was detected.
-
-  Eggdrop may fail to compile or run properly if threaded Tcl
-  library support is disabled and the Tcl library is threaded.
-
-EOF
-      fi
-    fi
-  fi
-
-  AC_MSG_CHECKING([whether threaded Tcl library support will be enabled])
-
-  if test $WANT_TCL_THREADS = 1; then
-    AC_MSG_RESULT([yes])
-    AC_DEFINE(HAVE_TCL_THREADS, 1, [Define if Tcl library is threads-enabled.])
+  # Check for Tcl_GetCurrentThread()
+  AC_CHECK_LIB($TCL_TEST_LIB, Tcl_GetCurrentThread, [egg_cv_var_tcl_getcurrentthread="yes"], [egg_cv_var_tcl_getcurrentthread="no"], $TCL_TEST_OTHERLIBS)
+  if test "$egg_cv_var_tcl_getcurrentthread" = yes; then
+    AC_DEFINE(HAVE_TCL_GETCURRENTTHREAD, 1, [Define for Tcl that has Tcl_GetCurrentThread() (8.1a2 and later).])
 
     # Add pthread library to $LIBS if we need it for threaded Tcl
     if test "x$ac_cv_lib_pthread" != x; then
       EGG_APPEND_VAR(LIBS, $ac_cv_lib_pthread)
     fi
-  else
-    AC_MSG_RESULT([no])
   fi
 ])
 

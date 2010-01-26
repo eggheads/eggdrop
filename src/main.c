@@ -5,7 +5,7 @@
  *   command line arguments
  *   context and assert debugging
  *
- * $Id: main.c,v 1.129 2010/01/15 19:51:49 pseudo Exp $
+ * $Id: main.c,v 1.130 2010/01/26 03:12:15 tothwolf Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -290,9 +290,8 @@ static void write_debug()
             tcl_resultstring() : "*unknown*", TCL_PATCH_LEVEL ? TCL_PATCH_LEVEL :
             "*unknown*");
 
-#ifdef HAVE_TCL_THREADS
-    dprintf(-x, "Tcl is threaded\n");
-#endif
+    if (tcl_threaded())
+      dprintf(-x, "Tcl is threaded\n");
 
 #ifdef CCFLAGS
     dprintf(-x, "Compile flags: %s\n", CCFLAGS);

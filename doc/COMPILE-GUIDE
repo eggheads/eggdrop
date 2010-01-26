@@ -1,4 +1,4 @@
-$Id: COMPILE-GUIDE,v 1.12 2010/01/03 13:27:22 pseudo Exp $
+$Id: COMPILE-GUIDE,v 1.13 2010/01/26 03:12:15 tothwolf Exp $
 
 Eggdrop Compile Guide and FAQ
 Last revised: August 20, 2004
@@ -72,9 +72,6 @@ Last revised: August 20, 2004
              HOWEVER, this will remove debugging symbols and make bug reports
              almost completely useless, and is not recommended. If disk space
              is very limited, however, it might help to enable this.
-
-           --disable-tcl-threads
-             This disables support for Tcl threads.
 
            --with-tcllib
            --with-tclinc

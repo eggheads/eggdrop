@@ -2,7 +2,7 @@
  * tclegg.h
  *   stuff used by tcl.c and tclhash.c
  *
- * $Id: tclegg.h,v 1.36 2010/01/03 13:27:32 pseudo Exp $
+ * $Id: tclegg.h,v 1.37 2010/01/26 03:12:15 tothwolf Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -178,6 +178,7 @@ void rem_tcl_ints(tcl_ints *);
 const char *tcl_resultstring();
 int tcl_resultint();
 int tcl_resultempty();
+int tcl_threaded();
 
 /* From Tcl's tclUnixInit.c */
 /* The following table is used to map from Unix locale strings to

@@ -7,7 +7,7 @@
  *   telling the current programmed settings
  *   initializing a lot of stuff and loading the tcl scripts
  *
- * $Id: chanprog.c,v 1.64 2010/01/03 13:27:31 pseudo Exp $
+ * $Id: chanprog.c,v 1.65 2010/01/26 03:12:15 tothwolf Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -355,10 +355,8 @@ void tell_verbose_status(int idx)
           tcl_resultstring() : "*unknown*", MISC_TCLHVERSION,
           TCL_PATCH_LEVEL ? TCL_PATCH_LEVEL : "*unknown*");
 
-#ifdef HAVE_TCL_THREADS
-  dprintf(idx, "Tcl is threaded.\n");
-#endif
-
+    if (tcl_threaded())
+      dprintf(idx, "Tcl is threaded.\n");
 }
 
 /* Show all internal state variables
