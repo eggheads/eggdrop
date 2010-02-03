@@ -1,10 +1,14 @@
-$Id: Changes1.6,v 1.60 2010/01/26 09:39:59 pseudo Exp $
+$Id: Changes1.6,v 1.61 2010/02/03 08:58:24 pseudo Exp $
 
 Eggdrop Changes (since version 1.6.0)
 
     _____________________________________________________________________
 
 1.6.20 (CVS):
+
+  - Don't assume cidr notation for hostmasks with slashes, unless the string
+    portion after the slash consists only of digits.
+    Found by: simple / Patch by: pseudo
 
   - Fixed the STRIP_ALL flag used with strip_mirc_codes() to actually work.
     Found by: T3256 / Patch by: pseudo

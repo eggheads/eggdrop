@@ -4,7 +4,7 @@
  *   hostmask matching
  *   cidr matching
  *
- * $Id: match.c,v 1.14 2010/01/07 13:48:31 pseudo Exp $
+ * $Id: match.c,v 1.15 2010/02/03 08:58:24 pseudo Exp $
  *
  * Once this code was working, I added support for % so that I could
  * use the same code both in Eggdrop and in my IrcII client.
@@ -260,11 +260,11 @@ int addr_match(char *m, char *n, int user, int cmp)
 
   /* check for CIDR notation and perform
      generic string matching if not found */
-  if (!(p = strrchr(r, '/')))
+  if (!(p = strrchr(r, '/')) || !str_isdigit(p + 1))
     return wild_match(r, s) ? 1 : NOMATCH;
   /* if the two strings are both cidr masks,
      use the broader prefix */
-  if (cmp && (q = strrchr(s, '/'))) {
+  if (cmp && (q = strrchr(s, '/')) && str_isdigit(q + 1)) {
     if (atoi(p + 1) > atoi(q + 1))
       return NOMATCH;
     *q = 0;
@@ -305,7 +305,7 @@ int mask_match(char *m, char *n)
     return 1;
   p = strrchr(r, '/');
   q = strrchr(s, '/');
-  if (!p && !q)
+  if ((!p || !str_isdigit(p + 1)) && (!q || !str_isdigit(q + 1)))
     return (wild_match(r, s) || wild_match(s, r));
 
   if (p) {
