@@ -4,7 +4,7 @@
  *
  *   IF YOU ALTER THIS FILE, YOU NEED TO RECOMPILE THE BOT.
  *
- * $Id: eggdrop.h,v 1.74 2010/01/26 09:39:59 pseudo Exp $
+ * $Id: eggdrop.h,v 1.75 2010/02/04 13:56:59 simple Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -156,7 +156,7 @@
 #endif
 
 #if HANDLEN > NICKMAX
-#  include "Error: HANDLEN MUST BE <= NICKMAX."
+#  include "Error: HANDLEN must be <= NICKMAX."
 #endif
 
 #ifdef HAVE_SYS_PARAM_H
@@ -517,7 +517,7 @@ struct dupwait_info {
 #define STRIP_REV    0x00004    /* remove reverse video codes           */
 #define STRIP_UNDER  0x00008    /* remove underline codes               */
 #define STRIP_ANSI   0x00010    /* remove ALL ANSI codes                */
-#define STRIP_BELLS  0x00020    /* remote ctrl-g's                      */
+#define STRIP_BELLS  0x00020    /* remove ctrl-g's                      */
 #define STRIP_ALL    0x0007F    /* remove every damn thing!             */
 
 /* For dcc bot links. */
@@ -567,8 +567,8 @@ typedef struct {
 
 /* Logfile display flags
  */
-#define LOG_MSGS     0x000001   /* m   msgs/notice/ctcps                */
-#define LOG_PUBLIC   0x000002   /* p   public msg/notice/ctcps          */
+#define LOG_MSGS     0x000001   /* m   private msgs/notices/ctcps       */
+#define LOG_PUBLIC   0x000002   /* p   public  msgs/notices/ctcps       */
 #define LOG_JOIN     0x000004   /* j   channel joins/parts/etc          */
 #define LOG_MODES    0x000008   /* k   mode changes/kicks/bans          */
 #define LOG_CMDS     0x000010   /* c   user dcc or msg commands         */
