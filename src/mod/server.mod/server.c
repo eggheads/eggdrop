@@ -2,7 +2,7 @@
  * server.c -- part of server.mod
  *   basic irc server support
  *
- * $Id: server.c,v 1.134 2010/01/03 13:27:55 pseudo Exp $
+ * $Id: server.c,v 1.135 2010/02/06 09:20:12 pseudo Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -1921,7 +1921,7 @@ char *server_start(Function *global_funcs)
   msgrate = 2;
 
   server_table[4] = (Function) botname;
-  module_register(MODULE_NAME, server_table, 1, 2);
+  module_register(MODULE_NAME, server_table, 1, 3);
   if (!module_depend(MODULE_NAME, "eggdrop", 106, 7)) {
     module_undepend(MODULE_NAME);
     return "This module requires Eggdrop 1.6.7 or later.";

@@ -2,7 +2,7 @@
  * channels.c -- part of channels.mod
  *   support for channels within the bot
  *
- * $Id: channels.c,v 1.102 2010/01/15 19:51:49 pseudo Exp $
+ * $Id: channels.c,v 1.103 2010/02/06 09:20:12 pseudo Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -1009,10 +1009,10 @@ char *channels_start(Function *global_funcs)
          "-protecthalfops "
          "-autohalfop "
          "-nodesynch ");
-  module_register(MODULE_NAME, channels_table, 1, 0);
-  if (!module_depend(MODULE_NAME, "eggdrop", 106, 7)) {
+  module_register(MODULE_NAME, channels_table, 1, 1);
+  if (!module_depend(MODULE_NAME, "eggdrop", 106, 20)) {
     module_undepend(MODULE_NAME);
-    return "This module requires Eggdrop 1.6.7 or later.";
+    return "This module requires Eggdrop 1.6.20 or later.";
   }
   add_hook(HOOK_MINUTELY, (Function) check_expired_bans);
   add_hook(HOOK_MINUTELY, (Function) check_expired_exempts);

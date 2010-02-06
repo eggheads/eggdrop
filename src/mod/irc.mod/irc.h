@@ -1,7 +1,7 @@
 /*
  * irc.h -- part of irc.mod
  *
- * $Id: irc.h,v 1.34 2010/01/03 13:27:54 pseudo Exp $
+ * $Id: irc.h,v 1.35 2010/02/06 09:20:12 pseudo Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -34,15 +34,6 @@
 
 #define REVENGE_KICK 1          /* Kicked victim        */
 #define REVENGE_DEOP 2          /* Took op              */
-
-/* Flags for reset_chan_info() */
-#define CHAN_RESETMODES   0x01
-#define CHAN_RESETWHO     0x02
-#define CHAN_RESETTOPIC   0x04
-#define CHAN_RESETBANS    0x08
-#define CHAN_RESETEXEMPTS 0x10
-#define CHAN_RESETINVITED 0x20
-#define CHAN_RESETALL     0x3F
 
 #ifdef MAKING_IRC
 static void check_tcl_need(char *, char *);
