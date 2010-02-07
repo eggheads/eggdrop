@@ -1,7 +1,7 @@
 /*
  * tclchan.c -- part of channels.mod
  *
- * $Id: tclchan.c,v 1.102 2010/01/03 13:27:41 pseudo Exp $
+ * $Id: tclchan.c,v 1.103 2010/02/07 17:21:14 pseudo Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -1946,7 +1946,7 @@ static int tcl_channel_add(Tcl_Interp *irp, char *newname, char *options)
 
     /* Initialize chan->channel info */
     init_channel(chan, 0);
-    list_append((struct list_type **) &chanset, (struct list_type *) chan);
+    egg_list_append((struct list_type **) &chanset, (struct list_type *) chan);
     /* Channel name is stored in xtra field for sharebot stuff */
     join = 1;
   }

@@ -4,7 +4,7 @@
  *
  * by Darrin Smith (beldin@light.iinet.net.au)
  *
- * $Id: modules.c,v 1.104 2010/01/07 13:48:31 pseudo Exp $
+ * $Id: modules.c,v 1.105 2010/02/07 17:21:14 pseudo Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -287,9 +287,9 @@ Function global_table[] = {
   (Function) chanout_but,
   /* 72 - 75 */
   (Function) check_validity,
-  (Function) list_delete,
-  (Function) list_append,
-  (Function) list_contains,
+  (Function) egg_list_delete,
+  (Function) egg_list_append,
+  (Function) egg_list_contains,
   /* 76 - 79 */
   (Function) answer,
   (Function) getmyip,

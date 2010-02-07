@@ -1,7 +1,7 @@
 /*
  * share.c -- part of share.mod
  *
- * $Id: share.c,v 1.90 2010/01/03 13:27:55 pseudo Exp $
+ * $Id: share.c,v 1.91 2010/02/07 17:21:14 pseudo Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -630,7 +630,7 @@ static void share_change(int idx, char *par)
           }
           uet->got_share(u, e, par, idx);
           if (!e->u.list) {
-            list_delete((struct list_type **) &(u->entries),
+            egg_list_delete((struct list_type **) &(u->entries),
                         (struct list_type *) e);
             nfree(e);
           }
@@ -1694,7 +1694,7 @@ static struct userrec *dup_userlist(int t)
             list->next = NULL;
             list->extra = user_malloc(strlen(lt->extra) + 1);
             strcpy(list->extra, lt->extra);
-            list_append((&nue->u.list), list);
+            egg_list_append((&nue->u.list), list);
           }
         } else {
           if (ue->type->dup_user && (t || ue->type->got_share))

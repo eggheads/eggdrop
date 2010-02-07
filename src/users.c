@@ -10,7 +10,7 @@
  *
  * dprintf'ized, 9nov1995
  *
- * $Id: users.c,v 1.58 2010/01/07 13:48:31 pseudo Exp $
+ * $Id: users.c,v 1.59 2010/02/07 17:21:14 pseudo Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -885,7 +885,7 @@ int readuserfile(char *file, struct userrec **ret)
                 list->next = NULL;
                 list->extra = user_malloc(strlen(s) + 1);
                 strcpy(list->extra, s);
-                list_append((&ue->u.list), list);
+                egg_list_append((&ue->u.list), list);
                 ok = 1;
               }
             if (!ok) {

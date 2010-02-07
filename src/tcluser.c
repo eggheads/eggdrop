@@ -2,7 +2,7 @@
  * tcluser.c -- handles:
  *   Tcl stubs for the user-record-oriented commands
  *
- * $Id: tcluser.c,v 1.49 2010/01/04 13:15:11 pseudo Exp $
+ * $Id: tcluser.c,v 1.50 2010/02/07 17:21:14 pseudo Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -589,7 +589,7 @@ static int tcl_setuser STDVAR
   }
   r = et->tcl_set(irp, u, e, argc, argv);
   /* Yeah... e is freed, and we read it... (tcl: setuser hand HOSTS none) */
-  if ((!e->u.list) && (list_delete((struct list_type **) &(u->entries),
+  if ((!e->u.list) && (egg_list_delete((struct list_type **) &(u->entries),
       (struct list_type *) e)))
     nfree(e);
     /* else maybe already freed... (entry_type==HOSTS) <drummer> */

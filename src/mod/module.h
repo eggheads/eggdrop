@@ -1,7 +1,7 @@
 /*
  * module.h
  *
- * $Id: module.h,v 1.91 2010/01/07 13:48:31 pseudo Exp $
+ * $Id: module.h,v 1.92 2010/02/07 17:21:14 pseudo Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -188,9 +188,9 @@
 #define chanout_but ((void(*)())global[71])
 /* 72 - 75 */
 #define check_validity ((int (*) (char *,Function))global[72])
-#define list_delete ((int (*)( struct list_type **, struct list_type *))global[73])
-#define list_append ((int (*) ( struct list_type **, struct list_type *))global[74])
-#define list_contains ((int (*) (struct list_type *, struct list_type *))global[75])
+#define egg_list_delete ((int (*)( struct list_type **, struct list_type *))global[73])
+#define egg_list_append ((int (*) ( struct list_type **, struct list_type *))global[74])
+#define egg_list_contains ((int (*) (struct list_type *, struct list_type *))global[75])
 /* 76 - 79 */
 #define answer ((int (*) (int,char *,unsigned long *,unsigned short *,int))global[76])
 #define getmyip ((IP (*) (void))global[77])

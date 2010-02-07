@@ -2,7 +2,7 @@
  * server.c -- part of server.mod
  *   basic irc server support
  *
- * $Id: server.c,v 1.135 2010/02/06 09:20:12 pseudo Exp $
+ * $Id: server.c,v 1.136 2010/02/07 17:21:14 pseudo Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -1052,7 +1052,8 @@ static void next_server(int *ptr, char *serv, unsigned int *port, char *pass)
       strcpy(x->pass, pass);
     } else
       x->pass = NULL;
-    list_append((struct list_type **) (&serverlist), (struct list_type *) x);
+    egg_list_append((struct list_type **) (&serverlist),
+                    (struct list_type *) x);
     *ptr = i;
     return;
   }

@@ -2,7 +2,7 @@
  * users.h
  *   structures and definitions used by users.c and userrec.c
  *
- * $Id: users.h,v 1.19 2010/01/03 13:27:32 pseudo Exp $
+ * $Id: users.h,v 1.20 2010/02/07 17:21:14 pseudo Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -36,9 +36,9 @@ struct list_type {
         (b)->next = *(a);                                               \
         *(a) = (b);                                                     \
 }
-int list_append(struct list_type **, struct list_type *);
-int list_delete(struct list_type **, struct list_type *);
-int list_contains(struct list_type *, struct list_type *);
+int egg_list_append(struct list_type **, struct list_type *);
+int egg_list_delete(struct list_type **, struct list_type *);
+int egg_list_contains(struct list_type *, struct list_type *);
 
 
 /* New userfile format stuff

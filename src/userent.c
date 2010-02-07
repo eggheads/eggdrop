@@ -2,7 +2,7 @@
  * userent.c -- handles:
  *   user-entry handling, new style more versatile.
  *
- * $Id: userent.c,v 1.39 2010/01/07 13:48:31 pseudo Exp $
+ * $Id: userent.c,v 1.40 2010/02/07 17:21:14 pseudo Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -684,7 +684,7 @@ int xtra_set(struct userrec *u, struct user_entry *e, void *buf)
     shareout(NULL, "c XTRA %s %s %s\n", u->handle, new->key,
              new->data ? new->data : "");
   if ((old && old != new) || !new->data || !new->data[0]) {
-    list_delete(&e->u.list, (struct list_type *) old);
+    egg_list_delete(&e->u.list, (struct list_type *) old);
     nfree(old->key);
     nfree(old->data);
     nfree(old);
@@ -1080,14 +1080,14 @@ struct user_entry_type USERENTRY_HOSTS = {
   "HOSTS"
 };
 
-int list_append(struct list_type **h, struct list_type *i)
+int egg_list_append(struct list_type **h, struct list_type *i)
 {
   for (; *h; h = &((*h)->next));
   *h = i;
   return 1;
 }
 
-int list_delete(struct list_type **h, struct list_type *i)
+int egg_list_delete(struct list_type **h, struct list_type *i)
 {
   for (; *h; h = &((*h)->next))
     if (*h == i) {
@@ -1097,7 +1097,7 @@ int list_delete(struct list_type **h, struct list_type *i)
   return 0;
 }
 
-int list_contains(struct list_type *h, struct list_type *i)
+int egg_list_contains(struct list_type *h, struct list_type *i)
 {
   for (; h; h = h->next)
     if (h == i) {
@@ -1138,7 +1138,7 @@ int del_entry_type(struct user_entry_type *type)
       e->type = NULL;
     }
   }
-  return list_delete((struct list_type **) &entry_type_list,
+  return egg_list_delete((struct list_type **) &entry_type_list,
                      (struct list_type *) type);
 }
 
@@ -1198,7 +1198,7 @@ int set_user(struct user_entry_type *et, struct userrec *u, void *d)
   }
   r = et->set(u, e, d);
   if (!e->u.list) {
-    list_delete((struct list_type **) &(u->entries), (struct list_type *) e);
+    egg_list_delete((struct list_type **) &(u->entries), (struct list_type *) e);
     nfree(e);
   }
   return r;
