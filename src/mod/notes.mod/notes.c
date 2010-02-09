@@ -5,7 +5,7 @@
  *   note cmds
  *   note ignores
  *
- * $Id: notes.c,v 1.60 2010/01/03 13:27:55 pseudo Exp $
+ * $Id: notes.c,v 1.61 2010/02/09 14:51:07 thommey Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -862,7 +862,7 @@ static void notes_hourly()
       k = num_notes(dcc[l].nick);
       if ((k > 0) && (dcc[l].type->flags & DCT_CHAT)) {
         dprintf(l, NOTES_WAITING2, k, (k == 1) ? "" : "s");
-        dprintf(l, "### %s", (k != 1) ? NOTES_DCC_USAGE_READ : NOTES_DCC_USAGE_READ2);
+        dprintf(l, "### %s\n", (k != 1) ? NOTES_DCC_USAGE_READ : NOTES_DCC_USAGE_READ2);
       }
     }
   }

@@ -1,7 +1,7 @@
 # notes.finnish.lang
 #   kieli tiedostot viesti moduuliin
 #
-# $Id: notes.finnish.lang,v 1.1 2004/07/05 04:37:33 wcc Exp $
+# $Id: notes.finnish.lang,v 1.2 2010/02/09 14:51:08 thommey Exp $
 
 0xc000,  Siirrettu viestit: %.70s\n
 0xc001,Vaihdettu %d note%s %s %s.
@@ -17,7 +17,7 @@
 0xc00b, -- ERÄÄNTYVÄT %d PÄIVÄNÄ%s
 0xc00c,Sinulla on seuraavat viesti(t) odottamassa
 0xc00d,Sinullea ei ole näin monta viestiä
-0xc00e,Käytä '.notes read' lukeaksesi ne.\n
+0xc00e,Käytä '.notes read' lukeaksesi ne.
 0xc00f,Ei pysty muuttamaan viesti tiedostoa
 0xc010,Kaikki viestit poistettu
 0xc011,Poistettu

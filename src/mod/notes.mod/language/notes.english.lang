@@ -1,7 +1,7 @@
 # notes.english.lang
 #   language messages for the notes module
 #
-# $Id: notes.english.lang,v 1.6 2004/04/09 18:00:31 wcc Exp $
+# $Id: notes.english.lang,v 1.7 2010/02/09 14:51:08 thommey Exp $
 
 0xc000,  Forward notes to: %.70s\n
 0xc001,Switched %d note%s from %s to %s.
@@ -17,7 +17,7 @@
 0xc00b, -- EXPIRES IN %d DAY%s
 0xc00c,You have the following note(s) waiting
 0xc00d,You don't have that many messages
-0xc00e,Use '.notes read' to read them.\n
+0xc00e,Use '.notes read' to read them.
 0xc00f,Can't modify the note file
 0xc010,Erased all notes
 0xc011,Erased
