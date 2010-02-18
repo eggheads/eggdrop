@@ -5,7 +5,7 @@
  *
  * Modified/written by Fabian Knittel <fknittel@gmx.de>
  *
- * $Id: coredns.c,v 1.33 2010/01/03 13:27:42 pseudo Exp $
+ * $Id: coredns.c,v 1.34 2010/02/18 13:11:20 pseudo Exp $
  */
 /*
  * Portions Copyright (C) 1999 - 2010 Eggheads Development Team
@@ -566,8 +566,15 @@ static void dorequest(char *s, int type, u_16bit_t id)
 {
   packetheader *hp;
   int r, i;
-  u_8bit_t buf[(MAX_PACKETSIZE / sizeof(char)) + 1];
+  u_8bit_t *buf;
 
+  /* Use malloc here instead of a static buffer, as per res_mkquery()'s manual
+   * buf should be aligned on an eight byte boundary. malloc() should return a
+   * pointer to an address properly aligned for any data type. Failing to
+   * provide a aligned buffer will result in a SIGBUS crash atleast on SPARC
+   * CPUs.
+   */
+  buf = nmalloc(MAX_PACKETSIZE + 1);
   r = res_mkquery(QUERY, s, C_IN, type, NULL, 0, NULL, buf, MAX_PACKETSIZE);
   if (r == -1) {
     ddebug0(RES_ERR "Query too large.");
@@ -579,6 +586,7 @@ static void dorequest(char *s, int type, u_16bit_t id)
     (void) sendto(resfd, buf, r, 0,
                   (struct sockaddr *) &_res.nsaddr_list[i],
                   sizeof(struct sockaddr));
+  nfree(buf);
 }
 
 /* (Re-)send request with existing id.

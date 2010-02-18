@@ -1,10 +1,14 @@
-$Id: Changes1.6,v 1.66 2010/02/18 13:03:04 pseudo Exp $
+$Id: Changes1.6,v 1.67 2010/02/18 13:11:20 pseudo Exp $
 
 Eggdrop Changes (since version 1.6.0)
 
     _____________________________________________________________________
 
 1.6.20 (CVS):
+
+  - Fixed dns.mod SIGBUS crashes on 64-bit Sparc.
+    Fixes Bugzilla Bug # 454 "Eggdrop crashes on sun sparc running debian etch"
+    Found by: soraver / Patch by: pseudo
 
   - Got rid of some compile warnings related to passing possibly signed chars
     to tolower().
