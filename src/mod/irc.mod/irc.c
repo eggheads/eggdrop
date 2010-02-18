@@ -2,7 +2,7 @@
  * irc.c -- part of irc.mod
  *   support for channels within the bot
  *
- * $Id: irc.c,v 1.118 2010/02/06 09:20:12 pseudo Exp $
+ * $Id: irc.c,v 1.119 2010/02/18 09:52:29 pseudo Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -718,7 +718,7 @@ static int channels_6char STDVAR
   BADARGS(7, 7, " nick user@host handle desto/chan keyword/nick text");
 
   CHECKVALIDITY(channels_6char);
-  sprintf(x, "%d", F(argv[1], argv[2], argv[3], argv[4], argv[5], argv[6]));
+  sprintf(x, "%d", (int) F(argv[1], argv[2], argv[3], argv[4], argv[5], argv[6]));
   Tcl_AppendResult(irp, x, NULL);
   return TCL_OK;
 }
@@ -1100,7 +1100,7 @@ static void do_nettype()
     break;
   }
   /* Update all rfc_ function pointers */
-  add_hook(HOOK_RFC_CASECMP, (Function) rfc_compliant);
+  add_hook(HOOK_RFC_CASECMP, (Function) (intptr_t) rfc_compliant);
 }
 
 static char *traced_nettype(ClientData cdata, Tcl_Interp *irp,
@@ -1119,7 +1119,7 @@ static char *traced_rfccompliant(ClientData cdata, Tcl_Interp *irp,
    * links to point to the rfc compliant versions if rfc_compliant
    * is 1, or to the normal version if it's 0.
    */
-  add_hook(HOOK_RFC_CASECMP, (Function) rfc_compliant);
+  add_hook(HOOK_RFC_CASECMP, (Function) (intptr_t) rfc_compliant);
   return NULL;
 }
 

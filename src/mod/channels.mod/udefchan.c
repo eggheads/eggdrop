@@ -2,7 +2,7 @@
  * udefchan.c -- part of channels.mod
  *   user definable channel flags/settings
  *
- * $Id: udefchan.c,v 1.15 2010/01/03 13:27:41 pseudo Exp $
+ * $Id: udefchan.c,v 1.16 2010/02/18 09:52:29 pseudo Exp $
  */
 /*
  * Copyright (C) 1999 - 2010 Eggheads Development Team
@@ -47,7 +47,7 @@ static int expmem_udef_chans(int type, struct udef_chans *ul)
   return i;
 }
 
-static int getudef(struct udef_chans *ul, char *name)
+static intptr_t getudef(struct udef_chans *ul, char *name)
 {
   int val = 0;
 
@@ -59,7 +59,7 @@ static int getudef(struct udef_chans *ul, char *name)
   return val;
 }
 
-static int ngetudef(char *name, char *chan)
+static intptr_t ngetudef(char *name, char *chan)
 {
   struct udef_struct *l;
   struct udef_chans *ll;
@@ -74,7 +74,7 @@ static int ngetudef(char *name, char *chan)
   return 0;
 }
 
-static void setudef(struct udef_struct *us, char *name, int value)
+static void setudef(struct udef_struct *us, char *name, intptr_t value)
 {
   struct udef_chans *ul, *ul_last = NULL;
 

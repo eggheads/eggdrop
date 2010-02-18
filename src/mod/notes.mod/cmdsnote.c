@@ -2,7 +2,7 @@
  * cmdsnote.c -- part of notes.mod
  *   handles all notes interaction over the party line
  *
- * $Id: cmdsnote.c,v 1.23 2010/01/03 13:27:55 pseudo Exp $
+ * $Id: cmdsnote.c,v 1.24 2010/02/18 09:52:29 pseudo Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -240,11 +240,11 @@ static void cmd_note(struct userrec *u, int idx, char *par)
 }
 
 static cmd_t notes_cmds[] = {
-  {"fwd",      "m",  (Function) cmd_fwd,         NULL},
-  {"notes",    "",   (Function) cmd_notes,       NULL},
-  {"+noteign", "",   (Function) cmd_pls_noteign, NULL},
-  {"-noteign", "",   (Function) cmd_mns_noteign, NULL},
-  {"noteigns", "",   (Function) cmd_noteigns,    NULL},
-  {"note",     "",   (Function) cmd_note,        NULL},
+  {"fwd",      "m",  (IntFunc) cmd_fwd,         NULL},
+  {"notes",    "",   (IntFunc) cmd_notes,       NULL},
+  {"+noteign", "",   (IntFunc) cmd_pls_noteign, NULL},
+  {"-noteign", "",   (IntFunc) cmd_mns_noteign, NULL},
+  {"noteigns", "",   (IntFunc) cmd_noteigns,    NULL},
+  {"note",     "",   (IntFunc) cmd_note,        NULL},
   {NULL,       NULL, NULL,                       NULL}
 };

@@ -4,7 +4,7 @@
  *
  * by Darrin Smith (beldin@light.iinet.net.au)
  *
- * $Id: modules.h,v 1.20 2010/01/03 13:27:32 pseudo Exp $
+ * $Id: modules.h,v 1.21 2010/02/18 09:52:29 pseudo Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -51,7 +51,7 @@ void *get_next_hook(int, void *);
 
 extern struct hook_entry {
   struct hook_entry *next;
-  int (*func) ();
+  Function func;
 } *hook_list[REAL_HOOKS];
 
 #define call_hook(x) do {                                       \

@@ -2,7 +2,7 @@
  * cmdsserv.c -- part of server.mod
  *   handles commands from a user via dcc that cause server interaction
  *
- * $Id: cmdsserv.c,v 1.25 2010/01/03 13:27:55 pseudo Exp $
+ * $Id: cmdsserv.c,v 1.26 2010/02/18 09:52:29 pseudo Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -132,9 +132,9 @@ static void cmd_clearqueue(struct userrec *u, int idx, char *par)
 }
 
 static cmd_t C_dcc_serv[] = {
-  {"dump",       "m",  (Function) cmd_dump,       NULL},
-  {"jump",       "m",  (Function) cmd_jump,       NULL},
-  {"servers",    "o",  (Function) cmd_servers,    NULL},
-  {"clearqueue", "m",  (Function) cmd_clearqueue, NULL},
+  {"dump",       "m",  (IntFunc) cmd_dump,       NULL},
+  {"jump",       "m",  (IntFunc) cmd_jump,       NULL},
+  {"servers",    "o",  (IntFunc) cmd_servers,    NULL},
+  {"clearqueue", "m",  (IntFunc) cmd_clearqueue, NULL},
   {NULL,         NULL, NULL,                      NULL}
 };

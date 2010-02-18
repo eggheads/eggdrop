@@ -1,7 +1,7 @@
 /*
  * servmsg.c -- part of server.mod
  *
- * $Id: servmsg.c,v 1.104 2010/01/03 13:27:55 pseudo Exp $
+ * $Id: servmsg.c,v 1.105 2010/02/18 09:52:30 pseudo Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -1215,29 +1215,29 @@ static int got465(char *from, char *msg)
 
 
 static cmd_t my_raw_binds[] = {
-  {"PRIVMSG", "",   (Function) gotmsg,       NULL},
-  {"NOTICE",  "",   (Function) gotnotice,    NULL},
-  {"MODE",    "",   (Function) gotmode,      NULL},
-  {"PING",    "",   (Function) gotping,      NULL},
-  {"PONG",    "",   (Function) gotpong,      NULL},
-  {"WALLOPS", "",   (Function) gotwall,      NULL},
-  {"001",     "",   (Function) got001,       NULL},
-  {"251",     "",   (Function) got251,       NULL},
-  {"303",     "",   (Function) got303,       NULL},
-  {"432",     "",   (Function) got432,       NULL},
-  {"433",     "",   (Function) got433,       NULL},
-  {"437",     "",   (Function) got437,       NULL},
-  {"438",     "",   (Function) got438,       NULL},
-  {"451",     "",   (Function) got451,       NULL},
-  {"442",     "",   (Function) got442,       NULL},
-  {"465",     "",   (Function) got465,       NULL},
-  {"NICK",    "",   (Function) gotnick,      NULL},
-  {"ERROR",   "",   (Function) goterror,     NULL},
+  {"PRIVMSG", "",   (IntFunc) gotmsg,       NULL},
+  {"NOTICE",  "",   (IntFunc) gotnotice,    NULL},
+  {"MODE",    "",   (IntFunc) gotmode,      NULL},
+  {"PING",    "",   (IntFunc) gotping,      NULL},
+  {"PONG",    "",   (IntFunc) gotpong,      NULL},
+  {"WALLOPS", "",   (IntFunc) gotwall,      NULL},
+  {"001",     "",   (IntFunc) got001,       NULL},
+  {"251",     "",   (IntFunc) got251,       NULL},
+  {"303",     "",   (IntFunc) got303,       NULL},
+  {"432",     "",   (IntFunc) got432,       NULL},
+  {"433",     "",   (IntFunc) got433,       NULL},
+  {"437",     "",   (IntFunc) got437,       NULL},
+  {"438",     "",   (IntFunc) got438,       NULL},
+  {"451",     "",   (IntFunc) got451,       NULL},
+  {"442",     "",   (IntFunc) got442,       NULL},
+  {"465",     "",   (IntFunc) got465,       NULL},
+  {"NICK",    "",   (IntFunc) gotnick,      NULL},
+  {"ERROR",   "",   (IntFunc) goterror,     NULL},
 /* ircu2.10.10 has a bug when a client is throttled ERROR is sent wrong */
-  {"ERROR:",  "",   (Function) goterror,     NULL},
-  {"KICK",    "",   (Function) gotkick,      NULL},
-  {"318",     "",   (Function) whoispenalty, NULL},
-  {"311",     "",   (Function) got311,       NULL},
+  {"ERROR:",  "",   (IntFunc) goterror,     NULL},
+  {"KICK",    "",   (IntFunc) gotkick,      NULL},
+  {"318",     "",   (IntFunc) whoispenalty, NULL},
+  {"311",     "",   (IntFunc) got311,       NULL},
   {NULL,      NULL, NULL,                    NULL}
 };
 

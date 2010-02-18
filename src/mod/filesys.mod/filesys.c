@@ -2,7 +2,7 @@
  * filesys.c -- part of filesys.mod
  *   main file of the filesys eggdrop module
  *
- * $Id: filesys.c,v 1.76 2010/01/03 13:27:42 pseudo Exp $
+ * $Id: filesys.c,v 1.77 2010/02/18 09:52:29 pseudo Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -914,7 +914,7 @@ static void init_server_ctcps(char *module)
 }
 
 static cmd_t myload[] = {
-  {"server", "",   (Function) init_server_ctcps, "filesys:server"},
+  {"server", "",   (IntFunc) init_server_ctcps, "filesys:server"},
   {NULL,     NULL, NULL,                                     NULL}
 };
 

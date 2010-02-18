@@ -2,7 +2,7 @@
  * cmdschan.c -- part of channels.mod
  *   commands from a user via dcc that cause server interaction
  *
- * $Id: cmdschan.c,v 1.79 2010/01/07 13:48:31 pseudo Exp $
+ * $Id: cmdschan.c,v 1.80 2010/02/18 09:52:29 pseudo Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -1577,26 +1577,26 @@ static void cmd_chanload(struct userrec *u, int idx, char *par)
  * NOTE: As with msg commands, the function is responsible for any logging.
  */
 static cmd_t C_dcc_irc[] = {
-  {"+ban",     "ol|ol", (Function) cmd_pls_ban,    NULL},
-  {"+exempt",  "ol|ol", (Function) cmd_pls_exempt, NULL},
-  {"+invite",  "ol|ol", (Function) cmd_pls_invite, NULL},
-  {"+chan",    "n",     (Function) cmd_pls_chan,   NULL},
-  {"+chrec",   "m|m",   (Function) cmd_pls_chrec,  NULL},
-  {"-ban",     "ol|ol", (Function) cmd_mns_ban,    NULL},
-  {"-chan",    "n",     (Function) cmd_mns_chan,   NULL},
-  {"-chrec",   "m|m",   (Function) cmd_mns_chrec,  NULL},
-  {"bans",     "ol|ol", (Function) cmd_bans,       NULL},
-  {"-exempt",  "ol|ol", (Function) cmd_mns_exempt, NULL},
-  {"-invite",  "ol|ol", (Function) cmd_mns_invite, NULL},
-  {"exempts",  "ol|ol", (Function) cmd_exempts,    NULL},
-  {"invites",  "ol|ol", (Function) cmd_invites,    NULL},
-  {"chaninfo", "m|m",   (Function) cmd_chaninfo,   NULL},
-  {"chanload", "n|n",   (Function) cmd_chanload,   NULL},
-  {"chanset",  "n|n",   (Function) cmd_chanset,    NULL},
-  {"chansave", "n|n",   (Function) cmd_chansave,   NULL},
-  {"chinfo",   "m|m",   (Function) cmd_chinfo,     NULL},
-  {"info",     "",      (Function) cmd_info,       NULL},
-  {"stick",    "ol|ol", (Function) cmd_stick,      NULL},
-  {"unstick",  "ol|ol", (Function) cmd_unstick,    NULL},
+  {"+ban",     "ol|ol", (IntFunc) cmd_pls_ban,    NULL},
+  {"+exempt",  "ol|ol", (IntFunc) cmd_pls_exempt, NULL},
+  {"+invite",  "ol|ol", (IntFunc) cmd_pls_invite, NULL},
+  {"+chan",    "n",     (IntFunc) cmd_pls_chan,   NULL},
+  {"+chrec",   "m|m",   (IntFunc) cmd_pls_chrec,  NULL},
+  {"-ban",     "ol|ol", (IntFunc) cmd_mns_ban,    NULL},
+  {"-chan",    "n",     (IntFunc) cmd_mns_chan,   NULL},
+  {"-chrec",   "m|m",   (IntFunc) cmd_mns_chrec,  NULL},
+  {"bans",     "ol|ol", (IntFunc) cmd_bans,       NULL},
+  {"-exempt",  "ol|ol", (IntFunc) cmd_mns_exempt, NULL},
+  {"-invite",  "ol|ol", (IntFunc) cmd_mns_invite, NULL},
+  {"exempts",  "ol|ol", (IntFunc) cmd_exempts,    NULL},
+  {"invites",  "ol|ol", (IntFunc) cmd_invites,    NULL},
+  {"chaninfo", "m|m",   (IntFunc) cmd_chaninfo,   NULL},
+  {"chanload", "n|n",   (IntFunc) cmd_chanload,   NULL},
+  {"chanset",  "n|n",   (IntFunc) cmd_chanset,    NULL},
+  {"chansave", "n|n",   (IntFunc) cmd_chansave,   NULL},
+  {"chinfo",   "m|m",   (IntFunc) cmd_chinfo,     NULL},
+  {"info",     "",      (IntFunc) cmd_info,       NULL},
+  {"stick",    "ol|ol", (IntFunc) cmd_stick,      NULL},
+  {"unstick",  "ol|ol", (IntFunc) cmd_unstick,    NULL},
   {NULL,       NULL,    NULL,                      NULL}
 };

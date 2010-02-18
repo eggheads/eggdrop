@@ -2,7 +2,7 @@
  * main.h
  *   include file to include most other include files
  *
- * $Id: main.h,v 1.39 2010/01/03 13:27:32 pseudo Exp $
+ * $Id: main.h,v 1.40 2010/02/18 09:52:29 pseudo Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -81,6 +81,10 @@
 
 #ifdef HAVE_STRINGS_H
 #  include <strings.h>
+#endif
+
+#ifdef HAVE_INTTYPES_H
+#  include <inttypes.h>
 #endif
 
 #include <sys/types.h>

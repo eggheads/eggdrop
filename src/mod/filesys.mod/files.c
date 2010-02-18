@@ -2,7 +2,7 @@
  * files.c - part of filesys.mod
  *   handles all file system commands
  *
- * $Id: files.c,v 1.55 2010/01/03 13:27:42 pseudo Exp $
+ * $Id: files.c,v 1.56 2010/02/18 09:52:29 pseudo Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -1349,37 +1349,37 @@ static void filesys_note(int idx, char *par)
 }
 
 static cmd_t myfiles[] = {
-  {"cancel",    "",   (Function) cmd_cancel,    NULL},
-  {"cd",        "",   (Function) cmd_chdir,     NULL},
-  {"chdir",     "",   (Function) cmd_chdir,     NULL},
-  {"cp",        "j",  (Function) cmd_cp,        NULL},
-  {"desc",      "",   (Function) cmd_desc,      NULL},
-  {"filestats", "j",  (Function) cmd_filestats, NULL},
-  {"get",       "",   (Function) cmd_get,       NULL},
-  {"reget",     "",   (Function) cmd_reget,     NULL},
-  {"help",      "",   (Function) cmd_file_help, NULL},
-  {"hide",      "j",  (Function) cmd_hide,      NULL},
-  {"ln",        "j",  (Function) cmd_ln,        NULL},
-  {"ls",        "",   (Function) cmd_ls,        NULL},
-  {"lsa",       "j",  (Function) cmd_lsa,       NULL},
-  {"mkdir",     "j",  (Function) cmd_mkdir,     NULL},
-  {"mv",        "j",  (Function) cmd_mv,        NULL},
-  {"note",      "",   (Function) filesys_note,  NULL},
-  {"pending",   "",   (Function) cmd_pending,   NULL},
-  {"pwd",       "",   (Function) cmd_pwd,       NULL},
-  {"quit",      "",   (Function) CMD_LEAVE,     NULL},
-  {"rm",        "j",  (Function) cmd_rm,        NULL},
-  {"rmdir",     "j",  (Function) cmd_rmdir,     NULL},
-  {"share",     "j",  (Function) cmd_share,     NULL},
+  {"cancel",    "",   (IntFunc) cmd_cancel,    NULL},
+  {"cd",        "",   (IntFunc) cmd_chdir,     NULL},
+  {"chdir",     "",   (IntFunc) cmd_chdir,     NULL},
+  {"cp",        "j",  (IntFunc) cmd_cp,        NULL},
+  {"desc",      "",   (IntFunc) cmd_desc,      NULL},
+  {"filestats", "j",  (IntFunc) cmd_filestats, NULL},
+  {"get",       "",   (IntFunc) cmd_get,       NULL},
+  {"reget",     "",   (IntFunc) cmd_reget,     NULL},
+  {"help",      "",   (IntFunc) cmd_file_help, NULL},
+  {"hide",      "j",  (IntFunc) cmd_hide,      NULL},
+  {"ln",        "j",  (IntFunc) cmd_ln,        NULL},
+  {"ls",        "",   (IntFunc) cmd_ls,        NULL},
+  {"lsa",       "j",  (IntFunc) cmd_lsa,       NULL},
+  {"mkdir",     "j",  (IntFunc) cmd_mkdir,     NULL},
+  {"mv",        "j",  (IntFunc) cmd_mv,        NULL},
+  {"note",      "",   (IntFunc) filesys_note,  NULL},
+  {"pending",   "",   (IntFunc) cmd_pending,   NULL},
+  {"pwd",       "",   (IntFunc) cmd_pwd,       NULL},
+  {"quit",      "",   (IntFunc) CMD_LEAVE,     NULL},
+  {"rm",        "j",  (IntFunc) cmd_rm,        NULL},
+  {"rmdir",     "j",  (IntFunc) cmd_rmdir,     NULL},
+  {"share",     "j",  (IntFunc) cmd_share,     NULL},
 /* Since we have spelt optimize wrong for so many years, we will
  * keep the old spelling around for the command name for now to
  * avoid problems with people typing .optimise and wondering
  * where it went (guppy:28Nov2001) */
-  {"optimise",  "j",  (Function) cmd_optimize,  NULL},
-  {"optimize",  "j",  (Function) cmd_optimize,  NULL},
-  {"stats",     "",   (Function) cmd_stats,     NULL},
-  {"unhide",    "j",  (Function) cmd_unhide,    NULL},
-  {"unshare",   "j",  (Function) cmd_unshare,   NULL},
+  {"optimise",  "j",  (IntFunc) cmd_optimize,  NULL},
+  {"optimize",  "j",  (IntFunc) cmd_optimize,  NULL},
+  {"stats",     "",   (IntFunc) cmd_stats,     NULL},
+  {"unhide",    "j",  (IntFunc) cmd_unhide,    NULL},
+  {"unshare",   "j",  (IntFunc) cmd_unshare,   NULL},
   {NULL,        NULL, NULL,                     NULL}
 };
 

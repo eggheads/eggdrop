@@ -1,7 +1,7 @@
 /*
  * tclchan.c -- part of channels.mod
  *
- * $Id: tclchan.c,v 1.103 2010/02/07 17:21:14 pseudo Exp $
+ * $Id: tclchan.c,v 1.104 2010/02/18 09:52:29 pseudo Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -1454,7 +1454,7 @@ static int tcl_channel_modify(Tcl_Interp *irp, struct chanset_t *chan,
           val = nmalloc(3 * strlen(item[i]) + 10);
           convert_element(item[i], val);
           val = nrealloc(val, strlen(val) + 1);
-          setudef(ul, chan->dname, (int) val);
+          setudef(ul, chan->dname, (intptr_t) val);
           found = 1;
           break;
         }

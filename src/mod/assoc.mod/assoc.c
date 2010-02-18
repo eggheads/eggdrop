@@ -2,7 +2,7 @@
  * assoc.c -- part of assoc.mod
  *   the assoc code, moved here mainly from botnet.c for module work
  *
- * $Id: assoc.c,v 1.35 2010/01/03 13:27:40 pseudo Exp $
+ * $Id: assoc.c,v 1.36 2010/02/18 09:52:29 pseudo Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -326,7 +326,7 @@ static void zapf_assoc(char *botnick, char *code, char *par)
       nick = newsplit(&par);
       s1 = get_assoc_name(chan);
       if (linking && ((s1 == NULL) || (s1[0] == 0) ||
-          (((int) get_user(find_entry_type("BOTFL"),
+          (((intptr_t) get_user(find_entry_type("BOTFL"),
           dcc[idx].user) & BOT_HUB)))) {
         add_assoc(par, chan);
         botnet_send_assoc(idx, chan, nick, par);
@@ -368,12 +368,12 @@ static cmd_t mydcc[] = {
 };
 
 static cmd_t mybot[] = {
-  {"assoc", "",   (Function) zapf_assoc, NULL},
+  {"assoc", "",   (IntFunc) zapf_assoc, NULL},
   {NULL,    NULL, NULL,                  NULL}
 };
 
 static cmd_t mylink[] = {
-  {"*",  "",   (Function) link_assoc, "assoc"},
+  {"*",  "",   (IntFunc) link_assoc, "assoc"},
   {NULL, NULL, NULL,                     NULL}
 };
 

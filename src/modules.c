@@ -4,7 +4,7 @@
  *
  * by Darrin Smith (beldin@light.iinet.net.au)
  *
- * $Id: modules.c,v 1.105 2010/02/07 17:21:14 pseudo Exp $
+ * $Id: modules.c,v 1.106 2010/02/18 09:52:29 pseudo Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -1034,8 +1034,8 @@ void add_hook(int hook_num, Function func)
       }
       break;
     case HOOK_MATCH_NOTEREJ:
-      if (match_noterej == (int (*)(struct userrec *, char *)) false_func)
-        match_noterej = func;
+      if (match_noterej == false_func)
+        match_noterej = (int (*)(struct userrec *, char *)) func;
       break;
     case HOOK_DNS_HOSTBYIP:
       if (dns_hostbyip == block_dns_hostbyip)

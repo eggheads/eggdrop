@@ -2,7 +2,7 @@
  * chancmds.c -- part of irc.mod
  *   handles commands directly relating to channel interaction
  *
- * $Id: cmdsirc.c,v 1.65 2010/01/04 13:15:11 pseudo Exp $
+ * $Id: cmdsirc.c,v 1.66 2010/02/18 09:52:29 pseudo Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -1159,25 +1159,25 @@ static void cmd_reset(struct userrec *u, int idx, char *par)
 }
 
 static cmd_t irc_dcc[] = {
-  {"adduser",      "m|m",   (Function) cmd_adduser,      NULL},
-  {"deluser",      "m|m",   (Function) cmd_deluser,      NULL},
-  {"reset",        "m|m",   (Function) cmd_reset,        NULL},
-  {"resetbans",    "o|o",   (Function) cmd_resetbans,    NULL},
-  {"resetexempts", "o|o",   (Function) cmd_resetexempts, NULL},
-  {"resetinvites", "o|o",   (Function) cmd_resetinvites, NULL},
-  {"act",          "o|o",   (Function) cmd_act,          NULL},
-  {"channel",      "o|o",   (Function) cmd_channel,      NULL},
-  {"op",           "o|o",   (Function) cmd_op,           NULL},
-  {"deop",         "o|o",   (Function) cmd_deop,         NULL},
-  {"halfop",       "ol|ol", (Function) cmd_halfop,       NULL},
-  {"dehalfop",     "ol|ol", (Function) cmd_dehalfop,     NULL},
-  {"voice",        "ov|ov", (Function) cmd_voice,        NULL},
-  {"devoice",      "ov|ov", (Function) cmd_devoice,      NULL},
-  {"invite",       "o|o",   (Function) cmd_invite,       NULL},
-  {"kick",         "lo|lo", (Function) cmd_kick,         NULL},
-  {"kickban",      "lo|lo", (Function) cmd_kickban,      NULL},
-  {"msg",          "o",     (Function) cmd_msg,          NULL},
-  {"say",          "o|o",   (Function) cmd_say,          NULL},
-  {"topic",        "lo|lo", (Function) cmd_topic,        NULL},
+  {"adduser",      "m|m",   (IntFunc) cmd_adduser,      NULL},
+  {"deluser",      "m|m",   (IntFunc) cmd_deluser,      NULL},
+  {"reset",        "m|m",   (IntFunc) cmd_reset,        NULL},
+  {"resetbans",    "o|o",   (IntFunc) cmd_resetbans,    NULL},
+  {"resetexempts", "o|o",   (IntFunc) cmd_resetexempts, NULL},
+  {"resetinvites", "o|o",   (IntFunc) cmd_resetinvites, NULL},
+  {"act",          "o|o",   (IntFunc) cmd_act,          NULL},
+  {"channel",      "o|o",   (IntFunc) cmd_channel,      NULL},
+  {"op",           "o|o",   (IntFunc) cmd_op,           NULL},
+  {"deop",         "o|o",   (IntFunc) cmd_deop,         NULL},
+  {"halfop",       "ol|ol", (IntFunc) cmd_halfop,       NULL},
+  {"dehalfop",     "ol|ol", (IntFunc) cmd_dehalfop,     NULL},
+  {"voice",        "ov|ov", (IntFunc) cmd_voice,        NULL},
+  {"devoice",      "ov|ov", (IntFunc) cmd_devoice,      NULL},
+  {"invite",       "o|o",   (IntFunc) cmd_invite,       NULL},
+  {"kick",         "lo|lo", (IntFunc) cmd_kick,         NULL},
+  {"kickban",      "lo|lo", (IntFunc) cmd_kickban,      NULL},
+  {"msg",          "o",     (IntFunc) cmd_msg,          NULL},
+  {"say",          "o|o",   (IntFunc) cmd_say,          NULL},
+  {"topic",        "lo|lo", (IntFunc) cmd_topic,        NULL},
   {NULL,           NULL,    NULL,                        NULL}
 };

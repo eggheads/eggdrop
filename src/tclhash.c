@@ -7,7 +7,7 @@
  *   (non-Tcl) procedure lookups for msg/dcc/file commands
  *   (Tcl) binding internal procedures to msg/dcc/file commands
  *
- * $Id: tclhash.c,v 1.65 2010/01/03 13:27:32 pseudo Exp $
+ * $Id: tclhash.c,v 1.66 2010/02/18 09:52:29 pseudo Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -253,7 +253,7 @@ void kill_bind(void)
   bind_table_list = NULL;
 }
 
-tcl_bind_list_t *add_bind_table(const char *nme, int flg, Function func)
+tcl_bind_list_t *add_bind_table(const char *nme, int flg, IntFunc func)
 {
   tcl_bind_list_t *tl, *tl_prev;
   int v;
@@ -487,7 +487,7 @@ static int tcl_bind STDVAR
   return TCL_OK;
 }
 
-int check_validity(char *nme, Function func)
+int check_validity(char *nme, IntFunc func)
 {
   char *p;
   tcl_bind_list_t *tl;

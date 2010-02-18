@@ -1,10 +1,17 @@
-$Id: Changes1.6,v 1.64 2010/02/09 14:51:07 thommey Exp $
+$Id: Changes1.6,v 1.65 2010/02/18 09:52:29 pseudo Exp $
 
 Eggdrop Changes (since version 1.6.0)
 
     _____________________________________________________________________
 
 1.6.20 (CVS):
+
+  - Changed the definition of the 'Function' type to avoid data loss with
+    functions returning 64-bit types. 64-bit builds will no longer crash due
+    to pointers being truncated to 32 bits. Created new function pointer type
+    'IntFunc' for use only with functions returning int.
+    Fixes Bugzilla Bug # 485 "64-bit eggdrop builds crash on some systems"
+    Patch by: pseudo
 
   - Fixed a minor notes.mod formatting bug when displaying dcc usage.
     Found by: Johannes13 / Patch by: thommey

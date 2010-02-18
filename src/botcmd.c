@@ -3,7 +3,7 @@
  *   commands that comes across the botnet
  *   userfile transfer and update commands from sharebots
  *
- * $Id: botcmd.c,v 1.51 2010/01/04 13:15:11 pseudo Exp $
+ * $Id: botcmd.c,v 1.52 2010/02/18 09:52:29 pseudo Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -1458,110 +1458,110 @@ static void bot_versions(int sock, char *par)
  */
 botcmd_t C_bot[] =
 {
-  {"a",          (Function) bot_actchan},
+  {"a",          (IntFunc) bot_actchan},
 #ifndef NO_OLD_BOTNET
-  {"actchan",    (Function) bot_actchan},
+  {"actchan",    (IntFunc) bot_actchan},
 #endif
-  {"aw",         (Function) bot_away},
-  {"away",       (Function) bot_away},
-  {"bye",        (Function) bot_bye},
-  {"c",          (Function) bot_chan2},
+  {"aw",         (IntFunc) bot_away},
+  {"away",       (IntFunc) bot_away},
+  {"bye",        (IntFunc) bot_bye},
+  {"c",          (IntFunc) bot_chan2},
 #ifndef NO_OLD_BOTNET
-  {"chan",       (Function) bot_chan2},
-  {"chat",       (Function) bot_chat},
+  {"chan",       (IntFunc) bot_chan2},
+  {"chat",       (IntFunc) bot_chat},
 #endif
-  {"ct",         (Function) bot_chat},
-  {"e",          (Function) bot_error},
-  {"el",         (Function) bot_endlink},
+  {"ct",         (IntFunc) bot_chat},
+  {"e",          (IntFunc) bot_error},
+  {"el",         (IntFunc) bot_endlink},
 #ifndef NO_OLD_BOTNET
-  {"error",      (Function) bot_error},
+  {"error",      (IntFunc) bot_error},
 #endif
-  {"f!",         (Function) bot_filereject},
+  {"f!",         (IntFunc) bot_filereject},
 #ifndef NO_OLD_BOTNET
-  {"filereject", (Function) bot_filereject},
-  {"filereq",    (Function) bot_filereq},
-  {"filesend",   (Function) bot_filesend},
+  {"filereject", (IntFunc) bot_filereject},
+  {"filereq",    (IntFunc) bot_filereq},
+  {"filesend",   (IntFunc) bot_filesend},
 #endif
-  {"fr",         (Function) bot_filereq},
-  {"fs",         (Function) bot_filesend},
-  {"h",          (Function) bot_handshake},
+  {"fr",         (IntFunc) bot_filereq},
+  {"fs",         (IntFunc) bot_filesend},
+  {"h",          (IntFunc) bot_handshake},
 #ifndef NO_OLD_BOTNET
-  {"handshake",  (Function) bot_handshake},
+  {"handshake",  (IntFunc) bot_handshake},
 #endif
-  {"i",          (Function) bot_idle},
-  {"i?",         (Function) bot_infoq},
+  {"i",          (IntFunc) bot_idle},
+  {"i?",         (IntFunc) bot_infoq},
 #ifndef NO_OLD_BOTNET
-  {"idle",       (Function) bot_idle},
-  {"info?",      (Function) bot_infoq},
+  {"idle",       (IntFunc) bot_idle},
+  {"info?",      (IntFunc) bot_infoq},
 #endif
-  {"j",          (Function) bot_join},
+  {"j",          (IntFunc) bot_join},
 #ifndef NO_OLD_BOTNET
-  {"join",       (Function) bot_join},
+  {"join",       (IntFunc) bot_join},
 #endif
-  {"l",          (Function) bot_link},
+  {"l",          (IntFunc) bot_link},
 #ifndef NO_OLD_BOTNET
-  {"link",       (Function) bot_link},
-  {"linked",     (Function) bot_linked},
+  {"link",       (IntFunc) bot_link},
+  {"linked",     (IntFunc) bot_linked},
 #endif
-  {"m",          (Function) bot_motd},
+  {"m",          (IntFunc) bot_motd},
 #ifndef NO_OLD_BOTNET
-  {"motd",       (Function) bot_motd},
+  {"motd",       (IntFunc) bot_motd},
 #endif
-  {"n",          (Function) bot_nlinked},
-  {"nc",         (Function) bot_nickchange},
+  {"n",          (IntFunc) bot_nlinked},
+  {"nc",         (IntFunc) bot_nickchange},
 #ifndef NO_OLD_BOTNET
-  {"nlinked",    (Function) bot_nlinked},
+  {"nlinked",    (IntFunc) bot_nlinked},
 #endif
-  {"p",          (Function) bot_priv},
+  {"p",          (IntFunc) bot_priv},
 #ifndef NO_OLD_BOTNET
-  {"part",       (Function) bot_part},
+  {"part",       (IntFunc) bot_part},
 #endif
-  {"pi",         (Function) bot_ping},
+  {"pi",         (IntFunc) bot_ping},
 #ifndef NO_OLD_BOTNET
-  {"ping",       (Function) bot_ping},
+  {"ping",       (IntFunc) bot_ping},
 #endif
-  {"po",         (Function) bot_pong},
+  {"po",         (IntFunc) bot_pong},
 #ifndef NO_OLD_BOTNET
-  {"pong",       (Function) bot_pong},
-  {"priv",       (Function) bot_priv},
+  {"pong",       (IntFunc) bot_pong},
+  {"priv",       (IntFunc) bot_priv},
 #endif
-  {"pt",         (Function) bot_part},
-  {"r",          (Function) bot_reject},
+  {"pt",         (IntFunc) bot_part},
+  {"r",          (IntFunc) bot_reject},
 #ifndef NO_OLD_BOTNET
-  {"reject",     (Function) bot_reject},
+  {"reject",     (IntFunc) bot_reject},
 #endif
-  {"s",          (Function) bot_share},
-  {"t",          (Function) bot_trace},
-  {"tb",         (Function) bot_thisbot},
-  {"td",         (Function) bot_traced},
+  {"s",          (IntFunc) bot_share},
+  {"t",          (IntFunc) bot_trace},
+  {"tb",         (IntFunc) bot_thisbot},
+  {"td",         (IntFunc) bot_traced},
 #ifndef NO_OLD_BOTNET
-  {"thisbot",    (Function) bot_thisbot},
-  {"trace",      (Function) bot_trace},
-  {"traced",     (Function) bot_traced},
+  {"thisbot",    (IntFunc) bot_thisbot},
+  {"trace",      (IntFunc) bot_trace},
+  {"traced",     (IntFunc) bot_traced},
 #endif
-  {"u",          (Function) bot_update},
+  {"u",          (IntFunc) bot_update},
 #ifndef NO_OLD_BOTNET
-  {"uf-no",      (Function) bot_ufno},
+  {"uf-no",      (IntFunc) bot_ufno},
 #endif
-  {"ul",         (Function) bot_unlink},
-  {"un",         (Function) bot_unlinked},
+  {"ul",         (IntFunc) bot_unlink},
+  {"un",         (IntFunc) bot_unlinked},
 #ifndef NO_OLD_BOTNET
-  {"unaway",     (Function) bot_away},
-  {"unlink",     (Function) bot_unlink},
-  {"unlinked",   (Function) bot_unlinked},
-  {"update",     (Function) bot_update},
-  {"userfile?",  (Function) bot_old_userfile},
+  {"unaway",     (IntFunc) bot_away},
+  {"unlink",     (IntFunc) bot_unlink},
+  {"unlinked",   (IntFunc) bot_unlinked},
+  {"update",     (IntFunc) bot_update},
+  {"userfile?",  (IntFunc) bot_old_userfile},
 #endif
-  {"v",          (Function) bot_versions},
-  {"w",          (Function) bot_who},
+  {"v",          (IntFunc) bot_versions},
+  {"w",          (IntFunc) bot_who},
 #ifndef NO_OLD_BOTNET
-  {"who",        (Function) bot_who},
+  {"who",        (IntFunc) bot_who},
 #endif
-  {"z",          (Function) bot_zapf},
+  {"z",          (IntFunc) bot_zapf},
 #ifndef NO_OLD_BOTNET
-  {"zapf",       (Function) bot_zapf},
-  {"zapf-broad", (Function) bot_zapfbroad},
+  {"zapf",       (IntFunc) bot_zapf},
+  {"zapf-broad", (IntFunc) bot_zapfbroad},
 #endif
-  {"zb",         (Function) bot_zapfbroad},
+  {"zb",         (IntFunc) bot_zapfbroad},
   {NULL,         NULL}
 };

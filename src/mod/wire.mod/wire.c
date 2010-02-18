@@ -15,7 +15,7 @@
  * 1.4       1997-11-25      1.2.2.0         Added language addition  Kirk
  * 1.5       1998-07-12      1.3.0.0         Fixed ;me and updated    BB
  *
- * $Id: wire.c,v 1.40 2010/01/03 13:27:55 pseudo Exp $
+ * $Id: wire.c,v 1.41 2010/02/18 09:52:30 pseudo Exp $
  */
 /*
  * Copyright (C) 1999 - 2010 Eggheads Development Team
@@ -384,7 +384,7 @@ static void wire_join(int idx, char *key)
                                  * we add a bind */
     wire_bot[0].name = wirecmd;
     wire_bot[0].flags = "";
-    wire_bot[0].func = (Function) wire_filter;
+    wire_bot[0].func = (IntFunc) wire_filter;
     add_builtins(H_bot, wire_bot);
   }
 }
@@ -439,7 +439,7 @@ static void wire_leave(int sock)
   if (!w2) {                    /* Someone else is NOT using this key */
     wire_bot[0].name = wirecmd;
     wire_bot[0].flags = "";
-    wire_bot[0].func = (Function) wire_filter;
+    wire_bot[0].func = (IntFunc) wire_filter;
     rem_builtins(H_bot, wire_bot);
   }
   w2 = wirelist;
@@ -530,19 +530,19 @@ static void wire_report(int idx, int details)
 }
 
 static cmd_t wire_dcc[] = {
-  {"wire",     "",   (Function) cmd_wire,     NULL},
-  {"onwire",   "",   (Function) cmd_onwire,   NULL},
-  {"wirelist", "n",  (Function) cmd_wirelist, NULL},
+  {"wire",     "",   (IntFunc) cmd_wire,     NULL},
+  {"onwire",   "",   (IntFunc) cmd_onwire,   NULL},
+  {"wirelist", "n",  (IntFunc) cmd_wirelist, NULL},
   {NULL,       NULL, NULL,                    NULL}
 };
 
 static cmd_t wire_chof[] = {
-  {"*", "",    (Function) chof_wire, "wire:chof"},
+  {"*", "",    (IntFunc) chof_wire, "wire:chof"},
   {NULL, NULL, NULL,                        NULL}
 };
 
 static cmd_t wire_filt[] = {
-  {";*", "",   (Function) cmd_putwire, "wire:filt"},
+  {";*", "",   (IntFunc) cmd_putwire, "wire:filt"},
   {NULL, NULL, NULL,                          NULL}
 };
 
@@ -562,7 +562,7 @@ static char *wire_close()
     nfree(enctmp);
     wire_bot[0].name = wiretmp;
     wire_bot[0].flags = "";
-    wire_bot[0].func = (Function) wire_filter;
+    wire_bot[0].func = (IntFunc) wire_filter;
     rem_builtins(H_bot, wire_bot);
     w = w->next;
   }

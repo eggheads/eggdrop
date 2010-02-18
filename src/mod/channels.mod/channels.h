@@ -1,7 +1,7 @@
 /*
  * channels.h -- part of channels.mod
  *
- * $Id: channels.h,v 1.31 2010/01/03 13:27:40 pseudo Exp $
+ * $Id: channels.h,v 1.32 2010/02/18 09:52:29 pseudo Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -50,7 +50,7 @@
 struct udef_chans {
   struct udef_chans *next;     /* Ptr to next value.                   */
   char *chan;                  /* Dname of channel name.               */
-  int value;                   /* Actual value.                        */
+  intptr_t value;              /* Actual value.                        */
 };
 
 /* Structure for user defined channel settings.
@@ -113,11 +113,11 @@ static int expmem_udef(struct udef_struct *);
 static int expmem_udef_chans (int, struct udef_chans *);
 static void free_udef(struct udef_struct *);
 static void free_udef_chans(struct udef_chans *, int);
-static int getudef(struct udef_chans *, char *);
+static intptr_t getudef(struct udef_chans *, char *);
 static void initudef(int type, char *, int);
-static void setudef(struct udef_struct *, char *, int);
+static void setudef(struct udef_struct *, char *, intptr_t);
 static void remove_channel(struct chanset_t *);
-static int ngetudef(char *, char *);
+static intptr_t ngetudef(char *, char *);
 static int expired_mask(struct chanset_t *chan, char *who);
 inline static int chanset_unlink(struct chanset_t *chan);
 

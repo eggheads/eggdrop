@@ -1,7 +1,7 @@
 /*
  * share.c -- part of share.mod
  *
- * $Id: share.c,v 1.91 2010/02/07 17:21:14 pseudo Exp $
+ * $Id: share.c,v 1.92 2010/02/18 09:52:30 pseudo Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -1257,45 +1257,45 @@ static void share_feats(int idx, char *par)
 
 /* Note: these MUST be sorted. */
 static botcmd_t C_share[] = {
-  {"!",        (Function) share_endstartup},
-  {"+b",       (Function) share_pls_ban},
-  {"+bc",      (Function) share_pls_banchan},
-  {"+bh",      (Function) share_pls_bothost},
-  {"+cr",      (Function) share_pls_chrec},
-  {"+e",       (Function) share_pls_exempt},
-  {"+ec",      (Function) share_pls_exemptchan},
-  {"+h",       (Function) share_pls_host},
-  {"+i",       (Function) share_pls_ignore},
-  {"+inv",     (Function) share_pls_invite},
-  {"+invc",    (Function) share_pls_invitechan},
-  {"-b",       (Function) share_mns_ban},
-  {"-bc",      (Function) share_mns_banchan},
-  {"-cr",      (Function) share_mns_chrec},
-  {"-e",       (Function) share_mns_exempt},
-  {"-ec",      (Function) share_mns_exemptchan},
-  {"-h",       (Function) share_mns_host},
-  {"-i",       (Function) share_mns_ignore},
-  {"-inv",     (Function) share_mns_invite},
-  {"-invc",    (Function) share_mns_invitechan},
-  {"a",        (Function) share_chattr},
-  {"c",        (Function) share_change},
-  {"chchinfo", (Function) share_chchinfo},
-  {"e",        (Function) share_end},
-  {"feats",    (Function) share_feats},
-  {"h",        (Function) share_chhand},
-  {"k",        (Function) share_killuser},
-  {"n",        (Function) share_newuser},
-  {"r!",       (Function) share_resync},
-  {"r?",       (Function) share_resyncq},
-  {"rn",       (Function) share_resync_no},
-  {"s",        (Function) share_stick_ban},
-  {"se",       (Function) share_stick_exempt},
-  {"sInv",     (Function) share_stick_invite},
-  {"u?",       (Function) share_userfileq},
-  {"un",       (Function) share_ufno},
-  {"us",       (Function) share_ufsend},
-  {"uy",       (Function) share_ufyes},
-  {"v",        (Function) share_version},
+  {"!",        (IntFunc) share_endstartup},
+  {"+b",       (IntFunc) share_pls_ban},
+  {"+bc",      (IntFunc) share_pls_banchan},
+  {"+bh",      (IntFunc) share_pls_bothost},
+  {"+cr",      (IntFunc) share_pls_chrec},
+  {"+e",       (IntFunc) share_pls_exempt},
+  {"+ec",      (IntFunc) share_pls_exemptchan},
+  {"+h",       (IntFunc) share_pls_host},
+  {"+i",       (IntFunc) share_pls_ignore},
+  {"+inv",     (IntFunc) share_pls_invite},
+  {"+invc",    (IntFunc) share_pls_invitechan},
+  {"-b",       (IntFunc) share_mns_ban},
+  {"-bc",      (IntFunc) share_mns_banchan},
+  {"-cr",      (IntFunc) share_mns_chrec},
+  {"-e",       (IntFunc) share_mns_exempt},
+  {"-ec",      (IntFunc) share_mns_exemptchan},
+  {"-h",       (IntFunc) share_mns_host},
+  {"-i",       (IntFunc) share_mns_ignore},
+  {"-inv",     (IntFunc) share_mns_invite},
+  {"-invc",    (IntFunc) share_mns_invitechan},
+  {"a",        (IntFunc) share_chattr},
+  {"c",        (IntFunc) share_change},
+  {"chchinfo", (IntFunc) share_chchinfo},
+  {"e",        (IntFunc) share_end},
+  {"feats",    (IntFunc) share_feats},
+  {"h",        (IntFunc) share_chhand},
+  {"k",        (IntFunc) share_killuser},
+  {"n",        (IntFunc) share_newuser},
+  {"r!",       (IntFunc) share_resync},
+  {"r?",       (IntFunc) share_resyncq},
+  {"rn",       (IntFunc) share_resync_no},
+  {"s",        (IntFunc) share_stick_ban},
+  {"se",       (IntFunc) share_stick_exempt},
+  {"sInv",     (IntFunc) share_stick_invite},
+  {"u?",       (IntFunc) share_userfileq},
+  {"un",       (IntFunc) share_ufno},
+  {"us",       (IntFunc) share_ufsend},
+  {"uy",       (IntFunc) share_ufyes},
+  {"v",        (IntFunc) share_version},
   {NULL,       NULL}
 };
 
@@ -2060,7 +2060,7 @@ static void cmd_flush(struct userrec *u, int idx, char *par)
 }
 
 static cmd_t my_cmds[] = {
-  {"flush", "n",  (Function) cmd_flush, NULL},
+  {"flush", "n",  (IntFunc) cmd_flush, NULL},
   {NULL,    NULL, NULL,                 NULL}
 };
 

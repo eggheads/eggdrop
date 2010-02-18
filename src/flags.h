@@ -1,7 +1,7 @@
 /*
  * flags.h
  *
- * $Id: flags.h,v 1.19 2010/01/03 13:27:32 pseudo Exp $
+ * $Id: flags.h,v 1.20 2010/02/18 09:52:29 pseudo Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -29,7 +29,7 @@ struct flag_record {
   int match;
   int global;
   int udef_global;
-  int bot;
+  intptr_t bot;
   int chan;
   int udef_chan;
 };

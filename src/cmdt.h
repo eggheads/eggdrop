@@ -2,7 +2,7 @@
  * cmdt.h
  *   stuff for builtin commands
  *
- * $Id: cmdt.h,v 1.14 2010/01/03 13:27:31 pseudo Exp $
+ * $Id: cmdt.h,v 1.15 2010/02/18 09:52:29 pseudo Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -29,13 +29,13 @@
 typedef struct {
   char *name;
   char *flags;
-  Function func;
+  IntFunc func;
   char *funcname;
 } cmd_t;
 
 typedef struct {
   char *name;
-  Function func;
+  IntFunc func;
 } botcmd_t;
 
 #endif /* _EGG_CMDT_H */

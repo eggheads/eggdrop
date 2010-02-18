@@ -2,7 +2,7 @@
  * msgcmds.c -- part of irc.mod
  *   all commands entered via /MSG
  *
- * $Id: msgcmds.c,v 1.57 2010/01/03 13:27:55 pseudo Exp $
+ * $Id: msgcmds.c,v 1.58 2010/02/18 09:52:29 pseudo Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -1117,26 +1117,26 @@ static int msg_jump(char *nick, char *host, struct userrec *u, char *par)
  * 0 if not.
  */
 static cmd_t C_msg[] = {
-  {"addhost", "",    (Function) msg_addhost, NULL},
-  {"die",     "n",   (Function) msg_die,     NULL},
-  {"go",      "",    (Function) msg_go,      NULL},
-  {"hello",   "",    (Function) msg_hello,   NULL},
-  {"help",    "",    (Function) msg_help,    NULL},
-  {"ident",   "",    (Function) msg_ident,   NULL},
-  {"info",    "",    (Function) msg_info,    NULL},
-  {"invite",  "o|o", (Function) msg_invite,  NULL},
-  {"jump",    "m",   (Function) msg_jump,    NULL},
-  {"key",     "o|o", (Function) msg_key,     NULL},
-  {"memory",  "m",   (Function) msg_memory,  NULL},
-  {"op",      "",    (Function) msg_op,      NULL},
-  {"halfop",  "",    (Function) msg_halfop,  NULL},
-  {"pass",    "",    (Function) msg_pass,    NULL},
-  {"rehash",  "m",   (Function) msg_rehash,  NULL},
-  {"reset",   "m",   (Function) msg_reset,   NULL},
-  {"save",    "m",   (Function) msg_save,    NULL},
-  {"status",  "m|m", (Function) msg_status,  NULL},
-  {"voice",   "",    (Function) msg_voice,   NULL},
-  {"who",     "",    (Function) msg_who,     NULL},
-  {"whois",   "",    (Function) msg_whois,   NULL},
+  {"addhost", "",    (IntFunc) msg_addhost, NULL},
+  {"die",     "n",   (IntFunc) msg_die,     NULL},
+  {"go",      "",    (IntFunc) msg_go,      NULL},
+  {"hello",   "",    (IntFunc) msg_hello,   NULL},
+  {"help",    "",    (IntFunc) msg_help,    NULL},
+  {"ident",   "",    (IntFunc) msg_ident,   NULL},
+  {"info",    "",    (IntFunc) msg_info,    NULL},
+  {"invite",  "o|o", (IntFunc) msg_invite,  NULL},
+  {"jump",    "m",   (IntFunc) msg_jump,    NULL},
+  {"key",     "o|o", (IntFunc) msg_key,     NULL},
+  {"memory",  "m",   (IntFunc) msg_memory,  NULL},
+  {"op",      "",    (IntFunc) msg_op,      NULL},
+  {"halfop",  "",    (IntFunc) msg_halfop,  NULL},
+  {"pass",    "",    (IntFunc) msg_pass,    NULL},
+  {"rehash",  "m",   (IntFunc) msg_rehash,  NULL},
+  {"reset",   "m",   (IntFunc) msg_reset,   NULL},
+  {"save",    "m",   (IntFunc) msg_save,    NULL},
+  {"status",  "m|m", (IntFunc) msg_status,  NULL},
+  {"voice",   "",    (IntFunc) msg_voice,   NULL},
+  {"who",     "",    (IntFunc) msg_who,     NULL},
+  {"whois",   "",    (IntFunc) msg_whois,   NULL},
   {NULL,      NULL,  NULL,                   NULL}
 };

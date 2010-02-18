@@ -6,7 +6,7 @@
  *   user kickban, kick, op, deop
  *   idle kicking
  *
- * $Id: chan.c,v 1.133 2010/01/07 13:48:31 pseudo Exp $
+ * $Id: chan.c,v 1.134 2010/02/18 09:52:29 pseudo Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -2550,33 +2550,33 @@ static int gotnotice(char *from, char *msg)
 }
 
 static cmd_t irc_raw[] = {
-  {"324",     "",   (Function) got324,       "irc:324"},
-  {"352",     "",   (Function) got352,       "irc:352"},
-  {"354",     "",   (Function) got354,       "irc:354"},
-  {"315",     "",   (Function) got315,       "irc:315"},
-  {"367",     "",   (Function) got367,       "irc:367"},
-  {"368",     "",   (Function) got368,       "irc:368"},
-  {"403",     "",   (Function) got403,       "irc:403"},
-  {"405",     "",   (Function) got405,       "irc:405"},
-  {"471",     "",   (Function) got471,       "irc:471"},
-  {"473",     "",   (Function) got473,       "irc:473"},
-  {"474",     "",   (Function) got474,       "irc:474"},
-  {"475",     "",   (Function) got475,       "irc:475"},
-  {"INVITE",  "",   (Function) gotinvite, "irc:invite"},
-  {"TOPIC",   "",   (Function) gottopic,   "irc:topic"},
-  {"331",     "",   (Function) got331,       "irc:331"},
-  {"332",     "",   (Function) got332,       "irc:332"},
-  {"JOIN",    "",   (Function) gotjoin,     "irc:join"},
-  {"PART",    "",   (Function) gotpart,     "irc:part"},
-  {"KICK",    "",   (Function) gotkick,     "irc:kick"},
-  {"NICK",    "",   (Function) gotnick,     "irc:nick"},
-  {"QUIT",    "",   (Function) gotquit,     "irc:quit"},
-  {"PRIVMSG", "",   (Function) gotmsg,       "irc:msg"},
-  {"NOTICE",  "",   (Function) gotnotice, "irc:notice"},
-  {"MODE",    "",   (Function) gotmode,     "irc:mode"},
-  {"346",     "",   (Function) got346,       "irc:346"},
-  {"347",     "",   (Function) got347,       "irc:347"},
-  {"348",     "",   (Function) got348,       "irc:348"},
-  {"349",     "",   (Function) got349,       "irc:349"},
+  {"324",     "",   (IntFunc) got324,       "irc:324"},
+  {"352",     "",   (IntFunc) got352,       "irc:352"},
+  {"354",     "",   (IntFunc) got354,       "irc:354"},
+  {"315",     "",   (IntFunc) got315,       "irc:315"},
+  {"367",     "",   (IntFunc) got367,       "irc:367"},
+  {"368",     "",   (IntFunc) got368,       "irc:368"},
+  {"403",     "",   (IntFunc) got403,       "irc:403"},
+  {"405",     "",   (IntFunc) got405,       "irc:405"},
+  {"471",     "",   (IntFunc) got471,       "irc:471"},
+  {"473",     "",   (IntFunc) got473,       "irc:473"},
+  {"474",     "",   (IntFunc) got474,       "irc:474"},
+  {"475",     "",   (IntFunc) got475,       "irc:475"},
+  {"INVITE",  "",   (IntFunc) gotinvite, "irc:invite"},
+  {"TOPIC",   "",   (IntFunc) gottopic,   "irc:topic"},
+  {"331",     "",   (IntFunc) got331,       "irc:331"},
+  {"332",     "",   (IntFunc) got332,       "irc:332"},
+  {"JOIN",    "",   (IntFunc) gotjoin,     "irc:join"},
+  {"PART",    "",   (IntFunc) gotpart,     "irc:part"},
+  {"KICK",    "",   (IntFunc) gotkick,     "irc:kick"},
+  {"NICK",    "",   (IntFunc) gotnick,     "irc:nick"},
+  {"QUIT",    "",   (IntFunc) gotquit,     "irc:quit"},
+  {"PRIVMSG", "",   (IntFunc) gotmsg,       "irc:msg"},
+  {"NOTICE",  "",   (IntFunc) gotnotice, "irc:notice"},
+  {"MODE",    "",   (IntFunc) gotmode,     "irc:mode"},
+  {"346",     "",   (IntFunc) got346,       "irc:346"},
+  {"347",     "",   (IntFunc) got347,       "irc:347"},
+  {"348",     "",   (IntFunc) got348,       "irc:348"},
+  {"349",     "",   (IntFunc) got349,       "irc:349"},
   {NULL,      NULL, NULL,                         NULL}
 };

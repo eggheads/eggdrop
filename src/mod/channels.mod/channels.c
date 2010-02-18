@@ -2,7 +2,7 @@
  * channels.c -- part of channels.mod
  *   support for channels within the bot
  *
- * $Id: channels.c,v 1.103 2010/02/06 09:20:12 pseudo Exp $
+ * $Id: channels.c,v 1.104 2010/02/18 09:52:29 pseudo Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -461,11 +461,11 @@ exempt-time %d invite-time %d %cenforcebans %cdynamicbans %cuserbans %cautoop \
     for (ul = udef; ul; ul = ul->next) {
       if (ul->defined && ul->name) {
         if (ul->type == UDEF_FLAG)
-          fprintf(f, "channel set %s %c%s%s\n", name, getudef(ul->values, chan->dname) ? '+' : '-',
-                  "udef-flag-", ul->name);
+          fprintf(f, "channel set %s %c%s%s\n", name, getudef(ul->values,
+                  chan->dname) ? '+' : '-', "udef-flag-", ul->name);
         else if (ul->type == UDEF_INT)
-          fprintf(f, "channel set %s %s%s %d\n", name, "udef-int-", ul->name, getudef(ul->values,
-                  chan->dname));
+          fprintf(f, "channel set %s %s%s %d\n", name, "udef-int-", ul->name,
+                  (int) getudef(ul->values, chan->dname));
         else if (ul->type == UDEF_STR) {
           char *p = (char *) getudef(ul->values, chan->dname);
 
@@ -565,7 +565,7 @@ static void channels_rehash()
 }
 
 static cmd_t my_chon[] = {
-  {"*",  "",   (Function) channels_chon, "channels:chon"},
+  {"*",  "",   (IntFunc) channels_chon, "channels:chon"},
   {NULL, NULL, NULL,                                NULL}
 };
 

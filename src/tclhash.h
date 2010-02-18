@@ -1,7 +1,7 @@
 /*
  * tclhash.h
  *
- * $Id: tclhash.h,v 1.20 2010/01/03 13:27:32 pseudo Exp $
+ * $Id: tclhash.h,v 1.21 2010/02/18 09:52:29 pseudo Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -60,7 +60,7 @@ typedef struct tcl_bind_list_b {
   tcl_bind_mask_t *first;       /* Pointer to registered binds for this list. */
   char name[5];                 /* Name of the bind. */
   u_8bit_t flags;               /* Flags for this element. HT_* */
-  Function func;                /* Function used as the Tcl calling interface
+  IntFunc func;                 /* Function used as the Tcl calling interface
                                  * for procs actually representing C functions. */
 } tcl_bind_list_t, *p_tcl_bind_list;
 
@@ -73,7 +73,7 @@ void init_bind(void);
 void kill_bind(void);
 int expmem_tclhash(void);
 
-tcl_bind_list_t *add_bind_table(const char *nme, int flg, Function func);
+tcl_bind_list_t *add_bind_table(const char *nme, int flg, IntFunc func);
 void del_bind_table(tcl_bind_list_t *tl_which);
 
 tcl_bind_list_t *find_bind_table(const char *nme);
@@ -111,7 +111,7 @@ void check_tcl_loadunld(const char *, tcl_bind_list_t *);
 void rem_builtins(tcl_bind_list_t *, cmd_t *);
 void add_builtins(tcl_bind_list_t *, cmd_t *);
 
-int check_validity(char *, Function);
+int check_validity(char *, IntFunc);
 extern p_tcl_bind_list H_chat, H_act, H_bcst, H_chon, H_chof;
 extern p_tcl_bind_list H_load, H_unld, H_dcc, H_bot, H_link;
 extern p_tcl_bind_list H_away, H_nkch, H_filt, H_disc, H_event;

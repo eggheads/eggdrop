@@ -1,7 +1,7 @@
 /*
  * module.h
  *
- * $Id: module.h,v 1.92 2010/02/07 17:21:14 pseudo Exp $
+ * $Id: module.h,v 1.93 2010/02/18 09:52:29 pseudo Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -107,7 +107,7 @@
 #define module_depend ((Function *(*)(char *,char *,int,int))global[6])
 #define module_undepend ((int(*)(char *))global[7])
 /* 8 - 11 */
-#define add_bind_table ((p_tcl_bind_list(*)(const char *,int,Function))global[8])
+#define add_bind_table ((p_tcl_bind_list(*)(const char *,int,IntFunc))global[8])
 #define del_bind_table ((void (*) (p_tcl_bind_list))global[9])
 #define find_bind_table ((p_tcl_bind_list(*)(const char *))global[10])
 #define check_tcl_bind ((int (*) (p_tcl_bind_list,const char *,struct flag_record *,const char *, int))global[11])
@@ -187,7 +187,7 @@
 #define chatout (global[70])
 #define chanout_but ((void(*)())global[71])
 /* 72 - 75 */
-#define check_validity ((int (*) (char *,Function))global[72])
+#define check_validity ((int (*) (char *,IntFunc))global[72])
 #define egg_list_delete ((int (*)( struct list_type **, struct list_type *))global[73])
 #define egg_list_append ((int (*) ( struct list_type **, struct list_type *))global[74])
 #define egg_list_contains ((int (*) (struct list_type *, struct list_type *))global[75])

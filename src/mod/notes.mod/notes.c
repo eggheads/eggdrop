@@ -5,7 +5,7 @@
  *   note cmds
  *   note ignores
  *
- * $Id: notes.c,v 1.61 2010/02/09 14:51:07 thommey Exp $
+ * $Id: notes.c,v 1.62 2010/02/18 09:52:29 pseudo Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -1086,27 +1086,27 @@ int match_note_ignore(struct userrec *u, char *from)
 
 
 static cmd_t notes_join[] = {
-  {"*",  "",   (Function) join_notes, "notes"},
+  {"*",  "",   (IntFunc) join_notes, "notes"},
   {NULL, NULL, NULL,                     NULL}
 };
 
 static cmd_t notes_nkch[] = {
-  {"*",  "",   (Function) notes_change, "notes"},
+  {"*",  "",   (IntFunc) notes_change, "notes"},
   {NULL, NULL, NULL,                       NULL}
 };
 
 static cmd_t notes_away[] = {
-  {"*",  "",   (Function) away_notes, "notes"},
+  {"*",  "",   (IntFunc) away_notes, "notes"},
   {NULL, NULL, NULL,                     NULL}
 };
 
 static cmd_t notes_chon[] = {
-  {"*",  "",   (Function) chon_notes, "notes"},
+  {"*",  "",   (IntFunc) chon_notes, "notes"},
   {NULL, NULL, NULL,                     NULL}
 };
 
 static cmd_t notes_msgs[] = {
-  {"notes", "",   (Function) msg_notes, NULL},
+  {"notes", "",   (IntFunc) msg_notes, NULL},
   {NULL,    NULL, NULL,                 NULL}
 };
 

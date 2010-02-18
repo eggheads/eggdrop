@@ -4,7 +4,7 @@
  *
  *   IF YOU ALTER THIS FILE, YOU NEED TO RECOMPILE THE BOT.
  *
- * $Id: eggdrop.h,v 1.75 2010/02/04 13:56:59 simple Exp $
+ * $Id: eggdrop.h,v 1.76 2010/02/18 09:52:29 pseudo Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -327,7 +327,8 @@ typedef u_32bit_t IP;
 /***********************************************************************/
 
 /* It's used in so many places, let's put it here */
-typedef int (*Function) ();
+typedef intptr_t (*Function) ();
+typedef int (*IntFunc) ();
 
 /* Public structure for the listening port map */
 struct portmap {
