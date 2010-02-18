@@ -1,10 +1,14 @@
-$Id: Changes1.6,v 1.65 2010/02/18 09:52:29 pseudo Exp $
+$Id: Changes1.6,v 1.66 2010/02/18 13:03:04 pseudo Exp $
 
 Eggdrop Changes (since version 1.6.0)
 
     _____________________________________________________________________
 
 1.6.20 (CVS):
+
+  - Got rid of some compile warnings related to passing possibly signed chars
+    to tolower().
+    Patch by: pseudo
 
   - Changed the definition of the 'Function' type to avoid data loss with
     functions returning 64-bit types. 64-bit builds will no longer crash due

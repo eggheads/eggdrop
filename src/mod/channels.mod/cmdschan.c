@@ -2,7 +2,7 @@
  * cmdschan.c -- part of channels.mod
  *   commands from a user via dcc that cause server interaction
  *
- * $Id: cmdschan.c,v 1.80 2010/02/18 09:52:29 pseudo Exp $
+ * $Id: cmdschan.c,v 1.81 2010/02/18 13:03:04 pseudo Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -66,7 +66,7 @@ static void cmd_pls_ban(struct userrec *u, int idx, char *par)
       p = newsplit(&par);
       p_expire = p + 1;
       while (*(++p) != 0) {
-        switch (tolower(*p)) {
+        switch (tolower((unsigned) *p)) {
         case 'd':
           *p = 0;
           expire_foo = strtol(p_expire, NULL, 10);
@@ -204,7 +204,7 @@ static void cmd_pls_exempt(struct userrec *u, int idx, char *par)
       p = newsplit(&par);
       p_expire = p + 1;
       while (*(++p) != 0) {
-        switch (tolower(*p)) {
+        switch (tolower((unsigned) *p)) {
         case 'd':
           *p = 0;
           expire_foo = strtol(p_expire, NULL, 10);
@@ -332,7 +332,7 @@ static void cmd_pls_invite(struct userrec *u, int idx, char *par)
       p = newsplit(&par);
       p_expire = p + 1;
       while (*(++p) != 0) {
-        switch (tolower(*p)) {
+        switch (tolower((unsigned) *p)) {
         case 'd':
           *p = 0;
           expire_foo = strtol(p_expire, NULL, 10);

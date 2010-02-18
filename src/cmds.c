@@ -3,7 +3,7 @@
  *   commands from a user via dcc
  *   (split in 2, this portion contains no-irc commands)
  *
- * $Id: cmds.c,v 1.125 2010/02/18 09:52:29 pseudo Exp $
+ * $Id: cmds.c,v 1.126 2010/02/18 13:03:04 pseudo Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -1892,7 +1892,7 @@ int stripmodes(char *s)
   int res = 0;
 
   for (; *s; s++)
-    switch (tolower(*s)) {
+    switch (tolower((unsigned) *s)) {
     case 'b':
       res |= STRIP_BOLD;
       break;
@@ -2325,7 +2325,7 @@ static void cmd_pls_ignore(struct userrec *u, int idx, char *par)
     p = newsplit(&par);
     p_expire = p + 1;
     while (*(++p) != 0) {
-      switch (tolower(*p)) {
+      switch (tolower((unsigned) *p)) {
       case 'd':
         *p = 0;
         expire_foo = strtol(p_expire, NULL, 10);

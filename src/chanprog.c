@@ -7,7 +7,7 @@
  *   telling the current programmed settings
  *   initializing a lot of stuff and loading the tcl scripts
  *
- * $Id: chanprog.c,v 1.65 2010/01/26 03:12:15 tothwolf Exp $
+ * $Id: chanprog.c,v 1.66 2010/02/18 13:03:04 pseudo Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -677,7 +677,8 @@ int isowner(char *name)
       if (!s)
         s = ptr;
     } else if (s) {
-      for (n = name; *n && *s && s < ptr && tolower(*n) == tolower(*s); n++, s++);
+      for (n = name; *n && *s && s < ptr &&
+           tolower((unsigned) *n) == tolower((unsigned) *s); n++, s++);
 
       if (s == ptr && !*n)
         return 1;
