@@ -5,7 +5,7 @@
  *   command line arguments
  *   context and assert debugging
  *
- * $Id: main.c,v 1.130 2010/01/26 03:12:15 tothwolf Exp $
+ * $Id: main.c,v 1.131 2010/02/20 18:33:52 pseudo Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -852,10 +852,8 @@ int main(int argc, char **argv)
 
   /* Move into background? */
   if (backgrd) {
-#ifndef CYGWIN_HACKS
     bg_do_split();
   } else {                        /* !backgrd */
-#endif
     xx = getpid();
     if (xx != 0) {
       FILE *fp;
@@ -874,16 +872,13 @@ int main(int argc, char **argv)
           fclose(fp);
       } else
         printf(EGG_NOWRITE, pid_file);
-#ifdef CYGWIN_HACKS
-      printf("Launched into the background  (pid: %d)\n\n", xx);
-#endif
     }
   }
 
   use_stderr = 0;               /* Stop writing to stderr now */
   if (backgrd) {
     /* Ok, try to disassociate from controlling terminal (finger cross) */
-#if defined(HAVE_SETPGID) && !defined(CYGWIN_HACKS)
+#ifdef HAVE_SETPGID
     setpgid(0, 0);
 #endif
     /* Tcl wants the stdin, stdout and stderr file handles kept open. */
