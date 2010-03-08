@@ -1,5 +1,5 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
-<!-- $Id: tcl-commands.html,v 1.66 2010/03/08 11:18:07 pseudo Exp $ -->
+<!-- $Id: tcl-commands.html,v 1.67 2010/03/08 20:52:56 pseudo Exp $ -->
 
 <html>
   <head>
@@ -4831,6 +4831,23 @@
               proceed as if they were '*'. All cron operators are supported.
               Please refer to the crontab manual for their meanings. Flags are
               ignored.</p>
+
+              <p><strong>Module:</strong> core</p>
+            </li>
+
+            <li>
+              <p><a name="binda_log"></a><strong>LOG (stackable)</strong></p>*
+
+              <p><strong>bind log &lt;flags&gt; &lt;mask&gt; &lt;proc&gt;<br>
+              proc-name &lt;level&gt; &lt;channel&gt; &lt;message&gt;</strong>
+              </p>
+
+              <p><strong>Description:</strong> triggered whenever a message
+              is sent to a log. The mask is matched against &quot;channel
+              text&quot;. The level argument to the proc will contain the
+              level(s) the message is sent to, or '*' if the message is sent
+              to all log levels at once. If the message wasn't sent to a
+              specific channel, channel will be set to '*'.</p>
 
               <p><strong>Module:</strong> core</p>
             </li>

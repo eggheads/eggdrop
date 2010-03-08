@@ -1,7 +1,7 @@
 /*
  * tclhash.h
  *
- * $Id: tclhash.h,v 1.22 2010/03/08 11:18:07 pseudo Exp $
+ * $Id: tclhash.h,v 1.23 2010/03/08 20:52:56 pseudo Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -96,6 +96,7 @@ void check_tcl_nkch(const char *, const char *);
 void check_tcl_away(const char *, int, const char *);
 void check_tcl_chatactbcst(const char *, int, const char *, tcl_bind_list_t *);
 void check_tcl_event(const char *);
+void check_tcl_log(int, char *, char *);
 
 #define check_tcl_chat(a, b, c) check_tcl_chatactbcst(a ,b, c, H_chat)
 #define check_tcl_act(a, b, c) check_tcl_chatactbcst(a, b, c, H_act)
@@ -115,7 +116,7 @@ void add_builtins(tcl_bind_list_t *, cmd_t *);
 int check_validity(char *, IntFunc);
 extern p_tcl_bind_list H_chat, H_act, H_bcst, H_chon, H_chof;
 extern p_tcl_bind_list H_load, H_unld, H_dcc, H_bot, H_link;
-extern p_tcl_bind_list H_away, H_nkch, H_filt, H_disc, H_event;
+extern p_tcl_bind_list H_away, H_nkch, H_filt, H_disc, H_event, H_log;
 
 #endif /* MAKING_MODS */
 

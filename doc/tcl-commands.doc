@@ -1,4 +1,4 @@
-$Id: tcl-commands.doc,v 1.132 2010/03/08 11:18:07 pseudo Exp $
+$Id: tcl-commands.doc,v 1.133 2010/03/08 20:52:56 pseudo Exp $
 
 Eggdrop Tcl Commands
 Last revised: November 23, 2009
@@ -2226,6 +2226,18 @@ marked with vertical bars (|) on the left.
 |          at the end, the match will proceed as if they were '*'. All cron
 |          operators are supported. Please refer to the crontab manual for their
 |          meanings. Flags are ignored.
+|        Module: core
+
+|   (47) LOG (stackable)
+|        bind log <flags> <mask> <proc>
+|        proc-name <level> <channel> <message>
+|
+|        Description: triggered whenever a message is sent to a log. The mask is
+|          matched against "channel text".
+|          The level argument to the proc will contain the level(s) the message
+|          is sent to, or '*' if the message is sent to all log levels at once.
+|          If the message wasn't sent to a specific channel, channel will be set
+|          to '*'.
 |        Module: core
 
   (B) RETURN VALUES

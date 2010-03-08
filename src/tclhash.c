@@ -7,7 +7,7 @@
  *   (non-Tcl) procedure lookups for msg/dcc/file commands
  *   (Tcl) binding internal procedures to msg/dcc/file commands
  *
- * $Id: tclhash.c,v 1.67 2010/03/08 11:18:07 pseudo Exp $
+ * $Id: tclhash.c,v 1.68 2010/03/08 20:52:56 pseudo Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -41,7 +41,7 @@ extern time_t now;
 p_tcl_bind_list bind_table_list;
 p_tcl_bind_list H_chat, H_act, H_bcst, H_chon, H_chof, H_load, H_unld, H_link,
                 H_disc, H_dcc, H_chjn, H_chpt, H_bot, H_time, H_nkch, H_away,
-                H_note, H_filt, H_event, H_cron;
+                H_note, H_filt, H_event, H_cron, H_log = NULL;
 
 static int builtin_2char();
 static int builtin_3char();
@@ -54,6 +54,7 @@ static int builtin_idxchar();
 static int builtin_charidx();
 static int builtin_chat();
 static int builtin_dcc();
+static int builtin_log();
 
 
 /* Allocate and initialise a chunk of memory.
@@ -236,6 +237,7 @@ void init_bind(void)
   H_away = add_bind_table("away", HT_STACKABLE, builtin_chat);
   H_act = add_bind_table("act", HT_STACKABLE, builtin_chat);
   H_event = add_bind_table("evnt", HT_STACKABLE, builtin_char);
+  H_log = add_bind_table("log", HT_STACKABLE, builtin_log);
   add_builtins(H_dcc, C_dcc);
   Context;
 }
@@ -673,6 +675,16 @@ static int builtin_dcc STDVAR
   return TCL_OK;
 }
 
+static int builtin_log STDVAR
+{
+  Function F = (Function) cd;
+
+  BADARGS(3, 3, " lvl chan msg");
+
+  CHECKVALIDITY(builtin_log);
+  F(argv[1], argv[2], argv[3]);
+  return TCL_OK;
+}
 
 /* Trigger (execute) a Tcl proc
  *
@@ -1151,6 +1163,18 @@ void check_tcl_event(const char *event)
 {
   Tcl_SetVar(interp, "_event1", (char *) event, 0);
   check_tcl_bind(H_event, event, 0, " $_event1", MATCH_EXACT | BIND_STACKABLE);
+}
+
+void check_tcl_log(int lv, char *chan, char *msg)
+{
+  char mask[512];
+
+  snprintf(mask, sizeof mask, "%s %s", chan, msg);
+  Tcl_SetVar(interp, "_log1", masktype(lv), 0);
+  Tcl_SetVar(interp, "_log2", chan, 0);
+  Tcl_SetVar(interp, "_log3", msg, 0);
+  check_tcl_bind(H_log, mask, 0, " $_log1 $_log2 $_log3",
+                 MATCH_MASK | BIND_STACKABLE);
 }
 
 void tell_binds(int idx, char *par)

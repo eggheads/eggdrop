@@ -2,7 +2,7 @@
  * tclmisc.c -- handles:
  *   Tcl stubs for everything else
  *
- * $Id: tclmisc.c,v 1.66 2010/01/07 13:48:31 pseudo Exp $
+ * $Id: tclmisc.c,v 1.67 2010/03/08 20:52:56 pseudo Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -190,7 +190,7 @@ static int tcl_putloglev STDVAR
   int lev = 0;
   char logtext[501];
 
-  BADARGS(4, 4, " level channel text");
+  BADARGS(4, 4, " level(s) channel text");
 
   lev = logmodes(argv[1]);
   if (!lev) {

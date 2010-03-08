@@ -7,7 +7,7 @@
  *   help system
  *   motd display and %var substitution
  *
- * $Id: misc.c,v 1.84 2010/01/15 19:51:49 pseudo Exp $
+ * $Id: misc.c,v 1.85 2010/03/08 20:52:56 pseudo Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -517,6 +517,7 @@ void daysdur(time_t now, time_t then, char *out)
  */
 void putlog EGG_VARARGS_DEF(int, arg1)
 {
+  static int inhere = 0;
   int i, type, tsl = 0;
   char *format, *chname, s[LOGLINELEN], s1[256], *out, ct[81], *s2, stamp[34];
   va_list va;
@@ -558,6 +559,12 @@ void putlog EGG_VARARGS_DEF(int, arg1)
         s2++;
       }
     }
+  }
+  /* Make sure the bind list is initialized and we're not looping here */
+  if (!inhere && H_log) {
+    inhere = 1;
+    check_tcl_log(type, chname, out);
+    inhere = 0;
   }
   /* Place the timestamp in the string to be printed */
   if (out[0] && shtime) {
