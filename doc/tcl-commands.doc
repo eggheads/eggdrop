@@ -1,4 +1,4 @@
-$Id: tcl-commands.doc,v 1.131 2010/01/07 13:48:30 pseudo Exp $
+$Id: tcl-commands.doc,v 1.132 2010/03/08 11:18:07 pseudo Exp $
 
 Eggdrop Tcl Commands
 Last revised: November 23, 2009
@@ -2211,6 +2211,22 @@ marked with vertical bars (|) on the left.
 |          'queued' or 'sent'. Queues are: mode, server, help, noqueue.
 |          noqueue is only used by the putnow tcl command.
 |        Module: server
+
+|   (46) CRON (stackable)
+|        bind cron <flags> <mask> <proc>
+|        proc-name <minute> <hour> <day> <month> <weekday>
+|
+|        Description: similar to bind TIME, but the mask is evaluated as a cron
+|          expression, e.g. "16/2 */2 5-15 7,8,9 4". It can contain up to five
+|          fields: minute, hour, day, month, weekday; delimited by whitespace.
+|          Week days are represented as 0-6, where 0 is Sunday. Symbolic names
+|          are not supported. The bind will be triggered if the mask matches all
+|          of the fields, except that if both day and weekday are not '*', only
+|          one of them is required to match. If any number of fields are omitted
+|          at the end, the match will proceed as if they were '*'. All cron
+|          operators are supported. Please refer to the crontab manual for their
+|          meanings. Flags are ignored.
+|        Module: core
 
   (B) RETURN VALUES
 

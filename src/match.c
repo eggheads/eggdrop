@@ -4,7 +4,7 @@
  *   hostmask matching
  *   cidr matching
  *
- * $Id: match.c,v 1.15 2010/02/03 08:58:24 pseudo Exp $
+ * $Id: match.c,v 1.16 2010/03/08 11:18:07 pseudo Exp $
  *
  * Once this code was working, I added support for % so that I could
  * use the same code both in Eggdrop and in my IrcII client.
@@ -362,4 +362,83 @@ int cidr_match(char *m, char *n, int count)
   count = 32 - count;
   return ((block >> count) == (addr >> count));
 #endif
+}
+
+/* Inline for cron_match (obviously).
+ * Matches a single field of a crontab expression.
+ */
+inline int cron_matchfld(char *mask, int match)
+{
+  int skip = 0, f, t;
+  char *p, *q;
+
+  for (p = mask; mask && *mask; mask = p) {
+    /* loop through a list of values, if such is given */
+    if ((p = strchr(mask, ',')))
+      *p++ = 0;
+    /* check for the step operator */
+    if ((q = strchr(mask, '/'))) {
+      if (q == mask)
+        continue;
+      *q++ = 0;
+      skip = atoi(q);
+    }
+    if (!strcmp(mask, "*") && (!skip || !(match % skip)))
+      return 1;
+    /* ranges, e.g 10-20 */
+    if (strchr(mask, '-')) {
+      if (sscanf(mask, "%d-%d", &f, &t) != 2)
+        continue;
+      if (t < f) {
+        if (match <= t)
+          match += 60;
+        t += 60;
+      }
+      if ((match >= f && match <= t) &&
+          (!skip || !((match - f) % skip)))
+        return 1;
+    }
+    /* no operator found, should be exact match */
+    f = strtol(mask, &q, 10);
+    if ((q > mask) &&
+        (skip ? !((match - f) % skip) : (match == f)))
+      return 1;
+  }
+  return 0;
+}
+
+/* Check if the current time matches a crontab-like specification.
+ *
+ * mask contains a cron-style series of time fields. The following
+ * crontab operators are supported: ranges '-', asterisks '*',
+ * lists ',' and steps '/'.
+ * match must have 5 space separated integers representing in order
+ * the current minute, hour, day of month, month and year.
+ * It should look like this: "53 17 01 03 2010", which means
+ * 01 March 2010, 17:53.
+ */
+int cron_match(const char *mask, const char *match)
+{
+  int d = 0, i, m = 1, t[5];
+  char *p, *q, *buf;
+
+  if (!mask[0])
+    return 0;
+  if (sscanf(match, "%d %d %d %d %d",
+             &t[0], &t[1], &t[2], &t[3], &t[4]) < 5)
+    return 0;
+  buf = nmalloc(strlen(mask) + 1);
+  strcpy(buf, mask);
+  for (p = buf, i = 0; *p && i < 5; i++) {
+    q = newsplit(&p);
+    if (!strcmp(q, "*"))
+      continue;
+    m = cron_matchfld(q, t[i]);
+    if (i == 2)
+      d = m;
+    else if (!m || (i == 3 && d))
+      break;
+  }
+  nfree(buf);
+  return m;
 }

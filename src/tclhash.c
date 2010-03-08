@@ -7,7 +7,7 @@
  *   (non-Tcl) procedure lookups for msg/dcc/file commands
  *   (Tcl) binding internal procedures to msg/dcc/file commands
  *
- * $Id: tclhash.c,v 1.66 2010/02/18 09:52:29 pseudo Exp $
+ * $Id: tclhash.c,v 1.67 2010/03/08 11:18:07 pseudo Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -41,11 +41,12 @@ extern time_t now;
 p_tcl_bind_list bind_table_list;
 p_tcl_bind_list H_chat, H_act, H_bcst, H_chon, H_chof, H_load, H_unld, H_link,
                 H_disc, H_dcc, H_chjn, H_chpt, H_bot, H_time, H_nkch, H_away,
-                H_note, H_filt, H_event;
+                H_note, H_filt, H_event, H_cron;
 
 static int builtin_2char();
 static int builtin_3char();
 static int builtin_5int();
+static int builtin_cron();
 static int builtin_char();
 static int builtin_chpt();
 static int builtin_chjn();
@@ -217,6 +218,7 @@ void init_bind(void)
   add_cd_tcl_cmds(cd_cmd_table);
   H_unld = add_bind_table("unld", HT_STACKABLE, builtin_char);
   H_time = add_bind_table("time", HT_STACKABLE, builtin_5int);
+  H_cron = add_bind_table("cron", HT_STACKABLE, builtin_cron);
   H_note = add_bind_table("note", 0, builtin_3char);
   H_nkch = add_bind_table("nkch", HT_STACKABLE, builtin_2char);
   H_load = add_bind_table("load", HT_STACKABLE, builtin_char);
@@ -540,6 +542,17 @@ static int builtin_5int STDVAR
   return TCL_OK;
 }
 
+static int builtin_cron STDVAR
+{
+  Function F = (Function) cd;
+
+  BADARGS(6, 6, " min hrs dom mon weekday");
+
+  CHECKVALIDITY(builtin_cron);
+  F(atoi(argv[1]), atoi(argv[2]), atoi(argv[3]), atoi(argv[4]), atoi(argv[5]));
+  return TCL_OK;
+}
+
 static int builtin_char STDVAR
 {
   Function F = (Function) cd;
@@ -734,6 +747,9 @@ static inline int check_bind_match(const char *match, char *mask,
     break;
   case MATCH_MODE:
     return (wild_match_partial_case(mask, match));
+    break;
+  case MATCH_CRON:
+    return (cron_match(mask, match));
     break;
   default:
     /* Do nothing */
@@ -1108,6 +1124,27 @@ void check_tcl_time(struct tm *tm)
   check_tcl_bind(H_time, y, 0,
                  " $_time1 $_time2 $_time3 $_time4 $_time5",
                  MATCH_MASK | BIND_STACKABLE);
+}
+
+void check_tcl_cron(struct tm *tm)
+{
+  char y[15];
+
+  egg_snprintf(y, sizeof y, "%02d", tm->tm_min);
+  Tcl_SetVar(interp, "_cron1", (char *) y, 0);
+  egg_snprintf(y, sizeof y, "%02d", tm->tm_hour);
+  Tcl_SetVar(interp, "_cron2", (char *) y, 0);
+  egg_snprintf(y, sizeof y, "%02d", tm->tm_mday);
+  Tcl_SetVar(interp, "_cron3", (char *) y, 0);
+  egg_snprintf(y, sizeof y, "%02d", tm->tm_mon + 1);
+  Tcl_SetVar(interp, "_cron4", (char *) y, 0);
+  egg_snprintf(y, sizeof y, "%02d", tm->tm_wday);
+  Tcl_SetVar(interp, "_cron5", (char *) y, 0);
+  egg_snprintf(y, sizeof y, "%02d %02d %02d %02d %02d", tm->tm_min, tm->tm_hour,
+               tm->tm_mday, tm->tm_mon + 1, tm->tm_wday);
+  check_tcl_bind(H_cron, y, 0,
+                 " $_cron1 $_cron2 $_cron3 $_cron4 $_cron5",
+                 MATCH_CRON | BIND_STACKABLE);
 }
 
 void check_tcl_event(const char *event)

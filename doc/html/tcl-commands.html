@@ -1,5 +1,5 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
-<!-- $Id: tcl-commands.html,v 1.65 2010/01/07 13:48:30 pseudo Exp $ -->
+<!-- $Id: tcl-commands.html,v 1.66 2010/03/08 11:18:07 pseudo Exp $ -->
 
 <html>
   <head>
@@ -4810,6 +4810,29 @@
               noqueue is only used by the putnow tcl command.</p>
 
               <p><strong>Module:</strong> server</p>
+            </li>
+
+            <li>
+              <p><a name="binda_cron"></a><strong>CRON (stackable)</strong></p>*
+
+              <p><strong>bind cron &lt;flags&gt; &lt;mask&gt; &lt;proc&gt;<br>
+              proc-name &lt;minute&gt; &lt;hour&gt; &lt;day&gt; &lt;weekday&gt;
+              &lt;year&gt;</strong></p>
+
+              <p><strong>Description:</strong> similar to bind TIME, but the
+              mask is evaluated as a cron expression, e.g.
+              &quot;16/2 */2 5-15 7,8,9 4&quot;. It can contain up to five
+              fields: minute, hour, day, month, weekday; delimited by
+              whitespace. Week days are represented as 0-6, where 0 is Sunday.
+              Symbolic names are not supported. The bind will be triggered if
+              the mask matches all of the fields, except that if both day and
+              weekday are not '*', only one of them is required to match. If
+              any number of fields are omitted at the end, the match will
+              proceed as if they were '*'. All cron operators are supported.
+              Please refer to the crontab manual for their meanings. Flags are
+              ignored.</p>
+
+              <p><strong>Module:</strong> core</p>
             </li>
           </ol>
         </li>

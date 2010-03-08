@@ -5,7 +5,7 @@
  *   command line arguments
  *   context and assert debugging
  *
- * $Id: main.c,v 1.131 2010/02/20 18:33:52 pseudo Exp $
+ * $Id: main.c,v 1.132 2010/03/08 11:18:07 pseudo Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -607,6 +607,7 @@ static void core_secondly()
 static void core_minutely()
 {
   check_tcl_time(&nowtm);
+  check_tcl_cron(&nowtm);
   do_check_timers(&timer);
   if (quick_logs != 0) {
     flushlogs();

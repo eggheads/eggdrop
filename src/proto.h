@@ -7,7 +7,7 @@
  * because they use structures in those
  * (saves including those .h files EVERY time) - Beldin
  *
- * $Id: proto.h,v 1.79 2010/01/07 13:48:31 pseudo Exp $
+ * $Id: proto.h,v 1.80 2010/03/08 11:18:07 pseudo Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -192,6 +192,7 @@ int _wild_match_per(register unsigned char *, register unsigned char *,
 int addr_match(char *, char *, int, int);
 int mask_match(char *, char *);
 int cidr_match(char *, char *, int);
+int cron_match(const char *, const char *);
 
 #define wild_match(a,b) _wild_match((unsigned char *)(a),(unsigned char *)(b))
 #define wild_match_per(a,b) _wild_match_per((unsigned char *)(a),              \

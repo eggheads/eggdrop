@@ -1,7 +1,7 @@
 /*
  * tclhash.h
  *
- * $Id: tclhash.h,v 1.21 2010/02/18 09:52:29 pseudo Exp $
+ * $Id: tclhash.h,v 1.22 2010/03/08 11:18:07 pseudo Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -90,6 +90,7 @@ const char *check_tcl_filt(int, const char *);
 int check_tcl_note(const char *, const char *, const char *);
 void check_tcl_listen(const char *, int);
 void check_tcl_time(struct tm *);
+void check_tcl_cron(struct tm *);
 void tell_binds(int, char *);
 void check_tcl_nkch(const char *, const char *);
 void check_tcl_away(const char *, int, const char *);

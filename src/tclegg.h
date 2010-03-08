@@ -2,7 +2,7 @@
  * tclegg.h
  *   stuff used by tcl.c and tclhash.c
  *
- * $Id: tclegg.h,v 1.38 2010/02/18 09:52:29 pseudo Exp $
+ * $Id: tclegg.h,v 1.39 2010/03/08 11:18:07 pseudo Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -46,6 +46,7 @@
 #define MATCH_MASK      2
 #define MATCH_CASE      3
 #define MATCH_MODE      4
+#define MATCH_CRON      5
 
 /*
  * Bitwise 'or' these:
