@@ -3,7 +3,7 @@
  *   commands from a user via dcc
  *   (split in 2, this portion contains no-irc commands)
  *
- * $Id: cmds.c,v 1.126 2010/02/18 13:03:04 pseudo Exp $
+ * $Id: cmds.c,v 1.127 2010/03/08 16:01:15 thommey Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -962,7 +962,7 @@ static void cmd_chaddr(struct userrec *u, int idx, char *par)
     dprintf(idx, "This command is only useful for tandem bots.\n");
     return;
   }
-  if ((bot_flags(u1) & BOT_SHARE) && (!u || !u->flags & USER_OWNER)) {
+  if ((bot_flags(u1) & BOT_SHARE) && (!u || !(u->flags & USER_OWNER))) {
     dprintf(idx, "You can't change a share bot's address.\n");
     return;
   }
