@@ -2,7 +2,7 @@
 #  This is the Makefile for EGGDROP (the IRC bot)
 #  You should never need to edit this.
 #
-# $Id: Makefile.in,v 1.42 2008/07/04 03:17:25 tothwolf Exp $
+# $Id: Makefile.in,v 1.43 2010/03/14 18:21:59 pseudo Exp $
 
 SHELL = @SHELL@
 top_srcdir = @top_srcdir@
@@ -25,6 +25,7 @@ EGGVERSION = @EGGVERSION@
 #   -DDEBUG          generic debugging code
 #   -DDEBUG_ASSERT   to enable assert debugging
 #   -DDEBUG_MEM      to be able to debug memory allocation (.debug)
+#   -DDEBUG_DNS      to enable dns.mod extra debugging information
 #
 # Debug defines can be set with configure now.
 # See ./configure --help for more information.

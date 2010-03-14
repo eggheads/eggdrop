@@ -43,6 +43,9 @@
 /* Define if running on SunOS 4.0. */
 #undef DLOPEN_1
 
+/* Define the maximum length of handles on the bot. */
+#undef EGG_HANDLEN
+
 /* Defines the extension of Eggdrop modules. */
 #undef EGG_MOD_EXT
 
@@ -294,9 +297,6 @@
 
 /* Define to 1 if you have the <wchar.h> header file. */
 #undef HAVE_WCHAR_H
-
-/* Define if you have a version of libsafe with a broken sscanf(). */
-#undef LIBSAFE_HACKS
 
 /* Define if modules will work on your system. */
 #undef MODULES_OK

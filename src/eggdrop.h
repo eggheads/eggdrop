@@ -4,7 +4,7 @@
  *
  *   IF YOU ALTER THIS FILE, YOU NEED TO RECOMPILE THE BOT.
  *
- * $Id: eggdrop.h,v 1.76 2010/02/18 09:52:29 pseudo Exp $
+ * $Id: eggdrop.h,v 1.77 2010/03/14 18:21:59 pseudo Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -145,6 +145,11 @@
 #      undef MOD_USE_RLD
 #    endif
 #  endif
+#endif
+
+#ifdef EGG_HANDLEN
+#  undef HANDLEN
+#  define HANDLEN EGG_HANDLEN
 #endif
 
 #if (NICKMAX < 9) || (NICKMAX > 32)

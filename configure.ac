@@ -1,11 +1,11 @@
 dnl configure.ac: this file is processed by autoconf to produce ./configure.
 dnl
-dnl $Id: configure.ac,v 1.38 2010/02/18 09:52:29 pseudo Exp $
+dnl $Id: configure.ac,v 1.39 2010/03/14 18:21:59 pseudo Exp $
 
 AC_PREREQ(2.60)
 AC_INIT([Eggdrop],[1.6.20],[bugs@eggheads.org])
 AC_COPYRIGHT([Copyright (C) 1999 - 2010 Eggheads Development Team])
-AC_REVISION($Revision: 1.38 $)
+AC_REVISION($Revision: 1.39 $)
 AC_CONFIG_SRCDIR(src/eggdrop.h)
 AC_CONFIG_AUX_DIR(misc)
 AC_CONFIG_HEADER(config.h)
@@ -120,10 +120,6 @@ AC_FUNC_STRFTIME
 AC_FUNC_MMAP
 
 
-# Make sure we are using the correct result from a broken libsafe sscanf().
-EGG_CHECK_LIBSAFE_SSCANF
-
-
 # Tcl version to recommend if no Tcl is found, and the site where it can be
 # found for download.
 tclrecommendver="8.5.X"
@@ -185,6 +181,8 @@ EGG_DEBUG_OPTIONS
 EGG_DEBUG_CFLAGS
 EGG_ENABLE_DEBUG_CONTEXT
 
+# Let the user set the handlen with a configure option
+EGG_ARG_HANDLEN
 
 # Substitute Makefile variables.
 EGG_SUBST_EGGVERSION

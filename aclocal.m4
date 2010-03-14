@@ -16,7 +16,7 @@ dnl You should have received a copy of the GNU General Public License
 dnl along with this program; if not, write to the Free Software
 dnl Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 dnl
-dnl $Id: aclocal.m4,v 1.114 2010/01/26 03:12:15 tothwolf Exp $
+dnl $Id: aclocal.m4,v 1.115 2010/03/14 18:21:59 pseudo Exp $
 dnl
 
 
@@ -861,38 +861,20 @@ AC_DEFUN([EGG_CHECK_LIBS],
 ])
 
 
-dnl EGG_CHECK_LIBSAFE_SSCANF()
-dnl
-AC_DEFUN([EGG_CHECK_LIBSAFE_SSCANF],
-[
-  AC_CACHE_CHECK([for broken libsafe sscanf], egg_cv_var_libsafe_sscanf, [
-    AC_RUN_IFELSE([[
-      #include <stdio.h>
-
-      int main()
-      {
-        char *src = "0x001,guppyism\n", dst[10];
-        int idx;
-
-        if (sscanf(src, "0x%x,%10c", &idx, dst) == 1)
-          exit(1);
-
-        return(0);
-      }
-    ]], [
-      egg_cv_var_libsafe_sscanf="no"
-    ], [
-      egg_cv_var_libsafe_sscanf="yes"
-    ], [
-      egg_cv_var_libsafe_sscanf="cross"
-    ])
+dnl EGG_ARG_HANDLEN()
+dnl 
+AC_DEFUN([EGG_ARG_HANDLEN], [
+  AC_ARG_WITH(handlen, [  --with-handlen=VALUE    set the maximum length a handle on the bot can be], [
+    if test -n $withval && test $withval -ge 9 && test $withval -le 32;
+    then
+      AC_DEFINE_UNQUOTED(EGG_HANDLEN, $withval, [
+        Define the maximum length of handles on the bot.
+      ])
+    else
+      AC_MSG_WARN([Invalid handlen given (must be a number between 9 and 32), defaulting to 9.])
+    fi
   ])
-
-  if test "$egg_cv_var_libsafe_sscanf" = yes; then
-    AC_DEFINE(LIBSAFE_HACKS, 1, [Define if you have a version of libsafe with a broken sscanf().])
-  fi
 ])
-
 
 dnl
 dnl Misc checks.
@@ -1540,6 +1522,8 @@ AC_DEFUN([EGG_DEBUG_ENABLE],
   AC_ARG_ENABLE(debug-assert,  [  --disable-debug-assert  disable assert debug code], [enable_debug_assert="$enableval"], [enable_debug_assert="auto"])
   AC_ARG_ENABLE(debug-mem,     [  --enable-debug-mem      enable memory debug code (default for 'make debug')], [enable_debug_mem="$enableval"], [enable_debug_mem="auto"])
   AC_ARG_ENABLE(debug-mem,     [  --disable-debug-mem     disable memory debug code], [enable_debug_mem="$enableval"], [enable_debug_mem="auto"])
+  AC_ARG_ENABLE(debug-dns,     [  --enable-debug-dns      enable dns.mod debug messages (default for 'make debug')], [enable_debug_dns="$enableval"], [enable_debug_dns="auto"])
+  AC_ARG_ENABLE(debug-dns,     [  --disable-debug-dns     disable dns.mod debug messages], [enable_debug_dns="$enableval"], [enable_debug_dns="auto"])
   AC_ARG_ENABLE(debug-context, [  --enable-debug-context  enable context debug code (default)], [enable_debug_context="$enableval"], [enable_debug_context="auto"])
   AC_ARG_ENABLE(debug-context, [  --disable-debug-context disable context debug code], [enable_debug_context="$enableval"], [enable_debug_context="auto"])
 ])
@@ -1556,36 +1540,43 @@ AC_DEFUN([EGG_DEBUG_DEFAULTS],
   default_std_debug_assert="no"
   default_std_debug_mem="no"
   default_std_debug_context="yes"
+  default_std_debug_dns="no"
 
   # make: 'debug' or 'sdebug'
   default_deb_debug="yes"
   default_deb_debug_assert="yes"
   default_deb_debug_mem="yes"
   default_deb_debug_context="yes"
+  default_deb_debug_dns="yes"
 
   if test "$DEFAULT_MAKE" = eggdrop || test "$DEFAULT_MAKE" = static; then
     default_debug="$default_std_debug" 
     default_debug_assert="$default_std_debug_assert" 
     default_debug_mem="$default_std_debug_mem" 
     default_debug_context="$default_std_debug_context"
+    default_debug_dns="$default_std_debug_dns"
   else
     default_debug="$default_deb_debug"
     default_debug_assert="$default_deb_debug_assert"
     default_debug_mem="$default_deb_debug_mem"
     default_debug_context="$default_deb_debug_context"
+    default_debug_dns="$default_deb_debug_dns"
   fi
 
-  debug_options="debug debug_assert debug_mem"
+  debug_options="debug debug_assert debug_mem debug_dns"
 
   debug_cflags_debug="-g3 -DDEBUG"
   debug_cflags_debug_assert="-DDEBUG_ASSERT"
   debug_cflags_debug_mem="-DDEBUG_MEM"
+  debug_cflags_debug_dns="-DDEBUG_DNS"
   debug_stdcflags_debug=""
   debug_stdcflags_debug_assert=""
   debug_stdcflags_debug_mem=""
+  debug_stdcflags_debug_dns=""
   debug_debcflags_debug=""
   debug_debcflags_debug_assert=""
   debug_debcflags_debug_mem=""
+  debug_debcflags_debug_dns=""
 ])
 
 
