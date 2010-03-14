@@ -1,10 +1,15 @@
-$Id: Changes1.6,v 1.73 2010/03/14 18:21:59 pseudo Exp $
+$Id: Changes1.6,v 1.74 2010/03/14 18:30:17 pseudo Exp $
 
 Eggdrop Changes (since version 1.6.0)
 
     _____________________________________________________________________
 
 1.6.20 (CVS):
+
+  - Modified the uptime module to send packets at a random interval, with
+    per-second resolution, to reduce the peak traffic and load on the uptime
+    server.
+    Patch by: grnbrg
 
   - Added a configure option to set the handlen while keeping compatibility with
     the older method of editing eggdrop.h directly.

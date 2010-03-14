@@ -1,5 +1,5 @@
 /*
- * $Id: uptime.c,v 1.38 2010/01/03 13:27:55 pseudo Exp $
+ * $Id: uptime.c,v 1.39 2010/03/14 18:30:17 pseudo Exp $
  *
  * This module reports uptime information about your bot to http://uptime.eggheads.org. The
  * purpose for this is to see how your bot rates against many others (including EnergyMechs
@@ -48,15 +48,23 @@
 #include <unistd.h>
 
 /*
- * both regnr and cookie are unused; however, they both must be here inorder for
+ * regnr is unused; however, it must be here inorder for
  * us to create a proper struct for the uptime server.
+ *
+ * "packets_sent" was originally defined as "cookie",
+ * however this field was deprecated and set to zero
+ * for most versions of the uptime client.  It has been
+ * repurposed and renamed as of uptime v1.3 to reflect 
+ * the number of packets the client thinks it has sent
+ * over the life of the module.  Only the name has changed -
+ * the type (unsigned long) is still the same.
  */
 
 typedef struct PackUp {
   int regnr;
   int pid;
   int type;
-  unsigned long cookie;
+  unsigned long packets_sent;
   unsigned long uptime;
   unsigned long ontime;
   unsigned long now2;
@@ -68,11 +76,19 @@ PackUp upPack;
 
 static Function *global = NULL;
 
-static int hours = 0;
+static int minutes = 0;
+static int seconds = 0;
+static int next_seconds = 0;
+static int next_minutes = 0;
+static int update_interval = 720; /* rand(0..12) hours: ~6 hour average. */
+static time_t next_update = 0;
 static int uptimesock;
 static int uptimecount;
 static unsigned long uptimeip;
 static char uptime_version[48] = "";
+
+void check_secondly(void);
+void check_minutely(void);
 
 static int uptime_expmem()
 {
@@ -81,13 +97,18 @@ static int uptime_expmem()
 
 static void uptime_report(int idx, int details)
 {
+  int delta_seconds;
+  char *next_update_at;
+  
   if (details) {
-    int size = uptime_expmem();
+    delta_seconds = (int) (next_update - time(NULL));
+    next_update_at = ctime(&next_update);
+    next_update_at[strlen(next_update_at) - 1] = 0;
 
-    dprintf(idx, "    %d uptime packet%s sent\n", uptimecount,
+    dprintf(idx, "      %d uptime packet%s sent\n", uptimecount,
             (uptimecount != 1) ? "s" : "");
-    dprintf(idx, "    Using %d byte%s of memory\n", size,
-            (size != 1) ? "s" : "");
+    dprintf(idx, "      Approximately %-.2f hours until next update "
+            "(at %s)\n", delta_seconds / 3600.0, next_update_at);
   }
 }
 
@@ -119,7 +140,7 @@ int init_uptime(void)
   upPack.regnr = 0;  /* unused */
   upPack.pid = 0;    /* must set this later */
   upPack.type = htonl(uptime_type);
-  upPack.cookie = 0; /* unused */
+  upPack.packets_sent = 0; /* reused (abused?) to send our packet count */
   upPack.uptime = 0; /* must set this later */
   uptimecount = 0;
   uptimeip = -1;
@@ -140,6 +161,12 @@ int init_uptime(void)
     return ((uptimesock = -1));
   }
   fcntl(uptimesock, F_SETFL, O_NONBLOCK | fcntl(uptimesock, F_GETFL));
+
+  next_minutes = rand() % update_interval; /* Initial update delay */
+  next_seconds = rand() % 59;
+  next_update = (time_t) ((time(NULL) / 60 * 60) + (next_minutes * 60) +
+    next_seconds);
+
   return 0;
 }
 
@@ -160,6 +187,8 @@ int send_uptime(void)
   }
 
   uptimecount++;
+  upPack.packets_sent = htonl(uptimecount); /* Tell the server how many 
+					       uptime packets we've sent. */
   upPack.now2 = htonl(time(NULL));
   upPack.ontime = 0;
 
@@ -187,9 +216,13 @@ int send_uptime(void)
   len = sizeof(upPack) + strlen(botnetnick) + strlen(servhost) +
         strlen(uptime_version);
   mem = (PackUp *) nmalloc(len);
+  egg_bzero(mem, len); /* mem *should* be completely filled before it's
+                             * sent to the server.  But belt-and-suspenders
+                             * is always good.
+                             */
   my_memcpy(mem, &upPack, sizeof(upPack));
   sprintf(mem->string, "%s %s %s", botnetnick, servhost, uptime_version);
-  egg_memset(&sai, 0, sizeof(sai));
+  egg_bzero(&sai, sizeof(sai));
   sai.sin_family = AF_INET;
   sai.sin_addr.s_addr = uptimeip;
   sai.sin_port = htons(uptime_port);
@@ -199,18 +232,40 @@ int send_uptime(void)
   return len;
 }
 
-void check_hourly()
+void check_minutely()
 {
-  hours++;
-  if (hours == 6) {
+  minutes++;
+  if (minutes >= next_minutes) { 
+    /* We're down to zero minutes.  Now do the seconds. */
+    del_hook(HOOK_MINUTELY, (Function) check_minutely);
+    add_hook(HOOK_SECONDLY, (Function) check_secondly);
+  }
+}
+
+void check_secondly()
+{
+  seconds++;
+  if (seconds >= next_seconds) {  /* DING! */
+    del_hook(HOOK_SECONDLY, (Function) check_secondly);
+    
     send_uptime();
-    hours = 0;
+
+    minutes = 0; /* Reset for the next countdown. */
+    seconds = 0;
+    next_minutes = rand() % update_interval;
+    next_seconds = rand() % 59;
+    next_update = (time_t) ((time(NULL) / 60 * 60) + (next_minutes * 60) +
+      next_seconds);
+
+    /* Go back to checking every minute. */
+    add_hook(HOOK_MINUTELY, (Function) check_minutely);
   }
 }
 
 static char *uptime_close()
 {
-  return "You cannot unload the uptime module (doing so will reset your stats).";
+  return "You cannot unload the uptime module "
+         "(doing so will reset your stats).";
 }
 
 EXPORT_SCOPE char *uptime_start(Function *);
@@ -227,14 +282,14 @@ char *uptime_start(Function *global_funcs)
   if (global_funcs) {
     global = global_funcs;
 
-    module_register(MODULE_NAME, uptime_table, 1, 2);
+    module_register(MODULE_NAME, uptime_table, 1, 3);
     if (!module_depend(MODULE_NAME, "eggdrop", 106, 11)) {
       module_undepend(MODULE_NAME);
       return "This module requires Eggdrop 1.6.11 or later.";
     }
 
     add_help_reference("uptime.help");
-    add_hook(HOOK_HOURLY, (Function) check_hourly);
+    add_hook(HOOK_MINUTELY, (Function) check_minutely);
     init_uptime();
   }
   return NULL;
