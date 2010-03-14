@@ -1,5 +1,5 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
-<!-- $Id: tcl-commands.html,v 1.67 2010/03/08 20:52:56 pseudo Exp $ -->
+<!-- $Id: tcl-commands.html,v 1.68 2010/03/14 18:34:59 pseudo Exp $ -->
 
 <html>
   <head>
@@ -3670,6 +3670,22 @@
 
           <p><strong>Returns:</strong> 1 if the address matches the
           block prefix, 0 otherwise.</p>
+          
+          <p><strong>Module:</strong> core</p>
+        </dd>
+
+
+        <dt><strong><a name="cmd_matchstr"></a>matchstr &lt;pattern&gt;
+        &lt;string&gt;</strong></dt>*
+
+        <dd>
+          <p><strong>Description:</strong> checks if pattern matches string.
+          Only two wildcards are supported: '*' and '?'. Matching is
+          case-insensitive. This command is intended as a simplified
+          alternative to Tcl's string match.</p>
+
+          <p><strong>Returns:</strong> 1 if the pattern matches the string,
+          0 if it doesn't.</p>
           
           <p><strong>Module:</strong> core</p>
         </dd>

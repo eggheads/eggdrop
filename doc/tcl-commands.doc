@@ -1,4 +1,4 @@
-$Id: tcl-commands.doc,v 1.133 2010/03/08 20:52:56 pseudo Exp $
+$Id: tcl-commands.doc,v 1.134 2010/03/14 18:34:59 pseudo Exp $
 
 Eggdrop Tcl Commands
 Last revised: November 23, 2009
@@ -1585,6 +1585,13 @@ marked with vertical bars (|) on the left.
 |     IPv6 is supported, if enabled at compile time.
 |       Example: matchcidr 192.168.0.0 192.168.1.17 16
 |   Returns: 1 if the address matches the block prefix, 0 otherwise.
+|   Module: core
+
+|  matchstr <pattern> <string>
+|   Description: checks if pattern matches string. Only two wildcards are
+|     supported: '*' and '?'. Matching is case-insensitive. This command
+|     is intended as a simplified alternative to Tcl's string match.  
+|   Returns: 1 if the pattern matches the string, 0 if it doesn't.
 |   Module: core
 
 *** GLOBAL VARIABLES ***

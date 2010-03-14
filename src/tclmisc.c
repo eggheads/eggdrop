@@ -2,7 +2,7 @@
  * tclmisc.c -- handles:
  *   Tcl stubs for everything else
  *
- * $Id: tclmisc.c,v 1.67 2010/03/08 20:52:56 pseudo Exp $
+ * $Id: tclmisc.c,v 1.68 2010/03/14 18:34:59 pseudo Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -744,6 +744,17 @@ static int tcl_matchcidr STDVAR
     Tcl_AppendResult(irp, "0", NULL);
   return TCL_OK;
 }
+
+static int tcl_matchstr STDVAR
+{
+  BADARGS(3, 3, " pattern string");
+
+  if (wild_match(argv[1], argv[2]))
+    Tcl_AppendResult(irp, "1", NULL);
+  else
+    Tcl_AppendResult(irp, "0", NULL);
+  return TCL_OK;
+}
                     
 tcl_cmds tclmisc_objcmds[] = {
 #ifdef USE_TCL_OBJ
@@ -792,5 +803,6 @@ tcl_cmds tclmisc_cmds[] = {
   {"stripcodes",     tcl_stripcodes},
   {"matchaddr",       tcl_matchaddr},
   {"matchcidr",       tcl_matchcidr},
+  {"matchstr",         tcl_matchstr},
   {NULL,                       NULL}
 };
