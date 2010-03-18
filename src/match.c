@@ -4,7 +4,7 @@
  *   hostmask matching
  *   cidr matching
  *
- * $Id: match.c,v 1.16 2010/03/08 11:18:07 pseudo Exp $
+ * $Id: match.c,v 1.17 2010/03/18 15:19:39 pseudo Exp $
  *
  * Once this code was working, I added support for % so that I could
  * use the same code both in Eggdrop and in my IrcII client.
@@ -413,9 +413,9 @@ inline int cron_matchfld(char *mask, int match)
  * crontab operators are supported: ranges '-', asterisks '*',
  * lists ',' and steps '/'.
  * match must have 5 space separated integers representing in order
- * the current minute, hour, day of month, month and year.
- * It should look like this: "53 17 01 03 2010", which means
- * 01 March 2010, 17:53.
+ * the current minute, hour, day of month, month and weekday.
+ * It should look like this: "53 17 01 03 06", which means
+ * Sunday 01 March, 17:53.
  */
 int cron_match(const char *mask, const char *match)
 {
@@ -433,7 +433,8 @@ int cron_match(const char *mask, const char *match)
     q = newsplit(&p);
     if (!strcmp(q, "*"))
       continue;
-    m = cron_matchfld(q, t[i]);
+    m = (cron_matchfld(q, t[i]) ||
+        (i == 4 && !t[i] && cron_matchfld(q, 7)));
     if (i == 2)
       d = m;
     else if (!m || (i == 3 && d))

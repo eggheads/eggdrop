@@ -2,7 +2,7 @@
  * tclmisc.c -- handles:
  *   Tcl stubs for everything else
  *
- * $Id: tclmisc.c,v 1.68 2010/03/14 18:34:59 pseudo Exp $
+ * $Id: tclmisc.c,v 1.69 2010/03/18 15:19:39 pseudo Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -565,7 +565,7 @@ static int tcl_unames STDVAR
 
   if (uname(&un) < 0) {
 #endif
-    unix_n = "*unkown*";
+    unix_n = "*unknown*";
     vers_n = "";
 #ifdef HAVE_UNAME
   } else {

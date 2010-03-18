@@ -1,5 +1,5 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
-<!-- $Id: tcl-commands.html,v 1.68 2010/03/14 18:34:59 pseudo Exp $ -->
+<!-- $Id: tcl-commands.html,v 1.69 2010/03/18 15:19:39 pseudo Exp $ -->
 
 <html>
   <head>
@@ -4815,12 +4815,11 @@
               proc-name &lt;queue&gt; &lt;text&gt; &lt;queued|sent&gt;
               </strong></p>
 
-              <p><strong>Description:</strong> triggered triggered whenever
-              output is sent to the server. Normally the event will occur
-              twice for each line sent: once before entering a server queue
-              and once after the message is actually sent. This allows for more
-              flexible logging of server output and introduces the ability to
-              cancel the message.
+              <p><strong>Description:</strong> triggered whenever output is sent
+              to the server. Normally the event will occur twice for each line
+              sent: once before entering a server queue and once after the
+              message is actually sent. This allows for more flexible logging of
+              server output and introduces the ability to cancel messages.
               Mask is matched against "queue status", where status is either
               'queued' or 'sent'. Queues are: mode, server, help, noqueue.
               noqueue is only used by the putnow tcl command.</p>
@@ -4839,14 +4838,14 @@
               mask is evaluated as a cron expression, e.g.
               &quot;16/2 */2 5-15 7,8,9 4&quot;. It can contain up to five
               fields: minute, hour, day, month, weekday; delimited by
-              whitespace. Week days are represented as 0-6, where 0 is Sunday.
-              Symbolic names are not supported. The bind will be triggered if
-              the mask matches all of the fields, except that if both day and
-              weekday are not '*', only one of them is required to match. If
-              any number of fields are omitted at the end, the match will
-              proceed as if they were '*'. All cron operators are supported.
-              Please refer to the crontab manual for their meanings. Flags are
-              ignored.</p>
+              whitespace. Week days are represented as 0-6, except Sunday
+              which can be either 0 or 7. Symbolic names are not supported. The
+              bind will be triggered if the mask matches all of the fields,
+              except that if both day and weekday are not '*', only one of them
+              is required to match. If any number of fields are omitted at the
+              end, the match will proceed as if they were '*'. All cron
+              operators are supported. Please refer to the crontab manual for
+              their meanings. Flags are ignored.</p>
 
               <p><strong>Module:</strong> core</p>
             </li>
