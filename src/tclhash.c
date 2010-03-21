@@ -7,7 +7,7 @@
  *   (non-Tcl) procedure lookups for msg/dcc/file commands
  *   (Tcl) binding internal procedures to msg/dcc/file commands
  *
- * $Id: tclhash.c,v 1.68 2010/03/08 20:52:56 pseudo Exp $
+ * $Id: tclhash.c,v 1.69 2010/03/21 20:41:32 pseudo Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -254,6 +254,7 @@ void kill_bind(void)
       putlog(LOG_DEBUG, "*", "De-Allocated bind table %s", tl->name);
     tcl_bind_list_delete(tl);
   }
+  H_log = NULL;
   bind_table_list = NULL;
 }
 
