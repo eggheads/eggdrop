@@ -1,10 +1,15 @@
-$Id: Changes1.6,v 1.77 2010/03/21 20:41:32 pseudo Exp $
+$Id: Changes1.6,v 1.78 2010/03/23 15:25:29 pseudo Exp $
 
 Eggdrop Changes (since version 1.6.0)
 
     _____________________________________________________________________
 
 1.6.20 (CVS):
+
+  - Changed some eggdrop.conf settings. .set and .tcl are no longer unbound
+    by default.
+  - Made .+chan check if the user is permitted to set the need-* settings.
+    Patch by: pseudo
 
   - Fixed a crash when restarting, related to bind log.
     Patch by: pseudo

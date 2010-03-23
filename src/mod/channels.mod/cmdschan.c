@@ -2,7 +2,7 @@
  * cmdschan.c -- part of channels.mod
  *   commands from a user via dcc that cause server interaction
  *
- * $Id: cmdschan.c,v 1.81 2010/02/18 13:03:04 pseudo Exp $
+ * $Id: cmdschan.c,v 1.82 2010/03/23 15:25:29 pseudo Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -1173,6 +1173,8 @@ static void cmd_mns_chrec(struct userrec *u, int idx, char *par)
 
 static void cmd_pls_chan(struct userrec *u, int idx, char *par)
 {
+  int i, argc;
+  EGG_CONST char **argv;
   char *chname;
   struct chanset_t *chan;
 
@@ -1196,6 +1198,24 @@ static void cmd_pls_chan(struct userrec *u, int idx, char *par)
     return;
   }
 
+  if (Tcl_SplitList(NULL, par, &argc, &argv ) == TCL_ERROR) {
+    dprintf(idx, "Invalid channel options.\n");
+    return;
+  }
+  for (i = 0; i < argc; i++) {
+    if (argv[i][0] == '-' || argv[i][0] == '+')
+      continue;
+    if (!strncmp(argv[i], "need-", 5) && (!(u->flags & USER_OWNER) ||
+        (!isowner(dcc[idx].nick) && must_be_owner))) {
+      dprintf(idx, "Due to security concerns, only permanent owners can set "
+                   "the need-* modes.\n");
+      Tcl_Free((char *) argv);
+      return;
+    }
+    i++;
+  }
+  Tcl_Free((char *) argv);
+    
   if (tcl_channel_add(0, chname, par) == TCL_ERROR)
     dprintf(idx, "Invalid channel or channel options.\n");
   else
