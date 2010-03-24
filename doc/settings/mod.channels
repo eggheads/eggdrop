@@ -1,4 +1,4 @@
-$Id: mod.channels,v 1.25 2010/01/03 13:27:23 pseudo Exp $
+$Id: mod.channels,v 1.26 2010/03/24 13:14:50 pseudo Exp $
 
 Channels Module
 Last revised: February 12, 2003
@@ -155,7 +155,7 @@ Last revised: February 12, 2003
          shorter than 120 characters. If you use scripts like getops.tcl or
          botnetop.tcl, you don't need to set this setting.
 
-       flood-chan 10:60
+       flood-chan 15:60
          Set here how many channel messages in how many seconds from one
          host constitutes a flood. Setting this to 0 or 0:0 disables text
          flood protection for the channel.
@@ -299,11 +299,13 @@ Last revised: February 12, 2003
           fighting with services such as ChanServ, or from kicking IRCops when
           setting channel modes without having ops.
 
+        static
+          Allow only permanent owners to remove the channel?
 
     The following settings are used as default values when you .+chan #chan or .tcl
     channel add #chan. Look in the section above for explanation of every option.
 
-    set global-flood-chan 10:60
+    set global-flood-chan 15:60
     set global-flood-deop 3:10
     set global-flood-kick 3:10
     set global-flood-join 5:60
@@ -327,10 +329,10 @@ Last revised: February 12, 2003
           -protectfriends +protectops
           -revenge        -revengebot
           -secret         -seen
-          +shared         +statuslog
+          +shared         -statuslog
           +userbans       +userexempts
           +userinvites    +protecthalfops
-          +autohalfop
+          +autohalfop     -static
     }
 
     _____________________________________________________________________

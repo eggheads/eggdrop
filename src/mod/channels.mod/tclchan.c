@@ -1,7 +1,7 @@
 /*
  * tclchan.c -- part of channels.mod
  *
- * $Id: tclchan.c,v 1.104 2010/02/18 09:52:29 pseudo Exp $
+ * $Id: tclchan.c,v 1.105 2010/03/24 13:14:50 pseudo Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -894,6 +894,10 @@ static int tcl_channel_info(Tcl_Interp *irp, struct chanset_t *chan)
     Tcl_AppendElement(irp, "+nodesynch");
   else
     Tcl_AppendElement(irp, "-nodesynch");
+  if (chan->status & CHAN_STATIC)
+    Tcl_AppendElement(irp, "+static");
+  else
+    Tcl_AppendElement(irp, "-static");
   for (ul = udef; ul; ul = ul->next) {
     /* If it's undefined, skip it. */
     if (!ul->defined || !ul->name)
@@ -1004,6 +1008,7 @@ static int tcl_channel_get(Tcl_Interp *irp, struct chanset_t *chan,
   else if CHKFLAG_POS(CHAN_CYCLE, "cycle", chan->status)
   else if CHKFLAG_POS(CHAN_SEEN, "seen", chan->status)
   else if CHKFLAG_POS(CHAN_NODESYNCH, "nodesynch", chan->status)
+  else if CHKFLAG_POS(CHAN_STATIC, "static", chan->status)
   else if CHKFLAG_POS(CHAN_DYNAMICEXEMPTS, "dynamicexempts",
                       chan->ircnet_status)
   else if CHKFLAG_NEG(CHAN_NOUSEREXEMPTS, "userexempts",
@@ -1319,6 +1324,10 @@ static int tcl_channel_modify(Tcl_Interp *irp, struct chanset_t *chan,
       chan->status |= CHAN_SEEN;
     else if (!strcmp(item[i], "-seen"))
       chan->status &= ~CHAN_SEEN;
+    else if (!strcmp(item[i], "+static"))
+      chan->status |= CHAN_STATIC;
+    else if (!strcmp(item[i], "-static"))
+      chan->status &= ~CHAN_STATIC;
     else if (!strcmp(item[i], "+dynamicexempts"))
       chan->ircnet_status |= CHAN_DYNAMICEXEMPTS;
     else if (!strcmp(item[i], "-dynamicexempts"))
@@ -1619,7 +1628,6 @@ static int tcl_loadchannels STDVAR
     Tcl_AppendResult(irp, "no channel file", NULL);
     return TCL_ERROR;
   }
-  setstatic = 0;
   read_channels(1);
   return TCL_OK;
 }
@@ -1950,8 +1958,6 @@ static int tcl_channel_add(Tcl_Interp *irp, char *newname, char *options)
     /* Channel name is stored in xtra field for sharebot stuff */
     join = 1;
   }
-  if (setstatic)
-    chan->status |= CHAN_STATIC;
   /* If chan_hack is set, we're loading the userfile. Ignore errors while
    * reading userfile and just return TCL_OK. This is for compatability
    * if a user goes back to an eggdrop that no-longer supports certain

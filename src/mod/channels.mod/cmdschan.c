@@ -2,7 +2,7 @@
  * cmdschan.c -- part of channels.mod
  *   commands from a user via dcc that cause server interaction
  *
- * $Id: cmdschan.c,v 1.82 2010/03/23 15:25:29 pseudo Exp $
+ * $Id: cmdschan.c,v 1.83 2010/03/24 13:14:50 pseudo Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -1203,15 +1203,16 @@ static void cmd_pls_chan(struct userrec *u, int idx, char *par)
     return;
   }
   for (i = 0; i < argc; i++) {
-    if (argv[i][0] == '-' || argv[i][0] == '+')
-      continue;
-    if (!strncmp(argv[i], "need-", 5) && (!(u->flags & USER_OWNER) ||
-        (!isowner(dcc[idx].nick) && must_be_owner))) {
-      dprintf(idx, "Due to security concerns, only permanent owners can set "
-                   "the need-* modes.\n");
+    if ((!strncmp(argv[i], "need-", 5) || !strcmp(argv[i] + 1, "static"))
+        && (!(u->flags & USER_OWNER) || (!isowner(dcc[idx].nick)
+        && must_be_owner))) {
+      dprintf(idx, "Due to security concerns, only permanent owners can "
+                   "set the need-* and +/-static modes.\n");
       Tcl_Free((char *) argv);
       return;
     }
+    if (argv[i][0] == '-' || argv[i][0] == '+')
+      continue;
     i++;
   }
   Tcl_Free((char *) argv);
@@ -1243,7 +1244,7 @@ static void cmd_mns_chan(struct userrec *u, int idx, char *par)
     return;
   }
   if (channel_static(chan)) {
-    dprintf(idx, "Cannot remove %s, it is not a dynamic channel!.\n", chname);
+    dprintf(idx, "Cannot remove %s, it is a static channel!\n", chname);
     return;
   }
 
@@ -1360,8 +1361,9 @@ static void cmd_chaninfo(struct userrec *u, int idx, char *par)
             (chan->status & CHAN_DYNAMICBANS) ? '+' : '-',
             (chan->status & CHAN_NOUSERBANS) ? '-' : '+',
             (chan->status & CHAN_AUTOHALFOP) ? '+' : '-');
-    dprintf(idx, "     %cprotecthalfops\n",
-            (chan->status & CHAN_PROTECTHALFOPS) ? '+' : '-');
+    dprintf(idx, "     %cprotecthalfops %cstatic\n",
+            (chan->status & CHAN_PROTECTHALFOPS) ? '+' : '-',
+            (chan->status & CHAN_STATIC) ? '+' : '-');
     dprintf(idx,
             "     %cdynamicexempts %cuserexempts    %cdynamicinvites "
             "%cuserinvites\n",
@@ -1508,6 +1510,12 @@ static void cmd_chanset(struct userrec *u, int idx, char *par)
       while (list[0][0]) {
         if (list[0][0] == '+' || list[0][0] == '-' ||
             (!strcmp(list[0], "dont-idle-kick"))) {
+            if (!strcmp(list[0] + 1, "static") && must_be_owner &&
+                !(isowner(dcc[idx].nick))) {
+              dprintf(idx, "Only permanent owners can modify the static flag.\n");
+              nfree(buf);
+              return;
+            }
           if (tcl_channel_modify(0, chan, 1, list) == TCL_OK) {
             strcat(answers, list[0]);
             strcat(answers, " ");
@@ -1584,7 +1592,6 @@ static void cmd_chanload(struct userrec *u, int idx, char *par)
   else {
     dprintf(idx, "Reloading all dynamic channel settings.\n");
     putlog(LOG_CMDS, "*", "#%s# chanload", dcc[idx].nick);
-    setstatic = 0;
     read_channels(1);
   }
 }

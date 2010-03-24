@@ -2,7 +2,7 @@
  * channels.c -- part of channels.mod
  *   support for channels within the bot
  *
- * $Id: channels.c,v 1.104 2010/02/18 09:52:29 pseudo Exp $
+ * $Id: channels.c,v 1.105 2010/03/24 13:14:50 pseudo Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -36,7 +36,7 @@ static char *lastdeletedmask;
 
 static struct udef_struct *udef;
 
-static int setstatic, use_info, chan_hack, quiet_save, global_revenge_mode,
+static int use_info, chan_hack, quiet_save, global_revenge_mode,
            global_stopnethack_mode, global_idle_kick, global_aop_min,
            global_aop_max, global_ban_time, global_exempt_time,
            global_invite_time, global_ban_type, allow_ps;
@@ -543,14 +543,12 @@ static void channels_prerehash()
     if (chan->status & CHAN_STATIC)
       chan->status &= ~CHAN_STATIC;
   }
-  setstatic = 1;
 }
 
 static void channels_rehash()
 {
   struct chanset_t *chan;
 
-  setstatic = 0;
   read_channels(1);
   /* Remove any extra channels, by checking the flag. */
   chan = chanset;
@@ -969,7 +967,6 @@ char *channels_start(Function *global_funcs)
   global_aop_min = 5;
   global_aop_max = 30;
   allow_ps = 0;
-  setstatic = 0;
   lastdeletedmask = 0;
   use_info = 1;
   strcpy(chanfile, "chanfile");
@@ -1034,6 +1031,5 @@ char *channels_start(Function *global_funcs)
   add_tcl_ints(my_tcl_ints);
   add_tcl_coups(mychan_tcl_coups);
   read_channels(0);
-  setstatic = 1;
   return NULL;
 }

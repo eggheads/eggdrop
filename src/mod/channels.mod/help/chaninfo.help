@@ -160,6 +160,7 @@
                        the bot from fighting with services such as ChanServ, or
                        from kicking IRCops when setting channel modes without
                        having ops.
+        %bstatic%b         Allow only permanent owners to remove the channel?
      The following are flood settings, they are set via ".chanset <channel>
      flood-type number:seconds", where number and second are integers
      indicating the number of times in how many seconds the flood will be
