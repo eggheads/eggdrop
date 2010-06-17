@@ -1,7 +1,7 @@
-$Id: THANKS,v 1.3 2010/01/03 13:27:22 pseudo Exp $:
+$Id: THANKS,v 1.4 2010/06/17 20:44:33 simple Exp $:
 
 Eggdrop Developers and Contributors
-Last revised: May 6, 2009
+Last revised: June 16, 2010
 
 ------------------------------------------------------------------------------
 
@@ -47,7 +47,9 @@ NC
 poptix         Matthew Hallacy                 poptix@poptix.net
 Q                                              Q@ping.be
 Robey          Robey Pointer                   robey@lag.net
+rfc                                            rfc@undernet.org
 rtc            Peter 'Rattacresh' Backes       rtc@helen.plasma.xg8.de
+simple         Jonathan Rudolph                skralg@gmail.com
 stdarg                                         stdarg@yahoo.com
 Sup            Teemu Hjelt                     sup@techmonkeys.org
 SuperS         Kevin Lamothe                   supers@starblaze.2y.net
