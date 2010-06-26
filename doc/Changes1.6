@@ -1,10 +1,14 @@
-$Id: Changes1.6,v 1.79 2010/03/24 13:14:50 pseudo Exp $
+$Id: Changes1.6,v 1.80 2010/06/26 20:26:05 pseudo Exp $
 
 Eggdrop Changes (since version 1.6.0)
 
     _____________________________________________________________________
 
 1.6.20 (CVS):
+
+  - Removed root uid check when compiled on Cygwin, as it was reported to
+    cause problems for some cygwin installations, while it doesn't provide
+    any protection, as administrator accounts appear as non-zero uids anyway.
 
   - Channels added in the config are no longer static. Added access to the
     static flag via new channel setting, available to permanent owners only.

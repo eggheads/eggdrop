@@ -5,7 +5,7 @@
  *   command line arguments
  *   context and assert debugging
  *
- * $Id: main.c,v 1.132 2010/03/08 11:18:07 pseudo Exp $
+ * $Id: main.c,v 1.133 2010/06/26 20:26:05 pseudo Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -800,9 +800,14 @@ int main(int argc, char **argv)
 
   printf("\n%s\n", version);
 
-  /* Don't allow eggdrop to run as root */
+#ifndef CYGWIN_HACKS
+  /* Don't allow eggdrop to run as root
+   * This check isn't useful under cygwin and has been
+   * reported to cause trouble in some situations.
+   */
   if (((int) getuid() == 0) || ((int) geteuid() == 0))
     fatal("ERROR: Eggdrop will not run as root!", 0);
+#endif
 
   init_dcc_max();
   init_userent();
