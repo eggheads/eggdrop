@@ -1,10 +1,14 @@
-$Id: Changes1.6,v 1.80 2010/06/26 20:26:05 pseudo Exp $
+$Id: Changes1.6,v 1.81 2010/06/28 21:13:26 thommey Exp $
 
 Eggdrop Changes (since version 1.6.0)
 
     _____________________________________________________________________
 
 1.6.20 (CVS):
+
+  - Modified compat.tcl version of time to allow accessing Tcl's time
+    command if any arguments are passed to it.
+    Patch by: Pixelz
 
   - Removed root uid check when compiled on Cygwin, as it was reported to
     cause problems for some cygwin installations, while it doesn't provide

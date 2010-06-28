@@ -10,8 +10,9 @@
 # Tothwolf  06Oct1999: optimized
 # rtc       10Oct1999: added [set|get][dn|up]loads functions
 # pseudo    04Oct2009: added putdccraw
+# Pixelz    08Apr2010: changed [time] to be compatible with Tcl [time]
 #
-# $Id: compat.tcl,v 1.17 2010/01/03 13:27:31 pseudo Exp $
+# $Id: compat.tcl,v 1.18 2010/06/28 21:13:26 thommey Exp $
 
 proc gethosts {hand} {
   getuser $hand HOSTS
@@ -80,8 +81,20 @@ proc getchanlaston {hand} {
   lindex [getuser $hand LASTON] 1
 }
 
-proc time {} {
-  strftime "%H:%M"
+if {![llength [info commands {TCLTIME}]] && [llength [info commands {time}]]} {
+  rename time TCLTIME
+}
+
+proc time {args} {
+  if {([llength $args] != 0) && [llength [info commands {TCLTIME}]]} {
+    if {[llength [info commands {uplevel}]]} {
+      uplevel 1 TCLTIME $args
+    } else {
+      eval TCLTIME $args
+    }
+  } else {
+    strftime "%H:%M"
+  }
 }
 
 proc date {} {
