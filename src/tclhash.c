@@ -7,7 +7,7 @@
  *   (non-Tcl) procedure lookups for msg/dcc/file commands
  *   (Tcl) binding internal procedures to msg/dcc/file commands
  *
- * $Id: tclhash.c,v 1.69 2010/03/21 20:41:32 pseudo Exp $
+ * $Id: tclhash.c,v 1.70 2010/06/29 15:52:24 thommey Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -890,7 +890,7 @@ int check_tcl_bind(tcl_bind_list_t *tl, const char *match,
   /* Now that we have found at least one bind, we can update the
    * preferred entries information.
    */
-  if (tm_p) {
+  if (tm_p && tm_p->next) {
     tm = tm_p->next;            /* Move mask to front of bind's mask list. */
     tm_p->next = tm->next;      /* Unlink mask from list. */
     tm->next = tl->first;       /* Readd mask to front of list. */

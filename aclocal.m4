@@ -16,7 +16,7 @@ dnl You should have received a copy of the GNU General Public License
 dnl along with this program; if not, write to the Free Software
 dnl Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 dnl
-dnl $Id: aclocal.m4,v 1.115 2010/03/14 18:21:59 pseudo Exp $
+dnl $Id: aclocal.m4,v 1.116 2010/06/29 15:52:23 thommey Exp $
 dnl
 
 
@@ -1370,6 +1370,38 @@ AC_DEFUN([EGG_TCL_CHECK_GETCURRENTTHREAD],
     if test "x$ac_cv_lib_pthread" != x; then
       EGG_APPEND_VAR(LIBS, $ac_cv_lib_pthread)
     fi
+  fi
+])
+
+
+dnl EGG_TCL_CHECK_GETTHREADDATA
+dnl
+AC_DEFUN([EGG_TCL_CHECK_GETTHREADDATA],
+[
+  if test "$egg_tcl_changed" = yes; then
+    EGG_CACHE_UNSET(egg_cv_var_tcl_getthreaddata)
+  fi
+
+  # Check for Tcl_GetThreadData()
+  AC_CHECK_LIB($TCL_TEST_LIB, Tcl_GetThreadData, [egg_cv_var_tcl_getthreaddata="yes"], [egg_cv_var_tcl_getthreaddata="no"], $TCL_TEST_OTHERLIBS)
+  if test "$egg_cv_var_tcl_getthreaddata" = yes; then
+    AC_DEFINE(HAVE_TCL_GETTHREADDATA, 1, [Define for Tcl that has Tcl_GetThreadData() (8.1a2 and later).])
+  fi
+])
+
+
+dnl EGG_TCL_CHECK_SETNOTIFIER
+dnl
+AC_DEFUN([EGG_TCL_CHECK_SETNOTIFIER],
+[
+  if test "$egg_tcl_changed" = yes; then
+    EGG_CACHE_UNSET(egg_cv_var_tcl_setnotifier)
+  fi
+
+  # Check for Tcl_SetNotifier()
+  AC_CHECK_LIB($TCL_TEST_LIB, Tcl_SetNotifier, [egg_cv_var_tcl_setnotifier="yes"], [egg_cv_var_tcl_setnotifier="no"], $TCL_TEST_OTHERLIBS)
+  if test "$egg_cv_var_tcl_setnotifier" = yes; then
+    AC_DEFINE(HAVE_TCL_SETNOTIFIER, 1, [Define for Tcl that has Tcl_SetNotifier() (8.2b1 and later).])
   fi
 ])
 

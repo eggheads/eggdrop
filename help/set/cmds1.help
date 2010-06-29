@@ -225,10 +225,11 @@
      0 - allow *no* outside boots
      1 - allow boots from sharebots
      2 - allow any boots
-%{help=set max-dcc}%{+n}
-###  %bset max-dcc%b <max dcc connections>
-   Set here the maximum number of dcc connections you will allow.
-   You can increase this later, but never decrease it.
+%{help=set max-socks}%{+n}
+###  %bset max-socks%b <max dcc connections>
+   Set here the maximum number of socket connections you will allow. You can
+   increase this later, but never decrease it below current usage. If you're
+   using Tcl threads, this is a per-thread maximum.
 %{help=set max-logs}%{+n}
 ###  %bset max-logs%b <max number of logs>
    This is the maximum number of logfiles allowed. This setting

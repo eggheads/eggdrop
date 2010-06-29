@@ -3,7 +3,7 @@
  *   moving the process to the background, i.e. forking, while keeping threads
  *   happy.
  *
- * $Id: bg.c,v 1.16 2010/01/26 03:12:15 tothwolf Exp $
+ * $Id: bg.c,v 1.17 2010/06/29 15:52:24 thommey Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -128,7 +128,7 @@ static void bg_do_detach(pid_t p)
 
 void bg_prepare_split(void)
 {
-  if (!tcl_threaded())
+  if (!fork_before_tcl())
     return;
 
   /* Create a pipe between parent and split process, fork to create a
@@ -208,7 +208,7 @@ error:
 
 void bg_send_quit(bg_quit_t q)
 {
-  if (!tcl_threaded())
+  if (!fork_before_tcl())
     return;
 
   if (bg.state == BG_PARENT) {
@@ -229,7 +229,7 @@ void bg_send_quit(bg_quit_t q)
 
 void bg_do_split(void)
 {
-  if (tcl_threaded()) {
+  if (fork_before_tcl()) {
     /* Tell our parent process to go away now, as we don't need it anymore. */
     bg_send_quit(BG_QUIT);
 

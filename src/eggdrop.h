@@ -4,7 +4,7 @@
  *
  *   IF YOU ALTER THIS FILE, YOU NEED TO RECOMPILE THE BOT.
  *
- * $Id: eggdrop.h,v 1.77 2010/03/14 18:21:59 pseudo Exp $
+ * $Id: eggdrop.h,v 1.78 2010/06/29 15:52:24 thommey Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -196,7 +196,7 @@
  * trouble?
  * Note: random(), rand(), and lrand48() are *not* thread safe.
  */
-#ifdef HAVE_RANDOM  
+#ifdef HAVE_RANDOM
   /* On systems with random(), RANDOM_MAX may or may not be defined.
    *
    * If RANDOM_MAX isn't defined, we use 0x7FFFFFFF (2^31-1), or 2147483647
@@ -205,7 +205,7 @@
    */
 #  ifndef RANDOM_MAX
 #    define RANDOM_MAX 0x7FFFFFFF  /* random() -- 2^31-1 */
-#  endif 
+#  endif
 #else                              /* !HAVE_RANDOM */
    /* This shouldn't exist in this case, but just to be safe... */
 #  ifdef RANDOM_MAX
@@ -215,7 +215,7 @@
    * srandom(), and we need both.
    */
 #  ifdef HAVE_RAND
-#    define random() rand()   
+#    define random() rand()
 #    define srandom(x) srand(x)
     /* Depending on the system int size, RAND_MAX can be either 0x7FFFFFFF
      * (2^31-1), or 2147483647 for a 32 bit int, or 0x7FFF (2^15-1), or
@@ -621,6 +621,7 @@ typedef struct {
                                  * of traffic                           */
 #define SOCK_VIRTUAL    0x0200  /* not-connected socket (dont read it!) */
 #define SOCK_BUFFER     0x0400  /* buffer data; don't notify dcc funcs  */
+#define SOCK_TCL        0x0800  /* tcl socket, don't do anything on it  */
 
 /* Flags to sock_has_data
  */
@@ -661,16 +662,29 @@ enum {
 #define HELP_TEXT       2
 #define HELP_IRC        16
 
-/* This is used by the net module to keep track of sockets and what's
+/* These are used by the net module to keep track of sockets and what's
  * queued on them
  */
-typedef struct {
-  int sock;
-  short flags;
+struct sock_handler {
   char *inbuf;
   char *outbuf;
   unsigned long outbuflen;      /* Outbuf could be binary data  */
   unsigned long inbuflen;       /* Inbuf could be binary data   */
+};
+
+struct tclsock_handler {
+  int mask;                     /* desired events               */
+  Tcl_FileProc *proc;
+  ClientData cd;
+};
+
+typedef struct sock_list {
+  int sock;
+  short flags;
+  union {
+    struct sock_handler sock;
+    struct tclsock_handler tclsock;
+  } handler;
 } sock_list;
 
 enum {

@@ -275,6 +275,12 @@
 /* Define for Tcl that has Tcl_GetCurrentThread() (8.1a2 and later). */
 #undef HAVE_TCL_GETCURRENTTHREAD
 
+/* Define for Tcl that has Tcl_GetThreadData() (8.1a2 and later). */
+#undef HAVE_TCL_GETTHREADDATA
+
+/* Define for Tcl that has Tcl_SetNotifier() (8.2b1 and later). */
+#undef HAVE_TCL_SETNOTIFIER
+
 /* Define to 1 if your `struct tm' has `tm_zone'. Deprecated, use
    `HAVE_STRUCT_TM_TM_ZONE' instead. */
 #undef HAVE_TM_ZONE

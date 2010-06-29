@@ -7,7 +7,7 @@
  * because they use structures in those
  * (saves including those .h files EVERY time) - Beldin
  *
- * $Id: proto.h,v 1.80 2010/03/08 11:18:07 pseudo Exp $
+ * $Id: proto.h,v 1.81 2010/06/29 15:52:24 thommey Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -128,6 +128,7 @@ int check_ansi(char *);
 void dupwait_notify(char *);
 
 /* dccutil.c */
+int increase_socks_max();
 int findidx(int);
 int findanyidx(int);
 char *add_cr(char *);
@@ -180,6 +181,7 @@ void eggContext(const char *, int, const char *);
 void eggContextNote(const char *, int, const char *, const char *);
 void eggAssert(const char *, int, const char *);
 void backup_userfile(void);
+int mainloop(void);
 
 /* match.c */
 int casecharcmp(unsigned char, unsigned char);
@@ -263,8 +265,10 @@ IP getmyip();
 void neterror(char *);
 void setsock(int, int);
 int allocsock(int, int);
+int alloctclsock(int, int, Tcl_FileProc *, ClientData);
 int getsock(int);
 void killsock(int);
+void killtclsock(int);
 int answer(int, char *, unsigned long *, unsigned short *, int);
 inline int open_listen(int *);
 int open_address_listen(IP addr, int *);
@@ -273,6 +277,8 @@ int open_telnet_dcc(int, char *, char *);
 int open_telnet_raw(int, char *, int);
 void tputs(int, char *, unsigned int);
 void dequeue_sockets();
+int preparefdset(fd_set *, sock_list *, int, int, int);
+int sockread(char *, int *, sock_list *, int, int);
 int sockgets(char *, int *);
 void tell_netdebug(int);
 int sanitycheck_dcc(char *, char *, char *, char *);
@@ -283,6 +289,8 @@ int sockoptions(int sock, int operation, int sock_options);
 int flush_inbuf(int idx);
 
 /* tcl.c */
+struct threaddata *threaddata();
+int init_threaddata(int);
 void protect_tcl();
 void unprotect_tcl();
 void do_tcl(char *, char *);

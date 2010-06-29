@@ -1,10 +1,22 @@
-$Id: Changes1.6,v 1.81 2010/06/28 21:13:26 thommey Exp $
+$Id: Changes1.6,v 1.82 2010/06/29 15:52:23 thommey Exp $
 
 Eggdrop Changes (since version 1.6.0)
 
     _____________________________________________________________________
 
 1.6.20 (CVS):
+
+  - Overwrite the Tcl notifier with our own version of it if possible.
+    Integrates Tcl events and sockets into our own eventloop and socketlist,
+    causing Tcl events happen without delay. It is thread-aware.
+  - If the Tcl notifier is overwritten, don't fork() before initializing
+    Tcl anymore. This used to be required to prevent hangs on startup.
+  - Replace the constant max-dcc upper limit with a dynamically enlarging
+    array that increases up to a new setting called max-socks. max-socks
+    also limits the number of Tcl socket connections (per thread).
+  - Added two configure checks against the Tcl library to check if it's
+    possible to replace the notifier.
+    Patch by: thommey
 
   - Modified compat.tcl version of time to allow accessing Tcl's time
     command if any arguments are passed to it.

@@ -1,7 +1,7 @@
 /*
  * tclhash.h
  *
- * $Id: tclhash.h,v 1.23 2010/03/08 20:52:56 pseudo Exp $
+ * $Id: tclhash.h,v 1.24 2010/06/29 15:52:24 thommey Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -38,6 +38,13 @@ typedef struct tcl_cmd_b {
   u_8bit_t attributes;          /* Flags for this entry. TC_* */
 } tcl_cmd_t;
 
+struct threaddata {
+  int (*mainloopfunc)(void);    /* main loop function */
+  sock_list *socklist;          /* tcl socket list for threads, else NULL */
+  struct timeval blocktime;     /* maximum time to block in select() */
+  int mainthread;               /* Is this the main thread? */
+  int MAXSOCKS;
+};
 
 #define TBM_DELETED  0x0001     /* This mask was deleted. */
 

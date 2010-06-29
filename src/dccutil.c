@@ -6,7 +6,7 @@
  *   memory management for dcc structures
  *   timeout checking for dcc connections
  *
- * $Id: dccutil.c,v 1.59 2010/01/03 13:27:31 pseudo Exp $
+ * $Id: dccutil.c,v 1.60 2010/06/29 15:52:24 thommey Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -35,7 +35,7 @@
 #include "tandem.h"
 
 extern struct dcc_t *dcc;
-extern int dcc_total, max_dcc, dcc_flood_thr, backgrd, copy_to_tmp, MAXSOCKS;
+extern int dcc_total, dcc_flood_thr, backgrd, copy_to_tmp, max_socks;
 extern char botnetnick[], version[];
 extern time_t now;
 extern sock_list *socklist;
@@ -47,32 +47,59 @@ int connect_timeout = 15;       /* How long to wait before a telnet
 int reserved_port_min = 0;
 int reserved_port_max = 0;
 
-void init_dcc_max()
+int max_dcc = 0;       /* indicates the current dcc limit in the main thread */
+
+/* This function is called to enlarge the static sockettable in a thread.
+ * It keeps the mainthread dcc table enlarging with the main thread sockettable
+ * If this fails because the upper limit max_socks is reached, -1 is returned.
+ * If this was called from the main thread, it updates the socklist variable
+ *
+ * increase_socks_max() can be called by Tcl threads
+ */
+int increase_socks_max()
 {
-  int osock = MAXSOCKS;
+  struct threaddata *td = threaddata();
+  int osock = td->MAXSOCKS;
 
-  if (max_dcc < 1)
-    max_dcc = 1;
+  if (max_socks < 1)
+    max_socks = 1;
 
-  if (dcc)
-    dcc = nrealloc(dcc, sizeof(struct dcc_t) * max_dcc);
+  if (td->MAXSOCKS == max_socks) {
+    putlog(LOG_MISC, "*", "Maximum socket limit reached. Consider raising max-socks.");
+    return -1;
+  }
+
+  td->MAXSOCKS += 10;
+  if (td->MAXSOCKS > max_socks)
+    td->MAXSOCKS = max_socks;
+
+  if (td->socklist)
+    td->socklist = nrealloc(td->socklist, sizeof(sock_list) * td->MAXSOCKS);
   else
-    dcc = nmalloc(sizeof(struct dcc_t) * max_dcc);
+    td->socklist = nmalloc(sizeof(sock_list) * td->MAXSOCKS);
+  for (; osock < td->MAXSOCKS; osock++)
+    td->socklist[osock].flags = SOCK_UNUSED;
 
-  MAXSOCKS = max_dcc + 10;
-  if (socklist)
-    socklist = nrealloc(socklist, sizeof(*socklist) * MAXSOCKS);
-  else
-    socklist = nmalloc(sizeof(*socklist) * MAXSOCKS);
-  for (; osock < MAXSOCKS; osock++)
-    socklist[osock].flags = SOCK_UNUSED;
+  if (td->mainthread) {
+    max_dcc = td->MAXSOCKS - 10;
+    if (max_dcc < 1)
+      max_dcc = 1;
+    if (dcc)
+      dcc = nrealloc(dcc, sizeof(struct dcc_t) * max_dcc);
+    else
+      dcc = nmalloc(sizeof(struct dcc_t) * max_dcc);
+    socklist = td->socklist;
+  }
+
+  return 0;
 }
 
 int expmem_dccutil()
 {
   int tot, i;
 
-  tot = sizeof(struct dcc_t) * max_dcc + sizeof(sock_list) * MAXSOCKS;
+  tot = sizeof(struct dcc_t) * max_dcc;
+  tot += sizeof(sock_list) * threaddata()->MAXSOCKS;
 
   for (i = 0; i < dcc_total; i++) {
     if (dcc[i].type && dcc[i].type->expmem)
@@ -501,7 +528,7 @@ int new_dcc(struct dcc_table *type, int xtra_size)
 {
   int i = dcc_total;
 
-  if (dcc_total == max_dcc)
+  if (dcc_total == max_dcc && increase_socks_max())
     return -1;
   dcc_total++;
   egg_bzero((char *) &dcc[i], sizeof(struct dcc_t));

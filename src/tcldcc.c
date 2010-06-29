@@ -2,7 +2,7 @@
  * tcldcc.c -- handles:
  *   Tcl stubs for the dcc commands
  *
- * $Id: tcldcc.c,v 1.67 2010/01/04 13:15:11 pseudo Exp $
+ * $Id: tcldcc.c,v 1.68 2010/06/29 15:52:24 thommey Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -31,8 +31,7 @@ extern Tcl_Interp *interp;
 extern tcl_timer_t *timer, *utimer;
 extern struct dcc_t *dcc;
 extern char botnetnick[];
-extern int dcc_total, backgrd, parties, make_userfile, do_restart, max_dcc,
-           remote_boots;
+extern int dcc_total, backgrd, parties, make_userfile, do_restart, remote_boots, max_dcc;
 extern party_t *party;
 extern tand_t *tandbot;
 extern time_t now;
@@ -851,7 +850,7 @@ static int tcl_connect STDVAR
 
   BADARGS(3, 3, " hostname port");
 
-  if (dcc_total == max_dcc) {
+  if (dcc_total == max_dcc && increase_socks_max()) {
     Tcl_AppendResult(irp, "out of dcc table space", NULL);
     return TCL_ERROR;
   }
@@ -923,7 +922,7 @@ static int tcl_listen STDVAR
   }
   if (idx < 0) {
     /* Make new one */
-    if (dcc_total >= max_dcc) {
+    if (dcc_total >= max_dcc && increase_socks_max()) {
       Tcl_AppendResult(irp, "No more DCC slots available.", NULL);
       return TCL_ERROR;
     }

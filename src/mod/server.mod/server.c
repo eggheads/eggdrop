@@ -2,7 +2,7 @@
  * server.c -- part of server.mod
  *   basic irc server support
  *
- * $Id: server.c,v 1.136 2010/02/07 17:21:14 pseudo Exp $
+ * $Id: server.c,v 1.137 2010/06/29 15:52:24 thommey Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -1481,7 +1481,7 @@ static int ctcp_DCC_CHAT(char *nick, char *from, char *handle,
   if (egg_strcasecmp(action, "CHAT") || egg_strcasecmp(object, botname) || !u)
     return 0;
   get_user_flagrec(u, &fr, 0);
-  if (dcc_total == max_dcc) {
+  if (dcc_total == max_dcc && increase_socks_max()) {
     if (!quiet_reject)
       dprintf(DP_HELP, "NOTICE %s :%s\n", nick, DCC_TOOMANYDCCS1);
     putlog(LOG_MISC, "*", DCC_TOOMANYDCCS2, "CHAT", param, nick, from);

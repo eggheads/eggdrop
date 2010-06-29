@@ -7,7 +7,7 @@
  *   telling the current programmed settings
  *   initializing a lot of stuff and loading the tcl scripts
  *
- * $Id: chanprog.c,v 1.66 2010/02/18 13:03:04 pseudo Exp $
+ * $Id: chanprog.c,v 1.67 2010/06/29 15:52:24 thommey Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -51,7 +51,7 @@ extern char ver[], botnetnick[], firewall[], motdfile[], userfile[], helpdir[],
 extern time_t now, online_since;
 extern int backgrd, term_z, con_chan, cache_hit, cache_miss, firewallport,
            default_flags, max_logs, conmask, protect_readonly, make_userfile,
-           noshare, ignore_time;
+           noshare, ignore_time, max_socks;
 
 tcl_timer_t *timer = NULL;         /* Minutely timer               */
 tcl_timer_t *utimer = NULL;        /* Secondly timer               */
@@ -355,8 +355,9 @@ void tell_verbose_status(int idx)
           tcl_resultstring() : "*unknown*", MISC_TCLHVERSION,
           TCL_PATCH_LEVEL ? TCL_PATCH_LEVEL : "*unknown*");
 
-    if (tcl_threaded())
-      dprintf(idx, "Tcl is threaded.\n");
+  if (tcl_threaded())
+    dprintf(idx, "Tcl is threaded.\n");
+  dprintf(idx, "Socket table: %d/%d\n", threaddata()->MAXSOCKS, max_socks);
 }
 
 /* Show all internal state variables

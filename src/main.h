@@ -2,7 +2,7 @@
  * main.h
  *   include file to include most other include files
  *
- * $Id: main.h,v 1.40 2010/02/18 09:52:29 pseudo Exp $
+ * $Id: main.h,v 1.41 2010/06/29 15:52:24 thommey Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -48,6 +48,10 @@
 #  define USE_TCL_ENCODING
 #endif
 
+#if defined(HAVE_TCL_SETNOTIFIER) && defined(HAVE_TCL_GETTHREADDATA)
+#  define REPLACE_NOTIFIER
+#endif
+
 #if (((TCL_MAJOR_VERSION == 8) && (TCL_MINOR_VERSION >= 4)) || (TCL_MAJOR_VERSION > 8))
 #  ifdef CONST
 #    define EGG_CONST CONST
@@ -56,6 +60,12 @@
 #  endif
 #else
 #  define EGG_CONST
+#endif
+
+#ifdef CONST86
+#  define TCL_CONST86 CONST86
+#else
+#  define TCL_CONST86
 #endif
 
 /* UGH! Why couldn't Tcl pick a standard? */

@@ -2,7 +2,7 @@
  * net.c -- handles:
  *   all raw network i/o
  *
- * $Id: net.c,v 1.82 2010/01/03 13:27:32 pseudo Exp $
+ * $Id: net.c,v 1.83 2010/06/29 15:52:24 thommey Exp $
  */
 /*
  * This is hereby released into the public domain.
@@ -66,8 +66,7 @@ char botuser[21] = "eggdrop"; /* Username of the user running the bot.        */
 int dcc_sanitycheck = 0;      /* Do some sanity checking on dcc connections.  */
 
 sock_list *socklist = NULL;   /* Enough to be safe.                           */
-int MAXSOCKS = 0;
-sigjmp_buf alarmret;             /* Env buffer for alarm() returns.              */
+sigjmp_buf alarmret;          /* Env buffer for alarm() returns.              */
 
 /* Types of proxies */
 #define PROXY_SOCKS   1
@@ -88,27 +87,17 @@ IP my_atoul(char *s)
   return ret;
 }
 
-/* Initialize the socklist
- */
-void init_net()
-{
-  int i;
-
-  for (i = 0; i < MAXSOCKS; i++) {
-    socklist[i].flags = SOCK_UNUSED;
-  }
-}
-
 int expmem_net()
 {
   int i, tot = 0;
+  struct threaddata *td = threaddata();
 
-  for (i = 0; i < MAXSOCKS; i++) {
-    if (!(socklist[i].flags & SOCK_UNUSED)) {
-      if (socklist[i].inbuf != NULL)
-        tot += strlen(socklist[i].inbuf) + 1;
-      if (socklist[i].outbuf != NULL)
-        tot += socklist[i].outbuflen;
+  for (i = 0; i < td->MAXSOCKS; i++) {
+    if (!(td->socklist[i].flags & (SOCK_UNUSED | SOCK_TCL))) {
+      if (td->socklist[i].handler.sock.inbuf != NULL)
+        tot += strlen(td->socklist[i].handler.sock.inbuf) + 1;
+      if (td->socklist[i].handler.sock.outbuf != NULL)
+        tot += td->socklist[i].handler.sock.outbuflen;
     }
   }
   return tot;
@@ -228,13 +217,15 @@ void neterror(char *s)
 int sockoptions(int sock, int operation, int sock_options)
 {
   int i;
+  struct threaddata *td = threaddata();
 
-  for (i = 0; i < MAXSOCKS; i++)
-    if ((socklist[i].sock == sock) && !(socklist[i].flags & SOCK_UNUSED)) {
+  for (i = 0; i < td->MAXSOCKS; i++)
+    if ((td->socklist[i].sock == sock) &&
+        !(td->socklist[i].flags & SOCK_UNUSED)) {
       if (operation == EGG_OPTION_SET)
-        socklist[i].flags |= sock_options;
+        td->socklist[i].flags |= sock_options;
       else if (operation == EGG_OPTION_UNSET)
-        socklist[i].flags &= ~sock_options;
+        td->socklist[i].flags &= ~sock_options;
       else
         return -2;
       return 0;
@@ -247,19 +238,60 @@ int sockoptions(int sock, int operation, int sock_options)
 int allocsock(int sock, int options)
 {
   int i;
+  struct threaddata *td = threaddata();
 
-  for (i = 0; i < MAXSOCKS; i++) {
-    if (socklist[i].flags & SOCK_UNUSED) {
+  for (i = 0; i < td->MAXSOCKS; i++) {
+    if (td->socklist[i].flags & SOCK_UNUSED) {
       /* yay!  there is table space */
-      socklist[i].inbuf = socklist[i].outbuf = NULL;
-      socklist[i].inbuflen = socklist[i].outbuflen = 0;
-      socklist[i].flags = options;
-      socklist[i].sock = sock;
+      td->socklist[i].handler.sock.inbuf = NULL;
+      td->socklist[i].handler.sock.outbuf = NULL;
+      td->socklist[i].handler.sock.inbuflen = 0;
+      td->socklist[i].handler.sock.outbuflen = 0;
+      td->socklist[i].flags = options;
+      td->socklist[i].sock = sock;
       return i;
     }
   }
-  fatal("Socket table is full!", 0);
-  return -1;                    /* Never reached */
+  /* Try again if enlarging socketlist works */
+  if (increase_socks_max())
+    return -1;
+  else
+    return allocsock(sock, options);
+}
+
+/* Return a free entry in the socket entry for a tcl socket
+ *
+ * alloctclsock() can be called by Tcl threads
+ */
+int alloctclsock(register int sock, int mask, Tcl_FileProc *proc, ClientData cd)
+{
+  int f = -1;
+  register int i;
+  struct threaddata *td = threaddata();
+
+  for (i = 0; i < td->MAXSOCKS; i++) {
+    if (td->socklist[i].flags & SOCK_UNUSED) {
+      if (f == -1)
+        f = i;
+    } else if ((td->socklist[i].flags & SOCK_TCL) &&
+               td->socklist[i].sock == sock) {
+      f = i;
+      break;
+    }
+  }
+  if (f != -1) {
+    td->socklist[f].sock = sock;
+    td->socklist[f].flags = SOCK_TCL;
+    td->socklist[f].handler.tclsock.mask = mask;
+    td->socklist[f].handler.tclsock.proc = proc;
+    td->socklist[f].handler.tclsock.cd = cd;
+    return f;
+  }
+  /* Try again if enlarging socketlist works */
+  if (increase_socks_max())
+    return -1;
+  else
+    return alloctclsock(sock, mask, proc, cd);
 }
 
 /* Request a normal socket for i/o
@@ -267,8 +299,13 @@ int allocsock(int sock, int options)
 void setsock(int sock, int options)
 {
   int i = allocsock(sock, options), parm;
+  struct threaddata *td = threaddata();
 
-  if (((sock != STDOUT) || backgrd) && !(socklist[i].flags & SOCK_NONSOCK)) {
+  if (i == -1) {
+    putlog(LOG_MISC, "*", "Sockettable full.");
+    return;
+  }
+  if (((sock != STDOUT) || backgrd) && !(td->socklist[i].flags & SOCK_NONSOCK)) {
     parm = 1;
     setsockopt(sock, SOL_SOCKET, SO_KEEPALIVE, (void *) &parm, sizeof(int));
 
@@ -300,28 +337,51 @@ int getsock(int options)
 void killsock(register int sock)
 {
   register int i;
+  struct threaddata *td = threaddata();
 
   /* Ignore invalid sockets.  */
   if (sock < 0)
     return;
 
-  for (i = 0; i < MAXSOCKS; i++) {
-    if ((socklist[i].sock == sock) && !(socklist[i].flags & SOCK_UNUSED)) {
-      close(socklist[i].sock);
-      if (socklist[i].inbuf != NULL) {
-        nfree(socklist[i].inbuf);
-        socklist[i].inbuf = NULL;
+  for (i = 0; i < td->MAXSOCKS; i++) {
+    if ((td->socklist[i].sock == sock) && !(td->socklist[i].flags & SOCK_UNUSED)) {
+      if (!(td->socklist[i].flags & SOCK_TCL)) { /* nothing to free for tclsocks */
+        close(td->socklist[i].sock);
+        if (td->socklist[i].handler.sock.inbuf != NULL) {
+          nfree(td->socklist[i].handler.sock.inbuf);
+          td->socklist[i].handler.sock.inbuf = NULL;
+        }
+        if (td->socklist[i].handler.sock.outbuf != NULL) {
+          nfree(td->socklist[i].handler.sock.outbuf);
+          td->socklist[i].handler.sock.outbuf = NULL;
+          td->socklist[i].handler.sock.outbuflen = 0;
+        }
       }
-      if (socklist[i].outbuf != NULL) {
-        nfree(socklist[i].outbuf);
-        socklist[i].outbuf = NULL;
-        socklist[i].outbuflen = 0;
-      }
-      socklist[i].flags = SOCK_UNUSED;
+      td->socklist[i].flags = SOCK_UNUSED;
       return;
     }
   }
   putlog(LOG_MISC, "*", "Warning: Attempt to kill un-allocated socket %d!", sock);
+}
+
+/* Done with a tcl socket
+ *
+ * killtclsock() can be called by Tcl threads
+ */
+void killtclsock(register int sock)
+{
+  register int i;
+  struct threaddata *td = threaddata();
+
+  if (sock < 0)
+    return;
+
+  for (i = 0; i < td->MAXSOCKS; i++) {
+    if ((td->socklist[i].flags & SOCK_TCL) && td->socklist[i].sock == sock) {
+      td->socklist[i].flags = SOCK_UNUSED;
+      return;
+    }
+  }
 }
 
 /* Send connection request to proxy
@@ -353,7 +413,7 @@ static int proxy_connect(int sock, char *host, int port, int proxy)
       }
       egg_memcpy(x, hp->h_addr, hp->h_length);
     }
-    for (i = 0; i < MAXSOCKS; i++)
+    for (i = 0; i < threaddata()->MAXSOCKS; i++)
       if (!(socklist[i].flags & SOCK_UNUSED) && socklist[i].sock == sock)
         socklist[i].flags |= SOCK_PROXYWAIT;    /* drummer */
       egg_snprintf(s, sizeof s, "\004\001%c%c%c%c%c%c%s", (port >> 8) % 256,
@@ -428,7 +488,7 @@ int open_telnet_raw(int sock, char *server, int sport)
     egg_memcpy(&name.sin_addr, hp->h_addr, hp->h_length);
     name.sin_family = hp->h_addrtype;
   }
-  for (i = 0; i < MAXSOCKS; i++) {
+  for (i = 0; i < threaddata()->MAXSOCKS; i++) {
     if (!(socklist[i].flags & SOCK_UNUSED) && (socklist[i].sock == sock))
       socklist[i].flags = (socklist[i].flags & ~SOCK_VIRTUAL) | SOCK_CONNECT;
   }
@@ -577,36 +637,21 @@ int open_telnet_dcc(int sock, char *server, char *port)
   return p;
 }
 
-/* Attempts to read from all the sockets in socklist
- * fills s with up to 511 bytes if available, and returns the array index
- *
- *              on EOF:  returns -1, with socket in len
- *     on socket error:  returns -2
- * if nothing is ready:  returns -3
+/* Builds the fd_sets for select(). Eggdrop only cares about readable
+ * sockets, but tcl also cares for writable/exceptions.
+ * preparefdset() can be called by Tcl Threads
  */
-static int sockread(char *s, int *len)
+int preparefdset(fd_set *fd, sock_list *slist, int slistmax, int tclonly, int tclmask)
 {
-  fd_set fd;
-  int fds, i, x, fdtmp;
-  struct timeval t;
-  int grab = 511;
+  int fdtmp, i, foundsocks = 0;
 
-  fds = getdtablesize();
-#ifdef FD_SETSIZE
-  if (fds > FD_SETSIZE)
-    fds = FD_SETSIZE;           /* Fixes YET ANOTHER freebsd bug!!! */
-#endif
-  /* timeout: 1 sec */
-  t.tv_sec = 1;
-  t.tv_usec = 0;
-  FD_ZERO(&fd);
-
-  for (i = 0; i < MAXSOCKS; i++) {
-    if (!(socklist[i].flags & (SOCK_UNUSED | SOCK_VIRTUAL))) {
-      if ((socklist[i].sock == STDOUT) && !backgrd)
+  FD_ZERO(fd);
+  for (i = 0; i < slistmax; i++) {
+    if (!(slist[i].flags & (SOCK_UNUSED | SOCK_VIRTUAL))) {
+      if ((slist[i].sock == STDOUT) && !backgrd)
         fdtmp = STDIN;
       else
-        fdtmp = socklist[i].sock;
+        fdtmp = slist[i].sock;
       /*
        * Looks like that having more than a call, in the same
        * program, to the FD_SET macro, triggers a bug in gcc.
@@ -616,62 +661,110 @@ static int sockread(char *s, int *len)
        *
        * ITE
        */
-      FD_SET(fdtmp, &fd);
+      if (slist[i].flags & SOCK_TCL) {
+        if (!(slist[i].handler.tclsock.mask & tclmask))
+          continue;
+      } else if (tclonly)
+        continue;
+      foundsocks = 1;
+      FD_SET(fdtmp, fd);
     }
   }
-  x = select((SELECT_TYPE_ARG1) fds, SELECT_TYPE_ARG234 &fd,
-             SELECT_TYPE_ARG234 NULL, SELECT_TYPE_ARG234 NULL,
+  return foundsocks;
+}
+
+/* Attempts to read from all sockets in slist (upper array boundary slistmax-1)
+ * fills s with up to 511 bytes if available, and returns the array index
+ * Also calls all handler procs for Tcl sockets
+ * sockread() can be called by Tcl threads
+ *
+ * If tclonly is 0:
+ *              on EOF:  returns -1, with socket in len
+ *     on socket error:  returns -2
+ * if nothing is ready:  returns -3
+ *
+ * If tclonly is 1:
+ *   a proc was called:  returns 1
+ *  no proc was called:  returns 0
+ */
+int sockread(char *s, int *len, sock_list *slist, int slistmax, int tclonly)
+{
+  struct timeval t;
+  fd_set fdr, fdw, fde;
+  int fds, i, x, have_r, have_w, have_e, events, tclbusy;
+  int grab = 511;
+  struct threaddata *td = threaddata();
+
+  fds = getdtablesize();
+#ifdef FD_SETSIZE
+  if (fds > FD_SETSIZE)
+    fds = FD_SETSIZE;           /* Fixes YET ANOTHER freebsd bug!!! */
+#endif
+
+  tclbusy = 0;
+  have_r = preparefdset(&fdr, slist, slistmax, tclonly, TCL_READABLE);
+  have_w = preparefdset(&fdw, slist, slistmax, 1, TCL_WRITABLE);
+  have_e = preparefdset(&fde, slist, slistmax, 1, TCL_EXCEPTION);
+
+  /* select() may modify the timeval argument - copy it */
+  t.tv_sec = td->blocktime.tv_sec;
+  t.tv_usec = td->blocktime.tv_usec;
+
+  x = select((SELECT_TYPE_ARG1) fds,
+             SELECT_TYPE_ARG234 (have_r ? &fdr : NULL),
+             SELECT_TYPE_ARG234 (have_w ? &fdw : NULL),
+             SELECT_TYPE_ARG234 (have_e ? &fde : NULL),
              SELECT_TYPE_ARG5 &t);
   if (x > 0) {
     /* Something happened */
-    for (i = 0; i < MAXSOCKS; i++) {
-      if ((!(socklist[i].flags & SOCK_UNUSED)) &&
-          ((FD_ISSET(socklist[i].sock, &fd)) ||
-          ((socklist[i].sock == STDOUT) && (!backgrd) &&
-          (FD_ISSET(STDIN, &fd))))) {
-        if (socklist[i].flags & (SOCK_LISTEN | SOCK_CONNECT)) {
+    for (i = 0; i < slistmax; i++) {
+      if (!tclonly && ((!(slist[i].flags & (SOCK_UNUSED | SOCK_TCL))) &&
+          ((FD_ISSET(slist[i].sock, &fdr)) ||
+          ((slist[i].sock == STDOUT) && (!backgrd) &&
+          (FD_ISSET(STDIN, &fdr)))))) {
+        if (slist[i].flags & (SOCK_LISTEN | SOCK_CONNECT)) {
           /* Listening socket -- don't read, just return activity */
           /* Same for connection attempt */
           /* (for strong connections, require a read to succeed first) */
-          if (socklist[i].flags & SOCK_PROXYWAIT) /* drummer */
+          if (slist[i].flags & SOCK_PROXYWAIT) /* drummer */
             /* Hang around to get the return code from proxy */
             grab = 10;
-          else if (!(socklist[i].flags & SOCK_STRONGCONN)) {
-            debug1("net: connect! sock %d", socklist[i].sock);
+          else if (!(slist[i].flags & SOCK_STRONGCONN)) {
+            debug1("net: connect! sock %d", slist[i].sock);
             s[0] = 0;
             *len = 0;
             return i;
           }
-        } else if (socklist[i].flags & SOCK_PASS) {
+        } else if (slist[i].flags & SOCK_PASS) {
           s[0] = 0;
           *len = 0;
           return i;
         }
         errno = 0;
-        if ((socklist[i].sock == STDOUT) && !backgrd)
+        if ((slist[i].sock == STDOUT) && !backgrd)
           x = read(STDIN, s, grab);
         else
-          x = read(socklist[i].sock, s, grab);
+          x = read(slist[i].sock, s, grab);
         if (x <= 0) {           /* eof */
           if (errno != EAGAIN) { /* EAGAIN happens when the operation would
                                   * block on a non-blocking socket, if the
                                   * socket is going to die, it will die later,
                                   * otherwise it will connect. */
-            *len = socklist[i].sock;
-            socklist[i].flags &= ~SOCK_CONNECT;
-            debug1("net: eof!(read) socket %d", socklist[i].sock);
+            *len = slist[i].sock;
+            slist[i].flags &= ~SOCK_CONNECT;
+            debug1("net: eof!(read) socket %d", slist[i].sock);
             return -1;
           } else {
-            debug3("sockread EAGAIN: %d %d (%s)", socklist[i].sock, errno,
+            debug3("sockread EAGAIN: %d %d (%s)", slist[i].sock, errno,
                    strerror(errno));
             continue;           /* EAGAIN */
           }
         }
         s[x] = 0;
         *len = x;
-        if (socklist[i].flags & SOCK_PROXYWAIT) {
-          debug2("net: socket: %d proxy errno: %d", socklist[i].sock, s[1]);
-          socklist[i].flags &= ~(SOCK_CONNECT | SOCK_PROXYWAIT);
+        if (slist[i].flags & SOCK_PROXYWAIT) {
+          debug2("net: socket: %d proxy errno: %d", slist[i].sock, s[1]);
+          slist[i].flags &= ~(SOCK_CONNECT | SOCK_PROXYWAIT);
           switch (s[1]) {
           case 90:             /* Success */
             s[0] = 0;
@@ -688,19 +781,29 @@ static int sockread(char *s, int *len)
             errno = ENETUNREACH;
             break;
           }
-          *len = socklist[i].sock;
+          *len = slist[i].sock;
           return -1;
         }
         return i;
+      } else if (slist[i].flags & SOCK_TCL) {
+        events = FD_ISSET(slist[i].sock, &fdr) ? TCL_READABLE : 0;
+        events |= FD_ISSET(slist[i].sock, &fdw) ? TCL_WRITABLE : 0;
+        events |= FD_ISSET(slist[i].sock, &fde) ? TCL_EXCEPTION : 0;
+        if (events) {
+          (*slist[i].handler.tclsock.proc)(slist[i].handler.tclsock.cd,
+                                     slist[i].handler.tclsock.mask & events);
+          tclbusy = 1;
+          continue;
+        }
       }
     }
   } else if (x == -1)
     return -2;                  /* socket error */
-  else {
+  else if (!tclonly) {
     s[0] = 0;
     *len = 0;
   }
-  return -3;
+  return (tclonly ? tclbusy : -3);
 }
 
 /* sockgets: buffer and read from sockets
@@ -730,28 +833,28 @@ int sockgets(char *s, int *len)
   char xx[514], *p, *px;
   int ret, i, data = 0;
 
-  for (i = 0; i < MAXSOCKS; i++) {
+  for (i = 0; i < threaddata()->MAXSOCKS; i++) {
     /* Check for stored-up data waiting to be processed */
-    if (!(socklist[i].flags & SOCK_UNUSED) &&
-        !(socklist[i].flags & SOCK_BUFFER) && (socklist[i].inbuf != NULL)) {
+    if (!(socklist[i].flags & (SOCK_UNUSED | SOCK_TCL | SOCK_BUFFER)) &&
+        (socklist[i].handler.sock.inbuf != NULL)) {
       if (!(socklist[i].flags & SOCK_BINARY)) {
         /* look for \r too cos windows can't follow RFCs */
-        p = strchr(socklist[i].inbuf, '\n');
+        p = strchr(socklist[i].handler.sock.inbuf, '\n');
         if (p == NULL)
-          p = strchr(socklist[i].inbuf, '\r');
+          p = strchr(socklist[i].handler.sock.inbuf, '\r');
         if (p != NULL) {
           *p = 0;
-          if (strlen(socklist[i].inbuf) > 510)
-            socklist[i].inbuf[510] = 0;
-          strcpy(s, socklist[i].inbuf);
+          if (strlen(socklist[i].handler.sock.inbuf) > 510)
+            socklist[i].handler.sock.inbuf[510] = 0;
+          strcpy(s, socklist[i].handler.sock.inbuf);
           px = nmalloc(strlen(p + 1) + 1);
           strcpy(px, p + 1);
-          nfree(socklist[i].inbuf);
+          nfree(socklist[i].handler.sock.inbuf);
           if (px[0])
-            socklist[i].inbuf = px;
+            socklist[i].handler.sock.inbuf = px;
           else {
             nfree(px);
-            socklist[i].inbuf = NULL;
+            socklist[i].handler.sock.inbuf = NULL;
           }
           /* Strip CR if this was CR/LF combo */
           if (s[strlen(s) - 1] == '\r')
@@ -761,26 +864,25 @@ int sockgets(char *s, int *len)
         }
       } else {
         /* Handling buffered binary data (must have been SOCK_BUFFER before). */
-        if (socklist[i].inbuflen <= 510) {
-          *len = socklist[i].inbuflen;
-          egg_memcpy(s, socklist[i].inbuf, socklist[i].inbuflen);
-          nfree(socklist[i].inbuf);
-          socklist[i].inbuf = NULL;
-          socklist[i].inbuflen = 0;
+        if (socklist[i].handler.sock.inbuflen <= 510) {
+          *len = socklist[i].handler.sock.inbuflen;
+          egg_memcpy(s, socklist[i].handler.sock.inbuf, socklist[i].handler.sock.inbuflen);
+          nfree(socklist[i].handler.sock.inbuf);
+          socklist[i].handler.sock.inbuf = NULL;
+          socklist[i].handler.sock.inbuflen = 0;
         } else {
           /* Split up into chunks of 510 bytes. */
           *len = 510;
-          egg_memcpy(s, socklist[i].inbuf, *len);
-          egg_memcpy(socklist[i].inbuf, socklist[i].inbuf + *len, *len);
-          socklist[i].inbuflen -= *len;
-          socklist[i].inbuf = nrealloc(socklist[i].inbuf, socklist[i].inbuflen);
+          egg_memcpy(s, socklist[i].handler.sock.inbuf, *len);
+          egg_memcpy(socklist[i].handler.sock.inbuf, socklist[i].handler.sock.inbuf + *len, *len);
+          socklist[i].handler.sock.inbuflen -= *len;
+          socklist[i].handler.sock.inbuf = nrealloc(socklist[i].handler.sock.inbuf, socklist[i].handler.sock.inbuflen);
         }
         return socklist[i].sock;
       }
     }
     /* Also check any sockets that might have EOF'd during write */
-    if (!(socklist[i].flags & SOCK_UNUSED) &&
-        (socklist[i].flags & SOCK_EOFD)) {
+    if (!(socklist[i].flags & SOCK_UNUSED) && (socklist[i].flags & SOCK_EOFD)) {
       s[0] = 0;
       *len = socklist[i].sock;
       return -1;
@@ -788,7 +890,7 @@ int sockgets(char *s, int *len)
   }
   /* No pent-up data of any worth -- down to business */
   *len = 0;
-  ret = sockread(xx, len);
+  ret = sockread(xx, len, socklist, threaddata()->MAXSOCKS, 0);
   if (ret < 0) {
     s[0] = 0;
     return ret;
@@ -798,11 +900,11 @@ int sockgets(char *s, int *len)
     if (socklist[ret].flags & SOCK_STRONGCONN) {
       socklist[ret].flags &= ~SOCK_STRONGCONN;
       /* Buffer any data that came in, for future read. */
-      socklist[ret].inbuflen = *len;
-      socklist[ret].inbuf = nmalloc(*len + 1);
+      socklist[ret].handler.sock.inbuflen = *len;
+      socklist[ret].handler.sock.inbuf = nmalloc(*len + 1);
       /* It might be binary data. You never know. */
-      egg_memcpy(socklist[ret].inbuf, xx, *len);
-      socklist[ret].inbuf[*len] = 0;
+      egg_memcpy(socklist[ret].handler.sock.inbuf, xx, *len);
+      socklist[ret].handler.sock.inbuf[*len] = 0;
     }
     socklist[ret].flags &= ~SOCK_CONNECT;
     s[0] = 0;
@@ -812,35 +914,35 @@ int sockgets(char *s, int *len)
     egg_memcpy(s, xx, *len);
     return socklist[ret].sock;
   }
-  if ((socklist[ret].flags & SOCK_LISTEN) || (socklist[ret].flags & SOCK_PASS))
+  if (socklist[ret].flags & (SOCK_LISTEN | SOCK_PASS | SOCK_TCL))
     return socklist[ret].sock;
   if (socklist[ret].flags & SOCK_BUFFER) {
-    socklist[ret].inbuf = (char *) nrealloc(socklist[ret].inbuf,
-                                            socklist[ret].inbuflen + *len + 1);
-    egg_memcpy(socklist[ret].inbuf + socklist[ret].inbuflen, xx, *len);
-    socklist[ret].inbuflen += *len;
+    socklist[ret].handler.sock.inbuf = (char *) nrealloc(socklist[ret].handler.sock.inbuf,
+                                            socklist[ret].handler.sock.inbuflen + *len + 1);
+    egg_memcpy(socklist[ret].handler.sock.inbuf + socklist[ret].handler.sock.inbuflen, xx, *len);
+    socklist[ret].handler.sock.inbuflen += *len;
     /* We don't know whether it's binary data. Make sure normal strings
      * will be handled properly later on too. */
-    socklist[ret].inbuf[socklist[ret].inbuflen] = 0;
+    socklist[ret].handler.sock.inbuf[socklist[ret].handler.sock.inbuflen] = 0;
     return -4;                  /* Ignore this one. */
   }
   /* Might be necessary to prepend stored-up data! */
-  if (socklist[ret].inbuf != NULL) {
-    p = socklist[ret].inbuf;
-    socklist[ret].inbuf = nmalloc(strlen(p) + strlen(xx) + 1);
-    strcpy(socklist[ret].inbuf, p);
-    strcat(socklist[ret].inbuf, xx);
+  if (socklist[ret].handler.sock.inbuf != NULL) {
+    p = socklist[ret].handler.sock.inbuf;
+    socklist[ret].handler.sock.inbuf = nmalloc(strlen(p) + strlen(xx) + 1);
+    strcpy(socklist[ret].handler.sock.inbuf, p);
+    strcat(socklist[ret].handler.sock.inbuf, xx);
     nfree(p);
-    if (strlen(socklist[ret].inbuf) < 512) {
-      strcpy(xx, socklist[ret].inbuf);
-      nfree(socklist[ret].inbuf);
-      socklist[ret].inbuf = NULL;
-      socklist[ret].inbuflen = 0;
+    if (strlen(socklist[ret].handler.sock.inbuf) < 512) {
+      strcpy(xx, socklist[ret].handler.sock.inbuf);
+      nfree(socklist[ret].handler.sock.inbuf);
+      socklist[ret].handler.sock.inbuf = NULL;
+      socklist[ret].handler.sock.inbuflen = 0;
     } else {
-      p = socklist[ret].inbuf;
-      socklist[ret].inbuflen = strlen(p) - 510;
-      socklist[ret].inbuf = nmalloc(socklist[ret].inbuflen + 1);
-      strcpy(socklist[ret].inbuf, p + 510);
+      p = socklist[ret].handler.sock.inbuf;
+      socklist[ret].handler.sock.inbuflen = strlen(p) - 510;
+      socklist[ret].handler.sock.inbuf = nmalloc(socklist[ret].handler.sock.inbuflen + 1);
+      strcpy(socklist[ret].handler.sock.inbuf, p + 510);
       *(p + 510) = 0;
       strcpy(xx, p);
       nfree(p);
@@ -878,17 +980,17 @@ int sockgets(char *s, int *len)
       return -3;
   }
   /* Prepend old data back */
-  if (socklist[ret].inbuf != NULL) {
-    p = socklist[ret].inbuf;
-    socklist[ret].inbuflen = strlen(p) + strlen(xx);
-    socklist[ret].inbuf = nmalloc(socklist[ret].inbuflen + 1);
-    strcpy(socklist[ret].inbuf, xx);
-    strcat(socklist[ret].inbuf, p);
+  if (socklist[ret].handler.sock.inbuf != NULL) {
+    p = socklist[ret].handler.sock.inbuf;
+    socklist[ret].handler.sock.inbuflen = strlen(p) + strlen(xx);
+    socklist[ret].handler.sock.inbuf = nmalloc(socklist[ret].handler.sock.inbuflen + 1);
+    strcpy(socklist[ret].handler.sock.inbuf, xx);
+    strcat(socklist[ret].handler.sock.inbuf, p);
     nfree(p);
   } else {
-    socklist[ret].inbuflen = strlen(xx);
-    socklist[ret].inbuf = nmalloc(socklist[ret].inbuflen + 1);
-    strcpy(socklist[ret].inbuf, xx);
+    socklist[ret].handler.sock.inbuflen = strlen(xx);
+    socklist[ret].handler.sock.inbuf = nmalloc(socklist[ret].handler.sock.inbuflen + 1);
+    strcpy(socklist[ret].handler.sock.inbuf, xx);
   }
   if (data)
     return socklist[ret].sock;
@@ -914,7 +1016,7 @@ void tputs(register int z, char *s, unsigned int len)
     return;
   }
 
-  for (i = 0; i < MAXSOCKS; i++) {
+  for (i = 0; i < threaddata()->MAXSOCKS; i++) {
     if (!(socklist[i].flags & SOCK_UNUSED) && (socklist[i].sock == z)) {
       for (idx = 0; idx < dcc_total; idx++) {
         if ((dcc[idx].sock == z) && dcc[idx].type && dcc[idx].type->name) {
@@ -936,12 +1038,12 @@ void tputs(register int z, char *s, unsigned int len)
         }
       }
 
-      if (socklist[i].outbuf != NULL) {
+      if (socklist[i].handler.sock.outbuf != NULL) {
         /* Already queueing: just add it */
-        p = (char *) nrealloc(socklist[i].outbuf, socklist[i].outbuflen + len);
-        egg_memcpy(p + socklist[i].outbuflen, s, len);
-        socklist[i].outbuf = p;
-        socklist[i].outbuflen += len;
+        p = (char *) nrealloc(socklist[i].handler.sock.outbuf, socklist[i].handler.sock.outbuflen + len);
+        egg_memcpy(p + socklist[i].handler.sock.outbuflen, s, len);
+        socklist[i].handler.sock.outbuf = p;
+        socklist[i].handler.sock.outbuflen += len;
         return;
       }
       /* Try. */
@@ -950,9 +1052,9 @@ void tputs(register int z, char *s, unsigned int len)
         x = 0;
       if (x < len) {
         /* Socket is full, queue it */
-        socklist[i].outbuf = nmalloc(len - x);
-        egg_memcpy(socklist[i].outbuf, &s[x], len - x);
-        socklist[i].outbuflen = len - x;
+        socklist[i].handler.sock.outbuf = nmalloc(len - x);
+        egg_memcpy(socklist[i].handler.sock.outbuf, &s[x], len - x);
+        socklist[i].handler.sock.outbuflen = len - x;
       }
       return;
     }
@@ -990,8 +1092,9 @@ void dequeue_sockets()
   FD_ZERO(&wfds);
   tv.tv_sec = 0;
   tv.tv_usec = 0;               /* we only want to see if it's ready for writing, no need to actually wait.. */
-  for (i = 0; i < MAXSOCKS; i++) {
-    if (!(socklist[i].flags & SOCK_UNUSED) && socklist[i].outbuf != NULL) {
+  for (i = 0; i < threaddata()->MAXSOCKS; i++) {
+    if (!(socklist[i].flags & (SOCK_UNUSED | SOCK_TCL)) &&
+        socklist[i].handler.sock.outbuf != NULL) {
       FD_SET(socklist[i].sock, &wfds);
       z = 1;
     }
@@ -1005,12 +1108,12 @@ void dequeue_sockets()
 
 /* end poptix */
 
-  for (i = 0; i < MAXSOCKS; i++) {
-    if (!(socklist[i].flags & SOCK_UNUSED) &&
-        (socklist[i].outbuf != NULL) && (FD_ISSET(socklist[i].sock, &wfds))) {
+  for (i = 0; i < threaddata()->MAXSOCKS; i++) {
+    if (!(socklist[i].flags & (SOCK_UNUSED | SOCK_TCL)) &&
+        (socklist[i].handler.sock.outbuf != NULL) && (FD_ISSET(socklist[i].sock, &wfds))) {
       /* Trick tputs into doing the work */
       errno = 0;
-      x = write(socklist[i].sock, socklist[i].outbuf, socklist[i].outbuflen);
+      x = write(socklist[i].sock, socklist[i].handler.sock.outbuf, socklist[i].handler.sock.outbuflen);
       if ((x < 0) && (errno != EAGAIN)
 #ifdef EBADSLT
           && (errno != EBADSLT)
@@ -1023,18 +1126,18 @@ void dequeue_sockets()
         debug3("net: eof!(write) socket %d (%s,%d)", socklist[i].sock,
                strerror(errno), errno);
         socklist[i].flags |= SOCK_EOFD;
-      } else if (x == socklist[i].outbuflen) {
+      } else if (x == socklist[i].handler.sock.outbuflen) {
         /* If the whole buffer was sent, nuke it */
-        nfree(socklist[i].outbuf);
-        socklist[i].outbuf = NULL;
-        socklist[i].outbuflen = 0;
+        nfree(socklist[i].handler.sock.outbuf);
+        socklist[i].handler.sock.outbuf = NULL;
+        socklist[i].handler.sock.outbuflen = 0;
       } else if (x > 0) {
-        char *p = socklist[i].outbuf;
+        char *p = socklist[i].handler.sock.outbuf;
 
         /* This removes any sent bytes from the beginning of the buffer */
-        socklist[i].outbuf = nmalloc(socklist[i].outbuflen - x);
-        egg_memcpy(socklist[i].outbuf, p + x, socklist[i].outbuflen - x);
-        socklist[i].outbuflen -= x;
+        socklist[i].handler.sock.outbuf = nmalloc(socklist[i].handler.sock.outbuflen - x);
+        egg_memcpy(socklist[i].handler.sock.outbuf, p + x, socklist[i].handler.sock.outbuflen - x);
+        socklist[i].handler.sock.outbuflen -= x;
         nfree(p);
       } else {
         debug3("dequeue_sockets(): errno = %d (%s) on %d", errno,
@@ -1043,7 +1146,7 @@ void dequeue_sockets()
       /* All queued data was sent. Call handler if one exists and the
        * dcc entry wants it.
        */
-      if (!socklist[i].outbuf) {
+      if (!socklist[i].handler.sock.outbuf) {
         int idx = findanyidx(socklist[i].sock);
 
         if (idx > 0 && dcc[idx].type && dcc[idx].type->outdone)
@@ -1064,7 +1167,7 @@ void tell_netdebug(int idx)
   char s[80];
 
   dprintf(idx, "Open sockets:");
-  for (i = 0; i < MAXSOCKS; i++) {
+  for (i = 0; i < threaddata()->MAXSOCKS; i++) {
     if (!(socklist[i].flags & SOCK_UNUSED)) {
       sprintf(s, " %d", socklist[i].sock);
       if (socklist[i].flags & SOCK_BINARY)
@@ -1079,11 +1182,15 @@ void tell_netdebug(int idx)
         strcat(s, " (strong)");
       if (socklist[i].flags & SOCK_NONSOCK)
         strcat(s, " (file)");
-      if (socklist[i].inbuf != NULL)
-        sprintf(&s[strlen(s)], " (inbuf: %04X)",
-                (unsigned int) strlen(socklist[i].inbuf));
-      if (socklist[i].outbuf != NULL)
-        sprintf(&s[strlen(s)], " (outbuf: %06lX)", socklist[i].outbuflen);
+      if (socklist[i].flags & SOCK_TCL)
+        strcat(s, " (tcl)");
+      if (!(socklist[i].flags & SOCK_TCL)) {
+        if (socklist[i].handler.sock.inbuf != NULL)
+          sprintf(&s[strlen(s)], " (inbuf: %04X)",
+                  (unsigned int) strlen(socklist[i].handler.sock.inbuf));
+        if (socklist[i].handler.sock.outbuf != NULL)
+          sprintf(&s[strlen(s)], " (outbuf: %06lX)", socklist[i].handler.sock.outbuflen);
+      }
       strcat(s, ",");
       dprintf(idx, "%s", s);
     }
@@ -1169,16 +1276,16 @@ int sock_has_data(int type, int sock)
 {
   int ret = 0, i;
 
-  for (i = 0; i < MAXSOCKS; i++)
+  for (i = 0; i < threaddata()->MAXSOCKS; i++)
     if (!(socklist[i].flags & SOCK_UNUSED) && socklist[i].sock == sock)
       break;
-  if (i < MAXSOCKS) {
+  if (i < threaddata()->MAXSOCKS) {
     switch (type) {
     case SOCK_DATA_OUTGOING:
-      ret = (socklist[i].outbuf != NULL);
+      ret = (socklist[i].handler.sock.outbuf != NULL);
       break;
     case SOCK_DATA_INCOMING:
-      ret = (socklist[i].inbuf != NULL);
+      ret = (socklist[i].handler.sock.inbuf != NULL);
       break;
     }
   } else
@@ -1202,14 +1309,14 @@ int flush_inbuf(int idx)
   char *inbuf;
 
   Assert((idx >= 0) && (idx < dcc_total));
-  for (i = 0; i < MAXSOCKS; i++) {
+  for (i = 0; i < threaddata()->MAXSOCKS; i++) {
     if ((dcc[idx].sock == socklist[i].sock) &&
         !(socklist[i].flags & SOCK_UNUSED)) {
-      len = socklist[i].inbuflen;
-      if ((len > 0) && socklist[i].inbuf) {
+      len = socklist[i].handler.sock.inbuflen;
+      if ((len > 0) && socklist[i].handler.sock.inbuf) {
         if (dcc[idx].type && dcc[idx].type->activity) {
-          inbuf = socklist[i].inbuf;
-          socklist[i].inbuf = NULL;
+          inbuf = socklist[i].handler.sock.inbuf;
+          socklist[i].handler.sock.inbuf = NULL;
           dcc[idx].type->activity(idx, inbuf, len);
           nfree(inbuf);
           return len;

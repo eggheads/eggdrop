@@ -5,7 +5,7 @@
  *
  * Modified/written by Fabian Knittel <fknittel@gmx.de>
  *
- * $Id: coredns.c,v 1.34 2010/02/18 13:11:20 pseudo Exp $
+ * $Id: coredns.c,v 1.35 2010/06/29 15:52:24 thommey Exp $
  */
 /*
  * Portions Copyright (C) 1999 - 2010 Eggheads Development Team
@@ -1081,7 +1081,12 @@ static int init_dns_network(void)
            strerror(errno));
     return 0;
   }
-  (void) allocsock(resfd, SOCK_PASS);
+  if (allocsock(resfd, SOCK_PASS) == -1) {
+    putlog(LOG_MISC, "*",
+           "Unable to allocate socket in socklist for nameserver communication");
+    killsock(resfd);
+    return 0;
+  }
   option = 1;
   if (setsockopt(resfd, SOL_SOCKET, SO_BROADCAST, (char *) &option,
                  sizeof(option))) {

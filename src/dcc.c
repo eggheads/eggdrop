@@ -4,7 +4,7 @@
  *   disconnect on a dcc socket
  *   ...and that's it!  (but it's a LOT)
  *
- * $Id: dcc.c,v 1.92 2010/01/25 20:11:55 pseudo Exp $
+ * $Id: dcc.c,v 1.93 2010/06/29 15:52:24 thommey Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -1128,7 +1128,7 @@ static void dcc_telnet(int idx, char *buf, int i)
   int j = 0, sock;
   char s[UHOSTLEN + 1];
 
-  if (dcc_total + 1 > max_dcc) {
+  if (dcc_total + 1 > max_dcc && increase_socks_max()) {
     j = answer(dcc[idx].sock, s, &ip, &port, 0);
     if (j != -1) {
       dprintf(-j, "Sorry, too many connections already.\r\n");
@@ -1554,7 +1554,7 @@ static void display_dcc_telnet_id(int idx, char *buf)
 {
   long tv;
 
-  tv = now - dcc[idx].timeval; 
+  tv = now - dcc[idx].timeval;
   sprintf(buf, "t-in  waited %lis", tv);
 }
 

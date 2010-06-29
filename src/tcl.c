@@ -4,7 +4,7 @@
  *   Tcl initialization
  *   getting and setting Tcl/eggdrop variables
  *
- * $Id: tcl.c,v 1.95 2010/01/26 03:12:15 tothwolf Exp $
+ * $Id: tcl.c,v 1.96 2010/06/29 15:52:24 thommey Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -78,7 +78,7 @@ int allow_dk_cmds = 1;
 int must_be_owner = 1;
 int quiet_reject = 1;
 int copy_to_tmp = 1;
-int max_dcc = 20;
+int max_socks = 100;
 int quick_logs = 0;
 int par_telnet_flood = 1;
 int quiet_save = 0;
@@ -90,7 +90,6 @@ int clientdata_stuff = 0;
 /* Compatability for removed settings.*/
 int strict_servernames = 0, enable_simul = 1, use_console_r = 0,
     debug_output = 0;
-
 
 /* Prototypes for Tcl */
 Tcl_Interp *Tcl_CreateInterp();
@@ -122,7 +121,7 @@ static void botnet_change(char *new)
  *     Vars, traces, misc
  */
 
-int init_dcc_max(), init_misc();
+int init_misc();
 
 /* Used for read/write to integer couplets */
 typedef struct {
@@ -223,11 +222,10 @@ static char *tcl_eggint(ClientData cdata, Tcl_Interp *irp,
       else {
         if (Tcl_ExprLong(interp, s, &l) == TCL_ERROR)
           return "variable must have integer value";
-        if ((int *) ii->var == &max_dcc) {
-          if (l < max_dcc)
-            return "you can't DECREASE max-dcc";
-          max_dcc = l;
-          init_dcc_max();
+        if ((int *) ii->var == &max_socks) {
+          if (l < threaddata()->MAXSOCKS)
+            return "you can't DECREASE max-socks below current usage";
+          max_socks = l;
         } else if ((int *) ii->var == &max_logs) {
           if (l < max_logs)
             return "you can't DECREASE max-logs";
@@ -526,7 +524,7 @@ static tcl_ints def_tcl_ints[] = {
   {"die-on-sighup",         &die_on_sighup,        1},
   {"die-on-sigterm",        &die_on_sigterm,       1},
   {"remote-boots",          &remote_boots,         1},
-  {"max-dcc",               &max_dcc,              0},
+  {"max-socks",             &max_socks,            0},
   {"max-logs",              &max_logs,             0},
   {"max-logsize",           &max_logsize,          0},
   {"quick-logs",            &quick_logs,           0},
@@ -586,11 +584,104 @@ void kill_tcl()
 extern tcl_cmds tcluser_cmds[], tcldcc_cmds[], tclmisc_cmds[],
        tclmisc_objcmds[], tcldns_cmds[];
 
+#ifdef REPLACE_NOTIFIER
+/* The tickle_*() functions replace the Tcl Notifier
+ * The tickle_*() functions can be called by Tcl threads
+ */
+void tickle_SetTimer (TCL_CONST86 Tcl_Time *timePtr)
+{
+  struct threaddata *td = threaddata();
+  /* we can block 1 second maximum, because we have SECONDLY events */
+  if (!timePtr || timePtr->sec > 1 || (timePtr->sec == 1 && timePtr->usec > 0)) {
+    td->blocktime.tv_sec = 1;
+    td->blocktime.tv_usec = 0;
+  } else {
+    td->blocktime.tv_sec = timePtr->sec;
+    td->blocktime.tv_usec = timePtr->usec;
+  }
+}
+
+int tickle_WaitForEvent (TCL_CONST86 Tcl_Time *timePtr)
+{
+  struct threaddata *td = threaddata();
+  tickle_SetTimer(timePtr);
+  if (timePtr)
+    Tcl_SetServiceMode(TCL_SERVICE_ALL);
+  return (*td->mainloopfunc)();
+}
+
+void tickle_CreateFileHandler(int fd, int mask, Tcl_FileProc *proc, ClientData cd)
+{
+  alloctclsock(fd, mask, proc, cd);
+}
+
+void tickle_DeleteFileHandler(int fd)
+{
+  killtclsock(fd);
+}
+
+void tickle_FinalizeNotifier(ClientData cd)
+{
+  struct threaddata *td = threaddata();
+  if (td->socklist)
+    nfree(td->socklist);
+}
+
+ClientData tickle_InitNotifier()
+{
+  static int ismainthread = 1;
+  init_threaddata(ismainthread);
+  if (ismainthread)
+    ismainthread = 0;
+  return NULL;
+}
+
+int tclthreadmainloop()
+{
+  return sockread(NULL, NULL, threaddata()->socklist, threaddata()->MAXSOCKS, 1);
+}
+
+struct threaddata *threaddata()
+{
+  static Tcl_ThreadDataKey tdkey;
+  struct threaddata *td = Tcl_GetThreadData(&tdkey, sizeof(struct threaddata));
+  return td;
+}
+
+#else /* REPLACE_NOTIFIER */
+
+int tclthreadmainloop() { return 0; }
+
+struct threaddata *threaddata()
+{
+  static struct threaddata tsd;
+  return &tsd;
+}
+
+#endif /* REPLACE_NOTIFIER */
+
+int init_threaddata(int mainthread)
+{
+  struct threaddata *td = threaddata();
+  td->mainloopfunc = mainthread ? mainloop : tclthreadmainloop;
+  td->socklist = NULL;
+  td->mainthread = mainthread;
+  td->blocktime.tv_sec = 1;
+  td->blocktime.tv_usec = 0;
+  td->MAXSOCKS = 0;
+  increase_socks_max();
+  return 0;
+}
+
 /* Not going through Tcl's crazy main() system (what on earth was he
  * smoking?!) so we gotta initialize the Tcl interpreter
  */
 void init_tcl(int argc, char **argv)
 {
+#ifdef REPLACE_NOTIFIER
+  Tcl_NotifierProcs notifierprocs;
+#endif /* REPLACE_NOTIFIER */
+
 #ifdef USE_TCL_ENCODING
   const char *encoding;
   int i;
@@ -600,6 +691,18 @@ void init_tcl(int argc, char **argv)
   int j;
   char pver[1024] = "";
 #endif /* USE_TCL_PACKAGE */
+
+#ifdef REPLACE_NOTIFIER
+  egg_bzero(&notifierprocs, sizeof(notifierprocs));
+  notifierprocs.initNotifierProc = tickle_InitNotifier;
+  notifierprocs.createFileHandlerProc = tickle_CreateFileHandler;
+  notifierprocs.deleteFileHandlerProc = tickle_DeleteFileHandler;
+  notifierprocs.setTimerProc = tickle_SetTimer;
+  notifierprocs.waitForEventProc = tickle_WaitForEvent;
+  notifierprocs.finalizeNotifierProc = tickle_FinalizeNotifier;
+
+  Tcl_SetNotifier(&notifierprocs);
+#endif /* REPLACE_NOTIFIER */
 
 /* This must be done *BEFORE* Tcl_SetSystemEncoding(),
  * or Tcl_SetSystemEncoding() will cause a segfault.
@@ -625,6 +728,7 @@ void init_tcl(int argc, char **argv)
 
   /* Setup script library facility */
   Tcl_Init(interp);
+  Tcl_SetServiceMode(TCL_SERVICE_ALL);
 
 /* Code based on Tcl's TclpSetInitialEncodings() */
 #ifdef USE_TCL_ENCODING
@@ -927,5 +1031,15 @@ int tcl_threaded()
     return 1;
 #endif
 
+  return 0;
+}
+
+/* Check if we need to fork before initializing Tcl
+*/
+int fork_before_tcl()
+{
+#ifndef REPLACE_NOTIFIER
+  return tcl_threaded();
+#endif
   return 0;
 }

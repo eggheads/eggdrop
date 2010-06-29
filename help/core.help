@@ -185,7 +185,7 @@ sort-users
 die-on-sighup
 die-on-sigterm
 remote-boots
-max-dcc
+max-socks
 max-logs
 protect-telnet
 ident-timeout

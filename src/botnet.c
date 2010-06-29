@@ -7,7 +7,7 @@
  *   linking, unlinking, and relaying to another bot
  *   pinging the bots periodically and checking leaf status
  *
- * $Id: botnet.c,v 1.64 2010/01/03 13:27:31 pseudo Exp $
+ * $Id: botnet.c,v 1.65 2010/06/29 15:52:24 thommey Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -1008,7 +1008,7 @@ int botlink(char *linker, int idx, char *nick)
         dprintf(idx, "%s .chaddr %s %s\n",
                 MISC_USEFORMAT, nick, MISC_CHADDRFORMAT);
       }
-    } else if (dcc_total == max_dcc) {
+    } else if (dcc_total == max_dcc && increase_socks_max()) {
       if (idx >= 0)
         dprintf(idx, "%s\n", DCC_TOOMANYDCCS1);
     } else {

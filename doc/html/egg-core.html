@@ -1,5 +1,5 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
-<!-- $Id: egg-core.html,v 1.48 2010/01/15 19:51:49 pseudo Exp $ -->
+<!-- $Id: egg-core.html,v 1.49 2010/06/29 15:52:24 thommey Exp $ -->
 
 <html>
   <head>
@@ -835,11 +835,12 @@
           Please select owners wisely and use this command ethically!</p>
         </dd>
 
-        <dt><strong>set max-dcc 50</strong></dt>
+        <dt><strong>set max-socks 100</strong></dt>
 
         <dd>
-          <p>Set here the maximum number of dcc connections you will allow.
-          You can increase this later, but never decrease it.</p>
+          <p>Set here the maximum number of socket connections you will allow. You
+          can increase this later, but never decrease it below current usage. If
+          you're using Tcl threads, this is a per thread maximum.</p>
         </dd>
 
         <dt><strong>set allow-dk-cmds 1</strong></dt>

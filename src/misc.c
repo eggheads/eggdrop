@@ -7,7 +7,7 @@
  *   help system
  *   motd display and %var substitution
  *
- * $Id: misc.c,v 1.85 2010/03/08 20:52:56 pseudo Exp $
+ * $Id: misc.c,v 1.86 2010/06/29 15:52:24 thommey Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -295,7 +295,7 @@ char *newsplit(char **rest)
  * Does not require a proper hostmask in 's'. Accepts any strings,
  * including empty ones and attempts to provide meaningful results.
  *
- * Strings containing no '@' character will be parsed as if the 
+ * Strings containing no '@' character will be parsed as if the
  * whole string is a host.
  * Strings containing no '!' character will be interpreted as if
  * there is no nick.
@@ -303,9 +303,9 @@ char *newsplit(char **rest)
  * Otherwise it will be considered a part of the host.
  * Supported types are listed in tcl-commands.doc in the maskhost
  * command section. Type 3 resembles the older maskhost() most closely.
- * 
+ *
  * Specific examples (with type=3):
- * 
+ *
  * "nick!user@is.the.lamest.bg"  -> *!*user@*.the.lamest.bg (ccTLD)
  * "nick!user@is.the.lamest.com" -> *!*user@*.lamest.com (gTLD)
  * "lamest.example"	         -> *!*@lamest.example
