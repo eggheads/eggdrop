@@ -2,7 +2,7 @@
  * net.c -- handles:
  *   all raw network i/o
  *
- * $Id: net.c,v 1.83 2010/06/29 15:52:24 thommey Exp $
+ * $Id: net.c,v 1.84 2010/06/30 21:12:25 thommey Exp $
  */
 /*
  * This is hereby released into the public domain.
@@ -914,8 +914,10 @@ int sockgets(char *s, int *len)
     egg_memcpy(s, xx, *len);
     return socklist[ret].sock;
   }
-  if (socklist[ret].flags & (SOCK_LISTEN | SOCK_PASS | SOCK_TCL))
+  if (socklist[ret].flags & (SOCK_LISTEN | SOCK_PASS | SOCK_TCL)) {
+    s[0] = 0; /* for the dcc traffic counters in the mainloop */
     return socklist[ret].sock;
+  }
   if (socklist[ret].flags & SOCK_BUFFER) {
     socklist[ret].handler.sock.inbuf = (char *) nrealloc(socklist[ret].handler.sock.inbuf,
                                             socklist[ret].handler.sock.inbuflen + *len + 1);
@@ -956,7 +958,7 @@ int sockgets(char *s, int *len)
   if (p != NULL) {
     *p = 0;
     strcpy(s, xx);
-    strcpy(xx, p + 1);
+    memmove(xx, p + 1, strlen(p + 1) + 1);
     if (s[strlen(s) - 1] == '\r')
       s[strlen(s) - 1] = 0;
     data = 1; /* DCC_CHAT may now need to process a blank line */
