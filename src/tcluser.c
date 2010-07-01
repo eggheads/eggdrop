@@ -2,7 +2,7 @@
  * tcluser.c -- handles:
  *   Tcl stubs for the user-record-oriented commands
  *
- * $Id: tcluser.c,v 1.50 2010/02/07 17:21:14 pseudo Exp $
+ * $Id: tcluser.c,v 1.51 2010/07/01 16:10:49 thommey Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -146,7 +146,7 @@ static int tcl_chattr STDVAR
       user.chan = chan_sanity_check((user.chan | pls.chan) & ~mns.chan,
                                     user.global);
       user.udef_chan = (user.udef_chan | pls.udef_chan) & ~mns.udef_chan;
-      
+
     }
     set_user_flagrec(u, &user, chan);
     check_dcc_attrs(u, of);
@@ -304,7 +304,7 @@ static int tcl_addbot STDVAR
   for (p = argv[1]; *p; p++)
     if ((unsigned char) *p <= 32 || *p == '@')
       *p = '?';
-  
+
   if ((argv[1][0] == '*') || strchr(BADHANDCHARS, argv[1][0]) ||
       get_user_by_handle(userlist, argv[1]))
     Tcl_AppendResult(irp, "0", NULL);

@@ -1,5 +1,5 @@
 /*
- * $Id: uptime.c,v 1.39 2010/03/14 18:30:17 pseudo Exp $
+ * $Id: uptime.c,v 1.40 2010/07/01 16:10:50 thommey Exp $
  *
  * This module reports uptime information about your bot to http://uptime.eggheads.org. The
  * purpose for this is to see how your bot rates against many others (including EnergyMechs
@@ -54,7 +54,7 @@
  * "packets_sent" was originally defined as "cookie",
  * however this field was deprecated and set to zero
  * for most versions of the uptime client.  It has been
- * repurposed and renamed as of uptime v1.3 to reflect 
+ * repurposed and renamed as of uptime v1.3 to reflect
  * the number of packets the client thinks it has sent
  * over the life of the module.  Only the name has changed -
  * the type (unsigned long) is still the same.
@@ -99,7 +99,7 @@ static void uptime_report(int idx, int details)
 {
   int delta_seconds;
   char *next_update_at;
-  
+
   if (details) {
     delta_seconds = (int) (next_update - time(NULL));
     next_update_at = ctime(&next_update);
@@ -187,7 +187,7 @@ int send_uptime(void)
   }
 
   uptimecount++;
-  upPack.packets_sent = htonl(uptimecount); /* Tell the server how many 
+  upPack.packets_sent = htonl(uptimecount); /* Tell the server how many
 					       uptime packets we've sent. */
   upPack.now2 = htonl(time(NULL));
   upPack.ontime = 0;
@@ -235,7 +235,7 @@ int send_uptime(void)
 void check_minutely()
 {
   minutes++;
-  if (minutes >= next_minutes) { 
+  if (minutes >= next_minutes) {
     /* We're down to zero minutes.  Now do the seconds. */
     del_hook(HOOK_MINUTELY, (Function) check_minutely);
     add_hook(HOOK_SECONDLY, (Function) check_secondly);
@@ -247,7 +247,7 @@ void check_secondly()
   seconds++;
   if (seconds >= next_seconds) {  /* DING! */
     del_hook(HOOK_SECONDLY, (Function) check_secondly);
-    
+
     send_uptime();
 
     minutes = 0; /* Reset for the next countdown. */

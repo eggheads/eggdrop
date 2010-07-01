@@ -4,7 +4,7 @@
  *   a bunch of functions to find and change user records
  *   change and check user (and channel-specific) flags
  *
- * $Id: userrec.c,v 1.62 2010/01/25 20:11:55 pseudo Exp $
+ * $Id: userrec.c,v 1.63 2010/07/01 16:10:49 thommey Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -913,7 +913,7 @@ void user_del_chan(char *dname)
 int check_conflags(struct flag_record *fr, int md)
 {
   if (!glob_owner(*fr))
-    md &= ~(LOG_RAW | LOG_SRVOUT | LOG_BOTNET | LOG_BOTSHARE); 
+    md &= ~(LOG_RAW | LOG_SRVOUT | LOG_BOTNET | LOG_BOTSHARE);
   if (!glob_master(*fr)) {
     md &= ~(LOG_FILES | LOG_LEV1 | LOG_LEV2 | LOG_LEV3 | LOG_LEV4 |
             LOG_LEV5 | LOG_LEV6 | LOG_LEV7 | LOG_LEV8 | LOG_DEBUG |

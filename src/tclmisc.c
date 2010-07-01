@@ -2,7 +2,7 @@
  * tclmisc.c -- handles:
  *   Tcl stubs for everything else
  *
- * $Id: tclmisc.c,v 1.69 2010/03/18 15:19:39 pseudo Exp $
+ * $Id: tclmisc.c,v 1.70 2010/07/01 16:10:49 thommey Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -755,7 +755,7 @@ static int tcl_matchstr STDVAR
     Tcl_AppendResult(irp, "0", NULL);
   return TCL_OK;
 }
-                    
+
 tcl_cmds tclmisc_objcmds[] = {
 #ifdef USE_TCL_OBJ
   {"md5", tcl_md5},

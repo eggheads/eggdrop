@@ -6,7 +6,7 @@
  *   user kickban, kick, op, deop
  *   idle kicking
  *
- * $Id: chan.c,v 1.134 2010/02/18 09:52:29 pseudo Exp $
+ * $Id: chan.c,v 1.135 2010/07/01 16:10:49 thommey Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -712,7 +712,7 @@ static void recheck_channel_modes(struct chanset_t *chan)
     if (pls & CHANNOAMSG && !(cur & CHANNOAMSG))
       add_mode(chan, '+', 'T', "");
     else if (mns & CHANNOAMSG && cur & CHANNOAMSG)
-      add_mode(chan, '-', 'T', "");    
+      add_mode(chan, '-', 'T', "");
     if (pls & CHANTOPIC && !(cur & CHANTOPIC))
       add_mode(chan, '+', 't', "");
     else if (mns & CHANTOPIC && cur & CHANTOPIC)

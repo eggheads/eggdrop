@@ -4,7 +4,7 @@
  *   channel mode changes and the bot's reaction to them
  *   setting and getting the current wanted channel modes
  *
- * $Id: mode.c,v 1.89 2010/01/07 13:48:31 pseudo Exp $
+ * $Id: mode.c,v 1.90 2010/07/01 16:10:49 thommey Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -50,7 +50,7 @@ struct chanset_t *modebind_refresh(char *chname,
 {
   struct userrec *u;
   struct chanset_t *chan;
-  
+
   if (!chname || !(chan = findchan(chname)))
     return NULL;
   if (usrhost) {

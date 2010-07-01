@@ -1,7 +1,7 @@
 /*
  * tclirc.c -- part of irc.mod
  *
- * $Id: tclirc.c,v 1.57 2010/01/03 13:27:55 pseudo Exp $
+ * $Id: tclirc.c,v 1.58 2010/07/01 16:10:49 thommey Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -496,7 +496,7 @@ static int tcl_onchansplit STDVAR
 static int tcl_maskhost STDVAR
 {
   char *new;
-  
+
   BADARGS(2, 3, " nick!user@host ?type?");
 
   new = nmalloc(strlen(argv[1]) + 5);
@@ -754,16 +754,16 @@ static int tcl_resetchanidle STDVAR
 {
   memberlist *m;
   struct chanset_t *chan;
-  
+
   BADARGS(2, 3, " ?nick? channel");
-  
+
   chan = findchan_by_dname((argc == 2) ? argv[1] : argv[2]);
   if (chan == NULL) {
     Tcl_AppendResult(irp, "invalid channel ",
                      (argc == 2) ? argv[1] : argv[2], NULL);
     return TCL_ERROR;
   }
-  
+
   if (argc == 2)
     for (m = chan->channel.member; m; m = m->next)
       m->last = now;
@@ -781,16 +781,16 @@ static int tcl_resetchanjoin STDVAR
 {
   memberlist *m;
   struct chanset_t *chan;
-  
+
   BADARGS(2, 3, " ?nick? channel");
-  
+
   chan = findchan_by_dname((argc == 2) ? argv[1] : argv[2]);
   if (chan == NULL) {
     Tcl_AppendResult(irp, "invalid channel ",
                      (argc == 2) ? argv[1] : argv[2], NULL);
     return TCL_ERROR;
   }
-  
+
   if (argc == 2)
     for (m = chan->channel.member; m; m = m->next)
       m->joined = now;

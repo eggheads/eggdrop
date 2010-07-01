@@ -4,7 +4,7 @@
  *   hostmask matching
  *   cidr matching
  *
- * $Id: match.c,v 1.17 2010/03/18 15:19:39 pseudo Exp $
+ * $Id: match.c,v 1.18 2010/07/01 16:10:49 thommey Exp $
  *
  * Once this code was working, I added support for % so that I could
  * use the same code both in Eggdrop and in my IrcII client.
@@ -251,7 +251,7 @@ int addr_match(char *m, char *n, int user, int cmp)
   *p = *q = 0;
   if ((!user && !cidr_support) || !r || !s)
     return wild_match(mu, nu) ? 1 : NOMATCH;
-  
+
   *r++ = *s++ = 0;
   if (!wild_match(mu, nu))
     return NOMATCH; /* nick!ident parts don't match */
@@ -296,7 +296,7 @@ int mask_match(char *m, char *n)
   *p = *q = 0;
   if (!cidr_support || !r || !s)
     return (wild_match(mu, nu) || wild_match(nu, mu));
-  
+
   *r++ = *s++ = 0;
   if (!wild_match(mu, nu) && !wild_match(nu, mu))
     return 0;
@@ -330,7 +330,7 @@ int cidr_match(char *m, char *n, int count)
 #ifdef IPV6
   int c, af = AF_INET;
   u_8bit_t block[16], addr[16];
-  
+
   if (count < 1)
     return NOMATCH;
   if (strchr(m, ':') || strchr(n, ':')) {
@@ -349,10 +349,10 @@ int cidr_match(char *m, char *n, int count)
     return 1;
   count = 8 - (count % 8);
   return ((block[c] >> count) == (addr[c] >> count));
-  
+
 #else
   IP block, addr;
-  
+
   if (count < 1 || count > 32)
     return NOMATCH;
   block = ntohl(inet_addr(m));
