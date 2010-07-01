@@ -1,4 +1,4 @@
-$Id: Changes1.6,v 1.84 2010/07/01 16:10:49 thommey Exp $
+$Id: Changes1.6,v 1.85 2010/07/01 19:02:10 thommey Exp $
 
 Eggdrop Changes (since version 1.6.0)
 
@@ -311,8 +311,10 @@ Eggdrop Changes (since version 1.6.0)
   - Further expanded 1.1.x information in doc/Versions.
     Patch by: Tothwolf
 
-  - Fixed another bug in the CTCP parsing code introduced by the servmsg.c
-    buffer overflow patch in 1.6.19.
+  - Fixed a remote DoS in the CTCP parsing code introduced by the servmsg.c
+    buffer overflow patch by Nico Golde.
+    Reference: Secunia Advisory: SA35104
+    Reference: CVE-2009-1789
     Patch by: thommey
 
   - Added scripts/dccwhois.tcl Tcl script. This script enhances the built-in
