@@ -1,4 +1,4 @@
-$Id: THANKS,v 1.5 2010/07/01 18:05:13 thommey Exp $:
+$Id: THANKS,v 1.6 2010/07/01 18:09:16 thommey Exp $:
 
 Eggdrop Developers and Contributors
 Last revised: June 16, 2010
@@ -45,6 +45,7 @@ Kirk           Ian Kaney                       ikaney@crisiant.com
 LuckyStar                                      lucky@binet.lv
 NC
 poptix         Matthew Hallacy                 poptix@poptix.net
+pseudo         Rumen Stoyanov                  pseudo@egg6.net
 Q                                              Q@ping.be
 Robey          Robey Pointer                   robey@lag.net
 rfc                                            rfc@undernet.org
@@ -432,7 +433,6 @@ project10
 proton
 prox
 ^PRS4^         James P.                        prs4@hotmail.com
-pseudo         Rumen Stoyanov                  pseudo@egg6.net
 pteron         Andy Repton                     eggdrop@pteron.org
 QuakeMstr
 quest                                          quest@mac.com
