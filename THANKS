@@ -1,4 +1,4 @@
-$Id: THANKS,v 1.4 2010/06/17 20:44:33 simple Exp $:
+$Id: THANKS,v 1.5 2010/07/01 18:05:13 thommey Exp $:
 
 Eggdrop Developers and Contributors
 Last revised: June 16, 2010
@@ -56,7 +56,7 @@ SuperS         Kevin Lamothe                   supers@starblaze.2y.net
 Sven           Sven Trenkel                    list@semidefinite.de
 TaKeDa         Dariusz Kulinski                takeda3@netzero.net
 TheGhost       James Simmons                   tg@linuxpackages.net
-thommey        Thomas Sader                    thommey@laxin.de
+thommey        Thomas Sader                    thommey@gmail.com
 toot           Toby Verrall                    toot@holborn.melnet.co.uk
 Tothwolf                                       tothwolf@techmonkeys.org
 Wcc            Will Buckner                    wcc@techmonkeys.org
@@ -123,7 +123,7 @@ Brian
                Bruce Gingery
                Bruce S.
                Bryan Dolan
-bUrN
+bUrN           Tobias Schwind
 Butthead
 By-Tor                                         bytor@netside.com
                C. Massam
@@ -382,10 +382,10 @@ NESS
 NetG0D
 NetIrc
 neuro
-never
+never          Sebastian Schwardt              never@nolife.org
                Nicholas J. Dear
 Nick_                                          nick@null.net
-               Nico Golde
+               Nico Golde                      nion@debian.org
 Nidhogg
 Niggurath      Shub Niggurath                  rm@fh-worms.de
 NigtHuntr
@@ -498,8 +498,8 @@ slenny
 slix
 sloot
 slt
-slug
-|SmAsH|
+slug           Chris Porter                    slug@quakenet.org
+smash          Patrick Ringl                   patrick_@freenet.de
 smok
 softlord
 Solal
@@ -529,7 +529,7 @@ tartarus
 taz-man
 tchaika
 tdmarti
-TheAvatar
+TheAvatar      Søren Jensen                    sjj@eushells.com
 The_Dawn
 thembones
 TheQ
