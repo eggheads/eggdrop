@@ -2,7 +2,7 @@
  * tcldcc.c -- handles:
  *   Tcl stubs for the dcc commands
  *
- * $Id: tcldcc.c,v 1.68 2010/06/29 15:52:24 thommey Exp $
+ * $Id: tcldcc.c,v 1.69 2010/07/02 21:56:44 pseudo Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -60,14 +60,23 @@ static int tcl_putdcc STDVAR
 {
   int j;
 
-  BADARGS(3, 3, " idx text");
+  BADARGS(3, 4, " idx text ?options?");
+
+  if ((argc == 4) && egg_strcasecmp(argv[3], "-raw")) {
+    Tcl_AppendResult(irp, "unknown putdcc option: should be ",
+                     "-raw", NULL);
+    return TCL_ERROR;
+  }
 
   j = findidx(atoi(argv[1]));
   if (j < 0) {
     Tcl_AppendResult(irp, "invalid idx", NULL);
     return TCL_ERROR;
   }
-  dumplots(j, "", argv[2]);
+  if (argc == 4)
+    tputs(dcc[j].sock, argv[2], strlen(argv[2]));
+  else
+    dumplots(j, "", argv[2]);
 
   return TCL_OK;
 }

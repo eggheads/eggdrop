@@ -1,4 +1,4 @@
-$Id: tcl-commands.doc,v 1.135 2010/03/18 15:19:38 pseudo Exp $
+$Id: tcl-commands.doc,v 1.136 2010/07/02 21:56:44 pseudo Exp $
 
 Eggdrop Tcl Commands
 Last revised: November 23, 2009
@@ -862,8 +862,10 @@ marked with vertical bars (|) on the left.
 
 *** DCC COMMANDS ***
 
-  putdcc <idx> <text>
-    Description: sends text to the idx specified
+  putdcc <idx> <text> [-raw]
+    Description: sends text to the idx specified. If -raw is specified, the
+      text will be sent as is, without forced new lines or limits to line
+      length.
     Returns: nothing
     Module: core
 

@@ -1,5 +1,5 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
-<!-- $Id: tcl-commands.html,v 1.69 2010/03/18 15:19:39 pseudo Exp $ -->
+<!-- $Id: tcl-commands.html,v 1.70 2010/07/02 21:56:44 pseudo Exp $ -->
 
 <html>
   <head>
@@ -1862,10 +1862,12 @@
 
     <blockquote>
       <dl>
-        <dt><strong><a name="cmd_putdcc"></a>putdcc &lt;idx&gt; &lt;text&gt;</strong></dt>
+        <dt><strong><a name="cmd_putdcc"></a>putdcc &lt;idx&gt; &lt;text&gt; [-raw]</strong></dt>
 
         <dd>
-          <p><strong>Description:</strong> sends text to the idx specified</p>
+          <p><strong>Description:</strong> sends text to the idx specified.
+          If -raw is specified, the text will be sent as is, without forced
+          new lines or limits to line length.</p>
 
           <p><strong>Returns:</strong> nothing</p>
 

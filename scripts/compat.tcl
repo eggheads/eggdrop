@@ -1,7 +1,6 @@
 # compat.tcl
-#   This script just quickly maps old Tcl functions to the new ones,
-#   use this is you are to lazy to get of your butt and update your scripts :D
-#   by the way it binds some old command to the new ones
+#   This script just quickly maps old Tcl commands to the new ones.
+#   Use this if you are too lazy to get off your butt and update your scripts :D
 #
 # Copyright (C) 2002 - 2010 Eggheads Development Team
 #
@@ -12,7 +11,7 @@
 # pseudo    04Oct2009: added putdccraw
 # Pixelz    08Apr2010: changed [time] to be compatible with Tcl [time]
 #
-# $Id: compat.tcl,v 1.18 2010/06/28 21:13:26 thommey Exp $
+# $Id: compat.tcl,v 1.19 2010/07/02 21:56:44 pseudo Exp $
 
 proc gethosts {hand} {
   getuser $hand HOSTS
@@ -125,7 +124,7 @@ proc putdccraw {idx size text} {
   }
   putloglev o * "Warning! putdccraw is deprecated. Use putdcc instead!"
   if {![valididx $idx]} {return -code error "invalid idx"}
-  putdcc $idx $text
+  putdcc $idx $text -raw
 }
 
 # as you can see it takes a lot of effort to simulate all the old commands
