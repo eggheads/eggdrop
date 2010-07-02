@@ -1,10 +1,13 @@
-$Id: Changes1.6,v 1.85 2010/07/01 19:02:10 thommey Exp $
+$Id: Changes1.6,v 1.86 2010/07/02 15:41:14 pseudo Exp $
 
 Eggdrop Changes (since version 1.6.0)
 
     _____________________________________________________________________
 
 1.6.20 (CVS):
+
+  - Added few contributors to the THANKS file.
+    Patch by: pseudo
 
   - Ran misc/killwhitespace and misc/runautotools
   - Prevent uninitialized memory access that became visible due to the
@@ -28,6 +31,7 @@ Eggdrop Changes (since version 1.6.0)
   - Removed root uid check when compiled on Cygwin, as it was reported to
     cause problems for some cygwin installations, while it doesn't provide
     any protection, as administrator accounts appear as non-zero uids anyway.
+    Found by: FireEgl / Patch by: pseudo
 
   - Channels added in the config are no longer static. Added access to the
     static flag via new channel setting, available to permanent owners only.
