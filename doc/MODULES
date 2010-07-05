@@ -1,4 +1,4 @@
-$Id: MODULES,v 1.35 2010/01/03 13:27:22 pseudo Exp $
+$Id: MODULES,v 1.36 2010/07/05 12:07:05 pseudo Exp $
 
 Eggdrop Module Information
 Last revised: March 04, 2003
@@ -106,7 +106,7 @@ Last revised: March 04, 2003
               or via dcc. This module works only for users in the bot's
               userlist. If you are looking for a better and more advanced seen
               module, try the gseen module by G'Quann. You can find it at
-              http://www.visions-of-fantasy.de/gseen.mod/.
+              http://www.kreativrauschen.com/gseen.mod/.
 
     server    This module provides the core server support. You have to load
               this if you want your bot to come on IRC. Not loading this is

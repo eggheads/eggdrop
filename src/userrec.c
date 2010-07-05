@@ -4,7 +4,7 @@
  *   a bunch of functions to find and change user records
  *   change and check user (and channel-specific) flags
  *
- * $Id: userrec.c,v 1.63 2010/07/01 16:10:49 thommey Exp $
+ * $Id: userrec.c,v 1.64 2010/07/05 12:07:05 pseudo Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -599,7 +599,8 @@ int change_handle(struct userrec *u, char *newh)
   strncpyz(s, u->handle, sizeof s);
   strncpyz(u->handle, newh, sizeof u->handle);
   for (i = 0; i < dcc_total; i++)
-    if (dcc[i].type != &DCC_BOT && !egg_strcasecmp(dcc[i].nick, s)) {
+    if ((dcc[i].type == &DCC_CHAT || dcc[i].type == &DCC_CHAT_PASS) &&
+        !egg_strcasecmp(dcc[i].nick, s)) {
       strncpyz(dcc[i].nick, newh, sizeof dcc[i].nick);
       if (dcc[i].type == &DCC_CHAT && dcc[i].u.chat->channel >= 0) {
         chanout_but(-1, dcc[i].u.chat->channel,
