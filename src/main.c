@@ -5,7 +5,7 @@
  *   command line arguments
  *   context and assert debugging
  *
- * $Id: main.c,v 1.134 2010/06/29 15:52:24 thommey Exp $
+ * $Id: main.c,v 1.135 2010/07/07 16:25:58 thommey Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -899,8 +899,8 @@ int mainloop()
 
 int main(int arg_c, char **arg_v)
 {
-  int i;
-  char s[25], xx;
+  int i, xx;
+  char s[25];
   FILE *f;
   struct sigaction sv;
   struct chanset_t *chan;
@@ -1043,9 +1043,9 @@ int main(int arg_c, char **arg_v)
   if (f != NULL) {
     fgets(s, 10, f);
     xx = atoi(s);
-    kill(xx, SIGCHLD);          /* Meaningless kill to determine if pid
+    i = kill(xx, SIGCHLD);      /* Meaningless kill to determine if pid
                                  * is used */
-    if (errno != ESRCH) {
+    if (i == 0 || errno != ESRCH) {
       printf(EGG_RUNNING1, botnetnick);
       printf(EGG_RUNNING2, pid_file);
       bg_send_quit(BG_ABORT);

@@ -10,7 +10,7 @@
  * statement, leave the rest of the file alone, this allows better
  * overlapping patches.
  *
- * $Id: patch.h,v 1.1252 2010/07/02 21:56:44 pseudo Exp $
+ * $Id: patch.h,v 1.1253 2010/07/07 16:25:58 thommey Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -46,7 +46,7 @@ patch("1278102620");            /* current unixtime */
  *
  *
  */
-patch("rawputdcc");
+patch("killpidfix");
 /*
  *
  *
