@@ -5,7 +5,7 @@
  *   command line arguments
  *   context and assert debugging
  *
- * $Id: main.c,v 1.135 2010/07/07 16:25:58 thommey Exp $
+ * $Id: main.c,v 1.136 2010/07/07 21:05:50 thommey Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -707,7 +707,8 @@ static inline void garbage_collect(void)
 
 int mainloop()
 {
-  int xx, i, busy = 1, socket_cleanup = 0;
+  static int socket_cleanup = 0;
+  int xx, i, busy = 1;
   char buf[520];
 
 #ifdef USE_TCL_EVENTS
