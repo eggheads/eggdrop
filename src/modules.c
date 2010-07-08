@@ -4,7 +4,7 @@
  *
  * by Darrin Smith (beldin@light.iinet.net.au)
  *
- * $Id: modules.c,v 1.107 2010/06/29 15:52:24 thommey Exp $
+ * $Id: modules.c,v 1.108 2010/07/08 19:23:06 pseudo Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -86,7 +86,7 @@ extern struct chanset_t *chanset;
 
 extern char tempdir[], botnetnick[], botname[], natip[], hostname[],
             origbotname[], botuser[], admin[], userfile[], ver[], notify_new[],
-            helpdir[], version[], quit_msg[];
+            helpdir[], version[], quit_msg[], log_ts[];
 
 extern int parties, noshare, dcc_total, egg_numver, userfile_perm, do_restart,
            ignore_time, must_be_owner, raw_log, max_dcc, make_userfile,
@@ -575,7 +575,8 @@ Function global_table[] = {
   (Function) mask_match,
   /* 296 - 299 */
   (Function) check_conflags,
-  (Function) increase_socks_max
+  (Function) increase_socks_max,
+  (Function) log_ts
 };
 
 void init_modules(void)

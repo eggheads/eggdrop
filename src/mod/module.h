@@ -1,7 +1,7 @@
 /*
  * module.h
  *
- * $Id: module.h,v 1.94 2010/06/29 15:52:24 thommey Exp $
+ * $Id: module.h,v 1.95 2010/07/08 19:23:06 pseudo Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -484,6 +484,7 @@
 /* 296 - 299 */
 #define check_conflags ((int (*) (struct flag_record *, int))global[296])
 #define increase_socks_max ((int (*)(void))global[297])
+#define LOG_TS ((char *)(global[298]))
 
 /* hostmasking */
 #define maskhost(a,b) maskaddr((a),(b),3)

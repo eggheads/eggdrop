@@ -1,10 +1,14 @@
-$Id: Changes1.6,v 1.90 2010/07/07 21:05:50 thommey Exp $
+$Id: Changes1.6,v 1.91 2010/07/08 19:23:06 pseudo Exp $
 
 Eggdrop Changes (since version 1.6.0)
 
     _____________________________________________________________________
 
 1.6.20 (CVS):
+
+  - Added log_ts to the modules function table to keep modules relying on
+    the old LOG_TS #define working.
+    Patch by: pseudo
 
   - Restore socket_cleanup functionality, was broken by the notifier patch.
   - Fixed detection of eggdrop already running on startup.
