@@ -2,7 +2,7 @@
  * channels.c -- part of channels.mod
  *   support for channels within the bot
  *
- * $Id: channels.c,v 1.105 2010/03/24 13:14:50 pseudo Exp $
+ * $Id: channels.c,v 1.106 2010/07/09 23:29:54 pseudo Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -410,19 +410,19 @@ static void write_channels()
     convert_element(chan->need_key, need3);
     convert_element(chan->need_unban, need4);
     convert_element(chan->need_limit, need5);
-    /* Do not indent me (adds extra spaces to chan file). */
     fprintf(f,
-"channel %s %s%schanmode %s idle-kick %d stopnethack-mode %d revenge-mode %d \
-need-op %s need-invite %s need-key %s need-unban %s need-limit %s \
-flood-chan %d:%d flood-ctcp %d:%d flood-join %d:%d flood-kick %d:%d \
-flood-deop %d:%d flood-nick %d:%d aop-delay %d:%d ban-type %d ban-time %d \
-exempt-time %d invite-time %d %cenforcebans %cdynamicbans %cuserbans %cautoop \
-%cautohalfop %cbitch %cgreet %cprotectops %cprotecthalfops %cprotectfriends \
-%cdontkickops %cstatuslog %crevenge %crevengebot %cautovoice %csecret \
-%cshared %ccycle %cseen %cinactive %cdynamicexempts %cuserexempts \
-%cdynamicinvites %cuserinvites %cnodesynch ",
-            channel_static(chan) ? "set" : "add", name, channel_static(chan) ?
-            " " : " { ", w2, chan->idle_kick, chan->stopnethack_mode,
+            "channel add %s { chanmode %s idle-kick %d stopnethack-mode %d "
+            "revenge-mode %d need-op %s need-invite %s need-key %s "
+            "need-unban %s need-limit %s flood-chan %d:%d flood-ctcp %d:%d "
+            "flood-join %d:%d flood-kick %d:%d flood-deop %d:%d "
+            "flood-nick %d:%d aop-delay %d:%d ban-type %d ban-time %d "
+            "exempt-time %d invite-time %d %cenforcebans %cdynamicbans "
+            "%cuserbans %cautoop %cautohalfop %cbitch %cgreet %cprotectops "
+            "%cprotecthalfops %cprotectfriends %cdontkickops %cstatuslog "
+            "%crevenge %crevengebot %cautovoice %csecret %cshared %ccycle "
+            "%cseen %cinactive %cdynamicexempts %cuserexempts %cdynamicinvites "
+            "%cuserinvites %cnodesynch %cstatic }" "\n",
+            name, w2, chan->idle_kick, chan->stopnethack_mode,
             chan->revenge_mode, need1, need2, need3, need4, need5,
             chan->flood_pub_thr, chan->flood_pub_time,
             chan->flood_ctcp_thr, chan->flood_ctcp_time,
@@ -456,8 +456,8 @@ exempt-time %d invite-time %d %cenforcebans %cdynamicbans %cuserbans %cautoop \
             PLSMNS(!channel_nouserexempts(chan)),
             PLSMNS(channel_dynamicinvites(chan)),
             PLSMNS(!channel_nouserinvites(chan)),
-            PLSMNS(channel_nodesynch(chan)));
-    fprintf(f, "%s\n", channel_static(chan) ? "" : "}");
+            PLSMNS(channel_nodesynch(chan)),
+            PLSMNS(channel_static(chan)));
     for (ul = udef; ul; ul = ul->next) {
       if (ul->defined && ul->name) {
         if (ul->type == UDEF_FLAG)
@@ -494,9 +494,10 @@ static void read_channels(int create)
 
   if (!chanfile[0])
     return;
+
   for (chan = chanset; chan; chan = chan->next)
-    if (!channel_static(chan))
-      chan->status |= CHAN_FLAGGED;
+    chan->status |= CHAN_FLAGGED;
+
   chan_hack = 1;
   if (!readtclprog(chanfile) && create) {
     FILE *f;
@@ -532,34 +533,12 @@ static void backup_chanfile()
 
 static void channels_prerehash()
 {
-  struct chanset_t *chan;
-
-  /* Flag will be cleared as the channels are re-added by the
-   * config file. Any still flagged afterwards will be removed.
-   */
-  for (chan = chanset; chan; chan = chan->next) {
-    chan->status |= CHAN_FLAGGED;
-    /* Flag is only added to channels read from config file */
-    if (chan->status & CHAN_STATIC)
-      chan->status &= ~CHAN_STATIC;
-  }
+  write_channels();
 }
 
 static void channels_rehash()
 {
-  struct chanset_t *chan;
-
-  read_channels(1);
-  /* Remove any extra channels, by checking the flag. */
-  chan = chanset;
-  for (chan = chanset; chan;) {
-    if (chan->status & CHAN_FLAGGED) {
-      putlog(LOG_MISC, "*", "No longer supporting channel %s", chan->dname);
-      remove_channel(chan);
-      chan = chanset;
-    } else
-      chan = chan->next;
-  }
+  write_channels();
 }
 
 static cmd_t my_chon[] = {
@@ -1005,7 +984,8 @@ char *channels_start(Function *global_funcs)
          "-revengebot "
          "-protecthalfops "
          "-autohalfop "
-         "-nodesynch ");
+         "-nodesynch "
+         "-static ");
   module_register(MODULE_NAME, channels_table, 1, 1);
   if (!module_depend(MODULE_NAME, "eggdrop", 106, 20)) {
     module_undepend(MODULE_NAME);

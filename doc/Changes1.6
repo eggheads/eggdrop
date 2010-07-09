@@ -1,10 +1,16 @@
-$Id: Changes1.6,v 1.93 2010/07/09 17:21:47 pseudo Exp $
+$Id: Changes1.6,v 1.94 2010/07/09 23:29:54 pseudo Exp $
 
 Eggdrop Changes (since version 1.6.0)
 
     _____________________________________________________________________
 
 1.6.20 (CVS):
+
+  - Fixed a problem with channels added in the config getting deleted after
+    the config is loaded.
+  - The chanfile is now saved before and after rehash instead of being
+    reloaded after.
+    Found by: CyBex, thommey / Patch by: thommey, pseudo
 
   - Added mod-transfer.html to index.html
     Patch by: pseudo
