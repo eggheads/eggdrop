@@ -4,7 +4,7 @@
  *   Tcl initialization
  *   getting and setting Tcl/eggdrop variables
  *
- * $Id: tcl.c,v 1.96 2010/06/29 15:52:24 thommey Exp $
+ * $Id: tcl.c,v 1.97 2010/07/09 15:33:27 thommey Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -604,9 +604,8 @@ void tickle_SetTimer (TCL_CONST86 Tcl_Time *timePtr)
 int tickle_WaitForEvent (TCL_CONST86 Tcl_Time *timePtr)
 {
   struct threaddata *td = threaddata();
+
   tickle_SetTimer(timePtr);
-  if (timePtr)
-    Tcl_SetServiceMode(TCL_SERVICE_ALL);
   return (*td->mainloopfunc)();
 }
 
@@ -638,7 +637,9 @@ ClientData tickle_InitNotifier()
 
 int tclthreadmainloop()
 {
-  return sockread(NULL, NULL, threaddata()->socklist, threaddata()->MAXSOCKS, 1);
+  int i;
+  i = sockread(NULL, NULL, threaddata()->socklist, threaddata()->MAXSOCKS, 1);
+  return (i == -4);
 }
 
 struct threaddata *threaddata()

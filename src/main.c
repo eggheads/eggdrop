@@ -5,7 +5,7 @@
  *   command line arguments
  *   context and assert debugging
  *
- * $Id: main.c,v 1.136 2010/07/07 21:05:50 thommey Exp $
+ * $Id: main.c,v 1.137 2010/07/09 15:33:27 thommey Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -826,6 +826,8 @@ int mainloop()
     call_hook(HOOK_IDLE);
     socket_cleanup = 0;       /* If we've been idle, cleanup & flush */
     busy = 0;
+  } else if (xx == -4) {
+    /* Tcl sockets are busy */
   }
 
   if (do_restart) {

@@ -1,10 +1,16 @@
-$Id: Changes1.6,v 1.91 2010/07/08 19:23:06 pseudo Exp $
+$Id: Changes1.6,v 1.92 2010/07/09 15:33:27 thommey Exp $
 
 Eggdrop Changes (since version 1.6.0)
 
     _____________________________________________________________________
 
 1.6.20 (CVS):
+
+  - Make sure tickle_WaitForEvent returns 1 when anything was done. This
+    was not done if Tcl socket handlers were called. It is required to make
+    Tcl_DoOneEvent() break out of its loop for vwait.
+  - Don't use Tcl_SetServiceMode(), Tcl handles that.
+    Found by: CyBex, horgh / Patch by: thommey
 
   - Added log_ts to the modules function table to keep modules relying on
     the old LOG_TS #define working.

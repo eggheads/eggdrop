@@ -2,7 +2,7 @@
  * net.c -- handles:
  *   all raw network i/o
  *
- * $Id: net.c,v 1.84 2010/06/30 21:12:25 thommey Exp $
+ * $Id: net.c,v 1.85 2010/07/09 15:33:27 thommey Exp $
  */
 /*
  * This is hereby released into the public domain.
@@ -678,20 +678,16 @@ int preparefdset(fd_set *fd, sock_list *slist, int slistmax, int tclonly, int tc
  * Also calls all handler procs for Tcl sockets
  * sockread() can be called by Tcl threads
  *
- * If tclonly is 0:
  *              on EOF:  returns -1, with socket in len
  *     on socket error:  returns -2
  * if nothing is ready:  returns -3
- *
- * If tclonly is 1:
- *   a proc was called:  returns 1
- *  no proc was called:  returns 0
+ *    tcl sockets busy:  returns -4
  */
 int sockread(char *s, int *len, sock_list *slist, int slistmax, int tclonly)
 {
   struct timeval t;
   fd_set fdr, fdw, fde;
-  int fds, i, x, have_r, have_w, have_e, events, tclbusy;
+  int fds, i, x, have_r, have_w, have_e, events;
   int grab = 511;
   struct threaddata *td = threaddata();
 
@@ -701,7 +697,6 @@ int sockread(char *s, int *len, sock_list *slist, int slistmax, int tclonly)
     fds = FD_SETSIZE;           /* Fixes YET ANOTHER freebsd bug!!! */
 #endif
 
-  tclbusy = 0;
   have_r = preparefdset(&fdr, slist, slistmax, tclonly, TCL_READABLE);
   have_w = preparefdset(&fdw, slist, slistmax, 1, TCL_WRITABLE);
   have_e = preparefdset(&fde, slist, slistmax, 1, TCL_EXCEPTION);
@@ -792,8 +787,7 @@ int sockread(char *s, int *len, sock_list *slist, int slistmax, int tclonly)
         if (events) {
           (*slist[i].handler.tclsock.proc)(slist[i].handler.tclsock.cd,
                                      slist[i].handler.tclsock.mask & events);
-          tclbusy = 1;
-          continue;
+          return -4;
         }
       }
     }
@@ -803,7 +797,7 @@ int sockread(char *s, int *len, sock_list *slist, int slistmax, int tclonly)
     s[0] = 0;
     *len = 0;
   }
-  return (tclonly ? tclbusy : -3);
+  return -3;
 }
 
 /* sockgets: buffer and read from sockets
