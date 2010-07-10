@@ -2,7 +2,7 @@
  * channels.c -- part of channels.mod
  *   support for channels within the bot
  *
- * $Id: channels.c,v 1.106 2010/07/09 23:29:54 pseudo Exp $
+ * $Id: channels.c,v 1.107 2010/07/10 14:54:49 pseudo Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -488,15 +488,16 @@ static void write_channels()
   movefile(s, chanfile);
 }
 
-static void read_channels(int create)
+static void read_channels(int create, int reload)
 {
   struct chanset_t *chan, *chan_next;
 
   if (!chanfile[0])
     return;
 
-  for (chan = chanset; chan; chan = chan->next)
-    chan->status |= CHAN_FLAGGED;
+  if (reload)
+    for (chan = chanset; chan; chan = chan->next)
+      chan->status |= CHAN_FLAGGED;
 
   chan_hack = 1;
   if (!readtclprog(chanfile) && create) {
@@ -512,6 +513,8 @@ static void read_channels(int create)
       fclose(f);
   }
   chan_hack = 0;
+  if (!reload)
+    return;
   for (chan = chanset; chan; chan = chan_next) {
     chan_next = chan->next;
     if (chan->status & CHAN_FLAGGED) {
@@ -538,6 +541,8 @@ static void channels_prerehash()
 
 static void channels_rehash()
 {
+  /* add channels from the chanfile but don't remove missing ones */
+  read_channels(1, 0);
   write_channels();
 }
 
@@ -1010,6 +1015,6 @@ char *channels_start(Function *global_funcs)
   my_tcl_ints[0].val = &share_greet;
   add_tcl_ints(my_tcl_ints);
   add_tcl_coups(mychan_tcl_coups);
-  read_channels(0);
+  read_channels(0, 1);
   return NULL;
 }

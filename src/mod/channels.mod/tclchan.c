@@ -1,7 +1,7 @@
 /*
  * tclchan.c -- part of channels.mod
  *
- * $Id: tclchan.c,v 1.105 2010/03/24 13:14:50 pseudo Exp $
+ * $Id: tclchan.c,v 1.106 2010/07/10 14:54:49 pseudo Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -1628,7 +1628,7 @@ static int tcl_loadchannels STDVAR
     Tcl_AppendResult(irp, "no channel file", NULL);
     return TCL_ERROR;
   }
-  read_channels(1);
+  read_channels(1, 1);
   return TCL_OK;
 }
 

@@ -2,7 +2,7 @@
  * cmdschan.c -- part of channels.mod
  *   commands from a user via dcc that cause server interaction
  *
- * $Id: cmdschan.c,v 1.84 2010/07/01 16:10:49 thommey Exp $
+ * $Id: cmdschan.c,v 1.85 2010/07/10 14:54:49 pseudo Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -1592,7 +1592,7 @@ static void cmd_chanload(struct userrec *u, int idx, char *par)
   else {
     dprintf(idx, "Reloading all dynamic channel settings.\n");
     putlog(LOG_CMDS, "*", "#%s# chanload", dcc[idx].nick);
-    read_channels(1);
+    read_channels(1, 1);
   }
 }
 

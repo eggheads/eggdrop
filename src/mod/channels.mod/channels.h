@@ -1,7 +1,7 @@
 /*
  * channels.h -- part of channels.mod
  *
- * $Id: channels.h,v 1.32 2010/02/18 09:52:29 pseudo Exp $
+ * $Id: channels.h,v 1.33 2010/07/10 14:54:49 pseudo Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -99,7 +99,7 @@ static void tell_invites(int idx, int show_inact, char *match);
 static int write_invites(FILE *f, int idx);
 static void check_expired_invites(void);
 static void write_channels(void);
-static void read_channels(int);
+static void read_channels(int, int);
 static void clear_channel(struct chanset_t *, int);
 static void get_mode_protect(struct chanset_t *chan, char *s);
 static void set_mode_protect(struct chanset_t *chan, char *set);
