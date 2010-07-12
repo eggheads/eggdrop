@@ -1,7 +1,7 @@
 /*
  * servmsg.c -- part of server.mod
  *
- * $Id: servmsg.c,v 1.105 2010/02/18 09:52:30 pseudo Exp $
+ * $Id: servmsg.c,v 1.106 2010/07/12 16:18:09 thommey Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -1119,7 +1119,7 @@ static void server_activity(int idx, char *msg, int len)
     trying_server = 0;
     SERVER_SOCKET.timeout_val = 0;
   }
-  waiting_for_awake = 0;
+  lastpingcheck = 0;
   from = "";
   if (msg[0] == ':') {
     msg++;
@@ -1253,7 +1253,7 @@ static void connect_server(void)
   int servidx;
   unsigned int botserverport = 0;
 
-  waiting_for_awake = 0;
+  lastpingcheck = 0;
   trying_server = now;
   empty_msgq();
   /* Start up the counter (always reset it if "never-give-up" is on) */

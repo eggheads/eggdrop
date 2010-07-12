@@ -2,7 +2,7 @@
  * server.c -- part of server.mod
  *   basic irc server support
  *
- * $Id: server.c,v 1.137 2010/06/29 15:52:24 thommey Exp $
+ * $Id: server.c,v 1.138 2010/07/12 16:18:09 thommey Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -57,7 +57,7 @@ static int nick_juped = 0;      /* True if origbotname is juped(RPL437) (dw) */
 static int check_stoned;        /* Check for a stoned server? */
 static int serverror_quit;      /* Disconnect from server if ERROR
                                  * messages received? */
-static int waiting_for_awake;   /* set when i unidle myself, cleared when
+static time_t lastpingcheck;    /* set when i unidle myself, cleared when
                                  * i get the response */
 static time_t server_online;    /* server connection time */
 static time_t server_cycle_wait;        /* seconds to wait before
@@ -1582,8 +1582,8 @@ static void server_secondly()
 static void server_5minutely()
 {
   if (check_stoned && server_online) {
-    if (waiting_for_awake) {
-      /* Uh oh!  Never got pong from last time, five minutes ago!
+    if (lastpingcheck && (now - lastpingcheck >= 240)) {
+      /* Still waiting for activity, requested longer than 4 minutes ago.
        * Server is probably stoned.
        */
       int servidx = findanyidx(serv);
@@ -1594,7 +1594,7 @@ static void server_5minutely()
     } else if (!trying_server) {
       /* Check for server being stoned. */
       dprintf(DP_MODE, "PING :%li\n", now);
-      waiting_for_awake = 1;
+      lastpingcheck = now;
     }
   }
 }
@@ -1693,7 +1693,7 @@ static void server_report(int idx, int details)
               keepnick ? " (trying)" : "");
     daysdur(now, server_online, s1);
     egg_snprintf(s, sizeof s, "(connected %s)", s1);
-    if (server_lag && !waiting_for_awake) {
+    if (server_lag && !lastpingcheck) {
       if (server_lag == -1)
         egg_snprintf(s1, sizeof s1, " (bad pong replies)");
       else
@@ -1885,7 +1885,7 @@ char *server_start(Function *global_funcs)
   keepnick = 1;
   check_stoned = 1;
   serverror_quit = 1;
-  waiting_for_awake = 0;
+  lastpingcheck = 0;
   server_online = 0;
   server_cycle_wait = 60;
   strcpy(botrealname, "A deranged product of evil coders");

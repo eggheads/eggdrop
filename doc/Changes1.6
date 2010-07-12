@@ -1,4 +1,4 @@
-$Id: Changes1.6,v 1.95 2010/07/12 15:40:52 thommey Exp $
+$Id: Changes1.6,v 1.96 2010/07/12 16:18:09 thommey Exp $
 
 Eggdrop Changes (since version 1.6.0)
 
@@ -6,6 +6,8 @@ Eggdrop Changes (since version 1.6.0)
 
 1.6.20 (CVS):
 
+  - Add sanity check to check-stoned event. Prevents eggdrop from
+    disconnecting in case of drift timers.
   - Unwind all nested [vwait] calls before performing a restart.
     Prevents Tcl_Panic() when deleting active interpreter.
   - Make sure traces are looked up in the global scope.
