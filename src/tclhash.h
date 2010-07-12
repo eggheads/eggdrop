@@ -1,7 +1,7 @@
 /*
  * tclhash.h
  *
- * $Id: tclhash.h,v 1.24 2010/06/29 15:52:24 thommey Exp $
+ * $Id: tclhash.h,v 1.25 2010/07/12 15:40:52 thommey Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -39,7 +39,7 @@ typedef struct tcl_cmd_b {
 } tcl_cmd_t;
 
 struct threaddata {
-  int (*mainloopfunc)(void);    /* main loop function */
+  int (*mainloopfunc)(int);     /* main loop function */
   sock_list *socklist;          /* tcl socket list for threads, else NULL */
   struct timeval blocktime;     /* maximum time to block in select() */
   int mainthread;               /* Is this the main thread? */

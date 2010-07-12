@@ -1,10 +1,16 @@
-$Id: Changes1.6,v 1.94 2010/07/09 23:29:54 pseudo Exp $
+$Id: Changes1.6,v 1.95 2010/07/12 15:40:52 thommey Exp $
 
 Eggdrop Changes (since version 1.6.0)
 
     _____________________________________________________________________
 
 1.6.20 (CVS):
+
+  - Unwind all nested [vwait] calls before performing a restart.
+    Prevents Tcl_Panic() when deleting active interpreter.
+  - Make sure traces are looked up in the global scope.
+  - Give eggdrop events priority over Tcl events so they can't starve it.
+    Found by: CyBex / Patch by: thommey
 
   - Fixed a problem with channels added in the config getting deleted after
     the config is loaded.

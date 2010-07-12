@@ -4,7 +4,7 @@
  *   Tcl initialization
  *   getting and setting Tcl/eggdrop variables
  *
- * $Id: tcl.c,v 1.97 2010/07/09 15:33:27 thommey Exp $
+ * $Id: tcl.c,v 1.98 2010/07/12 15:40:52 thommey Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -606,7 +606,7 @@ int tickle_WaitForEvent (TCL_CONST86 Tcl_Time *timePtr)
   struct threaddata *td = threaddata();
 
   tickle_SetTimer(timePtr);
-  return (*td->mainloopfunc)();
+  return (*td->mainloopfunc)(0);
 }
 
 void tickle_CreateFileHandler(int fd, int mask, Tcl_FileProc *proc, ClientData cd)
@@ -635,7 +635,7 @@ ClientData tickle_InitNotifier()
   return NULL;
 }
 
-int tclthreadmainloop()
+int tclthreadmainloop(int zero)
 {
   int i;
   i = sockread(NULL, NULL, threaddata()->socklist, threaddata()->MAXSOCKS, 1);
@@ -926,16 +926,14 @@ void add_tcl_strings(tcl_strings *list)
 
 void rem_tcl_strings(tcl_strings *list)
 {
-  int i;
+  int i, f;
   strinfo *st;
 
+  f = TCL_GLOBAL_ONLY | TCL_TRACE_READS | TCL_TRACE_WRITES | TCL_TRACE_UNSETS;
   for (i = 0; list[i].name; i++) {
-    st = (strinfo *) Tcl_VarTraceInfo(interp, list[i].name,
-         TCL_TRACE_READS | TCL_TRACE_WRITES | TCL_TRACE_UNSETS, tcl_eggstr,
-         NULL);
-    Tcl_UntraceVar(interp, list[i].name,
-                   TCL_TRACE_READS | TCL_TRACE_WRITES | TCL_TRACE_UNSETS,
-                   tcl_eggstr, st);
+    st = (strinfo *) Tcl_VarTraceInfo(interp, list[i].name, f, tcl_eggstr,
+                                      NULL);
+    Tcl_UntraceVar(interp, list[i].name, f, tcl_eggstr, st);
     if (st != NULL) {
       strtot -= sizeof(strinfo);
       nfree(st);
@@ -967,16 +965,14 @@ void add_tcl_ints(tcl_ints *list)
 
 void rem_tcl_ints(tcl_ints *list)
 {
-  int i;
+  int i, f;
   intinfo *ii;
 
+  f = TCL_GLOBAL_ONLY | TCL_TRACE_READS | TCL_TRACE_WRITES | TCL_TRACE_UNSETS;
   for (i = 0; list[i].name; i++) {
-    ii = (intinfo *) Tcl_VarTraceInfo(interp, list[i].name,
-         TCL_TRACE_READS | TCL_TRACE_WRITES | TCL_TRACE_UNSETS, tcl_eggint,
-         NULL);
-    Tcl_UntraceVar(interp, list[i].name,
-                   TCL_TRACE_READS | TCL_TRACE_WRITES | TCL_TRACE_UNSETS,
-                   tcl_eggint, (ClientData) ii);
+    ii = (intinfo *) Tcl_VarTraceInfo(interp, list[i].name, f, tcl_eggint,
+                                      NULL);
+    Tcl_UntraceVar(interp, list[i].name, f, tcl_eggint, (ClientData) ii);
     if (ii) {
       strtot -= sizeof(intinfo);
       nfree(ii);
@@ -1008,17 +1004,15 @@ void add_tcl_coups(tcl_coups *list)
 
 void rem_tcl_coups(tcl_coups *list)
 {
+  int i, f;
   coupletinfo *cp;
-  int i;
 
+  f = TCL_GLOBAL_ONLY | TCL_TRACE_READS | TCL_TRACE_WRITES | TCL_TRACE_UNSETS;
   for (i = 0; list[i].name; i++) {
-    cp = (coupletinfo *) Tcl_VarTraceInfo(interp, list[i].name,
-         TCL_TRACE_READS | TCL_TRACE_WRITES | TCL_TRACE_UNSETS, tcl_eggcouplet,
-         NULL);
+    cp = (coupletinfo *) Tcl_VarTraceInfo(interp, list[i].name, f,
+                                          tcl_eggcouplet, NULL);
     strtot -= sizeof(coupletinfo);
-    Tcl_UntraceVar(interp, list[i].name,
-                   TCL_TRACE_READS | TCL_TRACE_WRITES | TCL_TRACE_UNSETS,
-                   tcl_eggcouplet, (ClientData) cp);
+    Tcl_UntraceVar(interp, list[i].name, f, tcl_eggcouplet, (ClientData) cp);
     nfree(cp);
   }
 }

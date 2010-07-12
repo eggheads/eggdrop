@@ -2,7 +2,7 @@
  * net.c -- handles:
  *   all raw network i/o
  *
- * $Id: net.c,v 1.85 2010/07/09 15:33:27 thommey Exp $
+ * $Id: net.c,v 1.86 2010/07/12 15:40:52 thommey Exp $
  */
 /*
  * This is hereby released into the public domain.
@@ -681,14 +681,14 @@ int preparefdset(fd_set *fd, sock_list *slist, int slistmax, int tclonly, int tc
  *              on EOF:  returns -1, with socket in len
  *     on socket error:  returns -2
  * if nothing is ready:  returns -3
- *    tcl sockets busy:  returns -4
+ *    tcl sockets busy:  returns -5
  */
 int sockread(char *s, int *len, sock_list *slist, int slistmax, int tclonly)
 {
   struct timeval t;
   fd_set fdr, fdw, fde;
-  int fds, i, x, have_r, have_w, have_e, events;
-  int grab = 511;
+  int fds, i, x, have_r, have_w, have_e;
+  int grab = 511, tclsock = -1, events = 0;
   struct threaddata *td = threaddata();
 
   fds = getdtablesize();
@@ -780,15 +780,13 @@ int sockread(char *s, int *len, sock_list *slist, int slistmax, int tclonly)
           return -1;
         }
         return i;
-      } else if (slist[i].flags & SOCK_TCL) {
+      } else if (tclsock == -1 && (slist[i].flags & SOCK_TCL)) {
         events = FD_ISSET(slist[i].sock, &fdr) ? TCL_READABLE : 0;
         events |= FD_ISSET(slist[i].sock, &fdw) ? TCL_WRITABLE : 0;
         events |= FD_ISSET(slist[i].sock, &fde) ? TCL_EXCEPTION : 0;
-        if (events) {
-          (*slist[i].handler.tclsock.proc)(slist[i].handler.tclsock.cd,
-                                     slist[i].handler.tclsock.mask & events);
-          return -4;
-        }
+        events &= slist[i].handler.tclsock.mask;
+        if (events)
+          tclsock = i;
       }
     }
   } else if (x == -1)
@@ -796,6 +794,11 @@ int sockread(char *s, int *len, sock_list *slist, int slistmax, int tclonly)
   else if (!tclonly) {
     s[0] = 0;
     *len = 0;
+  }
+  if (tclsock != -1) {
+    (*slist[tclsock].handler.tclsock.proc)(slist[tclsock].handler.tclsock.cd,
+                                           events);
+    return -5;
   }
   return -3;
 }
@@ -820,6 +823,7 @@ int sockread(char *s, int *len, sock_list *slist, int slistmax, int tclonly)
  *
  * Returns -4 if we handled something that shouldn't be handled by the
  * dcc functions. Simply ignore it.
+ * Returns -5 if tcl sockets are busy but not eggdrop sockets.
  */
 
 int sockgets(char *s, int *len)

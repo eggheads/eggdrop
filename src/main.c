@@ -5,7 +5,7 @@
  *   command line arguments
  *   context and assert debugging
  *
- * $Id: main.c,v 1.137 2010/07/09 15:33:27 thommey Exp $
+ * $Id: main.c,v 1.138 2010/07/12 15:40:52 thommey Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -705,20 +705,11 @@ static inline void garbage_collect(void)
     run_cnt++;
 }
 
-int mainloop()
+int mainloop(int toplevel)
 {
   static int socket_cleanup = 0;
-  int xx, i, busy = 1;
+  int xx, i, eggbusy = 1, tclbusy = 0;
   char buf[520];
-
-#ifdef USE_TCL_EVENTS
-/* Process all pending tcl events */
-#  ifdef REPLACE_NOTIFIER
-  Tcl_ServiceAll();
-#  else
-  while (Tcl_DoOneEvent(TCL_DONT_WAIT | TCL_ALL_EVENTS)) ;
-#  endif /* REPLACE_NOTIFIER */
-#endif   /* USE_TCL_EVENTS   */
 
   /* Lets move some of this here, reducing the numer of actual
    * calls to periodic_timers
@@ -733,6 +724,13 @@ int mainloop()
    * calling random() and updating the state information.
    */
   random();                /* Woop, lets really jumble things */
+
+  /* If we want to restart, we have to unwind to the toplevel.
+   * Tcl will Panic if we kill the interp with Tcl_Eval in progress.
+   * This is done by returning -1 in tickle_WaitForEvent.
+   */
+  if (do_restart && do_restart != -2 && !toplevel)
+    return -1;
 
   /* Once a second */
   if (now != then) {
@@ -825,14 +823,17 @@ int mainloop()
   } else if (xx == -3) {
     call_hook(HOOK_IDLE);
     socket_cleanup = 0;       /* If we've been idle, cleanup & flush */
-    busy = 0;
-  } else if (xx == -4) {
-    /* Tcl sockets are busy */
+    eggbusy = 0;
+  } else if (xx == -5) {
+    eggbusy = 0;
+    tclbusy = 1;
   }
 
   if (do_restart) {
     if (do_restart == -2)
       rehash();
+    else if (!toplevel)
+      return -1; /* Unwind to toplevel before restarting */
     else {
       /* Unload as many modules as possible */
       int f = 1;
@@ -894,10 +895,24 @@ int mainloop()
       restart_chons();
       call_hook(HOOK_LOADED);
     }
-
+    eggbusy = 1;
     do_restart = 0;
   }
-  return busy;
+
+#ifdef USE_TCL_EVENTS
+  if (!eggbusy) {
+/* Process all pending tcl events */
+#  ifdef REPLACE_NOTIFIER
+    if (Tcl_ServiceAll())
+      tclbusy = 1;
+#  else
+    while (Tcl_DoOneEvent(TCL_DONT_WAIT | TCL_ALL_EVENTS))
+      tclbusy = 1;
+#  endif /* REPLACE_NOTIFIER */
+#endif   /* USE_TCL_EVENTS   */
+  }
+
+  return (eggbusy || tclbusy);
 }
 
 int main(int arg_c, char **arg_v)
@@ -1141,6 +1156,6 @@ int main(int arg_c, char **arg_v)
 
   debug0("main: entering loop");
   while (1) {
-    mainloop();
+    mainloop(1);
   }
 }
