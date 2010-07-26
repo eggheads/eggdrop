@@ -1,7 +1,7 @@
 # console.french.lang
 #   language messages for the console module
 #
-# $Id: console.french.lang,v 1.1 2010/07/26 21:11:06 simple Exp $
+# $Id: console.french.lang,v 1.1.1.1 2010/07/26 21:11:06 simple Exp $
 
 0xb040,Paramètres de console sauvegardés :
 0xb041,Vos paramètres de console ont été sauvegardés :

@@ -1,7 +1,7 @@
 # assoc.english.lang
 #   language messages for the assoc module
 #
-# $Id: assoc.english.lang,v 1.1 2010/07/26 21:11:06 simple Exp $
+# $Id: assoc.english.lang,v 1.1.1.1 2010/07/26 21:11:06 simple Exp $
 
 0xb000,No channel names
 0xb001,Chan

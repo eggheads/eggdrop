@@ -1,6 +1,6 @@
 dnl eggmod.m4
 dnl
-dnl $Id: eggmod.m4,v 1.1 2010/07/26 21:11:06 simple Exp $
+dnl $Id: eggmod.m4,v 1.1.1.1 2010/07/26 21:11:06 simple Exp $
 
 dnl EGG_REMOVE_MOD(MODULE-NAME)
 dnl

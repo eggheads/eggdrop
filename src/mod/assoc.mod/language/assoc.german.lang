@@ -1,7 +1,7 @@
 # assoc.german.lang
 #   language messages for the assoc module
 #
-# $Id: assoc.german.lang,v 1.1 2010/07/26 21:11:06 simple Exp $
+# $Id: assoc.german.lang,v 1.1.1.1 2010/07/26 21:11:06 simple Exp $
 
 0xb000,Keine Channel-Namen
 0xb001,Channel

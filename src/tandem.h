@@ -1,7 +1,7 @@
 /*
  * tandem.h
  *
- * $Id: tandem.h,v 1.1 2010/07/26 21:11:06 simple Exp $
+ * $Id: tandem.h,v 1.1.1.1 2010/07/26 21:11:06 simple Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer

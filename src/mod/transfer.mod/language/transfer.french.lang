@@ -1,7 +1,7 @@
 # transfer.french.lang
 #   language messages for transfer module
 #
-# $Id: transfer.french.lang,v 1.1 2010/07/26 21:11:06 simple Exp $
+# $Id: transfer.french.lang,v 1.1.1.1 2010/07/26 21:11:06 simple Exp $
 
 0xf00,Refus de réception dcc %s : copie de %s IMPOSSIBLE !
 0xf01,NOTICE %s :Le système de fichier est H.S.; annulation des fichiers en attente.\n

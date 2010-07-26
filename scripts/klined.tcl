@@ -2,7 +2,7 @@
 # KLined.TCL - Version 1.0
 # By Ian Kaney - ikaney@uk.defiant.org
 #
-# $Id: klined.tcl,v 1.1 2010/07/26 21:11:06 simple Exp $
+# $Id: klined.tcl,v 1.1.1.1 2010/07/26 21:11:06 simple Exp $
 #
 # Even at the best of times, your bot will get k-lined by one operator or
 # another on a server you're running your bot on. This script will 'hopefully'

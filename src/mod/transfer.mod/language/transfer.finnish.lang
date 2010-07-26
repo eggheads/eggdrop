@@ -1,7 +1,7 @@
 # transfer.finnish.lang
 #   kieli viestit siirto moduuliin
 #
-# $Id: transfer.finnish.lang,v 1.1 2010/07/26 21:11:06 simple Exp $
+# $Id: transfer.finnish.lang,v 1.1.1.1 2010/07/26 21:11:06 simple Exp $
 
 0xf00,Ev‰t‰‰n dcc saanti %s: kopiointi %s PERUTTU!
 0xf01,NOTICE %s :Tiedostoj‰rjestelm‰ on rikkoontunut; perutaan queue tiedostot.\n

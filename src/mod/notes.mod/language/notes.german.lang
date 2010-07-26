@@ -1,7 +1,7 @@
 # notes.german.lang
 #   language messages for the notes module
 #
-# $Id: notes.german.lang,v 1.1 2010/07/26 21:11:06 simple Exp $
+# $Id: notes.german.lang,v 1.1.1.1 2010/07/26 21:11:06 simple Exp $
 
 0xc000,  Befoerdere Nachrichten weiter an: %.70s\n
 0xc001,%d note%s von %s an %s uebermittelt.
