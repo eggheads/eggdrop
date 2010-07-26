@@ -1,7 +1,7 @@
 # console.english.lang
 #   language messages for the console module
 #
-# $Id: console.english.lang,v 1.2 2001/04/13 19:25:05 guppy Exp $
+# $Id: console.english.lang,v 1.1 2010/07/26 21:11:06 simple Exp $
 
 0xb040,Saved Console Settings:
 0xb041,Saved your Console Settings:

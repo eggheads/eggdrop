@@ -3,7 +3,7 @@
  *   saved console settings based on console.tcl
  *   by cmwagner/billyjoe/D. Senso
  *
- * $Id: console.c,v 1.38 2010/02/06 09:20:12 pseudo Exp $
+ * $Id: console.c,v 1.1 2010/07/26 21:11:06 simple Exp $
  */
 /*
  * Copyright (C) 1999 - 2010 Eggheads Development Team

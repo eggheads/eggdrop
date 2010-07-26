@@ -1,7 +1,7 @@
 /*
  * userchan.c -- part of channels.mod
  *
- * $Id: userchan.c,v 1.53 2010/01/07 13:48:31 pseudo Exp $
+ * $Id: userchan.c,v 1.1 2010/07/26 21:11:06 simple Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer

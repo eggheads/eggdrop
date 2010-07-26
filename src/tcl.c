@@ -4,7 +4,7 @@
  *   Tcl initialization
  *   getting and setting Tcl/eggdrop variables
  *
- * $Id: tcl.c,v 1.98 2010/07/12 15:40:52 thommey Exp $
+ * $Id: tcl.c,v 1.1 2010/07/26 21:11:06 simple Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer

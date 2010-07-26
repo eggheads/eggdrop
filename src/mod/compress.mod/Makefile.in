@@ -1,5 +1,5 @@
 # Makefile.in for src/mod/compress.mod/
-# $Id: Makefile.in,v 1.13 2005/12/09 09:29:11 wcc Exp $
+# $Id: Makefile.in,v 1.1 2010/07/26 21:11:06 simple Exp $
 
 ZLIB = @ZLIB@
 srcdir = .

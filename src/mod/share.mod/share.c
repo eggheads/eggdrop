@@ -1,7 +1,7 @@
 /*
  * share.c -- part of share.mod
  *
- * $Id: share.c,v 1.92 2010/02/18 09:52:30 pseudo Exp $
+ * $Id: share.c,v 1.1 2010/07/26 21:11:06 simple Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer

@@ -2,7 +2,7 @@
  * stat.h
  *  file attributes
  *
- * $Id: stat.h,v 1.12 2010/01/03 13:27:32 pseudo Exp $
+ * $Id: stat.h,v 1.1 2010/07/26 21:11:06 simple Exp $
  */
 /*
  * Copyright (C) 1999 - 2010 Eggheads Development Team

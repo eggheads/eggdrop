@@ -2,7 +2,7 @@
  * compat.h
  *   wrap-around header for all compability functions.
  *
- * $Id: compat.h,v 1.14 2010/01/03 13:27:40 pseudo Exp $
+ * $Id: compat.h,v 1.1 2010/07/26 21:11:06 simple Exp $
  */
 /*
  * Copyright (C) 2000 - 2010 Eggheads Development Team

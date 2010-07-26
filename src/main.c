@@ -5,7 +5,7 @@
  *   command line arguments
  *   context and assert debugging
  *
- * $Id: main.c,v 1.138 2010/07/12 15:40:52 thommey Exp $
+ * $Id: main.c,v 1.1 2010/07/26 21:11:06 simple Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -93,8 +93,8 @@ static char **argv;
  * modified versions of this bot.
  */
 
-char egg_version[1024] = "1.6.20";
-int egg_numver = 1062000;
+char egg_version[1024] = "1.8.0";
+int egg_numver = 1080000;
 
 char notify_new[121] = "";      /* Person to send a note to for new users */
 int default_flags = 0;          /* Default user flags                     */

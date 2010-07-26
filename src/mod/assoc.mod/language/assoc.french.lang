@@ -1,7 +1,7 @@
 # assoc.french.lang
 #   language messages for the assoc module
 #
-# $Id: assoc.french.lang,v 1.2 2002/01/02 08:06:14 tothwolf Exp $
+# $Id: assoc.french.lang,v 1.1 2010/07/26 21:11:06 simple Exp $
 
 0xb000,Pas de noms de canaux
 0xb001,Canal

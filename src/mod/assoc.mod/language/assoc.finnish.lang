@@ -1,7 +1,7 @@
 # assoc.finnish.lang
 #   kieli viestit assoc moduuliin
 #
-# $Id: assoc.finnish.lang,v 1.1 2004/07/05 04:37:33 wcc Exp $
+# $Id: assoc.finnish.lang,v 1.1 2010/07/26 21:11:06 simple Exp $
 
 0xb000,Ei kanava nimeä
 0xb001,Kanava

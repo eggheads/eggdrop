@@ -1,7 +1,7 @@
 
 # Getops 2.3b
 
-# $Id: getops.tcl,v 1.18 2003/03/26 00:19:30 wcc Exp $
+# $Id: getops.tcl,v 1.1 2010/07/26 21:11:06 simple Exp $
 
 # This script is used for bots to request and give ops to each other.
 # For this to work, you'll need:

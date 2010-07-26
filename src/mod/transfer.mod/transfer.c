@@ -1,7 +1,7 @@
 /*
  * transfer.c -- part of transfer.mod
  *
- * $Id: transfer.c,v 1.76 2010/01/03 13:27:55 pseudo Exp $
+ * $Id: transfer.c,v 1.1 2010/07/26 21:11:06 simple Exp $
  *
  * Copyright (C) 1997 Robey Pointer
  * Copyright (C) 1999 - 2010 Eggheads Development Team

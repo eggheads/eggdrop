@@ -2,7 +2,7 @@
  * bf_tab.h -- part of blowfish.mod
  *   Blowfish P-box and S-box tables
  *
- * $Id: bf_tab.h,v 1.13 2010/01/03 13:27:40 pseudo Exp $
+ * $Id: bf_tab.h,v 1.1 2010/07/26 21:11:06 simple Exp $
  */
 /*
  * Copyright (C) 1999 - 2010 Eggheads Development Team

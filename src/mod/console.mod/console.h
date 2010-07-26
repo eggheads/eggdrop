@@ -1,7 +1,7 @@
 /*
  * console.h -- part of console.mod
  *
- * $Id: console.h,v 1.12 2010/01/03 13:27:41 pseudo Exp $
+ * $Id: console.h,v 1.1 2010/07/26 21:11:06 simple Exp $
  */
 /*
  * Copyright (C) 2000 - 2010 Eggheads Development Team

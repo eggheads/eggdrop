@@ -1,4 +1,0 @@
-%{help=wire module}%{+n}
-###  %bwire module%b
-   This module provides all the standard .wire partyline commands. It is an
-   encrypted partyline communication tool, compatible with wire.tcl.

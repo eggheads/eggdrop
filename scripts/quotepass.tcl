@@ -10,7 +10,7 @@
 # -------
 #  10Feb08: initial version
 #
-# $Id: quotepass.tcl,v 1.3 2008/02/11 02:28:41 guppy Exp $
+# $Id: quotepass.tcl,v 1.1 2010/07/26 21:11:06 simple Exp $
 
 set quotepass_resyntax "must type /QUOTE PASS (\[^\" \]*)"
 

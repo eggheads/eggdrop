@@ -1,7 +1,7 @@
 # transfer.german.lang
 #   language messages for transfer module
 #
-# $Id: transfer.german.lang,v 1.4 2004/05/20 21:44:10 wcc Exp $
+# $Id: transfer.german.lang,v 1.1 2010/07/26 21:11:06 simple Exp $
 
 0xf00,DCC get zurueckgewiesen %s: kopieren nach %s schlug fehl!
 0xf01,NOTICE %s :Das Dateisystem ist defekt; entferne die Dateien aus der Warteschlange.\n

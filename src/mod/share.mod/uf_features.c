@@ -1,7 +1,7 @@
 /*
  * uf_features.c -- part of share.mod
  *
- * $Id: uf_features.c,v 1.19 2010/01/03 13:27:55 pseudo Exp $
+ * $Id: uf_features.c,v 1.1 2010/07/26 21:11:06 simple Exp $
  */
 /*
  * Copyright (C) 2000 - 2010 Eggheads Development Team

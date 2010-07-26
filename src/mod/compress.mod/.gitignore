@@ -1,7 +1,0 @@
-Makefile
-compress_config.h
-config.log
-config.status
-config.cache
-autom4te*.cache
-autoscan*.log

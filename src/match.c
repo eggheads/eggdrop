@@ -4,7 +4,7 @@
  *   hostmask matching
  *   cidr matching
  *
- * $Id: match.c,v 1.18 2010/07/01 16:10:49 thommey Exp $
+ * $Id: match.c,v 1.1 2010/07/26 21:11:06 simple Exp $
  *
  * Once this code was working, I added support for % so that I could
  * use the same code both in Eggdrop and in my IrcII client.

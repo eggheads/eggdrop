@@ -1,7 +1,7 @@
 # assoc.danish.lang
 #   language messages for the assoc module
 #
-# $Id: assoc.danish.lang,v 1.4 2003/03/20 00:10:26 wcc Exp $
+# $Id: assoc.danish.lang,v 1.1 2010/07/26 21:11:06 simple Exp $
 
 0xb000,Ingen kanal navne
 0xb001,Kanal

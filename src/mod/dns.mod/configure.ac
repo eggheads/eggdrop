@@ -1,6 +1,6 @@
 dnl configure.ac: this file is processed by autoconf to produce ./configure.
 dnl
-dnl $Id: configure.ac,v 1.10 2010/01/03 13:27:42 pseudo Exp $
+dnl $Id: configure.ac,v 1.1 2010/07/26 21:11:06 simple Exp $
 
 AC_PREREQ(2.59)
 
@@ -12,7 +12,7 @@ AC_CONFIG_SRCDIR(coredns.c)
 AC_CONFIG_AUX_DIR(../../../misc)
 
 AC_COPYRIGHT([Copyright (C) 1999 - 2010 Eggheads Development Team])
-AC_REVISION($Revision: 1.10 $)
+AC_REVISION($Revision: 1.1 $)
 
 dns_reslib_avail="true"
 
