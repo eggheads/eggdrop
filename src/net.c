@@ -2,7 +2,7 @@
  * net.c -- handles:
  *   all raw network i/o
  *
- * $Id: net.c,v 1.1 2010/07/26 21:11:06 simple Exp $
+ * $Id: net.c,v 1.1.1.1 2010/07/26 21:11:06 simple Exp $
  */
 /*
  * This is hereby released into the public domain.
