@@ -23,7 +23,7 @@ DO NOT SEND HTML E-MAIL TO THE LISTS.
 1) INFORMATION ABOUT YOUR EGGDROP
 
 1.1) Eggdrop version:
-     1.6.__
+     1.8.__
 
 1.2) Make type:
      ( ) dynamic
@@ -52,6 +52,7 @@ DO NOT SEND HTML E-MAIL TO THE LISTS.
      ( ) 8.3
      ( ) 8.4
      ( ) 8.5
+     ( ) 8.6
      ( ) Other - Which? ____
 
 2.2) Tcl library patchlevel: ___

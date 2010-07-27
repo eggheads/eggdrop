@@ -16,7 +16,7 @@ dnl You should have received a copy of the GNU General Public License
 dnl along with this program; if not, write to the Free Software
 dnl Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 dnl
-dnl $Id: aclocal.m4,v 1.1 2010/07/26 21:11:06 simple Exp $
+dnl $Id: aclocal.m4,v 1.2 2010/07/27 21:49:41 pseudo Exp $
 dnl
 
 
@@ -503,7 +503,7 @@ AC_DEFUN([EGG_CHECK_MODULE_SUPPORT],
 [
   MODULES_OK="yes"
   MOD_EXT="so"
-  DEFAULT_MAKE="eggdrop"
+  DEFAULT_MAKE="debug"
   LOAD_METHOD="dl"
   WEIRD_OS="yes"
   UNKNOWN_OS="no"

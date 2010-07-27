@@ -4,7 +4,7 @@
  *
  *   IF YOU ALTER THIS FILE, YOU NEED TO RECOMPILE THE BOT.
  *
- * $Id: eggdrop.h,v 1.1 2010/07/26 21:11:06 simple Exp $
+ * $Id: eggdrop.h,v 1.2 2010/07/27 21:49:41 pseudo Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -49,7 +49,7 @@
  *       You should leave this at 32 characters and modify nick-len in the
  *       configuration file instead.
  */
-#define HANDLEN 9   /* valid values 9->NICKMAX  */
+#define HANDLEN 32   /* valid values 9->NICKMAX  */
 #define NICKMAX 32  /* valid values HANDLEN->32 */
 
 

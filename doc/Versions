@@ -1,4 +1,4 @@
-$Id: Versions,v 1.1 2010/07/26 21:11:06 simple Exp $
+$Id: Versions,v 1.2 2010/07/27 21:49:41 pseudo Exp $
 
 This file lists the release dates for most of the officially released
 versions of Eggdrop and notes forks, bug fix patches and maintenance
@@ -10,6 +10,7 @@ added.
 
 Version    Release date
 
+1.6.20     Jul 23, 2010  New Tcl notifier, new Tcl commands and binds
 1.6.19     Apr 18, 2008  Fix for Secunia Advisory SA25276 / CVE-2007-2807
 1.6.18     Jul  9, 2006  Major bind code function changes
 1.6.17     Aug 22, 2004

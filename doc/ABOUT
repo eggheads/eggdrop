@@ -1,7 +1,7 @@
-$Id: ABOUT,v 1.1 2010/07/26 21:11:06 simple Exp $
+$Id: ABOUT,v 1.2 2010/07/27 21:49:41 pseudo Exp $
 
 About Eggdrop
-Last revised: January 12, 2002
+Last revised: July 27, 2010
     _____________________________________________________________________
 
                               About Eggdrop
@@ -43,7 +43,7 @@ Last revised: January 12, 2002
   be fixed and features to be added (if the users demand  them, and they
   make actually sense). In fact, it existed for several years as v0.7 -
   v0.9 before finally going 1.0. This version of Eggdrop is part of the
-  1.6 tree. A valiant effort has been made to chase down and destroy bugs.
+  1.8 tree. A valiant effort has been made to chase down and destroy bugs.
 
   To use Eggdrop, you need:
 

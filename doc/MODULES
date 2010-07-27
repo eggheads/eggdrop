@@ -1,4 +1,4 @@
-$Id: MODULES,v 1.1 2010/07/26 21:11:06 simple Exp $
+$Id: MODULES,v 1.2 2010/07/27 21:49:41 pseudo Exp $
 
 Eggdrop Module Information
 Last revised: March 04, 2003
@@ -43,7 +43,7 @@ Last revised: March 04, 2003
       2. Place the new module in its own directory (in the format of
          (modulename).mod) in src/mod.
 
-      3. Run ./configure (from eggdrop1.6.x/).
+      3. Run ./configure (from eggdrop1.8.x/).
 
       4. Type 'make config' or 'make iconfig'.
 
@@ -387,7 +387,7 @@ Last revised: March 04, 2003
 
      If you have written a module and feel that you wish to share it with the
      rest of the Eggdrop community, upload it to the incoming directory on
-     incoming.eggheads.org (/incoming/modules/1.6). Place a nice descriptive
+     incoming.eggheads.org (/incoming/modules/1.8). Place a nice descriptive
      text (modulename.desc) with it, and it'll make its way to the modules
      directory on ftp.eggheads.org. Don't forget to mention in your text file
      which version Eggdrop the module is written for.

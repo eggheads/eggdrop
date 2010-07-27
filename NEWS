@@ -1,4 +1,4 @@
-$Id: NEWS,v 1.1 2010/07/26 21:11:06 simple Exp $
+$Id: NEWS,v 1.2 2010/07/27 21:49:41 pseudo Exp $
 
 News
 Last revised: April 16, 2003
@@ -16,11 +16,11 @@ Last revised: April 16, 2003
     doc/tcl-commands.doc
 
   All of these documents combined will fill you in on the latest changes to
-  Eggdrop in version 1.6.x. All files, with the exception of Changes1.6, are
+  Eggdrop in version 1.8.x. All files, with the exception of Changes1.8, are
   also available in html format in doc/html/.
 
   A lot of things have changed in this version, so at a minimum, read the
-  Changes1.6 text file. Changes shows what's been added and fixed along the
+  Changes1.8 text file. Changes shows what's been added and fixed along the
   way.
 
   If you are upgrading from a pre-1.6 version of Eggdrop:
@@ -31,189 +31,7 @@ Last revised: April 16, 2003
 
      _________________________________________________________________
 
-Changes made to Eggdrop 1.6.x from Eggdrop1.4.x:
-
-  !CHANNELS
-
-    Support for IRCnet !channels was added to Eggdrop. This might still be
-    a bit buggy. We appreciate bug reports!
-
-  +/-NODESYNCH
-
-    This new channel setting replaces the old 'allow-desync' config file
-    setting. It is useful if you use some type of ChanServ or if you don't
-    care about your channel being desynched.
-
-  ASYNCHRONOUS DNS MODULE
-
-    Eggdrop 1.6 is shipped with a new module, the dns module. It replaces
-    those old dns-lookups performed by Eggdrop which could halt the whole bot
-    during a timeout. We also added a new Tcl command, 'dnslookup', so scripts
-    can now use DNS functions asynchronously, too. See doc/settings/mod.dns
-    for more information.
-
-  COMPRESS MODULE
-
-    A new module called compress was introduced to Eggdrop. It provides
-    gzip support to Eggdrop (via Tcl commands) and enables compressed
-    userfile transfer. See doc/settings/mod.compress for more information.
-
-  SHARE MODULE
-
-    The share module has a new setting now (override-bots) which allows
-    hub bots to override the leaf bots' bot settings (botaddress, telnet
-    port, and password). Please note that this won't work with a version
-    1.4 or below bot. See doc/settings/mod.share for more information.
-
-  TRANSFER / FILESYS MODULES
-
-    The filesys and transfer modules have changed completely. Both can now
-    handle unlimited filename lengths and description sizes. Incomplete
-    downloads from the bot can also now be resumed. The db format of the
-    filesys module was changed to remove the limits imposed by the old
-    format. There's nothing special for you to do, as the old db is
-    automatically converted to the new format when you first access it.
-    You won't be able to downgrade to older versions after this, so you
-    may want to make a backup first. See doc/settings/mod.transfer and
-    doc/settings/mod.filesys for more information.
-
-
-  UPTIME MODULE
-
-    This module reports uptime statistics to http://uptime.eggheads.org. Go
-    look and see what your uptime is! It takes about 9 hours to show up, so
-    if your bot isn't listed, try again later. See doc/settings/mod.uptime
-    for more information.
-
-
-  DCC COMMANDS
-
-    * ".nick" was renamed to ".handle". ".nick" will still be kept up to
-      version 1.8.
-
-    * ".chnick" was renamed to ".chhandle". ".chnick" will still be kept up
-      to version 1.8.
-
-    * ".binds" now supports wildcards.
-
-    * ".halfop" and ".dehalfop" have been added.
-
-    * The 'optimise' file system command was renamed to 'optimize'. The old
-      command will still be kept up to version 1.8.
-
-    * Eggdrop now counts all of the traffic which it generates and receives
-      through IRC, the botnet, scripts, and dcc. You can access these
-      statistics via the dcc command ".traffic". Please note that the counter
-      gets reset every time a restart is done.
-
-    * ".modules" now works locally as well as remotely.
-
-  CHANNEL MODES
-
-    Support for IRCnet negative limits and DALnet's +R, +M, and +c channel
-    modes has been added. Eggdrop now also supports halfops (+h).
-
-  DOCUMENTATION
-
-    A lot has happened to the documentation; nearly every file was changed,
-    so take a look at them. Also, we have discovered html, and full html
-    documentation is available now in doc/html. Additionally, all possible
-    settings for Eggdrop are documented in doc/settings.
-
-  CONFIG FILES
-
-    * To support longer nicknames, as some IRC servers do, a new 'nick-len'
-      setting was added.
-
-    * Eggdrop uses strftime now to support different logfile suffixes. The
-      new config file setting is 'logfile-suffix'.
-
-    * A new 'pidfile' setting was added to allow you to specify the name
-      of Eggdrop's pid file.
-
-    * The 'strict-servernames' setting was removed.
-
-  PENALTY CALCULATION
-
-    Eggdrop calculates penalty points on IRCnet now, so it won't flood
-    itself off anymore. This feature also works on EFnet and Undernet, and
-    should work on other networks as well.
-
-  TCL COMMANDS
-
-    * The 'chnick' command was renamed to 'chhandle'. The use of 'chnick' is
-      deprecated. 'chnick' is still accessible if you load compat.tcl.
-
-    * All three commands to add data to the queues (puthelp, putserv and
-      putquick) now support the '-next' parameter which pushes data to the
-      front of the queue.
-
-    * A command to calculate md5 checksums, 'md5', was added.
-
-    * To support the new asynch dns module, the command 'dnslookup' was added.
-
-    * Four new commands regarding exempts/invites were added: stickexempt,
-      unstickexempt, stickinvite, and unstickinvite.
-
-    * A new 'wasop' command was added to check if a user had op before a
-      mode change.
-
-    * 'washalfop', 'ishalfop', and 'botishalfop' have been added.
-
-    * Three new Tcl commands were added as part of the compress module:
-      compressfile, uncompressfile, and iscompressed.
-
-    * A new command to check whether the bot's nick is juped was
-      added (isjuped).
-
-    * The fileresend command was added to support mIRC's dcc resume feature.
-
-    * A new bind type called 'NEED' was added which triggers when the bot
-      needs op, unban, limit, key, or invite.
-
-    * LOST and TOUT bind types were added.
-
-    * Two new commands, 'channame2dname' and 'chandname2name', were added to
-      allow scripts to support !channels.
-
-    * A new evnt type, loaded, was added.
-
-    * The 'setudef', 'renudef', and 'deludef' commands were added to allow
-      for user-defined channel settings.
-
-    * A 'traffic' command was added which returns a list of sublists
-      containing information about the bot's traffic usage in bytes.
-
-    * The CTCP bind type now supports wildcards.
-
-    * A 'handlen' variable was added (set to the value of the HANDLEN define
-      in eggdrop.h. 'nick-len' was also renamed to 'nicklen' (the old variable
-      will remain until version 1.8.
-
-    * The 'channel get' command was added to allow channel settings to be
-      easily retrieved.
-
-    * The 'server' variable now contains the server's realname instead of its
-      serverlist entry regardless of the 'strict-servernames' setting.
-
-    * The 'serveraddress' variable was added, which contains the server's
-      serverlist address and port.
-
-    * The 'onchan', 'botonchan', 'botisvoice', 'botisop', 'onchansplit',
-      'isop', 'isvoice', and 'handonchan' commands no longer require an
-      argument.
-
-    * Added a "stripcodes" command to remove control codes/etc from strings.
-
-    For more information about changed or added Tcl commands, see
-    doc/tcl-commands.doc.
-
-  TRAFFIC ACCOUNTING
-
-    Eggdrop now counts all of the traffic which it generates and receives
-    through IRC, the botnet, scripts, and dcc. You can access these statistics
-    via the dcc command '.traffic'. Please note that the counter gets reset
-    every time a restart is done.
+Changes made to Eggdrop 1.8.x from Eggdrop1.6.x:
   ________________________________________________________________________
 
 Copyright (C) 1997 Robey Pointer

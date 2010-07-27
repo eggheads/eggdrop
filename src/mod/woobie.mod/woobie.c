@@ -5,7 +5,7 @@
  * Originally written by ButchBub         15 July     1997
  * Comments by Fabian Knittel             29 December 1999
  *
- * $Id: woobie.c,v 1.1 2010/07/26 21:11:06 simple Exp $
+ * $Id: woobie.c,v 1.2 2010/07/27 21:49:42 pseudo Exp $
  */
 /*
  * Copyright (C) 1999 - 2010 Eggheads Development Team
@@ -129,16 +129,16 @@ char *woobie_start(Function *global_funcs)
 
   Context;
   /* Register the module. */
-  module_register(MODULE_NAME, woobie_table, 2, 0);
+  module_register(MODULE_NAME, woobie_table, 2, 1);
   /*                                            ^--- minor module version
    *                                         ^------ major module version
    *                           ^-------------------- module function table
    *              ^--------------------------------- module name
    */
 
-  if (!module_depend(MODULE_NAME, "eggdrop", 106, 0)) {
+  if (!module_depend(MODULE_NAME, "eggdrop", 108, 0)) {
     module_undepend(MODULE_NAME);
-    return "This module requires Eggdrop 1.6.0 or later.";
+    return "This module requires Eggdrop 1.8.0 or later.";
   }
 
   /* Add command table to bind list H_dcc, responsible for dcc commands.

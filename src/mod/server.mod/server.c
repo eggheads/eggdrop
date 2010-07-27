@@ -2,7 +2,7 @@
  * server.c -- part of server.mod
  *   basic irc server support
  *
- * $Id: server.c,v 1.1 2010/07/26 21:11:06 simple Exp $
+ * $Id: server.c,v 1.2 2010/07/27 21:49:42 pseudo Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -1922,10 +1922,10 @@ char *server_start(Function *global_funcs)
   msgrate = 2;
 
   server_table[4] = (Function) botname;
-  module_register(MODULE_NAME, server_table, 1, 3);
-  if (!module_depend(MODULE_NAME, "eggdrop", 106, 7)) {
+  module_register(MODULE_NAME, server_table, 1, 4);
+  if (!module_depend(MODULE_NAME, "eggdrop", 108, 0)) {
     module_undepend(MODULE_NAME);
-    return "This module requires Eggdrop 1.6.7 or later.";
+    return "This module requires Eggdrop 1.8.0 or later.";
   }
 
   /* Fool bot in reading the values. */

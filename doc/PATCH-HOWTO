@@ -1,4 +1,4 @@
-$Id: PATCH-HOWTO,v 1.2 2010/07/27 13:05:43 pseudo Exp $
+$Id: PATCH-HOWTO,v 1.3 2010/07/27 21:49:41 pseudo Exp $
 
 Patch Howto
 Last revised: July 23, 2004
@@ -79,7 +79,7 @@ Last revised: July 23, 2004
 
       2. Run the following:
 
-           diff -urN eggdrop1.6.original eggdrop1.6.modified > patchname.patch
+           diff -urN eggdrop1.8.original eggdrop1.8.modified > patchname.patch
 
          DO NOT add any other diff options.
 
@@ -89,13 +89,13 @@ Last revised: July 23, 2004
          which your patch was created.
 
          It helps if you include the major release number that the patch is
-         for in the subject line. For the 1.6.x series, the subject line
+         for in the subject line. For the 1.8.x series, the subject line
          should look like this:
 
-           PATCH1.6: my-patch-filename.patch
+           PATCH1.8: my-patch-filename.patch
 
          You should also include the nick/handle, name, and email address
-         you would like used for attribution in the Changes1.6 and THANKS
+         you would like used for attribution in the Changes1.8 and THANKS
          files.
 
       Never modify src/patch.h or one of the Changes files. We will do it. If
@@ -103,7 +103,7 @@ Last revised: July 23, 2004
       NOT run autoconf, autoheader, etc; we will do this as well.
 
       Also, please don't add credit lines all over the source when patching.
-      Patch contributors will receive credit in Changes1.6 and THANKS.
+      Patch contributors will receive credit in Changes1.8 and THANKS.
 
       CVS diff's are also perfectly fine (and actually, prefered, as the patch
       will be against the most current version of Eggdrop). To create a CVS
@@ -115,9 +115,9 @@ Last revised: July 23, 2004
 
   4. Downloading a patch
 
-    Many patches for Eggdrop 1.6.x can be found at the following location:
+    Some patches for Eggdrop 1.8.x can be found at the following location:
 
-      ftp://ftp.eggheads.org/pub/eggdrop/patches/1.6
+      ftp://ftp.eggheads.org/pub/eggdrop/patches/1.8
     _____________________________________________________________________
 
   Copyright (C) 1999 - 2010 Eggheads Development Team

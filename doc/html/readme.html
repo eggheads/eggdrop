@@ -1,5 +1,5 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
-<!-- $Id: readme.html,v 1.1 2010/07/26 21:11:06 simple Exp $ -->
+<!-- $Id: readme.html,v 1.2 2010/07/27 21:49:41 pseudo Exp $ -->
 
 <html>
   <head>
@@ -40,11 +40,11 @@
           <a href="#sect5">Upgrading</a>
 
           <ol type="a">
-            <li><a href="#sect5a">Upgrading from a pre-1.3 version to 1.6
+            <li><a href="#sect5a">Upgrading from a pre-1.3 version to 1.8
             </a></li>
 
             <li><a href="#sect5b">Upgrading from an older 1.3/1.4/1.5/1.6
-            version to 1.6</a></li>
+            version to 1.8</a></li>
           </ol>
         </li>
 
@@ -115,7 +115,7 @@
       bugs to be fixed and features to be added (if the users demand them,
       and they make actually sense). In fact, it existed for several years
       as v0.7 - v0.9 before finally going 1.0. This version of Eggdrop is
-      part of the 1.6 tree. A valiant effort has been made to chase down and
+      part of the 1.8 tree. A valiant effort has been made to chase down and
       destroy bugs.</p>
 
       <p>This readme file contains information about how to get Eggdrop,
@@ -144,7 +144,7 @@
       that comes on Slackware 3.0 is goofed up and you&#39;ll have to
       reinstall it for yourself to get it working.</p>
 
-      <p>Currently, the 1.6 tree of Eggdrop is developed at eggheads.org.
+      <p>Currently, the 1.8 tree of Eggdrop is developed at eggheads.org.
       You can get the latest version of Eggdrop from
       <a href="http://geteggdrop.com/">geteggdrop.com</a>.</p>
 
@@ -183,9 +183,9 @@
 
         <li>Press &lt;enter&gt; when prompted for a password.</li>
 
-        <li>In your home dir, type &#39;cvs checkout eggdrop1.6&#39;.</li>
+        <li>In your home dir, type &#39;cvs checkout eggdrop1.8&#39;.</li>
 
-        <li>In ~/eggdrop1.6, you should have a copy of the latest CVS version
+        <li>In ~/eggdrop1.8, you should have a copy of the latest CVS version
         of Eggdrop.</li>
       </ol>
     </blockquote>
@@ -198,7 +198,7 @@
 
         <li>You don&#39;t need to go through this whole process every time.
         If you want to get a CVS version of Eggdrop at a later time, you can
-        just &#39;cd ~/eggdrop1.6&#39; and type &#39;cvs update -CdAP&#39;.
+        just &#39;cd ~/eggdrop1.8&#39; and type &#39;cvs update -CdAP&#39;.
         </li>
 
         <li>If you experience errors when using &#39;export&#39;, you might
@@ -224,7 +224,7 @@
     <p><a name="sect5"></a>5. <strong>Upgrading</strong></p>
 
     <p><a name="sect5a"></a>5a. <strong>Upgrading from a pre-1.3 version to
-    1.6</strong></p>
+    1.8</strong></p>
 
     <blockquote>
       <p><strong>BACK UP YOUR USERFILE</strong></p>
@@ -235,7 +235,7 @@
       v1.3 of Eggdrop radically changed a lot of things.</p>
 
       <p>There are many major changes between v0.9, v1.0, v1.1 and
-      v1.6, so <strong>PAY ATTENTION</strong> to this part if you have
+      v1.8, so <strong>PAY ATTENTION</strong> to this part if you have
       a v0.9, 1.0 or 1.1 bot currently. If you&#39;re just starting out,
       you can skip this section.</p>
 
@@ -245,26 +245,27 @@
       <strong>MAKE A NEW CONFIG FILE</strong> from the example; there are
       some radical changes.</p>
 
-      <p>If you are upgrading from 0.9/1.0 to 1.6, just redo the whole thing.
+      <p>If you are upgrading from 0.9/1.0 to 1.8, just redo the whole thing.
       Absolutely everything has changed, including the userfile and config
       file formats.</p>
 
-      <p>If you are upgrading from 1.1/1.2 to 1.6, you will likely want to
+      <p>If you are upgrading from 1.1/1.2 to 1.8, you will likely want to
       redo the config file, as much as changed. <strong>BACK UP!</strong>
       You will need to run &#39;tclsh scripts/weed/&lt;userfile&gt; c&#39;
-      to convert your userfile from v3 (1.1/1.2) to v4 (1.3/1.4/1.5/1.6).</p>
+      to convert your userfile from v3 (1.1/1.2) to v4 (1.3/1.4/1.5/1.6/1.8).
+      </p>
     </blockquote>
 
     <p><a name="sect5b"></a>5b. <strong>Upgrading from an older 1.3/1.4/1.5/
-    1.6 version to a newer 1.6 version</strong></p>
+    1.6/1.8 version to a newer 1.8 version</strong></p>
 
     <blockquote>
       <p>If you followed <a href="install.html">Compilation and
       Installation of Eggdrop</a> and did a &#39;make install&#39; (or
       &#39;make install DEST=&quot;path&quot;&#39;) after &#39;make&#39;,
-      this will be pretty easy. Just upload the new eggdrop1.6.x.tar.gz file
+      this will be pretty easy. Just upload the new eggdrop1.8.x.tar.gz file
       to your home dir on your shell, gunzip and untar it, and type &#39;cd
-      ~/eggdrop1.6.x&#39;. Next, type &#39;./configure&#39;, &#39;make
+      ~/eggdrop1.8.x&#39;. Next, type &#39;./configure&#39;, &#39;make
       config&#39; or &#39;make iconfig&#39;, then &#39;make&#39;. Then, kill
       the bot (&#39;.die&#39; on the party line), and &#39;make install&#39;
       to the same directory your bot is currently in. After that, you can
@@ -272,9 +273,9 @@
       and modules as well, especially if you have limited disk space.</p>
 
       <p>You should read through the new eggdrop.conf file for all of the new
-      options in Eggdrop 1.6.x if you are upgrading from 1.3.x or 1.4.x. You
-      can copy and paste any of these settings into you current conf file if
-      you do not want to use the default settings.</p>
+      options in Eggdrop 1.8.x. You can copy and paste any of these settings
+      into you current conf file if you do not want to use the default settings.
+      </p>
     </blockquote>
 
     <p><a name="sect6"></a>6. <strong>Command line</strong></p>

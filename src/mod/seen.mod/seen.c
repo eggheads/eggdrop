@@ -10,7 +10,7 @@
  * 1.2     1997-08-20      Minor fixes. [BB]
  * 1.2a    1997-08-24      Minor fixes. [BB]
  *
- * $Id: seen.c,v 1.1 2010/07/26 21:11:06 simple Exp $
+ * $Id: seen.c,v 1.2 2010/07/27 21:49:42 pseudo Exp $
  */
 /*
  * Copyright (C) 1999 - 2010 Eggheads Development Team
@@ -652,10 +652,10 @@ char *seen_start(Function *egg_func_table)
 {
   global = egg_func_table;
 
-  module_register(MODULE_NAME, seen_table, 2, 0);
-  if (!module_depend(MODULE_NAME, "eggdrop", 106, 0)) {
+  module_register(MODULE_NAME, seen_table, 2, 1);
+  if (!module_depend(MODULE_NAME, "eggdrop", 108, 0)) {
     module_undepend(MODULE_NAME);
-    return "This module requires Eggdrop 1.6.0 or later.";
+    return "This module requires Eggdrop 1.8.0 or later.";
   }
   add_builtins(H_load, seen_load);
   add_builtins(H_dcc, seen_dcc);

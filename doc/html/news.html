@@ -1,5 +1,5 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
-<!-- $Id: news.html,v 1.1 2010/07/26 21:11:06 simple Exp $ -->
+<!-- $Id: news.html,v 1.2 2010/07/27 21:49:41 pseudo Exp $ -->
 
 <html>
   <head>
@@ -26,20 +26,20 @@
 
         <li><a href="botnet.html">Botnet Sharing and Linking</a></li>
 
-        <li>Changes1.6</li>
+        <li>Changes1.8</li>
 
         <li><a href="tcl-commands.html">Eggdrop Tcl Commands</a></li>
       </ul>
     </blockquote>
 
     <p>All of these documents combined will help fill you in on the latest
-    changes to Eggdrop in version 1.6.x.</p>
+    changes to Eggdrop in version 1.8.x.</p>
 
     <p>A lot of things have changed in this version, so at a minimum, read
-    the Changes1.6 text file. Changes shows what&#39;s been added and fixed
+    the Changes1.8 text file. Changes shows what&#39;s been added and fixed
     along the way.</p>
 
-    <p><strong>If you are upgrading from a pre-1.6 version of Eggdrop:</strong></p>
+    <p><strong>If you are upgrading from a pre-1.8 version of Eggdrop:</strong></p>
 
     <blockquote>
       <ol>
@@ -53,292 +53,8 @@
       </ol>
     </blockquote>
 
-    <p><strong>Changes made to Eggdrop 1.6.x from Eggdrop1.4.x:</strong></p>
+    <p><strong>Changes made to Eggdrop 1.8.x from Eggdrop1.6.x:</strong></p>
 
-    <p><strong>!Channels</strong></p>
-
-    <blockquote>
-      <p>Support for IRCnet !channels was added to Eggdrop. This might still
-      be a bit buggy. We appreciate bug reports!</p>
-    </blockquote>
-
-    <p><strong>+/-nodesynch</strong></p>
-
-    <blockquote>
-      <p>This new channel setting replaces the old &#39;allow-desync&#39;
-      config file setting. It is useful if you use some type of ChanServ
-      or if you don&#39;t care about your channel being desynched.</p>
-    </blockquote>
-
-    <p><strong>Asynchronous Dns Module</strong></p>
-
-    <blockquote>
-      <p>Eggdrop 1.6 is shipped with a new module, the dns module. It
-      replaces those old dns-lookups performed by Eggdrop which could halt
-      the whole bot during a timeout. We also added a new Tcl command,
-      &#39;dnslookup&#39;, so scripts can now use DNS functions
-      asynchronously, too. See <a href="mod-dns.html">Dns Module</a> for
-      more information.</p>
-    </blockquote>
-
-    <p><strong>Compress Module</strong></p>
-
-    <blockquote>
-      <p>A new module called compress was introduced to Eggdrop. It provides
-      gzip support to Eggdrop via Tcl commands and enables compressed
-      userfile transfer. See <a href="mod-compress.html">Compress Module</a>
-      for more information.</p>
-    </blockquote>
-
-    <p><strong>Share Module</strong></p>
-
-    <blockquote>
-      <p>The share module has a new setting now (override-bots) which allows
-     hub bots to override the leaf bots&#39; bot settings (botaddress, telnet
-     port, and password). Please note that this won&#39;t work with a version
-     1.4 or below bot. See <a href="mod-share.html">Share Module</a> for more
-     information.</p>
-    </blockquote>
-
-    <p><strong>Transfer / Filesys Modules</strong></p>
-
-    <blockquote>
-      <p>The filesys and transfer modules have changed completely. Both can
-      now handle unlimited filename lengths and description sizes. Incomplete
-      downloads from the bot can also now be resumed. The db format of the
-      filesys module was changed to remove the limits imposed by the old
-      format. There&#39;s nothing special for you to do, as the old db is
-      automatically converted to the new format when you first access it.
-      You won&#39;t be able to downgrade to older versions after this, so
-      you may want to make a backup first. See <a href="mod-transfer.html">
-      Transfer Module</a> and  <a href="mod-transfer.html">Filesys Module</a>
-      for more information.</p>
-    </blockquote>
-
-    <p><strong>Uptime Module</strong></p>
-
-    <blockquote>
-      <p>This module reports uptime statistics to
-      http://uptime.eggheads.org. Go look and see what your uptime is! It
-      takes about 9 hours to show up, so if your bot isn&#39;t listed, try
-      again later. See <a href="mod-uptime.html">Uptime Module</a> for more
-      information.</p>
-    </blockquote>
-
-    <p><strong>DCC Commands</strong></p>
-
-    <blockquote>
-      <ul>
-        <li>
-          <p>&quot;.nick&quot; was renamed to &quot;.handle&quot;.
-          &quot;.nick&quot; will still be kept up to version 1.8.</p>
-        </li>
-
-        <li>
-          <p>&quot;.chnick&quot; was renamed to &quot;.chhandle&quot;.
-          &quot;.chnick&quot; will still be kept up to version 1.8.</p>
-        </li>
-
-        <li>
-          <p>&quot;.binds&quot; now supports wildcards.</p>
-        </li>
-
-        <li>
-          <p>&quot;.halfop&quot; and &quot;.dehalfop&quot; have been added.</p>
-        </li>
-
-        <li>
-          <p>The &#39;optimise&#39; file system command was renamed to
-          &#39;optimize&#39;. The old command will still be kept up to
-          version 1.8.</p>
-        </li>
-
-        <li>
-          <p>&quot;.modules&quot; now works locally as well as remotely.</p>
-        </li>
-
-        <li>
-          <p>Eggdrop now counts all of the traffic which it generates and
-          receives through IRC, botnet, scripts, and dcc. You can access
-          these statistics via the dcc command &quot;.traffic&quot;. Please
-          note that the counter gets reset every time a restart is done.</p>
-        </li>
-      </ul>
-    </blockquote>
-
-    <p><strong>Channel Modes</strong></p>
-
-    <blockquote>
-      <p>Support for IRCnet negative limits and DALnet&#39;s +R, +M, and +c
-      channel modes has been added. Eggdrop now also supports halfops (+h).</p>
-    </blockquote>
-
-    <p><strong>Config Files</strong></p>
-
-     <blockquote>
-       <ul>
-         <li>
-           <p>To support longer nicknames, as some IRC servers do, a new
-           &#39;nick-len&#39; setting was added.</p>
-         </li>
-
-         <li>
-           <p>Eggdrop uses strftime now to support different logfile
-           suffixes. The new config file setting is &#39;logfile-suffix&#39;.
-           </p>
-         </li>
-
-         <li>
-           <p>A new &#39;pidfile&#39; setting was added to allow you to
-           specify the name of Eggdrop&#39;s pid file.</p>
-         </li>
-
-         <li>
-           <p>The &#39;strict-servernames&#39; setting was removed.</p>
-         </li>
-       </ul>
-     </blockquote>
-
-    <p><strong>Penalty Calculation</strong></p>
-
-    <blockquote>
-      <p>Eggdrop calculates penalty points on IRCnet now, so it won&#39;t
-      flood itself off anymore.</p>
-    </blockquote>
-
-    <p><strong>Tcl Commands</strong></p>
-
-    <blockquote>
-      <ul>
-        <li>
-          <p>The &#39;chnick&#39; command was renamed to &#39;chhandle&#39;.
-          The use of &#39;chnick&#39; is deprecated. &#39;chnick&#39; is
-          still accessible if you load compat.tcl.
-          </p>
-        </li>
-
-        <li>
-          <p>All three commands to add data to the queues (puthelp, putserv
-          and putquick) now support the &#39;-next&#39; parameter which
-          pushes data to the front of the queue.</p>
-        </li>
-
-        <li>
-          <p>A command to calculate md5 checksums, &#39;md5&#39;, was
-          added.</p>
-        </li>
-
-        <li>
-          <p>To support the new asynch dns module, the command
-          &#39;dnslookup&#39; was added.</p>
-        </li>
-
-        <li>
-          <p>Four new commands regarding exempts/invites were added:
-          stickexempt, unstickexempt, stickinvite, and unstickinvite.</p>
-        </li>
-
-        <li>
-          <p>A new &#39;wasop&#39; command was added to check if a user had
-          op before a mode change.</p>
-        </li>
-
-        <li>
-          <p>&#39;washalfop&#39;, &#39;ishalfop&#39;, and &#39;botishalfop&#39;
-          have been added.</p>
-        </li>
-
-        <li>
-          <p>Three new Tcl commands were added as part of the compress
-          module: compressfile, uncompressfile, and iscompressed.</p>
-        </li>
-
-        <li>
-          <p>A new command to check whether the bot&#39;s nick is juped was
-          added (isjuped).</p>
-        </li>
-
-        <li>
-          <p>The fileresend command was added to support mIRC&#39;s dcc resume
-          feature.</p>
-        </li>
-
-        <li>
-          <p>A new bind type called &#39;NEED&#39; was added which triggers
-          when the bot needs op, unban, limit, key, or invite.</p>
-        </li>
-
-        <li>
-          <p>LOST and TOUT bind types were added.</p>
-        </li>
-
-        <li>
-          <p>Two new commands, &#39;channame2dname&#39; and
-          &#39;chandname2name&#39;, were added to allow scripts to support
-          !channels.</p>
-        </li>
-
-        <li>
-          <p>A new evnt type, loaded, was added.</p>
-        </li>
-
-        <li>
-          <p>The &#39;setudef&#39;, &#39;renudef&#39;, and &#39;deludef&#39;
-          commands were added to allow for user-defined channel settings.</p>
-        </li>
-
-        <li>
-          <p>A &#39;traffic&#39; command was added which returns a list of
-          sublists containing information about the bot&#39;s traffic usage
-          in bytes.</p>
-        </li>
-
-        <li>
-          <p>The CTCP bind type now supports wildcards.</p>
-        </li>
-
-        <li>
-          <p>The &#39;channel get&#39; command was added to allow channel
-          settings to be easily retrieved.</p>
-        </li>
-
-        <li>
-          <p>A &#39;handlen&#39; variable was added (set to the value of the
-          HANDLEN define in eggdrop.h. &#39;nick-len&#39; was also renamed to
-          &#39;nicklen&#39; (the old variable will remain until version
-          1.8.</p>
-        </li>
-
-        <li>
-          <p>The &#39;server&#39; variable now contains the server&#39;s
-          realname instead of its serverlist entry regardless of the
-          &#39;strict-servernames&#39; setting.</p>
-        </li>
-
-        <li>
-          <p>The &#39;serveraddress&#39; variable was added, which contains the
-          server&#39;s serverlist address and port.</p>
-        </li>
-
-        <li>
-          <p>The &#39;onchan&#39;, &#39;botonchan&#39;, &#39;botisvoice&#39;,
-          &#39;botisop&#39;, &#39;onchansplit&#39;, &#39;isop&#39;,
-          &#39;isvoice&#39;, and &#39;handonchan&#39; commands no longer
-          require an argument.</p>
-        </li>
-      </ul>
-      <p>For more information about changed or added Tcl commands, see
-      <a href="tcl-commands.html">Eggdrop Tcl Commands</a>.</p>
-    </blockquote>
-
-    <p><strong>Traffic Accounting</strong></p>
-
-    <blockquote>
-      <p>Eggdrop now counts all of the traffic which it generates and
-      receives through IRC, the botnet, scripts, and dcc. You can access
-      these statistics via the dcc command &#39;.traffic&#39;. Please note
-      that the counter gets reset every time a restart is done.</p>
-    </blockquote>
     <hr>
 
     <p><em>Copyright &copy; 1997 Robey Pointer<br>
