@@ -1,4 +1,4 @@
-$Id: COMPILE-GUIDE,v 1.1 2010/07/26 21:11:06 simple Exp $
+$Id: COMPILE-GUIDE,v 1.2 2010/07/27 13:05:43 pseudo Exp $
 
 Eggdrop Compile Guide and FAQ
 Last revised: August 20, 2004
@@ -252,7 +252,7 @@ Last revised: August 20, 2004
            This is usually something like 'C:\cygwin\home\<username>\'. After
            downloading, extract the Eggdrop tarball:
 
-             tar -zxf eggdrop1.6.20.tar.gz
+             tar -zxf eggdrop1.8.0.tar.gz
 
         4. Run './configure --enable-strip'. Debugging information under
            Windows is basically useless to the development team, and this will
@@ -276,8 +276,8 @@ Last revised: August 20, 2004
              cd 'C:/<install path>/' (example: cd 'C:/eggdrop')
              rm modules
              rm eggdrop.exe
-             mv eggdrop.exe-1.6.20 eggdrop.exe
-             mv modules-1.6.20 modules
+             mv eggdrop.exe-1.8.0 eggdrop.exe
+             mv modules-1.8.0 modules
 
         9. Create a 'lib' directory and copy needed libraries using the
            following commands. This assumes that you installed your Eggdrop in
