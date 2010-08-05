@@ -16,7 +16,7 @@ dnl You should have received a copy of the GNU General Public License
 dnl along with this program; if not, write to the Free Software
 dnl Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 dnl
-dnl $Id: aclocal.m4,v 1.2 2010/07/27 21:49:41 pseudo Exp $
+dnl $Id: aclocal.m4,v 1.3 2010/08/05 18:12:04 pseudo Exp $
 dnl
 
 
@@ -1792,6 +1792,93 @@ AC_DEFUN([AC_PROG_CC_WIN32],
       ac_compile="$ac_compile_save"
       CC="$save_CC"
       AC_MSG_RESULT([not found])
+    ])
+  ])
+])
+
+
+dnl EGG_IPV6_COMPAT
+dnl
+AC_DEFUN([EGG_IPV6_COMPAT],
+[
+if test "$enable_ipv6" = "yes"; then
+  AC_CHECK_FUNCS([inet_pton gethostbyname2])
+  AC_CHECK_TYPES([struct in6_addr], egg_cv_var_have_in6_addr="yes",
+    egg_cv_var_have_in6_addr="no", [#include <netinet/in.h>])
+  if test "$egg_cv_var_have_in6_addr" = "yes"; then
+    # Check for in6addr_any
+    AC_CACHE_CHECK([for the in6addr_any constant], [egg_cv_var_have_in6addr_any], [
+      AC_TRY_COMPILE([#include <netinet/in.h>],
+        [struct in6_addr i6 = in6addr_any;],
+        egg_cv_var_have_in6addr_any="yes",
+        egg_cv_var_have_in6addr_any="no"
+      )
+    ])
+    if test "$egg_cv_var_have_in6addr_any" = "yes"; then
+      AC_DEFINE(HAVE_IN6ADDR_ANY, 1, [Define to 1 if you have the in6addr_any constant.])
+    fi
+    # Check for in6addr_loopback
+    AC_CACHE_CHECK([for the in6addr_loopback constant], [egg_cv_var_have_in6addr_loopback], [
+      AC_TRY_COMPILE([#include <netinet/in.h>],
+        [struct in6_addr i6 = in6addr_loopback;],
+        egg_cv_var_have_in6addr_loopback="yes",
+        egg_cv_var_have_in6addr_loopback="no"
+      )
+    ])
+    if test "$egg_cv_var_have_in6addr_loopback" = "yes"; then
+      AC_DEFINE(HAVE_IN6ADDR_LOOPBACK, 1, [Define to 1 if you have the in6addr_loopback constant.])
+    fi
+    AC_CHECK_TYPES([struct sockaddr_in6], , , [#include <netinet/in.h>])
+  else
+    AC_MSG_NOTICE([no in6_addr found, skipping dependent checks. Custom definitions will be used.])
+  fi
+fi
+])
+
+
+dnl EGG_IPV6_ENABLE
+dnl
+AC_DEFUN([EGG_IPV6_ENABLE],
+[
+  AC_ARG_ENABLE(ipv6,
+    [  --enable-ipv6           enable IPv6 support (autodetect)],
+    [enable_ipv6="$enableval"], [enable_ipv6="$egg_cv_var_ipv6_supported"])
+  AC_ARG_ENABLE(ipv6,
+    [  --disable-ipv6          disable IPv6 support ], [enable_ipv6="$enableval"])
+
+  if test "$enable_ipv6" = "yes"; then
+    if test "$egg_cv_var_ipv6_supported" = "no"; then
+      AC_MSG_WARN([You have enabled IPv6 but your system doesn't seem to support it.])
+      AC_MSG_WARN([Eggdrop will compile but will be limited to IPv4 on this host.])
+    fi
+    AC_DEFINE(IPV6, 1, [Define to 1 if you want to enable IPv6 support.])
+  fi
+])
+
+
+dnl EGG_IPV6_STATUS
+dnl
+AC_DEFUN([EGG_IPV6_STATUS],
+[
+  AC_CACHE_CHECK([for system IPv6 support], [egg_cv_var_ipv6_supported], [
+    AC_RUN_IFELSE([[
+      #include <unistd.h>
+      #include <sys/socket.h>
+      #include <netinet/in.h>
+  
+      int main()
+      {
+        int s = socket(AF_INET6, SOCK_STREAM, 0);
+
+        if (s != -1)
+          close(s);
+
+        return((s == -1));
+       }
+    ]], [
+      egg_cv_var_ipv6_supported="yes"
+     ], [
+      egg_cv_var_ipv6_supported="no"
     ])
   ])
 ])

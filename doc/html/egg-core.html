@@ -1,5 +1,5 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
-<!-- $Id: egg-core.html,v 1.1 2010/07/26 21:11:06 simple Exp $ -->
+<!-- $Id: egg-core.html,v 1.2 2010/08/05 18:12:04 pseudo Exp $ -->
 
 <html>
   <head>
@@ -126,15 +126,25 @@
           setting.</p>
         </dd>
 
-        <dt><strong>set my-hostname &quot;virtual.host.com&quot;</strong></dt>
-        <dt><strong>set my-ip &quot;99.99.0.0&quot;</strong></dt>
+        <dt><strong>set vhost4 &quot;virtual.host.com&quot;</strong></dt>
+        <dt><strong>set vhost4 &quot;99.99.0.0&quot;</strong></dt>
 
         <dd>
           <p>If you&#39;re using virtual hosting (your machine has more
           than 1 IP), you may want to specify the particular IP to bind to.
-          You can specify either by hostname or by IP. You may also want to
-          set the hostname here if Eggdrop has trouble detecting it when it
-          starts up.</p>
+          You can specify either by hostname or by IP. Note that this is not
+          used for listening. Use the &#39;listen-addr&#39; variable to specify
+          the listening address.</p>
+        </dd>
+
+        <dt><strong>set vhost6 &quot;my.ipv6.host.com&quot;</strong></dt>
+        <dt><strong>set vhost6 &quot;2001:db8::c001:b07&quot;</strong></dt>
+
+        <dd>
+          <p>IPv6 vhost to bind to for outgoing IPv6 connections. You can
+          set it to any valid IPv6 address or hostname, resolving to an IPv6
+          address. Note that this is not used for listening. Use the
+          &#39;listen-addr&#39; variable to specify the listening address.</p>
         </dd>
 
         <dt><strong>addlang &quot;english&quot;</strong></dt>
@@ -729,8 +739,8 @@
           for your box) or you have IP masquerading between you and the
           rest of the world, and /dcc chat, /ctcp chat or userfile sharing
           aren&#39;t working, enter your outside IP here. This IP is used for
-          transfers only, and has nothing to do with the my-ip or my-hostname
-          settings. You may still need to set my-ip and/or my-hostname.</p>
+          transfers only, and has nothing to do with the vhost4/6 or
+          listen-addr settings. You may still need to set them.</p>
         </dd>
 
         <dt><strong>set reserved-portrange 2010:2020</strong></dt>

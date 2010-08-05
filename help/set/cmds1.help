@@ -31,10 +31,19 @@
 %{help=set my-hostname}%{+n}
 ###  %bset my-hostname%b <hostname>
    Set this if Eggdrop has trouble detecting its hostname.
-%{help=set my-ip}%{+n}
-###  %bset my-ip%b <ip-address>
+%{help=set vhost4}%{+n}
+###  %bset vhost4%b <ipv4-address|hostname>
    If you're using virtual hosting (your machine has more than 1 IP),
-   you may want to set this to a particular IP to bind to.
+   you may want to set this to a particular IP to bind to. You can
+   specify either by hostname or by IP. Note that this is not used for
+   listening. Use the listen-addr variable to specify the listening
+   address.
+%{help=set vhost6}%{+n}
+###  %bset vhost6%b <ipv6-address|hostname>
+   IPv6 vhost to bind to for outgoing IPv6 connections. You can set it
+   to any valid IPv6 address or hostname, resolving to an IPv6 address.
+   Note that this is not used for listening. Use the listen-addr
+   variable to specify the listening address.
 %{help=set nat-ip}%{+n}
 ###  %bset nat-ip%b <ip-address>
    If you have a NAT firewall (you box has an IP in one of the
@@ -44,9 +53,18 @@
    for your box) or you have IP masquerading between you and the
    rest of the world, and /dcc chat, /ctcp chat or userfile sharing
    aren't working, enter your outside IP here. This IP is used for
-   transfers only, and has nothing to do with the my-ip or
-   my-hostname settings. You may still need to set my-ip and/or
-   my-hostname.
+   transfers only, and has nothing to do with the vhost4/6 or
+   listen-addr settings. You may still need to set them.
+%{help=set listen-addr}%{+n}
+###  %bset listen-addr%b <ip-address/hostname>
+   You can specify a particular IPv4/IPv6 address (or hostname)
+   to bind for listening, e.g. for the 'listen' tcl command or
+   for file sending.
+%{help=set prefer-ipv6}%{+n}
+###  %bset prefer-ipv6%b <0/1>
+  Prefer IPv6 over IPv4 for connections and dns resolution.
+  If the preferred protocol family is not supported, the other
+  one will be tried.
 %{help=set dcc-sanitycheck}%{+n}
 ###  %bset dcc-sanitycheck%b <0/1>
    This setting will make the bot ignore DCC chat requests which

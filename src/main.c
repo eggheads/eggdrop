@@ -5,7 +5,7 @@
  *   command line arguments
  *   context and assert debugging
  *
- * $Id: main.c,v 1.1 2010/07/26 21:11:06 simple Exp $
+ * $Id: main.c,v 1.2 2010/08/05 18:12:05 pseudo Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -1115,7 +1115,7 @@ int main(int arg_c, char **arg_v)
   if (!backgrd && term_z) {
     int n = new_dcc(&DCC_CHAT, sizeof(struct chat_info));
 
-    dcc[n].addr = iptolong(getmyip());
+    getvhost(&dcc[n].sockname, AF_INET);
     dcc[n].sock = STDOUT;
     dcc[n].timeval = now;
     dcc[n].u.chat->con_flags = conmask;

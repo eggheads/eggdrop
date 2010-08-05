@@ -1,11 +1,11 @@
 dnl configure.ac: this file is processed by autoconf to produce ./configure.
 dnl
-dnl $Id: configure.ac,v 1.2 2010/07/27 13:05:43 pseudo Exp $
+dnl $Id: configure.ac,v 1.3 2010/08/05 18:12:04 pseudo Exp $
 
 AC_PREREQ(2.60)
 AC_INIT([Eggdrop],[1.8.0],[bugs@eggheads.org])
 AC_COPYRIGHT([Copyright (C) 1999 - 2010 Eggheads Development Team])
-AC_REVISION($Revision: 1.2 $)
+AC_REVISION($Revision: 1.3 $)
 AC_CONFIG_SRCDIR(src/eggdrop.h)
 AC_CONFIG_AUX_DIR(misc)
 AC_CONFIG_HEADER(config.h)
@@ -113,7 +113,7 @@ AC_CHECK_SIZEOF(short, 0)
 
 
 # Checks for functions and their arguments.
-AC_CHECK_FUNCS([clock dprintf fsync getdtablesize getrusage inet_aton isascii mbrlen memcpy memset random rand lrand48 rename setpgid sigaction sigemptyset snprintf strcasecmp strncasecmp uname vsnprintf])
+AC_CHECK_FUNCS([clock dprintf fsync getdtablesize getrusage inet_aton isascii mbrlen memcpy memset random rand lrand48 rename setpgid sigaction sigemptyset snprintf strcasecmp strncasecmp uname vsnprintf inet_ntop])
 AC_FUNC_SELECT_ARGTYPES
 EGG_FUNC_VPRINTF
 AC_FUNC_STRFTIME
@@ -185,6 +185,12 @@ EGG_ENABLE_DEBUG_CONTEXT
 
 # Let the user set the handlen with a configure option
 EGG_ARG_HANDLEN
+
+# Check for IPv6
+EGG_IPV6_STATUS
+EGG_IPV6_ENABLE
+EGG_IPV6_COMPAT
+
 
 # Substitute Makefile variables.
 EGG_SUBST_EGGVERSION

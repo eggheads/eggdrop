@@ -6,7 +6,7 @@
  *   memory management for dcc structures
  *   timeout checking for dcc connections
  *
- * $Id: dccutil.c,v 1.1 2010/07/26 21:11:06 simple Exp $
+ * $Id: dccutil.c,v 1.2 2010/08/05 18:12:05 pseudo Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -386,13 +386,11 @@ void dcc_remove_lost(void)
  */
 void tell_dcc(int zidx)
 {
-  int i, j;
+  int i, j, nicklen = 0;
   char other[160];
   char format[81];
-  int nicklen;
 
   /* calculate max nicklen */
-  nicklen = 0;
   for (i = 0; i < dcc_total; i++) {
     if (strlen(dcc[i].nick) > nicklen)
       nicklen = strlen(dcc[i].nick);
@@ -400,29 +398,31 @@ void tell_dcc(int zidx)
   if (nicklen < 9)
     nicklen = 9;
 
-  egg_snprintf(format, sizeof format, "%%-4s %%-8s %%-5s %%-%us %%-17s %%s\n",
-               nicklen);
-  dprintf(zidx, format, "SOCK", "ADDR", "PORT", "NICK", "HOST", "TYPE");
-  dprintf(zidx, format, "----", "--------", "-----", "---------",
-          "-----------------", "----");
+  j = 60 - nicklen;
+  if (j < 15)
+    j = 15;
+  if (j > 40)
+    j = 40;
+    
+  egg_snprintf(format, sizeof format, "%%-3s %%-%u.%us %%-5s %%-%u.%us %%s\n",
+               j, j, nicklen, nicklen);
+  dprintf(zidx, format, "IDX", "ADDR", "PORT", "NICK", "TYPE  INFO");
+  dprintf(zidx, format, "---",
+          "------------------------------------------------------", "-----",
+          "--------------------------------", "----- ---------");
+  egg_snprintf(format, sizeof format, "%%-3d %%-%u.%us %%5d %%-%u.%us %%s\n",
+               j, j, nicklen, nicklen);
 
-  egg_snprintf(format, sizeof format, "%%-4d %%08X %%5d %%-%us %%-17s %%s\n",
-               nicklen);
   /* Show server */
   for (i = 0; i < dcc_total; i++) {
-    j = strlen(dcc[i].host);
-    if (j > 17)
-      j -= 17;
-    else
-      j = 0;
     if (dcc[i].type && dcc[i].type->display)
       dcc[i].type->display(i, other);
     else {
       sprintf(other, "?:%lX  !! ERROR !!", (long) dcc[i].type);
       break;
     }
-    dprintf(zidx, format, dcc[i].sock, dcc[i].addr, dcc[i].port, dcc[i].nick,
-            dcc[i].host + j, other);
+      dprintf(zidx, format, dcc[i].sock, iptostr(&dcc[i].sockname.addr.sa), dcc[i].port,
+              dcc[i].nick, other);
   }
 }
 

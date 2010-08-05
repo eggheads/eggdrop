@@ -4,7 +4,7 @@
  *
  *   IF YOU ALTER THIS FILE, YOU NEED TO RECOMPILE THE BOT.
  *
- * $Id: eggdrop.h,v 1.2 2010/07/27 21:49:41 pseudo Exp $
+ * $Id: eggdrop.h,v 1.3 2010/08/05 18:12:05 pseudo Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -335,6 +335,25 @@ typedef u_32bit_t IP;
 typedef intptr_t (*Function) ();
 typedef int (*IntFunc) ();
 
+#ifdef IPV6
+#include "compat/in6.h"
+#endif
+
+#include <sys/socket.h>
+#include <netinet/in.h>
+
+typedef struct {
+  int family;
+  socklen_t addrlen;
+  union {
+    struct sockaddr sa;
+    struct sockaddr_in s4;
+#ifdef IPV6
+    struct sockaddr_in6 s6;
+#endif
+  } addr;
+} sockname_t;
+
 /* Public structure for the listening port map */
 struct portmap {
   int realport;
@@ -362,6 +381,7 @@ struct userrec;
 struct dcc_t {
   long sock;                    /* This should be a long to keep 64-bit machines sane. */
   IP addr;                      /* IP address in host network byte order. */
+  sockname_t sockname;		/* IPv4/IPv6 sockaddr placeholder */ 
   unsigned int port;
   struct userrec *user;
   char nick[NICKLEN];
@@ -471,7 +491,7 @@ struct dns_info {
   char *cbuf;                   /* temporary buffer. Memory will be free'd
                                  * as soon as dns_info is free'd           */
   char *cptr;                   /* temporary pointer                       */
-  IP ip;                        /* IP address                              */
+  sockname_t *ip;		/* pointer to sockname with ipv4/6 address */
   int ibuf;                     /* temporary buffer for one integer        */
   char dns_type;                /* lookup type, e.g. RES_HOSTBYIP          */
   struct dcc_table *type;       /* type of the dcc table we are making the

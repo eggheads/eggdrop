@@ -1,7 +1,7 @@
 /*
  * servmsg.c -- part of server.mod
  *
- * $Id: servmsg.c,v 1.1 2010/07/26 21:11:06 simple Exp $
+ * $Id: servmsg.c,v 1.2 2010/08/05 18:12:05 pseudo Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -1294,8 +1294,13 @@ static void connect_server(void)
       do_tcl("connect-server", connectserver);
     check_tcl_event("connect-server");
     next_server(&curserv, botserver, &botserverport, pass);
+#ifdef IPV6
+    if (strchr(botserver, ':'))
+      putlog(LOG_SERV, "*", "%s [%s]:%d", IRC_SERVERTRY, botserver,
+             botserverport);
+    else
+#endif
     putlog(LOG_SERV, "*", "%s %s:%d", IRC_SERVERTRY, botserver, botserverport);
-
     dcc[servidx].port = botserverport;
     strcpy(dcc[servidx].nick, "(server)");
     strncpyz(dcc[servidx].host, botserver, UHOSTLEN);
@@ -1344,17 +1349,17 @@ static void server_resolve_failure(int servidx)
 static void server_resolve_success(int servidx)
 {
   int oldserv = dcc[servidx].u.dns->ibuf;
-  char s[121], pass[121];
+  char pass[121];
 
   resolvserv = 0;
-  dcc[servidx].addr = dcc[servidx].u.dns->ip;
   strcpy(pass, dcc[servidx].u.dns->cbuf);
   changeover_dcc(servidx, &SERVER_SOCKET, 0);
-  serv = open_telnet(iptostr(htonl(dcc[servidx].addr)), dcc[servidx].port);
+  dcc[servidx].sock = getsock(dcc[servidx].sockname.family, 0);
+  setsnport(dcc[servidx].sockname, dcc[servidx].port);
+  serv = open_telnet_raw(dcc[servidx].sock, &dcc[servidx].sockname);
   if (serv < 0) {
-    neterror(s);
     putlog(LOG_SERV, "*", "%s %s (%s)", IRC_FAILEDCONNECT, dcc[servidx].host,
-           s);
+           strerror(errno));
     lostdcc(servidx);
     if (oldserv == curserv && !never_give_up)
       fatal("NO SERVERS WILL ACCEPT MY CONNECTION.", 0);

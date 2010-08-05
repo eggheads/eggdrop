@@ -7,7 +7,7 @@
  * because they use structures in those
  * (saves including those .h files EVERY time) - Beldin
  *
- * $Id: proto.h,v 1.1 2010/07/26 21:11:06 simple Exp $
+ * $Id: proto.h,v 1.2 2010/08/05 18:12:05 pseudo Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -158,13 +158,13 @@ void del_dcc(int);
 void changeover_dcc(int, struct dcc_table *, int);
 
 /* dns.c */
-extern void (*dns_hostbyip) (IP);
+extern void (*dns_hostbyip) (sockname_t *);
+void block_dns_hostbyip(sockname_t *);
+void call_hostbyip(sockname_t *, char *, int);
+void call_ipbyhost(char *, sockname_t *, int);
+void dcc_dnshostbyip(sockname_t *);
 extern void (*dns_ipbyhost) (char *);
-void block_dns_hostbyip(IP);
 void block_dns_ipbyhost(char *);
-void call_hostbyip(IP, char *, int);
-void call_ipbyhost(char *, IP, int);
-void dcc_dnshostbyip(IP);
 void dcc_dnsipbyhost(char *);
 
 /* language.c */
@@ -261,20 +261,20 @@ void maskaddr(const char *, char *, int);
 /* net.c */
 IP my_atoul(char *);
 unsigned long iptolong(IP);
-IP getmyip();
-void neterror(char *);
 void setsock(int, int);
 int allocsock(int, int);
 int alloctclsock(int, int, Tcl_FileProc *, ClientData);
-int getsock(int);
+int getsock(int, int);
 void killsock(int);
 void killtclsock(int);
-int answer(int, char *, unsigned long *, unsigned short *, int);
 inline int open_listen(int *);
-int open_address_listen(IP addr, int *);
+void getvhost(sockname_t *, int);
+int setsockname(sockname_t *, char *, int, int);
+int open_address_listen(sockname_t *);
+int open_telnet_raw(int, sockname_t *);
 int open_telnet(char *, int);
-int open_telnet_dcc(int, char *, char *);
-int open_telnet_raw(int, char *, int);
+int answer(int, sockname_t *, unsigned short *, int);
+int getdccaddr(sockname_t *, char *, size_t);
 void tputs(int, char *, unsigned int);
 void dequeue_sockets();
 int preparefdset(fd_set *, sock_list *, int, int, int);
@@ -282,8 +282,8 @@ int sockread(char *, int *, sock_list *, int, int);
 int sockgets(char *, int *);
 void tell_netdebug(int);
 int sanitycheck_dcc(char *, char *, char *, char *);
-int hostsanitycheck_dcc(char *, char *, IP, char *, char *);
-char *iptostr(IP);
+int hostsanitycheck_dcc(char *, char *, sockname_t *, char *, char *);
+char *iptostr(struct sockaddr *);
 int sock_has_data(int, int);
 int sockoptions(int sock, int operation, int sock_options);
 int flush_inbuf(int idx);

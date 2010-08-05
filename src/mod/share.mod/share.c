@@ -1,7 +1,7 @@
 /*
  * share.c -- part of share.mod
  *
- * $Id: share.c,v 1.2 2010/07/27 21:49:42 pseudo Exp $
+ * $Id: share.c,v 1.3 2010/08/05 18:12:05 pseudo Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -1137,16 +1137,18 @@ static void share_ufsend(int idx, char *par)
   } else {
     ip = newsplit(&par);
     port = newsplit(&par);
-    sock = getsock(SOCK_BINARY); /* Don't buffer this -> mark binary. */
-    if (sock < 0 || open_telnet_dcc(sock, ip, port) < 0) {
+    i = new_dcc(&DCC_FORK_SEND, sizeof(struct xfer_info));
+    dcc[i].port = atoi(port);
+    (void) setsockname(&dcc[i].sockname, ip, dcc[i].port, 0);
+    /* Don't buffer this -> mark binary. */
+    sock = getsock(dcc[i].sockname.family, SOCK_BINARY);
+    if (sock < 0 || open_telnet_raw(sock, &dcc[i].sockname) < 0) {
+      lostdcc(i);
       killsock(sock);
       putlog(LOG_BOTS, "*", "Asynchronous connection failed!");
       dprintf(idx, "s e Can't connect to you!\n");
       zapfbot(idx);
     } else {
-      i = new_dcc(&DCC_FORK_SEND, sizeof(struct xfer_info));
-      dcc[i].addr = my_atoul(ip);
-      dcc[i].port = atoi(port);
       strcpy(dcc[i].nick, "*users");
       dcc[i].u.xfer->filename = nmalloc(strlen(s) + 1);
       strcpy(dcc[i].u.xfer->filename, s);
@@ -1890,6 +1892,11 @@ static void start_sending_users(int idx)
   int i = 1;
   struct chanuserrec *ch;
   struct chanset_t *cst;
+#ifdef IPV6
+  char s[INET6_ADDRSTRLEN];
+#else
+  char s[sizeof "255.255.255.255"];
+#endif
 
   egg_snprintf(share_file, sizeof share_file, ".share.%s.%lu", dcc[idx].nick,
                now);
@@ -1924,8 +1931,8 @@ static void start_sending_users(int idx)
     dcc[idx].status |= STAT_SENDING;
     i = dcc_total - 1;
     strcpy(dcc[i].host, dcc[idx].nick); /* Store bot's nick */
-    dprintf(idx, "s us %lu %d %lu\n",
-            iptolong(natip[0] ? (IP) inet_addr(natip) : getmyip()),
+    getdccaddr(&dcc[i].sockname, s, sizeof s);
+    dprintf(idx, "s us %s %d %lu\n", s,
             dcc[i].port, dcc[i].u.xfer->length);
     /* Start up a tbuf to queue outgoing changes for this bot until the
      * userlist is done transferring.

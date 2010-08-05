@@ -2,7 +2,7 @@
  * ctcp.c -- part of ctcp.mod
  *   all the ctcp handling (except DCC, it's special ;)
  *
- * $Id: ctcp.c,v 1.2 2010/07/27 21:49:42 pseudo Exp $
+ * $Id: ctcp.c,v 1.3 2010/08/05 18:12:05 pseudo Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -145,6 +145,7 @@ static int ctcp_CHAT(char *nick, char *uhost, char *handle, char *object,
 {
   struct userrec *u = get_user_by_handle(userlist, handle);
   int atr = u ? u->flags : 0, i;
+  char s[INET6_ADDRSTRLEN];
 
   if ((atr & (USER_PARTY | USER_XFER)) || ((atr & USER_OP) && !require_p)) {
 
@@ -157,13 +158,13 @@ static int ctcp_CHAT(char *nick, char *uhost, char *handle, char *object,
     for (i = 0; i < dcc_total; i++) {
       if ((dcc[i].type->flags & DCT_LISTEN) &&
           (!strcmp(dcc[i].nick, "(telnet)") ||
-           !strcmp(dcc[i].nick, "(users)"))) {
+           !strcmp(dcc[i].nick, "(users)")) &&
+          getdccaddr(&dcc[i].sockname, s, sizeof s)) {
         /* Do me a favour and don't change this back to a CTCP reply,
          * CTCP replies are NOTICE's this has to be a PRIVMSG
          * -poptix 5/1/1997 */
-        dprintf(DP_SERVER, "PRIVMSG %s :\001DCC CHAT chat %lu %u\001\n",
-                nick, iptolong(natip[0] ? (IP) inet_addr(natip) : getmyip()),
-                dcc[i].port);
+          dprintf(DP_SERVER, "PRIVMSG %s :\001DCC CHAT chat %s %u\001\n",
+                  nick, s, dcc[i].port);
         return 1;
       }
     }

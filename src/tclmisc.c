@@ -2,7 +2,7 @@
  * tclmisc.c -- handles:
  *   Tcl stubs for everything else
  *
- * $Id: tclmisc.c,v 1.1 2010/07/26 21:11:06 simple Exp $
+ * $Id: tclmisc.c,v 1.2 2010/08/05 18:12:05 pseudo Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -434,7 +434,7 @@ static int tcl_myip STDVAR
 
   BADARGS(1, 1, "");
 
-  egg_snprintf(s, sizeof s, "%lu", iptolong(getmyip()));
+  getdccaddr(NULL, s, sizeof s);
   Tcl_AppendResult(irp, s, NULL);
   return TCL_OK;
 }

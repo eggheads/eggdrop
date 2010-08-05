@@ -706,6 +706,7 @@ enable_debug_mem
 enable_debug_dns
 enable_debug_context
 with_handlen
+enable_ipv6
 '
       ac_precious_vars='build_alias
 host_alias
@@ -1347,6 +1348,8 @@ Optional Features and Packages:
   --enable-debug-context  enable context debug code (default)
   --disable-debug-context disable context debug code
   --with-handlen=VALUE    set the maximum length a handle on the bot can be
+  --enable-ipv6           enable IPv6 support (autodetect)
+  --disable-ipv6          disable IPv6 support
 
 Some influential environment variables:
   CC          C compiler command
@@ -6513,7 +6516,7 @@ _ACEOF
 
 
 # Checks for functions and their arguments.
-for ac_func in clock dprintf fsync getdtablesize getrusage inet_aton isascii mbrlen memcpy memset random rand lrand48 rename setpgid sigaction sigemptyset snprintf strcasecmp strncasecmp uname vsnprintf
+for ac_func in clock dprintf fsync getdtablesize getrusage inet_aton isascii mbrlen memcpy memset random rand lrand48 rename setpgid sigaction sigemptyset snprintf strcasecmp strncasecmp uname vsnprintf inet_ntop
 do :
   as_ac_var=`$as_echo "ac_cv_func_$ac_func" | $as_tr_sh`
 ac_fn_c_check_func "$LINENO" "$ac_func" "$as_ac_var"
@@ -7949,6 +7952,198 @@ _ACEOF
 $as_echo "$as_me: WARNING: Invalid handlen given (must be a number between 9 and 32), defaulting to 9." >&2;}
     fi
 
+fi
+
+
+
+# Check for IPv6
+
+  { $as_echo "$as_me:${as_lineno-$LINENO}: checking for system IPv6 support" >&5
+$as_echo_n "checking for system IPv6 support... " >&6; }
+if test "${egg_cv_var_ipv6_supported+set}" = set; then :
+  $as_echo_n "(cached) " >&6
+else
+
+    if test "$cross_compiling" = yes; then :
+  { { $as_echo "$as_me:${as_lineno-$LINENO}: error: in \`$ac_pwd':" >&5
+$as_echo "$as_me: error: in \`$ac_pwd':" >&2;}
+as_fn_error "cannot run test program while cross compiling
+See \`config.log' for more details." "$LINENO" 5; }
+else
+  cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+/* end confdefs.h.  */
+
+      #include <unistd.h>
+      #include <sys/socket.h>
+      #include <netinet/in.h>
+
+      int main()
+      {
+        int s = socket(AF_INET6, SOCK_STREAM, 0);
+
+        if (s != -1)
+          close(s);
+
+        return((s == -1));
+       }
+
+_ACEOF
+if ac_fn_c_try_run "$LINENO"; then :
+
+      egg_cv_var_ipv6_supported="yes"
+
+else
+
+      egg_cv_var_ipv6_supported="no"
+
+fi
+rm -f core *.core core.conftest.* gmon.out bb.out conftest$ac_exeext \
+  conftest.$ac_objext conftest.beam conftest.$ac_ext
+fi
+
+
+fi
+{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $egg_cv_var_ipv6_supported" >&5
+$as_echo "$egg_cv_var_ipv6_supported" >&6; }
+
+
+  # Check whether --enable-ipv6 was given.
+if test "${enable_ipv6+set}" = set; then :
+  enableval=$enable_ipv6; enable_ipv6="$enableval"
+else
+  enable_ipv6="$egg_cv_var_ipv6_supported"
+fi
+
+  # Check whether --enable-ipv6 was given.
+if test "${enable_ipv6+set}" = set; then :
+  enableval=$enable_ipv6; enable_ipv6="$enableval"
+fi
+
+
+  if test "$enable_ipv6" = "yes"; then
+    if test "$egg_cv_var_ipv6_supported" = "no"; then
+      { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: You have enabled IPv6 but your system doesn't seem to support it." >&5
+$as_echo "$as_me: WARNING: You have enabled IPv6 but your system doesn't seem to support it." >&2;}
+      { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: Eggdrop will compile but will be limited to IPv4 on this host." >&5
+$as_echo "$as_me: WARNING: Eggdrop will compile but will be limited to IPv4 on this host." >&2;}
+    fi
+
+$as_echo "#define IPV6 1" >>confdefs.h
+
+  fi
+
+
+if test "$enable_ipv6" = "yes"; then
+  for ac_func in inet_pton gethostbyname2
+do :
+  as_ac_var=`$as_echo "ac_cv_func_$ac_func" | $as_tr_sh`
+ac_fn_c_check_func "$LINENO" "$ac_func" "$as_ac_var"
+eval as_val=\$$as_ac_var
+   if test "x$as_val" = x""yes; then :
+  cat >>confdefs.h <<_ACEOF
+#define `$as_echo "HAVE_$ac_func" | $as_tr_cpp` 1
+_ACEOF
+
+fi
+done
+
+  ac_fn_c_check_type "$LINENO" "struct in6_addr" "ac_cv_type_struct_in6_addr" "#include <netinet/in.h>
+"
+if test "x$ac_cv_type_struct_in6_addr" = x""yes; then :
+
+cat >>confdefs.h <<_ACEOF
+#define HAVE_STRUCT_IN6_ADDR 1
+_ACEOF
+
+egg_cv_var_have_in6_addr="yes"
+else
+  egg_cv_var_have_in6_addr="no"
+fi
+
+  if test "$egg_cv_var_have_in6_addr" = "yes"; then
+    # Check for in6addr_any
+    { $as_echo "$as_me:${as_lineno-$LINENO}: checking for the in6addr_any constant" >&5
+$as_echo_n "checking for the in6addr_any constant... " >&6; }
+if test "${egg_cv_var_have_in6addr_any+set}" = set; then :
+  $as_echo_n "(cached) " >&6
+else
+
+      cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+/* end confdefs.h.  */
+#include <netinet/in.h>
+int
+main ()
+{
+struct in6_addr i6 = in6addr_any;
+  ;
+  return 0;
+}
+_ACEOF
+if ac_fn_c_try_compile "$LINENO"; then :
+  egg_cv_var_have_in6addr_any="yes"
+else
+  egg_cv_var_have_in6addr_any="no"
+
+fi
+rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
+
+fi
+{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $egg_cv_var_have_in6addr_any" >&5
+$as_echo "$egg_cv_var_have_in6addr_any" >&6; }
+    if test "$egg_cv_var_have_in6addr_any" = "yes"; then
+
+$as_echo "#define HAVE_IN6ADDR_ANY 1" >>confdefs.h
+
+    fi
+    # Check for in6addr_loopback
+    { $as_echo "$as_me:${as_lineno-$LINENO}: checking for the in6addr_loopback constant" >&5
+$as_echo_n "checking for the in6addr_loopback constant... " >&6; }
+if test "${egg_cv_var_have_in6addr_loopback+set}" = set; then :
+  $as_echo_n "(cached) " >&6
+else
+
+      cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+/* end confdefs.h.  */
+#include <netinet/in.h>
+int
+main ()
+{
+struct in6_addr i6 = in6addr_loopback;
+  ;
+  return 0;
+}
+_ACEOF
+if ac_fn_c_try_compile "$LINENO"; then :
+  egg_cv_var_have_in6addr_loopback="yes"
+else
+  egg_cv_var_have_in6addr_loopback="no"
+
+fi
+rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
+
+fi
+{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $egg_cv_var_have_in6addr_loopback" >&5
+$as_echo "$egg_cv_var_have_in6addr_loopback" >&6; }
+    if test "$egg_cv_var_have_in6addr_loopback" = "yes"; then
+
+$as_echo "#define HAVE_IN6ADDR_LOOPBACK 1" >>confdefs.h
+
+    fi
+    ac_fn_c_check_type "$LINENO" "struct sockaddr_in6" "ac_cv_type_struct_sockaddr_in6" "#include <netinet/in.h>
+"
+if test "x$ac_cv_type_struct_sockaddr_in6" = x""yes; then :
+
+cat >>confdefs.h <<_ACEOF
+#define HAVE_STRUCT_SOCKADDR_IN6 1
+_ACEOF
+
+
+fi
+
+  else
+    { $as_echo "$as_me:${as_lineno-$LINENO}: no in6_addr found, skipping dependent checks. Custom definitions will be used." >&5
+$as_echo "$as_me: no in6_addr found, skipping dependent checks. Custom definitions will be used." >&6;}
+  fi
 fi
 
 

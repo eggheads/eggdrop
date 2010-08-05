@@ -1,7 +1,7 @@
-$Id: CONTENTS,v 1.1 2010/07/26 21:11:06 simple Exp $
+$Id: CONTENTS,v 1.2 2010/08/05 18:12:04 pseudo Exp $
 
 Directory Contents - doc/
-Last revised: August 04, 2004
+Last revised: July 29, 2010
     _____________________________________________________________________
 
                           Directory Contents - doc/
@@ -35,6 +35,10 @@ Last revised: August 04, 2004
 
   FIRST-SCRIPT
     This document will help get you started with Tcl scripting for Eggdrop.
+
+  IPV6
+    This document provides information about IPv6 support which is a new
+    eggdrop feature since version 1.8.0.
 
   KNOWN-PROBLEMS
     See this file for a list of things that are broken but aren't getting

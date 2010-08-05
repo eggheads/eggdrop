@@ -1,11 +1,11 @@
 /*
- * compat.h
- *   wrap-around header for all compability functions.
+ * gethostbyname2.h
+ *   prototypes for gethostbyname2.c
  *
- * $Id: compat.h,v 1.2 2010/08/05 18:12:05 pseudo Exp $
+ * $Id: gethostbyname2.h,v 1.1 2010/08/05 18:12:05 pseudo Exp $
  */
 /*
- * Copyright (C) 2000 - 2010 Eggheads Development Team
+ * Copyright (C) 2010 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -22,17 +22,13 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
-#ifndef _EGG_COMPAT_COMPAT_H
-#define _EGG_COMPAT_COMPAT_H
+#ifdef HAVE_CONFIG_H
+# include "config.h"
+#endif
 
-#include "inet_aton.h"
-#include "snprintf.h"
-#include "memset.h"
-#include "memcpy.h"
-#include "strcasecmp.h"
-#include "strftime.h"
-#include "inet_ntop.h"
-#include "inet_pton.h"
-#include "gethostbyname2.h"
+#include <netdb.h>
+#include <netinet/in.h>
 
-#endif /* !__EGG_COMPAT_COMPAT_H */
+#ifndef HAVE_GETHOSTBYNAME2
+struct hostent *gethostbyname2(const char *name, int af);
+#endif

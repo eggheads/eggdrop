@@ -1,7 +1,7 @@
 /*
  * transfer.c -- part of transfer.mod
  *
- * $Id: transfer.c,v 1.2 2010/07/27 21:49:42 pseudo Exp $
+ * $Id: transfer.c,v 1.3 2010/08/05 18:12:05 pseudo Exp $
  *
  * Copyright (C) 1997 Robey Pointer
  * Copyright (C) 1999 - 2010 Eggheads Development Team
@@ -30,6 +30,7 @@
 /* sigh sunos */
 #include <sys/types.h>
 #include <sys/stat.h>
+#include <sys/errno.h>
 #include "src/mod/module.h"
 #include "src/tandem.h"
 
@@ -257,8 +258,7 @@ static unsigned long pump_file_to_sock(FILE *file, long sock,
 
 static void eof_dcc_fork_send(int idx)
 {
-  char s1[121];
-  char *s2;
+  char *s;
 
   fclose(dcc[idx].u.xfer->f);
   if (!strcmp(dcc[idx].nick, "*users")) {
@@ -277,17 +277,16 @@ static void eof_dcc_fork_send(int idx)
     putlog(LOG_BOTS, "*", USERF_FAILEDXFER);
     unlink(dcc[idx].u.xfer->filename);
   } else {
-    neterror(s1);
     if (!quiet_reject)
       dprintf(DP_HELP, "NOTICE %s :%s (%s)\n", dcc[idx].nick,
-              DCC_CONNECTFAILED1, s1);
+              DCC_CONNECTFAILED1, strerror(errno));
     putlog(LOG_MISC, "*", "%s: SEND %s (%s!%s)", DCC_CONNECTFAILED2,
            dcc[idx].u.xfer->origname, dcc[idx].nick, dcc[idx].host);
-    putlog(LOG_MISC, "*", "    (%s)", s1);
-    s2 = nmalloc(strlen(tempdir) + strlen(dcc[idx].u.xfer->filename) + 1);
-    sprintf(s2, "%s%s", tempdir, dcc[idx].u.xfer->filename);
-    unlink(s2);
-    nfree(s2);
+    putlog(LOG_MISC, "*", "    (%s)", strerror(errno));
+    s = nmalloc(strlen(tempdir) + strlen(dcc[idx].u.xfer->filename) + 1);
+    sprintf(s, "%s%s", tempdir, dcc[idx].u.xfer->filename);
+    unlink(s);
+    nfree(s);
   }
   killsock(dcc[idx].sock);
   lostdcc(idx);
@@ -906,19 +905,16 @@ static void dcc_fork_send(int idx, char *x, int y)
 
 static void dcc_get_pending(int idx, char *buf, int len)
 {
-  unsigned long ip;
   unsigned short port;
   int i;
-  char s[UHOSTLEN];
 
-  i = answer(dcc[idx].sock, s, &ip, &port, 1);
+  i = answer(dcc[idx].sock, &dcc[idx].sockname, &port, 1);
   killsock(dcc[idx].sock);
   dcc[idx].sock = i;
-  dcc[idx].addr = ip;
+  dcc[idx].addr = 0;
   dcc[idx].port = (int) port;
   if (dcc[idx].sock == -1) {
-    neterror(s);
-    dprintf(DP_HELP, TRANSFER_NOTICE_BAD_CONN, dcc[idx].nick, s);
+    dprintf(DP_HELP, TRANSFER_NOTICE_BAD_CONN, dcc[idx].nick, strerror(errno));
     putlog(LOG_FILES, "*", TRANSFER_LOG_BAD_CONN, dcc[idx].u.xfer->origname,
            dcc[idx].nick, dcc[idx].host);
     fclose(dcc[idx].u.xfer->f);
@@ -1024,7 +1020,10 @@ static int raw_dcc_resend_send(char *filename, char *nick, char *from,
     return DCCSEND_FULL;
 
   dcc[i].sock = zz;
-  dcc[i].addr = (IP) (-559026163);
+  dcc[i].sockname.addrlen = sizeof(dcc[i].sockname.addr);
+  getsockname(dcc[i].sock, &dcc[i].sockname.addr.sa,
+              &dcc[i].sockname.addrlen);
+  dcc[i].sockname.family = dcc[i].sockname.addr.sa.sa_family;
   dcc[i].port = port;
   strcpy(dcc[i].nick, nick);
   strcpy(dcc[i].host, "irc");
@@ -1042,11 +1041,17 @@ static int raw_dcc_resend_send(char *filename, char *nick, char *from,
   dcc[i].u.xfer->type = resend ? XFER_RESEND_PEND : XFER_SEND;
 
   if (nick[0] != '*') {
-    dprintf(DP_SERVER, "PRIVMSG %s :\001DCC %sSEND %s %lu %d %lu\001\n", nick,
-            resend ? "RE" : "", nfn, iptolong(natip[0] ?
-            (IP) inet_addr(natip) : getmyip()), port, dccfilesize);
-    putlog(LOG_FILES, "*", TRANSFER_BEGIN_DCC, resend ? TRANSFER_RE : "", nfn,
-           nick);
+#ifdef IPV6
+    char s[INET6_ADDRSTRLEN];
+#else
+    char s[INET_ADDRSTRLEN];
+#endif
+    if (getdccaddr(&dcc[i].sockname, s, sizeof s)) {
+      dprintf(DP_SERVER, "PRIVMSG %s :\001DCC %sSEND %s %s %d %lu\001\n", nick,
+              resend ? "RE" : "", nfn, s, port, dccfilesize);
+      putlog(LOG_FILES, "*", TRANSFER_BEGIN_DCC, resend ? TRANSFER_RE : "", nfn,
+             nick);
+    }
   }
 
   if (buf)

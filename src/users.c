@@ -10,7 +10,7 @@
  *
  * dprintf'ized, 9nov1995
  *
- * $Id: users.c,v 1.1 2010/07/26 21:11:06 simple Exp $
+ * $Id: users.c,v 1.2 2010/08/05 18:12:05 pseudo Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -36,7 +36,6 @@
 #include "chan.h"
 #include "modules.h"
 #include "tandem.h"
-char natip[121] = "";
 
 #include <netinet/in.h>
 #include <arpa/inet.h>

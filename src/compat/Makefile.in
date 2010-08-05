@@ -1,5 +1,5 @@
 # Makefile for src/compat/
-# $Id: Makefile.in,v 1.1 2010/07/26 21:11:06 simple Exp $
+# $Id: Makefile.in,v 1.2 2010/08/05 18:12:05 pseudo Exp $
 
 SHELL = @SHELL@
 top_srcdir = @top_srcdir@
@@ -18,7 +18,8 @@ STRIP = @STRIP@
 CFLAGS = @CFLAGS@ -I../.. -I$(top_srcdir) -I$(top_srcdir)/src @DEFS@ $(CFLGS)
 CPPFLAGS = @CPPFLAGS@
 
-OBJS = inet_aton.o snprintf.o memset.o memcpy.o strcasecmp.o strftime.o
+OBJS = gethostbyname2.o in6.o inet_aton.o inet_ntop.o inet_pton.o snprintf.o \
+	memset.o memcpy.o strcasecmp.o strftime.o
 
 doofus:
 	@echo ""
@@ -42,6 +43,25 @@ compat: $(OBJS)
 
 #safety hash
 gnu_strftime.o: gnu_strftime.c ../../config.h
+gethostbyname2.o: gethostbyname2.c ../../src/main.h \
+  ../../config.h ../../lush.h \
+  ../../src/lang.h ../../src/eggdrop.h ../../src/flags.h \
+  ../../src/proto.h ../../src/misc_file.h ../../src/cmdt.h \
+  ../../src/tclegg.h ../../src/tclhash.h ../../src/chan.h \
+  ../../src/users.h ../../src/compat/compat.h \
+  ../../src/compat/inet_aton.h ../../src/main.h \
+  ../../src/compat/snprintf.h ../../src/compat/memset.h \
+  ../../src/compat/memcpy.h ../../src/compat/strcasecmp.h \
+  ../../src/compat/strftime.h in6.h gethostbyname2.h
+in6.o: in6.c ../../src/main.h ../../config.h ../../lush.h \
+  ../../src/lang.h ../../src/eggdrop.h ../../src/flags.h \
+  ../../src/proto.h ../../src/misc_file.h ../../src/cmdt.h \
+  ../../src/tclegg.h ../../src/tclhash.h ../../src/chan.h \
+  ../../src/users.h ../../src/compat/compat.h \
+  ../../src/compat/inet_aton.h ../../src/main.h \
+  ../../src/compat/snprintf.h ../../src/compat/memset.h \
+  ../../src/compat/memcpy.h ../../src/compat/strcasecmp.h \
+  ../../src/compat/strftime.h in6.h
 inet_aton.o: inet_aton.c ../../src/main.h ../../config.h ../../lush.h \
   ../../src/lang.h ../../src/eggdrop.h ../../src/flags.h \
   ../../src/proto.h ../../src/misc_file.h ../../src/cmdt.h \
@@ -51,6 +71,24 @@ inet_aton.o: inet_aton.c ../../src/main.h ../../config.h ../../lush.h \
   ../../src/compat/snprintf.h ../../src/compat/memset.h \
   ../../src/compat/memcpy.h ../../src/compat/strcasecmp.h \
   ../../src/compat/strftime.h inet_aton.h
+inet_ntop.o: inet_ntop.c ../../src/main.h ../../config.h ../../lush.h \
+  ../../src/lang.h ../../src/eggdrop.h ../../src/flags.h \
+  ../../src/proto.h ../../src/misc_file.h ../../src/cmdt.h \
+  ../../src/tclegg.h ../../src/tclhash.h ../../src/chan.h \
+  ../../src/users.h ../../src/compat/compat.h \
+  ../../src/compat/inet_aton.h ../../src/main.h \
+  ../../src/compat/snprintf.h ../../src/compat/memset.h \
+  ../../src/compat/memcpy.h ../../src/compat/strcasecmp.h \
+  ../../src/compat/strftime.h in6.h inet_ntop.h
+inet_pton.o: inet_pton.c ../../src/main.h ../../config.h ../../lush.h \
+  ../../src/lang.h ../../src/eggdrop.h ../../src/flags.h \
+  ../../src/proto.h ../../src/misc_file.h ../../src/cmdt.h \
+  ../../src/tclegg.h ../../src/tclhash.h ../../src/chan.h \
+  ../../src/users.h ../../src/compat/compat.h \
+  ../../src/compat/inet_aton.h ../../src/main.h \
+  ../../src/compat/snprintf.h ../../src/compat/memset.h \
+  ../../src/compat/memcpy.h ../../src/compat/strcasecmp.h \
+  ../../src/compat/strftime.h in6.h inet_pton.h
 memcpy.o: memcpy.c ../../src/main.h ../../config.h ../../lush.h \
   ../../src/lang.h ../../src/eggdrop.h ../../src/flags.h \
   ../../src/proto.h ../../src/misc_file.h ../../src/cmdt.h \

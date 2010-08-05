@@ -2,7 +2,7 @@
  * tcldcc.c -- handles:
  *   Tcl stubs for the dcc commands
  *
- * $Id: tcldcc.c,v 1.1 2010/07/26 21:11:06 simple Exp $
+ * $Id: tcldcc.c,v 1.2 2010/08/05 18:12:05 pseudo Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -26,6 +26,7 @@
 #include "main.h"
 #include "tandem.h"
 #include "modules.h"
+#include <errno.h>
 
 extern Tcl_Interp *interp;
 extern tcl_timer_t *timer, *utimer;
@@ -863,22 +864,20 @@ static int tcl_connect STDVAR
     Tcl_AppendResult(irp, "out of dcc table space", NULL);
     return TCL_ERROR;
   }
-  sock = getsock(0);
-
+  sock = z = open_telnet(argv[1], atoi(argv[2]));
   if (sock < 0) {
-    Tcl_AppendResult(irp, MISC_NOFREESOCK, NULL);
+    switch (sock) {
+      case -3:
+        Tcl_AppendResult(irp, MISC_NOFREESOCK, NULL);
+        break;
+      case -2:
+        Tcl_AppendResult(irp, "DNS lookup failed", NULL);
+        break;
+      default:
+        Tcl_AppendResult(irp, strerror(errno), NULL);
+    }
     return TCL_ERROR;
-  }
-  z = open_telnet_raw(sock, argv[1], atoi(argv[2]));
-  if (z < 0) {
-    killsock(sock);
-    if (z == -2)
-      strncpyz(s, "DNS lookup failed", sizeof s);
-    else
-      neterror(s);
-    Tcl_AppendResult(irp, s, NULL);
-    return TCL_ERROR;
-  }
+  }            
   i = new_dcc(&DCC_SOCKET, 0);
   dcc[i].sock = sock;
   dcc[i].port = atoi(argv[2]);
@@ -937,27 +936,31 @@ static int tcl_listen STDVAR
     }
     /* Try to grab port */
     j = port + 20;
-    i = -1;
+    i = -2;
     while (port < j && i < 0) {
       i = open_listen(&port);
       if (i == -1)
-        port++;
-      else if (i == -2)
         break;
-    }
+      else if (i == -2)
+        port++;
+    } 
+
     if (i == -1) {
-      egg_snprintf(msg, sizeof msg, "Couldn't listen on port '%d' on the "
-                   "given address. Please make sure 'my-ip' is set correctly, "
-                   "or try a different port.", realport);
+      egg_snprintf(msg, sizeof msg, "Couldn't listen on port '%d' on the given "
+                   "address: %s", realport, strerror(errno));
       Tcl_AppendResult(irp, msg, NULL);
       return TCL_ERROR;
     } else if (i == -2) {
-      Tcl_AppendResult(irp, "Couldn't assign the requested IP. Please make "
-                       "sure 'my-ip' is set properly.", NULL);
+      egg_snprintf(msg, sizeof msg, "Couldn't listen on port '%d' on the given "
+                   "address. Please make sure 'listen-addr' is set properly"
+                   " or try choosing a different port.", realport);
+      Tcl_AppendResult(irp, msg, NULL);
       return TCL_ERROR;
     }
     idx = new_dcc(&DCC_TELNET, 0);
-    dcc[idx].addr = iptolong(getmyip());
+    dcc[idx].sockname.addrlen = sizeof(dcc[idx].sockname.addr);
+    getsockname(i, &dcc[idx].sockname.addr.sa, &dcc[idx].sockname.addrlen);
+    dcc[idx].sockname.family = dcc[idx].sockname.addr.sa.sa_family;
     dcc[idx].port = port;
     dcc[idx].sock = i;
     dcc[idx].timeval = now;

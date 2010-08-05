@@ -2,7 +2,7 @@
  * dns.h
  *   stuff used by dns.c
  *
- * $Id: dns.h,v 1.1 2010/07/26 21:11:06 simple Exp $
+ * $Id: dns.h,v 1.2 2010/08/05 18:12:05 pseudo Exp $
  */
 /*
  * Written by Fabian Knittel <fknittel@gmx.de>
@@ -30,12 +30,13 @@
 typedef struct {
   char *name;
   int (*expmem) (void *);
-  void (*event) (IP, char *, int, void *);
+  void (*event) (sockname_t *, char *, int, void *);
 } devent_type;
 
 typedef struct {
   char *proc;                   /* Tcl proc                       */
   char *paras;                  /* Additional parameters          */
+  sockname_t sockname;
 } devent_tclinfo_t;
 
 typedef struct devent_str {
@@ -43,7 +44,7 @@ typedef struct devent_str {
   devent_type *type;
   u_8bit_t lookup;              /* RES_IPBYHOST or RES_HOSTBYIP   */
   union {
-    IP ip_addr;                 /* IP address                     */
+    sockname_t *ip_addr;	/* Pointer to address placeholder */
     char *hostname;             /* Hostname                       */
   } res_data;
   void *other;                  /* Data specific to the event type */

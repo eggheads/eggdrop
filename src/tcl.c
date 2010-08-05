@@ -4,7 +4,7 @@
  *   Tcl initialization
  *   getting and setting Tcl/eggdrop variables
  *
- * $Id: tcl.c,v 1.1 2010/07/26 21:11:06 simple Exp $
+ * $Id: tcl.c,v 1.2 2010/08/05 18:12:05 pseudo Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -46,10 +46,11 @@ typedef struct {
 extern time_t online_since;
 
 extern char origbotname[], botuser[], motdfile[], admin[], userfile[],
-            firewall[], helpdir[], notify_new[], hostname[], myip[], moddir[],
+            firewall[], helpdir[], notify_new[], vhost[], moddir[],
             tempdir[], owner[], network[], botnetnick[], bannerfile[],
             egg_version[], natip[], configfile[], logfile_suffix[], log_ts[],
-            textdir[], pid_file[];
+            textdir[], pid_file[], listen_ip[];
+
 
 extern int flood_telnet_thr, flood_telnet_time, shtime, share_greet,
            require_p, keep_all_logs, allow_new_telnets, stealth_telnets,
@@ -60,6 +61,11 @@ extern int flood_telnet_thr, flood_telnet_time, shtime, share_greet,
            identtimeout, dcc_sanitycheck, dupwait_timeout, egg_numver,
            share_unlinks, protect_telnet, sort_users, strict_host,
            resolve_timeout, default_uflags, userfile_perm, cidr_support;
+
+#ifdef IPV6
+extern char vhost6[];
+extern int pref_af;
+#endif
 
 extern struct dcc_t *dcc;
 extern tcl_timer_t *timer, *utimer;
@@ -488,8 +494,11 @@ static tcl_strings def_tcl_strings[] = {
 #endif
   {"notify-newusers", notify_new,     120,                     0},
   {"owner",           owner,          120,           STR_PROTECT},
-  {"my-ip",           myip,           120,                     0},
-  {"my-hostname",     hostname,       120,                     0},
+  {"vhost4",          vhost,          120,                     0},
+#ifdef IPV6
+  {"vhost6",          vhost6,         120,                     0},
+#endif
+  {"listen-addr",     listen_ip,      120,                     0},
   {"network",         network,        40,                      0},
   {"whois-fields",    whois_fields,   1024,                    0},
   {"nat-ip",          natip,          120,                     0},
@@ -553,6 +562,9 @@ static tcl_ints def_tcl_ints[] = {
   {"enable-simul",          &enable_simul,         0}, /* compat */
   {"debug-output",          &debug_output,         0}, /* compat */
   {"use-console-r",         &use_console_r,        0}, /* compat */
+#ifdef IPV6
+  {"prefer-ipv6",	    &pref_af,		   0},
+#endif
   {NULL,                    NULL,                  0}
 };
 

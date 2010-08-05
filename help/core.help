@@ -145,7 +145,7 @@ botnet-nick
 userfile
 motd
 paranoid-telnet-flood
-my-ip
+vhost
 telnet-banner
 admin
 use-telnet-banner
@@ -192,7 +192,10 @@ ident-timeout
 share-unlinks
 allow-dk-cmds
 userfile-perm
+listen-addr
 switch-logfiles-at
+vhost6
+prefer-ipv6
 %{end}
    Use %b'.help set <variable>'%b for more info on each variable.
 %{help=all}%{-}

@@ -1,7 +1,7 @@
 /*
  * userchan.c -- part of channels.mod
  *
- * $Id: userchan.c,v 1.1 2010/07/26 21:11:06 simple Exp $
+ * $Id: userchan.c,v 1.2 2010/08/05 18:12:05 pseudo Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -423,14 +423,13 @@ static int u_addban(struct chanset_t *chan, char *ban, char *from, char *note,
     strcat(host, "!*");
     strcat(host, s);
   }
-  if ((me = module_find("server", 0, 0)) && me->funcs)
+  if ((me = module_find("server", 0, 0)) && me->funcs) {
     simple_sprintf(s, "%s!%s", me->funcs[SERVER_BOTNAME],
                    me->funcs[SERVER_BOTUSERHOST]);
-  else
-    simple_sprintf(s, "%s!%s@%s", origbotname, botuser, hostname);
-  if (match_addr(host, s)) {
-    putlog(LOG_MISC, "*", IRC_IBANNEDME);
-    return 0;
+    if (match_addr(host, s)) {
+      putlog(LOG_MISC, "*", IRC_IBANNEDME);
+      return 0;
+    }
   }
   if (expire_time == now)
     return 1;
@@ -495,7 +494,6 @@ static int u_addinvite(struct chanset_t *chan, char *invite, char *from,
 {
   char host[1024], s[1024];
   maskrec *p = NULL, *l, **u = chan ? &chan->invites : &global_invites;
-  module_entry *me;
 
   strcpy(host, invite);
   /* Choke check: fix broken invites (must have '!' and '@') */
@@ -511,11 +509,6 @@ static int u_addinvite(struct chanset_t *chan, char *invite, char *from,
     strcat(host, "!*");
     strcat(host, s);
   }
-  if ((me = module_find("server", 0, 0)) && me->funcs)
-    simple_sprintf(s, "%s!%s", me->funcs[SERVER_BOTNAME],
-                   me->funcs[SERVER_BOTUSERHOST]);
-  else
-    simple_sprintf(s, "%s!%s@%s", origbotname, botuser, hostname);
 
   for (l = *u; l; l = l->next)
     if (!rfc_casecmp(l->mask, host)) {
@@ -577,7 +570,6 @@ static int u_addexempt(struct chanset_t *chan, char *exempt, char *from,
 {
   char host[1024], s[1024];
   maskrec *p = NULL, *l, **u = chan ? &chan->exempts : &global_exempts;
-  module_entry *me;
 
   strcpy(host, exempt);
   /* Choke check: fix broken exempts (must have '!' and '@') */
@@ -593,11 +585,6 @@ static int u_addexempt(struct chanset_t *chan, char *exempt, char *from,
     strcat(host, "!*");
     strcat(host, s);
   }
-  if ((me = module_find("server", 0, 0)) && me->funcs)
-    simple_sprintf(s, "%s!%s", me->funcs[SERVER_BOTNAME],
-                   me->funcs[SERVER_BOTUSERHOST]);
-  else
-    simple_sprintf(s, "%s!%s@%s", origbotname, botuser, hostname);
 
   for (l = *u; l; l = l->next)
     if (!rfc_casecmp(l->mask, host)) {

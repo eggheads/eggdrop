@@ -1,7 +1,7 @@
 /*
  * module.h
  *
- * $Id: module.h,v 1.1 2010/07/26 21:11:06 simple Exp $
+ * $Id: module.h,v 1.2 2010/08/05 18:12:05 pseudo Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -192,18 +192,18 @@
 #define egg_list_append ((int (*) ( struct list_type **, struct list_type *))global[74])
 #define egg_list_contains ((int (*) (struct list_type *, struct list_type *))global[75])
 /* 76 - 79 */
-#define answer ((int (*) (int,char *,unsigned long *,unsigned short *,int))global[76])
-#define getmyip ((IP (*) (void))global[77])
-#define neterror ((void (*) (char *))global[78])
+#define answer ((int (*) (int, sockname_t *, unsigned short *, int))global[76])
+#define getvhost ((void (*) (sockname_t *, int))global[77])
+/* was neterror() */
 #define tputs ((void (*) (int, char *,unsigned int))global[79])
 /* 80 - 83 */
 #define new_dcc ((int (*) (struct dcc_table *, int))global[80])
 #define lostdcc ((void (*) (int))global[81])
-#define getsock ((int (*) (int))global[82])
+#define getsock ((int (*) (int, int))global[82])
 #define killsock ((void (*) (int))global[83])
 /* 84 - 87 */
 #define open_listen ((int (*) (int *))global[84])
-#define open_telnet_dcc ((int (*) (int,char *,char *))global[85])
+#define getdccaddr ((int (*) (sockname_t *, char *, socklen_t))global[85])
 #define get_data_ptr(x) ((void *(*)(int,char*,int))global[86])(x,__FILE__,__LINE__)
 #define open_telnet ((int (*) (char *, int))global[87])
 /* 88 - 91 */
@@ -239,7 +239,8 @@
 /* 112 - 115 */
 #define tempdir ((char *)(global[112]))
 #define natip ((char *)(global[113]))
-#define hostname ((char *)(global[114]))
+/* was natip -- UNUSED */
+/* was hostname -- UNUSED */
 #define origbotname ((char *)(global[115]))
 /* 116 - 119 */
 #define botuser ((char *)(global[116]))
@@ -400,16 +401,16 @@
 #else
 #  define Assert(expr) do {} while (0)
 #endif
-#define allocsock ((int(*)(int sock,int options))global[234])
-#define call_hostbyip ((void(*)(IP, char *, int))global[235])
+#define allocsock ((int(*)(int sock, int options))global[234])
+#define call_hostbyip ((void(*)(sockname_t *, char *, int))global[235])
 /* 236 - 239 */
-#define call_ipbyhost ((void(*)(char *, IP, int))global[236])
-#define iptostr ((char *(*)(IP))global[237])
+#define call_ipbyhost ((void(*)(char *, sockname_t *, int))global[236])
+#define iptostr ((char *(*)(struct sockaddr *))global[237])
 #define DCC_DNSWAIT (*(struct dcc_table *)(global[238]))
-#define hostsanitycheck_dcc ((int(*)(char *, char *, IP, char *, char *))global[239])
+#define hostsanitycheck_dcc ((int(*)(char *, char *, sockname_t *, char *, char *))global[239])
 /* 240 - 243 */
 #define dcc_dnsipbyhost ((void (*)(char *))global[240])
-#define dcc_dnshostbyip ((void (*)(IP))global[241])
+#define dcc_dnshostbyip ((void (*)(sockname_t *))global[241])
 #define changeover_dcc ((void (*)(int, struct dcc_table *, int))global[242])
 #define make_rand_str ((void (*) (char *, int))global[243])
 /* 244 - 247 */
@@ -434,7 +435,7 @@
 #define tandbot (*(tand_t **)(global[259]))
 /* 260 - 263 */
 #define party (*(party_t **)(global[260]))
-#define open_address_listen ((int (*)(IP addr, int *port))global[261])
+#define open_address_listen ((int (*)(sockname_t *, int *))global[261])
 #define str_escape ((char *(*)(const char *, const char, const char))global[262])
 #define strchr_unescape ((char *(*)(char *, const char, register const char))global[263])
 /* 264 - 267 */
@@ -469,10 +470,12 @@
 /* 284 - 287 */
 #define quiet_reject (*(int *)(global[284]))
 #define file_readable ((int (*) (char *))global[285])
-/* IPv6 leftovers: 286 */
-/* IPv6 leftovers: 287 */
+#define setsockname ((int (*)(sockname_t *, char *, int, int))global[286])
+#define open_telnet_raw ((int (*)(int, sockname_t *))global[287])
 /* 288 - 291 */
-/* IPv6 leftovers: 288 */
+#ifdef IPV6
+# define pref_af (*(int *)(global[288]))
+#endif
 #define strip_mirc_codes ((void (*)(int, char *))global[289])
 #define check_ansi ((int (*) (char *))global[290])
 #define oatoi ((int (*) (const char *))global[291])

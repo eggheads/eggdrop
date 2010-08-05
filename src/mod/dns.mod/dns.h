@@ -4,7 +4,7 @@
  *
  * Written by Fabian Knittel <fknittel@gmx.de>
  *
- * $Id: dns.h,v 1.1 2010/07/26 21:11:06 simple Exp $
+ * $Id: dns.h,v 1.2 2010/08/05 18:12:05 pseudo Exp $
  */
 /*
  * Copyright (C) 1999 - 2010 Eggheads Development Team
@@ -49,6 +49,9 @@ struct resolve {
   time_t expiretime;
   char *hostn;
   IP ip;
+  u_32bit_t ttl;
+  u_16bit_t type;
+  sockname_t sockname;
   u_16bit_t id;
   u_8bit_t state;
   u_8bit_t sends;

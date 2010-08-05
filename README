@@ -1,4 +1,4 @@
-$Id: README,v 1.2 2010/07/27 21:49:41 pseudo Exp $
+$Id: README,v 1.3 2010/08/05 18:12:04 pseudo Exp $
 
 Readme
 Last revised: June 5, 2002
@@ -23,25 +23,24 @@ Last revised: June 5, 2002
     5. Command line
     6. Frequently Asked Questions
        6a. What do I do if I get the error "User file not found"?
-       6b. My Eggdrop won't run; It just says "Can't find your hostname!"
-       6c. What the Heck is Tcl?
-       6d. My bot dies and the last entry in the logfile is "Received terminate
+       6b. What the Heck is Tcl?
+       6c. My bot dies and the last entry in the logfile is "Received terminate
            signal". What does that mean and can I prevent it?
-       6e. Someone else set up a bot I don't like. Are there any backdoors I
+       6d. Someone else set up a bot I don't like. Are there any backdoors I
            can use to take their bot down?
-       6f. What are modules?
-       6g. Can I compile Eggdrop without dynamic modules?
+       6e. What are modules?
+       6f. Can I compile Eggdrop without dynamic modules?
            6g1. Do I still need to "loadmodule" modules?
-       6h. Where can I get a pre-compiled Eggdrop for my computer?
-       6i. I get "Makefile:3 : invalid operator" or some such thing when I
+       6g. Where can I get a pre-compiled Eggdrop for my computer?
+       6h. I get "Makefile:3 : invalid operator" or some such thing when I
            try to "make".
-       6j. When I "tclsh scripts/weed <userfile> c" It barfs chunks at me
+       6i. When I "tclsh scripts/weed <userfile> c" It barfs chunks at me
            and dies.
-       6k. I get "ld-elf.so.1: Shared object "libtcl80.so.1" not found" or
+       6j. I get "ld-elf.so.1: Shared object "libtcl80.so.1" not found" or
            "eggdrop: error in loading shared libraries / libtcl8.1.so: cannot
            open shared object file: No such file or directory" when I try to
            start my bot.
-       6l. I get a whole pile of "unresolved symbol 'Tcl_AppendResult'" (or
+       6k. I get a whole pile of "unresolved symbol 'Tcl_AppendResult'" (or
            some other symbol) when I try to load a module.
     7. Setting up a crontab
        7a. Setting up a crontab using autobotchk
@@ -273,13 +272,7 @@ Last revised: June 5, 2002
          (nobody else will become an owner if they say "hello"), but in the
          future, don't use the "-m" option when running the bot.
 
-    6b. MY EGGDROP WON'T RUN; IT JUST SAYS "CAN'T FIND YOUR HOSTNAME!"
-
-      Your machine is set up strangely, and Eggdrop can't figure out its
-      network hostname. You can get around this by setting the my-ip setting
-      in the config file correctly.
-
-    6c. WHAT THE HECK IS Tcl?
+    6b. WHAT THE HECK IS Tcl?
 
       Tcl is a scripting language written by John Ousterhout. It's much better
       than most "built-in" script languages (like the one in ircII) and is
@@ -291,7 +284,7 @@ Last revised: June 5, 2002
       around on the ftp/web sites if you like working by example (which is
       typically the best way).
 
-    6d. MY BOT DIES, AND THE LAST ENTRY IN THE LOGFILE IS "RECEIVED TERMINATE
+    6c. MY BOT DIES, AND THE LAST ENTRY IN THE LOGFILE IS "RECEIVED TERMINATE
         SIGNAL". WHAT DOES THAT MEAN, AND CAN I PREVENT IT?
 
       There's nothing you can do to prevent it. It means the system
@@ -302,7 +295,7 @@ Last revised: June 5, 2002
       kill the bot manually. For example, if he/she doesn't want bots running
       on the system.
 
-    6e. SOMEONE ELSE SET UP A BOT I DON'T LIKE. ARE THERE ANY BACKDOORS I CAN
+    6d. SOMEONE ELSE SET UP A BOT I DON'T LIKE. ARE THERE ANY BACKDOORS I CAN
         USE TO TAKE THEIR BOT DOWN?
 
       No, there have never been any backdoors and there never will be, so
@@ -311,13 +304,13 @@ Last revised: June 5, 2002
       about them. If you want to bring down someone else's bot, you will not
       have my/our help.
 
-    6f. WHAT ARE MODULES?
+    6e. WHAT ARE MODULES?
 
       Modules are a way of adding extra features to the bot, much like Tcl
       scripts, without requiring the bot to be recompiled. See doc/MODULES
       for more information.
 
-    6g. CAN I COMPILE EGGDROP WITHOUT DYNAMIC MODULES?
+    6f. CAN I COMPILE EGGDROP WITHOUT DYNAMIC MODULES?
 
        Yes, you can. If the configure script detects that your system CAN'T
        run modules, it will setup 'make' to link the modules in statically
@@ -325,14 +318,14 @@ Last revised: June 5, 2002
        You can also try to compile dynamic modules on a static-only system
        by using 'make eggdrop'.
 
-    6g1. DO I STILL NEED TO 'loadmodule' MODULES?
+    6f1. DO I STILL NEED TO 'loadmodule' MODULES?
 
       YES, when you compile statically, all the modules are linked into the
       main executable. HOWEVER, they are not enabled until you use loadmodule
       to enable them, hence you get nearly the same functionality with static
       modules as with dynamic modules.
 
-    6h. WHERE CAN I GET A PRE-COMPILED EGGDROP FOR MY COMPUTER?
+    6g. WHERE CAN I GET A PRE-COMPILED EGGDROP FOR MY COMPUTER?
 
       It is HIGHLY recommended AGAINST using pre-compiled Eggdrops from
       un-trusted sources. Eggdrop has been a regular target for hacking and
@@ -342,12 +335,12 @@ Last revised: June 5, 2002
       computer account directly. Don't advertise your pre-compiled Eggdrop
       binary sites on the Eggdrop list either. =P
 
-    6i. I GET 'Makefile:3 :invalid operator' OR SOME-SUCH-THING WHEN I TRY
+    6h. I GET 'Makefile:3 :invalid operator' OR SOME-SUCH-THING WHEN I TRY
         TO 'make'.
 
       Try 'gmake'.
 
-    6j. WHEN I 'tclsh scripts/weed <userfile> c' IT BARFS CHUNKS AT ME AND
+    6i. WHEN I 'tclsh scripts/weed <userfile> c' IT BARFS CHUNKS AT ME AND
         DIES. :(
 
       Upgrade your Tcl. You are probably using Tcl 7.5 or earlier. Some of the
@@ -355,7 +348,7 @@ Last revised: June 5, 2002
       the offending lines from you userfile manually (those starting with '.'
       generally) and accept the loss of that data.
 
-    6k. I GET "ld-elf.so.1: Shared object "libtcl80.so.1" not found" or
+    6j. I GET "ld-elf.so.1: Shared object "libtcl80.so.1" not found" or
         "eggdrop: error in loading shared libraries libtcl8.1.so: \
         cannot open shared object file: No such file or directory" WHEN I TRY
         TO START MY BOT.
@@ -390,10 +383,10 @@ Last revised: June 5, 2002
         If everything else fails, try to install Tcl to your home dir ;)
         (Suggested by dw@Undernet, dw@lixom.nu)
 
-    6l. I GET A WHOLE PILE OF "Unresolved symbol 'Tcl_AppendResult'" (OR SOME
+    6k. I GET A WHOLE PILE OF "Unresolved symbol 'Tcl_AppendResult'" (OR SOME
         OTHER SYMBOL) WHEN I TRY TO LOAD A MODULES.
 
-      POSSIBILITY A: See section 6k.
+      POSSIBILITY A: See section 6j.
 
       POSSIBILITY B:
 

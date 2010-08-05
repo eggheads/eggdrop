@@ -2,7 +2,7 @@
  * main.h
  *   include file to include most other include files
  *
- * $Id: main.h,v 1.1 2010/07/26 21:11:06 simple Exp $
+ * $Id: main.h,v 1.2 2010/08/05 18:12:05 pseudo Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -133,6 +133,18 @@ extern struct dcc_table DCC_CHAT, DCC_BOT, DCC_LOST, DCC_SCRIPT, DCC_BOT_NEW,
 #endif
 
 #define iptolong(a) (0xffffffff & (long) (htonl((unsigned long) a)))
+
+#ifdef IPV6
+# define setsnport(s, p) do {                                           \
+  if ((s).family == AF_INET6)                                           \
+    (s).addr.s6.sin6_port = htons((p));                                 \
+  else                                                                  \
+    (s).addr.s4.sin_port = htons((p));                                  \
+} while (0)
+#else
+# define setsnport(s, p) (s.addr.s4.sin_port = htons(p))
+#endif
+
 #define fixcolon(x) do {                                                \
         if ((x)[0] == ':')                                              \
           (x)++;                                                        \

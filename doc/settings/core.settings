@@ -1,4 +1,4 @@
-$Id: core.settings,v 1.1 2010/07/26 21:11:06 simple Exp $
+$Id: core.settings,v 1.2 2010/08/05 18:12:04 pseudo Exp $
 
 Eggdrop Core Settings
 Last revised: April 17, 2003
@@ -66,12 +66,35 @@ Last revised: April 17, 2003
       only, but instead everywhere possible, then use this setting.
 
 
-    set my-hostname "virtual.host.com"
-    set my-ip "99.99.0.0"
+    set vhost4 "virtual.host.com"
+    set vhost4 "99.99.0.0"
       If you're using virtual hosting (your machine has more than 1 IP), you
       may want to specify the particular IP to bind to. You can specify either
-      by hostname or by IP. You may also want to set the hostname here if
-      Eggdrop has trouble detecting it when it starts up.
+      by hostname or by IP. Note that this is not used for listening.  Use the
+      'listen-addr' variable to specify the listening address.
+
+
+    set vhost6 "2001:db8:618:5c0:263::"
+    set vhost6 "my.ipv6.host.com"
+     IPv6 vhost to bind to for outgoing IPv6 connections. You can set it
+     to any valid IPv6 address or hostname, resolving to an IPv6 address.
+     Note that this is not used for listening. Use the 'listen-addr'
+     variable to specify the listening address.
+
+
+    set listen-addr "99.99.0.0"
+    set listen-addr "2001:db8:618:5c0:263::"
+    set listen-addr "virtual.host.com"
+      IPv4/IPv6 address (or hostname) to bind for listening.
+      If you don't set this variable, eggdrop will listen on all available
+      IPv4 or IPv6 interfaces, depending on the 'prefer-ipv6' variable.
+      Note that on most platforms, IPv6 sockets are able to accept both
+      IPv4 and IPv6 connections.
+
+    set prefer-ipv6 "1"
+      Prefer IPv6 over IPv4 for connections and dns resolution.
+      If the preferred protocol family is not suppored, other possible
+      families will be tried.
 
 
     addlang "english"
@@ -409,8 +432,8 @@ Last revised: April 17, 2003
       address to a unique address for your box) or you have IP masquerading
       between you and the rest of the world, and /dcc chat, /ctcp chat or
       userfile sharing aren't working, enter your outside IP here. This IP
-      is used for transfers only, and has nothing to do with the my-ip or
-      my-hostname settings. You may still need to set my-ip and/or my-hostname.
+      is used for transfers only, and has nothing to do with the vhost4/6 or
+      listen-addr settings. You may still need to set them.
 
 
     set reserved-portrange 2010:2020

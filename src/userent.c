@@ -2,7 +2,7 @@
  * userent.c -- handles:
  *   user-entry handling, new style more versatile.
  *
- * $Id: userent.c,v 1.1 2010/07/26 21:11:06 simple Exp $
+ * $Id: userent.c,v 1.2 2010/08/05 18:12:05 pseudo Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -477,6 +477,11 @@ static int botaddr_unpack(struct userrec *u, struct user_entry *e)
     if ((q = strchr(q, '/')))
       bi->relay_port = atoi(q + 1);
   }
+#ifdef IPV6
+  for (p = bi->address; *p; p++)
+    if (*p == ';')
+      *p = ':';
+#endif
   if (!bi->telnet_port)
     bi->telnet_port = 3333;
   if (!bi->relay_port)
@@ -493,8 +498,19 @@ static int botaddr_pack(struct userrec *u, struct user_entry *e)
   int l;
 
   bi = (struct bot_addr *) e->u.extra;
+#ifdef IPV6
+  char *p, *addr = user_malloc(strlen(bi->address) + 1);
+  strcpy(addr, bi->address);
+  for (p = addr; *p; p++)
+    if (*p == ':')
+      *p = ';';
+  l = simple_sprintf(work, "%s:%u/%u", p, bi->telnet_port,
+                       bi->relay_port);
+  nfree(addr);
+#else
   l = simple_sprintf(work, "%s:%u/%u", bi->address, bi->telnet_port,
                      bi->relay_port);
+#endif
   e->u.list = user_malloc(sizeof(struct list_type));
   e->u.list->next = NULL;
   e->u.list->extra = user_malloc(l + 1);
@@ -517,10 +533,25 @@ static int botaddr_write_userfile(FILE *f, struct userrec *u,
 {
   register struct bot_addr *bi = (struct bot_addr *) e->u.extra;
 
+#ifdef IPV6
+  char *p, *addr = user_malloc(strlen(bi->address) + 1);
+  strcpy(addr, bi->address);
+  for (p = addr; *p; p++)
+    if (*p == ':')
+      *p = ';';
+  if (fprintf(f, "--%s %s:%u/%u\n", e->type->name, addr,
+      bi->telnet_port, bi->relay_port) == EOF) {
+    nfree(addr);
+    return 0;
+  }
+  nfree(addr);
+  return 1;
+#else
   if (fprintf(f, "--%s %s:%u/%u\n", e->type->name, bi->address,
               bi->telnet_port, bi->relay_port) == EOF)
     return 0;
   return 1;
+#endif
 }
 
 static int botaddr_set(struct userrec *u, struct user_entry *e, void *buf)

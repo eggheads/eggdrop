@@ -2,7 +2,7 @@
  * tcluser.c -- handles:
  *   Tcl stubs for the user-record-oriented commands
  *
- * $Id: tcluser.c,v 1.1 2010/07/26 21:11:06 simple Exp $
+ * $Id: tcluser.c,v 1.2 2010/08/05 18:12:05 pseudo Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -311,6 +311,14 @@ static int tcl_addbot STDVAR
   else {
     userlist = adduser(userlist, argv[1], "none", "-", USER_BOT);
     bi = user_malloc(sizeof(struct bot_addr));
+#ifdef IPV6
+  if ((q = strchr(argv[2], '/'))) {
+    if (!q[1]) {
+      *q = 0;
+      q = 0;
+    }
+  } else
+#endif
     q = strchr(argv[2], ':');
     if (!q) {
       bi->address = user_malloc(strlen(argv[2]) + 1);

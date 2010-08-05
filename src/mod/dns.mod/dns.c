@@ -4,7 +4,7 @@
  *
  * Written by Fabian Knittel <fknittel@gmx.de>
  *
- * $Id: dns.c,v 1.2 2010/07/27 21:49:42 pseudo Exp $
+ * $Id: dns.c,v 1.3 2010/08/05 18:12:05 pseudo Exp $
  */
 /*
  * Copyright (C) 1999 - 2010 Eggheads Development Team
@@ -46,11 +46,13 @@ static void dns_event_success(struct resolve *rp, int type)
     return;
 
   if (type == T_PTR) {
-    debug2("DNS resolved %s to %s", iptostr(rp->ip), rp->hostn);
-    call_hostbyip(ntohl(rp->ip), rp->hostn, 1);
+    debug2("DNS resolved %s to %s", iptostr(&rp->sockname.addr.sa),
+           rp->hostn);
+    call_hostbyip(&rp->sockname, rp->hostn, 1);
   } else if (type == T_A) {
-    debug2("DNS resolved %s to %s", rp->hostn, iptostr(rp->ip));
-    call_ipbyhost(rp->hostn, ntohl(rp->ip), 1);
+    debug2("DNS resolved %s to %s", rp->hostn,
+           iptostr(&rp->sockname.addr.sa));
+    call_ipbyhost(rp->hostn, &rp->sockname, 1);
   }
 }
 
@@ -62,15 +64,15 @@ static void dns_event_failure(struct resolve *rp, int type)
   if (type == T_PTR) {
     static char s[UHOSTLEN];
 
-    debug1("DNS resolve failed for %s", iptostr(rp->ip));
-    strcpy(s, iptostr(rp->ip));
-    call_hostbyip(ntohl(rp->ip), s, 0);
+    strcpy(s, iptostr(&rp->sockname.addr.sa));
+    debug1("DNS resolve failed for %s", s);
+    call_hostbyip(&rp->sockname, s, 0);
   } else if (type == T_A) {
     debug1("DNS resolve failed for %s", rp->hostn);
-    call_ipbyhost(rp->hostn, 0, 0);
+    call_ipbyhost(rp->hostn, &rp->sockname, 0);
   } else
-    debug2("DNS resolve failed for unknown %s / %s", iptostr(rp->ip),
-           nonull(rp->hostn));
+    debug2("DNS resolve failed for unknown %s / %s",
+           iptostr(&rp->sockname.addr.sa), nonull(rp->hostn));
   return;
 }
 
@@ -217,6 +219,9 @@ char *dns_start(Function *global_funcs)
   dcc[idx].sock = resfd;
   dcc[idx].timeval = now;
   strcpy(dcc[idx].nick, "(dns)");
+  egg_memcpy(&dcc[idx].sockname.addr.sa, &_res.nsaddr_list[0],
+             sizeof(_res.nsaddr_list[0]));
+  dcc[idx].sockname.addrlen = sizeof(_res.nsaddr_list[0]);
 
   add_hook(HOOK_SECONDLY, (Function) dns_check_expires);
   add_hook(HOOK_DNS_HOSTBYIP, (Function) dns_lookup);

@@ -2,7 +2,7 @@
  * server.c -- part of server.mod
  *   basic irc server support
  *
- * $Id: server.c,v 1.2 2010/07/27 21:49:42 pseudo Exp $
+ * $Id: server.c,v 1.3 2010/08/05 18:12:05 pseudo Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -26,6 +26,7 @@
 #define MODULE_NAME "server"
 #define MAKING_SERVER
 
+#include <errno.h>
 #include "src/mod/module.h"
 #include "server.h"
 
@@ -970,6 +971,15 @@ static void add_server(const char *ss)
     else
       serverlist = x;
     z = x;
+#ifdef IPV6
+    p = 0;
+    if ((q = strchr(ss, ','))) {
+      if (!q[1]) {
+        *q = 0;
+        q = 0;
+      }
+    } else
+#endif
     q = strchr(ss, ':');
     if (!q) {
       x->port = default_port;
@@ -1509,44 +1519,42 @@ static int ctcp_DCC_CHAT(char *nick, char *from, char *handle,
       putlog(LOG_MISC, "*", "DCC connection: CHAT (%s!%s)", nick, ip);
       return 1;
     }
-    dcc[i].addr = my_atoul(ip);
     dcc[i].port = atoi(prt);
+    (void) setsockname(&dcc[i].sockname, ip, dcc[i].port, 0);
+    dcc[i].u.dns->ip = &dcc[i].sockname;
     dcc[i].sock = -1;
     strcpy(dcc[i].nick, u->handle);
     strcpy(dcc[i].host, from);
     dcc[i].timeval = now;
     dcc[i].user = u;
-    dcc[i].u.dns->ip = dcc[i].addr;
     dcc[i].u.dns->dns_type = RES_HOSTBYIP;
     dcc[i].u.dns->dns_success = dcc_chat_hostresolved;
     dcc[i].u.dns->dns_failure = dcc_chat_hostresolved;
     dcc[i].u.dns->type = &DCC_CHAT_PASS;
-    dcc_dnshostbyip(dcc[i].addr);
+    dcc_dnshostbyip(&dcc[i].sockname);
   }
   return 1;
 }
 
 static void dcc_chat_hostresolved(int i)
 {
-  char buf[512], ip[512];
+  char buf[512];
   struct flag_record fr = { FR_GLOBAL | FR_CHAN | FR_ANYWH, 0, 0, 0, 0, 0 };
 
   egg_snprintf(buf, sizeof buf, "%d", dcc[i].port);
-  if (!hostsanitycheck_dcc(dcc[i].nick, dcc[i].host, dcc[i].addr,
-                           dcc[i].u.dns->host, buf)) {
+  if (!hostsanitycheck_dcc(dcc[i].nick, dcc[i].host, &dcc[i].sockname,
+      dcc[i].u.dns->host, buf)) {
     lostdcc(i);
     return;
   }
-  egg_snprintf(ip, sizeof ip, "%lu", iptolong(htonl(dcc[i].addr)));
-  dcc[i].sock = getsock(0);
-  if (dcc[i].sock < 0 || open_telnet_dcc(dcc[i].sock, ip, buf) < 0) {
-    neterror(buf);
+  dcc[i].sock = getsock(dcc[i].sockname.family, 0);
+  if (dcc[i].sock < 0 || open_telnet_raw(dcc[i].sock, &dcc[i].sockname) < 0) {
     if (!quiet_reject)
       dprintf(DP_HELP, "NOTICE %s :%s (%s)\n", dcc[i].nick,
-              DCC_CONNECTFAILED1, buf);
+              DCC_CONNECTFAILED1, strerror(errno));
     putlog(LOG_MISC, "*", "%s: CHAT (%s!%s)", DCC_CONNECTFAILED2,
            dcc[i].nick, dcc[i].host);
-    putlog(LOG_MISC, "*", "    (%s)", buf);
+    putlog(LOG_MISC, "*", "    (%s)", strerror(errno));
     killsock(dcc[i].sock);
     lostdcc(i);
   } else {

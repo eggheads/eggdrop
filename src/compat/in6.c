@@ -1,11 +1,8 @@
 /*
- * compat.h
- *   wrap-around header for all compability functions.
- *
- * $Id: compat.h,v 1.2 2010/08/05 18:12:05 pseudo Exp $
+ * in6.c -- provide some IPv6 constants if not available
  */
 /*
- * Copyright (C) 2000 - 2010 Eggheads Development Team
+ * Copyright (C) 2007 plazmus
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -22,17 +19,14 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
-#ifndef _EGG_COMPAT_COMPAT_H
-#define _EGG_COMPAT_COMPAT_H
+#ifdef IPV6
 
-#include "inet_aton.h"
-#include "snprintf.h"
-#include "memset.h"
-#include "memcpy.h"
-#include "strcasecmp.h"
-#include "strftime.h"
-#include "inet_ntop.h"
-#include "inet_pton.h"
-#include "gethostbyname2.h"
+#ifndef HAVE_IN6ADDR_ANY
+static const struct in6_addr in6addr_any = IN6ADDR_ANY_INIT;
+#endif
 
-#endif /* !__EGG_COMPAT_COMPAT_H */
+#ifndef HAVE_IN6ADDR_LOOPBACK
+static const struct in6_addr in6addr_loopback = IN6ADDR_LOOPBACK_INIT;
+#endif
+
+#endif /* IPV6 */
