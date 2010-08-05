@@ -4,7 +4,7 @@
  *
  *   IF YOU ALTER THIS FILE, YOU NEED TO RECOMPILE THE BOT.
  *
- * $Id: eggdrop.h,v 1.3 2010/08/05 18:12:05 pseudo Exp $
+ * $Id: eggdrop.h,v 1.4 2010/08/05 18:20:34 pseudo Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -381,7 +381,7 @@ struct userrec;
 struct dcc_t {
   long sock;                    /* This should be a long to keep 64-bit machines sane. */
   IP addr;                      /* IP address in host network byte order. */
-  sockname_t sockname;		/* IPv4/IPv6 sockaddr placeholder */ 
+  sockname_t sockname;          /* IPv4/IPv6 sockaddr placeholder */ 
   unsigned int port;
   struct userrec *user;
   char nick[NICKLEN];
@@ -491,7 +491,7 @@ struct dns_info {
   char *cbuf;                   /* temporary buffer. Memory will be free'd
                                  * as soon as dns_info is free'd           */
   char *cptr;                   /* temporary pointer                       */
-  sockname_t *ip;		/* pointer to sockname with ipv4/6 address */
+  sockname_t *ip;               /* pointer to sockname with ipv4/6 address */
   int ibuf;                     /* temporary buffer for one integer        */
   char dns_type;                /* lookup type, e.g. RES_HOSTBYIP          */
   struct dcc_table *type;       /* type of the dcc table we are making the
