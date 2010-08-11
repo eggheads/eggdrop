@@ -16,7 +16,7 @@ dnl You should have received a copy of the GNU General Public License
 dnl along with this program; if not, write to the Free Software
 dnl Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 dnl
-dnl $Id: aclocal.m4,v 1.3 2010/08/05 18:12:04 pseudo Exp $
+dnl $Id: aclocal.m4,v 1.4 2010/08/11 15:57:50 thommey Exp $
 dnl
 
 
@@ -1402,6 +1402,21 @@ AC_DEFUN([EGG_TCL_CHECK_SETNOTIFIER],
   AC_CHECK_LIB($TCL_TEST_LIB, Tcl_SetNotifier, [egg_cv_var_tcl_setnotifier="yes"], [egg_cv_var_tcl_setnotifier="no"], $TCL_TEST_OTHERLIBS)
   if test "$egg_cv_var_tcl_setnotifier" = yes; then
     AC_DEFINE(HAVE_TCL_SETNOTIFIER, 1, [Define for Tcl that has Tcl_SetNotifier() (8.2b1 and later).])
+  fi
+])
+
+dnl EGG_TCL_CHECK_NOTIFIER_INIT
+dnl
+AC_DEFUN([EGG_TCL_CHECK_NOTIFIER_INIT],
+[
+  if test "$egg_tcl_changed" = yes; then
+    EGG_CACHE_UNSET(egg_cv_var_tcl_notifier_init)
+  fi
+
+  # Check for Tcl_NotifierProcs member initNotifierProc
+  AC_CHECK_MEMBER([Tcl_NotifierProcs.initNotifierProc], [egg_cv_var_tcl_notifier_init="yes"], [egg_cv_var_tcl_notifier_init="no"], [[#include "$TCLINC/$TCLINCFN"]])
+  if test "$egg_cv_var_tcl_notifier_init" = yes; then
+    AC_DEFINE(HAVE_TCL_NOTIFIER_INIT, 1, [Define for Tcl that has the Tcl_NotiferProcs struct member initNotifierProc (8.4 and later).])
   fi
 ])
 

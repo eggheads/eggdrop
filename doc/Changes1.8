@@ -1,10 +1,14 @@
-$Id: Changes1.8,v 1.5 2010/08/05 18:12:04 pseudo Exp $
+$Id: Changes1.8,v 1.6 2010/08/11 15:57:50 thommey Exp $
 
 Eggdrop Changes (since version 1.8.0)
 
     _____________________________________________________________________
 
 1.8.0 (CVS):
+
+  - Added detection of Tcl_NotifierProcs members to ensure the notifier can
+    be replaced. Fixes compilation against Tcl 8.2 and 8.3.
+    Found by: AlIt0 / Patch by: thommey
 
   - Added full IPv6 support. New patch, nothing in common with older ones.
   - Changed a lot of functions and variables without breaking scripting
