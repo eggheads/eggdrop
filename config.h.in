@@ -299,6 +299,10 @@
 /* Define for Tcl that has Tcl_GetThreadData() (8.1a2 and later). */
 #undef HAVE_TCL_GETTHREADDATA
 
+/* Define for Tcl that has the Tcl_NotiferProcs struct member initNotifierProc
+   (8.4 and later). */
+#undef HAVE_TCL_NOTIFIER_INIT
+
 /* Define for Tcl that has Tcl_SetNotifier() (8.2b1 and later). */
 #undef HAVE_TCL_SETNOTIFIER
 
