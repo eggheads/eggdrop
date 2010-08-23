@@ -1,10 +1,17 @@
-$Id: Changes1.8,v 1.7 2010/08/11 15:58:19 thommey Exp $
+$Id: Changes1.8,v 1.8 2010/08/23 21:27:40 pseudo Exp $
 
 Eggdrop Changes (since version 1.8.0)
 
     _____________________________________________________________________
 
 1.8.0 (CVS):
+
+  - Modified src/compat/ replacements of gethostbyname2() and inet_ntop()
+    to not compile when IPv6 is disabled.
+  - Added a missing header preventing gethostbyname2() from compiling on
+    FreeBSD.
+  - Fixed few lines with wrong indentation.
+    Patch by: pseudo
 
   - Reran autotools.
   - Added detection of Tcl_NotifierProcs members to ensure the notifier can

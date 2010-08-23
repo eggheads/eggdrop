@@ -2,7 +2,7 @@
  * inet_ntop.h
  *   prototypes for inet_ntop.c
  *
- * $Id: inet_ntop.h,v 1.1 2010/08/05 18:12:05 pseudo Exp $
+ * $Id: inet_ntop.h,v 1.2 2010/08/23 21:27:40 pseudo Exp $
  */
 /*
  * Copyright (C) 2010 Eggheads Development Team
@@ -33,6 +33,6 @@
 #include <netinet/in.h>
 #include <arpa/inet.h>
 
-#ifndef HAVE_INET_NTOP
+#if defined IPV6 && !defined HAVE_INET_NTOP
 const char *inet_ntop(int af, const void *src, char *dst, socklen_t size);
 #endif

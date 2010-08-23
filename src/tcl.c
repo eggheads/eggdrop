@@ -4,7 +4,7 @@
  *   Tcl initialization
  *   getting and setting Tcl/eggdrop variables
  *
- * $Id: tcl.c,v 1.2 2010/08/05 18:12:05 pseudo Exp $
+ * $Id: tcl.c,v 1.3 2010/08/23 21:27:40 pseudo Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -563,7 +563,7 @@ static tcl_ints def_tcl_ints[] = {
   {"debug-output",          &debug_output,         0}, /* compat */
   {"use-console-r",         &use_console_r,        0}, /* compat */
 #ifdef IPV6
-  {"prefer-ipv6",	    &pref_af,		   0},
+  {"prefer-ipv6",           &pref_af,              0},
 #endif
   {NULL,                    NULL,                  0}
 };

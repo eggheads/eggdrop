@@ -1,7 +1,7 @@
 /*
  * inet_pton.c -- provides inet_pton() if necessary
  *
- * $Id: inet_pton.c,v 1.1 2010/08/05 18:12:05 pseudo Exp $
+ * $Id: inet_pton.c,v 1.2 2010/08/23 21:27:40 pseudo Exp $
  */
 /*
  * Portions Copyright (C) 2010 Eggheads Development Team
@@ -23,7 +23,7 @@
 
 #include "inet_pton.h"
 
-#ifndef HAVE_INET_NTOP
+#ifndef HAVE_INET_PTON
 /*
  * Copyright (c) 1996,1999 by Internet Software Consortium.
  *
@@ -51,7 +51,9 @@
 #define NS_INT16SZ      2       /* #/bytes of data in a u_int16_t */
 
 static int inet_pton4 (const char *src, u_char *dst);
+#ifdef IPV6
 static int inet_pton6 (const char *src, u_char *dst);
+#endif
 
 /* int
  * inet_pton(af, src, dst)
@@ -232,4 +234,4 @@ inet_pton6(src, dst)
 }
 #endif /* IPV6 */
 
-#endif /* HAVE_INET_NTOP */
+#endif /* HAVE_INET_PTON */

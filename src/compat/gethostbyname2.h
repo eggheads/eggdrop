@@ -2,7 +2,7 @@
  * gethostbyname2.h
  *   prototypes for gethostbyname2.c
  *
- * $Id: gethostbyname2.h,v 1.1 2010/08/05 18:12:05 pseudo Exp $
+ * $Id: gethostbyname2.h,v 1.2 2010/08/23 21:27:40 pseudo Exp $
  */
 /*
  * Copyright (C) 2010 Eggheads Development Team
@@ -27,8 +27,11 @@
 #endif
 
 #include <netdb.h>
+#ifdef HAVE_SYS_SOCKET_H
+#  include <sys/socket.h>
+#endif
 #include <netinet/in.h>
 
-#ifndef HAVE_GETHOSTBYNAME2
+#if defined IPV6 && !defined HAVE_GETHOSTBYNAME2
 struct hostent *gethostbyname2(const char *name, int af);
 #endif

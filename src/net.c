@@ -2,7 +2,7 @@
  * net.c -- handles:
  *   all raw network i/o
  *
- * $Id: net.c,v 1.2 2010/08/05 18:12:05 pseudo Exp $
+ * $Id: net.c,v 1.3 2010/08/23 21:27:40 pseudo Exp $
  */
 /*
  * This is hereby released into the public domain.
@@ -60,9 +60,9 @@ extern unsigned long otraffic_irc_today, otraffic_bn_today, otraffic_dcc_today,
 
 char natip[121] = "";         /* Public IPv4 to report for systems behind NAT */
 char listen_ip[121] = "";     /* IP (or hostname) for listening sockets       */
-char vhost[121] = "";          /* IPv4 vhost for outgoing connections         */
+char vhost[121] = "";         /* IPv4 vhost for outgoing connections          */
 #ifdef IPV6
-char vhost6[121] = "";         /* IPv6 vhost for outgoing connections         */
+char vhost6[121] = "";        /* IPv6 vhost for outgoing connections          */
 int pref_af = 0;              /* Prefer IPv6 over IPv4?                       */
 #endif
 char firewall[121] = "";      /* Socks server for firewall.                   */
@@ -627,7 +627,7 @@ int getdccaddr(sockname_t *addr, char *s, size_t l)
     if (IN6_IS_ADDR_V4MAPPED(&r->addr.s6.sin6_addr) ||
         IN6_IS_ADDR_UNSPECIFIED(&r->addr.s6.sin6_addr))
       snprintf(s, l, "%lu", natip[0] ? iptolong(inet_addr(natip)) :
-               ntohl((IP) &r->addr.s6.sin6_addr.s6_addr[12]));
+               ntohl(*(IP *) &r->addr.s6.sin6_addr.s6_addr[12]));
     else
       inet_ntop(AF_INET6, &r->addr.s6.sin6_addr, s, l);
   } else

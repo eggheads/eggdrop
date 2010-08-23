@@ -1,7 +1,7 @@
 /*
  * gethostbyname2.c -- provide a dummy gethostbyname2 replacement
  *
- * $Id: gethostbyname2.c,v 1.1 2010/08/05 18:12:05 pseudo Exp $
+ * $Id: gethostbyname2.c,v 1.2 2010/08/23 21:27:40 pseudo Exp $
  */
 /*
  * Copyright (C) 2010 Eggheads Development Team
@@ -23,13 +23,19 @@
 
 #include "gethostbyname2.h"
 
-#ifndef HAVE_GETHOSTBYNAME2
+#if defined IPV6 && !defined HAVE_GETHOSTBYNAME2
 struct hostent *gethostbyname2(const char *name, int af)
 {
-  if(af != AF_INET) {
+  struct hostent *h;
+  
+  h = gethostbyname(name);
+  if (!h)
+    return NULL;
+  if (h->h_addrtype != af) {
     h_errno = NO_RECOVERY;
-    return 0;
+    return NULL;
   }
-  return gethostbyname(name);
+
+  return h;
 }
 #endif
