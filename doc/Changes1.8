@@ -1,10 +1,14 @@
-$Id: Changes1.8,v 1.8 2010/08/23 21:27:40 pseudo Exp $
+$Id: Changes1.8,v 1.9 2010/08/31 18:21:46 pseudo Exp $
 
 Eggdrop Changes (since version 1.8.0)
 
     _____________________________________________________________________
 
 1.8.0 (CVS):
+
+  - Made dcc_telnet_new() allow non-latin characters in new handles like
+    other handle validation functions.
+    Patch by: pseudo
 
   - Modified src/compat/ replacements of gethostbyname2() and inet_ntop()
     to not compile when IPv6 is disabled.
