@@ -1,10 +1,14 @@
-$Id: Changes1.8,v 1.9 2010/08/31 18:21:46 pseudo Exp $
+$Id: Changes1.8,v 1.10 2010/09/06 22:08:54 thommey Exp $
 
 Eggdrop Changes (since version 1.8.0)
 
     _____________________________________________________________________
 
 1.8.0 (CVS):
+
+  - Fix env(TZ) config setting to not contain a space. The space is just
+    inserted in POSIX documentation to clarify, it must not be there.
+    Found by: Digdilem / Patch by: thommey
 
   - Made dcc_telnet_new() allow non-latin characters in new handles like
     other handle validation functions.
