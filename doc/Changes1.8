@@ -1,10 +1,14 @@
-$Id: Changes1.8,v 1.10 2010/09/06 22:08:54 thommey Exp $
+$Id: Changes1.8,v 1.11 2010/09/14 19:45:29 pseudo Exp $
 
 Eggdrop Changes (since version 1.8.0)
 
     _____________________________________________________________________
 
 1.8.0 (CVS):
+
+  - Fixed a bug in setsockname() making it fail with IPv6 enabled due to a
+    variable not being set.
+    Found by: afterlife / Patch by: pseudo
 
   - Fix env(TZ) config setting to not contain a space. The space is just
     inserted in POSIX documentation to clarify, it must not be there.
