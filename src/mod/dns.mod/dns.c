@@ -4,7 +4,7 @@
  *
  * Written by Fabian Knittel <fknittel@gmx.de>
  *
- * $Id: dns.c,v 1.3 2010/08/05 18:12:05 pseudo Exp $
+ * $Id: dns.c,v 1.4 2010/09/27 19:38:14 pseudo Exp $
  */
 /*
  * Copyright (C) 1999 - 2010 Eggheads Development Team
@@ -33,6 +33,13 @@ static void dns_event_success(struct resolve *rp, int type);
 static void dns_event_failure(struct resolve *rp, int type);
 
 static Function *global = NULL;
+
+static int dns_maxsends = 4;
+static int dns_retrydelay = 3;
+static int dns_cache = 86400;
+static int dns_negcache = 600;
+
+static char dns_servers[121] = "";
 
 #include "coredns.c"
 
@@ -117,6 +124,66 @@ static struct dcc_table DCC_DNS = {
   NULL
 };
 
+static tcl_ints dnsints[] = {
+  {"dns-maxsends",   &dns_maxsends,   0},
+  {"dns-retrydelay", &dns_retrydelay, 0},
+  {"dns-cache",      &dns_cache,      0},
+  {"dns-negcache",   &dns_negcache,   0},
+  {NULL,             NULL,            0}
+};
+
+static tcl_strings dnsstrings[] = {
+  {"dns-servers", dns_servers, 120,           0},
+  {NULL,          NULL,          0,           0}
+};
+
+static char *dns_change(ClientData cdata, Tcl_Interp *irp,
+                           EGG_CONST char *name1,
+                           EGG_CONST char *name2, int flags)
+{
+  char buf[121], *p;
+  unsigned short port;
+  int i, lc, code;
+  EGG_CONST char **list, *slist;
+
+  if (flags & (TCL_TRACE_READS | TCL_TRACE_UNSETS)) {
+    Tcl_DString ds;
+    
+    Tcl_DStringInit(&ds);
+    for (i = 0; i < _res.nscount; i++) {
+      snprintf(buf, sizeof buf, "%s:%d", iptostr((struct sockaddr *)
+               &_res.nsaddr_list[i]), ntohs(_res.nsaddr_list[i].sin_port));
+      Tcl_DStringAppendElement(&ds, buf);
+    }
+    slist = Tcl_DStringValue(&ds);
+    Tcl_SetVar2(interp, name1, name2, slist, TCL_GLOBAL_ONLY);
+    Tcl_DStringFree(&ds);
+  } else { /* TCL_TRACE_WRITES */
+    slist = Tcl_GetVar2(interp, name1, name2, TCL_GLOBAL_ONLY);
+    code = Tcl_SplitList(interp, slist, &lc, &list);
+    if (code == TCL_ERROR)
+      return "variable must be a list";
+    /* reinitialize the list */
+    _res.nscount = 0;
+    for (i = 0; i < lc; i++) {
+      if ((p = strchr(list[i], ':'))) {
+        *p++ = 0;
+        /* allow non-standard ports */
+        port = atoi(p);
+      } else
+        port = NAMESERVER_PORT; /* port 53 */
+      /* Ignore invalid addresses */
+      if (egg_inet_aton(list[i], &_res.nsaddr_list[_res.nscount].sin_addr)) {
+        _res.nsaddr_list[_res.nscount].sin_port = htons(port);
+        _res.nsaddr_list[_res.nscount].sin_family = AF_INET;
+        _res.nscount++;
+      }
+    }
+    Tcl_Free((char *) list);
+  }
+  return NULL;
+}
+
 
 /*
  *    DNS module related code
@@ -156,9 +223,14 @@ static int dns_expmem(void)
 static int dns_report(int idx, int details)
 {
   if (details) {
-    int size = dns_expmem();
+    int i, size = dns_expmem();
 
     dprintf(idx, "    Async DNS resolver is active.\n");
+    dprintf(idx, "    DNS server list:");
+    for (i = 0; i < _res.nscount; i++)
+      dprintf(idx, " %s:%d", iptostr((struct sockaddr *) &_res.nsaddr_list[i]),
+              ntohs(_res.nsaddr_list[i].sin_port));
+    dprintf(idx, "\n");
     dprintf(idx, "    Using %d byte%s of memory\n", size,
             (size != 1) ? "s" : "");
   }
@@ -172,6 +244,11 @@ static char *dns_close()
   del_hook(HOOK_DNS_HOSTBYIP, (Function) dns_lookup);
   del_hook(HOOK_DNS_IPBYHOST, (Function) dns_forward);
   del_hook(HOOK_SECONDLY, (Function) dns_check_expires);
+  rem_tcl_ints(dnsints);
+  rem_tcl_strings(dnsstrings);
+  Tcl_UntraceVar(interp, "dns-servers",
+                 TCL_TRACE_READS | TCL_TRACE_WRITES | TCL_TRACE_UNSETS,
+                 dns_change, NULL);
 
   for (i = 0; i < dcc_total; i++) {
     if (dcc[i].type == &DCC_DNS && dcc[i].sock == resfd) {
@@ -223,8 +300,13 @@ char *dns_start(Function *global_funcs)
              sizeof(_res.nsaddr_list[0]));
   dcc[idx].sockname.addrlen = sizeof(_res.nsaddr_list[0]);
 
+  Tcl_TraceVar(interp, "dns-servers",
+               TCL_TRACE_READS | TCL_TRACE_WRITES | TCL_TRACE_UNSETS,
+               dns_change, NULL);
   add_hook(HOOK_SECONDLY, (Function) dns_check_expires);
   add_hook(HOOK_DNS_HOSTBYIP, (Function) dns_lookup);
   add_hook(HOOK_DNS_IPBYHOST, (Function) dns_forward);
+  add_tcl_ints(dnsints);
+  add_tcl_strings(dnsstrings);
   return NULL;
 }

@@ -1,10 +1,20 @@
-$Id: Changes1.8,v 1.11 2010/09/14 19:45:29 pseudo Exp $
+$Id: Changes1.8,v 1.12 2010/09/27 19:38:12 pseudo Exp $
 
 Eggdrop Changes (since version 1.8.0)
 
     _____________________________________________________________________
 
 1.8.0 (CVS):
+
+  - Replaced most dns.mod preprocessor definitions with config variables.
+  - Added support for user-specified dns servers and non-standard ports.
+    This is most important for Cygwin 1.7, where the dns server list won't
+    get initialized under some common conditions.
+  - Added a trace to the new variable dns-servers, allowing scripts to get
+    or set the current dns server list.
+  - Added the servers list to the dns module information displayed by
+    .status all
+    Patch by: pseudo
 
   - Fixed a bug in setsockname() making it fail with IPv6 enabled due to a
     variable not being set.

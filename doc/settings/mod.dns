@@ -1,7 +1,7 @@
-$Id: mod.dns,v 1.1 2010/07/26 21:11:06 simple Exp $
+$Id: mod.dns,v 1.2 2010/09/27 19:38:14 pseudo Exp $
 
 DNS Module
-Last revised: February 12, 2002
+Last revised: September 26, 2010
     _____________________________________________________________________
 
                                  DNS Module
@@ -17,6 +17,38 @@ Last revised: February 12, 2002
   module:
 
     loadmodule dns
+
+  There are also some variables you can set in your config file:
+
+    set dns-servers "8.8.8.8 8.8.4.4"
+      In case your bot has trouble finding dns servers or you want to use
+      specific ones, you can set them here. The value is a list of dns servers.
+      The relative order doesn't matter. You can also specify a non-standard
+      port.
+      The default is to use the system specified dns servers. You don't need to
+      modify this normally.
+
+
+    set dns-cache 86400
+      Specify how long should the DNS module cache replies at maximum. The
+      value must be in seconds.
+      Note that it will respect the TTL of the reply and this is just an upper
+      boundary.
+
+
+    set dns-negcache 600
+      Specify how long should the DNS module cache negative replies (NXDOMAIN,
+      DNS Lookup failed). The value must be in seconds.
+
+
+    set dns-maxsends 4
+      How many times should the DNS module resend the query for a given domain
+      if it receives no reply?
+
+
+    set dns-retrydelay 3
+      Specify how long should the DNS module wait for a reply before resending
+      the query. The value must be in seconds.
 
     _____________________________________________________________________
 

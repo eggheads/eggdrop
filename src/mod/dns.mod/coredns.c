@@ -6,7 +6,7 @@
  * Modified/written by Fabian Knittel <fknittel@gmx.de>
  * IPv6 support added by pseudo <pseudo@egg6.net>
  *
- * $Id: coredns.c,v 1.2 2010/08/05 18:12:05 pseudo Exp $
+ * $Id: coredns.c,v 1.3 2010/09/27 19:38:14 pseudo Exp $
  */
 /*
  * Portions Copyright (C) 1999 - 2010 Eggheads Development Team
@@ -48,10 +48,6 @@
 
 #define BASH_SIZE        8192   /* Size of hash tables */
 #define HOSTNAMELEN       255   /* From RFC */
-#define RES_RETRYDELAY      3
-#define RES_MAXSENDS        4
-#define RES_FAILEDDELAY   600   /* TTL for failed records (in seconds). */
-#define RES_MAX_TTL     86400   /* Maximum TTL (in seconds). */
 
 #define RES_ERR "DNS Resolver error: "
 #define RES_MSG "DNS Resolver: "
@@ -749,7 +745,7 @@ static void resendrequest(struct resolve *rp, int type)
 {
   rp->sends++;
   /* Update expire time */
-  rp->expiretime = now + (RES_RETRYDELAY * rp->sends);
+  rp->expiretime = now + (dns_retrydelay * rp->sends);
   /* Add (back) to expire list */
   linkresolve(rp);
 
@@ -788,7 +784,7 @@ static void failrp(struct resolve *rp, int type)
 {
   if (rp->state == STATE_FINISHED)
     return;
-  rp->expiretime = now + RES_FAILEDDELAY;
+  rp->expiretime = now + dns_negcache;
   rp->state = STATE_FAILED;
 
   /* Expire time was changed, reinsert entry to maintain order */
@@ -807,10 +803,10 @@ static void passrp(struct resolve *rp, long ttl, int type)
   rp->state = STATE_FINISHED;
 
   /* Do not cache entries for too long. */
-  if (ttl < RES_MAX_TTL)
+  if (ttl < dns_cache)
     rp->expiretime = now + (time_t) ttl;
   else
-    rp->expiretime = now + RES_MAX_TTL;
+    rp->expiretime = now + dns_cache;
 
   /* Expire time was changed, reinsert entry to maintain order */
   untieresolve(rp);
@@ -1132,7 +1128,7 @@ static void dns_check_expires(void)
       unlinkresolve(rp);
       break;
     case STATE_PTRREQ:         /* T_PTR send timed out */
-      if (rp->sends <= RES_MAXSENDS) {
+      if (rp->sends <= dns_maxsends) {
         ddebug1(RES_MSG "Resend #%d for \"PTR\" query...", rp->sends - 1);
         resendrequest(rp, T_PTR);
       } else {
@@ -1141,7 +1137,7 @@ static void dns_check_expires(void)
       }
       break;
     case STATE_AREQ:           /* T_A send timed out */
-      if (rp->sends <= RES_MAXSENDS) {
+      if (rp->sends <= dns_maxsends) {
         ddebug1(RES_MSG "Resend #%d for \"A\" query...", rp->sends - 1);
         resendrequest(rp, T_A);
       } else {
@@ -1278,10 +1274,8 @@ static int init_dns_core(void)
 
   /* Initialise the resolv library. */
   res_init();
-  if (!_res.nscount) {
-    putlog(LOG_MISC, "*", "No nameservers defined.");
-    return 0;
-  }
+  if (!_res.nscount)
+    putlog(LOG_MISC, "*", "No nameservers found.");
   _res.options |= RES_RECURSE | RES_DEFNAMES | RES_DNSRCH;
   for (i = 0; i < _res.nscount; i++)
     _res.nsaddr_list[i].sin_family = AF_INET;
