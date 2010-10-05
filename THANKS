@@ -1,4 +1,4 @@
-$Id: THANKS,v 1.2 2010/09/14 19:45:29 pseudo Exp $:
+$Id: THANKS,v 1.3 2010/10/05 17:38:24 pseudo Exp $:
 
 Eggdrop Developers and Contributors
 Last revised: June 16, 2010
@@ -194,6 +194,7 @@ DennisMV
 derrick
 DFrank
 Dicctr0s
+Digdilem       Simon Avery                     flash@digdilem.org
 digital
 dirtymac
 DocSavag       Jerry Sutton                    jerrystn@ccse.net
@@ -268,7 +269,6 @@ hobb
 hoopycat
                Hue Truong
 Hunger
-Ian            Ian Campbell                    ian@damnit.org
 iceman
 Igmar
 illi
@@ -395,7 +395,7 @@ Niggurath      Shub Niggurath                  rm@fh-worms.de
 NigtHuntr
                Nils Østbjerg                   shorty@business.auc.dk
 nitemoon
-NML_375
+NML_375        Fredrik Löhr
 Nobody
 node
 NoPleX
