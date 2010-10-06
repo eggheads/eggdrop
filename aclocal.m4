@@ -16,7 +16,7 @@ dnl You should have received a copy of the GNU General Public License
 dnl along with this program; if not, write to the Free Software
 dnl Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 dnl
-dnl $Id: aclocal.m4,v 1.4 2010/08/11 15:57:50 thommey Exp $
+dnl $Id: aclocal.m4,v 1.5 2010/10/06 19:07:47 pseudo Exp $
 dnl
 
 
@@ -1818,32 +1818,37 @@ AC_DEFUN([EGG_IPV6_COMPAT],
 [
 if test "$enable_ipv6" = "yes"; then
   AC_CHECK_FUNCS([inet_pton gethostbyname2])
-  AC_CHECK_TYPES([struct in6_addr], egg_cv_var_have_in6_addr="yes",
-    egg_cv_var_have_in6_addr="no", [#include <netinet/in.h>])
+  AC_CHECK_TYPES([struct in6_addr], egg_cv_var_have_in6_addr="yes", egg_cv_var_have_in6_addr="no", [
+    #include <sys/types.h>
+    #include <netinet/in.h>
+  ])
   if test "$egg_cv_var_have_in6_addr" = "yes"; then
     # Check for in6addr_any
     AC_CACHE_CHECK([for the in6addr_any constant], [egg_cv_var_have_in6addr_any], [
-      AC_TRY_COMPILE([#include <netinet/in.h>],
-        [struct in6_addr i6 = in6addr_any;],
-        egg_cv_var_have_in6addr_any="yes",
-        egg_cv_var_have_in6addr_any="no"
-      )
+      AC_TRY_COMPILE([
+        #include <sys/types.h>
+        #include <netinet/in.h>
+      ], [struct in6_addr i6 = in6addr_any;],
+      [egg_cv_var_have_in6addr_any="yes"], [egg_cv_var_have_in6addr_any="no"])
     ])
     if test "$egg_cv_var_have_in6addr_any" = "yes"; then
       AC_DEFINE(HAVE_IN6ADDR_ANY, 1, [Define to 1 if you have the in6addr_any constant.])
     fi
     # Check for in6addr_loopback
     AC_CACHE_CHECK([for the in6addr_loopback constant], [egg_cv_var_have_in6addr_loopback], [
-      AC_TRY_COMPILE([#include <netinet/in.h>],
-        [struct in6_addr i6 = in6addr_loopback;],
-        egg_cv_var_have_in6addr_loopback="yes",
-        egg_cv_var_have_in6addr_loopback="no"
-      )
+      AC_TRY_COMPILE([
+        #include <sys/types.h>
+        #include <netinet/in.h>
+      ], [struct in6_addr i6 = in6addr_loopback;],
+      [egg_cv_var_have_in6addr_loopback="yes"], [egg_cv_var_have_in6addr_loopback="no"])
     ])
     if test "$egg_cv_var_have_in6addr_loopback" = "yes"; then
       AC_DEFINE(HAVE_IN6ADDR_LOOPBACK, 1, [Define to 1 if you have the in6addr_loopback constant.])
     fi
-    AC_CHECK_TYPES([struct sockaddr_in6], , , [#include <netinet/in.h>])
+    AC_CHECK_TYPES([struct sockaddr_in6], , , [
+      #include <sys/types.h>
+      #include <netinet/in.h>
+    ])
   else
     AC_MSG_NOTICE([no in6_addr found, skipping dependent checks. Custom definitions will be used.])
   fi

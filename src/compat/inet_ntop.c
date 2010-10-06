@@ -1,7 +1,7 @@
 /*
  * inet_ntop.c -- provides inet_ntop() if necessary
  *
- * $Id: inet_ntop.c,v 1.2 2010/08/23 21:27:40 pseudo Exp $
+ * $Id: inet_ntop.c,v 1.3 2010/10/06 19:07:47 pseudo Exp $
  */
 /*
  * Portions Copyright (C) 2010 Eggheads Development Team
@@ -23,7 +23,7 @@
 
 #include "inet_ntop.h"
 
-#if defined IPV6 && !defined HAVE_INET_NTOP
+#ifndef HAVE_INET_NTOP
 /*
  * Copyright (c) 1996-1999 by Internet Software Consortium.
  *
@@ -64,7 +64,9 @@
  */
 
 static const char *inet_ntop4 (const u_char *src, char *dst, socklen_t size);
+#ifdef IPV6
 static const char *inet_ntop6 (const u_char *src, char *dst, socklen_t size);
+#endif
 
 /* char *
  * inet_ntop(af, src, dst, size)

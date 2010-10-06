@@ -1,7 +1,7 @@
 /*
  * transfer.c -- part of transfer.mod
  *
- * $Id: transfer.c,v 1.3 2010/08/05 18:12:05 pseudo Exp $
+ * $Id: transfer.c,v 1.4 2010/10/06 19:07:47 pseudo Exp $
  *
  * Copyright (C) 1997 Robey Pointer
  * Copyright (C) 1999 - 2010 Eggheads Development Team
@@ -30,7 +30,7 @@
 /* sigh sunos */
 #include <sys/types.h>
 #include <sys/stat.h>
-#include <sys/errno.h>
+#include <errno.h>
 #include "src/mod/module.h"
 #include "src/tandem.h"
 

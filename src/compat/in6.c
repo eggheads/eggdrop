@@ -19,6 +19,8 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
+#include "in6.h"
+
 #ifdef IPV6
 
 #ifndef HAVE_IN6ADDR_ANY

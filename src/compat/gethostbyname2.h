@@ -2,7 +2,7 @@
  * gethostbyname2.h
  *   prototypes for gethostbyname2.c
  *
- * $Id: gethostbyname2.h,v 1.2 2010/08/23 21:27:40 pseudo Exp $
+ * $Id: gethostbyname2.h,v 1.3 2010/10/06 19:07:47 pseudo Exp $
  */
 /*
  * Copyright (C) 2010 Eggheads Development Team
@@ -22,9 +22,10 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
-#ifdef HAVE_CONFIG_H
-# include "config.h"
-#endif
+#ifndef _EGG_COMPAT_GETHOSTBYNAME2
+#define _EGG_COMPAT_GETHOSTBYNAME2
+
+#include "src/main.h"
 
 #include <netdb.h>
 #ifdef HAVE_SYS_SOCKET_H
@@ -35,3 +36,4 @@
 #if defined IPV6 && !defined HAVE_GETHOSTBYNAME2
 struct hostent *gethostbyname2(const char *name, int af);
 #endif
+#endif /* _EGG_COMPAT_GETHOSTBYNAME2 */

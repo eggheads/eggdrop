@@ -6806,7 +6806,6 @@ int
 main ()
 {
   char *data, *data2, *data3;
-  const char *cdata2;
   int i, pagesize;
   int fd, fd2;
 
@@ -6831,10 +6830,10 @@ main ()
   fd2 = open ("conftest.txt", O_RDWR | O_CREAT | O_TRUNC, 0600);
   if (fd2 < 0)
     return 4;
-  cdata2 = "";
-  if (write (fd2, cdata2, 1) != 1)
+  data2 = "";
+  if (write (fd2, data2, 1) != 1)
     return 5;
-  data2 = (char *) mmap (0, pagesize, PROT_READ | PROT_WRITE, MAP_SHARED, fd2, 0L);
+  data2 = mmap (0, pagesize, PROT_READ | PROT_WRITE, MAP_SHARED, fd2, 0L);
   if (data2 == MAP_FAILED)
     return 6;
   for (i = 0; i < pagesize; ++i)
@@ -8068,7 +8067,10 @@ _ACEOF
 fi
 done
 
-  ac_fn_c_check_type "$LINENO" "struct in6_addr" "ac_cv_type_struct_in6_addr" "#include <netinet/in.h>
+  ac_fn_c_check_type "$LINENO" "struct in6_addr" "ac_cv_type_struct_in6_addr" "
+    #include <sys/types.h>
+    #include <netinet/in.h>
+
 "
 if test "x$ac_cv_type_struct_in6_addr" = x""yes; then :
 
@@ -8091,7 +8093,10 @@ else
 
       cat confdefs.h - <<_ACEOF >conftest.$ac_ext
 /* end confdefs.h.  */
-#include <netinet/in.h>
+
+        #include <sys/types.h>
+        #include <netinet/in.h>
+
 int
 main ()
 {
@@ -8104,7 +8109,6 @@ if ac_fn_c_try_compile "$LINENO"; then :
   egg_cv_var_have_in6addr_any="yes"
 else
   egg_cv_var_have_in6addr_any="no"
-
 fi
 rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
 
@@ -8125,7 +8129,10 @@ else
 
       cat confdefs.h - <<_ACEOF >conftest.$ac_ext
 /* end confdefs.h.  */
-#include <netinet/in.h>
+
+        #include <sys/types.h>
+        #include <netinet/in.h>
+
 int
 main ()
 {
@@ -8138,7 +8145,6 @@ if ac_fn_c_try_compile "$LINENO"; then :
   egg_cv_var_have_in6addr_loopback="yes"
 else
   egg_cv_var_have_in6addr_loopback="no"
-
 fi
 rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
 
@@ -8150,7 +8156,10 @@ $as_echo "$egg_cv_var_have_in6addr_loopback" >&6; }
 $as_echo "#define HAVE_IN6ADDR_LOOPBACK 1" >>confdefs.h
 
     fi
-    ac_fn_c_check_type "$LINENO" "struct sockaddr_in6" "ac_cv_type_struct_sockaddr_in6" "#include <netinet/in.h>
+    ac_fn_c_check_type "$LINENO" "struct sockaddr_in6" "ac_cv_type_struct_sockaddr_in6" "
+      #include <sys/types.h>
+      #include <netinet/in.h>
+
 "
 if test "x$ac_cv_type_struct_sockaddr_in6" = x""yes; then :
 

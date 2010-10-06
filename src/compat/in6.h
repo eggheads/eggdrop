@@ -1,7 +1,7 @@
 /*
  * in6.h -- various IPv6 related definitions and macros
  *
- * $Id: in6.h,v 1.1 2010/08/05 18:12:05 pseudo Exp $
+ * $Id: in6.h,v 1.2 2010/10/06 19:07:47 pseudo Exp $
  */
 /*
  * Copyright (C) 2010 Eggheads Development Team
@@ -23,6 +23,7 @@
 
 #ifdef IPV6
 
+#include <sys/types.h>
 #include <sys/socket.h>
 #include <netinet/in.h>
 

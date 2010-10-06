@@ -2,7 +2,7 @@
  * inet_ntop.h
  *   prototypes for inet_ntop.c
  *
- * $Id: inet_ntop.h,v 1.2 2010/08/23 21:27:40 pseudo Exp $
+ * $Id: inet_ntop.h,v 1.3 2010/10/06 19:07:47 pseudo Exp $
  */
 /*
  * Copyright (C) 2010 Eggheads Development Team
@@ -22,17 +22,18 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
-#ifdef HAVE_CONFIG_H
-# include "config.h"
-#endif
+#ifndef _EGG_COMPAT_INET_NTOP_H
+#define _EGG_COMPAT_INET_NTOP_H
 
-#include <sys/types.h>
+#include "src/main.h"
+
 #ifdef HAVE_SYS_SOCKET_H
 #  include <sys/socket.h>
 #endif
 #include <netinet/in.h>
 #include <arpa/inet.h>
 
-#if defined IPV6 && !defined HAVE_INET_NTOP
+#ifndef HAVE_INET_NTOP
 const char *inet_ntop(int af, const void *src, char *dst, socklen_t size);
 #endif
+#endif /* _EGG_COMPAT_INET_NTOP_H */

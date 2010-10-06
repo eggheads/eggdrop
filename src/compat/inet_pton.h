@@ -2,7 +2,7 @@
  * inet_pton.h
  *   prototypes for inet_pton.c
  *
- * $Id: inet_pton.h,v 1.1 2010/08/05 18:12:05 pseudo Exp $
+ * $Id: inet_pton.h,v 1.2 2010/10/06 19:07:47 pseudo Exp $
  */
 /*
  * Copyright (C) 2010 Eggheads Development Team
@@ -22,9 +22,10 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
-#ifdef HAVE_CONFIG_H
-# include "config.h"
-#endif
+#ifndef _EGG_COMPAT_INET_PTON_H
+#define _EGG_COMPAT_INET_PTON_H
+
+# include "src/main.h"
 
 #ifdef HAVE_SYS_SOCKET_H
 #  include <sys/socket.h>
@@ -35,3 +36,4 @@
 #ifndef HAVE_INET_PTON
 int inet_pton(int af, const char *src, void *dst);
 #endif
+#endif /* _EGG_COMPAT_INET_PTON_H */
