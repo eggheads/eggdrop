@@ -7,7 +7,7 @@
  *   telling the current programmed settings
  *   initializing a lot of stuff and loading the tcl scripts
  *
- * $Id: chanprog.c,v 1.1 2010/07/26 21:11:06 simple Exp $
+ * $Id: chanprog.c,v 1.2 2010/10/10 18:22:47 pseudo Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -225,6 +225,25 @@ int expmem_chanprog()
   return tot;
 }
 
+float getcputime()
+{
+#ifdef HAVE_GETRUSAGE
+  float stime, utime;
+  struct rusage ru;
+  
+  getrusage(RUSAGE_SELF, &ru);
+  utime = ru.ru_utime.tv_sec + (ru.ru_utime.tv_usec / 1000000.00);
+  stime = ru.ru_stime.tv_sec + (ru.ru_stime.tv_usec / 1000000.00);
+  return (utime + stime);
+#else
+#  ifdef HAVE_CLOCK
+  return (clock() / (CLOCKS_PER_SEC * 1.00));
+#  else
+  return -1.00;
+#  endif
+#endif
+}
+
 /* Dump uptime info out to dcc (guppy 9Jan99)
  */
 void tell_verbose_uptime(int idx)
@@ -268,13 +287,7 @@ void tell_verbose_status(int idx)
   char *vers_t, *uni_t;
   int i;
   time_t now2 = now - online_since, hr, min;
-#ifdef HAVE_GETRUSAGE
-  struct rusage ru;
-#else
-#  ifdef HAVE_CLOCK
-  clock_t cl;
-#  endif
-#endif
+  float cputime;
 #ifdef HAVE_UNAME
   struct utsname un;
 
@@ -318,21 +331,14 @@ void tell_verbose_status(int idx)
     else
       strcpy(s1, MISC_LOGMODE);
   }
-#ifdef HAVE_GETRUSAGE
-  getrusage(RUSAGE_SELF, &ru);
-  hr = (int) ((ru.ru_utime.tv_sec + ru.ru_stime.tv_sec) / 60);
-  min = (int) ((ru.ru_utime.tv_sec + ru.ru_stime.tv_sec) - (hr * 60));
-  sprintf(s2, "CPU: %02d:%02d", (int) hr, (int) min);    /* Actally min/sec */
-#else
-#  ifdef HAVE_CLOCK
-  cl = (clock() / CLOCKS_PER_SEC);
-  hr = (int) (cl / 60);
-  min = (int) (cl - (hr * 60));
-  sprintf(s2, "CPU: %02d:%02d", (int) hr, (int) min);    /* Actually min/sec */
-#  else
-  sprintf(s2, "CPU: unknown");
-#  endif
-#endif
+  cputime = getcputime();
+  if (cputime < 0)
+    sprintf(s2, "CPU: unknown");
+  else {
+    hr = cputime / 60;
+    cputime -= hr * 60;
+    sprintf(s2, "CPU: %02d:%05.2f", (int) hr, cputime); /* Actally min/sec */
+  }
   dprintf(idx, "%s %s (%s) - %s - %s: %4.1f%%\n", MISC_ONLINEFOR,
           s, s1, s2, MISC_CACHEHIT,
           100.0 * ((float) cache_hit) / ((float) (cache_hit + cache_miss)));
@@ -342,6 +348,7 @@ void tell_verbose_status(int idx)
 
   dprintf(idx, "Config file: %s\n", configfile);
   dprintf(idx, "OS: %s %s\n", uni_t, vers_t);
+  dprintf(idx, "Process ID: %d (parent %d)\n", getpid(), getppid());
 
   /* info library */
   dprintf(idx, "%s %s\n", MISC_TCLLIBRARY,

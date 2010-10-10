@@ -7,7 +7,7 @@
  * because they use structures in those
  * (saves including those .h files EVERY time) - Beldin
  *
- * $Id: proto.h,v 1.2 2010/08/05 18:12:05 pseudo Exp $
+ * $Id: proto.h,v 1.3 2010/10/10 18:22:47 pseudo Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -114,6 +114,7 @@ void check_timers();
 void set_chanlist(const char *host, struct userrec *rec);
 void clear_chanlist(void);
 void clear_chanlist_member(const char *nick);
+float getcputime();
 
 /* cmds.c */
 int check_dcc_attrs(struct userrec *, int);

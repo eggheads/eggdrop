@@ -1,4 +1,4 @@
-$Id: tcl-commands.doc,v 1.2 2010/07/27 21:49:41 pseudo Exp $
+$Id: tcl-commands.doc,v 1.3 2010/10/10 18:22:47 pseudo Exp $
 
 Eggdrop Tcl Commands
 Last revised: November 23, 2009
@@ -1595,6 +1595,18 @@ marked with vertical bars (|) on the left.
 |     is intended as a simplified alternative to Tcl's string match.  
 |   Returns: 1 if the pattern matches the string, 0 if it doesn't.
 |   Module: core
+
+|  status [type]
+|    Description: provides eggdrop status information similar to the .status
+|      command in partyline. The available types of information are:
+|        cpu   - total cpu time spent by eggdrop
+|        mem   - dynamically allocated memory excluding the Tcl interpreter
+|        cache - user entries cache hits (in %)
+|        ipv6  - shows whether IPv6 support was compiled in
+|    Returns: the requested information type or all information if type
+|      isn't specified. The format is a flat list of name-value pairs.
+|    Module: core
+
 
 *** GLOBAL VARIABLES ***
 

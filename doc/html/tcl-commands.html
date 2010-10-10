@@ -1,5 +1,5 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
-<!-- $Id: tcl-commands.html,v 1.3 2010/10/01 23:56:37 thommey Exp $ -->
+<!-- $Id: tcl-commands.html,v 1.4 2010/10/10 18:22:47 pseudo Exp $ -->
 
 <html>
   <head>
@@ -3645,6 +3645,8 @@
           </blockquote>
 
           <p><strong>Returns:</strong> the stripped string</p>
+          
+          <p><strong>Module:</strong> core</p>
         </dd>
 
 
@@ -3688,6 +3690,64 @@
 
           <p><strong>Returns:</strong> 1 if the pattern matches the string,
           0 if it doesn't.</p>
+          
+          <p><strong>Module:</strong> core</p>
+        </dd>
+
+        <dt><strong><a name="cmd_status"></a>status [type]</strong></dt>*
+        <dd>
+          <p><strong>Description:</strong> provides eggdrop status
+          information similar to the .status command in partyline. The
+          available types of information are:</p>
+
+          <blockquote>
+            <table>
+              <tr valign="top">
+                <td>
+                  <p><strong>cpu</strong></p>
+                </td>
+
+                <td>
+                  <p>total cpu time spent by eggdrop</p>
+                </td>
+              </tr>
+
+              <tr valign="top">
+                <td>
+                  <p><strong>mem</strong></p>
+                </td>
+
+                <td>
+                  <p>dynamically allocated memory excluding the Tcl
+                  interpreter</p>
+                </td>
+              </tr>
+
+              <tr valign="top">
+                <td>
+                  <p><strong>cache</strong></p>
+                </td>
+
+                <td>
+                  <p>user entries cache hits (in %)</p>
+                </td>
+              </tr>
+
+              <tr valign="top">
+                <td>
+                  <p><strong>ipv6</strong></p>
+                </td>
+
+                <td>
+                  <p>shows whether IPv6 support was compiled in</p>
+                </td>
+              </tr>
+            </table>
+          </blockquote>
+
+          <p><strong>Returns:</strong> the requested information type or all
+          information if type isn't specified. The format is a flat list of
+          name-value pairs.</p>
           
           <p><strong>Module:</strong> core</p>
         </dd>

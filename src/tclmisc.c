@@ -2,7 +2,7 @@
  * tclmisc.c -- handles:
  *   Tcl stubs for everything else
  *
- * $Id: tclmisc.c,v 1.2 2010/08/05 18:12:05 pseudo Exp $
+ * $Id: tclmisc.c,v 1.3 2010/10/10 18:22:47 pseudo Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -52,7 +52,7 @@ extern char botnetnick[], quit_msg[];
 extern struct userrec *userlist;
 extern time_t now;
 extern module_entry *module_list;
-extern int max_logs;
+extern int max_logs, cache_hit, cache_miss;
 extern log_t *logs;
 extern Tcl_Interp *interp;
 
@@ -763,6 +763,40 @@ tcl_cmds tclmisc_objcmds[] = {
   {NULL,     NULL}
 };
 
+static int tcl_status STDVAR
+{
+  char s[15];
+
+  BADARGS(1, 2, " ?type?");
+
+  if ((argc < 2) || !strcmp(argv[1], "cpu")) {
+    Tcl_AppendElement(irp, "cputime");
+    snprintf(s, sizeof s, "%f", getcputime());
+    Tcl_AppendElement(irp, s);
+  }
+  if ((argc < 2) || !strcmp(argv[1], "mem")) {
+    Tcl_AppendElement(irp, "expmem");
+    snprintf(s, sizeof s, "%d", expected_memory());
+    Tcl_AppendElement(irp, s);
+  }
+  if ((argc < 2) || !strcmp(argv[1], "ipv6")) {
+    Tcl_AppendElement(irp, "ipv6");
+#ifdef IPV6
+    Tcl_AppendElement(irp, "enabled");
+#else
+    Tcl_AppendElement(irp, "disabled");
+#endif
+  }
+  if ((argc < 2) || !strcmp(argv[1], "cache")) {
+    Tcl_AppendElement(irp, "usercache");
+    snprintf(s, sizeof s, "%4.1f", 100.0 *
+             ((float) cache_hit) / ((float) (cache_hit + cache_miss)));
+    Tcl_AppendElement(irp, s);
+  }
+  
+  return TCL_OK;
+}
+
 tcl_cmds tclmisc_cmds[] = {
   {"logfile",           tcl_logfile},
   {"putlog",             tcl_putlog},
@@ -804,5 +838,6 @@ tcl_cmds tclmisc_cmds[] = {
   {"matchaddr",       tcl_matchaddr},
   {"matchcidr",       tcl_matchcidr},
   {"matchstr",         tcl_matchstr},
+  {"status",             tcl_status},
   {NULL,                       NULL}
 };
