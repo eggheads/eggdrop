@@ -5,7 +5,7 @@
  *   command line arguments
  *   context and assert debugging
  *
- * $Id: main.c,v 1.2 2010/08/05 18:12:05 pseudo Exp $
+ * $Id: main.c,v 1.3 2010/10/10 21:24:43 pseudo Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -294,7 +294,13 @@ static void write_debug()
 
     if (tcl_threaded())
       dprintf(-x, "Tcl is threaded\n");
+#ifdef IPV6
+    dprintf(-x, "Compiled with IPv6 support\n");
+#else
+    dprintf(-x, "Compiled without IPv6 support\n");
+#endif
 
+    dprintf(-x, "Configure flags: %s\n", EGG_AC_ARGS);
 #ifdef CCFLAGS
     dprintf(-x, "Compile flags: %s\n", CCFLAGS);
 #endif
@@ -484,6 +490,12 @@ static void do_arg(char *s)
         printf("%s\n", version);
         if (z[0])
           printf("  (patches: %s)\n", z);
+        printf("Configured with: " EGG_AC_ARGS "\n");
+        printf("Compiled with: ");
+#ifdef IPV6
+        printf("IPv6, ");
+#endif
+        printf("handlen=%d\n", HANDLEN);
         bg_send_quit(BG_ABORT);
         exit(0);
         break;                  /* this should never be reached */

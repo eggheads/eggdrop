@@ -2552,6 +2552,11 @@ $as_echo "" >&6; }
 
 
 
+cat >>confdefs.h <<_ACEOF
+#define EGG_AC_ARGS "$egg_ac_parameters"
+_ACEOF
+
+
 
 
 # Check for a working C compiler

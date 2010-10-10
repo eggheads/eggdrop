@@ -43,6 +43,9 @@
 /* Define if running on SunOS 4.0. */
 #undef DLOPEN_1
 
+/* Arguments passed to configure */
+#undef EGG_AC_ARGS
+
 /* Define the maximum length of handles on the bot. */
 #undef EGG_HANDLEN
 

@@ -16,7 +16,7 @@ dnl You should have received a copy of the GNU General Public License
 dnl along with this program; if not, write to the Free Software
 dnl Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 dnl
-dnl $Id: aclocal.m4,v 1.5 2010/10/06 19:07:47 pseudo Exp $
+dnl $Id: aclocal.m4,v 1.6 2010/10/10 21:24:42 pseudo Exp $
 dnl
 
 
@@ -1770,6 +1770,7 @@ AC_DEFUN([EGG_SAVE_PARAMETERS],
   done
 
   AC_SUBST(egg_ac_parameters)
+  AC_DEFINE_UNQUOTED(EGG_AC_ARGS, "$egg_ac_parameters", [Arguments passed to configure])
 ])
 
 

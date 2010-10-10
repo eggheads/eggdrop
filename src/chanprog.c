@@ -7,7 +7,7 @@
  *   telling the current programmed settings
  *   initializing a lot of stuff and loading the tcl scripts
  *
- * $Id: chanprog.c,v 1.2 2010/10/10 18:22:47 pseudo Exp $
+ * $Id: chanprog.c,v 1.3 2010/10/10 21:24:43 pseudo Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -343,6 +343,7 @@ void tell_verbose_status(int idx)
           s, s1, s2, MISC_CACHEHIT,
           100.0 * ((float) cache_hit) / ((float) (cache_hit + cache_miss)));
 
+  dprintf(idx, "Configured with: " EGG_AC_ARGS "\n");
   if (admin[0])
     dprintf(idx, "Admin: %s\n", admin);
 
