@@ -1,10 +1,14 @@
-$Id: Changes1.8,v 1.17 2010/10/10 21:24:43 pseudo Exp $
+$Id: Changes1.8,v 1.18 2010/10/11 08:46:10 pseudo Exp $
 
 Eggdrop Changes (since version 1.8.0)
 
     _____________________________________________________________________
 
 1.8.0 (CVS):
+
+  - Altered the permission check on the pls/mns ban/exempt/invite commands
+    from USER_MASTER to USER_OP to allow global operators to set global bans.
+    Patch by: pjb
 
   - Removed the unrecognized options warning when configuring modules.
   - Modified -v output and .status display configure options.
