@@ -6,7 +6,7 @@
  * Modified/written by Fabian Knittel <fknittel@gmx.de>
  * IPv6 support added by pseudo <pseudo@egg6.net>
  *
- * $Id: coredns.c,v 1.3 2010/09/27 19:38:14 pseudo Exp $
+ * $Id: coredns.c,v 1.4 2010/10/14 09:49:47 pseudo Exp $
  */
 /*
  * Portions Copyright (C) 1999 - 2010 Eggheads Development Team
@@ -274,9 +274,9 @@ inline static u_32bit_t getipbash(IP ip)
 
 #ifdef IPV6
 static unsigned long getip6bash(struct in6_addr *ip6) {
-  u_int32_t x;
+  u_32bit_t x;
   egg_memcpy(&x, &ip6->s6_addr, sizeof x);
-  x ^= *(u_int32_t *)&ip6->s6_addr[12];
+  x ^= *(u_32bit_t *)&ip6->s6_addr[12];
   return (unsigned long) BASH_MODULO(x);
 }
 #endif

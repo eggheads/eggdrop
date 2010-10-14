@@ -16,7 +16,7 @@ dnl You should have received a copy of the GNU General Public License
 dnl along with this program; if not, write to the Free Software
 dnl Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 dnl
-dnl $Id: aclocal.m4,v 1.6 2010/10/10 21:24:42 pseudo Exp $
+dnl $Id: aclocal.m4,v 1.7 2010/10/14 09:49:47 pseudo Exp $
 dnl
 
 
@@ -734,6 +734,7 @@ AC_DEFUN([EGG_CHECK_OS],
     ;;
     QNX)
       SHLIB_LD="ld -shared"
+      AC_DEFINE(QNX_HACKS, 1, [Define if running under QNX.])
     ;;
     OSF1)
       case `echo "$egg_cv_var_system_release" | cut -d . -f 1` in

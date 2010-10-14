@@ -5512,6 +5512,9 @@ $as_echo "#define CYGWIN_HACKS 1" >>confdefs.h
     ;;
     QNX)
       SHLIB_LD="ld -shared"
+
+$as_echo "#define QNX_HACKS 1" >>confdefs.h
+
     ;;
     OSF1)
       case `echo "$egg_cv_var_system_release" | cut -d . -f 1` in

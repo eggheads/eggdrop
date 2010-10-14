@@ -4,7 +4,7 @@
  *
  *   IF YOU ALTER THIS FILE, YOU NEED TO RECOMPILE THE BOT.
  *
- * $Id: eggdrop.h,v 1.4 2010/08/05 18:20:34 pseudo Exp $
+ * $Id: eggdrop.h,v 1.5 2010/10/14 09:49:47 pseudo Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -195,7 +195,15 @@
 /* Yikes...who would have thought finding a usable random() would be so much
  * trouble?
  * Note: random(), rand(), and lrand48() are *not* thread safe.
+ *
+ * QNX doesn't include random() and srandom() in libc.so, only in libc.a
+ * So we can only use these functions in static builds on QNX.
  */
+#if defined QNX_HACKS && defined MAKING_MODS
+#  undef HAVE_RANDOM
+#  undef HAVE_SRANDOM
+#endif
+
 #ifdef HAVE_RANDOM
   /* On systems with random(), RANDOM_MAX may or may not be defined.
    *
@@ -244,7 +252,7 @@
 /* Use high-order bits for getting the random integer. With a modern
  * random() implmentation, modulo would probably be sufficient, but on
  * systems lacking random(), it may just be a macro for an older rand()
- * fucntion.
+ * function.
  */
 #define randint(n) (unsigned long) (random() / (RANDOM_MAX + 1.0) * n)
 

@@ -1,6 +1,6 @@
 dnl configure.ac: this file is processed by autoconf to produce ./configure.
 dnl
-dnl $Id: configure.ac,v 1.2 2010/07/27 13:05:43 pseudo Exp $
+dnl $Id: configure.ac,v 1.3 2010/10/14 09:49:47 pseudo Exp $
 
 AC_PREREQ(2.59)
 
@@ -12,89 +12,48 @@ AC_CONFIG_SRCDIR(coredns.c)
 AC_CONFIG_AUX_DIR(../../../misc)
 
 AC_COPYRIGHT([Copyright (C) 1999 - 2010 Eggheads Development Team])
-AC_REVISION($Revision: 1.2 $)
+AC_REVISION($Revision: 1.3 $)
 
-dns_reslib_avail="true"
+dns_reslib_avail="false"
 
-AC_CHECK_FUNC(res_init, [],
-[
-  AC_CHECK_LIB(resolv, res_init,
-  [
-    RESLIB="-lresolv"
+AC_HEADER_RESOLV
+
+for lib in '' -lresolv -lbind -lsocket
+do
+  LIBS="$lib"
+  AC_LINK_IFELSE([AC_LANG_PROGRAM([
+      #ifdef HAVE_SYS_TYPES_H
+      #  include <sys/types.h>
+      #endif
+      #ifdef HAVE_NETINET_IN_H
+      #  include <netinet/in.h>   /* inet_ functions / structs */
+      #endif
+      #ifdef HAVE_ARPA_NAMESER_H
+      #  include <arpa/nameser.h> /* DNS HEADER struct */
+      #endif
+      #ifdef HAVE_NETDB_H
+      #  include <netdb.h>
+      #endif
+      #include <resolv.h>
+    ], [
+      res_init();
+      res_mkquery(0, NULL, 0, 0, NULL, 0, NULL, NULL, 0);
+      ;
+      return 0;
+    ])
   ], [
-    AC_CHECK_LIB(bind, res_init,
-    [
-      RESLIB="-lbind"
-    ], [
-      dns_reslib_avail="false"
-    ])
+    RESLIB="$lib"
+    dns_reslib_avail="true"
+    break
   ])
-])
+done
 
-if test "${dns_reslib_avail}" = "false"; then
-  dns_reslib_avail="true"
-
-  AC_CHECK_FUNC(__res_init, [],
-  [
-    AC_CHECK_LIB(resolv, __res_init,
-    [
-      RESLIB="-lresolv"
-    ], [
-      AC_CHECK_LIB(bind, __res_init,
-      [
-        RESLIB="-lbind"
-      ], [
-        dns_reslib_avail="false"
-      ])
-    ])
-  ])
-fi
-
-AC_CHECK_FUNC(res_mkquery, [],
-[
-  AC_CHECK_LIB(resolv, res_mkquery,
-  [
-    if test "x${RESLIB}" != "x-lresolv"; then
-      RESLIB="${RESLIB} -lresolv"
-    fi
-  ], [
-    AC_CHECK_LIB(bind, res_mkquery,
-    [
-      if test "x${RESLIB}" != "x-lbind"; then
-        RESLIB="${RESLIB} -lbind"
-      fi
-    ], [
-      dns_reslib_avail="false"
-    ])
-  ])
-])
-
-if test "${dns_reslib_avail}" = "false"; then
-  dns_reslib_avail="true"
-
-  AC_CHECK_FUNC(__res_mkquery, [],
-  [
-    AC_CHECK_LIB(resolv, __res_mkquery,
-    [
-      if test "x${RESLIB}" != "x-lresolv"; then
-        RESLIB="${RESLIB} -lresolv"
-      fi
-    ], [
-      AC_CHECK_LIB(bind, __res_mkquery,
-      [
-        if test "x${RESLIB}" != "x-lbind"; then
-          RESLIB="${RESLIB} -lbind"
-        fi
-      ], [
-        dns_reslib_avail="false";
-      ])
-    ])
-  ])
-fi
-
-# Cygwin checks.
-AC_CANONICAL_HOST
-if test "${dns_reslib_avail}" = "false"; then
+AC_MSG_CHECKING([for a working resolver library])
+if test "$dns_reslib_avail" = "true"; then
+  AC_MSG_RESULT([yes ($LIBS)])
+else
+  AC_MSG_RESULT(no)
+  # Cygwin checks.
   case $host_os in
     *cygwin* )
       AC_MSG_CHECKING([for /usr/local/bind/lib/libbind.a])
