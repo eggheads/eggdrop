@@ -6,7 +6,7 @@
  *   memory management for dcc structures
  *   timeout checking for dcc connections
  *
- * $Id: dccutil.c,v 1.2 2010/08/05 18:12:05 pseudo Exp $
+ * $Id: dccutil.c,v 1.3 2010/10/19 12:13:33 pseudo Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -404,13 +404,13 @@ void tell_dcc(int zidx)
   if (j > 40)
     j = 40;
     
-  egg_snprintf(format, sizeof format, "%%-3s %%-%u.%us %%-5s %%-%u.%us %%s\n",
+  egg_snprintf(format, sizeof format, "%%-3s %%-%u.%us %%-6s %%-%u.%us %%s\n",
                j, j, nicklen, nicklen);
-  dprintf(zidx, format, "IDX", "ADDR", "PORT", "NICK", "TYPE  INFO");
+  dprintf(zidx, format, "IDX", "ADDR", "+ PORT", "NICK", "TYPE  INFO");
   dprintf(zidx, format, "---",
-          "------------------------------------------------------", "-----",
+          "------------------------------------------------------", "------",
           "--------------------------------", "----- ---------");
-  egg_snprintf(format, sizeof format, "%%-3d %%-%u.%us %%5d %%-%u.%us %%s\n",
+  egg_snprintf(format, sizeof format, "%%-3d %%-%u.%us %%c%%5d %%-%u.%us %%s\n",
                j, j, nicklen, nicklen);
 
   /* Show server */
@@ -421,8 +421,12 @@ void tell_dcc(int zidx)
       sprintf(other, "?:%lX  !! ERROR !!", (long) dcc[i].type);
       break;
     }
-      dprintf(zidx, format, dcc[i].sock, iptostr(&dcc[i].sockname.addr.sa), dcc[i].port,
-              dcc[i].nick, other);
+      dprintf(zidx, format, dcc[i].sock, iptostr(&dcc[i].sockname.addr.sa),
+#ifdef TLS
+              dcc[i].ssl ? '+' : ' ', dcc[i].port, dcc[i].nick, other);
+#else
+              ' ', dcc[i].port, dcc[i].nick, other);
+#endif
   }
 }
 

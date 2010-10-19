@@ -7,7 +7,7 @@
  *   linking, unlinking, and relaying to another bot
  *   pinging the bots periodically and checking leaf status
  *
- * $Id: botnet.c,v 1.2 2010/08/05 18:12:05 pseudo Exp $
+ * $Id: botnet.c,v 1.3 2010/10/19 12:13:33 pseudo Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -44,7 +44,9 @@ int tands = 0;                     /* Number of bots on the botnet */
 int parties = 0;                   /* Number of people on the botnet */
 char botnetnick[HANDLEN + 1] = ""; /* Botnet nickname */
 int share_unlinks = 0;             /* Allow remote unlinks of my sharebots? */
-
+#ifdef TLS
+int tls_vfybots = 0;               /* Verify SSL certificates from bots? */
+#endif
 
 int expmem_botnet()
 {
@@ -1031,6 +1033,9 @@ int botlink(char *linker, int idx, char *nick)
       i = new_dcc(&DCC_DNSWAIT, sizeof(struct dns_info));
       dcc[i].timeval = now;
       dcc[i].port = bi->telnet_port;
+#ifdef TLS
+      dcc[i].ssl = bi->ssl;
+#endif
       dcc[i].user = u;
       strcpy(dcc[i].nick, nick);
       strcpy(dcc[i].host, bi->address);
@@ -1078,6 +1083,11 @@ static void botlink_resolve_success(int i)
   if (dcc[i].sock < 0 ||
       open_telnet_raw(dcc[i].sock, &dcc[i].sockname) < 0)
     failed_link(i);
+#ifdef TLS
+  else if (dcc[i].ssl && ssl_handshake(dcc[i].sock, TLS_CONNECT,
+           tls_vfybots, LOG_BOTS, dcc[i].host, NULL))
+    failed_link(i);
+#endif
 }
 
 static void failed_tandem_relay(int idx)
@@ -1117,6 +1127,11 @@ static void failed_tandem_relay(int idx)
   if (dcc[idx].sock < 0 ||
       open_telnet_raw(dcc[idx].sock, &dcc[idx].sockname) < 0)
     failed_tandem_relay(idx);
+#ifdef TLS
+  else if (dcc[idx].ssl && ssl_handshake(dcc[idx].sock, TLS_CONNECT,
+           tls_vfybots, LOG_BOTS, dcc[idx].host, NULL))
+    failed_tandem_relay(idx);
+#endif
 }
 
 
@@ -1162,6 +1177,9 @@ void tandem_relay(int idx, char *nick, register int i)
   }
 
   dcc[i].port = bi->relay_port;
+#ifdef TLS
+  dcc[i].ssl = bi->ssl;
+#endif
   dcc[i].addr = 0L;
   strcpy(dcc[i].nick, nick);
   dcc[i].user = u;
@@ -1248,6 +1266,11 @@ static void tandem_relay_resolve_success(int i)
     dcc[i].sockname.addr.s4.sin_port = htons(dcc[i].port);
   if (open_telnet_raw(dcc[i].sock, &dcc[i].sockname) < 0)
     failed_tandem_relay(i);
+#ifdef TLS
+  else if (dcc[i].ssl && ssl_handshake(dcc[i].sock, TLS_CONNECT,
+           tls_vfybots, LOG_BOTS, dcc[i].host, NULL))
+    failed_tandem_relay(i);
+#endif
 }
 
 /* Input from user before connect is ready

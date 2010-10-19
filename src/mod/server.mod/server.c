@@ -2,7 +2,7 @@
  * server.c -- part of server.mod
  *   basic irc server support
  *
- * $Id: server.c,v 1.3 2010/08/05 18:12:05 pseudo Exp $
+ * $Id: server.c,v 1.4 2010/10/19 12:13:33 pseudo Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -98,6 +98,10 @@ static int kick_method;
 static int optimize_kicks;
 static int msgrate;             /* Number of seconds between sending
                                  * queued lines to server. */
+#ifdef TLS
+static int use_ssl;		/* Use SSL for the next server connection? */
+static int tls_vfyserver;       /* Certificate validation mode for servrs  */
+#endif
 
 static p_tcl_bind_list H_wall, H_raw, H_notc, H_msgm, H_msg, H_flud, H_ctcr,
                        H_ctcp, H_out;
@@ -958,9 +962,9 @@ static void add_server(const char *ss)
 
   for (z = serverlist; z && z->next; z = z->next);
   while (ss) {
-    p = strchr(ss, ',');
+/*    p = strchr(ss, ',');
     if (p)
-      *p++ = 0;
+      *p++ = 0; */
     x = nmalloc(sizeof(struct server_list));
 
     x->next = 0;
@@ -986,6 +990,9 @@ static void add_server(const char *ss)
       x->pass = 0;
       x->name = nmalloc(strlen(ss) + 1);
       strcpy(x->name, ss);
+#ifdef TLS
+      x->ssl = 0;
+#endif
     } else {
       *q++ = 0;
       x->name = nmalloc(q - ss);
@@ -999,6 +1006,12 @@ static void add_server(const char *ss)
         x->pass = nmalloc(strlen(q) + 1);
         strcpy(x->pass, q);
       }
+#ifdef TLS
+      if (*ss == '+')
+        x->ssl = 1;
+      else
+        x->ssl = 0;
+#endif
       x->port = atoi(ss);
     }
     ss = p;
@@ -1040,10 +1053,16 @@ static void next_server(int *ptr, char *serv, unsigned int *port, char *pass)
       if (x->port == *port) {
         if (!egg_strcasecmp(x->name, serv)) {
           *ptr = i;
+#ifdef TLS
+            x->ssl = use_ssl;
+#endif
           return;
         } else if (x->realname && !egg_strcasecmp(x->realname, serv)) {
           *ptr = i;
           strncpyz(serv, x->realname, sizeof serv);
+#ifdef TLS
+          use_ssl = x->ssl;
+#endif
           return;
         }
       }
@@ -1062,6 +1081,9 @@ static void next_server(int *ptr, char *serv, unsigned int *port, char *pass)
       strcpy(x->pass, pass);
     } else
       x->pass = NULL;
+#ifdef TLS
+    x->ssl = use_ssl;
+#endif
     egg_list_append((struct list_type **) (&serverlist),
                     (struct list_type *) x);
     *ptr = i;
@@ -1083,6 +1105,9 @@ static void next_server(int *ptr, char *serv, unsigned int *port, char *pass)
     x = serverlist;
     *ptr = 0;
   }                             /* Start over at the beginning */
+#ifdef TLS
+  use_ssl = x->ssl;
+#endif
   strcpy(serv, x->name);
   *port = x->port ? x->port : default_port;
   if (x->pass)
@@ -1233,7 +1258,12 @@ static char *traced_serveraddress(ClientData cdata, Tcl_Interp *irp,
   if (server_online) {
     int servidx = findanyidx(serv);
 
+#ifdef TLS
+    simple_sprintf(s, "%s:%s%u", dcc[servidx].host, dcc[servidx].ssl ? "+" : "",
+                   dcc[servidx].port);
+#else
     simple_sprintf(s, "%s:%u", dcc[servidx].host, dcc[servidx].port);
+#endif
   } else
     s[0] = 0;
   Tcl_SetVar2(interp, name1, name2, s, TCL_GLOBAL_ONLY);
@@ -1395,6 +1425,9 @@ static tcl_ints my_tcl_ints[] = {
   {"stack-limit",       &stack_limit,               0},
   {"exclusive-binds",   &exclusive_binds,           0},
   {"msg-rate",          &msgrate,                   0},
+#ifdef TLS
+  {"ssl-verify-server", &tls_vfyserver,             0},
+#endif
   {NULL,                NULL,                       0}
 };
 
@@ -1420,9 +1453,16 @@ static char *tcl_eggserver(ClientData cdata, Tcl_Interp *irp,
     /* Create server list */
     Tcl_DStringInit(&ds);
     for (q = serverlist; q; q = q->next) {
+#ifdef TLS
+      egg_snprintf(x, sizeof x, "%s:%s%d%s%s %s", q->name,
+                   q->ssl ? "+" : "", q->port ? q->port : default_port,
+                   q->pass ? ":" : "", q->pass ? q->pass : "",
+                   q->realname ? q->realname : "");
+#else
       egg_snprintf(x, sizeof x, "%s:%d%s%s %s", q->name,
                    q->port ? q->port : default_port, q->pass ? ":" : "",
                    q->pass ? q->pass : "", q->realname ? q->realname : "");
+#endif
       Tcl_DStringAppendElement(&ds, x);
     }
     slist = Tcl_DStringValue(&ds);
@@ -1480,6 +1520,9 @@ static int ctcp_DCC_CHAT(char *nick, char *from, char *handle,
 {
   char *action, *param, *ip, *prt, buf[512], *msg = buf;
   int i;
+#ifdef TLS
+  int ssl = 0;
+#endif
   struct userrec *u = get_user_by_handle(userlist, handle);
   struct flag_record fr = { FR_GLOBAL | FR_CHAN | FR_ANYWH, 0, 0, 0, 0, 0 };
 
@@ -1488,8 +1531,18 @@ static int ctcp_DCC_CHAT(char *nick, char *from, char *handle,
   param = newsplit(&msg);
   ip = newsplit(&msg);
   prt = newsplit(&msg);
+#ifdef TLS
+  if (egg_strcasecmp(action, "CHAT") || egg_strcasecmp(object, botname) || !u)
+  {
+    if (!egg_strcasecmp(action, "SCHAT"))
+      ssl = 1;
+    else
+      return 0;
+  }
+#else
   if (egg_strcasecmp(action, "CHAT") || egg_strcasecmp(object, botname) || !u)
     return 0;
+#endif
   get_user_flagrec(u, &fr, 0);
   if (dcc_total == max_dcc && increase_socks_max()) {
     if (!quiet_reject)
@@ -1519,6 +1572,9 @@ static int ctcp_DCC_CHAT(char *nick, char *from, char *handle,
       putlog(LOG_MISC, "*", "DCC connection: CHAT (%s!%s)", nick, ip);
       return 1;
     }
+#ifdef TLS
+    dcc[i].ssl = ssl;
+#endif
     dcc[i].port = atoi(prt);
     (void) setsockname(&dcc[i].sockname, ip, dcc[i].port, 0);
     dcc[i].u.dns->ip = &dcc[i].sockname;
@@ -1536,6 +1592,18 @@ static int ctcp_DCC_CHAT(char *nick, char *from, char *handle,
   return 1;
 }
 
+#ifdef TLS
+int dcc_chat_sslcb(int sock)
+{
+  int idx;
+
+  idx = findanyidx(sock);
+  if ((idx >= 0) && dcc_fingerprint(idx))
+    dprintf(idx, "%s\n", DCC_ENTERPASS);
+  return 0;
+}
+#endif
+
 static void dcc_chat_hostresolved(int i)
 {
   char buf[512];
@@ -1547,14 +1615,22 @@ static void dcc_chat_hostresolved(int i)
     lostdcc(i);
     return;
   }
+  buf[0] = 0;
   dcc[i].sock = getsock(dcc[i].sockname.family, 0);
-  if (dcc[i].sock < 0 || open_telnet_raw(dcc[i].sock, &dcc[i].sockname) < 0) {
+  if (dcc[i].sock < 0 || open_telnet_raw(dcc[i].sock, &dcc[i].sockname) < 0)
+    snprintf(buf, sizeof buf, strerror(errno));
+#ifdef TLS
+  else if (dcc[i].ssl && ssl_handshake(dcc[i].sock, TLS_CONNECT, tls_vfydcc,
+                                       LOG_MISC, dcc[i].host, &dcc_chat_sslcb))
+    snprintf(buf, sizeof buf, "TLS negotiation error");
+#endif
+  if (buf[0]) {
     if (!quiet_reject)
       dprintf(DP_HELP, "NOTICE %s :%s (%s)\n", dcc[i].nick,
-              DCC_CONNECTFAILED1, strerror(errno));
+              DCC_CONNECTFAILED1, buf);
     putlog(LOG_MISC, "*", "%s: CHAT (%s!%s)", DCC_CONNECTFAILED2,
            dcc[i].nick, dcc[i].host);
-    putlog(LOG_MISC, "*", "    (%s)", strerror(errno));
+    putlog(LOG_MISC, "*", "    (%s)", buf);
     killsock(dcc[i].sock);
     lostdcc(i);
   } else {
@@ -1568,7 +1644,15 @@ static void dcc_chat_hostresolved(int i)
     /* Ok, we're satisfied with them now: attempt the connect */
     putlog(LOG_MISC, "*", "DCC connection: CHAT (%s!%s)", dcc[i].nick,
            dcc[i].host);
-    dprintf(i, "%s\n", DCC_ENTERPASS);
+#ifdef TLS
+    if (dcc[i].ssl)
+    /* Queue something up to make sure the handshake moves on */
+      dprintf(i, "TLS handshake in progress...\n");
+    else
+    /* For SSL connections, the handshake callback will determine
+       if we should request a password */
+#endif
+      dprintf(i, "%s\n", DCC_ENTERPASS);
   }
   return;
 }
@@ -1712,8 +1796,14 @@ static void server_report(int idx, int details)
 
   if ((trying_server || server_online) &&
       ((servidx = findanyidx(serv)) != -1)) {
-    dprintf(idx, "    Server %s:%d %s\n", dcc[servidx].host, dcc[servidx].port,
-            trying_server ? "(trying)" : s);
+#ifdef TLS
+    dprintf(idx, "    Server [%s]:%s%d %s\n", dcc[servidx].host,
+            dcc[servidx].ssl ? "+" : "", dcc[servidx].port, trying_server ?
+            "(trying)" : s);
+#else
+    dprintf(idx, "    Server [%s]:%d %s\n", dcc[servidx].host,
+            dcc[servidx].port, trying_server ? "(trying)" : s);
+#endif
   } else
     dprintf(idx, "    %s\n", IRC_NOSERVER);
 
@@ -1820,7 +1910,11 @@ static Function server_table[] = {
   /* 4 - 7 */
   (Function) NULL,              /* char * (points to botname later on)  */
   (Function) botuserhost,       /* char *                               */
+#ifdef TLS
+  (Function) & use_ssl,		/* int					*/
+#else
   (Function) NULL,              /* Was quiet_reject <Wcc[01/21/03]>.    */
+#endif
   (Function) & serv,            /* int                                  */
   /* 8 - 11 */
   (Function) & flud_thr,        /* int                                  */
@@ -1928,6 +2022,9 @@ char *server_start(Function *global_funcs)
   stack_limit = 4;
   realservername = 0;
   msgrate = 2;
+#ifdef TLS
+  tls_vfyserver = 0;
+#endif
 
   server_table[4] = (Function) botname;
   module_register(MODULE_NAME, server_table, 1, 4);

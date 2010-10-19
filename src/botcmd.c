@@ -3,7 +3,7 @@
  *   commands that comes across the botnet
  *   userfile transfer and update commands from sharebots
  *
- * $Id: botcmd.c,v 1.1 2010/07/26 21:11:06 simple Exp $
+ * $Id: botcmd.c,v 1.2 2010/10/19 12:13:32 pseudo Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -32,6 +32,11 @@
 
 extern char botnetnick[], ver[], admin[], network[], motdfile[];
 extern int dcc_total, remote_boots, noshare;
+#ifdef TLS
+extern int tls_vfybots;
+extern int tls_vfyclients;
+extern SSL_CTX *ssl_ctx;
+#endif
 extern struct dcc_t *dcc;
 extern struct chanset_t *chanset;
 extern struct userrec *userlist;
@@ -1446,6 +1451,38 @@ static void bot_versions(int sock, char *par)
   }
 }
 
+#ifdef TLS
+/* Negotiate an encrypted session over the existing link
+ * starttls
+ */
+static void bot_starttls(int idx, char *par)
+{
+  /* We're already using ssl, ignore the request */
+  if (dcc[idx].ssl)
+    return;
+
+  if (dcc[idx].status & STAT_STARTTLS) {
+    /* we requested ssl, now we got the reply */
+    dcc[idx].status &= ~STAT_STARTTLS;
+    ssl_handshake(dcc[idx].sock, TLS_CONNECT, tls_vfybots, LOG_BOTS,
+                  dcc[idx].host, NULL);
+  } else {
+    /* the peer requests ssl, tell it to go on */
+    /*
+      if (!SSL_CTX_check_private_key(ssl_ctx)) {
+      putlog(LOG_BOTS, "*", "%s", ERR_error_string(ERR_get_error()));
+      return;
+    }
+    */
+    dprintf(idx, "starttls\n");
+    putlog(LOG_BOTS, "*", "Got STARTTLS from %s. Replying...", dcc[idx].nick);
+    ssl_handshake(dcc[idx].sock, TLS_LISTEN, tls_vfybots, LOG_BOTS,
+                  dcc[idx].host, NULL);
+  }
+  dcc[idx].ssl = 1;
+}
+#endif
+
 /* BOT COMMANDS
  *
  * function call should be:
@@ -1531,6 +1568,9 @@ botcmd_t C_bot[] =
   {"reject",     (IntFunc) bot_reject},
 #endif
   {"s",          (IntFunc) bot_share},
+#ifdef TLS
+  {"starttls",   (IntFunc) bot_starttls},
+#endif
   {"t",          (IntFunc) bot_trace},
   {"tb",         (IntFunc) bot_thisbot},
   {"td",         (IntFunc) bot_traced},

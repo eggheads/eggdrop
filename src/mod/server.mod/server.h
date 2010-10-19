@@ -1,7 +1,7 @@
 /*
  * server.h -- part of server.mod
  *
- * $Id: server.h,v 1.1 2010/07/26 21:11:06 simple Exp $
+ * $Id: server.h,v 1.2 2010/10/19 12:13:33 pseudo Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -32,7 +32,11 @@
 /* 4 - 7 */
 /* Empty */
 #define botuserhost ((char *)(server_funcs[5]))
+#ifdef TLS
+#define use_ssl (*(int *)(server_funcs[6]))
+#else
 /* Was quiet_reject (moved to core) <Wcc[01/21/03]>. */
+#endif
 #define serv (*(int *)(server_funcs[7]))
 /* 8 - 11 */
 #define flud_thr (*(int*)(server_funcs[8]))
@@ -96,6 +100,9 @@ struct server_list {
 
   char *name;
   int port;
+#ifdef TLS
+  int ssl;
+#endif
   char *pass;
   char *realname;
 };

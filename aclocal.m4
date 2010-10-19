@@ -16,7 +16,7 @@ dnl You should have received a copy of the GNU General Public License
 dnl along with this program; if not, write to the Free Software
 dnl Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 dnl
-dnl $Id: aclocal.m4,v 1.7 2010/10/14 09:49:47 pseudo Exp $
+dnl $Id: aclocal.m4,v 1.8 2010/10/19 12:13:32 pseudo Exp $
 dnl
 
 
@@ -1903,4 +1903,140 @@ AC_DEFUN([EGG_IPV6_STATUS],
       egg_cv_var_ipv6_supported="no"
     ])
   ])
+])
+
+
+dnl EGG_TLS_ENABLE
+dnl
+AC_DEFUN([EGG_TLS_ENABLE],
+[
+  AC_MSG_CHECKING([whether to enable TLS support])
+  AC_ARG_ENABLE(tls,
+    [  --enable-tls            enable TLS support (autodetect)],
+    [enable_tls="$enableval"])
+  AC_ARG_ENABLE(tls,
+    [  --disable-tls           disable TLS support ], [enable_tls="$enableval"],
+    [enable_tls="autodetect"])
+
+  AC_MSG_RESULT([$enable_tls])
+])
+
+
+dnl EGG_TLS_WITHSSL
+dnl
+AC_DEFUN(EGG_TLS_WITHSSL,
+[
+  save_LIBS="$LIBS"
+  AC_ARG_WITH(sslinc, [  --with-sslinc=PATH      Path to OpenSSL headers], [
+    if test "$enable_tls" != "no"; then
+      if test -d "$withval"; then
+        save_CC="$CC"
+        save_CPP="$CPP"
+        CC="$CC -I$withval"
+        CPP="$CPP -I$withval"
+        AC_CHECK_HEADERS([openssl/ssl.h openssl/x509v3.h], [sslinc="-I$withval"], [
+          AC_MSG_WARN([Invalid path to OpenSSL headers. $withval/openssl/ doesn't contain the required files.])
+          sslinc=""
+          break
+        ], [[
+          #ifdef CYGWIN_HACKS
+          #  ifndef __int64
+          #    define __int64 long long
+          #  endif
+          #endif
+        ]])
+        AC_SUBST(SSL_INCLUDES, [$sslinc])
+        CC="$save_CC"
+        CPP="$save_CPP"
+      else
+        AC_MSG_WARN([Invalid path to OpenSSL headers. $withval is not a directory.])
+      fi
+    fi
+  ])
+
+  AC_ARG_WITH(ssllib, [  --with-ssllib=PATH      Path to OpenSSL libraries],
+  [
+    if test "$enable_tls" != "no"; then
+      if test -d "$withval"; then
+        AC_CHECK_LIB(ssl, SSL_accept, , [havessllib="no"], [-L$withval])
+        AC_CHECK_LIB(crypto, X509_digest, , [havessllib="no"], [-L$withval])
+        if test "$havessllib" = "no"; then
+          AC_MSG_WARN([Invalid path to OpenSSL libs. $withval doesn't contain the required files.])
+        else
+          AC_SUBST(SSL_LIBS, [-L$withval])
+        fi
+      else
+        AC_MSG_WARN([You have specified an invalid path to OpenSSL libs. $withval is not a directory.])
+      fi
+    fi
+  ])
+])
+
+
+dnl EGG_TLS_DETECT
+dnl
+AC_DEFUN([EGG_TLS_DETECT],
+[
+  if test "$enable_tls" != "no"; then
+    if test -z "$SSL_INCLUDES"; then
+      AC_CHECK_HEADERS([openssl/ssl.h openssl/x509v3.h], , [havesslinc="no"], [
+        #ifdef CYGWIN_HACKS
+        #  ifndef __int64
+        #    define __int64 long long
+        #  endif
+        #endif
+      ])
+    fi
+    if test -z "$SSL_LIBS"; then
+      AC_CHECK_LIB(ssl, SSL_accept, , [havessllib="no"], [-lcrypto])
+      AC_CHECK_LIB(crypto, X509_digest, , [havessllib="no"], [-lssl])
+      AC_CHECK_FUNCS([EVP_md5 EVP_sha1 hex_to_string string_to_hex], , [[
+        havessllib="no"
+        break
+      ]])
+    fi
+    if test "$enable_tls" = "yes"; then
+      if test "$havesslinc" = "no"; then
+        AC_MSG_WARN([Cannot find OpenSSL headers.])
+        AC_MSG_WARN([Please specify the path to the openssl include dir using --with-sslinc=path])
+      fi
+      if test "$havessllib" = "no"; then
+        AC_MSG_WARN([Cannot find OpenSSL libraries.])
+        AC_MSG_WARN([Please specify the path to libssl and libcrypto using --with-ssllib=path])
+      fi
+    fi
+    AC_MSG_CHECKING([for OpenSSL])
+    if test "$havesslinc" = "no" || test "$havessllib" = "no"; then
+      AC_MSG_RESULT([no])
+      LIBS="$save_LIBS"
+    else
+      AC_MSG_RESULT([yes])
+      if test "$EGG_CYGWIN" = "yes"; then
+        AC_CHECK_TYPE([__int64], , [
+          AC_DEFINE([__int64], [long long], [Define this to a 64-bit type on Cygwin to satisfy OpenSSL dependencies.])
+        ])
+      fi
+      AC_DEFINE(TLS, 1, [Define this to enable SSL support.])
+      EGG_MD5_COMPAT
+    fi
+  fi
+])
+
+
+dnl EGG_MD5_COMPAT
+dnl
+AC_DEFUN([EGG_MD5_COMPAT],
+[
+  save_CC="$CC"
+  save_CPP="$CPP"
+  CC="$CC $sslinc"
+  CPP="$CPP $sslinc"
+  AC_CHECK_HEADERS([openssl/md5.h], [
+    AC_CHECK_FUNCS([MD5_Init MD5_Update MD5_Final], , [havesslmd5="no"])
+  ])
+  if test "$havesslmd5" != "no"; then
+    AC_DEFINE(HAVE_OPENSSL_MD5, 1, [Define this if your OpenSSL library has MD5 cipher support.])
+  fi
+  CC="$save_CC"
+  CPP="$save_CPP"
 ])

@@ -1,7 +1,7 @@
 /*
  * tclserv.c -- part of server.mod
  *
- * $Id: tclserv.c,v 1.1 2010/07/26 21:11:06 simple Exp $
+ * $Id: tclserv.c,v 1.2 2010/10/19 12:13:33 pseudo Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -175,7 +175,17 @@ static int tcl_jump STDVAR
   if (argc >= 2) {
     strncpyz(newserver, argv[1], sizeof newserver);
     if (argc >= 3)
+#ifdef TLS
+    {
+      if (*argv[2] == '+')
+        use_ssl = 1;
+      else
+        use_ssl = 0;
       newserverport = atoi(argv[2]);
+    }
+#else
+      newserverport = atoi(argv[2]);
+#endif
     else
       newserverport = default_port;
     if (argc == 4)

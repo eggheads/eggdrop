@@ -4,7 +4,7 @@
  *
  * by Darrin Smith (beldin@light.iinet.net.au)
  *
- * $Id: modules.c,v 1.2 2010/08/05 18:12:05 pseudo Exp $
+ * $Id: modules.c,v 1.3 2010/10/19 12:13:33 pseudo Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -86,7 +86,7 @@ extern struct chanset_t *chanset;
 
 extern char tempdir[], botnetnick[], botname[], origbotname[], botuser[],
             admin[], userfile[], ver[], notify_new[], helpdir[], version[],
-            quit_msg[], log_ts[];
+                        quit_msg[], log_ts[];
 
 extern int parties, noshare, dcc_total, egg_numver, userfile_perm, do_restart,
            ignore_time, must_be_owner, raw_log, max_dcc, make_userfile,
@@ -96,6 +96,10 @@ extern int parties, noshare, dcc_total, egg_numver, userfile_perm, do_restart,
 
 #ifdef IPV6
 extern int pref_af;
+#endif
+
+#ifdef TLS
+extern int tls_vfyclients, tls_vfydcc, tls_vfybots;
 #endif
 
 extern party_t *party;
@@ -297,7 +301,11 @@ Function global_table[] = {
   /* 76 - 79 */
   (Function) answer,
   (Function) getvhost,
-  (Function) 0,                   /* was neterror() -- UNUSED            */
+#ifdef TLS
+  (Function) ssl_handshake,
+#else
+  (Function) 0,
+#endif
   (Function) tputs,
   /* 80 - 83 */
   (Function) new_dcc,
@@ -328,21 +336,34 @@ Function global_table[] = {
   (Function) & max_dcc,           /* int                                 */
   (Function) & require_p,         /* int                                 */
   (Function) & ignore_time,       /* int                                 */
+#ifdef TLS
+  (Function) dcc_fingerprint,
+#else
   (Function) 0,                   /* was use_console_r <Wcc[02/02/03]>   */
+#endif
   /* 104 - 107 */
   (Function) & reserved_port_min,
   (Function) & reserved_port_max,
   (Function) & raw_log,           /* int                                 */
   (Function) & noshare,           /* int                                 */
   /* 108 - 111 */
+#ifdef TLS
+  (Function) & tls_vfybots,       /* int                                 */
+#else
   (Function) 0,                   /* gban_total -- UNUSED! (Eule)        */
+#endif
   (Function) & make_userfile,     /* int                                 */
   (Function) & default_flags,     /* int                                 */
   (Function) & dcc_total,         /* int                                 */
   /* 112 - 115 */
   (Function) tempdir,             /* char *                              */
+#ifdef TLS
+  (Function) & tls_vfyclients,    /* int                                 */
+  (Function) & tls_vfydcc,        /* int                                 */
+#else
   (Function) 0,                   /* was natip -- use getmyip() instead  */
   (Function) 0,                   /* was myip -- use getvhost() instead  */
+#endif
   (Function) origbotname,         /* char *                              */
   /* 116 - 119 */
   (Function) botuser,             /* char *                              */

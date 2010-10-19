@@ -7,7 +7,7 @@
  *   telling the current programmed settings
  *   initializing a lot of stuff and loading the tcl scripts
  *
- * $Id: chanprog.c,v 1.3 2010/10/10 21:24:43 pseudo Exp $
+ * $Id: chanprog.c,v 1.4 2010/10/19 12:13:33 pseudo Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -52,6 +52,9 @@ extern time_t now, online_since;
 extern int backgrd, term_z, con_chan, cache_hit, cache_miss, firewallport,
            default_flags, max_logs, conmask, protect_readonly, make_userfile,
            noshare, ignore_time, max_socks;
+#ifdef TLS
+extern SSL_CTX *ssl_ctx;
+#endif
 
 tcl_timer_t *timer = NULL;         /* Minutely timer               */
 tcl_timer_t *utimer = NULL;        /* Secondly timer               */
@@ -365,6 +368,17 @@ void tell_verbose_status(int idx)
 
   if (tcl_threaded())
     dprintf(idx, "Tcl is threaded.\n");
+#ifdef TLS
+  dprintf(idx, "TLS support is enabled.\n");
+  dprintf(idx, "TLS library: %s\n", SSLeay_version(SSLEAY_VERSION));
+#else
+  dprintf(idx, "TLS support is not available.\n");
+#endif
+#ifdef IPV6
+  dprintf(idx, "IPv6 support is enabled.\n");
+#else
+  dprintf(idx, "IPv6 support is not available.\n");
+#endif
   dprintf(idx, "Socket table: %d/%d\n", threaddata()->MAXSOCKS, max_socks);
 }
 

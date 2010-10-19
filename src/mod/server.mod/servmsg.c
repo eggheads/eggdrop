@@ -1,7 +1,7 @@
 /*
  * servmsg.c -- part of server.mod
  *
- * $Id: servmsg.c,v 1.2 2010/08/05 18:12:05 pseudo Exp $
+ * $Id: servmsg.c,v 1.3 2010/10/19 12:13:33 pseudo Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -1294,13 +1294,14 @@ static void connect_server(void)
       do_tcl("connect-server", connectserver);
     check_tcl_event("connect-server");
     next_server(&curserv, botserver, &botserverport, pass);
-#ifdef IPV6
-    if (strchr(botserver, ':'))
-      putlog(LOG_SERV, "*", "%s [%s]:%d", IRC_SERVERTRY, botserver,
-             botserverport);
-    else
+#ifdef TLS
+    putlog(LOG_SERV, "*", "%s [%s]:%s%d", IRC_SERVERTRY, botserver,
+           use_ssl ? "+" : "", botserverport);
+    dcc[servidx].ssl = use_ssl;
+#else
+    putlog(LOG_SERV, "*", "%s [%s]:%d", IRC_SERVERTRY, botserver,
+           botserverport);
 #endif
-    putlog(LOG_SERV, "*", "%s %s:%d", IRC_SERVERTRY, botserver, botserverport);
     dcc[servidx].port = botserverport;
     strcpy(dcc[servidx].nick, "(server)");
     strncpyz(dcc[servidx].host, botserver, UHOSTLEN);
@@ -1357,9 +1358,17 @@ static void server_resolve_success(int servidx)
   dcc[servidx].sock = getsock(dcc[servidx].sockname.family, 0);
   setsnport(dcc[servidx].sockname, dcc[servidx].port);
   serv = open_telnet_raw(dcc[servidx].sock, &dcc[servidx].sockname);
+#ifdef TLS
+  if (serv < 0 || (dcc[servidx].ssl &&
+      ssl_handshake(serv, TLS_CONNECT, tls_vfyserver, LOG_SERV,
+                    dcc[servidx].host, NULL))) {
+    putlog(LOG_SERV, "*", "%s %s (%s)", IRC_FAILEDCONNECT, dcc[servidx].host,
+           serv ? "TLS negotiation failure" : strerror(errno));
+#else
   if (serv < 0) {
     putlog(LOG_SERV, "*", "%s %s (%s)", IRC_FAILEDCONNECT, dcc[servidx].host,
            strerror(errno));
+#endif
     lostdcc(servidx);
     if (oldserv == curserv && !never_give_up)
       fatal("NO SERVERS WILL ACCEPT MY CONNECTION.", 0);

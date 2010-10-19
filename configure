@@ -604,6 +604,8 @@ LIBOBJS
 MOD_UPDIR
 DEST
 EGGVERSION
+SSL_LIBS
+SSL_INCLUDES
 DEBCFLGS
 CFLGS
 TCL_LIBS
@@ -707,6 +709,9 @@ enable_debug_dns
 enable_debug_context
 with_handlen
 enable_ipv6
+enable_tls
+with_sslinc
+with_ssllib
 '
       ac_precious_vars='build_alias
 host_alias
@@ -1350,6 +1355,10 @@ Optional Features and Packages:
   --with-handlen=VALUE    set the maximum length a handle on the bot can be
   --enable-ipv6           enable IPv6 support (autodetect)
   --disable-ipv6          disable IPv6 support
+  --enable-tls            enable TLS support (autodetect)
+  --disable-tls           disable TLS support
+  --with-sslinc=PATH      Path to OpenSSL headers
+  --with-ssllib=PATH      Path to OpenSSL libraries
 
 Some influential environment variables:
   CC          C compiler command
@@ -7984,6 +7993,7 @@ fi
 
 
 
+
 # Check for IPv6
 
   { $as_echo "$as_me:${as_lineno-$LINENO}: checking for system IPv6 support" >&5
@@ -8183,6 +8193,421 @@ fi
 $as_echo "$as_me: no in6_addr found, skipping dependent checks. Custom definitions will be used." >&6;}
   fi
 fi
+
+
+
+# Check for TLS
+
+  { $as_echo "$as_me:${as_lineno-$LINENO}: checking whether to enable TLS support" >&5
+$as_echo_n "checking whether to enable TLS support... " >&6; }
+  # Check whether --enable-tls was given.
+if test "${enable_tls+set}" = set; then :
+  enableval=$enable_tls; enable_tls="$enableval"
+fi
+
+  # Check whether --enable-tls was given.
+if test "${enable_tls+set}" = set; then :
+  enableval=$enable_tls; enable_tls="$enableval"
+else
+  enable_tls="autodetect"
+fi
+
+
+  { $as_echo "$as_me:${as_lineno-$LINENO}: result: $enable_tls" >&5
+$as_echo "$enable_tls" >&6; }
+
+
+  save_LIBS="$LIBS"
+
+# Check whether --with-sslinc was given.
+if test "${with_sslinc+set}" = set; then :
+  withval=$with_sslinc;
+    if test "$enable_tls" != "no"; then
+      if test -d "$withval"; then
+        save_CC="$CC"
+        save_CPP="$CPP"
+        CC="$CC -I$withval"
+        CPP="$CPP -I$withval"
+        for ac_header in openssl/ssl.h openssl/x509v3.h
+do :
+  as_ac_Header=`$as_echo "ac_cv_header_$ac_header" | $as_tr_sh`
+ac_fn_c_check_header_compile "$LINENO" "$ac_header" "$as_ac_Header" "
+          #ifdef CYGWIN_HACKS
+          #  ifndef __int64
+          #    define __int64 long long
+          #  endif
+          #endif
+
+"
+eval as_val=\$$as_ac_Header
+   if test "x$as_val" = x""yes; then :
+  cat >>confdefs.h <<_ACEOF
+#define `$as_echo "HAVE_$ac_header" | $as_tr_cpp` 1
+_ACEOF
+ sslinc="-I$withval"
+else
+
+          { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: Invalid path to OpenSSL headers. $withval/openssl/ doesn't contain the required files." >&5
+$as_echo "$as_me: WARNING: Invalid path to OpenSSL headers. $withval/openssl/ doesn't contain the required files." >&2;}
+          sslinc=""
+          break
+
+fi
+
+done
+
+        SSL_INCLUDES=$sslinc
+
+        CC="$save_CC"
+        CPP="$save_CPP"
+      else
+        { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: Invalid path to OpenSSL headers. $withval is not a directory." >&5
+$as_echo "$as_me: WARNING: Invalid path to OpenSSL headers. $withval is not a directory." >&2;}
+      fi
+    fi
+
+fi
+
+
+
+# Check whether --with-ssllib was given.
+if test "${with_ssllib+set}" = set; then :
+  withval=$with_ssllib;
+    if test "$enable_tls" != "no"; then
+      if test -d "$withval"; then
+        { $as_echo "$as_me:${as_lineno-$LINENO}: checking for SSL_accept in -lssl" >&5
+$as_echo_n "checking for SSL_accept in -lssl... " >&6; }
+if test "${ac_cv_lib_ssl_SSL_accept+set}" = set; then :
+  $as_echo_n "(cached) " >&6
+else
+  ac_check_lib_save_LIBS=$LIBS
+LIBS="-lssl -L$withval $LIBS"
+cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+/* end confdefs.h.  */
+
+/* Override any GCC internal prototype to avoid an error.
+   Use char because int might match the return type of a GCC
+   builtin and then its argument prototype would still apply.  */
+#ifdef __cplusplus
+extern "C"
+#endif
+char SSL_accept ();
+int
+main ()
+{
+return SSL_accept ();
+  ;
+  return 0;
+}
+_ACEOF
+if ac_fn_c_try_link "$LINENO"; then :
+  ac_cv_lib_ssl_SSL_accept=yes
+else
+  ac_cv_lib_ssl_SSL_accept=no
+fi
+rm -f core conftest.err conftest.$ac_objext \
+    conftest$ac_exeext conftest.$ac_ext
+LIBS=$ac_check_lib_save_LIBS
+fi
+{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_cv_lib_ssl_SSL_accept" >&5
+$as_echo "$ac_cv_lib_ssl_SSL_accept" >&6; }
+if test "x$ac_cv_lib_ssl_SSL_accept" = x""yes; then :
+  cat >>confdefs.h <<_ACEOF
+#define HAVE_LIBSSL 1
+_ACEOF
+
+  LIBS="-lssl $LIBS"
+
+else
+  havessllib="no"
+fi
+
+        { $as_echo "$as_me:${as_lineno-$LINENO}: checking for X509_digest in -lcrypto" >&5
+$as_echo_n "checking for X509_digest in -lcrypto... " >&6; }
+if test "${ac_cv_lib_crypto_X509_digest+set}" = set; then :
+  $as_echo_n "(cached) " >&6
+else
+  ac_check_lib_save_LIBS=$LIBS
+LIBS="-lcrypto -L$withval $LIBS"
+cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+/* end confdefs.h.  */
+
+/* Override any GCC internal prototype to avoid an error.
+   Use char because int might match the return type of a GCC
+   builtin and then its argument prototype would still apply.  */
+#ifdef __cplusplus
+extern "C"
+#endif
+char X509_digest ();
+int
+main ()
+{
+return X509_digest ();
+  ;
+  return 0;
+}
+_ACEOF
+if ac_fn_c_try_link "$LINENO"; then :
+  ac_cv_lib_crypto_X509_digest=yes
+else
+  ac_cv_lib_crypto_X509_digest=no
+fi
+rm -f core conftest.err conftest.$ac_objext \
+    conftest$ac_exeext conftest.$ac_ext
+LIBS=$ac_check_lib_save_LIBS
+fi
+{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_cv_lib_crypto_X509_digest" >&5
+$as_echo "$ac_cv_lib_crypto_X509_digest" >&6; }
+if test "x$ac_cv_lib_crypto_X509_digest" = x""yes; then :
+  cat >>confdefs.h <<_ACEOF
+#define HAVE_LIBCRYPTO 1
+_ACEOF
+
+  LIBS="-lcrypto $LIBS"
+
+else
+  havessllib="no"
+fi
+
+        if test "$havessllib" = "no"; then
+          { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: Invalid path to OpenSSL libs. $withval doesn't contain the required files." >&5
+$as_echo "$as_me: WARNING: Invalid path to OpenSSL libs. $withval doesn't contain the required files." >&2;}
+        else
+          SSL_LIBS=-L$withval
+
+        fi
+      else
+        { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: You have specified an invalid path to OpenSSL libs. $withval is not a directory." >&5
+$as_echo "$as_me: WARNING: You have specified an invalid path to OpenSSL libs. $withval is not a directory." >&2;}
+      fi
+    fi
+
+fi
+
+
+
+  if test "$enable_tls" != "no"; then
+    if test -z "$SSL_INCLUDES"; then
+      for ac_header in openssl/ssl.h openssl/x509v3.h
+do :
+  as_ac_Header=`$as_echo "ac_cv_header_$ac_header" | $as_tr_sh`
+ac_fn_c_check_header_compile "$LINENO" "$ac_header" "$as_ac_Header" "
+        #ifdef CYGWIN_HACKS
+        #  ifndef __int64
+        #    define __int64 long long
+        #  endif
+        #endif
+
+"
+eval as_val=\$$as_ac_Header
+   if test "x$as_val" = x""yes; then :
+  cat >>confdefs.h <<_ACEOF
+#define `$as_echo "HAVE_$ac_header" | $as_tr_cpp` 1
+_ACEOF
+
+else
+  havesslinc="no"
+fi
+
+done
+
+    fi
+    if test -z "$SSL_LIBS"; then
+      { $as_echo "$as_me:${as_lineno-$LINENO}: checking for SSL_accept in -lssl" >&5
+$as_echo_n "checking for SSL_accept in -lssl... " >&6; }
+if test "${ac_cv_lib_ssl_SSL_accept+set}" = set; then :
+  $as_echo_n "(cached) " >&6
+else
+  ac_check_lib_save_LIBS=$LIBS
+LIBS="-lssl -lcrypto $LIBS"
+cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+/* end confdefs.h.  */
+
+/* Override any GCC internal prototype to avoid an error.
+   Use char because int might match the return type of a GCC
+   builtin and then its argument prototype would still apply.  */
+#ifdef __cplusplus
+extern "C"
+#endif
+char SSL_accept ();
+int
+main ()
+{
+return SSL_accept ();
+  ;
+  return 0;
+}
+_ACEOF
+if ac_fn_c_try_link "$LINENO"; then :
+  ac_cv_lib_ssl_SSL_accept=yes
+else
+  ac_cv_lib_ssl_SSL_accept=no
+fi
+rm -f core conftest.err conftest.$ac_objext \
+    conftest$ac_exeext conftest.$ac_ext
+LIBS=$ac_check_lib_save_LIBS
+fi
+{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_cv_lib_ssl_SSL_accept" >&5
+$as_echo "$ac_cv_lib_ssl_SSL_accept" >&6; }
+if test "x$ac_cv_lib_ssl_SSL_accept" = x""yes; then :
+  cat >>confdefs.h <<_ACEOF
+#define HAVE_LIBSSL 1
+_ACEOF
+
+  LIBS="-lssl $LIBS"
+
+else
+  havessllib="no"
+fi
+
+      { $as_echo "$as_me:${as_lineno-$LINENO}: checking for X509_digest in -lcrypto" >&5
+$as_echo_n "checking for X509_digest in -lcrypto... " >&6; }
+if test "${ac_cv_lib_crypto_X509_digest+set}" = set; then :
+  $as_echo_n "(cached) " >&6
+else
+  ac_check_lib_save_LIBS=$LIBS
+LIBS="-lcrypto -lssl $LIBS"
+cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+/* end confdefs.h.  */
+
+/* Override any GCC internal prototype to avoid an error.
+   Use char because int might match the return type of a GCC
+   builtin and then its argument prototype would still apply.  */
+#ifdef __cplusplus
+extern "C"
+#endif
+char X509_digest ();
+int
+main ()
+{
+return X509_digest ();
+  ;
+  return 0;
+}
+_ACEOF
+if ac_fn_c_try_link "$LINENO"; then :
+  ac_cv_lib_crypto_X509_digest=yes
+else
+  ac_cv_lib_crypto_X509_digest=no
+fi
+rm -f core conftest.err conftest.$ac_objext \
+    conftest$ac_exeext conftest.$ac_ext
+LIBS=$ac_check_lib_save_LIBS
+fi
+{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_cv_lib_crypto_X509_digest" >&5
+$as_echo "$ac_cv_lib_crypto_X509_digest" >&6; }
+if test "x$ac_cv_lib_crypto_X509_digest" = x""yes; then :
+  cat >>confdefs.h <<_ACEOF
+#define HAVE_LIBCRYPTO 1
+_ACEOF
+
+  LIBS="-lcrypto $LIBS"
+
+else
+  havessllib="no"
+fi
+
+      for ac_func in EVP_md5 EVP_sha1 hex_to_string string_to_hex
+do :
+  as_ac_var=`$as_echo "ac_cv_func_$ac_func" | $as_tr_sh`
+ac_fn_c_check_func "$LINENO" "$ac_func" "$as_ac_var"
+eval as_val=\$$as_ac_var
+   if test "x$as_val" = x""yes; then :
+  cat >>confdefs.h <<_ACEOF
+#define `$as_echo "HAVE_$ac_func" | $as_tr_cpp` 1
+_ACEOF
+
+else
+
+        havessllib="no"
+        break
+
+fi
+done
+
+    fi
+    if test "$enable_tls" = "yes"; then
+      if test "$havesslinc" = "no"; then
+        { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: Cannot find OpenSSL headers." >&5
+$as_echo "$as_me: WARNING: Cannot find OpenSSL headers." >&2;}
+        { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: Please specify the path to the openssl include dir using --with-sslinc=path" >&5
+$as_echo "$as_me: WARNING: Please specify the path to the openssl include dir using --with-sslinc=path" >&2;}
+      fi
+      if test "$havessllib" = "no"; then
+        { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: Cannot find OpenSSL libraries." >&5
+$as_echo "$as_me: WARNING: Cannot find OpenSSL libraries." >&2;}
+        { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: Please specify the path to libssl and libcrypto using --with-ssllib=path" >&5
+$as_echo "$as_me: WARNING: Please specify the path to libssl and libcrypto using --with-ssllib=path" >&2;}
+      fi
+    fi
+    { $as_echo "$as_me:${as_lineno-$LINENO}: checking for OpenSSL" >&5
+$as_echo_n "checking for OpenSSL... " >&6; }
+    if test "$havesslinc" = "no" || test "$havessllib" = "no"; then
+      { $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
+$as_echo "no" >&6; }
+      LIBS="$save_LIBS"
+    else
+      { $as_echo "$as_me:${as_lineno-$LINENO}: result: yes" >&5
+$as_echo "yes" >&6; }
+      if test "$EGG_CYGWIN" = "yes"; then
+        ac_fn_c_check_type "$LINENO" "__int64" "ac_cv_type___int64" "$ac_includes_default"
+if test "x$ac_cv_type___int64" = x""yes; then :
+
+else
+
+
+$as_echo "#define __int64 long long" >>confdefs.h
+
+
+fi
+
+      fi
+
+$as_echo "#define TLS 1" >>confdefs.h
+
+
+  save_CC="$CC"
+  save_CPP="$CPP"
+  CC="$CC $sslinc"
+  CPP="$CPP $sslinc"
+  for ac_header in openssl/md5.h
+do :
+  ac_fn_c_check_header_mongrel "$LINENO" "openssl/md5.h" "ac_cv_header_openssl_md5_h" "$ac_includes_default"
+if test "x$ac_cv_header_openssl_md5_h" = x""yes; then :
+  cat >>confdefs.h <<_ACEOF
+#define HAVE_OPENSSL_MD5_H 1
+_ACEOF
+
+    for ac_func in MD5_Init MD5_Update MD5_Final
+do :
+  as_ac_var=`$as_echo "ac_cv_func_$ac_func" | $as_tr_sh`
+ac_fn_c_check_func "$LINENO" "$ac_func" "$as_ac_var"
+eval as_val=\$$as_ac_var
+   if test "x$as_val" = x""yes; then :
+  cat >>confdefs.h <<_ACEOF
+#define `$as_echo "HAVE_$ac_func" | $as_tr_cpp` 1
+_ACEOF
+
+else
+  havesslmd5="no"
+fi
+done
+
+
+fi
+
+done
+
+  if test "$havesslmd5" != "no"; then
+
+$as_echo "#define HAVE_OPENSSL_MD5 1" >>confdefs.h
+
+  fi
+  CC="$save_CC"
+  CPP="$save_CPP"
+
+    fi
+  fi
 
 
 

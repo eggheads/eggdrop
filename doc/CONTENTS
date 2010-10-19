@@ -1,4 +1,4 @@
-$Id: CONTENTS,v 1.2 2010/08/05 18:12:04 pseudo Exp $
+$Id: CONTENTS,v 1.3 2010/10/19 12:13:32 pseudo Exp $
 
 Directory Contents - doc/
 Last revised: July 29, 2010
@@ -38,6 +38,10 @@ Last revised: July 29, 2010
 
   IPV6
     This document provides information about IPv6 support which is a new
+    eggdrop feature since version 1.8.0.
+
+  TLS
+    This document provides information about TLS support which is a new
     eggdrop feature since version 1.8.0.
 
   KNOWN-PROBLEMS

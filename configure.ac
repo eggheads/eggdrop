@@ -1,11 +1,11 @@
 dnl configure.ac: this file is processed by autoconf to produce ./configure.
 dnl
-dnl $Id: configure.ac,v 1.4 2010/08/11 15:57:50 thommey Exp $
+dnl $Id: configure.ac,v 1.5 2010/10/19 12:13:32 pseudo Exp $
 
 AC_PREREQ(2.60)
 AC_INIT([Eggdrop],[1.8.0],[bugs@eggheads.org])
 AC_COPYRIGHT([Copyright (C) 1999 - 2010 Eggheads Development Team])
-AC_REVISION($Revision: 1.4 $)
+AC_REVISION($Revision: 1.5 $)
 AC_CONFIG_SRCDIR(src/eggdrop.h)
 AC_CONFIG_AUX_DIR(misc)
 AC_CONFIG_HEADER(config.h)
@@ -187,10 +187,17 @@ EGG_ENABLE_DEBUG_CONTEXT
 # Let the user set the handlen with a configure option
 EGG_ARG_HANDLEN
 
+
 # Check for IPv6
 EGG_IPV6_STATUS
 EGG_IPV6_ENABLE
 EGG_IPV6_COMPAT
+
+
+# Check for TLS
+EGG_TLS_ENABLE
+EGG_TLS_WITHSSL
+EGG_TLS_DETECT
 
 
 # Substitute Makefile variables.

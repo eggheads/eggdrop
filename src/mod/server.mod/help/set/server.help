@@ -170,6 +170,12 @@ see also: default-port
 ###  %bset net-type%b
    Define the network the bot uses. 0 = EFnet, 1 = IRCnet, 2 = UnderNet,
    3 = DALnet, 4 = EFnet +e/+I/max-bans 20 Hybrid, 5 = Others.
+%{help=set ssl-verify-server}%{+n}
+###  %bset ssl-verify-server%b
+   Control certificate verification for servers
+   Define the network the bot uses. 0 = EFnet, 1 = IRCnet, 2 = UnderNet,
+
+See also: set ssl-verify-clients
 %{help=server settings}%{+n}
 ###  Settings for the %bserver module%b
    This is a list of the Tcl variables the can be used to setup
@@ -183,4 +189,4 @@ see also: default-port
      %bserverror-quit%b       %banswer-ctcp%b    %baltnick%b
      %btrigger-on-ignore%b    %bdefault-port%b   %brealname%b
      %bserver-cycle-wait%b    %bcheck-stoned%b   %bflood-msg%b
-     %bquiet-reject%b         %bkeep-nick%b
+     %bssl-verify-server%b    %bquiet-reject%b   %bkeep-nick%b

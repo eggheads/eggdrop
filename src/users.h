@@ -2,7 +2,7 @@
  * users.h
  *   structures and definitions used by users.c and userrec.c
  *
- * $Id: users.h,v 1.1 2010/07/26 21:11:06 simple Exp $
+ * $Id: users.h,v 1.2 2010/10/19 12:13:33 pseudo Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -69,6 +69,9 @@ struct user_entry_type {
 extern struct user_entry_type USERENTRY_COMMENT, USERENTRY_LASTON,
   USERENTRY_XTRA, USERENTRY_INFO, USERENTRY_BOTADDR, USERENTRY_HOSTS,
   USERENTRY_PASS, USERENTRY_BOTFL;
+#ifdef TLS
+extern struct user_entry_type USERENTRY_FPRINT;
+#endif
 #endif
 
 
@@ -81,6 +84,9 @@ struct bot_addr {
   int telnet_port;
   int relay_port;
   char *address;
+#ifdef TLS
+  int ssl;
+#endif
 };
 
 struct user_entry {

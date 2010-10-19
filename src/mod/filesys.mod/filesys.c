@@ -2,7 +2,7 @@
  * filesys.c -- part of filesys.mod
  *   main file of the filesys eggdrop module
  *
- * $Id: filesys.c,v 1.3 2010/08/05 18:12:05 pseudo Exp $
+ * $Id: filesys.c,v 1.4 2010/10/19 12:13:33 pseudo Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -633,7 +633,11 @@ static void filesys_dcc_send_hostresolved(int);
 /* Received a ctcp-dcc.
  */
 static void filesys_dcc_send(char *nick, char *from, struct userrec *u,
+#ifdef TLS
+                             char *text, int ssl)
+#else
                              char *text)
+#endif
 {
   char *param, *ip, *prt, *buf = NULL, *msg;
   int atr = u ? u->flags : 0, i, j = 0;
@@ -701,6 +705,9 @@ static void filesys_dcc_send(char *nick, char *from, struct userrec *u,
       (void) setsockname(&dcc[i].sockname, ip, dcc[i].port, 0);
       dcc[i].u.dns->ip = &dcc[i].sockname;
       dcc[i].sock = -1;
+#ifdef TLS
+      dcc[i].ssl = ssl;
+#endif
       dcc[i].user = u;
       strcpy(dcc[i].nick, nick);
       strcpy(dcc[i].host, from);
@@ -825,6 +832,11 @@ static void filesys_dcc_send_hostresolved(int i)
       if (dcc[i].sock < 0 ||
       open_telnet_raw(dcc[i].sock, &dcc[i].sockname) < 0)
         dcc[i].type->eof(i);
+#ifdef TLS
+      else if (dcc[i].ssl && ssl_handshake(dcc[i].sock, TLS_CONNECT, tls_vfydcc,
+                                           LOG_FILES, dcc[i].host, NULL))
+        dcc[i].type->eof(i);
+#endif
     }
   }
 }
@@ -842,9 +854,19 @@ static int filesys_DCC_CHAT(char *nick, char *from, char *handle,
   if (egg_strcasecmp(object, botname))
     return 0;
   if (!egg_strncasecmp(text, "SEND ", 5)) {
+#ifdef TLS
+    filesys_dcc_send(nick, from, u, text + 5, 0);
+#else
     filesys_dcc_send(nick, from, u, text + 5);
+#endif
     return 1;
   }
+#ifdef TLS
+  if (!egg_strncasecmp(text, "SSEND ", 5)) {
+    filesys_dcc_send(nick, from, u, text + 5, 1);
+    return 1;
+  }
+#endif
   if (egg_strncasecmp(text, "CHAT ", 5) || !u)
     return 0;
   strcpy(buf, text + 5);

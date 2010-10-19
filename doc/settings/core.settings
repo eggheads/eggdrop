@@ -1,4 +1,4 @@
-$Id: core.settings,v 1.2 2010/08/05 18:12:04 pseudo Exp $
+$Id: core.settings,v 1.3 2010/10/19 12:13:32 pseudo Exp $
 
 Eggdrop Core Settings
 Last revised: April 17, 2003
@@ -65,21 +65,20 @@ Last revised: April 17, 2003
       If you don't want to use the timezone setting for scripting purposes
       only, but instead everywhere possible, then use this setting.
 
-
-    set vhost4 "virtual.host.com"
     set vhost4 "99.99.0.0"
+    set vhost4 "virtual.host.com"
       If you're using virtual hosting (your machine has more than 1 IP), you
       may want to specify the particular IP to bind to. You can specify either
-      by hostname or by IP. Note that this is not used for listening.  Use the
+      by hostname or by IP. Note that this is not used for listening. Use the
       'listen-addr' variable to specify the listening address.
 
 
     set vhost6 "2001:db8:618:5c0:263::"
     set vhost6 "my.ipv6.host.com"
-     IPv6 vhost to bind to for outgoing IPv6 connections. You can set it
-     to any valid IPv6 address or hostname, resolving to an IPv6 address.
-     Note that this is not used for listening. Use the 'listen-addr'
-     variable to specify the listening address.
+      IPv6 vhost to bind to for outgoing IPv6 connections. You can set it
+      to any valid IPv6 address or hostname, resolving to an IPv6 address.
+      Note that this is not used for listening. Use the 'listen-addr'
+      variable to specify the listening address.
 
 
     set listen-addr "99.99.0.0"
@@ -335,6 +334,10 @@ Last revised: April 17, 2003
 
         listen 3333 all
 
+      You can setup a SSL port by prepending a plus sign to it:
+
+        listen +5555 all
+
       You need to un-comment this line and change the port number in order to
       open the listen port. You should not keep this set to 3333.
 
@@ -538,6 +541,109 @@ Last revised: April 17, 2003
       will understand and match modes in cidr notation, and will be able to
       put and enforce such bans or unban itself, if banned with a cidr mask.
       Do NOT set this, if your network/server does not support cidr!
+
+
+  ##### SSL SETTINGS #####
+
+  Settings in this section take effect when eggdrop is compiled with TLS
+  support.
+
+
+    set ssl-privatekey "eggdrop.key"
+      File containing your private key, needed for the SSL certificate
+      (see below). You can create one issuing the following command:
+
+        openssl genrsa -out eggdrop.key 2048
+
+      It will create a 2048 bit RSA key, strong enough for eggdrop.
+      This is required for SSL hubs/listen ports, secure file transfer and
+      /ctcp botnick schat
+      For your convenience, you can type 'make sslcert' after 'make install'
+      and you'll get a key and a certificate in your DEST directory.
+
+
+    set ssl-certificate "eggdrop.crt"
+      Specify the filename where your SSL certificate is located. If you
+      don't set this, eggdrop will not be able to act as a server in SSL
+      connections, as with most ciphers a certificate and a private key
+      are required on the server side. Must be in PEM format.
+      If you don't have one, you can create it using the following command:
+
+        openssl req -new -key eggdrop.key -x509 -out eggdrop.crt -days 365
+
+      This is required for SSL hubs/listen ports, secure file transfer and
+      /ctcp botnick schat
+      For your convenience, you can type 'make sslcert' after 'make install'
+      and you'll get a key and a certificate in your DEST directory.
+
+
+    set ssl-verify-depth 9
+      Sets the maximum depth for the certificate chain verification that shall
+      be allowed for ssl. When certificate verification is enabled, any chain
+      exceeding this depth will fail verification.
+
+
+    set ssl-capath "/etc/ssl/"
+    set ssl-cafile ""
+      Specify the location at which CA certificates for verification purposes
+      are located. These certificates are trusted. If you don't set this,
+      certificate verification will not work.
+
+
+    set ssl-ciphers ""
+      Specify the list of ciphers (in order of preference) allowed for use with
+      ssl. The cipher list is one or more cipher strings separated by colons,
+      commas or spaces. Unavailable ciphers are silently ignored unless no
+      useable cipher could be found. For the list of possible cipher strings
+      and their meanings, please refer to the ciphers(1) manual.
+      Note: if you set this, the value replaces any ciphers OpenSSL might use by
+      default. To include the default ciphers, you can put DEFAULT as a cipher
+      string in the list.
+      For example:
+
+        set ssl-ciphers "DEFAULT ADH"
+
+      This will make eggdrop allow the default OpenSSL selection plus anonymous
+      DH ciphers.
+
+        set ssl-ciphers "ALL"
+
+      This will make eggdrop allow all ciphers supported by OpenSSL, in a
+      reasonable order.
+
+
+    set ssl-cert-auth 0
+      Enable certificate authorization. Set to 1 to allow users and bots to
+      identify automatically by their certificate fingerprints. Setting it
+      to 2 to will force fingerprint logins. With a value of 2, users without
+      a fingerprint set or with a certificate UID not matching their handle
+      won't be allowed to login on SSL enabled telnet ports. Fingerprints
+      must be set in advance with the .fprint and .chfinger commands.
+      NOTE: this setting has no effect on plain-text ports.
+
+    You can control SSL certificate verification using the following variables.
+    All of them are flag-based. You can set them by adding together the numbers
+    for all exceptions you want to enable. By default certificate verification
+    is disabled and all certificates are assumed to be valid.
+
+    The numbers are the following:
+      1  - enable certificate verification
+      2  - allow self-signed certificates
+      4  - don't check peer common or alt names
+      8  - allow expired certificates
+      16 - allow certificates which are not valid yet
+      32 - allow revoked certificates
+    A value of 0 disables verification.
+
+    set ssl-verify-dcc 0
+      Control certificate verification for DCC chats (only /dcc chat botnick)
+
+    set ssl-verify-bots 0
+      Control certificate verification for linking to hubs
+
+    set ssl-verify-clients 0
+      Control cerfificate verification for SSL listening ports. This includes
+      leaf bots connecting, users telneting in and /ctcp bot chat.
 
 
   ##### MODULES #####

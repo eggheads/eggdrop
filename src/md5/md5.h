@@ -9,6 +9,10 @@
 #ifndef _MD5_H
 #define _MD5_H
 
+#ifdef HAVE_OPENSSL_MD5
+#  include <openssl/md5.h>
+#else
+
 /* Any 32-bit or wider integer data type will do */
 typedef unsigned long MD5_u32plus;
 
@@ -23,4 +27,5 @@ extern void MD5_Init(MD5_CTX *ctx);
 extern void MD5_Update(MD5_CTX *ctx, void *data, unsigned long size);
 extern void MD5_Final(unsigned char *result, MD5_CTX *ctx);
 
-#endif
+#endif /* HAVE_OPENSSL_MD5 */
+#endif /* _MD5_H */

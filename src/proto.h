@@ -7,7 +7,7 @@
  * because they use structures in those
  * (saves including those .h files EVERY time) - Beldin
  *
- * $Id: proto.h,v 1.3 2010/10/10 18:22:47 pseudo Exp $
+ * $Id: proto.h,v 1.4 2010/10/19 12:13:33 pseudo Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -127,6 +127,9 @@ void failed_link(int);
 void strip_mirc_codes(int, char *);
 int check_ansi(char *);
 void dupwait_notify(char *);
+#ifdef TLS
+int dcc_fingerprint(int);
+#endif
 
 /* dccutil.c */
 int increase_socks_max();
@@ -288,6 +291,7 @@ char *iptostr(struct sockaddr *);
 int sock_has_data(int, int);
 int sockoptions(int sock, int operation, int sock_options);
 int flush_inbuf(int idx);
+int findsock(int sock);
 
 /* tcl.c */
 struct threaddata *threaddata();
@@ -296,6 +300,14 @@ void protect_tcl();
 void unprotect_tcl();
 void do_tcl(char *, char *);
 int readtclprog(char *fname);
+
+/* tls.c */
+#ifdef TLS
+int ssl_handshake(int, int, int, int, char *, IntFunc);
+char *ssl_fpconv(char *in, char *out);
+char *ssl_getuid(int sock);
+char *ssl_getfp(int sock);
+#endif
 
 /* userent.c */
 void list_type_kill(struct list_type *);

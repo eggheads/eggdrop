@@ -2,7 +2,7 @@
  * net.c -- handles:
  *   all raw network i/o
  *
- * $Id: net.c,v 1.4 2010/09/14 19:45:29 pseudo Exp $
+ * $Id: net.c,v 1.5 2010/10/19 12:13:33 pseudo Exp $
  */
 /*
  * This is hereby released into the public domain.
@@ -43,6 +43,10 @@
 #  include <unistd.h>
 #endif
 #include <setjmp.h>
+
+#ifdef TLS
+#  include <openssl/err.h>
+#endif
 
 #ifndef HAVE_GETDTABLESIZE
 #  ifdef FD_SETSIZE
@@ -271,6 +275,9 @@ int allocsock(int sock, int options)
       td->socklist[i].handler.sock.outbuflen = 0;
       td->socklist[i].flags = options;
       td->socklist[i].sock = sock;
+#ifdef TLS
+      td->socklist[i].ssl = 0;
+#endif
       return i;
     }
   }
@@ -369,6 +376,14 @@ void killsock(register int sock)
   for (i = 0; i < td->MAXSOCKS; i++) {
     if ((td->socklist[i].sock == sock) && !(td->socklist[i].flags & SOCK_UNUSED)) {
       if (!(td->socklist[i].flags & SOCK_TCL)) { /* nothing to free for tclsocks */
+#ifdef TLS
+        if (td->socklist[i].ssl) {
+          SSL_shutdown(td->socklist[i].ssl);
+          nfree(SSL_get_app_data(td->socklist[i].ssl));
+          SSL_free(td->socklist[i].ssl);
+          td->socklist[i].ssl = NULL;
+        }
+#endif
         close(td->socklist[i].sock);
         if (td->socklist[i].handler.sock.inbuf != NULL) {
           nfree(td->socklist[i].handler.sock.inbuf);
@@ -716,6 +731,9 @@ int sockread(char *s, int *len, sock_list *slist, int slistmax, int tclonly)
     for (i = 0; i < slistmax; i++) {
       if (!tclonly && ((!(slist[i].flags & (SOCK_UNUSED | SOCK_TCL))) &&
           ((FD_ISSET(slist[i].sock, &fdr)) ||
+#ifdef TLS
+          (slist[i].ssl && SSL_pending(slist[i].ssl)) ||
+#endif
           ((slist[i].sock == STDOUT) && (!backgrd) &&
           (FD_ISSET(STDIN, &fdr)))))) {
         if (slist[i].flags & (SOCK_LISTEN | SOCK_CONNECT)) {
@@ -725,7 +743,12 @@ int sockread(char *s, int *len, sock_list *slist, int slistmax, int tclonly)
           if (slist[i].flags & SOCK_PROXYWAIT) /* drummer */
             /* Hang around to get the return code from proxy */
             grab = 10;
+#ifdef TLS
+          else if (!(slist[i].flags & SOCK_STRONGCONN) &&
+            (!(slist[i].ssl) || !SSL_in_init(slist[i].ssl))) {
+#else
           else if (!(slist[i].flags & SOCK_STRONGCONN)) {
+#endif
             debug1("net: connect! sock %d", slist[i].sock);
             s[0] = 0;
             *len = 0;
@@ -740,7 +763,24 @@ int sockread(char *s, int *len, sock_list *slist, int slistmax, int tclonly)
         if ((slist[i].sock == STDOUT) && !backgrd)
           x = read(STDIN, s, grab);
         else
-          x = read(slist[i].sock, s, grab);
+#ifdef TLS
+	{
+          if (slist[i].ssl) {
+            x = SSL_read(slist[i].ssl, s, grab);
+            if (x < 0) {
+	      int err = SSL_get_error(slist[i].ssl, x);
+	      if (err == SSL_ERROR_WANT_READ || err == SSL_ERROR_WANT_WRITE)
+	        errno = EAGAIN;
+              else
+                debug1("SSL error: %s", ERR_error_string(ERR_get_error(), 0));
+              x = -1;
+            }
+          } else
+            x = read(slist[i].sock, s, grab);
+	}
+#else
+	  x = read(slist[i].sock, s, grab);
+#endif  
         if (x <= 0) {           /* eof */
           if (errno != EAGAIN) { /* EAGAIN happens when the operation would
                                   * block on a non-blocking socket, if the
@@ -1047,6 +1087,22 @@ void tputs(register int z, char *s, unsigned int len)
         socklist[i].handler.sock.outbuflen += len;
         return;
       }
+#ifdef TLS
+      if (socklist[i].ssl) {
+        x = SSL_write(socklist[i].ssl, s, len);
+        if (x < 0) {
+          int err = SSL_get_error(socklist[i].ssl, x);
+          if (err == SSL_ERROR_WANT_WRITE || err == SSL_ERROR_WANT_READ)
+            errno = EAGAIN;
+          else if (!inhere) { /* Out there, somewhere */
+            inhere = 1;
+            debug1("SSL error: %s", ERR_error_string(ERR_get_error(), 0));
+            inhere = 0;
+          }
+          x = -1;
+        }
+      } else /* not ssl, use regular write() */
+#endif      
       /* Try. */
       x = write(z, s, len);
       if (x == -1)
@@ -1114,6 +1170,20 @@ void dequeue_sockets()
         (socklist[i].handler.sock.outbuf != NULL) && (FD_ISSET(socklist[i].sock, &wfds))) {
       /* Trick tputs into doing the work */
       errno = 0;
+#ifdef TLS
+      if (socklist[i].ssl) {
+        x = SSL_write(socklist[i].ssl, socklist[i].handler.sock.outbuf,
+        socklist[i].handler.sock.outbuflen);
+        if (x < 0) {
+          int err = SSL_get_error(socklist[i].ssl, x);
+          if (err == SSL_ERROR_WANT_WRITE || err == SSL_ERROR_WANT_READ)
+            errno = EAGAIN;
+          else
+            debug1("SSL error: %s", ERR_error_string(ERR_get_error(), 0));
+          x = -1;
+        }
+      } else
+#endif   
       x = write(socklist[i].sock, socklist[i].handler.sock.outbuf, socklist[i].handler.sock.outbuflen);
       if ((x < 0) && (errno != EAGAIN)
 #ifdef EBADSLT
@@ -1183,6 +1253,10 @@ void tell_netdebug(int idx)
         strcat(s, " (strong)");
       if (socklist[i].flags & SOCK_NONSOCK)
         strcat(s, " (file)");
+#ifdef TLS
+      if (socklist[i].ssl)
+        strcat(s, " (TLS)");
+#endif
       if (socklist[i].flags & SOCK_TCL)
         strcat(s, " (tcl)");
       if (!(socklist[i].flags & SOCK_TCL)) {
@@ -1345,4 +1419,21 @@ int flush_inbuf(int idx)
     }
   }
   return -1;
+}
+
+/* Find sock in socklist.
+ *
+ * Returns index in socklist or -1 if not found.
+ */
+int findsock(int sock)
+{
+  int i;
+  struct threaddata *td = threaddata();
+
+  for (i = 0; i < td->MAXSOCKS; i++)
+    if (td->socklist[i].sock == sock)
+      break;
+  if (i == td->MAXSOCKS)
+    return -1;
+  return i;
 }

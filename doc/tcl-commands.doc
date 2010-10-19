@@ -1,4 +1,4 @@
-$Id: tcl-commands.doc,v 1.3 2010/10/10 18:22:47 pseudo Exp $
+$Id: tcl-commands.doc,v 1.4 2010/10/19 12:13:32 pseudo Exp $
 
 Eggdrop Tcl Commands
 Last revised: November 23, 2009
@@ -804,9 +804,10 @@ marked with vertical bars (|) on the left.
     Returns: string of the type "+ntik key" for the channel specified
     Module: irc
 
-  jump [server [port [password]]]
+  jump [server [[+]port [password]]]
     Description: jumps to the server specified, or (if none is specified)
-      the next server in the bot's serverlist
+      the next server in the bot's serverlist. If you prefix the port with
+      a plus sign (e.g. +6697), SSL connection will be attempted.
     Returns: nothing
     Module: server
 
@@ -1028,16 +1029,19 @@ marked with vertical bars (|) on the left.
     Returns: nothing
     Module: core
 
-  connect <host> <port>
+  connect <host> <[+]port>
     Description: makes an outgoing connection attempt and creates a dcc
       entry for it. A 'control' command should be used immediately after
-      a successful 'connect' so no input is lost.
+      a successful 'connect' so no input is lost. If the port is prefixed
+      with a plus sign, SSL encrypted connection will be attempted.
     Returns: idx of the new connection
     Module: core
 
   listen <port> <type> [options] [flag]
     Description: opens a listening port to accept incoming telnets; type
-      must be one of "bots", "all", "users", "script", or "off":
+      must be one of "bots", "all", "users", "script", or "off".
+      Prefixing the port with a plus sign will make eggdrop accept SSL
+      connections on it.
 
         listen <port> bots [mask]
           Description: accepts connections from bots only; the optional mask
@@ -1607,6 +1611,27 @@ marked with vertical bars (|) on the left.
 |      isn't specified. The format is a flat list of name-value pairs.
 |    Module: core
 
+
+| istls <idx>
+|  Description: checks if a connection is encrypted or cleartext. This
+|    command is available on TLS-enabled bots only.
+|  Returns: 1 if the idx is a TLS connection, 0 if it's plaintext.
+|  Module: core
+
+| starttls <idx>
+|  Description: establishes a secure (using TLS) connection over idx. The
+|    TLS connection should be first negotiated over the plaintext link,
+|    or using other means. Both parties must switch to TLS simultaneously.
+|    This command is available on TLS-enabled bots only.
+|  Returns: nothing
+|  Module: core
+
+| tlsstatus <idx>
+|  Description: provides information about an established TLS connection
+|    This includes certificate and cipher information as well as protocol
+|    version. This command is available on TLS-enabled bots only.
+|  Returns: a flat list of name-value pairs
+|  Module: core
 
 *** GLOBAL VARIABLES ***
 

@@ -1,7 +1,7 @@
 /*
  * share.c -- part of share.mod
  *
- * $Id: share.c,v 1.3 2010/08/05 18:12:05 pseudo Exp $
+ * $Id: share.c,v 1.4 2010/10/19 12:13:33 pseudo Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -1142,7 +1142,13 @@ static void share_ufsend(int idx, char *par)
     (void) setsockname(&dcc[i].sockname, ip, dcc[i].port, 0);
     /* Don't buffer this -> mark binary. */
     sock = getsock(dcc[i].sockname.family, SOCK_BINARY);
+#ifdef TLS
+    if (sock < 0 || (open_telnet_raw(sock, &dcc[i].sockname) < 0) ||
+        (*port == '+' && ssl_handshake(sock, TLS_CONNECT, tls_vfybots,
+        LOG_MISC, ip, NULL))) {
+#else
     if (sock < 0 || open_telnet_raw(sock, &dcc[i].sockname) < 0) {
+#endif
       lostdcc(i);
       killsock(sock);
       putlog(LOG_BOTS, "*", "Asynchronous connection failed!");
@@ -1156,6 +1162,10 @@ static void share_ufsend(int idx, char *par)
       dcc[i].u.xfer->length = atoi(par);
       dcc[i].u.xfer->f = f;
       dcc[i].sock = sock;
+#ifdef TLS
+      if (*port == '+')
+        dcc[i].ssl = 1;
+#endif
       strcpy(dcc[i].host, dcc[idx].nick);
 
       dcc[idx].status |= STAT_GETTING;
@@ -1932,8 +1942,13 @@ static void start_sending_users(int idx)
     i = dcc_total - 1;
     strcpy(dcc[i].host, dcc[idx].nick); /* Store bot's nick */
     getdccaddr(&dcc[i].sockname, s, sizeof s);
-    dprintf(idx, "s us %s %d %lu\n", s,
-            dcc[i].port, dcc[i].u.xfer->length);
+#ifdef TLS
+    if (dcc[idx].ssl) {
+      dcc[i].ssl = 1;
+      dprintf(idx, "s us %s +%d %lu\n", s, dcc[i].port, dcc[i].u.xfer->length);
+    } else
+#endif
+    dprintf(idx, "s us %s %d %lu\n", s, dcc[i].port, dcc[i].u.xfer->length);
     /* Start up a tbuf to queue outgoing changes for this bot until the
      * userlist is done transferring.
      */

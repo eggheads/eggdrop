@@ -7,7 +7,7 @@
  *   (non-Tcl) procedure lookups for msg/dcc/file commands
  *   (Tcl) binding internal procedures to msg/dcc/file commands
  *
- * $Id: tclhash.c,v 1.1 2010/07/26 21:11:06 simple Exp $
+ * $Id: tclhash.c,v 1.2 2010/10/19 12:13:33 pseudo Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -42,6 +42,10 @@ p_tcl_bind_list bind_table_list;
 p_tcl_bind_list H_chat, H_act, H_bcst, H_chon, H_chof, H_load, H_unld, H_link,
                 H_disc, H_dcc, H_chjn, H_chpt, H_bot, H_time, H_nkch, H_away,
                 H_note, H_filt, H_event, H_cron, H_log = NULL;
+#ifdef TLS
+p_tcl_bind_list H_tls = NULL;
+static int builtin_idx();
+#endif
 
 static int builtin_2char();
 static int builtin_3char();
@@ -238,6 +242,9 @@ void init_bind(void)
   H_act = add_bind_table("act", HT_STACKABLE, builtin_chat);
   H_event = add_bind_table("evnt", HT_STACKABLE, builtin_char);
   H_log = add_bind_table("log", HT_STACKABLE, builtin_log);
+#ifdef TLS
+  H_tls = add_bind_table("tls", HT_STACKABLE, builtin_idx);
+#endif
   add_builtins(H_dcc, C_dcc);
   Context;
 }
@@ -686,6 +693,19 @@ static int builtin_log STDVAR
   F(argv[1], argv[2], argv[3]);
   return TCL_OK;
 }
+
+#ifdef TLS
+static int builtin_idx STDVAR
+{
+  Function F = (Function) cd;
+
+  BADARGS(2, 2, " idx");
+
+  CHECKVALIDITY(builtin_idx);
+  F(atoi(argv[1]));
+  return TCL_OK;
+}
+#endif
 
 /* Trigger (execute) a Tcl proc
  *
@@ -1177,6 +1197,20 @@ void check_tcl_log(int lv, char *chan, char *msg)
   check_tcl_bind(H_log, mask, 0, " $_log1 $_log2 $_log3",
                  MATCH_MASK | BIND_STACKABLE);
 }
+
+#ifdef TLS
+int check_tcl_tls(int sock)
+{
+  int x;
+  char s[11];
+
+  egg_snprintf(s, sizeof s, "%d", sock);
+  Tcl_SetVar(interp, "_tls", s, 0);
+  x = check_tcl_bind(H_tls, s, 0, " $_tls", MATCH_MASK | BIND_STACKABLE |
+                     BIND_WANTRET);
+  return (x == BIND_EXEC_LOG);
+}
+#endif
 
 void tell_binds(int idx, char *par)
 {

@@ -1,7 +1,7 @@
 /*
  * module.h
  *
- * $Id: module.h,v 1.2 2010/08/05 18:12:05 pseudo Exp $
+ * $Id: module.h,v 1.3 2010/10/19 12:13:33 pseudo Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -195,6 +195,9 @@
 #define answer ((int (*) (int, sockname_t *, unsigned short *, int))global[76])
 #define getvhost ((void (*) (sockname_t *, int))global[77])
 /* was neterror() */
+#ifdef TLS
+#  define ssl_handshake ((int (*)(int,int,int,int,char *,IntFunc))global[78])
+#endif
 #define tputs ((void (*) (int, char *,unsigned int))global[79])
 /* 80 - 83 */
 #define new_dcc ((int (*) (struct dcc_table *, int))global[80])
@@ -225,22 +228,33 @@
 #define max_dcc (*(int *)global[100])
 #define require_p (*(int *)global[101])
 #define ignore_time (*(int *)(global[102]))
-/* was use_console_r <Wcc[02/02/03]> */
+#ifdef TLS
+#  define dcc_fingerprint ((int (*) (int))global[103])
+#endif
 /* 104 - 107 */
 #define reserved_port_min (*(int *)(global[104]))
 #define reserved_port_max (*(int *)(global[105]))
 #define raw_log (*(int *)(global[106]))
 #define noshare (*(int *)(global[107]))
 /* 108 - 111 */
+#ifdef TLS
+#  define tls_vfybots (*(int *)(global[108]))
+#else
 /* 108: gban_total -- UNUSED (Eule) */
+#endif
 #define make_userfile (*(int*)global[109])
 #define default_flags (*(int*)global[110])
 #define dcc_total (*(int*)global[111])
 /* 112 - 115 */
 #define tempdir ((char *)(global[112]))
 #define natip ((char *)(global[113]))
+#ifdef TLS
+#  define tls_vfyclients (*(int *)(global[114]))
+#  define tls_vfydcc (*(int *)(global[115]))
+#else
 /* was natip -- UNUSED */
 /* was hostname -- UNUSED */
+#endif
 #define origbotname ((char *)(global[115]))
 /* 116 - 119 */
 #define botuser ((char *)(global[116]))

@@ -12,11 +12,13 @@
    See http://www.ietf.org/rfc/rfc1459.txt for more information on the
    IRC protocol.
 %{help=jump}%{+m}
-###  %bjump%b [server [port [pass]]]
+###  %bjump%b [server [[+]port [pass]]]
    Makes the bot jump to another server. If you don't specify a server, it
    will jump to the next server in the server list (see %b'.help servers'%b).
    If you specify a server, it will jump to that server (the default port is
    6667, unless you specified a different default port in your config file).
+   If you prefix the port with a plus sign (e.g. +6697), SSL connection will
+   be attempted.
    If the server is not in the server list already, it will be added to it.
    Jumping servers ALWAYS makes the bot lose ops! Be careful!
 

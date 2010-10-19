@@ -4,7 +4,7 @@
  *
  * Rewritten by Fabian Knittel <fknittel@gmx.de>
  *
- * $Id: filedb3.c,v 1.2 2010/08/05 18:12:05 pseudo Exp $
+ * $Id: filedb3.c,v 1.3 2010/10/19 12:13:33 pseudo Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer

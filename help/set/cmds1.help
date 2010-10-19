@@ -28,9 +28,6 @@
 %{help=set owner}%{+n}
 ###  %bset owner%b <nickname-list>
    This is a list of owners of the bot.
-%{help=set my-hostname}%{+n}
-###  %bset my-hostname%b <hostname>
-   Set this if Eggdrop has trouble detecting its hostname.
 %{help=set vhost4}%{+n}
 ###  %bset vhost4%b <ipv4-address|hostname>
    If you're using virtual hosting (your machine has more than 1 IP),
@@ -289,3 +286,78 @@
    This specifies what permissions the user, channel, and notes
    files should be set to. The octal values are the same as for
    the chmod system command.
+%{help=set ssl-certificate}%{+n}
+###  %bset ssl-certificate%b <filename>
+   Specify the filename where your SSL certificate is located. If
+   you don't set this, eggdrop will not be able to act as a server
+   in SSL connections, as with most ciphers a certificate and a
+   private key are required on the server side. Must be in PEM
+   format.
+%{help=set ssl-privatekey}%{+n}
+###  %bset ssl-privatekey%b <filename>
+   File containing your private RSA key used for SSL connections.
+%{help=set ssl-verify-depth}%{+n}
+###  %bset ssl-verify-depth%b <depth>
+   Sets the maximum depth for the certificate chain verification
+   that will be allowed for ssl. When certificate verification is
+   enabled, any chain exceeding this depth will fail verification.
+%{help=set ssl-capath}%{+n}
+###  %bset ssl-capath%b <directory>
+   Specify the location where CA certificates for verification
+   purposes are located. These certificates are trusted. If you
+   don't set this or ssl-cafile, certificate verification will not
+   work.
+
+See also: ssl-cafile
+%{help=set ssl-cafile}%{+n}
+###  %bset ssl-cafile%b <filename>
+   Specify a file which contains CA certificates for verification
+   purposes. These certificates are trusted. If you don't set this
+   or ssl-capath, certificate verification will not work.
+
+See also: set ssl-capath
+%{help=set ssl-ciphers}%{+n}
+###  %bset ssl-ciphers%b <cipher list>
+   Specify the list of ciphers (in order of preference) allowed for
+   use with ssl. The cipher list is one or more cipher strings
+   separated by colons, commas or spaces. Unavailable ciphers are
+   silently ignored unless no useable cipher could be found. For the
+   list of possible cipher strings and their meanings, please refer
+   to the ciphers(1) manual.
+   If you set this, the value replaces any ciphers OpenSSL might use
+   by  default. To include the default ciphers, you can put DEFAULT
+   as a cipher string in the list.
+%{help=set ssl-cert-auth}%{+n}
+###  %bset ssl-cert-auth%b <0/1/2>
+   Enable certificate authorization. Set to 1 to allow users and bots
+   to identify automatically by their certificate fingerprints. Setting
+   it to 2 to will force fingerprint logins. With a value of 2, users
+   without a fingerprint set or with a certificate UID not matching
+   their handle won't be allowed to login on SSL enabled telnet ports.
+   Fingerprints must be set in advance with the .fprint and .chfinger
+   commands.
+   NOTE: this setting has no effect on plain-text ports.
+%{help=set ssl-verify-dcc}%{+n}
+###  %bset ssl-verify-dcc%b <#>
+   Control certificate verification for DCC chats (/dcc chat botnick)
+
+See also: set ssl-verify-clients
+%{help=set ssl-verify-bots}%{+n}
+###  %bset ssl-verify-bots%b <#>
+   Control certificate verification for linking to hubs
+
+See also: set ssl-verify-clients
+%{help=set ssl-verify-clients}%{+n}
+###  %bset ssl-verify-clients%b <#>
+   Control cerfificate verification for SSL listening ports. This includes
+   leaf bots connecting to us, users telneting in and /ctcp bot chat.
+   You can set this by adding together the numbers for all exceptions you
+   want to enable. By default certificate verification is disabled and all
+   certificates are assumed to be valid.
+   There are the following exceptions with their corresponding numbers:
+     1  enable certificate verification
+     2  allow self-signed certificates
+     4  don't check peer common or alt names
+     8  allow expired certificates
+     16 allow certificates which are not valid yet
+     32 allow revoked certificates

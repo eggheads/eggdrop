@@ -2,7 +2,7 @@
  * tcldcc.c -- handles:
  *   Tcl stubs for the dcc commands
  *
- * $Id: tcldcc.c,v 1.2 2010/08/05 18:12:05 pseudo Exp $
+ * $Id: tcldcc.c,v 1.3 2010/10/19 12:13:33 pseudo Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -33,6 +33,10 @@ extern tcl_timer_t *timer, *utimer;
 extern struct dcc_t *dcc;
 extern char botnetnick[];
 extern int dcc_total, backgrd, parties, make_userfile, do_restart, remote_boots, max_dcc;
+#ifdef TLS
+extern int tls_vfydcc;
+extern sock_list *socklist;
+#endif
 extern party_t *party;
 extern tand_t *tandbot;
 extern time_t now;
@@ -878,9 +882,21 @@ static int tcl_connect STDVAR
     }
     return TCL_ERROR;
   }            
+#ifdef TLS
+  if (*argv[2] == '+' && ssl_handshake(sock, TLS_CONNECT, 0, LOG_MISC, NULL, NULL)) {
+    killsock(sock);
+    strncpyz(s, "Failed to establish a TLS session", sizeof s);
+    Tcl_AppendResult(irp, s, NULL);
+    return TCL_ERROR;
+  }
+#endif
   i = new_dcc(&DCC_SOCKET, 0);
   dcc[i].sock = sock;
   dcc[i].port = atoi(argv[2]);
+#ifdef TLS
+  if (*argv[2] == '+')
+    dcc[i].ssl = 1;
+#endif
   strcpy(dcc[i].nick, "*");
   strncpyz(dcc[i].host, argv[1], UHOSTMAX);
   egg_snprintf(s, sizeof s, "%d", sock);
@@ -965,6 +981,12 @@ static int tcl_listen STDVAR
     dcc[idx].sock = i;
     dcc[idx].timeval = now;
   }
+#ifdef TLS
+  if (*argv[1] == '+')
+    dcc[idx].ssl = 1;
+  else
+    dcc[idx].ssl = 0;
+#endif
   /* script? */
   if (!strcmp(argv[2], "script")) {
     strcpy(dcc[idx].nick, "(script)");

@@ -5,7 +5,7 @@
  *   command line arguments
  *   context and assert debugging
  *
- * $Id: main.c,v 1.3 2010/10/10 21:24:43 pseudo Exp $
+ * $Id: main.c,v 1.4 2010/10/19 12:13:33 pseudo Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -164,6 +164,9 @@ int cx_line[16];
 int cx_ptr = 0;
 #endif
 
+#ifdef TLS
+int ssl_cleanup();
+#endif
 
 void fatal(const char *s, int recoverable)
 {
@@ -174,6 +177,9 @@ void fatal(const char *s, int recoverable)
   for (i = 0; i < dcc_total; i++)
     if (dcc[i].sock >= 0)
       killsock(dcc[i].sock);
+#ifdef TLS
+  ssl_cleanup();
+#endif
   unlink(pid_file);
   if (!recoverable) {
     bg_send_quit(BG_ABORT);
@@ -193,6 +199,10 @@ int expmem_modules(int);
 int expmem_language();
 int expmem_tcldcc();
 int expmem_tclmisc();
+int expmem_dns();
+#ifdef TLS
+int expmem_tls();
+#endif
 
 /* For mem.c : calculate memory we SHOULD be using
  */
@@ -203,7 +213,10 @@ int expected_memory(void)
   tot = expmem_chanprog() + expmem_users() + expmem_misc() + expmem_dccutil() +
         expmem_botnet() + expmem_tcl() + expmem_tclhash() + expmem_net() +
         expmem_modules(0) + expmem_language() + expmem_tcldcc() +
-        expmem_tclmisc();
+        expmem_tclmisc() + expmem_dns();
+#ifdef TLS 
+  tot += expmem_tls();
+#endif
   return tot;
 }
 
@@ -695,6 +708,9 @@ int init_bots();
 int init_modules();
 int init_tcl(int, char **);
 int init_language(int);
+#ifdef TLS
+int ssl_init();
+#endif
 
 static void patch(const char *str)
 {
@@ -904,6 +920,10 @@ int mainloop(int toplevel)
       }
 
       rehash();
+#ifdef TLS
+      ssl_cleanup();
+      ssl_init();
+#endif
       restart_chons();
       call_hook(HOOK_LOADED);
     }
@@ -1063,6 +1083,9 @@ int main(int arg_c, char **arg_v)
     i++;
   putlog(LOG_MISC, "*", "=== %s: %d channels, %d users.",
          botnetnick, i, count_users(userlist));
+#ifdef TLS
+  ssl_init();
+#endif
   cache_miss = 0;
   cache_hit = 0;
   if (!pid_file[0])

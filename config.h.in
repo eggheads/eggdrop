@@ -84,6 +84,12 @@
 /* Define to 1 if you have the `dprintf' function. */
 #undef HAVE_DPRINTF
 
+/* Define to 1 if you have the `EVP_md5' function. */
+#undef HAVE_EVP_MD5
+
+/* Define to 1 if you have the `EVP_sha1' function. */
+#undef HAVE_EVP_SHA1
+
 /* Define to 1 if you have the <fcntl.h> header file. */
 #undef HAVE_FCNTL_H
 
@@ -101,6 +107,9 @@
 
 /* Define to 1 if you have the `getrusage' function. */
 #undef HAVE_GETRUSAGE
+
+/* Define to 1 if you have the `hex_to_string' function. */
+#undef HAVE_HEX_TO_STRING
 
 /* Define to 1 if you have the in6addr_any constant. */
 #undef HAVE_IN6ADDR_ANY
@@ -126,6 +135,9 @@
 /* Define to 1 if you have the `isascii' function. */
 #undef HAVE_ISASCII
 
+/* Define to 1 if you have the `crypto' library (-lcrypto). */
+#undef HAVE_LIBCRYPTO
+
 /* Define to 1 if you have the `dl' library (-ldl). */
 #undef HAVE_LIBDL
 
@@ -140,6 +152,9 @@
 
 /* Define to 1 if you have the `socket' library (-lsocket). */
 #undef HAVE_LIBSOCKET
+
+/* Define to 1 if you have the `ssl' library (-lssl). */
+#undef HAVE_LIBSSL
 
 /* Define to 1 if you have the <limits.h> header file. */
 #undef HAVE_LIMITS_H
@@ -165,6 +180,15 @@
 /* Define to 1 if you have the `mbrlen' function. */
 #undef HAVE_MBRLEN
 
+/* Define to 1 if you have the `MD5_Final' function. */
+#undef HAVE_MD5_FINAL
+
+/* Define to 1 if you have the `MD5_Init' function. */
+#undef HAVE_MD5_INIT
+
+/* Define to 1 if you have the `MD5_Update' function. */
+#undef HAVE_MD5_UPDATE
+
 /* Define to 1 if you have the `memcpy' function. */
 #undef HAVE_MEMCPY
 
@@ -188,6 +212,18 @@
 
 /* Define to 1 if you have the `NSLinkModule' function. */
 #undef HAVE_NSLINKMODULE
+
+/* Define this if your OpenSSL library has MD5 cipher support. */
+#undef HAVE_OPENSSL_MD5
+
+/* Define to 1 if you have the <openssl/md5.h> header file. */
+#undef HAVE_OPENSSL_MD5_H
+
+/* Define to 1 if you have the <openssl/ssl.h> header file. */
+#undef HAVE_OPENSSL_SSL_H
+
+/* Define to 1 if you have the <openssl/x509v3.h> header file. */
+#undef HAVE_OPENSSL_X509V3_H
 
 /* Define to 1 if you have the `rand' function. */
 #undef HAVE_RAND
@@ -248,6 +284,9 @@
 
 /* Define to 1 if you have the <string.h> header file. */
 #undef HAVE_STRING_H
+
+/* Define to 1 if you have the `string_to_hex' function. */
+#undef HAVE_STRING_TO_HEX
 
 /* Define to 1 if you have the `strncasecmp' function. */
 #undef HAVE_STRNCASECMP
@@ -402,6 +441,9 @@
 /* Define to 1 if you can safely include both <sys/time.h> and <time.h>. */
 #undef TIME_WITH_SYS_TIME
 
+/* Define this to enable SSL support. */
+#undef TLS
+
 /* Define to 1 if your <sys/time.h> declares `struct tm'. */
 #undef TM_IN_SYS_TIME
 
@@ -448,6 +490,9 @@
 
 /* Define to 1 if you need to in order for `stat' and other things to work. */
 #undef _POSIX_SOURCE
+
+/* Define this to a 64-bit type on Cygwin to satisfy OpenSSL dependencies. */
+#undef __int64
 
 /* Define to empty if `const' does not conform to ANSI C. */
 #undef const

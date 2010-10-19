@@ -1,10 +1,17 @@
-$Id: Changes1.8,v 1.19 2010/10/14 09:49:47 pseudo Exp $
+$Id: Changes1.8,v 1.20 2010/10/19 12:13:32 pseudo Exp $
 
 Eggdrop Changes (since version 1.8.0)
 
     _____________________________________________________________________
 
 1.8.0 (CVS):
+
+  - Added full SSL support including Tcl commands.
+  - Added support for certificate authentication.
+  - Added support for botnet and partyline encryption using ssl.
+  - Documented the new features and commands.
+  - Fixed add_server() problems with IPv6 addresses in the server list.
+    Patch by: pseudo
 
   - Fixed dns.mod on QNX6/Mac OS X/Solaris
   - Rewrote dns.mod's autoconf checks to detect the resolver library properly

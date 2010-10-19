@@ -3,7 +3,7 @@
  *   commands from a user via dcc
  *   (split in 2, this portion contains no-irc commands)
  *
- * $Id: cmds.c,v 1.2 2010/08/05 18:12:05 pseudo Exp $
+ * $Id: cmds.c,v 1.3 2010/10/19 12:13:33 pseudo Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -805,11 +805,19 @@ static void cmd_pls_bot(struct userrec *u, int idx, char *par)
     strncpy(bi->address, addr, q - addr);
     bi->address[q - addr] = 0;
     p = q + 1;
+#ifdef TLS
+    if (*p == '+')
+      bi->ssl = 1;
+#endif
     bi->telnet_port = atoi(p);
     q = strchr(p, '/');
     if (!q) {
       bi->relay_port = bi->telnet_port;
     } else  {
+#ifdef TLS
+      if (q[1] == '+')
+        bi->ssl = 1;
+#endif
       bi->relay_port = atoi(q + 1);
     }
   }
@@ -819,7 +827,7 @@ static void cmd_pls_bot(struct userrec *u, int idx, char *par)
     dprintf(idx, "Added bot '%s' with address '%s' and %s%s%s.\n", handle,
             addr, host[0] ? "hostmask '" : "no hostmask", host[0] ? host : "",
             host[0] ? "'" : "");
-  } else{
+  } else {
     dprintf(idx, "Added bot '%s' with no address and %s%s%s.\n", handle,
             host[0] ? "hostmask '" : "no hostmask", host[0] ? host : "",
             host[0] ? "'" : "");
@@ -953,6 +961,73 @@ static void cmd_chpass(struct userrec *u, int idx, char *par)
   }
 }
 
+#ifdef TLS
+static void cmd_fprint(struct userrec *u, int idx, char *par)
+{
+  char *new;
+
+  if (!par[0]) {
+    dprintf(idx, "Usage: fprint <newfingerprint|+>\n");
+    return;
+  }
+  new = newsplit(&par);
+  if (!strcmp(new, "+")) {
+    if (!dcc[idx].ssl) {
+      dprintf(idx, "You aren't connected with SSL. "
+              "Please set your fingerprint manually.\n");
+      return;
+    } else if (!(new = ssl_getfp(dcc[idx].sock))) {
+      dprintf(idx, "Can't get your current fingerprint. "
+              "Set up you client to send a certificate!\n");
+      return;
+    }
+  }
+  if (set_user(&USERENTRY_FPRINT, u, new)) {
+    putlog(LOG_CMDS, "*", "#%s# fprint...", dcc[idx].nick);
+    dprintf(idx, "Changed fingerprint to '%s'.\n", new);
+  } else
+    dprintf(idx, "Invalid fingerprint. Must be a hexadecimal string.\n");
+}
+
+static void cmd_chfinger(struct userrec *u, int idx, char *par)
+{
+  char *handle, *new;
+  int atr = u ? u->flags : 0;
+
+  if (!par[0])
+    dprintf(idx, "Usage: chfinger <handle> [fingerprint]\n");
+  else {
+    handle = newsplit(&par);
+    u = get_user_by_handle(userlist, handle);
+    if (!u)
+      dprintf(idx, "No such user.\n");
+    else if ((atr & USER_BOTMAST) && !(atr & USER_MASTER) &&
+             !(u->flags & USER_BOT))
+      dprintf(idx, "You can't change fingerprints for non-bots.\n");
+    else if ((bot_flags(u) & BOT_SHARE) && !(atr & USER_OWNER))
+      dprintf(idx, "You can't change a share bot's fingerprint.\n");
+    else if ((u->flags & USER_OWNER) && !(atr & USER_OWNER) &&
+             egg_strcasecmp(handle, dcc[idx].nick))
+      dprintf(idx, "You can't change a bot owner's fingerprint.\n");
+    else if (isowner(handle) && egg_strcasecmp(dcc[idx].nick, handle))
+      dprintf(idx, "You can't change a permanent bot owner's fingerprint.\n");
+    else if (!par[0]) {
+      putlog(LOG_CMDS, "*", "#%s# chfinger %s [nothing]", dcc[idx].nick, handle);
+      set_user(&USERENTRY_FPRINT, u, NULL);
+      dprintf(idx, "Removed fingerprint.\n");
+    } else {
+      new = newsplit(&par);
+      if (set_user(&USERENTRY_FPRINT, u, new)) {
+        putlog(LOG_CMDS, "*", "#%s# chfinger %s %s", dcc[idx].nick,
+               handle, new);
+        dprintf(idx, "Changed fingerprint.\n");
+      } else 
+        dprintf(idx, "Invalid fingerprint. Must be a hexadecimal string.\n");
+    }
+  }
+}
+#endif
+
 static void cmd_chaddr(struct userrec *u, int idx, char *par)
 {
   int telnet_port = 3333, relay_port = 3333;
@@ -992,6 +1067,9 @@ static void cmd_chaddr(struct userrec *u, int idx, char *par)
   }
 
   bi = user_malloc(sizeof(struct bot_addr));
+#ifdef TLS
+  bi->ssl = 0;
+#endif
 
 #ifdef IPV6
   if ((q = strchr(addr, ','))) {
@@ -1011,11 +1089,19 @@ static void cmd_chaddr(struct userrec *u, int idx, char *par)
     bi->address = user_malloc(q - addr + 1);
     strncpyz(bi->address, addr, q - addr + 1);
     p = q + 1;
+#ifdef TLS
+    if (*p == '+')
+      bi->ssl = 1;
+#endif
     bi->telnet_port = atoi(p);
     q = strchr(p, '/');
     if (!q) {
       bi->relay_port = bi->telnet_port;
     } else {
+#ifdef TLS
+    if (q[1] == '+')
+      bi->ssl = 1;
+#endif
       bi->relay_port = atoi(q + 1);
     }
   }
@@ -2804,6 +2890,9 @@ cmd_t C_dcc[] = {
   {"chaddr",    "t",    (IntFunc) cmd_chaddr,     NULL},
   {"chat",      "",     (IntFunc) cmd_chat,       NULL},
   {"chattr",    "m|m",  (IntFunc) cmd_chattr,     NULL},
+#ifdef TLS
+  {"chfinger",  "t",    (IntFunc) cmd_chfinger,   NULL},
+#endif
   {"chhandle",  "t",    (IntFunc) cmd_chhandle,   NULL},
   {"chnick",    "t",    (IntFunc) cmd_chhandle,   NULL},
   {"chpass",    "t",    (IntFunc) cmd_chpass,     NULL},
@@ -2813,6 +2902,9 @@ cmd_t C_dcc[] = {
   {"debug",     "m",    (IntFunc) cmd_debug,      NULL},
   {"die",       "n",    (IntFunc) cmd_die,        NULL},
   {"echo",      "",     (IntFunc) cmd_echo,       NULL},
+#ifdef TLS
+  {"fprint",    "",     (IntFunc) cmd_fprint,     NULL},
+#endif
   {"fixcodes",  "",     (IntFunc) cmd_fixcodes,   NULL},
   {"help",      "",     (IntFunc) cmd_help,       NULL},
   {"ignores",   "m",    (IntFunc) cmd_ignores,    NULL},

@@ -4,7 +4,7 @@
  *   Tcl initialization
  *   getting and setting Tcl/eggdrop variables
  *
- * $Id: tcl.c,v 1.3 2010/08/23 21:27:40 pseudo Exp $
+ * $Id: tcl.c,v 1.4 2010/10/19 12:13:33 pseudo Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -65,6 +65,12 @@ extern int flood_telnet_thr, flood_telnet_time, shtime, share_greet,
 #ifdef IPV6
 extern char vhost6[];
 extern int pref_af;
+#endif
+
+#ifdef TLS
+extern int tls_maxdepth, tls_vfybots, tls_vfyclients, tls_vfydcc, tls_auth;
+extern char tls_capath[], tls_cafile[], tls_certfile[], tls_keyfile[],
+            tls_ciphers[];
 #endif
 
 extern struct dcc_t *dcc;
@@ -489,12 +495,19 @@ static tcl_strings def_tcl_strings[] = {
   {"help-path",       helpdir,        120, STR_DIR | STR_PROTECT},
   {"temp-path",       tempdir,        120, STR_DIR | STR_PROTECT},
   {"text-path",       textdir,        120, STR_DIR | STR_PROTECT},
+#ifdef TLS
+  {"ssl-capath",      tls_capath,     120, STR_DIR | STR_PROTECT},
+  {"ssl-cafile",      tls_cafile,     120,           STR_PROTECT},
+  {"ssl-ciphers",     tls_ciphers,    120,           STR_PROTECT},
+  {"ssl-privatekey",  tls_keyfile,    120,           STR_PROTECT},
+  {"ssl-certificate", tls_certfile,   120,           STR_PROTECT},
+#endif
 #ifndef STATIC
   {"mod-path",        moddir,         120, STR_DIR | STR_PROTECT},
 #endif
   {"notify-newusers", notify_new,     120,                     0},
   {"owner",           owner,          120,           STR_PROTECT},
-  {"vhost4",          vhost,          120,                     0},
+  {"vhost",           vhost,           120,                    0},
 #ifdef IPV6
   {"vhost6",          vhost6,         120,                     0},
 #endif
@@ -516,6 +529,13 @@ static tcl_strings def_tcl_strings[] = {
 static tcl_ints def_tcl_ints[] = {
   {"ignore-time",           &ignore_time,          0},
   {"handlen",               &handlen,              2},
+#ifdef TLS
+  {"ssl-chain-depth",       &tls_maxdepth,         0},
+  {"ssl-verify-dcc",        &tls_vfydcc,           0},
+  {"ssl-verify-clients",    &tls_vfyclients,       0},
+  {"ssl-verify-bots",       &tls_vfybots,          0},
+  {"ssl-cert-auth",         &tls_auth,             0},
+#endif
   {"dcc-flood-thr",         &dcc_flood_thr,        0},
   {"hourly-updates",        &notify_users_at,      0},
   {"switch-logfiles-at",    &switch_logfiles_at,   0},
@@ -595,6 +615,9 @@ void kill_tcl()
 
 extern tcl_cmds tcluser_cmds[], tcldcc_cmds[], tclmisc_cmds[],
        tclmisc_objcmds[], tcldns_cmds[];
+#ifdef TLS
+extern tcl_cmds tcltls_cmds[];
+#endif
 
 #ifdef REPLACE_NOTIFIER
 /* The tickle_*() functions replace the Tcl Notifier
@@ -839,6 +862,9 @@ resetPath:
   add_tcl_objcommands(tclmisc_objcmds);
 #endif
   add_tcl_commands(tcldns_cmds);
+#ifdef TLS
+  add_tcl_commands(tcltls_cmds);
+#endif
 }
 
 void do_tcl(char *whatzit, char *script)

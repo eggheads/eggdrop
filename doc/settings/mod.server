@@ -1,4 +1,4 @@
-$Id: mod.server,v 1.1 2010/07/26 21:11:06 simple Exp $
+$Id: mod.server,v 1.2 2010/10/19 12:13:32 pseudo Exp $
 
 Server Module
 Last revised: February 12, 2003
@@ -78,6 +78,7 @@ Last revised: February 12, 2003
     set servers {
       you.need.to.change.this:6667
       another.example.com:7000:password
+      ssl.example.net:+6697
     }
       This is the bot's server list. The bot will start at the first server
       listed, and cycle through them whenever it gets disconnected. You need
@@ -85,6 +86,8 @@ Last revised: February 12, 2003
 
       The format is:
         server[:port[:password]]
+      Prefix the port with a plus sign to attempt a SSL connection:
+        server:+port[:password]
 
       Both the port and password fields are optional; however, if you want to
       set a password you must also set a port. If a port isn't specified it
@@ -95,16 +98,35 @@ Last revised: February 12, 2003
       Set the default port which should be used if none is specified with
       '.jump' or in 'set servers'.
 
+
     set msg-rate 2
       Number of seconds to wait between transmitting queued lines to the
       server. Lower this value at your own risk.  ircd is known to start
       flood control at 512 bytes/2 seconds.
+
+
+    set ssl-verify-servers 0
+      Control certificate verification for servers. You can set this by adding
+      together the numbers for all exceptions you want to enable. By default
+      certificate verification is disabled and all certificates are assumed to
+      be valid. The numbers are the following:
+      
+      The numbers are the following:
+        1  - enable certificate verification
+        2  - allow self-signed certificates
+        4  - don't check peer common or alt names
+        8  - allow expired certificates
+        16 - allow certificates which are not valid yet
+        32 - allow revoked certificates
+      A value of 0 disables verification.
+
 
     set server-cycle-wait 60
       This setting defines how long Eggdrop should wait before moving from one
       server to another on disconnect. If you set 0 here, Eggdrop will not wait
       at all and will connect instantly. Setting this too low could result in
       your bot being K:Lined.
+
 
     set never-give-up 1
       This settings makes the bot cycle forever through the server list until

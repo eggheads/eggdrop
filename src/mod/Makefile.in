@@ -1,5 +1,5 @@
 # Makefile for src/mod/
-# $Id: Makefile.in,v 1.2 2010/10/10 21:24:43 pseudo Exp $
+# $Id: Makefile.in,v 1.3 2010/10/19 12:13:33 pseudo Exp $
 
 SHELL = @SHELL@
 top_srcdir = @top_srcdir@
@@ -16,10 +16,10 @@ INSTALL_SCRIPT = @INSTALL_SCRIPT@
 CC = @CC@
 LD = @CC@
 STRIP = @STRIP@
-CFLAGS = @CFLAGS@ -I../.. -I$(top_srcdir) @DEFS@ $(CFLGS)
+CFLAGS = @CFLAGS@ -I../.. -I$(top_srcdir) @SSL_INCLUDES@ @DEFS@ $(CFLGS)
 CPPFLAGS = @CPPFLAGS@
 MOD_CFLAGS = @CFLAGS@ -I. -I../../.. -I$(MOD_UPDIR)$(top_srcdir) \
-  -I$(MOD_UPDIR)$(top_srcdir)/src/mod @DEFS@ $(CFLGS)
+  -I$(MOD_UPDIR)$(top_srcdir)/src/mod @SSL_INCLUDES@ @DEFS@ $(CFLGS)
 MOD_CPPFLAGS = @CPPFLAGS@
 XLIBS = @XLIBS@
 MOD_EXT = @MOD_EXT@

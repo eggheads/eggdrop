@@ -1,5 +1,5 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
-<!-- $Id: mod-server.html,v 1.1 2010/07/26 21:11:06 simple Exp $ -->
+<!-- $Id: mod-server.html,v 1.2 2010/10/19 12:13:32 pseudo Exp $ -->
 
 <html>
   <head>
@@ -127,6 +127,7 @@
 <pre>
         you.need.to.change.this:6667
         another.example.com:7000:password
+        ssl.example.net:+6697
 </pre>
         <p><strong>}</strong></p>
 
@@ -141,9 +142,12 @@
           <p>set servers {<br>
            &nbsp; irc.netw.ork<br>
            &nbsp; irc.krow.ten:6668<br>
+           &nbsp; ssl.secu.re:+6697<br>
            }</p>
 
            <p>The format is: server[:port[:password]]</p>
+           <p>Prefix the port with a plus sign to attempt a SSL connection:
+           server:+port[:password]</p>
 
            <p>Both the port and password fields are optional; however, if you
            want to set a password you must also set a port. If a port isn&#39;t

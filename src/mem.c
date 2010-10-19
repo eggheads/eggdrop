@@ -3,7 +3,7 @@
  *   memory allocation and deallocation
  *   keeping track of what memory is being used by whom
  *
- * $Id: mem.c,v 1.1 2010/07/26 21:11:06 simple Exp $
+ * $Id: mem.c,v 1.2 2010/10/19 12:13:33 pseudo Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -66,7 +66,9 @@ int expmem_modules();
 int expmem_language();
 int expmem_tcldcc();
 int expmem_dns();
-
+#ifdef TLS
+int expmem_tls();
+#endif
 
 /* Initialize the memory structure
  */
@@ -117,7 +119,11 @@ void tell_mem_status_dcc(int idx)
 void debug_mem_to_dcc(int idx)
 {
 #ifdef DEBUG_MEM
-#  define MAX_MEM 13
+#  ifdef TLS
+#    define MAX_MEM 14
+#  else
+#    define MAX_MEM 13
+#  endif
   unsigned long exp[MAX_MEM], use[MAX_MEM], l;
   int i, j;
   char fn[20], sofar[81];
@@ -137,6 +143,9 @@ void debug_mem_to_dcc(int idx)
   exp[10] = expmem_modules(1);
   exp[11] = expmem_tcldcc();
   exp[12] = expmem_dns();
+#ifdef TLS
+  exp[13] = expmem_tls();
+#endif
 
   for (me = module_list; me; me = me->next)
     me->mem_work = 0;
@@ -176,6 +185,10 @@ void debug_mem_to_dcc(int idx)
       use[11] += l;
     else if (!strcmp(fn, "dns.c"))
       use[12] += l;
+#ifdef TLS
+    else if (!strcmp(fn, "tls.c"))
+      use[13] += l;
+#endif
     else if (p) {
       for (me = module_list; me; me = me->next)
         if (!strcmp(fn, me->name))
@@ -225,6 +238,11 @@ void debug_mem_to_dcc(int idx)
     case 12:
       strcpy(fn, "dns.c");
       break;
+#ifdef TLS
+    case 13:
+      strcpy(fn, "tls.c");
+      break;
+#endif
     }
 
     if (use[i] == exp[i])

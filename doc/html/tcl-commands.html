@@ -1,5 +1,5 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
-<!-- $Id: tcl-commands.html,v 1.4 2010/10/10 18:22:47 pseudo Exp $ -->
+<!-- $Id: tcl-commands.html,v 1.5 2010/10/19 12:13:32 pseudo Exp $ -->
 
 <html>
   <head>
@@ -3748,6 +3748,48 @@
           <p><strong>Returns:</strong> the requested information type or all
           information if type isn't specified. The format is a flat list of
           name-value pairs.</p>
+          
+          <p><strong>Module:</strong> core</p>
+        </dd>
+
+
+        <dt><strong><a name="cmd_istls"></a>istls &lt;idx&gt;</strong></dt>*
+
+        <dd>
+          <p><strong>Description:</strong> checks if a connection is
+          encrypted or cleartext. This command is available on TLS-enabled
+          bots only.
+
+          <p><strong>Returns:</strong> 1 if the idx is a TLS connection, 0
+          if it's plaintext.</p>
+          
+          <p><strong>Module:</strong> core</p>
+        </dd>
+
+
+        <dt><strong><a name="cmd_starttls"></a>starttls &lt;idx&gt;</strong></dt>*
+
+        <dd>
+          <p><strong>Description:</strong> establishes a secure (using TLS)
+          connection over idx. The TLS connection should be first negotiated
+          over the plaintext link, or by other means. Both parties must switch
+          to TLS simultaneously.</p>
+
+          <p><strong>Returns:</strong> nothing</p>
+          
+          <p><strong>Module:</strong> core</p>
+        </dd>
+
+
+        <dt><strong><a name="cmd_tlsstatus"></a>tlsstatus &lt;idx&gt;</strong></dt>*
+
+        <dd>
+          <p><strong>Description:</strong> provides information about an
+          established TLS connection. This includes certificate and cipher
+          information as well as protocol version. This command is
+          available on TLS-enabled bots only.</p>
+
+          <p><strong>Returns:</strong> a flat list of name-value pairs</p>
           
           <p><strong>Module:</strong> core</p>
         </dd>

@@ -2,7 +2,7 @@
 #  This is the Makefile for EGGDROP (the IRC bot)
 #  You should never need to edit this.
 #
-# $Id: Makefile.in,v 1.1 2010/07/26 21:11:06 simple Exp $
+# $Id: Makefile.in,v 1.2 2010/10/19 12:13:32 pseudo Exp $
 
 SHELL = @SHELL@
 top_srcdir = @top_srcdir@
@@ -70,7 +70,7 @@ XREQS = @TCL_REQS@
 # Extra libraries
 # XLIBS will be linked with everything
 # MODULE_XLIBS will only be linked with the module objects
-XLIBS = @TCL_LIBS@ @LIBS@
+XLIBS = @SSL_LIBS@ @TCL_LIBS@ @LIBS@
 MODULE_XLIBS = @MODULE_XLIBS@
 
 # You shouldn't need to edit anything below this line.
@@ -290,6 +290,20 @@ modtest: conftest
 		exit 1;\
 	fi
 	@echo "stamp" >EGGMOD.stamp
+
+sslcert:
+	@if test ! -d $(DEST); then \
+		echo "You haven't installed eggdrop yet.";\
+		echo "Please run \"make install\" first.";\
+		exit 1;\
+	fi
+	@if test -f $(DEST)/eggdrop.key; then \
+		cp $(DEST)/eggdrop.key $(DEST)/eggdrop.key~old; \
+	fi
+	@if test -f $(DEST)/eggdrop.crt; then \
+		cp $(DEST)/eggdrop.crt $(DEST)/eggdrop.crt~old; \
+	fi
+	@openssl req -new -x509 -nodes -days 365 -keyout $(DEST)/eggdrop.key -out $(DEST)/eggdrop.crt -config ssl.conf; \
 
 install: ainstall
 

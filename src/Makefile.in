@@ -1,5 +1,5 @@
 # Makefile for src/
-# $Id: Makefile.in,v 1.1 2010/07/26 21:11:06 simple Exp $
+# $Id: Makefile.in,v 1.2 2010/10/19 12:13:32 pseudo Exp $
 
 SHELL = @SHELL@
 top_srcdir = @top_srcdir@
@@ -15,13 +15,13 @@ INSTALL_SCRIPT = @INSTALL_SCRIPT@
 CC = @CC@
 LD = @CC@
 STRIP = @STRIP@
-CFLAGS = @CFLAGS@ -I.. -I$(top_srcdir) @DEFS@ $(CFLGS)
+CFLAGS = @CFLAGS@ -I.. -I$(top_srcdir) @SSL_INCLUDES@ @DEFS@ $(CFLGS)
 CPPFLAGS = @CPPFLAGS@
 
 eggdrop_objs = bg.o botcmd.o botmsg.o botnet.o chanprog.o cmds.o dcc.o \
 dccutil.o dns.o flags.o language.o match.o main.o mem.o misc.o misc_file.o \
 modules.o net.o rfc1459.o tcl.o tcldcc.o tclhash.o tclmisc.o tcluser.o \
-userent.o userrec.o users.o
+tls.o userent.o userrec.o users.o
 
 MAKE_GENERIC = $(MAKE) 'MAKE=$(MAKE)' 'CC=$(CC)' 'LD=$(LD)' \
 'STRIP=$(STRIP)' 'CFLGS=$(CFLGS)'
@@ -201,6 +201,10 @@ tcluser.o: tcluser.c main.h ../config.h ../lush.h lang.h eggdrop.h \
   compat/compat.h compat/inet_aton.h ../src/main.h compat/snprintf.h \
   compat/memset.h compat/memcpy.h compat/strcasecmp.h compat/strftime.h \
   tandem.h modules.h mod/modvals.h
+tls.o: tls.c main.h ../config.h ../lush.h lang.h eggdrop.h flags.h \
+  proto.h misc_file.h cmdt.h tclegg.h tclhash.h chan.h users.h \
+  compat/compat.h compat/inet_aton.h ../src/main.h compat/snprintf.h \
+  compat/memset.h compat/memcpy.h compat/strcasecmp.h compat/strftime.h
 userent.o: userent.c main.h ../config.h ../lush.h lang.h eggdrop.h \
   flags.h proto.h misc_file.h cmdt.h tclegg.h tclhash.h chan.h users.h \
   compat/compat.h compat/inet_aton.h ../src/main.h compat/snprintf.h \

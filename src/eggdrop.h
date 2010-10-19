@@ -4,7 +4,7 @@
  *
  *   IF YOU ALTER THIS FILE, YOU NEED TO RECOMPILE THE BOT.
  *
- * $Id: eggdrop.h,v 1.5 2010/10/14 09:49:47 pseudo Exp $
+ * $Id: eggdrop.h,v 1.6 2010/10/19 12:13:33 pseudo Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -274,6 +274,10 @@
 typedef int socklen_t;
 #endif
 
+#ifdef TLS
+#  include <openssl/ssl.h>
+#endif
+
 /*
  *    Handy aliases for memory tracking and core dumps
  */
@@ -389,8 +393,11 @@ struct userrec;
 struct dcc_t {
   long sock;                    /* This should be a long to keep 64-bit machines sane. */
   IP addr;                      /* IP address in host network byte order. */
-  sockname_t sockname;          /* IPv4/IPv6 sockaddr placeholder */ 
+  sockname_t sockname;          /* IPv4/IPv6 sockaddr placeholder */
   unsigned int port;
+#ifdef TLS
+  int ssl;
+#endif
   struct userrec *user;
   char nick[NICKLEN];
   char host[UHOSTLEN];
@@ -536,8 +543,8 @@ struct dupwait_info {
 
 /* For dcc chat & files. */
 #define STAT_ECHO    0x00001    /* echo commands back?                  */
-#define STAT_DENY    0x00002    /* bad username (ignore password & deny
-                                 * access)                              */
+#define STAT_FPRINT  0x00002    /* fingerprint auth (ignore password &
+                                 * allow access)                        */
 #define STAT_CHAT    0x00004    /* in file-system but may return        */
 #define STAT_TELNET  0x00008    /* connected via telnet                 */
 #define STAT_PARTY   0x00010    /* only on party line via 'p' flag      */
@@ -566,6 +573,9 @@ struct dupwait_info {
 #define STAT_LINKING 0x00100    /* the bot is currently going through
                                  * the linking stage                     */
 #define STAT_AGGRESSIVE 0x00200 /* aggressively sharing with this bot    */
+#ifdef TLS
+#define STAT_STARTTLS   0x00400 /* have we sent a starttls request?      */
+#endif
 
 /* Flags for listening sockets */
 #define LSTN_PUBLIC  0x000001   /* No access restrictions               */
@@ -690,6 +700,30 @@ enum {
 #define HELP_TEXT       2
 #define HELP_IRC        16
 
+#ifdef TLS
+/* TLS generic flags */
+#  define TLS_LISTEN            0x80000000
+#  define TLS_CONNECT           0x40000000
+#  define TLS_DEPTH0            0x20000000
+
+/* TLS verification flags */
+#  define TLS_VERIFYPEER        0x00000001
+#  define TLS_VERIFYCN         	0x00000002
+#  define TLS_VERIFYISSUER      0x00000004
+#  define TLS_VERIFYFROM        0x00000008
+#  define TLS_VERIFYTO          0x00000010
+#  define TLS_VERIFYREV         0x00000020
+
+/* Context information to attach to SSL sockets */
+typedef struct {
+  int flags;			/* listen/connect, generic ssl flags      */
+  int verify;			/* certificate validation mode            */
+  int loglevel;			/* log level to output TLS information to */
+  char host[256];		/* host or IP for certificate validation  */
+  IntFunc cb;
+} ssl_appdata;
+#endif /* TLS */
+
 /* These are used by the net module to keep track of sockets and what's
  * queued on them
  */
@@ -708,6 +742,9 @@ struct tclsock_handler {
 
 typedef struct sock_list {
   int sock;
+#ifdef TLS
+  SSL *ssl;
+#endif
   short flags;
   union {
     struct sock_handler sock;
