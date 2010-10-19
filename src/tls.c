@@ -4,7 +4,7 @@
  *   Certificate handling
  *   OpenSSL initialization and shutdown
  *
- * $Id: tls.c,v 1.1 2010/10/19 12:13:33 pseudo Exp $
+ * $Id: tls.c,v 1.2 2010/10/19 14:20:56 pseudo Exp $
  */
 /*
  * Written by Rumen Stoyanov <pseudo@egg6.net>
@@ -77,7 +77,7 @@ static int ssl_seed(void)
   static char rand_file[120];
   FILE *fh;
 
-#if OPENSSL_VERSION_NUMBER >= 0x00905100
+#ifdef HAVE_RAND_STATUS
   if (RAND_status())
     return 0;     /* Status OK */
 #endif
@@ -103,7 +103,7 @@ static int ssl_seed(void)
     RAND_seed(&c, sizeof(c));
     RAND_seed(stackdata, sizeof(stackdata));
   }
-#if OPENSSL_VERSION_NUMBER >= 0x00905100
+#ifdef HAVE_RAND_STATUS
   if (!RAND_status())
     return 2;   /* pseudo random data still not ehough */
 #endif

@@ -16,7 +16,7 @@ dnl You should have received a copy of the GNU General Public License
 dnl along with this program; if not, write to the Free Software
 dnl Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 dnl
-dnl $Id: aclocal.m4,v 1.8 2010/10/19 12:13:32 pseudo Exp $
+dnl $Id: aclocal.m4,v 1.9 2010/10/19 14:20:56 pseudo Exp $
 dnl
 
 
@@ -1990,7 +1990,7 @@ AC_DEFUN([EGG_TLS_DETECT],
     if test -z "$SSL_LIBS"; then
       AC_CHECK_LIB(ssl, SSL_accept, , [havessllib="no"], [-lcrypto])
       AC_CHECK_LIB(crypto, X509_digest, , [havessllib="no"], [-lssl])
-      AC_CHECK_FUNCS([EVP_md5 EVP_sha1 hex_to_string string_to_hex], , [[
+      AC_CHECK_FUNCS([EVP_md5 EVP_sha1 a2i_IPADDRESS hex_to_string string_to_hex], , [[
         havessllib="no"
         break
       ]])
@@ -2016,6 +2016,7 @@ AC_DEFUN([EGG_TLS_DETECT],
           AC_DEFINE([__int64], [long long], [Define this to a 64-bit type on Cygwin to satisfy OpenSSL dependencies.])
         ])
       fi
+      AC_CHECK_FUNCS([RAND_status])
       AC_DEFINE(TLS, 1, [Define this to enable SSL support.])
       EGG_MD5_COMPAT
     fi

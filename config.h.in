@@ -55,6 +55,9 @@
 /* Defines the current Eggdrop version. */
 #undef EGG_VERSION
 
+/* Define to 1 if you have the `a2i_IPADDRESS' function. */
+#undef HAVE_A2I_IPADDRESS
+
 /* Define to 1 if you have the <arpa/inet.h> header file. */
 #undef HAVE_ARPA_INET_H
 
@@ -230,6 +233,9 @@
 
 /* Define to 1 if you have the `random' function. */
 #undef HAVE_RANDOM
+
+/* Define to 1 if you have the `RAND_status' function. */
+#undef HAVE_RAND_STATUS
 
 /* Define to 1 if you have the `rename' function. */
 #undef HAVE_RENAME

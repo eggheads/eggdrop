@@ -5,7 +5,7 @@
  *   command line arguments
  *   context and assert debugging
  *
- * $Id: main.c,v 1.4 2010/10/19 12:13:33 pseudo Exp $
+ * $Id: main.c,v 1.5 2010/10/19 14:20:56 pseudo Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -313,6 +313,12 @@ static void write_debug()
     dprintf(-x, "Compiled without IPv6 support\n");
 #endif
 
+#ifdef TLS
+    dprintf(-x, "Compiled with TLS support\n");
+#else
+    dprintf(-x, "Compiled without TLS support\n");
+#endif
+
     dprintf(-x, "Configure flags: %s\n", EGG_AC_ARGS);
 #ifdef CCFLAGS
     dprintf(-x, "Compile flags: %s\n", CCFLAGS);
@@ -507,6 +513,9 @@ static void do_arg(char *s)
         printf("Compiled with: ");
 #ifdef IPV6
         printf("IPv6, ");
+#endif
+#ifdef TLS
+        printf("TLS, ");
 #endif
         printf("handlen=%d\n", HANDLEN);
         bg_send_quit(BG_ABORT);

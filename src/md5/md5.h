@@ -9,6 +9,8 @@
 #ifndef _MD5_H
 #define _MD5_H
 
+#include "src/main.h"
+
 #ifdef HAVE_OPENSSL_MD5
 #  include <openssl/md5.h>
 #else

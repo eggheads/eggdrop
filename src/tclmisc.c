@@ -2,7 +2,7 @@
  * tclmisc.c -- handles:
  *   Tcl stubs for everything else
  *
- * $Id: tclmisc.c,v 1.3 2010/10/10 18:22:47 pseudo Exp $
+ * $Id: tclmisc.c,v 1.4 2010/10/19 14:20:56 pseudo Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -783,6 +783,14 @@ static int tcl_status STDVAR
     Tcl_AppendElement(irp, "ipv6");
 #ifdef IPV6
     Tcl_AppendElement(irp, "enabled");
+#else
+    Tcl_AppendElement(irp, "disabled");
+#endif
+  }
+  if ((argc < 2) || !strcmp(argv[1], "tls")) {
+    Tcl_AppendElement(irp, "tls");
+#ifdef TLS
+    Tcl_AppendElement(irp, SSLeay_version(SSLEAY_VERSION));
 #else
     Tcl_AppendElement(irp, "disabled");
 #endif
