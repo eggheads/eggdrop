@@ -1,7 +1,7 @@
 /*
  * module.h
  *
- * $Id: module.h,v 1.3 2010/10/19 12:13:33 pseudo Exp $
+ * $Id: module.h,v 1.4 2010/10/20 13:07:13 pseudo Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -208,7 +208,7 @@
 #define open_listen ((int (*) (int *))global[84])
 #define getdccaddr ((int (*) (sockname_t *, char *, socklen_t))global[85])
 #define get_data_ptr(x) ((void *(*)(int,char*,int))global[86])(x,__FILE__,__LINE__)
-#define open_telnet ((int (*) (char *, int))global[87])
+#define open_telnet ((int (*) (int, char *, int))global[87])
 /* 88 - 91 */
 #define check_tcl_event ((void * (*) (const char *))global[88])
 #define my_memcpy ((void * (*) (void *, const void *, size_t))global[89])

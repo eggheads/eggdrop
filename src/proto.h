@@ -7,7 +7,7 @@
  * because they use structures in those
  * (saves including those .h files EVERY time) - Beldin
  *
- * $Id: proto.h,v 1.4 2010/10/19 12:13:33 pseudo Exp $
+ * $Id: proto.h,v 1.5 2010/10/20 13:07:13 pseudo Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -276,7 +276,7 @@ void getvhost(sockname_t *, int);
 int setsockname(sockname_t *, char *, int, int);
 int open_address_listen(sockname_t *);
 int open_telnet_raw(int, sockname_t *);
-int open_telnet(char *, int);
+int open_telnet(int, char *, int);
 int answer(int, sockname_t *, unsigned short *, int);
 int getdccaddr(sockname_t *, char *, size_t);
 void tputs(int, char *, unsigned int);

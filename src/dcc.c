@@ -4,7 +4,7 @@
  *   disconnect on a dcc socket
  *   ...and that's it!  (but it's a LOT)
  *
- * $Id: dcc.c,v 1.4 2010/10/19 12:13:33 pseudo Exp $
+ * $Id: dcc.c,v 1.5 2010/10/20 13:07:13 pseudo Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -283,12 +283,8 @@ void failed_link(int idx)
 
   /* Try next port */
   killsock(dcc[idx].sock);
-  dcc[idx].port++;
   dcc[idx].timeval = now;
-  dcc[idx].sock = getsock(setsockname(&dcc[idx].sockname, dcc[idx].host,
-                                      dcc[idx].port, 1), SOCK_STRONGCONN);
-  if (dcc[idx].sock < 0 ||
-      open_telnet_raw(dcc[idx].sock, &dcc[idx].sockname) < 0)
+  if (open_telnet(idx, dcc[idx].host, dcc[idx].port + 1) < 0)
     failed_link(idx);
 }
 

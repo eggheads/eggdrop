@@ -16,7 +16,7 @@ dnl You should have received a copy of the GNU General Public License
 dnl along with this program; if not, write to the Free Software
 dnl Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 dnl
-dnl $Id: aclocal.m4,v 1.9 2010/10/19 14:20:56 pseudo Exp $
+dnl $Id: aclocal.m4,v 1.10 2010/10/20 13:07:13 pseudo Exp $
 dnl
 
 
@@ -2007,7 +2007,7 @@ AC_DEFUN([EGG_TLS_DETECT],
     fi
     AC_MSG_CHECKING([for OpenSSL])
     if test "$havesslinc" = "no" || test "$havessllib" = "no"; then
-      AC_MSG_RESULT([no])
+      AC_MSG_RESULT([no (make sure you have version 0.9.8 or higher installed)])
       LIBS="$save_LIBS"
     else
       AC_MSG_RESULT([yes])

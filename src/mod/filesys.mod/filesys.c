@@ -2,7 +2,7 @@
  * filesys.c -- part of filesys.mod
  *   main file of the filesys eggdrop module
  *
- * $Id: filesys.c,v 1.4 2010/10/19 12:13:33 pseudo Exp $
+ * $Id: filesys.c,v 1.5 2010/10/20 13:07:13 pseudo Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -847,7 +847,7 @@ static int filesys_DCC_CHAT(char *nick, char *from, char *handle,
                             char *object, char *keyword, char *text)
 {
   char *param, *ip, *prt, buf[512], *msg = buf;
-  int i, sock;
+  int i;
   struct userrec *u = get_user_by_handle(userlist, handle);
   struct flag_record fr = { FR_GLOBAL | FR_CHAN | FR_ANYWH, 0, 0, 0, 0, 0 };
 
@@ -889,27 +889,24 @@ static int filesys_DCC_CHAT(char *nick, char *from, char *handle,
   } else {
     ip = newsplit(&msg);
     prt = newsplit(&msg);
+    if (atoi(prt) < 1024 || atoi(prt) > 65535) {
+      /* Invalid port */
+      if (!quiet_reject)
+        dprintf(DP_HELP, "NOTICE %s :%s (invalid port)\n", nick,
+                DCC_CONNECTFAILED1);
+      putlog(LOG_FILES, "*", "%s: %s!%s", DCC_REFUSED7, nick, from);
+      return 1;
+    }
     i = new_dcc(&DCC_FILES_PASS, sizeof(struct file_info));
-    dcc[i].port = atoi(prt);
-    (void) setsockname(&dcc[i].sockname, ip, dcc[i].port, 0);
-    sock = getsock(dcc[i].sockname.family, 0);
-    if (sock < 0 || open_telnet_raw(sock, &dcc[i].sockname) < 0) {
+    dcc[i].sock = open_telnet(i, ip, atoi(prt));
+    if (dcc[i].sock < 0) {
       lostdcc(i);
       if (!quiet_reject)
         dprintf(DP_HELP, "NOTICE %s :%s (%s)\n", nick, DCC_CONNECTFAILED1, strerror(errno));
       putlog(LOG_MISC, "*", "%s: CHAT(file) (%s!%s)", DCC_CONNECTFAILED2, nick,
              from);
       putlog(LOG_MISC, "*", "    (%s)", strerror(errno));
-      killsock(sock);
-    } else if (atoi(prt) < 1024 || atoi(prt) > 65535) {
-      /* Invalid port */
-      if (!quiet_reject)
-        dprintf(DP_HELP, "NOTICE %s :%s (invalid port)\n", nick,
-                DCC_CONNECTFAILED1);
-      putlog(LOG_FILES, "*", "%s: %s!%s", DCC_REFUSED7, nick, from);
-
     } else {
-      dcc[i].sock = sock;
       strcpy(dcc[i].nick, u->handle);
       strcpy(dcc[i].host, from);
       dcc[i].status = STAT_ECHO;

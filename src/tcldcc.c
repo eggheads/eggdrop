@@ -2,7 +2,7 @@
  * tcldcc.c -- handles:
  *   Tcl stubs for the dcc commands
  *
- * $Id: tcldcc.c,v 1.3 2010/10/19 12:13:33 pseudo Exp $
+ * $Id: tcldcc.c,v 1.4 2010/10/20 13:07:13 pseudo Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -859,16 +859,18 @@ static int tcl_unlink STDVAR
 
 static int tcl_connect STDVAR
 {
-  int i, z, sock;
+  int i, sock;
   char s[81];
-
+  
   BADARGS(3, 3, " hostname port");
 
   if (dcc_total == max_dcc && increase_socks_max()) {
     Tcl_AppendResult(irp, "out of dcc table space", NULL);
     return TCL_ERROR;
   }
-  sock = z = open_telnet(argv[1], atoi(argv[2]));
+
+  i = new_dcc(&DCC_SOCKET, 0);
+  sock = open_telnet(i, argv[1], atoi(argv[2]));
   if (sock < 0) {
     switch (sock) {
       case -3:
@@ -880,22 +882,20 @@ static int tcl_connect STDVAR
       default:
         Tcl_AppendResult(irp, strerror(errno), NULL);
     }
+    lostdcc(i);
     return TCL_ERROR;
   }            
 #ifdef TLS
-  if (*argv[2] == '+' && ssl_handshake(sock, TLS_CONNECT, 0, LOG_MISC, NULL, NULL)) {
-    killsock(sock);
-    strncpyz(s, "Failed to establish a TLS session", sizeof s);
-    Tcl_AppendResult(irp, s, NULL);
-    return TCL_ERROR;
+  if (*argv[2] == '+') {
+    if (ssl_handshake(sock, TLS_CONNECT, 0, LOG_MISC, NULL, NULL)) {
+      killsock(sock);
+      lostdcc(i);
+      strncpyz(s, "Failed to establish a TLS session", sizeof s);
+      Tcl_AppendResult(irp, s, NULL);
+      return TCL_ERROR;
+    } else
+      dcc[i].ssl = 1;
   }
-#endif
-  i = new_dcc(&DCC_SOCKET, 0);
-  dcc[i].sock = sock;
-  dcc[i].port = atoi(argv[2]);
-#ifdef TLS
-  if (*argv[2] == '+')
-    dcc[i].ssl = 1;
 #endif
   strcpy(dcc[i].nick, "*");
   strncpyz(dcc[i].host, argv[1], UHOSTMAX);

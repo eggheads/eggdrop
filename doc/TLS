@@ -1,4 +1,4 @@
-$Id: TLS,v 1.1 2010/10/19 12:13:32 pseudo Exp $
+$Id: TLS,v 1.2 2010/10/20 13:07:13 pseudo Exp $
 
 TLS support
 Last revised: Oct 17, 2010
@@ -24,8 +24,8 @@ Last revised: Oct 17, 2010
 
   1. About
 
-    Eggdrop can be optionally compiled with TLS support. This requires a
-    recent version of the OpenSSL library installed on your system.
+    Eggdrop can be optionally compiled with TLS support. This requires OpenSSL
+    0.9.8 or more recent installed on your system.
     TLS support includes encryption for IRC, DCC, botnet, telnet and scripted
     connections as well as certificate authentication for users and bots.
 

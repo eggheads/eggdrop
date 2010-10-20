@@ -2,7 +2,7 @@
  * net.c -- handles:
  *   all raw network i/o
  *
- * $Id: net.c,v 1.5 2010/10/19 12:13:33 pseudo Exp $
+ * $Id: net.c,v 1.6 2010/10/20 13:07:13 pseudo Exp $
  */
 /*
  * This is hereby released into the public domain.
@@ -504,21 +504,22 @@ int open_telnet_raw(int sock, sockname_t *addr)
  *   >=0: connect successful, returned is the socket number
  *    -1: look at errno or use strerror()
  *    -2: lookup failed or server is not a valid IP string
+ *    -3: could not allocate socket
  */
-int open_telnet(char *server, int port)
+int open_telnet(int idx, char *server, int port)
 {
-  int ret, sock;
-  sockname_t name;
+  int ret;
   
-  ret = setsockname(&name, server, port, 1);
+  ret = setsockname(&dcc[idx].sockname, server, port, 1);
   if (ret == AF_UNSPEC)
     return -2;
-  sock = getsock(ret, 0);
-  if (sock < 0)
-    return -1;
-  ret = open_telnet_raw(sock, &name);
+  dcc[idx].port = port;
+  dcc[idx].sock = getsock(ret, 0);
+  if (dcc[idx].sock < 0)
+    return -3;
+  ret = open_telnet_raw(dcc[idx].sock, &dcc[idx].sockname);
   if (ret < 0)
-    killsock(sock);
+    killsock(dcc[idx].sock);
   return ret;
 }
 
