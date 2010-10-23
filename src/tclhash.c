@@ -7,7 +7,7 @@
  *   (non-Tcl) procedure lookups for msg/dcc/file commands
  *   (Tcl) binding internal procedures to msg/dcc/file commands
  *
- * $Id: tclhash.c,v 1.2 2010/10/19 12:13:33 pseudo Exp $
+ * $Id: tclhash.c,v 1.3 2010/10/23 11:16:13 pseudo Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -41,7 +41,7 @@ extern time_t now;
 p_tcl_bind_list bind_table_list;
 p_tcl_bind_list H_chat, H_act, H_bcst, H_chon, H_chof, H_load, H_unld, H_link,
                 H_disc, H_dcc, H_chjn, H_chpt, H_bot, H_time, H_nkch, H_away,
-                H_note, H_filt, H_event, H_cron, H_log = NULL;
+                H_note, H_filt, H_event, H_die, H_cron, H_log = NULL;
 #ifdef TLS
 p_tcl_bind_list H_tls = NULL;
 static int builtin_idx();
@@ -241,6 +241,7 @@ void init_bind(void)
   H_away = add_bind_table("away", HT_STACKABLE, builtin_chat);
   H_act = add_bind_table("act", HT_STACKABLE, builtin_chat);
   H_event = add_bind_table("evnt", HT_STACKABLE, builtin_char);
+  H_die = add_bind_table("die", HT_STACKABLE, builtin_char);
   H_log = add_bind_table("log", HT_STACKABLE, builtin_log);
 #ifdef TLS
   H_tls = add_bind_table("tls", HT_STACKABLE, builtin_idx);
@@ -1180,10 +1181,20 @@ void check_tcl_cron(struct tm *tm)
                  MATCH_CRON | BIND_STACKABLE);
 }
 
-void check_tcl_event(const char *event)
+int check_tcl_event(const char *event)
 {
+  int x;
+
   Tcl_SetVar(interp, "_event1", (char *) event, 0);
-  check_tcl_bind(H_event, event, 0, " $_event1", MATCH_EXACT | BIND_STACKABLE);
+  x = check_tcl_bind(H_event, event, 0, " $_event1",
+                 MATCH_EXACT | BIND_STACKABLE | BIND_WANTRET);
+  return (x == BIND_EXEC_LOG);
+}
+
+void check_tcl_die(char *reason)
+{
+  Tcl_SetVar(interp, "_die1", reason, 0);
+  check_tcl_bind(H_die, reason, 0, " $_die1", MATCH_MASK | BIND_STACKABLE);
 }
 
 void check_tcl_log(int lv, char *chan, char *msg)

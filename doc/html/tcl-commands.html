@@ -1,5 +1,5 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
-<!-- $Id: tcl-commands.html,v 1.5 2010/10/19 12:13:32 pseudo Exp $ -->
+<!-- $Id: tcl-commands.html,v 1.6 2010/10/23 11:16:12 pseudo Exp $ -->
 
 <html>
   <head>
@@ -5118,6 +5118,13 @@
               <p>Return 1 to make Eggdrop drop the message instead of
               sending it. Only meaningful for messages with status
               &quot;queued&quot;.</p>
+            </li>
+
+            <li>
+              <p><a name="bindb_evnt"></a><strong>EVNT</strong></p>
+            
+              <p>Return 1 to make Eggdrop not to take the default action for
+              the event. Used for signal type events, ignored for others.</p>
             </li>
           </ol>
         </li>

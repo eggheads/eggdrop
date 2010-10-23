@@ -1,10 +1,17 @@
-$Id: Changes1.8,v 1.22 2010/10/20 13:07:13 pseudo Exp $
+$Id: Changes1.8,v 1.23 2010/10/23 11:16:12 pseudo Exp $
 
 Eggdrop Changes (since version 1.8.0)
 
     _____________________________________________________________________
 
 1.8.0 (CVS):
+
+  - Modified SIGQUIT handler to restart the bot by default.
+  - Added support for evnt bind procs to cancel default signal actions.
+  - Removed the die-on-sighup and die-on-sigterm variables.
+  - Added a new bind type DIE triggered before a clean shutdown.
+  - Changed the exit status on clean shutdown to 0.
+    Patch by: pseudo
 
   - Clarified the OpenSSL version requirements.
   - Rewrote open_telnet() to make it more useful.

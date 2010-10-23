@@ -4,7 +4,7 @@
  *   Tcl initialization
  *   getting and setting Tcl/eggdrop variables
  *
- * $Id: tcl.c,v 1.4 2010/10/19 12:13:33 pseudo Exp $
+ * $Id: tcl.c,v 1.5 2010/10/23 11:16:13 pseudo Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -56,11 +56,11 @@ extern int flood_telnet_thr, flood_telnet_time, shtime, share_greet,
            require_p, keep_all_logs, allow_new_telnets, stealth_telnets,
            use_telnet_banner, default_flags, conmask, switch_logfiles_at,
            connect_timeout, firewallport, notify_users_at, flood_thr, tands,
-           ignore_time, reserved_port_min, reserved_port_max, die_on_sighup,
-           die_on_sigterm, max_logs, max_logsize, dcc_total, raw_log,
-           identtimeout, dcc_sanitycheck, dupwait_timeout, egg_numver,
-           share_unlinks, protect_telnet, sort_users, strict_host,
-           resolve_timeout, default_uflags, userfile_perm, cidr_support;
+           ignore_time, reserved_port_min, reserved_port_max, max_logs,
+           max_logsize, dcc_total, raw_log, identtimeout, dcc_sanitycheck,
+           dupwait_timeout, egg_numver, share_unlinks, protect_telnet,
+           sort_users, strict_host, resolve_timeout, default_uflags,
+           userfile_perm, cidr_support;
 
 #ifdef IPV6
 extern char vhost6[];
@@ -550,8 +550,6 @@ static tcl_ints def_tcl_ints[] = {
   {"console",               &conmask,              0},
   {"default-flags",         &default_flags,        0},
   {"numversion",            &egg_numver,           2},
-  {"die-on-sighup",         &die_on_sighup,        1},
-  {"die-on-sigterm",        &die_on_sigterm,       1},
   {"remote-boots",          &remote_boots,         1},
   {"max-socks",             &max_socks,            0},
   {"max-logs",              &max_logs,             0},

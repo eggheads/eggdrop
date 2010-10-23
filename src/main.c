@@ -5,7 +5,7 @@
  *   command line arguments
  *   context and assert debugging
  *
- * $Id: main.c,v 1.5 2010/10/19 14:20:56 pseudo Exp $
+ * $Id: main.c,v 1.6 2010/10/23 11:16:12 pseudo Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -127,8 +127,6 @@ char ver[41];        /* Version info (short form) */
 char egg_xtra[2048]; /* Patch info                */
 
 int do_restart = 0;       /* .restart has been called, restart ASAP */
-int die_on_sighup = 0;    /* Die if bot receives SIGHUP             */
-int die_on_sigterm = 1;   /* Die if bot receives SIGTERM            */
 int resolve_timeout = 15; /* Hostname/address lookup timeout        */
 char quit_msg[1024];      /* Quit message                           */
 
@@ -181,9 +179,9 @@ void fatal(const char *s, int recoverable)
   ssl_cleanup();
 #endif
   unlink(pid_file);
-  if (!recoverable) {
+  if (recoverable != 1) {
     bg_send_quit(BG_ABORT);
-    exit(1);
+    exit(!recoverable);
   }
 }
 
@@ -381,30 +379,29 @@ static void got_fpe(int z)
 
 static void got_term(int z)
 {
-  write_userfile(-1);
-  check_tcl_event("sigterm");
-  if (die_on_sigterm) {
-    botnet_send_chat(-1, botnetnick, "ACK, I've been terminated!");
-    fatal("TERMINATE SIGNAL -- SIGNING OFF", 0);
-  } else
-    putlog(LOG_MISC, "*", "RECEIVED TERMINATE SIGNAL (IGNORING)");
+  /* Now we die by default on sigterm, but scripts have the chance to
+   * catch the event themselves and cancel shutdown by returning 1
+   */
+  if (check_tcl_event("sigterm"))
+    return;
+  kill_bot("ACK, I've been terminated!", "TERMINATE SIGNAL -- SIGNING OFF");
 }
 
 static void got_quit(int z)
 {
-  check_tcl_event("sigquit");
-  putlog(LOG_MISC, "*", "RECEIVED QUIT SIGNAL (IGNORING)");
+  if (check_tcl_event("sigquit"))
+    return;
+  putlog(LOG_MISC, "*", "Received QUIT signal: restarting...");
+  do_restart = -1;
   return;
 }
 
 static void got_hup(int z)
 {
   write_userfile(-1);
-  check_tcl_event("sighup");
-  if (die_on_sighup) {
-    fatal("HANGUP SIGNAL -- SIGNING OFF", 0);
-  } else
-    putlog(LOG_MISC, "*", "Received HUP signal: rehashing...");
+  if (check_tcl_event("sighup"))
+    return;
+  putlog(LOG_MISC, "*", "Received HUP signal: rehashing...");
   do_restart = -2;
   return;
 }

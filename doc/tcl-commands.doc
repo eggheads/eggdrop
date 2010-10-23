@@ -1,7 +1,7 @@
-$Id: tcl-commands.doc,v 1.4 2010/10/19 12:13:32 pseudo Exp $
+$Id: tcl-commands.doc,v 1.5 2010/10/23 11:16:12 pseudo Exp $
 
 Eggdrop Tcl Commands
-Last revised: November 23, 2009
+Last revised: October 22, 2010
     _____________________________________________________________________
 
                            Eggdrop Tcl Commands
@@ -2286,6 +2286,15 @@ marked with vertical bars (|) on the left.
 |          to '*'.
 |        Module: core
 
+|   (48) DIE (stackable)
+|        bind die <flags> <mask> <proc>
+|        proc-name <shutdownreason>
+|
+|        Description: triggered when eggdrop is about to die. The mask is
+|          matched against the shutdown reason. The bind won't be triggered if
+|          the bot crashes or is being terminated by SIGKILL.
+|        Module: core
+
   (B) RETURN VALUES
 
     Several bindings pay attention to the value you return from the proc
@@ -2349,6 +2358,9 @@ marked with vertical bars (|) on the left.
 
 |   (16) OUT   Return 1 to make Eggdrop drop the message instead of sending
 |              it. Only meaningful for messages with status "queued".
+
+|   (17) EVNT  Return 1 to make Eggdrop not to take the default action for
+|              the event. Used for signal type events, ignored for others.
 
 *** CONTROL PROCEDURES ***
 

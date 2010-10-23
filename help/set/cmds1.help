@@ -223,16 +223,6 @@
    If you want your userfile to be sorted upon saving, enable this
    setting. This causes the bot to use a bit more CPU when saving the
    userfile.
-%{help=set die-on-sighup}%{+n}
-###  %bset die-on-sighup%b <0/1>
-   Enable this setting if you want your Eggdrop to die upon receiving
-   a SIGHUP kill signal. Otherwise, the Eggdrop will just save its
-   userfile and rehash.
-%{help=set die-on-sigterm}%{+n}
-###  %bset die-on-sigterm%b <0/1>
-   Enable this setting if you want your Eggdrop to die upon receiving
-   a SIGTERM kill signal. Otherwise, the Eggdrop will just save its
-   userfile and rehash.
 %{help=set remote-boots}%{+n}
 ###  %bset remote-boots%b <0/1>
    This setting defines whether or not people can boot users on the

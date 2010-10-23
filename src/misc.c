@@ -7,7 +7,7 @@
  *   help system
  *   motd display and %var substitution
  *
- * $Id: misc.c,v 1.1 2010/07/26 21:11:06 simple Exp $
+ * $Id: misc.c,v 1.2 2010/10/23 11:16:12 pseudo Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -1555,10 +1555,11 @@ void str_unescape(char *str, register const char esc_char)
  */
 void kill_bot(char *s1, char *s2)
 {
+  check_tcl_die(s2);
   call_hook(HOOK_DIE);
   chatout("*** %s\n", s1);
   botnet_send_chat(-1, botnetnick, s1);
   botnet_send_bye();
   write_userfile(-1);
-  fatal(s2, 0);
+  fatal(s2, 2);
 }
