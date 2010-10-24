@@ -16,7 +16,7 @@ dnl You should have received a copy of the GNU General Public License
 dnl along with this program; if not, write to the Free Software
 dnl Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 dnl
-dnl $Id: aclocal.m4,v 1.10 2010/10/20 13:07:13 pseudo Exp $
+dnl $Id: aclocal.m4,v 1.11 2010/10/24 13:41:53 pseudo Exp $
 dnl
 
 
@@ -1958,8 +1958,8 @@ AC_DEFUN(EGG_TLS_WITHSSL,
   [
     if test "$enable_tls" != "no"; then
       if test -d "$withval"; then
-        AC_CHECK_LIB(ssl, SSL_accept, , [havessllib="no"], [-L$withval])
-        AC_CHECK_LIB(crypto, X509_digest, , [havessllib="no"], [-L$withval])
+        AC_CHECK_LIB(ssl, SSL_accept, , [havessllib="no"], [-L$withval -lcrypto])
+        AC_CHECK_LIB(crypto, X509_digest, , [havessllib="no"], [-L$withval -lssl])
         if test "$havessllib" = "no"; then
           AC_MSG_WARN([Invalid path to OpenSSL libs. $withval doesn't contain the required files.])
         else
