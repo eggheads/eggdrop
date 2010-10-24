@@ -1,7 +1,7 @@
 /*
  * servmsg.c -- part of server.mod
  *
- * $Id: servmsg.c,v 1.3 2010/10/19 12:13:33 pseudo Exp $
+ * $Id: servmsg.c,v 1.4 2010/10/24 13:22:40 pseudo Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -465,23 +465,6 @@ static int detect_flood(char *floodnick, char *floodhost, char *from, int which)
   return 0;
 }
 
-/* Check for more than 8 control characters in a line.
- * This could indicate: beep flood CTCP avalanche.
- */
-static int detect_avalanche(char *msg)
-{
-  int count = 0;
-  unsigned char *p;
-
-  for (p = (unsigned char *) msg; (*p) && (count < 8); p++)
-    if ((*p == 7) || (*p == 1))
-      count++;
-  if (count >= 8)
-    return 1;
-  else
-    return 0;
-}
-
 /* Got a private message.
  */
 static int gotmsg(char *from, char *msg)
@@ -499,22 +482,9 @@ static int gotmsg(char *from, char *msg)
   ignoring = match_ignore(from);
   to = newsplit(&msg);
   fixcolon(msg);
-  /* Only check if flood-ctcp is active */
   strncpyz(uhost, from, sizeof(buf));
   nick = splitnick(&uhost);
-  if (flud_ctcp_thr && detect_avalanche(msg)) {
-    if (!ignoring) {
-      putlog(LOG_MODES, "*", "Avalanche from %s - ignoring", from);
-      p = strchr(uhost, '@');
-      if (p != NULL)
-        p++;
-      else
-        p = uhost;
-      egg_snprintf(ctcpbuf, sizeof(ctcpbuf), "*!*@%s", p);
-      addignore(ctcpbuf, botnetnick, "ctcp avalanche",
-                now + (60 * ignore_time));
-    }
-  }
+ 
   /* Check for CTCP: */
   ctcp_reply[0] = 0;
   p = strchr(msg, 1);
@@ -646,12 +616,7 @@ static int gotnotice(char *from, char *msg)
   fixcolon(msg);
   strcpy(uhost, from);
   nick = splitnick(&uhost);
-  if (flud_ctcp_thr && detect_avalanche(msg)) {
-    /* Discard -- kick user if it was to the channel */
-    if (!ignoring)
-      putlog(LOG_MODES, "*", "Avalanche from %s", from);
-    return 0;
-  }
+
   /* Check for CTCP: */
   p = strchr(msg, 1);
   while ((p != NULL) && (*p)) {
@@ -1249,16 +1214,12 @@ static void server_resolve_failure(int);
 static void connect_server(void)
 {
   char pass[121], botserver[UHOSTLEN];
-  static int oldserv = -1;
   int servidx;
   unsigned int botserverport = 0;
 
   lastpingcheck = 0;
   trying_server = now;
   empty_msgq();
-  /* Start up the counter (always reset it if "never-give-up" is on) */
-  if ((oldserv < 0) || (never_give_up))
-    oldserv = curserv;
   if (newserverport) {          /* Jump to specified server */
     curserv = -1;             /* Reset server list */
     strcpy(botserver, newserver);
@@ -1267,7 +1228,6 @@ static void connect_server(void)
     newserver[0] = 0;
     newserverport = 0;
     newserverpass[0] = 0;
-    oldserv = -1;
   } else {
     if (curserv == -1)
       curserv = 999;
@@ -1349,7 +1309,6 @@ static void server_resolve_failure(int servidx)
 
 static void server_resolve_success(int servidx)
 {
-  int oldserv = dcc[servidx].u.dns->ibuf;
   char pass[121];
 
   resolvserv = 0;
@@ -1370,8 +1329,6 @@ static void server_resolve_success(int servidx)
            strerror(errno));
 #endif
     lostdcc(servidx);
-    if (oldserv == curserv && !never_give_up)
-      fatal("NO SERVERS WILL ACCEPT MY CONNECTION.", 0);
   } else {
     dcc[servidx].sock = serv;
     /* Queue standard login */

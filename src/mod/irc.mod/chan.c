@@ -6,7 +6,7 @@
  *   user kickban, kick, op, deop
  *   idle kicking
  *
- * $Id: chan.c,v 1.1 2010/07/26 21:11:06 simple Exp $
+ * $Id: chan.c,v 1.2 2010/10/24 13:22:40 pseudo Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -2289,8 +2289,6 @@ static int gotmsg(char *from, char *msg)
   int ctcp_count = 0, ignoring;
   struct chanset_t *chan;
   struct userrec *u;
-  memberlist *m;
-  struct flag_record fr = { FR_GLOBAL | FR_CHAN, 0, 0, 0, 0, 0 };
 
   /* Only handle if message is to a channel, or to @#channel. */
   /* FIXME: Properly handle ovNotices (@+#channel), vNotices (+#channel), etc. */
@@ -2307,42 +2305,7 @@ static int gotmsg(char *from, char *msg)
   strcpy(uhost, from);
   nick = splitnick(&uhost);
   ignoring = match_ignore(from);
-  /* Only check if flood-ctcp is active */
-  if (flud_ctcp_thr && detect_avalanche(msg)) {
-    u = get_user_by_host(from);
-    get_user_flagrec(u, &fr, chan->dname);
-    m = ismember(chan, nick);
-    /* Discard -- kick user if it was to the channel */
-    if (m && (me_op(chan) || (me_halfop(chan) && !chan_hasop(m))) &&
-        !chan_sentkick(m) && !chan_friend(fr) && !glob_friend(fr) &&
-        !(channel_dontkickops(chan) && (chan_op(fr) || (glob_op(fr) &&
-        !chan_deop(fr)))) && !(use_exempts && ban_fun &&
-        (u_match_mask(global_exempts, from) ||
-        u_match_mask(chan->exempts, from)))) {
-      if (ban_fun) {
-        check_exemptlist(chan, from);
-        u_addban(chan, quickban(chan, uhost), botnetnick, IRC_FUNKICK,
-                 now + (60 * chan->ban_time), 0);
-      }
-      if (kick_fun) {
-        /* This can induce kickflood - arthur2 */
-        dprintf(DP_SERVER, "KICK %s %s :%s\n", chan->name, nick, IRC_FUNKICK);
-        m->flags |= SENTKICK;
-      }
-    }
-    if (!ignoring) {
-      putlog(LOG_MODES, "*", "Avalanche from %s!%s in %s - ignoring",
-             nick, uhost, chan->dname);
-      p = strchr(uhost, '@');
-      if (p)
-        p++;
-      else
-        p = uhost;
-      simple_sprintf(buf2, "*!*@%s", p);
-      addignore(buf2, botnetnick, "ctcp avalanche", now + (60 * ignore_time));
-    }
-    return 0;
-  }
+
   /* Check for CTCP: */
   ctcp_reply[0] = 0;
   p = strchr(msg, 1);
@@ -2447,9 +2410,7 @@ static int gotnotice(char *from, char *msg)
   char *to, *realto, *nick, buf2[512], *p, *p1, buf[512], *uhost = buf;
   char *ctcp, *code;
   struct userrec *u;
-  memberlist *m;
   struct chanset_t *chan;
-  struct flag_record fr = { FR_GLOBAL | FR_CHAN, 0, 0, 0, 0, 0 };
   int ignoring;
 
   if (!strchr(CHANMETA "@", *msg))
@@ -2464,30 +2425,7 @@ static int gotnotice(char *from, char *msg)
   strcpy(uhost, from);
   nick = splitnick(&uhost);
   u = get_user_by_host(from);
-  if (flud_ctcp_thr && detect_avalanche(msg)) {
-    get_user_flagrec(u, &fr, chan->dname);
-    m = ismember(chan, nick);
-    /* Discard -- kick user if it was to the channel */
-    if (me_op(chan) && m && !chan_sentkick(m) && !chan_friend(fr) &&
-        !glob_friend(fr) && !(channel_dontkickops(chan) && (chan_op(fr) ||
-        (glob_op(fr) && !chan_deop(fr)))) && !(use_exempts && ban_fun &&
-        (u_match_mask(global_exempts, from) ||
-        u_match_mask(chan->exempts, from)))) {
-      if (ban_fun) {
-        check_exemptlist(chan, from);
-        u_addban(chan, quickban(chan, uhost), botnetnick,
-                 IRC_FUNKICK, now + (60 * chan->ban_time), 0);
-      }
-      if (kick_fun) {
-        /* This can induce kickflood - arthur2 */
-        dprintf(DP_SERVER, "KICK %s %s :%s\n", chan->name, nick, IRC_FUNKICK);
-        m->flags |= SENTKICK;
-      }
-    }
-    if (!ignoring)
-      putlog(LOG_MODES, "*", "Avalanche from %s", from);
-    return 0;
-  }
+
   /* Check for CTCP: */
   p = strchr(msg, 1);
   while (p && *p) {

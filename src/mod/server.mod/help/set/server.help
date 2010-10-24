@@ -45,14 +45,6 @@ see also: set username
    This read-only variables returns the unix-time that the bot
    successfully connected to the server, so if you can read unix
    time, you'll be in luck ;)
-%{help=set never-give-up}%{+n}
-###  %bset never-give-up%b <0/1>
-   specifies whether the bot should loop forever.  if never-give-up
-   is set false, then the bot will shut down if it goes through the
-   entire server list once without getting a connection.  this is to
-   keep eggdrop from going through an endless loop, if, for example,
-   your machine gets disconnected from the rest of the net.  however,
-   some people prefer their bot to never shut down, no matter what.
 %{help=set keep-nick}%{+n}
 ###  %bset keep-nick%b <0/1>
    specifies whether the bot will keep trying to regain its nickname if
@@ -181,12 +173,12 @@ See also: set ssl-verify-clients
    This is a list of the Tcl variables the can be used to setup
    the server module, for a list of relevant commands type
    %b'.help server module'%b.
-     %bserver-online%b        %bservlimit%b      %bnick%b
-     %bnever-give-up%b        %bflood-ctcp%b     %bserver%b
+     %bquiet-reject%b        %bservlimit%b      %bnick%b
+     %bserver-online%b        %bflood-ctcp%b     %bserver%b
      %bmax-queue-msg%b        %bmsg-rate%b       %bbotnick%b
      %bserver-timeout%b       %binit-server%b    %bservers%b
      %blowercase-ctcp%b       %bnet-type%b       %bbotname%b
      %bserverror-quit%b       %banswer-ctcp%b    %baltnick%b
      %btrigger-on-ignore%b    %bdefault-port%b   %brealname%b
      %bserver-cycle-wait%b    %bcheck-stoned%b   %bflood-msg%b
-     %bssl-verify-server%b    %bquiet-reject%b   %bkeep-nick%b
+     %bssl-verify-server%b    %bkeep-nick%b

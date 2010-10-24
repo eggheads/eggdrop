@@ -51,13 +51,13 @@ See also: jump
 
    Config file variables for configuring the server module:
       %bservlimit       server-timeout      lowercase-ctcp%b
-      %bnever-give-up   keep-nick           check-stoned%b
+      %bmsg-rate        keep-nick           check-stoned%b
       %bserverror-quit  max-queue-msg       trigger-on-ignore%b
       %banswer-ctcp     server-cycle-wait   default-port%b
       %bcheck-mode-r    ctcp-mode           use-penalties%b
       %bdouble-server   double-mode         double-help%b
       %buse-fastdeq     nick-len            optimize-kicks%b
-      %bstack-limit     exclusive-binds     msg-rate%b
+      %bstack-limit     exclusive-binds%b
    (Use %b'.help set <variable>'%b for more info)
 %{help=all}%{+o|o}
 ###  %bserver module%b commands

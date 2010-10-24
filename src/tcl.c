@@ -4,7 +4,7 @@
  *   Tcl initialization
  *   getting and setting Tcl/eggdrop variables
  *
- * $Id: tcl.c,v 1.5 2010/10/23 11:16:13 pseudo Exp $
+ * $Id: tcl.c,v 1.6 2010/10/24 13:22:40 pseudo Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -59,8 +59,8 @@ extern int flood_telnet_thr, flood_telnet_time, shtime, share_greet,
            ignore_time, reserved_port_min, reserved_port_max, max_logs,
            max_logsize, dcc_total, raw_log, identtimeout, dcc_sanitycheck,
            dupwait_timeout, egg_numver, share_unlinks, protect_telnet,
-           sort_users, strict_host, resolve_timeout, default_uflags,
-           userfile_perm, cidr_support;
+           strict_host, resolve_timeout, default_uflags, userfile_perm,
+           cidr_support;
 
 #ifdef IPV6
 extern char vhost6[];
@@ -558,7 +558,6 @@ static tcl_ints def_tcl_ints[] = {
   {"raw-log",               &raw_log,              1},
   {"protect-telnet",        &protect_telnet,       0},
   {"dcc-sanitycheck",       &dcc_sanitycheck,      0},
-  {"sort-users",            &sort_users,           0},
   {"ident-timeout",         &identtimeout,         0},
   {"share-unlinks",         &share_unlinks,        0},
   {"log-time",              &shtime,               0},

@@ -2,7 +2,7 @@
  * server.c -- part of server.mod
  *   basic irc server support
  *
- * $Id: server.c,v 1.4 2010/10/19 12:13:33 pseudo Exp $
+ * $Id: server.c,v 1.5 2010/10/24 13:22:40 pseudo Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -66,7 +66,6 @@ static time_t server_cycle_wait;        /* seconds to wait before
 static char botrealname[121];   /* realname of bot */
 static int min_servs;           /* minimum number of servers to be around */
 static int server_timeout;      /* server timeout for connecting */
-static int never_give_up;       /* never give up when connecting to servers? */
 static struct server_list *serverlist;  /* old-style queue, still used by
                                          * server list */
 static int cycle_time;          /* cycle time till next server connect */
@@ -1401,7 +1400,6 @@ static tcl_ints my_tcl_ints[] = {
   {"server-timeout",    &server_timeout,            0},
   {"lowercase-ctcp",    &lowercase_ctcp,            0},
   {"server-online",     (int *) &server_online,     2},
-  {"never-give-up",     &never_give_up,             0},
   {"keep-nick",         &keepnick,                  0},
   {"check-stoned",      &check_stoned,              0},
   {"serverror-quit",    &serverror_quit,            0},
@@ -1929,7 +1927,7 @@ static Function server_table[] = {
   /* 16 - 19 */
   (Function) & trigger_on_ignore, /* int                                */
   (Function) check_tcl_ctcpr,
-  (Function) detect_avalanche,
+  (Function) NULL,
   (Function) nuke_server,
   /* 20 - 23 */
   (Function) newserver,         /* char *                               */
@@ -1993,7 +1991,6 @@ char *server_start(Function *global_funcs)
   strcpy(botrealname, "A deranged product of evil coders");
   min_servs = 0;
   server_timeout = 60;
-  never_give_up = 0;
   serverlist = NULL;
   cycle_time = 0;
   default_port = 6667;

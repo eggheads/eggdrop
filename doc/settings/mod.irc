@@ -1,4 +1,4 @@
-$Id: mod.irc,v 1.1 2010/07/26 21:11:06 simple Exp $
+$Id: mod.irc,v 1.2 2010/10/24 13:22:40 pseudo Exp $
 
 IRC Module
 Last revised: August 21, 2004
@@ -69,18 +69,6 @@ Last revised: August 21, 2004
       IRCnet, but off for all other large networks. This behavior can be
       modified with the following 2 flags. If your network doesn't support
       +e/+I modes then you will be unable to use these features.
-
-
-    set kick-fun 0
-      Set this to 1 if you want the bot to kick for control character/ctcp
-      avalanches to a channel. Remember that if it does, it won't ban them.
-      This can start kick floods.
-
-
-    set ban-fun 0
-      Set this to 1 if you want the bot to ban for control character/ctcp
-      avalanches to a channel. This can prevent kick floods, but it also can
-      fill the banlist.
 
 
     set learn-users 0

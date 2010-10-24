@@ -1,4 +1,4 @@
-$Id: core.settings,v 1.4 2010/10/23 11:16:12 pseudo Exp $
+$Id: core.settings,v 1.5 2010/10/24 13:22:40 pseudo Exp $
 
 Eggdrop Core Settings
 Last revised: April 17, 2003
@@ -244,11 +244,6 @@ Last revised: April 17, 2003
     set pidfile "pid.LamestBot"
       Specify here the filename Eggdrop will save its pid to. If no pidfile is
       specified, pid.(botnet-nick) will be used.
-
-
-    set sort-users 0
-      If you want your userfile to be sorted upon saving, enable this setting.
-      This causes the bot to use a bit more CPU when saving the userfile.
 
 
     set help-path "help/"

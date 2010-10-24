@@ -218,11 +218,6 @@
    will also not be logged. In addition to this, you can disable the
    "Switching logfiles..." and the new date message at midnight, by
    setting this to 3.
-%{help=set sort-users}%{+n}
-###  %bset sort-users%b <0/1>
-   If you want your userfile to be sorted upon saving, enable this
-   setting. This causes the bot to use a bit more CPU when saving the
-   userfile.
 %{help=set remote-boots}%{+n}
 ###  %bset remote-boots%b <0/1>
    This setting defines whether or not people can boot users on the

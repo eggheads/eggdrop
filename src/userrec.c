@@ -4,7 +4,7 @@
  *   a bunch of functions to find and change user records
  *   change and check user (and channel-specific) flags
  *
- * $Id: userrec.c,v 1.1 2010/07/26 21:11:06 simple Exp $
+ * $Id: userrec.c,v 1.2 2010/10/24 13:22:40 pseudo Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -39,7 +39,6 @@ extern char userfile[], ver[], botnetnick[];
 extern time_t now;
 
 int noshare = 1;                   /* don't send out to sharebots   */
-int sort_users = 0;                /* sort the userlist when saving */
 struct userrec *userlist = NULL;   /* user records are stored here  */
 struct userrec *lastuser = NULL;   /* last accessed user record     */
 maskrec *global_bans = NULL, *global_exempts = NULL, *global_invites = NULL;
@@ -561,8 +560,8 @@ void write_userfile(int idx)
   }
   if (!quiet_save)
     putlog(LOG_MISC, "*", USERF_WRITING);
-  if (sort_users)
-    sort_userlist();
+
+  sort_userlist();
   tt = now;
   strcpy(s1, ctime(&tt));
   fprintf(f, "#4v: %s -- %s -- written %s", ver, botnetnick, s1);

@@ -185,7 +185,6 @@ max-logsize
 quick-logs
 logfile-suffix
 quiet-save
-sort-users
 remote-boots
 max-socks
 ident-timeout
