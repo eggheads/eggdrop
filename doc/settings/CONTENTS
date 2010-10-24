@@ -1,4 +1,4 @@
-$Id: CONTENTS,v 1.1 2010/07/26 21:11:06 simple Exp $
+$Id: CONTENTS,v 1.2 2010/10/24 12:39:36 pseudo Exp $
 
 Directory Contents - doc/settings/
 Last revised: April 16, 2003
@@ -54,9 +54,6 @@ Last revised: April 16, 2003
 
   mod.uptime
     Documentation for the uptime module is provided in this file.
-
-  mod.wire
-    Documentation for the wire module is provided in this file.
 
   mod.woobie
     Documentation for the woobie module is provided in this file.

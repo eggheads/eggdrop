@@ -1,4 +1,4 @@
-$Id: MODULES,v 1.2 2010/07/27 21:49:41 pseudo Exp $
+$Id: MODULES,v 1.3 2010/10/24 12:39:36 pseudo Exp $
 
 Eggdrop Module Information
 Last revised: March 04, 2003
@@ -124,10 +124,6 @@ Last revised: March 04, 2003
               bot isn't listed, try again later. See doc/settings/mod.uptime
               for more information, including details on what information is
               sent to the uptime server.
-
-    wire      This module provides all the standard .wire partyline commands.
-              It is an encrypted partyline communication tool, compatible with
-              wire.tcl.
 
     woobie    This is for demonstrative purposes only. If you are looking for
               starting point in writing modules, woobie is the right thing.
