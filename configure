@@ -5387,64 +5387,7 @@ _ACEOF
       esac
     ;;
     CYGWI*)
-
-  { $as_echo "$as_me:${as_lineno-$LINENO}: checking how to access the Win32 API" >&5
-$as_echo_n "checking how to access the Win32 API... " >&6; }
-  WIN32FLAGS=
-  cat confdefs.h - <<_ACEOF >conftest.$ac_ext
-/* end confdefs.h.  */
-
-    #ifndef WIN32
-    #  ifndef _WIN32
-    #    error WIN32 or _WIN32 not defined
-    #  endif
-    #endif
-
-_ACEOF
-if ac_fn_c_try_compile "$LINENO"; then :
-
-    { $as_echo "$as_me:${as_lineno-$LINENO}: result: present by default" >&5
-$as_echo "present by default" >&6; }
-
-else
-
-    ac_compile_save="$ac_compile"
-    save_CC="$CC"
-    ac_compile="$ac_compile -mwin32"
-    CC="$CC -mwin32"
-    cat confdefs.h - <<_ACEOF >conftest.$ac_ext
-/* end confdefs.h.  */
-
-      #ifndef WIN32
-      #  ifndef _WIN32
-      #    error WIN32 or _WIN32 not defined
-      #  endif
-      #endif
-
-_ACEOF
-if ac_fn_c_try_compile "$LINENO"; then :
-
-      { $as_echo "$as_me:${as_lineno-$LINENO}: result: found via -mwin32" >&5
-$as_echo "found via -mwin32" >&6; }
-      ac_compile="$ac_compile_save"
-      CC="$save_CC"
-      WIN32FLAGS="-mwin32"
-
-else
-
-      ac_compile="$ac_compile_save"
-      CC="$save_CC"
-      { $as_echo "$as_me:${as_lineno-$LINENO}: result: not found" >&5
-$as_echo "not found" >&6; }
-
-fi
-rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
-
-fi
-rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
-
       SHLIB_LD="$CC -shared"
-      CC="$CC $WIN32FLAGS"
       MOD_CC="$CC"
       MOD_LD="$CC"
       EGG_CYGWIN="yes"

@@ -16,7 +16,7 @@ dnl You should have received a copy of the GNU General Public License
 dnl along with this program; if not, write to the Free Software
 dnl Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 dnl
-dnl $Id: aclocal.m4,v 1.11 2010/10/24 13:41:53 pseudo Exp $
+dnl $Id: aclocal.m4,v 1.12 2010/10/25 22:11:23 pseudo Exp $
 dnl
 
 
@@ -680,9 +680,7 @@ AC_DEFUN([EGG_CHECK_OS],
       esac
     ;;
     CYGWI*)
-      AC_PROG_CC_WIN32
       SHLIB_LD="$CC -shared"
-      CC="$CC $WIN32FLAGS"
       MOD_CC="$CC"
       MOD_LD="$CC"
       EGG_CYGWIN="yes"
@@ -1772,45 +1770,6 @@ AC_DEFUN([EGG_SAVE_PARAMETERS],
 
   AC_SUBST(egg_ac_parameters)
   AC_DEFINE_UNQUOTED(EGG_AC_ARGS, "$egg_ac_parameters", [Arguments passed to configure])
-])
-
-
-dnl AC_PROG_CC_WIN32()
-dnl
-AC_DEFUN([AC_PROG_CC_WIN32],
-[
-  AC_MSG_CHECKING([how to access the Win32 API])
-  WIN32FLAGS=
-  AC_COMPILE_IFELSE([[
-    #ifndef WIN32
-    #  ifndef _WIN32
-    #    error WIN32 or _WIN32 not defined
-    #  endif
-    #endif
-  ]], [
-    AC_MSG_RESULT([present by default])
-  ], [
-    ac_compile_save="$ac_compile"
-    save_CC="$CC"
-    ac_compile="$ac_compile -mwin32"
-    CC="$CC -mwin32"
-    AC_COMPILE_IFELSE([[
-      #ifndef WIN32
-      #  ifndef _WIN32
-      #    error WIN32 or _WIN32 not defined
-      #  endif
-      #endif
-    ]], [
-      AC_MSG_RESULT([found via -mwin32])
-      ac_compile="$ac_compile_save"
-      CC="$save_CC"
-      WIN32FLAGS="-mwin32"
-    ], [
-      ac_compile="$ac_compile_save"
-      CC="$save_CC"
-      AC_MSG_RESULT([not found])
-    ])
-  ])
 ])
 
 
