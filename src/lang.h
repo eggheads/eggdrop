@@ -2,7 +2,7 @@
  * lang.h
  *   Conversion definitions for language support
  *
- * $Id: lang.h,v 1.1 2010/07/26 21:11:06 simple Exp $
+ * $Id: lang.h,v 1.2 2010/10/25 19:47:49 pseudo Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -130,7 +130,6 @@
 #define IRC_BANNED              get_language(0x600)
 #define IRC_YOUREBANNED         get_language(0x601)
 #define IRC_IBANNEDME           get_language(0x602)
-#define IRC_FUNKICK             get_language(0x603)
 #define IRC_HI                  get_language(0x604)
 #define IRC_GOODBYE             get_language(0x605)
 #define IRC_BANNED2             get_language(0x606)
