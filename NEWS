@@ -1,7 +1,7 @@
-$Id: NEWS,v 1.2 2010/07/27 21:49:41 pseudo Exp $
+$Id: NEWS,v 1.3 2010/10/25 15:56:35 pseudo Exp $
 
 News
-Last revised: April 16, 2003
+Last revised: October 25, 2010
      _________________________________________________________________
 
                                    News
@@ -11,8 +11,9 @@ Last revised: April 16, 2003
 
     INSTALL
     README
-    doc/BOTNET
-    doc/Changes1.6
+    doc/TLS
+    doc/IPV6
+    doc/Changes1.8
     doc/tcl-commands.doc
 
   All of these documents combined will fill you in on the latest changes to
@@ -32,6 +33,38 @@ Last revised: April 16, 2003
      _________________________________________________________________
 
 Changes made to Eggdrop 1.8.x from Eggdrop1.6.x:
+
+  IPV6
+
+    Full IPv6 support for servers, telnet and script connections, dcc and
+    botnet. See doc/IPV6 for more information.
+
+
+  SSL
+
+    Full SSL support has been added for all kinds of connections, including
+    certificate verification and authorization. See doc/TLS.
+
+
+  WIRE REMOVED
+
+    The wire module has been removed from eggdrop 1.8. You can still get it
+    from ftp://eggheads.org/pub/eggdrop/modules/1.8/wire-2.1.tar.gz
+    Note that with ssl support you can have encrypted botnet and partyline
+    without wire.mod.
+
+
+  DOCUMENTATION
+
+    Documentation has been updated to reflect new and removed commands and
+    variables. Almost all files have changed, so take a look at them.
+
+
+  TCL COMMANDS
+
+    A lot of changes have been made to Tcl commands. Please look at
+    doc/tcl-commands.doc to see them. New or changed commands are marked with
+    vertical bars (|) on the left.
   ________________________________________________________________________
 
 Copyright (C) 1997 Robey Pointer

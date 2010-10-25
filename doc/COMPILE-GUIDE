@@ -1,7 +1,7 @@
-$Id: COMPILE-GUIDE,v 1.2 2010/07/27 13:05:43 pseudo Exp $
+$Id: COMPILE-GUIDE,v 1.3 2010/10/25 15:56:38 pseudo Exp $
 
 Eggdrop Compile Guide and FAQ
-Last revised: August 20, 2004
+Last revised: October 25, 2010
     _____________________________________________________________________
 
                         Eggdrop Compile Guide and FAQ
@@ -77,6 +77,10 @@ Last revised: August 20, 2004
            --with-tclinc
              See 'E. Tcl Detection and Installation' below (at the end of this
              compile guide).
+
+           --with-handlen=
+             Configure the handle length of the bot. Allowed values are
+             numbers from 9 to 32 inclusive.
 
       2. Type either 'make config', or 'make iconfig' to determine which
          modules will be compiled.
@@ -241,12 +245,13 @@ Last revised: August 20, 2004
            install the Tcl provided by Cygwin's installer. After installing,
            open the Cygwin bash prompt.
 
-        2. Download and install TCL 8.4.1. You can get Tcl for Cygwin at
+        2. Download and install TCL 8.5.9. You can get Tcl for Cygwin at
+           http://prdownloads.sourceforge.net/windrop/tcl-8.5.9.tar.gz.
            http://prdownloads.sourceforge.net/windrop/tcl-8.4.1.tar.gz.
            Extract this to the Cygwin root directory:
 
              cd /
-             tar -zxf tcl-8.4.1.tar.gz
+             tar -zxf tcl-8.5.9.tar.gz
 
         3. Download Eggdrop from geteggdrop.com to your home directory.
            This is usually something like 'C:\cygwin\home\<username>\'. After
@@ -286,17 +291,18 @@ Last revised: August 20, 2004
            directory, replacing all '\'s with '/'s.
 
              cp /bin/cygwin1.dll 'C:/eggdrop'
-             cp /usr/local/bin/tcl84.dll 'C:/eggdrop'
+             cp /usr/local/bin/libtcl8.5.dll 'C:/eggdrop'
              cp /usr/local/bin/tclpip84.dll 'C:/eggdrop'
+             cp /bin/cyggcc_s-1.dll 'C:/eggdrop'
+
+             cp /bin/cygcrypto-0.9.8.dll 'C:/eggdrop' (if compiled with ssl)
+             cp /bin/cygssl-0.9.8.dll 'C:/eggdrop' (if compiled with ssl)
 
              mkdir C:/eggdrop/lib
-             cp -r /usr/local/lib/dde1.2 'C:/eggdrop/lib'
-             cp -r /usr/local/lib/reg1.1 'C:/eggdrop/lib'
-             cp -r /usr/local/lib/tcl8.4 'C:/eggdrop/lib'
+             cp -r /usr/local/lib/tcl 'C:/eggdrop/lib'
+             cp -r /usr/local/lib/tcl8.5 'C:/eggdrop/lib'
 
              cp /bin/cygz.dll 'C:/eggdrop' (if you selected compress.mod)
-
-             cp /bin/cygminires.dll 'C:/eggdrop' (if you selected dns.mod)
 
 
     I. Tcl Detection and Installation

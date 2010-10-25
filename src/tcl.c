@@ -4,7 +4,7 @@
  *   Tcl initialization
  *   getting and setting Tcl/eggdrop variables
  *
- * $Id: tcl.c,v 1.6 2010/10/24 13:22:40 pseudo Exp $
+ * $Id: tcl.c,v 1.7 2010/10/25 15:56:38 pseudo Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -98,10 +98,6 @@ int strtot = 0;
 int handlen = HANDLEN;
 int utftot = 0;
 int clientdata_stuff = 0;
-
-/* Compatability for removed settings.*/
-int strict_servernames = 0, enable_simul = 1, use_console_r = 0,
-    debug_output = 0;
 
 /* Prototypes for Tcl */
 Tcl_Interp *Tcl_CreateInterp();
@@ -575,10 +571,6 @@ static tcl_ints def_tcl_ints[] = {
   {"copy-to-tmp",           &copy_to_tmp,          0},
   {"quiet-reject",          &quiet_reject,         0},
   {"cidr-support",          &cidr_support,         0},
-  {"strict-servernames",    &strict_servernames,   0}, /* compat */
-  {"enable-simul",          &enable_simul,         0}, /* compat */
-  {"debug-output",          &debug_output,         0}, /* compat */
-  {"use-console-r",         &use_console_r,        0}, /* compat */
 #ifdef IPV6
   {"prefer-ipv6",           &pref_af,              0},
 #endif

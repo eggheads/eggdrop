@@ -7,7 +7,7 @@
  *   telling the current programmed settings
  *   initializing a lot of stuff and loading the tcl scripts
  *
- * $Id: chanprog.c,v 1.4 2010/10/19 12:13:33 pseudo Exp $
+ * $Id: chanprog.c,v 1.5 2010/10/25 15:56:38 pseudo Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -294,7 +294,7 @@ void tell_verbose_status(int idx)
 #ifdef HAVE_UNAME
   struct utsname un;
 
-  if (!uname(&un) < 0) {
+  if (uname(&un) < 0) {
 #endif
     vers_t = " ";
     uni_t  = "*unknown*";

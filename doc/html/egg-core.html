@@ -1,5 +1,5 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
-<!-- $Id: egg-core.html,v 1.5 2010/10/24 13:22:39 pseudo Exp $ -->
+<!-- $Id: egg-core.html,v 1.6 2010/10/25 15:56:38 pseudo Exp $ -->
 
 <html>
   <head>
@@ -641,8 +641,9 @@
         <dt><strong>set ident-timeout 5</strong></dt>
 
         <dd>
-          <p>This settings defines a time in seconds that the bot should
-          wait before a dcc chat, telnet, or relay connection times out.</p>
+          <p>This setting defines the time in seconds the bot should wait
+          for ident reply before the lookup fails. The default ident on
+          timeout is &quot;telnet&quot;.</p>
         </dd>
 
         <dt><strong>set require-p 0</strong></dt>
@@ -680,7 +681,7 @@
          <dt><strong>set connect-timeout 15</strong></dt>
 
         <dd>
-          <p>This settings defines a timeout in seconds how long the bot
+          <p>This setting defines a timeout in seconds how long the bot
           should wait for a dcc chat, telnet, relay, etc connection.</p>
         </dd>
 

@@ -123,7 +123,7 @@
    default, and describes 03:00 (AM).
 %{help=set connect-timeout}%{+n}
 ###  %bset connect-timeout%b <seconds>
-   This settings defines a time in seconds that the bot should
+   This setting defines a time in seconds that the bot should
    wait before a dcc chat, telnet, or relay connection times out.
 %{help=set resolve-timeout}%{+n}
 ###  %bset resolve-timeout%b <seconds>
@@ -240,8 +240,8 @@
    host.
 %{help=set ident-timeout}%{+n}
 ###  %bset ident-timeout%b <timeout>
-   This settings defines a time in seconds that the bot should wait
-   before a dcc chat, telnet, or relay connection times out.
+   This setting defines the time in seconds the bot should wait for ident
+   reply before the lookup fails. The default ident on timeout is 'telnet'.
 %{help=set share-unlinks}%{+n}
 ###  %bset share-unlinks%b 0/1
    This setting prohibits remote bots from telling your Eggdrop to

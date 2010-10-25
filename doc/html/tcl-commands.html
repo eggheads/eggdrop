@@ -1,5 +1,5 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
-<!-- $Id: tcl-commands.html,v 1.6 2010/10/23 11:16:12 pseudo Exp $ -->
+<!-- $Id: tcl-commands.html,v 1.7 2010/10/25 15:56:38 pseudo Exp $ -->
 
 <html>
   <head>
@@ -128,7 +128,7 @@
           <p><strong>Module:</strong> server</p>
         </dd>
 
-        <dt><strong><a name="cmd_putnow"></a>putnow &lt;text&gt; [-oneline]</strong></dt>*
+        <dt><strong><a name="cmd_putnow"></a>putnow &lt;text&gt; [-oneline]</strong></dt>
 
         <dd>
           <p><strong>Description:</strong> sends text to the server
@@ -1171,7 +1171,7 @@
           <p><strong>Module:</strong> core</p>
         </dd>
 
-        <dt><strong><a name="cmd_backup"></a>backup</strong></dt>*
+        <dt><strong><a name="cmd_backup"></a>backup</strong></dt>
 
         <dd>
           <p><strong>Description:</strong> makes a simple backup of the
@@ -1553,7 +1553,7 @@
         </dd>
 
         <dt><strong><a name="cmd_resetchanidle"></a>resetchanidle [nick]
-        &lt;channel&gt;</strong></dt>*
+        &lt;channel&gt;</strong></dt>
 
         <dd>
           <p><strong>Description:</strong> resets the channel idle time for
@@ -1566,7 +1566,7 @@
         </dd>
 
         <dt><strong><a name="cmd_resetchanjoin"></a>resetchanjoin [nick]
-        &lt;channel&gt;</strong></dt>*
+        &lt;channel&gt;</strong></dt>
 
         <dd>
           <p><strong>Description:</strong> resets the channel join time for
@@ -1579,7 +1579,7 @@
         </dd>
 
         <dt><strong><a name="cmd_resetchan"></a>resetchan &lt;channel&gt;
-	[flags]</strong></dt>*
+	[flags]</strong></dt>
 
         <dd>
           <p><strong>Description:</strong> rereads in the channel info from
@@ -1752,12 +1752,13 @@
           <p><strong>Module:</strong> irc</p>
         </dd>
 
-        <dt><strong><a name="cmd_jump"></a>jump [server [port [password]]]</strong></dt>
+        <dt><strong><a name="cmd_jump"></a>jump [server [[+]port [password]]]</strong></dt>
 
         <dd>
           <p><strong>Description:</strong> jumps to the server specified,
           or (if none is specified) the next server in the bot&#39;s
-          serverlist</p>
+          serverlist. If you prefix the port with (e.g. +6697), a SSL
+          connection will be attempted.</p>
 
           <p><strong>Returns:</strong> nothing</p>
 
@@ -2260,7 +2261,7 @@
           <p><strong>Module:</strong> core</p>
         </dd>
 
-        <dt><strong><a name="cmd_connect"></a>connect &lt;host&gt; &lt;port&gt;</strong></dt>
+        <dt><strong><a name="cmd_connect"></a>connect &lt;host&gt; &lt;[+]port&gt;</strong></dt>
 
         <dd>
           <p><strong>Description:</strong> makes an outgoing connection
@@ -3011,7 +3012,7 @@
         </dd>
 
         <dt><strong><a name="cmd_maskhost"></a>maskhost &lt;nick!user@host&gt;
-        [masktype]</strong></dt>*
+        [masktype]</strong></dt>
 
         <dd>
           <p><strong>Description:</strong> masks the given irc hostmask, so
@@ -3651,7 +3652,7 @@
 
 
         <dt><strong><a name="cmd_matchaddr"></a>matchaddr &lt;hostmask&gt;
-        &lt;address&gt;</strong></dt>*
+        &lt;address&gt;</strong></dt>
 
         <dd>
           <p><strong>Description:</strong> checks if the address matches the
@@ -3665,7 +3666,7 @@
 
 
         <dt><strong><a name="cmd_matchcidr"></a>matchcidr &lt;block&gt;
-        &lt;address&gt; &lt;prefix&gt;</strong></dt>*
+        &lt;address&gt; &lt;prefix&gt;</strong></dt>
 
         <dd>
           <p><strong>Description:</strong> performs a cidr match on the
@@ -3680,7 +3681,7 @@
 
 
         <dt><strong><a name="cmd_matchstr"></a>matchstr &lt;pattern&gt;
-        &lt;string&gt;</strong></dt>*
+        &lt;string&gt;</strong></dt>
 
         <dd>
           <p><strong>Description:</strong> checks if pattern matches string.
@@ -4913,7 +4914,7 @@
             </li>
 
             <li>
-              <p><a name="binda_out"></a><strong>OUT (stackable)</strong></p>*
+              <p><a name="binda_out"></a><strong>OUT (stackable)</strong></p>
 
               <p><strong>bind out &lt;flags&gt; &lt;mask&gt; &lt;proc&gt;<br>
               proc-name &lt;queue&gt; &lt;text&gt; &lt;queued|sent&gt;
@@ -4932,7 +4933,7 @@
             </li>
 
             <li>
-              <p><a name="binda_cron"></a><strong>CRON (stackable)</strong></p>*
+              <p><a name="binda_cron"></a><strong>CRON (stackable)</strong></p>
 
               <p><strong>bind cron &lt;flags&gt; &lt;mask&gt; &lt;proc&gt;<br>
               proc-name &lt;minute&gt; &lt;hour&gt; &lt;day&gt; &lt;month&gt;
@@ -4955,7 +4956,7 @@
             </li>
 
             <li>
-              <p><a name="binda_log"></a><strong>LOG (stackable)</strong></p>*
+              <p><a name="binda_log"></a><strong>LOG (stackable)</strong></p>
 
               <p><strong>bind log &lt;flags&gt; &lt;mask&gt; &lt;proc&gt;<br>
               proc-name &lt;level&gt; &lt;channel&gt; &lt;message&gt;</strong>
@@ -4967,6 +4968,36 @@
               level(s) the message is sent to, or '*' if the message is sent
               to all log levels at once. If the message wasn't sent to a
               specific channel, channel will be set to '*'.</p>
+
+              <p><strong>Module:</strong> core</p>
+            </li>
+
+            <li>
+              <p><a name="binda_tls"></a><strong>TLS (stackable)</strong></p>*
+
+              <p><strong>bind die &lt;flags&gt; &lt;mask&gt; &lt;proc&gt;<br>
+              proc-name &lt;idx&gt</strong>
+              </p>
+
+              <p><strong>Description:</strong> triggered for tcp connections
+              when a ssl handshake has completed and the connection is
+              secured. The mask is matched against the idx of the connection.
+              </p>
+
+              <p><strong>Module:</strong> core</p>
+            </li>
+
+            <li>
+              <p><a name="binda_die"></a><strong>DIE (stackable)</strong></p>*
+
+              <p><strong>bind die &lt;flags&gt; &lt;mask&gt; &lt;proc&gt;<br>
+              proc-name &lt;shutdownreason&gt</strong>
+              </p>
+
+              <p><strong>Description:</strong> triggered when eggdrop is
+              about to die. The mask is matched against the shutdown reason.
+              The bind won't be triggered if the bot crashes or is being
+              terminated by SIGKILL.</p>
 
               <p><strong>Module:</strong> core</p>
             </li>
@@ -5121,10 +5152,17 @@
             </li>
 
             <li>
-              <p><a name="bindb_evnt"></a><strong>EVNT</strong></p>
+              <p><a name="bindb_evnt"></a><strong>EVNT</strong></p>*
             
               <p>Return 1 to make Eggdrop not to take the default action for
               the event. Used for signal type events, ignored for others.</p>
+            </li>
+            
+            <li>
+              <p><a name="bindb_tls"></a><strong>TLS</strong></p>*
+            
+              <p>Return 1 to disable verbose ssl information for the
+              handshake.</p>
             </li>
           </ol>
         </li>
@@ -5177,8 +5215,10 @@
       <p>To initiate an outgoing connection, use:</p>
 
       <blockquote>
-        <p>set idx [connect &lt;hostname&gt; &lt;port&gt;]</p>
+        <p>set idx [connect &lt;hostname&gt; &lt;[+]port&gt;]</p>
       </blockquote>
+
+      <p>For SSL connections, prefix the port with a plus sign.</p>
 
       <p>$idx now contains a new DCC entry for the outgoing connection.</p>
 
@@ -5216,8 +5256,10 @@
       <p>To create a listen port, use:</p>
 
       <blockquote>
-        <p>listen &lt;port&gt; script &lt;proc&gt;</p>
+        <p>listen &lt;[+]port&gt; script &lt;proc&gt;</p>
       </blockquote>
+
+      <p>To listen for SSL connections, prefix the port with a plus sign.</p>
 
       <p>Procs should be declared as:</p>
 
@@ -5240,6 +5282,12 @@
       The proc immediately puts this idx under control. Once
       &#39;listen:grab&#39; has been called, the idx behaves exactly like
       an outgoing connection would.</p>
+      
+      <p>Secure connection can be also established after a connection is
+      active. You can connect/listen normally and switch later using the
+      &quot;starttls&quot; command. Your script should first inform the other
+      side of the connection that it wants to switch to SSL. How to do this
+      is application specific.</p>
 
       <p>The best way to learn how to use these commands is to find a
       script that uses them and follow it carefully. However, hopefully

@@ -2,7 +2,7 @@
  * msgcmds.c -- part of irc.mod
  *   all commands entered via /MSG
  *
- * $Id: msgcmds.c,v 1.2 2010/10/19 12:13:33 pseudo Exp $
+ * $Id: msgcmds.c,v 1.3 2010/10/25 15:56:38 pseudo Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -795,7 +795,7 @@ static int msg_status(char *nick, char *host, struct userrec *u, char *par)
 #ifdef HAVE_UNAME
   struct utsname un;
 
-  if (!uname(&un) < 0) {
+  if (uname(&un) < 0) {
 #endif
     vers_t = " ";
     uni_t  = "*unknown*";
