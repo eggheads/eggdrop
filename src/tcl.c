@@ -4,7 +4,7 @@
  *   Tcl initialization
  *   getting and setting Tcl/eggdrop variables
  *
- * $Id: tcl.c,v 1.7 2010/10/25 15:56:38 pseudo Exp $
+ * $Id: tcl.c,v 1.8 2010/10/26 09:13:56 pseudo Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -503,7 +503,7 @@ static tcl_strings def_tcl_strings[] = {
 #endif
   {"notify-newusers", notify_new,     120,                     0},
   {"owner",           owner,          120,           STR_PROTECT},
-  {"vhost",           vhost,           120,                    0},
+  {"vhost4",          vhost,           120,                    0},
 #ifdef IPV6
   {"vhost6",          vhost6,         120,                     0},
 #endif
