@@ -7,7 +7,7 @@
  *   telling the current programmed settings
  *   initializing a lot of stuff and loading the tcl scripts
  *
- * $Id: chanprog.c,v 1.5 2010/10/25 15:56:38 pseudo Exp $
+ * $Id: chanprog.c,v 1.6 2010/10/27 20:47:26 pseudo Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -579,14 +579,15 @@ void rehash()
 
 /* Add a timer
  */
-unsigned long add_timer(tcl_timer_t ** stack, int elapse, char *cmd,
-                        unsigned long prev_id)
+unsigned long add_timer(tcl_timer_t ** stack, int elapse, int count,
+                        char *cmd, unsigned long prev_id)
 {
   tcl_timer_t *old = (*stack);
 
   *stack = nmalloc(sizeof **stack);
   (*stack)->next = old;
-  (*stack)->mins = elapse;
+  (*stack)->mins = (*stack)->interval = elapse;
+  (*stack)->count = count;
   (*stack)->cmd = nmalloc(strlen(cmd) + 1);
   strcpy((*stack)->cmd, cmd);
   /* If it's just being added back and already had an id,
@@ -639,12 +640,18 @@ void do_check_timers(tcl_timer_t ** stack)
     if (!old->mins) {
       egg_snprintf(x, sizeof x, "timer%lu", old->id);
       do_tcl(x, old->cmd);
-      nfree(old->cmd);
-      nfree(old);
-    } else {
-      old->next = *stack;
-      *stack = old;
+      if (old->count == 1) {
+        nfree(old->cmd);
+        nfree(old);
+        continue;
+      } else {
+        old->mins = old->interval;
+        if (old->count > 1)
+          old->count--;
+      }
     }
+    old->next = *stack;
+    *stack = old;
   }
 }
 
@@ -667,17 +674,19 @@ void wipe_timers(Tcl_Interp *irp, tcl_timer_t **stack)
  */
 void list_timers(Tcl_Interp *irp, tcl_timer_t *stack)
 {
-  char mins[10], id[16], *x;
-  EGG_CONST char *argv[3];
+  char mins[10], count[10], id[16], *x;
+  EGG_CONST char *argv[4];
   tcl_timer_t *mark;
 
   for (mark = stack; mark; mark = mark->next) {
     egg_snprintf(mins, sizeof mins, "%u", mark->mins);
     egg_snprintf(id, sizeof id, "timer%lu", mark->id);
+    egg_snprintf(count, sizeof count, "%u", mark->count);
     argv[0] = mins;
     argv[1] = mark->cmd;
     argv[2] = id;
-    x = Tcl_Merge(3, argv);
+    argv[3] = count;
+    x = Tcl_Merge(sizeof *argv, argv);
     Tcl_AppendElement(irp, x);
     Tcl_Free((char *) x);
   }

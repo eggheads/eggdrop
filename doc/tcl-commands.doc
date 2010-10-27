@@ -1,4 +1,4 @@
-$Id: tcl-commands.doc,v 1.6 2010/10/25 15:56:38 pseudo Exp $
+$Id: tcl-commands.doc,v 1.7 2010/10/27 20:47:26 pseudo Exp $
 
 Eggdrop Tcl Commands
 Last revised: October 24, 2010
@@ -1366,28 +1366,34 @@ marked with vertical bars (|) on the left.
       will be used.
     Module: core
 
-  timer <minutes> <tcl-command>
+  timer <minutes> <tcl-command> [count]
     Description: executes the given Tcl command after a certain number of
-      minutes have passed
+      minutes have passed. If count is specified, the command will be executed
+      count times with the given interval in between. If you specify a count
+      of 0, the timer will repeat until it's removed with killtimer or until
+      the bot is restarted.
     Returns: a timerID
     Module: core
 
-  utimer <seconds> <tcl-command>
+  utimer <seconds> <tcl-command> [count]
     Description: executes the given Tcl command after a certain number of
-      seconds have passed
+      seconds have passed. If count is specified, the command will be executed
+      count times with the given interval in between. If you specify a count
+      of 0, the utimer will repeat until it's removed with killutimer or until
+      the bot is restarted.
     Returns: a timerID
     Module: core
 
   timers
     Returns: a list of active minutely timers. Each entry in the list contains
       the number of minutes left till activation, the command that will be
-      executed, and the timerID.
+      executed, the timerID, and the remaining number of repeats.
     Module: core
 
   utimers
     Returns: a list of active secondly timers. Each entry in the list contains
       the number of minutes left till activation, the command that will be
-      executed, and the timerID.
+      executed, the timerID, and the remaining number of repeats.
     Module: core
 
   killtimer <timerID>

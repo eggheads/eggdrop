@@ -2,7 +2,7 @@
  * tclegg.h
  *   stuff used by tcl.c and tclhash.c
  *
- * $Id: tclegg.h,v 1.1 2010/07/26 21:11:06 simple Exp $
+ * $Id: tclegg.h,v 1.2 2010/10/27 20:47:26 pseudo Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -101,7 +101,9 @@
  */
 typedef struct timer_str {
   struct timer_str *next;
-  unsigned int mins;            /* Time to elapse                       */
+  unsigned int mins;            /* Time remaining                       */
+  unsigned int count;           /* Number of repeats                    */
+  unsigned int interval;        /* Time to elapse                       */
   char *cmd;                    /* Command linked to                    */
   unsigned long id;             /* Used to remove timers                */
 } tcl_timer_t;
@@ -130,7 +132,7 @@ typedef struct timer_str {
         }                                                               \
 } while (0)
 
-unsigned long add_timer(tcl_timer_t **, int, char *, unsigned long);
+unsigned long add_timer(tcl_timer_t **, int, int, char *, unsigned long);
 int remove_timer(tcl_timer_t **, unsigned long);
 void list_timers(Tcl_Interp *, tcl_timer_t *);
 void wipe_timers(Tcl_Interp *, tcl_timer_t **);

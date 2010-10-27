@@ -1,5 +1,5 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
-<!-- $Id: tcl-commands.html,v 1.7 2010/10/25 15:56:38 pseudo Exp $ -->
+<!-- $Id: tcl-commands.html,v 1.8 2010/10/27 20:47:26 pseudo Exp $ -->
 
 <html>
   <head>
@@ -3138,22 +3138,32 @@
           <p><strong>Module:</strong> core</p>
         </dd>
 
-        <dt><strong><a name="cmd_timer"></a>timer &lt;minutes&gt; &lt;tcl-command&gt;</strong></dt>
+        <dt><strong><a name="cmd_timer"></a>timer &lt;minutes&gt; &lt;tcl-command&gt;
+        [count]</strong></dt>
 
         <dd>
           <p><strong>Description:</strong> executes the given Tcl command
-          after a certain number of minutes have passed</p>
+          after a certain number of minutes have passed. If count is
+          specified, the command will be executed count times with the given
+          interval in between. If you specify a count of 0, the timer will
+          repeat until it's removed with killtimer or until the bot is
+          restarted.</p>
 
           <p><strong>Returns:</strong> a timerID</p>
 
           <p><strong>Module:</strong> core</p>
         </dd>
 
-        <dt><strong><a name="cmd_utimer"></a>utimer &lt;seconds&gt; &lt;tcl-command&gt;</strong></dt>
+        <dt><strong><a name="cmd_utimer"></a>utimer &lt;seconds&gt; &lt;tcl-command&gt;
+        [count]</strong></dt>
 
         <dd>
           <p><strong>Description:</strong> executes the given Tcl command
-          after a certain number of seconds have passed</p>
+          after a certain number of seconds have passed. If count is
+          specified, the command will be executed count times with the given
+          interval in between. If you specify a count of 0, the utimer will
+          repeat until it's removed with killutimer or until the bot is
+          restarted.</p>
 
           <p><strong>Returns:</strong> a timerID</p>
 
@@ -3165,7 +3175,8 @@
         <dd>
           <p><strong>Returns:</strong> a list of active minutely timers.
           Each entry in the list contains the number of minutes left till
-          activation, the command that will be executed, and the timerID.</p>
+          activation, the command that will be executed, the timerID, and
+          the remaining number of repeats.</p>
 
           <p><strong>Module:</strong> core</p>
         </dd>
@@ -3175,7 +3186,8 @@
         <dd>
           <p><strong>Returns:</strong> a list of active secondly timers.
           Each entry in the list contains the number of minutes left till
-          activation, the command that will be executed, and the timerID.</p>
+          activation, the command that will be executed, the timerID, and
+          the remaining number of repeats.</p>
 
           <p><strong>Module:</strong> core</p>
         </dd>
