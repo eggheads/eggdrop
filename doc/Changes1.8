@@ -1,10 +1,16 @@
-$Id: Changes1.8,v 1.31 2010/10/27 20:47:26 pseudo Exp $
+$Id: Changes1.8,v 1.32 2010/10/29 20:53:43 pseudo Exp $
 
 Eggdrop Changes (since version 1.8.0)
 
     _____________________________________________________________________
 
 1.8.0 (CVS):
+
+  - Modified tcl_channel_get to return a flat list of all channel settings
+    and their values when called without a setting argument.
+  - Added two new Tcl commands: [chansettype] returning setting types and
+    [getudefs] listing user defined channel settings.
+    Patch by: pseudo
 
   - Added optional count argument to Tcl timer and utimer to allow them run
     more than once.

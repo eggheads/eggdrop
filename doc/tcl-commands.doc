@@ -1,4 +1,4 @@
-$Id: tcl-commands.doc,v 1.7 2010/10/27 20:47:26 pseudo Exp $
+$Id: tcl-commands.doc,v 1.8 2010/10/29 20:53:43 pseudo Exp $
 
 Eggdrop Tcl Commands
 Last revised: October 24, 2010
@@ -562,9 +562,11 @@ marked with vertical bars (|) on the left.
     Returns: a list of info about the specified channel's settings.
     Module: channels
 
-  channel get <name> <setting>
+  channel get <name> [setting]
     Returns: The value of the setting you specify. For flags, a value of 0
-      means it is disabled (-), and non-zero means enabled (+).
+      means it is disabled (-), and non-zero means enabled (+). If no
+      setting is specified, a flat list of all available settings and their
+      values will be returned.
     Module: channels
 
   channel remove <name>
@@ -859,6 +861,16 @@ marked with vertical bars (|) on the left.
     Description: deletes a user defined channel flag, string, or integer
       setting.
     Returns: nothing
+    Module: channels
+
+  getudefs <flag/int/str>
+    Returns: a list of user defined channel settings of the given type, or
+      all of them if no type is given.
+    Module: channels
+
+  chansettype <setting>
+    Returns: The type of the setting you specify. The possible types
+      are flag, int, str, pair.
     Module: channels
 
 *** DCC COMMANDS ***

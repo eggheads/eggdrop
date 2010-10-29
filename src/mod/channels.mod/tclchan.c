@@ -1,7 +1,7 @@
 /*
  * tclchan.c -- part of channels.mod
  *
- * $Id: tclchan.c,v 1.1 2010/07/26 21:11:06 simple Exp $
+ * $Id: tclchan.c,v 1.2 2010/10/29 20:53:43 pseudo Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -934,6 +934,123 @@ static int tcl_channel_info(Tcl_Interp *irp, struct chanset_t *chan)
   return TCL_OK;
 }
 
+#define APPEND_KEYVAL(x, y) {	\
+  Tcl_AppendElement(irp, x);	\
+  Tcl_AppendElement(irp, y);	\
+}
+
+static int tcl_channel_getlist(Tcl_Interp *irp, struct chanset_t *chan)
+{
+  char s[121];
+  struct udef_struct *ul;
+
+  /* String values first */
+  get_mode_protect(chan, s);
+  APPEND_KEYVAL("chanmode", s);
+  APPEND_KEYVAL("need-op", chan->need_op);
+  APPEND_KEYVAL("need-invite", chan->need_invite);
+  APPEND_KEYVAL("need-key", chan->need_key);
+  APPEND_KEYVAL("need-unban", chan->need_unban);
+  APPEND_KEYVAL("need-limit", chan->need_limit);
+  
+  /* Integers now */
+  simple_sprintf(s, "%d", chan->idle_kick);
+  APPEND_KEYVAL("idle-kick", s);
+  simple_sprintf(s, "%d", chan->stopnethack_mode);
+  APPEND_KEYVAL("stopnethack-mode", s);
+  simple_sprintf(s, "%d", chan->revenge_mode);
+  APPEND_KEYVAL("revenge-mode", s);
+  simple_sprintf(s, "%d", chan->ban_type);
+  APPEND_KEYVAL("ban-type", s);
+  simple_sprintf(s, "%d", chan->ban_time);
+  APPEND_KEYVAL("ban-time", s);
+  simple_sprintf(s, "%d", chan->exempt_time);
+  APPEND_KEYVAL("exempt-time", s);
+  simple_sprintf(s, "%d", chan->invite_time);
+  APPEND_KEYVAL("invite-time", s);
+  simple_sprintf(s, "%d %d", chan->flood_pub_thr, chan->flood_pub_time);
+  APPEND_KEYVAL("flood-chan", s);
+  simple_sprintf(s, "%d %d", chan->flood_ctcp_thr, chan->flood_ctcp_time);
+  APPEND_KEYVAL("flood-ctcp", s);
+  simple_sprintf(s, "%d %d", chan->flood_join_thr, chan->flood_join_time);
+  APPEND_KEYVAL("flood-join", s);
+  simple_sprintf(s, "%d %d", chan->flood_kick_thr, chan->flood_kick_time);
+  APPEND_KEYVAL("flood-kick", s);
+  simple_sprintf(s, "%d %d", chan->flood_deop_thr, chan->flood_deop_time);
+  APPEND_KEYVAL("flood-deop", s);
+  simple_sprintf(s, "%d %d", chan->flood_nick_thr, chan->flood_nick_time);
+  APPEND_KEYVAL("flood-nick", s);
+  simple_sprintf(s, "%d %d", chan->aop_min, chan->aop_max);
+  APPEND_KEYVAL("aop-delay", s);
+
+  /* Last, but not least - flags */
+  APPEND_KEYVAL("enforcebans",
+               channel_enforcebans(chan) ?  "1" : "0");
+  APPEND_KEYVAL("dynamicbans",
+               channel_dynamicbans(chan) ?  "1" : "0");
+  APPEND_KEYVAL("userbans",
+               channel_nouserbans(chan) ?  "1" : "0");
+  APPEND_KEYVAL("autoop",
+               channel_autoop(chan) ?  "1" : "0");
+  APPEND_KEYVAL("autohalfop",
+               channel_autohalfop(chan) ?  "1" : "0");
+  APPEND_KEYVAL("bitch",
+               channel_bitch(chan) ?  "1" : "0");
+  APPEND_KEYVAL("greet",
+               channel_greet(chan) ?  "1" : "0");
+  APPEND_KEYVAL("protectops",
+               channel_protectops(chan) ?  "1" : "0");
+  APPEND_KEYVAL("protecthalfops",
+               channel_protecthalfops(chan) ?  "1" : "0");
+  APPEND_KEYVAL("protectfriends",
+               channel_protectfriends(chan) ?  "1" : "0");
+  APPEND_KEYVAL("dontkickops",
+               channel_dontkickops(chan) ?  "1" : "0");
+  APPEND_KEYVAL("inactive",
+               channel_inactive(chan) ?  "1" : "0");
+  APPEND_KEYVAL("statuslog",
+               channel_logstatus(chan) ?  "1" : "0");
+  APPEND_KEYVAL("revenge",
+               channel_revenge(chan) ?  "1" : "0");
+  APPEND_KEYVAL("revengebot",
+               channel_revengebot(chan) ?  "1" : "0");
+  APPEND_KEYVAL("secret",
+               channel_secret(chan) ?  "1" : "0");
+  APPEND_KEYVAL("shared",
+               channel_shared(chan) ?  "1" : "0");
+  APPEND_KEYVAL("autovoice",
+               channel_autovoice(chan) ?  "1" : "0");
+  APPEND_KEYVAL("cycle",
+               channel_cycle(chan) ?  "1" : "0");
+  APPEND_KEYVAL("seen",
+               channel_seen(chan) ?  "1" : "0");
+  APPEND_KEYVAL("nodesynch",
+               channel_nodesynch(chan) ?  "1" : "0");
+  APPEND_KEYVAL("static",
+               channel_static(chan) ?  "1" : "0");
+  APPEND_KEYVAL("dynamicexempts",
+               channel_dynamicexempts(chan) ?  "1" : "0");
+  APPEND_KEYVAL("userexempts",
+               channel_nouserexempts(chan) ?  "1" : "0");
+  APPEND_KEYVAL("dynamicinvites",
+               channel_dynamicinvites(chan) ?  "1" : "0");
+  APPEND_KEYVAL("userinvites",
+               channel_nouserinvites(chan) ?  "1" : "0");
+  
+  /* User defined settings */
+  for (ul = udef; ul && ul->name; ul = ul->next) {
+    Tcl_AppendElement(irp, ul->name);
+    if (ul->type == UDEF_FLAG)
+      Tcl_AppendElement(irp, "flag");
+    else if (ul->type == UDEF_INT)
+      Tcl_AppendElement(irp, "int");
+    else if (ul->type == UDEF_STR)
+      Tcl_AppendElement(irp, "str");
+  }
+
+  return TCL_OK;
+}
+
 static int tcl_channel_get(Tcl_Interp *irp, struct chanset_t *chan,
                            char *setting)
 {
@@ -1050,7 +1167,6 @@ static int tcl_channel_get(Tcl_Interp *irp, struct chanset_t *chan,
   return TCL_OK;
 }
 
-
 static int tcl_channel STDVAR
 {
   struct chanset_t *chan;
@@ -1079,14 +1195,17 @@ static int tcl_channel STDVAR
     return tcl_channel_modify(irp, chan, argc - 3, &argv[3]);
   }
   if (!strcmp(argv[1], "get")) {
-    BADARGS(4, 4, " get channel-name setting-name");
+    BADARGS(3, 4, " get channel-name ?setting-name?");
 
     chan = findchan_by_dname(argv[2]);
     if (chan == NULL) {
       Tcl_AppendResult(irp, "no such channel record", NULL);
       return TCL_ERROR;
     }
-    return (tcl_channel_get(irp, chan, argv[3]));
+    if (argc == 4)
+      return tcl_channel_get(irp, chan, argv[3]);
+    else
+      return tcl_channel_getlist(irp, chan);
   }
   if (!strcmp(argv[1], "info")) {
     BADARGS(3, 3, " info channel-name");
@@ -1415,6 +1534,7 @@ static int tcl_channel_modify(Tcl_Interp *irp, struct chanset_t *chan,
       }
     } else {
       if (!strncmp(item[i] + 1, "udef-flag-", 10))
+        /* 10th position for the +/- sign */
         initudef(UDEF_FLAG, item[i] + 11, 0);
       else if (!strncmp(item[i], "udef-int-", 9))
         initudef(UDEF_INT, item[i] + 9, 0);
@@ -2078,6 +2198,123 @@ static int tcl_deludef STDVAR
     return TCL_OK;
 }
 
+static int tcl_getudefs STDVAR
+{
+  struct udef_struct *ul;
+  int type = 0, count = 0;
+
+  BADARGS(1, 2, " ?type?");
+
+  if (argc > 1) {
+    if (!egg_strcasecmp(argv[1], "flag"))
+      type = UDEF_FLAG;
+    else if (!egg_strcasecmp(argv[1], "int"))
+      type = UDEF_INT;
+    else if (!egg_strcasecmp(argv[1], "str"))
+      type = UDEF_STR;
+    else {
+      Tcl_AppendResult(irp, "invalid type. Valid types are: flag, int, str",
+                       NULL);
+      return TCL_ERROR;
+    }
+  }
+  for (ul = udef; ul; ul = ul->next)
+    if (!type || (ul->type == type)) {
+      Tcl_AppendElement(irp, ul->name);
+      count++;
+    }
+
+  return TCL_OK;
+}
+
+static int tcl_chansettype STDVAR
+{
+  struct udef_struct *ul;
+
+  BADARGS(2, 2, " setting");
+
+  /* String values first */
+  if (!strcmp(argv[1], "chanmode") ||
+      !strcmp(argv[1], "need-op") ||
+      !strcmp(argv[1], "need-invite") ||
+      !strcmp(argv[1], "need-key") ||
+      !strcmp(argv[1], "need-unban") ||
+      !strcmp(argv[1], "need-limit")) {
+    Tcl_AppendResult(irp, "str", NULL);
+  /* Couplets */
+  } else if (!strcmp(argv[1], "flood-chan") ||
+             !strcmp(argv[1], "flood-ctcp") ||
+             !strcmp(argv[1], "flood-join") ||
+             !strcmp(argv[1], "flood-kick") ||
+             !strcmp(argv[1], "flood-deop") ||
+             !strcmp(argv[1], "flood-nick") ||
+             !strcmp(argv[1], "flood-nick") ||
+             !strcmp(argv[1], "aop-delay")) {
+    Tcl_AppendResult(irp, "pair", NULL);
+  /* Integers now */
+  } else if (!strcmp(argv[1], "idle-kick") ||
+             !strcmp(argv[1], "stopnethack-mode") ||
+             !strcmp(argv[1], "revenge-mode") ||
+             !strcmp(argv[1], "ban-type") ||
+             !strcmp(argv[1], "ban-time") ||
+             !strcmp(argv[1], "exempt-time") ||
+             !strcmp(argv[1], "invite-time")) {
+    Tcl_AppendResult(irp, "int", NULL);
+  /* Last, but not least - flags */
+  } else if (!strcmp(argv[1], "enforcebans") ||
+             !strcmp(argv[1], "dynamicbans") ||
+             !strcmp(argv[1], "userbans") ||
+             !strcmp(argv[1], "autoop") ||
+             !strcmp(argv[1], "autohalfop") ||
+             !strcmp(argv[1], "bitch") ||
+             !strcmp(argv[1], "greet") ||
+             !strcmp(argv[1], "protectops") ||
+             !strcmp(argv[1], "protecthalfops") ||
+             !strcmp(argv[1], "protectfriends") ||
+             !strcmp(argv[1], "dontkickops") ||
+             !strcmp(argv[1], "inactive") ||
+             !strcmp(argv[1], "statuslog") ||
+             !strcmp(argv[1], "revenge") ||
+             !strcmp(argv[1], "revengebot") ||
+             !strcmp(argv[1], "secret") ||
+             !strcmp(argv[1], "shared") ||
+             !strcmp(argv[1], "autovoice") ||
+             !strcmp(argv[1], "cycle") ||
+             !strcmp(argv[1], "seen") ||
+             !strcmp(argv[1], "nodesynch") ||
+             !strcmp(argv[1], "static") ||
+             !strcmp(argv[1], "dynamicexempts") ||
+             !strcmp(argv[1], "userexempts") ||
+             !strcmp(argv[1], "dynamicinvites") ||
+             !strcmp(argv[1], "userinvites")) {
+    Tcl_AppendResult(irp, "flag", NULL);
+  } else {
+    /* Must be a UDEF. */
+    for (ul = udef; ul && ul->name; ul = ul->next) {
+      if (!strcmp(argv[1], ul->name))
+        break;
+    }
+    if (!ul || !ul->name) {
+      Tcl_AppendResult(irp, "unknown channel setting.", NULL);
+      return TCL_ERROR;
+    }
+    if (ul->type == UDEF_STR)
+      Tcl_AppendResult(irp, "str", NULL);
+    else if (ul->type == UDEF_INT)
+      Tcl_AppendResult(irp, "int", NULL);
+    else if (ul->type == UDEF_FLAG)
+      Tcl_AppendResult(irp, "flag", NULL);
+    else
+        /* won't happen unless some day we create
+         * a new type and forget to add it here
+         */
+      Tcl_AppendResult(irp, "unknown", NULL);
+  }
+
+  return TCL_OK;
+  
+}
+
 static tcl_cmds channels_cmds[] = {
   {"killban",               tcl_killban},
   {"killchanban",       tcl_killchanban},
@@ -2126,6 +2363,8 @@ static tcl_cmds channels_cmds[] = {
   {"setudef",               tcl_setudef},
   {"renudef",               tcl_renudef},
   {"deludef",               tcl_deludef},
+  {"getudefs",             tcl_getudefs},
+  {"chansettype",       tcl_chansettype},
   {"haschanrec",         tcl_haschanrec},
   {NULL,                           NULL}
 };
