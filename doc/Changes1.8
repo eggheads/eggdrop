@@ -1,10 +1,14 @@
-$Id: Changes1.8,v 1.32 2010/10/29 20:53:43 pseudo Exp $
+$Id: Changes1.8,v 1.33 2010/10/31 14:40:38 pseudo Exp $
 
 Eggdrop Changes (since version 1.8.0)
 
     _____________________________________________________________________
 
 1.8.0 (CVS):
+
+  - Fixed dcc_telnet_pass() to not use a constant string with fingerprint
+    authentication, because strip_telnet() may attempt to write to it later.
+    Found by: grawity / Patch by: pseudo
 
   - Modified tcl_channel_get to return a flat list of all channel settings
     and their values when called without a setting argument.

@@ -4,7 +4,7 @@
  *   disconnect on a dcc socket
  *   ...and that's it!  (but it's a LOT)
  *
- * $Id: dcc.c,v 1.5 2010/10/20 13:07:13 pseudo Exp $
+ * $Id: dcc.c,v 1.6 2010/10/31 14:40:38 pseudo Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -1540,10 +1540,12 @@ static void dcc_telnet_pass(int idx, int atr)
     /* Get the fingerprint of the user, if set */
     uf = get_user(&USERENTRY_FPRINT, dcc[idx].user);
     if (cf && uf && !strcasecmp(cf, uf)) {
+      char fakepass[2] = "+";
+
       if (!glob_bot(fr))
         dprintf(idx, "Used your fingerprint for automatic authentication.\n");
       dcc[idx].status |= STAT_FPRINT;
-      dcc_chat_pass(idx, "+", 1);
+      dcc_chat_pass(idx, fakepass, 1);
       return;
     /* Required? */
     } else if (tls_auth == 2) {
