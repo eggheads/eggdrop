@@ -1,7 +1,7 @@
-$Id: README,v 1.4 2010/10/25 15:56:36 pseudo Exp $
+$Id: README,v 1.5 2010/11/01 23:00:10 pseudo Exp $
 
 Readme
-Last revised: October 25, 2010
+Last revised: Nov 01, 2010
      _________________________________________________________________
 
                                    Readme
@@ -111,10 +111,6 @@ Last revised: October 25, 2010
     on your system. If tclsh doesn't load, then Tcl probably isn't on your
     system, and you will need to install it. The best ftp site for Tcl is
     ftp://tcl.activestate.com/pub/tcl/.
-
-    Tcl comes with the most distributions of Linux. HOWEVER, the one that comes
-    on Slackware 3.0 is goofed up and you'll have to re-install it for yourself
-    to get it working.
 
     Currently, the 1.8 tree of Eggdrop is developed at eggheads.org. You can
     get the latest version of Eggdrop from the following url:

@@ -1,4 +1,4 @@
-$Id: CONTENTS,v 1.1 2010/07/26 21:11:06 simple Exp $
+$Id: CONTENTS,v 1.2 2010/11/01 23:00:09 pseudo Exp $
 
 Directory Contents - /
 Last revised: April 16, 2003
@@ -66,6 +66,9 @@ Last revised: April 16, 2003
 
   README
     You should read this file before even trying to compile Eggdrop.
+
+  ssl.conf
+    This is an OpenSSL config file, used for generating certificates
 
   THANKS
     Contains a full list of Eggdrop contributors.
