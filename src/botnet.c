@@ -7,7 +7,7 @@
  *   linking, unlinking, and relaying to another bot
  *   pinging the bots periodically and checking leaf status
  *
- * $Id: botnet.c,v 1.3 2010/10/19 12:13:33 pseudo Exp $
+ * $Id: botnet.c,v 1.4 2010/11/01 22:38:34 pseudo Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -1034,7 +1034,7 @@ int botlink(char *linker, int idx, char *nick)
       dcc[i].timeval = now;
       dcc[i].port = bi->telnet_port;
 #ifdef TLS
-      dcc[i].ssl = bi->ssl;
+      dcc[i].ssl = (bi->ssl & TLS_BOT);
 #endif
       dcc[i].user = u;
       strcpy(dcc[i].nick, nick);
@@ -1178,7 +1178,7 @@ void tandem_relay(int idx, char *nick, register int i)
 
   dcc[i].port = bi->relay_port;
 #ifdef TLS
-  dcc[i].ssl = bi->ssl;
+  dcc[i].ssl = (bi->ssl & TLS_RELAY);
 #endif
   dcc[i].addr = 0L;
   strcpy(dcc[i].nick, nick);

@@ -1,6 +1,5 @@
 %{help=+bot}%{+t}
-###  %b+bot%b <handle> [address[:[+]bot port[/[+]user port]]] [host]
-###  %b+bot%b <handle> [IPv6 address[,[+]bot port[/[+]user port]]] [host]
+###  %b+bot%b <handle> [address [[+]bot port[/[+]user port]]] [host]
    Creates a user record for a new bot with the handle given. If no hostmask
    is specified, the bot will try to automatically add a host from the channel.
    The bot's address will be used in linking. If the bot has a separate port
@@ -152,8 +151,7 @@ See also: bottree, vbottree, botinfo
 
 See also: bots, botinfo, vbottree
 %{help=chaddr}%{+t}
-###  %bchaddr%b <bot> <address[:[+]bot port[/[+]user port]]>
-###  %bchaddr%b <bot> <IPv6 address[,[+]bot port[/[+]user port]]>
+###  %bchaddr%b <bot> <address> [[+]bot port[/[+]user port]]
    Changes the address for a bot. This is the address your bot will try to
    connect to when linking. If the bot has a separate port for bots and users,
    they should be separated  by a slash (/). Prefixing the port with a plus

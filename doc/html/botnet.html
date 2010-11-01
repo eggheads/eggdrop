@@ -1,5 +1,5 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
-<!-- $Id: botnet.html,v 1.1 2010/07/26 21:11:06 simple Exp $ -->
+<!-- $Id: botnet.html,v 1.2 2010/11/01 22:38:33 pseudo Exp $ -->
 
 <html>
   <head>
@@ -184,7 +184,7 @@
         <dd>
           <p>The physical address, containing the address and port of the
           bot. For example: lame.org:3333. You can change a bot&#39;s
-          address with &#39;.chaddr &lt;botname&gt; &lt;hostaddress:botport
+          address with &#39;.chaddr &lt;botname&gt; &lt;hostaddress botport
           &#91;/userport&#93;&gt;&#39;.</p>
         </dd>
 
@@ -232,11 +232,11 @@
     <blockquote>
       <p>BotA is on lame.org listening on port 3333, and BotB is on irc.org
       listening on port 4444. First, you have to add each Bot to the other&#39;s
-      userfile. On BotA, you would type &#39;.+bot BotB irc.org:4444&#39;.
+      userfile. On BotA, you would type &#39;.+bot BotB irc.org 4444&#39;.
       If BotB is on a common channel with BotA, BotB&#39;s hostmask is
       automatically added. Otherwise, you have to add the hostmask manually
       with the &#39;.+host&#39; command. On BotB, you would type &#39;.+bot
-      BotA lame.org:3333&#39;.</p>
+      BotA lame.org 3333&#39;.</p>
 
       <p>At this point, you can link the two bots by typing &#39;.link
       BotA&#39; on BotB (or &#39;.link BotB&#39; on BotA). The bots will
@@ -342,7 +342,7 @@
     <p>On Lamestbot:</p>
 
     <blockquote>
-      <p>.+bot Lameshare eggdrop.com:3333 (This command adds a user record to
+      <p>.+bot Lameshare eggdrop.com 3333 (This command adds a user record to
       Lamestbot for Lameshare. Lameshare is running from eggdrop.com and is
       on port 3333. If Lameshare were to have a separate port for
       users/relays we would just add a &#39;/&#39; and the port number, i.e.
@@ -359,7 +359,7 @@
     <p>On Lameshare:</p>
 
     <blockquote>
-      <p>.+bot Lamestbot best.com:3333/5555 (Again this will add a user on
+      <p>.+bot Lamestbot best.com 3333/5555 (Again this will add a user on
       Lameshare called Lamestbot with the domain of best.com. The bot has two
       ports, 3333 for bot communications and 5555 for users/relays.)</p>
 
@@ -383,7 +383,7 @@
     <p>On Lamestbot:</p>
 
     <blockquote>
-      .+bot beldin llama.com:3333
+      .+bot beldin llama.com 3333
 
       <p>.botattr beldin s|s #eggdrop (Notice how i piped (the | character)
       the channel flag also saving time.)</p>

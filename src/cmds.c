@@ -3,7 +3,7 @@
  *   commands from a user via dcc
  *   (split in 2, this portion contains no-irc commands)
  *
- * $Id: cmds.c,v 1.3 2010/10/19 12:13:33 pseudo Exp $
+ * $Id: cmds.c,v 1.4 2010/11/01 22:38:34 pseudo Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -746,22 +746,19 @@ static void cmd_console(struct userrec *u, int idx, char *par)
 
 static void cmd_pls_bot(struct userrec *u, int idx, char *par)
 {
-  char *handle, *addr, *p, *q, *host;
+  char *handle, *addr, *port, *relay, *host;
   struct userrec *u1;
   struct bot_addr *bi;
 
   if (!par[0]) {
-    dprintf(idx, "Usage: +bot <handle> [address[:telnet-port[/relay-port]]] "
+    dprintf(idx, "Usage: +bot <handle> [address [telnet-port[/relay-port]]] "
             "[host]\n");
-#ifdef IPV6
-    dprintf(idx, "IPv6: +bot <handle> [IPv6-address,[telnet-port[/relay-port]]]"
-            " [host]\n");
-#endif
     return;
   }
 
   handle = newsplit(&par);
   addr = newsplit(&par);
+  port = newsplit(&par);
   host = newsplit(&par);
 
   if (strlen(handle) > HANDLEN)
@@ -780,54 +777,55 @@ static void cmd_pls_bot(struct userrec *u, int idx, char *par)
   if (strlen(addr) > 60)
     addr[60] = 0;
 
-  putlog(LOG_CMDS, "*", "#%s# +bot %s%s%s%s%s", dcc[idx].nick, handle,
-         addr[0] ? " " : "", addr, host[0] ? " " : "", host);
   userlist = adduser(userlist, handle, "none", "-", USER_BOT);
   u1 = get_user_by_handle(userlist, handle);
   bi = user_malloc(sizeof(struct bot_addr));
+  bi->address = user_malloc(strlen(addr) + 1);
+  strcpy(bi->address, addr);
 
-#ifdef IPV6
-  if ((q = strchr(addr, ','))) {
-    if (!q[1]) {
-      *q = 0;
-      q = 0;
-    }
-  } else
-#endif
-  q = strchr(addr, ':');
-  if (!q) {
-    bi->address = user_malloc(strlen(addr) + 1);
-    strcpy(bi->address, addr);
+  if (!port[0]) {
     bi->telnet_port = 3333;
     bi->relay_port = 3333;
   } else {
-    bi->address = user_malloc(q - addr + 1);
-    strncpy(bi->address, addr, q - addr);
-    bi->address[q - addr] = 0;
-    p = q + 1;
 #ifdef TLS
-    if (*p == '+')
-      bi->ssl = 1;
+    if (*port == '+')
+      bi->ssl |= TLS_BOT;
 #endif
-    bi->telnet_port = atoi(p);
-    q = strchr(p, '/');
-    if (!q) {
+    bi->telnet_port = atoi(port);
+    relay = strchr(port, '/');
+    if (!relay) {
       bi->relay_port = bi->telnet_port;
+#ifdef TLS
+      bi->ssl *= TLS_BOT + TLS_RELAY;
+#endif
     } else  {
 #ifdef TLS
-      if (q[1] == '+')
-        bi->ssl = 1;
+      if (relay[1] == '+')
+        bi->ssl |= TLS_RELAY;
 #endif
-      bi->relay_port = atoi(q + 1);
+      bi->relay_port = atoi(relay + 1);
     }
   }
 
   set_user(&USERENTRY_BOTADDR, u1, bi);
   if (addr[0]) {
-    dprintf(idx, "Added bot '%s' with address '%s' and %s%s%s.\n", handle,
-            addr, host[0] ? "hostmask '" : "no hostmask", host[0] ? host : "",
+    putlog(LOG_CMDS, "*", "#%s# +bot %s %s%s%s %s%s", dcc[idx].nick, handle,
+           addr, port[0] ? " " : "", port[0] ? port : "", host[0] ? " " : "",
+           host);
+#ifdef TLS
+    dprintf(idx, "Added bot '%s' with address [%s]:%s%d/%s%d and %s%s%s.\n",
+            handle, addr, (bi->ssl & TLS_BOT) ? "+" : "", bi->telnet_port,
+            (bi->ssl & TLS_RELAY) ? "+" : "", bi->relay_port, host[0] ?
+            "hostmask '" : "no hostmask", host[0] ? host : "",
             host[0] ? "'" : "");
+#else
+    dprintf(idx, "Added bot '%s' with address [%s]:%d/%d and %s%s%s.\n", handle,
+            addr, bi->telnet_port, bi->relay_port, host[0] ? "hostmask '" :
+            "no hostmask", host[0] ? host : "", host[0] ? "'" : "");
+#endif
   } else {
+    putlog(LOG_CMDS, "*", "#%s# +bot %s %s%s", dcc[idx].nick, handle,
+           host[0] ? " " : "", host);
     dprintf(idx, "Added bot '%s' with no address and %s%s%s.\n", handle,
             host[0] ? "hostmask '" : "no hostmask", host[0] ? host : "",
             host[0] ? "'" : "");
@@ -1030,22 +1028,22 @@ static void cmd_chfinger(struct userrec *u, int idx, char *par)
 
 static void cmd_chaddr(struct userrec *u, int idx, char *par)
 {
+#ifdef TLS
+  int use_ssl = 0;
+#endif
   int telnet_port = 3333, relay_port = 3333;
-  char *handle, *addr, *p, *q;
+  char *handle, *addr, *port, *relay;
   struct bot_addr *bi;
   struct userrec *u1;
 
   handle = newsplit(&par);
   if (!par[0]) {
-    dprintf(idx, "Usage: chaddr <botname> "
-            "<address[:telnet-port[/relay-port]]>\n");
-#ifdef IPV6
-    dprintf(idx, "IPv6: chaddr <botname> "
-            "<IPv6-address,[telnet-port[/relay-port]]>\n");
-#endif
+    dprintf(idx, "Usage: chaddr <botname> <address> "
+            "[telnet-port[/relay-port]]>\n");
     return;
   }
   addr = newsplit(&par);
+  port = newsplit(&par);
   if (strlen(addr) > UHOSTMAX)
     addr[UHOSTMAX] = 0;
   u1 = get_user_by_handle(userlist, handle);
@@ -1057,52 +1055,51 @@ static void cmd_chaddr(struct userrec *u, int idx, char *par)
     dprintf(idx, "You can't change a share bot's address.\n");
     return;
   }
-  putlog(LOG_CMDS, "*", "#%s# chaddr %s %s", dcc[idx].nick, handle, addr);
+  putlog(LOG_CMDS, "*", "#%s# chaddr %s %s%s%s", dcc[idx].nick, handle,
+         addr, *port ? " " : "", port);
   dprintf(idx, "Changed bot's address.\n");
 
   bi = (struct bot_addr *) get_user(&USERENTRY_BOTADDR, u1);
   if (bi) {
     telnet_port = bi->telnet_port;
     relay_port = bi->relay_port;
+#ifdef TLS
+    use_ssl = bi->ssl;
+#endif
   }
 
   bi = user_malloc(sizeof(struct bot_addr));
-#ifdef TLS
-  bi->ssl = 0;
-#endif
+  bi->address = user_malloc(strlen(addr) + 1);
+  strcpy(bi->address, addr);
 
-#ifdef IPV6
-  if ((q = strchr(addr, ','))) {
-    if (!q[1]) {
-      *q = 0;
-      q = 0;
-    }
-  } else
-#endif
-  q = strchr(addr, ':');
-  if (!q) {
-    bi->address = user_malloc(strlen(addr) + 1);
-    strcpy(bi->address, addr);
+  if (!port[0]) {
     bi->telnet_port = telnet_port;
     bi->relay_port = relay_port;
+#ifdef TLS
+    bi->ssl = use_ssl;
   } else {
-    bi->address = user_malloc(q - addr + 1);
-    strncpyz(bi->address, addr, q - addr + 1);
-    p = q + 1;
-#ifdef TLS
-    if (*p == '+')
-      bi->ssl = 1;
-#endif
-    bi->telnet_port = atoi(p);
-    q = strchr(p, '/');
-    if (!q) {
+    bi->ssl = 0;
+    if (*port == '+')
+      bi->ssl |= TLS_BOT;
+    bi->telnet_port = atoi(port);
+    relay = strchr(port, '/');
+    if (!relay) {
       bi->relay_port = bi->telnet_port;
+      bi->ssl *= TLS_BOT + TLS_RELAY;
     } else {
-#ifdef TLS
-    if (q[1] == '+')
-      bi->ssl = 1;
+      relay++;
+      if (*relay == '+')
+        bi->ssl |= TLS_RELAY;
+#else
+  } else {
+    bi->telnet_port = atoi(port);
+    relay = strchr(port, '/');
+    if (!relay)
+      bi->relay_port = bi->telnet_port;
+    else {
+      relay++;
 #endif
-      bi->relay_port = atoi(q + 1);
+      bi->relay_port = atoi(relay);
     }
   }
   set_user(&USERENTRY_BOTADDR, u1, bi);

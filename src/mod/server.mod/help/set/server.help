@@ -134,16 +134,18 @@ see also: set flood-msg
 see also: set flood-ctcp
 %{help=set servers}%{+n}
 ###  %bset servers%b <server-list>
-   gives the bot a list of servers to use for IRC.  you can change
+   gives the bot a list of servers to use for IRC. You can change
    this at any time on the fly, but if the bot's current IRC server
    (the one it's on right now) isn't in your new list, it will be
-   added, to maintain coherency.  here's an example:
+   added, to maintain coherency. Here's an example:
       set servers {
-        goblin.irc.com:6667
         dragon.irc.org
+        goblin.irc.com:6668:password
+        [2001:db8:618:5c0:263::]:6669
       }
    note that if you omit the port, it will assume the value of the
-   %bdefault-port%b setting.
+   %bdefault-port%b setting. Prefix the port with a plus sign to
+   attempt a SSL connection.
 
 see also: default-port
 %{help=set msg-rate}%{+n}

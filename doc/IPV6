@@ -1,4 +1,4 @@
-$Id: IPV6,v 1.1 2010/08/05 18:12:04 pseudo Exp $
+$Id: IPV6,v 1.2 2010/11/01 22:38:33 pseudo Exp $
 
 IPv6 support
 Last revised: Jul 29, 2010
@@ -45,9 +45,10 @@ Last revised: Jul 29, 2010
 
     You can use IPv6 addresses wherever you could specify IPv4 ones. IPs and
     hostnames are interchangeable everywhere. For certain settings and
-    commands, you can use a comma ',' instead of the colon character ':' as a
-    port separator. These are documented in the help files and the html
-    documentation, so you can consult them when in doubt.
+    commands, you can enclose IPv6 addresses in square brackets to prevent
+    the colon character (:) from being interpreted as a port separator. These
+    are documented in the help files and the html documentation, so you can
+    consult them when in doubt.
 
   4. Settings
  

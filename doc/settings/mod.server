@@ -1,4 +1,4 @@
-$Id: mod.server,v 1.4 2010/10/25 15:56:38 pseudo Exp $
+$Id: mod.server,v 1.5 2010/11/01 22:38:34 pseudo Exp $
 
 Server Module
 Last revised: October 25, 2010
@@ -78,6 +78,7 @@ Last revised: October 25, 2010
     set servers {
       you.need.to.change.this:6667
       another.example.com:7000:password
+      [2001:db8:618:5c0:263::]:6669:password
       ssl.example.net:+6697
     }
       This is the bot's server list. The bot will start at the first server
@@ -90,8 +91,8 @@ Last revised: October 25, 2010
         server:+port[:password]
 
       Both the port and password fields are optional; however, if you want to
-      set a password you must also set a port. If a port isn't specified it
-      will default to your default-port setting.
+      set a password or use SSL you must also set a port. If a port isn't
+      specified it will default to your default-port setting.
 
 
     set default-port 6667

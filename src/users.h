@@ -2,7 +2,7 @@
  * users.h
  *   structures and definitions used by users.c and userrec.c
  *
- * $Id: users.h,v 1.2 2010/10/19 12:13:33 pseudo Exp $
+ * $Id: users.h,v 1.3 2010/11/01 22:38:34 pseudo Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -85,6 +85,8 @@ struct bot_addr {
   int relay_port;
   char *address;
 #ifdef TLS
+#  define TLS_BOT 1
+#  define TLS_RELAY 2
   int ssl;
 #endif
 };

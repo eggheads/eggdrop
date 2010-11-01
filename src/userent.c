@@ -2,7 +2,7 @@
  * userent.c -- handles:
  *   user-entry handling, new style more versatile.
  *
- * $Id: userent.c,v 1.3 2010/10/19 12:13:33 pseudo Exp $
+ * $Id: userent.c,v 1.4 2010/11/01 22:38:34 pseudo Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -479,14 +479,14 @@ static int botaddr_unpack(struct userrec *u, struct user_entry *e)
     q++;
 #ifdef TLS
     if (*q == '+')
-      bi->ssl = 1;
+      bi->ssl |= TLS_BOT;
 #endif
     bi->telnet_port = atoi(q);
     if ((q = strchr(q, '/')))
 #ifdef TLS
     {
       if (q[1] == '+')
-        bi->ssl = 1;
+        bi->ssl |= TLS_RELAY;
       bi->relay_port = atoi(q + 1);
     }
 #else
@@ -520,11 +520,12 @@ static int botaddr_pack(struct userrec *u, struct user_entry *e)
     else
       *q++ = *p;
 #ifdef TLS
-  if (bi->ssl)
-    l = simple_sprintf(q, ":+%u/+%u", bi->telnet_port, bi->relay_port);
-  else
-#endif
+  l = simple_sprintf(q, ":%s%u/%s%u", (bi->ssl & TLS_BOT) ? "+" : "",
+                     bi->telnet_port, (bi->ssl & TLS_RELAY) ? "+" : "",
+                     bi->relay_port);
+#else
   l = simple_sprintf(q, ":%u/%u", bi->telnet_port, bi->relay_port);
+#endif
   e->u.list = user_malloc(sizeof(struct list_type));
   e->u.list->next = NULL;
   e->u.list->extra = user_malloc(l + 1);
@@ -558,14 +559,13 @@ static int botaddr_write_userfile(FILE *f, struct userrec *u,
       *q++ = *p;
     *q = 0;
 #ifdef TLS
-  if (bi->ssl) {
-    if (fprintf(f, "--%s %s:+%u/+%u\n", e->type->name, addr,
-                bi->telnet_port, bi->relay_port) == EOF)
-      ret = 0;
-  } else
-#endif
+  if (fprintf(f, "--%s %s:%s%u/%s%u\n", e->type->name, addr,
+      (bi->ssl & TLS_BOT) ? "+" : "", bi->telnet_port, (bi->ssl & TLS_RELAY) ?
+      "+" : "", bi->relay_port) == EOF)
+#else
   if (fprintf(f, "--%s %s:%u/%u\n", e->type->name, addr,
       bi->telnet_port, bi->relay_port) == EOF)
+#endif
     ret = 0;
   nfree(addr);
   return ret;
@@ -586,13 +586,13 @@ static int botaddr_set(struct userrec *u, struct user_entry *e, void *buf)
   }
   if (bi && !noshare && !(u->flags & USER_UNSHARED)) {
 #ifdef TLS
-    if (bi->ssl)
-      shareout(NULL, "c BOTADDR %s %s +%d +%d\n", u->handle,
-               bi->address, bi->telnet_port, bi->relay_port);
-    else
-#endif
+    shareout(NULL, "c BOTADDR %s %s %s%d %s%d\n", u->handle, bi->address,
+             (bi->ssl & TLS_BOT) ? "+" : "", bi->telnet_port,
+             (bi->ssl & TLS_RELAY) ? "+" : "", bi->relay_port);
+#else
     shareout(NULL, "c BOTADDR %s %s %d %d\n", u->handle,
              bi->address, bi->telnet_port, bi->relay_port);
+#endif
   }
   return 1;
 }
@@ -604,14 +604,14 @@ static int botaddr_tcl_get(Tcl_Interp * interp, struct userrec *u,
   char number[20];
 
 #ifdef TLS
-  if (bi->ssl)
+  if (bi->ssl & TLS_BOT)
     sprintf(number, " +%d", bi->telnet_port);
   else
 #endif
   sprintf(number, " %d", bi->telnet_port);
   Tcl_AppendResult(interp, bi->address, number, NULL);
 #ifdef TLS
-  if (bi->ssl)
+  if (bi->ssl & TLS_RELAY)
     sprintf(number, " +%d", bi->relay_port);
   else
 #endif
@@ -640,7 +640,7 @@ static int botaddr_tcl_set(Tcl_Interp * irp, struct userrec *u,
 #ifdef TLS
     {
       if (*argv[4] == '+')
-        bi->ssl = 1;
+        bi->ssl |= TLS_BOT;
       bi->telnet_port = atoi(argv[4]);
     }
 #else
@@ -650,7 +650,7 @@ static int botaddr_tcl_set(Tcl_Interp * irp, struct userrec *u,
 #ifdef TLS
     {
       if (*argv[5] == '+')
-        bi->ssl = 1;
+        bi->ssl |= TLS_RELAY;
       bi->relay_port = atoi(argv[5]);
     }
 #else
@@ -678,12 +678,11 @@ static void botaddr_display(int idx, struct user_entry *e)
 
   dprintf(idx, "  ADDRESS: %.70s\n", bi->address);
 #ifdef TLS
-  if (bi->ssl)
-    dprintf(idx, "     users: +%d, bots: +%d\n", bi->relay_port,
-            bi->telnet_port);
-  else
-#endif
+  dprintf(idx, "     users: %s%d, bots: %s%d\n", (bi->ssl & TLS_RELAY) ? "+" : "",
+          bi->relay_port, (bi->ssl & TLS_BOT) ? "+" : "", bi->telnet_port);
+#else
   dprintf(idx, "     users: %d, bots: %d\n", bi->relay_port, bi->telnet_port);
+#endif
 }
 
 static int botaddr_gotshare(struct userrec *u, struct user_entry *e,
@@ -698,8 +697,10 @@ static int botaddr_gotshare(struct userrec *u, struct user_entry *e,
   strcpy(bi->address, arg);
   arg = newsplit(&buf);
 #ifdef TLS
-  if (*arg == '+' || *buf == '+')
-    bi->ssl = 1;
+  if (*arg == '+')
+    bi->ssl |= TLS_BOT;
+  if (*buf == '+')
+    bi->ssl |= TLS_RELAY;
 #endif
   bi->telnet_port = atoi(arg);
   bi->relay_port = atoi(buf);

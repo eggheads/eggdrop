@@ -1,5 +1,5 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
-<!-- $Id: mod-server.html,v 1.3 2010/10/24 13:22:39 pseudo Exp $ -->
+<!-- $Id: mod-server.html,v 1.4 2010/11/01 22:38:33 pseudo Exp $ -->
 
 <html>
   <head>
@@ -127,6 +127,7 @@
 <pre>
         you.need.to.change.this:6667
         another.example.com:7000:password
+        [2001:db8:618:5c0:263::]:6669:password
         ssl.example.net:+6697
 </pre>
         <p><strong>}</strong></p>
@@ -150,8 +151,8 @@
            server:+port[:password]</p>
 
            <p>Both the port and password fields are optional; however, if you
-           want to set a password you must also set a port. If a port isn&#39;t
-           specified it will default to  your default-port setting..</p>
+           want to set a password or use SSL you must also set a port. If a port
+           isn&#39;t specified it will default to  your default-port setting..</p>
         </dd>
 
         <dt><strong>set default-port 6667</strong></dt>

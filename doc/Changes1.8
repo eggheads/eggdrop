@@ -1,10 +1,18 @@
-$Id: Changes1.8,v 1.33 2010/10/31 14:40:38 pseudo Exp $
+$Id: Changes1.8,v 1.34 2010/11/01 22:38:33 pseudo Exp $
 
 Eggdrop Changes (since version 1.8.0)
 
     _____________________________________________________________________
 
 1.8.0 (CVS):
+
+  - Made it possible to specify ssl independently for telnet and user ports
+    when modifying bot addresses.
+  - Changed the syntax of .chaddr and .+bot to use space as a port separator
+    instead of ':'.
+  - Changed the syntax of server list entries to enclose IPv6 addresses in
+    square brackets, instead of using a comma to separate the port.
+    Patch by: pseudo
 
   - Fixed dcc_telnet_pass() to not use a constant string with fingerprint
     authentication, because strip_telnet() may attempt to write to it later.

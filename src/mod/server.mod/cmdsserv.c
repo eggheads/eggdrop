@@ -2,7 +2,7 @@
  * cmdsserv.c -- part of server.mod
  *   handles commands from a user via dcc that cause server interaction
  *
- * $Id: cmdsserv.c,v 1.2 2010/10/19 12:13:33 pseudo Exp $
+ * $Id: cmdsserv.c,v 1.3 2010/11/01 22:38:34 pseudo Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -38,18 +38,18 @@ static void cmd_servers(struct userrec *u, int idx, char *par)
     for (; x; x = x->next) {
       if ((i == curserv) && realservername)
 #ifdef TLS
-        egg_snprintf(s, sizeof s, "  %s:%s%d (%s) <- I am here", x->name,
+        egg_snprintf(s, sizeof s, "  [%s]:%s%d (%s) <- I am here", x->name,
                      x->ssl ? "+" : "", x->port ? x->port : default_port,
                      realservername);
       else
-        egg_snprintf(s, sizeof s, "  %s:%s%d %s", x->name, x->ssl ? "+" : "",
+        egg_snprintf(s, sizeof s, "  [%s]:%s%d %s", x->name, x->ssl ? "+" : "",
                      x->port ? x->port : default_port,
                      (i == curserv) ? "<- I am here" : "");
 #else
-        egg_snprintf(s, sizeof s, "  %s:%d (%s) <- I am here", x->name,
+        egg_snprintf(s, sizeof s, "  [%s]:%d (%s) <- I am here", x->name,
                      x->port ? x->port : default_port, realservername);
       else
-        egg_snprintf(s, sizeof s, "  %s:%d %s", x->name,
+        egg_snprintf(s, sizeof s, "  [%s]:%d %s", x->name,
                      x->port ? x->port : default_port,
                      (i == curserv) ? "<- I am here" : "");
 #endif

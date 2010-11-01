@@ -2,7 +2,7 @@
  * server.c -- part of server.mod
  *   basic irc server support
  *
- * $Id: server.c,v 1.5 2010/10/24 13:22:40 pseudo Exp $
+ * $Id: server.c,v 1.6 2010/11/01 22:38:34 pseudo Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -957,64 +957,37 @@ static void queue_server(int which, char *msg, int len)
 static void add_server(const char *ss)
 {
   struct server_list *x, *z;
-  char *p, *q;
-
+  char name[256] = "", port[11] = "", pass[121] = "";
+  
   for (z = serverlist; z && z->next; z = z->next);
-  while (ss) {
-/*    p = strchr(ss, ',');
-    if (p)
-      *p++ = 0; */
-    x = nmalloc(sizeof(struct server_list));
 
-    x->next = 0;
-    x->realname = 0;
-    x->port = 0;
-    if (z)
-      z->next = x;
-    else
-      serverlist = x;
-    z = x;
-#ifdef IPV6
-    p = 0;
-    if ((q = strchr(ss, ','))) {
-      if (!q[1]) {
-        *q = 0;
-        q = 0;
-      }
-    } else
-#endif
-    q = strchr(ss, ':');
-    if (!q) {
-      x->port = default_port;
-      x->pass = 0;
-      x->name = nmalloc(strlen(ss) + 1);
-      strcpy(x->name, ss);
+  /* Allow IPv6 and IPv4-mapped addresses in [] */
+  if (!sscanf(ss, "[%255[0-9.A-F:a-f]]:%10[+0-9]:%120s", name, port, pass) &&
+      !sscanf(ss, "%255[^:]:%10[+0-9]:%120s", name, port, pass))
+    return;
+
+  x = nmalloc(sizeof(struct server_list));
+  x->next = 0;
+  x->realname = 0;
+  x->port = default_port;
+  if (z)
+    z->next = x;
+  else
+    serverlist = x;
+  z = x;
+
+  x->name = nmalloc(strlen(name) + 1);
+  strcpy(x->name, name);
+  if (pass[0]) {
+    x->pass = nmalloc(strlen(pass) + 1);
+    strcpy(x->pass, pass);
+  } else
+    x->pass = NULL;
+  if (port[0])
+    x->port = atoi(port);
 #ifdef TLS
-      x->ssl = 0;
+  x->ssl = (port[0] == '+') ? 1 : 0;
 #endif
-    } else {
-      *q++ = 0;
-      x->name = nmalloc(q - ss);
-      strcpy(x->name, ss);
-      ss = q;
-      q = strchr(ss, ':');
-      if (!q) {
-        x->pass = 0;
-      } else {
-        *q++ = 0;
-        x->pass = nmalloc(strlen(q) + 1);
-        strcpy(x->pass, q);
-      }
-#ifdef TLS
-      if (*ss == '+')
-        x->ssl = 1;
-      else
-        x->ssl = 0;
-#endif
-      x->port = atoi(ss);
-    }
-    ss = p;
-  }
 }
 
 
@@ -1452,12 +1425,14 @@ static char *tcl_eggserver(ClientData cdata, Tcl_Interp *irp,
     Tcl_DStringInit(&ds);
     for (q = serverlist; q; q = q->next) {
 #ifdef TLS
-      egg_snprintf(x, sizeof x, "%s:%s%d%s%s %s", q->name,
+      egg_snprintf(x, sizeof x, "%s%s%s:%s%d%s%s %s", strchr(q->name, ':') ?
+                   "[" : "", q->name, strchr(q->name, ':') ? "]" : "",
                    q->ssl ? "+" : "", q->port ? q->port : default_port,
                    q->pass ? ":" : "", q->pass ? q->pass : "",
                    q->realname ? q->realname : "");
 #else
-      egg_snprintf(x, sizeof x, "%s:%d%s%s %s", q->name,
+      egg_snprintf(x, sizeof x, "%s%s%s:%d%s%s %s", strchr(q->name, ':') ?
+                   "[" : "", q->name, strchr(q->name, ':') ? "]" : "",
                    q->port ? q->port : default_port, q->pass ? ":" : "",
                    q->pass ? q->pass : "", q->realname ? q->realname : "");
 #endif
