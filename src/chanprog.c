@@ -7,7 +7,7 @@
  *   telling the current programmed settings
  *   initializing a lot of stuff and loading the tcl scripts
  *
- * $Id: chanprog.c,v 1.6 2010/10/27 20:47:26 pseudo Exp $
+ * $Id: chanprog.c,v 1.7 2010/11/04 17:54:04 thommey Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -686,7 +686,7 @@ void list_timers(Tcl_Interp *irp, tcl_timer_t *stack)
     argv[1] = mark->cmd;
     argv[2] = id;
     argv[3] = count;
-    x = Tcl_Merge(sizeof *argv, argv);
+    x = Tcl_Merge(sizeof(argv)/sizeof(*argv), argv);
     Tcl_AppendElement(irp, x);
     Tcl_Free((char *) x);
   }

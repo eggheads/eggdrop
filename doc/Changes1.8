@@ -1,10 +1,13 @@
-$Id: Changes1.8,v 1.34 2010/11/01 22:38:33 pseudo Exp $
+$Id: Changes1.8,v 1.35 2010/11/04 17:53:55 thommey Exp $
 
 Eggdrop Changes (since version 1.8.0)
 
     _____________________________________________________________________
 
 1.8.0 (CVS):
+
+  - Fixed a bug in (u)timers which could lead to invalid memory access.
+    Found by: dr1 / Patch by: thommey
 
   - Made it possible to specify ssl independently for telnet and user ports
     when modifying bot addresses.

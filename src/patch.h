@@ -10,7 +10,7 @@
  * statement, leave the rest of the file alone, this allows better
  * overlapping patches.
  *
- * $Id: patch.h,v 1.23 2010/11/01 22:38:34 pseudo Exp $
+ * $Id: patch.h,v 1.24 2010/11/04 17:54:05 thommey Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -46,7 +46,7 @@ patch("1288651016");            /* current unixtime */
  *
  *
  */
-patch("v6syntax");
+patch("timerscount");
 /*
  *
  *
