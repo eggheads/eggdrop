@@ -1,10 +1,14 @@
-$Id: Changes1.8,v 1.35 2010/11/04 17:53:55 thommey Exp $
+$Id: Changes1.8,v 1.36 2010/11/05 16:18:01 pseudo Exp $
 
 Eggdrop Changes (since version 1.8.0)
 
     _____________________________________________________________________
 
 1.8.0 (CVS):
+
+  - Fixed getudef() to return intptr_t instead of int to prevent crashes on
+    64-bit systems.
+    Found by: izy` / Patch by: pseudo
 
   - Fixed a bug in (u)timers which could lead to invalid memory access.
     Found by: dr1 / Patch by: thommey
