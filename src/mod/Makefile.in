@@ -1,5 +1,5 @@
 # Makefile for src/mod/
-# $Id: Makefile.in,v 1.1.1.1 2010/07/26 21:11:06 simple Exp $
+# $Id: Makefile.in,v 1.3 2010/10/19 12:13:33 pseudo Exp $
 
 SHELL = @SHELL@
 top_srcdir = @top_srcdir@
@@ -16,10 +16,10 @@ INSTALL_SCRIPT = @INSTALL_SCRIPT@
 CC = @CC@
 LD = @CC@
 STRIP = @STRIP@
-CFLAGS = @CFLAGS@ -I../.. -I$(top_srcdir) @DEFS@ $(CFLGS)
+CFLAGS = @CFLAGS@ -I../.. -I$(top_srcdir) @SSL_INCLUDES@ @DEFS@ $(CFLGS)
 CPPFLAGS = @CPPFLAGS@
 MOD_CFLAGS = @CFLAGS@ -I. -I../../.. -I$(MOD_UPDIR)$(top_srcdir) \
-  -I$(MOD_UPDIR)$(top_srcdir)/src/mod @DEFS@ $(CFLGS)
+  -I$(MOD_UPDIR)$(top_srcdir)/src/mod @SSL_INCLUDES@ @DEFS@ $(CFLGS)
 MOD_CPPFLAGS = @CPPFLAGS@
 XLIBS = @XLIBS@
 MOD_EXT = @MOD_EXT@
@@ -88,7 +88,7 @@ config:
 			echo ""; \
 			echo "Configuring module '$${modname}'."; \
 			if test ! -d $$i; then mkdir $$i; fi; \
-			(cd $$i && $(MOD_UPDIR)$(srcdir)/$$i/configure $(egg_ac_parameters) --cache-file=../../../config.cache --srcdir=$(MOD_UPDIR)$(top_srcdir)/src/mod/$$i); \
+			(cd $$i && $(MOD_UPDIR)$(srcdir)/$$i/configure --disable-option-checking $(egg_ac_parameters) --cache-file=../../../config.cache --srcdir=$(MOD_UPDIR)$(top_srcdir)/src/mod/$$i); \
 		fi; \
 	done; \
 	echo ""

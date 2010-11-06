@@ -1,5 +1,5 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
-<!-- $Id: egg-core.html,v 1.1.1.1 2010/07/26 21:11:06 simple Exp $ -->
+<!-- $Id: egg-core.html,v 1.6 2010/10/25 15:56:38 pseudo Exp $ -->
 
 <html>
   <head>
@@ -39,9 +39,11 @@
 
             <li><a href="#sect1g">More advanced settings</a></li>
 
-            <li><a href="#sect1h">Modules</a></li>
+            <li><a href="#sect1h">SSL settings</a></li>
 
-            <li><a href="#sect1i">Scripts</a></li>
+            <li><a href="#sect1i">Modules</a></li>
+
+            <li><a href="#sect1j">Scripts</a></li>
           </ol>
         </li>
       </ol>
@@ -126,15 +128,25 @@
           setting.</p>
         </dd>
 
-        <dt><strong>set my-hostname &quot;virtual.host.com&quot;</strong></dt>
-        <dt><strong>set my-ip &quot;99.99.0.0&quot;</strong></dt>
+        <dt><strong>set vhost4 &quot;virtual.host.com&quot;</strong></dt>
+        <dt><strong>set vhost4 &quot;99.99.0.0&quot;</strong></dt>
 
         <dd>
           <p>If you&#39;re using virtual hosting (your machine has more
           than 1 IP), you may want to specify the particular IP to bind to.
-          You can specify either by hostname or by IP. You may also want to
-          set the hostname here if Eggdrop has trouble detecting it when it
-          starts up.</p>
+          You can specify either by hostname or by IP. Note that this is not
+          used for listening. Use the &#39;listen-addr&#39; variable to specify
+          the listening address.</p>
+        </dd>
+
+        <dt><strong>set vhost6 &quot;my.ipv6.host.com&quot;</strong></dt>
+        <dt><strong>set vhost6 &quot;2001:db8::c001:b07&quot;</strong></dt>
+
+        <dd>
+          <p>IPv6 vhost to bind to for outgoing IPv6 connections. You can
+          set it to any valid IPv6 address or hostname, resolving to an IPv6
+          address. Note that this is not used for listening. Use the
+          &#39;listen-addr&#39; variable to specify the listening address.</p>
         </dd>
 
         <dt><strong>addlang &quot;english&quot;</strong></dt>
@@ -464,14 +476,6 @@
           pidfile is specified, pid.(botnet-nick) will be used.</p>
         </dd>
 
-        <dt><strong>set sort-users 0</strong></dt>
-
-        <dd>
-          <p>If you want your userfile to be sorted upon saving, enable this
-          setting. This causes the bot to use a bit more CPU when saving the
-          userfile.</p>
-        </dd>
-
         <dt><strong>set help-path &quot;help/&quot;</strong></dt>
 
         <dd>
@@ -586,6 +590,12 @@
             <p><strong>listen 3333 all</strong></p>
           </blockquote>
 
+          <p>You can setup a SSL port by prepending a plus sign to it:</p>
+
+          <blockquote>
+            <p><strong>listen +5555 all</strong></p>
+          </blockquote>
+
           <p>You need to un-comment this line and change the port number in
           order to open the listen port. You should not keep this set to
           3333.</p>
@@ -631,8 +641,9 @@
         <dt><strong>set ident-timeout 5</strong></dt>
 
         <dd>
-          <p>This settings defines a time in seconds that the bot should
-          wait before a dcc chat, telnet, or relay connection times out.</p>
+          <p>This setting defines the time in seconds the bot should wait
+          for ident reply before the lookup fails. The default ident on
+          timeout is &quot;telnet&quot;.</p>
         </dd>
 
         <dt><strong>set require-p 0</strong></dt>
@@ -670,7 +681,7 @@
          <dt><strong>set connect-timeout 15</strong></dt>
 
         <dd>
-          <p>This settings defines a timeout in seconds how long the bot
+          <p>This setting defines a timeout in seconds how long the bot
           should wait for a dcc chat, telnet, relay, etc connection.</p>
         </dd>
 
@@ -719,6 +730,7 @@
           prefix the host with a &quot;!&quot;.</p>
         </dd>
 
+
         <dt><strong>set nat-ip &quot;127.0.0.1&quot;</strong></dt>
 
         <dd>
@@ -729,8 +741,8 @@
           for your box) or you have IP masquerading between you and the
           rest of the world, and /dcc chat, /ctcp chat or userfile sharing
           aren&#39;t working, enter your outside IP here. This IP is used for
-          transfers only, and has nothing to do with the my-ip or my-hostname
-          settings. You may still need to set my-ip and/or my-hostname.</p>
+          transfers only, and has nothing to do with the vhost4/6 or
+          listen-addr settings. You may still need to set them.</p>
         </dd>
 
         <dt><strong>set reserved-portrange 2010:2020</strong></dt>
@@ -792,22 +804,6 @@
           these extra fields. You might prefer to comment this out and use
           the userinfo1.0.tcl script which provides commands for changing
           all of these.</p>
-        </dd>
-
-        <dt><strong>set die-on-sighup 0</strong></dt>
-
-        <dd>
-          <p>Enable this setting if you want your Eggdrop to die upon
-          receiving a SIGHUP kill signal. Otherwise, the Eggdrop will just
-          save its userfile and rehash.</p>
-        </dd>
-
-        <dt><strong>set die-on-sigterm 0</strong></dt>
-
-        <dd>
-          <p>Enable this setting if you want your Eggdrop to die upon
-          receiving a SIGTERM kill signal. Otherwise, the Eggdrop will just
-          save its userfile and rehash.</p>
         </dd>
 
         <dt><strong>unbind dcc n tcl *dcc:tcl</strong></dt>
@@ -884,7 +880,166 @@
       </dl>
     </blockquote>
 
-    <p><a name="sect1h"></a>1h. <strong>Modules</strong></p>
+    <p><a name="sect1h"></a>1h. <strong>SSL settings</strong></p>
+    
+    <blockquote>
+      <p>Settings in this section take effect when eggdrop is compiled with
+      TLS support.</p>
+      
+      <dl>
+        <dt><strong>set ssl-privatekey &quot;eggdrop.key&quot;</strong></dt>
+
+        <dd>
+          <p>Specifies a file containing your private key, needed for the
+          SSL certificate (see below). You can create one issuing the
+          following command:</p>
+          
+         <blockquote>
+<pre>
+openssl genrsa -out eggdrop.key 2048
+</pre>
+        </blockquote>
+
+         
+        <p>It will create a 2048 bit RSA key, strong enough for eggdrop.
+        This is required for SSL hubs/listen ports, secure file transfer and
+        /ctcp botnick schat
+        For your convenience, you can type 'make sslcert' after 'make
+        install' and you'll get a key and a certificate in your DEST
+        directory.</p>
+        </dd>
+
+        <dt><strong>set ssl-certificate &quot;eggdrop.crt&quot;</strong></dt>
+
+        <dd>
+          <p>Specifies the file where your SSL certificate is located. If
+          you don't set this, eggdrop will not be able to act as a server in
+          SSL connections, as with most ciphers a certificate and a private
+          key are required on the server side. Must be in PEM format.
+          If you don't have one, you can create it using the following
+          command:</p>
+          
+         <blockquote>
+<pre>
+openssl req -new -key eggdrop.key -x509 -out eggdrop.crt -days 365
+</pre>
+        </blockquote>
+
+         
+        <p>This is required for SSL hubs/listen ports, secure file transfer
+        and /ctcp botnick schat
+        For your convenience, you can type 'make sslcert' after 'make
+        install' and you'll get a key and a certificate in your DEST
+        directory.</p>
+        </dd>
+
+        <dt><strong>set ssl-verify-depth 9</strong></dt>
+
+        <dd>
+          <p>Sets the maximum depth for the certificate chain verification
+          that will be allowed for ssl. When certificate verification is
+          enabled, any chain exceeding this depth will fail verification.</p>
+        </dd>
+
+        <dt><strong>set ssl-cafile &quot;/etc/ssl/&quot;</strong></dt>
+
+        <dd>
+          <p>Specify the location where CA certificates for verification
+          purposes are located. These certificates are trusted. If you
+          don't set this or ssl-cafile, certificate verification will not
+          work.</p>
+        </dd>
+
+        <dt><strong>set ssl-cafile &quot;&quot;</strong></dt>
+
+        <dd>
+          <p>Specify a file which contains CA certificates for verification
+          purposes. These certificates are trusted. If you don't set this
+          or ssl-cafile, certificate verification will not work.</p>
+        </dd>
+
+        <dt><strong>set ssl-ciphers &quot;&quot;</strong></dt>
+
+        <dd>
+          <p>Specify the list of ciphers (in order of preference) allowed
+          for use with ssl. The cipher list is one or more cipher strings
+          separated by colons, commas or spaces. Unavailable ciphers are
+          silently ignored unless no useable cipher could be found. For the
+          list of possible cipher strings and their meanings, please refer
+          to the ciphers(1) manual.</p>
+          <p><strong>Note:</strong> if you set this, the value replaces any
+          ciphers OpenSSL might use by default. To include the default
+          ciphers, you can put DEFAULT as a cipher string in the list.</p>
+          
+          <p>Examples:</p>
+          
+          <blockquote>
+            <p><strong>set ssl-ciphers &quot;DEFAULT ADH&quot;</strong></p>
+          </blockquote>
+          
+          <p>This will make eggdrop allow the default OpenSSL selection plus
+          anonymous DH ciphers.</p>
+
+          <blockquote>
+            <p><strong>set ssl-ciphers &quot;ALL&quot;</strong></p>
+          </blockquote>
+          
+          <p>This will make eggdrop allow all ciphers supported by OpenSSL,
+          in a reasonable order.</p>
+        </dd>
+
+        <dt><strong>set ssl-cert-auth &quot;0&quot;</strong></dt>
+
+        <dd>
+          <p>Enable certificate authorization. Set to 1 to allow users and
+          bots to identify automatically by their certificate fingerprints.
+          Setting it to 2 to will force fingerprint logins. With a value of
+          2, users without a fingerprint set or with a certificate UID not
+          matching their handle won't be allowed to login on SSL enabled
+          telnet ports. Fingerprints must be set in advance with the .fprint
+          and .chfinger commands. Note that this setting has no effect on 
+          plain-text ports.</p>
+        </dd>
+
+        <p> You can control SSL certificate verification using the variables
+        below. All of them are flag-based. You can set them by adding
+        together the numbers for all exceptions you want to enable. By
+        default certificate verification is disabled and all certificates
+        are assumed to be valid.</p>
+
+        <p> The numbers are the following:<blockquote>
+          1  - enable certificate verification<br>
+          2  - allow self-signed certificates<br>
+          4  - don't check peer common or alt names<br>
+          8  - allow expired certificates<br>
+          16 - allow certificates which are not valid yet<br>
+          32 - allow revoked certificates<br>
+        </blockquote>A value of 0 disables verification.</p>
+
+        <dt><strong>set ssl-verify-dcc &quot;0&quot;</strong></dt>
+
+        <dd>
+          <p>Control certificate verification for DCC chats (only /dcc chat
+          botnick)</p>
+        </dd>
+
+        <dt><strong>set ssl-verify-bots &quot;0&quot;</strong></dt>
+
+        <dd>
+          <p>Control certificate verification for linking to hub bots</p>
+        </dd>
+
+        <dt><strong>set ssl-verify-clients &quot;0&quot;</strong></dt>
+
+        <dd>
+          <p>Control certificate verification for SSL listening ports.
+          This includes leaf bots connecting, users telneting in and
+          /ctcp bot chat.</p>
+        </dd>
+      </dl>
+    </blockquote>
+
+    <p><a name="sect1i"></a>1i. <strong>Modules</strong></p>
 
     <blockquote>
       <p>After the core settings, you should start loading modules. Modules
@@ -928,7 +1083,7 @@
       </dl>
     </blockquote>
 
-    <p><a name="sect1i"></a>1i. <strong>Scripts</strong></p>
+    <p><a name="sect1j"></a>1j. <strong>Scripts</strong></p>
 
     <blockquote>
       <p>The scripts section should be placed at the end of the config file.

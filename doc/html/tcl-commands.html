@@ -1,5 +1,5 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
-<!-- $Id: tcl-commands.html,v 1.1.1.1 2010/07/26 21:11:06 simple Exp $ -->
+<!-- $Id: tcl-commands.html,v 1.9 2010/10/29 20:53:43 pseudo Exp $ -->
 
 <html>
   <head>
@@ -17,7 +17,7 @@
     you can also use these to manipulate features of the bot. They are listed
     according to category.</p>
 
-    <p>This list is accurate for Eggdrop v1.6.20. Scripts written for
+    <p>This list is accurate for Eggdrop v1.8.0. Scripts written for
     v1.3/v1.4 series of Eggdrop should probably work with a few minor
     modifications depending on the script. Scripts which were written for
     v0.9, v1.0, v1.1 or v1.2 will probably not work without modification.
@@ -128,7 +128,7 @@
           <p><strong>Module:</strong> server</p>
         </dd>
 
-        <dt><strong><a name="cmd_putnow"></a>putnow &lt;text&gt; [-oneline]</strong></dt>*
+        <dt><strong><a name="cmd_putnow"></a>putnow &lt;text&gt; [-oneline]</strong></dt>
 
         <dd>
           <p><strong>Description:</strong> sends text to the server
@@ -1171,7 +1171,7 @@
           <p><strong>Module:</strong> core</p>
         </dd>
 
-        <dt><strong><a name="cmd_backup"></a>backup</strong></dt>*
+        <dt><strong><a name="cmd_backup"></a>backup</strong></dt>
 
         <dd>
           <p><strong>Description:</strong> makes a simple backup of the
@@ -1233,12 +1233,13 @@
           <p><strong>Module:</strong> channels</p>
         </dd>
 
-        <dt><strong><a name="cmd_channel_get"></a>channel get &lt;name&gt; &lt;setting&gt;</strong></dt>
+        <dt><strong><a name="cmd_channel_get"></a>channel get &lt;name&gt; [setting]</strong></dt>
 
         <dd>
           <p><strong>Returns:</strong> The value of the setting you specify.
           For flags, a value of 0 means it is disabled (-), and non-zero means
-          enabled (+).</p>
+          enabled (+). If no setting is specified, a flat list of all available
+          settings and their values will be returned.</p>
 
           <p><strong>Module:</strong> channels</p>
         </dd>
@@ -1553,7 +1554,7 @@
         </dd>
 
         <dt><strong><a name="cmd_resetchanidle"></a>resetchanidle [nick]
-        &lt;channel&gt;</strong></dt>*
+        &lt;channel&gt;</strong></dt>
 
         <dd>
           <p><strong>Description:</strong> resets the channel idle time for
@@ -1566,7 +1567,7 @@
         </dd>
 
         <dt><strong><a name="cmd_resetchanjoin"></a>resetchanjoin [nick]
-        &lt;channel&gt;</strong></dt>*
+        &lt;channel&gt;</strong></dt>
 
         <dd>
           <p><strong>Description:</strong> resets the channel join time for
@@ -1579,7 +1580,7 @@
         </dd>
 
         <dt><strong><a name="cmd_resetchan"></a>resetchan &lt;channel&gt;
-	[flags]</strong></dt>*
+	[flags]</strong></dt>
 
         <dd>
           <p><strong>Description:</strong> rereads in the channel info from
@@ -1752,12 +1753,13 @@
           <p><strong>Module:</strong> irc</p>
         </dd>
 
-        <dt><strong><a name="cmd_jump"></a>jump [server [port [password]]]</strong></dt>
+        <dt><strong><a name="cmd_jump"></a>jump [server [[+]port [password]]]</strong></dt>
 
         <dd>
           <p><strong>Description:</strong> jumps to the server specified,
           or (if none is specified) the next server in the bot&#39;s
-          serverlist</p>
+          serverlist. If you prefix the port with (e.g. +6697), a SSL
+          connection will be attempted.</p>
 
           <p><strong>Returns:</strong> nothing</p>
 
@@ -1833,6 +1835,7 @@
           <p><strong>Module:</strong> channels</p>
         </dd>
 
+
         <dt><strong><a name="cmd_renudef"></a>renudef &lt;flag/int/str&gt; &lt;oldname&gt;
         &lt;newname&gt;</strong></dt>
 
@@ -1852,6 +1855,24 @@
           flag, string, or integer setting.</p>
 
           <p><strong>Returns:</strong> nothing</p>
+
+          <p><strong>Module:</strong> channels</p>
+        </dd>
+
+        <dt><strong><a name="cmd_getudefs"></a>getudefs &lt;flag/int/str&gt;</strong></dt>
+
+        <dd>
+          <p><strong>Returns:</strong> a list of user defined channel
+          settings of the given type, or all of them if no type is given.</p>
+
+          <p><strong>Module:</strong> channels</p>
+        </dd>
+
+        <dt><strong><a name="cmd_chansettype"></a>chansettype &lt;setting&gt;</strong></dt>
+
+        <dd>
+          <p><strong>Returns:</strong> The value of the setting you specify.
+          The possible types are flag, int, str, pair.</p>
 
           <p><strong>Module:</strong> channels</p>
         </dd>
@@ -2260,7 +2281,7 @@
           <p><strong>Module:</strong> core</p>
         </dd>
 
-        <dt><strong><a name="cmd_connect"></a>connect &lt;host&gt; &lt;port&gt;</strong></dt>
+        <dt><strong><a name="cmd_connect"></a>connect &lt;host&gt; &lt;[+]port&gt;</strong></dt>
 
         <dd>
           <p><strong>Description:</strong> makes an outgoing connection
@@ -3011,7 +3032,7 @@
         </dd>
 
         <dt><strong><a name="cmd_maskhost"></a>maskhost &lt;nick!user@host&gt;
-        [masktype]</strong></dt>*
+        [masktype]</strong></dt>
 
         <dd>
           <p><strong>Description:</strong> masks the given irc hostmask, so
@@ -3137,22 +3158,32 @@
           <p><strong>Module:</strong> core</p>
         </dd>
 
-        <dt><strong><a name="cmd_timer"></a>timer &lt;minutes&gt; &lt;tcl-command&gt;</strong></dt>
+        <dt><strong><a name="cmd_timer"></a>timer &lt;minutes&gt; &lt;tcl-command&gt;
+        [count]</strong></dt>
 
         <dd>
           <p><strong>Description:</strong> executes the given Tcl command
-          after a certain number of minutes have passed</p>
+          after a certain number of minutes have passed. If count is
+          specified, the command will be executed count times with the given
+          interval in between. If you specify a count of 0, the timer will
+          repeat until it's removed with killtimer or until the bot is
+          restarted.</p>
 
           <p><strong>Returns:</strong> a timerID</p>
 
           <p><strong>Module:</strong> core</p>
         </dd>
 
-        <dt><strong><a name="cmd_utimer"></a>utimer &lt;seconds&gt; &lt;tcl-command&gt;</strong></dt>
+        <dt><strong><a name="cmd_utimer"></a>utimer &lt;seconds&gt; &lt;tcl-command&gt;
+        [count]</strong></dt>
 
         <dd>
           <p><strong>Description:</strong> executes the given Tcl command
-          after a certain number of seconds have passed</p>
+          after a certain number of seconds have passed. If count is
+          specified, the command will be executed count times with the given
+          interval in between. If you specify a count of 0, the utimer will
+          repeat until it's removed with killutimer or until the bot is
+          restarted.</p>
 
           <p><strong>Returns:</strong> a timerID</p>
 
@@ -3164,7 +3195,8 @@
         <dd>
           <p><strong>Returns:</strong> a list of active minutely timers.
           Each entry in the list contains the number of minutes left till
-          activation, the command that will be executed, and the timerID.</p>
+          activation, the command that will be executed, the timerID, and
+          the remaining number of repeats.</p>
 
           <p><strong>Module:</strong> core</p>
         </dd>
@@ -3174,7 +3206,8 @@
         <dd>
           <p><strong>Returns:</strong> a list of active secondly timers.
           Each entry in the list contains the number of minutes left till
-          activation, the command that will be executed, and the timerID.</p>
+          activation, the command that will be executed, the timerID, and
+          the remaining number of repeats.</p>
 
           <p><strong>Module:</strong> core</p>
         </dd>
@@ -3645,11 +3678,13 @@
           </blockquote>
 
           <p><strong>Returns:</strong> the stripped string</p>
+          
+          <p><strong>Module:</strong> core</p>
         </dd>
 
 
         <dt><strong><a name="cmd_matchaddr"></a>matchaddr &lt;hostmask&gt;
-        &lt;address&gt;</strong></dt>*
+        &lt;address&gt;</strong></dt>
 
         <dd>
           <p><strong>Description:</strong> checks if the address matches the
@@ -3663,7 +3698,7 @@
 
 
         <dt><strong><a name="cmd_matchcidr"></a>matchcidr &lt;block&gt;
-        &lt;address&gt; &lt;prefix&gt;</strong></dt>*
+        &lt;address&gt; &lt;prefix&gt;</strong></dt>
 
         <dd>
           <p><strong>Description:</strong> performs a cidr match on the
@@ -3678,7 +3713,7 @@
 
 
         <dt><strong><a name="cmd_matchstr"></a>matchstr &lt;pattern&gt;
-        &lt;string&gt;</strong></dt>*
+        &lt;string&gt;</strong></dt>
 
         <dd>
           <p><strong>Description:</strong> checks if pattern matches string.
@@ -3688,6 +3723,106 @@
 
           <p><strong>Returns:</strong> 1 if the pattern matches the string,
           0 if it doesn't.</p>
+          
+          <p><strong>Module:</strong> core</p>
+        </dd>
+
+        <dt><strong><a name="cmd_status"></a>status [type]</strong></dt>*
+        <dd>
+          <p><strong>Description:</strong> provides eggdrop status
+          information similar to the .status command in partyline. The
+          available types of information are:</p>
+
+          <blockquote>
+            <table>
+              <tr valign="top">
+                <td>
+                  <p><strong>cpu</strong></p>
+                </td>
+
+                <td>
+                  <p>total cpu time spent by eggdrop</p>
+                </td>
+              </tr>
+
+              <tr valign="top">
+                <td>
+                  <p><strong>mem</strong></p>
+                </td>
+
+                <td>
+                  <p>dynamically allocated memory excluding the Tcl
+                  interpreter</p>
+                </td>
+              </tr>
+
+              <tr valign="top">
+                <td>
+                  <p><strong>cache</strong></p>
+                </td>
+
+                <td>
+                  <p>user entries cache hits (in %)</p>
+                </td>
+              </tr>
+
+              <tr valign="top">
+                <td>
+                  <p><strong>ipv6</strong></p>
+                </td>
+
+                <td>
+                  <p>shows whether IPv6 support was compiled in</p>
+                </td>
+              </tr>
+            </table>
+          </blockquote>
+
+          <p><strong>Returns:</strong> the requested information type or all
+          information if type isn't specified. The format is a flat list of
+          name-value pairs.</p>
+          
+          <p><strong>Module:</strong> core</p>
+        </dd>
+
+
+        <dt><strong><a name="cmd_istls"></a>istls &lt;idx&gt;</strong></dt>*
+
+        <dd>
+          <p><strong>Description:</strong> checks if a connection is
+          encrypted or cleartext. This command is available on TLS-enabled
+          bots only.
+
+          <p><strong>Returns:</strong> 1 if the idx is a TLS connection, 0
+          if it's plaintext.</p>
+          
+          <p><strong>Module:</strong> core</p>
+        </dd>
+
+
+        <dt><strong><a name="cmd_starttls"></a>starttls &lt;idx&gt;</strong></dt>*
+
+        <dd>
+          <p><strong>Description:</strong> establishes a secure (using TLS)
+          connection over idx. The TLS connection should be first negotiated
+          over the plaintext link, or by other means. Both parties must switch
+          to TLS simultaneously.</p>
+
+          <p><strong>Returns:</strong> nothing</p>
+          
+          <p><strong>Module:</strong> core</p>
+        </dd>
+
+
+        <dt><strong><a name="cmd_tlsstatus"></a>tlsstatus &lt;idx&gt;</strong></dt>*
+
+        <dd>
+          <p><strong>Description:</strong> provides information about an
+          established TLS connection. This includes certificate and cipher
+          information as well as protocol version. This command is
+          available on TLS-enabled bots only.</p>
+
+          <p><strong>Returns:</strong> a flat list of name-value pairs</p>
           
           <p><strong>Module:</strong> core</p>
         </dd>
@@ -4811,7 +4946,7 @@
             </li>
 
             <li>
-              <p><a name="binda_out"></a><strong>OUT (stackable)</strong></p>*
+              <p><a name="binda_out"></a><strong>OUT (stackable)</strong></p>
 
               <p><strong>bind out &lt;flags&gt; &lt;mask&gt; &lt;proc&gt;<br>
               proc-name &lt;queue&gt; &lt;text&gt; &lt;queued|sent&gt;
@@ -4830,11 +4965,11 @@
             </li>
 
             <li>
-              <p><a name="binda_cron"></a><strong>CRON (stackable)</strong></p>*
+              <p><a name="binda_cron"></a><strong>CRON (stackable)</strong></p>
 
               <p><strong>bind cron &lt;flags&gt; &lt;mask&gt; &lt;proc&gt;<br>
-              proc-name &lt;minute&gt; &lt;hour&gt; &lt;day&gt; &lt;weekday&gt;
-              &lt;year&gt;</strong></p>
+              proc-name &lt;minute&gt; &lt;hour&gt; &lt;day&gt; &lt;month&gt;
+              &lt;weekday&gt;</strong></p>
 
               <p><strong>Description:</strong> similar to bind TIME, but the
               mask is evaluated as a cron expression, e.g.
@@ -4853,7 +4988,7 @@
             </li>
 
             <li>
-              <p><a name="binda_log"></a><strong>LOG (stackable)</strong></p>*
+              <p><a name="binda_log"></a><strong>LOG (stackable)</strong></p>
 
               <p><strong>bind log &lt;flags&gt; &lt;mask&gt; &lt;proc&gt;<br>
               proc-name &lt;level&gt; &lt;channel&gt; &lt;message&gt;</strong>
@@ -4865,6 +5000,36 @@
               level(s) the message is sent to, or '*' if the message is sent
               to all log levels at once. If the message wasn't sent to a
               specific channel, channel will be set to '*'.</p>
+
+              <p><strong>Module:</strong> core</p>
+            </li>
+
+            <li>
+              <p><a name="binda_tls"></a><strong>TLS (stackable)</strong></p>*
+
+              <p><strong>bind die &lt;flags&gt; &lt;mask&gt; &lt;proc&gt;<br>
+              proc-name &lt;idx&gt</strong>
+              </p>
+
+              <p><strong>Description:</strong> triggered for tcp connections
+              when a ssl handshake has completed and the connection is
+              secured. The mask is matched against the idx of the connection.
+              </p>
+
+              <p><strong>Module:</strong> core</p>
+            </li>
+
+            <li>
+              <p><a name="binda_die"></a><strong>DIE (stackable)</strong></p>*
+
+              <p><strong>bind die &lt;flags&gt; &lt;mask&gt; &lt;proc&gt;<br>
+              proc-name &lt;shutdownreason&gt</strong>
+              </p>
+
+              <p><strong>Description:</strong> triggered when eggdrop is
+              about to die. The mask is matched against the shutdown reason.
+              The bind won't be triggered if the bot crashes or is being
+              terminated by SIGKILL.</p>
 
               <p><strong>Module:</strong> core</p>
             </li>
@@ -5017,6 +5182,20 @@
               sending it. Only meaningful for messages with status
               &quot;queued&quot;.</p>
             </li>
+
+            <li>
+              <p><a name="bindb_evnt"></a><strong>EVNT</strong></p>*
+            
+              <p>Return 1 to make Eggdrop not to take the default action for
+              the event. Used for signal type events, ignored for others.</p>
+            </li>
+            
+            <li>
+              <p><a name="bindb_tls"></a><strong>TLS</strong></p>*
+            
+              <p>Return 1 to disable verbose ssl information for the
+              handshake.</p>
+            </li>
           </ol>
         </li>
       </ol>
@@ -5068,8 +5247,10 @@
       <p>To initiate an outgoing connection, use:</p>
 
       <blockquote>
-        <p>set idx [connect &lt;hostname&gt; &lt;port&gt;]</p>
+        <p>set idx [connect &lt;hostname&gt; &lt;[+]port&gt;]</p>
       </blockquote>
+
+      <p>For SSL connections, prefix the port with a plus sign.</p>
 
       <p>$idx now contains a new DCC entry for the outgoing connection.</p>
 
@@ -5107,8 +5288,10 @@
       <p>To create a listen port, use:</p>
 
       <blockquote>
-        <p>listen &lt;port&gt; script &lt;proc&gt;</p>
+        <p>listen &lt;[+]port&gt; script &lt;proc&gt;</p>
       </blockquote>
+
+      <p>To listen for SSL connections, prefix the port with a plus sign.</p>
 
       <p>Procs should be declared as:</p>
 
@@ -5131,6 +5314,12 @@
       The proc immediately puts this idx under control. Once
       &#39;listen:grab&#39; has been called, the idx behaves exactly like
       an outgoing connection would.</p>
+      
+      <p>Secure connection can be also established after a connection is
+      active. You can connect/listen normally and switch later using the
+      &quot;starttls&quot; command. Your script should first inform the other
+      side of the connection that it wants to switch to SSL. How to do this
+      is application specific.</p>
 
       <p>The best way to learn how to use these commands is to find a
       script that uses them and follow it carefully. However, hopefully

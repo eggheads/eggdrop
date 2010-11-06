@@ -43,6 +43,9 @@
 /* Define if running on SunOS 4.0. */
 #undef DLOPEN_1
 
+/* Arguments passed to configure */
+#undef EGG_AC_ARGS
+
 /* Define the maximum length of handles on the bot. */
 #undef EGG_HANDLEN
 
@@ -51,6 +54,9 @@
 
 /* Defines the current Eggdrop version. */
 #undef EGG_VERSION
+
+/* Define to 1 if you have the `a2i_IPADDRESS' function. */
+#undef HAVE_A2I_IPADDRESS
 
 /* Define to 1 if you have the <arpa/inet.h> header file. */
 #undef HAVE_ARPA_INET_H
@@ -81,6 +87,12 @@
 /* Define to 1 if you have the `dprintf' function. */
 #undef HAVE_DPRINTF
 
+/* Define to 1 if you have the `EVP_md5' function. */
+#undef HAVE_EVP_MD5
+
+/* Define to 1 if you have the `EVP_sha1' function. */
+#undef HAVE_EVP_SHA1
+
 /* Define to 1 if you have the <fcntl.h> header file. */
 #undef HAVE_FCNTL_H
 
@@ -90,14 +102,32 @@
 /* Define to 1 if you have the `getdtablesize' function. */
 #undef HAVE_GETDTABLESIZE
 
+/* Define to 1 if you have the `gethostbyname2' function. */
+#undef HAVE_GETHOSTBYNAME2
+
 /* Define to 1 if you have the `getpagesize' function. */
 #undef HAVE_GETPAGESIZE
 
 /* Define to 1 if you have the `getrusage' function. */
 #undef HAVE_GETRUSAGE
 
+/* Define to 1 if you have the `hex_to_string' function. */
+#undef HAVE_HEX_TO_STRING
+
+/* Define to 1 if you have the in6addr_any constant. */
+#undef HAVE_IN6ADDR_ANY
+
+/* Define to 1 if you have the in6addr_loopback constant. */
+#undef HAVE_IN6ADDR_LOOPBACK
+
 /* Define to 1 if you have the `inet_aton' function. */
 #undef HAVE_INET_ATON
+
+/* Define to 1 if you have the `inet_ntop' function. */
+#undef HAVE_INET_NTOP
+
+/* Define to 1 if you have the `inet_pton' function. */
+#undef HAVE_INET_PTON
 
 /* Define to 1 if the system has the type `intptr_t'. */
 #undef HAVE_INTPTR_T
@@ -107,6 +137,9 @@
 
 /* Define to 1 if you have the `isascii' function. */
 #undef HAVE_ISASCII
+
+/* Define to 1 if you have the `crypto' library (-lcrypto). */
+#undef HAVE_LIBCRYPTO
 
 /* Define to 1 if you have the `dl' library (-ldl). */
 #undef HAVE_LIBDL
@@ -122,6 +155,9 @@
 
 /* Define to 1 if you have the `socket' library (-lsocket). */
 #undef HAVE_LIBSOCKET
+
+/* Define to 1 if you have the `ssl' library (-lssl). */
+#undef HAVE_LIBSSL
 
 /* Define to 1 if you have the <limits.h> header file. */
 #undef HAVE_LIMITS_H
@@ -147,6 +183,15 @@
 /* Define to 1 if you have the `mbrlen' function. */
 #undef HAVE_MBRLEN
 
+/* Define to 1 if you have the `MD5_Final' function. */
+#undef HAVE_MD5_FINAL
+
+/* Define to 1 if you have the `MD5_Init' function. */
+#undef HAVE_MD5_INIT
+
+/* Define to 1 if you have the `MD5_Update' function. */
+#undef HAVE_MD5_UPDATE
+
 /* Define to 1 if you have the `memcpy' function. */
 #undef HAVE_MEMCPY
 
@@ -171,11 +216,26 @@
 /* Define to 1 if you have the `NSLinkModule' function. */
 #undef HAVE_NSLINKMODULE
 
+/* Define this if your OpenSSL library has MD5 cipher support. */
+#undef HAVE_OPENSSL_MD5
+
+/* Define to 1 if you have the <openssl/md5.h> header file. */
+#undef HAVE_OPENSSL_MD5_H
+
+/* Define to 1 if you have the <openssl/ssl.h> header file. */
+#undef HAVE_OPENSSL_SSL_H
+
+/* Define to 1 if you have the <openssl/x509v3.h> header file. */
+#undef HAVE_OPENSSL_X509V3_H
+
 /* Define to 1 if you have the `rand' function. */
 #undef HAVE_RAND
 
 /* Define to 1 if you have the `random' function. */
 #undef HAVE_RANDOM
+
+/* Define to 1 if you have the `RAND_status' function. */
+#undef HAVE_RAND_STATUS
 
 /* Define to 1 if you have the `rename' function. */
 #undef HAVE_RENAME
@@ -231,8 +291,17 @@
 /* Define to 1 if you have the <string.h> header file. */
 #undef HAVE_STRING_H
 
+/* Define to 1 if you have the `string_to_hex' function. */
+#undef HAVE_STRING_TO_HEX
+
 /* Define to 1 if you have the `strncasecmp' function. */
 #undef HAVE_STRNCASECMP
+
+/* Define to 1 if the system has the type `struct in6_addr'. */
+#undef HAVE_STRUCT_IN6_ADDR
+
+/* Define to 1 if the system has the type `struct sockaddr_in6'. */
+#undef HAVE_STRUCT_SOCKADDR_IN6
 
 /* Define to 1 if `tm_zone' is a member of `struct tm'. */
 #undef HAVE_STRUCT_TM_TM_ZONE
@@ -278,6 +347,10 @@
 /* Define for Tcl that has Tcl_GetThreadData() (8.1a2 and later). */
 #undef HAVE_TCL_GETTHREADDATA
 
+/* Define for Tcl that has the Tcl_NotiferProcs struct member initNotifierProc
+   (8.4 and later). */
+#undef HAVE_TCL_NOTIFIER_INIT
+
 /* Define for Tcl that has Tcl_SetNotifier() (8.2b1 and later). */
 #undef HAVE_TCL_SETNOTIFIER
 
@@ -303,6 +376,9 @@
 
 /* Define to 1 if you have the <wchar.h> header file. */
 #undef HAVE_WCHAR_H
+
+/* Define to 1 if you want to enable IPv6 support. */
+#undef IPV6
 
 /* Define if modules will work on your system. */
 #undef MODULES_OK
@@ -341,6 +417,9 @@
 /* Define to the version of this package. */
 #undef PACKAGE_VERSION
 
+/* Define if running under QNX. */
+#undef QNX_HACKS
+
 /* Define to the type of arg 1 for `select'. */
 #undef SELECT_TYPE_ARG1
 
@@ -367,6 +446,9 @@
 
 /* Define to 1 if you can safely include both <sys/time.h> and <time.h>. */
 #undef TIME_WITH_SYS_TIME
+
+/* Define this to enable SSL support. */
+#undef TLS
 
 /* Define to 1 if your <sys/time.h> declares `struct tm'. */
 #undef TM_IN_SYS_TIME
@@ -414,6 +496,9 @@
 
 /* Define to 1 if you need to in order for `stat' and other things to work. */
 #undef _POSIX_SOURCE
+
+/* Define this to a 64-bit type on Cygwin to satisfy OpenSSL dependencies. */
+#undef __int64
 
 /* Define to empty if `const' does not conform to ANSI C. */
 #undef const

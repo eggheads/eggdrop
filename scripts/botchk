@@ -1,0 +1,103 @@
+#! /bin/sh
+#
+# botchk
+#
+# $Id: botchk,v 1.1.1.1 2010/07/26 21:11:06 simple Exp $
+#
+# This is a script suitable for use in a crontab.  It checks to make sure
+# your bot is running.  YOU NEED A SEPARATE CRON JOB FOR EACH BOT.  If your
+# bot isn't found, it'll try to start it back up.
+#
+# You'll need to edit this script for your bot.
+#
+# To check for your bot every 10 minutes, put the following line in your
+# crontab:
+#    0,10,20,30,40,50 * * * *   /home/mydir/mybot/botchk
+# And if you don't want to get email from crontab when it checks you bot,
+# put the following in your crontab:
+#    0,10,20,30,40,50 * * * *   /home/mydir/mybot/botchk >/dev/null 2>&1
+#
+
+# change this to the directory you run your bot from (capitalization COUNTS):
+botdir="/home/mydir/mybot"
+
+# change this to the name of your bot's config file (capitalization COUNTS):
+botscript="mybot"
+
+# change this to the botnet-nick of your bot (capitalization COUNTS):
+botname="LamestBot"
+
+# change this to the name of your bot's userfile (capitalization COUNTS):
+userfile="LamestBot.user"
+
+# change this to the name of your bot's pidfile (capitalization COUNTS):
+pidfile="pid.LamestBot"
+
+########## you probably don't need to change anything below here ##########
+
+cd $botdir
+
+# is there a pid file?
+if test -r $pidfile
+then
+  # there is a pid file -- is it current?
+  botpid=`cat $pidfile`
+  if `kill -CHLD $botpid >/dev/null 2>&1`
+  then
+    # it's still going -- back out quietly
+    exit 0
+  fi
+  echo ""
+  echo "Stale $pidfile file, erasing..."
+  rm -f $pidfile
+fi
+
+if test -r CANTSTART.$botname
+then
+  if test -r $userfile || test -r $userfile~new || test -r $userfile~bak
+  then
+    echo ""
+    echo "Userfile found, removing check file 'CANTSTART.$botname'..."
+    rm -f CANTSTART.$botname
+  fi
+fi
+
+# test if we have run botchk previously and didn't find a userfile
+if test ! -f CANTSTART.$botname
+then
+  echo ""
+  echo "Couldn't find bot '$botname' running, reloading..."
+  echo ""
+  # check for userfile and reload bot if found
+  if test -r $userfile
+  then
+    # It's there, load the bot
+    ./$botscript
+    exit 0
+  else
+    if test -r $userfile~new
+    then
+      # Bot f*@!ed up while saving the userfile last time.  Move it over.
+      echo "Userfile missing.  Using last saved userfile..."
+      mv -f $userfile~new $userfile
+      ./$botscript
+      exit 0
+    else
+      if test -r $userfile~bak
+      then
+        # Userfile is missing, use backup userfile.
+        echo "Userfile missing.  Using backup userfile..."
+        cp -f $userfile~bak $userfile
+        ./$botscript
+        exit 0
+      else
+        # Well, nothing to work with...
+        echo "No userfile.  Could not reload the bot..."
+        echo "no userfile" > CANTSTART.$botname
+        exit 1
+      fi
+    fi
+  fi
+fi
+
+exit 0

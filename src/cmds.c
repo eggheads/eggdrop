@@ -3,7 +3,7 @@
  *   commands from a user via dcc
  *   (split in 2, this portion contains no-irc commands)
  *
- * $Id: cmds.c,v 1.1.1.1 2010/07/26 21:11:06 simple Exp $
+ * $Id: cmds.c,v 1.4 2010/11/01 22:38:34 pseudo Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -746,18 +746,19 @@ static void cmd_console(struct userrec *u, int idx, char *par)
 
 static void cmd_pls_bot(struct userrec *u, int idx, char *par)
 {
-  char *handle, *addr, *p, *q, *host;
+  char *handle, *addr, *port, *relay, *host;
   struct userrec *u1;
   struct bot_addr *bi;
 
   if (!par[0]) {
-    dprintf(idx, "Usage: +bot <handle> [address[:telnet-port[/relay-port]]] "
+    dprintf(idx, "Usage: +bot <handle> [address [telnet-port[/relay-port]]] "
             "[host]\n");
     return;
   }
 
   handle = newsplit(&par);
   addr = newsplit(&par);
+  port = newsplit(&par);
   host = newsplit(&par);
 
   if (strlen(handle) > HANDLEN)
@@ -776,38 +777,55 @@ static void cmd_pls_bot(struct userrec *u, int idx, char *par)
   if (strlen(addr) > 60)
     addr[60] = 0;
 
-  putlog(LOG_CMDS, "*", "#%s# +bot %s%s%s%s%s", dcc[idx].nick, handle,
-         addr[0] ? " " : "", addr, host[0] ? " " : "", host);
   userlist = adduser(userlist, handle, "none", "-", USER_BOT);
   u1 = get_user_by_handle(userlist, handle);
   bi = user_malloc(sizeof(struct bot_addr));
+  bi->address = user_malloc(strlen(addr) + 1);
+  strcpy(bi->address, addr);
 
-  q = strchr(addr, ':');
-  if (!q) {
-    bi->address = user_malloc(strlen(addr) + 1);
-    strcpy(bi->address, addr);
+  if (!port[0]) {
     bi->telnet_port = 3333;
     bi->relay_port = 3333;
   } else {
-    bi->address = user_malloc(q - addr + 1);
-    strncpy(bi->address, addr, q - addr);
-    bi->address[q - addr] = 0;
-    p = q + 1;
-    bi->telnet_port = atoi(p);
-    q = strchr(p, '/');
-    if (!q) {
+#ifdef TLS
+    if (*port == '+')
+      bi->ssl |= TLS_BOT;
+#endif
+    bi->telnet_port = atoi(port);
+    relay = strchr(port, '/');
+    if (!relay) {
       bi->relay_port = bi->telnet_port;
+#ifdef TLS
+      bi->ssl *= TLS_BOT + TLS_RELAY;
+#endif
     } else  {
-      bi->relay_port = atoi(q + 1);
+#ifdef TLS
+      if (relay[1] == '+')
+        bi->ssl |= TLS_RELAY;
+#endif
+      bi->relay_port = atoi(relay + 1);
     }
   }
 
   set_user(&USERENTRY_BOTADDR, u1, bi);
   if (addr[0]) {
-    dprintf(idx, "Added bot '%s' with address '%s' and %s%s%s.\n", handle,
-            addr, host[0] ? "hostmask '" : "no hostmask", host[0] ? host : "",
+    putlog(LOG_CMDS, "*", "#%s# +bot %s %s%s%s %s%s", dcc[idx].nick, handle,
+           addr, port[0] ? " " : "", port[0] ? port : "", host[0] ? " " : "",
+           host);
+#ifdef TLS
+    dprintf(idx, "Added bot '%s' with address [%s]:%s%d/%s%d and %s%s%s.\n",
+            handle, addr, (bi->ssl & TLS_BOT) ? "+" : "", bi->telnet_port,
+            (bi->ssl & TLS_RELAY) ? "+" : "", bi->relay_port, host[0] ?
+            "hostmask '" : "no hostmask", host[0] ? host : "",
             host[0] ? "'" : "");
-  } else{
+#else
+    dprintf(idx, "Added bot '%s' with address [%s]:%d/%d and %s%s%s.\n", handle,
+            addr, bi->telnet_port, bi->relay_port, host[0] ? "hostmask '" :
+            "no hostmask", host[0] ? host : "", host[0] ? "'" : "");
+#endif
+  } else {
+    putlog(LOG_CMDS, "*", "#%s# +bot %s %s%s", dcc[idx].nick, handle,
+           host[0] ? " " : "", host);
     dprintf(idx, "Added bot '%s' with no address and %s%s%s.\n", handle,
             host[0] ? "hostmask '" : "no hostmask", host[0] ? host : "",
             host[0] ? "'" : "");
@@ -941,20 +959,91 @@ static void cmd_chpass(struct userrec *u, int idx, char *par)
   }
 }
 
+#ifdef TLS
+static void cmd_fprint(struct userrec *u, int idx, char *par)
+{
+  char *new;
+
+  if (!par[0]) {
+    dprintf(idx, "Usage: fprint <newfingerprint|+>\n");
+    return;
+  }
+  new = newsplit(&par);
+  if (!strcmp(new, "+")) {
+    if (!dcc[idx].ssl) {
+      dprintf(idx, "You aren't connected with SSL. "
+              "Please set your fingerprint manually.\n");
+      return;
+    } else if (!(new = ssl_getfp(dcc[idx].sock))) {
+      dprintf(idx, "Can't get your current fingerprint. "
+              "Set up you client to send a certificate!\n");
+      return;
+    }
+  }
+  if (set_user(&USERENTRY_FPRINT, u, new)) {
+    putlog(LOG_CMDS, "*", "#%s# fprint...", dcc[idx].nick);
+    dprintf(idx, "Changed fingerprint to '%s'.\n", new);
+  } else
+    dprintf(idx, "Invalid fingerprint. Must be a hexadecimal string.\n");
+}
+
+static void cmd_chfinger(struct userrec *u, int idx, char *par)
+{
+  char *handle, *new;
+  int atr = u ? u->flags : 0;
+
+  if (!par[0])
+    dprintf(idx, "Usage: chfinger <handle> [fingerprint]\n");
+  else {
+    handle = newsplit(&par);
+    u = get_user_by_handle(userlist, handle);
+    if (!u)
+      dprintf(idx, "No such user.\n");
+    else if ((atr & USER_BOTMAST) && !(atr & USER_MASTER) &&
+             !(u->flags & USER_BOT))
+      dprintf(idx, "You can't change fingerprints for non-bots.\n");
+    else if ((bot_flags(u) & BOT_SHARE) && !(atr & USER_OWNER))
+      dprintf(idx, "You can't change a share bot's fingerprint.\n");
+    else if ((u->flags & USER_OWNER) && !(atr & USER_OWNER) &&
+             egg_strcasecmp(handle, dcc[idx].nick))
+      dprintf(idx, "You can't change a bot owner's fingerprint.\n");
+    else if (isowner(handle) && egg_strcasecmp(dcc[idx].nick, handle))
+      dprintf(idx, "You can't change a permanent bot owner's fingerprint.\n");
+    else if (!par[0]) {
+      putlog(LOG_CMDS, "*", "#%s# chfinger %s [nothing]", dcc[idx].nick, handle);
+      set_user(&USERENTRY_FPRINT, u, NULL);
+      dprintf(idx, "Removed fingerprint.\n");
+    } else {
+      new = newsplit(&par);
+      if (set_user(&USERENTRY_FPRINT, u, new)) {
+        putlog(LOG_CMDS, "*", "#%s# chfinger %s %s", dcc[idx].nick,
+               handle, new);
+        dprintf(idx, "Changed fingerprint.\n");
+      } else 
+        dprintf(idx, "Invalid fingerprint. Must be a hexadecimal string.\n");
+    }
+  }
+}
+#endif
+
 static void cmd_chaddr(struct userrec *u, int idx, char *par)
 {
+#ifdef TLS
+  int use_ssl = 0;
+#endif
   int telnet_port = 3333, relay_port = 3333;
-  char *handle, *addr, *p, *q;
+  char *handle, *addr, *port, *relay;
   struct bot_addr *bi;
   struct userrec *u1;
 
   handle = newsplit(&par);
   if (!par[0]) {
-    dprintf(idx, "Usage: chaddr <botname> "
-            "<address[:telnet-port[/relay-port]]>\n");
+    dprintf(idx, "Usage: chaddr <botname> <address> "
+            "[telnet-port[/relay-port]]>\n");
     return;
   }
   addr = newsplit(&par);
+  port = newsplit(&par);
   if (strlen(addr) > UHOSTMAX)
     addr[UHOSTMAX] = 0;
   u1 = get_user_by_handle(userlist, handle);
@@ -966,33 +1055,51 @@ static void cmd_chaddr(struct userrec *u, int idx, char *par)
     dprintf(idx, "You can't change a share bot's address.\n");
     return;
   }
-  putlog(LOG_CMDS, "*", "#%s# chaddr %s %s", dcc[idx].nick, handle, addr);
+  putlog(LOG_CMDS, "*", "#%s# chaddr %s %s%s%s", dcc[idx].nick, handle,
+         addr, *port ? " " : "", port);
   dprintf(idx, "Changed bot's address.\n");
 
   bi = (struct bot_addr *) get_user(&USERENTRY_BOTADDR, u1);
   if (bi) {
     telnet_port = bi->telnet_port;
     relay_port = bi->relay_port;
+#ifdef TLS
+    use_ssl = bi->ssl;
+#endif
   }
 
   bi = user_malloc(sizeof(struct bot_addr));
+  bi->address = user_malloc(strlen(addr) + 1);
+  strcpy(bi->address, addr);
 
-  q = strchr(addr, ':');
-  if (!q) {
-    bi->address = user_malloc(strlen(addr) + 1);
-    strcpy(bi->address, addr);
+  if (!port[0]) {
     bi->telnet_port = telnet_port;
     bi->relay_port = relay_port;
+#ifdef TLS
+    bi->ssl = use_ssl;
   } else {
-    bi->address = user_malloc(q - addr + 1);
-    strncpyz(bi->address, addr, q - addr + 1);
-    p = q + 1;
-    bi->telnet_port = atoi(p);
-    q = strchr(p, '/');
-    if (!q) {
+    bi->ssl = 0;
+    if (*port == '+')
+      bi->ssl |= TLS_BOT;
+    bi->telnet_port = atoi(port);
+    relay = strchr(port, '/');
+    if (!relay) {
       bi->relay_port = bi->telnet_port;
+      bi->ssl *= TLS_BOT + TLS_RELAY;
     } else {
-      bi->relay_port = atoi(q + 1);
+      relay++;
+      if (*relay == '+')
+        bi->ssl |= TLS_RELAY;
+#else
+  } else {
+    bi->telnet_port = atoi(port);
+    relay = strchr(port, '/');
+    if (!relay)
+      bi->relay_port = bi->telnet_port;
+    else {
+      relay++;
+#endif
+      bi->relay_port = atoi(relay);
     }
   }
   set_user(&USERENTRY_BOTADDR, u1, bi);
@@ -2780,6 +2887,9 @@ cmd_t C_dcc[] = {
   {"chaddr",    "t",    (IntFunc) cmd_chaddr,     NULL},
   {"chat",      "",     (IntFunc) cmd_chat,       NULL},
   {"chattr",    "m|m",  (IntFunc) cmd_chattr,     NULL},
+#ifdef TLS
+  {"chfinger",  "t",    (IntFunc) cmd_chfinger,   NULL},
+#endif
   {"chhandle",  "t",    (IntFunc) cmd_chhandle,   NULL},
   {"chnick",    "t",    (IntFunc) cmd_chhandle,   NULL},
   {"chpass",    "t",    (IntFunc) cmd_chpass,     NULL},
@@ -2789,6 +2899,9 @@ cmd_t C_dcc[] = {
   {"debug",     "m",    (IntFunc) cmd_debug,      NULL},
   {"die",       "n",    (IntFunc) cmd_die,        NULL},
   {"echo",      "",     (IntFunc) cmd_echo,       NULL},
+#ifdef TLS
+  {"fprint",    "",     (IntFunc) cmd_fprint,     NULL},
+#endif
   {"fixcodes",  "",     (IntFunc) cmd_fixcodes,   NULL},
   {"help",      "",     (IntFunc) cmd_help,       NULL},
   {"ignores",   "m",    (IntFunc) cmd_ignores,    NULL},

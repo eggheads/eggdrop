@@ -1,0 +1,12 @@
+#  disabled_modules -- File which lists all Eggdrop modules that are
+#                      disabled by default.
+#
+#  $Id: disabled_modules,v 1.1.1.1 2010/07/26 21:11:06 simple Exp $
+#
+# Note:
+#   -  Lines which start with a '#' character are ignored.
+#   -  Every module name needs to be on its own line
+
+# Woobie only serves as an example for module programming. No need to
+# compile it for normal bots ...
+woobie

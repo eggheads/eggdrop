@@ -7,7 +7,7 @@
  *   telling the current programmed settings
  *   initializing a lot of stuff and loading the tcl scripts
  *
- * $Id: chanprog.c,v 1.1.1.1 2010/07/26 21:11:06 simple Exp $
+ * $Id: chanprog.c,v 1.7 2010/11/04 17:54:04 thommey Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -52,6 +52,9 @@ extern time_t now, online_since;
 extern int backgrd, term_z, con_chan, cache_hit, cache_miss, firewallport,
            default_flags, max_logs, conmask, protect_readonly, make_userfile,
            noshare, ignore_time, max_socks;
+#ifdef TLS
+extern SSL_CTX *ssl_ctx;
+#endif
 
 tcl_timer_t *timer = NULL;         /* Minutely timer               */
 tcl_timer_t *utimer = NULL;        /* Secondly timer               */
@@ -225,6 +228,25 @@ int expmem_chanprog()
   return tot;
 }
 
+float getcputime()
+{
+#ifdef HAVE_GETRUSAGE
+  float stime, utime;
+  struct rusage ru;
+  
+  getrusage(RUSAGE_SELF, &ru);
+  utime = ru.ru_utime.tv_sec + (ru.ru_utime.tv_usec / 1000000.00);
+  stime = ru.ru_stime.tv_sec + (ru.ru_stime.tv_usec / 1000000.00);
+  return (utime + stime);
+#else
+#  ifdef HAVE_CLOCK
+  return (clock() / (CLOCKS_PER_SEC * 1.00));
+#  else
+  return -1.00;
+#  endif
+#endif
+}
+
 /* Dump uptime info out to dcc (guppy 9Jan99)
  */
 void tell_verbose_uptime(int idx)
@@ -268,17 +290,11 @@ void tell_verbose_status(int idx)
   char *vers_t, *uni_t;
   int i;
   time_t now2 = now - online_since, hr, min;
-#ifdef HAVE_GETRUSAGE
-  struct rusage ru;
-#else
-#  ifdef HAVE_CLOCK
-  clock_t cl;
-#  endif
-#endif
+  float cputime;
 #ifdef HAVE_UNAME
   struct utsname un;
 
-  if (!uname(&un) < 0) {
+  if (uname(&un) < 0) {
 #endif
     vers_t = " ";
     uni_t  = "*unknown*";
@@ -318,30 +334,25 @@ void tell_verbose_status(int idx)
     else
       strcpy(s1, MISC_LOGMODE);
   }
-#ifdef HAVE_GETRUSAGE
-  getrusage(RUSAGE_SELF, &ru);
-  hr = (int) ((ru.ru_utime.tv_sec + ru.ru_stime.tv_sec) / 60);
-  min = (int) ((ru.ru_utime.tv_sec + ru.ru_stime.tv_sec) - (hr * 60));
-  sprintf(s2, "CPU: %02d:%02d", (int) hr, (int) min);    /* Actally min/sec */
-#else
-#  ifdef HAVE_CLOCK
-  cl = (clock() / CLOCKS_PER_SEC);
-  hr = (int) (cl / 60);
-  min = (int) (cl - (hr * 60));
-  sprintf(s2, "CPU: %02d:%02d", (int) hr, (int) min);    /* Actually min/sec */
-#  else
-  sprintf(s2, "CPU: unknown");
-#  endif
-#endif
+  cputime = getcputime();
+  if (cputime < 0)
+    sprintf(s2, "CPU: unknown");
+  else {
+    hr = cputime / 60;
+    cputime -= hr * 60;
+    sprintf(s2, "CPU: %02d:%05.2f", (int) hr, cputime); /* Actally min/sec */
+  }
   dprintf(idx, "%s %s (%s) - %s - %s: %4.1f%%\n", MISC_ONLINEFOR,
           s, s1, s2, MISC_CACHEHIT,
           100.0 * ((float) cache_hit) / ((float) (cache_hit + cache_miss)));
 
+  dprintf(idx, "Configured with: " EGG_AC_ARGS "\n");
   if (admin[0])
     dprintf(idx, "Admin: %s\n", admin);
 
   dprintf(idx, "Config file: %s\n", configfile);
   dprintf(idx, "OS: %s %s\n", uni_t, vers_t);
+  dprintf(idx, "Process ID: %d (parent %d)\n", getpid(), getppid());
 
   /* info library */
   dprintf(idx, "%s %s\n", MISC_TCLLIBRARY,
@@ -357,6 +368,17 @@ void tell_verbose_status(int idx)
 
   if (tcl_threaded())
     dprintf(idx, "Tcl is threaded.\n");
+#ifdef TLS
+  dprintf(idx, "TLS support is enabled.\n");
+  dprintf(idx, "TLS library: %s\n", SSLeay_version(SSLEAY_VERSION));
+#else
+  dprintf(idx, "TLS support is not available.\n");
+#endif
+#ifdef IPV6
+  dprintf(idx, "IPv6 support is enabled.\n");
+#else
+  dprintf(idx, "IPv6 support is not available.\n");
+#endif
   dprintf(idx, "Socket table: %d/%d\n", threaddata()->MAXSOCKS, max_socks);
 }
 
@@ -557,14 +579,15 @@ void rehash()
 
 /* Add a timer
  */
-unsigned long add_timer(tcl_timer_t ** stack, int elapse, char *cmd,
-                        unsigned long prev_id)
+unsigned long add_timer(tcl_timer_t ** stack, int elapse, int count,
+                        char *cmd, unsigned long prev_id)
 {
   tcl_timer_t *old = (*stack);
 
   *stack = nmalloc(sizeof **stack);
   (*stack)->next = old;
-  (*stack)->mins = elapse;
+  (*stack)->mins = (*stack)->interval = elapse;
+  (*stack)->count = count;
   (*stack)->cmd = nmalloc(strlen(cmd) + 1);
   strcpy((*stack)->cmd, cmd);
   /* If it's just being added back and already had an id,
@@ -617,12 +640,18 @@ void do_check_timers(tcl_timer_t ** stack)
     if (!old->mins) {
       egg_snprintf(x, sizeof x, "timer%lu", old->id);
       do_tcl(x, old->cmd);
-      nfree(old->cmd);
-      nfree(old);
-    } else {
-      old->next = *stack;
-      *stack = old;
+      if (old->count == 1) {
+        nfree(old->cmd);
+        nfree(old);
+        continue;
+      } else {
+        old->mins = old->interval;
+        if (old->count > 1)
+          old->count--;
+      }
     }
+    old->next = *stack;
+    *stack = old;
   }
 }
 
@@ -645,17 +674,19 @@ void wipe_timers(Tcl_Interp *irp, tcl_timer_t **stack)
  */
 void list_timers(Tcl_Interp *irp, tcl_timer_t *stack)
 {
-  char mins[10], id[16], *x;
-  EGG_CONST char *argv[3];
+  char mins[10], count[10], id[16], *x;
+  EGG_CONST char *argv[4];
   tcl_timer_t *mark;
 
   for (mark = stack; mark; mark = mark->next) {
     egg_snprintf(mins, sizeof mins, "%u", mark->mins);
     egg_snprintf(id, sizeof id, "timer%lu", mark->id);
+    egg_snprintf(count, sizeof count, "%u", mark->count);
     argv[0] = mins;
     argv[1] = mark->cmd;
     argv[2] = id;
-    x = Tcl_Merge(3, argv);
+    argv[3] = count;
+    x = Tcl_Merge(sizeof(argv)/sizeof(*argv), argv);
     Tcl_AppendElement(irp, x);
     Tcl_Free((char *) x);
   }

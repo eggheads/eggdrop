@@ -1,0 +1,72 @@
+%{help=set learn-users}%{+n}
+###  %bset learn-users%b <0/1>
+   specifies whether the bot will add users on the fly when they
+   send the "hello" msg.  if turned off, the only way to add users
+   is with the %b'.adduser'%b or %b'.+user'%b commands.  if turned on,
+   users can introduce themselves without your intervention.
+%{help=set wait-split}%{+n}
+### %bset wait-split%b <#>
+   allows you to set the number of seconds to wait before
+   considering a split user as gone for good.
+%{help=set wait-info}%{+n}
+### %bset wait-info%b <#>
+   allows you to set the number of seconds to wait before
+   redisplaying a users info line when they join the channel
+   (only relevant if %buse-info%b is 1).
+%{help=set modes-per-line}%{+n}
+### %bset modes-per-line%b <3-6>
+   this allows you to set the number of mode changes the bot will
+   send in one line, the irc default is 3 but some networks these
+   days allow up to 6 or more mode changes.
+%{help=set mode-buf-length}%{+n}
+### %bset mode-buf-length%b <#>
+   most servers limit the amount of data that can be sent in the
+   arguments of mode changes, this setting allows you to match it,
+   should your server be using a non-standard setup (200 is standard)
+%{help=set bounce-bans}%{+n}
+### %bset bounce-bans%b 0/1
+   do you want the bot to unban any bans set by servers?
+%{help=set bounce-exempts}%{+n}
+### %bset bounce-exempts%b 0/1
+   do you want the bot to reverse any +e modes set by servers?
+   this is an IRCnet feature.
+%{help=set bounce-invites}%{+n}
+### %bset bounce-invites%b 0/1
+   do you want the bot to reverse any +I modes set by servers?
+   this is an IRCnet feature.
+%{help=set bounce-modes}%{+n}
+### %bset bounce-modes%b 0/1
+   do you want the bot to reverse all server modes?
+%{help=set max-bans}%{+n}
+### %bset max-bans%b <#>
+   if there are more than max-bans active bans on a channel, then
+   the bot won't try to put more bans. thus it won't flood the irc
+   server.
+%{help=set max-exempts}%{+n}
+### %bset max-exempts%b <#>
+   if there are more than max-exempts active +e modes on a channel,
+   then the bot won't try to put more exemptions. thus it won't flood
+   the irc server. this is an IRCnet feature.
+%{help=set max-invites}%{+n}
+### %bset max-invites%b <#>
+   if there are more than max-invites active +I modes on a channel,
+   then the bot won't try to put more invitations. thus it won't flood
+   the irc server. this is an IRCnet feature.
+%{help=set max-modes}%{+n}
+### %bset max-modes%b <#>
+   there is a global limit for +b/+e/+I modes. this limit is set to
+   30 on 2.10 irc servers. this is an IRCnet feature.
+%{help=set kick-bogus}%{+n}
+### %bset kick-bogus%b 0/1
+   do you want the bot to kick bogus usernames?
+%{help=set kick-bogus}%{+n}
+### %bset kick-bogus%b 0/1
+   do you want the bot to kick for ctcp avalanches to a channel?
+   remember that if it does, as it won't ban them, it can be at the
+   origin of a nice kick-flood.
+%{help=set use-354}%{+n}
+### %bset use-354%b 0/1
+   ircu has a new format for /who channel (which returns 354 numeric)
+   by using this you reduce the amount of data retrieved about each
+   user when the bot joins the channel to the minimum required,
+   saving bandwidth, and being a good netizen ;)

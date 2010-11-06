@@ -16,7 +16,7 @@ dnl You should have received a copy of the GNU General Public License
 dnl along with this program; if not, write to the Free Software
 dnl Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 dnl
-dnl $Id: aclocal.m4,v 1.1.1.1 2010/07/26 21:11:06 simple Exp $
+dnl $Id: aclocal.m4,v 1.12 2010/10/25 22:11:23 pseudo Exp $
 dnl
 
 
@@ -503,7 +503,7 @@ AC_DEFUN([EGG_CHECK_MODULE_SUPPORT],
 [
   MODULES_OK="yes"
   MOD_EXT="so"
-  DEFAULT_MAKE="eggdrop"
+  DEFAULT_MAKE="debug"
   LOAD_METHOD="dl"
   WEIRD_OS="yes"
   UNKNOWN_OS="no"
@@ -680,9 +680,7 @@ AC_DEFUN([EGG_CHECK_OS],
       esac
     ;;
     CYGWI*)
-      AC_PROG_CC_WIN32
       SHLIB_LD="$CC -shared"
-      CC="$CC $WIN32FLAGS"
       MOD_CC="$CC"
       MOD_LD="$CC"
       EGG_CYGWIN="yes"
@@ -734,6 +732,7 @@ AC_DEFUN([EGG_CHECK_OS],
     ;;
     QNX)
       SHLIB_LD="ld -shared"
+      AC_DEFINE(QNX_HACKS, 1, [Define if running under QNX.])
     ;;
     OSF1)
       case `echo "$egg_cv_var_system_release" | cut -d . -f 1` in
@@ -1405,6 +1404,21 @@ AC_DEFUN([EGG_TCL_CHECK_SETNOTIFIER],
   fi
 ])
 
+dnl EGG_TCL_CHECK_NOTIFIER_INIT
+dnl
+AC_DEFUN([EGG_TCL_CHECK_NOTIFIER_INIT],
+[
+  if test "$egg_tcl_changed" = yes; then
+    EGG_CACHE_UNSET(egg_cv_var_tcl_notifier_init)
+  fi
+
+  # Check for Tcl_NotifierProcs member initNotifierProc
+  AC_CHECK_MEMBER([Tcl_NotifierProcs.initNotifierProc], [egg_cv_var_tcl_notifier_init="yes"], [egg_cv_var_tcl_notifier_init="no"], [[#include "$TCLINC/$TCLINCFN"]])
+  if test "$egg_cv_var_tcl_notifier_init" = yes; then
+    AC_DEFINE(HAVE_TCL_NOTIFIER_INIT, 1, [Define for Tcl that has the Tcl_NotiferProcs struct member initNotifierProc (8.4 and later).])
+  fi
+])
+
 
 dnl EGG_TCL_LIB_REQS()
 dnl
@@ -1755,43 +1769,234 @@ AC_DEFUN([EGG_SAVE_PARAMETERS],
   done
 
   AC_SUBST(egg_ac_parameters)
+  AC_DEFINE_UNQUOTED(EGG_AC_ARGS, "$egg_ac_parameters", [Arguments passed to configure])
 ])
 
 
-dnl AC_PROG_CC_WIN32()
+dnl EGG_IPV6_COMPAT
 dnl
-AC_DEFUN([AC_PROG_CC_WIN32],
+AC_DEFUN([EGG_IPV6_COMPAT],
 [
-  AC_MSG_CHECKING([how to access the Win32 API])
-  WIN32FLAGS=
-  AC_COMPILE_IFELSE([[
-    #ifndef WIN32
-    #  ifndef _WIN32
-    #    error WIN32 or _WIN32 not defined
-    #  endif
-    #endif
-  ]], [
-    AC_MSG_RESULT([present by default])
-  ], [
-    ac_compile_save="$ac_compile"
-    save_CC="$CC"
-    ac_compile="$ac_compile -mwin32"
-    CC="$CC -mwin32"
-    AC_COMPILE_IFELSE([[
-      #ifndef WIN32
-      #  ifndef _WIN32
-      #    error WIN32 or _WIN32 not defined
-      #  endif
-      #endif
+if test "$enable_ipv6" = "yes"; then
+  AC_CHECK_FUNCS([inet_pton gethostbyname2])
+  AC_CHECK_TYPES([struct in6_addr], egg_cv_var_have_in6_addr="yes", egg_cv_var_have_in6_addr="no", [
+    #include <sys/types.h>
+    #include <netinet/in.h>
+  ])
+  if test "$egg_cv_var_have_in6_addr" = "yes"; then
+    # Check for in6addr_any
+    AC_CACHE_CHECK([for the in6addr_any constant], [egg_cv_var_have_in6addr_any], [
+      AC_TRY_COMPILE([
+        #include <sys/types.h>
+        #include <netinet/in.h>
+      ], [struct in6_addr i6 = in6addr_any;],
+      [egg_cv_var_have_in6addr_any="yes"], [egg_cv_var_have_in6addr_any="no"])
+    ])
+    if test "$egg_cv_var_have_in6addr_any" = "yes"; then
+      AC_DEFINE(HAVE_IN6ADDR_ANY, 1, [Define to 1 if you have the in6addr_any constant.])
+    fi
+    # Check for in6addr_loopback
+    AC_CACHE_CHECK([for the in6addr_loopback constant], [egg_cv_var_have_in6addr_loopback], [
+      AC_TRY_COMPILE([
+        #include <sys/types.h>
+        #include <netinet/in.h>
+      ], [struct in6_addr i6 = in6addr_loopback;],
+      [egg_cv_var_have_in6addr_loopback="yes"], [egg_cv_var_have_in6addr_loopback="no"])
+    ])
+    if test "$egg_cv_var_have_in6addr_loopback" = "yes"; then
+      AC_DEFINE(HAVE_IN6ADDR_LOOPBACK, 1, [Define to 1 if you have the in6addr_loopback constant.])
+    fi
+    AC_CHECK_TYPES([struct sockaddr_in6], , , [
+      #include <sys/types.h>
+      #include <netinet/in.h>
+    ])
+  else
+    AC_MSG_NOTICE([no in6_addr found, skipping dependent checks. Custom definitions will be used.])
+  fi
+fi
+])
+
+
+dnl EGG_IPV6_ENABLE
+dnl
+AC_DEFUN([EGG_IPV6_ENABLE],
+[
+  AC_ARG_ENABLE(ipv6,
+    [  --enable-ipv6           enable IPv6 support (autodetect)],
+    [enable_ipv6="$enableval"], [enable_ipv6="$egg_cv_var_ipv6_supported"])
+  AC_ARG_ENABLE(ipv6,
+    [  --disable-ipv6          disable IPv6 support ], [enable_ipv6="$enableval"])
+
+  if test "$enable_ipv6" = "yes"; then
+    if test "$egg_cv_var_ipv6_supported" = "no"; then
+      AC_MSG_WARN([You have enabled IPv6 but your system doesn't seem to support it.])
+      AC_MSG_WARN([Eggdrop will compile but will be limited to IPv4 on this host.])
+    fi
+    AC_DEFINE(IPV6, 1, [Define to 1 if you want to enable IPv6 support.])
+  fi
+])
+
+
+dnl EGG_IPV6_STATUS
+dnl
+AC_DEFUN([EGG_IPV6_STATUS],
+[
+  AC_CACHE_CHECK([for system IPv6 support], [egg_cv_var_ipv6_supported], [
+    AC_RUN_IFELSE([[
+      #include <unistd.h>
+      #include <sys/socket.h>
+      #include <netinet/in.h>
+  
+      int main()
+      {
+        int s = socket(AF_INET6, SOCK_STREAM, 0);
+
+        if (s != -1)
+          close(s);
+
+        return((s == -1));
+       }
     ]], [
-      AC_MSG_RESULT([found via -mwin32])
-      ac_compile="$ac_compile_save"
-      CC="$save_CC"
-      WIN32FLAGS="-mwin32"
-    ], [
-      ac_compile="$ac_compile_save"
-      CC="$save_CC"
-      AC_MSG_RESULT([not found])
+      egg_cv_var_ipv6_supported="yes"
+     ], [
+      egg_cv_var_ipv6_supported="no"
     ])
   ])
+])
+
+
+dnl EGG_TLS_ENABLE
+dnl
+AC_DEFUN([EGG_TLS_ENABLE],
+[
+  AC_MSG_CHECKING([whether to enable TLS support])
+  AC_ARG_ENABLE(tls,
+    [  --enable-tls            enable TLS support (autodetect)],
+    [enable_tls="$enableval"])
+  AC_ARG_ENABLE(tls,
+    [  --disable-tls           disable TLS support ], [enable_tls="$enableval"],
+    [enable_tls="autodetect"])
+
+  AC_MSG_RESULT([$enable_tls])
+])
+
+
+dnl EGG_TLS_WITHSSL
+dnl
+AC_DEFUN(EGG_TLS_WITHSSL,
+[
+  save_LIBS="$LIBS"
+  AC_ARG_WITH(sslinc, [  --with-sslinc=PATH      Path to OpenSSL headers], [
+    if test "$enable_tls" != "no"; then
+      if test -d "$withval"; then
+        save_CC="$CC"
+        save_CPP="$CPP"
+        CC="$CC -I$withval"
+        CPP="$CPP -I$withval"
+        AC_CHECK_HEADERS([openssl/ssl.h openssl/x509v3.h], [sslinc="-I$withval"], [
+          AC_MSG_WARN([Invalid path to OpenSSL headers. $withval/openssl/ doesn't contain the required files.])
+          sslinc=""
+          break
+        ], [[
+          #ifdef CYGWIN_HACKS
+          #  ifndef __int64
+          #    define __int64 long long
+          #  endif
+          #endif
+        ]])
+        AC_SUBST(SSL_INCLUDES, [$sslinc])
+        CC="$save_CC"
+        CPP="$save_CPP"
+      else
+        AC_MSG_WARN([Invalid path to OpenSSL headers. $withval is not a directory.])
+      fi
+    fi
+  ])
+
+  AC_ARG_WITH(ssllib, [  --with-ssllib=PATH      Path to OpenSSL libraries],
+  [
+    if test "$enable_tls" != "no"; then
+      if test -d "$withval"; then
+        AC_CHECK_LIB(ssl, SSL_accept, , [havessllib="no"], [-L$withval -lcrypto])
+        AC_CHECK_LIB(crypto, X509_digest, , [havessllib="no"], [-L$withval -lssl])
+        if test "$havessllib" = "no"; then
+          AC_MSG_WARN([Invalid path to OpenSSL libs. $withval doesn't contain the required files.])
+        else
+          AC_SUBST(SSL_LIBS, [-L$withval])
+        fi
+      else
+        AC_MSG_WARN([You have specified an invalid path to OpenSSL libs. $withval is not a directory.])
+      fi
+    fi
+  ])
+])
+
+
+dnl EGG_TLS_DETECT
+dnl
+AC_DEFUN([EGG_TLS_DETECT],
+[
+  if test "$enable_tls" != "no"; then
+    if test -z "$SSL_INCLUDES"; then
+      AC_CHECK_HEADERS([openssl/ssl.h openssl/x509v3.h], , [havesslinc="no"], [
+        #ifdef CYGWIN_HACKS
+        #  ifndef __int64
+        #    define __int64 long long
+        #  endif
+        #endif
+      ])
+    fi
+    if test -z "$SSL_LIBS"; then
+      AC_CHECK_LIB(ssl, SSL_accept, , [havessllib="no"], [-lcrypto])
+      AC_CHECK_LIB(crypto, X509_digest, , [havessllib="no"], [-lssl])
+      AC_CHECK_FUNCS([EVP_md5 EVP_sha1 a2i_IPADDRESS hex_to_string string_to_hex], , [[
+        havessllib="no"
+        break
+      ]])
+    fi
+    if test "$enable_tls" = "yes"; then
+      if test "$havesslinc" = "no"; then
+        AC_MSG_WARN([Cannot find OpenSSL headers.])
+        AC_MSG_WARN([Please specify the path to the openssl include dir using --with-sslinc=path])
+      fi
+      if test "$havessllib" = "no"; then
+        AC_MSG_WARN([Cannot find OpenSSL libraries.])
+        AC_MSG_WARN([Please specify the path to libssl and libcrypto using --with-ssllib=path])
+      fi
+    fi
+    AC_MSG_CHECKING([for OpenSSL])
+    if test "$havesslinc" = "no" || test "$havessllib" = "no"; then
+      AC_MSG_RESULT([no (make sure you have version 0.9.8 or higher installed)])
+      LIBS="$save_LIBS"
+    else
+      AC_MSG_RESULT([yes])
+      if test "$EGG_CYGWIN" = "yes"; then
+        AC_CHECK_TYPE([__int64], , [
+          AC_DEFINE([__int64], [long long], [Define this to a 64-bit type on Cygwin to satisfy OpenSSL dependencies.])
+        ])
+      fi
+      AC_CHECK_FUNCS([RAND_status])
+      AC_DEFINE(TLS, 1, [Define this to enable SSL support.])
+      EGG_MD5_COMPAT
+    fi
+  fi
+])
+
+
+dnl EGG_MD5_COMPAT
+dnl
+AC_DEFUN([EGG_MD5_COMPAT],
+[
+  save_CC="$CC"
+  save_CPP="$CPP"
+  CC="$CC $sslinc"
+  CPP="$CPP $sslinc"
+  AC_CHECK_HEADERS([openssl/md5.h], [
+    AC_CHECK_FUNCS([MD5_Init MD5_Update MD5_Final], , [havesslmd5="no"])
+  ])
+  if test "$havesslmd5" != "no"; then
+    AC_DEFINE(HAVE_OPENSSL_MD5, 1, [Define this if your OpenSSL library has MD5 cipher support.])
+  fi
+  CC="$save_CC"
+  CPP="$save_CPP"
 ])

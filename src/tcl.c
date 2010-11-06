@@ -4,7 +4,7 @@
  *   Tcl initialization
  *   getting and setting Tcl/eggdrop variables
  *
- * $Id: tcl.c,v 1.1.1.1 2010/07/26 21:11:06 simple Exp $
+ * $Id: tcl.c,v 1.9 2010/10/26 09:16:36 pseudo Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -46,20 +46,32 @@ typedef struct {
 extern time_t online_since;
 
 extern char origbotname[], botuser[], motdfile[], admin[], userfile[],
-            firewall[], helpdir[], notify_new[], hostname[], myip[], moddir[],
+            firewall[], helpdir[], notify_new[], vhost[], moddir[],
             tempdir[], owner[], network[], botnetnick[], bannerfile[],
             egg_version[], natip[], configfile[], logfile_suffix[], log_ts[],
-            textdir[], pid_file[];
+            textdir[], pid_file[], listen_ip[];
+
 
 extern int flood_telnet_thr, flood_telnet_time, shtime, share_greet,
            require_p, keep_all_logs, allow_new_telnets, stealth_telnets,
            use_telnet_banner, default_flags, conmask, switch_logfiles_at,
            connect_timeout, firewallport, notify_users_at, flood_thr, tands,
-           ignore_time, reserved_port_min, reserved_port_max, die_on_sighup,
-           die_on_sigterm, max_logs, max_logsize, dcc_total, raw_log,
-           identtimeout, dcc_sanitycheck, dupwait_timeout, egg_numver,
-           share_unlinks, protect_telnet, sort_users, strict_host,
-           resolve_timeout, default_uflags, userfile_perm, cidr_support;
+           ignore_time, reserved_port_min, reserved_port_max, max_logs,
+           max_logsize, dcc_total, raw_log, identtimeout, dcc_sanitycheck,
+           dupwait_timeout, egg_numver, share_unlinks, protect_telnet,
+           strict_host, resolve_timeout, default_uflags, userfile_perm,
+           cidr_support;
+
+#ifdef IPV6
+extern char vhost6[];
+extern int pref_af;
+#endif
+
+#ifdef TLS
+extern int tls_maxdepth, tls_vfybots, tls_vfyclients, tls_vfydcc, tls_auth;
+extern char tls_capath[], tls_cafile[], tls_certfile[], tls_keyfile[],
+            tls_ciphers[];
+#endif
 
 extern struct dcc_t *dcc;
 extern tcl_timer_t *timer, *utimer;
@@ -86,10 +98,6 @@ int strtot = 0;
 int handlen = HANDLEN;
 int utftot = 0;
 int clientdata_stuff = 0;
-
-/* Compatability for removed settings.*/
-int strict_servernames = 0, enable_simul = 1, use_console_r = 0,
-    debug_output = 0;
 
 /* Prototypes for Tcl */
 Tcl_Interp *Tcl_CreateInterp();
@@ -483,13 +491,23 @@ static tcl_strings def_tcl_strings[] = {
   {"help-path",       helpdir,        120, STR_DIR | STR_PROTECT},
   {"temp-path",       tempdir,        120, STR_DIR | STR_PROTECT},
   {"text-path",       textdir,        120, STR_DIR | STR_PROTECT},
+#ifdef TLS
+  {"ssl-capath",      tls_capath,     120, STR_DIR | STR_PROTECT},
+  {"ssl-cafile",      tls_cafile,     120,           STR_PROTECT},
+  {"ssl-ciphers",     tls_ciphers,    120,           STR_PROTECT},
+  {"ssl-privatekey",  tls_keyfile,    120,           STR_PROTECT},
+  {"ssl-certificate", tls_certfile,   120,           STR_PROTECT},
+#endif
 #ifndef STATIC
   {"mod-path",        moddir,         120, STR_DIR | STR_PROTECT},
 #endif
   {"notify-newusers", notify_new,     120,                     0},
   {"owner",           owner,          120,           STR_PROTECT},
-  {"my-ip",           myip,           120,                     0},
-  {"my-hostname",     hostname,       120,                     0},
+  {"vhost4",          vhost,          120,                     0},
+#ifdef IPV6
+  {"vhost6",          vhost6,         120,                     0},
+#endif
+  {"listen-addr",     listen_ip,      120,                     0},
   {"network",         network,        40,                      0},
   {"whois-fields",    whois_fields,   1024,                    0},
   {"nat-ip",          natip,          120,                     0},
@@ -507,6 +525,13 @@ static tcl_strings def_tcl_strings[] = {
 static tcl_ints def_tcl_ints[] = {
   {"ignore-time",           &ignore_time,          0},
   {"handlen",               &handlen,              2},
+#ifdef TLS
+  {"ssl-chain-depth",       &tls_maxdepth,         0},
+  {"ssl-verify-dcc",        &tls_vfydcc,           0},
+  {"ssl-verify-clients",    &tls_vfyclients,       0},
+  {"ssl-verify-bots",       &tls_vfybots,          0},
+  {"ssl-cert-auth",         &tls_auth,             0},
+#endif
   {"dcc-flood-thr",         &dcc_flood_thr,        0},
   {"hourly-updates",        &notify_users_at,      0},
   {"switch-logfiles-at",    &switch_logfiles_at,   0},
@@ -521,8 +546,6 @@ static tcl_ints def_tcl_ints[] = {
   {"console",               &conmask,              0},
   {"default-flags",         &default_flags,        0},
   {"numversion",            &egg_numver,           2},
-  {"die-on-sighup",         &die_on_sighup,        1},
-  {"die-on-sigterm",        &die_on_sigterm,       1},
   {"remote-boots",          &remote_boots,         1},
   {"max-socks",             &max_socks,            0},
   {"max-logs",              &max_logs,             0},
@@ -531,7 +554,6 @@ static tcl_ints def_tcl_ints[] = {
   {"raw-log",               &raw_log,              1},
   {"protect-telnet",        &protect_telnet,       0},
   {"dcc-sanitycheck",       &dcc_sanitycheck,      0},
-  {"sort-users",            &sort_users,           0},
   {"ident-timeout",         &identtimeout,         0},
   {"share-unlinks",         &share_unlinks,        0},
   {"log-time",              &shtime,               0},
@@ -549,10 +571,9 @@ static tcl_ints def_tcl_ints[] = {
   {"copy-to-tmp",           &copy_to_tmp,          0},
   {"quiet-reject",          &quiet_reject,         0},
   {"cidr-support",          &cidr_support,         0},
-  {"strict-servernames",    &strict_servernames,   0}, /* compat */
-  {"enable-simul",          &enable_simul,         0}, /* compat */
-  {"debug-output",          &debug_output,         0}, /* compat */
-  {"use-console-r",         &use_console_r,        0}, /* compat */
+#ifdef IPV6
+  {"prefer-ipv6",           &pref_af,              0},
+#endif
   {NULL,                    NULL,                  0}
 };
 
@@ -583,6 +604,9 @@ void kill_tcl()
 
 extern tcl_cmds tcluser_cmds[], tcldcc_cmds[], tclmisc_cmds[],
        tclmisc_objcmds[], tcldns_cmds[];
+#ifdef TLS
+extern tcl_cmds tcltls_cmds[];
+#endif
 
 #ifdef REPLACE_NOTIFIER
 /* The tickle_*() functions replace the Tcl Notifier
@@ -827,6 +851,9 @@ resetPath:
   add_tcl_objcommands(tclmisc_objcmds);
 #endif
   add_tcl_commands(tcldns_cmds);
+#ifdef TLS
+  add_tcl_commands(tcltls_cmds);
+#endif
 }
 
 void do_tcl(char *whatzit, char *script)

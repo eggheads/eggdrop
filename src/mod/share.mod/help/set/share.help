@@ -1,0 +1,34 @@
+%{help=set allow-resync}%{+n}
+###  %bset allow-resync%b <0/1>
+   When two bots get disconnected, this setting allows them to create a resync
+   buffer which saves all changes done to the userfile during the disconnect.
+   When they reconnect, they will not have to transfer the complete user file,
+   but, instead, just send the resync buffer.
+
+   NOTE: This has been known to cause loss of channel flags and other problems.
+   Using this setting is not recommended.
+%{help=set resync-time}%{+n}
+###  %bset resync-time%b <time>
+   This setting specifies how long to hold another bots resync data before
+   flushing it.
+%{help=set private-global}%{+n}
+###  %bset private-global%b <0/1>
+   When sharing user lists, DON'T ACCEPT global flag changes from other bots?
+   The bot will still send changes made on the bot, it just won't accept any
+   global flag changes from other bots. This overrides the %bprivate-globals%b
+   setting.
+%{help=set private-globals}%{+n}
+###  %bset private-globals%b [flags]
+   When sharing user lists, if private-global isn't set, which global flag
+   changes from other bots should be ignored?
+%{help=set private-user}%{+n}
+###  %bset private-user <0/1>
+   When sharing user lists, don't accept ANY userfile changes from other
+   bots? Paranoid people should use this feature on their hub bot. This
+   will force all userlist changes to be made via the hub.
+%{help=set override-bots}%{+n}
+###  %bset override-bots <0/1>
+   This setting makes the bot discard its own bot records in favor of the ones
+   sent by the hub. No passwords or botflags are shared, only ports and address
+   are added to sharing procedure. This only works with hubs that are v1.5.1 or
+   higher.

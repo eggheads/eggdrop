@@ -1,0 +1,78 @@
+$Id: CONTENTS,v 1.1.1.1 2010/07/26 21:11:06 simple Exp $
+
+Directory Contents - scripts/
+Last revised: August 08, 2004
+    _____________________________________________________________________
+
+                        Directory Contents - scripts/
+
+  These are the example scripts that come with eggdrop.  They're meant to be
+  useful AND to introduce Tcl to those who haven't dealt with it before. Even
+  people who program in Tcl may be confused by Eggdrop's implementation at
+  first, because so many commands were added to interface with the bot.
+
+  action.fix.tcl
+    Gets rid of those ugly /me's people do instead of a .me.
+
+  alltools.tcl
+    Several useful procs for use in scripts.
+
+  autobotchk
+    Tcl script used to crontab your Eggdrop. Type 'scripts/autobotchk' from the
+    Eggdrop's root directory for help.
+
+  botchk
+    A shell script which can be used for auto-starting the bot via 'cron'.
+
+  cmd_resolve.tcl
+    Adds a dcc command called '.resolve' which can be used to resolve hostnames
+    or IP addresses via the partyline.
+
+  compat.tcl
+    Maps old Tcl functions to new ones, for lazy people who can't be bothered
+    updating their scripts.
+
+  dccwhois.tcl
+    Enhances Eggdrop's built-in dcc '.whois' command to allow all
+    users to '.whois' their own handle.
+
+  getops.tcl
+    A way for bots to get ops from other bots on the botnet (if they're on the
+    same channel).
+
+  klined.tcl
+    Removes servers from your server list that your bot has been k-lined on, to
+    prevent admins getting peeved with constant connects from your bot's host.
+
+  notes2.tcl
+    Check your notes on every shared bot of the hub.
+
+  ques5.tcl
+    Makes web pages of who's on each channel, updated periodically (requires
+    alltools.tcl).
+
+  quotepass.tcl
+    Some servers on the Undernet will make you send 'PASS <numbers>' before
+    you can connect if you did not return an identd response. This script will
+    handle sending that for you.
+
+  quotepong.tcl
+    Some EFnet servers require the user to type /quote pong :<cookie>
+    when identd is broken or disabled. This will send pong :<cookie> to
+    the server when connecting.
+
+  sentinel.tcl (by slennox)
+    Flood protection script for Eggdrop with integrated BitchX CTCP simulation.
+    This script is designed to provide strong protection for your bot and
+    channels against large floodnets and proxy floods.
+
+  userinfo.tcl
+    Cute user info settings things.
+
+  weed
+    Weed out certain undesirables from an Eggdrop userlist. Type 'scripts/weed'
+    from the Eggdrop's root directory for help.
+
+    _____________________________________________________________________
+
+  Copyright (C) 2001 - 2010 Eggheads Development Team

@@ -33,8 +33,8 @@ This erases your info line.
 %b/MSG%b %B %bINVITE%b <password> <channel>
 This will invite you to a channel (if the bot is on the specified channel).
 %{help=jump}%{+m}
-%b/MSG%b %B %bJUMP%b <password> [server [port [server password]]]
-This will make the bot jump to a new server. You can optionally specify a server to jump to, in the form of 'new.server.com' or 'new.server.com 6667', etc.
+%b/MSG%b %B %bJUMP%b <password> [server [[+]port [server password]]]
+This will make the bot jump to a new server. You can optionally specify a server to jump to, in the form of 'new.server.com' or 'new.server.com 6667', etc. Prefix the port with '+' for SSL.
 %{help=memory}%{+m}
 %b/MSG%b %B %bMEMORY%b <password>
 This displays the bot's memory usage information.

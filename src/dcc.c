@@ -4,7 +4,7 @@
  *   disconnect on a dcc socket
  *   ...and that's it!  (but it's a LOT)
  *
- * $Id: dcc.c,v 1.1.1.1 2010/07/26 21:11:06 simple Exp $
+ * $Id: dcc.c,v 1.6 2010/10/31 14:40:38 pseudo Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -43,26 +43,30 @@ extern int egg_numver, connect_timeout, conmask, backgrd, max_dcc,
            make_userfile, default_flags, raw_log, ignore_time,
            par_telnet_flood;
 
-struct dcc_t *dcc = NULL;       /* DCC list                                */
-int dcc_total = 0;              /* Total dcc's                             */
-char tempdir[121] = "";         /* Temporary directory
-                                 * (default: current directory)            */
+struct dcc_t *dcc = NULL;       /* DCC list                                   */
+#ifdef TLS
+int tls_vfyclients = 0;		/* Certificate validation mode for clients    */
+int tls_vfydcc = 0;             /* Verify DCC chat/send user certificates     */
+int tls_auth = 0;               /* Allow certificate authentication           */
+#endif
+int dcc_total = 0;              /* Total dcc's                                */
 int require_p = 0;              /* Require 'p' access to get on the
-                                 * party line?                             */
+                                 * party line?                                */
 int allow_new_telnets = 0;      /* Allow people to introduce themselves
-                                 * via telnet                              */
-int stealth_telnets = 0;        /* Be paranoid? <cybah>                    */
-int use_telnet_banner = 0;      /* Display telnet banner?                  */
-char network[41] = "unknown-net";       /* Name of the IRC network you're on  */
-int password_timeout = 180;     /* Time to wait for a password from a user */
-int bot_timeout = 60;           /* Bot timeout value                       */
-int identtimeout = 5;           /* Timeout value for ident lookups         */
-int dupwait_timeout = 5;        /* Timeout for rejecting duplicate entries */
-int protect_telnet = 1;         /* Even bother with ident lookups :)       */
+                                 * via telnet                                 */
+int stealth_telnets = 0;        /* Be paranoid? <cybah>                       */
+int use_telnet_banner = 0;      /* Display telnet banner?                     */
+int password_timeout = 180;     /* Time to wait for a password from a user    */
+int bot_timeout = 60;           /* Bot timeout value                          */
+int identtimeout = 5;           /* Timeout value for ident lookups            */
+int dupwait_timeout = 5;        /* Timeout for rejecting duplicate entries    */
+int protect_telnet = 1;         /* Even bother with ident lookups :)          */
 int flood_telnet_thr = 5;       /* Number of telnet connections to be
-                                 * considered a flood                      */
-int flood_telnet_time = 60;     /* In how many seconds?                    */
-char bannerfile[121] = "text/banner";   /* File displayed on telnet login */
+                                 * considered a flood                         */
+int flood_telnet_time = 60;     /* In how many seconds?                       */
+char tempdir[121] = "";         /* Temporary directory (default: current dir) */
+char network[41] = "unknown-net";      /* Name of the IRC network you're on   */
+char bannerfile[121] = "text/banner";  /* File displayed on telnet login      */
 
 static void dcc_telnet_hostresolved(int);
 static void dcc_telnet_got_ident(int, char *);
@@ -245,6 +249,17 @@ static void bot_version(int idx, char *par)
   egg_snprintf(x, sizeof x, "v %d", dcc[idx].u.bot->numver);
   bot_share(idx, x);
   dprintf(idx, "el\n");
+#ifdef TLS
+  /* Ask the peer to switch to ssl communication. We'll continue
+   * using plain text, until it replies with stls itself. Bots which don't
+   * support it will simply ignore the request and everything goes on as usual.
+   */
+  if (dcc[idx].status & STAT_STARTTLS) {
+    dprintf(idx, "starttls\n");
+    putlog(LOG_BOTS, "*", "Sent STARTTLS to %s...", dcc[idx].nick);
+  }
+#endif
+
 }
 
 void failed_link(int idx)
@@ -268,15 +283,9 @@ void failed_link(int idx)
 
   /* Try next port */
   killsock(dcc[idx].sock);
-  dcc[idx].sock = getsock(SOCK_STRONGCONN);
-  dcc[idx].port++;
   dcc[idx].timeval = now;
-  if (dcc[idx].sock < 0 ||
-      open_telnet_raw(dcc[idx].sock, dcc[idx].addr ?
-                      iptostr(htonl(dcc[idx].addr)) : dcc[idx].host,
-                      dcc[idx].port) < 0) {
+  if (open_telnet(idx, dcc[idx].host, dcc[idx].port + 1) < 0)
     failed_link(idx);
-  }
 }
 
 static void cont_link(int idx, char *buf, int i)
@@ -313,6 +322,11 @@ static void cont_link(int idx, char *buf, int i)
       }
     }
   }
+  /* Indicate that we'd like to switch to tls later */
+#ifdef TLS
+  if (!dcc[idx].ssl)
+    dcc[idx].status |= STAT_STARTTLS;
+#endif
   dcc[idx].type = &DCC_BOT_NEW;
   dcc[idx].u.bot->numver = 0;
 
@@ -438,7 +452,7 @@ static void dcc_bot(int idx, char *code, int i)
   int f;
 
   if (raw_log) {
-    if (code[0] == 's')
+    if (!strcmp(code, "s"))
       putlog(LOG_BOTSHARE, "*", "{%s} %s", dcc[idx].nick, code + 2);
     else
       putlog(LOG_BOTNET, "*", "[%s] %s", dcc[idx].nick, code);
@@ -599,7 +613,14 @@ static void dcc_chat_pass(int idx, char *buf, int atr)
     }
   }
 
+#ifdef TLS
+  /* Skip checking the password if the user is already identified by
+   * fingerprint.
+   */
+  if (dcc[idx].status & STAT_FPRINT || u_pass_match(dcc[idx].user, buf)) {
+#else
   if (u_pass_match(dcc[idx].user, buf)) {
+#endif
     if (atr & USER_BOT) {
       nfree(dcc[idx].u.chat);
       dcc[idx].type = &DCC_BOT_NEW;
@@ -1123,25 +1144,24 @@ static int detect_telnet_flood(char *floodhost)
 
 static void dcc_telnet(int idx, char *buf, int i)
 {
-  unsigned long ip;
   unsigned short port;
   int j = 0, sock;
-  char s[UHOSTLEN + 1];
 
   if (dcc_total + 1 > max_dcc && increase_socks_max()) {
-    j = answer(dcc[idx].sock, s, &ip, &port, 0);
+    sockname_t name;
+    j = answer(dcc[idx].sock, &name, &port, 0);
     if (j != -1) {
       dprintf(-j, "Sorry, too many connections already.\r\n");
       killsock(j);
     }
     return;
   }
-  sock = answer(dcc[idx].sock, s, &ip, &port, 0);
+  i = new_dcc(&DCC_DNSWAIT, sizeof(struct dns_info));
+  sock = answer(dcc[idx].sock, &dcc[i].sockname, &port, 0);
   while ((sock == -1) && (errno == EAGAIN))
-    sock = answer(sock, s, &ip, &port, 0);
+    sock = answer(dcc[idx].sock, &dcc[i].sockname, &port, 0);
   if (sock < 0) {
-    neterror(s);
-    putlog(LOG_MISC, "*", DCC_FAILED, s);
+    putlog(LOG_MISC, "*", DCC_FAILED, strerror(errno));
     return;
   }
   /* Buffer data received on this socket.  */
@@ -1152,31 +1172,39 @@ static void dcc_telnet(int idx, char *buf, int i)
 #else
   if (port < 1024 || port > 65535) {
 #endif
-    putlog(LOG_BOTS, "*", DCC_BADSRC, s, port);
+    putlog(LOG_BOTS, "*", DCC_BADSRC, iptostr(&dcc[i].sockname.addr.sa), port);
     killsock(sock);
+    lostdcc(i);
     return;
   }
 
-  i = new_dcc(&DCC_DNSWAIT, sizeof(struct dns_info));
+  dcc[i].u.dns->ip = &dcc[i].sockname;
   dcc[i].sock = sock;
-  dcc[i].addr = ip;
   dcc[i].port = port;
+#ifdef TLS
+  if (dcc[idx].ssl && ssl_handshake(sock, TLS_LISTEN, tls_vfyclients,
+      LOG_MISC, NULL, NULL)) {
+    killsock(sock);
+    lostdcc(i);
+    return;
+  }
+  dcc[i].ssl = dcc[idx].ssl;
+#endif
   dcc[i].timeval = now;
   strcpy(dcc[i].nick, "*");
-  dcc[i].u.dns->ip = ip;
   dcc[i].u.dns->dns_success = dcc_telnet_hostresolved;
   dcc[i].u.dns->dns_failure = dcc_telnet_hostresolved;
   dcc[i].u.dns->dns_type = RES_HOSTBYIP;
   dcc[i].u.dns->ibuf = dcc[idx].sock;
   dcc[i].u.dns->type = &DCC_IDENTWAIT;
-  dcc_dnshostbyip(ip);
+  dcc_dnshostbyip(&dcc[i].sockname);
 }
 
 static void dcc_telnet_hostresolved(int i)
 {
   int idx;
   int j = 0, sock;
-  char s[UHOSTLEN], s2[UHOSTLEN + 20];
+  char s[UHOSTLEN + 20];
 
   strncpyz(dcc[i].host, dcc[i].u.dns->host, UHOSTLEN);
 
@@ -1201,8 +1229,8 @@ static void dcc_telnet_hostresolved(int i)
       return;
     }
   }
-  sprintf(s2, "-telnet!telnet@%s", dcc[i].host);
-  if (match_ignore(s2) || detect_telnet_flood(s2)) {
+  sprintf(s, "-telnet!telnet@%s", dcc[i].host);
+  if (match_ignore(s) || detect_telnet_flood(s)) {
     killsock(dcc[i].sock);
     lostdcc(i);
     return;
@@ -1211,23 +1239,30 @@ static void dcc_telnet_hostresolved(int i)
   changeover_dcc(i, &DCC_IDENTWAIT, 0);
   dcc[i].timeval = now;
   dcc[i].u.ident_sock = dcc[idx].sock;
-  sock = open_telnet(iptostr(htonl(dcc[i].addr)), 113);
-  putlog(LOG_MISC, "*", DCC_TELCONN, dcc[i].host, dcc[i].port);
-  s[0] = 0;
-  if (sock < 0) {
-    if (sock == -2)
-      strcpy(s, "DNS lookup failed for ident");
-    else
-      neterror(s);
-  } else {
-    j = new_dcc(&DCC_IDENT, 0);
-    if (j < 0) {
-      killsock(sock);
-      strcpy(s, "No Free DCC's");
+  sock = -1;
+  j = new_dcc(&DCC_IDENT, 0);
+  if (j < 0)
+    putlog(LOG_MISC, "*", DCC_IDENTFAIL, dcc[i].host, strerror(errno));
+  else {
+    egg_memcpy(&dcc[j].sockname, &dcc[i].sockname, sizeof(sockname_t));
+    dcc[j].sock = getsock(dcc[j].sockname.family, 0);
+    if (dcc[j].sock >= 0) {
+      sockname_t name;
+      name.addrlen = sizeof(name.addr);
+      getsockname(dcc[i].sock, &name.addr.sa, &name.addrlen);
+      bind(dcc[j].sock, &name.addr.sa, name.addrlen);
+      setsnport(dcc[j].sockname, 113);
+      if (connect(dcc[j].sock, &dcc[j].sockname.addr.sa,
+          dcc[j].sockname.addrlen) < 0 && (errno != EINPROGRESS)) {
+        killsock(dcc[j].sock);
+        lostdcc(j);
+        putlog(LOG_MISC, "*", DCC_IDENTFAIL, dcc[i].host, strerror(errno));
+        j = 0;
+      }
+      sock = dcc[j].sock;
     }
   }
-  if (s[0]) {
-    putlog(LOG_MISC, "*", DCC_IDENTFAIL, dcc[i].host, s);
+  if (j < 0) {
     sprintf(s, "telnet@%s", dcc[i].host);
     dcc_telnet_got_ident(i, s);
     return;
@@ -1378,6 +1413,21 @@ static void dcc_telnet_id(int idx, char *buf, int atr)
   }
   dcc[idx].user = get_user_by_handle(userlist, buf);
   get_user_flagrec(dcc[idx].user, &fr, NULL);
+#ifdef TLS
+  if (dcc[idx].ssl && (tls_auth == 2)) {
+    char *uid = ssl_getuid(dcc[idx].sock);
+
+    if (!uid || strcasecmp(uid, buf)) {
+      if (glob_bot(fr))
+        dprintf(idx, "error Certificate UID doesn't match handle\n");
+      else
+        dprintf(idx, "Your certificate UID doesn't match your handle.\n");
+      killsock(dcc[idx].sock);
+      lostdcc(idx);
+      return;
+    }
+  }
+#endif
   /* Make sure users-only/bots-only connects are honored */
   if ((dcc[idx].status & STAT_BOTONLY) && !glob_bot(fr)) {
     dprintf(idx, "This telnet port is for bots only.\n");
@@ -1440,12 +1490,76 @@ static void dcc_telnet_id(int idx, char *buf, int atr)
   dcc_telnet_pass(idx, atr);
 }
 
+#ifdef TLS
+int dcc_fingerprint(idx)
+{
+  char *cf, *uf;
+  struct flag_record fr = { FR_GLOBAL | FR_CHAN | FR_ANYWH, 0, 0, 0, 0, 0 };
+  
+  get_user_flagrec(dcc[idx].user, &fr, NULL);
+  /* Check if fingerprint authentication is allowed or required. */
+  if (dcc[idx].ssl && tls_auth) {
+    /* Get the fingerprint of the current certificate */
+    cf = ssl_getfp(dcc[idx].sock);
+    /* Get the fingerprint of the user, if set */
+    uf = get_user(&USERENTRY_FPRINT, dcc[idx].user);
+    if (cf && uf && !strcasecmp(cf, uf)) {
+      if (!glob_bot(fr))
+        dprintf(idx, "Used your fingerprint for automatic authentication.\n");
+      dcc[idx].status |= STAT_FPRINT;
+      dcc_chat_pass(idx, "+", 1);
+    /* Required? */
+    } else if (tls_auth == 2) {
+      if (glob_bot(fr))
+        dprintf(idx, "error fingerprint required\n");
+      else
+        dprintf(idx, "Certificate authentication required. "
+                "You need to set your fingerprint.\n");
+      killsock(dcc[idx].sock);
+      lostdcc(idx);
+    }
+    return 0;
+  }
+  return 1;
+}
+#endif
+
 static void dcc_telnet_pass(int idx, int atr)
 {
   int ok = 0;
   struct flag_record fr = { FR_GLOBAL | FR_CHAN | FR_ANYWH, 0, 0, 0, 0, 0 };
 
   get_user_flagrec(dcc[idx].user, &fr, NULL);
+#ifdef TLS
+  /* Check if fingerprint authentication is allowed or required. */
+  if (dcc[idx].ssl && tls_auth) {
+    char *cf, *uf;
+    
+    /* Get the fingerprint of the current certificate */
+    cf = ssl_getfp(dcc[idx].sock);
+    /* Get the fingerprint of the user, if set */
+    uf = get_user(&USERENTRY_FPRINT, dcc[idx].user);
+    if (cf && uf && !strcasecmp(cf, uf)) {
+      char fakepass[2] = "+";
+
+      if (!glob_bot(fr))
+        dprintf(idx, "Used your fingerprint for automatic authentication.\n");
+      dcc[idx].status |= STAT_FPRINT;
+      dcc_chat_pass(idx, fakepass, 1);
+      return;
+    /* Required? */
+    } else if (tls_auth == 2) {
+      if (glob_bot(fr))
+        dprintf(idx, "error fingerprint required\n");
+      else
+        dprintf(idx, "Certificate authentication required. "
+                "You need to set your fingerprint.\n");
+      killsock(dcc[idx].sock);
+      lostdcc(idx);
+      return;
+    }
+  }
+#endif
   /* No password set? */
   if (u_pass_match(dcc[idx].user, "-")) {
     if (glob_bot(fr)) {
@@ -1581,7 +1695,7 @@ static void dcc_telnet_new(int idx, char *buf, int x)
     strip_telnet(dcc[idx].sock, buf, &x);
   dcc[idx].timeval = now;
   for (x = 0; x < strlen(buf); x++)
-    if ((buf[x] <= 32) || (buf[x] >= 127))
+    if (buf[x] <= 32)
       ok = 0;
   if (!ok) {
     dprintf(idx, "\nYou can't use weird symbols in your nick.\n");
@@ -2087,6 +2201,7 @@ static void dcc_telnet_got_ident(int i, char *host)
     lostdcc(i);
     return;
   }
+
   /* Script? */
   if (!strcmp(dcc[idx].nick, "(script)")) {
     dcc[i].type = &DCC_SOCKET;

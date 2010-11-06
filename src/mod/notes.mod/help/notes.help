@@ -1,0 +1,85 @@
+%{help=+noteign}%{-}
+###  %b+noteign%b%{+m} [user]%{-} <ignoremask>
+   Add a new ignore to the user's note ignore list. The ignoremask is
+   matched against the handle of a user attempting to send a note. Wildcards
+   are permitted.
+
+See also: -noteign, noteigns
+%{help=-noteign}
+###  %b-noteign%b%{+m} [user]%{-} <ignoremask>
+   Remove an existing ignore from the user's note ignore list.
+
+See also: +noteign, noteigns
+%{help=noteigns}
+###  %bnoteigns%b%{+m} [user]%{-}
+   List all note ignores for the user. All notes sent from users who's handle
+   matches one of these ignore masks will be rejected.
+
+See also: +noteign, -noteign
+%{help=fwd}%{+m}
+###  %bfwd%b <handle> [destination]
+   This allows you to set a 'forwarding address' for notes sent to a user.
+   This means if a note needs to be stored for the user, the bot will attempt
+   to pass it on to the given user@bot. If the bot is not online then the note
+   is still stored locally. If the remote user doesn't exist, the note is lost.
+%{help=note}%{-}
+###  %bnote%b <nickname[@bot]> <message>
+   Sends a private note to a user on the party line. If that user is
+   currently on the party line, and not marked as away, they will receive
+   the message immediately. Otherwise, it may be stored and displayed the
+   next time that user joins the party line.
+
+   If you join a channel, and have notes stored for you on the bot, it will
+   tell you (if enabled). To send a note to someone on another bot on the
+   botnet, use the "nick@bot" format for the nickname.
+
+See also: whom, notes, noteigns
+%{help=notes}%{-}
+###  %bnotes index%b
+###  %bnotes read%b  <# or ALL>
+###  %bnotes erase%b <# or ALL>
+   Lets you manipulate notes that have been stored for you while you were
+   gone.
+
+   %b'.notes index'%b gives a listing of all the stored notes: who they are
+   from, and when they were left.
+
+   %b'.notes read'%b lets you read some or all notes, according to a
+   list of numbers and/or intervals separated by semicolon.
+
+   %b'.notes erase'%b erases notes after you are finished with them.
+
+   Example:
+
+      .notes erase 2-4;8;16-
+
+   This will erase notes 2-4, note 8, and all notes after (and including) 16.
+
+See also: whom, note, noteigns
+%{help=notes module}%{+n}
+###  %bnotes modules%b
+   This module provides support for storing of notes for users from each
+   other. Note sending between currently online users is supported in the
+   core, this is only for storing the notes for later retrieval.
+
+   The following commands are provided by the notes module:
+
+   For all users:
+      %bnotes        +noteign     -noteign     noteigns%b
+      %bnote%b
+
+   For global masters:
+      %bfwd%b
+
+   Config file variables for configuring the notes module:
+      %bnote-life       max-notes           allow-fwd%b
+      %bnotify-users    notify-onjoin%b
+   (Use %b'.help set <variable>'%b for more info)
+%{help=all}%{-}
+###  %bnotes module%b commands
+   For all users:
+      %bnotes        +noteign     -noteign     noteigns%b
+      %bnote%b
+%{+m}
+   For global masters:
+      %bfwd%b

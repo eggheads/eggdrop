@@ -45,14 +45,6 @@ see also: set username
    This read-only variables returns the unix-time that the bot
    successfully connected to the server, so if you can read unix
    time, you'll be in luck ;)
-%{help=set never-give-up}%{+n}
-###  %bset never-give-up%b <0/1>
-   specifies whether the bot should loop forever.  if never-give-up
-   is set false, then the bot will shut down if it goes through the
-   entire server list once without getting a connection.  this is to
-   keep eggdrop from going through an endless loop, if, for example,
-   your machine gets disconnected from the rest of the net.  however,
-   some people prefer their bot to never shut down, no matter what.
 %{help=set keep-nick}%{+n}
 ###  %bset keep-nick%b <0/1>
    specifies whether the bot will keep trying to regain its nickname if
@@ -142,16 +134,18 @@ see also: set flood-msg
 see also: set flood-ctcp
 %{help=set servers}%{+n}
 ###  %bset servers%b <server-list>
-   gives the bot a list of servers to use for IRC.  you can change
+   gives the bot a list of servers to use for IRC. You can change
    this at any time on the fly, but if the bot's current IRC server
    (the one it's on right now) isn't in your new list, it will be
-   added, to maintain coherency.  here's an example:
+   added, to maintain coherency. Here's an example:
       set servers {
-        goblin.irc.com:6667
         dragon.irc.org
+        goblin.irc.com:6668:password
+        [2001:db8:618:5c0:263::]:6669
       }
    note that if you omit the port, it will assume the value of the
-   %bdefault-port%b setting.
+   %bdefault-port%b setting. Prefix the port with a plus sign to
+   attempt a SSL connection.
 
 see also: default-port
 %{help=set msg-rate}%{+n}
@@ -170,17 +164,23 @@ see also: default-port
 ###  %bset net-type%b
    Define the network the bot uses. 0 = EFnet, 1 = IRCnet, 2 = UnderNet,
    3 = DALnet, 4 = EFnet +e/+I/max-bans 20 Hybrid, 5 = Others.
+%{help=set ssl-verify-server}%{+n}
+###  %bset ssl-verify-server%b
+   Control certificate verification for servers
+   Define the network the bot uses. 0 = EFnet, 1 = IRCnet, 2 = UnderNet,
+
+See also: set ssl-verify-clients
 %{help=server settings}%{+n}
 ###  Settings for the %bserver module%b
    This is a list of the Tcl variables the can be used to setup
    the server module, for a list of relevant commands type
    %b'.help server module'%b.
-     %bserver-online%b        %bservlimit%b      %bnick%b
-     %bnever-give-up%b        %bflood-ctcp%b     %bserver%b
+     %bquiet-reject%b        %bservlimit%b      %bnick%b
+     %bserver-online%b        %bflood-ctcp%b     %bserver%b
      %bmax-queue-msg%b        %bmsg-rate%b       %bbotnick%b
      %bserver-timeout%b       %binit-server%b    %bservers%b
      %blowercase-ctcp%b       %bnet-type%b       %bbotname%b
      %bserverror-quit%b       %banswer-ctcp%b    %baltnick%b
      %btrigger-on-ignore%b    %bdefault-port%b   %brealname%b
      %bserver-cycle-wait%b    %bcheck-stoned%b   %bflood-msg%b
-     %bquiet-reject%b         %bkeep-nick%b
+     %bssl-verify-server%b    %bkeep-nick%b

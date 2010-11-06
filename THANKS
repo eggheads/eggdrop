@@ -1,7 +1,7 @@
-$Id: THANKS,v 1.1.1.1 2010/07/26 21:11:06 simple Exp $:
+$Id: THANKS,v 1.8 2010/11/05 16:18:01 pseudo Exp $:
 
 Eggdrop Developers and Contributors
-Last revised: June 16, 2010
+Last revised: October 25, 2010
 
 ------------------------------------------------------------------------------
 
@@ -75,6 +75,7 @@ Abraham
 Absinthe
                Adam Spiers
 Adze
+afterlife
 Al3X           Alex                            alex@bmotel.com
 alex323
                Amir Shalem                     amir@boom.org.il
@@ -135,6 +136,7 @@ CFusion
 CHaiNeSS
 chaos
 Charvel
+Chotaire                                       chotaire@chotaire.moc.kw
 Chriphil
                Chris Northwood
                Chucky Burnett
@@ -193,6 +195,7 @@ DennisMV
 derrick
 DFrank
 Dicctr0s
+Digdilem       Simon Avery                     flash@digdilem.org
 digital
 dirtymac
 DocSavag       Jerry Sutton                    jerrystn@ccse.net
@@ -232,7 +235,7 @@ flash
 Flattie
                flyin lion
 foxmulder
-Fraggle        Jérôme Benoit                   jerome.benoit@grenouille.com
+Fraggle        Jérôme Benoit                 jerome.benoit@grenouille.com
 Freeder                                        freeder@techmonkeys.org
 fuchs          Bjoern Krombholz                bjkro@gmx.de
 FumBa
@@ -249,6 +252,7 @@ Gisselle
 goo
 GoodGuy
 Gord-          Gordon Lloyd Goldberg           ggold@panix.com
+grawity        Mantas Mikulenas                grawity@nullroute.eu.org
 GregMo         Greg Mosier                     me@gregmo.us
 grnbrg         Brian Greenberg                 grnbrg@grnbrg.org 
 GSCEGO
@@ -267,13 +271,13 @@ hobb
 hoopycat
                Hue Truong
 Hunger
-Ian            Ian Campbell                    ian@damnit.org
 iceman
 Igmar
 illi
 imoq
 IpAddress
 islandic
+izy`
 \-\itman
                J. Lehto
 James
@@ -394,7 +398,7 @@ Niggurath      Shub Niggurath                  rm@fh-worms.de
 NigtHuntr
                Nils �stbjerg                   shorty@business.auc.dk
 nitemoon
-NML_375
+NML_375        Fredrik L�hr
 Nobody
 node
 NoPleX
@@ -424,6 +428,7 @@ Phoenix
 piglet
 pinchaser
 Pixelz         Rickard Utgren                  rutgren@gmail.com
+pjb                                            pjb@decafgeek.org
 plan9
 Plex
 plof

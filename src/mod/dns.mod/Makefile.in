@@ -1,0 +1,48 @@
+# Makefile for src/mod/dns.mod/
+# $Id: Makefile.in,v 1.1.1.1 2010/07/26 21:11:06 simple Exp $
+
+RESLIB = @RESLIB@
+RESINCLUDE = @RESINCLUDE@
+srcdir = .
+
+
+doofus:
+	@echo ""
+	@echo "Let's try this from the right directory..."
+	@echo ""
+	@cd ../../../ && make
+
+static: ../dns.o
+	@echo "$(RESLIB)" >> ../mod.xlibs
+
+modules: ../../../dns.$(MOD_EXT)
+
+../dns.o:
+	$(CC) $(CFLAGS) $(CPPFLAGS) $(RESINCLUDE) -DMAKING_MODS -c $(srcdir)/dns.c
+	@rm -f ../dns.o
+	mv dns.o ../
+
+../../../dns.$(MOD_EXT): ../dns.o
+	$(LD) -o ../../../dns.$(MOD_EXT) ../dns.o $(RESLIB) $(XLIBS) $(MODULE_XLIBS)
+	$(STRIP) ../../../dns.$(MOD_EXT)
+
+depend:
+	$(CC) $(CFLAGS) -MM $(srcdir)/dns.c -MT ../dns.o > .depend
+
+clean:
+	@rm -f .depend *.o *.$(MOD_EXT) *~
+
+distclean: clean
+	@rm -f Makefile config.cache config.log config.status
+
+#safety hash
+../dns.o: .././dns.mod/dns.c ../../../src/mod/module.h \
+  ../../../src/main.h ../../../config.h ../../../lush.h \
+  ../../../src/lang.h ../../../src/eggdrop.h ../../../src/flags.h \
+  ../../../src/cmdt.h ../../../src/tclegg.h ../../../src/tclhash.h \
+  ../../../src/chan.h ../../../src/users.h ../../../src/compat/compat.h \
+  ../../../src/compat/inet_aton.h ../../../src/main.h \
+  ../../../src/compat/snprintf.h ../../../src/compat/memset.h \
+  ../../../src/compat/memcpy.h ../../../src/compat/strcasecmp.h \
+  ../../../src/compat/strftime.h ../../../src/mod/modvals.h \
+  ../../../src/tandem.h .././dns.mod/dns.h .././dns.mod/coredns.c

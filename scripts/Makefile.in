@@ -1,0 +1,77 @@
+# Makefile for scripts/
+# $Id: Makefile.in,v 1.1.1.1 2010/07/26 21:11:06 simple Exp $
+
+SHELL = @SHELL@
+top_srcdir = @top_srcdir@
+srcdir = @srcdir@
+VPATH = @srcdir@
+
+@SET_MAKE@
+INSTALL = @INSTALL@
+INSTALL_PROGRAM = @INSTALL_PROGRAM@
+INSTALL_DATA = @INSTALL_DATA@
+INSTALL_SCRIPT = @INSTALL_SCRIPT@
+
+DOCS = CONTENTS
+
+SCRIPTS = action.fix.tcl alltools.tcl compat.tcl dccwhois.tcl getops.tcl \
+klined.tcl notes2.tcl ques5.tcl sentinel.tcl userinfo.tcl cmd_resolve.tcl \
+quotepass.tcl quotepong.tcl
+
+EXESCRIPTS = autobotchk botchk weed
+
+doofus:
+	@echo ""
+	@echo "Let's try this from the right directory..."
+	@echo ""
+	@cd .. && $(MAKE)
+
+all: $(DOCS) $(SCRIPTS) $(EXESCRIPTS)
+
+clean:
+	@rm -f *~
+
+install:
+	@if test ! -d $(DEST)/scripts; then \
+		echo "Creating 'scripts' subdirectory."; \
+		$(top_srcdir)/misc/mkinstalldirs $(DEST)/scripts >/dev/null; \
+		echo "Copying scripts."; \
+		for i in $(DOCS); do \
+			$(INSTALL_DATA) $(srcdir)/$$i $(DEST)/scripts/; \
+		done; \
+		for i in $(SCRIPTS); do \
+			$(INSTALL_DATA) $(srcdir)/$$i $(DEST)/scripts/; \
+		done; \
+		for i in $(EXESCRIPTS); do \
+			$(INSTALL_SCRIPT) $(srcdir)/$$i $(DEST)/scripts/; \
+		done; \
+		if test ! "x`echo $(srcdir)/help/*.help`" = "x$(srcdir)/help/*.help"; then \
+			if test ! -d $(DEST)/help; then \
+				echo "Creating 'help' subdirectory."; \
+				$(top_srcdir)/misc/mkinstalldirs $(DEST)/help >/dev/null; \
+			fi; \
+			for i in $(srcdir)/help/*.help; do \
+				$(INSTALL_DATA) $$i $(DEST)/help/; \
+			done; \
+		fi; \
+		if test ! "x`echo $(srcdir)/help/msg/*.help`" = "x$(srcdir)/help/msg/*.help"; then \
+			if test ! -d $(DEST)/help/msg; then \
+				echo "Creating 'help/msg' subdirectory."; \
+				$(top_srcdir)/misc/mkinstalldirs $(DEST)/help/msg >/dev/null; \
+			fi; \
+			for i in $(srcdir)/help/msg/*.help; do \
+				$(INSTALL_DATA) $$i $(DEST)/help/msg/; \
+			done; \
+		fi; \
+		if test ! "x`echo $(srcdir)/help/set/*.help`" = "x$(srcdir)/help/set/*.help"; then \
+			if test ! -d $(DEST)/help/set; then \
+				echo "Creating 'help/set' subdirectory."; \
+				$(top_srcdir)/misc/mkinstalldirs $(DEST)/help/set >/dev/null; \
+			fi; \
+			for i in $(srcdir)/help/set/*.help; do \
+				$(INSTALL_DATA) $$i $(DEST)/help/set/; \
+			done; \
+		fi; \
+	fi
+
+#safety hash

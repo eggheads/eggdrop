@@ -4,7 +4,7 @@
  *
  * by Darrin Smith (beldin@light.iinet.net.au)
  *
- * $Id: modules.c,v 1.1.1.1 2010/07/26 21:11:06 simple Exp $
+ * $Id: modules.c,v 1.3 2010/10/19 12:13:33 pseudo Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -84,15 +84,23 @@ extern struct dcc_t *dcc;
 extern struct userrec *userlist, *lastuser;
 extern struct chanset_t *chanset;
 
-extern char tempdir[], botnetnick[], botname[], natip[], hostname[],
-            origbotname[], botuser[], admin[], userfile[], ver[], notify_new[],
-            helpdir[], version[], quit_msg[], log_ts[];
+extern char tempdir[], botnetnick[], botname[], origbotname[], botuser[],
+            admin[], userfile[], ver[], notify_new[], helpdir[], version[],
+                        quit_msg[], log_ts[];
 
 extern int parties, noshare, dcc_total, egg_numver, userfile_perm, do_restart,
            ignore_time, must_be_owner, raw_log, max_dcc, make_userfile,
            default_flags, require_p, share_greet, use_invites, use_exempts,
            password_timeout, force_expire, protect_readonly, reserved_port_min,
            reserved_port_max, copy_to_tmp, quiet_reject;
+
+#ifdef IPV6
+extern int pref_af;
+#endif
+
+#ifdef TLS
+extern int tls_vfyclients, tls_vfydcc, tls_vfybots;
+#endif
 
 extern party_t *party;
 extern time_t now, online_since;
@@ -180,7 +188,7 @@ int (*rfc_casecmp) (const char *, const char *) = _rfc_casecmp;
 int (*rfc_ncasecmp) (const char *, const char *, int) = _rfc_ncasecmp;
 int (*rfc_toupper) (int) = _rfc_toupper;
 int (*rfc_tolower) (int) = _rfc_tolower;
-void (*dns_hostbyip) (IP) = block_dns_hostbyip;
+void (*dns_hostbyip) (sockname_t *) = block_dns_hostbyip;
 void (*dns_ipbyhost) (char *) = block_dns_ipbyhost;
 
 module_entry *module_list;
@@ -292,8 +300,12 @@ Function global_table[] = {
   (Function) egg_list_contains,
   /* 76 - 79 */
   (Function) answer,
-  (Function) getmyip,
-  (Function) neterror,
+  (Function) getvhost,
+#ifdef TLS
+  (Function) ssl_handshake,
+#else
+  (Function) 0,
+#endif
   (Function) tputs,
   /* 80 - 83 */
   (Function) new_dcc,
@@ -302,7 +314,7 @@ Function global_table[] = {
   (Function) killsock,
   /* 84 - 87 */
   (Function) open_listen,
-  (Function) open_telnet_dcc,
+  (Function) getdccaddr,
   (Function) _get_data_ptr,
   (Function) open_telnet,
   /* 88 - 91 */
@@ -324,21 +336,34 @@ Function global_table[] = {
   (Function) & max_dcc,           /* int                                 */
   (Function) & require_p,         /* int                                 */
   (Function) & ignore_time,       /* int                                 */
+#ifdef TLS
+  (Function) dcc_fingerprint,
+#else
   (Function) 0,                   /* was use_console_r <Wcc[02/02/03]>   */
+#endif
   /* 104 - 107 */
   (Function) & reserved_port_min,
   (Function) & reserved_port_max,
   (Function) & raw_log,           /* int                                 */
   (Function) & noshare,           /* int                                 */
   /* 108 - 111 */
+#ifdef TLS
+  (Function) & tls_vfybots,       /* int                                 */
+#else
   (Function) 0,                   /* gban_total -- UNUSED! (Eule)        */
+#endif
   (Function) & make_userfile,     /* int                                 */
   (Function) & default_flags,     /* int                                 */
   (Function) & dcc_total,         /* int                                 */
   /* 112 - 115 */
   (Function) tempdir,             /* char *                              */
-  (Function) natip,               /* char *                              */
-  (Function) hostname,            /* char *                              */
+#ifdef TLS
+  (Function) & tls_vfyclients,    /* int                                 */
+  (Function) & tls_vfydcc,        /* int                                 */
+#else
+  (Function) 0,                   /* was natip -- use getmyip() instead  */
+  (Function) 0,                   /* was myip -- use getvhost() instead  */
+#endif
   (Function) origbotname,         /* char *                              */
   /* 116 - 119 */
   (Function) botuser,             /* char *                              */
@@ -561,10 +586,14 @@ Function global_table[] = {
   /* 284 - 287 */
   (Function) & quiet_reject,      /* int                                 */
   (Function) file_readable,
-  (Function) 0,                   /* IPv6 leftovers: 286                 */
-  (Function) 0,                   /* IPv6 leftovers: 287                 */
+  (Function) setsockname,
+  (Function) open_telnet_raw,
   /* 288 - 291 */
+#ifdef IPV6
+  (Function) & pref_af,		  /* int                                 */
+#else
   (Function) 0,                   /* IPv6 leftovers: 288                 */
+#endif
   (Function) strip_mirc_codes,
   (Function) check_ansi,
   (Function) oatoi,
@@ -1041,7 +1070,7 @@ void add_hook(int hook_num, Function func)
       break;
     case HOOK_DNS_HOSTBYIP:
       if (dns_hostbyip == block_dns_hostbyip)
-        dns_hostbyip = (void (*)(IP)) func;
+        dns_hostbyip = (void (*)(sockname_t *)) func;
       break;
     case HOOK_DNS_IPBYHOST:
       if (dns_ipbyhost == block_dns_ipbyhost)
@@ -1102,7 +1131,7 @@ void del_hook(int hook_num, Function func)
         match_noterej = false_func;
       break;
     case HOOK_DNS_HOSTBYIP:
-      if (dns_hostbyip == (void (*)(IP)) func)
+      if (dns_hostbyip == (void (*)(sockname_t *)) func)
         dns_hostbyip = block_dns_hostbyip;
       break;
     case HOOK_DNS_IPBYHOST:

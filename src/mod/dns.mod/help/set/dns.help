@@ -1,0 +1,37 @@
+%{help=set dns-servers}%{+n}
+###  %bset dns-servers%b <dns-server-list>
+   A list of dns servers for eggdrop to use. The list is initialised
+   from the system on startup. You can also specify the port numbers
+   if they differ from the standard 53.
+
+%{help=set dns-cache}%{+n}
+###  %bset dns-cache%b <seconds>
+   Defines how long should the DNS module cache replies at maximum.
+   Note that it will respect the TTL of the reply and this is just
+   an upper boundary.
+
+see also: set dns-negcache
+%{help=set dns-negcache}%{+n}
+###  %bset dns-negcache%b <seconds>
+   Defines how long should the DNS module cache negative replies
+   (NXDOMAIN, DNS Lookup failed).
+
+see also: set dns-cache
+%{help=set dns-maxsends}%{+n}
+###  %bset dns-maxsends%b <#>
+   specifies How many times should the DNS module resend the query for a
+   given domain if it receives no reply.
+
+see also: set dns-retrydelay
+%{help=set dns-retrydelay}%{+n}
+###  %bset dns-retrydelay%b <seconds>
+   specify how long should the DNS module wait for a reply before
+   the query. The value must be in seconds.
+
+see also: set dns-maxsends
+%{help=dns settings}%{+n}
+###  Settings for the %bdns module%b
+   This is a list of the Tcl variables the can be used to setup
+   the dns module.
+     %bdns-retrydelay%b    %bdns-maxsends%b    %bdns-servers%b
+     %bdns-negcache%b      %bdns-cache%b

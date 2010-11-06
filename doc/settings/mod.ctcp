@@ -1,0 +1,37 @@
+$Id: mod.ctcp,v 1.1.1.1 2010/07/26 21:11:06 simple Exp $
+
+CTCP Module
+Last revised: February 12, 2002
+    _____________________________________________________________________
+
+                                CTCP Module
+
+
+  This module provides the normal ctcp replies that you would expect.
+  Without it loaded, CTCP CHAT will not work.
+
+    This module requires: server
+
+  Put this line into your Eggdrop configuration file to load the ctcp
+  module:
+
+    loadmodule ctcp
+
+  There are also some variables you can set in your config file:
+
+    set ctcp-mode 0
+      Set here how the ctcp module should answer ctcps. There are 3 possible
+      operating modes:
+        0: Normal behavior is used.
+        1: The bot ignores all ctcps, except for CHAT and PING requests
+          by users with the +o flag.
+        2: Normal behavior is used, however the bot will not answer more
+          than X ctcps in Y seconds (defined by 'set flood-ctcp').
+
+    There are also several variables to help make your bot less noticeable.
+    They are: ctcp-version, ctcp-finger, and ctcp-userinfo. You can use set
+    to set them to values you'd like.
+
+    _____________________________________________________________________
+
+  Copyright (C) 2000 - 2010 Eggheads Development Team

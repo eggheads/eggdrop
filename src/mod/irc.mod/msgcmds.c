@@ -2,7 +2,7 @@
  * msgcmds.c -- part of irc.mod
  *   all commands entered via /MSG
  *
- * $Id: msgcmds.c,v 1.1.1.1 2010/07/26 21:11:06 simple Exp $
+ * $Id: msgcmds.c,v 1.3 2010/10/25 15:56:38 pseudo Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -795,7 +795,7 @@ static int msg_status(char *nick, char *host, struct userrec *u, char *par)
 #ifdef HAVE_UNAME
   struct utsname un;
 
-  if (!uname(&un) < 0) {
+  if (uname(&un) < 0) {
 #endif
     vers_t = " ";
     uni_t  = "*unknown*";
@@ -1075,6 +1075,9 @@ static int msg_go(char *nick, char *host, struct userrec *u, char *par)
 static int msg_jump(char *nick, char *host, struct userrec *u, char *par)
 {
   char *s;
+#ifdef TLS
+  char *sport;
+#endif
   int port;
 
   if (match_my_nick(nick))
@@ -1090,11 +1093,26 @@ static int msg_jump(char *nick, char *host, struct userrec *u, char *par)
   if (u_pass_match(u, s)) {
     if (par[0]) {
       s = newsplit(&par);
+#ifdef TLS
+      sport = newsplit(&par);
+      if (*sport == '+')
+        use_ssl = 1;
+      else
+        use_ssl = 0;
+      port = atoi(sport);
+      if (!port) {
+        port = default_port;
+        use_ssl = 0;
+      }
+      putlog(LOG_CMDS, "*", "(%s!%s) !%s! JUMP %s %s%d %s", nick, host,
+             u->handle, s, use_ssl ? "+" : "", port, par);
+#else
       port = atoi(newsplit(&par));
       if (!port)
         port = default_port;
       putlog(LOG_CMDS, "*", "(%s!%s) !%s! JUMP %s %d %s", nick, host,
              u->handle, s, port, par);
+#endif
       strcpy(newserver, s);
       newserverport = port;
       strcpy(newserverpass, par);

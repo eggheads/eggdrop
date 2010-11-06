@@ -1,7 +1,7 @@
 /*
  * share.c -- part of share.mod
  *
- * $Id: share.c,v 1.1.1.1 2010/07/26 21:11:06 simple Exp $
+ * $Id: share.c,v 1.4 2010/10/19 12:13:33 pseudo Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -1137,16 +1137,24 @@ static void share_ufsend(int idx, char *par)
   } else {
     ip = newsplit(&par);
     port = newsplit(&par);
-    sock = getsock(SOCK_BINARY); /* Don't buffer this -> mark binary. */
-    if (sock < 0 || open_telnet_dcc(sock, ip, port) < 0) {
+    i = new_dcc(&DCC_FORK_SEND, sizeof(struct xfer_info));
+    dcc[i].port = atoi(port);
+    (void) setsockname(&dcc[i].sockname, ip, dcc[i].port, 0);
+    /* Don't buffer this -> mark binary. */
+    sock = getsock(dcc[i].sockname.family, SOCK_BINARY);
+#ifdef TLS
+    if (sock < 0 || (open_telnet_raw(sock, &dcc[i].sockname) < 0) ||
+        (*port == '+' && ssl_handshake(sock, TLS_CONNECT, tls_vfybots,
+        LOG_MISC, ip, NULL))) {
+#else
+    if (sock < 0 || open_telnet_raw(sock, &dcc[i].sockname) < 0) {
+#endif
+      lostdcc(i);
       killsock(sock);
       putlog(LOG_BOTS, "*", "Asynchronous connection failed!");
       dprintf(idx, "s e Can't connect to you!\n");
       zapfbot(idx);
     } else {
-      i = new_dcc(&DCC_FORK_SEND, sizeof(struct xfer_info));
-      dcc[i].addr = my_atoul(ip);
-      dcc[i].port = atoi(port);
       strcpy(dcc[i].nick, "*users");
       dcc[i].u.xfer->filename = nmalloc(strlen(s) + 1);
       strcpy(dcc[i].u.xfer->filename, s);
@@ -1154,6 +1162,10 @@ static void share_ufsend(int idx, char *par)
       dcc[i].u.xfer->length = atoi(par);
       dcc[i].u.xfer->f = f;
       dcc[i].sock = sock;
+#ifdef TLS
+      if (*port == '+')
+        dcc[i].ssl = 1;
+#endif
       strcpy(dcc[i].host, dcc[idx].nick);
 
       dcc[idx].status |= STAT_GETTING;
@@ -1890,6 +1902,11 @@ static void start_sending_users(int idx)
   int i = 1;
   struct chanuserrec *ch;
   struct chanset_t *cst;
+#ifdef IPV6
+  char s[INET6_ADDRSTRLEN];
+#else
+  char s[sizeof "255.255.255.255"];
+#endif
 
   egg_snprintf(share_file, sizeof share_file, ".share.%s.%lu", dcc[idx].nick,
                now);
@@ -1924,9 +1941,14 @@ static void start_sending_users(int idx)
     dcc[idx].status |= STAT_SENDING;
     i = dcc_total - 1;
     strcpy(dcc[i].host, dcc[idx].nick); /* Store bot's nick */
-    dprintf(idx, "s us %lu %d %lu\n",
-            iptolong(natip[0] ? (IP) inet_addr(natip) : getmyip()),
-            dcc[i].port, dcc[i].u.xfer->length);
+    getdccaddr(&dcc[i].sockname, s, sizeof s);
+#ifdef TLS
+    if (dcc[idx].ssl) {
+      dcc[i].ssl = 1;
+      dprintf(idx, "s us %s +%d %lu\n", s, dcc[i].port, dcc[i].u.xfer->length);
+    } else
+#endif
+    dprintf(idx, "s us %s %d %lu\n", s, dcc[i].port, dcc[i].u.xfer->length);
     /* Start up a tbuf to queue outgoing changes for this bot until the
      * userlist is done transferring.
      */
@@ -2192,10 +2214,10 @@ char *share_start(Function *global_funcs)
 
   global = global_funcs;
 
-  module_register(MODULE_NAME, share_table, 2, 3);
-  if (!module_depend(MODULE_NAME, "eggdrop", 106, 0)) {
+  module_register(MODULE_NAME, share_table, 2, 4);
+  if (!module_depend(MODULE_NAME, "eggdrop", 108, 0)) {
     module_undepend(MODULE_NAME);
-    return "This module requires Eggdrop 1.6.0 or later.";
+    return "This module requires Eggdrop 1.8.0 or later.";
   }
   if (!(transfer_funcs = module_depend(MODULE_NAME, "transfer", 2, 0))) {
     module_undepend(MODULE_NAME);

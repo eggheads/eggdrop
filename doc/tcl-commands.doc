@@ -1,7 +1,7 @@
-$Id: tcl-commands.doc,v 1.1.1.1 2010/07/26 21:11:06 simple Exp $
+$Id: tcl-commands.doc,v 1.8 2010/10/29 20:53:43 pseudo Exp $
 
 Eggdrop Tcl Commands
-Last revised: November 23, 2009
+Last revised: October 24, 2010
     _____________________________________________________________________
 
                            Eggdrop Tcl Commands
@@ -12,8 +12,8 @@ of the normal Tcl built-in commands are still there, of course, but you
 can also use these to manipulate features of the bot. They are listed
 according to category.
 
-This list is accurate for Eggdrop v1.6.18. Scripts written for v1.3/v1.4
-series of Eggdrop should probably work with a few minor modifications
+This list is accurate for Eggdrop v1.8.0. Scripts written for v1.3, v1.4
+or 1.6 series of Eggdrop should probably work with a few minor modifications
 depending on the script. Scripts which were written for  v0.9, v1.0, v1.1
 or v1.2 will probably not work without modification. Commands which have
 been changed in this version of Eggdrop (or are just new commands) are
@@ -50,13 +50,13 @@ marked with vertical bars (|) on the left.
     Returns: nothing
     Module: server
 
-| putnow <text> [-oneline]
-|   Description: sends text to the server immediately, bypassing all queues.
-|     Use with caution, as the bot may easily flood itself off the server.
-|   Options:
-|     -oneline: send text up to the first \r or \n, discarding the rest
-|   Returns: nothing
-|   Module: server
+  putnow <text> [-oneline]
+    Description: sends text to the server immediately, bypassing all queues.
+      Use with caution, as the bot may easily flood itself off the server.
+    Options:
+      -oneline: send text up to the first \r or \n, discarding the rest
+    Returns: nothing
+    Module: server
 
   putkick <channel> <nick,nick,...> [reason]
     Description: sends kicks to the server and tries to put as many nicks
@@ -562,9 +562,11 @@ marked with vertical bars (|) on the left.
     Returns: a list of info about the specified channel's settings.
     Module: channels
 
-  channel get <name> <setting>
+  channel get <name> [setting]
     Returns: The value of the setting you specify. For flags, a value of 0
-      means it is disabled (-), and non-zero means enabled (+).
+      means it is disabled (-), and non-zero means enabled (+). If no
+      setting is specified, a flat list of all available settings and their
+      values will be returned.
     Module: channels
 
   channel remove <name>
@@ -736,30 +738,30 @@ marked with vertical bars (|) on the left.
     Returns: nothing
     Module: irc
 
-| resetchanidle [nick] <channel>
-|   Description: resets the channel idle time for the given nick or for all
-|     nicks on the channel if no nick is specified.
-|   Returns: nothing
-|   Module: irc
+  resetchanidle [nick] <channel>
+    Description: resets the channel idle time for the given nick or for all
+      nicks on the channel if no nick is specified.
+    Returns: nothing
+    Module: irc
 
-| resetchanjoin [nick] <channel>
-|   Description: resets the channel join time for the given nick or for all
-|     nicks on the channel if no nick is specified.
-|   Returns: nothing
-|   Module: irc
+  resetchanjoin [nick] <channel>
+    Description: resets the channel join time for the given nick or for all
+      nicks on the channel if no nick is specified.
+    Returns: nothing
+    Module: irc
 
-| resetchan <channel> [flags]
-|   Description: rereads in the channel info from the server. If flags are
-|     specified, only the required information will be reset, according to
-|     the given flags. Available flags:
-|       b - reset channel bans
-|       e - reset channel exempts
-|       I - reset channel invites
-|       m - refresh channel modes 
-|       t - refresh channel topic
-|       w - refresh memberlist
-|   Returns: nothing
-|   Module: irc
+  resetchan <channel> [flags]
+    Description: rereads in the channel info from the server. If flags are
+      specified, only the required information will be reset, according to
+      the given flags. Available flags:
+        b - reset channel bans
+        e - reset channel exempts
+        I - reset channel invites
+        m - refresh channel modes 
+        t - refresh channel topic
+        w - refresh memberlist
+    Returns: nothing
+    Module: irc
 
   getchanhost <nickname> [channel]
     Returns: user@host of the specified nickname (the nickname is not included
@@ -804,9 +806,10 @@ marked with vertical bars (|) on the left.
     Returns: string of the type "+ntik key" for the channel specified
     Module: irc
 
-  jump [server [port [password]]]
+  jump [server [[+]port [password]]]
     Description: jumps to the server specified, or (if none is specified)
-      the next server in the bot's serverlist
+      the next server in the bot's serverlist. If you prefix the port with
+      a plus sign (e.g. +6697), SSL connection will be attempted.
     Returns: nothing
     Module: server
 
@@ -858,6 +861,16 @@ marked with vertical bars (|) on the left.
     Description: deletes a user defined channel flag, string, or integer
       setting.
     Returns: nothing
+    Module: channels
+
+  getudefs <flag/int/str>
+    Returns: a list of user defined channel settings of the given type, or
+      all of them if no type is given.
+    Module: channels
+
+  chansettype <setting>
+    Returns: The type of the setting you specify. The possible types
+      are flag, int, str, pair.
     Module: channels
 
 *** DCC COMMANDS ***
@@ -1028,16 +1041,19 @@ marked with vertical bars (|) on the left.
     Returns: nothing
     Module: core
 
-  connect <host> <port>
+  connect <host> <[+]port>
     Description: makes an outgoing connection attempt and creates a dcc
       entry for it. A 'control' command should be used immediately after
-      a successful 'connect' so no input is lost.
+      a successful 'connect' so no input is lost. If the port is prefixed
+      with a plus sign, SSL encrypted connection will be attempted.
     Returns: idx of the new connection
     Module: core
 
   listen <port> <type> [options] [flag]
     Description: opens a listening port to accept incoming telnets; type
-      must be one of "bots", "all", "users", "script", or "off":
+      must be one of "bots", "all", "users", "script", or "off".
+      Prefixing the port with a plus sign will make eggdrop accept SSL
+      connections on it.
 
         listen <port> bots [mask]
           Description: accepts connections from bots only; the optional mask
@@ -1341,49 +1357,55 @@ marked with vertical bars (|) on the left.
       list of logfiles such as: {mco * eggdrop.log} {jp #lame lame.log}
     Module: core
 
-| maskhost <nick!user@host> [masktype]
-|   Returns: masked hostmask for the string given according to the masktype
-|     (the default is 3).
-|     Available types are:
-|       0: *!user@host
-|       1: *!*user@host
-|       2: *!*@host
-|       3: *!*user@*.host
-|       4: *!*@*.host
-|       5: nick!user@host
-|       6: nick!*user@host
-|       7: nick!*@host
-|       8: nick!*user@*.host
-|       9: nick!*@*.host
-|     You can also specify types from 10 to 19 which correspond to types
-|     0 to 9, but instead of using a * wildcard to replace portions of the
-|     host, only numbers in hostnames are replaced with the '?' wildcard.
-|     Same is valid for types 20-29, but instead of '?', the '*' wildcard
-|     will be used.
-|   Module: core
+  maskhost <nick!user@host> [masktype]
+    Returns: masked hostmask for the string given according to the masktype
+      (the default is 3).
+      Available types are:
+        0: *!user@host
+        1: *!*user@host
+        2: *!*@host
+        3: *!*user@*.host
+        4: *!*@*.host
+        5: nick!user@host
+        6: nick!*user@host
+        7: nick!*@host
+        8: nick!*user@*.host
+        9: nick!*@*.host
+      You can also specify types from 10 to 19 which correspond to types
+      0 to 9, but instead of using a * wildcard to replace portions of the
+      host, only numbers in hostnames are replaced with the '?' wildcard.
+      Same is valid for types 20-29, but instead of '?', the '*' wildcard
+      will be used.
+    Module: core
 
-  timer <minutes> <tcl-command>
+  timer <minutes> <tcl-command> [count]
     Description: executes the given Tcl command after a certain number of
-      minutes have passed
+      minutes have passed. If count is specified, the command will be executed
+      count times with the given interval in between. If you specify a count
+      of 0, the timer will repeat until it's removed with killtimer or until
+      the bot is restarted.
     Returns: a timerID
     Module: core
 
-  utimer <seconds> <tcl-command>
+  utimer <seconds> <tcl-command> [count]
     Description: executes the given Tcl command after a certain number of
-      seconds have passed
+      seconds have passed. If count is specified, the command will be executed
+      count times with the given interval in between. If you specify a count
+      of 0, the utimer will repeat until it's removed with killutimer or until
+      the bot is restarted.
     Returns: a timerID
     Module: core
 
   timers
     Returns: a list of active minutely timers. Each entry in the list contains
       the number of minutes left till activation, the command that will be
-      executed, and the timerID.
+      executed, the timerID, and the remaining number of repeats.
     Module: core
 
   utimers
     Returns: a list of active secondly timers. Each entry in the list contains
       the number of minutes left till activation, the command that will be
-      executed, and the timerID.
+      executed, the timerID, and the remaining number of repeats.
     Module: core
 
   killtimer <timerID>
@@ -1512,7 +1534,7 @@ marked with vertical bars (|) on the left.
     Returns: nothing
     Module: core
 
- traffic
+  traffic
     Returns: a list of sublists containing information about the bot's
       traffic usage in bytes. Each sublist contains five elements: type,
       in-traffic today, in-traffic total, out-traffic today, out-traffic
@@ -1576,25 +1598,57 @@ marked with vertical bars (|) on the left.
     Returns: the stripped string.
     Module: core
 
-| matchaddr <hostmask> <address>
-|   Description: checks if the address matches the hostmask given. The
-|     address should be in the form nick!user@host.
-|   Returns: 1 if the address matches the hostmask, 0 otherwise.
+  matchaddr <hostmask> <address>
+    Description: checks if the address matches the hostmask given. The
+      address should be in the form nick!user@host.
+    Returns: 1 if the address matches the hostmask, 0 otherwise.
+    Module: core
+
+  matchcidr <block> <address> <prefix>
+    Description: performs a cidr match on the specified ip addresses.
+      IPv6 is supported, if enabled at compile time.
+        Example: matchcidr 192.168.0.0 192.168.1.17 16
+    Returns: 1 if the address matches the block prefix, 0 otherwise.
+    Module: core
+
+  matchstr <pattern> <string>
+    Description: checks if pattern matches string. Only two wildcards are
+      supported: '*' and '?'. Matching is case-insensitive. This command
+      is intended as a simplified alternative to Tcl's string match.  
+    Returns: 1 if the pattern matches the string, 0 if it doesn't.
+    Module: core
+
+| status [type]
+|   Description: provides eggdrop status information similar to the .status
+|     command in partyline. The available types of information are:
+|       cpu   - total cpu time spent by eggdrop
+|       mem   - dynamically allocated memory excluding the Tcl interpreter
+|       cache - user entries cache hits (in %)
+|       ipv6  - shows whether IPv6 support was compiled in
+|   Returns: the requested information type or all information if type
+|     isn't specified. The format is a flat list of name-value pairs.
 |   Module: core
 
-|  matchcidr <block> <address> <prefix>
-|   Description: performs a cidr match on the specified ip addresses.
-|     IPv6 is supported, if enabled at compile time.
-|       Example: matchcidr 192.168.0.0 192.168.1.17 16
-|   Returns: 1 if the address matches the block prefix, 0 otherwise.
-|   Module: core
+| istls <idx>
+|  Description: checks if a connection is encrypted or cleartext. This
+|    command is available on TLS-enabled bots only.
+|  Returns: 1 if the idx is a TLS connection, 0 if it's plaintext.
+|  Module: core
 
-|  matchstr <pattern> <string>
-|   Description: checks if pattern matches string. Only two wildcards are
-|     supported: '*' and '?'. Matching is case-insensitive. This command
-|     is intended as a simplified alternative to Tcl's string match.  
-|   Returns: 1 if the pattern matches the string, 0 if it doesn't.
-|   Module: core
+| starttls <idx>
+|  Description: establishes a secure (using TLS) connection over idx. The
+|    TLS connection should be first negotiated over the plaintext link,
+|    or using other means. Both parties must switch to TLS simultaneously.
+|    This command is available on TLS-enabled bots only.
+|  Returns: nothing
+|  Module: core
+
+| tlsstatus <idx>
+|  Description: provides information about an established TLS connection
+|    This includes certificate and cipher information as well as protocol
+|    version. This command is available on TLS-enabled bots only.
+|  Returns: a flat list of name-value pairs
+|  Module: core
 
 *** GLOBAL VARIABLES ***
 
@@ -1727,11 +1781,11 @@ marked with vertical bars (|) on the left.
 
          Description: matches the entire line of text from a /msg with the
            mask. This is useful for binding Tcl procs to words or phrases
-|          spoken anywhere within a line of text. If the proc returns 1,
-|          Eggdrop will not log the message that triggered this bind.
-|          MSGM binds are processed before MSG binds. If the exclusive-binds
-|          setting is enabled, MSG binds will not be triggered by text that
-|          a MSGM bind has already handled.
+           spoken anywhere within a line of text. If the proc returns 1,
+           Eggdrop will not log the message that triggered this bind.
+           MSGM binds are processed before MSG binds. If the exclusive-binds
+           setting is enabled, MSG binds will not be triggered by text that
+           a MSGM bind has already handled.
          Module: server
 
     (6)  PUBM (stackable)
@@ -1741,11 +1795,11 @@ marked with vertical bars (|) on the left.
          Description: just like MSGM, except it's triggered by things said
            on a channel instead of things /msg'd to the bot. The mask is
            matched against the channel name followed by the text and can
-|          contain wildcards. If the proc returns 1, Eggdrop will not log
-|          the message that triggered this bind. PUBM binds are processed
-|          before PUB binds. If the exclusive-binds setting is enabled,
-|          PUB binds will not be triggered by text that a PUBM bind has
-|          already handled.
+           contain wildcards. If the proc returns 1, Eggdrop will not log
+           the message that triggered this bind. PUBM binds are processed
+           before PUB binds. If the exclusive-binds setting is enabled,
+           PUB binds will not be triggered by text that a PUBM bind has
+           already handled.
          Module: irc
 
     (7)  NOTC (stackable)
@@ -1757,8 +1811,8 @@ marked with vertical bars (|) on the left.
            notice and can contain wildcards. It is considered a breach of
            protocol to respond to a /notice on IRC, so this is intended for
            internal use (logging, etc.) only. Note that server notices do
-|          not trigger the NOTC bind. If the proc returns 1, Eggdrop will
-|          not log the message that triggered this bind.
+           not trigger the NOTC bind. If the proc returns 1, Eggdrop will
+           not log the message that triggered this bind.
 
            New Tcl procs should be declared as
              proc notcproc {nick uhost hand text {dest ""}} {
@@ -2050,16 +2104,16 @@ marked with vertical bars (|) on the left.
            "*" for the bind); flags are ignored.
          Module: server
 
-|   (31) NOTE (stackable)
-|        bind note <flags> <mask> <proc>
-|        procname <from> <to> <text>
-|
-|        Description: incoming notes (either from the party line, someone on
-|          IRC, or someone on another bot on the botnet) are checked against
-|          these binds before being processed. The mask is matched against
-|          the receiving handle and supports wildcards. If the proc returns 1,
-|          Eggdrop will not process the note any further. Flags are ignored.
-|        Module: core
+    (31) NOTE (stackable)
+         bind note <flags> <mask> <proc>
+         procname <from> <to> <text>
+
+         Description: incoming notes (either from the party line, someone on
+           IRC, or someone on another bot on the botnet) are checked against
+           these binds before being processed. The mask is matched against
+           the receiving handle and supports wildcards. If the proc returns 1,
+           Eggdrop will not process the note any further. Flags are ignored.
+         Module: core
 
     (32) ACT (stackable)
          bind act <flags> <mask> <proc>
@@ -2070,18 +2124,18 @@ marked with vertical bars (|) on the left.
            text of the action and can support wildcards.
          Module: core
 
-   (33) WALL (stackable)
-        bind wall <flags> <mask> <proc>
-        proc-name <from> <msg>
+    (33) WALL (stackable)
+         bind wall <flags> <mask> <proc>
+         proc-name <from> <msg>
 
-        Description: when the bot receives a wallops, it invokes this
-          binding. flags are ignored; the mask is matched against the text
-          of the wallops msg. Note that RFC shows the server name as a source
-          of the message, whereas many IRCds send the nick!user@host of the
-          actual sender, thus, Eggdrop will not parse it at all, but simply
-|         pass it to bind in its original form. If the proc returns 1,
-|         Eggdrop will not log the message that triggered this bind.
-        Module: server
+         Description: when the bot receives a wallops, it invokes this
+           binding. flags are ignored; the mask is matched against the text
+           of the wallops msg. Note that RFC shows the server name as a source
+           of the message, whereas many IRCds send the nick!user@host of the
+           actual sender, thus, Eggdrop will not parse it at all, but simply
+           pass it to bind in its original form. If the proc returns 1,
+           Eggdrop will not log the message that triggered this bind.
+         Module: server
 
     (34) BCST (stackable)
          bind bcst <flags> <mask> <proc>
@@ -2207,46 +2261,64 @@ marked with vertical bars (|) on the left.
            because the data transfer stalled for some reason.
          Module: transfer
 
-|   (45) OUT (stackable)
-|        bind out <flags> <mask> <proc>
-|        proc-name <queue> <message> <queued|sent>
-|
-|        Description: triggered whenever output is sent to the server. Normally
-|          the event will occur twice for each line sent: once before entering
-|          a server queue and once after the message is actually sent. This
-|          allows for more flexible logging of server output and introduces
-|          the ability to cancel the message.
-|          Mask is matched against "queue status", where status is either
-|          'queued' or 'sent'. Queues are: mode, server, help, noqueue.
-|          noqueue is only used by the putnow tcl command.
-|        Module: server
+   (45) OUT (stackable)
+        bind out <flags> <mask> <proc>
+        proc-name <queue> <message> <queued|sent>
 
-|   (46) CRON (stackable)
-|        bind cron <flags> <mask> <proc>
-|        proc-name <minute> <hour> <day> <month> <weekday>
+        Description: triggered whenever output is sent to the server. Normally
+          the event will occur twice for each line sent: once before entering
+          a server queue and once after the message is actually sent. This
+          allows for more flexible logging of server output and introduces
+          the ability to cancel the message.
+          Mask is matched against "queue status", where status is either
+          'queued' or 'sent'. Queues are: mode, server, help, noqueue.
+          noqueue is only used by the putnow tcl command.
+        Module: server
+
+   (46) CRON (stackable)
+        bind cron <flags> <mask> <proc>
+        proc-name <minute> <hour> <day> <month> <weekday>
+
+        Description: similar to bind TIME, but the mask is evaluated as a cron
+          expression, e.g. "16/2 */2 5-15 7,8,9 4". It can contain up to five
+          fields: minute, hour, day, month, weekday; delimited by whitespace.
+          Week days are represented as 0-6, where Sunday can be either 0 or 7.
+          Symbolic names are not supported. The bind will be triggered if the
+          mask matches all of the fields, except that if both day and weekday
+          are not '*', only one of them is required to match. If any number of
+          fields are omitted at the end, the match will proceed as if they were
+          '*'. All cron operators are supported. Please refer to the crontab
+          manual for their meanings. Flags are ignored.
+        Module: core
+
+   (47) LOG (stackable)
+        bind log <flags> <mask> <proc>
+        proc-name <level> <channel> <message>
+
+        Description: triggered whenever a message is sent to a log. The mask is
+          matched against "channel text".
+          The level argument to the proc will contain the level(s) the message
+          is sent to, or '*' if the message is sent to all log levels at once.
+          If the message wasn't sent to a specific channel, channel will be set
+          to '*'.
+        Module: core
+
+|   (48) TLS (stackable)
+|        bind tls <flags> <mask> <proc>
+|        proc-name <idx>
 |
-|        Description: similar to bind TIME, but the mask is evaluated as a cron
-|          expression, e.g. "16/2 */2 5-15 7,8,9 4". It can contain up to five
-|          fields: minute, hour, day, month, weekday; delimited by whitespace.
-|          Week days are represented as 0-6, where Sunday can be either 0 or 7.
-|          Symbolic names are not supported. The bind will be triggered if the
-|          mask matches all of the fields, except that if both day and weekday
-|          are not '*', only one of them is required to match. If any number of
-|          fields are omitted at the end, the match will proceed as if they were
-|          '*'. All cron operators are supported. Please refer to the crontab
-|          manual for their meanings. Flags are ignored.
+|        Description: triggered for tcp connections when a ssl handshake has
+|          completed and the connection is secured. The mask is matched against
+|          the idx of the connection.
 |        Module: core
 
-|   (47) LOG (stackable)
-|        bind log <flags> <mask> <proc>
-|        proc-name <level> <channel> <message>
+|   (49) DIE (stackable)
+|        bind die <flags> <mask> <proc>
+|        proc-name <shutdownreason>
 |
-|        Description: triggered whenever a message is sent to a log. The mask is
-|          matched against "channel text".
-|          The level argument to the proc will contain the level(s) the message
-|          is sent to, or '*' if the message is sent to all log levels at once.
-|          If the message wasn't sent to a specific channel, channel will be set
-|          to '*'.
+|        Description: triggered when eggdrop is about to die. The mask is
+|          matched against the shutdown reason. The bind won't be triggered if
+|          the bot crashes or is being terminated by SIGKILL.
 |        Module: core
 
   (B) RETURN VALUES
@@ -2293,25 +2365,30 @@ marked with vertical bars (|) on the left.
 
     (10) CHOF  Return 1 to ask the bot not to process the partyline part event.
 
-|   (11) WALL  Return 1 to make Eggdrop not log the message that triggered
-|              this bind.
+    (11) WALL  Return 1 to make Eggdrop not log the message that triggered
+               this bind.
 
-|   (12) NOTE  Return 1 to make Eggdrop not process the note any further.
-|              This includes stacked note bindings that would be processed
-|              after this one, as well as the built-in eggdrop note handling
-|              routines.
+    (12) NOTE  Return 1 to make Eggdrop not process the note any further.
+               This includes stacked note bindings that would be processed
+               after this one, as well as the built-in eggdrop note handling
+               routines.
 
-|   (13) MSGM  Return 1 to make Eggdrop not log the message that triggered
-|              this bind.
+    (13) MSGM  Return 1 to make Eggdrop not log the message that triggered
+               this bind.
 
-|   (14) PUBM  Return 1 to make Eggdrop not log the message that triggered
-|              this bind.
+    (14) PUBM  Return 1 to make Eggdrop not log the message that triggered
+               this bind.
 
-|   (15) NOTC  Return 1 to make Eggdrop not log the message that triggered
-|              this bind.
+    (15) NOTC  Return 1 to make Eggdrop not log the message that triggered
+               this bind.
 
-|   (16) OUT   Return 1 to make Eggdrop drop the message instead of sending
-|              it. Only meaningful for messages with status "queued".
+    (16) OUT   Return 1 to make Eggdrop drop the message instead of sending
+               it. Only meaningful for messages with status "queued".
+
+|   (17) EVNT  Return 1 to make Eggdrop not to take the default action for
+|              the event. Used for signal type events, ignored for others.
+
+|   (18) TLS   Return 1 to disable verbose ssl information for the handshake.
 
 *** CONTROL PROCEDURES ***
 
@@ -2351,7 +2428,9 @@ marked with vertical bars (|) on the left.
   more input is a no-no.
 
   To initiate an outgoing connection, use:
-    set idx [connect <hostname> <port>]
+    set idx [connect <hostname> <[+]port>]
+  
+  For SSL connections, prefix the port with a plus sign.
 
   $idx now contains a new DCC entry for the outgoing connection.
 
@@ -2378,7 +2457,9 @@ marked with vertical bars (|) on the left.
   it on a closed socket.
 
   To create a listen port, use:
-    listen <port> script <proc>
+    listen <[+]port> script <proc>
+
+  To listen for SSL connections, prefix the port with a plus sign.
 
   Procs should be declared as:
     <procname> <newidx>
@@ -2394,6 +2475,11 @@ marked with vertical bars (|) on the left.
     idx for the connection. That idx is sent to 'listen:grab'. The proc
     immediately puts this idx under control. Once 'listen:grab' has been
     called, the idx behaves exactly like an outgoing connection would.
+
+  Secure connection can be also established after a connection is active.
+  You can connect/listen normally and switch later using the 'starttls'
+  command. Your script should first inform the other side of the connection
+  that it wants to switch to SSL. How to do this is application specific.
 
   The best way to learn how to use these commands is to find a script that
   uses them and follow it carefully. However, hopefully this has given you

@@ -1,0 +1,5 @@
+%{help=seen}
+###  %bseen%b <handle>
+   This returns how long it is since the user was last seen by
+   the bot. There may also be a public command available on
+   channels that does the same thing.

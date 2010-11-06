@@ -1,0 +1,9 @@
+%{help=transfer module}%{+n}
+###  %btransfer module%b
+   The transfer module provides DCC SEND/GET support and userfile transfer
+   support for userfile sharing.
+
+   Config file variables for configuring the transfer module:
+      %bxfer-timeout    copy-to-tmp         dcc-block%b
+      %bmax-dloads%b
+   (Use %b'.help set <variable>'%b for more info)

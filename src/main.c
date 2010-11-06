@@ -5,7 +5,7 @@
  *   command line arguments
  *   context and assert debugging
  *
- * $Id: main.c,v 1.1.1.1 2010/07/26 21:11:06 simple Exp $
+ * $Id: main.c,v 1.6 2010/10/23 11:16:12 pseudo Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -127,8 +127,6 @@ char ver[41];        /* Version info (short form) */
 char egg_xtra[2048]; /* Patch info                */
 
 int do_restart = 0;       /* .restart has been called, restart ASAP */
-int die_on_sighup = 0;    /* Die if bot receives SIGHUP             */
-int die_on_sigterm = 1;   /* Die if bot receives SIGTERM            */
 int resolve_timeout = 15; /* Hostname/address lookup timeout        */
 char quit_msg[1024];      /* Quit message                           */
 
@@ -164,6 +162,9 @@ int cx_line[16];
 int cx_ptr = 0;
 #endif
 
+#ifdef TLS
+int ssl_cleanup();
+#endif
 
 void fatal(const char *s, int recoverable)
 {
@@ -174,10 +175,13 @@ void fatal(const char *s, int recoverable)
   for (i = 0; i < dcc_total; i++)
     if (dcc[i].sock >= 0)
       killsock(dcc[i].sock);
+#ifdef TLS
+  ssl_cleanup();
+#endif
   unlink(pid_file);
-  if (!recoverable) {
+  if (recoverable != 1) {
     bg_send_quit(BG_ABORT);
-    exit(1);
+    exit(!recoverable);
   }
 }
 
@@ -193,6 +197,10 @@ int expmem_modules(int);
 int expmem_language();
 int expmem_tcldcc();
 int expmem_tclmisc();
+int expmem_dns();
+#ifdef TLS
+int expmem_tls();
+#endif
 
 /* For mem.c : calculate memory we SHOULD be using
  */
@@ -203,7 +211,10 @@ int expected_memory(void)
   tot = expmem_chanprog() + expmem_users() + expmem_misc() + expmem_dccutil() +
         expmem_botnet() + expmem_tcl() + expmem_tclhash() + expmem_net() +
         expmem_modules(0) + expmem_language() + expmem_tcldcc() +
-        expmem_tclmisc();
+        expmem_tclmisc() + expmem_dns();
+#ifdef TLS 
+  tot += expmem_tls();
+#endif
   return tot;
 }
 
@@ -294,7 +305,19 @@ static void write_debug()
 
     if (tcl_threaded())
       dprintf(-x, "Tcl is threaded\n");
+#ifdef IPV6
+    dprintf(-x, "Compiled with IPv6 support\n");
+#else
+    dprintf(-x, "Compiled without IPv6 support\n");
+#endif
 
+#ifdef TLS
+    dprintf(-x, "Compiled with TLS support\n");
+#else
+    dprintf(-x, "Compiled without TLS support\n");
+#endif
+
+    dprintf(-x, "Configure flags: %s\n", EGG_AC_ARGS);
 #ifdef CCFLAGS
     dprintf(-x, "Compile flags: %s\n", CCFLAGS);
 #endif
@@ -356,30 +379,29 @@ static void got_fpe(int z)
 
 static void got_term(int z)
 {
-  write_userfile(-1);
-  check_tcl_event("sigterm");
-  if (die_on_sigterm) {
-    botnet_send_chat(-1, botnetnick, "ACK, I've been terminated!");
-    fatal("TERMINATE SIGNAL -- SIGNING OFF", 0);
-  } else
-    putlog(LOG_MISC, "*", "RECEIVED TERMINATE SIGNAL (IGNORING)");
+  /* Now we die by default on sigterm, but scripts have the chance to
+   * catch the event themselves and cancel shutdown by returning 1
+   */
+  if (check_tcl_event("sigterm"))
+    return;
+  kill_bot("ACK, I've been terminated!", "TERMINATE SIGNAL -- SIGNING OFF");
 }
 
 static void got_quit(int z)
 {
-  check_tcl_event("sigquit");
-  putlog(LOG_MISC, "*", "RECEIVED QUIT SIGNAL (IGNORING)");
+  if (check_tcl_event("sigquit"))
+    return;
+  putlog(LOG_MISC, "*", "Received QUIT signal: restarting...");
+  do_restart = -1;
   return;
 }
 
 static void got_hup(int z)
 {
   write_userfile(-1);
-  check_tcl_event("sighup");
-  if (die_on_sighup) {
-    fatal("HANGUP SIGNAL -- SIGNING OFF", 0);
-  } else
-    putlog(LOG_MISC, "*", "Received HUP signal: rehashing...");
+  if (check_tcl_event("sighup"))
+    return;
+  putlog(LOG_MISC, "*", "Received HUP signal: rehashing...");
   do_restart = -2;
   return;
 }
@@ -484,6 +506,15 @@ static void do_arg(char *s)
         printf("%s\n", version);
         if (z[0])
           printf("  (patches: %s)\n", z);
+        printf("Configured with: " EGG_AC_ARGS "\n");
+        printf("Compiled with: ");
+#ifdef IPV6
+        printf("IPv6, ");
+#endif
+#ifdef TLS
+        printf("TLS, ");
+#endif
+        printf("handlen=%d\n", HANDLEN);
         bg_send_quit(BG_ABORT);
         exit(0);
         break;                  /* this should never be reached */
@@ -683,6 +714,9 @@ int init_bots();
 int init_modules();
 int init_tcl(int, char **);
 int init_language(int);
+#ifdef TLS
+int ssl_init();
+#endif
 
 static void patch(const char *str)
 {
@@ -892,6 +926,10 @@ int mainloop(int toplevel)
       }
 
       rehash();
+#ifdef TLS
+      ssl_cleanup();
+      ssl_init();
+#endif
       restart_chons();
       call_hook(HOOK_LOADED);
     }
@@ -1051,6 +1089,9 @@ int main(int arg_c, char **arg_v)
     i++;
   putlog(LOG_MISC, "*", "=== %s: %d channels, %d users.",
          botnetnick, i, count_users(userlist));
+#ifdef TLS
+  ssl_init();
+#endif
   cache_miss = 0;
   cache_hit = 0;
   if (!pid_file[0])
@@ -1115,7 +1156,7 @@ int main(int arg_c, char **arg_v)
   if (!backgrd && term_z) {
     int n = new_dcc(&DCC_CHAT, sizeof(struct chat_info));
 
-    dcc[n].addr = iptolong(getmyip());
+    getvhost(&dcc[n].sockname, AF_INET);
     dcc[n].sock = STDOUT;
     dcc[n].timeval = now;
     dcc[n].u.chat->con_flags = conmask;

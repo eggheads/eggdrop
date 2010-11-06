@@ -219,9 +219,8 @@ See also: console, devoice
       %bbounce-modes    use-354             bounce-invites%b
       %bmax-exempts     max-modes           bounce-exempts%b
       %bmax-invites     kick-method         modes-per-line%b
-      %bkick-fun        ban-fun             no-chanrec-info%b
-      %bctcp-mode       strict-host         keep-nick%b
-      %binclude-lk      prevent-mixing%b
+      %bno-chanrec-info ctcp-mode           strict-host%b
+      %bkeep-nick       include-lk          prevent-mixing%b
    (Use %b'.help set <variable>'%b for more info)
 %{help=all}%{+o|o}
 ###  %birc module%b commands

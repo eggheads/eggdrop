@@ -1,0 +1,21 @@
+$Id: mod.assoc,v 1.1.1.1 2010/07/26 21:11:06 simple Exp $
+
+Assoc Module
+Last revised: January 1, 2002
+    _____________________________________________________________________
+
+                                 Assoc Module
+
+
+  This module provides assoc support, i.e. naming channels on the botnet.
+
+  This module requires: none
+
+  Put this line into your Eggdrop configuration file to load the assoc
+  module:
+
+    loadmodule assoc
+
+    _____________________________________________________________________
+
+  Copyright (C) 2000 - 2010 Eggheads Development Team

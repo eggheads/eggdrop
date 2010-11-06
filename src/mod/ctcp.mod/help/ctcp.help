@@ -1,0 +1,9 @@
+%{help=ctcp module}%{+n}
+###  %bctcp module%b
+   This module provides the normal ctcp replies that you would expect. Without
+   it loaded, CTCP CHAT will not work.
+
+   Config file variables for configuring the ctcp module:
+     %bctcp-userinfo    ctcp-finger         ctcp-version%b
+     %bctcp-mode%b
+   (Use %b'.help set <variable>'%b for more info)

@@ -1,0 +1,22 @@
+%{help=resolve}
+###  %bresolve%b <host or ip>
+   Attempts to resolve a hostname or ipaddress using the dns module;
+   however, in order for this command to work the best you should
+   load the dns module. This command is completely asynchronous so it
+   will not stop you from doing other things in the partyline while
+   trying to resolve an address.
+
+see also: dns
+%{help=dns}
+###  %bdns%b <host or ip>
+   Attempts to resolve a hostname or ipaddress using the dns module;
+   however, in order for this command to work the best you should
+   load the dns module. This command is completely asynchronous so it
+   will not stop you from doing other things in the partyline while
+   trying to resolve an address.
+
+see also: resolve
+%{help=all}
+###  %bcmd_resolve.tcl%b commands
+%b  dns          resolve%b
+%{-}

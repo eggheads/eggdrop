@@ -1,0 +1,5 @@
+# $Id: modinfo,v 1.1.1.1 2010/07/26 21:11:06 simple Exp $
+DESC:This provides the normal ctcp replies that you'd expect.
+DESC:
+DESC:Enabling this module is recommended for bots active on IRC.
+DEPENDS:server

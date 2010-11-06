@@ -1,0 +1,8 @@
+%{help=set share-compressed}%{+n}
+###  %bset share-compressed%b <0/1>
+  Allow compressed sending of user files? The user files are compressed with
+  the compression level defined in `compress-level'.
+%{help=set compress-level}%{+n}
+###  %bset compress-level%b <0-9>
+  This is the default compression level used. These levels are the same as
+  those used by GNU gzip.

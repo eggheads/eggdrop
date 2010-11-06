@@ -1,0 +1,20 @@
+%{help=set note-life}%{+n}
+### %bset note-life%b <days>
+   Sets the number of days to hold a note before expiring it (erasing it from
+   the bot).
+%{help=set max-notes}%{+n}
+### %bset max-notes%b <number>
+   Sets the maximum number of notes a user may have stored on the bot. Once
+   this limit is reached, no more notes will be accepted for the user.
+%{help=set allow-fwd}%{+n}
+###  %bset allow-fwd%b <0/1>
+   This setting determines whether or not note forwarding is permitted. If a
+   note is about to be stored (since the user is note currently online) and
+   they have a forwarding setting (and this value is 1), the note will be
+   forwarded to the appropriate user@bot.
+%{help=set notefile}%{+n}
+###  %bset notefile%b <filename>
+   Specifies the filename where the bot will store notes that are sent to users
+   who are not currently on the partyline (or are away). Changing this while
+   the bot is running is not recommended, however, note storage can be disabled
+   by setting this to "" (blank) or by unloading the notes module.

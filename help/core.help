@@ -43,7 +43,7 @@ Extra help relating to loaded modules may be obtained by typing
 %b'.help <module> module'%b. Possible modules include:
    %bassoc      channels     compress      console      ctcp%b
    %bfilesys    irc          notes         seen         server%b
-   %bshare      transfer     uptime        wire%b
+   %bshare      transfer     uptime%b
 %{-}
 
 You may receive a list of commands provided by all loaded modules by
@@ -145,15 +145,19 @@ botnet-nick
 userfile
 motd
 paranoid-telnet-flood
-my-ip
+vhost4
+vhost6
+prefer-ipv6
+listen-addr
 telnet-banner
 admin
+userfile-perm
 use-telnet-banner
 temp-path
 notify-newusers
 owner
-my-hostname
 nat-ip
+cidr-support
 dcc-sanitycheck
 network
 whois-fields
@@ -181,18 +185,25 @@ max-logsize
 quick-logs
 logfile-suffix
 quiet-save
-sort-users
-die-on-sighup
-die-on-sigterm
 remote-boots
 max-socks
+ident-timeout
+allow-dk-cmds
 max-logs
 protect-telnet
-ident-timeout
-share-unlinks
-allow-dk-cmds
-userfile-perm
 switch-logfiles-at
+share-unlinks
+ssl-privatekey
+ssl-certificate
+ssl-privatekey
+ssl-certificate
+ssl-capath
+ssl-cafile
+ssl-verify-depth
+ssl-cert-auth
+ssl-verify-bots
+ssl-verify-dcc
+ssl-verify-clients
 %{end}
    Use %b'.help set <variable>'%b for more info on each variable.
 %{help=all}%{-}

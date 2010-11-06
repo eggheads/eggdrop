@@ -1,9 +1,10 @@
 %{help=+bot}%{+t}
-###  %b+bot%b <handle> [address[:bot port[/user port]]] [host]
+###  %b+bot%b <handle> [address [[+]bot port[/[+]user port]]] [host]
    Creates a user record for a new bot with the handle given. If no hostmask
    is specified, the bot will try to automatically add a host from the channel.
    The bot's address will be used in linking. If the bot has a separate port
-   for bots and users they should be separated with a slash (/).
+   for bots and users they should be separated with a slash (/). Prefixing
+   the port with a plus sign marks the bot for secure (SSL) linking.
 
 See also: -bot
 %{help=+host}%{+t|m}
@@ -150,10 +151,11 @@ See also: bottree, vbottree, botinfo
 
 See also: bots, botinfo, vbottree
 %{help=chaddr}%{+t}
-###  %bchaddr%b <bot> <address[:bot port[/user port]]>
+###  %bchaddr%b <bot> <address> [[+]bot port[/[+]user port]]
    Changes the address for a bot. This is the address your bot will try to
    connect to when linking. If the bot has a separate port for bots and users,
-   they should be separated  by a slash (/).
+   they should be separated  by a slash (/). Prefixing the port with a plus
+   sign marks the bot for secure (SSL) linking.
 
 See also: link, +bot
 %{help=chat}%{-}
@@ -271,13 +273,13 @@ See also: chhandle
    is considered a "dcc" connection.
 
    The headings of the table are:
-     %bSOCK%b  the socket number of this connection (always unique)
+     %bIDX%b   index; the socket number of this connection (always unique)
      %bADDR%b  the ip address mask of the host the bot is connected to, if
            applicable
      %bPORT%b  the port number being used for this connection
      %bNICK%b  the handle of the user or bot, if applicable
-     %bHOST%b  the hostname corresponding to the IP address, if available
      %bTYPE%b  the type of dcc connection (see below)
+     %bINFO%b  misc information, i.e. flags for certain dcc types
 
    The types of connections currently possible are as follows (but more are
    being added all the time):

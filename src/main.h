@@ -2,7 +2,7 @@
  * main.h
  *   include file to include most other include files
  *
- * $Id: main.h,v 1.1.1.1 2010/07/26 21:11:06 simple Exp $
+ * $Id: main.h,v 1.3.2.1 2010/11/06 20:57:41 pseudo Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -48,7 +48,7 @@
 #  define USE_TCL_ENCODING
 #endif
 
-#if defined(HAVE_TCL_SETNOTIFIER) && defined(HAVE_TCL_GETTHREADDATA)
+#if defined(HAVE_TCL_SETNOTIFIER) && defined(HAVE_TCL_GETTHREADDATA) && defined(HAVE_TCL_NOTIFIER_INIT)
 #  define REPLACE_NOTIFIER
 #endif
 
@@ -114,6 +114,16 @@
 #include "users.h"
 #include "compat/compat.h"
 
+/* This header will take care of conditional gettext support (ENABLE_NLS)
+ * and will provide the required functions as dummy macros, if necessary.
+ */
+#include "gettext.h"
+
+/* Provide shorter names, as we'll be using these in a lot of places */
+#define _(x)         gettext(x)
+#define N_(x)        gettext_noop(x)
+#define P_(x, y, z)  ngettext(x, y, z)
+
 /* For pre Tcl7.5p1 versions */
 #ifndef HAVE_TCL_FREE
 #  define Tcl_Free(x) n_free(x, "", 0)
@@ -133,6 +143,18 @@ extern struct dcc_table DCC_CHAT, DCC_BOT, DCC_LOST, DCC_SCRIPT, DCC_BOT_NEW,
 #endif
 
 #define iptolong(a) (0xffffffff & (long) (htonl((unsigned long) a)))
+
+#ifdef IPV6
+# define setsnport(s, p) do {                                           \
+  if ((s).family == AF_INET6)                                           \
+    (s).addr.s6.sin6_port = htons((p));                                 \
+  else                                                                  \
+    (s).addr.s4.sin_port = htons((p));                                  \
+} while (0)
+#else
+# define setsnport(s, p) (s.addr.s4.sin_port = htons(p))
+#endif
+
 #define fixcolon(x) do {                                                \
         if ((x)[0] == ':')                                              \
           (x)++;                                                        \

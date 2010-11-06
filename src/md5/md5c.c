@@ -20,6 +20,7 @@
 #include "md5.h"
 #include "compat/compat.h"
 
+#ifndef HAVE_OPENSSL_MD5
 /*
  * The basic MD5 functions.
  *
@@ -269,3 +270,4 @@ void MD5_Final(unsigned char *result, MD5_CTX *ctx)
 
 	egg_memset(ctx, 0, sizeof(ctx));
 }
+#endif /* HAVE_OPENSSL_MD5 */

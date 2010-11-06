@@ -2,7 +2,7 @@
  * tclmisc.c -- handles:
  *   Tcl stubs for everything else
  *
- * $Id: tclmisc.c,v 1.1.1.1 2010/07/26 21:11:06 simple Exp $
+ * $Id: tclmisc.c,v 1.5 2010/10/27 20:47:26 pseudo Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -52,7 +52,7 @@ extern char botnetnick[], quit_msg[];
 extern struct userrec *userlist;
 extern time_t now;
 extern module_entry *module_list;
-extern int max_logs;
+extern int max_logs, cache_hit, cache_miss;
 extern log_t *logs;
 extern Tcl_Interp *interp;
 
@@ -256,14 +256,19 @@ static int tcl_timer STDVAR
   unsigned long x;
   char s[16];
 
-  BADARGS(3, 3, " minutes command");
+  BADARGS(3, 4, " minutes command ?count?");
 
   if (atoi(argv[1]) < 0) {
     Tcl_AppendResult(irp, "time value must be positive", NULL);
     return TCL_ERROR;
   }
+  if (argc == 4 && atoi(argv[3]) < 0) {
+    Tcl_AppendResult(irp, "count value must be >= 0", NULL);
+    return TCL_ERROR;
+  }
   if (argv[2][0] != '#') {
-    x = add_timer(&timer, atoi(argv[1]), argv[2], 0L);
+    x = add_timer(&timer, atoi(argv[1]), (argc == 4 ? atoi(argv[3]) : 1),
+                  argv[2], 0L);
     egg_snprintf(s, sizeof s, "timer%lu", x);
     Tcl_AppendResult(irp, s, NULL);
   }
@@ -275,14 +280,19 @@ static int tcl_utimer STDVAR
   unsigned long x;
   char s[16];
 
-  BADARGS(3, 3, " seconds command");
+  BADARGS(3, 4, " seconds command ?count?");
 
   if (atoi(argv[1]) < 0) {
     Tcl_AppendResult(irp, "time value must be positive", NULL);
     return TCL_ERROR;
   }
+  if (argc == 4 && atoi(argv[3]) < 0) {
+    Tcl_AppendResult(irp, "count value must be >= 0", NULL);
+    return TCL_ERROR;
+  }
   if (argv[2][0] != '#') {
-    x = add_timer(&utimer, atoi(argv[1]), argv[2], 0L);
+    x = add_timer(&utimer, atoi(argv[1]), (argc == 4 ? atoi(argv[3]) : 1),
+                  argv[2], 0L);
     egg_snprintf(s, sizeof s, "timer%lu", x);
     Tcl_AppendResult(irp, s, NULL);
   }
@@ -434,7 +444,7 @@ static int tcl_myip STDVAR
 
   BADARGS(1, 1, "");
 
-  egg_snprintf(s, sizeof s, "%lu", iptolong(getmyip()));
+  getdccaddr(NULL, s, sizeof s);
   Tcl_AppendResult(irp, s, NULL);
   return TCL_OK;
 }
@@ -763,6 +773,48 @@ tcl_cmds tclmisc_objcmds[] = {
   {NULL,     NULL}
 };
 
+static int tcl_status STDVAR
+{
+  char s[15];
+
+  BADARGS(1, 2, " ?type?");
+
+  if ((argc < 2) || !strcmp(argv[1], "cpu")) {
+    Tcl_AppendElement(irp, "cputime");
+    snprintf(s, sizeof s, "%f", getcputime());
+    Tcl_AppendElement(irp, s);
+  }
+  if ((argc < 2) || !strcmp(argv[1], "mem")) {
+    Tcl_AppendElement(irp, "expmem");
+    snprintf(s, sizeof s, "%d", expected_memory());
+    Tcl_AppendElement(irp, s);
+  }
+  if ((argc < 2) || !strcmp(argv[1], "ipv6")) {
+    Tcl_AppendElement(irp, "ipv6");
+#ifdef IPV6
+    Tcl_AppendElement(irp, "enabled");
+#else
+    Tcl_AppendElement(irp, "disabled");
+#endif
+  }
+  if ((argc < 2) || !strcmp(argv[1], "tls")) {
+    Tcl_AppendElement(irp, "tls");
+#ifdef TLS
+    Tcl_AppendElement(irp, SSLeay_version(SSLEAY_VERSION));
+#else
+    Tcl_AppendElement(irp, "disabled");
+#endif
+  }
+  if ((argc < 2) || !strcmp(argv[1], "cache")) {
+    Tcl_AppendElement(irp, "usercache");
+    snprintf(s, sizeof s, "%4.1f", 100.0 *
+             ((float) cache_hit) / ((float) (cache_hit + cache_miss)));
+    Tcl_AppendElement(irp, s);
+  }
+  
+  return TCL_OK;
+}
+
 tcl_cmds tclmisc_cmds[] = {
   {"logfile",           tcl_logfile},
   {"putlog",             tcl_putlog},
@@ -804,5 +856,6 @@ tcl_cmds tclmisc_cmds[] = {
   {"matchaddr",       tcl_matchaddr},
   {"matchcidr",       tcl_matchcidr},
   {"matchstr",         tcl_matchstr},
+  {"status",             tcl_status},
   {NULL,                       NULL}
 };

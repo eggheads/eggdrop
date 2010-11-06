@@ -1,0 +1,6 @@
+%{help=notes}
+You must use your password for all NOTES commands.
+%b/MSG%b %B %bNOTES%b <password> %bINDEX%b - This lists all notes stored for your handle.
+%b/MSG%b %B %bNOTES%b <password> %bREAD%b <number/ALL> - Displays notes stored for your handle. If a number is specified, only that note will be displayed. If you specify ALL, all notes will be displayed. You can also request a list of notes, such as "2-4;8;16-".
+%b/MSG%b %B %bNOTES%b <password> %bERASE%b <number/ALL> - This has the same syntax as %bREAD%b, except it erases the specified notes
+%b/MSG%b %B %bNOTES%b <password> %bTO%b <handle> <message> - This stores a note for the specified handle. This must be a valid user.

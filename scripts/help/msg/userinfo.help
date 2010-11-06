@@ -1,0 +1,45 @@
+%{help=email}
+%b/MSG%b %B %bEMAIL%b <my email address>
+   This will set your email address.  It's shown when
+   someone does a WHOIS on you (see HELP WHOIS).  If
+   you don't specify a email address, the bot will show
+   you the email address it currently has set for you (if any).
+%b/MSG%b %B %bEMAIL%b none
+   This clears your email address.
+%{help=url}
+%b/MSG%b %B %bURL%b <my url>
+   This will set your url address. If you don't specify a
+   url address, the bot will show you the url address it
+   currently has set for you (if any).
+%b/MSG%b %B %bURL%b none
+   This clears your url address.
+%{help=bf}
+%b/MSG%b %B %bBF%b <my boyfriend>
+   This will set your boyfriend. some scripts (such as seen)
+   use this information. If you don't specify a boyfriend,
+   the bot will show you the boyfriend it currently has set
+   for you (if any).
+%b/MSG%b %B %bBF%b none
+   This clears your boyfriend.
+%{help=gf}
+%b/MSG%b %B %bGF%b <my girlfriend>
+   This will set your girlfriend. some scripts (such as seen)
+   use this information. If you don't specify a girlfriend,
+   the bot will show you the girlfriend it currently has set
+   for you (if any).
+%b/MSG%b %B %bGF%b none
+   This clears your girlfriend.
+%{help=irl}
+%b/MSG%b %B %bIRL%b <my real name>
+   This will set your real name. just for the information
+   of others :). If you don't specify a real name, the bot will
+   show you the real name it currently has set for you (if any).
+%b/MSG%b %B %bIRL%b none
+   This clears your real name.
+%{help=dob}
+%b/MSG%b %B %bDOB%b <my date of birth>
+   This will set your date of birth. now now, be honest :)
+   If you don't specify a date of birth, the bot will show
+   you the date of birth it currently has set for you (if any).
+%b/MSG%b %B %bDOB%b none
+   This clears your date of birth.

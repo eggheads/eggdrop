@@ -2,7 +2,7 @@
  * ctcp.c -- part of ctcp.mod
  *   all the ctcp handling (except DCC, it's special ;)
  *
- * $Id: ctcp.c,v 1.1.1.1 2010/07/26 21:11:06 simple Exp $
+ * $Id: ctcp.c,v 1.4 2010/10/19 12:13:33 pseudo Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -145,6 +145,10 @@ static int ctcp_CHAT(char *nick, char *uhost, char *handle, char *object,
 {
   struct userrec *u = get_user_by_handle(userlist, handle);
   int atr = u ? u->flags : 0, i;
+  char s[INET6_ADDRSTRLEN];
+#ifdef TLS
+  int ssl = 0;
+#endif
 
   if ((atr & (USER_PARTY | USER_XFER)) || ((atr & USER_OP) && !require_p)) {
 
@@ -154,20 +158,37 @@ static int ctcp_CHAT(char *nick, char *uhost, char *handle, char *object,
       return 1;
     }
 
+#ifdef TLS
+    if (!egg_strcasecmp(keyword, "SCHAT"))
+      ssl = 1;
+#endif
     for (i = 0; i < dcc_total; i++) {
       if ((dcc[i].type->flags & DCT_LISTEN) &&
+#ifdef TLS
+          (ssl == dcc[i].ssl) &&
+#endif
           (!strcmp(dcc[i].nick, "(telnet)") ||
-           !strcmp(dcc[i].nick, "(users)"))) {
+           !strcmp(dcc[i].nick, "(users)")) &&
+          getdccaddr(&dcc[i].sockname, s, sizeof s)) {
         /* Do me a favour and don't change this back to a CTCP reply,
          * CTCP replies are NOTICE's this has to be a PRIVMSG
          * -poptix 5/1/1997 */
-        dprintf(DP_SERVER, "PRIVMSG %s :\001DCC CHAT chat %lu %u\001\n",
-                nick, iptolong(natip[0] ? (IP) inet_addr(natip) : getmyip()),
-                dcc[i].port);
+#ifdef TLS
+	  dprintf(DP_SERVER, "PRIVMSG %s :\001DCC %sCHAT chat %s %u\001\n",
+		  nick, (ssl ? "S" : ""), s, dcc[i].port);
+#else
+          dprintf(DP_SERVER, "PRIVMSG %s :\001DCC CHAT chat %s %u\001\n",
+                  nick, s, dcc[i].port);
+#endif
         return 1;
       }
     }
+#ifdef TLS
+    simple_sprintf(ctcp_reply, "%s\001ERROR no %stelnet port\001", ctcp_reply,
+	 	   (ssl ? "SSL enabled " : ""));
+#else
     simple_sprintf(ctcp_reply, "%s\001ERROR no telnet port\001", ctcp_reply);
+#endif
   }
   return 1;
 }
@@ -182,6 +203,9 @@ static cmd_t myctcp[] = {
   {"CLIENTINFO", "",   ctcp_CLIENTINFO, NULL},
   {"TIME",       "",   ctcp_TIME,       NULL},
   {"CHAT",       "",   ctcp_CHAT,       NULL},
+#ifdef TLS
+  {"SCHAT",      "",   ctcp_CHAT,       NULL},
+#endif
   {NULL,         NULL, NULL,            NULL}
 };
 
@@ -220,10 +244,10 @@ char *ctcp_start(Function *global_funcs)
 {
   global = global_funcs;
 
-  module_register(MODULE_NAME, ctcp_table, 1, 0);
-  if (!module_depend(MODULE_NAME, "eggdrop", 106, 0)) {
+  module_register(MODULE_NAME, ctcp_table, 1, 1);
+  if (!module_depend(MODULE_NAME, "eggdrop", 108, 0)) {
     module_undepend(MODULE_NAME);
-    return "This module requires Eggdrop 1.6.0 or later.";
+    return "This module requires Eggdrop 1.8.0 or later.";
   }
   if (!(server_funcs = module_depend(MODULE_NAME, "server", 1, 0))) {
     module_undepend(MODULE_NAME);

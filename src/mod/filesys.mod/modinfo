@@ -1,0 +1,6 @@
+# $Id: modinfo,v 1.1.1.1 2010/07/26 21:11:06 simple Exp $
+DESC:The filesys module provides an area within the bot where you can store
+DESC:files.
+DESC:
+DESC:Not everyone will need this module. If unsure, ENABLE it.
+DEPENDS:transfer

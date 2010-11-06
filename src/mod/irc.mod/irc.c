@@ -2,7 +2,7 @@
  * irc.c -- part of irc.mod
  *   support for channels within the bot
  *
- * $Id: irc.c,v 1.1.1.1 2010/07/26 21:11:06 simple Exp $
+ * $Id: irc.c,v 1.3 2010/10/24 13:22:40 pseudo Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -62,8 +62,6 @@ static int use_354 = 0;         /* Use ircu's short 354 /who responses. */
 static int kick_method = 1;     /* How many kicks does the IRC network support
                                  * at once? Use 0 for as many as possible.
                                  * (Ernst 18/3/1998) */
-static int kick_fun = 0;
-static int ban_fun = 0;
 static int keepnick = 1;        /* Keep nick */
 static int prevent_mixing = 1;  /* Prevent mixing old/new modes */
 static int rfc_compliant = 1;   /* Value depends on net-type. */
@@ -937,8 +935,6 @@ static tcl_ints myints[] = {
   {"mode-buf-length", &mode_buf_len,    0},
   {"use-354",         &use_354,         0},
   {"kick-method",     &kick_method,     0},
-  {"kick-fun",        &kick_fun,        0},
-  {"ban-fun",         &ban_fun,         0},
   {"invite-key",      &invite_key,      0},
   {"no-chanrec-info", &no_chanrec_info, 0},
   {"max-bans",        &max_bans,        0},
@@ -1213,10 +1209,10 @@ char *irc_start(Function *global_funcs)
 
   global = global_funcs;
 
-  module_register(MODULE_NAME, irc_table, 1, 4);
-  if (!module_depend(MODULE_NAME, "eggdrop", 106, 20)) {
+  module_register(MODULE_NAME, irc_table, 1, 5);
+  if (!module_depend(MODULE_NAME, "eggdrop", 108, 0)) {
     module_undepend(MODULE_NAME);
-    return "This module requires Eggdrop 1.6.20 or later.";
+    return "This module requires Eggdrop 1.8.0 or later.";
   }
   if (!(server_funcs = module_depend(MODULE_NAME, "server", 1, 0))) {
     module_undepend(MODULE_NAME);

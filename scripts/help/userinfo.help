@@ -1,0 +1,108 @@
+%{help=chemail}%{+m}
+###  %bchemail%b <user> [email address]
+   Sets the email address for a user.  This info isn't really used by
+   the bot for any reason except to display.  If you don't specify an
+   email address, the bot will show you the user's email address it
+   currently has set for the user (if any).
+###  %bchemail%b <user> none
+   clears a user's email address.
+%{help=churl}%{+m}
+###  %bchurl%b <user> [url address]
+   Sets the url address for a user's web site.  This info isn't really
+   used by the bot for any reasons except to display. If you don't
+   specify an url address, the bot will show you the user's url address
+   it currently has set for the user (if any).
+###  %bchurl%b <user> none
+   clears a user's url address.
+%{help=chbf}%{+m}
+###  %bchbf%b <user> [boyfriend]
+   Sets the boyfriend for a user.  This info isn't really used by the
+   for any reasons except to display. If you don't specify a boyfriend,
+   the bot will show you the user's boyfriend it currently has set for
+   the user (if any).
+###  %bchbf%b <user> none
+   clears a user's boyfriend.
+%{help=chgf}%{+m}
+###  %bchgf%b <user> [girlfriend]
+   Sets the girlfriend for a user.  This info isn't really used by the
+   bot for any reasons except to display. If you don't specify a
+   girlfriend, the bot will show you the user's girlfriend it currently
+   has set for the user (if any).
+###  %bchgf%b <user> none
+   clears a user's girlfriend.
+%{help=chirl}%{+m}
+###  %bchirl%b <user> [real life name]
+   Sets the 'In Real Life' name for a user.  This info isn't really
+   used by the bot for any reasons except to display.  If you don't
+   specify an 'In Real Life' name, the bot will show you the user's
+   'In Real Life' name it currently has set for the user (if any).
+###  %bchirl%b <user> none
+   clears a user's 'In Real Life' name.
+%{help=chdob}%{+m}
+###  %bchdob%b <user> [date of birth]
+   Sets the date of birth for a user.  This info isn't really used
+   by the bot for any reasons except to display.  If you don't specify
+   the date of birth, the bot will show you the user's date of birth
+   it currently has set for the user (if any).
+###  %bchdob%b <user> none
+   clears a user's date of birth.
+%{help=email}
+###  %bemail%b [email address]
+   sets your email address.  this data isn't really used by the bot,
+   but it will show up if someone does a %b'whois'%b on you.  if you
+   don't specify an email address, the bot will show you the email
+   address it currently has set for you (if any).
+###  %bemail none%b
+   clears your email address.
+%{help=url}
+###  %burl%b [url site address]
+   sets your url address.  this data isn't really used by the bot,  
+   but it will show up if someone does a %b'whois'%b on you.  if you
+   don't specify an url address, the bot will show you the url
+   address it currently has set for you (if any).
+###  %burl none%b
+   clears your url address.
+%{help=bf}
+###  %bbf%b [boyfriend]
+   sets your boyfriend.  this data isn't really used by the bot, but
+   it will show up if someone does a %b'whois'%b on you.  it's also
+   used by the seen script. if you don't specify a boyfriend, the bot
+   will show you the boyfriend it currently has set for you (if any).
+###  %bbf none%b
+   clears your boyfriend.
+%{help=gf}
+###  %bgf%b [girlfriend]
+   sets your girlfriend.  this data isn't really used by the bot, but  
+   it will show up if someone does a %b'whois'%b on you.  it's also 
+   used by the seen script. if you don't specify a girlfriend, the bot
+   will show you the girlfriend it currently has set for you (if any).
+###  %bgf none%b
+   clears your girlfriend.
+%{help=irl}
+###  %birl%b [irl]
+   sets your 'in real life' name.  this data isn't really used by the  
+   bot, but it will show up if someone does a %b'whois'%b on you. if 
+   you don't specify a 'in real life' name, the bot will show you the
+   'in real life' name it currently has set for you (if any).
+###  %birl none%b
+   clears your 'in real life' name.
+%{help=dob}
+###  %bdob%b [date of birth]
+   sets your date of birth.  this data isn't really used by the bot,  
+   but it will show up if someone does a %b'whois'%b on you. if you
+   don't specify a date of birth, the bot will show you your date of
+   birth it currently has set for you (if any).
+###  %bdob none%b
+   clears your date of birth. (woah, no more showing ID ;)
+%{help=showfields}%{+m}
+###  %bshowfields%b
+   shows currently loaded user info fields.
+%{help=userinfo}%{+m}
+###  %buserinfo script%b
+   this nifty little script lets you define arbitrary strings for each
+   user that they can set themselves or a master can set.  the default
+   script contains the entries URL, BF (boyfriend), GF (girlfriend),
+   IRL (in real life name), EMAIL, and DOB (date of birth).  each entry
+   has a '.<entry>' command for users and a '.ch<entry>' command for
+   masters, also there is a /msg command to change each one.  for a
+   complete list of currently loaded user info fields type '.showfields'.

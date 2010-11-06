@@ -1,0 +1,16 @@
+%{help=store}%{-}
+###  %bstore%b
+   Stores your console settings so that they are restored automatically the
+   next time you join the party line.
+%{help=console module}%{+n}
+###  %bconsole module%b
+   This module provides storage of console settings when you exit the bot or
+   type %b.store%b on the partyline.
+
+   Config file variables for configuring the console module:
+     %bforce-channel    console-autosave    info-party%b
+   (Use %b'.help set <variable>'%b for more info)
+%{help=all}%{-}
+###  %bconsole module%b commands
+   For all users:
+      %bstore%b

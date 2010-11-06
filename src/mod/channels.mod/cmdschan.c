@@ -2,7 +2,7 @@
  * cmdschan.c -- part of channels.mod
  *   commands from a user via dcc that cause server interaction
  *
- * $Id: cmdschan.c,v 1.1.1.1 2010/07/26 21:11:06 simple Exp $
+ * $Id: cmdschan.c,v 1.3 2010/10/11 08:46:10 pseudo Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -45,7 +45,7 @@ static void cmd_pls_ban(struct userrec *u, int idx, char *par)
       chname = newsplit(&par);
     else
       chname = 0;
-    if (chname || !(u->flags & USER_MASTER)) {
+    if (chname || !(u->flags & USER_OP)) {
       if (!chname)
         chname = dcc[idx].u.chat->con_chan;
       get_user_flagrec(u, &user, chname);
@@ -109,15 +109,15 @@ static void cmd_pls_ban(struct userrec *u, int idx, char *par)
       egg_snprintf(s, sizeof s, "%s@*", who);   /* brain-dead? */
     else
       strncpyz(s, who, sizeof s);
-    if ((me = module_find("server", 0, 0)) && me->funcs)
+    if ((me = module_find("server", 0, 0)) && me->funcs) {
       egg_snprintf(s1, sizeof s1, "%s!%s", me->funcs[SERVER_BOTNAME],
                    me->funcs[SERVER_BOTUSERHOST]);
-    else
-      egg_snprintf(s1, sizeof s1, "%s!%s@%s", origbotname, botuser, hostname);
-    if (match_addr(s, s1)) {
-      dprintf(idx, "I'm not going to ban myself.\n");
-      putlog(LOG_CMDS, "*", "#%s# attempted +ban %s", dcc[idx].nick, s);
-    } else {
+      if (match_addr(s, s1)) {
+        dprintf(idx, "I'm not going to ban myself.\n");
+        putlog(LOG_CMDS, "*", "#%s# attempted +ban %s", dcc[idx].nick, s);
+        return;
+      }
+    }
       /* IRC can't understand bans longer than 70 characters */
       if (strlen(s) > 70) {
         s[69] = '*';
@@ -160,16 +160,14 @@ static void cmd_pls_ban(struct userrec *u, int idx, char *par)
           for (chan = chanset; chan != NULL; chan = chan->next)
             (me->funcs[IRC_CHECK_THIS_BAN]) (chan, s, sticky);
       }
-    }
   }
 }
 
 static void cmd_pls_exempt(struct userrec *u, int idx, char *par)
 {
-  char *chname, *who, s[UHOSTLEN], s1[UHOSTLEN], *p, *p_expire;
+  char *chname, *who, s[UHOSTLEN], *p, *p_expire;
   unsigned long int expire_time = 0, expire_foo;
   struct chanset_t *chan = NULL;
-  module_entry *me;
 
   if (!use_exempts) {
     dprintf(idx, "This command can only be used with use-exempts enabled.\n");
@@ -183,7 +181,7 @@ static void cmd_pls_exempt(struct userrec *u, int idx, char *par)
       chname = newsplit(&par);
     else
       chname = 0;
-    if (chname || !(u->flags & USER_MASTER)) {
+    if (chname || !(u->flags & USER_OP)) {
       if (!chname)
         chname = dcc[idx].u.chat->con_chan;
       get_user_flagrec(u, &user, chname);
@@ -247,11 +245,6 @@ static void cmd_pls_exempt(struct userrec *u, int idx, char *par)
       egg_snprintf(s, sizeof s, "%s@*", who);   /* brain-dead? */
     else
       strncpyz(s, who, sizeof s);
-    if ((me = module_find("server", 0, 0)) && me->funcs)
-      egg_snprintf(s1, sizeof s1, "%s!%s", me->funcs[SERVER_BOTNAME],
-                   me->funcs[SERVER_BOTUSERHOST]);
-    else
-      egg_snprintf(s1, sizeof s1, "%s!%s@%s", origbotname, botuser, hostname);
 
     /* IRC can't understand exempts longer than 70 characters */
     if (strlen(s) > 70) {
@@ -293,10 +286,9 @@ static void cmd_pls_exempt(struct userrec *u, int idx, char *par)
 
 static void cmd_pls_invite(struct userrec *u, int idx, char *par)
 {
-  char *chname, *who, s[UHOSTLEN], s1[UHOSTLEN], *p, *p_expire;
+  char *chname, *who, s[UHOSTLEN], *p, *p_expire;
   unsigned long int expire_time = 0, expire_foo;
   struct chanset_t *chan = NULL;
-  module_entry *me;
 
   if (!use_invites) {
     dprintf(idx, "This command can only be used with use-invites enabled.\n");
@@ -311,7 +303,7 @@ static void cmd_pls_invite(struct userrec *u, int idx, char *par)
       chname = newsplit(&par);
     else
       chname = 0;
-    if (chname || !(u->flags & USER_MASTER)) {
+    if (chname || !(u->flags & USER_OP)) {
       if (!chname)
         chname = dcc[idx].u.chat->con_chan;
       get_user_flagrec(u, &user, chname);
@@ -375,11 +367,6 @@ static void cmd_pls_invite(struct userrec *u, int idx, char *par)
       egg_snprintf(s, sizeof s, "%s@*", who);   /* brain-dead? */
     else
       strncpyz(s, who, sizeof s);
-    if ((me = module_find("server", 0, 0)) && me->funcs)
-      egg_snprintf(s1, sizeof s1, "%s!%s", me->funcs[SERVER_BOTNAME],
-                   me->funcs[SERVER_BOTUSERHOST]);
-    else
-      egg_snprintf(s1, sizeof s1, "%s!%s@%s", origbotname, botuser, hostname);
 
     /* IRC can't understand invites longer than 70 characters */
     if (strlen(s) > 70) {
@@ -437,7 +424,7 @@ static void cmd_mns_ban(struct userrec *u, int idx, char *par)
     chname = dcc[idx].u.chat->con_chan;
     console = 1;
   }
-  if (chname || !(u->flags & USER_MASTER)) {
+  if (chname || !(u->flags & USER_OP)) {
     if (!chname)
       chname = dcc[idx].u.chat->con_chan;
     get_user_flagrec(u, &user, chname);
@@ -450,7 +437,7 @@ static void cmd_mns_ban(struct userrec *u, int idx, char *par)
   }
   strncpyz(s, ban, sizeof s);
   if (console) {
-    i = u_delban(NULL, s, (u->flags & USER_MASTER));
+    i = u_delban(NULL, s, (u->flags & USER_OP));
     if (i > 0) {
       if (lastdeletedmask)
         mask = lastdeletedmask;
@@ -549,7 +536,7 @@ static void cmd_mns_exempt(struct userrec *u, int idx, char *par)
     chname = dcc[idx].u.chat->con_chan;
     console = 1;
   }
-  if (chname || !(u->flags & USER_MASTER)) {
+  if (chname || !(u->flags & USER_OP)) {
     if (!chname)
       chname = dcc[idx].u.chat->con_chan;
     get_user_flagrec(u, &user, chname);
@@ -561,7 +548,7 @@ static void cmd_mns_exempt(struct userrec *u, int idx, char *par)
   }
   strncpyz(s, exempt, sizeof s);
   if (console) {
-    i = u_delexempt(NULL, s, (u->flags & USER_MASTER));
+    i = u_delexempt(NULL, s, (u->flags & USER_OP));
     if (i > 0) {
       if (lastdeletedmask)
         mask = lastdeletedmask;
@@ -661,7 +648,7 @@ static void cmd_mns_invite(struct userrec *u, int idx, char *par)
     chname = dcc[idx].u.chat->con_chan;
     console = 1;
   }
-  if (chname || !(u->flags & USER_MASTER)) {
+  if (chname || !(u->flags & USER_OP)) {
     if (!chname)
       chname = dcc[idx].u.chat->con_chan;
     get_user_flagrec(u, &user, chname);
@@ -673,7 +660,7 @@ static void cmd_mns_invite(struct userrec *u, int idx, char *par)
   }
   strncpyz(s, invite, sizeof s);
   if (console) {
-    i = u_delinvite(NULL, s, (u->flags & USER_MASTER));
+    i = u_delinvite(NULL, s, (u->flags & USER_OP));
     if (i > 0) {
       if (lastdeletedmask)
         mask = lastdeletedmask;
@@ -963,7 +950,7 @@ static void cmd_stick_yn(int idx, char *par, int yn)
     }
     if (!chname[0]) {
       i = u_setsticky_exempt(NULL, s,
-                             (dcc[idx].user->flags & USER_MASTER) ? yn : -1);
+                             (dcc[idx].user->flags & USER_OP) ? yn : -1);
       if (i > 0) {
         putlog(LOG_CMDS, "*", "#%s# %sstick exempt %s",
                dcc[idx].nick, yn ? "" : "un", s);
@@ -1001,7 +988,7 @@ static void cmd_stick_yn(int idx, char *par, int yn)
     }
     if (!chname[0]) {
       i = u_setsticky_invite(NULL, s,
-                             (dcc[idx].user->flags & USER_MASTER) ? yn : -1);
+                             (dcc[idx].user->flags & USER_OP) ? yn : -1);
       if (i > 0) {
         putlog(LOG_CMDS, "*", "#%s# %sstick invite %s",
                dcc[idx].nick, yn ? "" : "un", s);
@@ -1033,7 +1020,7 @@ static void cmd_stick_yn(int idx, char *par, int yn)
   }
   if (!chname[0]) {
     i = u_setsticky_ban(NULL, s,
-                        (dcc[idx].user->flags & USER_MASTER) ? yn : -1);
+                        (dcc[idx].user->flags & USER_OP) ? yn : -1);
     if (i > 0) {
       putlog(LOG_CMDS, "*", "#%s# %sstick ban %s",
              dcc[idx].nick, yn ? "" : "un", s);

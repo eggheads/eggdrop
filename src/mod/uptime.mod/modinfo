@@ -1,0 +1,6 @@
+# $Id: modinfo,v 1.1.1.1 2010/07/26 21:11:06 simple Exp $
+DESC:This module reports uptime statistics to http://uptime.eggheads.org. Go
+DESC:look and see what your uptime is! It takes about 9 hours to show up, so
+DESC:if your bot isn't listed, try again later.
+DESC:
+DESC:Enabling this module is recommended for bots active on IRC.

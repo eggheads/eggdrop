@@ -1,7 +1,7 @@
 /*
  * tclhash.h
  *
- * $Id: tclhash.h,v 1.1.1.1 2010/07/26 21:11:06 simple Exp $
+ * $Id: tclhash.h,v 1.3 2010/10/23 11:16:13 pseudo Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -102,8 +102,12 @@ void tell_binds(int, char *);
 void check_tcl_nkch(const char *, const char *);
 void check_tcl_away(const char *, int, const char *);
 void check_tcl_chatactbcst(const char *, int, const char *, tcl_bind_list_t *);
-void check_tcl_event(const char *);
+int check_tcl_event(const char *);
+void check_tcl_die(char *);
 void check_tcl_log(int, char *, char *);
+#ifdef TLS
+int check_tcl_tls(int);
+#endif
 
 #define check_tcl_chat(a, b, c) check_tcl_chatactbcst(a ,b, c, H_chat)
 #define check_tcl_act(a, b, c) check_tcl_chatactbcst(a, b, c, H_act)
