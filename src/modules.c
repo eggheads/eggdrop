@@ -4,7 +4,7 @@
  *
  * by Darrin Smith (beldin@light.iinet.net.au)
  *
- * $Id: modules.c,v 1.3 2010/10/19 12:13:33 pseudo Exp $
+ * $Id: modules.c,v 1.3.2.1 2010/11/08 10:02:30 pseudo Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -165,7 +165,7 @@ struct hook_entry *hook_list[REAL_HOOKS];
 static void null_share(int idx, char *x)
 {
   if ((x[0] == 'u') && (x[1] == 'n')) {
-    putlog(LOG_BOTS, "*", "User file rejected by %s: %s", dcc[idx].nick, x + 3);
+    putlog(LOG_BOTS, "*", _("User file rejected by %s: %s"), dcc[idx].nick, x + 3);
     dcc[idx].status &= ~STAT_OFFERED;
     if (!(dcc[idx].status & STAT_GETTING)) {
       dcc[idx].status &= ~STAT_SHARE;
@@ -705,12 +705,12 @@ const char *module_load(char *name)
 #endif /* !STATIC */
 
   if (module_find(name, 0, 0) != NULL)
-    return MOD_ALREADYLOAD;
+    return _("Already loaded.");
 
 #ifndef STATIC
   if (moddir[0] != '/') {
     if (getcwd(workbuf, 1024) == NULL)
-      return MOD_BADCWD;
+      return _("Can't determine current directory.");
     sprintf(&(workbuf[strlen(workbuf)]), "/%s%s." EGG_MOD_EXT, moddir, name);
   } else {
     sprintf(workbuf, "%s%s." EGG_MOD_EXT, moddir, name);
@@ -719,7 +719,7 @@ const char *module_load(char *name)
 #  ifdef MOD_USE_SHL
   hand = shl_load(workbuf, BIND_IMMEDIATE, 0L);
   if (!hand)
-    return "Can't load module.";
+    return _("Can't load module.");
   sprintf(workbuf, "%s_start", name);
   if (shl_findsym(&hand, workbuf, (short) TYPE_PROCEDURE, (void *) &f))
     f = NULL;
@@ -731,14 +731,14 @@ const char *module_load(char *name)
   }
   if (f == NULL) {
     shl_unload(hand);
-    return MOD_NOSTARTDEF;
+    return _("No start function defined.");
   }
 #  endif /* MOD_USE_SHL */
 
 #  ifdef MOD_USE_DYLD
   ret = NSCreateObjectFileImageFromFile(workbuf, &file);
   if (ret != NSObjectFileImageSuccess)
-    return "Can't load module.";
+    return _("Can't load module.");
   hand = NSLinkModule(file, workbuf, DYLDFLAGS);
   sprintf(workbuf, "_%s_start", name);
   sym = NSLookupSymbolInModule(hand, workbuf);
@@ -748,25 +748,25 @@ const char *module_load(char *name)
     f = NULL;
   if (f == NULL) {
     NSUnLinkModule(hand, NSUNLINKMODULE_OPTION_NONE);
-    return MOD_NOSTARTDEF;
+    return _("No start function defined.");
   }
 #  endif /* MOD_USE_DYLD */
 
 #  ifdef MOD_USE_RLD
   ret = rld_load(NULL, (struct mach_header **) 0, workbuf, (const char *) 0);
   if (!ret)
-    return "Can't load module.";
+    return _("Can't load module.");
   sprintf(workbuf, "_%s_start", name);
   ret = rld_lookup(NULL, workbuf, &f)
   if (!ret || f == NULL)
-    return MOD_NOSTARTDEF;
+    return _("No start function defined.");
   /* There isn't a reliable way to unload at this point... just keep it loaded. */
 #  endif /* MOD_USE_DYLD */
 
 #  ifdef MOD_USE_LOADER
   hand = load(workbuf, LDR_NOFLAGS);
   if (hand == LDR_NULL_MODULE)
-    return "Can't load module.";
+    return _("Can't load module.");
   sprintf(workbuf, "%s_start", name);
   f = (Function) ldr_lookup_package(hand, workbuf);
   if (f == NULL) {
@@ -775,7 +775,7 @@ const char *module_load(char *name)
   }
   if (f == NULL) {
     unload(hand);
-    return MOD_NOSTARTDEF;
+    return _("No start function defined.");
   }
 #  endif /* MOD_USE_LOADER */
 
@@ -791,7 +791,7 @@ const char *module_load(char *name)
   }
   if (f == NULL) {
     dlclose(hand);
-    return MOD_NOSTARTDEF;
+    return _("No start function defined.");
   }
 #  endif /* MOD_USE_DL */
 #endif /* !STATIC */
@@ -799,13 +799,13 @@ const char *module_load(char *name)
 #ifdef STATIC
   for (sl = static_modules; sl && egg_strcasecmp(sl->name, name); sl = sl->next);
   if (!sl)
-    return "Unknown module.";
+    return _("Unknown module.");
   f = (Function) sl->func;
 #endif /* STATIC */
 
   p = nmalloc(sizeof(module_entry));
   if (p == NULL)
-    return "Malloc error";
+    return _("Malloc error");
   p->name = nmalloc(strlen(name) + 1);
   strcpy(p->name, name);
   p->major = 0;
@@ -826,9 +826,9 @@ const char *module_load(char *name)
   check_tcl_load(name);
 
   if (exist_lang_section(name))
-    putlog(LOG_MISC, "*", MOD_LOADED_WITH_LANG, name);
+    putlog(LOG_MISC, "*", _("Module loaded: %-16s (with lang support)"), name);
   else
-    putlog(LOG_MISC, "*", MOD_LOADED, name);
+    putlog(LOG_MISC, "*", _("Module loaded: %-16s"), name);
 
   return NULL;
 }
@@ -845,11 +845,11 @@ char *module_unload(char *name, char *user)
 
       for (d = dependancy_list; d; d = d->next)
         if (d->needed == p)
-          return MOD_NEEDED;
+          return _("Needed by another module");
 
       f = p->funcs;
       if (f && !f[MODCALL_CLOSE])
-        return MOD_NOCLOSEDEF;
+        return _("No close function");
       if (f) {
         check_tcl_unld(name);
         e = (((char *(*)()) f[MODCALL_CLOSE]) (user));
@@ -876,14 +876,14 @@ char *module_unload(char *name, char *user)
       else
         o->next = p->next;
       nfree(p);
-      putlog(LOG_MISC, "*", "%s %s", MOD_UNLOADED, name);
+      putlog(LOG_MISC, "*", "%s %s", _("Module unloaded:"), name);
       return NULL;
     }
     o = p;
     p = p->next;
   }
 
-  return MOD_NOSUCH;
+  return _("No such module");
 }
 
 module_entry *module_find(char *name, int major, int minor)
@@ -1161,18 +1161,18 @@ void do_module_report(int idx, int details, char *which)
   module_entry *p = module_list;
 
   if (p && !which)
-    dprintf(idx, "Loaded module information:\n");
+    dprintf(idx, _("Loaded module information:\n"));
   for (; p; p = p->next) {
     if (!which || !egg_strcasecmp(which, p->name)) {
       dependancy *d;
 
       if (details)
-        dprintf(idx, "  Module: %s, v %d.%d\n", p->name ? p->name : "CORE",
+        dprintf(idx, _("  Module: %s, v %d.%d\n"), p->name ? p->name : "CORE",
                 p->major, p->minor);
       if (details > 1) {
         for (d = dependancy_list; d; d = d->next)
           if (d->needing == p)
-            dprintf(idx, "    requires: %s, v %d.%d\n", d->needed->name,
+            dprintf(idx, _("    requires: %s, v %d.%d\n"), d->needed->name,
                     d->major, d->minor);
       }
       if (p->funcs) {
@@ -1186,5 +1186,5 @@ void do_module_report(int idx, int details, char *which)
     }
   }
   if (which)
-    dprintf(idx, "No such module.\n");
+    dprintf(idx, _("No such module.\n"));
 }

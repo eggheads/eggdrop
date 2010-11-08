@@ -3,7 +3,7 @@
  *   moving the process to the background, i.e. forking, while keeping threads
  *   happy.
  *
- * $Id: bg.c,v 1.1.1.1 2010/07/26 21:11:06 simple Exp $
+ * $Id: bg.c,v 1.1.1.1.2.1 2010/11/08 10:02:29 pseudo Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -110,16 +110,16 @@ static void bg_do_detach(pid_t p)
     fprintf(fp, "%u\n", p);
     if (fflush(fp)) {
       /* Kill bot incase a botchk is run from crond. */
-      printf(EGG_NOWRITE, pid_file);
-      printf("  Try freeing some disk space\n");
+      printf(_("* Warning! Could not write %s file!\n"), pid_file);
+      printf(_("  Try freeing some disk space\n"));
       fclose(fp);
       unlink(pid_file);
       exit(1);
     }
     fclose(fp);
   } else
-    printf(EGG_NOWRITE, pid_file);
-  printf("Launched into the background  (pid: %d)\n\n", p);
+    printf(_("* Warning! Could not write %s file!\n"), pid_file);
+  printf(_("Launched into the background  (pid: %d)\n\n"), p);
 #ifdef HAVE_SETPGID
   setpgid(p, p);
 #endif
@@ -140,7 +140,7 @@ void bg_prepare_split(void)
     int comm_pair[2];
 
     if (pipe(comm_pair) < 0)
-      fatal("CANNOT OPEN PIPE.", 0);
+      fatal(_("CANNOT OPEN PIPE."), 0);
 
     bg.comm_recv = comm_pair[0];
     bg.comm_send = comm_pair[1];
@@ -148,7 +148,7 @@ void bg_prepare_split(void)
 
   p = fork();
   if (p == -1)
-    fatal("CANNOT FORK PROCESS.", 0);
+    fatal(_("CANNOT FORK PROCESS."), 0);
   if (p == 0) {
     bg.state = BG_SPLIT;
     return;
@@ -181,7 +181,7 @@ void bg_prepare_split(void)
 error:
   /* We only reach this point in case of an error.
    */
-  fatal("COMMUNICATION THROUGH PIPE BROKE.", 0);
+  fatal(_("COMMUNICATION THROUGH PIPE BROKE."), 0);
 }
 
 /* Transfer contents of pid_file to parent process. This is necessary,
@@ -203,7 +203,7 @@ static void bg_send_pidfile(void)
     goto error;
   return;
 error:
-  fatal("COMMUNICATION THROUGH PIPE BROKE.", 0);
+  fatal(_("COMMUNICATION THROUGH PIPE BROKE."), 0);
 }
 
 void bg_send_quit(bg_quit_t q)
@@ -223,7 +223,7 @@ void bg_send_quit(bg_quit_t q)
       message.comm_type = BG_COMM_ABORT;
     /* Send message. */
     if (write(bg.comm_send, &message, sizeof(message)) < 0)
-      fatal("COMMUNICATION THROUGH PIPE BROKE.", 0);
+      fatal(_("COMMUNICATION THROUGH PIPE BROKE."), 0);
   }
 }
 
@@ -238,8 +238,9 @@ void bg_do_split(void)
     int xx = fork();
 
     if (xx == -1)
-      fatal("CANNOT FORK PROCESS.", 0);
+      fatal(_("CANNOT FORK PROCESS."), 0);
     if (xx != 0)
       bg_do_detach(xx);
   }
 }
+

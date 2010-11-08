@@ -4,7 +4,7 @@
  *   Tcl initialization
  *   getting and setting Tcl/eggdrop variables
  *
- * $Id: tcl.c,v 1.9 2010/10/26 09:16:36 pseudo Exp $
+ * $Id: tcl.c,v 1.9.2.1 2010/11/08 10:02:31 pseudo Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -112,13 +112,13 @@ static void botnet_change(char *new)
   if (egg_strcasecmp(botnetnick, new)) {
     /* Trying to change bot's nickname */
     if (tands > 0) {
-      putlog(LOG_MISC, "*", "* Tried to change my botnet nick, but I'm still "
-             "linked to a botnet.");
-      putlog(LOG_MISC, "*", "* (Unlink and try again.)");
+      putlog(LOG_MISC, "*", _("* Tried to change my botnet nick, but I'm still "
+             "linked to a botnet."));
+      putlog(LOG_MISC, "*", _("* (Unlink and try again.)"));
       return;
     } else {
       if (botnetnick[0])
-        putlog(LOG_MISC, "*", "* IDENTITY CHANGE: %s -> %s", botnetnick, new);
+        putlog(LOG_MISC, "*", _("* IDENTITY CHANGE: %s -> %s"), botnetnick, new);
       strcpy(botnetnick, new);
     }
   }
@@ -877,7 +877,7 @@ void do_tcl(char *whatzit, char *script)
 #endif
 
   if (code != TCL_OK) {
-    putlog(LOG_MISC, "*", "Tcl error in script for '%s':", whatzit);
+    putlog(LOG_MISC, "*", _("Tcl error in script for '%s':"), whatzit);
     putlog(LOG_MISC, "*", "%s", result);
   }
 
@@ -912,7 +912,7 @@ int readtclprog(char *fname)
 #endif
 
   if (code != TCL_OK) {
-    putlog(LOG_MISC, "*", "Tcl error in file '%s':", fname);
+    putlog(LOG_MISC, "*", _("Tcl error in file '%s':"), fname);
     putlog(LOG_MISC, "*", "%s", result);
     code = 0; /* JJM: refactored to remove premature return */
   } else {

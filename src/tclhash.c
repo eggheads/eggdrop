@@ -7,7 +7,7 @@
  *   (non-Tcl) procedure lookups for msg/dcc/file commands
  *   (Tcl) binding internal procedures to msg/dcc/file commands
  *
- * $Id: tclhash.c,v 1.3 2010/10/23 11:16:13 pseudo Exp $
+ * $Id: tclhash.c,v 1.3.2.1 2010/11/08 10:02:31 pseudo Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -259,7 +259,7 @@ void kill_bind(void)
     tl_next = tl->next;
 
     if (!(tl->flags |= HT_DELETED))
-      putlog(LOG_DEBUG, "*", "De-Allocated bind table %s", tl->name);
+      putlog(LOG_DEBUG, "*", _("De-Allocated bind table %s"), tl->name);
     tcl_bind_list_delete(tl);
   }
   H_log = NULL;
@@ -298,7 +298,7 @@ tcl_bind_list_t *add_bind_table(const char *nme, int flg, IntFunc func)
     bind_table_list = tl;
   }
 
-  putlog(LOG_DEBUG, "*", "Allocated bind table %s (flags %d)", nme, flg);
+  putlog(LOG_DEBUG, "*", _("Allocated bind table %s (flags %d)"), nme, flg);
   return tl;
 }
 
@@ -311,11 +311,11 @@ void del_bind_table(tcl_bind_list_t *tl_which)
       continue;
     if (tl == tl_which) {
       tl->flags |= HT_DELETED;
-      putlog(LOG_DEBUG, "*", "De-Allocated bind table %s", tl->name);
+      putlog(LOG_DEBUG, "*", _("De-Allocated bind table %s"), tl->name);
       return;
     }
   }
-  putlog(LOG_DEBUG, "*", "??? Tried to delete not listed bind table ???");
+  putlog(LOG_DEBUG, "*", _("??? Tried to delete not listed bind table ???"));
 }
 
 tcl_bind_list_t *find_bind_table(const char *nme)
@@ -942,11 +942,11 @@ int check_tcl_dcc(const char *cmd, int idx, const char *args)
   x = check_tcl_bind(H_dcc, cmd, &fr, " $_dcc1 $_dcc2 $_dcc3",
                      MATCH_PARTIAL | BIND_USE_ATTR | BIND_HAS_BUILTINS);
   if (x == BIND_AMBIGUOUS) {
-    dprintf(idx, MISC_AMBIGUOUS);
+    dprintf(idx, _("Ambiguous command.\n"));
     return 0;
   }
   if (x == BIND_NOMATCH) {
-    dprintf(idx, MISC_NOSUCHCMD);
+    dprintf(idx, _("What?  You need '.help'\n"));
     return 0;
   }
 
@@ -1251,8 +1251,8 @@ void tell_binds(int idx, char *par)
   if (tl_kind == NULL && name && name[0] && egg_strcasecmp(name, "all"))
     patmatc = 1;
 
-  dprintf(idx, MISC_CMDBINDS);
-  dprintf(idx, "  TYPE FLAGS    COMMAND              HITS BINDING (TCL)\n");
+  dprintf(idx, _("Command bindings:\n"));
+  dprintf(idx, _("  TYPE FLAGS    COMMAND              HITS BINDING (TCL)\n"));
 
   for (tl = tl_kind ? tl_kind : bind_table_list; tl;
        tl = tl_kind ? 0 : tl->next) {
@@ -1288,11 +1288,11 @@ void tell_binds(int idx, char *par)
   }
   if (!fnd) {
     if (patmatc)
-      dprintf(idx, "No command bindings found that match %s\n", name);
+      dprintf(idx, _("No command bindings found that match %s\n"), name);
     else if (tl_kind)
-      dprintf(idx, "No command bindings for type: %s.\n", name);
+      dprintf(idx, _("No command bindings for type: %s.\n"), name);
     else
-      dprintf(idx, "No command bindings exist.\n");
+      dprintf(idx, _("No command bindings exist.\n"));
   }
 }
 

@@ -4,7 +4,7 @@
  *   a bunch of functions to find and change user records
  *   change and check user (and channel-specific) flags
  *
- * $Id: userrec.c,v 1.2 2010/10/24 13:22:40 pseudo Exp $
+ * $Id: userrec.c,v 1.2.2.1 2010/11/08 10:02:32 pseudo Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -554,12 +554,12 @@ void write_userfile(int idx)
   f = fopen(new_userfile, "w");
   chmod(new_userfile, userfile_perm);
   if (f == NULL) {
-    putlog(LOG_MISC, "*", USERF_ERRWRITE);
+    putlog(LOG_MISC, "*", _("ERROR writing user file."));
     nfree(new_userfile);
     return;
   }
   if (!quiet_save)
-    putlog(LOG_MISC, "*", USERF_WRITING);
+    putlog(LOG_MISC, "*", _("Writing user file..."));
 
   sort_userlist();
   tt = now;
@@ -570,7 +570,7 @@ void write_userfile(int idx)
     if (!write_user(u, f, idx))
       ok = 0;
   if (!ok || !write_ignores(f, -1) || fflush(f)) {
-    putlog(LOG_MISC, "*", "%s (%s)", USERF_ERRWRITE, strerror(ferror(f)));
+    putlog(LOG_MISC, "*", _("ERROR writing user file. (%s)"), strerror(ferror(f)));
     fclose(f);
     nfree(new_userfile);
     return;
@@ -603,7 +603,7 @@ int change_handle(struct userrec *u, char *newh)
       strncpyz(dcc[i].nick, newh, sizeof dcc[i].nick);
       if (dcc[i].type == &DCC_CHAT && dcc[i].u.chat->channel >= 0) {
         chanout_but(-1, dcc[i].u.chat->channel,
-                    "*** Handle change: %s -> %s\n", s, newh);
+                    _("*** Handle change: %s -> %s\n"), s, newh);
         if (dcc[i].u.chat->channel < GLOBAL_CHANS)
           botnet_send_nkch(i, s);
       }

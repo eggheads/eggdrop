@@ -2,7 +2,7 @@
  * net.c -- handles:
  *   all raw network i/o
  *
- * $Id: net.c,v 1.6 2010/10/20 13:07:13 pseudo Exp $
+ * $Id: net.c,v 1.6.2.1 2010/11/08 10:02:30 pseudo Exp $
  */
 /*
  * This is hereby released into the public domain.
@@ -331,7 +331,7 @@ void setsock(int sock, int options)
   struct threaddata *td = threaddata();
 
   if (i == -1) {
-    putlog(LOG_MISC, "*", "Sockettable full.");
+    putlog(LOG_MISC, "*", _("Socket table full."));
     return;
   }
   if (((sock != STDOUT) || backgrd) && !(td->socklist[i].flags & SOCK_NONSOCK)) {
@@ -357,7 +357,7 @@ int getsock(int af, int options)
   if (sock >= 0)
     setsock(sock, options);
   else
-    putlog(LOG_MISC, "*", "Warning: Can't create new socket: %s!",
+    putlog(LOG_MISC, "*", _("Warning: Can't create new socket: %s!"),
            strerror(errno));
   return sock;
 }
@@ -399,7 +399,8 @@ void killsock(register int sock)
       return;
     }
   }
-  putlog(LOG_MISC, "*", "Warning: Attempt to kill un-allocated socket %d!", sock);
+  putlog(LOG_MISC, "*", _("Warning: Attempt to kill un-allocated socket %d!"),
+         sock);
 }
 
 /* Done with a tcl socket
@@ -434,8 +435,8 @@ static int proxy_connect(int sock, sockname_t *addr)
     return -2;
 #ifdef IPV6
   if (addr->family == AF_INET6) {
-    putlog(LOG_MISC, "*", "Eggdrop doesn't support IPv6 connections "
-           "through proxies yet.");
+    putlog(LOG_MISC, "*", _("Eggdrop doesn't support IPv6 connections "
+           "through proxies yet."));
     return -1;
   }
 #endif
@@ -773,7 +774,7 @@ int sockread(char *s, int *len, sock_list *slist, int slistmax, int tclonly)
 	      if (err == SSL_ERROR_WANT_READ || err == SSL_ERROR_WANT_WRITE)
 	        errno = EAGAIN;
               else
-                debug1("SSL error: %s", ERR_error_string(ERR_get_error(), 0));
+                debug1(_("SSL error: %s"), ERR_error_string(ERR_get_error(), 0));
               x = -1;
             }
           } else
@@ -1097,7 +1098,7 @@ void tputs(register int z, char *s, unsigned int len)
             errno = EAGAIN;
           else if (!inhere) { /* Out there, somewhere */
             inhere = 1;
-            debug1("SSL error: %s", ERR_error_string(ERR_get_error(), 0));
+            debug1(_("SSL error: %s"), ERR_error_string(ERR_get_error(), 0));
             inhere = 0;
           }
           x = -1;
@@ -1121,7 +1122,7 @@ void tputs(register int z, char *s, unsigned int len)
   if (!inhere) {
     inhere = 1;
 
-    putlog(LOG_MISC, "*", "!!! writing to nonexistent socket: %d", z);
+    putlog(LOG_MISC, "*", _("!!! writing to nonexistent socket: %d"), z);
     s[strlen(s) - 1] = 0;
     putlog(LOG_MISC, "*", "!-> '%s'", s);
 
@@ -1180,7 +1181,7 @@ void dequeue_sockets()
           if (err == SSL_ERROR_WANT_WRITE || err == SSL_ERROR_WANT_READ)
             errno = EAGAIN;
           else
-            debug1("SSL error: %s", ERR_error_string(ERR_get_error(), 0));
+            debug1(_("SSL error: %s"), ERR_error_string(ERR_get_error(), 0));
           x = -1;
         }
       } else
@@ -1303,15 +1304,15 @@ int sanitycheck_dcc(char *nick, char *from, char *ipaddy, char *port)
     return 1;
 
   if (prt < 1) {
-    putlog(LOG_MISC, "*", "ALERT: (%s!%s) specified an impossible port of %u!",
-           nick, from, prt);
+    putlog(LOG_MISC, "*", _("ALERT: (%s!%s) specified an impossible port "
+           "of %u!"), nick, from, from, prt);
     return 0;
   }
 #ifdef IPV6
   if (strchr(ipaddy, ':')) {
     if (inet_pton(AF_INET6, ipaddy, &name.addr.s6.sin6_addr) != 1) {
-      putlog(LOG_MISC, "*", "ALERT: (%s!%s) specified an invalid IPv6 "
-             "address of %s!", nick, from, ipaddy);
+      putlog(LOG_MISC, "*", _("ALERT: (%s!%s) specified an invalid IPv6 "
+             "address of %s!"), nick, from, ipaddy);
       return 0;
     }
     if (IN6_IS_ADDR_V4MAPPED(&name.addr.s6.sin6_addr))
@@ -1320,7 +1321,7 @@ int sanitycheck_dcc(char *nick, char *from, char *ipaddy, char *port)
 #endif
   if (ip && inet_ntop(AF_INET, &ip, badaddress, sizeof badaddress) &&
       (ip < (1 << 24))) {
-    putlog(LOG_MISC, "*", "ALERT: (%s!%s) specified an impossible IP of %s!",
+    putlog(LOG_MISC, "*", _("ALERT: (%s!%s) specified an impossible IP of %s!"),
            nick, from, badaddress);
     return 0;
   }
@@ -1347,12 +1348,12 @@ int hostsanitycheck_dcc(char *nick, char *from, sockname_t *ip, char *dnsname,
    */
   strncpyz(hostn, extracthostname(from), sizeof hostn);
   if (!egg_strcasecmp(hostn, dnsname)) {
-    putlog(LOG_DEBUG, "*", "DNS information for submitted IP checks out.");
+    putlog(LOG_DEBUG, "*", _("DNS information for submitted IP checks out."));
     return 1;
   }
   if (!strcmp(badaddress, dnsname))
-    putlog(LOG_MISC, "*", "ALERT: (%s!%s) sent a DCC request with bogus IP "
-           "information of %s port %s. %s does not resolve to %s!", nick, from,
+    putlog(LOG_MISC, "*", _("ALERT: (%s!%s) sent a DCC request with bogus IP "
+           "information of %s port %s. %s does not resolve to %s!"), nick, from,
            badaddress, prt, from, badaddress);
   else
     return 1;                   /* <- usually happens when we have

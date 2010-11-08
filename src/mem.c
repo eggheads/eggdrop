@@ -3,7 +3,7 @@
  *   memory allocation and deallocation
  *   keeping track of what memory is being used by whom
  *
- * $Id: mem.c,v 1.2 2010/10/19 12:13:33 pseudo Exp $
+ * $Id: mem.c,v 1.2.2.1 2010/11/08 10:02:30 pseudo Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -90,10 +90,10 @@ void tell_mem_status(char *nick)
   float per;
 
   per = ((lastused * 1.0) / (MEMTBLSIZE * 1.0)) * 100.0;
-  dprintf(DP_HELP, "NOTICE %s :Memory table usage: %d/%d (%.1f%% full)\n",
+  dprintf(DP_HELP, _("NOTICE %s :Memory table usage: %d/%d (%.1f%% full)\n"),
           nick, lastused, MEMTBLSIZE, per);
 #endif
-  dprintf(DP_HELP, "NOTICE %s :Think I'm using about %dk.\n", nick,
+  dprintf(DP_HELP, _("NOTICE %s :Think I'm using about %dk.\n"), nick,
           (int) (expected_memory() / 1024));
 }
 
@@ -105,13 +105,13 @@ void tell_mem_status_dcc(int idx)
 
   exp = expected_memory();      /* in main.c ? */
   per = ((lastused * 1.0) / (MEMTBLSIZE * 1.0)) * 100.0;
-  dprintf(idx, "Memory table: %d/%d (%.1f%% full)\n", lastused, MEMTBLSIZE,
+  dprintf(idx, _("Memory table: %d/%d (%.1f%% full)\n"), lastused, MEMTBLSIZE,
           per);
   per = ((exp * 1.0) / (memused * 1.0)) * 100.0;
   if (per != 100.0)
-    dprintf(idx, "Memory fault: only accounting for %d/%ld (%.1f%%)\n",
+    dprintf(idx, _("Memory fault: only accounting for %d/%ld (%.1f%%)\n"),
             exp, memused, per);
-  dprintf(idx, "Memory table itself occupies an additional %dk static\n",
+  dprintf(idx, _("Memory table itself occupies an additional %dk static\n"),
           (int) (sizeof(memtbl) / 1024));
 #endif
 }
@@ -194,7 +194,7 @@ void debug_mem_to_dcc(int idx)
         if (!strcmp(fn, me->name))
           me->mem_work += l;
     } else
-      dprintf(idx, "Not logging file %s!\n", fn);
+      dprintf(idx, _("Not logging file %s!\n"), fn);
   }
 
   for (i = 0; i < MAX_MEM; i++) {
@@ -246,10 +246,10 @@ void debug_mem_to_dcc(int idx)
     }
 
     if (use[i] == exp[i])
-      dprintf(idx, "File '%-10s' accounted for %lu/%lu (ok)\n", fn, exp[i],
+      dprintf(idx, _("File '%-10s' accounted for %lu/%lu (ok)\n"), fn, exp[i],
               use[i]);
     else {
-      dprintf(idx, "File '%-10s' accounted for %lu/%lu (debug follows:)\n",
+      dprintf(idx, _("File '%-10s' accounted for %lu/%lu (debug follows:)\n"),
               fn, exp[i], use[i]);
       strcpy(sofar, "   ");
       for (j = 0; j < lastused; j++) {
@@ -286,10 +286,10 @@ void debug_mem_to_dcc(int idx)
     if ((f != NULL) && (f[MODCALL_EXPMEM] != NULL))
       expt = f[MODCALL_EXPMEM] ();
     if (me->mem_work == expt)
-      dprintf(idx, "Module '%-10s' accounted for %lu/%lu (ok)\n", me->name,
+      dprintf(idx, _("Module '%-10s' accounted for %lu/%lu (ok)\n"), me->name,
               expt, me->mem_work);
     else {
-      dprintf(idx, "Module '%-10s' accounted for %lu/%lu (debug follows:)\n",
+      dprintf(idx, _("Module '%-10s' accounted for %lu/%lu (debug follows:)\n"),
               me->name, expt, me->mem_work);
       strcpy(sofar, "   ");
       for (j = 0; j < lastused; j++) {
@@ -315,9 +315,9 @@ void debug_mem_to_dcc(int idx)
     }
   }
 
-  dprintf(idx, "--- End of debug memory list.\n");
+  dprintf(idx, _("--- End of debug memory list.\n"));
 #else
-  dprintf(idx, "Compiled without extensive memory debugging (sorry).\n");
+  dprintf(idx, _("Compiled without extensive memory debugging (sorry).\n"));
 #endif
   tell_netdebug(idx);
 }
@@ -333,14 +333,14 @@ void *n_malloc(int size, const char *file, int line)
 
   x = (void *) malloc(size);
   if (x == NULL) {
-    putlog(LOG_MISC, "*", "*** FAILED MALLOC %s (%d) (%d): %s", file, line,
+    putlog(LOG_MISC, "*", _("*** FAILED MALLOC %s (%d) (%d): %s"), file, line,
            size, strerror(errno));
-    fatal("Memory allocation failed", 0);
+    fatal(_("Memory allocation failed"), 0);
   }
 #ifdef DEBUG_MEM
   if (lastused == MEMTBLSIZE) {
-    putlog(LOG_MISC, "*", "*** MEMORY TABLE FULL: %s (%d)", file, line);
-    fatal("Memory table full", 0);
+    putlog(LOG_MISC, "*", _("*** MEMORY TABLE FULL: %s (%d)"), file, line);
+    fatal(_("Memory table full"), 0);
   }
   i = lastused;
   memtbl[i].ptr = x;
@@ -371,13 +371,13 @@ void *n_realloc(void *ptr, int size, const char *file, int line)
   x = (void *) realloc(ptr, size);
   if (x == NULL && size > 0) {
     i = i;
-    putlog(LOG_MISC, "*", "*** FAILED REALLOC %s (%d)", file, line);
+    putlog(LOG_MISC, "*", _("*** FAILED REALLOC %s (%d)"), file, line);
     return NULL;
   }
 #ifdef DEBUG_MEM
   for (i = 0; (i < lastused) && (memtbl[i].ptr != ptr); i++);
   if (i == lastused) {
-    putlog(LOG_MISC, "*", "*** ATTEMPTING TO REALLOC NON-MALLOC'D PTR: %s (%d)",
+    putlog(LOG_MISC, "*", _("*** ATTEMPTING TO REALLOC NON-MALLOC'D PTR: %s (%d)"),
            file, line);
     return NULL;
   }
@@ -398,7 +398,7 @@ void n_free(void *ptr, const char *file, int line)
   int i = 0;
 
   if (ptr == NULL) {
-    putlog(LOG_MISC, "*", "*** ATTEMPTING TO FREE NULL PTR: %s (%d)",
+    putlog(LOG_MISC, "*", _("*** ATTEMPTING TO FREE NULL PTR: %s (%d)"),
            file, line);
     i = i;
     return;
@@ -408,7 +408,7 @@ void n_free(void *ptr, const char *file, int line)
   if (line) {
     for (i = 0; (i < lastused) && (memtbl[i].ptr != ptr); i++);
     if (i == lastused) {
-      putlog(LOG_MISC, "*", "*** ATTEMPTING TO FREE NON-MALLOC'D PTR: %s (%d)",
+      putlog(LOG_MISC, "*", _("*** ATTEMPTING TO FREE NON-MALLOC'D PTR: %s (%d)"),
              file, line);
       return;
     }

@@ -4,7 +4,7 @@
  *   Certificate handling
  *   OpenSSL initialization and shutdown
  *
- * $Id: tls.c,v 1.2 2010/10/19 14:20:56 pseudo Exp $
+ * $Id: tls.c,v 1.2.2.1 2010/11/08 10:02:32 pseudo Exp $
  */
 /*
  * Written by Rumen Stoyanov <pseudo@egg6.net>
@@ -126,7 +126,7 @@ int ssl_init()
   SSL_library_init();
 
   if (ssl_seed()) {
-    putlog(LOG_MISC, "*", "TLS: unable to seed PRNG. Disabling SSL");
+    putlog(LOG_MISC, "*", _("TLS: unable to seed PRNG. Disabling SSL"));
     ERR_free_strings();
     return -2;
   }
@@ -134,29 +134,29 @@ int ssl_init()
      supported protocols (SSLv2, SSLv3, and TLSv1) */
   if (!(ssl_ctx = SSL_CTX_new(SSLv23_method()))) {
     debug0(ERR_error_string(ERR_get_error(), NULL));
-    putlog(LOG_MISC, "*", "TLS: unable to create context. Disabling SSL.");
+    putlog(LOG_MISC, "*", _("TLS: unable to create context. Disabling SSL."));
     ERR_free_strings();
     return -1;
   }
   /* Load our own certificate and private key. Mandatory for acting as
      server, because we don't support anonymous ciphers by default. */
   if (SSL_CTX_use_certificate_chain_file(ssl_ctx, tls_certfile) != 1)
-    debug1("TLS: unable to load own certificate: %s",
+    debug1(_("TLS: unable to load own certificate: %s"),
            ERR_error_string(ERR_get_error(), NULL));
   if (SSL_CTX_use_PrivateKey_file(ssl_ctx, tls_keyfile,
       SSL_FILETYPE_PEM) != 1)
-    debug1("TLS: unable to load private key: %s",
+    debug1(_("TLS: unable to load private key: %s"),
            ERR_error_string(ERR_get_error(), NULL));
   if ((tls_capath[0] || tls_cafile[0]) &&
       !SSL_CTX_load_verify_locations(ssl_ctx, tls_cafile[0] ? tls_cafile : NULL,
       tls_capath[0] ? tls_capath : NULL))
-    debug1("TLS: unable to set CA certificates location: %s",
+    debug1(_("TLS: unable to set CA certificates location: %s"),
            ERR_error_string(ERR_get_error(), NULL));
   /* Let advanced users specify the list of allowed ssl ciphers */
   if (tls_ciphers[0])
     if (!SSL_CTX_set_cipher_list(ssl_ctx, tls_ciphers)) {
       /* this replaces any preset ciphers so an invalid list is fatal */
-      putlog(LOG_MISC, "*", "TLS: no valid ciphers found. Disabling SSL.");
+      putlog(LOG_MISC, "*", _("TLS: no valid ciphers found. Disabling SSL."));
       ERR_free_strings();
       SSL_CTX_free(ssl_ctx);
       ssl_ctx = NULL;
@@ -352,17 +352,17 @@ static int ssl_verifycn(X509 *cert, ssl_appdata *data)
     /* the following is just for information */
     switch (crit) {
       case 0:
-        debug0("TLS: X509 subjectAltName cannot be decoded");
+        debug0(_("TLS: X509 subjectAltName cannot be decoded"));
         break;
       case -1:
-        debug0("TLS: X509 has no subjectAltName extension");
+        debug0(_("TLS: X509 has no subjectAltName extension"));
         break;
       case -2:
-        debug0("TLS: X509 has multiple subjectAltName extensions");
+        debug0(_("TLS: X509 has multiple subjectAltName extensions"));
     }
     /* no subject name either? A completely broken certificate :) */
     if (!(subj = X509_get_subject_name(cert))) {
-      putlog(data->loglevel, "*", "TLS: peer certificate has no subject: %s",
+      putlog(data->loglevel, "*", _("TLS: peer certificate has no subject: %s"),
              data->host);
       match = 0;
     } else { /* we have a subject name, look at it */
@@ -372,15 +372,16 @@ static int ssl_verifycn(X509 *cert, ssl_appdata *data)
       /* Look for commonName attributes in the subject name */
       pos = X509_NAME_get_index_by_NID(subj, NID_commonName, pos);
       if (pos == -1) /* sorry */
-        putlog(data->loglevel, "*", "TLS: Peer has no common names and "
-              "no subjectAltName extension. Verification failed.");
+        putlog(data->loglevel, "*", _("TLS: Peer has no common names and "
+              "no subjectAltName extension. Verification failed."));
       /* Loop through all common names which may be present in the subject
          name until we find a match. */
       while (!match && pos != -1) {
         name = X509_NAME_ENTRY_get_data(X509_NAME_get_entry(subj, pos));
         cn = (char *) ASN1_STRING_data(name);
         if (ip)
-          match = a2i_IPADDRESS(cn) ? (ASN1_STRING_cmp(ip, a2i_IPADDRESS(cn)) ? 0 : 1) : 0;
+          match = a2i_IPADDRESS(cn) ? (ASN1_STRING_cmp(ip, a2i_IPADDRESS(cn)) ?
+                                                       0 : 1) : 0;
         else
           match = ssl_hostmatch(cn, data->host);
         pos = X509_NAME_get_index_by_NID(subj, NID_commonName, pos);
@@ -470,37 +471,37 @@ static void ssl_showcert(X509 *cert, int loglev)
   /* Subject and issuer names */
   if ((name = X509_get_subject_name(cert))) {
     buf = ssl_printname(name);
-    putlog(loglev, "*", "TLS: certificate subject: %s", buf);
+    putlog(loglev, "*", _("TLS: certificate subject: %s"), buf);
     nfree(buf);
   } else
-    putlog(loglev, "*", "TLS: cannot get subject name from certificate!");
+    putlog(loglev, "*", _("TLS: cannot get subject name from certificate!"));
   if ((name = X509_get_issuer_name(cert))) {
     buf = ssl_printname(name);
-    putlog(loglev, "*", "TLS: certificate issuer: %s", buf);
+    putlog(loglev, "*", _("TLS: certificate issuer: %s"), buf);
     nfree(buf);
   } else
-    putlog(loglev, "*", "TLS: cannot get issuer name from certificate!");
+    putlog(loglev, "*", _("TLS: cannot get issuer name from certificate!"));
   
   /* Fingerprints */
   X509_digest(cert, EVP_md5(), md, &len); /* MD5 hash */
   if (len <= sizeof(md)) {
     buf = hex_to_string(md, len);
-    putlog(loglev, "*", "TLS: certificate MD5 Fingerprint: %s", buf);
+    putlog(loglev, "*", _("TLS: certificate MD5 Fingerprint: %s"), buf);
     OPENSSL_free(buf);
   }
   X509_digest(cert, EVP_sha1(), md, &len); /* SHA-1 hash */
   if (len <= sizeof(md)) {
     buf = hex_to_string(md, len);
-    putlog(loglev, "*", "TLS: certificate SHA1 Fingerprint: %s", buf);
+    putlog(loglev, "*", _("TLS: certificate SHA1 Fingerprint: %s"), buf);
     OPENSSL_free(buf);
   }
 
   /* Validity time */
   from = ssl_printtime(X509_get_notBefore(cert));
   to = ssl_printtime(X509_get_notAfter(cert));
-  putlog(loglev, "*", "TLS: certificate valid from %s to %s", from, to);
+  putlog(loglev, "*", _("TLS: certificate valid from %s to %s"), from, to);
   nfree(from);
-  nfree(to);
+  nfree(to);	
 }
 
 /* Certificate validation callback
@@ -546,8 +547,8 @@ int ssl_verify(int ok, X509_STORE_CTX *ctx)
      */
     if (!(data->flags & TLS_DEPTH0) && !ssl_verifycn(cert, data) &&
         (data->verify & TLS_VERIFYCN)) {
-        putlog(data->loglevel, "*", "TLS: certificate validation failed. "
-               "Certificate subject does not match peer.");
+        putlog(data->loglevel, "*", _("TLS: certificate validation failed. "
+               "Certificate subject does not match peer."));
         return 0;
     }
     data->flags |= TLS_DEPTH0;
@@ -564,7 +565,7 @@ int ssl_verify(int ok, X509_STORE_CTX *ctx)
           (data->verify & TLS_VERIFYFROM)) ||
           ((err == X509_V_ERR_CERT_HAS_EXPIRED) &&
           (data->verify & TLS_VERIFYTO))) {
-        debug1("TLS: peer certificate warning: %s",
+        debug1(_("TLS: peer certificate warning: %s"),
                X509_verify_cert_error_string(err));
         ok = 1;
       }
@@ -572,7 +573,7 @@ int ssl_verify(int ok, X509_STORE_CTX *ctx)
   if (ok || !data->verify)
     return 1;
   putlog(data->loglevel, "*",
-         "TLS: certificate validation failed at depth %d: %s",
+         _("TLS: certificate validation failed at depth %d: %s"),
          depth, X509_verify_cert_error_string(err));
   return 0;
 }
@@ -605,26 +606,26 @@ void ssl_info(SSL *ssl, int where, int ret)
     if (check_tcl_tls(sock))
       return;
 
-    putlog(data->loglevel, "*", "TLS: handshake successful. Secure connection "
-           "established.");
+    putlog(data->loglevel, "*", _("TLS: handshake successful. "
+           "Secure connection established."));
 
     if ((cert = SSL_get_peer_certificate(ssl))) 
       ssl_showcert(cert, data->loglevel);
     else
-      putlog(data->loglevel, "*", "TLS: peer did not present a certificate");
+      putlog(data->loglevel, "*", _("TLS: peer did not present a certificate"));
 
     /* Display cipher information */
     cipher = SSL_get_current_cipher(ssl);
     processed = SSL_CIPHER_get_bits(cipher, &secret);
-    putlog(data->loglevel, "*", "TLS: cipher used: %s %s; %d bits (%d secret)",
-           SSL_CIPHER_get_name(cipher), SSL_CIPHER_get_version(cipher),
-           processed, secret);
+    putlog(data->loglevel, "*", _("TLS: cipher used: %s %s; "
+           "%d bits (%d secret)"), SSL_CIPHER_get_name(cipher),
+           SSL_CIPHER_get_version(cipher), processed, secret);
     /* secret are the actually secret bits. If processed and secret differ,
        the rest of the bits are fixed, i.e. for limited export ciphers */
 
     /* More verbose information, for debugging only */
     SSL_CIPHER_description(cipher, buf, sizeof buf);
-    debug1("TLS: cipher details: %s", buf);
+    debug1(_("TLS: cipher details: %s"), buf);
   }
 
   /* Display the state of the engine for debugging purposes */
@@ -655,25 +656,25 @@ int ssl_handshake(int sock, int flags, int verify, int loglevel, char *host,
   ssl_appdata *data;
   struct threaddata *td = threaddata();
 
-  debug0("TLS: attempting SSL negotiation...");
+  debug0(_("TLS: attempting SSL negotiation..."));
   if (!ssl_ctx && ssl_init()) {
-    debug0("TLS: Failed. OpenSSL not initialized properly.");
+    debug0(_("TLS: Failed. OpenSSL not initialized properly."));
     return -1;
   }
   /* find the socket in the list */
   i = findsock(sock);
   if (i == -1) {
-    debug0("TLS: socket not in socklist");
+    debug0(_("TLS: socket not in socklist"));
     return -2;
   }
   if (td->socklist[i].ssl) {
-    debug0("TLS: handshake not required - SSL session already established");
+    debug0(_("TLS: handshake not required - SSL session already established"));
     return 0;
   }
   td->socklist[i].ssl = SSL_new(ssl_ctx);
   if (!td->socklist[i].ssl ||
       !SSL_set_fd(td->socklist[i].ssl, td->socklist[i].sock)) {
-    debug1("TLS: cannot initiate SSL session - %s",
+    debug1(_("TLS: cannot initiate SSL session - %s"),
            ERR_error_string(ERR_get_error(), 0));
     return -3;
   }
@@ -700,7 +701,7 @@ int ssl_handshake(int sock, int flags, int verify, int loglevel, char *host,
     SSL_set_verify(td->socklist[i].ssl, SSL_VERIFY_PEER, ssl_verify);
     ret = SSL_connect(td->socklist[i].ssl);
     if (!ret)
-      debug0("TLS: connect handshake failed.");
+      debug0(_("TLS: connect handshake failed."));
   } else {
     if (data->flags & TLS_VERIFYPEER)
       SSL_set_verify(td->socklist[i].ssl, SSL_VERIFY_PEER |
@@ -709,19 +710,19 @@ int ssl_handshake(int sock, int flags, int verify, int loglevel, char *host,
       SSL_set_verify(td->socklist[i].ssl, SSL_VERIFY_PEER, ssl_verify);
     ret = SSL_accept(td->socklist[i].ssl);
     if (!ret)
-      debug0("TLS: accept handshake failed");
+      debug0(_("TLS: accept handshake failed"));
   }
 
   err = SSL_get_error(td->socklist[i].ssl, ret);
   /* Normal condition for async I/O, similar to EAGAIN */
   if (ret > 0 || err == SSL_ERROR_WANT_READ || err == SSL_ERROR_WANT_WRITE) {
-    debug0("TLS: handshake in progress");
+    debug0(_("TLS: handshake in progress"));
     return 0;
   }
   if (ERR_peek_error())
-    debug0("TLS: handshake failed due to the following errors: ");
+    debug0(_("TLS: handshake failed due to the following errors: "));
   while ((err = ERR_get_error()))
-    debug1("TLS: %s", ERR_error_string(err, NULL));
+    debug1(_("TLS: %s"), ERR_error_string(err, NULL));
 
   /* Attempt failed, cleanup and abort */
   SSL_shutdown(td->socklist[i].ssl);
