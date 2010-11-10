@@ -2,7 +2,7 @@
  * ctcp.c -- part of ctcp.mod
  *   all the ctcp handling (except DCC, it's special ;)
  *
- * $Id: ctcp.c,v 1.4 2010/10/19 12:13:33 pseudo Exp $
+ * $Id: ctcp.c,v 1.4.2.1 2010/11/10 21:16:56 pseudo Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -153,8 +153,8 @@ static int ctcp_CHAT(char *nick, char *uhost, char *handle, char *object,
   if ((atr & (USER_PARTY | USER_XFER)) || ((atr & USER_OP) && !require_p)) {
 
     if (u_pass_match(u, "-")) {
-      simple_sprintf(ctcp_reply, "%s\001ERROR no password set\001",
-                     ctcp_reply);
+      simple_sprintf(ctcp_reply, "%s\001ERROR %s\001", ctcp_reply,
+                     _("no password set"));
       return 1;
     }
 
@@ -184,11 +184,13 @@ static int ctcp_CHAT(char *nick, char *uhost, char *handle, char *object,
       }
     }
 #ifdef TLS
-    simple_sprintf(ctcp_reply, "%s\001ERROR no %stelnet port\001", ctcp_reply,
-	 	   (ssl ? "SSL enabled " : ""));
-#else
-    simple_sprintf(ctcp_reply, "%s\001ERROR no telnet port\001", ctcp_reply);
+    if (ssl)
+      simple_sprintf(ctcp_reply, "%s\001ERROR %s\001", ctcp_reply,
+                     _("no SSL enabled telnet port"));
+    else
 #endif
+      simple_sprintf(ctcp_reply, "%s\001ERROR %s\001", ctcp_reply,
+                     _("no telnet port"));
   }
   return 1;
 }
@@ -247,11 +249,11 @@ char *ctcp_start(Function *global_funcs)
   module_register(MODULE_NAME, ctcp_table, 1, 1);
   if (!module_depend(MODULE_NAME, "eggdrop", 108, 0)) {
     module_undepend(MODULE_NAME);
-    return "This module requires Eggdrop 1.8.0 or later.";
+    return _("This module requires Eggdrop 1.8.0 or later.");
   }
   if (!(server_funcs = module_depend(MODULE_NAME, "server", 1, 0))) {
     module_undepend(MODULE_NAME);
-    return "This module requires server module 1.0 or later.";
+    return _("This module requires server module 1.0 or later.");
   }
   add_tcl_strings(mystrings);
   add_tcl_ints(myints);

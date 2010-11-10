@@ -5,7 +5,7 @@
  * Originally written by ButchBub         15 July     1997
  * Comments by Fabian Knittel             29 December 1999
  *
- * $Id: woobie.c,v 1.2 2010/07/27 21:49:42 pseudo Exp $
+ * $Id: woobie.c,v 1.2.2.1 2010/11/10 21:16:57 pseudo Exp $
  */
 /*
  * Copyright (C) 1999 - 2010 Eggheads Development Team
@@ -74,8 +74,8 @@ static void woobie_report(int idx, int details)
   if (details) {
     int size = woobie_expmem();
 
-    dprintf(idx, "    Using %d byte%s of memory\n", size,
-            (size != 1) ? "s" : "");
+    /* Localize output by using the _() shortcut to gettext */
+    dprintf(idx, _("    Using %d bytes of memory\n"), size);
   }
 }
 
@@ -138,7 +138,7 @@ char *woobie_start(Function *global_funcs)
 
   if (!module_depend(MODULE_NAME, "eggdrop", 108, 0)) {
     module_undepend(MODULE_NAME);
-    return "This module requires Eggdrop 1.8.0 or later.";
+    return _("This module requires Eggdrop 1.8.0 or later.");
   }
 
   /* Add command table to bind list H_dcc, responsible for dcc commands.

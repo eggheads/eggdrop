@@ -2,7 +2,7 @@
  * assoc.c -- part of assoc.mod
  *   the assoc code, moved here mainly from botnet.c for module work
  *
- * $Id: assoc.c,v 1.2 2010/07/27 21:49:41 pseudo Exp $
+ * $Id: assoc.c,v 1.2.2.1 2010/11/10 21:16:56 pseudo Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -180,10 +180,10 @@ static void dump_assoc(int idx)
   assoc_t *a = assoc;
 
   if (a == NULL) {
-    dprintf(idx, "%s\n", ASSOC_NOCHNAMES);
+    dprintf(idx, _("No channel names\n"));
     return;
   }
-  dprintf(idx, " %s  %s\n", ASSOC_CHAN, ASSOC_NAME);
+  dprintf(idx, _(" Chan  Name\n"));
   for (; a && a->name[0]; a = a->next)
     dprintf(idx, "%c%5d %s\n", (a->channel < GLOBAL_CHANS) ? ' ' : '*',
             a->channel % GLOBAL_CHANS, a->name);
@@ -199,54 +199,55 @@ static int cmd_assoc(struct userrec *u, int idx, char *par)
     putlog(LOG_CMDS, "*", "#%s# assoc", dcc[idx].nick);
     dump_assoc(idx);
   } else if (!u || !(u->flags & USER_BOTMAST))
-    dprintf(idx, "%s", MISC_NOSUCHCMD);
+    dprintf(idx, _("What?  You need '.help'\n"));
   else {
     num = newsplit(&par);
     if (num[0] == '*') {
       chan = GLOBAL_CHANS + atoi(num + 1);
       if ((chan < GLOBAL_CHANS) || (chan > 199999)) {
-        dprintf(idx, "%s\n", ASSOC_LCHAN_RANGE);
+        dprintf(idx, _("Channel # out of range: must be *0-*99999\n"));
         return 0;
       }
     } else {
       chan = atoi(num);
       if (chan == 0) {
-        dprintf(idx, "%s\n", ASSOC_PARTYLINE);
+        dprintf(idx, _("You can't name the main party line; "
+                "it's just a party line.\n"));
         return 0;
       } else if ((chan < 1) || (chan >= GLOBAL_CHANS)) {
-        dprintf(idx, "%s\n", ASSOC_CHAN_RANGE);
+        dprintf(idx, _("Channel # out of range: must be 1-99999 \n"));
         return 0;
       }
     }
     if (!par[0]) {
       /* Remove an association */
       if (get_assoc_name(chan) == NULL) {
-        dprintf(idx, ASSOC_NONAME_CHAN, (chan < GLOBAL_CHANS) ? "" : "*",
+        dprintf(idx, _("Channel %s%d has no name.\n"), (chan < GLOBAL_CHANS) ? "" : "*",
                 chan % GLOBAL_CHANS);
         return 0;
       }
       kill_assoc(chan);
       putlog(LOG_CMDS, "*", "#%s# assoc %d", dcc[idx].nick, chan);
-      dprintf(idx, ASSOC_REMNAME_CHAN, (chan < GLOBAL_CHANS) ? "" : "*",
+      dprintf(idx, _("Okay,  removed name for channel %s%d.\n"), (chan < GLOBAL_CHANS) ? "" : "*",
               chan % GLOBAL_CHANS);
-      chanout_but(-1, chan, ASSOC_REMOUT_CHAN, dcc[idx].nick);
+      chanout_but(-1, chan, _("--- %s removed this channel's name.\n"), dcc[idx].nick);
       if (chan < GLOBAL_CHANS)
         botnet_send_assoc(-1, chan, dcc[idx].nick, "0");
       return 0;
     }
     if (strlen(par) > 20) {
-      dprintf(idx, "%s\n", ASSOC_CHNAME_TOOLONG);
+      dprintf(idx, "%s\n", _("Channel's name can't be that long (20 chars max)."));
       return 0;
     }
     if ((par[0] >= '0') && (par[0] <= '9')) {
-      dprintf(idx, "%s\n", ASSOC_CHNAME_FIRSTCHAR);
+      dprintf(idx, "%s\n", _("First character of the channel name can't be a digit."));
       return 0;
     }
     add_assoc(par, chan);
     putlog(LOG_CMDS, "*", "#%s# assoc %d %s", dcc[idx].nick, chan, par);
-    dprintf(idx, ASSOC_NEWNAME_CHAN, (chan < GLOBAL_CHANS) ? "" : "*",
+    dprintf(idx, _("Okay  channel %s%d is '%s' now.\n"), (chan < GLOBAL_CHANS) ? "" : "*",
             chan % GLOBAL_CHANS, par);
-    chanout_but(-1, chan, ASSOC_NEWOUT_CHAN, dcc[idx].nick, par);
+    chanout_but(-1, chan, _("--- %s named this channel '%s'\n"), dcc[idx].nick, par);
     if (chan < GLOBAL_CHANS)
       botnet_send_assoc(-1, chan, dcc[idx].nick, par);
   }
@@ -330,15 +331,15 @@ static void zapf_assoc(char *botnick, char *code, char *par)
           dcc[idx].user) & BOT_HUB)))) {
         add_assoc(par, chan);
         botnet_send_assoc(idx, chan, nick, par);
-        chanout_but(-1, chan, ASSOC_CHNAME_NAMED, nick, par);
+        chanout_but(-1, chan, _("--- (%s) named this channel '%s'.\n"), nick, par);
       } else if (par[0] == '0') {
         kill_assoc(chan);
-        chanout_but(-1, chan, ASSOC_CHNAME_REM, botnick, nick);
+        chanout_but(-1, chan, _("--- (%s) %s removed this channel's name.\n"), botnick, nick);
       } else if (get_assoc(par) != chan) {
         /* New one i didn't know about -- pass it on */
         s1 = get_assoc_name(chan);
         add_assoc(par, chan);
-        chanout_but(-1, chan, ASSOC_CHNAME_NAMED2, botnick, nick, par);
+        chanout_but(-1, chan, _("--- (%s) %s named this channel '%s'.\n"), botnick, nick, par);
       }
     }
   }
@@ -355,9 +356,9 @@ static void assoc_report(int idx, int details)
       size += sizeof(assoc_t);
     }
 
-    dprintf(idx, "    %d current association%s\n", count,
+    dprintf(idx, _("    %d current association%s\n"), count,
             (count != 1) ? "s" : "");
-    dprintf(idx, "    Using %d byte%s of memory\n", size,
+    dprintf(idx, _("    Using %d byte%s of memory\n"), size,
             (size != 1) ? "s" : "");
   }
 }
@@ -412,7 +413,7 @@ char *assoc_start(Function *global_funcs)
   module_register(MODULE_NAME, assoc_table, 2, 1);
   if (!module_depend(MODULE_NAME, "eggdrop", 108, 0)) {
     module_undepend(MODULE_NAME);
-    return "This module requires Eggdrop 1.8.0 or later.";
+    return _("This module requires Eggdrop 1.8.0 or later.");
   }
   assoc = NULL;
   add_builtins(H_dcc, mydcc);

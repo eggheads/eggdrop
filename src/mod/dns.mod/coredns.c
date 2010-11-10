@@ -6,7 +6,7 @@
  * Modified/written by Fabian Knittel <fknittel@gmx.de>
  * IPv6 support added by pseudo <pseudo@egg6.net>
  *
- * $Id: coredns.c,v 1.4 2010/10/14 09:49:47 pseudo Exp $
+ * $Id: coredns.c,v 1.4.2.1 2010/11/10 21:16:56 pseudo Exp $
  */
 /*
  * Portions Copyright (C) 1999 - 2010 Eggheads Development Team
@@ -1241,22 +1241,21 @@ static int init_dns_network(void)
   resfd = socket(AF_INET, SOCK_DGRAM, 0);
   if (resfd == -1) {
     putlog(LOG_MISC, "*",
-           "Unable to allocate socket for nameserver communication: %s",
+           _("Unable to allocate socket for nameserver communication: %s"),
            strerror(errno));
     return 0;
   }
   if (allocsock(resfd, SOCK_PASS) == -1) {
-    putlog(LOG_MISC, "*",
-           "Unable to allocate socket in socklist for nameserver communication");
+    putlog(LOG_MISC, "*", _("Unable to allocate socket in socklist for "
+           "nameserver communication"));
     killsock(resfd);
     return 0;
   }
   option = 1;
   if (setsockopt(resfd, SOL_SOCKET, SO_BROADCAST, (char *) &option,
                  sizeof(option))) {
-    putlog(LOG_MISC, "*",
-           "Unable to setsockopt() on nameserver communication socket: %s",
-           strerror(errno));
+    putlog(LOG_MISC, "*", _("Unable to setsockopt() on nameserver communication "
+           "socket: %s"), strerror(errno));
     killsock(resfd);
     return 0;
   }
@@ -1275,7 +1274,7 @@ static int init_dns_core(void)
   /* Initialise the resolv library. */
   res_init();
   if (!_res.nscount)
-    putlog(LOG_MISC, "*", "No nameservers found.");
+    putlog(LOG_MISC, "*", _("No nameservers found."));
   _res.options |= RES_RECURSE | RES_DEFNAMES | RES_DNSRCH;
   for (i = 0; i < _res.nscount; i++)
     _res.nsaddr_list[i].sin_family = AF_INET;

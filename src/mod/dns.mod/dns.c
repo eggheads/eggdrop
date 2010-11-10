@@ -4,7 +4,7 @@
  *
  * Written by Fabian Knittel <fknittel@gmx.de>
  *
- * $Id: dns.c,v 1.4 2010/09/27 19:38:14 pseudo Exp $
+ * $Id: dns.c,v 1.4.2.1 2010/11/10 21:16:56 pseudo Exp $
  */
 /*
  * Copyright (C) 1999 - 2010 Eggheads Development Team
@@ -90,11 +90,11 @@ static void dns_event_failure(struct resolve *rp, int type)
 
 static void eof_dns_socket(int idx)
 {
-  putlog(LOG_MISC, "*", "DNS Error: socket closed.");
+  putlog(LOG_MISC, "*", _("DNS Error: socket closed."));
   killsock(dcc[idx].sock);
   /* Try to reopen socket */
   if (init_dns_network()) {
-    putlog(LOG_MISC, "*", "DNS socket successfully reopened!");
+    putlog(LOG_MISC, "*", _("DNS socket successfully reopened!"));
     dcc[idx].sock = resfd;
     dcc[idx].timeval = now;
   } else
@@ -225,14 +225,13 @@ static int dns_report(int idx, int details)
   if (details) {
     int i, size = dns_expmem();
 
-    dprintf(idx, "    Async DNS resolver is active.\n");
-    dprintf(idx, "    DNS server list:");
+    dprintf(idx, _("    Async DNS resolver is active.\n"));
+    dprintf(idx, _("    DNS server list:"));
     for (i = 0; i < _res.nscount; i++)
       dprintf(idx, " %s:%d", iptostr((struct sockaddr *) &_res.nsaddr_list[i]),
               ntohs(_res.nsaddr_list[i].sin_port));
     dprintf(idx, "\n");
-    dprintf(idx, "    Using %d byte%s of memory\n", size,
-            (size != 1) ? "s" : "");
+    dprintf(idx, _("    Using %d bytes of memory\n"), size);
   }
   return 0;
 }
@@ -283,15 +282,15 @@ char *dns_start(Function *global_funcs)
   module_register(MODULE_NAME, dns_table, 1, 1);
   if (!module_depend(MODULE_NAME, "eggdrop", 108, 0)) {
     module_undepend(MODULE_NAME);
-    return "This module requires Eggdrop 1.8.0 or later.";
+    return _("This module requires Eggdrop 1.8.0 or later.");
   }
 
   idx = new_dcc(&DCC_DNS, 0);
   if (idx < 0)
-    return "NO MORE DCC CONNECTIONS -- Can't create DNS socket.";
+    return _("NO MORE DCC CONNECTIONS -- Can't create DNS socket.");
   if (!init_dns_core()) {
     lostdcc(idx);
-    return "DNS initialisation failed.";
+    return _("DNS initialisation failed.");
   }
   dcc[idx].sock = resfd;
   dcc[idx].timeval = now;

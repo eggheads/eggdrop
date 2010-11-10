@@ -1,5 +1,5 @@
 /*
- * $Id: uptime.c,v 1.2 2010/07/27 21:49:42 pseudo Exp $
+ * $Id: uptime.c,v 1.2.2.1 2010/11/10 21:16:56 pseudo Exp $
  *
  * This module reports uptime information about your bot to http://uptime.eggheads.org. The
  * purpose for this is to see how your bot rates against many others (including EnergyMechs
@@ -105,10 +105,11 @@ static void uptime_report(int idx, int details)
     next_update_at = ctime(&next_update);
     next_update_at[strlen(next_update_at) - 1] = 0;
 
-    dprintf(idx, "      %d uptime packet%s sent\n", uptimecount,
+    dprintf(idx, _("      %d uptime packet%s sent\n"), uptimecount,
             (uptimecount != 1) ? "s" : "");
-    dprintf(idx, "      Approximately %-.2f hours until next update "
-            "(at %s)\n", delta_seconds / 3600.0, next_update_at);
+    dprintf(idx, _("      Approximately %-.2f %s until next update "
+            "(at %s)\n"), delta_seconds / 3600.0,
+            P_("hour", "hours", delta_seconds / 3600.0), next_update_at);
   }
 }
 
@@ -150,7 +151,7 @@ int init_uptime(void)
   strncpyz(uptime_version, z, sizeof uptime_version);
 
   if ((uptimesock = socket(AF_INET, SOCK_DGRAM, 0)) < 0) {
-    putlog(LOG_DEBUG, "*", "init_uptime socket returned < 0 %d", uptimesock);
+    putlog(LOG_DEBUG, "*", _("init_uptime socket returned < 0 %d"), uptimesock);
     return ((uptimesock = -1));
   }
   egg_memset(&sai, 0, sizeof(sai));
@@ -264,8 +265,8 @@ void check_secondly()
 
 static char *uptime_close()
 {
-  return "You cannot unload the uptime module "
-         "(doing so will reset your stats).";
+  return _("You cannot unload the uptime module "
+         "(doing so will reset your stats).");
 }
 
 EXPORT_SCOPE char *uptime_start(Function *);
@@ -285,7 +286,7 @@ char *uptime_start(Function *global_funcs)
     module_register(MODULE_NAME, uptime_table, 1, 4);
     if (!module_depend(MODULE_NAME, "eggdrop", 108, 0)) {
       module_undepend(MODULE_NAME);
-      return "This module requires Eggdrop 1.8.0 or later.";
+      return _("This module requires Eggdrop 1.8.0 or later.");
     }
 
     add_help_reference("uptime.help");

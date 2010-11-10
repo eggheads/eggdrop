@@ -3,7 +3,7 @@
  *   saved console settings based on console.tcl
  *   by cmwagner/billyjoe/D. Senso
  *
- * $Id: console.c,v 1.2 2010/07/27 21:49:42 pseudo Exp $
+ * $Id: console.c,v 1.2.2.1 2010/11/10 21:16:56 pseudo Exp $
  */
 /*
  * Copyright (C) 1999 - 2010 Eggheads Development Team
@@ -200,15 +200,13 @@ static void console_display(int idx, struct user_entry *e)
   struct console_info *i = e->u.extra;
 
   if (dcc[idx].user && (dcc[idx].user->flags & USER_MASTER)) {
-    dprintf(idx, "  %s\n", CONSOLE_SAVED_SETTINGS);
-    dprintf(idx, "    %s %s\n", CONSOLE_CHANNEL, i->channel);
-    dprintf(idx, "    %s %s, %s %s, %s %s\n", CONSOLE_FLAGS,
-            masktype(i->conflags), CONSOLE_STRIPFLAGS,
-            stripmasktype(i->stripflags), CONSOLE_ECHO,
-            i->echoflags ? CONSOLE_YES : CONSOLE_NO);
-    dprintf(idx, "    %s %d, %s %s%d\n", CONSOLE_PAGE_SETTING, i->page,
-            CONSOLE_CHANNEL2, (i->conchan < GLOBAL_CHANS) ? "" : "*",
-            i->conchan % GLOBAL_CHANS);
+    dprintf(idx, _("  Saved Console Settings:\n"));
+    dprintf(idx, _("    Channel: %s\n"), i->channel);
+    dprintf(idx, _("    Console flags: %s, Strip flags: %s, Echo: %s\n"),
+            masktype(i->conflags), stripmasktype(i->stripflags),
+            i->echoflags ? _("yes") : _("no"));
+    dprintf(idx, _("    Page setting: %d, Console channel: %s%d\n"), i->page,
+            (i->conchan < GLOBAL_CHANS) ? "" : "*", i->conchan % GLOBAL_CHANS);
   }
 }
 
@@ -312,14 +310,13 @@ static int console_store(struct userrec *u, int idx, char *par)
     i->page = 0;
   i->conchan = dcc[idx].u.chat->channel;
   if (par) {
-    dprintf(idx, "%s\n", CONSOLE_SAVED_SETTINGS2);
-    dprintf(idx, "  %s %s\n", CONSOLE_CHANNEL, i->channel);
-    dprintf(idx, "  %s %s, %s %s, %s %s\n", CONSOLE_FLAGS,
-            masktype(i->conflags), CONSOLE_STRIPFLAGS,
-            stripmasktype(i->stripflags), CONSOLE_ECHO,
-            i->echoflags ? CONSOLE_YES : CONSOLE_NO);
-    dprintf(idx, "  %s %d, %s %d\n", CONSOLE_PAGE_SETTING, i->page,
-            CONSOLE_CHANNEL2, i->conchan);
+    dprintf(idx, _("Saved your Console Settings:\n"));
+    dprintf(idx, _("  Channel: %s\n"), i->channel);
+    dprintf(idx, _("  Console flags: %s, Strip flags: %s, Echo: %s\n"),
+            masktype(i->conflags), stripmasktype(i->stripflags),
+            i->echoflags ? _("yes") : _("no"));
+    dprintf(idx, _("  Page setting: %d, Console channel: %d\n"), i->page,
+            i->conchan);
   }
   set_user(&USERENTRY_CONSOLE, u, i);
   return 0;
@@ -379,7 +376,7 @@ char *console_start(Function *global_funcs)
   module_register(MODULE_NAME, console_table, 1, 3);
   if (!module_depend(MODULE_NAME, "eggdrop", 108, 0)) {
     module_undepend(MODULE_NAME);
-    return "This module requires Eggdrop 1.8.0 or later.";
+    return _("This module requires Eggdrop 1.8.0 or later.");
   }
   add_builtins(H_chon, mychon);
   add_builtins(H_dcc, mydcc);

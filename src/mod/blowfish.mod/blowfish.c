@@ -2,7 +2,7 @@
  * blowfish.c -- part of blowfish.mod
  *   encryption and decryption of passwords
  *
- * $Id: blowfish.c,v 1.2 2010/07/27 21:49:41 pseudo Exp $
+ * $Id: blowfish.c,v 1.2.2.1 2010/11/10 21:16:56 pseudo Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -146,15 +146,15 @@ static void blowfish_report(int idx, int details)
       if (box[i].P != NULL)
         tot++;
 
-    dprintf(idx, "    Blowfish encryption module:\n");
-    dprintf(idx, "      %d of %d boxes in use: ", tot, BOXES);
+    dprintf(idx, _("    Blowfish encryption module:\n"));
+    dprintf(idx, _("      %d of %d boxes in use: "), tot, BOXES);
     for (i = 0; i < BOXES; i++)
       if (box[i].P != NULL) {
-        dprintf(idx, "(age: %d) ", now - box[i].lastuse);
+        dprintf(idx, _("(age: %d) "), now - box[i].lastuse);
       }
     dprintf(idx, "\n");
-    dprintf(idx, "      Using %d byte%s of memory\n", size,
-            (size != 1) ? "s" : "");
+    dprintf(idx, _("      Using %d %s of memory\n"), size,
+            P_("byte", "bytes", size));
   }
 }
 
@@ -439,7 +439,7 @@ static tcl_cmds mytcls[] = {
 
 static char *blowfish_close()
 {
-  return "You can't unload the encryption module";
+  return _("You can't unload the encryption module");
 }
 
 EXPORT_SCOPE char *blowfish_start(Function *);
@@ -468,7 +468,7 @@ char *blowfish_start(Function *global_funcs)
     global = global_funcs;
 
     if (!module_rename("blowfish", MODULE_NAME))
-      return "Already loaded.";
+      return _("Already loaded.");
     /* Initialize buffered boxes */
     for (i = 0; i < BOXES; i++) {
       box[i].P = NULL;
@@ -479,7 +479,7 @@ char *blowfish_start(Function *global_funcs)
     module_register(MODULE_NAME, blowfish_table, 2, 2);
     if (!module_depend(MODULE_NAME, "eggdrop", 108, 0)) {
       module_undepend(MODULE_NAME);
-      return "This module requires Eggdrop 1.8.0 or later.";
+      return _("This module requires Eggdrop 1.8.0 or later.");
     }
     add_hook(HOOK_ENCRYPT_PASS, (Function) blowfish_encrypt_pass);
     add_hook(HOOK_ENCRYPT_STRING, (Function) encrypt_string);
