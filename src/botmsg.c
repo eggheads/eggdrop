@@ -5,7 +5,7 @@
  *
  * by Darrin Smith (beldin@light.iinet.net.au)
  *
- * $Id: botmsg.c,v 1.1.1.1 2010/07/26 21:11:06 simple Exp $
+ * $Id: botmsg.c,v 1.1.1.1.2.1 2010/11/10 13:39:19 pseudo Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -398,7 +398,7 @@ void botnet_send_nlinked(int idx, char *bot, char *next, char flag, int vernum)
 #ifndef NO_OLD_BOTNET
     if (flag == '!') {
       flag = '-';
-      tandout_but(idx, "chat %s %s %s\n", next, NET_LINKEDTO, bot);
+      tandout_but(idx, "chat %s %s %s\n", next, _("Linked to"), bot);
     }
     tandout_but(idx, "nlinked %s %s %c%d\n", bot, next, flag, vernum);
 #endif
@@ -585,20 +585,20 @@ void botnet_send_away(int idx, char *bot, int sock, char *msg, int linking)
         if (partyidx >= 0)
           tandout_but(idx, "chan %s %d %s %s: %s.\n", bot,
                       party[partyidx].chan, party[partyidx].nick,
-                      NET_AWAY, msg);
+                      _("is now away"), msg);
       }
       tandout_but(idx, "away %s %d %s\n", bot, sock, msg);
     } else {
       if (idx < 0) {
         tandout_but(idx, "chan %s %d %s %s.\n", bot,
                     dcc[linking].u.chat->channel, dcc[linking].nick,
-                    NET_UNAWAY);
+                    _("is no longer away"));
       } else if (b_numver(idx) >= NEAT_BOTNET) {
         int partyidx = getparty(bot, sock);
 
         if (partyidx >= 0)
           tandout_but(idx, "chan %s %d %s %s.\n", bot,
-                      party[partyidx].chan, party[partyidx].nick, NET_UNAWAY);
+                      party[partyidx].chan, party[partyidx].nick, _("is no longer away"));
       }
       tandout_but(idx, "unaway %s %d\n", bot, sock);
     }
@@ -622,13 +622,12 @@ void botnet_send_join_idx(int useridx, int oldchan)
                 geticon(useridx), dcc[useridx].sock, dcc[useridx].host);
     tandout_but(-1, "chan %s %d %s %s %s.\n",
                 botnetnick, dcc[useridx].u.chat->channel,
-                dcc[useridx].nick, NET_JOINEDTHE,
+                dcc[useridx].nick, _("has joined the"),
                 dcc[useridx].u.chat->channel ? "channel" : "party line");
     if ((oldchan >= 0) && (oldchan < GLOBAL_CHANS)) {
-      tandout_but(-1, "chan %s %d %s %s %s.\n",
-                  botnetnick, oldchan,
-                  dcc[useridx].nick, NET_LEFTTHE,
-                  oldchan ? "channel" : "party line");
+      tandout_but(-1, "chan %s %d %s %s.\n", botnetnick, oldchan,
+                  dcc[useridx].nick, oldchan ? _("has left the channel)") :
+                  _("has left the party line"));
     }
 #endif
   }
@@ -651,16 +650,16 @@ void botnet_send_join_party(int idx, int linking, int useridx, int oldchan)
                 party[useridx].flag, party[useridx].sock,
                 party[useridx].from ? party[useridx].from : "");
     if ((idx < 0) || (!linking && (b_numver(idx) >= NEAT_BOTNET))) {
-      tandout_but(idx, "chan %s %d %s %s %s.\n",
-                  party[useridx].bot, party[useridx].chan,
-                  party[useridx].nick, NET_JOINEDTHE,
-                  party[useridx].chan ? "channel" : "party line");
+      tandout_but(idx, "chan %s %d %s %s.\n", party[useridx].bot,
+                  party[useridx].chan, party[useridx].nick,
+                  party[useridx].chan ? _("has joined the channel") :
+                  _("has joined the party line"));
     }
     if ((oldchan >= 0) && (oldchan < GLOBAL_CHANS) &&
         ((idx < 0) || (b_numver(idx) >= NEAT_BOTNET))) {
-      tandout_but(idx, "chan %s %d %s %s %s.\n",
-                  party[useridx].bot, oldchan, party[useridx].nick,
-                  NET_LEFTTHE, party[useridx].chan ? "channel" : "party line");
+      tandout_but(idx, "chan %s %d %s %s.\n", party[useridx].bot, oldchan,
+                  party[useridx].nick, party[useridx].chan ?
+                  _("has left the channel") : _("has left the party line"));
     }
 #endif
   }
@@ -726,7 +725,7 @@ void botnet_send_nkch(int useridx, char *oldnick)
                 geticon(useridx), dcc[useridx].sock, dcc[useridx].host);
     tandout_but(-1, "chan %s %d %s: %s -> %s.\n",
                 botnetnick, dcc[useridx].u.chat->channel,
-                oldnick, NET_NICKCHANGE, dcc[useridx].nick);
+                oldnick, _("Nick Change:"), dcc[useridx].nick);
 #endif
   }
 }
@@ -748,7 +747,7 @@ void botnet_send_nkch_part(int butidx, int useridx, char *oldnick)
                 party[useridx].from ? party[useridx].from : "");
     tandout_but(butidx, "chan %s %d %s : %s -> %s.\n",
                 party[useridx].bot, party[useridx].chan,
-                NET_NICKCHANGE, oldnick, party[useridx].nick);
+                _("Nick Change:"), oldnick, party[useridx].nick);
 #endif
   }
 }
@@ -799,7 +798,7 @@ int add_note(char *to, char *from, char *msg, int idx, int echo)
     i = nextbot(p);
     if (i < 0) {
       if (idx >= 0)
-        dprintf(idx, BOT_NOTHERE);
+        dprintf(idx, _("That bot isn't here.\n"));
 
       return NOTE_ERROR;
     }
@@ -840,7 +839,7 @@ int add_note(char *to, char *from, char *msg, int idx, int echo)
   u = get_user_by_handle(userlist, to);
   if (!u) {
     if (idx >= 0)
-      dprintf(idx, USERF_UNKNOWN);
+      dprintf(idx, _("I don't know anyone by that name.\n"));
 
     return NOTE_ERROR;
   }
@@ -848,7 +847,7 @@ int add_note(char *to, char *from, char *msg, int idx, int echo)
   /* Is the note to a bot? */
   if (is_bot(u)) {
     if (idx >= 0)
-      dprintf(idx, BOT_NONOTES);
+      dprintf(idx, _("That's a bot.  You can't leave notes for a bot.\n"));
 
     return NOTE_ERROR;
   }
@@ -856,7 +855,7 @@ int add_note(char *to, char *from, char *msg, int idx, int echo)
   /* Is user rejecting notes from this source? */
   if (match_noterej(u, from)) {
     if (idx >= 0)
-      dprintf(idx, "%s rejected your note.\n", u->handle);
+      dprintf(idx, _("%s rejected your note.\n"), u->handle);
 
     return NOTE_REJECT;
   }
@@ -878,7 +877,7 @@ int add_note(char *to, char *from, char *msg, int idx, int echo)
           aok = 0;
 
           if (idx >= 0)
-            dprintf(idx, "%s %s: %s\n", dcc[i].nick, BOT_USERAWAY,
+            dprintf(idx, _("%s is away: %s\n"), dcc[i].nick,
                     dcc[i].u.chat->away);
 
           if (!iaway)
@@ -903,7 +902,7 @@ int add_note(char *to, char *from, char *msg, int idx, int echo)
         if (idx == -2 || !egg_strcasecmp(from, botnetnick))
           dprintf(i, "*** [%s] %s%s\n", fr, l ? work : "", msg);
         else
-          dprintf(i, "%cNote [%s]: %s%s\n", 7, fr, l ? work : "", msg);
+          dprintf(i, _("%cNote [%s]: %s%s\n"), 7, fr, l ? work : "", msg);
 
         if (idx >= 0 && echo)
           dprintf(idx, "-> %s: %s\n", to, msg);
@@ -932,7 +931,7 @@ int add_note(char *to, char *from, char *msg, int idx, int echo)
      * message arrived and was stored (only oldest session is notified).
      */
     if (status == NOTE_AWAY)
-      dprintf(iaway, "*** %s.\n", BOT_NOTEARRIVED);
+      dprintf(iaway, _("*** Note arrived for you.\n"));
 
     return status;
   }

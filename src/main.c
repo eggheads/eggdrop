@@ -5,7 +5,7 @@
  *   command line arguments
  *   context and assert debugging
  *
- * $Id: main.c,v 1.6 2010/10/23 11:16:12 pseudo Exp $
+ * $Id: main.c,v 1.6.2.1 2010/11/10 13:39:19 pseudo Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -282,7 +282,7 @@ static void write_debug()
   x = creat("DEBUG", 0644);
   setsock(x, SOCK_NONSOCK);
   if (x < 0) {
-    putlog(LOG_MISC, "*", "* Failed to write DEBUG");
+    putlog(LOG_MISC, "*", _("* Failed to write DEBUG"));
   } else {
     strncpyz(s, ctime(&now), sizeof s);
     dprintf(-x, "Debug (%s) written %s\n", ver, s);
@@ -384,14 +384,15 @@ static void got_term(int z)
    */
   if (check_tcl_event("sigterm"))
     return;
-  kill_bot("ACK, I've been terminated!", "TERMINATE SIGNAL -- SIGNING OFF");
+  kill_bot(_("ACK, I've been terminated!"),
+           _("TERMINATE SIGNAL -- SIGNING OFF"));
 }
 
 static void got_quit(int z)
 {
   if (check_tcl_event("sigquit"))
     return;
-  putlog(LOG_MISC, "*", "Received QUIT signal: restarting...");
+  putlog(LOG_MISC, "*", _("Received QUIT signal: restarting..."));
   do_restart = -1;
   return;
 }
@@ -401,7 +402,7 @@ static void got_hup(int z)
   write_userfile(-1);
   if (check_tcl_event("sighup"))
     return;
-  putlog(LOG_MISC, "*", "Received HUP signal: rehashing...");
+  putlog(LOG_MISC, "*", _("Received HUP signal: rehashing..."));
   do_restart = -2;
   return;
 }
@@ -505,22 +506,30 @@ static void do_arg(char *s)
         newsplit(&z);
         printf("%s\n", version);
         if (z[0])
-          printf("  (patches: %s)\n", z);
-        printf("Configured with: " EGG_AC_ARGS "\n");
-        printf("Compiled with: ");
+          printf(_("  (patches: %s)\n"), z);
+        printf(_("Configured with: %s\n"), EGG_AC_ARGS);
+        printf(_("Compiled with: "));
 #ifdef IPV6
         printf("IPv6, ");
 #endif
 #ifdef TLS
         printf("TLS, ");
 #endif
-        printf("handlen=%d\n", HANDLEN);
+        printf("%s=%d\n", _("handlen"), HANDLEN);
         bg_send_quit(BG_ABORT);
         exit(0);
         break;                  /* this should never be reached */
       case 'h':
         printf("\n%s\n\n", version);
-        printf(EGG_USAGE);
+	printf(_("Usage: eggdrop [options] [config-file]\n\n"
+"Options:\n"
+"  -h   help\n"
+"  -n   Don't background; send all log entries to console.\n"
+"  -nc  Don't background; display channel stats every 10 seconds.\n"
+"  -nt  Don't background; use terminal to simulate DCC chat.\n"
+"  -m   Create userfile.\n"
+"  -h   Show this help.\n"
+"  -v   Show version info, then quit.\n\n"));
         printf("\n");
         bg_send_quit(BG_ABORT);
         exit(0);
@@ -535,7 +544,7 @@ void backup_userfile(void)
   char s[125];
 
   if (quiet_save < 2)
-    putlog(LOG_MISC, "*", USERF_BACKUP);
+    putlog(LOG_MISC, "*", _("Backing up user file..."));
   egg_snprintf(s, sizeof s, "%s~bak", userfile);
   copyfile(userfile, s);
 }
@@ -585,7 +594,7 @@ static void core_secondly()
       call_hook(HOOK_MINUTELY);
     }
     if (i > 1)
-      putlog(LOG_MISC, "*", "(!) timer drift -- spun %d minutes", i);
+      putlog(LOG_MISC, "*", _("(!) timer drift -- spun %d minutes"), i);
     miltime = (nowtm.tm_hour * 100) + (nowtm.tm_min);
     if (((int) (nowtm.tm_min / 5) * 5) == (nowtm.tm_min)) {     /* 5 min */
       call_hook(HOOK_5MINUTELY);
@@ -619,7 +628,7 @@ static void core_secondly()
       call_hook(HOOK_DAILY);
       if (!keep_all_logs) {
         if (quiet_save < 3)
-          putlog(LOG_MISC, "*", MISC_LOGSWITCH);
+          putlog(LOG_MISC, "*", _("Switching logfiles..."));
         for (i = 0; i < max_logs; i++)
           if (logs[i].filename) {
             char s[1024];
@@ -814,7 +823,7 @@ int mainloop(int toplevel)
           dcc[idx].type->activity(idx, buf, i);
         } else
           putlog(LOG_MISC, "*",
-                 "!!! untrapped dcc activity: type %s, sock %d",
+                 _("!!! untrapped dcc activity: type %s, sock %d"),
                  dcc[idx].type->name, dcc[idx].sock);
         break;
       }
@@ -822,15 +831,18 @@ int mainloop(int toplevel)
     int idx;
 
     if (i == STDOUT && !backgrd)
-      fatal("END OF FILE ON TERMINAL", 0);
+      fatal(_("END OF FILE ON TERMINAL"), 0);
     for (idx = 0; idx < dcc_total; idx++)
       if (dcc[idx].sock == i) {
         if (dcc[idx].type && dcc[idx].type->eof)
           dcc[idx].type->eof(idx);
         else {
-          putlog(LOG_MISC, "*",
-                 "*** ATTENTION: DEAD SOCKET (%d) OF TYPE %s UNTRAPPED",
-                 i, dcc[idx].type ? dcc[idx].type->name : "*UNKNOWN*");
+          if (dcc[idx].type)
+            putlog(LOG_MISC, "*", _("*** ATTENTION: DEAD SOCKET (%d) "
+                   "OF TYPE %s UNTRAPPED"), i, dcc[idx].type->name);
+          else
+            putlog(LOG_MISC, "*", _("*** ATTENTION: DEAD SOCKET (%d) "
+                   "OF UNKNOWN TYPE UNTRAPPED"), i);
           killsock(i);
           lostdcc(idx);
         }
@@ -838,16 +850,16 @@ int mainloop(int toplevel)
       }
     if (idx == dcc_total) {
       putlog(LOG_MISC, "*",
-             "(@) EOF socket %d, not a dcc socket, not anything.", i);
+             _("(@) EOF socket %d, not a dcc socket, not anything."), i);
       close(i);
       killsock(i);
     }
   } else if (xx == -2 && errno != EINTR) {      /* select() error */
-    putlog(LOG_MISC, "*", "* Socket error #%d; recovering.", errno);
+    putlog(LOG_MISC, "*", _("* Socket error #%d; recovering."), errno);
     for (i = 0; i < dcc_total; i++) {
       if ((fcntl(dcc[i].sock, F_GETFD, 0) == -1) && (errno == EBADF)) {
         putlog(LOG_MISC, "*",
-               "DCC socket %d (type %d, name '%s') expired -- pfft",
+               _("DCC socket %d (type %d, name '%s') expired -- pfft"),
                dcc[i].sock, dcc[i].type, dcc[i].nick);
         killsock(dcc[i].sock);
         lostdcc(i);
@@ -909,7 +921,8 @@ int mainloop(int toplevel)
         }
       }
       if (f != 0) {
-        putlog(LOG_MISC, "*", MOD_STAGNANT);
+        putlog(LOG_MISC, "*", _("Stagnant modules; "
+	       "there WILL be memory leaks!"));
       }
 
       flushlogs();
@@ -1058,7 +1071,7 @@ int main(int arg_c, char **arg_v)
    * reported to cause trouble in some situations.
    */
   if (((int) getuid() == 0) || ((int) geteuid() == 0))
-    fatal("ERROR: Eggdrop will not run as root!", 0);
+    fatal(_("ERROR: Eggdrop will not run as root!"), 0);
 #endif
 
 #ifndef REPLACE_NOTIFIER
@@ -1077,17 +1090,18 @@ int main(int arg_c, char **arg_v)
 #endif
   strncpyz(s, ctime(&now), sizeof s);
   strcpy(&s[11], &s[20]);
-  putlog(LOG_ALL, "*", "--- Loading %s (%s)", ver, s);
+  putlog(LOG_ALL, "*", _("--- Loading %s (%s)"), ver, s);
   chanprog();
   if (!encrypt_pass) {
-    printf(MOD_NOCRYPT);
+    printf(_("You have installed modules but have not selected an encryption\n"
+	   "module. Please consult the default config file for info.\n"));
     bg_send_quit(BG_ABORT);
     exit(1);
   }
   i = 0;
   for (chan = chanset; chan; chan = chan->next)
     i++;
-  putlog(LOG_MISC, "*", "=== %s: %d channels, %d users.",
+  putlog(LOG_MISC, "*", _("=== %s: %d channels, %d users."),
          botnetnick, i, count_users(userlist));
 #ifdef TLS
   ssl_init();
@@ -1105,8 +1119,9 @@ int main(int arg_c, char **arg_v)
     i = kill(xx, SIGCHLD);      /* Meaningless kill to determine if pid
                                  * is used */
     if (i == 0 || errno != ESRCH) {
-      printf(EGG_RUNNING1, botnetnick);
-      printf(EGG_RUNNING2, pid_file);
+      printf(_("I detect %s already running from this directory.\n"),
+             botnetnick);
+      printf(_("If this is incorrect, erase the '%s'\n"), pid_file);
       bg_send_quit(BG_ABORT);
       exit(1);
     }
@@ -1127,13 +1142,13 @@ int main(int arg_c, char **arg_v)
         fprintf(fp, "%u\n", xx);
         if (fflush(fp)) {
           /* Let the bot live since this doesn't appear to be a botchk */
-          printf(EGG_NOWRITE, pid_file);
+          printf(_("* Warning! Could not write %s file!\n"), pid_file);
           fclose(fp);
           unlink(pid_file);
         } else
           fclose(fp);
       } else
-        printf(EGG_NOWRITE, pid_file);
+        printf(_("* Warning! Could not write %s file!\n"), pid_file);
     }
   }
 
@@ -1172,7 +1187,7 @@ int main(int arg_c, char **arg_v)
       dcc[n].user = get_user_by_handle(userlist, dcc[n].nick);
     }
     setsock(STDOUT, 0);          /* Entry in net table */
-    dprintf(n, "\n### ENTERING DCC CHAT SIMULATION ###\n\n");
+    dprintf(n, _("\n### ENTERING DCC CHAT SIMULATION ###\n\n"));
     dcc_chatter(n);
   }
 

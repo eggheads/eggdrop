@@ -6,7 +6,7 @@
  *   memory management for dcc structures
  *   timeout checking for dcc connections
  *
- * $Id: dccutil.c,v 1.3 2010/10/19 12:13:33 pseudo Exp $
+ * $Id: dccutil.c,v 1.3.2.1 2010/11/10 13:39:19 pseudo Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -65,7 +65,8 @@ int increase_socks_max()
     max_socks = 1;
 
   if (td->MAXSOCKS == max_socks) {
-    putlog(LOG_MISC, "*", "Maximum socket limit reached. Consider raising max-socks.");
+    putlog(LOG_MISC, "*", _("Maximum socket limit reached. "
+                            "Consider raising max-socks."));
     return -1;
   }
 
@@ -293,10 +294,10 @@ void dcc_chatter(int idx)
     }
     /* But *do* bother with sending it locally */
     if (!dcc[idx].u.chat->channel) {
-      chanout_but(-1, 0, "*** %s joined the party line.\n", dcc[idx].nick);
+      chanout_but(-1, 0, _("*** %s joined the party line.\n"), dcc[idx].nick);
     } else if (dcc[idx].u.chat->channel > 0) {
       chanout_but(-1, dcc[idx].u.chat->channel,
-                  "*** %s joined the channel.\n", dcc[idx].nick);
+                  _("*** %s joined the channel.\n"), dcc[idx].nick);
     }
   }
 }
@@ -440,12 +441,12 @@ void not_away(int idx)
   }
   if (dcc[idx].u.chat->channel >= 0) {
     chanout_but(-1, dcc[idx].u.chat->channel,
-                "*** %s is no longer away.\n", dcc[idx].nick);
+                _("*** %s is no longer away.\n"), dcc[idx].nick);
     if (dcc[idx].u.chat->channel < GLOBAL_CHANS) {
       botnet_send_away(-1, botnetnick, dcc[idx].sock, NULL, idx);
     }
   }
-  dprintf(idx, "You're not away any more.\n");
+  dprintf(idx, _("You're not away any more.\n"));
   nfree(dcc[idx].u.chat->away);
   dcc[idx].u.chat->away = NULL;
   check_tcl_away(botnetnick, dcc[idx].sock, NULL);
@@ -467,12 +468,12 @@ void set_away(int idx, char *s)
   strcpy(dcc[idx].u.chat->away, s);
   if (dcc[idx].u.chat->channel >= 0) {
     chanout_but(-1, dcc[idx].u.chat->channel,
-                "*** %s is now away: %s\n", dcc[idx].nick, s);
+                _("*** %s is now away: %s\n"), dcc[idx].nick, s);
     if (dcc[idx].u.chat->channel < GLOBAL_CHANS) {
       botnet_send_away(-1, botnetnick, dcc[idx].sock, s, idx);
     }
   }
-  dprintf(idx, "You are now away.\n");
+  dprintf(idx, _("You are now away.\n"));
   check_tcl_away(botnetnick, dcc[idx].sock, s);
 }
 
@@ -520,9 +521,9 @@ void flush_lines(int idx, struct chat_info *ci)
   }
   if (p != NULL) {
     if (dcc[idx].status & STAT_TELNET)
-      tputs(dcc[idx].sock, "[More]: ", 8);
+      tputs(dcc[idx].sock, _("[More]: "), 8);
     else
-      tputs(dcc[idx].sock, "[More]\n", 7);
+      tputs(dcc[idx].sock, _("[More]\n"), 7);
   }
   ci->buffer = p;
   ci->line_count = 0;
@@ -578,12 +579,13 @@ int detect_dcc_flood(time_t *timer, struct chat_info *chat, int idx)
     chat->msgs_per_sec++;
     if (chat->msgs_per_sec > dcc_flood_thr) {
       /* FLOOD */
-      dprintf(idx, "*** FLOOD: %s.\n", IRC_GOODBYE);
+      dprintf(idx, _("*** FLOOD: Goodbye.\n"));
       /* Evil assumption here that flags&DCT_CHAT implies chat type */
       if ((dcc[idx].type->flags & DCT_CHAT) && chat && (chat->channel >= 0)) {
         char x[1024];
 
-        egg_snprintf(x, sizeof x, DCC_FLOODBOOT, dcc[idx].nick);
+        egg_snprintf(x, sizeof x, _("%s has been forcibly removed for "
+                     "flooding.\n"), dcc[idx].nick);
         chanout_but(idx, chat->channel, "*** %s", x);
         if (chat->channel < GLOBAL_CHANS)
           botnet_send_part_idx(idx, x);
@@ -593,7 +595,7 @@ int detect_dcc_flood(time_t *timer, struct chat_info *chat, int idx)
         killsock(dcc[idx].sock);
         lostdcc(idx);
       } else {
-        dprintf(DP_STDOUT, "\n### SIMULATION RESET ###\n\n");
+        dprintf(DP_STDOUT, _("\n### SIMULATION RESET ###\n\n"));
         dcc_chatter(idx);
       }
       return 1;                 /* <- flood */
@@ -608,17 +610,21 @@ void do_boot(int idx, char *by, char *reason)
 {
   int files = (dcc[idx].type != &DCC_CHAT);
 
-  dprintf(idx, DCC_BOOTED1);
-  dprintf(idx, DCC_BOOTED2, files ? "file section" : "bot",
-          by, reason[0] ? ": " : ".", reason);
+  dprintf(idx, _("-=- poof -=-\n"));
+  if (files)
+    dprintf(idx, _("You've been booted from the file section by %s%s%s\n"),
+            by, reason[0] ? ": " : ".", reason);
+  else
+    dprintf(idx, _("You've been booted from the bot by %s%s%s\n"),
+            by, reason[0] ? ": " : ".", reason);
   /* If it's a partyliner (chatterer :) */
   /* Horrible assumption that DCT_CHAT using structure uses same format
    * as DCC_CHAT */
   if ((dcc[idx].type->flags & DCT_CHAT) && (dcc[idx].u.chat->channel >= 0)) {
     char x[1024];
 
-    egg_snprintf(x, sizeof x, DCC_BOOTED3, by, dcc[idx].nick,
-                 reason[0] ? ": " : "", reason);
+    egg_snprintf(x, sizeof x, _("%s booted %s from the party line%s%s"), by,
+                 dcc[idx].nick, reason[0] ? ": " : "", reason);
     chanout_but(idx, dcc[idx].u.chat->channel, "*** %s.\n", x);
     if (dcc[idx].u.chat->channel < GLOBAL_CHANS)
       botnet_send_part_idx(idx, x);
@@ -629,7 +635,7 @@ void do_boot(int idx, char *by, char *reason)
     lostdcc(idx);
     /* Entry must remain in the table so it can be logged by the caller */
   } else {
-    dprintf(DP_STDOUT, "\n### SIMULATION RESET\n\n");
+    dprintf(DP_STDOUT, _("\n### SIMULATION RESET\n\n"));
     dcc_chatter(idx);
   }
   return;

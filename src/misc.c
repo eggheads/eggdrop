@@ -7,7 +7,7 @@
  *   help system
  *   motd display and %var substitution
  *
- * $Id: misc.c,v 1.2 2010/10/23 11:16:12 pseudo Exp $
+ * $Id: misc.c,v 1.2.2.1 2010/11/10 13:39:19 pseudo Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -465,7 +465,7 @@ void daysago(time_t now, time_t then, char *out)
   if (now - then > 86400) {
     int days = (now - then) / 86400;
 
-    sprintf(out, "%d day%s ago", days, (days == 1) ? "" : "s");
+    sprintf(out, P_("a day ago", "%d days ago", days), days);
     return;
   }
   egg_strftime(out, 6, "%H:%M", localtime(&then));
@@ -479,10 +479,10 @@ void days(time_t now, time_t then, char *out)
   if (now - then > 86400) {
     int days = (now - then) / 86400;
 
-    sprintf(out, "in %d day%s", days, (days == 1) ? "" : "s");
+    sprintf(out, P_("in a day", "in %d days", days), days);
     return;
   }
-  egg_strftime(out, 9, "at %H:%M", localtime(&now));
+  egg_strftime(out, 20, _("at %H:%M"), localtime(&now));
 }
 
 /* Convert an interval (in seconds) to one of:
@@ -490,21 +490,18 @@ void days(time_t now, time_t then, char *out)
  */
 void daysdur(time_t now, time_t then, char *out)
 {
-  char s[81];
   int hrs, mins;
 
   if (now - then > 86400) {
     int days = (now - then) / 86400;
 
-    sprintf(out, "for %d day%s", days, (days == 1) ? "" : "s");
+    sprintf(out, P_("for one day", "for %d days", days), days);
     return;
   }
-  strcpy(out, "for ");
   now -= then;
   hrs = (int) (now / 3600);
   mins = (int) ((now - (hrs * 3600)) / 60);
-  sprintf(s, "%02d:%02d", hrs, mins);
-  strcat(out, s);
+  sprintf(out, "for %02d:%02d", hrs, mins);
 }
 
 
@@ -602,7 +599,7 @@ void putlog EGG_VARARGS_DEF(int, arg1)
                * so put that in the file first.
                */
               fprintf(logs[i].f, stamp);
-              fprintf(logs[i].f, MISC_LOGREPEAT, logs[i].repeats);
+              fprintf(logs[i].f, _("Last message repeated %d time(s).\n"), logs[i].repeats);
               logs[i].repeats = 0;
               /* No need to reset logs[i].szlast here
                * because we update it later on...
@@ -645,7 +642,7 @@ void logsuffix_change(char *s)
   if (s && s2 && !strcmp(s, s2))
     return;
 
-  debug0("Logfile suffix changed. Closing all open logs.");
+  debug0(_("Logfile suffix changed. Closing all open logs."));
   strcpy(logfile_suffix, s);
   while (s2[0]) {
     if (s2[0] == ' ')
@@ -678,7 +675,8 @@ void check_logsize()
         if ((ss.st_size >> 10) > max_logsize) {
           if (logs[i].f) {
             /* write to the log before closing it huh.. */
-            putlog(LOG_MISC, "*", MISC_CLOGS, logs[i].filename, ss.st_size);
+            putlog(LOG_MISC, "*", _("Cycling logfile %s  over max-logsize "
+                   "(%d)"), logs[i].filename, ss.st_size);
             fflush(logs[i].f);
             fclose(logs[i].f);
             logs[i].f = NULL;
@@ -717,7 +715,8 @@ void flushlogs()
 
         egg_strftime(stamp, sizeof(stamp) - 1, log_ts, localtime(&now));
         fprintf(logs[i].f, "%s ", stamp);
-        fprintf(logs[i].f, MISC_LOGREPEAT, logs[i].repeats);
+        fprintf(logs[i].f, _("Last message repeated %d time(s).\n"),
+                logs[i].repeats);
         /* Reset repeats */
         logs[i].repeats = 0;
       }
@@ -907,7 +906,9 @@ void help_subst(char *s, char *nick, struct flag_record *flags,
         towrite = sub;
       } else
 #endif
-        towrite = "*UNKNOWN*";
+        /* That's a substitution string for unknown text substitution variables
+           found in help files and motds */
+        towrite = _("*UNKNOWN*");
       break;
     case 'B':
       towrite = (isdcc ? botnetnick : botname);
@@ -1163,7 +1164,7 @@ void debug_help(int idx)
   struct help_list_t *item;
 
   for (current = help_list; current; current = current->next) {
-    dprintf(idx, "HELP FILE(S): %s\n", current->name);
+    dprintf(idx, _("HELP FILE(S): %s\n"), current->name);
     for (item = current->first; item; item = item->next) {
       dprintf(idx, "   %s (%s)\n", item->name, (item->type == 0) ? "msg/" :
               (item->type == 1) ? "" : "set/");
@@ -1233,7 +1234,7 @@ void showhelp(char *who, char *file, struct flag_record *flags, int fl)
     fclose(f);
   }
   if (!lines && !(fl & HELP_TEXT))
-    dprintf(DP_HELP, "NOTICE %s :%s\n", who, IRC_NOHELP2);
+    dprintf(DP_HELP, "NOTICE %s :%s\n", who, _("No help available on that."));
 }
 
 static int display_tellhelp(int idx, char *file, FILE *f,
@@ -1272,7 +1273,7 @@ void tellhelp(int idx, char *file, struct flag_record *flags, int fl)
   if (f)
     lines = display_tellhelp(idx, file, f, flags);
   if (!lines && !(fl & HELP_TEXT))
-    dprintf(idx, "%s\n", IRC_NOHELP2);
+    dprintf(idx, "%s\n", _("No help available on that."));
 }
 
 /* Same as tellallhelp, just using wild_match instead of strcmp
@@ -1296,7 +1297,7 @@ void tellwildhelp(int idx, char *match, struct flag_record *flags)
           display_tellhelp(idx, item->name, f, flags);
       }
   if (!s[0])
-    dprintf(idx, "%s\n", IRC_NOHELP2);
+    dprintf(idx, "%s\n", _("No help available on that."));
 }
 
 /* Same as tellwildhelp, just using strcmp instead of wild_match
@@ -1321,7 +1322,7 @@ void tellallhelp(int idx, char *match, struct flag_record *flags)
           display_tellhelp(idx, item->name, f, flags);
       }
   if (!s[0])
-    dprintf(idx, "%s\n", IRC_NOHELP2);
+    dprintf(idx, "%s\n", _("No help available on that."));
 }
 
 /* Substitute vars in a lang text to dcc chatter

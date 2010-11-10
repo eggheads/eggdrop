@@ -2,7 +2,7 @@
  * tclmisc.c -- handles:
  *   Tcl stubs for everything else
  *
- * $Id: tclmisc.c,v 1.5 2010/10/27 20:47:26 pseudo Exp $
+ * $Id: tclmisc.c,v 1.5.2.1 2010/11/10 13:39:19 pseudo Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -553,8 +553,8 @@ static int tcl_loadmodule STDVAR
   BADARGS(2, 2, " module-name");
 
   p = module_load(argv[1]);
-  if (p && strcmp(p, MOD_ALREADYLOAD) && !strcmp(argv[0], "loadmodule"))
-    putlog(LOG_MISC, "*", "%s %s: %s", MOD_CANTLOADMOD, argv[1], p);
+  if (p && strcmp(p, "Already loaded.") && !strcmp(argv[0], "loadmodule"))
+    putlog(LOG_MISC, "*", _("Can't load modules %s: %s"), argv[1], p);
   Tcl_AppendResult(irp, p, NULL);
   return TCL_OK;
 }

@@ -4,7 +4,7 @@
  *   disconnect on a dcc socket
  *   ...and that's it!  (but it's a LOT)
  *
- * $Id: dcc.c,v 1.6 2010/10/31 14:40:38 pseudo Exp $
+ * $Id: dcc.c,v 1.6.2.1 2010/11/10 13:39:19 pseudo Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -163,8 +163,8 @@ static void greet_new_bot(int idx)
   dcc[idx].u.bot->version[0] = 0;
   dcc[idx].u.bot->numver = 0;
   if (bfl & BOT_REJECT) {
-    putlog(LOG_BOTS, "*", DCC_REJECT, dcc[idx].nick);
-    dprintf(idx, "bye %s\n", "rejected");
+    putlog(LOG_BOTS, "*", _("Rejecting link from %s"), dcc[idx].nick);
+    dprintf(idx, "bye rejected\n");
     killsock(dcc[idx].sock);
     lostdcc(idx);
     return;
@@ -208,8 +208,8 @@ static void bot_version(int idx, char *par)
 #ifndef NO_OLD_BOTNET
   if (b_numver(idx) < NEAT_BOTNET) {
 #if HANDLEN != 9
-    putlog(LOG_BOTS, "*", "Non-matching handle lengths with %s, they use 9 "
-           "characters.", dcc[idx].nick);
+    putlog(LOG_BOTS, "*", _("Non-matching handle lengths with %s, they use %d "
+           "characters."), dcc[idx].nick, 9);
     dprintf(idx, "error Non-matching handle length: mine %d, yours 9\n",
             HANDLEN);
     dprintf(idx, "bye %s\n", "bad handlen");
@@ -224,8 +224,8 @@ static void bot_version(int idx, char *par)
     dprintf(idx, "tb %s\n", botnetnick);
     l = atoi(newsplit(&par));
     if (l != HANDLEN) {
-      putlog(LOG_BOTS, "*", "Non-matching handle lengths with %s, they use %d "
-             "characters.", dcc[idx].nick, l);
+      putlog(LOG_BOTS, "*", _("Non-matching handle lengths with %s, they use %d "
+             "characters."), dcc[idx].nick, l);
       dprintf(idx, "error Non-matching handle length: mine %d, yours %d\n",
               HANDLEN, l);
       dprintf(idx, "bye %s\n", "bad handlen");
@@ -237,8 +237,8 @@ static void bot_version(int idx, char *par)
   }
 #endif
   strncpyz(dcc[idx].u.bot->version, par, 120);
-  putlog(LOG_BOTS, "*", DCC_LINKED, dcc[idx].nick);
-  chatout("*** Linked to %s\n", dcc[idx].nick);
+  putlog(LOG_BOTS, "*", _("Linked to %s."), dcc[idx].nick);
+  chatout(_("*** Linked to %s\n"), dcc[idx].nick);
   botnet_send_nlinked(idx, dcc[idx].nick, botnetnick, '!',
                       dcc[idx].u.bot->numver);
   touch_laston(dcc[idx].user, "linked", now);
@@ -256,7 +256,7 @@ static void bot_version(int idx, char *par)
    */
   if (dcc[idx].status & STAT_STARTTLS) {
     dprintf(idx, "starttls\n");
-    putlog(LOG_BOTS, "*", "Sent STARTTLS to %s...", dcc[idx].nick);
+    putlog(LOG_BOTS, "*", _("Sent STARTTLS to %s..."), dcc[idx].nick);
   }
 #endif
 
@@ -273,7 +273,7 @@ void failed_link(int idx)
       add_note(s1, botnetnick, s, -2, 0);
     }
     if (dcc[idx].u.bot->numver >= -1)
-      putlog(LOG_BOTS, "*", DCC_LINKFAIL, dcc[idx].nick);
+      putlog(LOG_BOTS, "*", _("Failed link to %s."), dcc[idx].nick);
     killsock(dcc[idx].sock);
     strcpy(s, dcc[idx].nick);
     lostdcc(idx);
@@ -310,13 +310,12 @@ static void cont_link(int idx, char *buf, int i)
       if (i > 0) {
         bots = bots_in_subtree(findbot(dcc[idx].nick));
         users = users_in_subtree(findbot(dcc[idx].nick));
-        egg_snprintf(x, sizeof x,
-                     "Unlinked %s (restructure) (lost %d bot%s and %d user%s)",
-                     dcc[i].nick, bots, (bots != 1) ? "s" : "",
-                     users, (users != 1) ? "s" : "");
+        egg_snprintf(x, sizeof x, _("Unlinked %s (restructure) (lost %d %s "
+                     "and %d %s)"), dcc[i].nick, bots, P_("bot", "bots", bots),
+                     users, P_("user", "users", users));
         chatout("*** %s\n", x);
         botnet_send_unlinked(i, dcc[i].nick, x);
-        dprintf(i, "bye %s\n", "restructure");
+        dprintf(i, "bye restructure\n");
         killsock(dcc[i].sock);
         lostdcc(i);
       }
@@ -356,7 +355,7 @@ static void dcc_bot_digest(int idx, char *challenge, char *password)
   for (i = 0; i < 16; i++)
     sprintf(digest_string + (i * 2), "%.2x", digest[i]);
   dprintf(idx, "digest %s\n", digest_string);
-  putlog(LOG_BOTS, "*", "Received challenge from %s... sending response ...",
+  putlog(LOG_BOTS, "*", _("Received challenge from %s... sending response ..."),
          dcc[idx].nick);
 }
 
@@ -372,12 +371,14 @@ static void dcc_bot_new(int idx, char *buf, int x)
     bot_version(idx, buf);
   else if (!egg_strcasecmp(code, "badpass"))
     /* We entered the wrong password */
-    putlog(LOG_BOTS, "*", DCC_BADPASS, dcc[idx].nick);
+    putlog(LOG_BOTS, "*", _("Bad password on connect attempt to %s."),
+	   dcc[idx].nick);
   else if (!egg_strcasecmp(code, "passreq")) {
     char *pass = get_user(&USERENTRY_PASS, u);
 
     if (!pass || !strcmp(pass, "-")) {
-      putlog(LOG_BOTS, "*", DCC_PASSREQ, dcc[idx].nick);
+      putlog(LOG_BOTS, "*", _("Password required for connection to %s."),
+	     dcc[idx].nick);
       dprintf(idx, "-\n");
     } else {
       /* Determine if the other end supports an MD5 digest instead of a
@@ -389,20 +390,20 @@ static void dcc_bot_new(int idx, char *buf, int x)
         dprintf(idx, "%s\n", pass);
     }
   } else if (!egg_strcasecmp(code, "error"))
-    putlog(LOG_BOTS, "*", DCC_LINKERROR, dcc[idx].nick, buf);
+    putlog(LOG_BOTS, "*", _("ERROR linking %s: %s"), dcc[idx].nick, buf);
   /* Ignore otherwise */
 }
 
 static void eof_dcc_bot_new(int idx)
 {
-  putlog(LOG_BOTS, "*", DCC_LOSTBOT, dcc[idx].nick, dcc[idx].port);
+  putlog(LOG_BOTS, "*", _("Lost Bot: %s"), dcc[idx].nick, dcc[idx].port);
   killsock(dcc[idx].sock);
   lostdcc(idx);
 }
 
 static void timeout_dcc_bot_new(int idx)
 {
-  putlog(LOG_BOTS, "*", DCC_TIMEOUT, dcc[idx].nick,
+  putlog(LOG_BOTS, "*", _("Timeout: bot link to %s at %s:%d"), dcc[idx].nick,
          dcc[idx].host, dcc[idx].port);
   killsock(dcc[idx].sock);
   lostdcc(idx);
@@ -482,10 +483,9 @@ static void eof_dcc_bot(int idx)
 
   bots = bots_in_subtree(findbot(dcc[idx].nick));
   users = users_in_subtree(findbot(dcc[idx].nick));
-  egg_snprintf(x, sizeof x,
-               "Lost bot: %s (lost %d bot%s and %d user%s)",
-               dcc[idx].nick, bots, (bots != 1) ? "s" : "", users,
-               (users != 1) ? "s" : "");
+  egg_snprintf(x, sizeof x, _("Lost bot: %s (lost %d %s and %d %s)"),
+               dcc[idx].nick, bots, P_("bot", "bots", bots),
+               users, P_("user", "users", users));
   putlog(LOG_BOTS, "*", "%s.", x);
   chatout("*** %s\n", x);
   botnet_send_unlinked(idx, dcc[idx].nick, x);
@@ -577,7 +577,7 @@ static int dcc_bot_check_digest(int idx, char *remote_digest)
   if (!strcmp(digest_string, remote_digest))
     return 1;
 
-  putlog(LOG_BOTS, "*", "Response (password hash) from %s incorrect",
+  putlog(LOG_BOTS, "*", _("Response (password hash) from %s incorrect"),
          dcc[idx].nick);
   return 0;
 }
@@ -605,8 +605,8 @@ static void dcc_chat_pass(int idx, char *buf, int atr)
     } else {
       /* Invalid password/digest */
       dprintf(idx, "badpass\n");
-      putlog(LOG_MISC, "*", DCC_BADLOGIN, dcc[idx].nick, dcc[idx].host,
-             dcc[idx].port);
+      putlog(LOG_MISC, "*", _("Bad Password: [%s]%s/%d"), dcc[idx].nick,
+	     dcc[idx].host, dcc[idx].port);
       killsock(dcc[idx].sock);
       lostdcc(idx);
       return;
@@ -631,7 +631,7 @@ static void dcc_chat_pass(int idx, char *buf, int atr)
       greet_new_bot(idx);
     } else {
       /* Log entry for successful login -slennox 3/28/1999 */
-      putlog(LOG_MISC, "*", DCC_LOGGEDIN, dcc[idx].nick,
+      putlog(LOG_MISC, "*", _("Logged in: %s (%s/%d)"), dcc[idx].nick,
              dcc[idx].host, dcc[idx].port);
       if (dcc[idx].u.chat->away) {
         nfree(dcc[idx].u.chat->away);
@@ -650,8 +650,8 @@ static void dcc_chat_pass(int idx, char *buf, int atr)
     if (atr & USER_BOT)
       dprintf(idx, "badpass\n");
     else
-      dprintf(idx, DCC_HOUSTON);
-    putlog(LOG_MISC, "*", DCC_BADLOGIN, dcc[idx].nick,
+      dprintf(idx, _("Negative on that  Houston.\n"));
+    putlog(LOG_MISC, "*", _("Bad Password: [%s]%s/%d"), dcc[idx].nick,
            dcc[idx].host, dcc[idx].port);
     if (dcc[idx].u.chat->away) {        /* su from a dumb user */
       /* Turn echo back on for telnet sessions (send IAC WON'T ECHO). */
@@ -666,7 +666,8 @@ static void dcc_chat_pass(int idx, char *buf, int atr)
       dcc[idx].type = &DCC_CHAT;
       if (dcc[idx].u.chat->channel < GLOBAL_CHANS)
         botnet_send_join_idx(idx, -1);
-      chanout_but(-1, dcc[idx].u.chat->channel, DCC_JOIN, dcc[idx].nick);
+      chanout_but(-1, dcc[idx].u.chat->channel,
+                  _("*** %s has joined the party line.\n"), dcc[idx].nick);
     } else {
       killsock(dcc[idx].sock);
       lostdcc(idx);
@@ -676,7 +677,7 @@ static void dcc_chat_pass(int idx, char *buf, int atr)
 
 static void eof_dcc_general(int idx)
 {
-  putlog(LOG_MISC, "*", DCC_LOSTDCC, dcc[idx].nick,
+  putlog(LOG_MISC, "*", _("Lost dcc connection to %s (%s/%d)"), dcc[idx].nick,
          dcc[idx].host, dcc[idx].port);
   killsock(dcc[idx].sock);
   lostdcc(idx);
@@ -685,7 +686,8 @@ static void eof_dcc_general(int idx)
 static void tout_dcc_chat_pass(int idx)
 {
   dprintf(idx, "Timeout.\n");
-  putlog(LOG_MISC, "*", DCC_PWDTIMEOUT, dcc[idx].nick, dcc[idx].host);
+  putlog(LOG_MISC, "*", _("Password timeout on dcc chat: [%s]%s"),
+         dcc[idx].nick, dcc[idx].host);
   killsock(dcc[idx].sock);
   lostdcc(idx);
 }
@@ -828,7 +830,7 @@ static void append_line(int idx, char *line)
     }
     c->buffer = 0;
     dcc[idx].status &= ~STAT_PAGE;
-    do_boot(idx, botnetnick, "too many pages - sendq full");
+    do_boot(idx, botnetnick, _("too many pages - sendq full"));
     return;
   }
   if ((c->line_count < c->max_line) && (c->buffer == NULL)) {
@@ -904,10 +906,10 @@ int check_ansi(char *v)
 
 static void eof_dcc_chat(int idx)
 {
-  putlog(LOG_MISC, "*", DCC_LOSTDCC, dcc[idx].nick,
+  putlog(LOG_MISC, "*", _("Lost dcc connection to %s (%s/%d)"), dcc[idx].nick,
          dcc[idx].host, dcc[idx].port);
   if (dcc[idx].u.chat->channel >= 0) {
-    chanout_but(idx, dcc[idx].u.chat->channel, "*** %s lost dcc link.\n",
+    chanout_but(idx, dcc[idx].u.chat->channel, _("*** %s lost dcc link.\n"),
                 dcc[idx].nick);
     if (dcc[idx].u.chat->channel < GLOBAL_CHANS)
       botnet_send_part_idx(idx, "lost dcc link");
@@ -986,12 +988,13 @@ static void dcc_chat(int idx, char *buf, int i)
             check_tcl_chpt(botnetnick, dcc[idx].nick, dcc[idx].sock,
                            dcc[idx].u.chat->channel);
           check_tcl_chof(dcc[idx].nick, dcc[idx].sock);
-          dprintf(idx, "*** Ja mata!\n");
+          dprintf(idx, _("*** Ja mata!\n"));
           flush_lines(idx, dcc[idx].u.chat);
-          putlog(LOG_MISC, "*", DCC_CLOSED, dcc[idx].nick, dcc[idx].host);
+          putlog(LOG_MISC, "*", _("DCC connection closed (%s!%s)"),
+                 dcc[idx].nick, dcc[idx].host);
           if (dcc[idx].u.chat->channel >= 0) {
             chanout_but(-1, dcc[idx].u.chat->channel,
-                        "*** %s left the party line%s%s\n",
+                        _("*** %s left the party line%s%s\n"),
                         dcc[idx].nick, buf[0] ? ": " : ".", buf);
             if (dcc[idx].u.chat->channel < GLOBAL_CHANS)
               botnet_send_part_idx(idx, buf);
@@ -1001,7 +1004,7 @@ static void dcc_chat(int idx, char *buf, int i)
                                                dcc[idx].u.chat->su_nick);
             strcpy(dcc[idx].nick, dcc[idx].u.chat->su_nick);
             dcc[idx].type = &DCC_CHAT;
-            dprintf(idx, "Returning to real nick %s!\n",
+            dprintf(idx, _("Returning to real nick %s!\n"),
                     dcc[idx].u.chat->su_nick);
             nfree(dcc[idx].u.chat->su_nick);
             dcc[idx].u.chat->su_nick = NULL;
@@ -1015,7 +1018,7 @@ static void dcc_chat(int idx, char *buf, int i)
             lostdcc(idx);
             return;
           } else {
-            dprintf(DP_STDOUT, "\n### SIMULATION RESET\n\n");
+            dprintf(DP_STDOUT, _("\n### SIMULATION RESET\n\n"));
             dcc_chatter(idx);
             return;
           }
@@ -1134,7 +1137,8 @@ static int detect_telnet_flood(char *floodhost)
     lasttelnets = 0;
     lasttelnettime = 0;
     lasttelnethost[0] = 0;
-    putlog(LOG_MISC, "*", IRC_TELNETFLOOD, floodhost);
+    putlog(LOG_MISC, "*", _("Telnet connection flood from %s!  "
+           "Placing on ignore!"), floodhost);
     addignore(floodhost, origbotname, "Telnet connection flood",
               now + (60 * ignore_time));
     return 1;
@@ -1151,7 +1155,7 @@ static void dcc_telnet(int idx, char *buf, int i)
     sockname_t name;
     j = answer(dcc[idx].sock, &name, &port, 0);
     if (j != -1) {
-      dprintf(-j, "Sorry, too many connections already.\r\n");
+      dprintf(-j, _("Sorry, too many connections already.\r\n"));
       killsock(j);
     }
     return;
@@ -1161,7 +1165,7 @@ static void dcc_telnet(int idx, char *buf, int i)
   while ((sock == -1) && (errno == EAGAIN))
     sock = answer(dcc[idx].sock, &dcc[i].sockname, &port, 0);
   if (sock < 0) {
-    putlog(LOG_MISC, "*", DCC_FAILED, strerror(errno));
+    putlog(LOG_MISC, "*", _("Failed TELNET incoming (%s)"), strerror(errno));
     return;
   }
   /* Buffer data received on this socket.  */
@@ -1172,7 +1176,8 @@ static void dcc_telnet(int idx, char *buf, int i)
 #else
   if (port < 1024 || port > 65535) {
 #endif
-    putlog(LOG_BOTS, "*", DCC_BADSRC, iptostr(&dcc[i].sockname.addr.sa), port);
+    putlog(LOG_BOTS, "*", _("Refused %s/%d (bad src port)"),
+           iptostr(&dcc[i].sockname.addr.sa), port);
     killsock(sock);
     lostdcc(i);
     return;
@@ -1214,7 +1219,7 @@ static void dcc_telnet_hostresolved(int i)
       break;
     }
   if (dcc_total == idx) {
-    putlog(LOG_BOTS, "*", "Lost listening socket while resolving %s",
+    putlog(LOG_BOTS, "*", _("Lost listening socket while resolving %s"),
            dcc[i].host);
     killsock(dcc[i].sock);
     lostdcc(i);
@@ -1223,7 +1228,7 @@ static void dcc_telnet_hostresolved(int i)
   if (dcc[idx].host[0] == '@') {
     /* Restrict by hostname */
     if (!wild_match(dcc[idx].host + 1, dcc[i].host)) {
-      putlog(LOG_BOTS, "*", DCC_BADHOST, dcc[i].host);
+      putlog(LOG_BOTS, "*", _("Refused %s (bad hostname)"), dcc[i].host);
       killsock(dcc[i].sock);
       lostdcc(i);
       return;
@@ -1242,7 +1247,8 @@ static void dcc_telnet_hostresolved(int i)
   sock = -1;
   j = new_dcc(&DCC_IDENT, 0);
   if (j < 0)
-    putlog(LOG_MISC, "*", DCC_IDENTFAIL, dcc[i].host, strerror(errno));
+    putlog(LOG_MISC, "*", _("Ident failed for %s: %s"), dcc[i].host,
+           strerror(errno));
   else {
     egg_memcpy(&dcc[j].sockname, &dcc[i].sockname, sizeof(sockname_t));
     dcc[j].sock = getsock(dcc[j].sockname.family, 0);
@@ -1256,7 +1262,8 @@ static void dcc_telnet_hostresolved(int i)
           dcc[j].sockname.addrlen) < 0 && (errno != EINPROGRESS)) {
         killsock(dcc[j].sock);
         lostdcc(j);
-        putlog(LOG_MISC, "*", DCC_IDENTFAIL, dcc[i].host, strerror(errno));
+        putlog(LOG_MISC, "*", _("Ident failed for %s: %s"), dcc[i].host,
+               strerror(errno));
         j = 0;
       }
       sock = dcc[j].sock;
@@ -1279,7 +1286,8 @@ static void dcc_telnet_hostresolved(int i)
 
 static void eof_dcc_telnet(int idx)
 {
-  putlog(LOG_MISC, "*", DCC_PORTDIE, dcc[idx].port);
+  putlog(LOG_MISC, "*", _("(!) Listening port %d abruptly died."),
+         dcc[idx].port);
   killsock(dcc[idx].sock);
   lostdcc(idx);
 }
@@ -1305,7 +1313,8 @@ struct dcc_table DCC_TELNET = {
 
 static void eof_dcc_dupwait(int idx)
 {
-  putlog(LOG_BOTS, "*", DCC_LOSTDUP, dcc[idx].host);
+  putlog(LOG_BOTS, "*", _("Lost telnet connection from %s while "
+         "checking for duplicate"), dcc[idx].host);
   killsock(dcc[idx].sock);
   lostdcc(idx);
 }
@@ -1327,7 +1336,8 @@ static void timeout_dupwait(int idx)
   if (in_chain(dcc[idx].nick)) {
     egg_snprintf(x, sizeof x, "%s!%s", dcc[idx].nick, dcc[idx].host);
     dprintf(idx, "error Already connected.\n");
-    putlog(LOG_BOTS, "*", DCC_DUPLICATE, x);
+    putlog(LOG_BOTS, "*", _("Refused telnet connection from %s (duplicate)"),
+           x);
     killsock(dcc[idx].sock);
     lostdcc(idx);
   } else {
@@ -1405,8 +1415,8 @@ static void dcc_telnet_id(int idx, char *buf, int atr)
   buf[HANDLEN] = 0;
   /* Toss out bad nicknames */
   if (dcc[idx].nick[0] != '@' && !wild_match(dcc[idx].nick, buf)) {
-    dprintf(idx, "Sorry, that nickname format is invalid.\n");
-    putlog(LOG_BOTS, "*", DCC_BADNICK, dcc[idx].host);
+    dprintf(idx, _("Sorry, that nickname format is invalid.\n"));
+    putlog(LOG_BOTS, "*", _("Refused %s (bad nick)"), dcc[idx].host);
     killsock(dcc[idx].sock);
     lostdcc(idx);
     return;
@@ -1421,7 +1431,7 @@ static void dcc_telnet_id(int idx, char *buf, int atr)
       if (glob_bot(fr))
         dprintf(idx, "error Certificate UID doesn't match handle\n");
       else
-        dprintf(idx, "Your certificate UID doesn't match your handle.\n");
+        dprintf(idx, _("Your certificate UID doesn't match your handle.\n"));
       killsock(dcc[idx].sock);
       lostdcc(idx);
       return;
@@ -1430,15 +1440,15 @@ static void dcc_telnet_id(int idx, char *buf, int atr)
 #endif
   /* Make sure users-only/bots-only connects are honored */
   if ((dcc[idx].status & STAT_BOTONLY) && !glob_bot(fr)) {
-    dprintf(idx, "This telnet port is for bots only.\n");
-    putlog(LOG_BOTS, "*", DCC_NONBOT, dcc[idx].host);
+    dprintf(idx, _("This telnet port is for bots only.\n"));
+    putlog(LOG_BOTS, "*", _("Refused %s (non-bot)"), dcc[idx].host);
     killsock(dcc[idx].sock);
     lostdcc(idx);
     return;
   }
   if ((dcc[idx].status & STAT_USRONLY) && glob_bot(fr)) {
     dprintf(idx, "error Only users may connect at this port.\n");
-    putlog(LOG_BOTS, "*", DCC_NONUSER, dcc[idx].host);
+    putlog(LOG_BOTS, "*", _("Refused %s (non-user)"), dcc[idx].host);
     killsock(dcc[idx].sock);
     lostdcc(idx);
     return;
@@ -1448,9 +1458,13 @@ static void dcc_telnet_id(int idx, char *buf, int atr)
     dcc[idx].type = &DCC_TELNET_NEW;
     dcc[idx].timeval = now;
     dprintf(idx, "\n");
-    dprintf(idx, IRC_TELNET, botnetnick);
-    dprintf(idx, IRC_TELNET1);
-    dprintf(idx, "\nEnter the nickname you would like to use.\n");
+    dprintf(idx, _("This is the telnet interface to %s, an eggdrop bot.\n"
+            "Don't abuse it, and it will be open for all your friends, too.\n"),
+            botnetnick);
+    dprintf(idx, _("You now get to pick a nick to use on the bot,\n"
+            "and a password so nobody else can pretend to be you.\n"
+            "Please remember both!"));
+    dprintf(idx, _("\nEnter the nickname you would like to use.\n"));
     return;
   }
   if (chan_op(fr)) {
@@ -1461,8 +1475,9 @@ static void dcc_telnet_id(int idx, char *buf, int atr)
     ok = 1;
 
   if (!ok) {
-    dprintf(idx, "You don't have access.\n");
-    putlog(LOG_BOTS, "*", DCC_INVHANDLE, dcc[idx].host, buf);
+    dprintf(idx, _("You don't have access.\n"));
+    putlog(LOG_BOTS, "*", _("Refused %s (invalid handle: %s)"),
+           dcc[idx].host, buf);
     killsock(dcc[idx].sock);
     lostdcc(idx);
     return;
@@ -1472,7 +1487,8 @@ static void dcc_telnet_id(int idx, char *buf, int atr)
   if (glob_bot(fr)) {
     if (!egg_strcasecmp(botnetnick, dcc[idx].nick)) {
       dprintf(idx, "error You cannot link using my botnetnick.\n");
-      putlog(LOG_BOTS, "*", DCC_MYBOTNETNICK, dcc[idx].host);
+      putlog(LOG_BOTS, "*", _("Refused telnet connection from %s "
+             "(tried using my botnetnick)"), dcc[idx].host);
       killsock(dcc[idx].sock);
       lostdcc(idx);
       return;
@@ -1505,7 +1521,8 @@ int dcc_fingerprint(idx)
     uf = get_user(&USERENTRY_FPRINT, dcc[idx].user);
     if (cf && uf && !strcasecmp(cf, uf)) {
       if (!glob_bot(fr))
-        dprintf(idx, "Used your fingerprint for automatic authentication.\n");
+        dprintf(idx, _("Used your fingerprint for automatic "
+                "authentication.\n"));
       dcc[idx].status |= STAT_FPRINT;
       dcc_chat_pass(idx, "+", 1);
     /* Required? */
@@ -1513,8 +1530,8 @@ int dcc_fingerprint(idx)
       if (glob_bot(fr))
         dprintf(idx, "error fingerprint required\n");
       else
-        dprintf(idx, "Certificate authentication required. "
-                "You need to set your fingerprint.\n");
+        dprintf(idx, _("Certificate authentication required. "
+                "You need to set your fingerprint.\n"));
       killsock(dcc[idx].sock);
       lostdcc(idx);
     }
@@ -1543,7 +1560,8 @@ static void dcc_telnet_pass(int idx, int atr)
       char fakepass[2] = "+";
 
       if (!glob_bot(fr))
-        dprintf(idx, "Used your fingerprint for automatic authentication.\n");
+        dprintf(idx, _("Used your fingerprint for automatic "
+                "authentication.\n"));
       dcc[idx].status |= STAT_FPRINT;
       dcc_chat_pass(idx, fakepass, 1);
       return;
@@ -1552,8 +1570,8 @@ static void dcc_telnet_pass(int idx, int atr)
       if (glob_bot(fr))
         dprintf(idx, "error fingerprint required\n");
       else
-        dprintf(idx, "Certificate authentication required. "
-                "You need to set your fingerprint.\n");
+        dprintf(idx, _("Certificate authentication required. "
+                "You need to set your fingerprint.\n"));
       killsock(dcc[idx].sock);
       lostdcc(idx);
       return;
@@ -1579,8 +1597,9 @@ static void dcc_telnet_pass(int idx, int atr)
 #endif
       return;
     }
-    dprintf(idx, "Can't telnet until you have a password set.\n");
-    putlog(LOG_MISC, "*", DCC_NOPASS, dcc[idx].nick, dcc[idx].host);
+    dprintf(idx, _("Can't telnet until you have a password set.\n"));
+    putlog(LOG_MISC, "*", _("Refused [%s]%s (no password)"), dcc[idx].nick,
+           dcc[idx].host);
     killsock(dcc[idx].sock);
     lostdcc(idx);
     return;
@@ -1627,7 +1646,7 @@ static void dcc_telnet_pass(int idx, int atr)
      * authentication will not be correct - you've been warned ;)
      * <Cybah>
      */
-    putlog(LOG_BOTS, "*", "Challenging %s...", dcc[idx].nick);
+    putlog(LOG_BOTS, "*", _("Challenging %s..."), dcc[idx].nick);
     dprintf(idx, "passreq <%x%x@%s>\n", getpid(), dcc[idx].timeval, botnetnick);
   } else {
     /* NOTE: The MD5 digest used above to prevent cleartext passwords being
@@ -1641,25 +1660,27 @@ static void dcc_telnet_pass(int idx, int atr)
     /* Turn off remote telnet echo (send IAC WILL ECHO). */
     if (dcc[idx].status & STAT_TELNET) {
       char buf[1030];
-      snprintf(buf, sizeof buf, "\n%s%s\r\n", escape_telnet(DCC_ENTERPASS),
+      snprintf(buf, sizeof buf, "\n%s%s\r\n",
+               escape_telnet(_("Enter your password.")),
                TLN_IAC_C TLN_WILL_C TLN_ECHO_C);
       tputs(dcc[idx].sock, buf, strlen(buf));
     } else
-      dprintf(idx, "\n%s\n", DCC_ENTERPASS);
+      dprintf(idx, "\n%s\n", _("Enter your password."));
   }
 }
 
 static void eof_dcc_telnet_id(int idx)
 {
-  putlog(LOG_MISC, "*", DCC_LOSTCON, dcc[idx].host, dcc[idx].port);
+  putlog(LOG_MISC, "*", _("Lost telnet connection to %s/%d"),
+         dcc[idx].host, dcc[idx].port);
   killsock(dcc[idx].sock);
   lostdcc(idx);
 }
 
 static void timeout_dcc_telnet_id(int idx)
 {
-  dprintf(idx, "Timeout.\n");
-  putlog(LOG_MISC, "*", DCC_TTIMEOUT, dcc[idx].host);
+  dprintf(idx, _("Timeout.\n"));
+  putlog(LOG_MISC, "*", _("Ident timeout on telnet: %s"), dcc[idx].host);
   killsock(dcc[idx].sock);
   lostdcc(idx);
 }
@@ -1698,18 +1719,17 @@ static void dcc_telnet_new(int idx, char *buf, int x)
     if (buf[x] <= 32)
       ok = 0;
   if (!ok) {
-    dprintf(idx, "\nYou can't use weird symbols in your nick.\n");
-    dprintf(idx, "Try another one please:\n");
+    dprintf(idx, _("\nYou can't use weird symbols in your nick.\n"
+            "Try another one please:\n"));
   } else if (strchr(BADHANDCHARS, buf[0]) != NULL) {
-    dprintf(idx, "\nYou can't start your nick with the character '%c'\n",
-            buf[0]);
-    dprintf(idx, "Try another one please:\n");
+    dprintf(idx, _("\nYou can't start your nick with the character '%c'\n"
+            "Try another one please:\n"), buf[0]);
   } else if (get_user_by_handle(userlist, buf)) {
-    dprintf(idx, "\nSorry, that nickname is taken already.\n");
-    dprintf(idx, "Try another one please:\n");
+    dprintf(idx, _("\nSorry, that nickname is taken already.\n"
+            "Try another one please:\n"));
     return;
   } else if (!egg_strcasecmp(buf, botnetnick))
-    dprintf(idx, "Sorry, can't use my name for a nick.\n");
+    dprintf(idx, _("Sorry, can't use my name for a nick.\n"));
   else {
     strcpy(dcc[idx].nick, buf);
     if (make_userfile)
@@ -1740,15 +1760,17 @@ static void dcc_telnet_new(int idx, char *buf, int x)
     check_dcc_attrs(dcc[idx].user, USER_PARTY | default_flags);
     dcc[idx].type = &DCC_TELNET_PW;
     if (make_userfile) {
-      dprintf(idx, "\nYOU ARE THE MASTER/OWNER ON THIS BOT NOW\n");
-      dprintf(idx, IRC_LIMBO);
-      putlog(LOG_MISC, "*", DCC_INSTCOMPL, buf);
+      dprintf(idx, _("\nYOU ARE THE MASTER/OWNER ON THIS BOT NOW\n"));
+      dprintf(idx, _("From now on, you don't need to use the -m option "
+              "to start the bot.\nEnjoy !!"));
+      putlog(LOG_MISC, "*", _("Bot installation complete, first master is %s"),
+             buf);
       make_userfile = 0;
       write_userfile(-1);
       add_note(buf, botnetnick, "Welcome to eggdrop! :)", -1, 0);
     }
-    dprintf(idx, "\nOkay, now choose and enter a password:\n");
-    dprintf(idx, "(Only the first 15 letters are significant.)\n");
+    dprintf(idx, _("\nOkay, now choose and enter a password:\n"
+            "(Only the first 15 letters are significant.)\n"));
   }
 }
 
@@ -1762,20 +1784,20 @@ static void dcc_telnet_pw(int idx, char *buf, int x)
   buf[16] = 0;
   ok = 1;
   if (strlen(buf) < 4) {
-    dprintf(idx, "\nTry to use at least 4 characters in your password.\n");
-    dprintf(idx, "Choose and enter a password:\n");
+    dprintf(idx, _("\nTry to use at least 4 characters in your password.\n"));
+    dprintf(idx, _("Choose and enter a password:\n"));
     return;
   }
   for (x = 0; x < strlen(buf); x++)
     if ((buf[x] <= 32) || (buf[x] == 127))
       ok = 0;
   if (!ok) {
-    dprintf(idx, "\nYou can't use weird symbols in your password.\n");
-    dprintf(idx, "Try another one please:\n");
+    dprintf(idx, _("\nYou can't use weird symbols in your password.\n"));
+    dprintf(idx, _("Try another one please:\n"));
     return;
   }
-  putlog(LOG_MISC, "*", DCC_NEWUSER, dcc[idx].nick, dcc[idx].host,
-         dcc[idx].port);
+  putlog(LOG_MISC, "*", _("New user via telnet: [%s]%s/%d"), dcc[idx].nick,
+         dcc[idx].host, dcc[idx].port);
   if (notify_new[0]) {
     char s[121], s1[121], s2[121];
 
@@ -1792,8 +1814,8 @@ static void dcc_telnet_pw(int idx, char *buf, int x)
   }
   newpass = newsplit(&buf);
   set_user(&USERENTRY_PASS, dcc[idx].user, newpass);
-  dprintf(idx, "\nRemember that!  You'll need it next time you log in.\n");
-  dprintf(idx, "You now have an account on %s...\n\n\n", botnetnick);
+  dprintf(idx, _("\nRemember that!  You'll need it next time you log in.\n"));
+  dprintf(idx, _("You now have an account on %s...\n\n\n"), botnetnick);
   dcc[idx].type = &DCC_CHAT;
   dcc[idx].u.chat->channel = -2;
   dcc_chatter(idx);
@@ -1801,15 +1823,16 @@ static void dcc_telnet_pw(int idx, char *buf, int x)
 
 static void eof_dcc_telnet_new(int idx)
 {
-  putlog(LOG_MISC, "*", DCC_LOSTNEWUSER, dcc[idx].host, dcc[idx].port);
+  putlog(LOG_MISC, "*", _("Lost new telnet user (%s/%d)"), dcc[idx].host,
+         dcc[idx].port);
   killsock(dcc[idx].sock);
   lostdcc(idx);
 }
 
 static void eof_dcc_telnet_pw(int idx)
 {
-  putlog(LOG_MISC, "*", DCC_LOSTNEWUSR2, dcc[idx].nick, dcc[idx].host,
-         dcc[idx].port);
+  putlog(LOG_MISC, "*", _("Lost new telnet user %s (%s/%d)"), dcc[idx].nick,
+         dcc[idx].host, dcc[idx].port);
   deluser(dcc[idx].nick);
   killsock(dcc[idx].sock);
   lostdcc(idx);
@@ -1817,17 +1840,18 @@ static void eof_dcc_telnet_pw(int idx)
 
 static void tout_dcc_telnet_new(int idx)
 {
-  dprintf(idx, "Guess you're not there.  Bye.\n");
-  putlog(LOG_MISC, "*", DCC_TIMEOUTUSER, dcc[idx].host, dcc[idx].port);
+  dprintf(idx, _("Guess you're not there.  Bye.\n"));
+  putlog(LOG_MISC, "*", _("Timeout on new telnet user: %s/%d"), dcc[idx].host,
+         dcc[idx].port);
   killsock(dcc[idx].sock);
   lostdcc(idx);
 }
 
 static void tout_dcc_telnet_pw(int idx)
 {
-  dprintf(idx, "Guess you're not there.  Bye.\n");
-  putlog(LOG_MISC, "*", DCC_TIMEOUTUSR2, dcc[idx].nick,
-         dcc[idx].host, dcc[idx].port);
+  dprintf(idx, _("Guess you're not there.  Bye.\n"));
+  putlog(LOG_MISC, "*", _("Timeout on new telnet user: [%s]%s/%d"),
+         dcc[idx].nick, dcc[idx].host, dcc[idx].port);
   killsock(dcc[idx].sock);
   lostdcc(idx);
 }
@@ -1882,7 +1906,7 @@ static int call_tcl_func(char *name, int idx, char *args)
   Tcl_SetVar(interp, "_n", s, 0);
   Tcl_SetVar(interp, "_a", args, 0);
   if (Tcl_VarEval(interp, name, " $_n $_a", NULL) == TCL_ERROR) {
-    putlog(LOG_MISC, "*", DCC_TCLERROR, name, tcl_resultstring());
+    putlog(LOG_MISC, "*", _("Tcl error [%s]: %s"), name, tcl_resultstring());
     return -1;
   }
   return tcl_resultint();
@@ -1919,7 +1943,8 @@ static void dcc_script(int idx, char *buf, int len)
     }
     if (dcc[idx].type == &DCC_CHAT) {
       if (dcc[idx].u.chat->channel >= 0) {
-        chanout_but(-1, dcc[idx].u.chat->channel, DCC_JOIN, dcc[idx].nick);
+        chanout_but(-1, dcc[idx].u.chat->channel,
+                    _("*** %s has joined the party line.\n"), dcc[idx].nick);
         if (dcc[idx].u.chat->channel < 10000)
           botnet_send_join_idx(idx, -1);
         check_tcl_chjn(botnetnick, dcc[idx].nick, dcc[idx].u.chat->channel,
@@ -1952,7 +1977,8 @@ static void eof_dcc_script(int idx)
   if (dcc[idx].type && dcc[idx].type->eof)
     dcc[idx].type->eof(idx);
   else {
-    putlog(LOG_MISC, "*", DCC_DEADSOCKET, dcc[idx].sock, dcc[idx].type->name);
+    putlog(LOG_MISC, "*", _("*** ATTENTION: DEAD SOCKET (%d) OF TYPE %s "
+           "UNTRAPPED"), dcc[idx].sock, dcc[idx].type->name);
     killsock(dcc[idx].sock);
     lostdcc(idx);
   }
@@ -2060,7 +2086,8 @@ void eof_dcc_identwait(int idx)
 {
   int i;
 
-  putlog(LOG_MISC, "*", DCC_LOSTCONN, dcc[idx].host, dcc[idx].port);
+  putlog(LOG_MISC, "*", _("Lost telnet connection to %s/%d"), dcc[idx].host,
+         dcc[idx].port);
   for (i = 0; i < dcc_total; i++)
     if ((dcc[i].type == &DCC_IDENT) &&
         (dcc[i].u.ident_sock == dcc[idx].sock)) {
@@ -2128,7 +2155,7 @@ void eof_dcc_ident(int idx)
   for (i = 0; i < dcc_total; i++)
     if ((dcc[i].type == &DCC_IDENTWAIT) &&
         (dcc[i].sock == dcc[idx].u.ident_sock)) {
-      putlog(LOG_MISC, "*", DCC_EOFIDENT);
+      putlog(LOG_MISC, "*", _("Timeout/EOF ident connection"));
       simple_sprintf(buf, "telnet@%s", dcc[idx].host);
       dcc_telnet_got_ident(i, buf);
     }
@@ -2166,7 +2193,7 @@ static void dcc_telnet_got_ident(int i, char *host)
       break;
   dcc[i].u.other = 0;
   if (dcc_total == idx) {
-    putlog(LOG_MISC, "*", DCC_LOSTIDENT);
+    putlog(LOG_MISC, "*", _("Lost ident wait telnet socket!!"));
     killsock(dcc[i].sock);
     lostdcc(i);
     return;
@@ -2190,7 +2217,7 @@ static void dcc_telnet_got_ident(int i, char *host)
     if (!ok && (dcc[idx].status & LSTN_PUBLIC))
       ok = 1;
     if (!ok) {
-      putlog(LOG_MISC, "*", DCC_NOACCESS, dcc[i].host);
+      putlog(LOG_MISC, "*", _("Denied telnet: %s  No Access"), dcc[i].host);
       killsock(dcc[i].sock);
       lostdcc(i);
       return;
@@ -2240,11 +2267,11 @@ static void dcc_telnet_got_ident(int i, char *host)
    * about ourselves. <cybah>
    */
   if (stealth_telnets)
-    sub_lang(i, MISC_BANNER_STEALTH);
+    sub_lang(i, _("\nNickname.\n"));
   else {
     dprintf(i, "\n\n");
-    sub_lang(i, MISC_BANNER);
+    sub_lang(i, _("%B  (%E)\n\nPlease enter your nickname.\n"));
   }
   if (allow_new_telnets)
-    dprintf(i, "(If you are new, enter 'NEW' here.)\n");
+    dprintf(i, _("(If you are new, enter 'NEW' here.)\n"));
 }

@@ -2,7 +2,7 @@
  * tcldcc.c -- handles:
  *   Tcl stubs for the dcc commands
  *
- * $Id: tcldcc.c,v 1.4 2010/10/20 13:07:13 pseudo Exp $
+ * $Id: tcldcc.c,v 1.4.2.1 2010/11/10 13:39:19 pseudo Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -874,7 +874,7 @@ static int tcl_connect STDVAR
   if (sock < 0) {
     switch (sock) {
       case -3:
-        Tcl_AppendResult(irp, MISC_NOFREESOCK, NULL);
+        Tcl_AppendResult(irp, _("No free sockets available."), NULL);
         break;
       case -2:
         Tcl_AppendResult(irp, "DNS lookup failed", NULL);
@@ -1081,12 +1081,12 @@ static int tcl_rehash STDVAR
   BADARGS(1, 1, "");
 
   if (make_userfile) {
-    putlog(LOG_MISC, "*", USERF_NONEEDNEW);
+    putlog(LOG_MISC, "*", _("Userfile creation not necessary--skipping"));
     make_userfile = 0;
   }
   write_userfile(-1);
 
-  putlog(LOG_MISC, "*", USERF_REHASHING);
+  putlog(LOG_MISC, "*", _("Rehashing..."));
   do_restart = -2;
   return TCL_OK;
 }
@@ -1100,11 +1100,11 @@ static int tcl_restart STDVAR
     return TCL_ERROR;
   }
   if (make_userfile) {
-    putlog(LOG_MISC, "*", USERF_NONEEDNEW);
+    putlog(LOG_MISC, "*", _("Userfile creation not necessary--skipping"));
     make_userfile = 0;
   }
   write_userfile(-1);
-  putlog(LOG_MISC, "*", MISC_RESTARTING);
+  putlog(LOG_MISC, "*", _("Restarting..."));
   wipe_timers(interp, &utimer);
   wipe_timers(interp, &timer);
   do_restart = -1;

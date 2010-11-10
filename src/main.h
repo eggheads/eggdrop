@@ -2,7 +2,7 @@
  * main.h
  *   include file to include most other include files
  *
- * $Id: main.h,v 1.3.2.1 2010/11/06 20:57:41 pseudo Exp $
+ * $Id: main.h,v 1.3.2.2 2010/11/10 13:39:19 pseudo Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -120,7 +120,7 @@
 #include "gettext.h"
 
 /* Provide shorter names, as we'll be using these in a lot of places */
-#define _(x)         gettext(x)
+#define _(x)         ((char *) gettext(x))
 #define N_(x)        gettext_noop(x)
 #define P_(x, y, z)  ngettext(x, y, z)
 

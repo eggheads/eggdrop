@@ -7,7 +7,7 @@
  *   linking, unlinking, and relaying to another bot
  *   pinging the bots periodically and checking leaf status
  *
- * $Id: botnet.c,v 1.4 2010/11/01 22:38:34 pseudo Exp $
+ * $Id: botnet.c,v 1.4.2.1 2010/11/10 13:39:19 pseudo Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -91,7 +91,7 @@ void addbot(char *who, char *from, char *next, char flag, int vernum)
 
   while (*ptr) {
     if (!egg_strcasecmp((*ptr)->bot, who))
-      putlog(LOG_BOTS, "*", "!!! Duplicate botnet bot entry!!");
+      putlog(LOG_BOTS, "*", _("!!! Duplicate botnet bot entry!!"));
     ptr = &((*ptr)->next);
   }
   ptr2 = nmalloc(sizeof(tand_t));
@@ -435,15 +435,14 @@ void answer_local_whom(int idx, int chan)
   int i, t, nicklen, botnicklen, total = 0;
 
   if (chan == -1)
-    dprintf(idx, "%s (+: %s, *: %s)\n", BOT_BOTNETUSERS, BOT_PARTYLINE,
-            BOT_LOCALCHAN);
+    dprintf(idx, _("Users across the botnet (+: Party line, *: Local channel)\n"));
   else if (chan > 0) {
     simple_sprintf(idle, "assoc %d", chan);
     if ((Tcl_Eval(interp, idle) != TCL_OK) || tcl_resultempty())
-      dprintf(idx, "%s %s%d:\n", BOT_USERSONCHAN,
+      dprintf(idx, _("Users on channel %s%d:\n"),
               (chan < GLOBAL_CHANS) ? "" : "*", chan % GLOBAL_CHANS);
     else
-      dprintf(idx, "%s '%s%s' (%s%d):\n", BOT_USERSONCHAN,
+      dprintf(idx, _("Users on channel '%s%s' (%s%d):\n"),
               (chan < GLOBAL_CHANS) ? "" : "*", tcl_resultstring(),
               (chan < GLOBAL_CHANS) ? "" : "*", chan % GLOBAL_CHANS);
   }
@@ -536,11 +535,10 @@ void answer_local_whom(int idx, int chan)
               (party[i].chan == 0) && (chan == -1) ? '+' : ' ',
               party[i].bot, party[i].from, idle);
       if (party[i].status & PLSTAT_AWAY)
-        dprintf(idx, "   %s: %s\n", MISC_AWAY,
-                party[i].away ? party[i].away : "");
+        dprintf(idx, "   AWAY: %s\n", party[i].away ? party[i].away : "");
     }
   }
-  dprintf(idx, "Total users: %d\n", total);
+  dprintf(idx, _("Total users: %d\n"), total);
 }
 
 /* Show z a list of all bots connected
@@ -552,7 +550,7 @@ void tell_bots(int idx)
   tand_t *bot;
 
   if (!tands) {
-    dprintf(idx, "%s\n", BOT_NOBOTSLINKED);
+    dprintf(idx, _("No bots linked.\n"));
     return;
   }
   strcpy(s, botnetnick);
@@ -560,7 +558,7 @@ void tell_bots(int idx)
 
   for (bot = tandbot; bot; bot = bot->next) {
     if (i > (500 - HANDLEN)) {
-      dprintf(idx, "Bots: %s\n", s);
+      dprintf(idx, _("Bots: %s\n"), s);
       s[0] = 0;
       i = 0;
     }
@@ -572,8 +570,8 @@ void tell_bots(int idx)
     i += strlen(bot->bot);
   }
   if (s[0])
-    dprintf(idx, "Bots: %s\n", s);
-  dprintf(idx, "%s: %d\n", MISC_TOTAL, tands + 1);
+    dprintf(idx, _("Bots: %s\n"), s);
+  dprintf(idx, _("Total: %d\n"), tands + 1);
 }
 
 /* Show a simpleton bot tree
@@ -587,7 +585,7 @@ void tell_bottree(int idx, int showver)
   int tothops = 0;
 
   if (tands == 0) {
-    dprintf(idx, "%s\n", BOT_NOBOTSLINKED);
+    dprintf(idx, _("No bots linked.\n"));
     return;
   }
   s[0] = 0;
@@ -603,7 +601,7 @@ void tell_bottree(int idx, int showver)
       i += strlen(bot->bot);
     }
   if (s[0])
-    dprintf(idx, "(%s %s)\n", BOT_NOTRACEINFO, s);
+    dprintf(idx, _("(No trace info for: %s)\n"), s);
   if (showver)
     dprintf(idx, "%s (%d.%d.%d.%d)\n", botnetnick,
             egg_numver / 1000000,
@@ -615,7 +613,7 @@ void tell_bottree(int idx, int showver)
   work[0] = 0;
   while (more) {
     if (lev == 20) {
-      dprintf(idx, "\n%s\n", BOT_COMPLEXTREE);
+      dprintf(idx, _("\nTree too complex!\n"));
       return;
     }
     cnt = 0;
@@ -726,7 +724,7 @@ void tell_bottree(int idx, int showver)
     }
   }
   /* Hop information: (9d) */
-  dprintf(idx, "Average hops: %3.1f, total bots: %d\n",
+  dprintf(idx, _("Average hops: %3.1f, total bots: %d\n"),
           ((float) tothops) / ((float) tands), tands + 1);
 }
 
@@ -878,24 +876,24 @@ int botunlink(int idx, char *nick, char *reason, char *from)
   tand_t *bot;
 
   if (nick[0] == '*')
-    dprintf(idx, "%s\n", BOT_UNLINKALL);
+    dprintf(idx, _("Unlinking all bots...\n"));
   for (i = 0; i < dcc_total; i++) {
     if ((nick[0] == '*') || !egg_strcasecmp(dcc[i].nick, nick)) {
       if (dcc[i].type == &DCC_FORK_BOT) {
         if (idx >= 0)
-          dprintf(idx, "%s: %s -> %s.\n", BOT_KILLLINKATTEMPT,
+          dprintf(idx, _("Killed link attempt to: %s -> %s.\n"),
                   dcc[i].nick, dcc[i].host);
-        putlog(LOG_BOTS, "*", "%s: %s -> %s:%d",
-               BOT_KILLLINKATTEMPT, dcc[i].nick, dcc[i].host, dcc[i].port);
+        putlog(LOG_BOTS, "*", _("Killed link attempt to: %s -> %s:%d"),
+               dcc[i].nick, dcc[i].host, dcc[i].port);
         killsock(dcc[i].sock);
         lostdcc(i);
         if (nick[0] != '*')
           return 1;
       } else if (dcc[i].type == &DCC_BOT_NEW) {
         if (idx >= 0)
-          dprintf(idx, "%s %s.\n", BOT_ENDLINKATTEMPT, dcc[i].nick);
-        putlog(LOG_BOTS, "*", "%s %s @ %s:%d",
-               "Stopped trying to link", dcc[i].nick, dcc[i].host, dcc[i].port);
+          dprintf(idx, _("No longer trying to link: %s.\n"), dcc[i].nick);
+        putlog(LOG_BOTS, "*", _("Stopped trying to link %s @ %s:%d"),
+               dcc[i].nick, dcc[i].host, dcc[i].port);
         killsock(dcc[i].sock);
         lostdcc(i);
         if (nick[0] != '*')
@@ -904,23 +902,21 @@ int botunlink(int idx, char *nick, char *reason, char *from)
         char s[1024];
 
         if (idx >= 0)
-          dprintf(idx, "%s %s.\n", BOT_BREAKLINK, dcc[i].nick);
+          dprintf(idx, _("Breaking link with %s.\n"), dcc[i].nick);
         else if ((idx == -3) && (b_status(i) & STAT_SHARE) && !share_unlinks)
           return -1;
         bot = findbot(dcc[i].nick);
         bots = bots_in_subtree(bot);
         users = users_in_subtree(bot);
         if (reason && reason[0]) {
-          simple_sprintf(s, "%s %s (%s (%s)) (lost %d bot%s and %d user%s)",
-                         BOT_UNLINKEDFROM, dcc[i].nick, reason, from, bots,
-                         (bots != 1) ? "s" : "", users, (users != 1) ?
-                         "s" : "");
+          simple_sprintf(s, _("Unlinked from: %s (%s (%s)) (lost %d %s "
+                         "and %d %s)"), dcc[i].nick, reason, from, bots,
+                         P_("bot", "bots", bots), P_("user", "users", users));
           dprintf(i, "bye %s\n", reason);
         } else {
-          simple_sprintf(s, "%s %s (%s) (lost %d bot%s and %d user%s)",
-                         BOT_UNLINKEDFROM, dcc[i].nick, from, bots,
-                         (bots != 1) ? "s" : "", users,
-                         (users != 1) ? "s" : "");
+          simple_sprintf(s, _("Unlinked from: %s (%s) (lost %d %s and %d %s)"),
+                         dcc[i].nick, from, bots, P_("bot", "bots", bots),
+                         P_("user", "users", users));
           dprintf(i, "bye No reason\n");
         }
         chatout("*** %s\n", s);
@@ -933,7 +929,7 @@ int botunlink(int idx, char *nick, char *reason, char *from)
     }
   }
   if (idx >= 0 && nick[0] != '*')
-    dprintf(idx, "%s\n", BOT_NOTCONNECTED);
+    dprintf(idx, _("Not connected to that bot.\n"));
   if (nick[0] != '*') {
     bot = findbot(nick);
     if (bot) {
@@ -956,7 +952,7 @@ int botunlink(int idx, char *nick, char *reason, char *from)
     }
   }
   if (nick[0] == '*') {
-    dprintf(idx, "%s\n", BOT_WIPEBOTTABLE);
+    dprintf(idx, _("Smooshing bot tables and assocs...\n"));
     while (tandbot)
       rembot(tandbot->bot);
     while (parties) {
@@ -986,19 +982,19 @@ int botlink(char *linker, int idx, char *nick)
   u = get_user_by_handle(userlist, nick);
   if (!u || !(u->flags & USER_BOT)) {
     if (idx >= 0)
-      dprintf(idx, "%s %s\n", nick, BOT_BOTUNKNOWN);
+      dprintf(idx, _("%s is not a known bot.\n"), nick);
   } else if (!egg_strcasecmp(nick, botnetnick)) {
     if (idx >= 0)
-      dprintf(idx, "%s\n", BOT_CANTLINKMYSELF);
+      dprintf(idx, _("Link to myself? Oh boy, Freud would have a field day.\n"));
   } else if (in_chain(nick) && (idx != -3)) {
     if (idx >= 0)
-      dprintf(idx, "%s\n", BOT_ALREADYLINKED);
+      dprintf(idx, "%s\n", _("That bot is already connected up."));
   } else {
     for (i = 0; i < dcc_total; i++)
       if ((dcc[i].user == u) &&
           ((dcc[i].type == &DCC_FORK_BOT) || (dcc[i].type == &DCC_BOT_NEW))) {
         if (idx >= 0)
-          dprintf(idx, "%s\n", BOT_ALREADYLINKING);
+          dprintf(idx, "%s\n", _("Already linking to that bot."));
         return 0;
       }
     /* Address to connect to is in 'info' */
@@ -1006,30 +1002,19 @@ int botlink(char *linker, int idx, char *nick)
     if (!bi || !strlen(bi->address) || !bi->telnet_port ||
         (bi->telnet_port <= 0)) {
       if (idx >= 0) {
-        dprintf(idx, "%s '%s'.\n", BOT_NOTELNETADDY, nick);
-        dprintf(idx, "%s .chaddr %s %s\n",
-                MISC_USEFORMAT, nick, MISC_CHADDRFORMAT);
+        dprintf(idx, _("Invalid telnet address:port stored for '%s'.\n"), nick);
+        dprintf(idx, _("Use: .chaddr %s <address> <port#>[/<relay-port#>]\n"),
+                nick);
       }
     } else if (dcc_total == max_dcc && increase_socks_max()) {
       if (idx >= 0)
-        dprintf(idx, "%s\n", DCC_TOOMANYDCCS1);
+        dprintf(idx, _("Sorry, too many DCC connections.\n"));
     } else {
       correct_handle(nick);
 
       if (idx > -2)
-#ifdef IPV6
-      {
-        if (strchr(bi->address, ':'))
-          putlog(LOG_BOTS, "*", "%s %s at [%s]:%d ...", BOT_LINKING, nick,
-                 bi->address, bi->telnet_port);
-        else
-          putlog(LOG_BOTS, "*", "%s %s at %s:%d ...", BOT_LINKING, nick,
-                 bi->address, bi->telnet_port);
-      }
-#else
-        putlog(LOG_BOTS, "*", "%s %s at %s:%d ...", BOT_LINKING, nick,
+        putlog(LOG_BOTS, "*", _("Linking to %s at [%s]:%d ..."), nick,
                bi->address, bi->telnet_port);
-#endif
       i = new_dcc(&DCC_DNSWAIT, sizeof(struct dns_info));
       dcc[i].timeval = now;
       dcc[i].port = bi->telnet_port;
@@ -1059,7 +1044,7 @@ static void botlink_resolve_failure(int i)
 {
   char s[81];
 
-  putlog(LOG_BOTS, "*", DCC_LINKFAIL, dcc[i].nick);
+  putlog(LOG_BOTS, "*", _("Failed link to %s."), dcc[i].nick);
   strcpy(s, dcc[i].nick);
   nfree(dcc[i].u.dns->cptr);
   lostdcc(i);
@@ -1099,7 +1084,7 @@ static void failed_tandem_relay(int idx)
         (dcc[i].u.relay->sock == dcc[idx].sock))
       uidx = i;
   if (uidx < 0) {
-    putlog(LOG_MISC, "*", "%s  %d -> %d", BOT_CANTFINDRELAYUSER,
+    putlog(LOG_MISC, "*", _("Can't find user for relay!  %d -> %d"),
            dcc[idx].sock, dcc[idx].u.relay->sock);
     killsock(dcc[idx].sock);
     lostdcc(idx);
@@ -1108,7 +1093,7 @@ static void failed_tandem_relay(int idx)
   if (dcc[idx].port >= dcc[idx].u.relay->port + 3) {
     struct chat_info *ci = dcc[uidx].u.relay->chat;
 
-    dprintf(uidx, "%s %s.\n", BOT_CANTLINKTO, dcc[idx].nick);
+    dprintf(uidx, _("Could not link to %s.\n"), dcc[idx].nick);
     dcc[uidx].status = dcc[uidx].u.relay->old_status;
     nfree(dcc[uidx].u.relay);
     dcc[uidx].u.chat = ci;
@@ -1148,31 +1133,30 @@ void tandem_relay(int idx, char *nick, register int i)
 
   u = get_user_by_handle(userlist, nick);
   if (!u || !(u->flags & USER_BOT)) {
-    dprintf(idx, "%s %s\n", nick, BOT_BOTUNKNOWN);
+    dprintf(idx, _("%s is not a known bot.\n"), nick);
     return;
   }
   if (!egg_strcasecmp(nick, botnetnick)) {
-    dprintf(idx, "%s\n", BOT_CANTRELAYMYSELF);
+    dprintf(idx, "%s\n", _("Relay to myself?  What on EARTH would be the point?!"));
     return;
   }
   /* Address to connect to is in 'info' */
   bi = (struct bot_addr *) get_user(&USERENTRY_BOTADDR, u);
   if (!bi || !strlen(bi->address) || !bi->relay_port || (bi->relay_port <= 0)) {
-    dprintf(idx, "%s '%s'.\n", BOT_NOTELNETADDY, nick);
-    dprintf(idx, "%s .chaddr %s %s\n", MISC_USEFORMAT, nick,
-            MISC_CHADDRFORMAT);
+    dprintf(idx, _("Invalid telnet address:port stored for '%s'.\n"), nick);
+    dprintf(idx, _("Use: .chaddr %s <address> <port#>[/<relay-port#>]\n"), nick);
     return;
   }
   i = new_dcc(&DCC_DNSWAIT, sizeof(struct dns_info));
   if (i < 0) {
-    dprintf(idx, "%s\n", DCC_TOOMANYDCCS1);
+    dprintf(idx, _("Sorry, too many DCC connections.\n"));
     return;
   }
 
   dcc[i].sock = getsock(AF_INET, SOCK_STRONGCONN | SOCK_VIRTUAL);
   if (dcc[i].sock < 0) {
     lostdcc(i);
-    dprintf(idx, "%s\n", MISC_NOFREESOCK);
+    dprintf(idx, "%s\n", _("No free sockets available."));
     return;
   }
 
@@ -1186,13 +1170,13 @@ void tandem_relay(int idx, char *nick, register int i)
   strcpy(dcc[i].host, bi->address);
 #ifdef IPV6
   if (strchr(bi->address, ':'))
-    dprintf(idx, "%s %s @ [%s]:%d ...\n", BOT_CONNECTINGTO, nick,
+    dprintf(idx, _("Connecting to %s @ [%s]:%d ...\n"), nick,
             bi->address, bi->relay_port);
   else
 #endif
-  dprintf(idx, "%s %s @ %s:%d ...\n", BOT_CONNECTINGTO, nick,
+  dprintf(idx, _("Connecting to %s @ %s:%d ...\n"), nick,
           bi->address, bi->relay_port);
-  dprintf(idx, "%s\n", BOT_BYEINFO1);
+  dprintf(idx, _("(Type *BYE* on a line by itself to abort.)\n"));
   dcc[idx].type = &DCC_PRE_RELAY;
   ci = dcc[idx].u.chat;
   dcc[idx].u.relay = get_data_ptr(sizeof(struct relay_info));
@@ -1222,14 +1206,14 @@ static void tandem_relay_resolve_failure(int idx)
       break;
     }
   if (uidx < 0) {
-    putlog(LOG_MISC, "*", "%s  %d -> %d", BOT_CANTFINDRELAYUSER,
+    putlog(LOG_MISC, "*", _("Can't find user for relay!  %d -> %d"),
            dcc[idx].sock, dcc[idx].u.relay->sock);
     killsock(dcc[idx].sock);
     lostdcc(idx);
     return;
   }
   ci = dcc[uidx].u.relay->chat;
-  dprintf(uidx, "%s %s.\n", BOT_CANTLINKTO, dcc[idx].nick);
+  dprintf(uidx, _("Could not link to %s.\n"), dcc[idx].nick);
   dcc[uidx].status = dcc[uidx].u.relay->old_status;
   nfree(dcc[uidx].u.relay);
   dcc[uidx].u.chat = ci;
@@ -1295,7 +1279,7 @@ static void pre_relay(int idx, char *buf, register int i)
       }
   }
   if (tidx < 0) {
-    putlog(LOG_MISC, "*", "%s  %d -> %d", BOT_CANTFINDRELAYUSER,
+    putlog(LOG_MISC, "*", _("Can't find user for relay!  %d -> %d"),
            dcc[idx].sock, dcc[idx].u.relay->sock);
     killsock(dcc[idx].sock);
     lostdcc(idx);
@@ -1305,9 +1289,9 @@ static void pre_relay(int idx, char *buf, register int i)
     /* Disconnect */
     struct chat_info *ci = dcc[idx].u.relay->chat;
 
-    dprintf(idx, "%s %s.\n", BOT_ABORTRELAY1, dcc[tidx].nick);
-    dprintf(idx, "%s %s.\n\n", BOT_ABORTRELAY2, botnetnick);
-    putlog(LOG_MISC, "*", "%s %s -> %s", BOT_ABORTRELAY3, dcc[idx].nick,
+    dprintf(idx, _("Aborting relay attempt to %s.\n"), dcc[tidx].nick);
+    dprintf(idx, _("You are now back on %s.\n\n"), botnetnick);
+    putlog(LOG_MISC, "*", _("Relay aborted: %s -> %s"), dcc[idx].nick,
            dcc[tidx].nick);
     dcc[idx].status = dcc[idx].u.relay->old_status;
     nfree(dcc[idx].u.relay);
@@ -1341,15 +1325,15 @@ static void failed_pre_relay(int idx)
       }
   }
   if (tidx < 0) {
-    putlog(LOG_MISC, "*", "%s  %d -> %d", BOT_CANTFINDRELAYUSER,
+    putlog(LOG_MISC, "*", _("Can't find user for relay!  %d -> %d"),
            dcc[idx].sock, dcc[idx].u.relay->sock);
     killsock(dcc[idx].sock);
     lostdcc(idx);
     return;
   }
-  putlog(LOG_MISC, "*", "%s [%s]%s/%d", BOT_LOSTDCCUSER, dcc[idx].nick,
+  putlog(LOG_MISC, "*", _("Lost dcc connection to [%s]%s/%d"), dcc[idx].nick,
          dcc[idx].host, dcc[idx].port);
-  putlog(LOG_MISC, "*", "(%s %s)", BOT_DROPPINGRELAY, dcc[tidx].nick);
+  putlog(LOG_MISC, "*", _("(Dropping relay attempt to %s)"), dcc[tidx].nick);
   if ((dcc[tidx].sock != STDOUT) || backgrd) {
     if (idx > tidx) {
       int t = tidx;
@@ -1360,7 +1344,7 @@ static void failed_pre_relay(int idx)
     killsock(dcc[tidx].sock);
     lostdcc(tidx);
   } else
-    fatal("Lost my terminal?!", 0);
+    fatal(_("Lost my terminal?!"), 0);
   killsock(dcc[idx].sock);
   lostdcc(idx);
 }
@@ -1375,7 +1359,7 @@ static void cont_tandem_relay(int idx, char *buf, register int i)
         (dcc[i].u.relay->sock == dcc[idx].sock))
       uidx = i;
   if (uidx < 0) {
-    putlog(LOG_MISC, "*", "%s  %d -> %d", BOT_CANTFINDRELAYUSER,
+    putlog(LOG_MISC, "*", _("Can't find user for relay!  %d -> %d"),
            dcc[i].sock, dcc[i].u.relay->sock);
     killsock(dcc[i].sock);
     lostdcc(i);
@@ -1384,16 +1368,18 @@ static void cont_tandem_relay(int idx, char *buf, register int i)
   dcc[idx].type = &DCC_RELAY;
   dcc[idx].u.relay->sock = dcc[uidx].sock;
   dcc[uidx].u.relay->sock = dcc[idx].sock;
-  dprintf(uidx, "%s %s ...\n", BOT_RELAYSUCCESS, dcc[idx].nick);
-  dprintf(uidx, "%s\n\n", BOT_BYEINFO2);
-  putlog(LOG_MISC, "*", "%s %s -> %s", BOT_RELAYLINK,
-         dcc[uidx].nick, dcc[idx].nick);
+  dprintf(uidx, _("Success!\n\nNOW CONNECTED TO RELAY BOT %s ...\n"),
+          dcc[idx].nick);
+  dprintf(uidx, _("(You can type *BYE* to prematurely close the connection.)"
+          "\n\n"));
+  putlog(LOG_MISC, "*", _("Relay link: %s -> %s"), dcc[uidx].nick, 
+         dcc[idx].nick);
   ri = dcc[uidx].u.relay;       /* YEAH */
   dcc[uidx].type = &DCC_CHAT;
   dcc[uidx].u.chat = ri->chat;
   if (dcc[uidx].u.chat->channel >= 0) {
-    chanout_but(-1, dcc[uidx].u.chat->channel, "*** %s %s\n",
-                dcc[uidx].nick, BOT_PARTYLEFT);
+    chanout_but(-1, dcc[uidx].u.chat->channel, _("*** %s left the party line.\n"),
+                dcc[uidx].nick);
     if (dcc[uidx].u.chat->channel < GLOBAL_CHANS)
       botnet_send_part_idx(uidx, NULL);
     check_tcl_chpt(botnetnick, dcc[uidx].nick, dcc[uidx].sock,
@@ -1421,16 +1407,17 @@ static void eof_dcc_relay(int idx)
   /* In case echo was off, turn it back on (send IAC WON'T ECHO): */
   if (dcc[j].status & STAT_TELNET)
     dprintf(j, TLN_IAC_C TLN_WONT_C TLN_ECHO_C "\n");
-  putlog(LOG_MISC, "*", "%s: %s -> %s", BOT_ENDRELAY1, dcc[j].nick,
+  putlog(LOG_MISC, "*", _("Ended relay link: %s -> %s"), dcc[j].nick,
          dcc[idx].nick);
-  dprintf(j, "\n\n*** %s %s\n", BOT_ENDRELAY2, botnetnick);
+  dprintf(j, _("\n\n*** RELAY CONNECTION DROPPED.\nYou are now back on %s\n"),
+          botnetnick);
   ci = dcc[j].u.relay->chat;
   nfree(dcc[j].u.relay);
   dcc[j].u.chat = ci;
   dcc[j].type = &DCC_CHAT;
   if (dcc[j].u.chat->channel >= 0) {
-    chanout_but(-1, dcc[j].u.chat->channel, "*** %s %s.\n",
-                dcc[j].nick, BOT_PARTYREJOINED);
+    chanout_but(-1, dcc[j].u.chat->channel,
+                _("*** %s rejoined the party line..\n"), dcc[j].nick);
     if (dcc[j].u.chat->channel < GLOBAL_CHANS)
       botnet_send_join_idx(j, -1);
   }
@@ -1445,12 +1432,12 @@ static void eof_dcc_relaying(int idx)
 {
   register int j, x = dcc[idx].u.relay->sock;
 
-  putlog(LOG_MISC, "*", "%s [%s]%s/%d", BOT_LOSTDCCUSER, dcc[idx].nick,
+  putlog(LOG_MISC, "*", _("Lost dcc connection to [%s]%s/%d"), dcc[idx].nick,
          dcc[idx].host, dcc[idx].port);
   killsock(dcc[idx].sock);
   lostdcc(idx);
   for (j = 0; (dcc[j].sock != x) || (dcc[j].type == &DCC_FORK_RELAY); j++);
-  putlog(LOG_MISC, "*", "(%s %s)", BOT_DROPPEDRELAY, dcc[j].nick);
+  putlog(LOG_MISC, "*", _("(Dropping relay link to %s)"), dcc[j].nick);
   killsock(dcc[j].sock);
   lostdcc(j);                   /* Drop connection to the bot */
 }
@@ -1514,13 +1501,13 @@ static void dcc_relaying(int idx, char *buf, int j)
   /* In case echo was off, turn it back on (send IAC WON'T ECHO): */
   if (dcc[idx].status & STAT_TELNET)
     dprintf(idx, TLN_IAC_C TLN_WONT_C TLN_ECHO_C "\n");
-  dprintf(idx, "\n(%s %s.)\n", BOT_BREAKRELAY, dcc[j].nick);
-  dprintf(idx, "%s %s.\n\n", BOT_ABORTRELAY2, botnetnick);
-  putlog(LOG_MISC, "*", "%s: %s -> %s", BOT_RELAYBROKEN,
-         dcc[idx].nick, dcc[j].nick);
+  dprintf(idx, _("\n(Breaking connection to %s.)\n"), dcc[j].nick);
+  dprintf(idx, _("You are now back on %s.\n\n"), botnetnick);
+  putlog(LOG_MISC, "*", _("Relay broken: %s -> %s"), dcc[idx].nick,
+         dcc[j].nick);
   if (dcc[idx].u.relay->chat->channel >= 0) {
     chanout_but(-1, dcc[idx].u.relay->chat->channel,
-                "*** %s joined the party line.\n", dcc[idx].nick);
+                _("*** %s joined the party line.\n"), dcc[idx].nick);
     if (dcc[idx].u.relay->chat->channel < GLOBAL_CHANS)
       botnet_send_join_idx(idx, -1);
   }
@@ -1650,13 +1637,13 @@ void check_botnet_pings()
       if (dcc[i].status & STAT_PINGED) {
         char s[1024];
 
-        putlog(LOG_BOTS, "*", "%s: %s", BOT_PINGTIMEOUT, dcc[i].nick);
+        putlog(LOG_BOTS, "*", _("Ping timeout: %s"), dcc[i].nick);
         bot = findbot(dcc[i].nick);
         bots = bots_in_subtree(bot);
         users = users_in_subtree(bot);
-        simple_sprintf(s, "%s: %s (lost %d bot%s and %d user%s)",
-                       BOT_PINGTIMEOUT, dcc[i].nick, bots,
-                       (bots != 1) ? "s" : "", users, (users != 1) ? "s" : "");
+        simple_sprintf(s, _("Ping timeout: %s (lost %d %s and %d %s)"),
+                       dcc[i].nick, bots, P_("bot", "bots", bots),
+                       P_("user", "users", users));
         chatout("*** %s\n", s);
         botnet_send_unlinked(i, dcc[i].nick, s);
         killsock(dcc[i].sock);
@@ -1677,16 +1664,16 @@ void check_botnet_pings()
           if (dcc[i].status & STAT_WARNED) {
             char s[1024];
 
-            putlog(LOG_BOTS, "*", "%s %s (%s).", BOT_DISCONNECTED,
-                   dcc[i].nick, BOT_BOTNOTLEAFLIKE);
-            dprintf(i, "bye %s\n", BOT_BOTNOTLEAFLIKE);
+            putlog(LOG_BOTS, "*", _("Disconnected from: %s (unleaflike behavior)."),
+                   dcc[i].nick);
+            dprintf(i, "bye %s\n", "unleaflike behavior");
             bot = findbot(dcc[i].nick);
             bots = bots_in_subtree(bot);
             users = users_in_subtree(bot);
-            simple_sprintf(s, "%s %s (%s) (lost %d bot%s and %d user%s)",
-                           BOT_DISCONNECTED, dcc[i].nick, BOT_BOTNOTLEAFLIKE,
-                           bots, (bots != 1) ? "s" : "", users, (users != 1) ?
-                           "s" : "");
+            simple_sprintf(s, _("Disconnected from: %s (unleaflike behavior) "
+                           "(lost %d %s and %d %s)"), dcc[i].nick,
+                           bots, P_("bot", "bots", bots),
+                           users, P_("user", "users", users));
             chatout("*** %s\n", s);
             botnet_send_unlinked(i, dcc[i].nick, s);
             killsock(dcc[i].sock);
@@ -1710,9 +1697,9 @@ void zapfbot(int idx)
   bot = findbot(dcc[idx].nick);
   bots = bots_in_subtree(bot);
   users = users_in_subtree(bot);
-  simple_sprintf(s, "%s: %s (lost %d bot%s and %d user%s)", BOT_BOTDROPPED,
-                 dcc[idx].nick, bots, (bots != 1) ? "s" : "", users,
-                 (users != 1) ? "s" : "");
+  simple_sprintf(s, _("Dropped bot: %s (lost %d %s and %d %s)"), dcc[idx].nick,
+                 bots, P_("bot", "bots", bots),
+                 users, P_("user", "users", users));
   chatout("*** %s\n", s);
   botnet_send_unlinked(idx, dcc[idx].nick, s);
   killsock(dcc[idx].sock);

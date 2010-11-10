@@ -2,7 +2,7 @@
  * flags.c -- handles:
  *   all the flag matching/conversion functions in one neat package :)
  *
- * $Id: flags.c,v 1.1.1.1 2010/07/26 21:11:06 simple Exp $
+ * $Id: flags.c,v 1.1.1.1.2.1 2010/11/10 13:39:19 pseudo Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -192,55 +192,55 @@ char *maskname(int x)
 
   s[0] = 0;
   if (x & LOG_MSGS)
-    i += my_strcpy(s, "msgs, ");
+    i += my_strcpy(s, _("msgs, "));
   if (x & LOG_PUBLIC)
-    i += my_strcpy(s + i, "public, ");
+    i += my_strcpy(s + i, _("public, "));
   if (x & LOG_JOIN)
-    i += my_strcpy(s + i, "joins, ");
+    i += my_strcpy(s + i, _("joins, "));
   if (x & LOG_MODES)
-    i += my_strcpy(s + i, "kicks/modes, ");
+    i += my_strcpy(s + i, _("kicks/modes, "));
   if (x & LOG_CMDS)
-    i += my_strcpy(s + i, "cmds, ");
+    i += my_strcpy(s + i, _("cmds, "));
   if (x & LOG_MISC)
-    i += my_strcpy(s + i, "misc, ");
+    i += my_strcpy(s + i, _("misc, "));
   if (x & LOG_BOTS)
-    i += my_strcpy(s + i, "bots, ");
+    i += my_strcpy(s + i, _("bots, "));
   if ((x & LOG_RAW) && raw_log)
-    i += my_strcpy(s + i, "raw, ");
+    i += my_strcpy(s + i, _("raw, "));
   if (x & LOG_FILES)
-    i += my_strcpy(s + i, "files, ");
+    i += my_strcpy(s + i, _("files, "));
   if (x & LOG_SERV)
-    i += my_strcpy(s + i, "server, ");
+    i += my_strcpy(s + i, _("server, "));
   if (x & LOG_DEBUG)
-    i += my_strcpy(s + i, "debug, ");
+    i += my_strcpy(s + i, _("debug, "));
   if (x & LOG_WALL)
-    i += my_strcpy(s + i, "wallops, ");
+    i += my_strcpy(s + i, _("wallops, "));
   if ((x & LOG_SRVOUT) && raw_log)
-    i += my_strcpy(s + i, "server output, ");
+    i += my_strcpy(s + i, _("server output, "));
   if ((x & LOG_BOTNET) && raw_log)
-    i += my_strcpy(s + i, "botnet traffic, ");
+    i += my_strcpy(s + i, _("botnet traffic, "));
   if ((x & LOG_BOTSHARE) && raw_log)
-    i += my_strcpy(s + i, "share traffic, ");
+    i += my_strcpy(s + i, _("share traffic, "));
   if (x & LOG_LEV1)
-    i += my_strcpy(s + i, "level 1, ");
+    i += my_strcpy(s + i, _("level 1, "));
   if (x & LOG_LEV2)
-    i += my_strcpy(s + i, "level 2, ");
+    i += my_strcpy(s + i, _("level 2, "));
   if (x & LOG_LEV3)
-    i += my_strcpy(s + i, "level 3, ");
+    i += my_strcpy(s + i, _("level 3, "));
   if (x & LOG_LEV4)
-    i += my_strcpy(s + i, "level 4, ");
+    i += my_strcpy(s + i, _("level 4, "));
   if (x & LOG_LEV5)
-    i += my_strcpy(s + i, "level 5, ");
+    i += my_strcpy(s + i, _("level 5, "));
   if (x & LOG_LEV6)
-    i += my_strcpy(s + i, "level 6, ");
+    i += my_strcpy(s + i, _("level 6, "));
   if (x & LOG_LEV7)
-    i += my_strcpy(s + i, "level 7, ");
+    i += my_strcpy(s + i, _("level 7, "));
   if (x & LOG_LEV8)
-    i += my_strcpy(s + i, "level 8, ");
+    i += my_strcpy(s + i, _("level 8, "));
   if (i)
     s[i - 2] = 0;
   else
-    strcpy(s, "none");
+    strcpy(s, _("none"));
   return s;
 }
 
@@ -814,7 +814,7 @@ static void botfl_display(int idx, struct user_entry *e)
 
   fr.bot = e->u.ulong;
   build_flags(x, &fr, NULL);
-  dprintf(idx, "  BOT FLAGS: %s\n", x);
+  dprintf(idx, _("  BOT FLAGS: %s\n"), x);
 }
 
 struct user_entry_type USERENTRY_BOTFL = {
