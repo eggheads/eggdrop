@@ -1,7 +1,7 @@
 /*
  * userchan.c -- part of channels.mod
  *
- * $Id: userchan.c,v 1.2 2010/08/05 18:12:05 pseudo Exp $
+ * $Id: userchan.c,v 1.2.2.1 2010/11/11 20:34:47 pseudo Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -427,7 +427,7 @@ static int u_addban(struct chanset_t *chan, char *ban, char *from, char *note,
     simple_sprintf(s, "%s!%s", me->funcs[SERVER_BOTNAME],
                    me->funcs[SERVER_BOTUSERHOST]);
     if (match_addr(host, s)) {
-      putlog(LOG_MISC, "*", IRC_IBANNEDME);
+      putlog(LOG_MISC, "*", _("Wanted to ban myself--deflected."));
       return 0;
     }
   }
@@ -648,36 +648,35 @@ static void display_ban(int idx, int number, maskrec *ban,
 
   if (ban->added) {
     daysago(now, ban->added, s);
-    sprintf(dates, "%s %s", MODES_CREATED, s);
     if (ban->added < ban->lastactive) {
-      strcat(dates, ", ");
-      strcat(dates, MODES_LASTUSED);
-      strcat(dates, " ");
+      sprintf(dates, _("Created %s, last used "), s);
       daysago(now, ban->lastactive, s);
       strcat(dates, s);
     }
+    else
+      sprintf(dates, _("Created %s"), s);
   } else
     dates[0] = 0;
   if (ban->flags & MASKREC_PERM)
-    strcpy(s, "(perm)");
+    strcpy(s, _("(perm)"));
   else {
     char s1[41];
 
     days(ban->expire, now, s1);
-    sprintf(s, "(expires %s)", s1);
+    sprintf(s, _("(expires %s)"), s1);
   }
   if (ban->flags & MASKREC_STICKY)
-    strcat(s, " (sticky)");
+    strcat(s, _(" (sticky)"));
   if (!chan || ischanban(chan, ban->mask)) {
     if (number >= 0)
       dprintf(idx, "  [%3d] %s %s\n", number, ban->mask, s);
     else
-      dprintf(idx, "BAN: %s %s\n", ban->mask, s);
+      dprintf(idx, _("BAN: %s %s\n"), ban->mask, s);
   } else if (show_inact) {
     if (number >= 0)
       dprintf(idx, "! [%3d] %s %s\n", number, ban->mask, s);
     else
-      dprintf(idx, "BAN (%s): %s %s\n", MODES_INACTIVE, ban->mask, s);
+      dprintf(idx, _("BAN (inactive): %s %s\n"), ban->mask, s);
   } else
     return;
   dprintf(idx, "        %s: %s\n", ban->user, ban->desc);
@@ -694,36 +693,35 @@ static void display_exempt(int idx, int number, maskrec *exempt,
 
   if (exempt->added) {
     daysago(now, exempt->added, s);
-    sprintf(dates, "%s %s", MODES_CREATED, s);
     if (exempt->added < exempt->lastactive) {
-      strcat(dates, ", ");
-      strcat(dates, MODES_LASTUSED);
-      strcat(dates, " ");
+      sprintf(dates, _("Created %s, last used "), s);
       daysago(now, exempt->lastactive, s);
       strcat(dates, s);
     }
+    else
+      sprintf(dates, _("Created %s"), s);
   } else
     dates[0] = 0;
   if (exempt->flags & MASKREC_PERM)
-    strcpy(s, "(perm)");
+    strcpy(s, _("(perm)"));
   else {
     char s1[41];
 
     days(exempt->expire, now, s1);
-    sprintf(s, "(expires %s)", s1);
+    sprintf(s, _("(expires %s)"), s1);
   }
   if (exempt->flags & MASKREC_STICKY)
-    strcat(s, " (sticky)");
+    strcat(s, _(" (sticky)"));
   if (!chan || ischanexempt(chan, exempt->mask)) {
     if (number >= 0)
       dprintf(idx, "  [%3d] %s %s\n", number, exempt->mask, s);
     else
-      dprintf(idx, "EXEMPT: %s %s\n", exempt->mask, s);
+      dprintf(idx, _("EXEMPT: %s %s\n"), exempt->mask, s);
   } else if (show_inact) {
     if (number >= 0)
       dprintf(idx, "! [%3d] %s %s\n", number, exempt->mask, s);
     else
-      dprintf(idx, "EXEMPT (%s): %s %s\n", MODES_INACTIVE, exempt->mask, s);
+      dprintf(idx, _("EXEMPT (inactive): %s %s\n"), exempt->mask, s);
   } else
     return;
   dprintf(idx, "        %s: %s\n", exempt->user, exempt->desc);
@@ -740,36 +738,35 @@ static void display_invite(int idx, int number, maskrec *invite,
 
   if (invite->added) {
     daysago(now, invite->added, s);
-    sprintf(dates, "%s %s", MODES_CREATED, s);
     if (invite->added < invite->lastactive) {
-      strcat(dates, ", ");
-      strcat(dates, MODES_LASTUSED);
-      strcat(dates, " ");
+      sprintf(dates, _("Created %s, last used "), s);
       daysago(now, invite->lastactive, s);
       strcat(dates, s);
     }
+    else
+      sprintf(dates, _("Created %s"), s);
   } else
     dates[0] = 0;
   if (invite->flags & MASKREC_PERM)
-    strcpy(s, "(perm)");
+    strcpy(s, _("(perm)"));
   else {
     char s1[41];
 
     days(invite->expire, now, s1);
-    sprintf(s, "(expires %s)", s1);
+    sprintf(s, _("(expires %s)"), s1);
   }
   if (invite->flags & MASKREC_STICKY)
-    strcat(s, " (sticky)");
+    strcat(s, _(" (sticky)"));
   if (!chan || ischaninvite(chan, invite->mask)) {
     if (number >= 0)
       dprintf(idx, "  [%3d] %s %s\n", number, invite->mask, s);
     else
-      dprintf(idx, "INVITE: %s %s\n", invite->mask, s);
+      dprintf(idx, _("INVITE: %s %s\n"), invite->mask, s);
   } else if (show_inact) {
     if (number >= 0)
       dprintf(idx, "! [%3d] %s %s\n", number, invite->mask, s);
     else
-      dprintf(idx, "INVITE (%s): %s %s\n", MODES_INACTIVE, invite->mask, s);
+      dprintf(idx, _("INVITE (inactive): %s %s\n"), invite->mask, s);
   } else
     return;
   dprintf(idx, "        %s: %s\n", invite->user, invite->desc);
@@ -790,7 +787,7 @@ static void tell_bans(int idx, int show_inact, char *match)
     if (chname[0] && (strchr(CHANMETA, chname[0]))) {
       chan = findchan_by_dname(chname);
       if (!chan) {
-        dprintf(idx, "%s.\n", CHAN_NOSUCH);
+        dprintf(idx, _("No such channel defined.\n"));
         return;
       }
     } else
@@ -803,10 +800,9 @@ static void tell_bans(int idx, int show_inact, char *match)
     chan = NULL;
 
   if (chan && show_inact)
-    dprintf(idx, "%s:   (! = %s %s)\n", BANS_GLOBAL,
-            MODES_NOTACTIVE, chan->dname);
+    dprintf(idx, _("Global bans:   (! = not active on %s)\n"), chan->dname);
   else
-    dprintf(idx, "%s:\n", BANS_GLOBAL);
+    dprintf(idx, _("Global bans:\n"));
   for (u = global_bans; u; u = u->next) {
     if (match[0]) {
       if ((match_addr(match, u->mask)) ||
@@ -818,11 +814,11 @@ static void tell_bans(int idx, int show_inact, char *match)
   }
   if (chan) {
     if (show_inact)
-      dprintf(idx, "%s %s:   (! = %s, * = %s)\n",
-              BANS_BYCHANNEL, chan->dname, MODES_NOTACTIVE2, MODES_NOTBYBOT);
+      dprintf(idx, _("Channel bans for %s:   (! = not active, "
+              "* = not placed by bot)\n"), chan->dname);
     else
-      dprintf(idx, "%s %s:  (* = %s)\n",
-              BANS_BYCHANNEL, chan->dname, MODES_NOTBYBOT);
+      dprintf(idx, "Channel bans for %s:  (* = not placed by bot)\n",
+              chan->dname);
     for (u = chan->bans; u; u = u->next) {
       if (match[0]) {
         if ((match_addr(match, u->mask)) ||
@@ -846,12 +842,12 @@ static void tell_bans(int idx, int show_inact, char *match)
           if (s1[0])
             sprintf(fill, "%s (%s!%s)", b->mask, s1, s2);
           else
-            sprintf(fill, "%s (server %s)", b->mask, s2);
+            snprintf(fill, sizeof fill, _("%s (server %s)"), b->mask, s2);
           if (b->timer != 0) {
             min = (now - b->timer) / 60;
             sec = (now - b->timer) - (min * 60);
-            sprintf(s, " (active %02d:%02d)", min, sec);
-            strcat(fill, s);
+            sprintf(s, _(" (active %02d:%02d)"), min, sec);
+            strncat(fill, s, sizeof fill);
           }
           if ((!match[0]) || (match_addr(match, b->mask)))
             dprintf(idx, "* [%3d] %s\n", k, fill);
@@ -861,9 +857,9 @@ static void tell_bans(int idx, int show_inact, char *match)
     }
   }
   if (k == 1)
-    dprintf(idx, "(There are no bans, permanent or otherwise.)\n");
+    dprintf(idx, _("(There are no bans, permanent or otherwise.)\n"));
   if ((!show_inact) && (!match[0]))
-    dprintf(idx, "%s.\n", BANS_USEBANSALL);
+    dprintf(idx, _("Use '.bans all' to see the total list.\n"));
 }
 
 static void tell_exempts(int idx, int show_inact, char *match)
@@ -879,7 +875,7 @@ static void tell_exempts(int idx, int show_inact, char *match)
     if (chname[0] && strchr(CHANMETA, chname[0])) {
       chan = findchan_by_dname(chname);
       if (!chan) {
-        dprintf(idx, "%s.\n", CHAN_NOSUCH);
+        dprintf(idx, _("No such channel defined.\n"));
         return;
       }
     } else
@@ -892,10 +888,9 @@ static void tell_exempts(int idx, int show_inact, char *match)
     chan = NULL;
 
   if (chan && show_inact)
-    dprintf(idx, "%s:   (! = %s %s)\n", EXEMPTS_GLOBAL,
-            MODES_NOTACTIVE, chan->dname);
+    dprintf(idx, _("Global exempts:   (! = not active on %s)\n"), chan->dname);
   else
-    dprintf(idx, "%s:\n", EXEMPTS_GLOBAL);
+    dprintf(idx, _("Global exempts:\n"));
   for (u = global_exempts; u; u = u->next) {
     if (match[0]) {
       if ((match_addr(match, u->mask)) ||
@@ -907,11 +902,11 @@ static void tell_exempts(int idx, int show_inact, char *match)
   }
   if (chan) {
     if (show_inact)
-      dprintf(idx, "%s %s:   (! = %s, * = %s)\n", EXEMPTS_BYCHANNEL,
-              chan->dname, MODES_NOTACTIVE2, MODES_NOTBYBOT);
+      dprintf(idx, _("Channel exempts for %s:   (! = not active, "
+              "* = not placed by bot)\n"), chan->dname);
     else
-      dprintf(idx, "%s %s:  (* = %s)\n",
-              EXEMPTS_BYCHANNEL, chan->dname, MODES_NOTBYBOT);
+      dprintf(idx, _("Channel exempts for %s:  (* = not placed by bot)\n"),
+              chan->dname);
     for (u = chan->exempts; u; u = u->next) {
       if (match[0]) {
         if ((match_addr(match, u->mask)) ||
@@ -935,11 +930,11 @@ static void tell_exempts(int idx, int show_inact, char *match)
           if (s1[0])
             sprintf(fill, "%s (%s!%s)", e->mask, s1, s2);
           else
-            sprintf(fill, "%s (server %s)", e->mask, s2);
+            sprintf(fill, _("%s (server %s)"), e->mask, s2);
           if (e->timer != 0) {
             min = (now - e->timer) / 60;
             sec = (now - e->timer) - (min * 60);
-            sprintf(s, " (active %02d:%02d)", min, sec);
+            sprintf(s, _(" (active %02d:%02d)"), min, sec);
             strcat(fill, s);
           }
           if ((!match[0]) || (match_addr(match, e->mask)))
@@ -950,9 +945,9 @@ static void tell_exempts(int idx, int show_inact, char *match)
     }
   }
   if (k == 1)
-    dprintf(idx, "(There are no ban exempts, permanent or otherwise.)\n");
+    dprintf(idx, _("(There are no ban exempts, permanent or otherwise.)\n"));
   if ((!show_inact) && (!match[0]))
-    dprintf(idx, "%s.\n", EXEMPTS_USEEXEMPTSALL);
+    dprintf(idx, _("Use '.exempts all' to see the total list.\n"));
 }
 
 static void tell_invites(int idx, int show_inact, char *match)
@@ -968,7 +963,7 @@ static void tell_invites(int idx, int show_inact, char *match)
     if (chname[0] && strchr(CHANMETA, chname[0])) {
       chan = findchan_by_dname(chname);
       if (!chan) {
-        dprintf(idx, "%s.\n", CHAN_NOSUCH);
+        dprintf(idx, _("No such channel defined.\n"));
         return;
       }
     } else
@@ -981,10 +976,9 @@ static void tell_invites(int idx, int show_inact, char *match)
     chan = NULL;
 
   if (chan && show_inact)
-    dprintf(idx, "%s:   (! = %s %s)\n", INVITES_GLOBAL,
-            MODES_NOTACTIVE, chan->dname);
+    dprintf(idx, _("Global invites:   (! = not active on %s)\n"), chan->dname);
   else
-    dprintf(idx, "%s:\n", INVITES_GLOBAL);
+    dprintf(idx, _("Global invites:\n"));
   for (u = global_invites; u; u = u->next) {
     if (match[0]) {
       if ((match_addr(match, u->mask)) ||
@@ -996,11 +990,11 @@ static void tell_invites(int idx, int show_inact, char *match)
   }
   if (chan) {
     if (show_inact)
-      dprintf(idx, "%s %s:   (! = %s, * = %s)\n", INVITES_BYCHANNEL,
-              chan->dname, MODES_NOTACTIVE2, MODES_NOTBYBOT);
+      dprintf(idx, _("Channel invites for %s:   (! = not active, "
+              "* = not placed by bot)\n"), chan->dname);
     else
-      dprintf(idx, "%s %s:  (* = %s)\n",
-              INVITES_BYCHANNEL, chan->dname, MODES_NOTBYBOT);
+      dprintf(idx, _("Channel invites for %s:  (* = not placed by bot)\n"),
+              chan->dname);
     for (u = chan->invites; u; u = u->next) {
       if (match[0]) {
         if ((match_addr(match, u->mask)) ||
@@ -1024,11 +1018,11 @@ static void tell_invites(int idx, int show_inact, char *match)
           if (s1[0])
             sprintf(fill, "%s (%s!%s)", i->mask, s1, s2);
           else
-            sprintf(fill, "%s (server %s)", i->mask, s2);
+            sprintf(fill, _("%s (server %s)"), i->mask, s2);
           if (i->timer != 0) {
             min = (now - i->timer) / 60;
             sec = (now - i->timer) - (min * 60);
-            sprintf(s, " (active %02d:%02d)", min, sec);
+            sprintf(s, _(" (active %02d:%02d)"), min, sec);
             strcat(fill, s);
           }
           if ((!match[0]) || (match_addr(match, i->mask)))
@@ -1039,9 +1033,9 @@ static void tell_invites(int idx, int show_inact, char *match)
     }
   }
   if (k == 1)
-    dprintf(idx, "(There are no invites, permanent or otherwise.)\n");
+    dprintf(idx, _("(There are no invites, permanent or otherwise.)\n"));
   if ((!show_inact) && (!match[0]))
-    dprintf(idx, "%s.\n", INVITES_USEINVITESALL);
+    dprintf(idx, _("Use '.invites all' to see the total list.\n"));
 }
 
 /* Write the ban lists and the ignore list to a file.
@@ -1239,7 +1233,7 @@ static void channels_writeuserfile(void)
     fclose(f);
   }
   if (ret < 3)
-    putlog(LOG_MISC, "*", USERF_ERRWRITE);
+    putlog(LOG_MISC, "*", _("ERROR writing user file."));
   write_channels();
 }
 
@@ -1309,7 +1303,7 @@ static void check_expired_bans(void)
   for (u = global_bans; u; u = u2) {
     u2 = u->next;
     if (!(u->flags & MASKREC_PERM) && (now >= u->expire)) {
-      putlog(LOG_MISC, "*", "%s %s (%s)", BANS_NOLONGER, u->mask, MISC_EXPIRED);
+      putlog(LOG_MISC, "*", _("No longer banning %s (expired)"), u->mask);
       for (chan = chanset; chan; chan = chan->next)
         for (b = chan->channel.ban; b->mask[0]; b = b->next)
           if (!rfc_casecmp(b->mask, u->mask) &&
@@ -1325,8 +1319,8 @@ static void check_expired_bans(void)
     for (u = chan->bans; u; u = u2) {
       u2 = u->next;
       if (!(u->flags & MASKREC_PERM) && (now >= u->expire)) {
-        putlog(LOG_MISC, "*", "%s %s %s %s (%s)", BANS_NOLONGER,
-               u->mask, MISC_ONLOCALE, chan->dname, MISC_EXPIRED);
+        putlog(LOG_MISC, "*", _("No longer banning %s on %s (expired)"),
+               u->mask, chan->dname);
         for (b = chan->channel.ban; b->mask[0]; b = b->next)
           if (!rfc_casecmp(b->mask, u->mask) &&
               expired_mask(chan, b->who) && b->timer != now) {
@@ -1353,8 +1347,7 @@ static void check_expired_exempts(void)
   for (u = global_exempts; u; u = u2) {
     u2 = u->next;
     if (!(u->flags & MASKREC_PERM) && (now >= u->expire)) {
-      putlog(LOG_MISC, "*", "%s %s (%s)", EXEMPTS_NOLONGER,
-             u->mask, MISC_EXPIRED);
+      putlog(LOG_MISC, "*", _("No longer ban exempting %s (expired)"), u->mask);
       for (chan = chanset; chan; chan = chan->next) {
         match = 0;
         b = chan->channel.ban;
@@ -1366,7 +1359,7 @@ static void check_expired_exempts(void)
         }
         if (match)
           putlog(LOG_MISC, chan->dname,
-                 "Exempt not expired on channel %s. Ban still set!",
+                 _("Exempt not expired on channel %s. Ban still set!"),
                  chan->dname);
         else
           for (e = chan->channel.exempt; e->mask[0]; e = e->next)
@@ -1394,11 +1387,11 @@ static void check_expired_exempts(void)
         }
         if (match)
           putlog(LOG_MISC, chan->dname,
-                 "Exempt not expired on channel %s. Ban still set!",
+                 _("Exempt not expired on channel %s. Ban still set!"),
                  chan->dname);
         else {
-          putlog(LOG_MISC, "*", "%s %s %s %s (%s)", EXEMPTS_NOLONGER,
-                 u->mask, MISC_ONLOCALE, chan->dname, MISC_EXPIRED);
+          putlog(LOG_MISC, "*", "No longer ban exempting %s on %s (expired)",
+                 u->mask, chan->dname);
           for (e = chan->channel.exempt; e->mask[0]; e = e->next)
             if (!rfc_casecmp(e->mask, u->mask) &&
                 expired_mask(chan, e->who) && e->timer != now) {
@@ -1425,8 +1418,7 @@ static void check_expired_invites(void)
   for (u = global_invites; u; u = u2) {
     u2 = u->next;
     if (!(u->flags & MASKREC_PERM) && (now >= u->expire)) {
-      putlog(LOG_MISC, "*", "%s %s (%s)", INVITES_NOLONGER,
-             u->mask, MISC_EXPIRED);
+      putlog(LOG_MISC, "*", _("No longer inviting %s (expired)"), u->mask);
       for (chan = chanset; chan; chan = chan->next)
         if (!(chan->channel.mode & CHANINV))
           for (b = chan->channel.invite; b->mask[0]; b = b->next)
@@ -1443,8 +1435,8 @@ static void check_expired_invites(void)
     for (u = chan->invites; u; u = u2) {
       u2 = u->next;
       if (!(u->flags & MASKREC_PERM) && (now >= u->expire)) {
-        putlog(LOG_MISC, "*", "%s %s %s %s (%s)", INVITES_NOLONGER,
-               u->mask, MISC_ONLOCALE, chan->dname, MISC_EXPIRED);
+        putlog(LOG_MISC, "*", _("No longer inviting %s on %s (expired)"),
+               u->mask, chan->dname);
         if (!(chan->channel.mode & CHANINV))
           for (b = chan->channel.invite; b->mask[0]; b = b->next)
             if (!rfc_casecmp(b->mask, u->mask) &&

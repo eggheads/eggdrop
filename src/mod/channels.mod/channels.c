@@ -2,7 +2,7 @@
  * channels.c -- part of channels.mod
  *   support for channels within the bot
  *
- * $Id: channels.c,v 1.2 2010/07/27 21:49:42 pseudo Exp $
+ * $Id: channels.c,v 1.2.2.1 2010/11/11 20:34:47 pseudo Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -394,11 +394,11 @@ static void write_channels()
   f = fopen(s, "w");
   chmod(s, userfile_perm);
   if (f == NULL) {
-    putlog(LOG_MISC, "*", "ERROR writing channel file.");
+    putlog(LOG_MISC, "*", _("ERROR writing channel file."));
     return;
   }
   if (!quiet_save)
-    putlog(LOG_MISC, "*", "Writing channel file...");
+    putlog(LOG_MISC, "*", _("Writing channel file..."));
   fprintf(f, "#Dynamic Channel File for %s (%s) -- written %s\n",
           botnetnick, ver, ctime(&now));
   for (chan = chanset; chan; chan = chan->next) {
@@ -478,7 +478,7 @@ static void write_channels()
       }
     }
     if (fflush(f)) {
-      putlog(LOG_MISC, "*", "ERROR writing channel file.");
+      putlog(LOG_MISC, "*", _("ERROR writing channel file."));
       fclose(f);
       return;
     }
@@ -504,10 +504,10 @@ static void read_channels(int create, int reload)
     FILE *f;
 
     /* Assume file isnt there & therfore make it */
-    putlog(LOG_MISC, "*", "Creating channel file");
+    putlog(LOG_MISC, "*", _("Creating channel file"));
     f = fopen(chanfile, "w");
     if (!f)
-      putlog(LOG_MISC, "*", "Couldn't create channel file: %s.  Dropping",
+      putlog(LOG_MISC, "*", _("Couldn't create channel file: %s.  Dropping"),
              chanfile);
     else
       fclose(f);
@@ -518,7 +518,7 @@ static void read_channels(int create, int reload)
   for (chan = chanset; chan; chan = chan_next) {
     chan_next = chan->next;
     if (chan->status & CHAN_FLAGGED) {
-      putlog(LOG_MISC, "*", "No longer supporting channel %s", chan->dname);
+      putlog(LOG_MISC, "*", _("No longer supporting channel %s"), chan->dname);
       remove_channel(chan);
     }
   }
@@ -529,7 +529,7 @@ static void backup_chanfile()
   char s[125];
 
   if (quiet_save < 2)
-    putlog(LOG_MISC, "*", "Backing up channel file...");
+    putlog(LOG_MISC, "*", _("Backing up channel file..."));
   egg_snprintf(s, sizeof s, "%s~bak", chanfile);
   copyfile(chanfile, s);
 }
@@ -573,11 +573,11 @@ static void channels_report(int idx, int details)
     sprintf(s, "    %-20s: ", chan->dname);
 
     if (channel_inactive(chan))
-      strcat(s, "(inactive)");
+      strcat(s, _("(inactive)"));
     else if (channel_pending(chan))
-      strcat(s, "(pending)");
+      strcat(s, _("(pending)"));
     else if (!channel_active(chan))
-      strcat(s, "(not on channel)");
+      strcat(s, _("(not on channel)"));
     else {
 
       s1[0] = 0;
@@ -590,7 +590,7 @@ static void channels_report(int idx, int details)
 
       if (s2[0]) {
         s1[0] = 0;
-        sprintf(s1, ", enforcing \"%s\"", s2);
+        sprintf(s1, _(", enforcing \"%s\""), s2);
         strcat(s, s1);
       }
 
@@ -678,28 +678,29 @@ static void channels_report(int idx, int details)
       if (channel_nodesynch(chan))
         i += my_strcpy(s + i, "nodesynch ");
 
-      dprintf(idx, "      Options: %s\n", s);
+      dprintf(idx, _("      Options: %s\n"), s);
 
       if (chan->need_op[0])
-        dprintf(idx, "      To get ops, I do: %s\n", chan->need_op);
+        dprintf(idx, _("      To get ops, I do: %s\n"), chan->need_op);
 
       if (chan->need_invite[0])
-        dprintf(idx, "      To get invited, I do: %s\n", chan->need_invite);
+        dprintf(idx, _("      To get invited, I do: %s\n"), chan->need_invite);
 
       if (chan->need_limit[0])
-        dprintf(idx, "      To get the channel limit raised, I do: %s\n",
+        dprintf(idx, _("      To get the channel limit raised, I do: %s\n"),
                 chan->need_limit);
 
       if (chan->need_unban[0])
-        dprintf(idx, "      To get unbanned, I do: %s\n", chan->need_unban);
+        dprintf(idx, _("      To get unbanned, I do: %s\n"), chan->need_unban);
 
       if (chan->need_key[0])
-        dprintf(idx, "      To get the channel key, I do: %s\n",
+        dprintf(idx, _("      To get the channel key, I do: %s\n"),
                 chan->need_key);
 
       if (chan->idle_kick)
-        dprintf(idx, "      Kicking idle users after %d minute%s\n",
-                chan->idle_kick, (chan->idle_kick != 1) ? "s" : "");
+        dprintf(idx, P_("      Kicking idle users after a minute\n",
+                "      Kicking idle users after %d minutes\n",
+                chan->idle_kick), chan->idle_kick);
 
       if (chan->stopnethack_mode)
         dprintf(idx, "      stopnethack-mode: %d\n", chan->stopnethack_mode);
@@ -708,12 +709,13 @@ static void channels_report(int idx, int details)
         dprintf(idx, "      revenge-mode: %d\n", chan->revenge_mode);
 
       dprintf(idx, "      ban-type: %d\n", chan->ban_type);
-      dprintf(idx, "      Bans last %d minute%s.\n", chan->ban_time,
-               (chan->ban_time == 1) ? "" : "s");
-      dprintf(idx, "      Exemptions last %d minute%s.\n", chan->exempt_time,
-               (chan->exempt_time == 1) ? "" : "s");
-      dprintf(idx, "      Invitations last %d minute%s.\n", chan->invite_time,
-               (chan->invite_time == 1) ? "" : "s");
+      dprintf(idx, P_("      Bans last one minute.\n", "      Bans last "
+              "%d minutes.\n", chan->ban_time), chan->ban_time);
+      dprintf(idx, P_("      Exempts last one minute.\n", "      Exempts last "
+              "%d minutes.\n", chan->exempt_time), chan->exempt_time);
+      dprintf(idx, P_("      Invitations last one minute.\n",
+              "      Invitations last %d minutes.\n", chan->invite_time),
+              chan->invite_time);
     }
   }
 }
@@ -994,7 +996,7 @@ char *channels_start(Function *global_funcs)
   module_register(MODULE_NAME, channels_table, 1, 2);
   if (!module_depend(MODULE_NAME, "eggdrop", 108, 0)) {
     module_undepend(MODULE_NAME);
-    return "This module requires Eggdrop 1.8.0 or later.";
+    return _("This module requires Eggdrop 1.8.0 or later.");
   }
   add_hook(HOOK_MINUTELY, (Function) check_expired_bans);
   add_hook(HOOK_MINUTELY, (Function) check_expired_exempts);

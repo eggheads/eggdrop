@@ -1,7 +1,7 @@
 /*
  * transfer.h -- part of transfer.mod
  *
- * $Id: transfer.h,v 1.1.1.1 2010/07/26 21:11:06 simple Exp $
+ * $Id: transfer.h,v 1.1.1.1.2.1 2010/11/11 20:34:47 pseudo Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -86,7 +86,6 @@ enum dccsend_types {
 #define TRANSFER_USERFILE_TIMEOUT   get_language(0xf2b)
 #define TRANSFER_DICONNECT_TIMEOUT  get_language(0xf2c)
 #define TRANSFER_NOTICE_TIMEOUT     get_language(0xf2d)
-#define TRANSFER_LOG_TIMEOUT        get_language(0xf2e)
 #define TRANSFER_DCC_GET_TIMEOUT    get_language(0xf2f)
 #define TRANSFER_DCC_SEND_TIMEOUT   get_language(0xf30)
 #define TRANSFER_SEND               get_language(0xf31)

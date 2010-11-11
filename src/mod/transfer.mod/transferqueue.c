@@ -1,7 +1,7 @@
 /*
  * transferqueue.c -- part of transfer.mod
  *
- * $Id: transferqueue.c,v 1.1.1.1 2010/07/26 21:11:06 simple Exp $
+ * $Id: transferqueue.c,v 1.1.1.1.2.1 2010/11/11 20:34:47 pseudo Exp $
  *
  * Copyright (C) 2003 - 2010 Eggheads Development Team
  *
@@ -121,9 +121,10 @@ static void send_next_file(char *to)
     s1 = nmalloc(strlen(tempdir) + strlen(this->file) + 1);
     sprintf(s1, "%s%s", tempdir, this->file);
     if (copyfile(s, s1) != 0) {
-      putlog(LOG_FILES | LOG_MISC, "*", TRANSFER_COPY_FAILED, this->file,
-             tempdir);
-      dprintf(DP_HELP, TRANSFER_FILESYS_BROKEN, this->to);
+      putlog(LOG_FILES | LOG_MISC, "*", _("Refused dcc get %s: copy to %s "
+             "FAILED!"), this->file, tempdir);
+      dprintf(DP_HELP, _("NOTICE %s :File system is broken; "
+              "aborting queued files.\n"), this->to);
       strcpy(s, this->to);
       flush_fileq(s);
       nfree(s1);
@@ -144,7 +145,8 @@ static void send_next_file(char *to)
   x = raw_dcc_send(s1, this->to, this->nick, s);
   if (x == DCCSEND_OK) {
     if (egg_strcasecmp(this->to, this->nick))
-      dprintf(DP_HELP, TRANSFER_FILE_ARRIVE, this->to, this->nick);
+      dprintf(DP_HELP, _("NOTICE %s :Here is a file from %s ...\n"), this->to,
+              this->nick);
     deq_this(this);
     nfree(s);
     nfree(s1);
@@ -152,19 +154,24 @@ static void send_next_file(char *to)
   }
   wipe_tmp_filename(s1, -1);
   if (x == DCCSEND_FULL) {
-    putlog(LOG_FILES, "*", TRANSFER_LOG_CONFULL, s1, this->nick);
-    dprintf(DP_HELP, TRANSFER_NOTICE_CONFULL, this->to);
+    putlog(LOG_FILES, "*", _("DCC connections full: GET %s [%s]"), s1,
+           this->nick);
+    dprintf(DP_HELP, _("NOTICE %s :DCC connections full; "
+            "aborting queued files.\n"), this->to);
     strcpy(s, this->to);
     flush_fileq(s);
   } else if (x == DCCSEND_NOSOCK) {
-    putlog(LOG_FILES, "*", TRANSFER_LOG_SOCKERR, s1, this->nick);
-    dprintf(DP_HELP, TRANSFER_NOTICE_SOCKERR, this->to);
+    putlog(LOG_FILES, "*", _("DCC socket error: GET %s [%s]"), s1, this->nick);
+    dprintf(DP_HELP, _("NOTICE %s :DCC socket error; aborting queued files.\n"),
+            this->to);
     strcpy(s, this->to);
     flush_fileq(s);
   } else {
     if (x == DCCSEND_FEMPTY) {
-      putlog(LOG_FILES, "*", TRANSFER_LOG_FILEEMPTY, this->file);
-      dprintf(DP_HELP, TRANSFER_NOTICE_FILEEMPTY, this->to, this->file);
+      putlog(LOG_FILES, "*", _("Aborted dcc get %s: File is empty!"),
+             this->file);
+      dprintf(DP_HELP, _("NOTICE %s :File %s is empty  aborting transfer.\n"),
+              this->to, this->file);
     }
     deq_this(this);
   }
@@ -184,8 +191,8 @@ static void show_queued_files(int idx)
     if (!egg_strcasecmp(q->nick, dcc[idx].nick)) {
       if (!cnt) {
         spaces[HANDLEN - 9] = 0;
-        dprintf(idx, TRANSFER_SEND_TO, spaces);
-        dprintf(idx, TRANSFER_LINES, spaces);
+        dprintf(idx, _("  Send to  %s  Filename\n"), spaces);
+        dprintf(idx, _("  ---------%s  --------------------\n"), spaces);
         spaces[HANDLEN - 9] = ' ';
       }
       cnt++;
@@ -206,8 +213,8 @@ static void show_queued_files(int idx)
 
       if (!cnt) {
         spaces[HANDLEN - 9] = 0;
-        dprintf(idx, TRANSFER_SEND_TO, spaces);
-        dprintf(idx, TRANSFER_LINES, spaces);
+        dprintf(idx, _("  Send to  %s  Filename\n"), spaces);
+        dprintf(idx, _("  ---------%s  --------------------\n"), spaces);
         spaces[HANDLEN - 9] = ' ';
       }
       nfn = strrchr(dcc[i].u.xfer->origname, '/');
@@ -218,17 +225,18 @@ static void show_queued_files(int idx)
       cnt++;
       spaces[len = HANDLEN - strlen(dcc[i].nick)] = 0;
       if (dcc[i].type == &DCC_GET_PENDING)
-        dprintf(idx, TRANSFER_WAITING, dcc[i].nick, spaces, nfn);
+        dprintf(idx, _("  %s%s  %s  [WAITING]\n"), dcc[i].nick, spaces, nfn);
       else
-        dprintf(idx, TRANSFER_DONE, dcc[i].nick, spaces, nfn, (100.0 *
-                ((float) dcc[i].status / (float) dcc[i].u.xfer->length)));
+        dprintf(idx, _("  %s%s  %s  (%.1f%% done)\n"), dcc[i].nick, spaces, nfn,
+                (100.0 * ((float) dcc[i].status /
+                (float) dcc[i].u.xfer->length)));
       spaces[len] = ' ';
     }
   }
   if (!cnt)
-    dprintf(idx, TRANSFER_QUEUED_UP);
+    dprintf(idx, _("No files queued up.\n"));
   else
-    dprintf(idx, TRANSFER_TOTAL, cnt);
+    dprintf(idx, _("Total: %d\n"), cnt);
 }
 
 static void fileq_cancel(int idx, char *par)
@@ -248,14 +256,14 @@ static void fileq_cancel(int idx, char *par)
         else
           sprintf(s, "/%s%s%s", q->dir, q->dir[0] ? "/" : "", q->file);
         if (wild_match_file(par, s)) {
-          dprintf(idx, TRANSFER_CANCELLED, s, q->to);
+          dprintf(idx, _("Cancelled: %s to %s\n"), s, q->to);
           fnd = 1;
           deq_this(q);
           q = NULL;
           matches++;
         }
         if (!fnd && wild_match_file(par, q->file)) {
-          dprintf(idx, TRANSFER_CANCELLED, s, q->to);
+          dprintf(idx, _("Cancelled: %s to %s\n"), s, q->to);
           fnd = 1;
           deq_this(q);
           q = NULL;
@@ -281,13 +289,13 @@ static void fileq_cancel(int idx, char *par)
       else
         nfn++;
       if (wild_match_file(par, nfn)) {
-        dprintf(idx, TRANSFER_ABORT_DCCSEND, nfn);
+        dprintf(idx, _("Cancelled: %s  (aborted dcc send)\n"), nfn);
         if (egg_strcasecmp(dcc[i].nick, dcc[idx].nick))
-          dprintf(DP_HELP, TRANSFER_NOTICE_ABORT, dcc[i].nick, nfn,
-                  dcc[idx].nick);
+          dprintf(DP_HELP, _("NOTICE %s :Transfer of %s aborted by %s\n"),
+                  dcc[i].nick, nfn, dcc[idx].nick);
         if (dcc[i].type == &DCC_GET)
-          putlog(LOG_FILES, "*", TRANSFER_DCC_CANCEL, nfn, dcc[i].nick,
-                 dcc[i].status, dcc[i].u.xfer->length);
+          putlog(LOG_FILES, "*", _("DCC cancel: GET %s (%s) at %lu/%lu"), nfn,
+                 dcc[i].nick, dcc[i].status, dcc[i].u.xfer->length);
         wipe_tmp_filename(dcc[i].u.xfer->filename, i);
         atot++;
         matches++;
@@ -297,9 +305,10 @@ static void fileq_cancel(int idx, char *par)
     }
   }
   if (!matches)
-    dprintf(idx, TRANSFER_NO_MATCHES);
+    dprintf(idx, _("No matches.\n"));
   else
-    dprintf(idx, TRANSFER_CANCELLED_FILE, matches, (matches != 1) ? "s" : "");
+    dprintf(idx, P_("Canceled one file", "Cancelled %d files.\n", matches),
+            matches);
   for (i = 0; i < atot; i++)
     if (!at_limit(dcc[idx].nick))
       send_next_file(dcc[idx].nick);
