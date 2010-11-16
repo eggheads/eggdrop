@@ -2,7 +2,7 @@
  * irc.c -- part of irc.mod
  *   support for channels within the bot
  *
- * $Id: irc.c,v 1.3 2010/10/24 13:22:40 pseudo Exp $
+ * $Id: irc.c,v 1.3.2.1 2010/11/16 14:16:57 pseudo Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -131,17 +131,17 @@ static void punish_badguy(struct chanset_t *chan, char *whobad,
   reason[0] = 0;
   switch (type) {
   case REVENGE_KICK:
-    kick_msg = IRC_KICK_PROTECT;
-    simple_sprintf(reason, "kicked %s off %s", victim, chan->dname);
+    kick_msg = _("don't kick my friends, bud");
+    simple_sprintf(reason, _("kicked %s off %s"), victim, chan->dname);
     break;
   case REVENGE_DEOP:
-    simple_sprintf(reason, "deopped %s on %s", victim, chan->dname);
-    kick_msg = IRC_DEOP_PROTECT;
+    simple_sprintf(reason, _("deopped %s on %s"), victim, chan->dname);
+    kick_msg = _("don't deop my friends, bud");
     break;
   default:
-    kick_msg = "revenge!";
+    kick_msg = _("revenge!");
   }
-  putlog(LOG_MISC, chan->dname, "Punishing %s (%s)", badnick, reason);
+  putlog(LOG_MISC, chan->dname, _("Punishing %s (%s)"), badnick, reason);
 
   /* Set the offender +d */
   if ((chan->revenge_mode > 0) && !(chan_deop(fr) || glob_deop(fr))) {
@@ -156,8 +156,8 @@ static void punish_badguy(struct chanset_t *chan, char *whobad,
       else
         fr.chan |= USER_DEOP;
       set_user_flagrec(u, &fr, chan->dname);
-      putlog(LOG_MISC, "*", "No longer opping %s[%s] (%s)", u->handle, whobad,
-             reason);
+      putlog(LOG_MISC, "*", _("No longer opping %s[%s] (%s)"), u->handle,
+             whobad, reason);
     }
     /* ... or just setting to deop */
     else if (u) {
@@ -166,7 +166,8 @@ static void punish_badguy(struct chanset_t *chan, char *whobad,
       fr.chan |= USER_DEOP;
       set_user_flagrec(u, &fr, chan->dname);
       simple_sprintf(s, "(%s) %s", ct, reason);
-      putlog(LOG_MISC, "*", "Now deopping %s[%s] (%s)", u->handle, whobad, s);
+      putlog(LOG_MISC, "*", _("Now deopping %s[%s] (%s)"), u->handle, whobad,
+             s);
     }
     /* ... or creating new user and setting that to deop */
     else {
@@ -195,7 +196,7 @@ static void punish_badguy(struct chanset_t *chan, char *whobad,
       set_user_flagrec(u, &fr, chan->dname);
       simple_sprintf(s, "(%s) %s (%s)", ct, reason, whobad);
       set_user(&USERENTRY_COMMENT, u, (void *) s);
-      putlog(LOG_MISC, "*", "Now deopping %s (%s)", whobad, reason);
+      putlog(LOG_MISC, "*", _("Now deopping %s (%s)"), whobad, reason);
     }
   }
 
@@ -321,7 +322,7 @@ static int killmember(struct chanset_t *chan, char *nick)
       break;
   if (!x || !x->nick[0]) {
     if (!channel_pending(chan) && !channel_djoins(chan))
-        putlog(LOG_MISC, "*", "(!) killmember(%s) -> nonexistent", nick);
+        debug1(_("(!) killmember(%s) -> nonexistent"), nick);
     return 0;
   }
   if (old)
@@ -338,7 +339,7 @@ static int killmember(struct chanset_t *chan, char *nick)
     chan->channel.members = 0;
     for (x = chan->channel.member; x && x->nick[0]; x = x->next)
       chan->channel.members++;
-    putlog(LOG_MISC, "*", "(!) actually I know of %d members.",
+    putlog(LOG_MISC, "*", _("(!) actually I know of %d members."),
            chan->channel.members);
   }
   if (!chan->channel.member) {
@@ -542,7 +543,7 @@ static void check_lonely_channel(struct chanset_t *chan)
       i++;
   if (i == 1 && channel_cycle(chan) && !channel_stop_cycle(chan)) {
     if (chan->name[0] != '+') { /* Its pointless to cycle + chans for ops */
-      putlog(LOG_MISC, "*", "Trying to cycle %s to regain ops.", chan->dname);
+      putlog(LOG_MISC, "*", _("Trying to cycle %s to regain ops."), chan->dname);
       dprintf(DP_MODE, "PART %s\n", chan->name);
 
       /* If it's a !chan, we need to recreate the channel with !!chan <cybah> */
@@ -571,7 +572,7 @@ static void check_lonely_channel(struct chanset_t *chan)
        * help(services), we cant get them - Raist
        */
       if (chan->name[0] != '+' && channel_logstatus(chan))
-        putlog(LOG_MISC, "*", "%s is active but has no ops :(", chan->dname);
+        putlog(LOG_MISC, "*", _("%s is active but has no ops :("), chan->dname);
       chan->status |= CHAN_WHINED;
     }
     for (m = chan->channel.member; m && m->nick[0]; m = m->next) {
@@ -616,7 +617,8 @@ static void check_expired_chanstuff()
                 !u_sticky_mask(global_bans, b->mask) &&
                 expired_mask(chan, b->who)) {
               putlog(LOG_MODES, chan->dname,
-                     "(%s) Channel ban on %s expired.", chan->dname, b->mask);
+                     _("(%s) Channel ban on %s expired."), chan->dname,
+                     b->mask);
               add_mode(chan, '-', 'b', b->mask);
               b->timer = now;
             }
@@ -639,12 +641,11 @@ static void check_expired_chanstuff()
                * Jason
                */
               if (match) {
-                putlog(LOG_MODES, chan->dname,
-                       "(%s) Channel exemption %s NOT expired. Exempt still set!",
-                       chan->dname, e->mask);
+                putlog(LOG_MODES, chan->dname, _("(%s) Channel exemption %s "
+                       "NOT expired. Exempt still set!"), chan->dname, e->mask);
               } else {
                 putlog(LOG_MODES, chan->dname,
-                       "(%s) Channel exemption on %s expired.",
+                       _("(%s) Channel exemption on %s expired."),
                        chan->dname, e->mask);
                 add_mode(chan, '-', 'e', e->mask);
               }
@@ -659,7 +660,7 @@ static void check_expired_chanstuff()
                 !u_sticky_mask(global_invites, b->mask) &&
                 expired_mask(chan, b->who)) {
               putlog(LOG_MODES, chan->dname,
-                     "(%s) Channel invitation on %s expired.",
+                     _("(%s) Channel invitation on %s expired."),
                      chan->dname, b->mask);
               add_mode(chan, '-', 'I', b->mask);
               b->timer = now;
@@ -689,7 +690,7 @@ static void check_expired_chanstuff()
                          m->user ? m->user : get_user_by_host(s),
                          chan->dname, "lost in the netsplit");
           putlog(LOG_JOIN, chan->dname,
-                 "%s (%s) got lost in the net-split.", m->nick, m->userhost);
+                 _("%s (%s) got lost in the net-split."), m->nick, m->userhost);
           killmember(chan, m->nick);
         }
         m = n;
@@ -991,7 +992,7 @@ static void irc_report(int idx, int details)
   int k, l;
   struct chanset_t *chan;
 
-  strcpy(q, "Channels: ");
+  strcpy(q, _("Channels: "));
   k = 10;
   for (chan = chanset; chan; chan = chan->next) {
     if (idx != DP_STDOUT)
@@ -1000,13 +1001,13 @@ static void irc_report(int idx, int details)
       p = NULL;
       if (!channel_inactive(chan)) {
         if (chan->status & CHAN_JUPED)
-          p = MISC_JUPED;
+          p = _("juped");
         else if (!(chan->status & CHAN_ACTIVE))
-          p = MISC_TRYING;
+          p = _("trying");
         else if (chan->status & CHAN_PEND)
-          p = MISC_PENDING;
+          p = _("pending");
         else if ((chan->dname[0] != '+') && !me_op(chan))
-          p = MISC_WANTOPS;
+          p = _("need ops");
       }
       l = simple_sprintf(ch, "%s%s%s%s, ", chan->dname, p ? " (" : "",
                          p ? p : "", p ? ")" : "");
@@ -1212,15 +1213,15 @@ char *irc_start(Function *global_funcs)
   module_register(MODULE_NAME, irc_table, 1, 5);
   if (!module_depend(MODULE_NAME, "eggdrop", 108, 0)) {
     module_undepend(MODULE_NAME);
-    return "This module requires Eggdrop 1.8.0 or later.";
+    return _("This module requires Eggdrop 1.8.0 or later.");
   }
   if (!(server_funcs = module_depend(MODULE_NAME, "server", 1, 0))) {
     module_undepend(MODULE_NAME);
-    return "This module requires server module 1.0 or later.";
+    return _("This module requires server module 1.0 or later.");
   }
   if (!(channels_funcs = module_depend(MODULE_NAME, "channels", 1, 1))) {
     module_undepend(MODULE_NAME);
-    return "This module requires channels module 1.1 or later.";
+    return _("This module requires channels module 1.1 or later.");
   }
   for (chan = chanset; chan; chan = chan->next) {
     if (!channel_inactive(chan)) {

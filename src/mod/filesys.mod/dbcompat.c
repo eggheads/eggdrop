@@ -4,7 +4,7 @@
  *
  * Written for filedb3 by Fabian Knittel <fknittel@gmx.de>
  *
- * $Id: dbcompat.c,v 1.1.1.1 2010/07/26 21:11:06 simple Exp $
+ * $Id: dbcompat.c,v 1.1.1.1.2.1 2010/11/16 14:16:56 pseudo Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -60,7 +60,7 @@ static int convert_old_files(char *path, char *newfiledb)
   lockfile(f);
   filedb_initdb(fdb);
 
-  putlog(LOG_FILES, "*", FILES_CONVERT, path);
+  putlog(LOG_FILES, "*", _("Converting filesystem image in %s ..."), path);
   /* Scan contents of .files and painstakingly create .filedb entries */
   while (!feof(f)) {
     s = nmalloc(121);

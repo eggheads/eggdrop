@@ -2,7 +2,7 @@
  * cmdsnote.c -- part of notes.mod
  *   handles all notes interaction over the party line
  *
- * $Id: cmdsnote.c,v 1.1.1.1 2010/07/26 21:11:06 simple Exp $
+ * $Id: cmdsnote.c,v 1.1.1.1.2.1 2010/11/16 14:16:57 pseudo Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -29,7 +29,7 @@ static void cmd_pls_noteign(struct userrec *u, int idx, char *par)
   char *handle, *mask, *buf, *p;
 
   if (!par[0]) {
-    dprintf(idx, "%s: +noteign [handle] <ignoremask>\n", NOTES_USAGE);
+    dprintf(idx, _("Usage: +noteign [handle] <ignoremask>\n"));
     return;
   }
   putlog(LOG_CMDS, "*", "#%s# +noteign %s", dcc[idx].nick, par);
@@ -73,7 +73,7 @@ static void cmd_mns_noteign(struct userrec *u, int idx, char *par)
   char *handle, *mask, *buf, *p;
 
   if (!par[0]) {
-    dprintf(idx, "%s: -noteign [handle] <ignoremask>\n", NOTES_USAGE);
+    dprintf(idx, _("Usage: -noteign [handle] <ignoremask>\n"));
     return;
   }
   putlog(LOG_CMDS, "*", "#%s# -noteign %s", dcc[idx].nick, par);
@@ -155,7 +155,7 @@ static void cmd_fwd(struct userrec *u, int idx, char *par)
   struct userrec *u1;
 
   if (!par[0]) {
-    dprintf(idx, "%s: fwd <handle> [user@bot]\n", NOTES_USAGE);
+    dprintf(idx, _("Usage: fwd <handle> [user@bot]\n"));
     return;
   }
   handle = newsplit(&par);
@@ -189,11 +189,12 @@ static void cmd_notes(struct userrec *u, int idx, char *par)
   char *fcn;
 
   if (!par[0]) {
-    dprintf(idx, "%s: notes index\n", NOTES_USAGE);
-    dprintf(idx, "       notes read <# or ALL>\n");
-    dprintf(idx, "       notes erase <# or ALL>\n");
-    dprintf(idx, "       %s\n", NOTES_MAYBE);
-    dprintf(idx, "       ex: notes erase 2-4;8;16-\n");
+    dprintf(idx, _("Usage: notes index\n"));
+    dprintf(idx, _("       notes read <# or ALL>\n"));
+    dprintf(idx, _("       notes erase <# or ALL>\n"));
+    dprintf(idx, _("       '#' may be numbers and/or intervals "
+                   "separated by ';'.\n"));
+    dprintf(idx, _("       ex: notes erase 2-4;8;16-\n"));
     return;
   }
   fcn = newsplit(&par);
@@ -210,7 +211,7 @@ static void cmd_notes(struct userrec *u, int idx, char *par)
     else
       notes_del(dcc[idx].nick, "", par, idx);
   } else {
-    dprintf(idx, "%s\n", NOTES_MUSTBE);
+    dprintf(idx, _("Function must be one of INDEX READ or ERASE.\n"));
     return;
   }
   putlog(LOG_CMDS, "*", "#%s# notes %s %s", dcc[idx].nick, fcn, par);
@@ -223,7 +224,7 @@ static void cmd_note(struct userrec *u, int idx, char *par)
 
   p = newsplit(&par);
   if (!par[0]) {
-    dprintf(idx, "%s: note <to-whom> <message>\n", NOTES_USAGE);
+    dprintf(idx, _("Usage: note <to-whom> <message>\n"));
     return;
   }
   while ((*par == ' ') || (*par == '<') || (*par == '>'))

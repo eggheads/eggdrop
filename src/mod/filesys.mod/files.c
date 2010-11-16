@@ -2,7 +2,7 @@
  * files.c - part of filesys.mod
  *   handles all file system commands
  *
- * $Id: files.c,v 1.1.1.1 2010/07/26 21:11:06 simple Exp $
+ * $Id: files.c,v 1.1.1.1.2.1 2010/11/16 14:16:56 pseudo Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -88,8 +88,10 @@ static int welcome_to_files(int idx)
    */
   if (!(dcc[idx].status & STAT_CHAT))
     show_motd(idx);
-  sub_lang(idx, FILES_WELCOME);
-  sub_lang(idx, FILES_WELCOME1);
+  sub_lang(idx, _("Welcome to the %B file server\n"));
+  sub_lang(idx, _("All file transfers will be sent to '%N' by default.\n"
+           "(You can specify an alternate nick with the 'get' command.)\n"
+           "Type 'help' for help.\n"));
   if (p)
     strcpy(dcc[idx].u.file->dir, p);
   else
@@ -100,18 +102,18 @@ static int welcome_to_files(int idx)
     dcc[idx].u.file->dir[0] = 0;
     f = filedb_open(dcc[idx].u.file->dir, 0);
     if (f == NULL) {
-      dprintf(idx, FILES_BROKEN);
-      dprintf(idx, FILES_INVPATH);
+      dprintf(idx, _("\nThe file system seems to be broken right now.\n"));
+      dprintf(idx, _("(The files-path is set to an invalid directory.)\n"));
       dprintf(idx, "\n\n");
       dccdir[0] = 0;
       chanout_but(-1, dcc[idx].u.file->chat->channel,
-                  "*** %s rejoined the party line.\n", dcc[idx].nick);
+                  _("*** %s rejoined the party line.\n"), dcc[idx].nick);
       botnet_send_join_idx(idx, dcc[idx].u.file->chat->channel);
       return 0;                 /* failed */
     }
   }
   filedb_close(f);
-  dprintf(idx, "%s: /%s\n\n", FILES_CURDIR, dcc[idx].u.file->dir);
+  dprintf(idx, "%s: /%s\n\n", _("Current directory"), dcc[idx].u.file->dir);
   return 1;
 }
 
@@ -134,11 +136,11 @@ static void cmd_optimize(int idx, char *par)
   if (!p)
     fdb = filedb_open("", 1);
   if (!fdb) {
-    dprintf(idx, FILES_ILLDIR);
+    dprintf(idx, _("Illegal directory.\n"));
     return;
   }
   filedb_close(fdb);
-  dprintf(idx, "Current directory is now optimized.\n");
+  dprintf(idx, _("Current directory is now optimized.\n"));
 }
 
 /* Given current directory, and the desired changes, fill 'real' with
@@ -315,19 +317,19 @@ static void incr_file_gots(char *ppath)
 static void cmd_pwd(int idx, char *par)
 {
   putlog(LOG_FILES, "*", "files: #%s# pwd", dcc[idx].nick);
-  dprintf(idx, "%s: /%s\n", FILES_CURDIR, dcc[idx].u.file->dir);
+  dprintf(idx, "%s: /%s\n", _("Current directory"), dcc[idx].u.file->dir);
 }
 
 static void cmd_pending(int idx, char *par)
 {
   show_queued_files(idx);
-  putlog(LOG_FILES, "*", "files: #%s# pending", dcc[idx].nick);
+  putlog(LOG_FILES, "*", _("files: #%s# pending"), dcc[idx].nick);
 }
 
 static void cmd_cancel(int idx, char *par)
 {
   if (!par[0]) {
-    dprintf(idx, "%s: cancel <file-mask>\n", MISC_USAGE);
+    dprintf(idx, _("Usage: cancel <file-mask>\n"));
     return;
   }
   fileq_cancel(idx, par);
@@ -339,11 +341,11 @@ static void cmd_chdir(int idx, char *msg)
   char *s = NULL;
 
   if (!msg[0]) {
-    dprintf(idx, "%s: cd <new-dir>\n", MISC_USAGE);
+    dprintf(idx, _("Usage: cd <new-dir>\n"));
     return;
   }
   if (!resolve_dir(dcc[idx].u.file->dir, msg, &s, idx)) {
-    dprintf(idx, FILES_NOSUCHDIR);
+    dprintf(idx, _("No such directory.\n"));
     my_free(s);
     return;
   }
@@ -353,7 +355,7 @@ static void cmd_chdir(int idx, char *msg)
   set_user(&USERENTRY_DCCDIR, dcc[idx].user, dcc[idx].u.file->dir);
   putlog(LOG_FILES, "*", "files: #%s# cd /%s", dcc[idx].nick,
          dcc[idx].u.file->dir);
-  dprintf(idx, "%s: /%s\n", FILES_NEWCURDIR, dcc[idx].u.file->dir);
+  dprintf(idx, "%s: /%s\n", _("New current directory"), dcc[idx].u.file->dir);
 }
 
 static void files_ls(int idx, char *par, int showall)
@@ -369,7 +371,7 @@ static void files_ls(int idx, char *par, int showall)
       malloc_strcpy(s, par);
       malloc_strcpy(mask, p + 1);
       if (!resolve_dir(dcc[idx].u.file->dir, s, &destdir, idx)) {
-        dprintf(idx, FILES_ILLDIR);
+        dprintf(idx, _("Illegal directory.\n"));
         my_free(s);
         my_free(mask);
         my_free(destdir);
@@ -389,7 +391,7 @@ static void files_ls(int idx, char *par, int showall)
     my_free(s);
     fdb = filedb_open(destdir, 0);
     if (!fdb) {
-      dprintf(idx, FILES_ILLDIR);
+      dprintf(idx, _("Illegal directory.\n"));
       my_free(destdir);
       my_free(mask);
       return;
@@ -399,13 +401,13 @@ static void files_ls(int idx, char *par, int showall)
     my_free(destdir);
     my_free(mask);
   } else {
-    putlog(LOG_FILES, "*", "files: #%s# ls", dcc[idx].nick);
+    putlog(LOG_FILES, "*", _("files: #%s# ls"), dcc[idx].nick);
     fdb = filedb_open(dcc[idx].u.file->dir, 0);
     if (fdb) {
       filedb_ls(fdb, idx, "*", showall);
       filedb_close(fdb);
     } else
-      dprintf(idx, FILES_ILLDIR);
+      dprintf(idx, _("Illegal directory.\n"));
   }
 }
 
@@ -436,13 +438,12 @@ static void cmd_reget_get(int idx, char *par, int resend)
       nicklen = (*(int *)me->funcs[SERVER_NICKLEN]);
   }
   if (!par[0]) {
-    dprintf(idx, "%s: %sget <file(s)> [nickname]\n", MISC_USAGE,
-            resend ? "re" : "");
+    dprintf(idx, _("Usage: %sget <file(s)> [nickname]\n"), resend ? "re" : "");
     return;
   }
   what = newsplit(&par);
   if (strlen(par) > nicklen) {
-    dprintf(idx, FILES_BADNICK);
+    dprintf(idx, _("Be reasonable.\n"));
     return;
   }
   p = strrchr(what, '/');
@@ -453,7 +454,7 @@ static void cmd_reget_get(int idx, char *par, int resend)
     if (!resolve_dir(dcc[idx].u.file->dir, s, &destdir, idx)) {
       my_free(destdir);
       my_free(s);
-      dprintf(idx, FILES_ILLDIR);
+      dprintf(idx, _("Illegal directory.\n"));
       return;
     }
     my_free(s);
@@ -468,7 +469,7 @@ static void cmd_reget_get(int idx, char *par, int resend)
     filedb_close(fdb);
     free_fdbe(&fdbe);
     my_free(destdir);
-    dprintf(idx, FILES_NOMATCH);
+    dprintf(idx, _("No matching files.\n"));
     return;
   }
   while (fdbe) {
@@ -482,9 +483,9 @@ static void cmd_reget_get(int idx, char *par, int resend)
         bot = nmalloc(strlen(fdbe->sharelink) + 1);
         splitc(bot, fdbe->sharelink, ':');
         if (!egg_strcasecmp(bot, botnetnick))
-          dprintf(idx, "Can't get that file, it's linked to this bot!\n");
+          dprintf(idx, _("Can't get that file, it's linked to this bot!\n"));
         else if (!in_chain(bot))
-          dprintf(idx, FILES_NOTAVAIL, fdbe->filename);
+          dprintf(idx, _("%s isn't available right now.\n"), fdbe->filename);
         else {
           i = nextbot(bot);
           malloc_strcpy(whoto, par);
@@ -493,7 +494,7 @@ static void cmd_reget_get(int idx, char *par, int resend)
           s = nmalloc(strlen(whoto) + strlen(botnetnick) + 13);
           simple_sprintf(s, "%d:%s@%s", dcc[idx].sock, whoto, botnetnick);
           botnet_send_filereq(i, s, bot, fdbe->sharelink);
-          dprintf(idx, FILES_REQUESTED, fdbe->sharelink, bot);
+          dprintf(idx, _("Requested %s from %s ...\n"), fdbe->sharelink, bot);
           /* Increase got count now (or never) */
           fdbe->gots++;
           s = nrealloc(s, strlen(bot) + strlen(fdbe->sharelink) + 2);
@@ -515,7 +516,7 @@ static void cmd_reget_get(int idx, char *par, int resend)
   filedb_close(fdb);
   my_free(destdir);
   if (!ok)
-    dprintf(idx, FILES_NOMATCH);
+    dprintf(idx, _("No matching files.\n"));
   else
     putlog(LOG_FILES, "*", "files: #%s# %sget %s %s", dcc[idx].nick,
            resend ? "re" : "", what, par);
@@ -558,7 +559,7 @@ static void cmd_hide(int idx, char *par)
   int ok = 0;
 
   if (!par[0]) {
-    dprintf(idx, "%s: hide <file(s)>\n", MISC_USAGE);
+    dprintf(idx, _("Usage: hide <file(s)>\n"));
     return;
   }
   fdb = filedb_open(dcc[idx].u.file->dir, 0);
@@ -568,7 +569,7 @@ static void cmd_hide(int idx, char *par)
   fdbe = filedb_matchfile(fdb, ftell(fdb), par);
   if (!fdbe) {
     filedb_close(fdb);
-    dprintf(idx, FILES_NOMATCH);
+    dprintf(idx, _("No matching files.\n"));
     return;
   }
   while (fdbe) {
@@ -576,7 +577,7 @@ static void cmd_hide(int idx, char *par)
     if (!(fdbe->stat & FILE_HIDDEN)) {
       fdbe->stat |= FILE_HIDDEN;
       ok++;
-      dprintf(idx, "%s: %s\n", FILES_HID, fdbe->filename);
+      dprintf(idx, _("Hid: %s\n"), fdbe->filename);
       filedb_updatefile(fdb, fdbe->pos, fdbe, UPDATE_HEADER);
     }
     free_fdbe(&fdbe);
@@ -584,11 +585,10 @@ static void cmd_hide(int idx, char *par)
   }
   filedb_close(fdb);
   if (!ok)
-    dprintf(idx, FILES_NOMATCH);
+    dprintf(idx, _("No matching files.\n"));
   else {
     putlog(LOG_FILES, "*", "files: #%s# hide %s", dcc[idx].nick, par);
-    if (ok > 1)
-      dprintf(idx, "%s %d file%s.\n", FILES_HID, ok, ok == 1 ? "" : "s");
+    dprintf(idx, P_("Hid one file.\n", "Hid %d files.\n", ok), ok);
   }
 }
 
@@ -600,7 +600,7 @@ static void cmd_unhide(int idx, char *par)
   int ok = 0;
 
   if (!par[0]) {
-    dprintf(idx, "%s: unhide <file(s)>\n", MISC_USAGE);
+    dprintf(idx, _("Usage: unhide <file(s)>\n"));
     return;
   }
   fdb = filedb_open(dcc[idx].u.file->dir, 0);
@@ -610,7 +610,7 @@ static void cmd_unhide(int idx, char *par)
   fdbe = filedb_matchfile(fdb, ftell(fdb), par);
   if (!fdbe) {
     filedb_close(fdb);
-    dprintf(idx, FILES_NOMATCH);
+    dprintf(idx, _("No matching files.\n"));
     return;
   }
   while (fdbe) {
@@ -618,7 +618,7 @@ static void cmd_unhide(int idx, char *par)
     if (fdbe->stat & FILE_HIDDEN) {
       fdbe->stat &= ~FILE_HIDDEN;
       ok++;
-      dprintf(idx, "%s: %s\n", FILES_UNHID, fdbe->filename);
+      dprintf(idx, "Unhid: %s\n", fdbe->filename);
       filedb_updatefile(fdb, fdbe->pos, fdbe, UPDATE_HEADER);
     }
     free_fdbe(&fdbe);
@@ -626,11 +626,10 @@ static void cmd_unhide(int idx, char *par)
   }
   filedb_close(fdb);
   if (!ok)
-    dprintf(idx, FILES_NOMATCH);
+    dprintf(idx, _("No matching files.\n"));
   else {
     putlog(LOG_FILES, "*", "files: #%s# unhide %s", dcc[idx].nick, par);
-    if (ok > 1)
-      dprintf(idx, "%s %d file%s.\n", FILES_UNHID, ok, ok == 1 ? "" : "s");
+    dprintf(idx, P_("Unhid one file.\n", "Unhid %d files.\n", ok), ok);
   }
 }
 
@@ -642,7 +641,7 @@ static void cmd_share(int idx, char *par)
   int ok = 0;
 
   if (!par[0]) {
-    dprintf(idx, "%s: share <file(s)>\n", MISC_USAGE);
+    dprintf(idx, _("Usage: share <file(s)>\n"));
     return;
   }
   fdb = filedb_open(dcc[idx].u.file->dir, 0);
@@ -652,7 +651,7 @@ static void cmd_share(int idx, char *par)
   fdbe = filedb_matchfile(fdb, ftell(fdb), par);
   if (!fdbe) {
     filedb_close(fdb);
-    dprintf(idx, FILES_NOMATCH);
+    dprintf(idx, _("No matching files.\n"));
     return;
   }
   while (fdbe) {
@@ -660,7 +659,7 @@ static void cmd_share(int idx, char *par)
     if (!(fdbe->stat & (FILE_HIDDEN | FILE_DIR | FILE_SHARE))) {
       fdbe->stat |= FILE_SHARE;
       ok++;
-      dprintf(idx, "%s: %s\n", FILES_SHARED, fdbe->filename);
+      dprintf(idx, _("Shared: %s\n"), fdbe->filename);
       filedb_updatefile(fdb, fdbe->pos, fdbe, UPDATE_HEADER);
     }
     free_fdbe(&fdbe);
@@ -668,11 +667,10 @@ static void cmd_share(int idx, char *par)
   }
   filedb_close(fdb);
   if (!ok)
-    dprintf(idx, FILES_NOMATCH);
+    dprintf(idx, _("No matching files.\n"));
   else {
     putlog(LOG_FILES, "*", "files: #%s# share %s", dcc[idx].nick, par);
-    if (ok > 1)
-      dprintf(idx, "%s %d file%s.\n", FILES_SHARED, ok, ok == 1 ? "" : "s");
+    dprintf(idx, P_("Shared one file.\n", "Shared %d files.\n", ok), ok);
   }
 }
 
@@ -684,7 +682,7 @@ static void cmd_unshare(int idx, char *par)
   int ok = 0;
 
   if (!par[0]) {
-    dprintf(idx, "%s: unshare <file(s)>\n", MISC_USAGE);
+    dprintf(idx, _("Usage: unshare <file(s)>\n"));
     return;
   }
   fdb = filedb_open(dcc[idx].u.file->dir, 0);
@@ -694,7 +692,7 @@ static void cmd_unshare(int idx, char *par)
   fdbe = filedb_matchfile(fdb, ftell(fdb), par);
   if (!fdbe) {
     filedb_close(fdb);
-    dprintf(idx, FILES_NOMATCH);
+    dprintf(idx, _("No matching files.\n"));
     return;
   }
   while (fdbe) {
@@ -703,7 +701,7 @@ static void cmd_unshare(int idx, char *par)
         !(fdbe->stat & (FILE_DIR | FILE_HIDDEN))) {
       fdbe->stat &= ~FILE_SHARE;
       ok++;
-      dprintf(idx, "%s: %s\n", FILES_UNSHARED, fdbe->filename);
+      dprintf(idx, _("Unshared: %s\n"), fdbe->filename);
       filedb_updatefile(fdb, fdbe->pos, fdbe, UPDATE_HEADER);
     }
     free_fdbe(&fdbe);
@@ -711,11 +709,10 @@ static void cmd_unshare(int idx, char *par)
   }
   filedb_close(fdb);
   if (!ok)
-    dprintf(idx, FILES_NOMATCH);
+    dprintf(idx, _("No matching files.\n"));
   else {
     putlog(LOG_FILES, "*", "files: #%s# unshare %s", dcc[idx].nick, par);
-    if (ok > 1)
-      dprintf(idx, "%s %d file%s.\n", FILES_UNSHARED, ok, ok == 1 ? "" : "s");
+    dprintf(idx, P_("Unshared one file.\n", "Unshared %d files.\n", ok), ok);
   }
 }
 
@@ -732,15 +729,15 @@ static void cmd_ln(int idx, char *par)
     share[60] = 0;
   /* Correct format? */
   if (!(p = strchr(share, ':')) || !par[0])
-    dprintf(idx, "%s: ln <bot:path> <localfile>\n", MISC_USAGE);
+    dprintf(idx, _("Usage: ln <bot:path> <localfile>\n"));
   else if (p[1] != '/')
-    dprintf(idx, "Links to other bots must have absolute paths.\n");
+    dprintf(idx, _("Links to other bots must have absolute paths.\n"));
   else {
     if ((p = strrchr(par, '/'))) {
       *p = 0;
       malloc_strcpy(newfn, p + 1);
       if (!resolve_dir(dcc[idx].u.file->dir, par, &newpath, idx)) {
-        dprintf(idx, FILES_NOSUCHDIR);
+        dprintf(idx, _("No such directory.\n"));
         my_free(newfn);
         my_free(newpath);
         return;
@@ -759,13 +756,13 @@ static void cmd_ln(int idx, char *par)
     fdbe = filedb_matchfile(fdb, ftell(fdb), newfn);
     if (fdbe) {
       if (!fdbe->sharelink) {
-        dprintf(idx, FILES_NORMAL, newfn);
+        dprintf(idx, _("%s is already a normal file.\n"), newfn);
         filedb_close(fdb);
       } else {
         malloc_strcpy(fdbe->sharelink, share);
         filedb_updatefile(fdb, fdbe->pos, fdbe, UPDATE_ALL);
         filedb_close(fdb);
-        dprintf(idx, FILES_CHGLINK, share);
+        dprintf(idx, _("Changed link to %s\n"), share);
         putlog(LOG_FILES, "*", "files: #%s# ln %s %s",
                dcc[idx].nick, par, share);
       }
@@ -778,7 +775,7 @@ static void cmd_ln(int idx, char *par)
       malloc_strcpy(fdbe->sharelink, share);
       filedb_addfile(fdb, fdbe);
       filedb_close(fdb);
-      dprintf(idx, "%s %s -> %s\n", FILES_ADDLINK, fdbe->filename, share);
+      dprintf(idx, "Added link %s -> %s\n", fdbe->filename, share);
       putlog(LOG_FILES, "*", "files: #%s# ln /%s%s%s %s", dcc[idx].nick,
              newpath, newpath[0] ? "/" : "", newfn, share);
     }
@@ -798,7 +795,7 @@ static void cmd_desc(int idx, char *par)
 
   fn = newsplit(&par);
   if (!fn[0]) {
-    dprintf(idx, "%s: desc <filename> <new description>\n", MISC_USAGE);
+    dprintf(idx, _("Usage: desc <filename> <new description>\n"));
     return;
   }
   /* Fix up desc */
@@ -848,7 +845,7 @@ static void cmd_desc(int idx, char *par)
   fdbe = filedb_matchfile(fdb, ftell(fdb), fn);
   if (!fdbe) {
     filedb_close(fdb);
-    dprintf(idx, FILES_NOMATCH);
+    dprintf(idx, _("No matching files.\n"));
     my_free(desc);
     return;
   }
@@ -858,7 +855,7 @@ static void cmd_desc(int idx, char *par)
       ok = 1;
       if ((!(dcc[idx].user->flags & USER_JANITOR)) &&
           (egg_strcasecmp(fdbe->uploader, dcc[idx].nick)))
-        dprintf(idx, FILES_NOTOWNER, fdbe->filename);
+        dprintf(idx, _("You didn't upload %s\n"), fdbe->filename);
       else {
         if (desc[0]) {
           /* If the current description is the same as the new
@@ -875,9 +872,9 @@ static void cmd_desc(int idx, char *par)
         }
         filedb_updatefile(fdb, fdbe->pos, fdbe, UPDATE_ALL);
         if (par[0])
-          dprintf(idx, "%s: %s\n", FILES_CHANGED, fdbe->filename);
+          dprintf(idx, _("Changed: %s\n"), fdbe->filename);
         else
-          dprintf(idx, "%s: %s\n", FILES_BLANKED, fdbe->filename);
+          dprintf(idx, _("Blanked: %s\n"), fdbe->filename);
       }
     }
     free_fdbe(&fdbe);
@@ -885,7 +882,7 @@ static void cmd_desc(int idx, char *par)
   }
   filedb_close(fdb);
   if (!ok)
-    dprintf(idx, FILES_NOMATCH);
+    dprintf(idx, _("No matching files.\n"));
   else
     putlog(LOG_FILES, "*", "files: #%s# desc %s", dcc[idx].nick, fn);
   my_free(desc);
@@ -900,7 +897,7 @@ static void cmd_rm(int idx, char *par)
   char *s;
 
   if (!par[0]) {
-    dprintf(idx, "%s: rm <file(s)>\n", MISC_USAGE);
+    dprintf(idx, _("Usage: rm <file(s)>\n"));
     return;
   }
   fdb = filedb_open(dcc[idx].u.file->dir, 0);
@@ -910,7 +907,7 @@ static void cmd_rm(int idx, char *par)
   fdbe = filedb_matchfile(fdb, ftell(fdb), par);
   if (!fdbe) {
     filedb_close(fdb);
-    dprintf(idx, FILES_NOMATCH);
+    dprintf(idx, _("No matching files.\n"));
     return;
   }
   while (fdbe) {
@@ -924,7 +921,7 @@ static void cmd_rm(int idx, char *par)
       /* Shared file links won't be able to be unlinked */
       if (!(fdbe->sharelink))
         unlink(s);
-      dprintf(idx, "%s: %s\n", FILES_ERASED, fdbe->filename);
+      dprintf(idx, _("Erased: %s\n"), fdbe->filename);
       my_free(s);
     }
     free_fdbe(&fdbe);
@@ -932,11 +929,11 @@ static void cmd_rm(int idx, char *par)
   }
   filedb_close(fdb);
   if (!ok)
-    dprintf(idx, FILES_NOMATCH);
+    dprintf(idx, _("No matching files.\n"));
   else {
     putlog(LOG_FILES, "*", "files: #%s# rm %s", dcc[idx].nick, par);
     if (ok > 1)
-      dprintf(idx, "%s %d file%s.\n", FILES_ERASED, ok, ok == 1 ? "" : "s");
+      dprintf(idx, P_("Erased one file.\n", "Erased %d files.\n", ok), ok);
   }
 }
 
@@ -949,7 +946,7 @@ static void cmd_mkdir(int idx, char *par)
   struct flag_record fr = { FR_GLOBAL | FR_CHAN, 0, 0, 0, 0, 0 };
 
   if (!par[0]) {
-    dprintf(idx, "%s: mkdir <dir> [required-flags] [channel]\n", MISC_USAGE);
+    dprintf(idx, "Usage: mkdir <dir> [required-flags] [channel]\n");
     return;
   }
   name = newsplit(&par);
@@ -959,7 +956,8 @@ static void cmd_mkdir(int idx, char *par)
   if (name[ret] == '/')
     name[ret] = 0;
   if (strchr(name, '/'))
-    dprintf(idx, "You can only create directories in the current directory\n");
+    dprintf(idx, _("You can only create directories in the current "
+            "directory\n"));
   else {
     flags = newsplit(&par);
     chan = newsplit(&par);
@@ -968,7 +966,7 @@ static void cmd_mkdir(int idx, char *par)
        * the flags with a +channel. <cybah>
        */
       if (!findchan(flags) && flags[0] != '+') {
-        dprintf(idx, "Invalid channel!\n");
+        dprintf(idx, _("Invalid channel!\n"));
         return;
       } else if (findchan(flags)) {
         /* Flags is a channel. */
@@ -978,7 +976,7 @@ static void cmd_mkdir(int idx, char *par)
                                  * are flags. */
     }
     if (chan[0] && !findchan(chan)) {
-      dprintf(idx, "Invalid channel!\n");
+      dprintf(idx, _("Invalid channel!\n"));
       return;
     }
     fdb = filedb_open(dcc[idx].u.file->dir, 0);
@@ -1001,10 +999,10 @@ static void cmd_mkdir(int idx, char *par)
       fdbe->stat = FILE_DIR;
       malloc_strcpy(fdbe->filename, name);
       fdbe->uploaded = now;
-      dprintf(idx, "%s /%s%s%s\n", FILES_CREADIR, dcc[idx].u.file->dir,
+      dprintf(idx, _("Created directory /%s%s%s\n"), dcc[idx].u.file->dir,
               dcc[idx].u.file->dir[0] ? "/" : "", name);
     } else if (!(fdbe->stat & FILE_DIR)) {
-      dprintf(idx, FILES_NOSUCHDIR);
+      dprintf(idx, _("No such directory.\n"));
       free_fdbe(&fdbe);
       filedb_close(fdb);
       return;
@@ -1015,17 +1013,17 @@ static void cmd_mkdir(int idx, char *par)
       break_down_flags(flags, &fr, NULL);
       build_flags(buffer, &fr, NULL);
       malloc_strcpy_nocheck(fdbe->flags_req, buffer);
-      dprintf(idx, FILES_CHGACCESS, name, buffer);
+      dprintf(idx, _("Changed %s/ to require +%s to access\n"), name, buffer);
     } else if (!chan[0]) {
       my_free(fdbe->flags_req);
-      dprintf(idx, FILES_CHGNACCESS, name);
+      dprintf(idx, _("Changes %s/ to require no flags to access\n"), name);
     }
     if (chan[0]) {
       malloc_strcpy(fdbe->chan, chan);
-      dprintf(idx, "Access set to channel: %s\n", chan);
+      dprintf(idx, _("Access set to channel: %s\n"), chan);
     } else if (!flags[0]) {
       my_free(fdbe->chan);
-      dprintf(idx, "Access set to all channels.\n");
+      dprintf(idx, _("Access set to all channels.\n"));
     }
     if (!fdbe->pos)
       fdbe->pos = POS_NEW;
@@ -1046,7 +1044,8 @@ static void cmd_rmdir(int idx, char *par)
   if (name[strlen(name) - 1] == '/')
     name[strlen(name) - 1] = 0;
   if (strchr(name, '/'))
-    dprintf(idx, "You can only create directories in the current directory\n");
+    dprintf(idx, _("You can only create directories in the current "
+            "directory\n"));
   else {
     fdb = filedb_open(dcc[idx].u.file->dir, 0);
     if (!fdb) {
@@ -1056,13 +1055,13 @@ static void cmd_rmdir(int idx, char *par)
     filedb_readtop(fdb, NULL);
     fdbe = filedb_matchfile(fdb, ftell(fdb), name);
     if (!fdbe) {
-      dprintf(idx, FILES_NOSUCHDIR);
+      dprintf(idx, _("No such directory.\n"));
       filedb_close(fdb);
       my_free(name);
       return;
     }
     if (!(fdbe->stat & FILE_DIR)) {
-      dprintf(idx, FILES_NOSUCHDIR);
+      dprintf(idx, _("No such directory.\n"));
       filedb_close(fdb);
       my_free(name);
       free_fdbe(&fdbe);
@@ -1077,7 +1076,7 @@ static void cmd_rmdir(int idx, char *par)
     unlink(s);
     sprintf(s, "%s%s/%s", dccdir, dcc[idx].u.file->dir, name);
     if (rmdir(s) == 0) {
-      dprintf(idx, "%s /%s%s%s\n", FILES_REMDIR, dcc[idx].u.file->dir,
+      dprintf(idx, _("Removed directory /%s%s%s\n"), dcc[idx].u.file->dir,
               dcc[idx].u.file->dir[0] ? "/" : "", name);
       filedb_delfile(fdb, fdbe->pos);
       filedb_close(fdb);
@@ -1106,8 +1105,8 @@ static void cmd_mv_cp(int idx, char *par, int copy)
 
   fn = newsplit(&par);
   if (!par[0]) {
-    dprintf(idx, "%s: %s <oldfilepath> <newfilepath>\n",
-            MISC_USAGE, copy ? "cp" : "mv");
+    dprintf(idx, _("Usage: %s <oldfilepath> <newfilepath>\n"),
+            copy ? "cp" : "mv");
     return;
   }
   p = strrchr(fn, '/');
@@ -1116,7 +1115,7 @@ static void cmd_mv_cp(int idx, char *par, int copy)
     malloc_strcpy(s, fn);
     strcpy(fn, p + 1);
     if (!resolve_dir(dcc[idx].u.file->dir, s, &oldpath, idx)) {
-      dprintf(idx, FILES_ILLSOURCE);
+      dprintf(idx, _("Illegal source directory.\n"));
       my_free(s);
       my_free(oldpath);
       return;
@@ -1137,7 +1136,7 @@ static void cmd_mv_cp(int idx, char *par, int copy)
       malloc_strcpy(newfn, p + 1);
     }
     if (!resolve_dir(dcc[idx].u.file->dir, s, &newpath, idx)) {
-      dprintf(idx, FILES_ILLDEST);
+      dprintf(idx, _("Illegal destination directory.\n"));
       my_free(newfn);
       my_free(s);
       my_free(oldpath);
@@ -1149,7 +1148,7 @@ static void cmd_mv_cp(int idx, char *par, int copy)
   my_free(s);
   /* Stupidness checks */
   if ((!strcmp(oldpath, newpath)) && ((!newfn[0]) || (!strcmp(newfn, fn)))) {
-    dprintf(idx, FILES_STUPID, copy ? FILES_COPY : FILES_MOVE);
+    dprintf(idx, _("You can't copy or move files on top of themselves.\n"));
     my_free(oldpath);
     my_free(newpath);
     my_free(newfn);
@@ -1193,7 +1192,7 @@ static void cmd_mv_cp(int idx, char *par, int copy)
     filedb_entry *check_for_more;
     check_for_more = filedb_matchfile(fdb_old, ftell(fdb_old), fn);
     if (check_for_more) {
-      dprintf(idx, FILES_ILLDEST);
+      dprintf(idx, _("Illegal destination directory.\n"));
       free_fdbe(&fdbe_old);
       free_fdbe(&check_for_more);
       if (fdb_new != fdb_old) filedb_close(fdb_new);
@@ -1219,8 +1218,8 @@ static void cmd_mv_cp(int idx, char *par, int copy)
       sprintf(s1, "%s%s%s%s", dccdir, newpath,
               newpath[0] ? "/" : "", newfn[0] ? newfn : fdbe_old->filename);
       if (!strcmp(s, s1)) {
-        dprintf(idx, "%s /%s%s%s %s\n", FILES_SKIPSTUPID,
-                copy ? FILES_COPY : FILES_MOVE, newpath,
+        dprintf(idx, copy ? _("Copy /%s%s%s onto itself? Nuh uh.\n") :
+                _("Move /%s%s%s onto itself? Nuh uh.\n"), newpath,
                 newpath[0] ? "/" : "", newfn[0] ? newfn : fdbe_old->filename);
         skip_this = 1;
       }
@@ -1278,13 +1277,16 @@ static void cmd_mv_cp(int idx, char *par, int copy)
     filedb_close(fdb_new);
   filedb_close(fdb_old);
   if (!ok)
-    dprintf(idx, FILES_NOMATCH);
+    dprintf(idx, _("No matching files.\n"));
   else {
     putlog(LOG_FILES, "*", "files: #%s# %s %s%s%s %s", dcc[idx].nick,
            copy ? "cp" : "mv", oldpath, oldpath[0] ? "/" : "", fn, par);
-    if (ok > 1)
-      dprintf(idx, "%s %d file%s.\n",
-              copy ? FILES_COPIED : FILES_MOVED, ok, ok == 1 ? "" : "s");
+    if (ok > 1) {
+      if (copy)
+        dprintf(idx, P_("Copied one file.\n", "Copied %d files.\n", ok), ok);
+      else
+        dprintf(idx, P_("Moved one file.\n", "Moved %d files.\n", ok), ok);
+    }
   }
   my_free(oldpath);
   my_free(newpath);
@@ -1314,7 +1316,7 @@ static int cmd_filestats(int idx, char *par)
   struct userrec *u;
 
   if (!par[0]) {
-    dprintf(idx, "Usage: filestats <user>\n");
+    dprintf(idx, _("Usage: filestats <user>\n"));
     return 0;
   }
   nick = newsplit(&par);
@@ -1322,11 +1324,11 @@ static int cmd_filestats(int idx, char *par)
   if (nick[0] == 0)
     tell_file_stats(idx, dcc[idx].nick);
   else if (!(u = get_user_by_handle(userlist, nick)))
-    dprintf(idx, "No such user.\n");
+    dprintf(idx, _("No such user.\n"));
   else if (!strcmp(par, "clear") && dcc[idx].user &&
            (dcc[idx].user->flags & USER_JANITOR)) {
     set_user(&USERENTRY_FSTAT, u, NULL);
-    dprintf(idx, "Cleared filestats for %s.\n", nick);
+    dprintf(idx, _("Cleared filestats for %s.\n"), nick);
   } else
     tell_file_stats(idx, nick);
   return 0;
@@ -1345,7 +1347,7 @@ static void filesys_note(int idx, char *par)
 
     (f) (u, idx, par);
   } else
-    dprintf(idx, "Sending of notes is not supported.\n");
+    dprintf(idx, _("Sending of notes is not supported.\n"));
 }
 
 static cmd_t myfiles[] = {
@@ -1463,7 +1465,7 @@ static int files_reget(int idx, char *fn, char *nick, int resend)
       s = nmalloc(strlen(whoto) + strlen(botnetnick) + 13);
       simple_sprintf(s, "%d:%s@%s", dcc[idx].sock, whoto, botnetnick);
       botnet_send_filereq(i, s, bot, fdbe->sharelink);
-      dprintf(idx, FILES_REQUESTED, fdbe->sharelink, bot);
+      dprintf(idx, _("Requested %s from %s ...\n"), fdbe->sharelink, bot);
       /* Increase got count now (or never) */
       fdbe->gots++;
       s = nrealloc(s, strlen(bot) + strlen(fdbe->sharelink) + 2);

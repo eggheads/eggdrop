@@ -1,7 +1,7 @@
 # transfer.english.lang
 #   language messages for transfer module
 #
-# $Id: transfer.english.lang,v 1.1.1.1.2.1 2010/11/11 20:34:47 pseudo Exp $
+# $Id: transfer.english.lang,v 1.1.1.1.2.2 2010/11/16 14:16:57 pseudo Exp $
 
 0xf00,Refused dcc get %s: copy to %s FAILED!
 0xf01,NOTICE %s :File system is broken; aborting queued files.\n
@@ -34,7 +34,6 @@
 0xf1c,NOTICE %s :Thanks for the file!\n
 0xf1d,Lost userfile transfer from %s; aborting.
 # 0xf1e, < this one is now empty
-0xf1e,
 0xf1f,Disconnected %s (aborted userfile transfer)
 0xf20,Lost dcc send %s from %s!%s (%lu/%lu)
 0xf21,(!) reget packet from %s for %s is invalid!

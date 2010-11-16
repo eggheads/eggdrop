@@ -5,7 +5,7 @@
  *   note cmds
  *   note ignores
  *
- * $Id: notes.c,v 1.2 2010/07/27 21:49:42 pseudo Exp $
+ * $Id: notes.c,v 1.2.2.1 2010/11/16 14:16:57 pseudo Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -71,7 +71,7 @@ static struct user_entry_type USERENTRY_FWD = {
 static void fwd_display(int idx, struct user_entry *e)
 {
   if (dcc[idx].user && (dcc[idx].user->flags & USER_BOTMAST))
-    dprintf(idx, NOTES_FORWARD_TO, e->u.string);
+    dprintf(idx, _("  Forward notes to: %.70s\n"), e->u.string);
 }
 
 /* Determine how many notes are waiting for a user.
@@ -150,8 +150,8 @@ static void notes_change(char *oldnick, char *newnick)
   unlink(notefile);
   sprintf(s, "%s~new", notefile);
   movefile(s, notefile);
-  putlog(LOG_MISC, "*", NOTES_SWITCHED_NOTES, tot, tot == 1 ? "" : "s",
-         oldnick, newnick);
+  putlog(LOG_MISC, "*", P_("Switched %d note from %s to %s.",
+         "Switched %d notes from %s to %s.", tot), tot, oldnick, newnick);
 }
 
 /* Get rid of old useless notes.
@@ -202,7 +202,7 @@ static void expire_notes()
   sprintf(s, "%s~new", notefile);
   movefile(s, notefile);
   if (tot > 0)
-    putlog(LOG_MISC, "*", NOTES_EXPIRED, tot, tot == 1 ? "" : "s");
+    putlog(LOG_MISC, "*", P_("Expired one note", "Expired %d notes", tot), tot);
 }
 
 /* Add note to notefile.
@@ -277,7 +277,7 @@ static int tcl_storenote STDVAR
       ok = 0;
     if (ok) {
       if ((add_note(fwd, p, work, idx, 0) == NOTE_OK) && (idx >= 0))
-        dprintf(idx, NOTES_FORWARD_NOTONLINE, f1);
+        dprintf(idx, _("Not online; forwarded to %s.\n"), f1);
       Tcl_AppendResult(irp, f1, NULL);
       to = NULL;
     } else {
@@ -289,7 +289,7 @@ static int tcl_storenote STDVAR
   if (to) {
     if (notefile[0] == 0) {
       if (idx >= 0)
-        dprintf(idx, "%s\n", NOTES_UNSUPPORTED);
+        dprintf(idx, "%s\n", _("Notes are not supported by this bot."));
     } else if (num_notes(to) >= maxnotes) {
       if (idx >= 0)
         dprintf(idx, "%s\n", NOTES_NOTES2MANY);
@@ -299,8 +299,8 @@ static int tcl_storenote STDVAR
         f = fopen(notefile, "w");
       if (f == NULL) {
         if (idx >= 0)
-          dprintf(idx, "%s\n", NOTES_NOTEFILE_FAILED);
-        putlog(LOG_MISC, "*", "%s", NOTES_NOTEFILE_UNREACHABLE);
+          dprintf(idx, "%s\n", _("Can't create notefile. Sorry."));
+        putlog(LOG_MISC, "*", "%s", _("Notefile unreachable!"));
       } else {
         char *p, *blah = argv[3], *from = argv[1];
         int l = 0;
@@ -317,7 +317,7 @@ static int tcl_storenote STDVAR
                 l ? work : "", blah);
         fclose(f);
         if (idx >= 0)
-          dprintf(idx, "%s.\n", NOTES_STORED_MESSAGE);
+          dprintf(idx, _("Stored message.\n"));
       }
     }
   }
@@ -478,17 +478,17 @@ static void notes_read(char *hand, char *nick, char *srd, int idx)
     srd = "-";
   if (!notefile[0]) {
     if (idx >= 0)
-      dprintf(idx, "%s.\n", NOTES_NO_MESSAGES);
+      dprintf(idx, _("You have no messages.\n"));
     else
-      dprintf(DP_HELP, "NOTICE %s :%s.\n", nick, NOTES_NO_MESSAGES);
+      dprintf(DP_HELP, "NOTICE %s :%s.\n", nick, _("You have no messages"));
     return;
   }
   f = fopen(notefile, "r");
   if (f == NULL) {
     if (idx >= 0)
-      dprintf(idx, "%s.\n", NOTES_NO_MESSAGES);
+      dprintf(idx, _("You have no messages.\n"));
     else
-      dprintf(DP_HELP, "NOTICE %s :%s.\n", nick, NOTES_NO_MESSAGES);
+      dprintf(DP_HELP, "NOTICE %s :%s.\n", nick, _("You have no messages"));
     return;
   }
   notes_parse(rd, srd);
@@ -512,15 +512,17 @@ static void notes_read(char *hand, char *nick, char *srd, int idx)
           lapse = (int) ((now - tt) / 86400);
           if (lapse > note_life - 7) {
             if (lapse >= note_life)
-              strcat(dt, NOTES_EXPIRE_TODAY);
+              strcat(dt, _(" -- EXPIRES TODAY"));
             else
-              sprintf(&dt[strlen(dt)], NOTES_EXPIRE_XDAYS, note_life - lapse,
-                      (note_life - lapse) == 1 ? "" : "S");
+              sprintf(&dt[strlen(dt)], P_(" -- EXPIRES IN %d DAY",
+                      " -- EXPIRES IN %d DAYS", note_life - lapse),
+                      note_life - lapse);
           }
           if (srd[0] == '+') {
             if (idx >= 0) {
               if (ix == 1)
-                dprintf(idx, "### %s:\n", NOTES_WAITING);
+                dprintf(idx, _("### You have the following note(s) "
+                        "waiting:\n"));
               dprintf(idx, "  %2d. %s (%s)\n", ix, from, dt);
             } else
               dprintf(DP_HELP, "NOTICE %s :%2d. %s (%s)\n", nick, ix, from,
@@ -541,27 +543,29 @@ static void notes_read(char *hand, char *nick, char *srd, int idx)
   fclose(f);
   if ((srd[0] != '+') && (ir == 0) && (ix > 1)) {
     if (idx >= 0)
-      dprintf(idx, "%s.\n", NOTES_NOT_THAT_MANY);
+      dprintf(idx, "%s.\n", _("You don't have that many messages"));
     else
-      dprintf(DP_HELP, "NOTICE %s :%s.\n", nick, NOTES_NOT_THAT_MANY);
+      dprintf(DP_HELP, "NOTICE %s :%s.\n", nick, _("You don't have that many "
+              "messages"));
   }
   if (srd[0] == '+') {
     if (ix == 1) {
       if (idx >= 0)
-        dprintf(idx, "%s.\n", NOTES_NO_MESSAGES);
+        dprintf(idx, "%s.\n", _("You have no messages"));
       else
-        dprintf(DP_HELP, "NOTICE %s :%s.\n", nick, NOTES_NO_MESSAGES);
+        dprintf(DP_HELP, "NOTICE %s :%s.\n", nick, _("You have no messages"));
     } else {
       if (idx >= 0)
-        dprintf(idx, "### %s\n", (ix != 2) ? NOTES_DCC_USAGE_READ : NOTES_DCC_USAGE_READ2);
+        dprintf(idx, "### %s\n", P_("Use '.notes read' to read it.",
+                "Use '.notes read' to read them.", ix - 1));
       else
         dprintf(DP_HELP, "NOTICE %s :%s: %d\n", nick, MISC_TOTAL, ix - 1);
     }
   } else if ((ir == 0) && (ix == 1)) {
     if (idx >= 0)
-      dprintf(idx, "%s.\n", NOTES_NO_MESSAGES);
+      dprintf(idx, "%s.\n", _("You have no messages"));
     else
-      dprintf(DP_HELP, "NOTICE %s :%s.\n", nick, NOTES_NO_MESSAGES);
+      dprintf(DP_HELP, "NOTICE %s :%s.\n", nick, _("You have no messages"));
   }
 }
 
@@ -582,26 +586,27 @@ static void notes_del(char *hand, char *nick, char *sdl, int idx)
     sdl = "-";
   if (!notefile[0]) {
     if (idx >= 0)
-      dprintf(idx, "%s.\n", NOTES_NO_MESSAGES);
+      dprintf(idx, "%s.\n", _("You have no messages"));
     else
-      dprintf(DP_HELP, "NOTICE %s :%s.\n", nick, NOTES_NO_MESSAGES);
+      dprintf(DP_HELP, "NOTICE %s :%s.\n", nick, _("You have no messages"));
     return;
   }
   f = fopen(notefile, "r");
   if (f == NULL) {
     if (idx >= 0)
-      dprintf(idx, "%s.\n", NOTES_NO_MESSAGES);
+      dprintf(idx, "%s.\n", _("You have no messages"));
     else
-      dprintf(DP_HELP, "NOTICE %s :%s.\n", nick, NOTES_NO_MESSAGES);
+      dprintf(DP_HELP, "NOTICE %s :%s.\n", nick, _("You have no messages"));
     return;
   }
   sprintf(s, "%s~new", notefile);
   g = fopen(s, "w");
   if (g == NULL) {
     if (idx >= 0)
-      dprintf(idx, "%s. :(\n", NOTES_FAILED_CHMOD);
+      dprintf(idx, "%s. :(\n", _("Can't modify the note file"));
     else
-      dprintf(DP_HELP, "NOTICE %s :%s. :(\n", nick, NOTES_FAILED_CHMOD);
+      dprintf(DP_HELP, "NOTICE %s :%s. :(\n", nick,
+              _("Can't modify the note file"));
     fclose(f);
     return;
   }
@@ -635,27 +640,28 @@ static void notes_del(char *hand, char *nick, char *sdl, int idx)
   movefile(s, notefile);
   if ((er == 0) && (in > 1)) {
     if (idx >= 0)
-      dprintf(idx, "%s.\n", NOTES_NOT_THAT_MANY);
+      dprintf(idx, "%s.\n", _("You don't have that many messages"));
     else
-      dprintf(DP_HELP, "NOTICE %s :%s.\n", nick, NOTES_NOT_THAT_MANY);
+      dprintf(DP_HELP, "NOTICE %s :%s.\n", nick, _("You don't have "
+              "that many messages"));
   } else if (in == 1) {
     if (idx >= 0)
-      dprintf(idx, "%s.\n", NOTES_NO_MESSAGES);
+      dprintf(idx, "%s.\n", _("You have no messages"));
     else
-      dprintf(DP_HELP, "NOTICE %s :%s.\n", nick, NOTES_NO_MESSAGES);
+      dprintf(DP_HELP, "NOTICE %s :%s.\n", nick, _("You have no messages"));
   } else {
     if (er == (in - 1)) {
       if (idx >= 0)
-        dprintf(idx, "%s.\n", NOTES_ERASED_ALL);
+        dprintf(idx, "%s.\n", _("Erased all notes"));
       else
-        dprintf(DP_HELP, "NOTICE %s :%s.\n", nick, NOTES_ERASED_ALL);
+        dprintf(DP_HELP, "NOTICE %s :%s.\n", nick, _("Erased all notes"));
     } else {
       if (idx >= 0)
-        dprintf(idx, "%s %d note%s; %d %s.\n", NOTES_ERASED, er,
-                (er != 1) ? "s" : "", in - 1 - er, NOTES_LEFT);
+        dprintf(idx, P_("Erased %d note; %d left.\n",
+                "Erased %d notes; %d left.\n", er), in - 1 - er);
       else
-        dprintf(DP_HELP, "NOTICE %s :%s %d note%s; %d %s.\n", nick, MISC_ERASED,
-                er, (er != 1) ? "s" : "", in - 1 - er, NOTES_LEFT);
+        dprintf(DP_HELP, "NOTICE %s :%s", nick, P_("Erased %d note; %d left.\n",
+                "Erased %d notes; %d left.\n", er), in - 1 - er);
     }
   }
 }
@@ -739,7 +745,8 @@ static int msg_notes(char *nick, char *host, struct userrec *u, char *par)
     dprintf(DP_HELP, "NOTICE %s :NOTES <pass> TO <hand> <msg>\n", nick);
     dprintf(DP_HELP, "NOTICE %s :NOTES <pass> READ <# or ALL>\n", nick);
     dprintf(DP_HELP, "NOTICE %s :NOTES <pass> ERASE <# or ALL>\n", nick);
-    dprintf(DP_HELP, "NOTICE %s :%s\n", nick, NOTES_MAYBE);
+    dprintf(DP_HELP, "NOTICE %s :%s\n", nick, _("'#' may be numbers and/or "
+            "intervals separated by ';'."));
     dprintf(DP_HELP, "NOTICE %s :Ex: NOTES mypass ERASE 2-4;8;16-\n", nick);
     return 1;
   }
@@ -771,16 +778,18 @@ static int msg_notes(char *nick, char *host, struct userrec *u, char *par)
 
     to = newsplit(&par);
     if (!par[0]) {
-      dprintf(DP_HELP, "NOTICE %s :%s: NOTES <pass> TO <hand> <message>\n",
-              nick, NOTES_USAGE);
+      dprintf(DP_HELP, "NOTICE %s :%s", _("Usage: NOTES <pass> TO <hand> "
+              "<message>\n"), nick);
       return 0;
     }
     u2 = get_user_by_handle(userlist, to);
     if (!u2) {
-      dprintf(DP_HELP, "NOTICE %s :%s\n", nick, NOTES_USERF_UNKNOWN);
+      dprintf(DP_HELP, "NOTICE %s :%s\n", nick, _("I don't know anyone "
+              "by that name."));
       return 1;
     } else if (is_bot(u2)) {
-      dprintf(DP_HELP, "NOTICE %s :%s\n", nick, NOTES_NOTTO_BOT);
+      dprintf(DP_HELP, "NOTICE %s :%s\n", nick, _("That's a bot. You can't "
+              "leave notes for a bot."));
       return 1;
     }
     for (i = 0; i < dcc_total; i++) {
@@ -795,28 +804,30 @@ static int msg_notes(char *nick, char *host, struct userrec *u, char *par)
           aok = 0;              /* Assume non dcc-chat == something weird, so
                                  * store notes for later */
         if (aok) {
-          dprintf(i, "\007%s [%s]: %s\n", u->handle, NOTES_OUTSIDE, par);
-          dprintf(DP_HELP, "NOTICE %s :%s\n", nick, NOTES_DELIVERED);
+          dprintf(i, "\007%s [%s]: %s\n", u->handle, _("Outside note"), par);
+          dprintf(DP_HELP, "NOTICE %s :%s\n", nick, _("Note delivered."));
           return 1;
         }
       }
     }
     if (notefile[0] == 0) {
-      dprintf(DP_HELP, "NOTICE %s :%s\n", nick, NOTES_UNSUPPORTED);
+      dprintf(DP_HELP, "NOTICE %s :%s\n", nick,
+              _("Notes are not supported by this bot."));
       return 1;
     }
     f = fopen(notefile, "a");
     if (f == NULL)
       f = fopen(notefile, "w");
     if (f == NULL) {
-      dprintf(DP_HELP, "NOTICE %s :%s", nick, NOTES_NOTEFILE_FAILED);
-      putlog(LOG_MISC, "*", "* %s", NOTES_NOTEFILE_UNREACHABLE);
+      dprintf(DP_HELP, "NOTICE %s :%s", nick, _("Can't create notefile. "
+              "Sorry."));
+      putlog(LOG_MISC, "*", "* %s", _("Notefile unreachable!"));
       return 1;
     }
     chmod(notefile, userfile_perm); /* Use userfile permissions. */
     fprintf(f, "%s %s %li %s\n", to, u->handle, (long) now, par);
     fclose(f);
-    dprintf(DP_HELP, "NOTICE %s :%s\n", nick, NOTES_DELIVERED);
+    dprintf(DP_HELP, "NOTICE %s :%s\n", nick, _("Note delivered."));
     return 1;
   } else
     dprintf(DP_HELP, "NOTICE %s :%s: NOTES <pass> INDEX, READ, ERASE, TO\n",
@@ -850,10 +861,11 @@ static void notes_hourly()
               break;
             }
           if (k) {
-            dprintf(DP_HELP, "NOTICE %s :You have %d note%s waiting on %s.\n",
-                    m->nick, k, k == 1 ? "" : "s", botname);
+            dprintf(DP_HELP, P_("NOTICE %s :You have one note waiting on %s.\n",
+                    "NOTICE %s :You have %d notes waiting on %s.\n", k),
+                    m->nick, k, botname);
             dprintf(DP_HELP, "NOTICE %s :%s /MSG %s NOTES <pass> INDEX\n",
-                    m->nick, NOTES_FORLIST, botname);
+                    m->nick, _("For a list:"), botname);
           }
         }
       }
@@ -861,8 +873,10 @@ static void notes_hourly()
     for (l = 0; l < dcc_total; l++) {
       k = num_notes(dcc[l].nick);
       if ((k > 0) && (dcc[l].type->flags & DCT_CHAT)) {
-        dprintf(l, NOTES_WAITING2, k, (k == 1) ? "" : "s");
-        dprintf(l, "### %s\n", (k != 1) ? NOTES_DCC_USAGE_READ : NOTES_DCC_USAGE_READ2);
+        dprintf(l, P_("### You have %d note waiting.\n", "### You "
+                "have %d notes waiting.\n", k), k);
+        dprintf(l, "### %s\n", P_("Use '.notes read' to read it.",
+                "Use '.notes read' to read them.", k));
       }
     }
   }
@@ -875,7 +889,7 @@ static void away_notes(char *bot, int sock, char *msg)
   if (egg_strcasecmp(bot, botnetnick))
     return;
   if (msg && msg[0])
-    dprintf(idx, "%s\n", NOTES_STORED);
+    dprintf(idx, "%s\n", _("Notes will be stored."));
   else
     notes_read(dcc[idx].nick, 0, "+", idx);
 }
@@ -906,9 +920,10 @@ static void join_notes(char *nick, char *uhost, char *handle, char *par)
 
     i = num_notes(handle);
     if (i) {
-      dprintf(DP_HELP, NOTES_WAITING_NOTICE, nick, i, (i == 1) ? "" : "s", botname);
+      dprintf(DP_HELP, P_("NOTICE %s :You have one note waiting.",
+              "You have %d notes waiting.", i), nick, i, botname);
       dprintf(DP_HELP, "NOTICE %s :%s /MSG %s NOTES <pass> INDEX\n",
-              nick, NOTES_FORLIST, botname);
+              nick, _("For a list:"), botname);
     }
   }
 }
@@ -1192,11 +1207,10 @@ static void notes_report(int idx, int details)
     int size = notes_expmem();
 
     if (notefile[0])
-      dprintf(idx, "    Notes can be stored in: %s\n", notefile);
+      dprintf(idx, _("    Notes can be stored in: %s\n"), notefile);
     else
-      dprintf(idx, "    Notes can not be stored.\n");
-    dprintf(idx, "    Using %d byte%s of memory\n", size,
-            (size != 1) ? "s" : "");
+      dprintf(idx, _("    Notes can not be stored.\n"));
+    dprintf(idx, _("    Using %d bytes of memory\n"), size);
   }
 }
 
@@ -1219,7 +1233,7 @@ char *notes_start(Function *global_funcs)
   module_register(MODULE_NAME, notes_table, 2, 2);
   if (!module_depend(MODULE_NAME, "eggdrop", 108, 0)) {
     module_undepend(MODULE_NAME);
-    return "This module requires Eggdrop 1.8.0 or later.";
+    return _("This module requires Eggdrop 1.8.0 or later.");
   }
   add_hook(HOOK_HOURLY, (Function) notes_hourly);
   add_hook(HOOK_MATCH_NOTEREJ, (Function) match_note_ignore);

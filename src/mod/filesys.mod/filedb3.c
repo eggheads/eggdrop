@@ -4,7 +4,7 @@
  *
  * Rewritten by Fabian Knittel <fknittel@gmx.de>
  *
- * $Id: filedb3.c,v 1.3 2010/10/19 12:13:33 pseudo Exp $
+ * $Id: filedb3.c,v 1.3.2.1 2010/11/16 14:16:56 pseudo Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -647,7 +647,7 @@ static void filedb_update(char *path, FILE *fdb, int sort)
    */
   dir = opendir(path);
   if (dir == NULL) {
-    putlog(LOG_MISC, "*", FILES_NOUPDATE);
+    putlog(LOG_MISC, "*", _("filedb-update: can't open directory!"));
     return;
   }
   dd = readdir(dir);
@@ -741,7 +741,7 @@ static FILE *filedb_open(char *path, int sort)
   struct stat st;
 
   if (count >= 2)
-    putlog(LOG_MISC, "*", "(@) warning: %d open filedb's", count);
+    putlog(LOG_MISC, "*", _("(@) warning: %d open filedb's"), count);
   npath = nmalloc(strlen(dccdir) + strlen(path) + 1);
   simple_sprintf(npath, "%s%s", dccdir, path);
   /* Use alternate filename if requested */
@@ -761,7 +761,8 @@ static FILE *filedb_open(char *path, int sort)
     if (convert_old_files(npath, s)) {
       fdb = fopen(s, "r+b");
       if (fdb == NULL) {
-        putlog(LOG_MISC, "*", FILES_NOCONVERT, npath);
+        putlog(LOG_MISC, "*", _("(!) Broken convert to filedb in %s"),
+               npath);
         my_free(s);
         my_free(npath);
         return NULL;
@@ -922,11 +923,11 @@ static void filedb_ls(FILE *fdb, int idx, char *mask, int showall)
          */
         if ((fdbe->flags_req) && (user.global &(USER_MASTER | USER_JANITOR))) {
           s3 = nmalloc(42 + strlen(s2 ? s2 : "") + 6 +
-                       strlen(FILES_REQUIRES) + strlen(fdbe->flags_req) + 1 +
+                       strlen(_("requires")) + strlen(fdbe->flags_req) + 1 +
                        strlen(fdbe->chan ? fdbe->chan : "") + 1);
           sprintf(s3, "%-30s <DIR%s>  (%s %s%s%s)\n", s2,
                   fdbe->stat & FILE_SHARE ?
-                  " SHARE" : "", FILES_REQUIRES, fdbe->flags_req,
+                  " SHARE" : "", _("requires"), fdbe->flags_req,
                   fdbe->chan ? " " : "", fdbe->chan ? fdbe->chan : "");
         } else {
           s3 = nmalloc(38 + strlen(s2 ? s2 : ""));
@@ -1007,13 +1008,13 @@ static void filedb_ls(FILE *fdb, int idx, char *mask, int showall)
     fdbe = filedb_getfile(fdb, ftell(fdb), GET_FULL);
   }
   if (is == 0)
-    dprintf(idx, FILES_NOFILES);
+    dprintf(idx, _("No files in this directory.\n"));
   else if (cnt == 0)
-    dprintf(idx, FILES_NOMATCH);
+    dprintf(idx, _("No matching files.\n"));
   else {
     filelist_sort(flist);
     filelist_idxshow(flist, idx);
-    dprintf(idx, "--- %d file%s.\n", cnt, cnt != 1 ? "s" : "");
+    dprintf(idx, P_("--- one file.\n", "--- %d files.\n", cnt), cnt);
   }
   filelist_free(flist);
 }
@@ -1037,17 +1038,17 @@ static void remote_filereq(int idx, char *from, char *file)
   }
   fdb = filedb_open(dir, 0);
   if (!fdb) {
-    reject = FILES_DIRDNE;
+    reject = _("Directory does not exist");
   } else {
     filedb_readtop(fdb, NULL);
     fdbe = filedb_matchfile(fdb, ftell(fdb), what);
     filedb_close(fdb);
     if (!fdbe) {
-      reject = FILES_FILEDNE;
+      reject = _("File does not exist");
     } else {
       if ((!(fdbe->stat & FILE_SHARE)) ||
           (fdbe->stat & (FILE_HIDDEN | FILE_DIR)))
-        reject = FILES_NOSHARE;
+        reject = _("File is not shared");
       else {
         s1 = nmalloc(strlen(dccdir) + strlen(dir) + strlen(what) + 2);
         /* Copy to /tmp if needed */
@@ -1058,10 +1059,10 @@ static void remote_filereq(int idx, char *from, char *file)
           copyfile(s1, s);
         } else
           s = s1;
-        i = raw_dcc_send(s, "*remote", FILES_REMOTE, s);
+        i = raw_dcc_send(s, "*remote", _("(remote)"), s);
         if (i > 0) {
           wipe_tmp_filename(s, -1);
-          reject = FILES_SENDERR;
+          reject = _("Error trying to send file");
         }
         if (s1 != s)
           my_free(s);
@@ -1086,7 +1087,8 @@ static void remote_filereq(int idx, char *from, char *file)
   getdccaddr(&dcc[i].sockname, s, 46);
   simple_sprintf(s, "%s %u %d", s, dcc[i].port, dcc[i].u.xfer->length);
   botnet_send_filesend(idx, s1, from, s);
-  putlog(LOG_FILES, "*", FILES_REMOTEREQ, dir, dir[0] ? "/" : "", what);
+  putlog(LOG_FILES, "*", _("Remote request for /%s%s%s (sending)"), dir,
+         dir[0] ? "/" : "", what);
   my_free(s1);
   my_free(s);
   my_free(what);

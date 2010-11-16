@@ -2,7 +2,7 @@
  * cmdsserv.c -- part of server.mod
  *   handles commands from a user via dcc that cause server interaction
  *
- * $Id: cmdsserv.c,v 1.3 2010/11/01 22:38:34 pseudo Exp $
+ * $Id: cmdsserv.c,v 1.3.2.1 2010/11/16 14:16:57 pseudo Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -31,32 +31,32 @@ static void cmd_servers(struct userrec *u, int idx, char *par)
 
   putlog(LOG_CMDS, "*", "#%s# servers", dcc[idx].nick);
   if (!x) {
-    dprintf(idx, "There are no servers in the server list.\n");
+    dprintf(idx, _("There are no servers in the server list.\n"));
   } else {
-    dprintf(idx, "Server list:\n");
+    dprintf(idx, _("Server list:\n"));
     i = 0;
     for (; x; x = x->next) {
       if ((i == curserv) && realservername)
 #ifdef TLS
-        egg_snprintf(s, sizeof s, "  [%s]:%s%d (%s) <- I am here", x->name,
+        egg_snprintf(s, sizeof s, _("  [%s]:%s%d (%s) <- I am here"), x->name,
                      x->ssl ? "+" : "", x->port ? x->port : default_port,
                      realservername);
       else
         egg_snprintf(s, sizeof s, "  [%s]:%s%d %s", x->name, x->ssl ? "+" : "",
                      x->port ? x->port : default_port,
-                     (i == curserv) ? "<- I am here" : "");
+                     (i == curserv) ? _("<- I am here") : "");
 #else
-        egg_snprintf(s, sizeof s, "  [%s]:%d (%s) <- I am here", x->name,
+        egg_snprintf(s, sizeof s, _("  [%s]:%d (%s) <- I am here"), x->name,
                      x->port ? x->port : default_port, realservername);
       else
         egg_snprintf(s, sizeof s, "  [%s]:%d %s", x->name,
                      x->port ? x->port : default_port,
-                     (i == curserv) ? "<- I am here" : "");
+                     (i == curserv) ? _("<- I am here") : "");
 #endif
       dprintf(idx, "%s\n", s);
       i++;
     }
-    dprintf(idx, "End of server list.\n");
+    dprintf(idx, _("End of server list.\n"));
   }
 }
 
@@ -67,7 +67,7 @@ static void cmd_dump(struct userrec *u, int idx, char *par)
     return;
   }
   if (!par[0]) {
-    dprintf(idx, "Usage: dump <server stuff>\n");
+    dprintf(idx, _("Usage: dump <server stuff>\n"));
     return;
   }
   putlog(LOG_CMDS, "*", "#%s# dump %s", dcc[idx].nick, par);
@@ -109,7 +109,7 @@ static void cmd_jump(struct userrec *u, int idx, char *par)
     strncpyz(newserverpass, par, sizeof newserverpass);
   } else
     putlog(LOG_CMDS, "*", "#%s# jump", dcc[idx].nick);
-  dprintf(idx, "%s...\n", IRC_JUMP);
+  dprintf(idx, _("Jumping servers...\n"));
   cycle_time = 0;
   nuke_server("changing servers");
 }
@@ -119,7 +119,7 @@ static void cmd_clearqueue(struct userrec *u, int idx, char *par)
   int msgs;
 
   if (!par[0]) {
-    dprintf(idx, "Usage: clearqueue <mode|server|help|all>\n");
+    dprintf(idx, _("Usage: clearqueue <mode|server|help|all>\n"));
     return;
   }
   if (!egg_strcasecmp(par, "all")) {
@@ -128,32 +128,32 @@ static void cmd_clearqueue(struct userrec *u, int idx, char *par)
     msgq_clear(&mq);
     msgq_clear(&hq);
     double_warned = burst = 0;
-    dprintf(idx, "Removed %d message%s from all queues.\n", msgs,
-            (msgs != 1) ? "s" : "");
+    dprintf(idx, P_("Removed %d message from all queues.\n",
+            "Removed %d message from all queues.\n", msgs), msgs);
   } else if (!egg_strcasecmp(par, "mode")) {
     msgs = modeq.tot;
     msgq_clear(&modeq);
     if (mq.tot == 0)
       burst = 0;
     double_warned = 0;
-    dprintf(idx, "Removed %d message%s from the mode queue.\n", msgs,
-            (msgs != 1) ? "s" : "");
+    dprintf(idx, P_("Removed %d message from the mode queue.\n",
+            "Removed %d messages from the mode queue.\n", msgs), msgs);
   } else if (!egg_strcasecmp(par, "help")) {
     msgs = hq.tot;
     msgq_clear(&hq);
     double_warned = 0;
-    dprintf(idx, "Removed %d message%s from the help queue.\n", msgs,
-            (msgs != 1) ? "s" : "");
+    dprintf(idx, P_("Removed %d message from the help queue.\n",
+            "Removed %d messages from the help queue.\n", msgs), msgs);
   } else if (!egg_strcasecmp(par, "server")) {
     msgs = mq.tot;
     msgq_clear(&mq);
     if (modeq.tot == 0)
       burst = 0;
     double_warned = 0;
-    dprintf(idx, "Removed %d message%s from the server queue.\n", msgs,
-            (msgs != 1) ? "s" : "");
+    dprintf(idx, P_("Removed %d message from the server queue.\n",
+            "Removed %d messages from the server queue.\n", msgs), msgs);
   } else {
-    dprintf(idx, "Usage: clearqueue <mode|server|help|all>\n");
+    dprintf(idx, _("Usage: clearqueue <mode|server|help|all>\n"));
     return;
   }
   putlog(LOG_CMDS, "*", "#%s# clearqueue %s", dcc[idx].nick, par);

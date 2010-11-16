@@ -1,7 +1,7 @@
 /*
  * servmsg.c -- part of server.mod
  *
- * $Id: servmsg.c,v 1.4 2010/10/24 13:22:40 pseudo Exp $
+ * $Id: servmsg.c,v 1.4.2.1 2010/11/16 14:16:57 pseudo Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -84,7 +84,7 @@ static int gotfake433(char *from)
     }
     botname[l] = altnick_char;
   }
-  putlog(LOG_MISC, "*", IRC_BOTNICKINUSE, botname);
+  putlog(LOG_MISC, "*", _("NICK IN USE: Trying '%s'"), botname);
   dprintf(DP_MODE, "NICK %s\n", botname);
   return 0;
 }
@@ -297,7 +297,7 @@ static int got001(char *from, char *msg)
     for (i = curserv; i > 0 && x; i--)
       x = x->next;
     if (!x) {
-      putlog(LOG_MISC, "*", "Invalid server list!");
+      putlog(LOG_MISC, "*", _("Invalid server list!"));
     } else {
       if (x->realname)
         nfree(x->realname);
@@ -309,7 +309,7 @@ static int got001(char *from, char *msg)
     realservername = nmalloc(strlen(from) + 1);
     strcpy(realservername, from);
   } else
-    putlog(LOG_MISC, "*", "No server list!");
+    putlog(LOG_MISC, "*", _("No server list!"));
 
   server_online = now;
   fixcolon(msg);
@@ -357,7 +357,7 @@ static int got442(char *from, char *msg)
   if (chan && !channel_inactive(chan)) {
     module_entry *me = module_find("channels", 0, 0);
 
-    putlog(LOG_MISC, chname, IRC_SERVNOTONCHAN, chname);
+    putlog(LOG_MISC, chname, _("Server says I'm not on channel: %s"), chname);
     if (me && me->funcs)
       (me->funcs[CHANNEL_CLEAR]) (chan, 1);
     chan->status &= ~CHAN_ACTIVE;
@@ -459,8 +459,8 @@ static int detect_flood(char *floodnick, char *floodhost, char *from, int which)
     /* Private msg */
     simple_sprintf(h, "*!*@%s", p);
     putlog(LOG_MISC, "*", IRC_FLOODIGNORE1, p);
-    addignore(h, botnetnick, (which == FLOOD_CTCP) ? "CTCP flood" :
-              "MSG/NOTICE flood", now + (60 * ignore_time));
+    addignore(h, botnetnick, (which == FLOOD_CTCP) ? _("CTCP flood") :
+              _("MSG/NOTICE flood"), now + (60 * ignore_time));
   }
   return 0;
 }
@@ -514,7 +514,7 @@ static int gotmsg(char *from, char *msg)
           /* CTCP from oper, don't interpret */
           if ((to[0] == '$') || strchr(to, '.')) {
             if (!ignoring)
-              putlog(LOG_PUBLIC, to, "CTCP %s: %s from %s (%s) to %s",
+              putlog(LOG_PUBLIC, to, _("CTCP %s: %s from %s (%s) to %s"),
                      code, ctcp, nick, uhost, to);
           } else {
             u = get_user_by_host(from);
@@ -529,21 +529,22 @@ static int gotmsg(char *from, char *msg)
                   if (!strcmp(code, "CHAT")) {
                     if (!quiet_reject) {
                       if (u)
-                        dprintf(DP_HELP, "NOTICE %s :I'm not accepting calls "
-                                "at the moment.\n", nick);
+                        dprintf(DP_HELP, _("NOTICE %s :I'm not accepting calls "
+                                "at the moment.\n"), nick);
                       else
                         dprintf(DP_HELP, "NOTICE %s :%s\n", nick,
-                                DCC_NOSTRANGERS);
+                                _("I don't accept DCC chats from strangers."));
                     }
-                    putlog(LOG_MISC, "*", "%s: %s", DCC_REFUSED, from);
+                    putlog(LOG_MISC, "*", _("Refused DCC chat: %s (no access)"),
+                           from);
                   } else
-                    putlog(LOG_MISC, "*", "Refused DCC %s: %s", code, from);
+                    putlog(LOG_MISC, "*", _("Refused DCC %s: %s"), code, from);
                 }
               }
               if (!strcmp(code, "ACTION")) {
-                putlog(LOG_MSGS, "*", "Action to %s: %s %s", to, nick, ctcp);
+                putlog(LOG_MSGS, "*", _("Action to %s: %s %s"), to, nick, ctcp);
               } else {
-                putlog(LOG_MSGS, "*", "CTCP %s: %s from %s (%s)", code, ctcp,
+                putlog(LOG_MSGS, "*", _("CTCP %s: %s from %s (%s)"), code, ctcp,
                        nick, uhost);
               }                 /* I love a good close cascade ;) */
             }
@@ -638,7 +639,7 @@ static int gotnotice(char *from, char *msg)
         if ((to[0] == '$') || strchr(to, '.')) {
           if (!ignoring)
             putlog(LOG_PUBLIC, "*",
-                   "CTCP reply %s: %s from %s (%s) to %s", code, ctcp,
+                   _("CTCP reply %s: %s from %s (%s) to %s"), code, ctcp,
                    nick, uhost, to);
         } else {
           u = get_user_by_host(from);
@@ -647,7 +648,7 @@ static int gotnotice(char *from, char *msg)
             if (!ignoring)
               /* Who cares? */
               putlog(LOG_MSGS, "*",
-                     "CTCP reply %s: %s from %s (%s) to %s",
+                     _("CTCP reply %s: %s from %s (%s) to %s"),
                      code, ctcp, nick, uhost, to);
           }
         }
@@ -711,8 +712,9 @@ static int got251(char *from, char *msg)
                                  * stuff in here :/ */
   i = atoi(servs);
   if (i < min_servs) {
-    putlog(LOG_SERV, "*", IRC_AUTOJUMP, min_servs, i);
-    nuke_server(IRC_CHANGINGSERV);
+    putlog(LOG_SERV, "*", _("Jumping servers (need %d servers, only have %d)"),
+           min_servs, i);
+    nuke_server(_("changing servers"));
   }
   return 0;
 }
@@ -814,10 +816,10 @@ static void got303(char *from, char *msg)
     }
     if (!ison_orig) {
       if (!nick_juped)
-        putlog(LOG_MISC, "*", IRC_GETORIGNICK, origbotname);
+        putlog(LOG_MISC, "*", _("Switching back to nick %s"), origbotname);
       dprintf(DP_SERVER, "NICK %s\n", origbotname);
     } else if (alt[0] && !ison_alt && rfc_casecmp(botname, alt)) {
-      putlog(LOG_MISC, "*", IRC_GETALTNICK, alt);
+      putlog(LOG_MISC, "*", _("Switching back to altnick %s"), alt);
       dprintf(DP_SERVER, "NICK %s\n", alt);
     }
   }
@@ -832,10 +834,10 @@ static int got432(char *from, char *msg)
   newsplit(&msg);
   erroneus = newsplit(&msg);
   if (server_online)
-    putlog(LOG_MISC, "*", "NICK IS INVALID: %s (keeping '%s').", erroneus,
+    putlog(LOG_MISC, "*", _("NICK IS INVALID: %s (keeping '%s')."), erroneus,
            botname);
   else {
-    putlog(LOG_MISC, "*", IRC_BADBOTNICK);
+    putlog(LOG_MISC, "*", _("Server says my nickname is invalid."));
     if (!keepnick) {
       makepass(erroneus);
       erroneus[NICKMAX] = 0;
@@ -857,7 +859,7 @@ static int got433(char *from, char *msg)
     /* We are online and have a nickname, we'll keep it */
     newsplit(&msg);
     tmp = newsplit(&msg);
-    putlog(LOG_MISC, "*", "NICK IN USE: %s (keeping '%s').", tmp, botname);
+    putlog(LOG_MISC, "*", _("NICK IN USE: %s (keeping '%s')."), tmp, botname);
     nick_juped = 0;
     return 0;
   }
@@ -878,21 +880,22 @@ static int got437(char *from, char *msg)
     chan = findchan(s);
     if (chan) {
       if (chan->status & CHAN_ACTIVE) {
-        putlog(LOG_MISC, "*", IRC_CANTCHANGENICK, s);
+        putlog(LOG_MISC, "*", _("Can't change nickname on %s. "
+               "Is my nickname banned?"), s);
       } else {
         if (!channel_juped(chan)) {
-          putlog(LOG_MISC, "*", IRC_CHANNELJUPED, s);
+          putlog(LOG_MISC, "*", _("Channel %s is juped. :("), s);
           chan->status |= CHAN_JUPED;
         }
       }
     }
   } else if (server_online) {
     if (!nick_juped)
-      putlog(LOG_MISC, "*", "NICK IS JUPED: %s (keeping '%s').", s, botname);
+      putlog(LOG_MISC, "*", _("NICK IS JUPED: %s (keeping '%s')."), s, botname);
     if (!rfc_casecmp(s, origbotname))
       nick_juped = 1;
   } else {
-    putlog(LOG_MISC, "*", "%s: %s", IRC_BOTNICKJUPED, s);
+    putlog(LOG_MISC, "*", _("Nickname has been juped: %s"), s);
     gotfake433(from);
   }
   return 0;
@@ -933,10 +936,10 @@ static int goterror(char *from, char *msg)
    */
   if (msg[0] == ':')
     msg++;
-  putlog(LOG_SERV | LOG_MSGS, "*", "-ERROR from server- %s", msg);
+  putlog(LOG_SERV | LOG_MSGS, "*", _("-ERROR from server- %s"), msg);
   if (serverror_quit) {
-    putlog(LOG_SERV, "*", "Disconnecting from server.");
-    nuke_server("Bah, stupid error messages.");
+    putlog(LOG_SERV, "*", _("Disconnecting from server."));
+    nuke_server(_("Bah, stupid error messages."));
   }
   return 1;
 }
@@ -955,31 +958,31 @@ static int gotnick(char *from, char *msg)
     strncpyz(botname, msg, NICKLEN);
     altnick_char = 0;
     if (!strcmp(msg, origbotname)) {
-      putlog(LOG_SERV | LOG_MISC, "*", "Regained nickname '%s'.", msg);
+      putlog(LOG_SERV | LOG_MISC, "*", _("Regained nickname '%s'."), msg);
       nick_juped = 0;
     } else if (alt[0] && !strcmp(msg, alt))
-      putlog(LOG_SERV | LOG_MISC, "*", "Regained alternate nickname '%s'.",
+      putlog(LOG_SERV | LOG_MISC, "*", _("Regained alternate nickname '%s'."),
              msg);
     else if (keepnick && strcmp(nick, msg)) {
-      putlog(LOG_SERV | LOG_MISC, "*", "Nickname changed to '%s'???", msg);
+      putlog(LOG_SERV | LOG_MISC, "*", _("Nickname changed to '%s'???"), msg);
       if (!rfc_casecmp(nick, origbotname)) {
-        putlog(LOG_MISC, "*", IRC_GETORIGNICK, origbotname);
+        putlog(LOG_MISC, "*", _("Switching back to nick %s"), origbotname);
         dprintf(DP_SERVER, "NICK %s\n", origbotname);
       } else if (alt[0] && !rfc_casecmp(nick, alt) &&
                egg_strcasecmp(botname, origbotname)) {
-        putlog(LOG_MISC, "*", IRC_GETALTNICK, alt);
+        putlog(LOG_MISC, "*", _("Switching back to altnick %s"), alt);
         dprintf(DP_SERVER, "NICK %s\n", alt);
       }
     } else
-      putlog(LOG_SERV | LOG_MISC, "*", "Nickname changed to '%s'???", msg);
+      putlog(LOG_SERV | LOG_MISC, "*", _("Nickname changed to '%s'???"), msg);
   } else if ((keepnick) && (rfc_casecmp(nick, msg))) {
     /* Only do the below if there was actual nick change, case doesn't count */
     if (!rfc_casecmp(nick, origbotname)) {
-      putlog(LOG_MISC, "*", IRC_GETORIGNICK, origbotname);
+      putlog(LOG_MISC, "*", _("Switching back to nick %s"), origbotname);
       dprintf(DP_SERVER, "NICK %s\n", origbotname);
     } else if (alt[0] && !rfc_casecmp(nick, alt) &&
              egg_strcasecmp(botname, origbotname)) {
-      putlog(LOG_MISC, "*", IRC_GETALTNICK, altnick);
+      putlog(LOG_MISC, "*", _("Switching back to altnick %s"), altnick);
       dprintf(DP_SERVER, "NICK %s\n", altnick);
     }
   }
@@ -1000,7 +1003,7 @@ static int gotmode(char *from, char *msg)
         int servidx = findanyidx(serv);
 
         putlog(LOG_MISC | LOG_JOIN, "*",
-               "%s has me i-lined (jumping)", dcc[servidx].host);
+               _("%s has me i-lined (jumping)"), dcc[servidx].host);
         nuke_server("i-lines suck");
       }
     }
@@ -1025,14 +1028,14 @@ static void disconnect_server(int idx)
 
 static void eof_server(int idx)
 {
-  putlog(LOG_SERV, "*", "%s %s", IRC_DISCONNECTED, dcc[idx].host);
+  putlog(LOG_SERV, "*", _("Disconnected from %s"), dcc[idx].host);
   disconnect_server(idx);
   lostdcc(idx);
 }
 
 static void display_server(int idx, char *buf)
 {
-  sprintf(buf, "%s  (lag: %d)", trying_server ? "conn" : "serv", server_lag);
+  sprintf(buf, _("%s  (lag: %d)"), trying_server ? "conn" : "serv", server_lag);
 }
 
 static void connect_server(void);
@@ -1054,7 +1057,7 @@ static void kill_server(int idx, void *x)
 
 static void timeout_server(int idx)
 {
-  putlog(LOG_SERV, "*", "Timeout: connect to %s", dcc[idx].host);
+  putlog(LOG_SERV, "*", _("Timeout: connect to %s"), dcc[idx].host);
   disconnect_server(idx);
   lostdcc(idx);
 }
@@ -1080,7 +1083,7 @@ static void server_activity(int idx, char *msg, int len)
 
   if (trying_server) {
     strcpy(dcc[idx].nick, "(server)");
-    putlog(LOG_SERV, "*", "Connected to %s", dcc[idx].host);
+    putlog(LOG_SERV, "*", _("Connected to %s"), dcc[idx].host);
     trying_server = 0;
     SERVER_SOCKET.timeout_val = 0;
   }
@@ -1122,7 +1125,7 @@ static int gotkick(char *from, char *msg)
   if (use_penalties) {
     last_time += 2;
     if (raw_log)
-      putlog(LOG_SRVOUT, "*", "adding 2secs penalty (successful kick)");
+      putlog(LOG_SRVOUT, "*", _("adding 2secs penalty (successful kick)"));
   }
   return 0;
 }
@@ -1137,7 +1140,7 @@ static int whoispenalty(char *from, char *msg)
     last_time += 1;
 
     if (raw_log)
-      putlog(LOG_SRVOUT, "*", "adding 1sec penalty (remote whois)");
+      putlog(LOG_SRVOUT, "*", _("adding 1sec penalty (remote whois)"));
   }
 
   return 0;
@@ -1172,9 +1175,9 @@ static int got465(char *from, char *msg)
 
   fixcolon(msg);
 
-  putlog(LOG_SERV, "*", "Server (%s) says I'm banned: %s", from, msg);
-  putlog(LOG_SERV, "*", "Disconnecting from server.");
-  nuke_server("Banned from server.");
+  putlog(LOG_SERV, "*", _("Server (%s) says I'm banned: %s"), from, msg);
+  putlog(LOG_SERV, "*", _("Disconnecting from server."));
+  nuke_server(_("Banned from server."));
   return 1;
 }
 
@@ -1238,7 +1241,7 @@ static void connect_server(void)
     struct server_list *x = serverlist;
 
     if (!x && !botserverport) {
-      putlog(LOG_SERV, "*", "No servers in server list");
+      putlog(LOG_SERV, "*", _("No servers in server list"));
       cycle_time = 300;
       return;
     }
@@ -1246,7 +1249,7 @@ static void connect_server(void)
     servidx = new_dcc(&DCC_DNSWAIT, sizeof(struct dns_info));
     if (servidx < 0) {
       putlog(LOG_SERV, "*",
-             "NO MORE DCC CONNECTIONS -- Can't create server connection.");
+             _("NO MORE DCC CONNECTIONS -- Can't create server connection."));
       return;
     }
 
@@ -1255,15 +1258,14 @@ static void connect_server(void)
     check_tcl_event("connect-server");
     next_server(&curserv, botserver, &botserverport, pass);
 #ifdef TLS
-    putlog(LOG_SERV, "*", "%s [%s]:%s%d", IRC_SERVERTRY, botserver,
+    putlog(LOG_SERV, "*", _("Trying server [%s]:%s%d"), botserver,
            use_ssl ? "+" : "", botserverport);
     dcc[servidx].ssl = use_ssl;
 #else
-    putlog(LOG_SERV, "*", "%s [%s]:%d", IRC_SERVERTRY, botserver,
-           botserverport);
+    putlog(LOG_SERV, "*", _("Trying server [%s]:%d"), botserver, botserverport);
 #endif
     dcc[servidx].port = botserverport;
-    strcpy(dcc[servidx].nick, "(server)");
+    strcpy(dcc[servidx].nick, _("(server)"));
     strncpyz(dcc[servidx].host, botserver, UHOSTLEN);
 
     botuserhost[0] = 0;
@@ -1302,8 +1304,8 @@ static void server_resolve_failure(int servidx)
 {
   serv = -1;
   resolvserv = 0;
-  putlog(LOG_SERV, "*", "%s %s (%s)", IRC_FAILEDCONNECT, dcc[servidx].host,
-         IRC_DNSFAILED);
+  putlog(LOG_SERV, "*", _("Failed connect to %s (DNS lookup failed)"),
+         dcc[servidx].host);
   lostdcc(servidx);
 }
 
@@ -1321,11 +1323,11 @@ static void server_resolve_success(int servidx)
   if (serv < 0 || (dcc[servidx].ssl &&
       ssl_handshake(serv, TLS_CONNECT, tls_vfyserver, LOG_SERV,
                     dcc[servidx].host, NULL))) {
-    putlog(LOG_SERV, "*", "%s %s (%s)", IRC_FAILEDCONNECT, dcc[servidx].host,
-           serv ? "TLS negotiation failure" : strerror(errno));
+    putlog(LOG_SERV, "*", _("Failed connect to %s (%s)"), dcc[servidx].host,
+           serv ? _("TLS negotiation failure") : strerror(errno));
 #else
   if (serv < 0) {
-    putlog(LOG_SERV, "*", "%s %s (%s)", IRC_FAILEDCONNECT, dcc[servidx].host,
+    putlog(LOG_SERV, "*", _("Failed connect to %s (%s)"), dcc[servidx].host,
            strerror(errno));
 #endif
     lostdcc(servidx);

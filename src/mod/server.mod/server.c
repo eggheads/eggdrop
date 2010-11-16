@@ -2,7 +2,7 @@
  * server.c -- part of server.mod
  *   basic irc server support
  *
- * $Id: server.c,v 1.6 2010/11/01 22:38:34 pseudo Exp $
+ * $Id: server.c,v 1.6.2.1 2010/11/16 14:16:57 pseudo Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -369,11 +369,11 @@ static int calc_penalty(char *msg)
   if (penalty > 99)
     penalty = 99;
   if (penalty < 2) {
-    putlog(LOG_SRVOUT, "*", "Penalty < 2sec; that's impossible!");
+    putlog(LOG_SRVOUT, "*", _("Penalty < 2sec; that's impossible!"));
     penalty = 2;
   }
   if (raw_log && penalty != 0)
-    putlog(LOG_SRVOUT, "*", "Adding penalty: %i", penalty);
+    putlog(LOG_SRVOUT, "*", _("Adding penalty: %i"), penalty);
   return penalty;
 }
 
@@ -853,7 +853,7 @@ static void queue_server(int which, char *msg, int len)
     break;
 
   default:
-    putlog(LOG_MISC, "*", "Warning: queuing unknown type to server!");
+    putlog(LOG_MISC, "*", _("Warning: queuing unknown type to server!"));
     return;
   }
 
@@ -929,19 +929,19 @@ static void queue_server(int which, char *msg, int len)
       case DP_MODE_NEXT:
         /* Fallthrough */
       case DP_MODE:
-        putlog(LOG_MISC, "*", "Warning: over maximum mode queue!");
+        putlog(LOG_MISC, "*", _("Warning: over maximum mode queue!"));
         break;
 
       case DP_SERVER_NEXT:
         /* Fallthrough */
       case DP_SERVER:
-        putlog(LOG_MISC, "*", "Warning: over maximum server queue!");
+        putlog(LOG_MISC, "*", _("Warning: over maximum server queue!"));
         break;
 
       case DP_HELP_NEXT:
         /* Fallthrough */
       case DP_HELP:
-        putlog(LOG_MISC, "*", "Warning: over maximum help queue!");
+        putlog(LOG_MISC, "*", _("Warning: over maximum help queue!"));
         break;
       }
     }
@@ -1174,7 +1174,8 @@ static char *nick_change(ClientData cdata, Tcl_Interp *irp,
     new = Tcl_GetVar2(interp, name1, name2, TCL_GLOBAL_ONLY);
     if (strcmp(origbotname, (char *) new)) {
       if (origbotname[0]) {
-        putlog(LOG_MISC, "*", "* IRC NICK CHANGE: %s -> %s", origbotname, new);
+        putlog(LOG_MISC, "*", _("* IRC NICK CHANGE: %s -> %s"), origbotname,
+               new);
         nick_juped = 0;
       }
       strncpyz(origbotname, new, NICKLEN);
@@ -1519,30 +1520,33 @@ static int ctcp_DCC_CHAT(char *nick, char *from, char *handle,
   get_user_flagrec(u, &fr, 0);
   if (dcc_total == max_dcc && increase_socks_max()) {
     if (!quiet_reject)
-      dprintf(DP_HELP, "NOTICE %s :%s\n", nick, DCC_TOOMANYDCCS1);
-    putlog(LOG_MISC, "*", DCC_TOOMANYDCCS2, "CHAT", param, nick, from);
+      dprintf(DP_HELP, "NOTICE %s :%s\n", nick,
+              _("Sorry, too many DCC connections."));
+    putlog(LOG_MISC, "*", _("DCC connections full: %s %s (%s!%s)"), "CHAT",
+           param, nick, from);
   } else if (!(glob_party(fr) || (!require_p && chan_op(fr)))) {
     if (glob_xfer(fr))
       return 0;                 /* Allow filesys to pick up the chat */
     if (!quiet_reject)
-      dprintf(DP_HELP, "NOTICE %s :%s\n", nick, DCC_REFUSED2);
-    putlog(LOG_MISC, "*", "%s: %s!%s", DCC_REFUSED, nick, from);
+      dprintf(DP_HELP, "NOTICE %s :%s\n", nick, _("You don't have access"));
+    putlog(LOG_MISC, "*", _("Refused DCC chat: %s!%s (no access)"), nick, from);
   } else if (u_pass_match(u, "-")) {
     if (!quiet_reject)
-      dprintf(DP_HELP, "NOTICE %s :%s\n", nick, DCC_REFUSED3);
-    putlog(LOG_MISC, "*", "%s: %s!%s", DCC_REFUSED4, nick, from);
+      dprintf(DP_HELP, "NOTICE %s :%s\n", nick,
+              _("You must have a password set."));
+    putlog(LOG_MISC, "*", "Refused DCC chat: %s!%s (no password)", nick, from);
   } else if (atoi(prt) < 1024 || atoi(prt) > 65535) {
     /* Invalid port */
     if (!quiet_reject)
-      dprintf(DP_HELP, "NOTICE %s :%s (invalid port)\n", nick,
-              DCC_CONNECTFAILED1);
-    putlog(LOG_MISC, "*", "%s: CHAT (%s!%s)", DCC_CONNECTFAILED3, nick, from);
+      dprintf(DP_HELP, _("NOTICE %s :%s\n"), nick,
+              _("Failed to connect (invalid port)"));
+    putlog(LOG_MISC, "*", "DCC invalid port: CHAT (%s!%s)", nick, from);
   } else {
     if (!sanitycheck_dcc(nick, from, ip, prt))
       return 1;
     i = new_dcc(&DCC_DNSWAIT, sizeof(struct dns_info));
     if (i < 0) {
-      putlog(LOG_MISC, "*", "DCC connection: CHAT (%s!%s)", nick, ip);
+      putlog(LOG_MISC, "*", _("DCC connection: CHAT (%s!%s)"), nick, ip);
       return 1;
     }
 #ifdef TLS
@@ -1572,7 +1576,7 @@ int dcc_chat_sslcb(int sock)
 
   idx = findanyidx(sock);
   if ((idx >= 0) && dcc_fingerprint(idx))
-    dprintf(idx, "%s\n", DCC_ENTERPASS);
+    dprintf(idx, "%s\n", _("Enter your password."));
   return 0;
 }
 #endif
@@ -1595,13 +1599,13 @@ static void dcc_chat_hostresolved(int i)
 #ifdef TLS
   else if (dcc[i].ssl && ssl_handshake(dcc[i].sock, TLS_CONNECT, tls_vfydcc,
                                        LOG_MISC, dcc[i].host, &dcc_chat_sslcb))
-    snprintf(buf, sizeof buf, "TLS negotiation error");
+    snprintf(buf, sizeof buf, _("TLS negotiation error"));
 #endif
   if (buf[0]) {
     if (!quiet_reject)
       dprintf(DP_HELP, "NOTICE %s :%s (%s)\n", dcc[i].nick,
-              DCC_CONNECTFAILED1, buf);
-    putlog(LOG_MISC, "*", "%s: CHAT (%s!%s)", DCC_CONNECTFAILED2,
+              _("Failed to connect"), buf);
+    putlog(LOG_MISC, "*", _("DCC connection failed: CHAT (%s!%s)"),
            dcc[i].nick, dcc[i].host);
     putlog(LOG_MISC, "*", "    (%s)", buf);
     killsock(dcc[i].sock);
@@ -1615,17 +1619,17 @@ static void dcc_chat_hostresolved(int i)
     strcpy(dcc[i].u.chat->con_chan, (chanset) ? chanset->dname : "*");
     dcc[i].timeval = now;
     /* Ok, we're satisfied with them now: attempt the connect */
-    putlog(LOG_MISC, "*", "DCC connection: CHAT (%s!%s)", dcc[i].nick,
+    putlog(LOG_MISC, "*", _("DCC connection: CHAT (%s!%s)"), dcc[i].nick,
            dcc[i].host);
 #ifdef TLS
     if (dcc[i].ssl)
     /* Queue something up to make sure the handshake moves on */
-      dprintf(i, "TLS handshake in progress...\n");
+      dprintf(i, _("TLS handshake in progress...\n"));
     else
     /* For SSL connections, the handshake callback will determine
        if we should request a password */
 #endif
-      dprintf(i, "%s\n", DCC_ENTERPASS);
+      dprintf(i, "%s\n", _("Enter your password."));
   }
   return;
 }
@@ -1655,7 +1659,7 @@ static void server_5minutely()
 
       disconnect_server(servidx);
       lostdcc(servidx);
-      putlog(LOG_SERV, "*", IRC_SERVERSTONED);
+      putlog(LOG_SERV, "*", _("Server got stoned; jumping..."));
     } else if (!trying_server) {
       /* Check for server being stoned. */
       dprintf(DP_MODE, "PING :%li\n", now);
@@ -1751,18 +1755,18 @@ static void server_report(int idx, int details)
   int servidx;
 
   if (server_online) {
-    dprintf(idx, "    Online as: %s%s%s (%s)\n", botname, botuserhost[0] ?
+    dprintf(idx, _("    Online as: %s%s%s (%s)\n"), botname, botuserhost[0] ?
             "!" : "", botuserhost[0] ? botuserhost : "", botrealname);
     if (nick_juped)
-      dprintf(idx, "    NICK IS JUPED: %s%s\n", origbotname,
-              keepnick ? " (trying)" : "");
+      dprintf(idx, keepnick ? _("    NICK IS JUPED: %s (trying)\n") :
+              _("    NICK IS JUPED: %s\n"), origbotname);
     daysdur(now, server_online, s1);
-    egg_snprintf(s, sizeof s, "(connected %s)", s1);
+    egg_snprintf(s, sizeof s, _("(connected %s)"), s1);
     if (server_lag && !lastpingcheck) {
       if (server_lag == -1)
-        egg_snprintf(s1, sizeof s1, " (bad pong replies)");
+        egg_snprintf(s1, sizeof s1, _(" (bad pong replies)"));
       else
-        egg_snprintf(s1, sizeof s1, " (lag: %ds)", server_lag);
+        egg_snprintf(s1, sizeof s1, _(" (lag: %ds)"), server_lag);
       strcat(s, s1);
     }
   }
@@ -1770,45 +1774,44 @@ static void server_report(int idx, int details)
   if ((trying_server || server_online) &&
       ((servidx = findanyidx(serv)) != -1)) {
 #ifdef TLS
-    dprintf(idx, "    Server [%s]:%s%d %s\n", dcc[servidx].host,
-            dcc[servidx].ssl ? "+" : "", dcc[servidx].port, trying_server ?
-            "(trying)" : s);
+    dprintf(idx, trying_server ? _("    Server [%s]:%s%d (trying)\n") :
+            _("    Server [%s]:%s%d %s\n"), dcc[servidx].host,
+            dcc[servidx].ssl ? "+" : "", dcc[servidx].port, s);
 #else
-    dprintf(idx, "    Server [%s]:%d %s\n", dcc[servidx].host,
-            dcc[servidx].port, trying_server ? "(trying)" : s);
+    dprintf(idx, trying_server ? _("    Server [%s]:%d (trying)\n") :
+            _("    Server [%s]:%d %s\n"), dcc[servidx].host,
+            dcc[servidx].port, s);
 #endif
   } else
-    dprintf(idx, "    %s\n", IRC_NOSERVER);
+    dprintf(idx, "    %s\n", _("No server currently."));
 
   if (modeq.tot)
-    dprintf(idx, "    %s %d%% (%d msgs)\n", IRC_MODEQUEUE,
+    dprintf(idx, _("    Mode queue is at %d%% (%d msgs)\n"),
             (int) ((float) (modeq.tot * 100.0) / (float) maxqmsg),
             (int) modeq.tot);
   if (mq.tot)
-    dprintf(idx, "    %s %d%% (%d msgs)\n", IRC_SERVERQUEUE,
+    dprintf(idx, _("    Server queue is at %d%% (%d msgs)\n"),
             (int) ((float) (mq.tot * 100.0) / (float) maxqmsg), (int) mq.tot);
   if (hq.tot)
-    dprintf(idx, "    %s %d%% (%d msgs)\n", IRC_HELPQUEUE,
+    dprintf(idx, _("    Help queue is at %d%% (%d msgs)\n"),
             (int) ((float) (hq.tot * 100.0) / (float) maxqmsg), (int) hq.tot);
 
   if (details) {
     int size = server_expmem();
 
-    if (min_servs)
-      dprintf(idx, "    Requiring a network with at least %d server%s\n",
-              min_servs, (min_servs != 1) ? "s" : "");
+    if (min_servs > 1) /* we can't connect to a network with 0 servers .. */
+      dprintf(idx, _("    Requiring a network with at least %d servers\n"),
+              min_servs);
     if (initserver[0])
-      dprintf(idx, "    On connect, I do: %s\n", initserver);
+      dprintf(idx, _("    On connect, I do: %s\n"), initserver);
     if (connectserver[0])
-      dprintf(idx, "    Before connect, I do: %s\n", connectserver);
-    dprintf(idx, "    Msg flood: %d msg%s/%d second%s\n", flud_thr,
-            (flud_thr != 1) ? "s" : "", flud_time,
-            (flud_time != 1) ? "s" : "");
-    dprintf(idx, "    CTCP flood: %d msg%s/%d second%s\n", flud_ctcp_thr,
-            (flud_ctcp_thr != 1) ? "s" : "", flud_ctcp_time,
-            (flud_ctcp_time != 1) ? "s" : "");
-    dprintf(idx, "    Using %d byte%s of memory\n", size,
-            (size != 1) ? "s" : "");
+      dprintf(idx, _("    Before connect, I do: %s\n"), connectserver);
+    dprintf(idx, _("    Msg flood: %d %s/%d %s\n"), flud_thr, P_("msg", "msgs",
+            flud_thr), flud_time, P_("second", "seconds", flud_time));
+    dprintf(idx, _("    CTCP flood: %d %s/%d %s\n"), flud_ctcp_thr,
+            P_("msg", "msgs", flud_ctcp_thr), flud_ctcp_time,
+            P_("second", "seconds", flud_ctcp_time));
+    dprintf(idx, _("    Using %d bytes of memory\n"), size);
   }
 }
 
@@ -1820,7 +1823,7 @@ static cmd_t my_ctcps[] = {
 static char *server_close()
 {
   cycle_time = 100;
-  nuke_server("Connection reset by peer");
+  nuke_server(_("Connection reset by peer"));
   clearq(serverlist);
   rem_builtins(H_dcc, C_dcc_serv);
   rem_builtins(H_raw, my_raw_binds);
@@ -1963,7 +1966,7 @@ char *server_start(Function *global_funcs)
   lastpingcheck = 0;
   server_online = 0;
   server_cycle_wait = 60;
-  strcpy(botrealname, "A deranged product of evil coders");
+  strcpy(botrealname, _("A deranged product of evil coders"));
   min_servs = 0;
   server_timeout = 60;
   serverlist = NULL;
@@ -2002,7 +2005,7 @@ char *server_start(Function *global_funcs)
   module_register(MODULE_NAME, server_table, 1, 4);
   if (!module_depend(MODULE_NAME, "eggdrop", 108, 0)) {
     module_undepend(MODULE_NAME);
-    return "This module requires Eggdrop 1.8.0 or later.";
+    return _("This module requires Eggdrop 1.8.0 or later.");
   }
 
   /* Fool bot in reading the values. */
