@@ -1,5 +1,5 @@
 # Makefile for src/mod/server.mod/
-# $Id: Makefile,v 1.1.1.1 2010/07/26 21:11:06 simple Exp $
+# $Id: Makefile,v 1.1.1.1.2.1 2010/11/17 13:58:38 pseudo Exp $
 
 srcdir = .
 
@@ -34,7 +34,7 @@ distclean: clean
 #safety hash
 ../server.o: .././server.mod/server.c ../../../src/mod/module.h \
   ../../../src/main.h ../../../config.h ../../../lush.h \
-  ../../../src/lang.h ../../../src/eggdrop.h ../../../src/flags.h \
+  ../../../src/eggdrop.h ../../../src/flags.h \
   ../../../src/cmdt.h ../../../src/tclegg.h ../../../src/tclhash.h \
   ../../../src/chan.h ../../../src/users.h ../../../src/compat/compat.h \
   ../../../src/compat/inet_aton.h ../../../src/main.h \

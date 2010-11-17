@@ -2,7 +2,7 @@
  * assoc.c -- part of assoc.mod
  *   the assoc code, moved here mainly from botnet.c for module work
  *
- * $Id: assoc.c,v 1.2.2.1 2010/11/10 21:16:56 pseudo Exp $
+ * $Id: assoc.c,v 1.2.2.2 2010/11/17 13:58:37 pseudo Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -392,7 +392,6 @@ static char *assoc_close()
   rem_builtins(H_link, mylink);
   rem_tcl_commands(mytcl);
   rem_help_reference("assoc.help");
-  del_lang_section("assoc");
   module_undepend(MODULE_NAME);
   return NULL;
 }
@@ -419,7 +418,6 @@ char *assoc_start(Function *global_funcs)
   add_builtins(H_dcc, mydcc);
   add_builtins(H_bot, mybot);
   add_builtins(H_link, mylink);
-  add_lang_section("assoc");
   add_tcl_commands(mytcl);
   add_help_reference("assoc.help");
   return NULL;

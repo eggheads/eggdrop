@@ -4,7 +4,7 @@
  *
  * by Darrin Smith (beldin@light.iinet.net.au)
  *
- * $Id: modules.c,v 1.3.2.1 2010/11/08 10:02:30 pseudo Exp $
+ * $Id: modules.c,v 1.3.2.2 2010/11/17 13:58:37 pseudo Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -408,7 +408,7 @@ Function global_table[] = {
   /* 148 - 151 */
   (Function) do_tcl,
   (Function) readtclprog,
-  (Function) get_language,
+  (Function) 0,                   /* was get_language()                  */
   (Function) def_get,
   /* 152 - 155 */
   (Function) makepass,
@@ -427,7 +427,7 @@ Function global_table[] = {
   (Function) in_chain,
   /* 164 - 167 */
   (Function) add_note,
-  (Function) del_lang_section,
+  (Function) 0,
   (Function) detect_dcc_flood,
   (Function) flush_lines,
   /* 168 - 171 */
@@ -478,7 +478,7 @@ Function global_table[] = {
   /* 204 - 207 */
   (Function) sub_lang,
   (Function) & online_since,      /* time_t *                            */
-  (Function) cmd_loadlanguage,
+  (Function) 0,
   (Function) check_dcc_attrs,
   /* 208 - 211 */
   (Function) check_dcc_chanattrs,
@@ -506,7 +506,7 @@ Function global_table[] = {
   (Function) & use_invites,       /* int                                 */
   (Function) & force_expire,      /* int                                 */
   /* 228 - 231 */
-  (Function) add_lang_section,
+  (Function) 0,
   (Function) _user_realloc,
   (Function) mod_realloc,
   (Function) xtra_set,
@@ -825,7 +825,7 @@ const char *module_load(char *name)
   }
   check_tcl_load(name);
 
-  if (exist_lang_section(name))
+  if (0)
     putlog(LOG_MISC, "*", _("Module loaded: %-16s (with lang support)"), name);
   else
     putlog(LOG_MISC, "*", _("Module loaded: %-16s"), name);

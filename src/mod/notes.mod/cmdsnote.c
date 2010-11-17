@@ -2,7 +2,7 @@
  * cmdsnote.c -- part of notes.mod
  *   handles all notes interaction over the party line
  *
- * $Id: cmdsnote.c,v 1.1.1.1.2.1 2010/11/16 14:16:57 pseudo Exp $
+ * $Id: cmdsnote.c,v 1.1.1.1.2.2 2010/11/17 13:58:38 pseudo Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -45,13 +45,14 @@ static void cmd_pls_noteign(struct userrec *u, int idx, char *par)
 
       get_user_flagrec(u, &fr, dcc[idx].u.chat->con_chan);
       if (!(glob_master(fr) || glob_owner(fr))) {
-        dprintf(idx, NOTES_IGN_OTHERS, handle);
+        dprintf(idx, _("You are not allowed to change note ignores for %s"),
+                handle);
         nfree(buf);
         return;
       }
     }
     if (!u2) {
-      dprintf(idx, NOTES_UNKNOWN_USER, handle);
+      dprintf(idx, _("User %s does not exist."), handle);
       nfree(buf);
       return;
     }
@@ -60,9 +61,9 @@ static void cmd_pls_noteign(struct userrec *u, int idx, char *par)
     mask = handle;
   }
   if (add_note_ignore(u2, mask))
-    dprintf(idx, NOTES_IGN_NEW, mask);
+    dprintf(idx, _("Now ignoring notes from %s"), mask);
   else
-    dprintf(idx, NOTES_IGN_ALREADY, mask);
+    dprintf(idx, "Already ignoring %s", mask);
   nfree(buf);
   return;
 }
@@ -88,13 +89,14 @@ static void cmd_mns_noteign(struct userrec *u, int idx, char *par)
 
       get_user_flagrec(u, &fr, dcc[idx].u.chat->con_chan);
       if (!(glob_master(fr) || glob_owner(fr))) {
-        dprintf(idx, NOTES_IGN_OTHERS, handle);
+        dprintf(idx, _("You are not allowed to change note ignores for %s"),
+                handle);
         nfree(buf);
         return;
       }
     }
     if (!u2) {
-      dprintf(idx, NOTES_UNKNOWN_USER, handle);
+      dprintf(idx, _("User %s does not exist."), handle);
       nfree(buf);
       return;
     }
@@ -104,9 +106,9 @@ static void cmd_mns_noteign(struct userrec *u, int idx, char *par)
   }
 
   if (del_note_ignore(u2, mask))
-    dprintf(idx, NOTES_IGN_REM, mask);
+    dprintf(idx, _("No longer ignoring notes from %s"), mask);
   else
-    dprintf(idx, NOTES_IGN_NOTFOUND, mask);
+    dprintf(idx, _("Note ignore %s not found in list."), mask);
   nfree(buf);
   return;
 }
@@ -124,12 +126,13 @@ static void cmd_noteigns(struct userrec *u, int idx, char *par)
 
       get_user_flagrec(u, &fr, dcc[idx].u.chat->con_chan);
       if (!(glob_master(fr) || glob_owner(fr))) {
-        dprintf(idx, NOTES_IGN_OTHERS, par);
+        dprintf(idx, _("You are not allowed to change note ignores for %s"),
+                par);
         return;
       }
     }
     if (!u2) {
-      dprintf(idx, NOTES_UNKNOWN_USER, par);
+      dprintf(idx, _("User %s does not exist."), par);
       return;
     }
   } else
@@ -137,11 +140,11 @@ static void cmd_noteigns(struct userrec *u, int idx, char *par)
 
   ignoresn = get_note_ignores(u2, &ignores);
   if (!ignoresn) {
-    dprintf(idx, "%s", NOTES_IGN_NONE);
+    dprintf(idx, "%s", _("No note ignores present."));
     return;
   }
   putlog(LOG_CMDS, "*", "#%s# noteigns %s", dcc[idx].nick, par);
-  dprintf(idx, NOTES_IGN_FOR, u2->handle);
+  dprintf(idx, _("Note ignores for %s:"), u2->handle);
   for (i = 0; i < ignoresn; i++)
     dprintf(idx, " %s", ignores[i]);
   dprintf(idx, "\n");
@@ -161,26 +164,26 @@ static void cmd_fwd(struct userrec *u, int idx, char *par)
   handle = newsplit(&par);
   u1 = get_user_by_handle(userlist, handle);
   if (!u1) {
-    dprintf(idx, "%s\n", NOTES_NO_SUCH_USER);
+    dprintf(idx, "%s\n", _("No such user."));
     return;
   }
   if ((u1->flags & USER_OWNER) && egg_strcasecmp(handle, dcc[idx].nick)) {
-    dprintf(idx, "%s\n", NOTES_FWD_OWNER);
+    dprintf(idx, "%s\n", _("Can't change notes forwarding of the bot owner."));
     return;
   }
   if (!par[0]) {
     putlog(LOG_CMDS, "*", "#%s# fwd %s", dcc[idx].nick, handle);
-    dprintf(idx, NOTES_FWD_FOR, handle);
+    dprintf(idx, _("Wiped notes forwarding for %s"), handle);
     set_user(&USERENTRY_FWD, u1, NULL);
     return;
   }
   /* Thanks to vertex & dw */
   if (strchr(par, '@') == NULL) {
-    dprintf(idx, "%s\n", NOTES_FWD_BOTNAME);
+    dprintf(idx, "%s\n", _("You must supply a botname to forward to."));
     return;
   }
   putlog(LOG_CMDS, "*", "#%s# fwd %s %s", dcc[idx].nick, handle, par);
-  dprintf(idx, NOTES_FWD_CHANGED, handle, par);
+  dprintf(idx, _("Changed notes forwarding for %s to: %s"), handle, par);
   set_user(&USERENTRY_FWD, u1, par);
 }
 

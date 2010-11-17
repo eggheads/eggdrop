@@ -2,7 +2,7 @@
  * main.h
  *   include file to include most other include files
  *
- * $Id: main.h,v 1.3.2.2 2010/11/10 13:39:19 pseudo Exp $
+ * $Id: main.h,v 1.3.2.3 2010/11/17 13:58:37 pseudo Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -99,7 +99,6 @@
 
 #include <sys/types.h>
 #include "lush.h"
-#include "lang.h"
 #include "eggdrop.h"
 #include "flags.h"
 

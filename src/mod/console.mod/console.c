@@ -3,7 +3,7 @@
  *   saved console settings based on console.tcl
  *   by cmwagner/billyjoe/D. Senso
  *
- * $Id: console.c,v 1.2.2.1 2010/11/10 21:16:56 pseudo Exp $
+ * $Id: console.c,v 1.2.2.2 2010/11/17 13:58:37 pseudo Exp $
  */
 /*
  * Copyright (C) 1999 - 2010 Eggheads Development Team
@@ -354,7 +354,6 @@ static char *console_close()
   rem_tcl_ints(myints);
   rem_help_reference("console.help");
   del_entry_type(&USERENTRY_CONSOLE);
-  del_lang_section("console");
   module_undepend(MODULE_NAME);
   return NULL;
 }
@@ -384,6 +383,5 @@ char *console_start(Function *global_funcs)
   add_help_reference("console.help");
   USERENTRY_CONSOLE.get = def_get;
   add_entry_type(&USERENTRY_CONSOLE);
-  add_lang_section("console");
   return NULL;
 }

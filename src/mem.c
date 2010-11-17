@@ -3,7 +3,7 @@
  *   memory allocation and deallocation
  *   keeping track of what memory is being used by whom
  *
- * $Id: mem.c,v 1.2.2.1 2010/11/08 10:02:30 pseudo Exp $
+ * $Id: mem.c,v 1.2.2.2 2010/11/17 13:58:37 pseudo Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -63,7 +63,6 @@ int expmem_tclhash();
 int expmem_tclmisc();
 int expmem_net();
 int expmem_modules();
-int expmem_language();
 int expmem_tcldcc();
 int expmem_dns();
 #ifdef TLS
@@ -120,9 +119,9 @@ void debug_mem_to_dcc(int idx)
 {
 #ifdef DEBUG_MEM
 #  ifdef TLS
-#    define MAX_MEM 14
-#  else
 #    define MAX_MEM 13
+#  else
+#    define MAX_MEM 12
 #  endif
   unsigned long exp[MAX_MEM], use[MAX_MEM], l;
   int i, j;
@@ -130,7 +129,7 @@ void debug_mem_to_dcc(int idx)
   module_entry *me;
   char *p;
 
-  exp[0] = expmem_language();
+  exp[0] = expmem_dns();
   exp[1] = expmem_chanprog();
   exp[2] = expmem_misc();
   exp[3] = expmem_users();
@@ -142,9 +141,8 @@ void debug_mem_to_dcc(int idx)
   exp[9] = expmem_tclmisc();
   exp[10] = expmem_modules(1);
   exp[11] = expmem_tcldcc();
-  exp[12] = expmem_dns();
 #ifdef TLS
-  exp[13] = expmem_tls();
+  exp[12] = expmem_tls();
 #endif
 
   for (me = module_list; me; me = me->next)
@@ -159,7 +157,7 @@ void debug_mem_to_dcc(int idx)
     if (p)
       *p = 0;
     l = memtbl[i].size;
-    if (!strcmp(fn, "language.c"))
+    if (!strcmp(fn, "dns.c"))
       use[0] += l;
     else if (!strcmp(fn, "chanprog.c"))
       use[1] += l;
@@ -183,11 +181,9 @@ void debug_mem_to_dcc(int idx)
       use[10] += l;
     else if (!strcmp(fn, "tcldcc.c"))
       use[11] += l;
-    else if (!strcmp(fn, "dns.c"))
-      use[12] += l;
 #ifdef TLS
     else if (!strcmp(fn, "tls.c"))
-      use[13] += l;
+      use[12] += l;
 #endif
     else if (p) {
       for (me = module_list; me; me = me->next)
@@ -200,7 +196,7 @@ void debug_mem_to_dcc(int idx)
   for (i = 0; i < MAX_MEM; i++) {
     switch (i) {
     case 0:
-      strcpy(fn, "language.c");
+      strcpy(fn, "dns.c");
       break;
     case 1:
       strcpy(fn, "chanprog.c");
@@ -235,11 +231,8 @@ void debug_mem_to_dcc(int idx)
     case 11:
       strcpy(fn, "tcldcc.c");
       break;
-    case 12:
-      strcpy(fn, "dns.c");
-      break;
 #ifdef TLS
-    case 13:
+    case 12:
       strcpy(fn, "tls.c");
       break;
 #endif

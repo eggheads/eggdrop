@@ -2,7 +2,7 @@
  * files.c - part of filesys.mod
  *   handles all file system commands
  *
- * $Id: files.c,v 1.1.1.1.2.1 2010/11/16 14:16:56 pseudo Exp $
+ * $Id: files.c,v 1.1.1.1.2.2 2010/11/17 13:58:37 pseudo Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -989,7 +989,7 @@ static void cmd_mkdir(int idx, char *par)
                   + strlen(name) + 2);
       sprintf(s, "%s%s/%s", dccdir, dcc[idx].u.file->dir, name);
       if (mkdir(s, 0755) != 0) {
-        dprintf(idx, MISC_FAILED);
+        dprintf(idx, _("Failed."));
         filedb_close(fdb);
         my_free(s);
         return;
@@ -1086,7 +1086,7 @@ static void cmd_rmdir(int idx, char *par)
       putlog(LOG_FILES, "*", "files: #%s# rmdir %s", dcc[idx].nick, name);
       return;
     }
-    dprintf(idx, MISC_FAILED);
+    dprintf(idx, _("Failed"));
     filedb_close(fdb);
     free_fdbe(&fdbe);
     my_free(s);

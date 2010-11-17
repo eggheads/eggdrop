@@ -1,5 +1,5 @@
 # Makefile for src/md5/
-# $Id: Makefile.in,v 1.2 2010/10/19 12:13:33 pseudo Exp $
+# $Id: Makefile.in,v 1.2.2.1 2010/11/17 13:58:37 pseudo Exp $
 
 SHELL = @SHELL@
 top_srcdir = @top_srcdir@
@@ -43,7 +43,7 @@ md5: $(OBJS)
 #safety hash
 md5c.o: md5c.c md5.h ../../src/compat/compat.h \
   ../../src/compat/inet_aton.h ../../src/main.h ../../config.h \
-  ../../lush.h ../../src/lang.h ../../src/eggdrop.h ../../src/flags.h \
+  ../../lush.h ../../src/eggdrop.h ../../src/flags.h \
   ../../src/proto.h ../../src/misc_file.h ../../src/cmdt.h \
   ../../src/tclegg.h ../../src/tclhash.h ../../src/chan.h \
   ../../src/users.h ../../src/compat/compat.h ../../src/compat/snprintf.h \

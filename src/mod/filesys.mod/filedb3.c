@@ -4,7 +4,7 @@
  *
  * Rewritten by Fabian Knittel <fknittel@gmx.de>
  *
- * $Id: filedb3.c,v 1.3.2.1 2010/11/16 14:16:56 pseudo Exp $
+ * $Id: filedb3.c,v 1.3.2.2 2010/11/17 13:58:37 pseudo Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -899,8 +899,10 @@ static void filedb_ls(FILE *fdb, int idx, char *mask, int showall)
     if (ok) {
       /* Display it! */
       if (cnt == 0) {
-        dprintf(idx, FILES_LSHEAD1);
-        dprintf(idx, FILES_LSHEAD2);
+        dprintf(idx, _("Filename                        Size  "
+                "Sent by/Date         # Gets\n"
+                "------------------------------  ----  "
+                "-------------------  ------\n"));
       }
       filelist_add(flist, fdbe->filename);
       if (fdbe->stat & FILE_DIR) {

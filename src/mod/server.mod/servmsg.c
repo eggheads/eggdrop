@@ -1,7 +1,7 @@
 /*
  * servmsg.c -- part of server.mod
  *
- * $Id: servmsg.c,v 1.4.2.1 2010/11/16 14:16:57 pseudo Exp $
+ * $Id: servmsg.c,v 1.4.2.2 2010/11/17 13:58:38 pseudo Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -458,7 +458,7 @@ static int detect_flood(char *floodnick, char *floodhost, char *from, int which)
       return 0;
     /* Private msg */
     simple_sprintf(h, "*!*@%s", p);
-    putlog(LOG_MISC, "*", IRC_FLOODIGNORE1, p);
+    putlog(LOG_MISC, "*", _("Flood from @%s!  Placing on ignore!"), p);
     addignore(h, botnetnick, (which == FLOOD_CTCP) ? _("CTCP flood") :
               _("MSG/NOTICE flood"), now + (60 * ignore_time));
   }
@@ -922,8 +922,9 @@ static int got451(char *from, char *msg)
    * (minutely) sending of joins occurs before the bot does its ping reply.
    * Probably should do something about it some time - beldin
    */
-  putlog(LOG_MISC, "*", IRC_NOTREGISTERED1, from);
-  nuke_server(IRC_NOTREGISTERED2);
+  putlog(LOG_MISC, "*", _("%s says I'm not registered, trying next one."),
+         from);
+  nuke_server(_("The server says we are not registered yet.."));
   return 0;
 }
 

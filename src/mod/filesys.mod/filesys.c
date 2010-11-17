@@ -2,7 +2,7 @@
  * filesys.c -- part of filesys.mod
  *   main file of the filesys eggdrop module
  *
- * $Id: filesys.c,v 1.5.2.1 2010/11/16 14:16:56 pseudo Exp $
+ * $Id: filesys.c,v 1.5.2.2 2010/11/17 13:58:37 pseudo Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -64,7 +64,6 @@
 #include "filedb3.h"
 #include "filesys.h"
 #include "src/tandem.h"
-#include "files.h"
 #include "dbcompat.h"
 #include "filelist.h"
 
@@ -998,7 +997,7 @@ static char *filesys_close()
          "connections."));
   for (i = 0; i < dcc_total; i++)
     if (dcc[i].type == &DCC_FILES) {
-      dprintf(i, DCC_BOOTED1);
+      dprintf(i, _("-=- poof -=-\n"));
       dprintf(i, _("You have been booted from the filesystem, module "
               "unloaded.\n"));
       killsock(dcc[i].sock);
@@ -1018,7 +1017,6 @@ static char *filesys_close()
     rem_builtins(H_ctcp, myctcp);
   del_bind_table(H_fil);
   del_entry_type(&USERENTRY_DCCDIR);
-  del_lang_section("filesys");
   module_undepend(MODULE_NAME);
   return NULL;
 }
@@ -1068,7 +1066,6 @@ char *filesys_start(Function *global_funcs)
   USERENTRY_DCCDIR.got_share = 0;       /* We dont want it shared tho */
   add_entry_type(&USERENTRY_DCCDIR);
   DCC_FILES_PASS.timeout_val = &password_timeout;
-  add_lang_section("filesys");
   return NULL;
 }
 

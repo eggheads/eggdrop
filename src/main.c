@@ -5,7 +5,7 @@
  *   command line arguments
  *   context and assert debugging
  *
- * $Id: main.c,v 1.6.2.1 2010/11/10 13:39:19 pseudo Exp $
+ * $Id: main.c,v 1.6.2.2 2010/11/17 13:58:37 pseudo Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -194,7 +194,6 @@ int expmem_tcl();
 int expmem_tclhash();
 int expmem_net();
 int expmem_modules(int);
-int expmem_language();
 int expmem_tcldcc();
 int expmem_tclmisc();
 int expmem_dns();
@@ -210,8 +209,7 @@ int expected_memory(void)
 
   tot = expmem_chanprog() + expmem_users() + expmem_misc() + expmem_dccutil() +
         expmem_botnet() + expmem_tcl() + expmem_tclhash() + expmem_net() +
-        expmem_modules(0) + expmem_language() + expmem_tcldcc() +
-        expmem_tclmisc() + expmem_dns();
+        expmem_modules(0) + expmem_tcldcc() + expmem_tclmisc() + expmem_dns();
 #ifdef TLS 
   tot += expmem_tls();
 #endif
@@ -722,7 +720,6 @@ int init_misc();
 int init_bots();
 int init_modules();
 int init_tcl(int, char **);
-int init_language(int);
 #ifdef TLS
 int ssl_init();
 #endif
@@ -928,7 +925,6 @@ int mainloop(int toplevel)
       flushlogs();
       kill_tcl();
       init_tcl(argc, argv);
-      init_language(0);
 
       /* this resets our modules which we didn't unload (encryption and uptime) */
       for (p = module_list; p; p = p->next) {
@@ -1058,7 +1054,6 @@ int main(int arg_c, char **arg_v)
   lastmin = nowtm.tm_min;
   srandom((unsigned int) (now % (getpid() + getppid())));
   init_mem();
-  init_language(1);
   if (argc > 1)
     for (i = 1; i < argc; i++)
       do_arg(argv[i]);
@@ -1084,7 +1079,6 @@ int main(int arg_c, char **arg_v)
   if (backgrd)
     bg_prepare_split();
   init_tcl(argc, argv);
-  init_language(0);
 #ifdef STATIC
   link_statics();
 #endif

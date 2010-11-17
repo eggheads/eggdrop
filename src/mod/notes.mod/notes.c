@@ -5,7 +5,7 @@
  *   note cmds
  *   note ignores
  *
- * $Id: notes.c,v 1.2.2.1 2010/11/16 14:16:57 pseudo Exp $
+ * $Id: notes.c,v 1.2.2.2 2010/11/17 13:58:38 pseudo Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -292,7 +292,7 @@ static int tcl_storenote STDVAR
         dprintf(idx, "%s\n", _("Notes are not supported by this bot."));
     } else if (num_notes(to) >= maxnotes) {
       if (idx >= 0)
-        dprintf(idx, "%s\n", NOTES_NOTES2MANY);
+        dprintf(idx, "%s\n", _("Sorry, that user has too many notes already."));
     } else {                      /* Time to unpack it meaningfully */
       f = fopen(notefile, "a");
       if (f == NULL)
@@ -559,7 +559,7 @@ static void notes_read(char *hand, char *nick, char *srd, int idx)
         dprintf(idx, "### %s\n", P_("Use '.notes read' to read it.",
                 "Use '.notes read' to read them.", ix - 1));
       else
-        dprintf(DP_HELP, "NOTICE %s :%s: %d\n", nick, MISC_TOTAL, ix - 1);
+        dprintf(DP_HELP, _("NOTICE %s :Total %d\n"), nick, ix - 1);
     }
   } else if ((ir == 0) && (ix == 1)) {
     if (idx >= 0)
@@ -741,7 +741,7 @@ static int msg_notes(char *nick, char *host, struct userrec *u, char *par)
     return 1;
 
   if (!par[0]) {
-    dprintf(DP_HELP, "NOTICE %s :%s: NOTES <pass> INDEX\n", nick, NOTES_USAGE);
+    dprintf(DP_HELP, "NOTICE %s :%s: NOTES <pass> INDEX\n", nick, _("Usage"));
     dprintf(DP_HELP, "NOTICE %s :NOTES <pass> TO <hand> <msg>\n", nick);
     dprintf(DP_HELP, "NOTICE %s :NOTES <pass> READ <# or ALL>\n", nick);
     dprintf(DP_HELP, "NOTICE %s :NOTES <pass> ERASE <# or ALL>\n", nick);
@@ -831,7 +831,7 @@ static int msg_notes(char *nick, char *host, struct userrec *u, char *par)
     return 1;
   } else
     dprintf(DP_HELP, "NOTICE %s :%s: NOTES <pass> INDEX, READ, ERASE, TO\n",
-            nick, NOTES_USAGE);
+            nick, _("Usage"));
   putlog(LOG_CMDS, "*", "(%s!%s) !%s! NOTES %s %s", nick, host, u->handle, fcn,
          par[0] ? "..." : "");
   return 1;
@@ -1191,7 +1191,6 @@ static char *notes_close()
   del_hook(HOOK_MATCH_NOTEREJ, (Function) match_note_ignore);
   del_hook(HOOK_HOURLY, (Function) notes_hourly);
   del_entry_type(&USERENTRY_FWD);
-  del_lang_section("notes");
   module_undepend(MODULE_NAME);
   return NULL;
 }
@@ -1246,7 +1245,6 @@ char *notes_start(Function *global_funcs)
   add_builtins(H_nkch, notes_nkch);
   add_builtins(H_load, notes_load);
   add_help_reference("notes.help");
-  add_lang_section("notes");
   notes_server_setup(0);
   notes_irc_setup(0);
   my_memcpy(&USERENTRY_FWD, &USERENTRY_INFO, sizeof(void *) * 12);

@@ -1,7 +1,7 @@
 /*
  * share.c -- part of share.mod
  *
- * $Id: share.c,v 1.4.2.1 2010/11/10 21:16:56 pseudo Exp $
+ * $Id: share.c,v 1.4.2.2 2010/11/17 13:58:38 pseudo Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -1655,7 +1655,7 @@ static int write_tmp_userfile(char *fn, struct userrec *bu, int idx)
     fclose(f);
   }
   if (!ok)
-    putlog(LOG_MISC, "*", USERF_ERRWRITE2);
+    putlog(LOG_MISC, "*", _("ERROR writing user file to transfer."));
   return ok;
 }
 
@@ -1804,7 +1804,7 @@ static void finish_share(int idx)
    * the bot entries in non-override mode.
    */
   if (!readuserfile(dcc[idx].u.xfer->filename, &u)) {
-    putlog(LOG_MISC, "*", "%s", USERF_CANTREAD);
+    putlog(LOG_MISC, "*", _("CAN'T READ NEW USERFILE"));
     clear_userlist(u);          /* Clear new, obsolete, user list.      */
     clear_chanlist();           /* Remove all user references from the
                                  * channel lists.                       */
@@ -1814,7 +1814,7 @@ static void finish_share(int idx)
     lastuser = NULL;            /* Reset last accessed user ptr.        */
     return;
   }
-  putlog(LOG_BOTS, "*", "%s.", USERF_XFERDONE);
+  putlog(LOG_BOTS, "*", _("Userlist transfer complete; switched over."));
 
   clear_chanlist();             /* Remove all user references from the
                                  * channel lists.                       */
@@ -1941,7 +1941,7 @@ static void start_sending_users(int idx)
 
   if ((i = raw_dcc_send(share_file, "*users", "(users)", share_file)) > 0) {
     unlink(share_file);
-    dprintf(idx, "s e %s\n", USERF_CANTSEND);
+    dprintf(idx, "s e Can't send userfile to you (internal error)\n");
     putlog(LOG_BOTS, "*", _("%s -- can't send userfile"),
            i == DCCSEND_FULL ? _("NO MORE DCC CONNECTIONS") :
            i == DCCSEND_NOSOCK ? _("CAN'T OPEN A LISTENING SOCKET") :

@@ -1,7 +1,7 @@
 /*
  * transfer.c -- part of transfer.mod
  *
- * $Id: transfer.c,v 1.4.2.1 2010/11/11 20:34:47 pseudo Exp $
+ * $Id: transfer.c,v 1.4.2.2 2010/11/17 13:58:38 pseudo Exp $
  *
  * Copyright (C) 1997 Robey Pointer
  * Copyright (C) 1999 - 2010 Eggheads Development Team
@@ -274,13 +274,13 @@ static void eof_dcc_fork_send(int idx)
       dcc[y].status &= ~STAT_GETTING;
       dcc[y].status &= ~STAT_SHARE;
     }
-    putlog(LOG_BOTS, "*", USERF_FAILEDXFER);
+    putlog(LOG_BOTS, "*", _("Failed connection; aborted userfile transfer."));
     unlink(dcc[idx].u.xfer->filename);
   } else {
     if (!quiet_reject)
-      dprintf(DP_HELP, "NOTICE %s :%s (%s)\n", dcc[idx].nick,
-              DCC_CONNECTFAILED1, strerror(errno));
-    putlog(LOG_MISC, "*", "%s: SEND %s (%s!%s)", DCC_CONNECTFAILED2,
+      dprintf(DP_HELP, _("NOTICE %s :Failed to connect (%s)\n"), dcc[idx].nick,
+              strerror(errno));
+    putlog(LOG_MISC, "*", _("DCC connection failed: SEND %s (%s!%s)"),
            dcc[idx].u.xfer->origname, dcc[idx].nick, dcc[idx].host);
     putlog(LOG_MISC, "*", "    (%s)", strerror(errno));
     s = nmalloc(strlen(tempdir) + strlen(dcc[idx].u.xfer->filename) + 1);
@@ -1178,7 +1178,6 @@ static char *transfer_close()
   rem_tcl_commands(mytcls);
   rem_tcl_ints(myints);
   rem_help_reference("transfer.help");
-  del_lang_section("transfer");
   module_undepend(MODULE_NAME);
   return NULL;
 }
@@ -1193,11 +1192,10 @@ static void transfer_report(int idx, int details)
   if (details) {
     int size = transfer_expmem();
 
-    dprintf(idx, TRANSFER_STAT_1, dcc_block,
+    dprintf(idx, _("    DCC block size: %d%s\n"), dcc_block,
             (dcc_block == 0) ? " (turbo dcc)" : "");
-    dprintf(idx, TRANSFER_STAT_2, dcc_limit);
-    dprintf(idx, "    Using %d byte%s of memory\n", size,
-            (size != 1) ? "s" : "");
+    dprintf(idx, _("    Max simultaneous downloads per user: %d\n"), dcc_limit);
+    dprintf(idx, _("    Using %d bytes of memory\n"), size);
   }
 }
 
@@ -1257,6 +1255,5 @@ char *transfer_start(Function *global_funcs)
 
   USERENTRY_FSTAT.get = def_get;
   add_entry_type(&USERENTRY_FSTAT);
-  add_lang_section("transfer");
   return NULL;
 }

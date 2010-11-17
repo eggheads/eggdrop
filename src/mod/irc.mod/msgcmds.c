@@ -2,7 +2,7 @@
  * msgcmds.c -- part of irc.mod
  *   all commands entered via /MSG
  *
- * $Id: msgcmds.c,v 1.3.2.1 2010/11/16 14:16:57 pseudo Exp $
+ * $Id: msgcmds.c,v 1.3.2.2 2010/11/17 13:58:38 pseudo Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -46,8 +46,11 @@ static int msg_hello(char *nick, char *h, struct userrec *u, char *p)
   }
   strncpyz(handle, nick, sizeof(handle));
   if (get_user_by_handle(userlist, handle)) {
-    dprintf(DP_HELP, IRC_BADHOST1, nick);
-    dprintf(DP_HELP, IRC_BADHOST2, nick, botname);
+    dprintf(DP_HELP, "NOTICE %s :%s.\n", nick, _("I don't recognize you "
+            "from that host."));
+    dprintf(DP_HELP, _("NOTICE %s :Either you are using someone else's "
+            "nickname or you need to type: /MSG %s IDENT (password)\n"),
+            nick, botname);
     return 1;
   }
   egg_snprintf(s, sizeof s, "%s!%s", nick, h);
@@ -78,22 +81,31 @@ static int msg_hello(char *nick, char *h, struct userrec *u, char *p)
   for (chan = chanset; chan; chan = chan->next)
     if (ismember(chan, handle))
       add_chanrec_by_handle(userlist, handle, chan->dname);
-  dprintf(DP_HELP, IRC_SALUT1, nick, nick, botname);
-  dprintf(DP_HELP, IRC_SALUT2, nick, host);
-  if (common) {
-    dprintf(DP_HELP, "NOTICE %s :%s\n", nick, IRC_SALUT2A);
-    dprintf(DP_HELP, "NOTICE %s :%s\n", nick, IRC_SALUT2B);
-  }
+  dprintf(DP_HELP, _("NOTICE %s :Hi %s!  I'm %s, an eggdrop bot.\n"),
+          nick, nick, botname);
+  dprintf(DP_HELP, _("NOTICE %s :I'll recognize you by hostmask '%s' "
+          "from now on.\n"), nick, host);
+  if (common)
+    dprintf(DP_HELP, "NOTICE %s :%s\n", nick, _("Since you come from a common "
+            "irc site, this means you should\n"
+            "always use this nickname when talking to me."));
   if (make_userfile) {
-    dprintf(DP_HELP, "NOTICE %s :%s\n", nick, IRC_INITOWNER1);
-    dprintf(DP_HELP, IRC_NEWBOT1, nick, botname);
-    dprintf(DP_HELP, IRC_NEWBOT2, nick);
-    putlog(LOG_MISC, "*", IRC_INIT1, handle);
+    dprintf(DP_HELP, "NOTICE %s :%s\n", nick, _("YOU ARE THE OWNER ON THIS "
+            "BOT NOW"));
+    dprintf(DP_HELP, _("NOTICE %s :As master you really need to "
+            "set a password: with /MSG %s pass <your-chosen-password>."),
+            nick, botname);
+    dprintf(DP_HELP, "NOTICE %s :%s\n", _("All major commands are used from "
+            "DCC chat. From now on, you don't need to use the -m option when "
+            "starting the bot.  Enjoy !!!"));
+    putlog(LOG_MISC, "*", _("Bot installation complete, first master is %s"),
+           handle);
     make_userfile = 0;
     write_userfile(-1);
     add_note(handle, botnetnick, _("Welcome to Eggdrop! =]"), -1, 0);
   } else {
-    dprintf(DP_HELP, IRC_INTRO1, nick, botname);
+    dprintf(DP_HELP, _("NOTICE %s :All commands are done via /MSG. For the "
+            "complete list, /MSG %s help  Cya!\n"), nick, botname);
   }
   if (strlen(nick) > HANDLEN)
     /* Notify the user that his/her handle was truncated. */
