@@ -1,7 +1,7 @@
 /*
  * servmsg.c -- part of server.mod
  *
- * $Id: servmsg.c,v 1.4 2010/10/24 13:22:40 pseudo Exp $
+ * $Id: servmsg.c,v 1.5 2010/11/18 12:54:39 pseudo Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -1317,36 +1317,36 @@ static void server_resolve_success(int servidx)
   dcc[servidx].sock = getsock(dcc[servidx].sockname.family, 0);
   setsnport(dcc[servidx].sockname, dcc[servidx].port);
   serv = open_telnet_raw(dcc[servidx].sock, &dcc[servidx].sockname);
-#ifdef TLS
-  if (serv < 0 || (dcc[servidx].ssl &&
-      ssl_handshake(serv, TLS_CONNECT, tls_vfyserver, LOG_SERV,
-                    dcc[servidx].host, NULL))) {
-    putlog(LOG_SERV, "*", "%s %s (%s)", IRC_FAILEDCONNECT, dcc[servidx].host,
-           serv ? "TLS negotiation failure" : strerror(errno));
-#else
   if (serv < 0) {
     putlog(LOG_SERV, "*", "%s %s (%s)", IRC_FAILEDCONNECT, dcc[servidx].host,
            strerror(errno));
-#endif
     lostdcc(servidx);
-  } else {
-    dcc[servidx].sock = serv;
-    /* Queue standard login */
-    dcc[servidx].timeval = now;
-    SERVER_SOCKET.timeout_val = &server_timeout;
-    /* Another server may have truncated it, so use the original */
-    strcpy(botname, origbotname);
-    /* Start alternate nicks from the beginning */
-    altnick_char = 0;
-    if (pass[0])
-      dprintf(DP_MODE, "PASS %s\n", pass);
-    dprintf(DP_MODE, "NICK %s\n", botname);
-
-    rmspace(botrealname);
-    if (botrealname[0] == 0)
-      strcpy(botrealname, "/msg LamestBot hello");
-    dprintf(DP_MODE, "USER %s . . :%s\n", botuser, botrealname);
-
-    /* Wait for async result now. */
+    return;
   }
+#ifdef TLS
+  if (dcc[servidx].ssl && ssl_handshake(serv, TLS_CONNECT, tls_vfyserver,
+                                        LOG_SERV, dcc[servidx].host, NULL)) {
+    putlog(LOG_SERV, "*", "%s %s (%s)", IRC_FAILEDCONNECT, dcc[servidx].host,
+           "TLS negotiation failure");
+    lostdcc(servidx);
+    return;
+  }
+#endif
+  /* Queue standard login */
+  dcc[servidx].timeval = now;
+  SERVER_SOCKET.timeout_val = &server_timeout;
+  /* Another server may have truncated it, so use the original */
+  strcpy(botname, origbotname);
+  /* Start alternate nicks from the beginning */
+  altnick_char = 0;
+  if (pass[0])
+    dprintf(DP_MODE, "PASS %s\n", pass);
+  dprintf(DP_MODE, "NICK %s\n", botname);
+
+  rmspace(botrealname);
+  if (botrealname[0] == 0)
+    strcpy(botrealname, "/msg LamestBot hello");
+  dprintf(DP_MODE, "USER %s . . :%s\n", botuser, botrealname);
+
+  /* Wait for async result now. */
 }

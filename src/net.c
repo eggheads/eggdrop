@@ -2,7 +2,7 @@
  * net.c -- handles:
  *   all raw network i/o
  *
- * $Id: net.c,v 1.6 2010/10/20 13:07:13 pseudo Exp $
+ * $Id: net.c,v 1.7 2010/11/18 12:54:39 pseudo Exp $
  */
 /*
  * This is hereby released into the public domain.
@@ -205,8 +205,7 @@ int setsockname(sockname_t *addr, char *src, int port, int allowres)
       egg_memcpy(&addr->addr.s4.sin_addr, hp->h_addr, hp->h_length);
       af = hp->h_addrtype;
     }
-  } else
-    af = AF_INET;
+  }
   
   addr->family = addr->addr.s4.sin_family = AF_INET;
   addr->addr.sa.sa_family = addr->family;

@@ -1,10 +1,14 @@
-$Id: Changes1.8,v 1.36 2010/11/05 16:18:01 pseudo Exp $
+$Id: Changes1.8,v 1.37 2010/11/18 12:54:39 pseudo Exp $
 
 Eggdrop Changes (since version 1.8.0)
 
     _____________________________________________________________________
 
 1.8.0 (CVS):
+
+  - Fixed a problem with resolving hostnames when compiled with IPv6 disabled.
+  - Made server.mod report connection failures properly.
+    Found by: Arkadietz / Patch by: pseudo
 
   - Fixed getudef() to return intptr_t instead of int to prevent crashes on
     64-bit systems.
