@@ -3,7 +3,7 @@
  *   commands that comes across the botnet
  *   userfile transfer and update commands from sharebots
  *
- * $Id: botcmd.c,v 1.2 2010/10/19 12:13:32 pseudo Exp $
+ * $Id: botcmd.c,v 1.3 2010/11/23 16:36:23 pseudo Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -1453,30 +1453,24 @@ static void bot_versions(int sock, char *par)
 
 #ifdef TLS
 /* Negotiate an encrypted session over the existing link
- * starttls
+ * starttls <c/s>
  */
 static void bot_starttls(int idx, char *par)
 {
+  char *con;
   /* We're already using ssl, ignore the request */
   if (dcc[idx].ssl)
     return;
 
-  if (dcc[idx].status & STAT_STARTTLS) {
-    /* we requested ssl, now we got the reply */
-    dcc[idx].status &= ~STAT_STARTTLS;
-    ssl_handshake(dcc[idx].sock, TLS_CONNECT, tls_vfybots, LOG_BOTS,
-                  dcc[idx].host, NULL);
-  } else {
-    /* the peer requests ssl, tell it to go on */
-    /*
-      if (!SSL_CTX_check_private_key(ssl_ctx)) {
-      putlog(LOG_BOTS, "*", "%s", ERR_error_string(ERR_get_error()));
-      return;
-    }
-    */
-    dprintf(idx, "starttls\n");
+  con = newsplit(&par);
+  /* check who's going to play the server */
+  if (!egg_strcasecmp(con, "s")) { /* we're server */
     putlog(LOG_BOTS, "*", "Got STARTTLS from %s. Replying...", dcc[idx].nick);
+    dprintf(idx, "starttls c\n");
     ssl_handshake(dcc[idx].sock, TLS_LISTEN, tls_vfybots, LOG_BOTS,
+                  dcc[idx].host, NULL);
+  } else { /* we're client, don't reply or we'll be in the loop forever */
+    ssl_handshake(dcc[idx].sock, TLS_CONNECT, tls_vfybots, LOG_BOTS,
                   dcc[idx].host, NULL);
   }
   dcc[idx].ssl = 1;

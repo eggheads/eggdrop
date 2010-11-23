@@ -4,7 +4,7 @@
  *   disconnect on a dcc socket
  *   ...and that's it!  (but it's a LOT)
  *
- * $Id: dcc.c,v 1.6 2010/10/31 14:40:38 pseudo Exp $
+ * $Id: dcc.c,v 1.7 2010/11/23 16:36:23 pseudo Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -43,12 +43,15 @@ extern int egg_numver, connect_timeout, conmask, backgrd, max_dcc,
            make_userfile, default_flags, raw_log, ignore_time,
            par_telnet_flood;
 
-struct dcc_t *dcc = NULL;       /* DCC list                                   */
 #ifdef TLS
-int tls_vfyclients = 0;		/* Certificate validation mode for clients    */
+extern int tls_vfybots;
+
+int tls_vfyclients = 0;         /* Certificate validation mode for clients    */
 int tls_vfydcc = 0;             /* Verify DCC chat/send user certificates     */
 int tls_auth = 0;               /* Allow certificate authentication           */
 #endif
+
+struct dcc_t *dcc = NULL;       /* DCC list                                   */
 int dcc_total = 0;              /* Total dcc's                                */
 int require_p = 0;              /* Require 'p' access to get on the
                                  * party line?                                */
@@ -249,17 +252,6 @@ static void bot_version(int idx, char *par)
   egg_snprintf(x, sizeof x, "v %d", dcc[idx].u.bot->numver);
   bot_share(idx, x);
   dprintf(idx, "el\n");
-#ifdef TLS
-  /* Ask the peer to switch to ssl communication. We'll continue
-   * using plain text, until it replies with stls itself. Bots which don't
-   * support it will simply ignore the request and everything goes on as usual.
-   */
-  if (dcc[idx].status & STAT_STARTTLS) {
-    dprintf(idx, "starttls\n");
-    putlog(LOG_BOTS, "*", "Sent STARTTLS to %s...", dcc[idx].nick);
-  }
-#endif
-
 }
 
 void failed_link(int idx)
@@ -322,11 +314,6 @@ static void cont_link(int idx, char *buf, int i)
       }
     }
   }
-  /* Indicate that we'd like to switch to tls later */
-#ifdef TLS
-  if (!dcc[idx].ssl)
-    dcc[idx].status |= STAT_STARTTLS;
-#endif
   dcc[idx].type = &DCC_BOT_NEW;
   dcc[idx].u.bot->numver = 0;
 
@@ -376,6 +363,19 @@ static void dcc_bot_new(int idx, char *buf, int x)
   else if (!egg_strcasecmp(code, "passreq")) {
     char *pass = get_user(&USERENTRY_PASS, u);
 
+#ifdef TLS
+    /* We got a STARTTLS request earlier. Switch to ssl NOW. Doing this
+     * in two steps is necessary in order to synchronize the handshake.
+     */
+    if (dcc[idx].status & STAT_STARTTLS) {
+      dcc[idx].ssl = 1;
+      if (ssl_handshake(dcc[idx].sock, TLS_CONNECT, tls_vfybots, LOG_BOTS,
+                    dcc[idx].host, NULL))
+        putlog(LOG_BOTS, "*", "STARTTLS failed while linking to %s",
+               dcc[idx].nick);
+      dcc[idx].status &= ~STAT_STARTTLS;
+    }
+#endif
     if (!pass || !strcmp(pass, "-")) {
       putlog(LOG_BOTS, "*", DCC_PASSREQ, dcc[idx].nick);
       dprintf(idx, "-\n");
@@ -388,6 +388,18 @@ static void dcc_bot_new(int idx, char *buf, int x)
       else
         dprintf(idx, "%s\n", pass);
     }
+#ifdef TLS
+  } else if (!egg_strcasecmp(code, "starttls") && !dcc[idx].ssl) {
+    /* Mark the connection for secure communication, but don't switch yet.
+     * The hub has to send a plaintext passreq right after the starttls command
+     * and if we switch now, we'll break the handshake. Instead, we'll only
+     * send a confirmation to the peer and wait for the passreq.
+     */
+    putlog(LOG_BOTS, "*", "Got STARTTLS from %s. Replying...", dcc[idx].nick);
+    dcc[idx].status |= STAT_STARTTLS;
+    /* needs to have space to be distinguished from a plaintext password */
+    dprintf(idx, "starttls -\n");
+#endif
   } else if (!egg_strcasecmp(code, "error"))
     putlog(LOG_BOTS, "*", DCC_LINKERROR, dcc[idx].nick, buf);
   /* Ignore otherwise */
@@ -593,6 +605,17 @@ static void dcc_chat_pass(int idx, char *buf, int atr)
   atr = dcc[idx].user ? dcc[idx].user->flags : 0;
 
   /* Check for MD5 digest from remote _bot_. <cybah> */
+#ifdef TLS
+  if ((atr & USER_BOT) && !egg_strncasecmp(buf, "starttls ", 9)) {
+    dcc[idx].ssl = 1;
+    if (ssl_handshake(dcc[idx].sock, TLS_LISTEN, tls_vfybots, LOG_BOTS,
+                      dcc[idx].host, NULL)) {
+      killsock(dcc[idx].sock);
+      lostdcc(idx);
+    }
+    return;
+  }
+#endif
   if ((atr & USER_BOT) && !egg_strncasecmp(buf, "digest ", 7)) {
     if (dcc_bot_check_digest(idx, buf + 7)) {
       nfree(dcc[idx].u.chat);
@@ -1617,6 +1640,16 @@ static void dcc_telnet_pass(int idx, int atr)
   }
 
   if (glob_bot(fr)) {
+#ifdef TLS
+  /* Ask the peer to switch to ssl communication. We'll continue using plain
+   * text, until it replies with starttls itself. Bots which don't support ssl
+   * will simply ignore the request and everything will go on as usual.
+   */
+    if (!dcc[idx].ssl) {
+      dprintf(idx, "starttls\n");
+      putlog(LOG_BOTS, "*", "Sent STARTTLS to %s...", dcc[idx].nick);
+    }
+#endif
     /* Must generate a string consisting of our process ID and the current
      * time. The bot will add it's password to the end and use it to generate
      * an MD5 checksum (always 128bit). The checksum is sent back and this

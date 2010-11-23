@@ -2,7 +2,7 @@
  * net.c -- handles:
  *   all raw network i/o
  *
- * $Id: net.c,v 1.7 2010/11/18 12:54:39 pseudo Exp $
+ * $Id: net.c,v 1.8 2010/11/23 16:36:23 pseudo Exp $
  */
 /*
  * This is hereby released into the public domain.
@@ -732,7 +732,8 @@ int sockread(char *s, int *len, sock_list *slist, int slistmax, int tclonly)
       if (!tclonly && ((!(slist[i].flags & (SOCK_UNUSED | SOCK_TCL))) &&
           ((FD_ISSET(slist[i].sock, &fdr)) ||
 #ifdef TLS
-          (slist[i].ssl && SSL_pending(slist[i].ssl)) ||
+          (slist[i].ssl && (SSL_pending(slist[i].ssl) ||
+           !SSL_is_init_finished(slist[i].ssl))) ||
 #endif
           ((slist[i].sock == STDOUT) && (!backgrd) &&
           (FD_ISSET(STDIN, &fdr)))))) {
@@ -745,7 +746,7 @@ int sockread(char *s, int *len, sock_list *slist, int slistmax, int tclonly)
             grab = 10;
 #ifdef TLS
           else if (!(slist[i].flags & SOCK_STRONGCONN) &&
-            (!(slist[i].ssl) || !SSL_in_init(slist[i].ssl))) {
+            (!(slist[i].ssl) || SSL_is_init_finished(slist[i].ssl))) {
 #else
           else if (!(slist[i].flags & SOCK_STRONGCONN)) {
 #endif
@@ -772,7 +773,8 @@ int sockread(char *s, int *len, sock_list *slist, int slistmax, int tclonly)
 	      if (err == SSL_ERROR_WANT_READ || err == SSL_ERROR_WANT_WRITE)
 	        errno = EAGAIN;
               else
-                debug1("SSL error: %s", ERR_error_string(ERR_get_error(), 0));
+                debug1("sockread(): SSL error = %s",
+                       ERR_error_string(ERR_get_error(), 0));
               x = -1;
             }
           } else
@@ -1096,7 +1098,8 @@ void tputs(register int z, char *s, unsigned int len)
             errno = EAGAIN;
           else if (!inhere) { /* Out there, somewhere */
             inhere = 1;
-            debug1("SSL error: %s", ERR_error_string(ERR_get_error(), 0));
+            debug1("tputs(): SSL error = %s",
+                   ERR_error_string(ERR_get_error(), 0));
             inhere = 0;
           }
           x = -1;
@@ -1150,10 +1153,18 @@ void dequeue_sockets()
   tv.tv_sec = 0;
   tv.tv_usec = 0;               /* we only want to see if it's ready for writing, no need to actually wait.. */
   for (i = 0; i < threaddata()->MAXSOCKS; i++) {
-    if (!(socklist[i].flags & (SOCK_UNUSED | SOCK_TCL)) &&
-        socklist[i].handler.sock.outbuf != NULL) {
-      FD_SET(socklist[i].sock, &wfds);
-      z = 1;
+    if (!(socklist[i].flags & (SOCK_UNUSED | SOCK_TCL))) {
+#ifdef TLS
+      /* We can't rely on a transparent negotiation, because the
+       * handshake may never finish if we don't have any data to send.
+       */
+      if (socklist[i].ssl && !SSL_is_init_finished(socklist[i].ssl))
+        SSL_do_handshake(socklist[i].ssl);
+#endif
+      if (socklist[i].handler.sock.outbuf != NULL) {
+        FD_SET(socklist[i].sock, &wfds);
+        z = 1;
+      }
     }
   }
   if (!z)
@@ -1173,18 +1184,20 @@ void dequeue_sockets()
 #ifdef TLS
       if (socklist[i].ssl) {
         x = SSL_write(socklist[i].ssl, socklist[i].handler.sock.outbuf,
-        socklist[i].handler.sock.outbuflen);
+                      socklist[i].handler.sock.outbuflen);
         if (x < 0) {
           int err = SSL_get_error(socklist[i].ssl, x);
           if (err == SSL_ERROR_WANT_WRITE || err == SSL_ERROR_WANT_READ)
             errno = EAGAIN;
           else
-            debug1("SSL error: %s", ERR_error_string(ERR_get_error(), 0));
+            debug1("dequeue_sockets(): SSL error = %s",
+                   ERR_error_string(ERR_get_error(), 0));
           x = -1;
         }
       } else
 #endif   
-      x = write(socklist[i].sock, socklist[i].handler.sock.outbuf, socklist[i].handler.sock.outbuflen);
+      x = write(socklist[i].sock, socklist[i].handler.sock.outbuf,
+                socklist[i].handler.sock.outbuflen);
       if ((x < 0) && (errno != EAGAIN)
 #ifdef EBADSLT
           && (errno != EBADSLT)
@@ -1206,8 +1219,10 @@ void dequeue_sockets()
         char *p = socklist[i].handler.sock.outbuf;
 
         /* This removes any sent bytes from the beginning of the buffer */
-        socklist[i].handler.sock.outbuf = nmalloc(socklist[i].handler.sock.outbuflen - x);
-        egg_memcpy(socklist[i].handler.sock.outbuf, p + x, socklist[i].handler.sock.outbuflen - x);
+        socklist[i].handler.sock.outbuf =
+                            nmalloc(socklist[i].handler.sock.outbuflen - x);
+        egg_memcpy(socklist[i].handler.sock.outbuf, p + x,
+                   socklist[i].handler.sock.outbuflen - x);
         socklist[i].handler.sock.outbuflen -= x;
         nfree(p);
       } else {
