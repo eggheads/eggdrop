@@ -1,7 +1,7 @@
 /*
  * share.c -- part of share.mod
  *
- * $Id: share.c,v 1.5 2010/11/23 16:36:23 pseudo Exp $
+ * $Id: share.c,v 1.6 2010/11/23 23:25:24 pseudo Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -1972,8 +1972,8 @@ static void start_sending_users(int idx)
           if (bi) {
 #ifdef TLS
             egg_snprintf(s2, sizeof s2, "s c BOTADDR %s %s %s%d %s%d\n",
-                         u->handle, bi->address, (bi->ssl & TLS_BOT),
-                         bi->telnet_port, (bi->ssl & TLS_RELAY),
+                         u->handle, bi->address, (bi->ssl & TLS_BOT) ? "+" : "",
+                         bi->telnet_port, (bi->ssl & TLS_RELAY) ? "+" : "",
                          bi->relay_port);
 #else
             egg_snprintf(s2, sizeof s2, "s c BOTADDR %s %s %d %d\n", u->handle,
