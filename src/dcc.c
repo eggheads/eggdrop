@@ -4,7 +4,7 @@
  *   disconnect on a dcc socket
  *   ...and that's it!  (but it's a LOT)
  *
- * $Id: dcc.c,v 1.7 2010/11/23 16:36:23 pseudo Exp $
+ * $Id: dcc.c,v 1.8 2010/11/26 13:20:29 pseudo Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -604,18 +604,38 @@ static void dcc_chat_pass(int idx, char *buf, int atr)
     buf += 3; /* 'IAC','DO(DONT)','STATUS' */
   atr = dcc[idx].user ? dcc[idx].user->flags : 0;
 
-  /* Check for MD5 digest from remote _bot_. <cybah> */
 #ifdef TLS
-  if ((atr & USER_BOT) && !egg_strncasecmp(buf, "starttls ", 9)) {
-    dcc[idx].ssl = 1;
-    if (ssl_handshake(dcc[idx].sock, TLS_LISTEN, tls_vfybots, LOG_BOTS,
-                      dcc[idx].host, NULL)) {
-      killsock(dcc[idx].sock);
-      lostdcc(idx);
+  if (atr & USER_BOT) {
+    if (!egg_strncasecmp(buf, "starttls ", 9)) {
+      dcc[idx].ssl = 1;
+      if (ssl_handshake(dcc[idx].sock, TLS_LISTEN, tls_vfybots, LOG_BOTS,
+                        dcc[idx].host, NULL)) {
+        killsock(dcc[idx].sock);
+        lostdcc(idx);
+      }
+      return;
     }
-    return;
+    /* No password set? */
+    if (u_pass_match(dcc[idx].user, "-")) {
+      char ps[20];
+
+      makepass(ps);
+      set_user(&USERENTRY_PASS, dcc[idx].user, ps);
+      changeover_dcc(idx, &DCC_BOT_NEW, sizeof(struct bot_info));
+
+      dcc[idx].status = STAT_CALLED;
+      dprintf(idx, "*hello!\n");
+      greet_new_bot(idx);
+#ifdef NO_OLD_BOTNET
+      dprintf(idx, "h %s\n", ps);
+#else
+      dprintf(idx, "handshake %s\n", ps);
+#endif
+      return;
+    }
   }
 #endif
+  /* Check for MD5 digest from remote _bot_. <cybah> */
   if ((atr & USER_BOT) && !egg_strncasecmp(buf, "digest ", 7)) {
     if (dcc_bot_check_digest(idx, buf + 7)) {
       nfree(dcc[idx].u.chat);
@@ -1584,24 +1604,7 @@ static void dcc_telnet_pass(int idx, int atr)
   }
 #endif
   /* No password set? */
-  if (u_pass_match(dcc[idx].user, "-")) {
-    if (glob_bot(fr)) {
-      char ps[20];
-
-      makepass(ps);
-      set_user(&USERENTRY_PASS, dcc[idx].user, ps);
-      changeover_dcc(idx, &DCC_BOT_NEW, sizeof(struct bot_info));
-
-      dcc[idx].status = STAT_CALLED;
-      dprintf(idx, "*hello!\n");
-      greet_new_bot(idx);
-#ifdef NO_OLD_BOTNET
-      dprintf(idx, "h %s\n", ps);
-#else
-      dprintf(idx, "handshake %s\n", ps);
-#endif
-      return;
-    }
+  if (!glob_bot(fr) && u_pass_match(dcc[idx].user, "-")) {
     dprintf(idx, "Can't telnet until you have a password set.\n");
     putlog(LOG_MISC, "*", DCC_NOPASS, dcc[idx].nick, dcc[idx].host);
     killsock(dcc[idx].sock);

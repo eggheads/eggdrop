@@ -1,4 +1,4 @@
-$Id: Changes1.8,v 1.39 2010/11/23 23:25:24 pseudo Exp $
+$Id: Changes1.8,v 1.40 2010/11/26 13:20:29 pseudo Exp $
 
 Eggdrop Changes (since version 1.8.0)
 
@@ -6,8 +6,12 @@ Eggdrop Changes (since version 1.8.0)
 
 1.8.0 (CVS):
 
+  - Added a little hack to send starttls before password exchange during the
+    initial handshake.
+    Patch by: pseudo
+
   - Fixed a problem with sharing causing starttls to fail.
-    Found by: dr1
+    Found by: DarkReap1
   - Moved STARTTLS early in the bot link process and synchronized the
     handshake.
   - Made it possible for ssl handshakes to complete even without data to be
@@ -26,7 +30,7 @@ Eggdrop Changes (since version 1.8.0)
     Found by: izy` / Patch by: pseudo
 
   - Fixed a bug in (u)timers which could lead to invalid memory access.
-    Found by: dr1 / Patch by: thommey
+    Found by: DarkReap1 / Patch by: thommey
 
   - Made it possible to specify ssl independently for telnet and user ports
     when modifying bot addresses.

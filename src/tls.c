@@ -4,7 +4,7 @@
  *   Certificate handling
  *   OpenSSL initialization and shutdown
  *
- * $Id: tls.c,v 1.4 2010/11/23 23:25:24 pseudo Exp $
+ * $Id: tls.c,v 1.5 2010/11/26 13:20:29 pseudo Exp $
  */
 /*
  * Written by Rumen Stoyanov <pseudo@egg6.net>
@@ -628,7 +628,7 @@ void ssl_info(SSL *ssl, int where, int ret)
   }
 
   /* Display the state of the engine for debugging purposes */
-  /* debug1("TLS: state change: %s", SSL_state_string_long(ssl)); */
+  debug1("TLS: state change: %s", SSL_state_string_long(ssl));
 }
     
 /* Switch a socket to SSL communication

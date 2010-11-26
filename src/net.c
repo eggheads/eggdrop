@@ -2,7 +2,7 @@
  * net.c -- handles:
  *   all raw network i/o
  *
- * $Id: net.c,v 1.8 2010/11/23 16:36:23 pseudo Exp $
+ * $Id: net.c,v 1.9 2010/11/26 13:20:29 pseudo Exp $
  */
 /*
  * This is hereby released into the public domain.
@@ -1152,21 +1152,12 @@ void dequeue_sockets()
   FD_ZERO(&wfds);
   tv.tv_sec = 0;
   tv.tv_usec = 0;               /* we only want to see if it's ready for writing, no need to actually wait.. */
-  for (i = 0; i < threaddata()->MAXSOCKS; i++) {
-    if (!(socklist[i].flags & (SOCK_UNUSED | SOCK_TCL))) {
-#ifdef TLS
-      /* We can't rely on a transparent negotiation, because the
-       * handshake may never finish if we don't have any data to send.
-       */
-      if (socklist[i].ssl && !SSL_is_init_finished(socklist[i].ssl))
-        SSL_do_handshake(socklist[i].ssl);
-#endif
-      if (socklist[i].handler.sock.outbuf != NULL) {
-        FD_SET(socklist[i].sock, &wfds);
-        z = 1;
-      }
+  for (i = 0; i < threaddata()->MAXSOCKS; i++)
+    if (!(socklist[i].flags & (SOCK_UNUSED | SOCK_TCL)) &&
+        (socklist[i].handler.sock.outbuf != NULL)) {
+      FD_SET(socklist[i].sock, &wfds);
+      z = 1;
     }
-  }
   if (!z)
     return;                     /* nothing to write */
 

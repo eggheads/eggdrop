@@ -6,7 +6,7 @@
  *   memory management for dcc structures
  *   timeout checking for dcc connections
  *
- * $Id: dccutil.c,v 1.3 2010/10/19 12:13:33 pseudo Exp $
+ * $Id: dccutil.c,v 1.4 2010/11/26 13:20:29 pseudo Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -147,7 +147,7 @@ extern void (*qserver) (int, char *, int);
 
 void dprintf EGG_VARARGS_DEF(int, arg1)
 {
-  static char buf[1024];
+  char buf[1024];
   char *format;
   int idx, len;
   va_list va;
