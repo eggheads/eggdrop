@@ -2,7 +2,7 @@
  * tclmisc.c -- handles:
  *   Tcl stubs for everything else
  *
- * $Id: tclmisc.c,v 1.5.2.1 2010/11/10 13:39:19 pseudo Exp $
+ * $Id: tclmisc.c,v 1.5.2.2 2011/01/12 13:54:00 pseudo Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -430,7 +430,7 @@ static int tcl_strftime STDVAR
   else
     t = now;
   tm1 = localtime(&t);
-  if (egg_strftime(buf, sizeof(buf) - 1, argv[1], tm1)) {
+  if (strftime(buf, sizeof(buf) - 1, argv[1], tm1)) {
     Tcl_AppendResult(irp, buf, NULL);
     return TCL_OK;
   }

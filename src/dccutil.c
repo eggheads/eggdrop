@@ -6,7 +6,7 @@
  *   memory management for dcc structures
  *   timeout checking for dcc connections
  *
- * $Id: dccutil.c,v 1.3.2.1 2010/11/10 13:39:19 pseudo Exp $
+ * $Id: dccutil.c,v 1.3.2.2 2011/01/12 13:54:00 pseudo Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -361,7 +361,7 @@ void removedcc(int n)
     nfree(dcc[n].u.other);
   dcc_total--;
   if (n < dcc_total)
-    egg_memcpy(&dcc[n], &dcc[dcc_total], sizeof(struct dcc_t));
+    memcpy(&dcc[n], &dcc[dcc_total], sizeof(struct dcc_t));
   else
     egg_bzero(&dcc[n], sizeof(struct dcc_t));   /* drummer */
 }

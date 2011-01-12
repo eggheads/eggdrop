@@ -7,7 +7,7 @@
  *   (non-Tcl) procedure lookups for msg/dcc/file commands
  *   (Tcl) binding internal procedures to msg/dcc/file commands
  *
- * $Id: tclhash.c,v 1.3.2.1 2010/11/08 10:02:31 pseudo Exp $
+ * $Id: tclhash.c,v 1.3.2.2 2011/01/12 13:54:00 pseudo Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -73,7 +73,7 @@ static inline void *n_malloc_null(int size, const char *file, int line)
   void *ptr = nmalloc(size);
 #endif
 
-  egg_memset(ptr, 0, size);
+  memset(ptr, 0, size);
   return ptr;
 }
 

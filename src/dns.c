@@ -4,7 +4,7 @@
  *   provides the code used by the bot if the DNS module is not loaded
  *   DNS Tcl commands
  *
- * $Id: dns.c,v 1.2.2.1 2010/11/10 13:39:19 pseudo Exp $
+ * $Id: dns.c,v 1.2.2.2 2011/01/12 13:54:00 pseudo Exp $
  */
 /*
  * Written by Fabian Knittel <fknittel@gmx.de>
@@ -155,9 +155,9 @@ static void dns_dccipbyhost(sockname_t *ip, char *hostn, int ok, void *other)
         !egg_strcasecmp(dcc[idx].u.dns->host, hostn)) {
       if (ok) {
         if (dcc[idx].u.dns->ip)
-          egg_memcpy(dcc[idx].u.dns->ip, ip, sizeof(sockname_t));
+          memcpy(dcc[idx].u.dns->ip, ip, sizeof(sockname_t));
         else
-          egg_memcpy(&dcc[idx].sockname, ip, sizeof(sockname_t));
+          memcpy(&dcc[idx].sockname, ip, sizeof(sockname_t));
         dcc[idx].u.dns->dns_success(idx);
       } else
         dcc[idx].u.dns->dns_failure(idx);

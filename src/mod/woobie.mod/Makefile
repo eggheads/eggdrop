@@ -1,5 +1,5 @@
 # Makefile for src/mod/woobie.mod/
-# $Id: Makefile,v 1.1.1.1.2.1 2010/11/17 13:58:38 pseudo Exp $
+# $Id: Makefile,v 1.1.1.1.2.2 2011/01/12 13:54:01 pseudo Exp $
 
 srcdir = .
 
@@ -38,7 +38,7 @@ distclean: clean
   ../../../src/tclegg.h ../../../src/tclhash.h ../../../src/chan.h \
   ../../../src/users.h ../../../src/compat/compat.h \
   ../../../src/compat/inet_aton.h ../../../src/main.h \
-  ../../../src/compat/snprintf.h ../../../src/compat/memset.h \
-  ../../../src/compat/memcpy.h ../../../src/compat/strcasecmp.h \
-  ../../../src/compat/strftime.h ../../../src/mod/modvals.h \
+  ../../../src/compat/snprintf.h \
+  ../../../src/compat/strcasecmp.h \
+  ../../../src/mod/modvals.h \
   ../../../src/tandem.h

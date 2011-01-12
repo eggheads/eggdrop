@@ -10,7 +10,7 @@
  *
  * dprintf'ized, 9nov1995
  *
- * $Id: users.c,v 1.2.2.1 2010/11/08 10:02:33 pseudo Exp $
+ * $Id: users.c,v 1.2.2.2 2011/01/12 13:54:00 pseudo Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -499,9 +499,9 @@ void tell_user(int idx, struct userrec *u, int master)
   else {
     now2 = now - li->laston;
     if (now2 >= 86400)
-      egg_strftime(s1, 11, "%Y-%m-%d", localtime(&li->laston));
+      strftime(s1, 11, "%Y-%m-%d", localtime(&li->laston));
     else
-      egg_strftime(s1, 6, "%H:%M", localtime(&li->laston));
+      strftime(s1, 6, "%H:%M", localtime(&li->laston));
   }
   egg_snprintf(format, sizeof format, "%%-%us %%-5s%%5d %%-15s %%s (%%s)\n",
                HANDLEN);
@@ -518,9 +518,9 @@ void tell_user(int idx, struct userrec *u, int master)
       else {
         now2 = now - (ch->laston);
         if (now2 >= 86400)
-          egg_strftime(s1, 11, "%Y-%m-%d", localtime(&ch->laston));
+          strftime(s1, 11, "%Y-%m-%d", localtime(&ch->laston));
         else
-          egg_strftime(s1, 6, "%H:%M", localtime(&ch->laston));
+          strftime(s1, 6, "%H:%M", localtime(&ch->laston));
       }
       fr.match = FR_CHAN;
       fr.chan = ch->flags;

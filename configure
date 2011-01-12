@@ -6476,7 +6476,7 @@ _ACEOF
 
 
 # Checks for functions and their arguments.
-for ac_func in clock dprintf fsync getdtablesize getrusage inet_aton isascii mbrlen memcpy memset random rand lrand48 rename setpgid sigaction sigemptyset snprintf strcasecmp strncasecmp uname vsnprintf inet_ntop
+for ac_func in clock dprintf fsync getdtablesize getrusage inet_aton isascii mbrlen random rand lrand48 rename setpgid sigaction sigemptyset strcasecmp strncasecmp uname vsnprintf inet_ntop
 do :
   as_ac_var=`$as_echo "ac_cv_func_$ac_func" | $as_tr_sh`
 ac_fn_c_check_func "$LINENO" "$ac_func" "$as_ac_var"
@@ -6485,6 +6485,24 @@ eval as_val=\$$as_ac_var
   cat >>confdefs.h <<_ACEOF
 #define `$as_echo "HAVE_$ac_func" | $as_tr_cpp` 1
 _ACEOF
+
+fi
+done
+
+for ac_func in memcpy memset strftime
+do :
+  as_ac_var=`$as_echo "ac_cv_func_$ac_func" | $as_tr_sh`
+ac_fn_c_check_func "$LINENO" "$ac_func" "$as_ac_var"
+eval as_val=\$$as_ac_var
+   if test "x$as_val" = x""yes; then :
+  cat >>confdefs.h <<_ACEOF
+#define `$as_echo "HAVE_$ac_func" | $as_tr_cpp` 1
+_ACEOF
+
+else
+
+  as_fn_error "Some of the required library functions is not available. Sorry" "$LINENO" 5
+  exit 1
 
 fi
 done

@@ -6,7 +6,7 @@
  * Modified/written by Fabian Knittel <fknittel@gmx.de>
  * IPv6 support added by pseudo <pseudo@egg6.net>
  *
- * $Id: coredns.c,v 1.4.2.1 2010/11/10 21:16:56 pseudo Exp $
+ * $Id: coredns.c,v 1.4.2.2 2011/01/12 13:54:00 pseudo Exp $
  */
 /*
  * Portions Copyright (C) 1999 - 2010 Eggheads Development Team
@@ -275,7 +275,7 @@ inline static u_32bit_t getipbash(IP ip)
 #ifdef IPV6
 static unsigned long getip6bash(struct in6_addr *ip6) {
   u_32bit_t x;
-  egg_memcpy(&x, &ip6->s6_addr, sizeof x);
+  memcpy(&x, &ip6->s6_addr, sizeof x);
   x ^= *(u_32bit_t *)&ip6->s6_addr[12];
   return (unsigned long) BASH_MODULO(x);
 }
@@ -998,7 +998,7 @@ void parserespacket(u_8bit_t *response, int len)
         rp->ttl = rr->ttl;
         rp->sockname.addrlen = sizeof(struct sockaddr_in);
         rp->sockname.addr.sa.sa_family = AF_INET;
-        egg_memcpy(&rp->sockname.addr.s4.sin_addr, rr->data, 4);
+        memcpy(&rp->sockname.addr.s4.sin_addr, rr->data, 4);
 #ifndef IPV6
         passrp(rp, rr->ttl, T_A);
         return;
@@ -1017,7 +1017,7 @@ void parserespacket(u_8bit_t *response, int len)
         rp->ttl = rr->ttl;
         rp->sockname.addrlen = sizeof(struct sockaddr_in6);
         rp->sockname.addr.sa.sa_family = AF_INET6;
-        egg_memcpy(&rp->sockname.addr.s6.sin6_addr, rr->data, 16);
+        memcpy(&rp->sockname.addr.s6.sin6_addr, rr->data, 16);
         if (ready || pref_af) {
           passrp(rp, rr->ttl, T_A); 
           return;
@@ -1184,7 +1184,7 @@ static void dns_lookup(sockname_t *addr)
   rp->state = STATE_PTRREQ;
   rp->sends = 1;
   rp->type = T_PTR;
-  egg_memcpy(&rp->sockname, addr, sizeof(sockname_t));
+  memcpy(&rp->sockname, addr, sizeof(sockname_t));
   if (addr->family == AF_INET) {
     rp->ip = addr->addr.s4.sin_addr.s_addr;
     linkresolveip(rp);

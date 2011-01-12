@@ -2,7 +2,7 @@
  * compat.h
  *   wrap-around header for all compability functions.
  *
- * $Id: compat.h,v 1.2 2010/08/05 18:12:05 pseudo Exp $
+ * $Id: compat.h,v 1.2.2.1 2011/01/12 13:54:00 pseudo Exp $
  */
 /*
  * Copyright (C) 2000 - 2010 Eggheads Development Team
@@ -27,10 +27,7 @@
 
 #include "inet_aton.h"
 #include "snprintf.h"
-#include "memset.h"
-#include "memcpy.h"
 #include "strcasecmp.h"
-#include "strftime.h"
 #include "inet_ntop.h"
 #include "inet_pton.h"
 #include "gethostbyname2.h"

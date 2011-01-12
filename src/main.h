@@ -2,7 +2,7 @@
  * main.h
  *   include file to include most other include files
  *
- * $Id: main.h,v 1.3.2.3 2010/11/17 13:58:37 pseudo Exp $
+ * $Id: main.h,v 1.3.2.4 2011/01/12 13:54:00 pseudo Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -142,6 +142,8 @@ extern struct dcc_table DCC_CHAT, DCC_BOT, DCC_LOST, DCC_SCRIPT, DCC_BOT_NEW,
 #endif
 
 #define iptolong(a) (0xffffffff & (long) (htonl((unsigned long) a)))
+
+#define egg_bzero(dest, n) memset(dest, 0, n)
 
 #ifdef IPV6
 # define setsnport(s, p) do {                                           \

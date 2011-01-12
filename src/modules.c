@@ -4,7 +4,7 @@
  *
  * by Darrin Smith (beldin@light.iinet.net.au)
  *
- * $Id: modules.c,v 1.3.2.2 2010/11/17 13:58:37 pseudo Exp $
+ * $Id: modules.c,v 1.3.2.3 2011/01/12 13:54:00 pseudo Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -319,7 +319,7 @@ Function global_table[] = {
   (Function) open_telnet,
   /* 88 - 91 */
   (Function) check_tcl_event,
-  (Function) egg_memcpy,
+  (Function) 0,                   /* egg_memcpy -- UNUSED! (pseudo)      */
   (Function) my_atoul,
   (Function) my_strcpy,
   /* 92 - 95 */
@@ -546,7 +546,7 @@ Function global_table[] = {
   /* 252 - 255 */
   (Function) egg_snprintf,
   (Function) egg_vsnprintf,
-  (Function) egg_memset,
+  (Function) 0,
   (Function) egg_strcasecmp,
   /* 256 - 259 */
   (Function) egg_strncasecmp,

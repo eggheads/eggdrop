@@ -4,7 +4,7 @@
  *
  * Written by Fabian Knittel <fknittel@gmx.de>
  *
- * $Id: dns.c,v 1.4.2.1 2010/11/10 21:16:56 pseudo Exp $
+ * $Id: dns.c,v 1.4.2.2 2011/01/12 13:54:00 pseudo Exp $
  */
 /*
  * Copyright (C) 1999 - 2010 Eggheads Development Team
@@ -295,7 +295,7 @@ char *dns_start(Function *global_funcs)
   dcc[idx].sock = resfd;
   dcc[idx].timeval = now;
   strcpy(dcc[idx].nick, "(dns)");
-  egg_memcpy(&dcc[idx].sockname.addr.sa, &_res.nsaddr_list[0],
+  memcpy(&dcc[idx].sockname.addr.sa, &_res.nsaddr_list[0],
              sizeof(_res.nsaddr_list[0]));
   dcc[idx].sockname.addrlen = sizeof(_res.nsaddr_list[0]);
 

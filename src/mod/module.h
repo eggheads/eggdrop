@@ -1,7 +1,7 @@
 /*
  * module.h
  *
- * $Id: module.h,v 1.5.2.1 2010/11/17 13:58:37 pseudo Exp $
+ * $Id: module.h,v 1.5.2.2 2011/01/12 13:54:00 pseudo Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -69,9 +69,6 @@
 #endif
 #ifdef egg_snprintf
 #  undef egg_snprintf
-#endif
-#ifdef egg_memset
-#  undef egg_memset
 #endif
 #ifdef egg_strcasecmp
 #  undef egg_strcasecmp
@@ -436,7 +433,7 @@
 /* 252 - 255 */
 #define egg_snprintf (global[252])
 #define egg_vsnprintf ((int (*)(char *, size_t, const char *, va_list))global[253])
-#define egg_memset ((void *(*)(void *, int, size_t))global[254])
+/* 254: egg_memset() -- UNUSED (pseudo) */
 #define egg_strcasecmp ((int (*)(const char *, const char *))global[255])
 /* 256 - 259 */
 #define egg_strncasecmp ((int (*)(const char *, const char *, size_t))global[256])

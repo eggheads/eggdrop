@@ -1,11 +1,11 @@
 dnl configure.ac: this file is processed by autoconf to produce ./configure.
 dnl
-dnl $Id: configure.ac,v 1.5 2010/10/19 12:13:32 pseudo Exp $
+dnl $Id: configure.ac,v 1.5.2.1 2011/01/12 13:54:00 pseudo Exp $
 
 AC_PREREQ(2.60)
 AC_INIT([Eggdrop],[1.8.0],[bugs@eggheads.org])
 AC_COPYRIGHT([Copyright (C) 1999 - 2010 Eggheads Development Team])
-AC_REVISION($Revision: 1.5 $)
+AC_REVISION($Revision: 1.5.2.1 $)
 AC_CONFIG_SRCDIR(src/eggdrop.h)
 AC_CONFIG_AUX_DIR(misc)
 AC_CONFIG_HEADER(config.h)
@@ -113,10 +113,13 @@ AC_CHECK_SIZEOF(short, 0)
 
 
 # Checks for functions and their arguments.
-AC_CHECK_FUNCS([clock dprintf fsync getdtablesize getrusage inet_aton isascii mbrlen memcpy memset random rand lrand48 rename setpgid sigaction sigemptyset snprintf strcasecmp strncasecmp uname vsnprintf inet_ntop])
+AC_CHECK_FUNCS([clock dprintf fsync getdtablesize getrusage inet_aton isascii mbrlen random rand lrand48 rename setpgid sigaction sigemptyset snprintf strcasecmp strncasecmp uname vsnprintf inet_ntop])
+AC_CHECK_FUNCS([memcpy memset strftime], , [
+  AC_MSG_ERROR([Some of the required library functions is not available. Sorry])
+  exit 1
+])
 AC_FUNC_SELECT_ARGTYPES
 EGG_FUNC_VPRINTF
-AC_FUNC_STRFTIME
 AC_FUNC_MMAP
 
 

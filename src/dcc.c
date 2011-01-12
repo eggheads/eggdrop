@@ -4,7 +4,7 @@
  *   disconnect on a dcc socket
  *   ...and that's it!  (but it's a LOT)
  *
- * $Id: dcc.c,v 1.6.2.1 2010/11/10 13:39:19 pseudo Exp $
+ * $Id: dcc.c,v 1.6.2.2 2011/01/12 13:54:00 pseudo Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -1250,7 +1250,7 @@ static void dcc_telnet_hostresolved(int i)
     putlog(LOG_MISC, "*", _("Ident failed for %s: %s"), dcc[i].host,
            strerror(errno));
   else {
-    egg_memcpy(&dcc[j].sockname, &dcc[i].sockname, sizeof(sockname_t));
+    memcpy(&dcc[j].sockname, &dcc[i].sockname, sizeof(sockname_t));
     dcc[j].sock = getsock(dcc[j].sockname.family, 0);
     if (dcc[j].sock >= 0) {
       sockname_t name;

@@ -1,10 +1,14 @@
-$Id: Changes1.8,v 1.36.2.7 2010/11/17 13:58:37 pseudo Exp $
+$Id: Changes1.8,v 1.36.2.8 2011/01/12 13:54:00 pseudo Exp $
 
 Eggdrop Changes (since version 1.8.0)
 
     _____________________________________________________________________
 
 1.8.0 (CVS):
+
+  - Removed memcpy(), memset() and strftime() compatibility replacements.
+    Some of them were broken and all are generally available (C89).
+    Found by: thommey / Patch by: pseudo
 
   - Removed the old lang system.
     Patch by: pseudo

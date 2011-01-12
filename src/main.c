@@ -5,7 +5,7 @@
  *   command line arguments
  *   context and assert debugging
  *
- * $Id: main.c,v 1.6.2.2 2010/11/17 13:58:37 pseudo Exp $
+ * $Id: main.c,v 1.6.2.3 2011/01/12 13:54:00 pseudo Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -574,7 +574,7 @@ static void core_secondly()
       tell_mem_status_dcc(DP_STDOUT);
     }
   }
-  egg_memcpy(&nowtm, localtime(&now), sizeof(struct tm));
+  memcpy(&nowtm, localtime(&now), sizeof(struct tm));
   if (nowtm.tm_min != lastmin) {
     int i = 0;
 
@@ -1050,7 +1050,7 @@ int main(int arg_c, char **arg_v)
   /* Initialize variables and stuff */
   now = time(NULL);
   chanset = NULL;
-  egg_memcpy(&nowtm, localtime(&now), sizeof(struct tm));
+  memcpy(&nowtm, localtime(&now), sizeof(struct tm));
   lastmin = nowtm.tm_min;
   srandom((unsigned int) (now % (getpid() + getppid())));
   init_mem();

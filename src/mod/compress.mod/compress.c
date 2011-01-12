@@ -6,7 +6,7 @@
  * Written by Fabian Knittel <fknittel@gmx.de>. Based on zlib examples
  * by Jean-loup Gailly and Miguel Albrecht.
  *
- * $Id: compress.c,v 1.2.2.1 2010/11/10 21:16:56 pseudo Exp $
+ * $Id: compress.c,v 1.2.2.2 2011/01/12 13:54:00 pseudo Exp $
  */
 /*
  * Copyright (C) 2000 - 2010 Eggheads Development Team
@@ -75,8 +75,8 @@ static int is_compressedfile(char *filename)
   FILE *fin;
   register int len1, len2, i;
 
-  egg_memset(buf1, 0, 50);
-  egg_memset(buf2, 0, 50);
+  memset(buf1, 0, 50);
+  memset(buf2, 0, 50);
   if (!is_file(filename))
     return COMPF_FAILED;
 
