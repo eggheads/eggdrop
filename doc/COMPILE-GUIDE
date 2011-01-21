@@ -1,4 +1,4 @@
-$Id: COMPILE-GUIDE,v 1.3 2010/10/25 15:56:38 pseudo Exp $
+$Id: COMPILE-GUIDE,v 1.4 2011/01/21 02:33:41 thommey Exp $
 
 Eggdrop Compile Guide and FAQ
 Last revised: October 25, 2010
@@ -25,8 +25,9 @@ Last revised: October 25, 2010
       D. Mac OS X
       E. AIX
       F. IRIX
-      G. Cygwin / Windows
-      H. Tcl Detection and Installation
+      G. Solaris / SunOS
+      H. Cygwin / Windows
+      I. Tcl Detection and Installation
 
     Frequently Asked Questions:
       1. I get a lot of warnings.
@@ -75,7 +76,7 @@ Last revised: October 25, 2010
 
            --with-tcllib
            --with-tclinc
-             See 'E. Tcl Detection and Installation' below (at the end of this
+             See 'I. Tcl Detection and Installation' below (at the end of this
              compile guide).
 
            --with-handlen=

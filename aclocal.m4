@@ -16,7 +16,7 @@ dnl You should have received a copy of the GNU General Public License
 dnl along with this program; if not, write to the Free Software
 dnl Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 dnl
-dnl $Id: aclocal.m4,v 1.12 2010/10/25 22:11:23 pseudo Exp $
+dnl $Id: aclocal.m4,v 1.13 2011/01/21 02:33:41 thommey Exp $
 dnl
 
 
@@ -903,8 +903,8 @@ dnl EGG_TCL_ARG_WITH()
 dnl
 AC_DEFUN([EGG_TCL_ARG_WITH],
 [
-  AC_ARG_WITH(tcllib, [  --with-tcllib=PATH      full path to Tcl library], [tcllibname="$withval"])
-  AC_ARG_WITH(tclinc, [  --with-tclinc=PATH      full path to Tcl header],  [tclincname="$withval"])
+  AC_ARG_WITH(tcllib, [  --with-tcllib=PATH      full path to Tcl library (e.g. /usr/lib/libtcl8.5.so)], [tcllibname="$withval"])
+  AC_ARG_WITH(tclinc, [  --with-tclinc=PATH      full path to Tcl header (e.g. /usr/include/tcl.h)],  [tclincname="$withval"])
 
   WARN=0
   # Make sure either both or neither $tcllibname and $tclincname are set
@@ -989,6 +989,7 @@ AC_DEFUN([EGG_TCL_WITH_TCLLIB],
 configure: WARNING:
 
   The file '$tcllibname' given to option --with-tcllib is not valid.
+  Specify the full path including the file name (e.g. /usr/lib/libtcl8.5.so)
 
   configure will now attempt to autodetect both the Tcl library and header.
 
@@ -1018,6 +1019,7 @@ AC_DEFUN([EGG_TCL_WITH_TCLINC],
 configure: WARNING:
 
   The file '$tclincname' given to option --with-tclinc is not valid.
+  Specify the full path including the file name (e.g. /usr/include/tcl.h)
 
   configure will now attempt to autodetect both the Tcl library and header.
 
@@ -1284,9 +1286,12 @@ configure: error:
 
   Tcl cannot be found on this system.
 
-  Eggdrop requires Tcl to compile. If you already have Tcl installed on
-  this system, and I just wasn't looking in the right place for it, re-run
-  ./configure using the --with-tcllib='/path/to/libtcl.so' and
+  Eggdrop requires Tcl and the Tcl development files to compile.
+  If you already have Tcl installed on this system, make sure you
+  also have the development files (common package names include
+  'tcl-dev' and 'tcl-devel'). If I just wasn't looking
+  in the right place for it, re-run ./configure using the
+  --with-tcllib='/path/to/libtcl.so' and
   --with-tclinc='/path/to/tcl.h' options.
 
   See doc/COMPILE-GUIDE's 'Tcl Detection and Installation' section for more
