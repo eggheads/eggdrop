@@ -4,7 +4,7 @@
  *   disconnect on a dcc socket
  *   ...and that's it!  (but it's a LOT)
  *
- * $Id: dcc.c,v 1.8 2010/11/26 13:20:29 pseudo Exp $
+ * $Id: dcc.c,v 1.9 2011/01/27 11:20:16 pseudo Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -1279,6 +1279,7 @@ static void dcc_telnet_hostresolved(int i)
     return;
   }
 
+  putlog(LOG_MISC, "*", DCC_TELCONN, dcc[i].host, dcc[i].port);
   changeover_dcc(i, &DCC_IDENTWAIT, 0);
   dcc[i].timeval = now;
   dcc[i].u.ident_sock = dcc[idx].sock;
