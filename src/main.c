@@ -5,7 +5,7 @@
  *   command line arguments
  *   context and assert debugging
  *
- * $Id: main.c,v 1.6 2010/10/23 11:16:12 pseudo Exp $
+ * $Id: main.c,v 1.7 2011/01/27 01:41:08 thommey Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -382,14 +382,14 @@ static void got_term(int z)
   /* Now we die by default on sigterm, but scripts have the chance to
    * catch the event themselves and cancel shutdown by returning 1
    */
-  if (check_tcl_event("sigterm"))
+  if (check_tcl_signal("sigterm"))
     return;
   kill_bot("ACK, I've been terminated!", "TERMINATE SIGNAL -- SIGNING OFF");
 }
 
 static void got_quit(int z)
 {
-  if (check_tcl_event("sigquit"))
+  if (check_tcl_signal("sigquit"))
     return;
   putlog(LOG_MISC, "*", "Received QUIT signal: restarting...");
   do_restart = -1;
@@ -399,7 +399,7 @@ static void got_quit(int z)
 static void got_hup(int z)
 {
   write_userfile(-1);
-  if (check_tcl_event("sighup"))
+  if (check_tcl_signal("sighup"))
     return;
   putlog(LOG_MISC, "*", "Received HUP signal: rehashing...");
   do_restart = -2;
@@ -419,7 +419,7 @@ static void got_alarm(int z)
  */
 static void got_ill(int z)
 {
-  check_tcl_event("sigill");
+  check_tcl_signal("sigill");
 #ifdef DEBUG_CONTEXT
   putlog(LOG_MISC, "*", "* Context: %s/%d [%s]", cx_file[cx_ptr],
          cx_line[cx_ptr], (cx_note[cx_ptr][0]) ? cx_note[cx_ptr] : "");
