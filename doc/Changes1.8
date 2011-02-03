@@ -1,10 +1,15 @@
-$Id: Changes1.8,v 1.45 2011/01/27 11:20:16 pseudo Exp $
+$Id: Changes1.8,v 1.46 2011/02/03 15:44:11 pseudo Exp $
 
 Eggdrop Changes (since version 1.8.0)
 
     _____________________________________________________________________
 
 1.8.0 (CVS):
+
+  - Check for pending data on SSL sockets even when select() reports the
+    descriptor's not readable.
+  - Allow moving write buffers for SSL sockets.
+    Patch by: pseudo
 
   - Added missing message for incoming telnet connections.
     Found by: Robby / Patch by: pseudo

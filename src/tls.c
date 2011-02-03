@@ -4,7 +4,7 @@
  *   Certificate handling
  *   OpenSSL initialization and shutdown
  *
- * $Id: tls.c,v 1.5 2010/11/26 13:20:29 pseudo Exp $
+ * $Id: tls.c,v 1.6 2011/02/03 15:44:11 pseudo Exp $
  */
 /*
  * Written by Rumen Stoyanov <pseudo@egg6.net>
@@ -695,7 +695,8 @@ int ssl_handshake(int sock, int flags, int verify, int loglevel, char *host,
    */
   SSL_set_verify_depth(td->socklist[i].ssl, tls_maxdepth + 1);
 
-  SSL_set_mode(td->socklist[i].ssl, SSL_MODE_ENABLE_PARTIAL_WRITE);
+  SSL_set_mode(td->socklist[i].ssl, SSL_MODE_ENABLE_PARTIAL_WRITE |
+               SSL_MODE_ACCEPT_MOVING_WRITE_BUFFER);
   if (data->flags & TLS_CONNECT) {
     SSL_set_verify(td->socklist[i].ssl, SSL_VERIFY_PEER, ssl_verify);
     ret = SSL_connect(td->socklist[i].ssl);

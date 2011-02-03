@@ -2,7 +2,7 @@
  * net.c -- handles:
  *   all raw network i/o
  *
- * $Id: net.c,v 1.9 2010/11/26 13:20:29 pseudo Exp $
+ * $Id: net.c,v 1.10 2011/02/03 15:44:11 pseudo Exp $
  */
 /*
  * This is hereby released into the public domain.
@@ -726,115 +726,114 @@ int sockread(char *s, int *len, sock_list *slist, int slistmax, int tclonly)
              SELECT_TYPE_ARG234 (have_w ? &fdw : NULL),
              SELECT_TYPE_ARG234 (have_e ? &fde : NULL),
              SELECT_TYPE_ARG5 &t);
-  if (x > 0) {
-    /* Something happened */
-    for (i = 0; i < slistmax; i++) {
-      if (!tclonly && ((!(slist[i].flags & (SOCK_UNUSED | SOCK_TCL))) &&
-          ((FD_ISSET(slist[i].sock, &fdr)) ||
+  if (x == -1)
+    return -2;                  /* socket error */
+
+  for (i = 0; i < slistmax; i++) {
+    if (!tclonly && ((!(slist[i].flags & (SOCK_UNUSED | SOCK_TCL))) &&
+        ((FD_ISSET(slist[i].sock, &fdr)) ||
 #ifdef TLS
-          (slist[i].ssl && (SSL_pending(slist[i].ssl) ||
-           !SSL_is_init_finished(slist[i].ssl))) ||
+        (slist[i].ssl && (SSL_pending(slist[i].ssl) ||
+         !SSL_is_init_finished(slist[i].ssl))) ||
 #endif
-          ((slist[i].sock == STDOUT) && (!backgrd) &&
-          (FD_ISSET(STDIN, &fdr)))))) {
-        if (slist[i].flags & (SOCK_LISTEN | SOCK_CONNECT)) {
-          /* Listening socket -- don't read, just return activity */
-          /* Same for connection attempt */
-          /* (for strong connections, require a read to succeed first) */
-          if (slist[i].flags & SOCK_PROXYWAIT) /* drummer */
-            /* Hang around to get the return code from proxy */
-            grab = 10;
+        ((slist[i].sock == STDOUT) && (!backgrd) &&
+         (FD_ISSET(STDIN, &fdr)))))) {
+      if (slist[i].flags & (SOCK_LISTEN | SOCK_CONNECT)) {
+        /* Listening socket -- don't read, just return activity */
+        /* Same for connection attempt */
+        /* (for strong connections, require a read to succeed first) */
+        if (slist[i].flags & SOCK_PROXYWAIT) /* drummer */
+          /* Hang around to get the return code from proxy */
+          grab = 10;
 #ifdef TLS
-          else if (!(slist[i].flags & SOCK_STRONGCONN) &&
-            (!(slist[i].ssl) || SSL_is_init_finished(slist[i].ssl))) {
+        else if (!(slist[i].flags & SOCK_STRONGCONN) &&
+                 (!(slist[i].ssl) || SSL_is_init_finished(slist[i].ssl))) {
 #else
-          else if (!(slist[i].flags & SOCK_STRONGCONN)) {
+        else if (!(slist[i].flags & SOCK_STRONGCONN)) {
 #endif
-            debug1("net: connect! sock %d", slist[i].sock);
-            s[0] = 0;
-            *len = 0;
-            return i;
-          }
-        } else if (slist[i].flags & SOCK_PASS) {
+          debug1("net: connect! sock %d", slist[i].sock);
           s[0] = 0;
           *len = 0;
           return i;
         }
-        errno = 0;
-        if ((slist[i].sock == STDOUT) && !backgrd)
-          x = read(STDIN, s, grab);
-        else
-#ifdef TLS
-	{
-          if (slist[i].ssl) {
-            x = SSL_read(slist[i].ssl, s, grab);
-            if (x < 0) {
-	      int err = SSL_get_error(slist[i].ssl, x);
-	      if (err == SSL_ERROR_WANT_READ || err == SSL_ERROR_WANT_WRITE)
-	        errno = EAGAIN;
-              else
-                debug1("sockread(): SSL error = %s",
-                       ERR_error_string(ERR_get_error(), 0));
-              x = -1;
-            }
-          } else
-            x = read(slist[i].sock, s, grab);
-	}
-#else
-	  x = read(slist[i].sock, s, grab);
-#endif  
-        if (x <= 0) {           /* eof */
-          if (errno != EAGAIN) { /* EAGAIN happens when the operation would
-                                  * block on a non-blocking socket, if the
-                                  * socket is going to die, it will die later,
-                                  * otherwise it will connect. */
-            *len = slist[i].sock;
-            slist[i].flags &= ~SOCK_CONNECT;
-            debug1("net: eof!(read) socket %d", slist[i].sock);
-            return -1;
-          } else {
-            debug3("sockread EAGAIN: %d %d (%s)", slist[i].sock, errno,
-                   strerror(errno));
-            continue;           /* EAGAIN */
-          }
-        }
-        s[x] = 0;
-        *len = x;
-        if (slist[i].flags & SOCK_PROXYWAIT) {
-          debug2("net: socket: %d proxy errno: %d", slist[i].sock, s[1]);
-          slist[i].flags &= ~(SOCK_CONNECT | SOCK_PROXYWAIT);
-          switch (s[1]) {
-          case 90:             /* Success */
-            s[0] = 0;
-            *len = 0;
-            return i;
-          case 91:             /* Failed */
-            errno = ECONNREFUSED;
-            break;
-          case 92:             /* No identd */
-          case 93:             /* Identd said wrong username */
-            /* A better error message would be "socks misconfigured"
-             * or "identd not working" but this is simplest.
-             */
-            errno = ENETUNREACH;
-            break;
-          }
-          *len = slist[i].sock;
-          return -1;
-        }
+      } else if (slist[i].flags & SOCK_PASS) {
+        s[0] = 0;
+        *len = 0;
         return i;
-      } else if (tclsock == -1 && (slist[i].flags & SOCK_TCL)) {
-        events = FD_ISSET(slist[i].sock, &fdr) ? TCL_READABLE : 0;
-        events |= FD_ISSET(slist[i].sock, &fdw) ? TCL_WRITABLE : 0;
-        events |= FD_ISSET(slist[i].sock, &fde) ? TCL_EXCEPTION : 0;
-        events &= slist[i].handler.tclsock.mask;
-        if (events)
-          tclsock = i;
       }
+      errno = 0;
+      if ((slist[i].sock == STDOUT) && !backgrd)
+        x = read(STDIN, s, grab);
+      else
+#ifdef TLS
+      {
+        if (slist[i].ssl) {
+          x = SSL_read(slist[i].ssl, s, grab);
+          if (x < 0) {
+            int err = SSL_get_error(slist[i].ssl, x);
+            if (err == SSL_ERROR_WANT_READ || err == SSL_ERROR_WANT_WRITE)
+              errno = EAGAIN;
+            else
+              debug1("sockread(): SSL error = %s",
+                     ERR_error_string(ERR_get_error(), 0));
+            x = -1;
+          }
+        } else
+          x = read(slist[i].sock, s, grab);
+      }
+#else
+        x = read(slist[i].sock, s, grab);
+#endif  
+      if (x <= 0) {           /* eof */
+        if (errno != EAGAIN) { /* EAGAIN happens when the operation would
+                                * block on a non-blocking socket, if the
+                                * socket is going to die, it will die later,
+                                * otherwise it will connect. */
+          *len = slist[i].sock;
+          slist[i].flags &= ~SOCK_CONNECT;
+          debug1("net: eof!(read) socket %d", slist[i].sock);
+          return -1;
+        } else {
+          debug3("sockread EAGAIN: %d %d (%s)", slist[i].sock, errno,
+                 strerror(errno));
+          continue;           /* EAGAIN */
+        }
+      }
+      s[x] = 0;
+      *len = x;
+      if (slist[i].flags & SOCK_PROXYWAIT) {
+        debug2("net: socket: %d proxy errno: %d", slist[i].sock, s[1]);
+        slist[i].flags &= ~(SOCK_CONNECT | SOCK_PROXYWAIT);
+        switch (s[1]) {
+        case 90:             /* Success */
+          s[0] = 0;
+          *len = 0;
+          return i;
+        case 91:             /* Failed */
+          errno = ECONNREFUSED;
+          break;
+        case 92:             /* No identd */
+        case 93:             /* Identd said wrong username */
+          /* A better error message would be "socks misconfigured"
+           * or "identd not working" but this is simplest.
+           */
+          errno = ENETUNREACH;
+          break;
+        }
+        *len = slist[i].sock;
+        return -1;
+      }
+      return i;
+    } else if (tclsock == -1 && (slist[i].flags & SOCK_TCL)) {
+      events = FD_ISSET(slist[i].sock, &fdr) ? TCL_READABLE : 0;
+      events |= FD_ISSET(slist[i].sock, &fdw) ? TCL_WRITABLE : 0;
+      events |= FD_ISSET(slist[i].sock, &fde) ? TCL_EXCEPTION : 0;
+      events &= slist[i].handler.tclsock.mask;
+      if (events)
+        tclsock = i;
     }
-  } else if (x == -1)
-    return -2;                  /* socket error */
-  else if (!tclonly) {
+  }
+  if (!tclonly) {
     s[0] = 0;
     *len = 0;
   }

@@ -1,4 +1,4 @@
-$Id: COMPILE-GUIDE,v 1.4 2011/01/21 02:33:41 thommey Exp $
+$Id: COMPILE-GUIDE,v 1.5 2011/02/03 15:44:11 pseudo Exp $
 
 Eggdrop Compile Guide and FAQ
 Last revised: October 25, 2010
@@ -82,6 +82,12 @@ Last revised: October 25, 2010
            --with-handlen=
              Configure the handle length of the bot. Allowed values are
              numbers from 9 to 32 inclusive.
+
+           --disable-tls
+           --with-sslinc=
+           --with-ssllib=
+             You can disable TLS or specify the paths to the header and
+             library files. Look at doc/TLS for more information.
 
       2. Type either 'make config', or 'make iconfig' to determine which
          modules will be compiled.
