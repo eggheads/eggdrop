@@ -16,7 +16,7 @@ dnl You should have received a copy of the GNU General Public License
 dnl along with this program; if not, write to the Free Software
 dnl Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 dnl
-dnl $Id: aclocal.m4,v 1.12 2010/10/25 22:11:23 pseudo Exp $
+dnl $Id: aclocal.m4,v 1.12.2.1 2011/02/06 19:19:15 pseudo Exp $
 dnl
 
 
@@ -115,69 +115,6 @@ dnl Compiler checks.
 dnl
 
 
-dnl EGG_CHECK_CC()
-dnl
-dnl Check for a working C compiler.
-dnl
-AC_DEFUN([EGG_CHECK_CC],
-[
-  if test "x$cross_compiling" = x; then
-    cat << 'EOF' >&2
-configure: error:
-
-  This system does not appear to have a working C compiler.
-  A working C compiler is required to compile Eggdrop.
-
-EOF
-    exit 1
-  fi
-])
-
-
-dnl EGG_HEADER_STDC()
-dnl
-AC_DEFUN([EGG_HEADER_STDC],
-[
-  if test "$ac_cv_header_stdc" = no; then
-    cat << 'EOF' >&2
-configure: error:
-
-  Your system must support ANSI C Header files.
-  These are required for the language support. Sorry.
-
-EOF
-    exit 1
-  fi
-])
-
-
-dnl EGG_CHECK_ICC()
-dnl
-dnl Check for Intel's C compiler. It attempts to emulate gcc but doesn't
-dnl accept all the standard gcc options.
-dnl
-dnl
-AC_DEFUN([EGG_CHECK_ICC],[
-  AC_CACHE_CHECK([for icc], egg_cv_var_cc_icc, [
-    AC_COMPILE_IFELSE([[
-#if !(defined(__ICC) || defined(__ECC) || defined(__INTEL_COMPILER))
-  "Toto, I've a feeling we're not in Kansas anymore."
-#endif
-    ]], [
-      egg_cv_var_cc_icc="yes"
-    ], [
-      egg_cv_var_cc_icc="no"
-    ])
-  ])
-
-  if test "$egg_cv_var_cc_icc" = yes; then
-    ICC="yes"
-  else
-    ICC="no"
-  fi
-])
-
-
 dnl EGG_CHECK_CCPIPE()
 dnl
 dnl This macro checks whether or not the compiler supports the `-pipe' flag,
@@ -185,26 +122,24 @@ dnl which speeds up the compilation.
 dnl
 AC_DEFUN([EGG_CHECK_CCPIPE],
 [
-  if test "$GCC" = yes && test "$ICC" = no; then
-    AC_CACHE_CHECK([whether the compiler understands -pipe], egg_cv_var_ccpipe, [
-      ac_old_CC="$CC"
-      CC="$CC -pipe"
-      AC_COMPILE_IFELSE([[
-        int main ()
-        {
-          return(0);
-        }
-      ]], [
-        egg_cv_var_ccpipe="yes"
-      ], [
-        egg_cv_var_ccpipe="no"
-      ])
-      CC="$ac_old_CC"
+  AC_CACHE_CHECK([whether the compiler understands -pipe], egg_cv_var_ccpipe, [
+    ac_old_CC="$CC"
+    CC="$CC -pipe"
+    AC_COMPILE_IFELSE([[
+      int main ()
+      {
+        return(0);
+      }
+    ]], [
+      egg_cv_var_ccpipe="yes"
+    ], [
+      egg_cv_var_ccpipe="no"
     ])
+    CC="$ac_old_CC"
+  ])
 
-    if test "$egg_cv_var_ccpipe" = yes; then
-      EGG_APPEND_VAR(CFLAGS, -pipe)
-    fi
+  if test "$egg_cv_var_ccpipe" = yes; then
+    EGG_APPEND_VAR(CFLAGS, -pipe)
   fi
 ])
 
@@ -215,26 +150,24 @@ dnl See if the compiler supports -Wall.
 dnl
 AC_DEFUN([EGG_CHECK_CCWALL],
 [
-  if test "$GCC" = yes && test "$ICC" = no; then
-    AC_CACHE_CHECK([whether the compiler understands -Wall], egg_cv_var_ccwall, [
-      ac_old_CFLAGS="$CFLAGS"
-      CFLAGS="$CFLAGS -Wall"
-      AC_COMPILE_IFELSE([[
-        int main ()
-        {
-          return(0);
-        }
-      ]], [
-        egg_cv_var_ccwall="yes"
-      ], [
-        egg_cv_var_ccwall="no"
-      ])
-      CFLAGS="$ac_old_CFLAGS"
+  AC_CACHE_CHECK([whether the compiler understands -Wall], egg_cv_var_ccwall, [
+    ac_old_CFLAGS="$CFLAGS"
+    CFLAGS="$CFLAGS -Wall"
+    AC_COMPILE_IFELSE([[
+      int main ()
+      {
+        return(0);
+      }
+    ]], [
+      egg_cv_var_ccwall="yes"
+    ], [
+      egg_cv_var_ccwall="no"
     ])
+    CFLAGS="$ac_old_CFLAGS"
+  ])
 
-    if test "$egg_cv_var_ccwall" = yes; then
-      EGG_APPEND_VAR(CFLAGS, -Wall)
-    fi
+  if test "$egg_cv_var_ccwall" = yes; then
+    EGG_APPEND_VAR(CFLAGS, -Wall)
   fi
 ])
 
@@ -283,21 +216,15 @@ AC_DEFUN([EGG_CHECK_SOCKLEN_T],
 ])
 
 
-dnl EGG_FUNC_VPRINTF()
 dnl
-AC_DEFUN([EGG_FUNC_VPRINTF],
+dnl Make sure the compiler is determined and supports C89.
+dnl
+AC_DEFUN([EGG_CHECK_C89],
 [
-  AC_FUNC_VPRINTF
-  if test "$ac_cv_func_vprintf" = no; then
-    cat << 'EOF' >&2
-configure: error:
-
-  Your system does not have the vprintf/vsprintf/sprintf libraries.
-  These are required to compile almost anything. Sorry.
-
-EOF
-    exit 1
-  fi
+  AC_REQUIRE([AC_PROG_CC])
+  AS_IF([test "x$ac_cv_prog_cc_c89" = "xno" || test "x$ac_cv_header_stdc" = "xno"], [
+    AC_MSG_ERROR([Your system doesn't support ANSI C89.])
+  ])
 ])
 
 
@@ -355,17 +282,6 @@ EOF
 ])
 
 
-dnl EGG_PROG_STRIP()
-dnl
-AC_DEFUN([EGG_PROG_STRIP],
-[
-  AC_CHECK_PROG(STRIP, strip, strip)
-  if test "x$STRIP" = x; then
-    STRIP=touch
-  fi
-])
-
-
 dnl EGG_PROG_AWK()
 dnl
 AC_DEFUN([EGG_PROG_AWK],
@@ -406,8 +322,7 @@ dnl EGG_ENABLE_STRIP()
 dnl
 AC_DEFUN([EGG_ENABLE_STRIP],
 [
-  AC_ARG_ENABLE([strip],
-                [  --enable-strip          enable stripping of binaries],
+  AC_ARG_ENABLE([strip], AS_HELP_STRING([--enable-strip], [enable stripping of binaries]),
                 [enable_strip="$enableval"],
                 [enable_strip="no"])
 
@@ -863,12 +778,9 @@ AC_DEFUN([EGG_CHECK_LIBS],
 dnl EGG_ARG_HANDLEN()
 dnl 
 AC_DEFUN([EGG_ARG_HANDLEN], [
-  AC_ARG_WITH(handlen, [  --with-handlen=VALUE    set the maximum length a handle on the bot can be], [
-    if test -n $withval && test $withval -ge 9 && test $withval -le 32;
-    then
-      AC_DEFINE_UNQUOTED(EGG_HANDLEN, $withval, [
-        Define the maximum length of handles on the bot.
-      ])
+  AC_ARG_WITH(handlen, AS_HELP_STRING([--with-handlen=VALUE], [set the maximum length a handle on the bot can be]), [
+    if test -n $withval && test $withval -ge 9 && test $withval -le 32; then
+      AC_DEFINE_UNQUOTED(EGG_HANDLEN, $withval, [Define the maximum length of handles on the bot.])
     else
       AC_MSG_WARN([Invalid handlen given (must be a number between 9 and 32), defaulting to 9.])
     fi
@@ -885,11 +797,7 @@ dnl
 dnl Test for executable suffix and define Eggdrop's executable name accordingly.
 dnl
 AC_DEFUN([EGG_EXEEXT], [
-  EGGEXEC="eggdrop"
-  AC_EXEEXT
-  if test "x$EXEEXT" != x; then
-    EGGEXEC="eggdrop${EXEEXT}"
-  fi
+  EGGEXEC="eggdrop${EXEEXT}"
   AC_SUBST(EGGEXEC)
 ])
 
@@ -903,8 +811,8 @@ dnl EGG_TCL_ARG_WITH()
 dnl
 AC_DEFUN([EGG_TCL_ARG_WITH],
 [
-  AC_ARG_WITH(tcllib, [  --with-tcllib=PATH      full path to Tcl library], [tcllibname="$withval"])
-  AC_ARG_WITH(tclinc, [  --with-tclinc=PATH      full path to Tcl header],  [tclincname="$withval"])
+  AC_ARG_WITH(tcllib, AS_HELP_STRING([--with-tcllib=PATH], [full path to Tcl library]), [tcllibname="$withval"])
+  AC_ARG_WITH(tclinc, AS_HELP_STRING([--with-tclinc=PATH], [full path to Tcl header]),  [tclincname="$withval"])
 
   WARN=0
   # Make sure either both or neither $tcllibname and $tclincname are set
@@ -1480,9 +1388,8 @@ dnl EGG_SUBST_EGGVERSION()
 dnl
 AC_DEFUN([EGG_SUBST_EGGVERSION],
 [
-  EGGVERSION=`grep 'char.egg_version' $srcdir/src/main.c | $AWK '{gsub(/(\"|\;)/, "", [$]4); print [$]4}'`
-  egg_version_num=`echo $EGGVERSION | $AWK 'BEGIN {FS = "."} {printf("%d%02d%02d", [$]1, [$]2, [$]3)}'`
-  AC_SUBST(EGGVERSION)
+  egg_version_num=`echo $PACKAGE_VERSION | $AWK 'BEGIN {FS = "."} {printf("%d%02d%02d", [$]1, [$]2, [$]3)}'`
+  AC_SUBST(EGGVERSION, $PACKAGE_VERSION)
   AC_DEFINE_UNQUOTED(EGG_VERSION, $egg_version_num, [Defines the current Eggdrop version.])
 ])
 
@@ -1562,16 +1469,16 @@ dnl EGG_DEBUG_ENABLE()
 dnl
 AC_DEFUN([EGG_DEBUG_ENABLE],
 [
-  AC_ARG_ENABLE(debug,         [  --enable-debug          enable generic debug code (default for 'make debug')], [enable_debug="$enableval"], [enable_debug="auto"])
-  AC_ARG_ENABLE(debug,         [  --disable-debug         disable generic debug code], [enable_debug="$enableval"], [enable_debug="auto"])
-  AC_ARG_ENABLE(debug-assert,  [  --enable-debug-assert   enable assert debug code (default for 'make debug')], [enable_debug_assert="$enableval"], [enable_debug_assert="auto"])
-  AC_ARG_ENABLE(debug-assert,  [  --disable-debug-assert  disable assert debug code], [enable_debug_assert="$enableval"], [enable_debug_assert="auto"])
-  AC_ARG_ENABLE(debug-mem,     [  --enable-debug-mem      enable memory debug code (default for 'make debug')], [enable_debug_mem="$enableval"], [enable_debug_mem="auto"])
-  AC_ARG_ENABLE(debug-mem,     [  --disable-debug-mem     disable memory debug code], [enable_debug_mem="$enableval"], [enable_debug_mem="auto"])
-  AC_ARG_ENABLE(debug-dns,     [  --enable-debug-dns      enable dns.mod debug messages (default for 'make debug')], [enable_debug_dns="$enableval"], [enable_debug_dns="auto"])
-  AC_ARG_ENABLE(debug-dns,     [  --disable-debug-dns     disable dns.mod debug messages], [enable_debug_dns="$enableval"], [enable_debug_dns="auto"])
-  AC_ARG_ENABLE(debug-context, [  --enable-debug-context  enable context debug code (default)], [enable_debug_context="$enableval"], [enable_debug_context="auto"])
-  AC_ARG_ENABLE(debug-context, [  --disable-debug-context disable context debug code], [enable_debug_context="$enableval"], [enable_debug_context="auto"])
+AC_ARG_ENABLE(debug,         AS_HELP_STRING([--enable-debug],          [enable generic debug code (default for 'make debug')]), [enable_debug="$enableval"], [enable_debug="auto"])
+AC_ARG_ENABLE(debug,         AS_HELP_STRING([--disable-debug],         [disable generic debug code]), [enable_debug="$enableval"], [enable_debug="auto"])
+AC_ARG_ENABLE(debug-assert,  AS_HELP_STRING([--enable-debug-assert],   [enable assert debug code (default for 'make debug')]), [enable_debug_assert="$enableval"], [enable_debug_assert="auto"])
+AC_ARG_ENABLE(debug-assert,  AS_HELP_STRING([--disable-debug-assert],  [disable assert debug code]), [enable_debug_assert="$enableval"], [enable_debug_assert="auto"])
+AC_ARG_ENABLE(debug-mem,     AS_HELP_STRING([--enable-debug-mem],      [enable memory debug code (default for 'make debug')]), [enable_debug_mem="$enableval"], [enable_debug_mem="auto"])
+AC_ARG_ENABLE(debug-mem,     AS_HELP_STRING([--disable-debug-mem],     [disable memory debug code]), [enable_debug_mem="$enableval"], [enable_debug_mem="auto"])
+AC_ARG_ENABLE(debug-dns,     AS_HELP_STRING([--enable-debug-dns],      [enable dns.mod debug messages (default for 'make debug')]), [enable_debug_dns="$enableval"], [enable_debug_dns="auto"])
+AC_ARG_ENABLE(debug-dns,     AS_HELP_STRING([--disable-debug-dns],     [disable dns.mod debug messages]), [enable_debug_dns="$enableval"], [enable_debug_dns="auto"])
+AC_ARG_ENABLE(debug-context, AS_HELP_STRING([--enable-debug-context],  [enable context debug code (default)]), [enable_debug_context="$enableval"], [enable_debug_context="auto"])
+AC_ARG_ENABLE(debug-context, AS_HELP_STRING([--disable-debug-context], [disable context debug code]), [enable_debug_context="$enableval"], [enable_debug_context="auto"])
 ])
 
 
@@ -1822,10 +1729,10 @@ dnl
 AC_DEFUN([EGG_IPV6_ENABLE],
 [
   AC_ARG_ENABLE(ipv6,
-    [  --enable-ipv6           enable IPv6 support (autodetect)],
+    AS_HELP_STRING([--enable-ipv6], [enable IPv6 support (autodetect)]),
     [enable_ipv6="$enableval"], [enable_ipv6="$egg_cv_var_ipv6_supported"])
   AC_ARG_ENABLE(ipv6,
-    [  --disable-ipv6          disable IPv6 support ], [enable_ipv6="$enableval"])
+    AS_HELP_STRING([--disable-ipv6], [disable IPv6 support]), [enable_ipv6="$enableval"])
 
   if test "$enable_ipv6" = "yes"; then
     if test "$egg_cv_var_ipv6_supported" = "no"; then
@@ -1871,10 +1778,10 @@ AC_DEFUN([EGG_TLS_ENABLE],
 [
   AC_MSG_CHECKING([whether to enable TLS support])
   AC_ARG_ENABLE(tls,
-    [  --enable-tls            enable TLS support (autodetect)],
+    AS_HELP_STRING([--enable-tls], [enable TLS support (autodetect)]),
     [enable_tls="$enableval"])
   AC_ARG_ENABLE(tls,
-    [  --disable-tls           disable TLS support ], [enable_tls="$enableval"],
+    AS_HELP_STRING([--disable-tls], [disable TLS support]), [enable_tls="$enableval"],
     [enable_tls="autodetect"])
 
   AC_MSG_RESULT([$enable_tls])
@@ -1886,7 +1793,7 @@ dnl
 AC_DEFUN(EGG_TLS_WITHSSL,
 [
   save_LIBS="$LIBS"
-  AC_ARG_WITH(sslinc, [  --with-sslinc=PATH      Path to OpenSSL headers], [
+  AC_ARG_WITH(sslinc, AS_HELP_STRING([--with-sslinc=PATH], [Path to OpenSSL headers]), [
     if test "$enable_tls" != "no"; then
       if test -d "$withval"; then
         save_CC="$CC"
@@ -1913,7 +1820,7 @@ AC_DEFUN(EGG_TLS_WITHSSL,
     fi
   ])
 
-  AC_ARG_WITH(ssllib, [  --with-ssllib=PATH      Path to OpenSSL libraries],
+  AC_ARG_WITH(ssllib, AS_HELP_STRING([--with-ssllib=PATH], [Path to OpenSSL libraries]),
   [
     if test "$enable_tls" != "no"; then
       if test -d "$withval"; then

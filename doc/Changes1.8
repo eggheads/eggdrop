@@ -1,10 +1,14 @@
-$Id: Changes1.8,v 1.36.2.8 2011/01/12 13:54:00 pseudo Exp $
+$Id: Changes1.8,v 1.36.2.9 2011/02/06 19:19:15 pseudo Exp $
 
 Eggdrop Changes (since version 1.8.0)
 
     _____________________________________________________________________
 
 1.8.0 (CVS):
+
+  - configure.ac cleanup, part 1. Removed some tests which are no longer
+    needed or are obsolete nowadays. Updated/canonicalized some macros.
+    Patch by: pseudo
 
   - Removed memcpy(), memset() and strftime() compatibility replacements.
     Some of them were broken and all are generally available (C89).

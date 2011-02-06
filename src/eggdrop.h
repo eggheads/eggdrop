@@ -4,7 +4,7 @@
  *
  *   IF YOU ALTER THIS FILE, YOU NEED TO RECOMPILE THE BOT.
  *
- * $Id: eggdrop.h,v 1.6 2010/10/19 12:13:33 pseudo Exp $
+ * $Id: eggdrop.h,v 1.6.2.1 2011/02/06 19:19:15 pseudo Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -84,10 +84,6 @@
  * support the #error preprocessor directive. */
 #ifndef STDC_HEADERS
 #  include "Error: Your system must have standard ANSI C headers."
-#endif
-
-#ifndef HAVE_VPRINTF
-#  include "Error: You need vsprintf to compile eggdrop."
 #endif
 
 #ifdef HAVE_UNISTD_H

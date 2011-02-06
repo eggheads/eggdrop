@@ -1,18 +1,18 @@
 dnl configure.ac: this file is processed by autoconf to produce ./configure.
 dnl
-dnl $Id: configure.ac,v 1.5.2.1 2011/01/12 13:54:00 pseudo Exp $
+dnl $Id: configure.ac,v 1.5.2.2 2011/02/06 19:19:15 pseudo Exp $
 
 AC_PREREQ(2.60)
-AC_INIT([Eggdrop],[1.8.0],[bugs@eggheads.org])
+AC_INIT([Eggdrop], [1.8.0], [bugs@eggheads.org], , [http://www.eggheads.org/])
 AC_COPYRIGHT([Copyright (C) 1999 - 2010 Eggheads Development Team])
-AC_REVISION($Revision: 1.5.2.1 $)
-AC_CONFIG_SRCDIR(src/eggdrop.h)
+AC_REVISION([$Revision: 1.5.2.2 $])
+AC_CONFIG_SRCDIR([src/eggdrop.h])
 AC_CONFIG_AUX_DIR(misc)
-AC_CONFIG_HEADER(config.h)
+AC_CONFIG_MACRO_DIR([m4])
 AC_PREFIX_DEFAULT([\${HOME}/eggdrop])
-AC_PRESERVE_HELP_ORDER
 
 dnl config.h stuff
+AC_CONFIG_HEADER(config.h)
 AH_TOP([/*
  * Copyright (C) 1997 Robey Pointer
  * Copyright (C) 1999 - 2010 Eggheads Development Team
@@ -41,17 +41,13 @@ EGG_MSG_CONFIGURE_START
 EGG_SAVE_PARAMETERS
 
 
-# Check for a working C compiler
-AC_PROG_CC
-EGG_CHECK_CC
+# We require at least a C89 environment
+EGG_CHECK_C89
 
-# These 3 need to be done before any AC_COMPILE_IFELSE()'s.
-AC_AIX
-AC_ISC_POSIX
-AC_MINIX
+# This needs to be done before any AC_COMPILE_IFELSE()'s.
+AC_USE_SYSTEM_EXTENSIONS
 
 # Check C compiler characteristics.
-EGG_CHECK_ICC
 EGG_CHECK_CCPIPE
 EGG_CHECK_CCWALL
 
@@ -66,10 +62,10 @@ AC_PROG_MAKE_SET
 AC_PROG_RANLIB
 AC_PROG_LN_S
 EGG_PROG_HEAD_1
-EGG_PROG_STRIP
 EGG_PROG_AWK
 EGG_PROG_BASENAME
 AC_CHECK_PROG(UNAME,uname,uname)
+AC_CHECK_PROG(STRIP, strip, strip, touch)
 
 
 # Check if we will strip the binary
@@ -88,10 +84,9 @@ EGG_CHECK_OS
 
 
 # Checks for header files.
-EGG_HEADER_STDC
 AC_HEADER_DIRENT
 AC_HEADER_TIME
-AC_CHECK_HEADERS([arpa/inet.h fcntl.h limits.h locale.h netdb.h netinet/in.h stdio.h stdarg.h stddef.h sys/file.h sys/param.h sys/rusage.h sys/select.h sys/socket.h sys/time.h unistd.h wchar.h])
+AC_CHECK_HEADERS([arpa/inet.h fcntl.h limits.h locale.h netdb.h netinet/in.h stdio.h stdarg.h stddef.h sys/file.h sys/param.h sys/rusage.h sys/select.h sys/socket.h sys/time.h unistd.h])
 
 
 # Checks for typedefs, structures, and compiler characteristics.
@@ -101,25 +96,19 @@ AC_C_INLINE
 AC_TYPE_INTPTR_T
 AC_TYPE_PID_T
 AC_TYPE_SIZE_T
-AC_STRUCT_TIMEZONE
-AC_C_VOLATILE
 EGG_CHECK_SOCKLEN_T
 
 
 # Check the sizes of various types.
-AC_CHECK_SIZEOF(long, 0)
-AC_CHECK_SIZEOF(int, 0)
-AC_CHECK_SIZEOF(short, 0)
+AC_CHECK_SIZEOF(long)
+AC_CHECK_SIZEOF(int)
+AC_CHECK_SIZEOF(short)
 
 
 # Checks for functions and their arguments.
-AC_CHECK_FUNCS([clock dprintf fsync getdtablesize getrusage inet_aton isascii mbrlen random rand lrand48 rename setpgid sigaction sigemptyset snprintf strcasecmp strncasecmp uname vsnprintf inet_ntop])
-AC_CHECK_FUNCS([memcpy memset strftime], , [
-  AC_MSG_ERROR([Some of the required library functions is not available. Sorry])
-  exit 1
-])
+AC_CHECK_FUNCS([clock fsync getdtablesize getrusage inet_aton inet_ntop isascii memcpy memset random rand lrand48])
+AC_CHECK_FUNCS([rename setpgid sigaction sigemptyset snprintf strcasecmp strftime strncasecmp uname vsnprintf])
 AC_FUNC_SELECT_ARGTYPES
-EGG_FUNC_VPRINTF
 AC_FUNC_MMAP
 
 

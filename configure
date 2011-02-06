@@ -558,7 +558,7 @@ PACKAGE_TARNAME='eggdrop'
 PACKAGE_VERSION='1.8.0'
 PACKAGE_STRING='Eggdrop 1.8.0'
 PACKAGE_BUGREPORT='bugs@eggheads.org'
-PACKAGE_URL=''
+PACKAGE_URL='http://www.eggheads.org/'
 
 ac_unique_file="src/eggdrop.h"
 ac_default_prefix=\${HOME}/eggdrop
@@ -635,10 +635,10 @@ build_os
 build_vendor
 build_cpu
 build
+STRIP
 UNAME
 BASENAME
 AWK
-STRIP
 HEAD_1
 LN_S
 RANLIB
@@ -1333,30 +1333,33 @@ if test -n "$ac_init_help"; then
    esac
   cat <<\_ACEOF
 
-Optional Features and Packages:
+Optional Features:
   --disable-option-checking  ignore unrecognized --enable/--with options
   --disable-FEATURE       do not include FEATURE (same as --enable-FEATURE=no)
   --enable-FEATURE[=ARG]  include FEATURE [ARG=yes]
-  --with-PACKAGE[=ARG]    use PACKAGE [ARG=yes]
-  --without-PACKAGE       do not use PACKAGE (same as --with-PACKAGE=no)
   --enable-strip          enable stripping of binaries
-  --with-tcllib=PATH      full path to Tcl library
-  --with-tclinc=PATH      full path to Tcl header
   --enable-debug          enable generic debug code (default for 'make debug')
   --disable-debug         disable generic debug code
   --enable-debug-assert   enable assert debug code (default for 'make debug')
   --disable-debug-assert  disable assert debug code
   --enable-debug-mem      enable memory debug code (default for 'make debug')
   --disable-debug-mem     disable memory debug code
-  --enable-debug-dns      enable dns.mod debug messages (default for 'make debug')
+  --enable-debug-dns      enable dns.mod debug messages (default for 'make
+                          debug')
   --disable-debug-dns     disable dns.mod debug messages
   --enable-debug-context  enable context debug code (default)
   --disable-debug-context disable context debug code
-  --with-handlen=VALUE    set the maximum length a handle on the bot can be
   --enable-ipv6           enable IPv6 support (autodetect)
   --disable-ipv6          disable IPv6 support
   --enable-tls            enable TLS support (autodetect)
   --disable-tls           disable TLS support
+
+Optional Packages:
+  --with-PACKAGE[=ARG]    use PACKAGE [ARG=yes]
+  --without-PACKAGE       do not use PACKAGE (same as --with-PACKAGE=no)
+  --with-tcllib=PATH      full path to Tcl library
+  --with-tclinc=PATH      full path to Tcl header
+  --with-handlen=VALUE    set the maximum length a handle on the bot can be
   --with-sslinc=PATH      Path to OpenSSL headers
   --with-ssllib=PATH      Path to OpenSSL libraries
 
@@ -1374,6 +1377,7 @@ Use these variables to override the choices made by `configure' or to help
 it to find libraries and programs with nonstandard names/locations.
 
 Report bugs to <bugs@eggheads.org>.
+Eggdrop home page: <http://www.eggheads.org/>.
 _ACEOF
 ac_status=$?
 fi
@@ -1860,102 +1864,6 @@ $as_echo "$ac_res" >&6; }
 
 } # ac_fn_c_check_type
 
-# ac_fn_c_check_member LINENO AGGR MEMBER VAR INCLUDES
-# ----------------------------------------------------
-# Tries to find if the field MEMBER exists in type AGGR, after including
-# INCLUDES, setting cache variable VAR accordingly.
-ac_fn_c_check_member ()
-{
-  as_lineno=${as_lineno-"$1"} as_lineno_stack=as_lineno_stack=$as_lineno_stack
-  { $as_echo "$as_me:${as_lineno-$LINENO}: checking for $2.$3" >&5
-$as_echo_n "checking for $2.$3... " >&6; }
-if { as_var=$4; eval "test \"\${$as_var+set}\" = set"; }; then :
-  $as_echo_n "(cached) " >&6
-else
-  cat confdefs.h - <<_ACEOF >conftest.$ac_ext
-/* end confdefs.h.  */
-$5
-int
-main ()
-{
-static $2 ac_aggr;
-if (ac_aggr.$3)
-return 0;
-  ;
-  return 0;
-}
-_ACEOF
-if ac_fn_c_try_compile "$LINENO"; then :
-  eval "$4=yes"
-else
-  cat confdefs.h - <<_ACEOF >conftest.$ac_ext
-/* end confdefs.h.  */
-$5
-int
-main ()
-{
-static $2 ac_aggr;
-if (sizeof ac_aggr.$3)
-return 0;
-  ;
-  return 0;
-}
-_ACEOF
-if ac_fn_c_try_compile "$LINENO"; then :
-  eval "$4=yes"
-else
-  eval "$4=no"
-fi
-rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
-fi
-rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
-fi
-eval ac_res=\$$4
-	       { $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_res" >&5
-$as_echo "$ac_res" >&6; }
-  eval $as_lineno_stack; test "x$as_lineno_stack" = x && { as_lineno=; unset as_lineno;}
-
-} # ac_fn_c_check_member
-
-# ac_fn_c_check_decl LINENO SYMBOL VAR
-# ------------------------------------
-# Tests whether SYMBOL is declared, setting cache variable VAR accordingly.
-ac_fn_c_check_decl ()
-{
-  as_lineno=${as_lineno-"$1"} as_lineno_stack=as_lineno_stack=$as_lineno_stack
-  { $as_echo "$as_me:${as_lineno-$LINENO}: checking whether $2 is declared" >&5
-$as_echo_n "checking whether $2 is declared... " >&6; }
-if { as_var=$3; eval "test \"\${$as_var+set}\" = set"; }; then :
-  $as_echo_n "(cached) " >&6
-else
-  cat confdefs.h - <<_ACEOF >conftest.$ac_ext
-/* end confdefs.h.  */
-$4
-int
-main ()
-{
-#ifndef $2
-  (void) $2;
-#endif
-
-  ;
-  return 0;
-}
-_ACEOF
-if ac_fn_c_try_compile "$LINENO"; then :
-  eval "$3=yes"
-else
-  eval "$3=no"
-fi
-rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
-fi
-eval ac_res=\$$3
-	       { $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_res" >&5
-$as_echo "$ac_res" >&6; }
-  eval $as_lineno_stack; test "x$as_lineno_stack" = x && { as_lineno=; unset as_lineno;}
-
-} # ac_fn_c_check_decl
-
 # ac_fn_c_compute_int LINENO EXPR VAR INCLUDES
 # --------------------------------------------
 # Tries to find the compile-time value of EXPR in a program that includes
@@ -2133,6 +2041,63 @@ rm -f conftest.val
   as_fn_set_status $ac_retval
 
 } # ac_fn_c_compute_int
+
+# ac_fn_c_check_member LINENO AGGR MEMBER VAR INCLUDES
+# ----------------------------------------------------
+# Tries to find if the field MEMBER exists in type AGGR, after including
+# INCLUDES, setting cache variable VAR accordingly.
+ac_fn_c_check_member ()
+{
+  as_lineno=${as_lineno-"$1"} as_lineno_stack=as_lineno_stack=$as_lineno_stack
+  { $as_echo "$as_me:${as_lineno-$LINENO}: checking for $2.$3" >&5
+$as_echo_n "checking for $2.$3... " >&6; }
+if { as_var=$4; eval "test \"\${$as_var+set}\" = set"; }; then :
+  $as_echo_n "(cached) " >&6
+else
+  cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+/* end confdefs.h.  */
+$5
+int
+main ()
+{
+static $2 ac_aggr;
+if (ac_aggr.$3)
+return 0;
+  ;
+  return 0;
+}
+_ACEOF
+if ac_fn_c_try_compile "$LINENO"; then :
+  eval "$4=yes"
+else
+  cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+/* end confdefs.h.  */
+$5
+int
+main ()
+{
+static $2 ac_aggr;
+if (sizeof ac_aggr.$3)
+return 0;
+  ;
+  return 0;
+}
+_ACEOF
+if ac_fn_c_try_compile "$LINENO"; then :
+  eval "$4=yes"
+else
+  eval "$4=no"
+fi
+rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
+fi
+rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
+fi
+eval ac_res=\$$4
+	       { $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_res" >&5
+$as_echo "$ac_res" >&6; }
+  eval $as_lineno_stack; test "x$as_lineno_stack" = x && { as_lineno=; unset as_lineno;}
+
+} # ac_fn_c_check_member
 cat >config.log <<_ACEOF
 This file contains any messages produced by compilers while
 running configure, to aid debugging if configure makes a mistake.
@@ -2513,12 +2478,10 @@ ac_config_sub="$SHELL $ac_aux_dir/config.sub"  # Please don't use this var.
 ac_configure="$SHELL $ac_aux_dir/configure"  # Please don't use this var.
 
 
+
+
+
 ac_config_headers="$ac_config_headers config.h"
-
-
-
-
-
 
 
 
@@ -2568,7 +2531,7 @@ _ACEOF
 
 
 
-# Check for a working C compiler
+# We require at least a C89 environment
 ac_ext=c
 ac_cpp='$CPP $CPPFLAGS'
 ac_compile='$CC -c $CFLAGS $CPPFLAGS conftest.$ac_ext >&5'
@@ -3361,19 +3324,15 @@ ac_link='$CC -o conftest$ac_exeext $CFLAGS $CPPFLAGS $LDFLAGS conftest.$ac_ext $
 ac_compiler_gnu=$ac_cv_c_compiler_gnu
 
 
-  if test "x$cross_compiling" = x; then
-    cat << 'EOF' >&2
-configure: error:
 
-  This system does not appear to have a working C compiler.
-  A working C compiler is required to compile Eggdrop.
+  if test "x$ac_cv_prog_cc_c89" = "xno" || test "x$ac_cv_header_stdc" = "xno"; then :
 
-EOF
-    exit 1
-  fi
+    as_fn_error "Your system doesn't support ANSI C89." "$LINENO" 5
+
+fi
 
 
-# These 3 need to be done before any AC_COMPILE_IFELSE()'s.
+# This needs to be done before any AC_COMPILE_IFELSE()'s.
 
 ac_ext=c
 ac_cpp='$CPP $CPPFLAGS'
@@ -3835,137 +3794,42 @@ $as_echo "$ac_cv_safe_to_define___extensions__" >&6; }
 
 
 
-{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for library containing strerror" >&5
-$as_echo_n "checking for library containing strerror... " >&6; }
-if test "${ac_cv_search_strerror+set}" = set; then :
-  $as_echo_n "(cached) " >&6
-else
-  ac_func_search_save_LIBS=$LIBS
-cat confdefs.h - <<_ACEOF >conftest.$ac_ext
-/* end confdefs.h.  */
-
-/* Override any GCC internal prototype to avoid an error.
-   Use char because int might match the return type of a GCC
-   builtin and then its argument prototype would still apply.  */
-#ifdef __cplusplus
-extern "C"
-#endif
-char strerror ();
-int
-main ()
-{
-return strerror ();
-  ;
-  return 0;
-}
-_ACEOF
-for ac_lib in '' cposix; do
-  if test -z "$ac_lib"; then
-    ac_res="none required"
-  else
-    ac_res=-l$ac_lib
-    LIBS="-l$ac_lib  $ac_func_search_save_LIBS"
-  fi
-  if ac_fn_c_try_link "$LINENO"; then :
-  ac_cv_search_strerror=$ac_res
-fi
-rm -f core conftest.err conftest.$ac_objext \
-    conftest$ac_exeext
-  if test "${ac_cv_search_strerror+set}" = set; then :
-  break
-fi
-done
-if test "${ac_cv_search_strerror+set}" = set; then :
-
-else
-  ac_cv_search_strerror=no
-fi
-rm conftest.$ac_ext
-LIBS=$ac_func_search_save_LIBS
-fi
-{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_cv_search_strerror" >&5
-$as_echo "$ac_cv_search_strerror" >&6; }
-ac_res=$ac_cv_search_strerror
-if test "$ac_res" != no; then :
-  test "$ac_res" = "none required" || LIBS="$ac_res $LIBS"
-
-fi
-
-
-
 # Check C compiler characteristics.
 
-  { $as_echo "$as_me:${as_lineno-$LINENO}: checking for icc" >&5
-$as_echo_n "checking for icc... " >&6; }
-if test "${egg_cv_var_cc_icc+set}" = set; then :
-  $as_echo_n "(cached) " >&6
-else
-
-    cat confdefs.h - <<_ACEOF >conftest.$ac_ext
-/* end confdefs.h.  */
-
-#if !(defined(__ICC) || defined(__ECC) || defined(__INTEL_COMPILER))
-  "Toto, I've a feeling we're not in Kansas anymore."
-#endif
-
-_ACEOF
-if ac_fn_c_try_compile "$LINENO"; then :
-
-      egg_cv_var_cc_icc="yes"
-
-else
-
-      egg_cv_var_cc_icc="no"
-
-fi
-rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
-
-fi
-{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $egg_cv_var_cc_icc" >&5
-$as_echo "$egg_cv_var_cc_icc" >&6; }
-
-  if test "$egg_cv_var_cc_icc" = yes; then
-    ICC="yes"
-  else
-    ICC="no"
-  fi
-
-
-  if test "$GCC" = yes && test "$ICC" = no; then
-    { $as_echo "$as_me:${as_lineno-$LINENO}: checking whether the compiler understands -pipe" >&5
+  { $as_echo "$as_me:${as_lineno-$LINENO}: checking whether the compiler understands -pipe" >&5
 $as_echo_n "checking whether the compiler understands -pipe... " >&6; }
 if test "${egg_cv_var_ccpipe+set}" = set; then :
   $as_echo_n "(cached) " >&6
 else
 
-      ac_old_CC="$CC"
-      CC="$CC -pipe"
-      cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+    ac_old_CC="$CC"
+    CC="$CC -pipe"
+    cat confdefs.h - <<_ACEOF >conftest.$ac_ext
 /* end confdefs.h.  */
 
-        int main ()
-        {
-          return(0);
-        }
+      int main ()
+      {
+        return(0);
+      }
 
 _ACEOF
 if ac_fn_c_try_compile "$LINENO"; then :
 
-        egg_cv_var_ccpipe="yes"
+      egg_cv_var_ccpipe="yes"
 
 else
 
-        egg_cv_var_ccpipe="no"
+      egg_cv_var_ccpipe="no"
 
 fi
 rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
-      CC="$ac_old_CC"
+    CC="$ac_old_CC"
 
 fi
 { $as_echo "$as_me:${as_lineno-$LINENO}: result: $egg_cv_var_ccpipe" >&5
 $as_echo "$egg_cv_var_ccpipe" >&6; }
 
-    if test "$egg_cv_var_ccpipe" = yes; then
+  if test "$egg_cv_var_ccpipe" = yes; then
 
   if test "x-pipe" != x; then
     if test "x$CFLAGS" = x; then
@@ -3975,45 +3839,43 @@ $as_echo "$egg_cv_var_ccpipe" >&6; }
     fi
   fi
 
-    fi
   fi
 
 
-  if test "$GCC" = yes && test "$ICC" = no; then
-    { $as_echo "$as_me:${as_lineno-$LINENO}: checking whether the compiler understands -Wall" >&5
+  { $as_echo "$as_me:${as_lineno-$LINENO}: checking whether the compiler understands -Wall" >&5
 $as_echo_n "checking whether the compiler understands -Wall... " >&6; }
 if test "${egg_cv_var_ccwall+set}" = set; then :
   $as_echo_n "(cached) " >&6
 else
 
-      ac_old_CFLAGS="$CFLAGS"
-      CFLAGS="$CFLAGS -Wall"
-      cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+    ac_old_CFLAGS="$CFLAGS"
+    CFLAGS="$CFLAGS -Wall"
+    cat confdefs.h - <<_ACEOF >conftest.$ac_ext
 /* end confdefs.h.  */
 
-        int main ()
-        {
-          return(0);
-        }
+      int main ()
+      {
+        return(0);
+      }
 
 _ACEOF
 if ac_fn_c_try_compile "$LINENO"; then :
 
-        egg_cv_var_ccwall="yes"
+      egg_cv_var_ccwall="yes"
 
 else
 
-        egg_cv_var_ccwall="no"
+      egg_cv_var_ccwall="no"
 
 fi
 rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
-      CFLAGS="$ac_old_CFLAGS"
+    CFLAGS="$ac_old_CFLAGS"
 
 fi
 { $as_echo "$as_me:${as_lineno-$LINENO}: result: $egg_cv_var_ccwall" >&5
 $as_echo "$egg_cv_var_ccwall" >&6; }
 
-    if test "$egg_cv_var_ccwall" = yes; then
+  if test "$egg_cv_var_ccwall" = yes; then
 
   if test "x-Wall" != x; then
     if test "x$CFLAGS" = x; then
@@ -4023,18 +3885,13 @@ $as_echo "$egg_cv_var_ccwall" >&6; }
     fi
   fi
 
-    fi
   fi
 
 
 
 # Check for executable extension.
 
-  EGGEXEC="eggdrop"
-
-  if test "x$EXEEXT" != x; then
-    EGGEXEC="eggdrop${EXEEXT}"
-  fi
+  EGGEXEC="eggdrop${EXEEXT}"
 
 
 
@@ -4318,48 +4175,6 @@ EOF
 
 
 
-  # Extract the first word of "strip", so it can be a program name with args.
-set dummy strip; ac_word=$2
-{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for $ac_word" >&5
-$as_echo_n "checking for $ac_word... " >&6; }
-if test "${ac_cv_prog_STRIP+set}" = set; then :
-  $as_echo_n "(cached) " >&6
-else
-  if test -n "$STRIP"; then
-  ac_cv_prog_STRIP="$STRIP" # Let the user override the test.
-else
-as_save_IFS=$IFS; IFS=$PATH_SEPARATOR
-for as_dir in $PATH
-do
-  IFS=$as_save_IFS
-  test -z "$as_dir" && as_dir=.
-    for ac_exec_ext in '' $ac_executable_extensions; do
-  if { test -f "$as_dir/$ac_word$ac_exec_ext" && $as_test_x "$as_dir/$ac_word$ac_exec_ext"; }; then
-    ac_cv_prog_STRIP="strip"
-    $as_echo "$as_me:${as_lineno-$LINENO}: found $as_dir/$ac_word$ac_exec_ext" >&5
-    break 2
-  fi
-done
-  done
-IFS=$as_save_IFS
-
-fi
-fi
-STRIP=$ac_cv_prog_STRIP
-if test -n "$STRIP"; then
-  { $as_echo "$as_me:${as_lineno-$LINENO}: result: $STRIP" >&5
-$as_echo "$STRIP" >&6; }
-else
-  { $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
-$as_echo "no" >&6; }
-fi
-
-
-  if test "x$STRIP" = x; then
-    STRIP=touch
-  fi
-
-
   for ac_prog in gawk mawk nawk awk
 do
   # Extract the first word of "$ac_prog", so it can be a program name with args.
@@ -4493,6 +4308,44 @@ UNAME=$ac_cv_prog_UNAME
 if test -n "$UNAME"; then
   { $as_echo "$as_me:${as_lineno-$LINENO}: result: $UNAME" >&5
 $as_echo "$UNAME" >&6; }
+else
+  { $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
+$as_echo "no" >&6; }
+fi
+
+
+# Extract the first word of "strip", so it can be a program name with args.
+set dummy strip; ac_word=$2
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for $ac_word" >&5
+$as_echo_n "checking for $ac_word... " >&6; }
+if test "${ac_cv_prog_STRIP+set}" = set; then :
+  $as_echo_n "(cached) " >&6
+else
+  if test -n "$STRIP"; then
+  ac_cv_prog_STRIP="$STRIP" # Let the user override the test.
+else
+as_save_IFS=$IFS; IFS=$PATH_SEPARATOR
+for as_dir in $PATH
+do
+  IFS=$as_save_IFS
+  test -z "$as_dir" && as_dir=.
+    for ac_exec_ext in '' $ac_executable_extensions; do
+  if { test -f "$as_dir/$ac_word$ac_exec_ext" && $as_test_x "$as_dir/$ac_word$ac_exec_ext"; }; then
+    ac_cv_prog_STRIP="strip"
+    $as_echo "$as_me:${as_lineno-$LINENO}: found $as_dir/$ac_word$ac_exec_ext" >&5
+    break 2
+  fi
+done
+  done
+IFS=$as_save_IFS
+
+  test -z "$ac_cv_prog_STRIP" && ac_cv_prog_STRIP="touch"
+fi
+fi
+STRIP=$ac_cv_prog_STRIP
+if test -n "$STRIP"; then
+  { $as_echo "$as_me:${as_lineno-$LINENO}: result: $STRIP" >&5
+$as_echo "$STRIP" >&6; }
 else
   { $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
 $as_echo "no" >&6; }
@@ -5549,18 +5402,6 @@ $as_echo "#define BORGCUBES 1" >>confdefs.h
 
 
 # Checks for header files.
-
-  if test "$ac_cv_header_stdc" = no; then
-    cat << 'EOF' >&2
-configure: error:
-
-  Your system must support ANSI C Header files.
-  These are required for the language support. Sorry.
-
-EOF
-    exit 1
-  fi
-
 ac_header_dirent=no
 for ac_hdr in dirent.h sys/ndir.h sys/dir.h ndir.h; do
   as_ac_Header=`$as_echo "ac_cv_header_dirent_$ac_hdr" | $as_tr_sh`
@@ -5755,7 +5596,7 @@ $as_echo "#define TIME_WITH_SYS_TIME 1" >>confdefs.h
 
 fi
 
-for ac_header in arpa/inet.h fcntl.h limits.h locale.h netdb.h netinet/in.h stdio.h stdarg.h stddef.h sys/file.h sys/param.h sys/rusage.h sys/select.h sys/socket.h sys/time.h unistd.h wchar.h
+for ac_header in arpa/inet.h fcntl.h limits.h locale.h netdb.h netinet/in.h stdio.h stdarg.h stddef.h sys/file.h sys/param.h sys/rusage.h sys/select.h sys/socket.h sys/time.h unistd.h
 do :
   as_ac_Header=`$as_echo "ac_cv_header_$ac_header" | $as_tr_sh`
 ac_fn_c_check_header_mongrel "$LINENO" "$ac_header" "$as_ac_Header" "$ac_includes_default"
@@ -6175,142 +6016,6 @@ _ACEOF
 
 fi
 
-{ $as_echo "$as_me:${as_lineno-$LINENO}: checking whether struct tm is in sys/time.h or time.h" >&5
-$as_echo_n "checking whether struct tm is in sys/time.h or time.h... " >&6; }
-if test "${ac_cv_struct_tm+set}" = set; then :
-  $as_echo_n "(cached) " >&6
-else
-  cat confdefs.h - <<_ACEOF >conftest.$ac_ext
-/* end confdefs.h.  */
-#include <sys/types.h>
-#include <time.h>
-
-int
-main ()
-{
-struct tm tm;
-				     int *p = &tm.tm_sec;
-				     return !p;
-  ;
-  return 0;
-}
-_ACEOF
-if ac_fn_c_try_compile "$LINENO"; then :
-  ac_cv_struct_tm=time.h
-else
-  ac_cv_struct_tm=sys/time.h
-fi
-rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
-fi
-{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_cv_struct_tm" >&5
-$as_echo "$ac_cv_struct_tm" >&6; }
-if test $ac_cv_struct_tm = sys/time.h; then
-
-$as_echo "#define TM_IN_SYS_TIME 1" >>confdefs.h
-
-fi
-
-ac_fn_c_check_member "$LINENO" "struct tm" "tm_zone" "ac_cv_member_struct_tm_tm_zone" "#include <sys/types.h>
-#include <$ac_cv_struct_tm>
-
-"
-if test "x$ac_cv_member_struct_tm_tm_zone" = x""yes; then :
-
-cat >>confdefs.h <<_ACEOF
-#define HAVE_STRUCT_TM_TM_ZONE 1
-_ACEOF
-
-
-fi
-
-if test "$ac_cv_member_struct_tm_tm_zone" = yes; then
-
-$as_echo "#define HAVE_TM_ZONE 1" >>confdefs.h
-
-else
-  ac_fn_c_check_decl "$LINENO" "tzname" "ac_cv_have_decl_tzname" "#include <time.h>
-"
-if test "x$ac_cv_have_decl_tzname" = x""yes; then :
-  ac_have_decl=1
-else
-  ac_have_decl=0
-fi
-
-cat >>confdefs.h <<_ACEOF
-#define HAVE_DECL_TZNAME $ac_have_decl
-_ACEOF
-
-  { $as_echo "$as_me:${as_lineno-$LINENO}: checking for tzname" >&5
-$as_echo_n "checking for tzname... " >&6; }
-if test "${ac_cv_var_tzname+set}" = set; then :
-  $as_echo_n "(cached) " >&6
-else
-  cat confdefs.h - <<_ACEOF >conftest.$ac_ext
-/* end confdefs.h.  */
-#include <time.h>
-#if !HAVE_DECL_TZNAME
-extern char *tzname[];
-#endif
-
-int
-main ()
-{
-return tzname[0][0];
-  ;
-  return 0;
-}
-_ACEOF
-if ac_fn_c_try_link "$LINENO"; then :
-  ac_cv_var_tzname=yes
-else
-  ac_cv_var_tzname=no
-fi
-rm -f core conftest.err conftest.$ac_objext \
-    conftest$ac_exeext conftest.$ac_ext
-fi
-{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_cv_var_tzname" >&5
-$as_echo "$ac_cv_var_tzname" >&6; }
-  if test $ac_cv_var_tzname = yes; then
-
-$as_echo "#define HAVE_TZNAME 1" >>confdefs.h
-
-  fi
-fi
-
-{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for working volatile" >&5
-$as_echo_n "checking for working volatile... " >&6; }
-if test "${ac_cv_c_volatile+set}" = set; then :
-  $as_echo_n "(cached) " >&6
-else
-  cat confdefs.h - <<_ACEOF >conftest.$ac_ext
-/* end confdefs.h.  */
-
-int
-main ()
-{
-
-volatile int x;
-int * volatile y = (int *) 0;
-return !x && !y;
-  ;
-  return 0;
-}
-_ACEOF
-if ac_fn_c_try_compile "$LINENO"; then :
-  ac_cv_c_volatile=yes
-else
-  ac_cv_c_volatile=no
-fi
-rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
-fi
-{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_cv_c_volatile" >&5
-$as_echo "$ac_cv_c_volatile" >&6; }
-if test $ac_cv_c_volatile = no; then
-
-$as_echo "#define volatile /**/" >>confdefs.h
-
-fi
-
 
   { $as_echo "$as_me:${as_lineno-$LINENO}: checking for socklen_t" >&5
 $as_echo_n "checking for socklen_t... " >&6; }
@@ -6476,7 +6181,7 @@ _ACEOF
 
 
 # Checks for functions and their arguments.
-for ac_func in clock dprintf fsync getdtablesize getrusage inet_aton isascii mbrlen random rand lrand48 rename setpgid sigaction sigemptyset snprintf strcasecmp strncasecmp uname vsnprintf inet_ntop
+for ac_func in clock fsync getdtablesize getrusage inet_aton inet_ntop isascii memcpy memset random rand lrand48
 do :
   as_ac_var=`$as_echo "ac_cv_func_$ac_func" | $as_tr_sh`
 ac_fn_c_check_func "$LINENO" "$ac_func" "$as_ac_var"
@@ -6489,7 +6194,7 @@ _ACEOF
 fi
 done
 
-for ac_func in memcpy memset strftime
+for ac_func in rename setpgid sigaction sigemptyset snprintf strcasecmp strftime strncasecmp uname vsnprintf
 do :
   as_ac_var=`$as_echo "ac_cv_func_$ac_func" | $as_tr_sh`
 ac_fn_c_check_func "$LINENO" "$ac_func" "$as_ac_var"
@@ -6498,11 +6203,6 @@ eval as_val=\$$as_ac_var
   cat >>confdefs.h <<_ACEOF
 #define `$as_echo "HAVE_$ac_func" | $as_tr_cpp` 1
 _ACEOF
-
-else
-
-  as_fn_error "Some of the required library functions is not available. Sorry" "$LINENO" 5
-  exit 1
 
 fi
 done
@@ -6582,37 +6282,6 @@ cat >>confdefs.h <<_ACEOF
 _ACEOF
 
 rm -f conftest*
-
-
-  for ac_func in vprintf
-do :
-  ac_fn_c_check_func "$LINENO" "vprintf" "ac_cv_func_vprintf"
-if test "x$ac_cv_func_vprintf" = x""yes; then :
-  cat >>confdefs.h <<_ACEOF
-#define HAVE_VPRINTF 1
-_ACEOF
-
-ac_fn_c_check_func "$LINENO" "_doprnt" "ac_cv_func__doprnt"
-if test "x$ac_cv_func__doprnt" = x""yes; then :
-
-$as_echo "#define HAVE_DOPRNT 1" >>confdefs.h
-
-fi
-
-fi
-done
-
-
-  if test "$ac_cv_func_vprintf" = no; then
-    cat << 'EOF' >&2
-configure: error:
-
-  Your system does not have the vprintf/vsprintf/sprintf libraries.
-  These are required to compile almost anything. Sorry.
-
-EOF
-    exit 1
-  fi
 
 
 
@@ -7652,70 +7321,70 @@ EOF
 
 # Debug options
 
-  # Check whether --enable-debug was given.
+# Check whether --enable-debug was given.
 if test "${enable_debug+set}" = set; then :
   enableval=$enable_debug; enable_debug="$enableval"
 else
   enable_debug="auto"
 fi
 
-  # Check whether --enable-debug was given.
+# Check whether --enable-debug was given.
 if test "${enable_debug+set}" = set; then :
   enableval=$enable_debug; enable_debug="$enableval"
 else
   enable_debug="auto"
 fi
 
-  # Check whether --enable-debug-assert was given.
+# Check whether --enable-debug-assert was given.
 if test "${enable_debug_assert+set}" = set; then :
   enableval=$enable_debug_assert; enable_debug_assert="$enableval"
 else
   enable_debug_assert="auto"
 fi
 
-  # Check whether --enable-debug-assert was given.
+# Check whether --enable-debug-assert was given.
 if test "${enable_debug_assert+set}" = set; then :
   enableval=$enable_debug_assert; enable_debug_assert="$enableval"
 else
   enable_debug_assert="auto"
 fi
 
-  # Check whether --enable-debug-mem was given.
+# Check whether --enable-debug-mem was given.
 if test "${enable_debug_mem+set}" = set; then :
   enableval=$enable_debug_mem; enable_debug_mem="$enableval"
 else
   enable_debug_mem="auto"
 fi
 
-  # Check whether --enable-debug-mem was given.
+# Check whether --enable-debug-mem was given.
 if test "${enable_debug_mem+set}" = set; then :
   enableval=$enable_debug_mem; enable_debug_mem="$enableval"
 else
   enable_debug_mem="auto"
 fi
 
-  # Check whether --enable-debug-dns was given.
+# Check whether --enable-debug-dns was given.
 if test "${enable_debug_dns+set}" = set; then :
   enableval=$enable_debug_dns; enable_debug_dns="$enableval"
 else
   enable_debug_dns="auto"
 fi
 
-  # Check whether --enable-debug-dns was given.
+# Check whether --enable-debug-dns was given.
 if test "${enable_debug_dns+set}" = set; then :
   enableval=$enable_debug_dns; enable_debug_dns="$enableval"
 else
   enable_debug_dns="auto"
 fi
 
-  # Check whether --enable-debug-context was given.
+# Check whether --enable-debug-context was given.
 if test "${enable_debug_context+set}" = set; then :
   enableval=$enable_debug_context; enable_debug_context="$enableval"
 else
   enable_debug_context="auto"
 fi
 
-  # Check whether --enable-debug-context was given.
+# Check whether --enable-debug-context was given.
 if test "${enable_debug_context+set}" = set; then :
   enableval=$enable_debug_context; enable_debug_context="$enableval"
 else
@@ -7883,8 +7552,7 @@ EOF
 # Check whether --with-handlen was given.
 if test "${with_handlen+set}" = set; then :
   withval=$with_handlen;
-    if test -n $withval && test $withval -ge 9 && test $withval -le 32;
-    then
+    if test -n $withval && test $withval -ge 9 && test $withval -le 32; then
 
 cat >>confdefs.h <<_ACEOF
 #define EGG_HANDLEN $withval
@@ -8530,8 +8198,8 @@ $as_echo "#define HAVE_OPENSSL_MD5 1" >>confdefs.h
 
 # Substitute Makefile variables.
 
-  EGGVERSION=`grep 'char.egg_version' $srcdir/src/main.c | $AWK '{gsub(/(\"|\;)/, "", $4); print $4}'`
-  egg_version_num=`echo $EGGVERSION | $AWK 'BEGIN {FS = "."} {printf("%d%02d%02d", $1, $2, $3)}'`
+  egg_version_num=`echo $PACKAGE_VERSION | $AWK 'BEGIN {FS = "."} {printf("%d%02d%02d", $1, $2, $3)}'`
+  EGGVERSION=$PACKAGE_VERSION
 
 
 cat >>confdefs.h <<_ACEOF
@@ -9133,7 +8801,8 @@ $config_headers
 Configuration commands:
 $config_commands
 
-Report bugs to <bugs@eggheads.org>."
+Report bugs to <bugs@eggheads.org>.
+Eggdrop home page: <http://www.eggheads.org/>."
 
 _ACEOF
 cat >>$CONFIG_STATUS <<_ACEOF || ac_write_fail=1
