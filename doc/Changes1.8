@@ -1,4 +1,4 @@
-$Id: Changes1.8,v 1.36.2.10 2011/02/08 22:06:01 thommey Exp $
+$Id: Changes1.8,v 1.36.2.11 2011/02/08 22:33:01 thommey Exp $
 
 Eggdrop Changes (since version 1.8.0)
 
@@ -6,6 +6,10 @@ Eggdrop Changes (since version 1.8.0)
 
 1.8.0 (CVS):
 
+
+  - Adjusted my_memcpy() define for modules to use memcpy() instead of
+    now removed egg_memcpy().
+    Patch by: thommey
 
   - Check for pending data on SSL sockets even when select() reports the
     descriptor's not readable.

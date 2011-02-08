@@ -1,7 +1,7 @@
 /*
  * module.h
  *
- * $Id: module.h,v 1.5.2.3 2011/02/08 22:06:01 thommey Exp $
+ * $Id: module.h,v 1.5.2.4 2011/02/08 22:33:01 thommey Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -208,7 +208,7 @@
 #define open_telnet ((int (*) (int, char *, int))global[87])
 /* 88 - 91 */
 #define check_tcl_event ((void (*) (const char *))global[88])
-#define my_memcpy ((void * (*) (void *, const void *, size_t))global[89])
+/* was my_memcpy() */
 #define my_atoul ((IP(*)(char *))global[90])
 #define my_strcpy ((int (*)(char *, const char *))global[91])
 /* 92 - 95 */
@@ -503,6 +503,9 @@
 /* host matching */
 #define match_addr(a,b) addr_match((a),(b),0,0)
 #define cmp_masks(a,b) addr_match((a),(b),0,1)
+
+/* old my_memcpy */
+#define my_memcpy(a,b,c) memcpy((a),(b),(c))
 
 /* This is for blowfish module, couldnt be bothered making a whole new .h
  * file for it ;)
