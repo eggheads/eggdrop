@@ -1,7 +1,7 @@
 /*
  * transfer.c -- part of transfer.mod
  *
- * $Id: transfer.c,v 1.4.2.2 2010/11/17 13:58:38 pseudo Exp $
+ * $Id: transfer.c,v 1.4.2.3 2011/02/08 22:06:01 thommey Exp $
  *
  * Copyright (C) 1997 Robey Pointer
  * Copyright (C) 1999 - 2010 Eggheads Development Team
@@ -918,6 +918,15 @@ static void dcc_get_pending(int idx, char *buf, int len)
 
   i = answer(dcc[idx].sock, &dcc[idx].sockname, &port, 1);
   killsock(dcc[idx].sock);
+#ifdef TLS
+  if (dcc[idx].ssl && ssl_handshake(i, TLS_LISTEN, tls_vfydcc,
+                                    LOG_FILES, dcc[idx].host, NULL)) {
+    putlog(LOG_FILES, "*", _("DCC failed SSL handshake: GET %s (%s!%s)"),
+           dcc[idx].u.xfer->origname, dcc[idx].nick, dcc[idx].host);
+    lostdcc(idx);
+    return;
+  }
+#endif
   dcc[idx].sock = i;
   dcc[idx].addr = 0;
   dcc[idx].port = (int) port;

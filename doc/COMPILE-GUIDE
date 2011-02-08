@@ -1,4 +1,4 @@
-$Id: COMPILE-GUIDE,v 1.3 2010/10/25 15:56:38 pseudo Exp $
+$Id: COMPILE-GUIDE,v 1.3.2.1 2011/02/08 22:06:01 thommey Exp $
 
 Eggdrop Compile Guide and FAQ
 Last revised: October 25, 2010
@@ -25,8 +25,9 @@ Last revised: October 25, 2010
       D. Mac OS X
       E. AIX
       F. IRIX
-      G. Cygwin / Windows
-      H. Tcl Detection and Installation
+      G. Solaris / SunOS
+      H. Cygwin / Windows
+      I. Tcl Detection and Installation
 
     Frequently Asked Questions:
       1. I get a lot of warnings.
@@ -75,12 +76,18 @@ Last revised: October 25, 2010
 
            --with-tcllib
            --with-tclinc
-             See 'E. Tcl Detection and Installation' below (at the end of this
+             See 'I. Tcl Detection and Installation' below (at the end of this
              compile guide).
 
            --with-handlen=
              Configure the handle length of the bot. Allowed values are
              numbers from 9 to 32 inclusive.
+
+           --disable-tls
+           --with-sslinc=
+           --with-ssllib=
+             You can disable TLS or specify the paths to the header and
+             library files. Look at doc/TLS for more information.
 
       2. Type either 'make config', or 'make iconfig' to determine which
          modules will be compiled.

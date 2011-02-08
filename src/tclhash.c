@@ -7,7 +7,7 @@
  *   (non-Tcl) procedure lookups for msg/dcc/file commands
  *   (Tcl) binding internal procedures to msg/dcc/file commands
  *
- * $Id: tclhash.c,v 1.3.2.2 2011/01/12 13:54:00 pseudo Exp $
+ * $Id: tclhash.c,v 1.3.2.3 2011/02/08 22:06:01 thommey Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -1181,13 +1181,20 @@ void check_tcl_cron(struct tm *tm)
                  MATCH_CRON | BIND_STACKABLE);
 }
 
-int check_tcl_event(const char *event)
+void check_tcl_event(const char *event)
+{
+  Tcl_SetVar(interp, "_event1", (char *) event, 0);
+  check_tcl_bind(H_event, event, 0, " $_event1",
+                 MATCH_EXACT | BIND_STACKABLE);
+}
+
+int check_tcl_signal(const char *event)
 {
   int x;
 
   Tcl_SetVar(interp, "_event1", (char *) event, 0);
   x = check_tcl_bind(H_event, event, 0, " $_event1",
-                 MATCH_EXACT | BIND_STACKABLE | BIND_WANTRET);
+                 MATCH_EXACT | BIND_STACKABLE | BIND_STACKRET);
   return (x == BIND_EXEC_LOG);
 }
 

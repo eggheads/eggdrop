@@ -4,7 +4,7 @@
  *   Certificate handling
  *   OpenSSL initialization and shutdown
  *
- * $Id: tls.c,v 1.2.2.1 2010/11/08 10:02:32 pseudo Exp $
+ * $Id: tls.c,v 1.2.2.2 2011/02/08 22:06:01 thommey Exp $
  */
 /*
  * Written by Rumen Stoyanov <pseudo@egg6.net>
@@ -629,7 +629,7 @@ void ssl_info(SSL *ssl, int where, int ret)
   }
 
   /* Display the state of the engine for debugging purposes */
-/*  debug1("TLS: state change: %s", SSL_state_string_long(ssl)); */
+  debug1("TLS: state change: %s", SSL_state_string_long(ssl));
 }
     
 /* Switch a socket to SSL communication
@@ -696,7 +696,8 @@ int ssl_handshake(int sock, int flags, int verify, int loglevel, char *host,
    */
   SSL_set_verify_depth(td->socklist[i].ssl, tls_maxdepth + 1);
 
-  SSL_set_mode(td->socklist[i].ssl, SSL_MODE_ENABLE_PARTIAL_WRITE);
+  SSL_set_mode(td->socklist[i].ssl, SSL_MODE_ENABLE_PARTIAL_WRITE |
+               SSL_MODE_ACCEPT_MOVING_WRITE_BUFFER);
   if (data->flags & TLS_CONNECT) {
     SSL_set_verify(td->socklist[i].ssl, SSL_VERIFY_PEER, ssl_verify);
     ret = SSL_connect(td->socklist[i].ssl);

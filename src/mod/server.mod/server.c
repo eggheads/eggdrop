@@ -2,7 +2,7 @@
  * server.c -- part of server.mod
  *   basic irc server support
  *
- * $Id: server.c,v 1.6.2.2 2011/01/12 13:54:01 pseudo Exp $
+ * $Id: server.c,v 1.6.2.3 2011/02/08 22:06:01 thommey Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -1622,14 +1622,11 @@ static void dcc_chat_hostresolved(int i)
     putlog(LOG_MISC, "*", _("DCC connection: CHAT (%s!%s)"), dcc[i].nick,
            dcc[i].host);
 #ifdef TLS
-    if (dcc[i].ssl)
-    /* Queue something up to make sure the handshake moves on */
-      dprintf(i, _("TLS handshake in progress...\n"));
-    else
     /* For SSL connections, the handshake callback will determine
        if we should request a password */
+    if (!dcc[i].ssl)
 #endif
-      dprintf(i, "%s\n", _("Enter your password."));
+    dprintf(i, "%s\n", _("Enter your password."));
   }
   return;
 }

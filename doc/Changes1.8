@@ -1,10 +1,47 @@
-$Id: Changes1.8,v 1.36.2.9 2011/02/06 19:19:15 pseudo Exp $
+$Id: Changes1.8,v 1.36.2.10 2011/02/08 22:06:01 thommey Exp $
 
 Eggdrop Changes (since version 1.8.0)
 
     _____________________________________________________________________
 
 1.8.0 (CVS):
+
+
+  - Check for pending data on SSL sockets even when select() reports the
+    descriptor's not readable.
+  - Allow moving write buffers for SSL sockets.
+    Patch by: pseudo
+
+  - Added missing message for incoming telnet connections.
+    Found by: Robby / Patch by: pseudo
+
+  - Changed the prototype in module.h for check_tcl_event
+  - bind evnt return value now ignored for non-signal events as documented
+    Found by: Robby / Patch by: thommey
+
+  - Reran autotools
+  - Clarified --with-tcl* usage in configure and mentioned tcl-dev packages.
+  - Fixed some section numbering in doc/COMPILE-GUIDE.
+    Patch by: thommey
+
+  - Added a little hack to send starttls before password exchange during the
+    initial handshake.
+    Patch by: pseudo
+
+  - Fixed a problem with sharing causing starttls to fail.
+    Found by: DarkReap1
+  - Moved STARTTLS early in the bot link process and synchronized the
+    handshake.
+  - Made it possible for ssl handshakes to complete even without data to be
+    sent on the channel.
+  - Fixed an ancient bug resulting in sending uninitialized strings when
+    sharing bot addresses.
+  - Enabled (user)file sending over ssl.
+    Patch by: pseudo
+
+  - Fixed a problem with resolving hostnames when compiled with IPv6 disabled.
+  - Made server.mod report connection failures properly.
+    Found by: Arkadietz / Patch by: pseudo
 
   - configure.ac cleanup, part 1. Removed some tests which are no longer
     needed or are obsolete nowadays. Updated/canonicalized some macros.
@@ -45,7 +82,7 @@ Eggdrop Changes (since version 1.8.0)
     Found by: izy` / Patch by: pseudo
 
   - Fixed a bug in (u)timers which could lead to invalid memory access.
-    Found by: dr1 / Patch by: thommey
+    Found by: DarkReap1 / Patch by: thommey
 
   - Made it possible to specify ssl independently for telnet and user ports
     when modifying bot addresses.
