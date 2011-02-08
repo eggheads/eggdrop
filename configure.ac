@@ -1,17 +1,10 @@
 dnl configure.ac: this file is processed by autoconf to produce ./configure.
 dnl
-dnl $Id: configure.ac,v 1.5.2.3 2011/02/08 22:06:01 thommey Exp $
+dnl $Id: configure.ac,v 1.5.2.4 2011/02/08 22:08:35 thommey Exp $
 
 AC_PREREQ(2.60)
 AC_INIT([Eggdrop], [1.8.0], [bugs@eggheads.org], , [http://www.eggheads.org/])
 AC_COPYRIGHT([Copyright (C) 1999 - 2010 Eggheads Development Team])
-<<<<<<< configure.ac
-AC_REVISION([$Revision: 1.5.2.3 $])
-AC_CONFIG_SRCDIR([src/eggdrop.h])
-=======
-AC_REVISION([$Revision: 1.5.2.3 $])
-AC_CONFIG_SRCDIR([src/eggdrop.h])
->>>>>>> 1.5.2.2
 AC_CONFIG_AUX_DIR(misc)
 AC_CONFIG_MACRO_DIR([m4])
 AC_PREFIX_DEFAULT([\${HOME}/eggdrop])
