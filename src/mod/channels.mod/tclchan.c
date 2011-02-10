@@ -1,7 +1,7 @@
 /*
  * tclchan.c -- part of channels.mod
  *
- * $Id: tclchan.c,v 1.2 2010/10/29 20:53:43 pseudo Exp $
+ * $Id: tclchan.c,v 1.3 2011/02/10 21:28:14 pseudo Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -941,7 +941,9 @@ static int tcl_channel_info(Tcl_Interp *irp, struct chanset_t *chan)
 
 static int tcl_channel_getlist(Tcl_Interp *irp, struct chanset_t *chan)
 {
-  char s[121];
+  char s[121], *str;
+  EGG_CONST char **argv = NULL;
+  int argc = 0;
   struct udef_struct *ul;
 
   /* String values first */
@@ -1039,13 +1041,18 @@ static int tcl_channel_getlist(Tcl_Interp *irp, struct chanset_t *chan)
   
   /* User defined settings */
   for (ul = udef; ul && ul->name; ul = ul->next) {
-    Tcl_AppendElement(irp, ul->name);
-    if (ul->type == UDEF_FLAG)
-      Tcl_AppendElement(irp, "flag");
-    else if (ul->type == UDEF_INT)
-      Tcl_AppendElement(irp, "int");
-    else if (ul->type == UDEF_STR)
-      Tcl_AppendElement(irp, "str");
+    if (ul->type == UDEF_STR) {
+      str = (char *) getudef(ul->values, chan->dname);
+      if (!str)
+        str = "{}";
+      Tcl_SplitList(irp, str, &argc, &argv);
+      if (argc > 0)
+        APPEND_KEYVAL(ul->name, argv[0]);
+      Tcl_Free((char *) argv);
+    } else {
+      simple_sprintf(s, "%d", getudef(ul->values, chan->dname));
+      APPEND_KEYVAL(ul->name, s);
+    }
   }
 
   return TCL_OK;

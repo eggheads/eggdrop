@@ -1,10 +1,14 @@
-$Id: Changes1.8,v 1.46 2011/02/03 15:44:11 pseudo Exp $
+$Id: Changes1.8,v 1.47 2011/02/10 21:28:14 pseudo Exp $
 
 Eggdrop Changes (since version 1.8.0)
 
     _____________________________________________________________________
 
 1.8.0 (CVS):
+
+  - Fixed a bug with [channel get] returning types instead of values for
+    udefs.
+    Found by: Robby / Patch by: pseudo
 
   - Check for pending data on SSL sockets even when select() reports the
     descriptor's not readable.
