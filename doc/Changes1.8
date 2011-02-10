@@ -1,4 +1,4 @@
-$Id: Changes1.8,v 1.36.2.11 2011/02/08 22:33:01 thommey Exp $
+$Id: Changes1.8,v 1.36.2.12 2011/02/10 21:31:38 pseudo Exp $
 
 Eggdrop Changes (since version 1.8.0)
 
@@ -6,6 +6,9 @@ Eggdrop Changes (since version 1.8.0)
 
 1.8.0 (CVS):
 
+  - Fixed a bug with [channel get] returning types instead of values for
+    udefs.
+    Found by: Robby / Patch by: pseudo
 
   - Adjusted my_memcpy() define for modules to use memcpy() instead of
     now removed egg_memcpy().
