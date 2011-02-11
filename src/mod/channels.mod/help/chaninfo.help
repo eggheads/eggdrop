@@ -131,9 +131,9 @@
         %bprotectfriends%b Re-op a user with the +f flag if they get deopped?
         %bstatuslog%b      Log the channel status line every 5 minutes? This
                        shows the bot's status on the channel (op, voice, etc.),
-                       the channel's modes, and the number of +m, +o, +v, +n,
-                       +b, +e, and +I users on the channel. A sample status
-                       line follows:
+                       the channel's modes, and the total number of members,
+                       ops, voices, regular users, and +b, +e, and +I modes
+                       on the channel. A sample status line follows:
 
                          [01:40] @#chan (+istn) : [m/1 o/1 v/4 n/7 b/1 e/5 I/7]
         %brevenge%b        Remember people who deop/kick/ban the bot, valid ops,
