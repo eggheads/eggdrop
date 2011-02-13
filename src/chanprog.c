@@ -7,11 +7,11 @@
  *   telling the current programmed settings
  *   initializing a lot of stuff and loading the tcl scripts
  *
- * $Id: chanprog.c,v 1.67 2010/06/29 15:52:24 thommey Exp $
+ * $Id: chanprog.c,v 1.68 2011/02/13 14:19:33 simple Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2010 Eggheads Development Team
+ * Copyright (C) 1999 - 2011 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License

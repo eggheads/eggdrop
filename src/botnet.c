@@ -7,11 +7,11 @@
  *   linking, unlinking, and relaying to another bot
  *   pinging the bots periodically and checking leaf status
  *
- * $Id: botnet.c,v 1.65 2010/06/29 15:52:24 thommey Exp $
+ * $Id: botnet.c,v 1.66 2011/02/13 14:19:33 simple Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2010 Eggheads Development Team
+ * Copyright (C) 1999 - 2011 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License

@@ -1,4 +1,4 @@
-$Id: FIRST-SCRIPT,v 1.9 2010/01/03 13:27:22 pseudo Exp $
+$Id: FIRST-SCRIPT,v 1.10 2011/02/13 14:19:32 simple Exp $
 
 Your First Eggdrop Script
 Last revised: December 07, 2003
@@ -98,4 +98,4 @@ proc my_talk_handler {nick uhost hand chan text} {
 # Here's the end of the script.
     _____________________________________________________________________
 
-  Copyright (C) 2003 - 2010 Eggheads Development Team
+  Copyright (C) 2003 - 2011 Eggheads Development Team

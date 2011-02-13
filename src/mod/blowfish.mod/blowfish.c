@@ -2,11 +2,11 @@
  * blowfish.c -- part of blowfish.mod
  *   encryption and decryption of passwords
  *
- * $Id: blowfish.c,v 1.36 2010/01/03 13:27:40 pseudo Exp $
+ * $Id: blowfish.c,v 1.37 2011/02/13 14:19:33 simple Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2010 Eggheads Development Team
+ * Copyright (C) 1999 - 2011 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License

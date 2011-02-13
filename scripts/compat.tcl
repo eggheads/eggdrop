@@ -2,7 +2,7 @@
 #   This script just quickly maps old Tcl commands to the new ones.
 #   Use this if you are too lazy to get off your butt and update your scripts :D
 #
-# Copyright (C) 2002 - 2010 Eggheads Development Team
+# Copyright (C) 2002 - 2011 Eggheads Development Team
 #
 # Wiktor    31Mar2000: added binds and chnick proc
 # Tothwolf  25May1999: cleanup
@@ -11,7 +11,7 @@
 # pseudo    04Oct2009: added putdccraw
 # Pixelz    08Apr2010: changed [time] to be compatible with Tcl [time]
 #
-# $Id: compat.tcl,v 1.19 2010/07/02 21:56:44 pseudo Exp $
+# $Id: compat.tcl,v 1.20 2011/02/13 14:19:33 simple Exp $
 
 proc gethosts {hand} {
   getuser $hand HOSTS

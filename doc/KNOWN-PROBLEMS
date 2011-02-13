@@ -1,4 +1,4 @@
-$Id: KNOWN-PROBLEMS,v 1.21 2010/01/03 13:27:22 pseudo Exp $
+$Id: KNOWN-PROBLEMS,v 1.22 2011/02/13 14:19:32 simple Exp $
 
 Known Problems
 Last revised: April 16, 2003
@@ -25,4 +25,4 @@ Last revised: April 16, 2003
       Eggdrop can't handle these errors at the moment.
     _____________________________________________________________________
 
-  Copyright (C) 2003 - 2010 Eggheads Development Team
+  Copyright (C) 2003 - 2011 Eggheads Development Team

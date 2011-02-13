@@ -10,10 +10,10 @@
  * 1.2     1997-08-20      Minor fixes. [BB]
  * 1.2a    1997-08-24      Minor fixes. [BB]
  *
- * $Id: seen.c,v 1.41 2010/01/03 13:27:55 pseudo Exp $
+ * $Id: seen.c,v 1.42 2011/02/13 14:19:34 simple Exp $
  */
 /*
- * Copyright (C) 1999 - 2010 Eggheads Development Team
+ * Copyright (C) 1999 - 2011 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License

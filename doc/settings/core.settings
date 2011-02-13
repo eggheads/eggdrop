@@ -1,4 +1,4 @@
-$Id: core.settings,v 1.42 2010/01/15 19:51:49 pseudo Exp $
+$Id: core.settings,v 1.43 2011/02/13 14:19:33 simple Exp $
 
 Eggdrop Core Settings
 Last revised: April 17, 2003
@@ -565,4 +565,4 @@ Last revised: April 17, 2003
         source scripts/action.fix.tcl
     _____________________________________________________________________
 
-  Copyright (C) 2000 - 2010 Eggheads Development Team
+  Copyright (C) 2000 - 2011 Eggheads Development Team

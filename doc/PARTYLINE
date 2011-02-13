@@ -1,4 +1,4 @@
-$Id: PARTYLINE,v 1.13 2010/01/03 13:27:22 pseudo Exp $
+$Id: PARTYLINE,v 1.14 2011/02/13 14:19:32 simple Exp $
 
 The Party Line
 Last revised: December 31, 2001
@@ -40,4 +40,4 @@ Last revised: December 31, 2001
     channels with ".chat off".
     _____________________________________________________________________
 
-  Copyright (C) 2002 - 2010 Eggheads Development Team
+  Copyright (C) 2002 - 2011 Eggheads Development Team

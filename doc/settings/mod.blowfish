@@ -1,4 +1,4 @@
-$Id: mod.blowfish,v 1.18 2010/01/03 13:27:23 pseudo Exp $
+$Id: mod.blowfish,v 1.19 2011/02/13 14:19:33 simple Exp $
 
 Blowfish Module
 Last revised: January 28, 2003
@@ -21,4 +21,4 @@ Last revised: January 28, 2003
 
     _____________________________________________________________________
 
-  Copyright (C) 2000 - 2010 Eggheads Development Team
+  Copyright (C) 2000 - 2011 Eggheads Development Team

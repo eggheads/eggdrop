@@ -1,4 +1,4 @@
-$Id: tcl-commands.doc,v 1.136 2010/07/02 21:56:44 pseudo Exp $
+$Id: tcl-commands.doc,v 1.137 2011/02/13 14:19:32 simple Exp $
 
 Eggdrop Tcl Commands
 Last revised: November 23, 2009
@@ -2413,4 +2413,4 @@ marked with vertical bars (|) on the left.
      words)
     _____________________________________________________________________
 
-  Copyright (C) 1999 - 2010 Eggheads Development Team
+  Copyright (C) 1999 - 2011 Eggheads Development Team

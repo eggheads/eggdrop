@@ -2,10 +2,10 @@
  * strcasecmp.h
  *   prototypes for strcasecmp.c
  *
- * $Id: strcasecmp.h,v 1.13 2010/01/03 13:27:40 pseudo Exp $
+ * $Id: strcasecmp.h,v 1.14 2011/02/13 14:19:33 simple Exp $
  */
 /*
- * Copyright (C) 2000 - 2010 Eggheads Development Team
+ * Copyright (C) 2000 - 2011 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License

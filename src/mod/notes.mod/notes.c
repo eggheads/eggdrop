@@ -5,11 +5,11 @@
  *   note cmds
  *   note ignores
  *
- * $Id: notes.c,v 1.62 2010/02/18 09:52:29 pseudo Exp $
+ * $Id: notes.c,v 1.63 2011/02/13 14:19:34 simple Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2010 Eggheads Development Team
+ * Copyright (C) 1999 - 2011 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License

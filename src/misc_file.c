@@ -2,10 +2,10 @@
  * misc_file.c -- handles:
  *   copyfile() movefile() file_readable()
  *
- * $Id: misc_file.c,v 1.17 2010/01/03 13:27:32 pseudo Exp $
+ * $Id: misc_file.c,v 1.18 2011/02/13 14:19:33 simple Exp $
  */
 /*
- * Copyright (C) 1999 - 2010 Eggheads Development Team
+ * Copyright (C) 1999 - 2011 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License

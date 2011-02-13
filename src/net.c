@@ -2,7 +2,7 @@
  * net.c -- handles:
  *   all raw network i/o
  *
- * $Id: net.c,v 1.86 2010/07/12 15:40:52 thommey Exp $
+ * $Id: net.c,v 1.87 2011/02/13 14:19:33 simple Exp $
  */
 /*
  * This is hereby released into the public domain.
@@ -10,7 +10,7 @@
  *
  * Changes after Feb 23, 1999 Copyright Eggheads Development Team
  *
- * Copyright (C) 1999 - 2010 Eggheads Development Team
+ * Copyright (C) 1999 - 2011 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License

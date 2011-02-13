@@ -1,9 +1,9 @@
 /*
  * transferqueue.c -- part of transfer.mod
  *
- * $Id: transferqueue.c,v 1.10 2010/01/03 13:27:55 pseudo Exp $
+ * $Id: transferqueue.c,v 1.11 2011/02/13 14:19:34 simple Exp $
  *
- * Copyright (C) 2003 - 2010 Eggheads Development Team
+ * Copyright (C) 2003 - 2011 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License

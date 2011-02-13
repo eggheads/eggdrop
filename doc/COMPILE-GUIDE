@@ -1,4 +1,4 @@
-$Id: COMPILE-GUIDE,v 1.13 2010/01/26 03:12:15 tothwolf Exp $
+$Id: COMPILE-GUIDE,v 1.14 2011/02/13 14:19:32 simple Exp $
 
 Eggdrop Compile Guide and FAQ
 Last revised: August 20, 2004
@@ -529,4 +529,4 @@ Last revised: August 20, 2004
     _____________________________________________________________________
 
    Copyright (C) 1997 Robey Pointer
-   Copyright (C) 1999 - 2010 Eggheads Development Team
+   Copyright (C) 1999 - 2011 Eggheads Development Team

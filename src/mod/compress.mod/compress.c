@@ -6,10 +6,10 @@
  * Written by Fabian Knittel <fknittel@gmx.de>. Based on zlib examples
  * by Jean-loup Gailly and Miguel Albrecht.
  *
- * $Id: compress.c,v 1.30 2010/01/03 13:27:41 pseudo Exp $
+ * $Id: compress.c,v 1.31 2011/02/13 14:19:33 simple Exp $
  */
 /*
- * Copyright (C) 2000 - 2010 Eggheads Development Team
+ * Copyright (C) 2000 - 2011 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License

@@ -1,4 +1,4 @@
-$Id: INSTALL,v 1.30 2010/01/03 13:27:22 pseudo Exp $
+$Id: INSTALL,v 1.31 2011/02/13 14:19:32 simple Exp $
 
 Compilation and Installation of Eggdrop
 Last revised: July 24, 2004
@@ -149,4 +149,4 @@ Last revised: July 24, 2004
     _____________________________________________________________________
 
   Copyright (C) 1997 Robey Pointer
-  Copyright (C) 1999 - 2010 Eggheads Development Team
+  Copyright (C) 1999 - 2011 Eggheads Development Team
