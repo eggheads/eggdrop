@@ -1,4 +1,4 @@
-$Id: mod.channels,v 1.2 2010/10/25 15:56:38 pseudo Exp $
+$Id: mod.channels,v 1.3 2011/02/17 19:35:25 pseudo Exp $
 
 Channels Module
 Last revised: October 25, 2010
@@ -254,8 +254,8 @@ Last revised: October 25, 2010
         statuslog
           Log the channel status line every 5 minutes? This shows the bot's
           status on the channel (op, voice, etc.), the channel's modes, and
-          the number of +m/+o/+v/+n/+b/+e/+I users on the channel. A sample
-          status line follows:
+          the total number of members, ops, voices, regular users, and +b,
+          +e, and +I modes on the channel. A sample status line follows:
 
             [01:40] @#lamest (+istn) : [m/1 o/1 v/4 n/7 b/1 e/5 I/7]
 
