@@ -4,7 +4,7 @@
  *   disconnect on a dcc socket
  *   ...and that's it!  (but it's a LOT)
  *
- * $Id: dcc.c,v 1.9 2011/01/27 11:20:16 pseudo Exp $
+ * $Id: dcc.c,v 1.10 2011/02/26 19:22:37 thommey Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -1247,7 +1247,7 @@ static void dcc_telnet_hostresolved(int i)
 {
   int idx;
   int j = 0, sock;
-  char s[UHOSTLEN + 20];
+  char s[UHOSTLEN + 20], *userhost;
 
   strncpyz(dcc[i].host, dcc[i].u.dns->host, UHOSTLEN);
 
@@ -1273,6 +1273,7 @@ static void dcc_telnet_hostresolved(int i)
     }
   }
   sprintf(s, "-telnet!telnet@%s", dcc[i].host);
+  userhost = s + strlen("-telnet!");
   if (match_ignore(s) || detect_telnet_flood(s)) {
     killsock(dcc[i].sock);
     lostdcc(i);
@@ -1280,6 +1281,17 @@ static void dcc_telnet_hostresolved(int i)
   }
 
   putlog(LOG_MISC, "*", DCC_TELCONN, dcc[i].host, dcc[i].port);
+
+  /* Skip ident lookup for public script listeners */
+  if ((dcc[idx].status & LSTN_PUBLIC) && !strcmp(dcc[idx].nick, "(script)")) {
+    changeover_dcc(i, &DCC_SOCKET, 0);
+    dcc[i].u.other = NULL;
+    strcpy(dcc[i].nick, "*");
+    strncpyz(dcc[i].host, userhost, UHOSTLEN);
+    check_tcl_listen(dcc[idx].host, dcc[i].sock);
+    return;
+  }
+
   changeover_dcc(i, &DCC_IDENTWAIT, 0);
   dcc[i].timeval = now;
   dcc[i].u.ident_sock = dcc[idx].sock;
@@ -1307,8 +1319,7 @@ static void dcc_telnet_hostresolved(int i)
     }
   }
   if (j < 0) {
-    sprintf(s, "telnet@%s", dcc[i].host);
-    dcc_telnet_got_ident(i, s);
+    dcc_telnet_got_ident(i, userhost);
     return;
   }
   dcc[j].sock = sock;

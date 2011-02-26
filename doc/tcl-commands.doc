@@ -1,4 +1,4 @@
-$Id: tcl-commands.doc,v 1.8 2010/10/29 20:53:43 pseudo Exp $
+$Id: tcl-commands.doc,v 1.9 2011/02/26 19:22:37 thommey Exp $
 
 Eggdrop Tcl Commands
 Last revised: October 24, 2010
@@ -1080,7 +1080,7 @@ marked with vertical bars (|) on the left.
           Description: accepts connections which are immediately routed to
             a proc. The proc is called with one parameter: the idx of the
             new connection. Flag may currently only be 'pub', which makes
-            the bot allow anyone to connect.
+            the bot allow anyone to connect and not perform an ident lookup.
           Returns: port number
 
         listen <port> off
