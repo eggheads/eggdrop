@@ -3,7 +3,7 @@
  *   moving the process to the background, i.e. forking, while keeping threads
  *   happy.
  *
- * $Id: bg.c,v 1.1 2010/07/26 21:11:06 simple Exp $
+ * $Id: bg.c,v 1.2 2011/03/14 03:03:28 thommey Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -128,14 +128,14 @@ static void bg_do_detach(pid_t p)
 
 void bg_prepare_split(void)
 {
+  pid_t p;
+  bg_comm_t message;
+
   if (!fork_before_tcl())
     return;
 
   /* Create a pipe between parent and split process, fork to create a
    * parent and a split process and wait for messages on the pipe. */
-  pid_t p;
-  bg_comm_t message;
-
   {
     int comm_pair[2];
 
