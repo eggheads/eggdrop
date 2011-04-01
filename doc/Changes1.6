@@ -1,10 +1,23 @@
-$Id: Changes1.6,v 1.96 2010/07/12 16:18:09 thommey Exp $
+$Id: Changes1.6,v 1.97 2011/04/01 11:59:49 pseudo Exp $
 
 Eggdrop Changes (since version 1.6.0)
 
     _____________________________________________________________________
 
-1.6.20 (CVS):
+1.6.21 (CVS):
+
+  - Replaced most dns.mod preprocessor definitions with config variables.
+  - Added support for user-specified dns servers and non-standard ports.
+    This is most important for Cygwin 1.7, where the dns server list won't
+    get initialized under some common conditions.
+  - Added a trace to the new variable dns-servers, allowing scripts to get
+    or set the current dns server list.
+  - Added the servers list to the dns module information displayed by
+    .status all
+    Patch by: pseudo
+
+
+1.6.20 (July 23, 2010):
 
   - Add sanity check to check-stoned event. Prevents eggdrop from
     disconnecting in case of drift timers.
