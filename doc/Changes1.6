@@ -1,10 +1,14 @@
-$Id: Changes1.6,v 1.98 2011/04/01 12:10:08 pseudo Exp $
+$Id: Changes1.6,v 1.99 2011/04/01 12:22:15 pseudo Exp $
 
 Eggdrop Changes (since version 1.6.0)
 
     _____________________________________________________________________
 
 1.6.21 (CVS):
+
+  - Fixed getudef() to return intptr_t instead of int to prevent crashes on
+    64-bit systems.
+    Found by: izy` / Patch by: pseudo
 
   - Fixed dns.mod on QNX6/Mac OS X/Solaris
   - Rewrote dns.mod's autoconf checks to detect the resolver library properly

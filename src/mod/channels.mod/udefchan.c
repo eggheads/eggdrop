@@ -2,7 +2,7 @@
  * udefchan.c -- part of channels.mod
  *   user definable channel flags/settings
  *
- * $Id: udefchan.c,v 1.17 2011/02/13 14:19:33 simple Exp $
+ * $Id: udefchan.c,v 1.18 2011/04/01 12:22:16 pseudo Exp $
  */
 /*
  * Copyright (C) 1999 - 2011 Eggheads Development Team
@@ -49,7 +49,7 @@ static int expmem_udef_chans(int type, struct udef_chans *ul)
 
 static intptr_t getudef(struct udef_chans *ul, char *name)
 {
-  int val = 0;
+  intptr_t val = 0;
 
   for (; ul; ul = ul->next)
     if (!egg_strcasecmp(ul->chan, name)) {
