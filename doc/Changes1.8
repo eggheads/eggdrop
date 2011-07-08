@@ -1,10 +1,15 @@
-$Id: Changes1.8,v 1.52 2011/03/14 03:03:28 thommey Exp $
+$Id: Changes1.8,v 1.53 2011/07/08 23:12:54 thommey Exp $
 
 Eggdrop Changes (since version 1.8.0)
 
     _____________________________________________________________________
 
 1.8.0 (CVS):
+
+  - Make sure to account for null termination when using Tcl_ScanElement
+    to generate a string representation of a list using Tcl_ConvertElement.
+    A behavioural change in Tcl8.5.10 revealed this bug.
+    Found by: various / Patch by: thommey
 
   - Moved variable declarations to conform to C89 (beginning of blocks only).
     Found by: Anon-e-mouse / Patch by: thommey

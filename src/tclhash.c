@@ -7,7 +7,7 @@
  *   (non-Tcl) procedure lookups for msg/dcc/file commands
  *   (Tcl) binding internal procedures to msg/dcc/file commands
  *
- * $Id: tclhash.c,v 1.4 2011/01/27 01:41:08 thommey Exp $
+ * $Id: tclhash.c,v 1.5 2011/07/08 23:12:54 thommey Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -1316,7 +1316,7 @@ void add_builtins(tcl_bind_list_t *tl, cmd_t *cc)
   for (i = 0; cc[i].name; i++) {
     egg_snprintf(p, sizeof p, "*%s:%s", tl->name,
                  cc[i].funcname ? cc[i].funcname : cc[i].name);
-    l = nmalloc(Tcl_ScanElement(p, &k));
+    l = nmalloc(Tcl_ScanElement(p, &k) + 1);
     Tcl_ConvertElement(p, l, k | TCL_DONT_USE_BRACES);
     table[0].cdata = (void *) cc[i].func;
     add_cd_tcl_cmds(table);
@@ -1334,7 +1334,7 @@ void rem_builtins(tcl_bind_list_t *table, cmd_t *cc)
   for (i = 0; cc[i].name; i++) {
     egg_snprintf(p, sizeof p, "*%s:%s", table->name,
                  cc[i].funcname ? cc[i].funcname : cc[i].name);
-    l = nmalloc(Tcl_ScanElement(p, &k));
+    l = nmalloc(Tcl_ScanElement(p, &k) + 1);
     Tcl_ConvertElement(p, l, k | TCL_DONT_USE_BRACES);
     Tcl_DeleteCommand(interp, p);
     unbind_bind_entry(table, cc[i].flags, cc[i].name, l);
