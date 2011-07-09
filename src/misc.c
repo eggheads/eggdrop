@@ -7,7 +7,7 @@
  *   help system
  *   motd display and %var substitution
  *
- * $Id: misc.c,v 1.87 2011/02/13 14:19:33 simple Exp $
+ * $Id: misc.c,v 1.88 2011/07/09 15:07:48 thommey Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -1548,6 +1548,13 @@ int str_isdigit(const char *str)
 void str_unescape(char *str, register const char esc_char)
 {
   (void) strchr_unescape(str, 0, esc_char);
+}
+
+char *str_dup(const char *s)
+{
+  char *d = nmalloc(strlen(s)+1);
+  strcpy(d, s);
+  return d;
 }
 
 /* Kills the bot. s1 is the reason shown to other bots,

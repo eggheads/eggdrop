@@ -4,7 +4,7 @@
  *
  * by Darrin Smith (beldin@light.iinet.net.au)
  *
- * $Id: modules.h,v 1.22 2011/02/13 14:19:33 simple Exp $
+ * $Id: modules.h,v 1.23 2011/07/09 15:07:48 thommey Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -42,6 +42,7 @@ char *module_unload(char *, char *);
 module_entry *module_find(char *, int, int);
 Function *module_depend(char *, char *, int, int);
 int module_undepend(char *);
+char *mod_strdup(const char *, const char *, const char *, int);
 void *mod_malloc(int, const char *, const char *, int);
 void *mod_realloc(void *, int, const char *, const char *, int);
 void mod_free(void *, const char *, const char *, int);

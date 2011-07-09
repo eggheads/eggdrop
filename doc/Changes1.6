@@ -1,10 +1,36 @@
-$Id: Changes1.6,v 1.99 2011/04/01 12:22:15 pseudo Exp $
+$Id: Changes1.6,v 1.100 2011/07/09 15:07:48 thommey Exp $
 
 Eggdrop Changes (since version 1.6.0)
 
     _____________________________________________________________________
 
 1.6.21 (CVS):
+
+  - Make sure to account for null termination when using Tcl_ScanElement
+    to generate a string representation of a list using Tcl_ConvertElement.
+    A behavioural change in Tcl8.5.10 revealed this bug.
+    Found by: various / Patch by: thommey
+
+  - Fixed reentrance issues with the replacement Tcl notifier. It is now safe
+    for dns callbacks to call vwait/update. Execution of Tcl snippets in do_tcl
+    is now asynchronous and actually performed at the end of mainloop().
+    Found by: Ratler, various / Patch by: thommey
+
+  - do_restart is now reset before actually performing a rehash or restart to
+    ensure it doesn't try to do it again infinitely.
+    Found by: Domino / Patch by: thommey
+
+  - Clarified --with-tcl* usage in configure and mentioned tcl-dev packages.
+  - Fixed some section numbering in doc/COMPILE-GUIDE.
+    Patch by: thommey
+
+  - Fix env(TZ) config setting to not contain a space. The space is just
+    inserted in POSIX documentation to clarify, it must not be there.
+    Found by: Digdilem / Patch by: thommey
+
+  - Added detection of Tcl_NotifierProcs members to ensure the notifier can
+    be replaced. Fixes compilation against Tcl 8.2 and 8.3.
+    Found by: AlIt0 / Patch by: thommey
 
   - Fixed getudef() to return intptr_t instead of int to prevent crashes on
     64-bit systems.
@@ -29,6 +55,8 @@ Eggdrop Changes (since version 1.6.0)
 
 
 1.6.20 (July 23, 2010):
+
+  # RC2 released on July 15th, 2010.
 
   - Add sanity check to check-stoned event. Prevents eggdrop from
     disconnecting in case of drift timers.

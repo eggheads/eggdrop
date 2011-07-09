@@ -7,7 +7,7 @@
  *   (non-Tcl) procedure lookups for msg/dcc/file commands
  *   (Tcl) binding internal procedures to msg/dcc/file commands
  *
- * $Id: tclhash.c,v 1.71 2011/02/13 14:19:33 simple Exp $
+ * $Id: tclhash.c,v 1.72 2011/07/09 15:07:48 thommey Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -850,9 +850,13 @@ int check_tcl_bind(tcl_bind_list_t *tl, const char *match,
            */
 
           tc->hits++;
+
           x = trigger_bind(tc->func_name, param, tm->mask);
 
-          if (match_type & BIND_ALTER_ARGS) {
+          if ((tl->flags & HT_DELETED) || (tm->flags & TBM_DELETED)) {
+            /* This bind or bind type was deleted within trigger_bind() */
+            return x;
+          } else if (match_type & BIND_ALTER_ARGS) {
             if (tcl_resultempty())
               return x;
           } else if ((match_type & BIND_STACKRET) && x == BIND_EXEC_LOG) {
@@ -863,9 +867,10 @@ int check_tcl_bind(tcl_bind_list_t *tl, const char *match,
             if (!result)
               result = x;
             continue;
-          } else if ((match_type & BIND_WANTRET) && x == BIND_EXEC_LOG)
+          } else if ((match_type & BIND_WANTRET) && x == BIND_EXEC_LOG) {
             /* Return immediately if any commands return 1 */
             return x;
+          }
         }
       }
     }
@@ -1264,7 +1269,7 @@ void add_builtins(tcl_bind_list_t *tl, cmd_t *cc)
   for (i = 0; cc[i].name; i++) {
     egg_snprintf(p, sizeof p, "*%s:%s", tl->name,
                  cc[i].funcname ? cc[i].funcname : cc[i].name);
-    l = nmalloc(Tcl_ScanElement(p, &k));
+    l = nmalloc(Tcl_ScanElement(p, &k) + 1);
     Tcl_ConvertElement(p, l, k | TCL_DONT_USE_BRACES);
     table[0].cdata = (void *) cc[i].func;
     add_cd_tcl_cmds(table);
@@ -1282,7 +1287,7 @@ void rem_builtins(tcl_bind_list_t *table, cmd_t *cc)
   for (i = 0; cc[i].name; i++) {
     egg_snprintf(p, sizeof p, "*%s:%s", table->name,
                  cc[i].funcname ? cc[i].funcname : cc[i].name);
-    l = nmalloc(Tcl_ScanElement(p, &k));
+    l = nmalloc(Tcl_ScanElement(p, &k) + 1);
     Tcl_ConvertElement(p, l, k | TCL_DONT_USE_BRACES);
     Tcl_DeleteCommand(interp, p);
     unbind_bind_entry(table, cc[i].flags, cc[i].name, l);

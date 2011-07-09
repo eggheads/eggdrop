@@ -4,7 +4,7 @@
  *
  * by Darrin Smith (beldin@light.iinet.net.au)
  *
- * $Id: modules.c,v 1.109 2011/02/13 14:19:33 simple Exp $
+ * $Id: modules.c,v 1.110 2011/07/09 15:07:48 thommey Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -576,7 +576,8 @@ Function global_table[] = {
   /* 296 - 299 */
   (Function) check_conflags,
   (Function) increase_socks_max,
-  (Function) log_ts
+  (Function) log_ts,
+  (Function) mod_strdup
 };
 
 void init_modules(void)
@@ -939,6 +940,20 @@ int module_undepend(char *name1)
     }
   }
   return ok;
+}
+
+char *mod_strdup(const char *s, const char *modname, const char *filename, int line)
+{
+#ifdef DEBUG_MEM
+  char x[100], *p;
+
+  p = strrchr(filename, '/');
+  egg_snprintf(x, sizeof x, "%s:%s", modname, p ? p + 1 : filename);
+  x[19] = 0;
+  return n_strdup(s, x, line);
+#else
+  return nstrdup(s);
+#endif
 }
 
 void *mod_malloc(int size, const char *modname, const char *filename, int line)

@@ -1,4 +1,4 @@
-$Id: TEXT-SUBSTITUTIONS,v 1.13 2011/02/13 14:19:32 simple Exp $
+$Id: TEXT-SUBSTITUTIONS,v 1.14 2011/07/09 15:07:48 thommey Exp $
 
 Textfile Substitutions
 Last revised: March 08, 2002
@@ -23,9 +23,9 @@ respective values:
 
  %B   bot's nickname (i.e. "LamestBot")
 
- %V   current Eggdrop version (i.e. "eggdrop v1.6.20")
+ %V   current Eggdrop version (i.e. "eggdrop v1.6.21")
 
- %E   long form of %V (i.e. "Eggdrop v1.6.20 (C) 1997 Robey Pointer (C) 2011 Eggheads Development Team")
+ %E   long form of %V (i.e. "Eggdrop v1.6.21 (C) 1997 Robey Pointer (C) 2011 Eggheads Development Team")
 
  %C   channels the bot is on (i.e. "#lamest, #botnetcentral")
 

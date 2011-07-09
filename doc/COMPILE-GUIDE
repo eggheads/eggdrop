@@ -1,7 +1,7 @@
-$Id: COMPILE-GUIDE,v 1.14 2011/02/13 14:19:32 simple Exp $
+$Id: COMPILE-GUIDE,v 1.15 2011/07/09 15:07:48 thommey Exp $
 
 Eggdrop Compile Guide and FAQ
-Last revised: August 20, 2004
+Last revised: February 14, 2010
     _____________________________________________________________________
 
                         Eggdrop Compile Guide and FAQ
@@ -25,8 +25,9 @@ Last revised: August 20, 2004
       D. Mac OS X
       E. AIX
       F. IRIX
-      G. Cygwin / Windows
-      H. Tcl Detection and Installation
+      G. Solaris / SunOS
+      H. Cygwin / Windows
+      I. Tcl Detection and Installation
 
     Frequently Asked Questions:
       1. I get a lot of warnings.
@@ -75,7 +76,7 @@ Last revised: August 20, 2004
 
            --with-tcllib
            --with-tclinc
-             See 'E. Tcl Detection and Installation' below (at the end of this
+             See 'I. Tcl Detection and Installation' below (at the end of this
              compile guide).
 
       2. Type either 'make config', or 'make iconfig' to determine which
@@ -252,7 +253,7 @@ Last revised: August 20, 2004
            This is usually something like 'C:\cygwin\home\<username>\'. After
            downloading, extract the Eggdrop tarball:
 
-             tar -zxf eggdrop1.6.20.tar.gz
+             tar -zxf eggdrop1.6.21.tar.gz
 
         4. Run './configure --enable-strip'. Debugging information under
            Windows is basically useless to the development team, and this will
@@ -276,8 +277,8 @@ Last revised: August 20, 2004
              cd 'C:/<install path>/' (example: cd 'C:/eggdrop')
              rm modules
              rm eggdrop.exe
-             mv eggdrop.exe-1.6.20 eggdrop.exe
-             mv modules-1.6.20 modules
+             mv eggdrop.exe-1.6.21 eggdrop.exe
+             mv modules-1.6.21 modules
 
         9. Create a 'lib' directory and copy needed libraries using the
            following commands. This assumes that you installed your Eggdrop in

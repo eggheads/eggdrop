@@ -4,7 +4,7 @@
  *   Tcl initialization
  *   getting and setting Tcl/eggdrop variables
  *
- * $Id: tcl.c,v 1.99 2011/02/13 14:19:33 simple Exp $
+ * $Id: tcl.c,v 1.100 2011/07/09 15:07:48 thommey Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -90,6 +90,10 @@ int clientdata_stuff = 0;
 /* Compatability for removed settings.*/
 int strict_servernames = 0, enable_simul = 1, use_console_r = 0,
     debug_output = 0;
+
+#ifdef REPLACE_NOTIFIER
+tclevent_t *tclevents = NULL; /* Queue of Tcl snippets to execute */
+#endif
 
 /* Prototypes for Tcl */
 Tcl_Interp *Tcl_CreateInterp();
@@ -572,13 +576,54 @@ static void init_traces()
   add_tcl_ints(def_tcl_ints);
 }
 
-void kill_tcl()
-{
-  rem_tcl_coups(def_tcl_coups);
-  rem_tcl_strings(def_tcl_strings);
-  rem_tcl_ints(def_tcl_ints);
-  kill_bind();
-  Tcl_DeleteInterp(interp);
+/* tcleventcallback that's called after executing Tcl code,
+ * used by do_tcl(). Just logs Tcl errors.
+ */
+void bgtclcallback(char *context, char *script, int code,
+                   const char *result, int dofree) {
+#ifdef USE_TCL_ENCODING
+  Tcl_DString dstr;
+#endif
+
+  if (code == TCL_ERROR) {
+#ifdef USE_TCL_ENCODING
+    /* properly convert string to system encoding. */
+    Tcl_DStringInit(&dstr);
+    Tcl_UtfToExternalDString(NULL, result, -1, &dstr);
+    result = Tcl_DStringValue(&dstr);
+#endif
+    putlog(LOG_MISC, "*", "Tcl error in script for '%s':", context);
+    putlog(LOG_MISC, "*", "%s", result);
+#ifdef USE_TCL_ENCODING
+  Tcl_DStringFree(&dstr);
+#endif
+  }
+  if (dofree) {
+    nfree(context);
+    nfree(script);
+  }
+}
+
+/* Generic function (exported to modules) to execute Tcl code.
+ * context is used to display Tcl errors (Error in '..')
+ *
+ * Schedules execution if defined(REPLACE_NOTIFIER) to bottom of mainloop,
+ * where it's safe to recurse eventually (vwait/update).
+ */
+void do_tcl(char *context, char *script) {
+  do_tcl_async(context, script, bgtclcallback);
+}
+
+/* Evaluates Tcl code.
+ *
+ * Should only be called from reentrant functions (can recurse),
+ * use do_tcl/do_tcl_async instead.
+ */
+void do_tcl_sync(char *context, char *script, tcleventcallback cb, int dofree) {
+  int x;
+
+  x = Tcl_Eval(interp, script);
+  cb(context, script, x, tcl_resultstring(), dofree);
 }
 
 extern tcl_cmds tcluser_cmds[], tcldcc_cmds[], tclmisc_cmds[],
@@ -649,6 +694,27 @@ struct threaddata *threaddata()
   return td;
 }
 
+/* Add a script snippet to the queue of Tcl events to execute.
+ * See tclegg.h for the definition of the callback.
+ */
+void do_tcl_async(char *context, char *script, tcleventcallback callback) {
+  tclevent_t *ev, *e = tclevents;
+
+  ev = nmalloc(sizeof(tclevent_t));
+  ev->script = nstrdup(script);
+  ev->context = nstrdup(context);
+  ev->callback = callback;
+  ev->next = NULL;
+
+  if (!e)
+    tclevents = ev;
+  else {
+    while (e->next)
+      e = e->next;
+    e->next = ev;
+  }
+}
+
 #else /* REPLACE_NOTIFIER */
 
 int tclthreadmainloop() { return 0; }
@@ -657,6 +723,11 @@ struct threaddata *threaddata()
 {
   static struct threaddata tsd;
   return &tsd;
+}
+
+/* Without the replacement notifier, this just executes the script. */
+void do_tcl_async(char *context, char *script, tcleventcallback callback) {
+  do_tcl_sync(context, script, callback, 0);
 }
 
 #endif /* REPLACE_NOTIFIER */
@@ -829,35 +900,25 @@ resetPath:
   add_tcl_commands(tcldns_cmds);
 }
 
-void do_tcl(char *whatzit, char *script)
+void kill_tcl()
 {
-  int code;
-  char *result;
-#ifdef USE_TCL_ENCODING
-  Tcl_DString dstr;
-#endif
+#ifdef REPLACE_NOTIFIER
+  tclevent_t *ne, *e = tclevents;
 
-  code = Tcl_Eval(interp, script);
-
-#ifdef USE_TCL_ENCODING
-  /* properly convert string to system encoding. */
-  Tcl_DStringInit(&dstr);
-  Tcl_UtfToExternalDString(NULL, tcl_resultstring(), -1, &dstr);
-  result = Tcl_DStringValue(&dstr);
-#else
-  /* use old pre-Tcl 8.1 way. */
-  result = tcl_resultstring();
-#endif
-
-  if (code != TCL_OK) {
-    putlog(LOG_MISC, "*", "Tcl error in script for '%s':", whatzit);
-    putlog(LOG_MISC, "*", "%s", result);
+  while (e) {
+    ne = e->next;
+    e->callback(e->context, e->script, -1, "", 1);
+    nfree(e);
+    e = ne;
   }
-
-#ifdef USE_TCL_ENCODING
-  Tcl_DStringFree(&dstr);
 #endif
+  rem_tcl_coups(def_tcl_coups);
+  rem_tcl_strings(def_tcl_strings);
+  rem_tcl_ints(def_tcl_ints);
+  kill_bind();
+  Tcl_DeleteInterp(interp);
 }
+
 
 /* Interpret tcl file fname.
  *

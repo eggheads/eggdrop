@@ -4,7 +4,7 @@
  *   provides the code used by the bot if the DNS module is not loaded
  *   DNS Tcl commands
  *
- * $Id: dns.c,v 1.39 2011/02/13 14:19:33 simple Exp $
+ * $Id: dns.c,v 1.40 2011/07/09 15:07:48 thommey Exp $
  */
 /*
  * Written by Fabian Knittel <fknittel@gmx.de>
@@ -236,6 +236,19 @@ void dcc_dnshostbyip(IP ip)
  *   Tcl events
  */
 
+
+/* Called after a dns callback has been executed, displays errors */
+void dnstclcallback(char *context, char *script, int code,
+                    const char *result, int dofree) {
+  if (code == TCL_ERROR)
+    putlog(LOG_MISC, "*", DCC_TCLERROR, context, result);
+  if (dofree) {
+    nfree(context);
+    nfree(script);
+  }
+}
+
+/* Schedules the dns callback to be executed */
 static void dns_tcl_iporhostres(IP ip, char *hostn, int ok, void *other)
 {
   devent_tclinfo_t *tclinfo = (devent_tclinfo_t *) other;
@@ -255,11 +268,10 @@ static void dns_tcl_iporhostres(IP ip, char *hostn, int ok, void *other)
     argv[1] = tclinfo->paras;
     output = Tcl_Concat(2, argv);
 
-    if (Tcl_Eval(interp, output) == TCL_ERROR)
-      putlog(LOG_MISC, "*", DCC_TCLERROR, tclinfo->proc, tcl_resultstring());
+    do_tcl_async(tclinfo->proc, output, dnstclcallback);
     Tcl_Free(output);
-  } else if (Tcl_Eval(interp, Tcl_DStringValue(&list)) == TCL_ERROR)
-    putlog(LOG_MISC, "*", DCC_TCLERROR, tclinfo->proc, tcl_resultstring());
+  } else
+    do_tcl_async(tclinfo->proc, Tcl_DStringValue(&list), dnstclcallback);
 
   Tcl_DStringFree(&list);
 

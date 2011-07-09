@@ -5,7 +5,7 @@
  *   command line arguments
  *   context and assert debugging
  *
- * $Id: main.c,v 1.139 2011/02/13 14:19:33 simple Exp $
+ * $Id: main.c,v 1.140 2011/07/09 15:07:48 thommey Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -81,6 +81,9 @@ extern struct chanset_t *chanset;
 extern log_t *logs;
 extern Tcl_Interp *interp;
 extern tcl_timer_t *timer, *utimer;
+#ifdef REPLACE_NOTIFIER
+extern tclevent_t *tclevents;
+#endif
 extern sigjmp_buf alarmret;
 time_t now;
 static int argc;
@@ -93,8 +96,8 @@ static char **argv;
  * modified versions of this bot.
  */
 
-char egg_version[1024] = "1.6.20";
-int egg_numver = 1062000;
+char egg_version[1024] = "1.6.21";
+int egg_numver = 1062100;
 
 char notify_new[121] = "";      /* Person to send a note to for new users */
 int default_flags = 0;          /* Default user flags                     */
@@ -708,7 +711,7 @@ static inline void garbage_collect(void)
 int mainloop(int toplevel)
 {
   static int socket_cleanup = 0;
-  int xx, i, eggbusy = 1, tclbusy = 0;
+  int xx, i, eggbusy = 1, tclbusy = 0, old_do_restart;
   char buf[520];
 
   /* Lets move some of this here, reducing the numer of actual
@@ -750,8 +753,9 @@ int mainloop(int toplevel)
   } else
     socket_cleanup--;
 
-  /* Free unused structures. */
-  garbage_collect();
+  /* Free deleted binds, only if not recursing. */
+  if (toplevel)
+    garbage_collect();
 
   xx = sockgets(buf, &i);
   if (xx >= 0) {              /* Non-error */
@@ -829,8 +833,12 @@ int mainloop(int toplevel)
     tclbusy = 1;
   }
 
+/* restart/rehash is performed here, reset do_restart ASAP to prevent
+ * doing it again if rehash() recurses in Tcl_Eval() */
   if (do_restart) {
-    if (do_restart == -2)
+    old_do_restart = do_restart;
+    do_restart = 0;
+    if (old_do_restart == -2)
       rehash();
     else if (!toplevel)
       return -1; /* Unwind to toplevel before restarting */
@@ -896,19 +904,28 @@ int mainloop(int toplevel)
       call_hook(HOOK_LOADED);
     }
     eggbusy = 1;
-    do_restart = 0;
   }
 
 #ifdef USE_TCL_EVENTS
   if (!eggbusy) {
 /* Process all pending tcl events */
+
 #  ifdef REPLACE_NOTIFIER
+    tclevent_t *e;
     if (Tcl_ServiceAll())
       tclbusy = 1;
+    while (tclevents) {
+      e = tclevents;
+      tclevents = tclevents->next;
+      tclbusy = 1;
+      do_tcl_sync(e->context, e->script, e->callback, 1);
+      nfree(e);
+    }
 #  else
     while (Tcl_DoOneEvent(TCL_DONT_WAIT | TCL_ALL_EVENTS))
       tclbusy = 1;
 #  endif /* REPLACE_NOTIFIER */
+
 #endif   /* USE_TCL_EVENTS   */
   }
 

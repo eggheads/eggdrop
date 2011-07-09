@@ -4,7 +4,7 @@
  *
  *   IF YOU ALTER THIS FILE, YOU NEED TO RECOMPILE THE BOT.
  *
- * $Id: eggdrop.h,v 1.80 2011/04/01 12:10:08 pseudo Exp $
+ * $Id: eggdrop.h,v 1.81 2011/07/09 15:07:48 thommey Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -278,6 +278,7 @@ typedef int socklen_t;
  *    Handy aliases for memory tracking and core dumps
  */
 
+#define nstrdup(x)    n_strdup((x),__FILE__,__LINE__)
 #define nmalloc(x)    n_malloc((x),__FILE__,__LINE__)
 #define nrealloc(x,y) n_realloc((x),(y),__FILE__,__LINE__)
 #define nfree(x)      n_free((x),__FILE__,__LINE__)

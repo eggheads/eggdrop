@@ -2,7 +2,7 @@
  * tclegg.h
  *   stuff used by tcl.c and tclhash.c
  *
- * $Id: tclegg.h,v 1.41 2011/02/13 14:19:33 simple Exp $
+ * $Id: tclegg.h,v 1.42 2011/07/09 15:07:48 thommey Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -106,6 +106,27 @@ typedef struct timer_str {
   unsigned long id;             /* Used to remove timers                */
 } tcl_timer_t;
 
+/* Callback that's called after executing a Tcl code snippet.
+ * The arguments are: context, script, resultcode, resultstring, dofree.
+ * If dofree is 1, the callback *must* nfree() both context and script.
+ * resultcode is -1 if the execution is stopped (kill_tcl()).
+ */
+typedef void (*tcleventcallback)(char *, char *, int, const char *, int);
+
+/* This schedules a code snippet to execute, if necessary. */
+void do_tcl_async(char *, char *, tcleventcallback);
+
+#ifdef REPLACE_NOTIFIER
+
+/* Tcl code snippet queue structure */
+typedef struct tclevent {
+  char *script;
+  void *context;
+  tcleventcallback callback;
+  struct tclevent *next;
+} tclevent_t;
+
+#endif
 
 /* Used for Tcl stub functions */
 #define STDVAR (cd, irp, argc, argv)                                    \
@@ -176,6 +197,7 @@ void add_tcl_coups(tcl_coups *);
 void rem_tcl_coups(tcl_coups *);
 void add_tcl_ints(tcl_ints *);
 void rem_tcl_ints(tcl_ints *);
+void do_tcl_sync(char *, char *, tcleventcallback, int);
 const char *tcl_resultstring();
 int tcl_resultint();
 int tcl_resultempty();

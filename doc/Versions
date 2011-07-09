@@ -1,4 +1,4 @@
-$Id: Versions,v 1.8 2011/02/13 14:19:32 simple Exp $
+$Id: Versions,v 1.9 2011/07/09 15:07:48 thommey Exp $
 
 This file lists the release dates for most of the officially released
 versions of Eggdrop and notes forks, bug fix patches and maintenance
@@ -8,38 +8,40 @@ old version not in the archive available on ftp://ftp.eggheads.org please
 get in contact via the email lists at http://www.eggheads.org so it can be
 added.
 
-Version    Release date
+Version        Release date  Description
 
-1.6.20     Jul 23, 2010
-1.6.19     Apr 18, 2008  Fix for Secunia Advisory SA25276 / CVE-2007-2807
-1.6.18     Jul  9, 2006  Major bind code function changes
-1.6.17     Aug 22, 2004
-1.6.16     May 31, 2004  Fix for Secunia Advisory SA10858
-1.6.15     May  4, 2003
-1.6.14     May  4, 2003
-1.6.13     Nov 22, 2002
-1.6.12     Jul 26, 2002
-1.6.11     Jul 26, 2002
-1.6.10     Mar 29, 2002
-1.6.9      Mar 10, 2002
-1.6.8      Jan  2, 2002
-1.6.7      Dec  7, 2001
-1.6.6      Jul 20, 2001
-1.6.5      Jul 10, 2001
-1.6.4      Apr 13, 2001
-1.6.3      Feb 27, 2001  Eggdrop won't load as 'root' anymore
-1.6.2      Jan 14, 2001
-1.6.1      Nov 22, 2000
-1.6.0      Nov 15, 2000  Will load with threaded Tcl now
+1.6.21         TBD
+1.6.20         Jul 23, 2010
+1.6.19+ctcpfix May 14, 2009  Fix for Secunia Advisory SA35104 / CVE-2009-1789
+1.6.19         Apr 18, 2008  Fix for Secunia Advisory SA25276 / CVE-2007-2807
+1.6.18         Jul  9, 2006  Major bind code function changes
+1.6.17         Aug 22, 2004
+1.6.16         May 31, 2004  Fix for Secunia Advisory SA10858
+1.6.15         May  4, 2003
+1.6.14         May  4, 2003
+1.6.13         Nov 22, 2002
+1.6.12         Jul 26, 2002
+1.6.11         Jul 26, 2002
+1.6.10         Mar 29, 2002
+1.6.9          Mar 10, 2002
+1.6.8          Jan  2, 2002
+1.6.7          Dec  7, 2001
+1.6.6          Jul 20, 2001
+1.6.5          Jul 10, 2001
+1.6.4          Apr 13, 2001
+1.6.3          Feb 27, 2001  Eggdrop won't load as 'root' anymore
+1.6.2          Jan 14, 2001
+1.6.1          Nov 22, 2000
+1.6.0          Nov 15, 2000  Will load with threaded Tcl now
 
-1.5.4      Aug 22, 2000
-1.5.3      May  7, 2000  Compress module added, share code moved to a module
-1.5.2      Feb  4, 2000
+1.5.4          Aug 22, 2000
+1.5.3          May  7, 2000  Compress module added, share code moved to a module
+1.5.2          Feb  4, 2000
 1.5.1
-1.5.0                    Initial asynchronous DNS support
-                         Initial penalty calculation support
-                         Complete rewrite of filesys module
-                         Major changes to transfer module for DCC RESUME
+1.5.0                        Initial asynchronous DNS support
+                             Initial penalty calculation support
+                             Complete rewrite of filesys module
+                             Major changes to transfer module for DCC RESUME
 
   Versions 1.5.x were development test versions so their release dates
   overlap with 1.4.x.

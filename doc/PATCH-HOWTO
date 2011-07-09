@@ -1,4 +1,4 @@
-$Id: PATCH-HOWTO,v 1.15 2011/02/13 14:19:32 simple Exp $
+$Id: PATCH-HOWTO,v 1.16 2011/07/09 15:07:48 thommey Exp $
 
 Patch Howto
 Last revised: July 23, 2004
@@ -32,7 +32,7 @@ Last revised: July 23, 2004
     To apply a patch to an Eggdrop, you have to first obtain the Eggdrop
     source code. You should always keep a tar.gz archive with the source of
     your current Eggdrop on your shell. In the next step, you have to change
-    to your source directory (i.e.: /home/user/eggdrop1.6.20/) and type
+    to your source directory (i.e.: /home/user/eggdrop1.6.21/) and type
     the following command:
 
       patch -p1 < ../path.to.the/patch

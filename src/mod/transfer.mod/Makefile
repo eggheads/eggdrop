@@ -1,5 +1,5 @@
 # Makefile for src/mod/transfer.mod/
-# $Id: Makefile,v 1.17 2005/12/09 09:29:11 wcc Exp $
+# $Id: Makefile,v 1.18 2011/07/09 15:07:48 thommey Exp $
 
 srcdir = .
 
@@ -33,14 +33,14 @@ distclean: clean
 
 #safety hash
 ../transfer.o: .././transfer.mod/transfer.c ../../../src/mod/module.h \
-  ../../../src/main.h ../../../config.h ../../../lush.h \
-  ../../../src/lang.h ../../../src/eggdrop.h ../../../src/flags.h \
-  ../../../src/cmdt.h ../../../src/tclegg.h ../../../src/tclhash.h \
-  ../../../src/chan.h ../../../src/users.h ../../../src/compat/compat.h \
-  ../../../src/compat/inet_aton.h ../../../src/main.h \
-  ../../../src/compat/snprintf.h ../../../src/compat/memset.h \
-  ../../../src/compat/memcpy.h ../../../src/compat/strcasecmp.h \
-  ../../../src/compat/strftime.h ../../../src/mod/modvals.h \
-  ../../../src/tandem.h ../../../src/tandem.h ../../../src/users.h \
-  .././transfer.mod/transfer.h .././transfer.mod/transferfstat.c \
-  .././transfer.mod/transferqueue.c .././transfer.mod/tcltransfer.c
+ ../../../src/main.h ../../../config.h ../../../lush.h \
+ ../../../src/lang.h ../../../src/eggdrop.h ../../../src/flags.h \
+ ../../../src/cmdt.h ../../../src/tclegg.h ../../../src/tclhash.h \
+ ../../../src/chan.h ../../../src/users.h ../../../src/compat/compat.h \
+ ../../../src/compat/inet_aton.h ../../../src/compat/snprintf.h \
+ ../../../src/compat/memset.h ../../../src/compat/memcpy.h \
+ ../../../src/compat/strcasecmp.h ../../../src/compat/strdup.h \
+ ../../../src/compat/strftime.h ../../../src/mod/modvals.h \
+ ../../../src/tandem.h ../../../src/users.h .././transfer.mod/transfer.h \
+ .././transfer.mod/transferfstat.c .././transfer.mod/transferqueue.c \
+ .././transfer.mod/tcltransfer.c

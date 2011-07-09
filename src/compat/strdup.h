@@ -1,11 +1,11 @@
 /*
- * compat.h
- *   wrap-around header for all compability functions.
+ * strdup.h
+ *   prototypes for strdup.c
  *
- * $Id: compat.h,v 1.16 2011/07/09 15:07:48 thommey Exp $
+ * $Id: strdup.h,v 1.1 2011/07/09 15:07:48 thommey Exp $
  */
 /*
- * Copyright (C) 2000 - 2011 Eggheads Development Team
+ * Copyright (C) 2011 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -22,15 +22,17 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
-#ifndef _EGG_COMPAT_COMPAT_H
-#define _EGG_COMPAT_COMPAT_H
+#ifndef _EGG_COMPAT_STRDUP_H
+#define _EGG_COMPAT_STRDUP_H
 
-#include "inet_aton.h"
-#include "snprintf.h"
-#include "memset.h"
-#include "memcpy.h"
-#include "strcasecmp.h"
-#include "strdup.h"
-#include "strftime.h"
+#include "src/main.h"
+#include <string.h>
 
-#endif /* !__EGG_COMPAT_COMPAT_H */
+#ifndef HAVE_STRDUP
+/* Use our own implementation. */
+char *egg_strdup(const char *s);
+#else
+#  define egg_strdup strdup
+#endif
+
+#endif /* !__EGG_COMPAT_STRDUP_H */

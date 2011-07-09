@@ -1,11 +1,11 @@
 dnl configure.ac: this file is processed by autoconf to produce ./configure.
 dnl
-dnl $Id: configure.ac,v 1.41 2011/02/13 14:19:32 simple Exp $
+dnl $Id: configure.ac,v 1.42 2011/07/09 15:07:48 thommey Exp $
 
 AC_PREREQ(2.60)
-AC_INIT([Eggdrop],[1.6.20],[bugs@eggheads.org])
+AC_INIT([Eggdrop],[1.6.21],[bugs@eggheads.org])
 AC_COPYRIGHT([Copyright (C) 1999 - 2011 Eggheads Development Team])
-AC_REVISION($Revision: 1.41 $)
+AC_REVISION($Revision: 1.42 $)
 AC_CONFIG_SRCDIR(src/eggdrop.h)
 AC_CONFIG_AUX_DIR(misc)
 AC_CONFIG_HEADER(config.h)
@@ -113,7 +113,7 @@ AC_CHECK_SIZEOF(short, 0)
 
 
 # Checks for functions and their arguments.
-AC_CHECK_FUNCS([clock dprintf fsync getdtablesize getrusage inet_aton isascii mbrlen memcpy memset random rand lrand48 rename setpgid sigaction sigemptyset snprintf strcasecmp strncasecmp uname vsnprintf])
+AC_CHECK_FUNCS([clock dprintf fsync getdtablesize getrusage inet_aton isascii mbrlen memcpy memset random rand lrand48 rename setpgid sigaction sigemptyset snprintf strcasecmp strncasecmp strdup uname vsnprintf])
 AC_FUNC_SELECT_ARGTYPES
 EGG_FUNC_VPRINTF
 AC_FUNC_STRFTIME
@@ -172,6 +172,7 @@ EGG_TCL_CHECK_FREE
 EGG_TCL_CHECK_GETCURRENTTHREAD
 EGG_TCL_CHECK_GETTHREADDATA
 EGG_TCL_CHECK_SETNOTIFIER
+EGG_TCL_CHECK_NOTIFIER_INIT
 EGG_TCL_LIB_REQS
 EGG_TCL_LUSH
 

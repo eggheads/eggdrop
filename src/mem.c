@@ -3,7 +3,7 @@
  *   memory allocation and deallocation
  *   keeping track of what memory is being used by whom
  *
- * $Id: mem.c,v 1.30 2011/02/13 14:19:33 simple Exp $
+ * $Id: mem.c,v 1.31 2011/07/09 15:07:48 thommey Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -304,22 +304,12 @@ void debug_mem_to_dcc(int idx)
   tell_netdebug(idx);
 }
 
-void *n_malloc(int size, const char *file, int line)
-{
-  void *x;
-
 #ifdef DEBUG_MEM
+static inline void addtomemtbl(void *x, int size, const char *file, int line)
+{
   int i = 0;
   char *p;
-#endif
 
-  x = (void *) malloc(size);
-  if (x == NULL) {
-    putlog(LOG_MISC, "*", "*** FAILED MALLOC %s (%d) (%d): %s", file, line,
-           size, strerror(errno));
-    fatal("Memory allocation failed", 0);
-  }
-#ifdef DEBUG_MEM
   if (lastused == MEMTBLSIZE) {
     putlog(LOG_MISC, "*", "*** MEMORY TABLE FULL: %s (%d)", file, line);
     fatal("Memory table full", 0);
@@ -333,6 +323,34 @@ void *n_malloc(int size, const char *file, int line)
   memtbl[i].file[19] = 0;
   memused += size;
   lastused++;
+}
+#endif
+
+char *n_strdup(const char *s, const char *file, int line)
+{
+  char *x;
+
+  x = egg_strdup(s);
+putlog(LOG_MISC, "*", "*** %d", strlen(s)+1);
+/* compat strdup uses nmalloc itself */
+#if defined(DEBUG_MEM) && defined(HAVE_STRDUP)
+  addtomemtbl(x, strlen(s)+1, file, line);
+#endif
+  return x;
+}
+
+void *n_malloc(int size, const char *file, int line)
+{
+  void *x;
+
+  x = (void *) malloc(size);
+  if (x == NULL) {
+    putlog(LOG_MISC, "*", "*** FAILED MALLOC %s (%d) (%d): %s", file, line,
+           size, strerror(errno));
+    fatal("Memory allocation failed", 0);
+  }
+#ifdef DEBUG_MEM
+  addtomemtbl(x, size, file, line);
 #endif
   return x;
 }

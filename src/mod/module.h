@@ -1,7 +1,7 @@
 /*
  * module.h
  *
- * $Id: module.h,v 1.96 2011/02/13 14:19:33 simple Exp $
+ * $Id: module.h,v 1.97 2011/07/09 15:07:48 thommey Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -43,6 +43,7 @@
  * held responsible for mental break-downs caused by this file <G>
  */
 
+#undef nstrdup
 #undef nmalloc
 #undef nfree
 #undef nrealloc
@@ -78,6 +79,9 @@
 #endif
 #ifdef egg_strncasecmp
 #  undef egg_strncasecmp
+#endif
+#ifdef egg_strdup
+#  undef egg_strdup
 #endif
 
 #if defined (__CYGWIN__) && !defined(STATIC)
@@ -485,6 +489,7 @@
 #define check_conflags ((int (*) (struct flag_record *, int))global[296])
 #define increase_socks_max ((int (*)(void))global[297])
 #define LOG_TS ((char *)(global[298]))
+#define nstrdup(x) (((char *(*)())global[299])((x),MODULE_NAME,__FILE__,__LINE__))
 
 /* hostmasking */
 #define maskhost(a,b) maskaddr((a),(b),3)

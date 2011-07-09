@@ -2,7 +2,7 @@
  * main.h
  *   include file to include most other include files
  *
- * $Id: main.h,v 1.42 2011/02/13 14:19:33 simple Exp $
+ * $Id: main.h,v 1.43 2011/07/09 15:07:48 thommey Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -48,7 +48,7 @@
 #  define USE_TCL_ENCODING
 #endif
 
-#if defined(HAVE_TCL_SETNOTIFIER) && defined(HAVE_TCL_GETTHREADDATA)
+#if defined(HAVE_TCL_SETNOTIFIER) && defined(HAVE_TCL_GETTHREADDATA) && defined(HAVE_TCL_NOTIFIER_INIT)
 #  define REPLACE_NOTIFIER
 #endif
 

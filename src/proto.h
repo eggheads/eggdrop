@@ -7,7 +7,7 @@
  * because they use structures in those
  * (saves including those .h files EVERY time) - Beldin
  *
- * $Id: proto.h,v 1.83 2011/02/13 14:19:33 simple Exp $
+ * $Id: proto.h,v 1.84 2011/07/09 15:07:48 thommey Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -208,6 +208,7 @@ int cron_match(const char *, const char *);
 #define cmp_usermasks(a,b) addr_match((char *)(a),(char *)(b),1,1)
 
 /* mem.c */
+char *n_strdup(const char *, const char *, int);
 void *n_malloc(int, const char *, int);
 void *n_realloc(void *, int, const char *, int);
 void n_free(void *, const char *, int);
