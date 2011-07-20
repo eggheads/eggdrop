@@ -1,4 +1,4 @@
-$Id: Changes1.6,v 1.101 2011/07/20 10:50:35 thommey Exp $
+$Id: Changes1.6,v 1.102 2011/07/20 10:54:12 thommey Exp $
 
 Eggdrop Changes (since version 1.6.0)
 
@@ -6,6 +6,7 @@ Eggdrop Changes (since version 1.6.0)
 
 1.6.21 (CVS):
 
+  - More AC_LANG_* usage.
   - Work around Tcl8.5.10 bug 3371644 (strings starting with # could crash
     in Tcl_ConvertElement()). TCL_DONT_QUOTE_HASH can be used to work
     around it, as long as the string is not passed to Tcl_Eval().

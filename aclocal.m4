@@ -16,7 +16,7 @@ dnl You should have received a copy of the GNU General Public License
 dnl along with this program; if not, write to the Free Software
 dnl Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 dnl
-dnl $Id: aclocal.m4,v 1.120 2011/07/20 10:50:35 thommey Exp $
+dnl $Id: aclocal.m4,v 1.121 2011/07/20 10:54:12 thommey Exp $
 dnl
 
 
@@ -1773,26 +1773,26 @@ AC_DEFUN([AC_PROG_CC_WIN32],
 [
   AC_MSG_CHECKING([how to access the Win32 API])
   WIN32FLAGS=
-  AC_COMPILE_IFELSE([[
+  AC_COMPILE_IFELSE([AC_LANG_SOURCE([[
     #ifndef WIN32
     #  ifndef _WIN32
     #    error WIN32 or _WIN32 not defined
     #  endif
     #endif
-  ]], [
+  ]])], [
     AC_MSG_RESULT([present by default])
   ], [
     ac_compile_save="$ac_compile"
     save_CC="$CC"
     ac_compile="$ac_compile -mwin32"
     CC="$CC -mwin32"
-    AC_COMPILE_IFELSE([[
+    AC_COMPILE_IFELSE([AC_LANG_SOURCE([[
       #ifndef WIN32
       #  ifndef _WIN32
       #    error WIN32 or _WIN32 not defined
       #  endif
       #endif
-    ]], [
+    ]])], [
       AC_MSG_RESULT([found via -mwin32])
       ac_compile="$ac_compile_save"
       CC="$save_CC"
