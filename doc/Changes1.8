@@ -1,10 +1,18 @@
-$Id: Changes1.8,v 1.53 2011/07/08 23:12:54 thommey Exp $
+$Id: Changes1.8,v 1.54 2011/07/20 10:31:37 thommey Exp $
 
 Eggdrop Changes (since version 1.8.0)
 
     _____________________________________________________________________
 
 1.8.0 (CVS):
+
+  - Work around Tcl8.5.10 bug 3371644 (strings starting with # could crash
+    in Tcl_ConvertElement()). TCL_DONT_QUOTE_HASH can be used to work
+    around it, as long as the string is not passed to Tcl_Eval().
+    Found by: Austin
+  - Use the autoconf macros AC_LANG_PROGRAM/AC_LANG_SOURCE for sourcecode
+    to avoid warnings in autoconf >= 2.68.
+    Patch by: thommey
 
   - Make sure to account for null termination when using Tcl_ScanElement
     to generate a string representation of a list using Tcl_ConvertElement.

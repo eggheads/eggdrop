@@ -16,7 +16,7 @@ dnl You should have received a copy of the GNU General Public License
 dnl along with this program; if not, write to the Free Software
 dnl Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 dnl
-dnl $Id: aclocal.m4,v 1.13 2011/01/21 02:33:41 thommey Exp $
+dnl $Id: aclocal.m4,v 1.14 2011/07/20 10:31:37 thommey Exp $
 dnl
 
 
@@ -159,11 +159,11 @@ dnl
 dnl
 AC_DEFUN([EGG_CHECK_ICC],[
   AC_CACHE_CHECK([for icc], egg_cv_var_cc_icc, [
-    AC_COMPILE_IFELSE([[
+    AC_COMPILE_IFELSE([AC_LANG_SOURCE([[
 #if !(defined(__ICC) || defined(__ECC) || defined(__INTEL_COMPILER))
   "Toto, I've a feeling we're not in Kansas anymore."
 #endif
-    ]], [
+    ]])], [
       egg_cv_var_cc_icc="yes"
     ], [
       egg_cv_var_cc_icc="no"
@@ -189,12 +189,7 @@ AC_DEFUN([EGG_CHECK_CCPIPE],
     AC_CACHE_CHECK([whether the compiler understands -pipe], egg_cv_var_ccpipe, [
       ac_old_CC="$CC"
       CC="$CC -pipe"
-      AC_COMPILE_IFELSE([[
-        int main ()
-        {
-          return(0);
-        }
-      ]], [
+      AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[]], [[ return(0); ]])], [
         egg_cv_var_ccpipe="yes"
       ], [
         egg_cv_var_ccpipe="no"
@@ -219,12 +214,7 @@ AC_DEFUN([EGG_CHECK_CCWALL],
     AC_CACHE_CHECK([whether the compiler understands -Wall], egg_cv_var_ccwall, [
       ac_old_CFLAGS="$CFLAGS"
       CFLAGS="$CFLAGS -Wall"
-      AC_COMPILE_IFELSE([[
-        int main ()
-        {
-          return(0);
-        }
-      ]], [
+      AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[]], [[ return(0); ]])], [
         egg_cv_var_ccwall="yes"
       ], [
         egg_cv_var_ccwall="no"
@@ -251,24 +241,21 @@ dnl
 AC_DEFUN([EGG_CHECK_SOCKLEN_T],
 [
   AC_CACHE_CHECK([for socklen_t], egg_cv_socklen_t, [
-    AC_RUN_IFELSE([[
+    AC_RUN_IFELSE([AC_LANG_PROGRAM([[
       #include <unistd.h>
       #include <sys/param.h>
       #include <sys/types.h>
       #include <sys/socket.h>
       #include <netinet/in.h>
       #include <arpa/inet.h>
-
-      int main()
-      {
+    ]],[[
         socklen_t test = 55;
 
         if (test != 55)
-          exit(1);
+          return(1);
 
         return(0);
-      }
-    ]], [
+    ]])], [
       egg_cv_socklen_t="yes"
     ], [
       egg_cv_socklen_t="no"
@@ -1409,6 +1396,7 @@ AC_DEFUN([EGG_TCL_CHECK_SETNOTIFIER],
   fi
 ])
 
+
 dnl EGG_TCL_CHECK_NOTIFIER_INIT
 dnl
 AC_DEFUN([EGG_TCL_CHECK_NOTIFIER_INIT],
@@ -1420,7 +1408,7 @@ AC_DEFUN([EGG_TCL_CHECK_NOTIFIER_INIT],
   # Check for Tcl_NotifierProcs member initNotifierProc
   AC_CHECK_MEMBER([Tcl_NotifierProcs.initNotifierProc], [egg_cv_var_tcl_notifier_init="yes"], [egg_cv_var_tcl_notifier_init="no"], [[#include "$TCLINC/$TCLINCFN"]])
   if test "$egg_cv_var_tcl_notifier_init" = yes; then
-    AC_DEFINE(HAVE_TCL_NOTIFIER_INIT, 1, [Define for Tcl that has the Tcl_NotiferProcs struct member initNotifierProc (8.4 and later).])
+    AC_DEFINE(HAVE_TCL_NOTIFIER_INIT, 1, [Define for Tcl that has the Tcl_NotifierProcs struct member initNotifierProc (8.4 and later).])
   fi
 ])
 
@@ -1847,21 +1835,18 @@ dnl
 AC_DEFUN([EGG_IPV6_STATUS],
 [
   AC_CACHE_CHECK([for system IPv6 support], [egg_cv_var_ipv6_supported], [
-    AC_RUN_IFELSE([[
+    AC_RUN_IFELSE([AC_LANG_PROGRAM([[
       #include <unistd.h>
       #include <sys/socket.h>
       #include <netinet/in.h>
-  
-      int main()
-      {
+    ]], [[
         int s = socket(AF_INET6, SOCK_STREAM, 0);
 
         if (s != -1)
           close(s);
 
         return((s == -1));
-       }
-    ]], [
+    ]])], [
       egg_cv_var_ipv6_supported="yes"
      ], [
       egg_cv_var_ipv6_supported="no"
