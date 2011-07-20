@@ -2,7 +2,7 @@
  * channels.c -- part of channels.mod
  *   support for channels within the bot
  *
- * $Id: channels.c,v 1.2.2.1 2010/11/11 20:34:47 pseudo Exp $
+ * $Id: channels.c,v 1.2.2.2 2011/07/20 10:45:36 thommey Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -368,6 +368,10 @@ static char *convert_element(char *src, char *dst)
   int flags;
 
   Tcl_ScanElement(src, &flags);
+/* Work around Tcl bug 3371644 (only present in 8.5.10) */
+#ifdef TCL_DONT_QUOTE_HASH
+  flags |= TCL_DONT_QUOTE_HASH;
+#endif
   Tcl_ConvertElement(src, dst, flags);
   return dst;
 }
