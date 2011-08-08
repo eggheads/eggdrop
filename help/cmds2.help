@@ -61,7 +61,7 @@ See also: modules, module, unloadmod
    Specifying "&" as the separator will cause AND style matching.
 
    For example:
-      .match p&o
+      .match +p&o
 
    This will match all users with both the "p" global flag and the "o" channel
    flag on your current console channel.
@@ -69,20 +69,20 @@ See also: modules, module, unloadmod
    Specifying "|" as the separator will cause OR style matching.
 
    For example:
-     .match p|o
+     .match +p|o
 
    This will match all users with either the "p" global flag or the "o" channel
    flag on your current console channel. If you specify a channel, it will be
    used instead of the current console channel.
 
    For example:
-     .match p|o #eggdrop
+     .match +p|o #eggdrop
 
    This will match all users with either the "p" global flag or the "o" channel
    flag on the channel #eggdrop. You can also match bot flags.
 
    For example:
-     .match o|o|h
+     .match +o|o|h
 
    This will match all bots with either the "o" global flag, the "o" channel
    flag on the current console channel, or the "h" botflag. You can also limit
@@ -90,7 +90,7 @@ See also: modules, module, unloadmod
    command. A starting point can also be specified.
 
    For example:
-     .match p&o #eggdrop 16 25
+     .match +p&o #eggdrop 16 25
 
    This would show results 16 through 25 matching any users with the "p" global
    flag or the "o" channel flag on #eggdrop.
