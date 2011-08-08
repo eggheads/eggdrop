@@ -4,7 +4,7 @@
  *
  * Written by Fabian Knittel <fknittel@gmx.de>
  *
- * $Id: dns.c,v 1.42 2011/04/01 11:59:49 pseudo Exp $
+ * $Id: dns.c,v 1.43 2011/08/08 22:37:02 pseudo Exp $
  */
 /*
  * Copyright (C) 1999 - 2011 Eggheads Development Team
@@ -149,8 +149,9 @@ static char *dns_change(ClientData cdata, Tcl_Interp *irp,
     
     Tcl_DStringInit(&ds);
     for (i = 0; i < _res.nscount; i++) {
-      snprintf(buf, sizeof buf, "%s:%d", iptostr((struct sockaddr *)
-               &_res.nsaddr_list[i]), ntohs(_res.nsaddr_list[i].sin_port));
+      snprintf(buf, sizeof buf, "%s:%d",
+               iptostr(_res.nsaddr_list[i].sin_addr.s_addr),
+               ntohs(_res.nsaddr_list[i].sin_port));
       Tcl_DStringAppendElement(&ds, buf);
     }
     slist = Tcl_DStringValue(&ds);
@@ -226,7 +227,7 @@ static int dns_report(int idx, int details)
     dprintf(idx, "    Async DNS resolver is active.\n");
     dprintf(idx, "    DNS server list:");
     for (i = 0; i < _res.nscount; i++)
-      dprintf(idx, " %s:%d", iptostr((struct sockaddr *) &_res.nsaddr_list[i]),
+      dprintf(idx, " %s:%d", iptostr(_res.nsaddr_list[i].sin_addr.s_addr),
               ntohs(_res.nsaddr_list[i].sin_port));
     dprintf(idx, "\n");
     dprintf(idx, "    Using %d byte%s of memory\n", size,

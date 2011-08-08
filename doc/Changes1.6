@@ -1,10 +1,16 @@
-$Id: Changes1.6,v 1.104 2011/07/31 20:15:05 thommey Exp $
+$Id: Changes1.6,v 1.105 2011/08/08 22:37:02 pseudo Exp $
 
 Eggdrop Changes (since version 1.6.0)
 
     _____________________________________________________________________
 
 1.6.21 (CVS):
+
+  - Fixed a bug in the backported dns-settings patch where dns_change()
+    would call iptostr() with inappropriate argument.
+    Fixes Trac Bug #87 "dns-servers setting on 1.6 filled with garbage if
+    not set"
+    Found by: thommey / Patch by: pseudo
 
   - Partially revert changes to vwait/update. They are back to only
     processing Tcl events for now (fileevent/after) as handling eggdrop
