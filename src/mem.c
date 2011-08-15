@@ -3,7 +3,7 @@
  *   memory allocation and deallocation
  *   keeping track of what memory is being used by whom
  *
- * $Id: mem.c,v 1.31 2011/07/09 15:07:48 thommey Exp $
+ * $Id: mem.c,v 1.32 2011/08/15 18:16:29 thommey Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -331,7 +331,6 @@ char *n_strdup(const char *s, const char *file, int line)
   char *x;
 
   x = egg_strdup(s);
-putlog(LOG_MISC, "*", "*** %d", strlen(s)+1);
 /* compat strdup uses nmalloc itself */
 #if defined(DEBUG_MEM) && defined(HAVE_STRDUP)
   addtomemtbl(x, strlen(s)+1, file, line);
