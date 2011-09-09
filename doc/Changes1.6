@@ -1,10 +1,14 @@
-$Id: Changes1.6,v 1.108 2011/08/15 18:16:29 thommey Exp $
+$Id: Changes1.6,v 1.109 2011/09/09 21:37:53 thommey Exp $
 
 Eggdrop Changes (since version 1.6.0)
 
     _____________________________________________________________________
 
 1.6.21 (CVS):
+
+  - Fixed a bug in the mainloop for Tcl threads which is now
+    also being used as vwait/update recursion mainloop.
+    Patch by: thommey
 
   - Removed debug output accidentally checked in.
     Found by: DJStomp / Patch by: thommey

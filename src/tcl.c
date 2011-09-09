@@ -4,7 +4,7 @@
  *   Tcl initialization
  *   getting and setting Tcl/eggdrop variables
  *
- * $Id: tcl.c,v 1.101 2011/07/31 20:15:06 thommey Exp $
+ * $Id: tcl.c,v 1.102 2011/09/09 21:37:53 thommey Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -684,7 +684,7 @@ int tclthreadmainloop(int zero)
 {
   int i;
   i = sockread(NULL, NULL, threaddata()->socklist, threaddata()->MAXSOCKS, 1);
-  return (i == -4);
+  return (i == -5);
 }
 
 struct threaddata *threaddata()
