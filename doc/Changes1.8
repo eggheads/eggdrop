@@ -1,10 +1,14 @@
-$Id: Changes1.8,v 1.55 2011/07/20 10:32:25 thommey Exp $
+$Id: Changes1.8,v 1.56 2011/09/09 21:38:39 thommey Exp $
 
 Eggdrop Changes (since version 1.8.0)
 
     _____________________________________________________________________
 
 1.8.0 (CVS):
+
+  - Fixed a bug in the mainloop for Tcl threads which is now
+    also being used as vwait/update recursion mainloop.
+    Patch by: thommey
 
   - Ran autotools.
   - Work around Tcl8.5.10 bug 3371644 (strings starting with # could crash
