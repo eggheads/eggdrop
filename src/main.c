@@ -5,7 +5,7 @@
  *   command line arguments
  *   context and assert debugging
  *
- * $Id: main.c,v 1.140 2011/07/09 15:07:48 thommey Exp $
+ * $Id: main.c,v 1.141 2011/09/23 20:31:32 thommey Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -298,6 +298,8 @@ static void write_debug()
     if (tcl_threaded())
       dprintf(-x, "Tcl is threaded\n");
 
+    dprintf(-x, "Configure flags: %s\n", EGG_AC_ARGS);
+
 #ifdef CCFLAGS
     dprintf(-x, "Compile flags: %s\n", CCFLAGS);
 #endif
@@ -487,6 +489,8 @@ static void do_arg(char *s)
         printf("%s\n", version);
         if (z[0])
           printf("  (patches: %s)\n", z);
+        printf("Configured with: " EGG_AC_ARGS "\n");
+        printf("handlen=%d\n", HANDLEN);
         bg_send_quit(BG_ABORT);
         exit(0);
         break;                  /* this should never be reached */

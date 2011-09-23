@@ -4,7 +4,8 @@
    ban time. This ban is stored with your handle as the creator, and will be
    in effect for every channel if no channel is specified. Prefixing a comment
    with '@' will make it only visible within the bot, and not used as the ban
-   reason. Ban time has to be expressed in days, hours, and/or minutes.
+   reason. Prefixing the comment with '*' will make the ban sticky. Ban time
+   has to be expressed in days, hours, and/or minutes.
 
 See also: bans, -ban, stick, unstick
 %{help=+exempt}%{+lo|lo}
@@ -12,7 +13,8 @@ See also: bans, -ban, stick, unstick
    Adds an exempt to the list of exempts stored on the bot, with optional
    comment and exempt time. This exempt is stored with your handle as the
    creator, and will be in effect for every channel if no channel is specified.
-   Exempt time has to be expressed in days, hours, and/or minutes.
+   Prefixing a comment with '*' will make the exempt sticky. Exempt time has
+   to be expressed in days, hours, and/or minutes.
 
 See also: exempts, -exempt, stick, unstick
 %{help=+invite}%{+lo|lo}
@@ -20,7 +22,8 @@ See also: exempts, -exempt, stick, unstick
    Adds an invite to the list of invites stored on the bot, with optional
    comment and invite time. This invite is stored with your handle as the
    creator, and will be in effect for every channel if no channel is specified.
-   Invite time has to be expressed in days, hours, and/or minutes.
+   Prefixing a comment with '*' will make the invite sticky. Invite time has
+   to be expressed in days, hours, and/or minutes.
 
 See also: invites, -invite, stick, unstick
 %{help=+chan}%{+n}
