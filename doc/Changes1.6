@@ -1,10 +1,14 @@
-$Id: Changes1.6,v 1.114 2011/10/02 18:25:17 pseudo Exp $
+$Id: Changes1.6,v 1.115 2011/10/02 20:11:06 pseudo Exp $
 
 Eggdrop Changes (since version 1.6.0)
 
     _____________________________________________________________________
 
 1.6.21 (CVS):
+
+  - Fixed an ancient bug resulting in sending uninitialized strings when
+    sharing bot addresses.
+    Patch by: pseudo
 
   - Altered the permission check on the pls/mns ban/exempt/invite commands
     from USER_MASTER to USER_OP to allow global operators to set global bans.

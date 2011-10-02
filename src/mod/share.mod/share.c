@@ -1,7 +1,7 @@
 /*
  * share.c -- part of share.mod
  *
- * $Id: share.c,v 1.93 2011/02/13 14:19:34 simple Exp $
+ * $Id: share.c,v 1.94 2011/10/02 20:11:06 pseudo Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -1947,10 +1947,11 @@ static void start_sending_users(int idx)
             q_tbuf(dcc[idx].nick, s2, NULL);
           }
           /* Send address */
-          if (bi)
+          if (bi) {
             egg_snprintf(s2, sizeof s2, "s c BOTADDR %s %s %d %d\n", u->handle,
                          bi->address, bi->telnet_port, bi->relay_port);
-          q_tbuf(dcc[idx].nick, s2, NULL);
+            q_tbuf(dcc[idx].nick, s2, NULL);
+          }
           fr.match = FR_GLOBAL;
           fr.global = u->flags;
 
