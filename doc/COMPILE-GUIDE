@@ -1,7 +1,7 @@
-$Id: COMPILE-GUIDE,v 1.15 2011/07/09 15:07:48 thommey Exp $
+$Id: COMPILE-GUIDE,v 1.16 2011/10/02 20:51:31 pseudo Exp $
 
 Eggdrop Compile Guide and FAQ
-Last revised: February 14, 2010
+Last revised: October 02, 2011
     _____________________________________________________________________
 
                         Eggdrop Compile Guide and FAQ
@@ -238,16 +238,16 @@ Last revised: February 14, 2010
       below.
 
         1. Download and install Cygwin (www.cygwin.com). Make sure to install
-           things like GCC, zlib, minires, autoconf, and automake. DO NOT
-           install the Tcl provided by Cygwin's installer. After installing,
-           open the Cygwin bash prompt.
+           things like GCC, zlib, autoconf, and automake. DO NOT install the Tcl
+           provided by Cygwin's installer. After installing, open the Cygwin
+           bash prompt.
 
-        2. Download and install TCL 8.4.1. You can get Tcl for Cygwin at
-           http://prdownloads.sourceforge.net/windrop/tcl-8.4.1.tar.gz.
+        2. Download and install TCL 8.5.9 or later. You can get Tcl for Cygwin
+           at http://prdownloads.sourceforge.net/windrop/tcl-8.5.9.tar.gz.
            Extract this to the Cygwin root directory:
 
              cd /
-             tar -zxf tcl-8.4.1.tar.gz
+             tar -zxf tcl-8.5.9.tar.gz
 
         3. Download Eggdrop from geteggdrop.com to your home directory.
            This is usually something like 'C:\cygwin\home\<username>\'. After
@@ -287,17 +287,13 @@ Last revised: February 14, 2010
            directory, replacing all '\'s with '/'s.
 
              cp /bin/cygwin1.dll 'C:/eggdrop'
-             cp /usr/local/bin/tcl84.dll 'C:/eggdrop'
-             cp /usr/local/bin/tclpip84.dll 'C:/eggdrop'
+             cp /usr/local/bin/libtcl8.5.dll 'C:/eggdrop'
 
              mkdir C:/eggdrop/lib
-             cp -r /usr/local/lib/dde1.2 'C:/eggdrop/lib'
-             cp -r /usr/local/lib/reg1.1 'C:/eggdrop/lib'
-             cp -r /usr/local/lib/tcl8.4 'C:/eggdrop/lib'
+             cp -r /usr/local/lib/tcl 'C:/eggdrop/lib'
+             cp -r /usr/local/lib/tcl8.5 'C:/eggdrop/lib'
 
              cp /bin/cygz.dll 'C:/eggdrop' (if you selected compress.mod)
-
-             cp /bin/cygminires.dll 'C:/eggdrop' (if you selected dns.mod)
 
 
     I. Tcl Detection and Installation
@@ -329,9 +325,9 @@ Last revised: February 14, 2010
         If you do not have Tcl installed on your system, you can compile it in
         your /home directory. Download Tcl from Tcl's SourceForge project page
         at http://www.sourceforge.net/projects/tcl/, or from ActiveState at
-        ftp://tcl.activestate.com/pub/tcl/tcl8_4/. Read Tcl's README file for
-        help with compiling and installing it. After you compile Tcl, follow
-        the steps above to allow Eggdrop to detect Tcl.
+        ftp://tcl.activestate.com/pub/tcl/. Read Tcl's README file for help
+        with compiling and installing it. After you compile Tcl, follow the
+        steps above to allow Eggdrop to detect Tcl.
 
 
   Frequently Asked Questions

@@ -1,5 +1,5 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
-<!-- $Id: compiling.html,v 1.44 2011/07/09 15:07:48 thommey Exp $ -->
+<!-- $Id: compiling.html,v 1.45 2011/10/02 20:51:31 pseudo Exp $ -->
 
 <html>
   <head>
@@ -349,20 +349,21 @@ $(STRIP) ../../../mymodule.$(MOD_EXT)
         <ol>
           <li>Download and install Cygwin
           (<a href="http://www.cygwin.com">http://www.cygwin.com</a>). Make
-          sure to install things like <strong>GCC, zlib, minires, autoconf, and
+          sure to install things like <strong>GCC, zlib, autoconf, and
           automake</strong>. <strong>DO NOT</strong> install the Tcl provided
           by Cygwin&#39;s installer. After installing, open the Cygwin bash
           prompt.<br><br></li>
 
-          <li>Download and install TCL 8.4.1. You can get Tcl for Cygwin at
-          <a href="http://prdownloads.sourceforge.net/windrop/tcl-8.4.1.tar.gz">
-          http://prdownloads.sourceforge.net/windrop/tcl-8.4.1.tar.gz</a>.
+          <li>Download and install TCL 8.5.9 or later. You can get Tcl for
+          Cygwin at
+          <a href="http://prdownloads.sourceforge.net/windrop/tcl-8.5.9.tar.gz">
+          http://prdownloads.sourceforge.net/windrop/tcl-8.5.9.tar.gz</a>.
           Extract this to the Cygwin root directory:
 
           <blockquote>
 <pre>
 cd /
-tar -zxf tcl-8.4.1.tar.gz
+tar -zxf tcl-8.5.9.tar.gz
 </pre>
           </blockquote></li>
 
@@ -422,16 +423,13 @@ mv modules-1.6.21 modules
           <blockquote>
 <pre>
 cp /bin/cygwin1.dll &#39;C:/eggdrop&#39;
-cp /usr/local/bin/tcl84.dll &#39;C:/eggdrop&#39;
-cp /usr/local/bin/tclpip84.dll &#39;C:/eggdrop&#39;
+cp /usr/local/bin/libtcl8.5.dll &#39;C:/eggdrop&#39;
 
 mkdir C:/eggdrop/lib
-cp -r /usr/local/lib/dde1.2 &#39;C:/eggdrop/lib&#39;
-cp -r /usr/local/lib/reg1.1 &#39;C:/eggdrop/lib&#39;
-cp -r /usr/local/lib/tcl8.4 &#39;C:/eggdrop/lib&#39;
+cp -r /usr/local/lib/tcl &#39;C:/eggdrop/lib&#39;
+cp -r /usr/local/lib/tcl8.5 &#39;C:/eggdrop/lib&#39;
 
 cp /bin/cygz.dll &#39;C:/eggdrop&#39; (if you selected compress.mod)
-cp /bin/cygminires.dll &#39;C:/eggdrop&#39; (if you selected dns.mod)
 </pre>
           </blockquote></li>
         </ol>
@@ -447,7 +445,7 @@ cp /bin/cygminires.dll &#39;C:/eggdrop&#39; (if you selected dns.mod)
 
       <blockquote>
         <ol>
-          <li>Depending on what shell your using:<br><br>
+          <li>Depending on what shell you are using:<br><br>
 
           bash/ksh:
           <blockquote>
