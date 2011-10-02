@@ -4,7 +4,7 @@
  *   disconnect on a dcc socket
  *   ...and that's it!  (but it's a LOT)
  *
- * $Id: dcc.c,v 1.94 2011/02/13 14:19:33 simple Exp $
+ * $Id: dcc.c,v 1.95 2011/10/02 18:21:35 pseudo Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -1581,7 +1581,7 @@ static void dcc_telnet_new(int idx, char *buf, int x)
     strip_telnet(dcc[idx].sock, buf, &x);
   dcc[idx].timeval = now;
   for (x = 0; x < strlen(buf); x++)
-    if ((buf[x] <= 32) || (buf[x] >= 127))
+    if (buf[x] <= 32)
       ok = 0;
   if (!ok) {
     dprintf(idx, "\nYou can't use weird symbols in your nick.\n");
