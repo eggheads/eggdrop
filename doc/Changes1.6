@@ -1,10 +1,14 @@
-$Id: Changes1.6,v 1.113 2011/10/02 18:21:35 pseudo Exp $
+$Id: Changes1.6,v 1.114 2011/10/02 18:25:17 pseudo Exp $
 
 Eggdrop Changes (since version 1.6.0)
 
     _____________________________________________________________________
 
 1.6.21 (CVS):
+
+  - Altered the permission check on the pls/mns ban/exempt/invite commands
+    from USER_MASTER to USER_OP to allow global operators to set global bans.
+    Patch by: pjb
 
   - Made dcc_telnet_new() allow non-latin characters in new handles like other
     handle validation functions.

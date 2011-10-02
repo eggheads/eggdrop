@@ -2,7 +2,7 @@
  * cmdschan.c -- part of channels.mod
  *   commands from a user via dcc that cause server interaction
  *
- * $Id: cmdschan.c,v 1.86 2011/02/13 14:19:33 simple Exp $
+ * $Id: cmdschan.c,v 1.87 2011/10/02 18:25:17 pseudo Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -45,7 +45,7 @@ static void cmd_pls_ban(struct userrec *u, int idx, char *par)
       chname = newsplit(&par);
     else
       chname = 0;
-    if (chname || !(u->flags & USER_MASTER)) {
+    if (chname || !(u->flags & USER_OP)) {
       if (!chname)
         chname = dcc[idx].u.chat->con_chan;
       get_user_flagrec(u, &user, chname);
@@ -183,7 +183,7 @@ static void cmd_pls_exempt(struct userrec *u, int idx, char *par)
       chname = newsplit(&par);
     else
       chname = 0;
-    if (chname || !(u->flags & USER_MASTER)) {
+    if (chname || !(u->flags & USER_OP)) {
       if (!chname)
         chname = dcc[idx].u.chat->con_chan;
       get_user_flagrec(u, &user, chname);
@@ -311,7 +311,7 @@ static void cmd_pls_invite(struct userrec *u, int idx, char *par)
       chname = newsplit(&par);
     else
       chname = 0;
-    if (chname || !(u->flags & USER_MASTER)) {
+    if (chname || !(u->flags & USER_OP)) {
       if (!chname)
         chname = dcc[idx].u.chat->con_chan;
       get_user_flagrec(u, &user, chname);
@@ -437,7 +437,7 @@ static void cmd_mns_ban(struct userrec *u, int idx, char *par)
     chname = dcc[idx].u.chat->con_chan;
     console = 1;
   }
-  if (chname || !(u->flags & USER_MASTER)) {
+  if (chname || !(u->flags & USER_OP)) {
     if (!chname)
       chname = dcc[idx].u.chat->con_chan;
     get_user_flagrec(u, &user, chname);
@@ -450,7 +450,7 @@ static void cmd_mns_ban(struct userrec *u, int idx, char *par)
   }
   strncpyz(s, ban, sizeof s);
   if (console) {
-    i = u_delban(NULL, s, (u->flags & USER_MASTER));
+    i = u_delban(NULL, s, (u->flags & USER_OP));
     if (i > 0) {
       if (lastdeletedmask)
         mask = lastdeletedmask;
@@ -549,7 +549,7 @@ static void cmd_mns_exempt(struct userrec *u, int idx, char *par)
     chname = dcc[idx].u.chat->con_chan;
     console = 1;
   }
-  if (chname || !(u->flags & USER_MASTER)) {
+  if (chname || !(u->flags & USER_OP)) {
     if (!chname)
       chname = dcc[idx].u.chat->con_chan;
     get_user_flagrec(u, &user, chname);
@@ -561,7 +561,7 @@ static void cmd_mns_exempt(struct userrec *u, int idx, char *par)
   }
   strncpyz(s, exempt, sizeof s);
   if (console) {
-    i = u_delexempt(NULL, s, (u->flags & USER_MASTER));
+    i = u_delexempt(NULL, s, (u->flags & USER_OP));
     if (i > 0) {
       if (lastdeletedmask)
         mask = lastdeletedmask;
@@ -661,7 +661,7 @@ static void cmd_mns_invite(struct userrec *u, int idx, char *par)
     chname = dcc[idx].u.chat->con_chan;
     console = 1;
   }
-  if (chname || !(u->flags & USER_MASTER)) {
+  if (chname || !(u->flags & USER_OP)) {
     if (!chname)
       chname = dcc[idx].u.chat->con_chan;
     get_user_flagrec(u, &user, chname);
@@ -673,7 +673,7 @@ static void cmd_mns_invite(struct userrec *u, int idx, char *par)
   }
   strncpyz(s, invite, sizeof s);
   if (console) {
-    i = u_delinvite(NULL, s, (u->flags & USER_MASTER));
+    i = u_delinvite(NULL, s, (u->flags & USER_OP));
     if (i > 0) {
       if (lastdeletedmask)
         mask = lastdeletedmask;
@@ -963,7 +963,7 @@ static void cmd_stick_yn(int idx, char *par, int yn)
     }
     if (!chname[0]) {
       i = u_setsticky_exempt(NULL, s,
-                             (dcc[idx].user->flags & USER_MASTER) ? yn : -1);
+                             (dcc[idx].user->flags & USER_OP) ? yn : -1);
       if (i > 0) {
         putlog(LOG_CMDS, "*", "#%s# %sstick exempt %s",
                dcc[idx].nick, yn ? "" : "un", s);
@@ -1001,7 +1001,7 @@ static void cmd_stick_yn(int idx, char *par, int yn)
     }
     if (!chname[0]) {
       i = u_setsticky_invite(NULL, s,
-                             (dcc[idx].user->flags & USER_MASTER) ? yn : -1);
+                             (dcc[idx].user->flags & USER_OP) ? yn : -1);
       if (i > 0) {
         putlog(LOG_CMDS, "*", "#%s# %sstick invite %s",
                dcc[idx].nick, yn ? "" : "un", s);
@@ -1033,7 +1033,7 @@ static void cmd_stick_yn(int idx, char *par, int yn)
   }
   if (!chname[0]) {
     i = u_setsticky_ban(NULL, s,
-                        (dcc[idx].user->flags & USER_MASTER) ? yn : -1);
+                        (dcc[idx].user->flags & USER_OP) ? yn : -1);
     if (i > 0) {
       putlog(LOG_CMDS, "*", "#%s# %sstick ban %s",
              dcc[idx].nick, yn ? "" : "un", s);
