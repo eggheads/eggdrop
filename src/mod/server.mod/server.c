@@ -2,7 +2,7 @@
  * server.c -- part of server.mod
  *   basic irc server support
  *
- * $Id: server.c,v 1.6.2.3 2011/02/08 22:06:01 thommey Exp $
+ * $Id: server.c,v 1.6.2.4 2011/10/25 16:49:20 thommey Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -1337,8 +1337,8 @@ static char *traced_nicklen(ClientData cdata, Tcl_Interp *irp,
     egg_snprintf(s, sizeof s, "%d", nick_len);
     Tcl_SetVar2(interp, name1, name2, s, TCL_GLOBAL_ONLY);
     if (flags & TCL_TRACE_UNSETS)
-      Tcl_TraceVar(irp, name1, TCL_TRACE_WRITES | TCL_TRACE_UNSETS,
-                   traced_nicklen, cdata);
+      Tcl_TraceVar(irp, name1, TCL_TRACE_READS | TCL_TRACE_WRITES |
+                   TCL_TRACE_UNSETS, traced_nicklen, cdata);
   } else {
     EGG_CONST char *cval = Tcl_GetVar2(interp, name1, name2, TCL_GLOBAL_ONLY);
     long lval = 0;
