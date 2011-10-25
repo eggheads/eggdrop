@@ -1,10 +1,14 @@
-$Id: Changes1.8,v 1.56 2011/09/09 21:38:39 thommey Exp $
+$Id: Changes1.8,v 1.57 2011/10/25 16:47:19 thommey Exp $
 
 Eggdrop Changes (since version 1.8.0)
 
     _____________________________________________________________________
 
 1.8.0 (CVS):
+
+  - Added missing read trace flag to the nick-len variable trace after
+    being unset to make the trace be removed properly on unload.
+    Found by: Dopsy / Patch by: pseudo
 
   - Fixed a bug in the mainloop for Tcl threads which is now
     also being used as vwait/update recursion mainloop.
