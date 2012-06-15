@@ -1,7 +1,7 @@
 /*
  * servmsg.c -- part of server.mod
  *
- * $Id: servmsg.c,v 1.5 2010/11/18 12:54:39 pseudo Exp $
+ * $Id: servmsg.c,v 1.6 2012/06/15 00:04:59 thommey Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -1167,7 +1167,6 @@ static int got311(char *from, char *msg)
  */
 static int got465(char *from, char *msg)
 {
-  newsplit(&msg); /* 465 */
   newsplit(&msg); /* nick */
 
   fixcolon(msg);
