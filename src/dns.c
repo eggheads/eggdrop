@@ -4,7 +4,7 @@
  *   provides the code used by the bot if the DNS module is not loaded
  *   DNS Tcl commands
  *
- * $Id: dns.c,v 1.2 2010/08/05 18:12:05 pseudo Exp $
+ * $Id: dns.c,v 1.3 2012/06/16 16:04:02 thommey Exp $
  */
 /*
  * Written by Fabian Knittel <fknittel@gmx.de>
@@ -264,11 +264,15 @@ static void dns_tcl_iporhostres(sockname_t *ip, char *hostn, int ok, void *other
     argv[1] = tclinfo->paras;
     output = Tcl_Concat(2, argv);
 
-    if (Tcl_Eval(interp, output) == TCL_ERROR)
+    if (Tcl_Eval(interp, output) == TCL_ERROR) {
       putlog(LOG_MISC, "*", DCC_TCLERROR, tclinfo->proc, tcl_resultstring());
+      Tcl_BackgroundError(interp);
+    }
     Tcl_Free(output);
-  } else if (Tcl_Eval(interp, Tcl_DStringValue(&list)) == TCL_ERROR)
+  } else if (Tcl_Eval(interp, Tcl_DStringValue(&list)) == TCL_ERROR) {
     putlog(LOG_MISC, "*", DCC_TCLERROR, tclinfo->proc, tcl_resultstring());
+    Tcl_BackgroundError(interp);
+  }
 
   Tcl_DStringFree(&list);
 

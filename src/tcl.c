@@ -4,7 +4,7 @@
  *   Tcl initialization
  *   getting and setting Tcl/eggdrop variables
  *
- * $Id: tcl.c,v 1.10 2011/09/09 21:38:39 thommey Exp $
+ * $Id: tcl.c,v 1.11 2012/06/16 16:04:02 thommey Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -879,6 +879,7 @@ void do_tcl(char *whatzit, char *script)
   if (code != TCL_OK) {
     putlog(LOG_MISC, "*", "Tcl error in script for '%s':", whatzit);
     putlog(LOG_MISC, "*", "%s", result);
+    Tcl_BackgroundError(interp);
   }
 
 #ifdef USE_TCL_ENCODING
@@ -914,6 +915,7 @@ int readtclprog(char *fname)
   if (code != TCL_OK) {
     putlog(LOG_MISC, "*", "Tcl error in file '%s':", fname);
     putlog(LOG_MISC, "*", "%s", result);
+    Tcl_BackgroundError(interp);
     code = 0; /* JJM: refactored to remove premature return */
   } else {
     /* Refresh internal variables */
