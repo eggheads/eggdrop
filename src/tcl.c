@@ -4,7 +4,7 @@
  *   Tcl initialization
  *   getting and setting Tcl/eggdrop variables
  *
- * $Id: tcl.c,v 1.9.2.4 2012/06/16 15:59:49 thommey Exp $
+ * $Id: tcl.c,v 1.9.2.5 2012/06/19 14:27:06 thommey Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -688,7 +688,13 @@ struct threaddata *threaddata()
 int init_threaddata(int mainthread)
 {
   struct threaddata *td = threaddata();
-  td->mainloopfunc = mainthread ? mainloop : tclthreadmainloop;
+/* Nested evaluation (vwait/update) of the event loop only
+ * processes Tcl events (after/fileevent) for now. Using
+ * eggdrops mainloop() requires caution regarding reentrance.
+ * (check_tcl_* -> Tcl_Eval() -> mainloop() -> check_tcl_* etc.)
+ */
+/* td->mainloopfunc = mainthread ? mainloop : tclthreadmainloop; */
+  td->mainloopfunc = tclthreadmainloop;
   td->socklist = NULL;
   td->mainthread = mainthread;
   td->blocktime.tv_sec = 1;
