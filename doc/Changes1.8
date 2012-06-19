@@ -1,10 +1,15 @@
-$Id: Changes1.8,v 1.60 2012/06/16 16:04:02 thommey Exp $
+$Id: Changes1.8,v 1.61 2012/06/19 14:27:17 thommey Exp $
 
 Eggdrop Changes (since version 1.8.0)
 
     _____________________________________________________________________
 
 1.8.0 (CVS):
+
+  - Partially revert changes to vwait/update. They are back to only
+    processing Tcl events for now (fileevent/after) as handling eggdrop
+    events turned out to require careful examination of reentrance issues.
+    Patch by: thommey
 
   - Call Tcl's bgerror on Eggdrop background errors. This allows custom
     code to react to errors (and output full $::errorInfo, for example).
