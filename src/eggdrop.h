@@ -4,7 +4,7 @@
  *
  *   IF YOU ALTER THIS FILE, YOU NEED TO RECOMPILE THE BOT.
  *
- * $Id: eggdrop.h,v 1.6 2010/10/19 12:13:33 pseudo Exp $
+ * $Id: eggdrop.h,v 1.7 2012/06/22 21:38:55 thommey Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -559,6 +559,7 @@ struct dupwait_info {
 #define STRIP_UNDER  0x00008    /* remove underline codes               */
 #define STRIP_ANSI   0x00010    /* remove ALL ANSI codes                */
 #define STRIP_BELLS  0x00020    /* remove ctrl-g's                      */
+#define STRIP_RESET  0x00040    /* remove mirc ctrl+o                   */
 #define STRIP_ALL    0x0007F    /* remove every damn thing!             */
 
 /* For dcc bot links. */

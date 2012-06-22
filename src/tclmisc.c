@@ -2,7 +2,7 @@
  * tclmisc.c -- handles:
  *   Tcl stubs for everything else
  *
- * $Id: tclmisc.c,v 1.5 2010/10/27 20:47:26 pseudo Exp $
+ * $Id: tclmisc.c,v 1.6 2012/06/22 21:38:55 thommey Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -680,6 +680,12 @@ static int tcl_stripcodes STDVAR
       break;
     case 'u':
       flags |= STRIP_UNDER;
+      break;
+    case 'o':
+      flags |= STRIP_RESET;
+      break;
+    case '*':
+      flags |= STRIP_ALL;
       break;
     default:
       Tcl_AppendResult(irp, "Invalid strip-flags: ", argv[1], NULL);

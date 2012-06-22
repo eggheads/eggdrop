@@ -3,7 +3,7 @@
  *   commands from a user via dcc
  *   (split in 2, this portion contains no-irc commands)
  *
- * $Id: cmds.c,v 1.4 2010/11/01 22:38:34 pseudo Exp $
+ * $Id: cmds.c,v 1.5 2012/06/22 21:38:54 thommey Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -2018,6 +2018,9 @@ int stripmodes(char *s)
     case 'g':
       res |= STRIP_BELLS;
       break;
+    case 'o':
+      res |= STRIP_RESET;
+      break;
     case '*':
       res |= STRIP_ALL;
       break;
@@ -2042,6 +2045,8 @@ char *stripmasktype(int x)
     *p++ = 'a';
   if (x & STRIP_BELLS)
     *p++ = 'g';
+  if (x & STRIP_RESET)
+    *p++ = 'o';
   if (p == s)
     *p++ = '-';
   *p = 0;
@@ -2066,6 +2071,8 @@ static char *stripmaskname(int x)
     i += my_strcpy(s + i, "ansi, ");
   if (x & STRIP_BELLS)
     i += my_strcpy(s + i, "bells, ");
+  if (x & STRIP_RESET)
+    i += my_strcpy(s + i, "reset, ");
   if (!i)
     strcpy(s, "none");
   else

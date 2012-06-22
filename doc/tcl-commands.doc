@@ -1,4 +1,4 @@
-$Id: tcl-commands.doc,v 1.9 2011/02/26 19:22:37 thommey Exp $
+$Id: tcl-commands.doc,v 1.10 2012/06/22 21:38:54 thommey Exp $
 
 Eggdrop Tcl Commands
 Last revised: October 24, 2010
@@ -1595,6 +1595,8 @@ marked with vertical bars (|) on the left.
         u - remove all underline codes
         a - remove all ANSI codes
         g - remove all ctrl-g (bell) codes
+        o - remove all reset codes (mIRC ctrl+o, ascii 15)
+        * - remove all of the above
     Returns: the stripped string.
     Module: core
 
