@@ -4,7 +4,7 @@
  *
  *   IF YOU ALTER THIS FILE, YOU NEED TO RECOMPILE THE BOT.
  *
- * $Id: eggdrop.h,v 1.7 2012/06/22 21:38:55 thommey Exp $
+ * $Id: eggdrop.h,v 1.8 2012/06/22 23:35:33 thommey Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -553,14 +553,15 @@ struct dupwait_info {
 #define STAT_PAGE    0x00080    /* page output to the user              */
 
 /* For stripping out mIRC codes. */
-#define STRIP_COLOR  0x00001    /* remove mIRC color codes              */
-#define STRIP_BOLD   0x00002    /* remove bold codes                    */
-#define STRIP_REV    0x00004    /* remove reverse video codes           */
-#define STRIP_UNDER  0x00008    /* remove underline codes               */
-#define STRIP_ANSI   0x00010    /* remove ALL ANSI codes                */
-#define STRIP_BELLS  0x00020    /* remove ctrl-g's                      */
-#define STRIP_RESET  0x00040    /* remove mirc ctrl+o                   */
-#define STRIP_ALL    0x0007F    /* remove every damn thing!             */
+#define STRIP_COLOR     0x00001    /* remove mIRC color codes            */
+#define STRIP_BOLD      0x00002    /* remove bold codes                  */
+#define STRIP_REVERSE   0x00004    /* remove reverse video codes         */
+#define STRIP_UNDERLINE 0x00008    /* remove underline codes             */
+#define STRIP_ANSI      0x00010    /* remove ALL ANSI codes              */
+#define STRIP_BELLS     0x00020    /* remove ctrl-g's                    */
+#define STRIP_ORDINARY  0x00040    /* remove ordinary codes              */
+#define STRIP_ITALICS   0x00080    /* remove italics codes               */
+#define STRIP_ALL       0x000FF    /* remove every damn thing!           */
 
 /* For dcc bot links. */
 #define STAT_PINGED  0x00001    /* waiting for ping to return            */

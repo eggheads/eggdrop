@@ -4,7 +4,7 @@
  *   disconnect on a dcc socket
  *   ...and that's it!  (but it's a LOT)
  *
- * $Id: dcc.c,v 1.12 2012/06/22 21:38:55 thommey Exp $
+ * $Id: dcc.c,v 1.13 2012/06/22 23:35:33 thommey Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -824,20 +824,26 @@ void strip_mirc_codes(int flags, char *text)
         continue;
       }
       break;
-    case 017:                  /* Reset all control chars (mIRC ctrl+o) */
-      if (flags & STRIP_RESET) {
+    case 017:                  /* Ordinary (mIRC ctrl+o) */
+      if (flags & STRIP_ORDINARY) {
         text++;
         continue;
       }
       break;
     case 0x16:                 /* Reverse video */
-      if (flags & STRIP_REV) {
+      if (flags & STRIP_REVERSE) {
+        text++;
+        continue;
+      }
+      break;
+    case 29:                   /* Italics */
+      if (flags & STRIP_ITALICS) {
         text++;
         continue;
       }
       break;
     case 0x1f:                 /* Underlined text */
-      if (flags & STRIP_UNDER) {
+      if (flags & STRIP_UNDERLINE) {
         text++;
         continue;
       }

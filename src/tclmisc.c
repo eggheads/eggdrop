@@ -2,7 +2,7 @@
  * tclmisc.c -- handles:
  *   Tcl stubs for everything else
  *
- * $Id: tclmisc.c,v 1.6 2012/06/22 21:38:55 thommey Exp $
+ * $Id: tclmisc.c,v 1.7 2012/06/22 23:35:33 thommey Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -672,17 +672,20 @@ static int tcl_stripcodes STDVAR
     case 'c':
       flags |= STRIP_COLOR;
       break;
+    case 'o':
+      flags |= STRIP_ORDINARY;
+      break;
+    case 'i':
+      flags |= STRIP_ITALICS;
+      break;
     case 'g':
       flags |= STRIP_BELLS;
       break;
     case 'r':
-      flags |= STRIP_REV;
+      flags |= STRIP_REVERSE;
       break;
     case 'u':
-      flags |= STRIP_UNDER;
-      break;
-    case 'o':
-      flags |= STRIP_RESET;
+      flags |= STRIP_UNDERLINE;
       break;
     case '*':
       flags |= STRIP_ALL;
