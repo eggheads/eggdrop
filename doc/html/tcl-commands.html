@@ -1,5 +1,5 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
-<!-- $Id: tcl-commands.html,v 1.12 2012/06/22 23:35:32 thommey Exp $ -->
+<!-- $Id: tcl-commands.html,v 1.13 2012/06/26 21:20:49 thommey Exp $ -->
 
 <html>
   <head>
@@ -4164,12 +4164,12 @@
 
               <p><strong>Description:</strong> dest will be a nickname (the
               bot&#39;s nickname, obviously) or a channel name. mask is
-              matched against the entire notice and can contain wildcards.
-              It is considered a breach of protocol to respond to a /notice
-              on IRC, so this is intended for internal use (logging, etc.)
-              only. Note that server notices do not trigger the NOTC bind.
-              If the proc returns 1, Eggdrop will not log the message that
-              triggered this bind.</p>
+              matched against the entire text of the notice and can contain
+              wildcards. It is considered a breach of protocol to respond to
+              a /notice on IRC, so this is intended for internal use
+              (logging, etc.) only. Note that server notices do not trigger
+              the NOTC bind. If the proc returns 1, Eggdrop will not log
+              the message that triggered this bind.</p>
 
               <p>New Tcl procs should be declared as</p>
 
