@@ -4,7 +4,7 @@
  *
  * by Darrin Smith (beldin@light.iinet.net.au)
  *
- * $Id: modules.c,v 1.3 2010/10/19 12:13:33 pseudo Exp $
+ * $Id: modules.c,v 1.4 2012/09/25 17:24:41 thommey Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -605,7 +605,11 @@ Function global_table[] = {
   /* 296 - 299 */
   (Function) check_conflags,
   (Function) increase_socks_max,
-  (Function) log_ts
+  (Function) log_ts,
+  (Function) tcl_resultempty,
+  /* 300 - 304 */
+  (Function) tcl_resultint,
+  (Function) tcl_resultstring
 };
 
 void init_modules(void)

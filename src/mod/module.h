@@ -1,7 +1,7 @@
 /*
  * module.h
  *
- * $Id: module.h,v 1.6 2011/01/27 02:11:27 thommey Exp $
+ * $Id: module.h,v 1.7 2012/09/25 17:24:41 thommey Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -502,6 +502,10 @@
 #define check_conflags ((int (*) (struct flag_record *, int))global[296])
 #define increase_socks_max ((int (*)(void))global[297])
 #define LOG_TS ((char *)(global[298]))
+#define tcl_resultempty ((int (*)(void))global[299])
+/* 300 - 303 */
+#define tcl_resultint ((int (*)(void))global[300])
+#define tcl_resultstring ((const char *(*)(void))global[301])
 
 /* hostmasking */
 #define maskhost(a,b) maskaddr((a),(b),3)
