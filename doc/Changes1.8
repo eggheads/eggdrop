@@ -1,10 +1,13 @@
-$Id: Changes1.8,v 1.65 2012/09/25 17:24:41 thommey Exp $
+$Id: Changes1.8,v 1.66 2012/12/10 22:49:45 thommey Exp $
 
 Eggdrop Changes (since version 1.8.0)
 
     _____________________________________________________________________
 
 1.8.0 (CVS):
+
+  - Fix match_cidr to always return MATCH if the prefix is 0.
+    Patch by: thommey / Found by: Robby
 
   - Export the tcl_result* functions to modules. They're required because
     access to interp->result will be removed from Tcl.

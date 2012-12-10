@@ -4,7 +4,7 @@
  *   hostmask matching
  *   cidr matching
  *
- * $Id: match.c,v 1.1 2010/07/26 21:11:06 simple Exp $
+ * $Id: match.c,v 1.2 2012/12/10 22:49:45 thommey Exp $
  *
  * Once this code was working, I added support for % so that I could
  * use the same code both in Eggdrop and in my IrcII client.
@@ -332,7 +332,7 @@ int cidr_match(char *m, char *n, int count)
   u_8bit_t block[16], addr[16];
 
   if (count < 1)
-    return NOMATCH;
+    return 1;
   if (strchr(m, ':') || strchr(n, ':')) {
     af = AF_INET6;
     if (count > 128)
@@ -353,7 +353,9 @@ int cidr_match(char *m, char *n, int count)
 #else
   IP block, addr;
 
-  if (count < 1 || count > 32)
+  if (count < 1)
+    return 1;
+  if (count > 32)
     return NOMATCH;
   block = ntohl(inet_addr(m));
   addr = ntohl(inet_addr(n));
