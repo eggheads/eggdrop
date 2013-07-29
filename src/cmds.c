@@ -3,7 +3,7 @@
  *   commands from a user via dcc
  *   (split in 2, this portion contains no-irc commands)
  *
- * $Id: cmds.c,v 1.6 2012/06/22 23:35:33 thommey Exp $
+ * $Id: cmds.c,v 1.7 2013/07/29 15:49:40 thommey Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -1314,7 +1314,7 @@ static void cmd_backup(struct userrec *u, int idx, char *par)
 static void cmd_trace(struct userrec *u, int idx, char *par)
 {
   int i;
-  char x[NOTENAMELEN + 11], y[11];
+  char x[NOTENAMELEN + 11], y[12];
 
   if (!par[0]) {
     dprintf(idx, "Usage: trace <botname>\n");
