@@ -2,7 +2,7 @@
  * server.c -- part of server.mod
  *   basic irc server support
  *
- * $Id: server.c,v 1.6.2.4 2011/10/25 16:49:20 thommey Exp $
+ * $Id: server.c,v 1.6.2.5 2013/07/31 01:14:54 thommey Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -64,7 +64,6 @@ static time_t server_online;    /* server connection time */
 static time_t server_cycle_wait;        /* seconds to wait before
                                          * re-beginning the server list */
 static char botrealname[121];   /* realname of bot */
-static int min_servs;           /* minimum number of servers to be around */
 static int server_timeout;      /* server timeout for connecting */
 static struct server_list *serverlist;  /* old-style queue, still used by
                                          * server list */
@@ -1370,7 +1369,6 @@ static tcl_coups my_tcl_coups[] = {
 };
 
 static tcl_ints my_tcl_ints[] = {
-  {"servlimit",         &min_servs,                 0},
   {"server-timeout",    &server_timeout,            0},
   {"lowercase-ctcp",    &lowercase_ctcp,            0},
   {"server-online",     (int *) &server_online,     2},
@@ -1796,9 +1794,6 @@ static void server_report(int idx, int details)
   if (details) {
     int size = server_expmem();
 
-    if (min_servs > 1) /* we can't connect to a network with 0 servers .. */
-      dprintf(idx, _("    Requiring a network with at least %d servers\n"),
-              min_servs);
     if (initserver[0])
       dprintf(idx, _("    On connect, I do: %s\n"), initserver);
     if (connectserver[0])
@@ -1912,7 +1907,7 @@ static Function server_table[] = {
   /* 24 - 27 */
   (Function) & default_port,    /* int                                  */
   (Function) & server_online,   /* int                                  */
-  (Function) & min_servs,       /* int                                  */
+  (Function) NULL,              /* min_servs -- removed (guppy)         */
   (Function) & H_raw,           /* p_tcl_bind_list                      */
   /* 28 - 31 */
   (Function) & H_wall,          /* p_tcl_bind_list                      */
@@ -1964,7 +1959,6 @@ char *server_start(Function *global_funcs)
   server_online = 0;
   server_cycle_wait = 60;
   strcpy(botrealname, _("A deranged product of evil coders"));
-  min_servs = 0;
   server_timeout = 60;
   serverlist = NULL;
   cycle_time = 0;

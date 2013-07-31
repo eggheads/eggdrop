@@ -5,7 +5,7 @@
  *   command line arguments
  *   context and assert debugging
  *
- * $Id: main.c,v 1.6.2.5 2011/02/08 22:06:01 thommey Exp $
+ * $Id: main.c,v 1.6.2.6 2013/07/31 01:14:54 thommey Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -946,7 +946,6 @@ int mainloop(int toplevel)
     do_restart = 0;
   }
 
-#ifdef USE_TCL_EVENTS
   if (!eggbusy) {
 /* Process all pending tcl events */
 #  ifdef REPLACE_NOTIFIER
@@ -956,7 +955,6 @@ int mainloop(int toplevel)
     while (Tcl_DoOneEvent(TCL_DONT_WAIT | TCL_ALL_EVENTS))
       tclbusy = 1;
 #  endif /* REPLACE_NOTIFIER */
-#endif   /* USE_TCL_EVENTS   */
   }
 
   return (eggbusy || tclbusy);
