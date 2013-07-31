@@ -3,7 +3,7 @@
  *   commands from a user via dcc
  *   (split in 2, this portion contains no-irc commands)
  *
- * $Id: cmds.c,v 1.4.2.6 2013/07/31 00:20:46 thommey Exp $
+ * $Id: cmds.c,v 1.4.2.7 2013/07/31 00:27:33 thommey Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -2586,6 +2586,10 @@ static void cmd_mns_user(struct userrec *u, int idx, char *par)
   }
   if ((u2->flags & USER_OWNER) && !(u->flags & USER_OWNER)) {
     dprintf(idx, _("You can't remove a bot owner!\n"));
+    return;
+  }
+  if ((u2->flags & USER_MASTER) && !(u->flags & USER_OWNER)) {
+    dprintf(idx, _("Only owners can remove a master!\n"));
     return;
   }
   if (u2->flags & USER_BOT) {
