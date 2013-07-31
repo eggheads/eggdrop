@@ -3,7 +3,7 @@
  *   commands from a user via dcc
  *   (split in 2, this portion contains no-irc commands)
  *
- * $Id: cmds.c,v 1.4.2.5 2013/07/29 15:51:25 thommey Exp $
+ * $Id: cmds.c,v 1.4.2.6 2013/07/31 00:20:46 thommey Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -2008,11 +2008,11 @@ int stripmodes(char *s)
 
   for (; *s; s++)
     switch (tolower((unsigned) *s)) {
-    case 'b':
-      res |= STRIP_BOLD;
-      break;
     case 'c':
       res |= STRIP_COLOR;
+      break;
+    case 'b':
+      res |= STRIP_BOLD;
       break;
     case 'r':
       res |= STRIP_REVERSE;
@@ -2020,17 +2020,17 @@ int stripmodes(char *s)
     case 'u':
       res |= STRIP_UNDERLINE;
       break;
-    case 'i':
-      res |= STRIP_ITALICS;
-      break;
-    case 'o':
-      res |= STRIP_ORDINARY;
-      break;
     case 'a':
       res |= STRIP_ANSI;
       break;
     case 'g':
       res |= STRIP_BELLS;
+      break;
+    case 'o':
+      res |= STRIP_ORDINARY;
+      break;
+    case 'i':
+      res |= STRIP_ITALICS;
       break;
     case '*':
       res |= STRIP_ALL;
@@ -2044,22 +2044,22 @@ char *stripmasktype(int x)
   static char s[20];
   char *p = s;
 
-  if (x & STRIP_BOLD)
-    *p++ = 'b';
   if (x & STRIP_COLOR)
     *p++ = 'c';
+  if (x & STRIP_BOLD)
+    *p++ = 'b';
   if (x & STRIP_REVERSE)
     *p++ = 'r';
-  if (x & STRIP_ITALICS)
-    *p++ = 'i';
-  if (x & STRIP_ORDINARY)
-    *p++ = 'o';
   if (x & STRIP_UNDERLINE)
     *p++ = 'u';
   if (x & STRIP_ANSI)
     *p++ = 'a';
   if (x & STRIP_BELLS)
     *p++ = 'g';
+  if (x & STRIP_ORDINARY)
+    *p++ = 'o';
+  if (x & STRIP_ITALICS)
+    *p++ = 'i';
   if (p == s)
     *p++ = '-';
   *p = 0;
