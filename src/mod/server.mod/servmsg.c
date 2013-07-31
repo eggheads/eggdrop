@@ -1,7 +1,7 @@
 /*
  * servmsg.c -- part of server.mod
  *
- * $Id: servmsg.c,v 1.6 2012/06/15 00:04:59 thommey Exp $
+ * $Id: servmsg.c,v 1.7 2013/07/31 00:32:55 thommey Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -1056,6 +1056,7 @@ static void timeout_server(int idx)
 {
   putlog(LOG_SERV, "*", "Timeout: connect to %s", dcc[idx].host);
   disconnect_server(idx);
+  check_tcl_event("fail-server");
   lostdcc(idx);
 }
 
@@ -1303,6 +1304,7 @@ static void server_resolve_failure(int servidx)
   resolvserv = 0;
   putlog(LOG_SERV, "*", "%s %s (%s)", IRC_FAILEDCONNECT, dcc[servidx].host,
          IRC_DNSFAILED);
+  check_tcl_event("fail-server");
   lostdcc(servidx);
 }
 
@@ -1319,6 +1321,7 @@ static void server_resolve_success(int servidx)
   if (serv < 0) {
     putlog(LOG_SERV, "*", "%s %s (%s)", IRC_FAILEDCONNECT, dcc[servidx].host,
            strerror(errno));
+    check_tcl_event("fail-server");
     lostdcc(servidx);
     return;
   }
@@ -1327,6 +1330,7 @@ static void server_resolve_success(int servidx)
                                         LOG_SERV, dcc[servidx].host, NULL)) {
     putlog(LOG_SERV, "*", "%s %s (%s)", IRC_FAILEDCONNECT, dcc[servidx].host,
            "TLS negotiation failure");
+    check_tcl_event("fail-server");
     lostdcc(servidx);
     return;
   }

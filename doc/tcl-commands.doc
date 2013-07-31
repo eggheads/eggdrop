@@ -1,4 +1,4 @@
-$Id: tcl-commands.doc,v 1.13 2013/07/31 00:20:05 thommey Exp $
+$Id: tcl-commands.doc,v 1.14 2013/07/31 00:32:55 thommey Exp $
 
 Eggdrop Tcl Commands
 Last revised: October 24, 2010
@@ -2247,6 +2247,7 @@ marked with vertical bars (|) on the left.
              connect-server    - called just before we connect to an IRC server
              init-server       - called when we actually get on our IRC server
              disconnect-server - called when we disconnect from our IRC server
+             fail-server       - called when an IRC server fails to respond 
          Module: core
 
     (43) LOST (stackable)
