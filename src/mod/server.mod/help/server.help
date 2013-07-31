@@ -50,14 +50,14 @@ See also: jump
       %bjump         dump%b
 
    Config file variables for configuring the server module:
-      %bservlimit       server-timeout      lowercase-ctcp%b
+      %bnick-len        server-timeout      lowercase-ctcp%b
       %bmsg-rate        keep-nick           check-stoned%b
       %bserverror-quit  max-queue-msg       trigger-on-ignore%b
       %banswer-ctcp     server-cycle-wait   default-port%b
       %bcheck-mode-r    ctcp-mode           use-penalties%b
       %bdouble-server   double-mode         double-help%b
-      %buse-fastdeq     nick-len            optimize-kicks%b
-      %bstack-limit     exclusive-binds%b
+      %buse-fastdeq     stack-limit         optimize-kicks%b
+      %bexclusive-binds%b
    (Use %b'.help set <variable>'%b for more info)
 %{help=all}%{+o|o}
 ###  %bserver module%b commands

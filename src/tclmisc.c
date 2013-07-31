@@ -2,7 +2,7 @@
  * tclmisc.c -- handles:
  *   Tcl stubs for everything else
  *
- * $Id: tclmisc.c,v 1.8 2013/07/31 00:20:05 thommey Exp $
+ * $Id: tclmisc.c,v 1.9 2013/07/31 01:09:33 thommey Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -700,38 +700,22 @@ static int tcl_stripcodes STDVAR
   return TCL_OK;
 }
 
-#ifdef USE_TCL_OBJ
 static int tcl_md5(cd, irp, objc, objv)
 ClientData cd;
 Tcl_Interp *irp;
 int objc;
 Tcl_Obj *CONST objv[];
 {
-#else
-static int tcl_md5 STDVAR
-{
-#endif /* USE_TCL_OBJ */
   MD5_CTX md5context;
   char digest_string[33], *string;
   unsigned char digest[16];
   int i, len;
 
-#ifdef USE_TCL_OBJ
   if (objc != 2) {
     Tcl_WrongNumArgs(irp, 1, objv, "string");
     return TCL_ERROR;
   }
-#  ifdef USE_TCL_BYTE_ARRAYS
-  string = (char *)Tcl_GetByteArrayFromObj(objv[1], &len);
-#  else
   string = Tcl_GetStringFromObj(objv[1], &len);
-#  endif /* USE_TCL_BYTE_ARRAYS */
-#else /* USE_TCL_OBJ */
-  BADARGS(2, 2, " string");
-
-  string = argv[1];
-  len = strlen(argv[1]);
-#endif /* USE_TCL_OBJ */
 
   MD5_Init(&md5context);
   MD5_Update(&md5context, (unsigned char *) string, len);
@@ -776,9 +760,7 @@ static int tcl_matchstr STDVAR
 }
 
 tcl_cmds tclmisc_objcmds[] = {
-#ifdef USE_TCL_OBJ
   {"md5", tcl_md5},
-#endif /* USE_TCL_OBJ */
   {NULL,     NULL}
 };
 
@@ -856,9 +838,6 @@ tcl_cmds tclmisc_cmds[] = {
   {"unloadhelp",     tcl_unloadhelp},
   {"reloadhelp",     tcl_reloadhelp},
   {"duration",         tcl_duration},
-#ifndef USE_TCL_OBJ
-  {"md5",                   tcl_md5},
-#endif /* USE_TCL_OBJ */
   {"binds",               tcl_binds},
   {"callevent",       tcl_callevent},
   {"stripcodes",     tcl_stripcodes},
