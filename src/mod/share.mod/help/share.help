@@ -21,12 +21,12 @@
 
      %b3.%b On bot B, type:
 
-           '.botattr A +p' (+s means passively share)
+           '.botattr A +p' (+p means passively share)
 
      %b4.%b For each channel you want shared between the two, do the following:
 
            On bot A, type: '.botattr B |+s #channel'
-           On bot B, type: '.botattr A |+s #channel'
+           On bot B, type: '.botattr A |+p #channel'
 
      %b5.%b Link them together; they should start sharing immediately.
 %{help=flush}%{+n}
