@@ -1,4 +1,4 @@
-$Id: tcl-commands.doc,v 1.15 2013/07/31 00:45:38 thommey Exp $
+$Id: tcl-commands.doc,v 1.16 2013/07/31 00:52:36 thommey Exp $
 
 Eggdrop Tcl Commands
 Last revised: October 24, 2010
@@ -2179,13 +2179,14 @@ marked with vertical bars (|) on the left.
 
     (37) TIME (stackable)
          bind time <flags> <mask> <proc>
-         proc-name <minute> <hour> <day> <month> <year>
+         proc-name <minute 00-59> <hour 00-23> <day 01-31> <month 00-11> <year 0000-9999>
 
          Description: allows you to schedule procedure calls at certain
            times. mask matches 5 space separated integers of the form:
-           "minute hour day month year". minute, hour, day, month have a
-           zero padding so they are exactly two characters long; year is
-           four characters. Flags are ignored.
+           "minute hour day month year". The month var starts at 00 (Jan) 
+           and ends at 11 (Dec). Minute, hour, day, month have a zero
+           padding so they are exactly two characters long; year is zero
+           characters. Flags are ignored.
          Module: core
 
     (38) AWAY (stackable)
@@ -2285,7 +2286,7 @@ marked with vertical bars (|) on the left.
 
    (46) CRON (stackable)
         bind cron <flags> <mask> <proc>
-        proc-name <minute> <hour> <day> <month> <weekday>
+        proc-name <minute 0-59> <hour 0-23> <day 1-31> <month 1-12> <weekday 0-6>
 
         Description: similar to bind TIME, but the mask is evaluated as a cron
           expression, e.g. "16/2 */2 5-15 7,8,9 4". It can contain up to five
