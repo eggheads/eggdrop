@@ -1,7 +1,7 @@
 /*
  * servmsg.c -- part of server.mod
  *
- * $Id: servmsg.c,v 1.7 2013/07/31 00:32:55 thommey Exp $
+ * $Id: servmsg.c,v 1.8 2013/07/31 00:45:38 thommey Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -1342,6 +1342,7 @@ static void server_resolve_success(int servidx)
   strcpy(botname, origbotname);
   /* Start alternate nicks from the beginning */
   altnick_char = 0;
+  check_tcl_event("preinit-server");
   if (pass[0])
     dprintf(DP_MODE, "PASS %s\n", pass);
   dprintf(DP_MODE, "NICK %s\n", botname);
