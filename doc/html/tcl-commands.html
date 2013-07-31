@@ -1,5 +1,5 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
-<!-- $Id: tcl-commands.html,v 1.13 2012/06/26 21:20:49 thommey Exp $ -->
+<!-- $Id: tcl-commands.html,v 1.14 2013/07/31 00:20:05 thommey Exp $ -->
 
 <html>
   <head>
@@ -506,7 +506,7 @@
           <p><strong>Description:</strong> changes the attributes for a user
           record, if you include any. Changes are of the form &#39;+f&#39;,
           &#39;-o&#39;, &#39;+dk&#39;, &#39;-o+d&#39;, etc. If changes are
-          specified in the format of &lt;changes&gt; &lt;channel&lt;, the
+          specified in the format of &lt;changes&gt; &lt;channel&gt;, the
           channel-specific flags for that channel are altered. You can now
           use the +o|-o #channel format here too.</p>
 
@@ -2036,21 +2036,21 @@
             <table>
               <tr valign="top">
                 <td>
-                  <p><strong>b</strong></p>
-                </td>
-
-                <td>
-                  <p>remove all boldface codes</p>
-                </td>
-              </tr>
-
-              <tr valign="top">
-                <td>
                   <p><strong>c</strong></p>
                 </td>
 
                 <td>
                   <p>remove all color codes</p>
+                </td>
+              </tr>
+
+              <tr valign="top">
+                <td>
+                  <p><strong>b</strong></p>
+                </td>
+
+                <td>
+                  <p>remove all boldface codes</p>
                 </td>
               </tr>
 
@@ -2074,7 +2074,6 @@
                 </td>
               </tr>
 
-
               <tr valign="top">
                 <td>
                   <p><strong>a</strong></p>
@@ -2092,6 +2091,35 @@
 
                 <td>
                   <p>remove all ctrl-g (bell) codes</p>
+                </td>
+              </tr>
+
+              <tr valign="top">
+                <td>
+                  <p><strong>o</strong></p>
+                </td>
+
+                <td>
+                  <p>remove all ordinary codes (ctrl+o, terminates bold/color/..)</p>
+                </td>
+              </tr>
+
+              <tr valign="top">
+                <td>
+                  <p><strong>i</strong></p>
+                </td>
+
+                <td>
+                  <p>remove all italics codes</p>
+                </td>
+              </tr>
+              <tr valign="top">
+                <td>
+                  <p><strong>*</strong></p>
+                </td>
+
+                <td>
+                  <p>remove all of the above</p>
                 </td>
               </tr>
             </table>
@@ -3616,21 +3644,21 @@
             <table>
               <tr valign="top">
                 <td>
-                  <p><strong>b</strong></p>
-                </td>
-
-                <td>
-                  <p>remove all boldface codes</p>
-                </td>
-              </tr>
-
-              <tr valign="top">
-                <td>
                   <p><strong>c</strong></p>
                 </td>
 
                 <td>
                   <p>remove all color codes</p>
+                </td>
+              </tr>
+
+              <tr valign="top">
+                <td>
+                  <p><strong>b</strong></p>
+                </td>
+
+                <td>
+                  <p>remove all boldface codes</p>
                 </td>
               </tr>
 
@@ -3687,7 +3715,7 @@
 
               <tr valign="top">
                 <td>
-                  <p><strong>o</strong></p>
+                  <p><strong>i</strong></p>
                 </td>
 
                 <td>

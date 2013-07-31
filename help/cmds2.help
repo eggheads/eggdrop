@@ -61,7 +61,7 @@ See also: modules, module, unloadmod
    Specifying "&" as the separator will cause AND style matching.
 
    For example:
-      .match p&o
+      .match +p&o
 
    This will match all users with both the "p" global flag and the "o" channel
    flag on your current console channel.
@@ -69,20 +69,20 @@ See also: modules, module, unloadmod
    Specifying "|" as the separator will cause OR style matching.
 
    For example:
-     .match p|o
+      .match +p|o
 
    This will match all users with either the "p" global flag or the "o" channel
    flag on your current console channel. If you specify a channel, it will be
    used instead of the current console channel.
 
    For example:
-     .match p|o #eggdrop
+      .match +p|o #eggdrop
 
    This will match all users with either the "p" global flag or the "o" channel
    flag on the channel #eggdrop. You can also match bot flags.
 
    For example:
-     .match o|o|h
+      .match +o|o|h
 
    This will match all bots with either the "o" global flag, the "o" channel
    flag on the current console channel, or the "h" botflag. You can also limit
@@ -90,7 +90,7 @@ See also: modules, module, unloadmod
    command. A starting point can also be specified.
 
    For example:
-     .match p&o #eggdrop 16 25
+      .match +p&o #eggdrop 16 25
 
    This would show results 16 through 25 matching any users with the "p" global
    flag or the "o" channel flag on #eggdrop.
@@ -229,12 +229,15 @@ See also: reload, rehash, backup
 ###  %bstrip%b [modes]
    Allows you to remove embedded 'attribute' codes your partyline output. Valid
    options are:
-      %bb%b - remove all boldface codes
       %bc%b - remove all color codes
+      %bb%b - remove all boldface codes
       %br%b - remove all reverse video codes
       %bu%b - remove all underline codes
       %ba%b - remove all ANSI codes
       %bg%b - remove all ctrl-g (bell) codes
+      %bo%b - remove all ordinary codes (ctrl+o, terminates bold/color/..)
+      %bi%b - remove all italics codes
+      %b*%b - remove all of the above
 
    The mode can also be a modifier like '+c' or '-bu' or '+ru-c'. If
    you omit modes, it will show your current setting.
