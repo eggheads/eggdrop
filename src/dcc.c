@@ -4,7 +4,7 @@
  *   disconnect on a dcc socket
  *   ...and that's it!  (but it's a LOT)
  *
- * $Id: dcc.c,v 1.14 2013/07/31 00:20:05 thommey Exp $
+ * $Id: dcc.c,v 1.15 2014/03/21 21:42:41 thommey Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -273,10 +273,10 @@ void failed_link(int idx)
     return;
   }
 
-  /* Try next port */
+  /* Try next port, if it makes sense (no AF_UNSPEC, ...) */
   killsock(dcc[idx].sock);
   dcc[idx].timeval = now;
-  if (open_telnet(idx, dcc[idx].host, dcc[idx].port + 1) < 0)
+  if (open_telnet(idx, dcc[idx].host, dcc[idx].port + 1) == -1)
     failed_link(idx);
 }
 
