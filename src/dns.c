@@ -4,7 +4,7 @@
  *   provides the code used by the bot if the DNS module is not loaded
  *   DNS Tcl commands
  *
- * $Id: dns.c,v 1.2.2.3 2012/06/16 15:59:49 thommey Exp $
+ * $Id: dns.c,v 1.2.2.4 2014/04/19 17:41:59 pseudo Exp $
  */
 /*
  * Written by Fabian Knittel <fknittel@gmx.de>
@@ -472,7 +472,6 @@ void block_dns_hostbyip(sockname_t *addr)
 {
   struct hostent *hp = 0;
   static char s[UHOSTLEN];
-  const char *r = 0;
 
   if (addr->family == AF_INET) {
     if (!sigsetjmp(alarmret, 1)) {
@@ -482,7 +481,7 @@ void block_dns_hostbyip(sockname_t *addr)
       alarm(0);
     }
     if (!hp)
-      r = inet_ntop(AF_INET, &addr->addr.s4.sin_addr.s_addr, s, sizeof s);
+      (void) inet_ntop(AF_INET, &addr->addr.s4.sin_addr.s_addr, s, sizeof s);
 #ifdef IPV6
   } else {
     if (!sigsetjmp(alarmret, 1)) {
@@ -492,7 +491,7 @@ void block_dns_hostbyip(sockname_t *addr)
       alarm(0);
     }
     if (!hp)
-      r = inet_ntop(AF_INET6, &addr->addr.s6.sin6_addr, s, sizeof s);
+      (void) inet_ntop(AF_INET6, &addr->addr.s6.sin6_addr, s, sizeof s);
   }
 #else
   }

@@ -6,7 +6,7 @@
  * Written by Fabian Knittel <fknittel@gmx.de>. Based on zlib examples
  * by Jean-loup Gailly and Miguel Albrecht.
  *
- * $Id: compress.c,v 1.2.2.2 2011/01/12 13:54:00 pseudo Exp $
+ * $Id: compress.c,v 1.2.2.3 2014/04/19 17:41:59 pseudo Exp $
  */
 /*
  * Copyright (C) 2000 - 2010 Eggheads Development Team
@@ -73,6 +73,7 @@ static int is_compressedfile(char *filename)
 {
   char buf1[50], buf2[50];
   FILE *fin;
+  gzFile zin;
   register int len1, len2, i;
 
   memset(buf1, 0, 50);
@@ -82,13 +83,13 @@ static int is_compressedfile(char *filename)
 
   /* Read data with zlib routines.
    */
-  fin = gzopen(filename, "rb");
-  if (!fin)
+  zin = gzopen(filename, "rb");
+  if (!zin)
     return COMPF_FAILED;
-  len1 = gzread(fin, buf1, sizeof(buf1));
+  len1 = gzread(zin, buf1, sizeof(buf1));
   if (len1 < 0)
     return COMPF_FAILED;
-  if (gzclose(fin) != Z_OK)
+  if (gzclose(zin) != Z_OK)
     return COMPF_FAILED;
 
   /* Read raw data.
@@ -122,7 +123,8 @@ static int uncompress_to_file(char *f_src, char *f_target)
 {
   char buf[BUFLEN];
   int len;
-  FILE *fin, *fout;
+  gzFile fin;
+  FILE *fout;
 
   if (!is_file(f_src)) {
     putlog(LOG_MISC, "*", _("Failed to uncompress file `%s': not a file."),
@@ -185,7 +187,7 @@ inline static void adjust_mode_num(int *mode)
 #ifdef HAVE_MMAP
 /* Attempt to compress in one go, by mmap'ing the file to memory.
  */
-static int compress_to_file_mmap(FILE *fout, FILE *fin)
+static int compress_to_file_mmap(gzFile fout, FILE *fin)
 {
   int len, ifd = fileno(fin);
   char *buf;
@@ -219,9 +221,10 @@ static int compress_to_file_mmap(FILE *fout, FILE *fin)
  */
 static int compress_to_file(char *f_src, char *f_target, int mode_num)
 {
-  char buf[BUFLEN], mode[5];
-  FILE *fin, *fout;
   int len;
+  FILE *fin;
+  gzFile fout;
+  char buf[BUFLEN], mode[5];
 
   adjust_mode_num(&mode_num);
   egg_snprintf(mode, sizeof mode, "wb%d", mode_num);

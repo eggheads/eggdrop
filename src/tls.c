@@ -4,7 +4,7 @@
  *   Certificate handling
  *   OpenSSL initialization and shutdown
  *
- * $Id: tls.c,v 1.2.2.2 2011/02/08 22:06:01 thommey Exp $
+ * $Id: tls.c,v 1.2.2.3 2014/04/19 17:41:59 pseudo Exp $
  */
 /*
  * Written by Rumen Stoyanov <pseudo@egg6.net>
@@ -588,7 +588,7 @@ void ssl_info(SSL *ssl, int where, int ret)
   X509 *cert;
   char buf[256];
   ssl_appdata *data;
-  SSL_CIPHER *cipher;
+  const SSL_CIPHER *cipher;
   int secret, processed;
   
   /* We're doing non-blocking IO, so we check here if the handshake has
@@ -793,7 +793,7 @@ static int tcl_tlsstatus STDVAR
   char *p;
   int i, j;
   X509 *cert;
-  SSL_CIPHER *cipher;
+  const SSL_CIPHER *cipher;
   struct threaddata *td = threaddata();
   Tcl_DString ds;
 
