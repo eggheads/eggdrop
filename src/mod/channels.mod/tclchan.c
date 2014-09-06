@@ -1,7 +1,7 @@
 /*
  * tclchan.c -- part of channels.mod
  *
- * $Id: tclchan.c,v 1.3 2011/02/10 21:28:14 pseudo Exp $
+ * $Id: tclchan.c,v 1.4 2014/09/06 23:49:32 thommey Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -155,7 +155,7 @@ static int tcl_stickinvite STDVAR
   struct chanset_t *chan;
   int ok = 0;
 
-  BADARGS(2, 3, " ban ?channel?");
+  BADARGS(2, 3, " invite ?channel?");
 
   if (argc == 3) {
     chan = findchan_by_dname(argv[2]);
@@ -181,7 +181,7 @@ static int tcl_stickexempt STDVAR
   struct chanset_t *chan;
   int ok = 0;
 
-  BADARGS(2, 3, " ban ?channel?");
+  BADARGS(2, 3, " exempt ?channel?");
 
   if (argc == 3) {
     chan = findchan_by_dname(argv[2]);
@@ -2363,6 +2363,8 @@ static tcl_cmds channels_cmds[] = {
   {"delchanrec",         tcl_delchanrec},
   {"stick",                   tcl_stick},
   {"unstick",                 tcl_stick},
+  {"stickban",                tcl_stick},
+  {"unstickban",              tcl_stick},
   {"stickinvite",       tcl_stickinvite},
   {"unstickinvite",     tcl_stickinvite},
   {"stickexempt",       tcl_stickexempt},
