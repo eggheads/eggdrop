@@ -1,7 +1,7 @@
 /*
  * userchan.c -- part of channels.mod
  *
- * $Id: userchan.c,v 1.2 2010/08/05 18:12:05 pseudo Exp $
+ * $Id: userchan.c,v 1.3 2014/10/02 19:27:43 thommey Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -101,10 +101,6 @@ static void set_handle_chaninfo(struct userrec *bu, char *handle,
   if (!ch) {
     add_chanrec_by_handle(bu, handle, chname);
     ch = get_chanrec(u, chname);
-  }
-  if (info) {
-    if (strlen(info) > 80)
-      info[80] = 0;
   }
   if (ch->info != NULL)
     nfree(ch->info);

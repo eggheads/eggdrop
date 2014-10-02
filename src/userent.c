@@ -2,7 +2,7 @@
  * userent.c -- handles:
  *   user-entry handling, new style more versatile.
  *
- * $Id: userent.c,v 1.4 2010/11/01 22:38:34 pseudo Exp $
+ * $Id: userent.c,v 1.5 2014/10/02 19:27:43 thommey Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -129,10 +129,6 @@ int def_set(struct userrec *u, struct user_entry *e, void *buf)
   if (string) {
     int l = strlen(string);
     char *i;
-
-    if (l > 160)
-      l = 160;
-
 
     e->u.string = user_realloc(e->u.string, l + 1);
 

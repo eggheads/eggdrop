@@ -2,7 +2,7 @@
  * tclmisc.c -- handles:
  *   Tcl stubs for everything else
  *
- * $Id: tclmisc.c,v 1.9 2013/07/31 01:09:33 thommey Exp $
+ * $Id: tclmisc.c,v 1.10 2014/10/02 19:27:43 thommey Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -695,8 +695,10 @@ static int tcl_stripcodes STDVAR
       return TCL_ERROR;
     }
 
-  strip_mirc_codes(flags, argv[2]);
-  Tcl_AppendResult(irp, argv[2], NULL);
+  p = Tcl_Alloc(strlen(argv[2]) + 1);
+  strcpy(p, argv[2]);
+  strip_mirc_codes(flags, p);
+  Tcl_SetResult(irp, p, TCL_DYNAMIC);
   return TCL_OK;
 }
 

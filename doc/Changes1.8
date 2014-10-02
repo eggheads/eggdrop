@@ -1,10 +1,19 @@
-$Id: Changes1.8,v 1.80 2014/09/30 10:40:40 thommey Exp $
+$Id: Changes1.8,v 1.81 2014/10/02 19:27:43 thommey Exp $
 
 Eggdrop Changes (since version 1.8.0)
 
     _____________________________________________________________________
 
 1.8.0 (CVS):
+
+  - Remove length limit of info line.
+    Patch by: chrfle / Found by: Kiril
+
+  - Fix stripcodes modifying the Tcl object in-place.
+    Patch by: thommey / Found by: speechles
+
+  - Only permanent owners can delete owners.
+    Patch by: chrfle / Found by: pseudo
 
   - Add Tcl8.6 and /usr/lib/x86_64-linux-gnu to Tcl search paths.
   - Ran autotools.
