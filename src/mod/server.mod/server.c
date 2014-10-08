@@ -2,7 +2,7 @@
  * server.c -- part of server.mod
  *   basic irc server support
  *
- * $Id: server.c,v 1.9 2013/07/31 01:09:33 thommey Exp $
+ * $Id: server.c,v 1.10 2014/10/08 20:08:27 thommey Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -957,7 +957,7 @@ static void add_server(const char *ss)
 {
   struct server_list *x, *z;
   char name[256] = "", port[11] = "", pass[121] = "";
-  
+
   for (z = serverlist; z && z->next; z = z->next);
 
   /* Allow IPv6 and IPv4-mapped addresses in [] */
@@ -1241,6 +1241,8 @@ static char *traced_serveraddress(ClientData cdata, Tcl_Interp *irp,
   if (flags & TCL_TRACE_UNSETS)
     Tcl_TraceVar(irp, name1, TCL_TRACE_READS | TCL_TRACE_WRITES |
                  TCL_TRACE_UNSETS, traced_serveraddress, cdata);
+  if (flags & TCL_TRACE_WRITES)
+    return "read-only variable";
   return NULL;
 }
 
@@ -1261,6 +1263,8 @@ static char *traced_server(ClientData cdata, Tcl_Interp *irp,
   if (flags & TCL_TRACE_UNSETS)
     Tcl_TraceVar(irp, name1, TCL_TRACE_READS | TCL_TRACE_WRITES |
                  TCL_TRACE_UNSETS, traced_server, cdata);
+  if (flags & TCL_TRACE_WRITES)
+    return "read-only variable";
   return NULL;
 }
 
@@ -1276,6 +1280,8 @@ static char *traced_botname(ClientData cdata, Tcl_Interp *irp,
   if (flags & TCL_TRACE_UNSETS)
     Tcl_TraceVar(irp, name1, TCL_TRACE_READS | TCL_TRACE_WRITES |
                  TCL_TRACE_UNSETS, traced_botname, cdata);
+  if (flags & TCL_TRACE_WRITES)
+    return "read-only variable";
   return NULL;
 }
 
