@@ -798,7 +798,7 @@ marked with vertical bars (|) on the left.
 
 
   getchanidle <nickname> <channel>
-    Returns: number of minutes that person has been idle; 0 if the
+    Returns: number of minutes that person has been idle; -1 if the
       specified user isn't on the channel
     Module: irc
 
