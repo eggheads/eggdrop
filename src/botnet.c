@@ -1068,6 +1068,7 @@ static void botlink_resolve_failure(int i)
 
 static void botlink_resolve_success(int i)
 {
+  int ret;
   int idx = dcc[i].u.dns->ibuf;
   char *linker = dcc[i].u.dns->cptr;
 
@@ -1080,8 +1081,8 @@ static void botlink_resolve_success(int i)
   nfree(linker);
   setsnport(dcc[i].sockname, dcc[i].port);
   dcc[i].sock = getsock(dcc[i].sockname.family, SOCK_STRONGCONN);
-  if (dcc[i].sock < 0 ||
-      open_telnet_raw(dcc[i].sock, &dcc[i].sockname) < 0)
+  ret = open_telnet_raw(dcc[i].sock, &dcc[i].sockname);
+  if (dcc[i].sock < 0 || ret < 0)
     failed_link(i);
 #ifdef TLS
   else if (dcc[i].ssl && ssl_handshake(dcc[i].sock, TLS_CONNECT,

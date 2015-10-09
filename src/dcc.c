@@ -276,7 +276,7 @@ void failed_link(int idx)
   /* Try next port, if it makes sense (no AF_UNSPEC, ...) */
   killsock(dcc[idx].sock);
   dcc[idx].timeval = now;
-  if (open_telnet(idx, dcc[idx].host, dcc[idx].port + 1) == -1)
+  if (open_telnet(idx, dcc[idx].host, dcc[idx].port + 1) < 0)
     failed_link(idx);
 }
 
