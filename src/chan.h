@@ -176,6 +176,8 @@ struct chanset_t {
   int flood_ctcp_time;
   int flood_nick_thr;
   int flood_nick_time;
+  int flood_size_thr;
+  int flood_size_time;
   int aop_min;
   int aop_max;
   long status;

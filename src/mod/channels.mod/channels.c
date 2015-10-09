@@ -47,7 +47,8 @@ static char glob_chanset[512];
 /* Global flood settings */
 static int gfld_chan_thr, gfld_chan_time, gfld_deop_thr, gfld_deop_time,
            gfld_kick_thr, gfld_kick_time, gfld_join_thr, gfld_join_time,
-           gfld_ctcp_thr, gfld_ctcp_time, gfld_nick_thr, gfld_nick_time;
+           gfld_ctcp_thr, gfld_ctcp_time, gfld_nick_thr, gfld_nick_time,
+           gfld_size_thr, gfld_size_time;
 
 #include "channels.h"
 #include "cmdschan.c"
@@ -419,7 +420,7 @@ static void write_channels()
             "revenge-mode %d need-op %s need-invite %s need-key %s "
             "need-unban %s need-limit %s flood-chan %d:%d flood-ctcp %d:%d "
             "flood-join %d:%d flood-kick %d:%d flood-deop %d:%d "
-            "flood-nick %d:%d aop-delay %d:%d ban-type %d ban-time %d "
+            "flood-nick %d:%d flood-size %d:%d aop-delay %d:%d ban-type %d ban-time %d "
             "exempt-time %d invite-time %d %cenforcebans %cdynamicbans "
             "%cuserbans %cautoop %cautohalfop %cbitch %cgreet %cprotectops "
             "%cprotecthalfops %cprotectfriends %cdontkickops %cstatuslog "
@@ -434,6 +435,7 @@ static void write_channels()
             chan->flood_kick_thr, chan->flood_kick_time,
             chan->flood_deop_thr, chan->flood_deop_time,
             chan->flood_nick_thr, chan->flood_nick_time,
+            chan->flood_size_thr, chan->flood_size_time,
             chan->aop_min, chan->aop_max, chan->ban_type, chan->ban_time,
             chan->exempt_time, chan->invite_time,
             PLSMNS(channel_enforcebans(chan)),
@@ -832,6 +834,7 @@ static tcl_coups mychan_tcl_coups[] = {
   {"global-flood-join", &gfld_join_thr,  &gfld_join_time},
   {"global-flood-ctcp", &gfld_ctcp_thr,  &gfld_ctcp_time},
   {"global-flood-nick", &gfld_nick_thr,  &gfld_nick_time},
+  {"global-flood-size", &gfld_size_thr,  &gfld_size_time},
   {"global-aop-delay",  &global_aop_min, &global_aop_max},
   {NULL,                NULL,                       NULL}
 };
@@ -951,6 +954,10 @@ char *channels_start(Function *global_funcs)
   gfld_join_time = 60;
   gfld_ctcp_thr = 5;
   gfld_ctcp_time = 60;
+  gfld_nick_thr = 5;
+  gfld_nick_time = 60;
+  gfld_size_thr = 1024;
+  gfld_size_time = 60;
   global_idle_kick = 0;
   global_aop_min = 5;
   global_aop_max = 30;

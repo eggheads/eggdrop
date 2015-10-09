@@ -590,8 +590,9 @@ struct dupwait_info {
 #define FLOOD_JOIN       4
 #define FLOOD_KICK       5
 #define FLOOD_DEOP       6
+#define FLOOD_SIZE       7
 
-#define FLOOD_CHAN_MAX   7
+#define FLOOD_CHAN_MAX   8
 #define FLOOD_GLOBAL_MAX 3
 
 /* For local console: */

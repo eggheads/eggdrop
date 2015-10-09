@@ -784,6 +784,8 @@ static int tcl_channel_info(Tcl_Interp *irp, struct chanset_t *chan)
   Tcl_AppendElement(irp, s);
   simple_sprintf(s, "%d:%d", chan->flood_nick_thr, chan->flood_nick_time);
   Tcl_AppendElement(irp, s);
+  simple_sprintf(s, "%d:%d", chan->flood_size_thr, chan->flood_size_time);
+  Tcl_AppendElement(irp, s);
   simple_sprintf(s, "%d:%d", chan->aop_min, chan->aop_max);
   Tcl_AppendElement(irp, s);
   simple_sprintf(s, "%d", chan->ban_type);
@@ -1109,6 +1111,8 @@ static int tcl_channel_get(Tcl_Interp *irp, struct chanset_t *chan,
     simple_sprintf(s, "%d %d", chan->flood_deop_thr, chan->flood_deop_time);
   else if (!strcmp(setting, "flood-nick"))
     simple_sprintf(s, "%d %d", chan->flood_nick_thr, chan->flood_nick_time);
+  else if (!strcmp(setting, "flood-size"))
+    simple_sprintf(s, "%d %d", chan->flood_size_thr, chan->flood_size_time);
   else if (!strcmp(setting, "aop-delay"))
     simple_sprintf(s, "%d %d", chan->aop_min, chan->aop_max);
   else if CHKFLAG_POS(CHAN_ENFORCEBANS, "enforcebans", chan->status)
@@ -1500,6 +1504,9 @@ static int tcl_channel_modify(Tcl_Interp *irp, struct chanset_t *chan,
       } else if (!strcmp(item[i] + 6, "nick")) {
         pthr = &chan->flood_nick_thr;
         ptime = &chan->flood_nick_time;
+      } else if (!strcmp(item[i] + 6, "size")) {
+        pthr = &chan->flood_size_thr;
+        ptime = &chan->flood_size_time;
       } else {
         if (irp)
           Tcl_AppendResult(irp, "illegal channel flood type: ", item[i], NULL);
@@ -2062,6 +2069,8 @@ static int tcl_channel_add(Tcl_Interp *irp, char *newname, char *options)
     chan->flood_kick_time = gfld_kick_time;
     chan->flood_nick_thr = gfld_nick_thr;
     chan->flood_nick_time = gfld_nick_time;
+    chan->flood_size_thr = gfld_size_thr;
+    chan->flood_size_time = gfld_size_time;
     chan->stopnethack_mode = global_stopnethack_mode;
     chan->revenge_mode = global_revenge_mode;
     chan->ban_type = global_ban_type;
