@@ -484,6 +484,9 @@ static int gotmsg(char *from, char *msg)
   fixcolon(msg);
   strncpyz(uhost, from, sizeof(buf));
   nick = splitnick(&uhost);
+  /* Apparently servers can send CTCPs now too, not just nicks */
+  if (nick[0] == '\0')
+    nick = uhost;
  
   /* Check for CTCP: */
   ctcp_reply[0] = 0;
