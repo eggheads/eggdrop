@@ -1001,6 +1001,10 @@ static void bot_motd(int idx, char *par)
   int i;
   struct flag_record fr = { FR_BOT, USER_BOT, 0, 0, 0, 0 };
 
+  /* Make GCC shut up about unused variable / unused return value */
+  char *fgets_res;
+  (void)fgets_res;
+
   who = newsplit(&par);
   if (!par[0] || !egg_strcasecmp(par, botnetnick)) {
     int irc = 0;
@@ -1026,7 +1030,7 @@ static void bot_motd(int idx, char *par)
       botnet_send_priv(idx, botnetnick, who, NULL, "--- %s\n", MISC_MOTDFILE);
       help_subst(NULL, NULL, 0, irc, NULL);
       while (!feof(vv)) {
-        fgets(s, 120, vv);
+        fgets_res = fgets(s, 120, vv);
         if (!feof(vv)) {
           if (s[strlen(s) - 1] == '\n')
             s[strlen(s) - 1] = 0;

@@ -677,6 +677,10 @@ int readuserfile(char *file, struct userrec **ret)
   struct flag_record fr;
   struct chanuserrec *cr;
 
+  /* Make GCC shut up about unused variable / unused return value */
+  char *fgets_res;
+  (void)fgets_res;
+
   bu = (*ret);
   ignored[0] = 0;
   if (bu == userlist) {
@@ -694,7 +698,7 @@ int readuserfile(char *file, struct userrec **ret)
   noshare = noxtra = 1;
   /* read opening comment */
   s = buf;
-  fgets(s, 180, f);
+  fgets_res = fgets(s, 180, f);
   if (s[1] < '4') {
     fatal(USERF_OLDFMT, 0);
   }
@@ -702,7 +706,7 @@ int readuserfile(char *file, struct userrec **ret)
     fatal(USERF_INVALID, 0);
   while (!feof(f)) {
     s = buf;
-    fgets(s, 511, f);
+    fgets_res = fgets(s, 511, f);
     if (!feof(f)) {
       if (s[0] != '#' && s[0] != ';' && s[0]) {
         code = newsplit(&s);

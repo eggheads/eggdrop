@@ -470,6 +470,9 @@ void block_dns_hostbyip(sockname_t *addr)
   static char s[UHOSTLEN];
   const char *r = 0;
 
+  /* Make GCC shut up about unused variable */
+  (void)r;
+
   if (addr->family == AF_INET) {
     if (!sigsetjmp(alarmret, 1)) {
       alarm(resolve_timeout);

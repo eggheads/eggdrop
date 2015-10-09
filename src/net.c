@@ -641,6 +641,9 @@ int getdccaddr(sockname_t *addr, char *s, size_t l)
 {
   char h[121];
   sockname_t name, *r = &name;
+#ifdef IPV6
+  IP ip = 0;
+#endif
 
   if (addr)
     r = addr;
@@ -670,10 +673,11 @@ int getdccaddr(sockname_t *addr, char *s, size_t l)
 #ifdef IPV6
   if (r->family == AF_INET6) {
     if (IN6_IS_ADDR_V4MAPPED(&r->addr.s6.sin6_addr) ||
-        IN6_IS_ADDR_UNSPECIFIED(&r->addr.s6.sin6_addr))
+        IN6_IS_ADDR_UNSPECIFIED(&r->addr.s6.sin6_addr)) {
+      egg_memcpy(&ip, r->addr.s6.sin6_addr.s6_addr + 12, sizeof ip);
       snprintf(s, l, "%lu", natip[0] ? iptolong(inet_addr(natip)) :
-               ntohl(*(IP *) &r->addr.s6.sin6_addr.s6_addr[12]));
-    else
+               ntohl(ip));
+    } else
       inet_ntop(AF_INET6, &r->addr.s6.sin6_addr, s, l);
   } else
 #endif
@@ -1083,7 +1087,7 @@ void tputs(register int z, char *s, unsigned int len)
     return;
 
   if (((z == STDOUT) || (z == STDERR)) && (!backgrd || use_stderr)) {
-    write(z, s, len);
+    i = write(z, s, len);
     return;
   }
 
@@ -1348,7 +1352,8 @@ int sanitycheck_dcc(char *nick, char *from, char *ipaddy, char *port)
       return 0;
     }
     if (IN6_IS_ADDR_V4MAPPED(&name.addr.s6.sin6_addr))
-      ip = ntohl(*(IP *) &name.addr.s6.sin6_addr.s6_addr[12]);
+      egg_memcpy(&ip, name.addr.s6.sin6_addr.s6_addr + 12, sizeof ip);
+      ip = ntohl(ip);
   }
 #endif
   if (ip && inet_ntop(AF_INET, &ip, badaddress, sizeof badaddress) &&

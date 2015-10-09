@@ -158,12 +158,16 @@ static void unlockfile(FILE *f)
  */
 static int filedb_readtop(FILE *fdb, filedb_top *fdbt)
 {
+  /* Make GCC shut up about unused variable / unused return value */
+  size_t fread_res;
+  (void)fread_res;
+
   if (fdbt) {
     /* Read header */
     fseek(fdb, 0L, SEEK_SET);
     if (feof(fdb))
       return 0;
-    fread(fdbt, 1, sizeof(filedb_top), fdb);
+    fread_res = fread(fdbt, 1, sizeof(filedb_top), fdb);
   } else
     fseek(fdb, sizeof(filedb_top), SEEK_SET);
   return 1;
@@ -186,10 +190,14 @@ static int filedb_delfile(FILE *fdb, long pos)
 {
   filedb_header fdh;
 
+  /* Make GCC shut up about unused variable / unused return value */
+  size_t fread_res;
+  (void)fread_res;
+
   fseek(fdb, pos, SEEK_SET);    /* Go to start of entry */
   if (feof(fdb))
     return 0;
-  fread(&fdh, 1, sizeof(filedb_header), fdb);   /* Read header          */
+  fread_res = fread(&fdh, 1, sizeof(filedb_header), fdb);   /* Read header          */
   fdh.stat = FILE_UNUSED;
 
   /* Assign all available space to buffer. Simplifies
@@ -415,7 +423,7 @@ static int _filedb_addfile(FILE *fdb, filedb_entry *fdbe, char *file, int line)
 {                                       \
   if ((len) > 0) {                      \
     (entry) = nmalloc((len));           \
-    fread((entry), 1, (len), (fdb));    \
+    fread_res = fread((entry), 1, (len), (fdb));    \
   }                                     \
 }
 
@@ -430,9 +438,13 @@ static filedb_entry *_filedb_getfile(FILE *fdb, long pos, int get,
   filedb_entry *fdbe;
   filedb_header fdh;
 
+  /* Make GCC shut up about unused variable / unused return value */
+  size_t fread_res;
+  (void)fread_res;
+
   /* Read header */
   fseek(fdb, pos, SEEK_SET);
-  fread(&fdh, 1, sizeof(filedb_header), fdb);
+  fread_res = fread(&fdh, 1, sizeof(filedb_header), fdb);
   if (feof(fdb))
     return NULL;
 
@@ -509,6 +521,10 @@ static void filedb_cleanup(FILE *fdb)
   long oldpos, newpos, temppos;
   filedb_entry *fdbe = NULL;
 
+  /* Make GCC shut up about unused variable / unused return value */
+  int ftruncate_res;
+  (void)ftruncate_res;
+
   filedb_readtop(fdb, NULL);    /* Skip DB header  */
   newpos = temppos = oldpos = ftell(fdb);
   fseek(fdb, oldpos, SEEK_SET); /* Go to beginning */
@@ -536,7 +552,7 @@ static void filedb_cleanup(FILE *fdb)
       }
     }
   }
-  ftruncate(fileno(fdb), oldpos);       /* Shorten file    */
+  ftruncate_res = ftruncate(fileno(fdb), oldpos);       /* Shorten file    */
 }
 
 /* Merges empty entries to one big entry, if they directly
@@ -548,6 +564,10 @@ static void filedb_mergeempty(FILE *fdb)
 {
   filedb_entry *fdbe_t, *fdbe_i;
   int modified;
+
+  /* Make GCC shut up about unused variable / unused return value */
+  int ftruncate_res;
+  (void)ftruncate_res;
 
   filedb_readtop(fdb, NULL);
   while (!feof(fdb)) {
@@ -580,7 +600,7 @@ static void filedb_mergeempty(FILE *fdb)
           /* ... or because we hit EOF? */
         } else {
           /* Truncate trailing empty entries and exit. */
-          ftruncate(fileno(fdb), fdbe_t->pos);
+          ftruncate_res = ftruncate(fileno(fdb), fdbe_t->pos);
           free_fdbe(&fdbe_t);
           return;
         }

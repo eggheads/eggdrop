@@ -114,6 +114,10 @@ static void strip_telnet(int sock, char *buf, int *len)
   unsigned char *p = (unsigned char *) buf, *o = (unsigned char *) buf;
   int mark;
 
+  /* Make GCC shut up about unused variable / unused return value */
+  int write_res;
+  (void)write_res;
+
   while (*p != 0) {
     while ((*p != TLN_IAC) && (*p != 0))
       *o++ = *p++;
@@ -130,20 +134,20 @@ static void strip_telnet(int sock, char *buf, int *len)
         /* WILL X -> response: DONT X */
         /* except WILL ECHO which we just smile and ignore */
         if (*(p + 1) != TLN_ECHO) {
-          write(sock, TLN_IAC_C TLN_DONT_C, 2);
-          write(sock, p + 1, 1);
+          write_res = write(sock, TLN_IAC_C TLN_DONT_C, 2);
+          write_res = write(sock, p + 1, 1);
         }
       } else if (*p == TLN_DO) {
         /* DO X -> response: WONT X */
         /* except DO ECHO which we just smile and ignore */
         if (*(p + 1) != TLN_ECHO) {
-          write(sock, TLN_IAC_C TLN_WONT_C, 2);
-          write(sock, p + 1, 1);
+          write_res = write(sock, TLN_IAC_C TLN_WONT_C, 2);
+          write_res = write(sock, p + 1, 1);
         }
       } else if (*p == TLN_AYT) {
         /* "Are You There?" */
         /* response is: "Hell, yes!" */
-        write(sock, "\r\nHell, yes!\r\n", 14);
+        write_res = write(sock, "\r\nHell, yes!\r\n", 14);
       } else if (*p == TLN_IAC) {
         /* IAC character in data, escaped with another IAC */
         *o++ = *p++;
