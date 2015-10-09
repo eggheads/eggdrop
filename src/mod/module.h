@@ -247,10 +247,9 @@
 #define dcc_total (*(int*)global[111])
 /* 112 - 115 */
 #define tempdir ((char *)(global[112]))
-#define natip ((char *)(global[113]))
 #ifdef TLS
-#  define tls_vfyclients (*(int *)(global[114]))
-#  define tls_vfydcc (*(int *)(global[115]))
+#  define tls_vfyclients (*(int *)(global[113]))
+#  define tls_vfydcc (*(int *)(global[114]))
 #else
 /* was natip -- UNUSED */
 /* was hostname -- UNUSED */
