@@ -655,7 +655,7 @@ static void got_deop(struct chanset_t *chan, char *nick, char *from,
 
   /* Check for mass deop */
   if (nick[0])
-    detect_chan_flood(nick, from, s1, chan, FLOOD_DEOP, who);
+    detect_chan_flood(nick, from, s1, chan, FLOOD_DEOP, who, 0);
 
   /* Having op hides your +v and +h status -- so now that someone's lost ops,
    * check to see if they have +v or +h

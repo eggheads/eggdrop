@@ -1426,15 +1426,17 @@ static void cmd_chaninfo(struct userrec *u, int idx, char *par)
     }
 
 
-    dprintf(idx, "flood settings: chan ctcp join kick deop nick\n");
-    dprintf(idx, "number:          %3d  %3d  %3d  %3d  %3d  %3d\n",
+    dprintf(idx, "flood settings: chan ctcp join kick deop nick size\n");
+    dprintf(idx, "number:          %3d  %3d  %3d  %3d  %3d  %3d %4d\n",
             chan->flood_pub_thr, chan->flood_ctcp_thr,
             chan->flood_join_thr, chan->flood_kick_thr,
-            chan->flood_deop_thr, chan->flood_nick_thr);
-    dprintf(idx, "time  :          %3d  %3d  %3d  %3d  %3d  %3d\n",
+            chan->flood_deop_thr, chan->flood_nick_thr,
+            chan->flood_size_thr);
+    dprintf(idx, "time  :          %3d  %3d  %3d  %3d  %3d  %3d  %3d\n",
             chan->flood_pub_time, chan->flood_ctcp_time,
             chan->flood_join_time, chan->flood_kick_time,
-            chan->flood_deop_time, chan->flood_nick_time);
+            chan->flood_deop_time, chan->flood_nick_time,
+            chan->flood_size_time);
     putlog(LOG_CMDS, "*", "#%s# chaninfo %s", dcc[idx].nick, chname);
   }
 }
