@@ -583,7 +583,7 @@ static int tcl_setuser STDVAR
       return TCL_OK; /* Silently ignore user * */
   }
   me = module_find("irc", 0, 0);
-  if (me && !strcmp(argv[2], "hosts") && argc == 3) {
+  if (me && !strcasecmp(argv[2], "hosts") && argc == 3) {
     Function *func = me->funcs;
 
     (func[IRC_CHECK_THIS_USER]) (argv[1], 1, NULL);
@@ -601,7 +601,7 @@ static int tcl_setuser STDVAR
       (struct list_type *) e)))
     nfree(e);
     /* else maybe already freed... (entry_type==HOSTS) <drummer> */
-  if (me && !strcmp(argv[2], "hosts") && argc == 4) {
+  if (me && !strcasecmp(argv[2], "hosts") && argc == 4) {
     Function *func = me->funcs;
 
     (func[IRC_CHECK_THIS_USER]) (argv[1], 0, NULL);
