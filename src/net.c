@@ -560,7 +560,7 @@ int open_address_listen(sockname_t *addr)
 /* Returns a socket number for a listening socket that will accept any
  * connection -- port # is returned in port
  */
-inline int open_listen(int *port)
+extern inline int open_listen(int *port)
 {
   int sock;
   sockname_t name;
