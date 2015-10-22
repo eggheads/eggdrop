@@ -477,7 +477,10 @@ static int proxy_connect(int sock, sockname_t *addr)
 int open_telnet_raw(int sock, sockname_t *addr)
 {
   sockname_t name;
-  int i, rc;
+  socklen_t res_len;
+  fd_set sockset;
+  struct timeval tv;
+  int i, rc, sel, res;
 
   getvhost(&name, addr->family);
   if (bind(sock, &name.addr.sa, name.addrlen) < 0) {
@@ -491,10 +494,31 @@ int open_telnet_raw(int sock, sockname_t *addr)
     return proxy_connect(sock, addr);
   rc = connect(sock, &addr->addr.sa, addr->addrlen);
   if (rc < 0) {
-    if (errno == EINPROGRESS)
+    if (errno == EINPROGRESS) {
+      /* Async connection... don't return socket descriptor
+       * until after we confirm if it was successful or not */
+      tv.tv_sec = 1;
+      tv.tv_usec = 0;
+      FD_ZERO(&sockset);
+      FD_SET(sock, &sockset);
+      sel = select(sock + 1, &sockset, NULL, NULL, &tv);
+      res_len = sizeof(res);
+      getsockopt(sock, SOL_SOCKET, SO_ERROR, &res, &res_len);
+      if (res == 115)
+        return sock;  // This could probably fail somewhere
+      if (res == 111) {
+        debug1("net: attempted socket connection refused: %s", iptostr(&addr->addr.sa));
+        return -4;
+      }
+      if (res != 0) {
+        debug1("net: getsockopt error %d", res);
+        return -1;
+      }
       return sock; /* async success! */
-    else
+    }
+    else {
       return -1;
+    }
   }
   return sock;
 }
@@ -505,6 +529,7 @@ int open_telnet_raw(int sock, sockname_t *addr)
  *    -1: look at errno or use strerror()
  *    -2: lookup failed or server is not a valid IP string
  *    -3: could not allocate socket
+ *    -4: connection failed
  */
 int open_telnet(int idx, char *server, int port)
 {
@@ -518,8 +543,11 @@ int open_telnet(int idx, char *server, int port)
   if (dcc[idx].sock < 0)
     return -3;
   ret = open_telnet_raw(dcc[idx].sock, &dcc[idx].sockname);
-  if (ret < 0)
-    killsock(dcc[idx].sock);
+  if (ret < 0) {
+    if (findidx(dcc[idx].sock) >= 0) {
+      killsock(dcc[idx].sock);
+    }
+  }
   return ret;
 }
 
