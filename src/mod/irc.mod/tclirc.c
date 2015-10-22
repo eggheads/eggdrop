@@ -530,7 +530,7 @@ static int tcl_getchanidle STDVAR
     Tcl_AppendResult(irp, s, NULL);
     return TCL_OK;
   }
-  Tcl_AppendResult(irp, "0", NULL);
+  Tcl_AppendResult(irp, "-1", NULL);
   return TCL_OK;
 }
 
