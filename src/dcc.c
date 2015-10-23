@@ -1307,6 +1307,13 @@ static void dcc_telnet_hostresolved(int i)
     return;
   }
 
+  /* Skip ident lookup if disabled */
+  if (identtimeout <= 0) {
+    dcc[i].u.ident_sock = dcc[idx].sock;
+    dcc_telnet_got_ident(i, userhost);
+    return;
+  }
+  
   changeover_dcc(i, &DCC_IDENTWAIT, 0);
   dcc[i].timeval = now;
   dcc[i].u.ident_sock = dcc[idx].sock;
