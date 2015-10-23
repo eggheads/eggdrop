@@ -43,10 +43,6 @@ static int convert_old_files(char *path, char *newfiledb)
   int in_file = 0, i;
   struct stat st;
 
-  /* Make GCC shut up about unused variable / unused return value */
-  char *fgets_res;
-  (void)fgets_res;
-
   s = nmalloc(strlen(path) + 8);
   sprintf(s, "%s/.files", path);
   f = fopen(s, "r");
@@ -69,7 +65,7 @@ static int convert_old_files(char *path, char *newfiledb)
   while (!feof(f)) {
     s = nmalloc(121);
     s1 = s;
-    fgets_res = fgets(s, 120, f);
+    fgets(s, 120, f);
     if (s[strlen(s) - 1] == '\n')
       s[strlen(s) - 1] = 0;
     if (!feof(f)) {
@@ -154,13 +150,9 @@ static void convert_version1(FILE *fdb_s, FILE *fdb_t)
 {
   filedb1 fdb1;
 
-  /* Make GCC shut up about unused variable / unused return value */
-  size_t fread_res;
-  (void)fread_res;
-
   fseek(fdb_s, 0L, SEEK_SET);
   while (!feof(fdb_s)) {
-    fread_res = fread(&fdb1, sizeof(filedb1), 1, fdb_s);
+    fread(&fdb1, sizeof(filedb1), 1, fdb_s);
     if (!feof(fdb_s)) {
       if (!(fdb1.stat & FILE_UNUSED)) {
         filedb_entry *fdbe = malloc_fdbe();
@@ -193,13 +185,9 @@ static void convert_version2(FILE *fdb_s, FILE *fdb_t)
 {
   filedb2 fdb2;
 
-  /* Make GCC shut up about unused variable / unused return value */
-  size_t fread_res;
-  (void)fread_res;
-
   fseek(fdb_s, 0L, SEEK_SET);
   while (!feof(fdb_s)) {
-    fread_res = fread(&fdb2, sizeof(filedb2), 1, fdb_s);
+    fread(&fdb2, sizeof(filedb2), 1, fdb_s);
     if (!feof(fdb_s)) {
       if (!(fdb2.stat & FILE_UNUSED)) {
         filedb_entry *fdbe = malloc_fdbe();

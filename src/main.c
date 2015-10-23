@@ -965,12 +965,6 @@ int main(int arg_c, char **arg_v)
   int nvpair[2];
 #endif
 
-  /* Make GCC shut up about unused variable / unused return value */
-  char *fgets_res;
-  FILE *freopen_res;
-  (void)fgets_res;
-  (void)freopen_res;
-
 /* Make sure it can write core, if you make debug. Else it's pretty
  * useless (dw)
  *
@@ -1104,7 +1098,7 @@ int main(int arg_c, char **arg_v)
   /* Check for pre-existing eggdrop! */
   f = fopen(pid_file, "r");
   if (f != NULL) {
-    fgets_res = fgets(s, 10, f);
+    fgets(s, 10, f);
     xx = atoi(s);
     i = kill(xx, SIGCHLD);      /* Meaningless kill to determine if pid
                                  * is used */
@@ -1148,9 +1142,9 @@ int main(int arg_c, char **arg_v)
     setpgid(0, 0);
 #endif
     /* Tcl wants the stdin, stdout and stderr file handles kept open. */
-    freopen_res = freopen("/dev/null", "r", stdin);
-    freopen_res = freopen("/dev/null", "w", stdout);
-    freopen_res = freopen("/dev/null", "w", stderr);
+    freopen("/dev/null", "r", stdin);
+    freopen("/dev/null", "w", stdout);
+    freopen("/dev/null", "w", stderr);
 #ifdef CYGWIN_HACKS
     FreeConsole();
 #endif

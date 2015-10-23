@@ -1087,7 +1087,7 @@ void tputs(register int z, char *s, unsigned int len)
     return;
 
   if (((z == STDOUT) || (z == STDERR)) && (!backgrd || use_stderr)) {
-    i = write(z, s, len);
+    write(z, s, len);
     return;
   }
 

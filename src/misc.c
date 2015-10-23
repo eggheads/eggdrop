@@ -1066,13 +1066,9 @@ static void scan_help_file(struct help_ref *current, char *filename, int type)
   char s[HELP_BUF_LEN + 1], *p, *q;
   struct help_list_t *list;
 
-  /* Make GCC shut up about unused variable / unused return value */
-  char *fgets_res;
-  (void)fgets_res;
-
   if (is_file(filename) && (f = fopen(filename, "r"))) {
     while (!feof(f)) {
-      fgets_res = fgets(s, HELP_BUF_LEN, f);
+      fgets(s, HELP_BUF_LEN, f);
       if (!feof(f)) {
         p = s;
         while ((q = strstr(p, "%{help="))) {
@@ -1218,14 +1214,10 @@ void showhelp(char *who, char *file, struct flag_record *flags, int fl)
   char s[HELP_BUF_LEN + 1];
   FILE *f = resolve_help(fl, file);
 
-  /* Make GCC shut up about unused variable / unused return value */
-  char *fgets_res;
-  (void)fgets_res;
-
   if (f) {
     help_subst(NULL, NULL, 0, HELP_IRC, NULL);  /* Clear flags */
     while (!feof(f)) {
-      fgets_res = fgets(s, HELP_BUF_LEN, f);
+      fgets(s, HELP_BUF_LEN, f);
       if (!feof(f)) {
         if (s[strlen(s) - 1] == '\n')
           s[strlen(s) - 1] = 0;
@@ -1250,15 +1242,11 @@ static int display_tellhelp(int idx, char *file, FILE *f,
   char s[HELP_BUF_LEN + 1];
   int lines = 0;
 
-  /* Make GCC shut up about unused variable / unused return value */
-  char *fgets_res;
-  (void)fgets_res;
-
   if (f) {
     help_subst(NULL, NULL, 0,
                (dcc[idx].status & STAT_TELNET) ? 0 : HELP_IRC, NULL);
     while (!feof(f)) {
-      fgets_res = fgets(s, HELP_BUF_LEN, f);
+      fgets(s, HELP_BUF_LEN, f);
       if (!feof(f)) {
         if (s[strlen(s) - 1] == '\n')
           s[strlen(s) - 1] = 0;
@@ -1375,10 +1363,6 @@ void show_motd(int idx)
   char s[1024];
   struct flag_record fr = { FR_GLOBAL | FR_CHAN, 0, 0, 0, 0, 0 };
 
-  /* Make GCC shut up about unused variable / unused return value */
-  char *fgets_res;
-  (void)fgets_res;
-
   if (!is_file(motdfile))
     return;
 
@@ -1392,7 +1376,7 @@ void show_motd(int idx)
   help_subst(NULL, NULL, 0,
              (dcc[idx].status & STAT_TELNET) ? 0 : HELP_IRC, NULL);
   while (!feof(vv)) {
-    fgets_res = fgets(s, 120, vv);
+    fgets(s, 120, vv);
     if (!feof(vv)) {
       if (s[strlen(s) - 1] == '\n')
         s[strlen(s) - 1] = 0;
@@ -1415,10 +1399,6 @@ void show_banner(int idx)
   char s[1024];
   struct flag_record fr = { FR_GLOBAL | FR_CHAN, 0, 0, 0, 0, 0 };
 
-  /* Make GCC shut up about unused variable / unused return value */
-  char *fgets_res;
-  (void)fgets_res;
-
   if (!is_file(bannerfile))
     return;
 
@@ -1430,7 +1410,7 @@ void show_banner(int idx)
   /* reset the help_subst variables to their defaults */
   help_subst(NULL, NULL, 0, 0, NULL);
   while (!feof(vv)) {
-    fgets_res = fgets(s, 120, vv);
+    fgets(s, 120, vv);
     if (!feof(vv)) {
       if (!s[0])
         strcpy(s, " \n");

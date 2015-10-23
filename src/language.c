@@ -223,10 +223,6 @@ static void read_lang(char *langfile)
   int ltexts = 0;
   int ladd = 0, lupdate = 0;
 
-  /* Make GCC shut up about unused variable / unused return value */
-  char *fgets_res;
-  (void)fgets_res;
-
   FLANG = fopen(langfile, "r");
   if (FLANG == NULL) {
     putlog(LOG_MISC, "*", "LANG: unexpected: reading from file %s failed.",
@@ -246,7 +242,7 @@ static void read_lang(char *langfile)
       }
       if (lskip) {
         while (!strchr(lbuf, '\n')) {
-          fgets_res = fgets(lbuf, 511, FLANG);
+          fgets(lbuf, 511, FLANG);
           lline++;
         }
         lline++;

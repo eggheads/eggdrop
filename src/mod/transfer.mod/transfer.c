@@ -247,7 +247,7 @@ static unsigned long pump_file_to_sock(FILE *file, long sock,
   if (bf) {
     do {
       actual_size = pending_data >= buf_len ? buf_len : pending_data;
-      actual_size = fread(bf, actual_size, 1, file);
+      fread(bf, actual_size, 1, file);
       tputs(sock, bf, actual_size);
       pending_data -= actual_size;
     } while (!sock_has_data(SOCK_DATA_OUTGOING, sock) && pending_data != 0);

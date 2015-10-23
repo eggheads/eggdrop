@@ -82,17 +82,13 @@ static int num_notes(char *user)
   FILE *f;
   char s[513], *to, *s1;
 
-  /* Make GCC shut up about unused variable / unused return value */
-  char *fgets_res;
-  (void)fgets_res;
-
   if (!notefile[0])
     return 0;
   f = fopen(notefile, "r");
   if (f == NULL)
     return 0;
   while (!feof(f)) {
-    fgets_res = fgets(s, 512, f);
+    fgets(s, 512, f);
     if (!feof(f)) {
       if (s[strlen(s) - 1] == '\n')
         s[strlen(s) - 1] = 0;
@@ -117,10 +113,6 @@ static void notes_change(char *oldnick, char *newnick)
   char s[513], *to, *s1;
   int tot = 0;
 
-  /* Make GCC shut up about unused variable / unused return value */
-  char *fgets_res;
-  (void)fgets_res;
-
   if (!egg_strcasecmp(oldnick, newnick))
     return;
   if (!notefile[0])
@@ -136,7 +128,7 @@ static void notes_change(char *oldnick, char *newnick)
   }
   chmod(s, userfile_perm);      /* Use userfile permissions. */
   while (!feof(f)) {
-    fgets_res = fgets(s, 512, f);
+    fgets(s, 512, f);
     if (!feof(f)) {
       if (s[strlen(s) - 1] == '\n')
         s[strlen(s) - 1] = 0;
@@ -170,10 +162,6 @@ static void expire_notes()
   char s[513], *to, *from, *ts, *s1;
   int tot = 0, lapse;
 
-  /* Make GCC shut up about unused variable / unused return value */
-  char *fgets_res;
-  (void)fgets_res;
-
   if (!notefile[0])
     return;
   f = fopen(notefile, "r");
@@ -187,7 +175,7 @@ static void expire_notes()
   }
   chmod(s, userfile_perm);      /* Use userfile permissions. */
   while (!feof(f)) {
-    fgets_res = fgets(s, 512, f);
+    fgets(s, 512, f);
     if (!feof(f)) {
       if (s[strlen(s) - 1] == '\n')
         s[strlen(s) - 1] = 0;
@@ -619,7 +607,8 @@ static void notes_del(char *hand, char *nick, char *sdl, int idx)
   }
   chmod(s, userfile_perm);      /* Use userfile permissions. */
   notes_parse(dl, sdl);
-  while (!feof(f) && fgets(s, 512, f)) {;
+  while (!feof(f)) {
+    fgets(s, 512, f);
     if (s[strlen(s) - 1] == '\n')
       s[strlen(s) - 1] = 0;
     if (!feof(f)) {
