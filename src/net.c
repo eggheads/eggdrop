@@ -179,7 +179,7 @@ int setsockname(sockname_t *addr, char *src, int port, int allowres)
       af = hp->h_addrtype;
     }
   }
-  
+
   addr->family = (af == AF_UNSPEC) ? pref : af;
   addr->addr.sa.sa_family = addr->family;
   if (addr->family == AF_INET6) {
@@ -207,7 +207,7 @@ int setsockname(sockname_t *addr, char *src, int port, int allowres)
     }
   } else
     af = AF_INET;
-  
+
   addr->family = addr->addr.s4.sin_family = AF_INET;
   addr->addr.sa.sa_family = addr->family;
   addr->addrlen = sizeof(struct sockaddr_in);
@@ -221,7 +221,7 @@ int setsockname(sockname_t *addr, char *src, int port, int allowres)
 void getvhost(sockname_t *addr, int af)
 {
   char *h;
-  
+
   if (af == AF_INET)
     h = vhost;
 #ifdef IPV6
@@ -353,7 +353,7 @@ void setsock(int sock, int options)
 int getsock(int af, int options)
 {
   int sock = socket(af, SOCK_STREAM, 0);
-  
+
   if (sock >= 0)
     setsock(sock, options);
   else
@@ -429,7 +429,7 @@ static int proxy_connect(int sock, sockname_t *addr)
   sockname_t name;
   char host[121], s[256];
   int i, port, proxy;
-  
+
   if (!firewall[0])
     return -2;
 #ifdef IPV6
@@ -451,7 +451,7 @@ static int proxy_connect(int sock, sockname_t *addr)
   if (connect(sock, &name.addr.sa, name.addrlen) < 0 && errno != EINPROGRESS)
     return -1;
   if (proxy == PROXY_SOCKS) {
-    for (i = 0; i < threaddata()->MAXSOCKS; i++) 
+    for (i = 0; i < threaddata()->MAXSOCKS; i++)
       if (!(socklist[i].flags & SOCK_UNUSED) && socklist[i].sock == sock)
         socklist[i].flags |= SOCK_PROXYWAIT;    /* drummer */
     egg_memcpy(host, &addr->addr.s4.sin_addr.s_addr, 4);
@@ -534,7 +534,7 @@ int open_telnet_raw(int sock, sockname_t *addr)
 int open_telnet(int idx, char *server, int port)
 {
   int ret;
-  
+
   ret = setsockname(&dcc[idx].sockname, server, port, 1);
   if (ret == AF_UNSPEC)
     return -2;
@@ -588,7 +588,7 @@ int open_address_listen(sockname_t *addr)
 /* Returns a socket number for a listening socket that will accept any
  * connection -- port # is returned in port
  */
-inline int open_listen(int *port)
+int open_listen(int *port)
 {
   int sock;
   sockname_t name;
@@ -614,7 +614,7 @@ int answer(int sock, sockname_t *caller, unsigned short *port, int binary)
   int new_sock;
   caller->addrlen = sizeof(caller->addr);
   new_sock = accept(sock, &caller->addr.sa, &caller->addrlen);
-  
+
   if (new_sock < 0)
     return -1;
 
@@ -812,7 +812,7 @@ int sockread(char *s, int *len, sock_list *slist, int slistmax, int tclonly)
       }
 #else
         x = read(slist[i].sock, s, grab);
-#endif  
+#endif
       if (x <= 0) {           /* eof */
         if (errno != EAGAIN) { /* EAGAIN happens when the operation would
                                 * block on a non-blocking socket, if the
@@ -1133,7 +1133,7 @@ void tputs(register int z, char *s, unsigned int len)
           x = -1;
         }
       } else /* not ssl, use regular write() */
-#endif      
+#endif
       /* Try. */
       x = write(z, s, len);
       if (x == -1)
@@ -1214,7 +1214,7 @@ void dequeue_sockets()
           x = -1;
         }
       } else
-#endif   
+#endif
       x = write(socklist[i].sock, socklist[i].handler.sock.outbuf,
                 socklist[i].handler.sock.outbuflen);
       if ((x < 0) && (errno != EAGAIN)

@@ -113,7 +113,7 @@ static inline void tcl_bind_list_delete(tcl_bind_list_t *tl)
   nfree(tl);
 }
 
-inline void garbage_collect_tclhash(void)
+void garbage_collect_tclhash(void)
 {
   tcl_bind_list_t *tl, *tl_next, *tl_prev;
   tcl_bind_mask_t *tm, *tm_next, *tm_prev;
