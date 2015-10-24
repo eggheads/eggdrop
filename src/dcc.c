@@ -44,7 +44,7 @@ extern int egg_numver, connect_timeout, conmask, backgrd, max_dcc,
            par_telnet_flood;
 
 #ifdef TLS
-extern int tls_vfybots;
+extern int tls_vfybots, ssl_files_loaded;
 
 int tls_vfyclients = 0;         /* Certificate validation mode for clients    */
 int tls_vfydcc = 0;             /* Verify DCC chat/send user certificates     */
@@ -370,9 +370,12 @@ static void dcc_bot_new(int idx, char *buf, int x)
     if (dcc[idx].status & STAT_STARTTLS) {
       dcc[idx].ssl = 1;
       if (ssl_handshake(dcc[idx].sock, TLS_CONNECT, tls_vfybots, LOG_BOTS,
-                    dcc[idx].host, NULL))
+                    dcc[idx].host, NULL)) {
         putlog(LOG_BOTS, "*", "STARTTLS failed while linking to %s",
                dcc[idx].nick);
+        if !(ssl_files_loaded)
+          putlog(LOG_BOTS, "*", "SSL cert and/or key file not loaded");
+      }
       dcc[idx].status &= ~STAT_STARTTLS;
     }
 #endif

@@ -293,8 +293,9 @@ modtest: conftest
 
 sslcert:
 	@if test ! -d $(DEST); then \
-		echo "You haven't installed eggdrop yet.";\
+		echo "You haven't installed eggdrop yet, or you installed using the DEST= flag.";\
 		echo "Please run \"make install\" first.";\
+		echo "If you have already run \"make install\" and used the DEST= command, please use it again here";\
 		exit 1;\
 	fi
 	@if test -f $(DEST)/eggdrop.key; then \
@@ -465,6 +466,8 @@ install-scripts:
 install-end:
 	@echo
 	@echo "Installation completed."
+	@echo ""
+	@echo "If you intend to use this bot as a botnet hub, please run \"make sslcert\" now,"
 	@echo ""
 	@echo "You MUST ensure that you edit/verify your configuration file."
 	@echo "An example configuration file, eggdrop.conf, is distributed with Eggdrop."
