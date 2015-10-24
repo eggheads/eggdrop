@@ -2629,7 +2629,7 @@ static void cmd_pls_host(struct userrec *u, int idx, char *par)
       dprintf(idx, "You can't add hostmasks to non-bots.\n");
       return;
     }
-    if (!glob_owner(fr) && glob_bot(fr2) && (bot_flags(u2) & BOT_SHARE)) {
+    if (!(glob_owner(fr) || glob_botmast(fr)) && glob_bot(fr2) && (bot_flags(u2) & BOT_SHARE)) {
       dprintf(idx, "You can't add hostmasks to share bots.\n");
       return;
     }
