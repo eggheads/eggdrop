@@ -274,9 +274,10 @@ inline static u_32bit_t getipbash(IP ip)
 
 #ifdef IPV6
 static unsigned long getip6bash(struct in6_addr *ip6) {
-  u_32bit_t x;
-  egg_memcpy(&x, &ip6->s6_addr, sizeof x);
-  x ^= *(u_32bit_t *)&ip6->s6_addr[12];
+  u_32bit_t x, y;
+  egg_memcpy(&x, &ip6->s6_addr     , sizeof x);
+  egg_memcpy(&y, &ip6->s6_addr + 12, sizeof y);
+  x ^= y;
   return (unsigned long) BASH_MODULO(x);
 }
 #endif
