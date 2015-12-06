@@ -19,6 +19,9 @@ dnl
 dnl $Id: aclocal.m4,v 1.14 2011/07/20 10:31:37 thommey Exp $
 dnl
 
+dnl Load tcl macros
+builtin(include,tcl.m4)
+
 
 dnl
 dnl Message macros.
@@ -1022,78 +1025,6 @@ EOF
 ])
 
 
-dnl EGG_TCL_FIND_LIBRARY()
-dnl
-AC_DEFUN([EGG_TCL_FIND_LIBRARY],
-[
-  # Look for Tcl library: if $TCLLIB is set, check there first
-  if test "x$TCLLIBFN" = x && test "x$TCLLIB" != x; then
-    if test -d "$TCLLIB"; then
-      for tcllibfns in $tcllibnames; do
-        for tcllibext in $tcllibextensions; do
-          if test -r "${TCLLIB}/lib${tcllibfns}${tcllibext}"; then
-            TCLLIBFN="${tcllibfns}${tcllibext}"
-            TCLLIBEXT="$tcllibext"
-            TCLLIBFNS="$tcllibfns"
-            break 2
-          fi
-        done
-      done
-    fi
-
-    if test "x$TCLLIBFN" = x; then
-      cat << 'EOF' >&2
-configure: WARNING:
-
-  Environment variable TCLLIB was set, but incorrectly.
-  Please set both TCLLIB and TCLINC correctly if you wish to use them.
-
-  configure will now attempt to autodetect both the Tcl library and header.
-
-EOF
-      TCLLIB=""
-      TCLLIBFN=""
-      TCLINC=""
-      TCLINCFN=""
-    fi
-  fi
-])
-
-
-dnl EGG_TCL_FIND_HEADER()
-dnl
-AC_DEFUN([EGG_TCL_FIND_HEADER],
-[
-  # Look for Tcl header: if $TCLINC is set, check there first
-  if test "x$TCLINCFN" = x && test "x$TCLINC" != x; then
-    if test -d "$TCLINC"; then
-      for tclheaderfn in $tclheadernames; do
-        if test -r "${TCLINC}/${tclheaderfn}"; then
-          TCLINCFN="$tclheaderfn"
-          break
-        fi
-      done
-    fi
-
-    if test "x$TCLINCFN" = x; then
-      cat << 'EOF' >&2
-configure: WARNING:
-
-  Environment variable TCLINC was set, but incorrectly.
-  Please set both TCLLIB and TCLINC correctly if you wish to use them.
-
-  configure will now attempt to autodetect both the Tcl library and header.
-
-EOF
-      TCLLIB=""
-      TCLLIBFN=""
-      TCLINC=""
-      TCLINCFN=""
-    fi
-  fi
-])
-
-
 dnl EGG_TCL_CHECK_LIBRARY()
 dnl
 AC_DEFUN([EGG_TCL_CHECK_LIBRARY],
@@ -1104,20 +1035,12 @@ AC_DEFUN([EGG_TCL_CHECK_LIBRARY],
   if test "x$TCLLIBFN" != x; then
     AC_MSG_RESULT([using ${TCLLIB}/lib${TCLLIBFN}])
   else
-    for tcllibfns in $tcllibnames; do
-      for tcllibext in $tcllibextensions; do
-        for tcllibpath in $tcllibpaths; do
-          if test -r "${tcllibpath}/lib${tcllibfns}${tcllibext}"; then
-            AC_MSG_RESULT([found ${tcllibpath}/lib${tcllibfns}${tcllibext}])
-            TCLLIB="$tcllibpath"
-            TCLLIBFN="${tcllibfns}${tcllibext}"
-            TCLLIBEXT="$tcllibext"
-            TCLLIBFNS="$tcllibfns"
-            break 3
-          fi
-        done
-      done
-    done
+    # Use values from tclConfig.sh
+    TCLLIB=$TCL_BIN_DIR
+    TCLLIBFN=$TCL_LIB_FILE
+    TCLLIBEXT="${TCL_LIB_FILE##*.}"
+    TCLLIBFNS=$(sed 's/^.\{2\}//' <<< "$TCL_LIB_FLAG")
+    AC_MSG_RESULT([using ${TCL_BIN_DIR}/${TCL_LIB_FILE} from tclConfig.sh])
   fi
 
   # Show if $TCLLIBFN wasn't found
@@ -1140,32 +1063,15 @@ AC_DEFUN([EGG_TCL_CHECK_HEADER],
   if test "x$TCLINCFN" != x; then
     AC_MSG_RESULT([using ${TCLINC}/${TCLINCFN}])
   else
-    for tclheaderpath in $tclheaderpaths; do
-      for tclheaderfn in $tclheadernames; do
-        if test -r "${tclheaderpath}/${tclheaderfn}"; then
-          AC_MSG_RESULT([found ${tclheaderpath}/${tclheaderfn}])
-          TCLINC="$tclheaderpath"
-          TCLINCFN="$tclheaderfn"
-          break 2
-        fi
-      done
+    TCL_INCLUDE=$(sed 's/^.\{2\}//' <<< "$TCL_INCLUDE_SPEC")
+    for tclheaderfn in $tclheadernames; do
+      if test -r ${TCL_INCLUDE}/${tclheaderfn}; then
+        AC_MSG_RESULT([using ${TCL_INCLUDE}/${tclheaderfn} from tclConfig.sh])
+        TCLINC="$TCL_INCLUDE"
+        TCLINCFN="$tclheaderfn"
+        break
+      fi
     done
-
-    # FreeBSD hack ...
-    if test "x$TCLINCFN" = x; then
-      for tcllibfns in $tcllibnames; do
-        for tclheaderpath in $tclheaderpaths; do
-          for tclheaderfn in $tclheadernames; do
-            if test -r "${tclheaderpath}/${tcllibfns}/${tclheaderfn}"; then
-              AC_MSG_RESULT([found ${tclheaderpath}/${tcllibfns}/${tclheaderfn}])
-              TCLINC="${tclheaderpath}/${tcllibfns}"
-              TCLINCFN="$tclheaderfn"
-              break 3
-            fi
-          done
-        done
-      done
-    fi
   fi
 
   if test "x$TCLINCFN" = x; then
