@@ -148,10 +148,10 @@ marked with vertical bars (|) on the left.
         INFO    - returns the user's global info line
         XTRA    - returns the user's XTRA info
         COMMENT - returns the master-visible only comment for the user
-        EMAIL   - returns the user's e-mail address
-        URL     - returns the user's url
         HANDLE  - returns the user's handle as it is saved in the userfile
         PASS    - returns the user's encrypted password
+      For additional custom user fields, to include the deprecated "EMAIL"
+      and "URL" fields, reference scripts/userinfo.tcl
     Returns: info specific to each entry-type
     Module: core
 

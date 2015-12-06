@@ -1132,7 +1132,7 @@ static char *irc_close()
   dprintf(DP_MODE, "JOIN 0\n");
 
   for (chan = chanset; chan; chan = chan->next)
-    clear_channel(chan, 1);
+    clear_channel(chan, CHAN_RESETALL);
   del_bind_table(H_topc);
   del_bind_table(H_splt);
   del_bind_table(H_sign);

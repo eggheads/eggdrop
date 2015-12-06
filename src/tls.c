@@ -590,7 +590,7 @@ void ssl_info(SSL *ssl, int where, int ret)
   X509 *cert;
   char buf[256];
   ssl_appdata *data;
-  SSL_CIPHER *cipher;
+  const SSL_CIPHER *cipher;
   int secret, processed;
   
   /* We're doing non-blocking IO, so we check here if the handshake has
@@ -795,7 +795,7 @@ static int tcl_tlsstatus STDVAR
   char *p;
   int i, j;
   X509 *cert;
-  SSL_CIPHER *cipher;
+  const SSL_CIPHER *cipher;
   struct threaddata *td = threaddata();
   Tcl_DString ds;
 

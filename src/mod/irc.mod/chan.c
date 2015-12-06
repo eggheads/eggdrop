@@ -1157,7 +1157,7 @@ static int got315(char *from, char *msg)
   if (!ismember(chan, botname)) {      /* Am I on the channel now?          */
     putlog(LOG_MISC | LOG_JOIN, chan->dname, "Oops, I'm not really on %s.",
            chan->dname);
-    clear_channel(chan, 1);
+    clear_channel(chan, CHAN_RESETALL);
     chan->status &= ~CHAN_ACTIVE;
 
     key = chan->channel.key[0] ? chan->channel.key : chan->key_prot;
@@ -1989,7 +1989,7 @@ static int gotpart(char *from, char *msg)
   fixcolon(msg);
   chan = findchan(chname);
   if (chan && channel_inactive(chan)) {
-    clear_channel(chan, 1);
+    clear_channel(chan, CHAN_RESETALL);
     chan->status &= ~(CHAN_ACTIVE | CHAN_PEND);
     return 0;
   }
@@ -2023,7 +2023,7 @@ static int gotpart(char *from, char *msg)
              chan->dname);
     /* If it was me, all hell breaks loose... */
     if (match_my_nick(nick)) {
-      clear_channel(chan, 1);
+      clear_channel(chan, CHAN_RESETALL);
       chan->status &= ~(CHAN_ACTIVE | CHAN_PEND);
       if (!channel_inactive(chan)) {
 
@@ -2071,7 +2071,7 @@ static int gotkick(char *from, char *origmsg)
     else
       dprintf(DP_SERVER, "JOIN %s\n",
               chan->name[0] ? chan->name : chan->dname);
-    clear_channel(chan, 1);
+    clear_channel(chan, CHAN_RESETALL);
     return 0;                   /* rejoin if kicked before getting needed info <Wcc[08/08/02]> */
   }
   if (channel_active(chan)) {
@@ -2119,7 +2119,7 @@ static int gotkick(char *from, char *origmsg)
       else
         dprintf(DP_SERVER, "JOIN %s\n",
                 chan->name[0] ? chan->name : chan->dname);
-      clear_channel(chan, 1);
+      clear_channel(chan, CHAN_RESETALL);
     } else {
       killmember(chan, nick);
       check_lonely_channel(chan);

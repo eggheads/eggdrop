@@ -5,8 +5,36 @@ Eggdrop Changes (since version 1.8.0)
     _____________________________________________________________________
 
 1.8.0 (CVS):
+
   - Clarify SSL documentation, add error messages
     Patch by: Geo
+  
+  - Remove deprecated EMAIL and URL fields from tcl-commands.doc
+    Patch by: Geo
+
+  - Reset channel info on part/kick
+    Patch by: Geo / Found by: multiple users
+
+  - Fix duplicate array value in module API
+    Patch by: Geo / Found by: IRC user
+
+  - Add byte-based flood option
+    Patch by: remorse
+
+  - Reply properly to server-generated CTCPs
+    Patch by: Geo / Found by: IRC user
+
+  - Return -1 for idletime if user is not on channel
+    Patch by: Geo 
+
+  - Fix failing alt hub links
+    Patch by: Geo / Found by: Robby
+
+  - Change user mode after adding a hostmask to a user
+    Patch by: Geo, thommey / Found by: IRC user 
+
+  - Fix some compiler warnings
+    Patch by: Tobbe
 
   - Throw error when writing to read-only variables in server module.
     Patch by: chrfle / Found by: thommey
