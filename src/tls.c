@@ -38,6 +38,7 @@ extern int tls_vfydcc;
 extern struct dcc_t *dcc;
 
 int tls_maxdepth = 9;         /* Max certificate chain verification depth     */
+int ssl_files_loaded = 1;     /* Check for loaded SSL key/cert files          */
 SSL_CTX *ssl_ctx = NULL;      /* SSL context object                           */
 char *tls_randfile = NULL;    /* Random seed file for SSL                     */
 char tls_capath[121] = "";    /* Path to trusted CA certificates              */
@@ -140,9 +141,11 @@ int ssl_init()
   }
   /* Load our own certificate and private key. Mandatory for acting as
      server, because we don't support anonymous ciphers by default. */
-  if (SSL_CTX_use_certificate_chain_file(ssl_ctx, tls_certfile) != 1)
+  if (SSL_CTX_use_certificate_chain_file(ssl_ctx, tls_certfile) != 1) {
+    ssl_files_loaded = 0;
     debug1("TLS: unable to load own certificate: %s",
            ERR_error_string(ERR_get_error(), NULL));
+  }
   if (SSL_CTX_use_PrivateKey_file(ssl_ctx, tls_keyfile,
       SSL_FILETYPE_PEM) != 1)
     debug1("TLS: unable to load private key: %s",

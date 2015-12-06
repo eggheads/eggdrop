@@ -77,12 +77,24 @@ Last revised: July 24, 2004
 
          [The following is performed from the directory installed above.]
 
-      5. Edit your config file completely.
+      5. By default, version 1.8 uses SSL to protect botnet links. If you intend
+         on linking 1.8 bots together, you must run:
 
-      6. Start the bot with the "-m" option to create a user file, i.e. './eggdrop
+            make ssl-cert
+
+         Or, if you installed your eggdrop to a different directory in step 4, you
+         will want to run:
+
+           make ssl-cert DEST=<directory>
+
+         Read docs/TLS for more info on this process.
+
+      6. Edit your config file completely.
+
+      7. Start the bot with the "-m" option to create a user file, i.e. './eggdrop
          -m LamestBot.conf'.
 
-      7. When starting the bot in the future, drop the "-m". If you have edited
+      8. When starting the bot in the future, drop the "-m". If you have edited
          your config file correctly, you can type:
 
            chmod u+x <my-config-file-name>
@@ -96,12 +108,12 @@ Last revised: July 24, 2004
          to start up your bot. For this to work, the top line of your script
          MUST contain the correct path to the Eggdrop executable.
 
-      8. It's advisable to run your bot via crontab, so that it will
+      9. It's advisable to run your bot via crontab, so that it will
          automatically restart if the machine goes down or (heaven forbid)
          the bot should crash. Look at 'scripts/botchk' and 'scripts/autobotchk'
          for a great start with crontabbing the bot.
 
-      9. Smile, and if you haven't already read the README file in its
+      10. Smile, and if you haven't already read the README file in its
          entirety, go take a long walk off a short pier.
 
   (3) MODULES
