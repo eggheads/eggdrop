@@ -536,9 +536,9 @@ Last revised: October 25, 2010
       File containing your private key, needed for the SSL certificate
       (see below). You can create one issuing the following command:
 
-        openssl genrsa -out eggdrop.key 2048
+        openssl genrsa -out eggdrop.key 4096
 
-      It will create a 2048 bit RSA key, strong enough for eggdrop.
+      It will create a 4096 bit RSA key, strong enough for eggdrop.
       This is required for SSL hubs/listen ports, secure file transfer and
       /ctcp botnick schat
       For your convenience, you can type 'make sslcert' after 'make install'

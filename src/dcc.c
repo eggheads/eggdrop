@@ -373,7 +373,7 @@ static void dcc_bot_new(int idx, char *buf, int x)
                     dcc[idx].host, NULL)) {
         putlog(LOG_BOTS, "*", "STARTTLS failed while linking to %s",
                dcc[idx].nick);
-        if !(ssl_files_loaded)
+        if (!ssl_files_loaded)
           putlog(LOG_BOTS, "*", "SSL cert and/or key file not loaded");
       }
       dcc[idx].status &= ~STAT_STARTTLS;

@@ -100,7 +100,7 @@ Last revised: Oct 17, 2010
     The easy way to create a key and a certificate is to type 'make sslcert'
     after compiling your bot (If you installed eggdrop to a non-standard
     location, use make sslcert DEST=/path/to/eggdrop). This will generate a
-    2048-bit private key (eggdrop.key) and a certificate (eggdrop.crt) after
+    4096-bit private key (eggdrop.key) and a certificate (eggdrop.crt) after
     you fill in therequired fields.
 
     To authenticate with a certificate instead of using password, you should
