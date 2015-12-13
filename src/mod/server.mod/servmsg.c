@@ -950,15 +950,21 @@ static int gotmode(char *from, char *msg)
   ch = newsplit(&msg);
   /* Usermode changes? */
   if (strchr(CHANMETA, ch[0]) == NULL) {
-    if (match_my_nick(ch) && check_mode_r) {
-      /* umode +r? - D0H dalnet uses it to mean something different */
+    if (match_my_nick(ch)) {
       fixcolon(msg);
-      if ((msg[0] == '+') && strchr(msg, 'r')) {
-        int servidx = findanyidx(serv);
+      if ((msg[0] == '+') || (msg[0] == '-')) {
+        /* send a WHOIS in case our host was cloaked */
+        dprintf(DP_SERVER, "WHOIS %s\n", botname);
+      }
+      if (check_mode_r) {
+        /* umode +r? - D0H dalnet uses it to mean something different */
+        if ((msg[0] == '+') && strchr(msg, 'r')) {
+          int servidx = findanyidx(serv);
 
-        putlog(LOG_MISC | LOG_JOIN, "*",
-               "%s has me i-lined (jumping)", dcc[servidx].host);
-        nuke_server("i-lines suck");
+          putlog(LOG_MISC | LOG_JOIN, "*",
+                 "%s has me i-lined (jumping)", dcc[servidx].host);
+          nuke_server("i-lines suck");
+        }
       }
     }
   }
