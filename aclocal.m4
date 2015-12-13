@@ -1037,7 +1037,7 @@ AC_DEFUN([EGG_TCL_CHECK_LIBRARY],
   else
     # Use values from tclConfig.sh
     TCLLIB=$TCL_BIN_DIR
-    TCLLIBFN=$TCL_LIB_FILE
+    TCLLIBFN=$($BASENAME $TCL_LIB_FILE | cut -c4-)
     TCLLIBEXT="${TCL_LIB_FILE##*.}"
     TCLLIBFNS=$(sed 's/^.\{2\}//' <<< "$TCL_LIB_FLAG")
     AC_MSG_RESULT([using ${TCL_BIN_DIR}/${TCL_LIB_FILE} from tclConfig.sh])
