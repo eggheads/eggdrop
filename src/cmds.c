@@ -1854,7 +1854,9 @@ static void cmd_botattr(struct userrec *u, int idx, char *par)
 static void cmd_chat(struct userrec *u, int idx, char *par)
 {
   char *arg;
-  int newchan, oldchan;
+  int localchan = 0;
+  int newchan = 0;
+  int oldchan;
   module_entry *me;
 
   arg = newsplit(&par);
@@ -1906,6 +1908,9 @@ static void cmd_chat(struct userrec *u, int idx, char *par)
           if ((Tcl_VarEval(interp, "assoc ", "$_chan", NULL) == TCL_OK) &&
               !tcl_resultempty())
             newchan = tcl_resultint();
+            if ((newchan >= GLOBAL_CHANS) && (newchan <= 199999)) {
+              localchan = 1;
+            }
           else
             newchan = -1;
         }
@@ -1915,7 +1920,8 @@ static void cmd_chat(struct userrec *u, int idx, char *par)
         }
       } else
         newchan = atoi(arg);
-      if ((newchan < 0) || (newchan >= GLOBAL_CHANS)) {
+      if ((newchan < 0) || ((newchan >= GLOBAL_CHANS) && (!localchan)) ||
+          (newchan >= 199999)) {
         dprintf(idx, "Channel number out of range: must be between 0 and %d."
                 "\n", GLOBAL_CHANS);
         return;
