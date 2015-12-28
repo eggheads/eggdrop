@@ -30,7 +30,7 @@ EGGVERSION = @EGGVERSION@
 # Debug defines can be set with configure now.
 # See ./configure --help for more information.
 
-CFLGS = @CFLGS@
+CFLGS = @CFLGS@ @TCL_INCLUDE_SPEC@
 DEBCFLGS = @DEBCFLGS@
 
 # ./configure SHOULD set these; however you may need to tweak them to get
@@ -63,14 +63,12 @@ INSTALL_DATA = @INSTALL_DATA@
 INSTALL_SCRIPT = @INSTALL_SCRIPT@
 
 # Stuff for Tcl
-TCLLIB = @TCLLIB@
-TCLLIBFN = @TCLLIBFN@
-XREQS = @TCL_REQS@
+TCLLIB = @TCL_LIB_SPEC@
 
 # Extra libraries
 # XLIBS will be linked with everything
 # MODULE_XLIBS will only be linked with the module objects
-XLIBS = @SSL_LIBS@ @TCL_LIBS@ @LIBS@
+XLIBS = @SSL_LIBS@ @TCL_LIB_SPEC@ @LIBS@
 MODULE_XLIBS = @MODULE_XLIBS@
 
 # You shouldn't need to edit anything below this line.
@@ -94,31 +92,33 @@ egg_install_msg =  echo "" && \
 
 MAKE_MODEGG = $(MAKE) 'MAKE=$(MAKE)' 'CC=$(MOD_CC)' 'LD=$(MOD_LD)' \
 'STRIP=$(MOD_STRIP)' 'RANLIB=$(RANLIB)' 'CFLGS=$(CFLGS)' \
-'TCLLIB=$(TCLLIB)' 'TCLLIBFN=$(TCLLIBFN)' 'XREQS=$(XREQS)' \
+'TCLLIB=$(TCLLIB)' 'TCLINC=$(TCLINC)' \
 'XLIBS=$(XLIBS)' 'EGGEXEC=$(EGGEXEC)' 'EGGBUILD=(standard build)' 'MODOBJS='
 
 MAKE_MODULES = $(MAKE) 'MAKE=$(MAKE)' 'CC=$(SHLIB_CC)' 'LD=$(SHLIB_LD)' \
 'STRIP=$(SHLIB_STRIP)' 'CFLGS=$(CFLGS)' 'XLIBS=$(XLIBS)' \
+'TCLINC=$(TCLINC)' 'TCLLIB=$(TCLLIB)' \
 'MOD_EXT=$(MOD_EXT)' 'MODULE_XLIBS=$(MODULE_XLIBS)'
 
 MAKE_STATIC = $(MAKE) 'MAKE=$(MAKE)' 'CC=$(CC)' 'LD=$(LD)' \
 'STRIP=$(STRIP)' 'RANLIB=$(RANLIB)' 'CFLGS=$(CFLGS) -DSTATIC' \
-'TCLLIB=$(TCLLIB)' 'TCLLIBFN=$(TCLLIBFN)' 'XREQS=$(XREQS)' \
+'TCLLIB=$(TCLLIB)' 'TCLINC=$(TCLINC)' \
 'XLIBS=$(XLIBS)' 'EGGEXEC=$(EGGEXEC)' 'EGGBUILD=(static version)' \
 'MODOBJS=mod/*.o'
 
 MAKE_DEBEGG = $(MAKE) 'MAKE=$(MAKE)' 'CC=$(MOD_CC)' 'LD=$(MOD_LD)' \
 'STRIP=touch' 'RANLIB=$(RANLIB)' 'CFLGS=$(DEBCFLGS) $(CFLGS)' \
-'TCLLIB=$(TCLLIB)' 'TCLLIBFN=$(TCLLIBFN)' 'XREQS=$(XREQS)' \
+'TCLLIB=$(TCLLIB)' 'TCLINC=$(TCLINC)' \
 'XLIBS=$(XLIBS)' 'EGGEXEC=$(EGGEXEC)' 'EGGBUILD=(debug version)' 'MODOBJS='
 
 MAKE_DEBMODULES = $(MAKE) 'MAKE=$(MAKE)' 'CC=$(SHLIB_CC)' 'LD=$(SHLIB_LD)' \
 'XLIBS=$(XLIBS)' 'STRIP=touch' 'CFLGS=$(DEBCFLGS) $(CFLGS)' \
+'TCLINC=$(TCLINC)' 'TCLLIB=$(TCLLIB)' \
 'MOD_EXT=$(MOD_EXT)' 'MODULE_XLIBS=$(MODULE_XLIBS)'
 
 MAKE_SDEBUG = $(MAKE) 'MAKE=$(MAKE)' 'CC=$(CC)' 'LD=$(LD)' \
 'STRIP=touch' 'RANLIB=$(RANLIB)' 'CFLGS=$(DEBCFLGS) $(CFLGS) -DSTATIC' \
-'TCLLIB=$(TCLLIB)' 'TCLLIBFN=$(TCLLIBFN)' 'XREQS=$(XREQS)' 'XLIBS=$(XLIBS)' \
+'TCLLIB=$(TCLLIB)' 'TCLINC=$(TCLINC)' 'XLIBS=$(XLIBS)' \
 'EGGEXEC=$(EGGEXEC)' 'EGGBUILD=(static debug version)' 'MODOBJS=mod/*.o'
 
 MAKE_DEPEND = $(MAKE) 'MAKE=$(MAKE)' 'CC=$(CC)'

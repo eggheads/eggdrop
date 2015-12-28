@@ -71,13 +71,6 @@ compatability:
 compile_md5:
 	@cd md5 && $(MAKE_GENERIC) md5
 
-libtcle.a: $(TCLLIB)/lib$(TCLLIBFN)
-	@echo "[ Fixing lib$(TCLLIBFN) -> libtcle.a ]"
-	cp $(TCLLIB)/lib$(TCLLIBFN) libtcle.a
-	chmod u+rw libtcle.a
-	ar d libtcle.a tclMain.o
-	$(RANLIB) libtcle.a
-
 eggdrop.h:
 	@echo "You do not have the eggdrop source!"
 	@exit 1

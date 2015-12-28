@@ -213,6 +213,9 @@
 /* Define to 1 if you have the <netinet/in.h> header file. */
 #undef HAVE_NETINET_IN_H
 
+/* Do we have <net/errno.h>? */
+#undef HAVE_NET_ERRNO_H
+
 /* Define to 1 if you have the `NSLinkModule' function. */
 #undef HAVE_NSLINKMODULE
 
@@ -338,21 +341,9 @@
 /* Define to 1 if you have the <sys/types.h> header file. */
 #undef HAVE_SYS_TYPES_H
 
-/* Define for Tcl that has Tcl_Free() (7.5p1 and later). */
-#undef HAVE_TCL_FREE
-
-/* Define for Tcl that has Tcl_GetCurrentThread() (8.1a2 and later). */
-#undef HAVE_TCL_GETCURRENTTHREAD
-
-/* Define for Tcl that has Tcl_GetThreadData() (8.1a2 and later). */
-#undef HAVE_TCL_GETTHREADDATA
-
 /* Define for Tcl that has the Tcl_NotifierProcs struct member
    initNotifierProc (8.4 and later). */
 #undef HAVE_TCL_NOTIFIER_INIT
-
-/* Define for Tcl that has Tcl_SetNotifier() (8.2b1 and later). */
-#undef HAVE_TCL_SETNOTIFIER
 
 /* Define to 1 if your `struct tm' has `tm_zone'. Deprecated, use
    `HAVE_STRUCT_TM_TM_ZONE' instead. */

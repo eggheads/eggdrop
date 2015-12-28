@@ -636,11 +636,8 @@ SSL_LIBS
 SSL_INCLUDES
 DEBCFLGS
 CFLGS
-TCL_REQS
-TCLINCFN
-TCLINC
-TCLLIBFN
-TCLLIB
+TCL_INCLUDE_SPEC
+MATH_LIBS
 TCL_SHLIB_LD_LIBS
 TCL_LD_FLAGS
 TCL_EXTRA_CFLAGS
@@ -7070,36 +7067,78 @@ EOF
   fi
 
 
-  WARN=0
-  # Make sure either both or neither $TCLLIB and $TCLINC are set
-  if test "x$TCLLIB" != x; then
-    if test "x$TCLINC" = x; then
-      WARN=1
-      WVAR1=TCLLIB
-      WVAR2=TCLINC
-      TCLLIB=""
-    fi
-  else
-    if test "x$TCLINC" != x; then
-      WARN=1
-      WVAR1=TCLINC
-      WVAR2=TCLLIB
-      TCLINC=""
-    fi
-  fi
+  # Look for Tcl library: if $tcllibname is set, check there first
+  if test "x$tcllibname" != x; then
+    if test -f "$tcllibname" && test -r "$tcllibname"; then
+      TCLLIB=`echo $tcllibname | sed 's%/[^/][^/]*$%%'`
+      TCLLIBFN=`$BASENAME $tcllibname | cut -c4-`
+      TCLLIBEXT=".`echo $TCLLIBFN | $AWK '{j=split($1, i, "."); print i[j]}'`"
+      TCLLIBFNS=`$BASENAME $tcllibname $TCLLIBEXT | cut -c4-`
 
-  if test "$WARN" = 1; then
-    cat << EOF >&2
+      # Set default make as static for unshared Tcl library
+      if test TCLLIBEXT = ".a"; then
+        if test "$DEFAULT_MAKE" != static; then
+          cat << 'EOF' >&2
 configure: WARNING:
 
-  Environment variable $WVAR1 was set, but I did not detect ${WVAR2}.
-  Please set both TCLLIB and TCLINC correctly if you wish to use them.
+  Your Tcl library is not a shared lib.
+  configure will now set default make type to static.
+
+EOF
+          DEFAULT_MAKE="static"
+
+        fi
+      fi
+
+    else
+      cat << EOF >&2
+configure: WARNING:
+
+  The file '$tcllibname' given to option --with-tcllib is not valid.
+  Specify the full path including the file name (e.g. /usr/lib/libtcl8.5.so)
 
   configure will now attempt to autodetect both the Tcl library and header.
 
 EOF
+      tcllibname=""
+      tclincname=""
+      TCLLIB=""
+      TCLLIBFN=""
+      TCLINC=""
+      TCLINCFN=""
+    fi
   fi
 
+
+  # Look for Tcl header: if $tclincname is set, check there first
+  if test "x$tclincname" != x; then
+    if test -f "$tclincname" && test -r "$tclincname"; then
+      TCLINC=`echo $tclincname | sed 's%/[^/][^/]*$%%'`
+      TCLINCFN=`$BASENAME $tclincname`
+    else
+      cat << EOF >&2
+configure: WARNING:
+
+  The file '$tclincname' given to option --with-tclinc is not valid.
+  Specify the full path including the file name (e.g. /usr/include/tcl.h)
+
+  configure will now attempt to autodetect both the Tcl library and header.
+
+EOF
+      tcllibname=""
+      tclincname=""
+      TCLLIB=""
+      TCLLIBFN=""
+      TCLINC=""
+      TCLINCFN=""
+    fi
+  fi
+
+
+  if test "x$TCLLIBFN" = x; then
+    { $as_echo "$as_me:${as_lineno-$LINENO}: Autoconfiguring Tcl with tclConfig.sh" >&5
+$as_echo "$as_me: Autoconfiguring Tcl with tclConfig.sh" >&6;}
+    egg_tcl_changed="yes"
 
     # TEA extensions pass this us the version of TEA they think they
     # are compatible with.
@@ -7530,228 +7569,279 @@ _ACEOF
 
 
 
-  # Look for Tcl library: if $tcllibname is set, check there first
-  if test "x$tcllibname" != x; then
-    if test -f "$tcllibname" && test -r "$tcllibname"; then
-      TCLLIB=`echo $tcllibname | sed 's%/[^/][^/]*$%%'`
-      TCLLIBFN=`$BASENAME $tcllibname | cut -c4-`
-      TCLLIBEXT=".`echo $TCLLIBFN | $AWK '{j=split($1, i, "."); print i[j]}'`"
-      TCLLIBFNS=`$BASENAME $tcllibname $TCLLIBEXT | cut -c4-`
-    else
-      cat << EOF >&2
-configure: WARNING:
+    #--------------------------------------------------------------------
+    # On a few very rare systems, all of the libm.a stuff is
+    # already in libc.a.  Set compiler flags accordingly.
+    # Also, Linux requires the "ieee" library for math to work
+    # right (and it must appear before "-lm").
+    #--------------------------------------------------------------------
 
-  The file '$tcllibname' given to option --with-tcllib is not valid.
-  Specify the full path including the file name (e.g. /usr/lib/libtcl8.5.so)
+    ac_fn_c_check_func "$LINENO" "sin" "ac_cv_func_sin"
+if test "x$ac_cv_func_sin" = xyes; then :
+  MATH_LIBS=""
+else
+  MATH_LIBS="-lm"
+fi
 
-  configure will now attempt to autodetect both the Tcl library and header.
-
-EOF
-      tcllibname=""
-      tclincname=""
-      TCLLIB=""
-      TCLLIBFN=""
-      TCLINC=""
-      TCLINCFN=""
-    fi
-  fi
-
-
-  # Look for Tcl header: if $tclincname is set, check there first
-  if test "x$tclincname" != x; then
-    if test -f "$tclincname" && test -r "$tclincname"; then
-      TCLINC=`echo $tclincname | sed 's%/[^/][^/]*$%%'`
-      TCLINCFN=`$BASENAME $tclincname`
-    else
-      cat << EOF >&2
-configure: WARNING:
-
-  The file '$tclincname' given to option --with-tclinc is not valid.
-  Specify the full path including the file name (e.g. /usr/include/tcl.h)
-
-  configure will now attempt to autodetect both the Tcl library and header.
-
-EOF
-      tcllibname=""
-      tclincname=""
-      TCLLIB=""
-      TCLLIBFN=""
-      TCLINC=""
-      TCLINCFN=""
-    fi
-  fi
-
-
-  { $as_echo "$as_me:${as_lineno-$LINENO}: checking for Tcl library" >&5
-$as_echo_n "checking for Tcl library... " >&6; }
-
-  # Attempt autodetect for $TCLLIBFN if it's not set
-  if test "x$TCLLIBFN" != x; then
-    { $as_echo "$as_me:${as_lineno-$LINENO}: result: using ${TCLLIB}/lib${TCLLIBFN}" >&5
-$as_echo "using ${TCLLIB}/lib${TCLLIBFN}" >&6; }
-  else
-    # Use values from tclConfig.sh
-    TCLLIB=$TCL_BIN_DIR
-    TCLLIBFN=$($BASENAME $TCL_LIB_FILE | cut -c4-)
-    TCLLIBEXT="${TCL_LIB_FILE##*.}"
-    TCLLIBFNS=$(sed 's/^.\{2\}//' <<< "$TCL_LIB_FLAG")
-    { $as_echo "$as_me:${as_lineno-$LINENO}: result: using ${TCL_BIN_DIR}/${TCL_LIB_FILE} from tclConfig.sh" >&5
-$as_echo "using ${TCL_BIN_DIR}/${TCL_LIB_FILE} from tclConfig.sh" >&6; }
-  fi
-
-  # Show if $TCLLIBFN wasn't found
-  if test "x$TCLLIBFN" = x; then
-    { $as_echo "$as_me:${as_lineno-$LINENO}: result: not found" >&5
-$as_echo "not found" >&6; }
-  fi
-
-
-
-
-
-  { $as_echo "$as_me:${as_lineno-$LINENO}: checking for Tcl header" >&5
-$as_echo_n "checking for Tcl header... " >&6; }
-
-  # Attempt autodetect for $TCLINCFN if it's not set
-  if test "x$TCLINCFN" != x; then
-    { $as_echo "$as_me:${as_lineno-$LINENO}: result: using ${TCLINC}/${TCLINCFN}" >&5
-$as_echo "using ${TCLINC}/${TCLINCFN}" >&6; }
-  else
-    TCL_INCLUDE=$(sed 's/^.\{2\}//' <<< "$TCL_INCLUDE_SPEC")
-    for tclheaderfn in $tclheadernames; do
-      if test -r ${TCL_INCLUDE}/${tclheaderfn}; then
-        { $as_echo "$as_me:${as_lineno-$LINENO}: result: using ${TCL_INCLUDE}/${tclheaderfn} from tclConfig.sh" >&5
-$as_echo "using ${TCL_INCLUDE}/${tclheaderfn} from tclConfig.sh" >&6; }
-        TCLINC="$TCL_INCLUDE"
-        TCLINCFN="$tclheaderfn"
-        break
-      fi
-    done
-  fi
-
-  if test "x$TCLINCFN" = x; then
-    { $as_echo "$as_me:${as_lineno-$LINENO}: result: not found" >&5
-$as_echo "not found" >&6; }
-  fi
-
-
-
-
-
-      { $as_echo "$as_me:${as_lineno-$LINENO}: checking whether the Tcl system has changed" >&5
-$as_echo_n "checking whether the Tcl system has changed... " >&6; }
-  egg_tcl_changed="yes"
-  egg_tcl_id="${TCLLIB}:${TCLLIBFN}:${TCLINC}:${TCLINCFN}"
-  if test "$egg_tcl_id" != ":::"; then
-    egg_tcl_cached="yes"
-    if ${egg_cv_var_tcl_id+:} false; then :
+    { $as_echo "$as_me:${as_lineno-$LINENO}: checking for main in -lieee" >&5
+$as_echo_n "checking for main in -lieee... " >&6; }
+if ${ac_cv_lib_ieee_main+:} false; then :
   $as_echo_n "(cached) " >&6
 else
+  ac_check_lib_save_LIBS=$LIBS
+LIBS="-lieee  $LIBS"
+cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+/* end confdefs.h.  */
 
-      egg_cv_var_tcl_id="$egg_tcl_id"
-      egg_tcl_cached="no"
+
+int
+main ()
+{
+return main ();
+  ;
+  return 0;
+}
+_ACEOF
+if ac_fn_c_try_link "$LINENO"; then :
+  ac_cv_lib_ieee_main=yes
+else
+  ac_cv_lib_ieee_main=no
+fi
+rm -f core conftest.err conftest.$ac_objext \
+    conftest$ac_exeext conftest.$ac_ext
+LIBS=$ac_check_lib_save_LIBS
+fi
+{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_cv_lib_ieee_main" >&5
+$as_echo "$ac_cv_lib_ieee_main" >&6; }
+if test "x$ac_cv_lib_ieee_main" = xyes; then :
+  MATH_LIBS="-lieee $MATH_LIBS"
+fi
+
+
+    #--------------------------------------------------------------------
+    # Interactive UNIX requires -linet instead of -lsocket, plus it
+    # needs net/errno.h to define the socket-related error codes.
+    #--------------------------------------------------------------------
+
+    { $as_echo "$as_me:${as_lineno-$LINENO}: checking for main in -linet" >&5
+$as_echo_n "checking for main in -linet... " >&6; }
+if ${ac_cv_lib_inet_main+:} false; then :
+  $as_echo_n "(cached) " >&6
+else
+  ac_check_lib_save_LIBS=$LIBS
+LIBS="-linet  $LIBS"
+cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+/* end confdefs.h.  */
+
+
+int
+main ()
+{
+return main ();
+  ;
+  return 0;
+}
+_ACEOF
+if ac_fn_c_try_link "$LINENO"; then :
+  ac_cv_lib_inet_main=yes
+else
+  ac_cv_lib_inet_main=no
+fi
+rm -f core conftest.err conftest.$ac_objext \
+    conftest$ac_exeext conftest.$ac_ext
+LIBS=$ac_check_lib_save_LIBS
+fi
+{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_cv_lib_inet_main" >&5
+$as_echo "$ac_cv_lib_inet_main" >&6; }
+if test "x$ac_cv_lib_inet_main" = xyes; then :
+  LIBS="$LIBS -linet"
+fi
+
+    ac_fn_c_check_header_mongrel "$LINENO" "net/errno.h" "ac_cv_header_net_errno_h" "$ac_includes_default"
+if test "x$ac_cv_header_net_errno_h" = xyes; then :
+
+
+$as_echo "#define HAVE_NET_ERRNO_H 1" >>confdefs.h
 
 fi
 
-    if test "$egg_tcl_cached" = yes; then
-      if test "x$egg_cv_var_tcl_id" = "x$egg_tcl_id"; then
-        egg_tcl_changed="no"
-      else
-        egg_cv_var_tcl_id="$egg_tcl_id"
-      fi
-    fi
-  fi
 
-  if test "$egg_tcl_changed" = yes; then
-    { $as_echo "$as_me:${as_lineno-$LINENO}: result: yes" >&5
-$as_echo "yes" >&6; }
+
+    #--------------------------------------------------------------------
+    #	Check for the existence of the -lsocket and -lnsl libraries.
+    #	The order here is important, so that they end up in the right
+    #	order in the command line generated by make.  Here are some
+    #	special considerations:
+    #	1. Use "connect" and "accept" to check for -lsocket, and
+    #	   "gethostbyname" to check for -lnsl.
+    #	2. Use each function name only once:  can't redo a check because
+    #	   autoconf caches the results of the last check and won't redo it.
+    #	3. Use -lnsl and -lsocket only if they supply procedures that
+    #	   aren't already present in the normal libraries.  This is because
+    #	   IRIX 5.2 has libraries, but they aren't needed and they're
+    #	   bogus:  they goof up name resolution if used.
+    #	4. On some SVR4 systems, can't use -lsocket without -lnsl too.
+    #	   To get around this problem, check for both libraries together
+    #	   if -lsocket doesn't work by itself.
+    #--------------------------------------------------------------------
+
+    tcl_checkBoth=0
+    ac_fn_c_check_func "$LINENO" "connect" "ac_cv_func_connect"
+if test "x$ac_cv_func_connect" = xyes; then :
+  tcl_checkSocket=0
+else
+  tcl_checkSocket=1
+fi
+
+    if test "$tcl_checkSocket" = 1; then
+	ac_fn_c_check_func "$LINENO" "setsockopt" "ac_cv_func_setsockopt"
+if test "x$ac_cv_func_setsockopt" = xyes; then :
+
+else
+  { $as_echo "$as_me:${as_lineno-$LINENO}: checking for setsockopt in -lsocket" >&5
+$as_echo_n "checking for setsockopt in -lsocket... " >&6; }
+if ${ac_cv_lib_socket_setsockopt+:} false; then :
+  $as_echo_n "(cached) " >&6
+else
+  ac_check_lib_save_LIBS=$LIBS
+LIBS="-lsocket  $LIBS"
+cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+/* end confdefs.h.  */
+
+/* Override any GCC internal prototype to avoid an error.
+   Use char because int might match the return type of a GCC
+   builtin and then its argument prototype would still apply.  */
+#ifdef __cplusplus
+extern "C"
+#endif
+char setsockopt ();
+int
+main ()
+{
+return setsockopt ();
+  ;
+  return 0;
+}
+_ACEOF
+if ac_fn_c_try_link "$LINENO"; then :
+  ac_cv_lib_socket_setsockopt=yes
+else
+  ac_cv_lib_socket_setsockopt=no
+fi
+rm -f core conftest.err conftest.$ac_objext \
+    conftest$ac_exeext conftest.$ac_ext
+LIBS=$ac_check_lib_save_LIBS
+fi
+{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_cv_lib_socket_setsockopt" >&5
+$as_echo "$ac_cv_lib_socket_setsockopt" >&6; }
+if test "x$ac_cv_lib_socket_setsockopt" = xyes; then :
+  LIBS="$LIBS -lsocket"
+else
+  tcl_checkBoth=1
+fi
+
+fi
+
+    fi
+    if test "$tcl_checkBoth" = 1; then
+	tk_oldLibs=$LIBS
+	LIBS="$LIBS -lsocket -lnsl"
+	ac_fn_c_check_func "$LINENO" "accept" "ac_cv_func_accept"
+if test "x$ac_cv_func_accept" = xyes; then :
+  tcl_checkNsl=0
+else
+  LIBS=$tk_oldLibs
+fi
+
+    fi
+    ac_fn_c_check_func "$LINENO" "gethostbyname" "ac_cv_func_gethostbyname"
+if test "x$ac_cv_func_gethostbyname" = xyes; then :
+
+else
+  { $as_echo "$as_me:${as_lineno-$LINENO}: checking for gethostbyname in -lnsl" >&5
+$as_echo_n "checking for gethostbyname in -lnsl... " >&6; }
+if ${ac_cv_lib_nsl_gethostbyname+:} false; then :
+  $as_echo_n "(cached) " >&6
+else
+  ac_check_lib_save_LIBS=$LIBS
+LIBS="-lnsl  $LIBS"
+cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+/* end confdefs.h.  */
+
+/* Override any GCC internal prototype to avoid an error.
+   Use char because int might match the return type of a GCC
+   builtin and then its argument prototype would still apply.  */
+#ifdef __cplusplus
+extern "C"
+#endif
+char gethostbyname ();
+int
+main ()
+{
+return gethostbyname ();
+  ;
+  return 0;
+}
+_ACEOF
+if ac_fn_c_try_link "$LINENO"; then :
+  ac_cv_lib_nsl_gethostbyname=yes
+else
+  ac_cv_lib_nsl_gethostbyname=no
+fi
+rm -f core conftest.err conftest.$ac_objext \
+    conftest$ac_exeext conftest.$ac_ext
+LIBS=$ac_check_lib_save_LIBS
+fi
+{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_cv_lib_nsl_gethostbyname" >&5
+$as_echo "$ac_cv_lib_nsl_gethostbyname" >&6; }
+if test "x$ac_cv_lib_nsl_gethostbyname" = xyes; then :
+  LIBS="$LIBS -lnsl"
+fi
+
+fi
+
+
+    # TEA specific: Don't perform the eval of the libraries here because
+    # DL_LIBS won't be set until we call TEA_CONFIG_CFLAGS
+
+    TCL_LIBS='${DL_LIBS} ${LIBS} ${MATH_LIBS}'
+
+
+
+    TCL_PATCHLEVEL="${TCL_MAJOR_VERSION}.${TCL_MINOR_VERSION}${TCL_PATCH_LEVEL}"
+    TCL_LIB_SPEC="${TCL_LIB_SPEC} ${MATH_LIBS}"
   else
-    { $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
-$as_echo "no" >&6; }
+    egg_tcl_changed="yes"
+    TCL_LIB_SPEC="-L$TCLLIB -l$TCLLIBFN ${EGG_MATH_LIB}"
+    if test "x$ac_cv_lib_pthread" != x; then
+      TCL_LIB_SPEC="$TCL_LIB_SPEC $ac_cv_lib_pthread"
+    fi
+    TCL_INCLUDE_SPEC=""
+    TCL_VERSION=`grep TCL_VERSION $TCLINC/$TCLINCFN | $HEAD_1 | $AWK '{gsub(/\"/, "", $3); print $3}'`
+    TCL_PATCHLEVEL=`grep TCL_PATCH_LEVEL $TCLINC/$TCLINCFN | $HEAD_1 | $AWK '{gsub(/\"/, "", $3); print $3}'`
+    TCL_MAJOR_VERSION=`echo $TCL_VERSION | cut -d. -f1`
+    TCL_MINOR_VERSION=`echo $TCL_VERSION | cut -d. -f2`
   fi
 
-
-  # Both TCLLIBFN & TCLINCFN must be set, or we bail
-  TCL_FOUND=0
-  if test "x$TCLLIBFN" != x && test "x$TCLINCFN" != x; then
-    TCL_FOUND=1
-
-    # Check Tcl's version
-    if test "$egg_tcl_changed" = yes; then
-      unset egg_cv_var_tcl_version
-    fi
-
-    { $as_echo "$as_me:${as_lineno-$LINENO}: checking for Tcl version" >&5
+  { $as_echo "$as_me:${as_lineno-$LINENO}: checking for Tcl version" >&5
 $as_echo_n "checking for Tcl version... " >&6; }
-    if ${egg_cv_var_tcl_version+:} false; then :
-  $as_echo_n "(cached) " >&6
-else
-
-      egg_cv_var_tcl_version=`grep TCL_VERSION $TCLINC/$TCLINCFN | $HEAD_1 | $AWK '{gsub(/\"/, "", $3); print $3}'`
-
-fi
-
-
-    if test "x$egg_cv_var_tcl_version" != x; then
-      { $as_echo "$as_me:${as_lineno-$LINENO}: result: $egg_cv_var_tcl_version" >&5
-$as_echo "$egg_cv_var_tcl_version" >&6; }
-    else
-      { $as_echo "$as_me:${as_lineno-$LINENO}: result: not found" >&5
-$as_echo "not found" >&6; }
-      TCL_FOUND=0
-    fi
-
-    # Check Tcl's patch level (if available)
-    if test "$egg_tcl_changed" = yes; then
-      unset egg_cv_var_tcl_patch_level
-    fi
-    { $as_echo "$as_me:${as_lineno-$LINENO}: checking for Tcl patch level" >&5
-$as_echo_n "checking for Tcl patch level... " >&6; }
-    if ${egg_cv_var_tcl_patch_level+:} false; then :
-  $as_echo_n "(cached) " >&6
-else
-
-      eval "egg_cv_var_tcl_patch_level=`grep TCL_PATCH_LEVEL $TCLINC/$TCLINCFN | $HEAD_1 | $AWK '{gsub(/\"/, "", $3); print $3}'`"
-
-fi
+  { $as_echo "$as_me:${as_lineno-$LINENO}: result: $TCL_PATCHLEVEL" >&5
+$as_echo "$TCL_PATCHLEVEL" >&6; }
+  { $as_echo "$as_me:${as_lineno-$LINENO}: checking for Tcl library flags" >&5
+$as_echo_n "checking for Tcl library flags... " >&6; }
+  { $as_echo "$as_me:${as_lineno-$LINENO}: result: $TCL_LIB_SPEC" >&5
+$as_echo "$TCL_LIB_SPEC" >&6; }
+  { $as_echo "$as_me:${as_lineno-$LINENO}: checking for Tcl header flags" >&5
+$as_echo_n "checking for Tcl header flags... " >&6; }
+  { $as_echo "$as_me:${as_lineno-$LINENO}: result: $TCL_INCLUDE_SPEC" >&5
+$as_echo "$TCL_INCLUDE_SPEC" >&6; }
 
 
-    if test "x$egg_cv_var_tcl_patch_level" != x; then
-      { $as_echo "$as_me:${as_lineno-$LINENO}: result: $egg_cv_var_tcl_patch_level" >&5
-$as_echo "$egg_cv_var_tcl_patch_level" >&6; }
-    else
-      egg_cv_var_tcl_patch_level="unknown"
-      { $as_echo "$as_me:${as_lineno-$LINENO}: result: unknown" >&5
-$as_echo "unknown" >&6; }
-    fi
-  fi
-
-  # Check if we found Tcl's version
-  if test "$TCL_FOUND" = 0; then
-    cat << 'EOF' >&2
-configure: error:
-
-  Tcl cannot be found on this system.
-
-  Eggdrop requires Tcl and the Tcl development files to compile.
-  If you already have Tcl installed on this system, make sure you
-  also have the development files (common package names include
-  'tcl-dev' and 'tcl-devel'). If I just wasn't looking
-  in the right place for it, re-run ./configure using the
-  --with-tcllib='/path/to/libtcl.so' and
-  --with-tclinc='/path/to/tcl.h' options.
-
-  See doc/COMPILE-GUIDE's 'Tcl Detection and Installation' section for more
-  information.
-
-EOF
-    exit 1
-  fi
 
 
-  # Is this version of Tcl too old for us to use ?
-  TCL_VER_PRE70=`echo $egg_cv_var_tcl_version | $AWK '{split($1, i, "."); if (i[1] < 7) print "yes"; else print "no"}'`
-  if test "$TCL_VER_PRE70" = yes; then
+
+
+  if test "x$TCL_MAJOR_VERSION" = x || test "x$TCL_MINOR_VERSION" = x || test $TCL_MAJOR_VERSION -lt 8 || test $TCL_MAJOR_VERSION -eq 8 -a $TCL_MINOR_VERSION -lt 3; then
     cat << EOF >&2
 configure: error:
 
@@ -7768,325 +7858,22 @@ EOF
   fi
 
 
-  # Set variables for Tcl library tests
-  TCL_TEST_LIB="$TCLLIBFNS"
-  TCL_TEST_OTHERLIBS="-L$TCLLIB $EGG_MATH_LIB"
-  if test "x$ac_cv_lib_pthread" != x; then
-    TCL_TEST_OTHERLIBS="$TCL_TEST_OTHERLIBS $ac_cv_lib_pthread"
-  fi
 
-
-  if test "$egg_tcl_changed" = yes; then
-    unset egg_cv_var_tcl_free
-  fi
-
-  # Check for Tcl_Free()
-  as_ac_Lib=`$as_echo "ac_cv_lib_$TCL_TEST_LIB''_Tcl_Free" | $as_tr_sh`
-{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for Tcl_Free in -l$TCL_TEST_LIB" >&5
-$as_echo_n "checking for Tcl_Free in -l$TCL_TEST_LIB... " >&6; }
-if eval \${$as_ac_Lib+:} false; then :
-  $as_echo_n "(cached) " >&6
-else
-  ac_check_lib_save_LIBS=$LIBS
-LIBS="-l$TCL_TEST_LIB $TCL_TEST_OTHERLIBS $LIBS"
-cat confdefs.h - <<_ACEOF >conftest.$ac_ext
-/* end confdefs.h.  */
-
-/* Override any GCC internal prototype to avoid an error.
-   Use char because int might match the return type of a GCC
-   builtin and then its argument prototype would still apply.  */
-#ifdef __cplusplus
-extern "C"
-#endif
-char Tcl_Free ();
-int
-main ()
-{
-return Tcl_Free ();
-  ;
-  return 0;
-}
-_ACEOF
-if ac_fn_c_try_link "$LINENO"; then :
-  eval "$as_ac_Lib=yes"
-else
-  eval "$as_ac_Lib=no"
-fi
-rm -f core conftest.err conftest.$ac_objext \
-    conftest$ac_exeext conftest.$ac_ext
-LIBS=$ac_check_lib_save_LIBS
-fi
-eval ac_res=\$$as_ac_Lib
-	       { $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_res" >&5
-$as_echo "$ac_res" >&6; }
-if eval test \"x\$"$as_ac_Lib"\" = x"yes"; then :
-  egg_cv_var_tcl_free="yes"
-else
-  egg_cv_var_tcl_free="no"
-fi
-
-
-  if test "$egg_cv_var_tcl_free" = yes; then
-
-$as_echo "#define HAVE_TCL_FREE 1" >>confdefs.h
-
-  fi
-
-
-  if test "$egg_tcl_changed" = yes; then
-    unset egg_cv_var_tcl_getcurrentthread
-  fi
-
-  # Check for Tcl_GetCurrentThread()
-  as_ac_Lib=`$as_echo "ac_cv_lib_$TCL_TEST_LIB''_Tcl_GetCurrentThread" | $as_tr_sh`
-{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for Tcl_GetCurrentThread in -l$TCL_TEST_LIB" >&5
-$as_echo_n "checking for Tcl_GetCurrentThread in -l$TCL_TEST_LIB... " >&6; }
-if eval \${$as_ac_Lib+:} false; then :
-  $as_echo_n "(cached) " >&6
-else
-  ac_check_lib_save_LIBS=$LIBS
-LIBS="-l$TCL_TEST_LIB $TCL_TEST_OTHERLIBS $LIBS"
-cat confdefs.h - <<_ACEOF >conftest.$ac_ext
-/* end confdefs.h.  */
-
-/* Override any GCC internal prototype to avoid an error.
-   Use char because int might match the return type of a GCC
-   builtin and then its argument prototype would still apply.  */
-#ifdef __cplusplus
-extern "C"
-#endif
-char Tcl_GetCurrentThread ();
-int
-main ()
-{
-return Tcl_GetCurrentThread ();
-  ;
-  return 0;
-}
-_ACEOF
-if ac_fn_c_try_link "$LINENO"; then :
-  eval "$as_ac_Lib=yes"
-else
-  eval "$as_ac_Lib=no"
-fi
-rm -f core conftest.err conftest.$ac_objext \
-    conftest$ac_exeext conftest.$ac_ext
-LIBS=$ac_check_lib_save_LIBS
-fi
-eval ac_res=\$$as_ac_Lib
-	       { $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_res" >&5
-$as_echo "$ac_res" >&6; }
-if eval test \"x\$"$as_ac_Lib"\" = x"yes"; then :
-  egg_cv_var_tcl_getcurrentthread="yes"
-else
-  egg_cv_var_tcl_getcurrentthread="no"
-fi
-
-  if test "$egg_cv_var_tcl_getcurrentthread" = yes; then
-
-$as_echo "#define HAVE_TCL_GETCURRENTTHREAD 1" >>confdefs.h
-
-
-    # Add pthread library to $LIBS if we need it for threaded Tcl
-    if test "x$ac_cv_lib_pthread" != x; then
-
-  if test "x$ac_cv_lib_pthread" != x; then
-    if test "x$LIBS" = x; then
-      LIBS="$ac_cv_lib_pthread"
-    else
-      LIBS="$LIBS $ac_cv_lib_pthread"
-    fi
-  fi
-
-    fi
-  fi
-
-
-  if test "$egg_tcl_changed" = yes; then
-    unset egg_cv_var_tcl_getthreaddata
-  fi
-
-  # Check for Tcl_GetThreadData()
-  as_ac_Lib=`$as_echo "ac_cv_lib_$TCL_TEST_LIB''_Tcl_GetThreadData" | $as_tr_sh`
-{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for Tcl_GetThreadData in -l$TCL_TEST_LIB" >&5
-$as_echo_n "checking for Tcl_GetThreadData in -l$TCL_TEST_LIB... " >&6; }
-if eval \${$as_ac_Lib+:} false; then :
-  $as_echo_n "(cached) " >&6
-else
-  ac_check_lib_save_LIBS=$LIBS
-LIBS="-l$TCL_TEST_LIB $TCL_TEST_OTHERLIBS $LIBS"
-cat confdefs.h - <<_ACEOF >conftest.$ac_ext
-/* end confdefs.h.  */
-
-/* Override any GCC internal prototype to avoid an error.
-   Use char because int might match the return type of a GCC
-   builtin and then its argument prototype would still apply.  */
-#ifdef __cplusplus
-extern "C"
-#endif
-char Tcl_GetThreadData ();
-int
-main ()
-{
-return Tcl_GetThreadData ();
-  ;
-  return 0;
-}
-_ACEOF
-if ac_fn_c_try_link "$LINENO"; then :
-  eval "$as_ac_Lib=yes"
-else
-  eval "$as_ac_Lib=no"
-fi
-rm -f core conftest.err conftest.$ac_objext \
-    conftest$ac_exeext conftest.$ac_ext
-LIBS=$ac_check_lib_save_LIBS
-fi
-eval ac_res=\$$as_ac_Lib
-	       { $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_res" >&5
-$as_echo "$ac_res" >&6; }
-if eval test \"x\$"$as_ac_Lib"\" = x"yes"; then :
-  egg_cv_var_tcl_getthreaddata="yes"
-else
-  egg_cv_var_tcl_getthreaddata="no"
-fi
-
-  if test "$egg_cv_var_tcl_getthreaddata" = yes; then
-
-$as_echo "#define HAVE_TCL_GETTHREADDATA 1" >>confdefs.h
-
-  fi
-
-
-  if test "$egg_tcl_changed" = yes; then
-    unset egg_cv_var_tcl_setnotifier
-  fi
-
-  # Check for Tcl_SetNotifier()
-  as_ac_Lib=`$as_echo "ac_cv_lib_$TCL_TEST_LIB''_Tcl_SetNotifier" | $as_tr_sh`
-{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for Tcl_SetNotifier in -l$TCL_TEST_LIB" >&5
-$as_echo_n "checking for Tcl_SetNotifier in -l$TCL_TEST_LIB... " >&6; }
-if eval \${$as_ac_Lib+:} false; then :
-  $as_echo_n "(cached) " >&6
-else
-  ac_check_lib_save_LIBS=$LIBS
-LIBS="-l$TCL_TEST_LIB $TCL_TEST_OTHERLIBS $LIBS"
-cat confdefs.h - <<_ACEOF >conftest.$ac_ext
-/* end confdefs.h.  */
-
-/* Override any GCC internal prototype to avoid an error.
-   Use char because int might match the return type of a GCC
-   builtin and then its argument prototype would still apply.  */
-#ifdef __cplusplus
-extern "C"
-#endif
-char Tcl_SetNotifier ();
-int
-main ()
-{
-return Tcl_SetNotifier ();
-  ;
-  return 0;
-}
-_ACEOF
-if ac_fn_c_try_link "$LINENO"; then :
-  eval "$as_ac_Lib=yes"
-else
-  eval "$as_ac_Lib=no"
-fi
-rm -f core conftest.err conftest.$ac_objext \
-    conftest$ac_exeext conftest.$ac_ext
-LIBS=$ac_check_lib_save_LIBS
-fi
-eval ac_res=\$$as_ac_Lib
-	       { $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_res" >&5
-$as_echo "$ac_res" >&6; }
-if eval test \"x\$"$as_ac_Lib"\" = x"yes"; then :
-  egg_cv_var_tcl_setnotifier="yes"
-else
-  egg_cv_var_tcl_setnotifier="no"
-fi
-
-  if test "$egg_cv_var_tcl_setnotifier" = yes; then
-
-$as_echo "#define HAVE_TCL_SETNOTIFIER 1" >>confdefs.h
-
-  fi
-
-
-  if test "$egg_tcl_changed" = yes; then
-    unset egg_cv_var_tcl_notifier_init
-  fi
-
-  # Check for Tcl_NotifierProcs member initNotifierProc
-  ac_fn_c_check_member "$LINENO" "Tcl_NotifierProcs" "initNotifierProc" "ac_cv_member_Tcl_NotifierProcs_initNotifierProc" "#include \"$TCLINC/$TCLINCFN\"
-"
-if test "x$ac_cv_member_Tcl_NotifierProcs_initNotifierProc" = xyes; then :
-  egg_cv_var_tcl_notifier_init="yes"
-else
-  egg_cv_var_tcl_notifier_init="no"
-fi
-
-  if test "$egg_cv_var_tcl_notifier_init" = yes; then
+  if test $TCL_MAJOR_VERSION -gt 8 || test $TCL_MAJOR_VERSION -eq 8 -a $TCL_MINOR_VERSION -ge 4; then
 
 $as_echo "#define HAVE_TCL_NOTIFIER_INIT 1" >>confdefs.h
 
   fi
 
 
-  if test "$EGG_CYGWIN" = yes; then
-    TCL_REQS="${TCLLIB}/lib${TCLLIBFN}"
-    TCL_LIBS="-L$TCLLIB -l$TCLLIBFNS $EGG_MATH_LIB"
+  if test "x$TCLINCFN" != x; then
+    egg_tclinc="\\\"$TCLINC/$TCLINCFN\\\""
   else
-    if test "$TCLLIBEXT" != ".a"; then
-      TCL_REQS="${TCLLIB}/lib${TCLLIBFN}"
-      TCL_LIBS="-L$TCLLIB -l$TCLLIBFNS $EGG_MATH_LIB"
-    else
-      # Set default make as static for unshared Tcl library
-      if test "$DEFAULT_MAKE" != static; then
-        cat << 'EOF' >&2
-configure: WARNING:
-
-  Your Tcl library is not a shared lib.
-  configure will now set default make type to static.
-
-EOF
-        DEFAULT_MAKE="static"
-
-      fi
-
-      # Are we using a pre 7.4 Tcl version ?
-      TCL_VER_PRE74=`echo $egg_cv_var_tcl_version | $AWK '{split($1, i, "."); if (((i[1] == 7) && (i[2] < 4)) || (i[1] < 7)) print "yes"; else print "no"}'`
-      if test "$TCL_VER_PRE74" = no; then
-
-        # Was the --with-tcllib option given ?
-        if test "x$tcllibname" != x; then
-          TCL_REQS="${TCLLIB}/lib${TCLLIBFN}"
-          TCL_LIBS="${TCLLIB}/lib${TCLLIBFN} $EGG_MATH_LIB"
-        else
-          TCL_REQS="${TCLLIB}/lib${TCLLIBFN}"
-          TCL_LIBS="-L$TCLLIB -l$TCLLIBFNS $EGG_MATH_LIB"
-        fi
-      else
-        cat << EOF >&2
-configure: WARNING:
-
-  Your Tcl version ($egg_cv_var_tcl_version) is older than 7.4.
-  There are known problems, but we will attempt to work around them.
-
-EOF
-        TCL_REQS="libtcle.a"
-        TCL_LIBS="-L`pwd` -ltcle $EGG_MATH_LIB"
-      fi
-    fi
+    egg_tclinc="<tcl.h>"
   fi
 
-
-
-
-
-
   ac_config_commands="$ac_config_commands replace-if-changed"
+
 
 
 
@@ -9700,8 +9487,7 @@ cat >>$CONFIG_STATUS <<_ACEOF || ac_write_fail=1
 # INIT-COMMANDS
 #
 
-    egg_tclinc="$TCLINC"
-    egg_tclincfn="$TCLINCFN"
+    egg_tclinc="${egg_tclinc}"
 
 
 _ACEOF
@@ -10280,11 +10066,11 @@ $as_echo "$as_me: executing $ac_file commands" >&6;}
     "replace-if-changed":C)
     egg_replace_file="lush.h"
 
-    cat > conftest.out << EOF
+cat > conftest.out << EOF
 
 /* Ignore me but do not erase me. I am a kludge. */
 
-#include "${egg_tclinc}/${egg_tclincfn}"
+#include ${egg_tclinc}
 
 EOF
 
