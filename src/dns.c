@@ -379,7 +379,7 @@ static void tcl_dnshostbyip(sockname_t *ip, char *proc, char *paras)
  *    Event functions
  */
 
-inline static int dnsevent_expmem(void)
+static int dnsevent_expmem(void)
 {
   devent_t *de;
   int tot = 0;

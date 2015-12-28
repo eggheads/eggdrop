@@ -43,8 +43,8 @@ typedef struct {
 static filelist_t *filelist_new(void);
 static void filelist_free(filelist_t *);
 static void filelist_add(filelist_t *, char *);
-static inline void filelist_addout(filelist_t *, char *);
-static inline void filelist_idxshow(filelist_t *, int);
+static void filelist_addout(filelist_t *, char *);
+static void filelist_idxshow(filelist_t *, int);
 static void filelist_sort(filelist_t *);
 
 #endif /* _EGG_MOD_FILESYS_FILELIST_H */

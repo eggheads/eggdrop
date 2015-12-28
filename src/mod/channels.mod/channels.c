@@ -266,7 +266,7 @@ static int ismasked(masklist *m, char *user)
 
 /* Unlink chanset element from chanset list.
  */
-inline static int chanset_unlink(struct chanset_t *chan)
+static inline int chanset_unlink(struct chanset_t *chan)
 {
   struct chanset_t *c, *c_old = NULL;
 

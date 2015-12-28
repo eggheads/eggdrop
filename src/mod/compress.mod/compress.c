@@ -175,7 +175,7 @@ static int uncompress_to_file(char *f_src, char *f_target)
 
 /* Enforce limits.
  */
-inline static void adjust_mode_num(int *mode)
+static inline void adjust_mode_num(int *mode)
 {
   if (*mode > 9)
     *mode = 9;

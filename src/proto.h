@@ -271,7 +271,7 @@ int alloctclsock(int, int, Tcl_FileProc *, ClientData);
 int getsock(int, int);
 void killsock(int);
 void killtclsock(int);
-inline int open_listen(int *);
+int open_listen(int *);
 void getvhost(sockname_t *, int);
 int setsockname(sockname_t *, char *, int, int);
 int open_address_listen(sockname_t *);

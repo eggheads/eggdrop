@@ -119,7 +119,6 @@ static void setudef(struct udef_struct *, char *, intptr_t);
 static void remove_channel(struct chanset_t *);
 static intptr_t ngetudef(char *, char *);
 static int expired_mask(struct chanset_t *chan, char *who);
-inline static int chanset_unlink(struct chanset_t *chan);
 
 #else
 

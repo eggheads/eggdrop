@@ -76,7 +76,7 @@ void *_user_realloc(void *ptr, int size, const char *file, int line)
 #endif
 }
 
-inline int expmem_mask(struct maskrec *m)
+int expmem_mask(struct maskrec *m)
 {
   int result = 0;
 

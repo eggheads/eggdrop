@@ -260,14 +260,14 @@ static struct resolve *allocresolve()
 
 /* Return the hash bucket number for id.
  */
-inline static u_32bit_t getidbash(u_16bit_t id)
+static inline u_32bit_t getidbash(u_16bit_t id)
 {
   return (u_32bit_t) BASH_MODULO(id);
 }
 
 /* Return the hash bucket number for ip.
  */
-inline static u_32bit_t getipbash(IP ip)
+static inline u_32bit_t getipbash(IP ip)
 {
   return (u_32bit_t) BASH_MODULO(ip);
 }
