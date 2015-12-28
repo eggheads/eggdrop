@@ -1020,7 +1020,7 @@ AC_DEFUN([EGG_TCL_TCLCONFIG],
     TCL_LIB_SPEC="${TCL_LIB_SPEC} ${MATH_LIBS}"
   else
     egg_tcl_changed="yes"
-    TCL_LIB_SPEC="-L$TCLLIB -l$TCLLIBFN ${EGG_MATH_LIB}"
+    TCL_LIB_SPEC="-L$TCLLIB -l$TCLLIBFNS ${EGG_MATH_LIB}"
     if test "x$ac_cv_lib_pthread" != x; then
       TCL_LIB_SPEC="$TCL_LIB_SPEC $ac_cv_lib_pthread"
     fi
