@@ -7837,11 +7837,6 @@ $as_echo_n "checking for Tcl header flags... " >&6; }
 $as_echo "$TCL_INCLUDE_SPEC" >&6; }
 
 
-cat >>confdefs.h <<_ACEOF
-#define TCL_PATCH_LEVEL $TCL_PATCHLEVEL
-_ACEOF
-
-
 
 
 
@@ -7853,7 +7848,7 @@ configure: error:
   Your Tcl version is much too old for Eggdrop to use. You should
   download and compile a more recent version. The most reliable
   current version is $tclrecommendver and can be downloaded from
-  ${tclrecommendsite}.
+  ${tclrecommendsite}. We require at least Tcl 8.3.
 
   See doc/COMPILE-GUIDE's 'Tcl Detection and Installation' section
   for more information.
