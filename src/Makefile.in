@@ -33,7 +33,7 @@ doofus:
 	@echo ""
 	@cd .. && $(MAKE)
 
-../$(EGGEXEC): build_msg $(eggdrop_objs) $(XREQS) compile_md5 compatability
+../$(EGGEXEC): build_msg $(eggdrop_objs) compile_md5 compatability
 	@echo "Linking eggdrop $(EGGBUILD)."
 	@echo ""
 	@touch mod/mod.xlibs
