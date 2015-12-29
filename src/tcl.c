@@ -913,10 +913,8 @@ void rem_tcl_coups(tcl_coups *list)
 */
 int tcl_threaded()
 {
-#ifdef HAVE_TCL_GETCURRENTTHREAD
   if (Tcl_GetCurrentThread() != (Tcl_ThreadId)0)
     return 1;
-#endif
 
   return 0;
 }

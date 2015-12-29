@@ -32,7 +32,7 @@
 
 #include "lush.h"
 
-#if defined(HAVE_TCL_SETNOTIFIER) && defined(HAVE_TCL_GETTHREADDATA) && defined(HAVE_TCL_NOTIFIER_INIT)
+#if defined(HAVE_TCL_NOTIFIER_INIT)
 #  define REPLACE_NOTIFIER
 #endif
 
@@ -97,16 +97,6 @@
 #include "chan.h"
 #include "users.h"
 #include "compat/compat.h"
-
-/* For pre Tcl7.5p1 versions */
-#ifndef HAVE_TCL_FREE
-#  define Tcl_Free(x) n_free(x, "", 0)
-#endif
-
-/* For pre7.6 Tcl versions */
-#ifndef TCL_PATCH_LEVEL
-#  define TCL_PATCH_LEVEL Tcl_GetVar(interp, "tcl_patchLevel", TCL_GLOBAL_ONLY)
-#endif
 
 #ifndef MAKING_MODS
 extern struct dcc_table DCC_CHAT, DCC_BOT, DCC_LOST, DCC_SCRIPT, DCC_BOT_NEW,
