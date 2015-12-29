@@ -1055,7 +1055,7 @@ configure: error:
   Your Tcl version is much too old for Eggdrop to use. You should
   download and compile a more recent version. The most reliable
   current version is $tclrecommendver and can be downloaded from
-  ${tclrecommendsite}.
+  ${tclrecommendsite}. We require at least Tcl 8.3.
 
   See doc/COMPILE-GUIDE's 'Tcl Detection and Installation' section
   for more information.
