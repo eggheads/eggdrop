@@ -33,7 +33,7 @@ doofus:
 	@echo ""
 	@cd .. && $(MAKE)
 
-../$(EGGEXEC): build_msg $(eggdrop_objs) compile_md5 compatability
+../$(EGGEXEC): build_msg $(eggdrop_objs) compile_md5 compatibility
 	@echo "Linking eggdrop $(EGGBUILD)."
 	@echo ""
 	@touch mod/mod.xlibs
@@ -62,7 +62,7 @@ main.o:
 '-DLDFLAGS="$(LD)"' \
 '-DSTRIPFLAGS="$(STRIP)"' -c $(srcdir)/main.c
 
-compatability:
+compatibility:
 	@cd compat && $(MAKE_GENERIC) compat
 	@echo ""
 	@echo "---------- Yeah! That's the compiling, now the linking! ----------"
