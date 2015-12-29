@@ -75,7 +75,7 @@ typedef struct tcl_bind_list_b {
 
 #ifndef MAKING_MODS
 
-inline void garbage_collect_tclhash(void);
+void garbage_collect_tclhash(void);
 
 void init_bind(void);
 void kill_bind(void);
