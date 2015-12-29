@@ -468,7 +468,6 @@ void block_dns_hostbyip(sockname_t *addr)
 {
   struct hostent *hp = 0;
   static char s[UHOSTLEN];
-  const char *r = 0;
 
   if (addr->family == AF_INET) {
     if (!sigsetjmp(alarmret, 1)) {

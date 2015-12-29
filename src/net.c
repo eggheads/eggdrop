@@ -480,7 +480,7 @@ int open_telnet_raw(int sock, sockname_t *addr)
   socklen_t res_len;
   fd_set sockset;
   struct timeval tv;
-  int i, rc, sel, res;
+  int i, rc, res;
 
   getvhost(&name, addr->family);
   if (bind(sock, &name.addr.sa, name.addrlen) < 0) {
