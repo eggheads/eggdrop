@@ -7837,6 +7837,11 @@ $as_echo_n "checking for Tcl header flags... " >&6; }
 $as_echo "$TCL_INCLUDE_SPEC" >&6; }
 
 
+cat >>confdefs.h <<_ACEOF
+#define TCL_PATCH_LEVEL $TCL_PATCHLEVEL
+_ACEOF
+
+
 
 
 
