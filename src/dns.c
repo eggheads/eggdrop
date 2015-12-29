@@ -477,7 +477,7 @@ void block_dns_hostbyip(sockname_t *addr)
       alarm(0);
     }
     if (!hp)
-      r = inet_ntop(AF_INET, &addr->addr.s4.sin_addr.s_addr, s, sizeof s);
+     inet_ntop(AF_INET, &addr->addr.s4.sin_addr.s_addr, s, sizeof s);
 #ifdef IPV6
   } else {
     if (!sigsetjmp(alarmret, 1)) {
@@ -487,7 +487,7 @@ void block_dns_hostbyip(sockname_t *addr)
       alarm(0);
     }
     if (!hp)
-      r = inet_ntop(AF_INET6, &addr->addr.s6.sin6_addr, s, sizeof s);
+      inet_ntop(AF_INET6, &addr->addr.s6.sin6_addr, s, sizeof s);
   }
 #else
   }
