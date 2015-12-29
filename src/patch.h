@@ -41,12 +41,12 @@ patch("CVS");                   /* CVS version */
  *
  *
  */
-patch("1412277709");            /* current unixtime */
+patch("1451356129");            /* current unixtime */
 /*
  *
  *
  */
-patch("infiniteinfo");
+patch("tclconfig");
 /*
  *
  *
