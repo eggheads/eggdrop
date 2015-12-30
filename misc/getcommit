@@ -32,4 +32,4 @@ if [ $? -ne 0 -o "x$VER" = "x" ]; then
 		fi
 	fi
 fi
-echo $VER
+echo -n $VER
