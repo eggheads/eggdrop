@@ -1,7 +1,5 @@
 /*
  * uptime.h - part of the uptime module
- *
- * $Id: uptime.h,v 1.1.1.1 2010/07/26 21:11:06 simple Exp $
  */
 /*
  * Copyright (C) 2001 proton

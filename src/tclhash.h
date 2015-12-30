@@ -1,7 +1,5 @@
 /*
  * tclhash.h
- *
- * $Id: tclhash.h,v 1.5 2012/06/19 14:27:17 thommey Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer

@@ -6,8 +6,6 @@
  *   rejecting a bot
  *   linking, unlinking, and relaying to another bot
  *   pinging the bots periodically and checking leaf status
- *
- * $Id: botnet.c,v 1.4 2010/11/01 22:38:34 pseudo Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer

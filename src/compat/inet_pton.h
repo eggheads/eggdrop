@@ -1,8 +1,6 @@
 /*
  * inet_pton.h
  *   prototypes for inet_pton.c
- *
- * $Id: inet_pton.h,v 1.2 2010/10/06 19:07:47 pseudo Exp $
  */
 /*
  * Copyright (C) 2010 Eggheads Development Team

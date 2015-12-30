@@ -6,8 +6,6 @@
  *   timers, utimers
  *   telling the current programmed settings
  *   initializing a lot of stuff and loading the tcl scripts
- *
- * $Id: chanprog.c,v 1.7 2010/11/04 17:54:04 thommey Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer

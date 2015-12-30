@@ -1,8 +1,6 @@
 /*
  * ctcp.c -- part of ctcp.mod
  *   all the ctcp handling (except DCC, it's special ;)
- *
- * $Id: ctcp.c,v 1.4 2010/10/19 12:13:33 pseudo Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer

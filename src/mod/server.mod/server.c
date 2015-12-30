@@ -1,8 +1,6 @@
 /*
  * server.c -- part of server.mod
  *   basic irc server support
- *
- * $Id: server.c,v 1.10 2014/10/08 20:08:27 thommey Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer

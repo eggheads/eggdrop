@@ -3,8 +3,6 @@
  *   DNS resolve calls and events
  *   provides the code used by the bot if the DNS module is not loaded
  *   DNS Tcl commands
- *
- * $Id: dns.c,v 1.3 2012/06/16 16:04:02 thommey Exp $
  */
 /*
  * Written by Fabian Knittel <fknittel@gmx.de>

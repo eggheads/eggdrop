@@ -3,8 +3,6 @@
 # install - install a program, script, or datafile
 # This comes from X11R5 (mit/util/scripts/install.sh).
 #
-# $Id: install-sh,v 1.1.1.1 2010/07/26 21:11:06 simple Exp $
-#
 # Copyright 1991 by the Massachusetts Institute of Technology
 #
 # Permission to use, copy, modify, distribute, and sell this software and its

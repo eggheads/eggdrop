@@ -3,8 +3,6 @@
  *   add_q() del_q() str2flags() flags2str() str2chflags() chflags2str()
  *   a bunch of functions to find and change user records
  *   change and check user (and channel-specific) flags
- *
- * $Id: userrec.c,v 1.2 2010/10/24 13:22:40 pseudo Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer

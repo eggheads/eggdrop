@@ -10,8 +10,6 @@
 # rtc       10Oct1999: added [set|get][dn|up]loads functions
 # pseudo    04Oct2009: added putdccraw
 # Pixelz    08Apr2010: changed [time] to be compatible with Tcl [time]
-#
-# $Id: compat.tcl,v 1.1.1.1 2010/07/26 21:11:06 simple Exp $
 
 proc gethosts {hand} {
   getuser $hand HOSTS

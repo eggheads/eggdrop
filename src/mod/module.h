@@ -1,7 +1,5 @@
 /*
  * module.h
- *
- * $Id: module.h,v 1.7 2012/09/25 17:24:41 thommey Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer

@@ -5,8 +5,6 @@
  *
  * Written by Fabian Knittel <fknittel@gmx.de>. Based on zlib examples
  * by Jean-loup Gailly and Miguel Albrecht.
- *
- * $Id: compress.c,v 1.2 2010/07/27 21:49:42 pseudo Exp $
  */
 /*
  * Copyright (C) 2000 - 2010 Eggheads Development Team

@@ -4,8 +4,6 @@
 # Traduction par Fraggle, merci de me contacter
 # à benoit_jerome@penguinpowered.com
 # si vous voulez y contribuer.
-#
-# $Id: filesys.french.lang,v 1.1.1.1 2010/07/26 21:11:06 simple Exp $
 
 0x300,Conversion de l'image du système de fichier dans %s ...
 0x301,filedb-update: ne peut ouvrir le répertoire!

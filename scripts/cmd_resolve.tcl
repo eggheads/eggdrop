@@ -11,8 +11,6 @@
 #  15Apr2003: fixed a logging bug and stop using regexp incorrectly
 #  05Nov2000: fixed a nasty security hole, .resolve [die] <grin>
 #  04Nov2000: first version
-#
-# $Id: cmd_resolve.tcl,v 1.1.1.1 2010/07/26 21:11:06 simple Exp $
 
 bind dcc -|- resolve resolve_cmd
 bind dcc -|- dns resolve_cmd

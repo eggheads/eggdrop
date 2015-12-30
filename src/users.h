@@ -1,8 +1,6 @@
 /*
  * users.h
  *   structures and definitions used by users.c and userrec.c
- *
- * $Id: users.h,v 1.3 2010/11/01 22:38:34 pseudo Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer

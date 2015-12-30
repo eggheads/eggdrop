@@ -2,8 +2,6 @@
  * botcmd.c -- handles:
  *   commands that comes across the botnet
  *   userfile transfer and update commands from sharebots
- *
- * $Id: botcmd.c,v 1.3 2010/11/23 16:36:23 pseudo Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer

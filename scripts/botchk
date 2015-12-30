@@ -2,8 +2,6 @@
 #
 # botchk
 #
-# $Id: botchk,v 1.1.1.1 2010/07/26 21:11:06 simple Exp $
-#
 # This is a script suitable for use in a crontab.  It checks to make sure
 # your bot is running.  YOU NEED A SEPARATE CRON JOB FOR EACH BOT.  If your
 # bot isn't found, it'll try to start it back up.

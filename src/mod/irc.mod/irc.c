@@ -1,8 +1,6 @@
 /*
  * irc.c -- part of irc.mod
  *   support for channels within the bot
- *
- * $Id: irc.c,v 1.4 2014/09/09 16:43:32 thommey Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer

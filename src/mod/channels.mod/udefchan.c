@@ -1,8 +1,6 @@
 /*
  * udefchan.c -- part of channels.mod
  *   user definable channel flags/settings
- *
- * $Id: udefchan.c,v 1.2 2010/11/05 16:18:02 pseudo Exp $
  */
 /*
  * Copyright (C) 1999 - 2010 Eggheads Development Team

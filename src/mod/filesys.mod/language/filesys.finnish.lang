@@ -1,7 +1,5 @@
 # filesys.finnish.lang
 #   kieli tiedostot tiedostojärjestelmä moduuliin
-#
-# $Id: filesys.finnish.lang,v 1.1.1.1 2010/07/26 21:11:06 simple Exp $
 
 0x300,Muutetaan tiedostojärjestelmä imagea %s ...
 0x301,filedb-update: Ei pysty avata kansiota!

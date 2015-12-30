@@ -24,8 +24,6 @@
 # Tothwolf  27Dec2003: added matchbotattrany, optimized ordnumber,
 #                      more minor changes
 #
-# $Id: alltools.tcl,v 1.1.1.1 2010/07/26 21:11:06 simple Exp $
-#
 ########################################
 #
 # Descriptions of available commands:

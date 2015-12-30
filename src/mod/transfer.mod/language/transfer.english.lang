@@ -1,7 +1,5 @@
 # transfer.english.lang
 #   language messages for transfer module
-#
-# $Id: transfer.english.lang,v 1.1.1.1 2010/07/26 21:11:06 simple Exp $
 
 0xf00,Refused dcc get %s: copy to %s FAILED!
 0xf01,NOTICE %s :File system is broken; aborting queued files.\n

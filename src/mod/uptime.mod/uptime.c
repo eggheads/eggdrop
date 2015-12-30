@@ -1,6 +1,4 @@
 /*
- * $Id: uptime.c,v 1.2 2010/07/27 21:49:42 pseudo Exp $
- *
  * This module reports uptime information about your bot to http://uptime.eggheads.org. The
  * purpose for this is to see how your bot rates against many others (including EnergyMechs
  * and Eggdrops) -- It is a fun little project, jointly run by Eggheads.org and EnergyMech.net.

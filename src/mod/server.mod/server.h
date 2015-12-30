@@ -1,7 +1,5 @@
 /*
  * server.h -- part of server.mod
- *
- * $Id: server.h,v 1.4 2013/07/31 01:09:33 thommey Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer

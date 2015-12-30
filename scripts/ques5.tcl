@@ -11,8 +11,6 @@
 # v4.00001 nov97 [blurgh]
 # v5-BETA1 -- 26sep99 by rtc
 #
-# $Id: ques5.tcl,v 1.1.1.1 2010/07/26 21:11:06 simple Exp $
-#
 # o clean webfile var removal
 # o using timezone variable from config file
 # o unified options and removed unnecessary ones.

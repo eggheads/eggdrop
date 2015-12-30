@@ -3,8 +3,6 @@
 #                     - a bind apart script from #TSF
 #                     - for eggdrop 1.3.15+
 #
-# $Id: notes2.tcl,v 1.1.1.1 2010/07/26 21:11:06 simple Exp $
-#
 ####
 #
 # history:

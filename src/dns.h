@@ -1,8 +1,6 @@
 /*
  * dns.h
  *   stuff used by dns.c
- *
- * $Id: dns.h,v 1.2 2010/08/05 18:12:05 pseudo Exp $
  */
 /*
  * Written by Fabian Knittel <fknittel@gmx.de>

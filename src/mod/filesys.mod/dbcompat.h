@@ -4,8 +4,6 @@
  *   needed or converting old dbs to the new format.
  *
  * Written for filedb3 by Fabian Knittel <fknittel@gmx.de>
- *
- * $Id: dbcompat.h,v 1.1.1.1 2010/07/26 21:11:06 simple Exp $
  */
 /*
  * Copyright (C) 1999 - 2010 Eggheads Development Team

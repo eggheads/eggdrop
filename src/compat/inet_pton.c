@@ -1,7 +1,5 @@
 /*
  * inet_pton.c -- provides inet_pton() if necessary
- *
- * $Id: inet_pton.c,v 1.2 2010/08/23 21:27:40 pseudo Exp $
  */
 /*
  * Portions Copyright (C) 2010 Eggheads Development Team

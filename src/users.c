@@ -9,8 +9,6 @@
  *   reading the user file
  *
  * dprintf'ized, 9nov1995
- *
- * $Id: users.c,v 1.2 2010/08/05 18:12:05 pseudo Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer

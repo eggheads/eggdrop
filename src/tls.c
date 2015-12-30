@@ -3,8 +3,6 @@
  *   TLS support functions
  *   Certificate handling
  *   OpenSSL initialization and shutdown
- *
- * $Id: tls.c,v 1.6 2011/02/03 15:44:11 pseudo Exp $
  */
 /*
  * Written by Rumen Stoyanov <pseudo@egg6.net>

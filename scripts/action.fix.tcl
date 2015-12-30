@@ -5,8 +5,6 @@
 # Tothwolf  25May1999: cleanup
 # Tothwolf  04Oct1999: changed proc names slightly
 # poptix    07Dec2001: handle irssi (and some others) "correct" messages for DCC CTCP
-#
-# $Id: action.fix.tcl,v 1.1.1.1 2010/07/26 21:11:06 simple Exp $
 
 # Fix for mIRC dcc chat /me's:
 bind filt - "\001ACTION *\001" filt:dcc_action

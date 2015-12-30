@@ -1,8 +1,6 @@
 /*
  * tclmisc.c -- handles:
  *   Tcl stubs for everything else
- *
- * $Id: tclmisc.c,v 1.10 2014/10/02 19:27:43 thommey Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer

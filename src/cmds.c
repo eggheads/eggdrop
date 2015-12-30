@@ -2,8 +2,6 @@
  * cmds.c -- handles:
  *   commands from a user via dcc
  *   (split in 2, this portion contains no-irc commands)
- *
- * $Id: cmds.c,v 1.11 2014/10/02 19:27:43 thommey Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer

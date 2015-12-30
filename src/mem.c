@@ -2,8 +2,6 @@
  * mem.c -- handles:
  *   memory allocation and deallocation
  *   keeping track of what memory is being used by whom
- *
- * $Id: mem.c,v 1.2 2010/10/19 12:13:33 pseudo Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer

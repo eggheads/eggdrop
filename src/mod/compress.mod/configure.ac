@@ -1,6 +1,4 @@
 dnl configure.ac: this file is processed by autoconf to produce ./configure.
-dnl
-dnl $Id: configure.ac,v 1.2 2010/07/27 13:05:43 pseudo Exp $
 
 AC_PREREQ(2.59)
 

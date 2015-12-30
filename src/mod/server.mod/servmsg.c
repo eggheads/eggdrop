@@ -1,7 +1,5 @@
 /*
  * servmsg.c -- part of server.mod
- *
- * $Id: servmsg.c,v 1.9 2013/07/31 01:09:34 thommey Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer

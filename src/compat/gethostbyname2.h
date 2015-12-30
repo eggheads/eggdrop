@@ -1,8 +1,6 @@
 /*
  * gethostbyname2.h
  *   prototypes for gethostbyname2.c
- *
- * $Id: gethostbyname2.h,v 1.3 2010/10/06 19:07:47 pseudo Exp $
  */
 /*
  * Copyright (C) 2010 Eggheads Development Team

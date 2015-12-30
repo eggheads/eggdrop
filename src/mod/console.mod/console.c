@@ -2,8 +2,6 @@
  * console.c -- part of console.mod
  *   saved console settings based on console.tcl
  *   by cmwagner/billyjoe/D. Senso
- *
- * $Id: console.c,v 1.2 2010/07/27 21:49:42 pseudo Exp $
  */
 /*
  * Copyright (C) 1999 - 2010 Eggheads Development Team

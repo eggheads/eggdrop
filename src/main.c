@@ -4,8 +4,6 @@
  *   signal handling
  *   command line arguments
  *   context and assert debugging
- *
- * $Id: main.c,v 1.8 2013/07/31 01:09:33 thommey Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer

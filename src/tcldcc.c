@@ -1,8 +1,6 @@
 /*
  * tcldcc.c -- handles:
  *   Tcl stubs for the dcc commands
- *
- * $Id: tcldcc.c,v 1.5 2011/11/10 22:07:25 thommey Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer

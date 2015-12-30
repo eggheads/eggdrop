@@ -1,8 +1,6 @@
 /*
  * cmdschan.c -- part of channels.mod
  *   commands from a user via dcc that cause server interaction
- *
- * $Id: cmdschan.c,v 1.3 2010/10/11 08:46:10 pseudo Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer

@@ -1,8 +1,6 @@
 /*
  * inet_ntop.h
  *   prototypes for inet_ntop.c
- *
- * $Id: inet_ntop.h,v 1.3 2010/10/06 19:07:47 pseudo Exp $
  */
 /*
  * Copyright (C) 2010 Eggheads Development Team

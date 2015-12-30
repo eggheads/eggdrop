@@ -5,8 +5,6 @@
  *
  * Modified/written by Fabian Knittel <fknittel@gmx.de>
  * IPv6 support added by pseudo <pseudo@egg6.net>
- *
- * $Id: coredns.c,v 1.4 2010/10/14 09:49:47 pseudo Exp $
  */
 /*
  * Portions Copyright (C) 1999 - 2010 Eggheads Development Team

@@ -2,8 +2,6 @@
  * bg.c -- handles:
  *   moving the process to the background, i.e. forking, while keeping threads
  *   happy.
- *
- * $Id: bg.c,v 1.2 2011/03/14 03:03:28 thommey Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer

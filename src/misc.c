@@ -6,8 +6,6 @@
  *   resync buffers for sharebots
  *   help system
  *   motd display and %var substitution
- *
- * $Id: misc.c,v 1.2 2010/10/23 11:16:12 pseudo Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer

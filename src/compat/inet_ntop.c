@@ -1,7 +1,5 @@
 /*
  * inet_ntop.c -- provides inet_ntop() if necessary
- *
- * $Id: inet_ntop.c,v 1.3 2010/10/06 19:07:47 pseudo Exp $
  */
 /*
  * Portions Copyright (C) 2010 Eggheads Development Team

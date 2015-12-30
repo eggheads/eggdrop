@@ -3,8 +3,6 @@
  *   Eggdrop compile-time settings
  *
  *   IF YOU ALTER THIS FILE, YOU NEED TO RECOMPILE THE BOT.
- *
- * $Id: eggdrop.h,v 1.8 2012/06/22 23:35:33 thommey Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer

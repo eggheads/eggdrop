@@ -6,8 +6,6 @@
  *   adding/removing new binding tables
  *   (non-Tcl) procedure lookups for msg/dcc/file commands
  *   (Tcl) binding internal procedures to msg/dcc/file commands
- *
- * $Id: tclhash.c,v 1.6 2012/06/16 16:04:02 thommey Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer

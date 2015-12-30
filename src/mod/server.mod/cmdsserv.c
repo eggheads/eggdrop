@@ -1,8 +1,6 @@
 /*
  * cmdsserv.c -- part of server.mod
  *   handles commands from a user via dcc that cause server interaction
- *
- * $Id: cmdsserv.c,v 1.3 2010/11/01 22:38:34 pseudo Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer

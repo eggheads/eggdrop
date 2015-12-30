@@ -3,8 +3,6 @@
  *   support for modules in eggdrop
  *
  * by Darrin Smith (beldin@light.iinet.net.au)
- *
- * $Id: modules.c,v 1.4 2012/09/25 17:24:41 thommey Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer

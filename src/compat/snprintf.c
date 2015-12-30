@@ -1,7 +1,5 @@
 /*
  * snprintf.c - a portable implementation of snprintf and vsnprintf
- *
- * $Id: snprintf.c,v 1.1.1.1 2010/07/26 21:11:06 simple Exp $
  */
 /*
  * Portions Copyright (C) 2000 - 2010 Eggheads Development Team

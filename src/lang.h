@@ -1,8 +1,6 @@
 /*
  * lang.h
  *   Conversion definitions for language support
- *
- * $Id: lang.h,v 1.2 2010/10/25 19:47:49 pseudo Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer

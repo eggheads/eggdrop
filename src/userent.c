@@ -1,8 +1,6 @@
 /*
  * userent.c -- handles:
  *   user-entry handling, new style more versatile.
- *
- * $Id: userent.c,v 1.5 2014/10/02 19:27:43 thommey Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer

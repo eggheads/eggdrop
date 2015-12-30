@@ -3,8 +3,6 @@
  *   activity on a dcc socket
  *   disconnect on a dcc socket
  *   ...and that's it!  (but it's a LOT)
- *
- * $Id: dcc.c,v 1.15 2014/03/21 21:42:41 thommey Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer

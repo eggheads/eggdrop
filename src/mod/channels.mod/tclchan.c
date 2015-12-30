@@ -1,7 +1,5 @@
 /*
  * tclchan.c -- part of channels.mod
- *
- * $Id: tclchan.c,v 1.4 2014/09/06 23:49:32 thommey Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer

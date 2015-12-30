@@ -1,8 +1,6 @@
 /*
  * filesys.c -- part of filesys.mod
  *   main file of the filesys eggdrop module
- *
- * $Id: filesys.c,v 1.5 2010/10/20 13:07:13 pseudo Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer

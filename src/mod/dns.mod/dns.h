@@ -3,8 +3,6 @@
  *   dns module header file
  *
  * Written by Fabian Knittel <fknittel@gmx.de>
- *
- * $Id: dns.h,v 1.2 2010/08/05 18:12:05 pseudo Exp $
  */
 /*
  * Copyright (C) 1999 - 2010 Eggheads Development Team

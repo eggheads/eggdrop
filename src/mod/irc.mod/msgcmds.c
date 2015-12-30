@@ -1,8 +1,6 @@
 /*
  * msgcmds.c -- part of irc.mod
  *   all commands entered via /MSG
- *
- * $Id: msgcmds.c,v 1.3 2010/10/25 15:56:38 pseudo Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer

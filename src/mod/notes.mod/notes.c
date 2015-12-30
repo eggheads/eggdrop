@@ -4,8 +4,6 @@
  *   killing old notes and changing the destinations
  *   note cmds
  *   note ignores
- *
- * $Id: notes.c,v 1.2 2010/07/27 21:49:42 pseudo Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer

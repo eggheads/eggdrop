@@ -9,8 +9,6 @@
  * replace a  *** PATCH GOES HERE *** line with a patch("patchname");
  * statement, leave the rest of the file alone, this allows better
  * overlapping patches.
- *
- * $Id: patch.h,v 1.52 2014/10/02 19:27:43 thommey Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer

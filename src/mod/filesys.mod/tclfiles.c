@@ -1,8 +1,6 @@
 /*
  * tclfiles.c -- part of filesys.mod
  *   Tcl stubs for file system commands moved here to support modules
- *
- * $Id: tclfiles.c,v 1.1.1.1 2010/07/26 21:11:06 simple Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer

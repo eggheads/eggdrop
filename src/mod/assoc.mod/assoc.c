@@ -1,8 +1,6 @@
 /*
  * assoc.c -- part of assoc.mod
  *   the assoc code, moved here mainly from botnet.c for module work
- *
- * $Id: assoc.c,v 1.2 2010/07/27 21:49:41 pseudo Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer

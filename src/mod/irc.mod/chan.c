@@ -5,8 +5,6 @@
  *   'who' response
  *   user kickban, kick, op, deop
  *   idle kicking
- *
- * $Id: chan.c,v 1.2 2010/10/24 13:22:40 pseudo Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer

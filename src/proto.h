@@ -6,8 +6,6 @@
  * with full prototyping, some have been moved to other .h files
  * because they use structures in those
  * (saves including those .h files EVERY time) - Beldin
- *
- * $Id: proto.h,v 1.5 2010/10/20 13:07:13 pseudo Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer

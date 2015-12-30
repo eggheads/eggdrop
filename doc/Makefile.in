@@ -1,5 +1,4 @@
 # Makefile for doc/
-# $Id: Makefile.in,v 1.2 2010/11/01 23:00:11 pseudo Exp $
 
 SHELL = @SHELL@
 top_srcdir = @top_srcdir@

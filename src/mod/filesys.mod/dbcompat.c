@@ -3,8 +3,6 @@
  *   Compability functions to convert older DBs to the newest version.
  *
  * Written for filedb3 by Fabian Knittel <fknittel@gmx.de>
- *
- * $Id: dbcompat.c,v 1.1.1.1 2010/07/26 21:11:06 simple Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer

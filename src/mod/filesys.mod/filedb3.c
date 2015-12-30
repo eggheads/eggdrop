@@ -3,8 +3,6 @@
  *   low level functions for file db handling
  *
  * Rewritten by Fabian Knittel <fknittel@gmx.de>
- *
- * $Id: filedb3.c,v 1.3 2010/10/19 12:13:33 pseudo Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer

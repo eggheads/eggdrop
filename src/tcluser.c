@@ -1,8 +1,6 @@
 /*
  * tcluser.c -- handles:
  *   Tcl stubs for the user-record-oriented commands
- *
- * $Id: tcluser.c,v 1.2 2010/08/05 18:12:05 pseudo Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer

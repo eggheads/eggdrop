@@ -3,8 +3,6 @@
  *   functions to sort and manage file lists
  *
  * Written by Fabian Knittel <fknittel@gmx.de>
- *
- * $Id: filelist.c,v 1.1.1.1 2010/07/26 21:11:06 simple Exp $
  */
 /*
  * Copyright (C) 1999 - 2010 Eggheads Development Team

@@ -3,8 +3,6 @@
  *   the code for every command eggdrop adds to Tcl
  *   Tcl initialization
  *   getting and setting Tcl/eggdrop variables
- *
- * $Id: tcl.c,v 1.13 2013/07/31 01:09:33 thommey Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer

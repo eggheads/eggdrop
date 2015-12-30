@@ -36,8 +36,6 @@ do \
 done; \
 exec tclsh$lastver "$0" ${1+"$@"}
 #
-# $Id: weed,v 1.1.1.1 2010/07/26 21:11:06 simple Exp $
-#
 # weed out certain undesirables from an eggdrop userlist
 # try just typing 'tclsh weed' to find out the options
 #    Robey Pointer, November 1994

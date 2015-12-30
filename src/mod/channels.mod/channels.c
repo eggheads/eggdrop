@@ -1,8 +1,6 @@
 /*
  * channels.c -- part of channels.mod
  *   support for channels within the bot
- *
- * $Id: channels.c,v 1.3 2011/07/20 10:31:37 thommey Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer

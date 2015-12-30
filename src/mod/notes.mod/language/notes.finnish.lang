@@ -1,7 +1,5 @@
 # notes.finnish.lang
 #   kieli tiedostot viesti moduuliin
-#
-# $Id: notes.finnish.lang,v 1.1.1.1 2010/07/26 21:11:06 simple Exp $
 
 0xc000,  Siirrettu viestit: %.70s\n
 0xc001,Vaihdettu %d note%s %s %s.

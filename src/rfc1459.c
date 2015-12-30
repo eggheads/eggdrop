@@ -1,7 +1,5 @@
 /*
  * rfc1459.c
- *
- * $Id: rfc1459.c,v 1.1.1.1 2010/07/26 21:11:06 simple Exp $
  */
 /*
  * Copyright (C) 1990 Jarkko Oikarinen

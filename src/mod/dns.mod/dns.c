@@ -3,8 +3,6 @@
  *   domain lookup glue code for eggdrop
  *
  * Written by Fabian Knittel <fknittel@gmx.de>
- *
- * $Id: dns.c,v 1.4 2010/09/27 19:38:14 pseudo Exp $
  */
 /*
  * Copyright (C) 1999 - 2010 Eggheads Development Team

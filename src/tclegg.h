@@ -1,8 +1,6 @@
 /*
  * tclegg.h
  *   stuff used by tcl.c and tclhash.c
- *
- * $Id: tclegg.h,v 1.2 2010/10/27 20:47:26 pseudo Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer

@@ -4,8 +4,6 @@
  *   hostmask matching
  *   cidr matching
  *
- * $Id: match.c,v 1.3 2012/12/11 13:27:44 thommey Exp $
- *
  * Once this code was working, I added support for % so that I could
  * use the same code both in Eggdrop and in my IrcII client.
  * Pleased with this, I added the option of a fourth wildcard, ~,

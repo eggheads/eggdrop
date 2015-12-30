@@ -5,8 +5,6 @@
  *   '.who', '.whom', and '.dccstat' code
  *   memory management for dcc structures
  *   timeout checking for dcc connections
- *
- * $Id: dccutil.c,v 1.4 2010/11/26 13:20:29 pseudo Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer

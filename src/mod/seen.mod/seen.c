@@ -9,8 +9,6 @@
  * 1.1     1997-08-05      Add nick->handle lookup for NICK's. [BB]
  * 1.2     1997-08-20      Minor fixes. [BB]
  * 1.2a    1997-08-24      Minor fixes. [BB]
- *
- * $Id: seen.c,v 1.2 2010/07/27 21:49:42 pseudo Exp $
  */
 /*
  * Copyright (C) 1999 - 2010 Eggheads Development Team

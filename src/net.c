@@ -1,8 +1,6 @@
 /*
  * net.c -- handles:
  *   all raw network i/o
- *
- * $Id: net.c,v 1.11 2011/02/15 23:55:17 pseudo Exp $
  */
 /*
  * This is hereby released into the public domain.
