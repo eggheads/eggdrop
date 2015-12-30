@@ -10,7 +10,7 @@ AC_CONFIG_SRCDIR(coredns.c)
 AC_CONFIG_AUX_DIR(../../../misc)
 
 AC_COPYRIGHT([Copyright (C) 1999 - 2010 Eggheads Development Team])
-AC_REVISION($Revision: 1.3 $)
+AC_REVISION([m4_esyscmd([../../../misc/getcommit])])
 
 dns_reslib_avail="false"
 

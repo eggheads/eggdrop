@@ -10,7 +10,7 @@ AC_CONFIG_SRCDIR(compress.c)
 AC_CONFIG_AUX_DIR(../../../misc)
 
 AC_COPYRIGHT([Copyright (C) 1999 - 2010 Eggheads Development Team])
-AC_REVISION($Revision: 1.2 $)
+AC_REVISION([m4_esyscmd([../../../misc/getcommit])])
 
 # Check for gzopen() in -lz.
 AC_CHECK_LIB(z, gzopen, [ZLIB="-lz"], [])
