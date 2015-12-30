@@ -231,7 +231,7 @@ float getcputime()
 #ifdef HAVE_GETRUSAGE
   float stime, utime;
   struct rusage ru;
-  
+
   getrusage(RUSAGE_SELF, &ru);
   utime = ru.ru_utime.tv_sec + (ru.ru_utime.tv_usec / 1000000.00);
   stime = ru.ru_stime.tv_sec + (ru.ru_stime.tv_usec / 1000000.00);

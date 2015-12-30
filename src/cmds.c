@@ -1017,7 +1017,7 @@ static void cmd_chfinger(struct userrec *u, int idx, char *par)
         putlog(LOG_CMDS, "*", "#%s# chfinger %s %s", dcc[idx].nick,
                handle, new);
         dprintf(idx, "Changed fingerprint.\n");
-      } else 
+      } else
         dprintf(idx, "Invalid fingerprint. Must be a hexadecimal string.\n");
     }
   }

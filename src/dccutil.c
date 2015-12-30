@@ -401,7 +401,7 @@ void tell_dcc(int zidx)
     j = 15;
   if (j > 40)
     j = 40;
-    
+
   egg_snprintf(format, sizeof format, "%%-3s %%-%u.%us %%-6s %%-%u.%us %%s\n",
                j, j, nicklen, nicklen);
   dprintf(zidx, format, "IDX", "ADDR", "+ PORT", "NICK", "TYPE  INFO");

@@ -1563,7 +1563,7 @@ int dcc_fingerprint(idx)
 {
   char *cf, *uf;
   struct flag_record fr = { FR_GLOBAL | FR_CHAN | FR_ANYWH, 0, 0, 0, 0, 0 };
-  
+
   get_user_flagrec(dcc[idx].user, &fr, NULL);
   /* Check if fingerprint authentication is allowed or required. */
   if (dcc[idx].ssl && tls_auth) {
@@ -1602,7 +1602,7 @@ static void dcc_telnet_pass(int idx, int atr)
   /* Check if fingerprint authentication is allowed or required. */
   if (dcc[idx].ssl && tls_auth) {
     char *cf, *uf;
-    
+
     /* Get the fingerprint of the current certificate */
     cf = ssl_getfp(dcc[idx].sock);
     /* Get the fingerprint of the user, if set */

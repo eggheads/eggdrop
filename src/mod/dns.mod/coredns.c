@@ -950,7 +950,7 @@ void parserespacket(u_8bit_t *response, int len)
     if (r == -1) {
       ddebug0(RES_ERR "dn_expand() failed while expanding answer domain.");
       return;
-    }    
+    }
     ddebug1(RES_MSG "answered domain query: \"%s\"", namestring);
     c += r;
     if (c + 10 > response + len) {
@@ -1018,7 +1018,7 @@ void parserespacket(u_8bit_t *response, int len)
         rp->sockname.addr.sa.sa_family = AF_INET6;
         egg_memcpy(&rp->sockname.addr.s6.sin6_addr, rr->data, 16);
         if (ready || pref_af) {
-          passrp(rp, rr->ttl, T_A); 
+          passrp(rp, rr->ttl, T_A);
           return;
         }
         break;
@@ -1177,7 +1177,7 @@ static void dns_lookup(sockname_t *addr)
     }
     return;
   }
-  
+
   ddebug0(RES_MSG "Creating new record");
   rp = allocresolve();
   rp->state = STATE_PTRREQ;

@@ -210,7 +210,7 @@ int expected_memory(void)
         expmem_botnet() + expmem_tcl() + expmem_tclhash() + expmem_net() +
         expmem_modules(0) + expmem_language() + expmem_tcldcc() +
         expmem_tclmisc() + expmem_dns();
-#ifdef TLS 
+#ifdef TLS
   tot += expmem_tls();
 #endif
   return tot;

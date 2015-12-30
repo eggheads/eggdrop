@@ -485,7 +485,7 @@ static int gotmsg(char *from, char *msg)
   /* Apparently servers can send CTCPs now too, not just nicks */
   if (nick[0] == '\0')
     nick = uhost;
- 
+
   /* Check for CTCP: */
   ctcp_reply[0] = 0;
   p = strchr(msg, 1);
@@ -708,7 +708,7 @@ static int gotwall(char *from, char *msg)
   return 0;
 }
 
-/* Called once a minute... 
+/* Called once a minute...
  */
 static void minutely_checks()
 {

@@ -954,7 +954,7 @@ static int tcl_channel_getlist(Tcl_Interp *irp, struct chanset_t *chan)
   APPEND_KEYVAL("need-key", chan->need_key);
   APPEND_KEYVAL("need-unban", chan->need_unban);
   APPEND_KEYVAL("need-limit", chan->need_limit);
-  
+
   /* Integers now */
   simple_sprintf(s, "%d", chan->idle_kick);
   APPEND_KEYVAL("idle-kick", s);
@@ -1038,7 +1038,7 @@ static int tcl_channel_getlist(Tcl_Interp *irp, struct chanset_t *chan)
                channel_dynamicinvites(chan) ?  "1" : "0");
   APPEND_KEYVAL("userinvites",
                channel_nouserinvites(chan) ?  "1" : "0");
-  
+
   /* User defined settings */
   for (ul = udef; ul && ul->name; ul = ul->next) {
     if (ul->type == UDEF_STR) {
@@ -2323,7 +2323,7 @@ static int tcl_chansettype STDVAR
   }
 
   return TCL_OK;
-  
+
 }
 
 static tcl_cmds channels_cmds[] = {

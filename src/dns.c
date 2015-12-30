@@ -493,7 +493,7 @@ void block_dns_hostbyip(sockname_t *addr)
   if (hp)
     strncpyz(s, hp->h_name, sizeof s);
   call_hostbyip(addr, s, hp ? 1 : 0);
-}    
+}
 
 void block_dns_ipbyhost(char *host)
 {

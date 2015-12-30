@@ -25,7 +25,7 @@
 struct hostent *gethostbyname2(const char *name, int af)
 {
   struct hostent *h;
-  
+
   h = gethostbyname(name);
   if (!h)
     return NULL;

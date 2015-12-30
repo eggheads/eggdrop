@@ -802,7 +802,7 @@ static int tcl_status STDVAR
              ((float) cache_hit) / ((float) (cache_hit + cache_miss)));
     Tcl_AppendElement(irp, s);
   }
-  
+
   return TCL_OK;
 }
 

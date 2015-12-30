@@ -859,7 +859,7 @@ static int tcl_connect STDVAR
 {
   int i, sock;
   char s[81];
-  
+
   BADARGS(3, 3, " hostname port");
 
   if (dcc_total == max_dcc && increase_socks_max()) {
@@ -882,7 +882,7 @@ static int tcl_connect STDVAR
     }
     lostdcc(i);
     return TCL_ERROR;
-  }            
+  }
 #ifdef TLS
   if (*argv[2] == '+') {
     if (ssl_handshake(sock, TLS_CONNECT, 0, LOG_MISC, NULL, NULL)) {
@@ -957,7 +957,7 @@ static int tcl_listen STDVAR
         break;
       else if (i == -2)
         port++;
-    } 
+    }
 
     if (i == -1) {
       egg_snprintf(msg, sizeof msg, "Couldn't listen on port '%d' on the given "

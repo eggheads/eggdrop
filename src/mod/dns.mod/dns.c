@@ -146,7 +146,7 @@ static char *dns_change(ClientData cdata, Tcl_Interp *irp,
 
   if (flags & (TCL_TRACE_READS | TCL_TRACE_UNSETS)) {
     Tcl_DString ds;
-    
+
     Tcl_DStringInit(&ds);
     for (i = 0; i < _res.nscount; i++) {
       snprintf(buf, sizeof buf, "%s:%d", iptostr((struct sockaddr *)

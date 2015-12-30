@@ -184,10 +184,10 @@ char *ssl_fpconv(char *in, char *out)
   long len;
   char *fp;
   unsigned char *md5;
-  
+
   if (!in)
     return NULL;
-  
+
   if ((md5 = string_to_hex(in, &len))) {
     fp = hex_to_string(md5, len);
     if (fp) {
@@ -212,7 +212,7 @@ static X509 *ssl_getcert(int sock)
 {
   int i;
   struct threaddata *td = threaddata();
-  
+
   i = findsock(sock);
   if (i == -1 || !td->socklist[i].ssl)
     return NULL;
@@ -297,7 +297,7 @@ static int ssl_hostmatch(char *cn, char *host)
   return strcasecmp(cn, host) ? 0 : 1;
 }
 
-/* Confirm the peer identity, by checking if the certificate subject 
+/* Confirm the peer identity, by checking if the certificate subject
  * matches the peer's DNS name or IP address. Matching is performed in
  * accordance with RFC 2818:
  *
@@ -317,7 +317,7 @@ static int ssl_hostmatch(char *cn, char *host)
  * The certificate must be pointed by cert and the peer's host must be
  * placed in data->host. The format is a regular DNS name or an IP in
  * presentation format (see above).
- * 
+ *
  * Return value: 1 if the certificate matches the peer, 0 otherwise.
  */
 static int ssl_verifycn(X509 *cert, ssl_appdata *data)
@@ -326,7 +326,7 @@ static int ssl_verifycn(X509 *cert, ssl_appdata *data)
   int crit = 0, match = 0;
   ASN1_OCTET_STRING *ip;
   GENERAL_NAMES *altname; /* SubjectAltName ::= GeneralNames */
-  
+
   ip = a2i_IPADDRESS(data->host); /* check if it's an IP or a hostname */
   if ((altname = X509_get_ext_d2i(cert, NID_subject_alt_name, &crit, NULL))) {
     GENERAL_NAME *gn;
@@ -369,7 +369,7 @@ static int ssl_verifycn(X509 *cert, ssl_appdata *data)
     } else { /* we have a subject name, look at it */
       int pos = -1;
       ASN1_STRING *name;
-      
+
       /* Look for commonName attributes in the subject name */
       pos = X509_NAME_get_index_by_NID(subj, NID_commonName, pos);
       if (pos == -1) /* sorry */
@@ -406,7 +406,7 @@ static char *ssl_printname(X509_NAME *name)
   int len;
   char *data, *buf;
   BIO *bio = BIO_new(BIO_s_mem());
-  
+
   /* X509_NAME_oneline() is easier and shorter, but is deprecated and
      the manual discourages it's usage, so let's not be lazy ;) */
   X509_NAME_print_ex(bio, name, 0, XN_FLAG_ONELINE & ~XN_FLAG_SPC_EQ);
@@ -429,7 +429,7 @@ static char *ssl_printtime(ASN1_UTCTIME *t)
   int len;
   char *data, *buf;
   BIO *bio = BIO_new(BIO_s_mem());
-  
+
   ASN1_UTCTIME_print(bio, t);
   len = BIO_get_mem_data(bio, &data) + 1;
   buf = nmalloc(len);
@@ -449,7 +449,7 @@ static char *ssl_printnum(ASN1_INTEGER *i)
   int len;
   char *data, *buf;
   BIO *bio = BIO_new(BIO_s_mem());
-  
+
   i2a_ASN1_INTEGER(bio, i);
   len = BIO_get_mem_data(bio, &data) + 1;
   buf = nmalloc(len);
@@ -467,7 +467,7 @@ static void ssl_showcert(X509 *cert, int loglev)
   X509_NAME *name;
   unsigned int len;
   unsigned char md[EVP_MAX_MD_SIZE];
-  
+
   /* Subject and issuer names */
   if ((name = X509_get_subject_name(cert))) {
     buf = ssl_printname(name);
@@ -481,7 +481,7 @@ static void ssl_showcert(X509 *cert, int loglev)
     nfree(buf);
   } else
     putlog(loglev, "*", "TLS: cannot get issuer name from certificate!");
-  
+
   /* Fingerprints */
   X509_digest(cert, EVP_md5(), md, &len); /* MD5 hash */
   if (len <= sizeof(md)) {
@@ -519,7 +519,7 @@ int ssl_verify(int ok, X509_STORE_CTX *ctx)
   X509 *cert;
   ssl_appdata *data;
   int err, depth;
-  
+
   /* get cert, callbacks, error codes, etc. */
   depth = X509_STORE_CTX_get_error_depth(ctx);
   cert = X509_STORE_CTX_get_current_cert(ctx);
@@ -590,7 +590,7 @@ void ssl_info(SSL *ssl, int where, int ret)
   ssl_appdata *data;
   const SSL_CIPHER *cipher;
   int secret, processed;
-  
+
   /* We're doing non-blocking IO, so we check here if the handshake has
      finished */
   if (where & SSL_CB_HANDSHAKE_DONE) {
@@ -598,7 +598,7 @@ void ssl_info(SSL *ssl, int where, int ret)
       return;
     /* Callback for completed handshake. Cheaper and more convenient than
        using H_tls */
-    sock = SSL_get_fd(ssl);    
+    sock = SSL_get_fd(ssl);
     if (data->cb)
       data->cb(sock);
     /* Call TLS binds. We allow scripts to take over or disable displaying of
@@ -609,7 +609,7 @@ void ssl_info(SSL *ssl, int where, int ret)
     putlog(data->loglevel, "*", "TLS: handshake successful. Secure connection "
            "established.");
 
-    if ((cert = SSL_get_peer_certificate(ssl))) 
+    if ((cert = SSL_get_peer_certificate(ssl)))
       ssl_showcert(cert, data->loglevel);
     else
       putlog(data->loglevel, "*", "TLS: peer did not present a certificate");
@@ -631,7 +631,7 @@ void ssl_info(SSL *ssl, int where, int ret)
   /* Display the state of the engine for debugging purposes */
   debug1("TLS: state change: %s", SSL_state_string_long(ssl));
 }
-    
+
 /* Switch a socket to SSL communication
  *
  * Creates a SSL data structure for the connection;
@@ -813,7 +813,7 @@ static int tcl_tlsstatus STDVAR
     Tcl_AppendResult(irp, "not a TLS connection", NULL);
     return TCL_ERROR;
   }
-  
+
   Tcl_DStringInit(&ds);
   /* Try to get a cert, clients aren't required to send a
    * certificate, so this is optional
