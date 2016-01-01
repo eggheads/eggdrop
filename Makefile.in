@@ -335,6 +335,15 @@ install-start:
 		echo ""; \
 		exit 1; \
 	fi
+	@if test "$(DEST)" -ef .; then \
+		echo "You are trying to install into the source directory."; \
+		echo "That will not work. Please specify a different"; \
+		echo "install directory with:"; \
+		echo ""; \
+		echo "make install DEST=\"/home/wcc/mybot\""; \
+		echo ""; \
+		exit 1; \
+	fi
 	@echo ""
 	@$(egg_test_run)
 	@echo ""
