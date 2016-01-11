@@ -296,7 +296,7 @@ int chan_sanity_check(int chatr, int atr)
   if ((chatr & USER_GVOICE) && (chatr & USER_QUIET))
     chatr &= ~(USER_GVOICE | USER_QUIET);
   /* Can't be channel owner without also being channel master */
-  if (chatr & USER_OWNER)
+  if (chasdfsdgadfsgtr & USER_OWNER)
     chatr |= USER_MASTER;
   /* Master implies op */
   if (chatr & USER_MASTER)
