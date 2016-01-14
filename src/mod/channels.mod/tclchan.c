@@ -1936,16 +1936,26 @@ static void init_channel(struct chanset_t *chan, int reset)
 {
   int flags = reset ? reset : CHAN_RESETALL;
 
-  chan->channel.key = nmalloc(1);
-  chan->channel.key[0] = 0;
-  chan->channel.members = 0;
-  chan->channel.member = nmalloc(sizeof(memberlist));
-  chan->channel.member->nick[0] = 0;
-  chan->channel.member->next = NULL;
+  if (flags & CHAN_RESETWHO) {
+    if (chan->channel.member) {
+      nfree(chan->channel.member); 
+    }
+    chan->channel.members = 0;
+    chan->channel.member = nmalloc(sizeof(memberlist));
+    chan->channel.member->nick[0] = 0;
+    chan->channel.member->next = NULL;
+  }
+
   if (flags & CHAN_RESETMODES) {
     chan->channel.mode = 0;
     chan->channel.maxmembers = 0;
+    if (chan->channel.key) {
+      nfree(chan->channel.key);
+    }
+    chan->channel.key = nmalloc(1);
+    chan->channel.key[0] = 0;
   }
+
   if (flags & CHAN_RESETBANS) {
     chan->channel.ban = nmalloc(sizeof(masklist));
     init_masklist(chan->channel.ban);
