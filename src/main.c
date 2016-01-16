@@ -91,8 +91,8 @@ static char **argv;
  * modified versions of this bot.
  */
 
-char egg_version[1024] = "1.8.0";
-int egg_numver = 1080000;
+char egg_version[1024] = "1.6.22";
+int egg_numver = 1062200;
 
 char notify_new[121] = "";      /* Person to send a note to for new users */
 int default_flags = 0;          /* Default user flags                     */
