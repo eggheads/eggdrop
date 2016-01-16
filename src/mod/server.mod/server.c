@@ -1995,9 +1995,9 @@ char *server_start(Function *global_funcs)
 
   server_table[4] = (Function) botname;
   module_register(MODULE_NAME, server_table, 1, 4);
-  if (!module_depend(MODULE_NAME, "eggdrop", 108, 0)) {
+  if (!module_depend(MODULE_NAME, "eggdrop", 106, 0)) {
     module_undepend(MODULE_NAME);
-    return "This module requires Eggdrop 1.8.0 or later.";
+    return "This module requires Eggdrop 1.6.0 or later.";
   }
 
   /* Fool bot in reading the values. */

@@ -68,10 +68,10 @@ by eggheads.org on March 5, 1999:
   Whicked
 
 Eggdrop development after 1.3.24i has continued under eggheads.org up through
-versions 1.4.x, 1.5.x, 1.6.x and currently 1.8.x.
+versions 1.4.x, 1.5.x, and 1.6.x.
 
 Below are lists of major contributors and core Eggdrop community members for
-versions 1.3.24i-1.3.28, 1.4.x, 1.5.x, 1.6.x and 1.8.x.
+versions 1.3.24i-1.3.28, 1.4.x, 1.5.x, and 1.6.x.
 
 1.3.24i-1.3.28:
 
@@ -90,11 +90,9 @@ versions 1.3.24i-1.3.28, 1.4.x, 1.5.x, 1.6.x and 1.8.x.
 1.6:
 
   Abraham, BarkerJr, bryand, darko``, drummer, dw, Eugene, Eule, Fabian,
-  guppy, ITE, Kirben, Noyga, poptix, PPSlim, pseudo, simple, [sL], stdarg,
-  Sup, SuperS, Sven, TaKeDa, thommey, Tothwolf, Wcc, Wiktor, Wingman
-
-1.8:
-  pseudo, simple, thommey
+  Geo, guppy, ITE, Kirben, Noyga, poptix, PPSlim, pseudo, simple, [sL], 
+  stdarg, Sup, SuperS, Sven, TaKeDa, thommey, Tothwolf, Wcc, Wiktor, 
+  Wingman
 
 See also: THANKS, doc/Versions, doc/Changes
 

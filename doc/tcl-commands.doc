@@ -10,8 +10,8 @@ of the normal Tcl built-in commands are still there, of course, but you
 can also use these to manipulate features of the bot. They are listed
 according to category.
 
-This list is accurate for Eggdrop v1.8.0. Scripts written for v1.3, v1.4
-or 1.6 series of Eggdrop should probably work with a few minor modifications
+This list is accurate for Eggdrop v1.6.22. Scripts written for v1.3 or
+v1.4 series of Eggdrop should probably work with a few minor modifications
 depending on the script. Scripts which were written for  v0.9, v1.0, v1.1
 or v1.2 will probably not work without modification. Commands which have
 been changed in this version of Eggdrop (or are just new commands) are

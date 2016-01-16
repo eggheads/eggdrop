@@ -6,7 +6,7 @@ Last revised: Oct 17, 2010
 
 
   This document provides information about TLS support which is a new
-  eggdrop feature since version 1.8.0.
+  eggdrop feature since version 1.6.22.
 
   Contents:
     1. About

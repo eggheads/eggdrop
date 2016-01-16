@@ -1,5 +1,5 @@
 News
-Last revised: October 25, 2010
+Last revised: January 16, 2016
      _________________________________________________________________
 
                                    News
@@ -11,15 +11,15 @@ Last revised: October 25, 2010
     README
     doc/TLS
     doc/IPV6
-    doc/Changes1.8
+    doc/Changes1.6.22
     doc/tcl-commands.doc
 
   All of these documents combined will fill you in on the latest changes to
-  Eggdrop in version 1.8.x. All files, with the exception of Changes1.8, are
-  also available in html format in doc/html/.
+  Eggdrop in version 1.6.22. All files, with the exception of Changes1.6.22,
+  are also available in html format in doc/html/.
 
   A lot of things have changed in this version, so at a minimum, read the
-  Changes1.8 text file. Changes shows what's been added and fixed along the
+  Changes1.6.22 text file. Changes shows what's been added and fixed along the
   way.
 
   If you are upgrading from a pre-1.6 version of Eggdrop:
@@ -30,7 +30,7 @@ Last revised: October 25, 2010
 
      _________________________________________________________________
 
-Changes made to Eggdrop 1.8.x from Eggdrop1.6.x:
+Changes made to Eggdrop 1.6.22 from Eggdrop1.6.x:
 
   IPV6
 
@@ -46,7 +46,7 @@ Changes made to Eggdrop 1.8.x from Eggdrop1.6.x:
 
   WIRE REMOVED
 
-    The wire module has been removed from eggdrop 1.8. You can still get it
+    The wire module has been removed from eggdrop 1.6.22. You can still get it
     from ftp://eggheads.org/pub/eggdrop/modules/1.8/wire-2.1.tar.gz
     Note that with ssl support you can have encrypted botnet and partyline
     without wire.mod.

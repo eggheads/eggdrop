@@ -474,7 +474,7 @@ install-end:
 	@echo
 	@echo "Installation completed."
 	@echo ""
-	@echo "If you intend to use this bot as a botnet hub for other 1.8 bots using SSL,"
+	@echo "If you intend to use this bot as a botnet hub for other 1.6.22 bots using SSL,"
 	@echo "please run \"make sslcert\" now. If you installed eggdrop to a custom path"
 	@echo "during the make install process, use the same DEST= option here."
 	@echo ""

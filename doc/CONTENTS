@@ -36,7 +36,7 @@ Last revised: Nov 01, 2010
 
   IPV6
     This document provides information about IPv6 support which is a new
-    eggdrop feature since version 1.8.0.
+    eggdrop feature since version 1.6.22
 
   KNOWN-PROBLEMS
     See this file for a list of things that are broken but aren't getting
@@ -61,7 +61,7 @@ Last revised: Nov 01, 2010
 
   TLS
     This document provides information about TLS support which is a new
-    eggdrop feature since version 1.8.0.
+    eggdrop feature since version 1.6.22
 
   TRICKS
     Some advanced tips on making Eggdrop do what you want it to do can be found

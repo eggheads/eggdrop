@@ -1001,9 +1001,9 @@ char *channels_start(Function *global_funcs)
          "-nodesynch "
          "-static ");
   module_register(MODULE_NAME, channels_table, 1, 2);
-  if (!module_depend(MODULE_NAME, "eggdrop", 108, 0)) {
+  if (!module_depend(MODULE_NAME, "eggdrop", 106, 0)) {
     module_undepend(MODULE_NAME);
-    return "This module requires Eggdrop 1.8.0 or later.";
+    return "This module requires Eggdrop 1.6.0 or later.";
   }
   add_hook(HOOK_MINUTELY, (Function) check_expired_bans);
   add_hook(HOOK_MINUTELY, (Function) check_expired_exempts);

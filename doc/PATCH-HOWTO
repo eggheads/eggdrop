@@ -30,7 +30,7 @@ Last revised: October 25, 2010
     To apply a patch to an Eggdrop, you have to first obtain the Eggdrop
     source code. You should always keep a tar.gz archive with the source of
     your current Eggdrop on your shell. In the next step, you have to change
-    to your source directory (i.e.: /home/user/eggdrop1.8.0/) and type
+    to your source directory (i.e.: /home/user/eggdrop1.6.22/) and type
     the following command:
 
       patch -p1 < ../path.to.the/patch
@@ -48,7 +48,7 @@ Last revised: October 25, 2010
 
       |Index: Makefile.in
       |===================================================================
-      |RCS file: /usr/local/cvsroot/eggdrop1.8/Makefile.in,v
+      |RCS file: /usr/local/cvsroot/eggdrop1.6.22/Makefile.in,v
       |retrieving revision 1.38
       |diff -u -r1.38 Makefile.in
       |--- Makefile.in	17 Jun 2004 05:43:28 -0000	1.38
@@ -77,7 +77,7 @@ Last revised: October 25, 2010
 
       2. Run the following:
 
-           diff -urN eggdrop1.8.original eggdrop1.8.modified > patchname.patch
+           diff -urN eggdrop1.6.original eggdrop1.6.modified > patchname.patch
 
          DO NOT add any other diff options.
 
@@ -87,13 +87,13 @@ Last revised: October 25, 2010
          which your patch was created.
 
          It helps if you include the major release number that the patch is
-         for in the subject line. For the 1.8.x series, the subject line
+         for in the subject line. For the 1.6.x series, the subject line
          should look like this:
 
-           PATCH1.8: my-patch-filename.patch
+           PATCH1.6: my-patch-filename.patch
 
          You should also include the nick/handle, name, and email address
-         you would like used for attribution in the Changes1.8 and THANKS
+         you would like used for attribution in the Changes1.6 and THANKS
          files.
 
       Never modify src/patch.h or one of the Changes files. We will do it. If
@@ -101,7 +101,7 @@ Last revised: October 25, 2010
       NOT run autoconf, autoheader, etc; we will do this as well.
 
       Also, please don't add credit lines all over the source when patching.
-      Patch contributors will receive credit in Changes1.8 and THANKS.
+      Patch contributors will receive credit in Changes1.6 and THANKS.
 
       CVS diff's are also perfectly fine (and actually, prefered, as the patch
       will be against the most current version of Eggdrop). To create a CVS
@@ -113,9 +113,9 @@ Last revised: October 25, 2010
 
   4. Downloading a patch
 
-    Some patches for Eggdrop 1.8.x can be found at the following location:
+    Some patches for Eggdrop 1.6.x can be found at the following location:
 
-      ftp://ftp.eggheads.org/pub/eggdrop/patches/1.8
+      ftp://ftp.eggheads.org/pub/eggdrop/patches/1.6
     _____________________________________________________________________
 
   Copyright (C) 1999 - 2016 Eggheads Development Team

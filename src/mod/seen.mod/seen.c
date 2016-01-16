@@ -651,9 +651,9 @@ char *seen_start(Function *egg_func_table)
   global = egg_func_table;
 
   module_register(MODULE_NAME, seen_table, 2, 1);
-  if (!module_depend(MODULE_NAME, "eggdrop", 108, 0)) {
+  if (!module_depend(MODULE_NAME, "eggdrop", 106, 0)) {
     module_undepend(MODULE_NAME);
-    return "This module requires Eggdrop 1.8.0 or later.";
+    return "This module requires Eggdrop 1.6.0 or later.";
   }
   add_builtins(H_load, seen_load);
   add_builtins(H_dcc, seen_dcc);

@@ -281,9 +281,9 @@ char *uptime_start(Function *global_funcs)
     global = global_funcs;
 
     module_register(MODULE_NAME, uptime_table, 1, 4);
-    if (!module_depend(MODULE_NAME, "eggdrop", 108, 0)) {
+    if (!module_depend(MODULE_NAME, "eggdrop", 106, 0)) {
       module_undepend(MODULE_NAME);
-      return "This module requires Eggdrop 1.8.0 or later.";
+      return "This module requires Eggdrop 1.6.0 or later.";
     }
 
     add_help_reference("uptime.help");

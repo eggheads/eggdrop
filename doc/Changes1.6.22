@@ -1,8 +1,13 @@
-Eggdrop Changes (since version 1.8.0)
+Eggdrop Changes (since version 1.6.21)
 
     _____________________________________________________________________
 
-1.8.0 (CVS):
+1.6.22:
+
+  - Updated documentation to reflect change release from 1.8.0 to
+    1.6.22 (References in this CHANGE file to 1.8 were preserved for
+    historical reasons)
+    Patch by: Geo
 
   - Prevent the user from installing into the source directory.
     Patch by: thommey / Found by: boubou
