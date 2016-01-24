@@ -1147,6 +1147,7 @@ static cmd_t C_msg[] = {
   {"op",      "",    (IntFunc) msg_op,      NULL},
   {"halfop",  "",    (IntFunc) msg_halfop,  NULL},
   {"pass",    "",    (IntFunc) msg_pass,    NULL},
+  {"password","",    (IntFunc) msg_pass,    NULL},
   {"rehash",  "m",   (IntFunc) msg_rehash,  NULL},
   {"reset",   "m",   (IntFunc) msg_reset,   NULL},
   {"save",    "m",   (IntFunc) msg_save,    NULL},
