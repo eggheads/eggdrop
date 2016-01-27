@@ -233,6 +233,7 @@ int addr_match(char *m, char *n, int user, int cmp)
 {
   char *p, *q, *r = 0, *s = 0;
   char mu[UHOSTLEN], nu[UHOSTLEN];
+  int tmpscore, score = 0;
 
   /* copy the strings into our own buffers
      and convert to rfc uppercase */
@@ -248,18 +249,26 @@ int addr_match(char *m, char *n, int user, int cmp)
   }
   *p = *q = 0;
   if ((!user && !cidr_support) || !r || !s)
-    return wild_match(mu, nu) ? 1 : NOMATCH;
+    return wild_match(mu, nu);
 
   *r++ = *s++ = 0;
-  if (!wild_match(mu, nu))
+  tmpscore = wild_match(mu, nu);
+  if (!(tmpscore = wild_match(mu, nu)))
     return NOMATCH; /* nick!ident parts don't match */
+  score += tmpscore;
   if (!*r && !*s)
-    return 1; /* end of nonempty strings */
+    return score; /* end of nonempty strings */
 
   /* check for CIDR notation and perform
      generic string matching if not found */
-  if (!(p = strrchr(r, '/')) || !str_isdigit(p + 1))
-    return wild_match(r, s) ? 1 : NOMATCH;
+  if (!(p = strrchr(r, '/')) || !str_isdigit(p + 1)) {
+    tmpscore = wild_match(r, s);
+    if (!tmpscore)
+      return NOMATCH;
+    score += tmpscore;
+    return score;
+  }
+
   /* if the two strings are both cidr masks,
      use the broader prefix */
   if (cmp && (q = strrchr(s, '/')) && str_isdigit(q + 1)) {
@@ -269,7 +278,10 @@ int addr_match(char *m, char *n, int user, int cmp)
   }
   *p = 0;
   /* looks like a cidr mask */
-  return cidr_match(r, s, atoi(p + 1));
+  if (!(tmpscore = cidr_match(r, s, atoi(p + 1))))
+    return NOMATCH;
+  score += tmpscore;
+  return score;
 }
 
 /* Checks for overlapping masks
@@ -326,7 +338,7 @@ int mask_match(char *m, char *n)
 int cidr_match(char *m, char *n, int count)
 {
 #ifdef IPV6
-  int c, af = AF_INET;
+  int c, af = AF_INET, rest;
   u_8bit_t block[16], addr[16];
 
   if (strchr(m, ':') || strchr(n, ':')) {
@@ -344,11 +356,12 @@ int cidr_match(char *m, char *n, int count)
     if (block[c] != addr[c])
       return NOMATCH;
   if (!(count % 8))
-    return 1;
-  count = 8 - (count % 8);
-  return ((block[c] >> count) == (addr[c] >> count));
+    return count;
+  rest = 8 - (count % 8);
+  return ((block[c] >> rest) == (addr[c] >> rest)) ? count : 0;
 
 #else
+  int rest;
   IP block, addr;
 
   if (count > 32)
@@ -359,8 +372,8 @@ int cidr_match(char *m, char *n, int count)
     return NOMATCH;
   if (count < 1)
     return 1;
-  count = 32 - count;
-  return ((block >> count) == (addr >> count));
+  rest = 32 - count;
+  return ((block >> rest) == (addr >> rest)) ? count : 0;
 #endif
 }
 
