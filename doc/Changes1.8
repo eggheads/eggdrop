@@ -4,6 +4,13 @@ Eggdrop Changes (since version 1.8.0)
 
 1.8.0 (CVS):
 
+  - Document that you can trigger arbitrary events by Tcl scripts.
+    This is an intended feature.
+  - Make sure to always set evnt and log temporary variables in the
+    global scope. This is not complete by any means, but fixes the most
+    common binds triggered by Tcl scripts in a local scope.
+    Patch by: thommey / Found by: Domino
+
   - Fix relative DEST= paths for make install.
     Patch by: thommey
 
