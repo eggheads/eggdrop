@@ -1531,7 +1531,9 @@ marked with vertical bars (|) on the left.
 
   callevent <event>
     Description: triggers the evnt bind manually for a certain event.
-      For example: callevent rehash.
+      You can call arbitrary events here, even ones that are not pre-defined
+      by Eggdrop.
+      For example: callevent rehash, or callevent myownevent123.
     Returns: nothing
     Module: core
 
@@ -2230,7 +2232,7 @@ marked with vertical bars (|) on the left.
          proc-name <type>
 
          Description: triggered whenever one of these events happen. flags
-           are ignored; valid events are:
+           are ignored. Pre-defined events triggered by Eggdrop are:
              sighup          - called on a kill -HUP <pid>
              sigterm         - called on a kill -TERM <pid>
              sigill          - called on a kill -ILL <pid>
@@ -2248,6 +2250,8 @@ marked with vertical bars (|) on the left.
              init-server       - called when we actually get on our IRC server
              disconnect-server - called when we disconnect from our IRC server
              fail-server       - called when an IRC server fails to respond 
+           Note that Tcl scripts can trigger arbitrary events, including ones
+           that are not pre-defined or used by Eggdrop.
          Module: core
 
     (43) LOST (stackable)
