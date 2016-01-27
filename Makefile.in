@@ -10,6 +10,7 @@ VPATH = @srcdir@
 @SET_MAKE@
 prefix = @prefix@
 DEST = @DEST@
+override DEST = $(abspath $(DEST))
 EGGEXEC = @EGGEXEC@
 EGGVERSION = @EGGVERSION@
 
