@@ -410,7 +410,6 @@ static int any_ops(struct chanset_t *chan)
  */
 static void reset_chan_info(struct chanset_t *chan, int reset)
 {
-  char beI[4] = "\0";
   /* Leave the channel if we aren't supposed to be there */
   if (channel_inactive(chan)) {
     dprintf(DP_MODE, "PART %s\n", chan->name);
@@ -424,20 +423,18 @@ static void reset_chan_info(struct chanset_t *chan, int reset)
   clear_channel(chan, reset);
   if ((reset & CHAN_RESETBANS) && !(chan->status & CHAN_ASKEDBANS)) {
     chan->status |= CHAN_ASKEDBANS;
-    strcat(beI, "b");
+    dprintf(DP_MODE, "MODE %s +b\n");
   }
   if ((reset & CHAN_RESETEXEMPTS) &&
       !(chan->ircnet_status & CHAN_ASKED_EXEMPTS) && (use_exempts == 1)) {
     chan->ircnet_status |= CHAN_ASKED_EXEMPTS;
-    strcat(beI, "e");
+    dprintf(DP_MODE, "MODE %s +e\n");
   }
   if ((reset & CHAN_RESETINVITED) &&
       !(chan->ircnet_status & CHAN_ASKED_INVITED) && (use_invites == 1)) {
     chan->ircnet_status |= CHAN_ASKED_INVITED;
-    strcat(beI, "I");
+    dprintf(DP_MODE, "MODE %s +I\n");
   }
-  if (beI[0])
-    dprintf(DP_MODE, "MODE %s +%s\n", chan->name, beI);
   if (reset & CHAN_RESETMODES) {
     /* done here to keep expmem happy, as this is accounted in
        irc.mod, not channels.mod where clear_channel() resides */

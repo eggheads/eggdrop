@@ -4,6 +4,10 @@ Eggdrop Changes (since version 1.8.0)
 
 1.8.0 (CVS):
 
+  - Revert compression of +b, +e, +I to +beI when asking for MODEs.
+    Unfortunately, MODE #chan +beI doesn't work on all IRCds.
+    Patch by: thommey / Found by: knux
+
   - Document that you can trigger arbitrary events by Tcl scripts.
     This is an intended feature.
   - Make sure to always set evnt and log temporary variables in the
