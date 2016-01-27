@@ -1182,8 +1182,8 @@ void check_tcl_cron(struct tm *tm)
 
 void check_tcl_event(const char *event)
 {
-  Tcl_SetVar(interp, "_event1", (char *) event, 0);
-  check_tcl_bind(H_event, event, 0, " $_event1",
+  Tcl_SetVar(interp, "_event1", (char *) event, TCL_GLOBAL_ONLY);
+  check_tcl_bind(H_event, event, 0, " $::_event1",
                  MATCH_EXACT | BIND_STACKABLE);
 }
 
@@ -1191,8 +1191,8 @@ int check_tcl_signal(const char *event)
 {
   int x;
 
-  Tcl_SetVar(interp, "_event1", (char *) event, 0);
-  x = check_tcl_bind(H_event, event, 0, " $_event1",
+  Tcl_SetVar(interp, "_event1", (char *) event, TCL_GLOBAL_ONLY);
+  x = check_tcl_bind(H_event, event, 0, " $::_event1",
                  MATCH_EXACT | BIND_STACKABLE | BIND_STACKRET);
   return (x == BIND_EXEC_LOG);
 }
@@ -1208,10 +1208,10 @@ void check_tcl_log(int lv, char *chan, char *msg)
   char mask[512];
 
   snprintf(mask, sizeof mask, "%s %s", chan, msg);
-  Tcl_SetVar(interp, "_log1", masktype(lv), 0);
-  Tcl_SetVar(interp, "_log2", chan, 0);
-  Tcl_SetVar(interp, "_log3", msg, 0);
-  check_tcl_bind(H_log, mask, 0, " $_log1 $_log2 $_log3",
+  Tcl_SetVar(interp, "_log1", masktype(lv), TCL_GLOBAL_ONLY);
+  Tcl_SetVar(interp, "_log2", chan, TCL_GLOBAL_ONLY);
+  Tcl_SetVar(interp, "_log3", msg, TCL_GLOBAL_ONLY);
+  check_tcl_bind(H_log, mask, 0, " $::_log1 $::_log2 $::_log3",
                  MATCH_MASK | BIND_STACKABLE);
 }
 
