@@ -23,8 +23,7 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
-#include <stdlib.h>             /* getenv()                             */
-#include <locale.h>             /* setlocale()                          */
+#include <iconv.h>
 #include "main.h"
 
 /* Used for read/write to internal strings */
@@ -366,6 +365,62 @@ int tcl_resultint()
   return result;
 }
 
+static size_t convert_encoding(iconv_t conversion, char *src, char *dst, size_t dstlen)
+{
+  size_t i, srcbytesleft = strlen(src) + 1;
+
+  /* Reset conversion state */
+  iconv(conversion, NULL, NULL, NULL, NULL);
+
+  i = iconv(conversion, &src, &srcbytesleft, &dst, &dstlen);
+
+  return (i == -1 || srcbytesleft != 0) ? 0 : 1;
+}
+
+/* Set a Tcl variable from an external source, converting it into
+ * Tcl's internal Utf encoding.
+ * Static buffer, because this is ONLY ever used for IRC traffic.
+ *
+ * Tcl's internal UTF-8 encoding is a modified version of UTF-8
+ * which encodes the NUL byte as 0xC080.
+ * This function assumes there are no NUL bytes in bytes.
+ *
+ * Bufsize: 512 bytes (IRC including \r\n) + '\0' = 513 bytes.
+ * TCL_UTF_MAX is the maximum size of a single utf8 character.
+ */
+
+void tcl_setvarfromexternal(Tcl_Interp *irp, char *varname, char *bytes)
+{
+  static char buf[513*TCL_UTF_MAX];
+  static iconv_t fromutf8, fromiso8859;
+  iconv_t fromsystemencoding;
+
+  if (!fromutf8)
+    fromutf8 = iconv_open("utf-8", "utf-8");
+  if (!fromiso8859)
+    fromiso8859 = iconv_open("utf-8", "iso8859-1");
+
+  fromsystemencoding = iconv_open("utf-8", "");
+
+  /* reset conversion state */
+  iconv(fromutf8, NULL, NULL, NULL, NULL);
+
+  if (convert_encoding(fromutf8, bytes, buf, sizeof buf))
+    goto ok;
+  if (convert_encoding(fromsystemencoding, bytes, buf, sizeof buf))
+    goto ok;
+  if (convert_encoding(fromiso8859, bytes, buf, sizeof buf))
+    goto ok;
+
+  /* should never happen, can be inefficient */
+  putlog(LOG_MISC, "*", "Failed to convert '%s' into UTF encoding.", bytes);
+  strncpyz(buf, bytes, sizeof buf);
+
+ok:
+  Tcl_SetVar(irp, varname, buf, 0);
+  iconv_close(fromsystemencoding);
+}
+
 static tcl_strings def_tcl_strings[] = {
   {"botnet-nick",     botnetnick,     HANDLEN,                 0},
   {"userfile",        userfile,       120,           STR_PROTECT},
@@ -600,9 +655,8 @@ void init_tcl(int argc, char **argv)
   Tcl_NotifierProcs notifierprocs;
 #endif /* REPLACE_NOTIFIER */
 
-  const char *encoding;
-  int i, j;
-  char *langEnv, pver[1024] = "";
+  int j;
+  char pver[1024] = "";
 
 #ifdef REPLACE_NOTIFIER
   egg_bzero(&notifierprocs, sizeof(notifierprocs));

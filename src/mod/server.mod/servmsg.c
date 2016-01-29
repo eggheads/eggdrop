@@ -173,10 +173,14 @@ static int check_tcl_notc(char *nick, char *uhost, struct userrec *u,
 static int check_tcl_raw(char *from, char *code, char *msg)
 {
   int x;
-
+#if 0
   Tcl_SetVar(interp, "_raw1", from, 0);
   Tcl_SetVar(interp, "_raw2", code, 0);
   Tcl_SetVar(interp, "_raw3", msg, 0);
+#endif
+  tcl_setvarfromexternal(interp, "_raw1", from);
+  tcl_setvarfromexternal(interp, "_raw2", code);
+  tcl_setvarfromexternal(interp, "_raw3", msg);
   x = check_tcl_bind(H_raw, code, 0, " $_raw1 $_raw2 $_raw3",
                      MATCH_EXACT | BIND_STACKABLE | BIND_WANTRET);
 

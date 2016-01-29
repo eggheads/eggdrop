@@ -607,7 +607,8 @@ Function global_table[] = {
   (Function) tcl_resultempty,
   /* 300 - 304 */
   (Function) tcl_resultint,
-  (Function) tcl_resultstring
+  (Function) tcl_resultstring,
+  (Function) tcl_setvarfromexternal
 };
 
 void init_modules(void)
