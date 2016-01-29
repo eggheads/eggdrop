@@ -423,17 +423,17 @@ static void reset_chan_info(struct chanset_t *chan, int reset)
   clear_channel(chan, reset);
   if ((reset & CHAN_RESETBANS) && !(chan->status & CHAN_ASKEDBANS)) {
     chan->status |= CHAN_ASKEDBANS;
-    dprintf(DP_MODE, "MODE %s +b\n");
+    dprintf(DP_MODE, "MODE %s +b\n", chan->name);
   }
   if ((reset & CHAN_RESETEXEMPTS) &&
       !(chan->ircnet_status & CHAN_ASKED_EXEMPTS) && (use_exempts == 1)) {
     chan->ircnet_status |= CHAN_ASKED_EXEMPTS;
-    dprintf(DP_MODE, "MODE %s +e\n");
+    dprintf(DP_MODE, "MODE %s +e\n", chan->name);
   }
   if ((reset & CHAN_RESETINVITED) &&
       !(chan->ircnet_status & CHAN_ASKED_INVITED) && (use_invites == 1)) {
     chan->ircnet_status |= CHAN_ASKED_INVITED;
-    dprintf(DP_MODE, "MODE %s +I\n");
+    dprintf(DP_MODE, "MODE %s +I\n", chan->name);
   }
   if (reset & CHAN_RESETMODES) {
     /* done here to keep expmem happy, as this is accounted in
