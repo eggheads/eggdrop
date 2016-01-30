@@ -73,6 +73,8 @@ extern char tls_capath[], tls_cafile[], tls_certfile[], tls_keyfile[],
 extern struct dcc_t *dcc;
 extern tcl_timer_t *timer, *utimer;
 
+extern Tcl_VarTraceProc traced_myiphostname;
+
 Tcl_Interp *interp;
 
 int protect_readonly = 0; /* Enable read-only protection? */
@@ -96,7 +98,13 @@ int handlen = HANDLEN;
 int utftot = 0;
 int clientdata_stuff = 0;
 
-extern Tcl_VarTraceProc traced_myiphostname;
+static char fallback_encoding[121];
+
+static iconv_t enc_utf8_utf8 = (iconv_t)(-1), enc_iso8859_utf8 = (iconv_t)(-1),
+               enc_system_utf8 = (iconv_t)(-1), enc_fallback_utf8 = (iconv_t)(-1);
+
+/* Prototypes for Tcl */
+Tcl_Interp *Tcl_CreateInterp();
 
 int expmem_tcl()
 {
@@ -106,7 +114,7 @@ int expmem_tcl()
 static void botnet_change(char *new)
 {
   if (egg_strcasecmp(botnetnick, new)) {
-    /* Trying to change bot's nickname */
+    //* Trying to change bot's nickname */
     if (tands > 0) {
       putlog(LOG_MISC, "*", "* Tried to change my botnet nick, but I'm still "
              "linked to a botnet.");
@@ -365,9 +373,37 @@ int tcl_resultint()
   return result;
 }
 
+static void close_encodings(void)
+{
+  if (enc_utf8_utf8 != (iconv_t)(-1))
+    iconv_close(enc_utf8_utf8);
+  if (enc_fallback_utf8 != (iconv_t)(-1))
+    iconv_close(enc_fallback_utf8);
+  if (enc_system_utf8 != (iconv_t)(-1))
+    iconv_close(enc_system_utf8);
+  if (enc_iso8859_utf8 != (iconv_t)(-1))
+    iconv_close(enc_iso8859_utf8);
+}
+
+void open_encodings(void)
+{
+  close_encodings();
+
+  enc_utf8_utf8 = iconv_open("utf-8", "utf-8");
+  enc_fallback_utf8 = iconv_open("utf-8", fallback_encoding);
+  enc_system_utf8 = iconv_open("utf-8", "");
+  enc_iso8859_utf8 = iconv_open("utf-8", "iso8859-1");
+
+  if (enc_fallback_utf8 == (iconv_t)(-1))
+    putlog(LOG_MISC, "*", "Warning: Unable to load encoding '%s' set as fallback-encoding. Use `iconv -l` to see valid encoding names.", fallback_encoding);
+}
+
 static size_t convert_encoding(iconv_t conversion, char *src, char *dst, size_t dstlen)
 {
   size_t i, srcbytesleft = strlen(src) + 1;
+
+  if (conversion == (iconv_t)(-1))
+    return 0;
 
   /* Reset conversion state */
   iconv(conversion, NULL, NULL, NULL, NULL);
@@ -392,24 +428,14 @@ static size_t convert_encoding(iconv_t conversion, char *src, char *dst, size_t 
 void tcl_setvarfromexternal(Tcl_Interp *irp, char *varname, char *bytes)
 {
   static char buf[513*TCL_UTF_MAX];
-  static iconv_t fromutf8, fromiso8859;
-  iconv_t fromsystemencoding;
 
-  if (!fromutf8)
-    fromutf8 = iconv_open("utf-8", "utf-8");
-  if (!fromiso8859)
-    fromiso8859 = iconv_open("utf-8", "iso8859-1");
-
-  fromsystemencoding = iconv_open("utf-8", "");
-
-  /* reset conversion state */
-  iconv(fromutf8, NULL, NULL, NULL, NULL);
-
-  if (convert_encoding(fromutf8, bytes, buf, sizeof buf))
+  if (convert_encoding(enc_utf8_utf8, bytes, buf, sizeof buf))
     goto ok;
-  if (convert_encoding(fromsystemencoding, bytes, buf, sizeof buf))
+  if (convert_encoding(enc_fallback_utf8, bytes, buf, sizeof buf))
     goto ok;
-  if (convert_encoding(fromiso8859, bytes, buf, sizeof buf))
+  if (convert_encoding(enc_system_utf8, bytes, buf, sizeof buf))
+    goto ok;
+  if (convert_encoding(enc_iso8859_utf8, bytes, buf, sizeof buf))
     goto ok;
 
   /* should never happen, can be inefficient */
@@ -418,7 +444,6 @@ void tcl_setvarfromexternal(Tcl_Interp *irp, char *varname, char *bytes)
 
 ok:
   Tcl_SetVar(irp, varname, buf, 0);
-  iconv_close(fromsystemencoding);
 }
 
 static tcl_strings def_tcl_strings[] = {
@@ -457,6 +482,7 @@ static tcl_strings def_tcl_strings[] = {
   {"logfile-suffix",  logfile_suffix, 20,                      0},
   {"timestamp-format",log_ts,         32,                      0},
   {"pidfile",         pid_file,       120,           STR_PROTECT},
+  {"fallback-encoding", fallback_encoding, 120,                0},
   {NULL,              NULL,           0,                       0}
 };
 
@@ -705,6 +731,7 @@ void init_tcl(int argc, char **argv)
   /* Initialize binds and traces */
   init_bind();
   init_traces();
+  open_encodings();
 
   /* Add new commands */
   add_tcl_commands(tcluser_cmds);

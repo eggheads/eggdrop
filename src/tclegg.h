@@ -176,6 +176,7 @@ void add_tcl_coups(tcl_coups *);
 void rem_tcl_coups(tcl_coups *);
 void add_tcl_ints(tcl_ints *);
 void rem_tcl_ints(tcl_ints *);
+void open_encodings(void);
 void tcl_setvarfromexternal(Tcl_Interp *, char *, char *);
 const char *tcl_resultstring();
 int tcl_resultint();
