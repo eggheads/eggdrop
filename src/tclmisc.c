@@ -806,6 +806,15 @@ static int tcl_status STDVAR
   return TCL_OK;
 }
 
+static int tcl_rfcequal STDVAR
+{
+  BADARGS(3, 3, " string1 string2");
+
+  Tcl_AppendResult(irp, !rfc_casecmp(argv[1], argv[2]) ? "1" : "0", NULL);
+
+  return TCL_OK;
+}
+
 tcl_cmds tclmisc_cmds[] = {
   {"logfile",           tcl_logfile},
   {"putlog",             tcl_putlog},
@@ -845,5 +854,6 @@ tcl_cmds tclmisc_cmds[] = {
   {"matchcidr",       tcl_matchcidr},
   {"matchstr",         tcl_matchstr},
   {"status",             tcl_status},
+  {"rfcequal",         tcl_rfcequal},
   {NULL,                       NULL}
 };
