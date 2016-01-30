@@ -505,6 +505,8 @@
 #define tcl_resultstring ((const char *(*)(void))global[301])
 #define getdccfamilyaddr ((int (*) (sockname_t *, char *, socklen_t, int))global[302])
 #define tcl_setvarfromexternal ((void (*)(Tcl_Interp *, char *, char *))global[303])
+/* 304 - 307 */
+#define convert_out_encoding ((size_t (*)(char *, size_t, char *, size_t))global[304])
 
 /* hostmasking */
 #define maskhost(a,b) maskaddr((a),(b),3)

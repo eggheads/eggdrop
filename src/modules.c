@@ -609,7 +609,9 @@ Function global_table[] = {
   (Function) tcl_resultint,
   (Function) tcl_resultstring,
   (Function) getdccfamilyaddr,
-  (Function) tcl_setvarfromexternal
+  (Function) tcl_setvarfromexternal,
+  /* 304 - 307 */
+  (Function) convert_out_encoding
 };
 
 void init_modules(void)
