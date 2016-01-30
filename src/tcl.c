@@ -169,18 +169,24 @@ static size_t convert_encoding(iconv_t conversion, char *src, size_t len, char *
 size_t convert_out_encoding(char *msg, size_t len, char *buf, size_t bufsize)
 {
   static int initialized;
+  static iconv_t enc_utf8_utf8 = (iconv_t)(-1);
   size_t i;
 
   if (!initialized) {
     initialized = 1;
     reopen_encoding(&enc_utf8_out, out_encoding, "utf-8");
+    reopen_encoding(&enc_utf8_utf8, "utf-8", "utf-8");
   }
 
   i = convert_encoding(enc_utf8_out, msg, len, buf, bufsize);
   if (i != -1)
     return i;
 
-  /* Output encoding conversion failed, fallback to strcpy. */
+  i = convert_encoding(enc_utf8_utf8, msg, len, buf, bufsize);
+  if (i != -1)
+    return i;
+
+  /* Output encoding conversion failed, very unlikely, fallback to strcpy. */
   size_t tocopy = min(len, bufsize);
   strncpy(msg, buf, tocopy);
   return bufsize - tocopy;
