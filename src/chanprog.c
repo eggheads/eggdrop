@@ -485,6 +485,8 @@ void chanprog()
     }
   }
 
+  open_encodings();
+
   /* We should be safe now */
   call_hook(HOOK_REHASH);
   protect_readonly = 1;
