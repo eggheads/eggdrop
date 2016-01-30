@@ -98,10 +98,10 @@ int handlen = HANDLEN;
 int utftot = 0;
 int clientdata_stuff = 0;
 
-static char fallback_encoding[121];
+static char fallback_encoding[121] = ""; /* Fallback encoding if IRC input is not utf-8. "" is system encoding. */
+static char out_encoding[121] = "utf-8"; /* IRC output encoding. */
 
-static iconv_t enc_utf8_utf8 = (iconv_t)(-1), enc_iso8859_utf8 = (iconv_t)(-1),
-               enc_system_utf8 = (iconv_t)(-1), enc_fallback_utf8 = (iconv_t)(-1);
+static iconv_t enc_fallback_utf8 = (iconv_t)(-1), enc_utf8_out = (iconv_t)(-1);
 
 /* Prototypes for Tcl */
 Tcl_Interp *Tcl_CreateInterp();
@@ -128,7 +128,6 @@ static void botnet_change(char *new)
   }
 }
 
-
 /*
  *     Vars, traces, misc
  */
@@ -140,6 +139,95 @@ typedef struct {
   int *left;  /* left side of couplet */
   int *right; /* right side */
 } coupletinfo;
+
+static void reopen_encoding(iconv_t *conv, char *from, char *to)
+{
+  if (*conv != (iconv_t)(-1))
+    iconv_close(*conv);
+
+  *conv = iconv_open(to, from);
+
+  if (*conv == (iconv_t)(-1))
+    putlog(LOG_MISC, "*", "Warning: Unable to load '%s' -> '%s' encoding. Use `iconv -l` to see valid encoding names.", from, to);
+}
+
+static size_t convert_encoding(iconv_t conversion, char *src, size_t len, char *dst, size_t dstlen)
+{
+  size_t i;
+
+  if (conversion == (iconv_t)(-1))
+    return -1;
+
+  /* Reset conversion state */
+  iconv(conversion, NULL, NULL, NULL, NULL);
+
+  i = iconv(conversion, &src, &len, &dst, &dstlen);
+
+  return i >= 0 ? dstlen : -1;
+}
+
+size_t convert_out_encoding(char *msg, size_t len, char *buf, size_t bufsize)
+{
+  static int initialized;
+  size_t i;
+
+  if (!initialized) {
+    initialized = 1;
+    reopen_encoding(&enc_utf8_out, out_encoding, "utf-8");
+  }
+
+  i = convert_encoding(enc_utf8_out, msg, len, buf, bufsize);
+  if (i != -1)
+    return i;
+
+  /* Output encoding conversion failed, fallback to strcpy. */
+  size_t tocopy = min(len, bufsize);
+  strncpy(msg, buf, tocopy);
+  return bufsize - tocopy;
+}
+
+/* Set a Tcl variable from an external source, converting it into
+ * Tcl's internal Utf encoding.
+ * Static buffer, because this is ONLY ever used for IRC traffic.
+ *
+ * Tcl's internal UTF-8 encoding is a modified version of UTF-8
+ * which encodes the NUL byte as 0xC080.
+ * This function assumes there are no NUL bytes in bytes.
+ *
+ * Bufsize: 512 bytes (IRC including \r\n) + '\0' = 513 bytes.
+ * TCL_UTF_MAX is the maximum size of a single utf8 character.
+ */
+
+void tcl_setvarfromexternal(Tcl_Interp *irp, char *varname, char *bytes)
+{
+  static char buf[513*TCL_UTF_MAX];
+  static iconv_t enc_utf8_utf8 = (iconv_t)(-1), enc_iso8859_utf8 = (iconv_t)(-1);
+  static int initialized;
+  size_t len;
+
+  if (!initialized) {
+    initialized = 1;
+
+    reopen_encoding(&enc_utf8_utf8, "utf-8", "utf-8");
+    reopen_encoding(&enc_iso8859_utf8, "utf-8", "iso8859-1");
+    reopen_encoding(&enc_fallback_utf8, fallback_encoding, "utf-8");
+  }
+
+  len = strlen(bytes) + 1; /* Convert terminating NUL as well */
+  if (convert_encoding(enc_utf8_utf8, bytes, len, buf, sizeof buf) != -1)
+    goto ok;
+  if (convert_encoding(enc_fallback_utf8, bytes, len, buf, sizeof buf) != -1)
+    goto ok;
+  if (convert_encoding(enc_iso8859_utf8, bytes, len, buf, sizeof buf) != -1)
+    goto ok;
+
+  /* should never happen, so this can be inefficient. */
+  putlog(LOG_MISC, "*", "Failed to convert '%s' into UTF encoding.", bytes);
+  strncpyz(buf, bytes, sizeof buf);
+
+ok:
+  Tcl_SetVar(irp, varname, buf, 0);
+}
 
 /* FIXME: tcl_eggcouplet() should be redesigned so we can use
  * TCL_TRACE_WRITES | TCL_TRACE_READS as the bit mask instead
@@ -300,6 +388,10 @@ static char *tcl_eggstr(ClientData cdata, Tcl_Interp *irp,
         if (st->str[strlen(st->str) - 1] != '/')
           strcat(st->str, "/");
       }
+      if (st->str == out_encoding)
+        reopen_encoding(&enc_utf8_out, "utf-8", out_encoding);
+      else if (st->str == fallback_encoding)
+        reopen_encoding(&enc_fallback_utf8, fallback_encoding, "utf-8");
     }
     return NULL;
   }
@@ -373,78 +465,6 @@ int tcl_resultint()
   return result;
 }
 
-static void close_encodings(void)
-{
-  if (enc_utf8_utf8 != (iconv_t)(-1))
-    iconv_close(enc_utf8_utf8);
-  if (enc_fallback_utf8 != (iconv_t)(-1))
-    iconv_close(enc_fallback_utf8);
-  if (enc_system_utf8 != (iconv_t)(-1))
-    iconv_close(enc_system_utf8);
-  if (enc_iso8859_utf8 != (iconv_t)(-1))
-    iconv_close(enc_iso8859_utf8);
-}
-
-void open_encodings(void)
-{
-  close_encodings();
-
-  enc_utf8_utf8 = iconv_open("utf-8", "utf-8");
-  enc_fallback_utf8 = iconv_open("utf-8", fallback_encoding);
-  enc_system_utf8 = iconv_open("utf-8", "");
-  enc_iso8859_utf8 = iconv_open("utf-8", "iso8859-1");
-
-  if (enc_fallback_utf8 == (iconv_t)(-1))
-    putlog(LOG_MISC, "*", "Warning: Unable to load encoding '%s' set as fallback-encoding. Use `iconv -l` to see valid encoding names.", fallback_encoding);
-}
-
-static size_t convert_encoding(iconv_t conversion, char *src, char *dst, size_t dstlen)
-{
-  size_t i, srcbytesleft = strlen(src) + 1;
-
-  if (conversion == (iconv_t)(-1))
-    return 0;
-
-  /* Reset conversion state */
-  iconv(conversion, NULL, NULL, NULL, NULL);
-
-  i = iconv(conversion, &src, &srcbytesleft, &dst, &dstlen);
-
-  return (i == -1 || srcbytesleft != 0) ? 0 : 1;
-}
-
-/* Set a Tcl variable from an external source, converting it into
- * Tcl's internal Utf encoding.
- * Static buffer, because this is ONLY ever used for IRC traffic.
- *
- * Tcl's internal UTF-8 encoding is a modified version of UTF-8
- * which encodes the NUL byte as 0xC080.
- * This function assumes there are no NUL bytes in bytes.
- *
- * Bufsize: 512 bytes (IRC including \r\n) + '\0' = 513 bytes.
- * TCL_UTF_MAX is the maximum size of a single utf8 character.
- */
-
-void tcl_setvarfromexternal(Tcl_Interp *irp, char *varname, char *bytes)
-{
-  static char buf[513*TCL_UTF_MAX];
-
-  if (convert_encoding(enc_utf8_utf8, bytes, buf, sizeof buf))
-    goto ok;
-  if (convert_encoding(enc_fallback_utf8, bytes, buf, sizeof buf))
-    goto ok;
-  if (convert_encoding(enc_system_utf8, bytes, buf, sizeof buf))
-    goto ok;
-  if (convert_encoding(enc_iso8859_utf8, bytes, buf, sizeof buf))
-    goto ok;
-
-  /* should never happen, can be inefficient */
-  putlog(LOG_MISC, "*", "Failed to convert '%s' into UTF encoding.", bytes);
-  strncpyz(buf, bytes, sizeof buf);
-
-ok:
-  Tcl_SetVar(irp, varname, buf, 0);
-}
 
 static tcl_strings def_tcl_strings[] = {
   {"botnet-nick",     botnetnick,     HANDLEN,                 0},
@@ -483,6 +503,7 @@ static tcl_strings def_tcl_strings[] = {
   {"timestamp-format",log_ts,         32,                      0},
   {"pidfile",         pid_file,       120,           STR_PROTECT},
   {"fallback-encoding", fallback_encoding, 120,                0},
+  {"out-encoding",    out_encoding,   120,                     0},
   {NULL,              NULL,           0,                       0}
 };
 
@@ -731,7 +752,6 @@ void init_tcl(int argc, char **argv)
   /* Initialize binds and traces */
   init_bind();
   init_traces();
-  open_encodings();
 
   /* Add new commands */
   add_tcl_commands(tcluser_cmds);

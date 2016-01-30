@@ -798,11 +798,11 @@ static void queue_server(int which, char *msg, int len)
   /* Remove \r\n. We will add these back when we send the text to the server.
    * - Wcc [01/09/2004]
    */
-  strncpy(buf, msg, sizeof buf);
-  msg = buf;
-  remove_crlf(&msg);
-  buf[510] = 0;
-  len = strlen(buf);
+  len = strcspn(msg, "\r\n");
+  msg[len] = '\0';
+
+  len = sizeof buf - 1 - convert_out_encoding(msg, len, buf, sizeof buf - 1);
+  buf[len] = '\0';
 
   /* No queue for PING and PONG - drummer */
   if (!egg_strncasecmp(buf, "PING", 4) || !egg_strncasecmp(buf, "PONG", 4)) {
