@@ -98,11 +98,9 @@ int handlen = HANDLEN;
 int utftot = 0;
 int clientdata_stuff = 0;
 
-#define ENC_SUFFIX "//IGNORE" /* The suffix to append to target encodings to make sure they don't fail on unrepresentable chars. */
 static char fallback_encoding[121] = ""; /* Fallback encoding if IRC input is not utf-8. "" is system encoding. */
-static char out_encoding[121] = "utf-8"; /* IRC output encoding. */
 
-static iconv_t enc_fallback_utf8 = (iconv_t)(-1), enc_utf8_out = (iconv_t)(-1);
+static iconv_t enc_fallback_utf8 = (iconv_t)(-1), enc_utf8_system = (iconv_t)(-1);
 
 /* Prototypes for Tcl */
 Tcl_Interp *Tcl_CreateInterp();
@@ -152,6 +150,11 @@ static void reopen_encoding(iconv_t *conv, char *from, char *to)
     putlog(LOG_MISC, "*", "Warning: Unable to load '%s' -> '%s' encoding. Use `iconv -l` to see valid encoding names.", from, to);
 }
 
+void refresh_system_encoding(void)
+{
+  reopen_encoding(&enc_utf8_system, "//IGNORE", "utf-8");
+}
+
 static size_t convert_encoding(iconv_t conversion, char *src, size_t len, char *dst, size_t dstlen)
 {
   size_t i;
@@ -169,25 +172,14 @@ static size_t convert_encoding(iconv_t conversion, char *src, size_t len, char *
 
 size_t convert_out_encoding(char *msg, size_t len, char *buf, size_t bufsize)
 {
-  static int initialized;
-  static iconv_t enc_utf8_utf8 = (iconv_t)(-1);
   size_t i;
 
-  if (!initialized) {
-    initialized = 1;
-    reopen_encoding(&enc_utf8_out, out_encoding, "utf-8");
-    reopen_encoding(&enc_utf8_utf8, "utf-8", "utf-8");
-  }
-
-  i = convert_encoding(enc_utf8_out, msg, len, buf, bufsize);
-  if (i != -1)
-    return i;
-
-  i = convert_encoding(enc_utf8_utf8, msg, len, buf, bufsize);
+  i = convert_encoding(enc_utf8_system, msg, len, buf, bufsize);
   if (i != -1)
     return i;
 
   /* Output encoding conversion failed, very unlikely, fallback to strcpy. */
+  putlog(LOG_MISC, "*", "Failed to convert '%.*s' into system encoding.", len, msg);
   size_t tocopy = min(len, bufsize);
   strncpy(msg, buf, tocopy);
   return bufsize - tocopy;
@@ -395,11 +387,7 @@ static char *tcl_eggstr(ClientData cdata, Tcl_Interp *irp,
         if (st->str[strlen(st->str) - 1] != '/')
           strcat(st->str, "/");
       }
-      if (st->str == out_encoding) {
-        strcat(out_encoding, ENC_SUFFIX);
-        reopen_encoding(&enc_utf8_out, "utf-8", out_encoding);
-      }
-      else if (st->str == fallback_encoding)
+      if (st->str == fallback_encoding)
         reopen_encoding(&enc_fallback_utf8, fallback_encoding, "utf-8");
     }
     return NULL;
@@ -512,7 +500,6 @@ static tcl_strings def_tcl_strings[] = {
   {"timestamp-format",log_ts,         32,                      0},
   {"pidfile",         pid_file,       120,           STR_PROTECT},
   {"fallback-encoding", fallback_encoding, 120,                0},
-  {"out-encoding",    out_encoding,   120-ENC_SUFFIX,          0},
   {NULL,              NULL,           0,                       0}
 };
 
@@ -761,6 +748,7 @@ void init_tcl(int argc, char **argv)
   /* Initialize binds and traces */
   init_bind();
   init_traces();
+  reopen_encoding(&enc_utf8_system, "//IGNORE", "utf-8");
 
   /* Add new commands */
   add_tcl_commands(tcluser_cmds);
