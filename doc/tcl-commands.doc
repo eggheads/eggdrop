@@ -1810,7 +1810,7 @@ marked with vertical bars (|) on the left.
             bind pubm * "#eggdrop Hello*" myProc
               Listens on #eggdrop for any line that begins with "Hello"
             bind pubm * "% Hello*" myProc
-              Listens on any channel for any line that begis with "Hello"
+              Listens on any channel for any line that begins with "Hello"
             bind pubm * "% !command" myProc
               Listens on any channel for a line that ONLY contains "!command"
              
