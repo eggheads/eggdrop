@@ -98,6 +98,7 @@ int handlen = HANDLEN;
 int utftot = 0;
 int clientdata_stuff = 0;
 
+#define ENC_SUFFIX "//IGNORE" /* The suffix to append to target encodings to make sure they don't fail on unrepresentable chars. */
 static char fallback_encoding[121] = ""; /* Fallback encoding if IRC input is not utf-8. "" is system encoding. */
 static char out_encoding[121] = "utf-8"; /* IRC output encoding. */
 
@@ -394,8 +395,10 @@ static char *tcl_eggstr(ClientData cdata, Tcl_Interp *irp,
         if (st->str[strlen(st->str) - 1] != '/')
           strcat(st->str, "/");
       }
-      if (st->str == out_encoding)
+      if (st->str == out_encoding) {
+        strcat(out_encoding, ENC_SUFFIX);
         reopen_encoding(&enc_utf8_out, "utf-8", out_encoding);
+      }
       else if (st->str == fallback_encoding)
         reopen_encoding(&enc_fallback_utf8, fallback_encoding, "utf-8");
     }
@@ -509,7 +512,7 @@ static tcl_strings def_tcl_strings[] = {
   {"timestamp-format",log_ts,         32,                      0},
   {"pidfile",         pid_file,       120,           STR_PROTECT},
   {"fallback-encoding", fallback_encoding, 120,                0},
-  {"out-encoding",    out_encoding,   120,                     0},
+  {"out-encoding",    out_encoding,   120-ENC_SUFFIX,          0},
   {NULL,              NULL,           0,                       0}
 };
 
