@@ -179,6 +179,7 @@ void rem_tcl_ints(tcl_ints *);
 void tcl_setvarfromexternal(Tcl_Interp *, char *, char *);
 size_t convert_out_encoding(char *, size_t, char *, size_t);
 const char *tcl_resultstring();
+void refresh_system_encoding(void);
 int tcl_resultint();
 int tcl_resultempty();
 int tcl_threaded();
