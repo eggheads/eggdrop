@@ -611,6 +611,7 @@ Function global_table[] = {
   (Function) getdccfamilyaddr,
   (Function) tcl_setvarfromexternal,
   /* 304 - 307 */
+  (Function) convert_in_encoding,
   (Function) convert_out_encoding
 };
 
