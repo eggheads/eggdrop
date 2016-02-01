@@ -503,7 +503,7 @@
 /* 300 - 303 */
 #define tcl_resultint ((int (*)(void))global[300])
 #define tcl_resultstring ((const char *(*)(void))global[301])
-#define tcl_setvarfromexternal ((void (*)(Tcl_Interp *, char *, char *))global[302])
+#define convert_in_encoding ((size_t (*)(char *, size_t, char *, size_t))global[302])
 #define convert_out_encoding ((size_t (*)(char *, size_t, char *, size_t))global[303])
 
 /* hostmasking */

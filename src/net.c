@@ -1080,6 +1080,20 @@ void tputs(register int z, char *s, unsigned int len)
   register int i, x, idx;
   char *p;
   static int inhere = 0;
+  static char *buf;
+  static size_t buflen = 0;
+
+  if (!buf) {
+    buf = nmalloc(2048);
+    buflen = 2048;
+  }
+
+  if (len > buflen) {
+    buf = realloc(buf, len);
+  }
+
+  len = buflen - convert_out_encoding(s, len, buf, buflen);
+  s = buf;
 
   if (z < 0) /* um... HELLO?! sanity check please! */
     return;

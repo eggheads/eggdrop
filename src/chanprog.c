@@ -462,8 +462,6 @@ void chanprog()
   /* Turn off read-only variables (make them write-able) for rehash */
   protect_readonly = 0;
 
-  refresh_system_encoding();
-
   /* Now read it */
   if (!readtclprog(configfile))
     fatal(MISC_NOCONFIGFILE, 0);

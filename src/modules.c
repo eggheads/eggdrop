@@ -608,7 +608,7 @@ Function global_table[] = {
   /* 300 - 304 */
   (Function) tcl_resultint,
   (Function) tcl_resultstring,
-  (Function) tcl_setvarfromexternal,
+  (Function) convert_in_encoding,
   (Function) convert_out_encoding
 };
 

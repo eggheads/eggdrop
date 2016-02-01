@@ -173,14 +173,10 @@ static int check_tcl_notc(char *nick, char *uhost, struct userrec *u,
 static int check_tcl_raw(char *from, char *code, char *msg)
 {
   int x;
-#if 0
+
   Tcl_SetVar(interp, "_raw1", from, 0);
   Tcl_SetVar(interp, "_raw2", code, 0);
   Tcl_SetVar(interp, "_raw3", msg, 0);
-#endif
-  tcl_setvarfromexternal(interp, "_raw1", from);
-  tcl_setvarfromexternal(interp, "_raw2", code);
-  tcl_setvarfromexternal(interp, "_raw3", msg);
   x = check_tcl_bind(H_raw, code, 0, " $_raw1 $_raw2 $_raw3",
                      MATCH_EXACT | BIND_STACKABLE | BIND_WANTRET);
 
@@ -1043,6 +1039,12 @@ static struct dcc_table SERVER_SOCKET = {
 static void server_activity(int idx, char *msg, int len)
 {
   char *from, *code;
+  static char buf[2049];
+  size_t i;
+
+  i = convert_in_encoding(msg, len, buf, sizeof buf - 1);
+  buf[sizeof buf - 1 - i] = '\0';
+  msg = buf;
 
   if (trying_server) {
     strcpy(dcc[idx].nick, "(server)");

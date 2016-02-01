@@ -100,7 +100,8 @@ int clientdata_stuff = 0;
 
 static char fallback_encoding[121] = ""; /* Fallback encoding if IRC input is not utf-8. "" is system encoding. */
 
-static iconv_t enc_fallback_utf8 = (iconv_t)(-1), enc_utf8_system = (iconv_t)(-1);
+static iconv_t enc_fallback_utf8 = (iconv_t)(-1);
+static int tcl_initialized = 0; /* Needed to know when we can perform encoding translation */
 
 /* Prototypes for Tcl */
 Tcl_Interp *Tcl_CreateInterp();
@@ -150,11 +151,6 @@ static void reopen_encoding(iconv_t *conv, char *from, char *to)
     putlog(LOG_MISC, "*", "Warning: Unable to load '%s' -> '%s' encoding. Use `iconv -l` to see valid encoding names.", from, to);
 }
 
-void refresh_system_encoding(void)
-{
-  reopen_encoding(&enc_utf8_system, "//IGNORE", "utf-8");
-}
-
 static size_t convert_encoding(iconv_t conversion, char *src, size_t len, char *dst, size_t dstlen)
 {
   size_t i;
@@ -167,65 +163,48 @@ static size_t convert_encoding(iconv_t conversion, char *src, size_t len, char *
 
   i = iconv(conversion, &src, &len, &dst, &dstlen);
 
-  return i >= 0 ? dstlen : -1;
+  return i == -1 ? -1 : dstlen;
 }
 
+/* We use Tcl because it silently ignores nonrepresentable characters. */
 size_t convert_out_encoding(char *msg, size_t len, char *buf, size_t bufsize)
 {
-  size_t i;
+  int dstsize;
 
-  i = convert_encoding(enc_utf8_system, msg, len, buf, bufsize);
-  if (i != -1)
-    return i;
-
-  /* Output encoding conversion failed, very unlikely, fallback to strcpy. */
-  putlog(LOG_MISC, "*", "Failed to convert '%.*s' into system encoding.", len, msg);
-  size_t tocopy = min(len, bufsize);
-  strncpy(msg, buf, tocopy);
-  return bufsize - tocopy;
+  if (tcl_initialized) {
+    Tcl_UtfToExternal(NULL, Tcl_GetEncoding(NULL, NULL), msg, len, 0, NULL, buf, bufsize, NULL, &dstsize, NULL);
+  } else {
+    strncpy(buf, msg, min(len, sizeof bufsize));
+    dstsize = sizeof bufsize - min(len, sizeof bufsize);
+  }
+  return bufsize - dstsize;
 }
 
-/* Set a Tcl variable from an external source, converting it into
- * Tcl's internal Utf encoding.
- * Static buffer, because this is ONLY ever used for IRC traffic.
- *
- * Tcl's internal UTF-8 encoding is a modified version of UTF-8
- * which encodes the NUL byte as 0xC080.
- * This function assumes there are no NUL bytes in bytes.
- *
- * Bufsize: 512 bytes (IRC including \r\n) + '\0' = 513 bytes.
- * TCL_UTF_MAX is the maximum size of a single utf8 character.
- */
-
-void tcl_setvarfromexternal(Tcl_Interp *irp, char *varname, char *bytes)
+/* We use iconv because Tcl provides no error reporting on invalid sequences. */
+size_t convert_in_encoding(char *msg, size_t len, char *buf, size_t bufsize)
 {
-  static char buf[513*TCL_UTF_MAX];
   static iconv_t enc_utf8_utf8 = (iconv_t)(-1), enc_iso8859_utf8 = (iconv_t)(-1);
   static int initialized;
-  size_t len;
+  size_t i;
 
   if (!initialized) {
     initialized = 1;
 
     reopen_encoding(&enc_utf8_utf8, "utf-8", "utf-8");
-    reopen_encoding(&enc_iso8859_utf8, "utf-8", "iso8859-1");
+    reopen_encoding(&enc_iso8859_utf8, "iso8859-1", "utf-8");
     reopen_encoding(&enc_fallback_utf8, fallback_encoding, "utf-8");
   }
 
-  len = strlen(bytes) + 1; /* Convert terminating NUL as well */
-  if (convert_encoding(enc_utf8_utf8, bytes, len, buf, sizeof buf) != -1)
-    goto ok;
-  if (convert_encoding(enc_fallback_utf8, bytes, len, buf, sizeof buf) != -1)
-    goto ok;
-  if (convert_encoding(enc_iso8859_utf8, bytes, len, buf, sizeof buf) != -1)
-    goto ok;
+  if ((i = convert_encoding(enc_utf8_utf8, msg, len, buf, bufsize)) != -1)
+    return i;
+  if ((i = convert_encoding(enc_fallback_utf8, msg, len, buf, bufsize)) != -1)
+    return i;
+  if ((i = convert_encoding(enc_iso8859_utf8, msg, len, buf, bufsize)) != -1)
+    return i;
 
   /* should never happen, so this can be inefficient. */
-  putlog(LOG_MISC, "*", "Failed to convert '%s' into UTF encoding.", bytes);
-  strncpyz(buf, bytes, sizeof buf);
-
-ok:
-  Tcl_SetVar(irp, varname, buf, 0);
+  strncpy(buf, msg, min(sizeof buf, len));
+  return bufsize - min(sizeof buf, len);
 }
 
 /* FIXME: tcl_eggcouplet() should be redesigned so we can use
@@ -736,6 +715,7 @@ void init_tcl(int argc, char **argv)
   /* Setup script library facility */
   Tcl_Init(interp);
   Tcl_SetServiceMode(TCL_SERVICE_ALL);
+  tcl_initialized = 1;
 
   /* Add eggdrop to Tcl's package list */
   for (j = 0; j <= strlen(egg_version); j++) {
@@ -748,7 +728,6 @@ void init_tcl(int argc, char **argv)
   /* Initialize binds and traces */
   init_bind();
   init_traces();
-  reopen_encoding(&enc_utf8_system, "//IGNORE", "utf-8");
 
   /* Add new commands */
   add_tcl_commands(tcluser_cmds);
