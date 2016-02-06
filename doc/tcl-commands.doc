@@ -868,7 +868,11 @@ marked with vertical bars (|) on the left.
 
   chansettype <setting>
     Returns: The type of the setting you specify. The possible types
-      are flag, int, str, pair.
+      are flag, int, str, pair. A flag type references a channel flag
+      setting that can be set to either + or -. An int type is a channel 
+      setting that is set to a number, such as ban-time. A str type is a 
+      channel setting that stores a string, such as need-op. A pair type is
+      a setting that holds a value couple, such as the flood settings.
     Module: channels
 
 
