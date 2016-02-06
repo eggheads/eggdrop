@@ -963,6 +963,14 @@ static void add_server(const char *ss)
       !sscanf(ss, "%255[^:]:%10[+0-9]:%120s", name, port, pass))
     return;
 
+#ifndef TLS
+  if (port[0] == '+') {
+    putlog(LOG_MISC, "*", "ERROR: Attempted to add SSL-enabled server, but \
+Eggdrop was not compiled with SSL libraries. Skipping...");
+  return;
+  }
+#endif  
+
   x = nmalloc(sizeof(struct server_list));
   x->next = 0;
   x->realname = 0;

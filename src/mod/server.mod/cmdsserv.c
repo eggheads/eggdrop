@@ -75,17 +75,16 @@ static void cmd_dump(struct userrec *u, int idx, char *par)
 static void cmd_jump(struct userrec *u, int idx, char *par)
 {
   char *other;
-#ifdef TLS
   char *sport;
-#endif
   int port;
 
   if (par[0]) {
     other = newsplit(&par);
-#ifdef TLS
     sport = newsplit(&par);
-    if (*sport == '+')
+    if (*sport == '+') {
+#ifdef TLS
       use_ssl = 1;
+    }
     else
       use_ssl = 0;
     port = atoi(sport);
@@ -96,7 +95,11 @@ static void cmd_jump(struct userrec *u, int idx, char *par)
     putlog(LOG_CMDS, "*", "#%s# jump %s %s%d %s", dcc[idx].nick, other,
            use_ssl ? "+" : "", port, par);
 #else
-    port = atoi(newsplit(&par));
+    putlog(LOG_MISC, "*", "Error: Attempted to jump to SSL-enabled \
+server, but Eggdrop was not compiled with SSL libraries. Skipping...");
+      return;
+    }
+    port = atoi(sport);
     if (!port)
       port = default_port;
     putlog(LOG_CMDS, "*", "#%s# jump %s %d %s", dcc[idx].nick, other,
