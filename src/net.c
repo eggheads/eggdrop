@@ -639,6 +639,7 @@ int getdccaddr(sockname_t *addr, char *s, size_t l)
 {
   char h[121];
   sockname_t name, *r = &name;
+  int af = AF_UNSPEC;
 #ifdef IPV6
   IP ip = 0;
 #endif
@@ -655,9 +656,39 @@ int getdccaddr(sockname_t *addr, char *s, size_t l)
       (r->family == AF_INET && !r->addr.s4.sin_addr.s_addr)) {
       /* We can't send :: or 0.0.0.0 for dcc, so try
          to figure out some real address */
-    r = &name;
-    gethostname(h, sizeof h);
-    setsockname(r, h, 0, 1);
+#ifdef IPV6
+     /* If it's listening on an IPv6 :: address,
+        try using vhost6 as the source IP */
+    if (pref_af && (r->family == AF_INET6)) {
+      if (inet_pton(AF_INET6, vhost6, &r->addr.s6.sin6_addr) != 1) {
+        r = &name;
+        gethostname(h, sizeof h);
+        setsockname(r, h, 0, 1);
+        if (r->family == AF_INET) {
+        /* setsockname tries to resolve  both ipv4 and ipv6. ipv4 dns
+           resolution comes later in precedence, so if we get an ipv4
+           back, reset it to the original addr struct and try
+           again */
+          if (addr) {
+            r = addr;
+          } else {
+            setsockname(r, listen_ip, 0, 1);
+          }
+          af = AF_INET;
+        }
+      }
+    }
+#endif
+     /* If IPv6 didn't work, or it's listening on an IPv4
+        0.0.0.0 address, try using vhost4 as the source */
+    if (!pref_af || af) {
+      if (!egg_inet_aton(vhost, &r->addr.s4.sin_addr)) {
+        /* And if THAT fails, try DNS resolution of hostname */
+        r = &name;
+        gethostname(h, sizeof h);
+        setsockname(r, h, 0, 1);
+      }
+    }
   }
 
   if (
