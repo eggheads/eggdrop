@@ -1823,6 +1823,15 @@ marked with vertical bars (|) on the left.
            before PUB binds. If the exclusive-binds setting is enabled,
            PUB binds will not be triggered by text that a PUBM bind has
            already handled.
+           Examples:
+            bind pubm * "#eggdrop Hello*" myProc
+              Listens on #eggdrop for any line that begins with "Hello"
+            bind pubm * "% Hello*" myProc
+              Listens on any channel for any line that begins with "Hello"
+            bind pubm * "% !command" myProc
+              Listens on any channel for a line that ONLY contains "!command"
+             
+           
          Module: irc
 
     (7)  NOTC (stackable)
