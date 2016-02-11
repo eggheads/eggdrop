@@ -358,7 +358,8 @@ int cidr_match(char *m, char *n, int count)
   if (!(count % 8))
     return count;
   rest = 8 - (count % 8);
-  return ((block[c] >> rest) == (addr[c] >> rest)) ? count : 0;
+  /* Normalize returned score to max. 32 for a /128 ipv6, 32 for ipv4 */
+  return ((block[c] >> rest) == (addr[c] >> rest)) ? (count / (af == AF_INET6 ? 4 : 1)): 0;
 
 #else
   int rest;
