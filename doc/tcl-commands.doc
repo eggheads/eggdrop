@@ -541,6 +541,7 @@ marked with vertical bars (|) on the left.
       change); 0 if not
     Module: core
 
+
 *** CHANNEL COMMANDS ***
 
   channel add <name> [option-list]
@@ -794,7 +795,6 @@ marked with vertical bars (|) on the left.
       check for wasop, isop, etc.
     Module: irc
 
-
   getchanidle <nickname> <channel>
     Returns: number of minutes that person has been idle; -1 if the
       specified user isn't on the channel
@@ -861,15 +861,20 @@ marked with vertical bars (|) on the left.
     Returns: nothing
     Module: channels
 
-  getudefs <flag/int/str>
+  getudefs [flag/int/str]
     Returns: a list of user defined channel settings of the given type, or
       all of them if no type is given.
     Module: channels
 
   chansettype <setting>
     Returns: The type of the setting you specify. The possible types
-      are flag, int, str, pair.
+      are flag, int, str, pair. A flag type references a channel flag
+      setting that can be set to either + or -. An int type is a channel 
+      setting that is set to a number, such as ban-time. A str type is a 
+      channel setting that stores a string, such as need-op. A pair type is
+      a setting that holds a value couple, such as the flood settings.
     Module: channels
+
 
 *** DCC COMMANDS ***
 
@@ -1095,6 +1100,7 @@ marked with vertical bars (|) on the left.
     Returns: nothing
     Module: core
 
+
   *** NOTES MODULE ***
 
   notes <user> [numberlist]
@@ -1125,6 +1131,7 @@ marked with vertical bars (|) on the left.
     Returns: 0 on success; non-0 on failure
     Module: notes
 
+
 *** ASSOC MODULE ***
 
   assoc <chan> [name]
@@ -1138,6 +1145,7 @@ marked with vertical bars (|) on the left.
       exists. Use 'killassoc &' to kill all assocs.
     Returns: nothing
     Module: assoc
+
 
 *** COMPRESS MODULE ***
 
@@ -1157,6 +1165,7 @@ marked with vertical bars (|) on the left.
       checks from succeeding.
     Returns: nothing
     Module: compress
+
 
 *** FILESYS MODULE ***
 
@@ -1731,6 +1740,7 @@ marked with vertical bars (|) on the left.
     Value: the filename of the config file Eggdrop is currently using
     Module: core
 
+
 *** BIND ***
 
   You can use the 'bind' command to attach Tcl procedures to certain events.
@@ -1936,7 +1946,6 @@ marked with vertical bars (|) on the left.
              }
              proc mode_proc {nick uhost hand chan mode} { ... }
          Module: irc
-
 
     (15) CTCP (stackable)
          bind ctcp <flags> <keyword> <proc>
@@ -2408,6 +2417,7 @@ marked with vertical bars (|) on the left.
 
 |   (18) TLS   Return 1 to disable verbose ssl information for the handshake.
 
+
 *** CONTROL PROCEDURES ***
 
   Using the 'control' command, you can put a DCC connection (or outgoing
@@ -2512,9 +2522,9 @@ marked with vertical bars (|) on the left.
   ?  matches any single character
   *  matches 0 or more characters of any type
   %  matches 0 or more non-space characters (can be used to match a single
-     word)
+     word) (This character only works in binds, not in regular matching)
   ~  matches 1 or more space characters (can be used for whitespace between
-     words)
+     words) (This char only works in binds, not in regluar matching) 
     _____________________________________________________________________
 
   Copyright (C) 1999 - 2016 Eggheads Development Team
