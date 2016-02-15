@@ -125,7 +125,7 @@ int ssl_init()
   SSL_library_init();
 
   if (ssl_seed()) {
-    putlog(LOG_MISC, "*", "TLS: unable to seed PRNG. Disabling SSL");
+    putlog(LOG_MISC, "*", "ERROR: TLS: unable to seed PRNG. Disabling SSL");
     ERR_free_strings();
     return -2;
   }
@@ -133,7 +133,7 @@ int ssl_init()
      supported protocols (SSLv2, SSLv3, and TLSv1) */
   if (!(ssl_ctx = SSL_CTX_new(SSLv23_method()))) {
     putlog(LOG_MISC, "*", ERR_error_string(ERR_get_error(), NULL));
-    putlog(LOG_MISC, "*", "TLS: unable to create context. Disabling SSL.");
+    putlog(LOG_MISC, "*", "ERROR: TLS: unable to create context. Disabling SSL.");
     ERR_free_strings();
     return -1;
   }
@@ -141,23 +141,26 @@ int ssl_init()
      server, because we don't support anonymous ciphers by default. */
   if (SSL_CTX_use_certificate_chain_file(ssl_ctx, tls_certfile) != 1) {
     ssl_files_loaded = 0;
-    putlog(LOG_MISC, "*", "TLS: unable to load own certificate: %s",
+    putlog(LOG_MISC, "*", "ERROR: TLS: unable to load own certificate: %s",
            ERR_error_string(ERR_get_error(), NULL));
+    putlog(LOG_MISC, "*", "  Check ssl-certificate in config.");
   }
   if (SSL_CTX_use_PrivateKey_file(ssl_ctx, tls_keyfile,
-      SSL_FILETYPE_PEM) != 1)
-    putlog(LOG_MISC, "*", "TLS: unable to load private key: %s",
+      SSL_FILETYPE_PEM) != 1) {
+    putlog(LOG_MISC, "*", "ERROR: TLS: unable to load private key: %s",
            ERR_error_string(ERR_get_error(), NULL));
+    putlog(LOG_MISC, "*", "  Check ssl-privatekey in config.");
+  }
   if ((tls_capath[0] || tls_cafile[0]) &&
       !SSL_CTX_load_verify_locations(ssl_ctx, tls_cafile[0] ? tls_cafile : NULL,
       tls_capath[0] ? tls_capath : NULL))
-    putlog(LOG_MISC, "*", "TLS: unable to set CA certificates location: %s",
+    putlog(LOG_MISC, "*", "ERROR: TLS: unable to set CA certificates location: %s",
            ERR_error_string(ERR_get_error(), NULL));
   /* Let advanced users specify the list of allowed ssl ciphers */
   if (tls_ciphers[0])
     if (!SSL_CTX_set_cipher_list(ssl_ctx, tls_ciphers)) {
       /* this replaces any preset ciphers so an invalid list is fatal */
-      putlog(LOG_MISC, "*", "TLS: no valid ciphers found. Disabling SSL.");
+      putlog(LOG_MISC, "*", "ERROR: TLS: no valid ciphers found. Disabling SSL.");
       ERR_free_strings();
       SSL_CTX_free(ssl_ctx);
       ssl_ctx = NULL;
