@@ -64,11 +64,11 @@ Last revised: Oct 17, 2010
    
     By default, eggdrop now automatically attempts to protect botnet links
     with SSL if it is compiled with TLS support. If one of the bots linking 
-    does not have TLS support enabled, the connection will fall back back to 
-    plain text. To explicitly require all links to a hub be SSL-only (ie,
-    prevent plain text connections from being allowed), prefix the listen port
-    in the hub configuration file with a plus (+) sign. Conversely, to force
-    a leaf to only allow SSL (not plain text) connections with a hub, you must
+    does not have TLS support enabled, the connection will fall back to plain 
+    text. To explicitly require all links to a hub be SSL-only (ie, prevent 
+    plain text connections from being allowed), prefix the listen port in the
+    hub configuration file with a plus (+) sign. Conversely, to force a leaf 
+    to only allow SSL (not plain text) connections with a hub, you must 
     prefix the hub's listen port with a plus when adding it to the leaf via 
     +bot/chaddr commands. The nickname and password are sent before SSL 
     negotiation takes place (the password is not sent in plain text anyway).
