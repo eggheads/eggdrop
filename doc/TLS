@@ -47,6 +47,7 @@ Last revised: Oct 17, 2010
     By default, without additional configuration, TLS support will provide
     opportunistic encryption for botnet links. For other connection types,
     TLS must be requested explicitly.
+
     Secure connections are created the same way as plaintext ones. The only
     difference is that you must prefix the port number with a plus sign.
     A port number that could be normally omitted, would have to be included
@@ -60,16 +61,19 @@ Last revised: Oct 17, 2010
     the server list in the config file.
 
   3b. Botnet
-
-    Botnet links between TLS-enabled bots will automatically switch to SSL.
-    In this case however, the nickname and password will be sent before SSL
-    negotiation takes place (the password is not send as cleartext anyway).
-    If one of the bots doesn't support TLS, the connection will fall back to
-    plain text. To require SSL explicitly, you need to open a ssl telnet
-    port on your hub and prefix the port number with + when adding it on your
-    leafs. For SSL-only bot links, all communication is encrypted, including
-    sending the nickname and password. If SSL negotiation fails, the
-    connection is deliberately aborted and no clear text is ever sent.
+   
+    By default, eggdrop now automatically attempts to protect botnet links
+    with SSL if it is compiled with TLS support. If one of the bots linking 
+    does not have TLS support enabled, the connection will fall back back to 
+    plain text. To explicitly require all links to a hub be SSL-only (ie,
+    prevent plain text connections from being allowed), prefix the listen port
+    in the hub configuration file with a plus (+) sign. Conversely, to force
+    a leaf to only allow SSL (not plain text) connections with a hub, you must
+    prefix the hub's listen port with a plus when adding it to the leaf via 
+    +bot/chaddr commands. The nickname and password are sent before SSL 
+    negotiation takes place (the password is not sent in plain text anyway).
+    If SSL negotiation fails and either the hub or leaf is set to require SSL,
+    the connection is deliberately aborted and no clear text is ever sent.
 
   3c. Secure DCC
 

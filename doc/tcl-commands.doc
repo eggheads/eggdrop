@@ -2470,8 +2470,10 @@ marked with vertical bars (|) on the left.
   To create a listen port, use:
     listen <[+]port> script <proc>
 
-  To listen for SSL connections, prefix the port with a plus sign.
-
+  By default, a listen port will allow both plaintext and SSL connections.
+  To restrict a port to allow only SSL connections, prefix the port with a 
+  plus sign.
+   
   Procs should be declared as:
     <procname> <newidx>
 
