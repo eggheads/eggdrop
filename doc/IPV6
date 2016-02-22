@@ -48,6 +48,7 @@ Last revised: Jul 29, 2010
     are documented in the help files and the html documentation, so you can
     consult them when in doubt.
 
+
   4. Settings
  
     There are four new IPv6 related config variables:
@@ -77,6 +78,40 @@ Last revised: Jul 29, 2010
 
       nat-ip works with IPv4 as it used to. It has no meaning for IPv6 and is
         not queried for IPv6 connections.
+
+  5. Precedence
+
+    With all these settings, it can be confusing to follow what settings may 
+    override others when sending an IP for CTCP chat or file transfer. Here
+    is a quick overview of the network logic used by Eggdrop:
+
+      - If prefer-ipv6 is set to 1:
+
+        * If listen-addr is set to a valid IPv6 address, Eggdrop will use
+          the IP. 
+        
+        * If listen-addr is not set, or set to :: or 0.0.0.0 (listening on
+          all available interfaces), Eggdrop will check if vhost6 contains a
+          valid IPv6 address and, if so, use that IP.
+
+        * If vhost6 is not set, Eggdrop will attempt to resolve the hostname
+          of the machine to an IPv6 address via DNS lookup.
+
+      - If prefer-ipv6 is set to 0, OR is set to 1 but fails to identify an
+        address using the steps above:
+
+        * If nat-ip is set, this IP will be used.
+
+        * If nat-ip is not set and listen-addr is set to a valid IPv4 address,
+          Eggdrop will used the IP.
+
+        * If listen-addr is not set, or set to :: or /0.0.0.0 (listening on
+          all available interfaces), Eggdrop will check if vhost4 contains a
+          valid IPv4 address and, if so, use that IP. 
+
+        * If vhost4 is not set, Eggdrop will attempt to resolve the hostname
+          of the machine to an IPv4 address via DNS lookup.
+
     _____________________________________________________________________
 
   Copyright (C) 2010 - 2016 Eggheads Development Team
