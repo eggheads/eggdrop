@@ -160,16 +160,20 @@ static int ctcp_CHAT(char *nick, char *uhost, char *handle, char *object,
 // * Check if SSL, IPv4, or IPv6 were requested
     if (
 #ifdef IPV6
-    (!egg_strcasecmp(keyword, "CHAT6"))) {
+    (!egg_strcasecmp(keyword, "CHAT6")) ||
+        (!egg_strcasecmp(keyword, "SCHAT6"))) {
       chatv = AF_INET6;
     } else if (
 #endif
 #ifdef TLS
-    (!egg_strcasecmp(keyword, "SCHAT"))) {
+    (!egg_strcasecmp(keyword, "SCHAT")) ||
+        (!egg_strcasecmp(keyword, "SCHAT4")) ||
+        (!egg_strcasecmp(keyword, "SCHAT6"))) {
       ssl = 1;
     } else if (
 #endif
-    (!egg_strcasecmp(keyword, "CHAT4"))) {
+    (!egg_strcasecmp(keyword, "CHAT4")) ||
+        (!egg_strcasecmp(keyword, "SCHAT4"))) {
       chatv = AF_INET;
     }
   
@@ -220,6 +224,8 @@ static cmd_t myctcp[] = {
 #endif
 #ifdef TLS
   {"SCHAT",      "",   ctcp_CHAT,       NULL},
+  {"SCHAT4",     "",   ctcp_CHAT,       NULL},
+  {"SCHAT6",     "",   ctcp_CHAT,       NULL},
 #endif
   {NULL,         NULL, NULL,            NULL}
 };
