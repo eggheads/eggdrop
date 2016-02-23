@@ -225,7 +225,9 @@ static cmd_t myctcp[] = {
 #ifdef TLS
   {"SCHAT",      "",   ctcp_CHAT,       NULL},
   {"SCHAT4",     "",   ctcp_CHAT,       NULL},
+#ifdef IPV6
   {"SCHAT6",     "",   ctcp_CHAT,       NULL},
+#endif
 #endif
   {NULL,         NULL, NULL,            NULL}
 };

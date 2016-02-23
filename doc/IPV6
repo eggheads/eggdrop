@@ -80,7 +80,7 @@ Last revised: Jul 29, 2010
          the address to bind to for listening (telnet/bot ports, /ctcp chat,
          file send, script listen, etc.). Can be either an IPv4/IPv6 IP or a
          hostname. If a hostname resolves to both type of addresses,
-         prefer-ipv6 will determine which to be used. 
+         prefer-ipv6 will determine which is to be used. 
 
     Other affected variables:
 
@@ -114,7 +114,7 @@ Last revised: Jul 29, 2010
         * If nat-ip is set, this IP will be used.
 
         * If nat-ip is not set and listen-addr is set to a valid IPv4 address,
-          Eggdrop will used the IP.
+          Eggdrop will use the IP.
 
         * If listen-addr is not set, or set to :: or /0.0.0.0 (listening on
           all available interfaces), Eggdrop will check if vhost4 contains a
