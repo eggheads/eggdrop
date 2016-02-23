@@ -56,7 +56,8 @@ Last revised: Jul 29, 2010
     Among other examples, these options can be useful in cases where an
     Eggdrop is configured to prefer IPv6 addresses, but a client only has
     IPv4 available.
-    
+
+    The same usage applies when using SCHAT4/SCHAT6.
 
 
   4. Settings
