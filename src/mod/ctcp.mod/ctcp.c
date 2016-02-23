@@ -167,8 +167,10 @@ static int ctcp_CHAT(char *nick, char *uhost, char *handle, char *object,
 #endif
 #ifdef TLS
     (!egg_strcasecmp(keyword, "SCHAT")) ||
-        (!egg_strcasecmp(keyword, "SCHAT4")) ||
-        (!egg_strcasecmp(keyword, "SCHAT6"))) {
+#ifdef IPV6
+        (!egg_strcasecmp(keyword, "SCHAT6")) ||
+#endif
+        (!egg_strcasecmp(keyword, "SCHAT4"))) {
       ssl = 1;
     } else if (
 #endif
