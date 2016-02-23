@@ -47,6 +47,16 @@ Last revised: Jul 29, 2010
     the colon character (:) from being interpreted as a port separator. These
     are documented in the help files and the html documentation, so you can
     consult them when in doubt.
+ 
+    To specify which IP version you wish to use as a client, you can initiate
+    a DCC session by using /ctcp bot CHAT4 (which will require the bot to
+    initiate an IPv4 session) or /ctcp bot CHAT6 (which will require the bot
+    to initiate an IPv6 session). Using /ctcp bot CHAT will allow the bot's
+    configuration to determine whether an IPv4 or IPv6 connection is used.
+    Among other examples, these options can be useful in cases where an
+    Eggdrop is configured to prefer IPv6 addresses, but a client only has
+    IPv4 available.
+    
 
 
   4. Settings
@@ -85,7 +95,7 @@ Last revised: Jul 29, 2010
     override others when sending an IP for CTCP chat or file transfer. Here
     is a quick overview of the network logic used by Eggdrop:
 
-      - If prefer-ipv6 is set to 1:
+      - If prefer-ipv6 is set to 1 (and the client does not use CHAT4):
 
         * If listen-addr is set to a valid IPv6 address, Eggdrop will use
           the IP. 
@@ -98,7 +108,7 @@ Last revised: Jul 29, 2010
           of the machine to an IPv6 address via DNS lookup.
 
       - If prefer-ipv6 is set to 0, OR is set to 1 but fails to identify an
-        address using the steps above:
+        address using the steps above, AND the client does not use CHAT6:
 
         * If nat-ip is set, this IP will be used.
 

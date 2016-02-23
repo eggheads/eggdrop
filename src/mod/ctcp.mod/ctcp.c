@@ -143,6 +143,7 @@ static int ctcp_CHAT(char *nick, char *uhost, char *handle, char *object,
 {
   struct userrec *u = get_user_by_handle(userlist, handle);
   int atr = u ? u->flags : 0, i;
+  int chatv = AF_UNSPEC;
   char s[INET6_ADDRSTRLEN];
 #ifdef TLS
   int ssl = 0;
@@ -156,10 +157,22 @@ static int ctcp_CHAT(char *nick, char *uhost, char *handle, char *object,
       return 1;
     }
 
-#ifdef TLS
-    if (!egg_strcasecmp(keyword, "SCHAT"))
-      ssl = 1;
+// * Check if SSL, IPv4, or IPv6 were requested
+    if (
+#ifdef IPV6
+    (!egg_strcasecmp(keyword, "CHAT6"))) {
+      chatv = AF_INET6;
+    } else if (
 #endif
+#ifdef TLS
+    (!egg_strcasecmp(keyword, "SCHAT"))) {
+      ssl = 1;
+    } else if (
+#endif
+    (!egg_strcasecmp(keyword, "CHAT4"))) {
+      chatv = AF_INET;
+    }
+  
     for (i = 0; i < dcc_total; i++) {
       if ((dcc[i].type->flags & DCT_LISTEN) &&
 #ifdef TLS
@@ -167,7 +180,7 @@ static int ctcp_CHAT(char *nick, char *uhost, char *handle, char *object,
 #endif
           (!strcmp(dcc[i].nick, "(telnet)") ||
            !strcmp(dcc[i].nick, "(users)")) &&
-          getdccaddr(&dcc[i].sockname, s, sizeof s)) {
+          getdccfamilyaddr(&dcc[i].sockname, s, sizeof s, chatv)) {
         /* Do me a favour and don't change this back to a CTCP reply,
          * CTCP replies are NOTICE's this has to be a PRIVMSG
          * -poptix 5/1/1997 */
@@ -201,6 +214,10 @@ static cmd_t myctcp[] = {
   {"CLIENTINFO", "",   ctcp_CLIENTINFO, NULL},
   {"TIME",       "",   ctcp_TIME,       NULL},
   {"CHAT",       "",   ctcp_CHAT,       NULL},
+  {"CHAT4",      "",   ctcp_CHAT,       NULL},
+#ifdef IPV6
+  {"CHAT6",      "",   ctcp_CHAT,       NULL},
+#endif
 #ifdef TLS
   {"SCHAT",      "",   ctcp_CHAT,       NULL},
 #endif

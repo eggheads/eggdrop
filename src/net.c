@@ -629,13 +629,19 @@ int answer(int sock, sockname_t *caller, unsigned short *port, int binary)
   return new_sock;
 }
 
+int getdccaddr(sockname_t *addr, char *s, size_t l)
+{
+  return getdccfamilyaddr(addr, s, l, AF_UNSPEC);
+}
+
 /* Get DCC compatible address for a client to connect (e.g. 1660944385)
  * If addr is not NULL, it should point to the listening socket's address.
  * Otherwise, this function will try to figure out the public address of the
- * machine, using listen_ip and natip.
- * The result is a string useable for DCC requests
+ * machine, using listen_ip and natip. If restrict_af is set, it will limit
+ * the possible IPs to the specified family. The result is a string useable 
+ * for DCC requests
  */
-int getdccaddr(sockname_t *addr, char *s, size_t l)
+int getdccfamilyaddr(sockname_t *addr, char *s, size_t l, int restrict_af)
 {
   char h[121];
   sockname_t name, *r = &name;
@@ -659,7 +665,7 @@ int getdccaddr(sockname_t *addr, char *s, size_t l)
 #ifdef IPV6
      /* If it's listening on an IPv6 :: address,
         try using vhost6 as the source IP */
-    if (pref_af && (r->family == AF_INET6)) {
+    if (pref_af && (r->family == AF_INET6) && (restrict_af != AF_INET)) {
       if (inet_pton(AF_INET6, vhost6, &r->addr.s6.sin6_addr) != 1) {
         r = &name;
         gethostname(h, sizeof h);
@@ -681,7 +687,7 @@ int getdccaddr(sockname_t *addr, char *s, size_t l)
 #endif
      /* If IPv6 didn't work, or it's listening on an IPv4
         0.0.0.0 address, try using vhost4 as the source */
-    if (!pref_af || af) {
+    if ((!pref_af || af) && (restrict_af != AF_INET6)) {
       if (!egg_inet_aton(vhost, &r->addr.s4.sin_addr)) {
         /* And if THAT fails, try DNS resolution of hostname */
         r = &name;
@@ -695,6 +701,8 @@ int getdccaddr(sockname_t *addr, char *s, size_t l)
 #ifdef IPV6
       ((r->family == AF_INET6) &&
       IN6_IS_ADDR_UNSPECIFIED(&r->addr.s6.sin6_addr)) ||
+      ((r->family == AF_INET6) && (restrict_af == AF_INET)) ||
+      ((r->family == AF_INET) && (restrict_af == AF_INET6)) ||
 #endif
       (!natip[0] && (r->family == AF_INET) && !r->addr.s4.sin_addr.s_addr))
     return 0;
