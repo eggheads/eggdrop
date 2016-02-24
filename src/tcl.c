@@ -97,9 +97,6 @@ int handlen = HANDLEN;
 int utftot = 0;
 int clientdata_stuff = 0;
 
-/* Prototypes for Tcl */
-Tcl_Interp *Tcl_CreateInterp();
-
 int expmem_tcl()
 {
   return strtot + utftot + clientdata_stuff;
