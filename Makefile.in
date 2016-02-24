@@ -29,7 +29,7 @@ EGGVERSION = @EGGVERSION@
 # Debug defines can be set with configure now.
 # See ./configure --help for more information.
 
-CFLGS = @CFLGS@ @TCL_INCLUDE_SPEC@ @TCL_CFLAGS@
+CFLGS = @CFLGS@ @TCL_INCLUDE_SPEC@
 DEBCFLGS = @DEBCFLGS@
 
 # ./configure SHOULD set these; however you may need to tweak them to get
