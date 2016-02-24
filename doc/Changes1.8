@@ -4,6 +4,9 @@ Eggdrop Changes (since version 1.8.0)
 
 1.8.0 (CVS):
 
+  - Add TCL_EXTRA_CFLAGS from tclConfig.sh to the compiler (to get -pthread).
+    Patch by: thommey / Found by: fahuo
+
   - Remove unnecessary Tcl_CreateInterp() prototype, it is in tcl.h.
   - Reintroduce closest match when matching masks broken by CIDR code.
     Maximum score for matching IPv4 and IPv6 is 32.
