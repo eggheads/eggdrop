@@ -24,12 +24,6 @@
 #define _EGG_COMPAT_COMPAT_H
 
 #include "inet_aton.h"
-#include "snprintf.h"
-#include "memset.h"
-#include "memcpy.h"
-#include "strcasecmp.h"
-#include "strftime.h"
-#include "inet_ntop.h"
 #include "inet_pton.h"
 #include "gethostbyname2.h"
 

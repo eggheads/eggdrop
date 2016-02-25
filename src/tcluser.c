@@ -433,7 +433,7 @@ static int tcl_chhandle STDVAR
       x = 0;
     else if (get_user_by_handle(userlist, newhand))
       x = 0;
-    else if (!egg_strcasecmp(botnetnick, newhand) && (!(u->flags & USER_BOT) ||
+    else if (!strcasecmp(botnetnick, newhand) && (!(u->flags & USER_BOT) ||
              nextbot(argv[1]) != -1))
       x = 0;
     else if (newhand[0] == '*')
@@ -515,11 +515,11 @@ static int tcl_ignorelist STDVAR
     list[1] = i->msg;
 
     tv = i->expire;
-    egg_snprintf(expire, sizeof expire, "%lu", tv);
+    snprintf(expire, sizeof expire, "%lu", tv);
     list[2] = expire;
 
     tv = i->added;
-    egg_snprintf(added, sizeof added, "%lu", tv);
+    snprintf(added, sizeof added, "%lu", tv);
     list[3] = added;
 
     list[4] = i->user;
@@ -538,7 +538,7 @@ static int tcl_getuser STDVAR
 
   BADARGS(3, -1, " handle type");
 
-  if (!(et = find_entry_type(argv[2])) && egg_strcasecmp(argv[2], "HANDLE")) {
+  if (!(et = find_entry_type(argv[2])) && strcasecmp(argv[2], "HANDLE")) {
     Tcl_AppendResult(irp, "No such info type: ", argv[2], NULL);
     return TCL_ERROR;
   }
@@ -549,7 +549,7 @@ static int tcl_getuser STDVAR
     } else
       return TCL_OK; /* silently ignore user */
   }
-  if (!egg_strcasecmp(argv[2], "HANDLE"))
+  if (!strcasecmp(argv[2], "HANDLE"))
     Tcl_AppendResult(irp, u->handle, NULL);
   else {
     e = find_user_entry(et, u);

@@ -58,12 +58,6 @@
 /* Define to 1 if you have the `a2i_IPADDRESS' function. */
 #undef HAVE_A2I_IPADDRESS
 
-/* Define to 1 if you have the <arpa/inet.h> header file. */
-#undef HAVE_ARPA_INET_H
-
-/* Define to 1 if you have the `clock' function. */
-#undef HAVE_CLOCK
-
 /* Define to 1 if you have the declaration of `tzname', and to 0 if you don't.
    */
 #undef HAVE_DECL_TZNAME
@@ -81,9 +75,6 @@
 /* Define to 1 if you have the <dl.h> header file. */
 #undef HAVE_DL_H
 
-/* Define to 1 if you don't have `vprintf' but do have `_doprnt.' */
-#undef HAVE_DOPRNT
-
 /* Define to 1 if you have the `dprintf' function. */
 #undef HAVE_DPRINTF
 
@@ -93,23 +84,11 @@
 /* Define to 1 if you have the `EVP_sha1' function. */
 #undef HAVE_EVP_SHA1
 
-/* Define to 1 if you have the <fcntl.h> header file. */
-#undef HAVE_FCNTL_H
-
-/* Define to 1 if you have the `fsync' function. */
-#undef HAVE_FSYNC
-
 /* Define to 1 if you have the `getdtablesize' function. */
 #undef HAVE_GETDTABLESIZE
 
 /* Define to 1 if you have the `gethostbyname2' function. */
 #undef HAVE_GETHOSTBYNAME2
-
-/* Define to 1 if you have the `getpagesize' function. */
-#undef HAVE_GETPAGESIZE
-
-/* Define to 1 if you have the `getrusage' function. */
-#undef HAVE_GETRUSAGE
 
 /* Define to 1 if you have the `hex_to_string' function. */
 #undef HAVE_HEX_TO_STRING
@@ -123,9 +102,6 @@
 /* Define to 1 if you have the `inet_aton' function. */
 #undef HAVE_INET_ATON
 
-/* Define to 1 if you have the `inet_ntop' function. */
-#undef HAVE_INET_NTOP
-
 /* Define to 1 if you have the `inet_pton' function. */
 #undef HAVE_INET_PTON
 
@@ -134,9 +110,6 @@
 
 /* Define to 1 if you have the <inttypes.h> header file. */
 #undef HAVE_INTTYPES_H
-
-/* Define to 1 if you have the `isascii' function. */
-#undef HAVE_ISASCII
 
 /* Define to 1 if you have the `crypto' library (-lcrypto). */
 #undef HAVE_LIBCRYPTO
@@ -159,29 +132,17 @@
 /* Define to 1 if you have the `ssl' library (-lssl). */
 #undef HAVE_LIBSSL
 
-/* Define to 1 if you have the <limits.h> header file. */
-#undef HAVE_LIMITS_H
-
 /* Define to 1 if you have the `load' function. */
 #undef HAVE_LOAD
 
 /* Define to 1 if you have the <loader.h> header file. */
 #undef HAVE_LOADER_H
 
-/* Define to 1 if you have the <locale.h> header file. */
-#undef HAVE_LOCALE_H
-
-/* Define to 1 if you have the `lrand48' function. */
-#undef HAVE_LRAND48
-
 /* Define to 1 if you have the <mach-o/dyld.h> header file. */
 #undef HAVE_MACH_O_DYLD_H
 
 /* Define to 1 if you have the <mach-o/rld.h> header file. */
 #undef HAVE_MACH_O_RLD_H
-
-/* Define to 1 if you have the `mbrlen' function. */
-#undef HAVE_MBRLEN
 
 /* Define to 1 if you have the `MD5_Final' function. */
 #undef HAVE_MD5_FINAL
@@ -192,26 +153,11 @@
 /* Define to 1 if you have the `MD5_Update' function. */
 #undef HAVE_MD5_UPDATE
 
-/* Define to 1 if you have the `memcpy' function. */
-#undef HAVE_MEMCPY
-
 /* Define to 1 if you have the <memory.h> header file. */
 #undef HAVE_MEMORY_H
 
-/* Define to 1 if you have the `memset' function. */
-#undef HAVE_MEMSET
-
-/* Define to 1 if you have a working `mmap' system call. */
-#undef HAVE_MMAP
-
 /* Define to 1 if you have the <ndir.h> header file, and it defines `DIR'. */
 #undef HAVE_NDIR_H
-
-/* Define to 1 if you have the <netdb.h> header file. */
-#undef HAVE_NETDB_H
-
-/* Define to 1 if you have the <netinet/in.h> header file. */
-#undef HAVE_NETINET_IN_H
 
 /* Do we have <net/errno.h>? */
 #undef HAVE_NET_ERRNO_H
@@ -231,17 +177,8 @@
 /* Define to 1 if you have the <openssl/x509v3.h> header file. */
 #undef HAVE_OPENSSL_X509V3_H
 
-/* Define to 1 if you have the `rand' function. */
-#undef HAVE_RAND
-
-/* Define to 1 if you have the `random' function. */
-#undef HAVE_RANDOM
-
 /* Define to 1 if you have the `RAND_status' function. */
 #undef HAVE_RAND_STATUS
-
-/* Define to 1 if you have the `rename' function. */
-#undef HAVE_RENAME
 
 /* Define to 1 if you have the <rld.h> header file. */
 #undef HAVE_RLD_H
@@ -249,44 +186,17 @@
 /* Define to 1 if you have the `rld_load' function. */
 #undef HAVE_RLD_LOAD
 
-/* Define to 1 if you have the `setpgid' function. */
-#undef HAVE_SETPGID
-
 /* Define to 1 if you have the `shl_load' function. */
 #undef HAVE_SHL_LOAD
-
-/* Define to 1 if you have the `sigaction' function. */
-#undef HAVE_SIGACTION
-
-/* Define to 1 if you have the `sigemptyset' function. */
-#undef HAVE_SIGEMPTYSET
-
-/* Define to 1 if you have the `snprintf' function. */
-#undef HAVE_SNPRINTF
 
 /* Define to 1 if you have the `socklen_t' type. */
 #undef HAVE_SOCKLEN_T
 
-/* Define to 1 if you have the <stdarg.h> header file. */
-#undef HAVE_STDARG_H
-
-/* Define to 1 if you have the <stddef.h> header file. */
-#undef HAVE_STDDEF_H
-
 /* Define to 1 if you have the <stdint.h> header file. */
 #undef HAVE_STDINT_H
 
-/* Define to 1 if you have the <stdio.h> header file. */
-#undef HAVE_STDIO_H
-
 /* Define to 1 if you have the <stdlib.h> header file. */
 #undef HAVE_STDLIB_H
-
-/* Define to 1 if you have the `strcasecmp' function. */
-#undef HAVE_STRCASECMP
-
-/* Define to 1 if you have the `strftime' function. */
-#undef HAVE_STRFTIME
 
 /* Define to 1 if you have the <strings.h> header file. */
 #undef HAVE_STRINGS_H
@@ -296,9 +206,6 @@
 
 /* Define to 1 if you have the `string_to_hex' function. */
 #undef HAVE_STRING_TO_HEX
-
-/* Define to 1 if you have the `strncasecmp' function. */
-#undef HAVE_STRNCASECMP
 
 /* Define to 1 if the system has the type `struct in6_addr'. */
 #undef HAVE_STRUCT_IN6_ADDR
@@ -335,9 +242,6 @@
 /* Define to 1 if you have the <sys/stat.h> header file. */
 #undef HAVE_SYS_STAT_H
 
-/* Define to 1 if you have the <sys/time.h> header file. */
-#undef HAVE_SYS_TIME_H
-
 /* Define to 1 if you have the <sys/types.h> header file. */
 #undef HAVE_SYS_TYPES_H
 
@@ -353,20 +257,8 @@
    `tzname'. */
 #undef HAVE_TZNAME
 
-/* Define to 1 if you have the `uname' function. */
-#undef HAVE_UNAME
-
 /* Define to 1 if you have the <unistd.h> header file. */
 #undef HAVE_UNISTD_H
-
-/* Define to 1 if you have the `vprintf' function. */
-#undef HAVE_VPRINTF
-
-/* Define to 1 if you have the `vsnprintf' function. */
-#undef HAVE_VSNPRINTF
-
-/* Define to 1 if you have the <wchar.h> header file. */
-#undef HAVE_WCHAR_H
 
 /* Define to 1 if you want to enable IPv6 support. */
 #undef IPV6

@@ -24,7 +24,7 @@ static int fstat_unpack(struct userrec *u, struct user_entry *e)
   struct filesys_stats *fs;
 
   fs = user_malloc(sizeof(struct filesys_stats));
-  egg_bzero(fs, sizeof(struct filesys_stats));
+  bzero(fs, sizeof(struct filesys_stats));
   par = e->u.list->extra;
 
   arg = newsplit(&par);
@@ -56,7 +56,7 @@ static int fstat_pack(struct userrec *u, struct user_entry *e)
 
   fs = e->u.extra;
   l->extra = user_malloc(41);
-  egg_snprintf(l->extra, 41, "%09u %09u %09u %09u", fs->uploads, fs->upload_ks,
+  snprintf(l->extra, 41, "%09u %09u %09u %09u", fs->uploads, fs->upload_ks,
                fs->dnloads, fs->dnload_ks);
   l->next = NULL;
   e->u.list = l;
@@ -123,15 +123,15 @@ static int fstat_tcl_get(Tcl_Interp *irp, struct userrec *u,
 
   fs = e->u.extra;
   if (argc == 3)
-    egg_snprintf(d, sizeof d, "%u %u %u %u", fs->uploads, fs->upload_ks,
+    snprintf(d, sizeof d, "%u %u %u %u", fs->uploads, fs->upload_ks,
                  fs->dnloads, fs->dnload_ks);
   else
     switch (argv[3][0]) {
     case 'u':
-      egg_snprintf(d, sizeof d, "%u %u", fs->uploads, fs->upload_ks);
+      snprintf(d, sizeof d, "%u %u", fs->uploads, fs->upload_ks);
       break;
     case 'd':
-      egg_snprintf(d, sizeof d, "%u %u", fs->dnloads, fs->dnload_ks);
+      snprintf(d, sizeof d, "%u %u", fs->dnloads, fs->dnload_ks);
       break;
     }
 
@@ -197,7 +197,7 @@ static int fstat_gotshare(struct userrec *u, struct user_entry *e,
   default:
     if (!(fs = e->u.extra)) {
       fs = user_malloc(sizeof(struct filesys_stats));
-      egg_bzero(fs, sizeof(struct filesys_stats));
+      bzero(fs, sizeof(struct filesys_stats));
     }
 
     p = newsplit(&par);
@@ -246,7 +246,7 @@ static void stats_add_dnload(struct userrec *u, unsigned long bytes)
   if (u) {
     if (!(ue = find_user_entry(&USERENTRY_FSTAT, u)) || !(fs = ue->u.extra)) {
       fs = user_malloc(sizeof(struct filesys_stats));
-      egg_bzero(fs, sizeof(struct filesys_stats));
+      bzero(fs, sizeof(struct filesys_stats));
     }
     fs->dnloads++;
     fs->dnload_ks += ((bytes + 512) / 1024);
@@ -263,7 +263,7 @@ static void stats_add_upload(struct userrec *u, unsigned long bytes)
   if (u) {
     if (!(ue = find_user_entry(&USERENTRY_FSTAT, u)) || !(fs = ue->u.extra)) {
       fs = user_malloc(sizeof(struct filesys_stats));
-      egg_bzero(fs, sizeof(struct filesys_stats));
+      bzero(fs, sizeof(struct filesys_stats));
     }
     fs->uploads++;
     fs->upload_ks += ((bytes + 512) / 1024);
@@ -290,7 +290,7 @@ static int fstat_tcl_set(Tcl_Interp *irp, struct userrec *u,
   case 'd':
     if (!(fs = e->u.extra)) {
       fs = user_malloc(sizeof(struct filesys_stats));
-      egg_bzero(fs, sizeof(struct filesys_stats));
+      bzero(fs, sizeof(struct filesys_stats));
     }
     switch (argv[3][0]) {
     case 'u':

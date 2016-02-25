@@ -81,7 +81,7 @@ static char uff_sbuf[512];
 
 static void uff_init(void)
 {
-  egg_bzero(&uff_list, sizeof(uff_head_t));
+  bzero(&uff_list, sizeof(uff_head_t));
 }
 
 /* Calculate memory used for list.

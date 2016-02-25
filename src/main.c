@@ -435,7 +435,7 @@ void eggContext(const char *file, int line, const char *module)
   if (!module) {
     strncpyz(x, p ? p + 1 : file, sizeof x);
   } else
-    egg_snprintf(x, 31, "%s:%s", module, p ? p + 1 : file);
+    snprintf(x, 31, "%s:%s", module, p ? p + 1 : file);
   cx_ptr = ((cx_ptr + 1) & 15);
   strcpy(cx_file[cx_ptr], x);
   cx_line[cx_ptr] = line;
@@ -453,7 +453,7 @@ void eggContextNote(const char *file, int line, const char *module,
   if (!module)
     strncpyz(x, p ? p + 1 : file, sizeof x);
   else
-    egg_snprintf(x, 31, "%s:%s", module, p ? p + 1 : file);
+    snprintf(x, 31, "%s:%s", module, p ? p + 1 : file);
   cx_ptr = ((cx_ptr + 1) & 15);
   strcpy(cx_file[cx_ptr], x);
   cx_line[cx_ptr] = line;
@@ -534,7 +534,7 @@ void backup_userfile(void)
 
   if (quiet_save < 2)
     putlog(LOG_MISC, "*", USERF_BACKUP);
-  egg_snprintf(s, sizeof s, "%s~bak", userfile);
+  snprintf(s, sizeof s, "%s~bak", userfile);
   copyfile(userfile, s);
 }
 
@@ -565,7 +565,7 @@ static void core_secondly()
       tell_mem_status_dcc(DP_STDOUT);
     }
   }
-  egg_memcpy(&nowtm, localtime(&now), sizeof(struct tm));
+  memcpy(&nowtm, localtime(&now), sizeof(struct tm));
   if (nowtm.tm_min != lastmin) {
     int i = 0;
 
@@ -626,7 +626,7 @@ static void core_secondly()
               fclose(logs[i].f);
               logs[i].f = NULL;
             }
-            egg_snprintf(s, sizeof s, "%s.yesterday", logs[i].filename);
+            snprintf(s, sizeof s, "%s.yesterday", logs[i].filename);
             unlink(s);
             movefile(logs[i].filename, s);
           }
@@ -989,8 +989,8 @@ int main(int arg_c, char **arg_v)
   argv = arg_v;
 
   /* Version info! */
-  egg_snprintf(ver, sizeof ver, "eggdrop v%s", egg_version);
-  egg_snprintf(version, sizeof version,
+  snprintf(ver, sizeof ver, "eggdrop v%s", egg_version);
+  snprintf(version, sizeof version,
                "Eggdrop v%s (C) 1997 Robey Pointer (C) 2010 Eggheads",
                egg_version);
   /* Now add on the patchlevel (for Tcl) */
@@ -1037,7 +1037,7 @@ int main(int arg_c, char **arg_v)
   /* Initialize variables and stuff */
   now = time(NULL);
   chanset = NULL;
-  egg_memcpy(&nowtm, localtime(&now), sizeof(struct tm));
+  memcpy(&nowtm, localtime(&now), sizeof(struct tm));
   lastmin = nowtm.tm_min;
   srandom((unsigned int) (now % (getpid() + getppid())));
   init_mem();
@@ -1091,7 +1091,7 @@ int main(int arg_c, char **arg_v)
   cache_miss = 0;
   cache_hit = 0;
   if (!pid_file[0])
-    egg_snprintf(pid_file, sizeof pid_file, "pid.%s", botnetnick);
+    snprintf(pid_file, sizeof pid_file, "pid.%s", botnetnick);
 
   /* Check for pre-existing eggdrop! */
   f = fopen(pid_file, "r");

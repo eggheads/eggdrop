@@ -92,29 +92,29 @@ static int ctcp_CLIENTINFO(char *nick, char *uhosr, char *handle,
     return 1;
   else if (!msg[0])
     p = CLIENTINFO;
-  else if (!egg_strcasecmp(msg, "sed"))
+  else if (!strcasecmp(msg, "sed"))
     p = CLIENTINFO_SED;
-  else if (!egg_strcasecmp(msg, "version"))
+  else if (!strcasecmp(msg, "version"))
     p = CLIENTINFO_VERSION;
-  else if (!egg_strcasecmp(msg, "clientinfo"))
+  else if (!strcasecmp(msg, "clientinfo"))
     p = CLIENTINFO_CLIENTINFO;
-  else if (!egg_strcasecmp(msg, "userinfo"))
+  else if (!strcasecmp(msg, "userinfo"))
     p = CLIENTINFO_USERINFO;
-  else if (!egg_strcasecmp(msg, "errmsg"))
+  else if (!strcasecmp(msg, "errmsg"))
     p = CLIENTINFO_ERRMSG;
-  else if (!egg_strcasecmp(msg, "finger"))
+  else if (!strcasecmp(msg, "finger"))
     p = CLIENTINFO_FINGER;
-  else if (!egg_strcasecmp(msg, "time"))
+  else if (!strcasecmp(msg, "time"))
     p = CLIENTINFO_TIME;
-  else if (!egg_strcasecmp(msg, "action"))
+  else if (!strcasecmp(msg, "action"))
     p = CLIENTINFO_ACTION;
-  else if (!egg_strcasecmp(msg, "dcc"))
+  else if (!strcasecmp(msg, "dcc"))
     p = CLIENTINFO_DCC;
-  else if (!egg_strcasecmp(msg, "utc"))
+  else if (!strcasecmp(msg, "utc"))
     p = CLIENTINFO_UTC;
-  else if (!egg_strcasecmp(msg, "ping"))
+  else if (!strcasecmp(msg, "ping"))
     p = CLIENTINFO_PING;
-  else if (!egg_strcasecmp(msg, "echo"))
+  else if (!strcasecmp(msg, "echo"))
     p = CLIENTINFO_ECHO;
   if (p == NULL) {
     simple_sprintf(ctcp_reply,
@@ -157,7 +157,7 @@ static int ctcp_CHAT(char *nick, char *uhost, char *handle, char *object,
     }
 
 #ifdef TLS
-    if (!egg_strcasecmp(keyword, "SCHAT"))
+    if (!strcasecmp(keyword, "SCHAT"))
       ssl = 1;
 #endif
     for (i = 0; i < dcc_total; i++) {

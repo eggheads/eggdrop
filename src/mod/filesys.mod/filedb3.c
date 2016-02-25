@@ -107,7 +107,7 @@ static filedb_entry *_malloc_fdbe(char *file, int line)
 #else
   fdbe = nmalloc(sizeof(filedb_entry));
 #endif
-  egg_bzero(fdbe, sizeof(filedb_entry));
+  bzero(fdbe, sizeof(filedb_entry));
 
   /* Mark as new, will be overwritten if necessary. */
   fdbe->_type = TYPE_NEW;
@@ -276,7 +276,7 @@ static int _filedb_updatefile(FILE *fdb, long pos, filedb_entry *fdbe,
   int reposition = 0;
   int ndyntot, odyntot, nbuftot, obuftot;
 
-  egg_bzero(&fdh, sizeof(filedb_header));
+  bzero(&fdh, sizeof(filedb_header));
   fdh.uploaded = fdbe->uploaded;
   fdh.size = fdbe->size;
   fdh.stat = fdbe->stat;
@@ -944,7 +944,7 @@ static void filedb_ls(FILE *fdb, int idx, char *mask, int showall)
           if (fdbe->stat & FILE_HIDDEN)
             strcat(s2, " (hid)");
         }
-        egg_strftime(t, 10, "%d%b%Y", localtime(&fdbe->uploaded));
+        strftime(t, 10, "%d%b%Y", localtime(&fdbe->uploaded));
         if (fdbe->size < 1024)
           sprintf(s1, "%5d", fdbe->size);
         else

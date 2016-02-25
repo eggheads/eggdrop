@@ -554,7 +554,7 @@ char *get_language(int idx)
   for (l = langtab[idx & 63]; l; l = l->next)
     if (idx == l->idx)
       return l->text;
-  egg_snprintf(text, sizeof text, "MSG%03X", idx);
+  snprintf(text, sizeof text, "MSG%03X", idx);
   return text;
 }
 

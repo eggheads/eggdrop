@@ -354,10 +354,10 @@ void break_down_flags(const char *string, struct flag_record *plus,
     else
       return;                   /* We dont actually want any..huh? */
   }
-  egg_bzero(plus, sizeof(struct flag_record));
+  bzero(plus, sizeof(struct flag_record));
 
   if (minus)
-    egg_bzero(minus, sizeof(struct flag_record));
+    bzero(minus, sizeof(struct flag_record));
 
   plus->match = FR_OR;          /* Default binding type OR */
   while (*string) {
@@ -638,7 +638,7 @@ void set_user_flagrec(struct userrec *u, struct flag_record *fr,
     ch = findchan_by_dname(chname);
     if (!cr && ch) {
       cr = user_malloc(sizeof(struct chanuserrec));
-      egg_bzero(cr, sizeof(struct chanuserrec));
+      bzero(cr, sizeof(struct chanuserrec));
 
       cr->next = u->chanrec;
       u->chanrec = cr;

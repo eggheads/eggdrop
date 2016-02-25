@@ -90,7 +90,7 @@ EGG_CHECK_OS
 EGG_HEADER_STDC
 AC_HEADER_DIRENT
 AC_HEADER_TIME
-AC_CHECK_HEADERS([arpa/inet.h fcntl.h limits.h locale.h netdb.h netinet/in.h stdio.h stdarg.h stddef.h sys/file.h sys/param.h sys/rusage.h sys/select.h sys/socket.h sys/time.h unistd.h wchar.h])
+AC_CHECK_HEADERS([sys/file.h sys/param.h sys/rusage.h])
 
 
 # Checks for typedefs, structures, and compiler characteristics.
@@ -112,12 +112,8 @@ AC_CHECK_SIZEOF(short, 0)
 
 
 # Checks for functions and their arguments.
-AC_CHECK_FUNCS([clock dprintf fsync getdtablesize getrusage inet_aton isascii mbrlen memcpy memset random rand lrand48 rename setpgid sigaction sigemptyset snprintf strcasecmp strncasecmp uname vsnprintf inet_ntop])
+AC_CHECK_FUNCS([dprintf getdtablesize inet_aton inet_pton])
 AC_FUNC_SELECT_ARGTYPES
-EGG_FUNC_VPRINTF
-AC_FUNC_STRFTIME
-AC_FUNC_MMAP
-
 
 # Tcl version to recommend if no Tcl is found, and the site where it can be
 # found for download.

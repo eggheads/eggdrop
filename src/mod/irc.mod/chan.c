@@ -193,7 +193,7 @@ static int detect_chan_flood(char *floodnick, char *floodhost, char *from,
     return 0;
 
   /* My user@host (?) */
-  if (!egg_strcasecmp(floodhost, botuserhost))
+  if (!strcasecmp(floodhost, botuserhost))
     return 0;
 
   m = ismember(chan, floodnick);
@@ -471,7 +471,7 @@ static void refresh_ban_kick(struct chanset_t *chan, char *user, char *nick)
           do_mask(chan, chan->channel.ban, b->mask, 'b');
           b->lastactive = now;
           if (b->desc && b->desc[0] != '@')
-            egg_snprintf(c, sizeof c, "%s %s", IRC_PREBANNED, b->desc);
+            snprintf(c, sizeof c, "%s %s", IRC_PREBANNED, b->desc);
           else
             c[0] = 0;
           kick_all(chan, b->mask, c[0] ? c : IRC_YOUREBANNED, 0);
@@ -869,7 +869,7 @@ static void check_this_user(char *hand, int delete, char *host)
     for (m = chan->channel.member; m && m->nick[0]; m = m->next) {
       sprintf(s, "%s!%s", m->nick, m->userhost);
       u = m->user ? m->user : get_user_by_host(s);
-      if ((u && !egg_strcasecmp(u->handle, hand) && delete < 2) ||
+      if ((u && !strcasecmp(u->handle, hand) && delete < 2) ||
           (!u && delete == 2 && match_addr(host, fixfrom(s)))) {
         u = delete ? NULL : u;
         get_user_flagrec(u, &fr, chan->dname);
@@ -1704,7 +1704,7 @@ static int gotjoin(char *from, char *chname)
     if (l_chname > (CHANNEL_ID_LEN + 1)) {
       ch_dname = nmalloc(l_chname + 1);
       if (ch_dname) {
-        egg_snprintf(ch_dname, l_chname + 2, "!%s",
+        snprintf(ch_dname, l_chname + 2, "!%s",
                      chname + (CHANNEL_ID_LEN + 1));
         chan = findchan_by_dname(ch_dname);
         if (!chan) {
@@ -1771,7 +1771,7 @@ static int gotjoin(char *from, char *chname)
       reset_chan_info(chan, CHAN_RESETALL);
     } else {
       m = ismember(chan, nick);
-      if (m && m->split && !egg_strcasecmp(m->userhost, uhost)) {
+      if (m && m->split && !strcasecmp(m->userhost, uhost)) {
         check_tcl_rejn(nick, uhost, u, chan->dname);
 
         chan = findchan(chname);

@@ -461,7 +461,7 @@ static int botaddr_unpack(struct userrec *u, struct user_entry *e)
   char *p, *q;
   struct bot_addr *bi = user_malloc(sizeof(struct bot_addr));
 
-  egg_bzero(bi, sizeof(struct bot_addr));
+  bzero(bi, sizeof(struct bot_addr));
 
   if (!(q = strchr((p = e->u.list->extra), ':'))) {
     bi->address = user_malloc(strlen(p) + 1);
@@ -625,7 +625,7 @@ static int botaddr_tcl_set(Tcl_Interp * irp, struct userrec *u,
     /* Silently ignore for users */
     if (!bi) {
       bi = user_malloc(sizeof(struct bot_addr));
-      egg_bzero(bi, sizeof(struct bot_addr));
+      bzero(bi, sizeof(struct bot_addr));
     } else
       nfree(bi->address);
     bi->address = user_malloc(strlen(argv[3]) + 1);
@@ -685,7 +685,7 @@ static int botaddr_gotshare(struct userrec *u, struct user_entry *e,
   struct bot_addr *bi = user_malloc(sizeof(struct bot_addr));
   char *arg;
 
-  egg_bzero(bi, sizeof(struct bot_addr));
+  bzero(bi, sizeof(struct bot_addr));
   arg = newsplit(&buf);
   bi->address = user_malloc(strlen(arg) + 1);
   strcpy(bi->address, arg);
@@ -751,7 +751,7 @@ int xtra_set(struct userrec *u, struct user_entry *e, void *buf)
   struct xtra_key *curr, *old = NULL, *new = buf;
 
   for (curr = e->u.extra; curr; curr = curr->next) {
-    if (curr->key && !egg_strcasecmp(curr->key, new->key)) {
+    if (curr->key && !strcasecmp(curr->key, new->key)) {
       old = curr;
       break;
     }
@@ -799,7 +799,7 @@ static int xtra_tcl_set(Tcl_Interp * irp, struct userrec *u,
 
   xk = user_malloc(sizeof(struct xtra_key));
   l = strlen(argv[3]);
-  egg_bzero(xk, sizeof(struct xtra_key));
+  bzero(xk, sizeof(struct xtra_key));
   if (l > 500)
     l = 500;
   xk->key = user_malloc(l + 1);
@@ -877,7 +877,7 @@ static void xtra_display(int idx, struct user_entry *e)
   for (xk = e->u.extra; xk; xk = xk->next) {
     /* Ok, it's a valid xtra field entry */
     for (j = 0; j < lc; j++) {
-      if (!egg_strcasecmp(list[j], xk->key))
+      if (!strcasecmp(list[j], xk->key))
         dprintf(idx, "  %s: %s\n", xk->key, xk->data);
     }
   }
@@ -896,7 +896,7 @@ static int xtra_gotshare(struct userrec *u, struct user_entry *e,
     return 1;
 
   xk = user_malloc(sizeof(struct xtra_key));
-  egg_bzero(xk, sizeof(struct xtra_key));
+  bzero(xk, sizeof(struct xtra_key));
   l = strlen(arg);
   if (l > 500)
     l = 500;
@@ -966,7 +966,7 @@ static int xtra_tcl_get(Tcl_Interp * irp, struct userrec *u,
 
   if (argc == 4) {
     for (x = e->u.extra; x; x = x->next)
-      if (!egg_strcasecmp(argv[3], x->key)) {
+      if (!strcasecmp(argv[3], x->key)) {
         Tcl_AppendResult(irp, x->data, NULL);
         return TCL_OK;
       }
@@ -1082,7 +1082,7 @@ static void hosts_display(int idx, struct user_entry *e)
 
 static int hosts_set(struct userrec *u, struct user_entry *e, void *buf)
 {
-  if (!buf || !egg_strcasecmp(buf, "none")) {
+  if (!buf || !strcasecmp(buf, "none")) {
     /* When the bot crashes, it's in this part, not in the 'else' part */
     list_type_kill(e->u.list);
     e->u.list = NULL;
@@ -1297,7 +1297,7 @@ struct user_entry_type *find_entry_type(char *name)
   struct user_entry_type *p;
 
   for (p = entry_type_list; p; p = p->next) {
-    if (!egg_strcasecmp(name, p->name))
+    if (!strcasecmp(name, p->name))
       return p;
   }
   return NULL;
@@ -1310,7 +1310,7 @@ struct user_entry *find_user_entry(struct user_entry_type *et,
 
   for (e = &(u->entries); *e; e = &((*e)->next)) {
     if (((*e)->type == et) ||
-        ((*e)->name && !egg_strcasecmp((*e)->name, et->name))) {
+        ((*e)->name && !strcasecmp((*e)->name, et->name))) {
       t = *e;
       *e = t->next;
       t->next = u->entries;

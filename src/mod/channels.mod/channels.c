@@ -64,7 +64,7 @@ static void *channel_malloc(int size, char *file, int line)
 #else
   p = nmalloc(size);
 #endif
-  egg_bzero(p, size);
+  bzero(p, size);
   return p;
 }
 
@@ -534,7 +534,7 @@ static void backup_chanfile()
 
   if (quiet_save < 2)
     putlog(LOG_MISC, "*", "Backing up channel file...");
-  egg_snprintf(s, sizeof s, "%s~bak", chanfile);
+  snprintf(s, sizeof s, "%s~bak", chanfile);
   copyfile(chanfile, s);
 }
 

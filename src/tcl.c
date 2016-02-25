@@ -104,7 +104,7 @@ int expmem_tcl()
 
 static void botnet_change(char *new)
 {
-  if (egg_strcasecmp(botnetnick, new)) {
+  if (strcasecmp(botnetnick, new)) {
     /* Trying to change bot's nickname */
     if (tands > 0) {
       putlog(LOG_MISC, "*", "* Tried to change my botnet nick, but I'm still "
@@ -145,7 +145,7 @@ static char *tcl_eggcouplet(ClientData cdata, Tcl_Interp *irp,
   coupletinfo *cp = (coupletinfo *) cdata;
 
   if (flags & (TCL_TRACE_READS | TCL_TRACE_UNSETS)) {
-    egg_snprintf(s1, sizeof s1, "%d:%d", *(cp->left), *(cp->right));
+    snprintf(s1, sizeof s1, "%d:%d", *(cp->left), *(cp->right));
     Tcl_SetVar2(interp, name1, name2, s1, TCL_GLOBAL_ONLY);
     if (flags & TCL_TRACE_UNSETS)
       Tcl_TraceVar(interp, name1,
@@ -190,9 +190,9 @@ static char *tcl_eggint(ClientData cdata, Tcl_Interp *irp,
       fr.udef_global = default_uflags;
       build_flags(s1, &fr, 0);
     } else if ((int *) ii->var == &userfile_perm) {
-      egg_snprintf(s1, sizeof s1, "0%o", userfile_perm);
+      snprintf(s1, sizeof s1, "0%o", userfile_perm);
     } else
-      egg_snprintf(s1, sizeof s1, "%d", *(int *) ii->var);
+      snprintf(s1, sizeof s1, "%d", *(int *) ii->var);
     Tcl_SetVar2(interp, name1, name2, s1, TCL_GLOBAL_ONLY);
     if (flags & TCL_TRACE_UNSETS)
       Tcl_TraceVar(interp, name1,
@@ -255,7 +255,7 @@ static char *tcl_eggstr(ClientData cdata, Tcl_Interp *irp,
     if ((st->str == firewall) && (firewall[0])) {
       char s1[127];
 
-      egg_snprintf(s1, sizeof s1, "%s:%d", firewall, firewallport);
+      snprintf(s1, sizeof s1, "%s:%d", firewall, firewallport);
       Tcl_SetVar2(interp, name1, name2, s1, TCL_GLOBAL_ONLY);
     } else
       Tcl_SetVar2(interp, name1, name2, st->str, TCL_GLOBAL_ONLY);
@@ -599,7 +599,7 @@ void init_tcl(int argc, char **argv)
   char *langEnv, pver[1024] = "";
 
 #ifdef REPLACE_NOTIFIER
-  egg_bzero(&notifierprocs, sizeof(notifierprocs));
+  bzero(&notifierprocs, sizeof(notifierprocs));
   notifierprocs.initNotifierProc = tickle_InitNotifier;
   notifierprocs.createFileHandlerProc = tickle_CreateFileHandler;
   notifierprocs.deleteFileHandlerProc = tickle_DeleteFileHandler;

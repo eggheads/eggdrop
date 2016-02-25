@@ -681,7 +681,7 @@ int ssl_handshake(int sock, int flags, int verify, int loglevel, char *host,
 
   /* Prepare a ssl appdata struct for the verify callback */
   data = nmalloc(sizeof(ssl_appdata));
-  egg_bzero(data, sizeof(ssl_appdata));
+  bzero(data, sizeof(ssl_appdata));
   data->flags = flags & (TLS_LISTEN | TLS_CONNECT);
   data->verify = flags & ~(TLS_LISTEN | TLS_CONNECT);
   data->loglevel = loglevel;

@@ -1267,7 +1267,7 @@ static int expired_mask(struct chanset_t *chan, char *who)
   m = ismember(chan, snick);
   if (!m)
     for (m2 = chan->channel.member; m2 && m2->nick[0]; m2 = m2->next)
-      if (!egg_strcasecmp(sfrom, m2->userhost)) {
+      if (!strcasecmp(sfrom, m2->userhost)) {
         m = m2;
         break;
       }

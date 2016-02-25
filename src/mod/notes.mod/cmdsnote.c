@@ -162,7 +162,7 @@ static void cmd_fwd(struct userrec *u, int idx, char *par)
     dprintf(idx, "%s\n", NOTES_NO_SUCH_USER);
     return;
   }
-  if ((u1->flags & USER_OWNER) && egg_strcasecmp(handle, dcc[idx].nick)) {
+  if ((u1->flags & USER_OWNER) && strcasecmp(handle, dcc[idx].nick)) {
     dprintf(idx, "%s\n", NOTES_FWD_OWNER);
     return;
   }
@@ -195,15 +195,15 @@ static void cmd_notes(struct userrec *u, int idx, char *par)
     return;
   }
   fcn = newsplit(&par);
-  if (!egg_strcasecmp(fcn, "index"))
+  if (!strcasecmp(fcn, "index"))
     notes_read(dcc[idx].nick, "", "+", idx);
-  else if (!egg_strcasecmp(fcn, "read")) {
-    if (!egg_strcasecmp(par, "all"))
+  else if (!strcasecmp(fcn, "read")) {
+    if (!strcasecmp(par, "all"))
       notes_read(dcc[idx].nick, "", "-", idx);
     else
       notes_read(dcc[idx].nick, "", par, idx);
-  } else if (!egg_strcasecmp(fcn, "erase")) {
-    if (!egg_strcasecmp(par, "all"))
+  } else if (!strcasecmp(fcn, "erase")) {
+    if (!strcasecmp(par, "all"))
       notes_del(dcc[idx].nick, "", "-", idx);
     else
       notes_del(dcc[idx].nick, "", par, idx);

@@ -111,7 +111,7 @@ struct in_addr *addr;
   u_32bit_t parts[4];
   register u_32bit_t *pp = parts;
 
-  egg_bzero(parts, sizeof(parts));
+  bzero(parts, sizeof(parts));
 
   c = *cp;
   for (;;) {

@@ -248,7 +248,7 @@ static struct resolve *allocresolve()
   struct resolve *rp;
 
   rp = nmalloc(sizeof *rp);
-  egg_bzero(rp, sizeof(struct resolve));
+  bzero(rp, sizeof(struct resolve));
   return rp;
 }
 
@@ -273,8 +273,8 @@ static inline u_32bit_t getipbash(IP ip)
 #ifdef IPV6
 static unsigned long getip6bash(struct in6_addr *ip6) {
   u_32bit_t x, y;
-  egg_memcpy(&x, &ip6->s6_addr     , sizeof x);
-  egg_memcpy(&y, &ip6->s6_addr + 12, sizeof y);
+  memcpy(&x, &ip6->s6_addr     , sizeof x);
+  memcpy(&y, &ip6->s6_addr + 12, sizeof y);
   x ^= y;
   return (unsigned long) BASH_MODULO(x);
 }
@@ -357,12 +357,12 @@ static void linkresolvehost(struct resolve *addrp)
   rp = hostbash[bashnum];
   if (rp) {
     while ((rp->nexthost) &&
-           (egg_strcasecmp(addrp->hostn, rp->nexthost->hostn) < 0))
+           (strcasecmp(addrp->hostn, rp->nexthost->hostn) < 0))
       rp = rp->nexthost;
     while ((rp->previoushost) &&
-           (egg_strcasecmp(addrp->hostn, rp->previoushost->hostn) > 0))
+           (strcasecmp(addrp->hostn, rp->previoushost->hostn) > 0))
       rp = rp->previoushost;
-    ret = egg_strcasecmp(addrp->hostn, rp->hostn);
+    ret = strcasecmp(addrp->hostn, rp->hostn);
     if (ret < 0) {
       addrp->previoushost = rp;
       addrp->nexthost = rp->nexthost;
@@ -603,12 +603,12 @@ static struct resolve *findhost(char *hostn)
   rp = hostbash[bashnum];
   if (rp) {
     while ((rp->nexthost) &&
-          (egg_strcasecmp(hostn, rp->nexthost->hostn) >= 0))
+          (strcasecmp(hostn, rp->nexthost->hostn) >= 0))
       rp = rp->nexthost;
     while ((rp->previoushost) &&
-           (egg_strcasecmp(hostn, rp->previoushost->hostn) <= 0))
+           (strcasecmp(hostn, rp->previoushost->hostn) <= 0))
       rp = rp->previoushost;
-    if (egg_strcasecmp(hostn, rp->hostn))
+    if (strcasecmp(hostn, rp->hostn))
       return NULL;
     else {
       hostbash[bashnum] = rp;
@@ -890,7 +890,7 @@ void parserespacket(u_8bit_t *response, int len)
     ddebug0(RES_ERR "dn_expand() failed while expanding query domain.");
     return;
   }
-  if (egg_strcasecmp(stackstring, namestring)) {
+  if (strcasecmp(stackstring, namestring)) {
     ddebug2(RES_MSG "Unknown query packet dropped. (\"%s\" does not "
             "match \"%s\")", stackstring, namestring);
     return;
@@ -975,7 +975,7 @@ void parserespacket(u_8bit_t *response, int len)
       ddebug0(RES_ERR "Specified rdata length exceeds packet size.");
       return;
     }
-    if (egg_strcasecmp(stackstring, namestring))
+    if (strcasecmp(stackstring, namestring))
       continue;
     if (rr->datatype != qdatatype && rr->datatype != T_CNAME) {
       ddebug2(RES_MSG "Ignoring resource type %u. (%s)",
@@ -997,7 +997,7 @@ void parserespacket(u_8bit_t *response, int len)
         rp->ttl = rr->ttl;
         rp->sockname.addrlen = sizeof(struct sockaddr_in);
         rp->sockname.addr.sa.sa_family = AF_INET;
-        egg_memcpy(&rp->sockname.addr.s4.sin_addr, rr->data, 4);
+        memcpy(&rp->sockname.addr.s4.sin_addr, rr->data, 4);
 #ifndef IPV6
         passrp(rp, rr->ttl, T_A);
         return;
@@ -1016,7 +1016,7 @@ void parserespacket(u_8bit_t *response, int len)
         rp->ttl = rr->ttl;
         rp->sockname.addrlen = sizeof(struct sockaddr_in6);
         rp->sockname.addr.sa.sa_family = AF_INET6;
-        egg_memcpy(&rp->sockname.addr.s6.sin6_addr, rr->data, 16);
+        memcpy(&rp->sockname.addr.s6.sin6_addr, rr->data, 16);
         if (ready || pref_af) {
           passrp(rp, rr->ttl, T_A);
           return;
@@ -1183,7 +1183,7 @@ static void dns_lookup(sockname_t *addr)
   rp->state = STATE_PTRREQ;
   rp->sends = 1;
   rp->type = T_PTR;
-  egg_memcpy(&rp->sockname, addr, sizeof(sockname_t));
+  memcpy(&rp->sockname, addr, sizeof(sockname_t));
   if (addr->family == AF_INET) {
     rp->ip = addr->addr.s4.sin_addr.s_addr;
     linkresolveip(rp);

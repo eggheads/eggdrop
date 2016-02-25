@@ -65,7 +65,7 @@ static int tcl_putdcc STDVAR
 
   BADARGS(3, 4, " idx text ?options?");
 
-  if ((argc == 4) && egg_strcasecmp(argv[3], "-raw")) {
+  if ((argc == 4) && strcasecmp(argv[3], "-raw")) {
     Tcl_AppendResult(irp, "unknown putdcc option: should be ",
                      "-raw", NULL);
     return TCL_ERROR;
@@ -170,8 +170,8 @@ static int tcl_hand2idx STDVAR
 
   for (i = 0; i < dcc_total; i++)
     if ((dcc[i].type->flags & (DCT_SIMUL | DCT_BOT)) &&
-        !egg_strcasecmp(argv[1], dcc[i].nick)) {
-      egg_snprintf(s, sizeof s, "%ld", dcc[i].sock);
+        !strcasecmp(argv[1], dcc[i].nick)) {
+      snprintf(s, sizeof s, "%ld", dcc[i].sock);
       Tcl_AppendResult(irp, s, NULL);
       return TCL_OK;
     }
@@ -194,9 +194,9 @@ static int tcl_getchan STDVAR
   }
 
   if (dcc[idx].type == &DCC_SCRIPT)
-    egg_snprintf(s, sizeof s, "%d", dcc[idx].u.script->u.chat->channel);
+    snprintf(s, sizeof s, "%d", dcc[idx].u.script->u.chat->channel);
   else
-    egg_snprintf(s, sizeof s, "%d", dcc[idx].u.chat->channel);
+    snprintf(s, sizeof s, "%d", dcc[idx].u.chat->channel);
 
   Tcl_AppendResult(irp, s, NULL);
   return TCL_OK;
@@ -216,7 +216,7 @@ static int tcl_setchan STDVAR
     return TCL_ERROR;
   }
   if (argv[2][0] < '0' || argv[2][0] > '9') {
-    if (!strcmp(argv[2], "-1") || !egg_strcasecmp(argv[2], "off"))
+    if (!strcmp(argv[2], "-1") || !strcasecmp(argv[2], "off"))
       chan = -1;
     else {
       Tcl_SetVar(irp, "_chan", argv[2], 0);
@@ -438,7 +438,7 @@ static int tcl_page STDVAR
     }
   }
   if (dcc[i].status & STAT_PAGE) {
-    egg_snprintf(x, sizeof x, "%d", dcc[i].u.chat->max_line);
+    snprintf(x, sizeof x, "%d", dcc[i].u.chat->max_line);
     Tcl_AppendResult(irp, x, NULL);
   } else
     Tcl_AppendResult(irp, "0", NULL);
@@ -636,14 +636,14 @@ static int tcl_dcclist STDVAR
 
   for (i = 0; i < dcc_total; i++) {
     if (argc == 1 || ((argc == 2) && (dcc[i].type &&
-        !egg_strcasecmp(dcc[i].type->name, argv[1])))) {
-      egg_snprintf(idxstr, sizeof idxstr, "%ld", dcc[i].sock);
+        !strcasecmp(dcc[i].type->name, argv[1])))) {
+      snprintf(idxstr, sizeof idxstr, "%ld", dcc[i].sock);
       tv = dcc[i].timeval;
-      egg_snprintf(timestamp, sizeof timestamp, "%ld", tv);
+      snprintf(timestamp, sizeof timestamp, "%ld", tv);
       if (dcc[i].type && dcc[i].type->display)
         dcc[i].type->display(i, other);
       else {
-        egg_snprintf(other, sizeof other, "?:%lX  !! ERROR !!",
+        snprintf(other, sizeof other, "?:%lX  !! ERROR !!",
                      (long) dcc[i].type);
         break;
       }
@@ -695,7 +695,7 @@ static int tcl_whom STDVAR
         c[0] = geticon(i);
         c[1] = 0;
         tv = (now - dcc[i].timeval) / 60;
-        egg_snprintf(idle, sizeof idle, "%li", tv);
+        snprintf(idle, sizeof idle, "%li", tv);
         list[0] = dcc[i].nick;
         list[1] = botnetnick;
         list[2] = dcc[i].host;
@@ -703,7 +703,7 @@ static int tcl_whom STDVAR
         list[4] = idle;
         list[5] = dcc[i].u.chat->away ? dcc[i].u.chat->away : "";
         if (chan == -1) {
-          egg_snprintf(work, sizeof work, "%d", dcc[i].u.chat->channel);
+          snprintf(work, sizeof work, "%d", dcc[i].u.chat->channel);
           list[6] = work;
         }
         p = Tcl_Merge((chan == -1) ? 7 : 6, list);
@@ -719,7 +719,7 @@ static int tcl_whom STDVAR
         strcpy(idle, "0");
       else {
         tv = (now - party[i].timer) / 60;
-        egg_snprintf(idle, sizeof idle, "%li", tv);
+        snprintf(idle, sizeof idle, "%li", tv);
       }
       list[0] = party[i].nick;
       list[1] = party[i].bot;
@@ -728,7 +728,7 @@ static int tcl_whom STDVAR
       list[4] = idle;
       list[5] = party[i].status & PLSTAT_AWAY ? party[i].away : "";
       if (chan == -1) {
-        egg_snprintf(work, sizeof work, "%d", party[i].chan);
+        snprintf(work, sizeof work, "%d", party[i].chan);
         list[6] = work;
       }
       p = Tcl_Merge((chan == -1) ? 7 : 6, list);
@@ -745,7 +745,7 @@ static int tcl_dccused STDVAR
 
   BADARGS(1, 1, "");
 
-  egg_snprintf(s, sizeof s, "%d", dcc_total);
+  snprintf(s, sizeof s, "%d", dcc_total);
   Tcl_AppendResult(irp, s, NULL);
   return TCL_OK;
 }
@@ -764,7 +764,7 @@ static int tcl_getdccidle STDVAR
   }
   x = (now - dcc[idx].timeval);
 
-  egg_snprintf(s, sizeof s, "%d", x);
+  snprintf(s, sizeof s, "%d", x);
   Tcl_AppendElement(irp, s);
   return TCL_OK;
 }
@@ -826,7 +826,7 @@ static int tcl_link STDVAR
   } else
     x = botlink("", -2, bot);
 
-  egg_snprintf(bot, sizeof bot, "%d", x);
+  snprintf(bot, sizeof bot, "%d", x);
   Tcl_AppendResult(irp, bot, NULL);
   return TCL_OK;
 }
@@ -844,12 +844,12 @@ static int tcl_unlink STDVAR
     x = 0;
   else {
     x = 1;
-    if (!egg_strcasecmp(bot, dcc[i].nick))
+    if (!strcasecmp(bot, dcc[i].nick))
       x = botunlink(-2, bot, argv[2], botnetnick);
     else
       botnet_send_unlink(i, botnetnick, lastbot(bot), bot, argv[2]);
   }
-  egg_snprintf(bot, sizeof bot, "%d", x);
+  snprintf(bot, sizeof bot, "%d", x);
 
   Tcl_AppendResult(irp, bot, NULL);
   return TCL_OK;
@@ -897,7 +897,7 @@ static int tcl_connect STDVAR
 #endif
   strcpy(dcc[i].nick, "*");
   strncpyz(dcc[i].host, argv[1], UHOSTMAX);
-  egg_snprintf(s, sizeof s, "%d", sock);
+  snprintf(s, sizeof s, "%d", sock);
   Tcl_AppendResult(irp, s, NULL);
   return TCL_OK;
 }
@@ -925,7 +925,7 @@ static int tcl_listen STDVAR
   for (i = 0; i < dcc_total; i++)
     if ((dcc[i].type == &DCC_TELNET) && (dcc[i].port == port))
       idx = i;
-  if (!egg_strcasecmp(argv[2], "off")) {
+  if (!strcasecmp(argv[2], "off")) {
     if (pmap) {
       if (pold)
         pold->next = pmap->next;
@@ -960,12 +960,12 @@ static int tcl_listen STDVAR
     }
 
     if (i == -1) {
-      egg_snprintf(msg, sizeof msg, "Couldn't listen on port '%d' on the given "
+      snprintf(msg, sizeof msg, "Couldn't listen on port '%d' on the given "
                    "address: %s", realport, strerror(errno));
       Tcl_AppendResult(irp, msg, NULL);
       return TCL_ERROR;
     } else if (i == -2) {
-      egg_snprintf(msg, sizeof msg, "Couldn't listen on port '%d' on the given "
+      snprintf(msg, sizeof msg, "Couldn't listen on port '%d' on the given "
                    "address. Please make sure 'listen-addr' is set properly"
                    " or try choosing a different port.", realport);
       Tcl_AppendResult(irp, msg, NULL);
@@ -1005,7 +1005,7 @@ static int tcl_listen STDVAR
       dcc[idx].status = LSTN_PUBLIC;
     }
     strncpyz(dcc[idx].host, argv[3], UHOSTMAX);
-    egg_snprintf(s, sizeof s, "%d", port);
+    snprintf(s, sizeof s, "%d", port);
     Tcl_AppendResult(irp, s, NULL);
     return TCL_OK;
   }
@@ -1027,7 +1027,7 @@ static int tcl_listen STDVAR
     strncpyz(dcc[idx].host, argv[3], UHOSTMAX);
   else
     strcpy(dcc[idx].host, "*");
-  egg_snprintf(s, sizeof s, "%d", port);
+  snprintf(s, sizeof s, "%d", port);
   Tcl_AppendResult(irp, s, NULL);
   if (!pmap) {
     pmap = nmalloc(sizeof(struct portmap));
@@ -1054,7 +1054,7 @@ static int tcl_boot STDVAR
 
     splitc(whonick, who, '@');
     whonick[HANDLEN] = 0;
-    if (!egg_strcasecmp(who, botnetnick))
+    if (!strcasecmp(who, botnetnick))
       strncpyz(who, whonick, sizeof who);
     else if (remote_boots > 0) {
       i = nextbot(who);
@@ -1067,7 +1067,7 @@ static int tcl_boot STDVAR
   }
   for (i = 0; i < dcc_total; i++)
     if (!ok && (dcc[i].type->flags & DCT_CANBOOT) &&
-        !egg_strcasecmp(dcc[i].nick, who)) {
+        !strcasecmp(dcc[i].nick, who)) {
       do_boot(i, botnetnick, argv[2] ? argv[2] : "");
       ok = 1;
     }

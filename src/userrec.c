@@ -189,7 +189,7 @@ struct userrec *check_dcclist_hand(char *handle)
   int i;
 
   for (i = 0; i < dcc_total; i++)
-    if (!egg_strcasecmp(dcc[i].nick, handle))
+    if (!strcasecmp(dcc[i].nick, handle))
       return dcc[i].user;
   return NULL;
 }
@@ -205,7 +205,7 @@ struct userrec *get_user_by_handle(struct userrec *bu, char *handle)
   if (!handle[0] || (handle[0] == '*'))
     return NULL;
   if (bu == userlist) {
-    if (lastuser && !egg_strcasecmp(lastuser->handle, handle)) {
+    if (lastuser && !strcasecmp(lastuser->handle, handle)) {
       cache_hit++;
       return lastuser;
     }
@@ -222,7 +222,7 @@ struct userrec *get_user_by_handle(struct userrec *bu, char *handle)
     cache_miss++;
   }
   for (u = bu; u; u = u->next)
-    if (!egg_strcasecmp(u->handle, handle)) {
+    if (!strcasecmp(u->handle, handle)) {
       if (bu == userlist)
         lastuser = u;
       return u;
@@ -498,7 +498,7 @@ int sort_compare(struct userrec *a, struct userrec *b)
     if (a->flags & ~b->flags & USER_HALFOP)
       return 0;
   }
-  return (egg_strcasecmp(a->handle, b->handle) > 0);
+  return (strcasecmp(a->handle, b->handle) > 0);
 }
 
 void sort_userlist()
@@ -597,7 +597,7 @@ int change_handle(struct userrec *u, char *newh)
   strncpyz(u->handle, newh, sizeof u->handle);
   for (i = 0; i < dcc_total; i++)
     if ((dcc[i].type == &DCC_CHAT || dcc[i].type == &DCC_CHAT_PASS) &&
-        !egg_strcasecmp(dcc[i].nick, s)) {
+        !strcasecmp(dcc[i].nick, s)) {
       strncpyz(dcc[i].nick, newh, sizeof dcc[i].nick);
       if (dcc[i].type == &DCC_CHAT && dcc[i].u.chat->channel >= 0) {
         chanout_but(-1, dcc[i].u.chat->channel,
@@ -739,7 +739,7 @@ int deluser(char *handle)
   int fnd = 0;
 
   while ((u != NULL) && (!fnd)) {
-    if (!egg_strcasecmp(u->handle, handle))
+    if (!strcasecmp(u->handle, handle))
       fnd = 1;
     else {
       prev = u;
@@ -867,7 +867,7 @@ struct userrec *get_user_by_nick(char *nick)
       if (!rfc_casecmp(nick, m->nick)) {
         char word[512];
 
-        egg_snprintf(word, sizeof word, "%s!%s", m->nick, m->userhost);
+        snprintf(word, sizeof word, "%s!%s", m->nick, m->userhost);
         /* No need to check the return value ourself */
         return get_user_by_host(word);;
       }

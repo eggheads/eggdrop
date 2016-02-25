@@ -141,7 +141,7 @@ static int at_limit(char *nick)
 
   for (i = 0; i < dcc_total; i++)
     if ((dcc[i].type == &DCC_GET || dcc[i].type == &DCC_GET_PENDING) &&
-        !egg_strcasecmp(dcc[i].nick, nick))
+        !strcasecmp(dcc[i].nick, nick))
       x++;
 
   return (x >= dcc_limit);
@@ -210,9 +210,9 @@ static void check_tcl_toutlost(struct userrec *u, char *nick, char *path,
   Tcl_SetVar(interp, "_sr1", hand, 0);
   Tcl_SetVar(interp, "_sr2", nick, 0);
   Tcl_SetVar(interp, "_sr3", path, 0);
-  egg_snprintf(s, sizeof s, "%lu", acked);
+  snprintf(s, sizeof s, "%lu", acked);
   Tcl_SetVar(interp, "_sr4", s, 0);
-  egg_snprintf(s, sizeof s, "%lu", length);
+  snprintf(s, sizeof s, "%lu", length);
   Tcl_SetVar(interp, "_sr5", s, 0);
   check_tcl_bind(h, hand, &fr, " $_sr1 $_sr2 $_sr3 $_sr4 $_sr5",
                  MATCH_MASK | BIND_USE_ATTR | BIND_STACKABLE);
@@ -263,7 +263,7 @@ static void eof_dcc_fork_send(int idx)
     int x, y = 0;
 
     for (x = 0; x < dcc_total; x++)
-      if ((!egg_strcasecmp(dcc[x].nick, dcc[idx].host)) &&
+      if ((!strcasecmp(dcc[x].nick, dcc[idx].host)) &&
           (dcc[x].type->flags & DCT_BOT)) {
         y = x;
         break;
@@ -317,7 +317,7 @@ static void eof_dcc_send(int idx)
     }
     putlog(LOG_FILES, "*", TRANSFER_COMPLETED_DCC, dcc[idx].u.xfer->origname,
            dcc[idx].nick, dcc[idx].host);
-    egg_snprintf(s, sizeof s, "%s!%s", dcc[idx].nick, dcc[idx].host);
+    snprintf(s, sizeof s, "%s!%s", dcc[idx].nick, dcc[idx].host);
     u = get_user_by_host(s);
     hand = u ? u->handle : "*";
 
@@ -355,7 +355,7 @@ static void eof_dcc_send(int idx)
     nfree(nfn);
     for (j = 0; j < dcc_total; j++)
       if (!ok && (dcc[j].type->flags & (DCT_GETNOTES | DCT_FILES)) &&
-          !egg_strcasecmp(dcc[j].nick, hand)) {
+          !strcasecmp(dcc[j].nick, hand)) {
         ok = 1;
         dprintf(j, TRANSFER_THANKS);
       }
@@ -370,7 +370,7 @@ static void eof_dcc_send(int idx)
     int x, y = 0;
 
     for (x = 0; x < dcc_total; x++)
-      if ((!egg_strcasecmp(dcc[x].nick, dcc[idx].host)) &&
+      if ((!strcasecmp(dcc[x].nick, dcc[idx].host)) &&
           (dcc[x].type->flags & DCT_BOT))
         y = x;
     if (y) {
@@ -378,7 +378,7 @@ static void eof_dcc_send(int idx)
       unlink(dcc[idx].u.xfer->filename);
       /* Drop that bot */
       dprintf(y, "bye\n");
-      egg_snprintf(s, sizeof s, TRANSFER_USERFILE_DISCON, dcc[y].nick);
+      snprintf(s, sizeof s, TRANSFER_USERFILE_DISCON, dcc[y].nick);
       botnet_send_unlinked(y, dcc[y].nick, s);
       chatout("*** %s\n", dcc[y].nick, s);
       if (y != idx) {
@@ -537,7 +537,7 @@ static void dcc_get(int idx, char *buf, int len)
       int x, y = 0;
 
       for (x = 0; x < dcc_total; x++)
-        if (!egg_strcasecmp(dcc[x].nick, dcc[idx].host) &&
+        if (!strcasecmp(dcc[x].nick, dcc[idx].host) &&
             (dcc[x].type->flags & DCT_BOT))
           y = x;
       if (y != 0)
@@ -593,7 +593,7 @@ static void eof_dcc_get(int idx)
     int x, y = 0;
 
     for (x = 0; x < dcc_total; x++)
-      if (!egg_strcasecmp(dcc[x].nick, dcc[idx].host) &&
+      if (!strcasecmp(dcc[x].nick, dcc[idx].host) &&
           (dcc[x].type->flags & DCT_BOT))
         y = x;
     putlog(LOG_BOTS, "*", TRANSFER_ABORT_USERFILE);
@@ -601,7 +601,7 @@ static void eof_dcc_get(int idx)
     xnick[0] = 0;
     /* Drop that bot */
     dprintf(-dcc[y].sock, "bye\n");
-    egg_snprintf(s, sizeof s, TRANSFER_USERFILE_DISCON, dcc[y].nick);
+    snprintf(s, sizeof s, TRANSFER_USERFILE_DISCON, dcc[y].nick);
     botnet_send_unlinked(y, dcc[y].nick, s);
     chatout("*** %s\n", s);
     if (y != idx) {
@@ -616,7 +616,7 @@ static void eof_dcc_get(int idx)
 
     /* Call `lost' DCC trigger now.
      */
-    egg_snprintf(s, sizeof s, "%s!%s", dcc[idx].nick, dcc[idx].host);
+    snprintf(s, sizeof s, "%s!%s", dcc[idx].nick, dcc[idx].host);
     u = get_user_by_host(s);
     check_tcl_toutlost(u, dcc[idx].nick, dcc[idx].u.xfer->dir,
                        dcc[idx].u.xfer->acked, dcc[idx].u.xfer->length, H_lost);
@@ -671,7 +671,7 @@ static void transfer_get_timeout(int i)
     int x, y = 0;
 
     for (x = 0; x < dcc_total; x++)
-      if ((!egg_strcasecmp(dcc[x].nick, dcc[i].host)) &&
+      if ((!strcasecmp(dcc[x].nick, dcc[i].host)) &&
           (dcc[x].type->flags & DCT_BOT))
         y = x;
     if (y != 0) {
@@ -681,7 +681,7 @@ static void transfer_get_timeout(int i)
     unlink(dcc[i].u.xfer->filename);
     putlog(LOG_BOTS, "*", TRANSFER_USERFILE_TIMEOUT);
     dprintf(y, "bye\n");
-    egg_snprintf(xx, sizeof xx, TRANSFER_DICONNECT_TIMEOUT, dcc[y].nick);
+    snprintf(xx, sizeof xx, TRANSFER_DICONNECT_TIMEOUT, dcc[y].nick);
     botnet_send_unlinked(y, dcc[y].nick, xx);
     chatout("*** %s\n", xx);
     if (y < i) {
@@ -703,7 +703,7 @@ static void transfer_get_timeout(int i)
 
     /* Call DCC `timeout' trigger now.
      */
-    egg_snprintf(xx, sizeof xx, "%s!%s", dcc[i].nick, dcc[i].host);
+    snprintf(xx, sizeof xx, "%s!%s", dcc[i].nick, dcc[i].host);
     u = get_user_by_host(xx);
     check_tcl_toutlost(u, dcc[i].nick, dcc[i].u.xfer->dir,
                        dcc[i].u.xfer->acked, dcc[i].u.xfer->length, H_tout);
@@ -729,7 +729,7 @@ static void tout_dcc_send(int idx)
     int x, y = 0;
 
     for (x = 0; x < dcc_total; x++)
-      if (!egg_strcasecmp(dcc[x].nick, dcc[idx].host) &&
+      if (!strcasecmp(dcc[x].nick, dcc[idx].host) &&
           (dcc[x].type->flags & DCT_BOT))
         y = x;
 
@@ -896,7 +896,7 @@ static void dcc_fork_send(int idx, char *x, int y)
   dcc[idx].u.xfer->start_time = now;
 
   if (strcmp(dcc[idx].nick, "*users")) {
-    egg_snprintf(s1, sizeof s1, "%s!%s", dcc[idx].nick, dcc[idx].host);
+    snprintf(s1, sizeof s1, "%s!%s", dcc[idx].nick, dcc[idx].host);
     putlog(LOG_MISC, "*", TRANSFER_DCC_CONN, dcc[idx].u.xfer->origname, s1);
   }
 }
@@ -1091,7 +1091,7 @@ static int ctcp_DCC_RESUME(char *nick, char *from, char *handle,
   strcpy(msg, text);
   action = newsplit(&msg);
 
-  if (egg_strcasecmp(action, "RESUME"))
+  if (strcasecmp(action, "RESUME"))
     return 0;
 
   fn = newsplit(&msg);

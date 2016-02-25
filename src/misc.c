@@ -466,7 +466,7 @@ void daysago(time_t now, time_t then, char *out)
     sprintf(out, "%d day%s ago", days, (days == 1) ? "" : "s");
     return;
   }
-  egg_strftime(out, 6, "%H:%M", localtime(&then));
+  strftime(out, 6, "%H:%M", localtime(&then));
 }
 
 /* Convert an interval (in seconds) to one of:
@@ -480,7 +480,7 @@ void days(time_t now, time_t then, char *out)
     sprintf(out, "in %d day%s", days, (days == 1) ? "" : "s");
     return;
   }
-  egg_strftime(out, 9, "at %H:%M", localtime(&now));
+  strftime(out, 9, "at %H:%M", localtime(&now));
 }
 
 /* Convert an interval (in seconds) to one of:
@@ -529,7 +529,7 @@ void putlog EGG_VARARGS_DEF(int, arg1)
   /* Create the timestamp */
   t = localtime(&now2);
   if (shtime) {
-    egg_strftime(stamp, sizeof(stamp) - 2, log_ts, t);
+    strftime(stamp, sizeof(stamp) - 2, log_ts, t);
     strcat(stamp, " ");
     tsl = strlen(stamp);
   }
@@ -541,13 +541,13 @@ void putlog EGG_VARARGS_DEF(int, arg1)
   /* No need to check if out should be null-terminated here,
    * just do it! <cybah>
    */
-  egg_vsnprintf(out, LOGLINEMAX - tsl, format, va);
+  vsnprintf(out, LOGLINEMAX - tsl, format, va);
   out[LOGLINEMAX - tsl] = 0;
   if (keep_all_logs) {
     if (!logfile_suffix[0])
-      egg_strftime(ct, 12, ".%d%b%Y", t);
+      strftime(ct, 12, ".%d%b%Y", t);
     else {
-      egg_strftime(ct, 80, logfile_suffix, t);
+      strftime(ct, 80, logfile_suffix, t);
       ct[80] = 0;
       s2 = ct;
       /* replace spaces by underscores */
@@ -578,7 +578,7 @@ void putlog EGG_VARARGS_DEF(int, arg1)
         if (logs[i].f == NULL) {
           /* Open this logfile */
           if (keep_all_logs) {
-            egg_snprintf(s1, 256, "%s%s", logs[i].filename, ct);
+            snprintf(s1, 256, "%s%s", logs[i].filename, ct);
             logs[i].f = fopen(s1, "a+");
           } else
             logs[i].f = fopen(logs[i].filename, "a+");
@@ -587,7 +587,7 @@ void putlog EGG_VARARGS_DEF(int, arg1)
           /* Check if this is the same as the last line added to
            * the log. <cybah>
            */
-          if (!egg_strcasecmp(out + tsl, logs[i].szlast))
+          if (!strcasecmp(out + tsl, logs[i].szlast))
             /* It is a repeat, so increment repeats */
             logs[i].repeats++;
           else {
@@ -682,7 +682,7 @@ void check_logsize()
             logs[i].f = NULL;
           }
 
-          egg_snprintf(buf, sizeof buf, "%s.yesterday", logs[i].filename);
+          snprintf(buf, sizeof buf, "%s.yesterday", logs[i].filename);
           buf[1023] = 0;
           unlink(buf);
           movefile(logs[i].filename, buf);
@@ -713,7 +713,7 @@ void flushlogs()
          */
         char stamp[33];
 
-        egg_strftime(stamp, sizeof(stamp) - 1, log_ts, localtime(&now));
+        strftime(stamp, sizeof(stamp) - 1, log_ts, localtime(&now));
         fprintf(logs[i].f, "%s ", stamp);
         fprintf(logs[i].f, MISC_LOGREPEAT, logs[i].repeats);
         /* Reset repeats */
@@ -900,7 +900,7 @@ void help_subst(char *s, char *nick, struct flag_record *flags,
     case 'U':
 #ifdef HAVE_UNAME
       if (uname(&uname_info) >= 0) {
-        egg_snprintf(sub, sizeof sub, "%s %s", uname_info.sysname,
+        snprintf(sub, sizeof sub, "%s %s", uname_info.sysname,
                      uname_info.release);
         towrite = sub;
       } else
@@ -923,7 +923,7 @@ void help_subst(char *s, char *nick, struct flag_record *flags,
       towrite = network;
       break;
     case 'T':
-      egg_strftime(sub, 6, "%H:%M", localtime(&now));
+      strftime(sub, 6, "%H:%M", localtime(&now));
       towrite = sub;
       break;
     case 'N':
@@ -959,7 +959,7 @@ void help_subst(char *s, char *nick, struct flag_record *flags,
         q += 2;
         /* Now q is the string and p is where the rest of the fcn expects */
         if (!strncmp(q, "help=", 5)) {
-          if (topic && egg_strcasecmp(q + 5, topic))
+          if (topic && strcasecmp(q + 5, topic))
             blind |= 2;
           else
             blind &= ~2;
@@ -978,7 +978,7 @@ void help_subst(char *s, char *nick, struct flag_record *flags,
               blind &= ~1;
           } else if (q[0] == '-')
             blind &= ~1;
-          else if (!egg_strcasecmp(q, "end")) {
+          else if (!strcasecmp(q, "end")) {
             blind &= ~1;
             subwidth = 70;
             if (cols) {
@@ -989,7 +989,7 @@ void help_subst(char *s, char *nick, struct flag_record *flags,
               cols = 0;
               towrite = sub;
             }
-          } else if (!egg_strcasecmp(q, "center"))
+          } else if (!strcasecmp(q, "center"))
             center = 1;
           else if (!strncmp(q, "cols=", 5)) {
             char *r;
@@ -1105,11 +1105,11 @@ void add_help_reference(char *file)
   current->next = help_list;
   current->first = NULL;
   help_list = current;
-  egg_snprintf(s, sizeof s, "%smsg/%s", helpdir, file);
+  snprintf(s, sizeof s, "%smsg/%s", helpdir, file);
   scan_help_file(current, s, 0);
-  egg_snprintf(s, sizeof s, "%s%s", helpdir, file);
+  snprintf(s, sizeof s, "%s%s", helpdir, file);
   scan_help_file(current, s, 1);
-  egg_snprintf(s, sizeof s, "%sset/%s", helpdir, file);
+  snprintf(s, sizeof s, "%sset/%s", helpdir, file);
   scan_help_file(current, s, 2);
 }
 
@@ -1183,14 +1183,14 @@ FILE *resolve_help(int dcc, char *file)
       for (item = current->first; item; item = item->next)
         if (!strcmp(item->name, file)) {
           if (!item->type && !dcc) {
-            egg_snprintf(s, sizeof s, "%smsg/%s", helpdir, current->name);
+            snprintf(s, sizeof s, "%smsg/%s", helpdir, current->name);
             if ((f = fopen(s, "r")))
               return f;
           } else if (dcc && item->type) {
             if (item->type == 1)
-              egg_snprintf(s, sizeof s, "%s%s", helpdir, current->name);
+              snprintf(s, sizeof s, "%s%s", helpdir, current->name);
             else
-              egg_snprintf(s, sizeof s, "%sset/%s", helpdir, current->name);
+              snprintf(s, sizeof s, "%sset/%s", helpdir, current->name);
             if ((f = fopen(s, "r")))
               return f;
           }
@@ -1287,9 +1287,9 @@ void tellwildhelp(int idx, char *match, struct flag_record *flags)
     for (item = current->first; item; item = item->next)
       if (wild_match(match, item->name) && item->type) {
         if (item->type == 1)
-          egg_snprintf(s, sizeof s, "%s%s", helpdir, current->name);
+          snprintf(s, sizeof s, "%s%s", helpdir, current->name);
         else
-          egg_snprintf(s, sizeof s, "%sset/%s", helpdir, current->name);
+          snprintf(s, sizeof s, "%sset/%s", helpdir, current->name);
         if ((f = fopen(s, "r")))
           display_tellhelp(idx, item->name, f, flags);
       }
@@ -1312,9 +1312,9 @@ void tellallhelp(int idx, char *match, struct flag_record *flags)
       if (!strcmp(match, item->name) && item->type) {
 
         if (item->type == 1)
-          egg_snprintf(s, sizeof s, "%s%s", helpdir, current->name);
+          snprintf(s, sizeof s, "%s%s", helpdir, current->name);
         else
-          egg_snprintf(s, sizeof s, "%sset/%s", helpdir, current->name);
+          snprintf(s, sizeof s, "%sset/%s", helpdir, current->name);
         if ((f = fopen(s, "r")))
           display_tellhelp(idx, item->name, f, flags);
       }

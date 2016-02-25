@@ -75,7 +75,7 @@ static void flush_fileq(char *to)
     q = fileq;
     fnd = 0;
     while (q != NULL) {
-      if (!egg_strcasecmp(q->to, to)) {
+      if (!strcasecmp(q->to, to)) {
         deq_this(q);
         q = NULL;
         fnd = 1;
@@ -93,7 +93,7 @@ static void send_next_file(char *to)
   int x;
 
   for (q = fileq; q; q = q->next)
-    if (!egg_strcasecmp(q->to, to))
+    if (!strcasecmp(q->to, to))
       this = q;
 
   if (this == NULL)
@@ -141,7 +141,7 @@ static void send_next_file(char *to)
   }
   x = raw_dcc_send(s1, this->to, this->nick, s);
   if (x == DCCSEND_OK) {
-    if (egg_strcasecmp(this->to, this->nick))
+    if (strcasecmp(this->to, this->nick))
       dprintf(DP_HELP, TRANSFER_FILE_ARRIVE, this->to, this->nick);
     deq_this(this);
     nfree(s);
@@ -179,7 +179,7 @@ static void show_queued_files(int idx)
   fileq_t *q;
 
   for (q = fileq; q; q = q->next) {
-    if (!egg_strcasecmp(q->nick, dcc[idx].nick)) {
+    if (!strcasecmp(q->nick, dcc[idx].nick)) {
       if (!cnt) {
         spaces[HANDLEN - 9] = 0;
         dprintf(idx, TRANSFER_SEND_TO, spaces);
@@ -198,8 +198,8 @@ static void show_queued_files(int idx)
   }
   for (i = 0; i < dcc_total; i++) {
     if ((dcc[i].type == &DCC_GET_PENDING || dcc[i].type == &DCC_GET) &&
-        (!egg_strcasecmp(dcc[i].nick, dcc[idx].nick) ||
-         !egg_strcasecmp(dcc[i].u.xfer->from, dcc[idx].nick))) {
+        (!strcasecmp(dcc[i].nick, dcc[idx].nick) ||
+         !strcasecmp(dcc[i].u.xfer->from, dcc[idx].nick))) {
       char *nfn;
 
       if (!cnt) {
@@ -239,7 +239,7 @@ static void fileq_cancel(int idx, char *par)
     q = fileq;
     fnd = 0;
     while (q != NULL) {
-      if (!egg_strcasecmp(dcc[idx].nick, q->nick)) {
+      if (!strcasecmp(dcc[idx].nick, q->nick)) {
         s = nrealloc(s, strlen(q->dir) + strlen(q->file) + 3);
         if (q->dir[0] == '*')
           sprintf(s, "%s/%s", &q->dir[1], q->file);
@@ -270,8 +270,8 @@ static void fileq_cancel(int idx, char *par)
 
   for (i = 0; i < dcc_total; i++) {
     if ((dcc[i].type == &DCC_GET_PENDING || dcc[i].type == &DCC_GET) &&
-        (!egg_strcasecmp(dcc[i].nick, dcc[idx].nick) ||
-         !egg_strcasecmp(dcc[i].u.xfer->from, dcc[idx].nick))) {
+        (!strcasecmp(dcc[i].nick, dcc[idx].nick) ||
+         !strcasecmp(dcc[i].u.xfer->from, dcc[idx].nick))) {
       char *nfn = strrchr(dcc[i].u.xfer->origname, '/');
 
       if (nfn == NULL)
@@ -280,7 +280,7 @@ static void fileq_cancel(int idx, char *par)
         nfn++;
       if (wild_match_file(par, nfn)) {
         dprintf(idx, TRANSFER_ABORT_DCCSEND, nfn);
-        if (egg_strcasecmp(dcc[i].nick, dcc[idx].nick))
+        if (strcasecmp(dcc[i].nick, dcc[idx].nick))
           dprintf(DP_HELP, TRANSFER_NOTICE_ABORT, dcc[i].nick, nfn,
                   dcc[idx].nick);
         if (dcc[i].type == &DCC_GET)

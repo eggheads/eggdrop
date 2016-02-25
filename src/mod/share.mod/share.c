@@ -1121,7 +1121,7 @@ static void share_ufsend(int idx, char *par)
   int i, sock;
   FILE *f;
 
-  egg_snprintf(s, sizeof s, ".share.%s.%li.users", botnetnick, now);
+  snprintf(s, sizeof s, ".share.%s.%li.users", botnetnick, now);
   if (!(b_status(idx) & STAT_SHARE)) {
     dprintf(idx, "s e You didn't ask; you just started sending.\n");
     dprintf(idx, "s e Ask before sending the userfile.\n");
@@ -1318,7 +1318,7 @@ static void sharein_mod(int idx, char *msg)
 
   code = newsplit(&msg);
   for (f = 0, i = 0; C_share[i].name && !f; i++) {
-    int y = egg_strcasecmp(code, C_share[i].name);
+    int y = strcasecmp(code, C_share[i].name);
 
     if (!y)
       /* Found a match */
@@ -1342,7 +1342,7 @@ static void shareout_mod EGG_VARARGS_DEF(struct chanset_t *, arg1)
     format = va_arg(va, char *);
 
     strcpy(s, "s ");
-    if ((l = egg_vsnprintf(s + 2, 509, format, va)) < 0)
+    if ((l = vsnprintf(s + 2, 509, format, va)) < 0)
       s[2 + (l = 509)] = 0;
     for (i = 0; i < dcc_total; i++)
       if ((dcc[i].type->flags & DCT_BOT) &&
@@ -1373,7 +1373,7 @@ static void shareout_but EGG_VARARGS_DEF(struct chanset_t *, arg1)
   format = va_arg(va, char *);
 
   strcpy(s, "s ");
-  if ((l = egg_vsnprintf(s + 2, 509, format, va)) < 0)
+  if ((l = vsnprintf(s + 2, 509, format, va)) < 0)
     s[2 + (l = 509)] = 0;
   for (i = 0; i < dcc_total; i++)
     if ((dcc[i].type->flags & DCT_BOT) && (i != x) &&
@@ -1441,7 +1441,7 @@ static int flush_tbuf(char *bot)
 
   for (t = tbuf; t; t = tnext) {
     tnext = t->next;
-    if (!egg_strcasecmp(t->bot, bot)) {
+    if (!strcasecmp(t->bot, bot)) {
       del_tbuf(t);
       return 1;
     }
@@ -1520,7 +1520,7 @@ static void q_tbuf(char *bot, char *s, struct chanset_t *chan)
   tandbuf *t;
 
   for (t = tbuf; t && t->bot[0]; t = t->next)
-    if (!egg_strcasecmp(t->bot, bot)) {
+    if (!strcasecmp(t->bot, bot)) {
       if (chan) {
         fr.match = (FR_CHAN | FR_BOT);
         get_user_flagrec(get_user_by_handle(userlist, bot), &fr, chan->dname);
@@ -1557,7 +1557,7 @@ static int can_resync(char *bot)
   tandbuf *t;
 
   for (t = tbuf; t && t->bot[0]; t = t->next)
-    if (!egg_strcasecmp(bot, t->bot))
+    if (!strcasecmp(bot, t->bot))
       return 1;
   return 0;
 }
@@ -1570,7 +1570,7 @@ static void dump_resync(int idx)
   tandbuf *t;
 
   for (t = tbuf; t && t->bot[0]; t = t->next)
-    if (!egg_strcasecmp(dcc[idx].nick, t->bot)) {
+    if (!strcasecmp(dcc[idx].nick, t->bot)) {
       for (q = t->q; q && q->msg[0]; q = q->next) {
         dprintf(idx, "%s", q->msg);
       }
@@ -1726,7 +1726,7 @@ static void finish_share(int idx)
   int i, j = -1;
 
   for (i = 0; i < dcc_total; i++)
-    if (!egg_strcasecmp(dcc[i].nick, dcc[idx].host) &&
+    if (!strcasecmp(dcc[i].nick, dcc[idx].host) &&
         (dcc[i].type->flags & DCT_BOT))
       j = i;
   if (j == -1)
@@ -1907,7 +1907,7 @@ static void start_sending_users(int idx)
   char s[sizeof "255.255.255.255"];
 #endif
 
-  egg_snprintf(share_file, sizeof share_file, ".share.%s.%lu", dcc[idx].nick,
+  snprintf(share_file, sizeof share_file, ".share.%s.%lu", dcc[idx].nick,
                now);
   if (dcc[idx].u.bot->uff_flags & UFF_OVERRIDE) {
     debug1("NOTE: Sharing aggressively with %s, overriding its local bots.",
@@ -1964,18 +1964,18 @@ static void start_sending_users(int idx)
 
           /* Send hostmasks */
           for (t = get_user(&USERENTRY_HOSTS, u); t; t = t->next) {
-            egg_snprintf(s2, sizeof s2, "s +bh %s %s\n", u->handle, t->extra);
+            snprintf(s2, sizeof s2, "s +bh %s %s\n", u->handle, t->extra);
             q_tbuf(dcc[idx].nick, s2, NULL);
           }
           /* Send address */
           if (bi) {
 #ifdef TLS
-            egg_snprintf(s2, sizeof s2, "s c BOTADDR %s %s %s%d %s%d\n",
+            snprintf(s2, sizeof s2, "s c BOTADDR %s %s %s%d %s%d\n",
                          u->handle, bi->address, (bi->ssl & TLS_BOT) ? "+" : "",
                          bi->telnet_port, (bi->ssl & TLS_RELAY) ? "+" : "",
                          bi->relay_port);
 #else
-            egg_snprintf(s2, sizeof s2, "s c BOTADDR %s %s %d %d\n", u->handle,
+            snprintf(s2, sizeof s2, "s c BOTADDR %s %s %d %d\n", u->handle,
                          bi->address, bi->telnet_port, bi->relay_port);
 #endif
             q_tbuf(dcc[idx].nick, s2, NULL);
@@ -1985,7 +1985,7 @@ static void start_sending_users(int idx)
 
           fr.udef_global = u->flags_udef;
           build_flags(s1, &fr, NULL);
-          egg_snprintf(s2, sizeof s2, "s a %s %s\n", u->handle, s1);
+          snprintf(s2, sizeof s2, "s a %s %s\n", u->handle, s1);
           q_tbuf(dcc[idx].nick, s2, NULL);
           for (ch = u->chanrec; ch; ch = ch->next) {
             if ((ch->flags & ~BOT_SHARE) &&
@@ -1998,7 +1998,7 @@ static void start_sending_users(int idx)
                 fr.chan = ch->flags & ~BOT_SHARE;
                 fr.udef_chan = ch->flags_udef;
                 build_flags(s1, &fr, NULL);
-                egg_snprintf(s2, sizeof s2, "s a %s %s %s\n", u->handle, s1,
+                snprintf(s2, sizeof s2, "s a %s %s %s\n", u->handle, s1,
                              ch->channel);
                 q_tbuf(dcc[idx].nick, s2, cst);
               }
@@ -2031,7 +2031,7 @@ static void cancel_user_xfer(int idx, void *x)
     if (dcc[idx].status & STAT_GETTING) {
       j = 0;
       for (i = 0; i < dcc_total; i++)
-        if (!egg_strcasecmp(dcc[i].host, dcc[idx].nick) &&
+        if (!strcasecmp(dcc[i].host, dcc[idx].nick) &&
             ((dcc[i].type->flags & (DCT_FILETRAN | DCT_FILESEND)) ==
              (DCT_FILETRAN | DCT_FILESEND)))
           j = i;
@@ -2045,7 +2045,7 @@ static void cancel_user_xfer(int idx, void *x)
     if (dcc[idx].status & STAT_SENDING) {
       j = 0;
       for (i = 0; i < dcc_total; i++)
-        if ((!egg_strcasecmp(dcc[i].host, dcc[idx].nick)) &&
+        if ((!strcasecmp(dcc[i].host, dcc[idx].nick)) &&
             ((dcc[i].type->flags & (DCT_FILETRAN | DCT_FILESEND)) ==
             DCT_FILETRAN))
           j = i;
@@ -2165,7 +2165,7 @@ static void share_report(int idx, int details)
           for (j = 0; j < dcc_total; j++)
             if (((dcc[j].type->flags & (DCT_FILETRAN | DCT_FILESEND)) ==
                 (DCT_FILETRAN | DCT_FILESEND)) &&
-                !egg_strcasecmp(dcc[j].host, dcc[i].nick)) {
+                !strcasecmp(dcc[j].host, dcc[i].nick)) {
               dprintf(idx, "    Downloading userlist from %s (%d%% done)\n",
                       dcc[i].nick, (int) (100.0 * ((float) dcc[j].status) /
                       ((float) dcc[j].u.xfer->length)));
@@ -2178,7 +2178,7 @@ static void share_report(int idx, int details)
         } else if (dcc[i].status & STAT_SENDING) {
           for (j = 0; j < dcc_total; j++) {
             if (((dcc[j].type->flags & (DCT_FILETRAN | DCT_FILESEND)) ==
-                DCT_FILETRAN) && !egg_strcasecmp(dcc[j].host, dcc[i].nick)) {
+                DCT_FILETRAN) && !strcasecmp(dcc[j].host, dcc[i].nick)) {
               if (dcc[j].type == &DCC_GET)
                 dprintf(idx, "    Sending userlist to %s (%d%% done)\n",
                         dcc[i].nick, (int) (100.0 * ((float) dcc[j].status) /

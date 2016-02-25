@@ -414,7 +414,7 @@ static int _dcc_send(int idx, char *filename, char *nick, char *dir,
       *p = '_';
   }
 
-  if (egg_strcasecmp(nick, dcc[idx].nick))
+  if (strcasecmp(nick, dcc[idx].nick))
     dprintf(DP_HELP, "NOTICE %s :Here is %s file from %s %s...\n", nick,
             resend ? "the" : "a", dcc[idx].nick, resend ? "again " : "");
   dprintf(idx, "%sending: %s to %s\n", resend ? "Res" : "S", nfn, nick);
@@ -849,9 +849,9 @@ static int filesys_DCC_CHAT(char *nick, char *from, char *handle,
   struct userrec *u = get_user_by_handle(userlist, handle);
   struct flag_record fr = { FR_GLOBAL | FR_CHAN | FR_ANYWH, 0, 0, 0, 0, 0 };
 
-  if (egg_strcasecmp(object, botname))
+  if (strcasecmp(object, botname))
     return 0;
-  if (!egg_strncasecmp(text, "SEND ", 5)) {
+  if (!strncasecmp(text, "SEND ", 5)) {
 #ifdef TLS
     filesys_dcc_send(nick, from, u, text + 5, 0);
 #else
@@ -860,12 +860,12 @@ static int filesys_DCC_CHAT(char *nick, char *from, char *handle,
     return 1;
   }
 #ifdef TLS
-  if (!egg_strncasecmp(text, "SSEND ", 5)) {
+  if (!strncasecmp(text, "SSEND ", 5)) {
     filesys_dcc_send(nick, from, u, text + 5, 1);
     return 1;
   }
 #endif
-  if (egg_strncasecmp(text, "CHAT ", 5) || !u)
+  if (strncasecmp(text, "CHAT ", 5) || !u)
     return 0;
   strcpy(buf, text + 5);
   get_user_flagrec(u, &fr, 0);

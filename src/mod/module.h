@@ -62,20 +62,20 @@
 #ifdef egg_inet_aton
 #  undef egg_inet_aton
 #endif
-#ifdef egg_vsnprintf
-#  undef egg_vsnprintf
+#ifdef vsnprintf
+#  undef vsnprintf
 #endif
-#ifdef egg_snprintf
-#  undef egg_snprintf
+#ifdef snprintf
+#  undef snprintf
 #endif
-#ifdef egg_memset
-#  undef egg_memset
+#ifdef memset
+#  undef memset
 #endif
-#ifdef egg_strcasecmp
-#  undef egg_strcasecmp
+#ifdef strcasecmp
+#  undef strcasecmp
 #endif
-#ifdef egg_strncasecmp
-#  undef egg_strncasecmp
+#ifdef strncasecmp
+#  undef strncasecmp
 #endif
 
 #if defined (__CYGWIN__) && !defined(STATIC)
@@ -435,12 +435,12 @@
 #define users_in_subtree ((int (*)(tand_t *))global[250])
 #define egg_inet_aton ((int (*)(const char *cp, struct in_addr *addr))global[251])
 /* 252 - 255 */
-#define egg_snprintf (global[252])
-#define egg_vsnprintf ((int (*)(char *, size_t, const char *, va_list))global[253])
-#define egg_memset ((void *(*)(void *, int, size_t))global[254])
-#define egg_strcasecmp ((int (*)(const char *, const char *))global[255])
+#define snprintf (global[252])
+#define vsnprintf ((int (*)(char *, size_t, const char *, va_list))global[253])
+#define memset ((void *(*)(void *, int, size_t))global[254])
+#define strcasecmp ((int (*)(const char *, const char *))global[255])
 /* 256 - 259 */
-#define egg_strncasecmp ((int (*)(const char *, const char *, size_t))global[256])
+#define strncasecmp ((int (*)(const char *, const char *, size_t))global[256])
 #define is_file ((int (*)(const char *))global[257])
 #define must_be_owner (*(int *)(global[258]))
 #define tandbot (*(tand_t **)(global[259]))

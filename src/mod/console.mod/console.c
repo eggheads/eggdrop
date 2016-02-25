@@ -158,7 +158,7 @@ static int console_tcl_set(Tcl_Interp *irp, struct userrec *u,
 
   if (!i) {
     i = user_malloc(sizeof(struct console_info));
-    egg_bzero(i, sizeof(struct console_info));
+    bzero(i, sizeof(struct console_info));
   }
   if (i->channel)
     nfree(i->channel);
@@ -295,7 +295,7 @@ static int console_store(struct userrec *u, int idx, char *par)
 
   if (!i) {
     i = user_malloc(sizeof(struct console_info));
-    egg_bzero(i, sizeof(struct console_info));
+    bzero(i, sizeof(struct console_info));
   }
   if (i->channel)
     nfree(i->channel);

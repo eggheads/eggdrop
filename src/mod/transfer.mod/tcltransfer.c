@@ -65,7 +65,7 @@ static int tcl_dccsend STDVAR
   i = raw_dcc_send(sys, argv[2], "*", argv[1]);
   if (i > 0)
     wipe_tmp_filename(sys, -1);
-  egg_snprintf(s, sizeof s, "%d", i);
+  snprintf(s, sizeof s, "%d", i);
   Tcl_AppendResult(irp, s, NULL);
   nfree(sys);
   return TCL_OK;
@@ -79,7 +79,7 @@ static int tcl_getfileq STDVAR
   BADARGS(2, 2, " handle");
 
   for (q = fileq; q; q = q->next) {
-    if (!egg_strcasecmp(q->nick, argv[1])) {
+    if (!strcasecmp(q->nick, argv[1])) {
       s = nrealloc(s, strlen(q->to) + strlen(q->dir) + strlen(q->file) + 4);
       if (q->dir[0] == '*')
         sprintf(s, "%s %s/%s", q->to, &q->dir[1], q->file);
@@ -104,7 +104,7 @@ static int tcl_getfilesendtime STDVAR
   for (i = 0; i < dcc_total; i++) {
     if (dcc[i].sock == sock) {
       if (dcc[i].type == &DCC_SEND || dcc[i].type == &DCC_GET) {
-        egg_snprintf(s, sizeof s, "%lu", dcc[i].u.xfer->start_time);
+        snprintf(s, sizeof s, "%lu", dcc[i].u.xfer->start_time);
         Tcl_AppendResult(irp, s, NULL);
       } else
         Tcl_AppendResult(irp, "-2", NULL); /* Not a valid file transfer */
