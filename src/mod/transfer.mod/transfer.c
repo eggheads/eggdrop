@@ -783,7 +783,7 @@ static void display_dcc_send(int idx, char *buf)
 
 static void display_dcc_fork_send(int idx, char *buf)
 {
-  sprintf(buf, TRANSFER_CONN_SEND);
+  strcpy(buf, TRANSFER_CONN_SEND);
 }
 
 static int expmem_dcc_xfer(void *x)

@@ -599,7 +599,7 @@ void putlog EGG_VARARGS_DEF(int, arg1)
                * then reset repeats. We want the current time here,
                * so put that in the file first.
                */
-              fprintf(logs[i].f, stamp);
+              fprintf(logs[i].f, "%s", stamp);
               fprintf(logs[i].f, MISC_LOGREPEAT, logs[i].repeats);
               logs[i].repeats = 0;
               /* No need to reset logs[i].szlast here
