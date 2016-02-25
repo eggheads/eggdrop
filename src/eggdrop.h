@@ -88,10 +88,6 @@
 #  include <unistd.h>
 #endif
 
-#if !defined(_POSIX_VERSION) || _POSIX_VERSION < 200112L
-#  error "Eggdrop requires POSIX.1-2001 support from your operating system."
-#endif
-
 /* This allows us to make things a lot less messy in modules.c. */
 #ifndef STATIC
 #  if !defined(MODULES_OK) || (!defined(MOD_USE_DL) && !defined(MOD_USE_SHL) && !defined(MOD_USE_DYLD) && !defined(MOD_USE_RLD) && !defined(MOD_USE_LOADER))
