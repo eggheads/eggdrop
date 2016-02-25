@@ -1,0 +1,67 @@
+1 EGGDROP INFO
+1.1 Eggdrop Version:
+  *
+
+1.2 Make type:
+  * dynamic/static/debug/sdebug
+
+1.3 List any options passed to ./configure
+  * 
+
+1.4 Any additional patches or modules you are using:
+  * 
+  
+2. TCL INFO
+2.1 TCL Version
+  * 
+
+2.2 PROVIDED TCL scripts loaded (listed after a 'source' command in the config)
+  * alltools / sentinel / getops
+  
+3 OS INFO
+3.1 OS Type (Debian/Ubuntu/FreeBSD/etc)
+  * 
+
+3.2 OS Version/Release
+  * 
+  
+4 BUG DETAILS
+4.1 The logged last context (example: Last context: userent.c/973 []):
+  * 
+
+4.2 If the bot wrote to the file DEBUG, copy the text -contents- of
+     that file here (NOTE: It should be about 20 lines of info, but it
+     could be a few lines more):
+  * 
+  
+4.3 Your comments and a description of the bug:
+  * 
+  
+4.4 Can you cause the bug condition to repeat? If so, please outline
+     step by step what causes the error:
+  * 
+  
+4.5 Do you have ideas on what is wrong that causes this error?
+     Please list them:
+  * 
+  
+4.6 Do you have ideas on how to correct it?  Please list them:
+  *
+  
+4.7 Other comments?
+  * 
+  
+4.8 If the bot dumped a 'core' file when it crashed, it would be *very*
+     useful if you could paste gdb's output during the following steps:
+     First call gdb
+         $ gdb eggdrop -c core
+     and then enter 'bt' on gdb's command line:
+         (gdb) bt
+     Keep your core file for at least one week, so that the dev team
+     can ask for further information if needed. However, don't send
+     us the core file unless we ask for it.
+
+     NOTE: If this is a bug you can reproduce, please compile with
+           make debug and follow the above step. It can greatly help
+           find and fix the bug.
+  * 
