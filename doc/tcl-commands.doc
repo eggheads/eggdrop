@@ -2087,7 +2087,7 @@ marked with vertical bars (|) on the left.
            netsplit signoff message on some networks); mask may contain
            wildcards and is matched against '#channel nick!user@host'.
            Anyone who is SPLT will trigger a REJN or SIGN within the next
-           wait-split (defined in the config file) minutes.
+           wait-split (defined in the config file) seconds.
          Module: irc
 
     (27) REJN (stackable)
