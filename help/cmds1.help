@@ -4,7 +4,7 @@
    is specified, the bot will try to automatically add a host from the channel.
    The bot's address will be used in linking. If the bot has a separate port
    for bots and users they should be separated with a slash (/). Prefixing
-   the port with a plus sign marks the bot for secure (SSL) linking.
+   the port with a plus sign will only allow secure (SSL) linking to be used.
 
 See also: -bot
 %{help=+host}%{+t|m}
@@ -155,7 +155,7 @@ See also: bots, botinfo, vbottree
    Changes the address for a bot. This is the address your bot will try to
    connect to when linking. If the bot has a separate port for bots and users,
    they should be separated  by a slash (/). Prefixing the port with a plus
-   sign marks the bot for secure (SSL) linking.
+   sign will only allow secure (SSL) linking to be used.
 
 See also: link, +bot
 %{help=chat}%{-}
