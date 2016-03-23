@@ -17,7 +17,7 @@
     according to category.</p>
 
     <p>This list is accurate for Eggdrop v1.8.0. Scripts written for
-    v1.3/v1.4 series of Eggdrop should probably work with a few minor
+    v1.3, v1.4, or 1.6 series of Eggdrop should probably work with a few minor
     modifications depending on the script. Scripts which were written for
     v0.9, v1.0, v1.1 or v1.2 will probably not work without modification.
     Commands which have been changed in this version of Eggdrop (or are
@@ -387,26 +387,6 @@
 
               <tr valign="top">
                 <td>
-                  <p><strong>EMAIL</strong></p>
-                </td>
-
-                <td>
-                  <p>returns the user&#39;s e-mail address</p>
-                </td>
-              </tr>
-
-              <tr valign="top">
-                <td>
-                  <p><strong>URL</strong></p>
-                </td>
-
-                <td>
-                  <p>returns the user&#39;s url</p>
-                </td>
-              </tr>
-
-              <tr valign="top">
-                <td>
                   <p><strong>HANDLE</strong></p>
                 </td>
 
@@ -427,6 +407,8 @@
               </tr>
             </table>
           </blockquote>
+          <p> For additional custom user fields, to include the deprecated "EMAIL"
+          and "URL" fields, reference scripts/userinfo.tcl</p>
 
           <p><strong>Returns:</strong> info specific to each entry-type</p>
 
@@ -1738,7 +1720,7 @@
 
         <dd>
           <p><strong>Returns:</strong> number of minutes that person has
-          been idle; 0 if the specified user isn&#39;t on the channel</p>
+          been idle; -1 if the specified user isn&#39;t on the channel</p>
 
           <p><strong>Module:</strong> irc</p>
         </dd>
@@ -1858,7 +1840,7 @@
           <p><strong>Module:</strong> channels</p>
         </dd>
 
-        <dt><strong><a name="cmd_getudefs"></a>getudefs &lt;flag/int/str&gt;</strong></dt>
+        <dt><strong><a name="cmd_getudefs"></a>getudefs [flag/int/str]</strong></dt>
 
         <dd>
           <p><strong>Returns:</strong> a list of user defined channel
@@ -1871,7 +1853,11 @@
 
         <dd>
           <p><strong>Returns:</strong> The value of the setting you specify.
-          The possible types are flag, int, str, pair.</p>
+          The possible types are flag, int, str, pair. A flag type references a channel flag
+          setting that can be set to either + or -. An int type is a channel
+          setting that is set to a number, such as ban-time. A str type is a
+          channel setting that stores a string, such as need-op. A pair type is
+          a setting that holds a value couple, such as the flood settings.</p>
 
           <p><strong>Module:</strong> channels</p>
         </dd>
@@ -4191,6 +4177,14 @@
               processed before PUB binds. If the exclusive-binds setting
               is enabled, PUB binds will not be triggered by text that a
               PUBM bind has already handled.</p>
+              <p>Examples:</p>
+                bind pubm * "#eggdrop Hello*" myProc
+                  Listens on #eggdrop for any line that begins with "Hello"
+                bind pubm * "% Hello*" myProc
+                  Listens on any channel for any line that begins with "Hello"
+                bind pubm * "% !command" myProc
+                  Listens on any channel for a line that ONLY contains "!command"
+
 
               <p><strong>Module:</strong> irc</p>
             </li>
@@ -5382,7 +5376,9 @@
         <p>listen &lt;[+]port&gt; script &lt;proc&gt;</p>
       </blockquote>
 
-      <p>To listen for SSL connections, prefix the port with a plus sign.</p>
+      <p>By default, a listen port will allow both plaintext and SSL connections.
+         To restrict a port to allow only SSL connections, prefix the port with a 
+         plus sign.</p>
 
       <p>Procs should be declared as:</p>
 
@@ -5451,7 +5447,7 @@
 
           <td>
             <p>matches 0 or more non-space characters (can be used to match
-            a single word)</p>
+            a single word) (This character only works in binds, not in regular matching)</p>
           </td>
         </tr>
 
@@ -5462,7 +5458,7 @@
 
           <td>
             <p>matches 1 or more space characters (can be used for whitespace
-            between words)</p>
+            between words) (This character only works in binds, not in regular matching)</p>
           </td>
         </tr>
       </table>
