@@ -137,19 +137,30 @@ int ssl_init()
     ERR_free_strings();
     return -1;
   }
-  /* Load our own certificate and private key. Mandatory for acting as
-     server, because we don't support anonymous ciphers by default. */
-  if (SSL_CTX_use_certificate_chain_file(ssl_ctx, tls_certfile) != 1) {
+  if (!tls_certfile[0]) {
     ssl_files_loaded = 0;
-    putlog(LOG_MISC, "*", "ERROR: TLS: unable to load own certificate: %s",
-           ERR_error_string(ERR_get_error(), NULL));
-    putlog(LOG_MISC, "*", "  Check ssl-certificate in config.");
-  }
-  if (SSL_CTX_use_PrivateKey_file(ssl_ctx, tls_keyfile,
-      SSL_FILETYPE_PEM) != 1) {
-    putlog(LOG_MISC, "*", "ERROR: TLS: unable to load private key: %s",
-           ERR_error_string(ERR_get_error(), NULL));
-    putlog(LOG_MISC, "*", "  Check ssl-privatekey in config.");
+    if (tls_keyfile[0])
+      putlog(LOG_MISC, "*", "ERROR: TLS: ssl-privatekey not set, ignoring ssl-certificate.");
+  } else if (!tls_keyfile[0]) {
+    ssl_files_loaded = 0;
+    putlog(LOG_MISC, "*", "ERROR: TLS: ssl-certificate not set, ignoring ssl-privatekey.");
+  } else {
+    ssl_files_loaded = 1;
+    /* Load our own certificate and private key. Mandatory for acting as
+    server, because we don't support anonymous ciphers by default. */
+    if (SSL_CTX_use_certificate_chain_file(ssl_ctx, tls_certfile) != 1) {
+      putlog(LOG_MISC, "*", "ERROR: TLS: unable to load own certificate: %s",
+             ERR_error_string(ERR_get_error(), NULL));
+      putlog(LOG_MISC, "*", "  Check ssl-certificate in config.");
+      ssl_files_loaded = 0;
+    }
+    if (SSL_CTX_use_PrivateKey_file(ssl_ctx, tls_keyfile,
+        SSL_FILETYPE_PEM) != 1) {
+      putlog(LOG_MISC, "*", "ERROR: TLS: unable to load private key: %s",
+             ERR_error_string(ERR_get_error(), NULL));
+      putlog(LOG_MISC, "*", "  Check ssl-privatekey in config.");
+      ssl_files_loaded = 0;
+    }
   }
   if ((tls_capath[0] || tls_cafile[0]) &&
       !SSL_CTX_load_verify_locations(ssl_ctx, tls_cafile[0] ? tls_cafile : NULL,
