@@ -978,7 +978,8 @@ static void eof_dcc_chat(int idx)
 static void dcc_chat(int idx, char *buf, int i)
 {
   int nathan = 0, doron = 0, fixed = 0;
-  char *v, *d, filtbuf[2048];
+  char *v, *d, filtbuf[2048], encbuf[2048];
+  size_t encbufsize;
 
   if (dcc[idx].status & STAT_TELNET)
     strip_telnet(dcc[idx].sock, buf, &i);
@@ -986,6 +987,11 @@ static void dcc_chat(int idx, char *buf, int i)
       detect_dcc_flood(&dcc[idx].timeval, dcc[idx].u.chat, idx))
     return;
   dcc[idx].timeval = now;
+
+  encbufsize = convert_in_encoding(buf, strlen(buf), encbuf, sizeof encbuf - 1);
+  encbuf[sizeof encbuf - 1 - encbufsize] = '\0';
+  buf = encbuf;
+
   if (buf[0]) {
     const char *filt = check_tcl_filt(idx, buf);
     if (filt != buf) {

@@ -151,6 +151,10 @@ static void reopen_encoding(iconv_t *conv, char *from, char *to)
     putlog(LOG_MISC, "*", "Warning: Unable to load '%s' -> '%s' encoding. Use `iconv -l` to see valid encoding names.", from, to);
 }
 
+/* Convert encoding according to convertion from
+ * string in src with length len into dst buffer with size dstlen.
+ * Returns the remaining space left in dst.
+ */
 static size_t convert_encoding(iconv_t conversion, char *src, size_t len, char *dst, size_t dstlen)
 {
   size_t i;
