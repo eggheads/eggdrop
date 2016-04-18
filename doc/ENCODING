@@ -1,0 +1,126 @@
+ENCODING support
+Last revised: Apr 19, 2016
+    _____________________________________________________________________
+
+                         Encoding support
+
+
+  This document provides information about the encoding settings which are new
+  in eggdrop since version 1.8.0.
+
+  !! Warning: DO NOT use Tcl's [encoding system] command to change the encoding
+  !!    ALWAYS use set out-encoding instead, it does encoding system for you.
+  !!    See section 3 for details.
+  
+  Contents:
+    1. General overview
+    2. Quick settings guide
+    3. Incoming encoding conversion (and fallback-encoding setting)
+    4. Outgoing encoding conversion (and out-encoding setting)
+    5. Scripts
+
+  1. General overview
+
+    Eggdrop now performs a low-level encoding conversion on everything that
+    it reads from sockets or files, and everything that it outputs to sockets
+    or files.
+    That includes: the server connection, botnet connections, dcc chat or
+    telnet connections, logfiles, the config file, listen sockets.
+    The following sections describe how it works in detail and explain the
+    new settings (fallback-encoding, out-encoding) associated with it.
+
+  2. Quick settings guide
+
+    If you want your Eggdrop to use UTF-8 for everything (recommended):
+      set out-encoding "utf-8".
+    You may set fallback-encoding to something other people use in your
+    channels to make Eggdrop work with it, e.g.
+      set fallback-encoding "cp1251" or "iso8859-1".
+    This is only necessary if those users exist.
+
+    If you want your Eggdrop to use a single-byte encoding:
+      set out-encoding "iso8859-1".
+    You do not need to set fallback-encoding, the out-encoding is
+    used automatically to decode as well.
+
+    You can use "iconv -l" on your shell to get a list of supported encodings.
+
+    The next sections explain the gory details of the implementation.
+
+  3. Incoming encoding conversion and fallback-encoding setting
+
+    Eggdrop now attempts to convert any incoming text in this order:
+      UTF-8 -> out-encoding -> fallback-encoding -> ISO8859-1.
+    If one conversion fails, it moves on to the next until one succeeds.
+    Be advised that single-byte encodings never fail, so ISO8859-1 succeeds
+    in any case. And if out-encoding or fallback-encoding are single-byte
+    encodings, they will succeed before it.
+
+    The fallback-encoding setting is necessary, so that you can support
+    Eggdrop in a channel with mixed UTF-8 and CP1251 or similar encodings.
+
+    Attempting UTF-8 first in all situations, and falling back to a
+    user-specified single-byte encoding (iso8859, cp1251, ..) is common
+    practice in IRC clients to gracefully handle mixed UTF-8/iso8859
+    channels. It is highly unlikely ISO8859 text contains only valid
+    UTF-8 sequences, that is the reason this method succeeds.
+
+    The reason out-encoding is in the chain is that it would otherwise
+    create a situation, where you .+chan #<iso8859-1 channel>,
+    and Eggdrop would attempt to decode as UTF-8, which fails,
+    then it would rely on your setting fallback-encoding equal to
+    out-encoding for this to work. To prevent that buggy situation,
+    out-encoding is part of the decoding chain.
+
+    A list of valid fallback-encoding values can be obtained via the
+      iconv -l
+    shell command.
+
+    Implementation detail: The conversion is performed by iconv,
+    because iconv complains about invalid sequences, which is necessary,
+    to fall back to other encodings. Tcl's conversion routines silently
+    accept invalid UTF-8 sequences, which is unsuitable.
+
+  4. Outgoing encoding conversion
+
+    For all outgoing data (the server, partyline connections, logfiles),
+    Eggdrop converts it to the user-specified out-encoding.
+    If it is not specified, it defaults to the system encoding (LC_ALL).
+    This parsing and setting is performed by Tcl.
+
+    The out-encoding setting also calls Tcl's [encoding system] to set
+    Tcl's main encoding.
+
+    WARNING: DO NOT MANUALLY CALL [encoding system <encoding>].
+    Eggdrop will NOT be able to react to it!
+    The reason is that it would be too expensive to trace this.
+
+    A list of valid out-encoding values cab be obtained via the
+      echo 'encoding names' | tclsh
+    shell command.
+
+    Implementation detail: The conversion is performed by Tcl,
+    because Tcl silently ignores characters that are not representable
+    by the target charset. Iconv returns an error and stops the conversion.
+    This is undesirable for output routines. Even specifying //IGNORE or
+    //TRANSLIT to the iconv encodings did not help in all situations.
+
+  5. Scripts
+
+    The configfile is read using the system encoding.
+    The out-encoding variable is not set before starting to read it.
+    If the out-encoding variable is set during loading the config,
+    scripts are loaded with the new encoding.
+
+    As of Tcl8.5 you can manually specify an encoding to load scripts with:
+      source -encoding iso8859-1 scripts/foobar.tcl
+
+    Implementation detail: The channel file is also a Tcl script, but always
+    loaded with the UTF-8 encoding. The conversion of channel names to their
+    actual encoding is determined by the out-encoding setting (essentially
+    converting the JOIN command sent to the IRCd).
+
+    _____________________________________________________________________
+
+  Copyright (C) 2016 - 2016 Eggheads Development Team
+
