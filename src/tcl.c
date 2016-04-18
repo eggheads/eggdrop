@@ -99,8 +99,9 @@ int utftot = 0;
 int clientdata_stuff = 0;
 
 static char fallback_encoding[121] = ""; /* Fallback encoding if IRC input is not utf-8. "" is system encoding. */
+static char out_encoding[121] = ""; /* Output encoding. "" is system encoding. */
 
-static iconv_t enc_fallback_utf8 = (iconv_t)(-1);
+static iconv_t enc_fallback_utf8 = (iconv_t)(-1), enc_out_utf8 = (iconv_t)(-1);
 static int tcl_initialized = 0; /* Needed to know when we can perform encoding translation */
 
 /* Prototypes for Tcl */
@@ -140,7 +141,7 @@ typedef struct {
   int *right; /* right side */
 } coupletinfo;
 
-static void reopen_encoding(iconv_t *conv, char *from, char *to)
+static void reopen_encoding(iconv_t *conv, const char *from, const char *to)
 {
   if (*conv != (iconv_t)(-1))
     iconv_close(*conv);
@@ -195,11 +196,14 @@ size_t convert_in_encoding(char *msg, size_t len, char *buf, size_t bufsize)
     initialized = 1;
 
     reopen_encoding(&enc_utf8_utf8, "utf-8", "utf-8");
+    reopen_encoding(&enc_out_utf8, out_encoding, "utf-8");
     reopen_encoding(&enc_iso8859_utf8, "iso8859-1", "utf-8");
     reopen_encoding(&enc_fallback_utf8, fallback_encoding, "utf-8");
   }
 
   if ((i = convert_encoding(enc_utf8_utf8, msg, len, buf, bufsize)) != -1)
+    return i;
+  if ((i = convert_encoding(enc_out_utf8, msg, len, buf, bufsize)) != -1)
     return i;
   if ((i = convert_encoding(enc_fallback_utf8, msg, len, buf, bufsize)) != -1)
     return i;
@@ -335,11 +339,11 @@ static char *tcl_eggstr(ClientData cdata, Tcl_Interp *irp,
       char s1[127];
 
       egg_snprintf(s1, sizeof s1, "%s:%d", firewall, firewallport);
-      Tcl_SetVar2(interp, name1, name2, s1, TCL_GLOBAL_ONLY);
+      Tcl_SetVar2(irp, name1, name2, s1, TCL_GLOBAL_ONLY);
     } else
-      Tcl_SetVar2(interp, name1, name2, st->str, TCL_GLOBAL_ONLY);
+      Tcl_SetVar2(irp, name1, name2, st->str, TCL_GLOBAL_ONLY);
     if (flags & TCL_TRACE_UNSETS) {
-      Tcl_TraceVar(interp, name1, TCL_TRACE_READS | TCL_TRACE_WRITES |
+      Tcl_TraceVar(irp, name1, TCL_TRACE_READS | TCL_TRACE_WRITES |
                    TCL_TRACE_UNSETS, tcl_eggstr, cdata);
       if ((st->max <= 0) && (protect_readonly || (st->max == 0)))
         return "read-only variable";    /* it won't return the error... */
@@ -347,10 +351,10 @@ static char *tcl_eggstr(ClientData cdata, Tcl_Interp *irp,
     return NULL;
   } else {                        /* writes */
     if ((st->max <= 0) && (protect_readonly || (st->max == 0))) {
-      Tcl_SetVar2(interp, name1, name2, st->str, TCL_GLOBAL_ONLY);
+      Tcl_SetVar2(irp, name1, name2, st->str, TCL_GLOBAL_ONLY);
       return "read-only variable";
     }
-    s = (char *) Tcl_GetVar2(interp, name1, name2, 0);
+    s = (char *) Tcl_GetVar2(irp, name1, name2, 0);
     if (s != NULL) {
       if (strlen(s) > abs(st->max))
         s[abs(st->max)] = 0;
@@ -372,6 +376,10 @@ static char *tcl_eggstr(ClientData cdata, Tcl_Interp *irp,
       }
       if (st->str == fallback_encoding)
         reopen_encoding(&enc_fallback_utf8, fallback_encoding, "utf-8");
+      if (st->str == out_encoding) {
+        reopen_encoding(&enc_out_utf8, out_encoding, "utf-8");
+        Tcl_SetSystemEncoding(irp, out_encoding);
+      }
     }
     return NULL;
   }
@@ -483,6 +491,7 @@ static tcl_strings def_tcl_strings[] = {
   {"timestamp-format",log_ts,         32,                      0},
   {"pidfile",         pid_file,       120,           STR_PROTECT},
   {"fallback-encoding", fallback_encoding, 120,                0},
+  {"out-encoding",    out_encoding,   120,                     0},
   {NULL,              NULL,           0,                       0}
 };
 
@@ -720,6 +729,8 @@ void init_tcl(int argc, char **argv)
   Tcl_Init(interp);
   Tcl_SetServiceMode(TCL_SERVICE_ALL);
   tcl_initialized = 1;
+
+  reopen_encoding(&enc_out_utf8, Tcl_GetEncodingName(NULL), "utf-8");
 
   /* Add eggdrop to Tcl's package list */
   for (j = 0; j <= strlen(egg_version); j++) {
