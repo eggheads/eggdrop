@@ -97,6 +97,8 @@ int handlen = HANDLEN;
 int utftot = 0;
 int clientdata_stuff = 0;
 
+extern Tcl_VarTraceProc traced_myiphostname;
+
 int expmem_tcl()
 {
   return strtot + utftot + clientdata_stuff;
@@ -472,6 +474,8 @@ static void init_traces()
   add_tcl_coups(def_tcl_coups);
   add_tcl_strings(def_tcl_strings);
   add_tcl_ints(def_tcl_ints);
+  Tcl_TraceVar(interp, "my-ip", TCL_GLOBAL_ONLY|TCL_TRACE_WRITES|TCL_TRACE_UNSETS, traced_myiphostname, NULL);
+  Tcl_TraceVar(interp, "my-hostname", TCL_GLOBAL_ONLY|TCL_TRACE_WRITES|TCL_TRACE_UNSETS, traced_myiphostname, NULL);
 }
 
 void kill_tcl()
@@ -479,6 +483,8 @@ void kill_tcl()
   rem_tcl_coups(def_tcl_coups);
   rem_tcl_strings(def_tcl_strings);
   rem_tcl_ints(def_tcl_ints);
+  Tcl_UntraceVar(interp, "my-ip", TCL_GLOBAL_ONLY|TCL_TRACE_WRITES|TCL_TRACE_UNSETS, traced_myiphostname, NULL);
+  Tcl_UntraceVar(interp, "my-hostname", TCL_GLOBAL_ONLY|TCL_TRACE_WRITES|TCL_TRACE_UNSETS, traced_myiphostname, NULL);
   kill_bind();
   Tcl_DeleteInterp(interp);
 }

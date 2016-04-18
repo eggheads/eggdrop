@@ -1474,3 +1474,27 @@ int findsock(int sock)
     return -1;
   return i;
 }
+
+/* Trace on my-ip and my-hostname variable to handle transition into vhost4/vhost6/listen-addr.
+ */
+char *traced_myiphostname(ClientData cd, Tcl_Interp *irp, EGG_CONST char *name1, EGG_CONST char *name2, int flags)
+{
+  const char *value;
+
+  if (flags & TCL_INTERP_DESTROYED)
+    return NULL;
+  /* Recover trace in case of unset. */
+  if (flags & TCL_TRACE_DESTROYED) {
+    Tcl_TraceVar2(irp, name1, name2, TCL_GLOBAL_ONLY|TCL_TRACE_WRITES|TCL_TRACE_UNSETS, traced_myiphostname, cd);
+    return NULL;
+  }
+
+  value = Tcl_GetVar2(irp, name1, name2, TCL_GLOBAL_ONLY);
+  strncpyz(vhost, value, sizeof vhost);
+  strncpyz(listen_ip, value, sizeof listen_ip);
+  putlog(LOG_MISC, "*", "WARNING: You are using the DEPRECATED variable '%s' in your config file.\n", name1);
+  putlog(LOG_MISC, "*", "    To prevent future incompatibility, please use the vhost4/listen-addr variables instead.\n");
+  putlog(LOG_MISC, "*", "    More information on this subject can be found in the eggdrop/doc/IPV6 file, or\n");
+  putlog(LOG_MISC, "*", "    in the comments above those settings in the example eggdrop.conf that is included with Eggdrop.\n");
+  return NULL;
+}
