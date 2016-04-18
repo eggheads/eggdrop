@@ -463,7 +463,7 @@ void chanprog()
   protect_readonly = 0;
 
   /* Now read it */
-  if (!readtclprog(configfile))
+  if (!readtclprog(configfile, NULL))
     fatal(MISC_NOCONFIGFILE, 0);
 
   for (i = 0; i < max_logs; i++) {

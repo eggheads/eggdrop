@@ -1164,8 +1164,11 @@ void tputs(register int z, char *s, unsigned int len)
     buf = realloc(buf, len);
   }
 
-  len = buflen - convert_out_encoding(s, len, buf, buflen);
-  s = buf;
+  /* Don't convert telnet IAC codes. They must be sent as separate tputs/dprintf call. */
+  if (s[0] != '\xFF') {
+    len = buflen - convert_out_encoding(s, len, buf, buflen);
+    s = buf;
+  }
 
   if (z < 0) /* um... HELLO?! sanity check please! */
     return;

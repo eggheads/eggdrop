@@ -177,10 +177,10 @@ size_t convert_out_encoding(char *msg, size_t len, char *buf, size_t bufsize)
   int dstsize;
 
   if (tcl_initialized) {
-    Tcl_UtfToExternal(NULL, Tcl_GetEncoding(NULL, NULL), msg, len, 0, NULL, buf, bufsize, NULL, &dstsize, NULL);
+    Tcl_UtfToExternal(NULL, Tcl_GetEncoding(interp, NULL), msg, len, 0, NULL, buf, bufsize, NULL, &dstsize, NULL);
   } else {
-    strncpy(buf, msg, min(len, sizeof bufsize));
-    dstsize = sizeof bufsize - min(len, sizeof bufsize);
+    memcpy(buf, msg, min(len, bufsize));
+    dstsize = min(len, bufsize);
   }
   return bufsize - dstsize;
 }
@@ -211,7 +211,7 @@ size_t convert_in_encoding(char *msg, size_t len, char *buf, size_t bufsize)
     return i;
 
   /* should never happen, so this can be inefficient. */
-  strncpy(buf, msg, min(sizeof buf, len));
+  memcpy(buf, msg, min(sizeof buf, len));
   return bufsize - min(sizeof buf, len);
 }
 
@@ -380,7 +380,8 @@ static char *tcl_eggstr(ClientData cdata, Tcl_Interp *irp,
         reopen_encoding(&enc_fallback_utf8, fallback_encoding, "utf-8");
       if (st->str == out_encoding) {
         reopen_encoding(&enc_out_utf8, out_encoding, "utf-8");
-        Tcl_SetSystemEncoding(irp, out_encoding);
+        Tcl_SetSystemEncoding(irp, out_encoding[0] ? out_encoding : NULL);
+        printf("Set system encoding to: %s\n", out_encoding);
       }
     }
     return NULL;
@@ -732,7 +733,7 @@ void init_tcl(int argc, char **argv)
   Tcl_SetServiceMode(TCL_SERVICE_ALL);
   tcl_initialized = 1;
 
-  reopen_encoding(&enc_out_utf8, Tcl_GetEncodingName(NULL), "utf-8");
+  reopen_encoding(&enc_out_utf8, Tcl_GetEncodingName(Tcl_GetEncoding(interp, NULL)), "utf-8");
 
   /* Add eggdrop to Tcl's package list */
   for (j = 0; j <= strlen(egg_version); j++) {
@@ -783,17 +784,25 @@ void do_tcl(char *whatzit, char *script)
  *
  * returns:   1 - if everything was okay
  */
-int readtclprog(char *fname)
+int readtclprog(char *fname, const char *encoding)
 {
   int code;
+  const char *oldencoding;
   EGG_CONST char *result;
   Tcl_DString dstr;
 
   if (!file_readable(fname))
     return 0;
 
+  /* encoding is "utf-8" when reading the channel file, NULL otherwise. */
+  if (encoding != NULL) {
+    oldencoding = Tcl_GetEncodingName(Tcl_GetEncoding(interp, NULL));
+    Tcl_SetSystemEncoding(interp, encoding);
+  }
   code = Tcl_EvalFile(interp, fname);
   result = Tcl_GetVar(interp, "errorInfo", TCL_GLOBAL_ONLY);
+  if (encoding != NULL)
+    Tcl_SetSystemEncoding(interp, oldencoding);
 
   /* properly convert string to system encoding. */
   Tcl_DStringInit(&dstr);

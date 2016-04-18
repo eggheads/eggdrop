@@ -298,7 +298,7 @@ int init_threaddata(int);
 void protect_tcl();
 void unprotect_tcl();
 void do_tcl(char *, char *);
-int readtclprog(char *fname);
+int readtclprog(char *fname, const char *encoding);
 
 /* tls.c */
 #ifdef TLS

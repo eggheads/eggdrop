@@ -502,7 +502,7 @@ static void read_channels(int create, int reload)
       chan->status |= CHAN_FLAGGED;
 
   chan_hack = 1;
-  if (!readtclprog(chanfile) && create) {
+  if (!readtclprog(chanfile, "utf-8") && create) {
     FILE *f;
 
     /* Assume file isnt there & therfore make it */
