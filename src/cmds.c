@@ -2220,9 +2220,11 @@ static void cmd_su(struct userrec *u, int idx, char *par)
         dcc[idx].user = u;
         strcpy(dcc[idx].nick, par);
         /* Display password prompt and turn off echo (send IAC WILL ECHO). */
-        dprintf(idx, "Enter password for %s%s\n", par,
-                (dcc[idx].status & STAT_TELNET) ? TLN_IAC_C TLN_WILL_C
-                TLN_ECHO_C : "");
+        dprintf(idx, "Enter password for %s", par);
+        /* dprintf escapes telnet codes, so we need tputs. */
+        if (dcc[idx].status & STAT_TELNET)
+          tputs(dcc[idx].sock, TLN_IAC_C TLN_WILL_C TLN_ECHO_C, 3);
+        dprintf(idx, "\n");
         dcc[idx].type = &DCC_CHAT_PASS;
       } else if (atr & USER_OWNER) {
         if (dcc[idx].u.chat->channel < GLOBAL_CHANS)

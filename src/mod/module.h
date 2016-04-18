@@ -295,7 +295,7 @@
 #define copyfile ((int (*) (char *, char *))global[147])
 /* 148 - 151 */
 #define do_tcl ((void (*)(char *, char *))global[148])
-#define readtclprog ((int (*)(const char *))global[149])
+#define readtclprog ((int (*)(char *, const char *))global[149])
 #define get_language ((char *(*)(int))global[150])
 #define def_get ((void *(*)(struct userrec *, struct user_entry *))global[151])
 /* 152 - 155 */
