@@ -4,6 +4,10 @@ Eggdrop Changes (since version 1.8.0)
 
 1.8.0 (CVS):
 
+  - Move logging of failed bot logins to LOG_MISC to improve visibility.
+    It can also affect users logging in, so it does not belong to LOG_BOT only.
+    Patch by: Robby
+
   - Fix SSL verification flags not working.
     Patch by: manuel
 
