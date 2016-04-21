@@ -378,6 +378,7 @@ void tell_verbose_status(int idx)
   dprintf(idx, "IPv6 support is not available.\n");
 #endif
   dprintf(idx, "Socket table: %d/%d\n", threaddata()->MAXSOCKS, max_socks);
+  dprintf(idx, "Encoding information: %s\n", encoding_status());
 }
 
 /* Show all internal state variables
