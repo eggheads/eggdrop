@@ -102,6 +102,9 @@ static char fallback_encoding[121] = ""; /* Fallback encoding if IRC input is no
 static char out_encoding[121] = ""; /* Output encoding. "" is system encoding. */
 
 static iconv_t enc_fallback_utf8 = (iconv_t)(-1), enc_out_utf8 = (iconv_t)(-1);
+static char enc_fallback_name[121], enc_out_name[121];
+static unsigned long encstatsi[5], encstatso[2];
+
 static int tcl_initialized = 0; /* Needed to know when we can perform encoding translation */
 
 /* Prototypes for Tcl */
@@ -150,6 +153,11 @@ static void reopen_encoding(iconv_t *conv, const char *from, const char *to)
 
   if (*conv == (iconv_t)(-1))
     putlog(LOG_MISC, "*", "Warning: Unable to load '%s' -> '%s' encoding. Use `iconv -l` to see valid encoding names.", from, to);
+
+  if (conv == &enc_fallback_utf8)
+    strncpyz(enc_fallback_name, from, sizeof enc_fallback_name);
+  else if (conv == &enc_out_utf8)
+    strncpyz(enc_out_name, from, sizeof enc_out_name);
 }
 
 /* Convert encoding according to convertion from
@@ -171,14 +179,33 @@ static size_t convert_encoding(iconv_t conversion, char *src, size_t len, char *
   return i == -1 ? -1 : dstlen;
 }
 
+static char *encoding_ok_string(iconv_t conv) {
+  if (conv == (iconv_t)(-1))
+    return "FAILED";
+  return "OK";
+}
+
+char *encoding_status(void)
+{
+  static char buf[512];
+
+  sprintf(buf, "Encoding in: -%lu-> utf-8 -%lu-> %s (%s) -%lu-> %s (%s) -%lu-> iso8859-1 -%lu-> error. Encoding out: -%lu-> %s -%lu-> error.",
+          encstatsi[0], encstatsi[1], enc_out_name[0] ? enc_out_name : "system", encoding_ok_string(enc_out_utf8),
+          encstatsi[2], enc_fallback_name[0] ? enc_fallback_name : "system", encoding_ok_string(enc_fallback_utf8),
+          encstatsi[3], encstatsi[4], encstatso[0], Tcl_GetEncodingName(Tcl_GetEncoding(interp, NULL)), encstatso[1]);
+  return buf;
+}
+
 /* We use Tcl because it silently ignores nonrepresentable characters. */
 size_t convert_out_encoding(char *msg, size_t len, char *buf, size_t bufsize)
 {
-  int dstsize;
+  int dstsize, ret = TCL_OK;
 
-  if (tcl_initialized) {
-    Tcl_UtfToExternal(NULL, Tcl_GetEncoding(interp, NULL), msg, len, 0, NULL, buf, bufsize, NULL, &dstsize, NULL);
-  } else {
+  encstatso[0]++;
+  if (tcl_initialized)
+    ret = Tcl_UtfToExternal(NULL, Tcl_GetEncoding(interp, NULL), msg, len, 0, NULL, buf, bufsize, NULL, &dstsize, NULL);
+  if (!tcl_initialized || ret != TCL_OK) {
+    encstatso[1]++;
     memcpy(buf, msg, min(len, bufsize));
     dstsize = min(len, bufsize);
   }
@@ -197,18 +224,23 @@ size_t convert_in_encoding(char *msg, size_t len, char *buf, size_t bufsize)
 
     reopen_encoding(&enc_utf8_utf8, "utf-8", "utf-8");
     reopen_encoding(&enc_out_utf8, out_encoding, "utf-8");
-    reopen_encoding(&enc_iso8859_utf8, "iso8859-1", "utf-8");
     reopen_encoding(&enc_fallback_utf8, fallback_encoding, "utf-8");
+    reopen_encoding(&enc_iso8859_utf8, "iso8859-1", "utf-8");
   }
 
+  encstatsi[0]++;
   if ((i = convert_encoding(enc_utf8_utf8, msg, len, buf, bufsize)) != -1)
     return i;
+  encstatsi[1]++;
   if ((i = convert_encoding(enc_out_utf8, msg, len, buf, bufsize)) != -1)
     return i;
+  encstatsi[2]++;
   if ((i = convert_encoding(enc_fallback_utf8, msg, len, buf, bufsize)) != -1)
     return i;
+  encstatsi[3]++;
   if ((i = convert_encoding(enc_iso8859_utf8, msg, len, buf, bufsize)) != -1)
     return i;
+  encstatsi[4]++;
 
   /* should never happen, so this can be inefficient. */
   memcpy(buf, msg, min(sizeof buf, len));
@@ -379,7 +411,7 @@ static char *tcl_eggstr(ClientData cdata, Tcl_Interp *irp,
       if (st->str == out_encoding) {
         reopen_encoding(&enc_out_utf8, out_encoding, "utf-8");
         Tcl_SetSystemEncoding(irp, out_encoding[0] ? out_encoding : NULL);
-        printf("Set system encoding to: %s\n", out_encoding);
+        putlog(LOG_MISC, "*", "Set system encoding to: %s\n", out_encoding);
       }
     }
     return NULL;
