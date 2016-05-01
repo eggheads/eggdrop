@@ -517,7 +517,7 @@ void putlog EGG_VARARGS_DEF(int, arg1)
 {
   static int inhere = 0;
   int i, type, tsl = 0;
-  char *format, *chname, s[LOGLINELEN], s1[256], *out, ct[81], *s2, stamp[34], outencoded[LOGLINELEN*4];
+  char *format, *chname, s[LOGLINELEN], s1[256], *out, ct[81], *s2, stamp[34], encodingbuf[LOGLINELEN*4], *outencoded;
   va_list va;
   time_t now2 = time(NULL);
   struct tm *t = localtime(&now2);
@@ -571,8 +571,14 @@ void putlog EGG_VARARGS_DEF(int, arg1)
   }
   strcat(out, "\n");
 
-  /* Convert to system encoding for logfiles, everything else is translated in dprintf -> tputs. */
-  convert_out_encoding(out, strlen(out), outencoded, sizeof outencoded);
+  if (type == LOG_SRVOUT) {
+    /* Outgoing traffic is already translated to system encoding. */
+    outencoded = out;
+  } else {
+    /* Convert to system encoding for logfiles, everything else is translated in dprintf -> tputs. */
+    convert_out_encoding(out, strlen(out), encodingbuf, sizeof encodingbuf);
+    outencoded = encodingbuf;
+  }
   if (!use_stderr) {
     for (i = 0; i < max_logs; i++) {
       if ((logs[i].filename != NULL) && (logs[i].mask & type) &&
