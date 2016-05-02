@@ -253,7 +253,7 @@ bind dcc m showfields showfields
 proc showfields {hand idx arg} {
  global userinfo-fields
  if { ${userinfo-fields} == "" } {
-  putdcc $idx "Their is no user info fields set."
+  putdcc $idx "There are no user info fields set."
   return 0
  }  
  putdcc $idx "Currently: [string toupper ${userinfo-fields}]"
