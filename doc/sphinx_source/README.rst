@@ -101,7 +101,7 @@ Git Usage
     Otherwise, you can download the development snapshot as a tar archive 
     from:
 
-      https://github.com/eggheads/eggdrop/archive/develop.zip
+      https://github.com/eggheads/eggdrop/archive/develop.tar.gz
 
 -------------
 Quick Startup
