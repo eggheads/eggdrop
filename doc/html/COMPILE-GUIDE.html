@@ -1,0 +1,707 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Eggdrop Compile Guide and FAQ &mdash; Eggdrop 1.8.0 documentation</title>
+    
+    <link rel="stylesheet" href="_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '1.8.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="Eggdrop 1.8.0 documentation" href="index.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li><a href="index.html">Eggdrop 1.8.0 documentation</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <p>Eggdrop Compile Guide and FAQ
+Last revised: October 25, 2010</p>
+<div class="section" id="eggdrop-compile-guide-and-faq">
+<h1>Eggdrop Compile Guide and FAQ<a class="headerlink" href="#eggdrop-compile-guide-and-faq" title="Permalink to this headline">¶</a></h1>
+<blockquote>
+<div><p>This guide may help you successfully compile Eggdrop. Suggestions are by
+various contributors. If you think something should be added, please send
+an e-mail to <a class="reference external" href="mailto:bugs&#37;&#52;&#48;eggheads&#46;org">bugs<span>&#64;</span>eggheads<span>&#46;</span>org</a>. Note that in this document, text between
+a &#8216;&lt;&#8217; and a &#8216;&gt;&#8217; should be replaced (without the &#8216;&lt;&#8217; and &#8216;&gt;&#8217;).</p>
+<p>NOTE: This is not a &#8216;quick install&#8217; guide. See the INSTALL file for basic
+setup information. This is intended to help you compile the bot on uncommon
+operating systems, or work past problems encountered during compile.</p>
+<dl class="docutils">
+<dt>Contents:</dt>
+<dd><dl class="first last docutils">
+<dt>Compile Guide:</dt>
+<dd><ol class="first last upperalpha simple">
+<li>Standard compile process (Linux, FreeBSD, NetBSD, OpenBSD, etc)</li>
+<li>HP-UX B.11.*</li>
+<li>Ultrix</li>
+<li>Mac OS X</li>
+<li>AIX</li>
+<li>IRIX</li>
+<li>Solaris / SunOS</li>
+<li>Cygwin / Windows</li>
+<li>Tcl Detection and Installation</li>
+</ol>
+</dd>
+<dt>Frequently Asked Questions:</dt>
+<dd><blockquote class="first">
+<div><ol class="arabic simple">
+<li>I get a lot of warnings.</li>
+<li>I get a &#8216;strip terminated with signal 6&#8217; error during compile/install,
+or another error related to &#8216;strip&#8217;.</li>
+<li>&#8216;DIR&#8217; undeclared (and a whole bunch of others) (AIX 4)</li>
+<li>&#8216;fd_set&#8217; undeclared (and a whole bunch of others) (AIX 4)</li>
+<li>Unresolved or undefined symbols: ldclose, ldopen, ldnshread (AIX 3)</li>
+<li>Unsatisfied symbols &#8216;shl_findsym&#8217; and &#8216;shl_load&#8217; (HP-UX 9)</li>
+<li>Compile stops at the last minute with &#8220;ld fatal signal 11&#8221;! (Linux)</li>
+<li>Undefined references in net.o (Sun OS)</li>
+<li>I experience problems starting the configure script (AIX/various)</li>
+</ol>
+</div></blockquote>
+<ol class="last arabic simple" start="10">
+<li>I get a &#8216;make: Permission denied&#8217; error when I type &#8216;make config&#8217;
+or &#8216;make&#8217; (FreeBSD / <a href="#id1"><span class="problematic" id="id2">*</span></a>BSD)</li>
+</ol>
+</dd>
+</dl>
+</dd>
+<dt>Compile Guide</dt>
+<dd><p class="first">This will tell you how to compile Eggdrop on various operating systems.
+If you have gotten Eggdrop to compile on an operating system not listed
+here, please let the development team know how, at <a class="reference external" href="mailto:eggdev&#37;&#52;&#48;eggheads&#46;org">eggdev<span>&#64;</span>eggheads<span>&#46;</span>org</a>.
+Please tell us what, if any, special steps were required to compile the
+bot. Also, any compiler warnings/etc, and the &#8216;config.log&#8217; and &#8216;config.h&#8217;
+files would be helpful. The development team does not have access to the
+resources needed to test portability on uncommon operating systems, so
+your help is greatly appreciated.</p>
+<ol class="upperalpha simple">
+<li>Standard compile process (32-bit Linux, FreeBSD, NetBSD, OpenBSD, etc.)</li>
+<li>HP-UX B.11.*</li>
+<li>Ultrix</li>
+<li>Mac OS X</li>
+<li>AIX</li>
+<li>IRIX</li>
+<li>Solaris / SunOS</li>
+<li>Cygwin / Windows</li>
+<li>Tcl Detection and Installation</li>
+</ol>
+<ol class="upperalpha simple">
+<li>Standard compile process (32-bit Linux, FreeBSD, NetBSD, OpenBSD, etc.)</li>
+</ol>
+<blockquote>
+<div><ol class="arabic">
+<li><p class="first">Type &#8216;./configure&#8217; from the Eggdrop directory. Some of the options
+that can be given to ./configure are explained below.</p>
+<blockquote>
+<div><table class="docutils option-list" frame="void" rules="none">
+<col class="option" />
+<col class="description" />
+<tbody valign="top">
+<tr><td class="option-group">
+<kbd><span class="option">--enable-strip</span></kbd></td>
+<td><p class="first last">If you want to create a smaller binary, you can use this option.
+HOWEVER, this will remove debugging symbols and make bug reports
+almost completely useless, and is not recommended. If disk space
+is very limited, however, it might help to enable this.</p>
+</td></tr>
+</tbody>
+</table>
+<p>&#8211;with-tcllib
+&#8211;with-tclinc</p>
+<blockquote>
+<div><p>See &#8216;I. Tcl Detection and Installation&#8217; below (at the end of this
+compile guide).</p>
+</div></blockquote>
+<p class="attribution">&mdash;with-handlen=
+Configure the handle length of the bot. Allowed values are
+numbers from 9 to 32 inclusive.</p>
+</div></blockquote>
+<blockquote>
+<div><p>&#8211;disable-tls
+&#8211;with-sslinc=
+&#8211;with-ssllib=</p>
+<blockquote>
+<div><p>You can disable TLS or specify the paths to the header and
+library files. Look at doc/TLS for more information.</p>
+</div></blockquote>
+</div></blockquote>
+</li>
+<li><p class="first">Type either &#8216;make config&#8217;, or &#8216;make iconfig&#8217; to determine which
+modules will be compiled.</p>
+</li>
+<li><p class="first">Type &#8216;make&#8217; from the Eggdrop directory, or to force a statically
+linked module bot, type &#8216;make static&#8217;. Otherwise, the Makefile will
+use whatever type of compile the configure script determined your
+system will support. Dynamic is always the better way to go if
+possible. You can force a dynamic build with &#8216;make eggdrop&#8217;. There
+are also the &#8216;debug&#8217; and &#8216;sdebug&#8217; (static-debug) options, which will
+give more detailed output on a crash. This will help the development
+team track down the crash and fix the bug. Debug and sdebug will take
+a little longer to compile and will enlarge the binary a bit, but
+it&#8217;s worth it if you want to support Eggdrop development.</p>
+</li>
+<li><p class="first">Eggdrop must be installed in a directory somewhere. This is
+accomplished by typing &#8216;make install&#8217;.</p>
+<p>This will install the Eggdrop in your home directory in a directory
+called &#8216;eggdrop&#8217; (i.e. /home/user/eggdrop).</p>
+<p>If you want to install to a different directory, use:</p>
+<blockquote>
+<div><p>make install DEST=&lt;directory&gt;</p>
+</div></blockquote>
+<p>For example:</p>
+<blockquote>
+<div><p>make install DEST=/home/user/otherdir</p>
+</div></blockquote>
+</li>
+</ol>
+</div></blockquote>
+<ol class="upperalpha simple" start="2">
+<li>HP-UX B.11.*</li>
+</ol>
+<blockquote>
+<div><p>Follow the standard compile process in Section A. To compile dynamically
+(with module support), use &#8216;make eggdrop&#8217; instead of &#8216;make&#8217;.</p>
+<p>During a linking in a dynamic build, you may experience an error such as:</p>
+<blockquote>
+<div>gcc -pipe -fPIC -shared -o ../eggdrop bg.o botcmd.o botmsg.o botnet.o
+chanprog.o cmds.o dcc.o dccutil.o dns.o flags.o language.o match.o
+main.o mem.o misc.o misc_file.o modules.o net.o rfc1459.o tcl.o
+tcldcc.o tclhash.o tclmisc.o tcluser.o userent.o userrec.o users.o
+-L/usr/local/lib -ltcl8.4 -lm -ldld -lnsl md5/md5c.o compat/<em>.o `cat
+mod/mod.xlibs`
+/usr/ccs/bin/ld: DP relative code in file bg.o - shared library must be
+position independent. Use +z or +Z to recompile.
+collect2: ld returned 1 exit status
+**</em> Error exit code 1</div></blockquote>
+<p>If you know the cause of this error, please contact the Eggheads
+Development Team at <a class="reference external" href="mailto:eggdev&#37;&#52;&#48;eggheads&#46;org">eggdev<span>&#64;</span>eggheads<span>&#46;</span>org</a>.</p>
+<p>Note that on HP-UX, the SHLIB_PATH environment variable should be used
+instead of LD_LIBRARY_PATH.</p>
+</div></blockquote>
+<ol class="upperalpha simple" start="3">
+<li>Ultrix</li>
+</ol>
+<blockquote>
+<div><p>There are some known problems with &#8216;make&#8217; and Eggdrop on Ultrix systems.
+We recommend using &#8216;gmake&#8217; (GNU make) for this reason, as in the steps
+below.</p>
+<p>If your system does not have &#8216;gmake&#8217;, you can download it from:</p>
+<blockquote>
+<div><a class="reference external" href="http://ftp.gnu.org/pub/gnu/make/">http://ftp.gnu.org/pub/gnu/make/</a></div></blockquote>
+<p>It can be installed in your home directory, as with Tcl, but that is
+beyond the scope of this document. Read the INSTALL file that comes with
+gmake.</p>
+<p>Following these steps should work:</p>
+<blockquote>
+<div><ol class="arabic">
+<li><p class="first">Depending on what shell your using:</p>
+<blockquote>
+<div><dl class="docutils">
+<dt>bash/ksh:</dt>
+<dd><p class="first last">export LD_LIBRARY_PATH=&lt;path to DIRECTORY containing Tcl library&gt;:${LD_LIBRARY_PATH}</p>
+</dd>
+<dt>csh/tcsh/tclsh:</dt>
+<dd><p class="first last">setenv LD_LIBRARY_PATH &lt;path to DIRECTORY containing Tcl library&gt;:${LD_LIBRARY_PATH}</p>
+</dd>
+</dl>
+</div></blockquote>
+</li>
+</ol>
+<blockquote>
+<div><ol class="arabic simple" start="2">
+<li>Run the following command from your Eggdrop compilation directory
+(this is all one command):</li>
+</ol>
+<blockquote>
+<div>sh5 ./configure &#8211;with-tclinc=&#8217;&lt;full path to tcl.h&gt;&#8217;
+&#8211;with-tcllib=&#8217;&lt;full path to Tcl library&gt;&#8217;</div></blockquote>
+<ol class="arabic" start="3">
+<li><p class="first">Type &#8216;gmake config&#8217; or &#8216;gmake iconfig&#8217; to configure modules.</p>
+</li>
+<li><p class="first">Type &#8216;gmake&#8217;. If you experience problems during linking, or while
+building modules, try using &#8216;gmake static&#8217;, for a static build,
+instead.</p>
+</li>
+<li><p class="first">To install Eggdrop, type &#8216;gmake install&#8217;.</p>
+<p>This will install the Eggdrop in your home directory in a
+directory called &#8216;eggdrop&#8217; (i.e. /home/user/eggdrop).</p>
+<p>If you want to install to a different directory, use:</p>
+<blockquote>
+<div><p>gmake install DEST=&lt;directory&gt;</p>
+</div></blockquote>
+<p>For example:</p>
+<blockquote>
+<div><p>gmake install DEST=/home/user/otherdir</p>
+</div></blockquote>
+</li>
+</ol>
+</div></blockquote>
+</div></blockquote>
+</div></blockquote>
+<ol class="upperalpha simple" start="4">
+<li>Mac OS X</li>
+</ol>
+<blockquote>
+<div><p>Follow the standard compile process in Section A. To compile dynamically
+(with module support), use &#8216;make eggdrop&#8217; instead of &#8216;make&#8217;.</p>
+<p>To get third-party modules to compile, you may need to edit the module&#8217;s
+Makefile and add &#8220;$(XLIBS) $(MODULE_XLIBS)&#8221; to the end of the
+../../../MODULE.$(MOD_EXT) target&#8217;s $(LD) line.</p>
+<p>For example:</p>
+<blockquote>
+<div>../../../mymodule.$(MOD_EXT): ../mymodule.o
+$(LD) -o ../../../mymodule.$(MOD_EXT) ../mymodule.o
+$(STRIP) ../../../mymodule.$(MOD_EXT)</div></blockquote>
+<p>Would become:</p>
+<blockquote>
+<div>../../../mymodule.$(MOD_EXT): ../mymodule.o
+$(LD) -o ../../../mymodule.$(MOD_EXT) ../mymodule.o $(XLIBS) $(MODULE_XLIBS)
+$(STRIP) ../../../mymodule.$(MOD_EXT)</div></blockquote>
+<p>If you notice a module that requires these changes, it would probably be
+a good idea to let the module&#8217;s developer know, so it can be fixed.</p>
+<p>Note that on Mac OS X, the DYLD_LIBRARY_PATH environment variable should
+be used instead of LD_LIBRARY_PATH.</p>
+</div></blockquote>
+<ol class="upperalpha simple" start="5">
+<li>AIX</li>
+</ol>
+<blockquote>
+<div><p>Follow the standard compile process in Section A. To compile dynamically
+(with module support), use &#8216;make eggdrop&#8217; instead of &#8216;make&#8217;.</p>
+<p>Note that on AIX, the LIBPATH environment variable should be used instead
+of LD_LIBRARY_PATH.</p>
+</div></blockquote>
+<ol class="upperalpha simple" start="6">
+<li>IRIX</li>
+</ol>
+<blockquote>
+<div><p>Follow the standard compile process in Section A. To compile dynamically
+(with module support), use &#8216;make eggdrop&#8217; instead of &#8216;make&#8217;.</p>
+<p>Note that on IRIX, the LD_LIBRARYN32_PATH and LD_LIBRARY64_PATH environment
+variables should be used instead of LD_LIBRARY_PATH.</p>
+</div></blockquote>
+<ol class="upperalpha simple" start="7">
+<li>Solaris / SunOS</li>
+</ol>
+<blockquote>
+<div><p>Follow the standard compile process in Section A. To compile dynamically
+(with module support), use &#8216;make eggdrop&#8217; instead of &#8216;make&#8217;.</p>
+<p>Note that on Solaris / SunOS, the LD_LIBRARY_PATH_32 and LD_LIBRARY_PATH_64
+environment variables may need to be set instead of (or in addition to, to
+be safe) LD_LIBRARY_PATH.</p>
+</div></blockquote>
+<ol class="upperalpha simple" start="8">
+<li>Cygwin / Windows</li>
+</ol>
+<blockquote>
+<div><p>To compile and install Eggdrop on windows, perform the steps listed
+below.</p>
+<blockquote>
+<div><ol class="arabic">
+<li><p class="first">Download and install Cygwin (www.cygwin.com). Make sure to install
+things like GCC, zlib, minires, autoconf, and automake. DO NOT
+install the Tcl provided by Cygwin&#8217;s installer. After installing,
+open the Cygwin bash prompt.</p>
+</li>
+<li><p class="first">Download and install TCL 8.5.9. You can get Tcl for Cygwin at
+<a class="reference external" href="http://prdownloads.sourceforge.net/windrop/tcl-8.5.9.tar.gz">http://prdownloads.sourceforge.net/windrop/tcl-8.5.9.tar.gz</a>.
+<a class="reference external" href="http://prdownloads.sourceforge.net/windrop/tcl-8.4.1.tar.gz">http://prdownloads.sourceforge.net/windrop/tcl-8.4.1.tar.gz</a>.
+Extract this to the Cygwin root directory:</p>
+<blockquote>
+<div><p>cd /
+tar -zxf tcl-8.5.9.tar.gz</p>
+</div></blockquote>
+</li>
+<li><p class="first">Download Eggdrop from geteggdrop.com to your home directory.
+This is usually something like &#8216;C:cygwinhome&lt;username&gt;&#8217;. After
+downloading, extract the Eggdrop tarball:</p>
+<blockquote>
+<div><p>tar -zxf eggdrop1.8.0.tar.gz</p>
+</div></blockquote>
+</li>
+<li><p class="first">Run &#8216;./configure &#8211;enable-strip&#8217;. Debugging information under
+Windows is basically useless to the development team, and this will
+reduce the size of your Eggdrop binary.</p>
+</li>
+<li><p class="first">Type either &#8216;make config&#8217;, or &#8216;make iconfig&#8217; to determine which
+modules will be compiled.</p>
+</li>
+<li><p class="first">Compile the bot using &#8216;make eggdrop&#8217;.</p>
+</li>
+<li><p class="first">Install the bot by typing &#8216;make install DEST=&lt;install path&gt;&#8217;.
+For example:</p>
+<blockquote>
+<div><p>make install DEST=&#8217;C:/eggdrop/&#8217;</p>
+</div></blockquote>
+<p>Make sure to enclose the destination directory/folder in single
+quotes (&#8216;&#8217;), especially if it contains spaces.</p>
+</li>
+<li><p class="first">Perform the following commands:</p>
+<blockquote>
+<div><p>cd &#8216;C:/&lt;install path&gt;/&#8217; (example: cd &#8216;C:/eggdrop&#8217;)
+rm modules
+rm eggdrop.exe
+mv eggdrop.exe-1.8.0 eggdrop.exe
+mv modules-1.8.0 modules</p>
+</div></blockquote>
+</li>
+<li><p class="first">Create a &#8216;lib&#8217; directory and copy needed libraries using the
+following commands. This assumes that you installed your Eggdrop in
+&#8216;C:eggdrop&#8217;. If you chose a different installation path, replace
+&#8216;C:/eggdrop&#8217; in the following steps with your installation
+directory, replacing all &#8216;&#8217;s with &#8216;/&#8217;s.</p>
+<blockquote>
+<div><p>cp /bin/cygwin1.dll &#8216;C:/eggdrop&#8217;
+cp /usr/local/bin/libtcl8.5.dll &#8216;C:/eggdrop&#8217;
+cp /usr/local/bin/tclpip84.dll &#8216;C:/eggdrop&#8217;
+cp /bin/cyggcc_s-1.dll &#8216;C:/eggdrop&#8217;</p>
+<p>cp /bin/cygcrypto-0.9.8.dll &#8216;C:/eggdrop&#8217; (if compiled with ssl)
+cp /bin/cygssl-0.9.8.dll &#8216;C:/eggdrop&#8217; (if compiled with ssl)</p>
+<p>mkdir C:/eggdrop/lib
+cp -r /usr/local/lib/tcl &#8216;C:/eggdrop/lib&#8217;
+cp -r /usr/local/lib/tcl8.5 &#8216;C:/eggdrop/lib&#8217;</p>
+<p>cp /bin/cygz.dll &#8216;C:/eggdrop&#8217; (if you selected compress.mod)</p>
+</div></blockquote>
+</li>
+</ol>
+</div></blockquote>
+</div></blockquote>
+<ol class="last upperroman">
+<li><dl class="first docutils">
+<dt>Tcl Detection and Installation</dt>
+<dd><p class="first">If ./configure does not correctly detect the location of your Tcl
+library and header file, or if you experience errors related to Tcl
+during linking, perform these steps:</p>
+<blockquote>
+<div><ol class="arabic simple">
+<li>Depending on what shell your using:</li>
+</ol>
+<blockquote>
+<div><dl class="docutils">
+<dt>bash/ksh:</dt>
+<dd><p class="first last">export LD_LIBRARY_PATH=&lt;path to DIRECTORY containing Tcl library&gt;:${LD_LIBRARY_PATH}</p>
+</dd>
+<dt>csh/tcsh/tclsh:</dt>
+<dd><p class="first last">setenv LD_LIBRARY_PATH &lt;path to DIRECTORY containing Tcl library&gt;:${LD_LIBRARY_PATH}</p>
+</dd>
+</dl>
+<p>Note that some OS&#8217;s use a different environment variable to tell
+ld where to look for a library. See the notes for your specific OS
+above (if applicable).</p>
+</div></blockquote>
+<ol class="arabic simple" start="2">
+<li>Run the following command from your Eggdrop compilation directory
+(this is all one command):</li>
+</ol>
+<blockquote>
+<div><p>./configure &#8211;with-tclinc=&#8217;&lt;full path to tcl.h&gt;&#8217;
+&#8211;with-tcllib=&#8217;&lt;full path to Tcl library&gt;&#8217;</p>
+</div></blockquote>
+<ol class="arabic simple" start="3">
+<li>Continue compiling the bot as outlined in Section A., starting
+with &#8216;make config&#8217;.</li>
+</ol>
+</div></blockquote>
+<p class="last">If you do not have Tcl installed on your system, you can compile it in
+your /home directory. Download Tcl from Tcl&#8217;s SourceForge project page
+at <a class="reference external" href="http://www.sourceforge.net/projects/tcl/">http://www.sourceforge.net/projects/tcl/</a>, or from ActiveState at
+<a class="reference external" href="ftp://tcl.activestate.com/pub/tcl/tcl8_4/">ftp://tcl.activestate.com/pub/tcl/tcl8_4/</a>. Read Tcl&#8217;s README file for
+help with compiling and installing it. After you compile Tcl, follow
+the steps above to allow Eggdrop to detect Tcl.</p>
+</dd>
+</dl>
+</li>
+</ol>
+</dd>
+<dt>Frequently Asked Questions</dt>
+<dd><blockquote class="first">
+<div><ol class="arabic simple">
+<li>I get a lot of warnings.</li>
+</ol>
+<blockquote>
+<div>Warnings do not necessarily mean anything bad. As long as the compile
+completes, there is really nothing to worry about. Generally, we try to
+avoid warnings. We try to fix the warnings we are aware of. If you
+experience warnings, you can let us know by e-mailing <a class="reference external" href="mailto:bugs&#37;&#52;&#48;eggheads&#46;org">bugs<span>&#64;</span>eggheads<span>&#46;</span>org</a>.
+If you feel like fixing them yourself, please do so and send us a patch
+(as described in doc/PATCH_HOWTO). Thanks.</div></blockquote>
+<ol class="arabic simple" start="2">
+<li>I get a &#8216;strip terminated with signal 6&#8217; error during compile/install,
+or another error related to &#8216;strip&#8217;.</li>
+</ol>
+<blockquote>
+<div><p>collect2: strip terminated with signal 6 [IOT/Abort trap]
+<strong>* Exit 1
+Stop.
+*</strong> Exit 1
+Stop.</p>
+<p>Don&#8217;t use the &#8211;enable-strip ./configure option.</p>
+</div></blockquote>
+<ol class="arabic simple" start="3">
+<li>&#8216;DIR&#8217; undeclared (and a whole bunch of others) (AIX 4)</li>
+</ol>
+<blockquote>
+<div><p>gcc -c -O2 -fno-strength-reduce -I.. -DHAVE_CONFIG_H  filedb.c
+filedb.c: In function <a href="#id3"><span class="problematic" id="id4">`</span></a>filedb_update&#8217;:
+filedb.c:209: <a href="#id5"><span class="problematic" id="id6">`</span></a>DIR&#8217; undeclared (first use this function)
+filedb.c:209: (Each undeclared identifier is reported only once
+filedb.c:209: for each function it appears in.)
+filedb.c:209: <a href="#id7"><span class="problematic" id="id8">`</span></a>dir&#8217; undeclared (first use this function)
+filedb.c:209: parse error before <a href="#id9"><span class="problematic" id="id10">`</span></a><a href="#id11"><span class="problematic" id="id12">*</span></a>&#8216;
+filedb.c:217: warning: assignment makes pointer from integer without a cast
+filedb.c:218: <a href="#id13"><span class="problematic" id="id14">`</span></a>name&#8217; undeclared (first use this function)
+filedb.c:218: dereferencing pointer to incomplete type
+filedb.c:220: dereferencing pointer to incomplete type
+filedb.c:220: dereferencing pointer to incomplete type
+filedb.c:224: dereferencing pointer to incomplete type
+filedb.c:224: dereferencing pointer to incomplete type
+filedb.c:225: dereferencing pointer to incomplete type
+filedb.c:230: <a href="#id15"><span class="problematic" id="id16">`</span></a>s&#8217; undeclared (first use this function)
+filedb.c:231: <a href="#id17"><span class="problematic" id="id18">`</span></a>st&#8217; undeclared (first use this function)
+filedb.c:232: <a href="#id19"><span class="problematic" id="id20">`</span></a>fdb&#8217; undeclared (first use this function)
+filedb.c:232: <a href="#id21"><span class="problematic" id="id22">`</span></a>where&#8217; undeclared (first use this function)
+filedb.c:237: <a href="#id23"><span class="problematic" id="id24">`</span></a>fdb1&#8217; undeclared (first use this function)
+filedb.c:253: warning: assignment makes pointer from integer without a cast
+make: The error code from the last command is 1.</p>
+<p>The configure script didn&#8217;t detect that this particular system had dirent.h
+and sys/dir.h. The solution is to add -DHAVE_DIRENT_H -DHAVE_SYS_DIR_H to
+the Makefile&#8217;s CFLGS line:</p>
+<blockquote>
+<div>CFLGS = -DHAVE_DIRENT_H -DHAVE_SYS_DIR_H</div></blockquote>
+</div></blockquote>
+<ol class="arabic simple" start="4">
+<li>&#8216;fd_set&#8217; undeclared (and a whole bunch of others) (AIX 4)</li>
+</ol>
+<blockquote>
+<div><p>gcc -c -O2 -fno-strength-reduce -I.. -DHAVE_CONFIG_H -DHAVE_DIRENT_H -DHAVE_SYS_DIR_H net.c
+net.c: In function <a href="#id25"><span class="problematic" id="id26">`</span></a>sockread&#8217;:
+net.c:390: <a href="#id27"><span class="problematic" id="id28">`</span></a>fd_set&#8217; undeclared (first use this function)
+net.c:390: (Each undeclared identifier is reported only once
+net.c:390: for each function it appears in.)
+net.c:390: parse error before <a href="#id29"><span class="problematic" id="id30">`</span></a>fd&#8217;
+net.c:396: <a href="#id31"><span class="problematic" id="id32">`</span></a>fd&#8217; undeclared (first use this function)
+make: The error code from the last command is 1.</p>
+<p>Again, this seems that one of configure&#8217;s components (sed, awk,
+or something along those lines) is broken, and configure failed to
+detect that this system needed sys/select.h. The solution is to add
+-DHAVE_SYS_SELECT_H to the Makefile&#8217;s CFLGS line:</p>
+<blockquote>
+<div>CFLGS = -DHAVE_DIRENT_H -DHAVE_SYS_DIR_H -DHAVE_SYS_SELECT_H</div></blockquote>
+</div></blockquote>
+<ol class="arabic simple" start="5">
+<li>Unresolved or undefined symbols: ldclose, ldopen, ldnshread (AIX 3)</li>
+</ol>
+<blockquote>
+<div><p>cc -s -o eggdrop chan.o chanprog.o chanset.o cmds.o dcc.o dccutil.o
+filedb.o fileq.o files.o gotdcc.o hash.o main.o match.o mem.o misc.o
+mode.o msgcmds.o msgnotice.o net.o tandcmd.o tandem.o tcl.o tclhash.o
+userrec.o users.o -L/home2/f/foster/lib -ltcl7.5 -lm</p>
+<blockquote>
+<div><dl class="docutils">
+<dt>0706-317 ERROR: Unresolved or undefined symbols detected:</dt>
+<dd>Symbols in error (followed by references) are dumped to the load map.
+The -bloadmap:&lt;filename&gt; option will create a load map.</dd>
+</dl>
+<p>.ldclose
+.ldopen
+.ldnshread
+make: 1254-004 The error code from the last command is 8.</p>
+</div></blockquote>
+<p>Apparently, what is happening is a library called ld is required. Either
+configure doesn&#8217;t know it is needed, it simply can&#8217;t find it, or maybe
+this is a unique case. The solution is to have ld linked in with the final
+binary.</p>
+<p>Edit your Makefile and find the line that looks something like this:</p>
+<blockquote>
+<div><dl class="docutils">
+<dt>GMAKE = ${MAKE} &#8216;CC=cc&#8217; &#8216;AWK=awk&#8217; &#8216;OBJS=${OBJS}&#8217; &#8216;TCLLIBFN=tcl7.5.a&#8217;</dt>
+<dd>&#8216;CFLAGS=${CFLAGS}&#8217; &#8216;XREQ=${XREQ}&#8217; &#8216;XLIBS= -L/home2/f/foster/lib -ltcl7.5 -lm&#8217;&#8216;TCLLIB=${TCLLIB}&#8217; &#8216;RANLIB=ranlib&#8217; &#8216;STRIP=-s&#8217;</dd>
+</dl>
+</div></blockquote>
+<p>Add in -lld into the XLIBS assignment, like this:</p>
+<blockquote>
+<div><dl class="docutils">
+<dt>GMAKE = ${MAKE} &#8216;CC=cc&#8217; &#8216;AWK=awk&#8217; &#8216;OBJS=${OBJS}&#8217; &#8216;TCLLIBFN=tcl7.5.a&#8217;</dt>
+<dd>&#8216;CFLAGS=${CFLAGS}&#8217; &#8216;XREQ=${XREQ}&#8217; &#8216;XLIBS=-lld -L/home2/f/foster/lib -ltcl7.5 -lm&#8217;&#8216;TCLLIB=${TCLLIB}&#8217; &#8216;RANLIB=ranlib&#8217; &#8216;STRIP=-s&#8217;</dd>
+</dl>
+</div></blockquote>
+</div></blockquote>
+<ol class="arabic simple" start="6">
+<li>Unsatisfied symbols &#8216;shl_findsym&#8217; and &#8216;shl_load&#8217; (HP-UX 9)</li>
+</ol>
+<blockquote>
+<div><p>gcc -s -o eggdrop chan.o chanprog.o chanset.o cmds.o dcc.o
+dccutil.o filedb.o fileq.o files.o gotdcc.o hash.o main.o match.o
+mem.o misc.o mode.o msgcmds.o msgnotice.o net.o tandcmd.o tandem.o
+tcl.o tclhash.o userrec.o users.o -L/home/hltran/tcl/lib -ltcl7.5 -lm</p>
+<blockquote>
+<div><dl class="docutils">
+<dt>/bin/ld: Unsatisfied symbols:</dt>
+<dd>shl_findsym (code)
+shl_load (code)</dd>
+</dl>
+<p>collect2: ld returned 1 exit status
+<a href="#id33"><span class="problematic" id="id34">**</span></a>* Error code 1
+Stop.</p>
+</div></blockquote>
+<p>Upgrade to a later version of Tcl. The following should also work.</p>
+<p>Edit your Makefile and find the line that looks something like this:</p>
+<blockquote>
+<div><dl class="docutils">
+<dt>GMAKE = ${MAKE} &#8216;CC=gcc&#8217; &#8216;AWK=awk&#8217; &#8216;OBJS=${OBJS}&#8217; &#8216;TCLLIBFN=tcl7.5.a&#8217;</dt>
+<dd>&#8216;CFLAGS=${CFLAGS}&#8217; &#8216;XREQ=${XREQ}&#8217; &#8216;XLIBS= -L/usr/local/lib -ltcl7.5 -lm&#8217;&#8216;TCLLIB=${TCLLIB}&#8217; &#8216;RANLIB=:&#8217; &#8216;STRIP=&#8217;</dd>
+</dl>
+</div></blockquote>
+<p>Add in -ldl into the XLIBS assignment, like this:</p>
+<blockquote>
+<div><dl class="docutils">
+<dt>GMAKE = ${MAKE} &#8216;CC=gcc&#8217; &#8216;AWK=awk&#8217; &#8216;OBJS=${OBJS}&#8217; &#8216;TCLLIBFN=tcl7.5.a&#8217;</dt>
+<dd>&#8216;CFLAGS=${CFLAGS}&#8217; &#8216;XREQ=${XREQ}&#8217; &#8216;XLIBS=-ldl -L/usr/local/lib -ltcl7.5 -lm&#8217;&#8216;TCLLIB=${TCLLIB}&#8217; &#8216;RANLIB=:&#8217; &#8216;STRIP=&#8217;</dd>
+</dl>
+</div></blockquote>
+</div></blockquote>
+<ol class="arabic simple" start="7">
+<li>Compile stops at the last minute with &#8220;ld fatal signal 11&#8221;! (Linux)</li>
+</ol>
+<blockquote>
+<div>This seems to be caused by a non-ELF Tcl library binary, and the compiler
+doesn&#8217;t seem to like it. Download and install Tcl in your home directory
+using the steps in &#8216;E. Tcl Detection and Installation&#8217; in the Compile
+Guide above.</div></blockquote>
+<ol class="arabic" start="8">
+<li><p class="first">Undefined references in net.o (SunOS)</p>
+<blockquote>
+<div><p>First</p>
+</div></blockquote>
+</li>
+</ol>
+<blockquote>
+<div><dl class="docutils">
+<dt>Undefined    Referenced</dt>
+<dd>Symbol       In file</dd>
+</dl>
+<p>socket          net.o
+gethostbyname   net.o
+accept          net.o
+bind            net.o
+setsockopt      net.o
+gethostbyaddr   net.o
+getsockname     net.o
+gethostname     net.o
+listen          net.o
+connect         net.o
+ld: fatal: Symbol referencing errors. No output written to eggdrop</p>
+<p>This seems to be caused by a few libraries not being detected by the
+auto-configure script; it is relatively easy to fix. Edit your Makefile.
+Note that yours may be slightly different than this one when it comes to
+the Tcl library, but here is the way it probably is:</p>
+<blockquote>
+<div><dl class="docutils">
+<dt>GMAKE = ${MAKE} &#8216;CC=gcc&#8217; &#8216;AWK=awk&#8217; &#8216;OBJS=${OBJS}&#8217; &#8216;TCLLIBFN=tcl.a&#8217;</dt>
+<dd>&#8216;CFLAGS=${CFLAGS}&#8217; &#8216;XREQ=${XREQ}&#8217; &#8216;XLIBS= -L/usr/local/lib -ltcl -lm&#8217;&#8216;TCLLIB=${TCLLIB}&#8217; &#8216;RANLIB=:&#8217; &#8216;STRIP=&#8217;</dd>
+</dl>
+</div></blockquote>
+<p>Here is what you need to change it to:</p>
+<blockquote>
+<div><dl class="docutils">
+<dt>GMAKE = ${MAKE} &#8216;CC=gcc&#8217; &#8216;AWK=awk&#8217; &#8216;OBJS=${OBJS}&#8217; &#8216;TCLLIBFN=tcl.a&#8217;</dt>
+<dd>&#8216;CFLAGS=${CFLAGS}&#8217; &#8216;XREQ=${XREQ}&#8217; &#8216;XLIBS=-lsocket -ldl -lnsl -L/usr/local/lib -ltcl -lm&#8217;&#8216;TCLLIB=${TCLLIB}&#8217; &#8216;RANLIB=:&#8217; &#8216;STRIP=&#8217;</dd>
+</dl>
+</div></blockquote>
+<p>You are adding three libraries to be linked in: socket, dl, and nsl. This
+will resolve the net.o errors.</p>
+</div></blockquote>
+<ol class="arabic simple" start="9">
+<li>I experience problems starting the configure script (AIX/various)</li>
+</ol>
+<blockquote>
+<div>If you receive file descriptor or bad interpreter errors when attempting
+to run the configure script, try running &#8216;sh configure&#8217; or &#8216;bash configure&#8217;
+instead of &#8216;./configure&#8217;. This problem seems to show up on many AIX
+machines.</div></blockquote>
+<ol class="arabic simple" start="10">
+<li>I get a &#8216;make: Permission denied&#8217; error when I type &#8216;make config&#8217; or
+&#8216;make&#8217; (FreeBSD / <a href="#id35"><span class="problematic" id="id36">*</span></a>BSD)</li>
+</ol>
+<blockquote>
+<div>This is caused by a bug in FreeBSD (and possibly other BSDs as well).
+A simple &#8216;cd .&#8217;, or changing to a different directory and then changing
+back, usually fixes this.</div></blockquote>
+</div></blockquote>
+<p class="last">Copyright (C) 1997 Robey Pointer
+Copyright (C) 1999 - 2016 Eggheads Development Team</p>
+</dd>
+</dl>
+</div></blockquote>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="_sources/COMPILE-GUIDE.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li><a href="index.html">Eggdrop 1.8.0 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2016, Eggheads.
+      Last updated on Jul 02, 2016.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.2.
+    </div>
+  </body>
+</html>

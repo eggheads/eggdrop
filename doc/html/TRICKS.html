@@ -1,0 +1,155 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Eggdrop Tricks &mdash; Eggdrop 1.8.0 documentation</title>
+    
+    <link rel="stylesheet" href="_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '1.8.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="Eggdrop 1.8.0 documentation" href="index.html" />
+    <link rel="next" title="Weird Messages That Get Logged" href="WEIRD-MESSAGES.html" />
+    <link rel="prev" title="Textfile Substitutions" href="TEXT-SUBSTITUTIONS.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="WEIRD-MESSAGES.html" title="Weird Messages That Get Logged"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="TEXT-SUBSTITUTIONS.html" title="Textfile Substitutions"
+             accesskey="P">previous</a> |</li>
+        <li><a href="index.html">Eggdrop 1.8.0 documentation</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <p>Eggdrop Tricks
+Last revised: December 08, 2003</p>
+<div class="section" id="eggdrop-tricks">
+<h1>Eggdrop Tricks<a class="headerlink" href="#eggdrop-tricks" title="Permalink to this headline">¶</a></h1>
+<blockquote>
+<div><p>Here are some little tricks that you may or may not know about, which aren&#8217;t
+documented in other areas.</p>
+<ul>
+<li><p class="first">You can rename a built-in command by binding over it. To rename &#8216;.status&#8217;
+to &#8216;.report&#8217;, you&#8217;d do:</p>
+<div class="highlight-python"><div class="highlight"><pre>unbind dcc - status *dcc:status
+bind dcc m report *dcc:status
+</pre></div>
+</div>
+<p>The first line removes the built-in binding on &#8216;.status&#8217;, and the second
+line binds &#8216;.report&#8217; to the built-in status function.</p>
+</li>
+<li><p class="first">If you don&#8217;t want your logfiles to be deleted after two days and don&#8217;t
+want the bot to create a new logfile each new day, then set &#8216;keep-all-logs&#8217;
+to 0 and &#8216;switch-logfiles-at&#8217; to 2500 in your bot&#8217;s config file to make it
+keeping one logfile all the time. This is not recommended on high traffic
+channels.</p>
+</li>
+<li><p class="first">You can modify Eggdrop&#8217;s output in the partyline, kick messages, and other
+texts by editing core.english.lang in the language directory.</p>
+</li>
+<li><p class="first">You can export parts of your config file to separate files. For example,
+if you have several config files which differ from themselves only by
+the nickname and the used servers, you can export them to an own file
+and link it with the &#8216;source&#8217; Tcl command, similar to a script. The
+advantage of this is that you have to edit/upload only the small file
+instead of the big one. This technique is also useful if you want to
+maintain the same channel settings, etc across your botnet.</p>
+</li>
+<li><p class="first">You can use variables in your config file, since it&#8217;s really just a normal
+Tcl file. For example, you can set &#8216;userfile&#8217; and &#8216;chanfile&#8217; to
+&#8220;yourbot.user&#8221; and &#8220;yourbot.chan&#8221; using the following method:</p>
+<div class="highlight-python"><div class="highlight"><pre>set myvar &quot;yourbot&quot;
+set userfile &quot;$myvar.user&quot;
+set chanfile &quot;$myvar.chan&quot;
+</pre></div>
+</div>
+</li>
+</ul>
+<p>Copyright (C) 1999 - 2016 Eggheads Development Team</p>
+</div></blockquote>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="TEXT-SUBSTITUTIONS.html"
+                        title="previous chapter">Textfile Substitutions</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="WEIRD-MESSAGES.html"
+                        title="next chapter">Weird Messages That Get Logged</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="_sources/TRICKS.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="WEIRD-MESSAGES.html" title="Weird Messages That Get Logged"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="TEXT-SUBSTITUTIONS.html" title="Textfile Substitutions"
+             >previous</a> |</li>
+        <li><a href="index.html">Eggdrop 1.8.0 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2016, Eggheads.
+      Last updated on Jul 02, 2016.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.2.
+    </div>
+  </body>
+</html>
