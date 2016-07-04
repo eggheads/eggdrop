@@ -77,6 +77,7 @@
 #define IRC_DO_CHANNEL_PART       19
 #define IRC_CHECK_THIS_BAN        20
 #define IRC_CHECK_THIS_USER       21
+#define IRC_RESET_CHAN_INFO       25
 /* Notes */
 #define NOTES_CMD_NOTE            4
 /* Console */

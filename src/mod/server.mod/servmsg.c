@@ -20,6 +20,8 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
+#include  "../irc.mod/irc.h"
+#include  "../channels.mod/channels.h"
 
 static time_t last_ctcp = (time_t) 0L;
 static int count_ctcp = 0;
@@ -373,11 +375,20 @@ static int got442(char *from, char *msg)
  */
 static void nuke_server(char *reason)
 {
+  struct chanset_t *chan;
+  module_entry *me;
+
   if (serv >= 0) {
     int servidx = findanyidx(serv);
 
     if (reason && (servidx > 0))
       dprintf(servidx, "QUIT :%s\n", reason);
+    for (chan = chanset; chan; chan = chan->next) {
+      if (channel_active(chan))
+        if ((me = module_find("irc", 1, 3)) != NULL)
+          (me->funcs[IRC_RESET_CHAN_INFO]) (chan, CHAN_RESETALL);
+    }
+
     disconnect_server(servidx);
     lostdcc(servidx);
   }
