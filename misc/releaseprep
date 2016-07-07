@@ -35,7 +35,7 @@ show_usage() {
 }
 
 git_log() {
-	git log --no-merges --pretty=format:"%w(75)%H %n Committed %ai by %an %n %s %n %b%n" > ChangeLog
+	git log --name-only --no-merges --pretty=format:"- - - - - - - - - - - - - - - %n%w(75)%H %n * Committed %ai by %an %n %s %n %b" > ChangeLog
 }
 
 regenerate_changelog() {
