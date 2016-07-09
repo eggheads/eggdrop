@@ -1561,7 +1561,7 @@ static void dcc_telnet_id(int idx, char *buf, int atr)
 
   if (!ok) {
     dprintf(idx, "You don't have access.\n");
-    putlog(LOG_BOTS, "*", DCC_INVHANDLE, dcc[idx].host, buf);
+    putlog(LOG_MISC, "*", DCC_INVHANDLE, dcc[idx].host, buf);
     killsock(dcc[idx].sock);
     lostdcc(idx);
     return;
