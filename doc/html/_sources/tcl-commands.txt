@@ -208,11 +208,14 @@ Description: this is the counterpart of getuser. It lets you set the various val
 |         | hostmask is added :P                                                                  |
 +---------+---------------------------------------------------------------------------------------+
 |LASTON   | This setting has 3 forms.                                                             |
-|         |  | "setuser <handle> LASTON <unixtime> <place>" sets global LASTON time,              |
-|         |  | "setuser <handle> LASTON <unixtime>" sets global LASTON time (leaving the place    |
-|         |  |   field empty), and                                                                |
-|         |  | "setuser <handle> LASTON <unixtime> <channel>" sets a users LASTON time for a      |
-|         |  |   channel (if it is a  valid channel).                                             |
+|         |                                                                                       |
+|         | *setuser <handle> LASTON <unixtime> <place>* sets global LASTON time,                 |
+|         |                                                                                       |
+|         | *setuser <handle> LASTON <unixtime>* sets global LASTON time (leaving the place       |
+|         | field empty), and                                                                     |
+|         |                                                                                       |
+|         | *setuser <handle> LASTON <unixtime> <channel>* sets a users LASTON time for a         |
+|         | channel (if it is a  valid channel).                                                  |
 +---------+---------------------------------------------------------------------------------------+
 
 Returns: nothing

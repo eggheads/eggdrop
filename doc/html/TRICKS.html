@@ -57,38 +57,38 @@ Last revised: December 08, 2003</p>
 <div class="section" id="eggdrop-tricks">
 <h1>Eggdrop Tricks<a class="headerlink" href="#eggdrop-tricks" title="Permalink to this headline">¶</a></h1>
 <blockquote>
-<div><p>Here are some little tricks that you may or may not know about, which aren&#8217;t
+<div><p>Here are some little tricks that you may or may not know about, which aren't
 documented in other areas.</p>
 <ul>
-<li><p class="first">You can rename a built-in command by binding over it. To rename &#8216;.status&#8217;
-to &#8216;.report&#8217;, you&#8217;d do:</p>
+<li><p class="first">You can rename a built-in command by binding over it. To rename '.status'
+to '.report', you'd do:</p>
 <div class="highlight-python"><div class="highlight"><pre>unbind dcc - status *dcc:status
 bind dcc m report *dcc:status
 </pre></div>
 </div>
-<p>The first line removes the built-in binding on &#8216;.status&#8217;, and the second
-line binds &#8216;.report&#8217; to the built-in status function.</p>
+<p>The first line removes the built-in binding on '.status', and the second
+line binds '.report' to the built-in status function.</p>
 </li>
-<li><p class="first">If you don&#8217;t want your logfiles to be deleted after two days and don&#8217;t
-want the bot to create a new logfile each new day, then set &#8216;keep-all-logs&#8217;
-to 0 and &#8216;switch-logfiles-at&#8217; to 2500 in your bot&#8217;s config file to make it
+<li><p class="first">If you don't want your logfiles to be deleted after two days and don't
+want the bot to create a new logfile each new day, then set 'keep-all-logs'
+to 0 and 'switch-logfiles-at' to 2500 in your bot's config file to make it
 keeping one logfile all the time. This is not recommended on high traffic
 channels.</p>
 </li>
-<li><p class="first">You can modify Eggdrop&#8217;s output in the partyline, kick messages, and other
+<li><p class="first">You can modify Eggdrop's output in the partyline, kick messages, and other
 texts by editing core.english.lang in the language directory.</p>
 </li>
 <li><p class="first">You can export parts of your config file to separate files. For example,
 if you have several config files which differ from themselves only by
 the nickname and the used servers, you can export them to an own file
-and link it with the &#8216;source&#8217; Tcl command, similar to a script. The
+and link it with the 'source' Tcl command, similar to a script. The
 advantage of this is that you have to edit/upload only the small file
 instead of the big one. This technique is also useful if you want to
 maintain the same channel settings, etc across your botnet.</p>
 </li>
-<li><p class="first">You can use variables in your config file, since it&#8217;s really just a normal
-Tcl file. For example, you can set &#8216;userfile&#8217; and &#8216;chanfile&#8217; to
-&#8220;yourbot.user&#8221; and &#8220;yourbot.chan&#8221; using the following method:</p>
+<li><p class="first">You can use variables in your config file, since it's really just a normal
+Tcl file. For example, you can set 'userfile' and 'chanfile' to
+&quot;yourbot.user&quot; and &quot;yourbot.chan&quot; using the following method:</p>
 <div class="highlight-python"><div class="highlight"><pre>set myvar &quot;yourbot&quot;
 set userfile &quot;$myvar.user&quot;
 set chanfile &quot;$myvar.chan&quot;
@@ -151,7 +151,7 @@ set chanfile &quot;$myvar.chan&quot;
           
     <div class="footer">
         &copy; Copyright 2016, Eggheads.
-      Last updated on Jul 03, 2016.
+      Last updated on Jul 08, 2016.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.2.
     </div>
         </div>

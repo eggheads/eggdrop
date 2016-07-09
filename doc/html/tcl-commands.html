@@ -66,7 +66,7 @@ marked with vertical bars (|) on the left.</p>
 <div class="section" id="output-commands">
 <h2>Output Commands<a class="headerlink" href="#output-commands" title="Permalink to this headline">¶</a></h2>
 <p><strong>putserv &lt;text&gt; [options]</strong></p>
-<p>Description: sends text to the server, like &#8216;.dump&#8217; (intended for direct server commands); output is queued so that the bot won&#8217;t flood itself off the server.</p>
+<p>Description: sends text to the server, like '.dump' (intended for direct server commands); output is queued so that the bot won't flood itself off the server.</p>
 <dl class="docutils">
 <dt>Options:</dt>
 <dd><table class="first last docutils option-list" frame="void" rules="none">
@@ -86,7 +86,7 @@ marked with vertical bars (|) on the left.</p>
 <p>Returns: nothing</p>
 <p>Module: server</p>
 <p><strong>puthelp &lt;text&gt; [options]</strong></p>
-<p>Description: sends text to the server, like &#8216;putserv&#8217;, but it uses a different queue intended for sending messages to channels or people.</p>
+<p>Description: sends text to the server, like 'putserv', but it uses a different queue intended for sending messages to channels or people.</p>
 <dl class="docutils">
 <dt>Options:</dt>
 <dd><table class="first last docutils option-list" frame="void" rules="none">
@@ -106,7 +106,7 @@ marked with vertical bars (|) on the left.</p>
 <p>Returns: nothing</p>
 <p>Module: server</p>
 <p><strong>putquick &lt;text&gt; [options]</strong></p>
-<p>Description: sends text to the server, like &#8216;putserv&#8217;, but it uses a different (and faster) queue.</p>
+<p>Description: sends text to the server, like 'putserv', but it uses a different (and faster) queue.</p>
 <dl class="docutils">
 <dt>Options:</dt>
 <dd><table class="first last docutils option-list" frame="void" rules="none">
@@ -147,23 +147,23 @@ marked with vertical bars (|) on the left.</p>
 <p>Returns: nothing</p>
 <p>Module: irc</p>
 <p><strong>putlog &lt;text&gt;</strong></p>
-<p>Description: sends text to the bot&#8217;s logfile, marked as &#8216;misc&#8217; (o)</p>
+<p>Description: sends text to the bot's logfile, marked as 'misc' (o)</p>
 <p>Returns: nothing</p>
 <p>Module: core</p>
 <p><strong>putcmdlog &lt;text&gt;</strong></p>
-<p>Description: sends text to the bot&#8217;s logfile, marked as &#8216;command&#8217; (c)</p>
+<p>Description: sends text to the bot's logfile, marked as 'command' (c)</p>
 <p>Returns: nothing</p>
 <p>Module: core</p>
 <p><strong>putxferlog &lt;text&gt;</strong>
-Description: sends text to the bot&#8217;s logfile, marked as &#8216;file-area&#8217; (x)</p>
+Description: sends text to the bot's logfile, marked as 'file-area' (x)</p>
 <p>Returns: nothing</p>
 <p>Module: core</p>
 <p><strong>putloglev &lt;level(s)&gt; &lt;channel&gt; &lt;text&gt;</strong>
-Description: sends text to the bot&#8217;s logfile, tagged with all of the valid levels given. Use &#8220;*&#8221; to indicate all log levels.</p>
+Description: sends text to the bot's logfile, tagged with all of the valid levels given. Use &quot;*&quot; to indicate all log levels.</p>
 <p>Returns: nothing</p>
 <p>Module: core</p>
 <p><strong>dumpfile &lt;nick&gt; &lt;filename&gt;</strong></p>
-<p>Description: dumps file from the help/text directory to a user on IRC via msg (one line per msg). The user has no flags, so the flag bindings won&#8217;t work within the file.</p>
+<p>Description: dumps file from the help/text directory to a user on IRC via msg (one line per msg). The user has no flags, so the flag bindings won't work within the file.</p>
 <p>Returns: nothing</p>
 <p>Module: core</p>
 <p><strong>queuesize [queue]</strong></p>
@@ -177,20 +177,20 @@ Description: sends text to the bot&#8217;s logfile, tagged with all of the valid
 <div class="section" id="user-record-manipulation-commands">
 <h2>User Record Manipulation Commands<a class="headerlink" href="#user-record-manipulation-commands" title="Permalink to this headline">¶</a></h2>
 <p><strong>countusers</strong></p>
-<p>Returns: number of users in the bot&#8217;s database</p>
+<p>Returns: number of users in the bot's database</p>
 <p>Module: core</p>
 <p><strong>validuser &lt;handle&gt;</strong></p>
 <p>Returns: 1 if a user by that name exists; 0 otherwise</p>
 <p>Module: core</p>
 <p><strong>finduser &lt;nick!user&#64;host&gt;</strong></p>
 <p>Description: finds the user record which most closely matches the given <a class="reference external" href="mailto:nick!user&#37;&#52;&#48;host">nick!user<span>&#64;</span>host</a></p>
-<p>Returns: the handle found, or &#8220;*&#8221; if none</p>
+<p>Returns: the handle found, or &quot;*&quot; if none</p>
 <p>Module: core</p>
 <p><strong>userlist [flags]</strong></p>
-<p>Returns: a list of users on the bot. You can use the flag matching system here ([global]{&amp;/|}[chan]{&amp;/|}[bot]). &#8216;&amp;&#8217; specifies &#8220;and&#8221;; &#8216;|&#8217; specifies &#8220;or&#8221;.</p>
+<p>Returns: a list of users on the bot. You can use the flag matching system here ([global]{&amp;/|}[chan]{&amp;/|}[bot]). '&amp;' specifies &quot;and&quot;; '|' specifies &quot;or&quot;.</p>
 <p>Module: core</p>
 <p><strong>passwdok &lt;handle&gt; &lt;pass&gt;</strong></p>
-<p>Description: checks the password given against the user&#8217;s password. Check against the password &#8220;&#8221; (a blank string) or &#8220;-&#8221; to find out if a user has no password set.</p>
+<p>Description: checks the password given against the user's password. Check against the password &quot;&quot; (a blank string) or &quot;-&quot; to find out if a user has no password set.</p>
 <p>Returns: 1 if the password matches for that user; 0 otherwise</p>
 <p>Module: core</p>
 <p><strong>getuser &lt;handle&gt; &lt;entry-type&gt; [extra info]</strong></p>
@@ -205,7 +205,7 @@ Description: sends text to the bot&#8217;s logfile, tagged with all of the valid
 <td>returns the current bot-specific flags for the user (bot-only)</td>
 </tr>
 <tr class="row-even"><td>BOTADDR</td>
-<td>returns a list containing the bot&#8217;s address, telnet port, and relay port (bot-only)</td>
+<td>returns a list containing the bot's address, telnet port, and relay port (bot-only)</td>
 </tr>
 <tr class="row-odd"><td>HOSTS</td>
 <td>returns a list of hosts for the user</td>
@@ -216,27 +216,27 @@ LASTON #channel returns the time last seen time for the channel or 0 if no info
 exists.</td>
 </tr>
 <tr class="row-odd"><td>INFO</td>
-<td>returns the user&#8217;s global info line</td>
+<td>returns the user's global info line</td>
 </tr>
 <tr class="row-even"><td>XTRA</td>
-<td>returns the user&#8217;s XTRA info</td>
+<td>returns the user's XTRA info</td>
 </tr>
 <tr class="row-odd"><td>COMMENT</td>
 <td>returns the master-visible only comment for the user</td>
 </tr>
 <tr class="row-even"><td>HANDLE</td>
-<td>returns the user&#8217;s handle as it is saved in the userfile</td>
+<td>returns the user's handle as it is saved in the userfile</td>
 </tr>
 <tr class="row-odd"><td>PASS</td>
-<td>returns the user&#8217;s encrypted password</td>
+<td>returns the user's encrypted password</td>
 </tr>
 </tbody>
 </table>
-<p>For additional custom user fields, to include the deprecated &#8220;EMAIL&#8221; and &#8220;URL&#8221; fields, reference scripts/userinfo.tcl</p>
+<p>For additional custom user fields, to include the deprecated &quot;EMAIL&quot; and &quot;URL&quot; fields, reference scripts/userinfo.tcl</p>
 <p>Returns: info specific to each entry-type</p>
 <p>Module: core</p>
 <p><strong>setuser &lt;handle&gt; &lt;entry-type&gt; [extra info]</strong></p>
-<p>Description: this is the counterpart of getuser. It lets you set the various values. Other then the ones listed below, the entry-types are the same as getuser&#8217;s.</p>
+<p>Description: this is the counterpart of getuser. It lets you set the various values. Other then the ones listed below, the entry-types are the same as getuser's.</p>
 <table border="1" class="docutils">
 <colgroup>
 <col width="9%" />
@@ -251,21 +251,12 @@ exists.</td>
 hostmask is added :P</td>
 </tr>
 <tr class="row-odd"><td>LASTON</td>
-<td><dl class="first last docutils">
-<dt>This setting has 3 forms.</dt>
-<dd><div class="first last line-block">
-<div class="line">&#8220;setuser &lt;handle&gt; LASTON &lt;unixtime&gt; &lt;place&gt;&#8221; sets global LASTON time,</div>
-<div class="line">&#8220;setuser &lt;handle&gt; LASTON &lt;unixtime&gt;&#8221; sets global LASTON time (leaving the place</div>
-<div class="line-block">
-<div class="line">field empty), and</div>
-</div>
-<div class="line">&#8220;setuser &lt;handle&gt; LASTON &lt;unixtime&gt; &lt;channel&gt;&#8221; sets a users LASTON time for a</div>
-<div class="line-block">
-<div class="line">channel (if it is a  valid channel).</div>
-</div>
-</div>
-</dd>
-</dl>
+<td><p class="first">This setting has 3 forms.</p>
+<p><em>setuser &lt;handle&gt; LASTON &lt;unixtime&gt; &lt;place&gt;</em> sets global LASTON time,</p>
+<p><em>setuser &lt;handle&gt; LASTON &lt;unixtime&gt;</em> sets global LASTON time (leaving the place
+field empty), and</p>
+<p class="last"><em>setuser &lt;handle&gt; LASTON &lt;unixtime&gt; &lt;channel&gt;</em> sets a users LASTON time for a
+channel (if it is a  valid channel).</p>
 </td>
 </tr>
 </tbody>
@@ -273,19 +264,19 @@ hostmask is added :P</td>
 <p>Returns: nothing</p>
 <p>Module: core</p>
 <p><strong>chhandle &lt;old-handle&gt; &lt;new-handle&gt;</strong></p>
-<p>Description: changes a user&#8217;s handle</p>
-<p>Returns: 1 on success; 0 if the new handle is invalid or already used, or if the user can&#8217;t be found</p>
+<p>Description: changes a user's handle</p>
+<p>Returns: 1 on success; 0 if the new handle is invalid or already used, or if the user can't be found</p>
 <p>Module: core</p>
 <p><strong>chattr &lt;handle&gt; [changes [channel]]</strong></p>
 <dl class="docutils">
 <dt>Description: changes the attributes for a user record, if you include any.</dt>
-<dd>Changes are of the form &#8216;+f&#8217;, &#8216;-o&#8217;, &#8216;+dk&#8217;, &#8216;-o+d&#8217;, etc. If changes are specified in the format of |&lt;changes&gt; &lt;channel&gt;, the channel-specific flags for that channel are altered. You can now use the +o|-o #channel format here too.</dd>
+<dd>Changes are of the form '+f', '-o', '+dk', '-o+d', etc. If changes are specified in the format of |&lt;changes&gt; &lt;channel&gt;, the channel-specific flags for that channel are altered. You can now use the +o|-o #channel format here too.</dd>
 </dl>
-<p>Returns: new flags for the user (if you made no changes, the current flags are returned). If a channel was specified, the global AND the channel-specific flags for that channel are returned in the format of globalflags|channelflags. &#8220;*&#8221; is returned if the specified user does not exist.</p>
+<p>Returns: new flags for the user (if you made no changes, the current flags are returned). If a channel was specified, the global AND the channel-specific flags for that channel are returned in the format of globalflags|channelflags. &quot;*&quot; is returned if the specified user does not exist.</p>
 <p>Module: core</p>
 <p><strong>botattr &lt;handle&gt; [changes [channel]]</strong></p>
 <p>Description: similar to chattr except this modifies bot flags rather than normal user attributes.
-Returns: new flags for the bot (if you made no changes, the current flags are returned). If a channel was specified, the global AND the channel-specific flags for that channel are returned in the format of globalflags|channelflags. &#8220;*&#8221; is returned if the specified bot does not exist.</p>
+Returns: new flags for the bot (if you made no changes, the current flags are returned). If a channel was specified, the global AND the channel-specific flags for that channel are returned in the format of globalflags|channelflags. &quot;*&quot; is returned if the specified bot does not exist.</p>
 <p>Module: core</p>
 <p><strong>matchattr &lt;handle&gt; &lt;flags&gt; [channel]</strong></p>
 <p>Returns: 1 if the specified user has the specified flags; 0 otherwise</p>
@@ -303,8 +294,8 @@ Description: adds a new bot to the userlist with the handle and botaddress given
 <p>Returns: 1 if successful, 0 if no such user exists</p>
 <p>Module: core</p>
 <p><strong>delhost &lt;handle&gt; &lt;hostmask&gt;</strong></p>
-<p>Description: deletes a hostmask from a user&#8217;s host list</p>
-<p>Returns: 1 on success; 0 if the hostmask (or user) doesn&#8217;t exist</p>
+<p>Description: deletes a hostmask from a user's host list</p>
+<p>Returns: 1 on success; 0 if the hostmask (or user) doesn't exist</p>
 <p>Module: core</p>
 <p><strong>addchanrec &lt;handle&gt; &lt;channel&gt;</strong></p>
 <p>Description: adds a channel record for a user</p>
@@ -318,10 +309,10 @@ Description: adds a new bot to the userlist with the handle and botaddress given
 <p>Returns: 1 if the given handle has a chanrec for the specified channel; 0 otherwise</p>
 <p>Module: channels</p>
 <p><strong>getchaninfo &lt;handle&gt; &lt;channel&gt;</strong></p>
-<p>Returns: info line for a specific channel (behaves just like &#8216;getinfo&#8217;)</p>
+<p>Returns: info line for a specific channel (behaves just like 'getinfo')</p>
 <p>Module: channels</p>
 <p><strong>setchaninfo &lt;handle&gt; &lt;channel&gt; &lt;info&gt;</strong></p>
-<p>Description: sets the info line on a specific channel for a user. If info is &#8220;none&#8221;, it will be removed.</p>
+<p>Description: sets the info line on a specific channel for a user. If info is &quot;none&quot;, it will be removed.</p>
 <p>Returns: nothing</p>
 <p>Module: channels</p>
 <p><strong>newchanban &lt;channel&gt; &lt;ban&gt; &lt;creator&gt; &lt;comment&gt; [lifetime] [options]</strong></p>
@@ -484,42 +475,42 @@ Description: makes an invite sticky, or, if a channel is specified, then it is s
 <p>Returns: 1 if the channel is juped, and the bot is unable to join; 0 otherwise</p>
 <p>Module: channels</p>
 <p><strong>isban &lt;ban&gt; [channel]</strong></p>
-<p>Returns: 1 if the specified ban is in the global ban list; 0 otherwise. If a channel is specified, that channel&#8217;s ban list is checked as well.</p>
+<p>Returns: 1 if the specified ban is in the global ban list; 0 otherwise. If a channel is specified, that channel's ban list is checked as well.</p>
 <p>Module: channels</p>
 <p><strong>ispermban &lt;ban&gt; [channel]</strong></p>
-<p>Returns: 1 if the specified ban is in the global ban list AND is marked as permanent; 0 otherwise. If a channel is specified, that channel&#8217;s ban list is checked as well.</p>
+<p>Returns: 1 if the specified ban is in the global ban list AND is marked as permanent; 0 otherwise. If a channel is specified, that channel's ban list is checked as well.</p>
 <p>Module: channels</p>
 <p><strong>isexempt &lt;exempt&gt; [channel]</strong></p>
-<p>Returns: 1 if the specified exempt is in the global exempt list; 0 otherwise. If a channel is specified, that channel&#8217;s exempt list is checked as well.</p>
+<p>Returns: 1 if the specified exempt is in the global exempt list; 0 otherwise. If a channel is specified, that channel's exempt list is checked as well.</p>
 <p>Module: channels</p>
 <p><strong>ispermexempt &lt;exempt&gt; [channel]</strong></p>
-<p>Returns: 1 if the specified exempt is in the global exempt list AND is marked as permanent; 0 otherwise. If a channel is specified, that channel&#8217;s exempt list is checked as well.</p>
+<p>Returns: 1 if the specified exempt is in the global exempt list AND is marked as permanent; 0 otherwise. If a channel is specified, that channel's exempt list is checked as well.</p>
 <p>Module: channels</p>
 <p><strong>isinvite &lt;invite&gt; [channel]</strong></p>
-<p>Returns: 1 if the specified invite is in the global invite list; 0 otherwise. If a channel is specified, that channel&#8217;s invite list is checked as well.</p>
+<p>Returns: 1 if the specified invite is in the global invite list; 0 otherwise. If a channel is specified, that channel's invite list is checked as well.</p>
 <p>Module: channels</p>
 <p><strong>isperminvite &lt;invite&gt; [channel]</strong></p>
-<p>Returns: 1 if the specified invite is in the global invite list AND is marked as permanent; 0 otherwise. If a channel is specified, that channel&#8217;s invite list is checked as well.</p>
+<p>Returns: 1 if the specified invite is in the global invite list AND is marked as permanent; 0 otherwise. If a channel is specified, that channel's invite list is checked as well.</p>
 <p>Module: channels</p>
 <p><strong>isbansticky &lt;ban&gt; [channel]</strong></p>
-<p>Returns: 1 if the specified ban is marked as sticky in the global ban list; 0 otherwise. If a channel is specified, that channel&#8217;s ban list is checked as well.</p>
+<p>Returns: 1 if the specified ban is marked as sticky in the global ban list; 0 otherwise. If a channel is specified, that channel's ban list is checked as well.</p>
 <p>Module: channels</p>
 <p><strong>isexemptsticky &lt;exempt&gt; [channel]</strong></p>
-<p>Returns: 1 if the specified exempt is marked as sticky in the global exempt list; 0 otherwise. If a channel is specified, that channel&#8217;s exempt list is checked as well.</p>
+<p>Returns: 1 if the specified exempt is marked as sticky in the global exempt list; 0 otherwise. If a channel is specified, that channel's exempt list is checked as well.</p>
 <p>Module: channels</p>
 <p><strong>isinvitesticky &lt;invite&gt; [channel]</strong></p>
-<p>Returns: 1 if the specified invite is marked as sticky in the global invite list; 0 otherwise. If a channel is specified, that channel&#8217;s invite list is checked as well.</p>
+<p>Returns: 1 if the specified invite is marked as sticky in the global invite list; 0 otherwise. If a channel is specified, that channel's invite list is checked as well.</p>
 <p>Module: channels</p>
 <p><strong>matchban &lt;nick!user&#64;host&gt; [channel]</strong></p>
-<p>Returns: 1 if the specified <a class="reference external" href="mailto:nick!user&#37;&#52;&#48;host">nick!user<span>&#64;</span>host</a> matches a ban in the global ban list; 0 otherwise. If a channel is specified, that channel&#8217;s ban list is checked as well.</p>
+<p>Returns: 1 if the specified <a class="reference external" href="mailto:nick!user&#37;&#52;&#48;host">nick!user<span>&#64;</span>host</a> matches a ban in the global ban list; 0 otherwise. If a channel is specified, that channel's ban list is checked as well.</p>
 <p>Module: channels</p>
 <p><strong>matchexempt &lt;nick!user&#64;host&gt; [channel]</strong></p>
-<p>Returns: 1 if the specified <a class="reference external" href="mailto:nick!user&#37;&#52;&#48;host">nick!user<span>&#64;</span>host</a> matches an exempt in the global exempt list; 0 otherwise. If a channel is specified, that channel&#8217;s exempt list is checked as well.</p>
+<p>Returns: 1 if the specified <a class="reference external" href="mailto:nick!user&#37;&#52;&#48;host">nick!user<span>&#64;</span>host</a> matches an exempt in the global exempt list; 0 otherwise. If a channel is specified, that channel's exempt list is checked as well.</p>
 <p>Module: channels</p>
 <p><strong>matchinvite &lt;nick!user&#64;host&gt; [channel]</strong></p>
 <dl class="docutils">
 <dt>Returns: 1 if the specified <a class="reference external" href="mailto:nick!user&#37;&#52;&#48;host">nick!user<span>&#64;</span>host</a> matches an invite in the global invite list; 0 otherwise. If a channel is specified, that</dt>
-<dd>channel&#8217;s invite list is checked as well.</dd>
+<dd>channel's invite list is checked as well.</dd>
 </dl>
 <p>Module: channels</p>
 <p><strong>banlist [channel]</strong></p>
@@ -554,7 +545,7 @@ Description: removes an entry from the ignore list</p>
 <p>Returns: nothing</p>
 <p>Module: core</p>
 <p><strong>backup</strong>
-Description: makes a simple backup of the userfile that&#8217;s on disk. If the channels module is loaded, this also makes a simple backup of the channel file.</p>
+Description: makes a simple backup of the userfile that's on disk. If the channels module is loaded, this also makes a simple backup of the channel file.</p>
 <p>Returns: nothing</p>
 <p>Module: core</p>
 <p><strong>getting-users</strong></p>
@@ -572,7 +563,7 @@ Description: makes a simple backup of the userfile that&#8217;s on disk. If the 
 <p>Returns: nothing</p>
 <p>Module: channels</p>
 <p><strong>channel info &lt;name&gt;</strong></p>
-<p>Returns: a list of info about the specified channel&#8217;s settings.</p>
+<p>Returns: a list of info about the specified channel's settings.</p>
 <p>Module: channels</p>
 <p><strong>channel get &lt;name&gt; [setting]</strong></p>
 <p>Returns: The value of the setting you specify. For flags, a value of 0 means it is disabled (-), and non-zero means enabled (+). If no setting is specified, a flat list of all available settings and their values will be returned.</p>
@@ -593,8 +584,8 @@ Description: reloads the channel settings from the channel-file if one is define
 <p>Returns: a list of the channels the bot has a channel record for</p>
 <p>Module: channels</p>
 <p><strong>channame2dname &lt;channel-name&gt;</strong> and <strong>chandname2name &lt;channel-dname&gt;</strong></p>
-<p>Description: these two functions are important to correctly support !channels. The bot differentiates between channel description names (chan dnames) and real channel names (chan names). The chan dnames are what you would normally call the channel, such as &#8221;!channel&#8221;. The chan names are what the IRC server uses to identify the channel. They consist of the chan dname prefixed with an ID; such as &#8221;!ABCDEchannel&#8221;.</p>
-<p>For bot functions like isop, isvoice, etc. you need to know the chan dnames. If you communicate with the server, you usually get the chan name, though. That&#8217;s what you need the channame2dname function for.</p>
+<p>Description: these two functions are important to correctly support !channels. The bot differentiates between channel description names (chan dnames) and real channel names (chan names). The chan dnames are what you would normally call the channel, such as &quot;!channel&quot;. The chan names are what the IRC server uses to identify the channel. They consist of the chan dname prefixed with an ID; such as &quot;!ABCDEchannel&quot;.</p>
+<p>For bot functions like isop, isvoice, etc. you need to know the chan dnames. If you communicate with the server, you usually get the chan name, though. That's what you need the channame2dname function for.</p>
 <p>If you only have the chan dname and want to directly send raw server commands, use the chandname2name command.</p>
 <p>NOTE: For non-!channels, chan dname and chan name are the same.</p>
 <p>Module: irc</p>
@@ -632,42 +623,42 @@ Description: reloads the channel settings from the channel-file if one is define
 Returns: 1 if someone by that nickname is on the specified channel (or any channel if none is specified); 0 otherwise</p>
 <p>Module: irc</p>
 <p><strong>nick2hand &lt;nickname&gt; [channel]</strong></p>
-<p>Returns: the handle of a nickname on a channel. If a channel is not specified, the bot will check all of its channels. If the nick is not found, &#8220;&#8221; is returned. If the nick is found but does not have a handle, &#8220;*&#8221; is returned.</p>
+<p>Returns: the handle of a nickname on a channel. If a channel is not specified, the bot will check all of its channels. If the nick is not found, &quot;&quot; is returned. If the nick is found but does not have a handle, &quot;*&quot; is returned.</p>
 <p>Module: irc</p>
 <p><strong>hand2nick &lt;handle&gt; [channel]</strong></p>
-<p>Returns: nickname of the first person on the specified channel (if one is specified) whose <a class="reference external" href="mailto:nick!user&#37;&#52;&#48;host">nick!user<span>&#64;</span>host</a> matches the given handle; &#8220;&#8221; is returned if no match is found. If no channel is specified, all channels are checked.</p>
+<p>Returns: nickname of the first person on the specified channel (if one is specified) whose <a class="reference external" href="mailto:nick!user&#37;&#52;&#48;host">nick!user<span>&#64;</span>host</a> matches the given handle; &quot;&quot; is returned if no match is found. If no channel is specified, all channels are checked.</p>
 <p>Module: irc</p>
 <p><strong>handonchan &lt;handle&gt; [channel]</strong></p>
 <p>Returns: 1 if the the <a class="reference external" href="mailto:nick!user&#37;&#52;&#48;host">nick!user<span>&#64;</span>host</a> for someone on the channel (or any channel if no channel name is specified) matches for the handle given; 0 otherwise</p>
 <p>Module: irc</p>
 <p><strong>ischanban &lt;ban&gt; &lt;channel&gt;</strong></p>
-<p>Returns: 1 if the specified ban is on the given channel&#8217;s ban list (not the bot&#8217;s banlist for the channel)</p>
+<p>Returns: 1 if the specified ban is on the given channel's ban list (not the bot's banlist for the channel)</p>
 <p>Module: irc</p>
 <p><strong>ischanexempt &lt;exempt&gt; &lt;channel&gt;</strong></p>
-<p>Returns: 1 if the specified exempt is on the given channel&#8217;s exempt list (not the bot&#8217;s exemptlist for the channel)</p>
+<p>Returns: 1 if the specified exempt is on the given channel's exempt list (not the bot's exemptlist for the channel)</p>
 <p>Module: irc</p>
 <p><strong>ischaninvite &lt;invite&gt; &lt;channel&gt;</strong></p>
-<p>Returns: 1 if the specified invite is on the given channel&#8217;s invite list (not the bot&#8217;s invitelist for the channel)</p>
+<p>Returns: 1 if the specified invite is on the given channel's invite list (not the bot's invitelist for the channel)</p>
 <p>Module: irc</p>
 <p><strong>chanbans &lt;channel&gt;</strong></p>
-<p>Returns: a list of the current bans on the channel. Each element is a sublist of the form {&lt;ban&gt; &lt;bywho&gt; &lt;age&gt;}. age is seconds from the bot&#8217;s point of view</p>
+<p>Returns: a list of the current bans on the channel. Each element is a sublist of the form {&lt;ban&gt; &lt;bywho&gt; &lt;age&gt;}. age is seconds from the bot's point of view</p>
 <p>Module: irc</p>
 <p><strong>chanexempts &lt;channel&gt;</strong></p>
-<p>Returns: a list of the current exempts on the channel. Each element is a sublist of the form {&lt;exempts&gt; &lt;bywho&gt; &lt;age&gt;}. age is seconds from the bot&#8217;s point of view</p>
+<p>Returns: a list of the current exempts on the channel. Each element is a sublist of the form {&lt;exempts&gt; &lt;bywho&gt; &lt;age&gt;}. age is seconds from the bot's point of view</p>
 <p>Module: irc</p>
 <p><strong>chaninvites &lt;channel&gt;</strong></p>
-<p>Returns: a list of the current invites on the channel. Each element is a sublist of the form {&lt;invites&gt; &lt;bywho&gt; &lt;age&gt;}. age is seconds from the bot&#8217;s point of view</p>
+<p>Returns: a list of the current invites on the channel. Each element is a sublist of the form {&lt;invites&gt; &lt;bywho&gt; &lt;age&gt;}. age is seconds from the bot's point of view</p>
 <p>Module: irc</p>
 <p><strong>resetbans &lt;channel&gt;</strong></p>
-<p>Description: removes all bans on the channel that aren&#8217;t in the bot&#8217;s ban list and refreshes any bans that should be on the channel but aren&#8217;t</p>
+<p>Description: removes all bans on the channel that aren't in the bot's ban list and refreshes any bans that should be on the channel but aren't</p>
 <p>Returns: nothing</p>
 <p>Module: irc</p>
 <p><strong>resetexempts &lt;channel&gt;</strong></p>
-<p>Description: removes all exempt on the channel that aren&#8217;t in the bot&#8217;s exempt list and refreshes any exempts that should be on the channel but aren&#8217;t</p>
+<p>Description: removes all exempt on the channel that aren't in the bot's exempt list and refreshes any exempts that should be on the channel but aren't</p>
 <p>Returns: nothing</p>
 <p>Module: irc</p>
 <p><strong>resetinvites &lt;channel&gt;</strong></p>
-<p>Description: removes all invites on the channel that aren&#8217;t in the bot&#8217;s invite list and refreshes any invites that should be on the channel but aren&#8217;t</p>
+<p>Description: removes all invites on the channel that aren't in the bot's invite list and refreshes any invites that should be on the channel but aren't</p>
 <p>Returns: nothing</p>
 <p>Module: irc</p>
 <p><strong>resetchanidle [nick] &lt;channel&gt;</strong></p>
@@ -709,7 +700,7 @@ Description: resets the channel join time for the given nick or for all nicks on
 <p>Returns: nothing</p>
 <p>Module: irc</p>
 <p><strong>getchanhost &lt;nickname&gt; [channel]</strong></p>
-<p>Returns: <a class="reference external" href="mailto:user&#37;&#52;&#48;host">user<span>&#64;</span>host</a> of the specified nickname (the nickname is not included in the returned host). If a channel is not specified, bot will check all of its channels. If the nickname is not on the channel(s), &#8220;&#8221; is returned.</p>
+<p>Returns: <a class="reference external" href="mailto:user&#37;&#52;&#48;host">user<span>&#64;</span>host</a> of the specified nickname (the nickname is not included in the returned host). If a channel is not specified, bot will check all of its channels. If the nickname is not on the channel(s), &quot;&quot; is returned.</p>
 <p>Module: irc</p>
 <p><strong>getchanjoin &lt;nickname&gt; &lt;channel&gt;</strong></p>
 <p>Returns: timestamp (unixtime format) of when the specified nickname joined the channel if available, 0 otherwise. Note that after a channel reset this information will be lost, even if previously available.</p>
@@ -718,7 +709,7 @@ Description: resets the channel join time for the given nick or for all nicks on
 <p>Returns: 1 if that nick is split from the channel (or any channel if no channel is specified); 0 otherwise</p>
 <p>Module: irc</p>
 <p><strong>chanlist &lt;channel&gt; [flags[&amp;chanflags]]</strong></p>
-<p>Description: flags are any global flags; the &#8216;&amp;&#8217; denotes to look for channel specific flags. Examples:</p>
+<p>Description: flags are any global flags; the '&amp;' denotes to look for channel specific flags. Examples:</p>
 <table border="1" class="docutils">
 <colgroup>
 <col width="20%" />
@@ -736,21 +727,21 @@ Description: resets the channel join time for the given nick or for all nicks on
 </tr>
 </tbody>
 </table>
-<p>Now you can use even more complex matching of flags, including +&amp;- flags and &amp; or | (&#8216;and&#8217; or &#8216;or&#8217;) matching.</p>
-<p>Returns: list of nicknames currently on the bot&#8217;s channel that have all of the flags specified;. If no flags are given, all of the nicknames are returned. Please note that if you&#8217;re executing chanlist after a part or sign bind, the gone user will still be listed, so you can check for wasop, isop, etc.</p>
+<p>Now you can use even more complex matching of flags, including +&amp;- flags and &amp; or | ('and' or 'or') matching.</p>
+<p>Returns: list of nicknames currently on the bot's channel that have all of the flags specified;. If no flags are given, all of the nicknames are returned. Please note that if you're executing chanlist after a part or sign bind, the gone user will still be listed, so you can check for wasop, isop, etc.</p>
 <p>Module: irc</p>
 <p><strong>getchanidle &lt;nickname&gt; &lt;channel&gt;</strong></p>
-<p>Returns: number of minutes that person has been idle; -1 if the specified user isn&#8217;t on the channel</p>
+<p>Returns: number of minutes that person has been idle; -1 if the specified user isn't on the channel</p>
 <p>Module: irc</p>
 <p><strong>getchanmode &lt;channel&gt;</strong></p>
-<p>Returns: string of the type &#8220;+ntik key&#8221; for the channel specified</p>
+<p>Returns: string of the type &quot;+ntik key&quot; for the channel specified</p>
 <p>Module: irc</p>
 <p><strong>jump [server [[+]port [password]]]</strong></p>
-<p>Description: jumps to the server specified, or (if none is specified) the next server in the bot&#8217;s serverlist. If you prefix the port with a plus sign (e.g. +6697), SSL connection will be attempted.</p>
+<p>Description: jumps to the server specified, or (if none is specified) the next server in the bot's serverlist. If you prefix the port with a plus sign (e.g. +6697), SSL connection will be attempted.</p>
 <p>Returns: nothing</p>
 <p>Module: server</p>
 <p><strong>pushmode &lt;channel&gt; &lt;mode&gt; [arg]</strong></p>
-<p>Description: sends out a channel mode change (ex: pushmode #lame +o goober) through the bot&#8217;s queuing system. All the mode changes will be sent out at once (combined into one line as much as possible) after the script finishes, or when &#8216;flushmode&#8217; is called.</p>
+<p>Description: sends out a channel mode change (ex: pushmode #lame +o goober) through the bot's queuing system. All the mode changes will be sent out at once (combined into one line as much as possible) after the script finishes, or when 'flushmode' is called.</p>
 <p>Returns: nothing</p>
 <p>Module: irc</p>
 <p><strong>flushmode &lt;channel&gt;</strong></p>
@@ -768,7 +759,7 @@ Description: resets the channel join time for the given nick or for all nicks on
 <p>Returns: 1 if the channel is a dynamic channel; 0 otherwise</p>
 <p>Module: channels</p>
 <p><strong>setudef &lt;flag/int/str&gt; &lt;name&gt;</strong></p>
-<p>Description: initializes a user defined channel flag, string or integer setting. You can use it like any other flag/setting. IMPORTANT: Don&#8217;t forget to reinitialize your flags/settings after a restart, or it&#8217;ll be lost.</p>
+<p>Description: initializes a user defined channel flag, string or integer setting. You can use it like any other flag/setting. IMPORTANT: Don't forget to reinitialize your flags/settings after a restart, or it'll be lost.</p>
 <p>Returns: nothing</p>
 <p>Module: channels</p>
 <p><strong>renudef &lt;flag/int/str&gt; &lt;oldname&gt; &lt;newname&gt;</strong></p>
@@ -793,7 +784,7 @@ Description: resets the channel join time for the given nick or for all nicks on
 <p>Returns: nothing</p>
 <p>Module: core</p>
 <p><strong>dccbroadcast &lt;message&gt;</strong></p>
-<p>Description: sends a message to everyone on the party line across the botnet, in the form of &#8220;<strong>* &lt;message&gt;&#8221; for local users and &#8220;*</strong> (Bot) &lt;message&gt;&#8221; for users on other bots</p>
+<p>Description: sends a message to everyone on the party line across the botnet, in the form of &quot;<strong>* &lt;message&gt;&quot; for local users and &quot;*</strong> (Bot) &lt;message&gt;&quot; for users on other bots</p>
 <p>Returns: nothing</p>
 <p>Module: core</p>
 <p><strong>dccputchan &lt;channel&gt; &lt;message&gt;</strong></p>
@@ -805,7 +796,7 @@ Description: boots a user from the partyline</p>
 <p>Returns: nothing</p>
 <p>Module: core</p>
 <p><strong>dccsimul &lt;idx&gt; &lt;text&gt;</strong></p>
-<p>Description: simulates text typed in by the dcc user specified. Note that in v0.9, this only simulated commands; now a command must be preceded by a &#8216;.&#8217; to be simulated.</p>
+<p>Description: simulates text typed in by the dcc user specified. Note that in v0.9, this only simulated commands; now a command must be preceded by a '.' to be simulated.</p>
 <p>Returns: nothing</p>
 <p>Module: core</p>
 <p><strong>hand2idx &lt;handle&gt;</strong></p>
@@ -818,18 +809,18 @@ Description: boots a user from the partyline</p>
 <p>Returns: 1 if the idx currently exists; 0 otherwise</p>
 <p>Module: core</p>
 <p><strong>getchan &lt;idx&gt;</strong></p>
-<p>Returns: the current party line channel for a user on the party line; &#8220;0&#8221; indicates he&#8217;s on the group party line, &#8220;-1&#8221; means he has chat off, and a value from 1 to 99999 is a private channel</p>
+<p>Returns: the current party line channel for a user on the party line; &quot;0&quot; indicates he's on the group party line, &quot;-1&quot; means he has chat off, and a value from 1 to 99999 is a private channel</p>
 <p>Module: core</p>
 <p><strong>setchan &lt;idx&gt; &lt;channel&gt;</strong></p>
-<p>Description: sets a party line user&#8217;s channel. The party line user is not notified that she is now on a new channel. A channel name can be used (provided it exists).</p>
+<p>Description: sets a party line user's channel. The party line user is not notified that she is now on a new channel. A channel name can be used (provided it exists).</p>
 <p>Returns: nothing</p>
 <p>Module: core</p>
 <p><strong>console &lt;idx&gt; [channel] [console-modes]</strong></p>
-<p>Description: changes a dcc user&#8217;s console mode, either to an absolute mode (like &#8220;mpj&#8221;) or just adding/removing flags (like &#8220;+pj&#8221; or &#8220;-moc&#8221; or &#8220;+mp-c&#8221;). The user&#8217;s console channel view can be changed also (as long as the new channel is a valid channel).</p>
-<p>Returns: a list containing the user&#8217;s (new) channel view and (new) console modes, or nothing if that user isn&#8217;t currently on the partyline</p>
+<p>Description: changes a dcc user's console mode, either to an absolute mode (like &quot;mpj&quot;) or just adding/removing flags (like &quot;+pj&quot; or &quot;-moc&quot; or &quot;+mp-c&quot;). The user's console channel view can be changed also (as long as the new channel is a valid channel).</p>
+<p>Returns: a list containing the user's (new) channel view and (new) console modes, or nothing if that user isn't currently on the partyline</p>
 <p>Module: core</p>
 <p><strong>echo &lt;idx&gt; [status]</strong></p>
-<p>Description: turns a user&#8217;s echo on or off; the status has to be a 1 or 0</p>
+<p>Description: turns a user's echo on or off; the status has to be a 1 or 0</p>
 <p>Returns: new value of echo for that user (or the current value, if status was omitted)</p>
 <p>Module: core</p>
 <p><strong>strip &lt;idx&gt; [+/-strip-flags]</strong></p>
@@ -895,16 +886,16 @@ Description: boots a user from the partyline</p>
 </colgroup>
 <tbody valign="top">
 <tr class="row-odd"><td>bot</td>
-<td>the bot&#8217;s botnetnick</td>
+<td>the bot's botnetnick</td>
 </tr>
 <tr class="row-even"><td>uplink</td>
 <td>the bot the bot is connected to</td>
 </tr>
 <tr class="row-odd"><td>version</td>
-<td>it&#8217;s current numeric version</td>
+<td>it's current numeric version</td>
 </tr>
 <tr class="row-even"><td>sharing</td>
-<td>a &#8220;+&#8221; if the bot is a sharebot; &#8220;-&#8221; otherwise</td>
+<td>a &quot;+&quot; if the bot is a sharebot; &quot;-&quot; otherwise</td>
 </tr>
 </tbody>
 </table>
@@ -920,46 +911,46 @@ Description: boots a user from the partyline</p>
 <dt>Returns: a list of active connections, each item in the list is a sublist containing six elements:</dt>
 <dd>{&lt;idx&gt; &lt;handle&gt; &lt;hostname&gt; &lt;type&gt; {&lt;other&gt;} &lt;timestamp&gt;}.</dd>
 </dl>
-<p>The types are: chat, bot, files, file_receiving, file_sending, file_send_pending, script, socket (these are connections that have not yet been put under &#8216;control&#8217;), telnet, and server. The timestamp is in unixtime format.</p>
+<p>The types are: chat, bot, files, file_receiving, file_sending, file_send_pending, script, socket (these are connections that have not yet been put under 'control'), telnet, and server. The timestamp is in unixtime format.</p>
 <p>Module: core</p>
 <p><strong>whom &lt;chan&gt;</strong></p>
-<p>Returns: list of people on the botnet who are on that channel. 0 is the default party line. Each item in the list is a sublist with six elements: nickname, bot, hostname, access flag (&#8216;-&#8216;, &#8216;&#64;&#8217;, &#8216;+&#8217;, or &#8216;*&#8217;), minutes idle, and away message (blank if the user is not away). If you specify * for channel, every user on the botnet is returned with an extra argument indicating the channel the user is on.</p>
+<p>Returns: list of people on the botnet who are on that channel. 0 is the default party line. Each item in the list is a sublist with six elements: nickname, bot, hostname, access flag ('-', '&#64;', '+', or '*'), minutes idle, and away message (blank if the user is not away). If you specify * for channel, every user on the botnet is returned with an extra argument indicating the channel the user is on.</p>
 <p>Module: core</p>
 <p><strong>getdccidle &lt;idx&gt;</strong></p>
 <p>Returns: number of seconds the dcc chat/file system/script user has been idle</p>
 <p>Module: core</p>
 <p><strong>getdccaway &lt;idx&gt;</strong></p>
-<p>Returns: away message for a dcc chat user (or &#8220;&#8221; if the user is not set away)</p>
+<p>Returns: away message for a dcc chat user (or &quot;&quot; if the user is not set away)</p>
 <p>Module: core</p>
 <p><strong>setdccaway &lt;idx&gt; &lt;message&gt;</strong></p>
-<p>Description: sets a party line user&#8217;s away message and marks them away. If set to &#8220;&#8221;, the user is marked as no longer away.</p>
+<p>Description: sets a party line user's away message and marks them away. If set to &quot;&quot;, the user is marked as no longer away.</p>
 <p>Returns: nothing</p>
 <p>Module: core</p>
 <p><strong>connect &lt;host&gt; &lt;[+]port&gt;</strong></p>
-<p>Description: makes an outgoing connection attempt and creates a dcc entry for it. A &#8216;control&#8217; command should be used immediately after a successful &#8216;connect&#8217; so no input is lost. If the port is prefixed with a plus sign, SSL encrypted connection will be attempted.</p>
+<p>Description: makes an outgoing connection attempt and creates a dcc entry for it. A 'control' command should be used immediately after a successful 'connect' so no input is lost. If the port is prefixed with a plus sign, SSL encrypted connection will be attempted.</p>
 <p>Returns: idx of the new connection</p>
 <p>Module: core</p>
 <p><strong>listen &lt;port&gt; &lt;type&gt; [options] [flag]</strong></p>
-<p>Description: opens a listening port to accept incoming telnets; type must be one of &#8220;bots&#8221;, &#8220;all&#8221;, &#8220;users&#8221;, &#8220;script&#8221;, or &#8220;off&#8221;. Prefixing the port with a plus sign will make eggdrop accept SSL connections on it.</p>
+<p>Description: opens a listening port to accept incoming telnets; type must be one of &quot;bots&quot;, &quot;all&quot;, &quot;users&quot;, &quot;script&quot;, or &quot;off&quot;. Prefixing the port with a plus sign will make eggdrop accept SSL connections on it.</p>
 <blockquote>
 <div><p>listen &lt;port&gt; bots [mask]</p>
 <blockquote>
-<div><p>Description: accepts connections from bots only; the optional mask is used to identify permitted bot names. If the mask begins with &#8216;&#64;&#8217;, it is interpreted to be a mask of permitted hosts to accept connections from.</p>
+<div><p>Description: accepts connections from bots only; the optional mask is used to identify permitted bot names. If the mask begins with '&#64;', it is interpreted to be a mask of permitted hosts to accept connections from.</p>
 <p>Returns: port number</p>
 </div></blockquote>
 <p>listen &lt;port&gt; users [mask]</p>
 <blockquote>
-<div><p>Description: accepts connections from users only (no bots); the optional mask is used to identify permitted nicknames. If the mask begins with &#8216;&#64;&#8217;, it is interpreted to be a mask of permitted hosts to accept connections from.</p>
+<div><p>Description: accepts connections from users only (no bots); the optional mask is used to identify permitted nicknames. If the mask begins with '&#64;', it is interpreted to be a mask of permitted hosts to accept connections from.</p>
 <p>Returns: port number</p>
 </div></blockquote>
 <p>listen &lt;port&gt; all [mask]</p>
 <blockquote>
-<div><p>Description: accepts connections from anyone; the optional mask is used to identify permitted nicknames/botnames. If the mask begins with &#8216;&#64;&#8217;, it is interpreted to be a mask of permitted hosts to accept connections from.</p>
+<div><p>Description: accepts connections from anyone; the optional mask is used to identify permitted nicknames/botnames. If the mask begins with '&#64;', it is interpreted to be a mask of permitted hosts to accept connections from.</p>
 <p>Returns: port number</p>
 </div></blockquote>
 <p>listen &lt;port&gt; script &lt;proc&gt; [flag]</p>
 <blockquote>
-<div><p>Description: accepts connections which are immediately routed to a proc. The proc is called with one parameter: the idx of the new connection. Flag may currently only be &#8216;pub&#8217;, which makes the bot allow anyone to connect and not perform an ident lookup.</p>
+<div><p>Description: accepts connections which are immediately routed to a proc. The proc is called with one parameter: the idx of the new connection. Flag may currently only be 'pub', which makes the bot allow anyone to connect and not perform an ident lookup.</p>
 <p>Returns: port number</p>
 </div></blockquote>
 <p>listen &lt;port&gt; off</p>
@@ -970,7 +961,7 @@ Description: boots a user from the partyline</p>
 </div></blockquote>
 <p>Module: core</p>
 <p><strong>dccdumpfile &lt;idx&gt; &lt;filename&gt;</strong></p>
-<p>Description: dumps out a file from the text directory to a dcc chat user. The flag matching that&#8217;s used everywhere else works here, too.</p>
+<p>Description: dumps out a file from the text directory to a dcc chat user. The flag matching that's used everywhere else works here, too.</p>
 <p>Returns: nothing</p>
 <p>Module: core</p>
 </div>
@@ -983,11 +974,11 @@ Description: boots a user from the partyline</p>
 </div>
 <p>Module: notes</p>
 <p><strong>erasenotes &lt;user&gt; &lt;numberlist&gt;</strong></p>
-<p>Description: erases some or all stored notes for a user. Use &#8216;-&#8216; to erase all notes.</p>
+<p>Description: erases some or all stored notes for a user. Use '-' to erase all notes.</p>
 <p>Returns: -1 if no such user, -2 if notefile failure, 0 if no such note, or number of erased notes.</p>
 <p>Module: notes</p>
 <p><strong>listnotes &lt;user&gt; &lt;numberlist&gt;</strong></p>
-<p>Description: lists existing notes according to the numberlist (ex: &#8220;2-4;8;16-&#8221;)</p>
+<p>Description: lists existing notes according to the numberlist (ex: &quot;2-4;8;16-&quot;)</p>
 <p>Returns: -1 if no such user, -2 if notefile failure, 0 if no such note, list of existing notes.</p>
 <p>Module: notes</p>
 <p><strong>storenote &lt;from&gt; &lt;to&gt; &lt;msg&gt; &lt;idx&gt;</strong></p>
@@ -1002,7 +993,7 @@ Description: boots a user from the partyline</p>
 <p>Returns: current name for that channel, if any</p>
 <p>Module: assoc</p>
 <p><strong>killassoc &lt;chan&gt;</strong></p>
-<p>Description: removes the name associated with a botnet channel, if any exists. Use &#8216;killassoc &amp;&#8217; to kill all assocs.</p>
+<p>Description: removes the name associated with a botnet channel, if any exists. Use 'killassoc &amp;' to kill all assocs.</p>
 <p>Returns: nothing</p>
 <p>Module: assoc</p>
 </div>
@@ -1011,18 +1002,18 @@ Description: boots a user from the partyline</p>
 <p><strong>compressfile [-level &lt;level&gt;] &lt;src-file&gt; [target-file]</strong>
 and
 <strong>uncompressfile &lt;src-file&gt; [target-file]</strong></p>
-<p>Description: compresses or un-compresses files. The level option specifies the compression mode to use when compressing. Available modes are from 0 (minimum CPU usage, minimum compression) all the way up to 9 (maximum CPU usage, maximum compression). If you don&#8217;t specify the target-file, the src-file will be overwritten.</p>
+<p>Description: compresses or un-compresses files. The level option specifies the compression mode to use when compressing. Available modes are from 0 (minimum CPU usage, minimum compression) all the way up to 9 (maximum CPU usage, maximum compression). If you don't specify the target-file, the src-file will be overwritten.</p>
 <p>Returns: nothing</p>
 <p>Module: compress</p>
 <p><strong>iscompressed &lt;filename&gt;</strong></p>
 <p>Description: determines whether &lt;filename&gt; is gzip compressed.</p>
-<p>Returns: 1 if it is, 0 if it isn&#8217;t, and 2 if some kind of error prevented the checks from succeeding.</p>
+<p>Returns: 1 if it is, 0 if it isn't, and 2 if some kind of error prevented the checks from succeeding.</p>
 <p>Module: compress</p>
 </div>
 <div class="section" id="filesys-module">
 <h2>Filesys Module<a class="headerlink" href="#filesys-module" title="Permalink to this headline">¶</a></h2>
 <p><strong>setpwd &lt;idx&gt; &lt;dir&gt;</strong></p>
-<p>Description: changes the directory of a file system user, in exactly the same way as a &#8216;cd&#8217; command would. The directory can be specified relative or absolute.</p>
+<p>Description: changes the directory of a file system user, in exactly the same way as a 'cd' command would. The directory can be specified relative or absolute.</p>
 <p>Returns: nothing</p>
 <p>Module: filesys</p>
 <p><strong>getpwd &lt;idx&gt;</strong></p>
@@ -1035,7 +1026,7 @@ and
 <p>Returns: a list of subdirectories in the directory given; the directory is relative to dcc-path</p>
 <p>Module: filesys</p>
 <p><strong>dccsend &lt;filename&gt; &lt;ircnick&gt;</strong></p>
-<p>Description: attempts to start a dcc file transfer to the given nick; the filename must be specified either by full pathname or in relation to the bot&#8217;s startup directory</p>
+<p>Description: attempts to start a dcc file transfer to the given nick; the filename must be specified either by full pathname or in relation to the bot's startup directory</p>
 <p>Returns:</p>
 <table border="1" class="docutils">
 <colgroup>
@@ -1050,10 +1041,10 @@ and
 <td>the dcc table is full (too many connections)</td>
 </tr>
 <tr class="row-odd"><td>2</td>
-<td>can&#8217;t open a socket for the transfer</td>
+<td>can't open a socket for the transfer</td>
 </tr>
 <tr class="row-even"><td>3</td>
-<td>the file doesn&#8217;t exist</td>
+<td>the file doesn't exist</td>
 </tr>
 <tr class="row-odd"><td>4</td>
 <td>the file was queued for later transfer, which means that person has
@@ -1067,7 +1058,7 @@ directory</td>
 </table>
 <p>Module: transfer</p>
 <p><strong>filesend &lt;idx&gt; &lt;filename&gt; [ircnick]</strong></p>
-<p>Description: like dccsend, except it operates for a current filesystem user, and the filename is assumed to be a relative path from that user&#8217;s current directory</p>
+<p>Description: like dccsend, except it operates for a current filesystem user, and the filename is assumed to be a relative path from that user's current directory</p>
 <p>Returns: 0 on failure; 1 on success (either an immediate send or a queued send)</p>
 <p>Module: filesys</p>
 <p><strong>fileresend &lt;idx&gt; &lt;filename&gt; [ircnick]</strong></p>
@@ -1128,7 +1119,7 @@ directory</td>
 <td>success</td>
 </tr>
 <tr class="row-even"><td>1</td>
-<td>can&#8217;t create directory</td>
+<td>can't create directory</td>
 </tr>
 <tr class="row-odd"><td>2</td>
 <td>directory exists but is not a directory</td>
@@ -1202,7 +1193,7 @@ directory</td>
 <div class="section" id="miscellaneous-commands">
 <h2>Miscellaneous Commands<a class="headerlink" href="#miscellaneous-commands" title="Permalink to this headline">¶</a></h2>
 <p><strong>bind &lt;type&gt; &lt;flags&gt; &lt;keyword/mask&gt; [proc-name]</strong></p>
-<p>Description: You can use the &#8216;bind&#8217; command to attach Tcl procedures to certain events. flags are the flags the user must have to trigger the event (if applicable). proc-name is the name of the Tcl procedure to call for this command (see below for the format of the procedure call). If the proc-name is omitted, no binding is added. Instead, the current binding is returned (if it&#8217;s stackable, a list of the current bindings is returned).</p>
+<p>Description: You can use the 'bind' command to attach Tcl procedures to certain events. flags are the flags the user must have to trigger the event (if applicable). proc-name is the name of the Tcl procedure to call for this command (see below for the format of the procedure call). If the proc-name is omitted, no binding is added. Instead, the current binding is returned (if it's stackable, a list of the current bindings is returned).</p>
 <p>Returns: name of the command that was added, or (if proc-name was omitted), a list of the current bindings for this command</p>
 <p>Module: core</p>
 <p><strong>unbind &lt;type&gt; &lt;flags&gt; &lt;keyword/mask&gt; &lt;proc-name&gt;</strong></p>
@@ -1216,7 +1207,7 @@ directory</td>
 </dl>
 <p>Module: core</p>
 <p><strong>logfile [&lt;modes&gt; &lt;channel&gt; &lt;filename&gt;]</strong></p>
-<p>Description: creates a new logfile, which will log the modes given for the channel listed. If no logfile is specified, a list of existing logfiles will be returned. &#8220;*&#8221; indicates all channels. You can also change the modes and channel of an existing logfile with this command. Entering a blank mode and channel (&#8220;&#8221;) makes the bot stop logging there.</p>
+<p>Description: creates a new logfile, which will log the modes given for the channel listed. If no logfile is specified, a list of existing logfiles will be returned. &quot;*&quot; indicates all channels. You can also change the modes and channel of an existing logfile with this command. Entering a blank mode and channel (&quot;&quot;) makes the bot stop logging there.</p>
 <p>Logfile flags:</p>
 <table border="1" class="docutils">
 <colgroup>
@@ -1317,17 +1308,17 @@ directory</td>
 <blockquote>
 <div>You can also specify types from 10 to 19 which correspond to types
 0 to 9, but instead of using a * wildcard to replace portions of the
-host, only numbers in hostnames are replaced with the &#8216;?&#8217; wildcard.
-Same is valid for types 20-29, but instead of &#8216;?&#8217;, the &#8216;*&#8217; wildcard
+host, only numbers in hostnames are replaced with the '?' wildcard.
+Same is valid for types 20-29, but instead of '?', the '*' wildcard
 will be used.</div></blockquote>
 <p>Module: core</p>
 <p><strong>timer &lt;minutes&gt; &lt;tcl-command&gt; [count]</strong></p>
-<p>Description: executes the given Tcl command after a certain number of minutes have passed. If count is specified, the command will be executed count times with the given interval in between. If you specify a count of 0, the timer will repeat until it&#8217;s removed with killtimer or until the bot is restarted.</p>
+<p>Description: executes the given Tcl command after a certain number of minutes have passed. If count is specified, the command will be executed count times with the given interval in between. If you specify a count of 0, the timer will repeat until it's removed with killtimer or until the bot is restarted.</p>
 <p>Returns: a timerID</p>
 <p>Module: core</p>
 <blockquote>
 <div><strong>timer &lt;seconds&gt; &lt;tcl-command&gt; [count]</strong></div></blockquote>
-<p>Description: executes the given Tcl command after a certain number of seconds have passed. If count is specified, the command will be executed count times with the given interval in between. If you specify a count of 0, the utimer will repeat until it&#8217;s removed with killutimer or until the bot is restarted.</p>
+<p>Description: executes the given Tcl command after a certain number of seconds have passed. If count is specified, the command will be executed count times with the given interval in between. If you specify a count of 0, the utimer will repeat until it's removed with killutimer or until the bot is restarted.</p>
 <p>Returns: a timerID</p>
 <p>Module: core</p>
 <p><strong>timers</strong></p>
@@ -1354,16 +1345,16 @@ will be used.</div></blockquote>
 <p>Returns: a formatted string of time using standard strftime format. If time is specified, the value of the specified time is used. Otherwise, the current time is used.</p>
 <p>Module: core</p>
 <p><strong>ctime &lt;unixtime&gt;</strong></p>
-<p>Returns: a formatted date/time string based on the current locale settings from the unixtime string given; for example &#8220;Fri Aug 3 11:34:55 1973&#8221;</p>
+<p>Returns: a formatted date/time string based on the current locale settings from the unixtime string given; for example &quot;Fri Aug 3 11:34:55 1973&quot;</p>
 <p>Module: core</p>
 <p><strong>myip</strong></p>
-<p>Returns: a long number representing the bot&#8217;s IP address, as it might appear in (for example) a DCC request</p>
+<p>Returns: a long number representing the bot's IP address, as it might appear in (for example) a DCC request</p>
 <p>Module: core</p>
 <p><strong>rand &lt;limit&gt;</strong></p>
 <p>Returns: a random integer between 0 and limit-1</p>
 <p>Module: core</p>
 <p><strong>control &lt;idx&gt; &lt;command&gt;</strong></p>
-<p>Description: removes an idx from the party line and sends all future input to the Tcl command given. The command will be called with two parameters: the idx and the input text. The command should return 0 to indicate success and 1 to indicate that it relinquishes control of the user back to the bot. If the input text is blank (&#8220;&#8221;), it indicates that the connection has been dropped. Also, if the input text is blank, never call killdcc on it, as it will fail with &#8220;invalid idx&#8221;.</p>
+<p>Description: removes an idx from the party line and sends all future input to the Tcl command given. The command will be called with two parameters: the idx and the input text. The command should return 0 to indicate success and 1 to indicate that it relinquishes control of the user back to the bot. If the input text is blank (&quot;&quot;), it indicates that the connection has been dropped. Also, if the input text is blank, never call killdcc on it, as it will fail with &quot;invalid idx&quot;.</p>
 <p>Returns: nothing</p>
 <p>Module: core</p>
 <p><strong>sendnote &lt;from&gt; &lt;to[&#64;bot]&gt; &lt;message&gt;</strong></p>
@@ -1385,7 +1376,7 @@ will be used.</div></blockquote>
 <td>the note was stored locally</td>
 </tr>
 <tr class="row-even"><td>3</td>
-<td>the user&#8217;s notebox is too full to store a note</td>
+<td>the user's notebox is too full to store a note</td>
 </tr>
 <tr class="row-odd"><td>4</td>
 <td>a Tcl binding caught the note</td>
@@ -1414,7 +1405,7 @@ will be used.</div></blockquote>
 <p>Returns: encrypted string (using the currently loaded encryption module)</p>
 <p>Module: encryption</p>
 <p><strong>die [reason]</strong></p>
-<p>Description: causes the bot to log a fatal error and exit completely. If no reason is given, &#8220;EXIT&#8221; is used.</p>
+<p>Description: causes the bot to log a fatal error and exit completely. If no reason is given, &quot;EXIT&quot; is used.</p>
 <p>Returns: none</p>
 <p>Module: core</p>
 <p><strong>unames</strong></p>
@@ -1426,7 +1417,7 @@ will be used.</div></blockquote>
 <dt>As soon as the request completes, the specified proc will be called as follows:</dt>
 <dd>&lt;proc&gt; &lt;ipaddress&gt; &lt;hostname&gt; &lt;status&gt; [[arg1] [arg2] ... [argN]]</dd>
 </dl>
-<p>status is 1 if the lookup was successful and 0 if it wasn&#8217;t. All additional parameters (called arg1, arg2 and argN above) get appended to the proc&#8217;s other parameters.</p>
+<p>status is 1 if the lookup was successful and 0 if it wasn't. All additional parameters (called arg1, arg2 and argN above) get appended to the proc's other parameters.</p>
 <p>Returns: nothing</p>
 <p>Module: core</p>
 <p><strong>md5 &lt;string&gt;</strong></p>
@@ -1437,18 +1428,18 @@ will be used.</div></blockquote>
 <p>Returns: nothing</p>
 <p>Module: core</p>
 <p><strong>traffic</strong></p>
-<p>Returns: a list of sublists containing information about the bot&#8217;s traffic usage in bytes. Each sublist contains five elements: type, in-traffic today, in-traffic total, out-traffic today, out-traffic total (in that order).</p>
+<p>Returns: a list of sublists containing information about the bot's traffic usage in bytes. Each sublist contains five elements: type, in-traffic today, in-traffic total, out-traffic today, out-traffic total (in that order).</p>
 <p>Module: core</p>
 <p><strong>modules</strong>
-Returns: a list of sublists containing information about the bot&#8217;s currently loaded modules. Each sublist contains three elements: module, version, and dependencies. Each dependency is also a sublist containing the module name and version.</p>
+Returns: a list of sublists containing information about the bot's currently loaded modules. Each sublist contains three elements: module, version, and dependencies. Each dependency is also a sublist containing the module name and version.</p>
 <p>Module: core</p>
 <p><strong>loadmodule &lt;module&gt;</strong></p>
 <p>Description: attempts to load the specified module.</p>
-<p>Returns: &#8220;Already loaded.&#8221; if the module is already loaded, &#8220;&#8221; if successful, or the reason the module couldn&#8217;t be loaded.</p>
+<p>Returns: &quot;Already loaded.&quot; if the module is already loaded, &quot;&quot; if successful, or the reason the module couldn't be loaded.</p>
 <p>Module: core</p>
 <p><strong>unloadmodule &lt;module&gt;</strong></p>
 <p>Description: attempts to unload the specified module.</p>
-<p>Returns: &#8220;No such module&#8221; if the module is not loaded, &#8220;&#8221; otherwise.</p>
+<p>Returns: &quot;No such module&quot; if the module is not loaded, &quot;&quot; otherwise.</p>
 <p>Module: core</p>
 <p><strong>loadhelp &lt;helpfile-name&gt;</strong></p>
 <p>Description: attempts to load the specified help file from the help/ directory.</p>
@@ -1459,7 +1450,7 @@ Returns: a list of sublists containing information about the bot&#8217;s current
 <p>Returns: nothing</p>
 <p>Module: core</p>
 <p><strong>reloadhelp</strong></p>
-<p>Description: reloads the bot&#8217;s help files.</p>
+<p>Description: reloads the bot's help files.</p>
 <p>Returns: nothing</p>
 <p>Module: core</p>
 <p><strong>restart</strong></p>
@@ -1520,8 +1511,8 @@ Returns: a list of sublists containing information about the bot&#8217;s current
 <p>Returns: 1 if the address matches the block prefix, 0 otherwise.</p>
 <p>Module: core</p>
 <p><strong>matchstr &lt;pattern&gt; &lt;string&gt;</strong></p>
-<p>Description: checks if pattern matches string. Only two wildcards are supported: &#8216;*&#8217; and &#8216;?&#8217;. Matching is case-insensitive. This command is intended as a simplified alternative to Tcl&#8217;s string match.</p>
-<p>Returns: 1 if the pattern matches the string, 0 if it doesn&#8217;t.</p>
+<p>Description: checks if pattern matches string. Only two wildcards are supported: '*' and '?'. Matching is case-insensitive. This command is intended as a simplified alternative to Tcl's string match.</p>
+<p>Returns: 1 if the pattern matches the string, 0 if it doesn't.</p>
 <p>Module: core</p>
 <p><strong>rfcequal &lt;string1&gt; &lt;string2&gt;</strong></p>
 <p>Description: Checks if two strings are equal. Case is ignored, and this uses RFC1459 matching {}|~ == []^, depending on the rfc_compliant setting.</p>
@@ -1549,11 +1540,11 @@ Returns: a list of sublists containing information about the bot&#8217;s current
 </tr>
 </tbody>
 </table>
-<p>Returns: the requested information type or all information if type isn&#8217;t specified. The format is a flat list of name-value pairs.</p>
+<p>Returns: the requested information type or all information if type isn't specified. The format is a flat list of name-value pairs.</p>
 <p>Module: core</p>
 <p><strong>istls &lt;idx&gt;</strong></p>
 <p>Description: checks if a connection is encrypted or cleartext. This command is available on TLS-enabled bots only.</p>
-<p>Returns: 1 if the idx is a TLS connection, 0 if it&#8217;s plaintext.</p>
+<p>Returns: 1 if the idx is a TLS connection, 0 if it's plaintext.</p>
 <p>Module: core</p>
 <p><strong>starttls &lt;idx&gt;</strong></p>
 <p>Description: establishes a secure (using TLS) connection over idx. The TLS connection should be first negotiated over the plaintext link, or using other means. Both parties must switch to TLS simultaneously. This command is available on TLS-enabled bots only.</p>
@@ -1569,29 +1560,29 @@ Returns: a list of sublists containing information about the bot&#8217;s current
 <p>NOTE: All config file variables are also global.</p>
 <p><strong>botnick</strong></p>
 <blockquote>
-<div>Value: the current nickname the bot is using (for example: &#8220;Valis&#8221;, &#8220;Valis0&#8221;, etc.)</div></blockquote>
+<div>Value: the current nickname the bot is using (for example: &quot;Valis&quot;, &quot;Valis0&quot;, etc.)</div></blockquote>
 <p>Module: server</p>
 <p><strong>botname</strong></p>
 <blockquote>
-<div>Value: the current <a class="reference external" href="mailto:nick!user&#37;&#52;&#48;host">nick!user<span>&#64;</span>host</a> that the server sees (for example: &#8220;<a class="reference external" href="mailto:Valis!valis&#37;&#52;&#48;crappy&#46;com">Valis!valis<span>&#64;</span>crappy<span>&#46;</span>com</a>&#8221;)</div></blockquote>
+<div>Value: the current <a class="reference external" href="mailto:nick!user&#37;&#52;&#48;host">nick!user<span>&#64;</span>host</a> that the server sees (for example: &quot;<a class="reference external" href="mailto:Valis!valis&#37;&#52;&#48;crappy&#46;com">Valis!valis<span>&#64;</span>crappy<span>&#46;</span>com</a>&quot;)</div></blockquote>
 <p>Module: server</p>
 <p><strong>server</strong></p>
 <blockquote>
-<div>Value: the current server&#8217;s real name (what server calls itself) and port bot is connected to (for example: &#8220;irc.math.ufl.edu:6667&#8221;) Note that this does not necessarily match the servers internet address.</div></blockquote>
+<div>Value: the current server's real name (what server calls itself) and port bot is connected to (for example: &quot;irc.math.ufl.edu:6667&quot;) Note that this does not necessarily match the servers internet address.</div></blockquote>
 <p>Module: server</p>
 <dl class="docutils">
 <dt><strong>serveraddress</strong></dt>
-<dd>Value: the current server&#8217;s internet address (hostname or IP) and port bot is connected to. This will correspond to the entry in server list (for example: &#8220;eu.undernet.org:6667&#8221;). Note that this does not necessarily match the name server calls itself.</dd>
+<dd>Value: the current server's internet address (hostname or IP) and port bot is connected to. This will correspond to the entry in server list (for example: &quot;eu.undernet.org:6667&quot;). Note that this does not necessarily match the name server calls itself.</dd>
 </dl>
 <p>Module: server</p>
 <dl class="docutils">
 <dt><strong>version</strong></dt>
-<dd>Value: current bot version &#8220;1.1.2+pl1 1010201 pl1&#8221;; first item is the text version, second item is a numerical version, and any following items are the names of patches that have been added</dd>
+<dd>Value: current bot version &quot;1.1.2+pl1 1010201 pl1&quot;; first item is the text version, second item is a numerical version, and any following items are the names of patches that have been added</dd>
 </dl>
 <p>Module: core</p>
 <dl class="docutils">
 <dt><strong>numversion</strong></dt>
-<dd><p class="first">Value: the current numeric bot version (for example: &#8220;1010201&#8221;). Numerical version is in the format of &#8220;MNNRRPP&#8221;, where:</p>
+<dd><p class="first">Value: the current numeric bot version (for example: &quot;1010201&quot;). Numerical version is in the format of &quot;MNNRRPP&quot;, where:</p>
 <table border="1" class="last docutils">
 <colgroup>
 <col width="13%" />
@@ -1632,7 +1623,7 @@ Returns: a list of sublists containing information about the bot&#8217;s current
 <p>Module: core</p>
 <dl class="docutils">
 <dt><strong>isjuped</strong></dt>
-<dd>Value: 1 if bot&#8217;s nick is juped(437); 0 otherwise</dd>
+<dd>Value: 1 if bot's nick is juped(437); 0 otherwise</dd>
 </dl>
 <p>Module: server</p>
 <dl class="docutils">
@@ -1649,18 +1640,18 @@ Returns: a list of sublists containing information about the bot&#8217;s current
 <div class="section" id="binds">
 <h2>Binds<a class="headerlink" href="#binds" title="Permalink to this headline">¶</a></h2>
 <blockquote>
-<div><p>You can use the &#8216;bind&#8217; command to attach Tcl procedures to certain events.
+<div><p>You can use the 'bind' command to attach Tcl procedures to certain events.
 For example, you can write a Tcl procedure that gets called every time a
-user says &#8220;danger&#8221; on the channel.</p>
-<p>Some bind types are marked as &#8220;stackable&#8221;. That means that you can bind
+user says &quot;danger&quot; on the channel.</p>
+<p>Some bind types are marked as &quot;stackable&quot;. That means that you can bind
 multiple commands to the same trigger. Normally, for example, a bind such
-as &#8216;bind msg - stop msg:stop&#8217; (which makes a msg-command &#8220;stop&#8221; call the
-Tcl proc &#8220;msg:stop&#8221;) will overwrite any previous binding you had for the
-msg command &#8220;stop&#8221;. With stackable bindings, like &#8216;msgm&#8217; for example,
+as 'bind msg - stop msg:stop' (which makes a msg-command &quot;stop&quot; call the
+Tcl proc &quot;msg:stop&quot;) will overwrite any previous binding you had for the
+msg command &quot;stop&quot;. With stackable bindings, like 'msgm' for example,
 you can bind the same command to multiple procs. When the bind is triggered,
 ALL of the Tcl procs that are bound to it will be called.</p>
-<p>To remove a bind, use the &#8216;unbind&#8217; command. For example, to remove the
-bind for the &#8220;stop&#8221; msg command, use &#8216;unbind msg - stop msg:stop&#8217;.</p>
+<p>To remove a bind, use the 'unbind' command. For example, to remove the
+bind for the &quot;stop&quot; msg command, use 'unbind msg - stop msg:stop'.</p>
 </div></blockquote>
 <div class="section" id="bind-types">
 <h3>Bind Types<a class="headerlink" href="#bind-types" title="Permalink to this headline">¶</a></h3>
@@ -1671,7 +1662,7 @@ bind for the &#8220;stop&#8221; msg command, use &#8216;unbind msg - stop msg:st
 <blockquote>
 <div><p>bind msg &lt;flags&gt; &lt;command&gt; &lt;proc&gt;
 procname &lt;nick&gt; &lt;<a class="reference external" href="mailto:user&#37;&#52;&#48;host">user<span>&#64;</span>host</a>&gt; &lt;handle&gt; &lt;text&gt;</p>
-<p>Description: used for /msg commands. The first word of the user&#8217;s msg is the command, and everything else becomes the text argument.</p>
+<p>Description: used for /msg commands. The first word of the user's msg is the command, and everything else becomes the text argument.</p>
 <p>Module: server</p>
 </div></blockquote>
 <ol class="arabic simple" start="2">
@@ -1717,16 +1708,16 @@ procname &lt;nick&gt; &lt;<a class="reference external" href="mailto:user&#37;&#
 <div><p>bind pubm &lt;flags&gt; &lt;mask&gt; &lt;proc&gt;
 procname &lt;nick&gt; &lt;<a class="reference external" href="mailto:user&#37;&#52;&#48;host">user<span>&#64;</span>host</a>&gt; &lt;handle&gt; &lt;channel&gt; &lt;text&gt;</p>
 <dl class="docutils">
-<dt>Description: just like MSGM, except it&#8217;s triggered by things said on a channel instead of things /msg&#8217;d to the bot. The mask is matched against the channel name followed by the text and can contain wildcards. If the proc returns 1, Eggdrop will not log the message that triggered this bind. PUBM binds are processed before PUB binds. If the exclusive-binds setting is enabled, PUB binds will not be triggered by text that a PUBM bind has already handled.</dt>
+<dt>Description: just like MSGM, except it's triggered by things said on a channel instead of things /msg'd to the bot. The mask is matched against the channel name followed by the text and can contain wildcards. If the proc returns 1, Eggdrop will not log the message that triggered this bind. PUBM binds are processed before PUB binds. If the exclusive-binds setting is enabled, PUB binds will not be triggered by text that a PUBM bind has already handled.</dt>
 <dd><dl class="first last docutils">
 <dt>Examples:</dt>
 <dd><dl class="first last docutils">
-<dt>bind pubm * &#8220;#eggdrop Hello*&#8221; myProc</dt>
-<dd>Listens on #eggdrop for any line that begins with &#8220;Hello&#8221;</dd>
-<dt>bind pubm * &#8220;% Hello*&#8221; myProc</dt>
-<dd>Listens on any channel for any line that begins with &#8220;Hello&#8221;</dd>
-<dt>bind pubm * &#8220;% !command&#8221; myProc</dt>
-<dd>Listens on any channel for a line that ONLY contains &#8221;!command&#8221;</dd>
+<dt>bind pubm * &quot;#eggdrop Hello*&quot; myProc</dt>
+<dd>Listens on #eggdrop for any line that begins with &quot;Hello&quot;</dd>
+<dt>bind pubm * &quot;% Hello*&quot; myProc</dt>
+<dd>Listens on any channel for any line that begins with &quot;Hello&quot;</dd>
+<dt>bind pubm * &quot;% !command&quot; myProc</dt>
+<dd>Listens on any channel for a line that ONLY contains &quot;!command&quot;</dd>
 </dl>
 </dd>
 </dl>
@@ -1740,7 +1731,7 @@ procname &lt;nick&gt; &lt;<a class="reference external" href="mailto:user&#37;&#
 <blockquote>
 <div><p>bind notc &lt;flags&gt; &lt;mask&gt; &lt;proc&gt;
 procname &lt;nick&gt; &lt;<a class="reference external" href="mailto:user&#37;&#52;&#48;host">user<span>&#64;</span>host</a>&gt; &lt;handle&gt; &lt;text&gt; &lt;dest&gt;</p>
-<p>Description: dest will be a nickname (the bot&#8217;s nickname, obviously) or a channel name. mask is matched against the entire text of the notice and can contain wildcards. It is considered a breach of protocol to respond to a /notice on IRC, so this is intended for internal use (logging, etc.) only. Note that server notices do not trigger the NOTC bind. If the proc returns 1, Eggdrop will not log the message that triggered this bind.</p>
+<p>Description: dest will be a nickname (the bot's nickname, obviously) or a channel name. mask is matched against the entire text of the notice and can contain wildcards. It is considered a breach of protocol to respond to a /notice on IRC, so this is intended for internal use (logging, etc.) only. Note that server notices do not trigger the NOTC bind. If the proc returns 1, Eggdrop will not log the message that triggered this bind.</p>
 <p>New Tcl procs should be declared as:</p>
 <div class="highlight-python"><div class="highlight"><pre>proc notcproc {nick uhost hand text {dest &quot;&quot;}} {
   global botnick; if {$dest == &quot;&quot;} {set dest $botnick}
@@ -1757,7 +1748,7 @@ procname &lt;nick&gt; &lt;<a class="reference external" href="mailto:user&#37;&#
 <blockquote>
 <div><p>bind join &lt;flags&gt; &lt;mask&gt; &lt;proc&gt;
 procname &lt;nick&gt; &lt;<a class="reference external" href="mailto:user&#37;&#52;&#48;host">user<span>&#64;</span>host</a>&gt; &lt;handle&gt; &lt;channel&gt;</p>
-<p>Description: triggered by someone joining the channel. The mask in the bind is matched against &#8220;#channel <a class="reference external" href="mailto:nick!user&#37;&#52;&#48;host">nick!user<span>&#64;</span>host</a>&#8221; and can contain wildcards.</p>
+<p>Description: triggered by someone joining the channel. The mask in the bind is matched against &quot;#channel <a class="reference external" href="mailto:nick!user&#37;&#52;&#48;host">nick!user<span>&#64;</span>host</a>&quot; and can contain wildcards.</p>
 <p>Module: irc</p>
 </div></blockquote>
 <ol class="arabic simple" start="9">
@@ -1766,7 +1757,7 @@ procname &lt;nick&gt; &lt;<a class="reference external" href="mailto:user&#37;&#
 <blockquote>
 <div><p>bind part &lt;flags&gt; &lt;mask&gt; &lt;proc&gt;
 procname &lt;nick&gt; &lt;<a class="reference external" href="mailto:user&#37;&#52;&#48;host">user<span>&#64;</span>host</a>&gt; &lt;handle&gt; &lt;channel&gt; &lt;msg&gt;</p>
-<p>Description: triggered by someone leaving the channel. The mask is matched against &#8220;#channel <a class="reference external" href="mailto:nick!user&#37;&#52;&#48;host">nick!user<span>&#64;</span>host</a>&#8221; and can contain wildcards. If no part message is specified, msg will be set to &#8220;&#8221;.</p>
+<p>Description: triggered by someone leaving the channel. The mask is matched against &quot;#channel <a class="reference external" href="mailto:nick!user&#37;&#52;&#48;host">nick!user<span>&#64;</span>host</a>&quot; and can contain wildcards. If no part message is specified, msg will be set to &quot;&quot;.</p>
 <p>New Tcl procs should be declared as:</p>
 <div class="highlight-python"><div class="highlight"><pre>proc partproc {nick uhost hand chan {msg &quot;&quot;}} { ... }
 </pre></div>
@@ -1780,7 +1771,7 @@ procname &lt;nick&gt; &lt;<a class="reference external" href="mailto:user&#37;&#
 <blockquote>
 <div><p>bind sign &lt;flags&gt; &lt;mask&gt; &lt;proc&gt;
 procname &lt;nick&gt; &lt;<a class="reference external" href="mailto:user&#37;&#52;&#48;host">user<span>&#64;</span>host</a>&gt; &lt;handle&gt; &lt;channel&gt; &lt;reason&gt;</p>
-<p>Description: triggered by a signoff, or possibly by someone who got netsplit and never returned. The signoff message is the last argument to the proc. Wildcards can be used in the mask, which is matched against &#8216;#channel <a class="reference external" href="mailto:nick!user&#37;&#52;&#48;host">nick!user<span>&#64;</span>host</a>&#8216;.</p>
+<p>Description: triggered by a signoff, or possibly by someone who got netsplit and never returned. The signoff message is the last argument to the proc. Wildcards can be used in the mask, which is matched against '#channel <a class="reference external" href="mailto:nick!user&#37;&#52;&#48;host">nick!user<span>&#64;</span>host</a>'.</p>
 <p>Module: irc</p>
 </div></blockquote>
 <ol class="arabic simple" start="11">
@@ -1789,7 +1780,7 @@ procname &lt;nick&gt; &lt;<a class="reference external" href="mailto:user&#37;&#
 <blockquote>
 <div><p>bind topc &lt;flags&gt; &lt;mask&gt; &lt;proc&gt;
 procname &lt;nick&gt; &lt;<a class="reference external" href="mailto:user&#37;&#52;&#48;host">user<span>&#64;</span>host</a>&gt; &lt;handle&gt; &lt;channel&gt; &lt;topic&gt;</p>
-<p>Description: triggered by a topic change. mask can contain wildcards and is matched against &#8216;#channel &lt;new topic&gt;&#8217;.</p>
+<p>Description: triggered by a topic change. mask can contain wildcards and is matched against '#channel &lt;new topic&gt;'.</p>
 <p>Module: irc</p>
 </div></blockquote>
 <ol class="arabic simple" start="12">
@@ -1798,7 +1789,7 @@ procname &lt;nick&gt; &lt;<a class="reference external" href="mailto:user&#37;&#
 <blockquote>
 <div><p>bind kick &lt;flags&gt; &lt;mask&gt; &lt;proc&gt;
 procname &lt;nick&gt; &lt;<a class="reference external" href="mailto:user&#37;&#52;&#48;host">user<span>&#64;</span>host</a>&gt; &lt;handle&gt; &lt;channel&gt; &lt;target&gt; &lt;reason&gt;</p>
-<p>Description: triggered when someone is kicked off the channel. The mask is matched against &#8216;#channel target reason&#8217; where the target is the nickname of the person who got kicked (can contain wildcards). The proc is called with the nick, <a class="reference external" href="mailto:user&#37;&#52;&#48;host">user<span>&#64;</span>host</a>, and handle of the kicker, plus the channel, the nickname of the person who was kicked, and the reason.</p>
+<p>Description: triggered when someone is kicked off the channel. The mask is matched against '#channel target reason' where the target is the nickname of the person who got kicked (can contain wildcards). The proc is called with the nick, <a class="reference external" href="mailto:user&#37;&#52;&#48;host">user<span>&#64;</span>host</a>, and handle of the kicker, plus the channel, the nickname of the person who was kicked, and the reason.</p>
 <p>Module: irc</p>
 </div></blockquote>
 <ol class="arabic simple" start="13">
@@ -1807,7 +1798,7 @@ procname &lt;nick&gt; &lt;<a class="reference external" href="mailto:user&#37;&#
 <blockquote>
 <div><p>bind nick &lt;flags&gt; &lt;mask&gt; &lt;proc&gt;
 procname &lt;nick&gt; &lt;<a class="reference external" href="mailto:user&#37;&#52;&#48;host">user<span>&#64;</span>host</a>&gt; &lt;handle&gt; &lt;channel&gt; &lt;newnick&gt;</p>
-<p>Description: triggered when someone changes nicknames. The mask is matched against &#8216;#channel newnick&#8217; and can contain wildcards. Channel is &#8220;*&#8221; if the user isn&#8217;t on a channel (usually the bot not yet in a channel).</p>
+<p>Description: triggered when someone changes nicknames. The mask is matched against '#channel newnick' and can contain wildcards. Channel is &quot;*&quot; if the user isn't on a channel (usually the bot not yet in a channel).</p>
 <p>Module: irc</p>
 </div></blockquote>
 <ol class="arabic simple" start="14">
@@ -1816,10 +1807,10 @@ procname &lt;nick&gt; &lt;<a class="reference external" href="mailto:user&#37;&#
 <blockquote>
 <div><p>bind mode &lt;flags&gt; &lt;mask&gt; &lt;proc&gt;
 procname &lt;nick&gt; &lt;<a class="reference external" href="mailto:user&#37;&#52;&#48;host">user<span>&#64;</span>host</a>&gt; &lt;handle&gt; &lt;channel&gt; &lt;mode-change&gt; &lt;target&gt;</p>
-<p>Description: mode changes are broken down into their component parts before being sent here, so the &lt;mode-change&gt; will always be a single mode, such as &#8220;+m&#8221; or &#8220;-o&#8221;. target will show the argument of the mode change (for o/v/b/e/I) or &#8220;&#8221; if the set mode does not take an argument. The bot&#8217;s automatic response to a mode change will happen AFTER all matching Tcl procs are called. The mask will be matched against &#8216;#channel +/-modes&#8217; and can contain wildcards.</p>
-<p>If it is a server mode, nick will be &#8220;&#8221;, <a class="reference external" href="mailto:user&#37;&#52;&#48;host">user<span>&#64;</span>host</a> is the server name, and handle is *.</p>
-<p>Note that &#8220;target&#8221; was added in 1.3.17 and that this will break Tcl scripts that were written for pre-1.3.17 Eggdrop that use the mode binding. Also, due to a typo, mode binds were broken completely in 1.3.17 but were fixed in 1.3.18. Mode bindings are not triggered at all in 1.3.17.</p>
-<p>One easy example (from guppy) of how to support the &#8220;target&#8221; parameter in 1.3.18 and later and still remain compatible with older Eggdrop versions is:</p>
+<p>Description: mode changes are broken down into their component parts before being sent here, so the &lt;mode-change&gt; will always be a single mode, such as &quot;+m&quot; or &quot;-o&quot;. target will show the argument of the mode change (for o/v/b/e/I) or &quot;&quot; if the set mode does not take an argument. The bot's automatic response to a mode change will happen AFTER all matching Tcl procs are called. The mask will be matched against '#channel +/-modes' and can contain wildcards.</p>
+<p>If it is a server mode, nick will be &quot;&quot;, <a class="reference external" href="mailto:user&#37;&#52;&#48;host">user<span>&#64;</span>host</a> is the server name, and handle is *.</p>
+<p>Note that &quot;target&quot; was added in 1.3.17 and that this will break Tcl scripts that were written for pre-1.3.17 Eggdrop that use the mode binding. Also, due to a typo, mode binds were broken completely in 1.3.17 but were fixed in 1.3.18. Mode bindings are not triggered at all in 1.3.17.</p>
+<p>One easy example (from guppy) of how to support the &quot;target&quot; parameter in 1.3.18 and later and still remain compatible with older Eggdrop versions is:</p>
 <p>Old script looks as follows:</p>
 <div class="highlight-python"><div class="highlight"><pre>bind mode - * mode_proc
 proc mode_proc {nick uhost hand chan mode} { ... }
@@ -1842,7 +1833,7 @@ proc mode_proc {nick uhost hand chan mode} { ... }
 <blockquote>
 <div><p>bind ctcp &lt;flags&gt; &lt;keyword&gt; &lt;proc&gt;
 procname &lt;nick&gt; &lt;<a class="reference external" href="mailto:user&#37;&#52;&#48;host">user<span>&#64;</span>host</a>&gt; &lt;handle&gt; &lt;dest&gt; &lt;keyword&gt; &lt;text&gt;</p>
-<p>Description: dest will be a nickname (the bot&#8217;s nickname, obviously) or channel name. keyword is the ctcp command (which can contain wildcards), and text may be empty. If the proc returns 0, the bot will attempt its own processing of the ctcp command.</p>
+<p>Description: dest will be a nickname (the bot's nickname, obviously) or channel name. keyword is the ctcp command (which can contain wildcards), and text may be empty. If the proc returns 0, the bot will attempt its own processing of the ctcp command.</p>
 <p>Module: server</p>
 </div></blockquote>
 <ol class="arabic simple" start="16">
@@ -1860,7 +1851,7 @@ procname &lt;nick&gt; &lt;<a class="reference external" href="mailto:user&#37;&#
 <blockquote>
 <div><p>bind raw &lt;flags&gt; &lt;keyword&gt; &lt;proc&gt;
 procname &lt;from&gt; &lt;keyword&gt; &lt;text&gt;</p>
-<p>Description: previous versions of Eggdrop required a special compile option to enable this binding, but it&#8217;s now standard. The keyword is either a numeric, like &#8220;368&#8221;, or a keyword, such as &#8220;PRIVMSG&#8221;. &#8220;from&#8221; will be the server name or the source user (depending on the keyword); flags are ignored. The order of the arguments is identical to the order that the IRC server sends to the bot. The pre-processing  only splits it apart enough to determine the keyword. If the proc returns 1, Eggdrop will not process the line any further (this could cause unexpected behavior in some cases).</p>
+<p>Description: previous versions of Eggdrop required a special compile option to enable this binding, but it's now standard. The keyword is either a numeric, like &quot;368&quot;, or a keyword, such as &quot;PRIVMSG&quot;. &quot;from&quot; will be the server name or the source user (depending on the keyword); flags are ignored. The order of the arguments is identical to the order that the IRC server sends to the bot. The pre-processing  only splits it apart enough to determine the keyword. If the proc returns 1, Eggdrop will not process the line any further (this could cause unexpected behavior in some cases).</p>
 <p>Module: server</p>
 </div></blockquote>
 <ol class="arabic simple" start="18">
@@ -1878,7 +1869,7 @@ procname &lt;from-bot&gt; &lt;command&gt; &lt;text&gt;</p>
 <blockquote>
 <div><p>bind chon &lt;flags&gt; &lt;mask&gt; &lt;proc&gt;
 procname &lt;handle&gt; &lt;idx&gt;</p>
-<p>Description: when someone first enters the party-line area of the bot via dcc chat or telnet, this is triggered before they are connected to a chat channel (so, yes, you can change the channel in a &#8216;chon&#8217; proc). mask is matched against the handle and supports wildcards. This is NOT triggered when someone returns from the file area, etc.</p>
+<p>Description: when someone first enters the party-line area of the bot via dcc chat or telnet, this is triggered before they are connected to a chat channel (so, yes, you can change the channel in a 'chon' proc). mask is matched against the handle and supports wildcards. This is NOT triggered when someone returns from the file area, etc.</p>
 <p>Module: core</p>
 </div></blockquote>
 <ol class="arabic simple" start="20">
@@ -1887,7 +1878,7 @@ procname &lt;handle&gt; &lt;idx&gt;</p>
 <blockquote>
 <div><p>bind chof &lt;flags&gt; &lt;mask&gt; &lt;proc&gt;
 procname &lt;handle&gt; &lt;idx&gt;</p>
-<p>Description: triggered when someone leaves the party line to disconnect from the bot. mask is matched against the handle and can contain wildcards. Note that the connection may have already been dropped by the user, so don&#8217;t send output to the idx.</p>
+<p>Description: triggered when someone leaves the party line to disconnect from the bot. mask is matched against the handle and can contain wildcards. Note that the connection may have already been dropped by the user, so don't send output to the idx.</p>
 <p>Module: core</p>
 </div></blockquote>
 <ol class="arabic simple" start="21">
@@ -1896,7 +1887,7 @@ procname &lt;handle&gt; &lt;idx&gt;</p>
 <blockquote>
 <div><p>bind sent &lt;flags&gt; &lt;mask&gt; &lt;proc&gt;
 procname &lt;handle&gt; &lt;nick&gt; &lt;path/to/file&gt;</p>
-<p>Description: after a user has successfully downloaded a file from the bot, this binding is triggered. mask is matched against the handle of the user that initiated the transfer and supports wildcards. nick is the actual recipient (on IRC) of the file. The path is relative to the dcc directory (unless the file transfer was started by a script call to &#8216;dccsend&#8217;, in which case the path is the exact path given in the call to &#8216;dccsend&#8217;).</p>
+<p>Description: after a user has successfully downloaded a file from the bot, this binding is triggered. mask is matched against the handle of the user that initiated the transfer and supports wildcards. nick is the actual recipient (on IRC) of the file. The path is relative to the dcc directory (unless the file transfer was started by a script call to 'dccsend', in which case the path is the exact path given in the call to 'dccsend').</p>
 <p>Module: transfer</p>
 </div></blockquote>
 <ol class="arabic simple" start="22">
@@ -1905,7 +1896,7 @@ procname &lt;handle&gt; &lt;nick&gt; &lt;path/to/file&gt;</p>
 <blockquote>
 <div><p>bind rcvd &lt;flags&gt; &lt;mask&gt; &lt;proc&gt;
 procname &lt;handle&gt; &lt;nick&gt; &lt;path/to/file&gt;</p>
-<p>Description: triggered after a user uploads a file successfully. mask is matched against the user&#8217;s handle. nick is the IRC nickname that the file transfer originated from. The path is where the file ended up, relative to the dcc directory (usually this is your incoming dir).</p>
+<p>Description: triggered after a user uploads a file successfully. mask is matched against the user's handle. nick is the IRC nickname that the file transfer originated from. The path is where the file ended up, relative to the dcc directory (usually this is your incoming dir).</p>
 <p>Module: transfer</p>
 </div></blockquote>
 <ol class="arabic simple" start="23">
@@ -1914,7 +1905,7 @@ procname &lt;handle&gt; &lt;nick&gt; &lt;path/to/file&gt;</p>
 <blockquote>
 <div><p>bind chat &lt;flags&gt; &lt;mask&gt; &lt;proc&gt;
 procname &lt;handle&gt; &lt;channel#&gt; &lt;text&gt;</p>
-<p>Description: when a user says something on the botnet, it invokes this binding. Flags are ignored; handle could be a user on this bot (&#8220;DronePup&#8221;) or on another bot (&#8220;<a class="reference external" href="mailto:Eden&#37;&#52;&#48;Wilde">Eden<span>&#64;</span>Wilde</a>&#8221;) and therefore you can&#8217;t rely on a local user record. The mask is checked against the entire line of text and supports wildcards.</p>
+<p>Description: when a user says something on the botnet, it invokes this binding. Flags are ignored; handle could be a user on this bot (&quot;DronePup&quot;) or on another bot (&quot;<a class="reference external" href="mailto:Eden&#37;&#52;&#48;Wilde">Eden<span>&#64;</span>Wilde</a>&quot;) and therefore you can't rely on a local user record. The mask is checked against the entire line of text and supports wildcards.</p>
 <p>NOTE: If a BOT says something on the botnet, the BCST bind is invoked instead.</p>
 <p>Module: core</p>
 </div></blockquote>
@@ -1942,7 +1933,7 @@ procname &lt;botname&gt;</p>
 <blockquote>
 <div><p>bind splt &lt;flags&gt; &lt;mask&gt; &lt;proc&gt;
 procname &lt;nick&gt; &lt;<a class="reference external" href="mailto:user&#37;&#52;&#48;host">user<span>&#64;</span>host</a>&gt; &lt;handle&gt; &lt;channel&gt;</p>
-<p>Description: triggered when someone gets netsplit on the channel. Be aware that this may be a false alarm (it&#8217;s easy to fake a netsplit signoff message on some networks); mask may contain wildcards and is matched against &#8216;#channel <a class="reference external" href="mailto:nick!user&#37;&#52;&#48;host">nick!user<span>&#64;</span>host</a>&#8216;. Anyone who is SPLT will trigger a REJN or SIGN within the next wait-split (defined in the config file) seconds.</p>
+<p>Description: triggered when someone gets netsplit on the channel. Be aware that this may be a false alarm (it's easy to fake a netsplit signoff message on some networks); mask may contain wildcards and is matched against '#channel <a class="reference external" href="mailto:nick!user&#37;&#52;&#48;host">nick!user<span>&#64;</span>host</a>'. Anyone who is SPLT will trigger a REJN or SIGN within the next wait-split (defined in the config file) seconds.</p>
 <p>Module: irc</p>
 </div></blockquote>
 <ol class="arabic simple" start="27">
@@ -1951,7 +1942,7 @@ procname &lt;nick&gt; &lt;<a class="reference external" href="mailto:user&#37;&#
 <blockquote>
 <div><p>bind rejn &lt;flags&gt; &lt;mask&gt; &lt;proc&gt;
 procname &lt;nick&gt; &lt;<a class="reference external" href="mailto:user&#37;&#52;&#48;host">user<span>&#64;</span>host</a>&gt; &lt;handle&gt; &lt;channel&gt;</p>
-<p>Description: someone who was split has rejoined. mask can contain wildcards, and is matched against &#8216;#channel <a class="reference external" href="mailto:nick!user&#37;&#52;&#48;host">nick!user<span>&#64;</span>host</a>&#8216;.</p>
+<p>Description: someone who was split has rejoined. mask can contain wildcards, and is matched against '#channel <a class="reference external" href="mailto:nick!user&#37;&#52;&#48;host">nick!user<span>&#64;</span>host</a>'.</p>
 <p>Module: irc</p>
 </div></blockquote>
 <ol class="arabic simple" start="28">
@@ -1970,7 +1961,7 @@ procname &lt;idx&gt; &lt;text&gt;</p>
 <div><blockquote>
 <div><p>bind need &lt;flags&gt; &lt;mask&gt; &lt;proc&gt;
 procname &lt;channel&gt; &lt;type&gt;</p>
-<p>Description: this bind is triggered on certain events, like when the bot needs operator status or the key for a channel. The types are: op, unban, invite, limit, and key; the mask is matched against &#8216;#channel type&#8217; and can contain wildcards. flags are ignored.</p>
+<p>Description: this bind is triggered on certain events, like when the bot needs operator status or the key for a channel. The types are: op, unban, invite, limit, and key; the mask is matched against '#channel type' and can contain wildcards. flags are ignored.</p>
 <p>Example:</p>
 <div class="highlight-python"><div class="highlight"><pre>bind need - &quot;% op&quot; needop &lt; handles only need op
 bind need - &quot;*&quot; needall   &lt; handles all needs
@@ -1985,7 +1976,7 @@ bind need - &quot;*&quot; needall   &lt; handles all needs
 <blockquote>
 <div><p>bind flud &lt;flags&gt; &lt;type&gt; &lt;proc&gt;
 procname &lt;nick&gt; &lt;<a class="reference external" href="mailto:user&#37;&#52;&#48;host">user<span>&#64;</span>host</a>&gt; &lt;handle&gt; &lt;type&gt; &lt;channel&gt;</p>
-<p>Description: any floods detected through the flood control settings (like &#8216;flood-ctcp&#8217;) are sent here before processing. If the proc returns 1, no further action is taken on the flood; if the proc returns 0, the bot will do its normal &#8220;punishment&#8221; for the flood. The flood types are: pub, msg, join, or ctcp (and can be masked to &#8220;*&#8221; for the bind); flags are ignored.</p>
+<p>Description: any floods detected through the flood control settings (like 'flood-ctcp') are sent here before processing. If the proc returns 1, no further action is taken on the flood; if the proc returns 0, the bot will do its normal &quot;punishment&quot; for the flood. The flood types are: pub, msg, join, or ctcp (and can be masked to &quot;*&quot; for the bind); flags are ignored.</p>
 <p>Module: server</p>
 </div></blockquote>
 <ol class="arabic simple" start="31">
@@ -2021,8 +2012,8 @@ procname &lt;from&gt; &lt;msg&gt;</p>
 <blockquote>
 <div><p>bind bcst &lt;flags&gt; &lt;mask&gt; &lt;proc&gt;
 procname &lt;botname&gt; &lt;channel#&gt; &lt;text&gt;</p>
-<p>Description: when a bot broadcasts something on the botnet (see &#8216;dccbroadcast&#8217; above), it invokes this binding. flags are ignored; the mask is matched against the message text and can contain wildcards. &#8216;channel&#8217; argument will always be &#8216;-1&#8217; since broadcasts are not directed to any partyline channel.</p>
-<p>It is also invoked when a BOT (not a person, as with the CHAT bind) &#8216;says&#8217; something on a channel. In this case, the &#8216;channel&#8217; argument will be a valid channel, and not &#8216;-1&#8217;.</p>
+<p>Description: when a bot broadcasts something on the botnet (see 'dccbroadcast' above), it invokes this binding. flags are ignored; the mask is matched against the message text and can contain wildcards. 'channel' argument will always be '-1' since broadcasts are not directed to any partyline channel.</p>
+<p>It is also invoked when a BOT (not a person, as with the CHAT bind) 'says' something on a channel. In this case, the 'channel' argument will be a valid channel, and not '-1'.</p>
 <p>Module: core</p>
 </div></blockquote>
 <ol class="arabic simple" start="35">
@@ -2049,7 +2040,7 @@ procname &lt;botname&gt; &lt;handle&gt; &lt;idx&gt; &lt;channel#&gt;</p>
 <blockquote>
 <div><p>bind time &lt;flags&gt; &lt;mask&gt; &lt;proc&gt;
 procname &lt;minute 00-59&gt; &lt;hour 00-23&gt; &lt;day 01-31&gt; &lt;month 00-11&gt; &lt;year 0000-9999&gt;</p>
-<p>Description: allows you to schedule procedure calls at certain times. mask matches 5 space separated integers of the form: &#8220;minute hour day month year&#8221;. The month var starts at 00 (Jan) and ends at 11 (Dec). Minute, hour, day, month have a zero padding so they are exactly two characters long; year is zero characters. Flags are ignored.</p>
+<p>Description: allows you to schedule procedure calls at certain times. mask matches 5 space separated integers of the form: &quot;minute hour day month year&quot;. The month var starts at 00 (Jan) and ends at 11 (Dec). Minute, hour, day, month have a zero padding so they are exactly two characters long; year is zero characters. Flags are ignored.</p>
 <p>Module: core</p>
 </div></blockquote>
 <ol class="arabic simple" start="38">
@@ -2058,7 +2049,7 @@ procname &lt;minute 00-59&gt; &lt;hour 00-23&gt; &lt;day 01-31&gt; &lt;month 00-
 <blockquote>
 <div><p>bind away &lt;flags&gt; &lt;mask&gt; &lt;proc&gt;
 procname &lt;botname&gt; &lt;idx&gt; &lt;text&gt;</p>
-<p>Description: triggers when a user goes away or comes back on the botnet. text is the reason than has been specified (text is &#8220;&#8221; when returning). mask is matched against the botnet-nick of the bot the user is connected to and supports wildcards. flags are ignored.</p>
+<p>Description: triggers when a user goes away or comes back on the botnet. text is the reason than has been specified (text is &quot;&quot; when returning). mask is matched against the botnet-nick of the bot the user is connected to and supports wildcards. flags are ignored.</p>
 <p>Module: core</p>
 </div></blockquote>
 <ol class="arabic simple" start="39">
@@ -2086,7 +2077,7 @@ flags are ignored.</p>
 <blockquote>
 <div><p>bind nkch &lt;flags&gt; &lt;mask&gt; &lt;proc&gt;
 procname &lt;oldhandle&gt; &lt;newhandle&gt;</p>
-<p>Description: triggered whenever a local user&#8217;s handle is changed (in the userfile). mask is matched against the user&#8217;s old handle and can contain wildcards; flags are ignored.</p>
+<p>Description: triggered whenever a local user's handle is changed (in the userfile). mask is matched against the user's old handle and can contain wildcards; flags are ignored.</p>
 <p>Module: core</p>
 </div></blockquote>
 <ol class="arabic simple" start="42">
@@ -2144,7 +2135,7 @@ procname &lt;handle&gt; &lt;nick&gt; &lt;path&gt; &lt;bytes-transferred&gt; &lt;
 <blockquote>
 <div><p>bind out &lt;flags&gt; &lt;mask&gt; &lt;proc&gt;
 procname &lt;queue&gt; &lt;message&gt; &lt;queued|sent&gt;</p>
-<p>Description: triggered whenever output is sent to the server. Normally the event will occur twice for each line sent: once before entering a server queue and once after the message is actually sent. This allows for more flexible logging of server output and introduces the ability to cancel the message. Mask is matched against &#8220;queue status&#8221;, where status is either &#8216;queued&#8217; or &#8216;sent&#8217;. Queues are: mode, server, help, noqueue. noqueue is only used by the putnow tcl command.</p>
+<p>Description: triggered whenever output is sent to the server. Normally the event will occur twice for each line sent: once before entering a server queue and once after the message is actually sent. This allows for more flexible logging of server output and introduces the ability to cancel the message. Mask is matched against &quot;queue status&quot;, where status is either 'queued' or 'sent'. Queues are: mode, server, help, noqueue. noqueue is only used by the putnow tcl command.</p>
 <p>Module: server</p>
 </div></blockquote>
 <ol class="arabic simple" start="46">
@@ -2153,7 +2144,7 @@ procname &lt;queue&gt; &lt;message&gt; &lt;queued|sent&gt;</p>
 <blockquote>
 <div><p>bind cron &lt;flags&gt; &lt;mask&gt; &lt;proc&gt;
 proc-name &lt;minute 0-59&gt; &lt;hour 0-23&gt; &lt;day 1-31&gt; &lt;month 1-12&gt; &lt;weekday 0-6&gt;</p>
-<p>Description: similar to bind TIME, but the mask is evaluated as a cron expression, e.g. &#8220;16/2 <em>/2 5-15 7,8,9 4&#8221;. It can contain up to five fields: minute, hour, day, month, weekday; delimited by whitespace. Week days are represented as 0-6, where Sunday can be either 0 or 7. Symbolic names are not supported. The bind will be triggered if the mask matches all of the fields, except that if both day and weekday are not &#8216;</em>&#8216;, only one of them is required to match. If any number of fields are omitted at the end, the match will proceed as if they were &#8216;*&#8217;. All cron operators are supported. Please refer to the crontab manual for their meanings. Flags are ignored.</p>
+<p>Description: similar to bind TIME, but the mask is evaluated as a cron expression, e.g. &quot;16/2 <em>/2 5-15 7,8,9 4&quot;. It can contain up to five fields: minute, hour, day, month, weekday; delimited by whitespace. Week days are represented as 0-6, where Sunday can be either 0 or 7. Symbolic names are not supported. The bind will be triggered if the mask matches all of the fields, except that if both day and weekday are not '</em>', only one of them is required to match. If any number of fields are omitted at the end, the match will proceed as if they were '*'. All cron operators are supported. Please refer to the crontab manual for their meanings. Flags are ignored.</p>
 <p>Module: core</p>
 </div></blockquote>
 <ol class="arabic simple" start="47">
@@ -2162,7 +2153,7 @@ proc-name &lt;minute 0-59&gt; &lt;hour 0-23&gt; &lt;day 1-31&gt; &lt;month 1-12&
 <blockquote>
 <div><p>bind log &lt;flags&gt; &lt;mask&gt; &lt;proc&gt;
 proc-name &lt;level&gt; &lt;channel&gt; &lt;message&gt;</p>
-<p>Description: triggered whenever a message is sent to a log. The mask is matched against &#8220;channel text&#8221;. The level argument to the proc will contain the level(s) the message is sent to, or &#8216;*&#8217; if the message is sent to all log levels at once. If the message wasn&#8217;t sent to a specific channel, channel will be set to &#8216;*&#8217;.</p>
+<p>Description: triggered whenever a message is sent to a log. The mask is matched against &quot;channel text&quot;. The level argument to the proc will contain the level(s) the message is sent to, or '*' if the message is sent to all log levels at once. If the message wasn't sent to a specific channel, channel will be set to '*'.</p>
 <p>Module: core</p>
 </div></blockquote>
 <ol class="arabic simple" start="48">
@@ -2180,14 +2171,14 @@ procname &lt;idx&gt;</p>
 <blockquote>
 <div><p>bind die &lt;flags&gt; &lt;mask&gt; &lt;proc&gt;
 procname &lt;shutdownreason&gt;</p>
-<p>Description: triggered when eggdrop is about to die. The mask is matched against the shutdown reason. The bind won&#8217;t be triggered if the bot crashes or is being terminated by SIGKILL.</p>
+<p>Description: triggered when eggdrop is about to die. The mask is matched against the shutdown reason. The bind won't be triggered if the bot crashes or is being terminated by SIGKILL.</p>
 <p>Module: core</p>
 </div></blockquote>
 </div>
 <div class="section" id="return-values">
 <h3>Return Values<a class="headerlink" href="#return-values" title="Permalink to this headline">¶</a></h3>
-<p>Several bindings pay attention to the value you return from the proc(using &#8216;return &lt;value&gt;&#8217;). Usually, they expect a 0 or 1, and returning an empty return is interpreted as a 0. Be aware if you omit the return statement, the result of the last Tcl command executed will be returned by the proc. This will not likely produce the results you intended (this is a &#8220;feature&#8221; of Tcl).</p>
-<p>Here&#8217;s a list of the bindings that use the return value from procs they trigger:</p>
+<p>Several bindings pay attention to the value you return from the proc(using 'return &lt;value&gt;'). Usually, they expect a 0 or 1, and returning an empty return is interpreted as a 0. Be aware if you omit the return statement, the result of the last Tcl command executed will be returned by the proc. This will not likely produce the results you intended (this is a &quot;feature&quot; of Tcl).</p>
+<p>Here's a list of the bindings that use the return value from procs they trigger:</p>
 <ol class="arabic simple">
 <li>MSG   Return 1 to make Eggdrop log the command as:</li>
 </ol>
@@ -2205,13 +2196,13 @@ procname &lt;shutdownreason&gt;</p>
 <li><p class="first">PUB   Return 1 to make Eggdrop log the command as:</p>
 <p>&lt;&lt;nick&gt;&gt; !handle! command</p>
 </li>
-<li><p class="first">CTCP  Return 1 to ask the bot not to process the CTCP command on its own. Otherwise, it would send its own response to the CTCP (possibly an error message if it doesn&#8217;t know how to deal with it).</p>
+<li><p class="first">CTCP  Return 1 to ask the bot not to process the CTCP command on its own. Otherwise, it would send its own response to the CTCP (possibly an error message if it doesn't know how to deal with it).</p>
 </li>
-<li><p class="first">FILT  Return &#8220;&#8221; to indicate the text has been processed, and the bot should just ignore it. Otherwise, it will treat the text like any other.</p>
+<li><p class="first">FILT  Return &quot;&quot; to indicate the text has been processed, and the bot should just ignore it. Otherwise, it will treat the text like any other.</p>
 </li>
 <li><p class="first">FLUD  Return 1 to ask the bot not to take action on the flood. Otherwise it will do its normal punishment.</p>
 </li>
-<li><p class="first">RAW   Return 1 to ask the bot not to process the server text. This can affect the bot&#8217;s performance by causing it to miss things that it would normally act on &#8211; you have been warned.</p>
+<li><p class="first">RAW   Return 1 to ask the bot not to process the server text. This can affect the bot's performance by causing it to miss things that it would normally act on -- you have been warned.</p>
 </li>
 <li><p class="first">CHON  Return 1 to ask the bot not to process the partyline join event.</p>
 </li>
@@ -2227,7 +2218,7 @@ procname &lt;shutdownreason&gt;</p>
 </li>
 <li><p class="first">NOTC  Return 1 to make Eggdrop not log the message that triggered this bind.</p>
 </li>
-<li><p class="first">OUT   Return 1 to make Eggdrop drop the message instead of sending it. Only meaningful for messages with status &#8220;queued&#8221;.</p>
+<li><p class="first">OUT   Return 1 to make Eggdrop drop the message instead of sending it. Only meaningful for messages with status &quot;queued&quot;.</p>
 </li>
 <li><p class="first">EVNT  Return 1 to make Eggdrop not to take the default action for the event. Used for signal type events, ignored for others.</p>
 </li>
@@ -2239,10 +2230,10 @@ procname &lt;shutdownreason&gt;</p>
 <div class="section" id="control-procedures">
 <h2>Control Procedures<a class="headerlink" href="#control-procedures" title="Permalink to this headline">¶</a></h2>
 <blockquote>
-<div><p>Using the &#8216;control&#8217; command, you can put a DCC connection (or outgoing
+<div><p>Using the 'control' command, you can put a DCC connection (or outgoing
 TCP connection) in control of a script. All text received from the
 connection is sent to the proc you specify. All outgoing text should
-be sent with &#8216;putdcc&#8217;.</p>
+be sent with 'putdcc'.</p>
 <p>The control procedure is called with these parameters:</p>
 <div class="highlight-python"><div class="highlight"><pre>procname &lt;idx&gt; &lt;input-text&gt;
 </pre></div>
@@ -2251,11 +2242,11 @@ be sent with &#8216;putdcc&#8217;.</p>
 idx will stay the same until the connection is dropped. After that,
 it will probably get reused for a later connection.</p>
 <p>To indicate that the connection has closed, your control procedure
-will be called with blank text (the input-text will be &#8220;&#8221;). This
-is the only time it will ever be called with &#8220;&#8221; as the text, and it
-is the last time your proc will be called for that connection. Don&#8217;t
+will be called with blank text (the input-text will be &quot;&quot;). This
+is the only time it will ever be called with &quot;&quot; as the text, and it
+is the last time your proc will be called for that connection. Don't
 call killdcc on the idx when text is blank, it will always fail with
-&#8220;invalid idx&#8221;.</p>
+&quot;invalid idx&quot;.</p>
 <p>If you want to hand control of your connection back to Eggdrop, your
 proc should return 1. Otherwise, return 0 to retain control.</p>
 </div></blockquote>
@@ -2263,7 +2254,7 @@ proc should return 1. Otherwise, return 0 to retain control.</p>
 <div class="section" id="tcp-connections">
 <h2>TCP Connections<a class="headerlink" href="#tcp-connections" title="Permalink to this headline">¶</a></h2>
 <blockquote>
-<div><p>Eggdrop allows you to make two types of TCP (&#8220;telnet&#8221;) connections:
+<div><p>Eggdrop allows you to make two types of TCP (&quot;telnet&quot;) connections:
 outgoing and incoming. For an outgoing connection, you specify the
 remote host and port to connect to. For an incoming connection, you
 specify a port to listen on.</p>
@@ -2277,7 +2268,7 @@ more input is a no-no.</p>
 </div>
 <p>For SSL connections, prefix the port with a plus sign.</p>
 <p>$idx now contains a new DCC entry for the outgoing connection.</p>
-<p>All connections use non-blocking (commonly called &#8220;asynchronous&#8221;,
+<p>All connections use non-blocking (commonly called &quot;asynchronous&quot;,
 which is a misnomer) I/O. Without going into a big song and dance
 about asynchronous I/O, what this means to you is:</p>
 <blockquote>
@@ -2286,18 +2277,18 @@ about asynchronous I/O, what this means to you is:</p>
 <li>if the connection failed, an EOF will arrive for that idx</li>
 </ul>
 </div></blockquote>
-<p>The only time a &#8216;connect&#8217; will return an error is if you give it a
-hostname that can&#8217;t be resolved (this is considered a &#8220;DNS error&#8221;).
+<p>The only time a 'connect' will return an error is if you give it a
+hostname that can't be resolved (this is considered a &quot;DNS error&quot;).
 Otherwise, it will appear to have succeeded. If the connection failed,
 you will immediately get an EOF.</p>
-<p>Right after doing a &#8216;connect&#8217; call, you should set up a &#8216;control&#8217; for
+<p>Right after doing a 'connect' call, you should set up a 'control' for
 the new idx (see the section above). From then on, the connection will
 act just like a normal DCC connection that has been put under the control
-of a script. If you ever return &#8220;1&#8221; from the control proc (indicating
+of a script. If you ever return &quot;1&quot; from the control proc (indicating
 that you want control to return to Eggdrop), the bot will just close the
 connection and dispose of it. Other commands that work on normal DCC
-connections, like &#8216;killdcc&#8217; and &#8216;putdcc&#8217;, will work on this idx, too.
-The &#8216;killdcc&#8217; command will fail with &#8220;invalid idx&#8221; if you attempt to use
+connections, like 'killdcc' and 'putdcc', will work on this idx, too.
+The 'killdcc' command will fail with &quot;invalid idx&quot; if you attempt to use
 it on a closed socket.</p>
 <p>To create a listen port, use:</p>
 <div class="highlight-python"><div class="highlight"><pre>listen &lt;[+]port&gt; script &lt;proc&gt;
@@ -2318,8 +2309,8 @@ proc listen:grab {newidx} {
 }
 </pre></div>
 </div>
-<p>When a new connection arrives in port 6687, Eggdrop will create a new idx for the connection. That idx is sent to &#8216;listen:grab&#8217;. The proc immediately puts this idx under control. Once &#8216;listen:grab&#8217; has been called, the idx behaves exactly like an outgoing connection would.</p>
-<p>Secure connection can be also established after a connection is active. You can connect/listen normally and switch later using the &#8216;starttls&#8217; command. Your script should first inform the other side of the connection that it wants to switch to SSL. How to do this is application specific.</p>
+<p>When a new connection arrives in port 6687, Eggdrop will create a new idx for the connection. That idx is sent to 'listen:grab'. The proc immediately puts this idx under control. Once 'listen:grab' has been called, the idx behaves exactly like an outgoing connection would.</p>
+<p>Secure connection can be also established after a connection is active. You can connect/listen normally and switch later using the 'starttls' command. Your script should first inform the other side of the connection that it wants to switch to SSL. How to do this is application specific.</p>
 <p>The best way to learn how to use these commands is to find a script that uses them and follow it carefully. However, hopefully this has given you a good start.</p>
 </div></blockquote>
 </div>
@@ -2404,7 +2395,7 @@ words) (This char only works in binds, not in regluar matching)</td>
           
     <div class="footer">
         &copy; Copyright 2016, Eggheads.
-      Last updated on Jul 03, 2016.
+      Last updated on Jul 08, 2016.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.2.
     </div>
         </div>
