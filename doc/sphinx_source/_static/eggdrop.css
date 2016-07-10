@@ -7,3 +7,15 @@ div.header .headertitle a {
 div.footer, div.footer a {
   color: #034f84;
 }
+
+table {
+    border-collapse: collapse;
+    margin-bottom: 10px;
+    margin-top: 10px;
+}
+
+th, td {
+    padding-right: 4px; 
+    padding-left: 4px;
+    border: 2px solid #87bdd8;
+}
