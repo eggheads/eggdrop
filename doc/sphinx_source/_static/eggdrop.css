@@ -1,0 +1,9 @@
+@import url("agogo.css");
+
+div.header .headertitle a {
+  color: #2F2F2F;
+}
+
+div.footer, div.footer a {
+  color: #034f84;
+}

@@ -1,3 +1,4 @@
+
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
@@ -8,7 +9,7 @@
     
     <title>Eggdrop Tcl Commands &mdash; Eggdrop 1.8.0 documentation</title>
     
-    <link rel="stylesheet" href="_static/agogo.css" type="text/css" />
+    <link rel="stylesheet" href="_static/eggdrop.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     
     <script type="text/javascript">
@@ -189,7 +190,8 @@ marked with vertical bars (|) on the left.</p>
 <tr class="row-odd"><td>BOTFL</td>
 <td>returns the current bot-specific flags for the user (bot-only)</td>
 </tr>
-<tr class="row-even"><td colspan="2">BOTADDR   | returns a list containing the bot's address, telnet port, and relay port (bot-only)</td>
+<tr class="row-even"><td>BOTADDR</td>
+<td>returns a list containing the bot's address, telnet port, and relay port (bot-only)</td>
 </tr>
 <tr class="row-odd"><td>HOSTS</td>
 <td>returns a list of hosts for the user</td>
@@ -1583,6 +1585,44 @@ directory</td>
 <blockquote>
 <div><p>Returns: masked hostmask for the string given according to the masktype (the default is 3).</p>
 <p>Available types are:</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="8%" />
+<col width="92%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td>0</td>
+<td>*!user&#64;host</td>
+</tr>
+<tr class="row-even"><td>1</td>
+<td>*!*user&#64;host</td>
+</tr>
+<tr class="row-odd"><td>2</td>
+<td>*!*&#64;host</td>
+</tr>
+<tr class="row-even"><td>3</td>
+<td>*!*user&#64;*.host</td>
+</tr>
+<tr class="row-odd"><td>4</td>
+<td>*!*&#64;*.host</td>
+</tr>
+<tr class="row-even"><td>5</td>
+<td>nick!user&#64;host</td>
+</tr>
+<tr class="row-odd"><td>6</td>
+<td>nick!*user&#64;host</td>
+</tr>
+<tr class="row-even"><td>7</td>
+<td>nick!*&#64;host</td>
+</tr>
+<tr class="row-odd"><td>8</td>
+<td>nick!*user&#64;*.host</td>
+</tr>
+<tr class="row-even"><td>9</td>
+<td>nick!*&#64;*.host</td>
+</tr>
+</tbody>
+</table>
 <p>You can also specify types from 10 to 19 which correspond to types
 0 to 9, but instead of using a * wildcard to replace portions of the
 host, only numbers in hostnames are replaced with the '?' wildcard.
@@ -2733,16 +2773,13 @@ words) (This char only works in binds, not in regluar matching)</td>
         <div class="left">
           <a href="BOTNET.html" title="Botnet Sharing and Linking"
              >previous</a>
-            <br/>
-            <a href="_sources/tcl-commands.txt"
-               rel="nofollow">Show Source</a>
         </div>
 
         <div class="right">
           
     <div class="footer">
         &copy; Copyright 2016, Eggheads.
-      Last updated on Jul 08, 2016.
+      Last updated on Jul 10, 2016.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.2.
     </div>
         </div>

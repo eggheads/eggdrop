@@ -15,30 +15,30 @@
 }
 
 body {
-  font-family: "Verdana", Arial, sans-serif;
+  font-family: {{ theme_bodyfont }};
   line-height: 1.4em;
   color: black;
-  background-color: #eeeeec;
+  background-color: {{ theme_bgcolor }};
 }
 
 
 /* Page layout */
 
 div.header, div.content, div.footer {
-  width: 70em;
+  width: {{ theme_pagewidth }};
   margin-left: auto;
   margin-right: auto;
 }
 
 div.header-wrapper {
-  background: #b7d7e8;
+  background: {{ theme_headerbg }};
   border-bottom: 3px solid #2e3436;
 }
 
 
 /* Default body styles */
 a {
-  color: #336699;
+  color: {{ theme_linkcolor }};
 }
 
 div.bodywrapper a, div.footer a {
@@ -70,19 +70,19 @@ div.bodywrapper a, div.footer a {
 }
 
 h1, h2, h3, h4 {
-  font-family: "Georgia", "Times New Roman", serif;
+  font-family: {{ theme_headerfont }};
   font-weight: normal;
-  color: #3465a4;
+  color: {{ theme_headercolor2 }};
   margin-bottom: .8em;
 }
 
 h1 {
-  color: #204a87;
+  color: {{ theme_headercolor1 }};
 }
 
 h2 {
   padding-bottom: .5em;
-  border-bottom: 1px solid #3465a4;
+  border-bottom: 1px solid {{ theme_headercolor2 }};
 }
 
 a.headerlink {
@@ -129,7 +129,7 @@ div.header {
 }
 
 div.header .headertitle {
-  font-family: "Georgia", "Times New Roman", serif;
+  font-family: {{ theme_headerfont }};
   font-weight: normal;
   font-size: 180%;
   letter-spacing: .08em;
@@ -145,7 +145,7 @@ div.header div.rel {
 }
 
 div.header div.rel a {
-  color: 87bdd8;
+  color: {{ theme_headerlinkcolor }};
   letter-spacing: .1em;
   text-transform: uppercase;
 }
@@ -167,13 +167,13 @@ div.content-wrapper {
 }
 
 div.document {
-  width: 50em;
+  width: {{ theme_documentwidth }};
   float: left;
 }
 
 div.body {
   padding-right: 2em;
-  text-align: justify;
+  text-align: {{ theme_textalign }};
 }
 
 div.document h1 {
@@ -245,7 +245,7 @@ div.document ol {
 /* Sidebar */
 
 div.sidebar {
-  width: 20em;
+  width: {{ theme_sidebarwidth }};
   float: right;
   font-size: .9em;
 }
@@ -298,7 +298,7 @@ div.sidebar li.toctree-l2:last-child a {
 }
 
 div.sidebar li.toctree-l1.current a {
-  border-right: 5px solid 87bdd8;
+  border-right: 5px solid {{ theme_headerlinkcolor }};
 }
 
 div.sidebar li.toctree-l1.current li.toctree-l2 a {
@@ -317,7 +317,7 @@ div.sidebar input[type="submit"] {
 /* Footer */
 
 div.footer-wrapper {
-  background: url(bgfooter.png) top left repeat-x;
+  background: {{ theme_footerbg }};
   border-top: 4px solid #babdb6;
   padding-top: 10px;
   padding-bottom: 10px;
@@ -452,7 +452,7 @@ img.toggler {
 
 .viewcode-back {
     float: right;
-    font-family:: "Verdana", Arial, sans-serif;
+    font-family:: {{ theme_bodyfont }};
 }
 
 div.viewcode-block:target {
