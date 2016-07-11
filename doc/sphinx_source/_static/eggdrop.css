@@ -23,3 +23,8 @@ th, td {
 div.document li.toctree-l1 {
   margin-bottom: .5em;
 }
+
+div.document ul {
+  margin: 1.5em;
+  list-style-type: circle;
+}

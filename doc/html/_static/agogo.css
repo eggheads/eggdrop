@@ -70,7 +70,7 @@ div.bodywrapper a, div.footer a {
 }
 
 h1, h2, h3, h4 {
-  font-family: "Georgia", "Times New Roman", serif;
+  font-family: "Palatino Linotype", serif;
   font-weight: normal;
   color: #3465a4;
   margin-bottom: .8em;
@@ -129,7 +129,7 @@ div.header {
 }
 
 div.header .headertitle {
-  font-family: "Georgia", "Times New Roman", serif;
+  font-family: "Palatino Linotype", serif;
   font-weight: normal;
   font-size: 180%;
   letter-spacing: .08em;
