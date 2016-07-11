@@ -6,19 +6,38 @@
 Welcome to Eggdrop's documentation!
 ===================================
 
-Contents:
+----------------------
+Installation and Setup
+----------------------
 
 .. toctree::
    :maxdepth: 1
 
-   README.rst
-   INSTALL.rst
-   ABOUT.rst
-   KNOWN-PROBLEMS.rst
-   TEXT-SUBSTITUTIONS.rst
-   TRICKS.rst
-   WEIRD-MESSAGES.rst
-   BANS.rst
-   BOTNET.rst
-   tcl-commands.rst
+   installAndSetup/index
 
+------------------
+Main Documentation
+------------------
+
+.. toctree::
+   :maxdepth: 1
+
+   mainDocs/index
+
+------------------------
+Core and Module settings
+------------------------
+
+.. toctree::
+   :maxdepth: 1
+
+   core/index
+
+----------
+Appendices
+----------
+
+.. toctree::
+   :maxdepth: 1
+
+   appendices/index
