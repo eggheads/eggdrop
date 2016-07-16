@@ -190,21 +190,37 @@ int setsockname(sockname_t *addr, char *src, int port, int allowres)
     addr->addr.s4.sin_family = AF_INET;
   }
 #else
+  struct in6_addr ipbuf;
+
   egg_bzero(addr, sizeof(sockname_t));
-  if (!egg_inet_aton(src, &addr->addr.s4.sin_addr) && allowres) {
-    /* src is a hostname. Attempt to resolve it.. */
-    if (!sigsetjmp(alarmret, 1)) {
-      alarm(resolve_timeout);
-      hp = gethostbyname(src);
-      alarm(0);
-    } else
-      hp = NULL;
-    if (hp) {
-      egg_memcpy(&addr->addr.s4.sin_addr, hp->h_addr, hp->h_length);
-      af = hp->h_addrtype;
+
+/* If it's not an IPv4 address, check if its IPv6 (so it can fail/error
+ * appropriately). If it's not, and allowres is 1, use gethostbyname()
+ * to try and resolve. If allowres is 0, return AF_UNSPEC to allow
+ * dns.mod to do it's thing.
+ */
+  if (!inet_pton(AF_INET, src, &addr->addr.s4.sin_addr)) {
+    if (inet_pton(AF_INET6, src, &ipbuf)) {
+      putlog(LOG_MISC, "*", "ERROR: Attempted to use IPv6 address, but this \
+Eggdrop was not compiled with IPv6 support.");
+      af = AF_INET6;
     }
+    else if (allowres) {
+    /* src is a hostname. Attempt to resolve it.. */
+      if (!sigsetjmp(alarmret, 1)) {
+        alarm(resolve_timeout);
+        hp = gethostbyname(src);
+        alarm(0);
+      } else
+        hp = NULL;
+      if (hp) {
+        egg_memcpy(&addr->addr.s4.sin_addr, hp->h_addr, hp->h_length);
+        af = hp->h_addrtype;
+      }
+    } else
+        af = AF_UNSPEC;
   } else
-    af = AF_INET;
+      af = AF_INET;
 
   addr->family = addr->addr.s4.sin_family = AF_INET;
   addr->addr.sa.sa_family = addr->family;
