@@ -190,7 +190,7 @@ int setsockname(sockname_t *addr, char *src, int port, int allowres)
     addr->addr.s4.sin_family = AF_INET;
   }
 #else
-  struct in6_addr ipbuf;
+  int i; 
 
   egg_bzero(addr, sizeof(sockname_t));
 
@@ -198,11 +198,17 @@ int setsockname(sockname_t *addr, char *src, int port, int allowres)
  * appropriately). If it's not, and allowres is 1, use gethostbyname()
  * to try and resolve. If allowres is 0, return AF_UNSPEC to allow
  * dns.mod to do it's thing.
+
+ * Also, because we can't be sure inet_pton exists on the system, we
+ * have to resort to hackishly counting :s to see if its IPv6 or not.
+ * Go internet.
  */
   if (!inet_pton(AF_INET, src, &addr->addr.s4.sin_addr)) {
-    if (inet_pton(AF_INET6, src, &ipbuf)) {
-      putlog(LOG_MISC, "*", "ERROR: Attempted to use IPv6 address, but this \
-Eggdrop was not compiled with IPv6 support.");
+    /* Awesome way to count :s */
+    for (i=0; src[i]; src[i]==':' ? i++ : *src++);
+    if (i > 1) {
+      putlog(LOG_MISC, "*", "ERROR: This looks like an IPv6 address, \
+but this Eggdrop was not compiled with IPv6 support.");
       af = AF_INET6;
     }
     else if (allowres) {
