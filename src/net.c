@@ -709,7 +709,11 @@ int getdccfamilyaddr(sockname_t *addr, char *s, size_t l, int restrict_af)
 #endif
      /* If IPv6 didn't work, or it's listening on an IPv4
         0.0.0.0 address, try using vhost4 as the source */
-    if ((!pref_af || af) && (restrict_af != AF_INET6)) {
+    if ((
+#ifdef IPV6
+      !pref_af ||
+#endif
+      af) && (restrict_af != AF_INET6)) {
       if (!egg_inet_aton(vhost, &r->addr.s4.sin_addr)) {
         /* And if THAT fails, try DNS resolution of hostname */
         r = &name;
