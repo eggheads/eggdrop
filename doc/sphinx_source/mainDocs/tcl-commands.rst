@@ -585,7 +585,7 @@ User Record Manipulation Commands
 
   Module: channels
 
-exemptlist [channel]**
+**exemptlist [channel]**
 
   Returns: a list of global exempts, or, if a channel is specified, a list of channel-specific exempts. Each entry is a sublist containing: hostmask, comment, expiration timestamp, time added, last time active, and creator. The three timestamps are in unixtime format.
 
@@ -2190,15 +2190,15 @@ The following is a list of bind types and how they work. Below each bind type is
   procname <nick> <user\@host> <handle> <channel> <text>
 
   Description: just like MSGM, except it's triggered by things said on a channel instead of things /msg'd to the bot. The mask is matched against the channel name followed by the text and can contain wildcards. If the proc returns 1, Eggdrop will not log the message that triggered this bind. PUBM binds are processed before PUB binds. If the exclusive-binds setting is enabled, PUB binds will not be triggered by text that a PUBM bind has already handled.
-           Examples:
-            bind pubm * "#eggdrop Hello*" myProc
-             Listens on #eggdrop for any line that begins with "Hello"
-            bind pubm * "% Hello*" myProc
-             Listens on any channel for any line that begins with "Hello"
-            bind pubm * "% !command" myProc
-             Listens on any channel for a line that ONLY contains "!command"
+
+  Examples:
+    bind pubm * "#eggdrop Hello*" myProc
+      Listens on #eggdrop for any line that begins with "Hello"
+    bind pubm * "% Hello*" myProc
+      Listens on any channel for any line that begins with "Hello"
+    bind pubm * "% !command" myProc
+      Listens on any channel for a line that ONLY contains "!command"
              
-           
   Module: irc
 
 (7)  NOTC (stackable)

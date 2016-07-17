@@ -587,7 +587,7 @@ channel's invite list is checked as well.</p>
 <div><p>Returns: a list of global bans, or, if a channel is specified, a list of channel-specific bans. Each entry is a sublist containing: hostmask, comment, expiration timestamp, time added, last time active, and creator. The three timestamps are in unixtime format.</p>
 <p>Module: channels</p>
 </div></blockquote>
-<p>exemptlist [channel]**</p>
+<p><strong>exemptlist [channel]</strong></p>
 <blockquote>
 <div><p>Returns: a list of global exempts, or, if a channel is specified, a list of channel-specific exempts. Each entry is a sublist containing: hostmask, comment, expiration timestamp, time added, last time active, and creator. The three timestamps are in unixtime format.</p>
 <p>Module: channels</p>
@@ -2104,9 +2104,8 @@ procname &lt;nick&gt; &lt;user&#64;host&gt; &lt;handle&gt; &lt;text&gt;</p>
 <blockquote>
 <div><p>bind pubm &lt;flags&gt; &lt;mask&gt; &lt;proc&gt;
 procname &lt;nick&gt; &lt;user&#64;host&gt; &lt;handle&gt; &lt;channel&gt; &lt;text&gt;</p>
+<p>Description: just like MSGM, except it's triggered by things said on a channel instead of things /msg'd to the bot. The mask is matched against the channel name followed by the text and can contain wildcards. If the proc returns 1, Eggdrop will not log the message that triggered this bind. PUBM binds are processed before PUB binds. If the exclusive-binds setting is enabled, PUB binds will not be triggered by text that a PUBM bind has already handled.</p>
 <dl class="docutils">
-<dt>Description: just like MSGM, except it's triggered by things said on a channel instead of things /msg'd to the bot. The mask is matched against the channel name followed by the text and can contain wildcards. If the proc returns 1, Eggdrop will not log the message that triggered this bind. PUBM binds are processed before PUB binds. If the exclusive-binds setting is enabled, PUB binds will not be triggered by text that a PUBM bind has already handled.</dt>
-<dd><dl class="first last docutils">
 <dt>Examples:</dt>
 <dd><dl class="first last docutils">
 <dt>bind pubm * &quot;#eggdrop Hello*&quot; myProc</dt>
@@ -2115,8 +2114,6 @@ procname &lt;nick&gt; &lt;user&#64;host&gt; &lt;handle&gt; &lt;channel&gt; &lt;t
 <dd>Listens on any channel for any line that begins with &quot;Hello&quot;</dd>
 <dt>bind pubm * &quot;% !command&quot; myProc</dt>
 <dd>Listens on any channel for a line that ONLY contains &quot;!command&quot;</dd>
-</dl>
-</dd>
 </dl>
 </dd>
 </dl>
@@ -2813,7 +2810,7 @@ words) (This char only works in binds, not in regluar matching)</td>
           
     <div class="footer">
         &copy; Copyright 2016, Eggheads.
-      Last updated on Jul 11, 2016.
+      Last updated on Jul 16, 2016.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.2.
     </div>
         </div>
