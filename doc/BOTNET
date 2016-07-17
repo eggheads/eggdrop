@@ -83,13 +83,13 @@ Port
 Example bottree
 ---------------
 
- BotA  
-   |-+BotB  
-   `-+BotC
+    BotA
+      |-+BotB
+      `-+BotC
 
-  BotB is linked to a master sharebot, BotA, and a slave sharebot, BotC.
-  BotB shares passively with [receives from] BotA and shares
-  aggressively with [sends to] BotC.
+BotB is linked to a master sharebot, BotA, and a slave sharebot, BotC.
+BotB shares passively with [receives from] BotA and shares aggressively
+with [sends to] BotC.
 
 Bot Flags
 ---------
@@ -256,7 +256,7 @@ Making bots share user records
 
   Our botnet:
 
-    Lamestbot
+      Lamestbot
         `-+Lameshare
 
   Let's add a third bot called beldin to this scenario:
@@ -294,7 +294,8 @@ Making bots share user records
 
   Our botnet:
 
-    Lamestbot
-        |-+beldin `-+Lameshare
+      Lamestbot
+        |-+beldin
+        `-+Lameshare
 
 Copyright (C) 1999 - 2016 Eggheads Development Team

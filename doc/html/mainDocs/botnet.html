@@ -109,15 +109,12 @@ could be useful to you. It also covers botflags userfile sharing.</div></blockqu
 </div>
 <div class="section" id="example-bottree">
 <h2>Example bottree<a class="headerlink" href="#example-bottree" title="Permalink to this headline">¶</a></h2>
-<div class="line-block">
-<div class="line">BotA</div>
-<div class="line-block">
-<div class="line">|-+BotB</div>
-<div class="line">`-+BotC</div>
+<div class="highlight-python"><div class="highlight"><pre>BotA
+  |-+BotB
+  `-+BotC
+</pre></div>
 </div>
-</div>
-<blockquote>
-<div>BotB is linked to a master sharebot, BotA, and a slave sharebot, BotC. BotB shares passively with [receives from] BotA and shares aggressively with [sends to] BotC.</div></blockquote>
+<p>BotB is linked to a master sharebot, BotA, and a slave sharebot, BotC. BotB shares passively with [receives from] BotA and shares aggressively with [sends to] BotC.</p>
 </div>
 <div class="section" id="bot-flags">
 <h2>Bot Flags<a class="headerlink" href="#bot-flags" title="Permalink to this headline">¶</a></h2>
@@ -280,12 +277,10 @@ from Lamestbot::</p>
 </div>
 <p>This sets #eggdrop as a share channel</p>
 <p>Our botnet:</p>
-<blockquote>
-<div><dl class="docutils">
-<dt>Lamestbot</dt>
-<dd>`-+Lameshare</dd>
-</dl>
-</div></blockquote>
+<div class="highlight-python"><div class="highlight"><pre>Lamestbot
+  `-+Lameshare
+</pre></div>
+</div>
 <p>Let's add a third bot called beldin to this scenario:</p>
 <p>On Lamestbot:</p>
 <div class="highlight-python"><div class="highlight"><pre>.+bot beldin llama.com:3333
@@ -315,13 +310,11 @@ ones you would not have to do this on are beldin and the hub (Lamestbot).
 Of course, if you had more bots, you would have to add beldin as a +a on
 them, but you would not do it on the hub or beldin.</p>
 <p>Our botnet:</p>
-<blockquote>
-<div><dl class="docutils">
-<dt>Lamestbot</dt>
-<dd>|-+beldin
-`-+Lameshare</dd>
-</dl>
-</div></blockquote>
+<div class="highlight-python"><div class="highlight"><pre>Lamestbot
+  |-+beldin
+  `-+Lameshare
+</pre></div>
+</div>
 </div></blockquote>
 <p>Copyright (C) 1999 - 2016 Eggheads Development Team</p>
 </div>
@@ -403,7 +396,7 @@ them, but you would not do it on the hub or beldin.</p>
           
     <div class="footer">
         &copy; Copyright 2016, Eggheads.
-      Last updated on Jul 16, 2016.
+      Last updated on Jul 17, 2016.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.2.
     </div>
         </div>

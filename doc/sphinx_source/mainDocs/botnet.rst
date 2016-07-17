@@ -73,11 +73,13 @@ The following are some common terms used in this document:
 Example bottree
 ---------------
 
-|  BotA
-|    \|-+BotB
-|    \`-+BotC
+::
 
-  BotB is linked to a master sharebot, BotA, and a slave sharebot, BotC. BotB shares passively with [receives from] BotA and shares aggressively with [sends to] BotC.
+  BotA
+    |-+BotB
+    `-+BotC
+
+BotB is linked to a master sharebot, BotA, and a slave sharebot, BotC. BotB shares passively with [receives from] BotA and shares aggressively with [sends to] BotC.
 
 
 Bot Flags
@@ -247,10 +249,10 @@ Making bots share user records
 
   This sets #eggdrop as a share channel
 
-  Our botnet:
+  Our botnet::
 
    Lamestbot
-     \`-+Lameshare
+     `-+Lameshare
 
   Let's add a third bot called beldin to this scenario:
 
@@ -285,10 +287,10 @@ Making bots share user records
   Of course, if you had more bots, you would have to add beldin as a +a on
   them, but you would not do it on the hub or beldin.
 
-  Our botnet:
+  Our botnet::
 
     Lamestbot
-      \|-+beldin
-      \`-+Lameshare
+      |-+beldin
+      `-+Lameshare
 
 Copyright (C) 1999 - 2016 Eggheads Development Team
