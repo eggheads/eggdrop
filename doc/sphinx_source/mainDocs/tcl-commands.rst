@@ -2622,7 +2622,7 @@ The following is a list of bind types and how they work. Below each bind type is
   bind cron <flags> <mask> <proc>
   proc-name <minute 0-59> <hour 0-23> <day 1-31> <month 1-12> <weekday 0-6>
 
-  Description: similar to bind TIME, but the mask is evaluated as a cron expression, e.g. "16/2 */2 5-15 7,8,9 4". It can contain up to five fields: minute, hour, day, month, weekday; delimited by whitespace. Week days are represented as 0-6, where Sunday can be either 0 or 7. Symbolic names are not supported. The bind will be triggered if the mask matches all of the fields, except that if both day and weekday are not '*', only one of them is required to match. If any number of fields are omitted at the end, the match will proceed as if they were '*'. All cron operators are supported. Please refer to the crontab manual for their meanings. Flags are ignored.
+  Description: similar to bind TIME, but the mask is evaluated as a cron expression, e.g. "16/2 \*/2 5-15 7,8,9 4". It can contain up to five fields: minute, hour, day, month, weekday; delimited by whitespace. Week days are represented as 0-6, where Sunday can be either 0 or 7. Symbolic names are not supported. The bind will be triggered if the mask matches all of the fields, except that if both day and weekday are not '\*', only one of them is required to match. If any number of fields are omitted at the end, the match will proceed as if they were '\*'. All cron operators are supported. Please refer to the crontab manual for their meanings. Flags are ignored.
 
   Module: core
 
@@ -2631,7 +2631,7 @@ The following is a list of bind types and how they work. Below each bind type is
   bind log <flags> <mask> <proc>
   proc-name <level> <channel> <message>
 
-  Description: triggered whenever a message is sent to a log. The mask is matched against "channel text". The level argument to the proc will contain the level(s) the message is sent to, or '*' if the message is sent to all log levels at once. If the message wasn't sent to a specific channel, channel will be set to '*'.
+  Description: triggered whenever a message is sent to a log. The mask is matched against "channel text". The level argument to the proc will contain the level(s) the message is sent to, or '\*' if the message is sent to all log levels at once. If the message wasn't sent to a specific channel, channel will be set to '\*'.
 
   Module: core
 
