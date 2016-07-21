@@ -54,7 +54,7 @@ done
 
 echo "*** Generating HTML files..."
 ( cd ../doc/sphinx_source/ && make html )
-cd ..
+
 echo "*** Stupid housecleaning..."
 mv tmpdocs/about.txt ../doc/ABOUT
 mv tmpdocs/assoc.txt ../doc/settings/mod.assoc

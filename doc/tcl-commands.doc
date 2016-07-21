@@ -2477,8 +2477,9 @@ the Tcl proc, and an explanation.
 
 (1) MSG
 
-  bind msg <flags> <command> <proc> procname <nick> <user@host> <handle>
-  <text>
+  bind msg <flags> <command> <proc>
+
+  procname <nick> <user@host> <handle> <text>
 
   Description: used for /msg commands. The first word of the user's msg
   is the command, and everything else becomes the text argument.
@@ -2487,7 +2488,9 @@ the Tcl proc, and an explanation.
 
 (2) DCC
 
-  bind dcc <flags> <command> <proc> procname <handle> <idx> <text>
+  bind dcc <flags> <command> <proc>
+
+  procname <handle> <idx> <text>
 
   Description: used for partyline commands; the command is the first
   word and everything else becomes the text argument. The idx is valid
@@ -2498,7 +2501,9 @@ the Tcl proc, and an explanation.
 
 (3) FIL
 
-  bind fil <flags> <command> <proc> procname <handle> <idx> <text>
+  bind fil <flags> <command> <proc>
+
+  procname <handle> <idx> <text>
 
   Description: the same as DCC, except this is triggered if the user is
   in the file area instead of the party line
@@ -2507,8 +2512,9 @@ the Tcl proc, and an explanation.
 
 (4) PUB
 
-  bind pub <flags> <command> <proc> procname <nick> <user@host> <handle>
-  <channel> <text>
+  bind pub <flags> <command> <proc>
+
+  procname <nick> <user@host> <handle> <channel> <text>
 
   Description: used for commands given on a channel. The first word
   becomes the command and everything else is the text argument.
@@ -2517,8 +2523,9 @@ the Tcl proc, and an explanation.
 
 (5) MSGM (stackable)
 
-  bind msgm <flags> <mask> <proc> procname <nick> <user@host> <handle>
-  <text>
+  bind msgm <flags> <mask> <proc>
+
+  procname <nick> <user@host> <handle> <text>
 
   Description: matches the entire line of text from a /msg with the
   mask. This is useful for binding Tcl procs to words or phrases spoken
@@ -2531,8 +2538,9 @@ the Tcl proc, and an explanation.
 
 (6) PUBM (stackable)
 
-  bind pubm <flags> <mask> <proc> procname <nick> <user@host> <handle>
-  <channel> <text>
+  bind pubm <flags> <mask> <proc>
+
+  procname <nick> <user@host> <handle> <channel> <text>
 
   Description: just like MSGM, except it's triggered by things said on a
   channel instead of things /msg'd to the bot. The mask is matched
@@ -2557,8 +2565,9 @@ the Tcl proc, and an explanation.
 
 (7) NOTC (stackable)
 
-  bind notc <flags> <mask> <proc> procname <nick> <user@host> <handle>
-  <text> <dest>
+  bind notc <flags> <mask> <proc>
+
+  procname <nick> <user@host> <handle> <text> <dest>
 
   Description: dest will be a nickname (the bot's nickname, obviously)
   or a channel name. mask is matched against the entire text of the
@@ -2581,8 +2590,9 @@ the Tcl proc, and an explanation.
 
 (8) JOIN (stackable)
 
-  bind join <flags> <mask> <proc> procname <nick> <user@host> <handle>
-  <channel>
+  bind join <flags> <mask> <proc>
+
+  procname <nick> <user@host> <handle> <channel>
 
   Description: triggered by someone joining the channel. The mask in the
   bind is matched against "#channel nick!user@host" and can contain
@@ -2592,8 +2602,9 @@ the Tcl proc, and an explanation.
 
 (9) PART (stackable)
 
-  bind part <flags> <mask> <proc> procname <nick> <user@host> <handle>
-  <channel> <msg>
+  bind part <flags> <mask> <proc>
+
+  procname <nick> <user@host> <handle> <channel> <msg>
 
   Description: triggered by someone leaving the channel. The mask is
   matched against "#channel nick!user@host" and can contain wildcards.
@@ -2609,8 +2620,9 @@ the Tcl proc, and an explanation.
 
 (10) SIGN (stackable)
 
-  bind sign <flags> <mask> <proc> procname <nick> <user@host> <handle>
-  <channel> <reason>
+  bind sign <flags> <mask> <proc>
+
+  procname <nick> <user@host> <handle> <channel> <reason>
 
   Description: triggered by a signoff, or possibly by someone who got
   netsplit and never returned. The signoff message is the last argument
@@ -2621,8 +2633,9 @@ the Tcl proc, and an explanation.
 
 (11) TOPC (stackable)
 
-  bind topc <flags> <mask> <proc> procname <nick> <user@host> <handle>
-  <channel> <topic>
+  bind topc <flags> <mask> <proc>
+
+  procname <nick> <user@host> <handle> <channel> <topic>
 
   Description: triggered by a topic change. mask can contain wildcards
   and is matched against '#channel <new topic>'.
@@ -2631,8 +2644,9 @@ the Tcl proc, and an explanation.
 
 (12) KICK (stackable)
 
-  bind kick <flags> <mask> <proc> procname <nick> <user@host> <handle>
-  <channel> <target> <reason>
+  bind kick <flags> <mask> <proc>
+
+  procname <nick> <user@host> <handle> <channel> <target> <reason>
 
   Description: triggered when someone is kicked off the channel. The
   mask is matched against '#channel target reason' where the target is
@@ -2645,8 +2659,9 @@ the Tcl proc, and an explanation.
 
 (13) NICK (stackable)
 
-  bind nick <flags> <mask> <proc> procname <nick> <user@host> <handle>
-  <channel> <newnick>
+  bind nick <flags> <mask> <proc>
+
+  procname <nick> <user@host> <handle> <channel> <newnick>
 
   Description: triggered when someone changes nicknames. The mask is
   matched against '#channel newnick' and can contain wildcards. Channel
@@ -2657,8 +2672,9 @@ the Tcl proc, and an explanation.
 
 (14) MODE (stackable)
 
-  bind mode <flags> <mask> <proc> procname <nick> <user@host> <handle>
-  <channel> <mode-change> <target>
+  bind mode <flags> <mask> <proc>
+
+  procname <nick> <user@host> <handle> <channel> <mode-change> <target>
 
   Description: mode changes are broken down into their component parts
   before being sent here, so the <mode-change> will always be a single
@@ -2699,8 +2715,9 @@ the Tcl proc, and an explanation.
 
 (15) CTCP (stackable)
 
-  bind ctcp <flags> <keyword> <proc> procname <nick> <user@host>
-  <handle> <dest> <keyword> <text>
+  bind ctcp <flags> <keyword> <proc>
+
+  procname <nick> <user@host> <handle> <dest> <keyword> <text>
 
   Description: dest will be a nickname (the bot's nickname, obviously)
   or channel name. keyword is the ctcp command (which can contain
@@ -2711,8 +2728,9 @@ the Tcl proc, and an explanation.
 
 (16) CTCR (stackable)
 
-  bind ctcr <flags> <keyword> <proc> procname <nick> <user@host>
-  <handle> <dest> <keyword> <text>
+  bind ctcr <flags> <keyword> <proc>
+
+  procname <nick> <user@host> <handle> <dest> <keyword> <text>
 
   Description: just like ctcp, but this is triggered for a ctcp-reply
   (ctcp embedded in a notice instead of a privmsg)
@@ -2721,7 +2739,9 @@ the Tcl proc, and an explanation.
 
 (17) RAW (stackable)
 
-  bind raw <flags> <keyword> <proc> procname <from> <keyword> <text>
+  bind raw <flags> <keyword> <proc>
+
+  procname <from> <keyword> <text>
 
   Description: previous versions of Eggdrop required a special compile
   option to enable this binding, but it's now standard. The keyword is
@@ -2737,7 +2757,9 @@ the Tcl proc, and an explanation.
 
 (18) BOT
 
-  bind bot <flags> <command> <proc> procname <from-bot> <command> <text>
+  bind bot <flags> <command> <proc>
+
+  procname <from-bot> <command> <text>
 
   Description: triggered by a message coming from another bot in the
   botnet. The first word is the command and the rest becomes the text
@@ -2747,7 +2769,9 @@ the Tcl proc, and an explanation.
 
 (19) CHON (stackable)
 
-  bind chon <flags> <mask> <proc> procname <handle> <idx>
+  bind chon <flags> <mask> <proc>
+
+  procname <handle> <idx>
 
   Description: when someone first enters the party-line area of the bot
   via dcc chat or telnet, this is triggered before they are connected to
@@ -2759,7 +2783,9 @@ the Tcl proc, and an explanation.
 
 (20) CHOF (stackable)
 
-  bind chof <flags> <mask> <proc> procname <handle> <idx>
+  bind chof <flags> <mask> <proc>
+
+  procname <handle> <idx>
 
   Description: triggered when someone leaves the party line to
   disconnect from the bot. mask is matched against the handle and can
@@ -2770,8 +2796,9 @@ the Tcl proc, and an explanation.
 
 (21) SENT (stackable)
 
-  bind sent <flags> <mask> <proc> procname <handle> <nick>
-  <path/to/file>
+  bind sent <flags> <mask> <proc>
+
+  procname <handle> <nick> <path/to/file>
 
   Description: after a user has successfully downloaded a file from the
   bot, this binding is triggered. mask is matched against the handle of
@@ -2785,8 +2812,9 @@ the Tcl proc, and an explanation.
 
 (22) RCVD (stackable)
 
-  bind rcvd <flags> <mask> <proc> procname <handle> <nick>
-  <path/to/file>
+  bind rcvd <flags> <mask> <proc>
+
+  procname <handle> <nick> <path/to/file>
 
   Description: triggered after a user uploads a file successfully. mask
   is matched against the user's handle. nick is the IRC nickname that
@@ -2797,7 +2825,9 @@ the Tcl proc, and an explanation.
 
 (23) CHAT (stackable)
 
-  bind chat <flags> <mask> <proc> procname <handle> <channel#> <text>
+  bind chat <flags> <mask> <proc>
+
+  procname <handle> <channel#> <text>
 
   Description: when a user says something on the botnet, it invokes this
   binding. Flags are ignored; handle could be a user on this bot
@@ -2812,7 +2842,9 @@ the Tcl proc, and an explanation.
 
 (24) LINK (stackable)
 
-  bind link <flags> <mask> <proc> procname <botname> <via>
+  bind link <flags> <mask> <proc>
+
+  procname <botname> <via>
 
   Description: triggered when a bot links into the botnet. botname is
   the botnetnick of the bot that just linked in; via is the bot it
@@ -2823,7 +2855,9 @@ the Tcl proc, and an explanation.
 
 (25) DISC (stackable)
 
-  bind disc <flags> <mask> <proc> procname <botname>
+  bind disc <flags> <mask> <proc>
+
+  procname <botname>
 
   Description: triggered when a bot disconnects from the botnet for
   whatever reason. Just like the link bind, flags are ignored; mask is
@@ -2834,8 +2868,9 @@ the Tcl proc, and an explanation.
 
 (26) SPLT (stackable)
 
-  bind splt <flags> <mask> <proc> procname <nick> <user@host> <handle>
-  <channel>
+  bind splt <flags> <mask> <proc>
+
+  procname <nick> <user@host> <handle> <channel>
 
   Description: triggered when someone gets netsplit on the channel. Be
   aware that this may be a false alarm (it's easy to fake a netsplit
@@ -2848,8 +2883,9 @@ the Tcl proc, and an explanation.
 
 (27) REJN (stackable)
 
-  bind rejn <flags> <mask> <proc> procname <nick> <user@host> <handle>
-  <channel>
+  bind rejn <flags> <mask> <proc>
+
+  procname <nick> <user@host> <handle> <channel>
 
   Description: someone who was split has rejoined. mask can contain
   wildcards, and is matched against '#channel nick!user@host'.
@@ -2858,7 +2894,9 @@ the Tcl proc, and an explanation.
 
 (28) FILT (stackable)
 
-  bind filt <flags> <mask> <proc> procname <idx> <text>
+  bind filt <flags> <mask> <proc>
+
+  procname <idx> <text>
 
   Description: party line and file system users have their text sent
   through filt before being processed. If the proc returns a blank
@@ -2869,7 +2907,9 @@ the Tcl proc, and an explanation.
 
 (29) NEED (stackable)
 
-  bind need <flags> <mask> <proc> procname <channel> <type>
+  bind need <flags> <mask> <proc>
+
+  procname <channel> <type>
 
   Description: this bind is triggered on certain events, like when the
   bot needs operator status or the key for a channel. The types are: op,
@@ -2885,8 +2925,9 @@ the Tcl proc, and an explanation.
 
 (30) FLUD (stackable)
 
-  bind flud <flags> <type> <proc> procname <nick> <user@host> <handle>
-  <type> <channel>
+  bind flud <flags> <type> <proc>
+
+  procname <nick> <user@host> <handle> <type> <channel>
 
   Description: any floods detected through the flood control settings
   (like 'flood-ctcp') are sent here before processing. If the proc
@@ -2899,7 +2940,9 @@ the Tcl proc, and an explanation.
 
 (31) NOTE (stackable)
 
-  bind note <flags> <mask> <proc> procname <from> <to> <text>
+  bind note <flags> <mask> <proc>
+
+  procname <from> <to> <text>
 
   Description: incoming notes (either from the party line, someone on
   IRC, or someone on another bot on the botnet) are checked against
@@ -2911,7 +2954,9 @@ the Tcl proc, and an explanation.
 
 (32) ACT (stackable)
 
-  bind act <flags> <mask> <proc> procname <handle> <channel#> <action>
+  bind act <flags> <mask> <proc>
+
+  procname <handle> <channel#> <action>
 
   Description: when someone does an action on the botnet, it invokes
   this binding. flags are ignored; the mask is matched against the text
@@ -2921,7 +2966,9 @@ the Tcl proc, and an explanation.
 
 (33) WALL (stackable)
 
-  bind wall <flags> <mask> <proc> procname <from> <msg>
+  bind wall <flags> <mask> <proc>
+
+  procname <from> <msg>
 
   Description: when the bot receives a wallops, it invokes this binding.
   flags are ignored; the mask is matched against the text of the wallops
@@ -2935,7 +2982,9 @@ the Tcl proc, and an explanation.
 
 (34) BCST (stackable)
 
-  bind bcst <flags> <mask> <proc> procname <botname> <channel#> <text>
+  bind bcst <flags> <mask> <proc>
+
+  procname <botname> <channel#> <text>
 
   Description: when a bot broadcasts something on the botnet (see
   'dccbroadcast' above), it invokes this binding. flags are ignored; the
@@ -2951,8 +3000,9 @@ the Tcl proc, and an explanation.
 
 (35) CHJN (stackable)
 
-  bind chjn <flags> <mask> <proc> procname <botname> <handle> <channel#>
-  <flag> <idx> <user@host>
+  bind chjn <flags> <mask> <proc>
+
+  procname <botname> <handle> <channel#> <flag> <idx> <user@host>
 
   Description: when someone joins a botnet channel, it invokes this
   binding. The mask is matched against the channel and can contain
@@ -2963,8 +3013,9 @@ the Tcl proc, and an explanation.
 
 (36) CHPT (stackable)
 
-  bind chpt <flags> <mask> <proc> procname <botname> <handle> <idx>
-  <channel#>
+  bind chpt <flags> <mask> <proc>
+
+  procname <botname> <handle> <idx> <channel#>
 
   Description: when someone parts a botnet channel, it invokes this
   binding. The mask is matched against the channel and can contain
@@ -2974,8 +3025,10 @@ the Tcl proc, and an explanation.
 
 (37) TIME (stackable)
 
-  bind time <flags> <mask> <proc> procname <minute 00-59> <hour 00-23>
-  <day 01-31> <month 00-11> <year 0000-9999>
+  bind time <flags> <mask> <proc>
+
+  procname <minute 00-59> <hour 00-23> <day 01-31> <month 00-11> <year
+  0000-9999>
 
   Description: allows you to schedule procedure calls at certain times.
   mask matches 5 space separated integers of the form: "minute hour day
@@ -2987,7 +3040,9 @@ the Tcl proc, and an explanation.
 
 (38) AWAY (stackable)
 
-  bind away <flags> <mask> <proc> procname <botname> <idx> <text>
+  bind away <flags> <mask> <proc>
+
+  procname <botname> <idx> <text>
 
   Description: triggers when a user goes away or comes back on the
   botnet. text is the reason than has been specified (text is "" when
@@ -2998,7 +3053,9 @@ the Tcl proc, and an explanation.
 
 (39) LOAD (stackable)
 
-  bind load <flags> <mask> <proc> proc-name <module>
+  bind load <flags> <mask> <proc>
+
+  procname <module>
 
   Description: triggers when a module is loaded. mask is matched against
   the name of the loaded module and supports wildcards; flags are
@@ -3008,7 +3065,9 @@ the Tcl proc, and an explanation.
 
 (40) UNLD (stackable)
 
-  bind unld <flags> <mask> <proc> procname <module>
+  bind unld <flags> <mask> <proc>
+
+  procname <module>
 
   Description: triggers when a module is unloaded. mask is matched
   against the name of the unloaded module and supports wildcards; flags
@@ -3018,7 +3077,9 @@ the Tcl proc, and an explanation.
 
 (41) NKCH (stackable)
 
-  bind nkch <flags> <mask> <proc> procname <oldhandle> <newhandle>
+  bind nkch <flags> <mask> <proc>
+
+  procname <oldhandle> <newhandle>
 
   Description: triggered whenever a local user's handle is changed (in
   the userfile). mask is matched against the user's old handle and can
@@ -3028,7 +3089,9 @@ the Tcl proc, and an explanation.
 
 (42) EVNT (stackable)
 
-  bind evnt <flags> <type> <proc> procname <type>
+  bind evnt <flags> <type> <proc>
+
+  procname <type>
 
   Description: triggered whenever one of these events happen. flags are
   ignored. Pre-defined events triggered by Eggdrop are:
@@ -3057,8 +3120,9 @@ the Tcl proc, and an explanation.
 
 (43) LOST (stackable)
 
-  bind lost <flags> <mask> <proc> proc-name <handle> <nick> <path>
-  <bytes-transferred> <length-of-file>
+  bind lost <flags> <mask> <proc>
+
+  procname <handle> <nick> <path> <bytes-transferred> <length-of-file>
 
   Description: triggered when a DCC SEND transfer gets lost, such as
   when the connection is terminated before all data was successfully
@@ -3068,8 +3132,9 @@ the Tcl proc, and an explanation.
 
 (44) TOUT (stackable)
 
-  bind tout <flags> <mask> <proc> procname <handle> <nick> <path>
-  <bytes-transferred> <length-of-file>
+  bind tout <flags> <mask> <proc>
+
+  procname <handle> <nick> <path> <bytes-transferred> <length-of-file>
 
   Description: triggered when a DCC SEND transfer times out. This may
   either happen because the dcc connection was not accepted or because
@@ -3079,8 +3144,9 @@ the Tcl proc, and an explanation.
 
 (45) OUT (stackable)
 
-  bind out <flags> <mask> <proc> procname <queue> <message>
-  <queued|sent>
+  bind out <flags> <mask> <proc>
+
+  procname <queue> <message> <queued|sent>
 
   Description: triggered whenever output is sent to the server. Normally
   the event will occur twice for each line sent: once before entering a
@@ -3094,16 +3160,18 @@ the Tcl proc, and an explanation.
 
 (46) CRON (stackable)
 
-  bind cron <flags> <mask> <proc> proc-name <minute 0-59> <hour 0-23>
-  <day 1-31> <month 1-12> <weekday 0-6>
+  bind cron <flags> <mask> <proc>
+
+  procname <minute 0-59> <hour 0-23> <day 1-31> <month 1-12> <weekday
+  0-6>
 
   Description: similar to bind TIME, but the mask is evaluated as a cron
-  expression, e.g. "16/2 /2 5-15 7,8,9 4". It can contain up to five
+  expression, e.g. "16/2 */2 5-15 7,8,9 4". It can contain up to five
   fields: minute, hour, day, month, weekday; delimited by whitespace.
   Week days are represented as 0-6, where Sunday can be either 0 or 7.
   Symbolic names are not supported. The bind will be triggered if the
   mask matches all of the fields, except that if both day and weekday
-  are not '', only one of them is required to match. If any number of
+  are not '*', only one of them is required to match. If any number of
   fields are omitted at the end, the match will proceed as if they were
   '*'. All cron operators are supported. Please refer to the crontab
   manual for their meanings. Flags are ignored.
@@ -3112,19 +3180,23 @@ the Tcl proc, and an explanation.
 
 (47) LOG (stackable)
 
-  bind log <flags> <mask> <proc> proc-name <level> <channel> <message>
+  bind log <flags> <mask> <proc>
+
+  procname <level> <channel> <message>
 
   Description: triggered whenever a message is sent to a log. The mask
   is matched against "channel text". The level argument to the proc will
-  contain the level(s) the message is sent to, or '' if the message is
+  contain the level(s) the message is sent to, or '*' if the message is
   sent to all log levels at once. If the message wasn't sent to a
-  specific channel, channel will be set to ''.
+  specific channel, channel will be set to '*'.
 
   Module: core
 
 (48) TLS (stackable)
 
-  bind tls <flags> <mask> <proc> procname <idx>
+  bind tls <flags> <mask> <proc>
+
+  procname <idx>
 
   Description: triggered for tcp connections when a ssl handshake has
   completed and the connection is secured. The mask is matched against
@@ -3134,7 +3206,9 @@ the Tcl proc, and an explanation.
 
 (49) DIE (stackable)
 
-  bind die <flags> <mask> <proc> procname <shutdownreason>
+  bind die <flags> <mask> <proc>
+
+  procname <shutdownreason>
 
   Description: triggered when eggdrop is about to die. The mask is
   matched against the shutdown reason. The bind won't be triggered if
