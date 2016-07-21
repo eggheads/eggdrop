@@ -3,6 +3,7 @@
 # generateDocs - creates HTML and plaintext documentation from
 # reStructuredText format files. -Geo
 #
+#
 # Copyright (C) 2004 - 2016 Eggheads Development Team
 #
 # This file is free software; you can redistribute it and/or modify it
@@ -29,7 +30,16 @@ PANDOC="$(which pandoc)"
 if [ $? -eq 0 ]; then 
   echo "Found."
 else
-  echo "Not found. Exiting..."
+  echo "Not found. Pandoc can be found at pandoc.org or via apt-get install pandoc. Exiting..."
+  exit 1
+fi
+
+echo "*** Searching for sphinx-build..."
+SPHINX="$(which sphinx-build)"
+if [ $? -eq 0 ]; then
+  echo "Found."
+else
+  echo "Not found. Sphinx can be found at http://www.sphinx-doc.org or via apt-get install python-sphinx. Exiting..."
   exit 1
 fi
   
@@ -44,7 +54,7 @@ done
 
 echo "*** Generating HTML files..."
 ( cd ../doc/sphinx_source/ && make html )
-
+cd ..
 echo "*** Stupid housecleaning..."
 mv tmpdocs/about.txt ../doc/ABOUT
 mv tmpdocs/assoc.txt ../doc/settings/mod.assoc
