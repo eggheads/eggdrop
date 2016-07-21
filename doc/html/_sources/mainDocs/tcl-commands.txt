@@ -2142,6 +2142,7 @@ The following is a list of bind types and how they work. Below each bind type is
 (1)  MSG
 
   bind msg <flags> <command> <proc>
+
   procname <nick> <user\@host> <handle> <text>
 
   Description: used for /msg commands. The first word of the user's msg is the command, and everything else becomes the text argument.
@@ -2151,6 +2152,7 @@ The following is a list of bind types and how they work. Below each bind type is
 (2)  DCC
 
   bind dcc <flags> <command> <proc>
+
   procname <handle> <idx> <text>
 
   Description: used for partyline commands; the command is the first word and everything else becomes the text argument. The idx is valid until the user disconnects. After that, it may be reused, so be careful about storing an idx for long periods of time.
@@ -2160,6 +2162,7 @@ The following is a list of bind types and how they work. Below each bind type is
 (3)  FIL
 
   bind fil <flags> <command> <proc>
+
   procname <handle> <idx> <text>
 
   Description: the same as DCC, except this is triggered if the user is in the file area instead of the party line
@@ -2169,6 +2172,7 @@ The following is a list of bind types and how they work. Below each bind type is
 (4)  PUB
 
   bind pub <flags> <command> <proc>
+
   procname <nick> <user\@host> <handle> <channel> <text>
 
   Description: used for commands given on a channel. The first word becomes the command and everything else is the text argument.
@@ -2178,6 +2182,7 @@ The following is a list of bind types and how they work. Below each bind type is
 (5)  MSGM (stackable)
 
   bind msgm <flags> <mask> <proc>
+
   procname <nick> <user\@host> <handle> <text>
 
   Description: matches the entire line of text from a /msg with the mask. This is useful for binding Tcl procs to words or phrases spoken anywhere within a line of text. If the proc returns 1, Eggdrop will not log the message that triggered this bind. MSGM binds are processed before MSG binds. If the exclusive-binds setting is enabled, MSG binds will not be triggered by text that a MSGM bind has already handled.
@@ -2187,6 +2192,7 @@ The following is a list of bind types and how they work. Below each bind type is
 (6)  PUBM (stackable)
 
   bind pubm <flags> <mask> <proc>
+
   procname <nick> <user\@host> <handle> <channel> <text>
 
   Description: just like MSGM, except it's triggered by things said on a channel instead of things /msg'd to the bot. The mask is matched against the channel name followed by the text and can contain wildcards. If the proc returns 1, Eggdrop will not log the message that triggered this bind. PUBM binds are processed before PUB binds. If the exclusive-binds setting is enabled, PUB binds will not be triggered by text that a PUBM bind has already handled.
@@ -2204,6 +2210,7 @@ The following is a list of bind types and how they work. Below each bind type is
 (7)  NOTC (stackable)
 
   bind notc <flags> <mask> <proc>
+
   procname <nick> <user\@host> <handle> <text> <dest>
 
   Description: dest will be a nickname (the bot's nickname, obviously) or a channel name. mask is matched against the entire text of the notice and can contain wildcards. It is considered a breach of protocol to respond to a /notice on IRC, so this is intended for internal use (logging, etc.) only. Note that server notices do not trigger the NOTC bind. If the proc returns 1, Eggdrop will not log the message that triggered this bind.
@@ -2222,6 +2229,7 @@ The following is a list of bind types and how they work. Below each bind type is
 (8)  JOIN (stackable)
 
   bind join <flags> <mask> <proc>
+
   procname <nick> <user\@host> <handle> <channel>
 
   Description: triggered by someone joining the channel. The mask in the bind is matched against "#channel nick!user\@host" and can contain wildcards.
@@ -2231,6 +2239,7 @@ The following is a list of bind types and how they work. Below each bind type is
 (9)  PART (stackable)
 
   bind part <flags> <mask> <proc>
+
   procname <nick> <user\@host> <handle> <channel> <msg>
 
   Description: triggered by someone leaving the channel. The mask is matched against "#channel nick!user\@host" and can contain wildcards. If no part message is specified, msg will be set to "".
@@ -2246,6 +2255,7 @@ The following is a list of bind types and how they work. Below each bind type is
 (10) SIGN (stackable)
 
   bind sign <flags> <mask> <proc>
+  
   procname <nick> <user\@host> <handle> <channel> <reason>
 
   Description: triggered by a signoff, or possibly by someone who got netsplit and never returned. The signoff message is the last argument to the proc. Wildcards can be used in the mask, which is matched against '#channel nick!user\@host'.
@@ -2255,6 +2265,7 @@ The following is a list of bind types and how they work. Below each bind type is
 (11) TOPC (stackable)
 
   bind topc <flags> <mask> <proc>
+  
   procname <nick> <user\@host> <handle> <channel> <topic>
 
   Description: triggered by a topic change. mask can contain wildcards and is matched against '#channel <new topic>'.
@@ -2264,6 +2275,7 @@ The following is a list of bind types and how they work. Below each bind type is
 (12) KICK (stackable)
 
   bind kick <flags> <mask> <proc>
+  
   procname <nick> <user\@host> <handle> <channel> <target> <reason>
 
   Description: triggered when someone is kicked off the channel. The mask is matched against '#channel target reason' where the target is the nickname of the person who got kicked (can contain wildcards). The proc is called with the nick, user\@host, and handle of the kicker, plus the channel, the nickname of the person who was kicked, and the reason.
@@ -2274,6 +2286,7 @@ The following is a list of bind types and how they work. Below each bind type is
 (13) NICK (stackable)
 
   bind nick <flags> <mask> <proc>
+  
   procname <nick> <user\@host> <handle> <channel> <newnick>
 
   Description: triggered when someone changes nicknames. The mask is matched against '#channel newnick' and can contain wildcards. Channel is "*" if the user isn't on a channel (usually the bot not yet in a channel).
@@ -2283,6 +2296,7 @@ The following is a list of bind types and how they work. Below each bind type is
 (14) MODE (stackable)
 
   bind mode <flags> <mask> <proc>
+
   procname <nick> <user\@host> <handle> <channel> <mode-change> <target>
 
   Description: mode changes are broken down into their component parts before being sent here, so the <mode-change> will always be a single mode, such as "+m" or "-o". target will show the argument of the mode change (for o/v/b/e/I) or "" if the set mode does not take an argument. The bot's automatic response to a mode change will happen AFTER all matching Tcl procs are called. The mask will be matched against '#channel +/-modes' and can contain wildcards.
@@ -2312,6 +2326,7 @@ The following is a list of bind types and how they work. Below each bind type is
 (15) CTCP (stackable)
 
   bind ctcp <flags> <keyword> <proc>
+
   procname <nick> <user\@host> <handle> <dest> <keyword> <text>
 
   Description: dest will be a nickname (the bot's nickname, obviously) or channel name. keyword is the ctcp command (which can contain wildcards), and text may be empty. If the proc returns 0, the bot will attempt its own processing of the ctcp command.
@@ -2321,6 +2336,7 @@ The following is a list of bind types and how they work. Below each bind type is
 (16) CTCR (stackable)
 
   bind ctcr <flags> <keyword> <proc>
+
   procname <nick> <user\@host> <handle> <dest> <keyword> <text>
 
   Description: just like ctcp, but this is triggered for a ctcp-reply (ctcp embedded in a notice instead of a privmsg)
@@ -2330,6 +2346,7 @@ The following is a list of bind types and how they work. Below each bind type is
 (17) RAW (stackable)
 
   bind raw <flags> <keyword> <proc>
+
   procname <from> <keyword> <text>
 
   Description: previous versions of Eggdrop required a special compile option to enable this binding, but it's now standard. The keyword is either a numeric, like "368", or a keyword, such as "PRIVMSG". "from" will be the server name or the source user (depending on the keyword); flags are ignored. The order of the arguments is identical to the order that the IRC server sends to the bot. The pre-processing  only splits it apart enough to determine the keyword. If the proc returns 1, Eggdrop will not process the line any further (this could cause unexpected behavior in some cases).
@@ -2339,6 +2356,7 @@ The following is a list of bind types and how they work. Below each bind type is
 (18) BOT
 
   bind bot <flags> <command> <proc>
+
   procname <from-bot> <command> <text>
 
   Description: triggered by a message coming from another bot in the botnet. The first word is the command and the rest becomes the text argument; flags are ignored.
@@ -2348,6 +2366,7 @@ The following is a list of bind types and how they work. Below each bind type is
 (19) CHON (stackable)
 
   bind chon <flags> <mask> <proc>
+
   procname <handle> <idx>
 
   Description: when someone first enters the party-line area of the bot via dcc chat or telnet, this is triggered before they are connected to a chat channel (so, yes, you can change the channel in a 'chon' proc). mask is matched against the handle and supports wildcards. This is NOT triggered when someone returns from the file area, etc.
@@ -2357,6 +2376,7 @@ The following is a list of bind types and how they work. Below each bind type is
 (20) CHOF (stackable)
 
   bind chof <flags> <mask> <proc>
+
   procname <handle> <idx>
 
   Description: triggered when someone leaves the party line to disconnect from the bot. mask is matched against the handle and can contain wildcards. Note that the connection may have already been dropped by the user, so don't send output to the idx.
@@ -2366,6 +2386,7 @@ The following is a list of bind types and how they work. Below each bind type is
 (21) SENT (stackable)
 
   bind sent <flags> <mask> <proc>
+
   procname <handle> <nick> <path/to/file>
 
   Description: after a user has successfully downloaded a file from the bot, this binding is triggered. mask is matched against the handle of the user that initiated the transfer and supports wildcards. nick is the actual recipient (on IRC) of the file. The path is relative to the dcc directory (unless the file transfer was started by a script call to 'dccsend', in which case the path is the exact path given in the call to 'dccsend').
@@ -2375,6 +2396,7 @@ The following is a list of bind types and how they work. Below each bind type is
 (22) RCVD (stackable)
 
   bind rcvd <flags> <mask> <proc>
+
   procname <handle> <nick> <path/to/file>
 
   Description: triggered after a user uploads a file successfully. mask is matched against the user's handle. nick is the IRC nickname that the file transfer originated from. The path is where the file ended up, relative to the dcc directory (usually this is your incoming dir).
@@ -2384,6 +2406,7 @@ The following is a list of bind types and how they work. Below each bind type is
 (23) CHAT (stackable)
 
   bind chat <flags> <mask> <proc>
+
   procname <handle> <channel#> <text>
 
   Description: when a user says something on the botnet, it invokes this binding. Flags are ignored; handle could be a user on this bot ("DronePup") or on another bot ("Eden\@Wilde") and therefore you can't rely on a local user record. The mask is checked against the entire line of text and supports wildcards.
@@ -2395,6 +2418,7 @@ The following is a list of bind types and how they work. Below each bind type is
 (24) LINK (stackable)
 
   bind link <flags> <mask> <proc>
+
   procname <botname> <via>
 
   Description: triggered when a bot links into the botnet. botname is the botnetnick of the bot that just linked in; via is the bot it linked through. The mask is checked against the botnetnick of the bot that linked and supports wildcards. flags are ignored.
@@ -2404,6 +2428,7 @@ The following is a list of bind types and how they work. Below each bind type is
 (25) DISC (stackable)
 
   bind disc <flags> <mask> <proc>
+
   procname <botname>
 
   Description: triggered when a bot disconnects from the botnet for whatever reason. Just like the link bind, flags are ignored; mask is matched against the botnetnick of the bot that unlinked. Wildcards are supported in mask.
@@ -2413,6 +2438,7 @@ The following is a list of bind types and how they work. Below each bind type is
 (26) SPLT (stackable)
 
   bind splt <flags> <mask> <proc>
+
   procname <nick> <user\@host> <handle> <channel>
 
   Description: triggered when someone gets netsplit on the channel. Be aware that this may be a false alarm (it's easy to fake a netsplit signoff message on some networks); mask may contain wildcards and is matched against '#channel nick!user\@host'. Anyone who is SPLT will trigger a REJN or SIGN within the next wait-split (defined in the config file) seconds.
@@ -2422,6 +2448,7 @@ The following is a list of bind types and how they work. Below each bind type is
 (27) REJN (stackable)
 
   bind rejn <flags> <mask> <proc>
+
   procname <nick> <user\@host> <handle> <channel>
 
   Description: someone who was split has rejoined. mask can contain wildcards, and is matched against '#channel nick!user\@host'.
@@ -2431,6 +2458,7 @@ The following is a list of bind types and how they work. Below each bind type is
 (28) FILT (stackable)
 
   bind filt <flags> <mask> <proc>
+
   procname <idx> <text>
 
   Description: party line and file system users have their text sent through filt before being processed. If the proc returns a blank string, the text is considered parsed. Otherwise, the bot will use the text returned from the proc and continue parsing that
@@ -2440,6 +2468,7 @@ The following is a list of bind types and how they work. Below each bind type is
 (29) NEED (stackable)
 
   bind need <flags> <mask> <proc>
+
   procname <channel> <type>
 
   Description: this bind is triggered on certain events, like when the bot needs operator status or the key for a channel. The types are: op, unban, invite, limit, and key; the mask is matched against '#channel type' and can contain wildcards. flags are ignored.
@@ -2454,6 +2483,7 @@ The following is a list of bind types and how they work. Below each bind type is
 (30) FLUD (stackable)
 
   bind flud <flags> <type> <proc>
+
   procname <nick> <user\@host> <handle> <type> <channel>
 
   Description: any floods detected through the flood control settings (like 'flood-ctcp') are sent here before processing. If the proc returns 1, no further action is taken on the flood; if the proc returns 0, the bot will do its normal "punishment" for the flood. The flood types are: pub, msg, join, or ctcp (and can be masked to "*" for the bind); flags are ignored.
@@ -2463,6 +2493,7 @@ The following is a list of bind types and how they work. Below each bind type is
 (31) NOTE (stackable)
 
   bind note <flags> <mask> <proc>
+
   procname <from> <to> <text>
 
   Description: incoming notes (either from the party line, someone on IRC, or someone on another bot on the botnet) are checked against these binds before being processed. The mask is matched against the receiving handle and supports wildcards. If the proc returns 1, Eggdrop will not process the note any further. Flags are ignored.
@@ -2472,6 +2503,7 @@ The following is a list of bind types and how they work. Below each bind type is
 (32) ACT (stackable)
 
   bind act <flags> <mask> <proc>
+
   procname <handle> <channel#> <action>
 
   Description: when someone does an action on the botnet, it invokes this binding. flags are ignored; the mask is matched against the text of the action and can support wildcards.
@@ -2481,6 +2513,7 @@ The following is a list of bind types and how they work. Below each bind type is
 (33) WALL (stackable)
 
   bind wall <flags> <mask> <proc>
+
   procname <from> <msg>
 
   Description: when the bot receives a wallops, it invokes this binding. flags are ignored; the mask is matched against the text of the wallops msg. Note that RFC shows the server name as a source of the message, whereas many IRCds send the nick!user\@host of the actual sender, thus, Eggdrop will not parse it at all, but simply pass it to bind in its original form. If the proc returns 1,           Eggdrop will not log the message that triggered this bind.
@@ -2490,6 +2523,7 @@ The following is a list of bind types and how they work. Below each bind type is
 (34) BCST (stackable)
 
   bind bcst <flags> <mask> <proc>
+
   procname <botname> <channel#> <text>
  
   Description: when a bot broadcasts something on the botnet (see 'dccbroadcast' above), it invokes this binding. flags are ignored; the mask is matched against the message text and can contain wildcards. 'channel' argument will always be '-1' since broadcasts are not directed to any partyline channel.
@@ -2501,6 +2535,7 @@ The following is a list of bind types and how they work. Below each bind type is
 (35) CHJN (stackable)
 
   bind chjn <flags> <mask> <proc>
+
   procname <botname> <handle> <channel#> <flag> <idx> <user\@host>
 
   Description: when someone joins a botnet channel, it invokes this binding. The mask is matched against the channel and can contain wildcards. flag is one of: * (owner), + (master), @ (op), or % (botnet master). Flags are ignored.
@@ -2510,6 +2545,7 @@ The following is a list of bind types and how they work. Below each bind type is
 (36) CHPT (stackable)
 
   bind chpt <flags> <mask> <proc>
+
   procname <botname> <handle> <idx> <channel#>
 
   Description: when someone parts a botnet channel, it invokes this binding. The mask is matched against the channel and can contain wildcards. Flags are ignored.
@@ -2519,6 +2555,7 @@ The following is a list of bind types and how they work. Below each bind type is
 (37) TIME (stackable)
 
   bind time <flags> <mask> <proc>
+
   procname <minute 00-59> <hour 00-23> <day 01-31> <month 00-11> <year 0000-9999>
 
   Description: allows you to schedule procedure calls at certain times. mask matches 5 space separated integers of the form: "minute hour day month year". The month var starts at 00 (Jan) and ends at 11 (Dec). Minute, hour, day, month have a zero padding so they are exactly two characters long; year is zero characters. Flags are ignored.
@@ -2528,6 +2565,7 @@ The following is a list of bind types and how they work. Below each bind type is
 (38) AWAY (stackable)
 
   bind away <flags> <mask> <proc>
+
   procname <botname> <idx> <text>
 
   Description: triggers when a user goes away or comes back on the botnet. text is the reason than has been specified (text is "" when returning). mask is matched against the botnet-nick of the bot the user is connected to and supports wildcards. flags are ignored.
@@ -2537,7 +2575,8 @@ The following is a list of bind types and how they work. Below each bind type is
 (39) LOAD (stackable)
 
   bind load <flags> <mask> <proc>
-  proc-name <module>
+
+  procname <module>
 
   Description: triggers when a module is loaded. mask is matched against the name of the loaded module and supports wildcards; flags are ignored.
 
@@ -2546,6 +2585,7 @@ The following is a list of bind types and how they work. Below each bind type is
 (40) UNLD (stackable)
 
   bind unld <flags> <mask> <proc>
+
   procname <module>
 
   Description: triggers when a module is unloaded. mask is matched against the name of the unloaded module and supports wildcards;
@@ -2556,6 +2596,7 @@ The following is a list of bind types and how they work. Below each bind type is
 (41) NKCH (stackable)
 
   bind nkch <flags> <mask> <proc>
+
   procname <oldhandle> <newhandle>
 
   Description: triggered whenever a local user's handle is changed (in the userfile). mask is matched against the user's old handle and can contain wildcards; flags are ignored.
@@ -2565,6 +2606,7 @@ The following is a list of bind types and how they work. Below each bind type is
 (42) EVNT (stackable)
 
   bind evnt <flags> <type> <proc>
+
   procname <type>
 
   Description: triggered whenever one of these events happen. flags are ignored. Pre-defined events triggered by Eggdrop are::
@@ -2593,7 +2635,8 @@ The following is a list of bind types and how they work. Below each bind type is
 (43) LOST (stackable)
 
   bind lost <flags> <mask> <proc>
-  proc-name <handle> <nick> <path> <bytes-transferred> <length-of-file>
+
+  procname <handle> <nick> <path> <bytes-transferred> <length-of-file>
 
   Description: triggered when a DCC SEND transfer gets lost, such as when the connection is terminated before all data was successfully sent/received. This is typically caused by a user abort.
 
@@ -2602,6 +2645,7 @@ The following is a list of bind types and how they work. Below each bind type is
 (44) TOUT (stackable)
 
   bind tout <flags> <mask> <proc>
+
   procname <handle> <nick> <path> <bytes-transferred> <length-of-file>
 
   Description: triggered when a DCC SEND transfer times out. This may either happen because the dcc connection was not accepted or because the data transfer stalled for some reason.
@@ -2611,6 +2655,7 @@ The following is a list of bind types and how they work. Below each bind type is
 (45) OUT (stackable)
 
   bind out <flags> <mask> <proc>
+
   procname <queue> <message> <queued|sent>
 
   Description: triggered whenever output is sent to the server. Normally the event will occur twice for each line sent: once before entering a server queue and once after the message is actually sent. This allows for more flexible logging of server output and introduces the ability to cancel the message. Mask is matched against "queue status", where status is either 'queued' or 'sent'. Queues are: mode, server, help, noqueue. noqueue is only used by the putnow tcl command.
@@ -2620,24 +2665,27 @@ The following is a list of bind types and how they work. Below each bind type is
 (46) CRON (stackable)
 
   bind cron <flags> <mask> <proc>
-  proc-name <minute 0-59> <hour 0-23> <day 1-31> <month 1-12> <weekday 0-6>
 
-  Description: similar to bind TIME, but the mask is evaluated as a cron expression, e.g. "16/2 */2 5-15 7,8,9 4". It can contain up to five fields: minute, hour, day, month, weekday; delimited by whitespace. Week days are represented as 0-6, where Sunday can be either 0 or 7. Symbolic names are not supported. The bind will be triggered if the mask matches all of the fields, except that if both day and weekday are not '*', only one of them is required to match. If any number of fields are omitted at the end, the match will proceed as if they were '*'. All cron operators are supported. Please refer to the crontab manual for their meanings. Flags are ignored.
+  procname <minute 0-59> <hour 0-23> <day 1-31> <month 1-12> <weekday 0-6>
+
+  Description: similar to bind TIME, but the mask is evaluated as a cron expression, e.g. "16/2 \*/2 5-15 7,8,9 4". It can contain up to five fields: minute, hour, day, month, weekday; delimited by whitespace. Week days are represented as 0-6, where Sunday can be either 0 or 7. Symbolic names are not supported. The bind will be triggered if the mask matches all of the fields, except that if both day and weekday are not '\*', only one of them is required to match. If any number of fields are omitted at the end, the match will proceed as if they were '\*'. All cron operators are supported. Please refer to the crontab manual for their meanings. Flags are ignored.
 
   Module: core
 
 (47) LOG (stackable)
 
   bind log <flags> <mask> <proc>
-  proc-name <level> <channel> <message>
 
-  Description: triggered whenever a message is sent to a log. The mask is matched against "channel text". The level argument to the proc will contain the level(s) the message is sent to, or '*' if the message is sent to all log levels at once. If the message wasn't sent to a specific channel, channel will be set to '*'.
+  procname <level> <channel> <message>
+
+  Description: triggered whenever a message is sent to a log. The mask is matched against "channel text". The level argument to the proc will contain the level(s) the message is sent to, or '\*' if the message is sent to all log levels at once. If the message wasn't sent to a specific channel, channel will be set to '\*'.
 
   Module: core
 
 (48) TLS (stackable)
 
   bind tls <flags> <mask> <proc>
+
   procname <idx>
  
   Description: triggered for tcp connections when a ssl handshake has completed and the connection is secured. The mask is matched against the idx of the connection.
@@ -2647,6 +2695,7 @@ The following is a list of bind types and how they work. Below each bind type is
 (49) DIE (stackable)
 
   bind die <flags> <mask> <proc>
+
   procname <shutdownreason>
  
   Description: triggered when eggdrop is about to die. The mask is matched against the shutdown reason. The bind won't be triggered if the bot crashes or is being terminated by SIGKILL.

@@ -2057,8 +2057,8 @@ bind for the &quot;stop&quot; msg command, use 'unbind msg - stop msg:stop'.</p>
 <li>MSG</li>
 </ol>
 <blockquote>
-<div><p>bind msg &lt;flags&gt; &lt;command&gt; &lt;proc&gt;
-procname &lt;nick&gt; &lt;user&#64;host&gt; &lt;handle&gt; &lt;text&gt;</p>
+<div><p>bind msg &lt;flags&gt; &lt;command&gt; &lt;proc&gt;</p>
+<p>procname &lt;nick&gt; &lt;user&#64;host&gt; &lt;handle&gt; &lt;text&gt;</p>
 <p>Description: used for /msg commands. The first word of the user's msg is the command, and everything else becomes the text argument.</p>
 <p>Module: server</p>
 </div></blockquote>
@@ -2066,8 +2066,8 @@ procname &lt;nick&gt; &lt;user&#64;host&gt; &lt;handle&gt; &lt;text&gt;</p>
 <li>DCC</li>
 </ol>
 <blockquote>
-<div><p>bind dcc &lt;flags&gt; &lt;command&gt; &lt;proc&gt;
-procname &lt;handle&gt; &lt;idx&gt; &lt;text&gt;</p>
+<div><p>bind dcc &lt;flags&gt; &lt;command&gt; &lt;proc&gt;</p>
+<p>procname &lt;handle&gt; &lt;idx&gt; &lt;text&gt;</p>
 <p>Description: used for partyline commands; the command is the first word and everything else becomes the text argument. The idx is valid until the user disconnects. After that, it may be reused, so be careful about storing an idx for long periods of time.</p>
 <p>Module: core</p>
 </div></blockquote>
@@ -2075,8 +2075,8 @@ procname &lt;handle&gt; &lt;idx&gt; &lt;text&gt;</p>
 <li>FIL</li>
 </ol>
 <blockquote>
-<div><p>bind fil &lt;flags&gt; &lt;command&gt; &lt;proc&gt;
-procname &lt;handle&gt; &lt;idx&gt; &lt;text&gt;</p>
+<div><p>bind fil &lt;flags&gt; &lt;command&gt; &lt;proc&gt;</p>
+<p>procname &lt;handle&gt; &lt;idx&gt; &lt;text&gt;</p>
 <p>Description: the same as DCC, except this is triggered if the user is in the file area instead of the party line</p>
 <p>Module: filesys</p>
 </div></blockquote>
@@ -2084,8 +2084,8 @@ procname &lt;handle&gt; &lt;idx&gt; &lt;text&gt;</p>
 <li>PUB</li>
 </ol>
 <blockquote>
-<div><p>bind pub &lt;flags&gt; &lt;command&gt; &lt;proc&gt;
-procname &lt;nick&gt; &lt;user&#64;host&gt; &lt;handle&gt; &lt;channel&gt; &lt;text&gt;</p>
+<div><p>bind pub &lt;flags&gt; &lt;command&gt; &lt;proc&gt;</p>
+<p>procname &lt;nick&gt; &lt;user&#64;host&gt; &lt;handle&gt; &lt;channel&gt; &lt;text&gt;</p>
 <p>Description: used for commands given on a channel. The first word becomes the command and everything else is the text argument.</p>
 <p>Module: irc</p>
 </div></blockquote>
@@ -2093,8 +2093,8 @@ procname &lt;nick&gt; &lt;user&#64;host&gt; &lt;handle&gt; &lt;channel&gt; &lt;t
 <li>MSGM (stackable)</li>
 </ol>
 <blockquote>
-<div><p>bind msgm &lt;flags&gt; &lt;mask&gt; &lt;proc&gt;
-procname &lt;nick&gt; &lt;user&#64;host&gt; &lt;handle&gt; &lt;text&gt;</p>
+<div><p>bind msgm &lt;flags&gt; &lt;mask&gt; &lt;proc&gt;</p>
+<p>procname &lt;nick&gt; &lt;user&#64;host&gt; &lt;handle&gt; &lt;text&gt;</p>
 <p>Description: matches the entire line of text from a /msg with the mask. This is useful for binding Tcl procs to words or phrases spoken anywhere within a line of text. If the proc returns 1, Eggdrop will not log the message that triggered this bind. MSGM binds are processed before MSG binds. If the exclusive-binds setting is enabled, MSG binds will not be triggered by text that a MSGM bind has already handled.</p>
 <p>Module: server</p>
 </div></blockquote>
@@ -2102,8 +2102,8 @@ procname &lt;nick&gt; &lt;user&#64;host&gt; &lt;handle&gt; &lt;text&gt;</p>
 <li>PUBM (stackable)</li>
 </ol>
 <blockquote>
-<div><p>bind pubm &lt;flags&gt; &lt;mask&gt; &lt;proc&gt;
-procname &lt;nick&gt; &lt;user&#64;host&gt; &lt;handle&gt; &lt;channel&gt; &lt;text&gt;</p>
+<div><p>bind pubm &lt;flags&gt; &lt;mask&gt; &lt;proc&gt;</p>
+<p>procname &lt;nick&gt; &lt;user&#64;host&gt; &lt;handle&gt; &lt;channel&gt; &lt;text&gt;</p>
 <p>Description: just like MSGM, except it's triggered by things said on a channel instead of things /msg'd to the bot. The mask is matched against the channel name followed by the text and can contain wildcards. If the proc returns 1, Eggdrop will not log the message that triggered this bind. PUBM binds are processed before PUB binds. If the exclusive-binds setting is enabled, PUB binds will not be triggered by text that a PUBM bind has already handled.</p>
 <dl class="docutils">
 <dt>Examples:</dt>
@@ -2123,8 +2123,8 @@ procname &lt;nick&gt; &lt;user&#64;host&gt; &lt;handle&gt; &lt;channel&gt; &lt;t
 <li>NOTC (stackable)</li>
 </ol>
 <blockquote>
-<div><p>bind notc &lt;flags&gt; &lt;mask&gt; &lt;proc&gt;
-procname &lt;nick&gt; &lt;user&#64;host&gt; &lt;handle&gt; &lt;text&gt; &lt;dest&gt;</p>
+<div><p>bind notc &lt;flags&gt; &lt;mask&gt; &lt;proc&gt;</p>
+<p>procname &lt;nick&gt; &lt;user&#64;host&gt; &lt;handle&gt; &lt;text&gt; &lt;dest&gt;</p>
 <p>Description: dest will be a nickname (the bot's nickname, obviously) or a channel name. mask is matched against the entire text of the notice and can contain wildcards. It is considered a breach of protocol to respond to a /notice on IRC, so this is intended for internal use (logging, etc.) only. Note that server notices do not trigger the NOTC bind. If the proc returns 1, Eggdrop will not log the message that triggered this bind.</p>
 <p>New Tcl procs should be declared as:</p>
 <div class="highlight-python"><div class="highlight"><pre>proc notcproc {nick uhost hand text {dest &quot;&quot;}} {
@@ -2140,8 +2140,8 @@ procname &lt;nick&gt; &lt;user&#64;host&gt; &lt;handle&gt; &lt;text&gt; &lt;dest
 <li>JOIN (stackable)</li>
 </ol>
 <blockquote>
-<div><p>bind join &lt;flags&gt; &lt;mask&gt; &lt;proc&gt;
-procname &lt;nick&gt; &lt;user&#64;host&gt; &lt;handle&gt; &lt;channel&gt;</p>
+<div><p>bind join &lt;flags&gt; &lt;mask&gt; &lt;proc&gt;</p>
+<p>procname &lt;nick&gt; &lt;user&#64;host&gt; &lt;handle&gt; &lt;channel&gt;</p>
 <p>Description: triggered by someone joining the channel. The mask in the bind is matched against &quot;#channel nick!user&#64;host&quot; and can contain wildcards.</p>
 <p>Module: irc</p>
 </div></blockquote>
@@ -2149,8 +2149,8 @@ procname &lt;nick&gt; &lt;user&#64;host&gt; &lt;handle&gt; &lt;channel&gt;</p>
 <li>PART (stackable)</li>
 </ol>
 <blockquote>
-<div><p>bind part &lt;flags&gt; &lt;mask&gt; &lt;proc&gt;
-procname &lt;nick&gt; &lt;user&#64;host&gt; &lt;handle&gt; &lt;channel&gt; &lt;msg&gt;</p>
+<div><p>bind part &lt;flags&gt; &lt;mask&gt; &lt;proc&gt;</p>
+<p>procname &lt;nick&gt; &lt;user&#64;host&gt; &lt;handle&gt; &lt;channel&gt; &lt;msg&gt;</p>
 <p>Description: triggered by someone leaving the channel. The mask is matched against &quot;#channel nick!user&#64;host&quot; and can contain wildcards. If no part message is specified, msg will be set to &quot;&quot;.</p>
 <p>New Tcl procs should be declared as:</p>
 <div class="highlight-python"><div class="highlight"><pre>proc partproc {nick uhost hand chan {msg &quot;&quot;}} { ... }
@@ -2163,8 +2163,8 @@ procname &lt;nick&gt; &lt;user&#64;host&gt; &lt;handle&gt; &lt;channel&gt; &lt;m
 <li>SIGN (stackable)</li>
 </ol>
 <blockquote>
-<div><p>bind sign &lt;flags&gt; &lt;mask&gt; &lt;proc&gt;
-procname &lt;nick&gt; &lt;user&#64;host&gt; &lt;handle&gt; &lt;channel&gt; &lt;reason&gt;</p>
+<div><p>bind sign &lt;flags&gt; &lt;mask&gt; &lt;proc&gt;</p>
+<p>procname &lt;nick&gt; &lt;user&#64;host&gt; &lt;handle&gt; &lt;channel&gt; &lt;reason&gt;</p>
 <p>Description: triggered by a signoff, or possibly by someone who got netsplit and never returned. The signoff message is the last argument to the proc. Wildcards can be used in the mask, which is matched against '#channel nick!user&#64;host'.</p>
 <p>Module: irc</p>
 </div></blockquote>
@@ -2172,8 +2172,8 @@ procname &lt;nick&gt; &lt;user&#64;host&gt; &lt;handle&gt; &lt;channel&gt; &lt;r
 <li>TOPC (stackable)</li>
 </ol>
 <blockquote>
-<div><p>bind topc &lt;flags&gt; &lt;mask&gt; &lt;proc&gt;
-procname &lt;nick&gt; &lt;user&#64;host&gt; &lt;handle&gt; &lt;channel&gt; &lt;topic&gt;</p>
+<div><p>bind topc &lt;flags&gt; &lt;mask&gt; &lt;proc&gt;</p>
+<p>procname &lt;nick&gt; &lt;user&#64;host&gt; &lt;handle&gt; &lt;channel&gt; &lt;topic&gt;</p>
 <p>Description: triggered by a topic change. mask can contain wildcards and is matched against '#channel &lt;new topic&gt;'.</p>
 <p>Module: irc</p>
 </div></blockquote>
@@ -2181,8 +2181,8 @@ procname &lt;nick&gt; &lt;user&#64;host&gt; &lt;handle&gt; &lt;channel&gt; &lt;t
 <li>KICK (stackable)</li>
 </ol>
 <blockquote>
-<div><p>bind kick &lt;flags&gt; &lt;mask&gt; &lt;proc&gt;
-procname &lt;nick&gt; &lt;user&#64;host&gt; &lt;handle&gt; &lt;channel&gt; &lt;target&gt; &lt;reason&gt;</p>
+<div><p>bind kick &lt;flags&gt; &lt;mask&gt; &lt;proc&gt;</p>
+<p>procname &lt;nick&gt; &lt;user&#64;host&gt; &lt;handle&gt; &lt;channel&gt; &lt;target&gt; &lt;reason&gt;</p>
 <p>Description: triggered when someone is kicked off the channel. The mask is matched against '#channel target reason' where the target is the nickname of the person who got kicked (can contain wildcards). The proc is called with the nick, user&#64;host, and handle of the kicker, plus the channel, the nickname of the person who was kicked, and the reason.</p>
 <p>Module: irc</p>
 </div></blockquote>
@@ -2190,8 +2190,8 @@ procname &lt;nick&gt; &lt;user&#64;host&gt; &lt;handle&gt; &lt;channel&gt; &lt;t
 <li>NICK (stackable)</li>
 </ol>
 <blockquote>
-<div><p>bind nick &lt;flags&gt; &lt;mask&gt; &lt;proc&gt;
-procname &lt;nick&gt; &lt;user&#64;host&gt; &lt;handle&gt; &lt;channel&gt; &lt;newnick&gt;</p>
+<div><p>bind nick &lt;flags&gt; &lt;mask&gt; &lt;proc&gt;</p>
+<p>procname &lt;nick&gt; &lt;user&#64;host&gt; &lt;handle&gt; &lt;channel&gt; &lt;newnick&gt;</p>
 <p>Description: triggered when someone changes nicknames. The mask is matched against '#channel newnick' and can contain wildcards. Channel is &quot;*&quot; if the user isn't on a channel (usually the bot not yet in a channel).</p>
 <p>Module: irc</p>
 </div></blockquote>
@@ -2199,8 +2199,8 @@ procname &lt;nick&gt; &lt;user&#64;host&gt; &lt;handle&gt; &lt;channel&gt; &lt;n
 <li>MODE (stackable)</li>
 </ol>
 <blockquote>
-<div><p>bind mode &lt;flags&gt; &lt;mask&gt; &lt;proc&gt;
-procname &lt;nick&gt; &lt;user&#64;host&gt; &lt;handle&gt; &lt;channel&gt; &lt;mode-change&gt; &lt;target&gt;</p>
+<div><p>bind mode &lt;flags&gt; &lt;mask&gt; &lt;proc&gt;</p>
+<p>procname &lt;nick&gt; &lt;user&#64;host&gt; &lt;handle&gt; &lt;channel&gt; &lt;mode-change&gt; &lt;target&gt;</p>
 <p>Description: mode changes are broken down into their component parts before being sent here, so the &lt;mode-change&gt; will always be a single mode, such as &quot;+m&quot; or &quot;-o&quot;. target will show the argument of the mode change (for o/v/b/e/I) or &quot;&quot; if the set mode does not take an argument. The bot's automatic response to a mode change will happen AFTER all matching Tcl procs are called. The mask will be matched against '#channel +/-modes' and can contain wildcards.</p>
 <p>If it is a server mode, nick will be &quot;&quot;, user&#64;host is the server name, and handle is *.</p>
 <p>Note that &quot;target&quot; was added in 1.3.17 and that this will break Tcl scripts that were written for pre-1.3.17 Eggdrop that use the mode binding. Also, due to a typo, mode binds were broken completely in 1.3.17 but were fixed in 1.3.18. Mode bindings are not triggered at all in 1.3.17.</p>
@@ -2225,8 +2225,8 @@ proc mode_proc {nick uhost hand chan mode} { ... }
 <li>CTCP (stackable)</li>
 </ol>
 <blockquote>
-<div><p>bind ctcp &lt;flags&gt; &lt;keyword&gt; &lt;proc&gt;
-procname &lt;nick&gt; &lt;user&#64;host&gt; &lt;handle&gt; &lt;dest&gt; &lt;keyword&gt; &lt;text&gt;</p>
+<div><p>bind ctcp &lt;flags&gt; &lt;keyword&gt; &lt;proc&gt;</p>
+<p>procname &lt;nick&gt; &lt;user&#64;host&gt; &lt;handle&gt; &lt;dest&gt; &lt;keyword&gt; &lt;text&gt;</p>
 <p>Description: dest will be a nickname (the bot's nickname, obviously) or channel name. keyword is the ctcp command (which can contain wildcards), and text may be empty. If the proc returns 0, the bot will attempt its own processing of the ctcp command.</p>
 <p>Module: server</p>
 </div></blockquote>
@@ -2234,8 +2234,8 @@ procname &lt;nick&gt; &lt;user&#64;host&gt; &lt;handle&gt; &lt;dest&gt; &lt;keyw
 <li>CTCR (stackable)</li>
 </ol>
 <blockquote>
-<div><p>bind ctcr &lt;flags&gt; &lt;keyword&gt; &lt;proc&gt;
-procname &lt;nick&gt; &lt;user&#64;host&gt; &lt;handle&gt; &lt;dest&gt; &lt;keyword&gt; &lt;text&gt;</p>
+<div><p>bind ctcr &lt;flags&gt; &lt;keyword&gt; &lt;proc&gt;</p>
+<p>procname &lt;nick&gt; &lt;user&#64;host&gt; &lt;handle&gt; &lt;dest&gt; &lt;keyword&gt; &lt;text&gt;</p>
 <p>Description: just like ctcp, but this is triggered for a ctcp-reply (ctcp embedded in a notice instead of a privmsg)</p>
 <p>Module: server</p>
 </div></blockquote>
@@ -2243,8 +2243,8 @@ procname &lt;nick&gt; &lt;user&#64;host&gt; &lt;handle&gt; &lt;dest&gt; &lt;keyw
 <li>RAW (stackable)</li>
 </ol>
 <blockquote>
-<div><p>bind raw &lt;flags&gt; &lt;keyword&gt; &lt;proc&gt;
-procname &lt;from&gt; &lt;keyword&gt; &lt;text&gt;</p>
+<div><p>bind raw &lt;flags&gt; &lt;keyword&gt; &lt;proc&gt;</p>
+<p>procname &lt;from&gt; &lt;keyword&gt; &lt;text&gt;</p>
 <p>Description: previous versions of Eggdrop required a special compile option to enable this binding, but it's now standard. The keyword is either a numeric, like &quot;368&quot;, or a keyword, such as &quot;PRIVMSG&quot;. &quot;from&quot; will be the server name or the source user (depending on the keyword); flags are ignored. The order of the arguments is identical to the order that the IRC server sends to the bot. The pre-processing  only splits it apart enough to determine the keyword. If the proc returns 1, Eggdrop will not process the line any further (this could cause unexpected behavior in some cases).</p>
 <p>Module: server</p>
 </div></blockquote>
@@ -2252,8 +2252,8 @@ procname &lt;from&gt; &lt;keyword&gt; &lt;text&gt;</p>
 <li>BOT</li>
 </ol>
 <blockquote>
-<div><p>bind bot &lt;flags&gt; &lt;command&gt; &lt;proc&gt;
-procname &lt;from-bot&gt; &lt;command&gt; &lt;text&gt;</p>
+<div><p>bind bot &lt;flags&gt; &lt;command&gt; &lt;proc&gt;</p>
+<p>procname &lt;from-bot&gt; &lt;command&gt; &lt;text&gt;</p>
 <p>Description: triggered by a message coming from another bot in the botnet. The first word is the command and the rest becomes the text argument; flags are ignored.</p>
 <p>Module: core</p>
 </div></blockquote>
@@ -2261,8 +2261,8 @@ procname &lt;from-bot&gt; &lt;command&gt; &lt;text&gt;</p>
 <li>CHON (stackable)</li>
 </ol>
 <blockquote>
-<div><p>bind chon &lt;flags&gt; &lt;mask&gt; &lt;proc&gt;
-procname &lt;handle&gt; &lt;idx&gt;</p>
+<div><p>bind chon &lt;flags&gt; &lt;mask&gt; &lt;proc&gt;</p>
+<p>procname &lt;handle&gt; &lt;idx&gt;</p>
 <p>Description: when someone first enters the party-line area of the bot via dcc chat or telnet, this is triggered before they are connected to a chat channel (so, yes, you can change the channel in a 'chon' proc). mask is matched against the handle and supports wildcards. This is NOT triggered when someone returns from the file area, etc.</p>
 <p>Module: core</p>
 </div></blockquote>
@@ -2270,8 +2270,8 @@ procname &lt;handle&gt; &lt;idx&gt;</p>
 <li>CHOF (stackable)</li>
 </ol>
 <blockquote>
-<div><p>bind chof &lt;flags&gt; &lt;mask&gt; &lt;proc&gt;
-procname &lt;handle&gt; &lt;idx&gt;</p>
+<div><p>bind chof &lt;flags&gt; &lt;mask&gt; &lt;proc&gt;</p>
+<p>procname &lt;handle&gt; &lt;idx&gt;</p>
 <p>Description: triggered when someone leaves the party line to disconnect from the bot. mask is matched against the handle and can contain wildcards. Note that the connection may have already been dropped by the user, so don't send output to the idx.</p>
 <p>Module: core</p>
 </div></blockquote>
@@ -2279,8 +2279,8 @@ procname &lt;handle&gt; &lt;idx&gt;</p>
 <li>SENT (stackable)</li>
 </ol>
 <blockquote>
-<div><p>bind sent &lt;flags&gt; &lt;mask&gt; &lt;proc&gt;
-procname &lt;handle&gt; &lt;nick&gt; &lt;path/to/file&gt;</p>
+<div><p>bind sent &lt;flags&gt; &lt;mask&gt; &lt;proc&gt;</p>
+<p>procname &lt;handle&gt; &lt;nick&gt; &lt;path/to/file&gt;</p>
 <p>Description: after a user has successfully downloaded a file from the bot, this binding is triggered. mask is matched against the handle of the user that initiated the transfer and supports wildcards. nick is the actual recipient (on IRC) of the file. The path is relative to the dcc directory (unless the file transfer was started by a script call to 'dccsend', in which case the path is the exact path given in the call to 'dccsend').</p>
 <p>Module: transfer</p>
 </div></blockquote>
@@ -2288,8 +2288,8 @@ procname &lt;handle&gt; &lt;nick&gt; &lt;path/to/file&gt;</p>
 <li>RCVD (stackable)</li>
 </ol>
 <blockquote>
-<div><p>bind rcvd &lt;flags&gt; &lt;mask&gt; &lt;proc&gt;
-procname &lt;handle&gt; &lt;nick&gt; &lt;path/to/file&gt;</p>
+<div><p>bind rcvd &lt;flags&gt; &lt;mask&gt; &lt;proc&gt;</p>
+<p>procname &lt;handle&gt; &lt;nick&gt; &lt;path/to/file&gt;</p>
 <p>Description: triggered after a user uploads a file successfully. mask is matched against the user's handle. nick is the IRC nickname that the file transfer originated from. The path is where the file ended up, relative to the dcc directory (usually this is your incoming dir).</p>
 <p>Module: transfer</p>
 </div></blockquote>
@@ -2297,8 +2297,8 @@ procname &lt;handle&gt; &lt;nick&gt; &lt;path/to/file&gt;</p>
 <li>CHAT (stackable)</li>
 </ol>
 <blockquote>
-<div><p>bind chat &lt;flags&gt; &lt;mask&gt; &lt;proc&gt;
-procname &lt;handle&gt; &lt;channel#&gt; &lt;text&gt;</p>
+<div><p>bind chat &lt;flags&gt; &lt;mask&gt; &lt;proc&gt;</p>
+<p>procname &lt;handle&gt; &lt;channel#&gt; &lt;text&gt;</p>
 <p>Description: when a user says something on the botnet, it invokes this binding. Flags are ignored; handle could be a user on this bot (&quot;DronePup&quot;) or on another bot (&quot;Eden&#64;Wilde&quot;) and therefore you can't rely on a local user record. The mask is checked against the entire line of text and supports wildcards.</p>
 <p>NOTE: If a BOT says something on the botnet, the BCST bind is invoked instead.</p>
 <p>Module: core</p>
@@ -2307,8 +2307,8 @@ procname &lt;handle&gt; &lt;channel#&gt; &lt;text&gt;</p>
 <li>LINK (stackable)</li>
 </ol>
 <blockquote>
-<div><p>bind link &lt;flags&gt; &lt;mask&gt; &lt;proc&gt;
-procname &lt;botname&gt; &lt;via&gt;</p>
+<div><p>bind link &lt;flags&gt; &lt;mask&gt; &lt;proc&gt;</p>
+<p>procname &lt;botname&gt; &lt;via&gt;</p>
 <p>Description: triggered when a bot links into the botnet. botname is the botnetnick of the bot that just linked in; via is the bot it linked through. The mask is checked against the botnetnick of the bot that linked and supports wildcards. flags are ignored.</p>
 <p>Module: core</p>
 </div></blockquote>
@@ -2316,8 +2316,8 @@ procname &lt;botname&gt; &lt;via&gt;</p>
 <li>DISC (stackable)</li>
 </ol>
 <blockquote>
-<div><p>bind disc &lt;flags&gt; &lt;mask&gt; &lt;proc&gt;
-procname &lt;botname&gt;</p>
+<div><p>bind disc &lt;flags&gt; &lt;mask&gt; &lt;proc&gt;</p>
+<p>procname &lt;botname&gt;</p>
 <p>Description: triggered when a bot disconnects from the botnet for whatever reason. Just like the link bind, flags are ignored; mask is matched against the botnetnick of the bot that unlinked. Wildcards are supported in mask.</p>
 <p>Module: core</p>
 </div></blockquote>
@@ -2325,8 +2325,8 @@ procname &lt;botname&gt;</p>
 <li>SPLT (stackable)</li>
 </ol>
 <blockquote>
-<div><p>bind splt &lt;flags&gt; &lt;mask&gt; &lt;proc&gt;
-procname &lt;nick&gt; &lt;user&#64;host&gt; &lt;handle&gt; &lt;channel&gt;</p>
+<div><p>bind splt &lt;flags&gt; &lt;mask&gt; &lt;proc&gt;</p>
+<p>procname &lt;nick&gt; &lt;user&#64;host&gt; &lt;handle&gt; &lt;channel&gt;</p>
 <p>Description: triggered when someone gets netsplit on the channel. Be aware that this may be a false alarm (it's easy to fake a netsplit signoff message on some networks); mask may contain wildcards and is matched against '#channel nick!user&#64;host'. Anyone who is SPLT will trigger a REJN or SIGN within the next wait-split (defined in the config file) seconds.</p>
 <p>Module: irc</p>
 </div></blockquote>
@@ -2334,8 +2334,8 @@ procname &lt;nick&gt; &lt;user&#64;host&gt; &lt;handle&gt; &lt;channel&gt;</p>
 <li>REJN (stackable)</li>
 </ol>
 <blockquote>
-<div><p>bind rejn &lt;flags&gt; &lt;mask&gt; &lt;proc&gt;
-procname &lt;nick&gt; &lt;user&#64;host&gt; &lt;handle&gt; &lt;channel&gt;</p>
+<div><p>bind rejn &lt;flags&gt; &lt;mask&gt; &lt;proc&gt;</p>
+<p>procname &lt;nick&gt; &lt;user&#64;host&gt; &lt;handle&gt; &lt;channel&gt;</p>
 <p>Description: someone who was split has rejoined. mask can contain wildcards, and is matched against '#channel nick!user&#64;host'.</p>
 <p>Module: irc</p>
 </div></blockquote>
@@ -2343,8 +2343,8 @@ procname &lt;nick&gt; &lt;user&#64;host&gt; &lt;handle&gt; &lt;channel&gt;</p>
 <li>FILT (stackable)</li>
 </ol>
 <blockquote>
-<div><p>bind filt &lt;flags&gt; &lt;mask&gt; &lt;proc&gt;
-procname &lt;idx&gt; &lt;text&gt;</p>
+<div><p>bind filt &lt;flags&gt; &lt;mask&gt; &lt;proc&gt;</p>
+<p>procname &lt;idx&gt; &lt;text&gt;</p>
 <p>Description: party line and file system users have their text sent through filt before being processed. If the proc returns a blank string, the text is considered parsed. Otherwise, the bot will use the text returned from the proc and continue parsing that</p>
 <p>Module: core</p>
 </div></blockquote>
@@ -2352,8 +2352,8 @@ procname &lt;idx&gt; &lt;text&gt;</p>
 <li>NEED (stackable)</li>
 </ol>
 <blockquote>
-<div><p>bind need &lt;flags&gt; &lt;mask&gt; &lt;proc&gt;
-procname &lt;channel&gt; &lt;type&gt;</p>
+<div><p>bind need &lt;flags&gt; &lt;mask&gt; &lt;proc&gt;</p>
+<p>procname &lt;channel&gt; &lt;type&gt;</p>
 <p>Description: this bind is triggered on certain events, like when the bot needs operator status or the key for a channel. The types are: op, unban, invite, limit, and key; the mask is matched against '#channel type' and can contain wildcards. flags are ignored.</p>
 <p>Example:</p>
 <div class="highlight-python"><div class="highlight"><pre>bind need - &quot;% op&quot; needop &lt; handles only need op
@@ -2366,8 +2366,8 @@ bind need - &quot;*&quot; needall   &lt; handles all needs
 <li>FLUD (stackable)</li>
 </ol>
 <blockquote>
-<div><p>bind flud &lt;flags&gt; &lt;type&gt; &lt;proc&gt;
-procname &lt;nick&gt; &lt;user&#64;host&gt; &lt;handle&gt; &lt;type&gt; &lt;channel&gt;</p>
+<div><p>bind flud &lt;flags&gt; &lt;type&gt; &lt;proc&gt;</p>
+<p>procname &lt;nick&gt; &lt;user&#64;host&gt; &lt;handle&gt; &lt;type&gt; &lt;channel&gt;</p>
 <p>Description: any floods detected through the flood control settings (like 'flood-ctcp') are sent here before processing. If the proc returns 1, no further action is taken on the flood; if the proc returns 0, the bot will do its normal &quot;punishment&quot; for the flood. The flood types are: pub, msg, join, or ctcp (and can be masked to &quot;*&quot; for the bind); flags are ignored.</p>
 <p>Module: server</p>
 </div></blockquote>
@@ -2375,8 +2375,8 @@ procname &lt;nick&gt; &lt;user&#64;host&gt; &lt;handle&gt; &lt;type&gt; &lt;chan
 <li>NOTE (stackable)</li>
 </ol>
 <blockquote>
-<div><p>bind note &lt;flags&gt; &lt;mask&gt; &lt;proc&gt;
-procname &lt;from&gt; &lt;to&gt; &lt;text&gt;</p>
+<div><p>bind note &lt;flags&gt; &lt;mask&gt; &lt;proc&gt;</p>
+<p>procname &lt;from&gt; &lt;to&gt; &lt;text&gt;</p>
 <p>Description: incoming notes (either from the party line, someone on IRC, or someone on another bot on the botnet) are checked against these binds before being processed. The mask is matched against the receiving handle and supports wildcards. If the proc returns 1, Eggdrop will not process the note any further. Flags are ignored.</p>
 <p>Module: core</p>
 </div></blockquote>
@@ -2384,8 +2384,8 @@ procname &lt;from&gt; &lt;to&gt; &lt;text&gt;</p>
 <li>ACT (stackable)</li>
 </ol>
 <blockquote>
-<div><p>bind act &lt;flags&gt; &lt;mask&gt; &lt;proc&gt;
-procname &lt;handle&gt; &lt;channel#&gt; &lt;action&gt;</p>
+<div><p>bind act &lt;flags&gt; &lt;mask&gt; &lt;proc&gt;</p>
+<p>procname &lt;handle&gt; &lt;channel#&gt; &lt;action&gt;</p>
 <p>Description: when someone does an action on the botnet, it invokes this binding. flags are ignored; the mask is matched against the text of the action and can support wildcards.</p>
 <p>Module: core</p>
 </div></blockquote>
@@ -2393,8 +2393,8 @@ procname &lt;handle&gt; &lt;channel#&gt; &lt;action&gt;</p>
 <li>WALL (stackable)</li>
 </ol>
 <blockquote>
-<div><p>bind wall &lt;flags&gt; &lt;mask&gt; &lt;proc&gt;
-procname &lt;from&gt; &lt;msg&gt;</p>
+<div><p>bind wall &lt;flags&gt; &lt;mask&gt; &lt;proc&gt;</p>
+<p>procname &lt;from&gt; &lt;msg&gt;</p>
 <p>Description: when the bot receives a wallops, it invokes this binding. flags are ignored; the mask is matched against the text of the wallops msg. Note that RFC shows the server name as a source of the message, whereas many IRCds send the nick!user&#64;host of the actual sender, thus, Eggdrop will not parse it at all, but simply pass it to bind in its original form. If the proc returns 1,           Eggdrop will not log the message that triggered this bind.</p>
 <p>Module: server</p>
 </div></blockquote>
@@ -2402,8 +2402,8 @@ procname &lt;from&gt; &lt;msg&gt;</p>
 <li>BCST (stackable)</li>
 </ol>
 <blockquote>
-<div><p>bind bcst &lt;flags&gt; &lt;mask&gt; &lt;proc&gt;
-procname &lt;botname&gt; &lt;channel#&gt; &lt;text&gt;</p>
+<div><p>bind bcst &lt;flags&gt; &lt;mask&gt; &lt;proc&gt;</p>
+<p>procname &lt;botname&gt; &lt;channel#&gt; &lt;text&gt;</p>
 <p>Description: when a bot broadcasts something on the botnet (see 'dccbroadcast' above), it invokes this binding. flags are ignored; the mask is matched against the message text and can contain wildcards. 'channel' argument will always be '-1' since broadcasts are not directed to any partyline channel.</p>
 <p>It is also invoked when a BOT (not a person, as with the CHAT bind) 'says' something on a channel. In this case, the 'channel' argument will be a valid channel, and not '-1'.</p>
 <p>Module: core</p>
@@ -2412,8 +2412,8 @@ procname &lt;botname&gt; &lt;channel#&gt; &lt;text&gt;</p>
 <li>CHJN (stackable)</li>
 </ol>
 <blockquote>
-<div><p>bind chjn &lt;flags&gt; &lt;mask&gt; &lt;proc&gt;
-procname &lt;botname&gt; &lt;handle&gt; &lt;channel#&gt; &lt;flag&gt; &lt;idx&gt; &lt;user&#64;host&gt;</p>
+<div><p>bind chjn &lt;flags&gt; &lt;mask&gt; &lt;proc&gt;</p>
+<p>procname &lt;botname&gt; &lt;handle&gt; &lt;channel#&gt; &lt;flag&gt; &lt;idx&gt; &lt;user&#64;host&gt;</p>
 <p>Description: when someone joins a botnet channel, it invokes this binding. The mask is matched against the channel and can contain wildcards. flag is one of: * (owner), + (master), &#64; (op), or % (botnet master). Flags are ignored.</p>
 <p>Module: core</p>
 </div></blockquote>
@@ -2421,8 +2421,8 @@ procname &lt;botname&gt; &lt;handle&gt; &lt;channel#&gt; &lt;flag&gt; &lt;idx&gt
 <li>CHPT (stackable)</li>
 </ol>
 <blockquote>
-<div><p>bind chpt &lt;flags&gt; &lt;mask&gt; &lt;proc&gt;
-procname &lt;botname&gt; &lt;handle&gt; &lt;idx&gt; &lt;channel#&gt;</p>
+<div><p>bind chpt &lt;flags&gt; &lt;mask&gt; &lt;proc&gt;</p>
+<p>procname &lt;botname&gt; &lt;handle&gt; &lt;idx&gt; &lt;channel#&gt;</p>
 <p>Description: when someone parts a botnet channel, it invokes this binding. The mask is matched against the channel and can contain wildcards. Flags are ignored.</p>
 <p>Module: core</p>
 </div></blockquote>
@@ -2430,8 +2430,8 @@ procname &lt;botname&gt; &lt;handle&gt; &lt;idx&gt; &lt;channel#&gt;</p>
 <li>TIME (stackable)</li>
 </ol>
 <blockquote>
-<div><p>bind time &lt;flags&gt; &lt;mask&gt; &lt;proc&gt;
-procname &lt;minute 00-59&gt; &lt;hour 00-23&gt; &lt;day 01-31&gt; &lt;month 00-11&gt; &lt;year 0000-9999&gt;</p>
+<div><p>bind time &lt;flags&gt; &lt;mask&gt; &lt;proc&gt;</p>
+<p>procname &lt;minute 00-59&gt; &lt;hour 00-23&gt; &lt;day 01-31&gt; &lt;month 00-11&gt; &lt;year 0000-9999&gt;</p>
 <p>Description: allows you to schedule procedure calls at certain times. mask matches 5 space separated integers of the form: &quot;minute hour day month year&quot;. The month var starts at 00 (Jan) and ends at 11 (Dec). Minute, hour, day, month have a zero padding so they are exactly two characters long; year is zero characters. Flags are ignored.</p>
 <p>Module: core</p>
 </div></blockquote>
@@ -2439,8 +2439,8 @@ procname &lt;minute 00-59&gt; &lt;hour 00-23&gt; &lt;day 01-31&gt; &lt;month 00-
 <li>AWAY (stackable)</li>
 </ol>
 <blockquote>
-<div><p>bind away &lt;flags&gt; &lt;mask&gt; &lt;proc&gt;
-procname &lt;botname&gt; &lt;idx&gt; &lt;text&gt;</p>
+<div><p>bind away &lt;flags&gt; &lt;mask&gt; &lt;proc&gt;</p>
+<p>procname &lt;botname&gt; &lt;idx&gt; &lt;text&gt;</p>
 <p>Description: triggers when a user goes away or comes back on the botnet. text is the reason than has been specified (text is &quot;&quot; when returning). mask is matched against the botnet-nick of the bot the user is connected to and supports wildcards. flags are ignored.</p>
 <p>Module: core</p>
 </div></blockquote>
@@ -2448,8 +2448,8 @@ procname &lt;botname&gt; &lt;idx&gt; &lt;text&gt;</p>
 <li>LOAD (stackable)</li>
 </ol>
 <blockquote>
-<div><p>bind load &lt;flags&gt; &lt;mask&gt; &lt;proc&gt;
-proc-name &lt;module&gt;</p>
+<div><p>bind load &lt;flags&gt; &lt;mask&gt; &lt;proc&gt;</p>
+<p>procname &lt;module&gt;</p>
 <p>Description: triggers when a module is loaded. mask is matched against the name of the loaded module and supports wildcards; flags are ignored.</p>
 <p>Module: core</p>
 </div></blockquote>
@@ -2457,8 +2457,8 @@ proc-name &lt;module&gt;</p>
 <li>UNLD (stackable)</li>
 </ol>
 <blockquote>
-<div><p>bind unld &lt;flags&gt; &lt;mask&gt; &lt;proc&gt;
-procname &lt;module&gt;</p>
+<div><p>bind unld &lt;flags&gt; &lt;mask&gt; &lt;proc&gt;</p>
+<p>procname &lt;module&gt;</p>
 <p>Description: triggers when a module is unloaded. mask is matched against the name of the unloaded module and supports wildcards;
 flags are ignored.</p>
 <p>Module: core</p>
@@ -2467,8 +2467,8 @@ flags are ignored.</p>
 <li>NKCH (stackable)</li>
 </ol>
 <blockquote>
-<div><p>bind nkch &lt;flags&gt; &lt;mask&gt; &lt;proc&gt;
-procname &lt;oldhandle&gt; &lt;newhandle&gt;</p>
+<div><p>bind nkch &lt;flags&gt; &lt;mask&gt; &lt;proc&gt;</p>
+<p>procname &lt;oldhandle&gt; &lt;newhandle&gt;</p>
 <p>Description: triggered whenever a local user's handle is changed (in the userfile). mask is matched against the user's old handle and can contain wildcards; flags are ignored.</p>
 <p>Module: core</p>
 </div></blockquote>
@@ -2476,8 +2476,8 @@ procname &lt;oldhandle&gt; &lt;newhandle&gt;</p>
 <li>EVNT (stackable)</li>
 </ol>
 <blockquote>
-<div><p>bind evnt &lt;flags&gt; &lt;type&gt; &lt;proc&gt;
-procname &lt;type&gt;</p>
+<div><p>bind evnt &lt;flags&gt; &lt;type&gt; &lt;proc&gt;</p>
+<p>procname &lt;type&gt;</p>
 <p>Description: triggered whenever one of these events happen. flags are ignored. Pre-defined events triggered by Eggdrop are:</p>
 <div class="highlight-python"><div class="highlight"><pre>sighup            - called on a kill -HUP &lt;pid&gt;
 sigterm           - called on a kill -TERM &lt;pid&gt;
@@ -2504,8 +2504,8 @@ fail-server       - called when an IRC server fails to respond
 <li>LOST (stackable)</li>
 </ol>
 <blockquote>
-<div><p>bind lost &lt;flags&gt; &lt;mask&gt; &lt;proc&gt;
-proc-name &lt;handle&gt; &lt;nick&gt; &lt;path&gt; &lt;bytes-transferred&gt; &lt;length-of-file&gt;</p>
+<div><p>bind lost &lt;flags&gt; &lt;mask&gt; &lt;proc&gt;</p>
+<p>procname &lt;handle&gt; &lt;nick&gt; &lt;path&gt; &lt;bytes-transferred&gt; &lt;length-of-file&gt;</p>
 <p>Description: triggered when a DCC SEND transfer gets lost, such as when the connection is terminated before all data was successfully sent/received. This is typically caused by a user abort.</p>
 <p>Module: transfer</p>
 </div></blockquote>
@@ -2513,8 +2513,8 @@ proc-name &lt;handle&gt; &lt;nick&gt; &lt;path&gt; &lt;bytes-transferred&gt; &lt
 <li>TOUT (stackable)</li>
 </ol>
 <blockquote>
-<div><p>bind tout &lt;flags&gt; &lt;mask&gt; &lt;proc&gt;
-procname &lt;handle&gt; &lt;nick&gt; &lt;path&gt; &lt;bytes-transferred&gt; &lt;length-of-file&gt;</p>
+<div><p>bind tout &lt;flags&gt; &lt;mask&gt; &lt;proc&gt;</p>
+<p>procname &lt;handle&gt; &lt;nick&gt; &lt;path&gt; &lt;bytes-transferred&gt; &lt;length-of-file&gt;</p>
 <p>Description: triggered when a DCC SEND transfer times out. This may either happen because the dcc connection was not accepted or because the data transfer stalled for some reason.</p>
 <p>Module: transfer</p>
 </div></blockquote>
@@ -2522,8 +2522,8 @@ procname &lt;handle&gt; &lt;nick&gt; &lt;path&gt; &lt;bytes-transferred&gt; &lt;
 <li>OUT (stackable)</li>
 </ol>
 <blockquote>
-<div><p>bind out &lt;flags&gt; &lt;mask&gt; &lt;proc&gt;
-procname &lt;queue&gt; &lt;message&gt; &lt;queued|sent&gt;</p>
+<div><p>bind out &lt;flags&gt; &lt;mask&gt; &lt;proc&gt;</p>
+<p>procname &lt;queue&gt; &lt;message&gt; &lt;queued|sent&gt;</p>
 <p>Description: triggered whenever output is sent to the server. Normally the event will occur twice for each line sent: once before entering a server queue and once after the message is actually sent. This allows for more flexible logging of server output and introduces the ability to cancel the message. Mask is matched against &quot;queue status&quot;, where status is either 'queued' or 'sent'. Queues are: mode, server, help, noqueue. noqueue is only used by the putnow tcl command.</p>
 <p>Module: server</p>
 </div></blockquote>
@@ -2531,17 +2531,17 @@ procname &lt;queue&gt; &lt;message&gt; &lt;queued|sent&gt;</p>
 <li>CRON (stackable)</li>
 </ol>
 <blockquote>
-<div><p>bind cron &lt;flags&gt; &lt;mask&gt; &lt;proc&gt;
-proc-name &lt;minute 0-59&gt; &lt;hour 0-23&gt; &lt;day 1-31&gt; &lt;month 1-12&gt; &lt;weekday 0-6&gt;</p>
-<p>Description: similar to bind TIME, but the mask is evaluated as a cron expression, e.g. &quot;16/2 <em>/2 5-15 7,8,9 4&quot;. It can contain up to five fields: minute, hour, day, month, weekday; delimited by whitespace. Week days are represented as 0-6, where Sunday can be either 0 or 7. Symbolic names are not supported. The bind will be triggered if the mask matches all of the fields, except that if both day and weekday are not '</em>', only one of them is required to match. If any number of fields are omitted at the end, the match will proceed as if they were '*'. All cron operators are supported. Please refer to the crontab manual for their meanings. Flags are ignored.</p>
+<div><p>bind cron &lt;flags&gt; &lt;mask&gt; &lt;proc&gt;</p>
+<p>procname &lt;minute 0-59&gt; &lt;hour 0-23&gt; &lt;day 1-31&gt; &lt;month 1-12&gt; &lt;weekday 0-6&gt;</p>
+<p>Description: similar to bind TIME, but the mask is evaluated as a cron expression, e.g. &quot;16/2 */2 5-15 7,8,9 4&quot;. It can contain up to five fields: minute, hour, day, month, weekday; delimited by whitespace. Week days are represented as 0-6, where Sunday can be either 0 or 7. Symbolic names are not supported. The bind will be triggered if the mask matches all of the fields, except that if both day and weekday are not '*', only one of them is required to match. If any number of fields are omitted at the end, the match will proceed as if they were '*'. All cron operators are supported. Please refer to the crontab manual for their meanings. Flags are ignored.</p>
 <p>Module: core</p>
 </div></blockquote>
 <ol class="arabic simple" start="47">
 <li>LOG (stackable)</li>
 </ol>
 <blockquote>
-<div><p>bind log &lt;flags&gt; &lt;mask&gt; &lt;proc&gt;
-proc-name &lt;level&gt; &lt;channel&gt; &lt;message&gt;</p>
+<div><p>bind log &lt;flags&gt; &lt;mask&gt; &lt;proc&gt;</p>
+<p>procname &lt;level&gt; &lt;channel&gt; &lt;message&gt;</p>
 <p>Description: triggered whenever a message is sent to a log. The mask is matched against &quot;channel text&quot;. The level argument to the proc will contain the level(s) the message is sent to, or '*' if the message is sent to all log levels at once. If the message wasn't sent to a specific channel, channel will be set to '*'.</p>
 <p>Module: core</p>
 </div></blockquote>
@@ -2549,8 +2549,8 @@ proc-name &lt;level&gt; &lt;channel&gt; &lt;message&gt;</p>
 <li>TLS (stackable)</li>
 </ol>
 <blockquote>
-<div><p>bind tls &lt;flags&gt; &lt;mask&gt; &lt;proc&gt;
-procname &lt;idx&gt;</p>
+<div><p>bind tls &lt;flags&gt; &lt;mask&gt; &lt;proc&gt;</p>
+<p>procname &lt;idx&gt;</p>
 <p>Description: triggered for tcp connections when a ssl handshake has completed and the connection is secured. The mask is matched against the idx of the connection.</p>
 <p>Module: core</p>
 </div></blockquote>
@@ -2558,8 +2558,8 @@ procname &lt;idx&gt;</p>
 <li>DIE (stackable)</li>
 </ol>
 <blockquote>
-<div><p>bind die &lt;flags&gt; &lt;mask&gt; &lt;proc&gt;
-procname &lt;shutdownreason&gt;</p>
+<div><p>bind die &lt;flags&gt; &lt;mask&gt; &lt;proc&gt;</p>
+<p>procname &lt;shutdownreason&gt;</p>
 <p>Description: triggered when eggdrop is about to die. The mask is matched against the shutdown reason. The bind won't be triggered if the bot crashes or is being terminated by SIGKILL.</p>
 <p>Module: core</p>
 </div></blockquote>
@@ -2810,7 +2810,7 @@ words) (This char only works in binds, not in regluar matching)</td>
           
     <div class="footer">
         &copy; Copyright 2016, Eggheads.
-      Last updated on Jul 16, 2016.
+      Last updated on Jul 20, 2016.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.2.
     </div>
         </div>
