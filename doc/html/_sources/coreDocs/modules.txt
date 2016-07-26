@@ -185,7 +185,7 @@ multiple source file module, you shouldn't need to read this anyway.
 
     ::
  
-      Function \*global;
+      Function *global;
 
     This variable provides access to all the Eggdrop functions; without it,
     you can't call any Eggdrop functions (the module won't even load).
