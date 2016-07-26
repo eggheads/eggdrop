@@ -1,5 +1,7 @@
 Last revised: January 1, 2002
 
+.. _console:
+
 ==============
 Console Module
 ==============

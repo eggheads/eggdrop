@@ -1,5 +1,7 @@
 Last revised: August 21, 2004
 
+.. _irc:
+
 ==========
 IRC Module
 ==========
@@ -51,8 +53,9 @@ There are also some variables you can set in your config file:
     channel. Eggdrop will not place any more invites if this limit is
     reached.
 
-  set use-exempts 0
-  set use-invites 0
+  | set use-exempts 0
+  | set use-invites 0
+
     These settings should be left commented unless the default values are
     being overridden. By default, exempts and invites are on for EFnet and
     IRCnet, but off for all other large networks. This behavior can be
@@ -77,25 +80,26 @@ There are also some variables you can set in your config file:
     Set this to the maximum number of bytes to send in the arguments of
     modes sent to the server. Most servers default this to 200.
 
-  unbind msg - hello \*msg:hello
-  bind msg - myword \*msg:hello
+  | unbind msg - hello \*msg:hello
+  | bind msg - myword \*msg:hello
+
     Many IRCops find bots by seeing if they reply to 'hello' in a msg. You
     can change this to another word by un-commenting thse two lines and
     changing "myword" to the word wish to use instead of'hello'. It must be
     a single word.
 
 
-  unbind msg - ident \*msg:ident
-
-  unbind msg - addhost \*msg:addhost
+  | unbind msg - ident \*msg:ident
+  | unbind msg - addhost \*msg:addhost
     Many takeover attempts occur due to lame users blindly /msg ident'ing to
+
     the bot and attempting to guess passwords. We now unbind this command by
     default to discourage them. You can enable this command by un-commenting
     these two lines.
 
-  set opchars "@"
+  | set opchars "@"
+  | #set opchars "@&~"
 
-  #set opchars "@&~"
     Some IRC servers are using some non-standard op-like channel
     prefixes/modes. Define them here so the bot can recognize them. Just
     "@" should be fine for most networks. Un-comment the second line for

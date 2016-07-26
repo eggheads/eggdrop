@@ -31,7 +31,7 @@ Core and Module settings
 .. toctree::
    :maxdepth: 1
 
-   core/index
+   coreDocs/index
 
 ----------
 Appendices

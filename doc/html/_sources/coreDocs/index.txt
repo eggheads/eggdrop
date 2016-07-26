@@ -9,6 +9,7 @@ Contents:
    :maxdepth: 2
 
    core
+   modules
    assoc
    blowfish
    channels

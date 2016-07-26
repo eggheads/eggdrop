@@ -1,5 +1,7 @@
 Last revised: May 27, 2004
 
+.. _compress:
+
 ===============
 Compress Module
 ===============

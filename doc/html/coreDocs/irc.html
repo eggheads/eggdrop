@@ -24,7 +24,10 @@
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
-    <link rel="top" title="Eggdrop 1.8.0 documentation" href="../index.html" /> 
+    <link rel="top" title="Eggdrop 1.8.0 documentation" href="../index.html" />
+    <link rel="up" title="&lt;no title&gt;" href="index.html" />
+    <link rel="next" title="Notes Module" href="notes.html" />
+    <link rel="prev" title="Filesys Module" href="filesys.html" /> 
   </head>
   <body>
     <div class="header-wrapper">
@@ -35,6 +38,10 @@
         <div class="headertitle"><a
           href="../index.html">Eggdrop 1.8.0 documentation</a></div>
         <div class="rel">
+          <a href="filesys.html" title="Filesys Module"
+             accesskey="P">previous</a> |
+          <a href="notes.html" title="Notes Module"
+             accesskey="N">next</a>
         </div>
        </div>
     </div>
@@ -49,7 +56,7 @@
             
   <p>Last revised: August 21, 2004</p>
 <div class="section" id="irc-module">
-<h1>IRC Module<a class="headerlink" href="#irc-module" title="Permalink to this headline">¶</a></h1>
+<span id="irc"></span><h1>IRC Module<a class="headerlink" href="#irc-module" title="Permalink to this headline">¶</a></h1>
 <p>This module controls the bots interaction on IRC. It allows the bot to
 join channels, etc. You have to load this if you want your bot to come on
 irc.</p>
@@ -90,8 +97,10 @@ reached.</dd>
 channel. Eggdrop will not place any more invites if this limit is
 reached.</dd>
 </dl>
-<p>set use-exempts 0
-set use-invites 0</p>
+<div class="line-block">
+<div class="line">set use-exempts 0</div>
+<div class="line">set use-invites 0</div>
+</div>
 <blockquote>
 <div>These settings should be left commented unless the default values are
 being overridden. By default, exempts and invites are on for EFnet and
@@ -114,28 +123,34 @@ before re-displaying their info line.</dd>
 <dd>Set this to the maximum number of bytes to send in the arguments of
 modes sent to the server. Most servers default this to 200.</dd>
 </dl>
-<p>unbind msg - hello *msg:hello
-bind msg - myword *msg:hello</p>
+<div class="line-block">
+<div class="line">unbind msg - hello *msg:hello</div>
+<div class="line">bind msg - myword *msg:hello</div>
+</div>
 <blockquote>
 <div>Many IRCops find bots by seeing if they reply to 'hello' in a msg. You
 can change this to another word by un-commenting thse two lines and
 changing &quot;myword&quot; to the word wish to use instead of'hello'. It must be
 a single word.</div></blockquote>
-<p>unbind msg - ident *msg:ident</p>
-<dl class="docutils">
-<dt>unbind msg - addhost *msg:addhost</dt>
-<dd>Many takeover attempts occur due to lame users blindly /msg ident'ing to
-the bot and attempting to guess passwords. We now unbind this command by
+<div class="line-block">
+<div class="line">unbind msg - ident *msg:ident</div>
+<div class="line">unbind msg - addhost *msg:addhost
+Many takeover attempts occur due to lame users blindly /msg ident'ing to</div>
+</div>
+<blockquote>
+<div>the bot and attempting to guess passwords. We now unbind this command by
 default to discourage them. You can enable this command by un-commenting
-these two lines.</dd>
-</dl>
-<p>set opchars &quot;&#64;&quot;</p>
-<dl class="docutils">
-<dt>#set opchars &quot;&#64;&amp;~&quot;</dt>
-<dd>Some IRC servers are using some non-standard op-like channel
+these two lines.</div></blockquote>
+<div class="line-block">
+<div class="line">set opchars &quot;&#64;&quot;</div>
+<div class="line">#set opchars &quot;&#64;&amp;~&quot;</div>
+</div>
+<blockquote>
+<div>Some IRC servers are using some non-standard op-like channel
 prefixes/modes. Define them here so the bot can recognize them. Just
 &quot;&#64;&quot; should be fine for most networks. Un-comment the second line for
-some UnrealIRCds.</dd>
+some UnrealIRCds.</div></blockquote>
+<dl class="docutils">
 <dt>set no-chanrec-info 0</dt>
 <dd>If you are so lame you want the bot to display peoples info lines, even
 when you are too lazy to add their chanrecs to a channel, set this to 1.
@@ -204,14 +219,35 @@ set this to 0.</dd>
 <li class="toctree-l1"><a class="reference internal" href="../mainDocs/botnet.html">Botnet Sharing and Linking</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../mainDocs/patch.html">Patch How-To</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../mainDocs/tcl-commands.html">Eggdrop Tcl Commands</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../mainDocs/ipv6.html">IPv6 support</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../mainDocs/tls.html">TLS support</a></li>
 </ul>
-<ul class="simple">
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="core.html">Eggdrop Core Settings</a></li>
+<li class="toctree-l1"><a class="reference internal" href="modules.html">Eggdrop Module Information</a></li>
+<li class="toctree-l1"><a class="reference internal" href="assoc.html">Assoc Module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="blowfish.html">Blowfish Module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="channels.html">Channels Module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="compress.html">Compress Module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="console.html">Console Module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ctcp.html">CTCP Module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="dns.html">DNS Module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="filesys.html">Filesys Module</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="">IRC Module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="notes.html">Notes Module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="seen.html">Seen Module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="server.html">Server Module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="share.html">Share Module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="transfer.html">Transfer Module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="uptime.html">Uptime Module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="woobie.html">Woobie Module</a></li>
 </ul>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../appendices/known-probs.html">Known Problems</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../appendices/tricks.html">Eggdrop Tricks</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../appendices/text-sub.html">Textfile Substitutions</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../appendices/weird-msgs.html">Weird Messages That Get Logged</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../appendices/first-script.html">Your First Eggdrop Script</a></li>
 </ul>
 
           <h3 style="margin-top: 1.5em;">Search</h3>
@@ -232,13 +268,17 @@ set this to 0.</dd>
     <div class="footer-wrapper">
       <div class="footer">
         <div class="left">
+          <a href="filesys.html" title="Filesys Module"
+             >previous</a> |
+          <a href="notes.html" title="Notes Module"
+             >next</a>
         </div>
 
         <div class="right">
           
     <div class="footer">
         &copy; Copyright 2016, Eggheads.
-      Last updated on Jul 21, 2016.
+      Last updated on Jul 25, 2016.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.2.
     </div>
         </div>

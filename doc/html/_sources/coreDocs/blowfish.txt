@@ -1,5 +1,7 @@
 Last revised: January 28, 2003
 
+.. _blowfish:
+
 ===============
 Blowfish Module
 ===============

@@ -1,5 +1,7 @@
 Last revised: December 31, 2001
 
+.. _woobie:
+
 =============
 Woobie Module
 =============

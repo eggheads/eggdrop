@@ -1,5 +1,7 @@
 Last revised: May 26, 2004
 
+.. _filesys:
+
 ==============
 Filesys Module
 ==============

@@ -1,5 +1,7 @@
 Last revised: November 27, 2003
 
+.. _share:
+
 ============
 Share Module
 ============

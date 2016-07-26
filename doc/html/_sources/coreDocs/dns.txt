@@ -1,5 +1,7 @@
 Last revised: September 26, 2010
 
+.. _dns:
+
 ==========
 DNS Module
 ==========

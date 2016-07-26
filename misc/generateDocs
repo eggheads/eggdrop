@@ -70,9 +70,12 @@ mv tmpdocs/dns.txt ../doc/settings/mod.dns
 mv tmpdocs/faq.txt ../doc/FAQ
 mv tmpdocs/features.txt ../../FEATURES
 mv tmpdocs/filesys.txt ../doc/settings/mod.filesys
+mv tmpdocs/first-script.txt ../doc/FIRST-SCRIPT
 mv tmpdocs/install.txt ../../INSTALL
+mv tmpdocs/ipv6 ../docs/IPv6
 mv tmpdocs/irc.txt ../doc/settings/mod.irc
 mv tmpdocs/known-probs.txt ../doc/KNOWN-PROBLEMS
+mv tmpdocs/modules.txt ../doc/MODULES
 mv tmpdocs/notes.txt ../doc/settings/mod.notes
 mv tmpdocs/partyline.txt ../doc/PARTYLINE
 mv tmpdocs/patch.txt ../doc/PATCH-HOWTO
@@ -82,6 +85,7 @@ mv tmpdocs/server.txt ../doc/settings/mod.server
 mv tmpdocs/share.txt ../doc/settings/mod.share
 mv tmpdocs/tcl-commands.txt ../doc/tcl-commands.doc
 mv tmpdocs/text-sub.txt ../doc/TEXT-SUBSTITUTIONS
+mv tmpdocs/tls.txt ../doc/TLS
 mv tmpdocs/transfer.txt ../doc/settings/mod.transfer
 mv tmpdocs/tricks.txt ../doc/TRICKS
 mv tmpdocs/uptime.txt ../doc/settings/mod.uptime

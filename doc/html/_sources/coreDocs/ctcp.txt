@@ -1,5 +1,7 @@
 Last revised: February 12, 2002
 
+.. _ctcp:
+
 ===========
 CTCP Module
 ===========

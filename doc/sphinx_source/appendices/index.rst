@@ -12,3 +12,4 @@ Contents:
    tricks
    text-sub
    weird-msgs
+   first-script

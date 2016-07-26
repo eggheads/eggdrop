@@ -1,5 +1,7 @@
 Last revised: October 25, 2010
 
+.. _channels:
+
 ===============
 Channels Module
 ===============
