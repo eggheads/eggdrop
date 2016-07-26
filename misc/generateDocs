@@ -72,7 +72,7 @@ mv tmpdocs/features.txt ../../FEATURES
 mv tmpdocs/filesys.txt ../doc/settings/mod.filesys
 mv tmpdocs/first-script.txt ../doc/FIRST-SCRIPT
 mv tmpdocs/install.txt ../../INSTALL
-mv tmpdocs/ipv6 ../docs/IPv6
+mv tmpdocs/ipv6.txt ../doc/IPv6
 mv tmpdocs/irc.txt ../doc/settings/mod.irc
 mv tmpdocs/known-probs.txt ../doc/KNOWN-PROBLEMS
 mv tmpdocs/modules.txt ../doc/MODULES

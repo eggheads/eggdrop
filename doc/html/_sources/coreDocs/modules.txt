@@ -1,5 +1,5 @@
 Eggdrop Module Information
-Last revised: March 04, 2003
+Last revised: Jul 25, 2016
 
 ==========================
 Eggdrop Module Information
@@ -145,7 +145,7 @@ Programming modules
 WARNING: This section is very likely to be out of date.
 
 Note: This is for a simple module of 1 source file. If you're doing a
-      multiple source file module, you shouldn't need to read this anyway.
+multiple source file module, you shouldn't need to read this anyway.
 
   1. Create a src/mod/MODULE.mod directory in your Eggdrop directory (where
      MODULE is the module name) and cd to it.
@@ -157,29 +157,38 @@ Note: This is for a simple module of 1 source file. If you're doing a
   3. Next, you want to create a file called MODULE.c (MODULE is the module
      name again).
 
-  4. You MUST include the following in your source code:
+  4. You MUST include the following in your source code::
 
-    a. #define MODULE_NAME "module-name"
+      #define MODULE_NAME "module-name"
 
-      This should be defined to the same name you will be using when you load
-      your module.
+    This should be defined to the same name you will be using when you load
+    your module.
 
-    b. #define MAKING_MODULENAME
+    ::
 
-      MODULENAME is the name of your module (MODULE_NAME), but in all caps.
+      #define MAKING_MODULENAME
 
-    c. #include "../module.h"
+    MODULENAME is the name of your module (MODULE_NAME), but in all caps.
 
-      This provides access to Eggdrop's global function table. Examine
-      src/mod/module.h closely to find a list of functions available.
+    ::
 
-    d. #include any other standard c header files you might need. Note that
-       stdio.h, string.h, stdlib.h, and sys/types.h are already included.
+      #include "../module.h"
 
-    e. Function \*global;
+    This provides access to Eggdrop's global function table. Examine
+    src/mod/module.h closely to find a list of functions available.
 
-      This variable provides access to all the Eggdrop functions; without it,
-      you can't call any Eggdrop functions (the module won't even load).
+    ::
+
+      #include any other standard c header files you might need. 
+
+    Note that stdio.h, string.h, stdlib.h, and sys/types.h are already included.
+
+    ::
+ 
+      Function \*global;
+
+    This variable provides access to all the Eggdrop functions; without it,
+    you can't call any Eggdrop functions (the module won't even load).
 
 -------------------
 Module requirements

@@ -55,7 +55,7 @@
           <div class="body">
             
   <p>Eggdrop Module Information
-Last revised: March 04, 2003</p>
+Last revised: Jul 25, 2016</p>
 <div class="section" id="eggdrop-module-information">
 <h1>Eggdrop Module Information<a class="headerlink" href="#eggdrop-module-information" title="Permalink to this headline">¶</a></h1>
 <p>The purpose of this document is to show you how to download, install, create,
@@ -169,49 +169,49 @@ starting point in writing modules, woobie is the right thing.</dd>
 <div class="section" id="programming-modules">
 <h2>Programming modules<a class="headerlink" href="#programming-modules" title="Permalink to this headline">¶</a></h2>
 <p>WARNING: This section is very likely to be out of date.</p>
-<dl class="docutils">
-<dt>Note: This is for a simple module of 1 source file. If you're doing a</dt>
-<dd><blockquote class="first">
-<div>multiple source file module, you shouldn't need to read this anyway.</div></blockquote>
-<ol class="arabic simple">
-<li>Create a src/mod/MODULE.mod directory in your Eggdrop directory (where
-MODULE is the module name) and cd to it.</li>
-<li>Copy the file 'Makefile' from src/mod/woobie.mod and replace all
+<p>Note: This is for a simple module of 1 source file. If you're doing a
+multiple source file module, you shouldn't need to read this anyway.</p>
+<blockquote>
+<div><ol class="arabic">
+<li><p class="first">Create a src/mod/MODULE.mod directory in your Eggdrop directory (where
+MODULE is the module name) and cd to it.</p>
+</li>
+<li><p class="first">Copy the file 'Makefile' from src/mod/woobie.mod and replace all
 occurrences of 'woobie' with your module name. This should ensure
-that your module gets compiled.</li>
-<li>Next, you want to create a file called MODULE.c (MODULE is the module
-name again).</li>
-<li>You MUST include the following in your source code:</li>
-</ol>
-<blockquote class="last">
-<div><ol class="loweralpha simple">
-<li>#define MODULE_NAME &quot;module-name&quot;</li>
-</ol>
-<blockquote>
-<div>This should be defined to the same name you will be using when you load
-your module.</div></blockquote>
-<ol class="loweralpha simple" start="2">
-<li>#define MAKING_MODULENAME</li>
+that your module gets compiled.</p>
+</li>
+<li><p class="first">Next, you want to create a file called MODULE.c (MODULE is the module
+name again).</p>
+</li>
+<li><p class="first">You MUST include the following in your source code:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="c">#define MODULE_NAME &quot;module-name&quot;</span>
+</pre></div>
+</div>
+</li>
 </ol>
 <blockquote>
-<div>MODULENAME is the name of your module (MODULE_NAME), but in all caps.</div></blockquote>
-<ol class="loweralpha simple" start="3">
-<li>#include &quot;../module.h&quot;</li>
-</ol>
-<blockquote>
-<div>This provides access to Eggdrop's global function table. Examine
-src/mod/module.h closely to find a list of functions available.</div></blockquote>
-<ol class="loweralpha simple" start="4">
-<li>#include any other standard c header files you might need. Note that
-stdio.h, string.h, stdlib.h, and sys/types.h are already included.</li>
-<li>Function *global;</li>
-</ol>
-<blockquote>
-<div>This variable provides access to all the Eggdrop functions; without it,
-you can't call any Eggdrop functions (the module won't even load).</div></blockquote>
+<div><p>This should be defined to the same name you will be using when you load
+your module.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="c">#define MAKING_MODULENAME</span>
+</pre></div>
+</div>
+<p>MODULENAME is the name of your module (MODULE_NAME), but in all caps.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="c">#include &quot;../module.h&quot;</span>
+</pre></div>
+</div>
+<p>This provides access to Eggdrop's global function table. Examine
+src/mod/module.h closely to find a list of functions available.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="c">#include any other standard c header files you might need.</span>
+</pre></div>
+</div>
+<p>Note that stdio.h, string.h, stdlib.h, and sys/types.h are already included.</p>
+<div class="highlight-python"><div class="highlight"><pre>Function \*global;
+</pre></div>
+</div>
+<p>This variable provides access to all the Eggdrop functions; without it,
+you can't call any Eggdrop functions (the module won't even load).</p>
 </div></blockquote>
-</dd>
-</dl>
+</div></blockquote>
 </div>
 <div class="section" id="module-requirements">
 <h2>Module requirements<a class="headerlink" href="#module-requirements" title="Permalink to this headline">¶</a></h2>
