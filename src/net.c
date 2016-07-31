@@ -190,7 +190,7 @@ int setsockname(sockname_t *addr, char *src, int port, int allowres)
     addr->addr.s4.sin_family = AF_INET;
   }
 #else
-  int i; 
+  int i, count; 
 
   egg_bzero(addr, sizeof(sockname_t));
 
@@ -204,12 +204,19 @@ int setsockname(sockname_t *addr, char *src, int port, int allowres)
  * Go internet.
  */
   if (!inet_pton(AF_INET, src, &addr->addr.s4.sin_addr)) {
-    /* Awesome way to count :s */
-    for (i=0; src[i]; src[i]==':' ? i++ : *src++);
-    if (i > 1) {
+    /* Boring way to count :s */
+    count = 0;
+    for (i = 0; src[i]; i++) {
+      if (src[i] == ':') {
+        count++;
+        if (count == 2)
+          break;
+      }
+    }
+    if (count > 1) {
       putlog(LOG_MISC, "*", "ERROR: This looks like an IPv6 address, \
 but this Eggdrop was not compiled with IPv6 support.");
-      af = AF_INET6;
+      af = AF_UNSPEC;
     }
     else if (allowres) {
     /* src is a hostname. Attempt to resolve it.. */
