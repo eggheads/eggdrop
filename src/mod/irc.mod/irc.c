@@ -408,7 +408,7 @@ static int any_ops(struct chanset_t *chan)
 
 /* Reset channel information.
  */
-static void reset_chan_info(struct chanset_t *chan, int reset)
+void reset_chan_info(struct chanset_t *chan, int reset)
 {
   /* Leave the channel if we aren't supposed to be there */
   if (channel_inactive(chan)) {
@@ -1196,6 +1196,7 @@ static Function irc_table[] = {
   (Function) me_voice,
   /* 24 - 27 */
   (Function) getchanmode,
+  (Function) reset_chan_info
 };
 
 char *irc_start(Function *global_funcs)

@@ -709,10 +709,10 @@ enum {
 
 /* TLS verification flags */
 #  define TLS_VERIFYPEER        0x00000001
-#  define TLS_VERIFYCN         	0x00000002
-#  define TLS_VERIFYISSUER      0x00000004
-#  define TLS_VERIFYFROM        0x00000008
-#  define TLS_VERIFYTO          0x00000010
+#  define TLS_VERIFYISSUER      0x00000002
+#  define TLS_VERIFYCN          0x00000004
+#  define TLS_VERIFYTO          0x00000008
+#  define TLS_VERIFYFROM        0x00000010
 #  define TLS_VERIFYREV         0x00000020
 
 /* Context information to attach to SSL sockets */

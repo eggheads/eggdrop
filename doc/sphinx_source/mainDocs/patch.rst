@@ -1,0 +1,131 @@
+Last revised: July 10, 2016
+
+Patch How-To
+============
+
+The purpose of this document is to show you what a patch is and how you
+can create, apply, download, and submit a patch.
+
+A patch is an update to the source code of a program (here Eggdrop).
+Be careful, every patch is designed for a special Eggdrop version
+and cannot be applied on every bot!
+
+----------------
+Applying a patch
+----------------
+
+  To apply a patch to an Eggdrop, you have to first obtain the Eggdrop
+  source code. You should always keep a tar.gz archive with the source of
+  your current Eggdrop on your shell. In the next step, you have to change
+  to your source directory (i.e.: /home/user/eggdrop1.8.0/) and type
+  the following command::
+
+    patch -p1 < ../path.to.the/patch
+
+  Once this is complete, execute the following command:
+
+    find . -name "\*.rej" -print
+
+  If it returns a list with filenames ending with .rej extension, then the
+  patch didn't apply properly. Ensure that the patch is intended for your
+  version and that you have the original source. You should also try to
+  re-download the patch to ensure that the patch is not corrupted.
+
+  If you get an error such as this::
+
+    |Index: Makefile.in
+    |===================================================================
+    |RCS file: /usr/local/cvsroot/eggdrop1.8/Makefile.in,v
+    |retrieving revision 1.38
+    |diff -u -r1.38 Makefile.in
+    |--- Makefile.in	17 Jun 2004 05:43:28 -0000	1.38
+    |+++ Makefile.in	23 Jul 2004 21:58:23 -0000
+    --------------------------
+    File to patch:
+
+  Then you should try using a different '-p' option. Try -p0 first, and then
+  -p2, -p3, etc.
+
+
+  If the patch applied properly, the only thing left to do is to recompile
+  your Eggdrop and install the new modules and binaries.
+
+---------------------------------------------------------
+Creating and submitting a patch (via GitHub - preferred!)
+---------------------------------------------------------
+If you fixed a bug and/or changed something in Eggdrop's source code, it
+would be really nice to let the dev team know about it, so we can
+possibly apply it to next release of Eggdrop.
+
+To create a patch via github:
+
+  1. Fork the eggdrop git repo by logging in to your GitHub account and
+     clicking the fork button at the top of the screen. Follow the 
+     directions it provides to configure your local repo.
+
+  2. Enter the local directory and create a new branch for your patch::
+
+       git checkout -b <DescriptiveBranchName>
+
+  3. Make your changes
+
+  4. Once you confirm your patch works, push the changes back to your 
+     GitHub repo - this is usually done by something similar to::
+
+       git push origin <DescriptiveBranchName>
+  
+  5. Create a pull request by clicking on the "Pull Request" button on 
+     your GitHub page. Select the appropriate branches (usually eggheads/eggdrop/develop
+     and yourUserName/eggdrop/YourBranchName)
+
+  6. Fill in the Pull Request template and submit
+
+  7. Pour yourself a cold one and bask in the warm feeling of contributing
+     to the open source community! Karma++!
+
+--------------------------------------------------------
+Creating and submitting a patch (via diff - old school!)
+--------------------------------------------------------
+
+To create a patch using the diff tool:
+
+  1. Create a directory with original source tree and one with modified
+     source tree.
+
+  2. Run the following::
+
+       diff -urN eggdrop1.8.original eggdrop1.8.modified > patchname.patch
+
+     DO NOT add any other diff options.
+
+  3. Send an e-mail to patches@eggheads.org with the patch attached. The
+     body should contain a detailed description of what you changed and
+     why you changed it. Don't forget to include the Eggdrop version for
+     which your patch was created.
+
+     It helps if you include the major release number that the patch is
+     for in the subject line. For the 1.8.x series, the subject line
+     should look like this::
+
+       PATCH1.8: my-patch-filename.patch
+
+     You should also include the nick/handle, name, and email address
+     you would like used for attribution in the Changes1.8 and THANKS
+     files.
+
+  Never modify src/patch.h or one of the Changes files. We will do it. If
+  your patch includes changes related to autotools (./configure, etc), do
+  NOT run autoconf, autoheader, etc; we will do this as well.
+
+  Also, please don't add credit lines all over the source when patching.
+  Patch contributors will receive credit in Changes1.8 and THANKS.
+
+-------------------
+Downloading a patch
+-------------------
+
+  Some patches for Eggdrop 1.8.x can be found at the following location:
+
+    ftp://ftp.eggheads.org/pub/eggdrop/patches/1.8
+
+Copyright (C) 1999 - 2016 Eggheads Development Team

@@ -1238,13 +1238,22 @@ static void dcc_telnet(int idx, char *buf, int i)
   dcc[i].sock = sock;
   dcc[i].port = port;
 #ifdef TLS
-  if (dcc[idx].ssl && ssl_handshake(sock, TLS_LISTEN, tls_vfyclients,
-      LOG_MISC, NULL, NULL)) {
-    killsock(sock);
-    lostdcc(i);
-    return;
-  }
   dcc[i].ssl = dcc[idx].ssl;
+  if (dcc[i].ssl) {
+    /* In order to support certificate CN validation we need to wait for the dns
+     * lookup to complete. Additional we need to mark the socket virtual so we
+     * won't read SSL client-hello before ssl_handshake has happened.
+     * NOTE: TLS_VERIFYCN configurations value is inverted
+     */
+    if (!(tls_vfyclients & TLS_VERIFYCN))
+      threaddata()->socklist[findsock(sock)].flags |= SOCK_VIRTUAL;
+    else if (ssl_handshake(dcc[i].sock, TLS_LISTEN, tls_vfyclients,
+        LOG_MISC, NULL, NULL)) {
+      killsock(dcc[i].sock);
+      lostdcc(i);
+      return;
+    }
+  }
 #endif
   dcc[i].timeval = now;
   strcpy(dcc[i].nick, "*");
@@ -1294,6 +1303,21 @@ static void dcc_telnet_hostresolved(int i)
   }
 
   putlog(LOG_MISC, "*", DCC_TELCONN, dcc[i].host, dcc[i].port);
+
+#ifdef TLS
+  /* Remove SOCK_VIRTUAL and call ssl_handshake
+   * Check out dcc_telnet for more details
+   */
+  if (dcc[i].ssl && !(tls_vfyclients & TLS_VERIFYCN)) {
+    threaddata()->socklist[findsock(dcc[i].sock)].flags &= ~SOCK_VIRTUAL;
+    if (ssl_handshake(dcc[i].sock, TLS_LISTEN, tls_vfyclients,
+        LOG_MISC, dcc[i].host, NULL)) {
+      killsock(dcc[i].sock);
+      lostdcc(i);
+      return;
+    }
+  }
+#endif
 
   /* Skip ident lookup for public script listeners */
   if ((dcc[idx].status & LSTN_PUBLIC) && !strcmp(dcc[idx].nick, "(script)")) {
@@ -1537,7 +1561,7 @@ static void dcc_telnet_id(int idx, char *buf, int atr)
 
   if (!ok) {
     dprintf(idx, "You don't have access.\n");
-    putlog(LOG_BOTS, "*", DCC_INVHANDLE, dcc[idx].host, buf);
+    putlog(LOG_MISC, "*", DCC_INVHANDLE, dcc[idx].host, buf);
     killsock(dcc[idx].sock);
     lostdcc(idx);
     return;

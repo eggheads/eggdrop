@@ -605,9 +605,10 @@ Function global_table[] = {
   (Function) increase_socks_max,
   (Function) log_ts,
   (Function) tcl_resultempty,
-  /* 300 - 304 */
+  /* 300 - 303 */
   (Function) tcl_resultint,
-  (Function) tcl_resultstring
+  (Function) tcl_resultstring,
+  (Function) getdccfamilyaddr
 };
 
 void init_modules(void)

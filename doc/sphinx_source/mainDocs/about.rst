@@ -1,0 +1,64 @@
+About Eggdrop
+Last revised: July 27, 2010
+
+=============
+About Eggdrop
+=============
+
+  Eggdrop was created around December 1993 to help stop the incessant wars
+  on #gayteen. It spawned from another bot that was in the process of being
+  written at the time called "Unrest". The purpose of Unrest was to answer
+  help requests from other bots. The first public release of Eggdrop was
+  version 0.6, and since then, it has grown into what you have before you.
+
+  Eggdrop is the World's most popular Internet Relay Chat (IRC) bot; it is
+  freely distributable under the GNU General Public License (GPL). Eggdrop
+  is a feature rich program designed to be easily used and expanded upon by
+  both novice and advanced IRC users on a variety of hardware and software
+  platforms.
+
+  An IRC bot is a program that sits on an IRC channel and performs automated
+  tasks while looking just like a normal user on the channel. Some of these
+  functions include protecting the channel from abuse, allowing privileged
+  users to gain op or voice status, logging channel events, providing
+  information, hosting games, etc.
+
+  One of the features that makes Eggdrop stand out from other bots is module
+  and Tcl scripting support. With scripts and modules, you can make the bot
+  perform almost any task you want. They can do anything from preventing
+  floods to greeting users and banning advertisers from channels.
+
+  You can also link multiple Eggdrop bots together to form a botnet.
+  This can allow bots to op each other securely, control floods efficiently,
+  and even link channels across multiple IRC networks. It also allows the
+  Eggdrops share user lists, ban lists, exempt/invite lists, and ignore
+  lists with other bots if userfile sharing is enabled. This allows users
+  to have the same access on every bot on your botnet. It also allows the
+  bots to distribute tasks such as opping and banning users. See doc/BOTNET
+  for information on setting up a botnet.
+
+  Eggdrop is always being improved and adjusted because there are bugs to
+  be fixed and features to be added (if the users demand  them, and they
+  make actually sense). In fact, it existed for several years as v0.7 -
+  v0.9 before finally going 1.0. This version of Eggdrop is part of the
+  1.8 tree. A valiant effort has been made to chase down and destroy bugs.
+
+  To use Eggdrop, you need:
+
+    * Some sort of Unix account
+
+    * A pretty good knowledge of IRC and Unix, including how to compile
+      programs, how to read, and what DCC chat is, at absolute minimum.
+
+    * About 5-7 MB of disk space. The Eggdrop tarball is about 5.4 MB
+      unpacked.
+
+    * Tcl -- Eggdrop cannot compile without Tcl installed on your shell.
+
+  Before starting, ask yourself if you really need a bot. Most IRC servers
+  allow only a handful of bots, and some forbid them outright. The reason? Too
+  many people run bots as "toys" or as a means of destruction. If you want to
+  use Eggdrop for destructive purposes, go ahead and erase this directory now.
+  It's almost impossible to do what you want with this bot.
+
+  Copyright (C) 1999 - 2016 Eggheads Development Team

@@ -190,21 +190,50 @@ int setsockname(sockname_t *addr, char *src, int port, int allowres)
     addr->addr.s4.sin_family = AF_INET;
   }
 #else
+  int i, count; 
+
   egg_bzero(addr, sizeof(sockname_t));
-  if (!egg_inet_aton(src, &addr->addr.s4.sin_addr) && allowres) {
-    /* src is a hostname. Attempt to resolve it.. */
-    if (!sigsetjmp(alarmret, 1)) {
-      alarm(resolve_timeout);
-      hp = gethostbyname(src);
-      alarm(0);
-    } else
-      hp = NULL;
-    if (hp) {
-      egg_memcpy(&addr->addr.s4.sin_addr, hp->h_addr, hp->h_length);
-      af = hp->h_addrtype;
+
+/* If it's not an IPv4 address, check if its IPv6 (so it can fail/error
+ * appropriately). If it's not, and allowres is 1, use gethostbyname()
+ * to try and resolve. If allowres is 0, return AF_UNSPEC to allow
+ * dns.mod to do it's thing.
+
+ * Also, because we can't be sure inet_pton exists on the system, we
+ * have to resort to hackishly counting :s to see if its IPv6 or not.
+ * Go internet.
+ */
+  if (!inet_pton(AF_INET, src, &addr->addr.s4.sin_addr)) {
+    /* Boring way to count :s */
+    count = 0;
+    for (i = 0; src[i]; i++) {
+      if (src[i] == ':') {
+        count++;
+        if (count == 2)
+          break;
+      }
     }
+    if (count > 1) {
+      putlog(LOG_MISC, "*", "ERROR: This looks like an IPv6 address, \
+but this Eggdrop was not compiled with IPv6 support.");
+      af = AF_UNSPEC;
+    }
+    else if (allowres) {
+    /* src is a hostname. Attempt to resolve it.. */
+      if (!sigsetjmp(alarmret, 1)) {
+        alarm(resolve_timeout);
+        hp = gethostbyname(src);
+        alarm(0);
+      } else
+        hp = NULL;
+      if (hp) {
+        egg_memcpy(&addr->addr.s4.sin_addr, hp->h_addr, hp->h_length);
+        af = hp->h_addrtype;
+      }
+    } else
+        af = AF_UNSPEC;
   } else
-    af = AF_INET;
+      af = AF_INET;
 
   addr->family = addr->addr.s4.sin_family = AF_INET;
   addr->addr.sa.sa_family = addr->family;
@@ -629,16 +658,23 @@ int answer(int sock, sockname_t *caller, unsigned short *port, int binary)
   return new_sock;
 }
 
+int getdccaddr(sockname_t *addr, char *s, size_t l)
+{
+  return getdccfamilyaddr(addr, s, l, AF_UNSPEC);
+}
+
 /* Get DCC compatible address for a client to connect (e.g. 1660944385)
  * If addr is not NULL, it should point to the listening socket's address.
  * Otherwise, this function will try to figure out the public address of the
- * machine, using listen_ip and natip.
- * The result is a string useable for DCC requests
+ * machine, using listen_ip and natip. If restrict_af is set, it will limit
+ * the possible IPs to the specified family. The result is a string useable 
+ * for DCC requests
  */
-int getdccaddr(sockname_t *addr, char *s, size_t l)
+int getdccfamilyaddr(sockname_t *addr, char *s, size_t l, int restrict_af)
 {
   char h[121];
   sockname_t name, *r = &name;
+  int af = AF_UNSPEC;
 #ifdef IPV6
   IP ip = 0;
 #endif
@@ -655,15 +691,51 @@ int getdccaddr(sockname_t *addr, char *s, size_t l)
       (r->family == AF_INET && !r->addr.s4.sin_addr.s_addr)) {
       /* We can't send :: or 0.0.0.0 for dcc, so try
          to figure out some real address */
-    r = &name;
-    gethostname(h, sizeof h);
-    setsockname(r, h, 0, 1);
+#ifdef IPV6
+     /* If it's listening on an IPv6 :: address,
+        try using vhost6 as the source IP */
+    if (pref_af && (r->family == AF_INET6) && (restrict_af != AF_INET)) {
+      if (inet_pton(AF_INET6, vhost6, &r->addr.s6.sin6_addr) != 1) {
+        r = &name;
+        gethostname(h, sizeof h);
+        setsockname(r, h, 0, 1);
+        if (r->family == AF_INET) {
+        /* setsockname tries to resolve  both ipv4 and ipv6. ipv4 dns
+           resolution comes later in precedence, so if we get an ipv4
+           back, reset it to the original addr struct and try
+           again */
+          if (addr) {
+            r = addr;
+          } else {
+            setsockname(r, listen_ip, 0, 1);
+          }
+          af = AF_INET;
+        }
+      }
+    }
+#endif
+     /* If IPv6 didn't work, or it's listening on an IPv4
+        0.0.0.0 address, try using vhost4 as the source */
+    if ((
+#ifdef IPV6
+      !pref_af ||
+#endif
+      af) && (restrict_af != AF_INET6)) {
+      if (!egg_inet_aton(vhost, &r->addr.s4.sin_addr)) {
+        /* And if THAT fails, try DNS resolution of hostname */
+        r = &name;
+        gethostname(h, sizeof h);
+        setsockname(r, h, 0, 1);
+      }
+    }
   }
 
   if (
 #ifdef IPV6
       ((r->family == AF_INET6) &&
       IN6_IS_ADDR_UNSPECIFIED(&r->addr.s6.sin6_addr)) ||
+      ((r->family == AF_INET6) && (restrict_af == AF_INET)) ||
+      ((r->family == AF_INET) && (restrict_af == AF_INET6)) ||
 #endif
       (!natip[0] && (r->family == AF_INET) && !r->addr.s4.sin_addr.s_addr))
     return 0;

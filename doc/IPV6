@@ -47,6 +47,18 @@ Last revised: Jul 29, 2010
     the colon character (:) from being interpreted as a port separator. These
     are documented in the help files and the html documentation, so you can
     consult them when in doubt.
+ 
+    To specify which IP version you wish to use as a client, you can initiate
+    a DCC session by using /ctcp bot CHAT4 (which will require the bot to
+    initiate an IPv4 session) or /ctcp bot CHAT6 (which will require the bot
+    to initiate an IPv6 session). Using /ctcp bot CHAT will allow the bot's
+    configuration to determine whether an IPv4 or IPv6 connection is used.
+    Among other examples, these options can be useful in cases where an
+    Eggdrop is configured to prefer IPv6 addresses, but a client only has
+    IPv4 available.
+
+    The same usage applies when using SCHAT4/SCHAT6.
+
 
   4. Settings
  
@@ -68,7 +80,7 @@ Last revised: Jul 29, 2010
          the address to bind to for listening (telnet/bot ports, /ctcp chat,
          file send, script listen, etc.). Can be either an IPv4/IPv6 IP or a
          hostname. If a hostname resolves to both type of addresses,
-         prefer-ipv6 will determine which to be used. 
+         prefer-ipv6 will determine which is to be used. 
 
     Other affected variables:
 
@@ -77,6 +89,40 @@ Last revised: Jul 29, 2010
 
       nat-ip works with IPv4 as it used to. It has no meaning for IPv6 and is
         not queried for IPv6 connections.
+
+  5. Precedence
+
+    With all these settings, it can be confusing to follow what settings may 
+    override others when sending an IP for CTCP chat or file transfer. Here
+    is a quick overview of the network logic used by Eggdrop:
+
+      - If prefer-ipv6 is set to 1 (and the client does not use CHAT4):
+
+        * If listen-addr is set to a valid IPv6 address, Eggdrop will use
+          the IP. 
+        
+        * If listen-addr is not set, or set to :: or 0.0.0.0 (listening on
+          all available interfaces), Eggdrop will check if vhost6 contains a
+          valid IPv6 address and, if so, use that IP.
+
+        * If vhost6 is not set, Eggdrop will attempt to resolve the hostname
+          of the machine to an IPv6 address via DNS lookup.
+
+      - If prefer-ipv6 is set to 0, OR is set to 1 but fails to identify an
+        address using the steps above, AND the client does not use CHAT6:
+
+        * If nat-ip is set, this IP will be used.
+
+        * If nat-ip is not set and listen-addr is set to a valid IPv4 address,
+          Eggdrop will use the IP.
+
+        * If listen-addr is not set, or set to :: or /0.0.0.0 (listening on
+          all available interfaces), Eggdrop will check if vhost4 contains a
+          valid IPv4 address and, if so, use that IP. 
+
+        * If vhost4 is not set, Eggdrop will attempt to resolve the hostname
+          of the machine to an IPv4 address via DNS lookup.
+
     _____________________________________________________________________
 
   Copyright (C) 2010 - 2016 Eggheads Development Team

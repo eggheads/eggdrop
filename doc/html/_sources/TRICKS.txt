@@ -1,0 +1,47 @@
+Eggdrop Tricks
+Last revised: December 08, 2003
+
+==============
+Eggdrop Tricks
+==============
+
+
+  Here are some little tricks that you may or may not know about, which aren't
+  documented in other areas.
+
+  - You can rename a built-in command by binding over it. To rename '.status'
+    to '.report', you'd do::
+
+      unbind dcc - status *dcc:status
+      bind dcc m report *dcc:status
+
+    The first line removes the built-in binding on '.status', and the second
+    line binds '.report' to the built-in status function.
+
+  - If you don't want your logfiles to be deleted after two days and don't
+    want the bot to create a new logfile each new day, then set 'keep-all-logs'
+    to 0 and 'switch-logfiles-at' to 2500 in your bot's config file to make it
+    keeping one logfile all the time. This is not recommended on high traffic
+    channels.
+
+  - You can modify Eggdrop's output in the partyline, kick messages, and other
+    texts by editing core.english.lang in the language directory.
+
+  - You can export parts of your config file to separate files. For example,
+    if you have several config files which differ from themselves only by
+    the nickname and the used servers, you can export them to an own file
+    and link it with the 'source' Tcl command, similar to a script. The
+    advantage of this is that you have to edit/upload only the small file
+    instead of the big one. This technique is also useful if you want to
+    maintain the same channel settings, etc across your botnet.
+
+  - You can use variables in your config file, since it's really just a normal
+    Tcl file. For example, you can set 'userfile' and 'chanfile' to
+    "yourbot.user" and "yourbot.chan" using the following method::
+
+      set myvar "yourbot"
+      set userfile "$myvar.user"
+      set chanfile "$myvar.chan"
+
+  Copyright (C) 1999 - 2016 Eggheads Development Team
+

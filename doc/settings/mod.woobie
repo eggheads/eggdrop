@@ -1,19 +1,16 @@
-Woobie Module
 Last revised: December 31, 2001
-    _____________________________________________________________________
 
-                               Woobie Module
+Woobie Module
+=============
 
+This is for demonstrative purposes only. If you are looking for starting
+point in writing modules, woobie is the right thing.
 
-  This is for demonstrative purposes only. If you are looking for starting
-  point in writing modules, woobie is the right thing.
+This module requires: none
 
-  This module requires: none
-
-  Put this line into your Eggdrop configuration file to load the woobie
-  module:
+Put this line into your Eggdrop configuration file to load the woobie
+module:
 
     loadmodule woobie
-    _____________________________________________________________________
 
-  Copyright (C) 2000 - 2016 Eggheads Development Team
+Copyright (C) 2000 - 2016 Eggheads Development Team

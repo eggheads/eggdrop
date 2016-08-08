@@ -559,8 +559,8 @@ int ssl_verify(int ok, X509_STORE_CTX *ctx)
      * it ourselves. We check here for validity even if it's not requested
      * in order to be able to warn the user.
      */
-    if (!(data->flags & TLS_DEPTH0) && !ssl_verifycn(cert, data) &&
-        (data->verify & TLS_VERIFYCN)) {
+    if (!(data->flags & TLS_DEPTH0) && (data->verify & TLS_VERIFYCN) &&
+        !ssl_verifycn(cert, data)) {
         putlog(data->loglevel, "*", "TLS: certificate validation failed. "
                "Certificate subject does not match peer.");
         return 0;
@@ -572,13 +572,13 @@ int ssl_verify(int ok, X509_STORE_CTX *ctx)
      */
     if (!ok || data->verify)
       if (((err == X509_V_ERR_DEPTH_ZERO_SELF_SIGNED_CERT) &&
-          (data->verify & TLS_VERIFYISSUER)) ||
+          !(data->verify & TLS_VERIFYISSUER)) ||
           ((err == X509_V_ERR_CERT_REVOKED) &&
-          (data->verify & TLS_VERIFYREV)) ||
+          !(data->verify & TLS_VERIFYREV)) ||
           ((err == X509_V_ERR_CERT_NOT_YET_VALID) &&
-          (data->verify & TLS_VERIFYFROM)) ||
+          !(data->verify & TLS_VERIFYFROM)) ||
           ((err == X509_V_ERR_CERT_HAS_EXPIRED) &&
-          (data->verify & TLS_VERIFYTO))) {
+          !(data->verify & TLS_VERIFYTO))) {
         debug1("TLS: peer certificate warning: %s",
                X509_verify_cert_error_string(err));
         ok = 1;
@@ -697,7 +697,13 @@ int ssl_handshake(int sock, int flags, int verify, int loglevel, char *host,
   data = nmalloc(sizeof(ssl_appdata));
   egg_bzero(data, sizeof(ssl_appdata));
   data->flags = flags & (TLS_LISTEN | TLS_CONNECT);
-  data->verify = flags & ~(TLS_LISTEN | TLS_CONNECT);
+  data->verify = verify;
+  /* Invert these flags as their corresponding configuration values express
+   * exceptions
+   */
+  if (data->verify)
+      data->verify ^= (TLS_VERIFYISSUER | TLS_VERIFYCN | TLS_VERIFYFROM |
+                       TLS_VERIFYTO | TLS_VERIFYREV);
   data->loglevel = loglevel;
   data->cb = cb;
   strncpyz(data->host, host ? host : "", sizeof(data->host));
@@ -718,7 +724,7 @@ int ssl_handshake(int sock, int flags, int verify, int loglevel, char *host,
     if (!ret)
       debug0("TLS: connect handshake failed.");
   } else {
-    if (data->flags & TLS_VERIFYPEER)
+    if (data->verify & TLS_VERIFYPEER)
       SSL_set_verify(td->socklist[i].ssl, SSL_VERIFY_PEER |
                      SSL_VERIFY_FAIL_IF_NO_PEER_CERT, ssl_verify);
     else
