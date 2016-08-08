@@ -190,21 +190,50 @@ int setsockname(sockname_t *addr, char *src, int port, int allowres)
     addr->addr.s4.sin_family = AF_INET;
   }
 #else
+  int i, count; 
+
   egg_bzero(addr, sizeof(sockname_t));
-  if (!egg_inet_aton(src, &addr->addr.s4.sin_addr) && allowres) {
-    /* src is a hostname. Attempt to resolve it.. */
-    if (!sigsetjmp(alarmret, 1)) {
-      alarm(resolve_timeout);
-      hp = gethostbyname(src);
-      alarm(0);
-    } else
-      hp = NULL;
-    if (hp) {
-      egg_memcpy(&addr->addr.s4.sin_addr, hp->h_addr, hp->h_length);
-      af = hp->h_addrtype;
+
+/* If it's not an IPv4 address, check if its IPv6 (so it can fail/error
+ * appropriately). If it's not, and allowres is 1, use gethostbyname()
+ * to try and resolve. If allowres is 0, return AF_UNSPEC to allow
+ * dns.mod to do it's thing.
+
+ * Also, because we can't be sure inet_pton exists on the system, we
+ * have to resort to hackishly counting :s to see if its IPv6 or not.
+ * Go internet.
+ */
+  if (!inet_pton(AF_INET, src, &addr->addr.s4.sin_addr)) {
+    /* Boring way to count :s */
+    count = 0;
+    for (i = 0; src[i]; i++) {
+      if (src[i] == ':') {
+        count++;
+        if (count == 2)
+          break;
+      }
     }
+    if (count > 1) {
+      putlog(LOG_MISC, "*", "ERROR: This looks like an IPv6 address, \
+but this Eggdrop was not compiled with IPv6 support.");
+      af = AF_UNSPEC;
+    }
+    else if (allowres) {
+    /* src is a hostname. Attempt to resolve it.. */
+      if (!sigsetjmp(alarmret, 1)) {
+        alarm(resolve_timeout);
+        hp = gethostbyname(src);
+        alarm(0);
+      } else
+        hp = NULL;
+      if (hp) {
+        egg_memcpy(&addr->addr.s4.sin_addr, hp->h_addr, hp->h_length);
+        af = hp->h_addrtype;
+      }
+    } else
+        af = AF_UNSPEC;
   } else
-    af = AF_INET;
+      af = AF_INET;
 
   addr->family = addr->addr.s4.sin_family = AF_INET;
   addr->addr.sa.sa_family = addr->family;
