@@ -1,0 +1,100 @@
+Your First Eggdrop Script
+Last revised: December 07, 2003
+
+=========================
+Your First Eggdrop Script
+=========================
+
+
+
+So you want to write an Eggdrop script, but you don't really know where
+to begin. This file will give you a very basic idea about what Eggdrop
+scripting is like. There are far too many topics to be covered all at
+once, but this may help you get started with your own scripts.
+
+This guide assumes you know a bit about Eggdrops and IRC. You should have
+already installed Eggdrop. The bot should not be on any important or busy
+channels (development bots can be annoying if your script has bugs). If you
+plan on doing a lot of development, enable the .tcl and .set commands, and
+make sure nobody else has access to your bot. The .tcl and .set commands
+are helpful in debugging and testing your code.
+
+First, read through the script. You may be unfamiliar with some of the
+commands, especially if you haven't at least browsed through
+tcl-commands.doc. You may find it helpful to open up tcl-commands.doc in
+another window so that you can immediately look up commands you don't know.
+
+Then, open up another window and copy the script into its own file. If you
+have the .tcl command enabled, you can type '.tcl source scripts/file.tcl'
+to load it. Otherwise, add it to your config file like normal and '.rehash'
+or '.restart' your bot.
+
+From your own IRC client, join the bot's channel and type some lines that
+start with "hello". Example: hello I love you won't you tell me your name
+
+After your thrill abates, try playing around with your copy of the script.
+Get it to change the text it says, make it send notices instead of messages.
+Try changing the names of some variables (uhost -> userhost maybe).
+
+::
+
+  #
+  # Here's the start of the script.
+  # The '#' in Tcl means this line is a comment and doesn't get executed.
+  #
+
+  #
+  # Most scripts start off with a configuration section.
+  #
+
+  # Change this to the channel you want this script to work on.
+  set our_chan "#baa"
+
+  # After configuration, scripts generally do a bit of initialization work.
+  # This could include checking the validity of the config variables, setting
+  # timers, loading helper scripts, establishing database connections, or
+  # most frequently, creating our Eggdrop binds.
+  #
+  # A bind lets you attach your script to events that Eggdrop encounters. Events
+  # include IRC events (someone joining a channel, talking, etc), botnet events,
+  # and internal events (like receiving signals via the kill command).
+  #
+
+  # This bind will make Eggdrop call "my_talk_handler" whenever someone
+  # says hello on one of our channels.
+  bind pub - hello my_talk_handler
+
+  # Here is where we define "my_talk_handler"
+  proc my_talk_handler {nick uhost hand chan text} {
+    #
+    # nick - the person's nickname
+    # uhost - the person's user@host
+    # hand - the person's bothandle (if he is a valid user)
+    # chan - the channel this event happened on
+    # text - the text the person said (not counting the trigger word)
+    #
+    # You can name these variables any way you want, but these names
+    # are pretty much standard.
+    #
+
+    # The 'global' command imports global variables into our local scope.
+    # Any variable set outside of a procedure (like in the config section)
+    # is a global variable.
+    global our_chan
+
+    # We only want to respond on the $our_chan channel.
+    # The string tolower command converts a string to lowercase.
+    if {[string tolower $chan] != $our_chan} {
+      return 0
+    }
+
+    # The putserv commands lets us send text to the server.
+    putserv "privmsg $chan :$text too!"
+  
+    # All done! Log this command by returning 1.
+    return 1
+  }
+
+  # Here's the end of the script.
+
+Copyright (C) 2003 - 2016 Eggheads Development Team
