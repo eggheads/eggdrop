@@ -192,9 +192,10 @@ read PUSH
 if [ $PUSH = "y" ]; then
   echo "Enter release tag (vX.Y.Z[.RC0] format): "
   read RLS
-  MAJMIN=echo RLS|cut -d'.' -f1,2|sed 's/^v//'
+  MAJMIN="$(echo $RLS|cut -d'.' -f1,2|sed 's/^v//')"
   git add *
-  git commit -m "Final release - $RLS"
+  git commit -m "Release tag - $RLS"
+  git fetch stable/$MAJMIN
   git checkout -B stable/$MAJMIN
   git merge develop
   git tag $RLS
