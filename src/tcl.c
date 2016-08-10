@@ -220,20 +220,20 @@ static char *tcl_eggint(ClientData cdata, Tcl_Interp *irp,
         int p = oatoi(s);
 
         if (p <= 0)
-          return "invalid userfile permissions";
+          return "Invalid userfile permissions";
         userfile_perm = p;
       } else if ((ii->ro == 2) || ((ii->ro == 1) && protect_readonly))
-        return "read-only variable";
+        return "Read-only variable";
       else {
         if (Tcl_ExprLong(interp, s, &l) == TCL_ERROR)
-          return "variable must have integer value";
+          return "Variable must have integer value";
         if ((int *) ii->var == &max_socks) {
           if (l < threaddata()->MAXSOCKS)
-            return "you can't DECREASE max-socks below current usage";
+            return "You can't DECREASE max-socks below current usage";
           max_socks = l;
         } else if ((int *) ii->var == &max_logs) {
-          if (l < max_logs)
-            return "you can't DECREASE max-logs";
+          if (l < 5)
+            return "The config setting 'max-logs' must be at least 5";
           max_logs = l;
           init_misc();
         } else
