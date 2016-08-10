@@ -8,7 +8,7 @@ added.
 
 Version    Release date
 
-1.6.21     Oct 25, 2011 
+1.6.21     Oct 25, 2011
 1.6.20     Jul 23, 2010  New Tcl notifier, new Tcl commands and binds
 1.6.19     Apr 18, 2008  Fix for Secunia Advisory SA25276 / CVE-2007-2807
 1.6.18     Jul  9, 2006  Major bind code function changes
