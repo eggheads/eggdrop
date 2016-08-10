@@ -43,6 +43,10 @@ regenerate_changelog() {
 		echo "Error: Could not locate \`git' program."
 		exit 1
 	fi
+        if [ ! -f .mailmap ]; then
+          echo ".mailmap file missing- This is needed to properly run git log. Aborting."
+          exit 1
+        fi
 	if ! git_log $1; then
 		echo "Error while attempting to run \`git log' program."
 		exit 1
@@ -146,8 +150,8 @@ find ./ -type d -name "CVS" -print | xargs rm -rf
 echo " done."
 
 # Remove .gitignores.
-echo -n "Removing .gitignore files..."
-find ./ -name ".gitignore" -print | xargs rm -f
+echo -n "Removing git files..."
+find ./ -name ".git .github .gitignore" -print | xargs rm -f
 echo " done."
 
 # Remove doc/web_docs/ and doc/html/chat/
@@ -161,6 +165,9 @@ if test -d ./doc/html/chat; then
         rm -rf doc/html/chat
         echo " done."
 fi
+
+# Generate fresh html/docs
+misc/generateDocs
 
 # make distclean
 echo ""
@@ -182,7 +189,7 @@ echo "IT IS NOT REVERSIBLE!"
 echo "This is, like, the real deal."
 echo "Are you sure you want to do this? [y/N]: "
 read PUSH
-if [ $PUSH == "y" ]; then
+if [ $PUSH = "y" ]; then
   echo "Enter release tag (vX.Y.Z[.RC0] format): "
   read RLS
   MAJMIN=echo RLS|cut -d'.' -f1,2|sed 's/^v//'
