@@ -13,11 +13,18 @@ INSTALL_SCRIPT = @INSTALL_SCRIPT@
 
 DOCS = ABOUT BANS BOTNET BUG-REPORT COMPILE-GUIDE CONTENTS \
 Changes1.8 FIRST-SCRIPT IPV6 KNOWN-PROBLEMS MODULES PARTYLINE PATCH-HOWTO \
-TEXT-SUBSTITUTIONS TLS TRICKS USERS Versions WEIRD-MESSAGES tcl-commands.doc
+TEXT-SUBSTITUTIONS TLS TRICKS USERS Versions WEIRD-MESSAGES tcl-commands.doc \
+FAQ
 
 MAN1 = man1/eggdrop.1
 
-WEB_DOCS = $(srcdir)/html/*.html
+WEB_ROOT = $(srcdir)/html/*.html
+WEB_APPND = $(srcdir)/html/appendices/*.html
+WEB_CORE = $(srcdir)/html/coreDocs/*.html
+WEB_INST = $(srcdir)/html/installAndSetup/*.html
+WEB_MAIN = $(srcdir)/html/mainDocs/*.html
+WEB_STAT = $(srcdir)/html/_static/*
+
 SETTING_DOCS = core.settings CONTENTS
 SETTING_MOD_DOCS = $(srcdir)/settings/mod.*
 
@@ -45,6 +52,26 @@ install:
 		echo "Creating 'doc/html' subdirectory."; \
 		$(top_srcdir)/misc/mkinstalldirs $(DEST)/doc/html >/dev/null; \
 	fi
+	@if test ! -d $(DEST)/doc/html/appendices; then \
+		echo "Creating 'doc/html/appendices' subdirectory."; \
+		$(top_srcdir)/misc/mkinstalldirs $(DEST)/doc/html/appendices >/dev/null; \
+	fi
+	@if test ! -d $(DEST)/doc/html/coreDocs; then \
+                echo "Creating 'doc/html/coreDocs' subdirectory."; \
+                $(top_srcdir)/misc/mkinstalldirs $(DEST)/doc/html/coreDocs >/dev/null; \
+        fi
+	@if test ! -d $(DEST)/doc/html/installAndSetup; then \
+                echo "Creating 'doc/html/installAndSetup' subdirectory."; \
+                $(top_srcdir)/misc/mkinstalldirs $(DEST)/doc/html/installAndSetup >/dev/null; \
+        fi
+	@if test ! -d $(DEST)/doc/html/mainDocs; then \
+                echo "Creating 'doc/html/mainDocs' subdirectory."; \
+                $(top_srcdir)/misc/mkinstalldirs $(DEST)/doc/html/mainDocs >/dev/null; \
+        fi
+	@if test ! -d $(DEST)/doc/html/_static; then \
+                echo "Creating 'doc/html/_static' subdirectory."; \
+                $(top_srcdir)/misc/mkinstalldirs $(DEST)/doc/html/_static >/dev/null; \
+        fi
 	@if test ! -d $(DEST)/doc/settings; then \
 		echo "Creating 'doc/settings' subdirectory."; \
 		$(top_srcdir)/misc/mkinstalldirs $(DEST)/doc/settings >/dev/null; \
@@ -64,8 +91,33 @@ install:
 			$(INSTALL_DATA) $$i $(DEST)/doc/settings/; \
 		done; \
 	fi
-	@if test "x`echo $(WEB_DOCS)`" != "x$(WEB_DOCS)"; then \
-		for i in `echo $(WEB_DOCS)`; do \
+	@if test "x`echo $(WEB_ROOT)`" != "x$(WEB_ROOT)"; then \
+		for i in `echo $(WEB_ROOT)`; do \
 			$(INSTALL_DATA) $$i $(DEST)/doc/html/; \
 		done; \
 	fi
+	@if test "x`echo $(WEB_APPND)`" != "x$(WEB_APPND)"; then \
+		for i in `echo $(WEB_APPND)`; do \
+			$(INSTALL_DATA) $$i $(DEST)/doc/html/appendices; \
+		done; \
+	fi
+	@if test "x`echo $(WEB_CORE)`" != "x$(WEB_CORE)"; then \
+                for i in `echo $(WEB_CORE)`; do \
+                        $(INSTALL_DATA) $$i $(DEST)/doc/html/coreDocs; \
+                done; \
+        fi
+	@if test "x`echo $(WEB_INST)`" != "x$(WEB_INST)"; then \
+                for i in `echo $(WEB_INST)`; do \
+                        $(INSTALL_DATA) $$i $(DEST)/doc/html/installAndSetup; \
+                done; \
+        fi
+	@if test "x`echo $(WEB_MAIN)`" != "x$(WEB_MAIN)"; then \
+                for i in `echo $(WEB_MAIN)`; do \
+                        $(INSTALL_DATA) $$i $(DEST)/doc/html/mainDocs; \
+                done; \
+        fi
+	@if test "x`echo $(WEB_STAT)`" != "x$(WEB_STAT)"; then \
+                for i in `echo $(WEB_STAT)`; do \
+                        $(INSTALL_DATA) $$i $(DEST)/doc/html/_static; \
+                done; \
+        fi
