@@ -34,7 +34,7 @@
  *
  *
  */
-patch("CVS");                   /* CVS version */
+patch("Git");                   /* Git version */
 /*
  *
  *

@@ -1,6 +1,6 @@
 #! /bin/sh
 #
-# newversion - prepares the tree for a new version number in CVS
+# newversion - prepares the tree for a new version number in git
 #
 # Copyright (C) 2004 - 2016 Eggheads Development Team
 #
@@ -74,7 +74,7 @@ echo Current patch: `misc/addpatch -s`
 echo ""
 echo "Complete."
 echo ""
-echo "Now, cvs commit, and then run the following, and commit again:"
+echo "Now, git commit, and then run the following, and commit again:"
 echo "  autoconf"
 CURRENT_PWD=$PWD
 for i in $MOD_CONFIGURE_ACS; do

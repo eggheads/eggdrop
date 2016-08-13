@@ -24,24 +24,31 @@
 # the same distribution terms that you use for the rest of that program.
 
 show_usage() {
-	echo "Usage: `basename $0` [-h|-r <#>]"
+	echo "Usage: `basename $0` [-h|-r <#>] lastVer"
 	echo ""
-	echo "  patchname  - Name of last patch added."
-	echo "  unixtime   - Some unixtime number or 'now'. Default is 'now'."
+        echo "  lastVer    - git tag of last version (v1.6.21 or v1.8.0 for example)"
 	echo ""
 	echo "  -h, --help - Print this help and exit."
 	echo "  -r, --rc   - Prepare to release Release Candidate '#'."
 	exit 1
 }
 
+git_log() {
+	git log $(git rev-list -n 1 $1)..HEAD --name-only --no-merges --pretty=format:"- - - - - - - - - - - - - - - %n%w(75)Commit %h (%ai) by %aN %n %s %n %b" > ChangeLog
+}
+
 regenerate_changelog() {
-	cvs2cl=`which cvs2cl`
-	if test "x${cvs2cl}" = "x"; then
-		echo "Error: Could not locate \`cvs2cl' program."
+	git=`which git`
+	if test "x${git}" = "x"; then
+		echo "Error: Could not locate \`git' program."
 		exit 1
 	fi
-	if ! $cvs2cl; then
-		echo "Error while attempting to run \`cvs2cl' program."
+        if [ ! -f .mailmap ]; then
+          echo ".mailmap file missing- This is needed to properly run git log. Aborting."
+          exit 1
+        fi
+	if ! git_log $1; then
+		echo "Error while attempting to run \`git log' program."
 		exit 1
 	fi
 	if test -f ChangeLog; then
@@ -70,7 +77,7 @@ change_default_make() {
 fix_patch_h() {
 	if test $do_rc -eq 1; then
 		misc/addpatch RC${rc_number} >/dev/null
-		cat src/patch.h | sed 's/^patch.*CVS.*CVS version \*\//patch("PRE-RELEASE");           \/* RC version *\//g' > src/patch.h_
+		cat src/patch.h | sed 's/^patch.*Git.*Git version \*\//patch("PRE-RELEASE");           \/* RC version *\//g' > src/patch.h_
 	else
 		cat src/patch.h | sed 's/^patch.*/\/* PATCH GOES HERE *\//g' > src/patch.h_
 	fi
@@ -90,6 +97,11 @@ all:
 _EOF
 }
 
+if [ $# -eq 0 ]; then
+  echo "No args specified, use -h to view help"
+  exit 1
+fi
+
 if test "x${1}" = "x-h" || test "x${1}" = "x--help"; then
 	show_usage
 fi
@@ -103,6 +115,12 @@ if test "x${1}" = "x-r" || test "x${1}" = "x--rc"; then
 	rc_number=$2
 fi
 
+for LASTVER in $@; do :; done
+if ! git rev-parse $LASTVER > /dev/null 2>&1; then
+  echo "No git version tag found: $LASTVER"
+  exit 1
+fi
+
 if test ! -f src/main.c; then
 	echo "You are not in the Eggdrop root directory."
 	exit 1
@@ -111,7 +129,7 @@ fi
 
 # Regenerate ChangeLog file before doing anything else...
 echo "Regenerating ChangeLog file..."
-regenerate_changelog
+regenerate_changelog $LASTVER
 echo ""
 
 # Change default make from "debug" to "eggdrop"...
@@ -125,14 +143,15 @@ fix_patch_h
 echo " done."
 
 # Remove CVS dirs.
+# Let's remove this in 1.8.1 -Geo
 echo -n "Removing CVS and autom4te.cache directories..."
 find ./ -type d -name "autom4te.cache" -print | xargs rm -rf
 find ./ -type d -name "CVS" -print | xargs rm -rf
 echo " done."
 
-# Remove .cvsignores.
-echo -n "Removing .cvsignore files..."
-find ./ -name ".cvsignore" -print | xargs rm -f
+# Remove .gitignores.
+echo -n "Removing git files..."
+find ./ -name ".git .github .gitignore" -print | xargs rm -f
 echo " done."
 
 # Remove doc/web_docs/ and doc/html/chat/
@@ -146,6 +165,9 @@ if test -d ./doc/html/chat; then
         rm -rf doc/html/chat
         echo " done."
 fi
+
+# Generate fresh html/docs
+misc/generateDocs
 
 # make distclean
 echo ""
@@ -161,3 +183,24 @@ echo " done."
 echo Current patch: `misc/addpatch -s`
 echo "Complete."
 echo ""
+
+echo "This next step will commit, tag, and push to GitHub."
+echo "IT IS NOT REVERSIBLE!"
+echo "This is, like, the real deal."
+echo "Are you sure you want to do this? [y/N]: "
+read PUSH
+if [ $PUSH = "y" ]; then
+  echo "Enter release tag (vX.Y.Z[.RC0] format): "
+  read RLS
+  MAJMIN="$(echo $RLS|cut -d'.' -f1,2|sed 's/^v//')"
+  git add *
+  git commit -m "Release tag - $RLS"
+  git fetch stable/$MAJMIN
+  git checkout -B stable/$MAJMIN
+  git merge develop
+  git tag $RLS
+  git push origin stable/$MAJMIN
+else
+  echo "Aborting. Coward."
+  exit 0
+fi
