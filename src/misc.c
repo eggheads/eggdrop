@@ -57,7 +57,7 @@ char log_ts[32] = "[%H:%M:%S]"; /* Timestamp format for logfile entries */
 
 int shtime = 1;                 /* Display the time with console output */
 log_t *logs = 0;                /* Logfiles */
-int max_logs = 20;               /* Current maximum log files */
+int max_logs = 5;               /* Max log files, mismatch config on purpose */
 int max_logsize = 0;            /* Maximum logfile size, 0 for no limit */
 int raw_log = 0;                /* Disply output to server to LOG_SERVEROUT */
 

@@ -229,11 +229,13 @@ static char *tcl_eggint(ClientData cdata, Tcl_Interp *irp,
           return "Variable must have integer value";
         if ((int *) ii->var == &max_socks) {
           if (l < threaddata()->MAXSOCKS)
-            return "You can't DECREASE max-socks below current usage";
+            return "Decreasing max-socks requires a restart";
           max_socks = l;
         } else if ((int *) ii->var == &max_logs) {
           if (l < 5)
-            return "The config setting 'max-logs' must be at least 5";
+            return "ERROR: max-logs cannot be less than 5";
+          if (l < max_logs)
+            return "ERROR: Decreasing max-logs requires a restart";
           max_logs = l;
           init_misc();
         } else

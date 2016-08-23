@@ -102,9 +102,12 @@ Logfiles are normally kept for 24 hours. Afterwards, they will be renamed
 to "(logfilename).yesterday". After 48 hours, they will be overwritten by
 the logfile of the next day.
 
-  set max-logs 5
-    This is the maximum number of logfiles allowed. This setting can be
-    increased; however, don't decrease it.
+  set max-logs 20
+    This is the maximum number of concurrent logfiles that can be opened
+    for writing at one time. At most, this value should be the maximum
+    number of channels you expect to create log files for. There is no
+    value for 'infinity'; very few cases should ever require more than 20.
+    This setting can be increased; however, don't decrease it below 5.
 
   set max-logsize 0
     This is the maximum size of your logfiles. Set it to 0 to disable.
