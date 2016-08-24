@@ -162,7 +162,8 @@ the logfile of the next day.</p>
 for writing at one time. At most, this value should be the maximum
 number of channels you expect to create log files for. There is no
 value for 'infinity'; very few cases should ever require more than 20.
-This setting can be increased; however, don't decrease it below 5.</dd>
+A decrease to this value while running will require a restart (not rehash)
+of the bot. However, don't decrease it below 5.</dd>
 <dt>set max-logsize 0</dt>
 <dd>This is the maximum size of your logfiles. Set it to 0 to disable.
 This value is in kilobytes, so '550' would mean cycle logs when it
@@ -796,7 +797,7 @@ source scripts/action.fix.tcl
           
     <div class="footer">
         &copy; Copyright 2016, Eggheads.
-      Last updated on Aug 23, 2016.
+      Last updated on Aug 24, 2016.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.2.
     </div>
         </div>

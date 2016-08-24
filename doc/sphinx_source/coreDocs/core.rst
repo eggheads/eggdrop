@@ -107,7 +107,8 @@ the logfile of the next day.
     for writing at one time. At most, this value should be the maximum
     number of channels you expect to create log files for. There is no
     value for 'infinity'; very few cases should ever require more than 20.
-    This setting can be increased; however, don't decrease it below 5.
+    A decrease to this value while running will require a restart (not rehash)
+    of the bot. However, don't decrease it below 5.
 
   set max-logsize 0
     This is the maximum size of your logfiles. Set it to 0 to disable.
