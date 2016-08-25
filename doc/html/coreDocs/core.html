@@ -24,7 +24,10 @@
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
-    <link rel="top" title="Eggdrop 1.8.0 documentation" href="../index.html" /> 
+    <link rel="top" title="Eggdrop 1.8.0 documentation" href="../index.html" />
+    <link rel="up" title="&lt;no title&gt;" href="index.html" />
+    <link rel="next" title="Eggdrop Module Information" href="modules.html" />
+    <link rel="prev" title="&lt;no title&gt;" href="index.html" /> 
   </head>
   <body>
     <div class="header-wrapper">
@@ -35,6 +38,10 @@
         <div class="headertitle"><a
           href="../index.html">Eggdrop 1.8.0 documentation</a></div>
         <div class="rel">
+          <a href="index.html" title="&lt;no title&gt;"
+             accesskey="P">previous</a> |
+          <a href="modules.html" title="Eggdrop Module Information"
+             accesskey="N">next</a>
         </div>
        </div>
     </div>
@@ -150,9 +157,13 @@ to &quot;(logfilename).yesterday&quot;. After 48 hours, they will be overwritten
 the logfile of the next day.</p>
 <blockquote>
 <div><dl class="docutils">
-<dt>set max-logs 5</dt>
-<dd>This is the maximum number of logfiles allowed. This setting can be
-increased; however, don't decrease it.</dd>
+<dt>set max-logs 20</dt>
+<dd>This is the maximum number of concurrent logfiles that can be opened
+for writing at one time. At most, this value should be the maximum
+number of channels you expect to create log files for. There is no
+value for 'infinity'; very few cases should ever require more than 20.
+A decrease to this value while running will require a restart (not rehash)
+of the bot. However, don't decrease it below 5.</dd>
 <dt>set max-logsize 0</dt>
 <dd>This is the maximum size of your logfiles. Set it to 0 to disable.
 This value is in kilobytes, so '550' would mean cycle logs when it
@@ -727,15 +738,35 @@ source scripts/action.fix.tcl
 <li class="toctree-l1"><a class="reference internal" href="../mainDocs/botnet.html">Botnet Sharing and Linking</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../mainDocs/patch.html">Patch How-To</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../mainDocs/tcl-commands.html">Eggdrop Tcl Commands</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../mainDocs/TLS.html">TLS support</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../mainDocs/ipv6.html">IPv6 support</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../mainDocs/tls.html">TLS support</a></li>
 </ul>
-<ul class="simple">
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="">Eggdrop Core Settings</a></li>
+<li class="toctree-l1"><a class="reference internal" href="modules.html">Eggdrop Module Information</a></li>
+<li class="toctree-l1"><a class="reference internal" href="assoc.html">Assoc Module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="blowfish.html">Blowfish Module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="channels.html">Channels Module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="compress.html">Compress Module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="console.html">Console Module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ctcp.html">CTCP Module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="dns.html">DNS Module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="filesys.html">Filesys Module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="irc.html">IRC Module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="notes.html">Notes Module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="seen.html">Seen Module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="server.html">Server Module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="share.html">Share Module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="transfer.html">Transfer Module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="uptime.html">Uptime Module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="woobie.html">Woobie Module</a></li>
 </ul>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../appendices/known-probs.html">Known Problems</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../appendices/tricks.html">Eggdrop Tricks</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../appendices/text-sub.html">Textfile Substitutions</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../appendices/weird-msgs.html">Weird Messages That Get Logged</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../appendices/first-script.html">Your First Eggdrop Script</a></li>
 </ul>
 
           <h3 style="margin-top: 1.5em;">Search</h3>
@@ -756,13 +787,17 @@ source scripts/action.fix.tcl
     <div class="footer-wrapper">
       <div class="footer">
         <div class="left">
+          <a href="index.html" title="&lt;no title&gt;"
+             >previous</a> |
+          <a href="modules.html" title="Eggdrop Module Information"
+             >next</a>
         </div>
 
         <div class="right">
           
     <div class="footer">
         &copy; Copyright 2016, Eggheads.
-      Last updated on Jul 25, 2016.
+      Last updated on Aug 24, 2016.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.2.
     </div>
         </div>
