@@ -518,7 +518,7 @@ static void do_arg(char *s)
         break;                  /* this should never be reached */
       case 'h':
         printf("\n%s\n\n", version);
-        printf(EGG_USAGE);
+        printf("%s\n", EGG_USAGE);
         printf("\n");
         bg_send_quit(BG_ABORT);
         exit(0);
@@ -1076,7 +1076,7 @@ int main(int arg_c, char **arg_v)
   putlog(LOG_ALL, "*", "--- Loading %s (%s)", ver, s);
   chanprog();
   if (!encrypt_pass) {
-    printf(MOD_NOCRYPT);
+    printf("%s\n", MOD_NOCRYPT);
     bg_send_quit(BG_ABORT);
     exit(1);
   }

@@ -969,7 +969,7 @@ static void add_server(const char *ss)
 Eggdrop was not compiled with SSL libraries. Skipping...");
   return;
   }
-#endif  
+#endif
 
   x = nmalloc(sizeof(struct server_list));
   x->next = 0;
@@ -1601,7 +1601,7 @@ static void dcc_chat_hostresolved(int i)
   buf[0] = 0;
   dcc[i].sock = getsock(dcc[i].sockname.family, 0);
   if (dcc[i].sock < 0 || open_telnet_raw(dcc[i].sock, &dcc[i].sockname) < 0)
-    snprintf(buf, sizeof buf, strerror(errno));
+    snprintf(buf, sizeof buf, "%s", strerror(errno));
 #ifdef TLS
   else if (dcc[i].ssl && ssl_handshake(dcc[i].sock, TLS_CONNECT, tls_vfydcc,
                                        LOG_MISC, dcc[i].host, &dcc_chat_sslcb))
