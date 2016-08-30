@@ -389,6 +389,7 @@ There are also some variables you can set in your config file:
         | +protecthalfops
         | +autohalfop    
         | -static
+
       }
 
   Copyright (C) 2000 - 2016 Eggheads Development Team
