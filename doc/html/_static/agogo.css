@@ -31,7 +31,7 @@ div.header, div.content, div.footer {
 }
 
 div.header-wrapper {
-  background: #b7d7e8;
+  background: #86AAD3;
   border-bottom: 3px solid #2e3436;
 }
 
@@ -70,7 +70,7 @@ div.bodywrapper a, div.footer a {
 }
 
 h1, h2, h3, h4 {
-  font-family: "Palatino Linotype", serif;
+  font-family: "Open Sans", sans serif;
   font-weight: normal;
   color: #3465a4;
   margin-bottom: .8em;
@@ -129,7 +129,7 @@ div.header {
 }
 
 div.header .headertitle {
-  font-family: "Palatino Linotype", serif;
+  font-family: "Open Sans", sans serif;
   font-weight: normal;
   font-size: 180%;
   letter-spacing: .08em;
