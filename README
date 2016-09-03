@@ -411,7 +411,15 @@ Last revised: Nov 01, 2010
     Eggdrop comes with a shell script called 'botchk' that will help keep the
     bot online. It will make the machine check every ten minutes to make sure
     your bot is still running. To use it, you have to add a line to your
-    crontab. First, edit 'botchk' and change the directory and command line
+    crontab. It's recommended to do this using 'autobotchk' (see section 7a).
+    The following are instructions on doing it manually:
+
+    First, you need to change permissions on your Eggdrop configuration file.
+    From the command line,  you can type:
+
+    'chmod u+x <filename>'
+
+    Second, edit 'botchk' and change the directory and command line
     parameters so that it will be able to start up your bot. Then, add this
     line to your crontab:
 
