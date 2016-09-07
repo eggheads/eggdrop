@@ -102,7 +102,7 @@ modul, venligst rådfør dig med standard config filen for info.\n
 0x51f,MOTD fil:
 0x520,Ingen MOTD fil.
 0x521,Brug:
-0x522,<adresse>:<port#>[/<relay-port#>]
+0x522,<adresse> <port#>[/<relay-port#>]
 0x526,afventende
 0x527,ønsker ops
 0x529,baggrund

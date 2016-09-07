@@ -102,7 +102,7 @@ module, please consult the default config file for info.\n
 0x51f,MOTD file:
 0x520,No MOTD file.
 0x521,Use:
-0x522,<address>:<port#>[/<relay-port#>]
+0x522,<address> <port#>[/<relay-port#>]
 0x526,pending
 0x527,need ops
 0x529,background

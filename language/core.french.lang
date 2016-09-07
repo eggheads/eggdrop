@@ -103,7 +103,7 @@ consultez le ficher de configuration initiale pour plus de renseignements.\n
 0x51f,Fichier MOTD:
 0x520,Aucun fichier MOTD.
 0x521,Utilisez:
-0x522,<addresse>:<numéro de port>[/<numéro de port-relais>]
+0x522,<addresse> <numéro de port>[/<numéro de port-relais>]
 0x526,en suspens
 0x527,je ne suis pas op
 0x529,arrière plan

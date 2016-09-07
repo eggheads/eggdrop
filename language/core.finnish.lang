@@ -102,7 +102,7 @@ moduulille, etsi vakio config tiedostosta tietoa.\n
 0x51f,MOTD tiedosto:
 0x520,Ei MOTD tiedostoa.
 0x521,Käytä:
-0x522,<osoite>:<portti#>[/<relay-portti#>]
+0x522,<osoite> <portti#>[/<relay-portti#>]
 0x526,avoin
 0x527,tarvitaan opit
 0x529,taustalla
