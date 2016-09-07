@@ -55,7 +55,7 @@ The following are some common terms used in this document:
 **Address**
   The physical address, containing the address and port of the bot. For example: lame.org:3333. You can change a bot's address with::
 
-        .chaddr <botname> <hostaddress:botport[/userport]>
+        .chaddr <address> <port#>[/<relay-port#>]
 
 **Relay Port**
   The relay port number of the bot is defined in the config file. Note that you can define one port for bots and another for user connections.
@@ -63,7 +63,7 @@ The following are some common terms used in this document:
 **Relay**
   A relay connection is used to relay (jump) to another bot via telnet or DCC chat. You can relay to another bot even if the remote bot is not linked. You can use::
 
-   .relay <botname> 
+   .relay <botname>
 
   to relay to another bot.
 
@@ -213,7 +213,7 @@ Making bots share user records
 
   On Lamestbot::
 
-    .+bot Lameshare eggdrop.com:3333 
+    .+bot Lameshare eggdrop.com:3333
 
   This command adds a user record to
   Lamestbot for Lameshare. Lameshare is running from eggdrop.com and is
@@ -261,7 +261,7 @@ Making bots share user records
     .+bot beldin llama.com:3333
 
     .botattr beldin s|s #eggdrop
-     
+
   Notice how i piped (the | character)
   the channel flag, also saving time.)
 

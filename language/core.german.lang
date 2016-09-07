@@ -110,7 +110,7 @@ die mitgelieferte Konfigurationsdatei.\n
 0x51f,MOTD-Datei:
 0x520,Keine MOTD-Datei.
 0x521,Benutze:
-0x522,<Adresse>:<Port#>[/<Relais-Port#>]
+0x522,<Adresse> <Port#>[/<Relais-Port#>]
 0x526,dauert noch
 0x527,will op-status
 0x529,Hintergrund
