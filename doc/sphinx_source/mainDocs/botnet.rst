@@ -55,7 +55,7 @@ The following are some common terms used in this document:
 **Address**
   The physical address, containing the address and port of the bot. For example: lame.org:3333. You can change a bot's address with::
 
-        .chaddr <address> <port#>[/<relay-port#>]
+        .chaddr <botname> <address> <port#>[/<relay-port#>]
 
 **Relay Port**
   The relay port number of the bot is defined in the config file. Note that you can define one port for bots and another for user connections.
