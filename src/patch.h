@@ -34,17 +34,17 @@
  *
  *
  */
-patch("Git");                   /* Git version */
+patch("PRE-RELEASE");           /* RC version */
 /*
  *
  *
  */
-patch("1451356129");            /* current unixtime */
+patch("1473549914");            /* current unixtime */
 /*
  *
  *
  */
-patch("tclconfig");
+patch("RC1");
 /*
  *
  *
