@@ -1688,7 +1688,7 @@ Miscellaneous Commands
 
   Module: core
 
-**timer <seconds> <tcl-command> [count]**
+**utimer <seconds> <tcl-command> [count]**
 
   Description: executes the given Tcl command after a certain number of seconds have passed. If count is specified, the command will be executed count times with the given interval in between. If you specify a count of 0, the utimer will repeat until it's removed with killutimer or until the bot is restarted.
 
