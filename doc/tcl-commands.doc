@@ -1971,7 +1971,7 @@ timer <minutes> <tcl-command> [count]
 
   Module: core
 
-timer <seconds> <tcl-command> [count]
+utimer <seconds> <tcl-command> [count]
 
   Description: executes the given Tcl command after a certain number of
   seconds have passed. If count is specified, the command will be
