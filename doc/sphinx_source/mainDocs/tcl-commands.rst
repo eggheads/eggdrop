@@ -2558,7 +2558,7 @@ The following is a list of bind types and how they work. Below each bind type is
 
   procname <minute 00-59> <hour 00-23> <day 01-31> <month 00-11> <year 0000-9999>
 
-  Description: allows you to schedule procedure calls at certain times. mask matches 5 space separated integers of the form: "minute hour day month year". The month var starts at 00 (Jan) and ends at 11 (Dec). Minute, hour, day, month have a zero padding so they are exactly two characters long; year is zero characters. Flags are ignored.
+  Description: allows you to schedule procedure calls at certain times. mask matches 5 space separated integers of the form: "minute hour day month year". The month var starts at 00 (Jan) and ends at 11 (Dec). Minute, hour, day, month have a zero padding so they are exactly two characters long; year is four characters. Flags are ignored.
 
   Module: core
 

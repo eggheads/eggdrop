@@ -3034,7 +3034,7 @@ the Tcl proc, and an explanation.
   mask matches 5 space separated integers of the form: "minute hour day
   month year". The month var starts at 00 (Jan) and ends at 11 (Dec).
   Minute, hour, day, month have a zero padding so they are exactly two
-  characters long; year is zero characters. Flags are ignored.
+  characters long; year is four characters. Flags are ignored.
 
   Module: core
 
