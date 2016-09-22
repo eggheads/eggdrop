@@ -990,7 +990,7 @@ int main(int arg_c, char **arg_v)
   /* Version info! */
   egg_snprintf(ver, sizeof ver, "eggdrop v%s", egg_version);
   egg_snprintf(version, sizeof version,
-               "Eggdrop v%s (C) 1997 Robey Pointer (C) 2010 Eggheads",
+               "Eggdrop v%s (C) 1997 Robey Pointer (C) 2010-2016 Eggheads",
                egg_version);
   /* Now add on the patchlevel (for Tcl) */
   sprintf(&egg_version[strlen(egg_version)], " %u", egg_numver);
