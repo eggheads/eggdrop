@@ -12,6 +12,7 @@ prefix = @prefix@
 DEST = @DEST@
 override DEST := $(abspath $(DEST))
 EGGEXEC = @EGGEXEC@
+EGG_CROSS_COMPILING = @EGG_CROSS_COMPILING@
 EGGVERSION = @EGGVERSION@
 
 # Extra compiler flags
@@ -74,7 +75,11 @@ MODULE_XLIBS = @MODULE_XLIBS@
 
 modconf = $(top_srcdir)/misc/modconfig --top_srcdir=$(top_srcdir)
 
+ifeq ($(EGG_CROSS_COMPILING),no)
 egg_test_run = EGG_LANGDIR=$(top_srcdir)/language ./$(EGGEXEC) -v
+else
+egg_test_run = echo "This build is a cross-compilation, skipping test run..."
+endif
 
 post_config  =  echo "" && \
 		echo "You can now compile the bot, using \"make\"." && \
