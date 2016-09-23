@@ -242,7 +242,7 @@ dnl
 AC_DEFUN([EGG_CHECK_SOCKLEN_T],
 [
   AC_CACHE_CHECK([for socklen_t], egg_cv_socklen_t, [
-    AC_RUN_IFELSE([AC_LANG_PROGRAM([[
+    AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[
       #include <unistd.h>
       #include <sys/param.h>
       #include <sys/types.h>
@@ -260,8 +260,6 @@ AC_DEFUN([EGG_CHECK_SOCKLEN_T],
       egg_cv_socklen_t="yes"
     ], [
       egg_cv_socklen_t="no"
-    ], [
-      egg_cv_socklen_t="cross"
     ])
   ])
 
@@ -1468,6 +1466,23 @@ AC_DEFUN([EGG_IPV6_STATUS],
       egg_cv_var_ipv6_supported="yes"
      ], [
       egg_cv_var_ipv6_supported="no"
+    ], [
+      AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[
+        #include <unistd.h>
+        #include <sys/socket.h>
+        #include <netinet/in.h>
+      ]], [[
+          int s = socket(AF_INET6, SOCK_STREAM, 0);
+  
+          if (s != -1)
+            close(s);
+  
+          return((s == -1));
+      ]])], [
+        egg_cv_var_ipv6_supported="yes"
+       ], [
+        egg_cv_var_ipv6_supported="no"
+      ])
     ])
   ])
 ])
