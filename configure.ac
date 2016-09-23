@@ -175,7 +175,7 @@ dnl If we are cross-compiling, make a note of it so we can skip some tests in th
 AS_IF([test "$cross_compiling" = "yes"], [
 	EGG_CROSS_COMPILING=yes
 ], [
-	EGG_CROSS_COMPILING=yes
+	EGG_CROSS_COMPILING=no
 ])
 AC_SUBST(EGG_CROSS_COMPILING)
 
