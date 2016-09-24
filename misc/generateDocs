@@ -70,10 +70,10 @@ mv tmpdocs/core.txt $BASEDIR/../doc/settings/core.settings
 mv tmpdocs/ctcp.txt $BASEDIR/../doc/settings/mod.ctcp
 mv tmpdocs/dns.txt $BASEDIR/../doc/settings/mod.dns
 mv tmpdocs/faq.txt $BASEDIR/../doc/FAQ
-mv tmpdocs/features.txt $BASEDIR/../../FEATURES
+mv tmpdocs/features.txt $BASEDIR/../FEATURES
 mv tmpdocs/filesys.txt $BASEDIR/../doc/settings/mod.filesys
 mv tmpdocs/first-script.txt $BASEDIR/../doc/FIRST-SCRIPT
-mv tmpdocs/install.txt $BASEDIR/../../INSTALL
+mv tmpdocs/install.txt $BASEDIR/../INSTALL
 mv tmpdocs/ipv6.txt $BASEDIR/../doc/IPV6
 mv tmpdocs/irc.txt $BASEDIR/../doc/settings/mod.irc
 mv tmpdocs/known-probs.txt $BASEDIR/../doc/KNOWN-PROBLEMS
@@ -81,7 +81,7 @@ mv tmpdocs/modules.txt $BASEDIR/../doc/MODULES
 mv tmpdocs/notes.txt $BASEDIR/../doc/settings/mod.notes
 mv tmpdocs/partyline.txt $BASEDIR/../doc/PARTYLINE
 mv tmpdocs/patch.txt $BASEDIR/../doc/PATCH-HOWTO
-mv tmpdocs/readme.txt $BASEDIR/../../README
+mv tmpdocs/readme.txt $BASEDIR/../README
 mv tmpdocs/seen.txt $BASEDIR/../doc/settings/mod.seen
 mv tmpdocs/server.txt $BASEDIR/../doc/settings/mod.server
 mv tmpdocs/share.txt $BASEDIR/../doc/settings/mod.share
