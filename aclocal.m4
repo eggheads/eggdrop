@@ -1012,8 +1012,15 @@ AC_DEFUN([EGG_TCL_TCLCONFIG],
     TEA_PATH_TCLCONFIG
     TEA_LOAD_TCLCONFIG
     TEA_TCL_LINK_LIBS
+    # Overwrite TCL_LIBS again, which TCL_LOAD_TCLCONFIG unfortunately overwrites from tclConfig.sh
+    if test -r ${TCL_BIN_DIR}/tclConfig.sh; then
+      . ${TCL_BIN_DIR}/tclConfig.sh
+      AC_SUBST(TCL_LIBS)
+    else
+      TCL_LIBS=""
+    fi
     TCL_PATCHLEVEL="${TCL_MAJOR_VERSION}.${TCL_MINOR_VERSION}${TCL_PATCH_LEVEL}"
-    TCL_LIB_SPEC="${TCL_LIB_SPEC} ${MATH_LIBS}"
+    TCL_LIB_SPEC="${TCL_LIB_SPEC} ${MATH_LIBS} ${TCL_LIBS}"
   else
     egg_tcl_changed="yes"
     TCL_LIB_SPEC="-L$TCLLIB -l$TCLLIBFNS ${EGG_MATH_LIB}"
