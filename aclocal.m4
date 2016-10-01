@@ -760,6 +760,17 @@ AC_DEFUN([EGG_CHECK_OS],
     ;;
     *BSD)
       # FreeBSD/OpenBSD/NetBSD
+      ### TCL on NetBSD installs to the weird /usr/pkg/lib path
+      ### so we set prefix to /usr/pkg here, until tcl.m4 updates
+      ### to include *their own* install path
+      if test $egg_cv_var_system_type = "NetBSD"; then
+        if test "${prefix}" = "NONE"; then
+         prefix="/usr/pkg"
+        fi
+        if test "${exec_prefix}" = "NONE"; then
+          exec_prefix="/usr/pkg"
+        fi
+      fi
       SHLIB_CC="$CC -fPIC"
       SHLIB_LD="ld -Bshareable -x"
     ;;
