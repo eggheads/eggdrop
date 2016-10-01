@@ -4,6 +4,9 @@ Eggdrop Changes (since version 1.8.0)
 
 1.8.0:
 
+  - Install eggdrop-basic.conf on make install.
+    Patch by: Geo / Found by: thommey
+
   - Fix various compile warnings:
     Fixed type of recvfrom's last argument to be socklen_t, not uint.
     Added first arg cast for const char* in gethostbyaddr for cygwin.
