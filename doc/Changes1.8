@@ -4,6 +4,12 @@ Eggdrop Changes (since version 1.8.0)
 
 1.8.0:
 
+  - Fix various compile warnings:
+    Fixed type of recvfrom's last argument to be socklen_t, not uint.
+    Added first arg cast for const char* in gethostbyaddr for cygwin.
+    Added explicit type of idx as function argument.
+    Patch by: thommey
+
   - Add help-path to eggdrop-basic.conf
     Patch by: thommey / Found by: simple
 
