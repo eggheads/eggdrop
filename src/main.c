@@ -63,7 +63,7 @@
 #endif
 
 #ifdef CYGWIN_HACKS
-  int FreeConsole(void);
+#  include <windows.h>
 #endif
 
 #ifndef _POSIX_SOURCE
