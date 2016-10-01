@@ -1017,10 +1017,10 @@ AC_DEFUN([EGG_TCL_TCLCONFIG],
       . ${TCL_BIN_DIR}/tclConfig.sh
       AC_SUBST(TCL_LIBS)
     else
-      TCL_LIBS=""
+      TCL_LIBS="${MATH_LIBS}"
     fi
     TCL_PATCHLEVEL="${TCL_MAJOR_VERSION}.${TCL_MINOR_VERSION}${TCL_PATCH_LEVEL}"
-    TCL_LIB_SPEC="${TCL_LIB_SPEC} ${MATH_LIBS} ${TCL_LIBS}"
+    TCL_LIB_SPEC="${TCL_LIB_SPEC} ${TCL_LIBS}"
   else
     egg_tcl_changed="yes"
     TCL_LIB_SPEC="-L$TCLLIB -l$TCLLIBFNS ${EGG_MATH_LIB}"
