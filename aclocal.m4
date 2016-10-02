@@ -1013,9 +1013,13 @@ AC_DEFUN([EGG_TCL_TCLCONFIG],
     TEA_LOAD_TCLCONFIG
     TEA_TCL_LINK_LIBS
     # Overwrite TCL_LIBS again, which TCL_LOAD_TCLCONFIG unfortunately overwrites from tclConfig.sh
+    # Also, use the Tcl linker idea to be compatible with their ldflags
     if test -r ${TCL_BIN_DIR}/tclConfig.sh; then
       . ${TCL_BIN_DIR}/tclConfig.sh
+      AC_SUBST(SHLIB_LD, $TCL_SHLIB_LD)
       AC_SUBST(TCL_LIBS)
+      AC_MSG_CHECKING([for Tcl linker])
+      AC_MSG_RESULT([$SHLIB_LD])
     else
       TCL_LIBS="${EGG_MATH_LIB}"
     fi
