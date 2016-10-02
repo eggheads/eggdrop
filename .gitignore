@@ -37,3 +37,4 @@ config.status
 config.cache
 eggdrop
 EGGMOD.stamp
+mod.xlibs
