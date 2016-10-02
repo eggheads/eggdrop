@@ -1017,7 +1017,7 @@ AC_DEFUN([EGG_TCL_TCLCONFIG],
       . ${TCL_BIN_DIR}/tclConfig.sh
       AC_SUBST(TCL_LIBS)
     else
-      TCL_LIBS="${MATH_LIBS}"
+      TCL_LIBS="${EGG_MATH_LIB}"
     fi
     TCL_PATCHLEVEL="${TCL_MAJOR_VERSION}.${TCL_MINOR_VERSION}${TCL_PATCH_LEVEL}"
     TCL_LIB_SPEC="${TCL_LIB_SPEC} ${TCL_LIBS}"
@@ -1032,6 +1032,9 @@ AC_DEFUN([EGG_TCL_TCLCONFIG],
     TCL_PATCHLEVEL=`grep TCL_PATCH_LEVEL $TCLINC/$TCLINCFN | $HEAD_1 | $AWK '{gsub(/\"/, "", [$]3); print [$]3}'`
     TCL_MAJOR_VERSION=`echo $TCL_VERSION | cut -d. -f1`
     TCL_MINOR_VERSION=`echo $TCL_VERSION | cut -d. -f2`
+    if test $TCL_MAJOR_VERSION -gt 8 || test $TCL_MAJOR_VERSION -eq 8 -a $TCL_MINOR_VERSION -ge 6; then
+      TCL_LIB_SPEC="$TCL_LIB_SPEC -lz"
+    fi
   fi
 
   AC_MSG_CHECKING([for Tcl version])
