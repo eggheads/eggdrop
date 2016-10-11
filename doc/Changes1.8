@@ -4,6 +4,15 @@ Eggdrop Changes (since version 1.8.0)
 
 1.8.0:
 
+  - Update tcl.m4 (Adds NetBSD tclConfig.sh path). Fixes #175
+    Patch by: thommey,Geo / Found by: fhorst
+
+  - Remove duplicate uppercase doc filenames
+    Patch by: Geo / Found by: jackal^
+
+  - Fix compile warning about potentially signed char as array subscript.
+    Patch by: thommey
+
   - Install eggdrop-basic.conf on make install.
     Patch by: Geo / Found by: thommey
 
@@ -158,9 +167,6 @@ Eggdrop Changes (since version 1.8.0)
 
   - Fix duplicate array value in module API
     Patch by: Geo / Found by: IRC user
-
-  - Add byte-based flood option
-    Patch by: remorse
 
   - Reply properly to server-generated CTCPs
     Patch by: Geo / Found by: IRC user
