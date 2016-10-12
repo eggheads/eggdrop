@@ -359,7 +359,7 @@ static int got442(char *from, char *msg)
 
     putlog(LOG_MISC, chname, IRC_SERVNOTONCHAN, chname);
     if (me && me->funcs)
-      (me->funcs[CHANNEL_CLEAR]) (chan, 1);
+      (me->funcs[CHANNEL_CLEAR]) (chan, CHAN_RESETALL);
     chan->status &= ~CHAN_ACTIVE;
 
     key = chan->channel.key[0] ? chan->channel.key : chan->key_prot;
@@ -1018,7 +1018,7 @@ static void kill_server(int idx, void *x)
     struct chanset_t *chan;
 
     for (chan = chanset; chan; chan = chan->next)
-      (me->funcs[CHANNEL_CLEAR]) (chan, 1);
+      (me->funcs[CHANNEL_CLEAR]) (chan, CHAN_RESETALL);
   }
   /* A new server connection will be automatically initiated in
    * about 2 seconds. */
