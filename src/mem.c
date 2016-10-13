@@ -356,9 +356,8 @@ void *n_malloc(int size, const char *file, int line)
 void *n_realloc(void *ptr, int size, const char *file, int line)
 {
   void *x;
-  int i = 0;
-
 #ifdef DEBUG_MEM
+  int i = 0;
   char *p;
 #endif
 
@@ -368,7 +367,6 @@ void *n_realloc(void *ptr, int size, const char *file, int line)
 
   x = (void *) realloc(ptr, size);
   if (x == NULL && size > 0) {
-    i = i;
     putlog(LOG_MISC, "*", "*** FAILED REALLOC %s (%d)", file, line);
     return NULL;
   }
@@ -393,12 +391,13 @@ void *n_realloc(void *ptr, int size, const char *file, int line)
 
 void n_free(void *ptr, const char *file, int line)
 {
+#ifdef DEBUG_MEM
   int i = 0;
+#endif
 
   if (ptr == NULL) {
     putlog(LOG_MISC, "*", "*** ATTEMPTING TO FREE NULL PTR: %s (%d)",
            file, line);
-    i = i;
     return;
   }
 #ifdef DEBUG_MEM

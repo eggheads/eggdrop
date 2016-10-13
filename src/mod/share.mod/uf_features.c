@@ -221,7 +221,7 @@ static void uff_deltable(uff_table_t *ut)
   if (!ut)
     return;
   for (; ut->feature; ++ut)
-    (int) uff_delfeature(ut);
+    uff_delfeature(ut);
 }
 
 

@@ -1389,7 +1389,7 @@ static cmd_t myfiles[] = {
 static int files_reget(int idx, char *fn, char *nick, int resend)
 {
   int i = 0;
-  char *p = NULL, *what = NULL, *destdir, *s = NULL;
+  char *p = NULL, *what = NULL, *destdir = NULL, *s = NULL;
   filedb_entry *fdbe = NULL;
   FILE *fdb = NULL;
 
