@@ -1012,8 +1012,19 @@ AC_DEFUN([EGG_TCL_TCLCONFIG],
     TEA_PATH_TCLCONFIG
     TEA_LOAD_TCLCONFIG
     TEA_TCL_LINK_LIBS
+    # Overwrite TCL_LIBS again, which TCL_LOAD_TCLCONFIG unfortunately overwrites from tclConfig.sh
+    # Also, use the Tcl linker idea to be compatible with their ldflags
+    if test -r ${TCL_BIN_DIR}/tclConfig.sh; then
+      . ${TCL_BIN_DIR}/tclConfig.sh
+      AC_SUBST(SHLIB_LD, $TCL_SHLIB_LD)
+      AC_SUBST(TCL_LIBS)
+      AC_MSG_CHECKING([for Tcl linker])
+      AC_MSG_RESULT([$SHLIB_LD])
+    else
+      TCL_LIBS="${EGG_MATH_LIB}"
+    fi
     TCL_PATCHLEVEL="${TCL_MAJOR_VERSION}.${TCL_MINOR_VERSION}${TCL_PATCH_LEVEL}"
-    TCL_LIB_SPEC="${TCL_LIB_SPEC} ${MATH_LIBS}"
+    TCL_LIB_SPEC="${TCL_LIB_SPEC} ${TCL_LIBS}"
   else
     egg_tcl_changed="yes"
     TCL_LIB_SPEC="-L$TCLLIB -l$TCLLIBFNS ${EGG_MATH_LIB}"
@@ -1025,6 +1036,9 @@ AC_DEFUN([EGG_TCL_TCLCONFIG],
     TCL_PATCHLEVEL=`grep TCL_PATCH_LEVEL $TCLINC/$TCLINCFN | $HEAD_1 | $AWK '{gsub(/\"/, "", [$]3); print [$]3}'`
     TCL_MAJOR_VERSION=`echo $TCL_VERSION | cut -d. -f1`
     TCL_MINOR_VERSION=`echo $TCL_VERSION | cut -d. -f2`
+    if test $TCL_MAJOR_VERSION -gt 8 || test $TCL_MAJOR_VERSION -eq 8 -a $TCL_MINOR_VERSION -ge 6; then
+      TCL_LIB_SPEC="$TCL_LIB_SPEC -lz"
+    fi
   fi
 
   AC_MSG_CHECKING([for Tcl version])

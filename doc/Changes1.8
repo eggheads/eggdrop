@@ -4,6 +4,13 @@ Eggdrop Changes (since version 1.8.0)
 
 1.8.0:
 
+  - Tcl various OS linking, cross-compilation issues. Fixes #250, #251
+    Patch by: thommey / Found by: eelcohuininga, thommey
+
+    Fixes Tcl-related compilation/linking issues by using the
+    tclConfig.sh variables and including -lz if Tcl >= 8.6 and we have no
+    tclConfig.sh
+
   - Fix cygwin windows.h inclusion. Fixes #262, #265, #266
     Patch by: thommey / Found by: creatio, jackal
 
