@@ -4,6 +4,38 @@ Eggdrop Changes (since version 1.8.0)
 
 1.8.0:
 
+  - Fix cygwin windows.h inclusion. Fixes #262, #265, #266
+    Patch by: thommey / Found by: creatio, jackal
+
+    Cygwin's windows.h inclusion only works if VOID is not defined, and
+    we undefine their openssl defines before including the official
+    openssh headers. We need to include windows.h to have FreeConsole()
+    to launch eggdrop into the background properly.
+
+  - Reset channel information on disconnect properly.
+    Patch by: Cizzle
+
+  - Fix a bug introduced by Tcl interp result transition.
+    Patch by: thommey / Found by: simply
+
+  - Update tcl.m4 (Adds NetBSD tclConfig.sh path). Fixes #175
+    Patch by: thommey,Geo / Found by: fhorst
+
+  - Remove duplicate uppercase doc filenames
+    Patch by: Geo / Found by: jackal^
+
+  - Fix compile warning about potentially signed char as array subscript.
+    Patch by: thommey
+
+  - Install eggdrop-basic.conf on make install.
+    Patch by: Geo / Found by: thommey
+
+  - Fix various compile warnings:
+    Fixed type of recvfrom's last argument to be socklen_t, not uint.
+    Added first arg cast for const char* in gethostbyaddr for cygwin.
+    Added explicit type of idx as function argument.
+    Patch by: thommey
+
   - Add help-path to eggdrop-basic.conf
     Patch by: thommey / Found by: simple
 
@@ -149,9 +181,6 @@ Eggdrop Changes (since version 1.8.0)
 
   - Fix duplicate array value in module API
     Patch by: Geo / Found by: IRC user
-
-  - Add byte-based flood option
-    Patch by: remorse
 
   - Reply properly to server-generated CTCPs
     Patch by: Geo / Found by: IRC user

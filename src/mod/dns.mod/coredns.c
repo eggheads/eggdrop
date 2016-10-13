@@ -1080,7 +1080,7 @@ void parserespacket(u_8bit_t *response, int len)
 static void dns_ack(void)
 {
   struct sockaddr_in from;
-  unsigned int fromlen = sizeof(struct sockaddr_in);
+  socklen_t fromlen = sizeof(struct sockaddr_in);
   int r, i;
 
   r = recvfrom(resfd, (u_8bit_t *) resrecvbuf, MAX_PACKETSIZE, 0,

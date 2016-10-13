@@ -7136,6 +7136,7 @@ $as_echo "$as_me: Autoconfiguring Tcl with tclConfig.sh" >&6;}
     # TEA extensions pass this us the version of TEA they think they
     # are compatible with.
     TEA_VERSION="3.10"
+
     { $as_echo "$as_me:${as_lineno-$LINENO}: checking for correct TEA configuration" >&5
 $as_echo_n "checking for correct TEA configuration... " >&6; }
     if test x"${PACKAGE_NAME}" = x ; then
@@ -7352,8 +7353,9 @@ $as_echo "$as_me: WARNING: --with-tcl argument should refer to directory contain
 		for i in `ls -d ${libdir} 2>/dev/null` \
 			`ls -d ${exec_prefix}/lib 2>/dev/null` \
 			`ls -d ${prefix}/lib 2>/dev/null` \
-			`ls -d /usr/local/lib 2>/dev/null` \
 			`ls -d /usr/contrib/lib 2>/dev/null` \
+			`ls -d /usr/local/lib 2>/dev/null` \
+			`ls -d /usr/pkg/lib 2>/dev/null` \
 			`ls -d /usr/lib 2>/dev/null` \
 			`ls -d /usr/lib64 2>/dev/null` \
 			`ls -d /usr/lib/tcl8.6 2>/dev/null` \

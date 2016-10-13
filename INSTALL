@@ -21,6 +21,19 @@ BURNED TO A HORRIBLE DEATH! IF YOU DO NOT READ THAT FILE I WILL
 PERSONALLY WALK TO YOUR TERMINAL AND BEAT IT WITH A SMELLY SNEAKER! By
 the way, read the README file.
 
+Eggdrop on Windows with Cygwin
+------------------------------
+
+We recommand installing the following Cygwin packages in addition to the
+default ones:
+
+Interpreters: tcl, tcl-devel
+Net:          openssl-devel
+Devel:        autoconf, gcc-core, git, make
+Utils:        diffutils
+
+Then proceed as described below.
+
 Quick Startup
 -------------
 
@@ -72,12 +85,12 @@ Eggdrop uses the GNU autoconfigure scripts to make things easier.
 5.  By default, version 1.8 uses SSL to protect botnet links. If you intend
         on linking 1.8 bots together, you must run:
 
-            make ssl-cert
+            make sslcert
 
         Or, if you installed your eggdrop to a different directory in
         step 4, you will want to run:
 
-          make ssl-cert DEST=<directory>
+          make sslcert DEST=<directory>
 
         Read docs/TLS for more info on this process.
 

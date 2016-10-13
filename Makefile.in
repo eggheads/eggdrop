@@ -402,6 +402,9 @@ install-data:
 	@if test ! -f $(DEST)/eggdrop.conf; then \
 		$(INSTALL_DATA) $(srcdir)/eggdrop.conf $(DEST)/; \
 	fi
+	@if test ! -f $(DEST)/eggdrop-basic.conf; then \
+		$(INSTALL_DATA) $(srcdir)/eggdrop-basic.conf $(DEST)/; \
+	fi
 	@if test ! -d $(DEST)/logs; then \
 		echo "Creating 'logs' subdirectory."; \
 		$(top_srcdir)/misc/mkinstalldirs $(DEST)/logs >/dev/null; \

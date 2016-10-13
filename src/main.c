@@ -29,6 +29,22 @@
  * list available at eggheads@eggheads.org.
  */
 
+/* We need config.h for CYGWIN_HACKS, but windows.h must be included before
+ * eggdrop headers, because the malloc/free/Context macros break the inclusion.
+ * The SSL undefs are a workaround for bug #2182 in openssl with msys/mingw.
+ */
+#include <config.h>
+#ifdef CYGWIN_HACKS
+#  include <windows.h>
+#  undef X509_NAME
+#  undef X509_EXTENSIONS
+#  undef X509_CERT_PAIR
+#  undef PKCS7_ISSUER_AND_SERIAL
+#  undef PKCS7_SIGNER_INFO
+#  undef OCSP_REQUEST
+#  undef OCSP_RESPONSE
+#endif
+
 #include "main.h"
 
 #include <fcntl.h>
@@ -60,10 +76,6 @@
 
 #ifdef DEBUG                            /* For debug compile */
 #  include <sys/resource.h>             /* setrlimit() */
-#endif
-
-#ifdef CYGWIN_HACKS
-#  include <windows.h>
 #endif
 
 #ifndef _POSIX_SOURCE

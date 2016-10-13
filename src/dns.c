@@ -470,7 +470,7 @@ void block_dns_hostbyip(sockname_t *addr)
   if (addr->family == AF_INET) {
     if (!sigsetjmp(alarmret, 1)) {
       alarm(resolve_timeout);
-      hp = gethostbyaddr(&addr->addr.s4.sin_addr,
+      hp = gethostbyaddr((const char *) &addr->addr.s4.sin_addr,
                          sizeof (struct in_addr), AF_INET);
       alarm(0);
     }
@@ -480,7 +480,7 @@ void block_dns_hostbyip(sockname_t *addr)
   } else {
     if (!sigsetjmp(alarmret, 1)) {
       alarm(resolve_timeout);
-      hp = gethostbyaddr((char *) &addr->addr.s6.sin6_addr,
+      hp = gethostbyaddr((const char *) &addr->addr.s6.sin6_addr,
                          sizeof (struct in6_addr), AF_INET6);
       alarm(0);
     }
