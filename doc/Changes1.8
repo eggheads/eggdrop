@@ -4,6 +4,12 @@ Eggdrop Changes (since version 1.8.0)
 
 1.8.0:
 
+  - Update x-compile Makefile changes to POSIX compliance. Fixes #273
+    Patch by: Geo
+
+    Allows bsd 'make' to be used on BSD systems (gmake not needed). Fixes
+    bug introduced in e3321ccf46da7950995f7003b83e1b4a8e9eef81
+
   - Tcl various OS linking, cross-compilation issues. Fixes #250, #251
     Patch by: thommey / Found by: eelcohuininga, thommey
 
