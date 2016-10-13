@@ -4,6 +4,14 @@ Eggdrop Changes (since version 1.8.0)
 
 1.8.0:
 
+  - Fix cygwin windows.h inclusion. Fixes #262, #265, #266
+    Patch by: thommey / Found by: creatio, jackal
+
+    Cygwin's windows.h inclusion only works if VOID is not defined, and
+    we undefine their openssl defines before including the official
+    openssh headers. We need to include windows.h to have FreeConsole()
+    to launch eggdrop into the background properly.
+
   - Reset channel information on disconnect properly.
     Patch by: Cizzle
 
