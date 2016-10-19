@@ -386,7 +386,7 @@ static void nuke_server(char *reason)
     for (chan = chanset; chan; chan = chan->next) {
       if (channel_active(chan))
         if ((me = module_find("irc", 1, 3)) != NULL)
-          (me->funcs[IRC_RESET_CHAN_INFO]) (chan, CHAN_RESETALL);
+          (me->funcs[CHANNEL_CLEAR]) (chan, CHAN_RESETALL);
     }
 
     disconnect_server(servidx);
