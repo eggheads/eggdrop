@@ -22,7 +22,7 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
-#define MEMTBLSIZE 25000        /* yikes! */
+#define MEMTBLSIZE 250000       /* yikes! */
 #define COMPILING_MEM
 
 #include "main.h"
