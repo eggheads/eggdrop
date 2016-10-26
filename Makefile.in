@@ -10,7 +10,12 @@ VPATH = @srcdir@
 @SET_MAKE@
 prefix = @prefix@
 DEST = @DEST@
-override DEST := $(abspath $(DEST))
+# GNU Make < 3.82 ignores these != statements, they are for bsd make and gnu make >= 3.82
+DEST_PARENT != readlink `dirname $(DEST)`
+DEST_DIR != basename $(DEST)
+ABSDEST != echo $(DEST_PARENT)/$(DEST_DIR)
+# GNU Make
+ABSDEST ?= $(abspath $(DEST))
 EGGEXEC = @EGGEXEC@
 EGG_CROSS_COMPILING = @EGG_CROSS_COMPILING@
 EGGVERSION = @EGGVERSION@
@@ -128,7 +133,7 @@ MAKE_DEPEND = $(MAKE) 'MAKE=$(MAKE)' 'CC=$(CC)'
 
 MAKE_CONFIG = $(MAKE) 'MAKE=$(MAKE)'
 
-MAKE_INSTALL = $(MAKE) 'MAKE=$(MAKE)' 'DEST=$(DEST)'
+MAKE_INSTALL = $(MAKE) 'MAKE=$(MAKE)' 'DEST=$(ABSDEST)'
 
 all: @DEFAULT_MAKE@
 
@@ -352,7 +357,7 @@ install-start:
 	@echo ""
 	@$(egg_test_run)
 	@echo ""
-	@echo "Installing in directory: '$(DEST)'."
+	@echo "Installing in directory: '$(ABSDEST)'."
 	@echo ""
 	@if test ! -d $(DEST); then \
 		echo "Creating directory '$(DEST)'."; \
