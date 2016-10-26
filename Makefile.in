@@ -11,7 +11,7 @@ VPATH = @srcdir@
 prefix = @prefix@
 DEST = @DEST@
 # GNU Make < 3.82 ignores these != statements, they are for bsd make and gnu make >= 3.82
-DEST_PARENT != readlink `dirname $(DEST)`
+DEST_PARENT != readlink -f `dirname $(DEST)`
 DEST_DIR != basename $(DEST)
 ABSDEST != echo $(DEST_PARENT)/$(DEST_DIR)
 # GNU Make
