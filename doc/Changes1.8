@@ -4,6 +4,17 @@ Eggdrop Changes (since version 1.8.0)
 
 1.8.0:
 
+  - Clear channel modes on disconnect
+    Patch by: Geo / Found by: thommey
+
+    nuke_server() calls reset_chan_info(), which clears channel modes and
+    then re-requests them, which is the point of the function. However,
+    because the server connection has already been killed, chan->status
+    is set to CHAN_ASKEDBANS and thus doesn't re-request the banlist from
+    the server when it finally does rejoin. By setting to clear_chan, the
+    list is just cleared and the banlist properly requested from the IRC
+    server on join.
+
   - Ensure our Makefile works with both BSD make and GNU make.
     Patch by: thommey / Found by: Geo
     
