@@ -932,7 +932,7 @@ AC_DEFUN([EGG_TCL_WITH_TCLLIB],
     if test -f "$tcllibname" && test -r "$tcllibname"; then
       TCLLIB=`echo $tcllibname | sed 's%/[[^/]][[^/]]*$%%'`
       TCLLIBFN=`$BASENAME $tcllibname | cut -c4-`
-      TCLLIBEXT=".`echo $TCLLIBFN | $AWK '{j=split([$]1, i, "."); print i[[j]]}'`"
+      TCLLIBEXT=`echo $TCLLIBFN | $AWK '{j=split([$]1, i, "."); suffix=""; while (i[[j]] ~ /^[[0-9]]+$/) { suffix = "." i[[j--]] suffix; }; print "." i[[j]] suffix }'`
       TCLLIBFNS=`$BASENAME $tcllibname $TCLLIBEXT | cut -c4-`
 
       # Set default make as static for unshared Tcl library
