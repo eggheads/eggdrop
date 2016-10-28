@@ -4,6 +4,10 @@ Eggdrop Changes (since version 1.8.0)
 
 1.8.0:
 
+  - Switch to using $CC -shared for BSD in general, this seems to work on
+    newer versios, and ld -Bshareable -x fails.
+    Patch by: thommey / Found by: LinaSovereign
+
   - Work around some incompatibilies between gnu make 3.82 and 4.x.
     Patch by: thommey / Found by: Robby
 

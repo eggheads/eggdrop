@@ -761,7 +761,7 @@ AC_DEFUN([EGG_CHECK_OS],
     *BSD)
       # FreeBSD/OpenBSD/NetBSD
       SHLIB_CC="$CC -fPIC"
-      SHLIB_LD="ld -Bshareable -x"
+      SHLIB_LD="$CC -shared"
     ;;
     Darwin)
       # Mac OS X
