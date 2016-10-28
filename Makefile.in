@@ -10,10 +10,13 @@ VPATH = @srcdir@
 @SET_MAKE@
 prefix = @prefix@
 DEST = @DEST@
-# GNU Make < 3.82 ignores these != statements, they are for bsd make and gnu make >= 3.82
-DEST_PARENT != readlink -f `dirname $(DEST)`
-DEST_DIR != basename $(DEST)
-ABSDEST != echo $(DEST_PARENT)/$(DEST_DIR)
+# GNU Make < 3.82 ignores these != statements, they are for bsd make and gnu make >= 4.0.
+# gnu make 3.82 interprets a!= b as setting the variable a!.
+# it seems to interpret != otherwise and throws an error.
+DEST_PARENT_DIR!= dirname $(DEST)
+DEST_PARENT!= readlink -f $(DEST_PARENT_DIR)
+DEST_DIR!= basename $(DEST)
+ABSDEST!= echo $(DEST_PARENT)/$(DEST_DIR)
 # GNU Make
 ABSDEST ?= $(abspath $(DEST))
 EGGEXEC = @EGGEXEC@
