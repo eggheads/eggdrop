@@ -12,6 +12,14 @@ experienced users.
 For more information on compiling Eggdrop, see the Compile Guide in
 doc/COMPILE-GUIDE (and of course, the README FILE).
 
+Overview
+--------
+1. What is Eggdrop?
+2. Quick Startup
+3. Cygwin Requirements (Windows)
+4. Modules
+5. Frequently Asked Questions
+
 What is Eggdrop?
 ----------------
 
@@ -109,6 +117,17 @@ Eggdrop uses the GNU autoconfigure scripts to make things easier.
 
 10. Smile, and if you haven't already read the README file in its
     entirety, go take a long walk off a short pier.
+
+Cygwin Requirements (Windows)
+----------------------------------------
+
+Eggdrop requires the following packages to be added from the Cygwin
+installation tool prior to compiling:
+
+Interpreters: tcl, tcl-devel
+Net:          openssl-devel
+Devel:        autoconf, gcc-core, git, make
+Utils:        diffutils
 
 Modules
 -------
