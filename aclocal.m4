@@ -1016,15 +1016,16 @@ AC_DEFUN([EGG_TCL_TCLCONFIG],
     # Also, use the Tcl linker idea to be compatible with their ldflags
     if test -r ${TCL_BIN_DIR}/tclConfig.sh; then
       . ${TCL_BIN_DIR}/tclConfig.sh
+      # OpenBSD uses -pthread, but tclConfig.sh provides that flag in EXTRA_CFLAGS
+      TCL_PTHREAD_LDFLAG=`echo $TCL_EXTRA_CFLAGS | grep -o -- '-pthread'`
       AC_SUBST(SHLIB_LD, $TCL_SHLIB_LD)
-      AC_SUBST(TCL_LIBS)
       AC_MSG_CHECKING([for Tcl linker])
       AC_MSG_RESULT([$SHLIB_LD])
     else
       TCL_LIBS="${EGG_MATH_LIB}"
     fi
     TCL_PATCHLEVEL="${TCL_MAJOR_VERSION}.${TCL_MINOR_VERSION}${TCL_PATCH_LEVEL}"
-    TCL_LIB_SPEC="${TCL_LIB_SPEC} ${TCL_LIBS}"
+    TCL_LIB_SPEC="${TCL_PTHREAD_LDFLAG} ${TCL_LIB_SPEC} ${TCL_LIBS}"
   else
     egg_tcl_changed="yes"
     TCL_LIB_SPEC="-L$TCLLIB -l$TCLLIBFNS ${EGG_MATH_LIB}"
