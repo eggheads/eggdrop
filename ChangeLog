@@ -1,57 +1,26 @@
 - - - - - - - - - - - - - - -
-Commit 87f9943 (2016-11-01 18:43:42 -0400) by Geo
-Update ChangeLog 
-
-ChangeLog
-
-- - - - - - - - - - - - - - -
-Commit 3824a2e (2016-11-01 18:43:23 -0400) by Geo
-Update ChangeLog 
-
-ChangeLog
-
-- - - - - - - - - - - - - - -
-Commit dc6e78e (2016-11-01 18:42:58 -0400) by Geo
-Update ChangeLog 
-
-ChangeLog
-misc/releaseprep
-
-- - - - - - - - - - - - - - -
-Commit 75053e2 (2016-11-01 18:36:55 -0400) by Geo
-Check for recent ChangeLog 
+Commit 9a669cf (2016-11-01 18:51:27 -0400) by Geo
+Push tags as part of releaseprep 
 
 misc/releaseprep
-src/patch.h
 
 - - - - - - - - - - - - - - -
-Commit 62a923c (2016-11-01 18:35:33 -0400) by Geo
-Check for recent ChangeLog 
+Commit 9e1f329 (2016-11-01 18:49:33 -0400) by Geo
+Update doc/Changes1.8 
 
+doc/Changes1.8
+
+- - - - - - - - - - - - - - -
+Commit 7f5c04f (2016-11-01 18:19:08 -0400) by Geo
+Commit ChangeLog in releaseprep if changed 
+
+ChangeLog
 aclocal.m4
 configure
 doc/html/objects.inv
 doc/html/searchindex.js
 misc/releaseprep
 src/patch.h
-
-- - - - - - - - - - - - - - -
-Commit 0ef499c (2016-11-01 18:34:40 -0400) by Geo
-Check for recent ChangeLog 
-
-misc/releaseprep
-
-- - - - - - - - - - - - - - -
-Commit c991d75 (2016-11-01 18:27:45 -0400) by Geo
-Remove whitespace from ChangeLog gen 
-
-misc/releaseprep
-
-- - - - - - - - - - - - - - -
-Commit 27d6e06 (2016-11-01 18:19:08 -0400) by Geo
-Commit ChangeLog in releaseprep if changed 
-
-misc/releaseprep
 
 - - - - - - - - - - - - - - -
 Commit becf7dd (2016-11-01 18:13:32 -0400) by Geo
