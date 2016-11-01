@@ -95,5 +95,6 @@ mv tmpdocs/users.txt $BASEDIR/../doc/USERS
 mv tmpdocs/weird-msgs.txt $BASEDIR/../doc/WEIRD-MESSAGES
 mv tmpdocs/woobie.txt $BASEDIR/../doc/settings/mod.woobie
 rm -rf tmpdocs
+rm -rf $BASEDIR/../doc/html/_sources
 
 echo "Yahtzee!"
