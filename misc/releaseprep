@@ -208,7 +208,7 @@ if [ $PUSH = "y" ]; then
   git checkout -B stable/$MAJMIN
   git merge develop
   git tag $RLS
-  git push origin stable/$MAJMIN
+  git push origin stable/$MAJMIN --tags
 else
   echo "Aborting. Coward."
   exit 0
