@@ -1,4 +1,16 @@
 - - - - - - - - - - - - - - -
+Commit 6315d7a (2016-11-01 19:06:05 -0400) by Geo
+Don't create _sources doc dir 
+
+misc/generateDocs
+
+- - - - - - - - - - - - - - -
+Commit 69c0546 (2016-11-01 18:51:50 -0400) by Geo
+Update ChangeLog 
+
+ChangeLog
+
+- - - - - - - - - - - - - - -
 Commit 9a669cf (2016-11-01 18:51:27 -0400) by Geo
 Push tags as part of releaseprep 
 
