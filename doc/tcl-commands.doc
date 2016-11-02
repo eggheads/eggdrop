@@ -1908,23 +1908,23 @@ logfile [<modes> <channel> <filename>]
 
   Logfile flags:
 
-    ------ -------------------------------------------------------
-    b      information about bot linking and userfile sharing
-    c      commands
-    d      misc debug information
-    h      raw share traffic
-    j      joins, parts, quits, and netsplits on the channel
-    k      kicks, bans, and mode changes on the channel
-    m      private msgs, notices and ctcps to the bot
-    o      misc info, errors, etc (IMPORTANT STUFF)
-    p      public text on the channel
-    r      raw incoming server traffic
-    s      server connects, disconnects, and notices
-    t      raw botnet traffic
-    v      raw outgoing server traffic
-    w      wallops (make sure the bot sets +w in init-server)
-    x      file transfers and file-area commands
-    ------ -------------------------------------------------------
+    ----- ------------------------------------------------------------------
+    b     information about bot linking and userfile sharing
+    c     commands
+    d     misc debug information
+    h     raw share traffic
+    j     joins, parts, quits, topic changes, and netsplits on the channel
+    k     kicks, bans, and mode changes on the channel
+    m     private msgs, notices and ctcps to the bot
+    o     misc info, errors, etc (IMPORTANT STUFF)
+    p     public text on the channel
+    r     raw incoming server traffic
+    s     server connects, disconnects, and notices
+    t     raw botnet traffic
+    v     raw outgoing server traffic
+    w     wallops (make sure the bot sets +w in init-server)
+    x     file transfers and file-area commands
+    ----- ------------------------------------------------------------------
 
   Returns: filename of logfile created, or, if no logfile is specified,
   a list of logfiles such as: {mco * eggdrop.log} {jp #lame lame.log}
@@ -1971,7 +1971,7 @@ timer <minutes> <tcl-command> [count]
 
   Module: core
 
-timer <seconds> <tcl-command> [count]
+utimer <seconds> <tcl-command> [count]
 
   Description: executes the given Tcl command after a certain number of
   seconds have passed. If count is specified, the command will be
@@ -3034,7 +3034,7 @@ the Tcl proc, and an explanation.
   mask matches 5 space separated integers of the form: "minute hour day
   month year". The month var starts at 00 (Jan) and ends at 11 (Dec).
   Minute, hour, day, month have a zero padding so they are exactly two
-  characters long; year is zero characters. Flags are ignored.
+  characters long; year is four characters. Flags are ignored.
 
   Module: core
 

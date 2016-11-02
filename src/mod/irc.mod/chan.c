@@ -177,7 +177,7 @@ static void do_mask(struct chanset_t *chan, masklist *m, char *mask, char mode)
  * and handles kick & deop as well.
  */
 static int detect_chan_flood(char *floodnick, char *floodhost, char *from,
-                             struct chanset_t *chan, int which, char *victim, int size)
+                             struct chanset_t *chan, int which, char *victim)
 {
   char h[UHOSTLEN], ftype[12], *p;
   struct userrec *u;
@@ -232,11 +232,6 @@ static int detect_chan_flood(char *floodnick, char *floodhost, char *from,
     lapse = chan->flood_nick_time;
     strcpy(ftype, "nick");
     break;
-  case FLOOD_SIZE:
-    thr = chan->flood_size_thr;
-    lapse = chan->flood_size_time;
-    strcpy(ftype, "pub");
-    break;
   case FLOOD_JOIN:
     thr = chan->flood_join_thr;
     lapse = chan->flood_join_time;
@@ -270,19 +265,13 @@ static int detect_chan_flood(char *floodnick, char *floodhost, char *from,
     strncpy(chan->floodwho[which], p, 80);
     chan->floodwho[which][80] = 0;
     chan->floodtime[which] = now;
-    if (which == FLOOD_SIZE)
-      chan->floodnum[which] = size;
-    else
-      chan->floodnum[which] = 1;
+    chan->floodnum[which] = 1;
     return 0;
   }
   if (chan->floodtime[which] < now - lapse) {
     /* Flood timer expired, reset it */
     chan->floodtime[which] = now;
-    if (which == FLOOD_SIZE)
-      chan->floodnum[which] = size;
-    else
-      chan->floodnum[which] = 1;
+    chan->floodnum[which] = 1;
     return 0;
   }
   /* Deop'n the same person, sillyness ;) - so just ignore it */
@@ -292,12 +281,7 @@ static int detect_chan_flood(char *floodnick, char *floodhost, char *from,
     else
       strcpy(chan->deopd, victim);
   }
-
-  if (which == FLOOD_SIZE)
-    chan->floodnum[which]+=size;
-  else
-    chan->floodnum[which]++;
-
+  chan->floodnum[which]++;
   if (chan->floodnum[which] >= thr) {   /* FLOOD */
     /* Reset counters */
     chan->floodnum[which] = 0;
@@ -312,7 +296,6 @@ static int detect_chan_flood(char *floodnick, char *floodhost, char *from,
     case FLOOD_PRIVMSG:
     case FLOOD_NOTICE:
     case FLOOD_CTCP:
-    case FLOOD_SIZE:
       /* Flooding chan! either by public or notice */
       if (!chan_sentkick(m) &&
           (me_op(chan) || (me_halfop(chan) && !chan_hasop(m)))) {
@@ -1745,7 +1728,7 @@ static int gotjoin(char *from, char *chname)
     chan->status &= ~CHAN_STOP_CYCLE;
     strcpy(uhost, from);
     nick = splitnick(&uhost);
-    detect_chan_flood(nick, uhost, from, chan, FLOOD_JOIN, NULL, 0);
+    detect_chan_flood(nick, uhost, from, chan, FLOOD_JOIN, NULL);
 
     chan = findchan(chname);
     if (!chan) {
@@ -2077,7 +2060,7 @@ static int gotkick(char *from, char *origmsg)
     u = get_user_by_host(from);
     strcpy(uhost, from);
     whodid = splitnick(&uhost);
-    detect_chan_flood(whodid, uhost, from, chan, FLOOD_KICK, nick, 0);
+    detect_chan_flood(whodid, uhost, from, chan, FLOOD_KICK, nick);
 
     chan = findchan(chname);
     if (!chan)
@@ -2168,7 +2151,7 @@ static int gotnick(char *from, char *msg)
       /* Compose a nick!user@host for the new nick */
       sprintf(s1, "%s!%s", msg, uhost);
       strcpy(m->nick, msg);
-      detect_chan_flood(msg, uhost, from, chan, FLOOD_NICK, NULL, 0);
+      detect_chan_flood(msg, uhost, from, chan, FLOOD_NICK, NULL);
 
       if (!findchan_by_dname(chname)) {
         chan = oldchan;
@@ -2335,8 +2318,7 @@ static int gotmsg(char *from, char *msg)
       strcpy(ctcp, p1);
       strcpy(p1 - 1, p + 1);
       detect_chan_flood(nick, uhost, from, chan, strncmp(ctcp, "ACTION ", 7) ?
-                        FLOOD_CTCP : FLOOD_PRIVMSG, NULL, 0);
-      detect_chan_flood(nick, uhost, from, chan, FLOOD_SIZE, NULL, strlen(msg));
+                        FLOOD_CTCP : FLOOD_PRIVMSG, NULL);
 
       chan = findchan(realto);
       if (!chan)
@@ -2393,8 +2375,7 @@ static int gotmsg(char *from, char *msg)
     int result = 0;
 
     /* Check even if we're ignoring the host. (modified by Eule 17.7.99) */
-    detect_chan_flood(nick, uhost, from, chan, FLOOD_PRIVMSG, NULL, 0);
-    detect_chan_flood(nick, uhost, from, chan, FLOOD_SIZE, NULL, strlen(msg));
+    detect_chan_flood(nick, uhost, from, chan, FLOOD_PRIVMSG, NULL);
 
     chan = findchan(realto);
     if (!chan)
@@ -2458,8 +2439,7 @@ static int gotnotice(char *from, char *msg)
       p = strchr(msg, 1);
       detect_chan_flood(nick, uhost, from, chan,
                         strncmp(ctcp, "ACTION ", 7) ?
-                        FLOOD_CTCP : FLOOD_PRIVMSG, NULL, 0);
-      detect_chan_flood(nick, uhost, from, chan, FLOOD_SIZE, NULL, strlen(msg));
+                        FLOOD_CTCP : FLOOD_PRIVMSG, NULL);
 
       chan = findchan(realto);
       if (!chan)
@@ -2487,8 +2467,7 @@ static int gotnotice(char *from, char *msg)
   if (msg[0]) {
 
     /* Check even if we're ignoring the host. (modified by Eule 17.7.99) */
-    detect_chan_flood(nick, uhost, from, chan, FLOOD_NOTICE, NULL, 0);
-    detect_chan_flood(nick, uhost, from, chan, FLOOD_SIZE, NULL, strlen(msg));
+    detect_chan_flood(nick, uhost, from, chan, FLOOD_NOTICE, NULL);
 
     chan = findchan(realto);
     if (!chan)

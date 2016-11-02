@@ -10,8 +10,17 @@ VPATH = @srcdir@
 @SET_MAKE@
 prefix = @prefix@
 DEST = @DEST@
-override DEST := $(abspath $(DEST))
+# GNU Make < 3.82 ignores these != statements, they are for bsd make and gnu make >= 4.0.
+# gnu make 3.82 interprets a!= b as setting the variable a!.
+# it seems to interpret != otherwise and throws an error.
+DEST_PARENT_DIR!= dirname $(DEST)
+DEST_PARENT!= readlink -f $(DEST_PARENT_DIR)
+DEST_DIR!= basename $(DEST)
+ABSDEST!= echo $(DEST_PARENT)/$(DEST_DIR)
+# GNU Make
+ABSDEST ?= $(abspath $(DEST))
 EGGEXEC = @EGGEXEC@
+EGG_CROSS_COMPILING = @EGG_CROSS_COMPILING@
 EGGVERSION = @EGGVERSION@
 
 # Extra compiler flags
@@ -74,7 +83,10 @@ MODULE_XLIBS = @MODULE_XLIBS@
 
 modconf = $(top_srcdir)/misc/modconfig --top_srcdir=$(top_srcdir)
 
-egg_test_run = EGG_LANGDIR=$(top_srcdir)/language ./$(EGGEXEC) -v
+egg_test_run = if [ '$(EGG_CROSS_COMPILING)' = 'no' ]; \
+               	then EGG_LANGDIR=$(top_srcdir)/language ./$(EGGEXEC) -v; \
+               	else echo 'This build is a cross-compilation, skipping test run...'; \
+               fi
 
 post_config  =  echo "" && \
 		echo "You can now compile the bot, using \"make\"." && \
@@ -124,7 +136,7 @@ MAKE_DEPEND = $(MAKE) 'MAKE=$(MAKE)' 'CC=$(CC)'
 
 MAKE_CONFIG = $(MAKE) 'MAKE=$(MAKE)'
 
-MAKE_INSTALL = $(MAKE) 'MAKE=$(MAKE)' 'DEST=$(DEST)'
+MAKE_INSTALL = $(MAKE) 'MAKE=$(MAKE)' 'DEST=$(ABSDEST)'
 
 all: @DEFAULT_MAKE@
 
@@ -348,7 +360,7 @@ install-start:
 	@echo ""
 	@$(egg_test_run)
 	@echo ""
-	@echo "Installing in directory: '$(DEST)'."
+	@echo "Installing in directory: '$(ABSDEST)'."
 	@echo ""
 	@if test ! -d $(DEST); then \
 		echo "Creating directory '$(DEST)'."; \
@@ -396,6 +408,9 @@ install-modules:
 install-data:
 	@if test ! -f $(DEST)/eggdrop.conf; then \
 		$(INSTALL_DATA) $(srcdir)/eggdrop.conf $(DEST)/; \
+	fi
+	@if test ! -f $(DEST)/eggdrop-basic.conf; then \
+		$(INSTALL_DATA) $(srcdir)/eggdrop-basic.conf $(DEST)/; \
 	fi
 	@if test ! -d $(DEST)/logs; then \
 		echo "Creating 'logs' subdirectory."; \

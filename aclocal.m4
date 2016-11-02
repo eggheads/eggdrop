@@ -242,7 +242,7 @@ dnl
 AC_DEFUN([EGG_CHECK_SOCKLEN_T],
 [
   AC_CACHE_CHECK([for socklen_t], egg_cv_socklen_t, [
-    AC_RUN_IFELSE([AC_LANG_PROGRAM([[
+    AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[
       #include <unistd.h>
       #include <sys/param.h>
       #include <sys/types.h>
@@ -260,8 +260,6 @@ AC_DEFUN([EGG_CHECK_SOCKLEN_T],
       egg_cv_socklen_t="yes"
     ], [
       egg_cv_socklen_t="no"
-    ], [
-      egg_cv_socklen_t="cross"
     ])
   ])
 
@@ -763,7 +761,7 @@ AC_DEFUN([EGG_CHECK_OS],
     *BSD)
       # FreeBSD/OpenBSD/NetBSD
       SHLIB_CC="$CC -fPIC"
-      SHLIB_LD="ld -Bshareable -x"
+      SHLIB_LD="$CC -shared"
     ;;
     Darwin)
       # Mac OS X
@@ -934,7 +932,7 @@ AC_DEFUN([EGG_TCL_WITH_TCLLIB],
     if test -f "$tcllibname" && test -r "$tcllibname"; then
       TCLLIB=`echo $tcllibname | sed 's%/[[^/]][[^/]]*$%%'`
       TCLLIBFN=`$BASENAME $tcllibname | cut -c4-`
-      TCLLIBEXT=".`echo $TCLLIBFN | $AWK '{j=split([$]1, i, "."); print i[[j]]}'`"
+      TCLLIBEXT=`echo $TCLLIBFN | $AWK '{j=split([$]1, i, "."); suffix=""; while (i[[j]] ~ /^[[0-9]]+$/) { suffix = "." i[[j--]] suffix; }; print "." i[[j]] suffix }'`
       TCLLIBFNS=`$BASENAME $tcllibname $TCLLIBEXT | cut -c4-`
 
       # Set default make as static for unshared Tcl library
@@ -1010,12 +1008,24 @@ AC_DEFUN([EGG_TCL_TCLCONFIG],
   if test "x$TCLLIBFN" = x; then
     AC_MSG_NOTICE([Autoconfiguring Tcl with tclConfig.sh])
     egg_tcl_changed="yes"
-    TEA_INIT("3.9")
+    TEA_INIT("3.10")
     TEA_PATH_TCLCONFIG
     TEA_LOAD_TCLCONFIG
     TEA_TCL_LINK_LIBS
+    # Overwrite TCL_LIBS again, which TCL_LOAD_TCLCONFIG unfortunately overwrites from tclConfig.sh
+    # Also, use the Tcl linker idea to be compatible with their ldflags
+    if test -r ${TCL_BIN_DIR}/tclConfig.sh; then
+      . ${TCL_BIN_DIR}/tclConfig.sh
+      # OpenBSD uses -pthread, but tclConfig.sh provides that flag in EXTRA_CFLAGS
+      TCL_PTHREAD_LDFLAG=`echo $TCL_EXTRA_CFLAGS | grep -o -- '-pthread'`
+      AC_SUBST(SHLIB_LD, $TCL_SHLIB_LD)
+      AC_MSG_CHECKING([for Tcl linker])
+      AC_MSG_RESULT([$SHLIB_LD])
+    else
+      TCL_LIBS="${EGG_MATH_LIB}"
+    fi
     TCL_PATCHLEVEL="${TCL_MAJOR_VERSION}.${TCL_MINOR_VERSION}${TCL_PATCH_LEVEL}"
-    TCL_LIB_SPEC="${TCL_LIB_SPEC} ${MATH_LIBS}"
+    TCL_LIB_SPEC="${TCL_PTHREAD_LDFLAG} ${TCL_LIB_SPEC} ${TCL_LIBS}"
   else
     egg_tcl_changed="yes"
     TCL_LIB_SPEC="-L$TCLLIB -l$TCLLIBFNS ${EGG_MATH_LIB}"
@@ -1027,6 +1037,9 @@ AC_DEFUN([EGG_TCL_TCLCONFIG],
     TCL_PATCHLEVEL=`grep TCL_PATCH_LEVEL $TCLINC/$TCLINCFN | $HEAD_1 | $AWK '{gsub(/\"/, "", [$]3); print [$]3}'`
     TCL_MAJOR_VERSION=`echo $TCL_VERSION | cut -d. -f1`
     TCL_MINOR_VERSION=`echo $TCL_VERSION | cut -d. -f2`
+    if test $TCL_MAJOR_VERSION -gt 8 || test $TCL_MAJOR_VERSION -eq 8 -a $TCL_MINOR_VERSION -ge 6; then
+      TCL_LIB_SPEC="$TCL_LIB_SPEC -lz"
+    fi
   fi
 
   AC_MSG_CHECKING([for Tcl version])
@@ -1468,6 +1481,23 @@ AC_DEFUN([EGG_IPV6_STATUS],
       egg_cv_var_ipv6_supported="yes"
      ], [
       egg_cv_var_ipv6_supported="no"
+    ], [
+      AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[
+        #include <unistd.h>
+        #include <sys/socket.h>
+        #include <netinet/in.h>
+      ]], [[
+          int s = socket(AF_INET6, SOCK_STREAM, 0);
+  
+          if (s != -1)
+            close(s);
+  
+          return((s == -1));
+      ]])], [
+        egg_cv_var_ipv6_supported="yes"
+       ], [
+        egg_cv_var_ipv6_supported="no"
+      ])
     ])
   ])
 ])

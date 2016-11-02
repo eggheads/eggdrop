@@ -1608,37 +1608,37 @@ Miscellaneous Commands
 
   Logfile flags:
 
-  +-----+------------------------------------------------------+
-  | b   | information about bot linking and userfile sharing   |
-  +-----+------------------------------------------------------+
-  | c   | commands                                             |
-  +-----+------------------------------------------------------+
-  | d   | misc debug information                               |
-  +-----+------------------------------------------------------+
-  | h   | raw share traffic                                    |
-  +-----+------------------------------------------------------+
-  | j   | joins, parts, quits, and netsplits on the channel    |
-  +-----+------------------------------------------------------+
-  | k   | kicks, bans, and mode changes on the channel         |
-  +-----+------------------------------------------------------+
-  | m   | private msgs, notices and ctcps to the bot           |
-  +-----+------------------------------------------------------+
-  | o   | misc info, errors, etc (IMPORTANT STUFF)             |
-  +-----+------------------------------------------------------+
-  | p   | public text on the channel                           |
-  +-----+------------------------------------------------------+
-  | r   | raw incoming server traffic                          |
-  +-----+------------------------------------------------------+
-  | s   | server connects, disconnects, and notices            |
-  +-----+------------------------------------------------------+
-  | t   | raw botnet traffic                                   |
-  +-----+------------------------------------------------------+
-  | v   | raw outgoing server traffic                          |
-  +-----+------------------------------------------------------+
-  | w   | wallops (make sure the bot sets +w in init-server)   |
-  +-----+------------------------------------------------------+
-  | x   | file transfers and file-area commands                |
-  +-----+------------------------------------------------------+
+  +-----+---------------------------------------------------------------------+
+  | b   | information about bot linking and userfile sharing                  |
+  +-----+---------------------------------------------------------------------+
+  | c   | commands                                                            |
+  +-----+---------------------------------------------------------------------+
+  | d   | misc debug information                                              |
+  +-----+---------------------------------------------------------------------+
+  | h   | raw share traffic                                                   |
+  +-----+---------------------------------------------------------------------+
+  | j   | joins, parts, quits, topic changes, and netsplits on the channel    |
+  +-----+---------------------------------------------------------------------+
+  | k   | kicks, bans, and mode changes on the channel                        |
+  +-----+---------------------------------------------------------------------+
+  | m   | private msgs, notices and ctcps to the bot                          |
+  +-----+---------------------------------------------------------------------+
+  | o   | misc info, errors, etc (IMPORTANT STUFF)                            |
+  +-----+---------------------------------------------------------------------+
+  | p   | public text on the channel                                          |
+  +-----+---------------------------------------------------------------------+
+  | r   | raw incoming server traffic                                         |
+  +-----+---------------------------------------------------------------------+
+  | s   | server connects, disconnects, and notices                           |
+  +-----+---------------------------------------------------------------------+
+  | t   | raw botnet traffic                                                  |
+  +-----+---------------------------------------------------------------------+
+  | v   | raw outgoing server traffic                                         |
+  +-----+---------------------------------------------------------------------+
+  | w   | wallops (make sure the bot sets +w in init-server)                  |
+  +-----+---------------------------------------------------------------------+
+  | x   | file transfers and file-area commands                               |
+  +-----+---------------------------------------------------------------------+
 
   Returns: filename of logfile created, or, if no logfile is specified, a list of logfiles such as: {mco * eggdrop.log} {jp #lame lame.log}
 
@@ -1688,7 +1688,7 @@ Miscellaneous Commands
 
   Module: core
 
-**timer <seconds> <tcl-command> [count]**
+**utimer <seconds> <tcl-command> [count]**
 
   Description: executes the given Tcl command after a certain number of seconds have passed. If count is specified, the command will be executed count times with the given interval in between. If you specify a count of 0, the utimer will repeat until it's removed with killutimer or until the bot is restarted.
 
@@ -2558,7 +2558,7 @@ The following is a list of bind types and how they work. Below each bind type is
 
   procname <minute 00-59> <hour 00-23> <day 01-31> <month 00-11> <year 0000-9999>
 
-  Description: allows you to schedule procedure calls at certain times. mask matches 5 space separated integers of the form: "minute hour day month year". The month var starts at 00 (Jan) and ends at 11 (Dec). Minute, hour, day, month have a zero padding so they are exactly two characters long; year is zero characters. Flags are ignored.
+  Description: allows you to schedule procedure calls at certain times. mask matches 5 space separated integers of the form: "minute hour day month year". The month var starts at 00 (Jan) and ends at 11 (Dec). Minute, hour, day, month have a zero padding so they are exactly two characters long; year is four characters. Flags are ignored.
 
   Module: core
 

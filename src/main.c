@@ -29,6 +29,22 @@
  * list available at eggheads@eggheads.org.
  */
 
+/* We need config.h for CYGWIN_HACKS, but windows.h must be included before
+ * eggdrop headers, because the malloc/free/Context macros break the inclusion.
+ * The SSL undefs are a workaround for bug #2182 in openssl with msys/mingw.
+ */
+#include <config.h>
+#ifdef CYGWIN_HACKS
+#  include <windows.h>
+#  undef X509_NAME
+#  undef X509_EXTENSIONS
+#  undef X509_CERT_PAIR
+#  undef PKCS7_ISSUER_AND_SERIAL
+#  undef PKCS7_SIGNER_INFO
+#  undef OCSP_REQUEST
+#  undef OCSP_RESPONSE
+#endif
+
 #include "main.h"
 
 #include <fcntl.h>
@@ -60,10 +76,6 @@
 
 #ifdef DEBUG                            /* For debug compile */
 #  include <sys/resource.h>             /* setrlimit() */
-#endif
-
-#ifdef CYGWIN_HACKS
-#  include <windows.h>
 #endif
 
 #ifndef _POSIX_SOURCE
@@ -990,7 +1002,7 @@ int main(int arg_c, char **arg_v)
   /* Version info! */
   egg_snprintf(ver, sizeof ver, "eggdrop v%s", egg_version);
   egg_snprintf(version, sizeof version,
-               "Eggdrop v%s (C) 1997 Robey Pointer (C) 2010 Eggheads",
+               "Eggdrop v%s (C) 1997 Robey Pointer (C) 2010-2016 Eggheads",
                egg_version);
   /* Now add on the patchlevel (for Tcl) */
   sprintf(&egg_version[strlen(egg_version)], " %u", egg_numver);

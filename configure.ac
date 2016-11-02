@@ -171,6 +171,14 @@ EGG_SUBST_MOD_UPDIR
 
 EGG_CATCH_MAKEFILE_REBUILD
 
+dnl If we are cross-compiling, make a note of it so we can skip some tests in the Makefile
+AS_IF([test "$cross_compiling" = "yes"], [
+	EGG_CROSS_COMPILING=yes
+], [
+	EGG_CROSS_COMPILING=no
+])
+AC_SUBST(EGG_CROSS_COMPILING)
+
 
 # Create Makefiles
 AC_CONFIG_FILES([Makefile doc/Makefile scripts/Makefile src/Makefile src/compat/Makefile src/md5/Makefile src/mod/Makefile])

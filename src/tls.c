@@ -298,7 +298,7 @@ static int ssl_hostmatch(char *cn, char *host)
 
   if ((r = strchr(cn + 1, '.')) && r[-1] == '*' && strchr(r, '.')) {
     for (p = cn, q = host; *p != '*'; p++, q++)
-      if (toupper(*p) != toupper(*q))
+      if (toupper((unsigned char)*p) != toupper((unsigned char)*q))
         return 0;
 
     if (!(p = strchr(host, '.')) || strcasecmp(p, r))

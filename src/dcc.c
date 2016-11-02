@@ -1590,7 +1590,7 @@ static void dcc_telnet_id(int idx, char *buf, int atr)
 }
 
 #ifdef TLS
-int dcc_fingerprint(idx)
+int dcc_fingerprint(int idx)
 {
   char *cf, *uf;
   struct flag_record fr = { FR_GLOBAL | FR_CHAN | FR_ANYWH, 0, 0, 0, 0, 0 };

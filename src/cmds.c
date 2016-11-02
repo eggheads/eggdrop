@@ -1904,11 +1904,12 @@ static void cmd_chat(struct userrec *u, int idx, char *par)
         else {
           Tcl_SetVar(interp, "_chan", arg, 0);
           if ((Tcl_VarEval(interp, "assoc ", "$_chan", NULL) == TCL_OK) &&
-              !tcl_resultempty())
+              !tcl_resultempty()) {
             newchan = tcl_resultint();
             if ((newchan >= GLOBAL_CHANS) && (newchan <= 199999)) {
               localchan = 1;
             }
+          }
           else
             newchan = -1;
         }

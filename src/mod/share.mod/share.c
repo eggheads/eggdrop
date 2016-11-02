@@ -1262,7 +1262,7 @@ static void share_end(int idx, char *par)
 
 static void share_feats(int idx, char *par)
 {
-  (int) uf_features_check(idx, par);
+  uf_features_check(idx, par);
 }
 
 

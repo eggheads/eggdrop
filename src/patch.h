@@ -34,17 +34,17 @@
  *
  *
  */
-patch("PRE-RELEASE");           /* RC version */
+patch("Git");                   /* Git version */
 /*
  *
  *
  */
-patch("1473549914");            /* current unixtime */
+patch("1476373641");            /* current unixtime */
 /*
  *
  *
  */
-patch("RC1");
+patch("itcompiles");
 /*
  *
  *

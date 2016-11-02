@@ -273,8 +273,8 @@ static inline u_32bit_t getipbash(IP ip)
 #ifdef IPV6
 static unsigned long getip6bash(struct in6_addr *ip6) {
   u_32bit_t x, y;
-  egg_memcpy(&x, &ip6->s6_addr     , sizeof x);
-  egg_memcpy(&y, &ip6->s6_addr + 12, sizeof y);
+  egg_memcpy(&x, ip6->s6_addr     , sizeof x);
+  egg_memcpy(&y, ip6->s6_addr + 12, sizeof y);
   x ^= y;
   return (unsigned long) BASH_MODULO(x);
 }
@@ -1080,7 +1080,7 @@ void parserespacket(u_8bit_t *response, int len)
 static void dns_ack(void)
 {
   struct sockaddr_in from;
-  unsigned int fromlen = sizeof(struct sockaddr_in);
+  socklen_t fromlen = sizeof(struct sockaddr_in);
   int r, i;
 
   r = recvfrom(resfd, (u_8bit_t *) resrecvbuf, MAX_PACKETSIZE, 0,

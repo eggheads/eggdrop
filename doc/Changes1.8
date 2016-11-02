@@ -1,8 +1,127 @@
-Eggdrop Changes (since version 1.8.0)
+Eggdrop Changes (since version 1.6.21)
 
     _____________________________________________________________________
 
 1.8.0:
+
+  # RC2 Relased on Nov 1, 2016
+
+  - Use -pthread for OpenBSD linking, found in TCL_EXTRA_CFLAGS in tclConfig.sh.
+    Patch by: thommey / Found by: fahuo
+
+  - Trim version numbers from tcllib names like libtcl8.5.so.1.7.
+    Patch by: thommey
+
+  - Switch to using $CC -shared for BSD in general, this seems to work on
+    newer versios, and ld -Bshareable -x fails.
+    Patch by: thommey / Found by: LinaSovereign
+
+  - Work around some incompatibilies between gnu make 3.82 and 4.x.
+    Patch by: thommey / Found by: Robby
+
+  - Fix out-of-bounds read error
+    Patch by: thommey, Geo / Found by: Robby
+
+  - Clear channel modes on disconnect
+    Patch by: Geo / Found by: thommey
+
+    nuke_server() calls reset_chan_info(), which clears channel modes and
+    then re-requests them, which is the point of the function. However,
+    because the server connection has already been killed, chan->status
+    is set to CHAN_ASKEDBANS and thus doesn't re-request the banlist from
+    the server when it finally does rejoin. By setting to clear_chan, the
+    list is just cleared and the banlist properly requested from the IRC
+    server on join.
+
+  - Ensure our Makefile works with both BSD make and GNU make.
+    Patch by: thommey / Found by: Geo
+    
+  - Fix formatting bug in 618ecbf9, MISC_LOGREPEAT contains a format specifier.
+    Patch by: thommey / Found by: Robby
+
+  - Increase memory table size for memory debugging by factor 10.
+    Found by: Kiril, various / Patch by: thommey
+
+  - Fix compile warnings.
+    Patch by: thommey
+
+  - Update x-compile Makefile changes to POSIX compliance. Fixes #273
+    Patch by: Geo
+
+    Allows bsd 'make' to be used on BSD systems (gmake not needed). Fixes
+    bug introduced in e3321ccf46da7950995f7003b83e1b4a8e9eef81
+
+  - Tcl various OS linking, cross-compilation issues. Fixes #250, #251
+    Patch by: thommey / Found by: eelcohuininga, thommey
+
+    Fixes Tcl-related compilation/linking issues by using the
+    tclConfig.sh variables and including -lz if Tcl >= 8.6 and we have no
+    tclConfig.sh
+
+  - Fix cygwin windows.h inclusion. Fixes #262, #265, #266
+    Patch by: thommey / Found by: creatio, jackal
+
+    Cygwin's windows.h inclusion only works if VOID is not defined, and
+    we undefine their openssl defines before including the official
+    openssh headers. We need to include windows.h to have FreeConsole()
+    to launch eggdrop into the background properly.
+
+  - Reset channel information on disconnect properly.
+    Patch by: Cizzle
+
+  - Fix a bug introduced by Tcl interp result transition.
+    Patch by: thommey / Found by: simply
+
+  - Update tcl.m4 (Adds NetBSD tclConfig.sh path). Fixes #175
+    Patch by: thommey,Geo / Found by: fhorst
+
+  - Remove duplicate uppercase doc filenames
+    Patch by: Geo / Found by: jackal^
+
+  - Fix compile warning about potentially signed char as array subscript.
+    Patch by: thommey
+
+  - Install eggdrop-basic.conf on make install.
+    Patch by: Geo / Found by: thommey
+
+  - Fix various compile warnings:
+    Fixed type of recvfrom's last argument to be socklen_t, not uint.
+    Added first arg cast for const char* in gethostbyaddr for cygwin.
+    Added explicit type of idx as function argument.
+    Patch by: thommey
+
+  - Add help-path to eggdrop-basic.conf
+    Patch by: thommey / Found by: simple
+
+  - Add owner setting to eggdrop-basic.conf
+    Patch by: thommey
+
+  - Update TEA version for tcl.m4.
+    Patch by: thommey / Found by: b6s3d
+
+  - Fix doc generation incorrectly placing new docs
+    Patch by: Geo / Found by: Pixelz
+
+  - Commit ChangeLog before generating RC/Final release
+    Patch by: Geo / Found by: kisser
+
+  - Update docs to indicate the 'j' flag logs topic changes
+    Patch by: Geo / Found by: senpai
+
+  - Fix cross-compilation errors regarding socklen and IPv6
+    Skip attempted test run after make on x-compiles 
+    Patch by: Anonymous / Found by: eelcohuininga
+
+  - Update copyright date for ./eggdrop -v.
+    Patch by: thommey / Found by: maimizuno
+
+  - Typo: tcl-commands.doc bind time description
+    Patch by: Geo / Found by: maimizuno
+
+  - Typo: "timer <seconds>" should be "utimer <seconds>"
+    Patch by: sirfz, Geo / Found by: sirfz
+
+  # RC1 Relased on September 12, 2016
 
   - Add basic.eggdrop.conf to source directory
     Patch by: Geo, thommey
@@ -118,9 +237,6 @@ Eggdrop Changes (since version 1.8.0)
 
   - Fix duplicate array value in module API
     Patch by: Geo / Found by: IRC user
-
-  - Add byte-based flood option
-    Patch by: remorse
 
   - Reply properly to server-generated CTCPs
     Patch by: Geo / Found by: IRC user

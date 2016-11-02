@@ -1531,8 +1531,8 @@ directory</td>
 <p>Logfile flags:</p>
 <table border="1" class="docutils">
 <colgroup>
-<col width="8%" />
-<col width="92%" />
+<col width="7%" />
+<col width="93%" />
 </colgroup>
 <tbody valign="top">
 <tr class="row-odd"><td>b</td>
@@ -1548,7 +1548,7 @@ directory</td>
 <td>raw share traffic</td>
 </tr>
 <tr class="row-odd"><td>j</td>
-<td>joins, parts, quits, and netsplits on the channel</td>
+<td>joins, parts, quits, topic changes, and netsplits on the channel</td>
 </tr>
 <tr class="row-even"><td>k</td>
 <td>kicks, bans, and mode changes on the channel</td>
@@ -1640,7 +1640,7 @@ will be used.</p>
 <p>Returns: a timerID</p>
 <p>Module: core</p>
 </div></blockquote>
-<p><strong>timer &lt;seconds&gt; &lt;tcl-command&gt; [count]</strong></p>
+<p><strong>utimer &lt;seconds&gt; &lt;tcl-command&gt; [count]</strong></p>
 <blockquote>
 <div><p>Description: executes the given Tcl command after a certain number of seconds have passed. If count is specified, the command will be executed count times with the given interval in between. If you specify a count of 0, the utimer will repeat until it's removed with killutimer or until the bot is restarted.</p>
 <p>Returns: a timerID</p>
@@ -2432,7 +2432,7 @@ bind need - &quot;*&quot; needall   &lt; handles all needs
 <blockquote>
 <div><p>bind time &lt;flags&gt; &lt;mask&gt; &lt;proc&gt;</p>
 <p>procname &lt;minute 00-59&gt; &lt;hour 00-23&gt; &lt;day 01-31&gt; &lt;month 00-11&gt; &lt;year 0000-9999&gt;</p>
-<p>Description: allows you to schedule procedure calls at certain times. mask matches 5 space separated integers of the form: &quot;minute hour day month year&quot;. The month var starts at 00 (Jan) and ends at 11 (Dec). Minute, hour, day, month have a zero padding so they are exactly two characters long; year is zero characters. Flags are ignored.</p>
+<p>Description: allows you to schedule procedure calls at certain times. mask matches 5 space separated integers of the form: &quot;minute hour day month year&quot;. The month var starts at 00 (Jan) and ends at 11 (Dec). Minute, hour, day, month have a zero padding so they are exactly two characters long; year is four characters. Flags are ignored.</p>
 <p>Module: core</p>
 </div></blockquote>
 <ol class="arabic simple" start="38">
@@ -2814,7 +2814,7 @@ words) (This char only works in binds, not in regluar matching)</td>
           
     <div class="footer">
         &copy; Copyright 2016, Eggheads.
-      Last updated on Aug 30, 2016.
+      Last updated on Nov 01, 2016.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.2.
     </div>
         </div>
