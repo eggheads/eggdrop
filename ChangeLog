@@ -1,4 +1,79 @@
 - - - - - - - - - - - - - - -
+Commit d469046 (2016-11-01 22:49:59 -0400) by Geo
+Commit ChangeLog during releaseprep if changed 
+
+misc/releaseprep
+
+- - - - - - - - - - - - - - -
+Commit c390daa (2016-11-01 22:46:44 -0400) by Geo
+Revert "Commit ChangeLog in releaseprep if changed" 
+This reverts commit 7f5c04f07ad1923a91bf5fb691673521f3176ff0.
+
+Conflicts:
+ChangeLog
+doc/html/searchindex.js
+
+aclocal.m4
+configure
+doc/html/objects.inv
+doc/html/searchindex.js
+misc/releaseprep
+src/patch.h
+
+- - - - - - - - - - - - - - -
+Commit 2f1eb1a (2016-11-01 22:15:06 -0400) by Geo
+Fix Cygwin doc format, regen docs 
+
+INSTALL
+doc/html/appendices/first-script.html
+doc/html/appendices/index.html
+doc/html/appendices/known-probs.html
+doc/html/appendices/text-sub.html
+doc/html/appendices/tricks.html
+doc/html/appendices/weird-msgs.html
+doc/html/coreDocs/assoc.html
+doc/html/coreDocs/blowfish.html
+doc/html/coreDocs/channels.html
+doc/html/coreDocs/compress.html
+doc/html/coreDocs/console.html
+doc/html/coreDocs/core.html
+doc/html/coreDocs/ctcp.html
+doc/html/coreDocs/dns.html
+doc/html/coreDocs/filesys.html
+doc/html/coreDocs/index.html
+doc/html/coreDocs/irc.html
+doc/html/coreDocs/modules.html
+doc/html/coreDocs/notes.html
+doc/html/coreDocs/seen.html
+doc/html/coreDocs/server.html
+doc/html/coreDocs/share.html
+doc/html/coreDocs/transfer.html
+doc/html/coreDocs/uptime.html
+doc/html/coreDocs/woobie.html
+doc/html/installAndSetup/faq.html
+doc/html/installAndSetup/install.html
+doc/html/installAndSetup/readme.html
+doc/html/mainDocs/about.html
+doc/html/mainDocs/bans.html
+doc/html/mainDocs/botnet.html
+doc/html/mainDocs/features.html
+doc/html/mainDocs/index.html
+doc/html/mainDocs/ipv6.html
+doc/html/mainDocs/partyline.html
+doc/html/mainDocs/patch.html
+doc/html/mainDocs/tcl-commands.html
+doc/html/mainDocs/tls.html
+doc/html/mainDocs/users.html
+doc/html/searchindex.js
+doc/sphinx_source/installAndSetup/install.rst
+
+- - - - - - - - - - - - - - -
+Commit 113ee50 (2016-11-01 19:06:30 -0400) by Geo
+Update ChangeLog 
+
+ChangeLog
+
+- - - - - - - - - - - - - - -
 Commit 6315d7a (2016-11-01 19:06:05 -0400) by Geo
 Don't create _sources doc dir 
 
@@ -586,6 +661,15 @@ doc/html/search.html
 doc/html/searchindex.js
 doc/sphinx_source/mainDocs/tcl-commands.rst
 doc/tcl-commands.doc
+
+- - - - - - - - - - - - - - -
+Commit c5016d7 (2016-09-10 23:00:24 -0400) by Geo
+Eggdrop v1.8.0 Release Candidate 1 
+
+ChangeLog
+aclocal.m4
+configure
+src/patch.h
 
 - - - - - - - - - - - - - - -
 Commit 1a2ac64 (2016-09-10 19:22:42 -0400) by Geo
