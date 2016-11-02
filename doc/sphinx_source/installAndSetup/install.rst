@@ -124,10 +124,12 @@ Cygwin Requirements (Windows)
 Eggdrop requires the following packages to be added from the Cygwin
 installation tool prior to compiling:
 
-Interpreters: tcl, tcl-devel
-Net:          openssl-devel
-Devel:        autoconf, gcc-core, git, make
-Utils:        diffutils
+::
+
+  Interpreters: tcl, tcl-devel
+  Net:          openssl-devel
+  Devel:        autoconf, gcc-core, git, make
+  Utils:        diffutils
 
 Modules
 -------
