@@ -34,13 +34,7 @@ show_usage() {
 }
 
 git_log() {
-        DIFF=$(git log -1 --pretty="%s")
-        if [ "$DIFF" != "Update ChangeLog" ]; then
-	  git log $(git rev-list -n 1 $1)..HEAD --name-only --no-merges --pretty=format:"- - - - - - - - - - - - - - -%n%w(75)Commit %h (%ai) by %aN%n %s %n %b" > ChangeLog
-          git add ChangeLog
-          git commit -m "Update ChangeLog"
-          git push origin develop
-        fi
+	git log $(git rev-list -n 1 $1)..HEAD --name-only --no-merges --pretty=format:"- - - - - - - - - - - - - - - %n%w(75)Commit %h (%ai) by %aN %n %s %n %b" > ChangeLog
 }
 
 regenerate_changelog() {
@@ -137,6 +131,12 @@ fi
 echo "Regenerating ChangeLog file..."
 regenerate_changelog $LASTVER
 echo ""
+
+# Commit ChangeLog to develop branch before proceeding
+# (otherwise it never gets done!)
+git add ChangeLog
+git commit -m "Update ChangeLog"
+git push origin develop
 
 # Change default make from "debug" to "eggdrop"...
 echo -n "Changing default make..."
