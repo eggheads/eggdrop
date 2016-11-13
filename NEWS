@@ -1,5 +1,5 @@
 News
-Last revised: October 25, 2010
+Last revised: November 13, 2016
      _________________________________________________________________
 
                                    News
@@ -18,6 +18,8 @@ Last revised: October 25, 2010
   Eggdrop in version 1.8.x. All files, with the exception of Changes1.8, are
   also available in html format in doc/html/.
 
+  For support, feel free to visit us on Freenode #eggdrop.
+
   A lot of things have changed in this version, so at a minimum, read the
   Changes1.8 text file. Changes shows what's been added and fixed along the
   way.
@@ -32,6 +34,25 @@ Last revised: October 25, 2010
 
 Changes made to Eggdrop 1.8.x from Eggdrop1.6.x:
 
+  MODULES
+
+    All 3rd modules that work with Eggdrop1.6.x also work with Eggdrop1.8.x,
+    but most of them contain a static version check for 1.6.x.
+    We provide a modified version, with just that version check removed,
+    for the most popular 3rd party modules at
+    ftp://eggheads.org/pub/eggdrop/modules/1.8/
+
+  SCRIPTS
+
+    All 3rd party Tcl scripts that work with Eggdrop1.6.x fully work with
+    Eggdrop1.8.x.
+
+  ENCODINGS
+
+    Eggdrop1.8 has been modified to support the utf-8 encoding with a fallback
+    of iso8859-1. Other single-byte encodings are not yet supported, but
+    full support for them is planned for a later version of Eggdrop1.8.
+
   IPV6
 
     Full IPv6 support for servers, telnet and script connections, dcc and
@@ -41,7 +62,34 @@ Changes made to Eggdrop 1.8.x from Eggdrop1.6.x:
   SSL
 
     Full SSL support has been added for all kinds of connections, including
-    certificate verification and authorization. See doc/TLS.
+    certificate verification and authorization, and partyline SSL. See doc/TLS.
+
+  BOTNET
+
+    Because 1.8 bots attempt to link with SSL if available everytime, make
+    sure you generate a certificate on your hub bot with "make sslcert" after
+    "make install".
+
+  CONFIG
+
+     eggdrop.conf changes
+
+     For the transition from Eggdrop1.6.x to Eggdrop1.8, we provide a list
+     of modifications in the default config, which are only few settings,
+     at http://eggheads.org/eggconf180.txt
+
+     my-ip/my-hostname
+
+     The two settings my-ip and my-hostname have been removed and replaced by
+     vhost4, vhost6 and the listen-addr setting.
+     Check our new eggdrop.conf for examples.
+
+     eggdrop-basic.conf
+
+     Eggdrop1.8.0 includes an easier configuration file called
+     eggdrop-basic.conf recommended for users that do not need advanced
+     Eggdrop features such as botnets. We still recommend reading the full
+     eggdrop.conf and copying settings over that you might want to modify.
 
 
   WIRE REMOVED
