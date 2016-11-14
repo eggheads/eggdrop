@@ -5,7 +5,8 @@ Last revised: November 13, 2016
                                    News
 
 
-  What's new? First, read the following documents:
+  What's new? To gain a full understanding of changes to Eggdrop1.8.0, 
+  you can read the following documents:
 
     INSTALL
     README
@@ -20,10 +21,6 @@ Last revised: November 13, 2016
 
   For support, feel free to visit us on Freenode #eggdrop.
 
-  A lot of things have changed in this version, so at a minimum, read the
-  Changes1.8 text file. Changes shows what's been added and fixed along the
-  way.
-
   If you are upgrading from a pre-1.6 version of Eggdrop:
 
     1. Before you start the bot for the first time, BACKUP your userfile.
@@ -36,10 +33,10 @@ Changes made to Eggdrop 1.8.x from Eggdrop1.6.x:
 
   MODULES
 
-    All 3rd modules that work with Eggdrop1.6.x also work with Eggdrop1.8.x,
-    but most of them contain a static version check for 1.6.x.
-    We provide a modified version, with just that version check removed,
-    for the most popular 3rd party modules at
+    While most 3rd party modules that worked on Eggdrop1.6.x should still work
+    with Eggdrop1.8.x, many of them contain a version check that only allows
+    them to run on 1.6.x bots. We have removed the version check from some of
+    the more popular modules provide them at 
     ftp://eggheads.org/pub/eggdrop/modules/1.8/
 
   SCRIPTS
@@ -72,24 +69,20 @@ Changes made to Eggdrop 1.8.x from Eggdrop1.6.x:
 
   CONFIG
 
-     eggdrop.conf changes
+     eggdrop.conf changes:
 
-     For the transition from Eggdrop1.6.x to Eggdrop1.8, we provide a list
-     of modifications in the default config, which are only few settings,
-     at http://eggheads.org/eggconf180.txt
+     To ease the transition from Eggdrop1.6.x to Eggdrop1.8.0, we have created
+     a list of config file changes needed at http://eggheads.org/eggconf180.txt. 
+     Perhaps the most important changes are the removal of the my-ip and
+     my-hostname settings, replaced by vhost4, vhost6 and the listen-addr
+     setting. Check our new eggdrop.conf for examples.
 
-     my-ip/my-hostname
+     eggdrop-basic.conf:
 
-     The two settings my-ip and my-hostname have been removed and replaced by
-     vhost4, vhost6 and the listen-addr setting.
-     Check our new eggdrop.conf for examples.
-
-     eggdrop-basic.conf
-
-     Eggdrop1.8.0 includes an easier configuration file called
-     eggdrop-basic.conf recommended for users that do not need advanced
-     Eggdrop features such as botnets. We still recommend reading the full
-     eggdrop.conf and copying settings over that you might want to modify.
+     Eggdrop1.8.0 includes a simpler configuration file called
+     eggdrop-basic.conf, which is recommended for users that do not need
+     advanced Eggdrop features such as botnets. We still recommend reading the
+     full eggdrop.conf and copying settings over that you might want to modify.
 
 
   WIRE REMOVED
@@ -109,8 +102,7 @@ Changes made to Eggdrop 1.8.x from Eggdrop1.6.x:
   TCL COMMANDS
 
     A lot of changes have been made to Tcl commands. Please look at
-    doc/tcl-commands.doc to see them. New or changed commands are marked with
-    vertical bars (|) on the left.
+    doc/tcl-commands.doc to see them.
   ________________________________________________________________________
 
 Copyright (C) 1997 Robey Pointer
