@@ -929,7 +929,7 @@ static void bot_thisbot(int idx, char *par)
   noshare = 1;
   change_handle(dcc[idx].user, par);
   noshare = 0;
-  strncpyz(dcc[idx].nick, par, sizeof(dcc[idx].nick));
+  strncpyz(dcc[idx].nick, par, sizeof dcc[idx].nick);
 }
 
 static void bot_handshake(int idx, char *par)
