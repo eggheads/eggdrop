@@ -1055,7 +1055,7 @@ static void dcc_chat(int idx, char *buf, int i)
           if (dcc[idx].u.chat->su_nick) {
             dcc[idx].user = get_user_by_handle(userlist,
                                                dcc[idx].u.chat->su_nick);
-            strcpy(dcc[idx].nick, dcc[idx].u.chat->su_nick);
+            strncpyz(dcc[idx].nick, dcc[idx].u.chat->su_nick, sizeof(dcc[idx].nick));
             dcc[idx].type = &DCC_CHAT;
             dprintf(idx, "Returning to real nick %s!\n",
                     dcc[idx].u.chat->su_nick);

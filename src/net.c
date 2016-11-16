@@ -468,7 +468,7 @@ static int proxy_connect(int sock, sockname_t *addr)
 #endif
   if (firewall[0] == '!') {
     proxy = PROXY_SUN;
-    strcpy(host, &firewall[1]);
+    strncpyz(host, &firewall[1], sizeof(host));
   } else {
     proxy = PROXY_SOCKS;
     strcpy(host, firewall);
