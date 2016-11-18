@@ -1284,7 +1284,7 @@ static void server_resolve_success(int servidx)
   char pass[121];
 
   resolvserv = 0;
-  strcpy(pass, dcc[servidx].u.dns->cbuf);
+  strncpyz(pass, dcc[servidx].u.dns->cbuf, sizeof pass);
   changeover_dcc(servidx, &SERVER_SOCKET, 0);
   dcc[servidx].sock = getsock(dcc[servidx].sockname.family, 0);
   setsnport(dcc[servidx].sockname, dcc[servidx].port);
