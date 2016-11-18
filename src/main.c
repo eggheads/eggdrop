@@ -899,7 +899,7 @@ int mainloop(int toplevel)
             d = d->next;
           }
           if (ok) {
-            strcpy(name, p->name);
+            strncpyz(name, p->name, sizeof name);
             if (module_unload(name, botnetnick) == NULL) {
               f = 1;
               break;

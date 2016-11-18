@@ -933,7 +933,7 @@ int readuserfile(char *file, struct userrec **ret)
             } else {
               fr.match = FR_GLOBAL;
               break_down_flags(attr, &fr, 0);
-              strcpy(lasthand, code);
+              strncpyz(lasthand, code, sizeof lasthand);
               cst = NULL;
               if (strlen(code) > HANDLEN)
                 code[HANDLEN] = 0;

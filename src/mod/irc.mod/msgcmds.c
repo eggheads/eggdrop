@@ -171,7 +171,7 @@ static int msg_ident(char *nick, char *host, struct userrec *u, char *par)
   }
   pass = newsplit(&par);
   if (!par[0])
-    strcpy(who, nick);
+    strncpyz(who, nick, sizeof who);
   else {
     strncpy(who, par, NICKMAX);
     who[NICKMAX] = 0;

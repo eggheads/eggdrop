@@ -279,7 +279,7 @@ static int detect_chan_flood(char *floodnick, char *floodhost, char *from,
     if (!rfc_casecmp(chan->deopd, victim))
       return 0;
     else
-      strcpy(chan->deopd, victim);
+      strncpyz(chan->deopd, victim, sizeof chan->deopd);
   }
   chan->floodnum[which]++;
   if (chan->floodnum[which] >= thr) {   /* FLOOD */

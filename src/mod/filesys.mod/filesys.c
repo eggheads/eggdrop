@@ -707,7 +707,7 @@ static void filesys_dcc_send(char *nick, char *from, struct userrec *u,
       dcc[i].ssl = ssl;
 #endif
       dcc[i].user = u;
-      strcpy(dcc[i].nick, nick);
+      strncpyz(dcc[i].nick, nick, sizeof dcc[i].nick);
       strcpy(dcc[i].host, from);
       dcc[i].u.dns->cbuf = get_data_ptr(strlen(param) + 1);
       strcpy(dcc[i].u.dns->cbuf, param);

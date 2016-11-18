@@ -442,7 +442,7 @@ static int detect_flood(char *floodnick, char *floodhost, char *from, int which)
   if (p) {
     p++;
     if (egg_strcasecmp(lastmsghost[which], p)) {        /* New */
-      strcpy(lastmsghost[which], p);
+      strncpyz(lastmsghost[which], p, sizeof lastmsghost[which]);
       lastmsgtime[which] = now;
       lastmsgs[which] = 0;
       return 0;
