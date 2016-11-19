@@ -362,7 +362,12 @@ void tell_verbose_status(int idx)
           ((interp) && (Tcl_Eval(interp, "info patchlevel") == TCL_OK)) ?
           tcl_resultstring() : (Tcl_Eval(interp, "info tclversion") == TCL_OK) ?
           tcl_resultstring() : "*unknown*", MISC_TCLHVERSION,
-          TCL_PATCH_LEVEL ? TCL_PATCH_LEVEL : "*unknown*");
+#ifdef TCL_PATCH_LEVEL
+          TCL_PATCH_LEVEL
+#else
+          "*unknown*"
+#endif
+          );
 
   if (tcl_threaded())
     dprintf(idx, "Tcl is threaded.\n");
