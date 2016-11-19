@@ -1163,6 +1163,9 @@ int main(int arg_c, char **arg_v)
   if (!backgrd && term_z) {
     int n = new_dcc(&DCC_CHAT, sizeof(struct chat_info));
 
+    if (!n)
+      fatal("ERROR: Failed to initialize foreground chat.", 0);
+
     getvhost(&dcc[n].sockname, AF_INET);
     dcc[n].sock = STDOUT;
     dcc[n].timeval = now;
