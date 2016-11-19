@@ -265,8 +265,8 @@ static void write_debug()
      *       _not_ safe <cybah>
      */
     x = creat("DEBUG.DEBUG", 0644);
-    setsock(x, SOCK_NONSOCK);
     if (x >= 0) {
+      setsock(x, SOCK_NONSOCK);
       strncpyz(s, ctime(&now), sizeof s);
       dprintf(-x, "Debug (%s) written %s\n", ver, s);
       dprintf(-x, "Please report problem to bugs@eggheads.org\n");
