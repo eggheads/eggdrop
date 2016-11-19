@@ -776,10 +776,17 @@ int xtra_set(struct userrec *u, struct user_entry *e, void *buf)
     nfree(old->key);
     nfree(old->data);
     nfree(old);
+    if (old == e->u.extra) {
+      e->u.extra = NULL;
+    }
   }
   if (old != new && new->data) {
-    if (new->data[0])
+    if (new->data[0]) {
+      if (!e->u.extra) {
+        e->u.extra = nmalloc(sizeof *e->u.extra);
+      }
       list_insert((&e->u.extra), new)  /* do not add a ';' here */
+    }
   } else {
     if (new->data)
       nfree(new->data);
