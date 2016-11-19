@@ -830,13 +830,15 @@ int readuserfile(char *file, struct userrec **ret)
             /* NOTE only remove exempts for when getting a userfile
              * from another bot & that channel is shared */
             cst = findchan_by_dname(lasthand);
-            if ((*ret == userlist) || channel_shared(cst)) {
-              clear_masks(cst->exempts);
-              cst->exempts = NULL;
-            } else {
-              /* otherwise ignore any exempts for this channel */
-              cst = NULL;
-              lasthand[0] = 0;
+            if (cst) {
+              if ((*ret == userlist) || channel_shared(cst)) {
+                clear_masks(cst->exempts);
+                cst->exempts = NULL;
+              } else {
+                /* otherwise ignore any exempts for this channel */
+                cst = NULL;
+                lasthand[0] = 0;
+              }
             }
           }
         } else if (!strncmp(code, "$$", 2)) {
