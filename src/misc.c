@@ -640,7 +640,7 @@ void logsuffix_change(char *s)
   char *s2 = logfile_suffix;
 
   /* If the suffix didn't really change, ignore. It's probably a rehash. */
-  if (s && s2 && !strcmp(s, s2))
+  if (!s || s && s2 && !strcmp(s, s2))
     return;
 
   debug0("Logfile suffix changed. Closing all open logs.");
