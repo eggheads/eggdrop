@@ -1422,9 +1422,10 @@ int sanitycheck_dcc(char *nick, char *from, char *ipaddy, char *port)
              "address of %s!", nick, from, ipaddy);
       return 0;
     }
-    if (IN6_IS_ADDR_V4MAPPED(&name.addr.s6.sin6_addr))
+    if (IN6_IS_ADDR_V4MAPPED(&name.addr.s6.sin6_addr)) {
       egg_memcpy(&ip, name.addr.s6.sin6_addr.s6_addr + 12, sizeof ip);
       ip = ntohl(ip);
+    }
   }
 #endif
   if (ip && inet_ntop(AF_INET, &ip, badaddress, sizeof badaddress) &&
