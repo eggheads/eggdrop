@@ -1665,7 +1665,7 @@ static void cmd_chattr(struct userrec *u, int idx, char *par)
   }
   if (chan)
     putlog(LOG_CMDS, "*", "#%s# (%s) chattr %s %s",
-           dcc[idx].nick, chan ? chan->dname : "*", hand, chg ? chg : "");
+           dcc[idx].nick, chan->dname, hand, chg ? chg : "");
   else
     putlog(LOG_CMDS, "*", "#%s# chattr %s %s", dcc[idx].nick, hand,
            chg ? chg : "");
