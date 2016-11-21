@@ -605,8 +605,8 @@ static void dcc_chat_pass(int idx, char *buf, int atr)
     buf += 3; /* 'IAC','DO(DONT)','STATUS' */
   atr = dcc[idx].user ? dcc[idx].user->flags : 0;
 
-#ifdef TLS
   if (atr & USER_BOT) {
+#ifdef TLS
     if (!egg_strncasecmp(buf, "starttls ", 9)) {
       dcc[idx].ssl = 1;
       if (ssl_handshake(dcc[idx].sock, TLS_LISTEN, tls_vfybots, LOG_BOTS,
@@ -616,6 +616,7 @@ static void dcc_chat_pass(int idx, char *buf, int atr)
       }
       return;
     }
+#endif
     /* No password set? */
     if (u_pass_match(dcc[idx].user, "-")) {
       char ps[20];
@@ -635,7 +636,6 @@ static void dcc_chat_pass(int idx, char *buf, int atr)
       return;
     }
   }
-#endif
   /* Check for MD5 digest from remote _bot_. <cybah> */
   if ((atr & USER_BOT) && !egg_strncasecmp(buf, "digest ", 7)) {
     if (dcc_bot_check_digest(idx, buf + 7)) {
