@@ -513,7 +513,7 @@ int build_flags(char *string, struct flag_record *plus,
     string += flag2str(string, plus->chan, plus->udef_chan);
     if (minus && (minus->chan || minus->udef_chan)) {
       *string++ = '-';
-      string += flag2str(string, minus->global, minus->udef_chan);
+      string += flag2str(string, minus->chan, minus->udef_chan);
     }
   }
   if (string == old) {
