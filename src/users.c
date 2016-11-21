@@ -890,7 +890,7 @@ int readuserfile(char *file, struct userrec **ret)
             if (!ok) {
               ue = user_malloc(sizeof(struct user_entry));
 
-              ue->name = user_malloc(strlen(code) - 1));
+              ue->name = user_malloc(strlen(code) - 1);
               ue->type = NULL;
               strcpy(ue->name, code + 2);
               ue->u.list = user_malloc(sizeof(struct list_type));
