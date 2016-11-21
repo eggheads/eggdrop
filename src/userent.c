@@ -1070,7 +1070,7 @@ static void hosts_display(int idx, struct user_entry *e)
   strcpy(s, "  HOSTS: ");
   for (q = e->u.list; q; q = q->next) {
     if (s[0] && !s[9])
-      strcat(s, q->extra);
+      strncpyz(s, q->extra, sizeof s);
     else if (!s[0])
       sprintf(s, "         %s", q->extra);
     else {

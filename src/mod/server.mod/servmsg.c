@@ -122,7 +122,7 @@ static int check_tcl_msgm(char *cmd, char *nick, char *uhost,
   if (arg[0])
     simple_sprintf(args, "%s %s", cmd, arg);
   else
-    strcpy(args, cmd);
+    strncpyz(args, cmd, sizeof args);
   get_user_flagrec(u, &fr, NULL);
   Tcl_SetVar(interp, "_msgm1", nick, 0);
   Tcl_SetVar(interp, "_msgm2", uhost, 0);
