@@ -1673,7 +1673,7 @@ static void server_5minutely()
 
 static void server_prerehash()
 {
-  strncpyz(oldnick, botname, sizeof oldnick);
+  strncpyz(oldnick, botname, NICKLEN);
 }
 
 static void server_postrehash()
