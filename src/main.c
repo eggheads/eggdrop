@@ -1088,7 +1088,7 @@ int main(int arg_c, char **arg_v)
   link_statics();
 #endif
   strncpyz(s, ctime(&now), sizeof s);
-  strcpy(&s[11], &s[20]);
+  memmove(&s[11], &s[20], strlen(&s[20]+1));
   putlog(LOG_ALL, "*", "--- Loading %s (%s)", ver, s);
   chanprog();
   if (!encrypt_pass) {

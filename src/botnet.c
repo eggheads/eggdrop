@@ -1486,7 +1486,7 @@ static void dcc_relay(int idx, char *buf, int j)
         for (e = p + 2; *e != 'm' && *e; e++);
         strcpy((char *) p, (char *) (e + 1));
       } else if (*p == '\r')
-        strcpy((char *) p, (char *) (p + 1));
+        memmove(p, p + 1, strlen(p + 1) + 1);
     }
     if (!buf[0])
       dprintf(-dcc[idx].u.relay->sock, " \n");
