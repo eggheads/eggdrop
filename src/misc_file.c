@@ -49,8 +49,10 @@ int copyfile(char *oldpath, char *newpath)
   if (fi < 0)
     return 1;
   fstat(fi, &st);
-  if (!(st.st_mode & S_IFREG))
+  if (!(st.st_mode & S_IFREG)) {
+    close(fi);
     return 3;
+  }
   fo = creat(newpath, (int) (st.st_mode & 0777));
   if (fo < 0) {
     close(fi);

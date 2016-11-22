@@ -1079,8 +1079,10 @@ static void botlink_resolve_success(int i)
   nfree(linker);
   setsnport(dcc[i].sockname, dcc[i].port);
   dcc[i].sock = getsock(dcc[i].sockname.family, SOCK_STRONGCONN);
+  if (dcc[i].sock < 0)
+    failed_link(i);
   ret = open_telnet_raw(dcc[i].sock, &dcc[i].sockname);
-  if (dcc[i].sock < 0 || ret < 0)
+  if (ret < 0)
     failed_link(i);
 #ifdef TLS
   else if (dcc[i].ssl && ssl_handshake(dcc[i].sock, TLS_CONNECT,
@@ -1484,7 +1486,7 @@ static void dcc_relay(int idx, char *buf, int j)
         for (e = p + 2; *e != 'm' && *e; e++);
         strcpy((char *) p, (char *) (e + 1));
       } else if (*p == '\r')
-        strcpy((char *) p, (char *) (p + 1));
+        memmove(p, p + 1, strlen((char *)p + 1) + 1);
     }
     if (!buf[0])
       dprintf(-dcc[idx].u.relay->sock, " \n");

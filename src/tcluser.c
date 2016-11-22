@@ -379,8 +379,8 @@ static int tcl_userlist STDVAR
     break_down_flags(argv[1], &plus, &minus);
     f = (minus.global ||minus.udef_global || minus.chan || minus.udef_chan ||
          minus.bot);
+    minus.match = plus.match ^ (FR_AND | FR_OR);
   }
-  minus.match = plus.match ^ (FR_AND | FR_OR);
   for (u = userlist; u; u = u->next) {
     if (argc >= 2) {
       user.match = FR_GLOBAL | FR_CHAN | FR_BOT | (argc == 3 ? 0 : FR_ANYWH);

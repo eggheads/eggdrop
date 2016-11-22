@@ -39,7 +39,7 @@ git_log() {
 	  git log $(git rev-list -n 1 $1)..HEAD --name-only --no-merges --pretty=format:"- - - - - - - - - - - - - - -%n%w(75)Commit %h (%ai) by %aN%n %s %n %b" > ChangeLog
           git add ChangeLog
           git commit -m "Update ChangeLog"
-          git push origin develop
+          #git push origin develop
         fi
 }
 
