@@ -39,12 +39,12 @@ patch("PRE-RELEASE");           /* RC version */
  *
  *
  */
-patch("1479772226");            /* current unixtime */
+patch("1479820858");            /* current unixtime */
 /*
  *
  *
  */
-patch("tlslinkpass");
+patch("RC3");
 /*
  *
  *
