@@ -1,0 +1,305 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+
+<html>
+  <head>
+    <title>Eggdrop Documentation: Users and Flags</title>
+  </head>
+
+  <body>
+    <div align="center">
+      <p><strong>Users and Flags</strong></p>
+    </div>
+    <hr>
+
+    <p>People on IRC are recognized by the bot according to their
+    nick!user@host. That is, if I am on IRC as:</p>
+
+    <blockquote>
+      <p><em>*** Robey is robey@hubcap.clemson.edu (i hate milk)</em></p>
+    </blockquote>
+
+    <p>Eggdrop will identify me according to
+    &quot;Robey!robey@hubcap.clemson.edu&quot; and not only by my nickname.</p>
+
+
+    <p>then Eggdrop will identify me according to
+    &quot;ikaney@uk.defiant.org&quot; and not by my nickname. I can change
+    nicknames at will and it won&#39;t forget me.</p>
+
+    <p>Eggdrop does not have access levels like some bots. There are no
+    meaningless numbers or titles. Instead, each user has &quot;flags&quot;
+    that entitle them to certain privileges. Think of a flag as a badge. Any
+    user can have any number of flags -- you can have no flags, or you can
+    have all of them. Some flags are good, some are bad. Each flag is
+    identified by a letter. A channel flag applies only to a specific channel,
+    and a global flag applies to all channels. The standard global flags
+    are:</p>
+
+    <blockquote>
+      <table>
+        <tr valign="top">
+          <td>
+            <p><strong>n  (owner)</strong></p>
+          </td>
+
+          <td>
+            <p>user has absolute control. Only give this flag to people you
+            trust completely.</p>
+          </td>
+        </tr>
+
+        <tr valign="top">
+          <td>
+            <p><strong>m  (master)</strong></p>
+          </td>
+
+          <td>
+            <p>user has access to almost every feature of the bot.</p>
+          </td>
+        </tr>
+
+        <tr valign="top">
+          <td>
+            <p><strong>t  (botnet-master)</strong></p>
+          </td>
+
+          <td>
+            <p>user has access to all features dealing with the botnet.</p>
+          </td>
+        </tr>
+
+        <tr valign="top">
+          <td>
+            <p><strong>a  (auto-op)</strong></p>
+          </td>
+
+          <td>
+            <p>user is opped automatically upon joining a channel.</p>
+          </td>
+        </tr>
+
+        <tr valign="top">
+          <td>
+            <p><strong>o  (op)</strong></p>
+          </td>
+
+          <td>
+            <p>user has op access to all of the bot&#39;s channels.</p>
+          </td>
+        </tr>
+
+        <tr valign="top">
+          <td>
+            <p><strong>y  (auto-halfop)</strong></p>
+          </td>
+
+          <td>
+            <p>user is halfopped automatically upon joining a channel.</p>
+          </td>
+        </tr>
+
+        <tr valign="top">
+          <td>
+            <p><strong>l  (halfop)</strong></p>
+          </td>
+
+          <td>
+            <p>user has halfop access to all of the bot&#39;s channels.</p>
+          </td>
+        </tr>
+
+        <tr valign="top">
+          <td>
+            <p><strong>g  (auto-voice)</strong></p>
+          </td>
+
+          <td>
+            <p>user is voiced automatically upon joining a channel.</p>
+          </td>
+        </tr>
+
+        <tr valign="top">
+          <td>
+            <p><strong>v  (voice)</strong></p>
+          </td>
+
+          <td>
+            <p>user gets +v automatically on +autovoice channels.</p>
+          </td>
+        </tr>
+
+        <tr valign="top">
+          <td>
+            <p><strong>f  (friend)</strong></p>
+          </td>
+
+          <td>
+            <p>user is not punished for flooding, etc.</p>
+          </td>
+        </tr>
+
+        <tr valign="top">
+          <td>
+            <p><strong>p  (party)</strong></p>
+          </td>
+
+          <td>
+            <p>user has access to the partyline.</p>
+          </td>
+        </tr>
+
+        <tr valign="top">
+          <td>
+            <p><strong>q  (quiet)</strong></p>
+          </td>
+
+          <td>
+            <p>user does not get voice on +autovoice channels.</p>
+          </td>
+        </tr>
+
+        <tr valign="top">
+          <td>
+            <p><strong>r  (dehalfop)</strong></p>
+          </td>
+
+          <td>
+            <p>user cannot gain halfops on any of the bot&#39;s channels.</p>
+          </td>
+        </tr>
+
+        <tr valign="top">
+          <td>
+            <p><strong>d  (deop)</strong></p>
+          </td>
+
+          <td>
+            <p>user cannot gain ops on any of the bot&#39;s channels.</p>
+          </td>
+        </tr>
+
+        <tr valign="top">
+          <td>
+            <p><strong>k  (auto-kick)</strong></p>
+          </td>
+
+          <td>
+            <p>user is kicked and banned automatically.</p>
+          </td>
+        </tr>
+
+        <tr valign="top">
+          <td>
+            <p><strong>x  (xfer)</strong></p>
+          </td>
+
+          <td>
+            <p>user has access to the file transfer area of the bot (if it
+            exists) and can send and receive files to/from the bot.</p>
+          </td>
+        </tr>
+
+        <tr valign="top">
+          <td>
+            <p><strong>j  (janitor)</strong></p>
+          </td>
+
+          <td>
+            <p>user can perform maintenance in the file area of the bot (if
+            it exists) -- like a &quot;master&quot; of the file area. Janitors
+            have complete access to the filesystem.</p>
+          </td>
+        </tr>
+
+        <tr valign="top">
+          <td>
+            <p><strong>c  (common)</strong></p>
+          </td>
+
+          <td>
+            <p>this marks a user who is connecting from a public site from
+            which any number of people can use IRC. The user will now be
+            recognized by NICKNAME.</p>
+          </td>
+        </tr>
+
+        <tr valign="top">
+          <td>
+            <p><strong>b  (bot)</strong></p>
+          </td>
+
+          <td>
+            <p>user is a bot.</p>
+          </td>
+        </tr>
+
+        <tr valign="top">
+          <td>
+            <p><strong>w  (wasop-test)</strong></p>
+          </td>
+
+          <td>
+            <p>user needs wasop test for +stopnethack procedure.</p>
+          </td>
+        </tr>
+
+        <tr valign="top">
+          <td>
+            <p><strong>z  (washalfop-test)</strong></p>
+          </td>
+
+          <td>
+            <p>user needs washalfop test for +stopnethack procedure.</p>
+          </td>
+        </tr>
+
+        <tr valign="top">
+          <td>
+            <p><strong>e  (nethack-exempt)</strong></p>
+          </td>
+
+          <td>
+            <p>user is exempted from stopnethack protection.</p>
+          </td>
+        </tr>
+
+        <tr valign="top">
+          <td>
+            <p><strong>u  (unshared)</strong></p>
+          </td>
+
+          <td>
+            <p>user record is not sent to other bots.</p>
+          </td>
+        </tr>
+
+        <tr valign="top">
+          <td>
+            <p><strong>h  (highlight)</strong></p>
+          </td>
+
+          <td>
+            <p>use bold text in help/text files.</p>
+          </td>
+        </tr>
+      </table>
+    </blockquote>
+
+    <p>All global flags other then u, h, b, c, x, j, and p are also channel-
+    specific flags. Flags are set with the chattr command. The syntax for
+    this command is:</p>
+
+    <blockquote>
+      <p><em>chattr &lt;nickname&gt; [attributes] [channel]</em></p>
+    </blockquote>
+
+    <p>There are also 26 global user-defined flags and 26 channel user-defined
+    flags. These are used by scripts, and their uses very depending on the
+    script that uses them.</p>
+    <hr>
+
+    <p><em>Copyright &copy; 1997 Robey Pointer<br>
+    Copyright &copy; 1999 - 2016 Eggheads Development Team
+    <a href="http://www.eggheads.org/"> Eggheads Development Team</a></em></p>
+  </body>
+</html>

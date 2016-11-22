@@ -1,0 +1,49 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+
+<html>
+  <head>
+    <title>Eggdrop Documentation: Known Problems</title>
+  </head>
+
+  <body>
+    <div align="center">
+      <p><strong>Known Problems</strong></p>
+    </div>
+    <hr>
+
+    <p><strong>Things that are broke, but aren&#39;t getting fixed anytime
+    soon:</strong></p>
+    <blockquote>
+      <ul>
+        <li>
+          <p>Non-working alarm(10) in Linux (calls to gethostbyaddr/name()
+          have blocked for long periods when bind/named doesn&#39;t resolve
+          quickly, and the alarm does not interrupt it).</p>
+
+          <blockquote>
+            <p>Note: This should now work if you use the dns module.</p>
+          </blockquote>
+        </li>
+
+        <li>
+          <p>High-bit characters are being filtered from channel names.
+          This is a fault of the Tcl interpreter, and not Eggdrop. The Tcl
+          interpreter filters the characters when it reads a file for
+          interpreting. Update your Tcl to version 8.1 or higher.</p>
+        </li>
+
+        <li>
+          <p>Version 8.1 of Tcl doesn&#39;t support unicode characters, for
+          example, &egrave;. If those characters are handled in a script as
+          text, you run into errors. Eggdrop can&#39;t handle these errors at
+          the moment.</p>
+        </li>
+      </ul>
+    </blockquote>
+    <hr>
+
+    <p><em>Copyright &copy; 1997 Robey Pointer<br>
+    Copyright &copy; 1999 - 2016 Eggheads Development Team
+    <a href="http://www.eggheads.org/"> Eggheads Development Team</a></em></p>
+  </body>
+</html>

@@ -1,0 +1,264 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+
+<html>
+  <head>
+    <title>Eggdrop Documentation: IRC Module</title>
+  </head>
+
+  <body>
+    <div align="center">
+      <p><strong>IRC Module</strong></p>
+    </div>
+    <hr>
+
+    <p>This module controls the bots interaction on IRC. It allows the bot to
+    join channels, etc. You have to load this if you want your bot to come on
+    IRC.</p>
+
+    <blockquote>
+      <ol>
+        <li><a href="#config">Config file settings</a></li>
+      </ol>
+    </blockquote>
+    <hr>
+
+    <p><a name="config"></a>1. <strong>Config file settings</strong></p>
+
+    <blockquote>
+      <p>Put this line into your Eggdrop configuration file to load the
+      irc module:</p>
+
+      <p><strong>loadmodule irc</strong></p>
+
+      <p>There are also some variables you can set in your config
+      file:</p>
+    </blockquote>
+
+    <blockquote>
+      <dl>
+        <dt><strong>set bounce-bans 1</strong></dt>
+
+        <dd>
+          <p>Set this to 1 if you want to bounce all server bans.</p>
+        </dd>
+
+        <dt><strong>set bounce-exempts 0</strong></dt>
+
+        <dd>
+          <p>Set this to 1 if you want to bounce all server exemptions
+          (+e modes). This is disabled if use-exempts is disabled.</p>
+        </dd>
+
+        <dt><strong>set bounce-invites 0</strong></dt>
+
+        <dd>
+          <p>Set this to 1 if you want to bounce all server invitations
+          (+I modes). This is disabled if use-invites is disabled.</p>
+        </dd>
+
+        <dt><strong>set bounce-modes 0</strong></dt>
+
+        <dd>
+          <p>Set this to 1 if you want to bounce all server modes.</p>
+        </dd>
+
+        <dt><strong>set max-modes 30</strong></dt>
+
+        <dd>
+          <p>There is a global limit for +b/+e/+I modes. This limit should be
+          set to the same value as max-bans for networks that do not support
+          +e/+I.</p>
+        </dd>
+
+        <dt><strong>set max-bans 20</strong></dt>
+
+        <dd>
+          <p>Set here the maximum number of bans you want the bot to set on a
+          channel. Eggdrop will not place any more bans if this limit is
+          reached. Undernet currently allows 45 bans, IRCnet allows 64, EFnet
+          allows 100, and DALnet allows 100.</p>
+        </dd>
+
+        <dt><strong>set max-exempts 20</strong></dt>
+
+        <dd>
+          <p>Set here the maximum number of exempts you want Eggdrop to set
+          on a channel. Eggdrop will not place any more exempts if this
+          limit is reached.</p>
+        </dd>
+
+        <dt><strong>set max-invites 20</strong></dt>
+
+        <dd>
+          <p>Set here the maximum number of invites you want Eggdrop to set
+          on a channel. Eggdrop will not place any more invites if this
+          limit is reached.</p>
+        </dd>
+
+        <dt><strong>set use-exempts 0<br>
+        set use-invites 0</strong></dt>
+
+        <dd>
+          <p>These settings should be left commented unless the default values
+          are being overridden. By default, exempts and invites are on for
+          EFnet and IRCnet, but off for all other large networks. This behavior
+          can be modified with the following 2 flags. If your network
+          doesn&#39;t support +e/+I modes then you will be unable to use these
+          features.</p>
+        </dd>
+
+        <dt><strong>set learn-users 0</strong></dt>
+
+        <dd>
+          <p>If you want people to be able to add themselves to the bot&#39;s
+          userlist with the default userflags (defined above in the config
+          file) via the &#39;hello&#39; msg command, set this to 1.</p>
+        </dd>
+
+        <dt><strong>set wait-split 300</strong></dt>
+
+        <dd>
+          <p>Set here the time (in seconds) to wait for someone to return
+          from a netsplit (i.e. wasop will expire afterwards). Set this to
+          1500 on IRCnet since it&#39;s nick delay stops after 30 minutes.</p>
+        </dd>
+
+        <dt><strong>set wait-info 15</strong></dt>
+
+        <dd>
+          <p>Set here the time (in seconds) that someone must have been
+          off-channel before re-displaying their info line.</p>
+        </dd>
+
+        <dt><strong>set mode-buf-length 200</strong></dt>
+
+        <dd>
+          <p>Set this to the maximum number of bytes to send in the
+          arguments of modes sent to the server. Most servers default this
+          to 200.</p>
+        </dd>
+
+        <dt><strong>set opchars &quot;@&quot;<br>
+        #set opchars &quot;@&~&quot;</strong></dt>
+
+        <dd>
+          <p>Some IRC servers are using some non-standard op-like channel
+          prefixes/modes. Define them here so the bot can recognize them. Just
+          &quot;@&quot; should be fine for most networks. Un-comment the second
+          line for some UnrealIRCds.</p>
+        </dd>
+
+        <dt><strong>unbind msg - hello *msg:hello<br>
+        bind msg - myword *msg:hello</strong></dt>
+
+        <dd>
+          <p>Many IRCops find bots by seeing if they reply to &#39;hello&#39;
+          in a msg. You can change this to another word by un-commenting the
+          these two lines and changing &quot;myword&quot; to the word wish
+          to use instead of &#39;hello&#39;. It must be a single word.</p>
+        </dd>
+
+        <dt><strong>unbind msg - ident *msg:ident<br>
+        unbind msg - addhost *msg:addhost</strong></dt>
+
+        <dd>
+          <p>Many takeover attempts occur due to lame users blindly /msg
+          ident&#39;ing to the bot and attempting to guess passwords. We now
+          unbind this command by default to discourage them. You can enable
+          this command by un-commenting these two lines.</p>
+        </dd>
+
+        <dt><strong>set no-chanrec-info 0</strong></dt>
+
+        <dd>
+          <p>If you are so lame you want the bot to display peoples info
+          lines even when you are too lazy to add their chanrecs to a
+          channel, set this to 1.</p>
+
+          <p><strong>NOTE:</strong> This means <strong>every</strong> user
+          with an info line will have their info line displayed on EVERY
+          channel they join (provided they have been gone longer than
+          wait-info).</p>
+        </dd>
+      </dl>
+    </blockquote>
+
+    <blockquote>
+      <p>These were the core irc module settings. There are more settings for
+      &#39;net-type&#39; 1 and 5. net-type has to be set in the server module
+      config section.</p>
+
+      <p><strong>Use the following settings only if you set &#39;net-type&#39;
+      to 1!</strong></p>
+    </blockquote>
+
+    <blockquote>
+      <dl>
+        <dt><strong>set prevent-mixing 1</strong></dt>
+
+        <dd>
+          <p>At the moment, the current IRCnet IRCd version (2.10) doesn&#39;t
+          support the mixing of b, o and v modes with e and I modes. This might
+          be changed in the future, so use 1 at the moment for this setting.</p>
+        </dd>
+      </dl>
+    </blockquote>
+
+    <blockquote>
+      <p><strong>Use the following settings only if you set &#39;net-type&#39;
+      to 5!</strong></p>
+    </blockquote>
+
+    <blockquote>
+      <dl>
+        <dt><strong>set kick-method 1</strong></dt>
+
+        <dd>
+          <p>If your network supports more users per kick command then 1,
+          you can change this behavior here. Set this to the number of
+          users to kick at once, or set this to 0 for all at once.</p>
+        </dd>
+
+        <dt><strong>set modes-per-line 3</strong></dt>
+
+        <dd>
+          <p>Some networks allow you to stack lots of channel modes into
+          one line. They&#39;re all guaranteed to support at least 3, so
+          that&#39;s the default. If you know your network supports more,
+          you may want to adjust this. This setting is limited to 6,
+          although if you want to use a higher value, you can modify this
+          by changing the value of MODES_PER_LINE_MAX in src/chan.h and
+          recompiling the bot.</p>
+        </dd>
+
+        <dt><strong>set include-lk 1</strong></dt>
+
+        <dd>
+          <p>Some networks don&#39;t include the +l limit and +k or -k key modes
+          in the modes-per-line (see above) limitation. Set include-lk to 0
+          for these networks.</p>
+        </dd>
+
+        <dt><strong>set use-354 0</strong></dt>
+
+        <dd>
+          <p>Set this to 1 if your network uses IRCu2.10.01 specific /who
+          requests. Eggdrop can, therefore, ask only for exactly what&#39;s
+          needed.</p>
+        </dd>
+
+        <dt><strong>set rfc-compliant 1</strong> (Disabled by default)</dt>
+
+        <dd>
+          <p>If your network doesn&#39;t use rfc 1459 compliant string
+          matching routines, set this to 0.</p>
+        </dd>
+      </dl>
+    </blockquote>
+    <hr>
+
+    <p><em>Copyright &copy; 1997 Robey Pointer<br>
+    Copyright &copy; 1999 - 2016 Eggheads Development Team
+    <a href="http://www.eggheads.org/"> Eggheads Development Team</a></em></p>
+  </body>
+</html>

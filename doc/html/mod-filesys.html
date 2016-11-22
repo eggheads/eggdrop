@@ -1,0 +1,97 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+
+<html>
+  <head>
+    <title>Eggdrop Documentation: Filesys Module</title>
+  </head>
+
+  <body>
+    <div align="center">
+      <p><strong>Filesys Module</strong></p>
+    </div>
+    <hr>
+
+    <p>This module provides an area within the bot where users can store and
+    manage files. With this module, the bot is useable as a file server.</p>
+
+    <blockquote>
+      <ol>
+        <li><a href="#config">Config file settings</a></li>
+      </ol>
+    </blockquote>
+    <hr>
+
+    <p><a name="config"></a>1. <strong>Config file settings</strong></p>
+
+    <blockquote>
+      <p>This module provides the filesys support. You have to load this if
+      you want your users to upload and download files from your bot.</p>
+
+      <p>Put this line into your Eggdrop configuration file to load the
+      filesys module:</p>
+
+      <p><strong>loadmodule filesys</strong></p>
+
+      <p>There are also some variables you can set in your config
+      file:</p>
+    </blockquote>
+
+    <blockquote>
+      <dl>
+        <dt><strong>set files-path &quot;/home/mydir/eggdrop/filesys&quot;
+        </strong></dt>
+
+        <dd>
+          <p>Set here the &#39;root&#39; directory for the file system.</p>
+        </dd>
+
+        <dt><strong>set incoming-path
+        &quot;/home/mydir/eggdrop/filesys/incoming&quot;</strong></dt>
+
+        <dd>
+          <p>If you want to allow uploads, set this to the directory uploads
+          should be put into. Set this to &quot;&quot; if you don&#39;t want
+          people to upload files to your bot.</p>
+        </dd>
+
+        <dt><strong>set upload-to-pwd 0</strong></dt>
+
+        <dd>
+          <p>If you don&#39;t want to have a central incoming directory,
+          but instead want uploads to go to the current directory that a
+          user is in, set this setting to 1.</p>
+        </dd>
+
+        <dt><strong>set filedb-path &quot;&quot;</strong></dt>
+
+        <dd>
+          <p>Eggdrop creates a &#39;.filedb&#39; file in each subdirectory
+          of your file area to keep track of its own file system information.
+          If you can&#39;t do that (for example, if the dcc path isn&#39;t
+          owned by you, or you just don&#39;t want it to do that) specify
+          a path here where you&#39;d like all of the database files to be
+          stored instead.</p>
+        </dd>
+
+        <dt><strong>set max-file-users 20</strong></dt>
+
+        <dd>
+          <p>Set here the maximum number of people that can be in the file
+          area at once. Setting this to 0 makes it effectively infinite.</p>
+        </dd>
+
+        <dt><strong>set max-filesize 1024</strong></dt>
+
+        <dd>
+          <p>Set here the maximum allowable file size that will be received
+          (in KB). Setting this to 0 makes it effectively infinite.</p>
+        </dd>
+      </dl>
+    </blockquote>
+    <hr>
+
+    <p><em>Copyright &copy; 1997 Robey Pointer<br>
+    Copyright &copy; 1999 - 2016 Eggheads Development Team
+    <a href="http://www.eggheads.org/"> Eggheads Development Team</a></em></p>
+  </body>
+</html>

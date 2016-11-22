@@ -1,0 +1,79 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+
+<html>
+  <head>
+    <title>Eggdrop Documentation: CTCP Module</title>
+  </head>
+
+  <body>
+    <div align="center">
+      <p><strong>CTCP Module</strong></p>
+    </div>
+    <hr>
+
+    <p>This module provides the normal ctcp replies that you would expect.
+    Without it loaded, CTCP CHAT will not work.</p>
+
+    <blockquote>
+      <ol>
+        <li><a href="#config">Config file settings</a></li>
+      </ol>
+    </blockquote>
+    <hr>
+
+    <p><a name="config"></a>1. <strong>Config file settings</strong></p>
+
+    <blockquote>
+      <p>Put this line into your Eggdrop configuration file to load the
+      CTCP module:</p>
+
+      <p><strong>loadmodule ctcp</strong></p>
+
+      <p>There are also some variables you can set in your config
+      file:</p>
+    </blockquote>
+
+    <blockquote>
+      <dl>
+        <dt><strong>set ctcp-mode 0</strong></dt>
+
+        <dd>
+          <p>Set here how the ctcp module should answer ctcps. There are 3
+          possible operating modes:</p>
+
+          <table border=0>
+            <tr>
+              <td>0</td>
+
+              <td>Normal behavior is used.</td>
+            </tr>
+
+            <tr>
+              <td>1</td>
+
+              <td>The bot ignores all ctcps, except for CHAT and PING
+              requests by users with the +o flag.</td>
+            </tr>
+
+            <tr>
+              <td>2</td>
+
+              <td>Normal behavior is used, however the bot will not answer
+              more than X ctcps in Y seconds (defined by &#39;set
+              flood-ctcp&#39;).</td>
+            </tr>
+          </table>
+        </dd>
+      </dl>
+
+      <p>There are also several variables to help make your bot less
+      noticeable. They are: ctcp-version, ctcp-finger, and ctcp-userinfo.
+      You can use set to set them to values you&#39;d like.</p>
+    </blockquote>
+    <hr>
+
+    <p><em>Copyright &copy; 1997 Robey Pointer<br>
+    Copyright &copy; 1999 - 2016 Eggheads Development Team
+    <a href="http://www.eggheads.org/"> Eggheads Development Team</a></em></p>
+  </body>
+</html>

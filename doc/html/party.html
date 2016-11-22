@@ -1,0 +1,54 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+
+<html>
+  <head>
+    <title>Eggdrop Documentation: The Party Line</title>
+  </head>
+
+  <body>
+    <div align="center">
+      <p><strong>The Party Line</strong></p>
+    </div>
+    <hr>
+
+    <p>The most important way you will communicate with your bot is through
+    the party line. The party line is accessible via DCC chat or telnet.
+    It&#39;s pretty much just a miniature, lag-less IRC (see &quot;Botnet
+    sharing and linking&quot;), but it also consists of a console through
+    which you can watch channel activity and give commands.</p>
+
+    <p>To enter the party line, DCC chat or open a telnet connection to your
+    bot. It should ask for your password if you&#39;ve set one. If you don&#39;
+    have one set, use the /msg &lt;bot&gt; PASS &lt;new password&gt; command
+    to set one.</p>
+
+    <p>The party line is actually split up into 200,000 &quot;channels&quot;.
+    The console is available from each channel, but you can only talk to
+    people who are on your current channel (just like IRC). Channel 0 is the
+    main party line, while others are typically reserved for private
+    conversations. Channels 1-99,999 are botnet wide chat channels and any
+    user joining that channel anywhere on the botnet will be able to chat
+    with you, Channels *0-*99,999 are local channels (only people on the
+    bot you are on can chat with you on these channels).</p>
+
+    <p>Console commands start with a dot (.), similar to the slash (/)
+    used for IRC commands. At any time, you can type <em>&quot;.help
+    all&quot;</em> to get a list of all possible commands. To find out
+    what a command does, use <em>&quot;.help &lt;command&gt;&quot;</em>.
+    For example: <em> &quot;.help channel&quot;</em>.</p>
+
+    <p>When you&#39;re on the party line, anything you type that doesn&#39;t
+    start with a dot (.), a comma (,), or an apostrophe (&#39;) is considered
+    to be broadcast to everyone else, just like talking on a channel. A
+    message prefixed with a comma goes only to other bot owners (+n). A
+    message prefixed with an apostrophe is sent to all users on the local
+    bot only. You can change channels with the <em>&quot;.chat&quot;</em>
+    command or even leave all channels with <em>&quot;.chat off&quot;.</em>
+    </p>
+    <hr>
+
+    <p><em>Copyright &copy; 1997 Robey Pointer<br>
+    Copyright &copy; 1999 - 2016 Eggheads Development Team
+    <a href="http://www.eggheads.org/"> Eggheads Development Team</a></em></p>
+  </body>
+</html>

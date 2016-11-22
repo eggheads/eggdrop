@@ -1,0 +1,82 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+
+<html>
+  <head>
+    <title>Eggdrop Documentation: Weird Messages That Get Logged</title>
+  </head>
+
+  <body>
+    <div align="center">
+      <p><strong>Weird Messages That Get Logged</strong></p>
+    </div>
+    <hr>
+
+    <p>Shown below are some messages that Eggdrop might log from time to time
+    that may seem a bit strange and have meanings which may not be obvious</p>
+
+    <p><strong>(!) timer drift -- spun N minutes</strong></p>
+
+    <blockquote>
+      <p>This is caused by one of several known things...</p>
+    </blockquote>
+
+    <blockquote>
+      <ul>
+        <li>
+          <p>Your bot could have been swapped out of memory for a while, or for
+          some reason the computer could have stopped letting the bot run. Once
+          a minute, Eggdrop does a few maintenance things, including counting
+          down any active Tcl timers. If for some reason, several minutes pass
+          without Eggdrop being able to do this, it logs this message to let
+          you know what happened. It&#39;s generally a bad thing, because it means
+          that the system your bot is on is very busy, and the bot can hardly
+          keep track of the channel very well when it gets swapped out for
+          minutes at a time.</p>
+        </li>
+
+        <li>
+          <p>On some systems (at least Linux), if the DNS your bot is using to
+          lookup hostnames is broken and *very* slow in responding (this can
+          occur if the DNS server&#39;s uplink doesn&#39;t exist), then you
+          will get 4-5 minute timer drifts continuously. This can be fixed by
+          loading the dns module.</p>
+        </li>
+
+        <li>
+          <p>The clock on your machine has just been changed. It may have been
+          running behind by several minutes and was just corrected.</p>
+        </li>
+      </ul>
+    </blockquote>
+
+    <p><strong>(!) killmember(Nickname) -&gt; nonexistant</strong></p>
+
+    <blockquote>
+      <p>We have yet to track this down. It&#39;s a mildly bad thing, however.
+      It means the bot just got informed by the server that someone left the
+      channel -- but the bot has no record of that person ever being ON the
+      channel.</p>
+
+      <p><a href="mailto:jwilkinson@mail.utexas.edu">
+      jwilkinson@mail.utexas.edu</a> had some insight into this one:</p>
+
+      <blockquote>
+        <p>This is not an Eggdrop bug, at least not most of the time. This is a
+        bug in all but perhaps the very latest ircd systems. It&#39;s not
+        uncommon during netsplits and other joins for the server to lose track
+        of killed or collided join notices. Also, in some servers, it is
+        possible to specify non-standard characters, such as carret symbols,
+        which get falsely interpreted as capital letters.</p>
+
+
+        <p>When converted to lowercase, these symbols fail to get processed,
+        and joins are not reported, although parts are.</p>
+      </blockquote>
+    </blockquote>
+    <hr>
+
+    <p><em>Copyright &copy; 1997 Robey Pointer<br>
+    Copyright &copy; 1999 - 2016 Eggheads Development Team
+    <a href="http://www.eggheads.org/"> Eggheads Development Team</a></em></p>
+  </body>
+</html>

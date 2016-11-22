@@ -1,0 +1,215 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+
+<html>
+  <head>
+    <title>Eggdrop Documentation: Compilation and Installation of Eggdrop</title>
+  </head>
+
+  <body>
+    <div align="center">
+      <p><strong>Compilation and Installation of Eggdrop</strong></p>
+    </div>
+    <hr>
+
+    <p>This is the quick install guide; if you have had little or no
+    experience with UNIX or Eggdrop, READ THE <a href="readme.html">README</a>
+    FILE NOW! This file is only for experienced users.</p>
+
+    <p>For more information on compiling Eggdrop, see the
+    <a href="compiling.html">Compile Guide</a> (and of course, the
+    <a href="readme.html">README</a> FILE).</p>
+    <hr>
+
+    <p><strong>Contents</strong></p>
+
+    <blockquote>
+      <ol>
+        <li><a href="#sect1">What is Eggdrop?</a></li>
+
+        <li><a href="#sect2">Quick startup</a></li>
+
+        <li><a href="#sect3">Modules</a></li>
+
+        <li><a href="#sect4">Frequently asked questions</a></li>
+      </ol>
+    </blockquote>
+    <hr>
+
+    <p><a name="sect1"></a>1. <strong>What is Eggdrop?</strong></p>
+
+    <blockquote>
+      <p>Please, read the <a href="readme.html">Readme</a> file before
+      attempting to set up this bot. It is <strong>NOT</strong> easy to
+      use! This file is a quick setup guide, not a miracle worker. If you
+      enter this file without basic Eggdrop knowledge, you will
+      <strong>NOT</strong> leave with a working bot! Before asking ANY
+      questions, <strong>READ THE <a href="readme.html">README</a> FILE OR
+      YOU WILL BE BURNED TO A HORRIBLE DEATH! IF YOU DO NOT READ THAT FILE
+      I WILL PERSONALLY WALK TO YOUR TERMINAL AND BEAT IT WITH A SMELLY
+      SNEAKER!</strong> By the way, read the <a href="readme.html">README</a>
+      file.</p>
+    </blockquote>
+
+    <p><a name="sect2"></a>2. <strong>Quick startup</strong></p>
+
+    <blockquote>
+      <p>Eggdrop uses the GNU autoconfigure scripts to make things easier.</p>
+
+      <ol>
+        <li>
+          <p>Type &#39;./configure&#39; from the Eggdrop directory. The
+          configure script will determine how your system is set up and
+          figure out how to correctly compile Eggdrop. It will also try
+          to find Tcl, which is required to compile.</p>
+        </li>
+
+        <li>
+          <p>Type either &#39;make config&#39; or &#39;make iconfig&#39; to
+          determine which modules will be compiled. &#39;make config&#39;
+          compiles the default modules (everything but woobie.mod). If you
+          want to choose which modules to compile, use &#39;make iconfig&#39;.
+       </li>
+
+       <li>
+          <p>Type &#39;make&#39; from the eggdrop directory, or to force a
+          statically linked module bot, type &#39;make static&#39;. Otherwise,
+          the Makefile will compile whatever type of bot the configure script
+          determined your system will support. Dynamic is always the better
+          way to go if possible. There are also the &#39;debug&#39; and
+          &#39;sdebug&#39; (static-debug) options, which will give more
+          detailed output on a (highly unlikely :) crash. This will help
+          the devlopment team track down the crash and fix the bug. Debug and
+          sdebug will take a little longer to compile and will enlarge the
+          binary a bit, but it&#39;s worth it if you want to support Eggdrop
+          development.</p>
+        </li>
+
+        <li>
+          <p>Eggdrop must be installed in a directory somewhere. This is
+          accomplished by entering the Unix command:</p>
+        </li>
+
+        <blockquote>
+          <p>make install</p>
+        </blockquote>
+
+        <p>This will install the Eggdrop in your home directory in a
+        directory called &#39;eggdrop&#39; (i.e. /home/user/eggdrop).</p>
+
+       <p>If you want to install to a different directory, use:</p>
+
+       <blockquote>
+          <p>make install DEST=&lt;directory&gt;</p>
+       </blockquote>
+
+       <p>For example:</p>
+
+       <blockquote>
+         <p>make install DEST=/home/user/otherdir</p>
+       </blockquote>
+
+       <p>Note that you must use full path for every file to be correctly
+       installed.</p>
+
+       <p>[The following is performed from the directory installed above.]</p>
+
+        <li>
+          <p>Edit your config file completely.</p>
+        </li>
+
+        <li>
+          <p>Start the bot with the &quot;-m&quot; option to create a user
+          file, i.e. &#39;./eggdrop -m LamestBot.conf&#39;.</p>
+        </li>
+
+        <li>
+          <p>When starting the bot in the future, drop the &quot;-m&quot;.
+          If you have edited your config file correctly, you can type:
+
+          <blockquote>
+            <p>chmod u+x &lt;my-config-file-name&gt;</p>
+          </blockquote>
+
+          <p>For example:</p>
+
+          <blockquote>
+            <p>chmod u+x LamestBot.conf</p>
+          </blockquote>
+
+          <p>From then on, you will be able to use your config file as a
+          shell script. You can just type &quot;./LamestBot.conf&quot; from
+          your shell prompt to start up your bot. For this to work, the top
+          line of your script MUST contain the correct path to the Eggdrop
+          executable.</p>
+        </li>
+
+        <li><p>It&#39;s advisable to run your bot via crontab, so that it will
+        automatically restart if the machine goes down or (heaven forbid) the
+        bot should crash. Look at &#39;scripts/botchk&#39; and
+        &#39;scripts/autobotchk&#39; for a great start with crontabbing the
+        bot.</p></li>
+
+        <li><p>Smile, and if you haven&#39;t already read the README file
+        in its entirety, go take a long walk off a short pier.</p></li>
+      </ol>
+    </blockquote>
+
+    <p><a name="sect3"></a>3. <strong>Modules</strong></p>
+
+    <blockquote>
+      <ol>
+        <p>Modules are small pieces of code that can either be compiled into
+        the binary or can be compiled separately into a file. This allows
+        for a much smaller binary.</p>
+
+        <p>If there are any modules that you have made or downloaded, you
+        can add them to the bot by placing them in the /src/mod directory
+        with a mod extension. They will be automatically compiled during
+        make for you. They must have a valid Makefile and, of course, be
+        compatible with the rest of the Eggdrop source.</p>
+
+        <p>If you wish to add a module at a later time, follow the same steps
+        in paragraph 2. After you have moved the appropriate files, you will
+        only need to type &#39;make modules&#39; to compile only the modules
+        portion of the bot.</p>
+      </ol>
+    </blockquote>
+
+    <p><a name="sect4"></a>4. <strong>Frequently asked questions</strong></p>
+
+    <blockquote>
+      <p>What do I do if...?</p>
+
+      <p><strong>READ THE <a href="readme.html">README</a> FILE!</strong></p>
+
+      <p>The readme does not answer...!</p>
+
+      <p><strong>READ THE <a href="readme.html">README</a> FILE
+      AGAIN!</strong></p>
+
+      <p>I still don&#39;t know how to...</p>
+
+      <p><strong>MEMORIZE THE <a href="readme.html">README</a>
+      FILE!</strong></p>
+
+      <p>But...</p>
+
+      <p>Well, go to <a href="http://www.egghelp.org/">www.egghelp.org</a>
+      or <a href="http://www.eggheads.org/">www.eggheads.org</a> and see if
+      you can find there what you&#39;re looking for. There are also lots
+      of IRC help channels and various mailing lists, as seen in the
+      <strong><a href="readme.html">README</a> FILE</strong>.</p>
+    </blockquote>
+
+    <p>This is the end. If you read to this point, hopefully you have also
+    read the <a href="readme.html">README</a> file. If not, then READ
+    IT!&@#%@!</p>
+
+    <p>Have fun with Eggdrop!</p>
+    <hr>
+
+    <p><em>Copyright &copy; 1997 Robey Pointer<br>
+    Copyright &copy; 1999 - 2016 Eggheads Development Team
+    <a href="http://www.eggheads.org/"> Eggheads Development Team</a></em></p>
+  </body>
+</html>

@@ -1,0 +1,363 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+
+<html>
+  <head>
+    <title>Eggdrop Documentation: Server Module</title>
+  </head>
+
+  <body>
+    <div align="center">
+      <p><strong>Server Module</strong></p>
+    </div>
+    <hr>
+
+    <p>The server module allows the bot to connect to an IRC server.</p>
+
+    <blockquote>
+      <ol>
+        <li><a href="#config">Config file settings</a></li>
+      </ol>
+    </blockquote>
+    <hr>
+
+    <p><a name="config"></a>1. <strong>Config file settings</strong></p>
+
+    <blockquote>
+      <p>This module provides the core server support. You have to load this
+      if you want your bot to come on IRC.<br>
+      </p>
+
+      <p>Put this line into your Eggdrop configuration file to load the
+      server module:</p>
+
+      <p><strong>loadmodule server</strong></p>
+
+      <p>There are also some variables you can set in your config
+      file:</p>
+    </blockquote>
+
+    <blockquote>
+      <dl>
+        <dt><strong>set net-type 0</strong></dt>
+
+        <dd>
+          <p>What is your network?</p>
+
+          <p>0 = Efnet<br>
+           1 = IRCnet<br>
+           2 = Undernet<br>
+           3 = Dalnet<br>
+           4 = +e/+I/max-bans 20 Hybrid<br>
+           5 = Others</p>
+        </dd>
+
+        <dt><strong>set nick &quot;LamestBot&quot;</strong></dt>
+
+        <dd>
+          <p>Set the nick the bot uses on IRC, and on the botnet unless
+          you specify a separate botnet-nick, here.</p>
+        </dd>
+
+        <dt><strong>set altnick &quot;LamestBot&quot;</strong></dt>
+
+        <dd>
+          <p>Set the alternative nick which the bot uses on IRC if the nick
+          specified by &#39;set nick&#39; is unavailable. All &#39;?&#39;
+          characters will be replaced by random numbers.</p>
+        </dd>
+
+        <dt><strong>set keep-nick 1</strong></dt>
+
+        <dd>
+          <p>This setting makes the bot try to get his original nickname back
+          if its primary nickname is already in use.</p>
+        </dd>
+
+        <dt><strong>set realname &quot;/msg LamestBot hello&quot;</strong></dt>
+
+        <dd>
+          <p>Set here what to display in the real-name field for the bot.</p>
+        </dd>
+
+        <dt>
+          <p>
+            <strong>bind evnt - init-server evnt:init_server</strong><br>
+            <strong>proc evnt:init_server {type} {</strong><br>
+            <strong>&nbsp;&nbsp;&nbsp;global botnick</strong><br>
+            <strong>&nbsp;&nbsp;&nbsp;putquick &quot;MODE $botnick +i-ws&quot;</strong><br>
+            <strong>}</strong>
+          </p>
+        </dt>
+
+        <dd>
+          <p>This is a Tcl script to be run immediately after connecting to a
+          server.</p>
+        </dd>
+
+        <dt><strong>set init-server { putserv &quot;MODE $botnick +i-ws&quot;
+        }</strong></dt>
+
+        <dd>
+          <p>This is a Tcl script to be run immediately after connecting to a
+          server. It is limited to 120 characters, and is depriciated due to
+          the EVNT bind (see <a href="tcl-commands.html">Tcl Commands</a>).</p>
+        </dd>
+
+        <dt><strong>set connect-server { putlog &quot;Connecting to
+        server.&quot; }</strong></dt>
+
+        <dd>
+          <p>This is a Tcl script to be run immediately before connecting to a
+          server. It is limited to 120 characters, and is depriciated due to
+          the EVNT bind (see <a href="tcl-commands.html">Tcl Commands</a>).</p>
+        </dd>
+
+        <dt><strong>set disconnect-server { putlog &quot;Disconnected from
+        server.&quot; }</strong></dt>
+
+        <dd>
+          <p>This is a Tcl script to be run immediately after disconnecting
+          from a server. It is limited to 120 characters, and is depriciated
+          due to the EVNT bind (see <a href="tcl-commands.html">Tcl
+          Commands</a>).</p>
+        </dd>
+
+        <dt><strong>set servers {</strong></dt>
+<pre>
+        you.need.to.change.this:6667
+        another.example.com:7000:password
+        [2001:db8:618:5c0:263::]:6669:password
+        ssl.example.net:+6697
+</pre>
+        <p><strong>}</strong></p>
+
+
+        <dd>
+          <p>This is the bot&#39;s server list. The bot will start at the first
+          server listed, and cycle through them whenever it gets disconnected.
+          You need to change these servers to YOUR network&#39;s servers.</p>
+
+          <p>For example:</p>
+
+          <p>set servers {<br>
+           &nbsp; irc.netw.ork<br>
+           &nbsp; irc.krow.ten:6668<br>
+           &nbsp; ssl.secu.re:+6697<br>
+           }</p>
+
+           <p>The format is: server[:port[:password]]</p>
+           <p>Prefix the port with a plus sign to attempt a SSL connection:
+           server:+port[:password]</p>
+
+           <p>Both the port and password fields are optional; however, if you
+           want to set a password or use SSL you must also set a port. If a port
+           isn&#39;t specified it will default to  your default-port setting..</p>
+        </dd>
+
+        <dt><strong>set default-port 6667</strong></dt>
+
+        <dd>
+          <p>Set the default port which should be used if none is specified
+          with &#39;.jump&#39; or in &#39;set servers&#39;.</p>
+        </dd>
+
+        <dt><strong>set msg-rate 2</strong></dt>
+
+        <dd>
+          <p>Number of seconds to wait between transmitting queued lines to
+          the server. Lower this value at your own risk.  ircd is known to
+          start flood control at 512 bytes/2 seconds.</p>
+        </dd>
+
+        <dt><strong>set server-cycle-wait 60</strong></dt>
+
+        <dd>
+          <p>This setting defines how long Eggdrop should wait before moving
+          from one server to another on disconnect. If you set 0 here,
+          Eggdrop will not wait at all and will connect instantly. Setting
+          this too low could result in your bot being K:Lined.</p>
+        </dd>
+
+        <dt><strong>set server-timeout 60</strong></dt>
+
+        <dd>
+          <p>Set here how long Eggdrop should wait for a response when
+          connecting to a server before giving up and moving on to next
+          server.</p>
+        </dd>
+
+        <dt><strong>set check-stoned 1</strong></dt>
+
+        <dd>
+          <p>Set this to 1 if Eggdrop should check for stoned servers? (where
+          the server connection has died, but Eggdrop hasn&#39;t been notified
+          yet).</p>
+        </dd>
+
+        <dt><strong>set serverror-quit 1</strong></dt>
+
+        <dd>
+          <p>If you want your bot to exit the server if it receives an
+          ERROR message, set this to 1.</p>
+        </dd>
+
+        <dt><strong>set max-queue-msg 300</strong></dt>
+
+        <dd>
+          <p>Set here the maximum number of lines to queue to the server.
+          If you&#39;re going to dump large chunks of text to people over IRC,
+          you will probably want to raise this. 300 is fine for most people
+          though.</p>
+        </dd>
+
+        <dt><strong>set raw-log 0</strong></dt>
+
+        <dd>
+          <p>This setting allows you the logging of raw incoming server
+          traffic via console/log flag &#39;r&#39;, raw outgoing server
+          traffic via console/log mode &#39;v&#39;, raw botnet traffic via
+          console/log mode &#39;t&#39;, and raw share traffic via console/log
+          mode &#39;h&#39;. These flags can create a large security hole,
+          allowing people to see user passwords. This is now restricted to +n
+          users only. Please choose your owners with care.</p>
+        </dd>
+
+        <dt><strong>set quiet-reject 1</strong></dt>
+
+        <dd>
+          <p>This setting makes the bot squelch the error message when
+          rejecting a DCC CHAT, SEND or message command. Normally,
+          Eggdrop notifies the user that the command has been rejected
+          because they don&#39;t have access. Note that sometimes IRC
+          server operators detect bots that way.</p>
+        </dd>
+
+        <dt><strong>set flood-msg 5:60</strong></dt>
+
+        <dd>
+          <p>Set here how many msgs in how many seconds from one host
+          constitutes a flood. If you set this to 0:0, msg flood protection
+          will be disabled.</p>
+        </dd>
+
+        <dt><strong>set flood-ctcp 3:60</strong></dt>
+
+        <dd>
+          <p>Set here how many ctcps in how many seconds from one host are
+          recognized as a flood. Not specifying or using number = 0
+          will not check against ctcp floods.</p>
+        </dd>
+
+        <dt><strong>set answer-ctcp 3</strong></dt>
+
+        <dd>
+          <p>Set how many ctcps should be answered at once here.</p>
+        </dd>
+
+        <dt><strong>set lowercase-ctcp 0</strong></dt>
+
+        <dd>
+          <p>If you want your bot to answer lower case ctcp requests (non
+          rfc-compliant), set this setting to 1. mIRC will do this, most
+          other clients will not.</p>
+        </dd>
+
+        <dt><strong>set trigger-on-ignore 0</strong></dt>
+
+        <dd>
+          <p>If you want Eggdrop to trigger binds for ignored users, set
+          this to 1.</p>
+        </dd>
+
+        <dt><strong>set exclusive-binds 0</strong></dt>
+        <dd>
+          <p>This setting configures PUBM and MSGM binds to be exclusive
+          of PUB and MSG binds. This means if a MSGM bind with the mask
+          &quot;*help*&quot; exists and is triggered, any MSG bindings
+          with &quot;help&quot; in their mask will not be triggered.
+          Don&#39;t enable this unless you know what you are doing!</p>
+        </dd>
+
+        <dt><strong>set double-mode 0</strong></dt>
+
+        <dd>
+          <p>Allow identical messages in the mode queue?</p>
+        </dd>
+
+        <dt><strong>set double-server 0</strong></dt>
+
+        <dd>
+          <p>Allow identical messages in the server queue?</p>
+        </dd>
+
+        <dt><strong>set double-help 0</strong></dt>
+
+        <dd>
+          <p>Allow identical messages in the help queue?</p>
+        </dd>
+
+        <dt><strong>set use-penalties 1</strong></dt>
+
+        <dt>(default on net-type 1)</dt>
+
+        <dd>
+          <p>This enables Eggdrop&#39;s penalty calculation. Every command
+          Eggdrop sends to the IRC server raises it&#39;s penalty points.
+          If Eggdrop reaches a server limit, it gets disconnected with
+          &quot;excess flood&quot; message. Eggdrop is able to count internal
+          those penalty points, too and take measures against excess flooding.
+          Note: it&#39;s highly advised to turn this on!</p>
+        </dd>
+
+        <dt><strong>set optimize-kicks 1</strong></dt>
+
+        <dd>
+          <p>This optimizes the kick queue. It also traces nick changes
+          and parts in the channel and changes the kick queue accordingly.
+          There are three different options for this setting:</p>
+
+          <p>0 = Turn it off.<br>
+           1 = Optimize the kick queue by summarizing kicks.<br>
+           2 = Trace nick changes and parts on the channel and change
+           the queue accordingly. For example, bot will not try to kick
+           users who have already parted the channel.</p>
+        </dd>
+      </dl>
+    </blockquote>
+
+    <blockquote>
+      <p>There are more settings for &#39;net-type&#39; 5.</p>
+
+      <p><strong>Use this settings only if you set &#39;net-type&#39; to
+      5!</strong></p>
+    </blockquote>
+
+    <blockquote>
+      <dl>
+        <dt><strong>set check-mode-r 1</strong></dt>
+
+        <dd>
+          <p>This settings defines how umode +r is understood by Eggdrop.
+          Some networks use +r to indicate a restricted connection. If this
+          is your case, and you want your bot to leave restricted servers
+          and jump to the next server on its list, then set it to 1. Please
+          note, this setting is automatically set to 0 for net-type 0/2/3/4,
+          and set to 1 for net-type 1.</p>
+        </dd>
+
+        <dt><strong>set nick-len 9</strong></dt>
+
+        <dd>
+          <p>This setting allows you to specify the maximum nick-length
+          supported by your network. The default setting is 9. The
+          maximum supported length by Eggdrop is 32.</p>
+        </dd>
+      </dl>
+    </blockquote>
+    <hr>
+
+    <p><em>Copyright &copy; 1997 Robey Pointer<br>
+    Copyright &copy; 1999 - 2016 Eggheads Development Team
+    <a href="http://www.eggheads.org/"> Eggheads Development Team</a></em></p>
+  </body>
+</html>

@@ -1,4 +1,90 @@
 - - - - - - - - - - - - - - -
+Commit 4883c92 (2016-11-21 22:36:23 -0500) by Geo
+Remove git push from ChangeLog generation 
+
+misc/releaseprep
+
+- - - - - - - - - - - - - - -
+Commit 6caa0ec (2016-11-21 22:28:06 -0500) by Geo
+Update THANKS file 
+
+THANKS
+
+- - - - - - - - - - - - - - -
+Commit f957c85 (2016-11-21 17:50:33 -0600) by thommey
+Adjust patchlevel. 
+
+src/patch.h
+
+- - - - - - - - - - - - - - -
+Commit b04ac65 (2016-11-21 17:45:37 -0600) by thommey
+Various small bugfixes. 
+
+doc/Changes1.8
+src/botnet.c
+src/dccutil.c
+src/flags.c
+src/main.c
+src/misc_file.c
+src/net.c
+src/tcluser.c
+src/userent.c
+src/users.c
+
+- - - - - - - - - - - - - - -
+Commit 1d67443 (2016-11-14 23:23:01 -0500) by Geo
+Adjust TLS ifdefs to not skip link steps 
+
+src/dcc.c
+
+- - - - - - - - - - - - - - -
+Commit 8f9d578 (2016-11-13 23:02:41 -0500) by Geo
+Update NEWS-1.8.0 
+
+NEWS-1.8.0
+
+- - - - - - - - - - - - - - -
+Commit a16b333 (2016-11-13 22:31:40 +0100) by thommey
+Rename NEWS to NEWS-1.8.0. 
+
+NEWS
+NEWS-1.8.0
+README
+
+- - - - - - - - - - - - - - -
+Commit fb5503e (2016-11-13 22:30:06 +0100) by thommey
+Fix reference to 1.8 transition documentation- 
+
+README
+
+- - - - - - - - - - - - - - -
+Commit a6b77ee (2016-11-13 22:28:31 +0100) by thommey
+Merge readme.1.8.0 into NEWS. 
+
+NEWS
+README.1.8.0
+
+- - - - - - - - - - - - - - -
+Commit cfbe94a (2016-11-12 10:39:19 -0600) by thommey
+Add 1.8 readme. 
+
+README
+README.1.8.0
+
+- - - - - - - - - - - - - - -
+Commit 7c42c06 (2016-11-01 22:59:17 -0400) by Geo
+Eggdrop v1.8.0 Release Candidate 2 
+
+doc/html/searchindex.js
+src/patch.h
+
+- - - - - - - - - - - - - - -
+Commit d9b1e6d (2016-11-01 22:58:18 -0400) by Geo
+Update ChangeLog 
+
+ChangeLog
+
+- - - - - - - - - - - - - - -
 Commit d469046 (2016-11-01 22:49:59 -0400) by Geo
 Commit ChangeLog during releaseprep if changed 
 

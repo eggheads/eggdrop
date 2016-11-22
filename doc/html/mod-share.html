@@ -1,0 +1,97 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+
+<html>
+  <head>
+    <title>Eggdrop Documentation: Share Module</title>
+  </head>
+
+  <body>
+    <div align="center">
+      <p><strong>Share Module</strong></p>
+    </div>
+    <hr>
+
+    <p>This module provides userfile sharing support between two directly
+    linked bots.</p>
+
+    <blockquote>
+      <ol>
+        <li><a href="#config">Config file settings</a></li>
+      </ol>
+    </blockquote>
+    <hr>
+
+    <p><a name="config">1. <strong>Config file settings</strong></a></p>
+
+    <blockquote>
+      <p>Put this line into your Eggdrop configuration file to load the
+      share module:</p>
+
+      <p><strong>loadmodule share</strong></p>
+
+      <p>There are also some variables you can set in your config
+      file:</p>
+    </blockquote>
+
+    <blockquote>
+      <dl>
+        <dt><strong>set allow-resync 0</strong></dt>
+
+        <dd>
+          <p>When two bots get disconnected, this setting allows them
+          to create a resync buffer which saves all changes done to the
+          userfile during the disconnect. When they reconnect, they will
+          not have to transfer the complete user file, but, instead, just
+          send the resync buffer.</p>
+        </dd>
+
+        <dt><strong>set resync-time 900</strong></dt>
+
+        <dd>
+          <p>This setting specifies how long to hold another bots resync data
+          before flushing it. This is a setting for allow-resync.</p>
+        </dd>
+
+        <dt><strong>set private-global 0</strong></dt>
+
+        <dd>
+          <p>When sharing user lists, DON&#39;T ACCEPT global flag changes from
+          other bots? <strong>NOTE:</strong> The bot will still send changes
+          made on the bot, it just won&#39;t accept any global flag changes from
+          other bots. This overrides the private-globals setting (below).</p>
+        </dd>
+
+        <dt><strong>set private-globals &quot;&quot;</strong></dt>
+
+        <dd>
+          <p>When sharing user lists, if private-global isn&#39;t set, which
+          global flag changes from other bots should be ignored?</p>
+        </dd>
+
+        <dt><strong>set private-user 0</strong></dt>
+
+        <dd>
+          <p>When sharing user lists, don&#39;t accept ANY userfile changes
+          from other bots? Paranoid people should use this feature on their
+          hub bot. This will force all userlist changes to be made via the
+          hub.</p>
+        </dd>
+
+        <dt><strong>set override-bots 0</strong></dt>
+
+        <dd>
+          <p>This setting makes the bot discard it&#39;s own bot records in
+          favor of the ones sent by the hub. <strong>NOTE:</strong> No
+          passwords or botflags are shared, only ports and address are
+          added to sharing procedure. This only works with hubs that
+          are v1.5.1 or higher.</p>
+        </dd>
+      </dl>
+    </blockquote>
+    <hr>
+
+    <p><em>Copyright &copy; 1997 Robey Pointer<br>
+    Copyright &copy; 1999 - 2016 Eggheads Development Team
+    <a href="http://www.eggheads.org/"> Eggheads Development Team</a></em></p>
+  </body>
+</html>

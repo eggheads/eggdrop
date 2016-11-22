@@ -1,0 +1,260 @@
+<!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 3.2 Final//EN">
+
+<html>
+  <head>
+    <title>Eggdrop Documentation: Frequently Asked Questions</title>
+  </head>
+
+  <body>
+    <div align="center">
+      <p><strong>Frequently Asked Questions</strong></p>
+    </div>
+    <hr>
+
+    <p><strong>Contents</strong></p>
+
+    <blockquote>
+      <ol>
+        <li><a href="#sect1">What do I do if I get the Error &quot;User file
+        not found&quot;?</a></li>
+
+        <li><a href="#sect2">What the heck is Tcl?</a></li>
+
+        <li><a href="#sect3">My bot dies, and the last entry in the logfile is
+        &quot;Received terminate signal&quot;. What does that mean, and can I
+        prevent it?</a></li>
+
+        <li><a href="#sect4">Someone else set up a bot I don&#39;t like. Are
+        there any backdoors I can use to take their bot down?</a></li>
+
+        <li><a href="#sect5">What are modules?</a></li>
+
+        <li>
+          <a href="#sect6">Can I compile Eggdrop without dynamic modules?</a>
+
+
+          <ol type="a">
+            <li><a href="#sect6a">Do I still need to &quot;loadmodule&quot;
+            modules?</a></li>
+          </ol>
+        </li>
+
+        <li><a href="#sect7">Where can I get a pre-compiled Eggdrop for my
+        computer?</a></li>
+
+        <li><a href="#sect8">I get &quot;Makefile:3 : invalid operator&quot;
+        of some such thing When I try to &quot;make&quot;</a></li>
+
+        <li><a href="#sect9">When I &quot;tclsh scripts/weed
+        &lt;userfile&gt; c&quot; It barfs chunks at me and dies.</a></li>
+
+        <li><a href="#sect10">I get &quot;ld-elf.so.1: Shared object
+        &quot;libtcl80.so.1&quot; not found&quot; or &quot;eggdrop: error in
+        loading shared libraries / libtcl8.1.so: cannot open shared object
+        file: No such file or directory&quot; when I try to start my
+        bot.</a></li>
+
+        <li><a href="#sect11">I get a whole pile of &quot;unresolved symbol
+        &#39;Tcl_AppendResult&#39;&quot; (or some other symbol) when I try to
+        load a module.</a></li>
+      </ol>
+    </blockquote>
+
+    <p><a name="sect1"></a>1.<strong> What do I do if I get the error
+    &quot;User file not found&quot;?</strong></p>
+
+    <blockquote>
+      <ul>
+        <li>Run Eggdrop with the &quot;-m&quot; option (i.e. &quot;eggdrop
+        -m eggdrop.conf&quot;).</li>
+
+        <li>Go to IRC and send &quot;hello&quot; to your bot (i.e.
+        &quot;/msg mybot hello&quot;).</li>
+
+        <li>You will become an owner on your bot. You can leave the bot
+        running (nobody else will become an owner if they say
+        &quot;hello&quot;), but in the future, don&#39;t use the
+        &quot;-m&quot; option when running the bot.</li>
+      </ul>
+    </blockquote>
+
+    <p><a name="sect2"></a>2. <strong>What the heck is Tcl?</strong></p>
+
+    <blockquote>
+      <p>Tcl is a scripting language written by John Ousterhout. It&#39;s
+      much better than most &quot;built-in&quot; script languages (like the
+      one in ircII) and is meant to be linked with anything needing a
+      scripting language, so I linked it with Eggdrop.
+      <a href="tcl-commands.html">Eggdrop Tcl Commands</a> contains a list of
+      additional Tcl commands provided by Eggdrop. There are also several
+      example scripts in the scripts/ directory, and one in the doc directory
+      called first_script.txt. There are also hundreds of scripts floating
+      around on the ftp/web sites if you like working by example (which is
+      typically the best way).</p>
+    </blockquote>
+
+    <p><a name="sect3"></a>3. <strong>My bot dies and the last entry in the
+    logfile is &quot;received terminate signal&quot;. What does that mean and
+    can i prevent it?</strong></p>
+
+    <blockquote>
+      <p>There&#39;s nothing you can do to prevent it. It means the system
+      administrator is killing the Eggdrop process. Most of the time,
+      it&#39;s an automatic thing that happens when the system is being
+      rebooted, so it&#39;s harmless. If you have a crontab running, the bot
+      will get restarted when the system is back online. Occasionally, the
+      system administrator will kill the bot manually. For example, if
+      he/she doesn&#39;t want bots running on the system.</p>
+    </blockquote>
+
+    <p><a name="sect4"></a>4. <strong>Someone else set up a bot I don&#39;t
+    like. Are there any backdoors I can use to take their bot down?</strong></p>
+
+    <blockquote>
+      <p>No, there have never been any backdoors and there never will be, so
+      please stop asking. Every once in a while, someone finds a way to
+      exploit a bug in Eggdrop, but we fix these bugs as soon as we find out
+      about them. If you want to bring down someone else&#39;s bot, you will
+      not have my/our help.</p>
+    </blockquote>
+
+    <p><a name="sect5"></a>5. <strong>What are modules?</strong></p>
+
+    <blockquote>
+      <p>Modules are a way of adding extra features to the bot, much like Tcl
+      scripts, without requiring the bot to be recompiled. See doc/MODULES for
+      more info.</p>
+    </blockquote>
+
+    <p><a name="sect6"></a>6. <strong>Can I compile Eggdrop without dynamic
+    modules?</strong></p>
+
+    <blockquote>
+      <p>Yes, you can. If the configure script detects that your system
+      CAN&#39;T run modules, it will setup &#39;make&#39; to link the
+      modules in statically for you. You can choose this option yourself by
+      using &#39;make static&#39;. You can also try to compile dynamic
+      modules on a static-only system by using &#39;make eggdrop&#39;.</p>
+    </blockquote>
+
+    <p><a name="sect6a"></a>6a. <strong>Do I still need to &#39;loadmodule&#39;
+    modules?</strong></p>
+
+    <blockquote>
+      <p>YES, when you compile statically, all the modules are linked into
+      the main executable. HOWEVER, they are not enabled until you use
+      loadmodule to enable them, hence you get nearly the same functionality
+      with static modules as with dynamic modules.</p>
+    </blockquote>
+
+    <p><a name="sect7"></a>7. <strong>Where can i get a pre-compiled Eggdrop
+    for my computer?</strong></p>
+
+    <blockquote>
+      <p>It is <strong>HIGHLY</strong> recommended <strong>AGAINST</strong>
+      using pre-compiled Eggdrops from un-trusted sources. Eggdrop has been a
+      regular target for hacking and crashing. Distribution of pre-compiled
+      (binary) versions of Eggdrop are the easiest way for hackers to provide
+      you with the easiest (and most dangerous) way of gaining access to, not
+      only your bot, but to your computer account directly. Don&#39;t
+      advertise your pre-compiled Eggdrop binary sites on the Eggdrop list
+      either. =P</p>
+    </blockquote>
+
+    <p><a name="sect8"></a>8. <strong>I get &#39;Makefile:3 :invalid
+    operator&#39; or some-such-thing when I try to &#39;make&#39;.</strong>
+    </p>
+
+    <blockquote>
+      <p>Try &#39;gmake&#39;.</p>
+    </blockquote>
+
+    <p><a name="sect9"></a>9. <strong>When I &#39;tclsh scripts/weed
+    &lt;userfile&gt; c&#39; it barfs chunks at me and dies. :(</strong></p>
+
+    <blockquote>
+      <p>Upgrade your Tcl, you are probably using Tcl 7.5 or earlier. Some
+      of the commands in weed require Tcl7.6 to run, so either upgrade it or
+      remove the offending lines from you userfile manually (those starting
+      with &#39;.&#39; generally) and accept the loss of that data.</p>
+    </blockquote>
+
+    <p><a name="sect10"></a>10. <strong>I get &quot;ld-elf.so.1: Shared
+    object &quot;libtcl80.so.1&quot; not found&quot; or &quot;eggdrop: error
+    in loading shared libraries / libtcl8.1.so: cannot open shared object
+    file: No such file or directory&quot; when I try to start my bot.
+     </strong></p>
+
+    <blockquote>
+      <p>&#39;./configure&#39; is looking in the wrong place for Tcl; it
+      looks like it compiled with one version of Tcl and tries to load
+      another. Maybe your sysadmin upgraded Tcl and didn&#39;t tell you. In
+      that case, you should just need to recompile your bot.</p>
+
+      <p>Maybe, when upgrading, he didn&#39;t clean the old version of Tcl,
+      and &#39;./configure&#39; is looking for the files in the wrong places,
+      or trying to use different versions of tcl.h and libtcl*. Smack your
+      admin and have him install Tcl properly. ;) You can also try:</p>
+
+      <blockquote>
+        <p><em>./configure --with-tcllib=&lt;path-to-tcl-lib&gt;
+        --with-tclinc=&lt;path-to-tcl-inc&gt;</em></p>
+      </blockquote>
+
+      <p>This will tell configure where to look for the Tcl files.</p>
+
+      <p>Try looking for libtcl by:</p>
+
+      <blockquote>
+        <p>ls /usr/lib/libtcl*<br>
+        ls /usr/local/lib/libtcl*</p>
+      </blockquote>
+
+      <p>Try looking for tcl.h by:</p>
+
+      <blockquote>
+        <p>ls /usr/include/*/tcl.h<br>
+        ls /usr/local/include/*/tcl.h</p>
+      </blockquote>
+
+      <p>If everything else fails, try to install Tcl to your home dir ;)
+      (Suggested by dw@Undernet, dw@lixom.nu).</p>
+    </blockquote>
+
+    <p><a name="sect11"></a>11. <strong>I get a whole pile of
+    &quot;Unresolved symbol &#39;Tcl_AppendResult&#39;&quot; (or some other
+    symbol) when I try to load a modules.</strong></p>
+
+    <blockquote>
+      <p>Possibility A: See section 10.</p>
+
+      <p>Possibility B: Some of the standard libraries have been compiled
+      for static linking only on your machine, you have 3 options:</p>
+
+      <blockquote>
+        <ol>
+          <li>
+            <p>If it&#39;s your own machine, recompile Tcl using dynamic
+            linking by using &#39;./configure --enable-shared&#39; when you
+            configure Tcl (not the bot) and then remake, &amp; reinstall.</p>
+          </li>
+
+          <li>
+            <p>If it&#39;s not your machine, you may have to resort to &#39;make
+            static&#39; and &#39;make install DEST=&quot;path&quot;&#39; to make
+            and install your bot.</p>
+          </li>
+
+          <li>
+            <p>If you are of a more aggressive sense of mind, go beat the
+            stuffing out of your admin for having lame static libraries. :)</p>
+          </li>
+        </ol>
+      </blockquote>
+    <hr>
+
+    <p><em>Copyright &copy; 1997 Robey Pointer<br>
+    Copyright &copy; 1999 - 2016 Eggheads Development Team
+    <a href="http://www.eggheads.org/"> Eggheads Development Team</a></em></p>
+  </body>
+</html>
