@@ -1,4 +1,116 @@
 - - - - - - - - - - - - - - -
+Commit 241e569 (2016-11-22 22:39:28 -0600) by thommey
+Add rc3 to Changes1.8. 
+
+doc/Changes1.8
+
+- - - - - - - - - - - - - - -
+Commit 087bc41 (2016-11-22 22:38:51 -0600) by thommey
+Add some default paths to tcl.m4. 
+
+doc/Changes1.8
+tcl.m4
+
+- - - - - - - - - - - - - - -
+Commit 283e166 (2016-11-22 08:56:51 -0600) by thommey
+Fix some bugs. 
+
+doc/Changes1.8
+src/main.c
+src/userent.c
+
+- - - - - - - - - - - - - - -
+Commit cf5da32 (2016-11-22 08:22:08 -0500) by Geo
+Eggdrop v1.8.0 Release Candidate 3 
+
+src/patch.h
+
+- - - - - - - - - - - - - - -
+Commit c06c4b0 (2016-11-22 08:20:58 -0500) by Geo
+Update ChangeLog 
+
+ChangeLog
+doc/html/about.html
+doc/html/app-problems.html
+doc/html/app-textsub.html
+doc/html/app-tricks.html
+doc/html/app-weird.html
+doc/html/appendices/first-script.html
+doc/html/appendices/index.html
+doc/html/appendices/known-probs.html
+doc/html/appendices/text-sub.html
+doc/html/appendices/tricks.html
+doc/html/appendices/weird-msgs.html
+doc/html/bans.html
+doc/html/botnet.html
+doc/html/compiling.html
+doc/html/coreDocs/assoc.html
+doc/html/coreDocs/blowfish.html
+doc/html/coreDocs/channels.html
+doc/html/coreDocs/compress.html
+doc/html/coreDocs/console.html
+doc/html/coreDocs/core.html
+doc/html/coreDocs/ctcp.html
+doc/html/coreDocs/dns.html
+doc/html/coreDocs/filesys.html
+doc/html/coreDocs/index.html
+doc/html/coreDocs/irc.html
+doc/html/coreDocs/modules.html
+doc/html/coreDocs/notes.html
+doc/html/coreDocs/seen.html
+doc/html/coreDocs/server.html
+doc/html/coreDocs/share.html
+doc/html/coreDocs/transfer.html
+doc/html/coreDocs/uptime.html
+doc/html/coreDocs/woobie.html
+doc/html/egg-core.html
+doc/html/faqs.html
+doc/html/features.html
+doc/html/index.html
+doc/html/install.html
+doc/html/installAndSetup/INSTALL.html
+doc/html/installAndSetup/README.html
+doc/html/installAndSetup/faq.html
+doc/html/installAndSetup/index.html
+doc/html/installAndSetup/install.html
+doc/html/installAndSetup/readme.html
+doc/html/mainDocs/TLS.html
+doc/html/mainDocs/about.html
+doc/html/mainDocs/bans.html
+doc/html/mainDocs/botnet.html
+doc/html/mainDocs/features.html
+doc/html/mainDocs/index.html
+doc/html/mainDocs/ipv6.html
+doc/html/mainDocs/partyline.html
+doc/html/mainDocs/patch.html
+doc/html/mainDocs/tcl-commands.html
+doc/html/mainDocs/tls.html
+doc/html/mainDocs/users.html
+doc/html/mod-assoc.html
+doc/html/mod-blowfish.html
+doc/html/mod-channels.html
+doc/html/mod-compress.html
+doc/html/mod-console.html
+doc/html/mod-ctcp.html
+doc/html/mod-dns.html
+doc/html/mod-filesys.html
+doc/html/mod-irc.html
+doc/html/mod-notes.html
+doc/html/mod-seen.html
+doc/html/mod-server.html
+doc/html/mod-share.html
+doc/html/mod-transfer.html
+doc/html/mod-uptime.html
+doc/html/mod-woobie.html
+doc/html/news.html
+doc/html/party.html
+doc/html/patch-howto.html
+doc/html/readme.html
+doc/html/search.html
+doc/html/starting.html
+doc/html/users.html
+
+- - - - - - - - - - - - - - -
 Commit 4883c92 (2016-11-21 22:36:23 -0500) by Geo
 Remove git push from ChangeLog generation 
 
