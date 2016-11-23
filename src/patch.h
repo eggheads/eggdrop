@@ -39,12 +39,12 @@ patch("PRE-RELEASE");           /* RC version */
  *
  *
  */
-patch("1479820858");            /* current unixtime */
+patch("1479878257");            /* current unixtime */
 /*
  *
  *
  */
-patch("RC3");
+patch("RC4");
 /*
  *
  *
