@@ -34,17 +34,17 @@
  *
  *
  */
-patch("PRE-RELEASE");           /* RC version */
+/* PATCH GOES HERE */
 /*
  *
  *
  */
-patch("1479878257");            /* current unixtime */
+/* PATCH GOES HERE */
 /*
  *
  *
  */
-patch("RC4");
+/* PATCH GOES HERE */
 /*
  *
  *
