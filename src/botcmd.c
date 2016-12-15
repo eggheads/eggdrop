@@ -309,9 +309,12 @@ static void bot_bye(int idx, char *par)
 
 static void remote_tell_who(int idx, char *nick, int chan)
 {
-  int i = 10, k, l, ok = 0;
-  char s[1024], *realnick;
+  int i = 0, k, l, ok = 0;
+  /* botnet_send_priv truncates at 450 */
+  char s[450], *realnick;
   struct chanset_t *c;
+  /* usable size of channelslist */
+  size_t ssize = sizeof(s) - strlen(ver) - 3;
 
   realnick = strchr(nick, ':');
   if (realnick)
@@ -319,20 +322,35 @@ static void remote_tell_who(int idx, char *nick, int chan)
   else
     realnick = nick;
   putlog(LOG_BOTS, "*", "#%s# who", realnick);
-  strcpy(s, "Channels: ");
   for (c = chanset; c; c = c->next)
     if (!channel_secret(c) && !channel_inactive(c)) {
       l = strlen(c->dname);
-      if (i + l < 1021) {
-        if (i > 10)
-          sprintf(s, "%s, %s", s, c->dname);
-        else {
-          strcpy(s, c->dname);
-          i += (l + 2);
+      if (i) {
+	if (i + l + 2 < ssize) {
+          /* for 2nd and more chans */
+          strcat(s, ", ");
+          strcat(s, c->dname);
+          i += l + 2;
+        } else {
+          /* fill in as much as we can, then overwrite last 3 chars with ... */
+          strncat(s, ", ", ssize - i - 1);
+          strncat(s, c->dname, ssize - i - 3);
+          s[ssize - 2] = s[ssize - 3] = s[ssize - 4] = '.';
+          break;
+        }
+      } else {
+	if (l + 10 < ssize) {
+          /* only for first chanadd */
+          sprintf(s, "Channels: %s", c->dname);
+          i += l + 10;
+        } else {
+          snprintf(s, ssize, "Channels: %s", c->dname);
+          s[ssize - 2] = s[ssize - 3] = s[ssize - 4] = '.';
+          break;
         }
       }
     }
-  if (i > 10) {
+  if (i) {
     botnet_send_priv(idx, botnetnick, nick, NULL, "%s (%s)", s, ver);
   } else
     botnet_send_priv(idx, botnetnick, nick, NULL, "%s (%s)", BOT_NOCHANNELS,
