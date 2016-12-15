@@ -373,6 +373,7 @@ void *n_realloc(void *ptr, int size, const char *file, int line)
 #ifdef DEBUG_MEM
   for (i = 0; (i < lastused) && (memtbl[i].ptr != ptr); i++);
   if (i == lastused) {
+    if (size > 0) free(x);
     putlog(LOG_MISC, "*", "*** ATTEMPTING TO REALLOC NON-MALLOC'D PTR: %s (%d)",
            file, line);
     return NULL;
