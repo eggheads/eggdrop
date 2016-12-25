@@ -350,11 +350,17 @@ There are also some variables you can set in your config file:
 
       set global-flood-nick 5:60
 
-      set global-chanmode "nt-likm"
+      set global-aop-delay 5:30
+
+      set global-idle-kick 0
+
+      set global-chanmode "nt"
 
       set global-stopnethack-mode 0
 
       set global-revenge-mode 0
+
+      set global-ban-type 3
 
       set global-ban-time 120
 
@@ -386,8 +392,8 @@ There are also some variables you can set in your config file:
         | +userbans     
         | +userexempts
         | +userinvites   
-        | +protecthalfops
-        | +autohalfop    
+        | -protecthalfops
+        | -autohalfop    
         | -static
 
       }
