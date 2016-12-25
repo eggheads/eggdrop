@@ -400,9 +400,12 @@ channel add #chan. Look in the section above for explanation of every option.</p
 <p>set global-flood-join 5:60</p>
 <p>set global-flood-ctcp 3:60</p>
 <p>set global-flood-nick 5:60</p>
-<p>set global-chanmode &quot;nt-likm&quot;</p>
+<p>set global-aop-delay 5:30</p>
+<p>set global-idle-kick 0</p>
+<p>set global-chanmode &quot;nt&quot;</p>
 <p>set global-stopnethack-mode 0</p>
 <p>set global-revenge-mode 0</p>
+<p>set global-ban-type 3</p>
 <p>set global-ban-time 120</p>
 <p>set global-exempt-time 60</p>
 <p>set global-invite-time 60</p>
@@ -432,8 +435,8 @@ channel add #chan. Look in the section above for explanation of every option.</p
 <div class="line">+userbans</div>
 <div class="line">+userexempts</div>
 <div class="line">+userinvites</div>
-<div class="line">+protecthalfops</div>
-<div class="line">+autohalfop</div>
+<div class="line">-protecthalfops</div>
+<div class="line">-autohalfop</div>
 <div class="line">-static</div>
 </div>
 </dd>
@@ -525,7 +528,7 @@ channel add #chan. Look in the section above for explanation of every option.</p
           
     <div class="footer">
         &copy; Copyright 2016, Eggheads.
-      Last updated on Nov 01, 2016.
+      Last updated on Dec 25, 2016.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.2.
     </div>
         </div>
