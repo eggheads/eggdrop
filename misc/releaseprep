@@ -148,13 +148,6 @@ echo -n "Fixing patch.h..."
 fix_patch_h
 echo " done."
 
-# Remove CVS dirs.
-# Let's remove this in 1.8.1 -Geo
-echo -n "Removing CVS and autom4te.cache directories..."
-find ./ -type d -name "autom4te.cache" -print | xargs rm -rf
-find ./ -type d -name "CVS" -print | xargs rm -rf
-echo " done."
-
 # Remove .gitignores.
 echo -n "Removing git files..."
 find ./ -name ".git .github .gitignore" -print | xargs rm -f

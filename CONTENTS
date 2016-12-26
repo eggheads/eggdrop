@@ -39,7 +39,7 @@ Last revised: April 16, 2003
     Contains a list of Eggdrop developers and major contributors.
 
   ChangeLog
-    Contains CVS commit logs from each change made to Eggdrop in CVS.
+    Contains git commit logs from each change made to Eggdrop in the git repository.
 
   COPYING
     Eggdrop legal information is contained in this file.

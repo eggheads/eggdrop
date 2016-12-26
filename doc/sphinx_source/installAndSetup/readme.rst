@@ -57,7 +57,7 @@ What is Eggdrop?
     older versions, a list of frequently asked questions, how to set up a
     crontab, some boring legal stuff, info about the mailing list (a great
     place to ask questions, and a good place to report bugs, too), some basics
-    about CVS usage, and some channels where you might get help with Eggdrop.
+    about git usage, and some channels where you might get help with Eggdrop.
 
 ------------------
 HOW TO GET EGGDROP
