@@ -47,6 +47,46 @@ AC_DEFUN([EGG_MSG_CONFIGURE_END],
   AC_MSG_RESULT
 ])
 
+dnl EGG_MSG_SUMMARY()
+dnl
+dnl Print summary with OS, TLS and TCL info.
+AC_DEFUN([EGG_MSG_SUMMARY],
+[
+  AC_MSG_RESULT([Operating System: $egg_cv_var_system_type $egg_cv_var_system_release])
+  AC_MSG_RESULT([Tcl version: $TCL_PATCHLEVEL])
+  if test "x$TCL_THREADS" = "x1"; then
+    AC_MSG_RESULT([  Tcl is threaded.])
+  fi
+  if test "x$tls_enabled" = "xyes"; then
+    AC_MSG_RESULT([TLS support is enabled.])
+    EGG_FIND_SSL_VERSION
+    if test "x$tls_version" != "x"; then
+      AC_MSG_RESULT([  Using TLS version: $tls_version.])
+    fi
+  fi
+  if test "x$ipv6_enabled" = "xyes"; then
+    AC_MSG_RESULT([IPv6 support is enabled.])
+  fi
+  AC_MSG_RESULT
+])
+
+dnl EGG_FIND_SSL_VERSION()
+dnl
+dnl Tries to find the SSL version used
+AC_DEFUN([EGG_FIND_SSL_VERSION],
+[
+  cat >tmp.c <<EOF
+#include <openssl/opensslv.h>
+#include <stdio.h>
+int main(void) {
+ printf("%s\n", OPENSSL_VERSION_TEXT);
+ return 0;
+}
+EOF
+  $CC $SSL_INCLUDES tmp.c -o tmp
+  tls_version=$(./tmp)
+  rm -f tmp tmp.c
+])
 
 dnl EGG_MSG_WEIRDOS()
 dnl
@@ -55,8 +95,6 @@ dnl users of 'weird' operating systems.
 dnl
 AC_DEFUN([EGG_MSG_WEIRDOS],
 [
-  AC_MSG_RESULT([Operating System: $egg_cv_var_system_type $egg_cv_var_system_release])
-  AC_MSG_RESULT
   if test "$UNKNOWN_OS" = yes; then
     AC_MSG_RESULT([WARNING:])
     AC_MSG_RESULT
@@ -1028,17 +1066,28 @@ AC_DEFUN([EGG_TCL_TCLCONFIG],
     TCL_LIB_SPEC="${TCL_PTHREAD_LDFLAG} ${TCL_LIB_SPEC} ${TCL_LIBS}"
   else
     egg_tcl_changed="yes"
-    TCL_LIB_SPEC="-L$TCLLIB -l$TCLLIBFNS ${EGG_MATH_LIB}"
-    if test "x$ac_cv_lib_pthread" != x; then
-      TCL_LIB_SPEC="$TCL_LIB_SPEC $ac_cv_lib_pthread"
-    fi
-    TCL_INCLUDE_SPEC=""
-    TCL_VERSION=`grep TCL_VERSION $TCLINC/$TCLINCFN | $HEAD_1 | $AWK '{gsub(/\"/, "", [$]3); print [$]3}'`
-    TCL_PATCHLEVEL=`grep TCL_PATCH_LEVEL $TCLINC/$TCLINCFN | $HEAD_1 | $AWK '{gsub(/\"/, "", [$]3); print [$]3}'`
-    TCL_MAJOR_VERSION=`echo $TCL_VERSION | cut -d. -f1`
-    TCL_MINOR_VERSION=`echo $TCL_VERSION | cut -d. -f2`
-    if test $TCL_MAJOR_VERSION -gt 8 || test $TCL_MAJOR_VERSION -eq 8 -a $TCL_MINOR_VERSION -ge 6; then
-      TCL_LIB_SPEC="$TCL_LIB_SPEC -lz"
+    if test -r ${TCLLIB}/tclConfig.sh; then
+      . ${TCLLIB}/tclConfig.sh
+      # OpenBSD uses -pthread, but tclConfig.sh provides that flag in EXTRA_CFLAGS
+      TCL_PTHREAD_LDFLAG=`echo $TCL_EXTRA_CFLAGS | grep -o -- '-pthread'`
+      AC_SUBST(SHLIB_LD, $TCL_SHLIB_LD)
+      AC_MSG_CHECKING([for Tcl linker])
+      AC_MSG_RESULT([$SHLIB_LD])
+      TCL_PATCHLEVEL="${TCL_MAJOR_VERSION}.${TCL_MINOR_VERSION}${TCL_PATCH_LEVEL}"
+      TCL_LIB_SPEC="${TCL_PTHREAD_LDFLAG} ${TCL_LIB_SPEC} ${TCL_LIBS}"
+    else
+      TCL_LIB_SPEC="-L$TCLLIB -l$TCLLIBFNS ${EGG_MATH_LIB}"
+      if test "x$ac_cv_lib_pthread" != x; then
+        TCL_LIB_SPEC="$TCL_LIB_SPEC $ac_cv_lib_pthread"
+      fi
+      TCL_INCLUDE_SPEC=""
+      TCL_VERSION=`grep TCL_VERSION $TCLINC/$TCLINCFN | $HEAD_1 | $AWK '{gsub(/\"/, "", [$]3); print [$]3}'`
+      TCL_PATCHLEVEL=`grep TCL_PATCH_LEVEL $TCLINC/$TCLINCFN | $HEAD_1 | $AWK '{gsub(/\"/, "", [$]3); print [$]3}'`
+      TCL_MAJOR_VERSION=`echo $TCL_VERSION | cut -d. -f1`
+      TCL_MINOR_VERSION=`echo $TCL_VERSION | cut -d. -f2`
+      if test $TCL_MAJOR_VERSION -gt 8 || test $TCL_MAJOR_VERSION -eq 8 -a $TCL_MINOR_VERSION -ge 6; then
+        TCL_LIB_SPEC="$TCL_LIB_SPEC -lz"
+      fi
     fi
   fi
 
@@ -1457,6 +1506,7 @@ AC_DEFUN([EGG_IPV6_ENABLE],
       AC_MSG_WARN([Eggdrop will compile but will be limited to IPv4 on this host.])
     fi
     AC_DEFINE(IPV6, 1, [Define to 1 if you want to enable IPv6 support.])
+    ipv6_enabled=yes
   fi
 ])
 
@@ -1615,6 +1665,7 @@ AC_DEFUN([EGG_TLS_DETECT],
       fi
       AC_CHECK_FUNCS([RAND_status])
       AC_DEFINE(TLS, 1, [Define this to enable SSL support.])
+      tls_enabled=yes
       EGG_MD5_COMPAT
     fi
   fi
