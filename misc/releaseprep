@@ -148,7 +148,7 @@ echo -n "Fixing patch.h..."
 fix_patch_h
 echo " done."
 
-# Remove autom4t3.cache dirs...
+# Remove autom4te.cache dirs...
 echo -n "Removing autom4te.cache directories..."
 find ./ -type d -name "autom4te.cache" -print | xargs rm -rf
 
