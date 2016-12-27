@@ -151,6 +151,7 @@ echo " done."
 # Remove autom4te.cache dirs...
 echo -n "Removing autom4te.cache directories..."
 find ./ -type d -name "autom4te.cache" -print | xargs rm -rf
+echo " done." 
 
 # Remove .gitignores.
 echo -n "Removing git files..."
