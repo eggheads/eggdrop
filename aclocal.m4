@@ -57,16 +57,14 @@ AC_DEFUN([EGG_MSG_SUMMARY],
   if test "x$TCL_THREADS" = "x1"; then
     AC_MSG_RESULT([  Tcl is threaded.])
   fi
+  AC_MSG_RESULT([SSL/TLS Support: $tls_enabled])
   if test "x$tls_enabled" = "xyes"; then
-    AC_MSG_RESULT([TLS support is enabled.])
     EGG_FIND_SSL_VERSION
     if test "x$tls_version" != "x"; then
-      AC_MSG_RESULT([  Using TLS version: $tls_version.])
+      AC_MSG_RESULT([  Using version: $tls_version.])
     fi
   fi
-  if test "x$ipv6_enabled" = "xyes"; then
-    AC_MSG_RESULT([IPv6 support is enabled.])
-  fi
+  AC_MSG_RESULT([IPv6 Support: $ipv6_enabled])
   AC_MSG_RESULT
 ])
 
@@ -75,7 +73,9 @@ dnl
 dnl Tries to find the SSL version used
 AC_DEFUN([EGG_FIND_SSL_VERSION],
 [
-  cat >tmp.c <<EOF
+  tmpout="tmpfile"
+  if test ! -e "tmp.c" && test ! -e "$tmpout"; then
+    cat >tmp.c <<EOF
 #include <openssl/opensslv.h>
 #include <stdio.h>
 int main(void) {
@@ -83,9 +83,12 @@ int main(void) {
  return 0;
 }
 EOF
-  $CC $SSL_INCLUDES tmp.c -o tmp
-  tls_version=$(./tmp)
-  rm -f tmp tmp.c
+    $CC $SSL_INCLUDES tmp.c -o "$tmpout" >/dev/null 2>&1
+    if test -x "./$tmpout"; then
+      tls_version=$("./$tmpout")
+    fi
+    rm -f "$tmpout" tmp.c >/dev/null 2>&1
+  fi
 ])
 
 dnl EGG_MSG_WEIRDOS()
@@ -1494,6 +1497,7 @@ dnl EGG_IPV6_ENABLE
 dnl
 AC_DEFUN([EGG_IPV6_ENABLE],
 [
+  ipv6_enabled="no"
   AC_ARG_ENABLE(ipv6,
     [  --enable-ipv6           enable IPv6 support (autodetect)],
     [enable_ipv6="$enableval"], [enable_ipv6="$egg_cv_var_ipv6_supported"])
@@ -1506,7 +1510,7 @@ AC_DEFUN([EGG_IPV6_ENABLE],
       AC_MSG_WARN([Eggdrop will compile but will be limited to IPv4 on this host.])
     fi
     AC_DEFINE(IPV6, 1, [Define to 1 if you want to enable IPv6 support.])
-    ipv6_enabled=yes
+    ipv6_enabled="yes"
   fi
 ])
 
@@ -1624,6 +1628,7 @@ dnl EGG_TLS_DETECT
 dnl
 AC_DEFUN([EGG_TLS_DETECT],
 [
+  tls_enabled="no"
   if test "$enable_tls" != "no"; then
     if test -z "$SSL_INCLUDES"; then
       AC_CHECK_HEADERS([openssl/ssl.h openssl/x509v3.h], , [havesslinc="no"], [
@@ -1665,7 +1670,7 @@ AC_DEFUN([EGG_TLS_DETECT],
       fi
       AC_CHECK_FUNCS([RAND_status])
       AC_DEFINE(TLS, 1, [Define this to enable SSL support.])
-      tls_enabled=yes
+      tls_enabled="yes"
       EGG_MD5_COMPAT
     fi
   fi

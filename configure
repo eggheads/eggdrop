@@ -8254,6 +8254,7 @@ fi
 $as_echo "$egg_cv_var_ipv6_supported" >&6; }
 
 
+  ipv6_enabled="no"
   # Check whether --enable-ipv6 was given.
 if test "${enable_ipv6+set}" = set; then :
   enableval=$enable_ipv6; enable_ipv6="$enableval"
@@ -8277,7 +8278,7 @@ $as_echo "$as_me: WARNING: Eggdrop will compile but will be limited to IPv4 on t
 
 $as_echo "#define IPV6 1" >>confdefs.h
 
-    ipv6_enabled=yes
+    ipv6_enabled="yes"
   fi
 
 
@@ -8594,6 +8595,7 @@ fi
 
 
 
+  tls_enabled="no"
   if test "$enable_tls" != "no"; then
     if test -z "$SSL_INCLUDES"; then
       for ac_header in openssl/ssl.h openssl/x509v3.h
@@ -8782,7 +8784,7 @@ done
 
 $as_echo "#define TLS 1" >>confdefs.h
 
-      tls_enabled=yes
+      tls_enabled="yes"
 
   save_CC="$CC"
   save_CPP="$CPP"
@@ -10222,11 +10224,13 @@ $as_echo "Tcl version: $TCL_PATCHLEVEL" >&6; }
     { $as_echo "$as_me:${as_lineno-$LINENO}: result:   Tcl is threaded." >&5
 $as_echo "  Tcl is threaded." >&6; }
   fi
+  { $as_echo "$as_me:${as_lineno-$LINENO}: result: SSL/TLS Support: $tls_enabled" >&5
+$as_echo "SSL/TLS Support: $tls_enabled" >&6; }
   if test "x$tls_enabled" = "xyes"; then
-    { $as_echo "$as_me:${as_lineno-$LINENO}: result: TLS support is enabled." >&5
-$as_echo "TLS support is enabled." >&6; }
 
-  cat >tmp.c <<EOF
+  tmpout="tmpfile"
+  if test ! -e "tmp.c" && test ! -e "$tmpout"; then
+    cat >tmp.c <<EOF
 #include <openssl/opensslv.h>
 #include <stdio.h>
 int main(void) {
@@ -10234,19 +10238,20 @@ int main(void) {
  return 0;
 }
 EOF
-  $CC $SSL_INCLUDES tmp.c -o tmp
-  tls_version=$(./tmp)
-  rm -f tmp tmp.c
+    $CC $SSL_INCLUDES tmp.c -o "$tmpout" >/dev/null 2>&1
+    if test -x "./$tmpout"; then
+      tls_version=$("./$tmpout")
+    fi
+    rm -f "$tmpout" tmp.c >/dev/null 2>&1
+  fi
 
     if test "x$tls_version" != "x"; then
-      { $as_echo "$as_me:${as_lineno-$LINENO}: result:   Using TLS version: $tls_version." >&5
-$as_echo "  Using TLS version: $tls_version." >&6; }
+      { $as_echo "$as_me:${as_lineno-$LINENO}: result:   Using version: $tls_version." >&5
+$as_echo "  Using version: $tls_version." >&6; }
     fi
   fi
-  if test "x$ipv6_enabled" = "xyes"; then
-    { $as_echo "$as_me:${as_lineno-$LINENO}: result: IPv6 support is enabled." >&5
-$as_echo "IPv6 support is enabled." >&6; }
-  fi
+  { $as_echo "$as_me:${as_lineno-$LINENO}: result: IPv6 Support: $ipv6_enabled" >&5
+$as_echo "IPv6 Support: $ipv6_enabled" >&6; }
   { $as_echo "$as_me:${as_lineno-$LINENO}: result: " >&5
 $as_echo "" >&6; }
 
