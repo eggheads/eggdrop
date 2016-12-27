@@ -148,6 +148,10 @@ echo -n "Fixing patch.h..."
 fix_patch_h
 echo " done."
 
+# Remove autom4t3.cache dirs...
+echo -n "Removing autom4te.cache directories..."
+find ./ -type d -name "autom4te.cache" -print | xargs rm -rf
+
 # Remove .gitignores.
 echo -n "Removing git files..."
 find ./ -name ".git .github .gitignore" -print | xargs rm -f
