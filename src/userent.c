@@ -551,7 +551,7 @@ static int botaddr_write_userfile(FILE *f, struct userrec *u,
       *q++ = ';';
     else
       *q++ = *p;
-    *q = 0;
+  *q = 0;
 #ifdef TLS
   if (fprintf(f, "--%s %s:%s%u/%s%u\n", e->type->name, addr,
       (bi->ssl & TLS_BOT) ? "+" : "", bi->telnet_port, (bi->ssl & TLS_RELAY) ?
