@@ -212,8 +212,8 @@ Baue eine Telnetverbindung zu dem Bot auf und gib 'NEW' als Deinen Nickname ein.
 0x647,Mode-Queue ist bei
 0x648,Server-Queue ist bei
 0x649,Hilfe-Queue ist bei
-# 0x64a - unused
-# 0x64b - unused
+0x64a,Vhost set in config can not be used to connect to this address 
+0x64b,Vhost set in config is not available on this machine
 0x64c,Bearbeite Channel
 0x64d,Channel
 #need context

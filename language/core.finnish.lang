@@ -205,8 +205,8 @@ Telnettaa botille ja syötä 'UUSI' kuin sinun nickkisi.
 0x647,Moodi queue on nyt
 0x648,Serveri queue on nyt
 0x649,Auto queue on nyt
-# 0x64a - ei käytössä
-# 0x64b - ei käytössä
+0x64a,Vhost set in config can not be used to connect to this address 
+0x64b,Vhost set in config is not available on this machine
 0x64c,Tapahtuma kanava
 0x64d,Kanava
 0x64e,Halutaan kanava
