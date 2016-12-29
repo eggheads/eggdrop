@@ -51,8 +51,9 @@ for i in $( find $BASEDIR/../doc/sphinx_source/ -type f -name "*.rst" ); do
   FILENAME=$(basename "$i")
   FILENAME="${FILENAME%.*}"
   echo $FILENAME
-  pandoc -f rst -t plain -o tmpdocs/$FILENAME.txt $i
+  pandoc -f rst -t plain --filter ./docsfilter.py -o tmpdocs/$FILENAME.txt $i
 done
+rm -rf tmpdocs
 
 echo "*** Generating HTML files..."
 ( cd $BASEDIR/../doc/sphinx_source/ && make html )

@@ -171,7 +171,7 @@ if test -d ./doc/html/chat; then
 fi
 
 # Generate fresh html/docs
-misc/generateDocs
+misc/generatedocs
 
 # make distclean
 echo ""
