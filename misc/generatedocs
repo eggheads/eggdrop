@@ -36,6 +36,16 @@ else
   exit 1
 fi
 
+echo "*** Searching for panflute..."
+PANDOC="$(pip show panflute)"
+if [ $? -eq 0 ]; then
+  echo "Found."
+else
+  echo "Not found. Panflute can be installed via pip install panflute. Exiting..."
+  exit 1
+fi
+
+
 echo "*** Searching for sphinx-build..."
 SPHINX="$(which sphinx-build)"
 if [ $? -eq 0 ]; then
