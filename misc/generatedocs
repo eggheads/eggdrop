@@ -36,6 +36,16 @@ else
   exit 1
 fi
 
+echo "*** Searching for panflute..."
+PANDOC="$(pip show panflute)"
+if [ $? -eq 0 ]; then
+  echo "Found."
+else
+  echo "Not found. Panflute can be installed via pip install panflute. Exiting..."
+  exit 1
+fi
+
+
 echo "*** Searching for sphinx-build..."
 SPHINX="$(which sphinx-build)"
 if [ $? -eq 0 ]; then
@@ -51,7 +61,7 @@ for i in $( find $BASEDIR/../doc/sphinx_source/ -type f -name "*.rst" ); do
   FILENAME=$(basename "$i")
   FILENAME="${FILENAME%.*}"
   echo $FILENAME
-  pandoc -f rst -t plain -o tmpdocs/$FILENAME.txt $i
+  pandoc -f rst -t plain --filter ./misc/docsfilter.py -o tmpdocs/$FILENAME.txt $i
 done
 
 echo "*** Generating HTML files..."
@@ -96,5 +106,8 @@ mv tmpdocs/weird-msgs.txt $BASEDIR/../doc/WEIRD-MESSAGES
 mv tmpdocs/woobie.txt $BASEDIR/../doc/settings/mod.woobie
 rm -rf tmpdocs
 rm -rf $BASEDIR/../doc/html/_sources
+rm -rf $BASEDIR/../doc/doctrees/
+rm -rf $BASEDIR/../doc/html/.buildinfo
+
 
 echo "Yahtzee!"
