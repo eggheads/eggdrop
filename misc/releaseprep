@@ -171,7 +171,8 @@ if test -d ./doc/html/chat; then
 fi
 
 # Generate fresh html/docs
-misc/generatedocs
+vers=$(grep "egg_version\[1024\]" src/main.c |cut -d '"' -f2)
+misc/generatedocs -v ${vers}
 
 # make distclean
 echo ""
