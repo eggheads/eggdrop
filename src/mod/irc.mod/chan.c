@@ -1788,8 +1788,8 @@ static int gotjoin(char *from, char *chname)
         m->flags = 0;
         m->last = now;
         m->delay = 0L;
-        strcpy(m->nick, nick);
-        strcpy(m->userhost, uhost);
+        strncpyz(m->nick, nick, sizeof m->nick);
+        strncpyz(m->userhost, uhost, sizeof m->userhost);
         m->user = u;
         m->flags |= STOPWHO;
 
