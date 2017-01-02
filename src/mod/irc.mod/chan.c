@@ -2058,7 +2058,7 @@ static int gotkick(char *from, char *origmsg)
   if (channel_active(chan)) {
     fixcolon(msg);
     u = get_user_by_host(from);
-    strcpy(uhost, from);
+    strncpyz(uhost, from, sizeof uhost);
     whodid = splitnick(&uhost);
     detect_chan_flood(whodid, uhost, from, chan, FLOOD_KICK, nick);
 
