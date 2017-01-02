@@ -1257,7 +1257,7 @@ static int expired_mask(struct chanset_t *chan, char *who)
   if (force_expire)
     return 1;
 
-  strcpy(buf, who);
+  strncpyz(buf, who, sizeof(buf));
   sfrom = buf;
   snick = splitnick(&sfrom);
 
