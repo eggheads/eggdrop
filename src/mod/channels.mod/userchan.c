@@ -645,7 +645,7 @@ static void display_ban(int idx, int number, maskrec *ban,
     sprintf(dates, "%s %s", MODES_CREATED, s);
     if (ban->added < ban->lastactive) {
       strcat(dates, ", ");
-      strcat(dates, MODES_LASTUSED);
+      strncat(dates, MODES_LASTUSED, sizeof(dates) - strlen(dates) - 1);
       strcat(dates, " ");
       daysago(now, ban->lastactive, s);
       strcat(dates, s);
