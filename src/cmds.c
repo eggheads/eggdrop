@@ -2236,7 +2236,7 @@ static void cmd_su(struct userrec *u, int idx, char *par)
         dcc[idx].u.chat->su_nick = get_data_ptr(strlen(dcc[idx].nick) + 1);
         strcpy(dcc[idx].u.chat->su_nick, dcc[idx].nick);
         dcc[idx].user = u;
-        strcpy(dcc[idx].nick, par);
+        strncpyz(dcc[idx].nick, par, NICKLEN);
         dcc_chatter(idx);
       }
     }
