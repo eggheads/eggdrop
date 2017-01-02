@@ -116,7 +116,7 @@ static void botnet_change(char *new)
     } else {
       if (botnetnick[0])
         putlog(LOG_MISC, "*", "* IDENTITY CHANGE: %s -> %s", botnetnick, new);
-      strncpyz(botnetnick, new, sizeof(botnetnick));
+      strncpyz(botnetnick, new, HANDLEN+1);
     }
   }
 }
