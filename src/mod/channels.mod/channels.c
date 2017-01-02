@@ -151,7 +151,7 @@ static void set_mode_protect(struct chanset_t *chan, char *set)
       if (pos) {
         s1 = newsplit(&set);
         if (s1[0])
-          strcpy(chan->key_prot, s1);
+          strncpy(chan->key_prot, s1, sizeof(chan->key_prot) - strlen(chan->key_prot) - 1);
       }
       break;
     }
