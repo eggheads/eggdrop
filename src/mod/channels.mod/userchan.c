@@ -644,11 +644,11 @@ static void display_ban(int idx, int number, maskrec *ban,
     daysago(now, ban->added, s);
     sprintf(dates, "%s %s", MODES_CREATED, s);
     if (ban->added < ban->lastactive) {
-      strcat(dates, ", ");
+      strncat(dates, ", ",  sizeof(dates) - strlen(dates) - 1);
       strncat(dates, MODES_LASTUSED, sizeof(dates) - strlen(dates) - 1);
-      strcat(dates, " ");
+      strncat(dates, " ",  sizeof(dates) - strlen(dates) - 1);
       daysago(now, ban->lastactive, s);
-      strcat(dates, s);
+      strncat(dates, s,  sizeof(dates) - strlen(dates) - 1);
     }
   } else
     dates[0] = 0;
@@ -690,11 +690,11 @@ static void display_exempt(int idx, int number, maskrec *exempt,
     daysago(now, exempt->added, s);
     sprintf(dates, "%s %s", MODES_CREATED, s);
     if (exempt->added < exempt->lastactive) {
-      strcat(dates, ", ");
-      strcat(dates, MODES_LASTUSED);
-      strcat(dates, " ");
+      strncat(dates, ", ", sizeof(dates) - strlen(dates) - 1);
+      strncat(dates, MODES_LASTUSED,  sizeof(dates) - strlen(dates) - 1);
+      strncat(dates, " ",  sizeof(dates) - strlen(dates) - 1);
       daysago(now, exempt->lastactive, s);
-      strcat(dates, s);
+      strncat(dates, s,  sizeof(dates) - strlen(dates) - 1);
     }
   } else
     dates[0] = 0;
