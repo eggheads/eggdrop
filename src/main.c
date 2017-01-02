@@ -265,8 +265,8 @@ static void write_debug()
      *       _not_ safe <cybah>
      */
     x = creat("DEBUG.DEBUG", 0644);
-    setsock(x, SOCK_NONSOCK);
     if (x >= 0) {
+      setsock(x, SOCK_NONSOCK);
       strncpyz(s, ctime(&now), sizeof s);
       dprintf(-x, "Debug (%s) written %s\n", ver, s);
       dprintf(-x, "Please report problem to bugs@eggheads.org\n");
@@ -310,8 +310,13 @@ static void write_debug()
     dprintf(-x, "Tcl version: %s (header version %s)\n",
             ((interp) && (Tcl_Eval(interp, "info patchlevel") == TCL_OK)) ?
             tcl_resultstring() : (Tcl_Eval(interp, "info tclversion") == TCL_OK) ?
-            tcl_resultstring() : "*unknown*", TCL_PATCH_LEVEL ? TCL_PATCH_LEVEL :
-            "*unknown*");
+            tcl_resultstring() : "*unknown*",
+#ifdef TCL_PATCH_LEVEL
+            TCL_PATCH_LEVEL
+#else
+            "*unknown*"
+#endif
+           );
 
     if (tcl_threaded())
       dprintf(-x, "Tcl is threaded\n");
@@ -899,7 +904,7 @@ int mainloop(int toplevel)
             d = d->next;
           }
           if (ok) {
-            strcpy(name, p->name);
+            strncpyz(name, p->name, sizeof name);
             if (module_unload(name, botnetnick) == NULL) {
               f = 1;
               break;
@@ -1083,7 +1088,7 @@ int main(int arg_c, char **arg_v)
   link_statics();
 #endif
   strncpyz(s, ctime(&now), sizeof s);
-  strcpy(&s[11], &s[20]);
+  memmove(&s[11], &s[20], strlen(&s[20]+1));
   putlog(LOG_ALL, "*", "--- Loading %s (%s)", ver, s);
   chanprog();
   if (!encrypt_pass) {
@@ -1162,6 +1167,9 @@ int main(int arg_c, char **arg_v)
   /* Terminal emulating dcc chat */
   if (!backgrd && term_z) {
     int n = new_dcc(&DCC_CHAT, sizeof(struct chat_info));
+
+    if (!n)
+      fatal("ERROR: Failed to initialize foreground chat.", 0);
 
     getvhost(&dcc[n].sockname, AF_INET);
     dcc[n].sock = STDOUT;

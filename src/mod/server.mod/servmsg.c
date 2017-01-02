@@ -122,7 +122,7 @@ static int check_tcl_msgm(char *cmd, char *nick, char *uhost,
   if (arg[0])
     simple_sprintf(args, "%s %s", cmd, arg);
   else
-    strcpy(args, cmd);
+    strncpyz(args, cmd, sizeof args);
   get_user_flagrec(u, &fr, NULL);
   Tcl_SetVar(interp, "_msgm1", nick, 0);
   Tcl_SetVar(interp, "_msgm2", uhost, 0);
@@ -442,7 +442,7 @@ static int detect_flood(char *floodnick, char *floodhost, char *from, int which)
   if (p) {
     p++;
     if (egg_strcasecmp(lastmsghost[which], p)) {        /* New */
-      strcpy(lastmsghost[which], p);
+      strncpyz(lastmsghost[which], p, sizeof lastmsghost[which]);
       lastmsgtime[which] = now;
       lastmsgs[which] = 0;
       return 0;
@@ -1284,7 +1284,7 @@ static void server_resolve_success(int servidx)
   char pass[121];
 
   resolvserv = 0;
-  strcpy(pass, dcc[servidx].u.dns->cbuf);
+  strncpyz(pass, dcc[servidx].u.dns->cbuf, sizeof pass);
   changeover_dcc(servidx, &SERVER_SOCKET, 0);
   dcc[servidx].sock = getsock(dcc[servidx].sockname.family, 0);
   setsnport(dcc[servidx].sockname, dcc[servidx].port);

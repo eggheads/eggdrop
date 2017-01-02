@@ -830,13 +830,15 @@ int readuserfile(char *file, struct userrec **ret)
             /* NOTE only remove exempts for when getting a userfile
              * from another bot & that channel is shared */
             cst = findchan_by_dname(lasthand);
-            if ((*ret == userlist) || channel_shared(cst)) {
-              clear_masks(cst->exempts);
-              cst->exempts = NULL;
-            } else {
-              /* otherwise ignore any exempts for this channel */
-              cst = NULL;
-              lasthand[0] = 0;
+            if (cst) {
+              if ((*ret == userlist) || channel_shared(cst)) {
+                clear_masks(cst->exempts);
+                cst->exempts = NULL;
+              } else {
+                /* otherwise ignore any exempts for this channel */
+                cst = NULL;
+                lasthand[0] = 0;
+              }
             }
           }
         } else if (!strncmp(code, "$$", 2)) {
@@ -888,7 +890,7 @@ int readuserfile(char *file, struct userrec **ret)
             if (!ok) {
               ue = user_malloc(sizeof(struct user_entry));
 
-              ue->name = user_malloc(strlen(code + 1));
+              ue->name = user_malloc(strlen(code) - 1);
               ue->type = NULL;
               strcpy(ue->name, code + 2);
               ue->u.list = user_malloc(sizeof(struct list_type));
@@ -933,7 +935,7 @@ int readuserfile(char *file, struct userrec **ret)
             } else {
               fr.match = FR_GLOBAL;
               break_down_flags(attr, &fr, 0);
-              strcpy(lasthand, code);
+              strncpyz(lasthand, code, sizeof lasthand);
               cst = NULL;
               if (strlen(code) > HANDLEN)
                 code[HANDLEN] = 0;

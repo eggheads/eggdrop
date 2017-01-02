@@ -702,7 +702,7 @@ static void dcc_chat_pass(int idx, char *buf, int atr)
       if (dcc[idx].status & STAT_TELNET)
         tputs(dcc[idx].sock, TLN_IAC_C TLN_WONT_C TLN_ECHO_C "\n", 4);
       dcc[idx].user = get_user_by_handle(userlist, dcc[idx].u.chat->away);
-      strcpy(dcc[idx].nick, dcc[idx].u.chat->away);
+      strncpyz(dcc[idx].nick, dcc[idx].u.chat->away, sizeof dcc[idx].nick);
       nfree(dcc[idx].u.chat->away);
       nfree(dcc[idx].u.chat->su_nick);
       dcc[idx].u.chat->away = NULL;
@@ -1055,7 +1055,7 @@ static void dcc_chat(int idx, char *buf, int i)
           if (dcc[idx].u.chat->su_nick) {
             dcc[idx].user = get_user_by_handle(userlist,
                                                dcc[idx].u.chat->su_nick);
-            strncpyz(dcc[idx].nick, dcc[idx].u.chat->su_nick, sizeof(dcc[idx].nick));
+            strncpyz(dcc[idx].nick, dcc[idx].u.chat->su_nick, sizeof dcc[idx].nick);
             dcc[idx].type = &DCC_CHAT;
             dprintf(idx, "Returning to real nick %s!\n",
                     dcc[idx].u.chat->su_nick);

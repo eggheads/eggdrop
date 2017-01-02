@@ -498,7 +498,7 @@ static int u_addinvite(struct chanset_t *chan, char *invite, char *from,
   else if (strchr(host, '!') == NULL) {
     char *i = strchr(host, '@');
 
-    strcpy(s, i);
+    strncpyz(s, i, sizeof s);
     *i = 0;
     strcat(host, "!*");
     strcat(host, s);

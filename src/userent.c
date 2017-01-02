@@ -776,10 +776,17 @@ int xtra_set(struct userrec *u, struct user_entry *e, void *buf)
     nfree(old->key);
     nfree(old->data);
     nfree(old);
+    if (old == e->u.extra) {
+      e->u.extra = NULL;
+    }
   }
   if (old != new && new->data) {
-    if (new->data[0])
+    if (new->data[0]) {
+      if (!e->u.extra) {
+        e->u.extra = nmalloc(sizeof *e->u.extra);
+      }
       list_insert((&e->u.extra), new)  /* do not add a ';' here */
+    }
   } else {
     if (new->data)
       nfree(new->data);
@@ -1063,7 +1070,7 @@ static void hosts_display(int idx, struct user_entry *e)
   strcpy(s, "  HOSTS: ");
   for (q = e->u.list; q; q = q->next) {
     if (s[0] && !s[9])
-      strcat(s, q->extra);
+      strncpyz(s, q->extra, sizeof s);
     else if (!s[0])
       sprintf(s, "         %s", q->extra);
     else {

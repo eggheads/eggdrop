@@ -566,7 +566,7 @@ int detect_dcc_flood(time_t *timer, struct chat_info *chat, int idx)
 {
   time_t t;
 
-  if (!dcc_flood_thr)
+  if (!dcc_flood_thr || !chat)
     return 0;
   t = now;
   if (*timer != t) {
@@ -578,7 +578,7 @@ int detect_dcc_flood(time_t *timer, struct chat_info *chat, int idx)
       /* FLOOD */
       dprintf(idx, "*** FLOOD: %s.\n", IRC_GOODBYE);
       /* Evil assumption here that flags&DCT_CHAT implies chat type */
-      if ((dcc[idx].type->flags & DCT_CHAT) && chat && (chat->channel >= 0)) {
+      if ((dcc[idx].type->flags & DCT_CHAT) && (chat->channel >= 0)) {
         char x[1024];
 
         egg_snprintf(x, sizeof x, DCC_FLOODBOOT, dcc[idx].nick);

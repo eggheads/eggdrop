@@ -1088,7 +1088,7 @@ static int ctcp_DCC_RESUME(char *nick, char *from, char *handle,
   int i, port;
   unsigned long offset;
 
-  strcpy(msg, text);
+  strncpyz(msg, text, sizeof msg);
   action = newsplit(&msg);
 
   if (egg_strcasecmp(action, "RESUME"))

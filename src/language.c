@@ -148,8 +148,7 @@ static int del_lang(char *lang)
         lpo->next = lp->next;
       else
         langpriority = lp->next;
-      if (lp->lang)
-        nfree(lp->lang);
+      nfree(lp->lang);
       nfree(lp);
       debug1("LANG: Language unloaded: %s", lang);
       return 1;

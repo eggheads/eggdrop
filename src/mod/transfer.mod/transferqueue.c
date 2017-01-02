@@ -37,10 +37,10 @@ static void queue_file(char *dir, char *file, char *from, char *to)
   fileq->next = q;
   fileq->dir = nmalloc(strlen(dir) + 1);
   fileq->file = nmalloc(strlen(file) + 1);
-  strcpy(fileq->dir, dir);
-  strcpy(fileq->file, file);
-  strcpy(fileq->nick, from);
-  strcpy(fileq->to, to);
+  strncpyz(fileq->dir, dir, sizeof fileq->dir);
+  strncpyz(fileq->file, file, sizeof fileq->file);
+  strncpyz(fileq->nick, from, sizeof fileq->nick);
+  strncpyz(fileq->to, to, sizeof fileq->to);
 }
 
 static void deq_this(fileq_t *this)

@@ -375,7 +375,7 @@ void *n_realloc(void *ptr, int size, const char *file, int line)
   if (i == lastused) {
     putlog(LOG_MISC, "*", "*** ATTEMPTING TO REALLOC NON-MALLOC'D PTR: %s (%d)",
            file, line);
-    return NULL;
+    /* If we reach this, realloc returned a pointer anyway. So we use it. */
   }
   memused -= memtbl[i].size;
   memtbl[i].ptr = x;

@@ -656,7 +656,7 @@ static void cmd_console(struct userrec *u, int idx, char *par)
     return;
   }
   get_user_flagrec(u, &fr, dcc[idx].u.chat->con_chan);
-  strcpy(s1, par);
+  strncpyz(s1, par, sizeof s1);
   nick = newsplit(&par);
   /* Don't remove '+' as someone couldn't have '+' in CHANMETA cause
    * he doesn't use IRCnet ++rtc.
@@ -1665,7 +1665,7 @@ static void cmd_chattr(struct userrec *u, int idx, char *par)
   }
   if (chan)
     putlog(LOG_CMDS, "*", "#%s# (%s) chattr %s %s",
-           dcc[idx].nick, chan ? chan->dname : "*", hand, chg ? chg : "");
+           dcc[idx].nick, chan->dname, hand, chg ? chg : "");
   else
     putlog(LOG_CMDS, "*", "#%s# chattr %s %s", dcc[idx].nick, hand,
            chg ? chg : "");

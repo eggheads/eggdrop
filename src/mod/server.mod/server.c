@@ -1509,7 +1509,7 @@ static int ctcp_DCC_CHAT(char *nick, char *from, char *handle,
   struct userrec *u = get_user_by_handle(userlist, handle);
   struct flag_record fr = { FR_GLOBAL | FR_CHAN | FR_ANYWH, 0, 0, 0, 0, 0 };
 
-  strcpy(msg, text);
+  strncpyz(msg, text, sizeof msg);
   action = newsplit(&msg);
   param = newsplit(&msg);
   ip = newsplit(&msg);
@@ -1673,7 +1673,7 @@ static void server_5minutely()
 
 static void server_prerehash()
 {
-  strcpy(oldnick, botname);
+  strncpyz(oldnick, botname, NICKLEN);
 }
 
 static void server_postrehash()
