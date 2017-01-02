@@ -86,6 +86,8 @@ fix_patch_h() {
 		cat src/patch.h | sed 's/^patch.*Git.*Git version \*\//patch("PRE-RELEASE");           \/* RC version *\//g' > src/patch.h_
 	else
 		cat src/patch.h | sed 's/^patch.*/\/* PATCH GOES HERE *\//g' > src/patch.h_
+		mv src/patch.h_ src/patch.h
+		cat src/patch.h | sed -e '0,/^\/\* PATCH GOES HERE \*\//s//patch("");/' > src/patch.h_
 	fi
 	mv src/patch.h_ src/patch.h
 }
