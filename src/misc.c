@@ -1052,7 +1052,7 @@ void help_subst(char *s, char *nick, struct flag_record *flags,
     }
   }
   if (cols) {
-    strcpy(xx, s);
+    strncpyz(xx, s, sizeof xx);
     s[0] = 0;
     subst_addcol(s, xx);
   }
