@@ -2315,7 +2315,7 @@ static int gotmsg(char *from, char *msg)
     if (*p == 1) {
       *p = 0;
       ctcp = buf2;
-      strcpy(ctcp, p1);
+      strncpyz(ctcp, p1, sizeof ctcp);
       strcpy(p1 - 1, p + 1);
       detect_chan_flood(nick, uhost, from, chan, strncmp(ctcp, "ACTION ", 7) ?
                         FLOOD_CTCP : FLOOD_PRIVMSG, NULL);
