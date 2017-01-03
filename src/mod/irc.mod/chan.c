@@ -2150,7 +2150,7 @@ static int gotnick(char *from, char *msg)
        */
       /* Compose a nick!user@host for the new nick */
       sprintf(s1, "%s!%s", msg, uhost);
-      strcpy(m->nick, msg);
+      strncpyz(m->nick, msg, NICKLEN);
       detect_chan_flood(msg, uhost, from, chan, FLOOD_NICK, NULL);
 
       if (!findchan_by_dname(chname)) {
