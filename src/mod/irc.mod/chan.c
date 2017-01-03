@@ -1040,7 +1040,7 @@ static int got352or4(struct chanset_t *chan, char *user, char *host,
     m->flags = 0;               /* No flags for now */
     m->last = now;              /* Last time I saw him */
   }
-  strcpy(m->nick, nick);        /* Store the nick in list */
+  strncpyz(m->nick, nick, NICKLEN);        /* Store the nick in list */
   /* Store the userhost */
   simple_sprintf(m->userhost, "%s@%s", user, host);
   simple_sprintf(userhost, "%s!%s", nick, m->userhost);
