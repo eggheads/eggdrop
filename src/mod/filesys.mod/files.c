@@ -89,7 +89,7 @@ static int welcome_to_files(int idx)
   sub_lang(idx, FILES_WELCOME);
   sub_lang(idx, FILES_WELCOME1);
   if (p)
-    strcpy(dcc[idx].u.file->dir, p);
+    strncpyz(dcc[idx].u.file->dir, p, 161);
   else
     dcc[idx].u.file->dir[0] = 0;
   /* Does this dir even exist any more? */
@@ -1493,7 +1493,7 @@ static void files_setpwd(int idx, char *where)
 
   if (!resolve_dir(dcc[idx].u.file->dir, where, &s, idx))
     return;
-  strcpy(dcc[idx].u.file->dir, s);
+  strncpyz(dcc[idx].u.file->dir, s, 161);
   set_user(&USERENTRY_DCCDIR, get_user_by_handle(userlist, dcc[idx].nick),
            dcc[idx].u.file->dir);
   my_free(s);
