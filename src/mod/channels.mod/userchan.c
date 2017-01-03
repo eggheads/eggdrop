@@ -412,7 +412,7 @@ static int u_addban(struct chanset_t *chan, char *ban, char *from, char *note,
   else if (strchr(host, '!') == NULL) {
     char *i = strchr(host, '@');
 
-    strcpy(s, i);
+    strncpyz(s, i, sizeof s);
     *i = 0;
     strcat(host, "!*");
     strcat(host, s);
