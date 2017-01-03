@@ -736,11 +736,11 @@ static void display_invite(int idx, int number, maskrec *invite,
     daysago(now, invite->added, s);
     sprintf(dates, "%s %s", MODES_CREATED, s);
     if (invite->added < invite->lastactive) {
-      strcat(dates, ", ");
-      strcat(dates, MODES_LASTUSED);
-      strcat(dates, " ");
+      strncat(dates, ", ", sizeof dates - strlen(dates) - 1);
+      strncat(dates, MODES_LASTUSED, sizeof dates - strlen(dates) - 1);
+      strncat(dates, " ", sizeof dates - strlen(dates) - 1);
       daysago(now, invite->lastactive, s);
-      strcat(dates, s);
+      strncat(dates, s, sizeof dates - strlen(dates) - 1);
     }
   } else
     dates[0] = 0;
