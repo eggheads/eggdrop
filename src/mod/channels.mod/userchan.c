@@ -577,7 +577,7 @@ static int u_addexempt(struct chanset_t *chan, char *exempt, char *from,
     strncpyz(s, i, sizeof s);
     *i = 0;
     strncat(host, "!*", sizeof host - strlen(host) - 1);
-    strncat(host, s, sizeof host - strlen(host - 1));
+    strncat(host, s, sizeof host - strlen(host) - 1);
   }
 
   for (l = *u; l; l = l->next)
