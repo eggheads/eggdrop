@@ -170,7 +170,7 @@ static void punish_badguy(struct chanset_t *chan, char *whobad,
     else {
       strcpy(s1, whobad);
       maskaddr(s1, s, chan->ban_type);
-      strcpy(s1, badnick);
+      strncpyz(s1, badnick, sizeof s1);
       /* If that handle exists use "badX" (where X is an increasing number)
        * instead.
        */
