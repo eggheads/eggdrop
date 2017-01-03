@@ -323,14 +323,14 @@ void tell_verbose_status(int idx)
   sprintf(&s[strlen(s)], "%02d:%02d", (int) hr, (int) min);
   s1[0] = 0;
   if (backgrd)
-    strcpy(s1, MISC_BACKGROUND);
+    strncpyz(s1, MISC_BACKGROUND, sizeof s1);
   else {
     if (term_z)
-      strcpy(s1, MISC_TERMMODE);
+      strncpyz(s1, MISC_TERMMODE, sizeof s1);
     else if (con_chan)
-      strcpy(s1, MISC_STATMODE);
+      strncpyz(s1, MISC_STATMODE, sizeof s1);
     else
-      strcpy(s1, MISC_LOGMODE);
+      strncpyz(s1, MISC_LOGMODE, sizeof s1);
   }
   cputime = getcputime();
   if (cputime < 0)
