@@ -644,11 +644,11 @@ static void display_ban(int idx, int number, maskrec *ban,
     daysago(now, ban->added, s);
     sprintf(dates, "%s %s", MODES_CREATED, s);
     if (ban->added < ban->lastactive) {
-      strncat(dates, ", ",  sizeof(dates) - strlen(dates) - 1);
-      strncat(dates, MODES_LASTUSED, sizeof(dates) - strlen(dates) - 1);
-      strncat(dates, " ",  sizeof(dates) - strlen(dates) - 1);
+      strncat(dates, ", ",  sizeof dates - strlen(dates) - 1);
+      strncat(dates, MODES_LASTUSED, sizeof dates - strlen(dates) - 1);
+      strncat(dates, " ",  sizeof dates - strlen(dates) - 1);
       daysago(now, ban->lastactive, s);
-      strncat(dates, s,  sizeof(dates) - strlen(dates) - 1);
+      strncat(dates, s,  sizeof dates  - strlen(dates) - 1);
     }
   } else
     dates[0] = 0;
@@ -690,11 +690,11 @@ static void display_exempt(int idx, int number, maskrec *exempt,
     daysago(now, exempt->added, s);
     sprintf(dates, "%s %s", MODES_CREATED, s);
     if (exempt->added < exempt->lastactive) {
-      strncat(dates, ", ", sizeof(dates) - strlen(dates) - 1);
-      strncat(dates, MODES_LASTUSED,  sizeof(dates) - strlen(dates) - 1);
-      strncat(dates, " ",  sizeof(dates) - strlen(dates) - 1);
+      strncat(dates, ", ", sizeof dates - strlen(dates) - 1);
+      strncat(dates, MODES_LASTUSED,  sizeof dates  - strlen(dates) - 1);
+      strncat(dates, " ",  sizeof dates - strlen(dates) - 1);
       daysago(now, exempt->lastactive, s);
-      strncat(dates, s,  sizeof(dates) - strlen(dates) - 1);
+      strncat(dates, s,  sizeof dates - strlen(dates) - 1);
     }
   } else
     dates[0] = 0;
@@ -1257,7 +1257,7 @@ static int expired_mask(struct chanset_t *chan, char *who)
   if (force_expire)
     return 1;
 
-  strncpyz(buf, who, sizeof(buf));
+  strncpyz(buf, who, sizeof buf);
   sfrom = buf;
   snick = splitnick(&sfrom);
 

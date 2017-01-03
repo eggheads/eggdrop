@@ -1528,10 +1528,10 @@ static void cmd_chanset(struct userrec *u, int idx, char *par)
           parcpy = nmalloc(strlen(par) + 1);
           strcpy(parcpy, par);
           if (tcl_channel_modify(0, chan, 2, list) == TCL_OK) {
-            strncat(answers, list[0], sizeof(answers) - strlen(answers) - 1);
-            strncat(answers, " { ", sizeof(answers) - strlen(answers) - 1);
-            strncat(answers, parcpy, sizeof(answers) - strlen(answers) - 1);
-            strncat(answers, " }", sizeof(answers) - strlen(answers) - 1);
+            strncat(answers, list[0], sizeof answers - strlen(answers) - 1);
+            strncat(answers, " { ", sizeof answers - strlen(answers) - 1);
+            strncat(answers, parcpy, sizeof answers - strlen(answers) - 1);
+            strncat(answers, " }", sizeof answers - strlen(answers) - 1);
           } else if (!all || !chan->next)
             dprintf(idx, "Error trying to set %s for %s, invalid option\n",
                     list[0], all ? "all channels" : chname);
