@@ -505,8 +505,8 @@ targetcont:
 static char fixit[512];
 static char *fixnick(char *nick)
 {
-  strcpy(fixit, nick);
-  strcat(fixit, "'");
+  strncpyz(fixit, nick, sizeof fixit);
+  strncat(fixit, "'", sizeof fixit - strlen(fixit) - 1);
   switch (nick[strlen(nick) - 1]) {
   case 's':
   case 'S':
