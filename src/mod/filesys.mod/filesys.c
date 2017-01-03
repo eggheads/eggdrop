@@ -867,7 +867,7 @@ static int filesys_DCC_CHAT(char *nick, char *from, char *handle,
 #endif
   if (egg_strncasecmp(text, "CHAT ", 5) || !u)
     return 0;
-  strcpy(buf, text + 5);
+  strncpyz(buf, text + 5, sizeof buf);
   get_user_flagrec(u, &fr, 0);
   param = newsplit(&msg);
   if (dcc_total == max_dcc && increase_socks_max()) {
