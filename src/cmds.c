@@ -2347,7 +2347,7 @@ static void cmd_set(struct userrec *u, int idx, char *msg)
     dumplots(idx, "Global vars: ", tcl_resultstring());
     return;
   }
-  strcpy(s + 4, msg);
+  strncpyz(s + 4, msg, sizeof s - 4);
   code = Tcl_Eval(interp, s);
 
   /* properly convert string to system encoding. */
