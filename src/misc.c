@@ -644,7 +644,7 @@ void logsuffix_change(char *s)
     return;
 
   debug0("Logfile suffix changed. Closing all open logs.");
-  strcpy(logfile_suffix, s);
+  strncpyz(logfile_suffix, s, 21);
   while (s2[0]) {
     if (s2[0] == ' ')
       s2[0] = '_';
