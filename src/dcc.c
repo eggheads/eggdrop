@@ -1173,7 +1173,7 @@ static int detect_telnet_flood(char *floodhost)
   if (!flood_telnet_thr || (glob_friend(fr) && !par_telnet_flood))
     return 0;                   /* No flood protection */
   if (egg_strcasecmp(lasttelnethost, floodhost)) {      /* New... */
-    strcpy(lasttelnethost, floodhost);
+    strncpyz(lasttelnethost, floodhost, sizeof lasttelnethost);
     lasttelnettime = now;
     lasttelnets = 0;
     return 0;
