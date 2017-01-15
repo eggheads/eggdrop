@@ -247,7 +247,7 @@ but this Eggdrop was not compiled with IPv6 support.");
  */
 void getvhost(sockname_t *addr, int af)
 {
-  char *h;
+  char *h = NULL;
 
   if (af == AF_INET)
     h = vhost;
@@ -255,7 +255,7 @@ void getvhost(sockname_t *addr, int af)
   else
     h = vhost6;
 #endif
-  if (setsockname(addr, h, 0, 1) != af)
+  if (setsockname(addr, (h ? h : ""), 0, 1) != af)
     setsockname(addr, (af == AF_INET ? "0" : "::"), 0, 0);
   /* Remember this 'self-lookup failed' thingie?
      I have good news - you won't see it again ;) */
