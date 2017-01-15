@@ -1108,15 +1108,18 @@ int main(int arg_c, char **arg_v)
   /* Check for pre-existing eggdrop! */
   f = fopen(pid_file, "r");
   if (f != NULL) {
-    fgets(s, 10, f);
-    xx = atoi(s);
-    i = kill(xx, SIGCHLD);      /* Meaningless kill to determine if pid
-                                 * is used */
-    if (i == 0 || errno != ESRCH) {
-      printf(EGG_RUNNING1, botnetnick);
-      printf(EGG_RUNNING2, pid_file);
-      bg_send_quit(BG_ABORT);
-      exit(1);
+    if (fgets(s, 10, f) != NULL) {
+      xx = atoi(s);
+      i = kill(xx, SIGCHLD);      /* Meaningless kill to determine if pid
+                                   * is used */
+      if (i == 0 || errno != ESRCH) {
+        printf(EGG_RUNNING1, botnetnick);
+        printf(EGG_RUNNING2, pid_file);
+        bg_send_quit(BG_ABORT);
+        exit(1);
+      }
+    } else {
+      printf("Error checking for existing Eggdrop install");
     }
   }
 

@@ -1024,15 +1024,18 @@ static void bot_motd(int idx, char *par)
       botnet_send_priv(idx, botnetnick, who, NULL, "--- %s\n", MISC_MOTDFILE);
       help_subst(NULL, NULL, 0, irc, NULL);
       while (!feof(vv)) {
-        fgets(s, 120, vv);
-        if (!feof(vv)) {
-          if (s[strlen(s) - 1] == '\n')
-            s[strlen(s) - 1] = 0;
-          if (!s[0])
-            strcpy(s, " ");
-          help_subst(s, who, &fr, HELP_DCC, dcc[idx].nick);
-          if (s[0])
-            botnet_send_priv(idx, botnetnick, who, NULL, "%s", s);
+        if (fgets(s, 120, vv) != NULL) {
+          if (!feof(vv)) {
+            if (s[strlen(s) - 1] == '\n')
+              s[strlen(s) - 1] = 0;
+            if (!s[0])
+              strcpy(s, " ");
+            help_subst(s, who, &fr, HELP_DCC, dcc[idx].nick);
+            if (s[0])
+              botnet_send_priv(idx, botnetnick, who, NULL, "%s", s);
+          }
+        } else {
+          putlog(LOG_DEBUG, "*", "Error reading MOTD file"); 
         }
       }
       fclose(vv);

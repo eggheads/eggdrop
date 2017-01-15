@@ -1066,24 +1066,27 @@ static void scan_help_file(struct help_ref *current, char *filename, int type)
 
   if (is_file(filename) && (f = fopen(filename, "r"))) {
     while (!feof(f)) {
-      fgets(s, HELP_BUF_LEN, f);
-      if (!feof(f)) {
-        p = s;
-        while ((q = strstr(p, "%{help="))) {
-          q += 7;
-          if ((p = strchr(q, '}'))) {
-            *p = 0;
-            list = nmalloc(sizeof *list);
+      if (fgets(s, HELP_BUF_LEN, f) != NULL) {
+        if (!feof(f)) {
+          p = s;
+          while ((q = strstr(p, "%{help="))) {
+            q += 7;
+            if ((p = strchr(q, '}'))) {
+              *p = 0;
+              list = nmalloc(sizeof *list);
 
-            list->name = nmalloc(p - q + 1);
-            strcpy(list->name, q);
-            list->next = current->first;
-            list->type = type;
-            current->first = list;
-            p++;
-          } else
-            p = "";
+              list->name = nmalloc(p - q + 1);
+              strcpy(list->name, q);
+              list->next = current->first;
+              list->type = type;
+              current->first = list;
+              p++;
+            } else
+              p = "";
+          }
         }
+      } else {
+        putlog(LOG_DEBUG, "*", "Error reading help file"); 
       }
     }
     fclose(f);
@@ -1215,17 +1218,20 @@ void showhelp(char *who, char *file, struct flag_record *flags, int fl)
   if (f) {
     help_subst(NULL, NULL, 0, HELP_IRC, NULL);  /* Clear flags */
     while (!feof(f)) {
-      fgets(s, HELP_BUF_LEN, f);
-      if (!feof(f)) {
-        if (s[strlen(s) - 1] == '\n')
-          s[strlen(s) - 1] = 0;
-        if (!s[0])
-          strcpy(s, " ");
-        help_subst(s, who, flags, 0, file);
-        if ((s[0]) && (strlen(s) > 1)) {
-          dprintf(DP_HELP, "NOTICE %s :%s\n", who, s);
-          lines++;
+      if (fgets(s, HELP_BUF_LEN, f) != NULL) {
+        if (!feof(f)) {
+          if (s[strlen(s) - 1] == '\n')
+            s[strlen(s) - 1] = 0;
+          if (!s[0])
+            strcpy(s, " ");
+          help_subst(s, who, flags, 0, file);
+          if ((s[0]) && (strlen(s) > 1)) {
+            dprintf(DP_HELP, "NOTICE %s :%s\n", who, s);
+            lines++;
+          }
         }
+      } else {
+        putlog(LOG_DEBUG, "*", "Error reading help file");
       }
     }
     fclose(f);
@@ -1244,17 +1250,20 @@ static int display_tellhelp(int idx, char *file, FILE *f,
     help_subst(NULL, NULL, 0,
                (dcc[idx].status & STAT_TELNET) ? 0 : HELP_IRC, NULL);
     while (!feof(f)) {
-      fgets(s, HELP_BUF_LEN, f);
-      if (!feof(f)) {
-        if (s[strlen(s) - 1] == '\n')
-          s[strlen(s) - 1] = 0;
-        if (!s[0])
-          strcpy(s, " ");
-        help_subst(s, dcc[idx].nick, flags, 1, file);
-        if (s[0]) {
-          dprintf(idx, "%s\n", s);
-          lines++;
+      if (fgets(s, HELP_BUF_LEN, f) != NULL) {
+        if (!feof(f)) {
+          if (s[strlen(s) - 1] == '\n')
+            s[strlen(s) - 1] = 0;
+          if (!s[0])
+            strcpy(s, " ");
+          help_subst(s, dcc[idx].nick, flags, 1, file);
+          if (s[0]) {
+            dprintf(idx, "%s\n", s);
+            lines++;
+          }
         }
+      } else {
+        putlog(LOG_DEBUG, "*", "Error displaying help");
       }
     }
     fclose(f);
@@ -1374,15 +1383,18 @@ void show_motd(int idx)
   help_subst(NULL, NULL, 0,
              (dcc[idx].status & STAT_TELNET) ? 0 : HELP_IRC, NULL);
   while (!feof(vv)) {
-    fgets(s, 120, vv);
-    if (!feof(vv)) {
-      if (s[strlen(s) - 1] == '\n')
-        s[strlen(s) - 1] = 0;
-      if (!s[0])
-        strcpy(s, " ");
-      help_subst(s, dcc[idx].nick, &fr, 1, botnetnick);
-      if (s[0])
-        dprintf(idx, "%s\n", s);
+    if (fgets(s, 120, vv) != NULL) {
+      if (!feof(vv)) {
+        if (s[strlen(s) - 1] == '\n')
+          s[strlen(s) - 1] = 0;
+        if (!s[0])
+          strcpy(s, " ");
+        help_subst(s, dcc[idx].nick, &fr, 1, botnetnick);
+        if (s[0])
+          dprintf(idx, "%s\n", s);
+      }
+    } else {
+      putlog(LOG_DEBUG, "*", "Error reading MOTD for DCC");
     }
   }
   fclose(vv);
@@ -1408,12 +1420,15 @@ void show_banner(int idx)
   /* reset the help_subst variables to their defaults */
   help_subst(NULL, NULL, 0, 0, NULL);
   while (!feof(vv)) {
-    fgets(s, 120, vv);
-    if (!feof(vv)) {
-      if (!s[0])
-        strcpy(s, " \n");
-      help_subst(s, dcc[idx].nick, &fr, 0, botnetnick);
-      dprintf(idx, "%s", s);
+    if (fgets(s, 120, vv) != NULL) {
+      if (!feof(vv)) {
+        if (!s[0])
+          strcpy(s, " \n");
+        help_subst(s, dcc[idx].nick, &fr, 0, botnetnick);
+        dprintf(idx, "%s", s);
+      }
+    } else {
+      putlog(LOG_DEBUG, "*", "Error reading banner");
     }
   }
   fclose(vv);

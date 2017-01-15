@@ -86,17 +86,20 @@ static int num_notes(char *user)
   if (f == NULL)
     return 0;
   while (!feof(f)) {
-    fgets(s, 512, f);
-    if (!feof(f)) {
-      if (s[strlen(s) - 1] == '\n')
-        s[strlen(s) - 1] = 0;
-      rmspace(s);
-      if ((s[0]) && (s[0] != '#') && (s[0] != ';')) {   /* Not comment */
-        s1 = s;
-        to = newsplit(&s1);
-        if (!egg_strcasecmp(to, user))
-          tot++;
+    if (fgets(s, 512, f) != NULL) {
+      if (!feof(f)) {
+        if (s[strlen(s) - 1] == '\n')
+          s[strlen(s) - 1] = 0;
+        rmspace(s);
+        if ((s[0]) && (s[0] != '#') && (s[0] != ';')) {   /* Not comment */
+          s1 = s;
+          to = newsplit(&s1);
+          if (!egg_strcasecmp(to, user))
+            tot++;
+        }
       }
+    } else {
+      putlog(LOG_DEBUG, "*", "NOTES: Error reading number of notes.");
     }
   }
   fclose(f);
@@ -126,21 +129,24 @@ static void notes_change(char *oldnick, char *newnick)
   }
   chmod(s, userfile_perm);      /* Use userfile permissions. */
   while (!feof(f)) {
-    fgets(s, 512, f);
-    if (!feof(f)) {
-      if (s[strlen(s) - 1] == '\n')
-        s[strlen(s) - 1] = 0;
-      rmspace(s);
-      if ((s[0]) && (s[0] != '#') && (s[0] != ';')) {   /* Not comment */
-        s1 = s;
-        to = newsplit(&s1);
-        if (!egg_strcasecmp(to, oldnick)) {
-          tot++;
-          fprintf(g, "%s %s\n", newnick, s1);
+    if (fgets(s, 512, f) != NULL) {
+      if (!feof(f)) {
+        if (s[strlen(s) - 1] == '\n')
+          s[strlen(s) - 1] = 0;
+        rmspace(s);
+        if ((s[0]) && (s[0] != '#') && (s[0] != ';')) {   /* Not comment */
+          s1 = s;
+          to = newsplit(&s1);
+          if (!egg_strcasecmp(to, oldnick)) {
+            tot++;
+            fprintf(g, "%s %s\n", newnick, s1);
+          } else
+            fprintf(g, "%s %s\n", to, s1);
         } else
-          fprintf(g, "%s %s\n", to, s1);
-      } else
-        fprintf(g, "%s\n", s);
+          fprintf(g, "%s\n", s);
+      }
+    } else {
+      putlog(LOG_DEBUG, "*", "NOTES: Error reading notes file to change handle");
     }
   }
   fclose(f);
@@ -173,25 +179,28 @@ static void expire_notes()
   }
   chmod(s, userfile_perm);      /* Use userfile permissions. */
   while (!feof(f)) {
-    fgets(s, 512, f);
-    if (!feof(f)) {
-      if (s[strlen(s) - 1] == '\n')
-        s[strlen(s) - 1] = 0;
-      rmspace(s);
-      if ((s[0]) && (s[0] != '#') && (s[0] != ';')) {   /* Not comment */
-        s1 = s;
-        to = newsplit(&s1);
-        from = newsplit(&s1);
-        ts = newsplit(&s1);
-        lapse = (now - (time_t) atoi(ts)) / 86400;
-        if (lapse > note_life)
-          tot++;
-        else if (!get_user_by_handle(userlist, to))
-          tot++;
-        else
-          fprintf(g, "%s %s %s %s\n", to, from, ts, s1);
-      } else
-        fprintf(g, "%s\n", s);
+    if (fgets(s, 512, f)) {
+      if (!feof(f)) {
+        if (s[strlen(s) - 1] == '\n')
+          s[strlen(s) - 1] = 0;
+        rmspace(s);
+        if ((s[0]) && (s[0] != '#') && (s[0] != ';')) {   /* Not comment */
+          s1 = s;
+          to = newsplit(&s1);
+          from = newsplit(&s1);
+          ts = newsplit(&s1);
+          lapse = (now - (time_t) atoi(ts)) / 86400;
+          if (lapse > note_life)
+            tot++;
+          else if (!get_user_by_handle(userlist, to))
+            tot++;
+          else
+            fprintf(g, "%s %s %s %s\n", to, from, ts, s1);
+        } else
+          fprintf(g, "%s\n", s);
+      }
+    } else {
+      putlog(LOG_DEBUG, "*", "NOTES: Error reading notes file to remove old notes");
     }
   }
   fclose(f);
@@ -606,24 +615,27 @@ static void notes_del(char *hand, char *nick, char *sdl, int idx)
   chmod(s, userfile_perm);      /* Use userfile permissions. */
   notes_parse(dl, sdl);
   while (!feof(f)) {
-    fgets(s, 512, f);
-    if (s[strlen(s) - 1] == '\n')
-      s[strlen(s) - 1] = 0;
-    if (!feof(f)) {
-      rmspace(s);
-      if ((s[0]) && (s[0] != '#') && (s[0] != ';')) {   /* Not comment */
-        s1 = s;
-        to = newsplit(&s1);
-        if (!egg_strcasecmp(to, hand)) {
-          if (!notes_in(dl, in))
+    if (fgets(s, 512, f) != NULL) {
+      if (s[strlen(s) - 1] == '\n')
+        s[strlen(s) - 1] = 0;
+      if (!feof(f)) {
+        rmspace(s);
+        if ((s[0]) && (s[0] != '#') && (s[0] != ';')) {   /* Not comment */
+          s1 = s;
+          to = newsplit(&s1);
+          if (!egg_strcasecmp(to, hand)) {
+            if (!notes_in(dl, in))
+              fprintf(g, "%s %s\n", to, s1);
+            else
+              er++;
+            in++;
+          } else
             fprintf(g, "%s %s\n", to, s1);
-          else
-            er++;
-          in++;
         } else
-          fprintf(g, "%s %s\n", to, s1);
-      } else
-        fprintf(g, "%s\n", s);
+          fprintf(g, "%s\n", s);
+      }
+    } else {
+      putlog(LOG_DEBUG, "*", "NOTES: Error reading notes file to delete note.");
     }
   }
   fclose(f);
