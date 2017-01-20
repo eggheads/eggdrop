@@ -733,7 +733,8 @@ static void patch(const char *str)
 
   if (!p)
     p = &egg_version[strlen(egg_version)];
-  sprintf(p, "+%s", str);
+  if (str[0])
+    sprintf(p, "+%s", str);
   egg_numver++;
   sprintf(&egg_xtra[strlen(egg_xtra)], " %s", str);
 }
