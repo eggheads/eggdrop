@@ -1159,10 +1159,10 @@ int main(int arg_c, char **arg_v)
       printf("Error renaming stdin file handle");
     }
     if (freopen("/dev/null", "w", stdout) != NULL) {
-      printf("Error renaming stdout file handle"); 
+      printf("Error renaming stdout file handle");
     }
     if (freopen("/dev/null", "w", stderr) != NULL) {
-      printf("Error renaming stderr file handle"); 
+      printf("Error renaming stderr file handle");
     }
 #ifdef CYGWIN_HACKS
     FreeConsole();

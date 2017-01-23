@@ -1035,7 +1035,7 @@ static void bot_motd(int idx, char *par)
               botnet_send_priv(idx, botnetnick, who, NULL, "%s", s);
           }
         } else {
-          putlog(LOG_DEBUG, "*", "Error reading MOTD file"); 
+          putlog(LOG_DEBUG, "*", "Error reading MOTD file");
         }
       }
       fclose(vv);

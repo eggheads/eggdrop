@@ -1086,7 +1086,7 @@ static void scan_help_file(struct help_ref *current, char *filename, int type)
           }
         }
       } else {
-        putlog(LOG_DEBUG, "*", "Error reading help file"); 
+        putlog(LOG_DEBUG, "*", "Error reading help file");
       }
     }
     fclose(f);

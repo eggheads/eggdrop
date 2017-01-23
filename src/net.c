@@ -190,7 +190,7 @@ int setsockname(sockname_t *addr, char *src, int port, int allowres)
     addr->addr.s4.sin_family = AF_INET;
   }
 #else
-  int i, count; 
+  int i, count;
 
   egg_bzero(addr, sizeof(sockname_t));
 
@@ -667,7 +667,7 @@ int getdccaddr(sockname_t *addr, char *s, size_t l)
  * If addr is not NULL, it should point to the listening socket's address.
  * Otherwise, this function will try to figure out the public address of the
  * machine, using listen_ip and natip. If restrict_af is set, it will limit
- * the possible IPs to the specified family. The result is a string useable 
+ * the possible IPs to the specified family. The result is a string useable
  * for DCC requests
  */
 int getdccfamilyaddr(sockname_t *addr, char *s, size_t l, int restrict_af)
