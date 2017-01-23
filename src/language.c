@@ -243,7 +243,7 @@ static void read_lang(char *langfile)
           if (fgets(lbuf, 511, FLANG) != NULL) {
             lline++;
           } else {
-            putlog(LOG_DEBUG, "*", "LANG: Error reading lang file."); 
+            putlog(LOG_DEBUG, "*", "LANG: Error reading lang file.");
           }
         }
         lline++;
