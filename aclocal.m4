@@ -53,11 +53,11 @@ dnl Print summary with OS, TLS and TCL info.
 AC_DEFUN([EGG_MSG_SUMMARY],
 [
   AC_MSG_RESULT([Operating System: $egg_cv_var_system_type $egg_cv_var_system_release])
+  AC_MSG_RESULT([IPv6 Support: $ipv6_enabled])
   ADD=""
   if test "x$TCL_THREADS" = "x1"; then
     ADD=" (threaded)"
   fi
-  AC_MSG_RESULT([IPv6 Support: $ipv6_enabled])
   AC_MSG_RESULT([Tcl version: $TCL_PATCHLEVEL$ADD])
   ADD=""
   if test "x$tls_enabled" = "xyes"; then
