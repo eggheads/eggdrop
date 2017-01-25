@@ -59,6 +59,7 @@ AC_DEFUN([EGG_MSG_SUMMARY],
   fi
   AC_MSG_RESULT([IPv6 Support: $ipv6_enabled])
   AC_MSG_RESULT([Tcl version: $TCL_PATCHLEVEL$ADD])
+  ADD=""
   if test "x$tls_enabled" = "xyes"; then
     EGG_FIND_SSL_VERSION
     if test "x$tls_version" != "x"; then
