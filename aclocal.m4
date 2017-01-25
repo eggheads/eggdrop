@@ -53,18 +53,19 @@ dnl Print summary with OS, TLS and TCL info.
 AC_DEFUN([EGG_MSG_SUMMARY],
 [
   AC_MSG_RESULT([Operating System: $egg_cv_var_system_type $egg_cv_var_system_release])
-  AC_MSG_RESULT([Tcl version: $TCL_PATCHLEVEL])
+  ADD=""
   if test "x$TCL_THREADS" = "x1"; then
-    AC_MSG_RESULT([  Tcl is threaded.])
+    ADD=" (threaded)"
   fi
-  AC_MSG_RESULT([SSL/TLS Support: $tls_enabled])
+  AC_MSG_RESULT([IPv6 Support: $ipv6_enabled])
+  AC_MSG_RESULT([Tcl version: $TCL_PATCHLEVEL$ADD])
   if test "x$tls_enabled" = "xyes"; then
     EGG_FIND_SSL_VERSION
     if test "x$tls_version" != "x"; then
-      AC_MSG_RESULT([  Using version: $tls_version.])
+      ADD=" ($tls_version)"
     fi
   fi
-  AC_MSG_RESULT([IPv6 Support: $ipv6_enabled])
+  AC_MSG_RESULT([SSL/TLS Support: $tls_enabled$ADD])
   AC_MSG_RESULT
 ])
 
@@ -86,6 +87,7 @@ EOF
     $CC $SSL_INCLUDES tmp.c -o "$tmpout" >/dev/null 2>&1
     if test -x "./$tmpout"; then
       tls_version=$("./$tmpout")
+      tls_versionf=
     fi
     rm -f "$tmpout" tmp.c >/dev/null 2>&1
   fi
