@@ -314,7 +314,7 @@ static void remote_tell_who(int idx, char *nick, int chan)
   char s[450], *realnick;
   struct chanset_t *c;
   /* usable size of channelslist */
-  size_t ssize = sizeof(s) - strlen(ver) - 3;
+  size_t ssize = sizeof(s) - 1;
 
   realnick = strchr(nick, ':');
   if (realnick)
@@ -351,10 +351,10 @@ static void remote_tell_who(int idx, char *nick, int chan)
       }
     }
   if (i) {
-    botnet_send_priv(idx, botnetnick, nick, NULL, "%s (%s)", s, ver);
+    botnet_send_priv(idx, botnetnick, nick, NULL, "%s", s);
   } else
-    botnet_send_priv(idx, botnetnick, nick, NULL, "%s (%s)", BOT_NOCHANNELS,
-                     ver);
+    botnet_send_priv(idx, botnetnick, nick, NULL, "%s", BOT_NOCHANNELS);
+  botnet_send_priv(idx, botnetnick, nick, NULL, "Version: %s", ver);
   if (admin[0])
     botnet_send_priv(idx, botnetnick, nick, NULL, "Admin: %s", admin);
   if (chan == 0)
