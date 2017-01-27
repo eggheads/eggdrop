@@ -309,9 +309,9 @@ static void bot_bye(int idx, char *par)
 
 static void remote_tell_who(int idx, char *nick, int chan)
 {
-  int i = 0, k, l, ok = 0;
+  int i = 10, k, l, ok = 0;
   /* botnet_send_priv truncates at 450 */
-  char s[450], *realnick;
+  char s[450] = "Channels: ", *realnick;
   struct chanset_t *c;
   /* usable size of channelslist */
   size_t ssize = sizeof(s) - 1;
@@ -325,29 +325,34 @@ static void remote_tell_who(int idx, char *nick, int chan)
   for (c = chanset; c; c = c->next)
     if (!channel_secret(c) && !channel_inactive(c)) {
       l = strlen(c->dname);
-      if (i) {
-	if (i + l + 2 < ssize) {
-          /* for 2nd and more chans */
+      /* for 2nd and more chans we need to prepend ','; i is > 10 */
+      if (i > 10) {
+        /* check if ", #chan" fits or if there is a next chan, if ", #chan," fits */
+	if ((c->next && i + l + 3 <= ssize) || (!c->next && i + l + 2 <= ssize)) {
           strcat(s, ", ");
-          strcat(s, c->dname);
-          i += l + 2;
+          i += 2;
         } else {
-          /* fill in as much as we can, then overwrite last 3 chars with ... */
-          strncat(s, ", ", ssize - i - 1);
-          strncat(s, c->dname, ssize - i - 3);
-          s[ssize - 2] = s[ssize - 3] = s[ssize - 4] = '.';
-          break;
+          /* output and prepare for more, there should always be place for ',' */
+          strcat(s, ",");
+          botnet_send_priv(idx, botnetnick, nick, NULL, "%s", s);
+          strcpy(s, "          ");
+          i = 10;
         }
-      } else {
-	if (l + 10 < ssize) {
-          /* only for first chanadd */
-          sprintf(s, "Channels: %s", c->dname);
-          i += l + 10;
-        } else {
-          snprintf(s, ssize, "Channels: %s", c->dname);
-          s[ssize - 2] = s[ssize - 3] = s[ssize - 4] = '.';
-          break;
+      }
+
+      i += l;
+      strncat(s, c->dname, ssize);
+
+      /* check if we need to trunc, normally only for first chans on the line */
+      if (i > ssize) {
+        unsigned int trunc = 4;
+        if (c->next) {
+          /* more to come, leave place for ',' */
+          ++trunc;
         }
+        strcpy(s + ssize - trunc, " ...");
+        s[ssize - trunc + 4] = '\0';
+        i = ssize - trunc + 4;
       }
     }
   if (i) {
