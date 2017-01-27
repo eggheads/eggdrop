@@ -205,8 +205,8 @@ Telnet to the bot and enter 'NEW' as your nickname.
 0x647,Mode queue is at
 0x648,Server queue is at
 0x649,Help queue is at
-# 0x64a - unused
-# 0x64b - unused
+0x64a,Vhost set in config can not be used to connect to this address
+0x64b,Vhost set in config is not available on this machine
 0x64c,Processing channel
 0x64d,Channel
 0x64e,Desiring channel
