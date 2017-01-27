@@ -1651,7 +1651,7 @@ AC_DEFUN([EGG_TLS_DETECT],
       ]])
       AC_CHECK_FUNC(hex_to_string, ,
         AC_CHECK_FUNC(OPENSSL_hexstr2buf,
-            EGG_APPEND_VAR(CFLAGS, -Dhex_to_string=OPENSSL_hexstr2buf)
+            AC_DEFINE([hex_to_string], [OPENSSL_hexstr2buf], [Define this to OPENSSL_hexstr2buf when using OpenSSL 1.1.0+])
           , [[
             havessllib="no"
             break
@@ -1659,7 +1659,7 @@ AC_DEFUN([EGG_TLS_DETECT],
       )
       AC_CHECK_FUNC(string_to_hex, ,
         AC_CHECK_FUNC(OPENSSL_buf2hexstr,
-            EGG_APPEND_VAR(CFLAGS, -Dstring_to_hex=OPENSSL_buf2hexstr)
+            AC_DEFINE([string_to_hex], [OPENSSL_buf2hexstr], [Define this to OPENSSL_buf2hexstr when using OpenSSL 1.1.0+])
           , [[
             havessllib="no"
             break
