@@ -39,12 +39,12 @@ patch("Git");                   /* Git version */
  *
  *
  */
-patch("1479772226");            /* current unixtime */
+patch("1485483674");            /* current unixtime */
 /*
  *
  *
  */
-patch("tlslinkpass");
+patch("timerdrift");
 /*
  *
  *
