@@ -39,12 +39,12 @@ patch("Git");                   /* Git version */
  *
  *
  */
-patch("1485483674");            /* current unixtime */
+patch("1485620062");            /* current unixtime */
 /*
  *
  *
  */
-patch("timerdrift");
+patch("detectssl");
 /*
  *
  *
