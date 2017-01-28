@@ -29,7 +29,7 @@
     <link rel="next" title="Compress Module" href="compress.html" />
     <link rel="prev" title="Blowfish Module" href="blowfish.html" /> 
   </head>
-  <body>
+  <body role="document">
     <div class="header-wrapper">
       <div class="header">
           <p class="logo"><a href="../index.html">
@@ -52,7 +52,7 @@
             
       <div class="documentwrapper">
         <div class="bodywrapper">
-          <div class="body">
+          <div class="body" role="main">
             
   <p>Last revised: October 25, 2010</p>
 <div class="section" id="channels-module">
@@ -400,9 +400,12 @@ channel add #chan. Look in the section above for explanation of every option.</p
 <p>set global-flood-join 5:60</p>
 <p>set global-flood-ctcp 3:60</p>
 <p>set global-flood-nick 5:60</p>
-<p>set global-chanmode &quot;nt-likm&quot;</p>
+<p>set global-aop-delay 5:30</p>
+<p>set global-idle-kick 0</p>
+<p>set global-chanmode &quot;nt&quot;</p>
 <p>set global-stopnethack-mode 0</p>
 <p>set global-revenge-mode 0</p>
+<p>set global-ban-type 3</p>
 <p>set global-ban-time 120</p>
 <p>set global-exempt-time 60</p>
 <p>set global-invite-time 60</p>
@@ -432,8 +435,8 @@ channel add #chan. Look in the section above for explanation of every option.</p
 <div class="line">+userbans</div>
 <div class="line">+userexempts</div>
 <div class="line">+userinvites</div>
-<div class="line">+protecthalfops</div>
-<div class="line">+autohalfop</div>
+<div class="line">-protecthalfops</div>
+<div class="line">-autohalfop</div>
 <div class="line">-static</div>
 </div>
 </dd>
@@ -523,10 +526,10 @@ channel add #chan. Look in the section above for explanation of every option.</p
 
         <div class="right">
           
-    <div class="footer">
+    <div class="footer" role="contentinfo">
         &copy; Copyright 2016, Eggheads.
-      Last updated on Nov 01, 2016.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.2.
+      Last updated on Dec 30, 2016.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.6.
     </div>
         </div>
         <div class="clearer"></div>

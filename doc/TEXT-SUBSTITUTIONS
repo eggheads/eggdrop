@@ -1,7 +1,9 @@
 Textfile Substitutions Last revised: March 08, 2002
 
-Textfile Substitutions
-======================
+
+
+TEXTFILE SUBSTITUTIONS
+
 
 These %-variables can be inserted into help files, the banner, the MOTD,
 and other text files. There are four variables that can be used to

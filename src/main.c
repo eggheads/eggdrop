@@ -555,7 +555,7 @@ void backup_userfile(void)
 }
 
 /* Timer info */
-static int lastmin = 99;
+static time_t lastmin;
 static time_t then;
 static struct tm nowtm;
 
@@ -567,6 +567,7 @@ static void core_secondly()
 {
   static int cnt = 0;
   int miltime;
+  time_t nowmins;
 
   do_check_timers(&utimer);     /* Secondly timers */
   cnt++;
@@ -582,20 +583,21 @@ static void core_secondly()
     }
   }
   egg_memcpy(&nowtm, localtime(&now), sizeof(struct tm));
-  if (nowtm.tm_min != lastmin) {
+  nowmins = time(NULL) / 60;
+  if (nowmins > lastmin) {
     int i = 0;
 
     /* Once a minute */
-    lastmin = (lastmin + 1) % 60;
+    ++lastmin;
     call_hook(HOOK_MINUTELY);
     check_expired_ignores();
     autolink_cycle(NULL);       /* Attempt autolinks */
     /* In case for some reason more than 1 min has passed: */
-    while (nowtm.tm_min != lastmin) {
+    while (nowmins != lastmin) {
       /* Timer drift, dammit */
-      debug2("timer: drift (lastmin=%d, now=%d)", lastmin, nowtm.tm_min);
+      debug2("timer: drift (lastmin=%d, nowmins=%d)", lastmin, nowmins);
       i++;
-      lastmin = (lastmin + 1) % 60;
+      ++lastmin;
       call_hook(HOOK_MINUTELY);
     }
     if (i > 1)
@@ -738,7 +740,8 @@ static void patch(const char *str)
 
   if (!p)
     p = &egg_version[strlen(egg_version)];
-  sprintf(p, "+%s", str);
+  if (str[0])
+    sprintf(p, "+%s", str);
   egg_numver++;
   sprintf(&egg_xtra[strlen(egg_xtra)], " %s", str);
 }
@@ -1054,7 +1057,7 @@ int main(int arg_c, char **arg_v)
   now = time(NULL);
   chanset = NULL;
   egg_memcpy(&nowtm, localtime(&now), sizeof(struct tm));
-  lastmin = nowtm.tm_min;
+  lastmin = now / 60;
   srandom((unsigned int) (now % (getpid() + getppid())));
   init_mem();
   init_language(1);
@@ -1088,7 +1091,7 @@ int main(int arg_c, char **arg_v)
   link_statics();
 #endif
   strncpyz(s, ctime(&now), sizeof s);
-  memmove(&s[11], &s[20], strlen(&s[20]+1));
+  memmove(&s[11], &s[20], strlen(&s[20])+1);
   putlog(LOG_ALL, "*", "--- Loading %s (%s)", ver, s);
   chanprog();
   if (!encrypt_pass) {

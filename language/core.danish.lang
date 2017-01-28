@@ -205,8 +205,8 @@ Telnet botten og skriv 'NEW' som dit nick.\n
 0x647,Modekø er på
 0x648,Serverkø er på
 0x649,Hjælpekø er på
-# 0x64a - unused
-# 0x64b - unused
+0x64a,Vhost set in config can not be used to connect to this address 
+0x64b,Vhost set in config is not available on this machine
 0x64c,Behandler kanal
 0x64d,Kanal
 0x64e,Ønsker kanal

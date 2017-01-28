@@ -206,8 +206,8 @@ Faites un Telnet sur le bot et entrez 'NEW' comme surnom.
 0x647,La file d'attente des modes est ‡
 0x648,La file d'attente des serveurs est ‡
 0x649,La file d'attente d'aide est ‡
-# 0x64a - unused
-# 0x64b - unused
+0x64a,Le vhost qu'est configur√© dans le fichier de configuration n'est pas capable de connecter √† l'addresse du serveur
+0x64b,Le vhost qu'est configur√© dans le fichier de configuration n'est pas disponsible en cette machine
 0x64c,Traitement du canal
 0x64d,Canal
 0x64e,Je dÈsire le canal
