@@ -990,8 +990,7 @@ int sockgets(char *s, int *len)
           if (strlen(socklist[i].handler.sock.inbuf) > 510)
             socklist[i].handler.sock.inbuf[510] = 0;
           strcpy(s, socklist[i].handler.sock.inbuf);
-          /* intentional, we strip the first character. */
-          px = nmalloc(strlen(p));
+          px = nmalloc(strlen(p + 1) + 1);
           strcpy(px, p + 1);
           nfree(socklist[i].handler.sock.inbuf);
           if (px[0])
