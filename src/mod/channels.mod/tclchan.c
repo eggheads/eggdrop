@@ -1935,6 +1935,8 @@ static void init_channel(struct chanset_t *chan, int reset)
     }
     chan->channel.members = 0;
     chan->channel.member = nmalloc(sizeof(memberlist));
+    /* Since we don't have channel_malloc, manually bzero */
+    egg_bzero(chan->channel.member, sizeof *chan->channel.member);
     chan->channel.member->nick[0] = 0;
     chan->channel.member->next = NULL;
   }
