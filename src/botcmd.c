@@ -322,7 +322,7 @@ static void remote_tell_who(int idx, char *nick, int chan)
   else
     realnick = nick;
   putlog(LOG_BOTS, "*", "#%s# who", realnick);
-  for (c = chanset; c; c = c->next)
+  for (c = chanset; c; c = c->next) {
     if (!channel_secret(c) && !channel_inactive(c)) {
       l = strlen(c->dname);
       /* for 2nd and more chans we need to prepend ','; i is > 10 */
@@ -355,10 +355,12 @@ static void remote_tell_who(int idx, char *nick, int chan)
         i = ssize - trunc + 4;
       }
     }
-  if (i) {
+  }
+  if (i > 10) {
     botnet_send_priv(idx, botnetnick, nick, NULL, "%s", s);
   } else
     botnet_send_priv(idx, botnetnick, nick, NULL, "%s", BOT_NOCHANNELS);
+
   botnet_send_priv(idx, botnetnick, nick, NULL, "Version: %s", ver);
   if (admin[0])
     botnet_send_priv(idx, botnetnick, nick, NULL, "Admin: %s", admin);
