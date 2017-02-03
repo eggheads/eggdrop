@@ -39,12 +39,12 @@ patch("Git");                   /* Git version */
  *
  *
  */
-patch("1486095498");            /* current unixtime */
+patch("1486143995");            /* current unixtime */
 /*
  *
  *
  */
-patch("channelinit");
+patch("remotewho");
 /*
  *
  *
