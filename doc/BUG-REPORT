@@ -8,13 +8,16 @@ provide, the easier and more likely it is for the dev team to fix the
 bug. Please add everything that you think is important, in addition
 to the information requested in this form. Thanks.
 
-NOTE: First check http://www.eggheads.org/bugzilla/ to see if the
-      bug you want to report is already fixed. Also, please upgrade
-      to the latest eggdrop version to see if the bug is fixed before
-      reporting.
+NOTE: First check https://github.com/eggheads/eggdrop/issues to see if
+      the bug you want to report is already fixed. Also, please
+      upgrade to the latest eggdrop version to see if the bug is fixed
+      before reporting.
 
 Instructions:
 [1]  Please complete as many fields as possible.
+[2]  Create a new issue on https://github.com/eggheads/eggdrop/issues
+     and submit the completed report
+  -or-
 [2]  Email the completed report to: bugs@eggheads.org
 
 DO NOT SEND HTML E-MAIL TO THE LISTS.
@@ -39,16 +42,6 @@ DO NOT SEND HTML E-MAIL TO THE LISTS.
 2) INFORMATION ABOUT TCL
 
 2.1) Tcl library version:
-     ( ) 7.0
-     ( ) 7.1
-     ( ) 7.2
-     ( ) 7.3
-     ( ) 7.4
-     ( ) 7.5
-     ( ) 7.6
-     ( ) 8.0
-     ( ) 8.1
-     ( ) 8.2
      ( ) 8.3
      ( ) 8.4
      ( ) 8.5

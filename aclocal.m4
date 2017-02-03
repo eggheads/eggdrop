@@ -1645,10 +1645,26 @@ AC_DEFUN([EGG_TLS_DETECT],
     if test -z "$SSL_LIBS"; then
       AC_CHECK_LIB(ssl, SSL_accept, , [havessllib="no"], [-lcrypto])
       AC_CHECK_LIB(crypto, X509_digest, , [havessllib="no"], [-lssl])
-      AC_CHECK_FUNCS([EVP_md5 EVP_sha1 a2i_IPADDRESS hex_to_string string_to_hex], , [[
+      AC_CHECK_FUNCS([EVP_md5 EVP_sha1 a2i_IPADDRESS], , [[
         havessllib="no"
         break
       ]])
+      AC_CHECK_FUNC(hex_to_string, ,
+        AC_CHECK_FUNC(OPENSSL_hexstr2buf,
+            AC_DEFINE([hex_to_string], [OPENSSL_hexstr2buf], [Define this to OPENSSL_hexstr2buf when using OpenSSL 1.1.0+])
+          , [[
+            havessllib="no"
+            break
+        ]])
+      )
+      AC_CHECK_FUNC(string_to_hex, ,
+        AC_CHECK_FUNC(OPENSSL_buf2hexstr,
+            AC_DEFINE([string_to_hex], [OPENSSL_buf2hexstr], [Define this to OPENSSL_buf2hexstr when using OpenSSL 1.1.0+])
+          , [[
+            havessllib="no"
+            break
+        ]])
+      )
     fi
     if test "$enable_tls" = "yes"; then
       if test "$havesslinc" = "no"; then
