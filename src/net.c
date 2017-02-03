@@ -982,26 +982,20 @@ int sockgets(char *s, int *len)
         (socklist[i].handler.sock.inbuf != NULL)) {
       if (!(socklist[i].flags & SOCK_BINARY)) {
         /* look for \r too cos windows can't follow RFCs */
-        p = strchr(socklist[i].handler.sock.inbuf, '\n');
-        if (p == NULL)
-          p = strchr(socklist[i].handler.sock.inbuf, '\r');
+        p = strpbrk(socklist[i].handler.sock.inbuf, "\r\n");
         if (p != NULL) {
-          *p = 0;
+          while (*p == '\n' || *p == '\r')
+            *p++ = 0;
           if (strlen(socklist[i].handler.sock.inbuf) > 510)
             socklist[i].handler.sock.inbuf[510] = 0;
           strcpy(s, socklist[i].handler.sock.inbuf);
-          px = nmalloc(strlen(p + 1) + 1);
-          strcpy(px, p + 1);
-          nfree(socklist[i].handler.sock.inbuf);
-          if (px[0])
+          if (*p) {
+            px = nmalloc(strlen(p) + 1);
+            strcpy(px, p);
+            nfree(socklist[i].handler.sock.inbuf);
             socklist[i].handler.sock.inbuf = px;
-          else {
-            nfree(px);
+          } else
             socklist[i].handler.sock.inbuf = NULL;
-          }
-          /* Strip CR if this was CR/LF combo */
-          if (s[strlen(s) - 1] == '\r')
-            s[strlen(s) - 1] = 0;
           *len = strlen(s);
           return socklist[i].sock;
         }
