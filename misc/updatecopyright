@@ -56,14 +56,14 @@ if test ! -f src/main.c; then
 fi
 
 if test "x$1" = "x"; then
-	echo "Usage: $0 2016"
+	echo "Usage: $0 <year>"
 	exit 1
 fi
 
 YEAR=$1
 
 if test $YEAR -lt 2015 -o $YEAR -gt 2030; then
-	echo "Invalid year. Usage: $0 2016"
+	echo "Invalid year. Usage: $0 <year>"
 	exit 1
 fi
 
