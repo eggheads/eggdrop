@@ -45,14 +45,14 @@ extern struct dcc_t *dcc;
 extern struct chanset_t *chanset;
 
 extern char helpdir[], version[], origbotname[], botname[], admin[], network[],
-            motdfile[], ver[], botnetnick[], bannerfile[], logfile_suffix[],
-            textdir[];
+            motdfile[], ver[], botnetnick[], bannerfile[], textdir[];
 extern int  backgrd, con_chan, term_z, use_stderr, dcc_total, keep_all_logs,
             quick_logs, strict_host;
 
 extern time_t now;
 extern Tcl_Interp *interp;
 
+char logfile_suffix[21] = ".%d%b%Y";    /* Format of logfile suffix */
 char log_ts[32] = "[%H:%M:%S]"; /* Timestamp format for logfile entries */
 
 int shtime = 1;                 /* Display the time with console output */
@@ -644,7 +644,7 @@ void logsuffix_change(char *s)
     return;
 
   debug0("Logfile suffix changed. Closing all open logs.");
-  strncpyz(logfile_suffix, s, 21);
+  strncpyz(logfile_suffix, s, sizeof logfile_suffix);
   while (s2[0]) {
     if (s2[0] == ' ')
       s2[0] = '_';

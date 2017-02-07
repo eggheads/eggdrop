@@ -121,7 +121,6 @@ char helpdir[121] = "help/";            /* Directory of help files  */
 char textdir[121] = "text/";            /* Directory for text files */
 
 int keep_all_logs = 0;                  /* Never erase logfiles?    */
-char logfile_suffix[21] = ".%d%b%Y";    /* Format of logfile suffix */
 int switch_logfiles_at = 300;           /* When to switch logfiles  */
 
 time_t online_since;    /* time that the bot was started */
