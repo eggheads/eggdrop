@@ -4,7 +4,7 @@
 # reStructuredText format files. -Geo
 #
 #
-# Copyright (C) 2004 - 2016 Eggheads Development Team
+# Copyright (C) 2004 - 2017 Eggheads Development Team
 #
 # This file is free software; you can redistribute it and/or modify it
 # under the terms of the GNU General Public License as published by
@@ -98,7 +98,7 @@ for i in $( find $BASEDIR/../doc/sphinx_source/ -type f -name "*.rst" ); do
 done
 
 echo "*** Generating HTML files..."
-( cd $BASEDIR/../doc/sphinx_source/ && make html )
+( cd $BASEDIR/../doc/sphinx_source/ && make -B html )
 
 echo "*** Stupid housecleaning..."
 mv tmpdocs/about.txt $BASEDIR/../doc/ABOUT

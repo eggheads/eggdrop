@@ -3,7 +3,7 @@
  */
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2016 Eggheads Development Team
+ * Copyright (C) 1999 - 2017 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -1290,8 +1290,16 @@ static void server_resolve_success(int servidx)
   setsnport(dcc[servidx].sockname, dcc[servidx].port);
   serv = open_telnet_raw(dcc[servidx].sock, &dcc[servidx].sockname);
   if (serv < 0) {
+    char *errstr = NULL;
+    if (errno == EINVAL) {
+      errstr = IRC_VHOSTWRONGNET;
+    } else if (errno == EADDRNOTAVAIL) {
+      errstr = IRC_VHOSTBADADDR;
+    } else {
+      errstr = strerror(errno);
+    }
     putlog(LOG_SERV, "*", "%s %s (%s)", IRC_FAILEDCONNECT, dcc[servidx].host,
-           strerror(errno));
+           errstr);
     check_tcl_event("fail-server");
     lostdcc(servidx);
     return;

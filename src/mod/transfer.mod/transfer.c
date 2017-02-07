@@ -2,7 +2,7 @@
  * transfer.c -- part of transfer.mod
  *
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2016 Eggheads Development Team
+ * Copyright (C) 1999 - 2017 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -1023,8 +1023,10 @@ static int raw_dcc_resend_send(char *filename, char *nick, char *from,
   if (!f)
     return DCCSEND_BADFN;
 
-  if ((i = new_dcc(&DCC_GET_PENDING, sizeof(struct xfer_info))) == -1)
+  if ((i = new_dcc(&DCC_GET_PENDING, sizeof(struct xfer_info))) == -1) {
+    fclose(f);
     return DCCSEND_FULL;
+  }
 
   dcc[i].sock = zz;
   dcc[i].sockname.addrlen = sizeof(dcc[i].sockname.addr);

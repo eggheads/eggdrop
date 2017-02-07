@@ -2,7 +2,7 @@
 
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2016 Eggheads Development Team
+ * Copyright (C) 1999 - 2017 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -110,9 +110,6 @@
 
 /* Define to 1 if you have the `getrusage' function. */
 #undef HAVE_GETRUSAGE
-
-/* Define to 1 if you have the `hex_to_string' function. */
-#undef HAVE_HEX_TO_STRING
 
 /* Define to 1 if you have the in6addr_any constant. */
 #undef HAVE_IN6ADDR_ANY
@@ -293,9 +290,6 @@
 
 /* Define to 1 if you have the <string.h> header file. */
 #undef HAVE_STRING_H
-
-/* Define to 1 if you have the `string_to_hex' function. */
-#undef HAVE_STRING_TO_HEX
 
 /* Define to 1 if you have the `strncasecmp' function. */
 #undef HAVE_STRNCASECMP
@@ -494,6 +488,9 @@
 /* Define to empty if `const' does not conform to ANSI C. */
 #undef const
 
+/* Define this to OPENSSL_hexstr2buf when using OpenSSL 1.1.0+ */
+#undef hex_to_string
+
 /* Define to `__inline__' or `__inline' if that's what the C compiler
    calls it, or to nothing if 'inline' is not supported under any name.  */
 #ifndef __cplusplus
@@ -509,6 +506,9 @@
 
 /* Define to `unsigned int' if <sys/types.h> does not define. */
 #undef size_t
+
+/* Define this to OPENSSL_buf2hexstr when using OpenSSL 1.1.0+ */
+#undef string_to_hex
 
 /* Define to empty if the keyword `volatile' does not work. Warning: valid
    code using `volatile' can become incorrect without. Disable with care. */

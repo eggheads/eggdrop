@@ -151,4 +151,4 @@ Use the following settings only if you set 'net-type' to 1!
     If your network doesn't use rfc 1459 compliant string matching routines,
     set this to 0.
 
-Copyright (C) 2000 - 2016 Eggheads Development Team
+Copyright (C) 2000 - 2017 Eggheads Development Team

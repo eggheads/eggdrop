@@ -7,7 +7,7 @@
  * by Jean-loup Gailly and Miguel Albrecht.
  */
 /*
- * Copyright (C) 2000 - 2016 Eggheads Development Team
+ * Copyright (C) 2000 - 2017 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -96,8 +96,10 @@ static int is_compressedfile(char *filename)
   if (!fin)
     return COMPF_FAILED;
   len2 = fread(buf2, 1, sizeof(buf2), fin);
-  if (ferror(fin))
+  if (ferror(fin)) {
+    fclose(fin);
     return COMPF_FAILED;
+  }
   fclose(fin);
 
   /* Compare what we found.
@@ -239,6 +241,7 @@ static int compress_to_file(char *f_src, char *f_target, int mode_num)
 
   fout = gzopen(f_target, mode);
   if (!fout) {
+    fclose(fin);
     putlog(LOG_MISC, "*", "Failed to compress file `%s': gzopen failed.",
            f_src);
     return COMPF_ERROR;
@@ -260,6 +263,8 @@ static int compress_to_file(char *f_src, char *f_target, int mode_num)
   while (1) {
     len = fread(buf, 1, sizeof(buf), fin);
     if (ferror(fin)) {
+      fclose(fin);
+      gzclose(fout);
       putlog(LOG_MISC, "*", "Failed to compress file `%s': fread failed: %s",
              f_src, strerror(errno));
       return COMPF_ERROR;
@@ -267,6 +272,8 @@ static int compress_to_file(char *f_src, char *f_target, int mode_num)
     if (!len)
       break;
     if (gzwrite(fout, buf, (unsigned int) len) != len) {
+      fclose(fin);
+      gzclose(fout);
       putlog(LOG_MISC, "*", "Failed to compress file `%s': gzwrite failed.",
              f_src);
       return COMPF_ERROR;

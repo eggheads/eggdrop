@@ -4,7 +4,7 @@
  */
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2016 Eggheads Development Team
+ * Copyright (C) 1999 - 2017 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -197,8 +197,8 @@
 #define IRC_MODEQUEUE           get_language(0x647)
 #define IRC_SERVERQUEUE         get_language(0x648)
 #define IRC_HELPQUEUE           get_language(0x649)
-/* was: IRC_BOTNOTONIRC         0x64a            */
-/* was: IRC_NOTACTIVECHAN       0x64b            */
+#define IRC_VHOSTWRONGNET	get_language(0x64a)
+#define IRC_VHOSTBADADDR	get_language(0x64b)
 #define IRC_PROCESSINGCHAN      get_language(0x64c)
 #define IRC_CHANNEL             get_language(0x64d)
 #define IRC_DESIRINGCHAN        get_language(0x64e)

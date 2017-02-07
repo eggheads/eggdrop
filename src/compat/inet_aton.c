@@ -2,7 +2,7 @@
  * inet_aton.c -- provides inet_aton() if necessary.
  */
 /*
- * Portions Copyright (C) 2000 - 2016 Eggheads Development Team
+ * Portions Copyright (C) 2000 - 2017 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
