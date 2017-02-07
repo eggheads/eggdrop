@@ -534,7 +534,7 @@ static void filedb_cleanup(FILE *fdb)
       }
     }
   }
-  if (!(ftruncate(fileno(fdb), oldpos))) {       /* Shorten file    */
+  if (ftruncate(fileno(fdb), oldpos) == -1) {       /* Shorten file    */
     putlog(LOG_DEBUG, "*", "FILESYS: Error truncating file.");
   }
 }
@@ -580,7 +580,7 @@ static void filedb_mergeempty(FILE *fdb)
           /* ... or because we hit EOF? */
         } else {
           /* Truncate trailing empty entries and exit. */
-          if (!(ftruncate(fileno(fdb), fdbe_t->pos))) {
+          if (ftruncate(fileno(fdb), fdbe_t->pos) == -1) {
             putlog(LOG_DEBUG, "*", "FILESYS: Error truncating file");
           }
           free_fdbe(&fdbe_t);
