@@ -1065,29 +1065,28 @@ static void scan_help_file(struct help_ref *current, char *filename, int type)
   struct help_list_t *list;
 
   if (is_file(filename) && (f = fopen(filename, "r"))) {
-    while (!feof(f)) {
-      if (fgets(s, HELP_BUF_LEN, f) != NULL) {
-        if (!feof(f)) {
-          p = s;
-          while ((q = strstr(p, "%{help="))) {
-            q += 7;
-            if ((p = strchr(q, '}'))) {
-              *p = 0;
-              list = nmalloc(sizeof *list);
+    /* don't check for feof after fgets, skips last line if it has no \n (ie on windows) */
+    while (!feof(f) && fgets(s, HELP_BUF_LEN, f) != NULL) {
+      p = s;
+      while ((q = strstr(p, "%{help="))) {
+        q += 7;
+        if ((p = strchr(q, '}'))) {
+          *p = 0;
+          list = nmalloc(sizeof *list);
 
-              list->name = nmalloc(p - q + 1);
-              strcpy(list->name, q);
-              list->next = current->first;
-              list->type = type;
-              current->first = list;
-              p++;
-            } else
-              p = "";
-          }
-        }
-      } else {
-        putlog(LOG_DEBUG, "*", "Error reading help file");
+          list->name = nmalloc(p - q + 1);
+          strcpy(list->name, q);
+          list->next = current->first;
+          list->type = type;
+          current->first = list;
+          p++;
+        } else
+          p = "";
       }
+    }
+    /* fgets == NULL means error or empty file, so check for error */
+    if (ferror(f)) {
+      putlog(LOG_DEBUG, "*", "Error reading help file");
     }
     fclose(f);
   }
@@ -1217,22 +1216,21 @@ void showhelp(char *who, char *file, struct flag_record *flags, int fl)
 
   if (f) {
     help_subst(NULL, NULL, 0, HELP_IRC, NULL);  /* Clear flags */
-    while (!feof(f)) {
-      if (fgets(s, HELP_BUF_LEN, f) != NULL) {
-        if (!feof(f)) {
-          if (s[strlen(s) - 1] == '\n')
-            s[strlen(s) - 1] = 0;
-          if (!s[0])
-            strcpy(s, " ");
-          help_subst(s, who, flags, 0, file);
-          if ((s[0]) && (strlen(s) > 1)) {
-            dprintf(DP_HELP, "NOTICE %s :%s\n", who, s);
-            lines++;
-          }
-        }
-      } else {
-        putlog(LOG_DEBUG, "*", "Error reading help file");
+    /* don't check for feof after fgets, skips last line if it has no \n (ie on windows) */
+    while (!feof(f) && fgets(s, HELP_BUF_LEN, f) != NULL) {
+      if (s[strlen(s) - 1] == '\n')
+        s[strlen(s) - 1] = 0;
+      if (!s[0])
+        strcpy(s, " ");
+      help_subst(s, who, flags, 0, file);
+      if ((s[0]) && (strlen(s) > 1)) {
+        dprintf(DP_HELP, "NOTICE %s :%s\n", who, s);
+        lines++;
       }
+    }
+    /* fgets == NULL means error or empty file, so check for error */
+    if (ferror(f)) {
+      putlog(LOG_DEBUG, "*", "Error reading help file");
     }
     fclose(f);
   }
@@ -1249,22 +1247,21 @@ static int display_tellhelp(int idx, char *file, FILE *f,
   if (f) {
     help_subst(NULL, NULL, 0,
                (dcc[idx].status & STAT_TELNET) ? 0 : HELP_IRC, NULL);
-    while (!feof(f)) {
-      if (fgets(s, HELP_BUF_LEN, f) != NULL) {
-        if (!feof(f)) {
-          if (s[strlen(s) - 1] == '\n')
-            s[strlen(s) - 1] = 0;
-          if (!s[0])
-            strcpy(s, " ");
-          help_subst(s, dcc[idx].nick, flags, 1, file);
-          if (s[0]) {
-            dprintf(idx, "%s\n", s);
-            lines++;
-          }
-        }
-      } else {
-        putlog(LOG_DEBUG, "*", "Error displaying help");
+    /* don't check for feof after fgets, skips last line if it has no \n (ie on windows) */
+    while (!feof(f) && fgets(s, HELP_BUF_LEN, f) != NULL) {
+      if (s[strlen(s) - 1] == '\n')
+        s[strlen(s) - 1] = 0;
+      if (!s[0])
+        strcpy(s, " ");
+      help_subst(s, dcc[idx].nick, flags, 1, file);
+      if (s[0]) {
+        dprintf(idx, "%s\n", s);
+        lines++;
       }
+    }
+    /* fgets == NULL means error or empty file, so check for error */
+    if (ferror(f)) {
+      putlog(LOG_DEBUG, "*", "Error displaying help");
     }
     fclose(f);
   }
@@ -1382,20 +1379,19 @@ void show_motd(int idx)
   /* reset the help_subst variables to their defaults */
   help_subst(NULL, NULL, 0,
              (dcc[idx].status & STAT_TELNET) ? 0 : HELP_IRC, NULL);
-  while (!feof(vv)) {
-    if (fgets(s, 120, vv) != NULL) {
-      if (!feof(vv)) {
-        if (s[strlen(s) - 1] == '\n')
-          s[strlen(s) - 1] = 0;
-        if (!s[0])
-          strcpy(s, " ");
-        help_subst(s, dcc[idx].nick, &fr, 1, botnetnick);
-        if (s[0])
-          dprintf(idx, "%s\n", s);
-      }
-    } else {
-      putlog(LOG_DEBUG, "*", "Error reading MOTD for DCC");
-    }
+  /* don't check for feof after fgets, skips last line if it has no \n (ie on windows) */
+  while (!feof(vv) && fgets(s, sizeof s, vv) != NULL) {
+    if (s[strlen(s) - 1] == '\n')
+      s[strlen(s) - 1] = 0;
+    if (!s[0])
+      strcpy(s, " ");
+    help_subst(s, dcc[idx].nick, &fr, 1, botnetnick);
+    if (s[0])
+      dprintf(idx, "%s\n", s);
+  }
+  /* fgets == NULL means error or empty file, so check for error */
+  if (ferror(vv)) {
+    putlog(LOG_DEBUG, "*", "Error reading MOTD for DCC");
   }
   fclose(vv);
   dprintf(idx, "\n");
@@ -1419,15 +1415,18 @@ void show_banner(int idx)
   get_user_flagrec(dcc[idx].user, &fr, dcc[idx].u.chat->con_chan);
   /* reset the help_subst variables to their defaults */
   help_subst(NULL, NULL, 0, 0, NULL);
-  while (!feof(vv)) {
-    if (fgets(s, 120, vv) != NULL) {
-      if (!feof(vv)) {
-        if (!s[0])
-          strcpy(s, " \n");
-        help_subst(s, dcc[idx].nick, &fr, 0, botnetnick);
-        dprintf(idx, "%s", s);
-      }
-    } else {
+  /* don't check for feof after fgets, skips last line if it has no \n (ie on windows) */
+  while (!feof(vv) && fgets(s, sizeof s, vv) != NULL) {
+    if (s[strlen(s) - 1] == '\n')
+      s[strlen(s) - 1] = 0;
+    if (!s[0])
+      strcpy(s, " ");
+    help_subst(s, dcc[idx].nick, &fr, 0, botnetnick);
+    if (s[0])
+      dprintf(idx, "%s\n", s);
+  }
+  /* fgets == NULL means error or empty file, so check for error */
+  if (ferror(vv)) {
       putlog(LOG_DEBUG, "*", "Error reading banner");
     }
   }
