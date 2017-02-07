@@ -18,4 +18,4 @@ Blowfish Module
 
     loadmodule blowfish
 
-  Copyright (C) 2000 - 2016 Eggheads Development Team
+  Copyright (C) 2000 - 2017 Eggheads Development Team

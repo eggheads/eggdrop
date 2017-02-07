@@ -2,7 +2,7 @@
  * inet_pton.c -- provides inet_pton() if necessary
  */
 /*
- * Portions Copyright (C) 2010 - 2016 Eggheads Development Team
+ * Portions Copyright (C) 2010 - 2017 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
