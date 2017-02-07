@@ -1428,7 +1428,6 @@ void show_banner(int idx)
   /* fgets == NULL means error or empty file, so check for error */
   if (ferror(vv)) {
       putlog(LOG_DEBUG, "*", "Error reading banner");
-    }
   }
   fclose(vv);
 }
