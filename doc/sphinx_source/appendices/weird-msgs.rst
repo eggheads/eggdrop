@@ -51,4 +51,4 @@ Weird Messages That Get Logged
         joins are not reported, although parts are.
 
 
-  Copyright (C) 2003 - 2016 Eggheads Development Team
+  Copyright (C) 2003 - 2017 Eggheads Development Team

@@ -2867,4 +2867,4 @@ are the four special characters:
 |     | words) (This char only works in binds, not in regluar matching)          |
 +-----+--------------------------------------------------------------------------+
 
-  Copyright (C) 1999 - 2016 Eggheads Development Team
+  Copyright (C) 1999 - 2017 Eggheads Development Team

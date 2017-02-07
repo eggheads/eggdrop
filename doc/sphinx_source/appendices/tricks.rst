@@ -43,5 +43,5 @@ Eggdrop Tricks
       set userfile "$myvar.user"
       set chanfile "$myvar.chan"
 
-  Copyright (C) 1999 - 2016 Eggheads Development Team
+  Copyright (C) 1999 - 2017 Eggheads Development Team
 

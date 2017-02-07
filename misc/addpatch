@@ -2,7 +2,7 @@
 #
 # addpatch - modifies src/patch.h
 #
-# Copyright (C) 2002 - 2016 Eggheads Development Team
+# Copyright (C) 2002 - 2017 Eggheads Development Team
 # Copyright (C) 2000 Fabian Knittel <fknittel@gmx.de>
 #
 # This file is free software; you can redistribute it and/or modify it
