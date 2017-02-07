@@ -1157,14 +1157,14 @@ int main(int arg_c, char **arg_v)
     setpgid(0, 0);
 #endif
     /* Tcl wants the stdin, stdout and stderr file handles kept open. */
-    if (freopen("/dev/null", "r", stdin) != NULL) {
-      printf("Error renaming stdin file handle");
+    if (freopen("/dev/null", "r", stdin) == NULL) {
+      printf("Error renaming stdin file handle: %s\n", strerror(errno));
     }
-    if (freopen("/dev/null", "w", stdout) != NULL) {
-      printf("Error renaming stdout file handle");
+    if (freopen("/dev/null", "w", stdout) == NULL) {
+      printf("Error renaming stdout file handle: %s\n", strerror(errno));
     }
-    if (freopen("/dev/null", "w", stderr) != NULL) {
-      printf("Error renaming stderr file handle");
+    if (freopen("/dev/null", "w", stderr) == NULL) {
+      printf("Error renaming stderr file handle: %s\n", strerror(errno));
     }
 #ifdef CYGWIN_HACKS
     FreeConsole();
