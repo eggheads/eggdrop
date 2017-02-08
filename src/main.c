@@ -1121,8 +1121,9 @@ int main(int arg_c, char **arg_v)
         exit(1);
       }
     } else {
-      printf("Error checking for existing Eggdrop install");
+      printf("Error checking for existing Eggdrop process.\n");
     }
+    fclose(f);
   }
 
   /* Move into background? */
