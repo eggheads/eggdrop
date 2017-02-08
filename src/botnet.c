@@ -1072,7 +1072,7 @@ static void botlink_resolve_success(int i)
 
   changeover_dcc(i, &DCC_FORK_BOT, sizeof(struct bot_info));
   dcc[i].timeval = now;
-  strncpyz(dcc[i].u.bot->linker, linker, NOTENAMELEN + 1);
+  strncpyz(dcc[i].u.bot->linker, linker, sizeof dcc[i].u.bot->linker);
   strcpy(dcc[i].u.bot->version, "(primitive bot)");
   dcc[i].u.bot->numver = idx;
   dcc[i].u.bot->port = dcc[i].port;     /* Remember where i started */

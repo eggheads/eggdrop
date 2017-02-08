@@ -562,23 +562,18 @@ static int u_addinvite(struct chanset_t *chan, char *invite, char *from,
 static int u_addexempt(struct chanset_t *chan, char *exempt, char *from,
                        char *note, time_t expire_time, int flags)
 {
-  char host[1024], s[1024];
+  char host[1024], s[1024], *strat, *strbang;
   maskrec *p = NULL, *l, **u = chan ? &chan->exempts : &global_exempts;
 
-  strcpy(host, exempt);
   /* Choke check: fix broken exempts (must have '!' and '@') */
-  if ((strchr(host, '!') == NULL) && (strchr(host, '@') == NULL))
-    strcat(host, "!*@*");
-  else if (strchr(host, '@') == NULL)
-    strcat(host, "@*");
-  else if (strchr(host, '!') == NULL) {
-    char *i = strchr(host, '@');
-
-    strncpyz(s, i, sizeof s);
-    *i = 0;
-    strncat(host, "!*", sizeof host - strlen(host) - 1);
-    strncat(host, s, sizeof host - strlen(host) - 1);
-  }
+  strat = strchr(exempt, '@');
+  strbang = strchr(exempt, '!');
+  if (strbang == NULL && strat == NULL)
+    snprintf(host, sizeof(host), "%s!*@*", exempt);
+  else if (strat == NULL)
+    snprintf(host, sizeof(host), "%s@*", exempt);
+  else if (strbang == NULL)
+    snprintf(host, sizeof(host), "%.*s!*%s", strat - exempt, exempt, strat);
 
   for (l = *u; l; l = l->next)
     if (!rfc_casecmp(l->mask, host)) {
@@ -644,11 +639,10 @@ static void display_ban(int idx, int number, maskrec *ban,
     daysago(now, ban->added, s);
     sprintf(dates, "%s %s", MODES_CREATED, s);
     if (ban->added < ban->lastactive) {
-      strncat(dates, ", ",  sizeof dates - strlen(dates) - 1);
-      strncat(dates, MODES_LASTUSED, sizeof dates - strlen(dates) - 1);
-      strncat(dates, " ",  sizeof dates - strlen(dates) - 1);
+      char tocat[sizeof dates];
       daysago(now, ban->lastactive, s);
-      strncat(dates, s,  sizeof dates  - strlen(dates) - 1);
+      snprintf(tocat, sizeof tocat, ", %s %s", MODES_LASTUSED, s);
+      strncat(dates, tocat, sizeof dates - strlen(dates) - 1);
     }
   } else
     dates[0] = 0;
@@ -690,11 +684,10 @@ static void display_exempt(int idx, int number, maskrec *exempt,
     daysago(now, exempt->added, s);
     sprintf(dates, "%s %s", MODES_CREATED, s);
     if (exempt->added < exempt->lastactive) {
-      strncat(dates, ", ", sizeof dates - strlen(dates) - 1);
-      strncat(dates, MODES_LASTUSED,  sizeof dates  - strlen(dates) - 1);
-      strncat(dates, " ",  sizeof dates - strlen(dates) - 1);
+      char tocat[sizeof dates];
       daysago(now, exempt->lastactive, s);
-      strncat(dates, s,  sizeof dates - strlen(dates) - 1);
+      snprintf(tocat, sizeof tocat, ", %s %s", MODES_LASTUSED, s);
+      strncat(dates, tocat, sizeof dates - strlen(dates) - 1);
     }
   } else
     dates[0] = 0;
@@ -736,11 +729,10 @@ static void display_invite(int idx, int number, maskrec *invite,
     daysago(now, invite->added, s);
     sprintf(dates, "%s %s", MODES_CREATED, s);
     if (invite->added < invite->lastactive) {
-      strncat(dates, ", ", sizeof dates - strlen(dates) - 1);
-      strncat(dates, MODES_LASTUSED, sizeof dates - strlen(dates) - 1);
-      strncat(dates, " ", sizeof dates - strlen(dates) - 1);
+      char tocat[sizeof dates];
       daysago(now, invite->lastactive, s);
-      strncat(dates, s, sizeof dates - strlen(dates) - 1);
+      snprintf(tocat, sizeof tocat, ", %s %s", MODES_LASTUSED, s);
+      strncat(dates, tocat, sizeof dates - strlen(dates) - 1);
     }
   } else
     dates[0] = 0;

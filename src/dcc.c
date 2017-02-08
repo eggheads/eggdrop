@@ -1567,7 +1567,7 @@ static void dcc_telnet_id(int idx, char *buf, int atr)
     return;
   }
   correct_handle(buf);
-  strncpyz(dcc[idx].nick, buf, NICKLEN);
+  strncpyz(dcc[idx].nick, buf, sizeof dcc[idx].nick);
   if (glob_bot(fr)) {
     if (!egg_strcasecmp(botnetnick, dcc[idx].nick)) {
       dprintf(idx, "error You cannot link using my botnetnick.\n");

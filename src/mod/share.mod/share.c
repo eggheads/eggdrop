@@ -1403,7 +1403,7 @@ static void new_tbuf(char *bot)
   tandbuf **old = &tbuf, *new;
 
   new = nmalloc(sizeof(tandbuf));
-  strncpyz(new->bot, bot, NICKLEN);
+  strncpyz(new->bot, bot, sizeof new->bot);
   new->q = NULL;
   new->timer = now;
   new->next = *old;

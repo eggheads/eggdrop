@@ -252,8 +252,9 @@ static void uf_features_parse(int idx, char *par)
     ul = uff_findentry_byname(p);
     if (ul && (ul->entry->ask_func == NULL || ul->entry->ask_func(idx))) {
       dcc[idx].u.bot->uff_flags |= ul->entry->flag; /* Set flag */
+      if (uff_sbuf[0])
+        strncat(uff_sbuf, " ", sizeof uff_sbuf - strlen(uff_sbuf) - 1);
       strncat(uff_sbuf, ul->entry->feature, sizeof uff_sbuf - strlen(uff_sbuf) - 1); /* Add feature to list */
-      strncat(uff_sbuf, " ", sizeof uff_sbuf - strlen(uff_sbuf) - 1);
     }
     p = ++s;
   }
@@ -273,8 +274,9 @@ static char *uf_features_dump(int idx)
   uff_sbuf[0] = 0;
   for (ul = uff_list.start; ul; ul = ul->next)
     if (ul->entry->ask_func == NULL || ul->entry->ask_func(idx)) {
+      if (uff_sbuf[0])
+        strncat(uff_sbuf, " ", sizeof uff_sbuf - strlen(uff_sbuf) - 1);
       strncat(uff_sbuf, ul->entry->feature, sizeof uff_sbuf - strlen(uff_sbuf) - 1); /* Add feature to list  */
-      strncat(uff_sbuf, " ", sizeof uff_sbuf - strlen(uff_sbuf) - 1);
     }
   return uff_sbuf;
 }

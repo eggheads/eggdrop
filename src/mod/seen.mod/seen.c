@@ -505,20 +505,24 @@ targetcont:
 static char fixit[512];
 static char *fixnick(char *nick)
 {
-  strncpyz(fixit, nick, sizeof fixit);
-  strncat(fixit, "'", sizeof fixit - strlen(fixit) - 1);
-  switch (nick[strlen(nick) - 1]) {
-  case 's':
-  case 'S':
-  case 'x':
-  case 'X':
-  case 'z':
-  case 'Z':
-    break;
-  default:
-    strcat(fixit, "s");
-    break;
-  }
+  if (!nick)
+    return NULL;
+  if (!nick[0])
+    fixit[0] = '\0';
+  else
+    switch (nick[strlen(nick) - 1]) {
+    case 's':
+    case 'S':
+    case 'x':
+    case 'X':
+    case 'z':
+    case 'Z':
+      snprintf(fixit, sizeof fixit, "%s'", nick);
+      break;
+    default:
+      snprintf(fixit, sizeof fixit, "%s's", nick);
+      break;
+    }
   return fixit;
 }
 
