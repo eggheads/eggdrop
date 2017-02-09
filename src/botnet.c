@@ -136,6 +136,11 @@ int partysock(char *bot, char *nick)
   return 0;
 }
 
+/* Set the botnetnick and truncate as necessary */
+void set_botnetnick(const char *newnick) {
+  strncpyz(botnetnick, newnick, sizeof botnetnick);
+}
+
 /* New botnet member
  */
 int addparty(char *bot, char *nick, int chan, char flag, int sock,

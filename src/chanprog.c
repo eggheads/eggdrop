@@ -495,7 +495,7 @@ void chanprog()
   protect_readonly = 1;
 
   if (!botnetnick[0])
-    strncpyz(botnetnick, origbotname, HANDLEN + 1);
+    set_botnetnick(origbotname);
 
   if (!botnetnick[0])
     fatal("I don't have a botnet nick!!\n", 0);
