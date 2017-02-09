@@ -409,6 +409,8 @@ void fix_broken_mask(char *newmask, const char *oldmask, size_t len)
       snprintf(newmask, len, "%s@*", oldmask);
     else if (strbang == NULL)
       snprintf(newmask, len, "%.*s!*%s", (int)(strat - oldmask), oldmask, strat);
+    else
+      strncpyz(newmask, oldmask, len);
   }
 }
 
