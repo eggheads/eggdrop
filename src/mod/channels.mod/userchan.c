@@ -404,11 +404,11 @@ void fix_broken_mask(char *newmask, const char *oldmask, size_t len)
     strat = strchr(oldmask, '@');
     strbang = strchr(oldmask, '!');
     if (strbang == NULL && strat == NULL)
-      snprintf(newmask, len, "%s!*@*", oldmask);
+      egg_snprintf(newmask, len, "%s!*@*", oldmask);
     else if (strat == NULL)
-      snprintf(newmask, len, "%s@*", oldmask);
+      egg_snprintf(newmask, len, "%s@*", oldmask);
     else if (strbang == NULL)
-      snprintf(newmask, len, "%.*s!*%s", (int)(strat - oldmask), oldmask, strat);
+      egg_snprintf(newmask, len, "%.*s!*%s", (int)(strat - oldmask), oldmask, strat);
     else
       strncpyz(newmask, oldmask, len);
   }
