@@ -394,6 +394,24 @@ static int u_delinvite(struct chanset_t *c, char *who, int doit)
   return i;
 }
 
+/* Add a !* and/or @* if lacking in a usermask, copying to newmask */
+void fix_broken_mask(char *newmask, const char *oldmask, size_t len)
+{
+  char *strat, *strbang;
+
+  if (oldmask) {
+    /* must have '!' and '@' */
+    strat = strchr(oldmask, '@');
+    strbang = strchr(oldmask, '!');
+    if (strbang == NULL && strat == NULL)
+      snprintf(newmask, len, "%s!*@*", oldmask);
+    else if (strat == NULL)
+      snprintf(newmask, len, "%s@*", oldmask);
+    else if (strbang == NULL)
+      snprintf(newmask, len, "%.*s!*%s", (int)(strat - oldmask), oldmask, strat);
+  }
+}
+
 /* Note: If first char of note is '*' it's a sticky ban.
  */
 static int u_addban(struct chanset_t *chan, char *ban, char *from, char *note,
@@ -403,20 +421,9 @@ static int u_addban(struct chanset_t *chan, char *ban, char *from, char *note,
   maskrec *p = NULL, *l, **u = chan ? &chan->bans : &global_bans;
   module_entry *me;
 
-  strcpy(host, ban);
   /* Choke check: fix broken bans (must have '!' and '@') */
-  if ((strchr(host, '!') == NULL) && (strchr(host, '@') == NULL))
-    strcat(host, "!*@*");
-  else if (strchr(host, '@') == NULL)
-    strcat(host, "@*");
-  else if (strchr(host, '!') == NULL) {
-    char *i = strchr(host, '@');
+  fix_broken_mask(host, ban, sizeof host);
 
-    strncpyz(s, i, sizeof s);
-    *i = 0;
-    strcat(host, "!*");
-    strcat(host, s);
-  }
   if ((me = module_find("server", 0, 0)) && me->funcs) {
     simple_sprintf(s, "%s!%s", me->funcs[SERVER_BOTNAME],
                    me->funcs[SERVER_BOTUSERHOST]);
@@ -486,23 +493,11 @@ static int u_addban(struct chanset_t *chan, char *ban, char *from, char *note,
 static int u_addinvite(struct chanset_t *chan, char *invite, char *from,
                        char *note, time_t expire_time, int flags)
 {
-  char host[1024], s[1024];
+  char host[1024];
   maskrec *p = NULL, *l, **u = chan ? &chan->invites : &global_invites;
 
-  strcpy(host, invite);
   /* Choke check: fix broken invites (must have '!' and '@') */
-  if ((strchr(host, '!') == NULL) && (strchr(host, '@') == NULL))
-    strcat(host, "!*@*");
-  else if (strchr(host, '@') == NULL)
-    strcat(host, "@*");
-  else if (strchr(host, '!') == NULL) {
-    char *i = strchr(host, '@');
-
-    strncpyz(s, i, sizeof s);
-    *i = 0;
-    strcat(host, "!*");
-    strcat(host, s);
-  }
+  fix_broken_mask(host, invite, sizeof host);
 
   for (l = *u; l; l = l->next)
     if (!rfc_casecmp(l->mask, host)) {
@@ -562,18 +557,11 @@ static int u_addinvite(struct chanset_t *chan, char *invite, char *from,
 static int u_addexempt(struct chanset_t *chan, char *exempt, char *from,
                        char *note, time_t expire_time, int flags)
 {
-  char host[1024], s[1024], *strat, *strbang;
+  char host[1024];
   maskrec *p = NULL, *l, **u = chan ? &chan->exempts : &global_exempts;
 
   /* Choke check: fix broken exempts (must have '!' and '@') */
-  strat = strchr(exempt, '@');
-  strbang = strchr(exempt, '!');
-  if (strbang == NULL && strat == NULL)
-    snprintf(host, sizeof(host), "%s!*@*", exempt);
-  else if (strat == NULL)
-    snprintf(host, sizeof(host), "%s@*", exempt);
-  else if (strbang == NULL)
-    snprintf(host, sizeof(host), "%.*s!*%s", strat - exempt, exempt, strat);
+  fix_broken_mask(host, exempt, sizeof host);
 
   for (l = *u; l; l = l->next)
     if (!rfc_casecmp(l->mask, host)) {
