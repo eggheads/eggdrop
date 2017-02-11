@@ -1,7 +1,7 @@
 /*
  * tcltransfer.c -- part of transfer.mod
  *
- * Copyright (C) 2003 - 2016 Eggheads Development Team
+ * Copyright (C) 2003 - 2017 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License

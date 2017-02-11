@@ -82,4 +82,4 @@ Other affected variables:
   nat-ip works with IPv4 as it used to. It has no meaning for IPv6 and is
   not queried for IPv6 connections.
 
-Copyright (C) 2010 - 2016 Eggheads Development Team
+Copyright (C) 2010 - 2017 Eggheads Development Team

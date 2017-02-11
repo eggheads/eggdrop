@@ -2,7 +2,7 @@
 #
 # updatecopyright - updates copyright in files
 #
-# Copyright (C) 2005 - 2016 Eggheads Development Team
+# Copyright (C) 2005 - 2017 Eggheads Development Team
 #
 # This file is free software; you can redistribute it and/or modify it
 # under the terms of the GNU General Public License as published by
@@ -48,6 +48,8 @@ update_copyright() {
 		chmod --reference=$i ${i}_
 		mv ${i}_ $i
 	fi
+	# Cats and Dogs
+	sed -i '/Eggdrop v%s (C) 1997 Robey Pointer/c\               "Eggdrop v%s (C) 1997 Robey Pointer (C) 2010-'$YEAR' Eggheads",' src/main.c
 }
 
 if test ! -f src/main.c; then
@@ -56,18 +58,21 @@ if test ! -f src/main.c; then
 fi
 
 if test "x$1" = "x"; then
-	echo "Usage: $0 2016"
+	echo "Usage: $0 <year>"
 	exit 1
 fi
 
 YEAR=$1
 
 if test $YEAR -lt 2015 -o $YEAR -gt 2030; then
-	echo "Invalid year. Usage: $0 2016"
+	echo "Invalid year. Usage: $0 <year>"
 	exit 1
 fi
 
 count=0
+echo "Updating documentation copyright..."
+sed -i "s/^copyright = .*/copyright = u'$YEAR, Eggheads'/" doc/sphinx_source/conf.py
+./misc/generatedocs
 for i in $(find_copyright_files); do
 	count=$(($count + 1))
 	echo "${i}... "

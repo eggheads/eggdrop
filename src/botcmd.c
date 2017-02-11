@@ -5,7 +5,7 @@
  */
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2016 Eggheads Development Team
+ * Copyright (C) 1999 - 2017 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -310,8 +310,11 @@ static void bot_bye(int idx, char *par)
 static void remote_tell_who(int idx, char *nick, int chan)
 {
   int i = 10, k, l, ok = 0;
-  char s[1024], *realnick;
+  /* botnet_send_priv truncates at 450 */
+  char s[450] = "Channels: ", *realnick;
   struct chanset_t *c;
+  /* usable size of channelslist */
+  size_t ssize = sizeof(s) - 1;
 
   realnick = strchr(nick, ':');
   if (realnick)
@@ -319,24 +322,46 @@ static void remote_tell_who(int idx, char *nick, int chan)
   else
     realnick = nick;
   putlog(LOG_BOTS, "*", "#%s# who", realnick);
-  strcpy(s, "Channels: ");
-  for (c = chanset; c; c = c->next)
+  for (c = chanset; c; c = c->next) {
     if (!channel_secret(c) && !channel_inactive(c)) {
       l = strlen(c->dname);
-      if (i + l < 1021) {
-        if (i > 10)
-          sprintf(s, "%s, %s", s, c->dname);
-        else {
-          strcpy(s, c->dname);
-          i += (l + 2);
+      /* for 2nd and more chans we need to prepend ','; i is > 10 */
+      if (i > 10) {
+        /* check if ", #chan" fits or if there is a next chan, if ", #chan," fits */
+	if ((c->next && i + l + 3 <= ssize) || (!c->next && i + l + 2 <= ssize)) {
+          strcat(s, ", ");
+          i += 2;
+        } else {
+          /* output and prepare for more, there should always be place for ',' */
+          strcat(s, ",");
+          botnet_send_priv(idx, botnetnick, nick, NULL, "%s", s);
+          strcpy(s, "          ");
+          i = 10;
         }
       }
+
+      i += l;
+      strncat(s, c->dname, ssize);
+
+      /* check if we need to trunc, normally only for first chans on the line */
+      if (i > ssize) {
+        unsigned int trunc = 4;
+        if (c->next) {
+          /* more to come, leave place for ',' */
+          ++trunc;
+        }
+        strcpy(s + ssize - trunc, " ...");
+        s[ssize - trunc + 4] = '\0';
+        i = ssize - trunc + 4;
+      }
     }
+  }
   if (i > 10) {
-    botnet_send_priv(idx, botnetnick, nick, NULL, "%s (%s)", s, ver);
+    botnet_send_priv(idx, botnetnick, nick, NULL, "%s", s);
   } else
-    botnet_send_priv(idx, botnetnick, nick, NULL, "%s (%s)", BOT_NOCHANNELS,
-                     ver);
+    botnet_send_priv(idx, botnetnick, nick, NULL, "%s", BOT_NOCHANNELS);
+
+  botnet_send_priv(idx, botnetnick, nick, NULL, "Version: %s", ver);
   if (admin[0])
     botnet_send_priv(idx, botnetnick, nick, NULL, "Admin: %s", admin);
   if (chan == 0)

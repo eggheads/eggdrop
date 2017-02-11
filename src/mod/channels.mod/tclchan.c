@@ -3,7 +3,7 @@
  */
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2016 Eggheads Development Team
+ * Copyright (C) 1999 - 2017 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -1934,7 +1934,9 @@ static void init_channel(struct chanset_t *chan, int reset)
       nfree(chan->channel.member); 
     }
     chan->channel.members = 0;
-    chan->channel.member = nmalloc(sizeof(memberlist));
+    chan->channel.member = nmalloc(sizeof *chan->channel.member);
+    /* Since we don't have channel_malloc, manually bzero */
+    egg_bzero(chan->channel.member, sizeof *chan->channel.member);
     chan->channel.member->nick[0] = 0;
     chan->channel.member->next = NULL;
   }

@@ -9,7 +9,7 @@ AC_INIT([Eggdrop DNS Module],[1.8.0],[bugs@eggheads.org])
 AC_CONFIG_SRCDIR(coredns.c)
 AC_CONFIG_AUX_DIR(../../../misc)
 
-AC_COPYRIGHT([Copyright (C) 1999 - 2016 Eggheads Development Team])
+AC_COPYRIGHT([Copyright (C) 1999 - 2017 Eggheads Development Team])
 AC_REVISION([m4_esyscmd([../../../misc/getcommit])])
 
 dns_reslib_avail="false"

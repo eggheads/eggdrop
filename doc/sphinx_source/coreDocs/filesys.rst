@@ -46,4 +46,4 @@ There are also some variables you can set in your config file:
     Set here the maximum allowable file size that will be received (in KB).
     Setting this to 0 makes it effectively infinite.
 
-Copyright (C) 2000 - 2016 Eggheads Development Team
+Copyright (C) 2000 - 2017 Eggheads Development Team
