@@ -60,7 +60,7 @@ static int convert_old_files(char *path, char *newfiledb)
 
   putlog(LOG_FILES, "*", FILES_CONVERT, path);
   /* Scan contents of .files and painstakingly create .filedb entries */
-  while (!feof(f) && fgets(s, 120, f) != NULL) {
+  while (!feof(f) && fgets(s, sizeof s, f) != NULL) {
     s1 = s;
     if (s[strlen(s) - 1] == '\n')
       s[strlen(s) - 1] = 0;
