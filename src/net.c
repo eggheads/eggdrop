@@ -792,6 +792,18 @@ int preparefdset(fd_set *fd, sock_list *slist, int slistmax, int tclonly, int tc
   return foundsocks;
 }
 
+/* A safer version of write() that deals with partial writes. */
+void safe_write(int fd, const char *buf, size_t count)
+{
+  ssize_t ret;
+  do {
+    if ((ret = write(fd, buf, count)) == -1 && errno != EINTR) {
+      putlog(LOG_MISC, "*", "Unexpected write() failure on attempt to write %zd bytes to fd %d: %s.", count, fd, strerror(errno));
+      break;
+    }
+  } while ((buf += ret, count -= ret));
+}
+
 /* Attempts to read from all sockets in slist (upper array boundary slistmax-1)
  * fills s with up to 511 bytes if available, and returns the array index
  * Also calls all handler procs for Tcl sockets

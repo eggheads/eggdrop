@@ -128,30 +128,20 @@ static void strip_telnet(int sock, char *buf, int *len)
         /* WILL X -> response: DONT X */
         /* except WILL ECHO which we just smile and ignore */
         if (*(p + 1) != TLN_ECHO) {
-          if (write(sock, TLN_IAC_C TLN_DONT_C, 2) < 2) {
-            putlog(LOG_DEBUG, "*", "Unable to write everything to socket");
-          }
-          if (write(sock, p + 1, 1) < 1) {
-            putlog(LOG_DEBUG, "*", "Unable to write everything to socket");
-          }
+          safe_write(sock, TLN_IAC_C TLN_DONT_C, 2);
+          safe_write(sock, p + 1, 1);
         }
       } else if (*p == TLN_DO) {
         /* DO X -> response: WONT X */
         /* except DO ECHO which we just smile and ignore */
         if (*(p + 1) != TLN_ECHO) {
-          if (write(sock, TLN_IAC_C TLN_WONT_C, 2) < 2) {
-            putlog(LOG_DEBUG, "*", "Unable to write everything to socket");
-          }
-          if (write(sock, p + 1, 1) < 1) {
-            putlog(LOG_DEBUG, "*", "Unable to write everything to socket");
-          }
+          safe_write(sock, TLN_IAC_C TLN_WONT_C, 2);
+          safe_write(sock, p + 1, 1);
         }
       } else if (*p == TLN_AYT) {
         /* "Are You There?" */
         /* response is: "Hell, yes!" */
-        if (write(sock, "\r\nHell, yes!\r\n", 14) < 14) {
-          putlog(LOG_DEBUG, "*", "Unable to write everything to socket");
-        }
+        safe_write(sock, "\r\nHell, yes!\r\n", 14);
       } else if (*p == TLN_IAC) {
         /* IAC character in data, escaped with another IAC */
         *o++ = *p++;
