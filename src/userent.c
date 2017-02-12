@@ -780,18 +780,16 @@ int xtra_set(struct userrec *u, struct user_entry *e, void *buf)
       e->u.extra = NULL;
     }
   }
-  if (old != new && new->data) {
-    if (new->data[0]) {
-      if (!e->u.extra) {
-        e->u.extra = nmalloc(sizeof *e->u.extra);
-      }
+  /* don't do anything when old == new */
+  if (old != new) {
+    if (new->data && new->data[0])
       list_insert((&e->u.extra), new)  /* do not add a ';' here */
+    else {
+      if (new->data)
+        nfree(new->data);
+      nfree(new->key);
+      nfree(new);
     }
-  } else {
-    if (new->data)
-      nfree(new->data);
-    nfree(new->key);
-    nfree(new);
   }
   return TCL_OK;
 }
