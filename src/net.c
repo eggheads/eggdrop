@@ -1163,9 +1163,7 @@ void tputs(register int z, char *s, unsigned int len)
     return;
 
   if (((z == STDOUT) || (z == STDERR)) && (!backgrd || use_stderr)) {
-    if (write(z, s, len) < len) {
-      putlog(LOG_MISC, "*", "NET: Error writing to socket");
-    }
+    safe_write(z, s, len);
     return;
   }
 
