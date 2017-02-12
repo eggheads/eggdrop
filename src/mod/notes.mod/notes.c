@@ -99,7 +99,7 @@ static int num_notes(char *user)
   }
   /* fgets == NULL means error or empty file, so check for error */
   if (ferror(f)) {
-    putlog(LOG_DEBUG, "*", "NOTES: Error reading number of notes.");
+    putlog(LOG_MISC, "*", "NOTES: Error reading number of notes.");
   }
   fclose(f);
   return tot;
@@ -145,7 +145,7 @@ static void notes_change(char *oldnick, char *newnick)
   }
   /* fgets == NULL means error or empty file, so check for error */
   if (ferror(f)) {
-    putlog(LOG_DEBUG, "*", "NOTES: Error reading notes file to change handle");
+    putlog(LOG_MISC, "*", "NOTES: Error reading notes file to change handle");
   }
   fclose(f);
   fclose(g);
@@ -196,7 +196,7 @@ static void expire_notes()
   }
   /* fgets == NULL means error or empty file, so check for error */
   if (ferror(f)) {
-    putlog(LOG_DEBUG, "*", "NOTES: Error reading notes file to remove old notes");
+    putlog(LOG_MISC, "*", "NOTES: Error reading notes file to remove old notes");
   }
   fclose(f);
   fclose(g);
@@ -626,7 +626,7 @@ static void notes_del(char *hand, char *nick, char *sdl, int idx)
       fprintf(g, "%s\n", s);
   }
   if (ferror(f)) {
-    putlog(LOG_DEBUG, "*", "NOTES: Error reading notes file to delete note.");
+    putlog(LOG_MISC, "*", "NOTES: Error reading notes file to delete note.");
   }
   fclose(f);
   fclose(g);

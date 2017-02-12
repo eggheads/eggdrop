@@ -223,7 +223,7 @@ static void read_lang(char *langfile)
 
   FLANG = fopen(langfile, "r");
   if (FLANG == NULL) {
-    putlog(LOG_DEBUG, "*", "LANG: unexpected: reading from file %s failed.",
+    putlog(LOG_MISC, "*", "LANG: unexpected: reading from file %s failed.",
            langfile);
     return;
   }
@@ -234,7 +234,7 @@ static void read_lang(char *langfile)
       if ((lbuf[0] == '#') || (sscanf(lbuf, "%s", ltext) == EOF))
         lskip = 1;
       else if (sscanf(lbuf, "0x%x,", &lidx) != 1) {
-        putlog(LOG_DEBUG, "*", "LANG: Malformed text line in %s at %d.",
+        putlog(LOG_MISC, "*", "LANG: Malformed text line in %s at %d.",
                langfile, lline);
         lskip = 1;
       }
@@ -244,7 +244,7 @@ static void read_lang(char *langfile)
         }
         /* fgets == NULL means error or empty file, so check for error */
         if (ferror(FLANG)) {
-          putlog(LOG_DEBUG, "*", "LANG: Error reading lang file.");
+          putlog(LOG_MISC, "*", "LANG: Error reading lang file.");
         }
         lline++;
         lnew = 1;

@@ -1086,7 +1086,7 @@ static void scan_help_file(struct help_ref *current, char *filename, int type)
     }
     /* fgets == NULL means error or empty file, so check for error */
     if (ferror(f)) {
-      putlog(LOG_DEBUG, "*", "Error reading help file");
+      putlog(LOG_MISC, "*", "Error reading help file");
     }
     fclose(f);
   }
@@ -1230,7 +1230,7 @@ void showhelp(char *who, char *file, struct flag_record *flags, int fl)
     }
     /* fgets == NULL means error or empty file, so check for error */
     if (ferror(f)) {
-      putlog(LOG_DEBUG, "*", "Error reading help file");
+      putlog(LOG_MISC, "*", "Error reading help file");
     }
     fclose(f);
   }
@@ -1261,7 +1261,7 @@ static int display_tellhelp(int idx, char *file, FILE *f,
     }
     /* fgets == NULL means error or empty file, so check for error */
     if (ferror(f)) {
-      putlog(LOG_DEBUG, "*", "Error displaying help");
+      putlog(LOG_MISC, "*", "Error displaying help");
     }
     fclose(f);
   }
@@ -1391,7 +1391,7 @@ void show_motd(int idx)
   }
   /* fgets == NULL means error or empty file, so check for error */
   if (ferror(vv)) {
-    putlog(LOG_DEBUG, "*", "Error reading MOTD for DCC");
+    putlog(LOG_MISC, "*", "Error reading MOTD for DCC");
   }
   fclose(vv);
   dprintf(idx, "\n");
@@ -1427,7 +1427,7 @@ void show_banner(int idx)
   }
   /* fgets == NULL means error or empty file, so check for error */
   if (ferror(vv)) {
-      putlog(LOG_DEBUG, "*", "Error reading banner");
+      putlog(LOG_MISC, "*", "Error reading banner");
   }
   fclose(vv);
 }

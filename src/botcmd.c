@@ -1060,7 +1060,7 @@ static void bot_motd(int idx, char *par)
       }
       /* fgets == NULL means error or empty file, so check for error */
       if (ferror(vv)) {
-        putlog(LOG_DEBUG, "*", "Error reading MOTD file");
+        putlog(LOG_MISC, "*", "Error reading MOTD file");
       }
       fclose(vv);
     } else
