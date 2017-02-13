@@ -1529,7 +1529,7 @@ static void cmd_chanset(struct userrec *u, int idx, char *par)
           strcpy(parcpy, par);
           if (tcl_channel_modify(0, chan, 2, list) == TCL_OK) {
             char tocat[sizeof answers];
-            snprintf(tocat, sizeof tocat, "%s { %s }", list[0], parcpy);
+            egg_snprintf(tocat, sizeof tocat, "%s { %s }", list[0], parcpy);
             strncat(answers, tocat, sizeof answers - strlen(answers) - 1);
           } else if (!all || !chan->next)
             dprintf(idx, "Error trying to set %s for %s, invalid option\n",

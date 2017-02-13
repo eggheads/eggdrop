@@ -517,10 +517,10 @@ static char *fixnick(char *nick)
     case 'X':
     case 'z':
     case 'Z':
-      snprintf(fixit, sizeof fixit, "%s'", nick);
+      egg_snprintf(fixit, sizeof fixit, "%s'", nick);
       break;
     default:
-      snprintf(fixit, sizeof fixit, "%s's", nick);
+      egg_snprintf(fixit, sizeof fixit, "%s's", nick);
       break;
     }
   return fixit;
