@@ -1,7 +1,9 @@
 Weird Messages That Get Logged Last revised: March 10, 2003
 
-Weird Messages That Get Logged
-==============================
+
+
+WEIRD MESSAGES THAT GET LOGGED
+
 
   Shown below are some messages that Eggdrop might log from time to time
   that may seem a bit strange and have meanings which may not be
@@ -22,7 +24,7 @@ Weird Messages That Get Logged
           the channel very well when it gets swapped out for minutes at
           a time.
       -   On some systems (at least Linux), if the DNS your bot is using
-          to lookup hostnames is broken and very slow in responding
+          to lookup hostnames is broken and _very_ slow in responding
           (this can occur if the DNS server's uplink doesn't exist),
           then you will get 4-5 minute timer drifts continuously. This
           can be fixed by loading the dns module.
@@ -30,6 +32,7 @@ Weird Messages That Get Logged
           been running behind by several minutes and was just corrected.
 
   (!) killmember(Nickname) -> nonexistent
+
       We have yet to track this down. It's a mildly bad thing, however.
       It means the bot just got informed by the server that someone left
       the channel -- but the bot has no record of that person ever being
@@ -42,10 +45,10 @@ Weird Messages That Get Logged
         not uncommon during netsplits and other joins for the server to
         lose track of killed or collided join notices. Also, in some
         servers, it is possible to specify non-standard characters, such
-        as caret symbols, which get falsely interpreted as capital
-        letters.
+        as caret symbols, which get falsely interpreted as
+        capital letters.
 
         When converted to lowercase, these symbols fail to get
         processed, and joins are not reported, although parts are.
 
-  Copyright (C) 2003 - 2016 Eggheads Development Team
+  Copyright (C) 2003 - 2017 Eggheads Development Team

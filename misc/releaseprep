@@ -2,7 +2,7 @@
 #
 # releaseprep - prepares the tree for release
 #
-# Copyright (C) 2004 - 2016 Eggheads Development Team
+# Copyright (C) 2004 - 2017 Eggheads Development Team
 #
 # This file is free software; you can redistribute it and/or modify it
 # under the terms of the GNU General Public License as published by
@@ -86,6 +86,8 @@ fix_patch_h() {
 		cat src/patch.h | sed 's/^patch.*Git.*Git version \*\//patch("PRE-RELEASE");           \/* RC version *\//g' > src/patch.h_
 	else
 		cat src/patch.h | sed 's/^patch.*/\/* PATCH GOES HERE *\//g' > src/patch.h_
+		mv src/patch.h_ src/patch.h
+		cat src/patch.h | sed -e '0,/^\/\* PATCH GOES HERE \*\//s//patch("");/' > src/patch.h_
 	fi
 	mv src/patch.h_ src/patch.h
 }
@@ -148,12 +150,10 @@ echo -n "Fixing patch.h..."
 fix_patch_h
 echo " done."
 
-# Remove CVS dirs.
-# Let's remove this in 1.8.1 -Geo
-echo -n "Removing CVS and autom4te.cache directories..."
+# Remove autom4te.cache dirs...
+echo -n "Removing autom4te.cache directories..."
 find ./ -type d -name "autom4te.cache" -print | xargs rm -rf
-find ./ -type d -name "CVS" -print | xargs rm -rf
-echo " done."
+echo " done." 
 
 # Remove .gitignores.
 echo -n "Removing git files..."
@@ -173,7 +173,8 @@ if test -d ./doc/html/chat; then
 fi
 
 # Generate fresh html/docs
-misc/generateDocs
+vers=$(grep "egg_version\[1024\]" src/main.c |cut -d '"' -f2)
+misc/generatedocs -v ${vers}
 
 # make distclean
 echo ""

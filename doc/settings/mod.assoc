@@ -1,7 +1,9 @@
 Last revised: January 1, 2002
 
-Assoc Module
-============
+
+
+ASSOC MODULE
+
 
 This module provides assoc support, i.e. naming channels on the botnet.
 
@@ -12,4 +14,4 @@ module:
 
     loadmodule assoc
 
-Copyright (C) 2000 - 2016 Eggheads Development Team
+Copyright (C) 2000 - 2017 Eggheads Development Team

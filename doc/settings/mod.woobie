@@ -1,7 +1,9 @@
 Last revised: December 31, 2001
 
-Woobie Module
-=============
+
+
+WOOBIE MODULE
+
 
 This is for demonstrative purposes only. If you are looking for starting
 point in writing modules, woobie is the right thing.
@@ -13,4 +15,4 @@ module:
 
     loadmodule woobie
 
-Copyright (C) 2000 - 2016 Eggheads Development Team
+Copyright (C) 2000 - 2017 Eggheads Development Team

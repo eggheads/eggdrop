@@ -1,13 +1,17 @@
 IPv6 support Last revised: Jul 29, 2010
 
-IPv6 support
-============
+
+
+IPV6 SUPPORT
+
 
 This document provides information about IPv6 support which is a new
 eggdrop feature since version 1.8.0.
 
-About
------
+
+
+ABOUT
+
 
 Eggdrop can be compiled with IPv6 support. To make use of this, you need
 an IPv6-enabled OS and IPv6 connectivity. Every possible type of TCP
@@ -16,8 +20,10 @@ connections, DCC connections, file transfer, botnet connections, Tcl
 script connections initiated with the listen/connect commands, telnet
 and ident lookups.
 
-Installation
-------------
+
+
+INSTALLATION
+
 
 ./configure and install as usual, the configure script will detect if
 your system supports IPv6 and will enable it automatically. You can
@@ -30,8 +36,10 @@ has some limitations and needs to be manually installed and enabled.
 Cygwin includes IPv6 only since version 1.7. Unofficial patches are
 available for 1.5.x.
 
-Usage
------
+
+
+USAGE
+
 
 You can use IPv6 addresses wherever you could specify IPv4 ones. IPs and
 hostnames are interchangeable everywhere. For certain settings and
@@ -40,8 +48,10 @@ the colon character (:) from being interpreted as a port separator.
 These are documented in the help files and the html documentation, so
 you can consult them when in doubt.
 
-Settings
---------
+
+
+SETTINGS
+
 
 There are four new IPv6 related config variables:
 
@@ -75,4 +85,4 @@ Other affected variables:
   nat-ip works with IPv4 as it used to. It has no meaning for IPv6 and
   is not queried for IPv6 connections.
 
-Copyright (C) 2010 - 2016 Eggheads Development Team
+Copyright (C) 2010 - 2017 Eggheads Development Team

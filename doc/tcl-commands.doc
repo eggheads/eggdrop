@@ -1,7 +1,9 @@
 Eggdrop Tcl Commands Last revised: June 20, 2016
 
-Eggdrop Tcl Commands
-====================
+
+
+EGGDROP TCL COMMANDS
+
 
 This is an exhaustive list of all the Tcl commands added to Eggdrop. All
 of the normal Tcl built-in commands are still there, of course, but you
@@ -15,8 +17,10 @@ v0.9, v1.0, v1.1 or v1.2 will probably not work without modification.
 Commands which have been changed in this version of Eggdrop (or are just
 new commands) are marked with vertical bars (|) on the left.
 
-Output Commands
----------------
+
+
+OUTPUT COMMANDS
+
 
 putserv <text> [options]
 
@@ -94,14 +98,16 @@ putcmdlog <text>
   Module: core
 
 putxferlog <text>
-    Description: sends text to the bot's logfile, marked as 'file-area'
-    (x)
+
+    Description: sends text to the bot's logfile, marked as
+    'file-area' (x)
 
     Returns: nothing
 
     Module: core
 
 putloglev <level(s)> <channel> <text>
+
     Description: sends text to the bot's logfile, tagged with all of the
     valid levels given. Use "*" to indicate all log levels.
 
@@ -136,8 +142,10 @@ clearqueue <queue>
 
   Module: server
 
-User Record Manipulation Commands
----------------------------------
+
+
+USER RECORD MANIPULATION COMMANDS
+
 
 countusers
 
@@ -223,17 +231,17 @@ setuser <handle> <entry-type> [extra info]
   | PASS    | sets a users password (no third arg will clear it)               |
   +---------+------------------------------------------------------------------+
   | HOSTS   | if used with no third arg, all hosts for the user will be        |
-  |         | cleared. Otherwise, 1 hostmask is added :P                       |
+  |         | cleared. Otherwise, _1_ hostmask is added :P                     |
   +---------+------------------------------------------------------------------+
   | LASTON  | This setting has 3 forms.                                        |
   |         |                                                                  |
-  |         |   setuser <handle> LASTON <unixtime> <place> sets global LASTON  |
-  |         |   time                                                           |
+  |         |   _setuser <handle> LASTON <unixtime> <place>_ sets global       |
+  |         |   LASTON time                                                    |
   |         |                                                                  |
-  |         |   setuser <handle> LASTON <unixtime> sets global LASTON time     |
+  |         |   _setuser <handle> LASTON <unixtime>_ sets global LASTON time   |
   |         |   (leaving the place field empty)                                |
   |         |                                                                  |
-  |         |   setuser <handle> LASTON <unixtime> <channel> sets a users      |
+  |         |   _setuser <handle> LASTON <unixtime> <channel>_ sets a users    |
   |         |   LASTON time for a channel (if it is a valid channel)           |
   +---------+------------------------------------------------------------------+
 
@@ -295,6 +303,7 @@ adduser <handle> [hostmask]
   Module: core
 
 addbot <handle> <address>
+
     Description: adds a new bot to the userlist with the handle and
     botaddress given (with no password and no flags)
 
@@ -515,6 +524,7 @@ unstickexempt <exemptmask> [channel]
   Module: channels
 
 stickinvite <invitemask> [channel]
+
     Description: makes an invite sticky, or, if a channel is specified,
     then it is set sticky on that channel only.
 
@@ -721,6 +731,7 @@ newignore <hostmask> <creator> <comment> [lifetime]
   Module: core
 
 killignore <hostmask>
+
     Description: removes an entry from the ignore list
 
     Returns: 1 if successful; 0 otherwise
@@ -759,6 +770,7 @@ reload
   Module: core
 
 backup
+
     Description: makes a simple backup of the userfile that's on disk.
     If the channels module is loaded, this also makes a simple backup of
     the channel file.
@@ -775,8 +787,10 @@ getting-users
 
   Module: core
 
-Channel Commands
-----------------
+
+
+CHANNEL COMMANDS
+
 
 channel add <name> [option-list]
 
@@ -831,6 +845,7 @@ savechannels
   Module: channels
 
 loadchannels
+
     Description: reloads the channel settings from the channel-file if
     one is defined.
 
@@ -936,6 +951,7 @@ isvoice <nickname> [channel]
   Module: irc
 
 onchan <nickname> [channel]
+
     Returns: 1 if someone by that nickname is on the specified channel
     (or any channel if none is specified); 0 otherwise
 
@@ -1052,6 +1068,7 @@ resetchanidle [nick] <channel>
   Module: irc
 
 resetchanjoin [nick] <channel>
+
     Description: resets the channel join time for the given nick or for
     all nicks on the channel if no nick is specified.
 
@@ -1240,8 +1257,10 @@ chansettype <setting>
 
   Module: channels
 
-DCC Commands
-------------
+
+
+DCC COMMANDS
+
 
 putdcc <idx> <text> [-raw]
 
@@ -1274,6 +1293,7 @@ dccputchan <channel> <message>
   Module: core
 
 boot <user@bot> [reason]
+
     Description: boots a user from the partyline
 
     Returns: nothing
@@ -1453,10 +1473,10 @@ whom <chan>
 
   Returns: list of people on the botnet who are on that channel. 0 is
   the default party line. Each item in the list is a sublist with six
-  elements: nickname, bot, hostname, access flag ('-', '@', '+', or ''),
-  minutes idle, and away message (blank if the user is not away). If you
-  specify for channel, every user on the botnet is returned with an
-  extra argument indicating the channel the user is on.
+  elements: nickname, bot, hostname, access flag ('-', '@', '+', or
+  '_'), minutes idle, and away message (blank if the user is not away).
+  If you specify_ for channel, every user on the botnet is returned with
+  an extra argument indicating the channel the user is on.
 
   Module: core
 
@@ -1554,8 +1574,10 @@ dccdumpfile <idx> <filename>
 
   Module: core
 
-Notes Module
-------------
+
+
+NOTES MODULE
+
 
 notes <user> [numberlist]
 
@@ -1597,8 +1619,10 @@ storenote <from> <to> <msg> <idx>
 
   Module: notes
 
-Assoc Module
-------------
+
+
+ASSOC MODULE
+
 
 assoc <chan> [name]
 
@@ -1618,8 +1642,10 @@ killassoc <chan>
 
   Module: assoc
 
-Compress Module
----------------
+
+
+COMPRESS MODULE
+
 
 compressfile [-level <level>] <src-file> [target-file] and
 uncompressfile <src-file> [target-file]
@@ -1643,8 +1669,10 @@ iscompressed <filename>
 
   Module: compress
 
-Filesys Module
---------------
+
+
+FILESYS MODULE
+
 
 setpwd <idx> <dir>
 
@@ -1864,8 +1892,10 @@ setflags <dir> [<flags> [channel]]
 
   Module: filesys
 
-Miscellaneous Commands
-----------------------
+
+
+MISCELLANEOUS COMMANDS
+
 
 bind <type> <flags> <keyword/mask> [proc-name]
 
@@ -1893,6 +1923,7 @@ unbind <type> <flags> <keyword/mask> <proc-name>
 binds [type/mask]
 
   Returns: a list of Tcl binds, each item in the list is a sublist of five elements:
+
       {<type> <flags> <name> <hits> <proc>}
 
   Module: core
@@ -2190,6 +2221,7 @@ traffic
   Module: core
 
 modules
+
     Returns: a list of sublists containing information about the bot's
     currently loaded modules. Each sublist contains three elements:
     module, version, and dependencies. Each dependency is also a sublist
@@ -2364,8 +2396,10 @@ tlsstatus <idx>
 
   Module: core
 
-Global Variables
-----------------
+
+
+GLOBAL VARIABLES
+
 
 NOTE: All config file variables are also global.
 
@@ -2392,6 +2426,7 @@ server
   Module: server
 
 serveraddress
+
     Value: the current server's internet address (hostname or IP) and
     port bot is connected to. This will correspond to the entry in
     server list (for example: "eu.undernet.org:6667"). Note that this
@@ -2400,6 +2435,7 @@ serveraddress
     Module: server
 
 version
+
     Value: current bot version "1.1.2+pl1 1010201 pl1"; first item is
     the text version, second item is a numerical version, and any
     following items are the names of patches that have been added
@@ -2407,6 +2443,7 @@ version
     Module: core
 
 numversion
+
     Value: the current numeric bot version (for example: "1010201").
     Numerical version is in the format of "MNNRRPP", where:
 
@@ -2420,39 +2457,47 @@ numversion
     Module: core
 
 uptime
+
     Value: the unixtime value for when the bot was started
 
     Module: core
 
 server-online
+
     Value: the unixtime value for when the bot connected to its current
     server
 
     Module: server
 
 lastbind
+
     Value: the last command binding which was triggered. This allows you
     to identify which command triggered a Tcl proc.
 
     Module: core
 
 isjuped
+
     Value: 1 if bot's nick is juped(437); 0 otherwise
 
     Module: server
 
 handlen
+
     Value: the value of the HANDLEN define in src/eggdrop.h
 
     Module: core
 
 config
+
     Value: the filename of the config file Eggdrop is currently using
 
     Module: core
 
-Binds
------
+
+
+BINDS
+
 
 You can use the 'bind' command to attach Tcl procedures to certain
 events. For example, you can write a Tcl procedure that gets called
@@ -2469,7 +2514,10 @@ is triggered, ALL of the Tcl procs that are bound to it will be called.
 To remove a bind, use the 'unbind' command. For example, to remove the
 bind for the "stop" msg command, use 'unbind msg - stop msg:stop'.
 
-Bind Types
+
+
+BIND TYPES
+
 
 The following is a list of bind types and how they work. Below each bind
 type is the format of the bind command, the list of arguments sent to
@@ -2551,13 +2599,19 @@ the Tcl proc, and an explanation.
   triggered by text that a PUBM bind has already handled.
 
   Examples:
+
+      
+
       bind pubm * "#eggdrop Hello*" myProc
+
           Listens on #eggdrop for any line that begins with "Hello"
 
       bind pubm * "% Hello*" myProc
+
           Listens on any channel for any line that begins with "Hello"
 
       bind pubm * "% !command" myProc
+
           Listens on any channel for a line that ONLY contains
           "!command"
 
@@ -3216,7 +3270,10 @@ the Tcl proc, and an explanation.
 
   Module: core
 
-Return Values
+
+
+RETURN VALUES
+
 
 Several bindings pay attention to the value you return from the
 proc(using 'return <value>'). Usually, they expect a 0 or 1, and
@@ -3230,35 +3287,35 @@ trigger:
 
 (1) MSG Return 1 to make Eggdrop log the command as:
 
-    (nick!user@host) !handle! command
+        (nick!user@host) !handle! command
 
 (2) DCC Return 1 to make Eggdrop log the command as:
 
-    #handle# command
+        #handle# command
 
 (3) FIL Return 1 to make Eggdrop log the command as:
 
-    #handle# files: command
+        #handle# files: command
 
 (4) PUB Return 1 to make Eggdrop log the command as:
 
-    <<nick>> !handle! command
+        <<nick>> !handle! command
 
-(5) CTCP Return 1 to ask the bot not to process the CTCP command on its
-    own. Otherwise, it would send its own response to the CTCP (possibly
-    an error message if it doesn't know how to deal with it).
+(5) CTCP Return 1 to ask the bot not to process the CTCP command on
+    its own. Otherwise, it would send its own response to the CTCP
+    (possibly an error message if it doesn't know how to deal with it).
 (6) FILT Return "" to indicate the text has been processed, and the bot
-    should just ignore it. Otherwise, it will treat the text like any
-    other.
+    should just ignore it. Otherwise, it will treat the text like
+    any other.
 (7) FLUD Return 1 to ask the bot not to take action on the flood.
     Otherwise it will do its normal punishment.
 (8) RAW Return 1 to ask the bot not to process the server text. This can
     affect the bot's performance by causing it to miss things that it
     would normally act on -- you have been warned.
-(9) CHON Return 1 to ask the bot not to process the partyline join
-    event.
-(10) CHOF Return 1 to ask the bot not to process the partyline part
-    event.
+(9) CHON Return 1 to ask the bot not to process the partyline
+    join event.
+(10) CHOF Return 1 to ask the bot not to process the partyline
+    part event.
 (11) WALL Return 1 to make Eggdrop not log the message that triggered
     this bind.
 (12) NOTE Return 1 to make Eggdrop not process the note any further.
@@ -3270,14 +3327,16 @@ trigger:
     this bind.
 (15) NOTC Return 1 to make Eggdrop not log the message that triggered
     this bind.
-(16) OUT Return 1 to make Eggdrop drop the message instead of sending
-    it. Only meaningful for messages with status "queued".
+(16) OUT Return 1 to make Eggdrop drop the message instead of
+    sending it. Only meaningful for messages with status "queued".
 (17) EVNT Return 1 to make Eggdrop not to take the default action for
     the event. Used for signal type events, ignored for others.
 (18) TLS Return 1 to disable verbose ssl information for the handshake.
 
-Control Procedures
-------------------
+
+
+CONTROL PROCEDURES
+
 
 Using the 'control' command, you can put a DCC connection (or outgoing
 TCP connection) in control of a script. All text received from the
@@ -3301,15 +3360,17 @@ idx when text is blank, it will always fail with "invalid idx".
 If you want to hand control of your connection back to Eggdrop, your
 proc should return 1. Otherwise, return 0 to retain control.
 
-TCP Connections
----------------
+
+
+TCP CONNECTIONS
+
 
 Eggdrop allows you to make two types of TCP ("telnet") connections:
 outgoing and incoming. For an outgoing connection, you specify the
 remote host and port to connect to. For an incoming connection, you
 specify a port to listen on.
 
-All of the connections are event driven. This means that the bot will
+All of the connections are _event driven_. This means that the bot will
 trigger your procs when something happens on the connection, and your
 proc is expected to return as soon as possible. Waiting in a proc for
 more input is a no-no.
@@ -3379,8 +3440,10 @@ The best way to learn how to use these commands is to find a script that
 uses them and follow it carefully. However, hopefully this has given you
 a good start.
 
-Match Characters
-----------------
+
+
+MATCH CHARACTERS
+
 
 Many of the bindings allow match characters in the arguments. Here are
 the four special characters:
@@ -3399,4 +3462,4 @@ the four special characters:
         matching)
   ----- ------------------------------------------------------------------
 
-  Copyright (C) 1999 - 2016 Eggheads Development Team
+  Copyright (C) 1999 - 2017 Eggheads Development Team

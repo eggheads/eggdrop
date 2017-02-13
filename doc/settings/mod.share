@@ -1,7 +1,9 @@
 Last revised: November 27, 2003
 
-Share Module
-============
+
+
+SHARE MODULE
+
 
 This module provides userfile sharing support between two directly
 linked bots.
@@ -16,6 +18,7 @@ module:
 There are also some variables you can set in your config file:
 
   set allow-resync 0
+
       When two bots get disconnected, this setting allows them to create
       a resync buffer which saves all changes done to the userfile
       during the disconnect. When they reconnect, they will not have to
@@ -23,28 +26,34 @@ There are also some variables you can set in your config file:
       resync buffer.
 
   set resync-time 900
+
       This setting specifies how long to hold another bots resync data
       before flushing it. This is a setting for allow-resync.
 
   set private-global 0
+
       When sharing user lists, DON'T ACCEPT global flag changes from
       other bots? NOTE: The bot will still send changes made on the bot,
       it just won't accept any global flag changes from other bots. This
       overrides the private-globals setting (below).
 
   set private-globals "mnot"
+
       When sharing user lists, if private-global isn't set, which global
       flag changes from other bots should be ignored?
 
   set private-user 0
+
       When sharing user lists, don't accept ANY userfile changes from
-      other bots? Paranoid people should use this feature on their hub
-      bot. This will force all userlist changes to be made via the hub.
+      other bots? Paranoid people should use this feature on their
+      hub bot. This will force all userlist changes to be made via
+      the hub.
 
   set override-bots 0
+
       This setting makes the bot discard its own bot records in favor of
       the ones sent by the hub. NOTE: No passwords or botflags are
       shared, only ports and address are added to sharing procedure.
       This only works with hubs that are v1.5.1 or higher.
 
-Copyright (C) 2000 - 2016 Eggheads Development Team
+Copyright (C) 2000 - 2017 Eggheads Development Team

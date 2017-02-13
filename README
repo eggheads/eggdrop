@@ -1,22 +1,28 @@
 Last revised: Jul 2, 2016
 
+
+
 README
-======
+
 
   Please at least SKIM this document before asking questions. In fact,
   READ IT if you've never successfully set up an Eggdrop bot before.
   PLEASE! READ IT!
 
+
+
 NOTICE
-------
+
 
   Please read this file carefully before trying to set up Eggdrop. Also,
   make SURE that you select your +n (owner) users wisely! They have 100%
   access to your bot and account! ONLY GIVE THIS POWER TO SOMEONE YOU
   TRUST COMPLETELY!!
 
-What is Eggdrop?
-----------------
+
+
+WHAT IS EGGDROP?
+
 
   Eggdrop is the World's most popular Internet Relay Chat (IRC) bot; it
   is freely distributable under the GNU General Public License (GPL).
@@ -58,11 +64,13 @@ What is Eggdrop?
   upgrading from older versions, a list of frequently asked questions,
   how to set up a crontab, some boring legal stuff, info about the
   mailing list (a great place to ask questions, and a good place to
-  report bugs, too), some basics about CVS usage, and some channels
+  report bugs, too), some basics about git usage, and some channels
   where you might get help with Eggdrop.
 
+
+
 HOW TO GET EGGDROP
-------------------
+
 
   Before you can compile Eggdrop, you need to have Tcl installed on your
   system. Most systems should have Tcl on them by now -- you can check
@@ -79,8 +87,10 @@ HOW TO GET EGGDROP
 
   You might try www.eggheads.org for help and information.
 
-Git Usage
----------
+
+
+GIT USAGE
+
 
   Eggdrop development has moved from a CVS-based version control system
   to git. If you are interested in trying out the VERY LATEST updates to
@@ -104,13 +114,17 @@ Git Usage
 
     https://github.com/eggheads/eggdrop/archive/develop.tar.gz
 
-Quick Startup
--------------
+
+
+QUICK STARTUP
+
 
   Please see the 'INSTALL' file AFTER you finish reading this file.
 
-Upgrading
----------
+
+
+UPGRADING
+
 
 UPGRADING FROM A PRE-1.3 VERSION TO 1.8
 
@@ -156,11 +170,12 @@ UPGRADING FROM AN OLDER 1.3/1.4/1.5/1.6 VERSION TO A NEWER 1.8 VERSION
   You should read through the new eggdrop.conf file for all of the new
   options in Eggdrop 1.8.x. You can copy and paste any of these settings
   into you current conf file if you do not want to use the default
-  settings. For an overview of the major changes and details about
-  upgrading from 1.6 to 1.8, please read the NEWS-1.8.0 file.
+  settings.
 
-Command Line
-------------
+
+
+COMMAND LINE
+
 
   Eggdrop has some command-line options -- not many, because most things
   should be defined through the config file. However, sometimes you may
@@ -172,22 +187,26 @@ Command Line
   The options available are:
 
     -n: Don't background. Normally, Eggdrop will move itself into the
+
         background when you start it up, meaning you'll get another
-        shell prompt, and you can do other things while the bot is
-        running. With -n, you won't return to the shell prompt until the
-        bot exits (which won't normally happen until it's killed). By
-        default, -n will send all log entries to the console.
+        shell prompt, and you can do other things while the bot
+        is running. With -n, you won't return to the shell prompt until
+        the bot exits (which won't normally happen until it's killed).
+        By default, -n will send all log entries to the console.
 
     -nt: Don't background, use terminal. This is just like -n, except that
+
         instead of seeing log entries, your console will simulate a DCC
         chat with the bot.
 
     -nc: Don't background, show channel info. This is just like -n, except
+
         that instead of seeing log entries, every 10 seconds your screen
         will clear and you will see the current channel status, sort of
         like "top".
 
     -m: Create userfile. If you don't have a userfile, this will make Eggdrop
+
         create one and give owner status to the first person that
         introduces himself or herself to it. You'll need to do this when
         you first set up your bot.
@@ -199,8 +218,10 @@ Command Line
   Most people never use any of the options except -m, and you usually
   only need to use that once.
 
-Setting up a Crontab
---------------------
+
+
+SETTING UP A CRONTAB
+
 
   Eggdrop has become more stable with time, thanks mostly to people
   reporting bug details and helping find places where it crashes.
@@ -227,16 +248,18 @@ Setting up a Crontab
   If you've never used crontab before, here is a simple way to add that
   line:
 
-    1.  Create a new file called 'mycron' and put the above line into
-        it.
+    1.  Create a new file called 'mycron' and put the above line
+        into it.
     2.  From your shell prompt, type '% crontab mycron'.
 
   That will create a new crontab entry for you with a line that runs
   botchk every ten minutes. Botchk will then restart the bot when
   necessary (and send you email informing you).
 
-Setting up a Crontab using autobotchk
--------------------------------------
+
+
+SETTING UP A CRONTAB USING AUTOBOTCHK
+
 
   Included with your Eggdrop is an Eggdrop utility called 'autobotchk'.
   Using autobotchk is probably the fastest way of creating your botchk
@@ -259,8 +282,10 @@ Setting up a Crontab using autobotchk
   This would setup crontab to run the botchk every 5 minutes and also to
   not send you e-mail saying that it restarted your bot.
 
-Boring Legal Stuff
-------------------
+
+
+BORING LEGAL STUFF
+
 
   The Eggdrop bot is Copyright (C) by Robey Pointer. As of January,
   1997, Eggdrop is distributed according to the GNU General Public
@@ -294,8 +319,10 @@ Boring Legal Stuff
   There is no warranty, implied or whatever. You use this software at
   your own risk, no matter what purpose you put it to.
 
-Mailing List
-------------
+
+
+MAILING LIST
+
 
   There are currently a couple of mailing lists about Eggdrop.
   eggheads@eggheads.org is the one relevant for posts about Eggdrop 1.8
@@ -341,15 +368,19 @@ Mailing List
   ANYONE CAUGHT SENDING HTML E-MAILS TO ONE OF THESE LISTS WILL BE
   REMOVED IMMEDIATELY!
 
-Documentation
--------------
+
+
+DOCUMENTATION
+
 
   We're trying to keep the documentation up to date. If you feel that
   anything is missing here or that anything should be added, etc, please
   e-mail bugs@eggheads.org about it. Thank you.
 
-Obtaining Help
---------------
+
+
+OBTAINING HELP
+
 
   You can obtain help with Eggdrop in the following IRC channels:
 
@@ -374,5 +405,5 @@ Obtaining Help
   If there are any other serious Eggdrop related channels that should be
   added to the above list, please let us know.
 
-Copyright (C) 1997 Robey Pointer Copyright (C) 1999 - 2016 Eggheads
+Copyright (C) 1997 Robey Pointer Copyright (C) 1999 - 2017 Eggheads
 Development Team

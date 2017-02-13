@@ -4,7 +4,7 @@
  */
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2016 Eggheads Development Team
+ * Copyright (C) 1999 - 2017 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -551,7 +551,7 @@ static int botaddr_write_userfile(FILE *f, struct userrec *u,
       *q++ = ';';
     else
       *q++ = *p;
-    *q = 0;
+  *q = 0;
 #ifdef TLS
   if (fprintf(f, "--%s %s:%s%u/%s%u\n", e->type->name, addr,
       (bi->ssl & TLS_BOT) ? "+" : "", bi->telnet_port, (bi->ssl & TLS_RELAY) ?

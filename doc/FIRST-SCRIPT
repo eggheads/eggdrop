@@ -1,7 +1,9 @@
 Your First Eggdrop Script Last revised: December 07, 2003
 
-Your First Eggdrop Script
-=========================
+
+
+YOUR FIRST EGGDROP SCRIPT
+
 
 So you want to write an Eggdrop script, but you don't really know where
 to begin. This file will give you a very basic idea about what Eggdrop
@@ -94,4 +96,4 @@ maybe).
 
     # Here's the end of the script.
 
-Copyright (C) 2003 - 2016 Eggheads Development Team
+Copyright (C) 2003 - 2017 Eggheads Development Team

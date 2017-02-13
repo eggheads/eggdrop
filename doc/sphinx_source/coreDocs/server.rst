@@ -248,5 +248,5 @@ There are additional settings for 'net-type' 5.
       your network. The default setting is 9. The maximum supported length by
       Eggdrop is 32.
 
-  Copyright (C) 2000 - 2016 Eggheads Development Team
+  Copyright (C) 2000 - 2017 Eggheads Development Team
 

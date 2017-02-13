@@ -1,7 +1,9 @@
 Last revised: June 05, 2002
 
-Eggdrop Features
-================
+
+
+EGGDROP FEATURES
+
 
   Eggdrop is the most advanced IRC robot available. It has been under
   development since December 1993, and unlike most other bots, it is
@@ -14,9 +16,9 @@ Eggdrop Features
     -   A "party line" available through dcc chat or telnet, with
         multiple channels, giving you the ability to talk to people
         without being affected by netsplits.
-    -   A "botnet". A botnet consists of one or more bots linked
-        together. This can allow bots to op each other securely, control
-        floods efficiently, and share user lists, ban lists,
+    -   A "botnet". A botnet consists of one or more bots
+        linked together. This can allow bots to op each other securely,
+        control floods efficiently, and share user lists, ban lists,
         exempt/invite lists, and ignore lists (if sharing is enabled).
     -   User records are saved on disk and alterable via dcc chat. Each
         user can have a password (encrypted), a list of valid hostmasks,
@@ -47,4 +49,4 @@ Eggdrop Features
 
 Copyright (C) 1997 Robey Pointer
 
-Copyright (C) 2000 - 2016 Eggheads Development Team
+Copyright (C) 2000 - 2017 Eggheads Development Team

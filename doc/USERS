@@ -1,7 +1,9 @@
 Last revised: March 07, 2002
 
-Users and Flags
-===============
+
+
+USERS AND FLAGS
+
 
 People on IRC are recognized by the bot according to their
 nick!user@host. That is, if I am on IRC as:
@@ -92,4 +94,4 @@ global flag applies to all channels. The standard global flags are:
   user-defined flags. These are used by scripts, and their uses very
   depending on the script that uses them.
 
-Copyright (C) 2002 - 2016 Eggheads Development Team
+Copyright (C) 2002 - 2017 Eggheads Development Team

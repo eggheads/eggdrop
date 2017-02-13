@@ -1,7 +1,9 @@
 Last revised: January 1, 2002
 
-Uptime Module
-=============
+
+
+UPTIME MODULE
+
 
 This module reports uptime statistics to http://uptime.eggheads.org. Go
 look and see what your uptime is! It takes about 9 hours to show up, so
@@ -21,4 +23,4 @@ module:
 
     loadmodule uptime
 
-Copyright (C) 2001 - 2016 Eggheads Development Team
+Copyright (C) 2001 - 2017 Eggheads Development Team

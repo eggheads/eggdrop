@@ -3,7 +3,7 @@
  *   Portable strftime implementation. Uses GNU's strftime().
  */
 /*
- * Copyright (C) 2000 - 2016 Eggheads Development Team
+ * Copyright (C) 2000 - 2017 Eggheads Development Team
  * Written by Fabian Knittel
  *
  * This program is free software; you can redistribute it and/or

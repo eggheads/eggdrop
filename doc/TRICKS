@@ -1,7 +1,9 @@
 Eggdrop Tricks Last revised: December 08, 2003
 
-Eggdrop Tricks
-==============
+
+
+EGGDROP TRICKS
+
 
   Here are some little tricks that you may or may not know about, which
   aren't documented in other areas.
@@ -21,8 +23,8 @@ Eggdrop Tricks
       bot's config file to make it keeping one logfile all the time.
       This is not recommended on high traffic channels.
   -   You can modify Eggdrop's output in the partyline, kick messages,
-      and other texts by editing core.english.lang in the language
-      directory.
+      and other texts by editing core.english.lang in the
+      language directory.
   -   You can export parts of your config file to separate files. For
       example, if you have several config files which differ from
       themselves only by the nickname and the used servers, you can
@@ -40,4 +42,4 @@ Eggdrop Tricks
           set userfile "$myvar.user"
           set chanfile "$myvar.chan"
 
-  Copyright (C) 1999 - 2016 Eggheads Development Team
+  Copyright (C) 1999 - 2017 Eggheads Development Team

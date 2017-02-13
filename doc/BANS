@@ -1,7 +1,9 @@
 Bans, Invites and Exempts Last revised: March 07, 2002
 
-Bans, Invites, and Exempts
-==========================
+
+
+BANS, INVITES, AND EXEMPTS
+
 
   I assume that you know how bans work on IRC. Eggdrop handles bans,
   exempts and invites in various ways, and this file is intended to help
@@ -10,18 +12,21 @@ Bans, Invites, and Exempts
   otherwise specified. There are three types of modes:
 
     Global modes
+
         These modes will be active on every channel the bot monitors.
         Some will "expire" after a while (be removed automatically).
-        Others are considered "permanent" and can only be removed by a
-        master.
+        Others are considered "permanent" and can only be removed by
+        a master.
 
     Channel modes
+
         These modes are active only on one channel, and are almost
         always temporary modes that expire after an hour or so
         (depending on how long you've specified in the config file).
         Usually they're created by a Tcl script of some sort.
 
     Non-bot modes
+
         These are modes that were not placed by the bot. They can be
         removed by anyone on the channel. The other two types of modes
         are protected by the bot (unless the channel settings specify
@@ -30,13 +35,15 @@ Bans, Invites, and Exempts
   Bans can also be either sticky or unsticky:
 
     Sticky
-        These modes are usually set by a user using the ".stick"
-        command. Modes with this attribute are attempted to be kept
-        active on the channel at all times by the bot, even if the
+
+        These modes are usually set by a user using the
+        ".stick" command. Modes with this attribute are attempted to be
+        kept active on the channel at all times by the bot, even if the
         channel is set to use dynamic modes. Obviously, if the channel
         isn't set to use dynamic modes, this won't have any effect.
 
     Un-sticky
+
         These modes are the style that Eggdrop sets by default when a
         user uses one of the commands that result in a mode. This
         attribute means that the ban will be removed if using dynamic
@@ -46,6 +53,7 @@ Bans, Invites, and Exempts
   Mode behavior:
 
     Bans
+
         If the channel is supporting dynamic bans, then the ban is set
         when a user with a matching hostmask joins the channel;
         otherwise, the modes are permanently set. On a channel with
@@ -53,6 +61,7 @@ Bans, Invites, and Exempts
         specified in the config file).
 
     Exempts
+
         If the channel is not supporting dynamic exempts, then they are
         set at all times. Otherwise, the exemption is set when a ban is
         placed whose host includes that covered by the exempt. The
@@ -61,11 +70,12 @@ Bans, Invites, and Exempts
         has been removed, whichever happens last.
 
     Invites
+
         If the channel does not support dynamic invites, then they are
         set at all times. Otherwise, the invite is set when the channel
         is +i and a user requests an invite into the channel. The invite
-        then remains set for 'invite-time' minutes (defined in config
-        file) or until the channel goes -i again, whichever happens
-        last.
+        then remains set for 'invite-time' minutes (defined in
+        config file) or until the channel goes -i again, whichever
+        happens last.
 
-  Copyright (C) 1999 - 2016 Eggheads Development Team
+  Copyright (C) 1999 - 2017 Eggheads Development Team

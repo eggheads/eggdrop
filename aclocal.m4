@@ -1,6 +1,6 @@
 dnl aclocal.m4: macros autoconf uses when building configure from configure.ac
 dnl
-dnl Copyright (C) 1999 - 2016 Eggheads Development Team
+dnl Copyright (C) 1999 - 2017 Eggheads Development Team
 dnl
 dnl This program is free software; you can redistribute it and/or
 dnl modify it under the terms of the GNU General Public License
@@ -47,6 +47,52 @@ AC_DEFUN([EGG_MSG_CONFIGURE_END],
   AC_MSG_RESULT
 ])
 
+dnl EGG_MSG_SUMMARY()
+dnl
+dnl Print summary with OS, TLS and TCL info.
+AC_DEFUN([EGG_MSG_SUMMARY],
+[
+  AC_MSG_RESULT([Operating System: $egg_cv_var_system_type $egg_cv_var_system_release])
+  AC_MSG_RESULT([IPv6 Support: $ipv6_enabled])
+  ADD=""
+  if test "x$TCL_THREADS" = "x1"; then
+    ADD=" (threaded)"
+  fi
+  AC_MSG_RESULT([Tcl version: $TCL_PATCHLEVEL$ADD])
+  ADD=""
+  if test "x$tls_enabled" = "xyes"; then
+    EGG_FIND_SSL_VERSION
+    if test "x$tls_version" != "x"; then
+      ADD=" ($tls_version)"
+    fi
+  fi
+  AC_MSG_RESULT([SSL/TLS Support: $tls_enabled$ADD])
+  AC_MSG_RESULT
+])
+
+dnl EGG_FIND_SSL_VERSION()
+dnl
+dnl Tries to find the SSL version used
+AC_DEFUN([EGG_FIND_SSL_VERSION],
+[
+  tmpout="tmpfile"
+  if test ! -e "tmp.c" && test ! -e "$tmpout"; then
+    cat >tmp.c <<EOF
+#include <openssl/opensslv.h>
+#include <stdio.h>
+int main(void) {
+ printf("%s\n", OPENSSL_VERSION_TEXT);
+ return 0;
+}
+EOF
+    $CC $SSL_INCLUDES tmp.c -o "$tmpout" >/dev/null 2>&1
+    if test -x "./$tmpout"; then
+      tls_version=$("./$tmpout")
+      tls_versionf=
+    fi
+    rm -f "$tmpout" tmp.c >/dev/null 2>&1
+  fi
+])
 
 dnl EGG_MSG_WEIRDOS()
 dnl
@@ -55,8 +101,6 @@ dnl users of 'weird' operating systems.
 dnl
 AC_DEFUN([EGG_MSG_WEIRDOS],
 [
-  AC_MSG_RESULT([Operating System: $egg_cv_var_system_type $egg_cv_var_system_release])
-  AC_MSG_RESULT
   if test "$UNKNOWN_OS" = yes; then
     AC_MSG_RESULT([WARNING:])
     AC_MSG_RESULT
@@ -1028,17 +1072,28 @@ AC_DEFUN([EGG_TCL_TCLCONFIG],
     TCL_LIB_SPEC="${TCL_PTHREAD_LDFLAG} ${TCL_LIB_SPEC} ${TCL_LIBS}"
   else
     egg_tcl_changed="yes"
-    TCL_LIB_SPEC="-L$TCLLIB -l$TCLLIBFNS ${EGG_MATH_LIB}"
-    if test "x$ac_cv_lib_pthread" != x; then
-      TCL_LIB_SPEC="$TCL_LIB_SPEC $ac_cv_lib_pthread"
-    fi
-    TCL_INCLUDE_SPEC=""
-    TCL_VERSION=`grep TCL_VERSION $TCLINC/$TCLINCFN | $HEAD_1 | $AWK '{gsub(/\"/, "", [$]3); print [$]3}'`
-    TCL_PATCHLEVEL=`grep TCL_PATCH_LEVEL $TCLINC/$TCLINCFN | $HEAD_1 | $AWK '{gsub(/\"/, "", [$]3); print [$]3}'`
-    TCL_MAJOR_VERSION=`echo $TCL_VERSION | cut -d. -f1`
-    TCL_MINOR_VERSION=`echo $TCL_VERSION | cut -d. -f2`
-    if test $TCL_MAJOR_VERSION -gt 8 || test $TCL_MAJOR_VERSION -eq 8 -a $TCL_MINOR_VERSION -ge 6; then
-      TCL_LIB_SPEC="$TCL_LIB_SPEC -lz"
+    if test -r ${TCLLIB}/tclConfig.sh; then
+      . ${TCLLIB}/tclConfig.sh
+      # OpenBSD uses -pthread, but tclConfig.sh provides that flag in EXTRA_CFLAGS
+      TCL_PTHREAD_LDFLAG=`echo $TCL_EXTRA_CFLAGS | grep -o -- '-pthread'`
+      AC_SUBST(SHLIB_LD, $TCL_SHLIB_LD)
+      AC_MSG_CHECKING([for Tcl linker])
+      AC_MSG_RESULT([$SHLIB_LD])
+      TCL_PATCHLEVEL="${TCL_MAJOR_VERSION}.${TCL_MINOR_VERSION}${TCL_PATCH_LEVEL}"
+      TCL_LIB_SPEC="${TCL_PTHREAD_LDFLAG} ${TCL_LIB_SPEC} ${TCL_LIBS}"
+    else
+      TCL_LIB_SPEC="-L$TCLLIB -l$TCLLIBFNS ${EGG_MATH_LIB}"
+      if test "x$ac_cv_lib_pthread" != x; then
+        TCL_LIB_SPEC="$TCL_LIB_SPEC $ac_cv_lib_pthread"
+      fi
+      TCL_INCLUDE_SPEC=""
+      TCL_VERSION=`grep TCL_VERSION $TCLINC/$TCLINCFN | $HEAD_1 | $AWK '{gsub(/\"/, "", [$]3); print [$]3}'`
+      TCL_PATCHLEVEL=`grep TCL_PATCH_LEVEL $TCLINC/$TCLINCFN | $HEAD_1 | $AWK '{gsub(/\"/, "", [$]3); print [$]3}'`
+      TCL_MAJOR_VERSION=`echo $TCL_VERSION | cut -d. -f1`
+      TCL_MINOR_VERSION=`echo $TCL_VERSION | cut -d. -f2`
+      if test $TCL_MAJOR_VERSION -gt 8 || test $TCL_MAJOR_VERSION -eq 8 -a $TCL_MINOR_VERSION -ge 6; then
+        TCL_LIB_SPEC="$TCL_LIB_SPEC -lz"
+      fi
     fi
   fi
 
@@ -1445,6 +1500,7 @@ dnl EGG_IPV6_ENABLE
 dnl
 AC_DEFUN([EGG_IPV6_ENABLE],
 [
+  ipv6_enabled="no"
   AC_ARG_ENABLE(ipv6,
     [  --enable-ipv6           enable IPv6 support (autodetect)],
     [enable_ipv6="$enableval"], [enable_ipv6="$egg_cv_var_ipv6_supported"])
@@ -1457,6 +1513,7 @@ AC_DEFUN([EGG_IPV6_ENABLE],
       AC_MSG_WARN([Eggdrop will compile but will be limited to IPv4 on this host.])
     fi
     AC_DEFINE(IPV6, 1, [Define to 1 if you want to enable IPv6 support.])
+    ipv6_enabled="yes"
   fi
 ])
 
@@ -1574,6 +1631,7 @@ dnl EGG_TLS_DETECT
 dnl
 AC_DEFUN([EGG_TLS_DETECT],
 [
+  tls_enabled="no"
   if test "$enable_tls" != "no"; then
     if test -z "$SSL_INCLUDES"; then
       AC_CHECK_HEADERS([openssl/ssl.h openssl/x509v3.h], , [havesslinc="no"], [
@@ -1587,10 +1645,26 @@ AC_DEFUN([EGG_TLS_DETECT],
     if test -z "$SSL_LIBS"; then
       AC_CHECK_LIB(ssl, SSL_accept, , [havessllib="no"], [-lcrypto])
       AC_CHECK_LIB(crypto, X509_digest, , [havessllib="no"], [-lssl])
-      AC_CHECK_FUNCS([EVP_md5 EVP_sha1 a2i_IPADDRESS hex_to_string string_to_hex], , [[
+      AC_CHECK_FUNCS([EVP_md5 EVP_sha1 a2i_IPADDRESS], , [[
         havessllib="no"
         break
       ]])
+      AC_CHECK_FUNC(hex_to_string, ,
+        AC_CHECK_FUNC(OPENSSL_hexstr2buf,
+            AC_DEFINE([hex_to_string], [OPENSSL_hexstr2buf], [Define this to OPENSSL_hexstr2buf when using OpenSSL 1.1.0+])
+          , [[
+            havessllib="no"
+            break
+        ]])
+      )
+      AC_CHECK_FUNC(string_to_hex, ,
+        AC_CHECK_FUNC(OPENSSL_buf2hexstr,
+            AC_DEFINE([string_to_hex], [OPENSSL_buf2hexstr], [Define this to OPENSSL_buf2hexstr when using OpenSSL 1.1.0+])
+          , [[
+            havessllib="no"
+            break
+        ]])
+      )
     fi
     if test "$enable_tls" = "yes"; then
       if test "$havesslinc" = "no"; then
@@ -1615,6 +1689,7 @@ AC_DEFUN([EGG_TLS_DETECT],
       fi
       AC_CHECK_FUNCS([RAND_status])
       AC_DEFINE(TLS, 1, [Define this to enable SSL support.])
+      tls_enabled="yes"
       EGG_MD5_COMPAT
     fi
   fi

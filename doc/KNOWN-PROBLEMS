@@ -1,7 +1,9 @@
 Known Problems Last revised: April 16, 2003
 
-Known Problems
-==============
+
+
+KNOWN PROBLEMS
+
 
   Things that are broken, but aren't getting fixed anytime soon:
 
@@ -13,10 +15,10 @@ Known Problems
 
     -   High-bit characters are being filtered from channel names. This
         is a fault of the Tcl interpreter, and not Eggdrop. The Tcl
-        interpreter filters the characters when it reads a file for
-        interpreting. Update your Tcl to version 8.1 or higher.
+        interpreter filters the characters when it reads a file
+        for interpreting. Update your Tcl to version 8.1 or higher.
     -   Version 8.1 of Tcl doesn't support unicode characters. If those
         characters are handled in a script as text, you run into errors.
         Eggdrop can't handle these errors at the moment.
 
-  Copyright (C) 2003 - 2016 Eggheads Development Team
+  Copyright (C) 2003 - 2017 Eggheads Development Team

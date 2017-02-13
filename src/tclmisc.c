@@ -4,7 +4,7 @@
  */
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2016 Eggheads Development Team
+ * Copyright (C) 1999 - 2017 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -88,7 +88,7 @@ static int tcl_logfile STDVAR
                  logs[i].chname, logs[i].filename);
         Tcl_AppendElement(interp, s);
       }
-      return TCL_OK;
+    return TCL_OK;
   }
 
   BADARGS(4, 4, " ?logModes channel logFile?");
