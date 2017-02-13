@@ -309,13 +309,7 @@ static void write_debug()
     dprintf(-x, "Tcl version: %s (header version %s)\n",
             ((interp) && (Tcl_Eval(interp, "info patchlevel") == TCL_OK)) ?
             tcl_resultstring() : (Tcl_Eval(interp, "info tclversion") == TCL_OK) ?
-            tcl_resultstring() : "*unknown*",
-#ifdef TCL_PATCH_LEVEL
-            TCL_PATCH_LEVEL
-#else
-            "*unknown*"
-#endif
-           );
+            tcl_resultstring() : "*unknown*", TCL_PATCH_LEVEL);
 
     if (tcl_threaded())
       dprintf(-x, "Tcl is threaded\n");
