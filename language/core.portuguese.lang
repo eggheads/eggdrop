@@ -1,4 +1,4 @@
-# core.english.lang
+# core.portuguese.lang
 #   core language messages for eggdrop
 
 # General stuff
@@ -44,32 +44,32 @@
 0x20a,Erro ao remover módulo:
 0x20b,Não é possível carregar módulos
 0x20c,Módulos estagnados; Haverá vazamentos de memória!
-0x20d,Você instalou módulos mas não selecionou um Módulo \n\
-de criptografia,consulte o arquivo de configuração padrão para obter informações. \n
+0x20d,Você instalou módulos mas não selecionou um Módulo\n\
+de criptografia, consulte o arquivo de configuração padrão para obter informações.\n
 0x20e,Módulo Filesys não carregado.
-0x20f,Módulo carregado:% -16s (com suporte de idioma)
-0x210,Módulo carregado:% -16s
+0x20f,Módulo carregado: %-16s (com suporte de idioma)
+0x210,Módulo carregado: %-16s
 
 # USERF_
 0x400,Transferência lista de usuários concluída; Trocado
 0x402,NÀO CONSIGO LER NOVO USERFILE
 0x403,Não é possível enviar userfile para você (erro interno)
 0x404,Não foi encontrado nenhum
-0x405,userfile velho,use 'tclsh scripts/weed <userfile> c' para converter
-0x406,Formato de Userfile inválido.
+0x405,Userfile velho, use 'tclsh scripts/weed <userfile> c' para converter
+0x406,Formato de userfile inválido.
 0x407,Registro de usuário corrompido
 0x408,Registro de usuário duplicado
 0x409,Redefinição de senha corrompida para
 0x40a,Máscaras ignoradas para canal(is):
-0x40b,Escrevendo arquivo de usuário ...
+0x40b,Escrevendo arquivo de usuário...
 0x40c,ERRO na escrita de arquivo de usuário.
 0x40d,ERRO escrevendo arquivo de usuário para transferência.
-0x40e,Criação de arquivo de usuário não é necessária - ignorando
-0x40f,Rehashing ...
-0x410,Eu não conheço ninguém com esse nome. \n
+0x40e,Criação de arquivo de usuário não é necessária--ignorando
+0x40f,Rehashing...
+0x410,Eu não conheço ninguém com esse nome.\n
 0x411,Nenhum registro de usuário.
-0x412,Fazendo backup do arquivo do usuário ...
-0x413,Conexão com falha; Transferência de arquivo de usuário interrompida.
+0x412,Fazendo backup do arquivo do usuário...
+0x413,Conexão com falha; transferência de arquivo de usuário interrompida.
 0x414,Pedido de compartilhamento de estilo antigo por
 0x415,Pedido de partilha antiquado
 0x416,Arquivo de usuário rejeitado por
@@ -82,13 +82,13 @@ de criptografia,consulte o arquivo de configuração padrão para obter informa�
 0x505,Casando padrão
 0x506,ignorando primeiro
 0x507,(mais de %d correspondências; lista truncada)\n
-0x508,--- Encontrado %d correspondem%s. \n
-0x509,Comando ambíguo. \n
-0x50a,O quê? Você precisa de '.help' \n
-0x50b,Ligações de comando: \ n
-0x50c,r\Reiniciando ...
+0x508,--- Encontrado %d correspondem%s.\n
+0x509,Comando ambíguo.\n
+0x50a,O quê? Você precisa de '.help'\n
+0x50b,Ligações de comando:\n
+0x50c,Reiniciando...
 0x50d,es
-0x50e,Mudando logfiles ...
+0x50e,Mudando logfiles...
 0x512,inativo
 0x513,AWAY
 0x516,Desconectado
@@ -99,10 +99,10 @@ de criptografia,consulte o arquivo de configuração padrão para obter informa�
 0x51c,rejeitado
 0x51d,impostor
 0x51e,tentando
-0x51f,arquivo MOTD:
-0x520,nenhum arquivo MOTD.
+0x51f,Arquivo MOTD:
+0x520,Nenhum arquivo MOTD.
 0x521,Uso:
-0x522,<endereço> <# da porta> [/<relay-port #>]
+0x522,<endereço> <# da porta>[/<relay-port #>]
 0x526,pendente
 0x527,necessita ops
 0x529,fundo
@@ -111,123 +111,123 @@ de criptografia,consulte o arquivo de configuração padrão para obter informa�
 0x52c,modo de despejo de log
 0x52d,Online para
 0x52e,Cache hit
-0x52f,biblioteca Tcl:
+0x52f,Biblioteca Tcl:
 0x530,Novos usuários get flags
 0x531,notificar
-0x532,Proprietário (s) permanente (s)
+0x532,Proprietário(s) permanente(s)
 0x534,CONFIG FILE NÃO CARREGADO (NÃO ENCONTRADO,OU ERRO)
-0x535,Userfile não encontrado! (Tente './eggdrop -m %s' para criar um) \n
-0x536,INICIANDO BOT NO MODO DE CRIAÇÃO USERFILE. \n\
+0x535,ARQUIVO DE USUÁRIO NÃO ENCONTRADO! (tente './eggdrop -m %s' para criar um)\n
+0x536,INICIANDO BOT NO MODO DE CRIAÇÃO ARQUIVO DE USUÁRIO.\n\
 Telnet para o bot e digite 'NEW' como seu apelido.
-0x537,OU vá para o IRC e digite: /msg %s hello \n
+0x537,OU vá para o IRC e digite: /msg %s hello\n
 0x538,Isso fará com que o bot te reconheça como mestre.
-0x539,USERFILE JÁ EXISTE (solte o '-m')
-0x53a,não é possível escrever para TEMP DIR
-0x53b,Não é possível recarregar o arquivo do usuário!
-0x53c,arquivo de usuário está faltando!
-0x53e,%B (%E) \n\nPor favor,digite seu apelido.\n
+0x539,ARQUIVO DE USUÁRIO JÁ EXISTE (solte o '-m')
+0x53a,NÃO É POSSÍVEL ESCREVER PARA TEMP DIR
+0x53b,Não é possível recarregar o arquivo de usuário!
+0x53c,Arquivo de usuário está faltando!
+0x53e,%B (%E)\n\nPor favor, digite seu apelido.\n
 0x53f,Busca cíclca em logfile %s, sobre max-logsize (%d)
 0x540,\nNome.\n
 0x541,Última mensagem repetida %d vez(es).\n
 0x542,juped
-0x543,sem sockets livres disponíveis.
-0x544,versão Tcl:
+0x543,Sem sockets livres disponíveis.
+0x544,Versão Tcl:
 0x545,versão de cabeçalho
 
 IRC_
 0x600,Banido
 0x601,Você está banido
-0x602,Queria me banir - desavisado.
-0x603,foi divertido,vamos fazer de novo!
+0x602,Queria me banir--desavisado.
+0x603,foi divertido, vamos fazer de novo!
 0x604,Hi
 0x605,Goodbye
-0x606,Você está banido,goober.
-0x607,NOTICE %s: Seu nick foi muito longo e,portanto,foi truncado para '%s'.\n
+0x606,Você está banido, goober.
+0x607,NOTICE %s :Seu nick foi muito longo e, portanto, foi truncado para '%s'.\n
 0x608,Introduzido no
 0x609,site comum
-0x60a,AVISO %s: Oi %s! Sou %s,um bot eggdrop.\n
-0x60b,NOTICE %s: Eu vou reconhecê-lo por hostmask '%s' de agora em diante.\n
-0x60c,Uma vez que você vem de um site comum irc,isso significa que você deve
+0x60a,NOTICE %s :Oi %s! Sou %s, um bot eggdrop.\n
+0x60b,NOTICE %s :Eu vou reconhecê-lo por hostmask '%s' de agora em diante.\n
+0x60c,Uma vez que você vem de um site comum irc, isso significa que você deve
 0x60d,use sempre este apelido quando falar comigo.
 0x60e,VOCÊ É O PROPRIETÁRIO SOBRE ESTE BOT AGORA
-0x60f,instalação do Bot concluída,primeiro mestre é %s
+0x60f,Instalação do bot concluída, primeiro mestre é %s
 0x610,Bem-vindo ao Eggdrop! =]
 0x611,introduzido a %s de %s
 0x612,Você tem uma senha definida.
-0x613,você não tem uma senha definida.
+0x613,Você não tem uma senha definida.
 0x615,Você já tem uma senha definida.
-0x616,use pelo menos 6 caracteres.
+0x616,Use pelo menos 6 caracteres.
 0x617,Senha definida como:
-0x618,senha incorreta.
+0x618,Senha incorreta.
 0x619,Senha alterada para:
-0x61a,Você está em um site comum; Você não pode IDENT.
-0x61b,NOTICE %s: Você não é %s,você é %s.\n
-0x61c,acesso negado.
-0x61d,eu reconheço você lá.
+0x61a,Você está em um site comum; você não pode IDENT.
+0x61b,NOTICE %s :Você não é %s, você é %s.\n
+0x61c,Acesso negado.
+0x61d,Eu reconheço você lá.
 0x61e,Adicionado hostmask
 0x620,Atualmente:
 0x621,Agora:
 0x622,Para removê-lo:
-0x624,sua linha de informações está bloqueada
+0x624,Sua linha de informações está bloqueada
 0x625,Removido sua linha de informação em
 0x626,Removido sua linha de informações.
 0x627,Você não tem nenhuma informação definida em
 0x628,Você não tem conjunto de informações.
-0x629,eu não monitoro esse canal.
+0x629,Eu não monitoro esse canal.
 0x62a,Redefinir as informações do canal.
-0x62b,servidores de salto ...
+0x62b,Saltar servidores...
 0x62c,Channel está atualmente escondido.
 0x62d,Agora no canal
 0x62e,Nunca visto no canal.
-0x62f,Último Visto em
-0x630,eu não te conheço; Por favor,apresente-se primeiro.
-0x631,sem ajuda.
-0x632,nenhuma ajuda disponível sobre isso.
+0x62f,Último visto em
+0x630,Eu não te conheço; por favor, apresente-se primeiro.
+0x631,Sem ajuda.
+0x632,Nenhuma ajuda disponível sobre isso.
 # 0x633 - não utilizado
 0x634,Não nesse canal agora.
 0x635,Voltando ao nick %s
-0x636,o servidor diz que meu apelido é inválido.
-0x637,NICK EM USO: Tentando '\n%s'
+0x636,O servidor diz que meu apelido é inválido.
+0x637,NICK EM USO: Tentando '%s'
 0x638,Não é possível alterar o nickname em %s. Meu nickname foi banido?
 0x639,Nickname foi juped
-0x63a,o canal %s foi jupado. :(
-0x63b,%s diz que eu não estou registrado,tentando o próximo.
-0x63c,O servidor diz que ainda não estamos registados ..
-0x63d,Flood de @% s! Colocando em ignorar!
-0x63f,JOIN inundação de @% s! Banning.
-0x640,Inundação de canal de% s - kicking
-0x641,tentando servidor
-0x642,pesquisa de DNS falhou
+0x63a,O canal %s foi jupado. :(
+0x63b,%s diz que eu não estou registrado, tentando o próximo.
+0x63c,O servidor diz que ainda não estamos registados...
+0x63d,Flood de @%s! Colocando em ignorar!
+0x63f,JOIN inundação de @%s! Banning.
+0x640,Inundação de canal de %s -- kicking
+0x641,Tentando servidor
+0x642,Pesquisa de DNS falhou
 0x643,Falha ao conectar-se a
-0x644,Servidor ficou apedrejado; Pulando
+0x644,Servidor ficou apedrejado; pulando
 0x645,Desconectado de
 0x646,Nenhum servidor atualmente.
-0x647,a fila Modo está em
-0x648,A fila do servidor está em
-0x649,fila de ajuda está em
-# 0x64a - não utilizado
-# 0x64b - não utilizado
+0x647,Fila modo está em
+0x648,Fila do servidor está em
+0x649,Fila de ajuda está em
+0x64a,Vhost set in config can not be used to connect to this address
+0x64b,Vhost set in config is not available on this machine
 0x64c,Canal de processamento
 0x64d,Canal
-0x64e,canal desejando
+0x64e,Canal desejando
 0x64f,Tópico do Canal
-0x650,pendente + o - Estou atrasado
+0x650,pendente +o - Estou atrasado
 0x651,pendente -o - Estou atrasado
 0x652,pendente kick
 0x653,CHANOP FALSIFICADO DADO POR SERVIDOR
 0x654,Fim da informação do canal.
-0x655,pontapé de massa,vá sentar em um canto
-0x656,proibição removida
-0x657,Hmm,informações de modo de um canal que eu não estou
+0x655,pontapé de massa, vá sentar em um canto
+0x656,Proibição removida
+0x657,Hmm, informações de modo de um canal que eu não estou
 0x658,... e obrigado por jogar.
-0x659,Saltar servidores (necessidade% d servidores,apenas% d)
+0x659,Saltar servidores (necessidade %d servidores, apenas %d)
 0x65a,alterando servidores
-0x65b,estou em muitos canais - não posso participar: %s
-0x65c,Canal completo - não pode participar: %s
-0x65d,Apenas canal convidado - não pode participar: %s
-0x65e,Banido do canal - não pode participar: %s
-0x65f,o servidor diz que eu não estou no canal: %s
-0x660,tecla Bad - não pode participar: %s
+0x65b,Estou em muitos canais--não pode participar: %s
+0x65c,Canal completo--não pode participar: %s
+0x65d,Apenas canal convidado--não pode participar: %s
+0x65e,Banido do canal--não pode participar: %s
+0x65f,O servidor diz que eu não estou no canal: %s
+0x660,Tecla bad--não pode participar: %s
 0x661,NOTICE %s :Todos os comandos sao feitos via /MSG. Para a lista completa, /MSG %s help   Cya!\n
 0x662,NOTICE %s :Não te reconheço com essa host.\n
 0x663,NOTICE %s :Ou estás a usar o nick de outra pessoa ou então necessitas de escrever: /MSG %s IDENT (password)\n
@@ -240,7 +240,7 @@ IRC_
 0x66a,Banido:
 0x66b,join flood
 0x66c,não kickes os meus amigos, pah
-0x66d,...e não voltes.
+0x66d,... e não voltes.
 0x66e,Voltando ao nick alternativo %s
 0x66f,não retires op aos meus amigos, pah
 0x670,Removida excepção
@@ -250,12 +250,12 @@ IRC_
 
 # EGG_
 0x700,Uso: eggdrop [opções] [ficheiro-configuração]\n\n\
-Options:\n\
-  -h   help\n\
+Opções:\n\
+  -h   ajuda\n\
   -n   Sem background; envia todas as entradas de log para a consola.\n\
   -nc  Sem background; mostra as estatisticas de canal a cada 10 segundos.\n\
   -nt  Sem background; usa o terminal para simular DCC chat.\n\
-  -m   Cria o userfile.\n\
+  -m   Cria o arquivo de usuário.\n\
   -h   Mostra esta ajuda.\n\
   -v   Mostra a informação da versão, e depois encerra.\n\n
 
@@ -264,9 +264,9 @@ Options:\n\
 0x703,* Aviso! Impossivel criar o ficheiro %s!\n
 
 # USER_
-0x800,(é um op global)
-0x801,(é um bot)
-0x802,(é um master)
+0x800,  (é um op global)
+0x801,  (é um bot)
+0x802,  (é um master)
 
 # CHAN_
 0x900,Esse canal não se encontra definido
@@ -296,7 +296,7 @@ Options:\n\
 0xb1c,Bots ligados
 0xb1d,Outros utilizadores no bot
 0xb1f,Tentando ligar a
-0xb20,Não está online; nota guardada
+0xb20,Não está online; nota guardada.
 0xb21,Caixa de notas cheia, desculpa.
 0xb22,está ausente; nota guardada.
 0xb23,Nota enviada para
@@ -331,7 +331,7 @@ Options:\n\
 0xb42,Desligado de:
 0xb43,Não ligado a esse bot.
 0xb44,Smooshing tabelas de bots e assocs...
-0xb45,não é um bot conhecido
+0xb45,não é um bot conhecido.
 0xb46,Ligação a mim mesmo? Até Freud teria um ataque!
 0xb47,Esse bot já está ligado.
 0xb48,Armazenado endereço:porta inválida para
@@ -385,7 +385,7 @@ Options:\n\
 # BOTNET
 0xe00,Mensagem falsa rejeitada
 0xe01,Ligado a
-0xe02,Bot errado--queria %s,obteve %s
+0xe02,Bot errado--queria %s, obteve %s
 0xe03,saiu do
 0xe04,entrou no
 0xe05,está agora ausente
@@ -427,12 +427,13 @@ Options:\n\
 0xe27,Novo utilizador via telnet: [%s]%s/%d
 0xe28,Perdida ligação telnet de novo utilizador (%s/%d)
 0xe29,Perdida ligação telnet de novo utilizador %s (%s/%d)
-0xe2a,Excedido tempo limite de telnet de novo utilizador:: %s/%d
+0xe2a,Excedido tempo limite de telnet de novo utilizador: %s/%d
 0xe2b,Excedido tempo limite de telnet de novo utilizador: [%s]%s/%d
 0xe2c,Erro de Tcl [%s]: %s
 0xe2d,*** ATENÇÃO: TOMADA INOPERANTE (%d) DO TIPO %s NÃO DESENVOLVIDA
 0xe2e,Ligação perdida durante o processo de identing [%s/%d]
 0xe2f,Tempo limite de conexão/EOF esgotado
 0xe30,Perdida socket telnet aguardando por ident!!
-0xe31,Ligação telnet recusada: %s,Sem Acesso
-0xe32,Ligação telnet recusada de %s (tentou usar o meu nick de botnet)￿
+0xe31,Ligação telnet recusada: %s, Sem Acesso
+0xe32,Ligação telnet recusada de %s (tentou usar o meu nick de botnet)
+0xe33,Lost telnet connection from %s while checking for duplicate
