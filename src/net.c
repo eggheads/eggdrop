@@ -745,13 +745,13 @@ int getdccfamilyaddr(sockname_t *addr, char *s, size_t l, int restrict_af)
     if (IN6_IS_ADDR_V4MAPPED(&r->addr.s6.sin6_addr) ||
         IN6_IS_ADDR_UNSPECIFIED(&r->addr.s6.sin6_addr)) {
       egg_memcpy(&ip, r->addr.s6.sin6_addr.s6_addr + 12, sizeof ip);
-      snprintf(s, l, "%lu", natip[0] ? iptolong(inet_addr(natip)) :
+      egg_snprintf(s, l, "%lu", natip[0] ? iptolong(inet_addr(natip)) :
                ntohl(ip));
     } else
       inet_ntop(AF_INET6, &r->addr.s6.sin6_addr, s, l);
   } else
 #endif
-  snprintf(s, l, "%lu", natip[0] ? iptolong(inet_addr(natip)) :
+  egg_snprintf(s, l, "%lu", natip[0] ? iptolong(inet_addr(natip)) :
              ntohl(r->addr.s4.sin_addr.s_addr));
   return 1;
 }

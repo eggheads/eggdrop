@@ -149,7 +149,7 @@ static char *dns_change(ClientData cdata, Tcl_Interp *irp,
 
     Tcl_DStringInit(&ds);
     for (i = 0; i < _res.nscount; i++) {
-      snprintf(buf, sizeof buf, "%s:%d", iptostr((struct sockaddr *)
+      egg_snprintf(buf, sizeof buf, "%s:%d", iptostr((struct sockaddr *)
                &_res.nsaddr_list[i]), ntohs(_res.nsaddr_list[i].sin_port));
       Tcl_DStringAppendElement(&ds, buf);
     }

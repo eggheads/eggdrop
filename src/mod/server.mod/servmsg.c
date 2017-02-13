@@ -266,7 +266,7 @@ static int check_tcl_out(int which, char *msg, int sent)
   default:
     queue = "noqueue";
   }
-  snprintf(args, sizeof args, "%s %s", queue, sent ? "sent" : "queued");
+  egg_snprintf(args, sizeof args, "%s %s", queue, sent ? "sent" : "queued");
   Tcl_SetVar(interp, "_out1", queue, 0);
   Tcl_SetVar(interp, "_out2", msg, 0);
   Tcl_SetVar(interp, "_out3", sent ? "sent" : "queued", 0);
