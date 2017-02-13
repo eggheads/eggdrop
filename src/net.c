@@ -190,7 +190,7 @@ int setsockname(sockname_t *addr, char *src, int port, int allowres)
     addr->addr.s4.sin_family = AF_INET;
   }
 #else
-  int i, count; 
+  int i, count;
 
   egg_bzero(addr, sizeof(sockname_t));
 
@@ -667,7 +667,7 @@ int getdccaddr(sockname_t *addr, char *s, size_t l)
  * If addr is not NULL, it should point to the listening socket's address.
  * Otherwise, this function will try to figure out the public address of the
  * machine, using listen_ip and natip. If restrict_af is set, it will limit
- * the possible IPs to the specified family. The result is a string useable 
+ * the possible IPs to the specified family. The result is a string useable
  * for DCC requests
  */
 int getdccfamilyaddr(sockname_t *addr, char *s, size_t l, int restrict_af)
@@ -790,6 +790,18 @@ int preparefdset(fd_set *fd, sock_list *slist, int slistmax, int tclonly, int tc
     }
   }
   return foundsocks;
+}
+
+/* A safer version of write() that deals with partial writes. */
+void safe_write(int fd, const char *buf, size_t count)
+{
+  ssize_t ret;
+  do {
+    if ((ret = write(fd, buf, count)) == -1 && errno != EINTR) {
+      putlog(LOG_MISC, "*", "Unexpected write() failure on attempt to write %zd bytes to fd %d: %s.", count, fd, strerror(errno));
+      break;
+    }
+  } while ((buf += ret, count -= ret));
 }
 
 /* Attempts to read from all sockets in slist (upper array boundary slistmax-1)
@@ -1151,7 +1163,7 @@ void tputs(register int z, char *s, unsigned int len)
     return;
 
   if (((z == STDOUT) || (z == STDERR)) && (!backgrd || use_stderr)) {
-    write(z, s, len);
+    safe_write(z, s, len);
     return;
   }
 

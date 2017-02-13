@@ -692,16 +692,17 @@ int readuserfile(char *file, struct userrec **ret)
   noshare = noxtra = 1;
   /* read opening comment */
   s = buf;
-  fgets(s, 180, f);
-  if (s[1] < '4') {
-    fatal(USERF_OLDFMT, 0);
+  if (fgets(s, 180, f) != NULL) {
+    if (s[1] < '4') {
+      fatal(USERF_OLDFMT, 0);
+    }
+    if (s[1] > '4')
+      fatal(USERF_INVALID, 0);
   }
-  if (s[1] > '4')
-    fatal(USERF_INVALID, 0);
-  while (!feof(f)) {
-    s = buf;
-    fgets(s, 511, f);
-    if (!feof(f)) {
+  /* don't check for feof after fgets, skips last line if it has no \n (ie on windows) */
+  while (!feof(f) && fgets(buf, sizeof buf, f) != NULL) {
+      /* for the sake of git blame/history, I'm not re-indenting the next 255 lines*/
+      s = buf;
       if (s[0] != '#' && s[0] != ';' && s[0]) {
         code = newsplit(&s);
         rmspace(s);
@@ -956,7 +957,6 @@ int readuserfile(char *file, struct userrec **ret)
           }
         }
       }
-    }
   }
   fclose(f);
   (*ret) = bu;
