@@ -1,4 +1,22 @@
 #! /bin/sh
+#
+# Copyright (C) 1999-2003 Jeff Fisher (guppy@eggheads.org)
+# Copyright (C) 2004-2016 Eggheads Development Team
+#
+# This program is free software; you can redistribute it and/or
+# modify it under the terms of the GNU General Public License
+# as published by the Free Software Foundation; either version 2
+# of the License, or (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program; if not, write to the Free Software
+# Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+
 # This trick is borrowed from Tothwolf's Wolfpack \
 # Check for working 'grep -E' before using 'egrep' \
 if echo a | (grep -E '(a|b)') >/dev/null 2>&1; \
@@ -38,7 +56,8 @@ exec tclsh$lastver "$0" ${1+"$@"}
 #
 # AutoBotchk - An eggdrop utility to autogenerate botchk/crontab entries
 #
-# Copyright (C) 1999, 2000, 2001, 2002 Jeff Fisher (guppy@eggheads.org)
+# Copyright (C) 1999-2003 Jeff Fisher (guppy@eggheads.org)
+# Copyright (C) 2004-2016 Eggheads Development Team
 #
 # How to use
 # ----------
@@ -66,16 +85,27 @@ exec tclsh$lastver "$0" ${1+"$@"}
 #              directory if being run from the scripts directory.
 #   15Apr2003: cleaned up a few things, fixed a few bugs, and made a little
 #              love! j/k
+#   13Dec2016: add possibility to use multiple confs; fixes for (botnet-)nick
+#              with len > handlen, for (botnet-)nicks with \[ \] and for
+#              $(botnet-)nick used in pidfile, userfile or (botnet-)nick
 #
 
 if {$argc == 0} {
-  puts "\nusage: $argv0 <eggdrop config> \[options\]"
-  puts " -dir     (directory to run autobotchk in)"
-  puts " -noemail (discard crontab e-mails)"
-  puts " -5       (5 minute checks)"
-  puts " -10      (10 minute checks)"
-  puts " -15      (15 minute checks)"
-  puts " -30      (30 minute checks)"
+  puts "\nusage: $argv0 <eggdrop mainconfig> \[options\] \[additional configs\]"
+  puts "Options:"
+  puts "--------"
+  puts "  -dir     (directory to run autobotchk in)"
+  puts "  -noemail (discard crontab e-mails)"
+  puts "  -5       (5 minute checks)"
+  puts "  -10      (10 minute checks)"
+  puts "  -15      (15 minute checks)"
+  puts "  -30      (30 minute checks)"
+  puts ""
+  puts "Additional Configs:"
+  puts "-------------------"
+  puts "  If you source additional configs from your main config and they"
+  puts "  contain either nick, botnet-nick, userfile or pidfile settings,"
+  puts "  list them here so that autobotchk can check in them as well."
   puts ""
   exit
 }
@@ -95,10 +125,12 @@ proc newsplit {text {split " "}} {
   return $tmp
 }
 
-puts "\nautobotchk 1.10, (C) 2003 Jeff Fisher (guppy@eggheads.org)"
+puts "\nautobotchk 1.11, (C) 1999-2003 Jeff Fisher (guppy@eggheads.org)"
+puts "\n                 (C) 2004-2016 Eggheads Development Team"
 puts "------------------------------------------------------------\n"
 
-set config [newsplit argv]
+set mainconf [newsplit argv]
+set confs [list $mainconf]
 set dir [pwd]
 set delay 10
 set email 1
@@ -108,16 +140,16 @@ set binary "eggdrop"
 
 while {[set opt [newsplit argv]] != ""} {
   switch -- $opt {
-   "-time" -
-   "-1" { set delay 1 }
-   "-5" { set delay 5 }
-   "-10" { set delay 10 } 
-   "-15" { set delay 15 }
-   "-20" { set delay 20 }
-   "-30" { set delay 30 }
-   "-nomail" -
-   "-noemail" {set email 0}
-   "-dir" {
+    "-time" -
+    "-1" { set delay 1 }
+    "-5" { set delay 5 }
+    "-10" { set delay 10 }
+    "-15" { set delay 15 }
+    "-20" { set delay 20 }
+    "-30" { set delay 30 }
+    "-nomail" -
+    "-noemail" {set email 0}
+    "-dir" {
       set dir [newsplit argv]
       if {[string match -* $dir]} {
         puts "*** ERROR: you did not supply a directory name"
@@ -129,6 +161,10 @@ while {[set opt [newsplit argv]] != ""} {
         puts ""
         exit
       }
+    }
+    default {
+      # Treat as extra config file
+      if {[file isfile $opt] && [file readable $opt]} { lappend confs $opt }
     }
   }
 }
@@ -158,53 +194,51 @@ if {![file exists $dir/help] || ![file isdirectory $dir/help]} {
   exit
 }
 
-puts -nonewline "Opening '$config' for processing ... "
+foreach config $confs {
+  puts -nonewline "Opening '$config' for processing ... "
 
-if {[catch {open $dir/$config r} fd]} {
-  puts "error:"
-  puts "  $fd\n"
-  exit
-} else {
-  puts "done"
-}
-
-set count 0
-puts -nonewline "Scanning the config file "
-
-while {![eof $fd]} {
-  incr count
-  if {$count == 100} {
-    puts -nonewline "."
-    set count 0
+  if {[catch {open $dir/$config r} fd]} {
+    puts "error:"
+    puts "  $fd\n"
+    exit
+  } else {
+    puts "done"
   }
-  set line [gets $fd]
-  if {[set blarg [newsplit line]] != "set"} {
-    continue
-  }
-  switch -- [set opt [newsplit line]] {
-    "pidfile" -
-    "nick" -
-    "userfile" -
-    "botnet-nick" {
-      set $opt [string trim [newsplit line] " \""]
+
+  set count 0
+  puts -nonewline "Scanning the config file "
+
+  while {![eof $fd]} {
+    incr count
+    if {$count == 100} {
+      puts -nonewline "."
+      set count 0
+    }
+    set line [gets $fd]
+    if {[set blarg [newsplit line]] != "set"} {
+      continue
+    }
+    switch -- [set opt [newsplit line]] {
+      "pidfile" -
+      "nick" -
+      "userfile" -
+      "botnet-nick" {
+        set $opt [string trim [newsplit line] " \"{}"]
+      }
     }
   }
-}
-close $fd
+  close $fd
 
-if {$count != 0} {
-  puts -nonewline "."
-}
+  if {$count != 0} {
+    puts -nonewline "."
+  }
 
-puts " done"
+  puts " done"
+}
 
  if {![info exists {botnet-nick}] && [info exists nick]} {
   puts "  Defaulting \$botnet-nick to \"$nick\""
   set botnet-nick $nick
- }
- if {![info exists pidfile]} {
-  puts "  Defaulting \$pidfile to \"pid.${botnet-nick}\""
-  set pidfile "pid.${botnet-nick}"
  }
  if {![info exists {botnet-nick}] || ![info exists userfile]} {
   puts "  *** ERROR: could not find either \$userfile or \$botnet-nick"
@@ -213,6 +247,20 @@ puts " done"
   puts ""
   exit
  }
+ if {![regexp {handlen=([0-9]+)} "[exec "$dir/$binary" -v]" -> handlen]} {
+  puts "  Could not find handlen used, defaulting to 32."
+  # len 32 means up to index 31
+  set handlen 31
+ } else {
+  set handlen [expr $handlen - 1]
+ }
+ set nick [string range [subst -nocommands $nick] 0 $handlen]
+ set botnet-nick [string range [subst -nocommands ${botnet-nick}] 0 $handlen]
+ if {![info exists pidfile]} {
+  puts "  Defaulting \$pidfile to \"pid.${botnet-nick}\""
+  set pidfile "pid.${botnet-nick}"
+ }
+ set pidfile [subst -nocommands $pidfile]
  if {[catch {open $dir/${botnet-nick}.botchk w} fd]} {
   puts "  *** ERROR: unable to open '${botnet-nick}.botchk' for writing"
   puts ""
@@ -222,15 +270,16 @@ puts " done"
 #
 # ${botnet-nick}.botchk (generated on [clock format [clock seconds] -format "%B %d, %Y @ %I:%M%p"])
 #
-# Generated by AutoBotchk 1.10
-# Copyright (C) 1999, 2000, 2001, 2002, 2003 Jeff Fisher <guppy@eggheads.org>
+# Generated by AutoBotchk 1.11
+# Copyright (C) 1999-2003 Jeff Fisher (guppy@eggheads.org)
+# Copyright (C) 2004-2016 Eggheads Development Team
 #
 
 # change this to the directory you run your bot from:
 botdir=\"$dir\"
 
 # change this to the name of your bot's script in that directory:
-botscript=\"$binary $config\"
+botscript=\"$binary $mainconf\"
 
 # change this to the nickname of your bot (capitalization COUNTS)
 botname=\"${botnet-nick}\"
@@ -318,12 +367,13 @@ exit 0
   exit
  }
  puts -nonewline "Scanning crontab entries ... "
- 
+
 set tmp ".autobotchk[clock clicks].[pid]"
+set cronbotchk [string map {\\ \\\\ \[ \\\[ \] \\\]} "${botnet-nick}.botchk"]
 if {$email} {
-  set line "$minutes \* \* \* \* $dir/${botnet-nick}.botchk"
+  set line "$minutes \* \* \* \* $dir/${cronbotchk}"
 } {
-  set line "$minutes \* \* \* \* $dir/${botnet-nick}.botchk >\/dev\/null 2>&1"
+  set line "$minutes \* \* \* \* $dir/${cronbotchk} >\/dev\/null 2>&1"
 }
 
 if {[catch {exec crontab -l > $tmp} error ]} {
@@ -338,11 +388,12 @@ if {[catch {exec crontab -l > $tmp} error ]} {
   }
 }
 
+set cronbotchk [string map {\\ \\\\ \[ \\\[ \] \\\]} "${cronbotchk}"]
 set fd [open $tmp r]
 while {![eof $fd]} {
   set z [gets $fd]
-  if {[string match "*$dir/${botnet-nick}.botchk*" $z] ||
-      [string match "*$dir//${botnet-nick}.botchk*" $z]} {
+  if {[string match "*$dir/${cronbotchk}*" $z] ||
+      [string match "*$dir//${cronbotchk}*" $z]} {
     puts "found an existing entry, we're done now"
     puts ""
     exit
