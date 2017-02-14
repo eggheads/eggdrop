@@ -140,6 +140,12 @@ echo "Regenerating ChangeLog file..."
 regenerate_changelog $LASTVER
 echo ""
 
+# Commit ChangeLog to develop branch before proceeding
+# (otherwise it never gets done!)
+git add ChangeLog
+git commit -m "Update ChangeLog"
+git push origin develop
+
 # Change default make from "debug" to "eggdrop"...
 echo -n "Changing default make..."
 change_default_make
