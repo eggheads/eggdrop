@@ -1509,7 +1509,7 @@ static int ctcp_DCC_CHAT(char *nick, char *from, char *handle,
   struct userrec *u = get_user_by_handle(userlist, handle);
   struct flag_record fr = { FR_GLOBAL | FR_CHAN | FR_ANYWH, 0, 0, 0, 0, 0 };
 
-  strcpy(msg, text);
+  strncpyz(buf, text, sizeof buf);
   action = newsplit(&msg);
   param = newsplit(&msg);
   ip = newsplit(&msg);
@@ -1601,11 +1601,11 @@ static void dcc_chat_hostresolved(int i)
   buf[0] = 0;
   dcc[i].sock = getsock(dcc[i].sockname.family, 0);
   if (dcc[i].sock < 0 || open_telnet_raw(dcc[i].sock, &dcc[i].sockname) < 0)
-    snprintf(buf, sizeof buf, "%s", strerror(errno));
+    egg_snprintf(buf, sizeof buf, "%s", strerror(errno));
 #ifdef TLS
   else if (dcc[i].ssl && ssl_handshake(dcc[i].sock, TLS_CONNECT, tls_vfydcc,
                                        LOG_MISC, dcc[i].host, &dcc_chat_sslcb))
-    snprintf(buf, sizeof buf, "TLS negotiation error");
+    egg_snprintf(buf, sizeof buf, "TLS negotiation error");
 #endif
   if (buf[0]) {
     if (!quiet_reject)
@@ -1673,7 +1673,7 @@ static void server_5minutely()
 
 static void server_prerehash()
 {
-  strcpy(oldnick, botname);
+  strncpyz(oldnick, botname, sizeof oldnick);
 }
 
 static void server_postrehash()

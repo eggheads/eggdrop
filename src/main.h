@@ -30,6 +30,10 @@
 
 #include "lush.h"
 
+#ifndef TCL_PATCH_LEVEL
+#  define TCL_PATCH_LEVEL "*unknown*"
+#endif
+
 #if defined(HAVE_TCL_NOTIFIER_INIT)
 #  define REPLACE_NOTIFIER
 #endif

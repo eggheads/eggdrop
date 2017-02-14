@@ -868,6 +868,10 @@ static int tcl_connect STDVAR
   }
 
   i = new_dcc(&DCC_SOCKET, 0);
+  if (i < 0) {
+    Tcl_AppendResult(irp, "Could not allocate socket.", NULL);
+    return TCL_ERROR;
+  }
   sock = open_telnet(i, argv[1], atoi(argv[2]));
   if (sock < 0) {
     switch (sock) {

@@ -702,7 +702,7 @@ static void dcc_chat_pass(int idx, char *buf, int atr)
       if (dcc[idx].status & STAT_TELNET)
         tputs(dcc[idx].sock, TLN_IAC_C TLN_WONT_C TLN_ECHO_C "\n", 4);
       dcc[idx].user = get_user_by_handle(userlist, dcc[idx].u.chat->away);
-      strcpy(dcc[idx].nick, dcc[idx].u.chat->away);
+      strncpyz(dcc[idx].nick, dcc[idx].u.chat->away, sizeof dcc[idx].nick);
       nfree(dcc[idx].u.chat->away);
       nfree(dcc[idx].u.chat->su_nick);
       dcc[idx].u.chat->away = NULL;
@@ -1055,7 +1055,7 @@ static void dcc_chat(int idx, char *buf, int i)
           if (dcc[idx].u.chat->su_nick) {
             dcc[idx].user = get_user_by_handle(userlist,
                                                dcc[idx].u.chat->su_nick);
-            strcpy(dcc[idx].nick, dcc[idx].u.chat->su_nick);
+            strncpyz(dcc[idx].nick, dcc[idx].u.chat->su_nick, sizeof dcc[idx].nick);
             dcc[idx].type = &DCC_CHAT;
             dprintf(idx, "Returning to real nick %s!\n",
                     dcc[idx].u.chat->su_nick);
@@ -1173,7 +1173,7 @@ static int detect_telnet_flood(char *floodhost)
   if (!flood_telnet_thr || (glob_friend(fr) && !par_telnet_flood))
     return 0;                   /* No flood protection */
   if (egg_strcasecmp(lasttelnethost, floodhost)) {      /* New... */
-    strcpy(lasttelnethost, floodhost);
+    strncpyz(lasttelnethost, floodhost, sizeof lasttelnethost);
     lasttelnettime = now;
     lasttelnets = 0;
     return 0;
@@ -1567,7 +1567,7 @@ static void dcc_telnet_id(int idx, char *buf, int atr)
     return;
   }
   correct_handle(buf);
-  strcpy(dcc[idx].nick, buf);
+  strncpyz(dcc[idx].nick, buf, sizeof dcc[idx].nick);
   if (glob_bot(fr)) {
     if (!egg_strcasecmp(botnetnick, dcc[idx].nick)) {
       dprintf(idx, "error You cannot link using my botnetnick.\n");
@@ -1733,7 +1733,7 @@ static void dcc_telnet_pass(int idx, int atr)
     /* Turn off remote telnet echo (send IAC WILL ECHO). */
     if (dcc[idx].status & STAT_TELNET) {
       char buf[1030];
-      snprintf(buf, sizeof buf, "\n%s%s\r\n", escape_telnet(DCC_ENTERPASS),
+      egg_snprintf(buf, sizeof buf, "\n%s%s\r\n", escape_telnet(DCC_ENTERPASS),
                TLN_IAC_C TLN_WILL_C TLN_ECHO_C);
       tputs(dcc[idx].sock, buf, strlen(buf));
     } else

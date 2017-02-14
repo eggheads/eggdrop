@@ -665,7 +665,7 @@ static struct resolve *findip(IP ip)
 
 void ptrstring4(IP *ip, char *buf, size_t sz)
 {
-  snprintf(buf, sz, "%u.%u.%u.%u.in-addr.arpa",
+  egg_snprintf(buf, sz, "%u.%u.%u.%u.in-addr.arpa",
            ((u_8bit_t *) ip)[3],
            ((u_8bit_t *) ip)[2],
            ((u_8bit_t *) ip)[1],

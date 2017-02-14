@@ -569,7 +569,7 @@ void write_userfile(int idx)
 
   sort_userlist();
   tt = now;
-  strcpy(s1, ctime(&tt));
+  strncpyz(s1, ctime(&tt), sizeof s1);
   fprintf(f, "#4v: %s -- %s -- written %s", ver, botnetnick, s1);
   ok = 1;
   for (u = userlist; u && ok; u = u->next)

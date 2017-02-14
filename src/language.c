@@ -148,8 +148,7 @@ static int del_lang(char *lang)
         lpo->next = lp->next;
       else
         langpriority = lp->next;
-      if (lp->lang)
-        nfree(lp->lang);
+      nfree(lp->lang);
       nfree(lp);
       debug1("LANG: Language unloaded: %s", lang);
       return 1;
@@ -536,7 +535,7 @@ static int cmd_languagedump(struct userrec *u, int idx, char *par)
       sscanf(par, "%x", &idx2);
     else
       idx2 = (int) strtol(par, (char **) NULL, 10);
-    strcpy(ltext2, get_language(idx2));
+    strncpyz(ltext2, get_language(idx2), sizeof ltext2);
     dprintf(idx, "0x%x: %s\n", idx2, ltext2);
     return 0;
   }

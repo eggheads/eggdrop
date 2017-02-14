@@ -58,6 +58,7 @@ void bot_share(int, char *);
 int base64_to_int(char *);
 
 /* botnet.c */
+void set_botnetnick(const char *);
 void answer_local_whom(int, int);
 char *lastbot(char *);
 int nextbot(char *);

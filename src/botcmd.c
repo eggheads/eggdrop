@@ -123,7 +123,7 @@ static void bot_chan2(int idx, char *msg)
     *p = 0;
   p = strchr(from, '@');
   if (p) {
-    snprintf(TBUF, sizeof(TBUF), "<%s> %s", from, msg);
+    egg_snprintf(TBUF, sizeof(TBUF), "<%s> %s", from, msg);
     *p = 0;
     if (!partyidle(p + 1, from)) {
       *p = '@';
@@ -954,7 +954,7 @@ static void bot_thisbot(int idx, char *par)
   noshare = 1;
   change_handle(dcc[idx].user, par);
   noshare = 0;
-  strcpy(dcc[idx].nick, par);
+  strncpyz(dcc[idx].nick, par, sizeof dcc[idx].nick);
 }
 
 static void bot_handshake(int idx, char *par)
