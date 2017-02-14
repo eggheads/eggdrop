@@ -238,9 +238,12 @@ static void read_lang(char *langfile)
         lskip = 1;
       }
       if (lskip) {
-        while (!strchr(lbuf, '\n')) {
-          fgets(lbuf, 511, FLANG);
+        while (!strchr(lbuf, '\n') && fgets(lbuf, 511, FLANG) != NULL) {
           lline++;
+        }
+        /* fgets == NULL means error or empty file, so check for error */
+        if (ferror(FLANG)) {
+          putlog(LOG_MISC, "*", "LANG: Error reading lang file.");
         }
         lline++;
         lnew = 1;

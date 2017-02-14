@@ -1108,16 +1108,20 @@ int main(int arg_c, char **arg_v)
   /* Check for pre-existing eggdrop! */
   f = fopen(pid_file, "r");
   if (f != NULL) {
-    fgets(s, 10, f);
-    xx = atoi(s);
-    i = kill(xx, SIGCHLD);      /* Meaningless kill to determine if pid
-                                 * is used */
-    if (i == 0 || errno != ESRCH) {
-      printf(EGG_RUNNING1, botnetnick);
-      printf(EGG_RUNNING2, pid_file);
-      bg_send_quit(BG_ABORT);
-      exit(1);
+    if (fgets(s, 10, f) != NULL) {
+      xx = atoi(s);
+      i = kill(xx, SIGCHLD);      /* Meaningless kill to determine if pid
+                                   * is used */
+      if (i == 0 || errno != ESRCH) {
+        printf(EGG_RUNNING1, botnetnick);
+        printf(EGG_RUNNING2, pid_file);
+        bg_send_quit(BG_ABORT);
+        exit(1);
+      }
+    } else {
+      printf("Error checking for existing Eggdrop process.\n");
     }
+    fclose(f);
   }
 
   /* Move into background? */
@@ -1152,9 +1156,15 @@ int main(int arg_c, char **arg_v)
     setpgid(0, 0);
 #endif
     /* Tcl wants the stdin, stdout and stderr file handles kept open. */
-    freopen("/dev/null", "r", stdin);
-    freopen("/dev/null", "w", stdout);
-    freopen("/dev/null", "w", stderr);
+    if (freopen("/dev/null", "r", stdin) == NULL) {
+      putlog(LOG_MISC, "*", "Error renaming stdin file handle: %s", strerror(errno));
+    }
+    if (freopen("/dev/null", "w", stdout) == NULL) {
+      putlog(LOG_MISC, "*", "Error renaming stdout file handle: %s", strerror(errno));
+    }
+    if (freopen("/dev/null", "w", stderr) == NULL) {
+      putlog(LOG_MISC, "*", "Error renaming stderr file handle: %s", strerror(errno));
+    }
 #ifdef CYGWIN_HACKS
     FreeConsole();
 #endif

@@ -292,6 +292,7 @@ int sock_has_data(int, int);
 int sockoptions(int sock, int operation, int sock_options);
 int flush_inbuf(int idx);
 int findsock(int sock);
+void safe_write(int, const char *, size_t);
 
 /* tcl.c */
 struct threaddata *threaddata();
