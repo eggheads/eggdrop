@@ -793,15 +793,16 @@ int preparefdset(fd_set *fd, sock_list *slist, int slistmax, int tclonly, int tc
 }
 
 /* A safer version of write() that deals with partial writes. */
-void safe_write(int fd, const char *buf, size_t count)
+void safe_write(int fd, const void *buf, size_t count)
 {
+  const char *bytes = buf;
   ssize_t ret;
   do {
-    if ((ret = write(fd, buf, count)) == -1 && errno != EINTR) {
+    if ((ret = write(fd, bytes, count)) == -1 && errno != EINTR) {
       putlog(LOG_MISC, "*", "Unexpected write() failure on attempt to write %zd bytes to fd %d: %s.", count, fd, strerror(errno));
       break;
     }
-  } while ((buf += ret, count -= ret));
+  } while ((bytes += ret, count -= ret));
 }
 
 /* Attempts to read from all sockets in slist (upper array boundary slistmax-1)
