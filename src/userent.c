@@ -775,10 +775,10 @@ int xtra_set(struct userrec *u, struct user_entry *e, void *buf)
     egg_list_delete(&e->u.list, (struct list_type *) old);
     nfree(old->key);
     nfree(old->data);
-    nfree(old);
-    if (old == e->u.extra) {
+    if (old == e->u.extra)
       e->u.extra = NULL;
-    }
+    nfree(old);
+    old = NULL;
   }
   /* don't do anything when old == new */
   if (old != new) {
