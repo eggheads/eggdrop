@@ -1,2148 +1,139 @@
 - - - - - - - - - - - - - - -
-Commit 6315d7a (2016-11-01 19:06:05 -0400) by Geo
-Don't create _sources doc dir 
+Commit 6bc613a (2017-02-17 18:37:12 +0100) by thommey
+Fix safe_write prototype to equal write. 
 
-misc/generateDocs
-
-- - - - - - - - - - - - - - -
-Commit 69c0546 (2016-11-01 18:51:50 -0400) by Geo
-Update ChangeLog 
-
-ChangeLog
+src/net.c
+src/proto.h
 
 - - - - - - - - - - - - - - -
-Commit 9a669cf (2016-11-01 18:51:27 -0400) by Geo
-Push tags as part of releaseprep 
-
-misc/releaseprep
-
-- - - - - - - - - - - - - - -
-Commit 9e1f329 (2016-11-01 18:49:33 -0400) by Geo
-Update doc/Changes1.8 
-
-doc/Changes1.8
-
-- - - - - - - - - - - - - - -
-Commit 7f5c04f (2016-11-01 18:19:08 -0400) by Geo
-Commit ChangeLog in releaseprep if changed 
-
-ChangeLog
-aclocal.m4
-configure
-doc/html/objects.inv
-doc/html/searchindex.js
-misc/releaseprep
-src/patch.h
-
-- - - - - - - - - - - - - - -
-Commit becf7dd (2016-11-01 18:13:32 -0400) by Geo
-Update version in Changes1.8 
-
-doc/Changes1.8
-
-- - - - - - - - - - - - - - -
-Commit fc56390 (2016-11-01 17:41:21 -0400) by Geo
-Add Cygwin compile section to INSTALL docs 
-
-INSTALL
-doc/html/_sources/ABOUT.txt
-doc/html/_sources/BANS.txt
-doc/html/_sources/BOTNET.txt
-doc/html/_sources/COMPILE-GUIDE.txt
-doc/html/_sources/INSTALL.txt
-doc/html/_sources/KNOWN-PROBLEMS.txt
-doc/html/_sources/README.txt
-doc/html/_sources/TEXT-SUBSTITUTIONS.txt
-doc/html/_sources/TRICKS.txt
-doc/html/_sources/WEIRD-MESSAGES.txt
-doc/html/_sources/appendices/first-script.txt
-doc/html/_sources/appendices/index.txt
-doc/html/_sources/appendices/known-probs.txt
-doc/html/_sources/appendices/text-sub.txt
-doc/html/_sources/appendices/tricks.txt
-doc/html/_sources/appendices/weird-msg.txt
-doc/html/_sources/appendices/weird-msgs.txt
-doc/html/_sources/coreDocs/assoc.txt
-doc/html/_sources/coreDocs/blowfish.txt
-doc/html/_sources/coreDocs/channels.txt
-doc/html/_sources/coreDocs/compress.txt
-doc/html/_sources/coreDocs/console.txt
-doc/html/_sources/coreDocs/core.txt
-doc/html/_sources/coreDocs/ctcp.txt
-doc/html/_sources/coreDocs/dns.txt
-doc/html/_sources/coreDocs/filesys.txt
-doc/html/_sources/coreDocs/index.txt
-doc/html/_sources/coreDocs/irc.txt
-doc/html/_sources/coreDocs/modules.txt
-doc/html/_sources/coreDocs/notes.txt
-doc/html/_sources/coreDocs/seen.txt
-doc/html/_sources/coreDocs/server.txt
-doc/html/_sources/coreDocs/share.txt
-doc/html/_sources/coreDocs/transfer.txt
-doc/html/_sources/coreDocs/uptime.txt
-doc/html/_sources/coreDocs/woobie.txt
-doc/html/_sources/index.txt
-doc/html/_sources/installAndSetup/faq.txt
-doc/html/_sources/installAndSetup/index.txt
-doc/html/_sources/installAndSetup/install.txt
-doc/html/_sources/installAndSetup/readme.txt
-doc/html/_sources/mainDocs/about.txt
-doc/html/_sources/mainDocs/bans.txt
-doc/html/_sources/mainDocs/botnet.txt
-doc/html/_sources/mainDocs/features.txt
-doc/html/_sources/mainDocs/index.txt
-doc/html/_sources/mainDocs/ipv6.txt
-doc/html/_sources/mainDocs/partyline.txt
-doc/html/_sources/mainDocs/patch.txt
-doc/html/_sources/mainDocs/tcl-commands.txt
-doc/html/_sources/mainDocs/tls.txt
-doc/html/_sources/mainDocs/users.txt
-doc/html/_sources/tcl-commands.txt
-doc/html/_sources/toc_installAndSetup.txt
-doc/html/index.html
-doc/html/installAndSetup/index.html
-doc/html/installAndSetup/install.html
-doc/html/objects.inv
-doc/html/search.html
-doc/html/searchindex.js
-doc/sphinx_source/installAndSetup/install.rst
-
-- - - - - - - - - - - - - - -
-Commit 9c0fc90 (2016-11-01 14:05:07 +0100) by thommey
-Use -pthread for threaded Tcl on OpenBSD, fixes #295. 
-* Use -pthread for OpenBSD linking, found in TCL_EXTRA_CFLAGS in
-tclConfig.sh.
-
-* Run autotools.
-
-* Update changelog.
-
-* Add -pthread to cflags instead of shared module linker.
-
-* Run autotools.
-
-* Fix typo.
-
-* Run autotools.
-
-* Add linker flag to where it is being used.
-
-* Run autotools.
-
-aclocal.m4
-configure
-doc/Changes1.8
-src/mod/compress.mod/configure
-src/mod/dns.mod/configure
-
-- - - - - - - - - - - - - - -
-Commit bb5fb02 (2016-10-31 17:30:14 -0400) by Geo
-Update THANKS file 
-
-THANKS
-doc/Changes1.8
-
-- - - - - - - - - - - - - - -
-Commit 3d44182 (2016-10-28 18:12:54 +0200) by thommey
-Run autotools. 
-
-configure
-src/mod/compress.mod/configure
-src/mod/dns.mod/configure
-
-- - - - - - - - - - - - - - -
-Commit cdd012a (2016-10-28 17:51:22 +0200) by thommey
-Trim version numbers from tcllib names like libtcl8.5.so.1.7. 
-
-aclocal.m4
-doc/Changes1.8
-
-- - - - - - - - - - - - - - -
-Commit 2f98259 (2016-10-28 17:18:50 +0200) by thommey
-Use cc -shared for linking on BSD. 
-
-aclocal.m4
-doc/Changes1.8
-
-- - - - - - - - - - - - - - -
-Commit 63aaa90 (2016-10-28 16:07:05 +0200) by thommey
-Work around some incompatibilies between gnu make 3.82 and 4.x. 
-
-Makefile.in
-doc/Changes1.8
-
-- - - - - - - - - - - - - - -
-Commit 0f4bbd1 (2016-10-27 21:19:25 -0500) by Geo
-Fix out-of-bounds read error (#292). Fixes #200 
-Patch by: thommey, Geo / Found by: Robby
-doc/Changes1.8
-src/mod/dns.mod/coredns.c
-
-- - - - - - - - - - - - - - -
-Commit 711bf7f (2016-10-27 20:08:06 -0500) by Geo
-Clear channel modes on disconnect (#279) 
-Patch by: Geo, thommey / Found by: thommey
- nuke_server() calls reset_chan_info(), which clears channel modes and then
-re-requests them, which is the point of the function. However, because the
-server connection has already been killed, chan->status is set to
-CHAN_ASKEDBANS and thus doesn't re-request the banlist from the server
-when it finally does rejoin. By setting to clear_chan, the list is just
-cleared and the banlist properly requested from the IRC server on join.
-doc/Changes1.8
-src/mod/server.mod/servmsg.c
-
-- - - - - - - - - - - - - - -
-Commit 3a9a7be (2016-10-27 19:53:39 -0500) by Geo
-Ensure Makefile works with both BSDand GNU make (#291). Fixes #272 
-Patch by: thommey / Found by: Geo
-
-* Adding -f to readlink in Makefile because the destination path usually
-does not exist.
-Makefile.in
-doc/Changes1.8
-
-- - - - - - - - - - - - - - -
-Commit 829084a (2016-10-25 18:25:43 +0200) by thommey
-Fix commit hash for last commit, I meant 618ecbf9. 
-
-doc/Changes1.8
-
-- - - - - - - - - - - - - - -
-Commit 8ad1bc0 (2016-10-25 18:19:43 +0200) by thommey
-Fix formatting bug in 49df122, MISC_LOGREPEAT contains a format specifier. 
-
-doc/Changes1.8
-src/misc.c
-
-- - - - - - - - - - - - - - -
-Commit a4353e5 (2016-10-20 18:56:49 +0200) by thommey
-Increase memory table size for memory debugging by factor 10. 
-
-doc/Changes1.8
-src/mem.c
-
-- - - - - - - - - - - - - - -
-Commit a059d84 (2016-10-13 19:33:23 -0400) by Geo
-Update THANKS file 
-
-THANKS
-
-- - - - - - - - - - - - - - -
-Commit 14f9f6a (2016-10-13 18:38:04 -0400) by Geo
-Add RC1 release date to Changelog 
-
-doc/Changes1.8
-
-- - - - - - - - - - - - - - -
-Commit f6292e3 (2016-10-13 17:47:41 +0200) by thommey
-Update patch description, while we are still using it. 
+Commit b8c1e42 (2017-02-17 08:23:56 +0100) by Cizzle
+Don't use pointer after freeing w/o explicit setting to NULL. 
 
 src/patch.h
+src/userent.c
 
 - - - - - - - - - - - - - - -
-Commit 306bfe3 (2016-10-13 17:47:02 +0200) by thommey
-Fix compile warnings. 
-
-doc/Changes1.8
+Commit afdd3a5 (2017-02-13 21:06:31 -0600) by Geo
+Variety of long-needed code clean-up & fixes (coverity branch) 
+* Tons of small fixes, return value checks, etc
+* Move logfile_suffix declaration to misc.c.
+* Set botnetnick through accessor function so its size is known.
+* Avoid repetition and alter u_addinvite and u_addban as well.
+* Clean up TCL_PATCH_LEVEL usage.
+src/botcmd.c
 src/botnet.c
-src/mem.c
-src/mod/filesys.mod/files.c
-src/mod/share.mod/share.c
-src/mod/share.mod/uf_features.c
-
-- - - - - - - - - - - - - - -
-Commit 9557c38 (2016-10-13 00:19:46 -0400) by Geo
-Update Changelog 
-
-doc/Changes1.8
-
-- - - - - - - - - - - - - - -
-Commit 21816ec (2016-10-03 22:01:49 -0400) by Geo
-Update x-compile Makefile changes to POSIX. Fixes #273 Patch by: Geo 
-
-Makefile.in
-
-- - - - - - - - - - - - - - -
-Commit 9878939 (2016-10-12 23:44:58 -0400) by Geo
-Update Changelog 
-
-doc/Changes1.8
-
-- - - - - - - - - - - - - - -
-Commit 321c219 (2016-10-13 03:00:43 +0200) by Christophe Beauval
-Reset channel information on disconnect properly. 
-This fixes two instances missing in cc7240, in the fix for #218. Closes
-#275.
-
-doc/Changes1.8
-src/mod/server.mod/servmsg.c
-
-- - - - - - - - - - - - - - -
-Commit d953721 (2016-10-12 19:01:52 +0200) by thommey
-Fix a bug from the Tcl interp result transition. 
-
-doc/Changes1.8
+src/chanprog.c
 src/cmds.c
-
-- - - - - - - - - - - - - - -
-Commit 09dd276 (2016-10-10 22:41:29 -0400) by Geo
-Update Changelog 
-
-doc/Changes1.8
-
-- - - - - - - - - - - - - - -
-Commit 57419b9 (2016-10-04 15:59:43 -0400) by Geo
-Run autotools 
-
-configure
-doc/Changes1.8
-src/mod/compress.mod/configure
-src/mod/dns.mod/configure
-
-- - - - - - - - - - - - - - -
-Commit eafc49d (2016-10-04 15:57:50 -0400) by Geo
-Update tcl.m4 (Adds NetBSD tclConfig.sh path). Fixes #175 Patch by:
-thommey,Geo / Found by: fhorst 
-
-doc/Changes1.8
-tcl.m4
-
-- - - - - - - - - - - - - - -
-Commit 4a21b5a (2016-10-03 21:06:03 +0200) by thommey
-Update INSTALL. 
-
-INSTALL
-
-- - - - - - - - - - - - - - -
-Commit 2f316eb (2016-10-03 16:03:02 +0200) by thommey
-Revert "Add byte-based flood option", we will re-add it at a later point.
-It's not how we want it to be right now. 
-This reverts commit cfdf0ec1a01979ffaa694c93f764609e429ff13b.
-
-doc/Changes1.8
-eggdrop.conf
-src/chan.h
-src/eggdrop.h
+src/dcc.c
+src/language.c
+src/main.c
+src/main.h
+src/mem.c
+src/misc.c
 src/mod/channels.mod/channels.c
 src/mod/channels.mod/cmdschan.c
-src/mod/channels.mod/tclchan.c
-src/mod/irc.mod/chan.c
-src/mod/irc.mod/irc.h
-src/mod/irc.mod/mode.c
-
-- - - - - - - - - - - - - - -
-Commit 20b7479 (2016-10-02 20:37:44 -0400) by Geo
-Update Changes1.8 Patch by: Geo 
-
-doc/Changes1.8
-
-- - - - - - - - - - - - - - -
-Commit 867f4bb (2016-10-02 20:33:20 -0400) by Geo
-Remove duplicate uppercase doc filenames. Fixes #270 Patch by: Geo / Found
-by: jackal^ 
-
-doc/html/_sources/installAndSetup/INSTALL.txt
-doc/html/_sources/installAndSetup/README.txt
-doc/html/_sources/mainDocs/TLS.txt
-doc/html/installAndSetup/INSTALL.html
-doc/html/installAndSetup/README.html
-doc/html/mainDocs/TLS.html
-
-- - - - - - - - - - - - - - -
-Commit a858678 (2016-10-02 21:04:01 +0200) by thommey
-Squelsh error message on misc/runautotools if git is not found. 
-
-misc/getcommit
-
-- - - - - - - - - - - - - - -
-Commit 393e6ad (2016-10-02 17:33:54 +0200) by thommey
-Run autotools. 
-
-configure
-src/mod/compress.mod/configure
-src/mod/dns.mod/configure
-
-- - - - - - - - - - - - - - -
-Commit d2371c3 (2016-10-02 17:33:42 +0200) by thommey
-Use Tcl linker suggestion when using Tcl ldflags for them to be compatible.
-
-
-aclocal.m4
-
-- - - - - - - - - - - - - - -
-Commit 18fc31c (2016-10-02 17:27:00 +0200) by thommey
-Fix compile warning about potentially signed char as array subscript. 
-
-doc/Changes1.8
-src/tls.c
-
-- - - - - - - - - - - - - - -
-Commit 885b4e5 (2016-10-02 17:15:41 +0200) by thommey
-Run autotools. 
-
-configure
-src/mod/compress.mod/configure
-src/mod/dns.mod/configure
-
-- - - - - - - - - - - - - - -
-Commit 962c542 (2016-10-02 16:13:33 +0200) by thommey
-Include -lz for Tcl >= 8.6 if not autoconfigured via tclConfig.sh. 
-
-aclocal.m4
-
-- - - - - - - - - - - - - - -
-Commit c9bff21 (2016-10-02 16:06:30 +0200) by thommey
-Update .gitignore some more. 
-
-.gitignore
-
-- - - - - - - - - - - - - - -
-Commit 5a625d2 (2016-10-02 16:01:26 +0200) by thommey
-Update .gitignore. 
-
-.gitignore
-
-- - - - - - - - - - - - - - -
-Commit f11ce2c (2016-10-01 17:51:02 +0200) by thommey
-Fix cygwin windows.h inclusion. 
-
-src/main.c
-
-- - - - - - - - - - - - - - -
-Commit 74398d3 (2016-10-01 17:50:26 +0200) by thommey
-Revert "Remove windows.h including, and instead provide our own
-FreeConsole() prototype." 
-This reverts commit 28301664dd303d35563714a160b9bc7c9f6848eb.
-
-src/main.c
-
-- - - - - - - - - - - - - - -
-Commit becc096 (2016-10-01 11:56:03 +0200) by thommey
-Run autotools. 
-
-configure
-src/mod/compress.mod/configure
-src/mod/dns.mod/configure
-
-- - - - - - - - - - - - - - -
-Commit b3a0f63 (2016-10-01 11:55:44 +0200) by thommey
-Remove duplicate math libs from Tcl library list. 
-
-aclocal.m4
-
-- - - - - - - - - - - - - - -
-Commit 2830166 (2016-10-01 10:58:35 +0200) by thommey
-Remove windows.h including, and instead provide our own FreeConsole()
-prototype. 
-
-src/main.c
-
-- - - - - - - - - - - - - - -
-Commit e159be3 (2016-10-01 10:57:10 +0200) by thommey
-Fix various compile warnings. 
-
-doc/Changes1.8
-src/dcc.c
-src/dns.c
+src/mod/channels.mod/userchan.c
+src/mod/console.mod/console.c
 src/mod/dns.mod/coredns.c
-
-- - - - - - - - - - - - - - -
-Commit fe21006 (2016-09-30 00:35:35 +0200) by thommey
-Run autotools. 
-
-configure
-src/mod/compress.mod/configure
-src/mod/dns.mod/configure
-
-- - - - - - - - - - - - - - -
-Commit 593ec65 (2016-09-30 00:34:59 +0200) by thommey
-Add Tcl library link flags from tclConfig.sh. 
-
-aclocal.m4
-
-- - - - - - - - - - - - - - -
-Commit 2965183 (2016-09-29 22:26:06 +0200) by thommey
-Add help-path setting to eggdrop-basic.conf. 
-
-doc/Changes1.8
-eggdrop-basic.conf
-
-- - - - - - - - - - - - - - -
-Commit b41fb6b (2016-09-29 21:29:48 +0200) by thommey
-Add owner setting to eggdrop-basic.conf. 
-
-doc/Changes1.8
-eggdrop-basic.conf
-
-- - - - - - - - - - - - - - -
-Commit 0a90a9f (2016-09-29 17:06:02 +0200) by thommey
-Run autotools. 
-
-configure
-src/mod/compress.mod/configure
-src/mod/dns.mod/configure
-
-- - - - - - - - - - - - - - -
-Commit fb7db08 (2016-09-29 17:04:51 +0200) by thommey
-Update TEA version to match tcl.m4. 
-
-aclocal.m4
-doc/Changes1.8
-
-- - - - - - - - - - - - - - -
-Commit 789fc8c (2016-09-28 08:43:33 -0400) by Geo
-Move eggdrop-basic.conf as part of make install. Fixes #261 Patch by: Geo /
-Found by: thommey 
-
-Makefile.in
-
-- - - - - - - - - - - - - - -
-Commit 918b0e3 (2016-09-26 22:09:09 -0500) by Geo
-Fix documents not being generated to correct places. Fixes #257 (#258) 
-Patch by: Geo / Found by: Pixelz
-FEATURES
-INSTALL
-README
-doc/Changes1.8
-misc/generateDocs
-
-- - - - - - - - - - - - - - -
-Commit bd1ee04 (2016-09-23 23:04:08 -0400) by Geo
-Commit ChangeLog to develop before gen'ing RC/Releases. Fixes #246, closes
-#256 Patch by: Geo / Found by: kisser 
-
-doc/Changes1.8
-misc/releaseprep
-
-- - - - - - - - - - - - - - -
-Commit 48e427c (2016-09-23 22:52:47 -0400) by Geo
-Update docs to indicate j log flag logs topic changes. Fixes #191 Patch by:
-Geo / Found by: senpai 
-
-doc/Changes1.8
-doc/html/_sources/mainDocs/tcl-commands.txt
-doc/html/index.html
-doc/html/mainDocs/index.html
-doc/html/mainDocs/tcl-commands.html
-doc/html/search.html
-doc/html/searchindex.js
-doc/sphinx_source/mainDocs/tcl-commands.rst
-doc/tcl-commands.doc
-eggdrop.conf
-
-- - - - - - - - - - - - - - -
-Commit e3321cc (2016-09-21 23:31:02 -0500) by Generic User
-Fix cross-compile errors. Fixes #247, fixes #248, closes #249 Patch by:
-Anonymous / Found by: eelcohuininga 
-Fix some cross-compile issues with socklen_t and IPv6 autoconf
-
-Updated to not run the compiled eggdrop when cross-compiling
-
-Fixed typo when determining if we are cross-compiling
-
-Add notification that test run is to be skipped if x-compilation is used
-
-Makefile.in
-aclocal.m4
-configure
-configure.ac
-doc/Changes1.8
-
-- - - - - - - - - - - - - - -
-Commit a4ca7a5 (2016-09-23 00:39:50 +0200) by thommey
-Update copyright date for ./eggdrop -v. 
-
-doc/Changes1.8
-src/main.c
-
-- - - - - - - - - - - - - - -
-Commit be8bd09 (2016-09-16 20:22:54 -0400) by Geo
-Typo: tcl-commands.doc bind time description. Fixes #244 Patch by: Geo /
-Found by: maimizuno 
-
-doc/Changes1.8
-doc/html/_sources/mainDocs/tcl-commands.txt
-doc/html/index.html
-doc/html/mainDocs/index.html
-doc/html/mainDocs/tcl-commands.html
-doc/html/objects.inv
-doc/html/search.html
-doc/html/searchindex.js
-doc/sphinx_source/mainDocs/tcl-commands.rst
-doc/tcl-commands.doc
-
-- - - - - - - - - - - - - - -
-Commit c2b173f (2016-09-15 18:19:40 +0300) by Fayez
-Typo: "timer <seconds>" should be "utimer <seconds>". Closes #241 Patch by:
-sirfz, Geo / Found by: sirfz 
-
-doc/Changes1.8
-doc/html/_sources/mainDocs/tcl-commands.txt
-doc/html/index.html
-doc/html/mainDocs/index.html
-doc/html/mainDocs/tcl-commands.html
-doc/html/objects.inv
-doc/html/search.html
-doc/html/searchindex.js
-doc/sphinx_source/mainDocs/tcl-commands.rst
-doc/tcl-commands.doc
-
-- - - - - - - - - - - - - - -
-Commit 1a2ac64 (2016-09-10 19:22:42 -0400) by Geo
-Rename basic.eggdrop.conf to eggdrop-basic.conf 
-
-basic.eggdrop.conf
-eggdrop-basic.conf
-
-- - - - - - - - - - - - - - -
-Commit 1d86245 (2016-09-10 16:42:56 -0400) by Geo
-Generate documents 
-
-doc/BOTNET
-doc/IPV6
-doc/settings/core.settings
-
-- - - - - - - - - - - - - - -
-Commit 9f2c0e2 (2016-09-09 23:18:49 -0400) by Geo
-Update THANKS file 
-
-THANKS
-
-- - - - - - - - - - - - - - -
-Commit 3786a5c (2016-09-09 08:45:51 -0400) by Geo
-Add pid setting to basic.conf 
-
-basic.eggdrop.conf
-
-- - - - - - - - - - - - - - -
-Commit a9a2d13 (2016-08-30 22:58:25 -0400) by Geo
-Add 'basic' config file option to Eggdrop. Fixes #164 
-Move loadmodules to top, mod a few other settings
-
-Comment trim
-
-Basic conf improvements
-
-Rename basic config file
-
-Add +x to basic.eggdrop.conf
-
-Update intro text
-
-Fix inline comments
-
-basic.eggdrop.conf
-doc/Changes1.8
-
-- - - - - - - - - - - - - - -
-Commit f20b8fe (2016-09-08 21:25:48 -0400) by Geo
-Remove incorrect docs update artifact 
-
-doc/IPv6
-
-- - - - - - - - - - - - - - -
-Commit f69a389 (2016-09-07 18:58:54 -0500) by andy5995
-Fix incorrect .chaddr help documentation. Merges #238 
-Found by: andy5995 / Patch by: andy5995
-
-doc/sphinx_source/mainDocs/botnet.rst
-language/core.danish.lang
-language/core.english.lang
-language/core.finnish.lang
-language/core.french.lang
-language/core.german.lang
-
-- - - - - - - - - - - - - - -
-Commit 618ecbf (2016-08-28 11:57:31 -0500) by andy5995
-Fix format string warnings. Fixes #195, Merges #232. 
-When eggdrop is built with  -Wformat -Werror=format-security
-
-src/main.c
-src/misc.c
+src/mod/dns.mod/dns.c
+src/mod/filesys.mod/files.c
+src/mod/filesys.mod/filesys.c
+src/mod/irc.mod/chan.c
+src/mod/irc.mod/irc.c
+src/mod/irc.mod/msgcmds.c
+src/mod/irc.mod/tclirc.c
+src/mod/notes.mod/notes.c
+src/mod/seen.mod/seen.c
 src/mod/server.mod/server.c
+src/mod/server.mod/servmsg.c
+src/mod/share.mod/share.c
+src/mod/share.mod/uf_features.c
 src/mod/transfer.mod/transfer.c
-
-- - - - - - - - - - - - - - -
-Commit c805e6a (2016-08-30 10:48:46 -0400) by Geo
-Update HTML docs to match eggheads color scheme 
-
-doc/html/.buildinfo
-doc/html/_sources/coreDocs/channels.txt
-doc/html/_sources/coreDocs/core.txt
-doc/html/_static/agogo.css
-doc/html/_static/eggdrop.css
-doc/html/appendices/first-script.html
-doc/html/appendices/index.html
-doc/html/appendices/known-probs.html
-doc/html/appendices/text-sub.html
-doc/html/appendices/tricks.html
-doc/html/appendices/weird-msgs.html
-doc/html/coreDocs/assoc.html
-doc/html/coreDocs/blowfish.html
-doc/html/coreDocs/channels.html
-doc/html/coreDocs/compress.html
-doc/html/coreDocs/console.html
-doc/html/coreDocs/core.html
-doc/html/coreDocs/ctcp.html
-doc/html/coreDocs/dns.html
-doc/html/coreDocs/filesys.html
-doc/html/coreDocs/index.html
-doc/html/coreDocs/irc.html
-doc/html/coreDocs/modules.html
-doc/html/coreDocs/notes.html
-doc/html/coreDocs/seen.html
-doc/html/coreDocs/server.html
-doc/html/coreDocs/share.html
-doc/html/coreDocs/transfer.html
-doc/html/coreDocs/uptime.html
-doc/html/coreDocs/woobie.html
-doc/html/index.html
-doc/html/installAndSetup/faq.html
-doc/html/installAndSetup/index.html
-doc/html/installAndSetup/install.html
-doc/html/installAndSetup/readme.html
-doc/html/mainDocs/about.html
-doc/html/mainDocs/bans.html
-doc/html/mainDocs/botnet.html
-doc/html/mainDocs/features.html
-doc/html/mainDocs/index.html
-doc/html/mainDocs/ipv6.html
-doc/html/mainDocs/partyline.html
-doc/html/mainDocs/patch.html
-doc/html/mainDocs/tcl-commands.html
-doc/html/mainDocs/tls.html
-doc/html/mainDocs/users.html
-doc/html/objects.inv
-doc/html/search.html
-doc/html/searchindex.js
-doc/sphinx_source/_static/eggdrop.css
-doc/sphinx_source/conf.py
-
-- - - - - - - - - - - - - - -
-Commit c5b5244 (2016-08-24 21:12:17 -0400) by Geo
-Raise default max-log to 20, update config docs (#230) 
-Raise default max-log to 20, update config docs
- This change increases the default to 20. The code checks if max-logs was
-decreased from the previous value, and aborts. The src/misc.c hard-coded
-default is purposefully mismatched to the config file default setting, as
-the misc.c value is first read at load prior to being modified by the
-config setting. If the user were to set a value of less than the default
-misc.c value, eggdrop detects this as a 'decrease' in value and would not
-start. Thus, 5 is used as the hard-code default.
-doc/html/coreDocs/core.html
-doc/html/index.html
-doc/html/search.html
-doc/html/searchindex.js
-doc/settings/core.settings
-doc/sphinx_source/coreDocs/channels.rst
-doc/sphinx_source/coreDocs/core.rst
-eggdrop.conf
-src/misc.c
-src/tcl.c
-
-- - - - - - - - - - - - - - -
-Commit 6203bdd (2016-08-12 22:11:31 -0400) by Geo
-update AUTHORS 
-
-AUTHORS
-
-- - - - - - - - - - - - - - -
-Commit 9f802d5 (2016-08-11 20:51:40 -0400) by Geo
-Update doc Makefile for new HTML files 
-
-doc/Makefile.in
-
-- - - - - - - - - - - - - - -
-Commit a73a319 (2016-08-10 00:38:45 -0400) by Geo
-Fixup bash git push script 
-
-misc/releaseprep
-
-- - - - - - - - - - - - - - -
-Commit d758eb7 (2016-08-09 22:53:26 -0400) by Geo
-Generate fresh docs as part of release 
-
-misc/generateDocs
-misc/releaseprep
-
-- - - - - - - - - - - - - - -
-Commit 78a9a96 (2016-08-09 21:26:13 -0400) by Geo
-Remove whitespace 
-
-doc/Versions
-
-- - - - - - - - - - - - - - -
-Commit a5a915e (2016-08-07 02:00:52 -0400) by Geo
-Update THANKS file 
-
-THANKS
-
-- - - - - - - - - - - - - - -
-Commit 9957f00 (2016-08-04 17:46:23 -0400) by Geo
-Commit, Tag, Push final release version 
-
-misc/releaseprep
-
-- - - - - - - - - - - - - - -
-Commit 6fb5418 (2016-08-04 16:05:20 -0400) by Geo
-Update genChangelog to respect .mailmap 
-
-misc/genChangelog
-
-- - - - - - - - - - - - - - -
-Commit 9679f7b (2016-07-31 11:54:10 -0400) by Geo
-Update : counting method 
-
-src/net.c
-
-- - - - - - - - - - - - - - -
-Commit bdf72d9 (2016-07-25 23:14:06 -0400) by Geo
-Typo fix 
-
-doc/MODULES
-doc/html/_sources/coreDocs/modules.txt
-doc/html/coreDocs/modules.html
-doc/html/objects.inv
-doc/html/searchindex.js
-doc/sphinx_source/coreDocs/modules.rst
-
-- - - - - - - - - - - - - - -
-Commit 5254a4a (2016-07-25 23:08:52 -0400) by Geo
-Update text files 
-
-doc/FIRST-SCRIPT
-doc/IPv6
-doc/MODULES
-doc/TLS
-doc/html/_sources/coreDocs/compress.txt
-doc/html/_sources/coreDocs/modules.txt
-doc/html/coreDocs/compress.html
-doc/html/coreDocs/modules.html
-doc/html/objects.inv
-doc/html/searchindex.js
-doc/settings/mod.compress
-doc/settings/mod.irc
-doc/sphinx_source/coreDocs/compress.rst
-doc/sphinx_source/coreDocs/modules.rst
-misc/generateDocs
-
-- - - - - - - - - - - - - - -
-Commit c9d8607 (2016-07-25 22:49:15 -0400) by Geo
-Convert new documentation to HTML, sexify the rest 
-
-doc/html/COMPILE-GUIDE.html
-doc/html/_sources/appendices/first-script.txt
-doc/html/_sources/appendices/index.txt
-doc/html/_sources/coreDocs/assoc.txt
-doc/html/_sources/coreDocs/blowfish.txt
-doc/html/_sources/coreDocs/channels.txt
-doc/html/_sources/coreDocs/compress.txt
-doc/html/_sources/coreDocs/console.txt
-doc/html/_sources/coreDocs/ctcp.txt
-doc/html/_sources/coreDocs/dns.txt
-doc/html/_sources/coreDocs/filesys.txt
-doc/html/_sources/coreDocs/index.txt
-doc/html/_sources/coreDocs/irc.txt
-doc/html/_sources/coreDocs/modules.txt
-doc/html/_sources/coreDocs/notes.txt
-doc/html/_sources/coreDocs/seen.txt
-doc/html/_sources/coreDocs/server.txt
-doc/html/_sources/coreDocs/share.txt
-doc/html/_sources/coreDocs/transfer.txt
-doc/html/_sources/coreDocs/uptime.txt
-doc/html/_sources/coreDocs/woobie.txt
-doc/html/_sources/index.txt
-doc/html/_sources/mainDocs/TLS.txt
-doc/html/_sources/mainDocs/index.txt
-doc/html/_sources/mainDocs/ipv6.txt
-doc/html/_sources/mainDocs/tls.txt
-doc/html/appendices/first-script.html
-doc/html/appendices/index.html
-doc/html/appendices/known-probs.html
-doc/html/appendices/text-sub.html
-doc/html/appendices/tricks.html
-doc/html/appendices/weird-msgs.html
-doc/html/coreDocs/assoc.html
-doc/html/coreDocs/blowfish.html
-doc/html/coreDocs/channels.html
-doc/html/coreDocs/compress.html
-doc/html/coreDocs/console.html
-doc/html/coreDocs/core.html
-doc/html/coreDocs/ctcp.html
-doc/html/coreDocs/dns.html
-doc/html/coreDocs/filesys.html
-doc/html/coreDocs/index.html
-doc/html/coreDocs/irc.html
-doc/html/coreDocs/modules.html
-doc/html/coreDocs/notes.html
-doc/html/coreDocs/seen.html
-doc/html/coreDocs/server.html
-doc/html/coreDocs/share.html
-doc/html/coreDocs/transfer.html
-doc/html/coreDocs/uptime.html
-doc/html/coreDocs/woobie.html
-doc/html/index.html
-doc/html/installAndSetup/faq.html
-doc/html/installAndSetup/index.html
-doc/html/installAndSetup/install.html
-doc/html/installAndSetup/readme.html
-doc/html/mainDocs/TLS.html
-doc/html/mainDocs/about.html
-doc/html/mainDocs/bans.html
-doc/html/mainDocs/botnet.html
-doc/html/mainDocs/features.html
-doc/html/mainDocs/index.html
-doc/html/mainDocs/ipv6.html
-doc/html/mainDocs/partyline.html
-doc/html/mainDocs/patch.html
-doc/html/mainDocs/tcl-commands.html
-doc/html/mainDocs/tls.html
-doc/html/mainDocs/users.html
-doc/html/objects.inv
-doc/html/search.html
-doc/html/searchindex.js
-doc/sphinx_source/COMPILE-GUIDE.rst
-doc/sphinx_source/appendices/first-script.rst
-doc/sphinx_source/appendices/index.rst
-doc/sphinx_source/coreDocs/assoc.rst
-doc/sphinx_source/coreDocs/blowfish.rst
-doc/sphinx_source/coreDocs/channels.rst
-doc/sphinx_source/coreDocs/compress.rst
-doc/sphinx_source/coreDocs/console.rst
-doc/sphinx_source/coreDocs/ctcp.rst
-doc/sphinx_source/coreDocs/dns.rst
-doc/sphinx_source/coreDocs/filesys.rst
-doc/sphinx_source/coreDocs/index.rst
-doc/sphinx_source/coreDocs/irc.rst
-doc/sphinx_source/coreDocs/modules.rst
-doc/sphinx_source/coreDocs/notes.rst
-doc/sphinx_source/coreDocs/seen.rst
-doc/sphinx_source/coreDocs/server.rst
-doc/sphinx_source/coreDocs/share.rst
-doc/sphinx_source/coreDocs/transfer.rst
-doc/sphinx_source/coreDocs/uptime.rst
-doc/sphinx_source/coreDocs/woobie.rst
-doc/sphinx_source/index.rst
-doc/sphinx_source/mainDocs/index.rst
-doc/sphinx_source/mainDocs/ipv6.rst
-doc/sphinx_source/mainDocs/tls.rst
-misc/generateDocs
-
-- - - - - - - - - - - - - - -
-Commit e2a04d4 (2016-07-21 19:15:45 -0400) by Geo
-...aaaaand the html docs, too 
-
-doc/html/_sources/coreDocs/assoc.txt
-doc/html/_sources/coreDocs/blowfish.txt
-doc/html/_sources/coreDocs/channels.txt
-doc/html/_sources/coreDocs/compress.txt
-doc/html/_sources/coreDocs/console.txt
-doc/html/_sources/coreDocs/core.txt
-doc/html/_sources/coreDocs/ctcp.txt
-doc/html/_sources/coreDocs/dns.txt
-doc/html/_sources/coreDocs/filesys.txt
-doc/html/_sources/coreDocs/index.txt
-doc/html/_sources/coreDocs/irc.txt
-doc/html/_sources/coreDocs/notes.txt
-doc/html/_sources/coreDocs/seen.txt
-doc/html/_sources/coreDocs/server.txt
-doc/html/_sources/coreDocs/share.txt
-doc/html/_sources/coreDocs/transfer.txt
-doc/html/_sources/coreDocs/uptime.txt
-doc/html/_sources/coreDocs/woobie.txt
-doc/html/coreDocs/assoc.html
-doc/html/coreDocs/blowfish.html
-doc/html/coreDocs/channels.html
-doc/html/coreDocs/compress.html
-doc/html/coreDocs/console.html
-doc/html/coreDocs/core.html
-doc/html/coreDocs/ctcp.html
-doc/html/coreDocs/dns.html
-doc/html/coreDocs/filesys.html
-doc/html/coreDocs/index.html
-doc/html/coreDocs/irc.html
-doc/html/coreDocs/notes.html
-doc/html/coreDocs/seen.html
-doc/html/coreDocs/server.html
-doc/html/coreDocs/share.html
-doc/html/coreDocs/transfer.html
-doc/html/coreDocs/uptime.html
-doc/html/coreDocs/woobie.html
-
-- - - - - - - - - - - - - - -
-Commit f97e9f9 (2016-07-21 19:10:21 -0400) by Geo
-Fix generateDocs path error, re-gen tcl-commands.doc 
-
-doc/html/index.html
-doc/html/search.html
-doc/html/searchindex.js
-doc/tcl-commands.doc
-misc/generateDocs
-
-- - - - - - - - - - - - - - -
-Commit 9fbfcbd (2016-07-21 18:52:13 -0400) by Geo
-Add pandoc/sphinx check in generateDocs 
-
-misc/generateDocs
-
-- - - - - - - - - - - - - - -
-Commit 271fe23 (2016-07-21 18:50:59 -0400) by Geo
-Rename coreDocs from git-ignored filename core 
-
-doc/sphinx_source/coreDocs/assoc.rst
-doc/sphinx_source/coreDocs/blowfish.rst
-doc/sphinx_source/coreDocs/channels.rst
-doc/sphinx_source/coreDocs/compress.rst
-doc/sphinx_source/coreDocs/console.rst
-doc/sphinx_source/coreDocs/core.rst
-doc/sphinx_source/coreDocs/ctcp.rst
-doc/sphinx_source/coreDocs/dns.rst
-doc/sphinx_source/coreDocs/filesys.rst
-doc/sphinx_source/coreDocs/index.rst
-doc/sphinx_source/coreDocs/irc.rst
-doc/sphinx_source/coreDocs/notes.rst
-doc/sphinx_source/coreDocs/seen.rst
-doc/sphinx_source/coreDocs/server.rst
-doc/sphinx_source/coreDocs/share.rst
-doc/sphinx_source/coreDocs/transfer.rst
-doc/sphinx_source/coreDocs/uptime.rst
-doc/sphinx_source/coreDocs/woobie.rst
-
-- - - - - - - - - - - - - - -
-Commit 05379db (2016-07-20 23:53:07 -0400) by Geo
-Formatting - Update binds procname spacing 
-
-doc/html/COMPILE-GUIDE.html
-doc/html/_sources/mainDocs/tcl-commands.txt
-doc/html/appendices/index.html
-doc/html/appendices/known-probs.html
-doc/html/appendices/text-sub.html
-doc/html/appendices/tricks.html
-doc/html/appendices/weird-msgs.html
-doc/html/index.html
-doc/html/installAndSetup/faq.html
-doc/html/installAndSetup/index.html
-doc/html/installAndSetup/install.html
-doc/html/installAndSetup/readme.html
-doc/html/mainDocs/about.html
-doc/html/mainDocs/bans.html
-doc/html/mainDocs/botnet.html
-doc/html/mainDocs/features.html
-doc/html/mainDocs/index.html
-doc/html/mainDocs/partyline.html
-doc/html/mainDocs/patch.html
-doc/html/mainDocs/tcl-commands.html
-doc/html/mainDocs/users.html
-doc/html/search.html
-doc/html/searchindex.js
-doc/sphinx_source/mainDocs/tcl-commands.rst
-
-- - - - - - - - - - - - - - -
-Commit 826bbbc (2016-07-17 15:39:31 -0400) by Geo
-Formatting - tcl-commands.doc 
-
-doc/sphinx_source/mainDocs/tcl-commands.rst
-
-- - - - - - - - - - - - - - -
-Commit 6300a24 (2016-07-17 00:08:47 -0400) by Geo
-Update BOTNET formatting, add assoc docs 
-
-doc/BOTNET
-doc/html/_sources/mainDocs/botnet.txt
-doc/html/index.html
-doc/html/mainDocs/botnet.html
-doc/html/mainDocs/index.html
-doc/html/search.html
-doc/html/searchindex.js
-doc/settings/mod.assoc
-doc/sphinx_source/mainDocs/botnet.rst
-
-- - - - - - - - - - - - - - -
-Commit 07c2075 (2016-07-16 23:59:38 -0400) by Geo
-Update plaintext docs from rst files 
-
-doc/ABOUT
-doc/BANS
-doc/BOTNET
-doc/FAQ
-doc/KNOWN-PROBLEMS
-doc/PARTYLINE
-doc/PATCH-HOWTO
-doc/TEXT-SUBSTITUTIONS
-doc/TRICKS
-doc/USERS
-doc/WEIRD-MESSAGES
-doc/settings/core.settings
-doc/settings/mod.blowfish
-doc/settings/mod.channels
-doc/settings/mod.compress
-doc/settings/mod.console
-doc/settings/mod.ctcp
-doc/settings/mod.dns
-doc/settings/mod.filesys
-doc/settings/mod.irc
-doc/settings/mod.notes
-doc/settings/mod.seen
-doc/settings/mod.server
-doc/settings/mod.share
-doc/settings/mod.transfer
-doc/settings/mod.uptime
-doc/settings/mod.woobie
-doc/tcl-commands.doc
-
-- - - - - - - - - - - - - - -
-Commit 41b0279 (2016-07-16 23:50:27 -0400) by Geo
-Create generateDocs to gen HTML and plaintext docs 
-
-misc/generateDocs
-
-- - - - - - - - - - - - - - -
-Commit d87581d (2016-07-16 22:13:44 -0400) by Geo
-Formatting- Add emphasis to tcl-commands.rst heading 
-Formatting- also, fix PUBM spacing
-
-doc/html/.buildinfo
-doc/html/COMPILE-GUIDE.html
-doc/html/_sources/mainDocs/tcl-commands.txt
-doc/html/appendices/index.html
-doc/html/appendices/known-probs.html
-doc/html/appendices/text-sub.html
-doc/html/appendices/tricks.html
-doc/html/appendices/weird-msgs.html
-doc/html/index.html
-doc/html/installAndSetup/faq.html
-doc/html/installAndSetup/index.html
-doc/html/installAndSetup/install.html
-doc/html/installAndSetup/readme.html
-doc/html/mainDocs/about.html
-doc/html/mainDocs/bans.html
-doc/html/mainDocs/botnet.html
-doc/html/mainDocs/features.html
-doc/html/mainDocs/index.html
-doc/html/mainDocs/partyline.html
-doc/html/mainDocs/patch.html
-doc/html/mainDocs/tcl-commands.html
-doc/html/mainDocs/users.html
-doc/html/search.html
-doc/html/searchindex.js
-doc/sphinx_source/mainDocs/tcl-commands.rst
-
-- - - - - - - - - - - - - - -
-Commit 96a7981 (2016-07-16 17:04:35 -0400) by Geo
-Use :-checking instead of inet_pton to determine AF_INET/6 If the OS
-doesn't have IPv6 capabilities, the presence of inet_pton() is not
-reliable, so we simply check for 2 or more :s in the provided IP/hostname. 
-
-src/net.c
-
-- - - - - - - - - - - - - - -
-Commit 928b284 (2016-07-16 01:18:16 -0400) by Geo
-Check/reject IPv6 addresses w/o IPv6 support 
-
-src/net.c
-
-- - - - - - - - - - - - - - -
-Commit 26994c5 (2016-07-16 01:38:01 -0400) by Geo
-Fix IPv6 pref_af #ifdef bug If compiled without IPv6 support, pref_af is
-improperly attempted for use. This adds the appropriate IPv6 ifdef to
-exclude it from the conditional if IPv6 is not compiled. 
-
-src/net.c
-
-- - - - - - - - - - - - - - -
-Commit c601450 (2016-07-11 12:34:06 -0400) by Geo
-Docs font/bullets update 
-
-doc/html/.buildinfo
-doc/html/COMPILE-GUIDE.html
-doc/html/_static/agogo.css
-doc/html/_static/basic.css
-doc/html/_static/bgtop.png
-doc/html/_static/comment-bright.png
-doc/html/_static/comment-close.png
-doc/html/_static/comment.png
-doc/html/_static/down-pressed.png
-doc/html/_static/down.png
-doc/html/_static/eggdrop.css
-doc/html/_static/file.png
-doc/html/_static/minus.png
-doc/html/_static/plus.png
-doc/html/_static/pygments.css
-doc/html/_static/up-pressed.png
-doc/html/_static/up.png
-doc/html/appendices/index.html
-doc/html/appendices/known-probs.html
-doc/html/appendices/text-sub.html
-doc/html/appendices/tricks.html
-doc/html/appendices/weird-msgs.html
-doc/html/installAndSetup/faq.html
-doc/html/installAndSetup/index.html
-doc/html/installAndSetup/install.html
-doc/html/installAndSetup/readme.html
-doc/html/mainDocs/about.html
-doc/html/mainDocs/bans.html
-doc/html/mainDocs/botnet.html
-doc/html/mainDocs/features.html
-doc/html/mainDocs/index.html
-doc/html/mainDocs/partyline.html
-doc/html/mainDocs/patch.html
-doc/html/mainDocs/tcl-commands.html
-doc/html/mainDocs/users.html
-doc/html/searchindex.js
-doc/sphinx_source/_static/eggdrop.css
-doc/sphinx_source/conf.py
-
-- - - - - - - - - - - - - - -
-Commit f20e6de (2016-07-11 01:45:27 -0400) by Geo
-Remove un-needed sphinx build-byproducts 
-
-doc/html/_static/basic.css
-doc/html/_static/bgtop.png
-doc/html/_static/comment-bright.png
-doc/html/_static/comment-close.png
-doc/html/_static/comment.png
-doc/html/_static/contents.png
-doc/html/_static/default.css
-doc/html/_static/dialog-note.png
-doc/html/_static/dialog-seealso.png
-doc/html/_static/dialog-todo.png
-doc/html/_static/dialog-topic.png
-doc/html/_static/dialog-warning.png
-doc/html/_static/down-pressed.png
-doc/html/_static/down.png
-doc/html/_static/epub.css
-doc/html/_static/file.png
-doc/html/_static/footerbg.png
-doc/html/_static/headerbg.png
-doc/html/_static/ie6.css
-doc/html/_static/middlebg.png
-doc/html/_static/minus.png
-doc/html/_static/navigation.png
-doc/html/_static/plus.png
-doc/html/_static/pygments.css
-doc/html/_static/pyramid.css
-doc/html/_static/sphinxdoc.css
-doc/html/_static/traditional.css
-doc/html/_static/up-pressed.png
-doc/html/_static/up.png
-doc/sphinx_source/doctrees/ABOUT.doctree
-doc/sphinx_source/doctrees/BANS.doctree
-doc/sphinx_source/doctrees/BOTNET.doctree
-doc/sphinx_source/doctrees/COMPILE-GUIDE.doctree
-doc/sphinx_source/doctrees/INSTALL.doctree
-doc/sphinx_source/doctrees/KNOWN-PROBLEMS.doctree
-doc/sphinx_source/doctrees/README.doctree
-doc/sphinx_source/doctrees/TEXT-SUBSTITUTIONS.doctree
-doc/sphinx_source/doctrees/TRICKS.doctree
-doc/sphinx_source/doctrees/WEIRD-MESSAGES.doctree
-doc/sphinx_source/doctrees/environment.pickle
-doc/sphinx_source/doctrees/index.doctree
-doc/sphinx_source/doctrees/tcl-commands.doctree
-
-- - - - - - - - - - - - - - -
-Commit 3b25bfd (2016-07-11 00:37:43 -0400) by Geo
-Organize under TOC; add remaining topics 
-
-doc/html/ABOUT.html
-doc/html/BANS.html
-doc/html/BOTNET.html
-doc/html/COMPILE-GUIDE.html
-doc/html/INSTALL.html
-doc/html/KNOWN-PROBLEMS.html
-doc/html/README.html
-doc/html/TEXT-SUBSTITUTIONS.html
-doc/html/TRICKS.html
-doc/html/WEIRD-MESSAGES.html
-doc/html/_sources/appendices/index.txt
-doc/html/_sources/appendices/known-probs.txt
-doc/html/_sources/appendices/text-sub.txt
-doc/html/_sources/appendices/tricks.txt
-doc/html/_sources/appendices/weird-msg.txt
-doc/html/_sources/appendices/weird-msgs.txt
-doc/html/_sources/index.txt
-doc/html/_sources/installAndSetup/INSTALL.txt
-doc/html/_sources/installAndSetup/README.txt
-doc/html/_sources/installAndSetup/faq.txt
-doc/html/_sources/installAndSetup/index.txt
-doc/html/_sources/installAndSetup/install.txt
-doc/html/_sources/installAndSetup/readme.txt
-doc/html/_sources/mainDocs/about.txt
-doc/html/_sources/mainDocs/bans.txt
-doc/html/_sources/mainDocs/botnet.txt
-doc/html/_sources/mainDocs/features.txt
-doc/html/_sources/mainDocs/index.txt
-doc/html/_sources/mainDocs/partyline.txt
-doc/html/_sources/mainDocs/patch.txt
-doc/html/_sources/mainDocs/tcl-commands.txt
-doc/html/_sources/mainDocs/users.txt
-doc/html/_sources/toc_installAndSetup.txt
-doc/html/_static/eggdrop.css
-doc/html/appendices/index.html
-doc/html/appendices/known-probs.html
-doc/html/appendices/text-sub.html
-doc/html/appendices/tricks.html
-doc/html/appendices/weird-msg.html
-doc/html/appendices/weird-msgs.html
-doc/html/index.html
-doc/html/installAndSetup/INSTALL.html
-doc/html/installAndSetup/README.html
-doc/html/installAndSetup/faq.html
-doc/html/installAndSetup/index.html
-doc/html/installAndSetup/install.html
-doc/html/installAndSetup/readme.html
-doc/html/mainDocs/about.html
-doc/html/mainDocs/bans.html
-doc/html/mainDocs/botnet.html
-doc/html/mainDocs/features.html
-doc/html/mainDocs/index.html
-doc/html/mainDocs/partyline.html
-doc/html/mainDocs/patch.html
-doc/html/mainDocs/tcl-commands.html
-doc/html/mainDocs/users.html
-doc/html/search.html
-doc/html/searchindex.js
-doc/html/tcl-commands.html
-doc/html/toc_installAndSetup.html
-doc/sphinx_source/ABOUT.rst
-doc/sphinx_source/BANS.rst
-doc/sphinx_source/BOTNET.rst
-doc/sphinx_source/INSTALL.rst
-doc/sphinx_source/KNOWN-PROBLEMS.rst
-doc/sphinx_source/README.rst
-doc/sphinx_source/TEXT-SUBSTITUTIONS.rst
-doc/sphinx_source/TRICKS.rst
-doc/sphinx_source/WEIRD-MESSAGES.rst
-doc/sphinx_source/_static/eggdrop.css
-doc/sphinx_source/_themes/eggdrop/eggdrop.css
-doc/sphinx_source/appendices/index.rst
-doc/sphinx_source/appendices/known-probs.rst
-doc/sphinx_source/appendices/text-sub.rst
-doc/sphinx_source/appendices/tricks.rst
-doc/sphinx_source/appendices/weird-msgs.rst
-doc/sphinx_source/index.rst
-doc/sphinx_source/installAndSetup/faq.rst
-doc/sphinx_source/installAndSetup/index.rst
-doc/sphinx_source/installAndSetup/install.rst
-doc/sphinx_source/installAndSetup/readme.rst
-doc/sphinx_source/mainDocs/about.rst
-doc/sphinx_source/mainDocs/bans.rst
-doc/sphinx_source/mainDocs/botnet.rst
-doc/sphinx_source/mainDocs/features.rst
-doc/sphinx_source/mainDocs/index.rst
-doc/sphinx_source/mainDocs/partyline.rst
-doc/sphinx_source/mainDocs/patch.rst
-doc/sphinx_source/mainDocs/tcl-commands.rst
-doc/sphinx_source/mainDocs/users.rst
-doc/sphinx_source/tcl-commands.rst
-
-- - - - - - - - - - - - - - -
-Commit 318d0ad (2016-07-10 16:27:38 -0400) by Geo
-Update css elements 
-
-doc/html/_static/eggdrop.css
-doc/html/searchindex.js
-doc/sphinx_source/_static/eggdrop.css
-
-- - - - - - - - - - - - - - -
-Commit 9fdbd7f (2016-07-10 15:15:52 -0400) by Geo
-Create custom eggdrop CSS colorscheme 
-
-doc/html/.buildinfo
-doc/html/ABOUT.html
-doc/html/BANS.html
-doc/html/BOTNET.html
-doc/html/COMPILE-GUIDE.html
-doc/html/INSTALL.html
-doc/html/KNOWN-PROBLEMS.html
-doc/html/README.html
-doc/html/TEXT-SUBSTITUTIONS.html
-doc/html/TRICKS.html
-doc/html/WEIRD-MESSAGES.html
-doc/html/_sources/tcl-commands.txt
-doc/html/_static/agogo.css
-doc/html/_static/eggdrop.css
-doc/html/index.html
-doc/html/search.html
-doc/html/searchindex.js
-doc/html/tcl-commands.html
-doc/sphinx_source/_static/eggdrop.css
-doc/sphinx_source/_themes/agogo/layout.html
-doc/sphinx_source/_themes/agogo/static/agogo.css_t
-doc/sphinx_source/_themes/agogo/static/bgfooter.png
-doc/sphinx_source/_themes/agogo/static/bgtop.png
-doc/sphinx_source/_themes/agogo/theme.conf
-doc/sphinx_source/_themes/eggdrop/eggdrop.css
-doc/sphinx_source/_themes/eggdrop/layout.html
-doc/sphinx_source/_themes/eggdrop/theme.conf
-doc/sphinx_source/conf.py
-doc/sphinx_source/tcl-commands.rst
-
-- - - - - - - - - - - - - - -
-Commit d260563 (2016-07-09 13:35:41 +0200) by thommey
-Restore changelog entries. They are merged. 
-
-doc/Changes1.8
-
-- - - - - - - - - - - - - - -
-Commit 870326b (2016-07-09 13:27:45 +0200) by thommey
-Reverting changelog entries of not fully merged pull requests. 
-
-doc/Changes1.8
-
-- - - - - - - - - - - - - - -
-Commit 879f753 (2016-07-09 01:08:00 -0400) by Geo
-Add 1.6.21 to doc/Versions, update AUTHORS 
-
-AUTHORS
-doc/Versions
-
-- - - - - - - - - - - - - - -
-Commit 120d3ac (2016-07-08 23:30:59 -0400) by Geo
-Update tcl.m4 (#216) 
-Current as of 21 Jun 2016 -
-http://core.tcl.tk/tclconfig/artifact/9af027a75ea60be0
-tcl.m4
-
-- - - - - - - - - - - - - - -
-Commit 6159ba5 (2016-07-08 23:29:55 -0400) by Geo
-Fix SSL verify logic (#221) 
-
-src/eggdrop.h
-src/tls.c
-
-- - - - - - - - - - - - - - -
-Commit cffe3c1 (2016-07-08 23:29:33 -0400) by Geo
-Fix DNS Certificate Matching (#222) 
-
-- - - - - - - - - - - - - - -
-Commit 9bee92c (2016-07-08 23:28:36 -0400) by Geo
-Log failed logins due to invalid handles to LOG_MISC instead of LOG_BOTS.
-(#223) 
-Fixes #184
-src/dcc.c
-
-- - - - - - - - - - - - - - -
-Commit 5f48f12 (2016-07-08 23:27:00 -0400) by Geo
-Fix SSL DNS name matching for telnet (#224) 
-
-src/dcc.c
-
-- - - - - - - - - - - - - - -
-Commit 53536b1 (2016-07-08 23:23:42 -0400) by Geo
-Ipv6 chat select (#220) 
-* Add CTCP chat src IPv6 settings/selection logic
-
-* Explain network settings in eggdrop.conf
-
-* IPv6 CTCP IP selection logic docs update
-
-* Add CTCP CHAT4/CHAT6 functionality
-
-* Added SCHAT4/6 command support
-
-* Update IPV6 docs to include SCHAT4/6
-
-* Touchups
-
-* Fix missing ifdef
-
-doc/IPV6
-eggdrop.conf
-src/mod/ctcp.mod/ctcp.c
-src/mod/module.h
-src/modules.c
+src/mod/transfer.mod/transferqueue.c
 src/net.c
 src/proto.h
+src/tcl.c
+src/tcldcc.c
+src/tclhash.c
+src/tclmisc.c
+src/userent.c
+src/userrec.c
+src/users.c
 
 - - - - - - - - - - - - - - -
-Commit 11c2da4 (2016-07-08 22:23:58 -0400) by Geo
-MOAR rest formatting 
-
-doc/html/_sources/tcl-commands.txt
-doc/html/searchindex.js
-doc/html/tcl-commands.html
-doc/sphinx_source/tcl-commands.rst
-
-- - - - - - - - - - - - - - -
-Commit bd2f192 (2016-07-08 20:02:39 -0400) by Geo
-Update source formatting 
-
-doc/html/.buildinfo
-doc/html/ABOUT.html
-doc/html/BANS.html
-doc/html/BOTNET.html
-doc/html/COMPILE-GUIDE.html
-doc/html/INSTALL.html
-doc/html/KNOWN-PROBLEMS.html
-doc/html/README.html
-doc/html/TEXT-SUBSTITUTIONS.html
-doc/html/TRICKS.html
-doc/html/WEIRD-MESSAGES.html
-doc/html/_sources/README.txt
-doc/html/_sources/tcl-commands.txt
-doc/html/_static/agogo.css
-doc/html/index.html
-doc/html/search.html
-doc/html/searchindex.js
-doc/html/tcl-commands.html
-doc/sphinx_source/_static/eggman.png.gif
-doc/sphinx_source/conf.py
-doc/sphinx_source/tcl-commands.rst
+Commit 9bd9d1b (2017-02-12 21:51:17 -0600) by Geo
+Clean up some compile warnings (#330) 
+* Change releaseprep patch version string to "" for stable release. Fixes
+#303
+* Check return value for fgets calls
+* Check return value for write calls
+* Check return value for freopen calls
+* Check return value of ftruncate calls
+* Revisit fgets occurrences.
+* Properly check freopen.
+* Check for write errors as well.
+* Fix ftruncate errorchecking
+* Properly output freopen errors.
+* Add missing fclose and correct printf.
+* Use version of write() that doesn't ignore its return value.
+* Have language file reading errors output to MISC.
+* Change write to safe_write.
+* Replace LOG_DEBUG with LOG_MISC for errors.
+src/botcmd.c
+src/dcc.c
+src/language.c
+src/main.c
+src/misc.c
+src/mod/filesys.mod/dbcompat.c
+src/mod/filesys.mod/filedb3.c
+src/mod/notes.mod/notes.c
+src/net.c
+src/patch.h
+src/proto.h
+src/users.c
 
 - - - - - - - - - - - - - - -
-Commit 63754d6 (2016-07-08 00:14:39 -0400) by Geo
-Refine ChangeLog format 
+Commit d6165e2 (2017-02-12 20:37:04 -0600) by Geo
+Fixes for autobotchk. Fixes #239 
+Found by: Cizzle, StephenS Patch by: Cizzle, Geo
 
-doc/Changes1.8
-misc/releaseprep
-
-- - - - - - - - - - - - - - -
-Commit 06eb36c (2016-07-07 19:02:33 -0400) by Geo
-Update ChangeLog format 
-
-misc/releaseprep
-
-- - - - - - - - - - - - - - -
-Commit 3645b10 (2016-07-07 18:28:50 -0400) by Geo
-Update releaseprep to use git for ChangeLog 
-
-misc/newversion
-misc/releaseprep
+* adds possibilty for multiple confs if settings are split
+* fixes nick or botnet-nick with \\[ \\] in creating botchk file not
+findable by cron
+* fixes multiple cron entries added when \\[ \\] is in filename
+* fixes cases where botnet-nick="$nick" or pidfile="pid.${botnet-nick}" or
+any  of the other vars nick, userfile, pidfile and botnet-nick having one
+of the other vars in conf
+* fixes cases where botnet-nick or nick has handlen > defined handlen and
+pidfile uses this botnet-nick or nick
+* Prevent \s from being used in filenames
+* Fix addt'l handlen, {}, and pidfile autobotchk issues
+* Update copyright info
+scripts/autobotchk
 src/patch.h
 
 - - - - - - - - - - - - - - -
-Commit d4130c8 (2016-07-04 14:55:59 -0400) by Geo
-Reset channel info on server disconnect 
+Commit 283cee6 (2017-02-07 19:27:48 -0500) by Geo
+Update AUTHORS file 
 
-src/mod/irc.mod/irc.c
-src/mod/irc.mod/irc.h
-src/mod/modvals.h
-src/mod/server.mod/servmsg.c
+AUTHORS
 
 - - - - - - - - - - - - - - -
-Commit 13312a6 (2016-07-03 17:54:11 -0400) by Geo
-Update github download link to .tar.gz 
-
-doc/sphinx_source/README.rst
-
-- - - - - - - - - - - - - - -
-Commit 176c6ca (2016-07-03 17:45:40 -0400) by Geo
-HTML docs template update 
-
-doc/html/.buildinfo
-doc/html/ABOUT.html
-doc/html/BANS.html
-doc/html/BOTNET.html
-doc/html/COMPILE-GUIDE.html
-doc/html/INSTALL.html
-doc/html/KNOWN-PROBLEMS.html
-doc/html/README.html
-doc/html/TEXT-SUBSTITUTIONS.html
-doc/html/TRICKS.html
-doc/html/WEIRD-MESSAGES.html
-doc/html/_sources/index.txt
-doc/html/_static/agogo.css
-doc/html/_static/basic.css
-doc/html/_static/bgfooter.png
-doc/html/_static/bgtop.png
-doc/html/_static/contents.png
-doc/html/_static/dialog-note.png
-doc/html/_static/dialog-seealso.png
-doc/html/_static/dialog-todo.png
-doc/html/_static/dialog-topic.png
-doc/html/_static/dialog-warning.png
-doc/html/_static/eggman.png.gif
-doc/html/_static/epub.css
-doc/html/_static/footerbg.png
-doc/html/_static/headerbg.png
-doc/html/_static/ie6.css
-doc/html/_static/middlebg.png
-doc/html/_static/navigation.png
-doc/html/_static/pyramid.css
-doc/html/_static/sphinxdoc.css
-doc/html/_static/traditional.css
-doc/html/_static/transparent.gif
-doc/html/genindex.html
-doc/html/index.html
-doc/html/search.html
-doc/html/searchindex.js
-doc/html/tcl-commands.html
-doc/sphinx_source/conf.py
-doc/sphinx_source/index.rst
-
-- - - - - - - - - - - - - - -
-Commit 328cfcc (2016-07-02 23:31:10 -0400) by Geo
-Add new Sphinx-based HTML documentation build system Built in reStructure
-language, go to sphinx_source and type 'make html' to build docs. TODO:
-Script method to convert html docs to text, then update the base text docs 
-
-doc/html/.buildinfo
-doc/html/ABOUT.html
-doc/html/BANS.html
-doc/html/BOTNET.html
-doc/html/COMPILE-GUIDE.html
-doc/html/INSTALL.html
-doc/html/KNOWN-PROBLEMS.html
-doc/html/README.html
-doc/html/TEXT-SUBSTITUTIONS.html
-doc/html/TRICKS.html
-doc/html/WEIRD-MESSAGES.html
-doc/html/_sources/ABOUT.txt
-doc/html/_sources/BANS.txt
-doc/html/_sources/BOTNET.txt
-doc/html/_sources/COMPILE-GUIDE.txt
-doc/html/_sources/INSTALL.txt
-doc/html/_sources/KNOWN-PROBLEMS.txt
-doc/html/_sources/README.txt
-doc/html/_sources/TEXT-SUBSTITUTIONS.txt
-doc/html/_sources/TRICKS.txt
-doc/html/_sources/WEIRD-MESSAGES.txt
-doc/html/_sources/index.txt
-doc/html/_sources/tcl-commands.txt
-doc/html/_static/ajax-loader.gif
-doc/html/_static/basic.css
-doc/html/_static/comment-bright.png
-doc/html/_static/comment-close.png
-doc/html/_static/comment.png
-doc/html/_static/default.css
-doc/html/_static/doctools.js
-doc/html/_static/down-pressed.png
-doc/html/_static/down.png
-doc/html/_static/file.png
-doc/html/_static/jquery.js
-doc/html/_static/minus.png
-doc/html/_static/plus.png
-doc/html/_static/pygments.css
-doc/html/_static/searchtools.js
-doc/html/_static/sidebar.js
-doc/html/_static/underscore.js
-doc/html/_static/up-pressed.png
-doc/html/_static/up.png
-doc/html/_static/websupport.js
-doc/html/genindex.html
-doc/html/index.html
-doc/html/objects.inv
-doc/html/search.html
-doc/html/searchindex.js
-doc/html/tcl-commands.html
-doc/sphinx_source/ABOUT.rst
-doc/sphinx_source/BANS.rst
-doc/sphinx_source/BOTNET.rst
-doc/sphinx_source/COMPILE-GUIDE.rst
-doc/sphinx_source/INSTALL.rst
-doc/sphinx_source/KNOWN-PROBLEMS.rst
-doc/sphinx_source/Makefile
-doc/sphinx_source/README.rst
-doc/sphinx_source/TEXT-SUBSTITUTIONS.rst
-doc/sphinx_source/TRICKS.rst
-doc/sphinx_source/WEIRD-MESSAGES.rst
-doc/sphinx_source/conf.py
-doc/sphinx_source/doctrees/ABOUT.doctree
-doc/sphinx_source/doctrees/BANS.doctree
-doc/sphinx_source/doctrees/BOTNET.doctree
-doc/sphinx_source/doctrees/COMPILE-GUIDE.doctree
-doc/sphinx_source/doctrees/INSTALL.doctree
-doc/sphinx_source/doctrees/KNOWN-PROBLEMS.doctree
-doc/sphinx_source/doctrees/README.doctree
-doc/sphinx_source/doctrees/TEXT-SUBSTITUTIONS.doctree
-doc/sphinx_source/doctrees/TRICKS.doctree
-doc/sphinx_source/doctrees/WEIRD-MESSAGES.doctree
-doc/sphinx_source/doctrees/environment.pickle
-doc/sphinx_source/doctrees/index.doctree
-doc/sphinx_source/doctrees/tcl-commands.doctree
-doc/sphinx_source/index.rst
-doc/sphinx_source/tcl-commands.rst
-
-- - - - - - - - - - - - - - -
-Commit 7e39d46 (2016-07-02 23:28:14 -0400) by Geo
-Remove old HTML files 
-
-doc/html/about.html
-doc/html/app-problems.html
-doc/html/app-textsub.html
-doc/html/app-tricks.html
-doc/html/app-weird.html
-doc/html/bans.html
-doc/html/botnet.html
-doc/html/compiling.html
-doc/html/egg-core.html
-doc/html/faqs.html
-doc/html/features.html
-doc/html/index.html
-doc/html/install.html
-doc/html/mod-assoc.html
-doc/html/mod-blowfish.html
-doc/html/mod-channels.html
-doc/html/mod-compress.html
-doc/html/mod-console.html
-doc/html/mod-ctcp.html
-doc/html/mod-dns.html
-doc/html/mod-filesys.html
-doc/html/mod-irc.html
-doc/html/mod-notes.html
-doc/html/mod-seen.html
-doc/html/mod-server.html
-doc/html/mod-share.html
-doc/html/mod-transfer.html
-doc/html/mod-uptime.html
-doc/html/mod-woobie.html
-doc/html/news.html
-doc/html/party.html
-doc/html/patch-howto.html
-doc/html/readme.html
-doc/html/starting.html
-doc/html/tcl-commands.html
-doc/html/users.html
-
-- - - - - - - - - - - - - - -
-Commit 4ff3fd0 (2016-05-02 19:28:55 -0400) by Geo
-Grammar update 
-Patch by: Geo / Found by: maimizuno
-
-scripts/userinfo.tcl
-
-- - - - - - - - - - - - - - -
-Commit 4ca0207 (2016-06-05 21:00:47 +0200) by Robby
-Remove a trailing space in eggdrop.conf. 
-
-eggdrop.conf
-
-- - - - - - - - - - - - - - -
-Commit 5fe4cc9 (2016-05-02 19:28:55 -0400) by Geo
-Grammar update 
-Patch by: Geo / Found by: maimizuno
-scripts/userinfo.tcl
-
-- - - - - - - - - - - - - - -
-Commit 98bb0da (2016-04-18 17:55:35 +0200) by Geo
-Fix SSL hostname verification for partyline connections. Closes #98. 
-
-doc/Changes1.8
-
-- - - - - - - - - - - - - - -
-Commit f7abbda (2016-04-18 17:54:06 +0200) by Robby
-Move logging of failed bot logins to LOG_MISC. Closes #184. 
-
-doc/Changes1.8
-
-- - - - - - - - - - - - - - -
-Commit 8572444 (2016-04-18 17:51:19 +0200) by Geo
-Fix SSL verification flags not working. Closes #100. 
-
-doc/Changes1.8
-
-- - - - - - - - - - - - - - -
-Commit 609ce38 (2016-04-18 17:50:15 +0200) by Geo
-Improve CTCP CHAT IPv6 selection logic. Closes #159. 
-
-doc/Changes1.8
-
-- - - - - - - - - - - - - - -
-Commit a7fd15d (2016-04-17 23:08:17 +0200) by thommey
-Set bounce-bans to default to 0, 18a4e634 was incomplete. 
-
-doc/Changes1.8
-src/mod/irc.mod/irc.c
-
-- - - - - - - - - - - - - - -
-Commit 804944b (2016-04-08 18:25:35 +0200) by thommey
-Add changelog entry for last commit. 
-
-doc/Changes1.8
-
-- - - - - - - - - - - - - - -
-Commit da6fffe (2016-03-30 15:54:16 +0200) by thommey
-Reduce TLS error noise if neither key nor cert is set. 
-
-doc/Changes1.8
-src/tls.c
-
-- - - - - - - - - - - - - - -
-Commit d584c2f (2016-03-05 23:02:07 -0500) by Geo
-Prevent msg commands from functioning without a password set 
-
-src/userrec.c
-
-- - - - - - - - - - - - - - -
-Commit 663a59c (2016-02-27 06:44:37 +0100) by thommey
-Clarify that wait-split is in seconds, not minutes. 
-
-doc/Changes1.8
-doc/html/tcl-commands.html
-doc/tcl-commands.doc
-
-- - - - - - - - - - - - - - -
-Commit 4bbf0ec (2016-02-27 06:43:15 +0100) by thommey
-Remove issue template for github. 
-
-.github/ISSUE_TEMPLATE
-
-- - - - - - - - - - - - - - -
-Commit 2f1ceaa (2016-02-26 22:39:59 -0500) by Geo
-Update HTML docs 
-
-doc/html/tcl-commands.html
-
-- - - - - - - - - - - - - - -
-Commit 84e146a (2016-02-26 00:08:00 -0500) by Geo
-Update HTML docs 
-
-doc/html/tcl-commands.html
-
-- - - - - - - - - - - - - - -
-Commit 057431e (2016-02-24 19:41:23 -0500) by Geo
-Create ISSUE_TEMPLATE 
-
-.github/ISSUE_TEMPLATE
-
-- - - - - - - - - - - - - - -
-Commit 3e28ae4 (2016-02-24 19:32:18 -0500) by Geo
-Create PULL_REQUEST_TEMPLATE 
-
-.github/PULL_REQUEST_TEMPLATE
-
-- - - - - - - - - - - - - - -
-Commit 5257250 (2016-02-25 00:43:10 +0100) by thommey
-Revert "Add TCL_EXTRA_CFLAGS from tclConfig.sh to the compiler (to get
--pthread)." 
-This reverts commit f0927b9c7f48f33537a4bcc316118963c6ee7a83.
-
-Unfortunately, TCL_EXTRA_CFLAGS is '-g -O2 -fstack-protector
---param=ssp-buffer-size=4 -Wformat -Werror=format-security
--fno-unit-at-a-time -pipe -fvisibility=hidden -D_FORTIFY_SOURCE=2' on
-Ubuntu, which we certainly don't want to drag into Eggdrop.
-
-Makefile.in
-aclocal.m4
-configure
-doc/Changes1.8
-src/mod/compress.mod/configure
-src/mod/dns.mod/configure
-
-- - - - - - - - - - - - - - -
-Commit f0927b9 (2016-02-25 00:32:49 +0100) by thommey
-Add TCL_EXTRA_CFLAGS from tclConfig.sh to the compiler (to get -pthread). 
-
-Makefile.in
-aclocal.m4
-configure
-doc/Changes1.8
-src/mod/compress.mod/configure
-src/mod/dns.mod/configure
-
-- - - - - - - - - - - - - - -
-Commit 46e26ac (2016-02-25 00:07:35 +0100) by thommey
-Remove unnecessary Tcl_CreateInterp() prototype, it is in tcl.h. 
-
-doc/Changes1.8
-src/tcl.c
-
-- - - - - - - - - - - - - - -
-Commit 8cd9c1b (2016-02-22 21:11:33 -0500) by Geo
-Fix missing ifdef 
-
-src/mod/ctcp.mod/ctcp.c
-
-- - - - - - - - - - - - - - -
-Commit 10b5f58 (2016-02-22 20:55:42 -0500) by Geo
-Touchups 
-
-doc/IPV6
-src/mod/ctcp.mod/ctcp.c
-
-- - - - - - - - - - - - - - -
-Commit 3fbec09 (2016-02-22 20:50:38 -0500) by Geo
-Update IPV6 docs to include SCHAT4/6 
-
-doc/IPV6
-
-- - - - - - - - - - - - - - -
-Commit c57bd5d (2016-02-22 20:41:10 -0500) by Geo
-Added SCHAT4/6 command support 
-
-src/mod/ctcp.mod/ctcp.c
-
-- - - - - - - - - - - - - - -
-Commit 8abba25 (2016-02-22 19:32:22 -0500) by Geo
-Add CTCP CHAT4/CHAT6 functionality 
-
-doc/IPV6
-src/mod/ctcp.mod/ctcp.c
-src/mod/module.h
-src/modules.c
-src/net.c
-src/proto.h
-
-- - - - - - - - - - - - - - -
-Commit 89c6dda (2016-02-22 15:27:16 -0500) by Geo
-IPv6 CTCP IP selection logic docs update 
-
-doc/IPV6
-
-- - - - - - - - - - - - - - -
-Commit 24444dd (2016-02-22 00:29:19 -0500) by Geo
-Explain network settings in eggdrop.conf 
-
-eggdrop.conf
-
-- - - - - - - - - - - - - - -
-Commit 5bf60a6 (2016-02-15 15:36:12 -0500) by Geo
-grammarz 
-
-doc/TLS
-
-- - - - - - - - - - - - - - -
-Commit 4cb9fa6 (2016-02-14 22:26:10 -0500) by Geo
-Update botnet TLS documentation 
-
-doc/TLS
-doc/tcl-commands.doc
-help/cmds1.help
-
-- - - - - - - - - - - - - - -
-Commit a367dae (2016-02-15 00:42:19 -0500) by Geo
-Add ERROR prefix to errors 
-
-src/tls.c
-
-- - - - - - - - - - - - - - -
-Commit e045deb (2016-02-15 00:22:46 -0500) by Geo
-Fix SSL error logging 
-
-src/tls.c
-
-- - - - - - - - - - - - - - -
-Commit 1a145a1 (2016-02-15 03:37:25 +0100) by Robby
-Remove duplicate entries from doc/Changes1.8 
-
-doc/Changes1.8
-
-- - - - - - - - - - - - - - -
-Commit da89238 (2016-02-11 21:10:23 +0100) by thommey
-Clarify that the owner setting are handles. 
-
-eggdrop.conf
-
-- - - - - - - - - - - - - - -
-Commit eb3885a (2016-02-11 03:13:06 +0100) by thommey
-Normalize IPv6 score to same as IPv4 score: 32. 
-
-src/match.c
-
-- - - - - - - - - - - - - - -
-Commit 88837c2 (2016-02-09 23:56:44 -0500) by Geo
-Add CTCP chat src IPv6 settings/selection logic 
-
-src/net.c
-
-- - - - - - - - - - - - - - -
-Commit 480d0d7 (2016-02-06 00:09:49 -0500) by Geo
-Fail if SSL server attempted with no SSL support 
-
-src/mod/server.mod/cmdsserv.c
-src/mod/server.mod/server.c
-
-- - - - - - - - - - - - - - -
-Commit 73938bc (2016-02-05 22:31:21 -0500) by Geo
-Update chansettype 
-
-doc/tcl-commands.doc
-
-- - - - - - - - - - - - - - -
-Commit b59bf20 (2016-02-04 22:45:54 -0500) by Geo
-Documentation update 
-
-doc/tcl-commands.doc
-
-- - - - - - - - - - - - - - -
-Commit 9ec109a (2016-02-05 02:36:43 +0100) by thommey
-Fix THANKS file indention. 
+Commit a278043 (2017-02-07 19:21:06 -0500) by Geo
+Update THANKS file 
 
 THANKS
 
 - - - - - - - - - - - - - - -
-Commit 82db0bb (2016-02-05 02:28:25 +0100) by thommey
-Fix utf-8 encoding of THANKS file. 
-
-THANKS
-
-- - - - - - - - - - - - - - -
-Commit 61d5017 (2016-02-05 02:13:38 +0100) by Robby
-Update my email address. 
-
-THANKS
-
-- - - - - - - - - - - - - - -
-Commit f14fac0 (2016-01-30 21:29:51 -0500) by Geo
-Because spelling. 
-
-doc/tcl-commands.doc
-
-- - - - - - - - - - - - - - -
-Commit 7224cb8 (2016-01-30 21:27:03 -0500) by Geo
-Update PUBM documentation 
-
-doc/tcl-commands.doc
-
-- - - - - - - - - - - - - - -
-Commit 1ac3404 (2016-01-30 22:23:24 +0100) by thommey
-Add the Tcl function rfcequal. 
-
-doc/Changes1.8
-doc/html/tcl-commands.html
-doc/tcl-commands.doc
-src/tclmisc.c
-
-- - - - - - - - - - - - - - -
-Commit 7648f02 (2016-01-29 21:43:38 +0100) by thommey
-Fix bug in 0abc1c3b. 
-
-src/mod/irc.mod/irc.c
-
-- - - - - - - - - - - - - - -
-Commit dc74cec (2016-01-27 16:55:10 -0500) by Geo
-thommey knows best 
-
-src/net.c
-
-- - - - - - - - - - - - - - -
-Commit 92a1259 (2016-01-27 16:44:34 -0500) by Geo
-Last change! 
-
-src/net.c
-
-- - - - - - - - - - - - - - -
-Commit 0abc1c3 (2016-01-27 20:17:18 +0100) by thommey
-Revert compression of +b, +e, +I to +beI when asking for MODEs. 
-Unfortunately, MODE #chan +beI doesn't work on all IRCds. Fixes #73.
-
-doc/Changes1.8
-src/mod/irc.mod/irc.c
-
-- - - - - - - - - - - - - - -
-Commit 6528e34 (2016-01-27 20:07:59 +0100) by thommey
-Reintroduce scoring system for hostmask matching. Removed by 532d9fe. Fixes
-#89. 
-
-src/match.c
-
-- - - - - - - - - - - - - - -
-Commit 8e8aec3 (2016-01-27 18:50:49 +0100) by thommey
-Change deprecation message. 
-
-src/net.c
-
-- - - - - - - - - - - - - - -
-Commit 98603fd (2016-01-27 17:54:51 +0100) by thommey
-Document that you can trigger arbitrary events by Tcl scripts. 
-
-doc/Changes1.8
-doc/html/tcl-commands.html
-doc/tcl-commands.doc
-
-- - - - - - - - - - - - - - -
-Commit 07292c6 (2016-01-27 17:51:41 +0100) by thommey
-Make sure to always set evnt and log temporary variables in the global
-scope. 
-
-doc/Changes1.8
-src/tclhash.c
-
-- - - - - - - - - - - - - - -
-Commit 897c0cf (2016-01-27 00:30:46 -0500) by Geo
-Update message 
-
-src/net.c
-
-- - - - - - - - - - - - - - -
-Commit a40de62 (2016-01-27 02:34:36 +0100) by thommey
-Fix relative DEST= paths for make install. 
-
-Makefile.in
-
-- - - - - - - - - - - - - - -
-Commit 27c4179 (2016-01-27 02:08:20 +0100) by thommey
-Fix relative DEST= paths for make install. 
-
-Makefile.in
-doc/Changes1.8
-
-- - - - - - - - - - - - - - -
-Commit 9518b42 (2016-01-26 21:25:36 +0100) by thommey
-Add deprecation warning code and transition for my-ip/my-hostname to
-vhost4/vhost6/listen-addr. 
-
-src/net.c
-src/tcl.c
-
-- - - - - - - - - - - - - - -
-Commit 01a18f7 (2016-01-26 19:56:47 +0100) by thommey
-Update changes file. 
-
-doc/Changes1.8
-
-- - - - - - - - - - - - - - -
-Commit 2eaae9b (2016-01-24 00:07:07 -0500) by Geo
-alias PASSWORD to PASS in msg cmds 
-
-doc/Changes1.8
-src/mod/irc.mod/msgcmds.c
-
-- - - - - - - - - - - - - - -
-Commit 4aaf93b (2015-10-24 00:35:25 -0400) by Geo
-Allow botmasters to add shared bot hostmasks 
-
-doc/Changes1.8
-src/cmds.c
-
-- - - - - - - - - - - - - - -
-Commit 7e99f23 (2016-01-19 22:05:22 -0500) by Geo
-Formatting fixup 
-
-eggdrop.conf
-
-- - - - - - - - - - - - - - -
-Commit d2b3969 (2015-10-22 23:40:15 -0400) by Geo
-Add option to disable ident lookups 
-
-doc/Changes1.8
-eggdrop.conf
-src/dcc.c
-
-- - - - - - - - - - - - - - -
-Commit df4b71d (2016-01-14 01:55:48 -0500) by Geo
-Fix init_channel logic/memory leak 
-
-doc/Changes1.8
-src/mod/channels.mod/tclchan.c
-
-- - - - - - - - - - - - - - -
-Commit 9aa68a6 (2016-01-01 22:11:34 +0100) by thommey
-Prevent the user from installing into the source directory. 
-
-Makefile.in
-doc/Changes1.8
-
-- - - - - - - - - - - - - - -
-Commit 78fbbb8 (2015-12-30 21:04:26 +0100) by thommey
-Remove newline in getting commit number. 
-
-configure
-misc/getcommit
-src/mod/compress.mod/configure
-src/mod/dns.mod/configure
-
-- - - - - - - - - - - - - - -
-Commit 29e1a08 (2015-12-30 20:07:38 +0100) by thommey
-Update copyright ahead of time. 
+Commit eab7bea (2017-02-06 21:46:54 -0500) by Geo
+Update copyright to 2017 
 
 AUTHORS
 CONTENTS
 FEATURES
 INSTALL
-NEWS
+NEWS-1.8.0
 README
-THANKS
 aclocal.m4
 config.h.in
 configure
@@ -2163,42 +154,63 @@ doc/TLS
 doc/TRICKS
 doc/USERS
 doc/WEIRD-MESSAGES
-doc/html/about.html
-doc/html/app-problems.html
-doc/html/app-textsub.html
-doc/html/app-tricks.html
-doc/html/app-weird.html
-doc/html/bans.html
-doc/html/botnet.html
-doc/html/compiling.html
-doc/html/egg-core.html
-doc/html/faqs.html
-doc/html/features.html
+doc/html/ABOUT.html
+doc/html/BANS.html
+doc/html/BOTNET.html
+doc/html/COMPILE-GUIDE.html
+doc/html/INSTALL.html
+doc/html/KNOWN-PROBLEMS.html
+doc/html/README.html
+doc/html/TEXT-SUBSTITUTIONS.html
+doc/html/TRICKS.html
+doc/html/WEIRD-MESSAGES.html
+doc/html/appendices/first-script.html
+doc/html/appendices/index.html
+doc/html/appendices/known-probs.html
+doc/html/appendices/text-sub.html
+doc/html/appendices/tricks.html
+doc/html/appendices/weird-msg.html
+doc/html/appendices/weird-msgs.html
+doc/html/coreDocs/assoc.html
+doc/html/coreDocs/blowfish.html
+doc/html/coreDocs/channels.html
+doc/html/coreDocs/compress.html
+doc/html/coreDocs/console.html
+doc/html/coreDocs/core.html
+doc/html/coreDocs/ctcp.html
+doc/html/coreDocs/dns.html
+doc/html/coreDocs/filesys.html
+doc/html/coreDocs/index.html
+doc/html/coreDocs/irc.html
+doc/html/coreDocs/modules.html
+doc/html/coreDocs/notes.html
+doc/html/coreDocs/seen.html
+doc/html/coreDocs/server.html
+doc/html/coreDocs/share.html
+doc/html/coreDocs/transfer.html
+doc/html/coreDocs/uptime.html
+doc/html/coreDocs/woobie.html
+doc/html/genindex.html
 doc/html/index.html
-doc/html/install.html
-doc/html/mod-assoc.html
-doc/html/mod-blowfish.html
-doc/html/mod-channels.html
-doc/html/mod-compress.html
-doc/html/mod-console.html
-doc/html/mod-ctcp.html
-doc/html/mod-dns.html
-doc/html/mod-filesys.html
-doc/html/mod-irc.html
-doc/html/mod-notes.html
-doc/html/mod-seen.html
-doc/html/mod-server.html
-doc/html/mod-share.html
-doc/html/mod-transfer.html
-doc/html/mod-uptime.html
-doc/html/mod-woobie.html
-doc/html/news.html
-doc/html/party.html
-doc/html/patch-howto.html
-doc/html/readme.html
-doc/html/starting.html
+doc/html/installAndSetup/faq.html
+doc/html/installAndSetup/index.html
+doc/html/installAndSetup/install.html
+doc/html/installAndSetup/readme.html
+doc/html/mainDocs/about.html
+doc/html/mainDocs/bans.html
+doc/html/mainDocs/botnet.html
+doc/html/mainDocs/features.html
+doc/html/mainDocs/index.html
+doc/html/mainDocs/ipv6.html
+doc/html/mainDocs/partyline.html
+doc/html/mainDocs/patch.html
+doc/html/mainDocs/tcl-commands.html
+doc/html/mainDocs/tls.html
+doc/html/mainDocs/users.html
+doc/html/search.html
+doc/html/searchindex.js
 doc/html/tcl-commands.html
-doc/html/users.html
+doc/html/toc_installAndSetup.html
 doc/man1/eggdrop.1
 doc/settings/CONTENTS
 doc/settings/core.settings
@@ -2218,9 +230,47 @@ doc/settings/mod.share
 doc/settings/mod.transfer
 doc/settings/mod.uptime
 doc/settings/mod.woobie
+doc/sphinx_source/appendices/first-script.rst
+doc/sphinx_source/appendices/known-probs.rst
+doc/sphinx_source/appendices/text-sub.rst
+doc/sphinx_source/appendices/tricks.rst
+doc/sphinx_source/appendices/weird-msgs.rst
+doc/sphinx_source/conf.py
+doc/sphinx_source/coreDocs/assoc.rst
+doc/sphinx_source/coreDocs/blowfish.rst
+doc/sphinx_source/coreDocs/channels.rst
+doc/sphinx_source/coreDocs/compress.rst
+doc/sphinx_source/coreDocs/console.rst
+doc/sphinx_source/coreDocs/core.rst
+doc/sphinx_source/coreDocs/ctcp.rst
+doc/sphinx_source/coreDocs/dns.rst
+doc/sphinx_source/coreDocs/filesys.rst
+doc/sphinx_source/coreDocs/irc.rst
+doc/sphinx_source/coreDocs/modules.rst
+doc/sphinx_source/coreDocs/notes.rst
+doc/sphinx_source/coreDocs/seen.rst
+doc/sphinx_source/coreDocs/server.rst
+doc/sphinx_source/coreDocs/share.rst
+doc/sphinx_source/coreDocs/transfer.rst
+doc/sphinx_source/coreDocs/uptime.rst
+doc/sphinx_source/coreDocs/woobie.rst
+doc/sphinx_source/installAndSetup/install.rst
+doc/sphinx_source/installAndSetup/readme.rst
+doc/sphinx_source/mainDocs/about.rst
+doc/sphinx_source/mainDocs/bans.rst
+doc/sphinx_source/mainDocs/botnet.rst
+doc/sphinx_source/mainDocs/features.rst
+doc/sphinx_source/mainDocs/ipv6.rst
+doc/sphinx_source/mainDocs/partyline.rst
+doc/sphinx_source/mainDocs/patch.rst
+doc/sphinx_source/mainDocs/tcl-commands.rst
+doc/sphinx_source/mainDocs/tls.rst
+doc/sphinx_source/mainDocs/users.rst
 doc/tcl-commands.doc
 logs/CONTENTS
 misc/addpatch
+misc/genChangelog
+misc/generatedocs
 misc/getcommit
 misc/killwhitespace
 misc/makedepend
@@ -2228,7 +278,6 @@ misc/modconfig
 misc/newversion
 misc/releaseprep
 misc/runautotools
-misc/updatecopyright
 scripts/CONTENTS
 scripts/action.fix.tcl
 scripts/compat.tcl
@@ -2366,2364 +415,322 @@ text/CONTENTS
 text/banner
 
 - - - - - - - - - - - - - - -
-Commit 12f9ae8 (2015-12-30 20:05:45 +0100) by thommey
-Add script to update copyrights (at least most of them). 
+Commit dc9227f (2017-02-06 00:49:25 -0500) by Geo
+Add main.c to search path 
 
 misc/updatecopyright
 
 - - - - - - - - - - - - - - -
-Commit 87adce4 (2015-12-30 18:47:53 +0100) by thommey
-Kill whitespaces. 
+Commit e0de5ac (2017-02-06 00:32:09 -0500) by Geo
+update updatecopyright help 
 
-src/chanprog.c
-src/cmds.c
-src/compat/gethostbyname2.c
-src/dcc.c
-src/dccutil.c
-src/dns.c
-src/main.c
-src/mod/channels.mod/tclchan.c
-src/mod/dns.mod/coredns.c
-src/mod/dns.mod/dns.c
-src/mod/server.mod/servmsg.c
-src/tcldcc.c
-src/tclmisc.c
-src/tls.c
+misc/updatecopyright
 
 - - - - - - - - - - - - - - -
-Commit a538dca (2015-12-30 18:45:06 +0100) by thommey
-Ran autotools. 
+Commit 8cd27d8 (2017-02-06 00:30:47 -0500) by Geo
+Update docs copyright as part of updatecopyright script 
 
-configure
-src/mod/compress.mod/configure
-src/mod/dns.mod/configure
+misc/updatecopyright
 
 - - - - - - - - - - - - - - -
-Commit 0de27ec (2015-12-30 18:17:27 +0100) by thommey
-Replace CVS revision tags with git describe and patch as fallback. 
-
-configure.ac
-misc/getcommit
-misc/runautotools
-src/mod/compress.mod/configure.ac
-src/mod/dns.mod/configure.ac
+Commit d6420e9 (2017-02-04 03:49:50 +0100) by thommey
+Simplify sockgets line parsing 
+This simplifies the line parsing of sockets, and fixes the bug where
+s[strlen(s)-1] accesses invalid memory in case of an empty line (s = "\n"
+and it looks behind to find '\r').
+src/net.c
+src/patch.h
 
 - - - - - - - - - - - - - - -
-Commit f9754a4 (2015-12-30 15:54:54 +0100) by thommey
-Remove all CVS Id tags. 
-
-AUTHORS
-CONTENTS
-ChangeLog
-FEATURES
-INSTALL
-Makefile.in
-NEWS
-README
-THANKS
-aclocal.m4
-disabled_modules
-doc/ABOUT
-doc/BANS
-doc/BOTNET
-doc/COMPILE-GUIDE
-doc/CONTENTS
-doc/Changes0.6
-doc/Changes0.7
-doc/Changes0.9
-doc/Changes1.0
-doc/Changes1.1
-doc/Changes1.2
-doc/Changes1.3
-doc/Changes1.4
-doc/Changes1.5
-doc/Changes1.6
-doc/Changes1.8
-doc/FIRST-SCRIPT
-doc/IPV6
-doc/KNOWN-PROBLEMS
-doc/MODULES
-doc/Makefile.in
-doc/PARTYLINE
-doc/PATCH-HOWTO
-doc/TEXT-SUBSTITUTIONS
-doc/TLS
-doc/TRICKS
-doc/USERS
-doc/Versions
-doc/WEIRD-MESSAGES
-doc/html/about.html
-doc/html/app-problems.html
-doc/html/app-textsub.html
-doc/html/app-tricks.html
-doc/html/app-weird.html
-doc/html/bans.html
-doc/html/botnet.html
-doc/html/compiling.html
-doc/html/egg-core.html
-doc/html/faqs.html
-doc/html/features.html
-doc/html/index.html
-doc/html/install.html
-doc/html/mod-assoc.html
-doc/html/mod-blowfish.html
-doc/html/mod-channels.html
-doc/html/mod-compress.html
-doc/html/mod-console.html
-doc/html/mod-ctcp.html
-doc/html/mod-dns.html
-doc/html/mod-filesys.html
-doc/html/mod-irc.html
-doc/html/mod-notes.html
-doc/html/mod-seen.html
-doc/html/mod-server.html
-doc/html/mod-share.html
-doc/html/mod-transfer.html
-doc/html/mod-uptime.html
-doc/html/mod-woobie.html
-doc/html/news.html
-doc/html/party.html
-doc/html/patch-howto.html
-doc/html/readme.html
-doc/html/starting.html
-doc/html/tcl-commands.html
-doc/html/users.html
-doc/man1/eggdrop.1
-doc/settings/CONTENTS
-doc/settings/core.settings
-doc/settings/mod.assoc
-doc/settings/mod.blowfish
-doc/settings/mod.channels
-doc/settings/mod.compress
-doc/settings/mod.console
-doc/settings/mod.ctcp
-doc/settings/mod.dns
-doc/settings/mod.filesys
-doc/settings/mod.irc
-doc/settings/mod.notes
-doc/settings/mod.seen
-doc/settings/mod.server
-doc/settings/mod.share
-doc/settings/mod.transfer
-doc/settings/mod.uptime
-doc/settings/mod.woobie
-doc/tcl-commands.doc
-eggdrop.conf
-language/core.danish.lang
-language/core.english.lang
-language/core.finnish.lang
-language/core.french.lang
-language/core.german.lang
-logs/CONTENTS
-misc/addpatch
-misc/install-sh
-misc/killwhitespace
-misc/makedepend
-misc/mkinstalldirs
-misc/modconfig
-misc/newversion
-misc/releaseprep
-misc/runautotools
-scripts/CONTENTS
-scripts/Makefile.in
-scripts/action.fix.tcl
-scripts/alltools.tcl
-scripts/autobotchk
-scripts/botchk
-scripts/cmd_resolve.tcl
-scripts/compat.tcl
-scripts/dccwhois.tcl
-scripts/getops.tcl
-scripts/klined.tcl
-scripts/notes2.tcl
-scripts/ques5.tcl
-scripts/quotepass.tcl
-scripts/userinfo.tcl
-scripts/weed
-src/Makefile.in
-src/bg.c
-src/bg.h
+Commit 66f6d87 (2017-02-03 18:54:07 +0100) by Cizzle
+Fix channels output for ".who linkedbot" 
+* Fix channels output for .who linkedbot
+* Output of channels on multiple lines instead of truncating.
+* Fix output when no channels are present
 src/botcmd.c
-src/botmsg.c
-src/botnet.c
-src/chan.h
-src/chanprog.c
-src/cmds.c
-src/cmdt.h
-src/compat/Makefile.in
-src/compat/compat.h
-src/compat/gethostbyname2.c
-src/compat/gethostbyname2.h
-src/compat/in6.h
-src/compat/inet_aton.c
-src/compat/inet_aton.h
-src/compat/inet_ntop.c
-src/compat/inet_ntop.h
-src/compat/inet_pton.c
-src/compat/inet_pton.h
-src/compat/memcpy.c
-src/compat/memcpy.h
-src/compat/memset.c
-src/compat/memset.h
-src/compat/snprintf.c
-src/compat/snprintf.h
-src/compat/strcasecmp.c
-src/compat/strcasecmp.h
-src/compat/strftime.c
-src/compat/strftime.h
-src/dcc.c
-src/dccutil.c
-src/dns.c
-src/dns.h
-src/eggdrop.h
-src/flags.c
-src/flags.h
-src/lang.h
-src/language.c
-src/main.c
-src/main.h
-src/match.c
-src/md5/Makefile.in
-src/mem.c
-src/misc.c
-src/misc_file.c
-src/misc_file.h
-src/mod/Makefile.in
-src/mod/assoc.mod/Makefile
-src/mod/assoc.mod/assoc.c
-src/mod/assoc.mod/assoc.h
-src/mod/assoc.mod/language/assoc.danish.lang
-src/mod/assoc.mod/language/assoc.english.lang
-src/mod/assoc.mod/language/assoc.finnish.lang
-src/mod/assoc.mod/language/assoc.french.lang
-src/mod/assoc.mod/language/assoc.german.lang
-src/mod/assoc.mod/modinfo
-src/mod/blowfish.mod/Makefile
-src/mod/blowfish.mod/bf_tab.h
-src/mod/blowfish.mod/blowfish.c
-src/mod/blowfish.mod/blowfish.h
-src/mod/blowfish.mod/modinfo
-src/mod/channels.mod/Makefile
-src/mod/channels.mod/channels.c
-src/mod/channels.mod/channels.h
-src/mod/channels.mod/cmdschan.c
-src/mod/channels.mod/modinfo
-src/mod/channels.mod/tclchan.c
-src/mod/channels.mod/udefchan.c
-src/mod/channels.mod/userchan.c
-src/mod/compress.mod/Makefile.in
-src/mod/compress.mod/compress.c
-src/mod/compress.mod/compress.h
-src/mod/compress.mod/configure.ac
-src/mod/compress.mod/modinfo
-src/mod/compress.mod/tclcompress.c
-src/mod/console.mod/Makefile
-src/mod/console.mod/console.c
-src/mod/console.mod/console.h
-src/mod/console.mod/language/console.danish.lang
-src/mod/console.mod/language/console.english.lang
-src/mod/console.mod/language/console.finnish.lang
-src/mod/console.mod/language/console.french.lang
-src/mod/console.mod/language/console.german.lang
-src/mod/console.mod/modinfo
-src/mod/ctcp.mod/Makefile
-src/mod/ctcp.mod/ctcp.c
-src/mod/ctcp.mod/ctcp.h
-src/mod/ctcp.mod/modinfo
-src/mod/dns.mod/Makefile.in
-src/mod/dns.mod/configure.ac
-src/mod/dns.mod/coredns.c
-src/mod/dns.mod/dns.c
-src/mod/dns.mod/dns.h
-src/mod/dns.mod/modinfo
-src/mod/eggmod.m4
-src/mod/filesys.mod/Makefile
-src/mod/filesys.mod/dbcompat.c
-src/mod/filesys.mod/dbcompat.h
-src/mod/filesys.mod/filedb3.c
-src/mod/filesys.mod/filedb3.h
-src/mod/filesys.mod/filelist.c
-src/mod/filesys.mod/filelist.h
-src/mod/filesys.mod/files.c
-src/mod/filesys.mod/files.h
-src/mod/filesys.mod/filesys.c
-src/mod/filesys.mod/filesys.h
-src/mod/filesys.mod/language/filesys.danish.lang
-src/mod/filesys.mod/language/filesys.english.lang
-src/mod/filesys.mod/language/filesys.finnish.lang
-src/mod/filesys.mod/language/filesys.french.lang
-src/mod/filesys.mod/language/filesys.german.lang
-src/mod/filesys.mod/modinfo
-src/mod/filesys.mod/tclfiles.c
-src/mod/irc.mod/Makefile
-src/mod/irc.mod/chan.c
-src/mod/irc.mod/cmdsirc.c
-src/mod/irc.mod/irc.c
-src/mod/irc.mod/irc.h
-src/mod/irc.mod/mode.c
-src/mod/irc.mod/modinfo
-src/mod/irc.mod/msgcmds.c
-src/mod/irc.mod/tclirc.c
-src/mod/module.h
-src/mod/modvals.h
-src/mod/notes.mod/Makefile
-src/mod/notes.mod/cmdsnote.c
-src/mod/notes.mod/language/notes.danish.lang
-src/mod/notes.mod/language/notes.english.lang
-src/mod/notes.mod/language/notes.finnish.lang
-src/mod/notes.mod/language/notes.french.lang
-src/mod/notes.mod/language/notes.german.lang
-src/mod/notes.mod/modinfo
-src/mod/notes.mod/notes.c
-src/mod/notes.mod/notes.h
-src/mod/seen.mod/Makefile
-src/mod/seen.mod/modinfo
-src/mod/seen.mod/seen.c
-src/mod/server.mod/Makefile
-src/mod/server.mod/cmdsserv.c
-src/mod/server.mod/modinfo
-src/mod/server.mod/server.c
-src/mod/server.mod/server.h
-src/mod/server.mod/servmsg.c
-src/mod/server.mod/tclserv.c
-src/mod/share.mod/Makefile
-src/mod/share.mod/modinfo
-src/mod/share.mod/share.c
-src/mod/share.mod/share.h
-src/mod/share.mod/uf_features.c
-src/mod/transfer.mod/Makefile
-src/mod/transfer.mod/language/transfer.danish.lang
-src/mod/transfer.mod/language/transfer.english.lang
-src/mod/transfer.mod/language/transfer.finnish.lang
-src/mod/transfer.mod/language/transfer.french.lang
-src/mod/transfer.mod/language/transfer.german.lang
-src/mod/transfer.mod/modinfo
-src/mod/transfer.mod/tcltransfer.c
-src/mod/transfer.mod/transfer.c
-src/mod/transfer.mod/transfer.h
-src/mod/transfer.mod/transferfstat.c
-src/mod/transfer.mod/transferqueue.c
-src/mod/uptime.mod/Makefile
-src/mod/uptime.mod/modinfo
-src/mod/uptime.mod/uptime.c
-src/mod/uptime.mod/uptime.h
-src/mod/woobie.mod/Makefile
-src/mod/woobie.mod/modinfo
-src/mod/woobie.mod/woobie.c
-src/modules.c
-src/modules.h
-src/net.c
-src/patch.h
-src/proto.h
-src/rfc1459.c
-src/stat.h
-src/tandem.h
-src/tcl.c
-src/tcldcc.c
-src/tclegg.h
-src/tclhash.c
-src/tclhash.h
-src/tclmisc.c
-src/tcluser.c
-src/tls.c
-src/userent.c
-src/userrec.c
-src/users.c
-src/users.h
-ssl.conf
-text/CONTENTS
-
-- - - - - - - - - - - - - - -
-Commit 0751f3f (2015-12-29 03:28:56 +0100) by thommey
-Update patchname. 
-
 src/patch.h
 
 - - - - - - - - - - - - - - -
-Commit 24da99c (2015-12-29 03:03:29 +0100) by thommey
-Clear unused variable. 
-
-src/dns.c
-
-- - - - - - - - - - - - - - -
-Commit c690592 (2015-12-29 03:01:59 +0100) by thommey
-Run autotools. 
-
-config.h.in
-configure
-
-- - - - - - - - - - - - - - -
-Commit ac7a950 (2015-12-29 03:01:31 +0100) by thommey
-Remove superfluous definition of Tcl version, it is already in tcl.h. 
-
-aclocal.m4
-
-- - - - - - - - - - - - - - -
-Commit 1295758 (2015-12-29 02:59:14 +0100) by thommey
-Clarify minimum required Tcl version. 
-
-aclocal.m4
-
-- - - - - - - - - - - - - - -
-Commit 886c0ea (2015-12-29 02:57:15 +0100) by thommey
-Run autotools, update changelog. 
-
-config.h.in
-configure
-doc/Changes1.8
-
-- - - - - - - - - - - - - - -
-Commit d557bb2 (2015-12-29 02:56:22 +0100) by thommey
-Fix spelling error compatability. 
-
-src/Makefile.in
-
-- - - - - - - - - - - - - - -
-Commit d7d94e9 (2015-12-29 02:44:57 +0100) by thommey
-Set Tcl version from configure. 
-
-aclocal.m4
-
-- - - - - - - - - - - - - - -
-Commit 99212d0 (2015-12-29 02:41:44 +0100) by thommey
-Adjust HAVE_TCL_* settings to assume Tcl >= 8.3. 
-
-src/main.h
-src/tcl.c
-
-- - - - - - - - - - - - - - -
-Commit db30392 (2015-12-29 02:29:18 +0100) by thommey
-Remove XREQs. 
-
-src/Makefile.in
-src/net.c
-
-- - - - - - - - - - - - - - -
-Commit 7570148 (2015-12-29 01:48:58 +0100) by thommey
-Remove unused variables. Fix memset to zero. 
-
-src/dns.c
-src/md5/md5c.c
-src/net.c
-
-- - - - - - - - - - - - - - -
-Commit 8fba6a5 (2015-12-29 01:38:46 +0100) by thommey
-Remove another inline specifier. 
-
-src/tclhash.h
-
-- - - - - - - - - - - - - - -
-Commit 4106f73 (2015-12-28 19:24:57 +0100) by thommey
-Clean up the inline business. 
-
-doc/Changes1.8
-src/dns.c
-src/match.c
-src/mod/channels.mod/channels.c
-src/mod/channels.mod/channels.h
-src/mod/compress.mod/compress.c
-src/mod/dns.mod/coredns.c
-src/mod/filesys.mod/filelist.h
-src/mod/transfer.mod/transfer.c
-src/proto.h
-src/userrec.c
-
-- - - - - - - - - - - - - - -
-Commit bf47f57 (2015-12-28 19:07:30 +0100) by thommey
-Fix --with-tcllib compilation typo. 
-
-aclocal.m4
-configure
-
-- - - - - - - - - - - - - - -
-Commit 6694623 (2015-12-28 19:01:45 +0100) by thommey
-Fix compilation with tcl.m4 again. 
-
-Makefile.in
-aclocal.m4
-config.h.in
-configure
-configure.ac
-doc/Changes1.8
-src/Makefile.in
-
-- - - - - - - - - - - - - - -
-Commit ed910ff (2015-12-14 00:11:02 +0100) by thommey
-Fix basename for Tcl library when compiling without --with-tcllib. 
-
-aclocal.m4
-configure
-
-- - - - - - - - - - - - - - -
-Commit bb8a724 (2015-12-13 23:34:05 +0100) by thommey
-Fix Makefile 
-
-Makefile.in
-doc/Changes1.8
-
-- - - - - - - - - - - - - - -
-Commit 4315862 (2015-12-13 23:31:53 +0100) by thommey
-run autotools 
-
-configure
-
-- - - - - - - - - - - - - - -
-Commit c1e0df4 (2015-12-13 23:31:20 +0100) by thommey
-Fix compilation with tcl.m4 
-
-configure.ac
-doc/Changes1.8
-
-- - - - - - - - - - - - - - -
-Commit ed71324 (2015-10-21 23:31:09 -0400) by Geo
-fix assoc module local channels 
-
-doc/Changes1.8
-src/cmds.c
-
-- - - - - - - - - - - - - - -
-Commit b579643 (2015-10-28 23:40:04 -0400) by Geo
-Update botname on +i/+x 
-
-doc/Changes1.8
-src/mod/server.mod/servmsg.c
-
-- - - - - - - - - - - - - - -
-Commit 953d7dc (2015-12-06 16:08:52 -0500) by Geo
-re-run autotools 
-
-configure
-
-- - - - - - - - - - - - - - -
-Commit 2cae39c (2015-12-02 23:00:36 -0500) by Geo
-Updated tcl.m4 file Update date: 2015-10-05 from
-http://core.tcl.tk/tclconfig/dir?ci=tip 
-
-tcl.m4
-
-- - - - - - - - - - - - - - -
-Commit 3e56e30 (2015-12-02 22:53:04 -0500) by Geo
-Incorporate tclConfig.sh 
-
-aclocal.m4
-configure.ac
-doc/Changes1.8
-tcl.m4
-
-- - - - - - - - - - - - - - -
-Commit 7636e31 (2015-12-05 23:11:56 -0500) by Geo
-Up encryption to 4096 
-
-Makefile.in
-doc/TLS
-doc/html/egg-core.html
-doc/settings/core.settings
-eggdrop.conf
-src/dcc.c
-
-- - - - - - - - - - - - - - -
-Commit 7ce81fd (2015-10-31 23:49:43 -0400) by Geo
-Reset channel info on part/kick 
-
-doc/Changes1.8
-src/mod/channels.mod/tclchan.c
-src/mod/irc.mod/chan.c
-src/mod/irc.mod/irc.c
-
-- - - - - - - - - - - - - - -
-Commit ab717a5 (2015-10-24 00:11:49 -0400) by Geo
-Clarify SSL documentation and errors 
-
-INSTALL
-Makefile.in
-doc/Changes1.8
-doc/TLS
-eggdrop.conf
-src/dcc.c
-src/tls.c
-
-- - - - - - - - - - - - - - -
-Commit 78367e0 (2015-10-23 20:53:46 -0400) by Geo
-Update Change1.8 file 
-
-doc/Changes1.8
-
-- - - - - - - - - - - - - - -
-Commit 0d60c39 (2015-10-22 21:38:43 -0400) by Geo
-un-remove compile warning ignores 
-
-src/botcmd.c
-src/dcc.c
-src/dns.c
-src/language.c
-src/main.c
-src/misc.c
-src/mod/filesys.mod/dbcompat.c
-src/mod/filesys.mod/filedb3.c
-src/mod/notes.mod/notes.c
-src/mod/transfer.mod/transfer.c
-src/net.c
-src/users.c
-
-- - - - - - - - - - - - - - -
-Commit 6161024 (2015-10-08 21:12:57 -0400) by Geo
-various compile warning fixes 
-
-src/botcmd.c
-src/dcc.c
-src/dns.c
-src/language.c
-src/main.c
-src/misc.c
-src/mod/compress.mod/compress.c
-src/mod/dns.mod/coredns.c
-src/mod/filesys.mod/dbcompat.c
-src/mod/filesys.mod/filedb3.c
-src/mod/notes.mod/notes.c
-src/mod/transfer.mod/transfer.c
-src/net.c
-src/tls.c
-src/users.c
-
-- - - - - - - - - - - - - - -
-Commit 5777956 (2015-10-24 00:21:08 +0200) by thommey
-Remove two inline keywords. Fixes #123. 
-Inline semantics between gnu89 and c99 differ, and with gcc5 changng 
-default behavior this has become an issue.
-
-src/net.c
-src/tclhash.c
-
-- - - - - - - - - - - - - - -
-Commit 2e252d6 (2015-10-23 00:03:33 -0400) by Geo
-Remove EMAIL and URL fields from docs 
-
-doc/Changes1.8
-
-- - - - - - - - - - - - - - -
-Commit 2a6c083 (2015-10-22 18:20:49 -0400) by Geo
-Point user to userinfo.tcl 
-
-doc/tcl-commands.doc
-
-- - - - - - - - - - - - - - -
-Commit e16d7eb (2015-10-07 23:19:54 -0400) by Geo
-Removes the EMAIL and URL fields from tcl-commands.doc these were removed
-some time ago in code, but documentation appears not to have been updated
-along with it. 
-
-doc/tcl-commands.doc
-
-- - - - - - - - - - - - - - -
-Commit 82dedc8 (2015-10-22 23:15:08 -0400) by Geo
-update Change file 
-
-doc/Changes1.8
-
-- - - - - - - - - - - - - - -
-Commit 6bf8fbc (2015-10-22 18:20:49 -0400) by Geo
-Point user to userinfo.tcl 
-
-doc/tcl-commands.doc
-
-- - - - - - - - - - - - - - -
-Commit 6c0f4b5 (2015-10-08 21:26:26 -0400) by Geo
-fix failing alt hub links 
-
-src/botnet.c
-src/dcc.c
-src/net.c
-
-- - - - - - - - - - - - - - -
-Commit cfdf0ec (2015-10-08 20:59:38 -0400) by Geo
-Add byte-based flood option 
-
-eggdrop.conf
-src/chan.h
-src/eggdrop.h
-src/mod/channels.mod/channels.c
-src/mod/channels.mod/cmdschan.c
-src/mod/channels.mod/tclchan.c
-src/mod/irc.mod/chan.c
-src/mod/irc.mod/irc.h
-src/mod/irc.mod/mode.c
-
-- - - - - - - - - - - - - - -
-Commit c0dbb79 (2015-10-08 20:35:08 -0400) by Geo
-fix duplicate array mask value 
-
-src/mod/module.h
-
-- - - - - - - - - - - - - - -
-Commit 8d7a306 (2015-10-08 20:27:49 -0400) by Geo
-Reply to server CTCPs 
-
-src/mod/server.mod/servmsg.c
-
-- - - - - - - - - - - - - - -
-Commit e984dfe (2015-10-07 23:39:21 -0400) by Geo
-Return -1 for idletime if user not on channel 
-
-doc/tcl-commands.doc
-src/mod/irc.mod/tclirc.c
-
-- - - - - - - - - - - - - - -
-Commit 1eca0ff (2015-10-07 23:29:18 -0400) by Geo
-Mode change after host add 
-
-src/tcluser.c
-
-- - - - - - - - - - - - - - -
-Commit de293a9 (2015-10-07 23:19:54 -0400) by Geo
-Removes the EMAIL and URL fields from tcl-commands.doc these were removed
-some time ago in code, but documentation appears not to have been updated
-along with it. 
-
-doc/tcl-commands.doc
-
-- - - - - - - - - - - - - - -
-Commit d785368 (2014-10-08 20:08:27 +0000) by thommey
-Throw error when writing to read-only variables in server module. 
-
-doc/Changes1.8
-src/mod/server.mod/server.c
-
-- - - - - - - - - - - - - - -
-Commit 14c2584 (2014-10-08 14:41:23 +0000) by thommey
-Add a config warning to tell users they are in the source directory.
----------------------------------------------------------------------- 
-
-doc/Changes1.8
-eggdrop.conf
-
-- - - - - - - - - - - - - - -
-Commit d61e4ad (2014-10-03 20:49:44 +0000) by thommey
-Fix description for share-unlinks in the config. 
-
-doc/Changes1.8
-eggdrop.conf
-
-- - - - - - - - - - - - - - -
-Commit 6839dca (2014-10-02 19:27:43 +0000) by thommey
-Remove length limit of info line. Fix stripcodes modifying the Tcl object
-in-place. Only permanent owners can delete owners. 
-
-doc/Changes1.8
-src/cmds.c
-src/mod/channels.mod/userchan.c
-src/patch.h
-src/tclmisc.c
-src/userent.c
-
-- - - - - - - - - - - - - - -
-Commit 9b50119 (2014-09-30 10:40:40 +0000) by thommey
-Add Tcl8.6 and /usr/lib/x86_64-linux-gnu to Tcl search paths. 
-
-configure
-configure.ac
-doc/Changes1.8
-src/mod/compress.mod/configure
-src/mod/dns.mod/configure
-src/patch.h
-
-- - - - - - - - - - - - - - -
-Commit 05362f9 (2014-09-09 16:43:32 +0000) by thommey
- Changed IRCnet's max-bans/max-modes to 64. 
-
-doc/Changes1.8
-doc/html/mod-irc.html
-eggdrop.conf
-src/mod/irc.mod/irc.c
-
-- - - - - - - - - - - - - - -
-Commit 05930a1 (2014-09-06 23:49:32 +0000) by thommey
-Fix error messages of (un)stick(exempt/invite). 
-
-doc/Changes1.8
-doc/html/tcl-commands.html
-doc/tcl-commands.doc
-src/mod/channels.mod/tclchan.c
-
-- - - - - - - - - - - - - - -
-Commit 1401c68 (2014-03-21 21:42:41 +0000) by thommey
-Fix a potentially endless loop when looking up bot hostnames. 
-
-doc/Changes1.8
-src/dcc.c
-src/patch.h
-
-- - - - - - - - - - - - - - -
-Commit ee13a3b (2013-07-31 01:09:34 +0000) by thommey
-apply two patches of guppy that were missing 
-
-configure.ac
-doc/Changes1.8
-doc/html/mod-server.html
-doc/settings/mod.server
-eggdrop.conf
-src/cmds.c
-src/main.c
-src/main.h
-src/mod/server.mod/help/server.help
-src/mod/server.mod/server.c
-src/mod/server.mod/server.h
-src/mod/server.mod/servmsg.c
-src/tcl.c
-src/tclmisc.c
-
-- - - - - - - - - - - - - - -
-Commit 256e91a (2013-07-31 00:52:36 +0000) by thommey
-better documentation of bind time/cron 
-
-doc/Changes1.8
-doc/tcl-commands.doc
-
-- - - - - - - - - - - - - - -
-Commit 4847a9e (2013-07-31 00:45:38 +0000) by thommey
-new evnt bind type: preinit-server 
-
-doc/Changes1.8
-doc/html/tcl-commands.html
-doc/tcl-commands.doc
-src/mod/server.mod/servmsg.c
-src/patch.h
-
-- - - - - - - - - - - - - - -
-Commit a000d1a (2013-07-31 00:32:55 +0000) by thommey
-new evnt bind: fail-server 
-
-doc/Changes1.8
-doc/html/tcl-commands.html
-doc/tcl-commands.doc
-src/mod/server.mod/servmsg.c
-
-- - - - - - - - - - - - - - -
-Commit 3f6dd25 (2013-07-31 00:28:50 +0000) by thommey
-share doc update 
-
-doc/Changes1.8
-src/mod/share.mod/help/share.help
-
-- - - - - - - - - - - - - - -
-Commit e56c038 (2013-07-31 00:25:32 +0000) by thommey
-master can no longer .-user another master 
-
-doc/Changes1.8
-src/cmds.c
-
-- - - - - - - - - - - - - - -
-Commit 3306cc1 (2013-07-31 00:20:05 +0000) by thommey
-apply two patches by robby 
-
-doc/Changes1.8
-doc/html/tcl-commands.html
-doc/tcl-commands.doc
-help/cmds2.help
-src/cmds.c
-src/dcc.c
-src/tclmisc.c
-
-- - - - - - - - - - - - - - -
-Commit f410315 (2013-07-29 15:49:40 +0000) by thommey
-We need more chars to print unixtime these days (10 instead of 9) 
-
-doc/Changes1.8
-src/cmds.c
-src/patch.h
-
-- - - - - - - - - - - - - - -
-Commit 3290977 (2012-12-19 22:30:43 +0000) by thommey
-Fix a special char issue in dccwhois.tcl 
-
-doc/Changes1.8
-scripts/dccwhois.tcl
-src/patch.h
-
-- - - - - - - - - - - - - - -
-Commit 7002071 (2012-12-11 13:27:44 +0000) by thommey
-Make sure match_cidr returns NOMATCH if address families mismatch. 
-
-doc/Changes1.8
-src/match.c
-
-- - - - - - - - - - - - - - -
-Commit dc38404 (2012-12-10 22:49:45 +0000) by thommey
-Fix match_cidr to always return MATCH if the prefix is 0. 
-
-doc/Changes1.8
-src/match.c
-src/patch.h
-
-- - - - - - - - - - - - - - -
-Commit 23dce56 (2012-09-25 17:24:41 +0000) by thommey
-Export the tcl_result* functions to modules 
-
-doc/Changes1.8
-src/mod/module.h
-src/modules.c
-src/patch.h
-
-- - - - - - - - - - - - - - -
-Commit f64a828 (2012-06-26 21:20:49 +0000) by thommey
-Clarify documentation of mask matching in bind notc. 
-
-doc/Changes1.8
-doc/html/tcl-commands.html
-doc/tcl-commands.doc
-
-- - - - - - - - - - - - - - -
-Commit 66c1b1e (2012-06-22 23:35:33 +0000) by thommey
-add stripcodes flag to strip italics and rename code for stripcodes o 
-
-doc/Changes1.8
-doc/html/tcl-commands.html
-doc/tcl-commands.doc
-src/cmds.c
-src/dcc.c
-src/eggdrop.h
-src/patch.h
-src/tclmisc.c
-
-- - - - - - - - - - - - - - -
-Commit 1bb12aa (2012-06-22 21:38:55 +0000) by thommey
-new stripcode flag "o" for mirc ctrl+o and * for everything 
-
-doc/Changes1.8
-doc/html/tcl-commands.html
-doc/tcl-commands.doc
-src/cmds.c
-src/dcc.c
-src/eggdrop.h
-src/patch.h
-src/tclmisc.c
-
-- - - - - - - - - - - - - - -
-Commit af6e020 (2012-06-19 14:27:17 +0000) by thommey
-Partially revert changes to vwait/update as in 1.6.21. 
-
-doc/Changes1.8
-src/patch.h
-src/tcl.c
-src/tclhash.h
-
-- - - - - - - - - - - - - - -
-Commit b204199 (2012-06-16 16:04:02 +0000) by thommey
-Call Tcl's bgerror on Eggdrop background errors. 
-
-doc/Changes1.8
-src/dcc.c
-src/dns.c
-src/patch.h
-src/tcl.c
-src/tclhash.c
-
-- - - - - - - - - - - - - - -
-Commit 8961a65 (2012-06-15 00:04:59 +0000) by thommey
-Remove wrong truncation of ERR_YOUREBANNEDCREEP output to console. 
-
-doc/Changes1.8
-src/mod/server.mod/servmsg.c
-src/patch.h
-
-- - - - - - - - - - - - - - -
-Commit 3e15835 (2011-11-10 22:07:25 +0000) by thommey
-Fixed the format specifier for the Tcl [traffic] command. 
-
-THANKS
-doc/Changes1.8
-src/patch.h
-src/tcldcc.c
-
-- - - - - - - - - - - - - - -
-Commit f5390d9 (2011-10-25 16:49:54 +0000) by thommey
-THANKS file update 
-
-THANKS
-
-- - - - - - - - - - - - - - -
-Commit 2b7fd1f (2011-10-25 16:47:20 +0000) by thommey
-Added missing read trace flag to the nick-len variable trace after being
-unset to make the trace be removed properly on unload. 
-
-doc/Changes1.8
-src/mod/server.mod/server.c
-src/patch.h
-
-- - - - - - - - - - - - - - -
-Commit 732203e (2011-09-09 21:38:39 +0000) by thommey
-Fixed a bug in the mainloop for Tcl threads which is now also being used as
-vwait/update recursion mainloop. 
-
-doc/Changes1.8
-src/tcl.c
-
-- - - - - - - - - - - - - - -
-Commit 5ca0075 (2011-07-20 10:32:25 +0000) by thommey
-Ran autotools. 
-
-config.h.in
-configure
-doc/Changes1.8
-src/mod/compress.mod/configure
-src/mod/dns.mod/configure
-
-- - - - - - - - - - - - - - -
-Commit 8b6ee35 (2011-07-20 10:31:37 +0000) by thommey
-Work around Tcl8.5.10 bug 3371644. Use the autoconf macros
-AC_LANG_PROGRAM/AC_LANG_SOURCE. 
-
-aclocal.m4
-configure.ac
-doc/Changes1.8
-src/mod/channels.mod/channels.c
-src/patch.h
-
-- - - - - - - - - - - - - - -
-Commit d5fb2be (2011-07-08 23:12:54 +0000) by thommey
-Fix Tcl8.5.10 memory corruption bug related to Tcl_ScanElement and
-Tcl_ConvertElement. 
-
-doc/Changes1.8
-src/patch.h
-src/tclhash.c
-
-- - - - - - - - - - - - - - -
-Commit 3b40f1a (2011-03-14 03:03:28 +0000) by thommey
-Moved variable declarations to conform to C89 (beginning of blocks only) 
-
-THANKS
-doc/Changes1.8
-src/bg.c
-
-- - - - - - - - - - - - - - -
-Commit fbb23fc (2011-03-12 09:59:07 +0000) by Rumen Stoyanov
-Documented a .+ban/+exempt/+invite feature allowing to make the hostmask
-sticky by prefixing the comment with '*'. 
-
-doc/Changes1.8
-src/mod/channels.mod/help/channels.help
-
-- - - - - - - - - - - - - - -
-Commit fd8ae34 (2011-02-26 19:22:37 +0000) by thommey
-script listen sockets with the pub flag no longer perform ident lookups 
-
-doc/Changes1.8
-doc/html/tcl-commands.html
-doc/tcl-commands.doc
-src/dcc.c
-src/patch.h
-
-- - - - - - - - - - - - - - -
-Commit 2f6ef11 (2011-02-17 19:35:25 +0000) by Rumen Stoyanov
-Update of statuslog documentation. 
-
-doc/settings/mod.channels
-
-- - - - - - - - - - - - - - -
-Commit a61fb95 (2011-02-15 23:55:17 +0000) by Rumen Stoyanov
-Fixed a bug with connecting to numeric addresses when compiled with
---disable-ipv6 
-
-doc/Changes1.8
-src/net.c
-src/patch.h
-
-- - - - - - - - - - - - - - -
-Commit bb5b48f (2011-02-11 16:08:38 +0000) by Rumen Stoyanov
-Fixed statuslog documentation. 
-
-eggdrop.conf
-
-- - - - - - - - - - - - - - -
-Commit 4a99673 (2011-02-11 14:23:40 +0000) by Rumen Stoyanov
-Fixed statuslog documentation. 
-
-doc/Changes1.8
-doc/html/mod-channels.html
-src/mod/channels.mod/help/chaninfo.help
-src/patch.h
-
-- - - - - - - - - - - - - - -
-Commit 2be82c5 (2011-02-10 21:28:14 +0000) by Rumen Stoyanov
-Fixed a bug with [channel get] returning types instead of values for udefs.
-
-
-doc/Changes1.8
+Commit 1017d96 (2017-02-02 22:23:48 -0600) by Geo
+Zero memory after nmalloc() to initialize memberlist. Fixes #326 
+* Call bzero() after nmalloc() when initializing a new channel to properly
+zero all data since channel_malloc() isn't available.
 src/mod/channels.mod/tclchan.c
 src/patch.h
 
 - - - - - - - - - - - - - - -
-Commit bf5eac0 (2011-02-03 15:44:11 +0000) by Rumen Stoyanov
-Check for pending data on SSL sockets even when select reports the
-descriptor's not readable. Allow moving write buffers for SSL sockets. 
+Commit 1fb2777 (2017-02-02 15:37:29 -0500) by Geo
+Specify what 1 and 0 do for prefer-ipv6 in conf 
 
-doc/COMPILE-GUIDE
-doc/Changes1.8
-src/net.c
-src/patch.h
-src/tls.c
-
-- - - - - - - - - - - - - - -
-Commit 76cc2a5 (2011-01-27 11:20:16 +0000) by Rumen Stoyanov
-Added missing message for incoming telnet connections. 
-
-THANKS
-doc/Changes1.8
-src/dcc.c
-src/patch.h
-
-- - - - - - - - - - - - - - -
-Commit db5d453 (2011-01-27 02:11:27 +0000) by thommey
-Changed the prototype in module.h for check_tcl_event 
-
-doc/Changes1.8
-src/mod/module.h
-src/patch.h
-
-- - - - - - - - - - - - - - -
-Commit f679dd7 (2011-01-27 01:41:08 +0000) by thommey
-bind evnt return value now ignored for non-signal events as documented 
-
-doc/Changes1.8
-src/main.c
-src/tclhash.c
-src/tclhash.h
-
-- - - - - - - - - - - - - - -
-Commit f587add (2011-01-21 02:37:03 +0000) by thommey
-Reran autotools 
-
-configure
-doc/Changes1.8
-src/mod/compress.mod/configure
-src/mod/dns.mod/configure
-
-- - - - - - - - - - - - - - -
-Commit 0da9696 (2011-01-21 02:33:41 +0000) by thommey
-Clarified --with-tcl* usage in configure and mentioned tcl-dev packages.
-Fixed some section numbering in doc/COMPILE-GUIDE. 
-
-aclocal.m4
-doc/COMPILE-GUIDE
-doc/Changes1.8
-
-- - - - - - - - - - - - - - -
-Commit 7fba132 (2010-11-26 13:20:29 +0000) by Rumen Stoyanov
-Added a little hack to send starttls before password exchange during the
-initial handshake. 
-
-doc/Changes1.8
-src/dcc.c
-src/dccutil.c
-src/net.c
-src/patch.h
-src/tls.c
-
-- - - - - - - - - - - - - - -
-Commit 3832d05 (2010-11-23 23:25:24 +0000) by Rumen Stoyanov
-Fixed a dumb mistake in the previous patch. 
-
-doc/Changes1.8
-src/mod/share.mod/share.c
-src/patch.h
-src/tls.c
-
-- - - - - - - - - - - - - - -
-Commit 0e96d48 (2010-11-23 16:36:23 +0000) by Rumen Stoyanov
-Fixed a problem with sharing causing starttls to fail. Moved STARTTLS early
-in the bot link process and synchronized the handshake. Made it possible
-for ssl handshakes to complete even without data to be sent on the channel.
-Fixed an ancient bug resulting in sending uninitialized strings when
-sharing bot addresses. Enabled userfile sending over ssl. 
-
-doc/Changes1.8
-src/botcmd.c
-src/dcc.c
-src/mod/server.mod/server.c
-src/mod/share.mod/share.c
-src/mod/transfer.mod/transfer.c
-src/net.c
-src/patch.h
-src/tls.c
-
-- - - - - - - - - - - - - - -
-Commit 0e1cf3b (2010-11-18 12:54:39 +0000) by Rumen Stoyanov
-Fixed a problem with resolving hostnames when compiled with IPv6 disabled.
-Made server.mod report connection failures properly. 
-
-THANKS
-doc/Changes1.8
-src/mod/server.mod/servmsg.c
-src/net.c
-
-- - - - - - - - - - - - - - -
-Commit d55e635 (2010-11-06 20:57:41 +0000) by Rumen Stoyanov
-file gettext.h was initially added on branch gettext. 
-
-- - - - - - - - - - - - - - -
-Commit fe00c1e (2010-11-05 16:18:02 +0000) by Rumen Stoyanov
-Fixed getudef() to return intptr_t instead of int to prevent crashes on
-64-bit systems. 
-
-THANKS
-doc/Changes1.8
-src/mod/channels.mod/udefchan.c
-src/patch.h
-
-- - - - - - - - - - - - - - -
-Commit 0cb1103 (2010-11-04 17:54:05 +0000) by thommey
-Fixed a bug in (u)timers which could lead to invalid memory access. 
-
-doc/Changes1.8
-src/chanprog.c
-src/patch.h
-
-- - - - - - - - - - - - - - -
-Commit 8c4139b (2010-11-01 23:00:11 +0000) by Rumen Stoyanov
-Minor docfixes 
-
-CONTENTS
-README
-doc/CONTENTS
-doc/Makefile.in
-doc/html/readme.html
-
-- - - - - - - - - - - - - - -
-Commit 627013c (2010-11-01 22:38:34 +0000) by Rumen Stoyanov
-Made it possible to specify ssl independently for telnet and user ports
-when modifying bot addresses. Changed the syntax of .chaddr and .+bot to
-use space as a port separator instead of ':'. Changed the syntax of server
-list entries to enclose literal IPv6 addresses in square brackets, instead
-of using a comma to separate the port. 
-
-doc/Changes1.8
-doc/IPV6
-doc/html/botnet.html
-doc/html/mod-server.html
-doc/settings/mod.server
 eggdrop.conf
-help/cmds1.help
-src/botnet.c
-src/cmds.c
-src/mod/server.mod/cmdsserv.c
-src/mod/server.mod/help/set/server.help
-src/mod/server.mod/server.c
-src/patch.h
-src/userent.c
-src/users.h
 
 - - - - - - - - - - - - - - -
-Commit 563a50d (2010-10-31 14:40:38 +0000) by Rumen Stoyanov
-Fixed dcc_telnet_pass() to not use a constant string with fingerprint
-authentication, because strip_telnet() may attempt to write to it later. 
+Commit 299a763 (2017-01-29 22:37:06 -0500) by Geo
+Update BUG-REPORT with GitHub info 
 
-THANKS
-doc/Changes1.8
-src/dcc.c
-src/patch.h
-
-- - - - - - - - - - - - - - -
-Commit 3d596c3 (2010-10-29 20:53:43 +0000) by Rumen Stoyanov
-Modified tcl_channel_get to return a flat list of all channel settings and
-their values when called without a setting argument. Added two new Tcl
-commands: chansettype returning setting types and getudefs listing user
-defined channel settings. 
-
-doc/Changes1.8
-doc/html/tcl-commands.html
-doc/tcl-commands.doc
-src/mod/channels.mod/tclchan.c
-src/patch.h
-
-- - - - - - - - - - - - - - -
-Commit 36b4a14 (2010-10-27 20:47:26 +0000) by Rumen Stoyanov
-Added optional count argument to Tcl timer and utimer to allow them run
-more than once. 
-
-doc/Changes1.8
-doc/html/tcl-commands.html
-doc/tcl-commands.doc
-src/chanprog.c
-src/patch.h
-src/tclegg.h
-src/tclmisc.c
-
-- - - - - - - - - - - - - - -
-Commit 2bab129 (2010-10-26 09:16:36 +0000) by Rumen Stoyanov
-Fixed indentation. 
-
-src/tcl.c
-
-- - - - - - - - - - - - - - -
-Commit 2916868 (2010-10-26 09:13:56 +0000) by Rumen Stoyanov
-Renamed the vhost Tcl variable to vhost4. 
-
-doc/Changes1.8
-src/patch.h
-src/tcl.c
-
-- - - - - - - - - - - - - - -
-Commit 44ed106 (2010-10-25 22:11:23 +0000) by Rumen Stoyanov
-Removed -mwin32 on Windows. It's no longer necessary and causes problems
-with Cygwin 1.7. 
-
-aclocal.m4
-configure
-doc/Changes1.8
-src/patch.h
-
-- - - - - - - - - - - - - - -
-Commit dc0ed30 (2010-10-25 19:47:49 +0000) by Rumen Stoyanov
-Removed few wire.mod leftovers. Removed IRC_FUNKICK. 
-
-doc/Changes1.8
-doc/html/mod-wire.html
-doc/settings/mod.wire
-src/lang.h
-src/patch.h
-
-- - - - - - - - - - - - - - -
-Commit bf93d7c (2010-10-25 15:56:38 +0000) by Rumen Stoyanov
-Performed some cleanup. Removed some obsolete config aliases. Added missing
-parts of the documentation. Updated news and features for 1.8. 
-
-NEWS
-README
-THANKS
 doc/BUG-REPORT
-doc/COMPILE-GUIDE
-doc/Changes1.8
-doc/PATCH-HOWTO
-doc/html/egg-core.html
-doc/html/tcl-commands.html
-doc/settings/core.settings
-doc/settings/mod.channels
-doc/settings/mod.server
-doc/tcl-commands.doc
-eggdrop.conf
-help/set/cmds1.help
-src/chanprog.c
-src/mod/irc.mod/msgcmds.c
-src/tcl.c
 
 - - - - - - - - - - - - - - -
-Commit 65e5a3f (2010-10-24 13:41:53 +0000) by Rumen Stoyanov
-Added -lcrypto when probing for -lssl in --with-ssllib 
-
+Commit 4cae981 (2017-01-28 17:25:28 +0100) by Cizzle
+Detect newer OpenSSL function names. Fixes #323 
+* Checks for newer OpenSSL function names when old ones aren't found. 
 aclocal.m4
+config.h.in
 configure
-doc/Changes1.8
-
-- - - - - - - - - - - - - - -
-Commit dd367b4 (2010-10-24 13:22:40 +0000) by Rumen Stoyanov
-Removed the never-give-up, sort-users and kick-fun/ban-fun variables.
-Sorting users shouldn't be a challenge for CPUs nowadays. The rest are
-rarely used and can be scripted. 
-
-doc/Changes1.8
-doc/html/egg-core.html
-doc/html/mod-irc.html
-doc/html/mod-server.html
-doc/settings/core.settings
-doc/settings/mod.irc
-doc/settings/mod.server
-eggdrop.conf
-help/core.help
-help/set/cmds1.help
-src/mod/irc.mod/chan.c
-src/mod/irc.mod/help/irc.help
-src/mod/irc.mod/irc.c
-src/mod/server.mod/help/server.help
-src/mod/server.mod/help/set/server.help
-src/mod/server.mod/server.c
-src/mod/server.mod/server.h
-src/mod/server.mod/servmsg.c
-src/patch.h
-src/tcl.c
-src/userrec.c
-
-- - - - - - - - - - - - - - -
-Commit d1bac3f (2010-10-24 12:39:36 +0000) by Rumen Stoyanov
-Removed wire.mod and all references to it. Botnet and partyline encryption
-are now available using ssl. 
-
-doc/Changes1.8
-doc/MODULES
-doc/html/index.html
-doc/settings/CONTENTS
-eggdrop.conf
-help/core.help
 src/patch.h
 
 - - - - - - - - - - - - - - -
-Commit 3bcbf14 (2010-10-23 11:16:13 +0000) by Rumen Stoyanov
-Modified SIGQUIT handler to restart the bot by default. Added support for
-evnt bind procs to cancel default signal actions. Removed the die-on-sighup
-and die-on-sigterm variables. Added a new bind type DIE triggered before a
-clean shutdown. Changed the exit status on clean shutdown to 0. 
+Commit 39ee2eb (2017-01-27 03:27:08 +0100) by Cizzle
+Fix minutely hook to be called for all missed minutes. Fixes #308 
+Found by: maimizuno / Patch by: Cizzle
 
-doc/Changes1.8
-doc/html/egg-core.html
-doc/html/tcl-commands.html
-doc/man1/eggdrop.1
-doc/settings/core.settings
-doc/tcl-commands.doc
-eggdrop.conf
-help/core.help
-help/set/cmds1.help
+* Minutely hook now able to display minutes > 60 (previously only displayed
+mod 60)
 src/main.c
-src/misc.c
-src/mod/module.h
-src/patch.h
-src/tcl.c
-src/tclhash.c
-src/tclhash.h
-
-- - - - - - - - - - - - - - -
-Commit add01aa (2010-10-20 13:07:13 +0000) by Rumen Stoyanov
-Clarified the OpenSSL version requirements. Rewrote open_telnet() to make
-it more useful. Replaced some calls to open_telnet_raw() with
-open_telnet(). 
-
-aclocal.m4
-configure
-doc/Changes1.8
-doc/TLS
-src/dcc.c
-src/mod/filesys.mod/filesys.c
-src/mod/module.h
-src/net.c
-src/patch.h
-src/proto.h
-src/tcldcc.c
-
-- - - - - - - - - - - - - - -
-Commit bd4eaa4 (2010-10-19 14:20:56 +0000) by Rumen Stoyanov
-Added few autoconf checks for ssl. Added tls to tcl_status() 
-
-aclocal.m4
-config.h.in
-configure
-doc/Changes1.8
-src/main.c
-src/md5/md5.h
-src/patch.h
-src/tclmisc.c
-src/tls.c
-
-- - - - - - - - - - - - - - -
-Commit c01a09a (2010-10-19 12:13:33 +0000) by Rumen Stoyanov
-Added full SSL support including Tcl commands. Added support for
-certificate authentication. Added support for botnet and partyline
-encryption using ssl. Documented the new features and commands. Fixed
-add_server() problems with IPv6 addresses in the server list. 
-
-Makefile.in
-aclocal.m4
-config.h.in
-configure
-configure.ac
-doc/CONTENTS
-doc/Changes1.8
-doc/TLS
-doc/html/egg-core.html
-doc/html/mod-server.html
-doc/html/tcl-commands.html
-doc/settings/core.settings
-doc/settings/mod.server
-doc/tcl-commands.doc
-eggdrop.conf
-help/cmds1.help
-help/core.help
-help/set/cmds1.help
-src/Makefile.in
-src/botcmd.c
-src/botnet.c
-src/chanprog.c
-src/cmds.c
-src/compat/Makefile.in
-src/dcc.c
-src/dccutil.c
-src/eggdrop.h
-src/main.c
-src/md5/Makefile.in
-src/md5/md5.h
-src/md5/md5c.c
-src/mem.c
-src/mod/Makefile.in
-src/mod/ctcp.mod/ctcp.c
-src/mod/filesys.mod/filedb3.c
-src/mod/filesys.mod/filesys.c
-src/mod/irc.mod/help/msg/irc.help
-src/mod/irc.mod/msgcmds.c
-src/mod/module.h
-src/mod/server.mod/cmdsserv.c
-src/mod/server.mod/help/server.help
-src/mod/server.mod/help/set/server.help
-src/mod/server.mod/server.c
-src/mod/server.mod/server.h
-src/mod/server.mod/servmsg.c
-src/mod/server.mod/tclserv.c
-src/mod/share.mod/share.c
-src/modules.c
-src/net.c
-src/patch.h
-src/proto.h
-src/tcl.c
-src/tcldcc.c
-src/tclhash.c
-src/tclhash.h
-src/tls.c
-src/userent.c
-src/users.h
-ssl.conf
-
-- - - - - - - - - - - - - - -
-Commit 0f144fa (2010-10-14 09:49:47 +0000) by Rumen Stoyanov
-Fixed dns.mod on QNX6/Mac OS X/Solaris Rewrote dns.mod's autoconf checks to
-detect the resolver library properly on Darwin/Solaris. Added -lsocket to
-the list of libraries, searched for res_* functions, in order to support
-QNX6. 
-
-THANKS
-aclocal.m4
-config.h.in
-configure
-doc/Changes1.8
-src/eggdrop.h
-src/mod/dns.mod/configure
-src/mod/dns.mod/configure.ac
-src/mod/dns.mod/coredns.c
 src/patch.h
 
 - - - - - - - - - - - - - - -
-Commit bb1397b (2010-10-11 08:46:10 +0000) by Rumen Stoyanov
-Altered the permission check on the pls/mns ban/exempt/invite commands from
-USER_MASTER to USER_OP to allow global operators to set global bans. 
+Commit 20eb6a8 (2017-01-25 21:43:52 -0500) by Geo
+Update patchlevel to vhostreply 
 
-THANKS
-doc/Changes1.8
-src/mod/channels.mod/cmdschan.c
-
-- - - - - - - - - - - - - - -
-Commit aa0bbc0 (2010-10-10 21:24:43 +0000) by Rumen Stoyanov
-Removed the unrecognized options warning when configuring modules. Modified
--v output and .status display configure options. 
-
-aclocal.m4
-config.h.in
-configure
-doc/Changes1.8
-src/chanprog.c
-src/main.c
-src/mod/Makefile.in
-
-- - - - - - - - - - - - - - -
-Commit 94f48a7 (2010-10-10 18:22:47 +0000) by Rumen Stoyanov
-Added the process and parent pids to .status output. Increased the
-precision of cpu time reporting. Added a new Tcl command status to provide
-access to cpu/memory/cache information now and some more in the future. 
-
-doc/Changes1.8
-doc/html/tcl-commands.html
-doc/tcl-commands.doc
-src/chanprog.c
-src/patch.h
-src/proto.h
-src/tclmisc.c
-
-- - - - - - - - - - - - - - -
-Commit c259871 (2010-10-06 19:07:47 +0000) by Rumen Stoyanov
-Fixed some problems with IPv6 autodetection and system headers. 
-
-aclocal.m4
-configure
-doc/Changes1.8
-src/compat/gethostbyname2.h
-src/compat/in6.c
-src/compat/in6.h
-src/compat/inet_ntop.c
-src/compat/inet_ntop.h
-src/compat/inet_pton.h
-src/mod/transfer.mod/transfer.c
 src/patch.h
 
 - - - - - - - - - - - - - - -
-Commit 29db3e6 (2010-10-05 17:38:24 +0000) by Rumen Stoyanov
-Made some corrections to the contributors list, removed a duplicate entry. 
-
-THANKS
-doc/Changes1.6
-doc/Changes1.8
-
-- - - - - - - - - - - - - - -
-Commit fc70e8d (2010-10-01 23:56:37 +0000) by thommey
-Fixed bind cron html documention to be in sync with non-html one. 
-
-doc/Changes1.8
-doc/html/tcl-commands.html
-
-- - - - - - - - - - - - - - -
-Commit 5bb1e6a (2010-09-27 19:38:14 +0000) by Rumen Stoyanov
-Replaced most dns.mod preprocessor definitions with config variables. Added
-support for user-specified dns servers and non-standard ports. This is most
-important for Cygwin 1.7, where the dns server list won't get initialized
-under some common conditions. Added a trace to the new variable
-dns-servers, allowing scripts to get or set the current dns server list.
-Added the servers list to the dns module information displayed by .status
-all 
-
-doc/Changes1.8
-doc/html/mod-dns.html
-doc/settings/mod.dns
-eggdrop.conf
-src/mod/dns.mod/coredns.c
-src/mod/dns.mod/dns.c
-src/mod/dns.mod/help/dns.help
-src/mod/dns.mod/help/set/dns.help
-src/patch.h
-
-- - - - - - - - - - - - - - -
-Commit 66286cb (2010-09-14 19:45:29 +0000) by Rumen Stoyanov
-Fixed a bug in setsockname() making it fail with IPv6 enabled due to a
-variable not being set. 
-
-THANKS
-doc/Changes1.8
-src/net.c
-src/patch.h
-
-- - - - - - - - - - - - - - -
-Commit 24e6d68 (2010-09-06 22:08:54 +0000) by thommey
-Fix env(TZ) config setting to not contain a space. The space is just
-inserted in POSIX documentation to clarify, it must not be there. 
-
-doc/Changes1.8
-eggdrop.conf
-
-- - - - - - - - - - - - - - -
-Commit 75931fb (2010-08-31 18:21:47 +0000) by Rumen Stoyanov
-Made dcc_telnet_new() allow non-latin characters in new handles like other
-handle validation functions. 
-
-doc/Changes1.8
-src/dcc.c
-src/patch.h
-
-- - - - - - - - - - - - - - -
-Commit c8c7c77 (2010-08-23 21:27:40 +0000) by Rumen Stoyanov
-Modified src/compat/ replacements of gethostbyname2() and inet_ntop() to
-not compile when IPv6 is disabled. Added a missing header preventing
-gethostbyname2() from compiling on FreeBSD. Fixed few lines with wrong
-indentation. 
-
-doc/Changes1.8
-src/compat/gethostbyname2.c
-src/compat/gethostbyname2.h
-src/compat/inet_ntop.c
-src/compat/inet_ntop.h
-src/compat/inet_pton.c
-src/net.c
-src/tcl.c
-
-- - - - - - - - - - - - - - -
-Commit a3c088d (2010-08-11 16:10:19 +0000) by Jonathan Rudolph
-Removed Makefile from the repository. Doh! 
-
-Makefile
-
-- - - - - - - - - - - - - - -
-Commit 82462d9 (2010-08-11 15:58:19 +0000) by thommey
-Reran autotools 
-
-config.h.in
-configure
-doc/Changes1.8
-
-- - - - - - - - - - - - - - -
-Commit 6f99996 (2010-08-11 15:57:51 +0000) by thommey
-Added detection of Tcl_NotifierProcs members to ensure the notifier can be
-replaced. Fixes compilation against Tcl 8.2 and 8.3. 
-
-aclocal.m4
-configure.ac
-doc/Changes1.8
-src/main.h
-src/patch.h
-
-- - - - - - - - - - - - - - -
-Commit 427384f (2010-08-05 18:20:34 +0000) by Rumen Stoyanov
-Replaced some tabs with spaces. 
-
-src/eggdrop.h
-
-- - - - - - - - - - - - - - -
-Commit ac1b6ed (2010-08-05 18:12:05 +0000) by Rumen Stoyanov
-Added new, full IPv6 support to eggdrop. 
-
-README
-aclocal.m4
-config.h.in
-configure
-configure.ac
-doc/CONTENTS
-doc/Changes1.8
-doc/IPV6
-doc/html/egg-core.html
-doc/html/faqs.html
-doc/settings/core.settings
-eggdrop.conf
-help/cmds1.help
-help/core.help
-help/set/cmds1.help
-src/botnet.c
-src/cmds.c
-src/compat/Makefile.in
-src/compat/compat.h
-src/compat/gethostbyname2.c
-src/compat/gethostbyname2.h
-src/compat/in6.c
-src/compat/in6.h
-src/compat/inet_ntop.c
-src/compat/inet_ntop.h
-src/compat/inet_pton.c
-src/compat/inet_pton.h
-src/dcc.c
-src/dccutil.c
-src/dns.c
-src/dns.h
-src/eggdrop.h
-src/main.c
-src/main.h
-src/mod/channels.mod/cmdschan.c
-src/mod/channels.mod/userchan.c
-src/mod/ctcp.mod/ctcp.c
-src/mod/dns.mod/coredns.c
-src/mod/dns.mod/dns.c
-src/mod/dns.mod/dns.h
-src/mod/filesys.mod/filedb3.c
-src/mod/filesys.mod/filesys.c
-src/mod/module.h
-src/mod/server.mod/server.c
-src/mod/server.mod/servmsg.c
-src/mod/share.mod/share.c
-src/mod/transfer.mod/transfer.c
-src/modules.c
-src/net.c
-src/patch.h
-src/proto.h
-src/tcl.c
-src/tcldcc.c
-src/tclmisc.c
-src/tcluser.c
-src/userent.c
-src/users.c
-
-- - - - - - - - - - - - - - -
-Commit 005f285 (2010-07-27 21:49:42 +0000) by Rumen Stoyanov
-Updated documentation to reference 1.8 instead of 1.6. Changed module
-dependencies to 1.8. Changed default handle length to 32. Changed default
-make type to 'debug' as it should be in CVS builds. 
-
-AUTHORS
-NEWS
-README
-aclocal.m4
-configure
-doc/ABOUT
-doc/BUG-REPORT
-doc/Changes1.6
-doc/Changes1.8
-doc/MODULES
-doc/PATCH-HOWTO
-doc/Versions
-doc/html/about.html
-doc/html/index.html
-doc/html/news.html
-doc/html/patch-howto.html
-doc/html/readme.html
-doc/tcl-commands.doc
-src/eggdrop.h
-src/mod/assoc.mod/assoc.c
-src/mod/blowfish.mod/blowfish.c
-src/mod/channels.mod/channels.c
-src/mod/compress.mod/compress.c
-src/mod/console.mod/console.c
-src/mod/ctcp.mod/ctcp.c
-src/mod/dns.mod/dns.c
-src/mod/filesys.mod/filesys.c
-src/mod/irc.mod/irc.c
-src/mod/notes.mod/notes.c
-src/mod/seen.mod/seen.c
-src/mod/server.mod/server.c
-src/mod/share.mod/share.c
-src/mod/transfer.mod/transfer.c
-src/mod/uptime.mod/uptime.c
-src/mod/woobie.mod/woobie.c
-src/patch.h
-
-- - - - - - - - - - - - - - -
-Commit c753e44 (2010-07-27 13:13:20 +0000) by Rumen Stoyanov
-Ran misc/runautotools for 1.8.0. 
-
-configure
-doc/Changes1.8
-src/mod/compress.mod/configure
-src/mod/dns.mod/configure
-
-- - - - - - - - - - - - - - -
-Commit fe6333d (2010-07-27 13:05:43 +0000) by Rumen Stoyanov
-Ran misc/newversion for 1.8.0. 
-
-configure.ac
-doc/COMPILE-GUIDE
-doc/Changes1.8
-doc/PATCH-HOWTO
-doc/TEXT-SUBSTITUTIONS
-doc/html/app-textsub.html
-doc/html/compiling.html
-doc/html/patch-howto.html
-doc/html/tcl-commands.html
-src/mod/compress.mod/configure.ac
-src/mod/dns.mod/configure.ac
-
-- - - - - - - - - - - - - - -
-Commit b8de58a (2010-07-26 21:11:06 +0000) by Jonathan Rudolph
-Imported Eggdrop 1.6.20 
-
-ChangeLog
-FEATURES
-INSTALL
-disabled_modules
-doc/BANS
-doc/BOTNET
-doc/Changes0.6
-doc/Changes0.7
-doc/Changes0.9
-doc/Changes1.0
-doc/Changes1.1
-doc/Changes1.2
-doc/Changes1.3
-doc/Changes1.4
-doc/Changes1.5
-doc/FIRST-SCRIPT
-doc/KNOWN-PROBLEMS
-doc/PARTYLINE
-doc/TRICKS
-doc/USERS
-doc/WEIRD-MESSAGES
-doc/html/app-problems.html
-doc/html/app-tricks.html
-doc/html/app-weird.html
-doc/html/bans.html
-doc/html/features.html
-doc/html/install.html
-doc/html/mod-assoc.html
-doc/html/mod-blowfish.html
-doc/html/mod-compress.html
-doc/html/mod-console.html
-doc/html/mod-ctcp.html
-doc/html/mod-filesys.html
-doc/html/mod-notes.html
-doc/html/mod-seen.html
-doc/html/mod-share.html
-doc/html/mod-transfer.html
-doc/html/mod-uptime.html
-doc/html/mod-woobie.html
-doc/html/party.html
-doc/html/starting.html
-doc/html/users.html
-doc/settings/mod.assoc
-doc/settings/mod.blowfish
-doc/settings/mod.compress
-doc/settings/mod.console
-doc/settings/mod.ctcp
-doc/settings/mod.filesys
-doc/settings/mod.notes
-doc/settings/mod.seen
-doc/settings/mod.share
-doc/settings/mod.transfer
-doc/settings/mod.uptime
-doc/settings/mod.woobie
+Commit 5e35eb6 (2017-01-26 03:33:30 +0100) by Cizzle
+Return more user-friendly message with incorrect vhost4/6 setting in
+config. Closes #316 
+* Return more user-friendly message when vhost4/6 (or the deprecated
+my-ip/hostname) are incorrectly set in config.
+* Update language files (where possible) with error translations (TODO -
+finnish and danish)
 language/core.danish.lang
 language/core.english.lang
 language/core.finnish.lang
 language/core.french.lang
 language/core.german.lang
-logs/CONTENTS
-misc/addpatch
-misc/install-sh
-misc/killwhitespace
-misc/makedepend
-misc/mkinstalldirs
-misc/modconfig
-misc/newversion
-misc/releaseprep
-misc/runautotools
-scripts/CONTENTS
-scripts/Makefile.in
-scripts/action.fix.tcl
-scripts/alltools.tcl
-scripts/autobotchk
-scripts/botchk
-scripts/cmd_resolve.tcl
-scripts/compat.tcl
-scripts/getops.tcl
-scripts/klined.tcl
-scripts/notes2.tcl
-scripts/ques5.tcl
-scripts/quotepass.tcl
-scripts/userinfo.tcl
-scripts/weed
-src/bg.h
-src/botmsg.c
-src/chan.h
-src/cmdt.h
-src/compat/inet_aton.c
-src/compat/inet_aton.h
-src/compat/memcpy.c
-src/compat/memcpy.h
-src/compat/memset.c
-src/compat/memset.h
-src/compat/snprintf.c
-src/compat/snprintf.h
-src/compat/strcasecmp.c
-src/compat/strcasecmp.h
-src/compat/strftime.c
-src/compat/strftime.h
-src/flags.c
-src/flags.h
-src/language.c
-src/misc_file.c
-src/misc_file.h
-src/mod/assoc.mod/Makefile
-src/mod/assoc.mod/assoc.h
-src/mod/assoc.mod/language/assoc.danish.lang
-src/mod/assoc.mod/language/assoc.english.lang
-src/mod/assoc.mod/language/assoc.finnish.lang
-src/mod/assoc.mod/language/assoc.french.lang
-src/mod/assoc.mod/language/assoc.german.lang
-src/mod/assoc.mod/modinfo
-src/mod/blowfish.mod/Makefile
-src/mod/blowfish.mod/bf_tab.h
-src/mod/blowfish.mod/blowfish.h
-src/mod/blowfish.mod/modinfo
-src/mod/channels.mod/Makefile
-src/mod/channels.mod/channels.h
-src/mod/channels.mod/modinfo
-src/mod/compress.mod/Makefile.in
-src/mod/compress.mod/compress.h
-src/mod/compress.mod/modinfo
-src/mod/compress.mod/tclcompress.c
-src/mod/console.mod/Makefile
-src/mod/console.mod/console.h
-src/mod/console.mod/language/console.danish.lang
-src/mod/console.mod/language/console.english.lang
-src/mod/console.mod/language/console.finnish.lang
-src/mod/console.mod/language/console.french.lang
-src/mod/console.mod/language/console.german.lang
-src/mod/console.mod/modinfo
-src/mod/ctcp.mod/Makefile
-src/mod/ctcp.mod/ctcp.h
-src/mod/ctcp.mod/modinfo
-src/mod/dns.mod/Makefile.in
-src/mod/dns.mod/modinfo
-src/mod/eggmod.m4
-src/mod/filesys.mod/Makefile
-src/mod/filesys.mod/dbcompat.c
-src/mod/filesys.mod/dbcompat.h
-src/mod/filesys.mod/filedb3.h
-src/mod/filesys.mod/filelist.c
-src/mod/filesys.mod/filelist.h
-src/mod/filesys.mod/files.c
-src/mod/filesys.mod/files.h
-src/mod/filesys.mod/filesys.h
-src/mod/filesys.mod/language/filesys.danish.lang
-src/mod/filesys.mod/language/filesys.english.lang
-src/mod/filesys.mod/language/filesys.finnish.lang
-src/mod/filesys.mod/language/filesys.french.lang
-src/mod/filesys.mod/language/filesys.german.lang
-src/mod/filesys.mod/modinfo
-src/mod/filesys.mod/tclfiles.c
-src/mod/irc.mod/Makefile
-src/mod/irc.mod/cmdsirc.c
-src/mod/irc.mod/irc.h
-src/mod/irc.mod/mode.c
-src/mod/irc.mod/modinfo
-src/mod/irc.mod/tclirc.c
-src/mod/modvals.h
-src/mod/notes.mod/Makefile
-src/mod/notes.mod/cmdsnote.c
-src/mod/notes.mod/language/notes.danish.lang
-src/mod/notes.mod/language/notes.english.lang
-src/mod/notes.mod/language/notes.finnish.lang
-src/mod/notes.mod/language/notes.french.lang
-src/mod/notes.mod/language/notes.german.lang
-src/mod/notes.mod/modinfo
-src/mod/notes.mod/notes.h
-src/mod/seen.mod/Makefile
-src/mod/seen.mod/modinfo
-src/mod/server.mod/Makefile
-src/mod/server.mod/modinfo
-src/mod/share.mod/Makefile
-src/mod/share.mod/modinfo
-src/mod/share.mod/share.h
-src/mod/share.mod/uf_features.c
-src/mod/transfer.mod/Makefile
-src/mod/transfer.mod/language/transfer.danish.lang
-src/mod/transfer.mod/language/transfer.english.lang
-src/mod/transfer.mod/language/transfer.finnish.lang
-src/mod/transfer.mod/language/transfer.french.lang
-src/mod/transfer.mod/language/transfer.german.lang
-src/mod/transfer.mod/modinfo
-src/mod/transfer.mod/tcltransfer.c
-src/mod/transfer.mod/transfer.h
-src/mod/transfer.mod/transferfstat.c
-src/mod/transfer.mod/transferqueue.c
-src/mod/uptime.mod/Makefile
-src/mod/uptime.mod/modinfo
-src/mod/uptime.mod/uptime.h
-src/mod/woobie.mod/Makefile
-src/mod/woobie.mod/modinfo
-src/modules.h
-src/rfc1459.c
-src/stat.h
-src/tandem.h
-text/CONTENTS
-
-- - - - - - - - - - - - - - -
-Commit a3b9b4d (2010-07-26 21:11:06 +0000) by Jonathan Rudolph
-*** empty log message *** 
-
-AUTHORS
-CONTENTS
-ChangeLog
-FEATURES
-INSTALL
-Makefile
-Makefile.in
-NEWS
-README
-THANKS
-aclocal.m4
-configure
-configure.ac
-disabled_modules
-doc/.gitignore
-doc/ABOUT
-doc/BANS
-doc/BOTNET
-doc/COMPILE-GUIDE
-doc/CONTENTS
-doc/Changes0.6
-doc/Changes0.7
-doc/Changes0.9
-doc/Changes1.0
-doc/Changes1.1
-doc/Changes1.2
-doc/Changes1.3
-doc/Changes1.4
-doc/Changes1.5
-doc/Changes1.6
-doc/Changes1.8
-doc/FIRST-SCRIPT
-doc/KNOWN-PROBLEMS
-doc/MODULES
-doc/Makefile.in
-doc/PARTYLINE
-doc/PATCH-HOWTO
-doc/TEXT-SUBSTITUTIONS
-doc/TRICKS
-doc/USERS
-doc/Versions
-doc/WEIRD-MESSAGES
-doc/html/about.html
-doc/html/app-problems.html
-doc/html/app-textsub.html
-doc/html/app-tricks.html
-doc/html/app-weird.html
-doc/html/bans.html
-doc/html/botnet.html
-doc/html/compiling.html
-doc/html/egg-core.html
-doc/html/faqs.html
-doc/html/features.html
-doc/html/index.html
-doc/html/install.html
-doc/html/mod-assoc.html
-doc/html/mod-blowfish.html
-doc/html/mod-channels.html
-doc/html/mod-compress.html
-doc/html/mod-console.html
-doc/html/mod-ctcp.html
-doc/html/mod-dns.html
-doc/html/mod-filesys.html
-doc/html/mod-irc.html
-doc/html/mod-notes.html
-doc/html/mod-seen.html
-doc/html/mod-server.html
-doc/html/mod-share.html
-doc/html/mod-transfer.html
-doc/html/mod-uptime.html
-doc/html/mod-wire.html
-doc/html/mod-woobie.html
-doc/html/news.html
-doc/html/party.html
-doc/html/patch-howto.html
-doc/html/readme.html
-doc/html/starting.html
-doc/html/tcl-commands.html
-doc/html/users.html
-doc/man1/eggdrop.1
-doc/settings/CONTENTS
-doc/settings/core.settings
-doc/settings/mod.assoc
-doc/settings/mod.blowfish
-doc/settings/mod.channels
-doc/settings/mod.compress
-doc/settings/mod.console
-doc/settings/mod.ctcp
-doc/settings/mod.dns
-doc/settings/mod.filesys
-doc/settings/mod.irc
-doc/settings/mod.notes
-doc/settings/mod.seen
-doc/settings/mod.server
-doc/settings/mod.share
-doc/settings/mod.transfer
-doc/settings/mod.uptime
-doc/settings/mod.wire
-doc/settings/mod.woobie
-doc/tcl-commands.doc
-eggdrop.conf
-language/core.danish.lang
-language/core.english.lang
-language/core.finnish.lang
-language/core.french.lang
-language/core.german.lang
-logs/CONTENTS
-misc/addpatch
-misc/install-sh
-misc/killwhitespace
-misc/makedepend
-misc/mkinstalldirs
-misc/modconfig
-misc/newversion
-misc/releaseprep
-misc/runautotools
-scripts/.gitignore
-scripts/CONTENTS
-scripts/Makefile.in
-scripts/action.fix.tcl
-scripts/alltools.tcl
-scripts/autobotchk
-scripts/botchk
-scripts/cmd_resolve.tcl
-scripts/compat.tcl
-scripts/dccwhois.tcl
-scripts/getops.tcl
-scripts/klined.tcl
-scripts/notes2.tcl
-scripts/ques5.tcl
-scripts/quotepass.tcl
-scripts/userinfo.tcl
-scripts/weed
-src/.gitignore
-src/Makefile.in
-src/bg.c
-src/bg.h
-src/botcmd.c
-src/botmsg.c
-src/botnet.c
-src/chan.h
-src/chanprog.c
-src/cmds.c
-src/cmdt.h
-src/compat/.gitignore
-src/compat/Makefile.in
-src/compat/compat.h
-src/compat/inet_aton.c
-src/compat/inet_aton.h
-src/compat/memcpy.c
-src/compat/memcpy.h
-src/compat/memset.c
-src/compat/memset.h
-src/compat/snprintf.c
-src/compat/snprintf.h
-src/compat/strcasecmp.c
-src/compat/strcasecmp.h
-src/compat/strftime.c
-src/compat/strftime.h
-src/dcc.c
-src/dccutil.c
-src/dns.c
-src/dns.h
-src/eggdrop.h
-src/flags.c
-src/flags.h
 src/lang.h
-src/language.c
-src/main.c
-src/main.h
-src/match.c
-src/md5/.gitignore
-src/md5/Makefile.in
-src/mem.c
-src/misc.c
-src/misc_file.c
-src/misc_file.h
-src/mod/.gitignore
-src/mod/Makefile.in
-src/mod/assoc.mod/Makefile
-src/mod/assoc.mod/assoc.c
-src/mod/assoc.mod/assoc.h
-src/mod/assoc.mod/language/assoc.danish.lang
-src/mod/assoc.mod/language/assoc.english.lang
-src/mod/assoc.mod/language/assoc.finnish.lang
-src/mod/assoc.mod/language/assoc.french.lang
-src/mod/assoc.mod/language/assoc.german.lang
-src/mod/assoc.mod/modinfo
-src/mod/blowfish.mod/Makefile
-src/mod/blowfish.mod/bf_tab.h
-src/mod/blowfish.mod/blowfish.c
-src/mod/blowfish.mod/blowfish.h
-src/mod/blowfish.mod/modinfo
-src/mod/channels.mod/Makefile
-src/mod/channels.mod/channels.c
-src/mod/channels.mod/channels.h
-src/mod/channels.mod/cmdschan.c
-src/mod/channels.mod/modinfo
-src/mod/channels.mod/tclchan.c
-src/mod/channels.mod/udefchan.c
-src/mod/channels.mod/userchan.c
-src/mod/compress.mod/.gitignore
-src/mod/compress.mod/Makefile.in
-src/mod/compress.mod/compress.c
-src/mod/compress.mod/compress.h
-src/mod/compress.mod/configure.ac
-src/mod/compress.mod/modinfo
-src/mod/compress.mod/tclcompress.c
-src/mod/console.mod/Makefile
-src/mod/console.mod/console.c
-src/mod/console.mod/console.h
-src/mod/console.mod/language/console.danish.lang
-src/mod/console.mod/language/console.english.lang
-src/mod/console.mod/language/console.finnish.lang
-src/mod/console.mod/language/console.french.lang
-src/mod/console.mod/language/console.german.lang
-src/mod/console.mod/modinfo
-src/mod/ctcp.mod/Makefile
-src/mod/ctcp.mod/ctcp.c
-src/mod/ctcp.mod/ctcp.h
-src/mod/ctcp.mod/modinfo
-src/mod/dns.mod/.gitignore
-src/mod/dns.mod/Makefile.in
-src/mod/dns.mod/configure.ac
-src/mod/dns.mod/coredns.c
-src/mod/dns.mod/dns.c
-src/mod/dns.mod/dns.h
-src/mod/dns.mod/modinfo
-src/mod/eggmod.m4
-src/mod/filesys.mod/Makefile
-src/mod/filesys.mod/dbcompat.c
-src/mod/filesys.mod/dbcompat.h
-src/mod/filesys.mod/filedb3.c
-src/mod/filesys.mod/filedb3.h
-src/mod/filesys.mod/filelist.c
-src/mod/filesys.mod/filelist.h
-src/mod/filesys.mod/files.c
-src/mod/filesys.mod/files.h
-src/mod/filesys.mod/filesys.c
-src/mod/filesys.mod/filesys.h
-src/mod/filesys.mod/language/filesys.danish.lang
-src/mod/filesys.mod/language/filesys.english.lang
-src/mod/filesys.mod/language/filesys.finnish.lang
-src/mod/filesys.mod/language/filesys.french.lang
-src/mod/filesys.mod/language/filesys.german.lang
-src/mod/filesys.mod/modinfo
-src/mod/filesys.mod/tclfiles.c
-src/mod/irc.mod/Makefile
-src/mod/irc.mod/chan.c
-src/mod/irc.mod/cmdsirc.c
-src/mod/irc.mod/irc.c
-src/mod/irc.mod/irc.h
-src/mod/irc.mod/mode.c
-src/mod/irc.mod/modinfo
-src/mod/irc.mod/msgcmds.c
-src/mod/irc.mod/tclirc.c
-src/mod/module.h
-src/mod/modvals.h
-src/mod/notes.mod/Makefile
-src/mod/notes.mod/cmdsnote.c
-src/mod/notes.mod/language/notes.danish.lang
-src/mod/notes.mod/language/notes.english.lang
-src/mod/notes.mod/language/notes.finnish.lang
-src/mod/notes.mod/language/notes.french.lang
-src/mod/notes.mod/language/notes.german.lang
-src/mod/notes.mod/modinfo
-src/mod/notes.mod/notes.c
-src/mod/notes.mod/notes.h
-src/mod/seen.mod/Makefile
-src/mod/seen.mod/modinfo
-src/mod/seen.mod/seen.c
-src/mod/server.mod/Makefile
-src/mod/server.mod/cmdsserv.c
-src/mod/server.mod/modinfo
-src/mod/server.mod/server.c
-src/mod/server.mod/server.h
 src/mod/server.mod/servmsg.c
-src/mod/server.mod/tclserv.c
-src/mod/share.mod/Makefile
-src/mod/share.mod/modinfo
-src/mod/share.mod/share.c
-src/mod/share.mod/share.h
-src/mod/share.mod/uf_features.c
-src/mod/transfer.mod/Makefile
-src/mod/transfer.mod/language/transfer.danish.lang
-src/mod/transfer.mod/language/transfer.english.lang
-src/mod/transfer.mod/language/transfer.finnish.lang
-src/mod/transfer.mod/language/transfer.french.lang
-src/mod/transfer.mod/language/transfer.german.lang
-src/mod/transfer.mod/modinfo
-src/mod/transfer.mod/tcltransfer.c
-src/mod/transfer.mod/transfer.c
-src/mod/transfer.mod/transfer.h
-src/mod/transfer.mod/transferfstat.c
-src/mod/transfer.mod/transferqueue.c
-src/mod/uptime.mod/Makefile
-src/mod/uptime.mod/modinfo
-src/mod/uptime.mod/uptime.c
-src/mod/uptime.mod/uptime.h
-src/mod/wire.mod/Makefile
-src/mod/wire.mod/help/wire.help
-src/mod/wire.mod/language/wire.danish.lang
-src/mod/wire.mod/language/wire.english.lang
-src/mod/wire.mod/language/wire.finnish.lang
-src/mod/wire.mod/language/wire.french.lang
-src/mod/wire.mod/language/wire.german.lang
-src/mod/wire.mod/modinfo
-src/mod/wire.mod/wire.c
-src/mod/wire.mod/wire.h
-src/mod/woobie.mod/Makefile
-src/mod/woobie.mod/modinfo
-src/mod/woobie.mod/woobie.c
-src/modules.c
-src/modules.h
-src/net.c
+
+- - - - - - - - - - - - - - -
+Commit 571975b (2017-01-25 04:56:51 +0100) by Cizzle
+Add summary with tcl, tls and ipv6 info to configure output. Closes #264 
+Patch by: Cizzle
+
+* Add summary with tcl, tls and ipv6 info to configure output.
+* Improve tcl info gathering.
+* Show output with yes/no and add some safeguards for getting openssl
+version.
+* Display OpenSSL version and TCL threading, if available
+aclocal.m4
+configure
+configure.ac
+
+- - - - - - - - - - - - - - -
+Commit 6d98a07 (2017-01-19 20:08:31 -0600) by Geo
+Fix patch() compilation warning. Fixes #303 
+* Change releaseprep patch version string to "" for stable release to
+prevent compile warning. 
+* Update patchlevel
+
+misc/releaseprep
+src/main.c
 src/patch.h
-src/proto.h
-src/rfc1459.c
-src/stat.h
-src/tandem.h
-src/tcl.c
-src/tcldcc.c
-src/tclegg.h
-src/tclhash.c
-src/tclhash.h
+
+- - - - - - - - - - - - - - -
+Commit d5c8cd3 (2017-01-15 22:27:04 +0100) by Cizzle
+Address cppcheck mods. Fixes #69 
+Found by: vBm Patch by: Cizzle
+
+* Fix uninit var in rare case where af != AF_INET and IPV6 is disabled
+
+* Fix res leak where f wasn't closed with full dcc send queue
+
+* Fix res leaks when compressing a file fails
+src/mod/compress.mod/compress.c
+src/mod/transfer.mod/transfer.c
+src/net.c
+
+- - - - - - - - - - - - - - -
+Commit 12eba6d (2017-01-01 16:51:45 -0500) by Geo
+Update docs version as part of releaseprep 
+
+misc/generatedocs
+misc/releaseprep
+
+- - - - - - - - - - - - - - -
+Commit 1ff9451 (2016-12-31 02:14:21 -0600) by Geo
+Fix pandoc rendering. Fixes #302 
+Found by: Geo Patch by: Geo
+
+* Update docs to work with new pandoc rendering. Fixes #302 Created a
+pandoc filter (docsfilter.py) to elevate every heading to level 1, 
+rendering the resulting text in all caps (for text docs only).
+
+* Update filter to remove Strong tag from emphasized text
+
+* Regenerate documentation
+
+* Add panflute to generatedocs tool search
+
+* Update patch string
+FEATURES
+INSTALL
+README
+doc/ABOUT
+doc/BANS
+doc/BOTNET
+doc/FAQ
+doc/FIRST-SCRIPT
+doc/IPV6
+doc/KNOWN-PROBLEMS
+doc/MODULES
+doc/PARTYLINE
+doc/PATCH-HOWTO
+doc/TEXT-SUBSTITUTIONS
+doc/TLS
+doc/TRICKS
+doc/USERS
+doc/WEIRD-MESSAGES
+doc/html/_static/basic.css
+doc/html/_static/doctools.js
+doc/html/_static/down-pressed.png
+doc/html/_static/down.png
+doc/html/_static/file.png
+doc/html/_static/jquery.js
+doc/html/_static/minus.png
+doc/html/_static/plus.png
+doc/html/_static/pygments.css
+doc/html/_static/searchtools.js
+doc/html/_static/underscore.js
+doc/html/_static/up-pressed.png
+doc/html/_static/up.png
+doc/html/_static/websupport.js
+doc/html/appendices/first-script.html
+doc/html/appendices/index.html
+doc/html/appendices/known-probs.html
+doc/html/appendices/text-sub.html
+doc/html/appendices/tricks.html
+doc/html/appendices/weird-msgs.html
+doc/html/coreDocs/assoc.html
+doc/html/coreDocs/blowfish.html
+doc/html/coreDocs/channels.html
+doc/html/coreDocs/compress.html
+doc/html/coreDocs/console.html
+doc/html/coreDocs/core.html
+doc/html/coreDocs/ctcp.html
+doc/html/coreDocs/dns.html
+doc/html/coreDocs/filesys.html
+doc/html/coreDocs/index.html
+doc/html/coreDocs/irc.html
+doc/html/coreDocs/modules.html
+doc/html/coreDocs/notes.html
+doc/html/coreDocs/seen.html
+doc/html/coreDocs/server.html
+doc/html/coreDocs/share.html
+doc/html/coreDocs/transfer.html
+doc/html/coreDocs/uptime.html
+doc/html/coreDocs/woobie.html
+doc/html/index.html
+doc/html/installAndSetup/faq.html
+doc/html/installAndSetup/index.html
+doc/html/installAndSetup/install.html
+doc/html/installAndSetup/readme.html
+doc/html/mainDocs/about.html
+doc/html/mainDocs/bans.html
+doc/html/mainDocs/botnet.html
+doc/html/mainDocs/features.html
+doc/html/mainDocs/index.html
+doc/html/mainDocs/ipv6.html
+doc/html/mainDocs/partyline.html
+doc/html/mainDocs/patch.html
+doc/html/mainDocs/tcl-commands.html
+doc/html/mainDocs/tls.html
+doc/html/mainDocs/users.html
+doc/html/objects.inv
+doc/html/search.html
+doc/html/searchindex.js
+doc/settings/core.settings
+doc/settings/mod.assoc
+doc/settings/mod.blowfish
+doc/settings/mod.channels
+doc/settings/mod.compress
+doc/settings/mod.console
+doc/settings/mod.ctcp
+doc/settings/mod.dns
+doc/settings/mod.filesys
+doc/settings/mod.irc
+doc/settings/mod.notes
+doc/settings/mod.seen
+doc/settings/mod.server
+doc/settings/mod.share
+doc/settings/mod.transfer
+doc/settings/mod.uptime
+doc/settings/mod.woobie
+doc/tcl-commands.doc
+misc/docsfilter.py
+misc/generateDocs
+misc/generatedocs
+misc/releaseprep
+src/patch.h
+
+- - - - - - - - - - - - - - -
+Commit 2523474 (2016-12-28 01:11:22 -0500) by Geo
+Update config server comments. Fixes #237 
+Found by: andy5995
+ Add text to alert users that placing a # in front of a server inside the
+brace list will not comment out that server but rather cause it to fail on
+the hostname lookup.
+eggdrop.conf
+
+- - - - - - - - - - - - - - -
+Commit eb72426 (2016-12-27 18:04:31 +0100) by Cizzle
+Fix misleading indentation warnings from gcc 
+Found by: Cizzle Patch by: Cizzle
 src/tclmisc.c
 src/tcluser.c
 src/userent.c
-src/userrec.c
-src/users.c
-src/users.h
-text/CONTENTS
+
+- - - - - - - - - - - - - - -
+Commit 7be507c (2016-12-27 09:58:57 -0600) by Geo
+Remove CVS references from Eggdrop. Fixes #149 
+
+CONTENTS
+doc/sphinx_source/installAndSetup/readme.rst
+misc/releaseprep
+
+- - - - - - - - - - - - - - -
+Commit a5c1e9b (2016-12-25 13:03:08 -0500) by Geo
+Update patchlevel string to configdefaults 
+
+src/patch.h
+
+- - - - - - - - - - - - - - -
+Commit 58ec3a1 (2016-12-25 00:43:14 -0500) by Geo
+Reorganize commit.template 
+
+misc/commit.template
+
+- - - - - - - - - - - - - - -
+Commit f492377 (2016-12-24 23:41:42 -0600) by Geo
+Update mod.channels src/docs to match defaults to eggdrop.conf. Fixes #243 
+Found by: Geo Patch by: Cizzle
+
+* Update code with config defaults
+
+* Update docs with config defaults
+doc/html/coreDocs/channels.html
+doc/settings/mod.channels
+doc/sphinx_source/coreDocs/channels.rst
+src/mod/channels.mod/channels.c
+
+- - - - - - - - - - - - - - -
+Commit 791c072 (2016-12-19 03:49:04 -0600) by thommey
+Add git commit template to misc/. 
+
+misc/commit.template
+
+- - - - - - - - - - - - - - -
+Commit 3b65bfc (2016-12-19 03:20:57 -0600) by thommey
+Make genChangelog executable. 
+
+misc/genChangelog
