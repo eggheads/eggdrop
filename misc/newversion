@@ -24,9 +24,9 @@
 # the same distribution terms that you use for the rest of that program.
 
 MOD_CONFIGURE_ACS="src/mod/compress.mod/configure.ac src/mod/dns.mod/configure.ac"
-DOCS="doc/COMPILE-GUIDE doc/PATCH-HOWTO doc/tcl-commands.doc doc/TEXT-SUBSTITUTIONS \
-	doc/html/app-textsub.html doc/html/compiling.html doc/html/tcl-commands.html \
-	doc/html/patch-howto.html"
+DOCS="doc/COMPILE-GUIDE doc/sphinx_source/mainDocs/patch.rst \
+      doc/sphinx_source/mainDocs/tcl-commands.rst \
+      doc/sphinx_source/appendices/text-sub.rst"
 
 fix_main_c() {
 	sed -e 's:egg_numver = .*$:egg_numver = '${NEW_NUMVERSION}';:' \
@@ -64,9 +64,9 @@ done
 echo " done."
 
 echo -n "Fixing docs..."
+sed -i 's:'${OLD_EGGVERSION}':'${NEW_EGGVERSION}':g' doc/sphinx_source/conf.py
 for i in $DOCS; do
-	sed 's:'${OLD_EGGVERSION}':'${NEW_EGGVERSION}':g' $i > ${i}_
-	mv ${i}_ $i
+	sed -i 's:'${OLD_EGGVERSION}':'${NEW_EGGVERSION}':g' $i
 done
 echo " done."
 
@@ -81,6 +81,7 @@ for i in $MOD_CONFIGURE_ACS; do
 	echo "  cd ${CURRENT_PWD}/`dirname $i` && autoconf"
 done
 echo "  cd $PWD"
+echo "  ./misc/generatedocs"
 echo ""
 echo "Don't forget to add $NEW_EGGVERSION to the current doc/Changes file."
 echo ""
