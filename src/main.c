@@ -514,7 +514,7 @@ static void do_arg(char *s)
         printf("%s\n", version);
         if (z[0])
           printf("  (patches: %s)\n", z);
-        printf("Configured with: " EGG_AC_ARGS "\n");
+        printf("Configure flags: " EGG_AC_ARGS "\n");
         printf("Compiled with: ");
 #ifdef IPV6
         printf("IPv6, ");

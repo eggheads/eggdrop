@@ -1448,6 +1448,9 @@ AC_DEFUN([EGG_SAVE_PARAMETERS],
   done
 
   AC_SUBST(egg_ac_parameters)
+  if test "x$egg_ac_parameters" = "x"; then
+    egg_ac_parameters="none"
+  fi
   AC_DEFINE_UNQUOTED(EGG_AC_ARGS, "$egg_ac_parameters", [Arguments passed to configure])
 ])
 
