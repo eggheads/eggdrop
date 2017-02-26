@@ -28,6 +28,7 @@ show_usage() {
 	echo "Usage: `basename $0` [-hs] <patchname>"
 	echo ""
 	echo "  patchname  - Name of patch to add."
+        echo "    * Use 'none' as patchname to remove existing patch"
 	echo ""
 	echo "  -h, --help - Print this help and exit."
 	echo "  -s, --show - Print current patch name and exit."
@@ -108,4 +109,6 @@ EOS
 
 echo "#define EGG_STRINGVER \"$stringver\"" >> src/version.h
 echo "#define EGG_NUMVER $new_numver" >> src/version.h
-echo "#define EGG_PATCH \"$patch_name\"" >> src/version.h
+if [ $patch_name != "none" ]; then
+  echo "#define EGG_PATCH \"$patch_name\"" >> src/version.h
+fi

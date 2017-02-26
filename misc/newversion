@@ -44,9 +44,9 @@ OLD_EGGVERSION=$(grep AC_INIT configure.ac | sed -e 's/AC_INIT(\[Eggdrop\],\[//g
 NEW_EGGVERSION=$(echo $OLD_EGGVERSION | cut -d. -f1-2).$(($(echo $OLD_EGGVERSION | cut -d. -f3) + 1))
 NEW_NUMVERSION=$(($(grep '^#define EGG_NUMVER.*' src/version.h |cut -d " " -f 3|sed -e 's/..$/00/') + 100))
 
-# Change the patch to 'none'.
-echo -n "Adding patch 'none'..."
-misc/addpatch none >/dev/null
+# Remove patchlevel.
+echo -n "Removing patchlevel for a stable release..."
+misc/setpatch none >/dev/null
 echo " done."
 
 # Fix version.h.
@@ -69,7 +69,7 @@ for i in $DOCS; do
 done
 echo " done."
 
-echo Current patch: `misc/addpatch -s`
+echo Current patch: `misc/setpatch -s`
 echo ""
 echo "Complete."
 echo ""
