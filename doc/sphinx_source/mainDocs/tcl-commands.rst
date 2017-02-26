@@ -2066,7 +2066,7 @@ NOTE: All config file variables are also global.
   Module: server
 
 **version**
-  Value: current bot version "1.1.2+pl1 1010201 pl1"; first item is the text version, second item is a numerical version, and any following items are the names of patches that have been added
+  Value: current bot version "1.1.2+pl1 1010201"; first item is the text version, to include a patch string if present, and second item is a numerical version
 
   Module: core
 
