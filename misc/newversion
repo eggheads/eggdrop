@@ -30,7 +30,7 @@ DOCS="doc/COMPILE-GUIDE doc/sphinx_source/mainDocs/patch.rst \
 
 fix_version_h() {
 	sed -ie 's:^#define EGG_NUMVER.*$:#define EGG_NUMVER '${NEW_NUMVERSION}':' src/version.h
-	sed -ie 's:^#define EGG_STRINGVER.*$:#define EGG_STRINGVER '${NEW_EGGVERSION}':' src/version.h
+	sed -ie 's:^#define EGG_STRINGVER.*$:#define EGG_STRINGVER '\"${NEW_EGGVERSION}\"':' src/version.h
 }
 
 if test ! -f src/main.c; then
