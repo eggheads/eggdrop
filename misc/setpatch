@@ -1,6 +1,6 @@
 #! /bin/bash
 #
-# addpatch - modifies src/patch.h
+# addpatch - generates src/version.h
 #
 # Copyright (C) 2002 - 2017 Eggheads Development Team
 # Copyright (C) 2000 Fabian Knittel <fknittel@gmx.de>
@@ -45,7 +45,8 @@ if test ! -f src/main.c; then
 	exit 1
 fi
 
-oldpatch_name=$(cat src/version.h |grep -E '^#define EGG_PATCH.*'|cut -d "\"" -f 2)
+oldpatch_name=$(grep -E '^#define EGG_PATCH.*' src/version.h|cut -d "\"" -f 2
+)
 
 if test "x${oldpatch_name}" = "x"; then
 	oldpatch_name='stable'
