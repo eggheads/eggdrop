@@ -69,6 +69,7 @@
 #  define UAC_NOPRINT 0x00000001        /* Don't report unaligned fixups */
 #endif
 
+#include "version.h"
 #include "chan.h"
 #include "modules.h"
 #include "tandem.h"
@@ -103,8 +104,11 @@ static char **argv;
  * modified versions of this bot.
  */
 
-char egg_version[1024] = "1.8.0";
-int egg_numver = 1080000;
+char egg_version[1024] = EGG_STRINGVER;
+int egg_numver = EGG_NUMVER;
+#ifdef EGG_PATCH
+char egg_patch[] = EGG_PATCH;
+#endif
 
 char notify_new[121] = "";      /* Person to send a note to for new users */
 int default_flags = 0;          /* Default user flags                     */
@@ -133,7 +137,6 @@ int notify_users_at = 0; /* Minutes past the hour to notify users of notes? */
 
 char version[81];    /* Version info (long form)  */
 char ver[41];        /* Version info (short form) */
-char egg_xtra[2048]; /* Patch info                */
 
 int do_restart = 0;       /* .restart has been called, restart ASAP */
 int resolve_timeout = 15; /* Hostname/address lookup timeout        */
@@ -270,7 +273,11 @@ static void write_debug()
       dprintf(-x, "Debug (%s) written %s\n", ver, s);
       dprintf(-x, "Please report problem to bugs@eggheads.org\n");
       dprintf(-x, "after a visit to http://www.eggheads.org/bugzilla/\n");
-      dprintf(-x, "Full Patch List: %s\n", egg_xtra);
+#ifdef EGG_PATCH
+      dprintf(-x, "Patch level: %s\n", egg_patch);
+#else
+      dprintf(-x, "Patch level: %s\n", "stable");
+#endif
       dprintf(-x, "Context: ");
       cx_ptr = cx_ptr & 15;
       for (y = ((cx_ptr + 1) & 15); y != cx_ptr; y = ((y + 1) & 15))
@@ -295,7 +302,11 @@ static void write_debug()
   } else {
     strncpyz(s, ctime(&now), sizeof s);
     dprintf(-x, "Debug (%s) written %s\n", ver, s);
-    dprintf(-x, "Full Patch List: %s\n", egg_xtra);
+#ifdef EGG_PATCH
+    dprintf(-x, "Patch level: %s\n", egg_patch);
+#else
+    dprintf(-x, "Patch level: %s\n", "stable");
+#endif
 #ifdef STATIC
     dprintf(-x, "STATICALLY LINKED\n");
 #endif
@@ -514,7 +525,7 @@ static void do_arg(char *s)
         printf("%s\n", version);
         if (z[0])
           printf("  (patches: %s)\n", z);
-        printf("Configured with: " EGG_AC_ARGS "\n");
+        printf("Configure flags: " EGG_AC_ARGS "\n");
         printf("Compiled with: ");
 #ifdef IPV6
         printf("IPv6, ");
@@ -726,18 +737,6 @@ int init_language(int);
 #ifdef TLS
 int ssl_init();
 #endif
-
-static void patch(const char *str)
-{
-  char *p = strchr(egg_version, '+');
-
-  if (!p)
-    p = &egg_version[strlen(egg_version)];
-  if (str[0])
-    sprintf(p, "+%s", str);
-  egg_numver++;
-  sprintf(&egg_xtra[strlen(egg_xtra)], " %s", str);
-}
 
 static inline void garbage_collect(void)
 {
@@ -994,20 +993,20 @@ int main(int arg_c, char **arg_v)
     Context;
 #endif
 
-/* Include patch.h header for patch("...") */
-#include "patch.h"
-
   argc = arg_c;
   argv = arg_v;
 
   /* Version info! */
+#ifdef EGG_PATCH
+  egg_snprintf(&egg_version[strlen(egg_version)], sizeof egg_version, 
+               "+%s", egg_patch);
+#endif
   egg_snprintf(ver, sizeof ver, "eggdrop v%s", egg_version);
   egg_snprintf(version, sizeof version,
                "Eggdrop v%s (C) 1997 Robey Pointer (C) 2010-2017 Eggheads",
                egg_version);
   /* Now add on the patchlevel (for Tcl) */
   sprintf(&egg_version[strlen(egg_version)], " %u", egg_numver);
-  strcat(egg_version, egg_xtra);
 
 /* For OSF/1 */
 #ifdef STOP_UAC
