@@ -1192,7 +1192,8 @@ int main(int arg_c, char **arg_v)
       dcc[n].user = get_user_by_handle(userlist, dcc[n].nick);
     }
     setsock(STDOUT, 0);          /* Entry in net table */
-    dprintf(n, "\n### ENTERING DCC CHAT SIMULATION ###\n\n");
+    dprintf(n, "\n### ENTERING DCC CHAT SIMULATION ###\n");
+    dprintf(n, "You can use the .su command to log into your Eggdrop account.\n\n");
     dcc_chatter(n);
   }
 
