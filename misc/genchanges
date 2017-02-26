@@ -62,8 +62,8 @@ foreach commit [lreverse $commits] {
 		lappend secondline "Patch by: [join [dict keys $patch] {, }]"
 	}
 	if {[llength $secondline]} {
-		append shortmsg "\n[string repeat " " 10] [join $secondline { / }]"
+		append shortmsg "\n  [string repeat " " 10] [join $secondline { / }]"
 	}
-	lappend result "$date $shortmsg"
+	lappend result "  $date $shortmsg"
 }
 puts [join [lreverse $result] \n\n]
