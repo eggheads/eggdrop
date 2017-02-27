@@ -1,4 +1,95 @@
 - - - - - - - - - - - - - - -
+Commit 1762fe9 (2017-02-26 22:56:39 -0500) by Geo
+Geo-proof misc/newversion 
+
+misc/newversion
+
+- - - - - - - - - - - - - - -
+Commit 2cb92e1 (2017-02-27 00:28:28 +0100) by thommey
+Add indention to genchanges. 
+
+misc/genchanges
+
+- - - - - - - - - - - - - - -
+Commit b2a54ea (2017-02-27 00:25:41 +0100) by thommey
+Add misc/genchanges to generate doc/Changes file entries. 
+
+misc/genchanges
+
+- - - - - - - - - - - - - - -
+Commit 12a1478 (2017-02-26 22:59:52 +0100) by thommey
+Add comment about .su command in -nt 
+Add comment about .su command in -nt, because it's very useful and not
+commonly known.
+src/main.c
+
+- - - - - - - - - - - - - - -
+Commit c39175a (2017-02-26 01:05:31 -0500) by Geo
+* Update releaseprep with setpatch usage * Update patch.h reference to
+version.h * Don't change version in releaseprep, it is done in newversion *
+Fix missing quotes generating version.h * Add missing quotes to version.h
+string version 
+
+misc/newversion
+misc/releaseprep
+src/Makefile.in
+
+- - - - - - - - - - - - - - -
+Commit ca5179f (2017-02-26 11:04:52 -0500) by Geo
+Update patch.h reference to version.h 
+
+src/Makefile.in
+
+- - - - - - - - - - - - - - -
+Commit 55166da (2017-02-25 21:29:12 -0500) by Geo
+* Use setpatch vice addpatch * Use 'none' to remove patchlevel from
+version.h 
+
+misc/newversion
+misc/setpatch
+
+- - - - - - - - - - - - - - -
+Commit 0948058 (2017-02-25 20:05:22 -0600) by Geo
+Update Eggdrop versioning system. Fixes #337 
+Found by: maimizuno
+* Display 'none' in summary if no configure flags used
+* Replace hard-coded version numbers with version.h references
+* Introduce version.h for version assignments
+* Use misc/setpatch to generate version.h
+* Update misc/newversion to use version.h
+* Update docs to reflect new global var version output
+* Remove patch.h and misc/addpatch
+* Replace patch.h with version.h in docs
+* use misc/setpatch to give patchlevel to misc/getcommit
+aclocal.m4
+configure
+doc/PATCH-HOWTO
+doc/html/mainDocs/patch.html
+doc/html/mainDocs/tcl-commands.html
+doc/sphinx_source/mainDocs/patch.rst
+doc/sphinx_source/mainDocs/tcl-commands.rst
+doc/tcl-commands.doc
+misc/addpatch
+misc/getcommit
+misc/newversion
+misc/setpatch
+src/main.c
+src/patch.h
+src/version.h
+
+- - - - - - - - - - - - - - -
+Commit 14f0718 (2017-02-18 20:56:46 -0500) by Geo
+Update newversion with sphinx doc paths 
+
+misc/newversion
+
+- - - - - - - - - - - - - - -
+Commit bb27466 (2017-02-18 10:36:39 -0500) by Geo
+Update ChangeLog 
+
+ChangeLog
+
+- - - - - - - - - - - - - - -
 Commit 6bc613a (2017-02-17 18:37:12 +0100) by thommey
 Fix safe_write prototype to equal write. 
 
