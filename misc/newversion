@@ -44,9 +44,20 @@ OLD_EGGVERSION=$(grep AC_INIT configure.ac | sed -e 's/AC_INIT(\[Eggdrop\],\[//g
 NEW_EGGVERSION=$(echo $OLD_EGGVERSION | cut -d. -f1-2).$(($(echo $OLD_EGGVERSION | cut -d. -f3) + 1))
 NEW_NUMVERSION=$(($(grep '^#define EGG_NUMVER.*' src/version.h |cut -d " " -f 3|sed -e 's/..$/00/') + 100))
 
+#Remove existing staged files
+git reset HEAD -- .
+
+echo ""
+# Generate ChangeLog
+echo -n "Generating ChangeLog..."
+git log $(git rev-list -n 1 v${OLD_EGGVERSION})..HEAD --name-only --no-merges --pretty=format:"- - - - - - - - - - - - - - -%n%w(75)Commit %h (%ai) by %aN%n %s %n %b" > ChangeLog
+git add ChangeLog
+git commit -m "Generate ChangeLog for ${NEW_EGGVERSION}" > /dev/null
+echo " done."
+
 # Remove patchlevel.
 echo -n "Removing patchlevel for a stable release..."
-misc/setpatch none >/dev/null
+misc/setpatch alpha >/dev/null
 echo " done."
 
 # Fix version.h.
@@ -69,18 +80,38 @@ for i in $DOCS; do
 done
 echo " done."
 
-echo Current patch: `misc/setpatch -s`
+git commit -am "Update version strings to ${NEW_EGGVERSION}" > /dev/null
+
+# Generate docs
+echo -n "Generating docs (be patient)..."
+misc/generatedocs > /dev/null 2>&1
+git commit -am "Generate docs with ${NEW_EGGVERSION} version" > /dev/null
+echo " done."
+
+# Run autoconf
+echo -n "Running autoconf..."
+CURRENT_PWD=$PWD
+autoconf
+for i in $MOD_CONFIGURE_ACS; do
+  cd ${CURRENT_PWD}/`dirname $i` && autoconf
+done
+cd $CURRENT_PWD
+git commit -am "Run autoconf" > /dev/null
+echo " done."
+
+echo ""
+echo ""
+echo "Summary:"
+echo "--------"
+echo ""
+echo "version.h:"
+grep "^#define.*" src/version.h
+echo ""
+echo "Docs version string:"
+grep "^version = .*" doc/sphinx_source/conf.py
 echo ""
 echo "Complete."
 echo ""
-echo "Now, git commit, and then run the following, and commit again:"
-echo "  autoconf"
-CURRENT_PWD=$PWD
-for i in $MOD_CONFIGURE_ACS; do
-	echo "  cd ${CURRENT_PWD}/`dirname $i` && autoconf"
-done
-echo "  cd $PWD"
-echo "  ./misc/generatedocs"
 echo ""
 echo "Don't forget to add $NEW_EGGVERSION to the current doc/Changes file."
 echo ""
