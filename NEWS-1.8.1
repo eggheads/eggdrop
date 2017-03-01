@@ -1,0 +1,56 @@
+News
+Last revised: February 28, 2017
+     _________________________________________________________________
+
+                                   News
+
+
+  What's new? To gain a full understanding of changes to Eggdrop1.8.1, 
+  please read doc/Changes1.8.
+
+  For support, feel free to visit us on Freenode #eggdrop.
+
+  If you are upgrading from a pre-1.6 version of Eggdrop:
+
+    1. Before you start the bot for the first time, BACKUP your userfile.
+
+    2. DON'T USE YOUR OLD CONFIG FILE. MAKE A NEW ONE!
+
+     _________________________________________________________________
+
+Major changes made to Eggdrop 1.8.1 from Eggdrop1.8.0:
+
+    Autobotchk - Added functionality improvements to the tried-and-true
+      autobotchk script, allowing characters such as {} and [] to be used in
+      filenames. Additionally, it can also now handle long botnetnicks for 
+      pidfiles and check for additional sourced config files.
+
+    .who linkedbot output - Truncates listings appropriately.
+
+    eggdrop.conf - Update source code to match defaults given in Eggdrop
+      configuration file.
+
+    Minutely hook - The minutely hook was only called for missed minutes mod
+      60, now it is still listed in minutes but it can be greater than 60.
+
+    Options summary - At the end of configure, Eggdrop now displays a handy
+      summary of basic options used during compile. It will display the OS
+      and Tcl version found, along with if TLS, IPv6 and SSL are enabled.
+
+    New OpenSSL version detection - A recent update to the OpenSSL libs
+      rendered some of our checks invalid, particularly the hexstr2buf call.
+      This is now fixed.
+
+    Implemented version.h - Moved previously hard-coded version strings to
+      version.h and update them via misc/setpatch instead of misc/addpatch.
+      This also fixes inconsistencies in setting the internal version
+      integer.
+
+    Compile cleanup - Fixed some compiler warnings. 
+
+    General bugfixes - Small code tweaks to eliminate some rare error
+      conditions.
+  ________________________________________________________________________
+
+Copyright (C) 1997 Robey Pointer
+Copyright (C) 1999 - 2017 Eggheads Development Team
