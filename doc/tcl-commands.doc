@@ -2323,7 +2323,7 @@ matchcidr <block> <address> <prefix>
   Description: performs a cidr match on the specified ip addresses. IPv6
   is supported, if enabled at compile time.
 
-  Example: matchcidr 192.168.0.0 192.168.1.17 16
+  Example: matchcidr 192.1.8.1.0 192.168.1.17 16
 
   Returns: 1 if the address matches the block prefix, 0 otherwise.
 
