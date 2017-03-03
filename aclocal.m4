@@ -1154,7 +1154,8 @@ dnl EGG_SUBST_EGGVERSION()
 dnl
 AC_DEFUN([EGG_SUBST_EGGVERSION],
 [
-  EGGVERSION=`grep 'char.egg_version' $srcdir/src/main.c | $AWK '{gsub(/(\"|\;)/, "", [$]4); print [$]4}'`
+
+  EGGVERSION=`grep '^ *# *define  *EGG_STRINGVER ' $srcdir/src/version.h | $AWK '{gsub(/(\")/, "", $NF); print $NF}'`
   egg_version_num=`echo $EGGVERSION | $AWK 'BEGIN {FS = "."} {printf("%d%02d%02d", [$]1, [$]2, [$]3)}'`
   AC_SUBST(EGGVERSION)
   AC_DEFINE_UNQUOTED(EGG_VERSION, $egg_version_num, [Defines the current Eggdrop version.])
