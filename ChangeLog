@@ -1,4 +1,89 @@
 - - - - - - - - - - - - - - -
+Commit f086368 (2017-03-03 02:09:48 +0100) by thommey
+Run autotools. 
+
+configure
+src/mod/compress.mod/configure
+src/mod/dns.mod/configure
+
+- - - - - - - - - - - - - - -
+Commit c12e715 (2017-03-03 02:09:36 +0100) by thommey
+Remove debug output. 
+
+aclocal.m4
+
+- - - - - - - - - - - - - - -
+Commit d076def (2017-03-03 02:08:29 +0100) by thommey
+Run autotools. 
+
+configure
+src/mod/compress.mod/configure
+src/mod/dns.mod/configure
+
+- - - - - - - - - - - - - - -
+Commit e4dda8a (2017-03-03 02:07:28 +0100) by thommey
+Replace version fetching function in aclocal.m4 to use new version.h. 
+Found by: karakedi
+
+aclocal.m4
+
+- - - - - - - - - - - - - - -
+Commit 52ae60f (2017-02-28 19:49:49 -0500) by Geo
+Eggdrop v1.8.1 Release Candidate 1 
+
+aclocal.m4
+configure
+doc/html/appendices/first-script.html
+doc/html/appendices/index.html
+doc/html/appendices/known-probs.html
+doc/html/appendices/text-sub.html
+doc/html/appendices/tricks.html
+doc/html/appendices/weird-msgs.html
+doc/html/coreDocs/assoc.html
+doc/html/coreDocs/blowfish.html
+doc/html/coreDocs/channels.html
+doc/html/coreDocs/compress.html
+doc/html/coreDocs/console.html
+doc/html/coreDocs/core.html
+doc/html/coreDocs/ctcp.html
+doc/html/coreDocs/dns.html
+doc/html/coreDocs/filesys.html
+doc/html/coreDocs/index.html
+doc/html/coreDocs/irc.html
+doc/html/coreDocs/modules.html
+doc/html/coreDocs/notes.html
+doc/html/coreDocs/seen.html
+doc/html/coreDocs/server.html
+doc/html/coreDocs/share.html
+doc/html/coreDocs/transfer.html
+doc/html/coreDocs/uptime.html
+doc/html/coreDocs/woobie.html
+doc/html/index.html
+doc/html/installAndSetup/faq.html
+doc/html/installAndSetup/index.html
+doc/html/installAndSetup/install.html
+doc/html/installAndSetup/readme.html
+doc/html/mainDocs/about.html
+doc/html/mainDocs/bans.html
+doc/html/mainDocs/botnet.html
+doc/html/mainDocs/features.html
+doc/html/mainDocs/index.html
+doc/html/mainDocs/ipv6.html
+doc/html/mainDocs/partyline.html
+doc/html/mainDocs/patch.html
+doc/html/mainDocs/tcl-commands.html
+doc/html/mainDocs/tls.html
+doc/html/mainDocs/users.html
+doc/html/search.html
+src/version.h
+
+- - - - - - - - - - - - - - -
+Commit ed69bd4 (2017-02-28 19:46:10 -0500) by Geo
+Update ChangeLog 
+
+ChangeLog
+
+- - - - - - - - - - - - - - -
 Commit b1fadfb (2017-02-28 19:42:36 -0500) by Geo
 Update NEWS file for 1.8.1 
 
