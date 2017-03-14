@@ -342,6 +342,18 @@ static int got001(char *from, char *msg)
   return 0;
 }
 
+/* Got 005: ISUPPORT network information
+ */
+static int got005(char *from, char *msg)
+{
+  char *word;
+
+  newsplit(&msg); /* skip botnick */
+  while ((word = newsplit(&msg))) {
+    isupport_parse(word);
+  }
+}
+
 /* Got 442: not on channel
  */
 static int got442(char *from, char *msg)
@@ -1159,6 +1171,7 @@ static cmd_t my_raw_binds[] = {
   {"PONG",    "",   (IntFunc) gotpong,      NULL},
   {"WALLOPS", "",   (IntFunc) gotwall,      NULL},
   {"001",     "",   (IntFunc) got001,       NULL},
+  {"005",     "",   (IntFunc) got005,       NULL},
   {"303",     "",   (IntFunc) got303,       NULL},
   {"432",     "",   (IntFunc) got432,       NULL},
   {"433",     "",   (IntFunc) got433,       NULL},
