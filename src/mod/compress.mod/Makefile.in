@@ -32,6 +32,7 @@ clean:
 
 distclean: clean
 	@rm -f Makefile config.cache config.log config.status config.h
+	@rm -rf autom4te.cache
 
 #safety hash
 ../compress.o: .././compress.mod/compress.c ../../../src/mod/module.h \
