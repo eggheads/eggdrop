@@ -20,6 +20,9 @@ dnl
 dnl Load tcl macros
 builtin(include,tcl.m4)
 
+dnl Load GNU stdint.h creator
+builtin(include,ax_create_stdint_h.m4)
+
 
 dnl
 dnl Message macros.

@@ -28,6 +28,7 @@
 #  include "config.h"
 #endif
 
+#include "eggint.h"
 #include "lush.h"
 
 #ifndef TCL_PATCH_LEVEL

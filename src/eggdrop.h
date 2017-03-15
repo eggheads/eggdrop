@@ -308,19 +308,9 @@ typedef int socklen_t;
 #  define free(x)   dont_use_old_free(x)
 #endif /* !COMPILING_MEM */
 
-/* 32 bit type */
-#if (SIZEOF_INT == 4)
-typedef unsigned int u_32bit_t;
-#else
-#  if (SIZEOF_LONG == 4)
-typedef unsigned long u_32bit_t;
-#  else
-#    include "Error: Can't find 32bit type."
-#  endif
-#endif
-
-typedef unsigned short int u_16bit_t;
-typedef unsigned char u_8bit_t;
+typedef uint8_t u_8bit_t;
+typedef uint16_t u_16bit_t;
+typedef uint32_t u_32bit_t;
 
 /* IP type */
 typedef u_32bit_t IP;
