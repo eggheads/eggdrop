@@ -48,6 +48,8 @@
 #undef user_malloc
 #undef dprintf
 #undef get_data_ptr
+#undef match_addr
+#undef cmp_masks
 #undef wild_match
 #undef wild_match_per
 #undef wild_match_partial_case
