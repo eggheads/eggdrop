@@ -21,8 +21,8 @@ MOD_INCLUDES = -I. -I../../../ -I$(MOD_UPDIR)$(top_srcdir) \
   -I$(MOD_UPDIR)$(top_srcdir)/src/mod
 MOD_CFLAGS = @CFLAGS@ @SSL_INCLUDES@ @DEFS@ $(CFLGS)
 MOD_CPPFLAGS = @CPPFLAGS@
-XLIBS = @XLIBS@
 MOD_EXT = @MOD_EXT@
+RANLIB = @RANLIB@
 
 # Note: The following three lines are automatically adjusted by
 #       misc/modconfig. They have to be present here.
@@ -37,7 +37,7 @@ egg_ac_parameters = @egg_ac_parameters@
 MAKE_MOD = $(MAKE) 'MAKE=$(MAKE)' 'CC=$(CC)' 'LD=$(LD)' 'CFLAGS_NOINC=$(MOD_CFLAGS)' \
 'STRIP=$(STRIP)' 'CFLAGS=$(MOD_CFLAGS) $(MOD_INCLUDES)' 'CPPFLAGS=$(MOD_CPPFLAGS)' \
 'XLIBS=$(XLIBS)' 'MOD_EXT=$(MOD_EXT)' 'SHELL=$(SHELL)' \
-'MODULE_XLIBS=$(MODULE_XLIBS)'
+'MODULE_XLIBS=$(MODULE_XLIBS)' 'RANLIB=$(RANLIB)'
 
 MAKE_MODDEPEND = $(MAKE) 'MAKE=$(MAKE)' 'CC=$(CC)' \
 'CFLAGS=-I../../.. -I../../../src/mod -DMAKING_DEPEND -DHAVE_CONFIG_H -DMAKING_MODS'
