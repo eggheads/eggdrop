@@ -33,10 +33,10 @@ distclean: clean
 #safety hash
 ../ctcp.o: .././ctcp.mod/ctcp.c .././ctcp.mod/ctcp.h \
  ../../../src/mod/module.h ../../../src/main.h ../../../config.h \
- ../../../lush.h ../../../src/lang.h ../../../src/eggdrop.h \
- ../../../src/compat/in6.h ../../../src/flags.h ../../../src/cmdt.h \
- ../../../src/tclegg.h ../../../src/tclhash.h ../../../src/chan.h \
- ../../../src/users.h ../../../src/compat/compat.h \
+ ../../../eggint.h ../../../lush.h ../../../src/lang.h \
+ ../../../src/eggdrop.h ../../../src/compat/in6.h ../../../src/flags.h \
+ ../../../src/cmdt.h ../../../src/tclegg.h ../../../src/tclhash.h \
+ ../../../src/chan.h ../../../src/users.h ../../../src/compat/compat.h \
  ../../../src/compat/inet_aton.h ../../../src/compat/snprintf.h \
  ../../../src/compat/memset.h ../../../src/compat/memcpy.h \
  ../../../src/compat/strcasecmp.h ../../../src/compat/strftime.h \

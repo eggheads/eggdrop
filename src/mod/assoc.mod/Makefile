@@ -32,7 +32,7 @@ distclean: clean
 
 #safety hash
 ../assoc.o: .././assoc.mod/assoc.c ../../../src/mod/module.h \
- ../../../src/main.h ../../../config.h ../../../lush.h \
+ ../../../src/main.h ../../../config.h ../../../eggint.h ../../../lush.h \
  ../../../src/lang.h ../../../src/eggdrop.h ../../../src/compat/in6.h \
  ../../../src/flags.h ../../../src/cmdt.h ../../../src/tclegg.h \
  ../../../src/tclhash.h ../../../src/chan.h ../../../src/users.h \
