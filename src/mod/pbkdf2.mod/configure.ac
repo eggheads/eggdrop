@@ -8,7 +8,6 @@ sinclude(ax_check_openssl.m4)
 AC_INIT([Eggdrop PBKDF2 Module],[1.8.1],[bugs@eggheads.org])
 
 AC_CONFIG_SRCDIR(pbkdf2.c)
-AC_CONFIG_AUX_DIR(../../../misc)
 
 AC_COPYRIGHT([Copyright (C) 1999 - 2017 Eggheads Development Team])
 AC_REVISION([m4_esyscmd([../../../misc/getcommit])])
@@ -34,7 +33,7 @@ if test "$have_openssl" = "yes"; then
   CPPFLAGS="$OPENSSL_INCLUDES $CPPFLAGS -DPBKDF2_OPENSSL=1"
   CRYPTODEP=""
 else
-  CRYPTODEP="mbedtls.o"
+  CRYPTODEP="mbedtls"
 fi
 
 AC_SUBST([LDFLAGS])
