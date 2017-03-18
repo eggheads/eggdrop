@@ -2,62 +2,80 @@
 
 srcdir = .
 
-CRYPTODEP=@CRYPTODEP@
+MODNAME=pbkdf2
+CRYPTODEP=@CRYPTODEP@_dep
 
 MYCPPFLAGS=@CPPFLAGS@ $(CPPFLAGS)
-MYCFLAGS=$(CFLAGS) $(MYCPPFLAGS)
-LIBS=@LIBS@
+MYCFLAGS=$(CFLAGS) $(MYCPPFLAGS) -I.
+LIBS=@LIBS@ $(MODULE_XLIBS) $(XLIBS)
 LDFLAGS=@LDFLAGS@
+RANLIB=@RANLIB@
 
 MAKE_DEPEND = $(MAKE) 'MAKE=$(MAKE)' 'CC=$(CC)' \
-		 'CFLAGS=-I.. -I../../../.. -DMAKING_DEPEND -DHAVE_CONFIG_H -DMAKING_MODS'
+              'CFLAGS=-I.. -I../../../.. -DMAKING_DEPEND -DHAVE_CONFIG_H -DMAKING_MODS'
 
-MAKE_GENERIC = $(MAKE) 'MAKE=$(MAKE)' 'CC=$(CC)' 'LD=$(LD)' \
+MAKE_MBEDTLS = $(MAKE) 'MAKE=$(MAKE)' 'CC=$(CC)' 'LD=$(LD)' \
                'CFLAGS=-I.. -I../../../.. $(CFLAGS_NOINC)' \
-               'LDFLAGS=$(LDFLAGS)'
-
+               'LDFLAGS=$(LDFLAGS)' 'MOD_EXT=$(MOD_EXT)' 'STRIP=$(STRIP)' \
+	       'LIBS=$(LIBS)' 'RANLIB=$(RANLIB)' 'XLIBSFILE=../../xobjs' \
+	       'XLIBSPREFIX=$(MODNAME).mod/mbedtls'
 doofus:
 	@echo ""
 	@echo "Let's try this from the right directory..."
 	@echo ""
 	@cd ../../../ && make
 
-static: ../pbkdf2.o
+static: ../$(MODNAME).o
+	cp modxobjs ../mod.$(MODNAME).xlibs
 
-modules: $(CRYPTODEP) ../../../pbkdf2.$(MOD_EXT)
+modules: ../../../$(MODNAME).$(MOD_EXT)
 
-mbedtls.o:
-	@(cd mbedtls && $(MAKE_GENERIC) "VPATH=." "srcdir=." mbedtls)
+../$(MODNAME).o: $(CRYPTODEP)
+	$(CC) $(MYCFLAGS) -DMAKING_MODS -c $(srcdir)/$(MODNAME).c
+	@rm -f ../$(MODNAME).o
+	mv $(MODNAME).o ../
 
-../pbkdf2.o: pbkdf2.c
-	$(CC) $(MYCFLAGS) -DMAKING_MODS -c $(srcdir)/pbkdf2.c
-	@rm -f ../pbkdf2.o
-	mv pbkdf2.o ../
+../../../$(MODNAME).$(MOD_EXT): ../$(MODNAME).o
+	$(LD) $(LDFLAGS) -o ../../../$(MODNAME).$(MOD_EXT) ../$(MODNAME).o `cat xobjs` $(LIBS)
+	$(STRIP) ../../../$(MODNAME).$(MOD_EXT)
 
-../../../pbkdf2.$(MOD_EXT): ../pbkdf2.o
-	$(LD) $(LDFLAGS) -o ../../../pbkdf2.$(MOD_EXT) ../pbkdf2.o $(CRYPTODEP) $(LIBS) $(XLIBS) $(MODULE_XLIBS)
-	$(STRIP) ../../../pbkdf2.$(MOD_EXT)
+mbedtls_dep: _dep
+	@(cd mbedtls && $(MAKE_MBEDTLS) "VPATH=." "srcdir=." mbedtls)
+	@(for f in mbedtls/*.o; do echo "$$f" >> xobjs; echo "mod/$(MODNAME).mod/$$f" >> modxobjs; done)
+
+_dep:
+	@(rm -f xobjs modxobjs; touch xobjs modxobjs)
 
 depend:
-	$(CC) $(CFLAGS) -MM $(srcdir)/*.c > .depend
+	$(CC) $(MYCFLAGS) -MM $(srcdir)/$(MODNAME).c -MT ../$(MODNAME).o > .depend
 	@(cd mbedtls && $(MAKE_DEPEND) "VPATH=." "srcdir=." depend)
 
 clean:
-	@rm -f .depend *.o *.$(MOD_EXT) *~
+	@rm -f .depend *.o *.$(MOD_EXT) *~ xobjs modxobjs
 	@(cd mbedtls && $(MAKE) "VPATH=." "srcdir=." clean)
 
 distclean: clean
 	@rm -rf autom4te.cache Makefile config.log config.status config.cache
 
+.PHONY: mbedtls
+
 #safety hash
-pbkdf2.o: .././pbkdf2.mod/pbkdf2.c ../../../src/mod/module.h \
- ../../../src/main.h ../../../config.h ../../../eggint.h ../../../lush.h \
- ../../../src/lang.h ../../../src/eggdrop.h ../../../src/compat/in6.h \
- ../../../src/flags.h ../../../src/cmdt.h ../../../src/tclegg.h \
- ../../../src/tclhash.h ../../../src/chan.h ../../../src/users.h \
- ../../../src/compat/compat.h ../../../src/compat/inet_aton.h \
- ../../../src/compat/snprintf.h ../../../src/compat/memset.h \
- ../../../src/compat/memcpy.h ../../../src/compat/strcasecmp.h \
- ../../../src/compat/strftime.h ../../../src/compat/inet_ntop.h \
- ../../../src/compat/inet_pton.h ../../../src/compat/gethostbyname2.h \
- ../../../src/mod/modvals.h ../../../src/tandem.h
+../pbkdf2.o: .././pbkdf2.mod/pbkdf2.c .././pbkdf2.mod/pbkdf2.h \
+ ../../../src/mod/module.h ../../../src/main.h ../../../config.h \
+ ../../../eggint.h ../../../lush.h ../../../src/lang.h \
+ ../../../src/eggdrop.h ../../../src/compat/in6.h ../../../src/flags.h \
+ ../../../src/cmdt.h ../../../src/tclegg.h ../../../src/tclhash.h \
+ ../../../src/chan.h ../../../src/users.h ../../../src/compat/compat.h \
+ ../../../src/compat/inet_aton.h ../../../src/compat/snprintf.h \
+ ../../../src/compat/memset.h ../../../src/compat/memcpy.h \
+ ../../../src/compat/strcasecmp.h ../../../src/compat/strftime.h \
+ ../../../src/compat/inet_ntop.h ../../../src/compat/inet_pton.h \
+ ../../../src/compat/gethostbyname2.h ../../../src/mod/modvals.h \
+ ../../../src/tandem.h .././pbkdf2.mod/pbkdf2crypt.c \
+ .././pbkdf2.mod/pbkdf2crypt_openssl.c \
+ .././pbkdf2.mod/pbkdf2crypt_mbedtls.c .././pbkdf2.mod/mbedtls/md.h \
+ .././pbkdf2.mod/mbedtls/pkcs5.h .././pbkdf2.mod/mbedtls/asn1.h \
+ .././pbkdf2.mod/mbedtls/config.h .././pbkdf2.mod/mbedtls/../pbkdf2.h \
+ .././pbkdf2.mod/mbedtls/md.h .././pbkdf2.mod/mbedtls/hmac_drbg.h \
+ .././pbkdf2.mod/mbedtls/entropy.h .././pbkdf2.mod/mbedtls/sha256.h \
+ .././pbkdf2.mod/mbedtls/base64.h
