@@ -36,7 +36,7 @@ doofus:
 	@echo "Linking eggdrop $(EGGBUILD)."
 	@echo ""
 	@touch mod/mod.xlibs
-	$(LD) -o ../$(EGGEXEC) $(eggdrop_objs) $(MODOBJS) $(XLIBS) md5/md5c.o compat/*.o `cat mod/mod.xlibs`
+	$(LD) -o ../$(EGGEXEC) $(eggdrop_objs) $(MODOBJS) $(XLIBS) md5/md5c.o compat/*.o `cat mod/mod*.xlibs`
 	$(STRIP) ../$(EGGEXEC)
 	@echo ""
 	@echo "Successful compile: $(EGGEXEC)"

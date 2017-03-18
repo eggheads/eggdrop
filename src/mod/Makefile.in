@@ -88,13 +88,14 @@ config:
 			echo ""; \
 			echo "Configuring module '$${modname}'."; \
 			if test ! -d $$i; then mkdir $$i; fi; \
+			if test -r mod.$$i.xlibs; then rm $$i; fi; \
 			(cd $$i && $(MOD_UPDIR)$(srcdir)/$$i/configure --disable-option-checking $(egg_ac_parameters) --cache-file=../../../config.cache --srcdir=$(MOD_UPDIR)$(top_srcdir)/src/mod/$$i); \
 		fi; \
 	done; \
 	echo ""
 
 clean:
-	@rm -f *.o *.$(MOD_EXT) *~ static.h mod.xlibs
+	@rm -f *.o *.$(MOD_EXT) *~ static.h mod*.xlibs
 	@for i in *.mod; do \
 		if test ! -d $$i; then mkdir $$i; fi; \
 		if (test ! -r $$i/Makefile) && \
@@ -107,7 +108,7 @@ clean:
 	done
 
 distclean:
-	@rm -f *.o *.$(MOD_EXT) *~ static.h mod.xlibs
+	@rm -f *.o *.$(MOD_EXT) *~ static.h mod*.xlibs
 	@for i in *.mod; do \
 		if test ! -d $$i; then mkdir $$i; fi; \
 		if (test ! -r $$i/Makefile) && \
