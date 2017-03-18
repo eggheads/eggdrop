@@ -30,7 +30,7 @@ autom4te.cache
 Makefile
 .modules
 .known_modules
-config.h
+/config.h
 lush.h
 config.log
 config.status
