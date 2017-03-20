@@ -83,6 +83,8 @@ change_default_make() {
 fix_version_h() {
 	if test $do_rc -eq 1; then
 		misc/setpatch RC${rc_number} >/dev/null
+	else 
+		misc/setpatch none > /dev/null
 	fi
 }
 
