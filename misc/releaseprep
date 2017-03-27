@@ -131,10 +131,13 @@ if test ! -f src/main.c; then
 fi
 
 
+#TODO: Update releaseprep with new genchanges scripts
+# do it manually for now
+#
 # Regenerate ChangeLog file before doing anything else...
-echo "Regenerating ChangeLog file..."
-regenerate_changelog $LASTVER
-echo ""
+#echo "Regenerating ChangeLog file..."
+#regenerate_changelog $LASTVER
+#echo ""
 
 # Change default make from "debug" to "eggdrop"...
 echo -n "Changing default make..."
