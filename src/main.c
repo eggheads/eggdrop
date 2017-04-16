@@ -52,6 +52,7 @@
 #include <signal.h>
 #include <netdb.h>
 #include <setjmp.h>
+#include <getopt.h>
 
 #ifdef TIME_WITH_SYS_TIME
 #  include <sys/time.h>
@@ -496,56 +497,104 @@ void eggAssert(const char *file, int line, const char *module)
 }
 #endif
 
+void show_ver() {
+  char x[512], *z = x;
+
+  strncpyz(x, egg_version, sizeof x);
+  newsplit(&z);
+  newsplit(&z);
+  printf("%s\n", version);
+  if (z[0]) {
+    printf("  (patches: %s)\n", z);
+  }
+  printf("Configure flags: " EGG_AC_ARGS "\n");
+  printf("Compiled with: ");
+#ifdef IPV6
+  printf("IPv6, ");
+#endif
+#ifdef TLS
+  printf("TLS, ");
+#endif
+  printf("handlen=%d\n", HANDLEN);
+  bg_send_quit(BG_ABORT);
+}
+
+void show_help() {
+  printf("\n%s\n\n", version);
+  printf("%s\n", EGG_USAGE);
+  bg_send_quit(BG_ABORT);
+}
+
 static void do_arg(char *s)
 {
-  char x[512], *z = x;
-  int i;
+  int option = 0;
+/* Bitmask structure to hold cli flags
+   | QUIT| BAD FLAG| h| n| c| t| m| v|
+   |  128|       64|32|16| 8| 4| 2| 1|
+*/
+  int cliflags = 0;
 
-  if (s[0] == '-')
-    for (i = 1; i < strlen(s); i++) {
-      switch (s[i]) {
+  while ((option = getopt(argc, argv, "hnctmv")) != -1) {
+    switch (option) {
       case 'n':
+        if (cliflags & 16) {
+	  break;
+ 	}
+	cliflags = cliflags | 16;
         backgrd = 0;
         break;
       case 'c':
-        con_chan = 1;
-        term_z = 0;
-        break;
+        if (cliflags & 8 ) {
+          break;
+        }
+        cliflags = cliflags | 8;
+	con_chan = 1;
+	term_z = 0;
+	break;
       case 't':
+        if (cliflags & 4) {
+          break;
+        }
+        cliflags = cliflags | 4;
         con_chan = 0;
         term_z = 1;
         break;
       case 'm':
+        if (cliflags & 2) {
+          break;
+        }
+        cliflags = cliflags | 2;
         make_userfile = 1;
         break;
       case 'v':
-        strncpyz(x, egg_version, sizeof x);
-        newsplit(&z);
-        newsplit(&z);
-        printf("%s\n", version);
-        if (z[0])
-          printf("  (patches: %s)\n", z);
-        printf("Configure flags: " EGG_AC_ARGS "\n");
-        printf("Compiled with: ");
-#ifdef IPV6
-        printf("IPv6, ");
-#endif
-#ifdef TLS
-        printf("TLS, ");
-#endif
-        printf("handlen=%d\n", HANDLEN);
-        bg_send_quit(BG_ABORT);
-        exit(0);
+        if (cliflags & 1) {
+          break;
+        }
+        cliflags = (cliflags | 129);		//128 + 1
         break;                  /* this should never be reached */
       case 'h':
-        printf("\n%s\n\n", version);
-        printf("%s\n", EGG_USAGE);
-        bg_send_quit(BG_ABORT);
-        exit(0);
+        if (cliflags & 32) {
+          break;
+        }
+        cliflags = (cliflags | 160);		//128 + 32
         break;                  /* this should never be reached */
-      }
-    } else
+      default:
+        if (cliflags & 64) {
+          break;
+        }
+        cliflags = (cliflags | 192);		//128 + 64
+        break;			/* still should never be reached... */
+    }
+  }
+  if ((cliflags & 64) || (cliflags & 32)) {
+    show_help();
+    exit(0);
+  } else if (cliflags & 1) {
+    show_ver();
+    exit(0);
+  } else {
     strncpyz(configfile, s, sizeof configfile);
+  }
 }
 
 void backup_userfile(void)
