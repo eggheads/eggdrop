@@ -247,7 +247,10 @@ foreach config $confs {
   puts ""
   exit
  }
- if {![regexp {handlen=([0-9]+)} "[exec "$dir/$binary" -v]" -> handlen]} {
+ if {[catch {exec "$dir/$binary" -v} execres]} {
+  puts "\nWARNING: eggdrop could not be executed properly, verify execution manually!\n"
+ }
+ if {![regexp {handlen=([0-9]+)} "$execres" -> handlen]} {
   puts "  Could not find handlen used, defaulting to 32."
   # len 32 means up to index 31
   set handlen 31
