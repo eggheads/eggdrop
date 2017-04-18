@@ -52,7 +52,6 @@
 #include <signal.h>
 #include <netdb.h>
 #include <setjmp.h>
-#include <getopt.h>
 
 #ifdef TIME_WITH_SYS_TIME
 #  include <sys/time.h>
@@ -532,7 +531,7 @@ static void do_arg(char *s)
    | QUIT| BAD FLAG| h| n| c| t| m| v|
    |  128|       64|32|16| 8| 4| 2| 1|
 */
-  int cliflags = 0;
+  unsigned char cliflags = 0;
 
   while ((option = getopt(argc, argv, "hnctmv")) != -1) {
     switch (option) {
@@ -540,14 +539,14 @@ static void do_arg(char *s)
         if (cliflags & 16) {
 	  break;
  	}
-	cliflags = cliflags | 16;
+	cliflags |= 16;
         backgrd = 0;
         break;
       case 'c':
         if (cliflags & 8 ) {
           break;
         }
-        cliflags = cliflags | 8;
+        cliflags |= 8;
 	con_chan = 1;
 	term_z = 0;
 	break;
@@ -555,7 +554,7 @@ static void do_arg(char *s)
         if (cliflags & 4) {
           break;
         }
-        cliflags = cliflags | 4;
+        cliflags |= 4;
         con_chan = 0;
         term_z = 1;
         break;
@@ -563,26 +562,26 @@ static void do_arg(char *s)
         if (cliflags & 2) {
           break;
         }
-        cliflags = cliflags | 2;
+        cliflags |= 2;
         make_userfile = 1;
         break;
       case 'v':
         if (cliflags & 1) {
           break;
         }
-        cliflags = (cliflags | 129);		//128 + 1
+        cliflags |= 129;		//128 + 1
         break;                  /* this should never be reached */
       case 'h':
         if (cliflags & 32) {
           break;
         }
-        cliflags = (cliflags | 160);		//128 + 32
+        cliflags |= 160;		//128 + 32
         break;                  /* this should never be reached */
       default:
         if (cliflags & 64) {
           break;
         }
-        cliflags = (cliflags | 192);		//128 + 64
+        cliflags |= 192;		//128 + 64
         break;			/* still should never be reached... */
     }
   }
