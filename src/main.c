@@ -524,7 +524,7 @@ void show_help() {
   bg_send_quit(BG_ABORT);
 }
 
-static void do_arg(char *s)
+static void do_arg()
 {
   int option = 0;
 /* Bitmask structure to hold cli flags
@@ -592,7 +592,7 @@ static void do_arg(char *s)
     show_ver();
     exit(0);
   } else {
-    strncpyz(configfile, s, sizeof configfile);
+    strncpyz(configfile, argv[optind], sizeof configfile);
   }
 }
 
@@ -1102,8 +1102,7 @@ int main(int arg_c, char **arg_v)
   init_mem();
   init_language(1);
   if (argc > 1)
-    for (i = 1; i < argc; i++)
-      do_arg(argv[i]);
+    do_arg();
 
   printf("\n%s\n", version);
 
