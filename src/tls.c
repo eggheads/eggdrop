@@ -31,6 +31,9 @@
 #include <openssl/err.h>
 #include <openssl/rand.h>
 #include <openssl/x509v3.h>
+#if OPENSSL_VERSION_NUMBER >= 0x10100000L
+#  define ASN1_STRING_data ASN1_STRING_get0_data
+#endif
 
 extern int tls_vfydcc;
 extern struct dcc_t *dcc;
