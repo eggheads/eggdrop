@@ -210,7 +210,7 @@ proc doexec {cmd} {
 proc cmd:full {} {
 	set revlist [revlist]
 	set cmd [list git log --no-merges --date-order --name-status {--pretty=format:%n------------------------------%nCommit %h (%ai) by %aN %n%n%B%n%n} {*}[revlist]]
-	puts [doexec $cmd]
+	puts [string map [list "\r" ""] [doexec $cmd]]
 }
 
 proc cmd:short {} {
@@ -293,7 +293,7 @@ proc cmd:short {} {
 	}
 	lappend result {*}[string map [list %%CHANGELOGDATE%% $lastdate] $lastappend]
 	puts "Eggdrop Changes (Last Updated [clock format [clock seconds] -gmt 1 -format "%Y-%m-%d"]):\n__________________________________________\n\nEggdrop v$version:\n"
-	puts [join [lreverse $result] \n]
+	puts [string map [list "\r" ""] [join [lreverse $result] \n]]
 }
 
 start
