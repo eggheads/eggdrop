@@ -1273,8 +1273,6 @@ static int init_dns_core(void)
 
   /* Initialise the resolv library. */
   res_init();
-  if (!_res.nscount)
-    putlog(LOG_MISC, "*", "No nameservers found.");
   _res.options |= RES_RECURSE | RES_DEFNAMES | RES_DNSRCH;
   for (i = 0; i < _res.nscount; i++)
     _res.nsaddr_list[i].sin_family = AF_INET;
