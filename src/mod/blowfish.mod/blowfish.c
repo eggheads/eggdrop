@@ -280,11 +280,8 @@ static int base64dec(char c)
 
 static int cbcbase64dec(char c)
 {
-  int i = 64;
-
-  while (i >= 0 && cbcbase64[i] != c)
-    --i;
-  return i;
+  char *i = strchr(cbcbase64, c);
+  return i ? (int)(i - cbcbase64) : -1;
 }
 
 static void blowfish_encrypt_pass(char *text, char *new)
@@ -531,7 +528,7 @@ static char *decrypt_string_cbc(char *key, char *str)
   dlen = (slen >> 2) * 3;
   dest = nmalloc(dlen + 1);
   p = (unsigned char *) dest;
-  /* '=' will return 0 */
+  /* '=' will/should return 64 */
   for (i = 0; i < slen; i += 4) {
     int s1 = cbcbase64dec(s[i]);
     int s2 = cbcbase64dec(s[i + 1]);
