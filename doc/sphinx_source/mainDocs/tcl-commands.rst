@@ -1676,7 +1676,7 @@ Miscellaneous Commands
   0 to 9, but instead of using a * wildcard to replace portions of the
   host, only numbers in hostnames are replaced with the '?' wildcard.
   Same is valid for types 20-29, but instead of '?', the '*' wildcard
-  will be used.
+  will be used. Types 30-39 set the host to '*'.
 
   Module: core
 
