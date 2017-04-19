@@ -1514,7 +1514,7 @@ static void dcc_telnet_id(int idx, char *buf, int atr)
   get_user_flagrec(dcc[idx].user, &fr, NULL);
 #ifdef TLS
   if (dcc[idx].ssl && (tls_auth == 2)) {
-    char *uid = ssl_getuid(dcc[idx].sock);
+    const char *uid = ssl_getuid(dcc[idx].sock);
 
     if (!uid || strcasecmp(uid, buf)) {
       if (glob_bot(fr))
