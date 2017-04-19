@@ -781,6 +781,7 @@ static char *traced_globchanset(ClientData cdata, Tcl_Interp *irp,
       Tcl_TraceVar(interp, "default-chanset",
                    TCL_TRACE_READS | TCL_TRACE_WRITES | TCL_TRACE_UNSETS,
                    traced_globchanset, NULL);
+    }
   } else {                        /* Write */
     s2 = Tcl_GetVar2(interp, name1, name2, TCL_GLOBAL_ONLY);
     Tcl_SplitList(interp, s2, &items, &item);
