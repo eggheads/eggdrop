@@ -494,6 +494,10 @@
 /* Define to empty if `const' does not conform to ANSI C. */
 #undef const
 
+/* Define this to ASN1_STRING_get0_data when using OpenSSL 1.1.0+,
+   ASN1_STRING_data otherwise. */
+#undef egg_ASN1_string_data
+
 /* Define this to OPENSSL_hexstr2buf when using OpenSSL 1.1.0+ */
 #undef hex_to_string
 
