@@ -959,8 +959,8 @@ static void add_server(const char *ss)
   for (z = serverlist; z && z->next; z = z->next);
 
   /* Allow IPv6 and IPv4-mapped addresses in [] */
-  if (!sscanf(ss, "[%255[0-9.A-F:a-f]]:%10[+0-9]:%120s", name, port, pass) &&
-      !sscanf(ss, "%255[^:]:%10[+0-9]:%120s", name, port, pass))
+  if (!sscanf(ss, "[%255[0-9.A-F:a-f]]:%10[+0-9]:%120[^\r\n]", name, port, pass) &&
+      !sscanf(ss, "%255[^:]:%10[+0-9]:%120[^\r\n]", name, port, pass))
     return;
 
 #ifndef TLS
