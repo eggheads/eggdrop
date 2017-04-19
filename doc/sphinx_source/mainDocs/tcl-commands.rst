@@ -337,7 +337,7 @@ User Record Manipulation Commands
 
 **newban <ban> <creator> <comment> [lifetime] [options]**
 
-  Description: adds a ban to the global ban list (which takes effect on all channels); creator is given credit for the ban in the ban list. lifetime is specified in minutes. If lifetime is not specified, global-ban-time (usually 60) is used. Setting the lifetime to 0 makes it a permanent ban.
+  Description: adds a ban to the global ban list (which takes effect on all channels); creator is given credit for the ban in the ban list. lifetime is specified in minutes. If lifetime is not specified, default-ban-time (usually 120) is used. Setting the lifetime to 0 makes it a permanent ban.
 
   Options:
 

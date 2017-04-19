@@ -774,8 +774,11 @@ static char *traced_globchanset(ClientData cdata, Tcl_Interp *irp,
 
   if (flags & (TCL_TRACE_READS | TCL_TRACE_UNSETS)) {
     Tcl_SetVar2(interp, name1, name2, glob_chanset, TCL_GLOBAL_ONLY);
-    if (flags & TCL_TRACE_UNSETS)
+    if (flags & TCL_TRACE_UNSETS) {
       Tcl_TraceVar(interp, "global-chanset",
+                   TCL_TRACE_READS | TCL_TRACE_WRITES | TCL_TRACE_UNSETS,
+                   traced_globchanset, NULL); /* keep for backward compatibility */
+      Tcl_TraceVar(interp, "default-chanset",
                    TCL_TRACE_READS | TCL_TRACE_WRITES | TCL_TRACE_UNSETS,
                    traced_globchanset, NULL);
   } else {                        /* Write */
@@ -805,10 +808,18 @@ static char *traced_globchanset(ClientData cdata, Tcl_Interp *irp,
 }
 
 static tcl_ints my_tcl_ints[] = {
-  {"share-greet",             NULL,                     0},
-  {"use-info",                &use_info,                0},
-  {"quiet-save",              &quiet_save,              0},
-  {"allow-ps",                &allow_ps,                0},
+  {"share-greet",              NULL,                     0},
+  {"use-info",                 &use_info,                0},
+  {"quiet-save",               &quiet_save,              0},
+  {"allow-ps",                 &allow_ps,                0},
+  {"default-stopnethack-mode", &global_stopnethack_mode, 0},
+  {"default-revenge-mode",     &global_revenge_mode,     0},
+  {"default-idle-kick",        &global_idle_kick,        0},
+  {"default-ban-time",         &global_ban_time,         0},
+  {"default-exempt-time",      &global_exempt_time,      0},
+  {"default-invite-time",      &global_invite_time,      0},
+  {"default-ban-type",         &global_ban_type,         0},
+  /* keep global-* for backward compatibility */
   {"global-stopnethack-mode", &global_stopnethack_mode, 0},
   {"global-revenge-mode",     &global_revenge_mode,     0},
   {"global-idle-kick",        &global_idle_kick,        0},
@@ -824,6 +835,14 @@ static tcl_ints my_tcl_ints[] = {
 };
 
 static tcl_coups mychan_tcl_coups[] = {
+  {"default-flood-chan", &gfld_chan_thr,  &gfld_chan_time},
+  {"default-flood-deop", &gfld_deop_thr,  &gfld_deop_time},
+  {"default-flood-kick", &gfld_kick_thr,  &gfld_kick_time},
+  {"default-flood-join", &gfld_join_thr,  &gfld_join_time},
+  {"default-flood-ctcp", &gfld_ctcp_thr,  &gfld_ctcp_time},
+  {"default-flood-nick", &gfld_nick_thr,  &gfld_nick_time},
+  {"default-aop-delay",  &global_aop_min, &global_aop_max},
+  /* keep global-* for backward compatibility */
   {"global-flood-chan", &gfld_chan_thr,  &gfld_chan_time},
   {"global-flood-deop", &gfld_deop_thr,  &gfld_deop_time},
   {"global-flood-kick", &gfld_kick_thr,  &gfld_kick_time},
@@ -835,7 +854,9 @@ static tcl_coups mychan_tcl_coups[] = {
 };
 
 static tcl_strings my_tcl_strings[] = {
-  {"chanfile",        chanfile,      120, STR_PROTECT},
+  {"chanfile",         chanfile,      120, STR_PROTECT},
+  {"default-chanmode", glob_chanmode, 64,            0},
+  /* keep global-chanmode for backward compatibility */
   {"global-chanmode", glob_chanmode, 64,            0},
   {NULL,              NULL,          0,             0}
 };
@@ -860,6 +881,9 @@ static char *channels_close()
   del_hook(HOOK_MINUTELY, (Function) check_expired_exempts);
   del_hook(HOOK_MINUTELY, (Function) check_expired_invites);
   Tcl_UntraceVar(interp, "global-chanset",
+                 TCL_TRACE_READS | TCL_TRACE_WRITES | TCL_TRACE_UNSETS,
+                 traced_globchanset, NULL); /* keep for backward compatibility */
+  Tcl_UntraceVar(interp, "default-chanset",
                  TCL_TRACE_READS | TCL_TRACE_WRITES | TCL_TRACE_UNSETS,
                  traced_globchanset, NULL);
   rem_help_reference("channels.help");
@@ -1008,6 +1032,9 @@ char *channels_start(Function *global_funcs)
   add_hook(HOOK_REHASH, (Function) channels_rehash);
   add_hook(HOOK_PRE_REHASH, (Function) channels_prerehash);
   Tcl_TraceVar(interp, "global-chanset",
+               TCL_TRACE_READS | TCL_TRACE_WRITES | TCL_TRACE_UNSETS,
+               traced_globchanset, NULL); /* keep for backward compatibility */
+  Tcl_TraceVar(interp, "default-chanset",
                TCL_TRACE_READS | TCL_TRACE_WRITES | TCL_TRACE_UNSETS,
                traced_globchanset, NULL);
   add_builtins(H_chon, my_chon);
