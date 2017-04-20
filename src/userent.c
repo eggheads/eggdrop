@@ -33,7 +33,7 @@ extern char whois_fields[];
 
 
 int share_greet = 0;            /* Share greeting info                  */
-static struct user_entry_type *entry_type_list;
+struct user_entry_type *entry_type_list;
 
 
 void init_userent()
