@@ -33,7 +33,7 @@ extern int default_flags, dcc_total, ignore_time;
 extern struct dcc_t *dcc;
 extern char botnetnick[];
 extern time_t now;
-
+extern struct user_entry_type *entry_type_list;
 
 static int tcl_countusers STDVAR
 {
@@ -559,10 +559,21 @@ static int tcl_getuser STDVAR
         return et->tcl_get(irp, u, e, argc, argv);
     }
   } else {
-    for (e = u->entries; e; e = e->next) {
-      if (e->type->tcl_append && (e->name || e->type->name)) {
-        Tcl_AppendElement(irp, e->name ? e->name : e->type->name);
-        e->type->tcl_append(irp, u, e);
+    for (et = entry_type_list; et; et = et->next) {
+      if (!et->tcl_append)
+        continue;
+      e = find_user_entry(et, u);
+      if (e && e->name) {
+        Tcl_AppendElement(irp, e->name);
+      } else if (et->name) {
+        Tcl_AppendElement(irp, et->name);
+      } else {
+        continue;
+      }
+      if (e) {
+        et->tcl_append(irp, u, e);
+      } else {
+        Tcl_AppendElement(irp, "");
       }
     }
   }
