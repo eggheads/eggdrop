@@ -13,9 +13,7 @@ For more information on compiling Eggdrop, see the Compile Guide in
 doc/COMPILE-GUIDE (and of course, the README FILE).
 
 
-
 OVERVIEW
-
 
 1.  What is Eggdrop?
 2.  Quick Startup
@@ -24,9 +22,7 @@ OVERVIEW
 5.  Frequently Asked Questions
 
 
-
 WHAT IS EGGDROP?
-
 
 Please, read the README file before attempting to set up this bot. This
 file is a quick setup guide, not a miracle worker. If you enter this
@@ -37,9 +33,7 @@ PERSONALLY WALK TO YOUR TERMINAL AND BEAT IT WITH A SMELLY SNEAKER! By
 the way, read the README file.
 
 
-
 QUICK STARTUP
-
 
 Eggdrop uses the GNU autoconfigure scripts to make things easier.
 
@@ -148,9 +142,7 @@ Eggdrop uses the GNU autoconfigure scripts to make things easier.
     entirety, go take a long walk off a short pier.
 
 
-
 CYGWIN REQUIREMENTS (WINDOWS)
-
 
 Eggdrop requires the following packages to be added from the Cygwin
 installation tool prior to compiling:
@@ -161,9 +153,7 @@ installation tool prior to compiling:
     Utils:        diffutils
 
 
-
 MODULES
-
 
 Modules are small pieces of code that can either be compiled into the
 binary or can be compiled separately into a file. This allows for a much
@@ -181,9 +171,7 @@ need to type 'make modules' to compile only the modules portion of the
 bot.
 
 
-
 FREQUENTLY ASKED QUESTIONS
-
 
   (Q) What do I do if...?
   (R) READ THE README FILE!

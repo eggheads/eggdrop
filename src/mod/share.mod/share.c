@@ -1904,7 +1904,7 @@ static void start_sending_users(int idx)
 #ifdef IPV6
   char s[INET6_ADDRSTRLEN];
 #else
-  char s[sizeof "255.255.255.255"];
+  char s[INET_ADDRSTRLEN];
 #endif
 
   egg_snprintf(share_file, sizeof share_file, ".share.%s.%lu", dcc[idx].nick,
