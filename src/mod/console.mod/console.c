@@ -134,17 +134,31 @@ static int console_set(struct userrec *u, struct user_entry *e, void *buf)
   return 1;
 }
 
-static int console_tcl_get(Tcl_Interp *irp, struct userrec *u,
-                           struct user_entry *e, int argc, char **argv)
+static int console_tcl_format(char *work, struct console_info *i)
 {
-  char work[1024];
-  struct console_info *i = e->u.extra;
-
   simple_sprintf(work, "%s %s %s %d %d %d",
                  i->channel, masktype(i->conflags),
                  stripmasktype(i->stripflags), i->echoflags,
                  i->page, i->conchan);
+  return 0;
+}
+
+static int console_tcl_get(Tcl_Interp *irp, struct userrec *u,
+                           struct user_entry *e, int argc, char **argv)
+{
+  char work[1024];
+
+  console_tcl_format(work, e->u.extra);
   Tcl_AppendResult(irp, work, NULL);
+  return TCL_OK;
+}
+
+static int console_tcl_append(Tcl_Interp *irp, struct userrec *u,
+                           struct user_entry *e)
+{
+  char work[1024];
+  console_tcl_format(work, e->u.extra);
+  Tcl_AppendElement(irp, work);
   return TCL_OK;
 }
 
@@ -237,7 +251,8 @@ static struct user_entry_type USERENTRY_CONSOLE = {
   console_tcl_set,
   console_expmem,
   console_display,
-  "CONSOLE"
+  "CONSOLE",
+  console_tcl_append
 };
 
 static int console_chon(char *handle, int idx)

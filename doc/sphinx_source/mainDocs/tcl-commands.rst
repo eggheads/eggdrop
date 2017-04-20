@@ -200,10 +200,10 @@ passwdok <handle> <pass>
   Module: core
 
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-getuser <handle> <entry-type> [extra info]
+getuser <handle> [entry-type] [extra info]
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-  Description: an interface to the new generic userfile support. Valid entry types are:
+  Description: an interface to the new generic userfile support. Without an entry-type, it returns a flat key/value list (dict) of all set entries. Valid entry types are:
 
   +----------+-------------------------------------------------------------------------------------+
   | BOTFL    | returns the current bot-specific flags for the user (bot-only)                      |
@@ -227,7 +227,7 @@ getuser <handle> <entry-type> [extra info]
   | PASS     | returns the user's encrypted password                                               |
   +----------+-------------------------------------------------------------------------------------+
 
-  For additional custom user fields, to include the deprecated "EMAIL" and "URL" fields, reference scripts/userinfo.tcl
+  For additional custom user fields, to include the deprecated "EMAIL" and "URL" fields, reference scripts/userinfo.tcl.
 
   Returns: info specific to each entry-type
 
