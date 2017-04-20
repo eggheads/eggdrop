@@ -13,9 +13,7 @@ careful, every patch is designed for a special Eggdrop version and
 cannot be applied on every bot!
 
 
-
 APPLYING A PATCH
-
 
   To apply a patch to an Eggdrop, you have to first obtain the Eggdrop
   source code. You should always keep a tar.gz archive with the source
@@ -54,9 +52,7 @@ APPLYING A PATCH
   recompile your Eggdrop and install the new modules and binaries.
 
 
-
 CREATING AND SUBMITTING A PATCH (VIA GITHUB - PREFERRED!)
-
 
 If you fixed a bug and/or changed something in Eggdrop's source code, it
 would be really nice to let the dev team know about it, so we can
@@ -85,9 +81,7 @@ To create a patch via github:
       contributing to the open source community! Karma++!
 
 
-
 CREATING AND SUBMITTING A PATCH (VIA DIFF - OLD SCHOOL!)
-
 
 To create a patch using the diff tool:
 
@@ -122,9 +116,7 @@ To create a patch using the diff tool:
   Patch contributors will receive credit in Changes1.8 and THANKS.
 
 
-
 DOWNLOADING A PATCH
-
 
   Some patches for Eggdrop 1.8.x can be found at the following location:
 
