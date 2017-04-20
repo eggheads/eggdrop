@@ -1083,8 +1083,11 @@ static void remote_filereq(int idx, char *from, char *file)
   }
   /* Grab info from dcc struct and bounce real request across net */
   i = dcc_total - 1;
-  s = nmalloc(46);              /* Enough? */
-  /* Indeed, no more, no less ^^ */
+#ifdef IPV6
+  s = nmalloc(INET6_ADDRSTRLEN);
+#else
+  s = nmalloc(INET_ADDRSTRLEN);
+#endif
   getdccaddr(&dcc[i].sockname, s, 46);
   simple_sprintf(s, "%s %u %d", s, dcc[i].port, dcc[i].u.xfer->length);
   botnet_send_filesend(idx, s1, from, s);
