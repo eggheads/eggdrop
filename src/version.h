@@ -28,4 +28,4 @@
 
 #define EGG_STRINGVER "1.8.1"
 #define EGG_NUMVER 1080101
-#define EGG_PATCH "docanchors"
+#define EGG_PATCH "myipv6"
