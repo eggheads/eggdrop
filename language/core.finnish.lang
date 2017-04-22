@@ -249,15 +249,7 @@ Telnettaa botille ja syötä 'UUSI' kuin sinun nickkisi.
 0x673,nickki floodi
 
 # EGG_
-0x700,Usage: eggdrop [options] [config-file]\n\n\
-Options:\n\
-  -n   Don't background; send all log entries to console.\n\
-  -nc  Don't background; display channel stats every 10 seconds.\n\
-  -nt  Don't background; use terminal to simulate DCC chat.\n\
-  -m   Create userfile.\n\
-  -h   Show this help.\n\
-  -v   Show version info, then quit.\n\n
-
+#0x700 - unused / käyttämätön
 0x701,Tunnistan %s valmiiksi päällä tässä kansiossa.\n
 0x702,Jos tämä ei ole korjattu, poista '%s'\n
 0x703,* Varoitus!  Ei pysty kirjoittamaan %s tiedostoa!\n

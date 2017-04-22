@@ -259,15 +259,7 @@ Baue eine Telnetverbindung zu dem Bot auf und gib 'NEW' als Deinen Nickname ein.
 0x673,nick Flood
 
 # EGG_
-0x700,Usage: eggdrop [options] [config-file]\n\n\
-Options:\n\
-  -n   Don't background; send all log entries to console.\n\
-  -nc  Don't background; display channel stats every 10 seconds.\n\
-  -nt  Don't background; use terminal to simulate DCC chat.\n\
-  -m   Create userfile.\n\
-  -h   Show this help.\n\
-  -v   Show version info, then quit.\n\n
-
+#0x700 - unused / Unbenutzt
 0x701,%s scheint in diesem Verzeichnis bereits zu laufen.\n
 0x702,Loesche '%s' wenn das nicht stimmt\n
 0x703,* Warnung!  Konnte Datei %s nicht schreiben!

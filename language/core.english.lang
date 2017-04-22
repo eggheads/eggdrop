@@ -249,15 +249,7 @@ Telnet to the bot and enter 'NEW' as your nickname.
 0x673,nick flood
 
 # EGG_
-0x700,Usage: eggdrop [options] [config-file]\n\n\
-Options:\n\
-  -n   Don't background; send all log entries to console.\n\
-  -nc  Don't background; display channel stats every 10 seconds.\n\
-  -nt  Don't background; use terminal to simulate DCC chat.\n\
-  -m   Create userfile.\n\
-  -h   Show this help.\n\
-  -v   Show version info, then quit.\n\n
-
+#0x700 - unused
 0x701,I detect %s already running from this directory.\n
 0x702,If this is incorrect, erase the '%s'\n
 0x703,* Warning! Could not write %s file!\n
