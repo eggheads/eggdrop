@@ -543,46 +543,32 @@ static void do_arg()
   while ((option = getopt(argc, argv, "hnctmv")) != -1) {
     switch (option) {
       case 'n':
-        if (~(cliflags & 16)) {
-	  cliflags |= 16;
-          backgrd = 0;
-        }
+        cliflags |= 16;
+        backgrd = 0;
         break;
       case 'c':
-        if (~(cliflags & 8 )) {
-          cliflags |= 8;
-	  con_chan = 1;
-	  term_z = 0;
-        }
+        cliflags |= 8;
+        con_chan = 1;
+        term_z = 0;
 	break;
       case 't':
-        if (~(cliflags & 4)) {
-          cliflags |= 4;
-          con_chan = 0;
-          term_z = 1;
-        }
+        cliflags |= 4;
+        con_chan = 0;
+        term_z = 1;
         break;
       case 'm':
-        if (~(cliflags & 2)) {
-          cliflags |= 2;
-          make_userfile = 1;
-        }
+        cliflags |= 2;
+        make_userfile = 1;
         break;
       case 'v':
-        if (~(cliflags & 1)) {
-          cliflags |= 129;		//128 + 1
-        }
-        break;                  /* this should never be reached */
+        cliflags |= 129;		//128 + 1
+        break;
       case 'h':
-        if (~(cliflags & 32)) {
-          cliflags |= 160;		//128 + 32
-        }
-        break;                  /* this should never be reached */
+        cliflags |= 160;		//128 + 32
+        break;
       default:
-        if (~(cliflags & 64)) {
-          cliflags |= 192;		//128 + 64
-        }
-        break;			/* still should never be reached... */
+        cliflags |= 192;		//128 + 64
+        break;
     }
   }
   if ((cliflags & 64) || (cliflags & 32)) {
