@@ -1109,9 +1109,9 @@ int main(int arg_c, char **arg_v)
   lastmin = now / 60;
   srandom((unsigned int) (now % (getpid() + getppid())));
   init_mem();
-  init_language(1);
   if (argc > 1)
     do_arg();
+  init_language(1);
 
   printf("\n%s\n", version);
 
