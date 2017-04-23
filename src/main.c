@@ -518,16 +518,20 @@ void show_ver() {
   bg_send_quit(BG_ABORT);
 }
 
+/* Hard coded text because config file isn't loaded yet,
+   meaning other languages can't be loaded yet.
+   English (or an error) is the only possible option.
+*/
 void show_help() {
   printf("\n%s\n\n", version);
   printf("Usage: eggdrop [options] [config-file]\n\n"
          "Options:\n"
-	 "-n Don't background; send all log entries to console.\n"
-	 "-nc  Don't background; display channel stats every 10 seconds.\n"
-	 "-nt  Don't background; use terminal to simulate DCC chat.\n"
-	 "-m   Create userfile.\n"
-	 "-h   Show this help.\n"
-	 "-v   Show version info, then quit.\n\n");
+         "-n Don't background; send all log entries to console.\n"
+         "-nc  Don't background; display channel stats every 10 seconds.\n"
+         "-nt  Don't background; use terminal to simulate DCC chat.\n"
+         "-m   Create userfile.\n"
+         "-h   Show this help.\n"
+         "-v   Show version info, then quit.\n\n");
   bg_send_quit(BG_ABORT);
 }
 
@@ -550,7 +554,7 @@ static void do_arg()
         cliflags |= 8;
         con_chan = 1;
         term_z = 0;
-	break;
+        break;
       case 't':
         cliflags |= 4;
         con_chan = 0;
