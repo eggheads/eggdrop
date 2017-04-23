@@ -578,10 +578,10 @@ static void do_arg()
     show_ver();
     exit(0);
   } else {
-    if ((argc > optind) && (optind != 1)) {
+    if (argc > (optind + 1)) {
       printf("\n");
       printf("WARNING: More than one config file value detected\n");
-      printf("         Using %s as config file %d %d\n", argv[optind], argc, optind);
+      printf("         Using %s as config file\n", argv[optind]);
     }
     strncpyz(configfile, argv[optind], sizeof configfile);
   }
