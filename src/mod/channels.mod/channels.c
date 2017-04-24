@@ -1047,6 +1047,6 @@ char *channels_start(Function *global_funcs)
   my_tcl_ints[0].val = &share_greet;
   add_tcl_ints(my_tcl_ints);
   add_tcl_coups(mychan_tcl_coups);
-  read_channels(0, 1);
+  read_channels(0, 0);
   return NULL;
 }
