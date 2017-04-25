@@ -27,5 +27,5 @@
  */
 
 #define EGG_STRINGVER "1.8.1"
-#define EGG_NUMVER 1080103
-#define EGG_PATCH "safechannelsreload"
+#define EGG_NUMVER 1080104
+#define EGG_PATCH "sslserverlist"

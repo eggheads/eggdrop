@@ -99,6 +99,10 @@ static int use_ssl;		/* Use SSL for the next server connection? */
 static int tls_vfyserver;       /* Certificate validation mode for servrs  */
 #endif
 
+#ifndef TLS
+static char sslserver = 0;
+#endif
+
 static p_tcl_bind_list H_wall, H_raw, H_notc, H_msgm, H_msg, H_flud, H_ctcr,
                        H_ctcp, H_out;
 
@@ -967,7 +971,8 @@ static void add_server(const char *ss)
   if (port[0] == '+') {
     putlog(LOG_MISC, "*", "ERROR: Attempted to add SSL-enabled server, but \
 Eggdrop was not compiled with SSL libraries. Skipping...");
-  return;
+    sslserver = 1;
+    return;
   }
 #endif
 
@@ -1681,8 +1686,15 @@ static void server_postrehash()
   strncpyz(botname, origbotname, NICKLEN);
   if (!botname[0])
     fatal("NO BOT NAME.", 0);
-  if (serverlist == NULL)
-    fatal("NO SERVER.", 0);
+  if ((serverlist == NULL)
+#ifndef TLS
+  && (sslserver)) {
+    fatal("NO NON-SSL SERVERS ADDED (TLS IS DISABLED).", 0);
+  } else if (serverlist == NULL
+#endif
+  ) {
+    fatal("NO SERVERS ADDED.", 0);
+  }
   if (oldnick[0] && !rfc_casecmp(oldnick, botname) &&
       !rfc_casecmp(oldnick, get_altbotnick())) {
     /* Change botname back, don't be premature. */
