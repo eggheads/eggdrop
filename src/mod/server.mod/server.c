@@ -100,7 +100,7 @@ static int tls_vfyserver;       /* Certificate validation mode for servrs  */
 #endif
 
 #ifndef TLS
-char sslserver = 0;
+static char sslserver = 0;
 #endif
 
 static p_tcl_bind_list H_wall, H_raw, H_notc, H_msgm, H_msg, H_flud, H_ctcr,
@@ -972,7 +972,7 @@ static void add_server(const char *ss)
     putlog(LOG_MISC, "*", "ERROR: Attempted to add SSL-enabled server, but \
 Eggdrop was not compiled with SSL libraries. Skipping...");
     sslserver = 1;
-  return;
+    return;
   }
 #endif
 
