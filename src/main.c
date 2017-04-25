@@ -1190,7 +1190,7 @@ int main(int arg_c, char **arg_v)
     dcc[n].u.chat->con_flags = conmask;
     dcc[n].u.chat->strip_flags = STRIP_ALL;
     dcc[n].status = STAT_ECHO;
-    strcpy(dcc[n].nick, "HQ");
+    strcpy(dcc[n].nick, EGG_BG_HANDLE);
     strcpy(dcc[n].host, "llama@console");
     /* HACK: Workaround not to pass literal "HQ" as a non-const arg */
     dcc[n].user = get_user_by_handle(userlist, dcc[n].nick);
@@ -1199,6 +1199,14 @@ int main(int arg_c, char **arg_v)
       userlist = adduser(userlist, dcc[n].nick, "none", "-", USER_PARTY);
       dcc[n].user = get_user_by_handle(userlist, dcc[n].nick);
     }
+    /* Give all useful flags: efjlmnoptuvx */
+    dcc[n].user->flags = USER_EXEMPT | USER_FRIEND | USER_JANITOR |
+                         USER_HALFOP | USER_MASTER | USER_OWNER | USER_OP |
+                         USER_PARTY | USER_BOTMAST | USER_UNSHARED |
+                         USER_VOICE | USER_XFER;
+    /* Add to permowner list if there's place */
+    if (strlen(owner) + 4 < sizeof owner)
+      strcat(owner, " " EGG_BG_HANDLE);
     setsock(STDOUT, 0);          /* Entry in net table */
     dprintf(n, "\n### ENTERING DCC CHAT SIMULATION ###\n");
     dprintf(n, "You can use the .su command to log into your Eggdrop account.\n\n");
