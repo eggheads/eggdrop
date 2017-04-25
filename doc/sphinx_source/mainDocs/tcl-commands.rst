@@ -2223,7 +2223,7 @@ unlink <bot>
 encrypt <key> <string>
 ^^^^^^^^^^^^^^^^^^^^^^
 
-  Returns: encrypted string (using the currently loaded encryption module), encoded into ASCII using base-64
+  Returns: encrypted string (using the currently loaded encryption module), encoded into ASCII using base-64. The blowfish encryption module (default) can use ECB mode and CBC mode (Eggdrop1.8.2+). Since Eggdrop1.8.2, it defaults to CBC mode. You can explicitely request a mode of operation by prefixing the encryption key with either "ecb:" or "cbc:".
 
   Module: encryption
 
@@ -2231,7 +2231,7 @@ encrypt <key> <string>
 decrypt <key> <encrypted-base64-string>
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-  Returns: decrypted string (using the currently loaded encryption module)
+  Returns: decrypted string (using the currently loaded encryption module). If the blowfish encryption module (default) is used, this automatically picks the right decryption mode. You may still prefix the key with "ecb:" or "cbc:".
 
   Module: encryption
 
