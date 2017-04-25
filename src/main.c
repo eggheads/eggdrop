@@ -586,8 +586,8 @@ static void do_arg()
       printf("\n");
       printf("WARNING: More than one config file value detected\n");
       printf("         Using %s as config file\n", argv[optind]);
+      strncpyz(configfile, argv[optind], sizeof configfile);
     }
-    strncpyz(configfile, argv[optind], sizeof configfile);
   }
 }
 
