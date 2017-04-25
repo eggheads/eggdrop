@@ -336,7 +336,11 @@ static void write_debug()
     dprintf(-x, "Compiled without TLS support\n");
 #endif
 
-    dprintf(-x, "Configure flags: %s\n", EGG_AC_ARGS);
+    if (!strcmp(EGG_AC_ARGS, "")) {
+      dprintf(-x, "Configure flags: none\n");
+    } else {
+      dprintf(-x, "Configure flags: %s\n", EGG_AC_ARGS);
+    }
 #ifdef CCFLAGS
     dprintf(-x, "Compile flags: %s\n", CCFLAGS);
 #endif
@@ -525,7 +529,11 @@ static void do_arg(char *s)
         printf("%s\n", version);
         if (z[0])
           printf("  (patches: %s)\n", z);
-        printf("Configure flags: " EGG_AC_ARGS "\n");
+        if (!strcmp(EGG_AC_ARGS, "")) {
+          printf("Configure flags: none\n");
+        } else {
+          printf("Configure flags: %s\n", EGG_AC_ARGS);
+        }
         printf("Compiled with: ");
 #ifdef IPV6
         printf("IPv6, ");
