@@ -545,7 +545,7 @@ static int tcl_getuser STDVAR
     } else
       return TCL_OK; /* silently ignore user */
   }
-  if (argc == 3) {
+  if (argc >= 3) {
     if (!(et = find_entry_type(argv[2])) &&
         egg_strcasecmp(argv[2], "HANDLE")) {
       Tcl_AppendResult(irp, "No such info type: ", argv[2], NULL);
