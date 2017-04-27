@@ -55,7 +55,7 @@ de módulos. Consulta o ficheiro de configuração para mais informação.\n
 0x402,IMPOSSÍVEL LER NOVO FICHEIRO DE UTILIZADORES
 0x403,Impossível enviar ficheiro de utilizadores (erro interno)
 0x404,Não encontro ninguém que corresponda
-0x405,Ficheiro de utilizador antigo, use 'scripts tclsh / weed <userfile> c' para converter
+0x405,Ficheiro de utilizador antigo, use "'scripts tclsh / weed <userfile> c'" para converter
 0x406,Forma de ficheiro de utilizador invalido.
 0x407,Registo de utilizador corrompido
 0x408,Registo de utilizador duplicado
