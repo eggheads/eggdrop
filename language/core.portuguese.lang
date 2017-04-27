@@ -17,7 +17,7 @@
 # BANS_
 0x104,Bans globais
 0x106,Bans de canal para
-0x109,Usa '.bans all' para ver  lista completa
+0x109,Usa '.bans all' para ver a lista completa
 0x10a,Removendo ban
 
 # EXEMPTS_
@@ -33,8 +33,8 @@
 0x12a,Removendo convite
 
 # MOD_
-0x200,Já carregado
-0x201,Impossível determinar diretório atual
+0x200,Já carregado.
+0x201,Impossível determinar diretório atual.
 0x202,Sem função de inicio definida.
 0x204,Necessitado por outro modulo.
 0x205,Sem função de fecho
@@ -53,7 +53,7 @@ de módulos. Consulta o ficheiro de configuração para mais informação.\n
 # USERF_
 0x400,Transferência do ficheiro de utilizadores completada; trocando
 0x402,IMPOSSÍVEL LER NOVO FICHEIRO DE UTILIZADORES
-0x403,Impossível enviar ficheiro de tulizadores (erro interno)
+0x403,Impossível enviar ficheiro de utilizadores (erro interno)
 0x404,Não encontro ninguém que corresponda
 0x405,Ficheiro de utilizador antigo, use 'scripts tclsh / weed <userfile> c' para converter
 0x406,Forma de ficheiro de utilizador invalido.
@@ -66,12 +66,12 @@ de módulos. Consulta o ficheiro de configuração para mais informação.\n
 0x40d,ERRO ao escrever ficheiro de utilizador para transferência.
 0x40e,Criação de ficheiro de utilizador desnecessária--ignorando
 0x40f,Rehashing...
-0x410,Não conheço  ninguem com esse nome.\n
+0x410,Não conheço  ninguém com esse nome.\n
 0x411,Nenhum registo desse utilizador.
 0x412,Fazendo backup do ficheiro de utilizador...
 0x413,Falha na ligação. Transferência do ficheiro de utilizador abortada.
 0x414,Requisitado estilo de partilha antigo por
-0x415,Requisitado estilo de partilha entigo
+0x415,Requisitado estilo de partilha antigo
 0x416,Ficheiro de utilizador rejeitado por
 
 # MISC_
@@ -87,13 +87,13 @@ de módulos. Consulta o ficheiro de configuração para mais informação.\n
 0x50a,O quê? Necessitas de ajuda: '.help'\n
 0x50b,Ligações de comandos:\n
 0x50c,Reiniciando...
-0x50d,es
+0x50d,is
 0x50e,Trocando ficheiros de log...
-0x512,idle
+0x512,inativo
 0x513,ausente
 0x516,Desligado
 0x517,bot inválido
-0x518,Loop detectado: existem dois bots com o nome
+0x518,Loop detetado: existem dois bots com o nome
 0x51a,a partir de
 0x51b,desatualizado
 0x51c,rejeitado
@@ -116,7 +116,7 @@ de módulos. Consulta o ficheiro de configuração para mais informação.\n
 0x531,notifica
 0x532,Owner(s) permanente(s)
 0x534,FICHEIRO DE CONFIGURAÇÃO NÃO CARREGADO (NÃO ENCONTRADO, OU ERRO)
-0x535,FIVHEIRO DE UTILIZADOR NÃO ENCONTRADO! (tenta './eggdrop -m %s' para criar um)\n
+0x535,FICHEIRO DE UTILIZADOR NÃO ENCONTRADO! (tenta './eggdrop -m %s' para criar um)\n
 0x536,INICIANDO BOT EM MODO DE CRIAÇÃO DE FICHEIRO DE UTILIZADOR.\n\
 Entre em ligação telnet com o bot e digite 'NEW' como o seu nick.
 0x537,OU vá até ao IRC e digite: /msg %s hello\n
@@ -126,10 +126,10 @@ Entre em ligação telnet com o bot e digite 'NEW' como o seu nick.
 0x53b,Impossivel recarregar ficheiro de utilizador!
 0x53c,Ficheiro de utilizador em falta!
 0x53e,%B  (%E)\n\nPor favor introduza o seu nick.\n
-0x53f,Rodando ficheiro de log %s, acima do maximo do tamanho (%d)
+0x53f,Rodando ficheiro de log %s, acima do máximo do tamanho (%d)
 0x540,\nNick.\n
 0x541,Ultima mensagem repetida %d vez(s).\n
-0x542,juped
+0x542,bloqueado
 0x543,Sem sockets livres disponíveis.
 0x544,Versão Tcl:
 0x545,versão do cabeçalho
@@ -142,7 +142,7 @@ Entre em ligação telnet com o bot e digite 'NEW' como o seu nick.
 0x604,Olá
 0x605,Adeus
 0x606,Estás banido, palhaço.
-0x607,NOTICE %s :O teu nick é demasiado foi e por isso foi truncado para '%s'.\n
+0x607,NOTICE %s :O teu nick é demasiado longo e, por isso, foi truncado para '%s'.\n
 0x608,Introduzido a
 0x609,local comum
 0x60a,NOTICE %s :Olá %s! Eu sou o(a) %s, um bot eggdrop.\n
@@ -150,7 +150,7 @@ Entre em ligação telnet com o bot e digite 'NEW' como o seu nick.
 0x60c,Visto que vens de um local comum de IRC, isto significa que deverás
 0x60d,utilizar este nick cada vez que te comunicas comigo.
 0x60e,ÉS O OWNER DESTE BOT AGORA
-0x60f,Instalação do bot concluida, o primeiro master é %s
+0x60f,Instalação do bot concluída, o primeiro master é %s
 0x610,Bem vindo ao Eggdrop! =]
 0x611,introduzido a %s de %s
 0x612,Tens uma password definida.
@@ -228,7 +228,7 @@ Entre em ligação telnet com o bot e digite 'NEW' como o seu nick.
 0x65e,Banido do canal--não posso entrar no: %s
 0x65f,O servidor diz que eu não estou no canal: %s
 0x660,password incorreta-- não posso entrar no: %s
-0x661,NOTICE %s :Todos os comandos sao feitos via /MSG. Para ver a lista completa, /MSG %s help	Cya!\n
+0x661,NOTICE %s :Todos os comandos são feitos via /MSG. Para ver a lista completa, /MSG %s help	Cya!\n
 0x662,NOTICE %s :Não te reconheço com essa máscara.\n
 0x663,NOTICE %s :Ou estás a usar o nick de outra pessoa ou necessitas de escrever: /MSG %s IDENT (password)\n
 0x664,NOTICE %s :Como master deves mesmo definir uma password com: /MSG %s pass <password desejada>.\n
