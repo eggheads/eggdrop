@@ -55,8 +55,8 @@ de módulos. Consulta o ficheiro de configuração para mais informação.\n
 0x402,IMPOSSÍVEL LER NOVO FICHEIRO DE UTILIZADORES
 0x403,Impossível enviar ficheiro de utilizadores (erro interno)
 0x404,Não encontro ninguém que corresponda
-0x405,Ficheiro de utilizador antigo, use "'scripts tclsh / weed <userfile> c'" para converter
-0x406,Forma de ficheiro de utilizador invalido.
+0x405,Ficheiro de utilizador antigo, use 'scripts tclsh / weed <userfile> c' para converter
+0x406,Formato de ficheiro de utilizador invalido.
 0x407,Registo de utilizador corrompido
 0x408,Registo de utilizador duplicado
 0x409,Reposição de password corrompida para
@@ -105,7 +105,7 @@ de módulos. Consulta o ficheiro de configuração para mais informação.\n
 0x522,<endereço> <porta#>[/<porta-de-retransmissão#>]
 0x526,pendente
 0x527,necessita de op
-0x529,background
+0x529,plano de fundo
 0x52a,modo de terminal
 0x52b,modo de estado
 0x52c,modo de despejo de logs
@@ -186,7 +186,7 @@ Entre em ligação telnet com o bot e digite 'NEW' como o seu nick.
 # 0x633 - unused
 0x634,Não presente nesse canal agora mesmo.
 0x635,Voltando ao nick %s
-0x636,Servidor diz que o meu nick é invalido.
+0x636,Servidor diz que o meu nick é inválido.
 0x637,NICK EM USO: Tentando com '%s'
 0x638,Não consigo trocar de nick no %s. O meu nick está banido?
 0x639,Nick foi bloqueado
@@ -249,12 +249,12 @@ Entre em ligação telnet com o bot e digite 'NEW' como o seu nick.
 0x673,nick flood
 
 # EGG_
-0x700,Uso: eggdrop [opções] [ficheiro de configuração]\n\n\
+#0x700,nao utilizado
 Opções:\n\
   -h   Ajuda\n\
-  -n   Sem background; envia todas as entradas de log para a consola.\n\
-  -nc  Sem background; exibe as estatísticas de canal a cada 10 segundos.\n\
-  -nt  Sem background; 	usa o terminal para simular o DCC chat.\n\
+  -n   Sem plano de fundo; envia todas as entradas de log para a consola.\n\
+  -nc  Sem plano de fundo; exibe as estatísticas de canal a cada 10 segundos.\n\
+  -nt  Sem plano de fundo; 	usa o terminal para simular o DCC chat.\n\
   -m   Cria o ficheiro de utilizador.\n\
   -h   Mostra esta ajuda.\n\
   -v   Mostra a info da versão, depois desliga.\n\n
@@ -437,3 +437,4 @@ Opções:\n\
 0xe31,Telnet negada: %s, Sem acesso
 0xe32,Recusada ligação telnet de %s (tentou usar o meu nick de botnet)
 0xe33,Perdida ligação telnet de %s aquando verificação de duplicados
+
