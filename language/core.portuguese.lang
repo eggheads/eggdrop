@@ -55,7 +55,7 @@ de módulos. Consulta o ficheiro de configuração para mais informação.\n
 0x402,IMPOSSÍVEL LER NOVO FICHEIRO DE UTILIZADORES
 0x403,Impossível enviar ficheiro de utilizadores (erro interno)
 0x404,Não encontro ninguém que corresponda
-0x405,Ficheiro de utilizador antigo, use 'scripts tclsh / weed <userfile> c' para converter
+0x405,Ficheiro de utilizador antigo, use 'tclsh scripts/weed <userfile> c' para converter
 0x406,Formato de ficheiro de utilizador invalido.
 0x407,Registo de utilizador corrompido
 0x408,Registo de utilizador duplicado
@@ -66,7 +66,7 @@ de módulos. Consulta o ficheiro de configuração para mais informação.\n
 0x40d,ERRO ao escrever ficheiro de utilizador para transferência.
 0x40e,Criação de ficheiro de utilizador desnecessária--ignorando
 0x40f,Rehashing...
-0x410,Não conheço  ninguém com esse nome.\n
+0x410,Não conheço ninguém com esse nome.\n
 0x411,Nenhum registo desse utilizador.
 0x412,Fazendo backup do ficheiro de utilizador...
 0x413,Falha na ligação. Transferência do ficheiro de utilizador abortada.
@@ -125,7 +125,7 @@ Entre em ligação telnet com o bot e digite 'NEW' como o seu nick.
 0x53a,IMPOSSÍVEL ESCREVER NA DIRETORIA TEMP
 0x53b,Impossivel recarregar ficheiro de utilizador!
 0x53c,Ficheiro de utilizador em falta!
-0x53e,%B  (%E)\n\nPor favor introduza o seu nick.\n
+0x53e,%B (%E)\n\nPor favor introduza o seu nick.\n
 0x53f,Rodando ficheiro de log %s, acima do máximo do tamanho (%d)
 0x540,\nNick.\n
 0x541,Ultima mensagem repetida %d vez(s).\n
@@ -183,7 +183,7 @@ Entre em ligação telnet com o bot e digite 'NEW' como o seu nick.
 0x630,Eu não te conheço; apresenta-te primeiro.
 0x631,Sem ajuda.
 0x632,Sem ajuda disponível para isso.
-# 0x633 - unused
+# 0x633 - não utilizado
 0x634,Não presente nesse canal agora mesmo.
 0x635,Voltando ao nick %s
 0x636,Servidor diz que o meu nick é inválido.
@@ -201,7 +201,7 @@ Entre em ligação telnet com o bot e digite 'NEW' como o seu nick.
 0x643,Falha na ligação a
 0x644,Servidor ficou irrespondível; alternando...
 0x645,Desligado de
-0x646,Sem servidor atualmente
+0x646,Sem servidor atualmente.
 0x647,Modo de de espera está em
 0x648,Modo de espera de servidor está em
 0x649,Modo de espera na Ajuda está em
@@ -249,7 +249,7 @@ Entre em ligação telnet com o bot e digite 'NEW' como o seu nick.
 0x673,nick flood
 
 # EGG_
-# 0x700 - nao utilizado
+# 0x700 - não utilizado
 0x701,Eu deteto %s já a correr a partir desta diretoria.\n
 0x702,Se isto está incorrecto, apaga o '%s'\n
 0x703,* Aviso! Impossível criar ficheiro %s!\n
@@ -335,12 +335,12 @@ Entre em ligação telnet com o bot e digite 'NEW' como o seu nick.
 0xb4f,Abortando tentativa de retransmissão para
 0xb50,Estás agora de volta a
 0xb51,Retransmissão abortada:
-0xb53,Perdida ligação DDC a
+0xb53,Perdida ligação DCC a
 0xb54,Cessando tentativa de retransmissão para
 0xb55,Sucesso!\n\nLIGADO AGORA AO BOT DE RETRANSMISSÃO
 0xb56,(Digita *BYE* para fechar a ligação.)
 0xb57,Ligação de retransmissão:
-0xb58,saiu da  party line.
+0xb58,saiu da partyline.
 0xb59,Terminada ligação de retransmissão
 0xb5a,LIGAÇÃO DE RETRANSMISSÃO CESSADA.\nEstás agora de volta a
 0xb5b,reentrou na party line.
