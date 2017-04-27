@@ -249,16 +249,7 @@ Entre em ligação telnet com o bot e digite 'NEW' como o seu nick.
 0x673,nick flood
 
 # EGG_
-#0x700,nao utilizado
-Opções:\n\
-  -h   Ajuda\n\
-  -n   Sem plano de fundo; envia todas as entradas de log para a consola.\n\
-  -nc  Sem plano de fundo; exibe as estatísticas de canal a cada 10 segundos.\n\
-  -nt  Sem plano de fundo; 	usa o terminal para simular o DCC chat.\n\
-  -m   Cria o ficheiro de utilizador.\n\
-  -h   Mostra esta ajuda.\n\
-  -v   Mostra a info da versão, depois desliga.\n\n
-
+# 0x700 - nao utilizado
 0x701,Eu deteto %s já a correr a partir desta diretoria.\n
 0x702,Se isto está incorrecto, apaga o '%s'\n
 0x703,* Aviso! Impossível criar ficheiro %s!\n
@@ -335,10 +326,10 @@ Opções:\n\
 0xb46,Ligar a mim mesmo? Freud teria tido um ataque.
 0xb47,Esse bot já está ligado.
 0xb48,Endereço:porta de telnet inválida guardada para
-0xb49,Ligndo a
+0xb49,Ligando a
 0xb4a,Não encontro o utilizador para retransmitir!
 0xb4b,Impossível ligar a
-0xb4c,Retransmitir para mim mesmo? Qual serio o objetivo disso na TERRA?!
+0xb4c,Retransmitir para mim mesmo? Qual seria o objetivo disso na TERRA?!
 0xb4d,Ligando a
 0xb4e,(Digita *BYE* numa linha, para abortar.)
 0xb4f,Abortando tentativa de retransmissão para
@@ -410,7 +401,7 @@ Opções:\n\
 0xe16,Ligação DCC fechada (%s!%s)
 0xe17,Ligação de entrada TELNET falhada (%s)
 0xe18,Recusado %s/%d (porta src inválida)
-# 0xe19 - unused
+# 0xe19 - não utilizado
 0xe1a,Recusado %s (máscara inválida)
 0xe1b,Ligação Telnet: %s/%d
 0xe1c,Ident falhada para %s: %s
