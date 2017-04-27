@@ -1205,7 +1205,7 @@ int main(int arg_c, char **arg_v)
                          USER_PARTY | USER_BOTMAST | USER_UNSHARED |
                          USER_VOICE | USER_XFER;
     /* Add to permowner list if there's place */
-    if (strlen(owner) + 4 < sizeof owner)
+    if (strlen(owner) + sizeof EGG_BG_HANDLE < sizeof owner)
       strcat(owner, " " EGG_BG_HANDLE);
     setsock(STDOUT, 0);          /* Entry in net table */
     dprintf(n, "\n### ENTERING DCC CHAT SIMULATION ###\n");
