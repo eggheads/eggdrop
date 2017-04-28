@@ -551,6 +551,10 @@ static void do_arg(char *s)
         bg_send_quit(BG_ABORT);
         exit(0);
         break;                  /* this should never be reached */
+      default:
+        printf("Unknown command-line option. Use -h to see available options.\n");
+        exit(0);
+        break;                  /* this should never be reached */
       }
     } else
     strncpyz(configfile, s, sizeof configfile);
