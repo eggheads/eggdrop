@@ -581,13 +581,13 @@ static void do_arg()
   } else if (cliflags & 1) {
     show_ver();
     exit(0);
-  } else {
-    if (argc > (optind + 1)) {
-      printf("\n");
-      printf("WARNING: More than one config file value detected\n");
-      printf("         Using %s as config file\n", argv[optind]);
-      strncpyz(configfile, argv[optind], sizeof configfile);
-    }
+  } else if (argc > (optind + 1)) {
+    printf("\n");
+    printf("WARNING: More than one config file value detected\n");
+    printf("         Using %s as config file\n", argv[optind]);
+  }
+  if (argc > optind) {
+    strncpyz(configfile, argv[optind], sizeof configfile);
   }
 }
 
