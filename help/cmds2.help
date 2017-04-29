@@ -141,7 +141,7 @@ See also: chpass
    bot will know you as from this point forward. It is used to log into the
    bot, and for the /msg IDENT command, etc.
 
-See also: newpass%{+t}, chhand, chpass
+See also: newpass%{+t}, chhandle, chpass
 %{help=note}%{-}
 ###  %bnote%b <nickname[@bot]> <message>
    Sends a private note to a user on the partyline. If that user is currently

@@ -10,9 +10,7 @@ configuration file. Please note that you don't need to set all of these
 variables to make your bot work properly.
 
 
-
 EXECUTABLE PATH
-
 
 The first line in an Eggdrop configuration file should contain a fully
 qualified path to your Eggdrop executable. It has to be implemented in
@@ -24,9 +22,7 @@ Example:
     #! /path/to/eggdrop
 
 
-
 BASIC SETTINGS
-
 
 You can change the basic Eggdrop appearance and behavior in this
 section.
@@ -111,9 +107,7 @@ section.
       Finnish, German.
 
 
-
 LOG FILES
-
 
 Eggdrop is capable of logging various things, from channel chatter to
 partyline commands and file transfers.
@@ -244,9 +238,7 @@ set logfile-suffix ".%d%b%Y"
     support strftime, the default format will be used _always_.
 
 
-
 CONSOLE SETTINGS
-
 
   set console "mkcobxs"
 
@@ -257,9 +249,7 @@ CONSOLE SETTINGS
       with the '.console' command.
 
 
-
 FILE AND DIRECTORY SETTINGS
-
 
   set userfile "LamestBot.user"
 
@@ -320,9 +310,7 @@ FILE AND DIRECTORY SETTINGS
       head :).
 
 
-
 BOTNET/DCC/TELNET SETTINGS
-
 
 Settings in this section should be unimportant for you until you deal
 with botnets (multiple Eggdrops connected together to maximize
@@ -453,9 +441,7 @@ efficiency). You should read doc/BOTNET before modifying these settings.
       are on a slow network).
 
 
-
 ADVANCED SETTINGS
-
 
   set firewall "!sun-barr.ebay:3666"
 
@@ -573,9 +559,7 @@ ADVANCED SETTINGS
       support cidr!
 
 
-
 SSL SETTINGS
-
 
 Settings in this section take effect when eggdrop is compiled with TLS
 support.
@@ -687,9 +671,7 @@ support.
       bot chat.
 
 
-
 MODULES
-
 
 After the core settings, you should start loading modules. Modules are
 loaded by the command "loadmodule <module>". Eggdrop looks for modules
@@ -722,9 +704,7 @@ needed. Four examples:
       Of course, blowfish needs to be loaded here, too.
 
 
-
 SCRIPTS
-
 
 The scripts section should be placed at the end of the config file. All
 modules should be loaded and their variables should be set at this

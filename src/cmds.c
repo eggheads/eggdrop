@@ -863,6 +863,8 @@ static void cmd_chhandle(struct userrec *u, int idx, char *par)
     atr2 = u2 ? u2->flags : 0;
     if ((atr & USER_BOTMAST) && !(atr & USER_MASTER) && !(atr2 & USER_BOT))
       dprintf(idx, "You can't change handles for non-bots.\n");
+    else if (!egg_strcasecmp(hand, EGG_BG_HANDLE))
+      dprintf(idx, "You can't change the handle of a temporary user.\n");
     else if ((bot_flags(u2) & BOT_SHARE) && !(atr & USER_OWNER))
       dprintf(idx, "You can't change share bot's nick.\n");
     else if ((atr2 & USER_OWNER) && !(atr & USER_OWNER) &&
@@ -900,6 +902,8 @@ static void cmd_handle(struct userrec *u, int idx, char *par)
     dprintf(idx,
             "Bizarre quantum forces prevent handle from starting with '%c'.\n",
             newhandle[0]);
+  else if (!egg_strcasecmp(u->handle, EGG_BG_HANDLE))
+    dprintf(idx, "You can't change the handle of this temporary user.\n");
   else if (get_user_by_handle(userlist, newhandle) &&
            egg_strcasecmp(dcc[idx].nick, newhandle))
     dprintf(idx, "Somebody is already using %s.\n", newhandle);

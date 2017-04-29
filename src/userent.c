@@ -33,7 +33,7 @@ extern char whois_fields[];
 
 
 int share_greet = 0;            /* Share greeting info                  */
-static struct user_entry_type *entry_type_list;
+struct user_entry_type *entry_type_list;
 
 
 void init_userent()
@@ -164,6 +164,13 @@ int def_tcl_get(Tcl_Interp * interp, struct userrec *u,
   return TCL_OK;
 }
 
+int def_tcl_append(Tcl_Interp * interp, struct userrec *u,
+                   struct user_entry *e)
+{
+  Tcl_AppendElement(interp, e->u.string);
+  return TCL_OK;
+}
+
 int def_tcl_set(Tcl_Interp * irp, struct userrec *u,
                 struct user_entry *e, int argc, char **argv)
 {
@@ -208,7 +215,8 @@ struct user_entry_type USERENTRY_COMMENT = {
   def_tcl_set,
   def_expmem,
   comment_display,
-  "COMMENT"
+  "COMMENT",
+  def_tcl_append
 };
 
 struct user_entry_type USERENTRY_INFO = {
@@ -225,7 +233,8 @@ struct user_entry_type USERENTRY_INFO = {
   def_tcl_set,
   def_expmem,
   def_display,
-  "INFO"
+  "INFO",
+  def_tcl_append
 };
 
 int pass_set(struct userrec *u, struct user_entry *e, void *buf)
@@ -282,7 +291,8 @@ struct user_entry_type USERENTRY_PASS = {
   pass_tcl_set,
   def_expmem,
   0,
-  "PASS"
+  "PASS",
+  def_tcl_append
 };
 
 static int laston_unpack(struct userrec *u, struct user_entry *e)
@@ -371,11 +381,12 @@ static int laston_tcl_get(Tcl_Interp * irp, struct userrec *u,
   BADARGS(3, 4, " handle LASTON ?channel?");
 
   if (argc == 4) {
-    for (cr = u->chanrec; cr; cr = cr->next)
+    for (cr = u->chanrec; cr; cr = cr->next) {
       if (!rfc_casecmp(cr->channel, argv[3])) {
         Tcl_AppendResult(irp, int_to_base10(cr->laston), NULL);
         break;
       }
+    }
     if (!cr)
       Tcl_AppendResult(irp, "0", NULL);
   } else {
@@ -383,6 +394,22 @@ static int laston_tcl_get(Tcl_Interp * irp, struct userrec *u,
     sprintf(number, "%lu ", tv);
     Tcl_AppendResult(irp, number, li->lastonplace, NULL);
   }
+  return TCL_OK;
+}
+
+static int laston_tcl_append(Tcl_Interp *irp, struct userrec *u,
+                             struct user_entry *e)
+{
+  Tcl_DString ds;
+  struct chanuserrec *cr;
+
+  Tcl_DStringInit(&ds);
+  for (cr = u->chanrec; cr; cr = cr->next) {
+    Tcl_DStringAppendElement(&ds, cr->channel);
+    Tcl_DStringAppendElement(&ds, int_to_base10(cr->laston));
+  }
+  Tcl_AppendElement(irp, Tcl_DStringValue(&ds));
+  Tcl_DStringFree(&ds);
   return TCL_OK;
 }
 
@@ -453,7 +480,8 @@ struct user_entry_type USERENTRY_LASTON = {
   laston_tcl_set,
   laston_expmem,
   0,
-  "LASTON"
+  "LASTON",
+  laston_tcl_append
 };
 
 static int botaddr_unpack(struct userrec *u, struct user_entry *e)
@@ -591,26 +619,48 @@ static int botaddr_set(struct userrec *u, struct user_entry *e, void *buf)
   return 1;
 }
 
+static int botaddr_tcl_dstring(Tcl_DString *ds, struct user_entry *e)
+{
+  struct bot_addr *bi = (struct bot_addr *)e->u.extra;
+
+  Tcl_DStringAppendElement(ds, bi->address);
+  /* This is safe because there are no special characters in the port */
+  Tcl_DStringAppend(ds, " ", 1);
+#ifdef TLS
+  if (bi->ssl & TLS_BOT)
+    Tcl_DStringAppend(ds, "+", 1);
+#endif
+  Tcl_DStringAppend(ds, int_to_base10(bi->telnet_port), -1);
+  Tcl_DStringAppend(ds, " ", 1);
+#ifdef TLS
+  if (bi->ssl & TLS_RELAY)
+    Tcl_DStringAppend(ds, "+", 1);
+#endif
+  Tcl_DStringAppend(ds, int_to_base10(bi->relay_port), -1);
+  return TCL_OK;
+}
+
 static int botaddr_tcl_get(Tcl_Interp * interp, struct userrec *u,
                            struct user_entry *e, int argc, char **argv)
 {
-  register struct bot_addr *bi = (struct bot_addr *) e->u.extra;
-  char number[20];
+  Tcl_DString ds;
+  Tcl_DStringInit(&ds);
+  botaddr_tcl_dstring(&ds, e);
 
-#ifdef TLS
-  if (bi->ssl & TLS_BOT)
-    sprintf(number, " +%d", bi->telnet_port);
-  else
-#endif
-  sprintf(number, " %d", bi->telnet_port);
-  Tcl_AppendResult(interp, bi->address, number, NULL);
-#ifdef TLS
-  if (bi->ssl & TLS_RELAY)
-    sprintf(number, " +%d", bi->relay_port);
-  else
-#endif
-  sprintf(number, " %d", bi->relay_port);
-  Tcl_AppendResult(interp, number, NULL);
+  Tcl_AppendResult(interp, Tcl_DStringValue(&ds), NULL);
+  Tcl_DStringFree(&ds);
+  return TCL_OK;
+}
+
+static int botaddr_tcl_append(Tcl_Interp * interp, struct userrec *u,
+                           struct user_entry *e)
+{
+  Tcl_DString ds;
+  Tcl_DStringInit(&ds);
+  botaddr_tcl_dstring(&ds, e);
+
+  Tcl_AppendElement(interp, Tcl_DStringValue(&ds));
+  Tcl_DStringFree(&ds);
   return TCL_OK;
 }
 
@@ -743,7 +793,8 @@ struct user_entry_type USERENTRY_BOTADDR = {
   botaddr_tcl_set,
   botaddr_expmem,
   botaddr_display,
-  "BOTADDR"
+  "BOTADDR",
+  botaddr_tcl_append
 };
 
 int xtra_set(struct userrec *u, struct user_entry *e, void *buf)
@@ -962,6 +1013,21 @@ int xtra_kill(struct user_entry *e)
   return 1;
 }
 
+static int xtra_tcl_dstring(Tcl_DString *ds, int sublist, struct user_entry *e)
+{
+  struct xtra_key *x;
+
+  for (x = e->u.extra; x; x = x->next) {
+    if (sublist)
+      Tcl_DStringStartSublist(ds);
+    Tcl_DStringAppendElement(ds, x->key);
+    Tcl_DStringAppendElement(ds, x->data);
+    if (sublist)
+      Tcl_DStringEndSublist(ds);
+  }
+  return TCL_OK;
+}
+
 static int xtra_tcl_get(Tcl_Interp * irp, struct userrec *u,
                         struct user_entry *e, int argc, char **argv)
 {
@@ -969,24 +1035,30 @@ static int xtra_tcl_get(Tcl_Interp * irp, struct userrec *u,
 
   BADARGS(3, 4, " handle XTRA ?key?");
 
-  if (argc == 4) {
-    for (x = e->u.extra; x; x = x->next)
-      if (!egg_strcasecmp(argv[3], x->key)) {
-        Tcl_AppendResult(irp, x->data, NULL);
-        return TCL_OK;
-      }
+  if (argc == 3) {
+    Tcl_DString ds;
+    Tcl_DStringInit(&ds);
+    xtra_tcl_dstring(&ds, 1, e);
+    Tcl_AppendResult(irp, Tcl_DStringValue(&ds), NULL);
+    Tcl_DStringFree(&ds);
     return TCL_OK;
   }
-  for (x = e->u.extra; x; x = x->next) {
-    char *p;
-    EGG_CONST char *list[2];
+  for (x = e->u.extra; x; x = x->next)
+    if (!egg_strcasecmp(argv[3], x->key)) {
+      Tcl_AppendResult(irp, x->data, NULL);
+      return TCL_OK;
+    }
+  return TCL_OK;
+}
 
-    list[0] = x->key;
-    list[1] = x->data;
-    p = Tcl_Merge(2, list);
-    Tcl_AppendElement(irp, p);
-    Tcl_Free((char *) p);
-  }
+static int xtra_tcl_append(Tcl_Interp *irp, struct userrec *u,
+                           struct user_entry *e)
+{
+  Tcl_DString ds;
+  Tcl_DStringInit(&ds);
+  xtra_tcl_dstring(&ds, 0, e);
+  Tcl_AppendElement(irp, Tcl_DStringValue(&ds));
+  Tcl_DStringFree(&ds);
   return TCL_OK;
 }
 
@@ -1018,7 +1090,8 @@ struct user_entry_type USERENTRY_XTRA = {
   xtra_tcl_set,
   xtra_expmem,
   xtra_display,
-  "XTRA"
+  "XTRA",
+  xtra_tcl_append
 };
 
 static int hosts_dupuser(struct userrec *new, struct userrec *old,
@@ -1137,6 +1210,20 @@ static int hosts_tcl_get(Tcl_Interp * irp, struct userrec *u,
   return TCL_OK;
 }
 
+static int hosts_tcl_append(Tcl_Interp *irp, struct userrec *u,
+                            struct user_entry *e)
+{
+  Tcl_DString ds;
+  struct list_type *x;
+
+  Tcl_DStringInit(&ds);
+  for (x = e->u.list; x; x = x->next)
+    Tcl_DStringAppendElement(&ds, x->extra);
+  Tcl_AppendElement(irp, Tcl_DStringValue(&ds));
+  Tcl_DStringFree(&ds);
+  return TCL_OK;
+}
+
 static int hosts_tcl_set(Tcl_Interp * irp, struct userrec *u,
                          struct user_entry *e, int argc, char **argv)
 {
@@ -1170,7 +1257,8 @@ struct user_entry_type USERENTRY_HOSTS = {
   hosts_tcl_set,
   hosts_expmem,
   hosts_display,
-  "HOSTS"
+  "HOSTS",
+  hosts_tcl_append
 };
 
 #ifdef TLS
@@ -1230,7 +1318,8 @@ struct user_entry_type USERENTRY_FPRINT = {
   fprint_tcl_set,
   def_expmem,
   0,
-  "FPRINT"
+  "FPRINT",
+  def_tcl_append
 };
 #endif /* TLS */
 

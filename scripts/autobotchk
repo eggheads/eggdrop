@@ -88,7 +88,7 @@ exec tclsh$lastver "$0" ${1+"$@"}
 #   13Dec2016: add possibility to use multiple confs; fixes for (botnet-)nick
 #              with len > handlen, for (botnet-)nicks with \[ \] and for
 #              $(botnet-)nick used in pidfile, userfile or (botnet-)nick
-#
+#   19Apr2017: Fix running this from a non-eggdrop dir.
 
 if {$argc == 0} {
   puts "\nusage: $argv0 <eggdrop mainconfig> \[options\] \[additional configs\]"
@@ -247,7 +247,8 @@ foreach config $confs {
   puts ""
   exit
  }
- if {![regexp {handlen=([0-9]+)} "[exec "$dir/$binary" -v]" -> handlen]} {
+ catch {exec "$dir/$binary" -v} execres
+ if {![regexp {handlen=([0-9]+)} "$execres" -> handlen]} {
   puts "  Could not find handlen used, defaulting to 32."
   # len 32 means up to index 31
   set handlen 31

@@ -60,7 +60,8 @@ static struct user_entry_type USERENTRY_FWD = {
   NULL,
   NULL,
   fwd_display,
-  "FWD"
+  "FWD",
+  NULL
 };
 
 #include "cmdsnote.c"

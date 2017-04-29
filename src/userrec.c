@@ -572,8 +572,9 @@ void write_userfile(int idx)
   strncpyz(s1, ctime(&tt), sizeof s1);
   fprintf(f, "#4v: %s -- %s -- written %s", ver, botnetnick, s1);
   ok = 1;
+  /* Add all users except the -tn user */
   for (u = userlist; u && ok; u = u->next)
-    if (!write_user(u, f, idx))
+    if (egg_strcasecmp(u->handle, EGG_BG_HANDLE) && !write_user(u, f, idx))
       ok = 0;
   if (!ok || !write_ignores(f, -1) || fflush(f)) {
     putlog(LOG_MISC, "*", "%s (%s)", USERF_ERRWRITE, strerror(ferror(f)));
@@ -593,6 +594,9 @@ int change_handle(struct userrec *u, char *newh)
   char s[HANDLEN + 1];
 
   if (!u)
+    return 0;
+  /* Don't allow the -tn handle to be changed */
+  if (!egg_strcasecmp(u->handle, EGG_BG_HANDLE))
     return 0;
   /* Nothing that will confuse the userfile */
   if (!newh[1] && strchr(BADHANDCHARS, newh[0]))

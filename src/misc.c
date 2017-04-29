@@ -356,6 +356,11 @@ void maskaddr(const char *s, char *nw, int type)
   }
   *nw++ = '@';
 
+  if (type >= 30) {
+    strcpy(nw, "*");
+    return;
+  }
+
   /* The rest is for the host */
   h = (h ? h + 1 : ss);
   for (p = h; *p; p++) /* hostname? */

@@ -129,7 +129,8 @@ static struct user_entry_type USERENTRY_DCCDIR = {
   NULL,
   NULL,
   NULL,
-  "DCCDIR"
+  "DCCDIR",
+  NULL
 };
 
 #include "files.c"

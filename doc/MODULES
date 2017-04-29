@@ -9,27 +9,21 @@ The purpose of this document is to show you how to download, install,
 create, and submit modules.
 
 
-
 WHAT ARE MODULES?
-
 
 Modules are portions of code which are loaded separately to the bot
 itself and provide extra services. For example, the filesys module
 provides the entire file system.
 
 
-
 WHY USE MODULES?
-
 
 Modules allow C coders to add their own enhancements to the bot while
 keeping them optional and without increasing the size of the Eggdrop
 core.
 
 
-
 HOW TO INSTALL A MODULE
-
 
 Please note that these are only basic instructions for compiling and
 installing a module. Please read any and all directions included with
@@ -50,9 +44,7 @@ the module you wish to install.
 To view your currently loaded modules, type '.module'.
 
 
-
 MODULES INCLUDED WITH EGGDROP
-
 
   assoc
 
@@ -153,9 +145,7 @@ MODULES INCLUDED WITH EGGDROP
       starting point in writing modules, woobie is the right thing.
 
 
-
 PROGRAMMING MODULES
-
 
 WARNING: This section is very likely to be out of date.
 
@@ -198,9 +188,7 @@ multiple source file module, you shouldn't need to read this anyway.
     load).
 
 
-
 MODULE REQUIREMENTS
-
 
 In most modules, all functions/variables (except global and
 MODULE_start) should be static. This will drastically reduce the size of
@@ -210,10 +198,7 @@ Throughout this step, MODULE refers to the module name. Note that
 
     "MODULE_NAME" should literally be "MODULE_NAME".
 
-
-
-MODULE_START
-
+MODULE_start
 
     char *MODULE_start(Function *func_table)
 
@@ -247,10 +232,7 @@ loaded successfully. Returning a non-NULL STRING is an error message.
 The module (and any other dependant modules) will stop loading and an
 error will be returned.
 
-
-
-MODULE_TABLE
-
+MODULE_table
 
     static Function *MODULE_table = {
            MODULE_start,
@@ -265,10 +247,7 @@ MODULE_TABLE
     first 4 functions are FIXED. You MUST have them; they provide important
     module information.
 
-
-
-MODULE_CLOSE ()
-
+MODULE_close ()
 
     static char *MODULE_close ()
 
@@ -285,10 +264,7 @@ MODULE_CLOSE ()
     that the module cannot be unloaded for some reason, and hence the
     bot should not unload it (see the blowfish module for an example).
 
-
-
-MODULE_EXPMEM
-
+MODULE_expmem
 
     static int MODULE_expmem ()
 
@@ -296,10 +272,7 @@ MODULE_EXPMEM
     (using nmalloc, nfree, etc) in bytes. It's used by memory debugging to
     track memory faults, and it is used by .status to total up memory usage.
 
-
-
-MODULE_REPORT
-
+MODULE_report
 
     static void MODULE_report (int idx)
 
@@ -309,10 +282,7 @@ MODULE_REPORT
 These functions are available to modules. MANY more available functions
 can be found in src/mod/module.h.
 
-
-
-ADDITIONAL FUNCTIONS
-
+Additional functions
 
     void *nmalloc(int j);
 
@@ -446,9 +416,7 @@ ADDITIONAL FUNCTIONS
       console mode enabled.
 
 
-
 WHAT TO DO WITH A MODULE?
-
 
   If you have written a module and feel that you wish to share it with
   the rest of the Eggdrop community, upload it to the incoming directory
