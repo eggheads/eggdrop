@@ -27,5 +27,5 @@
  */
 
 #define EGG_STRINGVER "1.8.1"
-#define EGG_NUMVER 1080105
-#define EGG_PATCH "hqowns"
+#define EGG_NUMVER 1080106
+#define EGG_PATCH "cliflags"

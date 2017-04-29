@@ -500,60 +500,99 @@ void eggAssert(const char *file, int line, const char *module)
 }
 #endif
 
-static void do_arg(char *s)
-{
+void show_ver() {
   char x[512], *z = x;
-  int i;
 
-  if (s[0] == '-')
-    for (i = 1; i < strlen(s); i++) {
-      switch (s[i]) {
+  strncpyz(x, egg_version, sizeof x);
+  newsplit(&z);
+  newsplit(&z);
+  printf("%s\n", version);
+  if (z[0]) {
+    printf("  (patches: %s)\n", z);
+  }
+  printf("Configure flags: " EGG_AC_ARGS "\n");
+  printf("Compiled with: ");
+#ifdef IPV6
+  printf("IPv6, ");
+#endif
+#ifdef TLS
+  printf("TLS, ");
+#endif
+  printf("handlen=%d\n", HANDLEN);
+  bg_send_quit(BG_ABORT);
+}
+
+/* Hard coded text because config file isn't loaded yet,
+   meaning other languages can't be loaded yet.
+   English (or an error) is the only possible option.
+*/
+void show_help() {
+  printf("\n%s\n\n", version);
+  printf("Usage: eggdrop [options] [config-file]\n\n"
+         "Options:\n"
+         "-n Don't background; send all log entries to console.\n"
+         "-nc  Don't background; display channel stats every 10 seconds.\n"
+         "-nt  Don't background; use terminal to simulate DCC chat.\n"
+         "-m   Create userfile.\n"
+         "-h   Show this help.\n"
+         "-v   Show version info, then quit.\n\n");
+  bg_send_quit(BG_ABORT);
+}
+
+static void do_arg()
+{
+  int option = 0;
+/* Bitmask structure to hold cli flags
+   | QUIT| BAD FLAG| h| n| c| t| m| v|
+   |  128|       64|32|16| 8| 4| 2| 1|
+*/
+  unsigned char cliflags = 0;
+
+  while ((option = getopt(argc, argv, "hnctmv")) != -1) {
+    switch (option) {
       case 'n':
+        cliflags |= 16;
         backgrd = 0;
         break;
       case 'c':
+        cliflags |= 8;
         con_chan = 1;
         term_z = 0;
         break;
       case 't':
+        cliflags |= 4;
         con_chan = 0;
         term_z = 1;
         break;
       case 'm':
+        cliflags |= 2;
         make_userfile = 1;
         break;
       case 'v':
-        strncpyz(x, egg_version, sizeof x);
-        newsplit(&z);
-        newsplit(&z);
-        printf("%s\n", version);
-        if (z[0])
-          printf("  (patches: %s)\n", z);
-        if (!strcmp(EGG_AC_ARGS, "")) {
-          printf("Configure flags: none\n");
-        } else {
-          printf("Configure flags: %s\n", EGG_AC_ARGS);
-        }
-        printf("Compiled with: ");
-#ifdef IPV6
-        printf("IPv6, ");
-#endif
-#ifdef TLS
-        printf("TLS, ");
-#endif
-        printf("handlen=%d\n", HANDLEN);
-        bg_send_quit(BG_ABORT);
-        exit(0);
-        break;                  /* this should never be reached */
+        cliflags |= 129;		//128 + 1
+        break;
       case 'h':
-        printf("\n%s\n\n", version);
-        printf("%s\n", EGG_USAGE);
-        bg_send_quit(BG_ABORT);
-        exit(0);
-        break;                  /* this should never be reached */
-      }
-    } else
-    strncpyz(configfile, s, sizeof configfile);
+        cliflags |= 160;		//128 + 32
+        break;
+      default:
+        cliflags |= 192;		//128 + 64
+        break;
+    }
+  }
+  if ((cliflags & 64) || (cliflags & 32)) {
+    show_help();
+    exit(0);
+  } else if (cliflags & 1) {
+    show_ver();
+    exit(0);
+  } else if (argc > (optind + 1)) {
+    printf("\n");
+    printf("WARNING: More than one config file value detected\n");
+    printf("         Using %s as config file\n", argv[optind]);
+  }
+  if (argc > optind) {
+    strncpyz(configfile, argv[optind], sizeof configfile);
+  }
 }
 
 void backup_userfile(void)
@@ -1060,10 +1099,9 @@ int main(int arg_c, char **arg_v)
   lastmin = now / 60;
   srandom((unsigned int) (now % (getpid() + getppid())));
   init_mem();
-  init_language(1);
   if (argc > 1)
-    for (i = 1; i < argc; i++)
-      do_arg(argv[i]);
+    do_arg();
+  init_language(1);
 
   printf("\n%s\n", version);
 
