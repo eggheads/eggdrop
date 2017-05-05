@@ -103,6 +103,7 @@ int isowner(char *);
 char *masktype(int);
 char *maskname(int);
 void reaffirm_owners();
+void add_hq_user();
 void rehash();
 void reload();
 void chanprog();
