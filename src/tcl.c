@@ -404,6 +404,7 @@ static tcl_strings def_tcl_strings[] = {
   {"logfile-suffix",  logfile_suffix, 20,                      0},
   {"timestamp-format",log_ts,         32,                      0},
   {"pidfile",         pid_file,       120,           STR_PROTECT},
+  {"configure-args",  EGG_AC_ARGS,    0,             STR_PROTECT},
   {NULL,              NULL,           0,                       0}
 };
 

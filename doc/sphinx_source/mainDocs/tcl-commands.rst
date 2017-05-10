@@ -2604,6 +2604,13 @@ config
 
   Module: core
 
+^^^^^^
+config
+^^^^^^
+  Value: a string of configure arguments in shell expansion (single quotes)
+
+  Module: core
+
 Binds
 -----
 
