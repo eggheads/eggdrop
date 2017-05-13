@@ -1247,6 +1247,7 @@ static int tcl_channel_modify(Tcl_Interp *irp, struct chanset_t *chan,
       old_mode_pls_prot = chan->mode_pls_prot;
   struct udef_struct *ul = udef;
   char s[121];
+  char *endptr1, *endptr2;
   module_entry *me;
 
   for (i = 0; i < items; i++) {
@@ -1512,12 +1513,26 @@ static int tcl_channel_modify(Tcl_Interp *irp, struct chanset_t *chan,
       p = strchr(item[i], ':');
       if (p) {
         *p++ = 0;
-        *pthr = atoi(item[i]);
-        *ptime = atoi(p);
-        *--p = ':';
+        if ((!strtol(item[i], &endptr1, 10) && (strcmp(endptr1, "\0") != 0)) \
+           || (!strtol(p, &endptr2, 10) && (strcmp(endptr2, "\0") != 0))) {
+          *--p = ':';
+          if (irp)
+            Tcl_AppendResult(irp, "values must be integers: ", item[i], NULL);
+          return TCL_ERROR;
+        } else {
+          *pthr = atoi(item[i]);
+          *ptime = atoi(p);
+          *--p = ':';
+        }
       } else {
-        *pthr = atoi(item[i]);
-        *ptime = 1;
+        if (!strtol(item[i], &endptr1, 10) && (endptr1[0] != "\0")) {
+          *pthr = 0;  // Shortcut for .chanset #chan flood-x 0 to activate 0:0
+          *ptime = 0;
+        } else {
+          if (irp)
+            Tcl_AppendResult(irp, "flood value must be in X:Y format: ", item[i], NULL);
+          return TCL_ERROR;
+        }
       }
     } else if (!strncmp(item[i], "aop-delay", 9)) {
       char *p;
