@@ -113,18 +113,18 @@ static int fstat_set(struct userrec *u, struct user_entry *e, void *buf)
   return 1;
 }
 
-static int fstat_tcl_format(char *d, struct filesys_stats *fs, char *arg)
+static int fstat_tcl_format(char *d, size_t max, struct filesys_stats *fs, char *arg)
 {
   if (!arg)
-    egg_snprintf(d, sizeof d, "%u %u %u %u", fs->uploads, fs->upload_ks,
+    egg_snprintf(d, max, "%u %u %u %u", fs->uploads, fs->upload_ks,
                  fs->dnloads, fs->dnload_ks);
   else
     switch (arg[0]) {
     case 'u':
-      egg_snprintf(d, sizeof d, "%u %u", fs->uploads, fs->upload_ks);
+      egg_snprintf(d, max, "%u %u", fs->uploads, fs->upload_ks);
       break;
     case 'd':
-      egg_snprintf(d, sizeof d, "%u %u", fs->dnloads, fs->dnload_ks);
+      egg_snprintf(d, max, "%u %u", fs->dnloads, fs->dnload_ks);
       break;
     }
 
@@ -139,7 +139,7 @@ static int fstat_tcl_get(Tcl_Interp *irp, struct userrec *u,
 
   BADARGS(3, 4, " handle FSTAT ?u/d?");
 
-  ret = fstat_tcl_format(d, e->u.extra, (argc > 3 ? argv[3] : NULL));
+  ret = fstat_tcl_format(d, sizeof d, e->u.extra, (argc > 3 ? argv[3] : NULL));
 
   if (ret != TCL_OK)
     return ret;
@@ -153,7 +153,7 @@ static int fstat_tcl_append(Tcl_Interp *irp, struct userrec *u, struct user_entr
   int ret;
   char d[50];
 
-  ret = fstat_tcl_format(d, e->u.extra, NULL);
+  ret = fstat_tcl_format(d, sizeof d, e->u.extra, NULL);
 
   if (ret != TCL_OK)
     return ret;
