@@ -53,7 +53,7 @@ extern time_t now;
 extern Tcl_Interp *interp;
 
 char logfile_suffix[21] = ".%d%b%Y";    /* Format of logfile suffix */
-char log_ts[32] = "[%H:%M:%S]"; /* Timestamp format for logfile entries */
+char log_ts[33] = "[%H:%M:%S]"; /* Timestamp format for logfile entries */
 
 int shtime = 1;                 /* Display the time with console output */
 log_t *logs = 0;                /* Logfiles */
