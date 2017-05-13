@@ -29,7 +29,8 @@ package require textutil::adjust
 # TODO: automatic -i/-e arguments. sort order of git tag --list --sort=v:refname is stable.
 # TODO: shortlogs without * on every line, esp. on linebreaks
 # TODO: shortlogs might need to expand old (cvs/oneline) formatted lists
-# TODO: performance improvements (by reading .git/ directly, or otherwise get more than 1 item from git show with \0 sep or something)
+# TODO: shortlogs fails to mention found by/patch by properly
+# TODO: performance improvements (by reading .git/ directly?)
 
 proc get_usage {} {
 	return [subst [join {
@@ -286,10 +287,6 @@ proc clean {data} {
 	return $data
 }
 
-proc getcommitinfofmt {fmt commit} {
-	string trim [mustexec [list git show -s --pretty=format:$fmt $commit] "Failed to get commit info for $commit"]
-}
-
 proc getcommitinfo:date {commit} {
 	clock format [getcommitinfo:time $commit] -gmt 1 -format "%Y-%m-%d"
 }
@@ -321,29 +318,46 @@ proc getcommitinfo:tags {commit} {
 	dict get $tags $commit
 }
 
-foreach {name fmt} {fullbody %B time %ct authorname %aN authoremail %aE shorthash %h hash %H authordate %aI} {
-	interp alias {} getcommitinfo:$name {} getcommitinfofmt $fmt
-}
-
 proc getcommitinfo:body {commit} {
 	# roughly where we started using subject/body split messages after cvs->git
-	if {[getcommitinfofmt %ct $commit] > 1451487300} {
-		return [getcommitinfofmt %b $commit]
-	}
-	return [getcommitinfofmt %B $commit]
-}
-
-proc getcommitinfo:subject {commit} {
-	if {[getcommitinfofmt %ct $commit] > 1451487300} {
-		return [getcommitinfofmt %s $commit]
+	if {[dict get [getcommitinfo:time $commit] time] > 1451487300} {
+		return [getcommitinfofield body $commit]
 	}
 	return ""
 }
 
-set commitinfocache ""
-proc getcommitinfo {commit args} {
-	global commitinfocache
+proc getcommitinfo:subject {commit} {
+	if {[getcommitinfo:time $commit] > 1451487300} {
+		return [getcommitinfofield subject $commit]
+	}
+	return [getcommitinfofield fullbody $commit]
+}
 
+proc getcommitinfofield {field commit} {
+	global commitinfocache
+#	vlog "Getting $commit ($field)"
+	dict get $commitinfocache $commit $field
+}
+
+set commitinfocache ""
+set commitinfofields {fullbody %B time %ct authorname %aN authoremail %aE shorthash %h hash %H authordate %aI subject %s body %b}
+foreach field [dict keys $commitinfofields] {
+	if {![llength [info commands getcommitinfo:$field]]} {
+		interp alias {} getcommitinfo:$field {} getcommitinfofield $field
+	}
+}
+
+proc getcommitinfo {commit args} {
+	global commitinfocache commitinfofields
+
+	# Fetch all that information regardless of what was requested and cache it
+	if {![dict exists $commitinfocache $commit]} {
+		set result [split [mustexec [list git show -s --pretty=format:[join [dict values $commitinfofields] %x00] $commit] "Failed to get commit info for $commit"] \x00]
+		for {set i 0} {$i < [dict size $commitinfofields]} {incr i} {
+			dict set commitinfocache $commit [lindex [dict keys $commitinfofields] $i] [string trim [lindex $result $i]]
+#			vlog "$commit ([lindex [dict keys $commitinfofields] $i]) = '''[string trim [lindex $result $i]]'''"
+		}
+	}
 	set data ""
 	foreach info $args {
 		if {[dict exists $commitinfocache $commit $info]} {
@@ -422,13 +436,9 @@ proc cmd:short {} {
 		set commitinfo [getcommitinfo $commit fullbody subject date]
 		set fullmsg [dict get $commitinfo fullbody]
 		set shortmsg [dict get $commitinfo subject]
-		if {$shortmsg eq ""} {
-			set shortmsg $fullmsg
-		}
 		set date [dict get $commitinfo date]
 		set found ""
 		set patch ""
-		set shortmsg [string trim $shortmsg "- "]
 		if {$lastappend ne ""} {
 			lappend result {*}[string map [list %%CHANGELOGDATE%% [expr {($date eq $lastdate && !$forcedate) ? "[string repeat " " 10]" : "$lastdate"}]] $lastappend]
 		}
@@ -442,17 +452,6 @@ proc cmd:short {} {
 			}
 		}
 		set shortmsgs ""
-		#ugly specific fixup
-		if {[string index $shortmsg 0] in {* -}} {
-			set split [split $shortmsg *-]
-			foreach e $split {
-				set e [string trim $e]
-				if {$e eq ""} { continue }
-				lappend shortmsgs $e
-			}
-		} else {
-			set shortmsgs [list $shortmsg]
-		}
 		set secondline ""
 		if {[dict size $found]} {
 			lappend secondline "Found by: [join [dict keys $found] {, }]"
@@ -462,14 +461,14 @@ proc cmd:short {} {
 		}
 		if {[llength $secondline]} {
 			set lastmsg [lindex $shortmsgs end]
-			append lastmsg "\n  [string repeat " " 12] [join $secondline { / }]"
+			append lastmsg "\n[join $secondline { / }]"
 			set shortmsgs [list {*}[lrange $shortmsgs 0 end-1] $lastmsg]
 		}
 		set lastappend ""
 		set lastmsg [lindex $shortmsgs end]
 		set shortmsgs [lrange $shortmsgs 0 end-1]
 		foreach shortmsg $shortmsgs {
-			set lines [split [adjust $shortmsg] \n]
+			set lines [lmap line [split $shortmsg \n] { join [lmap l [split $line \n] { adjust $l }] \n }]
 			lappend lastappend "  [string repeat " " 10] * [pop lines]"
 			foreach line $lines {
 				lappend lastappend "  [string repeat " " 12] $line"
