@@ -26,6 +26,11 @@
 package require Tcl 8.6
 package require textutil::adjust
 
+# TODO: automatic -i/-e arguments. sort order of git tag --list --sort=v:refname is stable.
+# TODO: shortlogs without * on every line, esp. on linebreaks
+# TODO: shortlogs might need to expand old (cvs/oneline) formatted lists
+# TODO: performance improvements (by reading .git/ directly, or otherwise get more than 1 item from git show with \0 sep or something)
+
 proc get_usage {} {
 	return [subst [join {
 		{Syntax: $::argv0 \[options\] <command>} {} {Commands:}
@@ -85,6 +90,16 @@ proc vlog {text} {
 	}
 }
 
+proc mustexec {cmd msg} {
+	vlog "Attempting execute: [join $cmd]"
+	if {[catch [list exec {*}$cmd] result]} {
+		fatal "Execution failed. $msg: $result"
+	}
+	vlog "Execution successful: $result"
+	set result [regsub -all -- {\n\n\n+} [string trim $result] "\n\n"]
+	return $result
+}
+
 proc parsecmdline {argv} {
 	global verbose
 	if {![llength $argv]} {
@@ -126,32 +141,52 @@ proc parsecmdline {argv} {
 	foreach var {remote version includes excludes} {
 		cfg$var [set $var]
 	}
+	foreach file [textutil::adjust::listPredefined] {
+		textutil::adjust::readPatterns [textutil::adjust::getPredefined $file]
+	}
+	fetchremote
 	return $command
+}
+
+proc indent {text indent} {
+	textutil::adjust::indent $text [string repeat " " $indent]
+}
+
+proc adjust {text} {
+	textutil::adjust::adjust $text -hyphenate true -justify left -length 120 -strictlength true
 }
 
 interp alias {} cfgincludes {} cfgtags includes
 interp alias {} cfgexcludes {} cfgtags excludes
 
 proc cfgtags {varName patterns} {
-	global remote
-	upvar #0 $varName tags
-	set tags ""
+	global remote tags
+	upvar #0 $varName thesetags
+	set thesetags ""
+	if {![info exists tags]} {
+		set taglist [regexp -all -inline -- {\S+} [mustexec {git tag --list} "Failed getting tag list"]]
+		set tags ""
+		foreach tag $taglist {
+			set commit [string trim [mustexec [list git rev-parse $tag] "Could not rev-parse tag $tag"]]
+			dict lappend tags $commit $tag
+			vlog "$tag <- $commit"
+		}
+	}
 	foreach pattern $patterns {
-		set tmp [regexp -all -inline -- {\S+} [exec git tag -l $pattern]]
+		set tmp [dict values $tags $pattern]
 		if {![llength $tmp]} {
-			# no matching tags
-			if {[catch {exec git rev-parse --verify -q $remote/$pattern}]} {
-				fatal "Could not parse revision $pattern on remote $remote."
-			}
+			# no matching tags, must be a branch
+			mustexec [list git rev-parse --verify -q $remote/$pattern] "Could not parse revision $pattern on remote $remote."
 			set tmp [list $remote/$pattern]
 		}
-		lappend tags {*}$tmp
+		lappend thesetags {*}$tmp
 	}
 }
 
 proc cfgversion {version} {
-	if {$version ne "" && ![regexp {^\d+\.\d+\.\d+} $version]} {
-		fatal "Invalid ersion number: $version. Try 1.8.1 or similar."
+	global major
+	if {$version ne "" && ![regexp {^(\d+\.\d+)\.\d+} $version -> major]} {
+		fatal "Invalid version number: $version. Try 1.8.1 or 1.8.1rc1 or similar."
 	}
 	set ::version $version
 }
@@ -180,6 +215,16 @@ proc cfgremote {remote} {
 	set ::remote $remote
 }
 
+proc fetchremote {} {
+	global remote
+
+	log "Updating tags and branches from remote '$remote'. Branches first..."
+	mustexec [list -ignorestderr git fetch $remote] "Could not fetch from remote"
+	log "Branches updated. Fetching tags..."
+	mustexec [list -ignorestderr git fetch -t $remote] "Could not fetch tags from remote"
+	log "Tags updated."
+}
+
 proc start {} {
 	global remote
 	set command [parsecmdline $::argv]
@@ -187,50 +232,200 @@ proc start {} {
 		fatal "Unknown command: $command. Available: [join [commands] {, }]" 1
 	}
 	log "Working with remote $remote..."
-	cmd:$command
+	puts [cmd:$command]
 }
 
-proc revlist {} {
-	global includes excludes
+proc revlist {excludes includes} {
 	set includestr $includes
 	set excludestr [lmap x $excludes { return -level 0 ^$x }]
 	return [list {*}$includestr {*}$excludestr]
 }
 
-proc doexec {cmd} {
-	log "Executing: [join $cmd]"
-	if {[catch {exec {*}$cmd} res]} {
-		fatal "Error during executing: $res"
+proc commitlist {{full 0}} {
+	global version includes excludes verbose
+	set commits ""
+	for {set i 0} {$i < [llength $includes]} {incr i} {
+		set cmd [list git rev-list --reverse --date-order {*}[revlist [expr {($i == 0 && $full) ? "" : $excludes}] [lrange $includes $i $i]]]
+		set mycommits [mustexec $cmd "Failed to get revlist"]
+		foreach commit $mycommits {
+			if {$commit ni $commits} {
+				lappend commits $commit
+			}
+		}
 	}
-	set res [regsub -all -- {\n\n\n+} [string trim $res] "\n\n"]
-	log "Executed: [join $cmd]"
-	return $res
+	return [lreverse $commits]
+}
+
+proc cmd:release {} {
+	global major version
+	if {![info exists major] || $version eq ""} {
+		fatal "Need version number (-v) for short changelog."
+	}
+	if {![file exists ChangeLog.gz] || ![file exists doc/Changes$major]} {
+		fatal "ChangeLog or doc/Changes$major don't exist, are we in the right directory? Then please create them empty if necessary."
+	}
+	set short [cmd:short]
+	set full [cmd:full]
+	log "Writing ChangeLog.gz"
+	set fs [open ChangeLog.gz w]
+	zlib push gzip $fs -level 9
+	puts $fs [string trim $full \n]
+	close $fs
+	log "Writing doc/Changes$major"
+	set fs [open doc/Changes$major w]
+	puts $fs [string trim $short \n]
+	close $fs
+	return "Done."
+}
+
+proc clean {data} {
+	regsub -all -- {(\r)} $data {} data
+	regsub -all -- {\t} $data { } data
+	regsub -all -- { +\n} $data "\n" data
+	regsub -all -- {\n{4,}} $data "\n\n\n" data
+	return $data
+}
+
+proc getcommitinfofmt {fmt commit} {
+	string trim [mustexec [list git show -s --pretty=format:$fmt $commit] "Failed to get commit info for $commit"]
+}
+
+proc getcommitinfo:date {commit} {
+	clock format [getcommitinfo:time $commit] -gmt 1 -format "%Y-%m-%d"
+}
+
+proc getcommitinfo:files {commit} {
+	set data [mustexec [list git show --pretty= --numstat $commit] "Failed to get commit info for $commit"]
+	set result ""
+	foreach line [split $data \n] {
+		if {$line eq ""} {
+			continue
+		}
+		if {![regexp -- {^(\d+|-)\t(\d+|-)\t(.+)$} $line - add del file]} {
+			error "ERROR ON '$line'"
+		}
+		if {$add eq "-" && $del eq "-"} {
+			lappend result [format "%13s %s" (binary) $file]
+		} else {
+			lappend result [format "%6s %6s %s" +$add -$del $file]
+		}
+	}
+	join $result \n
+}
+
+proc getcommitinfo:tags {commit} {
+	global tags
+	if {![dict exists $tags $commit]} {
+		return ""
+	}
+	dict get $tags $commit
+}
+
+foreach {name fmt} {fullbody %B time %ct authorname %aN authoremail %aE shorthash %h hash %H authordate %aI} {
+	interp alias {} getcommitinfo:$name {} getcommitinfofmt $fmt
+}
+
+proc getcommitinfo:body {commit} {
+	# roughly where we started using subject/body split messages after cvs->git
+	if {[getcommitinfofmt %ct $commit] > 1451487300} {
+		return [getcommitinfofmt %b $commit]
+	}
+	return [getcommitinfofmt %B $commit]
+}
+
+proc getcommitinfo:subject {commit} {
+	if {[getcommitinfofmt %ct $commit] > 1451487300} {
+		return [getcommitinfofmt %s $commit]
+	}
+	return ""
+}
+
+set commitinfocache ""
+proc getcommitinfo {commit args} {
+	global commitinfocache
+
+	set data ""
+	foreach info $args {
+		if {[dict exists $commitinfocache $commit $info]} {
+			dict set data $info [dict get $commitinfocache $commit $info]
+		} else {
+			dict set data $info [getcommitinfo:$info $commit]
+			dict set commitinfocache $commit $info [dict get $data $info]
+		}
+	}
+	return $data
+}
+
+proc reportstatus {what i max} {
+	if {($i & 0xF) == 0 || $i == $max - 1} {
+		puts -nonewline stderr "\u001b\[1000D$what ... [format %3d [expr {$i == $max ? 100 : 100*(1+$i)/$max}]] %"
+	}
 }
 
 proc cmd:full {} {
-	set revlist [revlist]
-	set cmd [list git log --no-merges --date-order --name-status {--pretty=format:%n------------------------------%nCommit %h (%ai) by %aN %n%n%B%n%n} {*}[revlist]]
-	puts [string map [list "\r" ""] [doexec $cmd]]
+	global excludes includes tags
+	log "Generating ChangeLog info"
+	set commits [commitlist 1]
+	set result {""}
+	for {set i 0} {$i < [llength $commits]} {incr i} {
+		reportstatus "Generating ChangeLog info" $i [llength $commits]
+		set commit [lindex $commits $i]
+		set commitinfo [getcommitinfo $commit body subject authorname authoremail shorthash authordate files]
+		dict with commitinfo {
+			set this ""
+			lappend this "Commit $shorthash ($authordate) by $authorname <$authoremail>" ""
+			if {[string index $subject 0] in {* -} && [string index $subject 1] eq " "} {
+				set body [getcommitinfo:fullbody $commit]
+			} elseif {$subject ne ""} {
+				lappend this [adjust $subject] ""
+			}
+			if {$body ne ""} {
+				set thisbody ""
+				foreach line [split $body \n] {
+					lappend thisbody [indent [adjust $line] 2]
+				}
+				lappend this [join $thisbody \n] ""
+			}
+			if {$files ne ""} {
+				lappend this $files ""
+			}
+		}
+		lappend result [join $this \n]
+	}
+	log "\nDone"
+	return [clean [join $result \n[string repeat - 120]\n]]
 }
 
 proc cmd:short {} {
-	global version includes excludes
+	global version verbose tags major
 	if {$version eq ""} {
 		fatal "Need version number (-v) for short changelog."
 	}
-	set cmd [list git rev-list --no-merges --reverse --author-date-order {*}[revlist]]
-	set commits [doexec $cmd]
-	set taglist [regexp -all -inline -- {\S+} [exec git tag --list]]
-	set tags ""
-	foreach tag $taglist {
-		dict set tags [string trim [exec git rev-parse $tag]] $tag
+	log "Generating doc/Changes$major info"
+	set commits [lreverse [commitlist]]
+	if {$verbose} {
+		vlog "--- Start of History ---"
+		foreach commit $commits {
+			vlog "* $commit[expr {[dict exists $tags $commit] ? " ([dict get $tags $commit])" : ""}]"
+		}
+		vlog "---- End of History ----"
 	}
 	set lastdate ""
 	set lastappend ""
-	foreach commit $commits {
-		set fullmsg [exec git show -s --pretty=format:%B $commit]
-		set shortmsg [exec git show -s --pretty=format:%s $commit]
-		set date [clock format [exec git show -s --pretty=format:%ct $commit] -gmt 1 -format "%Y-%m-%d"]
+	for {set i 0} {$i < [llength $commits]} {incr i} {
+		reportstatus "Generating doc/Changes$major info" $i [llength $commits]
+		set commit [lindex $commits $i]
+		# skip merge commits unless they have a tag associated to them (e.g. v1.8.1 is a merge commit with a tag)
+		if {![dict exists $tags $commit] && ![catch {exec git cat-file -t $commit^2}]} {
+			continue
+		}
+		set commitinfo [getcommitinfo $commit fullbody subject date]
+		set fullmsg [dict get $commitinfo fullbody]
+		set shortmsg [dict get $commitinfo subject]
+		if {$shortmsg eq ""} {
+			set shortmsg $fullmsg
+		}
+		set date [dict get $commitinfo date]
 		set found ""
 		set patch ""
 		set shortmsg [string trim $shortmsg "- "]
@@ -248,8 +443,8 @@ proc cmd:short {} {
 		}
 		set shortmsgs ""
 		#ugly specific fixup
-		if {[string index $shortmsg 0] eq "*"} {
-			set split [split $shortmsg *]
+		if {[string index $shortmsg 0] in {* -}} {
+			set split [split $shortmsg *-]
 			foreach e $split {
 				set e [string trim $e]
 				if {$e eq ""} { continue }
@@ -274,13 +469,13 @@ proc cmd:short {} {
 		set lastmsg [lindex $shortmsgs end]
 		set shortmsgs [lrange $shortmsgs 0 end-1]
 		foreach shortmsg $shortmsgs {
-			set lines [split [textutil::adjust::adjust $shortmsg -full true -justify left -length 120 -strictlength true] \n]
+			set lines [split [adjust $shortmsg] \n]
 			lappend lastappend "  [string repeat " " 10] * [pop lines]"
 			foreach line $lines {
 				lappend lastappend "  [string repeat " " 12] $line"
 			}
 		}
-		set lines [split [textutil::adjust::adjust $shortmsg -full true -justify left -length 120 -strictlength true] \n]
+		set lines [split [adjust $shortmsg] \n]
 		lappend lastappend "  %%CHANGELOGDATE%% * [pop lines]"
 		foreach line $lines {
 			lappend lastappend "  [string repeat " " 10] * $line"
@@ -290,10 +485,11 @@ proc cmd:short {} {
 			set forcedate 1
 		}
 		set lastdate $date
+#		vlog "* ($commit) $date\n[join $lastappend \n]\n"
 	}
+	log "\nDone"
 	lappend result {*}[string map [list %%CHANGELOGDATE%% $lastdate] $lastappend]
-	puts "Eggdrop Changes (Last Updated [clock format [clock seconds] -gmt 1 -format "%Y-%m-%d"]):\n__________________________________________\n\nEggdrop v$version:\n"
-	puts [string map [list "\r" ""] [join [lreverse $result] \n]]
+	return [clean "Eggdrop Changes (Last Updated [clock format [clock seconds] -gmt 1 -format "%Y-%m-%d"]):\n__________________________________________\n\nEggdrop v$version:\n\n[join [lreverse $result] \n]"]
 }
 
 start
