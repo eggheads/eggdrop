@@ -49,14 +49,35 @@ git reset HEAD -- .
 
 echo ""
 # Generate ChangeLog
-echo -n "Generating ChangeLog..."
-git log $(git rev-list -n 1 v${OLD_EGGVERSION})..HEAD --name-only --no-merges --pretty=format:"- - - - - - - - - - - - - - -%n%w(75)Commit %h (%ai) by %aN%n %s %n %b" > ChangeLog
-git add ChangeLog
-git commit -m "Generate ChangeLog for ${NEW_EGGVERSION}" > /dev/null
-echo " done."
+###git log $(git rev-list -n 1 v${OLD_EGGVERSION})..HEAD --name-only --no-merges --pretty=format:"- - - - - - - - - - - - - - -%n%w(75)Commit %h (%ai) by %aN%n %s %n %b" > ChangeLog
+TRIMVERSION=${NEW_EGGVERSION%rc*}
+MAX=$(echo ${OLD_EGGVERSION}| cut -d "." -f 3)
+MAJOR=$(echo ${OLD_EGGVERSION}| rev| cut -d "." -f2- |rev)
+MAJOR=${MAJOR%rc*}
+MINOR=0
+while [ $MINOR -le $MAX ]; do
+  INCLUDE="${INCLUDE} -i v${MAJOR}.${MINOR}"
+  MINOR=$(expr $MINOR + 1)
+done
+git fetch origin
+git fetch -t origin
+misc/genchanges -l $INCLUDE -i develop -r origin full > ChangeLog
+gzip -f ChangeLog
+git add ChangeLog.gz
+
+#Generate doc/ChangesX.Y file
+MINOR=1
+INCLUDE=""
+while [ $MINOR -le $MAX ]; do
+  INCLUDE="${INCLUDE} -i v${MAJOR}.${MINOR}"
+  MINOR=$(expr $MINOR + 1)
+done
+misc/genchanges -l -e v1.6.21 -e v1.8.0 $INCLUDE -i develop -v "" -r origin short > doc/Changes1.8
+git add doc/Changes1.8
+git commit -m "Generate ChangeLog/Changes files for ${NEW_EGGVERSION}" > /dev/null
 
 # Remove patchlevel.
-echo -n "Removing patchlevel for a stable release..."
+echo -n "Setting alpha patchlevel for a stable release..."
 misc/setpatch alpha >/dev/null
 echo " done."
 
@@ -111,7 +132,4 @@ echo "Docs version string:"
 grep "^version = .*" doc/sphinx_source/conf.py
 echo ""
 echo "Complete."
-echo ""
-echo ""
-echo "Don't forget to add $NEW_EGGVERSION to the current doc/Changes file."
 echo ""
