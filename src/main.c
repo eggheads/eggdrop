@@ -589,6 +589,10 @@ static void do_arg()
   } else if (cliflags & 1) {
     show_ver();
     exit(0);
+  } else if (!(cliflags & 16) && ((cliflags & 8) || (cliflags & 4))) {
+    printf("\n%s\n", version);
+    printf("ERROR: The -n flag is required when using the -c or -t flags. Exiting...\n\n");
+    exit(1);
   } else if (argc > (optind + 1)) {
     printf("\n");
     printf("WARNING: More than one config file value detected\n");
