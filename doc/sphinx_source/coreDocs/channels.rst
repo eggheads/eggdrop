@@ -190,33 +190,33 @@ There are also some variables you can set in your config file:
 
        flood-chan 15:60
          Set here how many channel messages in how many seconds from one
-         host constitutes a flood. Setting this to 0 or 0:0 disables text
-         flood protection for the channel.
+         host constitutes a flood. Setting this to 0, 0:X or X:0 disables text
+         flood protection for the channel, where X is an integer >= 0.
 
        flood-deop 3:10
          Set here how many deops in how many seconds from one host constitutes
-         a flood. Setting this to 0 or 0:0 disables deop flood protection for
-         the channel.
+         a flood. Setting this to 0, 0:X or X:0 disables deop flood protection for
+         the channel, where X is an integer >= 0.
 
        flood-kick 3:10
          Set here how many kicks in how many seconds from one host constitutes
-         a flood. Setting this to 0 or 0:0 disables kick flood protection for
-         the channel.
+         a flood. Setting this to 0, 0:X or X:0 disables kick flood protection for
+         the channel, where X is an integer >= 0.
 
        flood-join 5:60
          Set here how many joins in how many seconds from one host constitutes
-         a flood. Setting this to 0 or 0:0 disables join flood protection for
-         the channel.
+         a flood. Setting this to 0, 0:X or X:0 disables join flood protection for
+         the channel, where X is an integer >= 0.
 
        flood-ctcp 3:60
          Set here how many channel ctcps in how many seconds from one host
-         constitutes a flood. Setting this to 0 or 0:0 disables ctcp flood
-         protection for the channel.
+         constitutes a flood. Setting this to 0, 0:X or X:0 disables ctcp flood
+         protection for the channel, where X is an integer >= 0.
 
        flood-nick 5:60
          Set here how many nick changes in how many seconds from one host
-         constitutes a flood. Setting this to 0 or 0:0 disables nick flood
-         protection for the channel.
+         constitutes a flood. Setting this to 0, 0:X or X:0 disables nick flood
+         protection for the channel, where X is an integer >= 0.
 
 
     channel set <chan> +/-<setting>

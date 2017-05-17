@@ -165,8 +165,7 @@
      <flood-type> <number>[:<seconds>]", where <number> and <seconds> are
      integers indicating the number of times in how many seconds the flood will
      be triggered. Setting this to 0, 0:X or X:0 will deactivate the respective
-     flood setting. If just "X" is used, a default of 1 second is used. The "X"
-     is an integer >= 0.
+     flood setting, where X is an integer >= 0.
         %bflood-chan%b  Set here how many channel messages in how many seconds
                     from one host constitutes a flood.
         %bflood-ctcp%b  Set here how many channel ctcps in how many seconds from
