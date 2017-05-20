@@ -1513,8 +1513,9 @@ static int tcl_channel_modify(Tcl_Interp *irp, struct chanset_t *chan,
       p = strchr(item[i], ':');
       if (p) {
         *p++ = 0;
-        if ((!strtol(item[i], &endptr, 10) && (strcmp(endptr, "\0") != 0)) \
-           || (!strtol(p, &endptr, 10) && (*endptr))) {
+        if ((!strtol(item[i], &endptr, 10) && (*endptr))
+           || (!strtol(p, &endptr, 10) && (*endptr))
+           || !*p || !*item[i]) { // Block :X or X: inputs
           *--p = ':';
           if (irp)
             Tcl_AppendResult(irp, "values must be integers: ", item[i], NULL);
