@@ -1247,7 +1247,7 @@ static int tcl_channel_modify(Tcl_Interp *irp, struct chanset_t *chan,
       old_mode_pls_prot = chan->mode_pls_prot;
   struct udef_struct *ul = udef;
   char s[121];
-  char *endptr1, *endptr2;
+  char *endptr;
   module_entry *me;
 
   for (i = 0; i < items; i++) {
@@ -1513,8 +1513,8 @@ static int tcl_channel_modify(Tcl_Interp *irp, struct chanset_t *chan,
       p = strchr(item[i], ':');
       if (p) {
         *p++ = 0;
-        if ((!strtol(item[i], &endptr1, 10) && (strcmp(endptr1, "\0") != 0)) \
-           || (!strtol(p, &endptr2, 10) && (strcmp(endptr2, "\0") != 0))) {
+        if ((!strtol(item[i], &endptr, 10) && (strcmp(endptr, "\0") != 0)) \
+           || (!strtol(p, &endptr, 10) && (*endptr))) {
           *--p = ':';
           if (irp)
             Tcl_AppendResult(irp, "values must be integers: ", item[i], NULL);
@@ -1525,7 +1525,7 @@ static int tcl_channel_modify(Tcl_Interp *irp, struct chanset_t *chan,
           *--p = ':';
         }
       } else {
-        if (!strtol(item[i], &endptr1, 10) && (endptr1[0] != "\0")) {
+        if (!strtol(item[i], &endptr, 10) && !(*endptr)) {
           *pthr = 0;  // Shortcut for .chanset #chan flood-x 0 to activate 0:0
           *ptime = 0;
         } else {
@@ -1539,8 +1539,8 @@ static int tcl_channel_modify(Tcl_Interp *irp, struct chanset_t *chan,
 
       i++;
       if (i >= items) {
-        if (irp)
-          Tcl_AppendResult(irp, item[i - 1], " needs argument", NULL);
+		if (irp)
+		  Tcl_AppendResult(irp, item[i - 1], " needs argument", NULL);
         return TCL_ERROR;
       }
       p = strchr(item[i], ':');
