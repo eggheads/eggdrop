@@ -1452,7 +1452,7 @@ AC_DEFUN([EGG_SAVE_PARAMETERS],
   done
 
   AC_SUBST(egg_ac_parameters)
-  AC_DEFINE_UNQUOTED(EGG_AC_ARGS, "$egg_ac_parameters", [Arguments passed to configure])
+  AC_DEFINE_UNQUOTED(EGG_AC_ARGS_RAW, $egg_ac_parameters, [Arguments passed to configure])
 ])
 
 

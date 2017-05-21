@@ -29,7 +29,7 @@
 
 static Function *global = NULL;
 
-static char chanfile[121], glob_chanmode[64];
+static char chanfile[121], glob_chanmode[65];
 static char *lastdeletedmask;
 
 static struct udef_struct *udef;

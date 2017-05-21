@@ -144,4 +144,10 @@ extern struct dcc_table DCC_CHAT, DCC_BOT, DCC_LOST, DCC_SCRIPT, DCC_BOT_NEW,
 /* Handle for the user that's used when starting eggdrop with -tn */
 #define EGG_BG_HANDLE "-HQ"
 
+/* Stringify macros */
+#define EGG_MACRO_STR(x) EGG_STR(x)
+#define EGG_STR(x) #x
+
+#define EGG_AC_ARGS EGG_MACRO_STR(EGG_AC_ARGS_RAW)
+
 #endif /* _EGG_MAIN_H */

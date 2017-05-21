@@ -61,7 +61,7 @@ static time_t lastpingcheck;    /* set when i unidle myself, cleared when
 static time_t server_online;    /* server connection time */
 static time_t server_cycle_wait;        /* seconds to wait before
                                          * re-beginning the server list */
-static char botrealname[121];   /* realname of bot */
+static char botrealname[81];    /* realname of bot */
 static int server_timeout;      /* server timeout for connecting */
 static struct server_list *serverlist;  /* old-style queue, still used by
                                          * server list */
@@ -1213,7 +1213,7 @@ static char *get_altbotnick(void)
 {
   /* A random-number nick? */
   if (strchr(altnick, '?')) {
-    if (!raltnick[0]) {
+    if (!raltnick[0] && !wild_match(altnick, botname)) {
       strncpyz(raltnick, altnick, NICKLEN);
       rand_nick(raltnick);
     }
