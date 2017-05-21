@@ -44,7 +44,7 @@
 #undef DLOPEN_1
 
 /* Arguments passed to configure */
-#undef EGG_AC_ARGS
+#undef EGG_AC_ARGS_RAW
 
 /* Define the maximum length of handles on the bot. */
 #undef EGG_HANDLEN
