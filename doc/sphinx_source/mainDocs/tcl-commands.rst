@@ -2604,9 +2604,9 @@ config
 
   Module: core
 
-^^^^^^
-config
-^^^^^^
+^^^^^^^^^^^^^^
+configure-args
+^^^^^^^^^^^^^^
   Value: a string of configure arguments in shell expansion (single quotes)
 
   Module: core
