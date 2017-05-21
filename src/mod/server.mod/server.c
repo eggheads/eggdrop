@@ -1213,7 +1213,7 @@ static char *get_altbotnick(void)
 {
   /* A random-number nick? */
   if (strchr(altnick, '?')) {
-    if (!raltnick[0]) {
+    if (!raltnick[0] && !wild_match(altnick, botname)) {
       strncpyz(raltnick, altnick, NICKLEN);
       rand_nick(raltnick);
     }

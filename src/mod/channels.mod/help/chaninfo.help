@@ -61,7 +61,8 @@
                           wildcard to replace portions of the host, only
                           numbers in hostnames are replaced with the '?'
                           wildcard. Same is valid for types 20-29, but instead
-                          of '?', the '*' wildcard will be used.
+                          of '?', the '*' wildcard will be used. Types 30-39
+                          set the host to '*'.
         %bban-time%b          Set here how long temporary bans will last (in
                           minutes). If you set this setting to 0, the bot will
                           never remove them.
