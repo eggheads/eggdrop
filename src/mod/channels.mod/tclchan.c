@@ -1511,11 +1511,12 @@ static int tcl_channel_modify(Tcl_Interp *irp, struct chanset_t *chan,
         return TCL_ERROR;
       }
       p = strchr(item[i], ':');
-      if (p) {
+      /* Check for valid X:Y, denying X, :Y and X: */
+      if (p && item[i] != p && *(p+1)) {
         *p++ = 0;
-        if ((!strtol(item[i], &endptr, 10) && (*endptr))
-           || (!strtol(p, &endptr, 10) && (*endptr))
-           || !*p || !*item[i]) { // Block :X or X: inputs
+        /* We don't care about strtol's return val, only what endptr holds */
+        if ((strtol(item[i], &endptr, 10), (*endptr))
+           || (strtol(p, &endptr, 10), (*endptr))) {
           *--p = ':';
           if (irp)
             Tcl_AppendResult(irp, "values must be integers: ", item[i], NULL);
@@ -1526,7 +1527,7 @@ static int tcl_channel_modify(Tcl_Interp *irp, struct chanset_t *chan,
           *--p = ':';
         }
       } else {
-        if (!strtol(item[i], &endptr, 10) && !(*endptr)) {
+        if ((*item[i]) && !strtol(item[i], &endptr, 10) && !(*endptr)) {
           *pthr = 0;  // Shortcut for .chanset #chan flood-x 0 to activate 0:0
           *ptime = 0;
         } else {
