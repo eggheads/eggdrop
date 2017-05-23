@@ -1515,6 +1515,7 @@ static void cmd_chanset(struct userrec *u, int idx, char *par)
          * just ignore any non global +n's trying to set the need-commands.
          */
         if (strncmp(list[0], "need-", 5) || (u->flags & USER_OWNER)) {
+          Tcl_Interp *irp = NULL;
           if (!strncmp(list[0], "need-", 5) && !(isowner(dcc[idx].nick)) &&
               must_be_owner) {
             dprintf(idx, "Due to security concerns, only permanent owners can set these modes.\n");
@@ -1527,13 +1528,16 @@ static void cmd_chanset(struct userrec *u, int idx, char *par)
            */
           parcpy = nmalloc(strlen(par) + 1);
           strcpy(parcpy, par);
-          if (tcl_channel_modify(0, chan, 2, list) == TCL_OK) {
+          irp = Tcl_CreateInterp();
+          if (tcl_channel_modify(irp, chan, 2, list) == TCL_OK) {
             char tocat[sizeof answers];
             egg_snprintf(tocat, sizeof tocat, "%s { %s }", list[0], parcpy);
             strncat(answers, tocat, sizeof answers - strlen(answers) - 1);
           } else if (!all || !chan->next)
-            dprintf(idx, "Error trying to set %s for %s, invalid option\n",
-                    list[0], all ? "all channels" : chname);
+            dprintf(idx, "Error trying to set %s for %s, %s\n",
+                    list[0], all ? "all channels" : chname, Tcl_GetStringResult(irp));
+          Tcl_ResetResult(irp);
+          Tcl_DeleteInterp(irp);
           nfree(parcpy);
         }
         break;
