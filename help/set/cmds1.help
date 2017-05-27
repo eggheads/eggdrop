@@ -19,9 +19,6 @@
    This setting defines which contact person should be shown in
    .status, /msg help, and other places. You really should include
    this information.
-%{help=set temp-path}%{+n}
-###  %bset temp-path%b <path>
-   Set here a place to store temporary files.
 %{help=set notify-newusers}%{+n}
 ###  %bset notify-newusers%b <nickname-list>
    Who should a note be sent to when new users are learned?

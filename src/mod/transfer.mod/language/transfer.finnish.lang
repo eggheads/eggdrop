@@ -1,7 +1,7 @@
 # transfer.finnish.lang
 #   kieli viestit siirto moduuliin
 
-0xf00,Ev‰t‰‰n dcc saanti %s: kopiointi %s PERUTTU!
+0xf00,Ev‰t‰‰n dcc saanti %s: kopiointi v√§liaikainen sijainti PERUTTU!
 0xf01,NOTICE %s :Tiedostoj‰rjestelm‰ on rikkoontunut; perutaan queue tiedostot.\n
 0xf02,NOTICE %s :T‰‰ll‰ on tiedosto  %s lta ...\n
 0xf03,DCC yhteydet t‰ynn‰: GET %s [%s]
@@ -27,7 +27,7 @@
 0xf17,NOTICE %s :Tiedostonimen %d pituus liian PITKƒ!\n
 0xf18,Liian Huono Kuten Is‰si!
 0xf19,NOTICE %s :Liian Huono Kuten Is‰si!\n
-0xf1a,PERUUTETTU siirto `%s' `%s'! Tiedosto kadonnut!
+0xf1a,PERUUTETTU siirto `%s' v√§liaikainen sijainti! Tiedosto kadonnut!
 0xf1b,Kiitos tiedostosta!\n
 0xf1c,NOTICE %s :Kiitos tiedostosta!\n
 0xf1d,Hukataan k‰ytt‰j‰tiedoston siirto %s; perutaan.

@@ -92,7 +92,7 @@ static void flush_fileq(char *to)
 static void send_next_file(char *to)
 {
   fileq_t *q, *this = NULL;
-  char *s, *s1;
+  char *s;
   int x;
 
   for (q = fileq; q; q = q->next)
@@ -118,23 +118,6 @@ static void send_next_file(char *to)
     sprintf(s, "%s%s%s", p, p[0] ? "/" : "", this->file);
     strcpy(this->dir, &(p[atoi(this->dir)]));
   }
-  if (copy_to_tmp) {
-    s1 = nmalloc(strlen(tempdir) + strlen(this->file) + 1);
-    sprintf(s1, "%s%s", tempdir, this->file);
-    if (copyfile(s, s1) != 0) {
-      putlog(LOG_FILES | LOG_MISC, "*", TRANSFER_COPY_FAILED, this->file,
-             tempdir);
-      dprintf(DP_HELP, TRANSFER_FILESYS_BROKEN, this->to);
-      strcpy(s, this->to);
-      flush_fileq(s);
-      nfree(s1);
-      nfree(s);
-      return;
-    }
-  } else {
-    s1 = nmalloc(strlen(s) + 1);
-    strcpy(s1, s);
-  }
   if (this->dir[0] == '*') {
     s = nrealloc(s, strlen(&this->dir[1]) + strlen(this->file) + 2);
     sprintf(s, "%s/%s", &this->dir[1], this->file);
@@ -142,24 +125,24 @@ static void send_next_file(char *to)
     s = nrealloc(s, strlen(this->dir) + strlen(this->file) + 2);
     sprintf(s, "%s%s%s", this->dir, this->dir[0] ? "/" : "", this->file);
   }
-  x = raw_dcc_send(s1, this->to, this->nick, s);
+  x = raw_dcc_send(s, this->to, this->nick);
   if (x == DCCSEND_OK) {
     if (egg_strcasecmp(this->to, this->nick))
       dprintf(DP_HELP, TRANSFER_FILE_ARRIVE, this->to, this->nick);
     deq_this(this);
-    nfree(s);
-    nfree(s1);
-    return;
-  }
-  wipe_tmp_filename(s1, -1);
-  if (x == DCCSEND_FULL) {
-    putlog(LOG_FILES, "*", TRANSFER_LOG_CONFULL, s1, this->nick);
+  } else if (x == DCCSEND_FULL) {
+    putlog(LOG_FILES, "*", TRANSFER_LOG_CONFULL, s, this->nick);
     dprintf(DP_HELP, TRANSFER_NOTICE_CONFULL, this->to);
     strcpy(s, this->to);
     flush_fileq(s);
   } else if (x == DCCSEND_NOSOCK) {
-    putlog(LOG_FILES, "*", TRANSFER_LOG_SOCKERR, s1, this->nick);
+    putlog(LOG_FILES, "*", TRANSFER_LOG_SOCKERR, s, this->nick);
     dprintf(DP_HELP, TRANSFER_NOTICE_SOCKERR, this->to);
+    strcpy(s, this->to);
+    flush_fileq(s);
+  } else if (x == DCCSEND_FCOPY) {
+    putlog(LOG_FILES | LOG_MISC, "*", TRANSFER_COPY_FAILED, this->file);
+    dprintf(DP_HELP, TRANSFER_FILESYS_BROKEN, this->to);
     strcpy(s, this->to);
     flush_fileq(s);
   } else {
@@ -170,7 +153,6 @@ static void send_next_file(char *to)
     deq_this(this);
   }
   nfree(s);
-  nfree(s1);
 
   return;
 }
@@ -289,7 +271,6 @@ static void fileq_cancel(int idx, char *par)
         if (dcc[i].type == &DCC_GET)
           putlog(LOG_FILES, "*", TRANSFER_DCC_CANCEL, nfn, dcc[i].nick,
                  dcc[i].status, dcc[i].u.xfer->length);
-        wipe_tmp_filename(dcc[i].u.xfer->filename, i);
         atot++;
         matches++;
         killsock(dcc[i].sock);

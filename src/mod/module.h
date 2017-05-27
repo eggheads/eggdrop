@@ -244,7 +244,7 @@
 #define default_flags (*(int*)global[110])
 #define dcc_total (*(int*)global[111])
 /* 112 - 115 */
-#define tempdir ((char *)(global[112]))
+/* was tempdir -- UNUSED */
 #ifdef TLS
 #  define tls_vfyclients (*(int *)(global[113]))
 #  define tls_vfydcc (*(int *)(global[114]))
@@ -379,8 +379,8 @@
 #define sanitycheck_dcc ((int (*)(char *, char *, char *, char *))global[214])
 #define isowner ((int (*)(char *))global[215])
 /* 216 - 219 */
-/* 216: min_dcc_port -- UNUSED (guppy) */
-/* 217: max_dcc_port -- UNUSED (guppy) */
+#define fcopyfile ((int (*) (FILE *, char *))global[216])
+#define copyfilef ((int (*) (char *, FILE *))global[217])
 #define rfc_casecmp ((int(*)(char *, char *))(*(Function**)(global[218])))
 #define rfc_ncasecmp ((int(*)(char *, char *, int *))(*(Function**)(global[219])))
 /* 220 - 223 */

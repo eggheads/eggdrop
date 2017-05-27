@@ -24,6 +24,8 @@
 #define _EGG_MISC_FILE_H
 
 int copyfile(char *, char *);
+int copyfilef(char *, FILE *);
+int fcopyfile(FILE *, char *);
 int movefile(char *, char *);
 int file_readable(char *);
 

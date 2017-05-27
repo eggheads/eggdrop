@@ -46,7 +46,7 @@ extern struct userrec *userlist;
 extern log_t *logs;
 extern Tcl_Interp *interp;
 extern char ver[], botnetnick[], firewall[], motdfile[], userfile[], helpdir[],
-            tempdir[], moddir[], notify_new[], configfile[];
+            moddir[], notify_new[], configfile[];
 extern time_t now, online_since;
 extern int backgrd, term_z, con_chan, cache_hit, cache_miss, firewallport,
            default_flags, max_logs, conmask, protect_readonly, make_userfile,
@@ -397,11 +397,9 @@ void tell_settings(int idx)
   dprintf(idx, "Directories:\n");
 #ifndef STATIC
   dprintf(idx, "  Help   : %s\n", helpdir);
-  dprintf(idx, "  Temp   : %s\n", tempdir);
   dprintf(idx, "  Modules: %s\n", moddir);
 #else
   dprintf(idx, "  Help: %s\n", helpdir);
-  dprintf(idx, "  Temp: %s\n", tempdir);
 #endif
   fr.global = default_flags;
 
@@ -449,12 +447,9 @@ void reaffirm_owners()
 void chanprog()
 {
   int i;
-  FILE *f;
-  char s[161], rands[8];
 
   admin[0]   = 0;
   helpdir[0] = 0;
-  tempdir[0] = 0;
   conmask    = 0;
 
   for (i = 0; i < max_logs; i++)
@@ -519,25 +514,6 @@ void chanprog()
     if (helpdir[strlen(helpdir) - 1] != '/')
       strcat(helpdir, "/");
 
-  if (tempdir[0])
-    if (tempdir[strlen(tempdir) - 1] != '/')
-      strcat(tempdir, "/");
-
-  /* Test tempdir: it's vital. */
-
-  /* Possible file race condition solved by using a random string
-   * and the process id in the filename.
-   * FIXME: This race is only partitially fixed. We could still be
-   *        overwriting an existing file / following a malicious
-   *        link.
-   */
-  make_rand_str(rands, 7); /* create random string */
-  sprintf(s, "%s.test-%u-%s", tempdir, getpid(), rands);
-  f = fopen(s, "w");
-  if (f == NULL)
-    fatal(MISC_CANTWRITETEMP, 0);
-  fclose(f);
-  unlink(s);
   reaffirm_owners();
   check_tcl_event("userfile-loaded");
 }

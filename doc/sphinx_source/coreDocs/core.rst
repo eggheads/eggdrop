@@ -253,10 +253,6 @@ File and Directory Settings
     certain Tcl and DCC commands.
 
 
-  set temp-path "/tmp"
-    Set here a place to store temporary files.
-
-
   set motd "text/motd"
     The MOTD (Message Of The day) is displayed when people dcc chat or telnet
     to the bot. Look at doc/TEXT-SUBSTITUTIONS for options.

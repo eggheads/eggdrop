@@ -357,8 +357,7 @@ static int cmd_files(struct userrec *u, int idx, char *par)
   return 0;
 }
 
-static int _dcc_send(int idx, char *filename, char *nick, char *dir,
-                     int resend)
+static int _dcc_send(int idx, char *filename, char *nick, int resend)
 {
   int x;
   char *nfn, *buf = NULL;
@@ -366,9 +365,9 @@ static int _dcc_send(int idx, char *filename, char *nick, char *dir,
   if (strlen(nick) > NICKMAX)
     nick[NICKMAX] = 0;
   if (resend)
-    x = raw_dcc_resend(filename, nick, dcc[idx].nick, dir);
+    x = raw_dcc_resend(filename, nick, dcc[idx].nick);
   else
-    x = raw_dcc_send(filename, nick, dcc[idx].nick, dir);
+    x = raw_dcc_send(filename, nick, dcc[idx].nick);
   if (x == DCCSEND_FULL) {
     dprintf(idx, "Sorry, too many DCC connections.  (try again later)\n");
     putlog(LOG_FILES, "*", "DCC connections full: %sGET %s [%s]", filename,
@@ -399,9 +398,16 @@ static int _dcc_send(int idx, char *filename, char *nick, char *dir,
            dcc[idx].nick);
     return 0;
   }
-  nfn = strrchr(dir, '/');
+  if (x == DCCSEND_FCOPY) {
+    dprintf(idx, "Can't make temporary copy of file!\n");
+    putlog(LOG_FILES | LOG_MISC, "*",
+           "Refused dcc %sget %s: copy to temporary location FAILED!",
+           resend ? "re" : "", filename);
+    return 0;
+  }
+  nfn = strrchr(filename, '/');
   if (nfn == NULL)
-    nfn = dir;
+    nfn = filename;
   else
     nfn++;
 
@@ -425,7 +431,7 @@ static int _dcc_send(int idx, char *filename, char *nick, char *dir,
 
 static int do_dcc_send(int idx, char *dir, char *fn, char *nick, int resend)
 {
-  char *s = NULL, *s1 = NULL;
+  char *s = NULL;
   int x;
 
   if (nick && strlen(nick) > NICKMAX)
@@ -470,35 +476,8 @@ static int do_dcc_send(int idx, char *dir, char *fn, char *nick, int resend)
     my_free(s);
     return 1;
   }
-  if (copy_to_tmp) {
-    char *tempfn = mktempfile(fn);
-
-    /* Copy this file to /tmp, add a random prefix to the filename. */
-    s = nrealloc(s, strlen(dccdir) + strlen(dir) + strlen(fn) + 2);
-    sprintf(s, "%s%s%s%s", dccdir, dir, dir[0] ? "/" : "", fn);
-    s1 = nrealloc(s1, strlen(tempdir) + strlen(tempfn) + 1);
-    sprintf(s1, "%s%s", tempdir, tempfn);
-    my_free(tempfn);
-    if (copyfile(s, s1) != 0) {
-      dprintf(idx, "Can't make temporary copy of file!\n");
-      putlog(LOG_FILES | LOG_MISC, "*",
-             "Refused dcc %sget %s: copy to %s FAILED!",
-             resend ? "re" : "", fn, tempdir);
-      my_free(s);
-      my_free(s1);
-      return 0;
-    }
-  } else {
-    s1 = nrealloc(s1, strlen(dccdir) + strlen(dir) + strlen(fn) + 2);
-    sprintf(s1, "%s%s%s%s", dccdir, dir, dir[0] ? "/" : "", fn);
-  }
-  s = nrealloc(s, strlen(dir) + strlen(fn) + 2);
-  sprintf(s, "%s%s%s", dir, dir[0] ? "/" : "", fn);
-  x = _dcc_send(idx, s1, nick, s, resend);
-  if (x != DCCSEND_OK)
-    wipe_tmp_filename(s1, -1);
+  x = _dcc_send(idx, s, nick, resend);
   my_free(s);
-  my_free(s1);
   return x;
 }
 
@@ -815,11 +794,8 @@ static void filesys_dcc_send_hostresolved(int i)
           }
         }
       }
-    /* Put uploads in /tmp first */
-    s1 = nmalloc(strlen(tempdir) + strlen(dcc[i].u.xfer->filename) + 1);
-    sprintf(s1, "%s%s", tempdir, dcc[i].u.xfer->filename);
-    dcc[i].u.xfer->f = fopen(s1, "w");
-    my_free(s1);
+    /* Put uploads in a temp file first */
+    dcc[i].u.xfer->f = tmpfile();
     if (dcc[i].u.xfer->f == NULL) {
       dprintf(DP_HELP,
               "NOTICE %s :Can't create file `%s' (temp dir error)\n",

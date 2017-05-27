@@ -23,6 +23,7 @@
 #include "main.h"
 #include <sys/stat.h>
 #include <unistd.h>
+#include <stdio.h>
 #include <fcntl.h>
 #include "stat.h"
 
@@ -74,6 +75,86 @@ int copyfile(char *oldpath, char *newpath)
 #endif /* HAVE_FSYNC */
   close(fo);
   close(fi);
+  return 0;
+}
+
+/* Copy a file from one place to another (possibly erasing old copy).
+ *
+ * returns:  0 if OK
+ *           1 if can't open original file
+ *           3 if original file isn't normal
+ *           4 if ran out of disk space
+ */
+int copyfilef(char *oldpath, FILE *newfile)
+{
+  int fi, x;
+  char buf[512];
+  struct stat st;
+
+#ifndef CYGWIN_HACKS
+  fi = open(oldpath, O_RDONLY, 0);
+#else
+  fi = open(oldpath, O_RDONLY | O_BINARY, 0);
+#endif
+  if (fi < 0)
+    return 1;
+  fstat(fi, &st);
+  if (!(st.st_mode & S_IFREG)) {
+    close(fi);
+    return 3;
+  }
+  for (x = 1; x > 0;) {
+    x = read(fi, buf, sizeof buf);
+    if (x > 0) {
+      if (fwrite(buf, 1, x, newfile) < x) {      /* Couldn't write */
+        close(fi);
+        return 4;
+      }
+    }
+  }
+#ifdef HAVE_FSYNC
+  fsync(fileno(newfile));
+#endif /* HAVE_FSYNC */
+  close(fi);
+  return 0;
+}
+
+/* Copy a file from one place to another (possibly erasing old copy).
+ * Variant with oldfile being a FILE* (most notably for use with tmpfile())
+ *
+ * returns:  0 if OK
+ *           2 if can't open new file
+ *           3 if original file isn't normal
+ *           4 if ran out of disk space
+ */
+int fcopyfile(FILE *oldfile, char *newpath)
+{
+  int fo;
+  size_t x;
+  char buf[512];
+  struct stat st;
+
+  if (fstat(fileno(oldfile), &st) || !(st.st_mode & S_IFREG)) {
+    return 3;
+  }
+  fo = creat(newpath, (int) (st.st_mode & 0777));
+  if (fo < 0) {
+    return 2;
+  }
+  for (x = 1; x > 0;) {
+    x = fread(buf, 1, sizeof buf, oldfile);
+    if (x > 0) {
+      if (write(fo, buf, x) < x) {      /* Couldn't write */
+        close(fo);
+        unlink(newpath);
+        return 4;
+      }
+    }
+  }
+#ifdef HAVE_FSYNC
+  fsync(fo);
+#endif /* HAVE_FSYNC */
+  close(fo);
   return 0;
 }
 

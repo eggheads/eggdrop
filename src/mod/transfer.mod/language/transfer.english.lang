@@ -1,7 +1,7 @@
 # transfer.english.lang
 #   language messages for transfer module
 
-0xf00,Refused dcc get %s: copy to %s FAILED!
+0xf00,Refused dcc get %s: copy to temporary location FAILED!
 0xf01,NOTICE %s :File system is broken; aborting queued files.\n
 0xf02,NOTICE %s :Here is a file from %s ...\n
 0xf03,DCC connections full: GET %s [%s]
@@ -27,7 +27,7 @@
 0xf17,NOTICE %s :Filename %d length Way To LONG!\n
 0xf18,To Bad So Sad Your Dad!
 0xf19,NOTICE %s :To Bad So Sad Your Dad!\n
-0xf1a,FAILED move `%s' from `%s'! File lost!
+0xf1a,FAILED move `%s' from temporary location! File lost!
 0xf1b,Thanks for the file!\n
 0xf1c,NOTICE %s :Thanks for the file!\n
 0xf1d,Lost userfile transfer from %s; aborting.
