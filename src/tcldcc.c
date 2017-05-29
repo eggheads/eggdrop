@@ -1040,7 +1040,22 @@ static int tcl_listen STDVAR
   }
   pmap->realport = realport;
   pmap->mappedto = port;
-  putlog(LOG_MISC, "*", "Listening at telnet port %d (%s).", port, argv[2]);
+
+  // github issue #405
+  char listen_ip[dcc[idx].sockname.addrlen];
+  switch(dcc[idx].sockname.family) {
+    case AF_INET:
+      inet_ntop(AF_INET, &(dcc[idx].sockname.addr.s4.sin_addr), listen_ip, dcc[idx].sockname.addrlen);
+      break;
+    case AF_INET6:
+      inet_ntop(AF_INET6, &(dcc[idx].sockname.addr.s6.sin6_addr), listen_ip, dcc[idx].sockname.addrlen);
+      break;      
+    default:
+      strcpy(listen_ip, "UNKNOWN");
+      break;
+  }
+  putlog(LOG_MISC, "*", "Listening for telnet connections on %s:%d (%s).", listen_ip, port, argv[2]);
+
   return TCL_OK;
 }
 
