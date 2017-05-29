@@ -1511,8 +1511,8 @@ static int tcl_channel_modify(Tcl_Interp *irp, struct chanset_t *chan,
         return TCL_ERROR;
       }
       p = strchr(item[i], ':');
-      /* Check for valid X:Y, denying X, :Y and X: */
-      if (p && item[i] != p && *(p+1)) {
+      /* Check for valid X:Y, denying X, :Y, X: and X:Y:Z[:...] */
+      if (p && item[i] != p && *(p+1) && !strchr(p+1, ':')) {
         *p++ = 0;
         /* We don't care about strtol's return val, only what endptr holds */
         if ((strtol(item[i], &endptr, 10), (*endptr))
