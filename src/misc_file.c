@@ -79,6 +79,7 @@ int copyfile(char *oldpath, char *newpath)
 }
 
 /* Copy a file from one place to another (possibly erasing old copy).
+ * Variant with newfile being a FILE* (most notably for use with tmpfile())
  *
  * returns:  0 if OK
  *           1 if can't open original file
