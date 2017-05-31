@@ -34,6 +34,8 @@
 #undef global
 static Function *global = NULL;
 
+static char bf_mode[4];
+
 /* Each box takes up 4k so be very careful here */
 #define BOXES 3
 
@@ -460,10 +462,16 @@ static char *encrypt_string(char *key, char *str)
   } else if (!egg_strncasecmp(key, "cbc:", 4)) {
     return encrypt_string_cbc(key + 4, str);
 
+  } else if (!egg_strncasecmp(bf_mode, "ecb", sizeof bf_mode)) {
+    return encrypt_string_ecb(key, str);
+
+  } else if (!egg_strncasecmp(bf_mode, "cbc", sizeof bf_mode)) {
+    return encrypt_string_cbc(key, str);
+
   }
 
-  /* else */
-  return encrypt_string_cbc(key, str);
+  /* else ECB for now, change at v1.9.0! */
+  return encrypt_string_ecb(key, str);
 }
 
 /* Returned string must be freed when done with it!
@@ -598,6 +606,11 @@ static char *decrypt_string_cbc(char *key, char *str)
 static char *decrypt_string(char *key, char *str)
 {
   if (!egg_strncasecmp(key, "ecb:", 4)) {
+    if (str[0] == '*') {
+      /* ecb strings shouldn't start with * */
+      return decrypt_string_cbc(key + 4, str + 1);
+    }
+    /* else */
     return decrypt_string_ecb(key + 4, str);
 
   } else if (!egg_strncasecmp(key, "cbc:", 4)) {
@@ -661,6 +674,11 @@ static tcl_cmds mytcls[] = {
   {NULL,             NULL}
 };
 
+static tcl_strings my_tcl_strings[] = {
+  {"blowfish-use-mode", bf_mode, 3, 0},
+  {NULL,                NULL,    0, 0}
+};
+
 static char *blowfish_close()
 {
   return "You can't unload the encryption module";
@@ -709,6 +727,11 @@ char *blowfish_start(Function *global_funcs)
     add_hook(HOOK_ENCRYPT_STRING, (Function) encrypt_string);
     add_hook(HOOK_DECRYPT_STRING, (Function) decrypt_string);
   }
+
+  /* ECB by default for now, change at v1.9.0! */
+  strncpyz(bf_mode, "ecb", sizeof bf_mode);
   add_tcl_commands(mytcls);
+  add_tcl_strings(my_tcl_strings);
+  add_help_reference("blowfish.help");
   return NULL;
 }
