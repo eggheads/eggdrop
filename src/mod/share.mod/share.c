@@ -48,7 +48,7 @@ static Function *global = NULL, *transfer_funcs = NULL, *channels_funcs = NULL;
 
 static int private_global = 0;
 static int private_user = 0;
-static char private_globals[50];
+static char private_globals[51];
 static int allow_resync = 0;
 static struct flag_record fr = { 0, 0, 0, 0, 0, 0 };
 static int resync_time = 900;

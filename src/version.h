@@ -27,5 +27,5 @@
  */
 
 #define EGG_STRINGVER "1.8.1"
-#define EGG_NUMVER 1080107
-#define EGG_PATCH "altnick"
+#define EGG_NUMVER 1080108
+#define EGG_PATCH "getuserall"

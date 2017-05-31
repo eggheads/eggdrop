@@ -120,7 +120,7 @@ int term_z = 0;         /* Foreground: use the terminal as a partyline?  */
 int use_stderr = 1;     /* Send stuff to stderr instead of logfiles?     */
 
 char configfile[121] = "eggdrop.conf";  /* Default config file name */
-char pid_file[120];                     /* Name of the pid file     */
+char pid_file[121];                     /* Name of the pid file     */
 char helpdir[121] = "help/";            /* Directory of help files  */
 char textdir[121] = "text/";            /* Directory for text files */
 
@@ -130,7 +130,6 @@ int switch_logfiles_at = 300;           /* When to switch logfiles  */
 time_t online_since;    /* time that the bot was started */
 
 int make_userfile = 0; /* Using bot in userfile-creation mode? */
-char owner[121] = "";  /* Permanent owner(s) of the bot        */
 
 int save_users_at = 0;   /* Minutes past the hour to save the userfile?     */
 int notify_users_at = 0; /* Minutes past the hour to notify users of notes? */
@@ -589,6 +588,10 @@ static void do_arg()
   } else if (cliflags & 1) {
     show_ver();
     exit(0);
+  } else if (!(cliflags & 16) && ((cliflags & 8) || (cliflags & 4))) {
+    printf("\n%s\n", version);
+    printf("ERROR: The -n flag is required when using the -c or -t flags. Exiting...\n\n");
+    exit(1);
   } else if (argc > (optind + 1)) {
     printf("\n");
     printf("WARNING: More than one config file value detected\n");
@@ -1221,38 +1224,26 @@ int main(int arg_c, char **arg_v)
 
   /* Terminal emulating dcc chat */
   if (!backgrd && term_z) {
-    int n = new_dcc(&DCC_CHAT, sizeof(struct chat_info));
+    /* reuse term_z as glob var to pass it's index in the dcc table around */
+    term_z = new_dcc(&DCC_CHAT, sizeof(struct chat_info));
 
-    if (!n)
+    /* new_dcc returns -1 on error, and 0 should always be taken by the listening socket */
+    if (term_z < 1)
       fatal("ERROR: Failed to initialize foreground chat.", 0);
 
-    getvhost(&dcc[n].sockname, AF_INET);
-    dcc[n].sock = STDOUT;
-    dcc[n].timeval = now;
-    dcc[n].u.chat->con_flags = conmask;
-    dcc[n].u.chat->strip_flags = STRIP_ALL;
-    dcc[n].status = STAT_ECHO;
-    strcpy(dcc[n].nick, EGG_BG_HANDLE);
-    strcpy(dcc[n].host, "llama@console");
-    /* HACK: Workaround not to pass literal "HQ" as a non-const arg */
-    dcc[n].user = get_user_by_handle(userlist, dcc[n].nick);
-    /* Make sure there's an innocuous HQ user if needed */
-    if (!dcc[n].user) {
-      userlist = adduser(userlist, dcc[n].nick, "none", "-", USER_PARTY);
-      dcc[n].user = get_user_by_handle(userlist, dcc[n].nick);
-    }
-    /* Give all useful flags: efjlmnoptuvx */
-    dcc[n].user->flags = USER_EXEMPT | USER_FRIEND | USER_JANITOR |
-                         USER_HALFOP | USER_MASTER | USER_OWNER | USER_OP |
-                         USER_PARTY | USER_BOTMAST | USER_UNSHARED |
-                         USER_VOICE | USER_XFER;
-    /* Add to permowner list if there's place */
-    if (strlen(owner) + sizeof EGG_BG_HANDLE < sizeof owner)
-      strcat(owner, " " EGG_BG_HANDLE);
+    getvhost(&dcc[term_z].sockname, AF_INET);
+    dcc[term_z].sock = STDOUT;
+    dcc[term_z].timeval = now;
+    dcc[term_z].u.chat->con_flags = conmask;
+    dcc[term_z].u.chat->strip_flags = STRIP_ALL;
+    dcc[term_z].status = STAT_ECHO;
+    strcpy(dcc[term_z].nick, EGG_BG_HANDLE);
+    strcpy(dcc[term_z].host, "llama@console");
+    add_hq_user();
     setsock(STDOUT, 0);          /* Entry in net table */
-    dprintf(n, "\n### ENTERING DCC CHAT SIMULATION ###\n");
-    dprintf(n, "You can use the .su command to log into your Eggdrop account.\n\n");
-    dcc_chatter(n);
+    dprintf(term_z, "\n### ENTERING DCC CHAT SIMULATION ###\n");
+    dprintf(term_z, "You can use the .su command to log into your Eggdrop account.\n\n");
+    dcc_chatter(term_z);
   }
 
   then = now;
