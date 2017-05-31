@@ -1040,7 +1040,9 @@ static int tcl_listen STDVAR
   }
   pmap->realport = realport;
   pmap->mappedto = port;
-  putlog(LOG_MISC, "*", "Listening at telnet port %d (%s).", port, argv[2]);
+
+  putlog(LOG_MISC, "*", "Listening for telnet connections on %s:%d (%s).", iptostr(&dcc[idx].sockname.addr.sa), port, argv[2]);
+
   return TCL_OK;
 }
 
