@@ -1514,12 +1514,12 @@ static int tcl_channel_modify(Tcl_Interp *irp, struct chanset_t *chan,
       /* Check for valid X:Y, denying X, :Y, X: and X:Y:Z[:...] */
       if (p && item[i] != p && *(p+1) && !strchr(p+1, ':')) {
         *p++ = 0;
-        /* We don't care about strtol's return val, only what endptr holds */
-        if ((strtol(item[i], &endptr, 10), (*endptr))
-           || (strtol(p, &endptr, 10), (*endptr))) {
+        /* strtol's return val should not be negative and endptr be NULL */
+        if (strtol(item[i], &endptr, 10) < 0 || (*endptr)
+           || strtol(p, &endptr, 10) < 0 || (*endptr)) {
           *--p = ':';
           if (irp)
-            Tcl_AppendResult(irp, "values must be integers: ", item[i], NULL);
+            Tcl_AppendResult(irp, "values must be integers >= 0: ", item[i], NULL);
           return TCL_ERROR;
         } else {
           *pthr = atoi(item[i]);
