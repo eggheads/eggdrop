@@ -291,7 +291,7 @@ static void eof_dcc_send(int idx)
     if (copy_to_tmp && (l = fcopyfile(dcc[idx].u.xfer->f, nfn))) {
       putlog(LOG_MISC | LOG_FILES, "*", TRANSFER_FAILED_MOVE, nfn);
     }
-    /* Only close now in case it was a tmpfile, as it's delled upon close */
+    /* Only close now in case it was a tmpfile, as it's deleted upon close */
     fclose(dcc[idx].u.xfer->f);
 
     /* lookup handle */
