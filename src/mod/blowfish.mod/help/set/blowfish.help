@@ -1,0 +1,9 @@
+%{help=set blowfish-use-mode}%{+n}
+###  %bset blowfish-use-mode%b <ecb/cbc>
+   The mode used for the "encrypt" and "decrypt" functions. ECB is used by
+   default, from v1.9.0 on it will be CBC.
+%{help=blowfish settings}%{+n}
+###  Settings for the %bblowfish module%b
+   This is a list of the Tcl variables the can be used to setup
+   the blowfish module.
+     %bblowfish-use-mode%b

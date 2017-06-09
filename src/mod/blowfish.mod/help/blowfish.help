@@ -1,0 +1,7 @@
+%{help=blowfish module}%{+n}
+###  %bblowfish module%b
+   This module provides support for encryption and decryption using blowfish.
+
+   Config file variables for configuring the blowfish module:
+      %bblowfish-use-mode%b
+   (Use %b'.help set <variable>'%b for more info)
