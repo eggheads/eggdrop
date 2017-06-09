@@ -270,10 +270,6 @@ FILE AND DIRECTORY SETTINGS
       Specify here where Eggdrop should look for text files. This is
       used for certain Tcl and DCC commands.
 
-  set temp-path "/tmp"
-
-      Set here a place to store temporary files.
-
   set motd "text/motd"
 
       The MOTD (Message Of The day) is displayed when people dcc chat or

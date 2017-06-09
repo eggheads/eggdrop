@@ -1,7 +1,7 @@
 # transfer.french.lang
 #   language messages for transfer module
 
-0xf00,Refus de réception dcc %s : copie de %s IMPOSSIBLE !
+0xf00,Refus de réception dcc %s : copie au emplacement temporaire IMPOSSIBLE !
 0xf01,NOTICE %s :Le système de fichier est H.S.; annulation des fichiers en attente.\n
 0xf02,NOTICE %s :Voici un fichier de %s ...\n
 0xf03,Plus de connexions DCC : GET %s [%s]
@@ -27,7 +27,7 @@
 0xf17,NOTICE %s :Longueur du fichier %d beaucoup TROP GROSSE !\n
 0xf18,T'as mal !
 0xf19,NOTICE %s :T'as mal !\n
-0xf1a,Déplacement RATÉ `%s' depuis `%s' ! Fichier perdu !
+0xf1a,Déplacement RATÉ `%s' de l'emplacement temporaire ! Fichier perdu !
 0xf1b,Merci pour le fichier !\n
 0xf1c,NOTICE %s : Merci pour le fichier !\n
 0xf1d,Transfert de la liste d'utilisateurs de %s perdu; annulation .

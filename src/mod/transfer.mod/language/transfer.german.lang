@@ -1,7 +1,7 @@
 # transfer.german.lang
 #   language messages for transfer module
 
-0xf00,DCC get zurueckgewiesen %s: kopieren nach %s schlug fehl!
+0xf00,DCC get zurueckgewiesen %s: kopieren nach voruebergehende Lage schlug fehl!
 0xf01,NOTICE %s :Das Dateisystem ist defekt; entferne die Dateien aus der Warteschlange.\n
 0xf02,NOTICE %s :Hier ist eine Datei von %s ...\n
 0xf03,DCC Verbindungen voll: GET %s [%s]
@@ -27,7 +27,7 @@
 0xf17,NOTICE %s :Dateiname hat Laenge %d. Viel zu lang!\n
 0xf18,Pech gehabt!
 0xf19,NOTICE %s :Pech gehabt!\n
-0xf1a,FEHLER Bewegen `%s' von `%s'! Datei verloren!
+0xf1a,FEHLER Bewegen `%s' von voruebergehende Lage! Datei verloren!
 0xf1b,Danke fuer die Datei!\n
 0xf1c,NOTICE %s :Danke fuer die Datei!\n
 0xf1d,Userfile Transfer von %s verloren; breche ab.

@@ -28,7 +28,8 @@ enum dccsend_types {
   DCCSEND_FULL,                 /* DCC table is full                    */
   DCCSEND_NOSOCK,               /* Can not open a listening socket      */
   DCCSEND_BADFN,                /* No such file                         */
-  DCCSEND_FEMPTY                /* File is empty                        */
+  DCCSEND_FEMPTY,               /* File is empty                        */
+  DCCSEND_FCOPY                 /* File failed to copy to tmpfile       */
 };
 
 /* File matching */
@@ -108,18 +109,18 @@ enum dccsend_types {
 #define fileq_cancel(a,b) (((void (*) (int,char *))transfer_funcs[7])(a,b))
 /* 8 - 11 */
 #define queue_file(a,b,c,d) (((void (*)(char *,char *,char *,char *))transfer_funcs[8])(a,b,c,d))
-#define raw_dcc_send(a,b,c,d) (((int (*) (char *,char *,char *,char *))transfer_funcs[9])(a,b,c,d))
+#define raw_dcc_send(a,b,c) (((int (*) (char *,char *,char *))transfer_funcs[9])(a,b,c))
 #define show_queued_files(a) (((void (*) (int))transfer_funcs[10])(a))
 #define wild_match_file(a,b) (((int (*)(register char *, register char *))transfer_funcs[11])(a,b))
 /* 12 - 15 */
-#define wipe_tmp_filename(a,b) (((void (*) (char *,int))transfer_funcs[12])(a,b))
+/* Was wipe_tmp_filename (obsoleted) */
 #define DCC_GET (*(struct dcc_table *)(transfer_funcs[13]))
 #define H_rcvd (*(p_tcl_bind_list*)(transfer_funcs[14]))
 #define H_sent (*(p_tcl_bind_list*)(transfer_funcs[15]))
 /* 16 - 19 */
 #define USERENTRY_FSTAT (*(struct user_entry_type *)(transfer_funcs[16]))
 /* Was quiet_reject (moved to core) <Wcc[01/20/03]>. */
-#define raw_dcc_resend(a,b,c,d) (((int (*) (char *,char *,char *,char *))transfer_funcs[18])(a,b,c,d))
+#define raw_dcc_resend(a,b,c) (((int (*) (char *,char *,char *))transfer_funcs[18])(a,b,c))
 #define H_lost (*(p_tcl_bind_list*)(transfer_funcs[19]))
 /* 20 - 23 */
 #define H_tout (*(p_tcl_bind_list*)(transfer_funcs[20]))
@@ -131,11 +132,10 @@ enum dccsend_types {
 static void dcc_fork_send(int, char *, int);
 static void stats_add_dnload(struct userrec *, unsigned long);
 static void stats_add_upload(struct userrec *, unsigned long);
-static void wipe_tmp_filename(char *, int);
 static void dcc_get_pending(int, char *, int);
 static void queue_file(char *, char *, char *, char *);
-static int raw_dcc_resend(char *, char *, char *, char *);
-static int raw_dcc_send(char *, char *, char *, char *);
+static int raw_dcc_resend(char *, char *, char *);
+static int raw_dcc_send(char *, char *, char *);
 static int at_limit(char *);
 static int fstat_gotshare(struct userrec *u, struct user_entry *e, char *par,
                           int idx);

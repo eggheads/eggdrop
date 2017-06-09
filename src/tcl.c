@@ -44,10 +44,10 @@ typedef struct {
 extern time_t online_since;
 
 extern char origbotname[], botuser[], motdfile[], admin[], userfile[],
-            firewall[], helpdir[], notify_new[], vhost[], moddir[],
-            tempdir[], owner[], network[], botnetnick[], bannerfile[],
-            egg_version[], natip[], configfile[], logfile_suffix[], log_ts[],
-            textdir[], pid_file[], listen_ip[];
+            firewall[], helpdir[], notify_new[], vhost[], moddir[], owner[],
+            network[], botnetnick[], bannerfile[], egg_version[], natip[],
+            configfile[], logfile_suffix[], log_ts[], textdir[], pid_file[],
+            listen_ip[];
 
 
 extern int flood_telnet_thr, flood_telnet_time, shtime, share_greet,
@@ -374,7 +374,6 @@ static tcl_strings def_tcl_strings[] = {
   {"motd",            motdfile,       120,           STR_PROTECT},
   {"admin",           admin,          120,                     0},
   {"help-path",       helpdir,        120, STR_DIR | STR_PROTECT},
-  {"temp-path",       tempdir,        120, STR_DIR | STR_PROTECT},
   {"text-path",       textdir,        120, STR_DIR | STR_PROTECT},
 #ifdef TLS
   {"ssl-capath",      tls_capath,     120, STR_DIR | STR_PROTECT},

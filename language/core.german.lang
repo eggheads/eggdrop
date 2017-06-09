@@ -130,7 +130,7 @@ Baue eine Telnetverbindung zu dem Bot auf und gib 'NEW' als Deinen Nickname ein.
 0x537,ODER gehe ins IRC und:  /msg %s hello\n
 0x538,Dies macht Dich zum Master des Bots.
 0x539,BENUTZERDATEI EXISTIERT BEREITS (bitte das '-m' weglassen)
-0x53a,KANN NICHT IN DAS TEMPORAERE VERZEICHNIS SCHREIBEN
+# 0x53a - unused / Unbenutzt
 0x53b,Kann die Benutzerdatei nicht neu laden!
 0x53c,Benutzerdatei fehlt!
 0x53e,%B  (%E)\n\nBitte gib Deinen Nickname ein:\n

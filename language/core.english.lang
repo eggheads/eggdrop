@@ -122,7 +122,7 @@ Telnet to the bot and enter 'NEW' as your nickname.
 0x537,OR go to IRC and type:  /msg %s hello\n
 0x538,This will make the bot recognize you as the master.
 0x539,USERFILE ALREADY EXISTS (drop the '-m')
-0x53a,CAN'T WRITE TO TEMP DIR
+# 0x53a - unused
 0x53b,Can't reload user file!
 0x53c,User file is missing!
 0x53e,%B  (%E)\n\nPlease enter your nickname.\n

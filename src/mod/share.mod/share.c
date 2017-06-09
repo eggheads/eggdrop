@@ -1926,7 +1926,7 @@ static void start_sending_users(int idx)
     return;
   }
 
-  if ((i = raw_dcc_send(share_file, "*users", "(users)", share_file)) > 0) {
+  if ((i = raw_dcc_send(share_file, "*users", "(users)")) > 0) {
     unlink(share_file);
     dprintf(idx, "s e %s\n", USERF_CANTSEND);
     putlog(LOG_BOTS, "*", "%s -- can't send userfile",

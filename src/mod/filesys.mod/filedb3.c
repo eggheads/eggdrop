@@ -1052,21 +1052,11 @@ static void remote_filereq(int idx, char *from, char *file)
         reject = FILES_NOSHARE;
       else {
         s1 = nmalloc(strlen(dccdir) + strlen(dir) + strlen(what) + 2);
-        /* Copy to /tmp if needed */
         sprintf(s1, "%s%s%s%s", dccdir, dir, dir[0] ? "/" : "", what);
-        if (copy_to_tmp) {
-          s = nmalloc(strlen(tempdir) + strlen(what) + 1);
-          sprintf(s, "%s%s", tempdir, what);
-          copyfile(s1, s);
-        } else
-          s = s1;
-        i = raw_dcc_send(s, "*remote", FILES_REMOTE, s);
+        i = raw_dcc_send(s1, "*remote", FILES_REMOTE);
         if (i > 0) {
-          wipe_tmp_filename(s, -1);
           reject = FILES_SENDERR;
         }
-        if (s1 != s)
-          my_free(s);
         my_free(s1);
       }
       free_fdbe(&fdbe);

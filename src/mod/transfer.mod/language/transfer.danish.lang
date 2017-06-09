@@ -1,7 +1,7 @@
 # transfer.danish.lang
 #   language messages for transfer module
 
-0xf00,Afviste dcc get %s: kopi til %s FEJLEDE!
+0xf00,Afviste dcc get %s: kopi til midlertidig placering FEJLEDE!
 0xf01,NOTICE %s :Filsystem fejl; fjerner filer fra køen.\n
 0xf02,NOTICE %s :Her er en fil fra %s ...\n
 0xf03,DCC forbindelser fyldt: GET %s [%s]
@@ -27,7 +27,7 @@
 0xf17,NOTICE %s :Filnavn %d længde alt for LANG!\n
 0xf18,To Bad So Sad Your Dad!
 0xf19,NOTICE %s :To Bad So Sad Your Dad!\n
-0xf1a,FEJLEDE flyt `%s' fra `%s'! Fil mistet!
+0xf1a,FEJLEDE flyt `%s' fra midlertidig placering! Fil mistet!
 0xf1b,Tak for filen!\n
 0xf1c,NOTICE %s :Tak for filen!\n
 0xf1d,Mistede brugerfil overførsel fra %s; annullerer.

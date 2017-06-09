@@ -82,9 +82,8 @@ extern struct dcc_t *dcc;
 extern struct userrec *userlist, *lastuser;
 extern struct chanset_t *chanset;
 
-extern char tempdir[], botnetnick[], botname[], origbotname[], botuser[],
-            admin[], userfile[], ver[], notify_new[], helpdir[], version[],
-                        quit_msg[], log_ts[];
+extern char botnetnick[], botname[], origbotname[], botuser[], ver[], log_ts[],
+            admin[], userfile[], notify_new[], helpdir[], version[], quit_msg[];
 
 extern int parties, noshare, dcc_total, egg_numver, userfile_perm, do_restart,
            ignore_time, must_be_owner, raw_log, max_dcc, make_userfile,
@@ -354,7 +353,7 @@ Function global_table[] = {
   (Function) & default_flags,     /* int                                 */
   (Function) & dcc_total,         /* int                                 */
   /* 112 - 115 */
-  (Function) tempdir,             /* char *                              */
+  (Function) 0,                   /* was tempdir                         */
 #ifdef TLS
   (Function) & tls_vfyclients,    /* int                                 */
   (Function) & tls_vfydcc,        /* int                                 */
@@ -489,8 +488,8 @@ Function global_table[] = {
   (Function) sanitycheck_dcc,
   (Function) isowner,
   /* 216 - 219 */
-  (Function) 0,                   /* min_dcc_port -- UNUSED! (guppy)     */
-  (Function) 0,                   /* max_dcc_port -- UNUSED! (guppy)     */
+  (Function) fcopyfile,
+  (Function) copyfilef,
   (Function) & rfc_casecmp,       /* Function *                          */
   (Function) & rfc_ncasecmp,      /* Function *                          */
   /* 220 - 223 */
