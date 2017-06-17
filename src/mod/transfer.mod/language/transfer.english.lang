@@ -23,10 +23,10 @@
 0xf13,No matches.\n
 0xf14,Cancelled %d file%s.\n
 0xf15,Completed dcc send %s from %s!%s
-0xf16,Filename %d length. Way To LONG.
-0xf17,NOTICE %s :Filename %d length Way To LONG!\n
-0xf18,To Bad So Sad Your Dad!
-0xf19,NOTICE %s :To Bad So Sad Your Dad!\n
+0xf16,Filename %d length way too long.
+0xf17,NOTICE %s :Filename %d length way too LONG!\n
+0xf18,Too Bad So Sad Your Dad!
+0xf19,NOTICE %s :Too Bad So Sad Your Dad!\n
 0xf1a,FAILED move `%s' from temporary location! File lost!
 0xf1b,Thanks for the file!\n
 0xf1c,NOTICE %s :Thanks for the file!\n
