@@ -3,7 +3,7 @@
 
 0xc000,  Reencaminhar notas para: %.70s\n
 0xc001,Trocadas %d nota%s de %s para %s.
-0xc002,Expiradas %d nota%s
+0xc002,Expirada(s) %d nota%s
 0xc003,Não está online; reencaminhando para %s.\n
 0xc004,Notas não são suportadas por este bot.
 0xc005,Lamento, esse utilizador já tem demasiadas notas.
@@ -13,7 +13,7 @@
 0xc009,Não tens mensagens
 0xc00a, -- EXPIRAM HOJE
 0xc00b, -- EXPIRAM EM %d DIA%s
-0xc00c,Tens as seguintes nota(s) à espera de serem lidas
+0xc00c,Tens a(s) seguinte(s) nota(s) à espera de ser(em) lida(s)
 0xc00d,Não tens assim tantas mensagens
 0xc00e,Usa '.notes read' para as ler.
 0xc00f,Impossivel modificar o ficheiro de notas
