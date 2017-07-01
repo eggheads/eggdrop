@@ -28,8 +28,6 @@ package require textutil::adjust
 
 # TODO: automatic -i/-e arguments. sort order of git tag --list --sort=v:refname is stable.
 # TODO: shortlogs without * on every line, esp. on linebreaks
-# TODO: shortlogs might need to expand old (cvs/oneline) formatted lists
-# TODO: shortlogs fails to mention found by/patch by properly
 # TODO: performance improvements (by reading .git/ directly?)
 
 proc get_usage {} {
