@@ -41,6 +41,7 @@ proc get_usage {} {
 		{} {Options (general):}
 		{-d           - Verbose debug logging}
 		{-r <remote>  - Specify remote for tags and public branches}
+		{-l           - Skip fetching from remote. ONLY use this on a fresh clone!}
 		{} {Options (short):}
 		{-e <version> - Specify ref to exclude with ancestors}
 		{-i <version> - Specify ref to include with ancestors}
@@ -114,7 +115,7 @@ proc mustexec {cmd msg} {
 }
 
 proc parsecmdline {argv} {
-	global verbose
+	global verbose local
 	if {![llength $argv]} {
 		fatal "" 1
 	}
@@ -122,12 +123,14 @@ proc parsecmdline {argv} {
 		set $var ""
 	}
 	set verbose 0
+	set local 0
 	while {[llength $argv]} {
 		set arg [pop argv]
 		if {[string index $arg 0] eq "-"} {
 			for {set i 1} {$i < [string length $arg]} {incr i} {
 				set c [string index $arg $i]
 				switch -exact -- $c {
+					"l" { set local 1 }
 					"r" { set remote [pop argv] }
 					"d" { set verbose 1 }
 					"v" { set version [pop argv] }
@@ -229,8 +232,11 @@ proc cfgremote {remote} {
 }
 
 proc fetchremote {} {
-	global remote
-
+	global remote local
+	if {$local} {
+		log "Operating locally only, skipping branches/tags-fetch."
+		return
+	}
 	log "Updating tags and branches from remote '$remote'. Branches first..."
 	mustexec [list -ignorestderr git fetch $remote] "Could not fetch from remote"
 	log "Branches updated. Fetching tags..."
