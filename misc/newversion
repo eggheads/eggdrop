@@ -49,8 +49,15 @@ git reset HEAD -- .
 
 echo ""
 # Generate ChangeLog
-echo -n "Generating ChangeLog..."
-git log $(git rev-list -n 1 v${OLD_EGGVERSION})..HEAD --name-only --no-merges --pretty=format:"- - - - - - - - - - - - - - -%n%w(75)Commit %h (%ai) by %aN%n %s %n %b" > ChangeLog
+#git log $(git rev-list -n 1 v${OLD_EGGVERSION})..HEAD --name-only --no-merges --pretty=format:"- - - - - - - - - - - - - - -%n%w(75)Commit %h (%ai) by %aN%n %s %n %b" > ChangeLog
+MAX=$(echo ${OLD_EGGVERSION}| cut -d "." -f 3)
+MAJOR=$(echo ${OLD_EGGVERSION}| rev| cut -d "." -f2- |rev)
+MINOR=0
+while [ $MINOR -le $MAX ]; do
+  INCLUDE="${INCLUDE} -i v${MAJOR}.${MINOR}"
+  MINOR=$(expr $MINOR + 1)
+done
+misc/genchanges -l $INCLUDE -i develop -r origin full > ChangeLog
 git add ChangeLog
 git commit -m "Generate ChangeLog for ${NEW_EGGVERSION}" > /dev/null
 echo " done."
