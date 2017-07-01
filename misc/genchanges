@@ -37,21 +37,21 @@ proc get_usage {} {
 		{Syntax: $::argv0 \[options\] <command>} {} {Commands:}
 		{short        - Generate short changelog (doc/ChangesX.Y)}
 		{full         - Generate full changelog (ChangeLog)}
-		{release      - OVERWRITE ChangeLog and doc/ChangesX.Y}
+		{release      - OVERWRITE ChangeLog and doc/ChangesX.Y (don't use, not done)}
 		{} {Options (general):}
 		{-d           - Verbose debug logging}
 		{-r <remote>  - Specify remote for tags and public branches}
 		{} {Options (short):}
 		{-e <version> - Specify ref to exclude with ancestors}
 		{-i <version> - Specify ref to include with ancestors}
-		{-n <version> - Specify the upcoming version}
+		{-v <version> - Specify the upcoming version}
 		{} {Examples:}
 		{  Generate doc/Changes1.8 for v1.8.2rc3:}
-		{    $::argv0 -e v1.6.21 -i v1.8.1 -i v1.8.2 -i stable/1.8 -n 1.8.2rc3 short}
+		{    $::argv0 -e v1.6.21 -i v1.8.1 -i v1.8.2 -i stable/1.8 -v 1.8.2rc3 short}
 		{  Generate doc/Changes1.8 for v1.8.3 final (make sure version order is correct at the end):}
-		{    $::argv0 -e v1.6.21 -i "v1.8.*" -i stable/1.8 -n 1.8.3 short}
+		{    $::argv0 -e v1.6.21 -i "v1.8.*" -i stable/1.8 -v 1.8.3 short}
 		{  Generate ChangeLog for v1.8.3 final:}
-		{    $::argv0 -i stable/1.8}
+		{    $::argv0 -i stable/1.8 full}
 	} \n]]
 }
 
@@ -284,6 +284,8 @@ proc cmd:release {} {
 	zlib push gzip $fs -level 9
 	puts $fs [string trim $full \n]
 	close $fs
+	log "Exiting, TODO: remove this when shortlog is done!"
+	exit 0
 	log "Writing doc/Changes$major"
 	set fs [open doc/Changes$major w]
 	puts $fs [string trim $short \n]
@@ -351,8 +353,9 @@ proc getcommitinfo:fullbody {commit} {
 	set msg [getcommitinfofield fullbody $commit]
 	if {[string index $commit 0] in {"*" "-"}} {
 		set lines [lmap x [split $commit [string index $commit 0]] { set x [string trim $x]; expr {$x eq "" ? [continue] : "* $x"} }]
+		return [join $lines \n]
 	}
-	join $lines \n
+	return $msg
 }
 
 proc getcommitinfofield {field commit} {
