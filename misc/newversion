@@ -78,8 +78,6 @@ misc/genchanges -l -e v1.6.21 -e v1.8.0 $INCLUDE -i develop -v "" -r origin shor
 git add doc/Changes1.8
 git commit -m "Generate ChangeLog/Changes files for ${NEW_EGGVERSION}" > /dev/null
 
-exit
-
 # Remove patchlevel.
 echo -n "Setting alpha patchlevel for a stable release..."
 misc/setpatch alpha >/dev/null
