@@ -64,10 +64,8 @@ git fetch -t origin
 misc/genchanges -l $INCLUDE -i develop -r origin full > ChangeLog
 gzip -f ChangeLog
 git add ChangeLog.gz
-echo " done."
 
 #Generate doc/ChangesX.Y file
-echo "Now just the doc/ChangesX.Y file..."
 MINOR=1
 INCLUDE=""
 while [ $MINOR -le $MAX ]; do
@@ -134,7 +132,4 @@ echo "Docs version string:"
 grep "^version = .*" doc/sphinx_source/conf.py
 echo ""
 echo "Complete."
-echo ""
-echo ""
-echo "Don't forget to add $NEW_EGGVERSION to the current doc/Changes file."
 echo ""

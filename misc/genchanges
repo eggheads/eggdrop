@@ -292,7 +292,6 @@ proc cmd:release {} {
 	set fs [open doc/Changes$major w]
 	puts $fs [string trim $short \n]
 	close $fs
-	return "Done."
 }
 
 proc clean {data} {
@@ -441,7 +440,7 @@ proc cmd:full {} {
 		}
 		lappend result [join $this \n]
 	}
-	log "\nDone"
+	log ""
 	return [clean [join $result \n[string repeat - 120]\n]]
 }
 
@@ -574,7 +573,7 @@ proc cmd:short {} {
 			set thisversion ""
 		}
 	}
-	log "\nDone"
+	log ""
 	dict set result $version $thisversion
 	set log [finalformatshortlog $result]
 	return [clean "Eggdrop Changes (Last Updated [clock format [clock seconds] -gmt 1 -format "%Y-%m-%d"]):\n__________________________________________\n\n$log\n\n[zlib decompress [base64::decode $::suffix]]"]
