@@ -536,7 +536,7 @@ proc cmd:short {} {
 		set newfiles ""
 		foreach file $files {
 			set fn [lindex [file split $file] end]
-			if {$file in {src/patch.h src/version.h} || $fn in {configure}} {
+			if {$file in {src/patch.h src/version.h ChangeLog.gz ChangeLog} || [string match doc/Changes?.* $file] || $fn in {configure}} {
 				continue
 			}
 			lappend newfiles $file
