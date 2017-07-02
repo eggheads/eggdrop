@@ -59,9 +59,6 @@ while [ $MINOR -le $MAX ]; do
   INCLUDE="${INCLUDE} -i v${MAJOR}.${MINOR}"
   MINOR=$(expr $MINOR + 1)
 done
-if [ $(git branch --list ${TRIMVERSION}) ]; then
-  INCLUDE="${INCLUDE} -i release/${TRIMVERSION}"
-fi
 git fetch origin
 git fetch -t origin
 misc/genchanges -l $INCLUDE -i develop -r origin full > ChangeLog
@@ -77,9 +74,6 @@ while [ $MINOR -le $MAX ]; do
   INCLUDE="${INCLUDE} -i v${MAJOR}.${MINOR}"
   MINOR=$(expr $MINOR + 1)
 done
-if [ $(git branch --list ${TRIMVERSION}) ]; then
-  INCLUDE="${INCLUDE} -i release/${TRIMVERSION}"
-fi
 misc/genchanges -l -e v1.6.21 -e v1.8.0 $INCLUDE -i develop -v "" -r origin short > doc/Changes1.8
 git add doc/Changes1.8
 git commit -m "Generate ChangeLog/Changes files for ${NEW_EGGVERSION}" > /dev/null
