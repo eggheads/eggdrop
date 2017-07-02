@@ -50,20 +50,46 @@ git reset HEAD -- .
 echo ""
 # Generate ChangeLog
 #git log $(git rev-list -n 1 v${OLD_EGGVERSION})..HEAD --name-only --no-merges --pretty=format:"- - - - - - - - - - - - - - -%n%w(75)Commit %h (%ai) by %aN%n %s %n %b" > ChangeLog
+TRIMVERSION=${NEW_EGGVERSION%rc*}
 MAX=$(echo ${OLD_EGGVERSION}| cut -d "." -f 3)
 MAJOR=$(echo ${OLD_EGGVERSION}| rev| cut -d "." -f2- |rev)
+MAJOR=${MAJOR%rc*}
 MINOR=0
 while [ $MINOR -le $MAX ]; do
   INCLUDE="${INCLUDE} -i v${MAJOR}.${MINOR}"
   MINOR=$(expr $MINOR + 1)
 done
-misc/genchanges -l $INCLUDE -i develop -r origin full > ChangeLog
-git add ChangeLog
+if [ $(git branch --list ${TRIMVERSION}) ]; then
+  INCLUDE="${INCLUDE} -i release/${TRIMVERSION}"
+fi
+echo "$INCLUDE -r origin full > ChangeLog"
+git fetch origin
+git fetch -t origin
+misc/genchanges $INCLUDE -r origin full > ChangeLog
+#gzip ChangeLog
+#git add ChangeLog.gz
 git commit -m "Generate ChangeLog for ${NEW_EGGVERSION}" > /dev/null
 echo " done."
 
+#Generate doc/ChangesX.Y file
+echo "Now just the doc/ChangesX.Y file..."
+MINOR=1
+INCLUDE=""
+while [ $MINOR -le $MAX ]; do
+  INCLUDE="${INCLUDE} -i v${MAJOR}.${MINOR}"
+  MINOR=$(expr $MINOR + 1)
+done
+if [ $(git branch --list ${TRIMVERSION}) ]; then
+  INCLUDE="${INCLUDE} -i release/${TRIMVERSION}"
+fi
+echo "-e v1.6.21 -e v1.8.0 $INCLUDE -v ${NEW_EGGVERSION} -r origin short > doc/Changes1.8"
+misc/genchanges -e v1.6.21 -e v1.8.0 $INCLUDE -v ${NEW_EGGVERSION} -r origin short > doc/Changes1.8
+# git add....
+
+exit
+
 # Remove patchlevel.
-echo -n "Removing patchlevel for a stable release..."
+echo -n "Setting alpha patchlevel for a stable release..."
 misc/setpatch alpha >/dev/null
 echo " done."
 
