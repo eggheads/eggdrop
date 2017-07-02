@@ -506,7 +506,6 @@ proc finalformatshortlog {commits} {
 
 proc cmd:short {} {
 	global version verbose tags major
-	log "Generating doc/Changes info"
 	set commits [lreverse [commitlist]]
 	if {$verbose} {
 		vlog "--- Start of History ---"
