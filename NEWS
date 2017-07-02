@@ -18,6 +18,35 @@ Last revised: Jun 7, 2017
 
      _________________________________________________________________
 
+Major changes made to Eggdrop v1.8.1 from Eggdrop v1.8.2:
+
+    eggdrop.conf changes:
+      - temp-path renamed to tmpfile and its purpose changed. It is now only
+        used by filesys.mod/transfer.mod and optional.
+      - blowfish-use-mode: New setting to allow blowfish to use CBC encryption
+        with the Tcl encrypt/decrypt commands. CBC will be the default in
+        a later version of eggdrop.
+      - global-*: Renamed to default-* to clarify their purpose as default
+        channel settings, not ones that override for existing channels.
+        global-* still works for backwards compatibility.
+    Tcl-API changes:
+      - encrypt/decrypt: These commands can now encrypt/decrypt in CBC
+        mode instead of the current ECB mode. This does NOT affect password
+        hashing for the userfile.
+      - getuser: Can now be called without a second argument. Returns a flat
+        key/value list (dict) of settings for that user.
+      - configureargs: New global variable holding the ./configure arguments.
+        This is a _string_, not a list. User needs to split it themselves.
+      - maskhost: New types 30-39 set hostmask to * (to allow e.g. nick!*@*).
+    General changes:
+      - Improved command line argument parsing.
+      - Portugese language file added.
+      - Eggdrop no longer changes nick on every rehash if altnick uses '?'.
+      - Terminal-mode (commandline -nt) always has full owner access now.
+      - Allow spaces in server passwords in serverlist.
+
+     _________________________________________________________________
+
 Major changes made to Eggdrop v1.8.1 from Eggdrop v1.8.0:
 
     Autobotchk - Added functionality improvements to the tried-and-true
