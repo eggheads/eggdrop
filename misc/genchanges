@@ -462,12 +462,9 @@ proc finalformatshortlog {commits} {
 			set byresult ""
 			foreach by [lreverse [dict keys $datecommits]] {
 				set bycommits [dict get $datecommits $by]
-				set this ""
-				for {set i 0} {$i < [llength $bycommits]} {incr i} {
-					lappend this "[expr {$i==0?"*":" "}] [lindex $bycommits $i]"
-				}
+				set this [lmap c $bycommits { return -level 0 "* $c" }]
 				if {$by ne ""} {
-					lappend this "  ($by)"
+					lappend this "  $by"
 				}
 				vlog "THIS: $this"
 				lappend byresult $this
