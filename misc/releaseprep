@@ -59,7 +59,7 @@ regenerate_changelog() {
 	  INCLUDE="${INCLUDE} -i v${MAJOR}.${MINOR}"
 	  MINOR=$(expr $MINOR + 1)
 	done
-	if [ $(git branch --list release/${TRIMVERSION}) ]; then
+	if ! git rev-parse -q --verify develop > /dev/null; then
 	  INCLUDE="${INCLUDE} -i release/${TRIMVERSION}"
 	fi
 	git fetch origin
@@ -76,7 +76,7 @@ regenerate_changelog() {
 	  INCLUDE="${INCLUDE} -i v${MAJOR}.${MINOR}"
 	  MINOR=$(expr $MINOR + 1)
 	done
-	if [ $(git branch --list release/${TRIMVERSION}) ]; then
+	if ! git rev-parse -q --verify develop > /dev/null; then
 	  INCLUDE="${INCLUDE} -i release/${TRIMVERSION}"
 	fi
 	misc/genchanges -l -e v1.6.21 -e v1.8.0 $INCLUDE -v ${NEW_EGGVERSION}${EGG_RC} -r origin short > doc/Changes1.8
