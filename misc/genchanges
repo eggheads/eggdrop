@@ -27,7 +27,6 @@ package require Tcl 8.6
 package require textutil::adjust
 
 # TODO: automatic -i/-e arguments. sort order of git tag --list --sort=v:refname is stable.
-# TODO: shortlogs without * on every line, esp. on linebreaks
 # TODO: performance improvements (by reading .git/ directly?)
 
 proc get_usage {} {
@@ -403,6 +402,9 @@ proc reportstatus {what i max} {
 	if {($i & 0xF) == 0 || $i == $max - 1} {
 		puts -nonewline stderr "\u001b\[1000D$what ... [format %3d [expr {$i == $max ? 100 : 100*(1+$i)/$max}]] %"
 	}
+	if {$i == $max - 1} {
+		puts ""
+	}
 }
 
 proc cmd:full {} {
@@ -470,7 +472,7 @@ proc finalformatshortlog {commits} {
 				lappend byresult $this
 			}
 			vlog "BYRESULT: $byresult"
-			lappend dateresult "[join [dateindent [split [join [lmap x $byresult { join $x \n }] \n] \n] $date] \n]"
+			lappend dateresult "[join [dateindent [split [join [lmap x $byresult { join $x \n\n }] \n] \n] $date] \n]"
 		}
 		vlog "DATERESULT: $dateresult"
 		lappend versionresult "Eggdrop $version:\n\n[join $dateresult \n]"
