@@ -500,17 +500,14 @@ proc finalformatshortlog {commits} {
 			lappend dateresult "[join [dateindent [split [join [lmap x $byresult { join $x \n }] \n] \n] $date] \n]"
 		}
 		vlog "DATERESULT: $dateresult"
-		lappend versionresult "Eggdrop $version:\n\n[join [versionindent [split [join $dateresult \n] \n]] \n]"
+		lappend versionresult "[expr {$version ne "" ? "Eggdrop $version:" : ""}]\n\n[join [versionindent [split [join $dateresult \n] \n]] \n]"
 	}
 	join $versionresult \n\n
 }
 
 proc cmd:short {} {
 	global version verbose tags major
-	if {$version eq ""} {
-		fatal "Need version number (-v) for short changelog."
-	}
-	log "Generating doc/Changes$major info"
+	log "Generating doc/Changes info"
 	set commits [lreverse [commitlist]]
 	if {$verbose} {
 		vlog "--- Start of History ---"
@@ -525,7 +522,7 @@ proc cmd:short {} {
 	set result ""
 	set thisversion ""
 	for {set i 0} {$i < [llength $commits]} {incr i} {
-		reportstatus "Generating doc/Changes$major info" $i [llength $commits]
+		reportstatus "Generating doc/Changes info" $i [llength $commits]
 		set commit [lindex $commits $i]
 		# skip merge commits unless they have a tag associated to them (e.g. v1.8.1 is a merge commit with a tag)
 		if {![dict exists $tags $commit] && ![catch {exec git cat-file -t $commit^2}]} {
