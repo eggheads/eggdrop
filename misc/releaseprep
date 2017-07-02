@@ -24,23 +24,11 @@
 # the same distribution terms that you use for the rest of that program.
 
 show_usage() {
-	echo "Usage: `basename $0` [-h|-r <#>] lastVer"
-	echo ""
-        echo "  lastVer    - git tag of last version (v1.6.21 or v1.8.0 for example)"
+	echo "Usage: `basename $0` [-h|-r <#>]"
 	echo ""
 	echo "  -h, --help - Print this help and exit."
 	echo "  -r, --rc   - Prepare to release Release Candidate '#'."
 	exit 1
-}
-
-git_log() {
-        DIFF=$(git log -1 --pretty="%s")
-        if [ "$DIFF" != "Update ChangeLog" ]; then
-	  git log $(git rev-list -n 1 $1)..HEAD --name-only --no-merges --pretty=format:"- - - - - - - - - - - - - - -%n%w(75)Commit %h (%ai) by %aN%n %s %n %b" > ChangeLog
-          git add ChangeLog
-          git commit -m "Update ChangeLog"
-          #git push origin develop
-        fi
 }
 
 regenerate_changelog() {
@@ -60,7 +48,7 @@ regenerate_changelog() {
 	fi
         if [ ! -f .mailmap ]; then
           echo ".mailmap file missing- This is needed to properly run git log. Aborting."
-#          exit 1
+          exit 1
         fi
 	TRIMVERSION=${NEW_EGGVERSION%rc*}
 	MAX=$(echo ${OLD_EGGVERSION}| cut -d "." -f 3)
@@ -76,7 +64,6 @@ regenerate_changelog() {
 	fi
 	git fetch origin
 	git fetch -t origin
-	echo "misc/genchanges -l $INCLUDE -r origin full > ChangeLog"
 	misc/genchanges -l $INCLUDE -r origin full > ChangeLog
 	gzip -f ChangeLog
 	echo " done."
@@ -160,23 +147,17 @@ if test "x${1}" = "x-r" || test "x${1}" = "x--rc"; then
 	rc_number=$2
 fi
 
-for LASTVER in $@; do :; done
-if ! git rev-parse $LASTVER > /dev/null 2>&1; then
-  echo "No git version tag found: $LASTVER"
-  exit 1
-fi
-
 if test ! -f src/main.c; then
 	echo "You are not in the Eggdrop root directory."
 	exit 1
 fi
 
-# Fix patch.h...
+# Update patch.h...
 echo -n "Updating version.h..."
 fix_version_h
 echo " done."
 
-# Regenerate ChangeLog file before doing anything else...
+# Generate ChangeLog file
 echo "Regenerating ChangeLog file..."
 regenerate_changelog
 echo ""
@@ -225,27 +206,3 @@ echo " done."
 echo Current patch: `misc/setpatch -s`
 echo "Complete."
 echo ""
-
-exit
-
-### Maybe for the future...
-echo "This next step will commit, tag, and push to GitHub."
-echo "IT IS NOT REVERSIBLE!"
-echo "This is, like, the real deal."
-echo "Are you sure you want to do this? [y/N]: "
-read PUSH
-if [ $PUSH = "y" ]; then
-  echo "Enter release tag (vX.Y.Z[.RC0] format): "
-  read RLS
-  MAJMIN="$(echo $RLS|cut -d'.' -f1,2|sed 's/^v//')"
-  git add *
-  git commit -m "Release tag - $RLS"
-  git fetch stable/$MAJMIN
-  git checkout -B stable/$MAJMIN
-  git merge develop
-  git tag $RLS
-  git push origin stable/$MAJMIN --tags
-else
-  echo "Aborting. Coward."
-  exit 0
-fi
