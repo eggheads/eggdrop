@@ -1,3 +1,158 @@
+
+Eggdrop Changes (Last Updated 2017-07-02):
+__________________________________________
+
+
+  2017-06-17 * Transfer.mod speling/grammars fix
+                 [Found by: maimizuno]
+  2017-06-09 * Update THANKS file
+             * Update UPGRADING file Per formalized documentation plan, renamed and updated UPGRADING file to
+               contain historical upgrade-related notes (1.4->1.6)
+             * Update and rename NEWS-1.8.1 to NEWS. Closes #340 Per formalized documentation plan, renamed file to
+               NEWS. NEWS will hold a running list of short summaries of major changes to each version. Each new
+               version will add to the top.
+             * Change temp-path to tmpfile. Closes #322
+  2017-06-02 * Fix additional invalid chanset options. Fixes #406
+  2017-05-31 * Provide config setting for blowfish mode. Fixes #384
+             * Display listen-addr on startup splash screen. Fixes #405
+  2017-05-21 * Fix foreground user losing owner perms upon rehash
+             * Validate user input for flood-* chan settings. Closes #381
+             * Fix some oob (and an iob) for a few config settings
+             * Add configure args to Tcl API, fix string expansion for -v. Fixes #342
+                 [Found by: maimizuno]
+             * Add transfer.mod's fstat user setting to getuser w/o args. Fixes #385
+                 [Found by: maimizuno]
+  2017-05-15 * Do not start if -n is missing from -c or -t cli flags. Fixes #391
+  2017-05-11 * Check if current nick matches altnick mask before switching. Fixes #366
+  2017-05-05 * Update docs regarding new ban-type values.
+  2017-04-29 * Add portugese language file
+             * Improve command line arg validation. Fixes #359
+             * Re-add configure flags display to show_ver()
+  2017-04-27 * Have full access when starting bot with -tn. (#380)
+  2017-04-26 * Fix oversight in getuser key/value list support. Fixes #382
+                 [Found by: maimizuno]
+  2017-04-25 * Remove 'none' custom string from aclocal ac flags. Fixes #352.
+             * Correct typo chhand to chhandle.
+             * Add documentation about CBC mode merged in commit 59813bc2
+             * Add error message if server list contains only SSL servers and TLS is disabled. Fixes #348
+  2017-04-24 * channels.mod will no longer delete channels not in the chanfile on restart/load.
+                 [Found by: HeXiLeD]
+  2017-04-22 * Add key/value list to getuser without key argument. Fixes #351.
+                 [Found by: maimizuno]
+             * Show unset entries in getuser handle as empty strings.
+  2017-04-20 * Add HTML anchors to tcl-commands.doc commands. Closes #253
+             * Generate docs
+             * Assign appropriate type to store ipv4/6 address. Fixes #363
+             * Improve README spelling and grammar. Fixes #349.
+                 [Found by: maimizuno, jackal / Patch by: jackal]
+  2017-04-19 * Fix autobotchk error when eggdrop returns an error. (#371)
+                 [Found by: Arkadietz]
+             * Fix EOL and shorten README (#349).
+                 [Found by: maimizuno, jackal / Patch by: jackal]
+             * Change global-* to default-* in docs and conf, add default-* in src. (#310)
+             * Fix braces bug in 687b9e.
+             * Allow spaces in server names. Fixes #369.
+                 [Found by: WildCrazy]
+             * Add warning if no dns-servers found for dns.mod. Fixes #333.
+             * Add CBC mode to blowfish and use it by default. (#281)
+                 [Patch by: Cizzle]
+             * Update COPYING (#347)
+                 [Patch by: jackal]
+             * Add maskhost types 30-39 that set hostmask to *. Fixes #169.
+                 [Found by: Robby]
+             * Remove cr characters in changelog generation.
+             * Convert line endings in quotepong to lf.
+             * Use compatibility function for ASN1_STRING_get0_data/ASN1_STRING_data in (#373)
+  2017-03-27 * Remove changelog generation from releaseprep TODO: Better integrate this for 1.8.2
+  2017-03-26 * Unify changelog generation.
+  2017-03-20 * Restore NEWS-1.8.0 as UPGRADE-1.8.
+             * Update releaseprep to correct version.h on stable release
+  2017-03-18 * Add compatibility autoconf macro for stdint.h
+             * Update gitingore file.
+  2017-03-15 * Make depend.
+
+Eggdrop v1.8.1 (2017-03-27):
+
+  2017-03-27 * Remove changelog generation from releaseprep TODO: Better integrate this for 1.8.2
+             * Update doc/Changes1.8
+             * Update ChangeLog
+             * Eggdrop v1.8.1 *STABLE* release
+             * Merge branch 'stable/1.8' into release/1.8.1
+  2017-03-26 * Restore NEWS-1.8.0 as UPGRADE-1.8.
+             * Update releaseprep to correct version.h on stable release
+             * Unify changelog generation.
+
+Eggdrop v1.8.1rc2 (2017-03-03):
+
+  2017-03-03 * Replace version fetching function in aclocal.m4 to use new version.h.
+                 [Found by: karakedi]
+             * Remove debug output.
+             * Update ChangeLog
+             * Eggdrop v1.8.1 Release Candidate 2
+
+Eggdrop v1.8.1rc1 (2017-03-01):
+
+  2017-03-01 * Update NEWS file for 1.8.1
+             * Update ChangeLog
+             * Eggdrop v1.8.1 Release Candidate 1
+  2017-02-28 * Fix copyright date
+                 [Found by: Pixelz]
+  2017-02-27 * Geo-proof misc/newversion
+             * Generate ChangeLog for 1.8.1
+             * Update version strings to 1.8.1
+             * Generate docs with 1.8.1 version
+  2017-02-26 * Update Eggdrop versioning system. Fixes #337
+                 [Found by: maimizuno]
+             * Use setpatch vice addpatch. Use 'none' to remove patchlevel from version.h
+             * Update patch.h reference to version.h
+             * Update releaseprep with setpatch usage. Update patch.h reference to version.h. Don't change version
+               in releaseprep, it is done in newversion. Fix missing quotes generating version.h. Add missing quo-
+               tes to version.h string version
+             * Add comment about .su command in -nt
+             * Add misc/genchanges to generate doc/Changes file entries.
+             * Add indention to genchanges.
+  2017-02-19 * Update newversion with sphinx doc paths
+  2017-02-18 * Update ChangeLog
+  2017-02-17 * Don't use pointer after freeing w/o explicit setting to NULL.
+             * Fix safe_write prototype to equal write.
+  2017-02-14 * Variety of long-needed code clean-up & fixes (coverity branch)
+  2017-02-13 * Fixes for autobotchk. Fixes #239
+                 [Found by: Cizzle, StephenS / Patch by: Cizzle, Geo]
+             * Clean up some compile warnings (#330)
+  2017-02-08 * Update THANKS file
+             * Update AUTHORS file
+  2017-02-07 * Update copyright to 2017
+  2017-02-06 * Update docs copyright as part of updatecopyright script
+             * update updatecopyright help
+             * Add main.c to search path
+  2017-02-04 * Simplify sockgets line parsing
+  2017-02-03 * Zero memory after nmalloc() to initialize memberlist. Fixes #326
+             * Fix channels output for ".who linkedbot"
+  2017-02-02 * Specify what 1 and 0 do for prefer-ipv6 in conf
+  2017-01-30 * Update BUG-REPORT with GitHub info
+  2017-01-28 * Detect newer OpenSSL function names. Fixes #323
+  2017-01-27 * Fix minutely hook to be called for all missed minutes. Fixes #308
+                 [Found by: maimizuno / Patch by: Cizzle]
+  2017-01-26 * Return more user-friendly message with incorrect vhost4/6 setting in config. Closes #316
+  2017-01-25 * Add summary with tcl, tls and ipv6 info to configure output. Closes #264
+                 [Patch by: Cizzle]
+  2017-01-20 * Fix patch() compilation warning. Fixes #303
+  2017-01-15 * Address cppcheck mods. Fixes #69
+                 [Found by: vBm / Patch by: Cizzle]
+  2017-01-01 * Update docs version as part of releaseprep
+  2016-12-31 * Fix pandoc rendering. Fixes #302
+                 [Found by: Geo / Patch by: Geo]
+  2016-12-28 * Update config server comments. Fixes #237
+                 [Found by: andy5995]
+  2016-12-27 * Remove CVS references from Eggdrop. Fixes #149
+             * Fix misleading indentation warnings from gcc
+                 [Found by: Cizzle / Patch by: Cizzle]
+  2016-12-25 * Update mod.channels src/docs to match defaults to eggdrop.conf. Fixes #243
+                 [Found by: Geo / Patch by: Cizzle]
+             * Reorganize commit.template
+  2016-12-19 * Make genChangelog executable.
+             * Add git commit template to misc/.
+
 1.8.0 (December 04, 2016):
 
   # RC4 release on Nov 23, 2016
@@ -50,7 +205,7 @@
 
   - Ensure our Makefile works with both BSD make and GNU make.
     Patch by: thommey / Found by: Geo
-    
+
   - Fix formatting bug in 618ecbf9, MISC_LOGREPEAT contains a format specifier.
     Patch by: thommey / Found by: Robby
 
@@ -124,7 +279,7 @@
     Patch by: Geo / Found by: senpai
 
   - Fix cross-compilation errors regarding socklen and IPv6
-    Skip attempted test run after make on x-compiles 
+    Skip attempted test run after make on x-compiles
     Patch by: Anonymous / Found by: eelcohuininga
 
   - Update copyright date for ./eggdrop -v.
@@ -243,7 +398,7 @@
 
   - Clarify SSL documentation, add error messages
     Patch by: Geo
-  
+
   - Remove deprecated EMAIL and URL fields from tcl-commands.doc
     Patch by: Geo
 
@@ -257,13 +412,13 @@
     Patch by: Geo / Found by: IRC user
 
   - Return -1 for idletime if user is not on channel
-    Patch by: Geo 
+    Patch by: Geo
 
   - Fix failing alt hub links
     Patch by: Geo / Found by: Robby
 
   - Change user mode after adding a hostmask to a user
-    Patch by: Geo, thommey / Found by: IRC user 
+    Patch by: Geo, thommey / Found by: IRC user
 
   - Fix some compiler warnings
     Patch by: Tobbe

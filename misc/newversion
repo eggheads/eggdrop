@@ -49,7 +49,7 @@ git reset HEAD -- .
 
 echo ""
 # Generate ChangeLog
-#git log $(git rev-list -n 1 v${OLD_EGGVERSION})..HEAD --name-only --no-merges --pretty=format:"- - - - - - - - - - - - - - -%n%w(75)Commit %h (%ai) by %aN%n %s %n %b" > ChangeLog
+###git log $(git rev-list -n 1 v${OLD_EGGVERSION})..HEAD --name-only --no-merges --pretty=format:"- - - - - - - - - - - - - - -%n%w(75)Commit %h (%ai) by %aN%n %s %n %b" > ChangeLog
 TRIMVERSION=${NEW_EGGVERSION%rc*}
 MAX=$(echo ${OLD_EGGVERSION}| cut -d "." -f 3)
 MAJOR=$(echo ${OLD_EGGVERSION}| rev| cut -d "." -f2- |rev)
@@ -62,13 +62,11 @@ done
 if [ $(git branch --list ${TRIMVERSION}) ]; then
   INCLUDE="${INCLUDE} -i release/${TRIMVERSION}"
 fi
-echo "$INCLUDE -r origin full > ChangeLog"
 git fetch origin
 git fetch -t origin
-misc/genchanges $INCLUDE -r origin full > ChangeLog
-#gzip ChangeLog
-#git add ChangeLog.gz
-git commit -m "Generate ChangeLog for ${NEW_EGGVERSION}" > /dev/null
+misc/genchanges -l $INCLUDE -i develop -r origin full > ChangeLog
+gzip -f ChangeLog
+git add ChangeLog.gz
 echo " done."
 
 #Generate doc/ChangesX.Y file
@@ -82,9 +80,9 @@ done
 if [ $(git branch --list ${TRIMVERSION}) ]; then
   INCLUDE="${INCLUDE} -i release/${TRIMVERSION}"
 fi
-echo "-e v1.6.21 -e v1.8.0 $INCLUDE -v ${NEW_EGGVERSION} -r origin short > doc/Changes1.8"
-misc/genchanges -e v1.6.21 -e v1.8.0 $INCLUDE -v ${NEW_EGGVERSION} -r origin short > doc/Changes1.8
-# git add....
+misc/genchanges -l -e v1.6.21 -e v1.8.0 $INCLUDE -i develop -v "" -r origin short > doc/Changes1.8
+git add doc/Changes1.8
+git commit -m "Generate ChangeLog/Changes files for ${NEW_EGGVERSION}" > /dev/null
 
 exit
 
