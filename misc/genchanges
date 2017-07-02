@@ -414,7 +414,6 @@ proc reportstatus {what i max} {
 
 proc cmd:full {} {
 	global excludes includes tags
-	log "Generating ChangeLog info"
 	set commits [commitlist 1]
 	set result {""}
 	for {set i 0} {$i < [llength $commits]} {incr i} {
