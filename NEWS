@@ -18,7 +18,7 @@ Last revised: Jun 7, 2017
 
      _________________________________________________________________
 
-Major changes made to Eggdrop v1.8.1 from Eggdrop v1.8.2:
+Major changes made to Eggdrop v1.8.2 from Eggdrop v1.8.1:
 
     eggdrop.conf changes:
       - temp-path renamed to tmpfile and its purpose changed. It is now only
