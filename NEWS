@@ -41,7 +41,7 @@ Eggdrop v1.8.2:
       - maskhost: New types 30-39 set hostmask to * (to allow e.g. nick!*@*).
     General changes:
       - Improved command line argument parsing.
-      - Portugese language file added.
+      - Portuguese language file added.
       - Eggdrop no longer changes nick on every rehash if altnick uses '?'.
       - Terminal-mode (commandline -nt) always has full owner access now.
       - Allow spaces in server passwords in serverlist.
