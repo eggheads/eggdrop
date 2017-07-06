@@ -42,7 +42,7 @@ proc get_usage {} {
 		{-l           - Skip fetching from remote. ONLY use this on a fresh clone!}
 		{} {Options (short):}
 		{-e <version> - Specify ref to exclude with ancestors}
-		{-i <version> - Specify ref to include with ancestors}
+		{-i <version> - Specify ref to include with ancestors (use ./XXX to force local ref XXX, e.g. -i ./release/1.8.2}
 		{-v <version> - Specify the upcoming version}
 		{} {Examples:}
 		{  Generate doc/Changes1.8 for v1.8.2rc3 (exclude v1.8.0 because of the static 1.8.0 blob):}
@@ -188,8 +188,14 @@ proc cfgtags {varName patterns} {
 		set tmp [dict values $tags $pattern]
 		if {![llength $tmp]} {
 			# no matching tags, must be a branch
-			mustexec [list git rev-parse --verify -q $remote/$pattern] "Could not parse revision $pattern on remote $remote."
-			set tmp [list $remote/$pattern]
+			if {[string range $pattern 0 1] eq "./"} {
+				# force local branch, illegal branch name
+				set path [string range $pattern 2 end]
+			} else {
+				set path $remote/$pattern
+			}
+			mustexec [list git rev-parse --verify -q $path] "Could not find revision '$path'."
+			set tmp [list $path]
 		}
 		lappend thesetags {*}$tmp
 	}
