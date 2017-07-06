@@ -7,7 +7,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Transfer Module &mdash; Eggdrop 1.8.1 documentation</title>
+    <title>Transfer Module &mdash; Eggdrop 1.8.2 documentation</title>
     
     <link rel="stylesheet" href="../_static/eggdrop.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -15,7 +15,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
-        VERSION:     '1.8.1',
+        VERSION:     '1.8.2',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -24,19 +24,19 @@
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
-    <link rel="top" title="Eggdrop 1.8.1 documentation" href="../index.html" />
+    <link rel="top" title="Eggdrop 1.8.2 documentation" href="../index.html" />
     <link rel="up" title="&lt;no title&gt;" href="index.html" />
     <link rel="next" title="Uptime Module" href="uptime.html" />
     <link rel="prev" title="Share Module" href="share.html" /> 
   </head>
-  <body role="document">
+  <body>
     <div class="header-wrapper">
       <div class="header">
           <p class="logo"><a href="../index.html">
             <img class="logo" src="../_static/eggman.png.gif" alt="Logo"/>
           </a></p>
         <div class="headertitle"><a
-          href="../index.html">Eggdrop 1.8.1 documentation</a></div>
+          href="../index.html">Eggdrop 1.8.2 documentation</a></div>
         <div class="rel">
           <a href="share.html" title="Share Module"
              accesskey="P">previous</a> |
@@ -52,7 +52,7 @@
             
       <div class="documentwrapper">
         <div class="bodywrapper">
-          <div class="body" role="main">
+          <div class="body">
             
   <p>Last revised: January 1, 2002</p>
 <div class="section" id="transfer-module">
@@ -76,11 +76,10 @@ each user.</dd>
 but admits that may be too small. 1024 is standard these days.
 Set this to 0 to use turbo-dcc (recommended).</dd>
 <dt>set copy-to-tmp 1</dt>
-<dd>Enable this setting if you want to copy files into the /tmp directory
-before sending them. This is useful on most systems for file stability,
-but if your directories are NFS mounted, it's a pain, and you'll want
-to set this to 0. If you are low on disk space, you may also want to
-set this to 0.</dd>
+<dd>Enable this setting if you want to copy files to a temporary location
+before sending them. This might be useful for file stability, but if your
+directories are NFS mounted, it's a pain. Setting this to 1 is not
+advised for big files or if you're low on disk space.</dd>
 <dt>set xfer-timeout 30</dt>
 <dd>Set here the time (in seconds) to wait before an inactive transfer
 times out.</dd>
@@ -167,10 +166,10 @@ times out.</dd>
 
         <div class="right">
           
-    <div class="footer" role="contentinfo">
+    <div class="footer">
         &copy; Copyright 2017, Eggheads.
-      Last updated on Feb 26, 2017.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.6.
+      Last updated on Jul 06, 2017.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.3.
     </div>
         </div>
         <div class="clearer"></div>

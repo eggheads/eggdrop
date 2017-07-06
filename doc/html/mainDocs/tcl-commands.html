@@ -7,7 +7,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Eggdrop Tcl Commands &mdash; Eggdrop 1.8.1 documentation</title>
+    <title>Eggdrop Tcl Commands &mdash; Eggdrop 1.8.2 documentation</title>
     
     <link rel="stylesheet" href="../_static/eggdrop.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -15,7 +15,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
-        VERSION:     '1.8.1',
+        VERSION:     '1.8.2',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -24,19 +24,19 @@
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
-    <link rel="top" title="Eggdrop 1.8.1 documentation" href="../index.html" />
+    <link rel="top" title="Eggdrop 1.8.2 documentation" href="../index.html" />
     <link rel="up" title="&lt;no title&gt;" href="index.html" />
     <link rel="next" title="IPv6 support" href="ipv6.html" />
     <link rel="prev" title="Patch How-To" href="patch.html" /> 
   </head>
-  <body role="document">
+  <body>
     <div class="header-wrapper">
       <div class="header">
           <p class="logo"><a href="../index.html">
             <img class="logo" src="../_static/eggman.png.gif" alt="Logo"/>
           </a></p>
         <div class="headertitle"><a
-          href="../index.html">Eggdrop 1.8.1 documentation</a></div>
+          href="../index.html">Eggdrop 1.8.2 documentation</a></div>
         <div class="rel">
           <a href="patch.html" title="Patch How-To"
              accesskey="P">previous</a> |
@@ -52,7 +52,7 @@
             
       <div class="documentwrapper">
         <div class="bodywrapper">
-          <div class="body" role="main">
+          <div class="body">
             
   <p>Eggdrop Tcl Commands
 Last revised: June 20, 2016</p>
@@ -62,7 +62,7 @@ Last revised: June 20, 2016</p>
 of the normal Tcl built-in commands are still there, of course, but you
 can also use these to manipulate features of the bot. They are listed
 according to category.</p>
-<p>This list is accurate for Eggdrop v1.8.1. Scripts written for v1.3, v1.4
+<p>This list is accurate for Eggdrop v1.8.2. Scripts written for v1.3, v1.4
 or 1.6 series of Eggdrop should probably work with a few minor modifications
 depending on the script. Scripts which were written for  v0.9, v1.0, v1.1
 or v1.2 will probably not work without modification. Commands which have
@@ -217,9 +217,9 @@ marked with vertical bars (|) on the left.</p>
 </div></blockquote>
 </div>
 <div class="section" id="getuser-handle-entry-type-extra-info">
-<h3>getuser &lt;handle&gt; &lt;entry-type&gt; [extra info]<a class="headerlink" href="#getuser-handle-entry-type-extra-info" title="Permalink to this headline">¶</a></h3>
+<h3>getuser &lt;handle&gt; [entry-type] [extra info]<a class="headerlink" href="#getuser-handle-entry-type-extra-info" title="Permalink to this headline">¶</a></h3>
 <blockquote>
-<div><p>Description: an interface to the new generic userfile support. Valid entry types are:</p>
+<div><p>Description: an interface to the new generic userfile support. Without an entry-type, it returns a flat key/value list (dict) of all set entries. Valid entry types are:</p>
 <table border="1" class="docutils">
 <colgroup>
 <col width="11%" />
@@ -257,7 +257,7 @@ exists.</td>
 </tr>
 </tbody>
 </table>
-<p>For additional custom user fields, to include the deprecated &quot;EMAIL&quot; and &quot;URL&quot; fields, reference scripts/userinfo.tcl</p>
+<p>For additional custom user fields, to include the deprecated &quot;EMAIL&quot; and &quot;URL&quot; fields, reference scripts/userinfo.tcl.</p>
 <p>Returns: info specific to each entry-type</p>
 <p>Module: core</p>
 </div></blockquote>
@@ -2158,14 +2158,14 @@ will be used. Types 30-39 set the host to '*'.</p>
 <div class="section" id="encrypt-key-string">
 <h3>encrypt &lt;key&gt; &lt;string&gt;<a class="headerlink" href="#encrypt-key-string" title="Permalink to this headline">¶</a></h3>
 <blockquote>
-<div><p>Returns: encrypted string (using the currently loaded encryption module), encoded into ASCII using base-64</p>
+<div><p>Returns: encrypted string (using the currently loaded encryption module), encoded into ASCII using base-64. As of v1.8.2, the default blowfish encryption module can use either the older ECB mode (currently used by default for compatibility reasons), or the more recent and more-secure CBC mode. You can explicitely request which encryption mode to use by prefixing the encryption key with either &quot;ecb:&quot; or &quot;cbc:&quot;, or by using the blowfish-use-mode setting in the config file. Note: the default encryption mode for this function is planned to transition from ECB to CBC in v1.9.0.</p>
 <p>Module: encryption</p>
 </div></blockquote>
 </div>
 <div class="section" id="decrypt-key-encrypted-base64-string">
 <h3>decrypt &lt;key&gt; &lt;encrypted-base64-string&gt;<a class="headerlink" href="#decrypt-key-encrypted-base64-string" title="Permalink to this headline">¶</a></h3>
 <blockquote>
-<div><p>Returns: decrypted string (using the currently loaded encryption module)</p>
+<div><p>Returns: decrypted string (using the currently loaded encryption module). If the default blowfish encryption module is used, this automatically picks the right decryption mode. You may still prefix the key with &quot;ecb:&quot; or &quot;cbc:&quot; or use the blowfish-use-mode setting in the config file (see the encrypt command for more detailed information).</p>
 <p>Module: encryption</p>
 </div></blockquote>
 </div>
@@ -2343,7 +2343,7 @@ will be used. Types 30-39 set the host to '*'.</p>
 <h3>matchcidr &lt;block&gt; &lt;address&gt; &lt;prefix&gt;<a class="headerlink" href="#matchcidr-block-address-prefix" title="Permalink to this headline">¶</a></h3>
 <blockquote>
 <div><p>Description: performs a cidr match on the specified ip addresses. IPv6 is supported, if enabled at compile time.</p>
-<p>Example: matchcidr 192.1.8.1.0 192.168.1.17 16</p>
+<p>Example: matchcidr 192.1.8.2.0 192.1.8.2.17 16</p>
 <p>Returns: 1 if the address matches the block prefix, 0 otherwise.</p>
 <p>Module: core</p>
 </div></blockquote>
@@ -2521,6 +2521,13 @@ will be used. Types 30-39 set the host to '*'.</p>
 <h3>config<a class="headerlink" href="#config" title="Permalink to this headline">¶</a></h3>
 <blockquote>
 <div><p>Value: the filename of the config file Eggdrop is currently using</p>
+<p>Module: core</p>
+</div></blockquote>
+</div>
+<div class="section" id="configureargs">
+<h3>configureargs<a class="headerlink" href="#configureargs" title="Permalink to this headline">¶</a></h3>
+<blockquote>
+<div><p>Value: a string (not list) of configure arguments in shell expansion (single quotes)</p>
 <p>Module: core</p>
 </div></blockquote>
 </div>
@@ -3064,12 +3071,12 @@ fail-server       - called when an IRC server fails to respond
 </div>
 </li>
 <li><p class="first">DCC   Return 1 to make Eggdrop log the command as:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="c1">#handle# command</span>
+<div class="highlight-python"><div class="highlight"><pre><span class="c">#handle# command</span>
 </pre></div>
 </div>
 </li>
 <li><p class="first">FIL   Return 1 to make Eggdrop log the command as:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="c1">#handle# files: command</span>
+<div class="highlight-python"><div class="highlight"><pre><span class="c">#handle# files: command</span>
 </pre></div>
 </div>
 </li>
@@ -3301,10 +3308,10 @@ words) (This char only works in binds, not in regluar matching)</td>
 
         <div class="right">
           
-    <div class="footer" role="contentinfo">
+    <div class="footer">
         &copy; Copyright 2017, Eggheads.
-      Last updated on Apr 19, 2017.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.6.
+      Last updated on Jul 06, 2017.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.3.
     </div>
         </div>
         <div class="clearer"></div>

@@ -7,7 +7,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Channels Module &mdash; Eggdrop 1.8.1 documentation</title>
+    <title>Channels Module &mdash; Eggdrop 1.8.2 documentation</title>
     
     <link rel="stylesheet" href="../_static/eggdrop.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -15,7 +15,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
-        VERSION:     '1.8.1',
+        VERSION:     '1.8.2',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -24,19 +24,19 @@
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
-    <link rel="top" title="Eggdrop 1.8.1 documentation" href="../index.html" />
+    <link rel="top" title="Eggdrop 1.8.2 documentation" href="../index.html" />
     <link rel="up" title="&lt;no title&gt;" href="index.html" />
     <link rel="next" title="Compress Module" href="compress.html" />
     <link rel="prev" title="Blowfish Module" href="blowfish.html" /> 
   </head>
-  <body role="document">
+  <body>
     <div class="header-wrapper">
       <div class="header">
           <p class="logo"><a href="../index.html">
             <img class="logo" src="../_static/eggman.png.gif" alt="Logo"/>
           </a></p>
         <div class="headertitle"><a
-          href="../index.html">Eggdrop 1.8.1 documentation</a></div>
+          href="../index.html">Eggdrop 1.8.2 documentation</a></div>
         <div class="rel">
           <a href="blowfish.html" title="Blowfish Module"
              accesskey="P">previous</a> |
@@ -52,7 +52,7 @@
             
       <div class="documentwrapper">
         <div class="bodywrapper">
-          <div class="body" role="main">
+          <div class="body">
             
   <p>Last revised: October 25, 2010</p>
 <div class="section" id="channels-module">
@@ -270,28 +270,28 @@ shorter than 120 characters. If you use scripts like getops.tcl or
 botnetop.tcl, you don't need to set this setting.</dd>
 <dt>flood-chan 15:60</dt>
 <dd>Set here how many channel messages in how many seconds from one
-host constitutes a flood. Setting this to 0 or 0:0 disables text
-flood protection for the channel.</dd>
+host constitutes a flood. Setting this to 0, 0:X or X:0 disables text
+flood protection for the channel, where X is an integer &gt;= 0.</dd>
 <dt>flood-deop 3:10</dt>
 <dd>Set here how many deops in how many seconds from one host constitutes
-a flood. Setting this to 0 or 0:0 disables deop flood protection for
-the channel.</dd>
+a flood. Setting this to 0, 0:X or X:0 disables deop flood protection for
+the channel, where X is an integer &gt;= 0.</dd>
 <dt>flood-kick 3:10</dt>
 <dd>Set here how many kicks in how many seconds from one host constitutes
-a flood. Setting this to 0 or 0:0 disables kick flood protection for
-the channel.</dd>
+a flood. Setting this to 0, 0:X or X:0 disables kick flood protection for
+the channel, where X is an integer &gt;= 0.</dd>
 <dt>flood-join 5:60</dt>
 <dd>Set here how many joins in how many seconds from one host constitutes
-a flood. Setting this to 0 or 0:0 disables join flood protection for
-the channel.</dd>
+a flood. Setting this to 0, 0:X or X:0 disables join flood protection for
+the channel, where X is an integer &gt;= 0.</dd>
 <dt>flood-ctcp 3:60</dt>
 <dd>Set here how many channel ctcps in how many seconds from one host
-constitutes a flood. Setting this to 0 or 0:0 disables ctcp flood
-protection for the channel.</dd>
+constitutes a flood. Setting this to 0, 0:X or X:0 disables ctcp flood
+protection for the channel, where X is an integer &gt;= 0.</dd>
 <dt>flood-nick 5:60</dt>
 <dd>Set here how many nick changes in how many seconds from one host
-constitutes a flood. Setting this to 0 or 0:0 disables nick flood
-protection for the channel.</dd>
+constitutes a flood. Setting this to 0, 0:X or X:0 disables nick flood
+protection for the channel, where X is an integer &gt;= 0.</dd>
 </dl>
 </dd>
 </dl>
@@ -526,10 +526,10 @@ channel add #chan. Look in the section above for explanation of every option.</p
 
         <div class="right">
           
-    <div class="footer" role="contentinfo">
+    <div class="footer">
         &copy; Copyright 2017, Eggheads.
-      Last updated on Apr 19, 2017.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.6.
+      Last updated on Jul 06, 2017.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.3.
     </div>
         </div>
         <div class="clearer"></div>
