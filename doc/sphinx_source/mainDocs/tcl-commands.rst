@@ -11,7 +11,7 @@ of the normal Tcl built-in commands are still there, of course, but you
 can also use these to manipulate features of the bot. They are listed
 according to category.
 
-This list is accurate for Eggdrop v1.8.1. Scripts written for v1.3, v1.4
+This list is accurate for Eggdrop v1.8.2. Scripts written for v1.3, v1.4
 or 1.6 series of Eggdrop should probably work with a few minor modifications
 depending on the script. Scripts which were written for  v0.9, v1.0, v1.1
 or v1.2 will probably not work without modification. Commands which have
@@ -2426,7 +2426,7 @@ matchcidr <block> <address> <prefix>
 
   Description: performs a cidr match on the specified ip addresses. IPv6 is supported, if enabled at compile time.
 
-  Example: matchcidr 192.1.8.1.0 192.168.1.17 16
+  Example: matchcidr 192.1.8.2.0 192.1.8.2.17 16
 
   Returns: 1 if the address matches the block prefix, 0 otherwise.
 

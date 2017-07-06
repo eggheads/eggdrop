@@ -262,7 +262,7 @@ Last revised: October 25, 2010
            This is usually something like 'C:\cygwin\home\<username>\'. After
            downloading, extract the Eggdrop tarball:
 
-             tar -zxf eggdrop1.8.1.tar.gz
+             tar -zxf eggdrop1.8.2.tar.gz
 
         4. Run './configure --enable-strip'. Debugging information under
            Windows is basically useless to the development team, and this will
@@ -286,8 +286,8 @@ Last revised: October 25, 2010
              cd 'C:/<install path>/' (example: cd 'C:/eggdrop')
              rm modules
              rm eggdrop.exe
-             mv eggdrop.exe-1.8.1 eggdrop.exe
-             mv modules-1.8.1 modules
+             mv eggdrop.exe-1.8.2 eggdrop.exe
+             mv modules-1.8.2 modules
 
         9. Create a 'lib' directory and copy needed libraries using the
            following commands. This assumes that you installed your Eggdrop in
