@@ -2,32 +2,33 @@ News
 Last revised: Jun 7, 2017
      _________________________________________________________________
 
-                                   News
+                                What's new?
 
 
-  What's new? To gain a full understanding of changes to Eggdrop v1.8.1, 
-  please read doc/Changes1.8.
-
+  This file lists major and incompatible changes in Eggdrop versions.
+  You can find the full list of changes in doc/Changes1.8.
   For support, feel free to visit us on Freenode #eggdrop.
 
-  If you are upgrading from a pre-1.6 version of Eggdrop:
+  For upgrading from a pre-1.6 version of Eggdrop: Read the UPGRADING file.
 
-    1. Before you start the bot for the first time, BACKUP your userfile.
-
-    2. DON'T USE YOUR OLD CONFIG FILE. MAKE A NEW ONE!
+  In general, always make a BACKUP of your config and user-/chanfile.
 
      _________________________________________________________________
 
-Major changes made to Eggdrop v1.8.2 from Eggdrop v1.8.1:
+Eggdrop v1.8.2:
 
     eggdrop.conf changes:
-      - temp-path renamed to tmpfile and its purpose changed. It is now only
-        used by filesys.mod/transfer.mod and optional.
-      - blowfish-use-mode: New setting to allow blowfish to use CBC encryption
-        with the Tcl encrypt/decrypt commands. CBC will be the default in
-        a later version of eggdrop.
-      - global-*: Renamed to default-* to clarify their purpose as default
-        channel settings, not ones that override for existing channels.
+      - temp-path renamed to tmpfile and its purpose changed.
+        It is now only used by filesys.mod/transfer.mod and optional.
+      - blowfish-use-mode is a new setting for Tcl encrypt/decrypt.
+        Allows using CBC instead of ECB mode for encryption.
+        Tcl scripts not using the same mode are incompatible with each other.
+        Does NOT affect password hashing for the userfile.
+        CBC will be the NEW DEFAULT in a later version of eggdrop.
+        Will be removed in a future Eggdrop version and forced to CBC.
+      - global-* is renamed to default-*.
+        This clarifies their purpose as default channel settings,
+        not ones that override for existing channels.
         global-* still works for backwards compatibility.
     Tcl-API changes:
       - encrypt/decrypt: These commands can now encrypt/decrypt in CBC
@@ -47,7 +48,7 @@ Major changes made to Eggdrop v1.8.2 from Eggdrop v1.8.1:
 
      _________________________________________________________________
 
-Major changes made to Eggdrop v1.8.1 from Eggdrop v1.8.0:
+Eggdrop v1.8.1:
 
     Autobotchk - Added functionality improvements to the tried-and-true
       autobotchk script, allowing characters such as {} and [] to be used in
@@ -83,7 +84,7 @@ Major changes made to Eggdrop v1.8.1 from Eggdrop v1.8.0:
   ________________________________________________________________________
 
 
-Changes made to Eggdrop v1.8.0 from Eggdrop v1.6.21:
+Eggdrop v1.8.0:
 
   MODULES
 
