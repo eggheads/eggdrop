@@ -1,23 +1,21 @@
 TLS support Last revised: Oct 17, 2010
 
-
-
-TLS SUPPORT
-
+TLS support
+===========
 
 This document provides information about TLS support which is a new
 eggdrop feature since version 1.8.0.
 
-
 ABOUT
+-----
 
 Eggdrop can be optionally compiled with TLS support. This requires
 OpenSSL 0.9.8 or more recent installed on your system. TLS support
 includes encryption for IRC, DCC, botnet, telnet and scripted
 connections as well as certificate authentication for users and bots.
 
-
 INSTALLATION
+------------
 
 ./configure and install as usual, the configure script will detect if
 your system meets the requirements and will enable TLS automatically.
@@ -30,8 +28,8 @@ files with the --with-sslinc and --with-ssllib options. You can also use
 these if you want to override the default OpenSSL installation with a
 custom one, as they take precedence over any system-wide paths.
 
-
 USAGE
+-----
 
 By default, without additional configuration, TLS support will provide
 opportunistic encryption for botnet links. For other connection types,
@@ -81,8 +79,8 @@ established as plaintext and later switched on with the starttls Tcl
 command. (Note that the other side should also switch to SSL at the same
 time - the synchronization is the script's job, not eggdrop's.)
 
-
 KEYS, CERTIFICATES AND AUTHENTICATION
+-------------------------------------
 
 You need a private key and a digital certificate whenever your bot will
 act as a server in a connection of any type. Common examples are hub
@@ -111,8 +109,8 @@ client:
 
     openssl s_client -cert my.crt -key my.key -connect host:sslport 
 
-
 SSL SETTINGS
+------------
 
 There are some new settings allowing control over certificate
 verification and authorization.
@@ -131,7 +129,7 @@ verification and authorization.
     maximum verification depth when checking certificate validity.
     Determines the maximum certificate chain length to allow.
 
-  ssl-capath
+  ssl-capath  
   ssl-cafile
 
     specify the location of certificate authorities certificates. These
@@ -160,9 +158,9 @@ verification and authorization.
     certificates will be required to have an UID field matching the
     handle of the user/bot.
 
-  ssl-verify-dcc
-  ssl-verify-bots
-  ssl-verify-server
+  ssl-verify-dcc  
+  ssl-verify-bots  
+  ssl-verify-server  
   ssl-verify-clients
 
     control ssl certificate verification. A value of 0 disables
@@ -171,3 +169,4 @@ verification and authorization.
     or expired certificates. Details are documented in eggdrop.conf.
 
 Copyright (C) 2010 - 2017 Eggheads Development Team
+

@@ -10,7 +10,7 @@ of the normal Tcl built-in commands are still there, of course, but you
 can also use these to manipulate features of the bot. They are listed
 according to category.
 
-This list is accurate for Eggdrop v1.8.1. Scripts written for v1.3, v1.4
+This list is accurate for Eggdrop v1.8.2. Scripts written for v1.3, v1.4
 or 1.6 series of Eggdrop should probably work with a few minor
 modifications depending on the script. Scripts which were written for
 v0.9, v1.0, v1.1 or v1.2 will probably not work without modification.
@@ -182,10 +182,11 @@ passwdok <handle> <pass>
 
   Module: core
 
-getuser <handle> <entry-type> [extra info]
+getuser <handle> [entry-type] [extra info]
 
-  Description: an interface to the new generic userfile support. Valid
-  entry types are:
+  Description: an interface to the new generic userfile support. Without
+  an entry-type, it returns a flat key/value list (dict) of all set
+  entries. Valid entry types are:
 
     -------- ---------------------------------------------------------------
     BOTFL    returns the current bot-specific flags for the user (bot-only)
@@ -211,7 +212,7 @@ getuser <handle> <entry-type> [extra info]
     -------- ---------------------------------------------------------------
 
   For additional custom user fields, to include the deprecated "EMAIL"
-  and "URL" fields, reference scripts/userinfo.tcl
+  and "URL" fields, reference scripts/userinfo.tcl.
 
   Returns: info specific to each entry-type
 
@@ -2127,14 +2128,25 @@ unlink <bot>
 encrypt <key> <string>
 
   Returns: encrypted string (using the currently loaded encryption
-  module), encoded into ASCII using base-64
+  module), encoded into ASCII using base-64. As of v1.8.2, the default
+  blowfish encryption module can use either the older ECB mode
+  (currently used by default for compatibility reasons), or the more
+  recent and more-secure CBC mode. You can explicitely request which
+  encryption mode to use by prefixing the encryption key with either
+  "ecb:" or "cbc:", or by using the blowfish-use-mode setting in the
+  config file. Note: the default encryption mode for this function is
+  planned to transition from ECB to CBC in v1.9.0.
 
   Module: encryption
 
 decrypt <key> <encrypted-base64-string>
 
   Returns: decrypted string (using the currently loaded encryption
-  module)
+  module). If the default blowfish encryption module is used, this
+  automatically picks the right decryption mode. You may still prefix
+  the key with "ecb:" or "cbc:" or use the blowfish-use-mode setting in
+  the config file (see the encrypt command for more detailed
+  information).
 
   Module: encryption
 
@@ -2308,7 +2320,7 @@ matchcidr <block> <address> <prefix>
   Description: performs a cidr match on the specified ip addresses. IPv6
   is supported, if enabled at compile time.
 
-  Example: matchcidr 192.1.8.1.0 192.168.1.17 16
+  Example: matchcidr 192.1.8.2.0 192.1.8.2.17 16
 
   Returns: 1 if the address matches the block prefix, 0 otherwise.
 
@@ -2474,6 +2486,13 @@ handlen
 config
 
   Value: the filename of the config file Eggdrop is currently using
+
+  Module: core
+
+configureargs
+
+  Value: a string (not list) of configure arguments in shell expansion
+  (single quotes)
 
   Module: core
 

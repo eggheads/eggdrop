@@ -1,9 +1,7 @@
 Textfile Substitutions Last revised: March 08, 2002
 
-
-
-TEXTFILE SUBSTITUTIONS
-
+Textfile Substitutions
+======================
 
 These %-variables can be inserted into help files, the banner, the MOTD,
 and other text files. There are four variables that can be used to
@@ -22,9 +20,9 @@ respective values:
   ------- ----------------------------------------------------------
   %B      bot's nickname (i.e. "LamestBot")
 
-  %V      current Eggdrop version (i.e. "eggdrop v1.8.1")
+  %V      current Eggdrop version (i.e. "eggdrop v1.8.2")
 
-  %E      long form of %V (i.e. "Eggdrop v1.8.1 (C) 1997 Robey
+  %E      long form of %V (i.e. "Eggdrop v1.8.2 (C) 1997 Robey
           Pointer (C) 2010 Eggheads Development Team")
 
   %C      channels the bot is on (i.e. "#lamest, #botnetcentral")
@@ -67,3 +65,4 @@ Other variables:
 +----------------+------------------------------------------------------------+
 
   Copyright (C) 1999 - 2017 Eggheads Development Team
+

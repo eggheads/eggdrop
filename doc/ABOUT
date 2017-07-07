@@ -1,9 +1,7 @@
 About Eggdrop Last revised: July 27, 2010
 
-
-
-ABOUT EGGDROP
-
+About Eggdrop
+=============
 
   Eggdrop was created around December 1993 to help stop the incessant
   wars on #gayteen. It spawned from another bot that was in the process
@@ -51,12 +49,12 @@ ABOUT EGGDROP
 
     -   Some sort of Unix account
     -   A pretty good knowledge of IRC and Unix, including how to
-        compile programs, how to read, and what DCC chat is, at
-        absolute minimum.
-    -   About 5-7 MB of disk space. The Eggdrop tarball is about 5.4
-        MB unpacked.
-    -   Tcl -- Eggdrop cannot compile without Tcl installed on
-        your shell.
+        compile programs, how to read, and what DCC chat is, at absolute
+        minimum.
+    -   About 5-7 MB of disk space. The Eggdrop tarball is about 5.4 MB
+        unpacked.
+    -   Tcl -- Eggdrop cannot compile without Tcl installed on your
+        shell.
 
   Before starting, ask yourself if you really need a bot. Most IRC
   servers allow only a handful of bots, and some forbid them outright.
@@ -66,3 +64,4 @@ ABOUT EGGDROP
   you want with this bot.
 
   Copyright (C) 1999 - 2017 Eggheads Development Team
+

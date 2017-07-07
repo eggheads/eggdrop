@@ -1,9 +1,7 @@
 Last revised: January 1, 2002
 
-
-
-CONSOLE MODULE
-
+Console Module
+==============
 
 This module provides storage of console settings when you exit the bot
 or type .store on the partyline.
@@ -18,18 +16,16 @@ module:
 There are also some variables you can set in your config file:
 
   set console-autosave 1
-
       Save users console settings automatically? Otherwise, they have to
       use the .store command.
 
   set force-channel 0
-
       If a user doesn't have any console settings saved, which channel
       do you want them automatically put on?
 
   set info-party 0
-
       Enable this setting if a user's global info line should be
       displayed when they join a botnet channel.
 
 Copyright (C) 2000 - 2017 Eggheads Development Team
+
