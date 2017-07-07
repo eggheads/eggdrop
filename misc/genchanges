@@ -504,7 +504,7 @@ proc finalformatshortlog {commits} {
 			lappend dateresult "[join [dateindent [split [join [lmap x $byresult { join $x \n }] \n] \n] $date] \n]"
 		}
 		vlog "DATERESULT: $dateresult"
-		lappend versionresult "[expr {$version ne "" ? "Eggdrop $version:" : ""}]\n\n[join [versionindent [split [join $dateresult \n] \n]] \n]"
+		lappend versionresult "[expr {$version ne "" ? "Eggdrop v$version:" : ""}]\n\n[join [versionindent [split [join $dateresult \n] \n]] \n]"
 	}
 	join $versionresult \n\n
 }
