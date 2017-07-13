@@ -1,7 +1,7 @@
 dnl configure.ac: this file is processed by autoconf to produce ./configure.
 
 AC_PREREQ(2.60)
-AC_INIT([Eggdrop],[1.8.0],[bugs@eggheads.org])
+AC_INIT([Eggdrop],[1.8.1],[bugs@eggheads.org])
 AC_COPYRIGHT([Copyright (C) 1999 - 2017 Eggheads Development Team])
 AC_LANG([C])
 AC_REVISION([m4_esyscmd([misc/getcommit])])
@@ -105,11 +105,8 @@ AC_C_VOLATILE
 EGG_CHECK_SOCKLEN_T
 
 
-# Check the sizes of various types.
-AC_CHECK_SIZEOF(long, 0)
-AC_CHECK_SIZEOF(int, 0)
-AC_CHECK_SIZEOF(short, 0)
-
+# Create stdint.h C99 compatibility header.
+AX_CREATE_STDINT_H([eggint.h])
 
 # Checks for functions and their arguments.
 AC_CHECK_FUNCS([clock dprintf fsync getdtablesize getrusage inet_aton isascii mbrlen memcpy memset random rand lrand48 rename setpgid sigaction sigemptyset snprintf strcasecmp strncasecmp uname vsnprintf inet_ntop])

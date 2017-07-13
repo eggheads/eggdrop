@@ -123,7 +123,7 @@ There are also some variables you can set in your config file:
 	0 to 9, but instead of using a * wildcard to replace portions of the
 	host, only numbers in hostnames are replaced with the '?' wildcard.
 	Same is valid for types 20-29, but instead of '?', the '*' wildcard
-	will be used.
+	will be used. Types 30-39 set the host to '*'.
 
       ban-time 120
         Set here how long temporary bans will last (in minutes). If you
@@ -190,33 +190,33 @@ There are also some variables you can set in your config file:
 
        flood-chan 15:60
          Set here how many channel messages in how many seconds from one
-         host constitutes a flood. Setting this to 0 or 0:0 disables text
-         flood protection for the channel.
+         host constitutes a flood. Setting this to 0, 0:X or X:0 disables text
+         flood protection for the channel, where X is an integer >= 0.
 
        flood-deop 3:10
          Set here how many deops in how many seconds from one host constitutes
-         a flood. Setting this to 0 or 0:0 disables deop flood protection for
-         the channel.
+         a flood. Setting this to 0, 0:X or X:0 disables deop flood protection for
+         the channel, where X is an integer >= 0.
 
        flood-kick 3:10
          Set here how many kicks in how many seconds from one host constitutes
-         a flood. Setting this to 0 or 0:0 disables kick flood protection for
-         the channel.
+         a flood. Setting this to 0, 0:X or X:0 disables kick flood protection for
+         the channel, where X is an integer >= 0.
 
        flood-join 5:60
          Set here how many joins in how many seconds from one host constitutes
-         a flood. Setting this to 0 or 0:0 disables join flood protection for
-         the channel.
+         a flood. Setting this to 0, 0:X or X:0 disables join flood protection for
+         the channel, where X is an integer >= 0.
 
        flood-ctcp 3:60
          Set here how many channel ctcps in how many seconds from one host
-         constitutes a flood. Setting this to 0 or 0:0 disables ctcp flood
-         protection for the channel.
+         constitutes a flood. Setting this to 0, 0:X or X:0 disables ctcp flood
+         protection for the channel, where X is an integer >= 0.
 
        flood-nick 5:60
          Set here how many nick changes in how many seconds from one host
-         constitutes a flood. Setting this to 0 or 0:0 disables nick flood
-         protection for the channel.
+         constitutes a flood. Setting this to 0, 0:X or X:0 disables nick flood
+         protection for the channel, where X is an integer >= 0.
 
 
     channel set <chan> +/-<setting>
@@ -338,37 +338,37 @@ There are also some variables you can set in your config file:
     The following settings are used as default values when you .+chan #chan or .tcl
     channel add #chan. Look in the section above for explanation of every option.
 
-      set global-flood-chan 15:60
+      set default-flood-chan 15:60
 
-      set global-flood-deop 3:10
+      set default-flood-deop 3:10
 
-      set global-flood-kick 3:10
+      set default-flood-kick 3:10
 
-      set global-flood-join 5:60
+      set default-flood-join 5:60
 
-      set global-flood-ctcp 3:60
+      set default-flood-ctcp 3:60
 
-      set global-flood-nick 5:60
+      set default-flood-nick 5:60
 
-      set global-aop-delay 5:30
+      set default-aop-delay 5:30
 
-      set global-idle-kick 0
+      set default-idle-kick 0
 
-      set global-chanmode "nt"
+      set default-chanmode "nt"
 
-      set global-stopnethack-mode 0
+      set default-stopnethack-mode 0
 
-      set global-revenge-mode 0
+      set default-revenge-mode 0
 
-      set global-ban-type 3
+      set default-ban-type 3
 
-      set global-ban-time 120
+      set default-ban-time 120
 
-      set global-exempt-time 60
+      set default-exempt-time 60
 
-      set global-invite-time 60
+      set default-invite-time 60
 
-      set global-chanset {
+      set default-chanset {
         | -autoop         
         | -autovoice
         | -bitch          

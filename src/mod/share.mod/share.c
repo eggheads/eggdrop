@@ -48,7 +48,7 @@ static Function *global = NULL, *transfer_funcs = NULL, *channels_funcs = NULL;
 
 static int private_global = 0;
 static int private_user = 0;
-static char private_globals[50];
+static char private_globals[51];
 static int allow_resync = 0;
 static struct flag_record fr = { 0, 0, 0, 0, 0, 0 };
 static int resync_time = 900;
@@ -1403,7 +1403,7 @@ static void new_tbuf(char *bot)
   tandbuf **old = &tbuf, *new;
 
   new = nmalloc(sizeof(tandbuf));
-  strcpy(new->bot, bot);
+  strncpyz(new->bot, bot, sizeof new->bot);
   new->q = NULL;
   new->timer = now;
   new->next = *old;
@@ -1904,7 +1904,7 @@ static void start_sending_users(int idx)
 #ifdef IPV6
   char s[INET6_ADDRSTRLEN];
 #else
-  char s[sizeof "255.255.255.255"];
+  char s[INET_ADDRSTRLEN];
 #endif
 
   egg_snprintf(share_file, sizeof share_file, ".share.%s.%lu", dcc[idx].nick,

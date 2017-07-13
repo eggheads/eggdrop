@@ -69,7 +69,7 @@ int pref_af = 0;              /* Prefer IPv6 over IPv4?                       */
 #endif
 char firewall[121] = "";      /* Socks server for firewall.                   */
 int firewallport = 1080;      /* Default port of socks 4/5 firewalls.         */
-char botuser[21] = "eggdrop"; /* Username of the user running the bot.        */
+char botuser[11] = "eggdrop"; /* Username of the user running the bot.        */
 int dcc_sanitycheck = 0;      /* Do some sanity checking on dcc connections.  */
 
 sock_list *socklist = NULL;   /* Enough to be safe.                           */
@@ -190,7 +190,7 @@ int setsockname(sockname_t *addr, char *src, int port, int allowres)
     addr->addr.s4.sin_family = AF_INET;
   }
 #else
-  int i, count; 
+  int i, count;
 
   egg_bzero(addr, sizeof(sockname_t));
 
@@ -468,7 +468,7 @@ static int proxy_connect(int sock, sockname_t *addr)
 #endif
   if (firewall[0] == '!') {
     proxy = PROXY_SUN;
-    strcpy(host, &firewall[1]);
+    strncpyz(host, &firewall[1], sizeof host);
   } else {
     proxy = PROXY_SOCKS;
     strcpy(host, firewall);
@@ -667,7 +667,7 @@ int getdccaddr(sockname_t *addr, char *s, size_t l)
  * If addr is not NULL, it should point to the listening socket's address.
  * Otherwise, this function will try to figure out the public address of the
  * machine, using listen_ip and natip. If restrict_af is set, it will limit
- * the possible IPs to the specified family. The result is a string useable 
+ * the possible IPs to the specified family. The result is a string useable
  * for DCC requests
  */
 int getdccfamilyaddr(sockname_t *addr, char *s, size_t l, int restrict_af)
@@ -745,13 +745,13 @@ int getdccfamilyaddr(sockname_t *addr, char *s, size_t l, int restrict_af)
     if (IN6_IS_ADDR_V4MAPPED(&r->addr.s6.sin6_addr) ||
         IN6_IS_ADDR_UNSPECIFIED(&r->addr.s6.sin6_addr)) {
       egg_memcpy(&ip, r->addr.s6.sin6_addr.s6_addr + 12, sizeof ip);
-      snprintf(s, l, "%lu", natip[0] ? iptolong(inet_addr(natip)) :
+      egg_snprintf(s, l, "%lu", natip[0] ? iptolong(inet_addr(natip)) :
                ntohl(ip));
     } else
       inet_ntop(AF_INET6, &r->addr.s6.sin6_addr, s, l);
   } else
 #endif
-  snprintf(s, l, "%lu", natip[0] ? iptolong(inet_addr(natip)) :
+  egg_snprintf(s, l, "%lu", natip[0] ? iptolong(inet_addr(natip)) :
              ntohl(r->addr.s4.sin_addr.s_addr));
   return 1;
 }
@@ -790,6 +790,19 @@ int preparefdset(fd_set *fd, sock_list *slist, int slistmax, int tclonly, int tc
     }
   }
   return foundsocks;
+}
+
+/* A safer version of write() that deals with partial writes. */
+void safe_write(int fd, const void *buf, size_t count)
+{
+  const char *bytes = buf;
+  ssize_t ret;
+  do {
+    if ((ret = write(fd, bytes, count)) == -1 && errno != EINTR) {
+      putlog(LOG_MISC, "*", "Unexpected write() failure on attempt to write %zd bytes to fd %d: %s.", count, fd, strerror(errno));
+      break;
+    }
+  } while ((bytes += ret, count -= ret));
 }
 
 /* Attempts to read from all sockets in slist (upper array boundary slistmax-1)
@@ -1151,7 +1164,7 @@ void tputs(register int z, char *s, unsigned int len)
     return;
 
   if (((z == STDOUT) || (z == STDERR)) && (!backgrd || use_stderr)) {
-    write(z, s, len);
+    safe_write(z, s, len);
     return;
   }
 

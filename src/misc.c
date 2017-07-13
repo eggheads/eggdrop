@@ -45,15 +45,15 @@ extern struct dcc_t *dcc;
 extern struct chanset_t *chanset;
 
 extern char helpdir[], version[], origbotname[], botname[], admin[], network[],
-            motdfile[], ver[], botnetnick[], bannerfile[], logfile_suffix[],
-            textdir[];
+            motdfile[], ver[], botnetnick[], bannerfile[], textdir[];
 extern int  backgrd, con_chan, term_z, use_stderr, dcc_total, keep_all_logs,
             quick_logs, strict_host;
 
 extern time_t now;
 extern Tcl_Interp *interp;
 
-char log_ts[32] = "[%H:%M:%S]"; /* Timestamp format for logfile entries */
+char logfile_suffix[21] = ".%d%b%Y";    /* Format of logfile suffix */
+char log_ts[33] = "[%H:%M:%S]"; /* Timestamp format for logfile entries */
 
 int shtime = 1;                 /* Display the time with console output */
 log_t *logs = 0;                /* Logfiles */
@@ -356,6 +356,11 @@ void maskaddr(const char *s, char *nw, int type)
   }
   *nw++ = '@';
 
+  if (type >= 30) {
+    strcpy(nw, "*");
+    return;
+  }
+
   /* The rest is for the host */
   h = (h ? h + 1 : ss);
   for (p = h; *p; p++) /* hostname? */
@@ -640,11 +645,11 @@ void logsuffix_change(char *s)
   char *s2 = logfile_suffix;
 
   /* If the suffix didn't really change, ignore. It's probably a rehash. */
-  if (s && s2 && !strcmp(s, s2))
+  if (!s || (s && s2 && !strcmp(s, s2)))
     return;
 
   debug0("Logfile suffix changed. Closing all open logs.");
-  strcpy(logfile_suffix, s);
+  strncpyz(logfile_suffix, s, sizeof logfile_suffix);
   while (s2[0]) {
     if (s2[0] == ' ')
       s2[0] = '_';
@@ -1052,7 +1057,7 @@ void help_subst(char *s, char *nick, struct flag_record *flags,
     }
   }
   if (cols) {
-    strcpy(xx, s);
+    strncpyz(xx, s, sizeof xx);
     s[0] = 0;
     subst_addcol(s, xx);
   }
@@ -1065,26 +1070,28 @@ static void scan_help_file(struct help_ref *current, char *filename, int type)
   struct help_list_t *list;
 
   if (is_file(filename) && (f = fopen(filename, "r"))) {
-    while (!feof(f)) {
-      fgets(s, HELP_BUF_LEN, f);
-      if (!feof(f)) {
-        p = s;
-        while ((q = strstr(p, "%{help="))) {
-          q += 7;
-          if ((p = strchr(q, '}'))) {
-            *p = 0;
-            list = nmalloc(sizeof *list);
+    /* don't check for feof after fgets, skips last line if it has no \n (ie on windows) */
+    while (!feof(f) && fgets(s, HELP_BUF_LEN, f) != NULL) {
+      p = s;
+      while ((q = strstr(p, "%{help="))) {
+        q += 7;
+        if ((p = strchr(q, '}'))) {
+          *p = 0;
+          list = nmalloc(sizeof *list);
 
-            list->name = nmalloc(p - q + 1);
-            strcpy(list->name, q);
-            list->next = current->first;
-            list->type = type;
-            current->first = list;
-            p++;
-          } else
-            p = "";
-        }
+          list->name = nmalloc(p - q + 1);
+          strcpy(list->name, q);
+          list->next = current->first;
+          list->type = type;
+          current->first = list;
+          p++;
+        } else
+          p = "";
       }
+    }
+    /* fgets == NULL means error or empty file, so check for error */
+    if (ferror(f)) {
+      putlog(LOG_MISC, "*", "Error reading help file");
     }
     fclose(f);
   }
@@ -1214,19 +1221,21 @@ void showhelp(char *who, char *file, struct flag_record *flags, int fl)
 
   if (f) {
     help_subst(NULL, NULL, 0, HELP_IRC, NULL);  /* Clear flags */
-    while (!feof(f)) {
-      fgets(s, HELP_BUF_LEN, f);
-      if (!feof(f)) {
-        if (s[strlen(s) - 1] == '\n')
-          s[strlen(s) - 1] = 0;
-        if (!s[0])
-          strcpy(s, " ");
-        help_subst(s, who, flags, 0, file);
-        if ((s[0]) && (strlen(s) > 1)) {
-          dprintf(DP_HELP, "NOTICE %s :%s\n", who, s);
-          lines++;
-        }
+    /* don't check for feof after fgets, skips last line if it has no \n (ie on windows) */
+    while (!feof(f) && fgets(s, HELP_BUF_LEN, f) != NULL) {
+      if (s[strlen(s) - 1] == '\n')
+        s[strlen(s) - 1] = 0;
+      if (!s[0])
+        strcpy(s, " ");
+      help_subst(s, who, flags, 0, file);
+      if ((s[0]) && (strlen(s) > 1)) {
+        dprintf(DP_HELP, "NOTICE %s :%s\n", who, s);
+        lines++;
       }
+    }
+    /* fgets == NULL means error or empty file, so check for error */
+    if (ferror(f)) {
+      putlog(LOG_MISC, "*", "Error reading help file");
     }
     fclose(f);
   }
@@ -1243,19 +1252,21 @@ static int display_tellhelp(int idx, char *file, FILE *f,
   if (f) {
     help_subst(NULL, NULL, 0,
                (dcc[idx].status & STAT_TELNET) ? 0 : HELP_IRC, NULL);
-    while (!feof(f)) {
-      fgets(s, HELP_BUF_LEN, f);
-      if (!feof(f)) {
-        if (s[strlen(s) - 1] == '\n')
-          s[strlen(s) - 1] = 0;
-        if (!s[0])
-          strcpy(s, " ");
-        help_subst(s, dcc[idx].nick, flags, 1, file);
-        if (s[0]) {
-          dprintf(idx, "%s\n", s);
-          lines++;
-        }
+    /* don't check for feof after fgets, skips last line if it has no \n (ie on windows) */
+    while (!feof(f) && fgets(s, HELP_BUF_LEN, f) != NULL) {
+      if (s[strlen(s) - 1] == '\n')
+        s[strlen(s) - 1] = 0;
+      if (!s[0])
+        strcpy(s, " ");
+      help_subst(s, dcc[idx].nick, flags, 1, file);
+      if (s[0]) {
+        dprintf(idx, "%s\n", s);
+        lines++;
       }
+    }
+    /* fgets == NULL means error or empty file, so check for error */
+    if (ferror(f)) {
+      putlog(LOG_MISC, "*", "Error displaying help");
     }
     fclose(f);
   }
@@ -1373,17 +1384,19 @@ void show_motd(int idx)
   /* reset the help_subst variables to their defaults */
   help_subst(NULL, NULL, 0,
              (dcc[idx].status & STAT_TELNET) ? 0 : HELP_IRC, NULL);
-  while (!feof(vv)) {
-    fgets(s, 120, vv);
-    if (!feof(vv)) {
-      if (s[strlen(s) - 1] == '\n')
-        s[strlen(s) - 1] = 0;
-      if (!s[0])
-        strcpy(s, " ");
-      help_subst(s, dcc[idx].nick, &fr, 1, botnetnick);
-      if (s[0])
-        dprintf(idx, "%s\n", s);
-    }
+  /* don't check for feof after fgets, skips last line if it has no \n (ie on windows) */
+  while (!feof(vv) && fgets(s, sizeof s, vv) != NULL) {
+    if (s[strlen(s) - 1] == '\n')
+      s[strlen(s) - 1] = 0;
+    if (!s[0])
+      strcpy(s, " ");
+    help_subst(s, dcc[idx].nick, &fr, 1, botnetnick);
+    if (s[0])
+      dprintf(idx, "%s\n", s);
+  }
+  /* fgets == NULL means error or empty file, so check for error */
+  if (ferror(vv)) {
+    putlog(LOG_MISC, "*", "Error reading MOTD for DCC");
   }
   fclose(vv);
   dprintf(idx, "\n");
@@ -1407,14 +1420,19 @@ void show_banner(int idx)
   get_user_flagrec(dcc[idx].user, &fr, dcc[idx].u.chat->con_chan);
   /* reset the help_subst variables to their defaults */
   help_subst(NULL, NULL, 0, 0, NULL);
-  while (!feof(vv)) {
-    fgets(s, 120, vv);
-    if (!feof(vv)) {
-      if (!s[0])
-        strcpy(s, " \n");
-      help_subst(s, dcc[idx].nick, &fr, 0, botnetnick);
-      dprintf(idx, "%s", s);
-    }
+  /* don't check for feof after fgets, skips last line if it has no \n (ie on windows) */
+  while (!feof(vv) && fgets(s, sizeof s, vv) != NULL) {
+    if (s[strlen(s) - 1] == '\n')
+      s[strlen(s) - 1] = 0;
+    if (!s[0])
+      strcpy(s, " ");
+    help_subst(s, dcc[idx].nick, &fr, 0, botnetnick);
+    if (s[0])
+      dprintf(idx, "%s\n", s);
+  }
+  /* fgets == NULL means error or empty file, so check for error */
+  if (ferror(vv)) {
+      putlog(LOG_MISC, "*", "Error reading banner");
   }
   fclose(vv);
 }

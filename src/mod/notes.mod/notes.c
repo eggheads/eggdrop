@@ -60,7 +60,8 @@ static struct user_entry_type USERENTRY_FWD = {
   NULL,
   NULL,
   fwd_display,
-  "FWD"
+  "FWD",
+  NULL
 };
 
 #include "cmdsnote.c"
@@ -85,19 +86,21 @@ static int num_notes(char *user)
   f = fopen(notefile, "r");
   if (f == NULL)
     return 0;
-  while (!feof(f)) {
-    fgets(s, 512, f);
-    if (!feof(f)) {
-      if (s[strlen(s) - 1] == '\n')
-        s[strlen(s) - 1] = 0;
-      rmspace(s);
-      if ((s[0]) && (s[0] != '#') && (s[0] != ';')) {   /* Not comment */
-        s1 = s;
-        to = newsplit(&s1);
-        if (!egg_strcasecmp(to, user))
-          tot++;
-      }
+  /* don't check for feof after fgets, skips last line if it has no \n (ie on windows) */
+  while (!feof(f) && fgets(s, sizeof s, f) != NULL) {
+    if (s[strlen(s) - 1] == '\n')
+      s[strlen(s) - 1] = 0;
+    rmspace(s);
+    if ((s[0]) && (s[0] != '#') && (s[0] != ';')) {   /* Not comment */
+      s1 = s;
+      to = newsplit(&s1);
+      if (!egg_strcasecmp(to, user))
+        tot++;
     }
+  }
+  /* fgets == NULL means error or empty file, so check for error */
+  if (ferror(f)) {
+    putlog(LOG_MISC, "*", "NOTES: Error reading number of notes.");
   }
   fclose(f);
   return tot;
@@ -125,23 +128,25 @@ static void notes_change(char *oldnick, char *newnick)
     return;
   }
   chmod(s, userfile_perm);      /* Use userfile permissions. */
-  while (!feof(f)) {
-    fgets(s, 512, f);
-    if (!feof(f)) {
-      if (s[strlen(s) - 1] == '\n')
-        s[strlen(s) - 1] = 0;
-      rmspace(s);
-      if ((s[0]) && (s[0] != '#') && (s[0] != ';')) {   /* Not comment */
-        s1 = s;
-        to = newsplit(&s1);
-        if (!egg_strcasecmp(to, oldnick)) {
-          tot++;
-          fprintf(g, "%s %s\n", newnick, s1);
-        } else
-          fprintf(g, "%s %s\n", to, s1);
+  /* don't check for feof after fgets, skips last line if it has no \n (ie on windows) */
+  while (!feof(f) && fgets(s, sizeof s, f) != NULL) {
+    if (s[strlen(s) - 1] == '\n')
+      s[strlen(s) - 1] = 0;
+    rmspace(s);
+    if ((s[0]) && (s[0] != '#') && (s[0] != ';')) {   /* Not comment */
+      s1 = s;
+      to = newsplit(&s1);
+      if (!egg_strcasecmp(to, oldnick)) {
+        tot++;
+        fprintf(g, "%s %s\n", newnick, s1);
       } else
-        fprintf(g, "%s\n", s);
-    }
+        fprintf(g, "%s %s\n", to, s1);
+    } else
+      fprintf(g, "%s\n", s);
+  }
+  /* fgets == NULL means error or empty file, so check for error */
+  if (ferror(f)) {
+    putlog(LOG_MISC, "*", "NOTES: Error reading notes file to change handle");
   }
   fclose(f);
   fclose(g);
@@ -172,27 +177,27 @@ static void expire_notes()
     return;
   }
   chmod(s, userfile_perm);      /* Use userfile permissions. */
-  while (!feof(f)) {
-    fgets(s, 512, f);
-    if (!feof(f)) {
-      if (s[strlen(s) - 1] == '\n')
-        s[strlen(s) - 1] = 0;
-      rmspace(s);
-      if ((s[0]) && (s[0] != '#') && (s[0] != ';')) {   /* Not comment */
-        s1 = s;
-        to = newsplit(&s1);
-        from = newsplit(&s1);
-        ts = newsplit(&s1);
-        lapse = (now - (time_t) atoi(ts)) / 86400;
-        if (lapse > note_life)
-          tot++;
-        else if (!get_user_by_handle(userlist, to))
-          tot++;
-        else
-          fprintf(g, "%s %s %s %s\n", to, from, ts, s1);
-      } else
-        fprintf(g, "%s\n", s);
-    }
+  /* don't check for feof after fgets, skips last line if it has no \n (ie on windows) */
+  while (!feof(f) && fgets(s, sizeof s, f) != NULL) {
+    if (s[strlen(s) - 1] == '\n')
+      s[strlen(s) - 1] = 0;
+    rmspace(s);
+    if ((s[0]) && (s[0] != '#') && (s[0] != ';')) {   /* Not comment */
+      s1 = s;
+      to = newsplit(&s1);
+      from = newsplit(&s1);
+      ts = newsplit(&s1);
+      lapse = (now - (time_t) atoi(ts)) / 86400;
+      if (lapse > note_life || !get_user_by_handle(userlist, to))
+        tot++;
+      else
+        fprintf(g, "%s %s %s %s\n", to, from, ts, s1);
+    } else
+      fprintf(g, "%s\n", s);
+  }
+  /* fgets == NULL means error or empty file, so check for error */
+  if (ferror(f)) {
+    putlog(LOG_MISC, "*", "NOTES: Error reading notes file to remove old notes");
   }
   fclose(f);
   fclose(g);
@@ -222,7 +227,7 @@ static int tcl_storenote STDVAR
     int ok = 1;
 
     /* User is valid & has a valid forwarding address */
-     strcpy(fwd, f1); /* Only 40 bytes are stored in the userfile */
+     strncpyz(fwd, f1, sizeof fwd); /* Only 40 bytes are stored in the userfile */
      p = strchr(fwd, '@');
     if (p && !egg_strcasecmp(p + 1, botnetnick)) {
       *p = 0;
@@ -403,23 +408,22 @@ static int tcl_erasenotes STDVAR
   read = 0;
   erased = 0;
   notes_parse(nl, (argv[2][0] == 0) ? "-" : argv[2]);
-  while (!feof(f) && fgets(s, 600, f)) {
+  /* don't check for feof after fgets, skips last line if it has no \n (ie on windows) */
+  while (!feof(f) && fgets(s, sizeof s, f) != NULL) {
     if (s[strlen(s) - 1] == '\n')
       s[strlen(s) - 1] = 0;
-    if (!feof(f)) {
       rmspace(s);
-      if ((s[0]) && (s[0] != '#') && (s[0] != ';')) {   /* Not comment */
-        s1 = s;
-        to = newsplit(&s1);
-        if (!egg_strcasecmp(to, argv[1])) {
-          read++;
-          if (!notes_in(nl, read))
-            fprintf(g, "%s %s\n", to, s1);
-          else
-            erased++;
-        } else
+    if ((s[0]) && (s[0] != '#') && (s[0] != ';')) {   /* Not comment */
+      s1 = s;
+      to = newsplit(&s1);
+      if (!egg_strcasecmp(to, argv[1])) {
+        read++;
+        if (!notes_in(nl, read))
           fprintf(g, "%s %s\n", to, s1);
-      }
+        else
+          erased++;
+      } else
+        fprintf(g, "%s %s\n", to, s1);
     }
   }
   sprintf(s, "%d", erased);
@@ -490,49 +494,47 @@ static void notes_read(char *hand, char *nick, char *srd, int idx)
     return;
   }
   notes_parse(rd, srd);
-  while (!feof(f) && fgets(s, 600, f)) {
+  while (!feof(f) && fgets(s, sizeof s, f) != NULL) {
     i = strlen(s);
     if (i > 0 && s[i - 1] == '\n')
       s[i - 1] = 0;
-    if (!feof(f)) {
-      rmspace(s);
-      if ((s[0]) && (s[0] != '#') && (s[0] != ';')) {   /* Not comment */
-        s1 = s;
-        to = newsplit(&s1);
-        if (!egg_strcasecmp(to, hand)) {
-          int lapse;
+    rmspace(s);
+    if ((s[0]) && (s[0] != '#') && (s[0] != ';')) {   /* Not comment */
+      s1 = s;
+      to = newsplit(&s1);
+      if (!egg_strcasecmp(to, hand)) {
+        int lapse;
 
-          from = newsplit(&s1);
-          dt = newsplit(&s1);
-          tt = atoi(dt);
-          egg_strftime(wt, 14, "%b %d %H:%M", localtime(&tt));
-          dt = wt;
-          lapse = (int) ((now - tt) / 86400);
-          if (lapse > note_life - 7) {
-            if (lapse >= note_life)
-              strcat(dt, NOTES_EXPIRE_TODAY);
-            else
-              sprintf(&dt[strlen(dt)], NOTES_EXPIRE_XDAYS, note_life - lapse,
-                      (note_life - lapse) == 1 ? "" : "S");
-          }
-          if (srd[0] == '+') {
-            if (idx >= 0) {
-              if (ix == 1)
-                dprintf(idx, "### %s:\n", NOTES_WAITING);
-              dprintf(idx, "  %2d. %s (%s)\n", ix, from, dt);
-            } else
-              dprintf(DP_HELP, "NOTICE %s :%2d. %s (%s)\n", nick, ix, from,
-                      dt);
-          } else if (notes_in(rd, ix)) {
-            if (idx >= 0)
-              dprintf(idx, "%2d. %s (%s): %s\n", ix, from, dt, s1);
-            else
-              dprintf(DP_HELP, "NOTICE %s :%2d. %s (%s): %s\n", nick, ix, from,
-                      dt, s1);
-            ir++;
-          }
-          ix++;
+        from = newsplit(&s1);
+        dt = newsplit(&s1);
+        tt = atoi(dt);
+        egg_strftime(wt, 14, "%b %d %H:%M", localtime(&tt));
+        dt = wt;
+        lapse = (int) ((now - tt) / 86400);
+        if (lapse > note_life - 7) {
+          if (lapse >= note_life)
+            strncat(wt, NOTES_EXPIRE_TODAY, sizeof wt - strlen(wt) - 1);
+          else
+            sprintf(&dt[strlen(dt)], NOTES_EXPIRE_XDAYS, note_life - lapse,
+                    (note_life - lapse) == 1 ? "" : "S");
         }
+        if (srd[0] == '+') {
+          if (idx >= 0) {
+            if (ix == 1)
+              dprintf(idx, "### %s:\n", NOTES_WAITING);
+            dprintf(idx, "  %2d. %s (%s)\n", ix, from, dt);
+          } else
+            dprintf(DP_HELP, "NOTICE %s :%2d. %s (%s)\n", nick, ix, from,
+                    dt);
+        } else if (notes_in(rd, ix)) {
+          if (idx >= 0)
+            dprintf(idx, "%2d. %s (%s): %s\n", ix, from, dt, s1);
+          else
+            dprintf(DP_HELP, "NOTICE %s :%2d. %s (%s): %s\n", nick, ix, from,
+                    dt, s1);
+          ir++;
+        }
+        ix++;
       }
     }
   }
@@ -605,26 +607,27 @@ static void notes_del(char *hand, char *nick, char *sdl, int idx)
   }
   chmod(s, userfile_perm);      /* Use userfile permissions. */
   notes_parse(dl, sdl);
-  while (!feof(f)) {
-    fgets(s, 512, f);
+  /* don't check for feof after fgets, skips last line if it has no \n (ie on windows) */
+  while (!feof(f) && fgets(s, sizeof s, f) != NULL) {
     if (s[strlen(s) - 1] == '\n')
       s[strlen(s) - 1] = 0;
-    if (!feof(f)) {
-      rmspace(s);
-      if ((s[0]) && (s[0] != '#') && (s[0] != ';')) {   /* Not comment */
-        s1 = s;
-        to = newsplit(&s1);
-        if (!egg_strcasecmp(to, hand)) {
-          if (!notes_in(dl, in))
-            fprintf(g, "%s %s\n", to, s1);
-          else
-            er++;
-          in++;
-        } else
+    rmspace(s);
+    if ((s[0]) && (s[0] != '#') && (s[0] != ';')) {   /* Not comment */
+      s1 = s;
+      to = newsplit(&s1);
+      if (!egg_strcasecmp(to, hand)) {
+        if (!notes_in(dl, in))
           fprintf(g, "%s %s\n", to, s1);
+        else
+          er++;
+        in++;
       } else
-        fprintf(g, "%s\n", s);
-    }
+        fprintf(g, "%s %s\n", to, s1);
+    } else
+      fprintf(g, "%s\n", s);
+  }
+  if (ferror(f)) {
+    putlog(LOG_MISC, "*", "NOTES: Error reading notes file to delete note.");
   }
   fclose(f);
   fclose(g);
@@ -688,27 +691,26 @@ static int tcl_notes STDVAR
   count = 0;
   read = 0;
   notes_parse(nl, (argv[2][0] == 0) ? "-" : argv[2]);
-  while (!feof(f) && fgets(s, 600, f)) {
+  /* don't check for feof after fgets, skips last line if it has no \n (ie on windows) */
+  while (!feof(f) && fgets(s, sizeof s, f) != NULL) {
     if (s[strlen(s) - 1] == '\n')
       s[strlen(s) - 1] = 0;
-    if (!feof(f)) {
-      rmspace(s);
-      if ((s[0]) && (s[0] != '#') && (s[0] != ';')) {   /* Not comment */
-        s1 = s;
-        to = newsplit(&s1);
-        if (!egg_strcasecmp(to, argv[1])) {
-          read++;
-          if (notes_in(nl, read)) {
-            count++;
-            from = newsplit(&s1);
-            dt = newsplit(&s1);
-            list[0] = from;
-            list[1] = dt;
-            list[2] = s1;
-            p = Tcl_Merge(3, list);
-            Tcl_AppendElement(irp, p);
-            Tcl_Free((char *) p);
-          }
+    rmspace(s);
+    if ((s[0]) && (s[0] != '#') && (s[0] != ';')) {   /* Not comment */
+      s1 = s;
+      to = newsplit(&s1);
+      if (!egg_strcasecmp(to, argv[1])) {
+        read++;
+        if (notes_in(nl, read)) {
+          count++;
+          from = newsplit(&s1);
+          dt = newsplit(&s1);
+          list[0] = from;
+          list[1] = dt;
+          list[2] = s1;
+          p = Tcl_Merge(3, list);
+          Tcl_AppendElement(irp, p);
+          Tcl_Free((char *) p);
         }
       }
     }

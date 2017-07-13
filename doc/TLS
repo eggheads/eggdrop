@@ -9,9 +9,7 @@ This document provides information about TLS support which is a new
 eggdrop feature since version 1.8.0.
 
 
-
 ABOUT
-
 
 Eggdrop can be optionally compiled with TLS support. This requires
 OpenSSL 0.9.8 or more recent installed on your system. TLS support
@@ -19,9 +17,7 @@ includes encryption for IRC, DCC, botnet, telnet and scripted
 connections as well as certificate authentication for users and bots.
 
 
-
 INSTALLATION
-
 
 ./configure and install as usual, the configure script will detect if
 your system meets the requirements and will enable TLS automatically.
@@ -35,9 +31,7 @@ these if you want to override the default OpenSSL installation with a
 custom one, as they take precedence over any system-wide paths.
 
 
-
 USAGE
-
 
 By default, without additional configuration, TLS support will provide
 opportunistic encryption for botnet links. For other connection types,
@@ -49,19 +43,13 @@ port number that could be normally omitted, would have to be included to
 enable TLS. Scripts can also switch a regular, plaintext connection to
 TLS, using the starttls Tcl command.
 
-
-
 IRC
-
 
 To connect to IRC using SSL, specify the port number and prefix it with
 a plus sign. Example: .jump irc.server.com +6697. The same goes for the
 server list in the config file.
 
-
-
-BOTNET
-
+Botnet
 
 By default, eggdrop now automatically attempts to protect botnet links
 with SSL if it is compiled with TLS support. If one of the bots linking
@@ -77,10 +65,7 @@ anyway). If SSL negotiation fails and either the hub or leaf is set to
 require SSL, the connection is deliberately aborted and no clear text is
 ever sent.
 
-
-
-SECURE DCC
-
+Secure DCC
 
 Eggdrop supports the SDCC protocol, allowing you to establish DCC chat
 and file transfers over SSL. Example: /ctcp bot schat Note, that
@@ -88,10 +73,7 @@ currently the only IRC client supporting SDCC is KVIrc. For information
 on how to initiate secure DCC chat from KVIrc (rather than from the bot
 with /ctcp bot chat), consult the KVIrc documentation.
 
-
-
-SCRIPTS
-
+Scripts
 
 Scripts can open or connect to SSL ports the usual way specifying the
 port with a plus sign. Alternatively, the connection could be
@@ -100,9 +82,7 @@ command. (Note that the other side should also switch to SSL at the same
 time - the synchronization is the script's job, not eggdrop's.)
 
 
-
 KEYS, CERTIFICATES AND AUTHENTICATION
-
 
 You need a private key and a digital certificate whenever your bot will
 act as a server in a connection of any type. Common examples are hub
@@ -132,9 +112,7 @@ client:
     openssl s_client -cert my.crt -key my.key -connect host:sslport 
 
 
-
 SSL SETTINGS
-
 
 There are some new settings allowing control over certificate
 verification and authorization.

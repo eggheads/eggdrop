@@ -265,6 +265,8 @@ static void blowfish_init(u_8bit_t *key, int keybytes)
 /* Convert 64-bit encrypted password to text for userfile */
 static char *base64 =
             "./0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
+static char *cbcbase64 =
+            "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=";
 
 static int base64dec(char c)
 {
@@ -274,6 +276,12 @@ static int base64dec(char c)
     if (base64[i] == c)
       return i;
   return 0;
+}
+
+static int cbcbase64dec(char c)
+{
+  char *i = strchr(cbcbase64, c);
+  return i ? (int)(i - cbcbase64) : -1;
 }
 
 static void blowfish_encrypt_pass(char *text, char *new)
@@ -305,7 +313,7 @@ static void blowfish_encrypt_pass(char *text, char *new)
 
 /* Returned string must be freed when done with it!
  */
-static char *encrypt_string(char *key, char *str)
+static char *encrypt_string_ecb(char *key, char *str)
 {
   u_32bit_t left, right;
   unsigned char *p;
@@ -352,7 +360,115 @@ static char *encrypt_string(char *key, char *str)
 
 /* Returned string must be freed when done with it!
  */
-static char *decrypt_string(char *key, char *str)
+static char *encrypt_string_cbc(char *key, char *str)
+{
+  u_32bit_t left, right, prevleft = 0, prevright = 0;
+  unsigned char *p;
+  char *s, *dest;
+  int i, slen;
+
+  /* Pad fake string with 8 bytes to make sure there's enough
+   * and prepend with 8 byte IV */
+  slen = strlen(str) + 8;
+  s = nmalloc(slen + 9);
+  for (i = 0; i < 8; ++i) {
+    s[i] = (char) (random() % 256);
+  }
+  strcpy(s + 8, str);
+  if ((!key) || (!key[0]))
+    return s;
+  p = (unsigned char *) s + slen;
+  while (slen % 8) {
+    ++slen;
+    *p++ = 0;
+  }
+  *p = 0;
+
+  blowfish_init((unsigned char *) key, strlen(key));
+
+  p = (unsigned char *) s;
+  /* p[0] can be 0 as it's random IV so check if at start of IV */
+  while (*p || (p == (unsigned char *)s)) {
+    left = ((*p++) << 24);
+    left |= ((*p++) << 16);
+    left |= ((*p++) << 8);
+    left |= (*p++);
+    right = ((*p++) << 24);
+    right |= ((*p++) << 16);
+    right |= ((*p++) << 8);
+    right |= (*p++);
+
+    /* XOR with previous encrypted block */
+    left ^= prevleft;
+    right ^= prevright;
+
+    blowfish_encipher(&left, &right);
+
+    /* save this encrypted block to use for next */
+    prevleft = left;
+    prevright = right;
+
+    /* turn back into chars */
+    for (i = 0; i < 32; i += 8) {
+        *--p = (unsigned char) ((right >> i) & 0xff);
+    }
+    for (i = 0; i < 32; i += 8) {
+        *--p = (unsigned char) ((left >> i) & 0xff);
+    }
+    p += 8;
+  }
+
+  /* base64 encoded string won't be longer than double the size,
+   * plus 2 for the * prefix and NULL suffix */
+  dest = nmalloc(slen * 2 + 2);
+  dest[0] = '*';
+
+  /* base64 encode */
+  /* go on til slen - #possible pads */
+  p = (unsigned char *) dest + 1;
+  for (i = 0; i < slen - 2; i += 3) {
+    *p++ = cbcbase64[((unsigned char) s[i]) >> 2];
+    *p++ = cbcbase64[((s[i] & 0x03) << 4) | (((unsigned char)s[i + 1]) >> 4)];
+    *p++ = cbcbase64[((s[i + 1] & 0x0f) << 2) | (((unsigned char)s[i + 2]) >> 6)];
+    *p++ = cbcbase64[s[i + 2] & 0x3f];
+  }
+  if (slen - i == 2) {
+    *p++ = cbcbase64[((unsigned char) s[i]) >> 2];
+    *p++ = cbcbase64[((s[i] & 0x03) << 4) | (((unsigned char)s[i + 1]) >> 4)];
+    *p++ = cbcbase64[(s[i + 1] & 0x0f) << 2];
+    *p++ = '=';
+  } else if (slen - i == 1) {
+    *p++ = cbcbase64[((unsigned char) s[i]) >> 2];
+    *p++ = cbcbase64[(s[i] & 0x03) << 4];
+    *p++ = '=';
+    *p++ = '=';
+  }
+  *p = 0;
+
+  nfree(s);
+
+  return dest;
+}
+
+/* Returned string must be freed when done with it!
+ */
+static char *encrypt_string(char *key, char *str)
+{
+  if (!egg_strncasecmp(key, "ecb:", 4)) {
+    return encrypt_string_ecb(key + 4, str);
+
+  } else if (!egg_strncasecmp(key, "cbc:", 4)) {
+    return encrypt_string_cbc(key + 4, str);
+
+  }
+
+  /* else */
+  return encrypt_string_cbc(key, str);
+}
+
+/* Returned string must be freed when done with it!
+ */
+static char *decrypt_string_ecb(char *key, char *str)
 {
   u_32bit_t left, right;
   char *p, *s, *dest, *d;
@@ -388,6 +504,116 @@ static char *decrypt_string(char *key, char *str)
   *d = 0;
   nfree(s);
   return dest;
+}
+
+/* Returned string must be freed when done with it!
+ */
+static char *decrypt_string_cbc(char *key, char *str)
+{
+  u_32bit_t left, right, prevleft = 0, prevright = 0, prevencleft, prevencright;
+  unsigned char *p;
+  char *s, *dest;
+  int i, slen, dlen;
+
+  slen = strlen(str);
+  s = nmalloc(slen + 1);
+  strcpy(s, str);
+  s[slen] = 0;
+  if ((!key) || (!key[0]) || (slen % 4))
+    return s;
+
+  blowfish_init((unsigned char *) key, strlen(key));
+
+  /* base64 decode */
+  dlen = (slen >> 2) * 3;
+  dest = nmalloc(dlen + 1);
+  p = (unsigned char *) dest;
+  /* '=' will/should return 64 */
+  for (i = 0; i < slen; i += 4) {
+    int s1 = cbcbase64dec(s[i]);
+    int s2 = cbcbase64dec(s[i + 1]);
+    int s3 = cbcbase64dec(s[i + 2]);
+    int s4 = cbcbase64dec(s[i + 3]);
+    if (s1 < 0 || s1 == 64 || s2 < 0 || s2 == 64 || s3 < 0 || s4 < 0)
+      return s;
+    *p++ = (unsigned char) ((s1 << 2) | (s2 >> 4));
+    if (s3 != 64) {
+      *p++ = (unsigned char) ((s2 << 4) | (s3 >> 2));
+      if (s4 != 64)
+        *p++ = (unsigned char) ((s3 << 6) | s4);
+      else
+        --dlen;
+    } else
+      dlen -= 2;
+  }
+  *p = 0;
+
+  /* see if multiple of 8 bytes */
+  if (dlen % 8)
+    return s;
+
+  p = (unsigned char *) dest;
+  while ((p - (unsigned char *)dest) < dlen) {
+    left = ((*p++) << 24);
+    left |= ((*p++) << 16);
+    left |= ((*p++) << 8);
+    left |= (*p++);
+    right = ((*p++) << 24);
+    right |= ((*p++) << 16);
+    right |= ((*p++) << 8);
+    right |= (*p++);
+
+    /* Save encoded block to xor next decrypted block with */
+    prevencleft = left;
+    prevencright = right;
+
+    blowfish_decipher(&left, &right);
+
+    /* XOR decrypted block with previous encoded block */
+    left ^= prevleft;
+    right ^= prevright;
+    prevleft = prevencleft;
+    prevright = prevencright;
+
+    /* turn back into chars */
+    for (i = 0; i < 32; i += 8) {
+        *--p = (unsigned char) ((right >> i) & 0xff);
+    }
+    for (i = 0; i < 32; i += 8) {
+        *--p = (unsigned char) ((left >> i) & 0xff);
+    }
+    p += 8;
+  }
+
+  /* cut off IV */
+  strcpy(s, dest + 8);
+  s[dlen - 8] = 0;
+  nfree(dest);
+
+  return s;
+}
+
+/* Returned string must be freed when done with it!
+ */
+static char *decrypt_string(char *key, char *str)
+{
+  if (!egg_strncasecmp(key, "ecb:", 4)) {
+    return decrypt_string_ecb(key + 4, str);
+
+  } else if (!egg_strncasecmp(key, "cbc:", 4)) {
+    if (str[0] != '*') {
+      /* cbc strings should start with * */
+      return decrypt_string_ecb(key + 4, str);
+    }
+    /* else */
+    return decrypt_string_cbc(key + 4, str + 1);
+
+  } else if (str[0] != '*') {
+      return decrypt_string_ecb(key, str);
+  }
+
+  /* else */
+  return decrypt_string_cbc(key, str + 1);
 }
 
 static int tcl_encrypt STDVAR

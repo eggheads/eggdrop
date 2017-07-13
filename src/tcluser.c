@@ -33,7 +33,7 @@ extern int default_flags, dcc_total, ignore_time;
 extern struct dcc_t *dcc;
 extern char botnetnick[];
 extern time_t now;
-
+extern struct user_entry_type *entry_type_list;
 
 static int tcl_countusers STDVAR
 {
@@ -532,16 +532,12 @@ static int tcl_ignorelist STDVAR
 
 static int tcl_getuser STDVAR
 {
-  struct user_entry_type *et;
+  struct user_entry_type *et = NULL;
   struct userrec *u;
   struct user_entry *e;
 
-  BADARGS(3, -1, " handle type");
+  BADARGS(2, -1, " handle type");
 
-  if (!(et = find_entry_type(argv[2])) && egg_strcasecmp(argv[2], "HANDLE")) {
-    Tcl_AppendResult(irp, "No such info type: ", argv[2], NULL);
-    return TCL_ERROR;
-  }
   if (!(u = get_user_by_handle(userlist, argv[1]))) {
     if (argv[1][0] != '*') {
       Tcl_AppendResult(irp, "No such user.", NULL);
@@ -549,12 +545,37 @@ static int tcl_getuser STDVAR
     } else
       return TCL_OK; /* silently ignore user */
   }
-  if (!egg_strcasecmp(argv[2], "HANDLE"))
-    Tcl_AppendResult(irp, u->handle, NULL);
-  else {
-    e = find_user_entry(et, u);
-    if (e)
-      return et->tcl_get(irp, u, e, argc, argv);
+  if (argc >= 3) {
+    if (!(et = find_entry_type(argv[2])) &&
+        egg_strcasecmp(argv[2], "HANDLE")) {
+      Tcl_AppendResult(irp, "No such info type: ", argv[2], NULL);
+      return TCL_ERROR;
+    }
+    if (!egg_strcasecmp(argv[2], "HANDLE"))
+      Tcl_AppendResult(irp, u->handle, NULL);
+    else {
+      e = find_user_entry(et, u);
+      if (e)
+        return et->tcl_get(irp, u, e, argc, argv);
+    }
+  } else {
+    for (et = entry_type_list; et; et = et->next) {
+      if (!et->tcl_append)
+        continue;
+      e = find_user_entry(et, u);
+      if (e && e->name) {
+        Tcl_AppendElement(irp, e->name);
+      } else if (et->name) {
+        Tcl_AppendElement(irp, et->name);
+      } else {
+        continue;
+      }
+      if (e) {
+        et->tcl_append(irp, u, e);
+      } else {
+        Tcl_AppendElement(irp, "");
+      }
+    }
   }
   return TCL_OK;
 }

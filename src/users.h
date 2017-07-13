@@ -60,6 +60,7 @@ struct user_entry_type {
   int (*expmem) (struct user_entry *);
   void (*display) (int idx, struct user_entry *);
   char *name;
+  int (*tcl_append) (Tcl_Interp *, struct userrec *, struct user_entry *);
 };
 
 

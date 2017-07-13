@@ -656,7 +656,7 @@ static void cmd_console(struct userrec *u, int idx, char *par)
     return;
   }
   get_user_flagrec(u, &fr, dcc[idx].u.chat->con_chan);
-  strcpy(s1, par);
+  strncpyz(s1, par, sizeof s1);
   nick = newsplit(&par);
   /* Don't remove '+' as someone couldn't have '+' in CHANMETA cause
    * he doesn't use IRCnet ++rtc.
@@ -863,6 +863,8 @@ static void cmd_chhandle(struct userrec *u, int idx, char *par)
     atr2 = u2 ? u2->flags : 0;
     if ((atr & USER_BOTMAST) && !(atr & USER_MASTER) && !(atr2 & USER_BOT))
       dprintf(idx, "You can't change handles for non-bots.\n");
+    else if (!egg_strcasecmp(hand, EGG_BG_HANDLE))
+      dprintf(idx, "You can't change the handle of a temporary user.\n");
     else if ((bot_flags(u2) & BOT_SHARE) && !(atr & USER_OWNER))
       dprintf(idx, "You can't change share bot's nick.\n");
     else if ((atr2 & USER_OWNER) && !(atr & USER_OWNER) &&
@@ -900,6 +902,8 @@ static void cmd_handle(struct userrec *u, int idx, char *par)
     dprintf(idx,
             "Bizarre quantum forces prevent handle from starting with '%c'.\n",
             newhandle[0]);
+  else if (!egg_strcasecmp(u->handle, EGG_BG_HANDLE))
+    dprintf(idx, "You can't change the handle of this temporary user.\n");
   else if (get_user_by_handle(userlist, newhandle) &&
            egg_strcasecmp(dcc[idx].nick, newhandle))
     dprintf(idx, "Somebody is already using %s.\n", newhandle);
@@ -1665,7 +1669,7 @@ static void cmd_chattr(struct userrec *u, int idx, char *par)
   }
   if (chan)
     putlog(LOG_CMDS, "*", "#%s# (%s) chattr %s %s",
-           dcc[idx].nick, chan ? chan->dname : "*", hand, chg ? chg : "");
+           dcc[idx].nick, chan->dname, hand, chg ? chg : "");
   else
     putlog(LOG_CMDS, "*", "#%s# chattr %s %s", dcc[idx].nick, hand,
            chg ? chg : "");
@@ -2236,7 +2240,7 @@ static void cmd_su(struct userrec *u, int idx, char *par)
         dcc[idx].u.chat->su_nick = get_data_ptr(strlen(dcc[idx].nick) + 1);
         strcpy(dcc[idx].u.chat->su_nick, dcc[idx].nick);
         dcc[idx].user = u;
-        strcpy(dcc[idx].nick, par);
+        strncpyz(dcc[idx].nick, par, sizeof dcc[idx].nick);
         dcc_chatter(idx);
       }
     }
@@ -2347,7 +2351,7 @@ static void cmd_set(struct userrec *u, int idx, char *msg)
     dumplots(idx, "Global vars: ", tcl_resultstring());
     return;
   }
-  strcpy(s + 4, msg);
+  strncpyz(s + 4, msg, sizeof s - 4);
   code = Tcl_Eval(interp, s);
 
   /* properly convert string to system encoding. */

@@ -123,7 +123,7 @@ static void bot_chan2(int idx, char *msg)
     *p = 0;
   p = strchr(from, '@');
   if (p) {
-    snprintf(TBUF, sizeof(TBUF), "<%s> %s", from, msg);
+    egg_snprintf(TBUF, sizeof(TBUF), "<%s> %s", from, msg);
     *p = 0;
     if (!partyidle(p + 1, from)) {
       *p = '@';
@@ -954,7 +954,7 @@ static void bot_thisbot(int idx, char *par)
   noshare = 1;
   change_handle(dcc[idx].user, par);
   noshare = 0;
-  strcpy(dcc[idx].nick, par);
+  strncpyz(dcc[idx].nick, par, sizeof dcc[idx].nick);
 }
 
 static void bot_handshake(int idx, char *par)
@@ -1048,17 +1048,19 @@ static void bot_motd(int idx, char *par)
     if (vv != NULL) {
       botnet_send_priv(idx, botnetnick, who, NULL, "--- %s\n", MISC_MOTDFILE);
       help_subst(NULL, NULL, 0, irc, NULL);
-      while (!feof(vv)) {
-        fgets(s, 120, vv);
-        if (!feof(vv)) {
-          if (s[strlen(s) - 1] == '\n')
-            s[strlen(s) - 1] = 0;
-          if (!s[0])
-            strcpy(s, " ");
-          help_subst(s, who, &fr, HELP_DCC, dcc[idx].nick);
-          if (s[0])
-            botnet_send_priv(idx, botnetnick, who, NULL, "%s", s);
-        }
+      /* don't check for feof after fgets, skips last line if it has no \n (ie on windows) */
+      while (!feof(vv) && fgets(s, sizeof TBUF, vv) != NULL) {
+        if (s[strlen(s) - 1] == '\n')
+          s[strlen(s) - 1] = 0;
+        if (!s[0])
+          strcpy(s, " ");
+        help_subst(s, who, &fr, HELP_DCC, dcc[idx].nick);
+        if (s[0])
+          botnet_send_priv(idx, botnetnick, who, NULL, "%s", s);
+      }
+      /* fgets == NULL means error or empty file, so check for error */
+      if (ferror(vv)) {
+        putlog(LOG_MISC, "*", "Error reading MOTD file");
       }
       fclose(vv);
     } else

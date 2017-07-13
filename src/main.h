@@ -28,7 +28,12 @@
 #  include "config.h"
 #endif
 
+#include "eggint.h"
 #include "lush.h"
+
+#ifndef TCL_PATCH_LEVEL
+#  define TCL_PATCH_LEVEL "*unknown*"
+#endif
 
 #if defined(HAVE_TCL_NOTIFIER_INIT)
 #  define REPLACE_NOTIFIER
@@ -135,5 +140,14 @@ extern struct dcc_table DCC_CHAT, DCC_BOT, DCC_LOST, DCC_SCRIPT, DCC_BOT_NEW,
 #ifdef BORGCUBES
 #  define O_NONBLOCK 00000004 /* POSIX non-blocking I/O */
 #endif /* BORGCUBES */
+
+/* Handle for the user that's used when starting eggdrop with -tn */
+#define EGG_BG_HANDLE "-HQ"
+
+/* Stringify macros */
+#define EGG_MACRO_STR(x) EGG_STR(x)
+#define EGG_STR(x) #x
+
+#define EGG_AC_ARGS EGG_MACRO_STR(EGG_AC_ARGS_RAW)
 
 #endif /* _EGG_MAIN_H */

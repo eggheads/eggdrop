@@ -129,7 +129,8 @@ static struct user_entry_type USERENTRY_DCCDIR = {
   NULL,
   NULL,
   NULL,
-  "DCCDIR"
+  "DCCDIR",
+  NULL
 };
 
 #include "files.c"
@@ -707,7 +708,7 @@ static void filesys_dcc_send(char *nick, char *from, struct userrec *u,
       dcc[i].ssl = ssl;
 #endif
       dcc[i].user = u;
-      strcpy(dcc[i].nick, nick);
+      strncpyz(dcc[i].nick, nick, sizeof dcc[i].nick);
       strcpy(dcc[i].host, from);
       dcc[i].u.dns->cbuf = get_data_ptr(strlen(param) + 1);
       strcpy(dcc[i].u.dns->cbuf, param);
@@ -867,7 +868,7 @@ static int filesys_DCC_CHAT(char *nick, char *from, char *handle,
 #endif
   if (egg_strncasecmp(text, "CHAT ", 5) || !u)
     return 0;
-  strcpy(buf, text + 5);
+  strncpyz(buf, text + 5, sizeof buf);
   get_user_flagrec(u, &fr, 0);
   param = newsplit(&msg);
   if (dcc_total == max_dcc && increase_socks_max()) {

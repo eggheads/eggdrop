@@ -58,6 +58,7 @@ void bot_share(int, char *);
 int base64_to_int(char *);
 
 /* botnet.c */
+void set_botnetnick(const char *);
 void answer_local_whom(int, int);
 char *lastbot(char *);
 int nextbot(char *);
@@ -102,6 +103,7 @@ int isowner(char *);
 char *masktype(int);
 char *maskname(int);
 void reaffirm_owners();
+void add_hq_user();
 void rehash();
 void reload();
 void chanprog();
@@ -291,6 +293,7 @@ int sock_has_data(int, int);
 int sockoptions(int sock, int operation, int sock_options);
 int flush_inbuf(int idx);
 int findsock(int sock);
+void safe_write(int, const void *, size_t);
 
 /* tcl.c */
 struct threaddata *threaddata();
@@ -304,7 +307,7 @@ int readtclprog(char *fname);
 #ifdef TLS
 int ssl_handshake(int, int, int, int, char *, IntFunc);
 char *ssl_fpconv(char *in, char *out);
-char *ssl_getuid(int sock);
+const char *ssl_getuid(int sock);
 char *ssl_getfp(int sock);
 #endif
 

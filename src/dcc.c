@@ -128,20 +128,20 @@ static void strip_telnet(int sock, char *buf, int *len)
         /* WILL X -> response: DONT X */
         /* except WILL ECHO which we just smile and ignore */
         if (*(p + 1) != TLN_ECHO) {
-          write(sock, TLN_IAC_C TLN_DONT_C, 2);
-          write(sock, p + 1, 1);
+          safe_write(sock, TLN_IAC_C TLN_DONT_C, 2);
+          safe_write(sock, p + 1, 1);
         }
       } else if (*p == TLN_DO) {
         /* DO X -> response: WONT X */
         /* except DO ECHO which we just smile and ignore */
         if (*(p + 1) != TLN_ECHO) {
-          write(sock, TLN_IAC_C TLN_WONT_C, 2);
-          write(sock, p + 1, 1);
+          safe_write(sock, TLN_IAC_C TLN_WONT_C, 2);
+          safe_write(sock, p + 1, 1);
         }
       } else if (*p == TLN_AYT) {
         /* "Are You There?" */
         /* response is: "Hell, yes!" */
-        write(sock, "\r\nHell, yes!\r\n", 14);
+        safe_write(sock, "\r\nHell, yes!\r\n", 14);
       } else if (*p == TLN_IAC) {
         /* IAC character in data, escaped with another IAC */
         *o++ = *p++;
@@ -702,7 +702,7 @@ static void dcc_chat_pass(int idx, char *buf, int atr)
       if (dcc[idx].status & STAT_TELNET)
         tputs(dcc[idx].sock, TLN_IAC_C TLN_WONT_C TLN_ECHO_C "\n", 4);
       dcc[idx].user = get_user_by_handle(userlist, dcc[idx].u.chat->away);
-      strcpy(dcc[idx].nick, dcc[idx].u.chat->away);
+      strncpyz(dcc[idx].nick, dcc[idx].u.chat->away, sizeof dcc[idx].nick);
       nfree(dcc[idx].u.chat->away);
       nfree(dcc[idx].u.chat->su_nick);
       dcc[idx].u.chat->away = NULL;
@@ -1055,7 +1055,7 @@ static void dcc_chat(int idx, char *buf, int i)
           if (dcc[idx].u.chat->su_nick) {
             dcc[idx].user = get_user_by_handle(userlist,
                                                dcc[idx].u.chat->su_nick);
-            strcpy(dcc[idx].nick, dcc[idx].u.chat->su_nick);
+            strncpyz(dcc[idx].nick, dcc[idx].u.chat->su_nick, sizeof dcc[idx].nick);
             dcc[idx].type = &DCC_CHAT;
             dprintf(idx, "Returning to real nick %s!\n",
                     dcc[idx].u.chat->su_nick);
@@ -1173,7 +1173,7 @@ static int detect_telnet_flood(char *floodhost)
   if (!flood_telnet_thr || (glob_friend(fr) && !par_telnet_flood))
     return 0;                   /* No flood protection */
   if (egg_strcasecmp(lasttelnethost, floodhost)) {      /* New... */
-    strcpy(lasttelnethost, floodhost);
+    strncpyz(lasttelnethost, floodhost, sizeof lasttelnethost);
     lasttelnettime = now;
     lasttelnets = 0;
     return 0;
@@ -1335,7 +1335,7 @@ static void dcc_telnet_hostresolved(int i)
     dcc_telnet_got_ident(i, userhost);
     return;
   }
-  
+
   changeover_dcc(i, &DCC_IDENTWAIT, 0);
   dcc[i].timeval = now;
   dcc[i].u.ident_sock = dcc[idx].sock;
@@ -1514,7 +1514,7 @@ static void dcc_telnet_id(int idx, char *buf, int atr)
   get_user_flagrec(dcc[idx].user, &fr, NULL);
 #ifdef TLS
   if (dcc[idx].ssl && (tls_auth == 2)) {
-    char *uid = ssl_getuid(dcc[idx].sock);
+    const char *uid = ssl_getuid(dcc[idx].sock);
 
     if (!uid || strcasecmp(uid, buf)) {
       if (glob_bot(fr))
@@ -1567,7 +1567,7 @@ static void dcc_telnet_id(int idx, char *buf, int atr)
     return;
   }
   correct_handle(buf);
-  strcpy(dcc[idx].nick, buf);
+  strncpyz(dcc[idx].nick, buf, sizeof dcc[idx].nick);
   if (glob_bot(fr)) {
     if (!egg_strcasecmp(botnetnick, dcc[idx].nick)) {
       dprintf(idx, "error You cannot link using my botnetnick.\n");
@@ -1733,7 +1733,7 @@ static void dcc_telnet_pass(int idx, int atr)
     /* Turn off remote telnet echo (send IAC WILL ECHO). */
     if (dcc[idx].status & STAT_TELNET) {
       char buf[1030];
-      snprintf(buf, sizeof buf, "\n%s%s\r\n", escape_telnet(DCC_ENTERPASS),
+      egg_snprintf(buf, sizeof buf, "\n%s%s\r\n", escape_telnet(DCC_ENTERPASS),
                TLN_IAC_C TLN_WILL_C TLN_ECHO_C);
       tputs(dcc[idx].sock, buf, strlen(buf));
     } else
