@@ -46,7 +46,7 @@
 0xf29,NOTICE %s :Comprimento de ficheiro malformada.\n
 0xf2a,Ficheiro demasiado longo: cancelando envio dcc %s desde %s!%s
 0xf2b,Tempo de ligação esgotado na transferência do ficheiro de utilizador.
-0xf2c,Desligado %s (tempo de ligação esgotado na transferência do ficheiro)
+0xf2c,Desligado %s (tempo de ligação esgotado na transferência do ficheiro de utilizador)
 0xf2d,NOTICE %s :Tempo de ligação esgotado durante transferência, abortando %s.\n
 0xf2f,Tempo de ligação esgotado em DCC: GET %s (%s) a %lu/%lu
 0xf30,Tempo de ligação esgotado em DCC: SEND %s (%s) a %lu/%lu
