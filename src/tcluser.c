@@ -536,7 +536,7 @@ static int tcl_getuser STDVAR
   struct userrec *u;
   struct user_entry *e;
 
-  BADARGS(2, -1, " handle type");
+  BADARGS(2, -1, " handle ?type?");
 
   if (!(u = get_user_by_handle(userlist, argv[1]))) {
     if (argv[1][0] != '*') {
