@@ -23,7 +23,7 @@
 0xc013,'#' podem ser numeros e/ou intervalos separados por ';'.
 0xc014,Isso é um bot. Não podes deixar notas a um bot.
 0xc015,Nota externa
-0xc016,Nota  entregue.
+0xc016,Nota entregue.
 0xc017,Para uma lista:
 0xc019,### Tens %d nota%s em espera.\n
 0xc01b,Notas serão guardadas.
@@ -40,6 +40,6 @@
 0xc026,Eliminado reencaminhamento de notas para %s\n
 0xc027,Tens que especifar o nome de um bot para reencaminhamento.
 0xc028,Alterado reencaminhamento de notas de %s para: %s\n
-0xc029,Função, deverá ser umas das seguintes: INDEX, READ, ou ERASE.
+0xc029,Função deverá ser umas das seguintes: INDEX, READ, ou ERASE.
 0xc02a,Usa '.notes read' para a ler.
 0xc02b,NOTICE %s :Tens %d nota%s em espera.\n
