@@ -250,15 +250,7 @@ Faites un Telnet sur le bot et entrez 'NEW' comme surnom.
 0x673,flood de surnoms
 
 # EGG_
-0x700,Usage: eggdrop [options] [config-file]\n\n\
-Options:\n\
-  -n   Don't background; send all log entries to console.\n\
-  -nc  Don't background; display channel stats every 10 seconds.\n\
-  -nt  Don't background; use terminal to simulate DCC chat.\n\
-  -m   Create userfile.\n\
-  -h   Show this help.\n\
-  -v   Show version info, then quit.\n\n
-
+#0x700 - unused / inutilisé
 0x701,Je détecte que %s est s'exécute déjà depuis ce répertoire.\n
 0x702,Si ce n'est pas le cas, supprimez '%s'\n
 0x703,* Attention! Impossible d'écrire le fichier %s!\n

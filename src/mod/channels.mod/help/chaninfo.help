@@ -61,7 +61,8 @@
                           wildcard to replace portions of the host, only
                           numbers in hostnames are replaced with the '?'
                           wildcard. Same is valid for types 20-29, but instead
-                          of '?', the '*' wildcard will be used.
+                          of '?', the '*' wildcard will be used. Types 30-39
+                          set the host to '*'.
         %bban-time%b          Set here how long temporary bans will last (in
                           minutes). If you set this setting to 0, the bot will
                           never remove them.
@@ -162,27 +163,21 @@
                        having ops.
         %bstatic%b         Allow only permanent owners to remove the channel?
      The following are flood settings, they are set via ".chanset <channel>
-     flood-type number:seconds", where number and second are integers
-     indicating the number of times in how many seconds the flood will be
-     triggered. Setting one of these to 0:0, 0:1, or 1:0 will deactivate the
-     respective flood setting.
+     <flood-type> <number>:<seconds>", where <number> and <seconds> are
+     integers indicating the number of times in how many seconds the flood will
+     be triggered. Setting this to 0:X or X:0 (where X is an integer >= 0), or
+     the special case of just 0, will deactivate the respective flood setting.
         %bflood-chan%b  Set here how many channel messages in how many seconds
-                    from one host constitutes a flood. Setting this to 0 or 0:0
-                    disables text flood protection for the channel.
+                    from one host constitutes a flood.
         %bflood-ctcp%b  Set here how many channel ctcps in how many seconds from
-                    one host constitutes a flood. Setting this to 0 or 0:0
-                    disables ctcp flood protection for the channel.
+                    one host constitutes a flood.
         %bflood-join%b  Set here how many joins in how many seconds from one
-                    host constitutes a flood. Setting this to 0 or 0:0 disables
-                    join flood protection for the channel.
+                    host constitutes a flood.
         %bflood-kick%b   Set here how many kicks in how many seconds from one
-                    host constitutes a flood. Setting this to 0 or 0:0 disables
-                    kick flood protection for the channel.
+                    host constitutes a flood.
         %bflood-deop%b   Set here how many deops in how many seconds from one
-                    host constitutes a flood. Setting this to 0 or 0:0 disables
-                    deop flood protection for the channel.
+                    host constitutes a flood.
         %bflood-nick%b   Set here how many nick changes in how many seconds from
-                    one host constitutes a flood. Setting this to 0 or 0:0
-                    disables nick flood protection for the channel.
+                    one host constitutes a flood.
 %{+n|n}
 See also: %{+n}+chan, -chan,%{+n|n} chansave, chanset

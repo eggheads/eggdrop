@@ -10,7 +10,7 @@ of the normal Tcl built-in commands are still there, of course, but you
 can also use these to manipulate features of the bot. They are listed
 according to category.
 
-This list is accurate for Eggdrop v1.8.0. Scripts written for v1.3, v1.4
+This list is accurate for Eggdrop v1.8.1. Scripts written for v1.3, v1.4
 or 1.6 series of Eggdrop should probably work with a few minor
 modifications depending on the script. Scripts which were written for
 v0.9, v1.0, v1.1 or v1.2 will probably not work without modification.
@@ -18,9 +18,7 @@ Commands which have been changed in this version of Eggdrop (or are just
 new commands) are marked with vertical bars (|) on the left.
 
 
-
 OUTPUT COMMANDS
-
 
 putserv <text> [options]
 
@@ -99,21 +97,21 @@ putcmdlog <text>
 
 putxferlog <text>
 
-    Description: sends text to the bot's logfile, marked as
-    'file-area' (x)
+  Description: sends text to the bot's logfile, marked as 'file-area'
+  (x)
 
-    Returns: nothing
+  Returns: nothing
 
-    Module: core
+  Module: core
 
 putloglev <level(s)> <channel> <text>
 
-    Description: sends text to the bot's logfile, tagged with all of the
-    valid levels given. Use "*" to indicate all log levels.
+  Description: sends text to the bot's logfile, tagged with all of the
+  valid levels given. Use "*" to indicate all log levels.
 
-    Returns: nothing
+  Returns: nothing
 
-    Module: core
+  Module: core
 
 dumpfile <nick> <filename>
 
@@ -143,9 +141,7 @@ clearqueue <queue>
   Module: server
 
 
-
 USER RECORD MANIPULATION COMMANDS
-
 
 countusers
 
@@ -304,12 +300,12 @@ adduser <handle> [hostmask]
 
 addbot <handle> <address>
 
-    Description: adds a new bot to the userlist with the handle and
-    botaddress given (with no password and no flags)
+  Description: adds a new bot to the userlist with the handle and
+  botaddress given (with no password and no flags)
 
-    Returns: 1 if successful; 0 if the bot already exists
+  Returns: 1 if successful; 0 if the bot already exists
 
-    Module: core
+  Module: core
 
 deluser <handle>
 
@@ -390,8 +386,8 @@ newban <ban> <creator> <comment> [lifetime] [options]
   Description: adds a ban to the global ban list (which takes effect on
   all channels); creator is given credit for the ban in the ban list.
   lifetime is specified in minutes. If lifetime is not specified,
-  global-ban-time (usually 60) is used. Setting the lifetime to 0 makes
-  it a permanent ban.
+  default-ban-time (usually 120) is used. Setting the lifetime to 0
+  makes it a permanent ban.
 
   Options:
 
@@ -404,8 +400,7 @@ newban <ban> <creator> <comment> [lifetime] [options]
 
   Module: channels
 
-newchanexempt <channel> <exempt> <creator> <comment> [lifetime]
-[options]
+newchanexempt <channel> <exempt> <creator> <comment> [lifetime] [options]
 
   Description: adds a exempt to the exempt list of a channel; creator is
   given credit for the exempt in the exempt list. lifetime is specified
@@ -447,8 +442,7 @@ newexempt <exempt> <creator> <comment> [lifetime] [options]
 
   Module: channels
 
-newchaninvite <channel> <invite> <creator> <comment> [lifetime]
-[options]
+newchaninvite <channel> <invite> <creator> <comment> [lifetime] [options]
 
   Description: adds a invite to the invite list of a channel; creator is
   given credit for the invite in the invite list. lifetime is specified
@@ -525,12 +519,12 @@ unstickexempt <exemptmask> [channel]
 
 stickinvite <invitemask> [channel]
 
-    Description: makes an invite sticky, or, if a channel is specified,
-    then it is set sticky on that channel only.
+  Description: makes an invite sticky, or, if a channel is specified,
+  then it is set sticky on that channel only.
 
-    Returns: 1 on success; 0 otherwise
+  Returns: 1 on success; 0 otherwise
 
-    Module: channels
+  Module: channels
 
 unstickinvite <invitemask> [channel]
 
@@ -732,11 +726,11 @@ newignore <hostmask> <creator> <comment> [lifetime]
 
 killignore <hostmask>
 
-    Description: removes an entry from the ignore list
+  Description: removes an entry from the ignore list
 
-    Returns: 1 if successful; 0 otherwise
+  Returns: 1 if successful; 0 otherwise
 
-    Module: core
+  Module: core
 
 ignorelist
 
@@ -771,13 +765,13 @@ reload
 
 backup
 
-    Description: makes a simple backup of the userfile that's on disk.
-    If the channels module is loaded, this also makes a simple backup of
-    the channel file.
+  Description: makes a simple backup of the userfile that's on disk. If
+  the channels module is loaded, this also makes a simple backup of the
+  channel file.
 
-    Returns: nothing
+  Returns: nothing
 
-    Module: core
+  Module: core
 
 getting-users
 
@@ -788,9 +782,7 @@ getting-users
   Module: core
 
 
-
 CHANNEL COMMANDS
-
 
 channel add <name> [option-list]
 
@@ -846,12 +838,12 @@ savechannels
 
 loadchannels
 
-    Description: reloads the channel settings from the channel-file if
-    one is defined.
+  Description: reloads the channel settings from the channel-file if one
+  is defined.
 
-    Returns: nothing
+  Returns: nothing
 
-    Module: channels
+  Module: channels
 
 channels
 
@@ -859,7 +851,9 @@ channels
 
   Module: channels
 
-channame2dname <channel-name> and chandname2name <channel-dname>
+channame2dname <channel-name>
+
+chandname2name <channel-dname>
 
   Description: these two functions are important to correctly support
   !channels. The bot differentiates between channel description names
@@ -952,10 +946,10 @@ isvoice <nickname> [channel]
 
 onchan <nickname> [channel]
 
-    Returns: 1 if someone by that nickname is on the specified channel
-    (or any channel if none is specified); 0 otherwise
+  Returns: 1 if someone by that nickname is on the specified channel (or
+  any channel if none is specified); 0 otherwise
 
-    Module: irc
+  Module: irc
 
 nick2hand <nickname> [channel]
 
@@ -1069,12 +1063,12 @@ resetchanidle [nick] <channel>
 
 resetchanjoin [nick] <channel>
 
-    Description: resets the channel join time for the given nick or for
-    all nicks on the channel if no nick is specified.
+  Description: resets the channel join time for the given nick or for
+  all nicks on the channel if no nick is specified.
 
-    Returns: nothing
+  Returns: nothing
 
-    Module: irc
+  Module: irc
 
 resetchan <channel> [flags]
 
@@ -1258,9 +1252,7 @@ chansettype <setting>
   Module: channels
 
 
-
 DCC COMMANDS
-
 
 putdcc <idx> <text> [-raw]
 
@@ -1294,11 +1286,11 @@ dccputchan <channel> <message>
 
 boot <user@bot> [reason]
 
-    Description: boots a user from the partyline
+  Description: boots a user from the partyline
 
-    Returns: nothing
+  Returns: nothing
 
-    Module: core
+  Module: core
 
 dccsimul <idx> <text>
 
@@ -1575,9 +1567,7 @@ dccdumpfile <idx> <filename>
   Module: core
 
 
-
 NOTES MODULE
-
 
 notes <user> [numberlist]
 
@@ -1620,9 +1610,7 @@ storenote <from> <to> <msg> <idx>
   Module: notes
 
 
-
 ASSOC MODULE
-
 
 assoc <chan> [name]
 
@@ -1643,11 +1631,12 @@ killassoc <chan>
   Module: assoc
 
 
-
 COMPRESS MODULE
 
+compressfile [-level <level>] <src-file> [target-file]
 
-compressfile [-level <level>] <src-file> [target-file] and
+and
+
 uncompressfile <src-file> [target-file]
 
   Description: compresses or un-compresses files. The level option
@@ -1670,9 +1659,7 @@ iscompressed <filename>
   Module: compress
 
 
-
 FILESYS MODULE
-
 
 setpwd <idx> <dir>
 
@@ -1893,9 +1880,7 @@ setflags <dir> [<flags> [channel]]
   Module: filesys
 
 
-
 MISCELLANEOUS COMMANDS
-
 
 bind <type> <flags> <keyword/mask> [proc-name]
 
@@ -1985,8 +1970,8 @@ maskhost <nick!user@host> [masktype]
   You can also specify types from 10 to 19 which correspond to types 0
   to 9, but instead of using a * wildcard to replace portions of the
   host, only numbers in hostnames are replaced with the '?' wildcard.
-  Same is valid for types 20-29, but instead of '?', the '*' wildcard
-  will be used.
+  Same is valid for types 20-29, but instead of '?', the '_' wildcard
+  will be used. Types 30-39 set the host to '_'.
 
   Module: core
 
@@ -2222,12 +2207,12 @@ traffic
 
 modules
 
-    Returns: a list of sublists containing information about the bot's
-    currently loaded modules. Each sublist contains three elements:
-    module, version, and dependencies. Each dependency is also a sublist
-    containing the module name and version.
+  Returns: a list of sublists containing information about the bot's
+  currently loaded modules. Each sublist contains three elements:
+  module, version, and dependencies. Each dependency is also a sublist
+  containing the module name and version.
 
-    Module: core
+  Module: core
 
 loadmodule <module>
 
@@ -2323,7 +2308,7 @@ matchcidr <block> <address> <prefix>
   Description: performs a cidr match on the specified ip addresses. IPv6
   is supported, if enabled at compile time.
 
-  Example: matchcidr 192.168.0.0 192.168.1.17 16
+  Example: matchcidr 192.1.8.1.0 192.168.1.17 16
 
   Returns: 1 if the address matches the block prefix, 0 otherwise.
 
@@ -2397,9 +2382,7 @@ tlsstatus <idx>
   Module: core
 
 
-
 GLOBAL VARIABLES
-
 
 NOTE: All config file variables are also global.
 
@@ -2427,77 +2410,75 @@ server
 
 serveraddress
 
-    Value: the current server's internet address (hostname or IP) and
-    port bot is connected to. This will correspond to the entry in
-    server list (for example: "eu.undernet.org:6667"). Note that this
-    does not necessarily match the name server calls itself.
+  Value: the current server's internet address (hostname or IP) and port
+  bot is connected to. This will correspond to the entry in server list
+  (for example: "eu.undernet.org:6667"). Note that this does not
+  necessarily match the name server calls itself.
 
-    Module: server
+  Module: server
 
 version
 
-    Value: current bot version "1.1.2+pl1 1010201 pl1"; first item is
-    the text version, second item is a numerical version, and any
-    following items are the names of patches that have been added
+  Value: current bot version "1.1.2+pl1 1010201"; first item is the text
+  version, to include a patch string if present, and second item is a
+  numerical version
 
-    Module: core
+  Module: core
 
-numversion
+numversion*
 
-    Value: the current numeric bot version (for example: "1010201").
-    Numerical version is in the format of "MNNRRPP", where:
+  Value: the current numeric bot version (for example: "1010201").
+  Numerical version is in the format of "MNNRRPP", where:
 
-      ------- ----------------------------------------
-      M       major release number
-      NN      minor release number
-      RR      sub-release number
-      PP      patch level for that sub-release
-      ------- ----------------------------------------
+    ------- ----------------------------------------
+    M       major release number
+    NN      minor release number
+    RR      sub-release number
+    PP      patch level for that sub-release
+    ------- ----------------------------------------
 
-    Module: core
+  Module: core
 
 uptime
 
-    Value: the unixtime value for when the bot was started
+  Value: the unixtime value for when the bot was started
 
-    Module: core
+  Module: core
 
 server-online
 
-    Value: the unixtime value for when the bot connected to its current
-    server
+  Value: the unixtime value for when the bot connected to its current
+  server
 
-    Module: server
+  Module: server
 
 lastbind
 
-    Value: the last command binding which was triggered. This allows you
-    to identify which command triggered a Tcl proc.
+  Value: the last command binding which was triggered. This allows you
+  to identify which command triggered a Tcl proc.
 
-    Module: core
+  Module: core
 
 isjuped
 
-    Value: 1 if bot's nick is juped(437); 0 otherwise
+  Value: 1 if bot's nick is juped(437); 0 otherwise
 
-    Module: server
+  Module: server
 
 handlen
 
-    Value: the value of the HANDLEN define in src/eggdrop.h
+  Value: the value of the HANDLEN define in src/eggdrop.h
 
-    Module: core
+  Module: core
 
 config
 
-    Value: the filename of the config file Eggdrop is currently using
+  Value: the filename of the config file Eggdrop is currently using
 
-    Module: core
-
+  Module: core
 
 
 BINDS
-
 
 You can use the 'bind' command to attach Tcl procedures to certain
 events. For example, you can write a Tcl procedure that gets called
@@ -2514,10 +2495,7 @@ is triggered, ALL of the Tcl procs that are bound to it will be called.
 To remove a bind, use the 'unbind' command. For example, to remove the
 bind for the "stop" msg command, use 'unbind msg - stop msg:stop'.
 
-
-
-BIND TYPES
-
+Bind Types
 
 The following is a list of bind types and how they work. Below each bind
 type is the format of the bind command, the list of arguments sent to
@@ -3270,10 +3248,7 @@ the Tcl proc, and an explanation.
 
   Module: core
 
-
-
-RETURN VALUES
-
+Return Values
 
 Several bindings pay attention to the value you return from the
 proc(using 'return <value>'). Usually, they expect a 0 or 1, and
@@ -3334,9 +3309,7 @@ trigger:
 (18) TLS Return 1 to disable verbose ssl information for the handshake.
 
 
-
 CONTROL PROCEDURES
-
 
 Using the 'control' command, you can put a DCC connection (or outgoing
 TCP connection) in control of a script. All text received from the
@@ -3361,9 +3334,7 @@ If you want to hand control of your connection back to Eggdrop, your
 proc should return 1. Otherwise, return 0 to retain control.
 
 
-
 TCP CONNECTIONS
-
 
 Eggdrop allows you to make two types of TCP ("telnet") connections:
 outgoing and incoming. For an outgoing connection, you specify the
@@ -3441,9 +3412,7 @@ uses them and follow it carefully. However, hopefully this has given you
 a good start.
 
 
-
 MATCH CHARACTERS
-
 
 Many of the bindings allow match characters in the arguments. Here are
 the four special characters:

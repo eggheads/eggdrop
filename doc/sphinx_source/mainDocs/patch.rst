@@ -17,7 +17,7 @@ Applying a patch
   To apply a patch to an Eggdrop, you have to first obtain the Eggdrop
   source code. You should always keep a tar.gz archive with the source of
   your current Eggdrop on your shell. In the next step, you have to change
-  to your source directory (i.e.: /home/user/eggdrop1.8.0/) and type
+  to your source directory (i.e.: /home/user/eggdrop1.8.1/) and type
   the following command::
 
     patch -p1 < ../path.to.the/patch
@@ -113,7 +113,7 @@ To create a patch using the diff tool:
      you would like used for attribution in the Changes1.8 and THANKS
      files.
 
-  Never modify src/patch.h or one of the Changes files. We will do it. If
+  Never modify src/version.h or one of the Changes files. We will do it. If
   your patch includes changes related to autotools (./configure, etc), do
   NOT run autoconf, autoheader, etc; we will do this as well.
 

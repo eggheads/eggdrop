@@ -1207,7 +1207,7 @@ void check_tcl_log(int lv, char *chan, char *msg)
 {
   char mask[512];
 
-  snprintf(mask, sizeof mask, "%s %s", chan, msg);
+  egg_snprintf(mask, sizeof mask, "%s %s", chan, msg);
   Tcl_SetVar(interp, "_log1", masktype(lv), TCL_GLOBAL_ONLY);
   Tcl_SetVar(interp, "_log2", chan, TCL_GLOBAL_ONLY);
   Tcl_SetVar(interp, "_log3", msg, TCL_GLOBAL_ONLY);

@@ -136,6 +136,11 @@ int partysock(char *bot, char *nick)
   return 0;
 }
 
+/* Set the botnetnick and truncate as necessary */
+void set_botnetnick(const char *newnick) {
+  strncpyz(botnetnick, newnick, sizeof botnetnick);
+}
+
 /* New botnet member
  */
 int addparty(char *bot, char *nick, int chan, char flag, int sock,
@@ -1072,7 +1077,7 @@ static void botlink_resolve_success(int i)
 
   changeover_dcc(i, &DCC_FORK_BOT, sizeof(struct bot_info));
   dcc[i].timeval = now;
-  strcpy(dcc[i].u.bot->linker, linker);
+  strncpyz(dcc[i].u.bot->linker, linker, sizeof dcc[i].u.bot->linker);
   strcpy(dcc[i].u.bot->version, "(primitive bot)");
   dcc[i].u.bot->numver = idx;
   dcc[i].u.bot->port = dcc[i].port;     /* Remember where i started */

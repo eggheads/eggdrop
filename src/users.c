@@ -692,16 +692,17 @@ int readuserfile(char *file, struct userrec **ret)
   noshare = noxtra = 1;
   /* read opening comment */
   s = buf;
-  fgets(s, 180, f);
-  if (s[1] < '4') {
-    fatal(USERF_OLDFMT, 0);
+  if (fgets(s, 180, f) != NULL) {
+    if (s[1] < '4') {
+      fatal(USERF_OLDFMT, 0);
+    }
+    if (s[1] > '4')
+      fatal(USERF_INVALID, 0);
   }
-  if (s[1] > '4')
-    fatal(USERF_INVALID, 0);
-  while (!feof(f)) {
-    s = buf;
-    fgets(s, 511, f);
-    if (!feof(f)) {
+  /* don't check for feof after fgets, skips last line if it has no \n (ie on windows) */
+  while (!feof(f) && fgets(buf, sizeof buf, f) != NULL) {
+      /* for the sake of git blame/history, I'm not re-indenting the next 255 lines*/
+      s = buf;
       if (s[0] != '#' && s[0] != ';' && s[0]) {
         code = newsplit(&s);
         rmspace(s);
@@ -890,7 +891,7 @@ int readuserfile(char *file, struct userrec **ret)
             if (!ok) {
               ue = user_malloc(sizeof(struct user_entry));
 
-              ue->name = user_malloc(strlen(code + 1));
+              ue->name = user_malloc(strlen(code) - 1);
               ue->type = NULL;
               strcpy(ue->name, code + 2);
               ue->u.list = user_malloc(sizeof(struct list_type));
@@ -935,7 +936,7 @@ int readuserfile(char *file, struct userrec **ret)
             } else {
               fr.match = FR_GLOBAL;
               break_down_flags(attr, &fr, 0);
-              strcpy(lasthand, code);
+              strncpyz(lasthand, code, sizeof lasthand);
               cst = NULL;
               if (strlen(code) > HANDLEN)
                 code[HANDLEN] = 0;
@@ -956,7 +957,6 @@ int readuserfile(char *file, struct userrec **ret)
           }
         }
       }
-    }
   }
   fclose(f);
   (*ret) = bu;

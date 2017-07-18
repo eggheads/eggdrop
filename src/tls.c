@@ -263,7 +263,7 @@ char *ssl_getfp(int sock)
  *
  * Return value: Pointer to the uid string or NULL if not found
  */
-char *ssl_getuid(int sock)
+const char *ssl_getuid(int sock)
 {
   int idx;
   X509 *cert;
@@ -282,7 +282,7 @@ char *ssl_getuid(int sock)
     return NULL;
   name = X509_NAME_ENTRY_get_data(X509_NAME_get_entry(subj, idx));
   /* Extract the contents, assuming null-terminated ASCII string */
-  return (char *) ASN1_STRING_data(name);
+  return (const char *) egg_ASN1_string_data(name);
 }
 
 /* Compare the peer's host with their Common Name or dnsName found in
@@ -292,13 +292,13 @@ char *ssl_getuid(int sock)
  *
  * Return value: 1 if cn matches host, 0 otherwise.
  */
-static int ssl_hostmatch(char *cn, char *host)
+static int ssl_hostmatch(const char *cn, const char *host)
 {
-  char *p, *q, *r;
+  const char *p, *q, *r;
 
   if ((r = strchr(cn + 1, '.')) && r[-1] == '*' && strchr(r, '.')) {
     for (p = cn, q = host; *p != '*'; p++, q++)
-      if (toupper((unsigned char)*p) != toupper((unsigned char)*q))
+      if (toupper((const unsigned char)*p) != toupper((const unsigned char)*q))
         return 0;
 
     if (!(p = strchr(host, '.')) || strcasecmp(p, r))
@@ -336,7 +336,7 @@ static int ssl_hostmatch(char *cn, char *host)
  */
 static int ssl_verifycn(X509 *cert, ssl_appdata *data)
 {
-  char *cn;
+  const char *cn;
   int crit = 0, match = 0;
   ASN1_OCTET_STRING *ip;
   GENERAL_NAMES *altname; /* SubjectAltName ::= GeneralNames */
@@ -356,7 +356,7 @@ static int ssl_verifycn(X509 *cert, ssl_appdata *data)
           match = !ASN1_STRING_cmp(gn->d.ip, ip);
       } else if (gn->type == GEN_DNS) {
         /* IA5string holds ASCII data */
-        cn = (char *) ASN1_STRING_data(gn->d.ia5);
+        cn = (const char *) egg_ASN1_string_data(gn->d.ia5);
         match = ssl_hostmatch(cn, data->host);
       }
     }
@@ -393,7 +393,7 @@ static int ssl_verifycn(X509 *cert, ssl_appdata *data)
          name until we find a match. */
       while (!match && pos != -1) {
         name = X509_NAME_ENTRY_get_data(X509_NAME_get_entry(subj, pos));
-        cn = (char *) ASN1_STRING_data(name);
+        cn = (const char *) egg_ASN1_string_data(name);
         if (ip)
           match = a2i_IPADDRESS(cn) ? (ASN1_STRING_cmp(ip, a2i_IPADDRESS(cn)) ? 0 : 1) : 0;
         else

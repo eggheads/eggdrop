@@ -113,29 +113,52 @@ static int fstat_set(struct userrec *u, struct user_entry *e, void *buf)
   return 1;
 }
 
-static int fstat_tcl_get(Tcl_Interp *irp, struct userrec *u,
-                         struct user_entry *e, int argc, char **argv)
+static int fstat_tcl_format(char *d, size_t max, struct filesys_stats *fs, char *arg)
 {
-  register struct filesys_stats *fs;
+  if (!arg)
+    egg_snprintf(d, max, "%u %u %u %u", fs->uploads, fs->upload_ks,
+                 fs->dnloads, fs->dnload_ks);
+  else
+    switch (arg[0]) {
+    case 'u':
+      egg_snprintf(d, max, "%u %u", fs->uploads, fs->upload_ks);
+      break;
+    case 'd':
+      egg_snprintf(d, max, "%u %u", fs->dnloads, fs->dnload_ks);
+      break;
+    }
+
+  return TCL_OK;
+}
+
+static int fstat_tcl_get(Tcl_Interp *irp, struct userrec *u,
+                      struct user_entry *e, int argc, char **argv)
+{
+  int ret;
   char d[50];
 
   BADARGS(3, 4, " handle FSTAT ?u/d?");
 
-  fs = e->u.extra;
-  if (argc == 3)
-    egg_snprintf(d, sizeof d, "%u %u %u %u", fs->uploads, fs->upload_ks,
-                 fs->dnloads, fs->dnload_ks);
-  else
-    switch (argv[3][0]) {
-    case 'u':
-      egg_snprintf(d, sizeof d, "%u %u", fs->uploads, fs->upload_ks);
-      break;
-    case 'd':
-      egg_snprintf(d, sizeof d, "%u %u", fs->dnloads, fs->dnload_ks);
-      break;
-    }
+  ret = fstat_tcl_format(d, sizeof d, e->u.extra, (argc > 3 ? argv[3] : NULL));
+
+  if (ret != TCL_OK)
+    return ret;
 
   Tcl_AppendResult(irp, d, NULL);
+  return TCL_OK;
+}
+
+static int fstat_tcl_append(Tcl_Interp *irp, struct userrec *u, struct user_entry *e)
+{
+  int ret;
+  char d[50];
+
+  ret = fstat_tcl_format(d, sizeof d, e->u.extra, NULL);
+
+  if (ret != TCL_OK)
+    return ret;
+
+  Tcl_AppendElement(irp, d);
   return TCL_OK;
 }
 
@@ -177,7 +200,8 @@ static struct user_entry_type USERENTRY_FSTAT = {
   fstat_tcl_set,
   fstat_expmem,
   fstat_display,
-  "FSTAT"
+  "FSTAT",
+  fstat_tcl_append
 };
 
 static int fstat_gotshare(struct userrec *u, struct user_entry *e,

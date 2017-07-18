@@ -154,7 +154,7 @@ clean: eggclean
 distclean: eggclean clean-modconfig
 	@cd src/mod && $(MAKE) distclean
 	@rm -f Makefile doc/Makefile scripts/Makefile src/Makefile src/md5/Makefile src/compat/Makefile src/mod/Makefile
-	@rm -f config.cache config.log config.status config.h lush.h
+	@rm -f config.cache config.log config.status config.h lush.h eggint.h
 	@rm -rf autom4te.cache
 
 distrib:

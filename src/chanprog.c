@@ -41,11 +41,12 @@
 
 #include "modules.h"
 
+extern struct dcc_t *dcc;
 extern struct userrec *userlist;
 extern log_t *logs;
 extern Tcl_Interp *interp;
 extern char ver[], botnetnick[], firewall[], motdfile[], userfile[], helpdir[],
-            tempdir[], moddir[], notify_new[], owner[], configfile[];
+            tempdir[], moddir[], notify_new[], configfile[];
 extern time_t now, online_since;
 extern int backgrd, term_z, con_chan, cache_hit, cache_miss, firewallport,
            default_flags, max_logs, conmask, protect_readonly, make_userfile,
@@ -62,6 +63,7 @@ struct chanset_t *chanset = NULL;  /* Channel list                 */
 char admin[121] = "";              /* Admin info                   */
 char origbotname[NICKLEN + 1];
 char botname[NICKLEN + 1];         /* Primary botname              */
+char owner[121] = "";              /* Permanent botowner(s)        */
 
 
 /* Remove leading and trailing whitespaces.
@@ -323,14 +325,14 @@ void tell_verbose_status(int idx)
   sprintf(&s[strlen(s)], "%02d:%02d", (int) hr, (int) min);
   s1[0] = 0;
   if (backgrd)
-    strcpy(s1, MISC_BACKGROUND);
+    strncpyz(s1, MISC_BACKGROUND, sizeof s1);
   else {
     if (term_z)
-      strcpy(s1, MISC_TERMMODE);
+      strncpyz(s1, MISC_TERMMODE, sizeof s1);
     else if (con_chan)
-      strcpy(s1, MISC_STATMODE);
+      strncpyz(s1, MISC_STATMODE, sizeof s1);
     else
-      strcpy(s1, MISC_LOGMODE);
+      strncpyz(s1, MISC_LOGMODE, sizeof s1);
   }
   cputime = getcputime();
   if (cputime < 0)
@@ -361,8 +363,7 @@ void tell_verbose_status(int idx)
   dprintf(idx, "%s %s (%s %s)\n", MISC_TCLVERSION,
           ((interp) && (Tcl_Eval(interp, "info patchlevel") == TCL_OK)) ?
           tcl_resultstring() : (Tcl_Eval(interp, "info tclversion") == TCL_OK) ?
-          tcl_resultstring() : "*unknown*", MISC_TCLHVERSION,
-          TCL_PATCH_LEVEL ? TCL_PATCH_LEVEL : "*unknown*");
+          tcl_resultstring() : "*unknown*", MISC_TCLHVERSION, TCL_PATCH_LEVEL);
 
   if (tcl_threaded())
     dprintf(idx, "Tcl is threaded.\n");
@@ -490,7 +491,7 @@ void chanprog()
   protect_readonly = 1;
 
   if (!botnetnick[0])
-    strncpyz(botnetnick, origbotname, HANDLEN + 1);
+    set_botnetnick(origbotname);
 
   if (!botnetnick[0])
     fatal("I don't have a botnet nick!!\n", 0);
@@ -557,6 +558,7 @@ void reload()
   if (!readuserfile(userfile, &userlist))
     fatal(MISC_MISSINGUSERF, 0);
   reaffirm_owners();
+  add_hq_user();
   check_tcl_event("userfile-loaded");
   call_hook(HOOK_READ_USERFILE);
 }
@@ -569,6 +571,7 @@ void rehash()
   noshare = 0;
   userlist = NULL;
   chanprog();
+  add_hq_user();
 }
 
 /*
@@ -718,4 +721,31 @@ int isowner(char *name)
   } while (*ptr);
 
   return 0;
+}
+
+/*
+ * Adds the -HQ user to the userlist and takes care of needed permissions
+ */
+void add_hq_user()
+{
+  if (!backgrd && term_z > 0 && userlist) {
+    /* HACK: Workaround using dcc[].nick not to pass literal "-HQ" as a non-const arg */
+    dcc[term_z].user = get_user_by_handle(userlist, dcc[term_z].nick);
+    /* Make sure there's an innocuous -HQ user if needed */
+    if (!dcc[term_z].user) {
+      userlist = adduser(userlist, dcc[term_z].nick, "none", "-", USER_PARTY);
+      dcc[term_z].user = get_user_by_handle(userlist, dcc[term_z].nick);
+    }
+    /* Give all useful flags: efjlmnoptuvx */
+    dcc[term_z].user->flags = USER_EXEMPT | USER_FRIEND | USER_JANITOR |
+                              USER_HALFOP | USER_MASTER | USER_OWNER | USER_OP |
+                              USER_PARTY | USER_BOTMAST | USER_UNSHARED |
+                              USER_VOICE | USER_XFER;
+    /* Add to permowner list if there's place */
+    if (strlen(owner) + sizeof EGG_BG_HANDLE < sizeof owner)
+      strcat(owner, " " EGG_BG_HANDLE);
+
+    /* Update laston info, gets cleared at rehash/reload */
+    touch_laston(dcc[term_z].user, "partyline", now);
+  }
 }

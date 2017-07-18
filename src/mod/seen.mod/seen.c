@@ -295,7 +295,7 @@ static void do_seen(int idx, char *prefix, char *nick, char *hand,
     /* "your admin" */
     if (!egg_strcasecmp(word1, "owner") || !egg_strcasecmp(word1, "admin")) {
       if (admin[0]) {
-        strcpy(word2, admin);
+        strncpyz(word2, admin, sizeof word2);
         wordshift(whotarget, word2);
         strcat(whoredirect, "My owner is ");
         strcat(whoredirect, whotarget);
@@ -505,20 +505,24 @@ targetcont:
 static char fixit[512];
 static char *fixnick(char *nick)
 {
-  strcpy(fixit, nick);
-  strcat(fixit, "'");
-  switch (nick[strlen(nick) - 1]) {
-  case 's':
-  case 'S':
-  case 'x':
-  case 'X':
-  case 'z':
-  case 'Z':
-    break;
-  default:
-    strcat(fixit, "s");
-    break;
-  }
+  if (!nick)
+    return NULL;
+  if (!nick[0])
+    fixit[0] = '\0';
+  else
+    switch (nick[strlen(nick) - 1]) {
+    case 's':
+    case 'S':
+    case 'x':
+    case 'X':
+    case 'z':
+    case 'Z':
+      egg_snprintf(fixit, sizeof fixit, "%s'", nick);
+      break;
+    default:
+      egg_snprintf(fixit, sizeof fixit, "%s's", nick);
+      break;
+    }
   return fixit;
 }
 
