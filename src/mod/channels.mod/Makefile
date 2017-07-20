@@ -32,15 +32,16 @@ distclean: clean
 
 #safety hash
 ../channels.o: .././channels.mod/channels.c ../../../src/mod/module.h \
- ../../../src/main.h ../../../config.h ../../../eggint.h ../../../lush.h \
- ../../../src/lang.h ../../../src/eggdrop.h ../../../src/compat/in6.h \
- ../../../src/flags.h ../../../src/cmdt.h ../../../src/tclegg.h \
- ../../../src/tclhash.h ../../../src/chan.h ../../../src/users.h \
- ../../../src/compat/compat.h ../../../src/compat/inet_aton.h \
- ../../../src/compat/snprintf.h ../../../src/compat/memset.h \
- ../../../src/compat/memcpy.h ../../../src/compat/strcasecmp.h \
- ../../../src/compat/strftime.h ../../../src/compat/inet_ntop.h \
- ../../../src/compat/inet_pton.h ../../../src/compat/gethostbyname2.h \
+ ../../../src/main.h ../../../src/config.h ../../../src/eggint.h \
+ ../../../src/lush.h ../../../src/lang.h ../../../src/eggdrop.h \
+ ../../../src/compat/in6.h ../../../src/flags.h ../../../src/cmdt.h \
+ ../../../src/tclegg.h ../../../src/tclhash.h ../../../src/chan.h \
+ ../../../src/users.h ../../../src/compat/compat.h \
+ ../../../src/compat/inet_aton.h ../../../src/compat/snprintf.h \
+ ../../../src/compat/memset.h ../../../src/compat/memcpy.h \
+ ../../../src/compat/strcasecmp.h ../../../src/compat/strftime.h \
+ ../../../src/compat/inet_ntop.h ../../../src/compat/inet_pton.h \
+ ../../../src/compat/gethostbyname2.h ../../../src/list.h \
  ../../../src/mod/modvals.h ../../../src/tandem.h \
  .././channels.mod/channels.h .././channels.mod/cmdschan.c \
  .././channels.mod/tclchan.c .././channels.mod/userchan.c \
