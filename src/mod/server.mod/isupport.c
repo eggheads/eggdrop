@@ -23,6 +23,14 @@
 
 #include <ctypes.h>
 
+struct isupport {
+  char *key;
+  const char *forced, *default, *value;
+};
+
+/* only the address is used */
+static char *UNSET = "";
+
 static char[][2] isupport_default_values {
   {"CASEMAPPING", "rfc1459"},
   {"CHANNELLEN", "200"},
@@ -33,7 +41,6 @@ static char[][2] isupport_default_values {
   {"TARGMAX", ""}
 };
 
-static hashtbl isupport_default, isupport, isupport_forced;
 static int hexdigit2dec[128] = {
   -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, /*   0 -   9 */
   -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, /*  10 -  19 */
