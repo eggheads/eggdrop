@@ -121,6 +121,7 @@ static void msgq_clear(struct msgq_head *qh);
 static int stack_limit;
 static char *realservername;
 
+#include "isupport.c"
 #include "servmsg.c"
 
 #define MAXPENALTY 10
@@ -132,7 +133,6 @@ static int burst;
 
 #include "cmdsserv.c"
 #include "tclserv.c"
-
 
 /*
  *     Bot server queues
@@ -1761,6 +1761,7 @@ static int server_expmem()
     tot += strlen(realservername) + 1;
   tot += msgq_expmem(&mq) + msgq_expmem(&hq) + msgq_expmem(&modeq);
 
+  tot += isupport_expmem();
   return tot;
 }
 
@@ -1799,6 +1800,8 @@ static void server_report(int idx, int details)
   } else
     dprintf(idx, "    %s\n", IRC_NOSERVER);
 
+  isupport_report(idx, details);
+
   if (modeq.tot)
     dprintf(idx, "    %s %d%% (%d msgs)\n", IRC_MODEQUEUE,
             (int) ((float) (modeq.tot * 100.0) / (float) maxqmsg),
@@ -1835,6 +1838,7 @@ static cmd_t my_ctcps[] = {
 
 static char *server_close()
 {
+  isupport_fini();
   cycle_time = 100;
   nuke_server("Connection reset by peer");
   clearq(serverlist);
@@ -2080,6 +2084,7 @@ char *server_start(Function *global_funcs)
   newserver[0] = 0;
   newserverport = 0;
   curserv = 999;
+  isupport_init();
   do_nettype();
   return NULL;
 }

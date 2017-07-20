@@ -346,12 +346,9 @@ static int got001(char *from, char *msg)
  */
 static int got005(char *from, char *msg)
 {
-  char *word;
-
   newsplit(&msg); /* skip botnick */
-  while ((word = newsplit(&msg))) {
-    isupport_parse(word);
-  }
+  isupport_handle(msg);
+  return 0;
 }
 
 /* Got 442: not on channel

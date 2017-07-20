@@ -47,17 +47,10 @@
 #ifndef LIST_H
 #define LIST_H
 
-#define JOIN2(a, b) a ## b
 #define JOIN3(a, b, c) a ## b ## c
-#define EVALJOIN2(a, b) JOIN2(a, b)
 #define EVALJOIN3(a, b, c) JOIN3(a, b, c)
 
-#define LIST_NAME(name) JOIN2(list_, name)
-#define LIST_ELEM_NAME(name) EVALJOIN2(LIST_NAME(name), _elem)
-
-#define LIST_TYPE(name) struct LIST_NAME(name)
-#define LIST_ELEM_TYPE(name) struct LIST_ELEM_NAME(name)
-#define LIST_FUNC_NAME(name, func) EVALJOIN3(LIST_NAME(name), _, func)
+#define LIST_FUNC_NAME(name, func) JOIN3(name, _, func)
 
 #define LIST_ELEM_DATA(elem) ((elem)->data)
 
@@ -74,50 +67,50 @@
     (var) && ((dvar) = LIST_ELEM_DATA(var), 1);                                \
     (var) = (var)->next)
 
-#define CREATE_LIST_TYPE(name, datatype)                                       \
-  LIST_ELEM_TYPE(name);                                                        \
-  LIST_TYPE(name) {                                                            \
+#define CREATE_LIST_TYPE(lname, ename, datatype)                               \
+  struct ename;                                                                \
+  struct lname {                                                               \
     int size;                                                                  \
-    LIST_ELEM_TYPE(name) *head, *tail;                                         \
-    void (*free)(datatype data);                                               \
+    struct ename *head, *tail;                                                 \
+    void (*freefunc)(datatype data);                                           \
   };                                                                           \
-  LIST_ELEM_TYPE(name) {                                                       \
-    LIST_ELEM_TYPE(name) *prev, *next;                                         \
+  struct ename {                                                               \
+    struct ename *prev, *next;                                                 \
     datatype data;                                                             \
   };                                                                           \
-  void LIST_FUNC_NAME(name, foreach) (LIST_TYPE(name) *list,                   \
-      void (*iter)(LIST_ELEM_TYPE(name) *elem)) {                              \
-    LIST_ELEM_TYPE(name) *e;                                                   \
+  void LIST_FUNC_NAME(lname, foreach) (struct lname *list,                     \
+      void (*iter)(struct ename *elem)) {                                      \
+    struct ename *e;                                                           \
     for (e = list->head; e; e = e->next)                                       \
       iter(e);                                                                 \
   }                                                                            \
-  void LIST_FUNC_NAME(name, foreach_safe) (LIST_TYPE(name) *list,              \
-      void (*iter)(LIST_ELEM_TYPE(name) *elem)) {                              \
-    LIST_ELEM_TYPE(name) *e, *next;                                            \
+  void LIST_FUNC_NAME(lname, foreach_safe) (struct lname *list,                \
+      void (*iter)(struct ename *elem)) {                                      \
+    struct ename *e, *next;                                                    \
     for (e = list->head; e && (next = e->next, 1); e = next)                   \
       iter(e);                                                                 \
   }                                                                            \
-  void LIST_FUNC_NAME(name, foreach_data) (LIST_TYPE(name) *list,              \
+  void LIST_FUNC_NAME(lname, foreach_data) (struct lname *list,                \
       void (*iter)(datatype data)) {                                           \
-    LIST_ELEM_TYPE(name) *e;                                                   \
+    struct ename *e;                                                           \
     for (e = list->head; e; e = e->next)                                       \
       iter(e->data);                                                           \
   }                                                                            \
-  void LIST_FUNC_NAME(name, destroy) (LIST_TYPE(name) *list) {                 \
-    if (list->free)                                                            \
-      LIST_FUNC_NAME(name, foreach_data)(list, list->free);                    \
+  void LIST_FUNC_NAME(lname, destroy) (struct lname *list) {                   \
+    if (list->freefunc)                                                        \
+      LIST_FUNC_NAME(lname, foreach_data)(list, list->freefunc);               \
     nfree(list);                                                               \
   }                                                                            \
-  LIST_TYPE(name) *LIST_FUNC_NAME(name, create) (                              \
+  struct lname *LIST_FUNC_NAME(lname, create) (                                \
       void (*freefunc)(datatype data)) {                                       \
-    LIST_TYPE(name) *list = nmalloc(sizeof *list);                             \
+    struct lname *list = nmalloc(sizeof *list);                                \
     list->size = 0;                                                            \
     list->head = NULL;                                                         \
-    list->free = freefunc;                                                     \
+    list->freefunc = freefunc;                                                 \
     return list;                                                               \
   }                                                                            \
-  void LIST_FUNC_NAME(name, delete) (LIST_TYPE(name) *list,                    \
-      LIST_ELEM_TYPE(name) *elem) {                                            \
+  void LIST_FUNC_NAME(lname, delete) (struct lname *list,                      \
+      struct ename *elem) {                                                    \
     if (elem->prev)                                                            \
       elem->prev->next = elem->next;                                           \
     else                                                                       \
@@ -126,12 +119,12 @@
       elem->next->prev = elem->prev;                                           \
     else                                                                       \
       list->tail = elem->prev;                                                 \
-    if (list->free)                                                            \
-      list->free(elem->data);                                                  \
+    if (list->freefunc)                                                        \
+      list->freefunc(elem->data);                                              \
     list->size--;                                                              \
   }                                                                            \
-  void LIST_FUNC_NAME(name, append) (LIST_TYPE(name) *list, datatype data) {   \
-    LIST_ELEM_TYPE(name) *elem = nmalloc(sizeof *elem);                        \
+  void LIST_FUNC_NAME(lname, append) (struct lname *list, datatype data) {     \
+    struct ename *elem = nmalloc(sizeof *elem);                                \
     elem->data = data;                                                         \
     elem->next = NULL;                                                         \
     if (!list->head) {                                                         \
@@ -143,8 +136,8 @@
     list->tail = elem;                                                         \
     list->size++;                                                              \
   }                                                                            \
-  void LIST_FUNC_NAME(name, prepend) (LIST_TYPE(name) *list, datatype data) {  \
-    LIST_ELEM_TYPE(name) *elem = nmalloc(sizeof *elem);                        \
+  void LIST_FUNC_NAME(lname, prepend) (struct lname *list, datatype data) {    \
+    struct ename *elem = nmalloc(sizeof *elem);                                \
     elem->data = data;                                                         \
     elem->prev = NULL;                                                         \
     if (!list->tail) {                                                         \
