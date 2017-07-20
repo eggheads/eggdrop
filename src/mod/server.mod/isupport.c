@@ -265,7 +265,8 @@ static void isupport_parse(const char *str,
   while (1) {
     while (*str == ' ')
       str++;
-    if (!*str)
+    /* :are supported by this server */
+    if (!*str || *str == ':')
       break;
     key = str;
     keylen = strcspn(key, "= ");
@@ -366,7 +367,6 @@ static void isupport_stringify(int idx, char *buf, size_t bufsize, size_t *len,
 {
   if (value)
     value = isupport_encode(value);
-  putlog(LOG_MISC, "*", "isupport debug: %s -- %s", key, value ? value : "(null)");
   if (!FITS_INTO(bufsize - *len, key, value)) {
     dprintf(idx, "%s\n", buf);
     *len = prefixlen;

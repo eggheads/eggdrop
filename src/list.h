@@ -132,6 +132,7 @@
       elem->prev = NULL;                                                       \
     } else {                                                                   \
       elem->prev = list->tail;                                                 \
+      elem->prev->next = elem;                                                 \
     }                                                                          \
     list->tail = elem;                                                         \
     list->size++;                                                              \
@@ -145,6 +146,7 @@
       elem->next = NULL;                                                       \
     } else {                                                                   \
       elem->next = list->head;                                                 \
+      elem->next->prev = elem;                                                 \
     }                                                                          \
     list->head = elem;                                                         \
     list->size++;                                                              \
