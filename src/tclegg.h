@@ -135,6 +135,15 @@ typedef struct timer_str {
         }                                                               \
 } while (0)
 
+#define BADARGS2(nl, nh, example) do {                                  \
+        if ((argc < (nl)) || ((argc > (nh)) && ((nh) != -1))) {         \
+                Tcl_AppendResult(irp, "wrong # args: should be \"",     \
+                                 argv[0], " ", argv[1], (example),      \
+                                 "\"", NULL);                           \
+                return TCL_ERROR;                                       \
+        }                                                               \
+} while (0)
+
 #define CHECKVALIDITY(a)        do {                                    \
         if (!check_validity(argv[0], (a))) {                            \
                 Tcl_AppendResult(irp, "bad builtin command call!",      \

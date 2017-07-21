@@ -31,7 +31,7 @@ struct isupport {
   size_t keylen;
   const char *key;
   const char *forced, *value, *def;
-  int forced_unset;
+  int forceunset;
 };
 
 /* Instantiate list type for isupport data */
@@ -86,7 +86,7 @@ static struct isupport *add_record(const char *key, size_t keylen) {
 
   data->key = keyupndup(key, keylen);
   data->keylen = keylen;
-  data->forced_unset = 0;
+  data->forceunset = 0;
   data->forced = data->def = data->value = NULL;
   isupportdata_append(isupportdata, data);
   return data;
@@ -113,7 +113,7 @@ static struct isupport *get_record(const char *key, size_t keylen) {
 }
 
 const char *isupport_get_from(struct isupport *data) {
-  if (data->forced_unset)
+  if (data->forceunset)
     return NULL;
   if (data->forced)
     return data->forced;
@@ -122,6 +122,29 @@ const char *isupport_get_from(struct isupport *data) {
   if (data->def)
     return data->def;
   return NULL;
+}
+
+void isupport_set_type_into(struct isupport *data, const char *type, const char *value) {
+  if (!strcmp(type, "forceunset"))
+    data->forceunset = atoi(value);
+  else if (!strcmp(type, "forced"))
+    ISET(data->forced, value, -1);
+  else if (!strcmp(type, "default"))
+    ISET(data->default, value, -1);
+  else if (!strcmp(type, "server"))
+    ISET(data->value, value, -1);
+}
+
+const char *isupport_get_type_from(struct isupport *data, const char *type) {
+  if (!strcmp(type, "current"))
+    return isupport_get_from(data);
+  if (!strcmp(type, "forced"))
+    return (data->forceunset ? NULL : data->forced);
+  if (!strcmp(type, "default"))
+    return data->def;
+  if (!strcmp(type, "forceunset"))
+    return (data->forceunset ? "1" : "0");
+  return data->value;
 }
 
 /* Get the value of an isupport key, following overrides and defs. */
@@ -168,7 +191,7 @@ static void isupport_unset_forced(const char *key, size_t keylen) {
   struct isupport *data = get_record(key, keylen);
 
   ICLEAR(data->forced);
-  data->forced_unset = 1;
+  data->forceunset = 1;
 }
 
 static void isupport_set_forced(const char *key, size_t keylen,
@@ -177,7 +200,7 @@ static void isupport_set_forced(const char *key, size_t keylen,
   struct isupport *data = get_record(key, keylen);
 
   ISET(data->forced, value, len);
-  data->forced_unset = 0;
+  data->forceunset = 0;
 }
 
 static void isupport_clear_forced(void) {
@@ -186,7 +209,7 @@ static void isupport_clear_forced(void) {
 
   LIST_FOREACH_DATA(isupportdata, i, data) {
     ICLEAR(data->forced);
-    data->forced_unset = 0;
+    data->forceunset = 0;
   }
 }
 
@@ -336,18 +359,6 @@ static void isupport_free(struct isupport *data) {
   nfree(data);
 }
 
-static int tcl_isupport STDVAR
-{
-  BADARGS(1, 2, " subcommand ?args?");
-/*
-  if (match_my_nick(argv[1]))
-    Tcl_AppendResult(irp, "1", NULL);
-  else
-    Tcl_AppendResult(irp, "0", NULL);
-    */
-  return TCL_OK;
-}
-
 void isupport_init(void) {
   isupportdata = isupportdata_create(isupport_free);
   isupport_handle_default(isupport_default);
@@ -362,7 +373,7 @@ void isupport_cleanup(void) {
   struct isupport *data;
   LIST_FOREACH_SAFE(isupportdata, i, next) {
     data = LIST_ELEM_DATA(i);
-    if (!data->forced && !data->def && !data->value && !data->forced_unset)
+    if (!data->forced && !data->def && !data->value && !data->forceunset)
       isupportdata_delete(isupportdata, i);
   }
 }
@@ -412,9 +423,9 @@ static void isupport_stringify(int idx, char *buf, size_t bufsize, size_t *len,
   struct isupportkeydata *i;                                                   \
   struct isupport *data;                                                       \
   LIST_FOREACH_DATA(isupportdata, i, data) {                                   \
-    if ((forced && data->forced_unset) || data->elem)                          \
+    if ((forced && data->forceunset) || data->elem)                          \
       isupport_stringify(idx, buf, sizeof buf, &len, prefixlen, data->key,     \
-          (forced && data->forced_unset ? NULL : data->elem));                 \
+          (forced && data->forceunset ? NULL : data->elem));                 \
   }                                                                            \
   if (len > prefixlen)                                                         \
     dprintf(idx, "%s\n", buf);                                                 \
