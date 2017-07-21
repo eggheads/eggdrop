@@ -23,6 +23,10 @@
 
 #include <ctype.h>
 
+#define ICLEAR(dst) do { if ((dst)) { nfree((dst)); (dst) = NULL; } } while (0)
+#define ISET(dst, val, len) do { if ((dst)) { nfree((dst)); }; \
+  (dst) = valuendup((val), ((len) < 0 ? strlen((val)) : (len))); } while (0);
+
 struct isupport {
   size_t keylen;
   const char *key;
@@ -30,15 +34,12 @@ struct isupport {
   int forced_unset;
 };
 
+/* Instantiate list type for isupport data */
 CREATE_LIST_TYPE(isupportdata, isupportkeydata, struct isupport *);
 
 static struct isupportdata *isupportdata;
 
 static char *isupport_default = "CASEMAPPING=rfc1459 CHANNELLEN=200 CHANTYPES=#& MODES=3 NICKLEN=9 PREFIX=(ov)@+ TARGMAX";
-
-#define ICLEAR(dst) do { if ((dst)) { nfree((dst)); (dst) = NULL; } } while (0)
-#define ISET(dst, val, len) do { if ((dst)) { nfree((dst)); }; \
-  (dst) = valuendup((val), ((len) < 0 ? strlen((val)) : (len))); } while (0);
 
 static int hexdigit2dec[128] = {
   -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, /*   0 -   9 */
@@ -216,7 +217,22 @@ static int isupport_hex2chr(const char *seq, size_t digits) {
       return -1;
     result += digit;
   }
-  return result;
+  /* disallow \x00 */
+  return result ? result : -1;
+}
+
+static const char *isupport_encode(const char *value) {
+  static char buf[512];
+  int i, j;
+
+  for (i = j = 0; i < strlen(value) && j < sizeof buf - strlen("\\xHH") - 1; i++) {
+    if ((unsigned char)value[i] < 33 || (unsigned char)value[i] > 126)
+      j += sprintf(buf + j, "\\x%02hhx", (unsigned char)value[i]);
+    else
+      buf[j++] = value[i];
+  }
+  buf[j] = '\0';
+  return buf;
 }
 
 static size_t isupport_decode(char *buf, size_t bufsize,
@@ -320,6 +336,18 @@ static void isupport_free(struct isupport *data) {
   nfree(data);
 }
 
+static int tcl_isupport STDVAR
+{
+  BADARGS(1, 2, " subcommand ?args?");
+/*
+  if (match_my_nick(argv[1]))
+    Tcl_AppendResult(irp, "1", NULL);
+  else
+    Tcl_AppendResult(irp, "0", NULL);
+    */
+  return TCL_OK;
+}
+
 void isupport_init(void) {
   isupportdata = isupportdata_create(isupport_free);
   isupport_handle_default(isupport_default);
@@ -353,11 +381,6 @@ size_t isupport_expmem(void) {
       bytes += strlen(data->forced) + 1;
   }
   return bytes;
-}
-
-// TODO
-static const char *isupport_encode(const char *value) {
-  return value;
 }
 
 #define FITS_INTO(len, key, value) ((strlen((key)) + ((value) ? strlen((value)) : 0) + 2) < (len))
