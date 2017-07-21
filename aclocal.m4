@@ -1653,27 +1653,23 @@ AC_DEFUN([EGG_TLS_DETECT],
         havessllib="no"
         break
       ]])
-      AC_CHECK_FUNC(ASN1_STRING_get0_data,
-        AC_DEFINE([egg_ASN1_string_data], [ASN1_STRING_get0_data], [Define this to ASN1_STRING_get0_data when using OpenSSL 1.1.0+, ASN1_STRING_data otherwise.])
-        , AC_DEFINE([egg_ASN1_string_data], [ASN1_STRING_data], [Define this to ASN1_STRING_get0_data when using OpenSSL 1.1.0+, ASN1_STRING_data otherwise.])
-      )
-      AC_CHECK_FUNC(hex_to_string, ,
-        AC_CHECK_FUNC(OPENSSL_hexstr2buf,
-            AC_DEFINE([hex_to_string], [OPENSSL_hexstr2buf], [Define this to OPENSSL_hexstr2buf when using OpenSSL 1.1.0+])
-          , [[
-            havessllib="no"
-            break
-        ]])
-      )
-      AC_CHECK_FUNC(string_to_hex, ,
-        AC_CHECK_FUNC(OPENSSL_buf2hexstr,
-            AC_DEFINE([string_to_hex], [OPENSSL_buf2hexstr], [Define this to OPENSSL_buf2hexstr when using OpenSSL 1.1.0+])
-          , [[
-            havessllib="no"
-            break
-        ]])
-      )
     fi
+    AC_CHECK_FUNC(hex_to_string, ,
+      AC_CHECK_FUNC(OPENSSL_hexstr2buf,
+          AC_DEFINE([hex_to_string], [OPENSSL_hexstr2buf], [Define this to OPENSSL_hexstr2buf when using OpenSSL 1.1.0+])
+        , [[
+          havessllib="no"
+          break
+      ]])
+    )
+    AC_CHECK_FUNC(string_to_hex, ,
+      AC_CHECK_FUNC(OPENSSL_buf2hexstr,
+          AC_DEFINE([string_to_hex], [OPENSSL_buf2hexstr], [Define this to OPENSSL_buf2hexstr when using OpenSSL 1.1.0+])
+        , [[
+          havessllib="no"
+          break
+      ]])
+    )
     if test "$enable_tls" = "yes"; then
       if test "$havesslinc" = "no"; then
         AC_MSG_WARN([Cannot find OpenSSL headers.])
@@ -1697,6 +1693,10 @@ AC_DEFUN([EGG_TLS_DETECT],
       fi
       AC_CHECK_FUNCS([RAND_status])
       AC_DEFINE(TLS, 1, [Define this to enable SSL support.])
+      AC_CHECK_FUNC(ASN1_STRING_get0_data,
+        AC_DEFINE([egg_ASN1_string_data], [ASN1_STRING_get0_data], [Define this to ASN1_STRING_get0_data when using OpenSSL 1.1.0+, ASN1_STRING_data otherwise.])
+        , AC_DEFINE([egg_ASN1_string_data], [ASN1_STRING_data], [Define this to ASN1_STRING_get0_data when using OpenSSL 1.1.0+, ASN1_STRING_data otherwise.])
+      )
       tls_enabled="yes"
       EGG_MD5_COMPAT
     fi
