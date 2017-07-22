@@ -89,7 +89,11 @@ int logmodes(char *s)
       break;
     case 't':
     case 'T':
-      res |= raw_log ? LOG_BOTNET : 0;
+      res |= raw_log ? LOG_BOTNETIN : 0;
+      break;
+    case 'u':
+    case 'U':
+      res |= raw_log ? LOG_BOTNETOUT : 0;
       break;
     case 'h':
     case 'H':
@@ -157,8 +161,10 @@ char *masktype(int x)
     *p++ = 'w';
   if ((x & LOG_SRVOUT) && raw_log)
     *p++ = 'v';
-  if ((x & LOG_BOTNET) && raw_log)
+  if ((x & LOG_BOTNETIN) && raw_log)
     *p++ = 't';
+  if ((x & LOG_BOTNETOUT) && raw_log)
+    *p++ = 'u';
   if ((x & LOG_BOTSHARE) && raw_log)
     *p++ = 'h';
   if (x & LOG_LEV1)
@@ -185,7 +191,7 @@ char *masktype(int x)
 
 char *maskname(int x)
 {
-  static char s[207];           /* Change this if you change the levels */
+  static char s[230];           /* Change this if you change the levels */
   int i = 0;
 
   s[0] = 0;
@@ -215,8 +221,10 @@ char *maskname(int x)
     i += my_strcpy(s + i, "wallops, ");
   if ((x & LOG_SRVOUT) && raw_log)
     i += my_strcpy(s + i, "server output, ");
-  if ((x & LOG_BOTNET) && raw_log)
-    i += my_strcpy(s + i, "botnet traffic, ");
+  if ((x & LOG_BOTNETIN) && raw_log)
+    i += my_strcpy(s + i, "botnet traffic in, ");
+  if ((x & LOG_BOTNETOUT) && raw_log)
+    i += my_strcpy(s + i, "botnet traffic out, ");
   if ((x & LOG_BOTSHARE) && raw_log)
     i += my_strcpy(s + i, "share traffic, ");
   if (x & LOG_LEV1)

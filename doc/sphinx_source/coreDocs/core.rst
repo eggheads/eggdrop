@@ -126,8 +126,9 @@ the logfile of the next day.
   set raw-log 0
     This setting allows you the logging of raw incoming server traffic via
     console/log flag 'r', raw outgoing server traffic via console/log mode
-    'v', raw botnet traffic via console/log mode 't', and raw share traffic
-    via console/log mode 'h'. These flags can create a large security hole,
+    'v', raw incoming botnet traffic via console/log mode 't', raw outgoing
+    botnet traffic via console/log mode 'u', and raw share traffic via
+    console/log mode 'h'. These flags can create a large security hole,
     allowing people to see user passwords. This is now restricted to +n users
     only. Please choose your owners with care.
 
@@ -160,7 +161,9 @@ logfile <logflags> <channel> "logs/logfile"
       +---+------------------------------------------------------+
       | s | server connects, disconnects, and notices            |
       +---+------------------------------------------------------+
-      | t | raw botnet traffic                                   |
+      | t | raw incoming botnet traffic                          |
+      +---+------------------------------------------------------+
+      | u | raw outgoing botnet traffic                          |
       +---+------------------------------------------------------+
       | v | raw outgoing server traffic                          |
       +---+------------------------------------------------------+

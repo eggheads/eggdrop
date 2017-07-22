@@ -252,7 +252,8 @@ See also: chhandle
    Owners only (these have to be enabled in the config file via "set raw-log"):
      %bh%b  raw share traffic
      %br%b  raw incoming server traffic
-     %bt%b  raw botnet traffic
+     %bt%b  raw incoming botnet traffic
+     %bu%b  raw outgoing botnet traffic
      %bv%b  raw outgoing server traffic
 
    There are also 8 user-defined console modes ('1' through '8').

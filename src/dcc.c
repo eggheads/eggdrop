@@ -467,7 +467,7 @@ static void dcc_bot(int idx, char *code, int i)
     if (!strcmp(code, "s"))
       putlog(LOG_BOTSHARE, "*", "{%s} %s", dcc[idx].nick, code + 2);
     else
-      putlog(LOG_BOTNET, "*", "[%s] %s", dcc[idx].nick, code);
+      putlog(LOG_BOTNETIN, "*", "[<%s] %s", dcc[idx].nick, code);
   }
   msg = strchr(code, ' ');
   if (msg) {
@@ -908,7 +908,6 @@ static void append_line(int idx, char *line)
       q->next = p;
   }
 }
-
 
 static void out_dcc_general(int idx, char *buf, void *x)
 {
