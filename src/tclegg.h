@@ -114,10 +114,23 @@ typedef struct timer_str {
         int argc;                                                       \
         char *argv[];
 
+#define STDOBJVAR (cd, irp, objc, objv)                                 \
+        ClientData cd;                                                  \
+        Tcl_Interp *irp;                                                \
+        int objc;                                                       \
+        CONST84 Tcl_Obj *objv[];
+
 #define BADARGS(nl, nh, example) do {                                   \
         if ((argc < (nl)) || ((argc > (nh)) && ((nh) != -1))) {         \
                 Tcl_AppendResult(irp, "wrong # args: should be \"",     \
                                  argv[0], (example), "\"", NULL);       \
+                return TCL_ERROR;                                       \
+        }                                                               \
+} while (0)
+
+#define BADOBJARGS(nl, nh, prefix, example) do {                        \
+        if ((objc < (nl)) || ((objc > (nh)) && ((nh) != -1))) {         \
+                Tcl_WrongNumArgs(irp, prefix, objv, example);           \
                 return TCL_ERROR;                                       \
         }                                                               \
 } while (0)
