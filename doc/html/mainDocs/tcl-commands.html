@@ -2343,7 +2343,7 @@ will be used. Types 30-39 set the host to '*'.</p>
 <h3>matchcidr &lt;block&gt; &lt;address&gt; &lt;prefix&gt;<a class="headerlink" href="#matchcidr-block-address-prefix" title="Permalink to this headline">¶</a></h3>
 <blockquote>
 <div><p>Description: performs a cidr match on the specified ip addresses. IPv6 is supported, if enabled at compile time.</p>
-<p>Example: matchcidr 192.1.8.2.0 192.1.8.2.17 16</p>
+<p>Example: matchcidr 192.168.0.0 192.168.1.17 16</p>
 <p>Returns: 1 if the address matches the block prefix, 0 otherwise.</p>
 <p>Module: core</p>
 </div></blockquote>
@@ -3310,7 +3310,7 @@ words) (This char only works in binds, not in regluar matching)</td>
           
     <div class="footer">
         &copy; Copyright 2017, Eggheads.
-      Last updated on Jul 07, 2017.
+      Last updated on Jul 22, 2017.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.3.
     </div>
         </div>
