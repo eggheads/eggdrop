@@ -105,6 +105,18 @@ struct server_list {
   char *realname;
 };
 
+typedef struct cap_list {
+  char supported[CAPMAX];
+  char negotiated[CAPMAX];
+} cap_list;
+
+#define INIT_CAP_LIST(X) cap_list X = { \
+  .supported = "",                      \
+  .negotiated = ""                      \
+}
+
+extern struct cap_list cap;
+
 /* Available net types.  */
 enum {
   NETT_EFNET        = 0, /* EFnet                    */
