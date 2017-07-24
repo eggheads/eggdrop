@@ -152,6 +152,16 @@ clearqueue <queue>
 
   Module: server
 
+^^^^^^^^^^^^^^^^^^^^^^^
+cap <sub-command> [arg]
+^^^^^^^^^^^^^^^^^^^^^^^
+
+  Description: sends a raw CAP command to the server. Sub-commands can be the CAP commands of LS, LIST, or REQ, or the eggdrop internal commands of -list or -active. -list will show commands supported on the current server, -active will show any capabilities already negotiated with the server. If sending a REQ, use arg to pass the requested capability to the server.
+
+  Returns: nothing
+
+  Module: server
+
 User Record Manipulation Commands
 ---------------------------------
 
