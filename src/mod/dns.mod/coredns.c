@@ -914,12 +914,13 @@ void parserespacket(u_8bit_t *response, int len)
         ddebug0(RES_WRN "Ignoring response with unexpected query type \"A\".");
         return;
       }
-      rp->sockname.family = AF_INET;
 #ifndef IPV6
+      rp->sockname.family = AF_INET;
       break;
 #else
       if (rp->sockname.family == AF_INET6)
         ready = 1;
+      rp->sockname.family = AF_INET;
       break;
     case T_AAAA:
       if (!IS_A(rp)) {
