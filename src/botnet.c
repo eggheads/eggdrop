@@ -737,7 +737,7 @@ void tell_bottree(int idx, int showver)
  */
 void dump_links(int z)
 {
-  register int i, l;
+  register int i;
   char x[1024];
   tand_t *bot;
 
@@ -750,13 +750,13 @@ void dump_links(int z)
       p = bot->uplink->bot;
 #ifndef NO_OLD_BOTNET
     if (b_numver(z) < NEAT_BOTNET)
-      l = simple_sprintf(x, "nlinked %s %s %c%d\n", bot->bot,
+      simple_sprintf(x, "nlinked %s %s %c%d\n", bot->bot,
                          p, bot->share, bot->ver);
     else
 #endif
-      l = simple_sprintf(x, "n %s %s %c%D\n", bot->bot, p,
+      simple_sprintf(x, "n %s %s %c%D\n", bot->bot, p,
                          bot->share, bot->ver);
-    tputs(dcc[z].sock, x, l);
+    dprintf(z, x);
   }
   if (!(bot_flags(dcc[z].user) & BOT_ISOLATE)) {
     /* Dump party line members */
@@ -766,65 +766,65 @@ void dump_links(int z)
             (dcc[i].u.chat->channel < GLOBAL_CHANS)) {
 #ifndef NO_OLD_BOTNET
           if (b_numver(z) < NEAT_BOTNET)
-            l = simple_sprintf(x, "join %s %s %d %c%d %s\n",
+            simple_sprintf(x, "join %s %s %d %c%d %s\n",
                                botnetnick, dcc[i].nick,
                                dcc[i].u.chat->channel, geticon(i),
                                dcc[i].sock, dcc[i].host);
           else
 #endif
-            l = simple_sprintf(x, "j !%s %s %D %c%D %s\n",
+            simple_sprintf(x, "j !%s %s %D %c%D %s\n",
                                botnetnick, dcc[i].nick,
                                dcc[i].u.chat->channel, geticon(i),
                                dcc[i].sock, dcc[i].host);
-          tputs(dcc[z].sock, x, l);
+          dprintf(z, x);
 #ifndef NO_OLD_BOTNET
           if (b_numver(z) < NEAT_BOTNET) {
             if (dcc[i].u.chat->away) {
-              l = simple_sprintf(x, "away %s %d %s\n", botnetnick,
+              simple_sprintf(x, "away %s %d %s\n", botnetnick,
                                  dcc[i].sock, dcc[i].u.chat->away);
-              tputs(dcc[z].sock, x, l);
+              dprintf(z, x);
             }
-            l = simple_sprintf(x, "idle %s %d %d\n", botnetnick,
+            simple_sprintf(x, "idle %s %d %d\n", botnetnick,
                                dcc[i].sock, now - dcc[i].timeval);
           } else
 #endif
-            l = simple_sprintf(x, "i %s %D %D %s\n", botnetnick,
+            simple_sprintf(x, "i %s %D %D %s\n", botnetnick,
                                dcc[i].sock, now - dcc[i].timeval,
                                dcc[i].u.chat->away ? dcc[i].u.chat->away : "");
-          tputs(dcc[z].sock, x, l);
+          dprintf(z, x);
         }
       }
     }
     for (i = 0; i < parties; i++) {
 #ifndef NO_OLD_BOTNET
       if (b_numver(z) < NEAT_BOTNET)
-        l = simple_sprintf(x, "join %s %s %d %c%d %s\n",
+        simple_sprintf(x, "join %s %s %d %c%d %s\n",
                            party[i].bot, party[i].nick,
                            party[i].chan, party[i].flag,
                            party[i].sock, party[i].from);
       else
 #endif
-        l = simple_sprintf(x, "j %s %s %D %c%D %s\n",
+        simple_sprintf(x, "j %s %s %D %c%D %s\n",
                            party[i].bot, party[i].nick,
                            party[i].chan, party[i].flag,
                            party[i].sock, party[i].from);
-      tputs(dcc[z].sock, x, l);
+      dprintf(z, x);
       if ((party[i].status & PLSTAT_AWAY) || (party[i].timer != 0)) {
 #ifndef NO_OLD_BOTNET
         if (b_numver(z) < NEAT_BOTNET) {
           if (party[i].status & PLSTAT_AWAY) {
-            l = simple_sprintf(x, "away %s %d %s\n", party[i].bot,
+            simple_sprintf(x, "away %s %d %s\n", party[i].bot,
                                party[i].sock, party[i].away);
-            tputs(dcc[z].sock, x, l);
+            dprintf(z, x);
           }
-          l = simple_sprintf(x, "idle %s %d %d\n", party[i].bot,
+          simple_sprintf(x, "idle %s %d %d\n", party[i].bot,
                              party[i].sock, now - party[i].timer);
         } else
 #endif
-          l = simple_sprintf(x, "i %s %D %D %s\n", party[i].bot,
+          simple_sprintf(x, "i %s %D %D %s\n", party[i].bot,
                              party[i].sock, now - party[i].timer,
                              party[i].away ? party[i].away : "");
-        tputs(dcc[z].sock, x, l);
+        dprintf(z, x);
       }
     }
   }

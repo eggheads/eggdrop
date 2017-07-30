@@ -349,6 +349,13 @@ static void dcc_bot_new(int idx, char *buf, int x)
   struct userrec *u = get_user_by_handle(userlist, dcc[idx].nick);
   char *code;
 
+  if (raw_log) {
+    if (!strcmp(buf, "s"))
+      putlog(LOG_BOTSHARE, "*", "{m<-%s} %s", dcc[idx].nick, buf + 2);
+    else
+      putlog(LOG_BOTNETIN, "*", "[m<-%s] %s", dcc[idx].nick, buf);
+  }
+
   code = newsplit(&buf);
   if (!egg_strcasecmp(code, "*hello!"))
     greet_new_bot(idx);
@@ -442,6 +449,33 @@ static void free_dcc_bot_(int n, void *x)
   nfree(x);
 }
 
+static void out_dcc_bot(int idx, char *buf, void *x)
+{
+  size_t len = strlen(buf);
+  /* We don't really use x here, so "use it" for the compiler */
+  (void)x;
+
+  if (raw_log) {
+    /* strip \n from end as putlog appends this */
+    char fnd = 0;
+    if (buf[len - 1] == '\n') {
+      fnd = 1;
+      buf[len - 1] = 0;
+    }
+
+    if (!strncmp(buf, "s ", 2))
+      putlog(LOG_BOTSHARE, "*", "{m->%s} %s", dcc[idx].nick, buf + 2);
+    else
+      putlog(LOG_BOTNETOUT, "*", "[m->%s] %s", dcc[idx].nick, buf);
+
+    /* Re-append \n if present */
+    if (fnd)
+      buf[len - 1] = '\n';
+  }
+
+  tputs(dcc[idx].sock, buf, len);
+}
+
 struct dcc_table DCC_BOT_NEW = {
   "BOT_NEW",
   0,
@@ -452,7 +486,7 @@ struct dcc_table DCC_BOT_NEW = {
   display_dcc_bot_new,
   expmem_dcc_bot_,
   free_dcc_bot_,
-  NULL
+  out_dcc_bot
 };
 
 /* Hash function for tandem bot commands */
@@ -527,33 +561,6 @@ static void display_dcc_fork_bot(int idx, char *buf)
   sprintf(buf, "conn  bot");
 }
 
-static void out_dcc_bot(int idx, char *buf, void *x)
-{
-  size_t len = strlen(buf);
-  /* We don't really use x here, so "use it" for the compiler */
-  (void)x;
-
-  if (raw_log) {
-    /* strip \n from end as putlog appends this */
-    char fnd = 0;
-    if (buf[len - 1] == '\n') {
-      fnd = 1;
-      buf[len - 1] = 0;
-    }
-
-    if (!strncmp(buf, "s ", 2))
-      putlog(LOG_BOTSHARE, "*", "{m->%s} %s", dcc[idx].nick, buf + 2);
-    else
-      putlog(LOG_BOTNETOUT, "*", "[m->%s] %s", dcc[idx].nick, buf);
-
-    /* Re-append \n if present */
-    if (fnd)
-      buf[len - 1] = '\n';
-  }
-
-  tputs(dcc[idx].sock, buf, strlen(buf));
-}
-
 struct dcc_table DCC_BOT = {
   "BOT",
   DCT_BOT | DCT_VALIDIDX,
@@ -577,7 +584,7 @@ struct dcc_table DCC_FORK_BOT = {
   display_dcc_fork_bot,
   expmem_dcc_bot_,
   free_dcc_bot_,
-  NULL
+  out_dcc_bot
 };
 
 /* This function generates a digest by combining a challenge consisting
