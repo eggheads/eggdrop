@@ -639,6 +639,12 @@ static void dcc_chat_pass(int idx, char *buf, int atr)
   atr = dcc[idx].user ? dcc[idx].user->flags : 0;
 
   if (atr & USER_BOT) {
+    if (raw_log) {
+      if (!strncmp(buf, "s ", 2))
+        putlog(LOG_BOTSHARE, "*", "{m<-%s} %s", dcc[idx].nick, buf + 2);
+      else
+        putlog(LOG_BOTNETIN, "*", "[m<-%s] %s", dcc[idx].nick, buf);
+    }
 #ifdef TLS
     if (!egg_strncasecmp(buf, "starttls ", 9)) {
       dcc[idx].ssl = 1;
@@ -681,7 +687,12 @@ static void dcc_chat_pass(int idx, char *buf, int atr)
       return;
     } else {
       /* Invalid password/digest */
+      /* change here temp to use bot output */
+      struct dcc_table *old = dcc[idx].type;
+      dcc[idx].type = &DCC_BOT_NEW;
       dprintf(idx, "badpass\n");
+      /* change back to original for general kill */
+      dcc[idx].type = old;
       putlog(LOG_MISC, "*", DCC_BADLOGIN, dcc[idx].nick, dcc[idx].host,
              dcc[idx].port);
       killsock(dcc[idx].sock);
@@ -724,9 +735,13 @@ static void dcc_chat_pass(int idx, char *buf, int atr)
       dcc_chatter(idx);
     }
   } else {
-    if (atr & USER_BOT)
+    if (atr & USER_BOT) {
+      /* change here temp to use bot output */
+      struct dcc_table *old = dcc[idx].type;
+      dcc[idx].type = &DCC_BOT_NEW;
       dprintf(idx, "badpass\n");
-    else
+      dcc[idx].type = old;
+    } else
       dprintf(idx, DCC_HOUSTON);
     putlog(LOG_MISC, "*", DCC_BADLOGIN, dcc[idx].nick,
            dcc[idx].host, dcc[idx].port);
@@ -1503,7 +1518,7 @@ struct dcc_table DCC_DUPWAIT = {
   display_dupwait,
   expmem_dupwait,
   kill_dupwait,
-  NULL
+  out_dcc_bot
 };
 
 /* This function is called if a bot gets removed from the list. It checks
@@ -1527,6 +1542,7 @@ static void dcc_telnet_id(int idx, char *buf, int atr)
 {
   int ok = 0;
   struct flag_record fr = { FR_GLOBAL | FR_CHAN | FR_ANYWH, 0, 0, 0, 0, 0 };
+  struct dcc_table *old = dcc[idx].type;
 
   if (detect_telnet((unsigned char *) buf)) {
     dcc[idx].status |= STAT_TELNET;
@@ -1549,9 +1565,12 @@ static void dcc_telnet_id(int idx, char *buf, int atr)
     const char *uid = ssl_getuid(dcc[idx].sock);
 
     if (!uid || strcasecmp(uid, buf)) {
-      if (glob_bot(fr))
+      if (glob_bot(fr)) {
+        /* change here temp to use bot output */
+        dcc[idx].type = &DCC_BOT_NEW;
         dprintf(idx, "error Certificate UID doesn't match handle\n");
-      else
+        dcc[idx].type = old;
+      } else
         dprintf(idx, "Your certificate UID doesn't match your handle.\n");
       killsock(dcc[idx].sock);
       lostdcc(idx);
@@ -1568,7 +1587,10 @@ static void dcc_telnet_id(int idx, char *buf, int atr)
     return;
   }
   if ((dcc[idx].status & STAT_USRONLY) && glob_bot(fr)) {
+    /* change here temp to use bot output */
+    dcc[idx].type = &DCC_BOT_NEW;
     dprintf(idx, "error Only users may connect at this port.\n");
+    dcc[idx].type = old;
     putlog(LOG_BOTS, "*", DCC_NONUSER, dcc[idx].host);
     killsock(dcc[idx].sock);
     lostdcc(idx);
@@ -1602,7 +1624,10 @@ static void dcc_telnet_id(int idx, char *buf, int atr)
   strncpyz(dcc[idx].nick, buf, sizeof dcc[idx].nick);
   if (glob_bot(fr)) {
     if (!egg_strcasecmp(botnetnick, dcc[idx].nick)) {
+      /* change here temp to use bot output */
+      dcc[idx].type = &DCC_BOT_NEW;
       dprintf(idx, "error You cannot link using my botnetnick.\n");
+      dcc[idx].type = old;
       putlog(LOG_BOTS, "*", DCC_MYBOTNETNICK, dcc[idx].host);
       killsock(dcc[idx].sock);
       lostdcc(idx);
@@ -1641,9 +1666,13 @@ int dcc_fingerprint(int idx)
       dcc_chat_pass(idx, "+", 1);
     /* Required? */
     } else if (tls_auth == 2) {
-      if (glob_bot(fr))
+      if (glob_bot(fr)) {
+        /* change here temp to use bot output */
+        struct dcc_table *old = dcc[idx].type;
+        dcc[idx].type = &DCC_BOT_NEW;
         dprintf(idx, "error fingerprint required\n");
-      else
+        dcc[idx].type = old;
+      } else
         dprintf(idx, "Certificate authentication required. "
                 "You need to set your fingerprint.\n");
       killsock(dcc[idx].sock);
@@ -1680,9 +1709,13 @@ static void dcc_telnet_pass(int idx, int atr)
       return;
     /* Required? */
     } else if (tls_auth == 2) {
-      if (glob_bot(fr))
+      if (glob_bot(fr)) {
+        /* change here temp to use bot output */
+        struct dcc_table *old = dcc[idx].type;
+        dcc[idx].type = &DCC_BOT_NEW;
         dprintf(idx, "error fingerprint required\n");
-      else
+        dcc[idx].type = old;
+      } else
         dprintf(idx, "Certificate authentication required. "
                 "You need to set your fingerprint.\n");
       killsock(dcc[idx].sock);
@@ -1731,6 +1764,9 @@ static void dcc_telnet_pass(int idx, int atr)
   }
 
   if (glob_bot(fr)) {
+    /* change here temp to use bot output */
+    struct dcc_table *old = dcc[idx].type;
+    dcc[idx].type = &DCC_BOT_NEW;
 #ifdef TLS
   /* Ask the peer to switch to ssl communication. We'll continue using plain
    * text, until it replies with starttls itself. Bots which don't support ssl
@@ -1753,6 +1789,7 @@ static void dcc_telnet_pass(int idx, int atr)
      */
     putlog(LOG_BOTS, "*", "Challenging %s...", dcc[idx].nick);
     dprintf(idx, "passreq <%x%x@%s>\n", getpid(), dcc[idx].timeval, botnetnick);
+    dcc[idx].type = old;
   } else {
     /* NOTE: The MD5 digest used above to prevent cleartext passwords being
      *       sent across the net will _only_ work when we have the cleartext
