@@ -25,24 +25,23 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
-static time_t last_ctcp = (time_t) 0L;
+static time_t last_ctcp = (time_t)0L;
 static int count_ctcp = 0;
-static time_t last_invtime = (time_t) 0L;
+static time_t last_invtime = (time_t)0L;
 static char last_invchan[300] = "";
 
 /* ID length for !channels.
  */
 #define CHANNEL_ID_LEN 5
 
-
 /* Returns a pointer to a new channel member structure.
  */
-static memberlist *newmember(struct chanset_t *chan)
-{
+static memberlist *newmember(struct chanset_t *chan) {
   memberlist *x;
 
-  for (x = chan->channel.member; x && x->nick[0]; x = x->next);
-  x->next = (memberlist *) channel_malloc(sizeof(memberlist));
+  for (x = chan->channel.member; x && x->nick[0]; x = x->next)
+    ;
+  x->next = (memberlist *)channel_malloc(sizeof(memberlist));
   x->next->next = NULL;
   x->next->nick[0] = 0;
   x->next->split = 0L;
@@ -53,8 +52,7 @@ static memberlist *newmember(struct chanset_t *chan)
 }
 
 /* Remove channel members for which no WHO reply was received */
-static inline void sync_members(struct chanset_t *chan)
-{
+static inline void sync_members(struct chanset_t *chan) {
   memberlist *m, *next, *prev;
 
   for (m = chan->channel.member, prev = 0; m && m->nick[0]; m = next) {
@@ -73,8 +71,7 @@ static inline void sync_members(struct chanset_t *chan)
 
 /* Always pass the channel dname (display name) to this function <cybah>
  */
-static void update_idle(char *chname, char *nick)
-{
+static void update_idle(char *chname, char *nick) {
   memberlist *m;
   struct chanset_t *chan;
 
@@ -88,8 +85,7 @@ static void update_idle(char *chname, char *nick)
 
 /* Returns the current channel mode.
  */
-static char *getchanmode(struct chanset_t *chan)
-{
+static char *getchanmode(struct chanset_t *chan) {
   static char s[121];
   int atr, i;
 
@@ -142,8 +138,7 @@ static char *getchanmode(struct chanset_t *chan)
   return s;
 }
 
-static void check_exemptlist(struct chanset_t *chan, char *from)
-{
+static void check_exemptlist(struct chanset_t *chan, char *from) {
   masklist *e;
   int ok = 0;
 
@@ -164,8 +159,8 @@ static void check_exemptlist(struct chanset_t *chan, char *from)
  * Moved all do_ban(), do_exempt() and do_invite() into this single function
  * as the code bloat is starting to get rediculous <cybah>
  */
-static void do_mask(struct chanset_t *chan, masklist *m, char *mask, char mode)
-{
+static void do_mask(struct chanset_t *chan, masklist *m, char *mask,
+                    char mode) {
   for (; m && m->mask[0]; m = m->next)
     if (cmp_masks(mask, m->mask) && rfc_casecmp(mask, m->mask))
       add_mode(chan, '-', mode, m->mask);
@@ -177,13 +172,12 @@ static void do_mask(struct chanset_t *chan, masklist *m, char *mask, char mode)
  * and handles kick & deop as well.
  */
 static int detect_chan_flood(char *floodnick, char *floodhost, char *from,
-                             struct chanset_t *chan, int which, char *victim)
-{
+                             struct chanset_t *chan, int which, char *victim) {
   char h[UHOSTLEN], ftype[12], *p;
   struct userrec *u;
   memberlist *m;
   int thr = 0, lapse = 0;
-  struct flag_record fr = { FR_GLOBAL | FR_CHAN, 0, 0, 0, 0, 0 };
+  struct flag_record fr = {FR_GLOBAL | FR_CHAN, 0, 0, 0, 0, 0};
 
   if (!chan || (which < 0) || (which >= FLOOD_CHAN_MAX))
     return 0;
@@ -205,13 +199,15 @@ static int detect_chan_flood(char *floodnick, char *floodhost, char *from,
     return 0;
 
   get_user_flagrec(get_user_by_host(from), &fr, chan->dname);
-  if (glob_bot(fr) || ((which == FLOOD_DEOP) && (glob_master(fr) ||
-      chan_master(fr)) && (glob_friend(fr) || chan_friend(fr))) ||
+  if (glob_bot(fr) ||
+      ((which == FLOOD_DEOP) && (glob_master(fr) || chan_master(fr)) &&
+       (glob_friend(fr) || chan_friend(fr))) ||
       ((which == FLOOD_KICK) && (glob_master(fr) || chan_master(fr)) &&
-      (glob_friend(fr) || chan_friend(fr))) || ((which != FLOOD_DEOP) &&
-      (which != FLOOD_KICK) && (glob_friend(fr) || chan_friend(fr))) ||
-      (channel_dontkickops(chan) && (chan_op(fr) || (glob_op(fr) &&
-      !chan_deop(fr)))))
+       (glob_friend(fr) || chan_friend(fr))) ||
+      ((which != FLOOD_DEOP) && (which != FLOOD_KICK) &&
+       (glob_friend(fr) || chan_friend(fr))) ||
+      (channel_dontkickops(chan) &&
+       (chan_op(fr) || (glob_op(fr) && !chan_deop(fr)))))
     return 0;
 
   /* Determine how many are necessary to make a flood. */
@@ -249,7 +245,7 @@ static int detect_chan_flood(char *floodnick, char *floodhost, char *from,
     break;
   }
   if ((thr == 0) || (lapse == 0))
-    return 0;                   /* no flood protection */
+    return 0; /* no flood protection */
 
   if ((which == FLOOD_KICK) || (which == FLOOD_DEOP))
     p = floodnick;
@@ -261,7 +257,7 @@ static int detect_chan_flood(char *floodnick, char *floodhost, char *from,
     if (!p)
       return 0;
   }
-  if (rfc_casecmp(chan->floodwho[which], p)) {  /* new */
+  if (rfc_casecmp(chan->floodwho[which], p)) { /* new */
     strncpy(chan->floodwho[which], p, 80);
     chan->floodwho[which][80] = 0;
     chan->floodtime[which] = now;
@@ -282,7 +278,7 @@ static int detect_chan_flood(char *floodnick, char *floodhost, char *from,
       strncpyz(chan->deopd, victim, sizeof chan->deopd);
   }
   chan->floodnum[which]++;
-  if (chan->floodnum[which] >= thr) {   /* FLOOD */
+  if (chan->floodnum[which] >= thr) { /* FLOOD */
     /* Reset counters */
     chan->floodnum[which] = 0;
     chan->floodtime[which] = 0;
@@ -307,16 +303,15 @@ static int detect_chan_flood(char *floodnick, char *floodhost, char *from,
     case FLOOD_JOIN:
     case FLOOD_NICK:
       if (use_exempts && (u_match_mask(global_exempts, from) ||
-          u_match_mask(chan->exempts, from)))
+                          u_match_mask(chan->exempts, from)))
         return 1;
       simple_sprintf(h, "*!*@%s", p);
       if (!isbanned(chan, h) && (me_op(chan) || me_halfop(chan))) {
         check_exemptlist(chan, from);
         do_mask(chan, chan->channel.ban, h, 'b');
       }
-      if ((u_match_mask(global_bans, from)) ||
-          (u_match_mask(chan->bans, from)))
-        return 1;               /* Already banned */
+      if ((u_match_mask(global_bans, from)) || (u_match_mask(chan->bans, from)))
+        return 1; /* Already banned */
       if (which == FLOOD_JOIN)
         putlog(LOG_MISC | LOG_JOIN, chan->dname, IRC_FLOODIGNORE3, p);
       else
@@ -329,8 +324,8 @@ static int detect_chan_flood(char *floodnick, char *floodhost, char *from,
         for (m = chan->channel.member; m && m->nick[0]; m = m->next) {
           sprintf(s, "%s!%s", m->nick, m->userhost);
           if (wild_match(h, s) && (m->joined >= chan->floodtime[which]) &&
-              !chan_sentkick(m) && !match_my_nick(m->nick) && (me_op(chan) ||
-              (me_halfop(chan) && !chan_hasop(m)))) {
+              !chan_sentkick(m) && !match_my_nick(m->nick) &&
+              (me_op(chan) || (me_halfop(chan) && !chan_hasop(m)))) {
             m->flags |= SENTKICK;
             if (which == FLOOD_JOIN)
               dprintf(DP_SERVER, "KICK %s %s :%s\n", chan->name, m->nick,
@@ -355,8 +350,8 @@ static int detect_chan_flood(char *floodnick, char *floodhost, char *from,
       if ((me_op(chan) || (me_halfop(chan) && !chan_hasop(m))) &&
           !chan_sentkick(m)) {
         putlog(LOG_MODES, chan->dname, CHAN_MASSDEOP, chan->dname, from);
-        dprintf(DP_MODE, "KICK %s %s :%s\n",
-                chan->name, floodnick, CHAN_MASSDEOP_KICK);
+        dprintf(DP_MODE, "KICK %s %s :%s\n", chan->name, floodnick,
+                CHAN_MASSDEOP_KICK);
         m->flags |= SENTKICK;
       }
       return 1;
@@ -367,8 +362,7 @@ static int detect_chan_flood(char *floodnick, char *floodhost, char *from,
 
 /* Given a [nick!]user@host, place a quick ban on them on a chan.
  */
-static char *quickban(struct chanset_t *chan, char *uhost)
-{
+static char *quickban(struct chanset_t *chan, char *uhost) {
   static char s1[512];
 
   maskaddr(uhost, s1, chan->ban_type);
@@ -380,11 +374,10 @@ static char *quickban(struct chanset_t *chan, char *uhost)
  * with a specified comment.  Ernst 18/3/1998
  */
 static void kick_all(struct chanset_t *chan, char *hostmask, char *comment,
-                     int bantype)
-{
+                     int bantype) {
   memberlist *m;
   char kicknick[512], s[UHOSTLEN];
-  struct flag_record fr = { FR_GLOBAL | FR_CHAN, 0, 0, 0, 0, 0 };
+  struct flag_record fr = {FR_GLOBAL | FR_CHAN, 0, 0, 0, 0, 0};
   int k, l, flushed;
 
   if (!me_op(chan) && !me_halfop(chan))
@@ -398,17 +391,19 @@ static void kick_all(struct chanset_t *chan, char *hostmask, char *comment,
     get_user_flagrec(m->user ? m->user : get_user_by_host(s), &fr, chan->dname);
     if ((me_op(chan) || (me_halfop(chan) && !chan_hasop(m))) &&
         match_addr(hostmask, s) && !chan_sentkick(m) &&
-        !match_my_nick(m->nick) && !chan_issplit(m) &&
-        !glob_friend(fr) && !chan_friend(fr) && !(use_exempts && ((bantype &&
-        isexempted(chan, s)) || (u_match_mask(global_exempts, s) ||
-        u_match_mask(chan->exempts, s)))) && !(channel_dontkickops(chan) &&
-        (chan_op(fr) || (glob_op(fr) && !chan_deop(fr))))) {
+        !match_my_nick(m->nick) && !chan_issplit(m) && !glob_friend(fr) &&
+        !chan_friend(fr) &&
+        !(use_exempts && ((bantype && isexempted(chan, s)) ||
+                          (u_match_mask(global_exempts, s) ||
+                           u_match_mask(chan->exempts, s)))) &&
+        !(channel_dontkickops(chan) &&
+          (chan_op(fr) || (glob_op(fr) && !chan_deop(fr))))) {
       if (!flushed) {
         /* We need to kick someone, flush eventual bans first */
         flush_mode(chan, QUICK);
         flushed += 1;
       }
-      m->flags |= SENTKICK;     /* Mark as pending kick */
+      m->flags |= SENTKICK; /* Mark as pending kick */
       if (kicknick[0])
         strcat(kicknick, ",");
       strcat(kicknick, m->nick);
@@ -427,8 +422,7 @@ static void kick_all(struct chanset_t *chan, char *hostmask, char *comment,
 
 /* If any bans match this wildcard expression, refresh them on the channel.
  */
-static void refresh_ban_kick(struct chanset_t *chan, char *user, char *nick)
-{
+static void refresh_ban_kick(struct chanset_t *chan, char *user, char *nick) {
   register maskrec *b;
   memberlist *m;
   int cycle;
@@ -441,15 +435,15 @@ static void refresh_ban_kick(struct chanset_t *chan, char *user, char *nick)
   for (cycle = 0; cycle < 2; cycle++) {
     for (b = cycle ? chan->bans : global_bans; b; b = b->next) {
       if (match_addr(b->mask, user)) {
-        struct flag_record fr = { FR_GLOBAL | FR_CHAN, 0, 0, 0, 0, 0 };
-        char c[512];            /* The ban comment.     */
+        struct flag_record fr = {FR_GLOBAL | FR_CHAN, 0, 0, 0, 0, 0};
+        char c[512]; /* The ban comment.     */
         char s[UHOSTLEN];
 
         sprintf(s, "%s!%s", m->nick, m->userhost);
         get_user_flagrec(m->user ? m->user : get_user_by_host(s), &fr,
                          chan->dname);
         if (!glob_friend(fr) && !chan_friend(fr)) {
-          add_mode(chan, '-', 'o', nick);       /* Guess it can't hurt. */
+          add_mode(chan, '-', 'o', nick); /* Guess it can't hurt. */
           check_exemptlist(chan, user);
           do_mask(chan, chan->channel.ban, b->mask, 'b');
           b->lastactive = now;
@@ -458,7 +452,7 @@ static void refresh_ban_kick(struct chanset_t *chan, char *user, char *nick)
           else
             c[0] = 0;
           kick_all(chan, b->mask, c[0] ? c : IRC_YOUREBANNED, 0);
-          return;               /* Drop out on 1st ban. */
+          return; /* Drop out on 1st ban. */
         }
       }
     }
@@ -468,8 +462,7 @@ static void refresh_ban_kick(struct chanset_t *chan, char *user, char *nick)
 /* This is a bit cumbersome at the moment, but it works... Any improvements
  * then feel free to have a go.. Jason
  */
-static void refresh_exempt(struct chanset_t *chan, char *user)
-{
+static void refresh_exempt(struct chanset_t *chan, char *user) {
   maskrec *e;
   masklist *b;
   int cycle;
@@ -491,8 +484,7 @@ static void refresh_exempt(struct chanset_t *chan, char *user)
   }
 }
 
-static void refresh_invite(struct chanset_t *chan, char *user)
-{
+static void refresh_invite(struct chanset_t *chan, char *user) {
   maskrec *i;
   int cycle;
 
@@ -513,8 +505,7 @@ static void refresh_invite(struct chanset_t *chan, char *user)
 
 /* Enforce all channel bans in a given channel.  Ernst 18/3/1998
  */
-static void enforce_bans(struct chanset_t *chan)
-{
+static void enforce_bans(struct chanset_t *chan) {
   char me[UHOSTLEN];
   masklist *b;
 
@@ -535,16 +526,15 @@ static void enforce_bans(struct chanset_t *chan)
  *
  * Note: Since i was getting a ban list, i assume i'm chop.
  */
-static void recheck_bans(struct chanset_t *chan)
-{
+static void recheck_bans(struct chanset_t *chan) {
   maskrec *u;
   int cycle;
 
   /* Check global bans in first cycle and channel bans in second cycle. */
   for (cycle = 0; cycle < 2; cycle++) {
     for (u = cycle ? chan->bans : global_bans; u; u = u->next)
-      if (!isbanned(chan, u->mask) && (!channel_dynamicbans(chan) ||
-          (u->flags & MASKREC_STICKY)))
+      if (!isbanned(chan, u->mask) &&
+          (!channel_dynamicbans(chan) || (u->flags & MASKREC_STICKY)))
         add_mode(chan, '+', 'b', u->mask);
   }
 }
@@ -554,8 +544,7 @@ static void recheck_bans(struct chanset_t *chan)
  *
  * Note: Since i was getting an excempt list, i assume i'm chop.
  */
-static void recheck_exempts(struct chanset_t *chan)
-{
+static void recheck_exempts(struct chanset_t *chan) {
   maskrec *e;
   masklist *b;
   int cycle;
@@ -567,8 +556,7 @@ static void recheck_exempts(struct chanset_t *chan)
           (!channel_dynamicexempts(chan) || (e->flags & MASKREC_STICKY)))
         add_mode(chan, '+', 'e', e->mask);
       for (b = chan->channel.ban; b && b->mask[0]; b = b->next) {
-        if (mask_match(b->mask, e->mask) &&
-            !isexempted(chan, e->mask))
+        if (mask_match(b->mask, e->mask) && !isexempted(chan, e->mask))
           add_mode(chan, '+', 'e', e->mask);
         /* do_mask(chan, chan->channel.exempt, e->mask, 'e'); */
       }
@@ -581,8 +569,7 @@ static void recheck_exempts(struct chanset_t *chan)
  *
  * Note: Since i was getting an invite list, i assume i'm chop.
  */
-static void recheck_invites(struct chanset_t *chan)
-{
+static void recheck_invites(struct chanset_t *chan) {
   maskrec *ir;
   int cycle;
 
@@ -592,8 +579,9 @@ static void recheck_invites(struct chanset_t *chan)
       /* If invite isn't set and (channel is not dynamic invites and not invite
        * only) or invite is sticky.
        */
-      if (!isinvited(chan, ir->mask) && ((!channel_dynamicinvites(chan) &&
-          !(chan->channel.mode & CHANINV)) || ir->flags & MASKREC_STICKY))
+      if (!isinvited(chan, ir->mask) &&
+          ((!channel_dynamicinvites(chan) && !(chan->channel.mode & CHANINV)) ||
+           ir->flags & MASKREC_STICKY))
         add_mode(chan, '+', 'I', ir->mask);
       /* do_mask(chan, chan->channel.invite, ir->mask, 'I'); */
     }
@@ -603,12 +591,11 @@ static void recheck_invites(struct chanset_t *chan)
 /* Resets the masks on the channel.
  */
 static void resetmasks(struct chanset_t *chan, masklist *m, maskrec *mrec,
-                       maskrec *global_masks, char mode)
-{
-  if (!me_op(chan) && (!me_halfop(chan) ||
-      (strchr(NOHALFOPS_MODES, 'b') != NULL) ||
-      (strchr(NOHALFOPS_MODES, 'e') != NULL) ||
-      (strchr(NOHALFOPS_MODES, 'I') != NULL)))
+                       maskrec *global_masks, char mode) {
+  if (!me_op(chan) &&
+      (!me_halfop(chan) || (strchr(NOHALFOPS_MODES, 'b') != NULL) ||
+       (strchr(NOHALFOPS_MODES, 'e') != NULL) ||
+       (strchr(NOHALFOPS_MODES, 'I') != NULL)))
     return;
 
   /* Remove masks we didn't put there */
@@ -633,8 +620,7 @@ static void resetmasks(struct chanset_t *chan, masklist *m, maskrec *mrec,
     break;
   }
 }
-static void check_this_ban(struct chanset_t *chan, char *banmask, int sticky)
-{
+static void check_this_ban(struct chanset_t *chan, char *banmask, int sticky) {
   memberlist *m;
   char user[UHOSTLEN];
 
@@ -644,17 +630,15 @@ static void check_this_ban(struct chanset_t *chan, char *banmask, int sticky)
   for (m = chan->channel.member; m && m->nick[0]; m = m->next) {
     sprintf(user, "%s!%s", m->nick, m->userhost);
     if (match_addr(banmask, user) &&
-        !(use_exempts &&
-          (u_match_mask(global_exempts, user) ||
-           u_match_mask(chan->exempts, user))))
+        !(use_exempts && (u_match_mask(global_exempts, user) ||
+                          u_match_mask(chan->exempts, user))))
       refresh_ban_kick(chan, user, m->nick);
   }
   if (!isbanned(chan, banmask) && (!channel_dynamicbans(chan) || sticky))
     add_mode(chan, '+', 'b', banmask);
 }
 
-static void recheck_channel_modes(struct chanset_t *chan)
-{
+static void recheck_channel_modes(struct chanset_t *chan) {
   int cur = chan->channel.mode, mns = chan->mode_mns_prot,
       pls = chan->mode_pls_prot;
 
@@ -746,8 +730,7 @@ static void recheck_channel_modes(struct chanset_t *chan)
 }
 
 static void check_this_member(struct chanset_t *chan, char *nick,
-                              struct flag_record *fr)
-{
+                              struct flag_record *fr) {
   memberlist *m;
   char s[UHOSTLEN], *p;
 
@@ -755,21 +738,21 @@ static void check_this_member(struct chanset_t *chan, char *nick,
   if (!m || match_my_nick(nick) || (!me_op(chan) && !me_halfop(chan)))
     return;
 
-
 #ifdef NO_HALFOP_CHANMODES
   if (me_op(chan)) {
 #else
   if (me_op(chan) || me_halfop(chan)) {
 #endif
     if (HALFOP_CANDOMODE('o')) {
-      if (chan_hasop(m) && ((chan_deop(*fr) || (glob_deop(*fr) &&
-          !chan_op(*fr))) || (channel_bitch(chan) && (!chan_op(*fr) &&
-          !(glob_op(*fr) && !chan_deop(*fr)))))) {
+      if (chan_hasop(m) &&
+          ((chan_deop(*fr) || (glob_deop(*fr) && !chan_op(*fr))) ||
+           (channel_bitch(chan) &&
+            (!chan_op(*fr) && !(glob_op(*fr) && !chan_deop(*fr)))))) {
         add_mode(chan, '-', 'o', m->nick);
       }
-      if (!chan_hasop(m) && (chan_op(*fr) || (glob_op(*fr) &&
-          !chan_deop(*fr))) && (channel_autoop(chan) || glob_autoop(*fr) ||
-          chan_autoop(*fr))) {
+      if (!chan_hasop(m) &&
+          (chan_op(*fr) || (glob_op(*fr) && !chan_deop(*fr))) &&
+          (channel_autoop(chan) || glob_autoop(*fr) || chan_autoop(*fr))) {
         if (!chan->aop_min)
           add_mode(chan, '+', 'o', m->nick);
         else {
@@ -780,14 +763,16 @@ static void check_this_member(struct chanset_t *chan, char *nick,
     }
 
     if (HALFOP_CANDOMODE('h')) {
-      if (chan_hashalfop(m) && ((chan_dehalfop(*fr) || (glob_dehalfop(*fr) &&
-          !chan_halfop(*fr)) || (channel_bitch(chan) && (!chan_halfop(*fr) &&
-          !(glob_halfop(*fr) && !chan_dehalfop(*fr)))))))
+      if (chan_hashalfop(m) &&
+          ((chan_dehalfop(*fr) || (glob_dehalfop(*fr) && !chan_halfop(*fr)) ||
+            (channel_bitch(chan) &&
+             (!chan_halfop(*fr) &&
+              !(glob_halfop(*fr) && !chan_dehalfop(*fr)))))))
         add_mode(chan, '-', 'h', m->nick);
       if (!chan_sentop(m) && !chan_hasop(m) && !chan_hashalfop(m) &&
           (chan_halfop(*fr) || (glob_halfop(*fr) && !chan_dehalfop(*fr))) &&
           (channel_autohalfop(chan) || glob_autohalfop(*fr) ||
-          chan_autohalfop(*fr))) {
+           chan_autohalfop(*fr))) {
         if (!chan->aop_min)
           add_mode(chan, '+', 'h', m->nick);
         else {
@@ -798,8 +783,8 @@ static void check_this_member(struct chanset_t *chan, char *nick,
     }
 
     if (HALFOP_CANDOMODE('v')) {
-      if (chan_hasvoice(m) && (chan_quiet(*fr) || (glob_quiet(*fr) &&
-          !chan_voice(*fr))))
+      if (chan_hasvoice(m) &&
+          (chan_quiet(*fr) || (glob_quiet(*fr) && !chan_voice(*fr))))
         add_mode(chan, '-', 'v', m->nick);
       if (!chan_hasvoice(m) && !chan_hasop(m) && !chan_hashalfop(m) &&
           (chan_voice(*fr) || (glob_voice(*fr) && !chan_quiet(*fr))) &&
@@ -814,18 +799,18 @@ static void check_this_member(struct chanset_t *chan, char *nick,
     }
   }
 
-  if (!me_op(chan) && (!me_halfop(chan) ||
-      (strchr(NOHALFOPS_MODES, 'b') != NULL) ||
-      (strchr(NOHALFOPS_MODES, 'e') != NULL) ||
-      (strchr(NOHALFOPS_MODES, 'I') != NULL)))
+  if (!me_op(chan) &&
+      (!me_halfop(chan) || (strchr(NOHALFOPS_MODES, 'b') != NULL) ||
+       (strchr(NOHALFOPS_MODES, 'e') != NULL) ||
+       (strchr(NOHALFOPS_MODES, 'I') != NULL)))
     return;
 
   sprintf(s, "%s!%s", m->nick, m->userhost);
-  if (use_invites && (u_match_mask(global_invites, s) ||
-      u_match_mask(chan->invites, s)))
+  if (use_invites &&
+      (u_match_mask(global_invites, s) || u_match_mask(chan->invites, s)))
     refresh_invite(chan, s);
-  if (!(use_exempts && (u_match_mask(global_exempts, s) ||
-      u_match_mask(chan->exempts, s)))) {
+  if (!(use_exempts &&
+        (u_match_mask(global_exempts, s) || u_match_mask(chan->exempts, s)))) {
     if (u_match_mask(global_bans, s) || u_match_mask(chan->bans, s))
       refresh_ban_kick(chan, s, m->nick);
     if (!chan_sentkick(m) && (chan_kick(*fr) || glob_kick(*fr)) &&
@@ -840,13 +825,12 @@ static void check_this_member(struct chanset_t *chan, char *nick,
   }
 }
 
-static void check_this_user(char *hand, int delete, char *host)
-{
+static void check_this_user(char *hand, int delete, char *host) {
   char s[UHOSTLEN];
   memberlist *m;
   struct userrec *u;
   struct chanset_t *chan;
-  struct flag_record fr = { FR_GLOBAL | FR_CHAN, 0, 0, 0, 0, 0 };
+  struct flag_record fr = {FR_GLOBAL | FR_CHAN, 0, 0, 0, 0, 0};
 
   for (chan = chanset; chan; chan = chan->next)
     for (m = chan->channel.member; m && m->nick[0]; m = m->next) {
@@ -863,11 +847,10 @@ static void check_this_user(char *hand, int delete, char *host)
 
 /* Things to do when i just became a chanop:
  */
-static void recheck_channel(struct chanset_t *chan, int dobans)
-{
+static void recheck_channel(struct chanset_t *chan, int dobans) {
   memberlist *m;
   char s[UHOSTLEN];
-  struct flag_record fr = { FR_GLOBAL | FR_CHAN, 0, 0, 0, 0, 0 };
+  struct flag_record fr = {FR_GLOBAL | FR_CHAN, 0, 0, 0, 0, 0};
   static int stacking = 0;
   int stop_reset = 0;
 
@@ -926,8 +909,7 @@ static void recheck_channel(struct chanset_t *chan, int dobans)
 /* got 324: mode status
  * <server> 324 <to> <channel> <mode>
  */
-static int got324(char *from, char *msg)
-{
+static int got324(char *from, char *msg) {
   int i = 1, ok = 0;
   char *p, *q, *chname;
   struct chanset_t *chan;
@@ -984,7 +966,7 @@ static int got324(char *from, char *msg)
     if (msg[i] == 'k') {
       chan->channel.mode |= CHANKEY;
       p = strchr(msg, ' ');
-      if (p != NULL) {          /* Test for null key assignment */
+      if (p != NULL) { /* Test for null key assignment */
         p++;
         q = strchr(p, ' ');
         if (q != NULL) {
@@ -996,8 +978,8 @@ static int got324(char *from, char *msg)
           *p = 0;
         }
       }
-      if ((chan->channel.mode & CHANKEY) && (!chan->channel.key[0] ||
-          !strcmp("*", chan->channel.key)))
+      if ((chan->channel.mode & CHANKEY) &&
+          (!chan->channel.key[0] || !strcmp("*", chan->channel.key)))
         /* Undernet use to show a blank channel key if one was set when
          * you first joined a channel; however, this has been replaced by
          * an asterisk and this has been agreed upon by other major IRC
@@ -1007,7 +989,7 @@ static int got324(char *from, char *msg)
     }
     if (msg[i] == 'l') {
       p = strchr(msg, ' ');
-      if (p != NULL) {          /* test for null limit assignment */
+      if (p != NULL) { /* test for null limit assignment */
         p++;
         q = strchr(p, ' ');
         if (q != NULL) {
@@ -1027,27 +1009,26 @@ static int got324(char *from, char *msg)
   return 0;
 }
 
-static int got352or4(struct chanset_t *chan, char *user, char *host,
-                     char *nick, char *flags)
-{
+static int got352or4(struct chanset_t *chan, char *user, char *host, char *nick,
+                     char *flags) {
   char userhost[UHOSTLEN];
   memberlist *m;
 
-  m = ismember(chan, nick);     /* In my channel list copy? */
-  if (!m) {                     /* Nope, so update */
-    m = newmember(chan);        /* Get a new channel entry */
-    m->joined = m->split = m->delay = 0L;       /* Don't know when he joined */
-    m->flags = 0;               /* No flags for now */
-    m->last = now;              /* Last time I saw him */
+  m = ismember(chan, nick);               /* In my channel list copy? */
+  if (!m) {                               /* Nope, so update */
+    m = newmember(chan);                  /* Get a new channel entry */
+    m->joined = m->split = m->delay = 0L; /* Don't know when he joined */
+    m->flags = 0;                         /* No flags for now */
+    m->last = now;                        /* Last time I saw him */
   }
-  strncpyz(m->nick, nick, sizeof m->nick);        /* Store the nick in list */
+  strncpyz(m->nick, nick, sizeof m->nick); /* Store the nick in list */
   /* Store the userhost */
   simple_sprintf(m->userhost, "%s@%s", user, host);
   simple_sprintf(userhost, "%s!%s", nick, m->userhost);
   /* Combine n!u@h */
-  m->user = NULL;               /* No handle match (yet) */
-  if (match_my_nick(nick))      /* Is it me? */
-    strcpy(botuserhost, m->userhost);   /* Yes, save my own userhost */
+  m->user = NULL;                     /* No handle match (yet) */
+  if (match_my_nick(nick))            /* Is it me? */
+    strcpy(botuserhost, m->userhost); /* Yes, save my own userhost */
   m->flags |= WHO_SYNCED;
   if (strpbrk(flags, opchars) != NULL)
     m->flags |= (CHANOP | WASOP);
@@ -1074,20 +1055,19 @@ static int got352or4(struct chanset_t *chan, char *user, char *host,
 
 /* got a 352: who info!
  */
-static int got352(char *from, char *msg)
-{
+static int got352(char *from, char *msg) {
   char *nick, *user, *host, *chname, *flags;
   struct chanset_t *chan;
 
-  newsplit(&msg);               /* Skip my nick - effeciently */
-  chname = newsplit(&msg);      /* Grab the channel */
-  chan = findchan(chname);      /* See if I'm on channel */
-  if (chan) {                   /* Am I? */
-    user = newsplit(&msg);      /* Grab the user */
-    host = newsplit(&msg);      /* Grab the host */
-    newsplit(&msg);             /* Skip the server */
-    nick = newsplit(&msg);      /* Grab the nick */
-    flags = newsplit(&msg);     /* Grab the flags */
+  newsplit(&msg);           /* Skip my nick - effeciently */
+  chname = newsplit(&msg);  /* Grab the channel */
+  chan = findchan(chname);  /* See if I'm on channel */
+  if (chan) {               /* Am I? */
+    user = newsplit(&msg);  /* Grab the user */
+    host = newsplit(&msg);  /* Grab the host */
+    newsplit(&msg);         /* Skip the server */
+    nick = newsplit(&msg);  /* Grab the nick */
+    flags = newsplit(&msg); /* Grab the flags */
     got352or4(chan, user, host, nick, flags);
   }
   return 0;
@@ -1095,13 +1075,12 @@ static int got352(char *from, char *msg)
 
 /* got a 354: who info! - iru style
  */
-static int got354(char *from, char *msg)
-{
+static int got354(char *from, char *msg) {
   char *nick, *user, *host, *chname, *flags;
   struct chanset_t *chan;
 
   if (use_354) {
-    newsplit(&msg);             /* Skip my nick - effeciently */
+    newsplit(&msg); /* Skip my nick - effeciently */
     if (msg[0] && (strchr(CHANMETA, msg[0]) != NULL)) {
       chname = newsplit(&msg);  /* Grab the channel */
       chan = findchan(chname);  /* See if I'm on channel */
@@ -1117,12 +1096,10 @@ static int got354(char *from, char *msg)
   return 0;
 }
 
-
 /* got 315: end of who
  * <server> 315 <to> <chan> :End of /who
  */
-static int got315(char *from, char *msg)
-{
+static int got315(char *from, char *msg) {
   char *chname, *key;
   struct chanset_t *chan;
 
@@ -1135,7 +1112,7 @@ static int got315(char *from, char *msg)
   sync_members(chan);
   chan->status |= CHAN_ACTIVE;
   chan->status &= ~CHAN_PEND;
-  if (!ismember(chan, botname)) {      /* Am I on the channel now?          */
+  if (!ismember(chan, botname)) { /* Am I on the channel now?          */
     putlog(LOG_MISC | LOG_JOIN, chan->dname, "Oops, I'm not really on %s.",
            chan->dname);
     clear_channel(chan, CHAN_RESETALL);
@@ -1146,20 +1123,18 @@ static int got315(char *from, char *msg)
       dprintf(DP_SERVER, "JOIN %s %s\n",
               chan->name[0] ? chan->name : chan->dname, key);
     else
-      dprintf(DP_SERVER, "JOIN %s\n",
-              chan->name[0] ? chan->name : chan->dname);
+      dprintf(DP_SERVER, "JOIN %s\n", chan->name[0] ? chan->name : chan->dname);
   } else if (me_op(chan))
     recheck_channel(chan, 1);
   else if (chan->channel.members == 1)
     chan->status |= CHAN_STOP_CYCLE;
-  return 0;                            /* Don't check for I-Lines here.     */
+  return 0; /* Don't check for I-Lines here.     */
 }
 
 /* got 367: ban info
  * <server> 367 <to> <chan> <ban> [placed-by] [timestamp]
  */
-static int got367(char *from, char *origmsg)
-{
+static int got367(char *from, char *origmsg) {
   char *ban, *who, *chname, buf[511], *msg;
   struct chanset_t *chan;
 
@@ -1184,8 +1159,7 @@ static int got367(char *from, char *origmsg)
 /* got 368: end of ban list
  * <server> 368 <to> <chan> :etc
  */
-static int got368(char *from, char *msg)
-{
+static int got368(char *from, char *msg) {
   struct chanset_t *chan;
   char *chname;
 
@@ -1204,8 +1178,7 @@ static int got368(char *from, char *msg)
 /* got 348: ban exemption info
  * <server> 348 <to> <chan> <exemption>
  */
-static int got348(char *from, char *origmsg)
-{
+static int got348(char *from, char *origmsg) {
   char *exempt, *who, *chname, buf[511], *msg;
   struct chanset_t *chan;
 
@@ -1233,8 +1206,7 @@ static int got348(char *from, char *origmsg)
 /* got 349: end of ban exemption list
  * <server> 349 <to> <chan> :etc
  */
-static int got349(char *from, char *msg)
-{
+static int got349(char *from, char *msg) {
   struct chanset_t *chan;
   char *chname;
 
@@ -1251,8 +1223,7 @@ static int got349(char *from, char *msg)
 /* got 346: invite exemption info
  * <server> 346 <to> <chan> <exemption>
  */
-static int got346(char *from, char *origmsg)
-{
+static int got346(char *from, char *origmsg) {
   char *invite, *who, *chname, buf[511], *msg;
   struct chanset_t *chan;
 
@@ -1279,8 +1250,7 @@ static int got346(char *from, char *origmsg)
 /* got 347: end of invite exemption list
  * <server> 347 <to> <chan> :etc
  */
-static int got347(char *from, char *msg)
-{
+static int got347(char *from, char *msg) {
   struct chanset_t *chan;
   char *chname;
 
@@ -1296,8 +1266,7 @@ static int got347(char *from, char *msg)
 
 /* Too many channels.
  */
-static int got405(char *from, char *msg)
-{
+static int got405(char *from, char *msg) {
   char *chname;
 
   newsplit(&msg);
@@ -1312,8 +1281,7 @@ static int got405(char *from, char *msg)
  *
  * 403 - ERR_NOSUCHCHANNEL
  */
-static int got403(char *from, char *msg)
-{
+static int got403(char *from, char *msg) {
   char *chname;
   struct chanset_t *chan;
 
@@ -1324,14 +1292,15 @@ static int got403(char *from, char *msg)
     if (!chan) {
       chan = findchan(chname);
       if (!chan)
-        return 0;               /* Ignore it */
+        return 0; /* Ignore it */
       /* We have the channel unique name, so we have attempted to join
        * a specific !channel that doesnt exist. Now attempt to join the
        * channel using it's short name.
        */
       putlog(LOG_MISC, "*",
              "Unique channel %s does not exist... Attempting to join with "
-             "short name.", chname);
+             "short name.",
+             chname);
       dprintf(DP_SERVER, "JOIN %s\n", chan->dname);
     } else {
       /* We have found the channel, so the server has given us the short
@@ -1347,8 +1316,7 @@ static int got403(char *from, char *msg)
 
 /* got 471: can't join channel, full
  */
-static int got471(char *from, char *msg)
-{
+static int got471(char *from, char *msg) {
   char *chname;
   struct chanset_t *chan;
 
@@ -1382,8 +1350,7 @@ static int got471(char *from, char *msg)
 
 /* got 473: can't join channel, invite only
  */
-static int got473(char *from, char *msg)
-{
+static int got473(char *from, char *msg) {
   char *chname;
   struct chanset_t *chan;
 
@@ -1417,8 +1384,7 @@ static int got473(char *from, char *msg)
 
 /* got 474: can't join channel, banned
  */
-static int got474(char *from, char *msg)
-{
+static int got474(char *from, char *msg) {
   char *chname;
   struct chanset_t *chan;
 
@@ -1452,8 +1418,7 @@ static int got474(char *from, char *msg)
 
 /* got 475: can't join channel, bad key
  */
-static int got475(char *from, char *msg)
-{
+static int got475(char *from, char *msg) {
   char *chname;
   struct chanset_t *chan;
 
@@ -1474,7 +1439,7 @@ static int got475(char *from, char *msg)
     putlog(LOG_JOIN, chan->dname, IRC_BADCHANKEY, chan->dname);
     if (chan->channel.key[0]) {
       nfree(chan->channel.key);
-      chan->channel.key = (char *) channel_malloc(1);
+      chan->channel.key = (char *)channel_malloc(1);
       chan->channel.key[0] = 0;
 
       if (chan->key_prot[0])
@@ -1498,8 +1463,7 @@ static int got475(char *from, char *msg)
 
 /* got invitation
  */
-static int gotinvite(char *from, char *msg)
-{
+static int gotinvite(char *from, char *msg) {
   char *nick, *key;
   struct chanset_t *chan;
 
@@ -1527,20 +1491,18 @@ static int gotinvite(char *from, char *msg)
       dprintf(DP_SERVER, "JOIN %s %s\n",
               chan->name[0] ? chan->name : chan->dname, key);
     else
-      dprintf(DP_SERVER, "JOIN %s\n",
-              chan->name[0] ? chan->name : chan->dname);
+      dprintf(DP_SERVER, "JOIN %s\n", chan->name[0] ? chan->name : chan->dname);
   }
   return 0;
 }
 
 /* Set the topic.
  */
-static void set_topic(struct chanset_t *chan, char *k)
-{
+static void set_topic(struct chanset_t *chan, char *k) {
   if (chan->channel.topic)
     nfree(chan->channel.topic);
   if (k && k[0]) {
-    chan->channel.topic = (char *) channel_malloc(strlen(k) + 1);
+    chan->channel.topic = (char *)channel_malloc(strlen(k) + 1);
     strcpy(chan->channel.topic, k);
   } else
     chan->channel.topic = NULL;
@@ -1548,8 +1510,7 @@ static void set_topic(struct chanset_t *chan, char *k)
 
 /* Topic change.
  */
-static int gottopic(char *from, char *msg)
-{
+static int gottopic(char *from, char *msg) {
   char *nick, *chname;
   memberlist *m;
   struct chanset_t *chan;
@@ -1575,8 +1536,7 @@ static int gottopic(char *from, char *msg)
 /* 331: no current topic for this channel
  * <server> 331 <to> <chname> :etc
  */
-static int got331(char *from, char *msg)
-{
+static int got331(char *from, char *msg) {
   char *chname;
   struct chanset_t *chan;
 
@@ -1593,8 +1553,7 @@ static int got331(char *from, char *msg)
 /* 332: topic on a channel i've just joined
  * <server> 332 <to> <chname> :topic goes here
  */
-static int got332(char *from, char *msg)
-{
+static int got332(char *from, char *msg) {
   struct chanset_t *chan;
   char *chname;
 
@@ -1611,8 +1570,7 @@ static int got332(char *from, char *msg)
 
 /* Set delay for +o, +h, or +v channel modes
  */
-static void set_delay(struct chanset_t *chan, char *nick)
-{
+static void set_delay(struct chanset_t *chan, char *nick) {
   time_t a_delay;
   int aop_min, aop_max, aop_diff, count = 0;
   memberlist *m, *m2;
@@ -1630,13 +1588,13 @@ static void set_delay(struct chanset_t *chan, char *nick)
   if ((aop_min <= 0) || (aop_max <= 0)) {
     a_delay = now + 1;
 
-  /* Use min value for delay if min greater then or equal to max or if the
-   * difference of max and min is greater than RANDOM_MAX (sanity check).
-   */
+    /* Use min value for delay if min greater then or equal to max or if the
+     * difference of max and min is greater than RANDOM_MAX (sanity check).
+     */
   } else if ((aop_min >= aop_max) || (aop_diff > RANDOM_MAX)) {
     a_delay = now + aop_min;
 
-  /* Set a random delay based on the difference of max and min */
+    /* Set a random delay based on the difference of max and min */
   } else {
     a_delay = now + randint(aop_diff) + aop_min + 1;
   }
@@ -1652,7 +1610,6 @@ static void set_delay(struct chanset_t *chan, char *nick)
 
         if (count + 1 >= modesperline)
           m2->flags |= FULL_DELAY;
-
       }
     }
   }
@@ -1665,15 +1622,14 @@ static void set_delay(struct chanset_t *chan, char *nick)
 
 /* Got a join
  */
-static int gotjoin(char *from, char *chname)
-{
+static int gotjoin(char *from, char *chname) {
   char *nick, *p, buf[UHOSTLEN], *uhost = buf;
   char *ch_dname = NULL;
   struct chanset_t *chan;
   memberlist *m;
   masklist *b;
   struct userrec *u;
-  struct flag_record fr = { FR_GLOBAL | FR_CHAN, 0, 0, 0, 0, 0 };
+  struct flag_record fr = {FR_GLOBAL | FR_CHAN, 0, 0, 0, 0, 0};
 
   fixcolon(chname);
   chan = findchan(chname);
@@ -1701,7 +1657,8 @@ static int gotjoin(char *from, char *chname)
              * the incident.
              */
             chan->status |= CHAN_INACTIVE;
-            putlog(LOG_MISC, "*", "Deactivated channel %s, because it uses "
+            putlog(LOG_MISC, "*",
+                   "Deactivated channel %s, because it uses "
                    "an ID channel-name. Use the descriptive name instead.",
                    chname);
             dprintf(DP_SERVER, "PART %s\n", chname);
@@ -1743,7 +1700,7 @@ static int gotjoin(char *from, char *chname)
 
     /* Grab last time joined before we update it */
     u = get_user_by_host(from);
-    get_user_flagrec(u, &fr, chan->dname);      /* Lam: fix to work with !channels */
+    get_user_flagrec(u, &fr, chan->dname); /* Lam: fix to work with !channels */
     if (!channel_active(chan) && !match_my_nick(nick)) {
       /* uh, what?!  i'm on the channel?! */
       putlog(LOG_MISC, chan->dname,
@@ -1773,7 +1730,8 @@ static int gotjoin(char *from, char *chname)
         m->split = 0;
         m->last = now;
         m->delay = 0L;
-        m->flags = (chan_hasop(m) ? WASOP : 0) | (chan_hashalfop(m) ? WASHALFOP : 0);
+        m->flags =
+            (chan_hasop(m) ? WASOP : 0) | (chan_hashalfop(m) ? WASHALFOP : 0);
         m->user = u;
         set_handle_laston(chan->dname, u, now);
         m->flags |= STOPWHO;
@@ -1827,8 +1785,8 @@ static int gotjoin(char *from, char *chname)
            * logs with the unique name.
            */
           if (chname[0] == '!')
-            putlog(LOG_JOIN | LOG_MISC, chan->dname, "%s joined %s (%s)",
-                   nick, chan->dname, chname);
+            putlog(LOG_JOIN | LOG_MISC, chan->dname, "%s joined %s (%s)", nick,
+                   chan->dname, chname);
           else
             putlog(LOG_JOIN | LOG_MISC, chan->dname, "%s joined %s.", nick,
                    chname);
@@ -1836,8 +1794,8 @@ static int gotjoin(char *from, char *chname)
         } else {
           struct chanuserrec *cr;
 
-          putlog(LOG_JOIN, chan->dname,
-                 "%s (%s) joined %s.", nick, uhost, chan->dname);
+          putlog(LOG_JOIN, chan->dname, "%s (%s) joined %s.", nick, uhost,
+                 chan->dname);
           /* Don't re-display greeting if they've been on the channel
            * recently.
            */
@@ -1849,7 +1807,7 @@ static int gotjoin(char *from, char *chname)
               li = get_user(&USERENTRY_LASTON, m->user);
             if (channel_greet(chan) && use_info &&
                 ((cr && now - cr->laston > wait_info) ||
-                (no_chanrec_info && (!li || now - li->laston > wait_info)))) {
+                 (no_chanrec_info && (!li || now - li->laston > wait_info)))) {
               char s1[512], *s;
 
               if (!(u->flags & USER_BOT)) {
@@ -1879,15 +1837,15 @@ static int gotjoin(char *from, char *chname)
          */
         if ((me_op(chan) || (strchr(NOHALFOPS_MODES, 'I') == NULL)) &&
             (u_match_mask(global_invites, from) ||
-            u_match_mask(chan->invites, from)))
+             u_match_mask(chan->invites, from)))
           refresh_invite(chan, from);
         if ((me_op(chan) || (strchr(NOHALFOPS_MODES, 'b') == NULL)) &&
             (!use_exempts || (!u_match_mask(global_exempts, from) &&
-            !u_match_mask(chan->exempts, from)))) {
+                              !u_match_mask(chan->exempts, from)))) {
           if (channel_enforcebans(chan) && !chan_op(fr) && !glob_op(fr) &&
               !glob_friend(fr) && !chan_friend(fr) && !chan_sentkick(m) &&
-              (!use_exempts || !isexempted(chan, from)) && (me_op(chan) ||
-              (me_halfop(chan) && !chan_hasop(m)))) {
+              (!use_exempts || !isexempted(chan, from)) &&
+              (me_op(chan) || (me_halfop(chan) && !chan_hasop(m)))) {
             for (b = chan->channel.ban; b->mask[0]; b = b->next) {
               if (match_addr(b->mask, from)) {
                 dprintf(DP_SERVER, "KICK %s %s :%s\n", chname, m->nick,
@@ -1913,37 +1871,39 @@ static int gotjoin(char *from, char *chname)
 #ifdef NO_HALFOP_CHANMODES
         if (me_op(chan)) {
 #endif
-        if ((me_op(chan) || (strchr(NOHALFOPS_MODES, 'o') == NULL)) &&
-            (chan_op(fr) || (glob_op(fr) && !chan_deop(fr))) &&
-            (channel_autoop(chan) || glob_autoop(fr) || chan_autoop(fr))) {
-          if (!chan->aop_min)
-            add_mode(chan, '+', 'o', nick);
-          else {
-            set_delay(chan, nick);
-            m->flags |= SENTOP;
+          if ((me_op(chan) || (strchr(NOHALFOPS_MODES, 'o') == NULL)) &&
+              (chan_op(fr) || (glob_op(fr) && !chan_deop(fr))) &&
+              (channel_autoop(chan) || glob_autoop(fr) || chan_autoop(fr))) {
+            if (!chan->aop_min)
+              add_mode(chan, '+', 'o', nick);
+            else {
+              set_delay(chan, nick);
+              m->flags |= SENTOP;
+            }
+          } else if ((me_op(chan) || (strchr(NOHALFOPS_MODES, 'h') == NULL)) &&
+                     (chan_halfop(fr) ||
+                      (glob_halfop(fr) && !chan_dehalfop(fr))) &&
+                     (channel_autohalfop(chan) || glob_autohalfop(fr) ||
+                      chan_autohalfop(fr))) {
+            if (!chan->aop_min)
+              add_mode(chan, '+', 'h', nick);
+            else {
+              set_delay(chan, nick);
+              m->flags |= SENTHALFOP;
+            }
+          } else if ((me_op(chan) || (strchr(NOHALFOPS_MODES, 'v') == NULL)) &&
+                     ((channel_autovoice(chan) &&
+                       (chan_voice(fr) ||
+                        (glob_voice(fr) && !chan_quiet(fr)))) ||
+                      ((glob_gvoice(fr) || chan_gvoice(fr)) &&
+                       !chan_quiet(fr)))) {
+            if (!chan->aop_min)
+              add_mode(chan, '+', 'v', nick);
+            else {
+              set_delay(chan, nick);
+              m->flags |= SENTVOICE;
+            }
           }
-        } else if ((me_op(chan) || (strchr(NOHALFOPS_MODES, 'h') == NULL)) &&
-                   (chan_halfop(fr) || (glob_halfop(fr) &&
-                   !chan_dehalfop(fr))) && (channel_autohalfop(chan) ||
-                   glob_autohalfop(fr) || chan_autohalfop(fr))) {
-          if (!chan->aop_min)
-            add_mode(chan, '+', 'h', nick);
-          else {
-            set_delay(chan, nick);
-            m->flags |= SENTHALFOP;
-          }
-        } else if ((me_op(chan) || (strchr(NOHALFOPS_MODES, 'v') == NULL)) &&
-                   ((channel_autovoice(chan) && (chan_voice(fr) ||
-                   (glob_voice(fr) && !chan_quiet(fr)))) ||
-                   ((glob_gvoice(fr) || chan_gvoice(fr)) &&
-                   !chan_quiet(fr)))) {
-          if (!chan->aop_min)
-            add_mode(chan, '+', 'v', nick);
-          else {
-            set_delay(chan, nick);
-            m->flags |= SENTVOICE;
-          }
-        }
 #ifdef NO_HALFOP_CHANMODES
         }
 #endif
@@ -1959,8 +1919,7 @@ exit:
 
 /* Got a part
  */
-static int gotpart(char *from, char *msg)
-{
+static int gotpart(char *from, char *msg) {
   char *nick, *chname, *key;
   struct chanset_t *chan;
   struct userrec *u;
@@ -2024,14 +1983,13 @@ static int gotpart(char *from, char *msg)
 
 /* Got a kick
  */
-static int gotkick(char *from, char *origmsg)
-{
+static int gotkick(char *from, char *origmsg) {
   char *nick, *whodid, *chname, s1[UHOSTLEN], buf[UHOSTLEN], *uhost = buf;
   char buf2[511], *msg, *key;
   memberlist *m;
   struct chanset_t *chan;
   struct userrec *u;
-  struct flag_record fr = { FR_GLOBAL | FR_CHAN, 0, 0, 0, 0, 0 };
+  struct flag_record fr = {FR_GLOBAL | FR_CHAN, 0, 0, 0, 0, 0};
 
   strncpy(buf2, origmsg, 510);
   buf2[510] = 0;
@@ -2041,8 +1999,7 @@ static int gotkick(char *from, char *origmsg)
   if (!chan)
     return 0;
   nick = newsplit(&msg);
-  if (match_my_nick(nick) && channel_pending(chan) &&
-      !channel_inactive(chan)) {
+  if (match_my_nick(nick) && channel_pending(chan) && !channel_inactive(chan)) {
     chan->status &= ~(CHAN_ACTIVE | CHAN_PEND);
 
     key = chan->channel.key[0] ? chan->channel.key : chan->key_prot;
@@ -2050,10 +2007,9 @@ static int gotkick(char *from, char *origmsg)
       dprintf(DP_SERVER, "JOIN %s %s\n",
               chan->name[0] ? chan->name : chan->dname, key);
     else
-      dprintf(DP_SERVER, "JOIN %s\n",
-              chan->name[0] ? chan->name : chan->dname);
+      dprintf(DP_SERVER, "JOIN %s\n", chan->name[0] ? chan->name : chan->dname);
     clear_channel(chan, CHAN_RESETALL);
-    return 0;                   /* rejoin if kicked before getting needed info <Wcc[08/08/02]> */
+    return 0; /* rejoin if kicked before getting needed info <Wcc[08/08/02]> */
   }
   if (channel_active(chan)) {
     fixcolon(msg);
@@ -2111,19 +2067,18 @@ static int gotkick(char *from, char *origmsg)
 
 /* Got a nick change
  */
-static int gotnick(char *from, char *msg)
-{
+static int gotnick(char *from, char *msg) {
   char *nick, *chname, s1[UHOSTLEN], buf[UHOSTLEN], *uhost = buf;
   unsigned char found = 0;
   memberlist *m, *mm;
   struct chanset_t *chan, *oldchan = NULL;
   struct userrec *u;
-  struct flag_record fr = { FR_GLOBAL | FR_CHAN, 0, 0, 0, 0, 0 };
+  struct flag_record fr = {FR_GLOBAL | FR_CHAN, 0, 0, 0, 0, 0};
 
   strcpy(uhost, from);
   nick = splitnick(&uhost);
   fixcolon(msg);
-  clear_chanlist_member(nick);  /* Cache for nick 'nick' is meaningless now. */
+  clear_chanlist_member(nick); /* Cache for nick 'nick' is meaningless now. */
   for (chan = chanset; chan; chan = chan->next) {
     oldchan = chan;
     chname = chan->dname;
@@ -2137,8 +2092,8 @@ static int gotnick(char *from, char *msg)
         if (mm) {
           /* Someone on channel with old nick?! */
           if (mm->split)
-            putlog(LOG_JOIN, chan->dname,
-                   "Possible future nick collision: %s", mm->nick);
+            putlog(LOG_JOIN, chan->dname, "Possible future nick collision: %s",
+                   mm->nick);
           else
             putlog(LOG_MISC, chan->dname,
                    "* Bug: nick change to existing nick");
@@ -2194,8 +2149,7 @@ static int gotnick(char *from, char *msg)
 
 /* Signoff, similar to part.
  */
-static int gotquit(char *from, char *msg)
-{
+static int gotquit(char *from, char *msg) {
   char *nick, *chname, *p, *alt;
   int split = 0;
   char from2[NICKMAX + UHOSTMAX + 1];
@@ -2218,8 +2172,8 @@ static int gotquit(char *from, char *msg)
     *p = 0;
     z1 = strchr(p + 1, '.');
     z2 = strchr(msg, '.');
-    if (z1 && z2 && (*(z1 + 1) != 0) && (z1 - 1 != p) &&
-        (z2 + 1 != p) && (z2 != msg)) {
+    if (z1 && z2 && (*(z1 + 1) != 0) && (z1 - 1 != p) && (z2 + 1 != p) &&
+        (z2 != msg)) {
       /* Server split, or else it looked like it anyway (no harm in
        * assuming)
        */
@@ -2280,16 +2234,16 @@ static int gotquit(char *from, char *msg)
 
 /* Got a private message.
  */
-static int gotmsg(char *from, char *msg)
-{
+static int gotmsg(char *from, char *msg) {
   char *to, *realto, buf[UHOSTLEN], *nick, buf2[512], *uhost = buf, *p, *p1,
-       *code, *ctcp;
+                                                      *code, *ctcp;
   int ctcp_count = 0, ignoring;
   struct chanset_t *chan;
   struct userrec *u;
 
   /* Only handle if message is to a channel, or to @#channel. */
-  /* FIXME: Properly handle ovNotices (@+#channel), vNotices (+#channel), etc. */
+  /* FIXME: Properly handle ovNotices (@+#channel), vNotices (+#channel), etc.
+   */
   if (!strchr(CHANMETA "@", msg[0]))
     return 0;
 
@@ -2317,8 +2271,9 @@ static int gotmsg(char *from, char *msg)
       ctcp = buf2;
       strncpyz(buf2, p1, sizeof buf2);
       strcpy(p1 - 1, p + 1);
-      detect_chan_flood(nick, uhost, from, chan, strncmp(ctcp, "ACTION ", 7) ?
-                        FLOOD_CTCP : FLOOD_PRIVMSG, NULL);
+      detect_chan_flood(
+          nick, uhost, from, chan,
+          strncmp(ctcp, "ACTION ", 7) ? FLOOD_CTCP : FLOOD_PRIVMSG, NULL);
 
       chan = findchan(realto);
       if (!chan)
@@ -2345,8 +2300,8 @@ static int gotmsg(char *from, char *msg)
                 putlog(LOG_PUBLIC, chan->dname, "Action: %s %s", nick, ctcp);
               } else {
                 putlog(LOG_PUBLIC, chan->dname,
-                       "CTCP %s: %s from %s (%s) to %s", code, ctcp, nick,
-                       from, to);
+                       "CTCP %s: %s from %s (%s) to %s", code, ctcp, nick, from,
+                       to);
               }
             }
           }
@@ -2403,8 +2358,7 @@ static int gotmsg(char *from, char *msg)
 
 /* Got a private notice.
  */
-static int gotnotice(char *from, char *msg)
-{
+static int gotnotice(char *from, char *msg) {
   char *to, *realto, *nick, buf2[512], *p, *p1, buf[512], *uhost = buf;
   char *ctcp, *code;
   struct userrec *u;
@@ -2418,7 +2372,7 @@ static int gotnotice(char *from, char *msg)
   realto = (*to == '@') ? to + 1 : to;
   chan = findchan(realto);
   if (!chan)
-    return 0;                   /* Notice to an unknown channel?? */
+    return 0; /* Notice to an unknown channel?? */
   fixcolon(msg);
   strcpy(uhost, from);
   nick = splitnick(&uhost);
@@ -2437,9 +2391,9 @@ static int gotnotice(char *from, char *msg)
       strcpy(ctcp, p1);
       strcpy(p1 - 1, p + 1);
       p = strchr(msg, 1);
-      detect_chan_flood(nick, uhost, from, chan,
-                        strncmp(ctcp, "ACTION ", 7) ?
-                        FLOOD_CTCP : FLOOD_PRIVMSG, NULL);
+      detect_chan_flood(
+          nick, uhost, from, chan,
+          strncmp(ctcp, "ACTION ", 7) ? FLOOD_CTCP : FLOOD_PRIVMSG, NULL);
 
       chan = findchan(realto);
       if (!chan)
@@ -2485,34 +2439,32 @@ static int gotnotice(char *from, char *msg)
   return 0;
 }
 
-static cmd_t irc_raw[] = {
-  {"324",     "",   (IntFunc) got324,       "irc:324"},
-  {"352",     "",   (IntFunc) got352,       "irc:352"},
-  {"354",     "",   (IntFunc) got354,       "irc:354"},
-  {"315",     "",   (IntFunc) got315,       "irc:315"},
-  {"367",     "",   (IntFunc) got367,       "irc:367"},
-  {"368",     "",   (IntFunc) got368,       "irc:368"},
-  {"403",     "",   (IntFunc) got403,       "irc:403"},
-  {"405",     "",   (IntFunc) got405,       "irc:405"},
-  {"471",     "",   (IntFunc) got471,       "irc:471"},
-  {"473",     "",   (IntFunc) got473,       "irc:473"},
-  {"474",     "",   (IntFunc) got474,       "irc:474"},
-  {"475",     "",   (IntFunc) got475,       "irc:475"},
-  {"INVITE",  "",   (IntFunc) gotinvite, "irc:invite"},
-  {"TOPIC",   "",   (IntFunc) gottopic,   "irc:topic"},
-  {"331",     "",   (IntFunc) got331,       "irc:331"},
-  {"332",     "",   (IntFunc) got332,       "irc:332"},
-  {"JOIN",    "",   (IntFunc) gotjoin,     "irc:join"},
-  {"PART",    "",   (IntFunc) gotpart,     "irc:part"},
-  {"KICK",    "",   (IntFunc) gotkick,     "irc:kick"},
-  {"NICK",    "",   (IntFunc) gotnick,     "irc:nick"},
-  {"QUIT",    "",   (IntFunc) gotquit,     "irc:quit"},
-  {"PRIVMSG", "",   (IntFunc) gotmsg,       "irc:msg"},
-  {"NOTICE",  "",   (IntFunc) gotnotice, "irc:notice"},
-  {"MODE",    "",   (IntFunc) gotmode,     "irc:mode"},
-  {"346",     "",   (IntFunc) got346,       "irc:346"},
-  {"347",     "",   (IntFunc) got347,       "irc:347"},
-  {"348",     "",   (IntFunc) got348,       "irc:348"},
-  {"349",     "",   (IntFunc) got349,       "irc:349"},
-  {NULL,      NULL, NULL,                         NULL}
-};
+static cmd_t irc_raw[] = {{"324", "", (IntFunc)got324, "irc:324"},
+                          {"352", "", (IntFunc)got352, "irc:352"},
+                          {"354", "", (IntFunc)got354, "irc:354"},
+                          {"315", "", (IntFunc)got315, "irc:315"},
+                          {"367", "", (IntFunc)got367, "irc:367"},
+                          {"368", "", (IntFunc)got368, "irc:368"},
+                          {"403", "", (IntFunc)got403, "irc:403"},
+                          {"405", "", (IntFunc)got405, "irc:405"},
+                          {"471", "", (IntFunc)got471, "irc:471"},
+                          {"473", "", (IntFunc)got473, "irc:473"},
+                          {"474", "", (IntFunc)got474, "irc:474"},
+                          {"475", "", (IntFunc)got475, "irc:475"},
+                          {"INVITE", "", (IntFunc)gotinvite, "irc:invite"},
+                          {"TOPIC", "", (IntFunc)gottopic, "irc:topic"},
+                          {"331", "", (IntFunc)got331, "irc:331"},
+                          {"332", "", (IntFunc)got332, "irc:332"},
+                          {"JOIN", "", (IntFunc)gotjoin, "irc:join"},
+                          {"PART", "", (IntFunc)gotpart, "irc:part"},
+                          {"KICK", "", (IntFunc)gotkick, "irc:kick"},
+                          {"NICK", "", (IntFunc)gotnick, "irc:nick"},
+                          {"QUIT", "", (IntFunc)gotquit, "irc:quit"},
+                          {"PRIVMSG", "", (IntFunc)gotmsg, "irc:msg"},
+                          {"NOTICE", "", (IntFunc)gotnotice, "irc:notice"},
+                          {"MODE", "", (IntFunc)gotmode, "irc:mode"},
+                          {"346", "", (IntFunc)got346, "irc:346"},
+                          {"347", "", (IntFunc)got347, "irc:347"},
+                          {"348", "", (IntFunc)got348, "irc:348"},
+                          {"349", "", (IntFunc)got349, "irc:349"},
+                          {NULL, NULL, NULL, NULL}};
