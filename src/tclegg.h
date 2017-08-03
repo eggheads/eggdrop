@@ -27,9 +27,8 @@
 #include "lush.h"
 
 #ifndef MAKING_MODS
-#  include "proto.h"
+#include "proto.h"
 #endif
-
 
 /*
  * Wow, this is old...CMD_LEAVE goes back to before version 0.9.
@@ -37,24 +36,23 @@
  */
 #define CMD_LEAVE (Function)(-1)
 
-
 /* Match types for check_tcl_bind(). */
-#define MATCH_PARTIAL   0
-#define MATCH_EXACT     1
-#define MATCH_MASK      2
-#define MATCH_CASE      3
-#define MATCH_MODE      4
-#define MATCH_CRON      5
+#define MATCH_PARTIAL 0
+#define MATCH_EXACT 1
+#define MATCH_MASK 2
+#define MATCH_CASE 3
+#define MATCH_MODE 4
+#define MATCH_CRON 5
 
 /*
  * Bitwise 'or' these:
  */
 
 /* Check flags; make sure the user has the flags required. */
-#define BIND_USE_ATTR       0x010
+#define BIND_USE_ATTR 0x010
 
 /* Bind is stackable; more than one bind can have the same name. */
-#define BIND_STACKABLE      0x020
+#define BIND_STACKABLE 0x020
 
 /* Additional flag checking; check for +d, +k, etc.
  * Currently used for dcc, fil, msg, and pub bind types.
@@ -69,66 +67,65 @@
 /* FIXME: This type actually seems to be obsolete. This was originally
  *        used to check built-in types in Eggdrop version 1.0.
  */
-#define BIND_HAS_BUILTINS   0x040
+#define BIND_HAS_BUILTINS 0x040
 
 /* Want return; we want to know if the proc returns 1.
  * Side effect: immediate return; don't do any further
  * processing of stacked binds.
  */
-#define BIND_WANTRET        0x080
+#define BIND_WANTRET 0x080
 
 /* Alternate args; replace args with the return result from the Tcl proc. */
-#define BIND_ALTER_ARGS     0x100
+#define BIND_ALTER_ARGS 0x100
 
 /* Stacked return; we want to know if any proc returns 1,
  * and also want to process all stacked binds.
  */
-#define BIND_STACKRET       0x200
-
+#define BIND_STACKRET 0x200
 
 /* Return values. */
-#define BIND_NOMATCH    0
-#define BIND_AMBIGUOUS  1
-#define BIND_MATCHED    2       /* But the proc couldn't be found */
-#define BIND_EXECUTED   3
-#define BIND_EXEC_LOG   4       /* Proc returned 1 -> wants to be logged */
-#define BIND_QUIT       5       /* CMD_LEAVE 'quit' from partyline or filesys */
+#define BIND_NOMATCH 0
+#define BIND_AMBIGUOUS 1
+#define BIND_MATCHED 2 /* But the proc couldn't be found */
+#define BIND_EXECUTED 3
+#define BIND_EXEC_LOG 4 /* Proc returned 1 -> wants to be logged */
+#define BIND_QUIT 5     /* CMD_LEAVE 'quit' from partyline or filesys */
 
 /* Extra commands are stored in Tcl hash tables (one hash table for each type
  * of command: msg, dcc, etc).
  */
 typedef struct timer_str {
   struct timer_str *next;
-  unsigned int mins;            /* Time remaining                       */
-  unsigned int count;           /* Number of repeats                    */
-  unsigned int interval;        /* Time to elapse                       */
-  char *cmd;                    /* Command linked to                    */
-  unsigned long id;             /* Used to remove timers                */
+  unsigned int mins;     /* Time remaining                       */
+  unsigned int count;    /* Number of repeats                    */
+  unsigned int interval; /* Time to elapse                       */
+  char *cmd;             /* Command linked to                    */
+  unsigned long id;      /* Used to remove timers                */
 } tcl_timer_t;
 
-
 /* Used for Tcl stub functions */
-#define STDVAR (cd, irp, argc, argv)                                    \
-        ClientData cd;                                                  \
-        Tcl_Interp *irp;                                                \
-        int argc;                                                       \
-        char *argv[];
+#define STDVAR                                                                 \
+  (cd, irp, argc, argv) ClientData cd;                                         \
+  Tcl_Interp *irp;                                                             \
+  int argc;                                                                    \
+  char *argv[];
 
-#define BADARGS(nl, nh, example) do {                                   \
-        if ((argc < (nl)) || ((argc > (nh)) && ((nh) != -1))) {         \
-                Tcl_AppendResult(irp, "wrong # args: should be \"",     \
-                                 argv[0], (example), "\"", NULL);       \
-                return TCL_ERROR;                                       \
-        }                                                               \
-} while (0)
+#define BADARGS(nl, nh, example)                                               \
+  do {                                                                         \
+    if ((argc < (nl)) || ((argc > (nh)) && ((nh) != -1))) {                    \
+      Tcl_AppendResult(irp, "wrong # args: should be \"", argv[0], (example),  \
+                       "\"", NULL);                                            \
+      return TCL_ERROR;                                                        \
+    }                                                                          \
+  } while (0)
 
-#define CHECKVALIDITY(a)        do {                                    \
-        if (!check_validity(argv[0], (a))) {                            \
-                Tcl_AppendResult(irp, "bad builtin command call!",      \
-                                 NULL);                                 \
-                return TCL_ERROR;                                       \
-        }                                                               \
-} while (0)
+#define CHECKVALIDITY(a)                                                       \
+  do {                                                                         \
+    if (!check_validity(argv[0], (a))) {                                       \
+      Tcl_AppendResult(irp, "bad builtin command call!", NULL);                \
+      return TCL_ERROR;                                                        \
+    }                                                                          \
+  } while (0)
 
 unsigned long add_timer(tcl_timer_t **, int, int, char *, unsigned long);
 int remove_timer(tcl_timer_t **, unsigned long);
@@ -191,42 +188,40 @@ typedef struct LocaleTable {
   const char *encoding;
 } LocaleTable;
 
-static const LocaleTable localeTable[] = {
-  {"ja_JP.SJIS",    "shiftjis"},
-  {"ja_JP.EUC",       "euc-jp"},
-  {"ja_JP.JIS",   "iso2022-jp"},
-  {"ja_JP.mscode",  "shiftjis"},
-  {"ja_JP.ujis",      "euc-jp"},
-  {"ja_JP",           "euc-jp"},
-  {"Ja_JP",         "shiftjis"},
-  {"Jp_JP",         "shiftjis"},
-  {"japan",           "euc-jp"},
+static const LocaleTable localeTable[] = {{"ja_JP.SJIS", "shiftjis"},
+                                          {"ja_JP.EUC", "euc-jp"},
+                                          {"ja_JP.JIS", "iso2022-jp"},
+                                          {"ja_JP.mscode", "shiftjis"},
+                                          {"ja_JP.ujis", "euc-jp"},
+                                          {"ja_JP", "euc-jp"},
+                                          {"Ja_JP", "shiftjis"},
+                                          {"Jp_JP", "shiftjis"},
+                                          {"japan", "euc-jp"},
 #ifdef hpux
-  {"japanese",      "shiftjis"},
-  {"ja",            "shiftjis"},
+                                          {"japanese", "shiftjis"},
+                                          {"ja", "shiftjis"},
 #else
-  {"japanese",        "euc-jp"},
-  {"ja",              "euc-jp"},
+                                          {"japanese", "euc-jp"},
+                                          {"ja", "euc-jp"},
 #endif
-  {"japanese.sjis", "shiftjis"},
-  {"japanese.euc",    "euc-jp"},
-  {"japanese-sjis", "shiftjis"},
-  {"japanese-ujis",   "euc-jp"},
+                                          {"japanese.sjis", "shiftjis"},
+                                          {"japanese.euc", "euc-jp"},
+                                          {"japanese-sjis", "shiftjis"},
+                                          {"japanese-ujis", "euc-jp"},
 
-  {"ko",              "euc-kr"},
-  {"ko_KR",           "euc-kr"},
-  {"ko_KR.EUC",       "euc-kr"},
-  {"ko_KR.euc",       "euc-kr"},
-  {"ko_KR.eucKR",     "euc-kr"},
-  {"korean",          "euc-kr"},
+                                          {"ko", "euc-kr"},
+                                          {"ko_KR", "euc-kr"},
+                                          {"ko_KR.EUC", "euc-kr"},
+                                          {"ko_KR.euc", "euc-kr"},
+                                          {"ko_KR.eucKR", "euc-kr"},
+                                          {"korean", "euc-kr"},
 
-  {"ru",           "iso8859-5"},
-  {"ru_RU",        "iso8859-5"},
-  {"ru_SU",        "iso8859-5"},
+                                          {"ru", "iso8859-5"},
+                                          {"ru_RU", "iso8859-5"},
+                                          {"ru_SU", "iso8859-5"},
 
-  {"zh",               "cp936"},
+                                          {"zh", "cp936"},
 
-  {NULL,                  NULL}
-};
+                                          {NULL, NULL}};
 
 #endif /* _EGG_TCLEGG_H */

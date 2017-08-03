@@ -42,20 +42,19 @@ typedef struct {
   char *from;
   char flag;
   char status;
-  time_t timer;                 /* Track idle time */
+  time_t timer; /* Track idle time */
   char *away;
 } party_t;
 
 /* Status: */
-#define PLSTAT_AWAY   0x001
-#define IS_PARTY      0x002
+#define PLSTAT_AWAY 0x001
+#define IS_PARTY 0x002
 
 /* Minimum version that uses tokens & base64 ints
  * for channel msg's
  */
 #define NEAT_BOTNET 1029900
 #define GLOBAL_CHANS 100000
-
 
 #ifndef MAKING_MODS
 
@@ -96,10 +95,9 @@ int users_in_subtree(tand_t *);
 
 #endif /* MAKING_MODS */
 
-
-#define b_status(a)  (dcc[a].status)
+#define b_status(a) (dcc[a].status)
 #define b_version(a) (dcc[a].u.bot->version)
-#define b_linker(a)  (dcc[a].u.bot->linker)
-#define b_numver(a)  (dcc[a].u.bot->numver)
+#define b_linker(a) (dcc[a].u.bot->linker)
+#define b_numver(a) (dcc[a].u.bot->numver)
 
 #endif /* _EGG_TANDEM_H */

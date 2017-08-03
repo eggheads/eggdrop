@@ -23,53 +23,51 @@
 #ifndef _EGG_TCLHASH_H
 #define _EGG_TCLHASH_H
 
-
-#define TC_DELETED   0x0001     /* This command/trigger was deleted. */
+#define TC_DELETED 0x0001 /* This command/trigger was deleted. */
 
 typedef struct tcl_cmd_b {
   struct tcl_cmd_b *next;
 
   struct flag_record flags;
-  char *func_name;              /* Proc name. */
+  char *func_name; /* Proc name. */
   /* FIXME: 'hits' could overflow if a bind is triggered enough. */
-  int hits;                     /* Number of times this proc was triggered. */
-  u_8bit_t attributes;          /* Flags for this entry. TC_* */
+  int hits;            /* Number of times this proc was triggered. */
+  u_8bit_t attributes; /* Flags for this entry. TC_* */
 } tcl_cmd_t;
 
 struct threaddata {
-  int (*mainloopfunc)(int);     /* main loop function replacing a single
-                                 * tcl event loop iteration */
-  sock_list *socklist;          /* tcl socket list for threads, else NULL */
-  struct timeval blocktime;     /* maximum time to block in select() */
-  int mainthread;               /* Is this the main thread? */
+  int (*mainloopfunc)(int); /* main loop function replacing a single
+                             * tcl event loop iteration */
+  sock_list *socklist;      /* tcl socket list for threads, else NULL */
+  struct timeval blocktime; /* maximum time to block in select() */
+  int mainthread;           /* Is this the main thread? */
   int MAXSOCKS;
 };
 
-#define TBM_DELETED  0x0001     /* This mask was deleted. */
+#define TBM_DELETED 0x0001 /* This mask was deleted. */
 
 typedef struct tcl_bind_mask_b {
   struct tcl_bind_mask_b *next;
 
-  tcl_cmd_t *first;             /* List of commands registered for this bind. */
+  tcl_cmd_t *first; /* List of commands registered for this bind. */
   char *mask;
-  u_8bit_t flags;               /* Flags for this entry. TBM_* */
+  u_8bit_t flags; /* Flags for this entry. TBM_* */
 } tcl_bind_mask_t;
 
-
-#define HT_STACKABLE 0x0001     /* Triggers in this bind list may be stacked. */
-#define HT_DELETED   0x0002     /* This bind list was already deleted. Do not
-                                 * use it anymore. */
+#define HT_STACKABLE 0x0001 /* Triggers in this bind list may be stacked. */
+#define HT_DELETED                                                             \
+  0x0002 /* This bind list was already deleted. Do not                         \
+          * use it anymore. */
 
 typedef struct tcl_bind_list_b {
   struct tcl_bind_list_b *next;
 
-  tcl_bind_mask_t *first;       /* Pointer to registered binds for this list. */
-  char name[5];                 /* Name of the bind. */
-  u_8bit_t flags;               /* Flags for this element. HT_* */
-  IntFunc func;                 /* Function used as the Tcl calling interface
-                                 * for procs actually representing C functions. */
+  tcl_bind_mask_t *first; /* Pointer to registered binds for this list. */
+  char name[5];           /* Name of the bind. */
+  u_8bit_t flags;         /* Flags for this element. HT_* */
+  IntFunc func;           /* Function used as the Tcl calling interface
+                           * for procs actually representing C functions. */
 } tcl_bind_list_t, *p_tcl_bind_list;
-
 
 #ifndef MAKING_MODS
 
@@ -109,7 +107,7 @@ void check_tcl_log(int, char *, char *);
 int check_tcl_tls(int);
 #endif
 
-#define check_tcl_chat(a, b, c) check_tcl_chatactbcst(a ,b, c, H_chat)
+#define check_tcl_chat(a, b, c) check_tcl_chatactbcst(a, b, c, H_chat)
 #define check_tcl_act(a, b, c) check_tcl_chatactbcst(a, b, c, H_act)
 #define check_tcl_bcst(a, b, c) check_tcl_chatactbcst(a, b, c, H_bcst)
 void check_tcl_chonof(char *, int, tcl_bind_list_t *);

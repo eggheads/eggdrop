@@ -51,16 +51,17 @@ void *get_next_hook(int, void *);
 extern struct hook_entry {
   struct hook_entry *next;
   Function func;
-} *hook_list[REAL_HOOKS];
+} * hook_list[REAL_HOOKS];
 
-#define call_hook(x) do {                                       \
-        register struct hook_entry *p, *pn;                     \
-                                                                \
-        for (p = hook_list[x]; p; p = pn) {                     \
-                pn = p->next;                                   \
-                p->func();                                      \
-        }                                                       \
-} while (0)
+#define call_hook(x)                                                           \
+  do {                                                                         \
+    register struct hook_entry *p, *pn;                                        \
+                                                                               \
+    for (p = hook_list[x]; p; p = pn) {                                        \
+      pn = p->next;                                                            \
+      p->func();                                                               \
+    }                                                                          \
+  } while (0)
 
 int call_hook_cccc(int, char *, char *, char *, char *);
 

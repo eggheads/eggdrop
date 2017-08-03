@@ -34,7 +34,7 @@
 
 #define dprintf dprintf_eggdrop
 
-struct chanset_t;               /* keeps the compiler warnings down :) */
+struct chanset_t; /* keeps the compiler warnings down :) */
 struct userrec;
 struct maskrec;
 struct igrec;
@@ -43,14 +43,14 @@ struct list_type;
 struct tand_t_struct;
 
 #ifndef MAKING_MODS
-extern void (*encrypt_pass) (char *, char *);
-extern char *(*encrypt_string) (char *, char *);
-extern char *(*decrypt_string) (char *, char *);
-extern int (*rfc_casecmp) (const char *, const char *);
-extern int (*rfc_ncasecmp) (const char *, const char *, int);
-extern int (*rfc_toupper) (int);
-extern int (*rfc_tolower) (int);
-extern int (*match_noterej) (struct userrec *, char *);
+extern void (*encrypt_pass)(char *, char *);
+extern char *(*encrypt_string)(char *, char *);
+extern char *(*decrypt_string)(char *, char *);
+extern int (*rfc_casecmp)(const char *, const char *);
+extern int (*rfc_ncasecmp)(const char *, const char *, int);
+extern int (*rfc_toupper)(int);
+extern int (*rfc_tolower)(int);
+extern int (*match_noterej)(struct userrec *, char *);
 #endif
 
 /* botcmd.c */
@@ -138,8 +138,8 @@ int findanyidx(int);
 char *add_cr(char *);
 void dprintf EGG_VARARGS(int, arg1);
 void chatout EGG_VARARGS(char *, arg1);
-extern void (*shareout) ();
-extern void (*sharein) (int, char *);
+extern void (*shareout)();
+extern void (*sharein)(int, char *);
 void chanout_but EGG_VARARGS(int, arg1);
 void dcc_chatter(int);
 void lostdcc(int);
@@ -154,7 +154,7 @@ void dcc_remove_lost(void);
 void do_boot(int, char *, char *);
 int detect_dcc_flood(time_t *, struct chat_info *, int);
 
-#define get_data_ptr(x) _get_data_ptr(x,__FILE__,__LINE__)
+#define get_data_ptr(x) _get_data_ptr(x, __FILE__, __LINE__)
 void flush_lines(int, struct chat_info *);
 struct dcc_t *find_idx(int);
 int new_dcc(struct dcc_table *, int);
@@ -162,12 +162,12 @@ void del_dcc(int);
 void changeover_dcc(int, struct dcc_table *, int);
 
 /* dns.c */
-extern void (*dns_hostbyip) (sockname_t *);
+extern void (*dns_hostbyip)(sockname_t *);
 void block_dns_hostbyip(sockname_t *);
 void call_hostbyip(sockname_t *, char *, int);
 void call_ipbyhost(char *, sockname_t *, int);
 void dcc_dnshostbyip(sockname_t *);
-extern void (*dns_ipbyhost) (char *);
+extern void (*dns_ipbyhost)(char *);
 void block_dns_ipbyhost(char *);
 void dcc_dnsipbyhost(char *);
 
@@ -193,23 +193,23 @@ int charcmp(unsigned char, unsigned char);
 int _wild_match(register unsigned char *, register unsigned char *);
 int _wild_match_per(register unsigned char *, register unsigned char *,
                     int (*)(unsigned char, unsigned char),
-                    int (*)(unsigned char, unsigned char),
-                    unsigned char *);
+                    int (*)(unsigned char, unsigned char), unsigned char *);
 int addr_match(char *, char *, int, int);
 int mask_match(char *, char *);
 int cidr_match(char *, char *, int);
 int cron_match(const char *, const char *);
 
-#define wild_match(a,b) _wild_match((unsigned char *)(a),(unsigned char *)(b))
-#define wild_match_per(a,b) _wild_match_per((unsigned char *)(a),              \
-                            (unsigned char *)(b),casecharcmp,NULL,NULL)
-#define wild_match_partial_case(a,b) _wild_match_per((unsigned char *)(a),     \
-                            (unsigned char *)(b),casecharcmp,charcmp,          \
-                            (unsigned char *)strchr((b),' '))
-#define match_addr(a,b) addr_match((char *)(a),(char *)(b),0,0)
-#define match_useraddr(a,b) addr_match((char *)(a),(char *)(b),1,0)
-#define cmp_masks(a,b) addr_match((char *)(a),(char *)(b),0,1)
-#define cmp_usermasks(a,b) addr_match((char *)(a),(char *)(b),1,1)
+#define wild_match(a, b) _wild_match((unsigned char *)(a), (unsigned char *)(b))
+#define wild_match_per(a, b)                                                   \
+  _wild_match_per((unsigned char *)(a), (unsigned char *)(b), casecharcmp,     \
+                  NULL, NULL)
+#define wild_match_partial_case(a, b)                                          \
+  _wild_match_per((unsigned char *)(a), (unsigned char *)(b), casecharcmp,     \
+                  charcmp, (unsigned char *)strchr((b), ' '))
+#define match_addr(a, b) addr_match((char *)(a), (char *)(b), 0, 0)
+#define match_useraddr(a, b) addr_match((char *)(a), (char *)(b), 1, 0)
+#define cmp_masks(a, b) addr_match((char *)(a), (char *)(b), 0, 1)
+#define cmp_usermasks(a, b) addr_match((char *)(a), (char *)(b), 1, 1)
 
 /* mem.c */
 void *n_malloc(int, const char *, int);
@@ -259,8 +259,8 @@ int str_isdigit(const char *);
 void kill_bot(char *, char *);
 
 void maskaddr(const char *, char *, int);
-#define maskhost(a,b) maskaddr((a),(b),3)
-#define maskban(a,b)  maskaddr((a),(b),3)
+#define maskhost(a, b) maskaddr((a), (b), 3)
+#define maskban(a, b) maskaddr((a), (b), 3)
 
 /* net.c */
 IP my_atoul(char *);

@@ -25,51 +25,53 @@
 #define _EGG_MAIN_H
 
 #ifdef HAVE_CONFIG_H
-#  include "config.h"
+#include "config.h"
 #endif
 
 #include "eggint.h"
 #include "lush.h"
 
 #ifndef TCL_PATCH_LEVEL
-#  define TCL_PATCH_LEVEL "*unknown*"
+#define TCL_PATCH_LEVEL "*unknown*"
 #endif
 
 #if defined(HAVE_TCL_NOTIFIER_INIT)
-#  define REPLACE_NOTIFIER
+#define REPLACE_NOTIFIER
 #endif
 
-#if (((TCL_MAJOR_VERSION == 8) && (TCL_MINOR_VERSION >= 4)) || (TCL_MAJOR_VERSION > 8))
-#  ifdef CONST
-#    define EGG_CONST CONST
-#  else
-#    define EGG_CONST
-#  endif
+#if (((TCL_MAJOR_VERSION == 8) && (TCL_MINOR_VERSION >= 4)) ||                 \
+     (TCL_MAJOR_VERSION > 8))
+#ifdef CONST
+#define EGG_CONST CONST
 #else
-#  define EGG_CONST
+#define EGG_CONST
+#endif
+#else
+#define EGG_CONST
 #endif
 
 #ifdef CONST86
-#  define TCL_CONST86 CONST86
+#define TCL_CONST86 CONST86
 #else
-#  define TCL_CONST86
+#define TCL_CONST86
 #endif
 
 /* UGH! Why couldn't Tcl pick a standard? */
 #if defined(__STDC__) || defined(HAS_STDARG)
-#  ifdef HAVE_STDARG_H
-#    include <stdarg.h>
-#  endif
-#  define EGG_VARARGS(type, name) (type name, ...)
-#  define EGG_VARARGS_DEF(type, name) (type name, ...)
-#  define EGG_VARARGS_START(type, name, list) (va_start(list, name), name)
+#ifdef HAVE_STDARG_H
+#include <stdarg.h>
+#endif
+#define EGG_VARARGS(type, name) (type name, ...)
+#define EGG_VARARGS_DEF(type, name) (type name, ...)
+#define EGG_VARARGS_START(type, name, list) (va_start(list, name), name)
 #else
-#  ifndef MAKING_DEPEND /* Allows 'make depend' to work on newer GCC versions. */
-#    include <varargs.h>
-#    define EGG_VARARGS(type, name) ()
-#    define EGG_VARARGS_DEF(type, name) (va_alist) va_dcl
-#    define EGG_VARARGS_START(type, name, list) (va_start(list), va_arg(list,type))
-#  endif
+#ifndef MAKING_DEPEND /* Allows 'make depend' to work on newer GCC versions.   \
+                         */
+#include <varargs.h>
+#define EGG_VARARGS(type, name) ()
+#define EGG_VARARGS_DEF(type, name) (va_alist) va_dcl
+#define EGG_VARARGS_START(type, name, list) (va_start(list), va_arg(list, type))
+#endif
 #endif
 
 #include <stdio.h>
@@ -77,69 +79,71 @@
 #include <string.h>
 
 #ifdef HAVE_STRINGS_H
-#  include <strings.h>
+#include <strings.h>
 #endif
 
 #ifdef HAVE_INTTYPES_H
-#  include <inttypes.h>
+#include <inttypes.h>
 #endif
 
-#include <sys/types.h>
-#include "lush.h"
-#include "lang.h"
 #include "eggdrop.h"
 #include "flags.h"
+#include "lang.h"
+#include "lush.h"
+#include <sys/types.h>
 
 #ifndef MAKING_MODS
-#  include "proto.h"
+#include "proto.h"
 #endif
 
+#include "chan.h"
 #include "cmdt.h"
+#include "compat/compat.h"
 #include "tclegg.h"
 #include "tclhash.h"
-#include "chan.h"
 #include "users.h"
-#include "compat/compat.h"
 
 #ifndef MAKING_MODS
 extern struct dcc_table DCC_CHAT, DCC_BOT, DCC_LOST, DCC_SCRIPT, DCC_BOT_NEW,
-                        DCC_RELAY, DCC_RELAYING, DCC_FORK_RELAY, DCC_PRE_RELAY,
-                        DCC_CHAT_PASS, DCC_FORK_BOT, DCC_SOCKET, DCC_TELNET_ID,
-                        DCC_TELNET_NEW, DCC_TELNET_PW, DCC_TELNET, DCC_IDENT,
-                        DCC_IDENTWAIT, DCC_DNSWAIT;
+    DCC_RELAY, DCC_RELAYING, DCC_FORK_RELAY, DCC_PRE_RELAY, DCC_CHAT_PASS,
+    DCC_FORK_BOT, DCC_SOCKET, DCC_TELNET_ID, DCC_TELNET_NEW, DCC_TELNET_PW,
+    DCC_TELNET, DCC_IDENT, DCC_IDENTWAIT, DCC_DNSWAIT;
 #endif
 
-#define iptolong(a) (0xffffffff & (long) (htonl((unsigned long) a)))
+#define iptolong(a) (0xffffffff & (long)(htonl((unsigned long)a)))
 
 #ifdef IPV6
-# define setsnport(s, p) do {                                           \
-  if ((s).family == AF_INET6)                                           \
-    (s).addr.s6.sin6_port = htons((p));                                 \
-  else                                                                  \
-    (s).addr.s4.sin_port = htons((p));                                  \
-} while (0)
+#define setsnport(s, p)                                                        \
+  do {                                                                         \
+    if ((s).family == AF_INET6)                                                \
+      (s).addr.s6.sin6_port = htons((p));                                      \
+    else                                                                       \
+      (s).addr.s4.sin_port = htons((p));                                       \
+  } while (0)
 #else
-# define setsnport(s, p) (s.addr.s4.sin_port = htons(p))
+#define setsnport(s, p) (s.addr.s4.sin_port = htons(p))
 #endif
 
-#define fixcolon(x) do {                                                \
-        if ((x)[0] == ':')                                              \
-          (x)++;                                                        \
-        else                                                            \
-          (x) = newsplit(&(x));                                         \
-} while (0)
+#define fixcolon(x)                                                            \
+  do {                                                                         \
+    if ((x)[0] == ':')                                                         \
+      (x)++;                                                                   \
+    else                                                                       \
+      (x) = newsplit(&(x));                                                    \
+  } while (0)
 
 /* This macro copies (_len - 1) bytes from _source to _target. The
  * target string is NULL-terminated.
  */
-#define strncpyz(_target, _source, _len) do {                           \
-        strncpy((_target), (_source), (_len) - 1);                      \
-        (_target)[(_len) - 1] = 0;                                      \
-} while (0)
+#define strncpyz(_target, _source, _len)                                       \
+  do {                                                                         \
+    strncpy((_target), (_source), (_len)-1);                                   \
+    (_target)[(_len)-1] = 0;                                                   \
+  } while (0)
 
 #ifdef BORGCUBES
-#  define O_NONBLOCK 00000004 /* POSIX non-blocking I/O */
-#endif /* BORGCUBES */
+#define O_NONBLOCK 00000004 /* POSIX non-blocking I/O */
+#endif                      /* BORGCUBES */
 
 /* Handle for the user that's used when starting eggdrop with -tn */
 #define EGG_BG_HANDLE "-HQ"
