@@ -28,6 +28,7 @@
 
 /* Module related structures
  */
+#include "eggdrop.h"
 #include "mod/modvals.h"
 
 #ifndef MAKING_NUMMODS
