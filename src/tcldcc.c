@@ -22,15 +22,16 @@
  */
 
 #include "main.h"
-#include "tandem.h"
 #include "modules.h"
+#include "tandem.h"
 #include <errno.h>
 
 extern Tcl_Interp *interp;
 extern tcl_timer_t *timer, *utimer;
 extern struct dcc_t *dcc;
 extern char botnetnick[];
-extern int dcc_total, backgrd, parties, make_userfile, do_restart, remote_boots, max_dcc;
+extern int dcc_total, backgrd, parties, make_userfile, do_restart, remote_boots,
+    max_dcc;
 #ifdef TLS
 extern int tls_vfydcc;
 extern sock_list *socklist;
@@ -39,17 +40,14 @@ extern party_t *party;
 extern tand_t *tandbot;
 extern time_t now;
 extern unsigned long otraffic_irc, otraffic_irc_today, itraffic_irc,
-                     itraffic_irc_today, otraffic_bn, otraffic_bn_today,
-                     itraffic_bn, itraffic_bn_today, otraffic_dcc,
-                     otraffic_dcc_today, itraffic_dcc, itraffic_dcc_today,
-                     otraffic_trans, otraffic_trans_today, itraffic_trans,
-                     itraffic_trans_today, otraffic_unknown, itraffic_unknown,
-                     otraffic_unknown_today, itraffic_unknown_today;
+    itraffic_irc_today, otraffic_bn, otraffic_bn_today, itraffic_bn,
+    itraffic_bn_today, otraffic_dcc, otraffic_dcc_today, itraffic_dcc,
+    itraffic_dcc_today, otraffic_trans, otraffic_trans_today, itraffic_trans,
+    itraffic_trans_today, otraffic_unknown, itraffic_unknown,
+    otraffic_unknown_today, itraffic_unknown_today;
 static struct portmap *root = NULL;
 
-
-int expmem_tcldcc(void)
-{
+int expmem_tcldcc(void) {
   int tot = 0;
   struct portmap *pmap;
 
@@ -59,15 +57,13 @@ int expmem_tcldcc(void)
   return tot;
 }
 
-static int tcl_putdcc STDVAR
-{
+static int tcl_putdcc STDVAR {
   int j;
 
   BADARGS(3, 4, " idx text ?options?");
 
   if ((argc == 4) && egg_strcasecmp(argv[3], "-raw")) {
-    Tcl_AppendResult(irp, "unknown putdcc option: should be ",
-                     "-raw", NULL);
+    Tcl_AppendResult(irp, "unknown putdcc option: should be ", "-raw", NULL);
     return TCL_ERROR;
   }
 
@@ -93,8 +89,7 @@ static int tcl_putdcc STDVAR
  *
  * Added by <drummer@sophia.jpte.hu>.
  */
-static int tcl_putdccraw STDVAR
-{
+static int tcl_putdccraw STDVAR {
 #if 0
   int i, j = 0, z;
 
@@ -119,12 +114,12 @@ static int tcl_putdccraw STDVAR
 #endif
 
   Tcl_AppendResult(irp, "putdccraw is deprecated. "
-                   "Please use putdcc/putnow instead.", NULL);
+                        "Please use putdcc/putnow instead.",
+                   NULL);
   return TCL_ERROR;
 }
 
-static int tcl_dccsimul STDVAR
-{
+static int tcl_dccsimul STDVAR {
   int idx;
 
   BADARGS(3, 3, " idx command");
@@ -135,7 +130,7 @@ static int tcl_dccsimul STDVAR
 
     if (l > 510) {
       l = 510;
-      argv[2][510] = 0;        /* Restrict length of cmd */
+      argv[2][510] = 0; /* Restrict length of cmd */
     }
     if (dcc[idx].type && dcc[idx].type->activity) {
       dcc[idx].type->activity(idx, argv[2], l);
@@ -147,9 +142,7 @@ static int tcl_dccsimul STDVAR
   return TCL_ERROR;
 }
 
-
-static int tcl_dccbroadcast STDVAR
-{
+static int tcl_dccbroadcast STDVAR {
   char msg[401];
 
   BADARGS(2, 2, " message");
@@ -161,8 +154,7 @@ static int tcl_dccbroadcast STDVAR
   return TCL_OK;
 }
 
-static int tcl_hand2idx STDVAR
-{
+static int tcl_hand2idx STDVAR {
   int i;
   char s[11];
 
@@ -179,16 +171,14 @@ static int tcl_hand2idx STDVAR
   return TCL_OK;
 }
 
-static int tcl_getchan STDVAR
-{
+static int tcl_getchan STDVAR {
   char s[7];
   int idx;
 
   BADARGS(2, 2, " idx");
 
   idx = findidx(atoi(argv[1]));
-  if (idx < 0 || (dcc[idx].type != &DCC_CHAT &&
-      dcc[idx].type != &DCC_SCRIPT)) {
+  if (idx < 0 || (dcc[idx].type != &DCC_CHAT && dcc[idx].type != &DCC_SCRIPT)) {
     Tcl_AppendResult(irp, "invalid idx", NULL);
     return TCL_ERROR;
   }
@@ -202,16 +192,14 @@ static int tcl_getchan STDVAR
   return TCL_OK;
 }
 
-static int tcl_setchan STDVAR
-{
+static int tcl_setchan STDVAR {
   int idx, chan;
   module_entry *me;
 
   BADARGS(3, 3, " idx channel");
 
   idx = findidx(atoi(argv[1]));
-  if (idx < 0 || (dcc[idx].type != &DCC_CHAT &&
-      dcc[idx].type != &DCC_SCRIPT)) {
+  if (idx < 0 || (dcc[idx].type != &DCC_CHAT && dcc[idx].type != &DCC_SCRIPT)) {
     Tcl_AppendResult(irp, "invalid idx", NULL);
     return TCL_ERROR;
   }
@@ -248,20 +236,19 @@ static int tcl_setchan STDVAR
     dcc[idx].u.chat->channel = chan;
     if (chan < GLOBAL_CHANS)
       botnet_send_join_idx(idx, oldchan);
-    check_tcl_chjn(botnetnick, dcc[idx].nick, chan, geticon(idx),
-                   dcc[idx].sock, dcc[idx].host);
+    check_tcl_chjn(botnetnick, dcc[idx].nick, chan, geticon(idx), dcc[idx].sock,
+                   dcc[idx].host);
   }
   /* Console autosave. */
   if ((me = module_find("console", 1, 1))) {
     Function *func = me->funcs;
 
-    (func[CONSOLE_DOSTORE]) (idx);
+    (func[CONSOLE_DOSTORE])(idx);
   }
   return TCL_OK;
 }
 
-static int tcl_dccputchan STDVAR
-{
+static int tcl_dccputchan STDVAR {
   int chan;
   char msg[401];
 
@@ -269,7 +256,8 @@ static int tcl_dccputchan STDVAR
 
   chan = atoi(argv[1]);
   if ((chan < 0) || (chan > 199999)) {
-    Tcl_AppendResult(irp, "channel out of range; must be 0 through 199999", NULL);
+    Tcl_AppendResult(irp, "channel out of range; must be 0 through 199999",
+                     NULL);
     return TCL_ERROR;
   }
   strncpyz(msg, argv[2], sizeof msg);
@@ -280,8 +268,7 @@ static int tcl_dccputchan STDVAR
   return TCL_OK;
 }
 
-static int tcl_console STDVAR
-{
+static int tcl_console STDVAR {
   int i, j, pls, arg;
   module_entry *me;
 
@@ -295,8 +282,8 @@ static int tcl_console STDVAR
   pls = 1;
 
   for (arg = 2; arg < argc; arg++) {
-    if (argv[arg][0] && ((strchr(CHANMETA, argv[arg][0]) != NULL) ||
-        (argv[arg][0] == '*'))) {
+    if (argv[arg][0] &&
+        ((strchr(CHANMETA, argv[arg][0]) != NULL) || (argv[arg][0] == '*'))) {
       if ((argv[arg][0] != '*') && (!findchan_by_dname(argv[arg]))) {
         /* If we dont find the channel, and it starts with a +, assume it
          * should be the console flags to set. */
@@ -334,13 +321,12 @@ static int tcl_console STDVAR
   if (argc > 2 && (me = module_find("console", 1, 1))) {
     Function *func = me->funcs;
 
-    (func[CONSOLE_DOSTORE]) (i);
+    (func[CONSOLE_DOSTORE])(i);
   }
   return TCL_OK;
 }
 
-static int tcl_strip STDVAR
-{
+static int tcl_strip STDVAR {
   int i, j, pls, arg;
   module_entry *me;
 
@@ -378,13 +364,12 @@ static int tcl_strip STDVAR
   if (argc > 2 && (me = module_find("console", 1, 1))) {
     Function *func = me->funcs;
 
-    (func[CONSOLE_DOSTORE]) (i);
+    (func[CONSOLE_DOSTORE])(i);
   }
   return TCL_OK;
 }
 
-static int tcl_echo STDVAR
-{
+static int tcl_echo STDVAR {
   int i;
   module_entry *me;
 
@@ -409,13 +394,12 @@ static int tcl_echo STDVAR
   if (argc > 2 && (me = module_find("console", 1, 1))) {
     Function *func = me->funcs;
 
-    (func[CONSOLE_DOSTORE]) (i);
+    (func[CONSOLE_DOSTORE])(i);
   }
   return TCL_OK;
 }
 
-static int tcl_page STDVAR
-{
+static int tcl_page STDVAR {
   int i;
   char x[20];
   module_entry *me;
@@ -446,13 +430,12 @@ static int tcl_page STDVAR
   if ((argc > 2) && (me = module_find("console", 1, 1))) {
     Function *func = me->funcs;
 
-    (func[CONSOLE_DOSTORE]) (i);
+    (func[CONSOLE_DOSTORE])(i);
   }
   return TCL_OK;
 }
 
-static int tcl_control STDVAR
-{
+static int tcl_control STDVAR {
   int idx;
   void *hold;
 
@@ -485,8 +468,7 @@ static int tcl_control STDVAR
   return TCL_OK;
 }
 
-static int tcl_valididx STDVAR
-{
+static int tcl_valididx STDVAR {
   int idx;
 
   BADARGS(2, 2, " idx");
@@ -496,11 +478,10 @@ static int tcl_valididx STDVAR
     Tcl_AppendResult(irp, "0", NULL);
   else
     Tcl_AppendResult(irp, "1", NULL);
-   return TCL_OK;
+  return TCL_OK;
 }
 
-static int tcl_killdcc STDVAR
-{
+static int tcl_killdcc STDVAR {
   int idx;
 
   BADARGS(2, 3, " idx ?reason?");
@@ -513,7 +494,6 @@ static int tcl_killdcc STDVAR
 
   if ((dcc[idx].sock == STDOUT) && !backgrd) /* Don't kill terminal socket */
     return TCL_OK;
-
 
   if (dcc[idx].type->flags & DCT_CHAT) { /* Make sure 'whom' info is updated */
     chanout_but(idx, dcc[idx].u.chat->channel, "*** %s has left the %s%s%s\n",
@@ -532,8 +512,7 @@ static int tcl_killdcc STDVAR
   return TCL_OK;
 }
 
-static int tcl_putbot STDVAR
-{
+static int tcl_putbot STDVAR {
   int i;
   char msg[401];
 
@@ -550,8 +529,7 @@ static int tcl_putbot STDVAR
   return TCL_OK;
 }
 
-static int tcl_putallbots STDVAR
-{
+static int tcl_putallbots STDVAR {
   char msg[401];
 
   BADARGS(2, 2, " message");
@@ -561,8 +539,7 @@ static int tcl_putallbots STDVAR
   return TCL_OK;
 }
 
-static int tcl_idx2hand STDVAR
-{
+static int tcl_idx2hand STDVAR {
   int idx;
 
   BADARGS(2, 2, " idx");
@@ -577,8 +554,7 @@ static int tcl_idx2hand STDVAR
   return TCL_OK;
 }
 
-static int tcl_islinked STDVAR
-{
+static int tcl_islinked STDVAR {
   int i;
 
   BADARGS(2, 2, " bot");
@@ -591,8 +567,7 @@ static int tcl_islinked STDVAR
   return TCL_OK;
 }
 
-static int tcl_bots STDVAR
-{
+static int tcl_bots STDVAR {
   tand_t *bot;
 
   BADARGS(1, 1, "");
@@ -602,8 +577,7 @@ static int tcl_bots STDVAR
   return TCL_OK;
 }
 
-static int tcl_botlist STDVAR
-{
+static int tcl_botlist STDVAR {
   char *p, sh[2], string[20];
   EGG_CONST char *list[4];
   tand_t *bot;
@@ -615,18 +589,17 @@ static int tcl_botlist STDVAR
   list[2] = string;
   for (bot = tandbot; bot; bot = bot->next) {
     list[0] = bot->bot;
-    list[1] = (bot->uplink == (tand_t *) 1) ? botnetnick : bot->uplink->bot;
+    list[1] = (bot->uplink == (tand_t *)1) ? botnetnick : bot->uplink->bot;
     strncpyz(string, int_to_base10(bot->ver), sizeof string);
     sh[0] = bot->share;
     p = Tcl_Merge(4, list);
     Tcl_AppendElement(irp, p);
-    Tcl_Free((char *) p);
+    Tcl_Free((char *)p);
   }
   return TCL_OK;
 }
 
-static int tcl_dcclist STDVAR
-{
+static int tcl_dcclist STDVAR {
   int i;
   char *p, idxstr[10], timestamp[11], other[160];
   long tv;
@@ -635,8 +608,9 @@ static int tcl_dcclist STDVAR
   BADARGS(1, 2, " ?type?");
 
   for (i = 0; i < dcc_total; i++) {
-    if (argc == 1 || ((argc == 2) && (dcc[i].type &&
-        !egg_strcasecmp(dcc[i].type->name, argv[1])))) {
+    if (argc == 1 ||
+        ((argc == 2) &&
+         (dcc[i].type && !egg_strcasecmp(dcc[i].type->name, argv[1])))) {
       egg_snprintf(idxstr, sizeof idxstr, "%ld", dcc[i].sock);
       tv = dcc[i].timeval;
       egg_snprintf(timestamp, sizeof timestamp, "%ld", tv);
@@ -644,7 +618,7 @@ static int tcl_dcclist STDVAR
         dcc[i].type->display(i, other);
       else {
         egg_snprintf(other, sizeof other, "?:%lX  !! ERROR !!",
-                     (long) dcc[i].type);
+                     (long)dcc[i].type);
         break;
       }
       list[0] = idxstr;
@@ -655,14 +629,13 @@ static int tcl_dcclist STDVAR
       list[5] = timestamp;
       p = Tcl_Merge(6, list);
       Tcl_AppendElement(irp, p);
-      Tcl_Free((char *) p);
+      Tcl_Free((char *)p);
     }
   }
   return TCL_OK;
 }
 
-static int tcl_whom STDVAR
-{
+static int tcl_whom STDVAR {
   int chan, i;
   char c[2], idle[11], work[20], *p;
   long tv = 0;
@@ -708,7 +681,7 @@ static int tcl_whom STDVAR
         }
         p = Tcl_Merge((chan == -1) ? 7 : 6, list);
         Tcl_AppendElement(irp, p);
-        Tcl_Free((char *) p);
+        Tcl_Free((char *)p);
       }
     }
   for (i = 0; i < parties; i++) {
@@ -733,14 +706,13 @@ static int tcl_whom STDVAR
       }
       p = Tcl_Merge((chan == -1) ? 7 : 6, list);
       Tcl_AppendElement(irp, p);
-      Tcl_Free((char *) p);
+      Tcl_Free((char *)p);
     }
   }
   return TCL_OK;
 }
 
-static int tcl_dccused STDVAR
-{
+static int tcl_dccused STDVAR {
   char s[20];
 
   BADARGS(1, 1, "");
@@ -750,8 +722,7 @@ static int tcl_dccused STDVAR
   return TCL_OK;
 }
 
-static int tcl_getdccidle STDVAR
-{
+static int tcl_getdccidle STDVAR {
   int x, idx;
   char s[21];
 
@@ -769,8 +740,7 @@ static int tcl_getdccidle STDVAR
   return TCL_OK;
 }
 
-static int tcl_getdccaway STDVAR
-{
+static int tcl_getdccaway STDVAR {
   int idx;
 
   BADARGS(2, 2, " idx");
@@ -787,8 +757,7 @@ static int tcl_getdccaway STDVAR
   return TCL_OK;
 }
 
-static int tcl_setdccaway STDVAR
-{
+static int tcl_setdccaway STDVAR {
   int idx;
 
   BADARGS(3, 3, " idx message");
@@ -807,8 +776,7 @@ static int tcl_setdccaway STDVAR
   return TCL_OK;
 }
 
-static int tcl_link STDVAR
-{
+static int tcl_link STDVAR {
   int x, i;
   char bot[HANDLEN + 1], bot2[HANDLEN + 1];
 
@@ -831,8 +799,7 @@ static int tcl_link STDVAR
   return TCL_OK;
 }
 
-static int tcl_unlink STDVAR
-{
+static int tcl_unlink STDVAR {
   int i, x;
   char bot[HANDLEN + 1];
 
@@ -855,8 +822,7 @@ static int tcl_unlink STDVAR
   return TCL_OK;
 }
 
-static int tcl_connect STDVAR
-{
+static int tcl_connect STDVAR {
   int i, sock;
   char s[81];
 
@@ -875,14 +841,14 @@ static int tcl_connect STDVAR
   sock = open_telnet(i, argv[1], atoi(argv[2]));
   if (sock < 0) {
     switch (sock) {
-      case -3:
-        Tcl_AppendResult(irp, MISC_NOFREESOCK, NULL);
-        break;
-      case -2:
-        Tcl_AppendResult(irp, "DNS lookup failed", NULL);
-        break;
-      default:
-        Tcl_AppendResult(irp, strerror(errno), NULL);
+    case -3:
+      Tcl_AppendResult(irp, MISC_NOFREESOCK, NULL);
+      break;
+    case -2:
+      Tcl_AppendResult(irp, "DNS lookup failed", NULL);
+      break;
+    default:
+      Tcl_AppendResult(irp, strerror(errno), NULL);
     }
     lostdcc(i);
     return TCL_ERROR;
@@ -912,8 +878,7 @@ static int tcl_connect STDVAR
  * listen <port> script <proc> [flag]
  * listen <port> off
  */
-static int tcl_listen STDVAR
-{
+static int tcl_listen STDVAR {
   int i, j, idx = -1, port, realport;
   char s[11], msg[256];
   struct portmap *pmap = NULL, *pold = NULL;
@@ -925,7 +890,7 @@ static int tcl_listen STDVAR
     if (pmap->realport == port) {
       port = pmap->mappedto;
       break;
-  }
+    }
   for (i = 0; i < dcc_total; i++)
     if ((dcc[i].type == &DCC_TELNET) && (dcc[i].port == port))
       idx = i;
@@ -965,13 +930,16 @@ static int tcl_listen STDVAR
 
     if (i == -1) {
       egg_snprintf(msg, sizeof msg, "Couldn't listen on port '%d' on the given "
-                   "address: %s", realport, strerror(errno));
+                                    "address: %s",
+                   realport, strerror(errno));
       Tcl_AppendResult(irp, msg, NULL);
       return TCL_ERROR;
     } else if (i == -2) {
-      egg_snprintf(msg, sizeof msg, "Couldn't listen on port '%d' on the given "
+      egg_snprintf(msg, sizeof msg,
+                   "Couldn't listen on port '%d' on the given "
                    "address. Please make sure 'listen-addr' is set properly"
-                   " or try choosing a different port.", realport);
+                   " or try choosing a different port.",
+                   realport);
       Tcl_AppendResult(irp, msg, NULL);
       return TCL_ERROR;
     }
@@ -993,7 +961,8 @@ static int tcl_listen STDVAR
   if (!strcmp(argv[2], "script")) {
     strcpy(dcc[idx].nick, "(script)");
     if (argc < 4) {
-      Tcl_AppendResult(irp, "a proc name must be specified for a script listen", NULL);
+      Tcl_AppendResult(irp, "a proc name must be specified for a script listen",
+                       NULL);
       killsock(dcc[idx].sock);
       lostdcc(idx);
       return TCL_ERROR;
@@ -1041,13 +1010,13 @@ static int tcl_listen STDVAR
   pmap->realport = realport;
   pmap->mappedto = port;
 
-  putlog(LOG_MISC, "*", "Listening for telnet connections on %s:%d (%s).", iptostr(&dcc[idx].sockname.addr.sa), port, argv[2]);
+  putlog(LOG_MISC, "*", "Listening for telnet connections on %s:%d (%s).",
+         iptostr(&dcc[idx].sockname.addr.sa), port, argv[2]);
 
   return TCL_OK;
 }
 
-static int tcl_boot STDVAR
-{
+static int tcl_boot STDVAR {
   char who[NOTENAMELEN + 1];
   int i, ok = 0;
 
@@ -1080,8 +1049,7 @@ static int tcl_boot STDVAR
   return TCL_OK;
 }
 
-static int tcl_rehash STDVAR
-{
+static int tcl_rehash STDVAR {
   BADARGS(1, 1, "");
 
   if (make_userfile) {
@@ -1095,8 +1063,7 @@ static int tcl_rehash STDVAR
   return TCL_OK;
 }
 
-static int tcl_restart STDVAR
-{
+static int tcl_restart STDVAR {
   BADARGS(1, 1, "");
 
   if (!backgrd) {
@@ -1115,27 +1082,26 @@ static int tcl_restart STDVAR
   return TCL_OK;
 }
 
-static int tcl_traffic STDVAR
-{
+static int tcl_traffic STDVAR {
   char buf[1024];
   unsigned long out_total_today, out_total;
   unsigned long in_total_today, in_total;
 
   /* IRC traffic */
-  sprintf(buf, "irc %lu %lu %lu %lu", itraffic_irc_today, itraffic_irc +
-          itraffic_irc_today, otraffic_irc_today,
+  sprintf(buf, "irc %lu %lu %lu %lu", itraffic_irc_today,
+          itraffic_irc + itraffic_irc_today, otraffic_irc_today,
           otraffic_irc + otraffic_irc_today);
   Tcl_AppendElement(irp, buf);
 
   /* Botnet traffic */
-  sprintf(buf, "botnet %lu %lu %lu %lu", itraffic_bn_today, itraffic_bn +
-          itraffic_bn_today, otraffic_bn_today,
+  sprintf(buf, "botnet %lu %lu %lu %lu", itraffic_bn_today,
+          itraffic_bn + itraffic_bn_today, otraffic_bn_today,
           otraffic_bn + otraffic_bn_today);
   Tcl_AppendElement(irp, buf);
 
   /* Partyline */
-  sprintf(buf, "partyline %lu %lu %lu %lu", itraffic_dcc_today, itraffic_dcc +
-          itraffic_dcc_today, otraffic_dcc_today,
+  sprintf(buf, "partyline %lu %lu %lu %lu", itraffic_dcc_today,
+          itraffic_dcc + itraffic_dcc_today, otraffic_dcc_today,
           otraffic_dcc + otraffic_dcc_today);
   Tcl_AppendElement(irp, buf);
 
@@ -1152,9 +1118,8 @@ static int tcl_traffic STDVAR
   Tcl_AppendElement(irp, buf);
 
   /* Totals */
-  in_total_today = itraffic_irc_today + itraffic_bn_today +
-                   itraffic_dcc_today + itraffic_trans_today +
-                   itraffic_unknown_today;
+  in_total_today = itraffic_irc_today + itraffic_bn_today + itraffic_dcc_today +
+                   itraffic_trans_today + itraffic_unknown_today;
   in_total = in_total_today + itraffic_irc + itraffic_bn + itraffic_dcc +
              itraffic_trans + itraffic_unknown;
   out_total_today = otraffic_irc_today + otraffic_bn_today +
@@ -1168,42 +1133,40 @@ static int tcl_traffic STDVAR
   return TCL_OK;
 }
 
-tcl_cmds tcldcc_cmds[] = {
-  {"putdcc",             tcl_putdcc},
-  {"putdccraw",       tcl_putdccraw},
-  {"putidx",             tcl_putdcc},
-  {"dccsimul",         tcl_dccsimul},
-  {"dccbroadcast", tcl_dccbroadcast},
-  {"hand2idx",         tcl_hand2idx},
-  {"getchan",           tcl_getchan},
-  {"setchan",           tcl_setchan},
-  {"dccputchan",     tcl_dccputchan},
-  {"console",           tcl_console},
-  {"strip",               tcl_strip},
-  {"echo",                 tcl_echo},
-  {"page",                 tcl_page},
-  {"control",           tcl_control},
-  {"valididx",         tcl_valididx},
-  {"killdcc",           tcl_killdcc},
-  {"putbot",             tcl_putbot},
-  {"putallbots",     tcl_putallbots},
-  {"idx2hand",         tcl_idx2hand},
-  {"bots",                 tcl_bots},
-  {"botlist",           tcl_botlist},
-  {"dcclist",           tcl_dcclist},
-  {"whom",                 tcl_whom},
-  {"dccused",           tcl_dccused},
-  {"getdccidle",     tcl_getdccidle},
-  {"getdccaway",     tcl_getdccaway},
-  {"setdccaway",     tcl_setdccaway},
-  {"islinked",         tcl_islinked},
-  {"link",                 tcl_link},
-  {"unlink",             tcl_unlink},
-  {"connect",           tcl_connect},
-  {"listen",             tcl_listen},
-  {"boot",                 tcl_boot},
-  {"rehash",             tcl_rehash},
-  {"restart",           tcl_restart},
-  {"traffic",           tcl_traffic},
-  {NULL,                       NULL}
-};
+tcl_cmds tcldcc_cmds[] = {{"putdcc", tcl_putdcc},
+                          {"putdccraw", tcl_putdccraw},
+                          {"putidx", tcl_putdcc},
+                          {"dccsimul", tcl_dccsimul},
+                          {"dccbroadcast", tcl_dccbroadcast},
+                          {"hand2idx", tcl_hand2idx},
+                          {"getchan", tcl_getchan},
+                          {"setchan", tcl_setchan},
+                          {"dccputchan", tcl_dccputchan},
+                          {"console", tcl_console},
+                          {"strip", tcl_strip},
+                          {"echo", tcl_echo},
+                          {"page", tcl_page},
+                          {"control", tcl_control},
+                          {"valididx", tcl_valididx},
+                          {"killdcc", tcl_killdcc},
+                          {"putbot", tcl_putbot},
+                          {"putallbots", tcl_putallbots},
+                          {"idx2hand", tcl_idx2hand},
+                          {"bots", tcl_bots},
+                          {"botlist", tcl_botlist},
+                          {"dcclist", tcl_dcclist},
+                          {"whom", tcl_whom},
+                          {"dccused", tcl_dccused},
+                          {"getdccidle", tcl_getdccidle},
+                          {"getdccaway", tcl_getdccaway},
+                          {"setdccaway", tcl_setdccaway},
+                          {"islinked", tcl_islinked},
+                          {"link", tcl_link},
+                          {"unlink", tcl_unlink},
+                          {"connect", tcl_connect},
+                          {"listen", tcl_listen},
+                          {"boot", tcl_boot},
+                          {"rehash", tcl_rehash},
+                          {"restart", tcl_restart},
+                          {"traffic", tcl_traffic},
+                          {NULL, NULL}};

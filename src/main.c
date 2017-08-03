@@ -35,57 +35,57 @@
  */
 #include <config.h>
 #ifdef CYGWIN_HACKS
-#  include <windows.h>
-#  undef X509_NAME
-#  undef X509_EXTENSIONS
-#  undef X509_CERT_PAIR
-#  undef PKCS7_ISSUER_AND_SERIAL
-#  undef PKCS7_SIGNER_INFO
-#  undef OCSP_REQUEST
-#  undef OCSP_RESPONSE
+#include <windows.h>
+#undef X509_NAME
+#undef X509_EXTENSIONS
+#undef X509_CERT_PAIR
+#undef PKCS7_ISSUER_AND_SERIAL
+#undef PKCS7_SIGNER_INFO
+#undef OCSP_REQUEST
+#undef OCSP_RESPONSE
 #endif
 
 #include "main.h"
 
-#include <fcntl.h>
 #include <errno.h>
-#include <signal.h>
+#include <fcntl.h>
 #include <netdb.h>
 #include <setjmp.h>
+#include <signal.h>
 
 #ifdef TIME_WITH_SYS_TIME
-#  include <sys/time.h>
-#  include <time.h>
+#include <sys/time.h>
+#include <time.h>
 #else
-#  ifdef HAVE_SYS_TIME_H
-#    include <sys/time.h>
-#  else
-#    include <time.h>
-#  endif
+#ifdef HAVE_SYS_TIME_H
+#include <sys/time.h>
+#else
+#include <time.h>
+#endif
 #endif
 
-#ifdef STOP_UAC                         /* OSF/1 complains a lot */
-#  include <sys/sysinfo.h>
-#  define UAC_NOPRINT 0x00000001        /* Don't report unaligned fixups */
+#ifdef STOP_UAC /* OSF/1 complains a lot */
+#include <sys/sysinfo.h>
+#define UAC_NOPRINT 0x00000001 /* Don't report unaligned fixups */
 #endif
 
-#include "version.h"
+#include "bg.h"
 #include "chan.h"
 #include "modules.h"
 #include "tandem.h"
-#include "bg.h"
+#include "version.h"
 
-#ifdef DEBUG                            /* For debug compile */
-#  include <sys/resource.h>             /* setrlimit() */
+#ifdef DEBUG              /* For debug compile */
+#include <sys/resource.h> /* setrlimit() */
 #endif
 
 #ifndef _POSIX_SOURCE
-#  define _POSIX_SOURCE 1               /* Solaris needs this */
+#define _POSIX_SOURCE 1 /* Solaris needs this */
 #endif
 
 extern char origbotname[], userfile[], botnetnick[];
 extern int dcc_total, conmask, cache_hit, cache_miss, max_logs, quick_logs,
-           quiet_save;
+    quiet_save;
 extern struct dcc_t *dcc;
 extern struct userrec *userlist;
 extern struct chanset_t *chanset;
@@ -110,32 +110,32 @@ int egg_numver = EGG_NUMVER;
 char egg_patch[] = EGG_PATCH;
 #endif
 
-char notify_new[121] = "";      /* Person to send a note to for new users */
-int default_flags = 0;          /* Default user flags                     */
-int default_uflags = 0;         /* Default user-definied flags            */
+char notify_new[121] = ""; /* Person to send a note to for new users */
+int default_flags = 0;     /* Default user flags                     */
+int default_uflags = 0;    /* Default user-definied flags            */
 
-int backgrd = 1;        /* Run in the background?                        */
-int con_chan = 0;       /* Foreground: constantly display channel stats? */
-int term_z = 0;         /* Foreground: use the terminal as a partyline?  */
-int use_stderr = 1;     /* Send stuff to stderr instead of logfiles?     */
+int backgrd = 1;    /* Run in the background?                        */
+int con_chan = 0;   /* Foreground: constantly display channel stats? */
+int term_z = 0;     /* Foreground: use the terminal as a partyline?  */
+int use_stderr = 1; /* Send stuff to stderr instead of logfiles?     */
 
-char configfile[121] = "eggdrop.conf";  /* Default config file name */
-char pid_file[121];                     /* Name of the pid file     */
-char helpdir[121] = "help/";            /* Directory of help files  */
-char textdir[121] = "text/";            /* Directory for text files */
+char configfile[121] = "eggdrop.conf"; /* Default config file name */
+char pid_file[121];                    /* Name of the pid file     */
+char helpdir[121] = "help/";           /* Directory of help files  */
+char textdir[121] = "text/";           /* Directory for text files */
 
-int keep_all_logs = 0;                  /* Never erase logfiles?    */
-int switch_logfiles_at = 300;           /* When to switch logfiles  */
+int keep_all_logs = 0;        /* Never erase logfiles?    */
+int switch_logfiles_at = 300; /* When to switch logfiles  */
 
-time_t online_since;    /* time that the bot was started */
+time_t online_since; /* time that the bot was started */
 
 int make_userfile = 0; /* Using bot in userfile-creation mode? */
 
 int save_users_at = 0;   /* Minutes past the hour to save the userfile?     */
 int notify_users_at = 0; /* Minutes past the hour to notify users of notes? */
 
-char version[81];    /* Version info (long form)  */
-char ver[41];        /* Version info (short form) */
+char version[81]; /* Version info (long form)  */
+char ver[41];     /* Version info (short form) */
 
 int do_restart = 0;       /* .restart has been called, restart ASAP */
 int resolve_timeout = 15; /* Hostname/address lookup timeout        */
@@ -177,8 +177,7 @@ int cx_ptr = 0;
 int ssl_cleanup();
 #endif
 
-void fatal(const char *s, int recoverable)
-{
+void fatal(const char *s, int recoverable) {
   int i;
 
   putlog(LOG_MISC, "*", "* %s", s);
@@ -215,8 +214,7 @@ int expmem_tls();
 
 /* For mem.c : calculate memory we SHOULD be using
  */
-int expected_memory(void)
-{
+int expected_memory(void) {
   int tot;
 
   tot = expmem_chanprog() + expmem_users() + expmem_misc() + expmem_dccutil() +
@@ -229,8 +227,7 @@ int expected_memory(void)
   return tot;
 }
 
-static void check_expired_dcc()
-{
+static void check_expired_dcc() {
   int i;
 
   for (i = 0; i < dcc_total; i++)
@@ -248,12 +245,13 @@ static void check_expired_dcc()
 }
 
 #ifndef DEBUG_CONTEXT
-#define write_debug() do {} while (0)
+#define write_debug()                                                          \
+  do {                                                                         \
+  } while (0)
 #else
 static int nested_debug = 0;
 
-static void write_debug()
-{
+static void write_debug() {
   int x;
   char s[25];
   int y;
@@ -286,8 +284,8 @@ static void write_debug()
       close(x);
     }
     bg_send_quit(BG_ABORT);
-    exit(1);                    /* Dont even try & tell people about, that may
-                                 * have caused the fault last time. */
+    exit(1); /* Dont even try & tell people about, that may
+              * have caused the fault last time. */
   } else
     nested_debug = 1;
   putlog(LOG_MISC, "*", "* Last context: %s/%d [%s]", cx_file[cx_ptr],
@@ -312,14 +310,18 @@ static void write_debug()
 
     /* info library */
     dprintf(-x, "Tcl library: %s\n",
-            ((interp) && (Tcl_Eval(interp, "info library") == TCL_OK)) ?
-            tcl_resultstring() : "*unknown*");
+            ((interp) && (Tcl_Eval(interp, "info library") == TCL_OK))
+                ? tcl_resultstring()
+                : "*unknown*");
 
     /* info tclversion/patchlevel */
     dprintf(-x, "Tcl version: %s (header version %s)\n",
-            ((interp) && (Tcl_Eval(interp, "info patchlevel") == TCL_OK)) ?
-            tcl_resultstring() : (Tcl_Eval(interp, "info tclversion") == TCL_OK) ?
-            tcl_resultstring() : "*unknown*", TCL_PATCH_LEVEL);
+            ((interp) && (Tcl_Eval(interp, "info patchlevel") == TCL_OK))
+                ? tcl_resultstring()
+                : (Tcl_Eval(interp, "info tclversion") == TCL_OK)
+                      ? tcl_resultstring()
+                      : "*unknown*",
+            TCL_PATCH_LEVEL);
 
     if (tcl_threaded())
       dprintf(-x, "Tcl is threaded\n");
@@ -369,8 +371,7 @@ static void write_debug()
 }
 #endif /* DEBUG_CONTEXT */
 
-static void got_bus(int z)
-{
+static void got_bus(int z) {
   write_debug();
   fatal("BUS ERROR -- CRASHING!", 1);
 #ifdef SA_RESETHAND
@@ -381,8 +382,7 @@ static void got_bus(int z)
 #endif
 }
 
-static void got_segv(int z)
-{
+static void got_segv(int z) {
   write_debug();
   fatal("SEGMENT VIOLATION -- CRASHING!", 1);
 #ifdef SA_RESETHAND
@@ -393,14 +393,12 @@ static void got_segv(int z)
 #endif
 }
 
-static void got_fpe(int z)
-{
+static void got_fpe(int z) {
   write_debug();
   fatal("FLOATING POINT ERROR -- CRASHING!", 0);
 }
 
-static void got_term(int z)
-{
+static void got_term(int z) {
   /* Now we die by default on sigterm, but scripts have the chance to
    * catch the event themselves and cancel shutdown by returning 1
    */
@@ -409,8 +407,7 @@ static void got_term(int z)
   kill_bot("ACK, I've been terminated!", "TERMINATE SIGNAL -- SIGNING OFF");
 }
 
-static void got_quit(int z)
-{
+static void got_quit(int z) {
   if (check_tcl_signal("sigquit"))
     return;
   putlog(LOG_MISC, "*", "Received QUIT signal: restarting...");
@@ -418,8 +415,7 @@ static void got_quit(int z)
   return;
 }
 
-static void got_hup(int z)
-{
+static void got_hup(int z) {
   write_userfile(-1);
   if (check_tcl_signal("sighup"))
     return;
@@ -430,8 +426,7 @@ static void got_hup(int z)
 
 /* A call to resolver (gethostbyname, etc) timed out
  */
-static void got_alarm(int z)
-{
+static void got_alarm(int z) {
   siglongjmp(alarmret, 1);
 
   /* -Never reached- */
@@ -439,8 +434,7 @@ static void got_alarm(int z)
 
 /* Got ILL signal -- log context and continue
  */
-static void got_ill(int z)
-{
+static void got_ill(int z) {
   check_tcl_signal("sigill");
 #ifdef DEBUG_CONTEXT
   putlog(LOG_MISC, "*", "* Context: %s/%d [%s]", cx_file[cx_ptr],
@@ -451,8 +445,7 @@ static void got_ill(int z)
 #ifdef DEBUG_CONTEXT
 /* Called from the Context macro.
  */
-void eggContext(const char *file, int line, const char *module)
-{
+void eggContext(const char *file, int line, const char *module) {
   char x[31], *p;
 
   p = strrchr(file, '/');
@@ -469,8 +462,7 @@ void eggContext(const char *file, int line, const char *module)
 /* Called from the ContextNote macro.
  */
 void eggContextNote(const char *file, int line, const char *module,
-                    const char *note)
-{
+                    const char *note) {
   char x[31], *p;
 
   p = strrchr(file, '/');
@@ -488,8 +480,7 @@ void eggContextNote(const char *file, int line, const char *module,
 #ifdef DEBUG_ASSERT
 /* Called from the Assert macro.
  */
-void eggAssert(const char *file, int line, const char *module)
-{
+void eggAssert(const char *file, int line, const char *module) {
   write_debug();
   if (!module)
     putlog(LOG_MISC, "*", "* In file %s, line %u", file, line);
@@ -542,44 +533,43 @@ void show_help() {
   bg_send_quit(BG_ABORT);
 }
 
-static void do_arg()
-{
+static void do_arg() {
   int option = 0;
-/* Bitmask structure to hold cli flags
-   | QUIT| BAD FLAG| h| n| c| t| m| v|
-   |  128|       64|32|16| 8| 4| 2| 1|
-*/
+  /* Bitmask structure to hold cli flags
+     | QUIT| BAD FLAG| h| n| c| t| m| v|
+     |  128|       64|32|16| 8| 4| 2| 1|
+  */
   unsigned char cliflags = 0;
 
   while ((option = getopt(argc, argv, "hnctmv")) != -1) {
     switch (option) {
-      case 'n':
-        cliflags |= 16;
-        backgrd = 0;
-        break;
-      case 'c':
-        cliflags |= 8;
-        con_chan = 1;
-        term_z = 0;
-        break;
-      case 't':
-        cliflags |= 4;
-        con_chan = 0;
-        term_z = 1;
-        break;
-      case 'm':
-        cliflags |= 2;
-        make_userfile = 1;
-        break;
-      case 'v':
-        cliflags |= 129;		//128 + 1
-        break;
-      case 'h':
-        cliflags |= 160;		//128 + 32
-        break;
-      default:
-        cliflags |= 192;		//128 + 64
-        break;
+    case 'n':
+      cliflags |= 16;
+      backgrd = 0;
+      break;
+    case 'c':
+      cliflags |= 8;
+      con_chan = 1;
+      term_z = 0;
+      break;
+    case 't':
+      cliflags |= 4;
+      con_chan = 0;
+      term_z = 1;
+      break;
+    case 'm':
+      cliflags |= 2;
+      make_userfile = 1;
+      break;
+    case 'v':
+      cliflags |= 129; // 128 + 1
+      break;
+    case 'h':
+      cliflags |= 160; // 128 + 32
+      break;
+    default:
+      cliflags |= 192; // 128 + 64
+      break;
     }
   }
   if ((cliflags & 64) || (cliflags & 32)) {
@@ -590,7 +580,8 @@ static void do_arg()
     exit(0);
   } else if (!(cliflags & 16) && ((cliflags & 8) || (cliflags & 4))) {
     printf("\n%s\n", version);
-    printf("ERROR: The -n flag is required when using the -c or -t flags. Exiting...\n\n");
+    printf("ERROR: The -n flag is required when using the -c or -t flags. "
+           "Exiting...\n\n");
     exit(1);
   } else if (argc > (optind + 1)) {
     printf("\n");
@@ -602,8 +593,7 @@ static void do_arg()
   }
 }
 
-void backup_userfile(void)
-{
+void backup_userfile(void) {
   char s[125];
 
   if (quiet_save < 2)
@@ -621,15 +611,14 @@ static struct tm nowtm;
  *
  * Note:  Try to not put any Context lines in here (guppy 21Mar2000).
  */
-static void core_secondly()
-{
+static void core_secondly() {
   static int cnt = 0;
   int miltime;
   time_t nowmins;
 
-  do_check_timers(&utimer);     /* Secondly timers */
+  do_check_timers(&utimer); /* Secondly timers */
   cnt++;
-  if (cnt >= 10) {              /* Every 10 seconds */
+  if (cnt >= 10) { /* Every 10 seconds */
     cnt = 0;
     check_expired_dcc();
     if (con_chan && !backgrd) {
@@ -649,7 +638,7 @@ static void core_secondly()
     ++lastmin;
     call_hook(HOOK_MINUTELY);
     check_expired_ignores();
-    autolink_cycle(NULL);       /* Attempt autolinks */
+    autolink_cycle(NULL); /* Attempt autolinks */
     /* In case for some reason more than 1 min has passed: */
     while (nowmins != lastmin) {
       /* Timer drift, dammit */
@@ -661,14 +650,14 @@ static void core_secondly()
     if (i > 1)
       putlog(LOG_MISC, "*", "(!) timer drift -- spun %d minutes", i);
     miltime = (nowtm.tm_hour * 100) + (nowtm.tm_min);
-    if (((int) (nowtm.tm_min / 5) * 5) == (nowtm.tm_min)) {     /* 5 min */
+    if (((int)(nowtm.tm_min / 5) * 5) == (nowtm.tm_min)) { /* 5 min */
       call_hook(HOOK_5MINUTELY);
       check_botnet_pings();
       if (!quick_logs) {
         flushlogs();
         check_logsize();
       }
-      if (!miltime) {           /* At midnight */
+      if (!miltime) { /* At midnight */
         char s[25];
         int j;
 
@@ -711,8 +700,7 @@ static void core_secondly()
   }
 }
 
-static void core_minutely()
-{
+static void core_minutely() {
   check_tcl_time(&nowtm);
   check_tcl_cron(&nowtm);
   do_check_timers(&timer);
@@ -722,33 +710,17 @@ static void core_minutely()
   }
 }
 
-static void core_hourly()
-{
-  write_userfile(-1);
-}
+static void core_hourly() { write_userfile(-1); }
 
-static void event_rehash()
-{
-  check_tcl_event("rehash");
-}
+static void event_rehash() { check_tcl_event("rehash"); }
 
-static void event_prerehash()
-{
-  check_tcl_event("prerehash");
-}
+static void event_prerehash() { check_tcl_event("prerehash"); }
 
-static void event_save()
-{
-  check_tcl_event("save");
-}
+static void event_save() { check_tcl_event("save"); }
 
-static void event_logfile()
-{
-  check_tcl_event("logfile");
-}
+static void event_logfile() { check_tcl_event("logfile"); }
 
-static void event_resettraffic()
-{
+static void event_resettraffic() {
   otraffic_irc += otraffic_irc_today;
   itraffic_irc += itraffic_irc_today;
   otraffic_bn += otraffic_bn_today;
@@ -766,10 +738,7 @@ static void event_resettraffic()
   itraffic_trans_today = otraffic_trans_today = 0;
 }
 
-static void event_loaded()
-{
-  check_tcl_event("loaded");
-}
+static void event_loaded() { check_tcl_event("loaded"); }
 
 void kill_tcl();
 extern module_entry *module_list;
@@ -792,8 +761,7 @@ int init_language(int);
 int ssl_init();
 #endif
 
-static inline void garbage_collect(void)
-{
+static inline void garbage_collect(void) {
   static u_8bit_t run_cnt = 0;
 
   if (run_cnt == 3)
@@ -802,8 +770,7 @@ static inline void garbage_collect(void)
     run_cnt++;
 }
 
-int mainloop(int toplevel)
-{
+int mainloop(int toplevel) {
   static int socket_cleanup = 0;
   int xx, i, eggbusy = 1, tclbusy = 0;
   char buf[520];
@@ -820,7 +787,7 @@ int mainloop(int toplevel)
    * This attempts to keep random() more random by constantly
    * calling random() and updating the state information.
    */
-  random();                /* Woop, lets really jumble things */
+  random(); /* Woop, lets really jumble things */
 
   /* If we want to restart, we have to unwind to the toplevel.
    * Tcl will Panic if we kill the interp with Tcl_Eval in progress.
@@ -851,7 +818,7 @@ int mainloop(int toplevel)
   garbage_collect();
 
   xx = sockgets(buf, &i);
-  if (xx >= 0) {              /* Non-error */
+  if (xx >= 0) { /* Non-error */
     int idx;
 
     for (idx = 0; idx < dcc_total; idx++)
@@ -876,12 +843,11 @@ int mainloop(int toplevel)
           }
           dcc[idx].type->activity(idx, buf, i);
         } else
-          putlog(LOG_MISC, "*",
-                 "!!! untrapped dcc activity: type %s, sock %d",
+          putlog(LOG_MISC, "*", "!!! untrapped dcc activity: type %s, sock %d",
                  dcc[idx].type->name, dcc[idx].sock);
         break;
       }
-  } else if (xx == -1) {        /* EOF from someone */
+  } else if (xx == -1) { /* EOF from someone */
     int idx;
 
     if (i == STDOUT && !backgrd)
@@ -892,8 +858,8 @@ int mainloop(int toplevel)
           dcc[idx].type->eof(idx);
         else {
           putlog(LOG_MISC, "*",
-                 "*** ATTENTION: DEAD SOCKET (%d) OF TYPE %s UNTRAPPED",
-                 i, dcc[idx].type ? dcc[idx].type->name : "*UNKNOWN*");
+                 "*** ATTENTION: DEAD SOCKET (%d) OF TYPE %s UNTRAPPED", i,
+                 dcc[idx].type ? dcc[idx].type->name : "*UNKNOWN*");
           killsock(i);
           lostdcc(idx);
         }
@@ -905,7 +871,7 @@ int mainloop(int toplevel)
       close(i);
       killsock(i);
     }
-  } else if (xx == -2 && errno != EINTR) {      /* select() error */
+  } else if (xx == -2 && errno != EINTR) { /* select() error */
     putlog(LOG_MISC, "*", "* Socket error #%d; recovering.", errno);
     for (i = 0; i < dcc_total; i++) {
       if ((fcntl(dcc[i].sock, F_GETFD, 0) == -1) && (errno == EBADF)) {
@@ -919,7 +885,7 @@ int mainloop(int toplevel)
     }
   } else if (xx == -3) {
     call_hook(HOOK_IDLE);
-    socket_cleanup = 0;       /* If we've been idle, cleanup & flush */
+    socket_cleanup = 0; /* If we've been idle, cleanup & flush */
     eggbusy = 0;
   } else if (xx == -5) {
     eggbusy = 0;
@@ -980,7 +946,8 @@ int mainloop(int toplevel)
       init_tcl(argc, argv);
       init_language(0);
 
-      /* this resets our modules which we didn't unload (encryption and uptime) */
+      /* this resets our modules which we didn't unload (encryption and uptime)
+       */
       for (p = module_list; p; p = p->next) {
         if (p->funcs) {
           startfunc = p->funcs[MODCALL_START];
@@ -1002,20 +969,19 @@ int mainloop(int toplevel)
 
   if (!eggbusy) {
 /* Process all pending tcl events */
-#  ifdef REPLACE_NOTIFIER
+#ifdef REPLACE_NOTIFIER
     if (Tcl_ServiceAll())
       tclbusy = 1;
-#  else
+#else
     while (Tcl_DoOneEvent(TCL_DONT_WAIT | TCL_ALL_EVENTS))
       tclbusy = 1;
-#  endif /* REPLACE_NOTIFIER */
+#endif /* REPLACE_NOTIFIER */
   }
 
   return (eggbusy || tclbusy);
 }
 
-int main(int arg_c, char **arg_v)
-{
+int main(int arg_c, char **arg_v) {
   int i, xx;
   char s[25];
   FILE *f;
@@ -1050,10 +1016,10 @@ int main(int arg_c, char **arg_v)
   argc = arg_c;
   argv = arg_v;
 
-  /* Version info! */
+/* Version info! */
 #ifdef EGG_PATCH
-  egg_snprintf(&egg_version[strlen(egg_version)], sizeof egg_version, 
-               "+%s", egg_patch);
+  egg_snprintf(&egg_version[strlen(egg_version)], sizeof egg_version, "+%s",
+               egg_patch);
 #endif
   egg_snprintf(ver, sizeof ver, "eggdrop v%s", egg_version);
   egg_snprintf(version, sizeof version,
@@ -1067,7 +1033,7 @@ int main(int arg_c, char **arg_v)
   /* Don't print "unaligned access fixup" warning to the user */
   nvpair[0] = SSIN_UACPROC;
   nvpair[1] = UAC_NOPRINT;
-  setsysinfo(SSI_NVPAIRS, (char *) nvpair, 1, NULL, 0);
+  setsysinfo(SSI_NVPAIRS, (char *)nvpair, 1, NULL, 0);
 #endif
 
   /* Set up error traps: */
@@ -1104,7 +1070,7 @@ int main(int arg_c, char **arg_v)
   chanset = NULL;
   egg_memcpy(&nowtm, localtime(&now), sizeof(struct tm));
   lastmin = now / 60;
-  srandom((unsigned int) (now % (getpid() + getppid())));
+  srandom((unsigned int)(now % (getpid() + getppid())));
   init_mem();
   if (argc > 1)
     do_arg();
@@ -1117,7 +1083,7 @@ int main(int arg_c, char **arg_v)
    * This check isn't useful under cygwin and has been
    * reported to cause trouble in some situations.
    */
-  if (((int) getuid() == 0) || ((int) geteuid() == 0))
+  if (((int)getuid() == 0) || ((int)geteuid() == 0))
     fatal("ERROR: Eggdrop will not run as root!", 0);
 #endif
 
@@ -1136,7 +1102,7 @@ int main(int arg_c, char **arg_v)
   link_statics();
 #endif
   strncpyz(s, ctime(&now), sizeof s);
-  memmove(&s[11], &s[20], strlen(&s[20])+1);
+  memmove(&s[11], &s[20], strlen(&s[20]) + 1);
   putlog(LOG_ALL, "*", "--- Loading %s (%s)", ver, s);
   chanprog();
   if (!encrypt_pass) {
@@ -1147,8 +1113,8 @@ int main(int arg_c, char **arg_v)
   i = 0;
   for (chan = chanset; chan; chan = chan->next)
     i++;
-  putlog(LOG_MISC, "*", "=== %s: %d channels, %d users.",
-         botnetnick, i, count_users(userlist));
+  putlog(LOG_MISC, "*", "=== %s: %d channels, %d users.", botnetnick, i,
+         count_users(userlist));
 #ifdef TLS
   ssl_init();
 #endif
@@ -1162,8 +1128,8 @@ int main(int arg_c, char **arg_v)
   if (f != NULL) {
     if (fgets(s, 10, f) != NULL) {
       xx = atoi(s);
-      i = kill(xx, SIGCHLD);      /* Meaningless kill to determine if pid
-                                   * is used */
+      i = kill(xx, SIGCHLD); /* Meaningless kill to determine if pid
+                              * is used */
       if (i == 0 || errno != ESRCH) {
         printf(EGG_RUNNING1, botnetnick);
         printf(EGG_RUNNING2, pid_file);
@@ -1179,7 +1145,7 @@ int main(int arg_c, char **arg_v)
   /* Move into background? */
   if (backgrd) {
     bg_do_split();
-  } else {                        /* !backgrd */
+  } else { /* !backgrd */
     xx = getpid();
     if (xx != 0) {
       FILE *fp;
@@ -1201,21 +1167,24 @@ int main(int arg_c, char **arg_v)
     }
   }
 
-  use_stderr = 0;               /* Stop writing to stderr now */
+  use_stderr = 0; /* Stop writing to stderr now */
   if (backgrd) {
-    /* Ok, try to disassociate from controlling terminal (finger cross) */
+/* Ok, try to disassociate from controlling terminal (finger cross) */
 #ifdef HAVE_SETPGID
     setpgid(0, 0);
 #endif
     /* Tcl wants the stdin, stdout and stderr file handles kept open. */
     if (freopen("/dev/null", "r", stdin) == NULL) {
-      putlog(LOG_MISC, "*", "Error renaming stdin file handle: %s", strerror(errno));
+      putlog(LOG_MISC, "*", "Error renaming stdin file handle: %s",
+             strerror(errno));
     }
     if (freopen("/dev/null", "w", stdout) == NULL) {
-      putlog(LOG_MISC, "*", "Error renaming stdout file handle: %s", strerror(errno));
+      putlog(LOG_MISC, "*", "Error renaming stdout file handle: %s",
+             strerror(errno));
     }
     if (freopen("/dev/null", "w", stderr) == NULL) {
-      putlog(LOG_MISC, "*", "Error renaming stderr file handle: %s", strerror(errno));
+      putlog(LOG_MISC, "*", "Error renaming stderr file handle: %s",
+             strerror(errno));
     }
 #ifdef CYGWIN_HACKS
     FreeConsole();
@@ -1227,7 +1196,8 @@ int main(int arg_c, char **arg_v)
     /* reuse term_z as glob var to pass it's index in the dcc table around */
     term_z = new_dcc(&DCC_CHAT, sizeof(struct chat_info));
 
-    /* new_dcc returns -1 on error, and 0 should always be taken by the listening socket */
+    /* new_dcc returns -1 on error, and 0 should always be taken by the
+     * listening socket */
     if (term_z < 1)
       fatal("ERROR: Failed to initialize foreground chat.", 0);
 
@@ -1240,28 +1210,30 @@ int main(int arg_c, char **arg_v)
     strcpy(dcc[term_z].nick, EGG_BG_HANDLE);
     strcpy(dcc[term_z].host, "llama@console");
     add_hq_user();
-    setsock(STDOUT, 0);          /* Entry in net table */
+    setsock(STDOUT, 0); /* Entry in net table */
     dprintf(term_z, "\n### ENTERING DCC CHAT SIMULATION ###\n");
-    dprintf(term_z, "You can use the .su command to log into your Eggdrop account.\n\n");
+    dprintf(
+        term_z,
+        "You can use the .su command to log into your Eggdrop account.\n\n");
     dcc_chatter(term_z);
   }
 
   then = now;
   online_since = now;
-  autolink_cycle(NULL);         /* Hurry and connect to tandem bots */
+  autolink_cycle(NULL); /* Hurry and connect to tandem bots */
   add_help_reference("cmds1.help");
   add_help_reference("cmds2.help");
   add_help_reference("core.help");
-  add_hook(HOOK_SECONDLY, (Function) core_secondly);
-  add_hook(HOOK_MINUTELY, (Function) core_minutely);
-  add_hook(HOOK_HOURLY, (Function) core_hourly);
-  add_hook(HOOK_REHASH, (Function) event_rehash);
-  add_hook(HOOK_PRE_REHASH, (Function) event_prerehash);
-  add_hook(HOOK_USERFILE, (Function) event_save);
-  add_hook(HOOK_BACKUP, (Function) backup_userfile);
-  add_hook(HOOK_DAILY, (Function) event_logfile);
-  add_hook(HOOK_DAILY, (Function) event_resettraffic);
-  add_hook(HOOK_LOADED, (Function) event_loaded);
+  add_hook(HOOK_SECONDLY, (Function)core_secondly);
+  add_hook(HOOK_MINUTELY, (Function)core_minutely);
+  add_hook(HOOK_HOURLY, (Function)core_hourly);
+  add_hook(HOOK_REHASH, (Function)event_rehash);
+  add_hook(HOOK_PRE_REHASH, (Function)event_prerehash);
+  add_hook(HOOK_USERFILE, (Function)event_save);
+  add_hook(HOOK_BACKUP, (Function)backup_userfile);
+  add_hook(HOOK_DAILY, (Function)event_logfile);
+  add_hook(HOOK_DAILY, (Function)event_resettraffic);
+  add_hook(HOOK_LOADED, (Function)event_loaded);
 
   call_hook(HOOK_LOADED);
 

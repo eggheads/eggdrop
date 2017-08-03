@@ -25,65 +25,62 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
-#include <fcntl.h>
 #include "main.h"
+#include <fcntl.h>
 #include <limits.h>
-#include <string.h>
 #include <netdb.h>
+#include <string.h>
 #include <sys/socket.h>
 #if HAVE_SYS_SELECT_H
-#  include <sys/select.h>
+#include <sys/select.h>
 #endif
-#include <netinet/in.h>
 #include <arpa/inet.h>
 #include <errno.h>
+#include <netinet/in.h>
 #if HAVE_UNISTD_H
-#  include <unistd.h>
+#include <unistd.h>
 #endif
 #include <setjmp.h>
 
 #ifdef TLS
-#  include <openssl/err.h>
+#include <openssl/err.h>
 #endif
 
 #ifndef HAVE_GETDTABLESIZE
-#  ifdef FD_SETSIZE
-#    define getdtablesize() FD_SETSIZE
-#  else
-#    define getdtablesize() 200
-#  endif
+#ifdef FD_SETSIZE
+#define getdtablesize() FD_SETSIZE
+#else
+#define getdtablesize() 200
+#endif
 #endif
 
 extern struct dcc_t *dcc;
 extern int backgrd, use_stderr, resolve_timeout, dcc_total;
 extern unsigned long otraffic_irc_today, otraffic_bn_today, otraffic_dcc_today,
-                     otraffic_filesys_today, otraffic_trans_today,
-                     otraffic_unknown_today;
+    otraffic_filesys_today, otraffic_trans_today, otraffic_unknown_today;
 
-char natip[121] = "";         /* Public IPv4 to report for systems behind NAT */
-char listen_ip[121] = "";     /* IP (or hostname) for listening sockets       */
-char vhost[121] = "";         /* IPv4 vhost for outgoing connections          */
+char natip[121] = "";     /* Public IPv4 to report for systems behind NAT */
+char listen_ip[121] = ""; /* IP (or hostname) for listening sockets       */
+char vhost[121] = "";     /* IPv4 vhost for outgoing connections          */
 #ifdef IPV6
-char vhost6[121] = "";        /* IPv6 vhost for outgoing connections          */
-int pref_af = 0;              /* Prefer IPv6 over IPv4?                       */
+char vhost6[121] = ""; /* IPv6 vhost for outgoing connections          */
+int pref_af = 0;       /* Prefer IPv6 over IPv4?                       */
 #endif
 char firewall[121] = "";      /* Socks server for firewall.                   */
 int firewallport = 1080;      /* Default port of socks 4/5 firewalls.         */
 char botuser[11] = "eggdrop"; /* Username of the user running the bot.        */
 int dcc_sanitycheck = 0;      /* Do some sanity checking on dcc connections.  */
 
-sock_list *socklist = NULL;   /* Enough to be safe.                           */
-sigjmp_buf alarmret;          /* Env buffer for alarm() returns.              */
+sock_list *socklist = NULL; /* Enough to be safe.                           */
+sigjmp_buf alarmret;        /* Env buffer for alarm() returns.              */
 
 /* Types of proxies */
-#define PROXY_SOCKS   1
-#define PROXY_SUN     2
-
+#define PROXY_SOCKS 1
+#define PROXY_SUN 2
 
 /* I need an UNSIGNED long for dcc type stuff
  */
-IP my_atoul(char *s)
-{
+IP my_atoul(char *s) {
   IP ret = 0;
 
   while ((*s >= '0') && (*s <= '9')) {
@@ -94,8 +91,7 @@ IP my_atoul(char *s)
   return ret;
 }
 
-int expmem_net()
-{
+int expmem_net() {
   int i, tot = 0;
   struct threaddata *td = threaddata();
 
@@ -113,13 +109,11 @@ int expmem_net()
 /* Extract the IP address from a sockaddr struct and convert it
  * to presentation format.
  */
-char *iptostr(struct sockaddr *sa)
-{
+char *iptostr(struct sockaddr *sa) {
 #ifdef IPV6
   static char s[INET6_ADDRSTRLEN] = "";
   if (sa->sa_family == AF_INET6)
-    inet_ntop(AF_INET6, &((struct sockaddr_in6 *)sa)->sin6_addr,
-              s, sizeof s);
+    inet_ntop(AF_INET6, &((struct sockaddr_in6 *)sa)->sin6_addr, s, sizeof s);
   else
 #else
   static char s[sizeof "255.255.255.255"] = "";
@@ -135,8 +129,7 @@ char *iptostr(struct sockaddr *sa)
  * convenient, but you should use the async dns functions where possible, to
  * avoid blocking the bot while the lookup is performed.
  */
-int setsockname(sockname_t *addr, char *src, int port, int allowres)
-{
+int setsockname(sockname_t *addr, char *src, int port, int allowres) {
   struct hostent *hp;
   int af = AF_UNSPEC;
 #ifdef IPV6
@@ -155,8 +148,7 @@ int setsockname(sockname_t *addr, char *src, int port, int allowres)
   if (af != pref)
     if (((af == AF_INET6) &&
          (inet_pton(af, src, &addr->addr.s6.sin6_addr) != 1)) ||
-        ((af == AF_INET)  &&
-         !egg_inet_aton(src, &addr->addr.s4.sin_addr)))
+        ((af == AF_INET) && !egg_inet_aton(src, &addr->addr.s4.sin_addr)))
       af = AF_UNSPEC;
 
   if (af == AF_UNSPEC && allowres) {
@@ -194,15 +186,15 @@ int setsockname(sockname_t *addr, char *src, int port, int allowres)
 
   egg_bzero(addr, sizeof(sockname_t));
 
-/* If it's not an IPv4 address, check if its IPv6 (so it can fail/error
- * appropriately). If it's not, and allowres is 1, use gethostbyname()
- * to try and resolve. If allowres is 0, return AF_UNSPEC to allow
- * dns.mod to do it's thing.
+  /* If it's not an IPv4 address, check if its IPv6 (so it can fail/error
+   * appropriately). If it's not, and allowres is 1, use gethostbyname()
+   * to try and resolve. If allowres is 0, return AF_UNSPEC to allow
+   * dns.mod to do it's thing.
 
- * Also, because we can't be sure inet_pton exists on the system, we
- * have to resort to hackishly counting :s to see if its IPv6 or not.
- * Go internet.
- */
+   * Also, because we can't be sure inet_pton exists on the system, we
+   * have to resort to hackishly counting :s to see if its IPv6 or not.
+   * Go internet.
+   */
   if (!inet_pton(AF_INET, src, &addr->addr.s4.sin_addr)) {
     /* Boring way to count :s */
     count = 0;
@@ -217,9 +209,8 @@ int setsockname(sockname_t *addr, char *src, int port, int allowres)
       putlog(LOG_MISC, "*", "ERROR: This looks like an IPv6 address, \
 but this Eggdrop was not compiled with IPv6 support.");
       af = AF_UNSPEC;
-    }
-    else if (allowres) {
-    /* src is a hostname. Attempt to resolve it.. */
+    } else if (allowres) {
+      /* src is a hostname. Attempt to resolve it.. */
       if (!sigsetjmp(alarmret, 1)) {
         alarm(resolve_timeout);
         hp = gethostbyname(src);
@@ -231,9 +222,9 @@ but this Eggdrop was not compiled with IPv6 support.");
         af = hp->h_addrtype;
       }
     } else
-        af = AF_UNSPEC;
+      af = AF_UNSPEC;
   } else
-      af = AF_INET;
+    af = AF_INET;
 
   addr->family = addr->addr.s4.sin_family = AF_INET;
   addr->addr.sa.sa_family = addr->family;
@@ -245,8 +236,7 @@ but this Eggdrop was not compiled with IPv6 support.");
 
 /* Get socket address to bind to for outbound connections
  */
-void getvhost(sockname_t *addr, int af)
-{
+void getvhost(sockname_t *addr, int af) {
   char *h = NULL;
 
   if (af == AF_INET)
@@ -267,8 +257,7 @@ void getvhost(sockname_t *addr, int af)
  *           -1  - socket not found
  *           -2  - illegal operation
  */
-int sockoptions(int sock, int operation, int sock_options)
-{
+int sockoptions(int sock, int operation, int sock_options) {
   int i;
   struct threaddata *td = threaddata();
 
@@ -288,8 +277,7 @@ int sockoptions(int sock, int operation, int sock_options)
 
 /* Return a free entry in the socket entry
  */
-int allocsock(int sock, int options)
-{
+int allocsock(int sock, int options) {
   int i;
   struct threaddata *td = threaddata();
 
@@ -319,8 +307,8 @@ int allocsock(int sock, int options)
  *
  * alloctclsock() can be called by Tcl threads
  */
-int alloctclsock(register int sock, int mask, Tcl_FileProc *proc, ClientData cd)
-{
+int alloctclsock(register int sock, int mask, Tcl_FileProc *proc,
+                 ClientData cd) {
   int f = -1;
   register int i;
   struct threaddata *td = threaddata();
@@ -352,8 +340,7 @@ int alloctclsock(register int sock, int mask, Tcl_FileProc *proc, ClientData cd)
 
 /* Request a normal socket for i/o
  */
-void setsock(int sock, int options)
-{
+void setsock(int sock, int options) {
   int i = allocsock(sock, options), parm;
   struct threaddata *td = threaddata();
 
@@ -361,24 +348,24 @@ void setsock(int sock, int options)
     putlog(LOG_MISC, "*", "Sockettable full.");
     return;
   }
-  if (((sock != STDOUT) || backgrd) && !(td->socklist[i].flags & SOCK_NONSOCK)) {
+  if (((sock != STDOUT) || backgrd) &&
+      !(td->socklist[i].flags & SOCK_NONSOCK)) {
     parm = 1;
-    setsockopt(sock, SOL_SOCKET, SO_KEEPALIVE, (void *) &parm, sizeof(int));
+    setsockopt(sock, SOL_SOCKET, SO_KEEPALIVE, (void *)&parm, sizeof(int));
 
     parm = 0;
-    setsockopt(sock, SOL_SOCKET, SO_LINGER, (void *) &parm, sizeof(int));
+    setsockopt(sock, SOL_SOCKET, SO_LINGER, (void *)&parm, sizeof(int));
   }
   if (options & SOCK_LISTEN) {
     /* Tris says this lets us grab the same port again next time */
     parm = 1;
-    setsockopt(sock, SOL_SOCKET, SO_REUSEADDR, (void *) &parm, sizeof(int));
+    setsockopt(sock, SOL_SOCKET, SO_REUSEADDR, (void *)&parm, sizeof(int));
   }
   /* Yay async i/o ! */
   fcntl(sock, F_SETFL, O_NONBLOCK);
 }
 
-int getsock(int af, int options)
-{
+int getsock(int af, int options) {
   int sock = socket(af, SOCK_STREAM, 0);
 
   if (sock >= 0)
@@ -391,8 +378,7 @@ int getsock(int af, int options)
 
 /* Done with a socket
  */
-void killsock(register int sock)
-{
+void killsock(register int sock) {
   register int i;
   struct threaddata *td = threaddata();
 
@@ -401,8 +387,10 @@ void killsock(register int sock)
     return;
 
   for (i = 0; i < td->MAXSOCKS; i++) {
-    if ((td->socklist[i].sock == sock) && !(td->socklist[i].flags & SOCK_UNUSED)) {
-      if (!(td->socklist[i].flags & SOCK_TCL)) { /* nothing to free for tclsocks */
+    if ((td->socklist[i].sock == sock) &&
+        !(td->socklist[i].flags & SOCK_UNUSED)) {
+      if (!(td->socklist[i].flags &
+            SOCK_TCL)) { /* nothing to free for tclsocks */
 #ifdef TLS
         if (td->socklist[i].ssl) {
           SSL_shutdown(td->socklist[i].ssl);
@@ -426,15 +414,15 @@ void killsock(register int sock)
       return;
     }
   }
-  putlog(LOG_MISC, "*", "Warning: Attempt to kill un-allocated socket %d!", sock);
+  putlog(LOG_MISC, "*", "Warning: Attempt to kill un-allocated socket %d!",
+         sock);
 }
 
 /* Done with a tcl socket
  *
  * killtclsock() can be called by Tcl threads
  */
-void killtclsock(register int sock)
-{
+void killtclsock(register int sock) {
   register int i;
   struct threaddata *td = threaddata();
 
@@ -451,8 +439,7 @@ void killtclsock(register int sock)
 
 /* Send connection request to proxy
  */
-static int proxy_connect(int sock, sockname_t *addr)
-{
+static int proxy_connect(int sock, sockname_t *addr) {
   sockname_t name;
   char host[121], s[256];
   int i, port, proxy;
@@ -462,7 +449,7 @@ static int proxy_connect(int sock, sockname_t *addr)
 #ifdef IPV6
   if (addr->family == AF_INET6) {
     putlog(LOG_MISC, "*", "Eggdrop doesn't support IPv6 connections "
-           "through proxies yet.");
+                          "through proxies yet.");
     return -1;
   }
 #endif
@@ -480,15 +467,16 @@ static int proxy_connect(int sock, sockname_t *addr)
   if (proxy == PROXY_SOCKS) {
     for (i = 0; i < threaddata()->MAXSOCKS; i++)
       if (!(socklist[i].flags & SOCK_UNUSED) && socklist[i].sock == sock)
-        socklist[i].flags |= SOCK_PROXYWAIT;    /* drummer */
+        socklist[i].flags |= SOCK_PROXYWAIT; /* drummer */
     egg_memcpy(host, &addr->addr.s4.sin_addr.s_addr, 4);
     egg_snprintf(s, sizeof s, "\004\001%c%c%c%c%c%c%s", port % 256,
-                 (port >> 8) % 256, host[0], host[1], host[2], host[3], botuser);
-    tputs(sock, s, strlen(botuser) + 9);        /* drummer */
+                 (port >> 8) % 256, host[0], host[1], host[2], host[3],
+                 botuser);
+    tputs(sock, s, strlen(botuser) + 9); /* drummer */
   } else if (proxy == PROXY_SUN) {
     inet_ntop(AF_INET, &addr->addr.s4.sin_addr, host, sizeof host);
     egg_snprintf(s, sizeof s, "%s %d\n", host, port);
-    tputs(sock, s, strlen(s));  /* drummer */
+    tputs(sock, s, strlen(s)); /* drummer */
   }
   return sock;
 }
@@ -501,8 +489,7 @@ static int proxy_connect(int sock, sockname_t *addr)
  * returns < 0 if connection refused:
  *   -1  strerror() type error
  */
-int open_telnet_raw(int sock, sockname_t *addr)
-{
+int open_telnet_raw(int sock, sockname_t *addr) {
   sockname_t name;
   socklen_t res_len;
   fd_set sockset;
@@ -532,9 +519,10 @@ int open_telnet_raw(int sock, sockname_t *addr)
       res_len = sizeof(res);
       getsockopt(sock, SOL_SOCKET, SO_ERROR, &res, &res_len);
       if (res == 115)
-        return sock;  // This could probably fail somewhere
+        return sock; // This could probably fail somewhere
       if (res == 111) {
-        debug1("net: attempted socket connection refused: %s", iptostr(&addr->addr.sa));
+        debug1("net: attempted socket connection refused: %s",
+               iptostr(&addr->addr.sa));
         return -4;
       }
       if (res != 0) {
@@ -542,8 +530,7 @@ int open_telnet_raw(int sock, sockname_t *addr)
         return -1;
       }
       return sock; /* async success! */
-    }
-    else {
+    } else {
       return -1;
     }
   }
@@ -558,8 +545,7 @@ int open_telnet_raw(int sock, sockname_t *addr)
  *    -3: could not allocate socket
  *    -4: connection failed
  */
-int open_telnet(int idx, char *server, int port)
-{
+int open_telnet(int idx, char *server, int port) {
   int ret;
 
   ret = setsockname(&dcc[idx].sockname, server, port, 1);
@@ -582,8 +568,7 @@ int open_telnet(int idx, char *server, int port)
  * connection on the given address. The address can be filled in by
  * setsockname().
  */
-int open_address_listen(sockname_t *addr)
-{
+int open_address_listen(sockname_t *addr) {
   int sock = 0;
 
   sock = getsock(addr->family, SOCK_LISTEN);
@@ -592,7 +577,7 @@ int open_address_listen(sockname_t *addr)
 #if defined IPV6 && IPV6_V6ONLY
   if (addr->family == AF_INET6) {
     int on = 0;
-    setsockopt(sock, IPPROTO_IPV6, IPV6_V6ONLY, (char *) &on, sizeof(on));
+    setsockopt(sock, IPPROTO_IPV6, IPV6_V6ONLY, (char *)&on, sizeof(on));
   }
 #endif
   if (bind(sock, &addr->addr.sa, addr->addrlen) < 0) {
@@ -615,12 +600,11 @@ int open_address_listen(sockname_t *addr)
 /* Returns a socket number for a listening socket that will accept any
  * connection -- port # is returned in port
  */
-int open_listen(int *port)
-{
+int open_listen(int *port) {
   int sock;
   sockname_t name;
 
-  (void) setsockname(&name, listen_ip, *port, 1);
+  (void)setsockname(&name, listen_ip, *port, 1);
   sock = open_address_listen(&name);
   if (name.addr.sa.sa_family == AF_INET)
     *port = ntohs(name.addr.s4.sin_port);
@@ -636,8 +620,7 @@ int open_listen(int *port)
  * If port is not NULL, it points to an integer to hold the port number
  * of the caller.
  */
-int answer(int sock, sockname_t *caller, unsigned short *port, int binary)
-{
+int answer(int sock, sockname_t *caller, unsigned short *port, int binary) {
   int new_sock;
   caller->addrlen = sizeof(caller->addr);
   new_sock = accept(sock, &caller->addr.sa, &caller->addrlen);
@@ -658,8 +641,7 @@ int answer(int sock, sockname_t *caller, unsigned short *port, int binary)
   return new_sock;
 }
 
-int getdccaddr(sockname_t *addr, char *s, size_t l)
-{
+int getdccaddr(sockname_t *addr, char *s, size_t l) {
   return getdccfamilyaddr(addr, s, l, AF_UNSPEC);
 }
 
@@ -670,8 +652,7 @@ int getdccaddr(sockname_t *addr, char *s, size_t l)
  * the possible IPs to the specified family. The result is a string useable
  * for DCC requests
  */
-int getdccfamilyaddr(sockname_t *addr, char *s, size_t l, int restrict_af)
-{
+int getdccfamilyaddr(sockname_t *addr, char *s, size_t l, int restrict_af) {
   char h[121];
   sockname_t name, *r = &name;
   int af = AF_UNSPEC;
@@ -686,24 +667,24 @@ int getdccfamilyaddr(sockname_t *addr, char *s, size_t l, int restrict_af)
   if (
 #ifdef IPV6
       ((r->family == AF_INET6) &&
-      IN6_IS_ADDR_UNSPECIFIED(&r->addr.s6.sin6_addr)) ||
+       IN6_IS_ADDR_UNSPECIFIED(&r->addr.s6.sin6_addr)) ||
 #endif
       (r->family == AF_INET && !r->addr.s4.sin_addr.s_addr)) {
-      /* We can't send :: or 0.0.0.0 for dcc, so try
-         to figure out some real address */
+/* We can't send :: or 0.0.0.0 for dcc, so try
+   to figure out some real address */
 #ifdef IPV6
-     /* If it's listening on an IPv6 :: address,
-        try using vhost6 as the source IP */
+    /* If it's listening on an IPv6 :: address,
+       try using vhost6 as the source IP */
     if (pref_af && (r->family == AF_INET6) && (restrict_af != AF_INET)) {
       if (inet_pton(AF_INET6, vhost6, &r->addr.s6.sin6_addr) != 1) {
         r = &name;
         gethostname(h, sizeof h);
         setsockname(r, h, 0, 1);
         if (r->family == AF_INET) {
-        /* setsockname tries to resolve  both ipv4 and ipv6. ipv4 dns
-           resolution comes later in precedence, so if we get an ipv4
-           back, reset it to the original addr struct and try
-           again */
+          /* setsockname tries to resolve  both ipv4 and ipv6. ipv4 dns
+             resolution comes later in precedence, so if we get an ipv4
+             back, reset it to the original addr struct and try
+             again */
           if (addr) {
             r = addr;
           } else {
@@ -714,13 +695,14 @@ int getdccfamilyaddr(sockname_t *addr, char *s, size_t l, int restrict_af)
       }
     }
 #endif
-     /* If IPv6 didn't work, or it's listening on an IPv4
-        0.0.0.0 address, try using vhost4 as the source */
+    /* If IPv6 didn't work, or it's listening on an IPv4
+       0.0.0.0 address, try using vhost4 as the source */
     if ((
 #ifdef IPV6
-      !pref_af ||
+            !pref_af ||
 #endif
-      af) && (restrict_af != AF_INET6)) {
+            af) &&
+        (restrict_af != AF_INET6)) {
       if (!egg_inet_aton(vhost, &r->addr.s4.sin_addr)) {
         /* And if THAT fails, try DNS resolution of hostname */
         r = &name;
@@ -733,7 +715,7 @@ int getdccfamilyaddr(sockname_t *addr, char *s, size_t l, int restrict_af)
   if (
 #ifdef IPV6
       ((r->family == AF_INET6) &&
-      IN6_IS_ADDR_UNSPECIFIED(&r->addr.s6.sin6_addr)) ||
+       IN6_IS_ADDR_UNSPECIFIED(&r->addr.s6.sin6_addr)) ||
       ((r->family == AF_INET6) && (restrict_af == AF_INET)) ||
       ((r->family == AF_INET) && (restrict_af == AF_INET6)) ||
 #endif
@@ -745,14 +727,15 @@ int getdccfamilyaddr(sockname_t *addr, char *s, size_t l, int restrict_af)
     if (IN6_IS_ADDR_V4MAPPED(&r->addr.s6.sin6_addr) ||
         IN6_IS_ADDR_UNSPECIFIED(&r->addr.s6.sin6_addr)) {
       egg_memcpy(&ip, r->addr.s6.sin6_addr.s6_addr + 12, sizeof ip);
-      egg_snprintf(s, l, "%lu", natip[0] ? iptolong(inet_addr(natip)) :
-               ntohl(ip));
+      egg_snprintf(s, l, "%lu",
+                   natip[0] ? iptolong(inet_addr(natip)) : ntohl(ip));
     } else
       inet_ntop(AF_INET6, &r->addr.s6.sin6_addr, s, l);
   } else
 #endif
-  egg_snprintf(s, l, "%lu", natip[0] ? iptolong(inet_addr(natip)) :
-             ntohl(r->addr.s4.sin_addr.s_addr));
+    egg_snprintf(s, l, "%lu",
+                 natip[0] ? iptolong(inet_addr(natip))
+                          : ntohl(r->addr.s4.sin_addr.s_addr));
   return 1;
 }
 
@@ -760,8 +743,8 @@ int getdccfamilyaddr(sockname_t *addr, char *s, size_t l, int restrict_af)
  * sockets, but tcl also cares for writable/exceptions.
  * preparefdset() can be called by Tcl Threads
  */
-int preparefdset(fd_set *fd, sock_list *slist, int slistmax, int tclonly, int tclmask)
-{
+int preparefdset(fd_set *fd, sock_list *slist, int slistmax, int tclonly,
+                 int tclmask) {
   int fdtmp, i, foundsocks = 0;
 
   FD_ZERO(fd);
@@ -793,13 +776,14 @@ int preparefdset(fd_set *fd, sock_list *slist, int slistmax, int tclonly, int tc
 }
 
 /* A safer version of write() that deals with partial writes. */
-void safe_write(int fd, const void *buf, size_t count)
-{
+void safe_write(int fd, const void *buf, size_t count) {
   const char *bytes = buf;
   ssize_t ret;
   do {
     if ((ret = write(fd, bytes, count)) == -1 && errno != EINTR) {
-      putlog(LOG_MISC, "*", "Unexpected write() failure on attempt to write %zd bytes to fd %d: %s.", count, fd, strerror(errno));
+      putlog(LOG_MISC, "*", "Unexpected write() failure on attempt to write "
+                            "%zd bytes to fd %d: %s.",
+             count, fd, strerror(errno));
       break;
     }
   } while ((bytes += ret, count -= ret));
@@ -815,8 +799,7 @@ void safe_write(int fd, const void *buf, size_t count)
  * if nothing is ready:  returns -3
  *    tcl sockets busy:  returns -5
  */
-int sockread(char *s, int *len, sock_list *slist, int slistmax, int tclonly)
-{
+int sockread(char *s, int *len, sock_list *slist, int slistmax, int tclonly) {
   struct timeval t;
   fd_set fdr, fdw, fde;
   int fds, i, x, have_r, have_w, have_e;
@@ -826,7 +809,7 @@ int sockread(char *s, int *len, sock_list *slist, int slistmax, int tclonly)
   fds = getdtablesize();
 #ifdef FD_SETSIZE
   if (fds > FD_SETSIZE)
-    fds = FD_SETSIZE;           /* Fixes YET ANOTHER freebsd bug!!! */
+    fds = FD_SETSIZE; /* Fixes YET ANOTHER freebsd bug!!! */
 #endif
 
   have_r = preparefdset(&fdr, slist, slistmax, tclonly, TCL_READABLE);
@@ -837,23 +820,21 @@ int sockread(char *s, int *len, sock_list *slist, int slistmax, int tclonly)
   t.tv_sec = td->blocktime.tv_sec;
   t.tv_usec = td->blocktime.tv_usec;
 
-  x = select((SELECT_TYPE_ARG1) fds,
-             SELECT_TYPE_ARG234 (have_r ? &fdr : NULL),
-             SELECT_TYPE_ARG234 (have_w ? &fdw : NULL),
-             SELECT_TYPE_ARG234 (have_e ? &fde : NULL),
-             SELECT_TYPE_ARG5 &t);
+  x = select((SELECT_TYPE_ARG1)fds, SELECT_TYPE_ARG234(have_r ? &fdr : NULL),
+             SELECT_TYPE_ARG234(have_w ? &fdw : NULL),
+             SELECT_TYPE_ARG234(have_e ? &fde : NULL), SELECT_TYPE_ARG5 & t);
   if (x == -1)
-    return -2;                  /* socket error */
+    return -2; /* socket error */
 
   for (i = 0; i < slistmax; i++) {
     if (!tclonly && ((!(slist[i].flags & (SOCK_UNUSED | SOCK_TCL))) &&
-        ((FD_ISSET(slist[i].sock, &fdr)) ||
+                     ((FD_ISSET(slist[i].sock, &fdr)) ||
 #ifdef TLS
-        (slist[i].ssl && (SSL_pending(slist[i].ssl) ||
-         !SSL_is_init_finished(slist[i].ssl))) ||
+                      (slist[i].ssl && (SSL_pending(slist[i].ssl) ||
+                                        !SSL_is_init_finished(slist[i].ssl))) ||
 #endif
-        ((slist[i].sock == STDOUT) && (!backgrd) &&
-         (FD_ISSET(STDIN, &fdr)))))) {
+                      ((slist[i].sock == STDOUT) && (!backgrd) &&
+                       (FD_ISSET(STDIN, &fdr)))))) {
       if (slist[i].flags & (SOCK_LISTEN | SOCK_CONNECT)) {
         /* Listening socket -- don't read, just return activity */
         /* Same for connection attempt */
@@ -900,7 +881,7 @@ int sockread(char *s, int *len, sock_list *slist, int slistmax, int tclonly)
 #else
         x = read(slist[i].sock, s, grab);
 #endif
-      if (x <= 0) {           /* eof */
+      if (x <= 0) {            /* eof */
         if (errno != EAGAIN) { /* EAGAIN happens when the operation would
                                 * block on a non-blocking socket, if the
                                 * socket is going to die, it will die later,
@@ -912,7 +893,7 @@ int sockread(char *s, int *len, sock_list *slist, int slistmax, int tclonly)
         } else {
           debug3("sockread EAGAIN: %d %d (%s)", slist[i].sock, errno,
                  strerror(errno));
-          continue;           /* EAGAIN */
+          continue; /* EAGAIN */
         }
       }
       s[x] = 0;
@@ -921,15 +902,15 @@ int sockread(char *s, int *len, sock_list *slist, int slistmax, int tclonly)
         debug2("net: socket: %d proxy errno: %d", slist[i].sock, s[1]);
         slist[i].flags &= ~(SOCK_CONNECT | SOCK_PROXYWAIT);
         switch (s[1]) {
-        case 90:             /* Success */
+        case 90: /* Success */
           s[0] = 0;
           *len = 0;
           return i;
-        case 91:             /* Failed */
+        case 91: /* Failed */
           errno = ECONNREFUSED;
           break;
-        case 92:             /* No identd */
-        case 93:             /* Identd said wrong username */
+        case 92: /* No identd */
+        case 93: /* Identd said wrong username */
           /* A better error message would be "socks misconfigured"
            * or "identd not working" but this is simplest.
            */
@@ -984,8 +965,7 @@ int sockread(char *s, int *len, sock_list *slist, int slistmax, int tclonly)
  * Returns -5 if tcl sockets are busy but not eggdrop sockets.
  */
 
-int sockgets(char *s, int *len)
-{
+int sockgets(char *s, int *len) {
   char xx[514], *p, *px;
   int ret, i, data = 0;
 
@@ -1016,7 +996,8 @@ int sockgets(char *s, int *len)
         /* Handling buffered binary data (must have been SOCK_BUFFER before). */
         if (socklist[i].handler.sock.inbuflen <= 510) {
           *len = socklist[i].handler.sock.inbuflen;
-          egg_memcpy(s, socklist[i].handler.sock.inbuf, socklist[i].handler.sock.inbuflen);
+          egg_memcpy(s, socklist[i].handler.sock.inbuf,
+                     socklist[i].handler.sock.inbuflen);
           nfree(socklist[i].handler.sock.inbuf);
           socklist[i].handler.sock.inbuf = NULL;
           socklist[i].handler.sock.inbuflen = 0;
@@ -1024,9 +1005,12 @@ int sockgets(char *s, int *len)
           /* Split up into chunks of 510 bytes. */
           *len = 510;
           egg_memcpy(s, socklist[i].handler.sock.inbuf, *len);
-          egg_memcpy(socklist[i].handler.sock.inbuf, socklist[i].handler.sock.inbuf + *len, *len);
+          egg_memcpy(socklist[i].handler.sock.inbuf,
+                     socklist[i].handler.sock.inbuf + *len, *len);
           socklist[i].handler.sock.inbuflen -= *len;
-          socklist[i].handler.sock.inbuf = nrealloc(socklist[i].handler.sock.inbuf, socklist[i].handler.sock.inbuflen);
+          socklist[i].handler.sock.inbuf =
+              nrealloc(socklist[i].handler.sock.inbuf,
+                       socklist[i].handler.sock.inbuflen);
         }
         return socklist[i].sock;
       }
@@ -1069,14 +1053,17 @@ int sockgets(char *s, int *len)
     return socklist[ret].sock;
   }
   if (socklist[ret].flags & SOCK_BUFFER) {
-    socklist[ret].handler.sock.inbuf = (char *) nrealloc(socklist[ret].handler.sock.inbuf,
-                                            socklist[ret].handler.sock.inbuflen + *len + 1);
-    egg_memcpy(socklist[ret].handler.sock.inbuf + socklist[ret].handler.sock.inbuflen, xx, *len);
+    socklist[ret].handler.sock.inbuf =
+        (char *)nrealloc(socklist[ret].handler.sock.inbuf,
+                         socklist[ret].handler.sock.inbuflen + *len + 1);
+    egg_memcpy(socklist[ret].handler.sock.inbuf +
+                   socklist[ret].handler.sock.inbuflen,
+               xx, *len);
     socklist[ret].handler.sock.inbuflen += *len;
     /* We don't know whether it's binary data. Make sure normal strings
      * will be handled properly later on too. */
     socklist[ret].handler.sock.inbuf[socklist[ret].handler.sock.inbuflen] = 0;
-    return -4;                  /* Ignore this one. */
+    return -4; /* Ignore this one. */
   }
   /* Might be necessary to prepend stored-up data! */
   if (socklist[ret].handler.sock.inbuf != NULL) {
@@ -1093,7 +1080,8 @@ int sockgets(char *s, int *len)
     } else {
       p = socklist[ret].handler.sock.inbuf;
       socklist[ret].handler.sock.inbuflen = strlen(p) - 510;
-      socklist[ret].handler.sock.inbuf = nmalloc(socklist[ret].handler.sock.inbuflen + 1);
+      socklist[ret].handler.sock.inbuf =
+          nmalloc(socklist[ret].handler.sock.inbuflen + 1);
       strcpy(socklist[ret].handler.sock.inbuf, p + 510);
       *(p + 510) = 0;
       strcpy(xx, p);
@@ -1112,8 +1100,8 @@ int sockgets(char *s, int *len)
     if (s[strlen(s) - 1] == '\r')
       s[strlen(s) - 1] = 0;
     data = 1; /* DCC_CHAT may now need to process a blank line */
-/* NO! */
-/* if (!s[0]) strcpy(s," ");  */
+              /* NO! */
+              /* if (!s[0]) strcpy(s," ");  */
   } else {
     s[0] = 0;
     if (strlen(xx) >= 510) {
@@ -1135,13 +1123,15 @@ int sockgets(char *s, int *len)
   if (socklist[ret].handler.sock.inbuf != NULL) {
     p = socklist[ret].handler.sock.inbuf;
     socklist[ret].handler.sock.inbuflen = strlen(p) + strlen(xx);
-    socklist[ret].handler.sock.inbuf = nmalloc(socklist[ret].handler.sock.inbuflen + 1);
+    socklist[ret].handler.sock.inbuf =
+        nmalloc(socklist[ret].handler.sock.inbuflen + 1);
     strcpy(socklist[ret].handler.sock.inbuf, xx);
     strcat(socklist[ret].handler.sock.inbuf, p);
     nfree(p);
   } else {
     socklist[ret].handler.sock.inbuflen = strlen(xx);
-    socklist[ret].handler.sock.inbuf = nmalloc(socklist[ret].handler.sock.inbuflen + 1);
+    socklist[ret].handler.sock.inbuf =
+        nmalloc(socklist[ret].handler.sock.inbuflen + 1);
     strcpy(socklist[ret].handler.sock.inbuf, xx);
   }
   if (data)
@@ -1154,8 +1144,7 @@ int sockgets(char *s, int *len)
  *
  * NOTE: Do NOT put Contexts in here if you want DEBUG to be meaningful!!
  */
-void tputs(register int z, char *s, unsigned int len)
-{
+void tputs(register int z, char *s, unsigned int len) {
   register int i, x, idx;
   char *p;
   static int inhere = 0;
@@ -1192,7 +1181,8 @@ void tputs(register int z, char *s, unsigned int len)
 
       if (socklist[i].handler.sock.outbuf != NULL) {
         /* Already queueing: just add it */
-        p = (char *) nrealloc(socklist[i].handler.sock.outbuf, socklist[i].handler.sock.outbuflen + len);
+        p = (char *)nrealloc(socklist[i].handler.sock.outbuf,
+                             socklist[i].handler.sock.outbuflen + len);
         egg_memcpy(p + socklist[i].handler.sock.outbuflen, s, len);
         socklist[i].handler.sock.outbuf = p;
         socklist[i].handler.sock.outbuflen += len;
@@ -1215,8 +1205,8 @@ void tputs(register int z, char *s, unsigned int len)
         }
       } else /* not ssl, use regular write() */
 #endif
-      /* Try. */
-      x = write(z, s, len);
+        /* Try. */
+        x = write(z, s, len);
       if (x == -1)
         x = 0;
       if (x < len) {
@@ -1243,24 +1233,25 @@ void tputs(register int z, char *s, unsigned int len)
 /* tputs might queue data for sockets, let's dump as much of it as
  * possible.
  */
-void dequeue_sockets()
-{
+void dequeue_sockets() {
   int i, x;
 
   int z = 0, fds;
   fd_set wfds;
   struct timeval tv;
 
-/* ^-- start poptix test code, this should avoid writes to sockets not ready to be written to. */
+  /* ^-- start poptix test code, this should avoid writes to sockets not ready
+   * to be written to. */
   fds = getdtablesize();
 
 #ifdef FD_SETSIZE
   if (fds > FD_SETSIZE)
-    fds = FD_SETSIZE;           /* Fixes YET ANOTHER freebsd bug!!! */
+    fds = FD_SETSIZE; /* Fixes YET ANOTHER freebsd bug!!! */
 #endif
   FD_ZERO(&wfds);
   tv.tv_sec = 0;
-  tv.tv_usec = 0;               /* we only want to see if it's ready for writing, no need to actually wait.. */
+  tv.tv_usec = 0; /* we only want to see if it's ready for writing, no need to
+                     actually wait.. */
   for (i = 0; i < threaddata()->MAXSOCKS; i++)
     if (!(socklist[i].flags & (SOCK_UNUSED | SOCK_TCL)) &&
         (socklist[i].handler.sock.outbuf != NULL)) {
@@ -1268,17 +1259,18 @@ void dequeue_sockets()
       z = 1;
     }
   if (!z)
-    return;                     /* nothing to write */
+    return; /* nothing to write */
 
-  select((SELECT_TYPE_ARG1) fds, SELECT_TYPE_ARG234 NULL,
-         SELECT_TYPE_ARG234 &wfds, SELECT_TYPE_ARG234 NULL,
-         SELECT_TYPE_ARG5 &tv);
+  select((SELECT_TYPE_ARG1)fds, SELECT_TYPE_ARG234 NULL,
+         SELECT_TYPE_ARG234 & wfds, SELECT_TYPE_ARG234 NULL,
+         SELECT_TYPE_ARG5 & tv);
 
-/* end poptix */
+  /* end poptix */
 
   for (i = 0; i < threaddata()->MAXSOCKS; i++) {
     if (!(socklist[i].flags & (SOCK_UNUSED | SOCK_TCL)) &&
-        (socklist[i].handler.sock.outbuf != NULL) && (FD_ISSET(socklist[i].sock, &wfds))) {
+        (socklist[i].handler.sock.outbuf != NULL) &&
+        (FD_ISSET(socklist[i].sock, &wfds))) {
       /* Trick tputs into doing the work */
       errno = 0;
 #ifdef TLS
@@ -1296,8 +1288,8 @@ void dequeue_sockets()
         }
       } else
 #endif
-      x = write(socklist[i].sock, socklist[i].handler.sock.outbuf,
-                socklist[i].handler.sock.outbuflen);
+        x = write(socklist[i].sock, socklist[i].handler.sock.outbuf,
+                  socklist[i].handler.sock.outbuflen);
       if ((x < 0) && (errno != EAGAIN)
 #ifdef EBADSLT
           && (errno != EBADSLT)
@@ -1305,7 +1297,7 @@ void dequeue_sockets()
 #ifdef ENOTCONN
           && (errno != ENOTCONN)
 #endif
-        ) {
+              ) {
         /* This detects an EOF during writing */
         debug3("net: eof!(write) socket %d (%s,%d)", socklist[i].sock,
                strerror(errno), errno);
@@ -1320,7 +1312,7 @@ void dequeue_sockets()
 
         /* This removes any sent bytes from the beginning of the buffer */
         socklist[i].handler.sock.outbuf =
-                            nmalloc(socklist[i].handler.sock.outbuflen - x);
+            nmalloc(socklist[i].handler.sock.outbuflen - x);
         egg_memcpy(socklist[i].handler.sock.outbuf, p + x,
                    socklist[i].handler.sock.outbuflen - x);
         socklist[i].handler.sock.outbuflen -= x;
@@ -1342,13 +1334,11 @@ void dequeue_sockets()
   }
 }
 
-
 /*
  *      Debugging stuff
  */
 
-void tell_netdebug(int idx)
-{
+void tell_netdebug(int idx) {
   int i;
   char s[80];
 
@@ -1377,9 +1367,10 @@ void tell_netdebug(int idx)
       if (!(socklist[i].flags & SOCK_TCL)) {
         if (socklist[i].handler.sock.inbuf != NULL)
           sprintf(&s[strlen(s)], " (inbuf: %04X)",
-                  (unsigned int) strlen(socklist[i].handler.sock.inbuf));
+                  (unsigned int)strlen(socklist[i].handler.sock.inbuf));
         if (socklist[i].handler.sock.outbuf != NULL)
-          sprintf(&s[strlen(s)], " (outbuf: %06lX)", socklist[i].handler.sock.outbuflen);
+          sprintf(&s[strlen(s)], " (outbuf: %06lX)",
+                  socklist[i].handler.sock.outbuflen);
       }
       strcat(s, ",");
       dprintf(idx, "%s", s);
@@ -1396,11 +1387,10 @@ void tell_netdebug(int idx)
  * isn't going to work anyway due to masquerading firewalls, NAT routers,
  * or bugs in mIRC.
  */
-int sanitycheck_dcc(char *nick, char *from, char *ipaddy, char *port)
-{
-  /* According to the latest RFC, the clients SHOULD be able to handle
-   * DNS names that are up to 255 characters long.  This is not broken.
-   */
+int sanitycheck_dcc(char *nick, char *from, char *ipaddy, char *port) {
+/* According to the latest RFC, the clients SHOULD be able to handle
+ * DNS names that are up to 255 characters long.  This is not broken.
+ */
 
 #ifdef IPV6
   char badaddress[INET6_ADDRSTRLEN];
@@ -1425,7 +1415,8 @@ int sanitycheck_dcc(char *nick, char *from, char *ipaddy, char *port)
   if (strchr(ipaddy, ':')) {
     if (inet_pton(AF_INET6, ipaddy, &name.addr.s6.sin6_addr) != 1) {
       putlog(LOG_MISC, "*", "ALERT: (%s!%s) specified an invalid IPv6 "
-             "address of %s!", nick, from, ipaddy);
+                            "address of %s!",
+             nick, from, ipaddy);
       return 0;
     }
     if (IN6_IS_ADDR_V4MAPPED(&name.addr.s6.sin6_addr)) {
@@ -1444,8 +1435,7 @@ int sanitycheck_dcc(char *nick, char *from, char *ipaddy, char *port)
 }
 
 int hostsanitycheck_dcc(char *nick, char *from, sockname_t *ip, char *dnsname,
-                        char *prt)
-{
+                        char *prt) {
   char badaddress[INET6_ADDRSTRLEN];
 
   /* According to the latest RFC, the clients SHOULD be able to handle
@@ -1467,12 +1457,13 @@ int hostsanitycheck_dcc(char *nick, char *from, sockname_t *ip, char *dnsname,
     return 1;
   }
   if (!strcmp(badaddress, dnsname))
-    putlog(LOG_MISC, "*", "ALERT: (%s!%s) sent a DCC request with bogus IP "
-           "information of %s port %s. %s does not resolve to %s!", nick, from,
-           badaddress, prt, from, badaddress);
+    putlog(LOG_MISC, "*",
+           "ALERT: (%s!%s) sent a DCC request with bogus IP "
+           "information of %s port %s. %s does not resolve to %s!",
+           nick, from, badaddress, prt, from, badaddress);
   else
-    return 1;                   /* <- usually happens when we have
-                                 * a user with an unresolved hostmask! */
+    return 1; /* <- usually happens when we have
+               * a user with an unresolved hostmask! */
   return 0;
 }
 
@@ -1481,8 +1472,7 @@ int hostsanitycheck_dcc(char *nick, char *from, sockname_t *ip, char *dnsname,
  * Returns true if the incoming/outgoing (depending on 'type') queues
  * contain data, otherwise false.
  */
-int sock_has_data(int type, int sock)
-{
+int sock_has_data(int type, int sock) {
   int ret = 0, i;
 
   for (i = 0; i < threaddata()->MAXSOCKS; i++)
@@ -1512,8 +1502,7 @@ int sock_has_data(int type, int sock)
  *          0 if buffer was empty
  *          otherwise length of flushed buffer
  */
-int flush_inbuf(int idx)
-{
+int flush_inbuf(int idx) {
   int i, len;
   char *inbuf;
 
@@ -1542,8 +1531,7 @@ int flush_inbuf(int idx)
  *
  * Returns index in socklist or -1 if not found.
  */
-int findsock(int sock)
-{
+int findsock(int sock) {
   int i;
   struct threaddata *td = threaddata();
 
@@ -1555,26 +1543,35 @@ int findsock(int sock)
   return i;
 }
 
-/* Trace on my-ip and my-hostname variable to handle transition into vhost4/vhost6/listen-addr.
+/* Trace on my-ip and my-hostname variable to handle transition into
+ * vhost4/vhost6/listen-addr.
  */
-char *traced_myiphostname(ClientData cd, Tcl_Interp *irp, EGG_CONST char *name1, EGG_CONST char *name2, int flags)
-{
+char *traced_myiphostname(ClientData cd, Tcl_Interp *irp, EGG_CONST char *name1,
+                          EGG_CONST char *name2, int flags) {
   const char *value;
 
   if (flags & TCL_INTERP_DESTROYED)
     return NULL;
   /* Recover trace in case of unset. */
   if (flags & TCL_TRACE_DESTROYED) {
-    Tcl_TraceVar2(irp, name1, name2, TCL_GLOBAL_ONLY|TCL_TRACE_WRITES|TCL_TRACE_UNSETS, traced_myiphostname, cd);
+    Tcl_TraceVar2(irp, name1, name2,
+                  TCL_GLOBAL_ONLY | TCL_TRACE_WRITES | TCL_TRACE_UNSETS,
+                  traced_myiphostname, cd);
     return NULL;
   }
 
   value = Tcl_GetVar2(irp, name1, name2, TCL_GLOBAL_ONLY);
   strncpyz(vhost, value, sizeof vhost);
   strncpyz(listen_ip, value, sizeof listen_ip);
-  putlog(LOG_MISC, "*", "WARNING: You are using the DEPRECATED variable '%s' in your config file.\n", name1);
-  putlog(LOG_MISC, "*", "    To prevent future incompatibility, please use the vhost4/listen-addr variables instead.\n");
-  putlog(LOG_MISC, "*", "    More information on this subject can be found in the eggdrop/doc/IPV6 file, or\n");
-  putlog(LOG_MISC, "*", "    in the comments above those settings in the example eggdrop.conf that is included with Eggdrop.\n");
+  putlog(LOG_MISC, "*", "WARNING: You are using the DEPRECATED variable '%s' "
+                        "in your config file.\n",
+         name1);
+  putlog(LOG_MISC, "*", "    To prevent future incompatibility, please use the "
+                        "vhost4/listen-addr variables instead.\n");
+  putlog(LOG_MISC, "*", "    More information on this subject can be found in "
+                        "the eggdrop/doc/IPV6 file, or\n");
+  putlog(LOG_MISC, "*", "    in the comments above those settings in the "
+                        "example eggdrop.conf that is included with "
+                        "Eggdrop.\n");
   return NULL;
 }

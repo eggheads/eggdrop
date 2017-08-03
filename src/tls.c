@@ -35,22 +35,20 @@
 extern int tls_vfydcc;
 extern struct dcc_t *dcc;
 
-int tls_maxdepth = 9;         /* Max certificate chain verification depth     */
-int ssl_files_loaded = 1;     /* Check for loaded SSL key/cert files          */
-SSL_CTX *ssl_ctx = NULL;      /* SSL context object                           */
-char *tls_randfile = NULL;    /* Random seed file for SSL                     */
-char tls_capath[121] = "";    /* Path to trusted CA certificates              */
-char tls_cafile[121] = "";    /* File containing trusted CA certificates      */
-char tls_certfile[121] = "";  /* Our own digital certificate ;)               */
-char tls_keyfile[121] = "";   /* Private key for use with eggdrop             */
-char tls_ciphers[121] = "";   /* A list of ciphers for SSL to use             */
-
+int tls_maxdepth = 9;        /* Max certificate chain verification depth     */
+int ssl_files_loaded = 1;    /* Check for loaded SSL key/cert files          */
+SSL_CTX *ssl_ctx = NULL;     /* SSL context object                           */
+char *tls_randfile = NULL;   /* Random seed file for SSL                     */
+char tls_capath[121] = "";   /* Path to trusted CA certificates              */
+char tls_cafile[121] = "";   /* File containing trusted CA certificates      */
+char tls_certfile[121] = ""; /* Our own digital certificate ;)               */
+char tls_keyfile[121] = "";  /* Private key for use with eggdrop             */
+char tls_ciphers[121] = "";  /* A list of ciphers for SSL to use             */
 
 /* Count allocated memory for SSL. This excludes memory allocated by OpenSSL's
  * family of malloc functions.
  */
-int expmem_tls()
-{
+int expmem_tls() {
   int i, tot;
   struct threaddata *td = threaddata();
 
@@ -70,15 +68,14 @@ int expmem_tls()
  *
  * Return value: 0 on success, !=0 on failure.
  */
-static int ssl_seed(void)
-{
+static int ssl_seed(void) {
   char stackdata[1024];
   static char rand_file[120];
   FILE *fh;
 
 #ifdef HAVE_RAND_STATUS
   if (RAND_status())
-    return 0;     /* Status OK */
+    return 0; /* Status OK */
 #endif
   /* If '/dev/urandom' is present, OpenSSL will use it by default.
    * Otherwise we'll have to generate pseudorandom data ourselves,
@@ -104,7 +101,7 @@ static int ssl_seed(void)
   }
 #ifdef HAVE_RAND_STATUS
   if (!RAND_status())
-    return 2;   /* pseudo random data still not ehough */
+    return 2; /* pseudo random data still not ehough */
 #endif
   return 0;
 }
@@ -118,8 +115,7 @@ static int ssl_seed(void)
  *
  * Return value: 0 on successful initialization, !=0 on failure
  */
-int ssl_init()
-{
+int ssl_init() {
   /* Load SSL and crypto error strings; register SSL algorithms */
   SSL_load_error_strings();
   SSL_library_init();
@@ -133,17 +129,20 @@ int ssl_init()
      supported protocols (SSLv2, SSLv3, and TLSv1) */
   if (!(ssl_ctx = SSL_CTX_new(SSLv23_method()))) {
     putlog(LOG_MISC, "*", ERR_error_string(ERR_get_error(), NULL));
-    putlog(LOG_MISC, "*", "ERROR: TLS: unable to create context. Disabling SSL.");
+    putlog(LOG_MISC, "*",
+           "ERROR: TLS: unable to create context. Disabling SSL.");
     ERR_free_strings();
     return -1;
   }
   if (!tls_certfile[0]) {
     ssl_files_loaded = 0;
     if (tls_keyfile[0])
-      putlog(LOG_MISC, "*", "ERROR: TLS: ssl-privatekey not set, ignoring ssl-certificate.");
+      putlog(LOG_MISC, "*",
+             "ERROR: TLS: ssl-privatekey not set, ignoring ssl-certificate.");
   } else if (!tls_keyfile[0]) {
     ssl_files_loaded = 0;
-    putlog(LOG_MISC, "*", "ERROR: TLS: ssl-certificate not set, ignoring ssl-privatekey.");
+    putlog(LOG_MISC, "*",
+           "ERROR: TLS: ssl-certificate not set, ignoring ssl-privatekey.");
   } else {
     ssl_files_loaded = 1;
     /* Load our own certificate and private key. Mandatory for acting as
@@ -154,8 +153,8 @@ int ssl_init()
       putlog(LOG_MISC, "*", "  Check ssl-certificate in config.");
       ssl_files_loaded = 0;
     }
-    if (SSL_CTX_use_PrivateKey_file(ssl_ctx, tls_keyfile,
-        SSL_FILETYPE_PEM) != 1) {
+    if (SSL_CTX_use_PrivateKey_file(ssl_ctx, tls_keyfile, SSL_FILETYPE_PEM) !=
+        1) {
       putlog(LOG_MISC, "*", "ERROR: TLS: unable to load private key: %s",
              ERR_error_string(ERR_get_error(), NULL));
       putlog(LOG_MISC, "*", "  Check ssl-privatekey in config.");
@@ -164,14 +163,16 @@ int ssl_init()
   }
   if ((tls_capath[0] || tls_cafile[0]) &&
       !SSL_CTX_load_verify_locations(ssl_ctx, tls_cafile[0] ? tls_cafile : NULL,
-      tls_capath[0] ? tls_capath : NULL))
-    putlog(LOG_MISC, "*", "ERROR: TLS: unable to set CA certificates location: %s",
+                                     tls_capath[0] ? tls_capath : NULL))
+    putlog(LOG_MISC, "*",
+           "ERROR: TLS: unable to set CA certificates location: %s",
            ERR_error_string(ERR_get_error(), NULL));
   /* Let advanced users specify the list of allowed ssl ciphers */
   if (tls_ciphers[0])
     if (!SSL_CTX_set_cipher_list(ssl_ctx, tls_ciphers)) {
       /* this replaces any preset ciphers so an invalid list is fatal */
-      putlog(LOG_MISC, "*", "ERROR: TLS: no valid ciphers found. Disabling SSL.");
+      putlog(LOG_MISC, "*",
+             "ERROR: TLS: no valid ciphers found. Disabling SSL.");
       ERR_free_strings();
       SSL_CTX_free(ssl_ctx);
       ssl_ctx = NULL;
@@ -182,8 +183,7 @@ int ssl_init()
 }
 
 /* Free the SSL CTX, clean up the mess */
-void ssl_cleanup()
-{
+void ssl_cleanup() {
   if (ssl_ctx) {
     SSL_CTX_free(ssl_ctx);
     ssl_ctx = NULL;
@@ -193,8 +193,7 @@ void ssl_cleanup()
   ERR_free_strings();
 }
 
-char *ssl_fpconv(char *in, char *out)
-{
+char *ssl_fpconv(char *in, char *out) {
   long len;
   char *fp;
   unsigned char *md5;
@@ -211,7 +210,7 @@ char *ssl_fpconv(char *in, char *out)
       OPENSSL_free(fp);
       return out;
     }
-      OPENSSL_free(md5);
+    OPENSSL_free(md5);
   }
   return NULL;
 }
@@ -222,8 +221,7 @@ char *ssl_fpconv(char *in, char *out)
  * Return value: pointer to a X509 certificate or NULL if we couldn't
  * look up the certificate.
  */
-static X509 *ssl_getcert(int sock)
-{
+static X509 *ssl_getcert(int sock) {
   int i;
   struct threaddata *td = threaddata();
 
@@ -239,8 +237,7 @@ static X509 *ssl_getcert(int sock)
  * Return value: ptr to the hexadecimal representation of the fingerprint
  * or NULL if there's no certificate associated with the connection.
  */
-char *ssl_getfp(int sock)
-{
+char *ssl_getfp(int sock) {
   char *p;
   unsigned i;
   X509 *cert;
@@ -263,8 +260,7 @@ char *ssl_getfp(int sock)
  *
  * Return value: Pointer to the uid string or NULL if not found
  */
-const char *ssl_getuid(int sock)
-{
+const char *ssl_getuid(int sock) {
   int idx;
   X509 *cert;
   X509_NAME *subj;
@@ -282,7 +278,7 @@ const char *ssl_getuid(int sock)
     return NULL;
   name = X509_NAME_ENTRY_get_data(X509_NAME_get_entry(subj, idx));
   /* Extract the contents, assuming null-terminated ASCII string */
-  return (const char *) egg_ASN1_string_data(name);
+  return (const char *)egg_ASN1_string_data(name);
 }
 
 /* Compare the peer's host with their Common Name or dnsName found in
@@ -292,8 +288,7 @@ const char *ssl_getuid(int sock)
  *
  * Return value: 1 if cn matches host, 0 otherwise.
  */
-static int ssl_hostmatch(const char *cn, const char *host)
-{
+static int ssl_hostmatch(const char *cn, const char *host) {
   const char *p, *q, *r;
 
   if ((r = strchr(cn + 1, '.')) && r[-1] == '*' && strchr(r, '.')) {
@@ -334,8 +329,7 @@ static int ssl_hostmatch(const char *cn, const char *host)
  *
  * Return value: 1 if the certificate matches the peer, 0 otherwise.
  */
-static int ssl_verifycn(X509 *cert, ssl_appdata *data)
-{
+static int ssl_verifycn(X509 *cert, ssl_appdata *data) {
   const char *cn;
   int crit = 0, match = 0;
   ASN1_OCTET_STRING *ip;
@@ -356,7 +350,7 @@ static int ssl_verifycn(X509 *cert, ssl_appdata *data)
           match = !ASN1_STRING_cmp(gn->d.ip, ip);
       } else if (gn->type == GEN_DNS) {
         /* IA5string holds ASCII data */
-        cn = (const char *) egg_ASN1_string_data(gn->d.ia5);
+        cn = (const char *)egg_ASN1_string_data(gn->d.ia5);
         match = ssl_hostmatch(cn, data->host);
       }
     }
@@ -366,14 +360,14 @@ static int ssl_verifycn(X509 *cert, ssl_appdata *data)
 
     /* the following is just for information */
     switch (crit) {
-      case 0:
-        debug0("TLS: X509 subjectAltName cannot be decoded");
-        break;
-      case -1:
-        debug0("TLS: X509 has no subjectAltName extension");
-        break;
-      case -2:
-        debug0("TLS: X509 has multiple subjectAltName extensions");
+    case 0:
+      debug0("TLS: X509 subjectAltName cannot be decoded");
+      break;
+    case -1:
+      debug0("TLS: X509 has no subjectAltName extension");
+      break;
+    case -2:
+      debug0("TLS: X509 has multiple subjectAltName extensions");
     }
     /* no subject name either? A completely broken certificate :) */
     if (!(subj = X509_get_subject_name(cert))) {
@@ -387,15 +381,18 @@ static int ssl_verifycn(X509 *cert, ssl_appdata *data)
       /* Look for commonName attributes in the subject name */
       pos = X509_NAME_get_index_by_NID(subj, NID_commonName, pos);
       if (pos == -1) /* sorry */
-        putlog(data->loglevel, "*", "TLS: Peer has no common names and "
-              "no subjectAltName extension. Verification failed.");
+        putlog(data->loglevel, "*",
+               "TLS: Peer has no common names and "
+               "no subjectAltName extension. Verification failed.");
       /* Loop through all common names which may be present in the subject
          name until we find a match. */
       while (!match && pos != -1) {
         name = X509_NAME_ENTRY_get_data(X509_NAME_get_entry(subj, pos));
-        cn = (const char *) egg_ASN1_string_data(name);
+        cn = (const char *)egg_ASN1_string_data(name);
         if (ip)
-          match = a2i_IPADDRESS(cn) ? (ASN1_STRING_cmp(ip, a2i_IPADDRESS(cn)) ? 0 : 1) : 0;
+          match = a2i_IPADDRESS(cn)
+                      ? (ASN1_STRING_cmp(ip, a2i_IPADDRESS(cn)) ? 0 : 1)
+                      : 0;
         else
           match = ssl_hostmatch(cn, data->host);
         pos = X509_NAME_get_index_by_NID(subj, NID_commonName, pos);
@@ -415,8 +412,7 @@ static int ssl_verifycn(X509 *cert, ssl_appdata *data)
  *
  * You need to nfree() the returned pointer.
  */
-static char *ssl_printname(X509_NAME *name)
-{
+static char *ssl_printname(X509_NAME *name) {
   int len;
   char *data, *buf;
   BIO *bio = BIO_new(BIO_s_mem());
@@ -438,8 +434,7 @@ static char *ssl_printname(X509_NAME *name)
  *
  * You need to nfree() the returned pointer.
  */
-static char *ssl_printtime(ASN1_UTCTIME *t)
-{
+static char *ssl_printtime(ASN1_UTCTIME *t) {
   int len;
   char *data, *buf;
   BIO *bio = BIO_new(BIO_s_mem());
@@ -458,8 +453,7 @@ static char *ssl_printtime(ASN1_UTCTIME *t)
  *
  * You need to nfree() the returned pointer.
  */
-static char *ssl_printnum(ASN1_INTEGER *i)
-{
+static char *ssl_printnum(ASN1_INTEGER *i) {
   int len;
   char *data, *buf;
   BIO *bio = BIO_new(BIO_s_mem());
@@ -475,8 +469,7 @@ static char *ssl_printnum(ASN1_INTEGER *i)
 /* Show the user all relevant information about a certificate: subject,
  * issuer, validity dates and fingerprints.
  */
-static void ssl_showcert(X509 *cert, int loglev)
-{
+static void ssl_showcert(X509 *cert, int loglev) {
   char *buf, *from, *to;
   X509_NAME *name;
   unsigned int len;
@@ -527,8 +520,7 @@ static void ssl_showcert(X509 *cert, int loglev)
  *
  * Return value: 1 - validation passed, 0 - invalid cert
  */
-int ssl_verify(int ok, X509_STORE_CTX *ctx)
-{
+int ssl_verify(int ok, X509_STORE_CTX *ctx) {
   SSL *ssl;
   X509 *cert;
   ssl_appdata *data;
@@ -537,9 +529,8 @@ int ssl_verify(int ok, X509_STORE_CTX *ctx)
   /* get cert, callbacks, error codes, etc. */
   depth = X509_STORE_CTX_get_error_depth(ctx);
   cert = X509_STORE_CTX_get_current_cert(ctx);
-  ssl = X509_STORE_CTX_get_ex_data(ctx,
-                          SSL_get_ex_data_X509_STORE_CTX_idx());
-  data = (ssl_appdata *) SSL_get_app_data(ssl);
+  ssl = X509_STORE_CTX_get_ex_data(ctx, SSL_get_ex_data_X509_STORE_CTX_idx());
+  data = (ssl_appdata *)SSL_get_app_data(ssl);
   err = X509_STORE_CTX_get_error(ctx);
 
   /* OpenSSL won't explicitly generate this error; instead it will
@@ -550,10 +541,10 @@ int ssl_verify(int ok, X509_STORE_CTX *ctx)
     ok = 0;
     err = X509_V_ERR_CERT_CHAIN_TOO_LONG;
 
-  /* depth 0 is actually the peer certificate. We do all custom
-   * verification here and leave the rest of the certificate chain
-   * to OpenSSL's built in procedures.
-   */
+    /* depth 0 is actually the peer certificate. We do all custom
+     * verification here and leave the rest of the certificate chain
+     * to OpenSSL's built in procedures.
+     */
   } else if (!depth) {
     /* OpenSSL doesn't perform subject name verification. We need to do
      * it ourselves. We check here for validity even if it's not requested
@@ -561,9 +552,9 @@ int ssl_verify(int ok, X509_STORE_CTX *ctx)
      */
     if (!(data->flags & TLS_DEPTH0) && (data->verify & TLS_VERIFYCN) &&
         !ssl_verifycn(cert, data)) {
-        putlog(data->loglevel, "*", "TLS: certificate validation failed. "
-               "Certificate subject does not match peer.");
-        return 0;
+      putlog(data->loglevel, "*", "TLS: certificate validation failed. "
+                                  "Certificate subject does not match peer.");
+      return 0;
     }
     data->flags |= TLS_DEPTH0;
     /* Allow exceptions for certain common verification errors, if the
@@ -572,13 +563,13 @@ int ssl_verify(int ok, X509_STORE_CTX *ctx)
      */
     if (!ok || data->verify)
       if (((err == X509_V_ERR_DEPTH_ZERO_SELF_SIGNED_CERT) &&
-          !(data->verify & TLS_VERIFYISSUER)) ||
+           !(data->verify & TLS_VERIFYISSUER)) ||
           ((err == X509_V_ERR_CERT_REVOKED) &&
-          !(data->verify & TLS_VERIFYREV)) ||
+           !(data->verify & TLS_VERIFYREV)) ||
           ((err == X509_V_ERR_CERT_NOT_YET_VALID) &&
-          !(data->verify & TLS_VERIFYFROM)) ||
+           !(data->verify & TLS_VERIFYFROM)) ||
           ((err == X509_V_ERR_CERT_HAS_EXPIRED) &&
-          !(data->verify & TLS_VERIFYTO))) {
+           !(data->verify & TLS_VERIFYTO))) {
         debug1("TLS: peer certificate warning: %s",
                X509_verify_cert_error_string(err));
         ok = 1;
@@ -587,8 +578,8 @@ int ssl_verify(int ok, X509_STORE_CTX *ctx)
   if (ok || !data->verify)
     return 1;
   putlog(data->loglevel, "*",
-         "TLS: certificate validation failed at depth %d: %s",
-         depth, X509_verify_cert_error_string(err));
+         "TLS: certificate validation failed at depth %d: %s", depth,
+         X509_verify_cert_error_string(err));
   return 0;
 }
 
@@ -596,8 +587,7 @@ int ssl_verify(int ok, X509_STORE_CTX *ctx)
  * and to check when the handshake is finished, so we can display
  * some cipher and session information and process callbacks.
  */
-void ssl_info(SSL *ssl, int where, int ret)
-{
+void ssl_info(SSL *ssl, int where, int ret) {
   int sock;
   X509 *cert;
   char buf[256];
@@ -608,7 +598,7 @@ void ssl_info(SSL *ssl, int where, int ret)
   /* We're doing non-blocking IO, so we check here if the handshake has
      finished */
   if (where & SSL_CB_HANDSHAKE_DONE) {
-    if (!(data = (ssl_appdata *) SSL_get_app_data(ssl)))
+    if (!(data = (ssl_appdata *)SSL_get_app_data(ssl)))
       return;
     /* Callback for completed handshake. Cheaper and more convenient than
        using H_tls */
@@ -621,7 +611,7 @@ void ssl_info(SSL *ssl, int where, int ret)
       return;
 
     putlog(data->loglevel, "*", "TLS: handshake successful. Secure connection "
-           "established.");
+                                "established.");
 
     if ((cert = SSL_get_peer_certificate(ssl)))
       ssl_showcert(cert, data->loglevel);
@@ -664,8 +654,7 @@ void ssl_info(SSL *ssl, int where, int ret)
  * Return value: 0 on success, !=0 on failure.
  */
 int ssl_handshake(int sock, int flags, int verify, int loglevel, char *host,
-                  IntFunc cb)
-{
+                  IntFunc cb) {
   int i, err, ret;
   ssl_appdata *data;
   struct threaddata *td = threaddata();
@@ -702,13 +691,13 @@ int ssl_handshake(int sock, int flags, int verify, int loglevel, char *host,
    * exceptions
    */
   if (data->verify)
-      data->verify ^= (TLS_VERIFYISSUER | TLS_VERIFYCN | TLS_VERIFYFROM |
-                       TLS_VERIFYTO | TLS_VERIFYREV);
+    data->verify ^= (TLS_VERIFYISSUER | TLS_VERIFYCN | TLS_VERIFYFROM |
+                     TLS_VERIFYTO | TLS_VERIFYREV);
   data->loglevel = loglevel;
   data->cb = cb;
   strncpyz(data->host, host ? host : "", sizeof(data->host));
   SSL_set_app_data(td->socklist[i].ssl, data);
-  SSL_set_info_callback(td->socklist[i].ssl, (void *) ssl_info);
+  SSL_set_info_callback(td->socklist[i].ssl, (void *)ssl_info);
   /* We set this +1 to be able to report extra long chains properly.
    * Otherwise, OpenSSL will break the verification reporting about
    * missing certificates instead. The rest of the fix is in
@@ -716,8 +705,9 @@ int ssl_handshake(int sock, int flags, int verify, int loglevel, char *host,
    */
   SSL_set_verify_depth(td->socklist[i].ssl, tls_maxdepth + 1);
 
-  SSL_set_mode(td->socklist[i].ssl, SSL_MODE_ENABLE_PARTIAL_WRITE |
-               SSL_MODE_ACCEPT_MOVING_WRITE_BUFFER);
+  SSL_set_mode(td->socklist[i].ssl,
+               SSL_MODE_ENABLE_PARTIAL_WRITE |
+                   SSL_MODE_ACCEPT_MOVING_WRITE_BUFFER);
   if (data->flags & TLS_CONNECT) {
     SSL_set_verify(td->socklist[i].ssl, SSL_VERIFY_PEER, ssl_verify);
     ret = SSL_connect(td->socklist[i].ssl);
@@ -725,8 +715,9 @@ int ssl_handshake(int sock, int flags, int verify, int loglevel, char *host,
       debug0("TLS: connect handshake failed.");
   } else {
     if (data->verify & TLS_VERIFYPEER)
-      SSL_set_verify(td->socklist[i].ssl, SSL_VERIFY_PEER |
-                     SSL_VERIFY_FAIL_IF_NO_PEER_CERT, ssl_verify);
+      SSL_set_verify(td->socklist[i].ssl,
+                     SSL_VERIFY_PEER | SSL_VERIFY_FAIL_IF_NO_PEER_CERT,
+                     ssl_verify);
     else
       SSL_set_verify(td->socklist[i].ssl, SSL_VERIFY_PEER, ssl_verify);
     ret = SSL_accept(td->socklist[i].ssl);
@@ -756,8 +747,7 @@ int ssl_handshake(int sock, int flags, int verify, int loglevel, char *host,
 /* Tcl functions */
 
 /* Is the connection secure? */
-static int tcl_istls STDVAR
-{
+static int tcl_istls STDVAR {
   int j;
 
   BADARGS(2, 2, " idx");
@@ -777,8 +767,7 @@ static int tcl_istls STDVAR
 /* Perform a SSL handshake over an existing plain text
  * connection.
  */
-static int tcl_starttls STDVAR
-{
+static int tcl_starttls STDVAR {
   int j;
   struct threaddata *td = threaddata();
 
@@ -795,8 +784,10 @@ static int tcl_starttls STDVAR
   }
   /* Determine if we're playing a client or a server */
   j = findsock(dcc[j].sock);
-  if (ssl_handshake(dcc[j].sock, (td->socklist[j].flags & SOCK_CONNECT) ?
-      TLS_CONNECT : TLS_LISTEN, tls_vfydcc, LOG_MISC, NULL, NULL))
+  if (ssl_handshake(dcc[j].sock,
+                    (td->socklist[j].flags & SOCK_CONNECT) ? TLS_CONNECT
+                                                           : TLS_LISTEN,
+                    tls_vfydcc, LOG_MISC, NULL, NULL))
     Tcl_AppendResult(irp, "0", NULL);
   else
     Tcl_AppendResult(irp, "1", NULL);
@@ -808,8 +799,7 @@ static int tcl_starttls STDVAR
  * expiry date, protocol version and cipher information.
  * All data is presented as a flat list consisting of name-value pairs.
  */
-static int tcl_tlsstatus STDVAR
-{
+static int tcl_tlsstatus STDVAR {
   char *p;
   int i, j;
   X509 *cert;
@@ -878,11 +868,9 @@ static int tcl_tlsstatus STDVAR
 }
 
 /* These will be added by tcl.c which is the established practice */
-tcl_cmds tcltls_cmds[] = {
-  {"istls",         tcl_istls},
-  {"starttls",   tcl_starttls},
-  {"tlsstatus", tcl_tlsstatus},
-  {NULL,                 NULL}
-};
+tcl_cmds tcltls_cmds[] = {{"istls", tcl_istls},
+                          {"starttls", tcl_starttls},
+                          {"tlsstatus", tcl_tlsstatus},
+                          {NULL, NULL}};
 
 #endif /* TLS */

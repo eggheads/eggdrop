@@ -22,17 +22,16 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
-#define MEMTBLSIZE 250000       /* yikes! */
+#define MEMTBLSIZE 250000 /* yikes! */
 #define COMPILING_MEM
 
 #include "main.h"
+#include <errno.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <errno.h>
 
 #include "mod/modvals.h"
-
 
 extern module_entry *module_list;
 
@@ -70,8 +69,7 @@ int expmem_tls();
 
 /* Initialize the memory structure
  */
-void init_mem()
-{
+void init_mem() {
 #ifdef DEBUG_MEM
   int i;
 
@@ -82,46 +80,43 @@ void init_mem()
 
 /* Tell someone the gory memory details
  */
-void tell_mem_status(char *nick)
-{
+void tell_mem_status(char *nick) {
 #ifdef DEBUG_MEM
   float per;
 
   per = ((lastused * 1.0) / (MEMTBLSIZE * 1.0)) * 100.0;
-  dprintf(DP_HELP, "NOTICE %s :Memory table usage: %d/%d (%.1f%% full)\n",
-          nick, lastused, MEMTBLSIZE, per);
+  dprintf(DP_HELP, "NOTICE %s :Memory table usage: %d/%d (%.1f%% full)\n", nick,
+          lastused, MEMTBLSIZE, per);
 #endif
   dprintf(DP_HELP, "NOTICE %s :Think I'm using about %dk.\n", nick,
-          (int) (expected_memory() / 1024));
+          (int)(expected_memory() / 1024));
 }
 
-void tell_mem_status_dcc(int idx)
-{
+void tell_mem_status_dcc(int idx) {
 #ifdef DEBUG_MEM
   int exp;
   float per;
 
-  exp = expected_memory();      /* in main.c ? */
+  exp = expected_memory(); /* in main.c ? */
   per = ((lastused * 1.0) / (MEMTBLSIZE * 1.0)) * 100.0;
   dprintf(idx, "Memory table: %d/%d (%.1f%% full)\n", lastused, MEMTBLSIZE,
           per);
   per = ((exp * 1.0) / (memused * 1.0)) * 100.0;
   if (per != 100.0)
-    dprintf(idx, "Memory fault: only accounting for %d/%ld (%.1f%%)\n",
-            exp, memused, per);
+    dprintf(idx, "Memory fault: only accounting for %d/%ld (%.1f%%)\n", exp,
+            memused, per);
   dprintf(idx, "Memory table itself occupies an additional %dk static\n",
-          (int) (sizeof(memtbl) / 1024));
+          (int)(sizeof(memtbl) / 1024));
 #endif
 }
 
-void debug_mem_to_dcc(int idx)
-{
+void debug_mem_to_dcc(int idx) {
 #ifdef DEBUG_MEM
-#  ifdef TLS
-#    define MAX_MEM 14
-#  else
-#    define MAX_MEM 13
-#  endif
+#ifdef TLS
+#define MAX_MEM 14
+#else
+#define MAX_MEM 13
+#endif
   unsigned long exp[MAX_MEM], use[MAX_MEM], l;
   int i, j;
   char fn[20], sofar[81];
@@ -247,19 +242,19 @@ void debug_mem_to_dcc(int idx)
       dprintf(idx, "File '%-10s' accounted for %lu/%lu (ok)\n", fn, exp[i],
               use[i]);
     else {
-      dprintf(idx, "File '%-10s' accounted for %lu/%lu (debug follows:)\n",
-              fn, exp[i], use[i]);
+      dprintf(idx, "File '%-10s' accounted for %lu/%lu (debug follows:)\n", fn,
+              exp[i], use[i]);
       strcpy(sofar, "   ");
       for (j = 0; j < lastused; j++) {
         if ((p = strchr(memtbl[j].file, ':')))
           *p = 0;
         if (!egg_strcasecmp(memtbl[j].file, fn)) {
           if (p)
-            sprintf(&sofar[strlen(sofar)], "%-10s/%-4d:(%04d) ",
-                    p + 1, memtbl[j].line, memtbl[j].size);
-          else
-            sprintf(&sofar[strlen(sofar)], "%-4d:(%04d) ",
+            sprintf(&sofar[strlen(sofar)], "%-10s/%-4d:(%04d) ", p + 1,
                     memtbl[j].line, memtbl[j].size);
+          else
+            sprintf(&sofar[strlen(sofar)], "%-4d:(%04d) ", memtbl[j].line,
+                    memtbl[j].size);
 
           if (strlen(sofar) > 60) {
             sofar[strlen(sofar) - 1] = 0;
@@ -282,7 +277,7 @@ void debug_mem_to_dcc(int idx)
     int expt = 0;
 
     if ((f != NULL) && (f[MODCALL_EXPMEM] != NULL))
-      expt = f[MODCALL_EXPMEM] ();
+      expt = f[MODCALL_EXPMEM]();
     if (me->mem_work == expt)
       dprintf(idx, "Module '%-10s' accounted for %lu/%lu (ok)\n", me->name,
               expt, me->mem_work);
@@ -320,8 +315,7 @@ void debug_mem_to_dcc(int idx)
   tell_netdebug(idx);
 }
 
-void *n_malloc(int size, const char *file, int line)
-{
+void *n_malloc(int size, const char *file, int line) {
   void *x;
 
 #ifdef DEBUG_MEM
@@ -329,7 +323,7 @@ void *n_malloc(int size, const char *file, int line)
   char *p;
 #endif
 
-  x = (void *) malloc(size);
+  x = (void *)malloc(size);
   if (x == NULL) {
     putlog(LOG_MISC, "*", "*** FAILED MALLOC %s (%d) (%d): %s", file, line,
            size, strerror(errno));
@@ -353,8 +347,7 @@ void *n_malloc(int size, const char *file, int line)
   return x;
 }
 
-void *n_realloc(void *ptr, int size, const char *file, int line)
-{
+void *n_realloc(void *ptr, int size, const char *file, int line) {
   void *x;
 #ifdef DEBUG_MEM
   int i = 0;
@@ -365,13 +358,14 @@ void *n_realloc(void *ptr, int size, const char *file, int line)
   if (!ptr)
     return n_malloc(size, file, line);
 
-  x = (void *) realloc(ptr, size);
+  x = (void *)realloc(ptr, size);
   if (x == NULL && size > 0) {
     putlog(LOG_MISC, "*", "*** FAILED REALLOC %s (%d)", file, line);
     return NULL;
   }
 #ifdef DEBUG_MEM
-  for (i = 0; (i < lastused) && (memtbl[i].ptr != ptr); i++);
+  for (i = 0; (i < lastused) && (memtbl[i].ptr != ptr); i++)
+    ;
   if (i == lastused) {
     putlog(LOG_MISC, "*", "*** ATTEMPTING TO REALLOC NON-MALLOC'D PTR: %s (%d)",
            file, line);
@@ -389,21 +383,21 @@ void *n_realloc(void *ptr, int size, const char *file, int line)
   return x;
 }
 
-void n_free(void *ptr, const char *file, int line)
-{
+void n_free(void *ptr, const char *file, int line) {
 #ifdef DEBUG_MEM
   int i = 0;
 #endif
 
   if (ptr == NULL) {
-    putlog(LOG_MISC, "*", "*** ATTEMPTING TO FREE NULL PTR: %s (%d)",
-           file, line);
+    putlog(LOG_MISC, "*", "*** ATTEMPTING TO FREE NULL PTR: %s (%d)", file,
+           line);
     return;
   }
 #ifdef DEBUG_MEM
   /* Give tcl builtins an escape mechanism */
   if (line) {
-    for (i = 0; (i < lastused) && (memtbl[i].ptr != ptr); i++);
+    for (i = 0; (i < lastused) && (memtbl[i].ptr != ptr); i++)
+      ;
     if (i == lastused) {
       putlog(LOG_MISC, "*", "*** ATTEMPTING TO FREE NON-MALLOC'D PTR: %s (%d)",
              file, line);

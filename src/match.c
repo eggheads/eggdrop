@@ -31,29 +31,24 @@
 #define WILDT '~'  /* matches 1 or more spaces */
 
 #define NOMATCH 0
-#define MATCH (match+sofar)
-#define PERMATCH (match+saved+sofar)
+#define MATCH (match + sofar)
+#define PERMATCH (match + saved + sofar)
 
 int cidr_support = 0;
 
-int casecharcmp(unsigned char a, unsigned char b)
-{
+int casecharcmp(unsigned char a, unsigned char b) {
   return (rfc_toupper(a) - rfc_toupper(b));
 }
 
-int charcmp(unsigned char a, unsigned char b)
-{
-  return (a - b);
-}
+int charcmp(unsigned char a, unsigned char b) { return (a - b); }
 
 /* Wildcard-matches mask m to n. Uses the comparison function cmp1. If chgpoint
  * isn't NULL, it points at the first character in n where we start using cmp2.
  */
 int _wild_match_per(register unsigned char *m, register unsigned char *n,
-                           int (*cmp1)(unsigned char, unsigned char),
-                           int (*cmp2)(unsigned char, unsigned char),
-                           unsigned char *chgpoint)
-{
+                    int (*cmp1)(unsigned char, unsigned char),
+                    int (*cmp2)(unsigned char, unsigned char),
+                    unsigned char *chgpoint) {
   unsigned char *ma = m, *lsm = 0, *lsn = 0, *lpm = 0, *lpn = 0;
   int match = 1, saved = 0, space;
   register unsigned int sofar = 0;
@@ -62,98 +57,98 @@ int _wild_match_per(register unsigned char *m, register unsigned char *n,
   if ((m == 0) || (n == 0) || (!*n) || (!cmp1))
     return NOMATCH;
 
-  if (!cmp2)                    /* Don't change cmpfunc if it's not valid */
+  if (!cmp2) /* Don't change cmpfunc if it's not valid */
     chgpoint = NULL;
 
   while (*n) {
-    if (*m == WILDT) {          /* Match >=1 space */
-      space = 0;                /* Don't need any spaces */
+    if (*m == WILDT) { /* Match >=1 space */
+      space = 0;       /* Don't need any spaces */
       do {
         m++;
         space++;
-      }                         /* Tally 1 more space ... */
-      while ((*m == WILDT) || (*m == ' '));     /*  for each space or ~ */
-      sofar += space;           /* Each counts as exact */
+      }                                     /* Tally 1 more space ... */
+      while ((*m == WILDT) || (*m == ' ')); /*  for each space or ~ */
+      sofar += space;                       /* Each counts as exact */
       while (*n == ' ') {
         n++;
         space--;
-      }                         /* Do we have enough? */
+      } /* Do we have enough? */
       if (space <= 0)
-        continue;               /* Had enough spaces! */
+        continue; /* Had enough spaces! */
     }
     /* Do the fallback       */
     else {
       switch (*m) {
       case 0:
         do
-          m--;                  /* Search backwards */
-        while ((m > ma) && (*m == '?'));        /* For first non-? char */
+          m--;                           /* Search backwards */
+        while ((m > ma) && (*m == '?')); /* For first non-? char */
         if ((m > ma) ? ((*m == '*') && (m[-1] != QUOTE)) : (*m == '*'))
-          return PERMATCH;      /* nonquoted * = match */
+          return PERMATCH; /* nonquoted * = match */
         break;
       case WILDP:
-        while (*(++m) == WILDP);        /* Zap redundant %s */
-        if (*m != WILDS) {      /* Don't both if next=* */
-          if (*n != ' ') {      /* WILDS can't match ' ' */
+        while (*(++m) == WILDP)
+          ;                /* Zap redundant %s */
+        if (*m != WILDS) { /* Don't both if next=* */
+          if (*n != ' ') { /* WILDS can't match ' ' */
             lpm = m;
-            lpn = n;            /* Save '%' fallback spot */
+            lpn = n; /* Save '%' fallback spot */
             saved += sofar;
-            sofar = 0;          /* And save tally count */
+            sofar = 0; /* And save tally count */
           }
-          continue;             /* Done with '%' */
+          continue; /* Done with '%' */
         }
-        /* FALL THROUGH */
+      /* FALL THROUGH */
       case WILDS:
         do
-          m++;                  /* Zap redundant wilds */
+          m++; /* Zap redundant wilds */
         while ((*m == WILDS) || (*m == WILDP));
         lsm = m;
         lsn = n;
-        lpm = 0;                /* Save '*' fallback spot */
-        match += (saved + sofar);       /* Save tally count */
+        lpm = 0;                  /* Save '*' fallback spot */
+        match += (saved + sofar); /* Save tally count */
         saved = sofar = 0;
-        continue;               /* Done with '*' */
+        continue; /* Done with '*' */
       case WILDQ:
         m++;
         n++;
-        continue;               /* Match one char */
+        continue; /* Match one char */
       case QUOTE:
-        m++;                    /* Handle quoting */
+        m++; /* Handle quoting */
       }
       if (((!chgpoint || n < chgpoint) && !(*cmp1)(*m, *n)) ||
           (chgpoint && n >= chgpoint && !(*cmp2)(*m, *n))) { /* If matching */
         m++;
         n++;
         sofar++;
-        continue;               /* Tally the match */
+        continue; /* Tally the match */
       }
 #ifdef WILDT
     }
 #endif
-    if (lpm) {                  /* Try to fallback on '%' */
+    if (lpm) { /* Try to fallback on '%' */
       n = ++lpn;
       m = lpm;
-      sofar = 0;                /* Restore position */
+      sofar = 0; /* Restore position */
       if ((*n | 32) == 32)
-        lpm = 0;                /* Can't match 0 or ' ' */
-      continue;                 /* Next char, please */
+        lpm = 0; /* Can't match 0 or ' ' */
+      continue;  /* Next char, please */
     }
-    if (lsm) {                  /* Try to fallback on '*' */
+    if (lsm) { /* Try to fallback on '*' */
       n = ++lsn;
-      m = lsm;                  /* Restore position */
+      m = lsm; /* Restore position */
       saved = sofar = 0;
-      continue;                 /* Next char, please */
+      continue; /* Next char, please */
     }
-    return NOMATCH;             /* No fallbacks=No match */
+    return NOMATCH; /* No fallbacks=No match */
   }
   while ((*m == WILDS) || (*m == WILDP))
-    m++;                        /* Zap leftover %s & *s */
-  return (*m) ? NOMATCH : PERMATCH;     /* End of both = match */
+    m++;                            /* Zap leftover %s & *s */
+  return (*m) ? NOMATCH : PERMATCH; /* End of both = match */
 }
 
 /* Generic string matching, use addr_match() for hostmasks! */
-int _wild_match(register unsigned char *m, register unsigned char *n)
-{
+int _wild_match(register unsigned char *m, register unsigned char *n) {
   unsigned char *ma = m, *na = n, *lsm = 0, *lsn = 0;
   int match = 1;
   register int sofar = 0;
@@ -162,9 +157,11 @@ int _wild_match(register unsigned char *m, register unsigned char *n)
   if ((ma == 0) || (na == 0) || (!*ma) || (!*na))
     return NOMATCH;
   /* find the end of each string */
-  while (*(++m));
+  while (*(++m))
+    ;
   m--;
-  while (*(++n));
+  while (*(++n))
+    ;
   n--;
 
   while (n >= na) {
@@ -177,47 +174,46 @@ int _wild_match(register unsigned char *m, register unsigned char *n)
         if (n < na)
           lsm = 0;
         sofar = 0;
-      }
-      else
+      } else
         return NOMATCH;
     }
 
     switch (*m) {
-    case WILDS:                /* Matches anything */
+    case WILDS: /* Matches anything */
       do
-        m--;                    /* Zap redundant wilds */
+        m--; /* Zap redundant wilds */
       while ((m >= ma) && (*m == WILDS));
       lsm = m;
       lsn = n;
       match += sofar;
-      sofar = 0;                /* Update fallback pos */
+      sofar = 0; /* Update fallback pos */
       if (m < ma)
         return MATCH;
-      continue;                 /* Next char, please */
+      continue; /* Next char, please */
     case WILDQ:
       m--;
       n--;
-      continue;                 /* '?' always matches */
+      continue; /* '?' always matches */
     }
-    if (toupper(*m) == toupper(*n)) {   /* If matching char */
+    if (toupper(*m) == toupper(*n)) { /* If matching char */
       m--;
       n--;
-      sofar++;                  /* Tally the match */
-      continue;                 /* Next char, please */
+      sofar++;  /* Tally the match */
+      continue; /* Next char, please */
     }
-    if (lsm) {                  /* To to fallback on '*' */
+    if (lsm) { /* To to fallback on '*' */
       n = --lsn;
       m = lsm;
       if (n < na)
-        lsm = 0;                /* Rewind to saved pos */
+        lsm = 0; /* Rewind to saved pos */
       sofar = 0;
-      continue;                 /* Next char, please */
+      continue; /* Next char, please */
     }
-    return NOMATCH;             /* No fallback=No match */
+    return NOMATCH; /* No fallback=No match */
   }
   while ((m >= ma) && (*m == WILDS))
-    m--;                        /* Zap leftover %s & *s */
-  return (m >= ma) ? NOMATCH : MATCH;   /* Start of both = match */
+    m--;                              /* Zap leftover %s & *s */
+  return (m >= ma) ? NOMATCH : MATCH; /* Start of both = match */
 }
 
 /* cidr and RFC1459 compatible host matching
@@ -229,8 +225,7 @@ int _wild_match(register unsigned char *m, register unsigned char *n)
  * This is required as userhost matching shouldn't depend on
  * server support of cidr.
  */
-int addr_match(char *m, char *n, int user, int cmp)
-{
+int addr_match(char *m, char *n, int user, int cmp) {
   char *p, *q, *r = 0, *s = 0;
   char mu[UHOSTLEN], nu[UHOSTLEN];
   int tmpscore, score = 0;
@@ -287,8 +282,7 @@ int addr_match(char *m, char *n, int user, int cmp)
 /* Checks for overlapping masks
  * Returns: > 0 if the two masks in m and n overlap, 0 otherwise.
  */
-int mask_match(char *m, char *n)
-{
+int mask_match(char *m, char *n) {
   int prefix;
   char *p, *q, *r = 0, *s = 0;
   char mu[UHOSTLEN], nu[UHOSTLEN];
@@ -335,8 +329,7 @@ int mask_match(char *m, char *n)
  * (string) format. IPs are first internally converted to binary form.
  * Returns: 1 if the first count bits are equal, 0 otherwise.
  */
-int cidr_match(char *m, char *n, int count)
-{
+int cidr_match(char *m, char *n, int count) {
 #ifdef IPV6
   int c, af = AF_INET, rest;
   u_8bit_t block[16], addr[16];
@@ -346,9 +339,8 @@ int cidr_match(char *m, char *n, int count)
     if (count > 128)
       return NOMATCH;
   } else if (count > 32)
-      return NOMATCH;
-  if (inet_pton(af, m, &block) != 1 ||
-      inet_pton(af, n, &addr) != 1)
+    return NOMATCH;
+  if (inet_pton(af, m, &block) != 1 || inet_pton(af, n, &addr) != 1)
     return NOMATCH;
   if (count < 1)
     return 1;
@@ -359,7 +351,9 @@ int cidr_match(char *m, char *n, int count)
     return count;
   rest = 8 - (count % 8);
   /* Normalize returned score to max. 32 for a /128 ipv6, 32 for ipv4 */
-  return ((block[c] >> rest) == (addr[c] >> rest)) ? (count / (af == AF_INET6 ? 4 : 1)): 0;
+  return ((block[c] >> rest) == (addr[c] >> rest))
+             ? (count / (af == AF_INET6 ? 4 : 1))
+             : 0;
 
 #else
   int rest;
@@ -381,8 +375,7 @@ int cidr_match(char *m, char *n, int count)
 /* Inline for cron_match (obviously).
  * Matches a single field of a crontab expression.
  */
-static inline int cron_matchfld(char *mask, int match)
-{
+static inline int cron_matchfld(char *mask, int match) {
   int skip = 0, f, t;
   char *p, *q;
 
@@ -408,14 +401,12 @@ static inline int cron_matchfld(char *mask, int match)
           match += 60;
         t += 60;
       }
-      if ((match >= f && match <= t) &&
-          (!skip || !((match - f) % skip)))
+      if ((match >= f && match <= t) && (!skip || !((match - f) % skip)))
         return 1;
     }
     /* no operator found, should be exact match */
     f = strtol(mask, &q, 10);
-    if ((q > mask) &&
-        (skip ? !((match - f) % skip) : (match == f)))
+    if ((q > mask) && (skip ? !((match - f) % skip) : (match == f)))
       return 1;
   }
   return 0;
@@ -431,15 +422,13 @@ static inline int cron_matchfld(char *mask, int match)
  * It should look like this: "53 17 01 03 06", which means
  * Sunday 01 March, 17:53.
  */
-int cron_match(const char *mask, const char *match)
-{
+int cron_match(const char *mask, const char *match) {
   int d = 0, i, m = 1, t[5];
   char *p, *q, *buf;
 
   if (!mask[0])
     return 0;
-  if (sscanf(match, "%d %d %d %d %d",
-             &t[0], &t[1], &t[2], &t[3], &t[4]) < 5)
+  if (sscanf(match, "%d %d %d %d %d", &t[0], &t[1], &t[2], &t[3], &t[4]) < 5)
     return 0;
   buf = nmalloc(strlen(mask) + 1);
   strcpy(buf, mask);
@@ -447,8 +436,7 @@ int cron_match(const char *mask, const char *match)
     q = newsplit(&p);
     if (!strcmp(q, "*"))
       continue;
-    m = (cron_matchfld(q, t[i]) ||
-        (i == 4 && !t[i] && cron_matchfld(q, 7)));
+    m = (cron_matchfld(q, t[i]) || (i == 4 && !t[i] && cron_matchfld(q, 7)));
     if (i == 2)
       d = m;
     else if (!m || (i == 3 && d))

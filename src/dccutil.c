@@ -25,12 +25,12 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
-#include <sys/stat.h>
-#include "main.h"
-#include <errno.h>
 #include "chan.h"
+#include "main.h"
 #include "modules.h"
 #include "tandem.h"
+#include <errno.h>
+#include <sys/stat.h>
 
 extern struct dcc_t *dcc;
 extern int dcc_total, dcc_flood_thr, backgrd, copy_to_tmp, max_socks;
@@ -38,14 +38,14 @@ extern char botnetnick[], version[];
 extern time_t now;
 extern sock_list *socklist;
 
-char motdfile[121] = "text/motd";       /* File where the motd is stored */
-int connect_timeout = 15;       /* How long to wait before a telnet
-                                 * connection times out */
+char motdfile[121] = "text/motd"; /* File where the motd is stored */
+int connect_timeout = 15;         /* How long to wait before a telnet
+                                   * connection times out */
 
 int reserved_port_min = 0;
 int reserved_port_max = 0;
 
-int max_dcc = 0;       /* indicates the current dcc limit in the main thread */
+int max_dcc = 0; /* indicates the current dcc limit in the main thread */
 
 /* This function is called to enlarge the static sockettable in a thread.
  * It keeps the mainthread dcc table enlarging with the main thread sockettable
@@ -54,8 +54,7 @@ int max_dcc = 0;       /* indicates the current dcc limit in the main thread */
  *
  * increase_socks_max() can be called by Tcl threads
  */
-int increase_socks_max()
-{
+int increase_socks_max() {
   struct threaddata *td = threaddata();
   int osock = td->MAXSOCKS;
 
@@ -63,7 +62,8 @@ int increase_socks_max()
     max_socks = 1;
 
   if (td->MAXSOCKS == max_socks) {
-    putlog(LOG_MISC, "*", "Maximum socket limit reached. Consider raising max-socks.");
+    putlog(LOG_MISC, "*",
+           "Maximum socket limit reached. Consider raising max-socks.");
     return -1;
   }
 
@@ -92,8 +92,7 @@ int increase_socks_max()
   return 0;
 }
 
-int expmem_dccutil()
-{
+int expmem_dccutil() {
   int tot, i;
 
   tot = sizeof(struct dcc_t) * max_dcc;
@@ -106,8 +105,7 @@ int expmem_dccutil()
   return tot;
 }
 
-int findidx(int z)
-{
+int findidx(int z) {
   int j;
 
   for (j = 0; j < dcc_total; j++)
@@ -116,8 +114,7 @@ int findidx(int z)
   return -1;
 }
 
-int findanyidx(register int z)
-{
+int findanyidx(register int z) {
   register int j;
 
   for (j = 0; j < dcc_total; j++)
@@ -127,8 +124,7 @@ int findanyidx(register int z)
 }
 
 /* Replace \n with \r\n */
-char *add_cr(char *buf)
-{
+char *add_cr(char *buf) {
   static char WBUF[1024];
   char *p, *q;
 
@@ -141,10 +137,9 @@ char *add_cr(char *buf)
   return WBUF;
 }
 
-extern void (*qserver) (int, char *, int);
+extern void (*qserver)(int, char *, int);
 
-void dprintf EGG_VARARGS_DEF(int, arg1)
-{
+void dprintf EGG_VARARGS_DEF(int, arg1) {
   char buf[1024];
   char *format;
   int idx, len;
@@ -190,12 +185,12 @@ void dprintf EGG_VARARGS_DEF(int, arg1)
     }
     return;
   } else {
-    if (len > 500) {            /* Truncate to fit */
+    if (len > 500) { /* Truncate to fit */
       buf[500] = 0;
       strcat(buf, "\n");
       len = 501;
     }
-    if (dcc[idx].type && ((long) (dcc[idx].type->output) == 1)) {
+    if (dcc[idx].type && ((long)(dcc[idx].type->output) == 1)) {
       char *p = add_cr(buf);
 
       tputs(dcc[idx].sock, p, strlen(p));
@@ -206,8 +201,7 @@ void dprintf EGG_VARARGS_DEF(int, arg1)
   }
 }
 
-void chatout EGG_VARARGS_DEF(char *, arg1)
-{
+void chatout EGG_VARARGS_DEF(char *, arg1) {
   int i, len;
   char *format;
   char s[601];
@@ -226,13 +220,11 @@ void chatout EGG_VARARGS_DEF(char *, arg1)
     if (dcc[i].type == &DCC_CHAT)
       if (dcc[i].u.chat->channel >= 0)
         dprintf(i, "%s", s);
-
 }
 
 /* Print to all on this channel but one.
  */
-void chanout_but EGG_VARARGS_DEF(int, arg1)
-{
+void chanout_but EGG_VARARGS_DEF(int, arg1) {
   int i, x, chan, len;
   char *format;
   char s[601];
@@ -253,13 +245,11 @@ void chanout_but EGG_VARARGS_DEF(int, arg1)
     if ((dcc[i].type == &DCC_CHAT) && (i != x))
       if (dcc[i].u.chat->channel == chan)
         dprintf(i, "%s", s);
-
 }
 
-void dcc_chatter(int idx)
-{
+void dcc_chatter(int idx) {
   int i, j;
-  struct flag_record fr = { FR_GLOBAL | FR_CHAN | FR_ANYWH, 0, 0, 0, 0, 0 };
+  struct flag_record fr = {FR_GLOBAL | FR_CHAN | FR_ANYWH, 0, 0, 0, 0, 0};
 
   get_user_flagrec(dcc[idx].user, &fr, NULL);
   show_motd(idx);
@@ -270,7 +260,7 @@ void dcc_chatter(int idx)
   check_tcl_chon(dcc[idx].nick, dcc[idx].sock);
   /* Still there? */
   if ((idx >= dcc_total) || (dcc[idx].sock != j))
-    return;                     /* Nope */
+    return; /* Nope */
   /* Tcl script may have taken control */
   if (dcc[idx].type == &DCC_CHAT) {
     if (!strcmp(dcc[idx].u.chat->con_chan, "***"))
@@ -293,15 +283,14 @@ void dcc_chatter(int idx)
     if (!dcc[idx].u.chat->channel) {
       chanout_but(-1, 0, "*** %s joined the party line.\n", dcc[idx].nick);
     } else if (dcc[idx].u.chat->channel > 0) {
-      chanout_but(-1, dcc[idx].u.chat->channel,
-                  "*** %s joined the channel.\n", dcc[idx].nick);
+      chanout_but(-1, dcc[idx].u.chat->channel, "*** %s joined the channel.\n",
+                  dcc[idx].nick);
     }
   }
 }
 
 /* Closes an open FD for transfer sockets. */
-void killtransfer(int n)
-{
+void killtransfer(int n) {
   int i, ok = 1;
 
   if (dcc[n].type->flags & DCT_FILETRAN) {
@@ -327,8 +316,7 @@ void killtransfer(int n)
 /* Mark an entry as lost and deconstruct it's contents. It will be securely
  * removed from the dcc list in the main loop.
  */
-void lostdcc(int n)
-{
+void lostdcc(int n) {
   /* Make sure it's a valid dcc index. */
   if (n < 0 || n >= max_dcc)
     return;
@@ -350,8 +338,7 @@ void lostdcc(int n)
  * Note: The entry will be deconstructed if it was not deconstructed
  *       already. This case should normally not occur.
  */
-void removedcc(int n)
-{
+void removedcc(int n) {
   if (dcc[n].type && dcc[n].type->kill)
     dcc[n].type->kill(n, dcc[n].u.other);
   else if (dcc[n].u.other)
@@ -360,13 +347,12 @@ void removedcc(int n)
   if (n < dcc_total)
     egg_memcpy(&dcc[n], &dcc[dcc_total], sizeof(struct dcc_t));
   else
-    egg_bzero(&dcc[n], sizeof(struct dcc_t));   /* drummer */
+    egg_bzero(&dcc[n], sizeof(struct dcc_t)); /* drummer */
 }
 
 /* Clean up sockets that were just left for dead.
  */
-void dcc_remove_lost(void)
-{
+void dcc_remove_lost(void) {
   int i;
 
   for (i = 0; i < dcc_total; i++) {
@@ -382,8 +368,7 @@ void dcc_remove_lost(void)
 /* Show list of current dcc's to a dcc-chatter
  * positive value: idx given -- negative value: sock given
  */
-void tell_dcc(int zidx)
-{
+void tell_dcc(int zidx) {
   int i, j, nicklen = 0;
   char other[160];
   char format[81];
@@ -416,29 +401,28 @@ void tell_dcc(int zidx)
     if (dcc[i].type && dcc[i].type->display)
       dcc[i].type->display(i, other);
     else {
-      sprintf(other, "?:%lX  !! ERROR !!", (long) dcc[i].type);
+      sprintf(other, "?:%lX  !! ERROR !!", (long)dcc[i].type);
       break;
     }
-      dprintf(zidx, format, dcc[i].sock, iptostr(&dcc[i].sockname.addr.sa),
+    dprintf(zidx, format, dcc[i].sock, iptostr(&dcc[i].sockname.addr.sa),
 #ifdef TLS
-              dcc[i].ssl ? '+' : ' ', dcc[i].port, dcc[i].nick, other);
+            dcc[i].ssl ? '+' : ' ', dcc[i].port, dcc[i].nick, other);
 #else
-              ' ', dcc[i].port, dcc[i].nick, other);
+            ' ', dcc[i].port, dcc[i].nick, other);
 #endif
   }
 }
 
 /* Mark someone on dcc chat as no longer away
  */
-void not_away(int idx)
-{
+void not_away(int idx) {
   if (dcc[idx].u.chat->away == NULL) {
     dprintf(idx, "You weren't away!\n");
     return;
   }
   if (dcc[idx].u.chat->channel >= 0) {
-    chanout_but(-1, dcc[idx].u.chat->channel,
-                "*** %s is no longer away.\n", dcc[idx].nick);
+    chanout_but(-1, dcc[idx].u.chat->channel, "*** %s is no longer away.\n",
+                dcc[idx].nick);
     if (dcc[idx].u.chat->channel < GLOBAL_CHANS) {
       botnet_send_away(-1, botnetnick, dcc[idx].sock, NULL, idx);
     }
@@ -449,8 +433,7 @@ void not_away(int idx)
   check_tcl_away(botnetnick, dcc[idx].sock, NULL);
 }
 
-void set_away(int idx, char *s)
-{
+void set_away(int idx, char *s) {
   if (s == NULL) {
     not_away(idx);
     return;
@@ -464,8 +447,8 @@ void set_away(int idx, char *s)
   dcc[idx].u.chat->away = nmalloc(strlen(s) + 1);
   strcpy(dcc[idx].u.chat->away, s);
   if (dcc[idx].u.chat->channel >= 0) {
-    chanout_but(-1, dcc[idx].u.chat->channel,
-                "*** %s is now away: %s\n", dcc[idx].nick, s);
+    chanout_but(-1, dcc[idx].u.chat->channel, "*** %s is now away: %s\n",
+                dcc[idx].nick, s);
     if (dcc[idx].u.chat->channel < GLOBAL_CHANS) {
       botnet_send_away(-1, botnetnick, dcc[idx].sock, s, idx);
     }
@@ -476,8 +459,7 @@ void set_away(int idx, char *s)
 
 /* This helps the memory debugging
  */
-void *_get_data_ptr(int size, char *file, int line)
-{
+void *_get_data_ptr(int size, char *file, int line) {
   char *p;
 #ifdef DEBUG_MEM
   char x[1024];
@@ -494,16 +476,14 @@ void *_get_data_ptr(int size, char *file, int line)
 
 /* Make a password, 10-15 random letters and digits
  */
-void makepass(char *s)
-{
+void makepass(char *s) {
   int i;
 
   i = 10 + randint(6);
   make_rand_str(s, i);
 }
 
-void flush_lines(int idx, struct chat_info *ci)
-{
+void flush_lines(int idx, struct chat_info *ci) {
   int c = ci->line_count;
   struct msgq *p = ci->buffer, *o;
 
@@ -526,14 +506,13 @@ void flush_lines(int idx, struct chat_info *ci)
   ci->line_count = 0;
 }
 
-int new_dcc(struct dcc_table *type, int xtra_size)
-{
+int new_dcc(struct dcc_table *type, int xtra_size) {
   int i = dcc_total;
 
   if (dcc_total == max_dcc && increase_socks_max())
     return -1;
   dcc_total++;
-  egg_bzero((char *) &dcc[i], sizeof(struct dcc_t));
+  egg_bzero((char *)&dcc[i], sizeof(struct dcc_t));
 
   dcc[i].type = type;
   if (xtra_size) {
@@ -545,8 +524,7 @@ int new_dcc(struct dcc_table *type, int xtra_size)
 
 /* Changes the given dcc entry to another type.
  */
-void changeover_dcc(int i, struct dcc_table *type, int xtra_size)
-{
+void changeover_dcc(int i, struct dcc_table *type, int xtra_size) {
   /* Free old structure. */
   if (dcc[i].type && dcc[i].type->kill)
     dcc[i].type->kill(i, dcc[i].u.other);
@@ -562,8 +540,7 @@ void changeover_dcc(int i, struct dcc_table *type, int xtra_size)
   }
 }
 
-int detect_dcc_flood(time_t *timer, struct chat_info *chat, int idx)
-{
+int detect_dcc_flood(time_t *timer, struct chat_info *chat, int idx) {
   time_t t;
 
   if (!dcc_flood_thr || !chat)
@@ -594,7 +571,7 @@ int detect_dcc_flood(time_t *timer, struct chat_info *chat, int idx)
         dprintf(DP_STDOUT, "\n### SIMULATION RESET ###\n\n");
         dcc_chatter(idx);
       }
-      return 1;                 /* <- flood */
+      return 1; /* <- flood */
     }
   }
   return 0;
@@ -602,13 +579,12 @@ int detect_dcc_flood(time_t *timer, struct chat_info *chat, int idx)
 
 /* Handle someone being booted from dcc chat.
  */
-void do_boot(int idx, char *by, char *reason)
-{
+void do_boot(int idx, char *by, char *reason) {
   int files = (dcc[idx].type != &DCC_CHAT);
 
   dprintf(idx, DCC_BOOTED1);
-  dprintf(idx, DCC_BOOTED2, files ? "file section" : "bot",
-          by, reason[0] ? ": " : ".", reason);
+  dprintf(idx, DCC_BOOTED2, files ? "file section" : "bot", by,
+          reason[0] ? ": " : ".", reason);
   /* If it's a partyliner (chatterer :) */
   /* Horrible assumption that DCT_CHAT using structure uses same format
    * as DCC_CHAT */

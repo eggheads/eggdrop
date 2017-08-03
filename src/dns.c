@@ -25,11 +25,11 @@
  */
 
 #include "main.h"
+#include <arpa/inet.h>
 #include <netdb.h>
+#include <netinet/in.h>
 #include <setjmp.h>
 #include <sys/socket.h>
-#include <netinet/in.h>
-#include <arpa/inet.h>
 
 #include "dns.h"
 
@@ -42,32 +42,25 @@ extern Tcl_Interp *interp;
 
 devent_t *dns_events = NULL;
 
-
 /*
  *   DCC functions
  */
 
-void dcc_dnswait(int idx, char *buf, int len)
-{
-  /* Ignore anything now. */
-}
+void dcc_dnswait(int idx, char *buf, int len) { /* Ignore anything now. */ }
 
-void eof_dcc_dnswait(int idx)
-{
+void eof_dcc_dnswait(int idx) {
   putlog(LOG_MISC, "*", "Lost connection while resolving hostname [%s/%d]",
          iptostr(&dcc[idx].sockname.addr.sa), dcc[idx].port);
   killsock(dcc[idx].sock);
   lostdcc(idx);
 }
 
-static void display_dcc_dnswait(int idx, char *buf)
-{
-  sprintf(buf, "dns   waited %lis", (long) now - dcc[idx].timeval);
+static void display_dcc_dnswait(int idx, char *buf) {
+  sprintf(buf, "dns   waited %lis", (long)now - dcc[idx].timeval);
 }
 
-static int expmem_dcc_dnswait(void *x)
-{
-  register struct dns_info *p = (struct dns_info *) x;
+static int expmem_dcc_dnswait(void *x) {
+  register struct dns_info *p = (struct dns_info *)x;
   int size = 0;
 
   if (p) {
@@ -80,9 +73,8 @@ static int expmem_dcc_dnswait(void *x)
   return size;
 }
 
-static void kill_dcc_dnswait(int idx, void *x)
-{
-  register struct dns_info *p = (struct dns_info *) x;
+static void kill_dcc_dnswait(int idx, void *x) {
+  register struct dns_info *p = (struct dns_info *)x;
 
   if (p) {
     if (p->host)
@@ -94,18 +86,8 @@ static void kill_dcc_dnswait(int idx, void *x)
 }
 
 struct dcc_table DCC_DNSWAIT = {
-  "DNSWAIT",
-  DCT_VALIDIDX,
-  eof_dcc_dnswait,
-  dcc_dnswait,
-  0,
-  0,
-  display_dcc_dnswait,
-  expmem_dcc_dnswait,
-  kill_dcc_dnswait,
-  0
-};
-
+    "DNSWAIT", DCT_VALIDIDX,        eof_dcc_dnswait,    dcc_dnswait,      0,
+    0,         display_dcc_dnswait, expmem_dcc_dnswait, kill_dcc_dnswait, 0};
 
 /*
  *   DCC events
@@ -114,20 +96,20 @@ struct dcc_table DCC_DNSWAIT = {
 /* Walk through every dcc entry and look for waiting DNS requests
  * of RES_HOSTBYIP for our IP address.
  */
-static void dns_dcchostbyip(sockname_t *ip, char *hostn, int ok, void *other)
-{
+static void dns_dcchostbyip(sockname_t *ip, char *hostn, int ok, void *other) {
   int idx;
 
   for (idx = 0; idx < dcc_total; idx++) {
     if ((dcc[idx].type == &DCC_DNSWAIT) &&
-        (dcc[idx].u.dns->dns_type == RES_HOSTBYIP) && (
+        (dcc[idx].u.dns->dns_type == RES_HOSTBYIP) &&
+        (
 #ifdef IPV6
-        (ip->family == AF_INET6 &&
-          IN6_ARE_ADDR_EQUAL(&dcc[idx].u.dns->ip->addr.s6.sin6_addr,
-                             &ip->addr.s6.sin6_addr)) ||
+            (ip->family == AF_INET6 &&
+             IN6_ARE_ADDR_EQUAL(&dcc[idx].u.dns->ip->addr.s6.sin6_addr,
+                                &ip->addr.s6.sin6_addr)) ||
 #endif
-          (dcc[idx].u.dns->ip->addr.s4.sin_addr.s_addr ==
-                              ip->addr.s4.sin_addr.s_addr))) {
+            (dcc[idx].u.dns->ip->addr.s4.sin_addr.s_addr ==
+             ip->addr.s4.sin_addr.s_addr))) {
       if (dcc[idx].u.dns->host)
         nfree(dcc[idx].u.dns->host);
       dcc[idx].u.dns->host = get_data_ptr(strlen(hostn) + 1);
@@ -143,8 +125,7 @@ static void dns_dcchostbyip(sockname_t *ip, char *hostn, int ok, void *other)
 /* Walk through every dcc entry and look for waiting DNS requests
  * of RES_IPBYHOST for our hostname.
  */
-static void dns_dccipbyhost(sockname_t *ip, char *hostn, int ok, void *other)
-{
+static void dns_dccipbyhost(sockname_t *ip, char *hostn, int ok, void *other) {
   int idx;
 
   for (idx = 0; idx < dcc_total; idx++) {
@@ -163,25 +144,15 @@ static void dns_dccipbyhost(sockname_t *ip, char *hostn, int ok, void *other)
   }
 }
 
-static int dns_dccexpmem(void *other)
-{
-  return 0;
-}
+static int dns_dccexpmem(void *other) { return 0; }
 
-devent_type DNS_DCCEVENT_HOSTBYIP = {
-  "DCCEVENT_HOSTBYIP",
-  dns_dccexpmem,
-  dns_dcchostbyip
-};
+devent_type DNS_DCCEVENT_HOSTBYIP = {"DCCEVENT_HOSTBYIP", dns_dccexpmem,
+                                     dns_dcchostbyip};
 
-devent_type DNS_DCCEVENT_IPBYHOST = {
-  "DCCEVENT_IPBYHOST",
-  dns_dccexpmem,
-  dns_dccipbyhost
-};
+devent_type DNS_DCCEVENT_IPBYHOST = {"DCCEVENT_IPBYHOST", dns_dccexpmem,
+                                     dns_dccipbyhost};
 
-void dcc_dnsipbyhost(char *hostn)
-{
+void dcc_dnsipbyhost(char *hostn) {
   devent_t *de;
 
   for (de = dns_events; de; de = de->next) {
@@ -210,8 +181,7 @@ void dcc_dnsipbyhost(char *hostn)
   dns_ipbyhost(hostn);
 }
 
-void dcc_dnshostbyip(sockname_t *ip)
-{
+void dcc_dnshostbyip(sockname_t *ip) {
   devent_t *de;
 
   for (de = dns_events; de; de = de->next) {
@@ -238,14 +208,13 @@ void dcc_dnshostbyip(sockname_t *ip)
   dns_hostbyip(ip);
 }
 
-
 /*
  *   Tcl events
  */
 
-static void dns_tcl_iporhostres(sockname_t *ip, char *hostn, int ok, void *other)
-{
-  devent_tclinfo_t *tclinfo = (devent_tclinfo_t *) other;
+static void dns_tcl_iporhostres(sockname_t *ip, char *hostn, int ok,
+                                void *other) {
+  devent_tclinfo_t *tclinfo = (devent_tclinfo_t *)other;
   Tcl_DString list;
 
   Tcl_DStringInit(&list);
@@ -280,9 +249,8 @@ static void dns_tcl_iporhostres(sockname_t *ip, char *hostn, int ok, void *other
   nfree(tclinfo);
 }
 
-static int dns_tclexpmem(void *other)
-{
-  devent_tclinfo_t *tclinfo = (devent_tclinfo_t *) other;
+static int dns_tclexpmem(void *other) {
+  devent_tclinfo_t *tclinfo = (devent_tclinfo_t *)other;
   int l = 0;
 
   if (tclinfo) {
@@ -295,20 +263,13 @@ static int dns_tclexpmem(void *other)
   return l;
 }
 
-devent_type DNS_TCLEVENT_HOSTBYIP = {
-  "TCLEVENT_HOSTBYIP",
-  dns_tclexpmem,
-  dns_tcl_iporhostres
-};
+devent_type DNS_TCLEVENT_HOSTBYIP = {"TCLEVENT_HOSTBYIP", dns_tclexpmem,
+                                     dns_tcl_iporhostres};
 
-devent_type DNS_TCLEVENT_IPBYHOST = {
-  "TCLEVENT_IPBYHOST",
-  dns_tclexpmem,
-  dns_tcl_iporhostres
-};
+devent_type DNS_TCLEVENT_IPBYHOST = {"TCLEVENT_IPBYHOST", dns_tclexpmem,
+                                     dns_tcl_iporhostres};
 
-static void tcl_dnsipbyhost(char *hostn, char *proc, char *paras)
-{
+static void tcl_dnsipbyhost(char *hostn, char *proc, char *paras) {
   devent_t *de;
   devent_tclinfo_t *tclinfo;
 
@@ -339,8 +300,7 @@ static void tcl_dnsipbyhost(char *hostn, char *proc, char *paras)
   dns_ipbyhost(hostn);
 }
 
-static void tcl_dnshostbyip(sockname_t *ip, char *proc, char *paras)
-{
+static void tcl_dnshostbyip(sockname_t *ip, char *proc, char *paras) {
   devent_t *de;
   devent_tclinfo_t *tclinfo;
 
@@ -372,13 +332,11 @@ static void tcl_dnshostbyip(sockname_t *ip, char *proc, char *paras)
   dns_hostbyip(ip);
 }
 
-
 /*
  *    Event functions
  */
 
-static int dnsevent_expmem(void)
-{
+static int dnsevent_expmem(void) {
   devent_t *de;
   int tot = 0;
 
@@ -392,21 +350,21 @@ static int dnsevent_expmem(void)
   return tot;
 }
 
-void call_hostbyip(sockname_t *ip, char *hostn, int ok)
-{
+void call_hostbyip(sockname_t *ip, char *hostn, int ok) {
   devent_t *de = dns_events, *ode = NULL, *nde = NULL;
 
   while (de) {
     nde = de->next;
-    if ((de->lookup == RES_HOSTBYIP) && (
+    if ((de->lookup == RES_HOSTBYIP) &&
+        (
 #ifdef IPV6
-        (ip->family == AF_INET6 &&
-          IN6_ARE_ADDR_EQUAL(&de->res_data.ip_addr->addr.s6.sin6_addr,
-                             &ip->addr.s6.sin6_addr)) ||
+            (ip->family == AF_INET6 &&
+             IN6_ARE_ADDR_EQUAL(&de->res_data.ip_addr->addr.s6.sin6_addr,
+                                &ip->addr.s6.sin6_addr)) ||
 #endif
-          (de->res_data.ip_addr->addr.s4.sin_addr.s_addr ==
-                              ip->addr.s4.sin_addr.s_addr))) {
-        /* A memcmp() could have perfectly done it .. */
+            (de->res_data.ip_addr->addr.s4.sin_addr.s_addr ==
+             ip->addr.s4.sin_addr.s_addr))) {
+      /* A memcmp() could have perfectly done it .. */
       /* Remove the event from the list here, to avoid conflicts if one of
        * the event handlers re-adds another event. */
       if (ode)
@@ -427,14 +385,14 @@ void call_hostbyip(sockname_t *ip, char *hostn, int ok)
   }
 }
 
-void call_ipbyhost(char *hostn, sockname_t *ip, int ok)
-{
+void call_ipbyhost(char *hostn, sockname_t *ip, int ok) {
   devent_t *de = dns_events, *ode = NULL, *nde = NULL;
 
   while (de) {
     nde = de->next;
-    if ((de->lookup == RES_IPBYHOST) && (!de->res_data.hostname ||
-        !egg_strcasecmp(de->res_data.hostname, hostn))) {
+    if ((de->lookup == RES_IPBYHOST) &&
+        (!de->res_data.hostname ||
+         !egg_strcasecmp(de->res_data.hostname, hostn))) {
       /* Remove the event from the list here, to avoid conflicts if one of
        * the event handlers re-adds another event. */
       if (ode)
@@ -458,30 +416,28 @@ void call_ipbyhost(char *hostn, sockname_t *ip, int ok)
   }
 }
 
-
 /*
  *    Async DNS emulation functions
  */
-void block_dns_hostbyip(sockname_t *addr)
-{
+void block_dns_hostbyip(sockname_t *addr) {
   struct hostent *hp = 0;
   static char s[UHOSTLEN];
 
   if (addr->family == AF_INET) {
     if (!sigsetjmp(alarmret, 1)) {
       alarm(resolve_timeout);
-      hp = gethostbyaddr((const char *) &addr->addr.s4.sin_addr,
-                         sizeof (struct in_addr), AF_INET);
+      hp = gethostbyaddr((const char *)&addr->addr.s4.sin_addr,
+                         sizeof(struct in_addr), AF_INET);
       alarm(0);
     }
     if (!hp)
-     inet_ntop(AF_INET, &addr->addr.s4.sin_addr.s_addr, s, sizeof s);
+      inet_ntop(AF_INET, &addr->addr.s4.sin_addr.s_addr, s, sizeof s);
 #ifdef IPV6
   } else {
     if (!sigsetjmp(alarmret, 1)) {
       alarm(resolve_timeout);
-      hp = gethostbyaddr((const char *) &addr->addr.s6.sin6_addr,
-                         sizeof (struct in6_addr), AF_INET6);
+      hp = gethostbyaddr((const char *)&addr->addr.s6.sin6_addr,
+                         sizeof(struct in6_addr), AF_INET6);
       alarm(0);
     }
     if (!hp)
@@ -495,8 +451,7 @@ void block_dns_hostbyip(sockname_t *addr)
   call_hostbyip(addr, s, hp ? 1 : 0);
 }
 
-void block_dns_ipbyhost(char *host)
-{
+void block_dns_ipbyhost(char *host) {
   sockname_t name;
 
   if (setsockname(&name, host, 0, 1) == AF_UNSPEC)
@@ -509,19 +464,14 @@ void block_dns_ipbyhost(char *host)
  *   Misc functions
  */
 
-int expmem_dns(void)
-{
-  return dnsevent_expmem();
-}
-
+int expmem_dns(void) { return dnsevent_expmem(); }
 
 /*
  *   Tcl functions
  */
 
 /* dnslookup <ip-address> <proc> */
-static int tcl_dnslookup STDVAR
-{
+static int tcl_dnslookup STDVAR {
   sockname_t addr;
   Tcl_DString paras;
 
@@ -548,7 +498,4 @@ static int tcl_dnslookup STDVAR
   return TCL_OK;
 }
 
-tcl_cmds tcldns_cmds[] = {
-  {"dnslookup", tcl_dnslookup},
-  {NULL,                 NULL}
-};
+tcl_cmds tcldns_cmds[] = {{"dnslookup", tcl_dnslookup}, {NULL, NULL}};

@@ -22,9 +22,9 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
+#include "bg.h"
 #include "main.h"
 #include <signal.h>
-#include "bg.h"
 
 extern char pid_file[];
 
@@ -71,34 +71,32 @@ typedef struct {
     BG_COMM_TRANSFERPF /* Sending pid_file.                              */
   } comm_type;
   union {
-    struct {           /* Data for BG_COMM_TRANSFERPF.                   */
-      int len;         /* Length of the file name.                       */
+    struct {   /* Data for BG_COMM_TRANSFERPF.                   */
+      int len; /* Length of the file name.                       */
     } transferpf;
   } comm_data;
 } bg_comm_t;
 
 typedef enum {
-  BG_NONE = 0,         /* No forking has taken place yet.                */
-  BG_SPLIT,            /* I'm the newly forked process.                  */
-  BG_PARENT            /* I'm the original process.                      */
+  BG_NONE = 0, /* No forking has taken place yet.                */
+  BG_SPLIT,    /* I'm the newly forked process.                  */
+  BG_PARENT    /* I'm the original process.                      */
 } bg_state_t;
 
 typedef struct {
-  int comm_recv;        /* Receives messages from the child process.     */
-  int comm_send;        /* Sends messages to the parent process.         */
-  bg_state_t state;     /* Current state, see above enum descriptions.   */
-  pid_t child_pid;      /* PID of split process.                         */
+  int comm_recv;    /* Receives messages from the child process.     */
+  int comm_send;    /* Sends messages to the parent process.         */
+  bg_state_t state; /* Current state, see above enum descriptions.   */
+  pid_t child_pid;  /* PID of split process.                         */
 } bg_t;
 
-static bg_t bg = { 0 };
-
+static bg_t bg = {0};
 
 /* Do everything we normally do after we have split off a new
  * process to the background. This includes writing a PID file
  * and informing the user of the split.
  */
-static void bg_do_detach(pid_t p)
-{
+static void bg_do_detach(pid_t p) {
   FILE *fp;
 
   /* Need to attempt to write pid now, not later. */
@@ -124,8 +122,7 @@ static void bg_do_detach(pid_t p)
   exit(0);
 }
 
-void bg_prepare_split(void)
-{
+void bg_prepare_split(void) {
   pid_t p;
   bg_comm_t message;
 
@@ -186,8 +183,7 @@ error:
  * as the pid_file[] buffer has changed in this fork by now, but the
  * parent needs an up-to-date version.
  */
-static void bg_send_pidfile(void)
-{
+static void bg_send_pidfile(void) {
   bg_comm_t message;
 
   message.comm_type = BG_COMM_TRANSFERPF;
@@ -204,8 +200,7 @@ error:
   fatal("COMMUNICATION THROUGH PIPE BROKE.", 0);
 }
 
-void bg_send_quit(bg_quit_t q)
-{
+void bg_send_quit(bg_quit_t q) {
   if (!fork_before_tcl())
     return;
 
@@ -225,8 +220,7 @@ void bg_send_quit(bg_quit_t q)
   }
 }
 
-void bg_do_split(void)
-{
+void bg_do_split(void) {
   if (fork_before_tcl()) {
     /* Tell our parent process to go away now, as we don't need it anymore. */
     bg_send_quit(BG_QUIT);

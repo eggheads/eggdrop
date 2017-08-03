@@ -26,17 +26,17 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
+#include "chan.h"
 #include "main.h"
+#include "modules.h"
+#include "tandem.h"
+#include <ctype.h>
+#include <fcntl.h>
 #include <sys/stat.h>
 #include <unistd.h>
-#include <fcntl.h>
-#include <ctype.h>
-#include "chan.h"
-#include "tandem.h"
-#include "modules.h"
 
 #ifdef HAVE_UNAME
-#  include <sys/utsname.h>
+#include <sys/utsname.h>
 #endif
 
 #include "stat.h"
@@ -45,21 +45,21 @@ extern struct dcc_t *dcc;
 extern struct chanset_t *chanset;
 
 extern char helpdir[], version[], origbotname[], botname[], admin[], network[],
-            motdfile[], ver[], botnetnick[], bannerfile[], textdir[];
-extern int  backgrd, con_chan, term_z, use_stderr, dcc_total, keep_all_logs,
-            quick_logs, strict_host;
+    motdfile[], ver[], botnetnick[], bannerfile[], textdir[];
+extern int backgrd, con_chan, term_z, use_stderr, dcc_total, keep_all_logs,
+    quick_logs, strict_host;
 
 extern time_t now;
 extern Tcl_Interp *interp;
 
-char logfile_suffix[21] = ".%d%b%Y";    /* Format of logfile suffix */
-char log_ts[33] = "[%H:%M:%S]"; /* Timestamp format for logfile entries */
+char logfile_suffix[21] = ".%d%b%Y"; /* Format of logfile suffix */
+char log_ts[33] = "[%H:%M:%S]";      /* Timestamp format for logfile entries */
 
-int shtime = 1;                 /* Display the time with console output */
-log_t *logs = 0;                /* Logfiles */
-int max_logs = 5;               /* Max log files, mismatch config on purpose */
-int max_logsize = 0;            /* Maximum logfile size, 0 for no limit */
-int raw_log = 0;                /* Disply output to server to LOG_SERVEROUT */
+int shtime = 1;      /* Display the time with console output */
+log_t *logs = 0;     /* Logfiles */
+int max_logs = 5;    /* Max log files, mismatch config on purpose */
+int max_logsize = 0; /* Maximum logfile size, 0 for no limit */
+int raw_log = 0;     /* Disply output to server to LOG_SERVEROUT */
 
 int conmask = LOG_MODES | LOG_CMDS | LOG_MISC; /* Console mask */
 
@@ -75,11 +75,9 @@ static struct help_ref {
   struct help_ref *next;
 } *help_list = NULL;
 
-
 /* Expected memory usage
  */
-int expmem_misc()
-{
+int expmem_misc() {
   struct help_ref *current;
   struct help_list_t *item;
   int tot = 0;
@@ -93,8 +91,7 @@ int expmem_misc()
   return tot + (max_logs * sizeof(log_t));
 }
 
-void init_misc()
-{
+void init_misc() {
   static int last = 0;
 
   if (max_logs < 1)
@@ -115,15 +112,13 @@ void init_misc()
   }
 }
 
-
 /*
  *    Misc functions
  */
 
 /* low-level stuff for other modules
  */
-int is_file(const char *s)
-{
+int is_file(const char *s) {
   struct stat ss;
   int i = stat(s, &ss);
 
@@ -153,8 +148,7 @@ int is_file(const char *s)
  *
  *  <Cybah>
  */
-int egg_strcatn(char *dst, const char *src, size_t max)
-{
+int egg_strcatn(char *dst, const char *src, size_t max) {
   size_t tmpmax = 0;
 
   /* find end of 'dst' */
@@ -183,8 +177,7 @@ int egg_strcatn(char *dst, const char *src, size_t max)
   return tmpmax - max;
 }
 
-int my_strcpy(register char *a, register char *b)
-{
+int my_strcpy(register char *a, register char *b) {
   register char *c = b;
 
   while (*b)
@@ -195,8 +188,7 @@ int my_strcpy(register char *a, register char *b)
 
 /* Split first word off of rest and put it in first
  */
-void splitc(char *first, char *rest, char divider)
-{
+void splitc(char *first, char *rest, char divider) {
   char *p = strchr(rest, divider);
 
   if (p == NULL) {
@@ -226,8 +218,7 @@ void splitc(char *first, char *rest, char divider)
  *
  * <Cybah>
  */
-void splitcn(char *first, char *rest, char divider, size_t max)
-{
+void splitcn(char *first, char *rest, char divider, size_t max) {
   char *p = strchr(rest, divider);
 
   if (p == NULL) {
@@ -246,8 +237,7 @@ void splitcn(char *first, char *rest, char divider, size_t max)
     strcpy(rest, p + 1);
 }
 
-char *splitnick(char **blah)
-{
+char *splitnick(char **blah) {
   char *p = strchr(*blah, '!'), *q = *blah;
 
   if (p) {
@@ -258,8 +248,7 @@ char *splitnick(char **blah)
   return "";
 }
 
-void remove_crlf(char **line)
-{
+void remove_crlf(char **line) {
   char *p;
 
   p = strchr(*line, '\n');
@@ -270,8 +259,7 @@ void remove_crlf(char **line)
     *p = 0;
 }
 
-char *newsplit(char **rest)
-{
+char *newsplit(char **rest) {
   register char *o, *r;
 
   if (!rest)
@@ -317,8 +305,7 @@ char *newsplit(char **rest)
  * "abc!user@0:0:0:0:0:ffff:1.2.3.4"
  * -> *!*user@0:0:0:0:0:ffff:1.2.3.*
  */
-void maskaddr(const char *s, char *nw, int type)
-{
+void maskaddr(const char *s, char *nw, int type) {
   int d = type % 5, num = 1;
   register char *p, *u = 0, *h = 0, *ss;
 
@@ -327,7 +314,7 @@ void maskaddr(const char *s, char *nw, int type)
   u = strchr(s, '!');
   if (u)
     h = strchr(u, '@');
-  if (!h){
+  if (!h) {
     h = strchr(s, '@');
     u = 0;
   }
@@ -377,8 +364,8 @@ void maskaddr(const char *s, char *nw, int type)
     nw += p - h;
     strcpy(nw, "*");
   } else if (!p && !num && type >= 10) {
-      /* we have a hostname and type
-       requires us to replace numbers */
+    /* we have a hostname and type
+     requires us to replace numbers */
     num = 0;
     for (p = h; *p; p++) {
       if (*p < '0' || *p > '9') {
@@ -402,7 +389,8 @@ void maskaddr(const char *s, char *nw, int type)
       strcpy(nw, ".*");
       return;
     }
-    for (u = h, d = 0; (u = strchr(++u, '.')); d++);
+    for (u = h, d = 0; (u = strchr(++u, '.')); d++)
+      ;
     if (d < 2) { /* types < 2 don't mask the host */
       strcpy(nw, h);
       return;
@@ -412,16 +400,15 @@ void maskaddr(const char *s, char *nw, int type)
       u = strchr(++u, '.'); /* ccTLD or not? Look above. */
     sprintf(nw, "*%s", u);
   } else if (!*h)
-      /* take care if the mask is empty or contains only '@' */
-      strcpy(nw, "*");
-    else
-      strcpy(nw, h);
+    /* take care if the mask is empty or contains only '@' */
+    strcpy(nw, "*");
+  else
+    strcpy(nw, h);
 }
 
 /* Dump a potentially super-long string of text.
  */
-void dumplots(int idx, const char *prefix, const char *data)
-{
+void dumplots(int idx, const char *prefix, const char *data) {
   const char *p = data, *q, *n;
   const int max_data_len = 500 - strlen(prefix);
 
@@ -457,14 +444,13 @@ void dumplots(int idx, const char *prefix, const char *data)
     n = strchr(p, '\n');
   }
   if (*p)
-    dprintf(idx, "%s%s\n", prefix, p);  /* Last trailing bit */
+    dprintf(idx, "%s%s\n", prefix, p); /* Last trailing bit */
 }
 
 /* Convert an interval (in seconds) to one of:
  * "19 days ago", "1 day ago", "18:12"
  */
-void daysago(time_t now, time_t then, char *out)
-{
+void daysago(time_t now, time_t then, char *out) {
   if (now - then > 86400) {
     int days = (now - then) / 86400;
 
@@ -477,8 +463,7 @@ void daysago(time_t now, time_t then, char *out)
 /* Convert an interval (in seconds) to one of:
  * "in 19 days", "in 1 day", "at 18:12"
  */
-void days(time_t now, time_t then, char *out)
-{
+void days(time_t now, time_t then, char *out) {
   if (now - then > 86400) {
     int days = (now - then) / 86400;
 
@@ -491,8 +476,7 @@ void days(time_t now, time_t then, char *out)
 /* Convert an interval (in seconds) to one of:
  * "for 19 days", "for 1 day", "for 09:10"
  */
-void daysdur(time_t now, time_t then, char *out)
-{
+void daysdur(time_t now, time_t then, char *out) {
   char s[81];
   int hrs, mins;
 
@@ -504,12 +488,11 @@ void daysdur(time_t now, time_t then, char *out)
   }
   strcpy(out, "for ");
   now -= then;
-  hrs = (int) (now / 3600);
-  mins = (int) ((now - (hrs * 3600)) / 60);
+  hrs = (int)(now / 3600);
+  mins = (int)((now - (hrs * 3600)) / 60);
   sprintf(s, "%02d:%02d", hrs, mins);
   strcat(out, s);
 }
-
 
 /*
  *    Logging functions
@@ -518,8 +501,7 @@ void daysdur(time_t now, time_t then, char *out)
 /* Log something
  * putlog(level,channel_name,format,...);
  */
-void putlog EGG_VARARGS_DEF(int, arg1)
-{
+void putlog EGG_VARARGS_DEF(int, arg1) {
   static int inhere = 0;
   int i, type, tsl = 0;
   char *format, *chname, s[LOGLINELEN], s1[256], *out, ct[81], *s2, stamp[34];
@@ -537,8 +519,7 @@ void putlog EGG_VARARGS_DEF(int, arg1)
     egg_strftime(stamp, sizeof(stamp) - 2, log_ts, t);
     strcat(stamp, " ");
     tsl = strlen(stamp);
-  }
-  else
+  } else
     *stamp = '\0';
 
   /* Format log entry at offset 'tsl,' then i can prepend the timestamp */
@@ -639,8 +620,7 @@ void putlog EGG_VARARGS_DEF(int, arg1)
 /* Called as soon as the logfile suffix changes. All logs are closed
  * and the new suffix is stored in `logfile_suffix'.
  */
-void logsuffix_change(char *s)
-{
+void logsuffix_change(char *s) {
   int i;
   char *s2 = logfile_suffix;
 
@@ -664,13 +644,12 @@ void logsuffix_change(char *s)
   }
 }
 
-void check_logsize()
-{
+void check_logsize() {
   struct stat ss;
   int i;
 
-/* int x=1; */
-  char buf[1024];               /* Should be plenty */
+  /* int x=1; */
+  char buf[1024]; /* Should be plenty */
 
   if (!keep_all_logs && max_logsize > 0) {
     for (i = 0; i < max_logs; i++) {
@@ -699,8 +678,7 @@ void check_logsize()
 
 /* Flush the logfiles to disk
  */
-void flushlogs()
-{
+void flushlogs() {
   int i;
 
   /* Logs may not be initialised yet. */
@@ -729,7 +707,6 @@ void flushlogs()
   }
 }
 
-
 /*
  *     String substitution functions
  */
@@ -740,18 +717,16 @@ static int blind = 0;
 static int subwidth = 70;
 static char *colstr = NULL;
 
-
 /* Add string to colstr
  */
-static void subst_addcol(char *s, char *newcol)
-{
+static void subst_addcol(char *s, char *newcol) {
   char *p, *q;
   int i, colwidth;
 
   if ((newcol[0]) && (newcol[0] != '\377'))
     colsofar++;
-  colstr = nrealloc(colstr, strlen(colstr) + strlen(newcol) +
-                    (colstr[0] ? 2 : 1));
+  colstr =
+      nrealloc(colstr, strlen(colstr) + strlen(newcol) + (colstr[0] ? 2 : 1));
   if ((newcol[0]) && (newcol[0] != '\377')) {
     if (colstr[0])
       strcat(colstr, "\377");
@@ -797,16 +772,15 @@ static void subst_addcol(char *s, char *newcol)
  * %{end}     end of section
  */
 #define HELP_BUF_LEN 256
-#define HELP_BOLD  1
-#define HELP_REV   2
+#define HELP_BOLD 1
+#define HELP_REV 2
 #define HELP_UNDER 4
 #define HELP_FLASH 8
 
-void help_subst(char *s, char *nick, struct flag_record *flags,
-                int isdcc, char *topic)
-{
-  char xx[HELP_BUF_LEN + 1], sub[161], *current, *q, chr, *writeidx,
-       *readidx, *towrite;
+void help_subst(char *s, char *nick, struct flag_record *flags, int isdcc,
+                char *topic) {
+  char xx[HELP_BUF_LEN + 1], sub[161], *current, *q, chr, *writeidx, *readidx,
+      *towrite;
   struct chanset_t *chan;
   int i, j, center = 0;
   static int help_flags;
@@ -970,7 +944,7 @@ void help_subst(char *s, char *nick, struct flag_record *flags,
             blind &= ~2;
         } else if (!(blind & 2)) {
           if (q[0] == '+') {
-            struct flag_record fr = { FR_GLOBAL | FR_CHAN, 0, 0, 0, 0, 0 };
+            struct flag_record fr = {FR_GLOBAL | FR_CHAN, 0, 0, 0, 0, 0};
 
             break_down_flags(q + 1, &fr, NULL);
 
@@ -1009,7 +983,7 @@ void help_subst(char *s, char *nick, struct flag_record *flags,
           }
         }
       } else
-        current = q;            /* no } so ignore */
+        current = q; /* no } so ignore */
       break;
     default:
       if (!blind) {
@@ -1063,14 +1037,14 @@ void help_subst(char *s, char *nick, struct flag_record *flags,
   }
 }
 
-static void scan_help_file(struct help_ref *current, char *filename, int type)
-{
+static void scan_help_file(struct help_ref *current, char *filename, int type) {
   FILE *f;
   char s[HELP_BUF_LEN + 1], *p, *q;
   struct help_list_t *list;
 
   if (is_file(filename) && (f = fopen(filename, "r"))) {
-    /* don't check for feof after fgets, skips last line if it has no \n (ie on windows) */
+    /* don't check for feof after fgets, skips last line if it has no \n (ie on
+     * windows) */
     while (!feof(f) && fgets(s, HELP_BUF_LEN, f) != NULL) {
       p = s;
       while ((q = strstr(p, "%{help="))) {
@@ -1097,14 +1071,13 @@ static void scan_help_file(struct help_ref *current, char *filename, int type)
   }
 }
 
-void add_help_reference(char *file)
-{
+void add_help_reference(char *file) {
   char s[1024];
   struct help_ref *current;
 
   for (current = help_list; current; current = current->next)
     if (!strcmp(current->name, file))
-      return;                   /* Already exists, can't re-add :P */
+      return; /* Already exists, can't re-add :P */
   current = nmalloc(sizeof *current);
 
   current->name = nmalloc(strlen(file) + 1);
@@ -1120,8 +1093,7 @@ void add_help_reference(char *file)
   scan_help_file(current, s, 2);
 }
 
-void rem_help_reference(char *file)
-{
+void rem_help_reference(char *file) {
   struct help_ref *current, *last = NULL;
   struct help_list_t *item;
 
@@ -1142,8 +1114,7 @@ void rem_help_reference(char *file)
     }
 }
 
-void reload_help_data(void)
-{
+void reload_help_data(void) {
   struct help_ref *current = help_list, *next;
   struct help_list_t *item;
 
@@ -1162,22 +1133,20 @@ void reload_help_data(void)
   }
 }
 
-void debug_help(int idx)
-{
+void debug_help(int idx) {
   struct help_ref *current;
   struct help_list_t *item;
 
   for (current = help_list; current; current = current->next) {
     dprintf(idx, "HELP FILE(S): %s\n", current->name);
     for (item = current->first; item; item = item->next) {
-      dprintf(idx, "   %s (%s)\n", item->name, (item->type == 0) ? "msg/" :
-              (item->type == 1) ? "" : "set/");
+      dprintf(idx, "   %s (%s)\n", item->name,
+              (item->type == 0) ? "msg/" : (item->type == 1) ? "" : "set/");
     }
   }
 }
 
-FILE *resolve_help(int dcc, char *file)
-{
+FILE *resolve_help(int dcc, char *file) {
 
   char s[1024];
   FILE *f;
@@ -1205,7 +1174,8 @@ FILE *resolve_help(int dcc, char *file)
     /* No match was found, so we better return NULL */
     return NULL;
   }
-  /* Since we're not dealing with help files, we should just prepend the filename with textdir */
+  /* Since we're not dealing with help files, we should just prepend the
+   * filename with textdir */
   simple_sprintf(s, "%s%s", textdir, file);
   if (is_file(s))
     return fopen(s, "r");
@@ -1213,15 +1183,15 @@ FILE *resolve_help(int dcc, char *file)
     return NULL;
 }
 
-void showhelp(char *who, char *file, struct flag_record *flags, int fl)
-{
+void showhelp(char *who, char *file, struct flag_record *flags, int fl) {
   int lines = 0;
   char s[HELP_BUF_LEN + 1];
   FILE *f = resolve_help(fl, file);
 
   if (f) {
-    help_subst(NULL, NULL, 0, HELP_IRC, NULL);  /* Clear flags */
-    /* don't check for feof after fgets, skips last line if it has no \n (ie on windows) */
+    help_subst(NULL, NULL, 0, HELP_IRC, NULL); /* Clear flags */
+    /* don't check for feof after fgets, skips last line if it has no \n (ie on
+     * windows) */
     while (!feof(f) && fgets(s, HELP_BUF_LEN, f) != NULL) {
       if (s[strlen(s) - 1] == '\n')
         s[strlen(s) - 1] = 0;
@@ -1244,15 +1214,15 @@ void showhelp(char *who, char *file, struct flag_record *flags, int fl)
 }
 
 static int display_tellhelp(int idx, char *file, FILE *f,
-                            struct flag_record *flags)
-{
+                            struct flag_record *flags) {
   char s[HELP_BUF_LEN + 1];
   int lines = 0;
 
   if (f) {
-    help_subst(NULL, NULL, 0,
-               (dcc[idx].status & STAT_TELNET) ? 0 : HELP_IRC, NULL);
-    /* don't check for feof after fgets, skips last line if it has no \n (ie on windows) */
+    help_subst(NULL, NULL, 0, (dcc[idx].status & STAT_TELNET) ? 0 : HELP_IRC,
+               NULL);
+    /* don't check for feof after fgets, skips last line if it has no \n (ie on
+     * windows) */
     while (!feof(f) && fgets(s, HELP_BUF_LEN, f) != NULL) {
       if (s[strlen(s) - 1] == '\n')
         s[strlen(s) - 1] = 0;
@@ -1273,8 +1243,7 @@ static int display_tellhelp(int idx, char *file, FILE *f,
   return lines;
 }
 
-void tellhelp(int idx, char *file, struct flag_record *flags, int fl)
-{
+void tellhelp(int idx, char *file, struct flag_record *flags, int fl) {
   int lines = 0;
   FILE *f = resolve_help(HELP_DCC | fl, file);
 
@@ -1286,8 +1255,7 @@ void tellhelp(int idx, char *file, struct flag_record *flags, int fl)
 
 /* Same as tellallhelp, just using wild_match instead of strcmp
  */
-void tellwildhelp(int idx, char *match, struct flag_record *flags)
-{
+void tellwildhelp(int idx, char *match, struct flag_record *flags) {
   struct help_ref *current;
   struct help_list_t *item;
   FILE *f;
@@ -1310,8 +1278,7 @@ void tellwildhelp(int idx, char *match, struct flag_record *flags)
 
 /* Same as tellwildhelp, just using strcmp instead of wild_match
  */
-void tellallhelp(int idx, char *match, struct flag_record *flags)
-{
+void tellallhelp(int idx, char *match, struct flag_record *flags) {
   struct help_ref *current;
   struct help_list_t *item;
   FILE *f;
@@ -1335,14 +1302,13 @@ void tellallhelp(int idx, char *match, struct flag_record *flags)
 
 /* Substitute vars in a lang text to dcc chatter
  */
-void sub_lang(int idx, char *text)
-{
+void sub_lang(int idx, char *text) {
   char s[1024];
-  struct flag_record fr = { FR_GLOBAL | FR_CHAN, 0, 0, 0, 0, 0 };
+  struct flag_record fr = {FR_GLOBAL | FR_CHAN, 0, 0, 0, 0, 0};
 
   get_user_flagrec(dcc[idx].user, &fr, dcc[idx].u.chat->con_chan);
-  help_subst(NULL, NULL, 0,
-             (dcc[idx].status & STAT_TELNET) ? 0 : HELP_IRC, NULL);
+  help_subst(NULL, NULL, 0, (dcc[idx].status & STAT_TELNET) ? 0 : HELP_IRC,
+             NULL);
   strncpyz(s, text, sizeof s);
   if (s[strlen(s) - 1] == '\n')
     s[strlen(s) - 1] = 0;
@@ -1357,8 +1323,7 @@ void sub_lang(int idx, char *text)
  * string given it.  Possibly it's time to think about a regexp library
  * for eggdrop...
  */
-char *extracthostname(char *hostmask)
-{
+char *extracthostname(char *hostmask) {
   char *p = strrchr(hostmask, '@');
 
   return p ? p + 1 : "";
@@ -1366,11 +1331,10 @@ char *extracthostname(char *hostmask)
 
 /* Show motd to dcc chatter
  */
-void show_motd(int idx)
-{
+void show_motd(int idx) {
   FILE *vv;
   char s[1024];
-  struct flag_record fr = { FR_GLOBAL | FR_CHAN, 0, 0, 0, 0, 0 };
+  struct flag_record fr = {FR_GLOBAL | FR_CHAN, 0, 0, 0, 0, 0};
 
   if (!is_file(motdfile))
     return;
@@ -1382,9 +1346,10 @@ void show_motd(int idx)
   get_user_flagrec(dcc[idx].user, &fr, dcc[idx].u.chat->con_chan);
   dprintf(idx, "\n");
   /* reset the help_subst variables to their defaults */
-  help_subst(NULL, NULL, 0,
-             (dcc[idx].status & STAT_TELNET) ? 0 : HELP_IRC, NULL);
-  /* don't check for feof after fgets, skips last line if it has no \n (ie on windows) */
+  help_subst(NULL, NULL, 0, (dcc[idx].status & STAT_TELNET) ? 0 : HELP_IRC,
+             NULL);
+  /* don't check for feof after fgets, skips last line if it has no \n (ie on
+   * windows) */
   while (!feof(vv) && fgets(s, sizeof s, vv) != NULL) {
     if (s[strlen(s) - 1] == '\n')
       s[strlen(s) - 1] = 0;
@@ -1404,11 +1369,10 @@ void show_motd(int idx)
 
 /* Show banner to telnet user
  */
-void show_banner(int idx)
-{
+void show_banner(int idx) {
   FILE *vv;
   char s[1024];
-  struct flag_record fr = { FR_GLOBAL | FR_CHAN, 0, 0, 0, 0, 0 };
+  struct flag_record fr = {FR_GLOBAL | FR_CHAN, 0, 0, 0, 0, 0};
 
   if (!is_file(bannerfile))
     return;
@@ -1420,7 +1384,8 @@ void show_banner(int idx)
   get_user_flagrec(dcc[idx].user, &fr, dcc[idx].u.chat->con_chan);
   /* reset the help_subst variables to their defaults */
   help_subst(NULL, NULL, 0, 0, NULL);
-  /* don't check for feof after fgets, skips last line if it has no \n (ie on windows) */
+  /* don't check for feof after fgets, skips last line if it has no \n (ie on
+   * windows) */
   while (!feof(vv) && fgets(s, sizeof s, vv) != NULL) {
     if (s[strlen(s) - 1] == '\n')
       s[strlen(s) - 1] = 0;
@@ -1432,15 +1397,14 @@ void show_banner(int idx)
   }
   /* fgets == NULL means error or empty file, so check for error */
   if (ferror(vv)) {
-      putlog(LOG_MISC, "*", "Error reading banner");
+    putlog(LOG_MISC, "*", "Error reading banner");
   }
   fclose(vv);
 }
 
 /* Create a string with random letters and digits
  */
-void make_rand_str(char *s, int len)
-{
+void make_rand_str(char *s, int len) {
   int j;
 
   for (j = 0; j < len; j++) {
@@ -1455,8 +1419,7 @@ void make_rand_str(char *s, int len)
 /* Convert an octal string into a decimal integer value.  If the string
  * is empty or contains non-octal characters, -1 is returned.
  */
-int oatoi(const char *octal)
-{
+int oatoi(const char *octal) {
   register int i;
 
   if (!*octal)
@@ -1474,8 +1437,7 @@ int oatoi(const char *octal)
  *
  * Remember to free the returned memory block.
  */
-char *str_escape(const char *str, const char div, const char mask)
-{
+char *str_escape(const char *str, const char div, const char mask) {
   const int len = strlen(str);
   int buflen = (2 * len), blen = 0;
   char *buf = nmalloc(buflen + 1), *b = buf;
@@ -1523,21 +1485,20 @@ char *str_escape(const char *str, const char div, const char mask)
  * NOTE: If you look carefully, you'll notice that strchr_unescape()
  *       behaves differently than strchr().
  */
-char *strchr_unescape(char *str, const char div, register const char esc_char)
-{
+char *strchr_unescape(char *str, const char div, register const char esc_char) {
   char buf[3];
   register char *s, *p;
 
   buf[2] = 0;
   for (s = p = str; *s; s++, p++) {
-    if (*s == esc_char) {       /* Found escape character.              */
+    if (*s == esc_char) { /* Found escape character.              */
       /* Convert code to character. */
       buf[0] = s[1], buf[1] = s[2];
-      *p = (unsigned char) strtol(buf, NULL, 16);
+      *p = (unsigned char)strtol(buf, NULL, 16);
       s += 2;
     } else if (*s == div) {
       *p = *s = 0;
-      return (s + 1);           /* Found searched for character.        */
+      return (s + 1); /* Found searched for character.        */
     } else
       *p = *s;
   }
@@ -1546,8 +1507,7 @@ char *strchr_unescape(char *str, const char div, register const char esc_char)
 }
 
 /* Is every character in a string a digit? */
-int str_isdigit(const char *str)
-{
+int str_isdigit(const char *str) {
   if (!*str)
     return 0;
 
@@ -1561,16 +1521,14 @@ int str_isdigit(const char *str)
 /* As strchr_unescape(), but converts the complete string, without
  * searching for a specific delimiter character.
  */
-void str_unescape(char *str, register const char esc_char)
-{
-  (void) strchr_unescape(str, 0, esc_char);
+void str_unescape(char *str, register const char esc_char) {
+  (void)strchr_unescape(str, 0, esc_char);
 }
 
 /* Kills the bot. s1 is the reason shown to other bots,
  * s2 the reason shown on the partyline. (Sup 25Jul2001)
  */
-void kill_bot(char *s1, char *s2)
-{
+void kill_bot(char *s1, char *s2) {
   check_tcl_die(s2);
   call_hook(HOOK_DIE);
   chatout("*** %s\n", s1);

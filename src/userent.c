@@ -24,20 +24,16 @@
 #include "main.h"
 #include "users.h"
 
-
 extern int noshare;
 extern struct userrec *userlist;
 extern struct dcc_t *dcc;
 extern Tcl_Interp *interp;
 extern char whois_fields[];
 
-
-int share_greet = 0;            /* Share greeting info                  */
+int share_greet = 0; /* Share greeting info                  */
 struct user_entry_type *entry_type_list;
 
-
-void init_userent()
-{
+void init_userent() {
   entry_type_list = 0;
   add_entry_type(&USERENTRY_COMMENT);
   add_entry_type(&USERENTRY_XTRA);
@@ -52,8 +48,7 @@ void init_userent()
 #endif
 }
 
-void list_type_kill(struct list_type *t)
-{
+void list_type_kill(struct list_type *t) {
   struct list_type *u;
 
   while (t) {
@@ -65,8 +60,7 @@ void list_type_kill(struct list_type *t)
   }
 }
 
-int list_type_expmem(struct list_type *t)
-{
+int list_type_expmem(struct list_type *t) {
   int tot = 0;
 
   for (; t; t = t->next)
@@ -75,8 +69,7 @@ int list_type_expmem(struct list_type *t)
   return tot;
 }
 
-int def_unpack(struct userrec *u, struct user_entry *e)
-{
+int def_unpack(struct userrec *u, struct user_entry *e) {
   char *tmp;
 
   tmp = e->u.list->extra;
@@ -86,8 +79,7 @@ int def_unpack(struct userrec *u, struct user_entry *e)
   return 1;
 }
 
-int def_pack(struct userrec *u, struct user_entry *e)
-{
+int def_pack(struct userrec *u, struct user_entry *e) {
   char *tmp;
 
   tmp = e->u.string;
@@ -97,28 +89,22 @@ int def_pack(struct userrec *u, struct user_entry *e)
   return 1;
 }
 
-int def_kill(struct user_entry *e)
-{
+int def_kill(struct user_entry *e) {
   nfree(e->u.string);
   nfree(e);
   return 1;
 }
 
-int def_write_userfile(FILE *f, struct userrec *u, struct user_entry *e)
-{
+int def_write_userfile(FILE *f, struct userrec *u, struct user_entry *e) {
   if (fprintf(f, "--%s %s\n", e->type->name, e->u.string) == EOF)
     return 0;
   return 1;
 }
 
-void *def_get(struct userrec *u, struct user_entry *e)
-{
-  return e->u.string;
-}
+void *def_get(struct userrec *u, struct user_entry *e) { return e->u.string; }
 
-int def_set(struct userrec *u, struct user_entry *e, void *buf)
-{
-  char *string = (char *) buf;
+int def_set(struct userrec *u, struct user_entry *e, void *buf) {
+  char *string = (char *)buf;
 
   if (string && !string[0])
     string = NULL;
@@ -136,7 +122,7 @@ int def_set(struct userrec *u, struct user_entry *e, void *buf)
       /* Allow bold, inverse, underline, color text here...
        * But never add cr or lf!! --rtc
        */
-      if ((unsigned int) *i < 32 && !strchr("\002\003\026\037", *i))
+      if ((unsigned int)*i < 32 && !strchr("\002\003\026\037", *i))
         *i = '?';
   } else {
     nfree(e->u.string);
@@ -150,95 +136,81 @@ int def_set(struct userrec *u, struct user_entry *e, void *buf)
   return 1;
 }
 
-int def_gotshare(struct userrec *u, struct user_entry *e, char *data, int idx)
-{
+int def_gotshare(struct userrec *u, struct user_entry *e, char *data, int idx) {
   putlog(LOG_CMDS, "*", "%s: change %s %s", dcc[idx].nick, e->type->name,
          u->handle);
   return e->type->set(u, e, data);
 }
 
-int def_tcl_get(Tcl_Interp * interp, struct userrec *u,
-                struct user_entry *e, int argc, char **argv)
-{
+int def_tcl_get(Tcl_Interp *interp, struct userrec *u, struct user_entry *e,
+                int argc, char **argv) {
   Tcl_AppendResult(interp, e->u.string, NULL);
   return TCL_OK;
 }
 
-int def_tcl_append(Tcl_Interp * interp, struct userrec *u,
-                   struct user_entry *e)
-{
+int def_tcl_append(Tcl_Interp *interp, struct userrec *u,
+                   struct user_entry *e) {
   Tcl_AppendElement(interp, e->u.string);
   return TCL_OK;
 }
 
-int def_tcl_set(Tcl_Interp * irp, struct userrec *u,
-                struct user_entry *e, int argc, char **argv)
-{
+int def_tcl_set(Tcl_Interp *irp, struct userrec *u, struct user_entry *e,
+                int argc, char **argv) {
   BADARGS(4, 4, " handle type setting");
 
   e->type->set(u, e, argv[3]);
   return TCL_OK;
 }
 
-int def_expmem(struct user_entry *e)
-{
-  return strlen(e->u.string) + 1;
-}
+int def_expmem(struct user_entry *e) { return strlen(e->u.string) + 1; }
 
-void def_display(int idx, struct user_entry *e)
-{
+void def_display(int idx, struct user_entry *e) {
   dprintf(idx, "  %s: %s\n", e->type->name, e->u.string);
 }
 
-int def_dupuser(struct userrec *new, struct userrec *old, struct user_entry *e)
-{
+int def_dupuser(struct userrec *new, struct userrec *old,
+                struct user_entry *e) {
   return set_user(e->type, new, e->u.string);
 }
 
-static void comment_display(int idx, struct user_entry *e)
-{
+static void comment_display(int idx, struct user_entry *e) {
   if (dcc[idx].user && (dcc[idx].user->flags & USER_MASTER))
     dprintf(idx, "  COMMENT: %.70s\n", e->u.string);
 }
 
-struct user_entry_type USERENTRY_COMMENT = {
-  0,                            /* always 0 ;) */
-  def_gotshare,
-  def_dupuser,
-  def_unpack,
-  def_pack,
-  def_write_userfile,
-  def_kill,
-  def_get,
-  def_set,
-  def_tcl_get,
-  def_tcl_set,
-  def_expmem,
-  comment_display,
-  "COMMENT",
-  def_tcl_append
-};
+struct user_entry_type USERENTRY_COMMENT = {0, /* always 0 ;) */
+                                            def_gotshare,
+                                            def_dupuser,
+                                            def_unpack,
+                                            def_pack,
+                                            def_write_userfile,
+                                            def_kill,
+                                            def_get,
+                                            def_set,
+                                            def_tcl_get,
+                                            def_tcl_set,
+                                            def_expmem,
+                                            comment_display,
+                                            "COMMENT",
+                                            def_tcl_append};
 
-struct user_entry_type USERENTRY_INFO = {
-  0,                            /* always 0 ;) */
-  def_gotshare,
-  def_dupuser,
-  def_unpack,
-  def_pack,
-  def_write_userfile,
-  def_kill,
-  def_get,
-  def_set,
-  def_tcl_get,
-  def_tcl_set,
-  def_expmem,
-  def_display,
-  "INFO",
-  def_tcl_append
-};
+struct user_entry_type USERENTRY_INFO = {0, /* always 0 ;) */
+                                         def_gotshare,
+                                         def_dupuser,
+                                         def_unpack,
+                                         def_pack,
+                                         def_write_userfile,
+                                         def_kill,
+                                         def_get,
+                                         def_set,
+                                         def_tcl_get,
+                                         def_tcl_set,
+                                         def_expmem,
+                                         def_display,
+                                         "INFO",
+                                         def_tcl_append};
 
-int pass_set(struct userrec *u, struct user_entry *e, void *buf)
-{
+int pass_set(struct userrec *u, struct user_entry *e, void *buf) {
   char new[32];
   register char *pass = buf;
 
@@ -247,7 +219,7 @@ int pass_set(struct userrec *u, struct user_entry *e, void *buf)
   if (!pass || !pass[0] || (pass[0] == '-'))
     e->u.extra = NULL;
   else {
-    unsigned char *p = (unsigned char *) pass;
+    unsigned char *p = (unsigned char *)pass;
 
     if (strlen(pass) > 30)
       pass[30] = 0;
@@ -268,9 +240,8 @@ int pass_set(struct userrec *u, struct user_entry *e, void *buf)
   return 1;
 }
 
-static int pass_tcl_set(Tcl_Interp * irp, struct userrec *u,
-                        struct user_entry *e, int argc, char **argv)
-{
+static int pass_tcl_set(Tcl_Interp *irp, struct userrec *u,
+                        struct user_entry *e, int argc, char **argv) {
   BADARGS(3, 4, " handle PASS ?newpass?");
 
   pass_set(u, e, argc == 3 ? NULL : argv[3]);
@@ -278,25 +249,13 @@ static int pass_tcl_set(Tcl_Interp * irp, struct userrec *u,
 }
 
 struct user_entry_type USERENTRY_PASS = {
-  0,
-  def_gotshare,
-  0,
-  def_unpack,
-  def_pack,
-  def_write_userfile,
-  def_kill,
-  def_get,
-  pass_set,
-  def_tcl_get,
-  pass_tcl_set,
-  def_expmem,
-  0,
-  "PASS",
-  def_tcl_append
-};
+    0,           def_gotshare, 0,
+    def_unpack,  def_pack,     def_write_userfile,
+    def_kill,    def_get,      pass_set,
+    def_tcl_get, pass_tcl_set, def_expmem,
+    0,           "PASS",       def_tcl_append};
 
-static int laston_unpack(struct userrec *u, struct user_entry *e)
-{
+static int laston_unpack(struct userrec *u, struct user_entry *e) {
   char *par, *arg;
   struct laston_info *li;
 
@@ -313,14 +272,13 @@ static int laston_unpack(struct userrec *u, struct user_entry *e)
   return 1;
 }
 
-static int laston_pack(struct userrec *u, struct user_entry *e)
-{
+static int laston_pack(struct userrec *u, struct user_entry *e) {
   char work[1024];
   long tv;
   struct laston_info *li;
   int l;
 
-  li = (struct laston_info *) e->u.extra;
+  li = (struct laston_info *)e->u.extra;
   tv = li->laston;
   l = sprintf(work, "%lu %s", tv, li->lastonplace);
   e->u.list = user_malloc(sizeof(struct list_type));
@@ -333,10 +291,9 @@ static int laston_pack(struct userrec *u, struct user_entry *e)
 }
 
 static int laston_write_userfile(FILE *f, struct userrec *u,
-                                 struct user_entry *e)
-{
+                                 struct user_entry *e) {
   long tv;
-  struct laston_info *li = (struct laston_info *) e->u.extra;
+  struct laston_info *li = (struct laston_info *)e->u.extra;
 
   tv = li->laston;
   if (fprintf(f, "--LASTON %lu %s\n", tv,
@@ -345,18 +302,16 @@ static int laston_write_userfile(FILE *f, struct userrec *u,
   return 1;
 }
 
-static int laston_kill(struct user_entry *e)
-{
-  if (((struct laston_info *) (e->u.extra))->lastonplace)
-    nfree(((struct laston_info *) (e->u.extra))->lastonplace);
+static int laston_kill(struct user_entry *e) {
+  if (((struct laston_info *)(e->u.extra))->lastonplace)
+    nfree(((struct laston_info *)(e->u.extra))->lastonplace);
   nfree(e->u.extra);
   nfree(e);
   return 1;
 }
 
-static int laston_set(struct userrec *u, struct user_entry *e, void *buf)
-{
-  struct laston_info *li = (struct laston_info *) e->u.extra;
+static int laston_set(struct userrec *u, struct user_entry *e, void *buf) {
+  struct laston_info *li = (struct laston_info *)e->u.extra;
 
   if (li != buf) {
     if (li) {
@@ -370,10 +325,9 @@ static int laston_set(struct userrec *u, struct user_entry *e, void *buf)
   return 1;
 }
 
-static int laston_tcl_get(Tcl_Interp * irp, struct userrec *u,
-                          struct user_entry *e, int argc, char **argv)
-{
-  struct laston_info *li = (struct laston_info *) e->u.extra;
+static int laston_tcl_get(Tcl_Interp *irp, struct userrec *u,
+                          struct user_entry *e, int argc, char **argv) {
+  struct laston_info *li = (struct laston_info *)e->u.extra;
   char number[20];
   long tv;
   struct chanuserrec *cr;
@@ -398,8 +352,7 @@ static int laston_tcl_get(Tcl_Interp * irp, struct userrec *u,
 }
 
 static int laston_tcl_append(Tcl_Interp *irp, struct userrec *u,
-                             struct user_entry *e)
-{
+                             struct user_entry *e) {
   Tcl_DString ds;
   struct chanuserrec *cr;
 
@@ -413,9 +366,8 @@ static int laston_tcl_append(Tcl_Interp *irp, struct userrec *u,
   return TCL_OK;
 }
 
-static int laston_tcl_set(Tcl_Interp * irp, struct userrec *u,
-                          struct user_entry *e, int argc, char **argv)
-{
+static int laston_tcl_set(Tcl_Interp *irp, struct userrec *u,
+                          struct user_entry *e, int argc, char **argv) {
   struct laston_info *li;
   struct chanuserrec *cr;
 
@@ -444,15 +396,13 @@ static int laston_tcl_set(Tcl_Interp * irp, struct userrec *u,
   return TCL_OK;
 }
 
-static int laston_expmem(struct user_entry *e)
-{
+static int laston_expmem(struct user_entry *e) {
   return sizeof(struct laston_info) +
-    strlen(((struct laston_info *) (e->u.extra))->lastonplace) + 1;
+         strlen(((struct laston_info *)(e->u.extra))->lastonplace) + 1;
 }
 
 static int laston_dupuser(struct userrec *new, struct userrec *old,
-                          struct user_entry *e)
-{
+                          struct user_entry *e) {
   struct laston_info *li = e->u.extra, *li2;
 
   if (li) {
@@ -466,26 +416,23 @@ static int laston_dupuser(struct userrec *new, struct userrec *old,
   return 0;
 }
 
-struct user_entry_type USERENTRY_LASTON = {
-  0,                            /* always 0 ;) */
-  0,
-  laston_dupuser,
-  laston_unpack,
-  laston_pack,
-  laston_write_userfile,
-  laston_kill,
-  def_get,
-  laston_set,
-  laston_tcl_get,
-  laston_tcl_set,
-  laston_expmem,
-  0,
-  "LASTON",
-  laston_tcl_append
-};
+struct user_entry_type USERENTRY_LASTON = {0, /* always 0 ;) */
+                                           0,
+                                           laston_dupuser,
+                                           laston_unpack,
+                                           laston_pack,
+                                           laston_write_userfile,
+                                           laston_kill,
+                                           def_get,
+                                           laston_set,
+                                           laston_tcl_get,
+                                           laston_tcl_set,
+                                           laston_expmem,
+                                           0,
+                                           "LASTON",
+                                           laston_tcl_append};
 
-static int botaddr_unpack(struct userrec *u, struct user_entry *e)
-{
+static int botaddr_unpack(struct userrec *u, struct user_entry *e) {
   char *p, *q;
   struct bot_addr *bi = user_malloc(sizeof(struct bot_addr));
 
@@ -529,13 +476,12 @@ static int botaddr_unpack(struct userrec *u, struct user_entry *e)
   return 1;
 }
 
-static int botaddr_pack(struct userrec *u, struct user_entry *e)
-{
+static int botaddr_pack(struct userrec *u, struct user_entry *e) {
   char work[1024], *p, *q = work;
   struct bot_addr *bi;
   int l;
 
-  bi = (struct bot_addr *) e->u.extra;
+  bi = (struct bot_addr *)e->u.extra;
   for (p = bi->address; *p; p++)
     if (*p == ':')
       *q++ = ';';
@@ -557,20 +503,18 @@ static int botaddr_pack(struct userrec *u, struct user_entry *e)
   return 1;
 }
 
-static int botaddr_kill(struct user_entry *e)
-{
-  nfree(((struct bot_addr *) (e->u.extra))->address);
+static int botaddr_kill(struct user_entry *e) {
+  nfree(((struct bot_addr *)(e->u.extra))->address);
   nfree(e->u.extra);
   nfree(e);
   return 1;
 }
 
 static int botaddr_write_userfile(FILE *f, struct userrec *u,
-                                  struct user_entry *e)
-{
+                                  struct user_entry *e) {
   int ret = 1;
   char *p, *q, *addr;
-  register struct bot_addr *bi = (struct bot_addr *) e->u.extra;
+  register struct bot_addr *bi = (struct bot_addr *)e->u.extra;
 
   p = bi->address;
   addr = user_malloc(strlen(bi->address) + 1);
@@ -582,20 +526,19 @@ static int botaddr_write_userfile(FILE *f, struct userrec *u,
   *q = 0;
 #ifdef TLS
   if (fprintf(f, "--%s %s:%s%u/%s%u\n", e->type->name, addr,
-      (bi->ssl & TLS_BOT) ? "+" : "", bi->telnet_port, (bi->ssl & TLS_RELAY) ?
-      "+" : "", bi->relay_port) == EOF)
+              (bi->ssl & TLS_BOT) ? "+" : "", bi->telnet_port,
+              (bi->ssl & TLS_RELAY) ? "+" : "", bi->relay_port) == EOF)
 #else
-  if (fprintf(f, "--%s %s:%u/%u\n", e->type->name, addr,
-      bi->telnet_port, bi->relay_port) == EOF)
+  if (fprintf(f, "--%s %s:%u/%u\n", e->type->name, addr, bi->telnet_port,
+              bi->relay_port) == EOF)
 #endif
     ret = 0;
   nfree(addr);
   return ret;
 }
 
-static int botaddr_set(struct userrec *u, struct user_entry *e, void *buf)
-{
-  register struct bot_addr *bi = (struct bot_addr *) e->u.extra;
+static int botaddr_set(struct userrec *u, struct user_entry *e, void *buf) {
+  register struct bot_addr *bi = (struct bot_addr *)e->u.extra;
 
   if (!bi && !buf)
     return 1;
@@ -612,15 +555,14 @@ static int botaddr_set(struct userrec *u, struct user_entry *e, void *buf)
              (bi->ssl & TLS_BOT) ? "+" : "", bi->telnet_port,
              (bi->ssl & TLS_RELAY) ? "+" : "", bi->relay_port);
 #else
-    shareout(NULL, "c BOTADDR %s %s %d %d\n", u->handle,
-             bi->address, bi->telnet_port, bi->relay_port);
+    shareout(NULL, "c BOTADDR %s %s %d %d\n", u->handle, bi->address,
+             bi->telnet_port, bi->relay_port);
 #endif
   }
   return 1;
 }
 
-static int botaddr_tcl_dstring(Tcl_DString *ds, struct user_entry *e)
-{
+static int botaddr_tcl_dstring(Tcl_DString *ds, struct user_entry *e) {
   struct bot_addr *bi = (struct bot_addr *)e->u.extra;
 
   Tcl_DStringAppendElement(ds, bi->address);
@@ -640,9 +582,8 @@ static int botaddr_tcl_dstring(Tcl_DString *ds, struct user_entry *e)
   return TCL_OK;
 }
 
-static int botaddr_tcl_get(Tcl_Interp * interp, struct userrec *u,
-                           struct user_entry *e, int argc, char **argv)
-{
+static int botaddr_tcl_get(Tcl_Interp *interp, struct userrec *u,
+                           struct user_entry *e, int argc, char **argv) {
   Tcl_DString ds;
   Tcl_DStringInit(&ds);
   botaddr_tcl_dstring(&ds, e);
@@ -652,9 +593,8 @@ static int botaddr_tcl_get(Tcl_Interp * interp, struct userrec *u,
   return TCL_OK;
 }
 
-static int botaddr_tcl_append(Tcl_Interp * interp, struct userrec *u,
-                           struct user_entry *e)
-{
+static int botaddr_tcl_append(Tcl_Interp *interp, struct userrec *u,
+                              struct user_entry *e) {
   Tcl_DString ds;
   Tcl_DStringInit(&ds);
   botaddr_tcl_dstring(&ds, e);
@@ -664,10 +604,9 @@ static int botaddr_tcl_append(Tcl_Interp * interp, struct userrec *u,
   return TCL_OK;
 }
 
-static int botaddr_tcl_set(Tcl_Interp * irp, struct userrec *u,
-                           struct user_entry *e, int argc, char **argv)
-{
-  register struct bot_addr *bi = (struct bot_addr *) e->u.extra;
+static int botaddr_tcl_set(Tcl_Interp *irp, struct userrec *u,
+                           struct user_entry *e, int argc, char **argv) {
+  register struct bot_addr *bi = (struct bot_addr *)e->u.extra;
 
   BADARGS(4, 6, " handle type address ?telnetport ?relayport??");
 
@@ -709,29 +648,27 @@ static int botaddr_tcl_set(Tcl_Interp * irp, struct userrec *u,
   return TCL_OK;
 }
 
-static int botaddr_expmem(struct user_entry *e)
-{
-  register struct bot_addr *bi = (struct bot_addr *) e->u.extra;
+static int botaddr_expmem(struct user_entry *e) {
+  register struct bot_addr *bi = (struct bot_addr *)e->u.extra;
 
   return strlen(bi->address) + 1 + sizeof(struct bot_addr);
 }
 
-static void botaddr_display(int idx, struct user_entry *e)
-{
-  register struct bot_addr *bi = (struct bot_addr *) e->u.extra;
+static void botaddr_display(int idx, struct user_entry *e) {
+  register struct bot_addr *bi = (struct bot_addr *)e->u.extra;
 
   dprintf(idx, "  ADDRESS: %.70s\n", bi->address);
 #ifdef TLS
-  dprintf(idx, "     users: %s%d, bots: %s%d\n", (bi->ssl & TLS_RELAY) ? "+" : "",
-          bi->relay_port, (bi->ssl & TLS_BOT) ? "+" : "", bi->telnet_port);
+  dprintf(idx, "     users: %s%d, bots: %s%d\n",
+          (bi->ssl & TLS_RELAY) ? "+" : "", bi->relay_port,
+          (bi->ssl & TLS_BOT) ? "+" : "", bi->telnet_port);
 #else
   dprintf(idx, "     users: %d, bots: %d\n", bi->relay_port, bi->telnet_port);
 #endif
 }
 
-static int botaddr_gotshare(struct userrec *u, struct user_entry *e,
-                            char *buf, int idx)
-{
+static int botaddr_gotshare(struct userrec *u, struct user_entry *e, char *buf,
+                            int idx) {
   struct bot_addr *bi = user_malloc(sizeof(struct bot_addr));
   char *arg;
 
@@ -758,8 +695,7 @@ static int botaddr_gotshare(struct userrec *u, struct user_entry *e,
 }
 
 static int botaddr_dupuser(struct userrec *new, struct userrec *old,
-                           struct user_entry *e)
-{
+                           struct user_entry *e) {
   if (old->flags & USER_BOT) {
     struct bot_addr *bi = e->u.extra, *bi2;
 
@@ -779,26 +715,23 @@ static int botaddr_dupuser(struct userrec *new, struct userrec *old,
   return 0;
 }
 
-struct user_entry_type USERENTRY_BOTADDR = {
-  0,                            /* always 0 ;) */
-  botaddr_gotshare,
-  botaddr_dupuser,
-  botaddr_unpack,
-  botaddr_pack,
-  botaddr_write_userfile,
-  botaddr_kill,
-  def_get,
-  botaddr_set,
-  botaddr_tcl_get,
-  botaddr_tcl_set,
-  botaddr_expmem,
-  botaddr_display,
-  "BOTADDR",
-  botaddr_tcl_append
-};
+struct user_entry_type USERENTRY_BOTADDR = {0, /* always 0 ;) */
+                                            botaddr_gotshare,
+                                            botaddr_dupuser,
+                                            botaddr_unpack,
+                                            botaddr_pack,
+                                            botaddr_write_userfile,
+                                            botaddr_kill,
+                                            def_get,
+                                            botaddr_set,
+                                            botaddr_tcl_get,
+                                            botaddr_tcl_set,
+                                            botaddr_expmem,
+                                            botaddr_display,
+                                            "BOTADDR",
+                                            botaddr_tcl_append};
 
-int xtra_set(struct userrec *u, struct user_entry *e, void *buf)
-{
+int xtra_set(struct userrec *u, struct user_entry *e, void *buf) {
   struct xtra_key *curr, *old = NULL, *new = buf;
 
   for (curr = e->u.extra; curr; curr = curr->next) {
@@ -823,7 +756,7 @@ int xtra_set(struct userrec *u, struct user_entry *e, void *buf)
     shareout(NULL, "c XTRA %s %s %s\n", u->handle, new->key,
              new->data ? new->data : "");
   if ((old && old != new) || !new->data || !new->data[0]) {
-    egg_list_delete(&e->u.list, (struct list_type *) old);
+    egg_list_delete(&e->u.list, (struct list_type *)old);
     nfree(old->key);
     nfree(old->data);
     if (old == e->u.extra)
@@ -834,20 +767,19 @@ int xtra_set(struct userrec *u, struct user_entry *e, void *buf)
   /* don't do anything when old == new */
   if (old != new) {
     if (new->data && new->data[0])
-      list_insert((&e->u.extra), new)  /* do not add a ';' here */
-    else {
-      if (new->data)
-        nfree(new->data);
-      nfree(new->key);
-      nfree(new);
-    }
+      list_insert((&e->u.extra), new) /* do not add a ';' here */
+          else {
+        if (new->data)
+          nfree(new->data);
+        nfree(new->key);
+        nfree(new);
+      }
   }
   return TCL_OK;
 }
 
-static int xtra_tcl_set(Tcl_Interp * irp, struct userrec *u,
-                        struct user_entry *e, int argc, char **argv)
-{
+static int xtra_tcl_set(Tcl_Interp *irp, struct userrec *u,
+                        struct user_entry *e, int argc, char **argv) {
   struct xtra_key *xk;
   int l;
 
@@ -873,8 +805,7 @@ static int xtra_tcl_set(Tcl_Interp * irp, struct userrec *u,
   return TCL_OK;
 }
 
-int xtra_unpack(struct userrec *u, struct user_entry *e)
-{
+int xtra_unpack(struct userrec *u, struct user_entry *e) {
   struct list_type *curr, *head;
   struct xtra_key *t;
   char *key, *data;
@@ -899,8 +830,7 @@ int xtra_unpack(struct userrec *u, struct user_entry *e)
   return 1;
 }
 
-static int xtra_pack(struct userrec *u, struct user_entry *e)
-{
+static int xtra_pack(struct userrec *u, struct user_entry *e) {
   struct list_type *t;
   struct xtra_key *curr, *next;
 
@@ -920,8 +850,7 @@ static int xtra_pack(struct userrec *u, struct user_entry *e)
   return 1;
 }
 
-static void xtra_display(int idx, struct user_entry *e)
-{
+static void xtra_display(int idx, struct user_entry *e) {
   int code, lc, j;
   EGG_CONST char **list;
   struct xtra_key *xk;
@@ -937,12 +866,11 @@ static void xtra_display(int idx, struct user_entry *e)
         dprintf(idx, "  %s: %s\n", xk->key, xk->data);
     }
   }
-  Tcl_Free((char *) list);
+  Tcl_Free((char *)list);
 }
 
-static int xtra_gotshare(struct userrec *u, struct user_entry *e,
-                         char *buf, int idx)
-{
+static int xtra_gotshare(struct userrec *u, struct user_entry *e, char *buf,
+                         int idx) {
   char *arg;
   struct xtra_key *xk;
   int l;
@@ -972,8 +900,7 @@ static int xtra_gotshare(struct userrec *u, struct user_entry *e,
 }
 
 static int xtra_dupuser(struct userrec *new, struct userrec *old,
-                        struct user_entry *e)
-{
+                        struct user_entry *e) {
   struct xtra_key *x1, *x2;
 
   for (x1 = e->u.extra; x1; x1 = x1->next) {
@@ -989,8 +916,7 @@ static int xtra_dupuser(struct userrec *new, struct userrec *old,
 }
 
 static int xtra_write_userfile(FILE *f, struct userrec *u,
-                               struct user_entry *e)
-{
+                               struct user_entry *e) {
   struct xtra_key *x;
 
   for (x = e->u.extra; x; x = x->next)
@@ -999,8 +925,7 @@ static int xtra_write_userfile(FILE *f, struct userrec *u,
   return 1;
 }
 
-int xtra_kill(struct user_entry *e)
-{
+int xtra_kill(struct user_entry *e) {
   struct xtra_key *x, *y;
 
   for (x = e->u.extra; x; x = y) {
@@ -1013,8 +938,8 @@ int xtra_kill(struct user_entry *e)
   return 1;
 }
 
-static int xtra_tcl_dstring(Tcl_DString *ds, int sublist, struct user_entry *e)
-{
+static int xtra_tcl_dstring(Tcl_DString *ds, int sublist,
+                            struct user_entry *e) {
   struct xtra_key *x;
 
   for (x = e->u.extra; x; x = x->next) {
@@ -1028,9 +953,8 @@ static int xtra_tcl_dstring(Tcl_DString *ds, int sublist, struct user_entry *e)
   return TCL_OK;
 }
 
-static int xtra_tcl_get(Tcl_Interp * irp, struct userrec *u,
-                        struct user_entry *e, int argc, char **argv)
-{
+static int xtra_tcl_get(Tcl_Interp *irp, struct userrec *u,
+                        struct user_entry *e, int argc, char **argv) {
   struct xtra_key *x;
 
   BADARGS(3, 4, " handle XTRA ?key?");
@@ -1052,8 +976,7 @@ static int xtra_tcl_get(Tcl_Interp * irp, struct userrec *u,
 }
 
 static int xtra_tcl_append(Tcl_Interp *irp, struct userrec *u,
-                           struct user_entry *e)
-{
+                           struct user_entry *e) {
   Tcl_DString ds;
   Tcl_DStringInit(&ds);
   xtra_tcl_dstring(&ds, 0, e);
@@ -1062,8 +985,7 @@ static int xtra_tcl_append(Tcl_Interp *irp, struct userrec *u,
   return TCL_OK;
 }
 
-static int xtra_expmem(struct user_entry *e)
-{
+static int xtra_expmem(struct user_entry *e) {
   struct xtra_key *x;
   int tot = 0;
 
@@ -1076,27 +998,24 @@ static int xtra_expmem(struct user_entry *e)
   return tot;
 }
 
-struct user_entry_type USERENTRY_XTRA = {
-  0,
-  xtra_gotshare,
-  xtra_dupuser,
-  xtra_unpack,
-  xtra_pack,
-  xtra_write_userfile,
-  xtra_kill,
-  def_get,
-  xtra_set,
-  xtra_tcl_get,
-  xtra_tcl_set,
-  xtra_expmem,
-  xtra_display,
-  "XTRA",
-  xtra_tcl_append
-};
+struct user_entry_type USERENTRY_XTRA = {0,
+                                         xtra_gotshare,
+                                         xtra_dupuser,
+                                         xtra_unpack,
+                                         xtra_pack,
+                                         xtra_write_userfile,
+                                         xtra_kill,
+                                         def_get,
+                                         xtra_set,
+                                         xtra_tcl_get,
+                                         xtra_tcl_set,
+                                         xtra_expmem,
+                                         xtra_display,
+                                         "XTRA",
+                                         xtra_tcl_append};
 
 static int hosts_dupuser(struct userrec *new, struct userrec *old,
-                         struct user_entry *e)
-{
+                         struct user_entry *e) {
   struct list_type *h;
 
   for (h = e->u.extra; h; h = h->next)
@@ -1104,14 +1023,10 @@ static int hosts_dupuser(struct userrec *new, struct userrec *old,
   return 1;
 }
 
-static int hosts_null(struct userrec *u, struct user_entry *e)
-{
-  return 1;
-}
+static int hosts_null(struct userrec *u, struct user_entry *e) { return 1; }
 
 static int hosts_write_userfile(FILE *f, struct userrec *u,
-                                struct user_entry *e)
-{
+                                struct user_entry *e) {
   struct list_type *h;
 
   for (h = e->u.extra; h; h = h->next)
@@ -1120,20 +1035,17 @@ static int hosts_write_userfile(FILE *f, struct userrec *u,
   return 1;
 }
 
-static int hosts_kill(struct user_entry *e)
-{
+static int hosts_kill(struct user_entry *e) {
   list_type_kill(e->u.list);
   nfree(e);
   return 1;
 }
 
-static int hosts_expmem(struct user_entry *e)
-{
+static int hosts_expmem(struct user_entry *e) {
   return list_type_expmem(e->u.list);
 }
 
-static void hosts_display(int idx, struct user_entry *e)
-{
+static void hosts_display(int idx, struct user_entry *e) {
   char s[1024];
   struct list_type *q;
 
@@ -1158,8 +1070,7 @@ static void hosts_display(int idx, struct user_entry *e)
     dprintf(idx, "%s\n", s);
 }
 
-static int hosts_set(struct userrec *u, struct user_entry *e, void *buf)
-{
+static int hosts_set(struct userrec *u, struct user_entry *e, void *buf) {
   if (!buf || !egg_strcasecmp(buf, "none")) {
     /* When the bot crashes, it's in this part, not in the 'else' part */
     list_type_kill(e->u.list);
@@ -1198,9 +1109,8 @@ static int hosts_set(struct userrec *u, struct user_entry *e, void *buf)
   return 1;
 }
 
-static int hosts_tcl_get(Tcl_Interp * irp, struct userrec *u,
-                         struct user_entry *e, int argc, char **argv)
-{
+static int hosts_tcl_get(Tcl_Interp *irp, struct userrec *u,
+                         struct user_entry *e, int argc, char **argv) {
   struct list_type *x;
 
   BADARGS(3, 3, " handle HOSTS");
@@ -1211,8 +1121,7 @@ static int hosts_tcl_get(Tcl_Interp * irp, struct userrec *u,
 }
 
 static int hosts_tcl_append(Tcl_Interp *irp, struct userrec *u,
-                            struct user_entry *e)
-{
+                            struct user_entry *e) {
   Tcl_DString ds;
   struct list_type *x;
 
@@ -1224,46 +1133,41 @@ static int hosts_tcl_append(Tcl_Interp *irp, struct userrec *u,
   return TCL_OK;
 }
 
-static int hosts_tcl_set(Tcl_Interp * irp, struct userrec *u,
-                         struct user_entry *e, int argc, char **argv)
-{
+static int hosts_tcl_set(Tcl_Interp *irp, struct userrec *u,
+                         struct user_entry *e, int argc, char **argv) {
   BADARGS(3, 4, " handle HOSTS ?host?");
 
   if (argc == 4)
     addhost_by_handle(u->handle, argv[3]);
   else
-    addhost_by_handle(u->handle, "none");       /* drummer */
+    addhost_by_handle(u->handle, "none"); /* drummer */
   return TCL_OK;
 }
 
-static int hosts_gotshare(struct userrec *u, struct user_entry *e,
-                          char *buf, int idx)
-{
+static int hosts_gotshare(struct userrec *u, struct user_entry *e, char *buf,
+                          int idx) {
   /* doh, try to be too clever and it bites your butt */
   return 0;
 }
 
-struct user_entry_type USERENTRY_HOSTS = {
-  0,
-  hosts_gotshare,
-  hosts_dupuser,
-  hosts_null,
-  hosts_null,
-  hosts_write_userfile,
-  hosts_kill,
-  def_get,
-  hosts_set,
-  hosts_tcl_get,
-  hosts_tcl_set,
-  hosts_expmem,
-  hosts_display,
-  "HOSTS",
-  hosts_tcl_append
-};
+struct user_entry_type USERENTRY_HOSTS = {0,
+                                          hosts_gotshare,
+                                          hosts_dupuser,
+                                          hosts_null,
+                                          hosts_null,
+                                          hosts_write_userfile,
+                                          hosts_kill,
+                                          def_get,
+                                          hosts_set,
+                                          hosts_tcl_get,
+                                          hosts_tcl_set,
+                                          hosts_expmem,
+                                          hosts_display,
+                                          "HOSTS",
+                                          hosts_tcl_append};
 
 #ifdef TLS
-int fprint_unpack(struct userrec *u, struct user_entry *e)
-{
+int fprint_unpack(struct userrec *u, struct user_entry *e) {
   char *tmp;
 
   tmp = ssl_fpconv(e->u.list->extra, NULL);
@@ -1274,8 +1178,7 @@ int fprint_unpack(struct userrec *u, struct user_entry *e)
   return 1;
 }
 
-int fprint_set(struct userrec *u, struct user_entry *e, void *buf)
-{
+int fprint_set(struct userrec *u, struct user_entry *e, void *buf) {
   char *fp = buf;
 
   if (!fp || !fp[0] || (fp[0] == '-')) {
@@ -1291,47 +1194,44 @@ int fprint_set(struct userrec *u, struct user_entry *e, void *buf)
       return 0;
   }
   if (!noshare && !(u->flags & (USER_BOT | USER_UNSHARED)))
-    shareout(NULL, "c FPRINT %s %s\n", u->handle, e->u.string ? e->u.string : "");
+    shareout(NULL, "c FPRINT %s %s\n", u->handle,
+             e->u.string ? e->u.string : "");
   return 1;
 }
 
-static int fprint_tcl_set(Tcl_Interp * irp, struct userrec *u,
-                        struct user_entry *e, int argc, char **argv)
-{
+static int fprint_tcl_set(Tcl_Interp *irp, struct userrec *u,
+                          struct user_entry *e, int argc, char **argv) {
   BADARGS(3, 4, " handle FPRINT ?new-fingerprint?");
 
   fprint_set(u, e, argc == 3 ? NULL : argv[3]);
   return TCL_OK;
 }
 
-struct user_entry_type USERENTRY_FPRINT = {
-  0,
-  def_gotshare,
-  0,
-  fprint_unpack,
-  def_pack,
-  def_write_userfile,
-  def_kill,
-  def_get,
-  fprint_set,
-  def_tcl_get,
-  fprint_tcl_set,
-  def_expmem,
-  0,
-  "FPRINT",
-  def_tcl_append
-};
+struct user_entry_type USERENTRY_FPRINT = {0,
+                                           def_gotshare,
+                                           0,
+                                           fprint_unpack,
+                                           def_pack,
+                                           def_write_userfile,
+                                           def_kill,
+                                           def_get,
+                                           fprint_set,
+                                           def_tcl_get,
+                                           fprint_tcl_set,
+                                           def_expmem,
+                                           0,
+                                           "FPRINT",
+                                           def_tcl_append};
 #endif /* TLS */
 
-int egg_list_append(struct list_type **h, struct list_type *i)
-{
-  for (; *h; h = &((*h)->next));
+int egg_list_append(struct list_type **h, struct list_type *i) {
+  for (; *h; h = &((*h)->next))
+    ;
   *h = i;
   return 1;
 }
 
-int egg_list_delete(struct list_type **h, struct list_type *i)
-{
+int egg_list_delete(struct list_type **h, struct list_type *i) {
   for (; *h; h = &((*h)->next))
     if (*h == i) {
       *h = i->next;
@@ -1340,8 +1240,7 @@ int egg_list_delete(struct list_type **h, struct list_type *i)
   return 0;
 }
 
-int egg_list_contains(struct list_type *h, struct list_type *i)
-{
+int egg_list_contains(struct list_type *h, struct list_type *i) {
   for (; h; h = h->next)
     if (h == i) {
       return 1;
@@ -1349,8 +1248,7 @@ int egg_list_contains(struct list_type *h, struct list_type *i)
   return 0;
 }
 
-int add_entry_type(struct user_entry_type *type)
-{
+int add_entry_type(struct user_entry_type *type) {
   struct userrec *u;
 
   list_insert(&entry_type_list, type);
@@ -1368,8 +1266,7 @@ int add_entry_type(struct user_entry_type *type)
   return 1;
 }
 
-int del_entry_type(struct user_entry_type *type)
-{
+int del_entry_type(struct user_entry_type *type) {
   struct userrec *u;
 
   for (u = userlist; u; u = u->next) {
@@ -1382,12 +1279,11 @@ int del_entry_type(struct user_entry_type *type)
       e->type = NULL;
     }
   }
-  return egg_list_delete((struct list_type **) &entry_type_list,
-                     (struct list_type *) type);
+  return egg_list_delete((struct list_type **)&entry_type_list,
+                         (struct list_type *)type);
 }
 
-struct user_entry_type *find_entry_type(char *name)
-{
+struct user_entry_type *find_entry_type(char *name) {
   struct user_entry_type *p;
 
   for (p = entry_type_list; p; p = p->next) {
@@ -1398,8 +1294,7 @@ struct user_entry_type *find_entry_type(char *name)
 }
 
 struct user_entry *find_user_entry(struct user_entry_type *et,
-                                   struct userrec *u)
-{
+                                   struct userrec *u) {
   struct user_entry **e, *t;
 
   for (e = &(u->entries); *e; e = &((*e)->next)) {
@@ -1415,8 +1310,7 @@ struct user_entry *find_user_entry(struct user_entry_type *et,
   return NULL;
 }
 
-void *get_user(struct user_entry_type *et, struct userrec *u)
-{
+void *get_user(struct user_entry_type *et, struct userrec *u) {
   struct user_entry *e;
 
   if (u && (e = find_user_entry(et, u)))
@@ -1424,8 +1318,7 @@ void *get_user(struct user_entry_type *et, struct userrec *u)
   return 0;
 }
 
-int set_user(struct user_entry_type *et, struct userrec *u, void *d)
-{
+int set_user(struct user_entry_type *et, struct userrec *u, void *d) {
   struct user_entry *e;
   int r;
 
@@ -1442,7 +1335,7 @@ int set_user(struct user_entry_type *et, struct userrec *u, void *d)
   }
   r = et->set(u, e, d);
   if (!e->u.list) {
-    egg_list_delete((struct list_type **) &(u->entries), (struct list_type *) e);
+    egg_list_delete((struct list_type **)&(u->entries), (struct list_type *)e);
     nfree(e);
   }
   return r;

@@ -21,11 +21,11 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
-#include "main.h"
-#include "users.h"
 #include "chan.h"
-#include "tandem.h"
+#include "main.h"
 #include "modules.h"
+#include "tandem.h"
+#include "users.h"
 
 extern Tcl_Interp *interp;
 extern struct userrec *userlist;
@@ -35,16 +35,14 @@ extern char botnetnick[];
 extern time_t now;
 extern struct user_entry_type *entry_type_list;
 
-static int tcl_countusers STDVAR
-{
+static int tcl_countusers STDVAR {
   BADARGS(1, 1, "");
 
   Tcl_AppendResult(irp, int_to_base10(count_users(userlist)), NULL);
   return TCL_OK;
 }
 
-static int tcl_validuser STDVAR
-{
+static int tcl_validuser STDVAR {
   BADARGS(2, 2, " handle");
 
   Tcl_AppendResult(irp, get_user_by_handle(userlist, argv[1]) ? "1" : "0",
@@ -52,8 +50,7 @@ static int tcl_validuser STDVAR
   return TCL_OK;
 }
 
-static int tcl_finduser STDVAR
-{
+static int tcl_finduser STDVAR {
   struct userrec *u;
 
   BADARGS(2, 2, " nick!user@host");
@@ -63,19 +60,21 @@ static int tcl_finduser STDVAR
   return TCL_OK;
 }
 
-static int tcl_passwdOk STDVAR
-{
+static int tcl_passwdOk STDVAR {
   struct userrec *u;
 
   BADARGS(3, 3, " handle passwd");
 
-  Tcl_AppendResult(irp, ((u = get_user_by_handle(userlist, argv[1])) &&
-                   u_pass_match(u, argv[2])) ? "1" : "0", NULL);
+  Tcl_AppendResult(
+      irp,
+      ((u = get_user_by_handle(userlist, argv[1])) && u_pass_match(u, argv[2]))
+          ? "1"
+          : "0",
+      NULL);
   return TCL_OK;
 }
 
-static int tcl_chattr STDVAR
-{
+static int tcl_chattr STDVAR {
   int of, ocf = 0;
   char *chan, *chg, work[100];
   struct flag_record pls, mns, user;
@@ -128,23 +127,21 @@ static int tcl_chattr STDVAR
     pls.match = user.match;
     break_down_flags(chg, &pls, &mns);
     /* No-one can change these flags on-the-fly */
-    pls.global &=~(USER_BOT);
-    mns.global &=~(USER_BOT);
+    pls.global &= ~(USER_BOT);
+    mns.global &= ~(USER_BOT);
 
     if (chan) {
       pls.chan &= ~(BOT_SHARE);
       mns.chan &= ~(BOT_SHARE);
     }
-    user.global = sanity_check((user.global |pls.global) &~mns.global);
+    user.global = sanity_check((user.global | pls.global) & ~mns.global);
 
-    user.udef_global = (user.udef_global | pls.udef_global)
-                       & ~mns.udef_global;
+    user.udef_global = (user.udef_global | pls.udef_global) & ~mns.udef_global;
     if (chan) {
       ocf = user.chan;
-      user.chan = chan_sanity_check((user.chan | pls.chan) & ~mns.chan,
-                                    user.global);
+      user.chan =
+          chan_sanity_check((user.chan | pls.chan) & ~mns.chan, user.global);
       user.udef_chan = (user.udef_chan | pls.udef_chan) & ~mns.udef_chan;
-
     }
     set_user_flagrec(u, &user, chan);
     check_dcc_attrs(u, of);
@@ -158,8 +155,7 @@ static int tcl_chattr STDVAR
   return TCL_OK;
 }
 
-static int tcl_botattr STDVAR
-{
+static int tcl_botattr STDVAR {
   char *chan, *chg, work[100];
   struct flag_record pls, mns, user;
   struct userrec *u;
@@ -239,8 +235,7 @@ static int tcl_botattr STDVAR
   return TCL_OK;
 }
 
-static int tcl_matchattr STDVAR
-{
+static int tcl_matchattr STDVAR {
   struct userrec *u;
   struct flag_record plus, minus, user;
   int ok = 0, f;
@@ -268,15 +263,14 @@ static int tcl_matchattr STDVAR
   return TCL_OK;
 }
 
-static int tcl_adduser STDVAR
-{
+static int tcl_adduser STDVAR {
   unsigned char *p;
 
   BADARGS(2, 3, " handle ?hostmask?");
 
   if (strlen(argv[1]) > HANDLEN)
     argv[1][HANDLEN] = 0;
-  for (p = (unsigned char *) argv[1]; *p; p++)
+  for (p = (unsigned char *)argv[1]; *p; p++)
     if (*p <= 32 || *p == '@')
       *p = '?';
 
@@ -290,8 +284,7 @@ static int tcl_adduser STDVAR
   return TCL_OK;
 }
 
-static int tcl_addbot STDVAR
-{
+static int tcl_addbot STDVAR {
   struct bot_addr *bi;
   char *p, *q;
 
@@ -300,7 +293,7 @@ static int tcl_addbot STDVAR
   if (strlen(argv[1]) > HANDLEN)
     argv[1][HANDLEN] = 0;
   for (p = argv[1]; *p; p++)
-    if ((unsigned char) *p <= 32 || *p == '@')
+    if ((unsigned char)*p <= 32 || *p == '@')
       *p = '?';
 
   if ((argv[1][0] == '*') || strchr(BADHANDCHARS, argv[1][0]) ||
@@ -317,7 +310,7 @@ static int tcl_addbot STDVAR
       }
     } else
 #endif
-    q = strchr(argv[2], ':');
+      q = strchr(argv[2], ':');
     if (!q) {
       bi->address = user_malloc(strlen(argv[2]) + 1);
       strcpy(bi->address, argv[2]);
@@ -341,17 +334,15 @@ static int tcl_addbot STDVAR
   return TCL_OK;
 }
 
-static int tcl_deluser STDVAR
-{
+static int tcl_deluser STDVAR {
   BADARGS(2, 2, " handle");
 
-  Tcl_AppendResult(irp, (argv[1][0] == '*') ? "0" :
-                   int_to_base10(deluser(argv[1])), NULL);
+  Tcl_AppendResult(
+      irp, (argv[1][0] == '*') ? "0" : int_to_base10(deluser(argv[1])), NULL);
   return TCL_OK;
 }
 
-static int tcl_delhost STDVAR
-{
+static int tcl_delhost STDVAR {
   BADARGS(3, 3, " handle hostmask");
 
   if ((!get_user_by_handle(userlist, argv[1])) || (argv[1][0] == '*')) {
@@ -362,8 +353,7 @@ static int tcl_delhost STDVAR
   return TCL_OK;
 }
 
-static int tcl_userlist STDVAR
-{
+static int tcl_userlist STDVAR {
   struct userrec *u;
   struct flag_record user, plus, minus;
   int ok = 1, f = 0;
@@ -377,7 +367,7 @@ static int tcl_userlist STDVAR
   if (argc >= 2) {
     plus.match = FR_GLOBAL | FR_CHAN | FR_BOT;
     break_down_flags(argv[1], &plus, &minus);
-    f = (minus.global ||minus.udef_global || minus.chan || minus.udef_chan ||
+    f = (minus.global || minus.udef_global || minus.chan || minus.udef_chan ||
          minus.bot);
     minus.match = plus.match ^ (FR_AND | FR_OR);
   }
@@ -399,20 +389,17 @@ static int tcl_userlist STDVAR
   return TCL_OK;
 }
 
-static int tcl_save STDVAR
-{
+static int tcl_save STDVAR {
   write_userfile(-1);
   return TCL_OK;
 }
 
-static int tcl_reload STDVAR
-{
+static int tcl_reload STDVAR {
   reload();
   return TCL_OK;
 }
 
-static int tcl_chhandle STDVAR
-{
+static int tcl_chhandle STDVAR {
   struct userrec *u;
   char newhand[HANDLEN + 1];
   int x = 1, i;
@@ -425,7 +412,7 @@ static int tcl_chhandle STDVAR
   else {
     strncpyz(newhand, argv[2], sizeof newhand);
     for (i = 0; i < strlen(newhand); i++)
-      if (((unsigned char) newhand[i] <= 32) || (newhand[i] == '@'))
+      if (((unsigned char)newhand[i] <= 32) || (newhand[i] == '@'))
         newhand[i] = '?';
     if (strchr(BADHANDCHARS, newhand[0]) != NULL)
       x = 0;
@@ -433,8 +420,8 @@ static int tcl_chhandle STDVAR
       x = 0;
     else if (get_user_by_handle(userlist, newhand))
       x = 0;
-    else if (!egg_strcasecmp(botnetnick, newhand) && (!(u->flags & USER_BOT) ||
-             nextbot(argv[1]) != -1))
+    else if (!egg_strcasecmp(botnetnick, newhand) &&
+             (!(u->flags & USER_BOT) || nextbot(argv[1]) != -1))
       x = 0;
     else if (newhand[0] == '*')
       x = 0;
@@ -446,8 +433,7 @@ static int tcl_chhandle STDVAR
   return TCL_OK;
 }
 
-static int tcl_getting_users STDVAR
-{
+static int tcl_getting_users STDVAR {
   int i;
 
   BADARGS(1, 1, "");
@@ -462,16 +448,14 @@ static int tcl_getting_users STDVAR
   return TCL_OK;
 }
 
-static int tcl_isignore STDVAR
-{
+static int tcl_isignore STDVAR {
   BADARGS(2, 2, " nick!user@host");
 
   Tcl_AppendResult(irp, match_ignore(argv[1]) ? "1" : "0", NULL);
   return TCL_OK;
 }
 
-static int tcl_newignore STDVAR
-{
+static int tcl_newignore STDVAR {
   time_t expire_time;
   char ign[UHOSTLEN], cmt[66], from[HANDLEN + 1];
 
@@ -487,22 +471,22 @@ static int tcl_newignore STDVAR
     if (argc == 5 && atol(argv[4]) == 0)
       expire_time = 0L;
     else
-      expire_time = now + (60 * atol(argv[4])); /* This is a potential crash. FIXME  -poptix */
+      expire_time =
+          now +
+          (60 * atol(argv[4])); /* This is a potential crash. FIXME  -poptix */
   }
   addignore(ign, from, cmt, expire_time);
   return TCL_OK;
 }
 
-static int tcl_killignore STDVAR
-{
+static int tcl_killignore STDVAR {
   BADARGS(2, 2, " hostmask");
 
   Tcl_AppendResult(irp, delignore(argv[1]) ? "1" : "0", NULL);
   return TCL_OK;
 }
 
-static int tcl_ignorelist STDVAR
-{
+static int tcl_ignorelist STDVAR {
   char expire[11], added[11], *p;
   long tv;
   EGG_CONST char *list[5];
@@ -525,13 +509,12 @@ static int tcl_ignorelist STDVAR
     list[4] = i->user;
     p = Tcl_Merge(5, list);
     Tcl_AppendElement(irp, p);
-    Tcl_Free((char *) p);
+    Tcl_Free((char *)p);
   }
   return TCL_OK;
 }
 
-static int tcl_getuser STDVAR
-{
+static int tcl_getuser STDVAR {
   struct user_entry_type *et = NULL;
   struct userrec *u;
   struct user_entry *e;
@@ -546,8 +529,7 @@ static int tcl_getuser STDVAR
       return TCL_OK; /* silently ignore user */
   }
   if (argc >= 3) {
-    if (!(et = find_entry_type(argv[2])) &&
-        egg_strcasecmp(argv[2], "HANDLE")) {
+    if (!(et = find_entry_type(argv[2])) && egg_strcasecmp(argv[2], "HANDLE")) {
       Tcl_AppendResult(irp, "No such info type: ", argv[2], NULL);
       return TCL_ERROR;
     }
@@ -580,8 +562,7 @@ static int tcl_getuser STDVAR
   return TCL_OK;
 }
 
-static int tcl_setuser STDVAR
-{
+static int tcl_setuser STDVAR {
   struct user_entry_type *et;
   struct userrec *u;
   struct user_entry *e;
@@ -605,7 +586,7 @@ static int tcl_setuser STDVAR
   if (me && !strcasecmp(argv[2], "hosts") && argc == 3) {
     Function *func = me->funcs;
 
-    (func[IRC_CHECK_THIS_USER]) (argv[1], 1, NULL);
+    (func[IRC_CHECK_THIS_USER])(argv[1], 1, NULL);
   }
   if (!(e = find_user_entry(et, u))) {
     e = user_malloc(sizeof(struct user_entry));
@@ -616,42 +597,40 @@ static int tcl_setuser STDVAR
   }
   r = et->tcl_set(irp, u, e, argc, argv);
   /* Yeah... e is freed, and we read it... (tcl: setuser hand HOSTS none) */
-  if ((!e->u.list) && (egg_list_delete((struct list_type **) &(u->entries),
-      (struct list_type *) e)))
+  if ((!e->u.list) && (egg_list_delete((struct list_type **)&(u->entries),
+                                       (struct list_type *)e)))
     nfree(e);
-    /* else maybe already freed... (entry_type==HOSTS) <drummer> */
+  /* else maybe already freed... (entry_type==HOSTS) <drummer> */
   if (me && !strcasecmp(argv[2], "hosts") && argc == 4) {
     Function *func = me->funcs;
 
-    (func[IRC_CHECK_THIS_USER]) (argv[1], 0, NULL);
+    (func[IRC_CHECK_THIS_USER])(argv[1], 0, NULL);
   }
   return r;
 }
 
-tcl_cmds tcluser_cmds[] = {
-  {"countusers",       tcl_countusers},
-  {"validuser",         tcl_validuser},
-  {"finduser",           tcl_finduser},
-  {"passwdok",           tcl_passwdOk},
-  {"chattr",               tcl_chattr},
-  {"botattr",             tcl_botattr},
-  {"matchattr",         tcl_matchattr},
-  {"matchchanattr",     tcl_matchattr},
-  {"adduser",             tcl_adduser},
-  {"addbot",               tcl_addbot},
-  {"deluser",             tcl_deluser},
-  {"delhost",             tcl_delhost},
-  {"userlist",           tcl_userlist},
-  {"save",                   tcl_save},
-  {"reload",               tcl_reload},
-  {"chhandle",           tcl_chhandle},
-  {"chnick",             tcl_chhandle},
-  {"getting-users", tcl_getting_users},
-  {"isignore",           tcl_isignore},
-  {"newignore",         tcl_newignore},
-  {"killignore",       tcl_killignore},
-  {"ignorelist",       tcl_ignorelist},
-  {"getuser",             tcl_getuser},
-  {"setuser",             tcl_setuser},
-  {NULL,                         NULL}
-};
+tcl_cmds tcluser_cmds[] = {{"countusers", tcl_countusers},
+                           {"validuser", tcl_validuser},
+                           {"finduser", tcl_finduser},
+                           {"passwdok", tcl_passwdOk},
+                           {"chattr", tcl_chattr},
+                           {"botattr", tcl_botattr},
+                           {"matchattr", tcl_matchattr},
+                           {"matchchanattr", tcl_matchattr},
+                           {"adduser", tcl_adduser},
+                           {"addbot", tcl_addbot},
+                           {"deluser", tcl_deluser},
+                           {"delhost", tcl_delhost},
+                           {"userlist", tcl_userlist},
+                           {"save", tcl_save},
+                           {"reload", tcl_reload},
+                           {"chhandle", tcl_chhandle},
+                           {"chnick", tcl_chhandle},
+                           {"getting-users", tcl_getting_users},
+                           {"isignore", tcl_isignore},
+                           {"newignore", tcl_newignore},
+                           {"killignore", tcl_killignore},
+                           {"ignorelist", tcl_ignorelist},
+                           {"getuser", tcl_getuser},
+                           {"setuser", tcl_setuser},
+                           {NULL, NULL}};

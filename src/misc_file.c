@@ -21,12 +21,11 @@
  */
 
 #include "main.h"
+#include "stat.h"
+#include <fcntl.h>
+#include <stdio.h>
 #include <sys/stat.h>
 #include <unistd.h>
-#include <stdio.h>
-#include <fcntl.h>
-#include "stat.h"
-
 
 /* Copy a file from one place to another (possibly erasing old copy).
  *
@@ -36,8 +35,7 @@
  *           3 if original file isn't normal
  *           4 if ran out of disk space
  */
-int copyfile(char *oldpath, char *newpath)
-{
+int copyfile(char *oldpath, char *newpath) {
   int fi, fo, x;
   char buf[512];
   struct stat st;
@@ -54,7 +52,7 @@ int copyfile(char *oldpath, char *newpath)
     close(fi);
     return 3;
   }
-  fo = creat(newpath, (int) (st.st_mode & 0777));
+  fo = creat(newpath, (int)(st.st_mode & 0777));
   if (fo < 0) {
     close(fi);
     return 2;
@@ -62,7 +60,7 @@ int copyfile(char *oldpath, char *newpath)
   for (x = 1; x > 0;) {
     x = read(fi, buf, 512);
     if (x > 0) {
-      if (write(fo, buf, x) < x) {      /* Couldn't write */
+      if (write(fo, buf, x) < x) { /* Couldn't write */
         close(fo);
         close(fi);
         unlink(newpath);
@@ -87,8 +85,7 @@ int copyfile(char *oldpath, char *newpath)
  *           3 if original file isn't normal
  *           4 if ran out of disk space
  */
-int copyfilef(char *oldpath, FILE *newfile)
-{
+int copyfilef(char *oldpath, FILE *newfile) {
   int fi, x;
   char buf[512];
   struct stat st;
@@ -113,7 +110,7 @@ int copyfilef(char *oldpath, FILE *newfile)
   for (x = 1; x > 0;) {
     x = read(fi, buf, sizeof buf);
     if (x > 0) {
-      if (fwrite(buf, 1, x, newfile) < x) {      /* Couldn't write */
+      if (fwrite(buf, 1, x, newfile) < x) { /* Couldn't write */
         close(fi);
         fseek(newfile, oripos, SEEK_SET);
         return 4;
@@ -140,8 +137,7 @@ int copyfilef(char *oldpath, FILE *newfile)
  *           3 if original file isn't normal
  *           4 if ran out of disk space
  */
-int fcopyfile(FILE *oldfile, char *newpath)
-{
+int fcopyfile(FILE *oldfile, char *newpath) {
   int fo;
   size_t x;
   char buf[512];
@@ -151,7 +147,7 @@ int fcopyfile(FILE *oldfile, char *newpath)
   if (fstat(fileno(oldfile), &st) || !(st.st_mode & S_IFREG)) {
     return 3;
   }
-  fo = creat(newpath, (int) (st.st_mode & 0777));
+  fo = creat(newpath, (int)(st.st_mode & 0777));
   if (fo < 0) {
     return 2;
   }
@@ -162,7 +158,7 @@ int fcopyfile(FILE *oldfile, char *newpath)
   for (x = 1; x > 0;) {
     x = fread(buf, 1, sizeof buf, oldfile);
     if (x > 0) {
-      if (write(fo, buf, x) < x) {      /* Couldn't write */
+      if (write(fo, buf, x) < x) { /* Couldn't write */
         close(fo);
         unlink(newpath);
         fseek(oldfile, oripos, SEEK_SET);
@@ -181,8 +177,7 @@ int fcopyfile(FILE *oldfile, char *newpath)
   return 0;
 }
 
-int movefile(char *oldpath, char *newpath)
-{
+int movefile(char *oldpath, char *newpath) {
   int ret;
 
 #ifdef HAVE_RENAME
@@ -200,8 +195,7 @@ int movefile(char *oldpath, char *newpath)
   return ret;
 }
 
-int file_readable(char *file)
-{
+int file_readable(char *file) {
   FILE *fp;
 
   if (!(fp = fopen(file, "r")))
