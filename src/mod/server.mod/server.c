@@ -24,9 +24,11 @@
 #define MODULE_NAME "server"
 #define MAKING_SERVER
 
-#include "server.h"
-#include "src/mod/module.h"
 #include <errno.h>
+
+#include "src/mod/module.h"
+
+#include "server.h"
 
 static Function *global = NULL;
 
