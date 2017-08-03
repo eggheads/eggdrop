@@ -18,8 +18,7 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
-static int expmem_fileq()
-{
+static int expmem_fileq() {
   fileq_t *q;
   int tot = 0;
 
@@ -29,8 +28,7 @@ static int expmem_fileq()
   return tot;
 }
 
-static void queue_file(char *dir, char *file, char *from, char *to)
-{
+static void queue_file(char *dir, char *file, char *from, char *to) {
   fileq_t *q = fileq;
   size_t l;
 
@@ -46,8 +44,7 @@ static void queue_file(char *dir, char *file, char *from, char *to)
   strncpyz(fileq->to, to, sizeof fileq->to);
 }
 
-static void deq_this(fileq_t *this)
-{
+static void deq_this(fileq_t *this) {
   fileq_t *q = fileq, *last = NULL;
 
   while (q && q != this) {
@@ -69,8 +66,7 @@ static void deq_this(fileq_t *this)
 
 /* Remove all files queued to a certain user.
  */
-static void flush_fileq(char *to)
-{
+static void flush_fileq(char *to) {
   fileq_t *q = fileq;
   int fnd = 1;
 
@@ -89,8 +85,7 @@ static void flush_fileq(char *to)
   }
 }
 
-static void send_next_file(char *to)
-{
+static void send_next_file(char *to) {
   fileq_t *q, *this = NULL;
   char *s;
   int x;
@@ -157,8 +152,7 @@ static void send_next_file(char *to)
   return;
 }
 
-static void show_queued_files(int idx)
-{
+static void show_queued_files(int idx) {
   int i, cnt = 0, len;
   char spaces[] = "                                 ";
   fileq_t *q;
@@ -203,8 +197,9 @@ static void show_queued_files(int idx)
       if (dcc[i].type == &DCC_GET_PENDING)
         dprintf(idx, TRANSFER_WAITING, dcc[i].nick, spaces, nfn);
       else
-        dprintf(idx, TRANSFER_DONE, dcc[i].nick, spaces, nfn, (100.0 *
-                ((float) dcc[i].status / (float) dcc[i].u.xfer->length)));
+        dprintf(
+            idx, TRANSFER_DONE, dcc[i].nick, spaces, nfn,
+            (100.0 * ((float)dcc[i].status / (float)dcc[i].u.xfer->length)));
       spaces[len] = ' ';
     }
   }
@@ -214,8 +209,7 @@ static void show_queued_files(int idx)
     dprintf(idx, TRANSFER_TOTAL, cnt);
 }
 
-static void fileq_cancel(int idx, char *par)
-{
+static void fileq_cancel(int idx, char *par) {
   int fnd = 1, matches = 0, atot = 0, i;
   fileq_t *q;
   char *s = NULL;

@@ -18,8 +18,7 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
-static int fstat_unpack(struct userrec *u, struct user_entry *e)
-{
+static int fstat_unpack(struct userrec *u, struct user_entry *e) {
   char *par, *arg;
   struct filesys_stats *fs;
 
@@ -49,8 +48,7 @@ static int fstat_unpack(struct userrec *u, struct user_entry *e)
   return 1;
 }
 
-static int fstat_pack(struct userrec *u, struct user_entry *e)
-{
+static int fstat_pack(struct userrec *u, struct user_entry *e) {
   register struct filesys_stats *fs;
   struct list_type *l = user_malloc(sizeof(struct list_type));
 
@@ -66,8 +64,7 @@ static int fstat_pack(struct userrec *u, struct user_entry *e)
 }
 
 static int fstat_write_userfile(FILE *f, struct userrec *u,
-                                struct user_entry *e)
-{
+                                struct user_entry *e) {
   register struct filesys_stats *fs;
 
   fs = e->u.extra;
@@ -78,8 +75,7 @@ static int fstat_write_userfile(FILE *f, struct userrec *u,
   return 1;
 }
 
-static int fstat_set(struct userrec *u, struct user_entry *e, void *buf)
-{
+static int fstat_set(struct userrec *u, struct user_entry *e, void *buf) {
   register struct filesys_stats *fs = buf;
 
   if (e->u.extra != fs) {
@@ -113,11 +109,11 @@ static int fstat_set(struct userrec *u, struct user_entry *e, void *buf)
   return 1;
 }
 
-static int fstat_tcl_format(char *d, size_t max, struct filesys_stats *fs, char *arg)
-{
+static int fstat_tcl_format(char *d, size_t max, struct filesys_stats *fs,
+                            char *arg) {
   if (!arg)
-    egg_snprintf(d, max, "%u %u %u %u", fs->uploads, fs->upload_ks,
-                 fs->dnloads, fs->dnload_ks);
+    egg_snprintf(d, max, "%u %u %u %u", fs->uploads, fs->upload_ks, fs->dnloads,
+                 fs->dnload_ks);
   else
     switch (arg[0]) {
     case 'u':
@@ -132,8 +128,7 @@ static int fstat_tcl_format(char *d, size_t max, struct filesys_stats *fs, char 
 }
 
 static int fstat_tcl_get(Tcl_Interp *irp, struct userrec *u,
-                      struct user_entry *e, int argc, char **argv)
-{
+                         struct user_entry *e, int argc, char **argv) {
   int ret;
   char d[50];
 
@@ -148,8 +143,8 @@ static int fstat_tcl_get(Tcl_Interp *irp, struct userrec *u,
   return TCL_OK;
 }
 
-static int fstat_tcl_append(Tcl_Interp *irp, struct userrec *u, struct user_entry *e)
-{
+static int fstat_tcl_append(Tcl_Interp *irp, struct userrec *u,
+                            struct user_entry *e) {
   int ret;
   char d[50];
 
@@ -162,8 +157,7 @@ static int fstat_tcl_append(Tcl_Interp *irp, struct userrec *u, struct user_entr
   return TCL_OK;
 }
 
-static int fstat_kill(struct user_entry *e)
-{
+static int fstat_kill(struct user_entry *e) {
   if (e->u.extra)
     nfree(e->u.extra);
   nfree(e);
@@ -171,13 +165,11 @@ static int fstat_kill(struct user_entry *e)
   return 1;
 }
 
-static int fstat_expmem(struct user_entry *e)
-{
+static int fstat_expmem(struct user_entry *e) {
   return sizeof(struct filesys_stats);
 }
 
-static void fstat_display(int idx, struct user_entry *e)
-{
+static void fstat_display(int idx, struct user_entry *e) {
   struct filesys_stats *fs;
 
   fs = e->u.extra;
@@ -187,26 +179,14 @@ static void fstat_display(int idx, struct user_entry *e)
 }
 
 static struct user_entry_type USERENTRY_FSTAT = {
-  NULL,
-  fstat_gotshare,
-  fstat_dupuser,
-  fstat_unpack,
-  fstat_pack,
-  fstat_write_userfile,
-  fstat_kill,
-  NULL,
-  fstat_set,
-  fstat_tcl_get,
-  fstat_tcl_set,
-  fstat_expmem,
-  fstat_display,
-  "FSTAT",
-  fstat_tcl_append
-};
+    NULL,          fstat_gotshare, fstat_dupuser,
+    fstat_unpack,  fstat_pack,     fstat_write_userfile,
+    fstat_kill,    NULL,           fstat_set,
+    fstat_tcl_get, fstat_tcl_set,  fstat_expmem,
+    fstat_display, "FSTAT",        fstat_tcl_append};
 
-static int fstat_gotshare(struct userrec *u, struct user_entry *e,
-                          char *par, int idx)
-{
+static int fstat_gotshare(struct userrec *u, struct user_entry *e, char *par,
+                          int idx) {
   char *p;
   struct filesys_stats *fs;
 
@@ -249,8 +229,7 @@ static int fstat_gotshare(struct userrec *u, struct user_entry *e,
 }
 
 static int fstat_dupuser(struct userrec *u, struct userrec *o,
-                         struct user_entry *e)
-{
+                         struct user_entry *e) {
   struct filesys_stats *fs;
 
   if (e->u.extra) {
@@ -262,8 +241,7 @@ static int fstat_dupuser(struct userrec *u, struct userrec *o,
   return 0;
 }
 
-static void stats_add_dnload(struct userrec *u, unsigned long bytes)
-{
+static void stats_add_dnload(struct userrec *u, unsigned long bytes) {
   struct user_entry *ue;
   register struct filesys_stats *fs;
 
@@ -279,8 +257,7 @@ static void stats_add_dnload(struct userrec *u, unsigned long bytes)
   }
 }
 
-static void stats_add_upload(struct userrec *u, unsigned long bytes)
-{
+static void stats_add_upload(struct userrec *u, unsigned long bytes) {
   struct user_entry *ue;
   register struct filesys_stats *fs;
 
@@ -297,8 +274,7 @@ static void stats_add_upload(struct userrec *u, unsigned long bytes)
 }
 
 static int fstat_tcl_set(Tcl_Interp *irp, struct userrec *u,
-                         struct user_entry *e, int argc, char **argv)
-{
+                         struct user_entry *e, int argc, char **argv) {
   register struct filesys_stats *fs;
   int f = 0, k = 0;
 

@@ -18,8 +18,7 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
-static int tcl_dccsend STDVAR
-{
+static int tcl_dccsend STDVAR {
   char s[10], *sys, *nfn;
   int i;
 
@@ -56,8 +55,7 @@ static int tcl_dccsend STDVAR
   return TCL_OK;
 }
 
-static int tcl_getfileq STDVAR
-{
+static int tcl_getfileq STDVAR {
   char *s = NULL;
   fileq_t *q;
 
@@ -78,8 +76,7 @@ static int tcl_getfileq STDVAR
   return TCL_OK;
 }
 
-static int tcl_getfilesendtime STDVAR
-{
+static int tcl_getfilesendtime STDVAR {
   int sock, i;
   char s[15];
 
@@ -100,9 +97,7 @@ static int tcl_getfilesendtime STDVAR
   return TCL_OK;
 }
 
-static tcl_cmds mytcls[] = {
-  {"dccsend",                 tcl_dccsend},
-  {"getfileq",               tcl_getfileq},
-  {"getfilesendtime", tcl_getfilesendtime},
-  {NULL,                             NULL}
-};
+static tcl_cmds mytcls[] = {{"dccsend", tcl_dccsend},
+                            {"getfileq", tcl_getfileq},
+                            {"getfilesendtime", tcl_getfilesendtime},
+                            {NULL, NULL}};

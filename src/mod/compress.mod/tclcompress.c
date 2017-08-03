@@ -22,11 +22,13 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
+#define NEXT_ARG                                                               \
+  {                                                                            \
+    curr_arg++;                                                                \
+    argc--;                                                                    \
+  }
 
-#define NEXT_ARG { curr_arg++; argc--; }
-
-static int tcl_compress_file STDVAR
-{
+static int tcl_compress_file STDVAR {
   int mode_num = compress_level, result, curr_arg = 1;
   char *fn_src = NULL, *fn_target = NULL;
 
@@ -74,8 +76,7 @@ static int tcl_compress_file STDVAR
   return TCL_OK;
 }
 
-static int tcl_uncompress_file STDVAR
-{
+static int tcl_uncompress_file STDVAR {
   int result;
 
   BADARGS(2, 3, " src-file ?target-file?");
@@ -92,25 +93,22 @@ static int tcl_uncompress_file STDVAR
   return TCL_OK;
 }
 
-static int tcl_iscompressed STDVAR
-{
+static int tcl_iscompressed STDVAR {
   int result;
 
   BADARGS(2, 2, " compressed-file");
 
   result = is_compressedfile(argv[1]);
   if (result == COMPF_UNCOMPRESSED)
-    Tcl_AppendResult(irp, "0", NULL);  /* Uncompressed.        */
+    Tcl_AppendResult(irp, "0", NULL); /* Uncompressed.        */
   else if (result == COMPF_COMPRESSED)
-    Tcl_AppendResult(irp, "1", NULL);  /* Compressed.          */
+    Tcl_AppendResult(irp, "1", NULL); /* Compressed.          */
   else
-    Tcl_AppendResult(irp, "2", NULL);  /* Failed to detect.    */
+    Tcl_AppendResult(irp, "2", NULL); /* Failed to detect.    */
   return TCL_OK;
 }
 
-static tcl_cmds my_tcl_cmds[] = {
-  {"compressfile",     tcl_compress_file},
-  {"uncompressfile", tcl_uncompress_file},
-  {"iscompressed",      tcl_iscompressed},
-  {NULL,                            NULL}
-};
+static tcl_cmds my_tcl_cmds[] = {{"compressfile", tcl_compress_file},
+                                 {"uncompressfile", tcl_uncompress_file},
+                                 {"iscompressed", tcl_iscompressed},
+                                 {NULL, NULL}};

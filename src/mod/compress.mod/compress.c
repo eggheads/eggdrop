@@ -27,24 +27,23 @@
 #define MODULE_NAME "compress"
 #define MAKING_COMPRESS
 
-#include <string.h>
 #include <errno.h>
+#include <string.h>
 #include <zlib.h>
 
-#include "src/mod/module.h"
 #include "share.mod/share.h"
+#include "src/mod/module.h"
 
 #ifdef HAVE_MMAP
-#  undef panic
-#  include <sys/types.h>
-#  include <sys/mman.h>
-#  include <sys/stat.h>
+#undef panic
+#include <sys/mman.h>
+#include <sys/stat.h>
+#include <sys/types.h>
 #endif /* HAVE_MMAP */
 
 #include "compress.h"
 
 #define BUFLEN 512
-
 
 static Function *global = NULL, *share_funcs = NULL;
 
@@ -52,7 +51,6 @@ static unsigned int compressed_files;   /* Number of files compressed.      */
 static unsigned int uncompressed_files; /* Number of files uncompressed.    */
 static unsigned int share_compressed;   /* Compress userfiles when sharing? */
 static unsigned int compress_level;     /* Default compression used.        */
-
 
 static int uncompress_to_file(char *f_src, char *f_target);
 static int compress_to_file(char *f_src, char *f_target, int mode_num);
@@ -62,13 +60,11 @@ static int is_compressedfile(char *filename);
 
 #include "tclcompress.c"
 
-
 /*
  *    Misc functions.
  */
 
-static int is_compressedfile(char *filename)
-{
+static int is_compressedfile(char *filename) {
   char buf1[50], buf2[50];
   FILE *fin;
   gzFile zin;
@@ -112,15 +108,13 @@ static int is_compressedfile(char *filename)
   return COMPF_UNCOMPRESSED;
 }
 
-
 /*
  *    General compression / uncompression functions
  */
 
 /* Uncompresses a file `f_src' and saves it as `f_target'.
  */
-static int uncompress_to_file(char *f_src, char *f_target)
-{
+static int uncompress_to_file(char *f_src, char *f_target) {
   char buf[BUFLEN];
   int len;
   FILE *fout;
@@ -153,9 +147,10 @@ static int uncompress_to_file(char *f_src, char *f_target)
     }
     if (!len)
       break;
-    if ((int) fwrite(buf, 1, (unsigned int) len, fout) != len) {
+    if ((int)fwrite(buf, 1, (unsigned int)len, fout) != len) {
       putlog(LOG_MISC, "*", "Failed to uncompress file `%s': fwrite "
-             "failed: %s.", f_src, strerror(errno));
+                            "failed: %s.",
+             f_src, strerror(errno));
       return COMPF_ERROR;
     }
   }
@@ -175,8 +170,7 @@ static int uncompress_to_file(char *f_src, char *f_target)
 
 /* Enforce limits.
  */
-static inline void adjust_mode_num(int *mode)
-{
+static inline void adjust_mode_num(int *mode) {
   if (*mode > 9)
     *mode = 9;
   else if (*mode < 0)
@@ -186,8 +180,7 @@ static inline void adjust_mode_num(int *mode)
 #ifdef HAVE_MMAP
 /* Attempt to compress in one go, by mmap'ing the file to memory.
  */
-static int compress_to_file_mmap(gzFile fout, FILE *fin)
-{
+static int compress_to_file_mmap(gzFile fout, FILE *fin) {
   int len, ifd = fileno(fin);
   char *buf;
   struct stat st;
@@ -205,7 +198,7 @@ static int compress_to_file_mmap(gzFile fout, FILE *fin)
 
   /* Compress the whole file in one go */
   len = gzwrite(fout, buf, st.st_size);
-  if (len != (int) st.st_size)
+  if (len != (int)st.st_size)
     return COMPF_ERROR;
 
   munmap(buf, st.st_size);
@@ -218,8 +211,7 @@ static int compress_to_file_mmap(gzFile fout, FILE *fin)
 
 /* Compresses a file `f_src' and saves it as `f_target'.
  */
-static int compress_to_file(char *f_src, char *f_target, int mode_num)
-{
+static int compress_to_file(char *f_src, char *f_target, int mode_num) {
   char buf[BUFLEN], mode[5];
   FILE *fin;
   gzFile fout;
@@ -271,7 +263,7 @@ static int compress_to_file(char *f_src, char *f_target, int mode_num)
     }
     if (!len)
       break;
-    if (gzwrite(fout, buf, (unsigned int) len) != len) {
+    if (gzwrite(fout, buf, (unsigned int)len) != len) {
       fclose(fin);
       gzclose(fout);
       putlog(LOG_MISC, "*", "Failed to compress file `%s': gzwrite failed.",
@@ -291,8 +283,7 @@ static int compress_to_file(char *f_src, char *f_target, int mode_num)
 
 /* Compresses a file `filename' and saves it as `filename'.
  */
-static int compress_file(char *filename, int mode_num)
-{
+static int compress_file(char *filename, int mode_num) {
   char *temp_fn, randstr[5];
   int ret;
 
@@ -317,8 +308,7 @@ static int compress_file(char *filename, int mode_num)
 
 /* Uncompresses a file `filename' and saves it as `filename'.
  */
-static int uncompress_file(char *filename)
-{
+static int uncompress_file(char *filename) {
   char *temp_fn, randstr[5];
   int ret;
 
@@ -341,25 +331,21 @@ static int uncompress_file(char *filename)
   return ret;
 }
 
-
 /*
  *    Userfile feature releated functions
  */
 
-static int uff_comp(int idx, char *filename)
-{
+static int uff_comp(int idx, char *filename) {
   debug1("Compressing user file for %s.", dcc[idx].nick);
   return compress_file(filename, compress_level);
 }
 
-static int uff_uncomp(int idx, char *filename)
-{
+static int uff_uncomp(int idx, char *filename) {
   debug1("Uncompressing user file from %s.", dcc[idx].nick);
   return uncompress_file(filename);
 }
 
-static int uff_ask_compress(int idx)
-{
+static int uff_ask_compress(int idx) {
   if (share_compressed)
     return 1;
   else
@@ -367,27 +353,20 @@ static int uff_ask_compress(int idx)
 }
 
 static uff_table_t compress_uff_table[] = {
-  {"compress", UFF_COMPRESS, uff_ask_compress, 100, uff_comp, uff_uncomp},
-  {NULL,       0,            NULL,             0,   NULL,           NULL}
-};
+    {"compress", UFF_COMPRESS, uff_ask_compress, 100, uff_comp, uff_uncomp},
+    {NULL, 0, NULL, 0, NULL, NULL}};
 
 /*
  *    Compress module related code
  */
 
-static tcl_ints my_tcl_ints[] = {
-  {"share-compressed", (int *)&share_compressed},
-  {"compress-level",     (int *)&compress_level},
-  {NULL,                                   NULL}
-};
+static tcl_ints my_tcl_ints[] = {{"share-compressed", (int *)&share_compressed},
+                                 {"compress-level", (int *)&compress_level},
+                                 {NULL, NULL}};
 
-static int compress_expmem(void)
-{
-  return 0;
-}
+static int compress_expmem(void) { return 0; }
 
-static int compress_report(int idx, int details)
-{
+static int compress_report(int idx, int details) {
   if (details) {
     int size = compress_expmem();
 
@@ -401,8 +380,7 @@ static int compress_report(int idx, int details)
   return 0;
 }
 
-static char *compress_close()
-{
+static char *compress_close() {
   rem_help_reference("compress.help");
   rem_tcl_commands(my_tcl_cmds);
   rem_tcl_ints(my_tcl_ints);
@@ -415,22 +393,17 @@ static char *compress_close()
 EXPORT_SCOPE char *compress_start();
 
 static Function compress_table[] = {
-  /* 0 - 3 */
-  (Function) compress_start,
-  (Function) compress_close,
-  (Function) compress_expmem,
-  (Function) compress_report,
-  /* 4 - 7 */
-  (Function) compress_to_file,
-  (Function) compress_file,
-  (Function) uncompress_to_file,
-  (Function) uncompress_file,
-  /* 8 - 11 */
-  (Function) is_compressedfile,
+    /* 0 - 3 */
+    (Function)compress_start, (Function)compress_close,
+    (Function)compress_expmem, (Function)compress_report,
+    /* 4 - 7 */
+    (Function)compress_to_file, (Function)compress_file,
+    (Function)uncompress_to_file, (Function)uncompress_file,
+    /* 8 - 11 */
+    (Function)is_compressedfile,
 };
 
-char *compress_start(Function *global_funcs)
-{
+char *compress_start(Function *global_funcs) {
   global = global_funcs;
 
   compressed_files = 0;

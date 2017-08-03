@@ -23,28 +23,27 @@
 #ifndef _EGG_MOD_COMPRESS_COMPRESS_H
 #define _EGG_MOD_COMPRESS_COMPRESS_H
 
-#define UFF_COMPRESS    0x000008        /* Compress the user file       */
+#define UFF_COMPRESS 0x000008 /* Compress the user file       */
 
 typedef enum {
-  COMPF_ERROR,                  /* Compression failed.                  */
-  COMPF_SUCCESS                 /* Compression succeeded.               */
+  COMPF_ERROR,  /* Compression failed.                  */
+  COMPF_SUCCESS /* Compression succeeded.               */
 } compf_result;
 
 typedef enum {
-  COMPF_UNCOMPRESSED,           /* File is uncompressed.                */
-  COMPF_COMPRESSED,             /* File is compressed.                  */
-  COMPF_FAILED                  /* Could not determine file type.       */
+  COMPF_UNCOMPRESSED, /* File is uncompressed.                */
+  COMPF_COMPRESSED,   /* File is compressed.                  */
+  COMPF_FAILED        /* Could not determine file type.       */
 } compf_type;
-
 
 #ifndef MAKING_COMPRESS
 /* 4 - 7 */
-# define compress_to_file   ((int (*)(char *, char *, int))(compress_funcs[4]))
-# define compress_file      ((int (*)(char *, int))(compress_funcs[5]))
-# define uncompress_to_file ((int (*)(char *, char *))(uncompress_funcs[6]))
-# define uncompress_file    ((int (*)(char *))(uncompress_funcs[7]))
+#define compress_to_file ((int (*)(char *, char *, int))(compress_funcs[4]))
+#define compress_file ((int (*)(char *, int))(compress_funcs[5]))
+#define uncompress_to_file ((int (*)(char *, char *))(uncompress_funcs[6]))
+#define uncompress_file ((int (*)(char *))(uncompress_funcs[7]))
 /* 8 - 11 */
-# define is_compressedfile  ((int (*)(char *))(uncompress_funcs[8]))
+#define is_compressedfile ((int (*)(char *))(uncompress_funcs[8]))
 #endif /* !MAKING_COMPRESS */
 
 #endif /* !_EGG_MOD_COMPRESS_COMPRESS_H */

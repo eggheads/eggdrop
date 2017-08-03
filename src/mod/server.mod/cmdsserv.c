@@ -21,8 +21,7 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
-static void cmd_servers(struct userrec *u, int idx, char *par)
-{
+static void cmd_servers(struct userrec *u, int idx, char *par) {
   struct server_list *x = serverlist;
   int i;
   char s[1024];
@@ -58,8 +57,7 @@ static void cmd_servers(struct userrec *u, int idx, char *par)
   }
 }
 
-static void cmd_dump(struct userrec *u, int idx, char *par)
-{
+static void cmd_dump(struct userrec *u, int idx, char *par) {
   if (!(isowner(dcc[idx].nick)) && (must_be_owner == 2)) {
     dprintf(idx, MISC_NOSUCHCMD);
     return;
@@ -72,8 +70,7 @@ static void cmd_dump(struct userrec *u, int idx, char *par)
   dprintf(DP_SERVER, "%s\n", par);
 }
 
-static void cmd_jump(struct userrec *u, int idx, char *par)
-{
+static void cmd_jump(struct userrec *u, int idx, char *par) {
   char *other;
   char *sport;
   int port;
@@ -84,8 +81,7 @@ static void cmd_jump(struct userrec *u, int idx, char *par)
     if (*sport == '+') {
 #ifdef TLS
       use_ssl = 1;
-    }
-    else
+    } else
       use_ssl = 0;
     port = atoi(sport);
     if (!port) {
@@ -95,15 +91,15 @@ static void cmd_jump(struct userrec *u, int idx, char *par)
     putlog(LOG_CMDS, "*", "#%s# jump %s %s%d %s", dcc[idx].nick, other,
            use_ssl ? "+" : "", port, par);
 #else
-    putlog(LOG_MISC, "*", "Error: Attempted to jump to SSL-enabled \
+      putlog(LOG_MISC, "*", "Error: Attempted to jump to SSL-enabled \
 server, but Eggdrop was not compiled with SSL libraries. Skipping...");
       return;
     }
     port = atoi(sport);
     if (!port)
       port = default_port;
-    putlog(LOG_CMDS, "*", "#%s# jump %s %d %s", dcc[idx].nick, other,
-           port, par);
+    putlog(LOG_CMDS, "*", "#%s# jump %s %d %s", dcc[idx].nick, other, port,
+           par);
 #endif
     strncpyz(newserver, other, sizeof newserver);
     newserverport = port;
@@ -115,8 +111,7 @@ server, but Eggdrop was not compiled with SSL libraries. Skipping...");
   nuke_server("changing servers");
 }
 
-static void cmd_clearqueue(struct userrec *u, int idx, char *par)
-{
+static void cmd_clearqueue(struct userrec *u, int idx, char *par) {
   int msgs;
 
   if (!par[0]) {
@@ -160,10 +155,8 @@ static void cmd_clearqueue(struct userrec *u, int idx, char *par)
   putlog(LOG_CMDS, "*", "#%s# clearqueue %s", dcc[idx].nick, par);
 }
 
-static cmd_t C_dcc_serv[] = {
-  {"dump",       "m",  (IntFunc) cmd_dump,       NULL},
-  {"jump",       "m",  (IntFunc) cmd_jump,       NULL},
-  {"servers",    "o",  (IntFunc) cmd_servers,    NULL},
-  {"clearqueue", "m",  (IntFunc) cmd_clearqueue, NULL},
-  {NULL,         NULL, NULL,                      NULL}
-};
+static cmd_t C_dcc_serv[] = {{"dump", "m", (IntFunc)cmd_dump, NULL},
+                             {"jump", "m", (IntFunc)cmd_jump, NULL},
+                             {"servers", "o", (IntFunc)cmd_servers, NULL},
+                             {"clearqueue", "m", (IntFunc)cmd_clearqueue, NULL},
+                             {NULL, NULL, NULL, NULL}};

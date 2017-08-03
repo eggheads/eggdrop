@@ -20,10 +20,10 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
-#include  "../irc.mod/irc.h"
-#include  "../channels.mod/channels.h"
+#include "../channels.mod/channels.h"
+#include "../irc.mod/irc.h"
 
-static time_t last_ctcp = (time_t) 0L;
+static time_t last_ctcp = (time_t)0L;
 static int count_ctcp = 0;
 static char altnick_char = 0;
 
@@ -42,8 +42,7 @@ static char altnick_char = 0;
  *
  * fixed by guppy (1999/02/24) and Fabian (1999/11/26)
  */
-static int gotfake433(char *from)
-{
+static int gotfake433(char *from) {
   int l = strlen(botname) - 1;
 
   /* First run? */
@@ -93,10 +92,9 @@ static int gotfake433(char *from)
  *
  * msg: proc-name <nick> <user@host> <handle> <args...>
  */
-static int check_tcl_msg(char *cmd, char *nick, char *uhost,
-                         struct userrec *u, char *args)
-{
-  struct flag_record fr = { FR_GLOBAL | FR_CHAN | FR_ANYWH, 0, 0, 0, 0, 0 };
+static int check_tcl_msg(char *cmd, char *nick, char *uhost, struct userrec *u,
+                         char *args) {
+  struct flag_record fr = {FR_GLOBAL | FR_CHAN | FR_ANYWH, 0, 0, 0, 0, 0};
   char *hand = u ? u->handle : "*";
   int x;
 
@@ -112,10 +110,9 @@ static int check_tcl_msg(char *cmd, char *nick, char *uhost,
   return ((x == BIND_MATCHED) || (x == BIND_EXECUTED) || (x == BIND_EXEC_LOG));
 }
 
-static int check_tcl_msgm(char *cmd, char *nick, char *uhost,
-                           struct userrec *u, char *arg)
-{
-  struct flag_record fr = { FR_GLOBAL | FR_CHAN | FR_ANYWH, 0, 0, 0, 0, 0 };
+static int check_tcl_msgm(char *cmd, char *nick, char *uhost, struct userrec *u,
+                          char *arg) {
+  struct flag_record fr = {FR_GLOBAL | FR_CHAN | FR_ANYWH, 0, 0, 0, 0, 0};
   int x;
   char args[1024];
 
@@ -129,7 +126,8 @@ static int check_tcl_msgm(char *cmd, char *nick, char *uhost,
   Tcl_SetVar(interp, "_msgm3", u ? u->handle : "*", 0);
   Tcl_SetVar(interp, "_msgm4", args, 0);
   x = check_tcl_bind(H_msgm, args, &fr, " $_msgm1 $_msgm2 $_msgm3 $_msgm4",
-                     MATCH_MASK | BIND_USE_ATTR | BIND_STACKABLE | BIND_STACKRET);
+                     MATCH_MASK | BIND_USE_ATTR | BIND_STACKABLE |
+                         BIND_STACKRET);
 
   /*
    * 0 - no match
@@ -145,9 +143,8 @@ static int check_tcl_msgm(char *cmd, char *nick, char *uhost,
 }
 
 static int check_tcl_notc(char *nick, char *uhost, struct userrec *u,
-                           char *dest, char *arg)
-{
-  struct flag_record fr = { FR_GLOBAL | FR_CHAN | FR_ANYWH, 0, 0, 0, 0, 0 };
+                          char *dest, char *arg) {
+  struct flag_record fr = {FR_GLOBAL | FR_CHAN | FR_ANYWH, 0, 0, 0, 0, 0};
   int x;
 
   get_user_flagrec(u, &fr, NULL);
@@ -156,8 +153,9 @@ static int check_tcl_notc(char *nick, char *uhost, struct userrec *u,
   Tcl_SetVar(interp, "_notc3", u ? u->handle : "*", 0);
   Tcl_SetVar(interp, "_notc4", arg, 0);
   Tcl_SetVar(interp, "_notc5", dest, 0);
-  x = check_tcl_bind(H_notc, arg, &fr, " $_notc1 $_notc2 $_notc3 $_notc4 $_notc5",
-                     MATCH_MASK | BIND_USE_ATTR | BIND_STACKABLE | BIND_STACKRET);
+  x = check_tcl_bind(
+      H_notc, arg, &fr, " $_notc1 $_notc2 $_notc3 $_notc4 $_notc5",
+      MATCH_MASK | BIND_USE_ATTR | BIND_STACKABLE | BIND_STACKRET);
 
   /*
    * 0 - no match
@@ -172,8 +170,7 @@ static int check_tcl_notc(char *nick, char *uhost, struct userrec *u,
   return 1;
 }
 
-static int check_tcl_raw(char *from, char *code, char *msg)
-{
+static int check_tcl_raw(char *from, char *code, char *msg) {
   int x;
 
   Tcl_SetVar(interp, "_raw1", from, 0);
@@ -188,9 +185,8 @@ static int check_tcl_raw(char *from, char *code, char *msg)
 
 static int check_tcl_ctcpr(char *nick, char *uhost, struct userrec *u,
                            char *dest, char *keyword, char *args,
-                           p_tcl_bind_list table)
-{
-  struct flag_record fr = { FR_GLOBAL | FR_CHAN | FR_ANYWH, 0, 0, 0, 0, 0 };
+                           p_tcl_bind_list table) {
+  struct flag_record fr = {FR_GLOBAL | FR_CHAN | FR_ANYWH, 0, 0, 0, 0, 0};
   int x;
 
   get_user_flagrec(u, &fr, NULL);
@@ -203,12 +199,11 @@ static int check_tcl_ctcpr(char *nick, char *uhost, struct userrec *u,
   x = check_tcl_bind(table, keyword, &fr,
                      " $_ctcpr1 $_ctcpr2 $_ctcpr3 $_ctcpr4 $_ctcpr5 $_ctcpr6",
                      MATCH_MASK | BIND_USE_ATTR | BIND_STACKABLE |
-                     ((table == H_ctcp) ? BIND_WANTRET : 0));
+                         ((table == H_ctcp) ? BIND_WANTRET : 0));
   return (x == BIND_EXEC_LOG) || (table == H_ctcr);
 }
 
-static int check_tcl_wall(char *from, char *msg)
-{
+static int check_tcl_wall(char *from, char *msg) {
   int x;
 
   Tcl_SetVar(interp, "_wall1", from, 0);
@@ -230,8 +225,7 @@ static int check_tcl_wall(char *from, char *msg)
 }
 
 static int check_tcl_flud(char *nick, char *uhost, struct userrec *u,
-                          char *ftype, char *chname)
-{
+                          char *ftype, char *chname) {
   int x;
 
   Tcl_SetVar(interp, "_flud1", nick, 0);
@@ -245,8 +239,7 @@ static int check_tcl_flud(char *nick, char *uhost, struct userrec *u,
   return (x == BIND_EXEC_LOG);
 }
 
-static int check_tcl_out(int which, char *msg, int sent)
-{
+static int check_tcl_out(int which, char *msg, int sent) {
   int x;
   char args[32], *queue;
 
@@ -276,16 +269,14 @@ static int check_tcl_out(int which, char *msg, int sent)
   return (x == BIND_EXEC_LOG);
 }
 
-static int match_my_nick(char *nick)
-{
+static int match_my_nick(char *nick) {
   if (!rfc_casecmp(nick, botname))
     return 1;
   return 0;
 }
 
 /* 001: welcome to IRC (use it to fix the server name) */
-static int got001(char *from, char *msg)
-{
+static int got001(char *from, char *msg) {
   int i;
   char *key;
   struct chanset_t *chan;
@@ -323,7 +314,7 @@ static int got001(char *from, char *msg)
   if (!x)
     return 0;
 
-  if (module_find("irc", 0, 0)) {  /* Only join if the IRC module is loaded. */
+  if (module_find("irc", 0, 0)) { /* Only join if the IRC module is loaded. */
     for (chan = chanset; chan; chan = chan->next) {
       chan->status &= ~(CHAN_ACTIVE | CHAN_PEND);
       if (!channel_inactive(chan)) {
@@ -344,8 +335,7 @@ static int got001(char *from, char *msg)
 
 /* Got 442: not on channel
  */
-static int got442(char *from, char *msg)
-{
+static int got442(char *from, char *msg) {
   char *chname, *key;
   struct chanset_t *chan;
 
@@ -359,7 +349,7 @@ static int got442(char *from, char *msg)
 
     putlog(LOG_MISC, chname, IRC_SERVNOTONCHAN, chname);
     if (me && me->funcs)
-      (me->funcs[CHANNEL_CLEAR]) (chan, CHAN_RESETALL);
+      (me->funcs[CHANNEL_CLEAR])(chan, CHAN_RESETALL);
     chan->status &= ~CHAN_ACTIVE;
 
     key = chan->channel.key[0] ? chan->channel.key : chan->key_prot;
@@ -373,8 +363,7 @@ static int got442(char *from, char *msg)
 
 /* Close the current server connection.
  */
-static void nuke_server(char *reason)
-{
+static void nuke_server(char *reason) {
   struct chanset_t *chan;
   module_entry *me;
 
@@ -386,7 +375,7 @@ static void nuke_server(char *reason)
     for (chan = chanset; chan; chan = chan->next) {
       if (channel_active(chan))
         if ((me = module_find("irc", 1, 3)) != NULL)
-          (me->funcs[CHANNEL_CLEAR]) (chan, CHAN_RESETALL);
+          (me->funcs[CHANNEL_CLEAR])(chan, CHAN_RESETALL);
     }
 
     disconnect_server(servidx);
@@ -402,8 +391,8 @@ static time_t lastmsgtime[FLOOD_GLOBAL_MAX];
 
 /* Do on NICK, PRIVMSG, NOTICE and JOIN.
  */
-static int detect_flood(char *floodnick, char *floodhost, char *from, int which)
-{
+static int detect_flood(char *floodnick, char *floodhost, char *from,
+                        int which) {
   char *p, ftype[10], h[1024];
   struct userrec *u;
   int thr = 0, lapse = 0, atr;
@@ -436,19 +425,19 @@ static int detect_flood(char *floodnick, char *floodhost, char *from, int which)
     break;
   }
   if ((thr == 0) || (lapse == 0))
-    return 0;                   /* No flood protection */
+    return 0; /* No flood protection */
 
   p = strchr(floodhost, '@');
   if (p) {
     p++;
-    if (egg_strcasecmp(lastmsghost[which], p)) {        /* New */
+    if (egg_strcasecmp(lastmsghost[which], p)) { /* New */
       strncpyz(lastmsghost[which], p, sizeof lastmsghost[which]);
       lastmsgtime[which] = now;
       lastmsgs[which] = 0;
       return 0;
     }
   } else
-    return 0;                   /* Uh... whatever. */
+    return 0; /* Uh... whatever. */
 
   if (lastmsgtime[which] < now - lapse) {
     /* Flood timer expired, reset it */
@@ -468,18 +457,18 @@ static int detect_flood(char *floodnick, char *floodhost, char *from, int which)
     /* Private msg */
     simple_sprintf(h, "*!*@%s", p);
     putlog(LOG_MISC, "*", IRC_FLOODIGNORE1, p);
-    addignore(h, botnetnick, (which == FLOOD_CTCP) ? "CTCP flood" :
-              "MSG/NOTICE flood", now + (60 * ignore_time));
+    addignore(h, botnetnick,
+              (which == FLOOD_CTCP) ? "CTCP flood" : "MSG/NOTICE flood",
+              now + (60 * ignore_time));
   }
   return 0;
 }
 
 /* Got a private message.
  */
-static int gotmsg(char *from, char *msg)
-{
-  char *to, buf[UHOSTLEN], *nick, ctcpbuf[512], *uhost = buf, *ctcp,
-       *p, *p1, *code;
+static int gotmsg(char *from, char *msg) {
+  char *to, buf[UHOSTLEN], *nick, ctcpbuf[512], *uhost = buf, *ctcp, *p, *p1,
+                                                *code;
   struct userrec *u;
   int ctcp_count = 0;
   int ignoring;
@@ -526,12 +515,13 @@ static int gotmsg(char *from, char *msg)
           /* CTCP from oper, don't interpret */
           if ((to[0] == '$') || strchr(to, '.')) {
             if (!ignoring)
-              putlog(LOG_PUBLIC, to, "CTCP %s: %s from %s (%s) to %s",
-                     code, ctcp, nick, uhost, to);
+              putlog(LOG_PUBLIC, to, "CTCP %s: %s from %s (%s) to %s", code,
+                     ctcp, nick, uhost, to);
           } else {
             u = get_user_by_host(from);
             if (!ignoring || trigger_on_ignore) {
-              if (!check_tcl_ctcp(nick, uhost, u, to, code, ctcp) && !ignoring) {
+              if (!check_tcl_ctcp(nick, uhost, u, to, code, ctcp) &&
+                  !ignoring) {
                 if ((lowercase_ctcp && !egg_strcasecmp(code, "DCC")) ||
                     (!lowercase_ctcp && !strcmp(code, "DCC"))) {
                   /* If it gets this far unhandled, it means that
@@ -542,7 +532,8 @@ static int gotmsg(char *from, char *msg)
                     if (!quiet_reject) {
                       if (u)
                         dprintf(DP_HELP, "NOTICE %s :I'm not accepting calls "
-                                "at the moment.\n", nick);
+                                         "at the moment.\n",
+                                nick);
                       else
                         dprintf(DP_HELP, "NOTICE %s :%s\n", nick,
                                 DCC_NOSTRANGERS);
@@ -557,7 +548,7 @@ static int gotmsg(char *from, char *msg)
               } else {
                 putlog(LOG_MSGS, "*", "CTCP %s: %s from %s (%s)", code, ctcp,
                        nick, uhost);
-              }                 /* I love a good close cascade ;) */
+              } /* I love a good close cascade ;) */
             }
           }
         }
@@ -586,8 +577,8 @@ static int gotmsg(char *from, char *msg)
     if ((to[0] == '$') || (strchr(to, '.') != NULL)) {
       if (!ignoring) {
         detect_flood(nick, uhost, from, FLOOD_PRIVMSG);
-        putlog(LOG_MSGS | LOG_SERV, "*", "[%s!%s to %s] %s",
-               nick, uhost, to, msg);
+        putlog(LOG_MSGS | LOG_SERV, "*", "[%s!%s to %s] %s", nick, uhost, to,
+               msg);
       }
       return 0;
     }
@@ -613,8 +604,7 @@ static int gotmsg(char *from, char *msg)
 
 /* Got a private notice.
  */
-static int gotnotice(char *from, char *msg)
-{
+static int gotnotice(char *from, char *msg) {
   char *to, *nick, ctcpbuf[512], *p, *p1, buf[512], *uhost = buf, *ctcp;
   struct userrec *u;
   int ignoring;
@@ -649,17 +639,15 @@ static int gotnotice(char *from, char *msg)
         /* CTCP reply from oper, don't interpret */
         if ((to[0] == '$') || strchr(to, '.')) {
           if (!ignoring)
-            putlog(LOG_PUBLIC, "*",
-                   "CTCP reply %s: %s from %s (%s) to %s", code, ctcp,
-                   nick, uhost, to);
+            putlog(LOG_PUBLIC, "*", "CTCP reply %s: %s from %s (%s) to %s",
+                   code, ctcp, nick, uhost, to);
         } else {
           u = get_user_by_host(from);
           if (!ignoring || trigger_on_ignore) {
             check_tcl_ctcr(nick, uhost, u, to, code, ctcp);
             if (!ignoring)
               /* Who cares? */
-              putlog(LOG_MSGS, "*",
-                     "CTCP reply %s: %s from %s (%s) to %s",
+              putlog(LOG_MSGS, "*", "CTCP reply %s: %s from %s (%s) to %s",
                      code, ctcp, nick, uhost, to);
           }
         }
@@ -672,8 +660,8 @@ static int gotnotice(char *from, char *msg)
     if ((to[0] == '$') || (strchr(to, '.') != NULL)) {
       if (!ignoring) {
         detect_flood(nick, uhost, from, FLOOD_NOTICE);
-        putlog(LOG_MSGS | LOG_SERV, "*", "-%s (%s) to %s- %s",
-               nick, uhost, to, msg);
+        putlog(LOG_MSGS | LOG_SERV, "*", "-%s (%s) to %s- %s", nick, uhost, to,
+               msg);
       }
       return 0;
     }
@@ -703,8 +691,7 @@ static int gotnotice(char *from, char *msg)
 
 /* WALLOPS: oper's nuisance
  */
-static int gotwall(char *from, char *msg)
-{
+static int gotwall(char *from, char *msg) {
   char *nick;
 
   fixcolon(msg);
@@ -721,8 +708,7 @@ static int gotwall(char *from, char *msg)
 
 /* Called once a minute...
  */
-static void minutely_checks()
-{
+static void minutely_checks() {
   char *alt;
 
   /* Only check if we have already successfully logged in.  */
@@ -745,10 +731,9 @@ static void minutely_checks()
 
 /* Pong from server.
  */
-static int gotpong(char *from, char *msg)
-{
+static int gotpong(char *from, char *msg) {
   newsplit(&msg);
-  fixcolon(msg);                /* Scrap server name */
+  fixcolon(msg); /* Scrap server name */
   server_lag = now - my_atoul(msg);
   if (server_lag > 99999) {
     /* IRCnet lagmeter support by drummer */
@@ -759,8 +744,7 @@ static int gotpong(char *from, char *msg)
 
 /* This is a reply on ISON :<current> <orig> [<alt>]
  */
-static void got303(char *from, char *msg)
-{
+static void got303(char *from, char *msg) {
   char *tmp, *alt;
   int ison_orig = 0, ison_alt = 0;
 
@@ -791,8 +775,7 @@ static void got303(char *from, char *msg)
 
 /* 432 : Bad nickname
  */
-static int got432(char *from, char *msg)
-{
+static int got432(char *from, char *msg) {
   char *erroneus;
 
   newsplit(&msg);
@@ -815,8 +798,7 @@ static int got432(char *from, char *msg)
 /* 433 : Nickname in use
  * Change nicks till we're acceptable or we give up
  */
-static int got433(char *from, char *msg)
-{
+static int got433(char *from, char *msg) {
   char *tmp;
 
   if (server_online) {
@@ -833,8 +815,7 @@ static int got433(char *from, char *msg)
 
 /* 437 : Nickname juped (IRCnet)
  */
-static int got437(char *from, char *msg)
-{
+static int got437(char *from, char *msg) {
   char *s;
   struct chanset_t *chan;
 
@@ -866,8 +847,7 @@ static int got437(char *from, char *msg)
 
 /* 438 : Nick change too fast
  */
-static int got438(char *from, char *msg)
-{
+static int got438(char *from, char *msg) {
   newsplit(&msg);
   newsplit(&msg);
   fixcolon(msg);
@@ -875,8 +855,7 @@ static int got438(char *from, char *msg)
   return 0;
 }
 
-static int got451(char *from, char *msg)
-{
+static int got451(char *from, char *msg) {
   /* Usually if we get this then we really messed up somewhere
    * or this is a non-standard server, so we log it and kill the socket
    * hoping the next server will work :) -poptix
@@ -892,8 +871,7 @@ static int got451(char *from, char *msg)
 
 /* Got error notice
  */
-static int goterror(char *from, char *msg)
-{
+static int goterror(char *from, char *msg) {
   /* FIXME: fixcolon doesn't do what we need here, this is a temp fix
    * fixcolon(msg);
    */
@@ -909,8 +887,7 @@ static int goterror(char *from, char *msg)
 
 /* Got nick change.
  */
-static int gotnick(char *from, char *msg)
-{
+static int gotnick(char *from, char *msg) {
   char *nick, *alt = get_altbotnick();
 
   nick = splitnick(&from);
@@ -932,7 +909,7 @@ static int gotnick(char *from, char *msg)
         putlog(LOG_MISC, "*", IRC_GETORIGNICK, origbotname);
         dprintf(DP_SERVER, "NICK %s\n", origbotname);
       } else if (alt[0] && !rfc_casecmp(nick, alt) &&
-               egg_strcasecmp(botname, origbotname)) {
+                 egg_strcasecmp(botname, origbotname)) {
         putlog(LOG_MISC, "*", IRC_GETALTNICK, alt);
         dprintf(DP_SERVER, "NICK %s\n", alt);
       }
@@ -944,7 +921,7 @@ static int gotnick(char *from, char *msg)
       putlog(LOG_MISC, "*", IRC_GETORIGNICK, origbotname);
       dprintf(DP_SERVER, "NICK %s\n", origbotname);
     } else if (alt[0] && !rfc_casecmp(nick, alt) &&
-             egg_strcasecmp(botname, origbotname)) {
+               egg_strcasecmp(botname, origbotname)) {
       putlog(LOG_MISC, "*", IRC_GETALTNICK, altnick);
       dprintf(DP_SERVER, "NICK %s\n", altnick);
     }
@@ -952,8 +929,7 @@ static int gotnick(char *from, char *msg)
   return 0;
 }
 
-static int gotmode(char *from, char *msg)
-{
+static int gotmode(char *from, char *msg) {
   char *ch;
 
   ch = newsplit(&msg);
@@ -970,8 +946,8 @@ static int gotmode(char *from, char *msg)
         if ((msg[0] == '+') && strchr(msg, 'r')) {
           int servidx = findanyidx(serv);
 
-          putlog(LOG_MISC | LOG_JOIN, "*",
-                 "%s has me i-lined (jumping)", dcc[servidx].host);
+          putlog(LOG_MISC | LOG_JOIN, "*", "%s has me i-lined (jumping)",
+                 dcc[servidx].host);
           nuke_server("i-lines suck");
         }
       }
@@ -980,8 +956,7 @@ static int gotmode(char *from, char *msg)
   return 0;
 }
 
-static void disconnect_server(int idx)
-{
+static void disconnect_server(int idx) {
   if (server_online > 0)
     check_tcl_event("disconnect-server");
   server_online = 0;
@@ -995,22 +970,19 @@ static void disconnect_server(int idx)
   botuserhost[0] = 0;
 }
 
-static void eof_server(int idx)
-{
+static void eof_server(int idx) {
   putlog(LOG_SERV, "*", "%s %s", IRC_DISCONNECTED, dcc[idx].host);
   disconnect_server(idx);
   lostdcc(idx);
 }
 
-static void display_server(int idx, char *buf)
-{
+static void display_server(int idx, char *buf) {
   sprintf(buf, "%s  (lag: %d)", trying_server ? "conn" : "serv", server_lag);
 }
 
 static void connect_server(void);
 
-static void kill_server(int idx, void *x)
-{
+static void kill_server(int idx, void *x) {
   module_entry *me;
 
   disconnect_server(idx);
@@ -1018,14 +990,13 @@ static void kill_server(int idx, void *x)
     struct chanset_t *chan;
 
     for (chan = chanset; chan; chan = chan->next)
-      (me->funcs[CHANNEL_CLEAR]) (chan, CHAN_RESETALL);
+      (me->funcs[CHANNEL_CLEAR])(chan, CHAN_RESETALL);
   }
   /* A new server connection will be automatically initiated in
    * about 2 seconds. */
 }
 
-static void timeout_server(int idx)
-{
+static void timeout_server(int idx) {
   putlog(LOG_SERV, "*", "Timeout: connect to %s", dcc[idx].host);
   disconnect_server(idx);
   check_tcl_event("fail-server");
@@ -1034,21 +1005,13 @@ static void timeout_server(int idx)
 
 static void server_activity(int idx, char *msg, int len);
 
-static struct dcc_table SERVER_SOCKET = {
-  "SERVER",
-  0,
-  eof_server,
-  server_activity,
-  NULL,
-  timeout_server,
-  display_server,
-  NULL,
-  kill_server,
-  NULL
-};
+static struct dcc_table SERVER_SOCKET = {"SERVER",       0,
+                                         eof_server,     server_activity,
+                                         NULL,           timeout_server,
+                                         display_server, NULL,
+                                         kill_server,    NULL};
 
-static void server_activity(int idx, char *msg, int len)
-{
+static void server_activity(int idx, char *msg, int len) {
   char *from, *code;
 
   if (trying_server) {
@@ -1065,7 +1028,7 @@ static void server_activity(int idx, char *msg, int len)
   }
   code = newsplit(&msg);
   if (raw_log && ((strcmp(code, "PRIVMSG") && strcmp(code, "NOTICE")) ||
-      !match_ignore(from))) {
+                  !match_ignore(from))) {
     if (!strcmp(from, ""))
       putlog(LOG_RAW, "*", "[@] %s %s", code, msg);
     else
@@ -1077,15 +1040,13 @@ static void server_activity(int idx, char *msg, int len)
   check_tcl_raw(from, code, msg);
 }
 
-static int gotping(char *from, char *msg)
-{
+static int gotping(char *from, char *msg) {
   fixcolon(msg);
   dprintf(DP_MODE, "PONG :%s\n", msg);
   return 0;
 }
 
-static int gotkick(char *from, char *msg)
-{
+static int gotkick(char *from, char *msg) {
   char *nick;
 
   nick = from;
@@ -1102,10 +1063,8 @@ static int gotkick(char *from, char *msg)
 
 /* Another sec penalty if bot did a whois on another server.
  */
-static int whoispenalty(char *from, char *msg)
-{
-  if (realservername && use_penalties &&
-      egg_strcasecmp(from, realservername)) {
+static int whoispenalty(char *from, char *msg) {
+  if (realservername && use_penalties && egg_strcasecmp(from, realservername)) {
 
     last_time += 1;
 
@@ -1116,8 +1075,7 @@ static int whoispenalty(char *from, char *msg)
   return 0;
 }
 
-static int got311(char *from, char *msg)
-{
+static int got311(char *from, char *msg) {
   char *n1, *n2, *u, *h;
 
   n1 = newsplit(&msg);
@@ -1134,12 +1092,10 @@ static int got311(char *from, char *msg)
   return 0;
 }
 
-
 /*
  * 465     ERR_YOUREBANNEDCREEP :You are banned from this server
  */
-static int got465(char *from, char *msg)
-{
+static int got465(char *from, char *msg) {
   newsplit(&msg); /* nick */
 
   fixcolon(msg);
@@ -1150,40 +1106,37 @@ static int got465(char *from, char *msg)
   return 1;
 }
 
-
 static cmd_t my_raw_binds[] = {
-  {"PRIVMSG", "",   (IntFunc) gotmsg,       NULL},
-  {"NOTICE",  "",   (IntFunc) gotnotice,    NULL},
-  {"MODE",    "",   (IntFunc) gotmode,      NULL},
-  {"PING",    "",   (IntFunc) gotping,      NULL},
-  {"PONG",    "",   (IntFunc) gotpong,      NULL},
-  {"WALLOPS", "",   (IntFunc) gotwall,      NULL},
-  {"001",     "",   (IntFunc) got001,       NULL},
-  {"303",     "",   (IntFunc) got303,       NULL},
-  {"432",     "",   (IntFunc) got432,       NULL},
-  {"433",     "",   (IntFunc) got433,       NULL},
-  {"437",     "",   (IntFunc) got437,       NULL},
-  {"438",     "",   (IntFunc) got438,       NULL},
-  {"451",     "",   (IntFunc) got451,       NULL},
-  {"442",     "",   (IntFunc) got442,       NULL},
-  {"465",     "",   (IntFunc) got465,       NULL},
-  {"NICK",    "",   (IntFunc) gotnick,      NULL},
-  {"ERROR",   "",   (IntFunc) goterror,     NULL},
-/* ircu2.10.10 has a bug when a client is throttled ERROR is sent wrong */
-  {"ERROR:",  "",   (IntFunc) goterror,     NULL},
-  {"KICK",    "",   (IntFunc) gotkick,      NULL},
-  {"318",     "",   (IntFunc) whoispenalty, NULL},
-  {"311",     "",   (IntFunc) got311,       NULL},
-  {NULL,      NULL, NULL,                    NULL}
-};
+    {"PRIVMSG", "", (IntFunc)gotmsg, NULL},
+    {"NOTICE", "", (IntFunc)gotnotice, NULL},
+    {"MODE", "", (IntFunc)gotmode, NULL},
+    {"PING", "", (IntFunc)gotping, NULL},
+    {"PONG", "", (IntFunc)gotpong, NULL},
+    {"WALLOPS", "", (IntFunc)gotwall, NULL},
+    {"001", "", (IntFunc)got001, NULL},
+    {"303", "", (IntFunc)got303, NULL},
+    {"432", "", (IntFunc)got432, NULL},
+    {"433", "", (IntFunc)got433, NULL},
+    {"437", "", (IntFunc)got437, NULL},
+    {"438", "", (IntFunc)got438, NULL},
+    {"451", "", (IntFunc)got451, NULL},
+    {"442", "", (IntFunc)got442, NULL},
+    {"465", "", (IntFunc)got465, NULL},
+    {"NICK", "", (IntFunc)gotnick, NULL},
+    {"ERROR", "", (IntFunc)goterror, NULL},
+    /* ircu2.10.10 has a bug when a client is throttled ERROR is sent wrong */
+    {"ERROR:", "", (IntFunc)goterror, NULL},
+    {"KICK", "", (IntFunc)gotkick, NULL},
+    {"318", "", (IntFunc)whoispenalty, NULL},
+    {"311", "", (IntFunc)got311, NULL},
+    {NULL, NULL, NULL, NULL}};
 
 static void server_resolve_success(int);
 static void server_resolve_failure(int);
 
 /* Hook up to a server
  */
-static void connect_server(void)
-{
+static void connect_server(void) {
   char pass[121], botserver[UHOSTLEN];
   int servidx;
   unsigned int botserverport = 0;
@@ -1191,8 +1144,8 @@ static void connect_server(void)
   lastpingcheck = 0;
   trying_server = now;
   empty_msgq();
-  if (newserverport) {          /* Jump to specified server */
-    curserv = -1;             /* Reset server list */
+  if (newserverport) { /* Jump to specified server */
+    curserv = -1;      /* Reset server list */
     strcpy(botserver, newserver);
     botserverport = newserverport;
     strcpy(pass, newserverpass);
@@ -1221,7 +1174,7 @@ static void connect_server(void)
       return;
     }
 
-    if (connectserver[0])       /* drummer */
+    if (connectserver[0]) /* drummer */
       do_tcl("connect-server", connectserver);
     check_tcl_event("connect-server");
     next_server(&curserv, botserver, &botserverport, pass);
@@ -1269,8 +1222,7 @@ static void connect_server(void)
   }
 }
 
-static void server_resolve_failure(int servidx)
-{
+static void server_resolve_failure(int servidx) {
   serv = -1;
   resolvserv = 0;
   putlog(LOG_SERV, "*", "%s %s (%s)", IRC_FAILEDCONNECT, dcc[servidx].host,
@@ -1279,8 +1231,7 @@ static void server_resolve_failure(int servidx)
   lostdcc(servidx);
 }
 
-static void server_resolve_success(int servidx)
-{
+static void server_resolve_success(int servidx) {
   char pass[121];
 
   resolvserv = 0;

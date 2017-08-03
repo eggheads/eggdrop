@@ -20,8 +20,7 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
-static int tcl_isbotnick STDVAR
-{
+static int tcl_isbotnick STDVAR {
   BADARGS(2, 2, " nick");
 
   if (match_my_nick(argv[1]))
@@ -31,24 +30,23 @@ static int tcl_isbotnick STDVAR
   return TCL_OK;
 }
 
-static int tcl_putnow STDVAR
-{
+static int tcl_putnow STDVAR {
   int len;
   char buf[512], *p, *q, *r;
 
   BADARGS(2, 3, " text ?options?");
 
   if ((argc == 3) && egg_strcasecmp(argv[2], "-oneline")) {
-    Tcl_AppendResult(irp, "unknown putnow option: should be ",
-                     "-oneline", NULL);
+    Tcl_AppendResult(irp, "unknown putnow option: should be ", "-oneline",
+                     NULL);
     return TCL_ERROR;
   }
   if (!serv) /* no server - no output */
     return TCL_OK;
 
-  for (p = r = argv[1], q = buf; ; p++) {
+  for (p = r = argv[1], q = buf;; p++) {
     if (*p && *p != '\r' && *p != '\n')
-      continue; /* look for message delimiters */
+      continue;   /* look for message delimiters */
     if (p == r) { /* empty message */
       if (*p) {
         r++;
@@ -57,7 +55,7 @@ static int tcl_putnow STDVAR
         break;
     }
     if ((p - r) > (sizeof(buf) - 2 - (q - buf)))
-      break; /* That's all folks, no space left */
+      break;         /* That's all folks, no space left */
     len = p - r + 1; /* leave space for '\0' */
     strncpyz(q, r, len);
     if (check_tcl_out(0, q, 0)) {
@@ -82,8 +80,7 @@ static int tcl_putnow STDVAR
   return TCL_OK;
 }
 
-static int tcl_putquick STDVAR
-{
+static int tcl_putquick STDVAR {
   char s[511], *p;
 
   BADARGS(2, 3, " text ?options?");
@@ -110,8 +107,7 @@ static int tcl_putquick STDVAR
   return TCL_OK;
 }
 
-static int tcl_putserv STDVAR
-{
+static int tcl_putserv STDVAR {
   char s[511], *p;
 
   BADARGS(2, 3, " text ?options?");
@@ -138,8 +134,7 @@ static int tcl_putserv STDVAR
   return TCL_OK;
 }
 
-static int tcl_puthelp STDVAR
-{
+static int tcl_puthelp STDVAR {
   char s[511], *p;
 
   BADARGS(2, 3, " text ?options?");
@@ -166,8 +161,7 @@ static int tcl_puthelp STDVAR
   return TCL_OK;
 }
 
-static int tcl_jump STDVAR
-{
+static int tcl_jump STDVAR {
   BADARGS(1, 4, " ?server? ?port? ?pass?");
 
   if (argc >= 2) {
@@ -195,8 +189,7 @@ static int tcl_jump STDVAR
   return TCL_OK;
 }
 
-static int tcl_clearqueue STDVAR
-{
+static int tcl_clearqueue STDVAR {
   struct msgq *q, *qq;
   int msgs = 0;
   char s[20];
@@ -204,7 +197,7 @@ static int tcl_clearqueue STDVAR
   BADARGS(2, 2, " queue");
 
   if (!strcmp(argv[1], "all")) {
-    msgs = (int) (modeq.tot + mq.tot + hq.tot);
+    msgs = (int)(modeq.tot + mq.tot + hq.tot);
     for (q = modeq.head; q; q = qq) {
       qq = q->next;
       nfree(q->msg);
@@ -278,30 +271,29 @@ static int tcl_clearqueue STDVAR
   return TCL_ERROR;
 }
 
-static int tcl_queuesize STDVAR
-{
+static int tcl_queuesize STDVAR {
   char s[20];
   int x;
 
   BADARGS(1, 2, " ?queue?");
 
   if (argc == 1) {
-    x = (int) (modeq.tot + hq.tot + mq.tot);
+    x = (int)(modeq.tot + hq.tot + mq.tot);
     simple_sprintf(s, "%d", x);
     Tcl_AppendResult(irp, s, NULL);
     return TCL_OK;
   } else if (!strncmp(argv[1], "serv", 4)) {
-    x = (int) (mq.tot);
+    x = (int)(mq.tot);
     simple_sprintf(s, "%d", x);
     Tcl_AppendResult(irp, s, NULL);
     return TCL_OK;
   } else if (!strcmp(argv[1], "mode")) {
-    x = (int) (modeq.tot);
+    x = (int)(modeq.tot);
     simple_sprintf(s, "%d", x);
     Tcl_AppendResult(irp, s, NULL);
     return TCL_OK;
   } else if (!strcmp(argv[1], "help")) {
-    x = (int) (hq.tot);
+    x = (int)(hq.tot);
     simple_sprintf(s, "%d", x);
     Tcl_AppendResult(irp, s, NULL);
     return TCL_OK;
@@ -312,14 +304,12 @@ static int tcl_queuesize STDVAR
   return TCL_ERROR;
 }
 
-static tcl_cmds my_tcl_cmds[] = {
-  {"jump",       tcl_jump},
-  {"isbotnick",  tcl_isbotnick},
-  {"clearqueue", tcl_clearqueue},
-  {"queuesize",  tcl_queuesize},
-  {"puthelp",    tcl_puthelp},
-  {"putserv",    tcl_putserv},
-  {"putquick",   tcl_putquick},
-  {"putnow",     tcl_putnow},
-  {NULL,         NULL}
-};
+static tcl_cmds my_tcl_cmds[] = {{"jump", tcl_jump},
+                                 {"isbotnick", tcl_isbotnick},
+                                 {"clearqueue", tcl_clearqueue},
+                                 {"queuesize", tcl_queuesize},
+                                 {"puthelp", tcl_puthelp},
+                                 {"putserv", tcl_putserv},
+                                 {"putquick", tcl_putquick},
+                                 {"putnow", tcl_putnow},
+                                 {NULL, NULL}};

@@ -24,9 +24,9 @@
 #define MODULE_NAME "console"
 #define MAKING_CONSOLE
 
+#include "console.h"
 #include "src/mod/module.h"
 #include <stdlib.h>
-#include "console.h"
 
 static Function *global = NULL;
 static int console_autosave = 0;
@@ -44,9 +44,7 @@ struct console_info {
 
 static struct user_entry_type USERENTRY_CONSOLE;
 
-
-static int console_unpack(struct userrec *u, struct user_entry *e)
-{
+static int console_unpack(struct userrec *u, struct user_entry *e) {
   struct console_info *ci = user_malloc(sizeof(struct console_info));
   char *par, *arg;
 
@@ -69,18 +67,16 @@ static int console_unpack(struct userrec *u, struct user_entry *e)
   return 1;
 }
 
-static int console_pack(struct userrec *u, struct user_entry *e)
-{
+static int console_pack(struct userrec *u, struct user_entry *e) {
   char work[1024];
   struct console_info *ci;
   int l;
 
-  ci = (struct console_info *) e->u.extra;
+  ci = (struct console_info *)e->u.extra;
 
-  l = simple_sprintf(work, "%s %s %s %d %d %d",
-                     ci->channel, masktype(ci->conflags),
-                     stripmasktype(ci->stripflags), ci->echoflags,
-                     ci->page, ci->conchan);
+  l = simple_sprintf(work, "%s %s %s %d %d %d", ci->channel,
+                     masktype(ci->conflags), stripmasktype(ci->stripflags),
+                     ci->echoflags, ci->page, ci->conchan);
 
   e->u.list = user_malloc(sizeof(struct list_type));
   e->u.list->next = NULL;
@@ -92,8 +88,7 @@ static int console_pack(struct userrec *u, struct user_entry *e)
   return 1;
 }
 
-static int console_kill(struct user_entry *e)
-{
+static int console_kill(struct user_entry *e) {
   struct console_info *i = e->u.extra;
 
   nfree(i->channel);
@@ -103,21 +98,18 @@ static int console_kill(struct user_entry *e)
 }
 
 static int console_write_userfile(FILE *f, struct userrec *u,
-                                  struct user_entry *e)
-{
+                                  struct user_entry *e) {
   struct console_info *i = e->u.extra;
 
-  if (fprintf(f, "--CONSOLE %s %s %s %d %d %d\n",
-              i->channel, masktype(i->conflags),
-              stripmasktype(i->stripflags), i->echoflags,
+  if (fprintf(f, "--CONSOLE %s %s %s %d %d %d\n", i->channel,
+              masktype(i->conflags), stripmasktype(i->stripflags), i->echoflags,
               i->page, i->conchan) == EOF)
     return 0;
   return 1;
 }
 
-static int console_set(struct userrec *u, struct user_entry *e, void *buf)
-{
-  struct console_info *ci = (struct console_info *) e->u.extra;
+static int console_set(struct userrec *u, struct user_entry *e, void *buf) {
+  struct console_info *ci = (struct console_info *)e->u.extra;
 
   if (!ci && !buf)
     return 1;
@@ -134,18 +126,15 @@ static int console_set(struct userrec *u, struct user_entry *e, void *buf)
   return 1;
 }
 
-static int console_tcl_format(char *work, struct console_info *i)
-{
-  simple_sprintf(work, "%s %s %s %d %d %d",
-                 i->channel, masktype(i->conflags),
-                 stripmasktype(i->stripflags), i->echoflags,
-                 i->page, i->conchan);
+static int console_tcl_format(char *work, struct console_info *i) {
+  simple_sprintf(work, "%s %s %s %d %d %d", i->channel, masktype(i->conflags),
+                 stripmasktype(i->stripflags), i->echoflags, i->page,
+                 i->conchan);
   return 0;
 }
 
 static int console_tcl_get(Tcl_Interp *irp, struct userrec *u,
-                           struct user_entry *e, int argc, char **argv)
-{
+                           struct user_entry *e, int argc, char **argv) {
   char work[1024];
 
   console_tcl_format(work, e->u.extra);
@@ -154,8 +143,7 @@ static int console_tcl_get(Tcl_Interp *irp, struct userrec *u,
 }
 
 static int console_tcl_append(Tcl_Interp *irp, struct userrec *u,
-                           struct user_entry *e)
-{
+                              struct user_entry *e) {
   char work[1024];
   console_tcl_format(work, e->u.extra);
   Tcl_AppendElement(irp, work);
@@ -163,8 +151,7 @@ static int console_tcl_append(Tcl_Interp *irp, struct userrec *u,
 }
 
 static int console_tcl_set(Tcl_Interp *irp, struct userrec *u,
-                           struct user_entry *e, int argc, char **argv)
-{
+                           struct user_entry *e, int argc, char **argv) {
   struct console_info *i = e->u.extra;
   int l;
 
@@ -200,15 +187,13 @@ static int console_tcl_set(Tcl_Interp *irp, struct userrec *u,
   return TCL_OK;
 }
 
-static int console_expmem(struct user_entry *e)
-{
+static int console_expmem(struct user_entry *e) {
   struct console_info *i = e->u.extra;
 
   return sizeof(struct console_info) + strlen(i->channel) + 1;
 }
 
-static void console_display(int idx, struct user_entry *e)
-{
+static void console_display(int idx, struct user_entry *e) {
   struct console_info *i = e->u.extra;
 
   if (dcc[idx].user && (dcc[idx].user->flags & USER_MASTER)) {
@@ -225,8 +210,7 @@ static void console_display(int idx, struct user_entry *e)
 }
 
 static int console_dupuser(struct userrec *new, struct userrec *old,
-                           struct user_entry *e)
-{
+                           struct user_entry *e) {
   struct console_info *i = e->u.extra, *j;
 
   j = user_malloc(sizeof(struct console_info));
@@ -237,33 +221,31 @@ static int console_dupuser(struct userrec *new, struct userrec *old,
   return set_user(e->type, new, j);
 }
 
-static struct user_entry_type USERENTRY_CONSOLE = {
-  NULL,                         /* always 0 ;) */
-  NULL,
-  console_dupuser,
-  console_unpack,
-  console_pack,
-  console_write_userfile,
-  console_kill,
-  NULL,
-  console_set,
-  console_tcl_get,
-  console_tcl_set,
-  console_expmem,
-  console_display,
-  "CONSOLE",
-  console_tcl_append
-};
+static struct user_entry_type USERENTRY_CONSOLE = {NULL, /* always 0 ;) */
+                                                   NULL,
+                                                   console_dupuser,
+                                                   console_unpack,
+                                                   console_pack,
+                                                   console_write_userfile,
+                                                   console_kill,
+                                                   NULL,
+                                                   console_set,
+                                                   console_tcl_get,
+                                                   console_tcl_set,
+                                                   console_expmem,
+                                                   console_display,
+                                                   "CONSOLE",
+                                                   console_tcl_append};
 
-static int console_chon(char *handle, int idx)
-{
-  struct flag_record fr = { FR_GLOBAL | FR_CHAN, 0, 0, 0, 0, 0 };
+static int console_chon(char *handle, int idx) {
+  struct flag_record fr = {FR_GLOBAL | FR_CHAN, 0, 0, 0, 0, 0};
   struct console_info *i = get_user(&USERENTRY_CONSOLE, dcc[idx].user);
 
   if (dcc[idx].type == &DCC_CHAT) {
     if (i) {
       if (i->channel && i->channel[0])
-        strncpyz(dcc[idx].u.chat->con_chan, i->channel, sizeof dcc[idx].u.chat->con_chan);
+        strncpyz(dcc[idx].u.chat->con_chan, i->channel,
+                 sizeof dcc[idx].u.chat->con_chan);
       get_user_flagrec(dcc[idx].user, &fr, i->channel);
       dcc[idx].u.chat->con_flags = check_conflags(&fr, i->conflags);
       dcc[idx].u.chat->strip_flags = i->stripflags;
@@ -293,8 +275,8 @@ static int console_chon(char *handle, int idx)
         if (dcc[idx].u.chat->channel >= 0) {
           char x[1024];
 
-          chanout_but(-1, dcc[idx].u.chat->channel,
-                      "*** [%s] %s\n", dcc[idx].nick, p);
+          chanout_but(-1, dcc[idx].u.chat->channel, "*** [%s] %s\n",
+                      dcc[idx].nick, p);
           simple_sprintf(x, "[%s] %s", dcc[idx].nick, p);
           botnet_send_chan(-1, botnetnick, NULL, dcc[idx].u.chat->channel, x);
         }
@@ -304,8 +286,7 @@ static int console_chon(char *handle, int idx)
   return 0;
 }
 
-static int console_store(struct userrec *u, int idx, char *par)
-{
+static int console_store(struct userrec *u, int idx, char *par) {
   struct console_info *i = get_user(&USERENTRY_CONSOLE, u);
 
   if (!i) {
@@ -339,32 +320,24 @@ static int console_store(struct userrec *u, int idx, char *par)
 }
 
 /* cmds.c:cmd_console calls this, better than chof bind - drummer,07/25/1999 */
-static int console_dostore(int idx)
-{
+static int console_dostore(int idx) {
   if (console_autosave)
     console_store(dcc[idx].user, idx, NULL);
   return 0;
 }
 
-static tcl_ints myints[] = {
-  {"console-autosave", &console_autosave, 0},
-  {"force-channel",    &force_channel,    0},
-  {"info-party",       &info_party,       0},
-  {NULL,               NULL,              0}
-};
+static tcl_ints myints[] = {{"console-autosave", &console_autosave, 0},
+                            {"force-channel", &force_channel, 0},
+                            {"info-party", &info_party, 0},
+                            {NULL, NULL, 0}};
 
-static cmd_t mychon[] = {
-  {"*",  "",   console_chon, "console:chon"},
-  {NULL, NULL, NULL,                   NULL}
-};
+static cmd_t mychon[] = {{"*", "", console_chon, "console:chon"},
+                         {NULL, NULL, NULL, NULL}};
 
-static cmd_t mydcc[] = {
-  {"store", "",   console_store, NULL},
-  {NULL,    NULL, NULL,          NULL}
-};
+static cmd_t mydcc[] = {{"store", "", console_store, NULL},
+                        {NULL, NULL, NULL, NULL}};
 
-static char *console_close()
-{
+static char *console_close() {
   rem_builtins(H_chon, mychon);
   rem_builtins(H_dcc, mydcc);
   rem_tcl_ints(myints);
@@ -378,15 +351,11 @@ static char *console_close()
 EXPORT_SCOPE char *console_start();
 
 static Function console_table[] = {
-  (Function) console_start,
-  (Function) console_close,
-  (Function) NULL,
-  (Function) NULL,
-  (Function) console_dostore,
+    (Function)console_start, (Function)console_close,   (Function)NULL,
+    (Function)NULL,          (Function)console_dostore,
 };
 
-char *console_start(Function *global_funcs)
-{
+char *console_start(Function *global_funcs) {
   global = global_funcs;
 
   module_register(MODULE_NAME, console_table, 1, 3);

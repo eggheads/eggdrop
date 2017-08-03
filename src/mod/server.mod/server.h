@@ -23,8 +23,10 @@
 #ifndef _EGG_MOD_SERVER_SERVER_H
 #define _EGG_MOD_SERVER_SERVER_H
 
-#define check_tcl_ctcp(a,b,c,d,e,f) check_tcl_ctcpr(a,b,c,d,e,f,H_ctcp)
-#define check_tcl_ctcr(a,b,c,d,e,f) check_tcl_ctcpr(a,b,c,d,e,f,H_ctcr)
+#define check_tcl_ctcp(a, b, c, d, e, f)                                       \
+  check_tcl_ctcpr(a, b, c, d, e, f, H_ctcp)
+#define check_tcl_ctcr(a, b, c, d, e, f)                                       \
+  check_tcl_ctcpr(a, b, c, d, e, f, H_ctcr)
 
 #ifndef MAKING_SERVER
 /* 4 - 7 */
@@ -37,20 +39,23 @@
 #endif
 #define serv (*(int *)(server_funcs[7]))
 /* 8 - 11 */
-#define flud_thr (*(int*)(server_funcs[8]))
-#define flud_time (*(int*)(server_funcs[9]))
-#define flud_ctcp_thr (*(int*)(server_funcs[10]))
-#define flud_ctcp_time (*(int*)(server_funcs[11]))
+#define flud_thr (*(int *)(server_funcs[8]))
+#define flud_time (*(int *)(server_funcs[9]))
+#define flud_ctcp_thr (*(int *)(server_funcs[10]))
+#define flud_ctcp_time (*(int *)(server_funcs[11]))
 /* 12 - 15 */
-#define match_my_nick ((int(*)(char *))server_funcs[12])
-#define check_tcl_flud ((int (*)(char *,char *,struct userrec *,char *,char *))server_funcs[13])
+#define match_my_nick ((int (*)(char *))server_funcs[12])
+#define check_tcl_flud                                                         \
+  ((int (*)(char *, char *, struct userrec *, char *, char *))server_funcs[13])
 /* Was fixfrom (moved to core) */
 #define answer_ctcp (*(int *)(server_funcs[15]))
 /* 16 - 19 */
 #define trigger_on_ignore (*(int *)(server_funcs[16]))
-#define check_tcl_ctcpr ((int(*)(char*,char*,struct userrec*,char*,char*,char*,p_tcl_bind_list))server_funcs[17])
+#define check_tcl_ctcpr                                                        \
+  ((int (*)(char *, char *, struct userrec *, char *, char *, char *,          \
+            p_tcl_bind_list))server_funcs[17])
 /* Was detect_avalanche */
-#define nuke_server ((void(*)(char *))server_funcs[19])
+#define nuke_server ((void (*)(char *))server_funcs[19])
 /* 20 - 23 */
 #define newserver ((char *)(server_funcs[20]))
 #define newserverport (*(int *)(server_funcs[21]))
@@ -74,22 +79,25 @@
 /* 36 - 39 */
 #define get_altbotnick ((char *(*)(void))(server_funcs[36]))
 #define nick_len (*(int *)(server_funcs[37]))
-#define check_tcl_notc ((int (*)(char *,char *,struct userrec *,char *,char *))server_funcs[38])
+#define check_tcl_notc                                                         \
+  ((int (*)(char *, char *, struct userrec *, char *, char *))server_funcs[38])
 #define exclusive_binds (*(int *)(server_funcs[39]))
 /* 40 - 43 */
 #define H_out (*(p_tcl_bind_list *)(server_funcs[40]))
 #else /* MAKING_SERVER */
 
 /* Macros for commonly used commands. */
-#define free_null(ptr)  do {                            \
-        nfree(ptr);                                     \
-        ptr = NULL;                                     \
-} while (0)
+#define free_null(ptr)                                                         \
+  do {                                                                         \
+    nfree(ptr);                                                                \
+    ptr = NULL;                                                                \
+  } while (0)
 
-#define write_to_server(x,y) do {                       \
-        tputs(serv, (x), (y));                          \
-        tputs(serv, "\r\n", 2);                         \
-} while (0)
+#define write_to_server(x, y)                                                  \
+  do {                                                                         \
+    tputs(serv, (x), (y));                                                     \
+    tputs(serv, "\r\n", 2);                                                    \
+  } while (0)
 
 #endif /* MAKING_SERVER */
 
@@ -107,11 +115,11 @@ struct server_list {
 
 /* Available net types.  */
 enum {
-  NETT_EFNET        = 0, /* EFnet                    */
-  NETT_IRCNET       = 1, /* IRCnet                   */
-  NETT_UNDERNET     = 2, /* UnderNet                 */
-  NETT_DALNET       = 3, /* DALnet                   */
-  NETT_HYBRID_EFNET = 4  /* +e/+I/max-bans 20 Hybrid */
+  NETT_EFNET = 0,       /* EFnet                    */
+  NETT_IRCNET = 1,      /* IRCnet                   */
+  NETT_UNDERNET = 2,    /* UnderNet                 */
+  NETT_DALNET = 3,      /* DALnet                   */
+  NETT_HYBRID_EFNET = 4 /* +e/+I/max-bans 20 Hybrid */
 } nett_t;
 
 #endif /* _EGG_MOD_SERVER_SERVER_H */

@@ -74,19 +74,19 @@
 #include "src/mod/module.h"
 
 #ifdef TIME_WITH_SYS_TIME
-#  include <sys/time.h>
-#  include <time.h>
+#include <sys/time.h>
+#include <time.h>
 #else
-#  ifdef HAVE_SYS_TIME_H
-#    include <sys/time.h>
-#  else
-#    include <time.h>
-#  endif
+#ifdef HAVE_SYS_TIME_H
+#include <sys/time.h>
+#else
+#include <time.h>
+#endif
 #endif
 
-#include "src/users.h"
-#include "src/chan.h"
 #include "channels.mod/channels.h"
+#include "src/chan.h"
+#include "src/users.h"
 
 static Function *global = NULL;
 static void wordshift();
@@ -101,25 +101,20 @@ typedef struct {
 } trig_data;
 
 static trig_data trigdata[] = {
-  {"god",      "Let's not get into a religious discussion, %s"},
-  {"jesus",    "Let's not get into a religious discussion, %s"},
-  {"shit",                         "Here's looking at you, %s"},
-  {"yourself",          "Yeah, whenever I look in a mirror..."},
-  {NULL, "                                  You found me, %s!"},
-  {"elvis",                 "Last time I was on the moon man."},
-  {NULL,                                                  NULL}
-};
+    {"god", "Let's not get into a religious discussion, %s"},
+    {"jesus", "Let's not get into a religious discussion, %s"},
+    {"shit", "Here's looking at you, %s"},
+    {"yourself", "Yeah, whenever I look in a mirror..."},
+    {NULL, "                                  You found me, %s!"},
+    {"elvis", "Last time I was on the moon man."},
+    {NULL, NULL}};
 
-static int seen_expmem()
-{
-  return 0;
-}
+static int seen_expmem() { return 0; }
 
 /* PUB `seen' trigger. */
-static int pub_seen(char *nick, char *host, char *hand,
-                    char *channel, char *text)
-{
-  char prefix[91];              /* sizeof(name) + strlen("PRIVMSG  :") */
+static int pub_seen(char *nick, char *host, char *hand, char *channel,
+                    char *text) {
+  char prefix[91]; /* sizeof(name) + strlen("PRIVMSG  :") */
   struct chanset_t *chan = findchan_by_dname(channel);
 
   if ((chan != NULL) && channel_seen(chan)) {
@@ -129,8 +124,7 @@ static int pub_seen(char *nick, char *host, char *hand,
   return 0;
 }
 
-static int msg_seen(char *nick, char *host, struct userrec *u, char *text)
-{
+static int msg_seen(char *nick, char *host, struct userrec *u, char *text) {
   char prefix[50];
 
   if (!u) {
@@ -143,18 +137,16 @@ static int msg_seen(char *nick, char *host, struct userrec *u, char *text)
   return 0;
 }
 
-static int dcc_seen(struct userrec *u, int idx, char *par)
-{
+static int dcc_seen(struct userrec *u, int idx, char *par) {
   putlog(LOG_CMDS, "*", "#%s# seen %s", dcc[idx].nick, par);
   do_seen(idx, "", dcc[idx].nick, dcc[idx].nick, "", par);
   return 0;
 }
 
 static void do_seen(int idx, char *prefix, char *nick, char *hand,
-                    char *channel, char *text)
-{
+                    char *channel, char *text) {
   char stuff[512], word1[512], word2[512], whotarget[512], object[512],
-       whoredirect[512], *oix, *lastonplace = 0;
+      whoredirect[512], *oix, *lastonplace = 0;
   struct userrec *urec;
   struct chanset_t *chan;
   struct laston_info *li;
@@ -164,9 +156,9 @@ static void do_seen(int idx, char *prefix, char *nick, char *hand,
   long tv;
   time_t laston = 0, work;
 
-  whotarget[0]   = 0;
+  whotarget[0] = 0;
   whoredirect[0] = 0;
-  object[0]      = 0;
+  object[0] = 0;
 
   /* Was ANYONE specified */
   if (!text[0]) {
@@ -179,11 +171,11 @@ static void do_seen(int idx, char *prefix, char *nick, char *hand,
   oix = strchr(word1, '\'');
   /* Have we got a NICK's target? */
   if (oix == word1)
-    return;                     /* Skip anything starting with ' */
-  if (oix && *oix && ((oix[1] && (oix[1] == 's' || oix[1] == 'S') &&
-      !oix[2]) || (!oix[1] && (oix[-1] == 's' || oix[-1] == 'z' ||
-      oix[-1] == 'x' || oix[-1] == 'S' || oix[-1] == 'Z' ||
-      oix[-1] == 'X')))) {
+    return; /* Skip anything starting with ' */
+  if (oix && *oix &&
+      ((oix[1] && (oix[1] == 's' || oix[1] == 'S') && !oix[2]) ||
+       (!oix[1] && (oix[-1] == 's' || oix[-1] == 'z' || oix[-1] == 'x' ||
+                    oix[-1] == 'S' || oix[-1] == 'Z' || oix[-1] == 'X')))) {
     strncpy(object, word1, oix - word1);
     object[oix - word1] = 0;
     wordshift(word1, text);
@@ -213,37 +205,34 @@ static void do_seen(int idx, char *prefix, char *nick, char *hand,
         chan = chan->next;
       }
       if (!onchan) {
-        dprintf(idx, "%sI don't think I know who %s is, %s.\n",
-                prefix, object, nick);
+        dprintf(idx, "%sI don't think I know who %s is, %s.\n", prefix, object,
+                nick);
         return;
       }
     }
     if (!egg_strcasecmp(word1, "bf") || !egg_strcasecmp(word1, "boyfriend")) {
       strcpy(whotarget, getxtra(object, "BF"));
       if (whotarget[0]) {
-        sprintf(whoredirect, "%s boyfriend is %s, and ",
-                fixnick(object), whotarget);
+        sprintf(whoredirect, "%s boyfriend is %s, and ", fixnick(object),
+                whotarget);
         goto targetcont;
       }
-      dprintf(idx,
-              "%sI don't know who %s boyfriend is, %s.\n",
-              prefix, fixnick(object), nick);
+      dprintf(idx, "%sI don't know who %s boyfriend is, %s.\n", prefix,
+              fixnick(object), nick);
       return;
     }
     if (!egg_strcasecmp(word1, "gf") || !egg_strcasecmp(word1, "girlfriend")) {
       strcpy(whotarget, getxtra(object, "GF"));
       if (whotarget[0]) {
-        sprintf(whoredirect, "%s girlfriend is %s, and ",
-                fixnick(object), whotarget);
+        sprintf(whoredirect, "%s girlfriend is %s, and ", fixnick(object),
+                whotarget);
         goto targetcont;
       }
-      dprintf(idx,
-              "%sI don't know who %s girlfriend is, %s.\n",
-              prefix, fixnick(object), nick);
+      dprintf(idx, "%sI don't know who %s girlfriend is, %s.\n", prefix,
+              fixnick(object), nick);
       return;
     }
-    dprintf(idx,
-            "%sWhy are you bothering me with questions about %s %s, %s?\n",
+    dprintf(idx, "%sWhy are you bothering me with questions about %s %s, %s?\n",
             prefix, fixnick(object), word1, nick);
     return;
   }
@@ -256,8 +245,7 @@ static void do_seen(int idx, char *prefix, char *nick, char *hand,
     }
     /* Do I even KNOW the requestor? */
     if (hand[0] == '*' || !hand[0]) {
-      dprintf(idx,
-              "%sI don't know you, %s, so I don't know about your %s.\n",
+      dprintf(idx, "%sI don't know you, %s, so I don't know about your %s.\n",
               prefix, nick, word1);
       return;
     }
@@ -276,8 +264,8 @@ static void do_seen(int idx, char *prefix, char *nick, char *hand,
              !egg_strcasecmp(word1, "gf")) {
       strcpy(whotarget, getxtra(hand, "GF"));
       if (whotarget[0]) {
-        sprintf(whoredirect, "%s, your girlfriend is %s, and ",
-                nick, whotarget);
+        sprintf(whoredirect, "%s, your girlfriend is %s, and ", nick,
+                whotarget);
       } else {
         dprintf(idx, "%sI didn't know you had a girlfriend, %s\n", prefix,
                 nick);
@@ -312,13 +300,12 @@ static void do_seen(int idx, char *prefix, char *nick, char *hand,
           dprintf(idx, "%s%s\n", prefix, whoredirect);
           return;
         }
-      } else {                    /* owner variable munged or not set */
-        dprintf(idx,
-                "%sI don't seem to recall who my owner is right now...\n",
+      } else { /* owner variable munged or not set */
+        dprintf(idx, "%sI don't seem to recall who my owner is right now...\n",
                 prefix);
         return;
       }
-    } else {                      /* no "your" target specified */
+    } else { /* no "your" target specified */
       dprintf(idx, "%sLet's not get personal, %s.\n", prefix, nick);
       return;
     }
@@ -336,8 +323,8 @@ static void do_seen(int idx, char *prefix, char *nick, char *hand,
 targetcont:
   /* Looking for ones own nick? */
   if (!rfc_casecmp(nick, whotarget)) {
-    dprintf(idx, "%s%sLooking for yourself, eh %s?\n",
-            prefix, whoredirect, nick);
+    dprintf(idx, "%s%sLooking for yourself, eh %s?\n", prefix, whoredirect,
+            nick);
     return;
   }
   /* Check if nick is on a channel */
@@ -385,15 +372,15 @@ targetcont:
   if (chan) {
     m = ismember(chan, whotarget);
     if (m && chan_issplit(m)) {
-      dprintf(idx, "%s%s%s was just here, but got netsplit.\n",
-              prefix, whoredirect, whotarget);
+      dprintf(idx, "%s%s%s was just here, but got netsplit.\n", prefix,
+              whoredirect, whotarget);
       return;
     }
   }
   /* Check if the target IS on the channel */
   if (chan && m) {
-    dprintf(idx, "%s%s%s is on the channel right now!\n",
-            prefix, whoredirect, whotarget);
+    dprintf(idx, "%s%s%s is on the channel right now!\n", prefix, whoredirect,
+            whotarget);
     return;
   }
   /* Target not on this channel.   Check other channels */
@@ -401,15 +388,13 @@ targetcont:
   while (chan) {
     m = ismember(chan, whotarget);
     if (m && chan_issplit(m)) {
-      dprintf(idx,
-              "%s%s%s was just on %s, but got netsplit.\n",
-              prefix, whoredirect, whotarget, chan->dname);
+      dprintf(idx, "%s%s%s was just on %s, but got netsplit.\n", prefix,
+              whoredirect, whotarget, chan->dname);
       return;
     }
     if (m) {
-      dprintf(idx,
-              "%s%s%s is on %s right now!\n",
-              prefix, whoredirect, whotarget, chan->dname);
+      dprintf(idx, "%s%s%s is on %s right now!\n", prefix, whoredirect,
+              whotarget, chan->dname);
       return;
     }
     chan = chan->next;
@@ -419,8 +404,8 @@ targetcont:
   urec = get_user_by_handle(userlist, whotarget);
   /* No match, then bail out */
   if (!urec) {
-    dprintf(idx, "%s%sI don't know who %s is.\n",
-            prefix, whoredirect, whotarget);
+    dprintf(idx, "%s%sI don't know who %s is.\n", prefix, whoredirect,
+            whotarget);
     return;
   }
   /* We had a userlist match to a handle */
@@ -435,8 +420,7 @@ targetcont:
                  " is 'observing' this channel right now from my party line!");
           dprintf(idx, "%s%s\n", prefix, whoredirect);
         } else {
-          dprintf(idx,
-                  "%s%s%s is linked to me via DCC CHAT right now!\n",
+          dprintf(idx, "%s%s%s is linked to me via DCC CHAT right now!\n",
                   prefix, whoredirect, whotarget);
         }
         return;
@@ -460,8 +444,8 @@ targetcont:
   if (!cr) {
     li = get_user(&USERENTRY_LASTON, urec);
     if (!li || !li->lastonplace || !li->lastonplace[0]) {
-      dprintf(idx, "%s%sI've never seen %s around.\n",
-              prefix, whoredirect, whotarget);
+      dprintf(idx, "%s%sI've never seen %s around.\n", prefix, whoredirect,
+              whotarget);
       return;
     }
     lastonplace = li->lastonplace;
@@ -482,8 +466,7 @@ targetcont:
   }
   if (work >= 60) {
     tv = work / 60;
-    sprintf(word2 + strlen(word2), "%lu minute%s, ", tv,
-            (tv == 1) ? "" : "s");
+    sprintf(word2 + strlen(word2), "%lu minute%s, ", tv, (tv == 1) ? "" : "s");
   }
   if (!word2[0] && (work < 60)) {
     strcpy(word2, "just moments ago!!");
@@ -498,13 +481,12 @@ targetcont:
     sprintf(word1, "on my %s", lastonplace);
   else
     strcpy(word1, "seen");
-  dprintf(idx, "%s%s%s was last %s %s\n",
-          prefix, whoredirect, whotarget, word1, word2);
+  dprintf(idx, "%s%s%s was last %s %s\n", prefix, whoredirect, whotarget, word1,
+          word2);
 }
 
 static char fixit[512];
-static char *fixnick(char *nick)
-{
+static char *fixnick(char *nick) {
   if (!nick)
     return NULL;
   if (!nick[0])
@@ -526,8 +508,7 @@ static char *fixnick(char *nick)
   return fixit;
 }
 
-static char *match_trigger(char *word)
-{
+static char *match_trigger(char *word) {
   trig_data *t = trigdata;
 
   while (t->key) {
@@ -535,11 +516,10 @@ static char *match_trigger(char *word)
       return t->text;
     t++;
   }
-  return (char *) NULL;
+  return (char *)NULL;
 }
 
-static char *getxtra(char *hand, char *field)
-{
+static char *getxtra(char *hand, char *field) {
 
   struct userrec *urec;
   struct user_entry *ue;
@@ -564,8 +544,7 @@ static char *getxtra(char *hand, char *field)
   return "";
 }
 
-static void wordshift(char *first, char *rest)
-{
+static void wordshift(char *first, char *rest) {
   char *p, *q = rest;
 
   do {
@@ -576,8 +555,7 @@ static void wordshift(char *first, char *rest)
 }
 
 /* Report on current seen info for .modulestat. */
-static void seen_report(int idx, int details)
-{
+static void seen_report(int idx, int details) {
   if (details) {
     int size = seen_expmem();
 
@@ -587,23 +565,16 @@ static void seen_report(int idx, int details)
 }
 
 /* PUB channel builtin commands. */
-static cmd_t seen_pub[] = {
-  {"seen", "",    pub_seen, NULL},
-  {NULL,   NULL, NULL,      NULL}
-};
+static cmd_t seen_pub[] = {{"seen", "", pub_seen, NULL},
+                           {NULL, NULL, NULL, NULL}};
 
-static cmd_t seen_dcc[] = {
-  {"seen", "",   dcc_seen, NULL},
-  {NULL,   NULL, NULL,     NULL}
-};
+static cmd_t seen_dcc[] = {{"seen", "", dcc_seen, NULL},
+                           {NULL, NULL, NULL, NULL}};
 
-static cmd_t seen_msg[] = {
-  {"seen", "",   msg_seen, NULL},
-  {NULL,   NULL, NULL,     NULL}
-};
+static cmd_t seen_msg[] = {{"seen", "", msg_seen, NULL},
+                           {NULL, NULL, NULL, NULL}};
 
-static int server_seen_setup(char *mod)
-{
+static int server_seen_setup(char *mod) {
   p_tcl_bind_list H_temp;
 
   if ((H_temp = find_bind_table("msg")))
@@ -611,8 +582,7 @@ static int server_seen_setup(char *mod)
   return 0;
 }
 
-static int irc_seen_setup(char *mod)
-{
+static int irc_seen_setup(char *mod) {
   p_tcl_bind_list H_temp;
 
   if ((H_temp = find_bind_table("pub")))
@@ -620,14 +590,11 @@ static int irc_seen_setup(char *mod)
   return 0;
 }
 
-static cmd_t seen_load[] = {
-  {"server", "",   server_seen_setup, NULL},
-  {"irc",    "",   irc_seen_setup,    NULL},
-  {NULL,     NULL, NULL,              NULL}
-};
+static cmd_t seen_load[] = {{"server", "", server_seen_setup, NULL},
+                            {"irc", "", irc_seen_setup, NULL},
+                            {NULL, NULL, NULL, NULL}};
 
-static char *seen_close()
-{
+static char *seen_close() {
   p_tcl_bind_list H_temp;
 
   rem_builtins(H_load, seen_load);
@@ -644,14 +611,11 @@ static char *seen_close()
 EXPORT_SCOPE char *seen_start();
 
 static Function seen_table[] = {
-  (Function) seen_start,
-  (Function) seen_close,
-  (Function) seen_expmem,
-  (Function) seen_report,
+    (Function)seen_start, (Function)seen_close, (Function)seen_expmem,
+    (Function)seen_report,
 };
 
-char *seen_start(Function *egg_func_table)
-{
+char *seen_start(Function *egg_func_table) {
   global = egg_func_table;
 
   module_register(MODULE_NAME, seen_table, 2, 1);

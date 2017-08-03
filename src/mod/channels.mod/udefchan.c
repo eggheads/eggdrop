@@ -20,8 +20,7 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
-static int expmem_udef(struct udef_struct *ul)
-{
+static int expmem_udef(struct udef_struct *ul) {
   int i = 0;
 
   for (; ul; ul = ul->next) {
@@ -32,21 +31,19 @@ static int expmem_udef(struct udef_struct *ul)
   return i;
 }
 
-static int expmem_udef_chans(int type, struct udef_chans *ul)
-{
+static int expmem_udef_chans(int type, struct udef_chans *ul) {
   int i = 0;
 
   for (; ul; ul = ul->next) {
     i += sizeof(struct udef_chans);
     i += strlen(ul->chan) + 1;
     if (type == UDEF_STR && ul->value)
-      i += strlen((char *) ul->value) + 1;
+      i += strlen((char *)ul->value) + 1;
   }
   return i;
 }
 
-static intptr_t getudef(struct udef_chans *ul, char *name)
-{
+static intptr_t getudef(struct udef_chans *ul, char *name) {
   intptr_t val = 0;
 
   for (; ul; ul = ul->next)
@@ -57,8 +54,7 @@ static intptr_t getudef(struct udef_chans *ul, char *name)
   return val;
 }
 
-static intptr_t ngetudef(char *name, char *chan)
-{
+static intptr_t ngetudef(char *name, char *chan) {
   struct udef_struct *l;
   struct udef_chans *ll;
 
@@ -72,8 +68,7 @@ static intptr_t ngetudef(char *name, char *chan)
   return 0;
 }
 
-static void setudef(struct udef_struct *us, char *name, intptr_t value)
-{
+static void setudef(struct udef_struct *us, char *name, intptr_t value) {
   struct udef_chans *ul, *ul_last = NULL;
 
   for (ul = us->values; ul; ul_last = ul, ul = ul->next)
@@ -93,8 +88,7 @@ static void setudef(struct udef_struct *us, char *name, intptr_t value)
     us->values = ul;
 }
 
-static void initudef(int type, char *name, int defined)
-{
+static void initudef(int type, char *name, int defined) {
   struct udef_struct *ul, *ul_last = NULL;
 
   if (strlen(name) < 1)
@@ -126,8 +120,7 @@ static void initudef(int type, char *name, int defined)
     udef = ul;
 }
 
-static void free_udef(struct udef_struct *ul)
-{
+static void free_udef(struct udef_struct *ul) {
   struct udef_struct *ull;
 
   for (; ul; ul = ull) {
@@ -138,14 +131,13 @@ static void free_udef(struct udef_struct *ul)
   }
 }
 
-static void free_udef_chans(struct udef_chans *ul, int type)
-{
+static void free_udef_chans(struct udef_chans *ul, int type) {
   struct udef_chans *ull;
 
   for (; ul; ul = ull) {
     ull = ul->next;
     if (type == UDEF_STR && ul->value)
-      nfree((void *) ul->value);
+      nfree((void *)ul->value);
     nfree(ul->chan);
     nfree(ul);
   }

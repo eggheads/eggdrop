@@ -1,12 +1,17 @@
 /*
- * This module reports uptime information about your bot to http://uptime.eggheads.org. The
- * purpose for this is to see how your bot rates against many others (including EnergyMechs
- * and Eggdrops) -- It is a fun little project, jointly run by Eggheads.org and EnergyMech.net.
+ * This module reports uptime information about your bot to
+ * http://uptime.eggheads.org. The
+ * purpose for this is to see how your bot rates against many others (including
+ * EnergyMechs
+ * and Eggdrops) -- It is a fun little project, jointly run by Eggheads.org and
+ * EnergyMech.net.
  *
  * If you don't like being a part of it please just unload this module.
  *
- * Also for bot developers feel free to modify this code to make it a part of your bot and
- * e-mail webmaster@eggheads.org for more information on registering your bot type. See how
+ * Also for bot developers feel free to modify this code to make it a part of
+ * your bot and
+ * e-mail webmaster@eggheads.org for more information on registering your bot
+ * type. See how
  * your bot's stability rates against ours and ours against yours <g>.
  */
 /*
@@ -34,15 +39,13 @@
 #include "uptime.h"
 #include "../module.h"
 #include "../server.mod/server.h"
+#include <arpa/inet.h>
+#include <fcntl.h>
 #include <netdb.h>
 #include <netinet/in.h>
-#include <arpa/inet.h>
-#include <unistd.h>
-#include <fcntl.h>
-#include <sys/types.h>
 #include <sys/socket.h>
-#include <fcntl.h>
 #include <sys/stat.h>
+#include <sys/types.h>
 #include <unistd.h>
 
 /*
@@ -88,30 +91,26 @@ static char uptime_version[48] = "";
 void check_secondly(void);
 void check_minutely(void);
 
-static int uptime_expmem()
-{
-  return 0;
-}
+static int uptime_expmem() { return 0; }
 
-static void uptime_report(int idx, int details)
-{
+static void uptime_report(int idx, int details) {
   int delta_seconds;
   char *next_update_at;
 
   if (details) {
-    delta_seconds = (int) (next_update - time(NULL));
+    delta_seconds = (int)(next_update - time(NULL));
     next_update_at = ctime(&next_update);
     next_update_at[strlen(next_update_at) - 1] = 0;
 
     dprintf(idx, "      %d uptime packet%s sent\n", uptimecount,
             (uptimecount != 1) ? "s" : "");
     dprintf(idx, "      Approximately %-.2f hours until next update "
-            "(at %s)\n", delta_seconds / 3600.0, next_update_at);
+                 "(at %s)\n",
+            delta_seconds / 3600.0, next_update_at);
   }
 }
 
-unsigned long get_ip()
-{
+unsigned long get_ip() {
   struct hostent *hp;
   IP ip;
   struct in_addr *in;
@@ -120,26 +119,25 @@ unsigned long get_ip()
   if (uptime_host[0]) {
     if ((uptime_host[strlen(uptime_host) - 1] >= '0') &&
         (uptime_host[strlen(uptime_host) - 1] <= '9'))
-      return (IP) inet_addr(uptime_host);
+      return (IP)inet_addr(uptime_host);
   }
   hp = gethostbyname(uptime_host);
   if (hp == NULL)
     return -1;
-  in = (struct in_addr *) (hp->h_addr_list[0]);
-  ip = (IP) (in->s_addr);
+  in = (struct in_addr *)(hp->h_addr_list[0]);
+  ip = (IP)(in->s_addr);
   return ip;
 }
 
-int init_uptime(void)
-{
+int init_uptime(void) {
   struct sockaddr_in sai;
   char x[64], *z = x;
 
-  upPack.regnr = 0;  /* unused */
-  upPack.pid = 0;    /* must set this later */
+  upPack.regnr = 0; /* unused */
+  upPack.pid = 0;   /* must set this later */
   upPack.type = htonl(uptime_type);
   upPack.packets_sent = 0; /* reused (abused?) to send our packet count */
-  upPack.uptime = 0; /* must set this later */
+  upPack.uptime = 0;       /* must set this later */
   uptimecount = 0;
   uptimeip = -1;
 
@@ -154,7 +152,7 @@ int init_uptime(void)
   egg_memset(&sai, 0, sizeof(sai));
   sai.sin_addr.s_addr = INADDR_ANY;
   sai.sin_family = AF_INET;
-  if (bind(uptimesock, (struct sockaddr *) &sai, sizeof(sai)) < 0) {
+  if (bind(uptimesock, (struct sockaddr *)&sai, sizeof(sai)) < 0) {
     close(uptimesock);
     return ((uptimesock = -1));
   }
@@ -162,15 +160,13 @@ int init_uptime(void)
 
   next_minutes = rand() % update_interval; /* Initial update delay */
   next_seconds = rand() % 59;
-  next_update = (time_t) ((time(NULL) / 60 * 60) + (next_minutes * 60) +
-    next_seconds);
+  next_update =
+      (time_t)((time(NULL) / 60 * 60) + (next_minutes * 60) + next_seconds);
 
   return 0;
 }
 
-
-int send_uptime(void)
-{
+int send_uptime(void) {
   struct sockaddr_in sai;
   struct stat st;
   PackUp *mem;
@@ -186,7 +182,7 @@ int send_uptime(void)
 
   uptimecount++;
   upPack.packets_sent = htonl(uptimecount); /* Tell the server how many
-					       uptime packets we've sent. */
+                                               uptime packets we've sent. */
   upPack.now2 = htonl(time(NULL));
   upPack.ontime = 0;
 
@@ -213,7 +209,7 @@ int send_uptime(void)
 
   len = sizeof(upPack) + strlen(botnetnick) + strlen(servhost) +
         strlen(uptime_version);
-  mem = (PackUp *) nmalloc(len);
+  mem = (PackUp *)nmalloc(len);
   egg_bzero(mem, len); /* mem *should* be completely filled before it's
                              * sent to the server.  But belt-and-suspenders
                              * is always good.
@@ -224,27 +220,25 @@ int send_uptime(void)
   sai.sin_family = AF_INET;
   sai.sin_addr.s_addr = uptimeip;
   sai.sin_port = htons(uptime_port);
-  len = sendto(uptimesock, (void *) mem, len, 0, (struct sockaddr *) &sai,
+  len = sendto(uptimesock, (void *)mem, len, 0, (struct sockaddr *)&sai,
                sizeof(sai));
   nfree(mem);
   return len;
 }
 
-void check_minutely()
-{
+void check_minutely() {
   minutes++;
   if (minutes >= next_minutes) {
     /* We're down to zero minutes.  Now do the seconds. */
-    del_hook(HOOK_MINUTELY, (Function) check_minutely);
-    add_hook(HOOK_SECONDLY, (Function) check_secondly);
+    del_hook(HOOK_MINUTELY, (Function)check_minutely);
+    add_hook(HOOK_SECONDLY, (Function)check_secondly);
   }
 }
 
-void check_secondly()
-{
+void check_secondly() {
   seconds++;
-  if (seconds >= next_seconds) {  /* DING! */
-    del_hook(HOOK_SECONDLY, (Function) check_secondly);
+  if (seconds >= next_seconds) { /* DING! */
+    del_hook(HOOK_SECONDLY, (Function)check_secondly);
 
     send_uptime();
 
@@ -252,16 +246,15 @@ void check_secondly()
     seconds = 0;
     next_minutes = rand() % update_interval;
     next_seconds = rand() % 59;
-    next_update = (time_t) ((time(NULL) / 60 * 60) + (next_minutes * 60) +
-      next_seconds);
+    next_update =
+        (time_t)((time(NULL) / 60 * 60) + (next_minutes * 60) + next_seconds);
 
     /* Go back to checking every minute. */
-    add_hook(HOOK_MINUTELY, (Function) check_minutely);
+    add_hook(HOOK_MINUTELY, (Function)check_minutely);
   }
 }
 
-static char *uptime_close()
-{
+static char *uptime_close() {
   return "You cannot unload the uptime module "
          "(doing so will reset your stats).";
 }
@@ -269,14 +262,11 @@ static char *uptime_close()
 EXPORT_SCOPE char *uptime_start(Function *);
 
 static Function uptime_table[] = {
-  (Function) uptime_start,
-  (Function) uptime_close,
-  (Function) uptime_expmem,
-  (Function) uptime_report,
+    (Function)uptime_start, (Function)uptime_close, (Function)uptime_expmem,
+    (Function)uptime_report,
 };
 
-char *uptime_start(Function *global_funcs)
-{
+char *uptime_start(Function *global_funcs) {
   if (global_funcs) {
     global = global_funcs;
 
@@ -287,7 +277,7 @@ char *uptime_start(Function *global_funcs)
     }
 
     add_help_reference("uptime.help");
-    add_hook(HOOK_MINUTELY, (Function) check_minutely);
+    add_hook(HOOK_MINUTELY, (Function)check_minutely);
     init_uptime();
   }
   return NULL;

@@ -37,16 +37,14 @@ static Function *global = NULL;
 
 /* Calculate the memory we keep allocated.
  */
-static int woobie_expmem()
-{
+static int woobie_expmem() {
   int size = 0;
 
   Context;
   return size;
 }
 
-static int cmd_woobie(struct userrec *u, int idx, char *par)
-{
+static int cmd_woobie(struct userrec *u, int idx, char *par) {
   /* Define a context.
    *
    * If the bot crashes after the context, it will be  the last mentioned
@@ -67,8 +65,7 @@ static int cmd_woobie(struct userrec *u, int idx, char *par)
  *    0 - `.status'
  *    1 - `.status all'  or  `.module woobie'
  */
-static void woobie_report(int idx, int details)
-{
+static void woobie_report(int idx, int details) {
   if (details) {
     int size = woobie_expmem();
 
@@ -87,13 +84,12 @@ static void woobie_report(int idx, int details)
  *       stackable).
  */
 static cmd_t mydcc[] = {
-  /* command  flags  function     tcl-name */
-  {"woobie",  "",    cmd_woobie,  NULL},
-  {NULL,      NULL,  NULL,        NULL}  /* Mark end. */
+    /* command  flags  function     tcl-name */
+    {"woobie", "", cmd_woobie, NULL},
+    {NULL, NULL, NULL, NULL} /* Mark end. */
 };
 
-static char *woobie_close()
-{
+static char *woobie_close() {
   Context;
   rem_builtins(H_dcc, mydcc);
   module_undepend(MODULE_NAME);
@@ -112,14 +108,11 @@ EXPORT_SCOPE char *woobie_start();
  * they are checked by eggdrop core.
  */
 static Function woobie_table[] = {
-  (Function) woobie_start,
-  (Function) woobie_close,
-  (Function) woobie_expmem,
-  (Function) woobie_report,
+    (Function)woobie_start, (Function)woobie_close, (Function)woobie_expmem,
+    (Function)woobie_report,
 };
 
-char *woobie_start(Function *global_funcs)
-{
+char *woobie_start(Function *global_funcs) {
   /* Assign the core function table. After this point you use all normal
    * functions defined in src/mod/modules.h
    */

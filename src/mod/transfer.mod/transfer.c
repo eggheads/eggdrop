@@ -26,18 +26,17 @@
 #define MAKING_TRANSFER
 
 /* sigh sunos */
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <errno.h>
 #include "src/mod/module.h"
 #include "src/tandem.h"
+#include <errno.h>
+#include <sys/stat.h>
+#include <sys/types.h>
 
 #include "src/users.h"
 #include "transfer.h"
 
-#include <netinet/in.h>
 #include <arpa/inet.h>
-
+#include <netinet/in.h>
 
 static Function *global = NULL;
 
@@ -50,16 +49,15 @@ static fileq_t *fileq = NULL;
 
 static struct dcc_table DCC_SEND, DCC_GET, DCC_GET_PENDING;
 
+#include "tcltransfer.c"
 #include "transferfstat.c"
 #include "transferqueue.c"
-#include "tcltransfer.c"
 
 /* Forward, case-sensitive file matching supporting the '*' and '?'
  * wildcard characters. This is basically a direct copy of wild_match_per(),
  * but without support for '%', or '~'.
  */
-static int wild_match_file(register char *m, register char *n)
-{
+static int wild_match_file(register char *m, register char *n) {
   char *ma = m, *lsm = 0, *lsn = 0;
   int match = 1;
   register unsigned int sofar = 0;
@@ -114,8 +112,7 @@ static int wild_match_file(register char *m, register char *n)
 
 /* Return true if this user has >= the maximum number of file xfers allowed.
  */
-static int at_limit(char *nick)
-{
+static int at_limit(char *nick) {
   int i, x = 0;
 
   for (i = 0; i < dcc_total; i++)
@@ -129,8 +126,7 @@ static int at_limit(char *nick)
 /* Replaces all spaces with underscores (' ' -> '_').  The returned buffer
  * needs to be freed after use.
  */
-static char *replace_spaces(char *fn)
-{
+static char *replace_spaces(char *fn) {
   register char *ret, *p;
 
   p = ret = nmalloc(strlen(fn) + 1);
@@ -140,10 +136,8 @@ static char *replace_spaces(char *fn)
   return ret;
 }
 
-
-static int builtin_sentrcvd STDVAR
-{
-  Function F = (Function) cd;
+static int builtin_sentrcvd STDVAR {
+  Function F = (Function)cd;
 
   BADARGS(4, 4, " hand nick path");
 
@@ -152,9 +146,8 @@ static int builtin_sentrcvd STDVAR
   return TCL_OK;
 }
 
-static int builtin_toutlost STDVAR
-{
-  Function F = (Function) cd;
+static int builtin_toutlost STDVAR {
+  Function F = (Function)cd;
 
   BADARGS(6, 6, " hand nick path acked length");
 
@@ -164,9 +157,8 @@ static int builtin_toutlost STDVAR
 }
 
 static void check_tcl_sentrcvd(struct userrec *u, char *nick, char *path,
-                               p_tcl_bind_list h)
-{
-  struct flag_record fr = { FR_GLOBAL | FR_CHAN | FR_ANYWH, 0, 0, 0, 0, 0 };
+                               p_tcl_bind_list h) {
+  struct flag_record fr = {FR_GLOBAL | FR_CHAN | FR_ANYWH, 0, 0, 0, 0, 0};
   char *hand = u ? u->handle : "*";
 
   get_user_flagrec(u, &fr, NULL);
@@ -179,9 +171,8 @@ static void check_tcl_sentrcvd(struct userrec *u, char *nick, char *path,
 
 static void check_tcl_toutlost(struct userrec *u, char *nick, char *path,
                                unsigned long acked, unsigned long length,
-                               p_tcl_bind_list h)
-{
-  struct flag_record fr = { FR_GLOBAL | FR_CHAN | FR_ANYWH, 0, 0, 0, 0, 0 };
+                               p_tcl_bind_list h) {
+  struct flag_record fr = {FR_GLOBAL | FR_CHAN | FR_ANYWH, 0, 0, 0, 0, 0};
   char *hand = u ? u->handle : "*";
   char s[15];
 
@@ -214,11 +205,10 @@ static void check_tcl_toutlost(struct userrec *u, char *nick, char *path,
  */
 #define PMAX_SIZE 4096
 static unsigned long pump_file_to_sock(FILE *file, long sock,
-                                       register unsigned long pending_data)
-{
+                                       register unsigned long pending_data) {
   register unsigned long actual_size;
-  const unsigned long buf_len = pending_data >= PMAX_SIZE ?
-                      PMAX_SIZE : pending_data;
+  const unsigned long buf_len =
+      pending_data >= PMAX_SIZE ? PMAX_SIZE : pending_data;
   char *bf = nmalloc(buf_len);
 
   if (bf) {
@@ -233,8 +223,7 @@ static unsigned long pump_file_to_sock(FILE *file, long sock,
   return pending_data;
 }
 
-static void eof_dcc_fork_send(int idx)
-{
+static void eof_dcc_fork_send(int idx) {
   fclose(dcc[idx].u.xfer->f);
   if (!strcmp(dcc[idx].nick, "*users")) {
     int x, y = 0;
@@ -263,8 +252,7 @@ static void eof_dcc_fork_send(int idx)
   lostdcc(idx);
 }
 
-static void eof_dcc_send(int idx)
-{
+static void eof_dcc_send(int idx) {
   int ok, j;
   char *nfn, s[1024], *hand;
   struct userrec *u;
@@ -273,7 +261,7 @@ static void eof_dcc_send(int idx)
   if (dcc[idx].u.xfer->length == dcc[idx].status) {
     int l = strlen(dcc[idx].u.xfer->filename);
 
-    if (l > NAME_MAX) {         /* Filename is too long. */
+    if (l > NAME_MAX) { /* Filename is too long. */
       fclose(dcc[idx].u.xfer->f);
       putlog(LOG_FILES, "*", TRANSFER_FILENAME_TOOLONG, l);
       dprintf(DP_HELP, TRANSFER_NOTICE_FNTOOLONG, dcc[idx].nick, l);
@@ -284,8 +272,8 @@ static void eof_dcc_send(int idx)
       return;
     }
 
-    nfn = nmalloc(strlen(dcc[idx].u.xfer->dir)
-                  + strlen(dcc[idx].u.xfer->origname) + 1);
+    nfn = nmalloc(strlen(dcc[idx].u.xfer->dir) +
+                  strlen(dcc[idx].u.xfer->origname) + 1);
     sprintf(nfn, "%s%s", dcc[idx].u.xfer->dir, dcc[idx].u.xfer->origname);
 
     if (copy_to_tmp && (l = fcopyfile(dcc[idx].u.xfer->f, nfn))) {
@@ -318,7 +306,7 @@ static void eof_dcc_send(int idx)
 
       if (me && me->funcs) {
         Function f = me->funcs[SHARE_FINISH];
-        (f) (idx);
+        (f)(idx);
       }
 
     } else {
@@ -372,26 +360,23 @@ static void eof_dcc_send(int idx)
     killsock(dcc[idx].sock);
     lostdcc(idx);
   }
-
 }
 
 /* Determine byte order. Used for resend DCC startup packets.
  */
-static inline u_8bit_t byte_order_test(void)
-{
+static inline u_8bit_t byte_order_test(void) {
   u_16bit_t test = TRANSFER_REGET_PACKETID;
 
-  if (*((u_8bit_t *) & test) == ((TRANSFER_REGET_PACKETID & 0xff00) >> 8))
+  if (*((u_8bit_t *)&test) == ((TRANSFER_REGET_PACKETID & 0xff00) >> 8))
     return 0;
-  if (*((u_8bit_t *) & test) == (TRANSFER_REGET_PACKETID & 0x00ff))
+  if (*((u_8bit_t *)&test) == (TRANSFER_REGET_PACKETID & 0x00ff))
     return 1;
   return 0;
 }
 
 /* Parse and handle resend DCC startup packets.
  */
-static inline void handle_resend_packet(int idx, transfer_reget *reget_data)
-{
+static inline void handle_resend_packet(int idx, transfer_reget *reget_data) {
   if (byte_order_test() != reget_data->byte_order) {
     /* The sender's byte order does not match our's so we need to switch the
      * bytes first, before we can make use of them.
@@ -417,14 +402,13 @@ static inline void handle_resend_packet(int idx, transfer_reget *reget_data)
  * Note: The first received packet during reget is a special 8 bit packet
  *       containing special information.
  */
-static void dcc_get(int idx, char *buf, int len)
-{
+static void dcc_get(int idx, char *buf, int len) {
   char xnick[NICKLEN];
   unsigned char bbuf[4];
   unsigned long cmp, l;
   int w = len + dcc[idx].u.xfer->sofar, p = 0;
 
-  dcc[idx].timeval = now;       /* Mark as active               */
+  dcc[idx].timeval = now; /* Mark as active               */
 
   /* Add bytes to our buffer if we don't have a complete response yet.
    * This is either a 4 bit ack or the 8 bit reget packet.
@@ -464,9 +448,8 @@ static void dcc_get(int idx, char *buf, int len)
     /* This is more compatible than ntohl for machines where an int
      * is more than 4 bytes:
      */
-    cmp = ((unsigned int) (bbuf[0]) << 24) +
-          ((unsigned int) (bbuf[1]) << 16) +
-          ((unsigned int) (bbuf[2]) << 8) + bbuf[3];
+    cmp = ((unsigned int)(bbuf[0]) << 24) + ((unsigned int)(bbuf[1]) << 16) +
+          ((unsigned int)(bbuf[2]) << 8) + bbuf[3];
     dcc[idx].u.xfer->acked = cmp;
   }
 
@@ -482,7 +465,7 @@ static void dcc_get(int idx, char *buf, int len)
     else {
       fseek(dcc[idx].u.xfer->f, cmp, SEEK_SET);
       dcc[idx].status = cmp;
-      putlog(LOG_FILES, "*", TRANSFER_RESUME_FILE, (int) (cmp / 1024),
+      putlog(LOG_FILES, "*", TRANSFER_RESUME_FILE, (int)(cmp / 1024),
              dcc[idx].u.xfer->origname, dcc[idx].nick);
     }
   } else {
@@ -520,7 +503,7 @@ static void dcc_get(int idx, char *buf, int len)
       unlink(dcc[idx].u.xfer->filename);
       /* Any sharebot things that were queued: */
       if (me && me->funcs[SHARE_DUMP_RESYNC])
-        ((me->funcs)[SHARE_DUMP_RESYNC]) (y);
+        ((me->funcs)[SHARE_DUMP_RESYNC])(y);
       xnick[0] = 0;
     } else {
       module_entry *fs = module_find("filesys", 0, 0);
@@ -538,7 +521,7 @@ static void dcc_get(int idx, char *buf, int len)
       stats_add_dnload(u, dcc[idx].u.xfer->length);
       putlog(LOG_FILES, "*", TRANSFER_FINISHED_DCCSEND,
              dcc[idx].u.xfer->origname, dcc[idx].nick);
-      strcpy((char *) xnick, dcc[idx].nick);
+      strcpy((char *)xnick, dcc[idx].nick);
     }
     lostdcc(idx);
     /* Any to dequeue? */
@@ -552,13 +535,12 @@ static void dcc_get(int idx, char *buf, int len)
   l = dcc_block;
   if (l == 0 || dcc[idx].status + l > dcc[idx].u.xfer->length)
     l = dcc[idx].u.xfer->length - dcc[idx].status;
-  dcc[idx].u.xfer->block_pending = pump_file_to_sock(dcc[idx].u.xfer->f,
-                                                     dcc[idx].sock, l);
+  dcc[idx].u.xfer->block_pending =
+      pump_file_to_sock(dcc[idx].u.xfer->f, dcc[idx].sock, l);
   dcc[idx].status += l;
 }
 
-static void eof_dcc_get(int idx)
-{
+static void eof_dcc_get(int idx) {
   char xnick[NICKLEN], s[1024];
 
   fclose(dcc[idx].u.xfer->f);
@@ -594,8 +576,8 @@ static void eof_dcc_get(int idx)
     check_tcl_toutlost(u, dcc[idx].nick, dcc[idx].u.xfer->dir,
                        dcc[idx].u.xfer->acked, dcc[idx].u.xfer->length, H_lost);
 
-    putlog(LOG_FILES, "*", TRANSFER_LOST_DCCGET,
-           dcc[idx].u.xfer->origname, dcc[idx].nick, dcc[idx].host);
+    putlog(LOG_FILES, "*", TRANSFER_LOST_DCCGET, dcc[idx].u.xfer->origname,
+           dcc[idx].nick, dcc[idx].host);
     strcpy(xnick, dcc[idx].nick);
   }
   killsock(dcc[idx].sock);
@@ -605,8 +587,7 @@ static void eof_dcc_get(int idx)
     send_next_file(xnick);
 }
 
-static void dcc_send(int idx, char *buf, int len)
-{
+static void dcc_send(int idx, char *buf, int len) {
   char s[512];
   unsigned long sent;
 
@@ -620,7 +601,8 @@ static void dcc_send(int idx, char *buf, int len)
   s[3] = (sent % (1 << 8));
   tputs(dcc[idx].sock, s, 4);
   dcc[idx].timeval = now;
-  if (dcc[idx].status > dcc[idx].u.xfer->length && dcc[idx].u.xfer->length > 0) {
+  if (dcc[idx].status > dcc[idx].u.xfer->length &&
+      dcc[idx].u.xfer->length > 0) {
     dprintf(DP_HELP, TRANSFER_BOGUS_FILE_LENGTH, dcc[idx].nick);
     putlog(LOG_FILES, "*", TRANSFER_FILE_TOO_LONG, dcc[idx].u.xfer->origname,
            dcc[idx].nick, dcc[idx].host);
@@ -630,8 +612,7 @@ static void dcc_send(int idx, char *buf, int len)
   }
 }
 
-static void transfer_get_timeout(int i)
-{
+static void transfer_get_timeout(int i) {
   char xx[1024];
 
   fclose(dcc[i].u.xfer->f);
@@ -673,8 +654,8 @@ static void transfer_get_timeout(int i)
      */
     egg_snprintf(xx, sizeof xx, "%s!%s", dcc[i].nick, dcc[i].host);
     u = get_user_by_host(xx);
-    check_tcl_toutlost(u, dcc[i].nick, dcc[i].u.xfer->dir,
-                       dcc[i].u.xfer->acked, dcc[i].u.xfer->length, H_tout);
+    check_tcl_toutlost(u, dcc[i].nick, dcc[i].u.xfer->dir, dcc[i].u.xfer->acked,
+                       dcc[i].u.xfer->length, H_tout);
 
     putlog(LOG_FILES, "*", TRANSFER_DCC_GET_TIMEOUT,
            p ? p + 1 : dcc[i].u.xfer->origname, dcc[i].nick, dcc[i].status,
@@ -687,8 +668,7 @@ static void transfer_get_timeout(int i)
     send_next_file(xx);
 }
 
-static void tout_dcc_send(int idx)
-{
+static void tout_dcc_send(int idx) {
 
   fclose(dcc[idx].u.xfer->f);
 
@@ -719,36 +699,31 @@ static void tout_dcc_send(int idx)
   lostdcc(idx);
 }
 
-static void display_dcc_get(int idx, char *buf)
-{
+static void display_dcc_get(int idx, char *buf) {
   if (dcc[idx].status == dcc[idx].u.xfer->length)
-    sprintf(buf, TRANSFER_SEND, dcc[idx].u.xfer->acked,
-            dcc[idx].u.xfer->length, dcc[idx].u.xfer->origname);
+    sprintf(buf, TRANSFER_SEND, dcc[idx].u.xfer->acked, dcc[idx].u.xfer->length,
+            dcc[idx].u.xfer->origname);
   else
-    sprintf(buf, TRANSFER_SEND, dcc[idx].status,
-            dcc[idx].u.xfer->length, dcc[idx].u.xfer->origname);
+    sprintf(buf, TRANSFER_SEND, dcc[idx].status, dcc[idx].u.xfer->length,
+            dcc[idx].u.xfer->origname);
 }
 
-static void display_dcc_get_p(int idx, char *buf)
-{
+static void display_dcc_get_p(int idx, char *buf) {
   sprintf(buf, TRANSFER_SEND_WAITED, now - dcc[idx].timeval,
           dcc[idx].u.xfer->origname);
 }
 
-static void display_dcc_send(int idx, char *buf)
-{
-  sprintf(buf, TRANSFER_SEND, dcc[idx].status,
-          dcc[idx].u.xfer->length, dcc[idx].u.xfer->origname);
+static void display_dcc_send(int idx, char *buf) {
+  sprintf(buf, TRANSFER_SEND, dcc[idx].status, dcc[idx].u.xfer->length,
+          dcc[idx].u.xfer->origname);
 }
 
-static void display_dcc_fork_send(int idx, char *buf)
-{
+static void display_dcc_fork_send(int idx, char *buf) {
   sprintf(buf, "%s", TRANSFER_CONN_SEND);
 }
 
-static int expmem_dcc_xfer(void *x)
-{
-  register struct xfer_info *p = (struct xfer_info *) x;
+static int expmem_dcc_xfer(void *x) {
+  register struct xfer_info *p = (struct xfer_info *)x;
   int tot;
 
   tot = sizeof(struct xfer_info);
@@ -762,9 +737,8 @@ static int expmem_dcc_xfer(void *x)
   return tot;
 }
 
-static void kill_dcc_xfer(int idx, void *x)
-{
-  register struct xfer_info *p = (struct xfer_info *) x;
+static void kill_dcc_xfer(int idx, void *x) {
+  register struct xfer_info *p = (struct xfer_info *)x;
 
   if (p->filename)
     nfree(p->filename);
@@ -776,77 +750,52 @@ static void kill_dcc_xfer(int idx, void *x)
   nfree(x);
 }
 
-static void out_dcc_xfer(int idx, char *buf, void *x)
-{
-}
+static void out_dcc_xfer(int idx, char *buf, void *x) {}
 
-static void outdone_dcc_xfer(int idx)
-{
+static void outdone_dcc_xfer(int idx) {
   if (dcc[idx].u.xfer->block_pending)
-    dcc[idx].u.xfer->block_pending =
-      pump_file_to_sock(dcc[idx].u.xfer->f, dcc[idx].sock,
-                        dcc[idx].u.xfer->block_pending);
+    dcc[idx].u.xfer->block_pending = pump_file_to_sock(
+        dcc[idx].u.xfer->f, dcc[idx].sock, dcc[idx].u.xfer->block_pending);
 }
 
 /* Send TO the bot - Wcc */
 static struct dcc_table DCC_SEND = {
-  "SEND",
-  DCT_FILETRAN | DCT_FILESEND | DCT_VALIDIDX,
-  eof_dcc_send,
-  dcc_send,
-  &wait_dcc_xfer,
-  tout_dcc_send,
-  display_dcc_send,
-  expmem_dcc_xfer,
-  kill_dcc_xfer,
-  out_dcc_xfer
-};
+    "SEND",           DCT_FILETRAN | DCT_FILESEND | DCT_VALIDIDX,
+    eof_dcc_send,     dcc_send,
+    &wait_dcc_xfer,   tout_dcc_send,
+    display_dcc_send, expmem_dcc_xfer,
+    kill_dcc_xfer,    out_dcc_xfer};
 
 /* Send TO the bot from outside of the transfer module - Wcc */
-static struct dcc_table DCC_FORK_SEND = {
-  "FORK_SEND",
-  DCT_FILETRAN | DCT_FORKTYPE | DCT_FILESEND | DCT_VALIDIDX,
-  eof_dcc_fork_send,
-  dcc_fork_send,
-  &wait_dcc_xfer,
-  eof_dcc_fork_send,
-  display_dcc_fork_send,
-  expmem_dcc_xfer,
-  kill_dcc_xfer,
-  out_dcc_xfer
-};
+static struct dcc_table DCC_FORK_SEND = {"FORK_SEND",
+                                         DCT_FILETRAN | DCT_FORKTYPE |
+                                             DCT_FILESEND | DCT_VALIDIDX,
+                                         eof_dcc_fork_send,
+                                         dcc_fork_send,
+                                         &wait_dcc_xfer,
+                                         eof_dcc_fork_send,
+                                         display_dcc_fork_send,
+                                         expmem_dcc_xfer,
+                                         kill_dcc_xfer,
+                                         out_dcc_xfer};
 
 /* Send FROM the bot, don't know why this isn't called DCC_SEND - Wcc */
-static struct dcc_table DCC_GET = {
-  "GET",
-  DCT_FILETRAN | DCT_VALIDIDX,
-  eof_dcc_get,
-  dcc_get,
-  &wait_dcc_xfer,
-  transfer_get_timeout,
-  display_dcc_get,
-  expmem_dcc_xfer,
-  kill_dcc_xfer,
-  out_dcc_xfer,
-  outdone_dcc_xfer
-};
+static struct dcc_table DCC_GET = {"GET",           DCT_FILETRAN | DCT_VALIDIDX,
+                                   eof_dcc_get,     dcc_get,
+                                   &wait_dcc_xfer,  transfer_get_timeout,
+                                   display_dcc_get, expmem_dcc_xfer,
+                                   kill_dcc_xfer,   out_dcc_xfer,
+                                   outdone_dcc_xfer};
 
 /* Send FROM the bot - Wcc */
 static struct dcc_table DCC_GET_PENDING = {
-  "GET_PENDING",
-  DCT_FILETRAN | DCT_VALIDIDX,
-  eof_dcc_get,
-  dcc_get_pending,
-  &wait_dcc_xfer,
-  transfer_get_timeout,
-  display_dcc_get_p,
-  expmem_dcc_xfer,
-  kill_dcc_xfer,
-  out_dcc_xfer
-};
+    "GET_PENDING",     DCT_FILETRAN | DCT_VALIDIDX,
+    eof_dcc_get,       dcc_get_pending,
+    &wait_dcc_xfer,    transfer_get_timeout,
+    display_dcc_get_p, expmem_dcc_xfer,
+    kill_dcc_xfer,     out_dcc_xfer};
 
-static void dcc_fork_send(int idx, char *x, int y)
-{
+static void dcc_fork_send(int idx, char *x, int y) {
   char s1[121];
 
   if (dcc[idx].type != &DCC_FORK_SEND)
@@ -861,16 +810,15 @@ static void dcc_fork_send(int idx, char *x, int y)
   }
 }
 
-static void dcc_get_pending(int idx, char *buf, int len)
-{
+static void dcc_get_pending(int idx, char *buf, int len) {
   unsigned short port;
   int i;
 
   i = answer(dcc[idx].sock, &dcc[idx].sockname, &port, 1);
   killsock(dcc[idx].sock);
 #ifdef TLS
-  if (dcc[idx].ssl && ssl_handshake(i, TLS_LISTEN, tls_vfydcc,
-                                    LOG_FILES, dcc[idx].host, NULL)) {
+  if (dcc[idx].ssl && ssl_handshake(i, TLS_LISTEN, tls_vfydcc, LOG_FILES,
+                                    dcc[idx].host, NULL)) {
     putlog(LOG_FILES, "*", "DCC failed SSL handshake: GET %s (%s!%s)",
            dcc[idx].u.xfer->origname, dcc[idx].nick, dcc[idx].host);
     lostdcc(idx);
@@ -879,7 +827,7 @@ static void dcc_get_pending(int idx, char *buf, int len)
 #endif
   dcc[idx].sock = i;
   dcc[idx].addr = 0;
-  dcc[idx].port = (int) port;
+  dcc[idx].port = (int)port;
   if (dcc[idx].sock == -1) {
     dprintf(DP_HELP, TRANSFER_NOTICE_BAD_CONN, dcc[idx].nick, strerror(errno));
     putlog(LOG_FILES, "*", TRANSFER_LOG_BAD_CONN, dcc[idx].u.xfer->origname,
@@ -911,8 +859,8 @@ static void dcc_get_pending(int idx, char *buf, int len)
 
     /* Seek forward ... */
     fseek(dcc[idx].u.xfer->f, dcc[idx].u.xfer->offset, SEEK_SET);
-    dcc[idx].u.xfer->block_pending = pump_file_to_sock(dcc[idx].u.xfer->f,
-                                                       dcc[idx].sock, l);
+    dcc[idx].u.xfer->block_pending =
+        pump_file_to_sock(dcc[idx].u.xfer->f, dcc[idx].sock, l);
     dcc[idx].u.xfer->type = XFER_RESUME;
   } else {
     dcc[idx].u.xfer->offset = 0;
@@ -925,9 +873,8 @@ static void dcc_get_pending(int idx, char *buf, int len)
         dcc[idx].status = dcc[idx].u.xfer->length;
       else
         dcc[idx].status = dcc_block;
-      dcc[idx].u.xfer->block_pending = pump_file_to_sock(dcc[idx].u.xfer->f,
-                                                         dcc[idx].sock,
-                                                         dcc[idx].status);
+      dcc[idx].u.xfer->block_pending =
+          pump_file_to_sock(dcc[idx].u.xfer->f, dcc[idx].sock, dcc[idx].status);
     } else
       dcc[idx].status = 0;
   }
@@ -942,8 +889,7 @@ static void dcc_get_pending(int idx, char *buf, int len)
  *
  */
 static int raw_dcc_resend_send(char *filename, char *nick, char *from,
-                               int resend)
-{
+                               int resend) {
   int zz, port, i;
   char *nfn, *buf = NULL;
   long dccfilesize;
@@ -999,8 +945,7 @@ static int raw_dcc_resend_send(char *filename, char *nick, char *from,
 
   dcc[i].sock = zz;
   dcc[i].sockname.addrlen = sizeof(dcc[i].sockname.addr);
-  getsockname(dcc[i].sock, &dcc[i].sockname.addr.sa,
-              &dcc[i].sockname.addrlen);
+  getsockname(dcc[i].sock, &dcc[i].sockname.addr.sa, &dcc[i].sockname.addrlen);
   dcc[i].sockname.family = dcc[i].sockname.addr.sa.sa_family;
   dcc[i].port = port;
   strcpy(dcc[i].nick, nick);
@@ -1039,22 +984,19 @@ static int raw_dcc_resend_send(char *filename, char *nick, char *from,
 }
 
 /* Starts a DCC RESEND connection. */
-static int raw_dcc_resend(char *filename, char *nick, char *from)
-{
+static int raw_dcc_resend(char *filename, char *nick, char *from) {
   return raw_dcc_resend_send(filename, nick, from, 1);
 }
 
 /* Starts a DCC_SEND connection. */
-static int raw_dcc_send(char *filename, char *nick, char *from)
-{
+static int raw_dcc_send(char *filename, char *nick, char *from) {
   return raw_dcc_resend_send(filename, nick, from, 0);
 }
 
 /* This handles DCC RESUME requests.
  */
-static int ctcp_DCC_RESUME(char *nick, char *from, char *handle,
-                           char *object, char *keyword, char *text)
-{
+static int ctcp_DCC_RESUME(char *nick, char *from, char *handle, char *object,
+                           char *keyword, char *text) {
   char *action, *fn, buf[512], *msg = buf;
   int i, port;
   unsigned long offset;
@@ -1089,31 +1031,24 @@ static int ctcp_DCC_RESUME(char *nick, char *from, char *handle,
 
   dcc[i].u.xfer->type = XFER_RESUME_PEND;
   dcc[i].u.xfer->offset = offset;
-  dprintf(DP_SERVER, "PRIVMSG %s :\001DCC ACCEPT %s %d %u\001\n", nick, fn, port,
-          offset);
+  dprintf(DP_SERVER, "PRIVMSG %s :\001DCC ACCEPT %s %d %u\001\n", nick, fn,
+          port, offset);
   return 1; /* Now we wait for the client to connect. */
 }
 
-static tcl_ints myints[] = {
-  {"max-dloads",       &dcc_limit},
-  {"dcc-block",        &dcc_block},
-  {"xfer-timeout", &wait_dcc_xfer},
-  {NULL,                     NULL}
-};
+static tcl_ints myints[] = {{"max-dloads", &dcc_limit},
+                            {"dcc-block", &dcc_block},
+                            {"xfer-timeout", &wait_dcc_xfer},
+                            {NULL, NULL}};
 
-static cmd_t transfer_ctcps[] = {
-  {"DCC", "",  ctcp_DCC_RESUME, "transfer:DCC"},
-  {NULL, NULL, NULL,                      NULL}
-};
+static cmd_t transfer_ctcps[] = {{"DCC", "", ctcp_DCC_RESUME, "transfer:DCC"},
+                                 {NULL, NULL, NULL, NULL}};
 
-static cmd_t transfer_load[] = {
-  {"server", "", server_transfer_setup, NULL},
-  {NULL,     "", NULL,                  NULL}
-};
+static cmd_t transfer_load[] = {{"server", "", server_transfer_setup, NULL},
+                                {NULL, "", NULL, NULL}};
 
 /* Add our CTCP bindings if the server module is loaded. */
-static int server_transfer_setup(char *mod)
-{
+static int server_transfer_setup(char *mod) {
   p_tcl_bind_list H_ctcp;
 
   if ((H_ctcp = find_bind_table("ctcp")))
@@ -1121,8 +1056,7 @@ static int server_transfer_setup(char *mod)
   return 1;
 }
 
-static char *transfer_close()
-{
+static char *transfer_close() {
   int i;
   p_tcl_bind_list H_ctcp;
 
@@ -1153,13 +1087,9 @@ static char *transfer_close()
   return NULL;
 }
 
-static int transfer_expmem()
-{
-  return expmem_fileq();
-}
+static int transfer_expmem() { return expmem_fileq(); }
 
-static void transfer_report(int idx, int details)
-{
+static void transfer_report(int idx, int details) {
   if (details) {
     int size = transfer_expmem();
 
@@ -1174,38 +1104,31 @@ static void transfer_report(int idx, int details)
 EXPORT_SCOPE char *transfer_start();
 
 static Function transfer_table[] = {
-  (Function) transfer_start,
-  (Function) transfer_close,
-  (Function) transfer_expmem,
-  (Function) transfer_report,
-  /* 4- 7 */
-  (Function) & DCC_FORK_SEND,   /* struct dcc_table             */
-  (Function) at_limit,
-  (Function) NULL,              /* Was copy_to_tmp <Wcc[01/20/03]>. */
-  (Function) fileq_cancel,
-  /* 8 - 11 */
-  (Function) queue_file,
-  (Function) raw_dcc_send,
-  (Function) show_queued_files,
-  (Function) wild_match_file,
-  /* 12 - 15 */
-  (Function) NULL,              /* Was wipe_tmp_filename */
-  (Function) & DCC_GET,         /* struct dcc_table             */
-  (Function) & H_rcvd,          /* p_tcl_bind_list              */
-  (Function) & H_sent,          /* p_tcl_bind_list              */
-  /* 16 - 19 */
-  (Function) & USERENTRY_FSTAT, /* struct user_entry_type       */
-  (Function) NULL,              /* Was quiet_reject <Wcc[01/20/03]>. */
-  (Function) raw_dcc_resend,
-  (Function) & H_lost,          /* p_tcl_bind_list              */
-  /* 20 - 23 */
-  (Function) & H_tout,          /* p_tcl_bind_list              */
-  (Function) & DCC_SEND,        /* struct dcc_table             */
-  (Function) & DCC_GET_PENDING, /* struct dcc_table             */
+    (Function)transfer_start, (Function)transfer_close,
+    (Function)transfer_expmem, (Function)transfer_report,
+    /* 4- 7 */
+    (Function)&DCC_FORK_SEND,           /* struct dcc_table             */
+    (Function)at_limit, (Function)NULL, /* Was copy_to_tmp <Wcc[01/20/03]>. */
+    (Function)fileq_cancel,
+    /* 8 - 11 */
+    (Function)queue_file, (Function)raw_dcc_send, (Function)show_queued_files,
+    (Function)wild_match_file,
+    /* 12 - 15 */
+    (Function)NULL,     /* Was wipe_tmp_filename */
+    (Function)&DCC_GET, /* struct dcc_table             */
+    (Function)&H_rcvd,  /* p_tcl_bind_list              */
+    (Function)&H_sent,  /* p_tcl_bind_list              */
+    /* 16 - 19 */
+    (Function)&USERENTRY_FSTAT, /* struct user_entry_type       */
+    (Function)NULL,             /* Was quiet_reject <Wcc[01/20/03]>. */
+    (Function)raw_dcc_resend, (Function)&H_lost, /* p_tcl_bind_list */
+    /* 20 - 23 */
+    (Function)&H_tout,          /* p_tcl_bind_list              */
+    (Function)&DCC_SEND,        /* struct dcc_table             */
+    (Function)&DCC_GET_PENDING, /* struct dcc_table             */
 };
 
-char *transfer_start(Function *global_funcs)
-{
+char *transfer_start(Function *global_funcs) {
   global = global_funcs;
 
   fileq = NULL;

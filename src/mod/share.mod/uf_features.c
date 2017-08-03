@@ -42,7 +42,8 @@
  *                                      accept/use. Those features are then
  *                                      locally set:
  *
- *                                      dcc[idx].u.bot->uff_flags |= <feature_flag>
+ *                                      dcc[idx].u.bot->uff_flags |=
+ * <feature_flag>
  *
  *                                      and sent back to the LEAF:
  *
@@ -56,7 +57,6 @@
  *
  *      dcc[idx].u.bot->uff_flags |= <feature_flag>
  */
-
 
 typedef struct uff_list_struct {
   struct uff_list_struct *next; /* Pointer to next entry                */
@@ -74,20 +74,15 @@ typedef struct {
 static uff_head_t uff_list;
 static char uff_sbuf[512];
 
-
 /*
  *    Userfile features management functions
  */
 
-static void uff_init(void)
-{
-  egg_bzero(&uff_list, sizeof(uff_head_t));
-}
+static void uff_init(void) { egg_bzero(&uff_list, sizeof(uff_head_t)); }
 
 /* Calculate memory used for list.
  */
-static int uff_expmem(void)
-{
+static int uff_expmem(void) {
   uff_list_t *ul;
   int tot = 0;
 
@@ -100,8 +95,7 @@ static int uff_expmem(void)
  * feature flag. Returns a pointer to the entry in the list or NULL if
  * no feature uses the flag.
  */
-static uff_list_t *uff_findentry_byflag(int flag)
-{
+static uff_list_t *uff_findentry_byflag(int flag) {
   uff_list_t *ul;
 
   for (ul = uff_list.start; ul; ul = ul->next)
@@ -113,8 +107,7 @@ static uff_list_t *uff_findentry_byflag(int flag)
 /* Search for a feature in the uff feature list. Returns a pointer to the
  * entry in the list or NULL if no such feature exists.
  */
-static uff_list_t *uff_findentry_byname(char *feature)
-{
+static uff_list_t *uff_findentry_byname(char *feature) {
   uff_list_t *ul;
 
   for (ul = uff_list.start; ul; ul = ul->next)
@@ -125,8 +118,7 @@ static uff_list_t *uff_findentry_byname(char *feature)
 
 /* Insert entry into sorted list.
  */
-static void uff_insert_entry(uff_list_t *nul)
-{
+static void uff_insert_entry(uff_list_t *nul) {
   uff_list_t *ul, *lul = NULL;
 
   ul = uff_list.start;
@@ -155,8 +147,7 @@ static void uff_insert_entry(uff_list_t *nul)
 
 /* Remove entry from sorted list.
  */
-static void uff_remove_entry(uff_list_t *ul)
-{
+static void uff_remove_entry(uff_list_t *ul) {
   if (!ul->next)
     uff_list.end = ul->prev;
   else
@@ -169,8 +160,7 @@ static void uff_remove_entry(uff_list_t *ul)
 
 /* Add a single feature to the list.
  */
-static void uff_addfeature(uff_table_t *ut)
-{
+static void uff_addfeature(uff_table_t *ut) {
   uff_list_t *ul;
 
   if (uff_findentry_byname(ut->feature)) {
@@ -191,8 +181,7 @@ static void uff_addfeature(uff_table_t *ut)
 
 /* Add a complete table to the list.
  */
-static void uff_addtable(uff_table_t *ut)
-{
+static void uff_addtable(uff_table_t *ut) {
   if (!ut)
     return;
   for (; ut->feature; ++ut)
@@ -201,8 +190,7 @@ static void uff_addtable(uff_table_t *ut)
 
 /* Remove a single feature from the list.
  */
-static int uff_delfeature(uff_table_t *ut)
-{
+static int uff_delfeature(uff_table_t *ut) {
   uff_list_t *ul;
 
   for (ul = uff_list.start; ul; ul = ul->next)
@@ -216,14 +204,12 @@ static int uff_delfeature(uff_table_t *ut)
 
 /* Remove a complete table from the list.
  */
-static void uff_deltable(uff_table_t *ut)
-{
+static void uff_deltable(uff_table_t *ut) {
   if (!ut)
     return;
   for (; ut->feature; ++ut)
     uff_delfeature(ut);
 }
-
 
 /*
  *    Userfile feature parsing functions
@@ -232,12 +218,11 @@ static void uff_deltable(uff_table_t *ut)
 /* Parse the given features string, set internal flags apropriately and
  * eventually respond with all features we will use.
  */
-static void uf_features_parse(int idx, char *par)
-{
+static void uf_features_parse(int idx, char *par) {
   char *buf, *s, *p;
   uff_list_t *ul;
 
-  uff_sbuf[0] = 0; /* Reset static buffer  */
+  uff_sbuf[0] = 0;                        /* Reset static buffer  */
   p = s = buf = nmalloc(strlen(par) + 1); /* Allocate temp buffer */
   strcpy(buf, par);
 
@@ -254,7 +239,8 @@ static void uf_features_parse(int idx, char *par)
       dcc[idx].u.bot->uff_flags |= ul->entry->flag; /* Set flag */
       if (uff_sbuf[0])
         strncat(uff_sbuf, " ", sizeof uff_sbuf - strlen(uff_sbuf) - 1);
-      strncat(uff_sbuf, ul->entry->feature, sizeof uff_sbuf - strlen(uff_sbuf) - 1); /* Add feature to list */
+      strncat(uff_sbuf, ul->entry->feature,
+              sizeof uff_sbuf - strlen(uff_sbuf) - 1); /* Add feature to list */
     }
     p = ++s;
   }
@@ -267,8 +253,7 @@ static void uf_features_parse(int idx, char *par)
 
 /* Return a list of features we are supporting.
  */
-static char *uf_features_dump(int idx)
-{
+static char *uf_features_dump(int idx) {
   uff_list_t *ul;
 
   uff_sbuf[0] = 0;
@@ -276,17 +261,17 @@ static char *uf_features_dump(int idx)
     if (ul->entry->ask_func == NULL || ul->entry->ask_func(idx)) {
       if (uff_sbuf[0])
         strncat(uff_sbuf, " ", sizeof uff_sbuf - strlen(uff_sbuf) - 1);
-      strncat(uff_sbuf, ul->entry->feature, sizeof uff_sbuf - strlen(uff_sbuf) - 1); /* Add feature to list  */
+      strncat(uff_sbuf, ul->entry->feature,
+              sizeof uff_sbuf - strlen(uff_sbuf) - 1); /* Add feature to list */
     }
   return uff_sbuf;
 }
 
-static int uf_features_check(int idx, char *par)
-{
+static int uf_features_check(int idx, char *par) {
   char *buf, *s, *p;
   uff_list_t *ul;
 
-  uff_sbuf[0] = 0; /* Reset static buffer  */
+  uff_sbuf[0] = 0;                        /* Reset static buffer  */
   p = s = buf = nmalloc(strlen(par) + 1); /* Allocate temp buffer */
   strcpy(buf, par);
 
@@ -325,8 +310,7 @@ static int uf_features_check(int idx, char *par)
 /* Call all active feature functions, sorted by their priority. This
  * should be called when we're about to send a user file.
  */
-static int uff_call_sending(int idx, char *user_file)
-{
+static int uff_call_sending(int idx, char *user_file) {
   uff_list_t *ul;
 
   for (ul = uff_list.start; ul; ul = ul->next)
@@ -341,8 +325,7 @@ static int uff_call_sending(int idx, char *user_file)
  * should be called when we've received a user file and are about to
  * parse it.
  */
-static int uff_call_receiving(int idx, char *user_file)
-{
+static int uff_call_receiving(int idx, char *user_file) {
   uff_list_t *ul;
 
   for (ul = uff_list.end; ul; ul = ul->prev)
@@ -353,31 +336,26 @@ static int uff_call_receiving(int idx, char *user_file)
   return 1;
 }
 
-
 /*
  *    Userfile feature handlers
  */
 
-
 /* Feature `overbots'
  */
 
-static int uff_ask_override_bots(int idx)
-{
+static int uff_ask_override_bots(int idx) {
   if (overr_local_bots)
     return 1;
   else
     return 0;
 }
 
-
 /*
  *     Internal user file feature table
  */
 
 static uff_table_t internal_uff_table[] = {
-  {"overbots", UFF_OVERRIDE, uff_ask_override_bots, 0, NULL, NULL},
-  {"invites",  UFF_INVITE,   NULL,                  0, NULL, NULL},
-  {"exempts",  UFF_EXEMPT,   NULL,                  0, NULL, NULL},
-  {NULL,       0,            NULL,                  0, NULL, NULL}
-};
+    {"overbots", UFF_OVERRIDE, uff_ask_override_bots, 0, NULL, NULL},
+    {"invites", UFF_INVITE, NULL, 0, NULL, NULL},
+    {"exempts", UFF_EXEMPT, NULL, 0, NULL, NULL},
+    {NULL, 0, NULL, 0, NULL, NULL}};
