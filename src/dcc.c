@@ -1560,6 +1560,13 @@ static void dcc_telnet_id(int idx, char *buf, int atr)
   }
   dcc[idx].user = get_user_by_handle(userlist, buf);
   get_user_flagrec(dcc[idx].user, &fr, NULL);
+
+  if (glob_bot(fr) && raw_log) {
+    if (!strncmp(buf, "s ", 2))
+      putlog(LOG_BOTSHARE, "*", "{m<-%s} %s", dcc[idx].user->handle, buf + 2);
+    else
+      putlog(LOG_BOTNETIN, "*", "[m<-%s] %s", dcc[idx].user->handle, buf);
+  }
 #ifdef TLS
   if (dcc[idx].ssl && (tls_auth == 2)) {
     const char *uid = ssl_getuid(dcc[idx].sock);
