@@ -33,8 +33,7 @@
  *      '- <comment>\n'
  *      ...
  */
-static int convert_old_files(char *path, char *newfiledb)
-{
+static int convert_old_files(char *path, char *newfiledb) {
   FILE *f, *fdb;
   char s[121], *fn, *nick, *tm, *s1;
   filedb_entry *fdbe = NULL;
@@ -73,8 +72,8 @@ static int convert_old_files(char *path, char *newfiledb)
         if (in_file && fdbe) {
           rmspace(s);
           if (fdbe->desc) {
-            fdbe->desc = nrealloc(fdbe->desc,
-                                  strlen(fdbe->desc) + strlen(s) + 2);
+            fdbe->desc =
+                nrealloc(fdbe->desc, strlen(fdbe->desc) + strlen(s) + 2);
             strcat(fdbe->desc, "\n");
           } else
             fdbe->desc = nmalloc(strlen(s) + 2);
@@ -109,7 +108,7 @@ static int convert_old_files(char *path, char *newfiledb)
               char x[100];
 
               /* Only do global flags, it's an old one */
-              struct flag_record fr = { FR_GLOBAL, 0, 0, 0, 0, 0 };
+              struct flag_record fr = {FR_GLOBAL, 0, 0, 0, 0, 0};
 
               break_down_flags(nick + 1, &fr, NULL);
               build_flags(x, &fr, NULL);
@@ -119,7 +118,7 @@ static int convert_old_files(char *path, char *newfiledb)
           }
           fdbe->size = st.st_size;
         } else
-          in_file = 0;        /* skip */
+          in_file = 0; /* skip */
       }
     }
   }
@@ -139,8 +138,7 @@ static int convert_old_files(char *path, char *newfiledb)
 /* Reads file DB v1 entries from fdb_s and saves them to fdb_t in
  * v3 format.
  */
-static void convert_version1(FILE *fdb_s, FILE *fdb_t)
-{
+static void convert_version1(FILE *fdb_s, FILE *fdb_t) {
   filedb1 fdb1;
 
   fseek(fdb_s, 0L, SEEK_SET);
@@ -158,7 +156,7 @@ static void convert_version1(FILE *fdb_s, FILE *fdb_t)
         if (fdb1.uploader[0])
           malloc_strcpy(fdbe->uploader, fdb1.uploader);
         if (fdb1.flags_req[0])
-          malloc_strcpy(fdbe->flags_req, (char *) fdb1.flags_req);
+          malloc_strcpy(fdbe->flags_req, (char *)fdb1.flags_req);
         fdbe->uploaded = fdb1.uploaded;
         fdbe->size = fdb1.size;
         fdbe->gots = fdb1.gots;
@@ -174,8 +172,7 @@ static void convert_version1(FILE *fdb_s, FILE *fdb_t)
 /* Reads file DB v2 entries from fdb_s and saves them to fdb_t in
  * v3 format.
  */
-static void convert_version2(FILE *fdb_s, FILE *fdb_t)
-{
+static void convert_version2(FILE *fdb_s, FILE *fdb_t) {
   filedb2 fdb2;
 
   fseek(fdb_s, 0L, SEEK_SET);
@@ -220,34 +217,32 @@ static void convert_version2(FILE *fdb_s, FILE *fdb_t)
  * Also remember to check the returned *fdb_s on failure, as it could be
  * NULL.
  */
-static int convert_old_db(FILE ** fdb_s, char *filedb)
-{
+static int convert_old_db(FILE **fdb_s, char *filedb) {
   filedb_top fdbt;
   FILE *fdb_t;
-  int ret = 0;                  /* Default to 'failure' */
+  int ret = 0; /* Default to 'failure' */
 
   filedb_readtop(*fdb_s, &fdbt);
   /* Old DB version? */
   if (fdbt.version > 0 && fdbt.version < FILEDB_VERSION3) {
     char *tempdb;
 
-    putlog(LOG_MISC, "*", "Converting old filedb %s to newest format.",
-           filedb);
+    putlog(LOG_MISC, "*", "Converting old filedb %s to newest format.", filedb);
     /* Create temp DB name */
     tempdb = nmalloc(strlen(filedb) + 5);
     simple_sprintf(tempdb, "%s-tmp", filedb);
 
-    fdb_t = fopen(tempdb, "w+b");       /* Open temp DB         */
+    fdb_t = fopen(tempdb, "w+b"); /* Open temp DB         */
     if (fdb_t) {
-      filedb_initdb(fdb_t);     /* Initialise new DB    */
+      filedb_initdb(fdb_t); /* Initialise new DB    */
 
       /* Convert old database to new one, saving
        * in temporary db file
        */
       if (fdbt.version == FILEDB_VERSION1)
-        convert_version1(*fdb_s, fdb_t);        /* v1 -> v3             */
+        convert_version1(*fdb_s, fdb_t); /* v1 -> v3             */
       else
-        convert_version2(*fdb_s, fdb_t);        /* v2 -> v3             */
+        convert_version2(*fdb_s, fdb_t); /* v2 -> v3             */
 
       unlockfile(*fdb_s);
       fclose(fdb_t);
@@ -258,7 +253,7 @@ static int convert_old_db(FILE ** fdb_s, char *filedb)
         putlog(LOG_MISC, "*", "(!) Moving file db from %s to %s failed.",
                tempdb, filedb);
 
-      *fdb_s = fopen(filedb, "r+b");    /* Reopen new db        */
+      *fdb_s = fopen(filedb, "r+b"); /* Reopen new db        */
       if (*fdb_s) {
         lockfile(*fdb_s);
         /* Now we should have recreated the original situation,

@@ -24,8 +24,7 @@
 
 #include "filelist.h"
 
-static filelist_t *filelist_new(void)
-{
+static filelist_t *filelist_new(void) {
   filelist_t *flist;
 
   flist = nmalloc(sizeof(filelist_t));
@@ -34,8 +33,7 @@ static filelist_t *filelist_new(void)
   return flist;
 }
 
-static void filelist_free(filelist_t *flist)
-{
+static void filelist_free(filelist_t *flist) {
   int i;
 
   if (!flist)
@@ -52,8 +50,7 @@ static void filelist_free(filelist_t *flist)
 
 /* Increase number of filelist entries.
  */
-static void filelist_add(filelist_t *flist, char *filename)
-{
+static void filelist_add(filelist_t *flist, char *filename) {
   flist->tot++;
   flist->elements = nrealloc(flist->elements, flist->tot * sizeof(filelist_t));
   FILELIST_LE(flist).fn = nmalloc(strlen(filename) + 1);
@@ -63,12 +60,11 @@ static void filelist_add(filelist_t *flist, char *filename)
 
 /* Add data to the end of filelist entry's output string
  */
-static void filelist_addout(filelist_t *flist, char *desc)
-{
+static void filelist_addout(filelist_t *flist, char *desc) {
   if (FILELIST_LE(flist).output) {
-    FILELIST_LE(flist).output = nrealloc(FILELIST_LE(flist).output,
-                                strlen(FILELIST_LE(flist).output) +
-                                strlen(desc) + 1);
+    FILELIST_LE(flist).output =
+        nrealloc(FILELIST_LE(flist).output,
+                 strlen(FILELIST_LE(flist).output) + strlen(desc) + 1);
     strcat(FILELIST_LE(flist).output, desc);
   } else {
     FILELIST_LE(flist).output = nmalloc(strlen(desc) + 1);
@@ -77,8 +73,7 @@ static void filelist_addout(filelist_t *flist, char *desc)
 }
 
 /* Dump all data to specified idx */
-static inline void filelist_idxshow(filelist_t *flist, int idx)
-{
+static inline void filelist_idxshow(filelist_t *flist, int idx) {
   int i;
 
   for (i = 0; i < flist->tot; i++)
@@ -88,8 +83,7 @@ static inline void filelist_idxshow(filelist_t *flist, int idx)
 /* Uses QSort to sort the list of filenames. This function is
  * called recursively.
  */
-static void filelist_qsort(filelist_t *flist, int l, int r)
-{
+static void filelist_qsort(filelist_t *flist, int l, int r) {
   int i = l, j = r, middle;
   filelist_element_t *el = flist->elements, elt;
 
@@ -120,8 +114,7 @@ static void filelist_qsort(filelist_t *flist, int l, int r)
 
 /* Sort list of filenames.
  */
-static void filelist_sort(filelist_t *flist)
-{
+static void filelist_sort(filelist_t *flist) {
   if (flist->tot < 2)
     return;
   filelist_qsort(flist, 0, (flist->tot - 1));

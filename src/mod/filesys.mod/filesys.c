@@ -24,47 +24,47 @@
 #define MODULE_NAME "filesys"
 #define MAKING_FILESYS
 
-#include <fcntl.h>
-#include <sys/stat.h>
-#include <sys/file.h>
 #include <errno.h>
+#include <fcntl.h>
+#include <sys/file.h>
+#include <sys/stat.h>
 
 #include "src/mod/module.h"
 
 #ifdef HAVE_DIRENT_H
-#  include <dirent.h>
-#  define NAMLEN(dirent) strlen((dirent)->d_name)
+#include <dirent.h>
+#define NAMLEN(dirent) strlen((dirent)->d_name)
 #else
-#  define dirent direct
-#  define NAMLEN(dirent) (dirent)->d_namlen
-#  ifdef HAVE_SYS_NDIR_H
-#    include <sys/ndir.h>
-#  endif
-#  ifdef HAVE_SYS_DIR_H
-#    include <sys/dir.h>
-#  endif
-#  ifdef HAVE_NDIR_H
-#    include <ndir.h>
-#  endif
+#define dirent direct
+#define NAMLEN(dirent) (dirent)->d_namlen
+#ifdef HAVE_SYS_NDIR_H
+#include <sys/ndir.h>
+#endif
+#ifdef HAVE_SYS_DIR_H
+#include <sys/dir.h>
+#endif
+#ifdef HAVE_NDIR_H
+#include <ndir.h>
+#endif
 #endif
 
 #ifdef TIME_WITH_SYS_TIME
-#  include <sys/time.h>
-#  include <time.h>
+#include <sys/time.h>
+#include <time.h>
 #else
-#  ifdef HAVE_SYS_TIME_H
-#    include <sys/time.h>
-#  else
-#    include <time.h>
-#  endif
+#ifdef HAVE_SYS_TIME_H
+#include <sys/time.h>
+#else
+#include <time.h>
+#endif
 #endif
 
+#include "dbcompat.h"
 #include "filedb3.h"
+#include "filelist.h"
+#include "files.h"
 #include "filesys.h"
 #include "src/tandem.h"
-#include "files.h"
-#include "dbcompat.h"
-#include "filelist.h"
 
 static p_tcl_bind_list H_fil;
 static Function *transfer_funcs = NULL;
@@ -102,51 +102,37 @@ static void kill_dcc_files(int idx, void *x);
 static void out_dcc_files(int idx, char *buf, void *x);
 static char *mktempfile(char *filename);
 
-static struct dcc_table DCC_FILES = {
-  "FILES",
-  DCT_MASTER | DCT_VALIDIDX | DCT_SHOWWHO | DCT_SIMUL | DCT_CANBOOT | DCT_FILES,
-  eof_dcc_files,
-  dcc_files,
-  NULL,
-  NULL,
-  disp_dcc_files,
-  expmem_dcc_files,
-  kill_dcc_files,
-  out_dcc_files
-};
+static struct dcc_table DCC_FILES = {"FILES",
+                                     DCT_MASTER | DCT_VALIDIDX | DCT_SHOWWHO |
+                                         DCT_SIMUL | DCT_CANBOOT | DCT_FILES,
+                                     eof_dcc_files,
+                                     dcc_files,
+                                     NULL,
+                                     NULL,
+                                     disp_dcc_files,
+                                     expmem_dcc_files,
+                                     kill_dcc_files,
+                                     out_dcc_files};
 
 static struct user_entry_type USERENTRY_DCCDIR = {
-  NULL,                         /* always NULL ;) */
-  NULL,
-  NULL,
-  NULL,
-  NULL,
-  NULL,
-  NULL,
-  NULL,
-  NULL,
-  NULL,
-  NULL,
-  NULL,
-  NULL,
-  "DCCDIR",
-  NULL
-};
+    NULL, /* always NULL ;) */
+    NULL, NULL, NULL, NULL, NULL, NULL,     NULL,
+    NULL, NULL, NULL, NULL, NULL, "DCCDIR", NULL};
 
-#include "files.c"
 #include "filedb3.c"
-#include "tclfiles.c"
+
 #include "dbcompat.c"
 #include "filelist.c"
+#include "files.c"
+#include "tclfiles.c"
 
 /* Check for tcl-bound file command, return 1 if found
  * fil: proc-name <handle> <dcc-handle> <args...>
  */
-static int check_tcl_fil(char *cmd, int idx, char *args)
-{
+static int check_tcl_fil(char *cmd, int idx, char *args) {
   int x;
   char s[5];
-  struct flag_record fr = { FR_GLOBAL | FR_CHAN, 0, 0, 0, 0, 0 };
+  struct flag_record fr = {FR_GLOBAL | FR_CHAN, 0, 0, 0, 0, 0};
 
   get_user_flagrec(dcc[idx].user, &fr, dcc[idx].u.file->chat->con_chan);
   sprintf(s, "%ld", dcc[idx].sock);
@@ -165,7 +151,7 @@ static int check_tcl_fil(char *cmd, int idx, char *args)
   }
 
   /* We return 1 to leave the filesys */
-  if (x == BIND_QUIT)           /* CMD_LEAVE, 'quit' */
+  if (x == BIND_QUIT) /* CMD_LEAVE, 'quit' */
     return 1;
 
   if (x == BIND_EXEC_LOG)
@@ -173,8 +159,7 @@ static int check_tcl_fil(char *cmd, int idx, char *args)
   return 0;
 }
 
-static void dcc_files_pass(int idx, char *buf, int x)
-{
+static void dcc_files_pass(int idx, char *buf, int x) {
   struct userrec *u = get_user_by_handle(userlist, dcc[idx].nick);
 
   if (!x)
@@ -191,7 +176,7 @@ static void dcc_files_pass(int idx, char *buf, int x)
     }
     dcc[idx].type = &DCC_FILES;
     if (dcc[idx].status & STAT_TELNET)
-      dprintf(idx, "\377\374\001\n");   /* turn echo back on */
+      dprintf(idx, "\377\374\001\n"); /* turn echo back on */
     putlog(LOG_FILES, "*", "File system: [%s]%s/%d", dcc[idx].nick,
            dcc[idx].host, dcc[idx].port);
     if (!welcome_to_files(idx)) {
@@ -214,8 +199,7 @@ static void dcc_files_pass(int idx, char *buf, int x)
 
 /* Hash function for file area commands.
  */
-static int got_files_cmd(int idx, char *msg)
-{
+static int got_files_cmd(int idx, char *msg) {
   char *code;
 
   strcpy(msg, check_tcl_filt(idx, msg));
@@ -227,10 +211,8 @@ static int got_files_cmd(int idx, char *msg)
   return check_tcl_fil(code, idx, msg);
 }
 
-static void dcc_files(int idx, char *buf, int i)
-{
-  if (buf[0] && detect_dcc_flood(&dcc[idx].timeval, dcc[idx].u.file->chat,
-      idx))
+static void dcc_files(int idx, char *buf, int i) {
+  if (buf[0] && detect_dcc_flood(&dcc[idx].timeval, dcc[idx].u.file->chat, idx))
     return;
   dcc[idx].timeval = now;
   strcpy(buf, check_tcl_filt(idx, buf));
@@ -261,8 +243,8 @@ static void dcc_files(int idx, char *buf, int i)
       dcc[idx].status &= (~STAT_CHAT);
       dcc[idx].type = &DCC_CHAT;
       if (dcc[idx].u.chat->channel >= 0) {
-        chanout_but(-1, dcc[idx].u.chat->channel,
-                    "*** %s has returned.\n", dcc[idx].nick);
+        chanout_but(-1, dcc[idx].u.chat->channel, "*** %s has returned.\n",
+                    dcc[idx].nick);
         if (dcc[idx].u.chat->channel < GLOBAL_CHANS)
           botnet_send_join_idx(idx, -1);
       }
@@ -278,8 +260,7 @@ static void dcc_files(int idx, char *buf, int i)
     flush_lines(idx, dcc[idx].u.file->chat);
 }
 
-static void tell_file_stats(int idx, char *hand)
-{
+static void tell_file_stats(int idx, char *hand) {
   struct userrec *u;
   struct filesys_stats *fs;
   float fr = (-1.0), kr = (-1.0);
@@ -293,9 +274,9 @@ static void tell_file_stats(int idx, char *hand)
     dprintf(idx, "  uploads: %4u / %6luk\n", fs->uploads, fs->upload_ks);
     dprintf(idx, "downloads: %4u / %6luk\n", fs->dnloads, fs->dnload_ks);
     if (fs->uploads)
-      fr = ((float) fs->dnloads / (float) fs->uploads);
+      fr = ((float)fs->dnloads / (float)fs->uploads);
     if (fs->upload_ks)
-      kr = ((float) fs->dnload_ks / (float) fs->upload_ks);
+      kr = ((float)fs->dnload_ks / (float)fs->upload_ks);
     if (fr < 0.0)
       dprintf(idx, "(infinite file leech)\n");
     else
@@ -307,8 +288,7 @@ static void tell_file_stats(int idx, char *hand)
   }
 }
 
-static int cmd_files(struct userrec *u, int idx, char *par)
-{
+static int cmd_files(struct userrec *u, int idx, char *par) {
   int atr = u ? u->flags : 0;
   static struct chat_info *ci;
 
@@ -345,8 +325,8 @@ static int cmd_files(struct userrec *u, int idx, char *par)
         dcc[idx].type = &DCC_CHAT;
         putlog(LOG_FILES, "*", "File system broken.");
         if (dcc[idx].u.chat->channel >= 0) {
-          chanout_but(-1, dcc[idx].u.chat->channel,
-                      "*** %s has returned.\n", dcc[idx].nick);
+          chanout_but(-1, dcc[idx].u.chat->channel, "*** %s has returned.\n",
+                      dcc[idx].nick);
           if (dcc[idx].u.chat->channel < GLOBAL_CHANS)
             botnet_send_join_idx(idx, -1);
         }
@@ -357,8 +337,7 @@ static int cmd_files(struct userrec *u, int idx, char *par)
   return 0;
 }
 
-static int _dcc_send(int idx, char *filename, char *nick, int resend)
-{
+static int _dcc_send(int idx, char *filename, char *nick, int resend) {
   int x;
   char *nfn, *buf = NULL;
 
@@ -429,8 +408,7 @@ static int _dcc_send(int idx, char *filename, char *nick, int resend)
   return 1;
 }
 
-static int do_dcc_send(int idx, char *dir, char *fn, char *nick, int resend)
-{
+static int do_dcc_send(int idx, char *dir, char *fn, char *nick, int resend) {
   char *s = NULL;
   int x;
 
@@ -458,8 +436,8 @@ static int do_dcc_send(int idx, char *dir, char *fn, char *nick, int resend)
 
   if (!file_readable(s)) {
     dprintf(idx, "No such file.\n");
-    putlog(LOG_FILES, "*", "Refused dcc %sget %s from [%s]", resend ? "re" :
-           "", fn, dcc[idx].nick);
+    putlog(LOG_FILES, "*", "Refused dcc %sget %s from [%s]", resend ? "re" : "",
+           fn, dcc[idx].nick);
     my_free(s);
     return 0;
   }
@@ -470,7 +448,7 @@ static int do_dcc_send(int idx, char *dir, char *fn, char *nick, int resend)
   if (at_limit(nick)) {
     char xxx[1024];
 
-    sprintf(xxx, "%d*%s%s", (int) strlen(dccdir), dccdir, dir);
+    sprintf(xxx, "%d*%s%s", (int)strlen(dccdir), dccdir, dir);
     queue_file(xxx, fn, dcc[idx].nick, nick);
     dprintf(idx, "Queued: %s to %s\n", fn, nick);
     my_free(s);
@@ -481,10 +459,9 @@ static int do_dcc_send(int idx, char *dir, char *fn, char *nick, int resend)
   return x;
 }
 
-static int builtin_fil STDVAR
-{
+static int builtin_fil STDVAR {
   int idx;
-  Function F = (Function) cd;
+  Function F = (Function)cd;
 
   BADARGS(4, 4, " hand idx param");
 
@@ -508,8 +485,7 @@ static int builtin_fil STDVAR
   return TCL_OK;
 }
 
-static void tout_dcc_files_pass(int i)
-{
+static void tout_dcc_files_pass(int i) {
   dprintf(i, "Timeout.\n");
   putlog(LOG_MISC, "*", "Password timeout on dcc chat: [%s]%s", dcc[i].nick,
          dcc[i].host);
@@ -517,8 +493,7 @@ static void tout_dcc_files_pass(int i)
   lostdcc(i);
 }
 
-static void disp_dcc_files(int idx, char *buf)
-{
+static void disp_dcc_files(int idx, char *buf) {
   sprintf(buf, "file  flags: %c%c%c%c%c",
           dcc[idx].status & STAT_CHAT ? 'C' : 'c',
           dcc[idx].status & STAT_PARTY ? 'P' : 'p',
@@ -527,25 +502,22 @@ static void disp_dcc_files(int idx, char *buf)
           dcc[idx].status & STAT_PAGE ? 'P' : 'p');
 }
 
-static void disp_dcc_files_pass(int idx, char *buf)
-{
+static void disp_dcc_files_pass(int idx, char *buf) {
   long tv;
 
   tv = now - dcc[idx].timeval;
   sprintf(buf, "fpas  waited %lis", tv);
 }
 
-static void kill_dcc_files(int idx, void *x)
-{
-  register struct file_info *f = (struct file_info *) x;
+static void kill_dcc_files(int idx, void *x) {
+  register struct file_info *f = (struct file_info *)x;
 
   if (f->chat)
     DCC_CHAT.kill(idx, f->chat);
   my_free(x);
 }
 
-static void eof_dcc_files(int idx)
-{
+static void eof_dcc_files(int idx) {
   dcc[idx].u.file->chat->con_flags = 0;
   putlog(LOG_MISC, "*", "Lost dcc connection to %s (%s/%d)", dcc[idx].nick,
          dcc[idx].host, dcc[idx].port);
@@ -553,9 +525,8 @@ static void eof_dcc_files(int idx)
   lostdcc(idx);
 }
 
-static int expmem_dcc_files(void *x)
-{
-  register struct file_info *p = (struct file_info *) x;
+static int expmem_dcc_files(void *x) {
+  register struct file_info *p = (struct file_info *)x;
   int tot = sizeof(struct file_info);
 
   if (p->chat)
@@ -563,9 +534,8 @@ static int expmem_dcc_files(void *x)
   return tot;
 }
 
-static void out_dcc_files(int idx, char *buf, void *x)
-{
-  register struct file_info *p = (struct file_info *) x;
+static void out_dcc_files(int idx, char *buf, void *x) {
+  register struct file_info *p = (struct file_info *)x;
 
   if (p->chat)
     DCC_CHAT.output(idx, buf, p->chat);
@@ -573,38 +543,30 @@ static void out_dcc_files(int idx, char *buf, void *x)
     tputs(dcc[idx].sock, buf, strlen(buf));
 }
 
-static cmd_t mydcc[] = {
-  {"files", "-",  cmd_files, NULL},
-  {NULL,    NULL, NULL,      NULL}
-};
+static cmd_t mydcc[] = {{"files", "-", cmd_files, NULL},
+                        {NULL, NULL, NULL, NULL}};
 
 static tcl_strings mystrings[] = {
-  {"files-path",    dccdir,      120, STR_DIR | STR_PROTECT},
-  {"incoming-path", dccin,       120, STR_DIR | STR_PROTECT},
-  {"filedb-path",   filedb_path, 120, STR_DIR | STR_PROTECT},
-  {NULL,            NULL,        0,                       0}
-};
+    {"files-path", dccdir, 120, STR_DIR | STR_PROTECT},
+    {"incoming-path", dccin, 120, STR_DIR | STR_PROTECT},
+    {"filedb-path", filedb_path, 120, STR_DIR | STR_PROTECT},
+    {NULL, NULL, 0, 0}};
 
-static tcl_ints myints[] = {
-  {"max-filesize",    &dcc_maxsize},
-  {"max-file-users",    &dcc_users},
-  {"upload-to-pwd",  &upload_to_cd},
-  {NULL,                      NULL}
-};
+static tcl_ints myints[] = {{"max-filesize", &dcc_maxsize},
+                            {"max-file-users", &dcc_users},
+                            {"upload-to-pwd", &upload_to_cd},
+                            {NULL, NULL}};
 
-static struct dcc_table DCC_FILES_PASS = {
-  "FILES_PASS",
-  0,
-  eof_dcc_files,
-  dcc_files_pass,
-  NULL,
-  tout_dcc_files_pass,
-  disp_dcc_files_pass,
-  expmem_dcc_files,
-  kill_dcc_files,
-  out_dcc_files
-};
-
+static struct dcc_table DCC_FILES_PASS = {"FILES_PASS",
+                                          0,
+                                          eof_dcc_files,
+                                          dcc_files_pass,
+                                          NULL,
+                                          tout_dcc_files_pass,
+                                          disp_dcc_files_pass,
+                                          expmem_dcc_files,
+                                          kill_dcc_files,
+                                          out_dcc_files};
 
 static void filesys_dcc_send_hostresolved(int);
 
@@ -624,8 +586,7 @@ static void filesys_dcc_send(char *nick, char *from, struct userrec *u,
     text[j] = ' ';
 
     for (j = 1; text[j] != '"' && text[j] != '\0'; j++) {
-      if (text[j] == ' ')
-      {
+      if (text[j] == ' ') {
         text[j] = '_';
       }
     }
@@ -660,8 +621,8 @@ static void filesys_dcc_send(char *nick, char *from, struct userrec *u,
     } else if (atoi(msg) == 0) {
       dprintf(DP_HELP, "NOTICE %s :Sorry, file size info must be included.\n",
               nick);
-      putlog(LOG_FILES, "*", "Refused dcc send %s (%s): no file size",
-             param, nick);
+      putlog(LOG_FILES, "*", "Refused dcc send %s (%s): no file size", param,
+             nick);
     } else if (dcc_maxsize && (atoi(msg) > (dcc_maxsize * 1024))) {
       dprintf(DP_HELP, "NOTICE %s :Sorry, file too large.\n", nick);
       putlog(LOG_FILES, "*", "Refused dcc send %s (%s): file too large", param,
@@ -680,7 +641,7 @@ static void filesys_dcc_send(char *nick, char *from, struct userrec *u,
         return;
       }
       dcc[i].port = atoi(prt);
-      (void) setsockname(&dcc[i].sockname, ip, dcc[i].port, 0);
+      (void)setsockname(&dcc[i].sockname, ip, dcc[i].port, 0);
       dcc[i].u.dns->ip = &dcc[i].sockname;
       dcc[i].sock = -1;
 #ifdef TLS
@@ -711,8 +672,7 @@ static void filesys_dcc_send(char *nick, char *from, struct userrec *u,
  *   2 - size of additional characters in "%u-%s-%s" format string
  *   8 - estimated size of getpid()'s output converted to %u */
 #define MKTEMPFILE_TOT (7 + 2 + 8)
-static char *mktempfile(char *filename)
-{
+static char *mktempfile(char *filename) {
   char rands[8], *tempname, *fn = filename;
   int l;
 
@@ -732,8 +692,7 @@ static char *mktempfile(char *filename)
   return tempname;
 }
 
-static void filesys_dcc_send_hostresolved(int i)
-{
+static void filesys_dcc_send_hostresolved(int i) {
   char *s1, *param, prt[100], ip[100], *tempf;
   int len = dcc[i].u.dns->ibuf, j;
 
@@ -770,8 +729,8 @@ static void filesys_dcc_send_hostresolved(int i)
   } else
     strcpy(dcc[i].u.xfer->dir, dccin);
   dcc[i].u.xfer->length = len;
-  s1 = nmalloc(strlen(dcc[i].u.xfer->dir) +
-               strlen(dcc[i].u.xfer->origname) + 1);
+  s1 =
+      nmalloc(strlen(dcc[i].u.xfer->dir) + strlen(dcc[i].u.xfer->origname) + 1);
   sprintf(s1, "%s%s", dcc[i].u.xfer->dir, dcc[i].u.xfer->origname);
 
   if (file_readable(s1)) {
@@ -797,15 +756,13 @@ static void filesys_dcc_send_hostresolved(int i)
     /* Put uploads in a temp file first */
     dcc[i].u.xfer->f = tmpfile();
     if (dcc[i].u.xfer->f == NULL) {
-      dprintf(DP_HELP,
-              "NOTICE %s :Can't create file `%s' (temp dir error)\n",
+      dprintf(DP_HELP, "NOTICE %s :Can't create file `%s' (temp dir error)\n",
               dcc[i].nick, dcc[i].u.xfer->origname);
       lostdcc(i);
     } else {
       dcc[i].timeval = now;
       dcc[i].sock = getsock(dcc[i].sockname.family, SOCK_BINARY);
-      if (dcc[i].sock < 0 ||
-      open_telnet_raw(dcc[i].sock, &dcc[i].sockname) < 0)
+      if (dcc[i].sock < 0 || open_telnet_raw(dcc[i].sock, &dcc[i].sockname) < 0)
         dcc[i].type->eof(i);
 #ifdef TLS
       else if (dcc[i].ssl && ssl_handshake(dcc[i].sock, TLS_CONNECT, tls_vfydcc,
@@ -818,13 +775,12 @@ static void filesys_dcc_send_hostresolved(int i)
 
 /* This only handles CHAT requests, otherwise it's handled in transfer.
  */
-static int filesys_DCC_CHAT(char *nick, char *from, char *handle,
-                            char *object, char *keyword, char *text)
-{
+static int filesys_DCC_CHAT(char *nick, char *from, char *handle, char *object,
+                            char *keyword, char *text) {
   char *param, *ip, *prt, buf[512], *msg = buf;
   int i;
   struct userrec *u = get_user_by_handle(userlist, handle);
-  struct flag_record fr = { FR_GLOBAL | FR_CHAN | FR_ANYWH, 0, 0, 0, 0, 0 };
+  struct flag_record fr = {FR_GLOBAL | FR_CHAN | FR_ANYWH, 0, 0, 0, 0, 0};
 
   if (egg_strcasecmp(object, botname))
     return 0;
@@ -850,7 +806,7 @@ static int filesys_DCC_CHAT(char *nick, char *from, char *handle,
   if (dcc_total == max_dcc && increase_socks_max()) {
     putlog(LOG_MISC, "*", DCC_TOOMANYDCCS2, "CHAT(file)", param, nick, from);
   } else if (glob_party(fr) || (!require_p && chan_op(fr)))
-    return 0;                   /* Allow ctcp.so to pick up the chat */
+    return 0; /* Allow ctcp.so to pick up the chat */
   else if (!glob_xfer(fr)) {
     if (!quiet_reject)
       dprintf(DP_HELP, "NOTICE %s :%s\n", nick, DCC_REFUSED2);
@@ -877,7 +833,8 @@ static int filesys_DCC_CHAT(char *nick, char *from, char *handle,
     if (dcc[i].sock < 0) {
       lostdcc(i);
       if (!quiet_reject)
-        dprintf(DP_HELP, "NOTICE %s :%s (%s)\n", nick, DCC_CONNECTFAILED1, strerror(errno));
+        dprintf(DP_HELP, "NOTICE %s :%s (%s)\n", nick, DCC_CONNECTFAILED1,
+                strerror(errno));
       putlog(LOG_MISC, "*", "%s: CHAT(file) (%s!%s)", DCC_CONNECTFAILED2, nick,
              from);
       putlog(LOG_MISC, "*", "    (%s)", strerror(errno));
@@ -896,13 +853,10 @@ static int filesys_DCC_CHAT(char *nick, char *from, char *handle,
   return 1;
 }
 
-static cmd_t myctcp[] = {
-  {"DCC", "",   filesys_DCC_CHAT, "files:DCC"},
-  {NULL,  NULL, NULL,                    NULL}
-};
+static cmd_t myctcp[] = {{"DCC", "", filesys_DCC_CHAT, "files:DCC"},
+                         {NULL, NULL, NULL, NULL}};
 
-static void init_server_ctcps(char *module)
-{
+static void init_server_ctcps(char *module) {
   p_tcl_bind_list H_ctcp;
 
   if ((H_ctcp = find_bind_table("ctcp")))
@@ -910,17 +864,12 @@ static void init_server_ctcps(char *module)
 }
 
 static cmd_t myload[] = {
-  {"server", "",   (IntFunc) init_server_ctcps, "filesys:server"},
-  {NULL,     NULL, NULL,                                     NULL}
-};
+    {"server", "", (IntFunc)init_server_ctcps, "filesys:server"},
+    {NULL, NULL, NULL, NULL}};
 
-static int filesys_expmem()
-{
-  return 0;
-}
+static int filesys_expmem() { return 0; }
 
-static void filesys_report(int idx, int details)
-{
+static void filesys_report(int idx, int details) {
   if (details) {
     int size = filesys_expmem();
 
@@ -939,24 +888,23 @@ static void filesys_report(int idx, int details)
         dprintf(idx, "    Max upload file size: %dk\n", dcc_maxsize);
     } else
       dprintf(idx, "    Filesystem module loaded, but no active dcc path "
-              "exists.\n");
+                   "exists.\n");
     dprintf(idx, "    Using %d byte%s of memory\n", size,
             (size != 1) ? "s" : "");
   }
 }
 
-static char *filesys_close()
-{
+static char *filesys_close() {
   int i;
   p_tcl_bind_list H_ctcp;
 
   putlog(LOG_MISC, "*", "Unloading filesystem; killing all filesystem "
-         "connections.");
+                        "connections.");
   for (i = 0; i < dcc_total; i++)
     if (dcc[i].type == &DCC_FILES) {
       dprintf(i, DCC_BOOTED1);
       dprintf(i, "You have been booted from the filesystem, module "
-              "unloaded.\n");
+                 "unloaded.\n");
       killsock(dcc[i].sock);
       lostdcc(i);
     } else if (dcc[i].type == &DCC_FILES_PASS) {
@@ -982,22 +930,17 @@ static char *filesys_close()
 EXPORT_SCOPE char *filesys_start();
 
 static Function filesys_table[] = {
-  /* 0 - 3 */
-  (Function) filesys_start,
-  (Function) filesys_close,
-  (Function) filesys_expmem,
-  (Function) filesys_report,
-  /* 4 - 7 */
-  (Function) remote_filereq,
-  (Function) add_file,
-  (Function) incr_file_gots,
-  (Function) is_valid,
-  /* 8 - 11 */
-  (Function) & H_fil,
+    /* 0 - 3 */
+    (Function)filesys_start, (Function)filesys_close, (Function)filesys_expmem,
+    (Function)filesys_report,
+    /* 4 - 7 */
+    (Function)remote_filereq, (Function)add_file, (Function)incr_file_gots,
+    (Function)is_valid,
+    /* 8 - 11 */
+    (Function)&H_fil,
 };
 
-char *filesys_start(Function *global_funcs)
-{
+char *filesys_start(Function *global_funcs) {
   global = global_funcs;
 
   module_register(MODULE_NAME, filesys_table, 2, 1);
@@ -1021,14 +964,11 @@ char *filesys_start(Function *global_funcs)
   my_memcpy(&USERENTRY_DCCDIR, &USERENTRY_INFO,
             sizeof(struct user_entry_type) - sizeof(char *));
 
-  USERENTRY_DCCDIR.got_share = 0;       /* We dont want it shared tho */
+  USERENTRY_DCCDIR.got_share = 0; /* We dont want it shared tho */
   add_entry_type(&USERENTRY_DCCDIR);
   DCC_FILES_PASS.timeout_val = &password_timeout;
   add_lang_section("filesys");
   return NULL;
 }
 
-static int is_valid()
-{
-  return dccdir[0];
-}
+static int is_valid() { return dccdir[0]; }
