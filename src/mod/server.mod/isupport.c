@@ -66,12 +66,13 @@ static char *valuendup(const char *value, size_t len) {
   return str;
 } 
 
+/* length has to be validated for equality before calling this. */
 static int keyupeq(const char *key, const char *upkey) {
   int i;
   for (i = 0; key[i] && upkey[i]; i++)
     if (toupper((unsigned char)key[i]) != upkey[i])
       return 0;
-  return (key[i] == upkey[i]);
+  return 1;
 }
 
 static char *keyupndup(const char *key, size_t len) {
