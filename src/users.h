@@ -24,6 +24,8 @@
 #ifndef _EGG_USERS_H
 #define _EGG_USERS_H
 
+#include "eggdrop.h"
+
 /* List functions :) , next *must* be the 1st item in the struct */
 struct list_type {
   struct list_type *next;
