@@ -35,6 +35,8 @@
 #ifndef _EGG_MOD_DNS_DNS_H
 #define _EGG_MOD_DNS_DNS_H
 
+#include "src/eggdrop.h"
+
 struct resolve {
   struct resolve *next;
   struct resolve *previous;
@@ -55,28 +57,23 @@ struct resolve {
   u_8bit_t sends;
 };
 
-enum resolve_states {
-  STATE_FINISHED,
-  STATE_FAILED,
-  STATE_PTRREQ,
-  STATE_AREQ
-};
+enum resolve_states { STATE_FINISHED, STATE_FAILED, STATE_PTRREQ, STATE_AREQ };
 
 #define IS_PTR(x) (x->state == STATE_PTRREQ)
-#define IS_A(x)   (x->state == STATE_AREQ)
+#define IS_A(x) (x->state == STATE_AREQ)
 
 #ifdef DEBUG_DNS
-#  define ddebug0                debug0
-#  define ddebug1                debug1
-#  define ddebug2                debug2
-#  define ddebug3                debug3
-#  define ddebug4                debug4
+#define ddebug0 debug0
+#define ddebug1 debug1
+#define ddebug2 debug2
+#define ddebug3 debug3
+#define ddebug4 debug4
 #else /* !DEBUG_DNS */
-#  define ddebug0(x)
-#  define ddebug1(x, x1)
-#  define ddebug2(x, x1, x2)
-#  define ddebug3(x, x1, x2, x3)
-#  define ddebug4(x, x1, x2, x3, x4)
+#define ddebug0(x)
+#define ddebug1(x, x1)
+#define ddebug2(x, x1, x2)
+#define ddebug3(x, x1, x2, x3)
+#define ddebug4(x, x1, x2, x3, x4)
 #endif /* !DEBUG_DNS */
 
 #endif /* _EGG_MOD_DNS_DNS_H */

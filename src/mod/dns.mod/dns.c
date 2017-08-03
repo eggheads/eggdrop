@@ -24,8 +24,8 @@
 
 #define MODULE_NAME "dns"
 
-#include "src/mod/module.h"
 #include "dns.h"
+#include "src/mod/module.h"
 
 static void dns_event_success(struct resolve *rp, int type);
 static void dns_event_failure(struct resolve *rp, int type);
@@ -41,28 +41,23 @@ static char dns_servers[121] = "";
 
 #include "coredns.c"
 
-
 /*
  *    DNS event related code
  */
-static void dns_event_success(struct resolve *rp, int type)
-{
+static void dns_event_success(struct resolve *rp, int type) {
   if (!rp)
     return;
 
   if (type == T_PTR) {
-    debug2("DNS resolved %s to %s", iptostr(&rp->sockname.addr.sa),
-           rp->hostn);
+    debug2("DNS resolved %s to %s", iptostr(&rp->sockname.addr.sa), rp->hostn);
     call_hostbyip(&rp->sockname, rp->hostn, 1);
   } else if (type == T_A) {
-    debug2("DNS resolved %s to %s", rp->hostn,
-           iptostr(&rp->sockname.addr.sa));
+    debug2("DNS resolved %s to %s", rp->hostn, iptostr(&rp->sockname.addr.sa));
     call_ipbyhost(rp->hostn, &rp->sockname, 1);
   }
 }
 
-static void dns_event_failure(struct resolve *rp, int type)
-{
+static void dns_event_failure(struct resolve *rp, int type) {
   if (!rp)
     return;
 
@@ -81,13 +76,11 @@ static void dns_event_failure(struct resolve *rp, int type)
   return;
 }
 
-
 /*
  *    DNS Socket related code
  */
 
-static void eof_dns_socket(int idx)
-{
+static void eof_dns_socket(int idx) {
   putlog(LOG_MISC, "*", "DNS Error: socket closed.");
   killsock(dcc[idx].sock);
   /* Try to reopen socket */
@@ -99,46 +92,28 @@ static void eof_dns_socket(int idx)
     lostdcc(idx);
 }
 
-static void dns_socket(int idx, char *buf, int len)
-{
-  dns_ack();
-}
+static void dns_socket(int idx, char *buf, int len) { dns_ack(); }
 
-static void display_dns_socket(int idx, char *buf)
-{
+static void display_dns_socket(int idx, char *buf) {
   strcpy(buf, "dns   (ready)");
 }
 
 static struct dcc_table DCC_DNS = {
-  "DNS",
-  DCT_LISTEN,
-  eof_dns_socket,
-  dns_socket,
-  NULL,
-  NULL,
-  display_dns_socket,
-  NULL,
-  NULL,
-  NULL
-};
+    "DNS", DCT_LISTEN,         eof_dns_socket, dns_socket, NULL,
+    NULL,  display_dns_socket, NULL,           NULL,       NULL};
 
-static tcl_ints dnsints[] = {
-  {"dns-maxsends",   &dns_maxsends,   0},
-  {"dns-retrydelay", &dns_retrydelay, 0},
-  {"dns-cache",      &dns_cache,      0},
-  {"dns-negcache",   &dns_negcache,   0},
-  {NULL,             NULL,            0}
-};
+static tcl_ints dnsints[] = {{"dns-maxsends", &dns_maxsends, 0},
+                             {"dns-retrydelay", &dns_retrydelay, 0},
+                             {"dns-cache", &dns_cache, 0},
+                             {"dns-negcache", &dns_negcache, 0},
+                             {NULL, NULL, 0}};
 
-static tcl_strings dnsstrings[] = {
-  {"dns-servers", dns_servers, 120,           0},
-  {NULL,          NULL,          0,           0}
-};
+static tcl_strings dnsstrings[] = {{"dns-servers", dns_servers, 120, 0},
+                                   {NULL, NULL, 0, 0}};
 
 static char *dns_change(ClientData cdata, Tcl_Interp *irp,
-                           EGG_CONST char *name1,
-                           EGG_CONST char *name2, int flags)
-{
+                        EGG_CONST char *name1, EGG_CONST char *name2,
+                        int flags) {
   char buf[121], *p;
   unsigned short port;
   int i, lc, code;
@@ -149,8 +124,9 @@ static char *dns_change(ClientData cdata, Tcl_Interp *irp,
 
     Tcl_DStringInit(&ds);
     for (i = 0; i < _res.nscount; i++) {
-      egg_snprintf(buf, sizeof buf, "%s:%d", iptostr((struct sockaddr *)
-               &_res.nsaddr_list[i]), ntohs(_res.nsaddr_list[i].sin_port));
+      egg_snprintf(buf, sizeof buf, "%s:%d",
+                   iptostr((struct sockaddr *)&_res.nsaddr_list[i]),
+                   ntohs(_res.nsaddr_list[i].sin_port));
       Tcl_DStringAppendElement(&ds, buf);
     }
     slist = Tcl_DStringValue(&ds);
@@ -177,18 +153,16 @@ static char *dns_change(ClientData cdata, Tcl_Interp *irp,
         _res.nscount++;
       }
     }
-    Tcl_Free((char *) list);
+    Tcl_Free((char *)list);
   }
   return NULL;
 }
-
 
 /*
  *    DNS module related code
  */
 
-static void dns_free_cache(void)
-{
+static void dns_free_cache(void) {
   struct resolve *rp, *rpnext;
 
   for (rp = expireresolves; rp; rp = rpnext) {
@@ -200,8 +174,7 @@ static void dns_free_cache(void)
   expireresolves = NULL;
 }
 
-static int dns_cache_expmem(void)
-{
+static int dns_cache_expmem(void) {
   struct resolve *rp;
   int size = 0;
 
@@ -213,20 +186,16 @@ static int dns_cache_expmem(void)
   return size;
 }
 
-static int dns_expmem(void)
-{
-  return dns_cache_expmem();
-}
+static int dns_expmem(void) { return dns_cache_expmem(); }
 
-static int dns_report(int idx, int details)
-{
+static int dns_report(int idx, int details) {
   if (details) {
     int i, size = dns_expmem();
 
     dprintf(idx, "    Async DNS resolver is active.\n");
     dprintf(idx, "    DNS server list:");
     for (i = 0; i < _res.nscount; i++)
-      dprintf(idx, " %s:%d", iptostr((struct sockaddr *) &_res.nsaddr_list[i]),
+      dprintf(idx, " %s:%d", iptostr((struct sockaddr *)&_res.nsaddr_list[i]),
               ntohs(_res.nsaddr_list[i].sin_port));
     if (!_res.nscount)
       dprintf(idx, " NO DNS SERVERS FOUND!\n");
@@ -237,24 +206,23 @@ static int dns_report(int idx, int details)
   return 0;
 }
 
-static int dns_check_servercount(void)
-{
+static int dns_check_servercount(void) {
   static int oldcount = -1;
   if (oldcount != _res.nscount && !_res.nscount) {
-    putlog(LOG_MISC, "*", "WARNING: No nameservers found. Please set the dns-servers config variable.");
+    putlog(LOG_MISC, "*", "WARNING: No nameservers found. Please set the "
+                          "dns-servers config variable.");
   }
   oldcount = _res.nscount;
   return 0;
 }
 
-static char *dns_close()
-{
+static char *dns_close() {
   int i;
 
-  del_hook(HOOK_DNS_HOSTBYIP, (Function) dns_lookup);
-  del_hook(HOOK_DNS_IPBYHOST, (Function) dns_forward);
-  del_hook(HOOK_SECONDLY, (Function) dns_check_expires);
-  del_hook(HOOK_REHASH, (Function) dns_check_servercount);
+  del_hook(HOOK_DNS_HOSTBYIP, (Function)dns_lookup);
+  del_hook(HOOK_DNS_IPBYHOST, (Function)dns_forward);
+  del_hook(HOOK_SECONDLY, (Function)dns_check_expires);
+  del_hook(HOOK_REHASH, (Function)dns_check_servercount);
   rem_tcl_ints(dnsints);
   rem_tcl_strings(dnsstrings);
   Tcl_UntraceVar(interp, "dns-servers",
@@ -277,16 +245,13 @@ static char *dns_close()
 EXPORT_SCOPE char *dns_start();
 
 static Function dns_table[] = {
-  /* 0 - 3 */
-  (Function) dns_start,
-  (Function) dns_close,
-  (Function) dns_expmem,
-  (Function) dns_report,
-  /* 4 - 7 */
+    /* 0 - 3 */
+    (Function)dns_start, (Function)dns_close, (Function)dns_expmem,
+    (Function)dns_report,
+    /* 4 - 7 */
 };
 
-char *dns_start(Function *global_funcs)
-{
+char *dns_start(Function *global_funcs) {
   int idx;
 
   global = global_funcs;
@@ -314,10 +279,10 @@ char *dns_start(Function *global_funcs)
   Tcl_TraceVar(interp, "dns-servers",
                TCL_TRACE_READS | TCL_TRACE_WRITES | TCL_TRACE_UNSETS,
                dns_change, NULL);
-  add_hook(HOOK_SECONDLY, (Function) dns_check_expires);
-  add_hook(HOOK_DNS_HOSTBYIP, (Function) dns_lookup);
-  add_hook(HOOK_DNS_IPBYHOST, (Function) dns_forward);
-  add_hook(HOOK_REHASH, (Function) dns_check_servercount);
+  add_hook(HOOK_SECONDLY, (Function)dns_check_expires);
+  add_hook(HOOK_DNS_HOSTBYIP, (Function)dns_lookup);
+  add_hook(HOOK_DNS_IPBYHOST, (Function)dns_forward);
+  add_hook(HOOK_REHASH, (Function)dns_check_servercount);
   add_tcl_ints(dnsints);
   add_tcl_strings(dnsstrings);
   return NULL;
