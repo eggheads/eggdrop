@@ -30,7 +30,7 @@ extern Tcl_Interp *interp;
 extern tcl_timer_t *timer, *utimer;
 extern struct dcc_t *dcc;
 extern char botnetnick[];
-extern int dcc_total, backgrd, parties, make_userfile, do_restart, remote_boots, max_dcc;
+extern int dcc_total, backgrd, parties, make_userfile, do_restart, remote_boots, max_dcc, conmask;
 #ifdef TLS
 extern int tls_vfydcc;
 extern sock_list *socklist;
@@ -280,12 +280,11 @@ static int tcl_dccputchan STDVAR
   return TCL_OK;
 }
 
-static int tcl_console STDVAR
+static int tcl_do_console(Tcl_Interp *irp, ClientData cd, int argc,
+    char **argv, int reset)
 {
   int i, j, pls, arg;
   module_entry *me;
-
-  BADARGS(2, 4, " idx ?channel? ?console-modes?");
 
   i = findidx(atoi(argv[1]));
   if (i < 0 || dcc[i].type != &DCC_CHAT) {
@@ -307,23 +306,28 @@ static int tcl_console STDVAR
       }
       strncpyz(dcc[i].u.chat->con_chan, argv[arg], 81);
     } else {
-      if ((argv[arg][0] != '+') && (argv[arg][0] != '-'))
+      if (!reset && (argv[arg][0] != '+') && (argv[arg][0] != '-'))
         dcc[i].u.chat->con_flags = 0;
     do_console_flags:
-      for (j = 0; j < strlen(argv[arg]); j++) {
-        if (argv[arg][j] == '+')
-          pls = 1;
-        else if (argv[arg][j] == '-')
-          pls = -1;
-        else {
-          char s[2];
+      if (reset) {
+        dcc[i].u.chat->con_flags =
+            (dcc[i].user && (dcc[i].user->flags & USER_MASTER) ? conmask : 0);
+      } else {
+        for (j = 0; j < strlen(argv[arg]); j++) {
+          if (argv[arg][j] == '+')
+            pls = 1;
+          else if (argv[arg][j] == '-')
+            pls = -1;
+          else {
+            char s[2];
 
-          s[0] = argv[arg][j];
-          s[1] = 0;
-          if (pls == 1)
-            dcc[i].u.chat->con_flags |= logmodes(s);
-          else
-            dcc[i].u.chat->con_flags &= ~logmodes(s);
+            s[0] = argv[arg][j];
+            s[1] = 0;
+            if (pls == 1)
+              dcc[i].u.chat->con_flags |= logmodes(s);
+            else
+              dcc[i].u.chat->con_flags &= ~logmodes(s);
+          }
         }
       }
     }
@@ -338,6 +342,19 @@ static int tcl_console STDVAR
   }
   return TCL_OK;
 }
+
+static int tcl_console STDVAR
+{
+  BADARGS(2, 4, " idx ?channel? ?console-modes?");
+  return tcl_do_console(irp, cd, argc, argv, 0);
+}
+
+static int tcl_resetconsole STDVAR
+{
+  BADARGS(2, 3, " idx ?channel?");
+  return tcl_do_console(irp, cd, argc, argv, 1);
+}
+
 
 static int tcl_strip STDVAR
 {
@@ -1179,6 +1196,7 @@ tcl_cmds tcldcc_cmds[] = {
   {"setchan",           tcl_setchan},
   {"dccputchan",     tcl_dccputchan},
   {"console",           tcl_console},
+  {"resetconsole", tcl_resetconsole},
   {"strip",               tcl_strip},
   {"echo",                 tcl_echo},
   {"page",                 tcl_page},

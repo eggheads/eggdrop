@@ -641,20 +641,13 @@ static void cmd_boot(struct userrec *u, int idx, char *par)
     dprintf(idx, "Who?  No such person on the party line.\n");
 }
 
-static void cmd_console(struct userrec *u, int idx, char *par)
+static void do_console(struct userrec *u, int idx, char *par, int reset)
 {
   char *nick, s[2], s1[512];
   int dest = 0, i, ok = 0, pls;
   struct flag_record fr = { FR_GLOBAL | FR_CHAN, 0, 0, 0, 0, 0 };
   module_entry *me;
 
-  if (!par[0]) {
-    dprintf(idx, "Your console is %s: %s (%s).\n",
-            dcc[idx].u.chat->con_chan,
-            masktype(dcc[idx].u.chat->con_flags),
-            maskname(dcc[idx].u.chat->con_flags));
-    return;
-  }
   get_user_flagrec(u, &fr, dcc[idx].u.chat->con_chan);
   strncpyz(s1, par, sizeof s1);
   nick = newsplit(&par);
@@ -698,7 +691,7 @@ static void cmd_console(struct userrec *u, int idx, char *par)
   if (!nick[0])
     nick = newsplit(&par);
   pls = 1;
-  if (nick[0]) {
+  if (!reset && nick[0]) {
     if ((nick[0] != '+') && (nick[0] != '-'))
       dcc[dest].u.chat->con_flags = 0;
     for (; *nick; nick++) {
@@ -715,10 +708,12 @@ static void cmd_console(struct userrec *u, int idx, char *par)
           dcc[dest].u.chat->con_flags &= ~logmodes(s);
       }
     }
+  } else if (reset) {
+    dcc[dest].u.chat->con_flags = (u->flags & USER_MASTER) ? conmask : 0;
   }
   dcc[dest].u.chat->con_flags = check_conflags(&fr,
                                                dcc[dest].u.chat->con_flags);
-  putlog(LOG_CMDS, "*", "#%s# console %s", dcc[idx].nick, s1);
+  putlog(LOG_CMDS, "*", "#%s# %sconsole %s", dcc[idx].nick, reset ? "reset" : "", s1);
   if (dest == idx) {
     dprintf(idx, "Set your console to %s: %s (%s).\n",
             dcc[idx].u.chat->con_chan,
@@ -740,6 +735,23 @@ static void cmd_console(struct userrec *u, int idx, char *par)
 
     (func[CONSOLE_DOSTORE]) (dest);
   }
+}
+
+static void cmd_console(struct userrec *u, int idx, char *par)
+{
+  if (!par[0]) {
+    dprintf(idx, "Your console is %s: %s (%s).\n",
+            dcc[idx].u.chat->con_chan,
+            masktype(dcc[idx].u.chat->con_flags),
+            maskname(dcc[idx].u.chat->con_flags));
+    return;
+  }
+  do_console(u, idx, par, 0);
+}
+
+static void cmd_resetconsole(struct userrec *u, int idx, char *par)
+{
+  do_console(u, idx, par, 1);
 }
 
 static void cmd_pls_bot(struct userrec *u, int idx, char *par)
@@ -2904,6 +2916,7 @@ cmd_t C_dcc[] = {
   {"chpass",    "t",    (IntFunc) cmd_chpass,     NULL},
   {"comment",   "m",    (IntFunc) cmd_comment,    NULL},
   {"console",   "to|o", (IntFunc) cmd_console,    NULL},
+  {"resetconsole", "to|o", (IntFunc) cmd_resetconsole, NULL},
   {"dccstat",   "t",    (IntFunc) cmd_dccstat,    NULL},
   {"debug",     "m",    (IntFunc) cmd_debug,      NULL},
   {"die",       "n",    (IntFunc) cmd_die,        NULL},
