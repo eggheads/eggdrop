@@ -39,7 +39,11 @@ static void cmd_pls_ban(struct userrec *u, int idx, char *par)
     dprintf(idx, "Usage: +ban <hostmask> [channel] [%%<XdXhXm>] [reason]\n");
   } else {
     who = newsplit(&par);
-    if (par[0] && strchr(CHANMETA, par[0]))
+    /* Sanity check for <channel> <ban> vs. <ban> <channel> */
+    if (par[0] && strchr(CHANMETA, who[0])) {
+      chname = who;
+      who = newsplit(&par);
+    } else if (par[0] && strchr(CHANMETA, par[0]))
       chname = newsplit(&par);
     else
       chname = 0;
@@ -416,7 +420,11 @@ static void cmd_mns_ban(struct userrec *u, int idx, char *par)
     return;
   }
   ban = newsplit(&par);
-  if (par[0] && strchr(CHANMETA, par[0]))
+  /* Sanity check for <channel> <ban> vs. <ban> <channel> */
+  if (par[0] && strchr(CHANMETA, ban[0])) {
+      chname = ban;
+      ban = newsplit(&par);
+  } else if (par[0] && strchr(CHANMETA, par[0]))
     chname = newsplit(&par);
   else {
     chname = dcc[idx].u.chat->con_chan;
