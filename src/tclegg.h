@@ -108,17 +108,9 @@ typedef struct timer_str {
 
 
 /* Used for Tcl stub functions */
-#define STDVAR (cd, irp, argc, argv)                                    \
-        ClientData cd;                                                  \
-        Tcl_Interp *irp;                                                \
-        int argc;                                                       \
-        char *argv[];
+#define STDVAR (ClientData cd, Tcl_Interp *irp, int argc, char *argv[])
 
-#define STDOBJVAR (cd, irp, objc, objv)                                 \
-        ClientData cd;                                                  \
-        Tcl_Interp *irp;                                                \
-        int objc;                                                       \
-        CONST84 Tcl_Obj *objv[];
+#define STDOBJVAR (ClientData cd, Tcl_Interp *irp, int objc, Tcl_Obj *const objv[])
 
 #define BADARGS(nl, nh, example) do {                                   \
         if ((argc < (nl)) || ((argc > (nh)) && ((nh) != -1))) {         \
@@ -180,6 +172,7 @@ typedef struct _cd_tcl_cmd {
 } cd_tcl_cmd;
 
 void add_tcl_commands(tcl_cmds *);
+void add_tcl_objcommands(tcl_cmds *);
 void add_cd_tcl_cmds(cd_tcl_cmd *);
 void rem_tcl_commands(tcl_cmds *);
 void rem_cd_tcl_cmds(cd_tcl_cmd *);
