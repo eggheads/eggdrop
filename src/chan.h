@@ -25,6 +25,8 @@
 #ifndef _EGG_CHAN_H
 #define _EGG_CHAN_H
 
+#include "eggdrop.h"
+
 /* Valid channel prefixes. */
 #define CHANMETA "#&!+"
 

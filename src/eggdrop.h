@@ -26,6 +26,12 @@
 #ifndef _EGG_EGGDROP_H
 #define _EGG_EGGDROP_H
 
+#include <stdint.h>
+
+#include <tcl.h>
+
+#include "config.h"
+
 /*
  * If you're *only* going to link to new version bots (1.3.0 or higher)
  * then you can safely define this.
