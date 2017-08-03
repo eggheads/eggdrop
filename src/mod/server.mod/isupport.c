@@ -439,39 +439,35 @@ static void isupport_stringify(int idx, char *buf, size_t bufsize, size_t *len,
     *len += sprintf(buf + *len, " %s=%s", key, value);
 }
 
-#define ISUPPORT_REPORT(name, elem, forced) do {                               \
-  char buf[450] = "    isupport (" name "):";                                  \
-  size_t prefixlen = strlen(buf), len = prefixlen;                             \
-  struct isupportkeydata *i;                                                   \
-  struct isupport *data;                                                       \
-  LIST_FOREACH_DATA(isupportdata, i, data) {                                   \
-    if ((forced && data->ignored) || data->elem)                          \
-      isupport_stringify(idx, buf, sizeof buf, &len, prefixlen, data->key,     \
-          (forced && data->ignored ? NULL : data->elem));                 \
-  }                                                                            \
-  if (len > prefixlen)                                                         \
-    dprintf(idx, "%s\n", buf);                                                 \
-} while (0)
+static void isupport_report_type(int idx, const char *type)
+{
+  int forced;
+  char buf[450];
+  const char *value;
+  size_t prefixlen, len;
+  struct isupportkeydata *i;
+  struct isupport *data;
 
-#define ISUPPORT_REPORT_COMBINED do {                                          \
-  char buf[450] = "    isupport (current):";                                   \
-  size_t prefixlen = strlen(buf), len = prefixlen;                             \
-  struct isupportkeydata *i;                                                   \
-  struct isupport *data;                                                       \
-  LIST_FOREACH_DATA(isupportdata, i, data) {                                   \
-    if (isupport_get_from(data))                                               \
-      isupport_stringify(idx, buf, sizeof buf, &len, prefixlen, data->key,     \
-          isupport_get_from(data));                                            \
-  }                                                                            \
-  if (len > prefixlen)                                                         \
-    dprintf(idx, "%s\n", buf);                                                 \
-} while (0)
+  forced = !strcmp(type, "forced");
+  len = prefixlen = sprintf(buf, "    isupport (%s):", type);
+  LIST_FOREACH_DATA(isupportdata, i, data) {
+    value = isupport_get_type_from(data, type);
+    if (forced && isupport_get_type_from(data, "ignored"))
+      value = NULL;
+    else if (!value)
+      continue;
+    isupport_stringify(idx, buf, sizeof buf, &len, prefixlen, data->key, value);
+  }
+  if (len > prefixlen)
+    dprintf(idx, "%s\n", buf);
+}
 
 void isupport_report(int idx, int details) {
   if (details) {
-    ISUPPORT_REPORT("forced", forced, 1);
-    ISUPPORT_REPORT("server", value, 0);
-    ISUPPORT_REPORT("default", def, 0);
+    isupport_report_type(idx, "forced");
+    isupport_report_type(idx, "server");
+    isupport_report_type(idx, "default");
   }
-  ISUPPORT_REPORT_COMBINED;
+  if (server_online)
+    isupport_report_type(idx, "current");
 }
