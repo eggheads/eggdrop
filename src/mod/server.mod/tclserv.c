@@ -323,3 +323,9 @@ static tcl_cmds my_tcl_cmds[] = {
   {"putnow",     tcl_putnow},
   {NULL,         NULL}
 };
+
+static tcl_cmds my_tcl_objcmds[] = {
+  {"isupport",   tcl_isupport},
+  {NULL,         NULL}
+};
+

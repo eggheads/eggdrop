@@ -122,6 +122,7 @@ static int stack_limit;
 static char *realservername;
 
 #include "isupport.c"
+#include "tclisupport.c"
 #include "servmsg.c"
 
 #define MAXPENALTY 10
@@ -1860,6 +1861,7 @@ static char *server_close()
   rem_tcl_ints(my_tcl_ints);
   rem_help_reference("server.help");
   rem_tcl_commands(my_tcl_cmds);
+  rem_tcl_commands(my_tcl_objcmds);
   Tcl_UntraceVar(interp, "nick",
                  TCL_TRACE_READS | TCL_TRACE_WRITES | TCL_TRACE_UNSETS,
                  nick_change, NULL);
@@ -2068,6 +2070,7 @@ char *server_start(Function *global_funcs)
   add_tcl_strings(my_tcl_strings);
   add_tcl_ints(my_tcl_ints);
   add_tcl_commands(my_tcl_cmds);
+  add_tcl_objcommands(my_tcl_objcmds);
   add_tcl_coups(my_tcl_coups);
   add_hook(HOOK_SECONDLY, (Function) server_secondly);
   add_hook(HOOK_5MINUTELY, (Function) server_5minutely);

@@ -25,13 +25,13 @@
 
 #define ICLEAR(dst) do { if ((dst)) { nfree((dst)); (dst) = NULL; } } while (0)
 #define ISET(dst, val, len) do { if ((dst)) { nfree((dst)); }; \
-  (dst) = valuendup((val), ((len) < 0 ? strlen((val)) : (len))); } while (0);
+  (dst) = valuendup((val), ((len) < 0 ? strlen((val)) : (len))); } while (0)
 
 struct isupport {
   size_t keylen;
   const char *key;
   const char *forced, *value, *def;
-  int forceunset;
+  int ignored;
 };
 
 /* Instantiate list type for isupport data */
@@ -86,7 +86,7 @@ static struct isupport *add_record(const char *key, size_t keylen) {
 
   data->key = keyupndup(key, keylen);
   data->keylen = keylen;
-  data->forceunset = 0;
+  data->ignored = 0;
   data->forced = data->def = data->value = NULL;
   isupportdata_append(isupportdata, data);
   return data;
@@ -97,7 +97,7 @@ static struct isupport *find_record(const char *key, size_t keylen) {
   struct isupport *data;
 
   LIST_FOREACH_DATA(isupportdata, i, data) {
-    if (keylen == data->keylen && keyupeq(data->key, key))
+    if (keylen == data->keylen && keyupeq(key, data->key))
       return data;
   }
   return NULL;
@@ -113,7 +113,7 @@ static struct isupport *get_record(const char *key, size_t keylen) {
 }
 
 const char *isupport_get_from(struct isupport *data) {
-  if (data->forceunset)
+  if (data->ignored)
     return NULL;
   if (data->forced)
     return data->forced;
@@ -124,27 +124,47 @@ const char *isupport_get_from(struct isupport *data) {
   return NULL;
 }
 
+void isupport_set_ignored_into(struct isupport *data, int value) {
+  data->ignored = value;
+  if (value)
+    ICLEAR(data->forced);
+}
+
 void isupport_set_type_into(struct isupport *data, const char *type, const char *value) {
-  if (!strcmp(type, "forceunset"))
-    data->forceunset = atoi(value);
-  else if (!strcmp(type, "forced"))
+  if (!strcmp(type, "forced"))
     ISET(data->forced, value, -1);
   else if (!strcmp(type, "default"))
-    ISET(data->default, value, -1);
+    ISET(data->def, value, -1);
   else if (!strcmp(type, "server"))
     ISET(data->value, value, -1);
+  putlog(LOG_MISC, "*", "Unknown ISUPPORT type: %s", type);
+}
+
+void isupport_unset_type_into(struct isupport *data, const char *type) {
+  if (!strcmp(type, "ignored"))
+    isupport_set_ignored_into(data, 0);
+  else if (!strcmp(type, "forced"))
+    ICLEAR(data->forced);
+  else if (!strcmp(type, "default"))
+    ICLEAR(data->forced);
+  else if (!strcmp(type, "server"))
+    ICLEAR(data->value);
+  putlog(LOG_MISC, "*", "Unknown ISUPPORT type: %s", type);
 }
 
 const char *isupport_get_type_from(struct isupport *data, const char *type) {
   if (!strcmp(type, "current"))
     return isupport_get_from(data);
-  if (!strcmp(type, "forced"))
-    return (data->forceunset ? NULL : data->forced);
-  if (!strcmp(type, "default"))
+  else if (!strcmp(type, "forced"))
+    return data->forced;
+  else if (!strcmp(type, "default"))
     return data->def;
-  if (!strcmp(type, "forceunset"))
-    return (data->forceunset ? "1" : "0");
-  return data->value;
+  else if (!strcmp(type, "ignored"))
+    return (data->ignored ? "1" : NULL);
+  else if (!strcmp(type, "server"))
+    return data->value;
+  putlog(LOG_MISC, "*", "Unknown ISUPPORT type: %s", type);
+  return NULL;
 }
 
 /* Get the value of an isupport key, following overrides and defs. */
@@ -191,7 +211,7 @@ static void isupport_unset_forced(const char *key, size_t keylen) {
   struct isupport *data = get_record(key, keylen);
 
   ICLEAR(data->forced);
-  data->forceunset = 1;
+  data->ignored = 1;
 }
 
 static void isupport_set_forced(const char *key, size_t keylen,
@@ -200,7 +220,7 @@ static void isupport_set_forced(const char *key, size_t keylen,
   struct isupport *data = get_record(key, keylen);
 
   ISET(data->forced, value, len);
-  data->forceunset = 0;
+  data->ignored = 0;
 }
 
 static void isupport_clear_forced(void) {
@@ -209,7 +229,7 @@ static void isupport_clear_forced(void) {
 
   LIST_FOREACH_DATA(isupportdata, i, data) {
     ICLEAR(data->forced);
-    data->forceunset = 0;
+    data->ignored = 0;
   }
 }
 
@@ -373,7 +393,7 @@ void isupport_cleanup(void) {
   struct isupport *data;
   LIST_FOREACH_SAFE(isupportdata, i, next) {
     data = LIST_ELEM_DATA(i);
-    if (!data->forced && !data->def && !data->value && !data->forceunset)
+    if (!data->forced && !data->def && !data->value && !data->ignored)
       isupportdata_delete(isupportdata, i);
   }
 }
@@ -423,9 +443,9 @@ static void isupport_stringify(int idx, char *buf, size_t bufsize, size_t *len,
   struct isupportkeydata *i;                                                   \
   struct isupport *data;                                                       \
   LIST_FOREACH_DATA(isupportdata, i, data) {                                   \
-    if ((forced && data->forceunset) || data->elem)                          \
+    if ((forced && data->ignored) || data->elem)                          \
       isupport_stringify(idx, buf, sizeof buf, &len, prefixlen, data->key,     \
-          (forced && data->forceunset ? NULL : data->elem));                 \
+          (forced && data->ignored ? NULL : data->elem));                 \
   }                                                                            \
   if (len > prefixlen)                                                         \
     dprintf(idx, "%s\n", buf);                                                 \
