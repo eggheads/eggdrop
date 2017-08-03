@@ -157,14 +157,27 @@ static Tcl_Obj *tcl_isupport_type_list(Tcl_Interp *irp, const char *type) {
   return TCL_ERROR;                                             \
 } while (0)
 
-#define ENSURE_VALIDTYPE(irp, dstobj, typeobj, set) do {                       \
-  if (!tcl_isupport_validtype(Tcl_GetString((typeobj)), (set))) {              \
+#define TCL_ERR_TYPE(dstobj, typeobj) do {                                     \
     (dstobj) = Tcl_NewStringObj("type \"", -1);                                \
     Tcl_AppendObjToObj((dstobj), (typeobj));                                   \
     Tcl_AppendToObj((dstobj), "\" is not a valid type, must be one of: ", -1); \
     Tcl_AppendToObj((dstobj), tcl_isupport_settypes(), -1);                    \
-    if (!(set))                                                                \
-      Tcl_AppendStringsToObj((dstobj), " ", tcl_isupport_gettypes(), NULL);    \
+} while (0)
+
+#define CHECK_VALIDTYPE(typeobj, set) tcl_isupport_validtype(Tcl_GetString((typeobj)), (set))
+
+#define ENSURE_VALIDTYPE_SET(irp, dstobj, typeobj) do {                        \
+  if (!CHECK_VALIDTYPE((typeobj), 1)) {                                        \
+    TCL_ERR_TYPE((dstobj), (typeobj));                                         \
+    Tcl_SetObjResult((irp), (dstobj));                                         \
+    return TCL_ERROR;                                                          \
+  }                                                                            \
+} while (0)
+
+#define ENSURE_VALIDTYPE_GET(irp, dstobj, typeobj) do {                        \
+  if (!CHECK_VALIDTYPE((typeobj), 0)) {                                        \
+    TCL_ERR_TYPE((dstobj), (typeobj));                                         \
+    Tcl_AppendStringsToObj((dstobj), " ", tcl_isupport_gettypes(), NULL);      \
     Tcl_SetObjResult((irp), (dstobj));                                         \
     return TCL_ERROR;                                                          \
   }                                                                            \
@@ -195,7 +208,7 @@ static int tcl_isupport_get STDOBJVAR
   }
 
   /* objc >= 3 */
-  ENSURE_VALIDTYPE(irp, tclres, objv[2], 0);
+  ENSURE_VALIDTYPE_GET(irp, tclres, objv[2]);
 
   if (objc == 4) {
     int keylen;
@@ -228,7 +241,7 @@ static int tcl_isupport_set STDOBJVAR
   /* First one to check for type validity only */
   BADOBJARGS(3, 5, 2, "type setting value");
 
-  ENSURE_VALIDTYPE(irp, tclres, objv[2], 1);
+  ENSURE_VALIDTYPE_SET(irp, tclres, objv[2]);
 
   if (!strcmp(Tcl_GetString(objv[2]), "ignored"))
     BADOBJARGS(4, 5, 3, "setting ?value?");
@@ -270,7 +283,7 @@ static int tcl_isupport_unset STDOBJVAR
 
   BADOBJARGS(4, 4, 2, "type setting");
 
-  ENSURE_VALIDTYPE(irp, tclres, objv[2], 1);
+  ENSURE_VALIDTYPE_SET(irp, tclres, objv[2]);
 
   key = Tcl_GetStringFromObj(objv[3], &keylen);
   data = find_record(key, keylen);
@@ -292,7 +305,7 @@ static int tcl_isupport_isset STDOBJVAR
 
   BADOBJARGS(4, 4, 2, "type setting");
 
-  ENSURE_VALIDTYPE(irp, tclres, objv[2], 1);
+  ENSURE_VALIDTYPE_GET(irp, tclres, objv[2]);
 
   key = Tcl_GetStringFromObj(objv[3], &keylen);
   data = find_record(key, keylen);

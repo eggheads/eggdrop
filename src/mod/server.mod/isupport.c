@@ -24,8 +24,10 @@
 #include <ctype.h>
 
 #define ICLEAR(dst) do { if ((dst)) { nfree((dst)); (dst) = NULL; } } while (0)
-#define ISET(dst, val, len) do { if ((dst)) { nfree((dst)); }; \
-  (dst) = valuendup((val), ((len) < 0 ? strlen((val)) : (len))); } while (0)
+#define ISET(dst, val) do { if ((dst)) { nfree((dst)); }; \
+  (dst) = valuendup((val), strlen((val))); } while (0)
+#define ISETLEN(dst, val, len) do { if ((dst)) { nfree((dst)); }; \
+  (dst) = valuendup((val), (len)); } while (0)
 
 struct isupport {
   size_t keylen;
@@ -132,11 +134,11 @@ void isupport_set_ignored_into(struct isupport *data, int value) {
 
 void isupport_set_type_into(struct isupport *data, const char *type, const char *value) {
   if (!strcmp(type, "forced"))
-    ISET(data->forced, value, -1);
+    ISET(data->forced, value);
   else if (!strcmp(type, "default"))
-    ISET(data->def, value, -1);
+    ISET(data->def, value);
   else if (!strcmp(type, "server"))
-    ISET(data->value, value, -1);
+    ISET(data->value, value);
   putlog(LOG_MISC, "*", "Unknown ISUPPORT type: %s", type);
 }
 
@@ -195,7 +197,7 @@ static void isupport_set(const char *key, size_t keylen,
 {
   struct isupport *data = get_record(key, keylen);
 
-  ISET(data->value, value, len);
+  ISETLEN(data->value, value, len);
 }
 
 static void isupport_clear(void) {
@@ -219,7 +221,7 @@ static void isupport_set_forced(const char *key, size_t keylen,
 {
   struct isupport *data = get_record(key, keylen);
 
-  ISET(data->forced, value, len);
+  ISETLEN(data->forced, value, len);
   data->ignored = 0;
 }
 
@@ -238,7 +240,7 @@ static void isupport_set_default(const char *key, size_t keylen,
 {
   struct isupport *data = get_record(key, keylen);
 
-  ISET(data->def, value, len);
+  ISETLEN(data->def, value, len);
 }
 
 static void isupport_clear_default(void) {
