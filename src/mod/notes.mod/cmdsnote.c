@@ -21,8 +21,7 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
-static void cmd_pls_noteign(struct userrec *u, int idx, char *par)
-{
+static void cmd_pls_noteign(struct userrec *u, int idx, char *par) {
   struct userrec *u2;
   char *handle, *mask, *buf, *p;
 
@@ -39,7 +38,7 @@ static void cmd_pls_noteign(struct userrec *u, int idx, char *par)
   if (mask[0]) {
     u2 = get_user_by_handle(userlist, handle);
     if (u != u2) {
-      struct flag_record fr = { FR_GLOBAL | FR_CHAN, 0, 0, 0, 0, 0 };
+      struct flag_record fr = {FR_GLOBAL | FR_CHAN, 0, 0, 0, 0, 0};
 
       get_user_flagrec(u, &fr, dcc[idx].u.chat->con_chan);
       if (!(glob_master(fr) || glob_owner(fr))) {
@@ -65,8 +64,7 @@ static void cmd_pls_noteign(struct userrec *u, int idx, char *par)
   return;
 }
 
-static void cmd_mns_noteign(struct userrec *u, int idx, char *par)
-{
+static void cmd_mns_noteign(struct userrec *u, int idx, char *par) {
   struct userrec *u2;
   char *handle, *mask, *buf, *p;
 
@@ -82,7 +80,7 @@ static void cmd_mns_noteign(struct userrec *u, int idx, char *par)
   if (mask[0]) {
     u2 = get_user_by_handle(userlist, handle);
     if (u != u2) {
-      struct flag_record fr = { FR_GLOBAL | FR_CHAN, 0, 0, 0, 0, 0 };
+      struct flag_record fr = {FR_GLOBAL | FR_CHAN, 0, 0, 0, 0, 0};
 
       get_user_flagrec(u, &fr, dcc[idx].u.chat->con_chan);
       if (!(glob_master(fr) || glob_owner(fr))) {
@@ -109,8 +107,7 @@ static void cmd_mns_noteign(struct userrec *u, int idx, char *par)
   return;
 }
 
-static void cmd_noteigns(struct userrec *u, int idx, char *par)
-{
+static void cmd_noteigns(struct userrec *u, int idx, char *par) {
   struct userrec *u2;
   char **ignores;
   int ignoresn, i;
@@ -118,7 +115,7 @@ static void cmd_noteigns(struct userrec *u, int idx, char *par)
   if (par[0]) {
     u2 = get_user_by_handle(userlist, par);
     if (u != u2) {
-      struct flag_record fr = { FR_GLOBAL | FR_CHAN, 0, 0, 0, 0, 0 };
+      struct flag_record fr = {FR_GLOBAL | FR_CHAN, 0, 0, 0, 0, 0};
 
       get_user_flagrec(u, &fr, dcc[idx].u.chat->con_chan);
       if (!(glob_master(fr) || glob_owner(fr))) {
@@ -143,12 +140,11 @@ static void cmd_noteigns(struct userrec *u, int idx, char *par)
   for (i = 0; i < ignoresn; i++)
     dprintf(idx, " %s", ignores[i]);
   dprintf(idx, "\n");
-  nfree(ignores[0]);            /* Free the string buffer       */
-  nfree(ignores);               /* Free the ptr array           */
+  nfree(ignores[0]); /* Free the string buffer       */
+  nfree(ignores);    /* Free the ptr array           */
 }
 
-static void cmd_fwd(struct userrec *u, int idx, char *par)
-{
+static void cmd_fwd(struct userrec *u, int idx, char *par) {
   char *handle;
   struct userrec *u1;
 
@@ -182,8 +178,7 @@ static void cmd_fwd(struct userrec *u, int idx, char *par)
   set_user(&USERENTRY_FWD, u1, par);
 }
 
-static void cmd_notes(struct userrec *u, int idx, char *par)
-{
+static void cmd_notes(struct userrec *u, int idx, char *par) {
   char *fcn;
 
   if (!par[0]) {
@@ -214,8 +209,7 @@ static void cmd_notes(struct userrec *u, int idx, char *par)
   putlog(LOG_CMDS, "*", "#%s# notes %s %s", dcc[idx].nick, fcn, par);
 }
 
-static void cmd_note(struct userrec *u, int idx, char *par)
-{
+static void cmd_note(struct userrec *u, int idx, char *par) {
   char handle[512], *p;
   int echo;
 
@@ -237,12 +231,10 @@ static void cmd_note(struct userrec *u, int idx, char *par)
   add_note(p, dcc[idx].nick, par, idx, echo);
 }
 
-static cmd_t notes_cmds[] = {
-  {"fwd",      "m",  (IntFunc) cmd_fwd,         NULL},
-  {"notes",    "",   (IntFunc) cmd_notes,       NULL},
-  {"+noteign", "",   (IntFunc) cmd_pls_noteign, NULL},
-  {"-noteign", "",   (IntFunc) cmd_mns_noteign, NULL},
-  {"noteigns", "",   (IntFunc) cmd_noteigns,    NULL},
-  {"note",     "",   (IntFunc) cmd_note,        NULL},
-  {NULL,       NULL, NULL,                       NULL}
-};
+static cmd_t notes_cmds[] = {{"fwd", "m", (IntFunc)cmd_fwd, NULL},
+                             {"notes", "", (IntFunc)cmd_notes, NULL},
+                             {"+noteign", "", (IntFunc)cmd_pls_noteign, NULL},
+                             {"-noteign", "", (IntFunc)cmd_mns_noteign, NULL},
+                             {"noteigns", "", (IntFunc)cmd_noteigns, NULL},
+                             {"note", "", (IntFunc)cmd_note, NULL},
+                             {NULL, NULL, NULL, NULL}};
