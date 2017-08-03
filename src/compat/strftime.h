@@ -34,7 +34,7 @@
 size_t egg_strftime(char *s, size_t maxsize, const char *format,
                     const struct tm *tp);
 #else
-#  define egg_strftime strftime
+#define egg_strftime strftime
 #endif
 
 #endif /* !_EGG_COMPAT_STRFTIME_H_ */

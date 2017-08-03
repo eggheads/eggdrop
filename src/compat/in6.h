@@ -21,50 +21,59 @@
 
 #ifdef IPV6
 
-#include <sys/types.h>
-#include <sys/socket.h>
 #include <netinet/in.h>
-
+#include <sys/socket.h>
+#include <sys/types.h>
 
 #ifndef PF_INET6
-#  define PF_INET6 PF_MAX
+#define PF_INET6 PF_MAX
 #endif
 
 #ifndef AF_INET6
-#  define AF_INET6 PF_INET6
+#define AF_INET6 PF_INET6
 #endif
 
 #ifndef HAVE_STRUCT_IN6_ADDR
 struct in6_addr {
   union {
-    u_8bit_t	__u6_addr8[16];
-    u_16bit_t	__u6_addr16[8];
-    u_32bit_t	__u6_addr32[4];
+    u_8bit_t __u6_addr8[16];
+    u_16bit_t __u6_addr16[8];
+    u_32bit_t __u6_addr32[4];
   } __u6_addr;
-#define	s6_addr	__u6_addr.__u6_addr8
+#define s6_addr __u6_addr.__u6_addr8
 };
 #endif
 
 #ifndef HAVE_STRUCT_SOCKADDR_IN6
 struct sockaddr_in6 {
-  u_16bit_t 	  sin6_family;
-  u_16bit_t 	  sin6_port;
-  u_32bit_t 	  sin6_flowinfo;
+  u_16bit_t sin6_family;
+  u_16bit_t sin6_port;
+  u_32bit_t sin6_flowinfo;
   struct in6_addr sin6_addr;
-  u_32bit_t       sin6_scope_id;
+  u_32bit_t sin6_scope_id;
 };
 #endif
 
 #ifndef INET6_ADDRSTRLEN
-#  define INET6_ADDRSTRLEN 46
+#define INET6_ADDRSTRLEN 46
 #endif
 
 #ifndef IN6ADDR_ANY_INIT
-#  define IN6ADDR_ANY_INIT { { { 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 } } }
+#define IN6ADDR_ANY_INIT                                                       \
+  {                                                                            \
+    {                                                                          \
+      { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }                       \
+    }                                                                          \
+  }
 #endif
 
 #ifndef IN6ADDR_LOOPBACK_INIT
-#  define IN6ADDR_LOOPBACK_INIT { { { 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1 } } }
+#define IN6ADDR_LOOPBACK_INIT                                                  \
+  {                                                                            \
+    {                                                                          \
+      { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1 }                       \
+    }                                                                          \
+  }
 #endif
 
 #ifndef HAVE_IN6ADDR_ANY
@@ -76,34 +85,30 @@ extern const struct in6_addr in6addr_loopback;
 #endif
 
 #ifndef IN6_IS_ADDR_UNSPECIFIED
-# define IN6_IS_ADDR_UNSPECIFIED(a) \
-  (((const u_32bit_t *) (a))[0] == 0                                   \
-   && ((const u_32bit_t *) (a))[1] == 0                                \
-   && ((const u_32bit_t *) (a))[2] == 0                                \
-   && ((const u_32bit_t *) (a))[3] == 0)
+#define IN6_IS_ADDR_UNSPECIFIED(a)                                             \
+  (((const u_32bit_t *)(a))[0] == 0 && ((const u_32bit_t *)(a))[1] == 0 &&     \
+   ((const u_32bit_t *)(a))[2] == 0 && ((const u_32bit_t *)(a))[3] == 0)
 #endif
 
 #ifndef IN6_IS_ADDR_LOOPBACK
-# define IN6_IS_ADDR_LOOPBACK(a) \
-  (((const u_32bit_t *) (a))[0] == 0                                   \
-   && ((const u_32bit_t *) (a))[1] == 0                                \
-   && ((const u_32bit_t *) (a))[2] == 0                                \
-   && ((const u_32bit_t *) (a))[3] == htonl (1))
+#define IN6_IS_ADDR_LOOPBACK(a)                                                \
+  (((const u_32bit_t *)(a))[0] == 0 && ((const u_32bit_t *)(a))[1] == 0 &&     \
+   ((const u_32bit_t *)(a))[2] == 0 &&                                         \
+   ((const u_32bit_t *)(a))[3] == htonl(1))
 #endif
 
 #ifndef IN6_IS_ADDR_V4MAPPED
-# define IN6_IS_ADDR_V4MAPPED(a) \
-  ((((const u_32bit_t *) (a))[0] == 0)                                 \
-   && (((const u_32bit_t *) (a))[1] == 0)                              \
-   && (((const u_32bit_t *) (a))[2] == htonl (0xffff)))
+#define IN6_IS_ADDR_V4MAPPED(a)                                                \
+  ((((const u_32bit_t *)(a))[0] == 0) && (((const u_32bit_t *)(a))[1] == 0) && \
+   (((const u_32bit_t *)(a))[2] == htonl(0xffff)))
 #endif
 
 #ifndef IN6_ARE_ADDR_EQUAL
-# define IN6_ARE_ADDR_EQUAL(a,b) \
-  ((((const u_32bit_t *) (a))[0] == ((const u_32bit_t *) (b))[0])     \
-   && (((const u_32bit_t *) (a))[1] == ((const u_32bit_t *) (b))[1])  \
-   && (((const u_32bit_t *) (a))[2] == ((const u_32bit_t *) (b))[2])  \
-   && (((const u_32bit_t *) (a))[3] == ((const u_32bit_t *) (b))[3]))
+#define IN6_ARE_ADDR_EQUAL(a, b)                                               \
+  ((((const u_32bit_t *)(a))[0] == ((const u_32bit_t *)(b))[0]) &&             \
+   (((const u_32bit_t *)(a))[1] == ((const u_32bit_t *)(b))[1]) &&             \
+   (((const u_32bit_t *)(a))[2] == ((const u_32bit_t *)(b))[2]) &&             \
+   (((const u_32bit_t *)(a))[3] == ((const u_32bit_t *)(b))[3]))
 #endif
 
 #endif /* IPV6 */

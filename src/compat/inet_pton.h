@@ -23,13 +23,13 @@
 #ifndef _EGG_COMPAT_INET_PTON_H
 #define _EGG_COMPAT_INET_PTON_H
 
-# include "src/main.h"
+#include "src/main.h"
 
 #ifdef HAVE_SYS_SOCKET_H
-#  include <sys/socket.h>
+#include <sys/socket.h>
 #endif
-#include <netinet/in.h>
 #include <arpa/inet.h>
+#include <netinet/in.h>
 
 #ifndef HAVE_INET_PTON
 int inet_pton(int af, const char *src, void *dst);

@@ -19,9 +19,8 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
-#include "main.h"
 #include "snprintf.h"
-
+#include "main.h"
 
 /*
  * Copyright Patrick Powell 1995
@@ -80,8 +79,8 @@
  *
  **************************************************************/
 
-#include <string.h>
 #include <ctype.h>
+#include <string.h>
 #include <sys/types.h>
 
 #ifndef HAVE_VSNPRINTF
@@ -89,21 +88,21 @@
 /* varargs declarations: */
 
 #if defined(__STDC__)
-#  ifdef HAVE_STDARG_H
-#    include <stdarg.h>
-#  endif
-#  define HAVE_STDARGS          /* let's hope that works everywhere (mj) */
-#  define VA_LOCAL_DECL va_list ap
-#  define VA_START(f)   va_start(ap, f)
-#  define VA_SHIFT(v,t) ;       /* no-op for ANSI */
-#  define VA_END        va_end(ap)
+#ifdef HAVE_STDARG_H
+#include <stdarg.h>
+#endif
+#define HAVE_STDARGS /* let's hope that works everywhere (mj) */
+#define VA_LOCAL_DECL va_list ap
+#define VA_START(f) va_start(ap, f)
+#define VA_SHIFT(v, t) ; /* no-op for ANSI */
+#define VA_END va_end(ap)
 #else
-#  include <varargs.h>
-#  undef HAVE_STDARGS
-#  define VA_LOCAL_DECL va_list ap
-#  define VA_START(f)   va_start(ap)    /* f is ignored! */
-#  define VA_SHIFT(v,t) v = va_arg(ap,t)
-#  define VA_END        va_end(ap)
+#include <varargs.h>
+#undef HAVE_STDARGS
+#define VA_LOCAL_DECL va_list ap
+#define VA_START(f) va_start(ap) /* f is ignored! */
+#define VA_SHIFT(v, t) v = va_arg(ap, t)
+#define VA_END va_end(ap)
 #endif
 
 #ifdef HAVE_LONG_DOUBLE
@@ -127,37 +126,37 @@ static void dopr_outch(char *buffer, size_t *currlen, size_t maxlen, char c);
 
 /* format read states */
 #define DP_S_DEFAULT 0
-#define DP_S_FLAGS   1
-#define DP_S_MIN     2
-#define DP_S_DOT     3
-#define DP_S_MAX     4
-#define DP_S_MOD     5
-#define DP_S_CONV    6
-#define DP_S_DONE    7
+#define DP_S_FLAGS 1
+#define DP_S_MIN 2
+#define DP_S_DOT 3
+#define DP_S_MAX 4
+#define DP_S_MOD 5
+#define DP_S_CONV 6
+#define DP_S_DONE 7
 
 /* format flags - Bits */
-#define DP_F_MINUS      (1 << 0)
-#define DP_F_PLUS       (1 << 1)
-#define DP_F_SPACE      (1 << 2)
-#define DP_F_NUM        (1 << 3)
-#define DP_F_ZERO       (1 << 4)
-#define DP_F_UP         (1 << 5)
-#define DP_F_UNSIGNED   (1 << 6)
+#define DP_F_MINUS (1 << 0)
+#define DP_F_PLUS (1 << 1)
+#define DP_F_SPACE (1 << 2)
+#define DP_F_NUM (1 << 3)
+#define DP_F_ZERO (1 << 4)
+#define DP_F_UP (1 << 5)
+#define DP_F_UNSIGNED (1 << 6)
 
 /* Conversion Flags */
-#define DP_C_SHORT   1
-#define DP_C_LONG    2
+#define DP_C_SHORT 1
+#define DP_C_LONG 2
 #define DP_C_LDOUBLE 3
 
 #define char_to_int(p) (p - '0')
 
 #ifdef MAX
-#  undef MAX
+#undef MAX
 #endif
-#define MAX(p,q) ((p >= q) ? p : q)
+#define MAX(p, q) ((p >= q) ? p : q)
 
-static void dopr(char *buffer, size_t maxlen, const char *format, va_list args)
-{
+static void dopr(char *buffer, size_t maxlen, const char *format,
+                 va_list args) {
   char ch;
   long value;
   LDOUBLE fvalue;
@@ -357,13 +356,13 @@ static void dopr(char *buffer, size_t maxlen, const char *format, va_list args)
         strvalue = va_arg(args, char *);
 
         if (max < 0)
-          max = maxlen;         /* ie, no max */
+          max = maxlen; /* ie, no max */
         fmtstr(buffer, &currlen, maxlen, strvalue, flags, min, max);
         break;
       case 'p':
         strvalue = va_arg(args, void *);
 
-        fmtint(buffer, &currlen, maxlen, (long) strvalue, 16, min, max, flags);
+        fmtint(buffer, &currlen, maxlen, (long)strvalue, 16, min, max, flags);
         break;
       case 'n':
         if (cflags == DP_C_SHORT) {
@@ -403,7 +402,7 @@ static void dopr(char *buffer, size_t maxlen, const char *format, va_list args)
       break;
     default:
       /* hmm? */
-      break;                    /* some picky compilers need this */
+      break; /* some picky compilers need this */
     }
   }
   if (currlen < maxlen - 1)
@@ -412,22 +411,22 @@ static void dopr(char *buffer, size_t maxlen, const char *format, va_list args)
     buffer[maxlen - 1] = '\0';
 }
 
-static void fmtstr(char *buffer, size_t *currlen, size_t maxlen,
-                   char *value, int flags, int min, int max)
-{
-  int padlen, strln;            /* amount to pad */
+static void fmtstr(char *buffer, size_t *currlen, size_t maxlen, char *value,
+                   int flags, int min, int max) {
+  int padlen, strln; /* amount to pad */
   int cnt = 0;
 
   if (value == 0) {
     value = "<NULL>";
   }
 
-  for (strln = 0; value[strln]; ++strln);       /* strlen */
+  for (strln = 0; value[strln]; ++strln)
+    ; /* strlen */
   padlen = min - strln;
   if (padlen < 0)
     padlen = 0;
   if (flags & DP_F_MINUS)
-    padlen = -padlen;           /* Left Justify */
+    padlen = -padlen; /* Left Justify */
 
   while ((padlen > 0) && (cnt < max)) {
     dopr_outch(buffer, currlen, maxlen, ' ');
@@ -447,15 +446,14 @@ static void fmtstr(char *buffer, size_t *currlen, size_t maxlen,
 
 /* Have to handle DP_F_NUM (ie 0x and 0 alternates) */
 
-static void fmtint(char *buffer, size_t *currlen, size_t maxlen,
-                   long value, int base, int min, int max, int flags)
-{
+static void fmtint(char *buffer, size_t *currlen, size_t maxlen, long value,
+                   int base, int min, int max, int flags) {
   int signvalue = 0;
   unsigned long uvalue;
   char convert[20];
   int place = 0;
-  int spadlen = 0;              /* amount to space pad */
-  int zpadlen = 0;              /* amount to zero pad */
+  int spadlen = 0; /* amount to space pad */
+  int zpadlen = 0; /* amount to zero pad */
   int caps = 0;
 
   if (max < 0)
@@ -474,14 +472,13 @@ static void fmtint(char *buffer, size_t *currlen, size_t maxlen,
   }
 
   if (flags & DP_F_UP)
-    caps = 1;                   /* Should characters be upper case? */
+    caps = 1; /* Should characters be upper case? */
 
   do {
-    convert[place++] = (caps ? "0123456789ABCDEF" : "0123456789abcdef")
-      [uvalue % (unsigned) base];
-    uvalue = (uvalue / (unsigned) base);
-  }
-  while (uvalue && (place < 20));
+    convert[place++] = (caps ? "0123456789ABCDEF"
+                             : "0123456789abcdef")[uvalue % (unsigned)base];
+    uvalue = (uvalue / (unsigned)base);
+  } while (uvalue && (place < 20));
   if (place == 20)
     place--;
   convert[place] = 0;
@@ -497,12 +494,11 @@ static void fmtint(char *buffer, size_t *currlen, size_t maxlen,
     spadlen = 0;
   }
   if (flags & DP_F_MINUS)
-    spadlen = -spadlen;         /* Left Justifty */
+    spadlen = -spadlen; /* Left Justifty */
 
 #ifdef DEBUG_SNPRINTF
-  dprint(1,
-         (debugfile, "zpad: %d, spad: %d, min: %d, max: %d, place: %d\n",
-          zpadlen, spadlen, min, max, place));
+  dprint(1, (debugfile, "zpad: %d, spad: %d, min: %d, max: %d, place: %d\n",
+             zpadlen, spadlen, min, max, place));
 #endif
 
   /* Spaces */
@@ -534,8 +530,7 @@ static void fmtint(char *buffer, size_t *currlen, size_t maxlen,
   }
 }
 
-static LDOUBLE abs_val(LDOUBLE value)
-{
+static LDOUBLE abs_val(LDOUBLE value) {
   LDOUBLE result = value;
 
   if (value < 0)
@@ -544,8 +539,7 @@ static LDOUBLE abs_val(LDOUBLE value)
   return result;
 }
 
-static LDOUBLE pow10(int exp)
-{
+static LDOUBLE pow10(int exp) {
   LDOUBLE result = 1;
 
   while (exp) {
@@ -556,8 +550,7 @@ static LDOUBLE pow10(int exp)
   return result;
 }
 
-static long round(LDOUBLE value)
-{
+static long round(LDOUBLE value) {
   long intpart;
 
   intpart = value;
@@ -568,16 +561,15 @@ static long round(LDOUBLE value)
   return intpart;
 }
 
-static void fmtfp(char *buffer, size_t *currlen, size_t maxlen,
-                  LDOUBLE fvalue, int min, int max, int flags)
-{
+static void fmtfp(char *buffer, size_t *currlen, size_t maxlen, LDOUBLE fvalue,
+                  int min, int max, int flags) {
   int signvalue = 0;
   LDOUBLE ufvalue;
   char iconvert[20];
   char fconvert[20];
   int iplace = 0;
   int fplace = 0;
-  int padlen = 0;               /* amount to pad */
+  int padlen = 0; /* amount to pad */
   int zpadlen = 0;
   int caps = 0;
   long intpart;
@@ -594,7 +586,7 @@ static void fmtfp(char *buffer, size_t *currlen, size_t maxlen,
 
   if (fvalue < 0)
     signvalue = '-';
-  else if (flags & DP_F_PLUS)   /* Do a sign (+/i) */
+  else if (flags & DP_F_PLUS) /* Do a sign (+/i) */
     signvalue = '+';
   else if (flags & DP_F_SPACE)
     signvalue = ' ';
@@ -626,10 +618,9 @@ static void fmtfp(char *buffer, size_t *currlen, size_t maxlen,
   /* Convert integer part */
   do {
     iconvert[iplace++] =
-      (caps ? "0123456789ABCDEF" : "0123456789abcdef")[intpart % 10];
+        (caps ? "0123456789ABCDEF" : "0123456789abcdef")[intpart % 10];
     intpart = (intpart / 10);
-  }
-  while (intpart && (iplace < 20));
+  } while (intpart && (iplace < 20));
   if (iplace == 20)
     iplace--;
   iconvert[iplace] = 0;
@@ -637,10 +628,9 @@ static void fmtfp(char *buffer, size_t *currlen, size_t maxlen,
   /* Convert fractional part */
   do {
     fconvert[fplace++] =
-      (caps ? "0123456789ABCDEF" : "0123456789abcdef")[fracpart % 10];
+        (caps ? "0123456789ABCDEF" : "0123456789abcdef")[fracpart % 10];
     fracpart = (fracpart / 10);
-  }
-  while (fracpart && (fplace < 20));
+  } while (fracpart && (fplace < 20));
   if (fplace == 20)
     fplace--;
   fconvert[fplace] = 0;
@@ -653,7 +643,7 @@ static void fmtfp(char *buffer, size_t *currlen, size_t maxlen,
   if (padlen < 0)
     padlen = 0;
   if (flags & DP_F_MINUS)
-    padlen = -padlen;           /* Left Justifty */
+    padlen = -padlen; /* Left Justifty */
 
   if ((flags & DP_F_ZERO) && (padlen > 0)) {
     if (signvalue) {
@@ -698,14 +688,12 @@ static void fmtfp(char *buffer, size_t *currlen, size_t maxlen,
   }
 }
 
-static void dopr_outch(char *buffer, size_t *currlen, size_t maxlen, char c)
-{
+static void dopr_outch(char *buffer, size_t *currlen, size_t maxlen, char c) {
   if (*currlen < maxlen)
     buffer[(*currlen)++] = c;
 }
 
-int egg_vsnprintf(char *str, size_t count, const char *fmt, va_list args)
-{
+int egg_vsnprintf(char *str, size_t count, const char *fmt, va_list args) {
   str[0] = 0;
   dopr(str, count, fmt, args);
   return (strlen(str));
@@ -713,18 +701,17 @@ int egg_vsnprintf(char *str, size_t count, const char *fmt, va_list args)
 #endif /* !HAVE_VSNPRINTF */
 
 #ifndef HAVE_SNPRINTF
-#  ifdef HAVE_STDARGS
+#ifdef HAVE_STDARGS
 int egg_snprintf(char *str, size_t count, const char *fmt, ...)
-#  else
-int egg_snprintf(va_alist)
-va_dcl
-#  endif
+#else
+int egg_snprintf(va_alist) va_dcl
+#endif
 {
-#  ifndef HAVE_STDARGS
+#ifndef HAVE_STDARGS
   char *str;
   size_t count;
   char *fmt;
-#  endif
+#endif
   VA_LOCAL_DECL;
 
   VA_START(fmt);
@@ -733,7 +720,7 @@ va_dcl
   VA_SHIFT(count, size_t);
   VA_SHIFT(fmt, char *);
 
-  (void) egg_vsnprintf(str, count, fmt, ap);
+  (void)egg_vsnprintf(str, count, fmt, ap);
   VA_END;
   return (strlen(str));
 }

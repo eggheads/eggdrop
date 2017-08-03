@@ -25,16 +25,16 @@
 
 #include "src/main.h"
 #ifdef HAVE_SYS_SOCKET_H
-#  include <sys/socket.h>
+#include <sys/socket.h>
 #endif
-#include <netinet/in.h>
 #include <arpa/inet.h>
+#include <netinet/in.h>
 
 #ifndef HAVE_INET_ATON
 /* Use our own implementation. */
 int egg_inet_aton(const char *cp, struct in_addr *addr);
 #else
-#  define egg_inet_aton inet_aton
+#define egg_inet_aton inet_aton
 #endif
 
 #endif /* !__EGG_COMPAT_INET_ATON_H */

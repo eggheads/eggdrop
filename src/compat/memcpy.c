@@ -20,14 +20,13 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
-#include "main.h"
 #include "memcpy.h"
+#include "main.h"
 
 #ifndef HAVE_MEMCPY
-void *egg_memcpy(void *dest, const void *src, size_t n)
-{
+void *egg_memcpy(void *dest, const void *src, size_t n) {
   while (n--)
-    *((char *) dest)++ = *((char *) src)++;
+    *((char *)dest)++ = *((char *)src)++;
   return dest;
 }
 #endif /* !HAVE_MEMCPY */

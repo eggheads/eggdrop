@@ -26,10 +26,10 @@
 #include "src/main.h"
 
 #ifdef HAVE_SYS_SOCKET_H
-#  include <sys/socket.h>
+#include <sys/socket.h>
 #endif
-#include <netinet/in.h>
 #include <arpa/inet.h>
+#include <netinet/in.h>
 
 #ifndef HAVE_INET_NTOP
 const char *inet_ntop(int af, const void *src, char *dst, socklen_t size);

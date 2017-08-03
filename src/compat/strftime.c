@@ -21,13 +21,13 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
-#include "src/main.h"
 #include "strftime.h"
+#include "src/main.h"
 
 #ifndef HAVE_STRFTIME
-#  undef emacs
-#  undef _LIBC
-#  define strftime egg_strftime
+#undef emacs
+#undef _LIBC
+#define strftime egg_strftime
 
-#  include "gnu_strftime.c"
+#include "gnu_strftime.c"
 #endif /* !HAVE_STRFTIME */

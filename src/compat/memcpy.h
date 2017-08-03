@@ -30,7 +30,7 @@
 /* Use our own implementation. */
 void *egg_memcpy(void *dest, const void *src, size_t n);
 #else
-#  define egg_memcpy memcpy
+#define egg_memcpy memcpy
 #endif
 
 #endif /* !__EGG_COMPAT_MEMCPY_H */

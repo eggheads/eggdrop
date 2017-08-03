@@ -22,8 +22,7 @@
 #include "gethostbyname2.h"
 
 #if defined IPV6 && !defined HAVE_GETHOSTBYNAME2
-struct hostent *gethostbyname2(const char *name, int af)
-{
+struct hostent *gethostbyname2(const char *name, int af) {
   struct hostent *h;
 
   h = gethostbyname(name);

@@ -30,7 +30,7 @@
 /* Use our own implementation. */
 void *egg_memset(void *dest, int c, size_t n);
 #else
-#  define egg_memset memset
+#define egg_memset memset
 #endif
 
 /* Use memset instead of bzero.

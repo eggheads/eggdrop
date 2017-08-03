@@ -19,13 +19,13 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
-#include "main.h"
 #include "inet_aton.h"
+#include "main.h"
 
 #ifndef HAVE_ISASCII
-#  define inet_isascii(x) 1 /* Let checks succeed if we don't have isascii(). */
+#define inet_isascii(x) 1 /* Let checks succeed if we don't have isascii(). */
 #else
-#  define inet_isascii(x) egg_isascii(x)
+#define inet_isascii(x) egg_isascii(x)
 #endif
 
 #ifndef HAVE_INET_ATON
@@ -85,12 +85,13 @@
 
 #if defined(LIBC_SCCS) && !defined(lint)
 static char sccsid[] = "@(#)inet_addr.c	8.1 (Berkeley) 6/17/93";
-static char rcsid[] = "$-Id: inet_addr.c,v 1.11 1999/04/29 18:19:53 drepper Exp $";
+static char rcsid[] =
+    "$-Id: inet_addr.c,v 1.11 1999/04/29 18:19:53 drepper Exp $";
 #endif /* LIBC_SCCS and not lint */
 
-#include <sys/types.h>
-#include <sys/param.h>
 #include <ctype.h>
+#include <sys/param.h>
+#include <sys/types.h>
 
 /*
  * Check whether "cp" is a valid ascii representation
@@ -99,12 +100,11 @@ static char rcsid[] = "$-Id: inet_addr.c,v 1.11 1999/04/29 18:19:53 drepper Exp 
  * This replaces inet_addr, the return value from which
  * cannot distinguish between failure and a local broadcast address.
  */
-int egg_inet_aton(cp, addr)
-const char *cp;
+int egg_inet_aton(cp, addr) const char *cp;
 struct in_addr *addr;
 {
-  static const u_32bit_t max[4] = { 0xffffffff, 0xffffff, 0xffff, 0xff };
-  register u_32bit_t val;       /* changed from u_long --david */
+  static const u_32bit_t max[4] = {0xffffffff, 0xffffff, 0xffff, 0xff};
+  register u_32bit_t val; /* changed from u_long --david */
   register int base;
   register int n;
   register char c;
@@ -166,9 +166,8 @@ struct in_addr *addr;
    */
   n = pp - parts + 1;
 
-  if (n == 0 ||                 /* initial nondigit */
-      parts[0] > 0xff || parts[1] > 0xff || parts[2] > 0xff ||
-      val > max[n - 1])
+  if (n == 0 || /* initial nondigit */
+      parts[0] > 0xff || parts[1] > 0xff || parts[2] > 0xff || val > max[n - 1])
     goto ret_0;
 
   val |= (parts[0] << 24) | (parts[1] << 16) | (parts[2] << 8);

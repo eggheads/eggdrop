@@ -20,14 +20,13 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
-#include "main.h"
 #include "memset.h"
+#include "main.h"
 
 #ifndef HAVE_MEMSET
-void *egg_memset(void *dest, int c, size_t n)
-{
+void *egg_memset(void *dest, int c, size_t n) {
   while (n--)
-    *((u_8bit_t *) dest)++ = c;
+    *((u_8bit_t *)dest)++ = c;
   return dest;
 }
 #endif /* !HAVE_MEMSET */
