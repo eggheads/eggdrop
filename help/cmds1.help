@@ -250,7 +250,8 @@ See also: chhandle
 
 %{+n}
    Owners only (these have to be enabled in the config file via "set raw-log"):
-     %bh%b  raw share traffic
+     %bg%b  raw outgoing share traffic
+     %bh%b  raw incoming share traffic
      %br%b  raw incoming server traffic
      %bt%b  raw incoming botnet traffic
      %bu%b  raw outgoing botnet traffic
