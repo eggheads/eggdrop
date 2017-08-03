@@ -350,7 +350,7 @@ static void dcc_bot_new(int idx, char *buf, int x)
   char *code;
 
   if (raw_log) {
-    if (!strcmp(buf, "s"))
+    if (!strncmp(buf, "s ", 2))
       putlog(LOG_BOTSHARE, "*", "{m<-%s} %s", dcc[idx].nick, buf + 2);
     else
       putlog(LOG_BOTNETIN, "*", "[m<-%s] %s", dcc[idx].nick, buf);
