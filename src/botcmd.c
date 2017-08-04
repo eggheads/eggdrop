@@ -171,7 +171,7 @@ static void bot_chat(int idx, char *par)
     fake_alert(idx, "direction", from);
     return;
   }
-  chatout("*** (%s) %s\n", from, par);
+  putlog(LOG_BOTMSG, "*", "(%s) %s", from, par);
   botnet_send_chat(idx, from, par);
   check_tcl_bcst(from, -1, par);
 }
@@ -716,7 +716,7 @@ static void bot_nlinked(int idx, char *par)
     i = base64_to_int(par);
   botnet_send_nlinked(idx, newbot, next, x, i);
   if (x == '!') {
-    chatout("*** (%s) %s %s.\n", next, NET_LINKEDTO, newbot);
+    putlog(LOG_BOTMSG, "*", "(%s) %s %s.", next, NET_LINKEDTO, newbot);
     x = '-';
   }
   addbot(newbot, dcc[idx].nick, next, x, i);
@@ -760,7 +760,7 @@ static void bot_unlinked(int idx, char *par)
     fake_alert(idx, "direction", bot);
   else if (i >= 0) {            /* Valid bot downstream of idx */
     if (par[0])
-      chatout("*** (%s) %s\n", lastbot(bot), par);
+      putlog(LOG_BOTMSG, "*", "(%s) %s", lastbot(bot), par);
     botnet_send_unlinked(idx, bot, par);
     unvia(idx, findbot(bot));
     rembot(bot);
