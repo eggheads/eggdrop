@@ -205,7 +205,8 @@ void isupport_set_into(struct isupport *data, const char *type, const char *valu
     ISET(data->def, value);
   else if (!strcmp(type, "server"))
     ISET(data->server, value);
-  putlog(LOG_MISC, "*", "Invalid ISUPPORT set type: %s", type);
+  else
+    putlog(LOG_MISC, "*", "Invalid ISUPPORT set type: %s", type);
 }
 
 /*** isupport unset ***/
