@@ -30,9 +30,9 @@ autom4te.cache
 Makefile
 .modules
 .known_modules
-/src/config.h
-/src/eggint.h
-lush.h
+/config.h
+/eggint.h
+/lush.h
 config.log
 config.status
 config.cache
