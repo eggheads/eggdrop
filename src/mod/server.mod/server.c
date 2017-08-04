@@ -2055,10 +2055,6 @@ char *server_start(Function *global_funcs)
   Tcl_TraceVar(interp, "nick-len",
                TCL_TRACE_READS | TCL_TRACE_WRITES | TCL_TRACE_UNSETS,
                traced_nicklen, NULL);
-  Tcl_TraceVar(interp, "isupport-default",
-               TCL_TRACE_READS | TCL_TRACE_WRITES | TCL_TRACE_UNSETS,
-               traced_isupport, NULL);
-
   H_wall = add_bind_table("wall", HT_STACKABLE, server_2char);
   H_raw = add_bind_table("raw", HT_STACKABLE, server_raw);
   H_notc = add_bind_table("notc", HT_STACKABLE, server_5char);
@@ -2093,7 +2089,11 @@ char *server_start(Function *global_funcs)
   newserver[0] = 0;
   newserverport = 0;
   curserv = 999;
+  /* Because this reads the interp variable, the read trace MUST be after */
   isupport_init();
+  Tcl_TraceVar(interp, "isupport-default",
+               TCL_TRACE_READS | TCL_TRACE_WRITES | TCL_TRACE_UNSETS,
+               traced_isupport, NULL);
   do_nettype();
   return NULL;
 }
