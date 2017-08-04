@@ -172,11 +172,6 @@ static void isupport_set_ignored(const char *key, size_t keylen,
   isupport_set_ignored_into(data, 1);
 }
 
-static void isupport_set_ignored_true(const char *key, size_t keylen)
-{
-  isupport_set_ignored(key, keylen, "", 0);
-}
-
 static void isupport_set_forced(const char *key, size_t keylen,
     const char *value, size_t len)
 {
@@ -372,7 +367,7 @@ void isupport_handle_ignored(const char *str)
 void isupport_handle_forced(const char *str)
 {
   isupport_clear_forced();
-  isupport_parse(str, isupport_set_forced, isupport_set_ignored_true);
+  isupport_parse(str, isupport_set_forced, NULL);
 }
 
 void isupport_handle_server(const char *str)

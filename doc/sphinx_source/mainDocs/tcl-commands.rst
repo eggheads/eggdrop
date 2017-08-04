@@ -1370,17 +1370,17 @@ isupport set <type> <key> <value>
 isupport setstr <type> <string>
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-  Description: Unsets all keys in the supplied type and then sets them from the supplied string in RPL_ISUPPORT form. The types "ignored" and "forced" are special, in that keys explicitely unset in the string for "forced" (e.g. "-WHOX") are set to ignored. And the values in a string for the "ignored" type are silently ignored (e.g. "NICKLEN=12" makes Eggdrop ignore the NICKLEN key from the server).
+  Description: Unsets all keys in the supplied type and then sets them from the supplied string in RPL_ISUPPORT form. The type "ignored" ignores specified values, all keys specified are added to the "ignored"-list.
 
   Examples:
 
-  +---------------------------------------------------------+--------------------------------------------------------------------------+
-  | isupport setstr default "NICKLEN=9 MODES=3 CHANTYPES=#& | Eggdrop does this to the "isupport-default" config setting on startup.   |
-  +---------------------------------------------------------+--------------------------------------------------------------------------+
-  | isupport setstr forced "-WHOX NICKLEN=15"               | Equivalent to isupport set ignored WHOX; isupport set forced NICKLEN 15. |
-  +---------------------------------------------------------+--------------------------------------------------------------------------+
-  | isupport setstr ignored "WHOX CPRIVMSG"                 | Possible values (e.g. CHANNELLEN=200) are ignored.                       |
-  +---------------------------------------------------------+--------------------------------------------------------------------------+
+  +---------------------------------------------------------+----------------------------------------------------------------------------+
+  | isupport setstr default "NICKLEN=9 MODES=3 CHANTYPES=#& | Eggdrop does this to the "isupport-default" config setting on startup.     |
+  +---------------------------------------------------------+----------------------------------------------------------------------------+
+  | isupport setstr forced "NICKLEN=15 WHOX"                | Equivalent to isupport set forced WHOX ""; isupport set forced NICKLEN 15. |
+  +---------------------------------------------------------+----------------------------------------------------------------------------+
+  | isupport setstr ignored "WHOX CPRIVMSG"                 | Possible values (e.g. CHANNELLEN=200) are ignored.                         |
+  +---------------------------------------------------------+----------------------------------------------------------------------------+
 
   Returns: nothing
 
