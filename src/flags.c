@@ -136,7 +136,7 @@ int logmodes(char *s)
 
 char *masktype(int x)
 {
-  static char s[24];            /* Change this if you change the levels */
+  static char s[26];            /* Change this if you change the levels */
   char *p = s;
 
   if (x & LOG_MSGS)
