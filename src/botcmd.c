@@ -299,8 +299,7 @@ static void bot_bye(int idx, char *par)
                  BOT_DISCONNECTED, dcc[idx].nick, par[0] ?
                  par : "No reason", bots, (bots != 1) ?
                  "s" : "", users, (users != 1) ? "s" : "");
-  putlog(LOG_BOTS, "*", "%s", s);
-  chatout("*** %s\n", s);
+  putlog(LOG_BOTS, "*", "%s.", s);
   botnet_send_unlinked(idx, dcc[idx].nick, s);
   dprintf(idx, "*bye\n");
   killsock(dcc[idx].sock);
@@ -697,7 +696,7 @@ static void bot_nlinked(int idx, char *par)
     dprintf(idx, "error %s\n", BOT_YOUREALEAF);
   }
   if (s[0]) {
-    chatout("*** %s\n", s);
+    putlog(LOG_BOTS, "*", "%s.", s);
     botnet_send_unlinked(idx, dcc[idx].nick, s);
     dprintf(idx, "bye %s\n", BOT_ILLEGALLINK);
     killsock(dcc[idx].sock);
@@ -742,7 +741,7 @@ static void bot_linked(int idx, char *par)
   simple_sprintf(s, "%s %s (%s) (lost %d bot%s and %d user%s",
                  MISC_DISCONNECTED, dcc[idx].nick, MISC_OUTDATED,
                  bots, (bots != 1) ? "s" : "", users, (users != 1) ? "s" : "");
-  chatout("*** %s\n", s);
+  putlog(LOG_BOTS, "*", "%s.", s);
   botnet_send_unlinked(idx, dcc[idx].nick, s);
   killsock(dcc[idx].sock);
   lostdcc(idx);
@@ -876,12 +875,11 @@ static void bot_reject(int idx, char *par)
       char s[1024];
 
       /* I'm the connection to the rejected bot */
-      putlog(LOG_BOTS, "*", "%s %s %s", from, MISC_REJECTED, dcc[i].nick);
       dprintf(i, "bye %s\n", par[0] ? par : MISC_REJECTED);
       simple_sprintf(s, "%s %s (%s: %s)",
                      MISC_DISCONNECTED, dcc[i].nick, from,
                      par[0] ? par : MISC_REJECTED);
-      chatout("*** %s\n", s);
+      putlog(LOG_BOTS, "*", "%s.", s);
       botnet_send_unlinked(i, dcc[i].nick, s);
       killsock(dcc[i].sock);
       lostdcc(i);
@@ -941,7 +939,7 @@ static void bot_thisbot(int idx, char *par)
     dprintf(idx, "bye %s\n", MISC_IMPOSTER);
     simple_sprintf(s, "%s %s (%s)", MISC_DISCONNECTED, dcc[idx].nick,
                    MISC_IMPOSTER);
-    chatout("*** %s\n", s);
+    putlog(LOG_BOTS, "*", "%s.", s);
     botnet_send_unlinked(idx, dcc[idx].nick, s);
     unvia(idx, findbot(dcc[idx].nick));
     killsock(dcc[idx].sock);
