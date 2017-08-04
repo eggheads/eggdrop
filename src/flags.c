@@ -63,6 +63,10 @@ int logmodes(char *s)
     case 'B':
       res |= LOG_BOTS;
       break;
+    case 'i':
+    case 'I':
+      res |= LOG_BOTMSG;
+      break;
     case 'r':
     case 'R':
       res |= raw_log ? LOG_RAW : 0;
@@ -136,7 +140,7 @@ int logmodes(char *s)
 
 char *masktype(int x)
 {
-  static char s[26];            /* Change this if you change the levels */
+  static char s[27];            /* Change this if you change the levels */
   char *p = s;
 
   if (x & LOG_MSGS)
@@ -153,6 +157,8 @@ char *masktype(int x)
     *p++ = 'o';
   if (x & LOG_BOTS)
     *p++ = 'b';
+  if (x & LOG_BOTMSG)
+    *p++ = 'i';
   if ((x & LOG_RAW) && raw_log)
     *p++ = 'r';
   if (x & LOG_FILES)
@@ -197,60 +203,62 @@ char *masktype(int x)
 
 char *maskname(int x)
 {
-  static char s[248];           /* Change this if you change the levels */
-  int i = 0;
+  static char s[280];           /* Change this if you change the levels */
+  int i = 0;			/* 6+8+7+13+6+6+6+17+5+7+8+7+9+15+19+20+24+24+(8*9)+1 */
 
   s[0] = 0;
   if (x & LOG_MSGS)
-    i += my_strcpy(s, "msgs, ");
+    i += my_strcpy(s, "msgs, "); /* 6 */
   if (x & LOG_PUBLIC)
-    i += my_strcpy(s + i, "public, ");
+    i += my_strcpy(s + i, "public, "); /* 8 */
   if (x & LOG_JOIN)
-    i += my_strcpy(s + i, "joins, ");
+    i += my_strcpy(s + i, "joins, "); /* 7 */
   if (x & LOG_MODES)
-    i += my_strcpy(s + i, "kicks/modes, ");
+    i += my_strcpy(s + i, "kicks/modes, "); /* 13 */
   if (x & LOG_CMDS)
-    i += my_strcpy(s + i, "cmds, ");
+    i += my_strcpy(s + i, "cmds, "); /* 6 */
   if (x & LOG_MISC)
-    i += my_strcpy(s + i, "misc, ");
+    i += my_strcpy(s + i, "misc, "); /* 6 */
   if (x & LOG_BOTS)
-    i += my_strcpy(s + i, "bots, ");
+    i += my_strcpy(s + i, "bots, "); /* 6 */
+  if (x & LOG_BOTMSG)
+    i += my_strcpy(s + i, "linked bot msgs, "); /* 17 */
   if ((x & LOG_RAW) && raw_log)
-    i += my_strcpy(s + i, "raw, ");
+    i += my_strcpy(s + i, "raw, "); /* 5 */
   if (x & LOG_FILES)
-    i += my_strcpy(s + i, "files, ");
+    i += my_strcpy(s + i, "files, "); /* 7 */
   if (x & LOG_SERV)
-    i += my_strcpy(s + i, "server, ");
+    i += my_strcpy(s + i, "server, "); /* 8 */
   if (x & LOG_DEBUG)
-    i += my_strcpy(s + i, "debug, ");
+    i += my_strcpy(s + i, "debug, "); /* 7 */
   if (x & LOG_WALL)
-    i += my_strcpy(s + i, "wallops, ");
+    i += my_strcpy(s + i, "wallops, "); /* 9 */
   if ((x & LOG_SRVOUT) && raw_log)
-    i += my_strcpy(s + i, "server output, ");
+    i += my_strcpy(s + i, "server output, "); /* 15 */
   if ((x & LOG_BOTNETIN) && raw_log)
-    i += my_strcpy(s + i, "botnet traffic in, ");
+    i += my_strcpy(s + i, "botnet traffic in, "); /* 19 */
   if ((x & LOG_BOTNETOUT) && raw_log)
-    i += my_strcpy(s + i, "botnet traffic out, ");
+    i += my_strcpy(s + i, "botnet traffic out, "); /* 20 */
   if ((x & LOG_BOTSHRIN) && raw_log)
-    i += my_strcpy(s + i, "incoming share traffic, ");
+    i += my_strcpy(s + i, "incoming share traffic, "); /* 24 */
   if ((x & LOG_BOTSHROUT) && raw_log)
-    i += my_strcpy(s + i, "outgoing share traffic, ");
+    i += my_strcpy(s + i, "outgoing share traffic, "); /* 24 */
   if (x & LOG_LEV1)
-    i += my_strcpy(s + i, "level 1, ");
+    i += my_strcpy(s + i, "level 1, "); /* 9 */
   if (x & LOG_LEV2)
-    i += my_strcpy(s + i, "level 2, ");
+    i += my_strcpy(s + i, "level 2, "); /* 9 */
   if (x & LOG_LEV3)
-    i += my_strcpy(s + i, "level 3, ");
+    i += my_strcpy(s + i, "level 3, "); /* 9 */
   if (x & LOG_LEV4)
-    i += my_strcpy(s + i, "level 4, ");
+    i += my_strcpy(s + i, "level 4, "); /* 9 */
   if (x & LOG_LEV5)
-    i += my_strcpy(s + i, "level 5, ");
+    i += my_strcpy(s + i, "level 5, "); /* 9 */
   if (x & LOG_LEV6)
-    i += my_strcpy(s + i, "level 6, ");
+    i += my_strcpy(s + i, "level 6, "); /* 9 */
   if (x & LOG_LEV7)
-    i += my_strcpy(s + i, "level 7, ");
+    i += my_strcpy(s + i, "level 7, "); /* 9 */
   if (x & LOG_LEV8)
-    i += my_strcpy(s + i, "level 8, ");
+    i += my_strcpy(s + i, "level 8, "); /* 9 */
   if (i)
     s[i - 2] = 0;
   else

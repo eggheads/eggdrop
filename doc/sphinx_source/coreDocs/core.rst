@@ -150,6 +150,8 @@ logfile <logflags> <channel> "logs/logfile"
       +---+------------------------------------------------------+
       | h | raw incoming share traffic                           |
       +---+------------------------------------------------------+
+      | i | linked bot messages                                  |
+      +---+------------------------------------------------------+
       | j | joins, parts, quits, and netsplits on the channel    |
       +---+------------------------------------------------------+
       | k | kicks, bans, and mode changes on the channel         |
@@ -231,7 +233,7 @@ logfile <logflags> <channel> "logs/logfile"
 Console Settings
 ----------------
 
-  set console "mkcobxs"
+  set console "mkcobixs"
     This is the default console mode. It uses the same event flags as the
     log files do. The console channel is automatically set to your "primary"
     channel, which is set in the modules section of the config file. Masters

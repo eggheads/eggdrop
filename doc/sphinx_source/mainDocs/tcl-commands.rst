@@ -1998,6 +1998,8 @@ logfile [<modes> <channel> <filename>]
   +-----+---------------------------------------------------------------------+
   | h   | raw incoming share traffic                                          |
   +-----+---------------------------------------------------------------------+
+  | i   | linked bot messages                                                 |
+  +-----+---------------------------------------------------------------------+
   | j   | joins, parts, quits, topic changes, and netsplits on the channel    |
   +-----+---------------------------------------------------------------------+
   | k   | kicks, bans, and mode changes on the channel                        |
