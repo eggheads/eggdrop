@@ -31,8 +31,8 @@ distclean: clean
 
 #safety hash
 ../uptime.o: .././uptime.mod/uptime.c .././uptime.mod/uptime.h \
- .././uptime.mod/../module.h ../../../src/main.h ../../../src/config.h \
- ../../../src/eggint.h ../../../src/lush.h ../../../src/lang.h \
+ .././uptime.mod/../module.h ../../../src/main.h ../../../config.h \
+ ../../../eggint.h ../../../lush.h ../../../src/lang.h \
  ../../../src/eggdrop.h ../../../src/compat/in6.h ../../../src/flags.h \
  ../../../src/cmdt.h ../../../src/tclegg.h ../../../src/tclhash.h \
  ../../../src/chan.h ../../../src/users.h ../../../src/compat/compat.h \
