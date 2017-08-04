@@ -1294,28 +1294,30 @@ isupport <subcommand> <args>
 
   Description: The isupport command manages RAW 005 (RPL_ISUPPORT) tokens, that define IRC network specifics like the maximum length of a nickname or channel, the amount of channels users can join, the channel- and usermodes, and so on. The valid subcommands are: get, isset, set, unset. The following table provides an overview of the subcommands and their parameters.
 
-  +-----------------------------------+-------------------------------------------------------------------------------------------------------------------------------+
-  | isupport get [type] [key]         | Retrieve the value of an ISUPPORT setting. Throws an error if not set. Valid types: forced, ignored, default, server, current |
-  +-----------------------------------+-------------------------------------------------------------------------------------------------------------------------------+
-  | isupport isset <type> <key>       | Checks if an ISUPPORT setting is set, returns 1 if set, 0 if not set. Valid types: forced, ignored, default, server, current  |
-  +-----------------------------------+-------------------------------------------------------------------------------------------------------------------------------+
-  | isupport set <type> <key> <value> | Sets the value of an ISUPPORT setting. Returns the value that was set. Valid types: forced, ignored, default.                 |
-  +-----------------------------------+-------------------------------------------------------------------------------------------------------------------------------+
-  | isupport unset <type> <key>       | Unsets the value of an ISUPPORT setting. Valid types: forced, ignored, default.                                               |
-  +-----------------------------------+-------------------------------------------------------------------------------------------------------------------------------+
+  +------------------------------------+-------------------------------------------------------------------------------------------------------------------------------+
+  | isupport get [type] [key]          | Retrieve the value of an isupport setting. Throws an error if not set. Valid types: forced, ignored, default, server, current |
+  +------------------------------------+-------------------------------------------------------------------------------------------------------------------------------+
+  | isupport isset <type> <key>        | Checks if an isupport setting is set, returns 1 if set, 0 if not set. Valid types: forced, ignored, default, server, current  |
+  +------------------------------------+-------------------------------------------------------------------------------------------------------------------------------+
+  | isupport set <type> <key> <value>  | Sets the value of an isupport setting. Returns the value that was set. Valid types: forced, ignored, default.                 |
+  +------------------------------------+-------------------------------------------------------------------------------------------------------------------------------+
+  | isupport unset <type> <key>        | Unsets the value of an isupport setting. Valid types: forced, ignored, default.                                               |
+  +------------------------------------+-------------------------------------------------------------------------------------------------------------------------------+
+  | isupport setstr <type> <string>    | Overwrites the type with the information from the supplied string in RPL_ISUPPORT form, see isupport setstr docs below.       |
+  +------------------------------------+-------------------------------------------------------------------------------------------------------------------------------+
 
-  Because of various IRCds that might return bogus values, their implementation could be different from Eggdrop's implementation of a feature or because of IRCd bugs, a hierarchical system was chosen to allow full flexibility in overwriting the ISUPPORT settings.
+  Because of various IRCds that might return bogus values, their implementation could be different from Eggdrop's implementation of a feature or because of IRCd bugs, a hierarchical system was chosen to allow full flexibility in overwriting the isupport settings.
 
   The following table describes the types of settings in order from highest to lowest priority and their purpose.
 
   +---------+-----------+-------------------------------------------------------------------------------------------------------------------------------------------------+
-  | ignored | settable  | The only valid value for these is 1 (and 0). If set, makes Eggdrop ignore anything the server sends about this token.                           |
+  | ignored | settable  | The only valid value for these is 1 (and 0). If set, makes Eggdrop forces this to be unset, even if specified in the default category.          |
   +---------+-----------+-------------------------------------------------------------------------------------------------------------------------------------------------+
   | forced  | settable  | The opposite of ignored. This forces a setting to a certain value, ignoring anything the server sends about it.                                 |
   +---------+-----------+-------------------------------------------------------------------------------------------------------------------------------------------------+
   | server  | read-only | This type is used to store the server's actual information after receiving RPL_ISUPPORT.                                                        |
   +---------+-----------+-------------------------------------------------------------------------------------------------------------------------------------------------+
-  | default | settable  | Default values not included in the IRCd's ISUPPORT line(s) are STILL used (e.g. WHOX when the server doesn't send WHOX). MUST be safe defaults! |
+  | default | settable  | Default values not included in the IRCd's isupport line(s) are STILL used (e.g. WHOX when the server doesn't send WHOX). MUST be safe defaults! |
   +---------+-----------+-------------------------------------------------------------------------------------------------------------------------------------------------+
   | current | read-only | The resulting setting Eggdrop is using. The aggregation of ignored > forced > server > default.                                                 |
   +---------+-----------+-------------------------------------------------------------------------------------------------------------------------------------------------+
@@ -1350,7 +1352,7 @@ isupport get [type] [key]
 isupport isset <type> <key>
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-  Returns: 1 if the specified ISUPPORT key is set for the specified type, 0 otherwise. This is necessary because isupport get throws an error if a key is not set because the empty string cannot be used to indicate unset, nor can 0 or any other string. Valid types: ignored, forced, server, default, current.
+  Returns: 1 if the specified isupport key is set for the specified type, 0 otherwise. This is necessary because isupport get throws an error if a key is not set because the empty string cannot be used to indicate unset, nor can 0 or any other string. Valid types: ignored, forced, server, default, current.
 
   Module: server
 
@@ -1358,18 +1360,37 @@ isupport isset <type> <key>
 isupport set <type> <key> <value>
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-  Description: Sets the specified ISUPPORT key in the specified type to the value string. For the type "ignored", value is optional and defaults to 1, must be 0/1 if specified. Specifying type "ignored" and value 0 is equivalent to isupport unset ignored <key>. Examples: isupport set default NICKLEN 9; isupport set ignored WHOX; isupport set ignored WHOX 1; isupport set forced NICKLEN 32. Valid types: forced, ignored, default.
+  Description: Sets the specified isupport key in the specified type to the value string. For the type "ignored", value is optional and defaults to 1, must be 0/1 if specified. Specifying type "ignored" and value 0 is equivalent to isupport unset ignored <key>. Examples: isupport set default NICKLEN 9; isupport set ignored WHOX; isupport set ignored WHOX 1; isupport set forced NICKLEN 32. Valid types: forced, ignored, default.
 
   Returns: The value that was set.
 
   Module: server
 
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+isupport setstr <type> <string>
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+  Description: Unsets all keys in the supplied type and then sets them from the supplied string in RPL_ISUPPORT form. The types "ignored" and "forced" are special, in that keys explicitely unset in the string for "forced" (e.g. "-WHOX") are set to ignored. And the values in a string for the "ignored" type are silently ignored (e.g. "NICKLEN=12" makes Eggdrop ignore the NICKLEN key from the server).
+
+  Examples:
+
+  +---------------------------------------------------------+--------------------------------------------------------------------------+
+  | isupport setstr default "NICKLEN=9 MODES=3 CHANTYPES=#& | Eggdrop does this to the "isupport-default" config setting on startup.   |
+  +---------------------------------------------------------+--------------------------------------------------------------------------+
+  | isupport setstr forced "-WHOX NICKLEN=15"               | Equivalent to isupport set ignored WHOX; isupport set forced NICKLEN 15. |
+  +---------------------------------------------------------+--------------------------------------------------------------------------+
+  | isupport setstr ignored "WHOX CPRIVMSG"                 | Possible values (e.g. CHANNELLEN=200) are ignored.                       |
+  +---------------------------------------------------------+--------------------------------------------------------------------------+
+
+  Returns: nothing
+
+  Module: server
 
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^
 isupport unset <type> <key>
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-  Description: Unsets the specified ISUPPORT key in the specified type. Must be set, or this throws an error. Examples: isupport unset ignored WHOX; isupport set default NICKLEN 9; isupport unset default NICKLEN. (NICKLEN is now unset as default.)
+  Description: Unsets the specified isupport key in the specified type. Must be set, or this throws an error. Examples: isupport unset ignored WHOX; isupport set default NICKLEN 9; isupport unset default NICKLEN. (NICKLEN is now unset as default.)
 
   Returns: nothing
 

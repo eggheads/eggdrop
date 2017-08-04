@@ -1882,6 +1882,9 @@ static char *server_close()
   Tcl_UntraceVar(interp, "nick-len",
                  TCL_TRACE_READS | TCL_TRACE_WRITES | TCL_TRACE_UNSETS,
                  traced_nicklen, NULL);
+  Tcl_UntraceVar(interp, "isupport-default",
+                 TCL_TRACE_READS | TCL_TRACE_WRITES | TCL_TRACE_UNSETS,
+                 traced_isupport, NULL);
   tcl_untraceserver("servers", NULL);
   empty_msgq();
   del_hook(HOOK_SECONDLY, (Function) server_secondly);
@@ -2052,6 +2055,9 @@ char *server_start(Function *global_funcs)
   Tcl_TraceVar(interp, "nick-len",
                TCL_TRACE_READS | TCL_TRACE_WRITES | TCL_TRACE_UNSETS,
                traced_nicklen, NULL);
+  Tcl_TraceVar(interp, "isupport-default",
+               TCL_TRACE_READS | TCL_TRACE_WRITES | TCL_TRACE_UNSETS,
+               traced_isupport, NULL);
 
   H_wall = add_bind_table("wall", HT_STACKABLE, server_2char);
   H_raw = add_bind_table("raw", HT_STACKABLE, server_raw);

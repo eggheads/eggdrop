@@ -27,6 +27,7 @@ static int tcl_isupport STDOBJVAR;
 static int tcl_isupport_get STDOBJVAR;
 static int tcl_isupport_isset STDOBJVAR;
 static int tcl_isupport_set STDOBJVAR;
+static int tcl_isupport_setstr STDOBJVAR;
 static int tcl_isupport_unset STDOBJVAR;
 
 /* settypes are implicitly also gettypes */
@@ -39,6 +40,7 @@ static struct {
   {"get", tcl_isupport_get},
   {"isset", tcl_isupport_isset},
   {"set", tcl_isupport_set},
+  {"setstr", tcl_isupport_setstr},
   {"unset", tcl_isupport_unset},
 };
 
@@ -138,7 +140,7 @@ static Tcl_Obj *tcl_isupport_type_list(Tcl_Interp *irp, const char *type) {
 
   Tcl_IncrRefCount(result);
   LIST_FOREACH_DATA(isupportdata, e, data) {
-    value = isupport_get_type_from(data, type);
+    value = isupport_get_from(data, type);
     if (value) {
       Tcl_ListObjAppendElement(irp, result, Tcl_NewStringObj(data->key, -1));
       Tcl_ListObjAppendElement(irp, result, Tcl_NewStringObj(value, -1));
@@ -215,7 +217,7 @@ static int tcl_isupport_get STDOBJVAR
     const char *key = Tcl_GetStringFromObj(objv[3], &keylen);
     struct isupport *data = find_record(key, keylen);
     if (data) {
-      const char *result = isupport_get_type_from(data, Tcl_GetString(objv[2]));
+      const char *result = isupport_get_from(data, Tcl_GetString(objv[2]));
       if (result) {
         Tcl_SetObjResult(irp, Tcl_NewStringObj(result, -1));
         return TCL_OK;
@@ -268,7 +270,7 @@ static int tcl_isupport_set STDOBJVAR
     isupport_set_ignored_into(data, truefalse);
     Tcl_SetObjResult(irp, Tcl_NewBooleanObj(truefalse));
   } else {
-    isupport_set_type_into(data, Tcl_GetString(objv[2]), Tcl_GetString(objv[4]));
+    isupport_set_into(data, Tcl_GetString(objv[2]), Tcl_GetString(objv[4]));
     Tcl_SetObjResult(irp, objv[4]);
   }
   return TCL_OK;
@@ -291,7 +293,7 @@ static int tcl_isupport_unset STDOBJVAR
   if (!data)
     TCL_ERR_NOTSET(irp, tclres, objv[3], objv[2]);
 
-  isupport_unset_type_into(data, Tcl_GetString(objv[2]));
+  isupport_unset_into(data, Tcl_GetString(objv[2]));
   Tcl_ResetResult(irp);
   return TCL_OK;
 }
@@ -309,8 +311,56 @@ static int tcl_isupport_isset STDOBJVAR
 
   key = Tcl_GetStringFromObj(objv[3], &keylen);
   data = find_record(key, keylen);
-  isset = (data && isupport_get_type_from(data, Tcl_GetString(objv[2])));
+  isset = (data && isupport_get_from(data, Tcl_GetString(objv[2])));
   Tcl_SetObjResult(irp, Tcl_NewBooleanObj(isset));
   return TCL_OK;
 }
 
+static int tcl_isupport_setstr STDOBJVAR
+{
+  Tcl_Obj *tclres;
+
+  BADOBJARGS(4, 4, 2, "type string");
+
+  ENSURE_VALIDTYPE_SET(irp, tclres, objv[2]);
+
+  isupport_handle(Tcl_GetString(objv[3]), Tcl_GetString(objv[2])); 
+
+  return TCL_OK;
+}
+
+static char *traced_isupport(ClientData cdata, Tcl_Interp *irp,
+                            EGG_CONST char *name1,
+                            EGG_CONST char *name2, int flags)
+{
+  if (flags & (TCL_TRACE_READS | TCL_TRACE_UNSETS)) {
+    struct isupportkeydata *e;
+    struct isupport *data;
+    const char *value;
+    Tcl_DString ds;
+    Tcl_DStringInit(&ds);
+
+    LIST_FOREACH_DATA(isupportdata, e, data) {
+      value = isupport_get_default_from(data);
+      if (value) {
+        value = isupport_encode(value);
+        Tcl_DStringAppend(&ds, data->key, data->keylen);
+        Tcl_DStringAppend(&ds, "=", 1);
+        Tcl_DStringAppend(&ds, value, strlen(value));
+        Tcl_DStringAppend(&ds, " ", 1);
+      }
+    }
+    /* remove trailing space */
+    if (Tcl_DStringLength(&ds))
+      Tcl_DStringTrunc(&ds, Tcl_DStringLength(&ds) - 1);
+    Tcl_SetVar2(interp, name1, name2, Tcl_DStringValue(&ds), TCL_GLOBAL_ONLY);
+    Tcl_DStringFree(&ds);
+    if (flags & TCL_TRACE_UNSETS)
+      Tcl_TraceVar(irp, name1, TCL_TRACE_READS | TCL_TRACE_WRITES |
+                   TCL_TRACE_UNSETS, traced_isupport, cdata);
+  } else {
+    EGG_CONST char *cval = Tcl_GetVar2(interp, name1, name2, TCL_GLOBAL_ONLY);
+    isupport_handle_default(cval);
+  }
+  return NULL;
+}
