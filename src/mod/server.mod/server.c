@@ -1861,7 +1861,6 @@ static char *server_close()
   rem_tcl_ints(my_tcl_ints);
   rem_help_reference("server.help");
   rem_tcl_commands(my_tcl_cmds);
-  rem_tcl_commands(my_tcl_objcmds);
   Tcl_UntraceVar(interp, "nick",
                  TCL_TRACE_READS | TCL_TRACE_WRITES | TCL_TRACE_UNSETS,
                  nick_change, NULL);
@@ -1882,9 +1881,6 @@ static char *server_close()
   Tcl_UntraceVar(interp, "nick-len",
                  TCL_TRACE_READS | TCL_TRACE_WRITES | TCL_TRACE_UNSETS,
                  traced_nicklen, NULL);
-  Tcl_UntraceVar(interp, "isupport-default",
-                 TCL_TRACE_READS | TCL_TRACE_WRITES | TCL_TRACE_UNSETS,
-                 traced_isupport, NULL);
   tcl_untraceserver("servers", NULL);
   empty_msgq();
   del_hook(HOOK_SECONDLY, (Function) server_secondly);
@@ -1955,7 +1951,8 @@ static Function server_table[] = {
   (Function) check_tcl_notc,
   (Function) & exclusive_binds, /* int                                  */
   /* 40 - 43 */
-  (Function) & H_out            /* p_tcl_bind_list                      */
+  (Function) & H_out,           /* p_tcl_bind_list                      */
+  (Function) & H_postisupport   /* p_tcl_bind_list                      */
 };
 
 char *server_start(Function *global_funcs)
@@ -2072,7 +2069,6 @@ char *server_start(Function *global_funcs)
   add_tcl_strings(my_tcl_strings);
   add_tcl_ints(my_tcl_ints);
   add_tcl_commands(my_tcl_cmds);
-  add_tcl_objcommands(my_tcl_objcmds);
   add_tcl_coups(my_tcl_coups);
   add_hook(HOOK_SECONDLY, (Function) server_secondly);
   add_hook(HOOK_5MINUTELY, (Function) server_5minutely);
@@ -2091,9 +2087,6 @@ char *server_start(Function *global_funcs)
   curserv = 999;
   /* Because this reads the interp variable, the read trace MUST be after */
   isupport_init();
-  Tcl_TraceVar(interp, "isupport-default",
-               TCL_TRACE_READS | TCL_TRACE_WRITES | TCL_TRACE_UNSETS,
-               traced_isupport, NULL);
   do_nettype();
   return NULL;
 }

@@ -64,7 +64,7 @@ typedef struct tcl_bind_list_b {
   struct tcl_bind_list_b *next;
 
   tcl_bind_mask_t *first;       /* Pointer to registered binds for this list. */
-  char name[5];                 /* Name of the bind. */
+  char name[20];                /* Name of the bind. */
   u_8bit_t flags;               /* Flags for this element. HT_* */
   IntFunc func;                 /* Function used as the Tcl calling interface
                                  * for procs actually representing C functions. */

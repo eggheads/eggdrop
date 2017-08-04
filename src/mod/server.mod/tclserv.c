@@ -324,8 +324,3 @@ static tcl_cmds my_tcl_cmds[] = {
   {NULL,         NULL}
 };
 
-static tcl_cmds my_tcl_objcmds[] = {
-  {"isupport",   tcl_isupport},
-  {NULL,         NULL}
-};
-

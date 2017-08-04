@@ -23,7 +23,7 @@
 
 #include <ctype.h>
 
-static int tcl_isupport STDOBJVAR;
+int tcl_isupport STDOBJVAR;
 static int tcl_isupport_get STDOBJVAR;
 static int tcl_isupport_isset STDOBJVAR;
 static int tcl_isupport_set STDOBJVAR;
@@ -112,7 +112,7 @@ static int tcl_isupport_validtype(const char *type, int set) {
   return 0;
 }
 
-static int tcl_isupport STDOBJVAR
+int tcl_isupport STDOBJVAR
 {
   int i;
   const char *subcmd;
@@ -329,7 +329,7 @@ static int tcl_isupport_setstr STDOBJVAR
   return TCL_OK;
 }
 
-static char *traced_isupport(ClientData cdata, Tcl_Interp *irp,
+char *traced_isupport(ClientData cdata, Tcl_Interp *irp,
                             EGG_CONST char *name1,
                             EGG_CONST char *name2, int flags)
 {
@@ -363,4 +363,48 @@ static char *traced_isupport(ClientData cdata, Tcl_Interp *irp,
     isupport_handle_default(cval);
   }
   return NULL;
+}
+
+int preisupport_bind STDVAR
+{
+  Function F = (Function) cd;
+  BADARGS(6, 6, " key wasset oldvalue isset value");
+  CHECKVALIDITY(preisupport_bind);
+  F(argv[1], argv[2], argv[3], argv[4], argv[5]);
+  return TCL_OK;
+}
+
+int postisupport_bind STDVAR
+{
+  Function F = (Function) cd;
+  BADARGS(4, 4, " key isset value");
+  CHECKVALIDITY(postisupport_bind);
+  F(argv[1], argv[2], argv[3]);
+  return TCL_OK;
+}
+
+/* Bind before values are final, so they can be changed by scripts */
+int check_tcl_isupport(struct isupport *data, const char *key, const char *oldvalue, const char *value)
+{
+  static int inhere;
+  if (inhere)
+    return 0;
+  inhere = 1;
+  Tcl_SetVar(interp, "_isupport1", key, 0);
+  Tcl_SetVar(interp, "_isupport2", oldvalue ? "1" : "0", 0);
+  Tcl_SetVar(interp, "_isupport3", oldvalue ? oldvalue : "", 0);
+  Tcl_SetVar(interp, "_isupport4", value ? "1" : "0", 0);
+  Tcl_SetVar(interp, "_isupport5", value ? value : "", 0);
+  check_tcl_bind(H_preisupport, key, 0, " $_isupport1 $_isupport2 $_isupport3 $_isupport4 $_isupport5",
+      MATCH_MASK | BIND_STACKABLE);
+  /* Recursion prevention only necessary for first part */
+  inhere = 0;
+  /* Now grab the actual new value, could have been modified by proc */
+  value = isupport_get_current_from(data);
+  /* Assume _isupport1 unchanged */
+  Tcl_SetVar(interp, "_isupport2", value ? "1" : "0", 0);
+  Tcl_SetVar(interp, "_isupport3", value ? value : "", 0);
+  check_tcl_bind(H_postisupport, key, 0, " $_isupport1 $_isupport2 $_isupport3",
+      MATCH_MASK | BIND_STACKABLE);
+  return 0;
 }

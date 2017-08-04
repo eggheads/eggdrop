@@ -3306,6 +3306,26 @@ The following is a list of bind types and how they work. Below each bind type is
 
   Module: core
 
+(50) PREISUPPORT (stackable)
+
+  bind preisupport <flags> <mask> <proc>
+
+  procname <key> <wasset> <oldvalue> <isset> <value>
+ 
+  Description: triggered when the value of an isupport key effectively changes (it is compared against the old value internally). The mask is matched against the isupport key. If the value was not set, wasset it 0 and oldvalue is the empty string. If the value is not set now, isset is 0 and the value is the empty string. Because the empty string is valid value, use wasset/isset to distinguish empty string values from a key being unset. This is intended to allow script writers to overwrite the value with isupport set forced or isupport set ignored. Does not recurse if you set the key to something different in here. Eggdrop does not use this bind internally to allow script authors to change the values before it uses them. Eggdrop only uses the POSTISUPPORT bind internally. The return value is ignored.
+
+  Module: server
+
+(51) POSTISUPPORT (stackable)
+
+  bind postisupport <flags> <mask> <proc>
+
+  procname <key> <isset> <value>
+ 
+  Description: triggered when the value of an isupport key effectively changes (it is compared against the old value internally). The mask is matched against the isupport key. If the value is not set, it is set to the empty string and isset is 1. Otherwise it is 0 (the empty string is a valid value for a feature).This is intended to use the supplied value to reconfigure network dependent features. Eggdrop uses this bind type internally to detect changes that require reconfiguring features. If you overwrite a value here (with isupport set forced/ignored), it will trigger again. It is therefore advised to use the PREISUPPORT bind type for such cases. The return value is ignored.
+
+  Module: server
+
 ^^^^^^^^^^^^^
 Return Values
 ^^^^^^^^^^^^^
