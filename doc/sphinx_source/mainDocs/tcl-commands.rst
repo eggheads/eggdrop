@@ -1305,7 +1305,7 @@ putdcc <idx> <text> [-raw]
 dccbroadcast <message>
 ^^^^^^^^^^^^^^^^^^^^^^
 
-  Description: sends a message to everyone on the party line across the botnet, in the form of "\*\*\* <message>" for local users and "\*\*\* (Bot) <message>" for users on other bots
+  Description: sends a message to everyone on the party line across the botnet, in the form of "\*\*\* <message>" for local users and "\*\*\* (Bot) <message>" for users on other bots with version below 1.8.3 and "(Bot) <message>" for users on other bots with version 1.8.3+ and console log mode 'l' enabled
 
   Returns: nothing
 
