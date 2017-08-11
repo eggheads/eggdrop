@@ -63,8 +63,8 @@ int logmodes(char *s)
     case 'B':
       res |= LOG_BOTS;
       break;
-    case 'i':
-    case 'I':
+    case 'l':
+    case 'L':
       res |= LOG_BOTMSG;
       break;
     case 'r':
@@ -158,7 +158,7 @@ char *masktype(int x)
   if (x & LOG_BOTS)
     *p++ = 'b';
   if (x & LOG_BOTMSG)
-    *p++ = 'i';
+    *p++ = 'l';
   if ((x & LOG_RAW) && raw_log)
     *p++ = 'r';
   if (x & LOG_FILES)

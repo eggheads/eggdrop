@@ -626,7 +626,7 @@ typedef struct {
 #define LOG_BOTSHRIN 0x400000   /* h   incoming share traffic           */
 #define LOG_BOTNETOUT 0x800000  /* u   outgoing botnet traffic          */
 #define LOG_BOTSHROUT 0x1000000 /* g   outgoing share traffic           */
-#define LOG_BOTMSG   0x2000000  /* i   linked bot messages              */
+#define LOG_BOTMSG   0x2000000  /* l   linked bot messages              */
 #define LOG_ALL      0x3ffffff  /* (dump to all logfiles)               */
 
 /* Internal logfile flags

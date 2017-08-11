@@ -150,11 +150,11 @@ logfile <logflags> <channel> "logs/logfile"
       +---+------------------------------------------------------+
       | h | raw incoming share traffic                           |
       +---+------------------------------------------------------+
-      | i | linked bot messages                                  |
-      +---+------------------------------------------------------+
       | j | joins, parts, quits, and netsplits on the channel    |
       +---+------------------------------------------------------+
       | k | kicks, bans, and mode changes on the channel         |
+      +---+------------------------------------------------------+
+      | l | linked bot messages                                  |
       +---+------------------------------------------------------+
       | m | private msgs, notices and ctcps to the bot           |
       +---+------------------------------------------------------+
