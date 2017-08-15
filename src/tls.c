@@ -140,10 +140,10 @@ int ssl_init()
   if (!tls_certfile[0]) {
     ssl_files_loaded = 0;
     if (tls_keyfile[0])
-      putlog(LOG_MISC, "*", "ERROR: TLS: ssl-privatekey not set, ignoring ssl-certificate.");
+      putlog(LOG_MISC, "*", "ERROR: TLS: ssl-certificate not set, ignoring ssl-privatekey.");
   } else if (!tls_keyfile[0]) {
     ssl_files_loaded = 0;
-    putlog(LOG_MISC, "*", "ERROR: TLS: ssl-certificate not set, ignoring ssl-privatekey.");
+    putlog(LOG_MISC, "*", "ERROR: TLS: ssl-privatekey not set, ignoring ssl-certificate.");
   } else {
     ssl_files_loaded = 1;
     /* Load our own certificate and private key. Mandatory for acting as
