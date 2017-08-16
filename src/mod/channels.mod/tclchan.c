@@ -2108,6 +2108,9 @@ static int tcl_channel_add(Tcl_Interp *irp, char *newname, char *options)
     egg_list_append((struct list_type **) &chanset, (struct list_type *) chan);
     /* Channel name is stored in xtra field for sharebot stuff */
     join = 1;
+    /* Request user chanflags from other bots */
+    shareout(NULL, "nc %s\n", chan->dname);
+
   }
   /* If chan_hack is set, we're loading the userfile. Ignore errors while
    * reading userfile and just return TCL_OK. This is for compatability
