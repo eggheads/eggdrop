@@ -547,15 +547,18 @@ static void share_newchan(int idx, char *par)
 
       /* Go over users and check if it has flags for that chan */
       for (u = userlist; u->next; u = u->next) {
-        struct flag_record fr = { FR_CHAN, 0, 0, 0, 0, 0 };
-        char buffer[100];
+        /* Only for shared users */
+        if (!(u->flags & USER_UNSHARED)) {
+          struct flag_record fr = { FR_CHAN, 0, 0, 0, 0, 0 };
+          char buffer[100];
 
-        get_user_flagrec(u, &fr, par);
+          get_user_flagrec(u, &fr, par);
 
-        if (fr.chan) {
-          /* send flags to bot requesting */
-          build_flags(buffer, &fr, NULL);
-          dprintf(idx, "s a %s %s %s\n", u->handle, buffer, par);
+          if (fr.chan) {
+            /* send flags to bot requesting */
+            build_flags(buffer, &fr, NULL);
+            dprintf(idx, "s a %s %s %s\n", u->handle, buffer, par);
+          }
         }
       }
     }
