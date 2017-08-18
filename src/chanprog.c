@@ -450,7 +450,8 @@ void chanprog()
 
   admin[0]   = 0;
   helpdir[0] = 0;
-  conmask    = 0;
+  /* default mkcobxs */
+  conmask = LOG_MSGS|LOG_MODES|LOG_CMDS|LOG_MISC|LOG_BOTS|LOG_FILES|LOG_SERV;
 
   for (i = 0; i < max_logs; i++)
     logs[i].flags |= LF_EXPIRING;

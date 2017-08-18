@@ -671,8 +671,8 @@ static void do_console(struct userrec *u, int idx, char *par, int reset)
   if (!nick[0])
     nick = newsplit(&par);
   /* Consider modeless channels, starting with '+' */
-  if ((nick[0] == '+' && findchan_by_dname(nick)) ||
-      (nick[0] != '+' && strchr(CHANMETA "*", nick[0]))) {
+  if (nick[0] && ((nick[0] == '+' && findchan_by_dname(nick)) ||
+      (nick[0] != '+' && strchr(CHANMETA "*", nick[0])))) {
     if (strcmp(nick, "*") && !findchan_by_dname(nick)) {
       dprintf(idx, "Invalid console channel: %s.\n", nick);
       return;
