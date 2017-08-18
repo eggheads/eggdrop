@@ -44,7 +44,7 @@ static void cmd_pls_ban(struct userrec *u, int idx, char *par)
       chname = who;
       who = newsplit(&par);
       dprintf(idx, "Usage: +ban <hostmask> [channel] [%%<XdXhXm>] [reason]\n");
-      dprintf(idx, "Did you mean .+ban %s %s %s ?\n", who, chname, par);
+      dprintf(idx, "Did you mean: .+ban %s %s %s\n", who, chname, par);
       return;
     } else if (par[0] && strchr(CHANMETA, par[0]))
       chname = newsplit(&par);
