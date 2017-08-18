@@ -36,7 +36,7 @@ extern int tls_vfydcc;
 extern struct dcc_t *dcc;
 
 int tls_maxdepth = 9;         /* Max certificate chain verification depth     */
-int ssl_files_loaded = 1;     /* Check for loaded SSL key/cert files          */
+int ssl_files_loaded = 0;     /* Check for loaded SSL key/cert files          */
 SSL_CTX *ssl_ctx = NULL;      /* SSL context object                           */
 char *tls_randfile = NULL;    /* Random seed file for SSL                     */
 char tls_capath[121] = "";    /* Path to trusted CA certificates              */
@@ -137,47 +137,44 @@ int ssl_init()
     ERR_free_strings();
     return -1;
   }
+  ssl_files_loaded = 0;
   if (!tls_certfile[0]) {
-    ssl_files_loaded = 0;
+    /* Intentional fall-through for !tls_certfile[0] && !tls_keyfile[0] */
     if (tls_keyfile[0])
-      putlog(LOG_MISC, "*", "ERROR: TLS: ssl-certificate not set, ignoring ssl-privatekey.");
+      fatal("ERROR: TLS: ssl-certificate not set, but ssl-privatekey is set!", 0);
   } else if (!tls_keyfile[0]) {
-    ssl_files_loaded = 0;
-    putlog(LOG_MISC, "*", "ERROR: TLS: ssl-privatekey not set, ignoring ssl-certificate.");
+    fatal("ERROR: TLS: ssl-privatekey not set, but ssl-certificate is set!", 0);
   } else {
-    ssl_files_loaded = 1;
     /* Load our own certificate and private key. Mandatory for acting as
     server, because we don't support anonymous ciphers by default. */
     if (SSL_CTX_use_certificate_chain_file(ssl_ctx, tls_certfile) != 1) {
-      putlog(LOG_MISC, "*", "ERROR: TLS: unable to load own certificate: %s",
-             ERR_error_string(ERR_get_error(), NULL));
-      putlog(LOG_MISC, "*", "  Check ssl-certificate in config.");
-      ssl_files_loaded = 0;
+      putlog(LOG_MISC, "*", "ERROR: TLS: unable to load own certificate from %s: %s",
+          tls_certfile, ERR_error_string(ERR_get_error(), NULL));
+      fatal("Unable to load TLS certificate (ssl-certificate config setting)!", 0);
     }
-    if (SSL_CTX_use_PrivateKey_file(ssl_ctx, tls_keyfile,
-        SSL_FILETYPE_PEM) != 1) {
-      putlog(LOG_MISC, "*", "ERROR: TLS: unable to load private key: %s",
-             ERR_error_string(ERR_get_error(), NULL));
-      putlog(LOG_MISC, "*", "  Check ssl-privatekey in config.");
-      ssl_files_loaded = 0;
+    if (SSL_CTX_use_PrivateKey_file(ssl_ctx, tls_keyfile, SSL_FILETYPE_PEM) != 1) {
+      putlog(LOG_MISC, "*", "ERROR: TLS: unable to load private key from %s: %s",
+          tls_keyfile, ERR_error_string(ERR_get_error(), NULL));
+      fatal("Unable to load TLS private key (ssl-privatekey config setting)!", 0);
     }
+    ssl_files_loaded = 1;
   }
   if ((tls_capath[0] || tls_cafile[0]) &&
       !SSL_CTX_load_verify_locations(ssl_ctx, tls_cafile[0] ? tls_cafile : NULL,
-      tls_capath[0] ? tls_capath : NULL))
+      tls_capath[0] ? tls_capath : NULL)) {
     putlog(LOG_MISC, "*", "ERROR: TLS: unable to set CA certificates location: %s",
            ERR_error_string(ERR_get_error(), NULL));
+    ERR_free_strings();
+  }
   /* Let advanced users specify the list of allowed ssl ciphers */
-  if (tls_ciphers[0])
-    if (!SSL_CTX_set_cipher_list(ssl_ctx, tls_ciphers)) {
-      /* this replaces any preset ciphers so an invalid list is fatal */
-      putlog(LOG_MISC, "*", "ERROR: TLS: no valid ciphers found. Disabling SSL.");
-      ERR_free_strings();
-      SSL_CTX_free(ssl_ctx);
-      ssl_ctx = NULL;
-      return -3;
-    }
-
+  if (tls_ciphers[0] && !SSL_CTX_set_cipher_list(ssl_ctx, tls_ciphers)) {
+    /* this replaces any preset ciphers so an invalid list is fatal */
+    putlog(LOG_MISC, "*", "ERROR: TLS: no valid ciphers found. Disabling SSL.");
+    ERR_free_strings();
+    SSL_CTX_free(ssl_ctx);
+    ssl_ctx = NULL;
+    return -3;
+  }
   return 0;
 }
 
@@ -211,7 +208,7 @@ char *ssl_fpconv(char *in, char *out)
       OPENSSL_free(fp);
       return out;
     }
-      OPENSSL_free(md5);
+    OPENSSL_free(md5);
   }
   return NULL;
 }
@@ -674,6 +671,10 @@ int ssl_handshake(int sock, int flags, int verify, int loglevel, char *host,
   if (!ssl_ctx && ssl_init()) {
     debug0("TLS: Failed. OpenSSL not initialized properly.");
     return -1;
+  }
+  if ((flags & TLS_LISTEN) && !ssl_files_loaded) {
+    putlog(LOG_MISC, "*", "TLS: Failed. Certificate/Key not loaded, cannot support SSL/TLS for client (see doc/TLS).");
+    return -4;
   }
   /* find the socket in the list */
   i = findsock(sock);
