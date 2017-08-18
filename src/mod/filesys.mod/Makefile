@@ -4,23 +4,20 @@ srcdir = .
 
 
 doofus:
-	@echo ""
-	@echo "Let's try this from the right directory..."
-	@echo ""
-	@cd ../../../ && make
+	@echo "" && \
+	echo "Let's try this from the right directory..." && \
+	echo "" && \
+	cd ../../../ && $(MAKE)
 
 static: ../filesys.o
 
 modules: ../../../filesys.$(MOD_EXT)
 
 ../filesys.o:
-	$(CC) $(CFLAGS) $(CPPFLAGS) -DMAKING_MODS -c $(srcdir)/filesys.c
-	@rm -f ../filesys.o
-	mv filesys.o ../
+	$(CC) $(CFLAGS) $(CPPFLAGS) -DMAKING_MODS -c $(srcdir)/filesys.c && mv -f filesys.o ../
 
 ../../../filesys.$(MOD_EXT): ../filesys.o
-	$(LD) -o ../../../filesys.$(MOD_EXT) ../filesys.o $(XLIBS) $(MODULE_XLIBS)
-	$(STRIP) ../../../filesys.$(MOD_EXT)
+	$(LD) -o ../../../filesys.$(MOD_EXT) ../filesys.o $(XLIBS) $(MODULE_XLIBS) && $(STRIP) ../../../filesys.$(MOD_EXT)
 
 depend:
 	$(CC) $(CFLAGS) -MM $(srcdir)/filesys.c -MT ../filesys.o > .depend
