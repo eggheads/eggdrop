@@ -1,0 +1,45 @@
+# notes.portuguese.lang
+#   lingua portuguesa para o módulo notes
+
+0xc000,  Reencaminhar notas para: %.70s\n
+0xc001,Trocadas %d nota%s de %s para %s.
+0xc002,Expirada(s) %d nota%s
+0xc003,Não está online; reencaminhando para %s.\n
+0xc004,Notas não são suportadas por este bot.
+0xc005,Lamento, esse utilizador já tem demasiadas notas.
+0xc006,Impossivel criar ficheiro de notas. Lamento.
+0xc007,Ficheiro de notas inacessivel!
+0xc008,Mensagens gravadas
+0xc009,Não tens mensagens
+0xc00a, -- EXPIRAM HOJE
+0xc00b, -- EXPIRAM EM %d DIA%s
+0xc00c,Tens a(s) seguinte(s) nota(s) à espera de ser(em) lida(s)
+0xc00d,Não tens assim tantas mensagens
+0xc00e,Usa '.notes read' para as ler.
+0xc00f,Impossivel modificar o ficheiro de notas
+0xc010,Apagadas todas as notas
+0xc011,Apagada(s)
+0xc012,restam
+0xc013,'#' podem ser numeros e/ou intervalos separados por ';'.
+0xc014,Isso é um bot. Não podes deixar notas a um bot.
+0xc015,Nota externa
+0xc016,Nota entregue.
+0xc017,Para uma lista:
+0xc019,### Tens %d nota%s em espera.\n
+0xc01b,Notas serão guardadas.
+0xc01c,Não tens permissão para alterar o ignore de notas para %s\n
+0xc01d,Utilizador %s não existe.\n
+0xc01e,Ignorando notas de %s\n
+0xc01f,Já ignorando %s\n
+0xc020,Removido ignore de notas de %s\n
+0xc021,Ignore de notas %s não encontrada na lista.\n
+0xc022,Sem ignores de notas presentemente.\n
+0xc023,Ignore de notas para %s:\n
+0xc024,Utilizador inexistente.
+0xc025,Impossivel alterar reencaminhamento de notas para o owner do bot.\n
+0xc026,Eliminado reencaminhamento de notas para %s\n
+0xc027,Tens que especifar o nome de um bot para reencaminhamento.
+0xc028,Alterado reencaminhamento de notas de %s para: %s\n
+0xc029,Função deverá ser umas das seguintes: INDEX, READ, ou ERASE.
+0xc02a,Usa '.notes read' para a ler.
+0xc02b,NOTICE %s :Tens %d nota%s em espera.\n
