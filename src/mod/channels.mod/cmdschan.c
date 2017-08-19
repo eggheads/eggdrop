@@ -428,7 +428,7 @@ static void cmd_mns_ban(struct userrec *u, int idx, char *par)
       chname = ban;
       ban = newsplit(&par);
       dprintf(idx, "Usage: -ban <hostmask|ban #> [channel]\n");
-      dprintf(idx, "Did you mean .-ban %s %s\n", ban, chname);
+      dprintf(idx, "Did you mean: .-ban %s %s\n", ban, chname);
       return;
   } else if (par[0] && strchr(CHANMETA, par[0]))
     chname = newsplit(&par);
