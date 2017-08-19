@@ -143,6 +143,8 @@ extern struct dcc_table DCC_CHAT, DCC_BOT, DCC_LOST, DCC_SCRIPT, DCC_BOT_NEW,
 
 /* Handle for the user that's used when starting eggdrop with -tn */
 #define EGG_BG_HANDLE "-HQ"
+/* Default recommended flags for this user, use | as splitter */
+#define EGG_BG_CONMASK LOG_MISC /* "o" */
 
 /* Stringify macros */
 #define EGG_MACRO_STR(x) EGG_STR(x)

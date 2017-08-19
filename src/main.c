@@ -1234,7 +1234,7 @@ int main(int arg_c, char **arg_v)
     getvhost(&dcc[term_z].sockname, AF_INET);
     dcc[term_z].sock = STDOUT;
     dcc[term_z].timeval = now;
-    dcc[term_z].u.chat->con_flags = conmask;
+    dcc[term_z].u.chat->con_flags = conmask | EGG_BG_CONMASK;
     dcc[term_z].u.chat->strip_flags = STRIP_ALL;
     dcc[term_z].status = STAT_ECHO;
     strcpy(dcc[term_z].nick, EGG_BG_HANDLE);

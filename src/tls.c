@@ -141,9 +141,10 @@ int ssl_init()
   if (!tls_certfile[0]) {
     /* Intentional fall-through for !tls_certfile[0] && !tls_keyfile[0] */
     if (tls_keyfile[0])
-      fatal("ERROR: TLS: ssl-certificate not set, but ssl-privatekey is set!", 0);
+      putlog(LOG_MISC, "*", "ERROR: TLS: ssl-certificate not set, ignoring ssl-privatekey.");
   } else if (!tls_keyfile[0]) {
-    fatal("ERROR: TLS: ssl-privatekey not set, but ssl-certificate is set!", 0);
+    ssl_files_loaded = 0;
+    putlog(LOG_MISC, "*", "ERROR: TLS: ssl-privatekey not set, ignoring ssl-certificate.");
   } else {
     /* Load our own certificate and private key. Mandatory for acting as
     server, because we don't support anonymous ciphers by default. */
