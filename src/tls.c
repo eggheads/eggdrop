@@ -638,6 +638,11 @@ void ssl_info(SSL *ssl, int where, int ret)
     /* More verbose information, for debugging only */
     SSL_CIPHER_description(cipher, buf, sizeof buf);
     debug1("TLS: cipher details: %s", buf);
+  } else if (where & SSL_CB_ALERT) {
+    putlog(data->loglevel, "*", "TLS: alert during %s: %s (%s).",
+           (where & SSL_CB_READ) ? "read" : "write",
+           SSL_alert_type_string_long(ret),
+           SSL_alert_desc_string_long(ret));
   }
 
   /* Display the state of the engine for debugging purposes */
