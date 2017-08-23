@@ -603,11 +603,12 @@ void ssl_info(SSL *ssl, int where, int ret)
   const SSL_CIPHER *cipher;
   int secret, processed;
 
+  if (!(data = (ssl_appdata *) SSL_get_app_data(ssl)))
+    return;
+
   /* We're doing non-blocking IO, so we check here if the handshake has
      finished */
   if (where & SSL_CB_HANDSHAKE_DONE) {
-    if (!(data = (ssl_appdata *) SSL_get_app_data(ssl)))
-      return;
     /* Callback for completed handshake. Cheaper and more convenient than
        using H_tls */
     sock = SSL_get_fd(ssl);
