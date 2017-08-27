@@ -269,10 +269,10 @@ See also: chhandle
    This is used to set the console level of another user. This can even be used
    on users who normally would not be able to set their own console mode.
 %{help=resetconsole}%{+to|o}
-###  %bresetconsole%b [channel]
+###  %bresetconsole%b
    Changes your console level to the default settings from the configfile.
 %{+m|m}
-###  %bresetconsole%b <user> [channel]
+###  %bresetconsole%b <user>
    This is used to reset the console level of another user to the default
    setting from the configfile. This can even be used on users who normally
    would not be able to set their own console mode.

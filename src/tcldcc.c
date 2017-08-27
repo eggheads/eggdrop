@@ -294,8 +294,8 @@ static int tcl_do_console(Tcl_Interp *irp, ClientData cd, int argc,
   pls = 1;
 
   for (arg = 2; arg < argc; arg++) {
-    if (argv[arg][0] && ((strchr(CHANMETA, argv[arg][0]) != NULL) ||
-        (argv[arg][0] == '*'))) {
+    if (argv[arg][0] && !reset && ((strchr(CHANMETA, argv[arg][0]) 
+        != NULL) || (argv[arg][0] == '*'))) {
       if ((argv[arg][0] != '*') && (!findchan_by_dname(argv[arg]))) {
         /* If we dont find the channel, and it starts with a +, assume it
          * should be the console flags to set. */
@@ -351,7 +351,7 @@ static int tcl_console STDVAR
 
 static int tcl_resetconsole STDVAR
 {
-  BADARGS(2, 3, " idx ?channel?");
+  BADARGS(2, 2, " idx");
   return tcl_do_console(irp, cd, argc, argv, 1);
 }
 

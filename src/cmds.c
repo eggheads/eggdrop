@@ -641,6 +641,7 @@ static void cmd_boot(struct userrec *u, int idx, char *par)
     dprintf(idx, "Who?  No such person on the party line.\n");
 }
 
+/* Make changes to user console settings */
 static void do_console(struct userrec *u, int idx, char *par, int reset)
 {
   char *nick, s[2], s1[512];
@@ -651,16 +652,18 @@ static void do_console(struct userrec *u, int idx, char *par, int reset)
   get_user_flagrec(u, &fr, dcc[idx].u.chat->con_chan);
   strncpyz(s1, par, sizeof s1);
   nick = newsplit(&par);
-  /* Don't remove '+' as someone couldn't have '+' in CHANMETA cause
+  /* Check if the parameter is a handle.
+   * Don't remove '+' as someone couldn't have '+' in CHANMETA cause
    * he doesn't use IRCnet ++rtc.
    */
   if (nick[0] && !strchr(CHANMETA "+-*", nick[0]) && glob_master(fr)) {
-    for (i = 0; i < dcc_total; i++)
+    for (i = 0; i < dcc_total; i++) {
       if (!egg_strcasecmp(nick, dcc[i].nick) &&
           (dcc[i].type == &DCC_CHAT) && (!ok)) {
         ok = 1;
         dest = i;
       }
+    }
     if (!ok) {
       dprintf(idx, "No such user on the party line!\n");
       return;
@@ -670,8 +673,10 @@ static void do_console(struct userrec *u, int idx, char *par, int reset)
     dest = idx;
   if (!nick[0])
     nick = newsplit(&par);
-  /* Consider modeless channels, starting with '+' */
-  if (nick[0] && ((nick[0] == '+' && findchan_by_dname(nick)) ||
+  /* Check if the parameter is a channel.
+   * Consider modeless channels, starting with '+'
+   */
+  if (nick[0] && !reset && ((nick[0] == '+' && findchan_by_dname(nick)) ||
       (nick[0] != '+' && strchr(CHANMETA "*", nick[0])))) {
     if (strcmp(nick, "*") && !findchan_by_dname(nick)) {
       dprintf(idx, "Invalid console channel: %s.\n", nick);
@@ -683,7 +688,8 @@ static void do_console(struct userrec *u, int idx, char *par, int reset)
               nick);
       return;
     }
-    strncpyz(dcc[dest].u.chat->con_chan, nick, 81);
+    strncpyz(dcc[dest].u.chat->con_chan, nick,
+        sizeof dcc[dest].u.chat->con_chan);
     nick[0] = 0;
     if (dest != idx)
       get_user_flagrec(dcc[dest].user, &fr, dcc[dest].u.chat->con_chan);
@@ -749,6 +755,7 @@ static void cmd_console(struct userrec *u, int idx, char *par)
   do_console(u, idx, par, 0);
 }
 
+/* Reset console flags to config defaults */
 static void cmd_resetconsole(struct userrec *u, int idx, char *par)
 {
   do_console(u, idx, par, 1);
