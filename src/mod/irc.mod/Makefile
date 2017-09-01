@@ -4,23 +4,20 @@ srcdir = .
 
 
 doofus:
-	@echo ""
-	@echo "Let's try this from the right directory..."
-	@echo ""
-	@cd ../../../ && make
+	@echo "" && \
+	echo "Let's try this from the right directory..." && \
+	echo "" && \
+	cd ../../../ && $(MAKE)
 
 static: ../irc.o
 
 modules: ../../../irc.$(MOD_EXT)
 
 ../irc.o:
-	$(CC) $(CFLAGS) $(CPPFLAGS) -DMAKING_MODS -c $(srcdir)/irc.c
-	@rm -f ../irc.o
-	mv irc.o ../
+	$(CC) $(CFLAGS) $(CPPFLAGS) -DMAKING_MODS -c $(srcdir)/irc.c && mv -f irc.o ../
 
 ../../../irc.$(MOD_EXT): ../irc.o
-	$(LD) -o ../../../irc.$(MOD_EXT) ../irc.o $(XLIBS) $(MODULE_XLIBS)
-	$(STRIP) ../../../irc.$(MOD_EXT)
+	$(LD) -o ../../../irc.$(MOD_EXT) ../irc.o $(XLIBS) $(MODULE_XLIBS) && $(STRIP) ../../../irc.$(MOD_EXT)
 
 depend:
 	$(CC) $(CFLAGS) -MM $(srcdir)/irc.c -MT ../irc.o > .depend
