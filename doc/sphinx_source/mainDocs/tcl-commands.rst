@@ -1296,19 +1296,18 @@ isupport <subcommand> [type] [args]
 
   Because of various IRCds that might return bogus values, their implementation could be different from Eggdrop's implementation of a feature or because of IRCd bugs, a hierarchical system was chosen to allow full flexibility in overwriting the isupport settings.
 
-  The following table describes the type argument of all subcommands in order from highest to lowest priority and their purpose.
+  The following table describes the type argument of all subcommands in order from highest to lowest priority and their purpose. Priority means that current is the first according to: ignored > forced > server > default.
 
   +---------+-----------+------------------------------------------------------------------------+
   | ignored | settable  | Values are 0/1. If set, forces the setting to be unset.                |
   +---------+-----------+------------------------------------------------------------------------+
   | forced  | settable  | Forces a setting to have a the specified value.                        |
   +---------+-----------+------------------------------------------------------------------------+
-  | server  | read-only | Returns the value the server sent for the key.                         |
+  | server  | readonly  | Returns the value the server sent for the key.                         |
   +---------+-----------+------------------------------------------------------------------------+
   | default | settable  | Sets a default value to be used if the IRC server does not specify it. |
   +---------+-----------+------------------------------------------------------------------------+
-  | current | read-only | Returns the current value Eggdrop uses according to all of the above.  |
-  |         |           | (ignored > forced > server > default)                                  |
+  | current | readonly  | Returns the current value Eggdrop uses according to all of the above.  |
   +---------+-----------+------------------------------------------------------------------------+
 
   Module: server
