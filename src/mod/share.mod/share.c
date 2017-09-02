@@ -1116,7 +1116,7 @@ static void share_userfileq(int idx, char *par)
  */
 static void share_ufsend(int idx, char *par)
 {
-  char *ip = NULL, *port;
+  char *port;
   char s[1024];
   int i, sock;
   FILE *f;
@@ -1134,17 +1134,20 @@ static void share_ufsend(int idx, char *par)
     putlog(LOG_MISC, "*", "CAN'T WRITE USERFILE DOWNLOAD FILE!");
     zapfbot(idx);
   } else {
-    ip = newsplit(&par);
+    /* Ignore longip and use botaddr, arg kept for backward compat for pre 1.8.3 */
+    newsplit(&par);
     port = newsplit(&par);
     i = new_dcc(&DCC_FORK_SEND, sizeof(struct xfer_info));
+    /* Use same addr we succesfully linked to and change port */
+    memcpy(&dcc[i].sockname, &dcc[idx].sockname, sizeof dcc[i].sockname);
     dcc[i].port = atoi(port);
-    (void) setsockname(&dcc[i].sockname, ip, dcc[i].port, 0);
+    setsnport(dcc[i].sockname, dcc[i].port);
     /* Don't buffer this -> mark binary. */
     sock = getsock(dcc[i].sockname.family, SOCK_BINARY);
 #ifdef TLS
     if (sock < 0 || (open_telnet_raw(sock, &dcc[i].sockname) < 0) ||
         (*port == '+' && ssl_handshake(sock, TLS_CONNECT, tls_vfybots,
-        LOG_MISC, ip, NULL))) {
+        LOG_MISC, dcc[i].host, NULL))) {
 #else
     if (sock < 0 || open_telnet_raw(sock, &dcc[i].sockname) < 0) {
 #endif
