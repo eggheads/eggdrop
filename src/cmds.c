@@ -774,7 +774,7 @@ static void cmd_pls_bot(struct userrec *u, int idx, char *par)
   }
 
 #ifndef TLS
-  if ((*port == '+') || (relay[1] == '+')) {
+  if ((*port == '+') || (relay && (relay[1] == '+'))) {
     dprintf(idx, "Ports prefixed with '+' are not enabled (this Eggdrop was compiled without TLS support)\n");
     return;
   }
@@ -1056,7 +1056,7 @@ static void cmd_chaddr(struct userrec *u, int idx, char *par)
   relay = strchr(port, '/');
 
 #ifndef TLS  
-  if ((*port == '+') || (relay[1] == '+')) {
+  if ((*port == '+') || ((relay && relay[1] == '+'))) {
     dprintf(idx, "Ports prefixed with '+' are not enabled (this Eggdrop was compiled without TLS support)\n");
     return;
   }
