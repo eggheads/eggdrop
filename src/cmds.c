@@ -791,6 +791,12 @@ static void cmd_pls_bot(struct userrec *u, int idx, char *par)
 #endif
     bi->telnet_port = atoi(port);
     relay = strchr(port, '/');
+#ifndef TLS
+    if ((*port == '+') || (*relay == '/')) {
+      dprintf(idx, "Ports prefixed with '+' are not enabled (this Eggdrop was compiled without TLS support)\n");
+      return;
+    }
+#endif
     if (!relay) {
       bi->relay_port = bi->telnet_port;
 #ifdef TLS
@@ -1057,9 +1063,6 @@ static void cmd_chaddr(struct userrec *u, int idx, char *par)
     dprintf(idx, "You can't change a share bot's address.\n");
     return;
   }
-  putlog(LOG_CMDS, "*", "#%s# chaddr %s %s%s%s", dcc[idx].nick, handle,
-         addr, *port ? " " : "", port);
-  dprintf(idx, "Changed bot's address.\n");
 
   bi = (struct bot_addr *) get_user(&USERENTRY_BOTADDR, u1);
   if (bi) {
@@ -1096,6 +1099,10 @@ static void cmd_chaddr(struct userrec *u, int idx, char *par)
   } else {
     bi->telnet_port = atoi(port);
     relay = strchr(port, '/');
+    if ((*port == '+') || (*relay == '+')) {
+      dprintf(idx, "Ports prefixed with '+' are not enabled (this Eggdrop was compiled without TLS support)\n");
+      return;
+    }
     if (!relay)
       bi->relay_port = bi->telnet_port;
     else {
@@ -1105,6 +1112,9 @@ static void cmd_chaddr(struct userrec *u, int idx, char *par)
     }
   }
   set_user(&USERENTRY_BOTADDR, u1, bi);
+  putlog(LOG_CMDS, "*", "#%s# chaddr %s %s%s%s", dcc[idx].nick, handle,
+         addr, *port ? " " : "", port);
+  dprintf(idx, "Changed bot's address.\n");
 }
 
 static void cmd_comment(struct userrec *u, int idx, char *par)
