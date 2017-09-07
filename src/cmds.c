@@ -792,7 +792,7 @@ static void cmd_pls_bot(struct userrec *u, int idx, char *par)
     bi->telnet_port = atoi(port);
     relay = strchr(port, '/');
 #ifndef TLS
-    if ((*port == '+') || (*relay == '/')) {
+    if ((*port == '+') || (relay[1] == '+')) {
       dprintf(idx, "Ports prefixed with '+' are not enabled (this Eggdrop was compiled without TLS support)\n");
       return;
     }
@@ -1099,14 +1099,14 @@ static void cmd_chaddr(struct userrec *u, int idx, char *par)
   } else {
     bi->telnet_port = atoi(port);
     relay = strchr(port, '/');
+    if ((*port == '+') || (relay[1] == '+')) {
+      dprintf(idx, "Ports prefixed with '+' are not enabled (this Eggdrop was compiled without TLS support)\n");
+      return;
+    }
     if (!relay)
       bi->relay_port = bi->telnet_port;
     else {
       relay++;
-      if ((*port == '+') || (*relay == '+')) {
-        dprintf(idx, "Ports prefixed with '+' are not enabled (this Eggdrop was compiled without TLS support)\n");
-        return;
-      }
 #endif
       bi->relay_port = atoi(relay);
     }
