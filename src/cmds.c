@@ -796,8 +796,8 @@ static void cmd_pls_bot(struct userrec *u, int idx, char *par)
 
 #ifndef TLS
   if ((*port == '+') || (relay && (relay[1] == '+'))) {
-    dprintf(idx, "Ports prefixed with '+' are not enabled \
-(this Eggdrop was compiled without TLS support).\n");
+    dprintf(idx, "Ports prefixed with '+' are not enabled
+      (this Eggdrop was compiled without TLS support).\n");
     return;
   }
 #endif
