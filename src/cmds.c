@@ -767,6 +767,7 @@ static void cmd_pls_bot(struct userrec *u, int idx, char *par)
   char *handle, *addr, *port, *relay, *host;
   struct userrec *u1;
   struct bot_addr *bi;
+  int i, found = 0;
 
   if (!par[0]) {
     dprintf(idx, "Usage: +bot <handle> [address [telnet-port[/relay-port]]] "
@@ -796,21 +797,40 @@ static void cmd_pls_bot(struct userrec *u, int idx, char *par)
 #ifndef TLS
   if ((*port == '+') || (relay && (relay[1] == '+'))) {
     dprintf(idx, "Ports prefixed with '+' are not enabled \
-(this Eggdrop was compiled without TLS support)\n");
+(this Eggdrop was compiled without TLS support).\n");
     return;
   }
 #endif
   if (port) {
     if (!check_port(port)) {
-      dprintf(idx, "Ports must be integers between 1 and 65535\n");
+      dprintf(idx, "Ports must be integers between 1 and 65535.\n");
       return;
     }
   }
   if (relay) {
     if (!check_port(relay)) {
-      dprintf(idx, "Ports must be integers between 1 and 65535\n");
+      dprintf(idx, "Ports must be integers between 1 and 65535.\n");
       return;
     }
+  }
+
+  if (*addr == '+') {
+    dprintf(idx, "Bot address may not start with a +.\n");
+    return;
+  }
+
+// Check if user forgot address field
+  for (i=0; i < strlen(addr); i++) {
+    if (!isdigit(addr[i]) && (addr[i] != '/')) {
+      found=1;
+      break;
+    }
+  }
+  if (!found) {
+    dprintf(idx, "Invalid host address.\n");
+    dprintf(idx, "Usage: +bot <handle> [address [telnet-port[/relay-port]]] "
+            "[host]\n");
+    return;
   }
 
   if (strlen(addr) > 60)
@@ -1073,7 +1093,7 @@ static void cmd_chaddr(struct userrec *u, int idx, char *par)
 #ifdef TLS
   int use_ssl = 0;
 #endif
-  int telnet_port = 3333, relay_port = 3333;
+  int i, found = 0, telnet_port = 3333, relay_port = 3333;
   char *handle, *addr, *port, *relay;
   struct bot_addr *bi;
   struct userrec *u1;
@@ -1095,6 +1115,25 @@ static void cmd_chaddr(struct userrec *u, int idx, char *par)
     return;
   }
 #endif
+
+  if (*addr == '+') {
+    dprintf(idx, "Bot address may not start with a +.\n");
+    return;
+  }
+
+// Check if user forgot address field
+  for (i=0; i < strlen(addr); i++) {
+    if (!isdigit(addr[i]) && (addr[i] != '/')) {
+      found=1;
+      break;
+    }
+  }
+  if (!found) {
+    dprintf(idx, "Invalid host address.\n");
+    dprintf(idx, "Usage: chaddr <botname> <address> "
+            "[telnet-port[/relay-port]]>\n");
+    return;
+  }
 
   if (strlen(addr) > UHOSTMAX)
     addr[UHOSTMAX] = 0;
