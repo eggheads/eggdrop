@@ -236,26 +236,6 @@ static void tell_who(struct userrec *u, int idx, int chan)
   }
 }
 
-/* Checks a string to see if it is a valid port. Accounts for SSL
- * ports prepended with '+'. Returns true if valid TCP port.
-*/
-int check_port(char *port) {
-  int i, start = 0;
-#ifdef TLS
-  if (*port == '+') {
-    start = 1;
-  }
-#endif
-  for (i=start; i < strlen(port); i++) {
-    if ((isdigit(port[i]) == 0) ||
-        (isdigit(port[i]) && ((atoi(&port[i]) < 1) || atoi(&port[i]) > 65535))) {
-      return 0;
-    }
-  }
-  return 1;
-}
-
-
 static void cmd_botinfo(struct userrec *u, int idx, char *par)
 {
   char s[512], s2[32];
@@ -764,7 +744,7 @@ static void cmd_console(struct userrec *u, int idx, char *par)
 
 static void cmd_pls_bot(struct userrec *u, int idx, char *par)
 {
-  char *handle, *addr, *port, *relay, *host;
+  char *handle, *addr, *port, *relay, *relay2, *host;
   struct userrec *u1;
   struct bot_addr *bi;
   int i, found = 0;
@@ -796,19 +776,25 @@ static void cmd_pls_bot(struct userrec *u, int idx, char *par)
 
 #ifndef TLS
   if ((*port == '+') || (relay && (relay[1] == '+'))) {
-    dprintf(idx, "Ports prefixed with '+' are not enabled
-      (this Eggdrop was compiled without TLS support).\n");
+    dprintf(idx, "Ports prefixed with '+' are not enabled"
+      "(this Eggdrop was compiled without TLS support).\n");
     return;
   }
 #endif
   if (port) {
-    if (!check_port(port)) {
+    if ((atoi(port) < 1) && (atoi(port) > 65535)) {
       dprintf(idx, "Ports must be integers between 1 and 65535.\n");
       return;
     }
   }
   if (relay) {
-    if (!check_port(relay)) {
+    relay2 = relay;
+    // Convert to just the port number string for error checking
+    relay2++;
+    if (*relay2 == '+') {
+      relay2++;
+    }
+    if ((atoi(relay2) < 1) && (atoi(relay2) > 65535)) {
       dprintf(idx, "Ports must be integers between 1 and 65535.\n");
       return;
     }
@@ -1094,7 +1080,7 @@ static void cmd_chaddr(struct userrec *u, int idx, char *par)
   int use_ssl = 0;
 #endif
   int i, found = 0, telnet_port = 3333, relay_port = 3333;
-  char *handle, *addr, *port, *relay;
+  char *handle, *addr, *port, *relay, *relay2;
   struct bot_addr *bi;
   struct userrec *u1;
 
@@ -1115,6 +1101,25 @@ static void cmd_chaddr(struct userrec *u, int idx, char *par)
     return;
   }
 #endif
+
+  if (port) {
+    if ((atoi(port) < 1) && (atoi(port) > 65535)) {
+      dprintf(idx, "Ports must be integers between 1 and 65535.\n");
+      return;
+    }
+  }
+  if (relay) {
+    relay2 = relay;
+    // Convert to just the port number string for error checking
+    relay2++;
+    if (*relay2 == '+') {
+      relay2++;
+    }
+    if ((atoi(relay2) < 1) && (atoi(relay2) > 65535)) {
+      dprintf(idx, "Ports must be integers between 1 and 65535.\n");
+      return;
+    }
+  }
 
   if (*addr == '+') {
     dprintf(idx, "Bot address may not start with a +.\n");
