@@ -780,7 +780,7 @@ static void cmd_pls_bot(struct userrec *u, int idx, char *par)
     for (i = 0; addr[i]; i++) {
       if (addr[i] == ':') {
         dprintf(idx, "Invalid IP address format (this Eggdrop "
-          "was not compiled with IPv6 support).\n");
+          "was compiled without IPv6 support).\n");
         return;
       }
     }
@@ -1113,7 +1113,7 @@ static void cmd_chaddr(struct userrec *u, int idx, char *par)
     for (i = 0; addr[i]; i++) {
       if (addr[i] == ':') {
         dprintf(idx, "Invalid IP address format (this Eggdrop "
-          "was not compiled with IPv6 support).\n");
+          "was compiled without IPv6 support).\n");
         return;
       }
     }
