@@ -795,7 +795,7 @@ static void cmd_pls_bot(struct userrec *u, int idx, char *par)
   }
 #endif
   if (port) {
-    if ((atoi(port) < 1) && (atoi(port) > 65535)) {
+    if ((atoi(port) < 1) || (atoi(port) > 65535)) {
       dprintf(idx, "Ports must be integers between 1 and 65535.\n");
       return;
     }
@@ -807,7 +807,7 @@ static void cmd_pls_bot(struct userrec *u, int idx, char *par)
     if (*relay2 == '+') {
       relay2++;
     }
-    if ((atoi(relay2) < 1) && (atoi(relay2) > 65535)) {
+    if ((atoi(relay2) < 1) || (atoi(relay2) > 65535)) {
       dprintf(idx, "Ports must be integers between 1 and 65535.\n");
       return;
     }
@@ -1129,7 +1129,7 @@ static void cmd_chaddr(struct userrec *u, int idx, char *par)
 #endif
 
   if (port) {
-    if ((atoi(port) < 1) && (atoi(port) > 65535)) {
+    if ((atoi(port) < 1) || (atoi(port) > 65535)) {
       dprintf(idx, "Ports must be integers between 1 and 65535.\n");
       return;
     }
@@ -1141,7 +1141,7 @@ static void cmd_chaddr(struct userrec *u, int idx, char *par)
     if (*relay2 == '+') {
       relay2++;
     }
-    if ((atoi(relay2) < 1) && (atoi(relay2) > 65535)) {
+    if ((atoi(relay2) < 1) || (atoi(relay2) > 65535)) {
       dprintf(idx, "Ports must be integers between 1 and 65535.\n");
       return;
     }
