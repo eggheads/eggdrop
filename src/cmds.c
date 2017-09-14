@@ -745,6 +745,7 @@ static void cmd_console(struct userrec *u, int idx, char *par)
 static void cmd_pls_bot(struct userrec *u, int idx, char *par)
 {
   char *handle, *addr, *port, *relay, *relay2, *host;
+  char saddr[sizeof(struct in_addr)];
   struct userrec *u1;
   struct bot_addr *bi;
   int i, found = 0;
@@ -773,6 +774,18 @@ static void cmd_pls_bot(struct userrec *u, int idx, char *par)
     dprintf(idx, "You can't start a botnick with '%c'.\n", handle[0]);
     return;
   }
+
+#ifndef IPV6
+  if (!inet_pton(AF_INET, addr, saddr)) {
+    for (i = 0; addr[i]; i++) {
+      if (addr[i] == ':') {
+        dprintf(idx, "Invalid IP address format (this Eggdrop "
+          "was not compiled with IPv6 support).\n");
+        return;
+      }
+    }
+  }
+#endif
 
 #ifndef TLS
   if ((*port == '+') || (relay && (relay[1] == '+'))) {
@@ -1081,6 +1094,7 @@ static void cmd_chaddr(struct userrec *u, int idx, char *par)
 #endif
   int i, found = 0, telnet_port = 3333, relay_port = 3333;
   char *handle, *addr, *port, *relay, *relay2;
+  char saddr[sizeof(struct in_addr)];
   struct bot_addr *bi;
   struct userrec *u1;
 
@@ -1093,6 +1107,18 @@ static void cmd_chaddr(struct userrec *u, int idx, char *par)
   addr = newsplit(&par);
   port = newsplit(&par);
   relay = strchr(port, '/');
+
+#ifndef IPV6
+  if (!inet_pton(AF_INET, addr, saddr)) {
+    for (i = 0; addr[i]; i++) {
+      if (addr[i] == ':') {
+        dprintf(idx, "Invalid IP address format (this Eggdrop "
+          "was not compiled with IPv6 support).\n");
+        return;
+      }
+    }
+  }
+#endif
 
 #ifndef TLS  
   if ((*port == '+') || ((relay && relay[1] == '+'))) {
