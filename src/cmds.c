@@ -800,7 +800,7 @@ static void cmd_pls_bot(struct userrec *u, int idx, char *par)
   }
   if (relay) {
     relay2 = relay;
-    // Convert to just the port number string for error checking
+    /* Convert to just the port number string for error checking */
     relay2++;
     if (*relay2 == '+') {
       relay2++;
@@ -816,9 +816,9 @@ static void cmd_pls_bot(struct userrec *u, int idx, char *par)
     return;
   }
 
-// Check if user forgot address field
+ /* Check if user forgot address field */
   for (i=0; i < strlen(addr); i++) {
-    if (!isdigit(addr[i]) && (addr[i] != '/')) {
+    if (!isdigit((unsigned char) addr[i]) && (addr[i] != '/')) {
       found=1;
       break;
     }
@@ -1150,7 +1150,7 @@ static void cmd_chaddr(struct userrec *u, int idx, char *par)
 
 // Check if user forgot address field
   for (i=0; i < strlen(addr); i++) {
-    if (!isdigit(addr[i]) && (addr[i] != '/')) {
+    if (!isdigit((unsigned char) addr[i]) && (addr[i] != '/')) {
       found=1;
       break;
     }
