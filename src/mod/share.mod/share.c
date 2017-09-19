@@ -858,6 +858,8 @@ static void share_pls_ban(int idx, char *par)
   time_t expire_time;
   char *ban, *tm, *from;
   int flags = 0;
+  module_entry *me;
+  struct chanset_t *chan = NULL;
 
   if (dcc[idx].status & STAT_SHARE) {
     shareout_but(NULL, idx, "+b %s\n", par);
@@ -877,6 +879,11 @@ static void share_pls_ban(int idx, char *par)
     u_addban(NULL, ban, from, par, expire_time, flags);
     putlog(LOG_CMDS, "*", "%s: global ban %s (%s:%s)", dcc[idx].nick, ban,
            from, par);
+    /* check ban against users in chans */
+    if ((me = module_find("irc", 0, 0)))
+      for (chan = chanset; chan != NULL; chan = chan->next)
+        if (channel_shared(chan))
+          (me->funcs[IRC_CHECK_THIS_BAN]) (chan, ban, flags & MASKREC_STICKY);
     noshare = 0;
   }
 }
@@ -887,6 +894,7 @@ static void share_pls_banchan(int idx, char *par)
   int flags = 0;
   struct chanset_t *chan;
   char *ban, *tm, *chname, *from;
+  module_entry *me;
 
   if (dcc[idx].status & STAT_SHARE) {
     ban = newsplit(&par);
@@ -915,6 +923,9 @@ static void share_pls_banchan(int idx, char *par)
       if (expire_time != 0L)
         expire_time += now;
       u_addban(chan, ban, from, par, expire_time, flags);
+      /* check ban against users in chan */
+      if ((me = module_find("irc", 0, 0)))
+        (me->funcs[IRC_CHECK_THIS_BAN]) (chan, ban, flags & MASKREC_STICKY);
       noshare = 0;
     }
   }

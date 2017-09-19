@@ -734,11 +734,10 @@ static char *mktempfile(char *filename)
 
 static void filesys_dcc_send_hostresolved(int i)
 {
-  char *s1, *param, prt[100], ip[100], *tempf;
+  char *s1, *param, prt[100], *tempf;
   int len = dcc[i].u.dns->ibuf, j;
 
   sprintf(prt, "%d", dcc[i].port);
-  sprintf(ip, "%lu", iptolong(htonl(dcc[i].addr)));
   if (!hostsanitycheck_dcc(dcc[i].nick, dcc[i].u.dns->host, &dcc[i].sockname,
                            dcc[i].u.dns->host, prt)) {
     lostdcc(i);

@@ -4,23 +4,20 @@ srcdir = .
 
 
 doofus:
-	@echo ""
-	@echo "Let's try this from the right directory..."
-	@echo ""
-	@cd ../../../ && make
+	@echo "" && \
+	echo "Let's try this from the right directory..." && \
+	echo "" && \
+	cd ../../../ && $(MAKE)
 
 static: ../woobie.o
 
 modules: ../../../woobie.$(MOD_EXT)
 
 ../woobie.o:
-	$(CC) $(CFLAGS) $(CPPFLAGS) -DMAKING_MODS -c $(srcdir)/woobie.c
-	@rm -f ../woobie.o
-	mv woobie.o ../
+	$(CC) $(CFLAGS) $(CPPFLAGS) -DMAKING_MODS -c $(srcdir)/woobie.c && mv -f woobie.o ../
 
 ../../../woobie.$(MOD_EXT): ../woobie.o
-	$(LD) -o ../../../woobie.$(MOD_EXT) ../woobie.o $(XLIBS) $(MODULE_XLIBS)
-	$(STRIP) ../../../woobie.$(MOD_EXT)
+	$(LD) -o ../../../woobie.$(MOD_EXT) ../woobie.o $(XLIBS) $(MODULE_XLIBS) && $(STRIP) ../../../woobie.$(MOD_EXT)
 
 depend:
 	$(CC) $(CFLAGS) -MM $(srcdir)/woobie.c -MT ../woobie.o > .depend
