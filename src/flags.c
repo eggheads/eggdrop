@@ -191,7 +191,7 @@ char *masktype(int x)
 
 char *maskname(int x)
 {
-  static char s[230];           /* Change this if you change the levels */
+  static char s[225];           /* Change this if you change the levels */
   int i = 0;
 
   s[0] = 0;
@@ -222,9 +222,9 @@ char *maskname(int x)
   if ((x & LOG_SRVOUT) && raw_log)
     i += my_strcpy(s + i, "server output, ");
   if ((x & LOG_BOTNETIN) && raw_log)
-    i += my_strcpy(s + i, "botnet traffic in, ");
+    i += my_strcpy(s + i, "botnet incoming, ");
   if ((x & LOG_BOTNETOUT) && raw_log)
-    i += my_strcpy(s + i, "botnet traffic out, ");
+    i += my_strcpy(s + i, "botnet outgoing, ");
   if ((x & LOG_BOTSHARE) && raw_log)
     i += my_strcpy(s + i, "share traffic, ");
   if (x & LOG_LEV1)
