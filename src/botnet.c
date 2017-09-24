@@ -996,6 +996,10 @@ int botlink(char *linker, int idx, char *nick)
   } else if (in_chain(nick) && (idx != -3)) {
     if (idx >= 0)
       dprintf(idx, "%s\n", BOT_ALREADYLINKED);
+  } else if (bot_flags(u) & BOT_REJECT) {
+    if (idx >= 0) {
+      dprintf(idx, "%s %s\n", BOT_REJECTING, nick);
+    }
   } else {
     for (i = 0; i < dcc_total; i++)
       if ((dcc[i].user == u) &&
