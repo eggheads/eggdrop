@@ -745,7 +745,7 @@ static void cmd_console(struct userrec *u, int idx, char *par)
 static void cmd_pls_bot(struct userrec *u, int idx, char *par)
 {
   char *handle, *addr, *port, *relay, *relay2, *host;
-  char saddr[sizeof(struct in_addr)];
+  struct in_addr saddr;
   struct userrec *u1;
   struct bot_addr *bi;
   int i, found = 0;
@@ -1092,7 +1092,7 @@ static void cmd_chaddr(struct userrec *u, int idx, char *par)
 #endif
   int i, found = 0, telnet_port = 3333, relay_port = 3333;
   char *handle, *addr, *port, *relay, *relay2;
-  char saddr[sizeof(struct in_addr)];
+  struct in_addr saddr;
   struct bot_addr *bi;
   struct userrec *u1;
 
@@ -1132,7 +1132,7 @@ static void cmd_chaddr(struct userrec *u, int idx, char *par)
   }
   if (relay) {
     relay2 = relay;
-    // Convert to just the port number string for error checking
+    /* Convert to just the port number string for error checking */
     relay2++;
     if (*relay2 == '+') {
       relay2++;
@@ -1148,7 +1148,7 @@ static void cmd_chaddr(struct userrec *u, int idx, char *par)
     return;
   }
 
-// Check if user forgot address field
+/* Check if user forgot address field */
   for (i=0; i < strlen(addr); i++) {
     if (!isdigit((unsigned char) addr[i]) && (addr[i] != '/')) {
       found=1;
