@@ -81,12 +81,12 @@ Eggdrop uses the GNU autoconfigure scripts to make things easier.
 5. By default, version 1.8 uses SSL to protect botnet links. If you intend
      on linking 1.8 bots together, you must run::
 
-        make ssl-cert
+        make sslcert
 
      Or, if you installed your eggdrop to a different directory in step 4, you
      will want to run:
 
-       make ssl-cert DEST=<directory>
+       make sslcert DEST=<directory>
 
      Read docs/TLS for more info on this process.
 

@@ -4,23 +4,20 @@ srcdir = .
 
 
 doofus:
-	@echo ""
-	@echo "Let's try this from the right directory..."
-	@echo ""
-	@cd ../../../ && make
+	@echo "" && \
+	echo "Let's try this from the right directory..." && \
+	echo "" && \
+	cd ../../../ && $(MAKE)
 
 static: ../share.o
 
 modules: ../../../share.$(MOD_EXT)
 
 ../share.o:
-	$(CC) $(CFLAGS) $(CPPFLAGS) -DMAKING_MODS -c $(srcdir)/share.c
-	@rm -f ../share.o
-	mv share.o ../
+	$(CC) $(CFLAGS) $(CPPFLAGS) -DMAKING_MODS -c $(srcdir)/share.c && mv -f share.o ../
 
 ../../../share.$(MOD_EXT): ../share.o
-	$(LD) -o ../../../share.$(MOD_EXT) ../share.o $(XLIBS) $(MODULE_XLIBS)
-	$(STRIP) ../../../share.$(MOD_EXT)
+	$(LD) -o ../../../share.$(MOD_EXT) ../share.o $(XLIBS) $(MODULE_XLIBS) && $(STRIP) ../../../share.$(MOD_EXT)
 
 depend:
 	$(CC) $(CFLAGS) -MM $(srcdir)/share.c -MT ../share.o > .depend

@@ -4,23 +4,20 @@ srcdir = .
 
 
 doofus:
-	@echo ""
-	@echo "Let's try this from the right directory..."
-	@echo ""
-	@cd ../../../ && make
+	@echo "" && \
+	echo "Let's try this from the right directory..." && \
+	echo "" && \
+	cd ../../../ && $(MAKE)
 
 static: ../ctcp.o
 
 modules: ../../../ctcp.$(MOD_EXT)
 
 ../ctcp.o:
-	$(CC) $(CFLAGS) $(CPPFLAGS) -DMAKING_MODS -c $(srcdir)/ctcp.c
-	@rm -f ../ctcp.o
-	mv ctcp.o ../
+	$(CC) $(CFLAGS) $(CPPFLAGS) -DMAKING_MODS -c $(srcdir)/ctcp.c && mv -f ctcp.o ../
 
 ../../../ctcp.$(MOD_EXT): ../ctcp.o
-	$(LD) -o ../../../ctcp.$(MOD_EXT) ../ctcp.o $(XLIBS) $(MODULE_XLIBS)
-	$(STRIP) ../../../ctcp.$(MOD_EXT)
+	$(LD) -o ../../../ctcp.$(MOD_EXT) ../ctcp.o $(XLIBS) $(MODULE_XLIBS) && $(STRIP) ../../../ctcp.$(MOD_EXT)
 
 depend:
 	$(CC) $(CFLAGS) -MM $(srcdir)/ctcp.c -MT ../ctcp.o > .depend

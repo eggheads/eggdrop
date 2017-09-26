@@ -504,7 +504,7 @@ proc finalformatshortlog {commits} {
 			lappend dateresult "[join [dateindent [split [join [lmap x $byresult { join $x \n }] \n] \n] $date] \n]"
 		}
 		vlog "DATERESULT: $dateresult"
-		lappend versionresult "[expr {$version ne "" ? "Eggdrop v$version:" : ""}]\n\n[join [versionindent [split [join $dateresult \n] \n]] \n]"
+		lappend versionresult "[expr {$version ne "" ? "Eggdrop $version:" : ""}]\n\n[join [versionindent [split [join $dateresult \n] \n]] \n]"
 	}
 	join $versionresult \n\n
 }
@@ -580,7 +580,7 @@ proc cmd:short {} {
 		}
 	}
 	log ""
-	dict set result $version $thisversion
+	dict set result [expr {$version eq "" ? "" : "v$version"}] $thisversion
 	set log [finalformatshortlog $result]
 	return [clean "Eggdrop Changes (Last Updated [clock format [clock seconds] -gmt 1 -format "%Y-%m-%d"]):\n__________________________________________\n\n$log\n\n[zlib decompress [base64::decode $::suffix]]"]
 }

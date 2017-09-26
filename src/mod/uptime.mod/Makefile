@@ -3,23 +3,20 @@ srcdir = .
 
 
 doofus:
-	@echo ""
-	@echo "Let's try this from the right directory..."
-	@echo ""
-	@cd ../../../ && make
+	@echo "" && \
+	echo "Let's try this from the right directory..." && \
+	echo "" && \
+	cd ../../../ && $(MAKE)
 
 static: ../uptime.o
 
 modules: ../../../uptime.$(MOD_EXT)
 
 ../uptime.o:
-	$(CC) $(CFLAGS) $(CPPFLAGS) -DMAKING_MODS -c $(srcdir)/uptime.c
-	@rm -f ../uptime.o
-	mv uptime.o ../
+	$(CC) $(CFLAGS) $(CPPFLAGS) -DMAKING_MODS -c $(srcdir)/uptime.c && mv -f uptime.o ../
 
 ../../../uptime.$(MOD_EXT): ../uptime.o
-	$(LD) -o ../../../uptime.$(MOD_EXT) ../uptime.o $(XLIBS) $(MODULE_XLIBS)
-	$(STRIP) ../../../uptime.$(MOD_EXT)
+	$(LD) -o ../../../uptime.$(MOD_EXT) ../uptime.o $(XLIBS) $(MODULE_XLIBS) && $(STRIP) ../../../uptime.$(MOD_EXT)
 
 depend:
 	$(CC) $(CFLAGS) -MM $(srcdir)/uptime.c -MT ../uptime.o > .depend
