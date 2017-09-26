@@ -622,9 +622,10 @@ typedef struct {
 #define LOG_DEBUG    0x040000   /* d   debug                            */
 #define LOG_WALL     0x080000   /* w   wallops                          */
 #define LOG_SRVOUT   0x100000   /* v   server output                    */
-#define LOG_BOTNET   0x200000   /* t   botnet traffic                   */
+#define LOG_BOTNETIN 0x200000   /* t   incoming botnet traffic          */
 #define LOG_BOTSHARE 0x400000   /* h   share traffic                    */
-#define LOG_ALL      0x7fffff   /* (dump to all logfiles)               */
+#define LOG_BOTNETOUT 0x800000  /* u   outgoing botnet traffic          */
+#define LOG_ALL      0xffffff   /* (dump to all logfiles)               */
 
 /* Internal logfile flags
  */
