@@ -882,7 +882,7 @@ static void share_pls_ban(int idx, char *par)
     /* check ban against users in chans */
     if ((me = module_find("irc", 0, 0)))
       for (chan = chanset; chan != NULL; chan = chan->next)
-        if (channel_shared(chan))
+        if (channel_shared(chan) && (bot_chan(fr) || bot_global(fr)))
           (me->funcs[IRC_CHECK_THIS_BAN]) (chan, ban, flags & MASKREC_STICKY);
     noshare = 0;
   }
