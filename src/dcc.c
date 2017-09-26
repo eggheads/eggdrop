@@ -351,7 +351,7 @@ static void dcc_bot_new(int idx, char *buf, int x)
 
   if (raw_log) {
     if (!strncmp(buf, "s ", 2))
-      putlog(LOG_BOTSHARE, "*", "{m<-%s} %s", dcc[idx].nick, buf + 2);
+      putlog(LOG_BOTSHRIN, "*", "{m<-%s} %s", dcc[idx].nick, buf + 2);
     else
       putlog(LOG_BOTNETIN, "*", "[m<-%s] %s", dcc[idx].nick, buf);
   }
@@ -464,7 +464,7 @@ static void out_dcc_bot(int idx, char *buf, void *x)
     }
 
     if (!strncmp(buf, "s ", 2))
-      putlog(LOG_BOTSHARE, "*", "{m->%s} %s", dcc[idx].nick, buf + 2);
+      putlog(LOG_BOTSHROUT, "*", "{m->%s} %s", dcc[idx].nick, buf + 2);
     else
       putlog(LOG_BOTNETOUT, "*", "[m->%s] %s", dcc[idx].nick, buf);
 
@@ -499,7 +499,7 @@ static void dcc_bot(int idx, char *code, int i)
 
   if (raw_log) {
     if (!strcmp(code, "s"))
-      putlog(LOG_BOTSHARE, "*", "{m<-%s} %s", dcc[idx].nick, code + 2);
+      putlog(LOG_BOTSHRIN, "*", "{m<-%s} %s", dcc[idx].nick, code + 2);
     else
       putlog(LOG_BOTNETIN, "*", "[m<-%s] %s", dcc[idx].nick, code);
   }
@@ -641,7 +641,7 @@ static void dcc_chat_pass(int idx, char *buf, int atr)
   if (atr & USER_BOT) {
     if (raw_log) {
       if (!strncmp(buf, "s ", 2))
-        putlog(LOG_BOTSHARE, "*", "{m<-%s} %s", dcc[idx].nick, buf + 2);
+        putlog(LOG_BOTSHRIN, "*", "{m<-%s} %s", dcc[idx].nick, buf + 2);
       else
         putlog(LOG_BOTNETIN, "*", "[m<-%s] %s", dcc[idx].nick, buf);
     }
@@ -1563,7 +1563,7 @@ static void dcc_telnet_id(int idx, char *buf, int atr)
 
   if (glob_bot(fr) && raw_log) {
     if (!strncmp(buf, "s ", 2))
-      putlog(LOG_BOTSHARE, "*", "{m<-%s} %s", dcc[idx].user->handle, buf + 2);
+      putlog(LOG_BOTSHRIN, "*", "{m<-%s} %s", dcc[idx].user->handle, buf + 2);
     else
       putlog(LOG_BOTNETIN, "*", "[m<-%s] %s", dcc[idx].user->handle, buf);
   }
