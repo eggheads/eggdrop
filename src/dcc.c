@@ -238,7 +238,6 @@ static void bot_version(int idx, char *par)
 #endif
   strncpyz(dcc[idx].u.bot->version, par, 120);
   putlog(LOG_BOTS, "*", DCC_LINKED, dcc[idx].nick);
-  chatout("*** Linked to %s\n", dcc[idx].nick);
   botnet_send_nlinked(idx, dcc[idx].nick, botnetnick, '!',
                       dcc[idx].u.bot->numver);
   touch_laston(dcc[idx].user, "linked", now);
@@ -303,7 +302,7 @@ static void cont_link(int idx, char *buf, int i)
                      "Unlinked %s (restructure) (lost %d bot%s and %d user%s)",
                      dcc[i].nick, bots, (bots != 1) ? "s" : "",
                      users, (users != 1) ? "s" : "");
-        chatout("*** %s\n", x);
+        putlog(LOG_BOTS, "*", "%s.", x);
         botnet_send_unlinked(i, dcc[i].nick, x);
         dprintf(i, "bye %s\n", "restructure");
         killsock(dcc[i].sock);
@@ -533,7 +532,6 @@ static void eof_dcc_bot(int idx)
                dcc[idx].nick, bots, (bots != 1) ? "s" : "", users,
                (users != 1) ? "s" : "");
   putlog(LOG_BOTS, "*", "%s.", x);
-  chatout("*** %s\n", x);
   botnet_send_unlinked(idx, dcc[idx].nick, x);
   killsock(dcc[idx].sock);
   lostdcc(idx);

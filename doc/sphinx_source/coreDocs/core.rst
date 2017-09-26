@@ -154,6 +154,8 @@ logfile <logflags> <channel> "logs/logfile"
       +---+------------------------------------------------------+
       | k | kicks, bans, and mode changes on the channel         |
       +---+------------------------------------------------------+
+      | l | linked bot messages                                  |
+      +---+------------------------------------------------------+
       | m | private msgs, notices and ctcps to the bot           |
       +---+------------------------------------------------------+
       | o | misc info, errors, etc (IMPORTANT STUFF)             |
@@ -231,7 +233,7 @@ logfile <logflags> <channel> "logs/logfile"
 Console Settings
 ----------------
 
-  set console "mkcobxs"
+  set console "mkcoblxs"
     This is the default console mode. It uses the same event flags as the
     log files do. The console channel is automatically set to your "primary"
     channel, which is set in the modules section of the config file. Masters

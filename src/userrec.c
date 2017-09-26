@@ -932,6 +932,6 @@ int check_conflags(struct flag_record *fr, int md)
       md &= ~(LOG_MISC | LOG_CMDS);
   }
   if (!glob_botmast(*fr))
-    md &= ~LOG_BOTS;
+    md &= ~(LOG_BOTS | LOG_BOTMSG);
   return md;
 }

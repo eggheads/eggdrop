@@ -926,7 +926,8 @@ int botunlink(int idx, char *nick, char *reason, char *from)
                          (users != 1) ? "s" : "");
           dprintf(i, "bye No reason\n");
         }
-        chatout("*** %s\n", s);
+        putlog(LOG_BOTS, "*", "%s.", s);
+        dprintf(idx, "%s.\n", s);
         botnet_send_unlinked(i, dcc[i].nick, s);
         killsock(dcc[i].sock);
         lostdcc(i);
@@ -1656,14 +1657,13 @@ void check_botnet_pings()
       if (dcc[i].status & STAT_PINGED) {
         char s[1024];
 
-        putlog(LOG_BOTS, "*", "%s: %s", BOT_PINGTIMEOUT, dcc[i].nick);
         bot = findbot(dcc[i].nick);
         bots = bots_in_subtree(bot);
         users = users_in_subtree(bot);
         simple_sprintf(s, "%s: %s (lost %d bot%s and %d user%s)",
                        BOT_PINGTIMEOUT, dcc[i].nick, bots,
                        (bots != 1) ? "s" : "", users, (users != 1) ? "s" : "");
-        chatout("*** %s\n", s);
+        putlog(LOG_BOTS, "*", "%s.", s);
         botnet_send_unlinked(i, dcc[i].nick, s);
         killsock(dcc[i].sock);
         lostdcc(i);
@@ -1683,8 +1683,6 @@ void check_botnet_pings()
           if (dcc[i].status & STAT_WARNED) {
             char s[1024];
 
-            putlog(LOG_BOTS, "*", "%s %s (%s).", BOT_DISCONNECTED,
-                   dcc[i].nick, BOT_BOTNOTLEAFLIKE);
             dprintf(i, "bye %s\n", BOT_BOTNOTLEAFLIKE);
             bot = findbot(dcc[i].nick);
             bots = bots_in_subtree(bot);
@@ -1693,7 +1691,7 @@ void check_botnet_pings()
                            BOT_DISCONNECTED, dcc[i].nick, BOT_BOTNOTLEAFLIKE,
                            bots, (bots != 1) ? "s" : "", users, (users != 1) ?
                            "s" : "");
-            chatout("*** %s\n", s);
+            putlog(LOG_BOTS, "*", "%s.", s);
             botnet_send_unlinked(i, dcc[i].nick, s);
             killsock(dcc[i].sock);
             lostdcc(i);
@@ -1719,7 +1717,7 @@ void zapfbot(int idx)
   simple_sprintf(s, "%s: %s (lost %d bot%s and %d user%s)", BOT_BOTDROPPED,
                  dcc[idx].nick, bots, (bots != 1) ? "s" : "", users,
                  (users != 1) ? "s" : "");
-  chatout("*** %s\n", s);
+  putlog(LOG_BOTS, "*", "%s.", s);
   botnet_send_unlinked(idx, dcc[idx].nick, s);
   killsock(dcc[idx].sock);
   lostdcc(idx);
