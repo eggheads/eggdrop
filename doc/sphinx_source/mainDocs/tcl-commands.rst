@@ -1392,6 +1392,16 @@ console <idx> [channel] [console-modes]
 
   Module: core
 
+^^^^^^^^^^^^^^^^^^
+resetconsole <idx>
+^^^^^^^^^^^^^^^^^^
+
+  Description: changes a dcc user's console mode to the default setting in the configfile.
+
+  Returns: a list containing the user's channel view and (new) console modes, or nothing if that user isn't currently on the partyline
+
+  Module: core
+
 ^^^^^^^^^^^^^^^^^^^
 echo <idx> [status]
 ^^^^^^^^^^^^^^^^^^^
