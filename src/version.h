@@ -27,5 +27,5 @@
  */
 
 #define EGG_STRINGVER "1.8.2"
-#define EGG_NUMVER 1080205
-#define EGG_PATCH "newchanflags"
+#define EGG_NUMVER 1080206
+#define EGG_PATCH "rejectlink"
