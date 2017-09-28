@@ -203,8 +203,8 @@ char *masktype(int x)
 
 char *maskname(int x)
 {
-  static char s[280];           /* Change this if you change the levels */
-  int i = 0;			/* 6+8+7+13+6+6+6+17+5+7+8+7+9+15+19+20+24+24+(8*9)+1 */
+  static char s[275];           /* Change this if you change the levels */
+  int i = 0;			/* 6+8+7+13+6+6+6+17+5+7+8+7+9+15+17+17+24+24+(8*9)+1 */
 
   s[0] = 0;
   if (x & LOG_MSGS)
@@ -236,9 +236,9 @@ char *maskname(int x)
   if ((x & LOG_SRVOUT) && raw_log)
     i += my_strcpy(s + i, "server output, "); /* 15 */
   if ((x & LOG_BOTNETIN) && raw_log)
-    i += my_strcpy(s + i, "botnet traffic in, "); /* 19 */
+    i += my_strcpy(s + i, "botnet incoming, "); /* 17 */
   if ((x & LOG_BOTNETOUT) && raw_log)
-    i += my_strcpy(s + i, "botnet traffic out, "); /* 20 */
+    i += my_strcpy(s + i, "botnet outgoing, "); /* 17 */
   if ((x & LOG_BOTSHRIN) && raw_log)
     i += my_strcpy(s + i, "incoming share traffic, "); /* 24 */
   if ((x & LOG_BOTSHROUT) && raw_log)
