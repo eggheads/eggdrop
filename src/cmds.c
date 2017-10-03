@@ -805,7 +805,7 @@ static void cmd_pls_bot(struct userrec *u, int idx, char *par)
     }
 #endif
  /* Check if user forgot address field */
-    for (i=0; i < strlen(addr); i++) {
+    for (i=0; i < addr[i]; i++) {
       if (!isdigit((unsigned char) addr[i]) && (addr[i] != '/')) {
         found=1;
         break;
@@ -817,6 +817,10 @@ static void cmd_pls_bot(struct userrec *u, int idx, char *par)
               "[host]\n");
       return;
     }
+  }
+  if (*addr == '+') {
+    dprintf(idx, "Bot address may not start with a +.\n");
+    return;
   }
 
 #ifndef TLS
@@ -833,11 +837,7 @@ static void cmd_pls_bot(struct userrec *u, int idx, char *par)
     }
   }
   if (relay) {
-    relay2 = relay;
-    if (*relay == '+') {
-      relay2++;
-    }
-    if (!check_int_range(relay2, 0, 65536)) {
+    if (!check_int_range(relay, 0, 65536)) {
       dprintf(idx, "Ports must be integers between 1 and 65535.\n");
       return;
     }
