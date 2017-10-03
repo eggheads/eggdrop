@@ -742,10 +742,25 @@ static void cmd_console(struct userrec *u, int idx, char *par)
   }
 }
 
+/* Check if a string is a valid integer and lies between
+ * two given integers. Returns 1 if true, 0 if not.
+ */
+char check_int_range(char *value, int min, int max) {
+  char **endptr = NULL;
+  int intvalue;
+
+  if (value) {
+    intvalue = strtol(value, endptr, 10);
+    if ((intvalue < max) && (intvalue > min) && (!endptr && (strcmp(value,"")))) {
+      return 1;
+    }
+  }
+  return 0;
+}
+
 static void cmd_pls_bot(struct userrec *u, int idx, char *par)
 {
-  char *handle, *addr, *port, *relay, *relay2, *host;
-  struct in_addr saddr;
+  char *handle, *addr, *port, *port2, *relay, *relay2=NULL, *host;
   struct userrec *u1;
   struct bot_addr *bi;
   int i, found = 0;
@@ -758,9 +773,10 @@ static void cmd_pls_bot(struct userrec *u, int idx, char *par)
 
   handle = newsplit(&par);
   addr = newsplit(&par);
-  port = newsplit(&par);
+  port2 = newsplit(&par);
+  port = strtok(port2, "/");
+  relay = strtok(NULL, "/");
   host = newsplit(&par);
-  relay = strchr(port, '/');
 
   if (strlen(handle) > HANDLEN)
     handle[HANDLEN] = 0;
@@ -775,37 +791,53 @@ static void cmd_pls_bot(struct userrec *u, int idx, char *par)
     return;
   }
 
+  if (strcmp(addr, "")) {
 #ifndef IPV6
-  if (!inet_pton(AF_INET, addr, saddr)) {
-    for (i = 0; addr[i]; i++) {
-      if (addr[i] == ':') {
-        dprintf(idx, "Invalid IP address format (this Eggdrop "
-          "was compiled without IPv6 support).\n");
-        return;
+ /* Reject IPv6 addresses */
+    if (!inet_pton(AF_INET, addr, saddr)) {
+      for (i = 0; addr[i]; i++) {
+        if (addr[i] == ':') {
+          dprintf(idx, "Invalid IP address format (this Eggdrop "
+            "was compiled without IPv6 support).\n");
+          return;
+        }
       }
     }
-  }
 #endif
+ /* Check if user forgot address field */
+    for (i=0; i < strlen(addr); i++) {
+      if (!isdigit((unsigned char) addr[i]) && (addr[i] != '/')) {
+        found=1;
+        break;
+      }
+    }
+    if (!found) {
+      dprintf(idx, "Invalid host address.\n");
+      dprintf(idx, "Usage: +bot <handle> [address [telnet-port[/relay-port]]] "
+              "[host]\n");
+      return;
+    }
+  }
 
 #ifndef TLS
-  if ((*port == '+') || (relay && (relay[1] == '+'))) {
+  if ((port && *port == '+') || (relay && (relay[1] == '+'))) {
     dprintf(idx, "Ports prefixed with '+' are not enabled "
       "(this Eggdrop was compiled without TLS support).\n");
     return;
   }
 #endif
-  if ((atoi(port) < 1) || (atoi(port) > 65535)) {
-    dprintf(idx, "Ports must be integers between 1 and 65535.\n");
-    return;
+  if (port) {
+    if (!check_int_range(port, 0, 65536)) {
+      dprintf(idx, "Ports must be integers between 1 and 65535.\n");
+      return;
+    }
   }
   if (relay) {
     relay2 = relay;
-    /* Convert to just the port number string for error checking */
-    relay2++;
-    if (*relay2 == '+') {
+    if (*relay == '+') {
       relay2++;
     }
-    if ((atoi(relay2) < 1) || (atoi(relay2) > 65535)) {
+    if (!check_int_range(relay2, 0, 65536)) {
       dprintf(idx, "Ports must be integers between 1 and 65535.\n");
       return;
     }
@@ -813,20 +845,6 @@ static void cmd_pls_bot(struct userrec *u, int idx, char *par)
 
   if (*addr == '+') {
     dprintf(idx, "Bot address may not start with a +.\n");
-    return;
-  }
-
- /* Check if user forgot address field */
-  for (i=0; i < strlen(addr); i++) {
-    if (!isdigit((unsigned char) addr[i]) && (addr[i] != '/')) {
-      found=1;
-      break;
-    }
-  }
-  if (!found) {
-    dprintf(idx, "Invalid host address.\n");
-    dprintf(idx, "Usage: +bot <handle> [address [telnet-port[/relay-port]]] "
-            "[host]\n");
     return;
   }
 
@@ -839,7 +857,7 @@ static void cmd_pls_bot(struct userrec *u, int idx, char *par)
   bi->address = user_malloc(strlen(addr) + 1);
   strcpy(bi->address, addr);
 
-  if (!port[0]) {
+  if (!port) {
     bi->telnet_port = 3333;
     bi->relay_port = 3333;
   } else {
@@ -858,15 +876,15 @@ static void cmd_pls_bot(struct userrec *u, int idx, char *par)
       if (relay[1] == '+')
         bi->ssl |= TLS_RELAY;
 #endif
-      bi->relay_port = atoi(relay + 1);
+      bi->relay_port = atoi(relay);
     }
   }
 
   set_user(&USERENTRY_BOTADDR, u1, bi);
   if (addr[0]) {
-    putlog(LOG_CMDS, "*", "#%s# +bot %s %s%s%s %s%s", dcc[idx].nick, handle,
-           addr, port[0] ? " " : "", port[0] ? port : "", host[0] ? " " : "",
-           host);
+    putlog(LOG_CMDS, "*", "#%s# +bot %s %s%s%s%s%s %s%s", dcc[idx].nick, handle,
+           addr, port ? " " : "", port ? port : "", relay ? " " : "",
+           relay ? relay : "", host[0] ? " " : "", host);
 #ifdef TLS
     dprintf(idx, "Added bot '%s' with address [%s]:%s%d/%s%d and %s%s%s.\n",
             handle, addr, (bi->ssl & TLS_BOT) ? "+" : "", bi->telnet_port,
@@ -1092,7 +1110,6 @@ static void cmd_chaddr(struct userrec *u, int idx, char *par)
 #endif
   int i, found = 0, telnet_port = 3333, relay_port = 3333;
   char *handle, *addr, *port, *relay, *relay2;
-  struct in_addr saddr;
   struct bot_addr *bi;
   struct userrec *u1;
 
