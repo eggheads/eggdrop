@@ -760,7 +760,7 @@ char check_int_range(char *value, int min, int max) {
 
 static void cmd_pls_bot(struct userrec *u, int idx, char *par)
 {
-  char *handle, *addr, *port, *port2, *relay, *relay2=NULL, *host;
+  char *handle, *addr, *port, *port2, *relay, *host;
   struct userrec *u1;
   struct bot_addr *bi;
   int i, found = 0;
@@ -1109,7 +1109,7 @@ static void cmd_chaddr(struct userrec *u, int idx, char *par)
   int use_ssl = 0;
 #endif
   int i, found = 0, telnet_port = 3333, relay_port = 3333;
-  char *handle, *addr, *port, *relay, *relay2;
+  char *handle, *addr, *port, *port2, *relay;
   struct bot_addr *bi;
   struct userrec *u1;
 
@@ -1120,20 +1120,41 @@ static void cmd_chaddr(struct userrec *u, int idx, char *par)
     return;
   }
   addr = newsplit(&par);
-  port = newsplit(&par);
-  relay = strchr(port, '/');
+  port2 = newsplit(&par);
+  port = strtok(port2, "/");
+  relay = strtok(NULL, "/");
 
+  if (strcmp(addr, "")) {
 #ifndef IPV6
-  if (!inet_pton(AF_INET, addr, saddr)) {
-    for (i = 0; addr[i]; i++) {
-      if (addr[i] == ':') {
-        dprintf(idx, "Invalid IP address format (this Eggdrop "
-          "was compiled without IPv6 support).\n");
-        return;
+    if (!inet_pton(AF_INET, addr, saddr)) {
+      for (i = 0; addr[i]; i++) {
+        if (addr[i] == ':') {
+          dprintf(idx, "Invalid IP address format (this Eggdrop "
+            "was compiled without IPv6 support).\n");
+          return;
+        }
       }
     }
-  }
 #endif
+/* Check if user forgot address field */
+    for (i=0; i < strlen(addr); i++) {
+      if (!isdigit((unsigned char) addr[i]) && (addr[i] != '/')) {
+        found=1;
+        break;
+      }
+    }
+    if (!found) {
+      dprintf(idx, "Invalid host address.\n");
+      dprintf(idx, "Usage: chaddr <botname> <address> "
+              "[telnet-port[/relay-port]]>\n");
+      return;
+    }
+  }
+  if (*addr == '+') {
+    dprintf(idx, "Bot address may not start with a +.\n");
+    return;
+  }
+
 
 #ifndef TLS  
   if ((*port == '+') || ((relay && relay[1] == '+'))) {
@@ -1143,40 +1164,17 @@ static void cmd_chaddr(struct userrec *u, int idx, char *par)
   }
 #endif
 
-  if ((atoi(port) < 1) || (atoi(port) > 65535)) {
-    dprintf(idx, "Ports must be integers between 1 and 65535.\n");
-    return;
-  }
-  if (relay) {
-    relay2 = relay;
-    /* Convert to just the port number string for error checking */
-    relay2++;
-    if (*relay2 == '+') {
-      relay2++;
-    }
-    if ((atoi(relay2) < 1) || (atoi(relay2) > 65535)) {
+  if (port) {
+    if (!check_int_range(port, 0, 65536)) {
       dprintf(idx, "Ports must be integers between 1 and 65535.\n");
       return;
     }
   }
-
-  if (*addr == '+') {
-    dprintf(idx, "Bot address may not start with a +.\n");
-    return;
-  }
-
-/* Check if user forgot address field */
-  for (i=0; i < strlen(addr); i++) {
-    if (!isdigit((unsigned char) addr[i]) && (addr[i] != '/')) {
-      found=1;
-      break;
+  if (relay) {
+    if (!check_int_range(relay, 0, 65536)) {
+      dprintf(idx, "Ports must be integers between 1 and 65535.\n");
+      return;
     }
-  }
-  if (!found) {
-    dprintf(idx, "Invalid host address.\n");
-    dprintf(idx, "Usage: chaddr <botname> <address> "
-            "[telnet-port[/relay-port]]>\n");
-    return;
   }
 
   if (strlen(addr) > UHOSTMAX)
