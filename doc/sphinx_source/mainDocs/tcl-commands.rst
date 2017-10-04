@@ -208,7 +208,7 @@ getuser <handle> [entry-type] [extra info]
   +----------+-------------------------------------------------------------------------------------+
   | BOTFL    | returns the current bot-specific flags for the user (bot-only)                      |
   +----------+-------------------------------------------------------------------------------------+
-  | BOTADDR  | returns a list containing the bot's address, telnet port, and relay port (bot-only) |
+  | BOTADDR  | returns a list containing the bot's address, bot listen port, and user listen port  |
   +----------+-------------------------------------------------------------------------------------+
   | HOSTS    | returns a list of hosts for the user                                                |
   +----------+-------------------------------------------------------------------------------------+
@@ -240,7 +240,10 @@ setuser <handle> <entry-type> [extra info]
   Description: this is the counterpart of getuser. It lets you set the various values. Other then the ones listed below, the entry-types are the same as getuser's.
 
   +---------+---------------------------------------------------------------------------------------+
-  | PASS    | sets a users password (no third arg will clear it)                                    |
+  | PASS    | Sets a users password (no third arg will clear it)                                    |
+  +---------+---------------------------------------------------------------------------------------+
+  | BOTADDR | Sets address, listen port and, with an optional third argument, user listen port. No  |
+  |         | third argument sets bot bot and user to the second argument.                          |
   +---------+---------------------------------------------------------------------------------------+
   | HOSTS   | if used with no third arg, all hosts for the user will be cleared. Otherwise, *1*     |
   |         | hostmask is added :P                                                                  |
