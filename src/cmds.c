@@ -810,6 +810,10 @@ static void cmd_pls_bot(struct userrec *u, int idx, char *par)
         found=1;
         break;
       }
+      if (*addr == '+') {
+        dprintf(idx, "Bot address may not start with a +.\n");
+        return;
+      }
     }
     if (!found) {
       dprintf(idx, "Invalid host address.\n");
@@ -817,10 +821,6 @@ static void cmd_pls_bot(struct userrec *u, int idx, char *par)
               "[host]\n");
       return;
     }
-  }
-  if (*addr == '+') {
-    dprintf(idx, "Bot address may not start with a +.\n");
-    return;
   }
 
 #ifndef TLS
@@ -841,11 +841,6 @@ static void cmd_pls_bot(struct userrec *u, int idx, char *par)
       dprintf(idx, "Ports must be integers between 1 and 65535.\n");
       return;
     }
-  }
-
-  if (*addr == '+') {
-    dprintf(idx, "Bot address may not start with a +.\n");
-    return;
   }
 
   if (strlen(addr) > 60)
@@ -1142,6 +1137,10 @@ static void cmd_chaddr(struct userrec *u, int idx, char *par)
         found=1;
         break;
       }
+      if (*addr == '+') {
+        dprintf(idx, "Bot address may not start with a +.\n");
+        return;
+      }
     }
     if (!found) {
       dprintf(idx, "Invalid host address.\n");
@@ -1150,11 +1149,6 @@ static void cmd_chaddr(struct userrec *u, int idx, char *par)
       return;
     }
   }
-  if (*addr == '+') {
-    dprintf(idx, "Bot address may not start with a +.\n");
-    return;
-  }
-
 
 #ifndef TLS  
   if ((port && *port == '+') || ((relay && relay[1] == '+'))) {
@@ -1209,7 +1203,7 @@ static void cmd_chaddr(struct userrec *u, int idx, char *par)
     bi->ssl = use_ssl;
   } else {
     bi->ssl = 0;
-    if (*port == '+')
+    if (port && *port == '+')
       bi->ssl |= TLS_BOT;
     bi->telnet_port = atoi(port);
     if (!relay) {
