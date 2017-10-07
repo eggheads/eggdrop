@@ -1196,14 +1196,14 @@ static void cmd_chaddr(struct userrec *u, int idx, char *par)
   bi->address = user_malloc(strlen(addr) + 1);
   strcpy(bi->address, addr);
 
-  if (!port[0]) {
+  if (!port) {
     bi->telnet_port = telnet_port;
     bi->relay_port = relay_port;
 #ifdef TLS
     bi->ssl = use_ssl;
   } else {
     bi->ssl = 0;
-    if (port && *port == '+')
+    if (*port == '+')
       bi->ssl |= TLS_BOT;
     bi->telnet_port = atoi(port);
     if (!relay) {
