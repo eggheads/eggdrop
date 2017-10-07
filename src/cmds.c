@@ -1158,7 +1158,7 @@ static void cmd_chaddr(struct userrec *u, int idx, char *par)
   }
 #endif
 
-  if (port) {
+  if (port && port[0]) {
     if (!check_int_range(port, 0, 65536)) {
       dprintf(idx, "Ports must be integers between 1 and 65535.\n");
       return;
