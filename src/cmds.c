@@ -1226,7 +1226,7 @@ static void cmd_chaddr(struct userrec *u, int idx, char *par)
   }
   set_user(&USERENTRY_BOTADDR, u1, bi);
   putlog(LOG_CMDS, "*", "#%s# chaddr %s %s%s%s", dcc[idx].nick, handle,
-         addr, *port ? " " : "", port);
+         addr, port ? " " : "", port);
   dprintf(idx, "Changed bot's address.\n");
 }
 
