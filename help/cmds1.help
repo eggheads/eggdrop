@@ -242,6 +242,7 @@ See also: chhandle
 %{+m}
    Masters only:
      %bb%b  information about bot linking and userfile sharing
+     %bl%b  messages from linked bots
      %bd%b  misc debug information
      %bc%b  commands
      %bo%b  misc info, errors, etc (IMPORTANT STUFF)
@@ -250,9 +251,11 @@ See also: chhandle
 
 %{+n}
    Owners only (these have to be enabled in the config file via "set raw-log"):
-     %bh%b  raw share traffic
+     %bg%b  raw outgoing share traffic
+     %bh%b  raw incoming share traffic
      %br%b  raw incoming server traffic
-     %bt%b  raw botnet traffic
+     %bt%b  raw incoming botnet traffic
+     %bu%b  raw outgoing botnet traffic
      %bv%b  raw outgoing server traffic
 
    There are also 8 user-defined console modes ('1' through '8').
@@ -265,6 +268,14 @@ See also: chhandle
 ###  %bconsole%b <user> [channel] [modes]
    This is used to set the console level of another user. This can even be used
    on users who normally would not be able to set their own console mode.
+%{help=resetconsole}%{+to|o}
+###  %bresetconsole%b
+   Changes your console level to the default settings from the configfile.
+%{+m|m}
+###  %bresetconsole%b <user>
+   This is used to reset the console level of another user to the default
+   setting from the configfile. This can even be used on users who normally
+   would not be able to set their own console mode.
 %{help=dccstat}%{+m}
 ###  %bdccstat%b
    Displays a table-format list of all "dcc" connections in use on the bot.

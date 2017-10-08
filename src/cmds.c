@@ -641,33 +641,29 @@ static void cmd_boot(struct userrec *u, int idx, char *par)
     dprintf(idx, "Who?  No such person on the party line.\n");
 }
 
-static void cmd_console(struct userrec *u, int idx, char *par)
+/* Make changes to user console settings */
+static void do_console(struct userrec *u, int idx, char *par, int reset)
 {
   char *nick, s[2], s1[512];
   int dest = 0, i, ok = 0, pls;
   struct flag_record fr = { FR_GLOBAL | FR_CHAN, 0, 0, 0, 0, 0 };
   module_entry *me;
 
-  if (!par[0]) {
-    dprintf(idx, "Your console is %s: %s (%s).\n",
-            dcc[idx].u.chat->con_chan,
-            masktype(dcc[idx].u.chat->con_flags),
-            maskname(dcc[idx].u.chat->con_flags));
-    return;
-  }
   get_user_flagrec(u, &fr, dcc[idx].u.chat->con_chan);
   strncpyz(s1, par, sizeof s1);
   nick = newsplit(&par);
-  /* Don't remove '+' as someone couldn't have '+' in CHANMETA cause
+  /* Check if the parameter is a handle.
+   * Don't remove '+' as someone couldn't have '+' in CHANMETA cause
    * he doesn't use IRCnet ++rtc.
    */
   if (nick[0] && !strchr(CHANMETA "+-*", nick[0]) && glob_master(fr)) {
-    for (i = 0; i < dcc_total; i++)
+    for (i = 0; i < dcc_total; i++) {
       if (!egg_strcasecmp(nick, dcc[i].nick) &&
           (dcc[i].type == &DCC_CHAT) && (!ok)) {
         ok = 1;
         dest = i;
       }
+    }
     if (!ok) {
       dprintf(idx, "No such user on the party line!\n");
       return;
@@ -677,9 +673,11 @@ static void cmd_console(struct userrec *u, int idx, char *par)
     dest = idx;
   if (!nick[0])
     nick = newsplit(&par);
-  /* Consider modeless channels, starting with '+' */
-  if ((nick[0] == '+' && findchan_by_dname(nick)) ||
-      (nick[0] != '+' && strchr(CHANMETA "*", nick[0]))) {
+  /* Check if the parameter is a channel.
+   * Consider modeless channels, starting with '+'
+   */
+  if (nick[0] && !reset && ((nick[0] == '+' && findchan_by_dname(nick)) ||
+      (nick[0] != '+' && strchr(CHANMETA "*", nick[0])))) {
     if (strcmp(nick, "*") && !findchan_by_dname(nick)) {
       dprintf(idx, "Invalid console channel: %s.\n", nick);
       return;
@@ -690,7 +688,8 @@ static void cmd_console(struct userrec *u, int idx, char *par)
               nick);
       return;
     }
-    strncpyz(dcc[dest].u.chat->con_chan, nick, 81);
+    strncpyz(dcc[dest].u.chat->con_chan, nick,
+        sizeof dcc[dest].u.chat->con_chan);
     nick[0] = 0;
     if (dest != idx)
       get_user_flagrec(dcc[dest].user, &fr, dcc[dest].u.chat->con_chan);
@@ -698,7 +697,7 @@ static void cmd_console(struct userrec *u, int idx, char *par)
   if (!nick[0])
     nick = newsplit(&par);
   pls = 1;
-  if (nick[0]) {
+  if (!reset && nick[0]) {
     if ((nick[0] != '+') && (nick[0] != '-'))
       dcc[dest].u.chat->con_flags = 0;
     for (; *nick; nick++) {
@@ -715,10 +714,12 @@ static void cmd_console(struct userrec *u, int idx, char *par)
           dcc[dest].u.chat->con_flags &= ~logmodes(s);
       }
     }
+  } else if (reset) {
+    dcc[dest].u.chat->con_flags = (u->flags & USER_MASTER) ? conmask : 0;
   }
   dcc[dest].u.chat->con_flags = check_conflags(&fr,
                                                dcc[dest].u.chat->con_flags);
-  putlog(LOG_CMDS, "*", "#%s# console %s", dcc[idx].nick, s1);
+  putlog(LOG_CMDS, "*", "#%s# %sconsole %s", dcc[idx].nick, reset ? "reset" : "", s1);
   if (dest == idx) {
     dprintf(idx, "Set your console to %s: %s (%s).\n",
             dcc[idx].u.chat->con_chan,
@@ -740,6 +741,24 @@ static void cmd_console(struct userrec *u, int idx, char *par)
 
     (func[CONSOLE_DOSTORE]) (dest);
   }
+}
+
+static void cmd_console(struct userrec *u, int idx, char *par)
+{
+  if (!par[0]) {
+    dprintf(idx, "Your console is %s: %s (%s).\n",
+            dcc[idx].u.chat->con_chan,
+            masktype(dcc[idx].u.chat->con_flags),
+            maskname(dcc[idx].u.chat->con_flags));
+    return;
+  }
+  do_console(u, idx, par, 0);
+}
+
+/* Reset console flags to config defaults */
+static void cmd_resetconsole(struct userrec *u, int idx, char *par)
+{
+  do_console(u, idx, par, 1);
 }
 
 /* Check if a string is a valid integer and lies between
@@ -3027,6 +3046,7 @@ cmd_t C_dcc[] = {
   {"chpass",    "t",    (IntFunc) cmd_chpass,     NULL},
   {"comment",   "m",    (IntFunc) cmd_comment,    NULL},
   {"console",   "to|o", (IntFunc) cmd_console,    NULL},
+  {"resetconsole", "to|o", (IntFunc) cmd_resetconsole, NULL},
   {"dccstat",   "t",    (IntFunc) cmd_dccstat,    NULL},
   {"debug",     "m",    (IntFunc) cmd_debug,      NULL},
   {"die",       "n",    (IntFunc) cmd_die,        NULL},

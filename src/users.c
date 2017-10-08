@@ -1071,8 +1071,7 @@ void autolink_cycle(char *start)
             char *p = MISC_REJECTED;
 
             /* we're directly connected to the offending bot?! (shudder!) */
-            putlog(LOG_BOTS, "*", "%s %s", BOT_REJECTING, dcc[i].nick);
-            chatout("*** %s bot %s\n", p, dcc[i].nick);
+            putlog(LOG_BOTS, "*", "%s bot %s.", p, dcc[i].nick);
             botnet_send_unlinked(i, dcc[i].nick, p);
             dprintf(i, "bye %s\n", BOT_REJECTING);
             killsock(dcc[i].sock);
