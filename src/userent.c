@@ -687,10 +687,15 @@ static int botaddr_tcl_set(Tcl_Interp * irp, struct userrec *u,
         bi->ssl |= TLS_BOT;
         if (argc == 5) {
           bi->ssl |= TLS_RELAY;
+        } 
+      } else {
+        bi->ssl &= ~TLS_BOT;
+        if (argc == 5) {
+          bi->ssl &= ~TLS_RELAY;
         }
       }
 #endif
-      bi->telnet_port = atoi(argv[4]); 
+      bi->telnet_port = atoi(argv[4]);
       if (argc == 5) {
         bi->relay_port = atoi(argv[4]);
       }
@@ -699,6 +704,8 @@ static int botaddr_tcl_set(Tcl_Interp * irp, struct userrec *u,
 #ifdef TLS
       if (*argv[5] == '+') {
         bi->ssl |= TLS_RELAY;
+      } else {
+        bi->ssl &= ~TLS_RELAY;
       }
 #endif
       bi->relay_port = atoi(argv[5]);
