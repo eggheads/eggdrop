@@ -240,23 +240,30 @@ setuser <handle> <entry-type> [extra info]
   Description: this is the counterpart of getuser. It lets you set the various values. Other then the ones listed below, the entry-types are the same as getuser's.
 
   +---------+---------------------------------------------------------------------------------------+
-  | PASS    | Sets a users password (no third arg will clear it)                                    |
+  | Type    | Extra Info                                                                            |
+  +=========+=======================================================================================+
+  | PASS    | <password>                                                                            |
+  |         |   Password string (Empty value will clear the password)                               |
   +---------+---------------------------------------------------------------------------------------+
-  | BOTADDR | Sets address, listen port and, with an optional third argument, user listen port. No  |
-  |         | third argument sets bot bot and user to the second argument.                          |
+  | BOTADDR | <address> [bot listen port] [user listen port]                                        |
+  |         |   Sets address, bot listen port and user listen port. If no listen ports are          |
+  |         |   specified, only the bot address is updated. If only the bot listen port is          |
+  |         |   specified, both the bot and user listen ports are set to the bot listen port.       |
   +---------+---------------------------------------------------------------------------------------+
-  | HOSTS   | if used with no third arg, all hosts for the user will be cleared. Otherwise, *1*     |
-  |         | hostmask is added :P                                                                  |
+  | HOSTS   | [hostmask]                                                                            |
+  |         |   If no value is specified, all hosts for the user will be cleared. Otherwise, only   |
+  |         |   *1* hostmask is added :P                                                            |
   +---------+---------------------------------------------------------------------------------------+
   | LASTON  | This setting has 3 forms.                                                             |
   |         |                                                                                       |
-  |         |   *setuser <handle> LASTON <unixtime> <place>* sets global LASTON time                |
+  |         | <unixtime> <place>                                                                    |
+  |         |    sets global LASTON time                                                            |
   |         |                                                                                       |
-  |         |   *setuser <handle> LASTON <unixtime>* sets global LASTON time (leaving the place     |
-  |         |   field empty)                                                                        |
+  |         | <unixtime>                                                                            |
+  |         |   sets global LASTON time (leaving the place field empty)                             |
   |         |                                                                                       |
-  |         |   *setuser <handle> LASTON <unixtime> <channel>* sets a users LASTON time for a       |
-  |         |   channel (if it is a  valid channel)                                                 |
+  |         | <unixtime> <channel>                                                                  |
+  |         |   sets a users LASTON time for a channel (if it is a valid channel)                   |
   +---------+---------------------------------------------------------------------------------------+
 
   Returns: nothing
