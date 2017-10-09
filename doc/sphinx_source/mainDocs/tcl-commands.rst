@@ -263,7 +263,7 @@ setuser <handle> <entry-type> [extra info]
   |         |   sets global LASTON time (leaving the place field empty)                             |
   |         |                                                                                       |
   |         | <unixtime> <channel>                                                                  |
-  |         |   sets a users LASTON time for a channel (if it is a valid channel)                   |
+  |         |   sets a user's LASTON time for a channel (if it is a valid channel)                  |
   +---------+---------------------------------------------------------------------------------------+
 
   Returns: nothing
