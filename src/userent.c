@@ -680,26 +680,29 @@ static int botaddr_tcl_set(Tcl_Interp * irp, struct userrec *u,
       nfree(bi->address);
     bi->address = user_malloc(strlen(argv[3]) + 1);
     strcpy(bi->address, argv[3]);
-    if (argc > 4)
+    if (argc > 4) {
 #ifdef TLS
-    {
-      if (*argv[4] == '+')
+      /* If no user port set, use bot port for both entries */
+      if (*argv[4] == '+') {
         bi->ssl |= TLS_BOT;
-      bi->telnet_port = atoi(argv[4]);
-    }
-#else
-      bi->telnet_port = atoi(argv[4]);
+        if (argc == 5) {
+          bi->ssl |= TLS_RELAY;
+        }
+      }
 #endif
-    if (argc > 5)
+      bi->telnet_port = atoi(argv[4]); 
+      if (argc == 5) {
+        bi->relay_port = atoi(argv[4]);
+      }
+    }
+    if (argc > 5) {
 #ifdef TLS
-    {
-      if (*argv[5] == '+')
+      if (*argv[5] == '+') {
         bi->ssl |= TLS_RELAY;
+      }
+#endif
       bi->relay_port = atoi(argv[5]);
     }
-#else
-      bi->relay_port = atoi(argv[5]);
-#endif
     if (!bi->telnet_port)
       bi->telnet_port = 3333;
     if (!bi->relay_port)
