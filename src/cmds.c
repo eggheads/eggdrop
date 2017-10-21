@@ -761,12 +761,12 @@ static void cmd_resetconsole(struct userrec *u, int idx, char *par)
   do_console(u, idx, par, 1);
 }
 
-/* Check if a string is a valid integer and lies between
- * two given integers. Returns 1 if true, 0 if not.
+/* Check if a string is a valid integer and lies non-inclusive
+ * between two given integers. Returns 1 if true, 0 if not.
  */
-char check_int_range(char *value, int min, int max) {
+int check_int_range(char *value, int min, int max) {
   char **endptr = NULL;
-  int intvalue;
+  long intvalue;
 
   if (value) {
     intvalue = strtol(value, endptr, 10);
@@ -824,14 +824,14 @@ static void cmd_pls_bot(struct userrec *u, int idx, char *par)
     }
 #endif
  /* Check if user forgot address field */
+    if (*addr == '+') {
+      dprintf(idx, "Bot address may not start with a +.\n");
+      return;
+    }
     for (i=0; i < addr[i]; i++) {
       if (!isdigit((unsigned char) addr[i]) && (addr[i] != '/')) {
         found=1;
         break;
-      }
-      if (*addr == '+') {
-        dprintf(idx, "Bot address may not start with a +.\n");
-        return;
       }
     }
     if (!found) {
@@ -843,7 +843,7 @@ static void cmd_pls_bot(struct userrec *u, int idx, char *par)
   }
 
 #ifndef TLS
-  if ((port && *port == '+') || (relay && (relay[1] == '+'))) {
+  if ((port && *port == '+') || (relay && (relay[0] == '+'))) {
     dprintf(idx, "Ports prefixed with '+' are not enabled "
       "(this Eggdrop was compiled without TLS support).\n");
     return;
@@ -1151,14 +1151,14 @@ static void cmd_chaddr(struct userrec *u, int idx, char *par)
     }
 #endif
 /* Check if user forgot address field */
+    if (*addr == '+') {
+      dprintf(idx, "Bot address may not start with a +.\n");
+      return;
+    }
     for (i=0; i < strlen(addr); i++) {
       if (!isdigit((unsigned char) addr[i]) && (addr[i] != '/')) {
         found=1;
         break;
-      }
-      if (*addr == '+') {
-        dprintf(idx, "Bot address may not start with a +.\n");
-        return;
       }
     }
     if (!found) {
@@ -1170,7 +1170,7 @@ static void cmd_chaddr(struct userrec *u, int idx, char *par)
   }
 
 #ifndef TLS  
-  if ((port && *port == '+') || ((relay && relay[1] == '+'))) {
+  if ((port && *port == '+') || ((relay && relay[0] == '+'))) {
     dprintf(idx, "Ports prefixed with '+' are not enabled "
       "(this Eggdrop was compiled without TLS support)\n");
     return;
