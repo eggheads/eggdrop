@@ -144,7 +144,7 @@ int ssl_init()
 		   "to use a certificate, or unset both to disable.",
 		   tls_certfile[0] ? "ssl-certificate" : "ssl-privatekey",
 		   tls_certfile[0] ? "ssl-privatekey" : "ssl-certificate");
-    fatal("ssl-private and ssl-certificate must both be set or unset.";
+    fatal("ssl-privatekey and ssl-certificate must both be set or unset.");
   } else if (tls_certfile[0]) {
     /* Load our own certificate and private key. Mandatory for acting as
     server, because we don't support anonymous ciphers by default. */
