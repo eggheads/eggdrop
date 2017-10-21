@@ -141,11 +141,12 @@ int ssl_init()
   if (tls_certfile[0] ^ tls_keyfile[0]) {
     /* Both need to be set or unset */
     putlog(LOG_MISC, "*", "ERROR: TLS: %s set but %s unset. Both must be set "
-		   "to use a certificate, or unset both to disable.",
-		   tls_certfile[0] ? "ssl-certificate" : "ssl-privatekey",
-		   tls_certfile[0] ? "ssl-privatekey" : "ssl-certificate");
+        "to use a certificate, or unset both to disable.",
+        tls_certfile[0] ? "ssl-certificate" : "ssl-privatekey",
+        tls_certfile[0] ? "ssl-privatekey" : "ssl-certificate");
     fatal("ssl-privatekey and ssl-certificate must both be set or unset.", 0);
-  } else if (tls_certfile[0]) {
+  }
+  if (tls_certfile[0] && tls_keyfile[0]) {
     /* Load our own certificate and private key. Mandatory for acting as
     server, because we don't support anonymous ciphers by default. */
     if (SSL_CTX_use_certificate_chain_file(ssl_ctx, tls_certfile) != 1) {
