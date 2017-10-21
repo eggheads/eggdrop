@@ -887,7 +887,7 @@ static void cmd_pls_bot(struct userrec *u, int idx, char *par)
 #endif
     } else  {
 #ifdef TLS
-      if (relay[1] == '+')
+      if (relay[0] == '+')
         bi->ssl |= TLS_RELAY;
 #endif
       bi->relay_port = atoi(relay);
