@@ -770,7 +770,7 @@ int check_int_range(char *value, int min, int max) {
 
   if (value) {
     intvalue = strtol(value, &endptr, 10);
-    if ((intvalue < max) && (intvalue > min) && (*endptr != '\0')) {
+    if ((intvalue < max) && (intvalue > min) && (*endptr == '\0')) {
       return 1;
     }
   }
