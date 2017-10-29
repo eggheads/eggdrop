@@ -765,12 +765,12 @@ static void cmd_resetconsole(struct userrec *u, int idx, char *par)
  * between two given integers. Returns 1 if true, 0 if not.
  */
 int check_int_range(char *value, int min, int max) {
-  char **endptr = NULL;
+  char *endptr = NULL;
   long intvalue;
 
   if (value) {
-    intvalue = strtol(value, endptr, 10);
-    if ((intvalue < max) && (intvalue > min) && (!endptr && (strcmp(value,"")))) {
+    intvalue = strtol(value, &endptr, 10);
+    if ((intvalue < max) && (intvalue > min) && (*endptr != '\0')) {
       return 1;
     }
   }
@@ -782,7 +782,10 @@ static void cmd_pls_bot(struct userrec *u, int idx, char *par)
   char *handle, *addr, *port, *port2, *relay, *host;
   struct userrec *u1;
   struct bot_addr *bi;
-  int i, found = 0;
+#ifndef IPV6
+  struct in_addr saddr
+#endif
+  int i, len, found = 0;
 
   if (!par[0]) {
     dprintf(idx, "Usage: +bot <handle> [address [telnet-port[/relay-port]]] "
@@ -823,12 +826,15 @@ static void cmd_pls_bot(struct userrec *u, int idx, char *par)
       }
     }
 #endif
- /* Check if user forgot address field */
+ /* Check if user forgot address field by checking if argument is completely
+  * numerical, implying a port was provided as the next argument instead.
+  */
     if (*addr == '+') {
       dprintf(idx, "Bot address may not start with a +.\n");
       return;
     }
-    for (i=0; i < addr[i]; i++) {
+    len = strlen(addr);
+    for (i=0; i < len; i++) {
       if (!isdigit((unsigned char) addr[i]) && (addr[i] != '/')) {
         found=1;
         break;
@@ -1122,10 +1128,13 @@ static void cmd_chaddr(struct userrec *u, int idx, char *par)
 #ifdef TLS
   int use_ssl = 0;
 #endif
-  int i, found = 0, telnet_port = 3333, relay_port = 3333;
+  int i, len, found = 0, telnet_port = 3333, relay_port = 3333;
   char *handle, *addr, *port, *port2, *relay;
   struct bot_addr *bi;
   struct userrec *u1;
+#ifndef IPV6
+  struct in_addr saddr
+#endif
 
   handle = newsplit(&par);
   if (!par[0]) {
@@ -1150,12 +1159,15 @@ static void cmd_chaddr(struct userrec *u, int idx, char *par)
       }
     }
 #endif
-/* Check if user forgot address field */
+ /* Check if user forgot address field by checking if argument is completely
+  * numerical, implying a port was provided as the next argument instead.
+  */
     if (*addr == '+') {
       dprintf(idx, "Bot address may not start with a +.\n");
       return;
     }
-    for (i=0; i < strlen(addr); i++) {
+    len = strlen(addr);
+    for (i=0; i < len; i++) {
       if (!isdigit((unsigned char) addr[i]) && (addr[i] != '/')) {
         found=1;
         break;
