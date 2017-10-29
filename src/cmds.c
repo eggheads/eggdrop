@@ -849,7 +849,7 @@ static void cmd_pls_bot(struct userrec *u, int idx, char *par)
   }
 
 #ifndef TLS
-  if ((port && *port == '+') || (relay && (relay[0] == '+'))) {
+  if ((port && *port == '+') || (relay && relay[0] == '+')) {
     dprintf(idx, "Ports prefixed with '+' are not enabled "
       "(this Eggdrop was compiled without TLS support).\n");
     return;
@@ -1147,6 +1147,10 @@ static void cmd_chaddr(struct userrec *u, int idx, char *par)
   port = strtok(port2, "/");
   relay = strtok(NULL, "/");
 
+  if (!port) {
+    port="";
+  }
+
   if (strcmp(addr, "")) {
 #ifndef IPV6
     if (!inet_pton(AF_INET, addr, saddr)) {
@@ -1181,14 +1185,13 @@ static void cmd_chaddr(struct userrec *u, int idx, char *par)
     }
   }
 
-#ifndef TLS  
-  if ((port && *port == '+') || ((relay && relay[0] == '+'))) {
+#ifndef TLS
+  if ((port && *port == '+') || (relay && relay[0] == '+')) {
     dprintf(idx, "Ports prefixed with '+' are not enabled "
-      "(this Eggdrop was compiled without TLS support)\n");
+      "(this Eggdrop was compiled without TLS support).\n");
     return;
   }
 #endif
-
   if (port && port[0]) {
     if (!check_int_range(port, 0, 65536)) {
       dprintf(idx, "Ports must be integers between 1 and 65535.\n");
