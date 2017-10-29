@@ -1147,10 +1147,6 @@ static void cmd_chaddr(struct userrec *u, int idx, char *par)
   port = strtok(port2, "/");
   relay = strtok(NULL, "/");
 
-  if (!port) {
-    port="";
-  }
-
   if (strcmp(addr, "")) {
 #ifndef IPV6
     if (!inet_pton(AF_INET, addr, saddr)) {
@@ -1244,23 +1240,21 @@ static void cmd_chaddr(struct userrec *u, int idx, char *par)
       bi->relay_port = bi->telnet_port;
       bi->ssl *= TLS_BOT + TLS_RELAY;
     } else {
-      relay++;
       if (*relay == '+')
         bi->ssl |= TLS_RELAY;
 #else
   } else {
     bi->telnet_port = atoi(port);
-    if (!relay)
+    if (!relay) {
       bi->relay_port = bi->telnet_port;
-    else {
-      relay++;
+    }
 #endif
       bi->relay_port = atoi(relay);
     }
   }
   set_user(&USERENTRY_BOTADDR, u1, bi);
-  putlog(LOG_CMDS, "*", "#%s# chaddr %s %s%s%s", dcc[idx].nick, handle,
-         addr, port ? " " : "", port);
+  putlog(LOG_CMDS, "*", "#%s# chaddr %s %s%s%s%s%s", dcc[idx].nick, handle,
+         addr, port ? " " : "", port ? port : "", relay ? "/" : "", relay ? relay : "");
   dprintf(idx, "Changed bot's address.\n");
 }
 
