@@ -1240,16 +1240,17 @@ static void cmd_chaddr(struct userrec *u, int idx, char *par)
       bi->relay_port = bi->telnet_port;
       bi->ssl *= TLS_BOT + TLS_RELAY;
     } else {
-      if (*relay == '+')
+      if (*relay == '+') {
         bi->ssl |= TLS_RELAY;
+      }
 #else
   } else {
     bi->telnet_port = atoi(port);
     if (!relay) {
       bi->relay_port = bi->telnet_port;
-    }
+    } else {
 #endif
-      bi->relay_port = atoi(relay);
+     bi->relay_port = atoi(relay);
     }
   }
   set_user(&USERENTRY_BOTADDR, u1, bi);
