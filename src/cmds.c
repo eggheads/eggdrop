@@ -783,7 +783,7 @@ static void cmd_pls_bot(struct userrec *u, int idx, char *par)
   struct userrec *u1;
   struct bot_addr *bi;
 #ifndef IPV6
-  struct in_addr saddr
+  struct in_addr *saddr;
 #endif
   int i, len, found = 0;
 
@@ -1133,7 +1133,7 @@ static void cmd_chaddr(struct userrec *u, int idx, char *par)
   struct bot_addr *bi;
   struct userrec *u1;
 #ifndef IPV6
-  struct in_addr saddr
+  struct in_addr *saddr;
 #endif
 
   handle = newsplit(&par);
