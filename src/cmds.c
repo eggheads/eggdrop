@@ -768,7 +768,7 @@ int check_int_range(char *value, int min, int max) {
   char *endptr = NULL;
   long intvalue;
 
-  if (value) {
+  if (value && value[0]) {
     intvalue = strtol(value, &endptr, 10);
     if ((intvalue < max) && (intvalue > min) && (*endptr == '\0')) {
       return 1;
