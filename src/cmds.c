@@ -810,7 +810,7 @@ static void cmd_pls_bot(struct userrec *u, int idx, char *par)
     return;
   }
 
-  if (!addr[0]) {
+  if (addr[0]) {
 #ifndef IPV6
  /* Reject IPv6 addresses */
     for (i=0; addr[i]; i++) {
@@ -826,7 +826,7 @@ static void cmd_pls_bot(struct userrec *u, int idx, char *par)
   */
     for (i=0; addr[i]; i++) {
       if (addr[i] == '+') {
-        dprintf(idx, "Bot address may not start with a +.\n");
+        dprintf(idx, "Bot address may not contain a +.\n");
         return;
       }
       if (!isdigit((unsigned char) addr[i]) && (addr[i] != '/')) {
@@ -1138,7 +1138,7 @@ static void cmd_chaddr(struct userrec *u, int idx, char *par)
   port = strtok(port2, "/");
   relay = strtok(NULL, "/");
 
-  if (!addr[0]) {
+  if (addr[0]) {
 #ifndef IPV6
     for (i=0; addr[i]; i++) {
       if (addr[i] == ':') {
@@ -1153,7 +1153,7 @@ static void cmd_chaddr(struct userrec *u, int idx, char *par)
   */
     for (i=0; addr[i]; i++) {
       if (addr[i] == '+') {
-        dprintf(idx, "Bot address may not start with a +.\n");
+        dprintf(idx, "Bot address may not contain a +.\n");
         return;
       }
       if (!isdigit((unsigned char) addr[i]) && (addr[i] != '/')) {
