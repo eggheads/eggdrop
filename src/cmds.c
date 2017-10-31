@@ -782,9 +782,6 @@ static void cmd_pls_bot(struct userrec *u, int idx, char *par)
   char *handle, *addr, *port, *port2, *relay, *host;
   struct userrec *u1;
   struct bot_addr *bi;
-#ifndef IPV6
-  struct in_addr *saddr;
-#endif
   int i, found = 0;
 
   if (!par[0]) {
@@ -1129,9 +1126,6 @@ static void cmd_chaddr(struct userrec *u, int idx, char *par)
   char *handle, *addr, *port, *port2, *relay;
   struct bot_addr *bi;
   struct userrec *u1;
-#ifndef IPV6
-  struct in_addr *saddr;
-#endif
 
   handle = newsplit(&par);
   if (!par[0]) {
