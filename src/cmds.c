@@ -813,7 +813,7 @@ static void cmd_pls_bot(struct userrec *u, int idx, char *par)
     return;
   }
 
-  if (strcmp(addr, "")) {
+  if (!addr[0]) {
 #ifndef IPV6
  /* Reject IPv6 addresses */
     for (i = 0; addr[i]; i++) {
@@ -1145,7 +1145,7 @@ static void cmd_chaddr(struct userrec *u, int idx, char *par)
   port = strtok(port2, "/");
   relay = strtok(NULL, "/");
 
-  if (strcmp(addr, "")) {
+  if (!addr[0]) {
 #ifndef IPV6
     for (i = 0; addr[i]; i++) {
       if (addr[i] == ':') {
