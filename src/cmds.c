@@ -827,11 +827,11 @@ static void cmd_pls_bot(struct userrec *u, int idx, char *par)
  /* Check if user forgot address field by checking if argument is completely
   * numerical, implying a port was provided as the next argument instead.
   */
-    if (*addr == '+') {
-      dprintf(idx, "Bot address may not start with a +.\n");
-      return;
-    }
     for (i=0; addr[i]; i++) {
+      if (addr[i] == '+') {
+        dprintf(idx, "Bot address may not start with a +.\n");
+        return;
+      }
       if (!isdigit((unsigned char) addr[i]) && (addr[i] != '/')) {
         found=1;
         break;
@@ -1157,11 +1157,11 @@ static void cmd_chaddr(struct userrec *u, int idx, char *par)
  /* Check if user forgot address field by checking if argument is completely
   * numerical, implying a port was provided as the next argument instead.
   */
-    if (*addr == '+') {
-      dprintf(idx, "Bot address may not start with a +.\n");
-      return;
-    }
     for (i=0; addr[i]; i++) {
+      if (addr[i] == '+') {
+        dprintf(idx, "Bot address may not start with a +.\n");
+        return;
+      }
       if (!isdigit((unsigned char) addr[i]) && (addr[i] != '/')) {
         found=1;
         break;
