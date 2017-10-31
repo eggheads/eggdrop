@@ -785,7 +785,7 @@ static void cmd_pls_bot(struct userrec *u, int idx, char *par)
 #ifndef IPV6
   struct in_addr *saddr;
 #endif
-  int i, len, found = 0;
+  int i, found = 0;
 
   if (!par[0]) {
     dprintf(idx, "Usage: +bot <handle> [address [telnet-port[/relay-port]]] "
@@ -816,7 +816,7 @@ static void cmd_pls_bot(struct userrec *u, int idx, char *par)
   if (!addr[0]) {
 #ifndef IPV6
  /* Reject IPv6 addresses */
-    for (i = 0; addr[i]; i++) {
+    for (i=0; addr[i]; i++) {
       if (addr[i] == ':') {
         dprintf(idx, "Invalid IP address format (this Eggdrop "
           "was compiled without IPv6 support).\n");
@@ -831,8 +831,7 @@ static void cmd_pls_bot(struct userrec *u, int idx, char *par)
       dprintf(idx, "Bot address may not start with a +.\n");
       return;
     }
-    len = strlen(addr);
-    for (i=0; i < len; i++) {
+    for (i=0; addr[i]; i++) {
       if (!isdigit((unsigned char) addr[i]) && (addr[i] != '/')) {
         found=1;
         break;
@@ -1126,7 +1125,7 @@ static void cmd_chaddr(struct userrec *u, int idx, char *par)
 #ifdef TLS
   int use_ssl = 0;
 #endif
-  int i, len, found = 0, telnet_port = 3333, relay_port = 3333;
+  int i, found = 0, telnet_port = 3333, relay_port = 3333;
   char *handle, *addr, *port, *port2, *relay;
   struct bot_addr *bi;
   struct userrec *u1;
@@ -1147,7 +1146,7 @@ static void cmd_chaddr(struct userrec *u, int idx, char *par)
 
   if (!addr[0]) {
 #ifndef IPV6
-    for (i = 0; addr[i]; i++) {
+    for (i=0; addr[i]; i++) {
       if (addr[i] == ':') {
         dprintf(idx, "Invalid IP address format (this Eggdrop "
           "was compiled without IPv6 support).\n");
@@ -1162,8 +1161,7 @@ static void cmd_chaddr(struct userrec *u, int idx, char *par)
       dprintf(idx, "Bot address may not start with a +.\n");
       return;
     }
-    len = strlen(addr);
-    for (i=0; i < len; i++) {
+    for (i=0; addr[i]; i++) {
       if (!isdigit((unsigned char) addr[i]) && (addr[i] != '/')) {
         found=1;
         break;
