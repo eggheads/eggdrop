@@ -816,13 +816,11 @@ static void cmd_pls_bot(struct userrec *u, int idx, char *par)
   if (strcmp(addr, "")) {
 #ifndef IPV6
  /* Reject IPv6 addresses */
-    if (!inet_pton(AF_INET, addr, saddr)) {
-      for (i = 0; addr[i]; i++) {
-        if (addr[i] == ':') {
-          dprintf(idx, "Invalid IP address format (this Eggdrop "
-            "was compiled without IPv6 support).\n");
-          return;
-        }
+    for (i = 0; addr[i]; i++) {
+      if (addr[i] == ':') {
+        dprintf(idx, "Invalid IP address format (this Eggdrop "
+          "was compiled without IPv6 support).\n");
+        return;
       }
     }
 #endif
@@ -1149,13 +1147,11 @@ static void cmd_chaddr(struct userrec *u, int idx, char *par)
 
   if (strcmp(addr, "")) {
 #ifndef IPV6
-    if (!inet_pton(AF_INET, addr, saddr)) {
-      for (i = 0; addr[i]; i++) {
-        if (addr[i] == ':') {
-          dprintf(idx, "Invalid IP address format (this Eggdrop "
-            "was compiled without IPv6 support).\n");
-          return;
-        }
+    for (i = 0; addr[i]; i++) {
+      if (addr[i] == ':') {
+        dprintf(idx, "Invalid IP address format (this Eggdrop "
+          "was compiled without IPv6 support).\n");
+        return;
       }
     }
 #endif
