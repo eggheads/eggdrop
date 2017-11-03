@@ -830,7 +830,7 @@ static void cmd_pls_bot(struct userrec *u, int idx, char *par)
   */
     for (i=0; addr[i]; i++) {
       if (strchr(BADADDRCHARS, addr[i])) {
-        dprintf(idx, "Bot address may not contain a %c. ", addr[i]);
+        dprintf(idx, "Bot address may not contain a '%c'. ", addr[i]);
         break;
       }
       if (!isdigit((unsigned char) addr[i])) {
@@ -1157,7 +1157,7 @@ static void cmd_chaddr(struct userrec *u, int idx, char *par)
   */
     for (i=0; addr[i]; i++) {
       if (strchr(BADADDRCHARS, addr[i])) {
-        dprintf(idx, "Bot address may not contain a %c. ", addr[i]);
+        dprintf(idx, "Bot address may not contain a '%c'. ", addr[i]);
         break;
       }
       if (!isdigit((unsigned char) addr[i])) {
