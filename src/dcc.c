@@ -497,7 +497,7 @@ static void dcc_bot(int idx, char *code, int i)
   int f;
 
   if (raw_log) {
-    if (!strcmp(code, "s"))
+    if (!strncmp(code, "s ", 2))
       putlog(LOG_BOTSHRIN, "*", "{m<-%s} %s", dcc[idx].nick, code + 2);
     else
       putlog(LOG_BOTNETIN, "*", "[m<-%s] %s", dcc[idx].nick, code);
