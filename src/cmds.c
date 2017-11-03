@@ -48,6 +48,10 @@ extern module_entry *module_list;
 
 static char *btos(unsigned long);
 
+/* Define some characters not allowed in address/port string
+ */
+#define BADADDRCHARS "+/"
+
 
 /* Add hostmask to a bot's record if possible.
  */
@@ -825,11 +829,11 @@ static void cmd_pls_bot(struct userrec *u, int idx, char *par)
   * numerical, implying a port was provided as the next argument instead.
   */
     for (i=0; addr[i]; i++) {
-      if (addr[i] == '+') {
-        dprintf(idx, "Bot address may not contain a +.\n");
-        return;
+      if (strchr(BADADDRCHARS, addr[i])) {
+        dprintf(idx, "Bot address may not contain a %c.\n", addr[i]);
+        break;
       }
-      if (!isdigit((unsigned char) addr[i]) && (addr[i] != '/')) {
+      if (!isdigit((unsigned char) addr[i])) {
         found=1;
         break;
       }
@@ -1152,11 +1156,11 @@ static void cmd_chaddr(struct userrec *u, int idx, char *par)
   * numerical, implying a port was provided as the next argument instead.
   */
     for (i=0; addr[i]; i++) {
-      if (addr[i] == '+') {
-        dprintf(idx, "Bot address may not contain a +.\n");
-        return;
+      if (strchr(BADADDRARGS, addr[i])) {
+        dprintf(idx, "Bot address may not contain a %c.\n", addr[i]);
+        break;
       }
-      if (!isdigit((unsigned char) addr[i]) && (addr[i] != '/')) {
+      if (!isdigit((unsigned char) addr[i])) {
         found=1;
         break;
       }
