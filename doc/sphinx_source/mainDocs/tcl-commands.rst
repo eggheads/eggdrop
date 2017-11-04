@@ -208,7 +208,7 @@ getuser <handle> [entry-type] [extra info]
   +----------+-------------------------------------------------------------------------------------+
   | BOTFL    | returns the current bot-specific flags for the user (bot-only)                      |
   +----------+-------------------------------------------------------------------------------------+
-  | BOTADDR  | returns a list containing the bot's address, telnet port, and relay port (bot-only) |
+  | BOTADDR  | returns a list containing the bot's address, bot listen port, and user listen port  |
   +----------+-------------------------------------------------------------------------------------+
   | HOSTS    | returns a list of hosts for the user                                                |
   +----------+-------------------------------------------------------------------------------------+
@@ -240,20 +240,30 @@ setuser <handle> <entry-type> [extra info]
   Description: this is the counterpart of getuser. It lets you set the various values. Other then the ones listed below, the entry-types are the same as getuser's.
 
   +---------+---------------------------------------------------------------------------------------+
-  | PASS    | sets a users password (no third arg will clear it)                                    |
+  | Type    | Extra Info                                                                            |
+  +=========+=======================================================================================+
+  | PASS    | <password>                                                                            |
+  |         |   Password string (Empty value will clear the password)                               |
   +---------+---------------------------------------------------------------------------------------+
-  | HOSTS   | if used with no third arg, all hosts for the user will be cleared. Otherwise, *1*     |
-  |         | hostmask is added :P                                                                  |
+  | BOTADDR | <address> [bot listen port] [user listen port]                                        |
+  |         |   Sets address, bot listen port and user listen port. If no listen ports are          |
+  |         |   specified, only the bot address is updated. If only the bot listen port is          |
+  |         |   specified, both the bot and user listen ports are set to the bot listen port.       |
+  +---------+---------------------------------------------------------------------------------------+
+  | HOSTS   | [hostmask]                                                                            |
+  |         |   If no value is specified, all hosts for the user will be cleared. Otherwise, only   |
+  |         |   *1* hostmask is added :P                                                            |
   +---------+---------------------------------------------------------------------------------------+
   | LASTON  | This setting has 3 forms.                                                             |
   |         |                                                                                       |
-  |         |   *setuser <handle> LASTON <unixtime> <place>* sets global LASTON time                |
+  |         | <unixtime> <place>                                                                    |
+  |         |    sets global LASTON time                                                            |
   |         |                                                                                       |
-  |         |   *setuser <handle> LASTON <unixtime>* sets global LASTON time (leaving the place     |
-  |         |   field empty)                                                                        |
+  |         | <unixtime>                                                                            |
+  |         |   sets global LASTON time (leaving the place field empty)                             |
   |         |                                                                                       |
-  |         |   *setuser <handle> LASTON <unixtime> <channel>* sets a users LASTON time for a       |
-  |         |   channel (if it is a  valid channel)                                                 |
+  |         | <unixtime> <channel>                                                                  |
+  |         |   sets a user's LASTON time for a channel (if it is a valid channel)                  |
   +---------+---------------------------------------------------------------------------------------+
 
   Returns: nothing
@@ -1305,7 +1315,7 @@ putdcc <idx> <text> [-raw]
 dccbroadcast <message>
 ^^^^^^^^^^^^^^^^^^^^^^
 
-  Description: sends a message to everyone on the party line across the botnet, in the form of "\*\*\* <message>" for local users and "\*\*\* (Bot) <message>" for users on other bots
+  Description: sends a message to everyone on the party line across the botnet, in the form of "\*\*\* <message>" for local users, "\*\*\* (Bot) <message>" for users on other bots with version below 1.8.3, and "(Bot) <message>" for users on other bots with version 1.8.3+ and console log mode 'l' enabled
 
   Returns: nothing
 
@@ -1389,6 +1399,16 @@ console <idx> [channel] [console-modes]
   Description: changes a dcc user's console mode, either to an absolute mode (like "mpj") or just adding/removing flags (like "+pj" or "-moc" or "+mp-c"). The user's console channel view can be changed also (as long as the new channel is a valid channel).
 
   Returns: a list containing the user's (new) channel view and (new) console modes, or nothing if that user isn't currently on the partyline
+
+  Module: core
+
+^^^^^^^^^^^^^^^^^^
+resetconsole <idx>
+^^^^^^^^^^^^^^^^^^
+
+  Description: changes a dcc user's console mode to the default setting in the configfile.
+
+  Returns: a list containing the user's channel view and (new) console modes, or nothing if that user isn't currently on the partyline
 
   Module: core
 
@@ -1994,11 +2014,15 @@ logfile [<modes> <channel> <filename>]
   +-----+---------------------------------------------------------------------+
   | d   | misc debug information                                              |
   +-----+---------------------------------------------------------------------+
-  | h   | raw share traffic                                                   |
+  | g   | raw outgoing share traffic                                          |
+  +-----+---------------------------------------------------------------------+
+  | h   | raw incoming share traffic                                          |
   +-----+---------------------------------------------------------------------+
   | j   | joins, parts, quits, topic changes, and netsplits on the channel    |
   +-----+---------------------------------------------------------------------+
   | k   | kicks, bans, and mode changes on the channel                        |
+  +-----+---------------------------------------------------------------------+
+  | l   | linked bot messages                                                 |
   +-----+---------------------------------------------------------------------+
   | m   | private msgs, notices and ctcps to the bot                          |
   +-----+---------------------------------------------------------------------+
@@ -2010,7 +2034,9 @@ logfile [<modes> <channel> <filename>]
   +-----+---------------------------------------------------------------------+
   | s   | server connects, disconnects, and notices                           |
   +-----+---------------------------------------------------------------------+
-  | t   | raw botnet traffic                                                  |
+  | t   | raw incoming botnet traffic                                         |
+  +-----+---------------------------------------------------------------------+
+  | u   | raw outgoing botnet traffic                                         |
   +-----+---------------------------------------------------------------------+
   | v   | raw outgoing server traffic                                         |
   +-----+---------------------------------------------------------------------+

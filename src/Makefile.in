@@ -22,25 +22,35 @@ dccutil.o dns.o flags.o language.o match.o main.o mem.o misc.o misc_file.o \
 modules.o net.o rfc1459.o tcl.o tcldcc.o tclhash.o tclmisc.o tcluser.o \
 tls.o userent.o userrec.o users.o
 
-MAKE_GENERIC = $(MAKE) 'MAKE=$(MAKE)' 'CC=$(CC)' 'LD=$(LD)' \
-'STRIP=$(STRIP)' 'CFLGS=$(CFLGS)'
+MAKE_GENERIC_ARGS = 'MAKE=$(MAKE)' 'CC=$(CC)' 'LD=$(LD)' \
+                    'STRIP=$(STRIP)' 'CFLGS=$(CFLGS)'
 
 
 doofus:
-	@echo ""
-	@echo "Let's try this from the right directory..."
-	@echo ""
-	@cd .. && $(MAKE)
+	@echo "" && \
+	echo "Let's try this from the right directory..." && echo "" && \
+	cd .. && $(MAKE)
 
-../$(EGGEXEC): build_msg $(eggdrop_objs) compile_md5 compatibility
-	@echo "Linking eggdrop $(EGGBUILD)."
-	@echo ""
-	@touch mod/mod.xlibs
+linkstart:
+	@echo "" && echo "This may take a while. Go get some runts." && \
+	echo "" && \
+	echo "---------- Yeah! That's the compiling, now the linking! ----------" && \
+	echo "" && \
+	echo "Linking eggdrop $(EGGBUILD)." && \
+	echo "" && \
+	touch mod/mod.xlibs
+
+link:
 	$(LD) -o ../$(EGGEXEC) $(eggdrop_objs) $(MODOBJS) $(XLIBS) md5/md5c.o compat/*.o `cat mod/mod.xlibs`
-	$(STRIP) ../$(EGGEXEC)
-	@echo ""
-	@echo "Successful compile: $(EGGEXEC)"
-	@echo ""
+
+linkfinish:
+	@$(STRIP) ../$(EGGEXEC) && \
+	echo "" && \
+	echo "Successful compile: $(EGGEXEC)" && \
+	echo ""
+
+../$(EGGEXEC): $(eggdrop_objs) compile_md5 compatibility
+	$(MAKE) linkstart && $(MAKE) link && $(MAKE) linkfinish
 
 $(EGGEXEC): ../$(EGGEXEC)
 
@@ -50,29 +60,20 @@ depend:
 clean:
 	@rm -f .depend *.o *.a *~
 
-build_msg:
-	@echo ""
-	@echo "This may take a while. Go get some runts."
-	@echo ""
-
 main.o:
 	$(CC) $(CFLAGS) $(CPPFLAGS) \
-'-DCCFLAGS="$(CC) $(CFLAGS) $(CPPFLAGS)"' \
-'-DLDFLAGS="$(LD)"' \
-'-DSTRIPFLAGS="$(STRIP)"' -c $(srcdir)/main.c
+	'-DCCFLAGS="$(CC) $(CFLAGS) $(CPPFLAGS)"' \
+	'-DLDFLAGS="$(LD)"' \
+	'-DSTRIPFLAGS="$(STRIP)"' -c $(srcdir)/main.c
 
 compatibility:
-	@cd compat && $(MAKE_GENERIC) compat
-	@echo ""
-	@echo "---------- Yeah! That's the compiling, now the linking! ----------"
-	@echo ""
+	@cd compat && $(MAKE) $(MAKE_GENERIC_ARGS) compat
 
 compile_md5:
-	@cd md5 && $(MAKE_GENERIC) md5
+	@cd md5 && $(MAKE) $(MAKE_GENERIC_ARGS) md5
 
 eggdrop.h:
-	@echo "You do not have the eggdrop source!"
-	@exit 1
+	@echo "You do not have the eggdrop source!" && exit 1
 
 .SUFFIXES:
 .SUFFIXES: .c .h .o .a

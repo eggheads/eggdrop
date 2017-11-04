@@ -5,10 +5,10 @@ srcdir = .
 
 
 doofus:
-	@echo ""
-	@echo "Let's try this from the right directory..."
-	@echo ""
-	@cd ../../../ && make
+	@echo "" && \
+	echo "Let's try this from the right directory..." && \
+	echo "" && \
+	cd ../../../ && $(MAKE)
 
 static: ../compress.o
 	@echo "$(ZLIB)" >> ../mod.xlibs
@@ -16,13 +16,10 @@ static: ../compress.o
 modules: ../../../compress.$(MOD_EXT)
 
 ../compress.o:
-	$(CC) $(CFLAGS) $(CPPFLAGS) -DMAKING_MODS -c $(srcdir)/compress.c
-	rm -f ../compress.o
-	mv compress.o ../
+	$(CC) $(CFLAGS) $(CPPFLAGS) -DMAKING_MODS -c $(srcdir)/compress.c && mv -f compress.o ../
 
 ../../../compress.$(MOD_EXT): ../compress.o
-	$(LD) -o ../../../compress.$(MOD_EXT) ../compress.o $(ZLIB) $(XLIBS) $(MODULE_XLIBS)
-	$(STRIP) ../../../compress.$(MOD_EXT)
+	$(LD) -o ../../../compress.$(MOD_EXT) ../compress.o $(ZLIB) $(XLIBS) $(MODULE_XLIBS) && $(STRIP) ../../../compress.$(MOD_EXT)
 
 depend:
 	$(CC) $(CFLAGS) -MM $(srcdir)/compress.c -MT ../compress.o > .depend

@@ -126,10 +126,12 @@ the logfile of the next day.
   set raw-log 0
     This setting allows you the logging of raw incoming server traffic via
     console/log flag 'r', raw outgoing server traffic via console/log mode
-    'v', raw botnet traffic via console/log mode 't', and raw share traffic
-    via console/log mode 'h'. These flags can create a large security hole,
-    allowing people to see user passwords. This is now restricted to +n users
-    only. Please choose your owners with care.
+    'v', raw incoming botnet traffic via console/log mode 't', raw outgoing
+    botnet traffic via console/log mode 'u', raw outgoing share traffic via
+    console/log mode 'g', and raw incoming share traffic via console/log
+    mode 'h'. These flags can create a large security hole, allowing people
+    to see user passwords. This is now restricted to +n users only. Please
+    choose your owners with care.
 
 logfile <logflags> <channel> "logs/logfile"
     This setting tells the bot what should be logged, from where, and to
@@ -144,11 +146,15 @@ logfile <logflags> <channel> "logs/logfile"
       +---+------------------------------------------------------+
       | d | misc debug information                               |
       +---+------------------------------------------------------+
-      | h | raw share traffic                                    |
+      | g | raw outgoing share traffic                           |
+      +---+------------------------------------------------------+
+      | h | raw incoming share traffic                           |
       +---+------------------------------------------------------+
       | j | joins, parts, quits, and netsplits on the channel    |
       +---+------------------------------------------------------+
       | k | kicks, bans, and mode changes on the channel         |
+      +---+------------------------------------------------------+
+      | l | linked bot messages                                  |
       +---+------------------------------------------------------+
       | m | private msgs, notices and ctcps to the bot           |
       +---+------------------------------------------------------+
@@ -160,7 +166,9 @@ logfile <logflags> <channel> "logs/logfile"
       +---+------------------------------------------------------+
       | s | server connects, disconnects, and notices            |
       +---+------------------------------------------------------+
-      | t | raw botnet traffic                                   |
+      | t | raw incoming botnet traffic                          |
+      +---+------------------------------------------------------+
+      | u | raw outgoing botnet traffic                          |
       +---+------------------------------------------------------+
       | v | raw outgoing server traffic                          |
       +---+------------------------------------------------------+
@@ -225,7 +233,7 @@ logfile <logflags> <channel> "logs/logfile"
 Console Settings
 ----------------
 
-  set console "mkcobxs"
+  set console "mkcoblxs"
     This is the default console mode. It uses the same event flags as the
     log files do. The console channel is automatically set to your "primary"
     channel, which is set in the modules section of the config file. Masters

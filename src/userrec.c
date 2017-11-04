@@ -923,7 +923,7 @@ void user_del_chan(char *dname)
 int check_conflags(struct flag_record *fr, int md)
 {
   if (!glob_owner(*fr))
-    md &= ~(LOG_RAW | LOG_SRVOUT | LOG_BOTNET | LOG_BOTSHARE);
+    md &= ~(LOG_RAW | LOG_SRVOUT | LOG_BOTNETIN | LOG_BOTNETOUT | LOG_BOTSHRIN | LOG_BOTSHROUT);
   if (!glob_master(*fr)) {
     md &= ~(LOG_FILES | LOG_LEV1 | LOG_LEV2 | LOG_LEV3 | LOG_LEV4 |
             LOG_LEV5 | LOG_LEV6 | LOG_LEV7 | LOG_LEV8 | LOG_DEBUG |
@@ -932,6 +932,6 @@ int check_conflags(struct flag_record *fr, int md)
       md &= ~(LOG_MISC | LOG_CMDS);
   }
   if (!glob_botmast(*fr))
-    md &= ~LOG_BOTS;
+    md &= ~(LOG_BOTS | LOG_BOTMSG);
   return md;
 }

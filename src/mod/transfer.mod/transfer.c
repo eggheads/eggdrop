@@ -357,7 +357,7 @@ static void eof_dcc_send(int idx)
       dprintf(y, "bye\n");
       egg_snprintf(s, sizeof s, TRANSFER_USERFILE_DISCON, dcc[y].nick);
       botnet_send_unlinked(y, dcc[y].nick, s);
-      chatout("*** %s\n", dcc[y].nick, s);
+      putlog(LOG_BOTS, "*", "%s.", s);
       if (y != idx) {
         killsock(dcc[y].sock);
         lostdcc(y);
@@ -576,7 +576,7 @@ static void eof_dcc_get(int idx)
     dprintf(-dcc[y].sock, "bye\n");
     egg_snprintf(s, sizeof s, TRANSFER_USERFILE_DISCON, dcc[y].nick);
     botnet_send_unlinked(y, dcc[y].nick, s);
-    chatout("*** %s\n", s);
+    putlog(LOG_BOTS, "*", "%s.", s);
     if (y != idx) {
       killsock(dcc[y].sock);
       lostdcc(y);
@@ -651,7 +651,7 @@ static void transfer_get_timeout(int i)
     dprintf(y, "bye\n");
     egg_snprintf(xx, sizeof xx, TRANSFER_DICONNECT_TIMEOUT, dcc[y].nick);
     botnet_send_unlinked(y, dcc[y].nick, xx);
-    chatout("*** %s\n", xx);
+    putlog(LOG_BOTS, "*", "%s.", xx);
     if (y < i) {
       int t = y;
 

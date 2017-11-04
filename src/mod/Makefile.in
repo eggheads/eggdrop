@@ -23,7 +23,7 @@ MOD_CPPFLAGS = @CPPFLAGS@
 XLIBS = @XLIBS@
 MOD_EXT = @MOD_EXT@
 
-# Note: The following three lines are automatically adjusted by
+# Note: The following lines are automatically adjusted by
 #       misc/modconfig. They have to be present here.
 mods =
 mod_objs =
@@ -42,14 +42,13 @@ MAKE_MODDEPEND = $(MAKE) 'MAKE=$(MAKE)' 'CC=$(CC)' \
 'CFLAGS=-I../../.. -I../../../src/mod -DMAKING_DEPEND -DHAVE_CONFIG_H -DMAKING_MODS'
 
 doofus:
-	@echo ""
-	@echo "Let's try this from the right directory..."
-	@echo ""
-	@cd ../.. && $(MAKE)
+	@echo "" && \
+	echo "Let's try this from the right directory..." && \
+	echo "" && \
+	cd ../.. && $(MAKE)
 
 modules: $(mod_libs)
-	@echo ""
-	@echo "All modules compiled."
+	@echo "" && echo "All modules compiled."
 
 static: $(mod_objs)
 	@$(modconfig) static.h
@@ -121,8 +120,8 @@ distclean:
 install: install-help install-language
 
 install-help:
-	@echo "Copying module help files."
-	@if test ! -d $(DEST)/help; then \
+	@echo "Copying module help files." && \
+	if test ! -d $(DEST)/help; then \
 		echo "Creating 'help' subdirectory."; \
 		$(top_srcdir)/misc/mkinstalldirs $(DEST)/help >/dev/null; \
 	fi; \
@@ -132,8 +131,8 @@ install-help:
 				$(INSTALL_DATA) $$h $(DEST)/help/; \
 			done; \
 		fi; \
-	done;
-	@if test ! -d $(DEST)/help/msg; then \
+	done; \
+	if test ! -d $(DEST)/help/msg; then \
 		echo "Creating 'help/msg' subdirectory."; \
 		$(top_srcdir)/misc/mkinstalldirs $(DEST)/help/msg >/dev/null; \
 	fi; \
@@ -143,8 +142,8 @@ install-help:
 				$(INSTALL_DATA) $$h $(DEST)/help/msg/; \
 			done; \
 		fi; \
-	done;
-	@if test ! -d $(DEST)/help/set; then \
+	done; \
+	if test ! -d $(DEST)/help/set; then \
 		echo "Creating 'help/set' subdirectory."; \
 		$(top_srcdir)/misc/mkinstalldirs $(DEST)/help/set >/dev/null; \
 	fi; \
@@ -157,8 +156,8 @@ install-help:
 	done;
 
 install-language:
-	@echo "Copying module language files."
-	@if test ! -d $(DEST)/language; then \
+	@echo "Copying module language files." && \
+	if test ! -d $(DEST)/language; then \
 		echo "Creating 'language' subdirectory."; \
 		$(top_srcdir)/misc/mkinstalldirs $(DEST)/language >/dev/null; \
 	fi; \

@@ -4,23 +4,20 @@ srcdir = .
 
 
 doofus:
-	@echo ""
-	@echo "Let's try this from the right directory..."
-	@echo ""
-	@cd ../../../ && make
+	@echo "" && \
+	echo "Let's try this from the right directory..." && \
+	echo "" && \
+	cd ../../../ && $(MAKE)
 
 static: ../blowfish.o
 
 modules: ../../../blowfish.$(MOD_EXT)
 
 ../blowfish.o:
-	$(CC) $(CFLAGS) $(CPPFLAGS) -DMAKING_MODS -c $(srcdir)/blowfish.c
-	@rm -f ../blowfish.o
-	mv blowfish.o ../
+	$(CC) $(CFLAGS) $(CPPFLAGS) -DMAKING_MODS -c $(srcdir)/blowfish.c && mv -f blowfish.o ../
 
 ../../../blowfish.$(MOD_EXT): ../blowfish.o
-	$(LD) -o ../../../blowfish.$(MOD_EXT) ../blowfish.o $(XLIBS) $(MODULE_XLIBS)
-	$(STRIP) ../../../blowfish.$(MOD_EXT)
+	$(LD) -o ../../../blowfish.$(MOD_EXT) ../blowfish.o $(XLIBS) $(MODULE_XLIBS) && $(STRIP) ../../../blowfish.$(MOD_EXT)
 
 depend:
 	$(CC) $(CFLAGS) -MM $(srcdir)/blowfish.c -MT ../blowfish.o > .depend
