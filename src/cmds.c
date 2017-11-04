@@ -48,6 +48,10 @@ extern module_entry *module_list;
 
 static char *btos(unsigned long);
 
+/* Define some characters not allowed in address/port string
+ */
+#define BADADDRCHARS "+/"
+
 
 /* Add hostmask to a bot's record if possible.
  */
@@ -765,12 +769,12 @@ static void cmd_resetconsole(struct userrec *u, int idx, char *par)
  * between two given integers. Returns 1 if true, 0 if not.
  */
 int check_int_range(char *value, int min, int max) {
-  char **endptr = NULL;
+  char *endptr = NULL;
   long intvalue;
 
-  if (value) {
-    intvalue = strtol(value, endptr, 10);
-    if ((intvalue < max) && (intvalue > min) && (!endptr && (strcmp(value,"")))) {
+  if (value && value[0]) {
+    intvalue = strtol(value, &endptr, 10);
+    if ((intvalue < max) && (intvalue > min) && (*endptr == '\0')) {
       return 1;
     }
   }
@@ -810,26 +814,26 @@ static void cmd_pls_bot(struct userrec *u, int idx, char *par)
     return;
   }
 
-  if (strcmp(addr, "")) {
+  if (addr[0]) {
 #ifndef IPV6
  /* Reject IPv6 addresses */
-    if (!inet_pton(AF_INET, addr, saddr)) {
-      for (i = 0; addr[i]; i++) {
-        if (addr[i] == ':') {
-          dprintf(idx, "Invalid IP address format (this Eggdrop "
-            "was compiled without IPv6 support).\n");
-          return;
-        }
+    for (i=0; addr[i]; i++) {
+      if (addr[i] == ':') {
+        dprintf(idx, "Invalid IP address format (this Eggdrop "
+          "was compiled without IPv6 support).\n");
+        return;
       }
     }
 #endif
- /* Check if user forgot address field */
-    if (*addr == '+') {
-      dprintf(idx, "Bot address may not start with a +.\n");
-      return;
-    }
-    for (i=0; i < addr[i]; i++) {
-      if (!isdigit((unsigned char) addr[i]) && (addr[i] != '/')) {
+ /* Check if user forgot address field by checking if argument is completely
+  * numerical, implying a port was provided as the next argument instead.
+  */
+    for (i=0; addr[i]; i++) {
+      if (strchr(BADADDRCHARS, addr[i])) {
+        dprintf(idx, "Bot address may not contain a '%c'. ", addr[i]);
+        break;
+      }
+      if (!isdigit((unsigned char) addr[i])) {
         found=1;
         break;
       }
@@ -843,7 +847,7 @@ static void cmd_pls_bot(struct userrec *u, int idx, char *par)
   }
 
 #ifndef TLS
-  if ((port && *port == '+') || (relay && (relay[0] == '+'))) {
+  if ((port && *port == '+') || (relay && relay[0] == '+')) {
     dprintf(idx, "Ports prefixed with '+' are not enabled "
       "(this Eggdrop was compiled without TLS support).\n");
     return;
@@ -1138,25 +1142,25 @@ static void cmd_chaddr(struct userrec *u, int idx, char *par)
   port = strtok(port2, "/");
   relay = strtok(NULL, "/");
 
-  if (strcmp(addr, "")) {
+  if (addr[0]) {
 #ifndef IPV6
-    if (!inet_pton(AF_INET, addr, saddr)) {
-      for (i = 0; addr[i]; i++) {
-        if (addr[i] == ':') {
-          dprintf(idx, "Invalid IP address format (this Eggdrop "
-            "was compiled without IPv6 support).\n");
-          return;
-        }
+    for (i=0; addr[i]; i++) {
+      if (addr[i] == ':') {
+        dprintf(idx, "Invalid IP address format (this Eggdrop "
+          "was compiled without IPv6 support).\n");
+        return;
       }
     }
 #endif
-/* Check if user forgot address field */
-    if (*addr == '+') {
-      dprintf(idx, "Bot address may not start with a +.\n");
-      return;
-    }
-    for (i=0; i < strlen(addr); i++) {
-      if (!isdigit((unsigned char) addr[i]) && (addr[i] != '/')) {
+ /* Check if user forgot address field by checking if argument is completely
+  * numerical, implying a port was provided as the next argument instead.
+  */
+    for (i=0; addr[i]; i++) {
+      if (strchr(BADADDRCHARS, addr[i])) {
+        dprintf(idx, "Bot address may not contain a '%c'. ", addr[i]);
+        break;
+      }
+      if (!isdigit((unsigned char) addr[i])) {
         found=1;
         break;
       }
@@ -1169,14 +1173,13 @@ static void cmd_chaddr(struct userrec *u, int idx, char *par)
     }
   }
 
-#ifndef TLS  
-  if ((port && *port == '+') || ((relay && relay[0] == '+'))) {
+#ifndef TLS
+  if ((port && *port == '+') || (relay && relay[0] == '+')) {
     dprintf(idx, "Ports prefixed with '+' are not enabled "
-      "(this Eggdrop was compiled without TLS support)\n");
+      "(this Eggdrop was compiled without TLS support).\n");
     return;
   }
 #endif
-
   if (port && port[0]) {
     if (!check_int_range(port, 0, 65536)) {
       dprintf(idx, "Ports must be integers between 1 and 65535.\n");
@@ -1229,23 +1232,22 @@ static void cmd_chaddr(struct userrec *u, int idx, char *par)
       bi->relay_port = bi->telnet_port;
       bi->ssl *= TLS_BOT + TLS_RELAY;
     } else {
-      relay++;
-      if (*relay == '+')
+      if (*relay == '+') {
         bi->ssl |= TLS_RELAY;
+      }
 #else
   } else {
     bi->telnet_port = atoi(port);
-    if (!relay)
+    if (!relay) {
       bi->relay_port = bi->telnet_port;
-    else {
-      relay++;
+    } else {
 #endif
-      bi->relay_port = atoi(relay);
+     bi->relay_port = atoi(relay);
     }
   }
   set_user(&USERENTRY_BOTADDR, u1, bi);
-  putlog(LOG_CMDS, "*", "#%s# chaddr %s %s%s%s", dcc[idx].nick, handle,
-         addr, port ? " " : "", port);
+  putlog(LOG_CMDS, "*", "#%s# chaddr %s %s%s%s%s%s", dcc[idx].nick, handle,
+         addr, port ? " " : "", port ? port : "", relay ? "/" : "", relay ? relay : "");
   dprintf(idx, "Changed bot's address.\n");
 }
 
