@@ -872,7 +872,6 @@ static void cmd_pls_bot(struct userrec *u, int idx, char *par)
   userlist = adduser(userlist, handle, "none", "-", USER_BOT);
   u1 = get_user_by_handle(userlist, handle);
   bi = user_malloc(sizeof(struct bot_addr));
-  bi->ssl = 0;
   bi->address = user_malloc(strlen(addr) + 1);
   strcpy(bi->address, addr);
 
@@ -881,6 +880,7 @@ static void cmd_pls_bot(struct userrec *u, int idx, char *par)
     bi->relay_port = 3333;
   } else {
 #ifdef TLS
+    bi->ssl = 0;
     if (*port == '+')
       bi->ssl |= TLS_BOT;
 #endif
