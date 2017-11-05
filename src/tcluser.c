@@ -309,6 +309,7 @@ static int tcl_addbot STDVAR
   else {
     userlist = adduser(userlist, argv[1], "none", "-", USER_BOT);
     bi = user_malloc(sizeof(struct bot_addr));
+    bi->ssl = 0;
 #ifdef IPV6
     if ((q = strchr(argv[2], '/'))) {
       if (!q[1]) {
