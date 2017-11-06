@@ -138,7 +138,7 @@ int ssl_init()
     return -1;
   }
   ssl_files_loaded = 0;
-  if (tls_certfile[0] ^ tls_keyfile[0]) {
+  if ((tls_certfile[0] == '\0') != (tls_keyfile[0] == '\0')) {
     /* Both need to be set or unset */
     putlog(LOG_MISC, "*", "ERROR: TLS: %s set but %s unset. Both must be set "
         "to use a certificate, or unset both to disable.",
