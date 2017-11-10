@@ -26,6 +26,7 @@
 #include "chan.h"
 #include "tandem.h"
 #include "modules.h"
+#include "string.h"
 
 extern Tcl_Interp *interp;
 extern struct userrec *userlist;
@@ -294,6 +295,8 @@ static int tcl_addbot STDVAR
 {
   struct bot_addr *bi;
   char *p, *q;
+  int i, colon=0, braced = 0, ipv6 = 0, count = 0;
+
 
   BADARGS(3, 3, " handle address");
 
@@ -310,14 +313,32 @@ static int tcl_addbot STDVAR
     userlist = adduser(userlist, argv[1], "none", "-", USER_BOT);
     bi = user_malloc(sizeof(struct bot_addr));
 #ifdef IPV6
+    for (i=0; argv[2][i]; i++) {
+      if (argv[2][i] == ':') {
+        count++;
+        colon=i;
+      }
+      if (argv[2][i] == ']') {
+        braced = i;
+      }
+    }
+    if (count > 1) {
+      ipv6 = 1;
+    }
+#endif
+/* Check that the char following the / is not null */
     if ((q = strchr(argv[2], '/'))) {
       if (!q[1]) {
         *q = 0;
         q = 0;
       }
-    } else
-#endif
-    q = strchr(argv[2], ':');
+    }
+    if (!ipv6) {
+      q = strchr(argv[2], ':');
+    }
+    if (braced && (colon > braced)) {
+      q = strrchr(argv[2], ':');
+    }
     if (!q) {
       bi->address = user_malloc(strlen(argv[2]) + 1);
       strcpy(bi->address, argv[2]);
