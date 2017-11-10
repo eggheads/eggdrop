@@ -46,17 +46,17 @@ struct flag_record {
  *   unused letters: is
  *
  * botflags:
- *   a?????ghi??l???p?rs??0123456789
- *   unused letters: bcdefjkmnoqtu
+ *   abc?e?ghij?l?n?p?rs?u0123456789
+ *   unused letters: dfkmoqt
  *   unusable letters: vwxyz
  *
  * chanflags:
  *   a??defg???klmno?qrs??vw?yz + user defined A-Z
- *   unused letters: bchijptuw (s from bot flags)
+ *   unused letters: bchijptux (s from bot flags)
  */
 #define USER_VALID 0x003fbfeff   /* Sum of all valid USER_ flags */
 #define CHAN_VALID 0x003677c79   /* Sum of all valid CHAN_ flags */
-#define BOT_VALID  0x07fe689c1   /* Sum of all valid BOT_  flags */
+#define BOT_VALID  0x07ff6abd7   /* Sum of all valid BOT_  flags */
 
 
 #define USER_AUTOOP        0x00000001 /* a  auto-op                               */
@@ -89,26 +89,26 @@ struct flag_record {
 
 /* Flags specifically for bots */
 #define BOT_ALT        0x00000001 /* a  auto-link here if all hubs fail */
-#define BOT_B          0x00000002 /* b  unused                          */
-#define BOT_C          0x00000004 /* c  unused                          */
+#define BOT_SHBAN      0x00000002 /* b  can share bans                  */
+#define BOT_SHCHAN     0x00000004 /* c  can share channel changes       */
 #define BOT_D          0x00000008 /* d  unused                          */
-#define BOT_E          0x00000010 /* e  unused                          */
+#define BOT_SHEXEMPT   0x00000010 /* e  can share exempts               */
 #define BOT_F          0x00000020 /* f  unused                          */
 #define BOT_GLOBAL     0x00000040 /* g  all channel are shared          */
 #define BOT_HUB        0x00000080 /* h  auto-link to ONE of these bots  */
 #define BOT_ISOLATE    0x00000100 /* i  isolate party line from botnet  */
-#define BOT_J          0x00000200 /* j  unused                          */
+#define BOT_SHINV      0x00000200 /* j  can share invites               */
 #define BOT_K          0x00000400 /* k  unused                          */
 #define BOT_LEAF       0x00000800 /* l  may not link other bots         */
 #define BOT_M          0x00001000 /* m  unused                          */
-#define BOT_N          0x00002000 /* n  unused                          */
+#define BOT_SHIGN      0x00002000 /* n  can share ignores               */
 #define BOT_O          0x00004000 /* o  unused                          */
 #define BOT_PASSIVE    0x00008000 /* p  share passively with this bot   */
 #define BOT_Q          0x00010000 /* q  unused                          */
 #define BOT_REJECT     0x00020000 /* r  automatically reject anywhere   */
 #define BOT_AGGRESSIVE 0x00040000 /* s  bot shares user files           */
 #define BOT_T          0x00080000 /* t  unused                          */
-#define BOT_U          0x00100000 /* u  unused                          */
+#define BOT_SHUSER     0x00100000 /* u  can share user changes          */
 /* BOT_V to BOT_Z not usable as they're bitflags 32-36 */
 #define BOT_FLAG0      0x00200000 /* 0  user-defined flag #0            */
 #define BOT_FLAG1      0x00400000 /* 1  user-defined flag #1            */

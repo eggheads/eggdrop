@@ -1322,49 +1322,52 @@ static void share_feats(int idx, char *par)
 }
 
 
-/* Note: these MUST be sorted. */
-static botcmd_t C_share[] = {
-  {"!",        (IntFunc) share_endstartup},
-  {"+b",       (IntFunc) share_pls_ban},
-  {"+bc",      (IntFunc) share_pls_banchan},
-  {"+bh",      (IntFunc) share_pls_bothost},
-  {"+cr",      (IntFunc) share_pls_chrec},
-  {"+e",       (IntFunc) share_pls_exempt},
-  {"+ec",      (IntFunc) share_pls_exemptchan},
-  {"+h",       (IntFunc) share_pls_host},
-  {"+i",       (IntFunc) share_pls_ignore},
-  {"+inv",     (IntFunc) share_pls_invite},
-  {"+invc",    (IntFunc) share_pls_invitechan},
-  {"-b",       (IntFunc) share_mns_ban},
-  {"-bc",      (IntFunc) share_mns_banchan},
-  {"-cr",      (IntFunc) share_mns_chrec},
-  {"-e",       (IntFunc) share_mns_exempt},
-  {"-ec",      (IntFunc) share_mns_exemptchan},
-  {"-h",       (IntFunc) share_mns_host},
-  {"-i",       (IntFunc) share_mns_ignore},
-  {"-inv",     (IntFunc) share_mns_invite},
-  {"-invc",    (IntFunc) share_mns_invitechan},
-  {"a",        (IntFunc) share_chattr},
-  {"c",        (IntFunc) share_change},
-  {"chchinfo", (IntFunc) share_chchinfo},
-  {"e",        (IntFunc) share_end},
-  {"feats",    (IntFunc) share_feats},
-  {"h",        (IntFunc) share_chhand},
-  {"k",        (IntFunc) share_killuser},
-  {"n",        (IntFunc) share_newuser},
-  {"nc",       (IntFunc) share_newchan},
-  {"r!",       (IntFunc) share_resync},
-  {"r?",       (IntFunc) share_resyncq},
-  {"rn",       (IntFunc) share_resync_no},
-  {"s",        (IntFunc) share_stick_ban},
-  {"se",       (IntFunc) share_stick_exempt},
-  {"sInv",     (IntFunc) share_stick_invite},
-  {"u?",       (IntFunc) share_userfileq},
-  {"un",       (IntFunc) share_ufno},
-  {"us",       (IntFunc) share_ufsend},
-  {"uy",       (IntFunc) share_ufyes},
-  {"v",        (IntFunc) share_version},
-  {NULL,       NULL}
+/* Note: these MUST be sorted.
+ * Flags (second arg) are compared with OR,
+ * here in particular this means +p can execute all
+ */
+static botscmd_t C_share[] = {
+  {"!",        "",  (IntFunc) share_endstartup},
+  {"+b",       "pb", (IntFunc) share_pls_ban},
+  {"+bc",      "pb", (IntFunc) share_pls_banchan},
+  {"+bh",      "pu", (IntFunc) share_pls_bothost},
+  {"+cr",      "pc", (IntFunc) share_pls_chrec},
+  {"+e",       "pe", (IntFunc) share_pls_exempt},
+  {"+ec",      "pe", (IntFunc) share_pls_exemptchan},
+  {"+h",       "pu", (IntFunc) share_pls_host},
+  {"+i",       "pn", (IntFunc) share_pls_ignore},
+  {"+inv",     "pv", (IntFunc) share_pls_invite},
+  {"+invc",    "pv", (IntFunc) share_pls_invitechan},
+  {"-b",       "pb", (IntFunc) share_mns_ban},
+  {"-bc",      "pb", (IntFunc) share_mns_banchan},
+  {"-cr",      "pc", (IntFunc) share_mns_chrec},
+  {"-e",       "pe", (IntFunc) share_mns_exempt},
+  {"-ec",      "pe", (IntFunc) share_mns_exemptchan},
+  {"-h",       "pu", (IntFunc) share_mns_host},
+  {"-i",       "pn", (IntFunc) share_mns_ignore},
+  {"-inv",     "pv", (IntFunc) share_mns_invite},
+  {"-invc",    "pv", (IntFunc) share_mns_invitechan},
+  {"a",        "pu", (IntFunc) share_chattr},
+  {"c",        "pu", (IntFunc) share_change},
+  {"chchinfo", "pu", (IntFunc) share_chchinfo},
+  {"e",        "",  (IntFunc) share_end},
+  {"feats",    "",  (IntFunc) share_feats},
+  {"h",        "pu", (IntFunc) share_chhand},
+  {"k",        "pu", (IntFunc) share_killuser},
+  {"n",        "pu", (IntFunc) share_newuser},
+  {"nc",       "pc", (IntFunc) share_newchan},
+  {"r!",       "",  (IntFunc) share_resync},
+  {"r?",       "",  (IntFunc) share_resyncq},
+  {"rn",       "",  (IntFunc) share_resync_no},
+  {"s",        "pb", (IntFunc) share_stick_ban},
+  {"se",       "pe", (IntFunc) share_stick_exempt},
+  {"sInv",     "pv", (IntFunc) share_stick_invite},
+  {"u?",       "",  (IntFunc) share_userfileq},
+  {"un",       "",  (IntFunc) share_ufno},
+  {"us",       "",  (IntFunc) share_ufsend},
+  {"uy",       "",  (IntFunc) share_ufyes},
+  {"v",        "",  (IntFunc) share_version},
+  {NULL,       NULL, NULL}
 };
 
 
@@ -1377,9 +1380,17 @@ static void sharein_mod(int idx, char *msg)
   for (f = 0, i = 0; C_share[i].name && !f; i++) {
     int y = strcasecmp(code, C_share[i].name);
 
-    if (!y)
+    if (!y) {
       /* Found a match */
-      (C_share[i].func) (idx, msg);
+      struct flag_record fr = { FR_BOT , 0, 0, 0, 0, 0 };
+      struct flag_record req = { FR_BOT | FR_OR, 0, 0, 0, 0, 0 };
+
+      break_down_flags(C_share[i].flags, &req, NULL);
+      get_user_flagrec(dcc[idx].user, &fr, NULL);
+      if (flagrec_eq(&req, &fr)) {
+        (C_share[i].func) (idx, msg);
+      }
+    }
     if (y <= 0)
       f = 1;
   }

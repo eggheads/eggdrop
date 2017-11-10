@@ -92,22 +92,40 @@ Flags can be either global (such as +s) or channel specific (such as
 The following is a list of valid bot flags:
 
 +------+---------------------------------------------------------------+
-| s    | share aggressively (SEND userfile to a passive bot)           |
+| a    | alternate (automatically link to this bot if the hub bot can't|
+|      | be linked)                                                    |
 +------+---------------------------------------------------------------+
-| p    | share passively (ACCEPT userfile from an aggressive bot)      |
+| b    | ban sharing (passive bot is allowed to share bans with        |
+|      | aggressive bot)                                               |
++------+---------------------------------------------------------------+
+| c    | channel sharing (passive bot is allowed to share channel      |
+|      | changes with aggressive bot)                                  |
++------+---------------------------------------------------------------+
+| e    | exempt sharing (passive bot is allowed to share exempts with  |
+|      | aggressive bot)                                               |
 +------+---------------------------------------------------------------+
 | g    | global share (share all channels)                             |
 +------+---------------------------------------------------------------+
 | h    | hub (automatically link to this bot)                          |
 +------+---------------------------------------------------------------+
-| a    | alternate (automatically link to this bot if the hub bot can't|
-|      | be linked)                                                    |
+| i    | isolate (isolate the party line across a bot link)            |
 +------+---------------------------------------------------------------+
 | l    | leaf (bot is not allowed to link in other bots)               |
 +------+---------------------------------------------------------------+
+| n    | ignore sharing (passive bot is allowed to share ignores with  |
+|      | aggressive bot)                                               |
++------+---------------------------------------------------------------+
+| p    | share passively (ACCEPT userfile from an aggressive bot)      |
++------+---------------------------------------------------------------+
 | r    | reject (bot will not be allowed to link)                      |
 +------+---------------------------------------------------------------+
-| i    | isolate (isolate the party line across a bot link)            |
+| s    | share aggressively (SEND userfile to a passive bot)           |
++------+---------------------------------------------------------------+
+| u    | user sharing (passive bot is allowed to share user changes    |
+|      | with aggressive bot)                                          |
++------+---------------------------------------------------------------+
+| v    | invite sharing (passive bot is allowed to share invites with  |
+|      | aggressive bot)                                               |
 +------+---------------------------------------------------------------+
 | 0-9  | user defined flags                                            |
 +------+---------------------------------------------------------------+
