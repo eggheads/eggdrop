@@ -329,18 +329,26 @@ static int tcl_addbot STDVAR
       ipv6 = 1;
     }
 #endif
+    if (!ipv6 && braced) {
+      Tcl_AppendResult(irp, "0", NULL);
+      return TCL_OK;
+    }
 /* Check that the char following the / is not null */
-    if ((q = strchr(argv[2], '/'))) {
-      if (!q[1]) {
+    if ((q = strrchr(argv[2], '/'))) {
+      if (!q[1]) {  // this needs to move
         *q = 0;
         q = 0;
       }
     }
     if (!ipv6) {
-      q = strchr(argv[2], ':');
-    }
-    if (braced && (colon > braced)) {
+      if (!(q = strchr(argv[2], ':'))) {
+        q = strchr(argv[2], '/');
+      }
+    // if ipv6
+    } else if (braced && (colon > braced)) {
       q = strrchr(argv[2], ':');
+    } else {
+      q = strchr(argv[2], '/');
     }
     if (!q) {
       bi->address = user_malloc(strlen(argv[2]) + 1);
