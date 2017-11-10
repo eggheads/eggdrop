@@ -310,12 +310,6 @@ static int tcl_addbot STDVAR
       get_user_by_handle(userlist, argv[1]))
     Tcl_AppendResult(irp, "0", NULL);
   else {
-    userlist = adduser(userlist, argv[1], "none", "-", USER_BOT);
-    bi = user_malloc(sizeof(struct bot_addr));
-#ifdef TLS
-    bi->ssl = 0;
-#endif
-#ifdef IPV6
     for (i=0; argv[2][i]; i++) {
       if (argv[2][i] == ':') {
         count++;
@@ -328,14 +322,17 @@ static int tcl_addbot STDVAR
     if (count > 1) {
       ipv6 = 1;
     }
+    if ((!ipv6 && braced)
+#ifndef IPV6
+        || (ipv6)
 #endif
-    if (!ipv6 && braced) {
+      ) {
       Tcl_AppendResult(irp, "0", NULL);
       return TCL_OK;
     }
 /* Check that the char following the / is not null */
     if ((q = strrchr(argv[2], '/'))) {
-      if (!q[1]) {  // this needs to move
+      if (!q[1]) {
         *q = 0;
         q = 0;
       }
@@ -344,12 +341,16 @@ static int tcl_addbot STDVAR
       if (!(q = strchr(argv[2], ':'))) {
         q = strchr(argv[2], '/');
       }
-    // if ipv6
     } else if (braced && (colon > braced)) {
       q = strrchr(argv[2], ':');
     } else {
       q = strchr(argv[2], '/');
     }
+    userlist = adduser(userlist, argv[1], "none", "-", USER_BOT);
+    bi = user_malloc(sizeof(struct bot_addr));
+#ifdef TLS
+    bi->ssl = 0;
+#endif
     if (!q) {
       bi->address = user_malloc(strlen(argv[2]) + 1);
       strcpy(bi->address, argv[2]);
