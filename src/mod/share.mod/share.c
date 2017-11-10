@@ -1374,7 +1374,7 @@ static void sharein_mod(int idx, char *msg)
     if (!y)
       /* Found a match */
       (C_share[i].func) (idx, msg);
-    if (y < 0)
+    if (y <= 0)
       f = 1;
   }
 }

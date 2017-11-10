@@ -18,8 +18,12 @@ dnl TEA_VERSION="3.10"
 # Possible values for key variables defined:
 #
 # TEA_WINDOWINGSYSTEM - win32 aqua x11 (mirrors 'tk windowingsystem')
+# PRACTCL_WINDOWINGSYSTEM - windows cocoa hitheme x11 sdl
 # TEA_PLATFORM        - windows unix
 # TEA_TK_EXTENSION    - True if this is a Tk extension
+# TEACUP_OS           - windows macosx linux generic
+# TEACUP_TOOLSET      - Toolset in use (gcc,mingw,msvc,llvm)
+# TEACUP_PROFILE      - win32  
 #
 
 #------------------------------------------------------------------------
@@ -141,9 +145,7 @@ AC_DEFUN([TEA_PATH_TCLCONFIG], [
 			`ls -d /usr/lib 2>/dev/null` \
 			`ls -d /usr/lib64 2>/dev/null` \
 			`ls -d /usr/lib/tcl8.6 2>/dev/null` \
-			`ls -d /usr/local/lib/tcl8.6 2>/dev/null` \
 			`ls -d /usr/lib/tcl8.5 2>/dev/null` \
-			`ls -d /usr/local/lib/tcl8.5 2>/dev/null` \
 			; do
 		    if test -f "$i/tclConfig.sh" ; then
 			ac_cv_c_tclconfig="`(cd $i; pwd)`"
@@ -211,6 +213,7 @@ AC_DEFUN([TEA_PATH_TKCONFIG], [
     if test x"${no_tk}" = x ; then
 	# we reset no_tk in case something fails here
 	no_tk=true
+  TEA_TK_EXTENSION=0
 	AC_ARG_WITH(tk,
 	    AC_HELP_STRING([--with-tk],
 		[directory containing tk configuration (tkConfig.sh)]),
@@ -330,6 +333,7 @@ AC_DEFUN([TEA_PATH_TKCONFIG], [
 	    AC_MSG_ERROR([Can't find Tk configuration definitions. Use --with-tk to specify a directory containing tkConfig.sh])
 	else
 	    no_tk=
+		  TEA_TK_EXTENSION=1
 	    TK_BIN_DIR="${ac_cv_c_tkconfig}"
 	    AC_MSG_RESULT([found ${TK_BIN_DIR}/tkConfig.sh])
 	fi
@@ -525,18 +529,42 @@ AC_DEFUN([TEA_LOAD_TKCONFIG], [
     eval "TK_STUB_LIB_SPEC=\"${TK_STUB_LIB_SPEC}\""
 
     # TEA specific: Ensure windowingsystem is defined
-    if test "${TEA_PLATFORM}" = "unix" ; then
+    case ${TK_DEFS} in
+	*PLATFORM_SDL*)
+	    TEA_WINDOWINGSYSTEM="x11"
+            PRACTCL_WINDOWINGSYSTEM="sdl"
+	    TEA_USE_SDL=yes
+	    ;;
+    esac
+    if test "${TEA_USE_SDL}" = "yes" ; then
+	true
+    elif test "${TEA_PLATFORM}" = "unix" ; then
 	case ${TK_DEFS} in
 	    *MAC_OSX_TK*)
-		AC_DEFINE(MAC_OSX_TK, 1, [Are we building against Mac OS X TkAqua?])
+		AC_DEFINE(MAC_OSX_TK, 1, [Are we building against Mac OS X Cocoa?])
 		TEA_WINDOWINGSYSTEM="aqua"
+                PRACTCL_WINDOWINGSYSTEM="cocoa"
+                TEA_USE_HITHEME=no;
+                if test "${TK_VERSION}" = "8.5" ; then
+                  if test "${TK_PATCH_LEVEL}" > ".17" ; then
+                    TEA_USE_HITHEME=yes;
+                  fi
+                elif test "${TK_VERSION}" = "8.6" ; then
+                  if test "${TK_PATCH_LEVEL}" > ".3" ; then
+                    TEA_USE_HITHEME=yes;
+                  fi
+                elif test "${TK_VERSION}" > "8.6" ; then
+                    TEA_USE_HITHEME=yes;
+                fi 
 		;;
 	    *)
 		TEA_WINDOWINGSYSTEM="x11"
+                PRACTCL_WINDOWINGSYSTEM="x11"
 		;;
 	esac
     elif test "${TEA_PLATFORM}" = "windows" ; then
 	TEA_WINDOWINGSYSTEM="win32"
+        PRACTCL_WINDOWINGSYSTEM="windows"
     fi
 
     AC_SUBST(TK_VERSION)
@@ -554,6 +582,8 @@ AC_DEFUN([TEA_LOAD_TKCONFIG], [
     # TEA specific:
     AC_SUBST(TK_LIBS)
     AC_SUBST(TK_XINCLUDES)
+    # Practcl
+    AC_SUBST(PRACTCL_WINDOWINGSYSTEM)
 ])
 
 #------------------------------------------------------------------------
@@ -577,11 +607,32 @@ AC_DEFUN([TEA_LOAD_TKCONFIG], [
 
 AC_DEFUN([TEA_PROG_TCLSH], [
     AC_MSG_CHECKING([for tclsh])
-    if test -f "${TCL_BIN_DIR}/Makefile" ; then
+		
+    AC_ARG_WITH(tclsh, [  --with-tclsh      Specify a local tcl shell to use for dynamic code], with_tclsh=${withval})
+ 	  # Use the value from --with-tclsh, if it was given
+		TCLSH_PROG=0
+		if test x"${with_tclsh}" != x ; then
+	    if test -f "${with_tclsh}" ; then
+		TCLSH_PROG=${with_tclsh}
+	    else
+	      if test -f "${with_tclsh}/tcl8.6" ; then
+		TCLSH_PROG="${with_tclsh}/tcl8.6"
+			  else
+	        if test -f "${with_tclsh}/tclsh86.exe" ; then
+		TCLSH_PROG="${with_tclsh}/tclsh86.exe"
+				  else
+		AC_MSG_ERROR([${with_tclsh} does not point to a valid Tcl executable])
+		      fi
+				fi
+	    fi
+		else
+      if test -f "${TCL_BIN_DIR}/Makefile" ; then
         # tclConfig.sh is in Tcl build directory
         if test "${TEA_PLATFORM}" = "windows"; then
           if test -f "${TCL_BIN_DIR}/tclsh${TCL_MAJOR_VERSION}${TCL_MINOR_VERSION}${TCL_DBGX}${EXEEXT}" ; then
             TCLSH_PROG="${TCL_BIN_DIR}/tclsh${TCL_MAJOR_VERSION}${TCL_MINOR_VERSION}${TCL_DBGX}${EXEEXT}"
+          elif test -f "${TCL_BIN_DIR}/tclsh${TCL_MAJOR_VERSION}${TCL_MINOR_VERSION}${TCL_DBGX}sg${EXEEXT}" ; then
+            TCLSH_PROG="${TCL_BIN_DIR}/tclsh${TCL_MAJOR_VERSION}${TCL_MINOR_VERSION}${TCL_DBGX}sg${EXEEXT}"
           elif test -f "${TCL_BIN_DIR}/tclsh${TCL_MAJOR_VERSION}${TCL_MINOR_VERSION}${TCL_DBGX}s${EXEEXT}" ; then
             TCLSH_PROG="${TCL_BIN_DIR}/tclsh${TCL_MAJOR_VERSION}${TCL_MINOR_VERSION}${TCL_DBGX}s${EXEEXT}"
           elif test -f "${TCL_BIN_DIR}/tclsh${TCL_MAJOR_VERSION}${TCL_MINOR_VERSION}${TCL_DBGX}t${EXEEXT}" ; then
@@ -592,7 +643,7 @@ AC_DEFUN([TEA_PROG_TCLSH], [
         else
             TCLSH_PROG="${TCL_BIN_DIR}/tclsh"
         fi
-    else
+      else
         # tclConfig.sh is in install location
         if test "${TEA_PLATFORM}" = "windows"; then
             TCLSH_PROG="tclsh${TCL_MAJOR_VERSION}${TCL_MINOR_VERSION}${TCL_DBGX}${EXEEXT}"
@@ -609,7 +660,8 @@ AC_DEFUN([TEA_PROG_TCLSH], [
             fi
         done
         TCLSH_PROG="${REAL_TCL_BIN_DIR}${TCLSH_PROG}"
-    fi
+      fi
+		fi
     AC_MSG_RESULT([${TCLSH_PROG}])
     AC_SUBST(TCLSH_PROG)
 ])
@@ -648,7 +700,7 @@ AC_DEFUN([TEA_PROG_WISH], [
             WISH_PROG="${TK_BIN_DIR}/wish${TK_MAJOR_VERSION}${TK_MINOR_VERSION}${TK_DBGX}st${EXEEXT}"
           fi
         else
-            WISH_PROG="${TK_BIN_DIR}/wish"
+          WISH_PROG="${TK_BIN_DIR}/wish"
         fi
     else
         # tkConfig.sh is in install location
@@ -1354,6 +1406,8 @@ AC_DEFUN([TEA_CONFIG_CFLAGS], [
 		CFLAGS_OPTIMIZE="-O2 -fomit-frame-pointer"
 		SHLIB_LD='${CC} -shared'
 		UNSHARED_LIB_SUFFIX='${TCL_TRIM_DOTS}.a'
+		PRACTCL_UNSHARED_LIB_SUFFIX='.a'
+
 		LDFLAGS_CONSOLE="-wl,--subsystem,console ${lflags}"
 		LDFLAGS_WINDOW="-wl,--subsystem,windows ${lflags}"
 
@@ -1652,37 +1706,21 @@ AC_DEFUN([TEA_CONFIG_CFLAGS], [
 	OpenBSD-*)
 	    arch=`arch -s`
 	    case "$arch" in
-	    vax)
-		SHLIB_SUFFIX=""
-		SHARED_LIB_SUFFIX=""
-		LDFLAGS=""
+	    alpha|sparc64)
+		SHLIB_CFLAGS="-fPIC"
 		;;
 	    *)
-		case "$arch" in
-		alpha|sparc64)
-		    SHLIB_CFLAGS="-fPIC"
-		    ;;
-		*)
-		    SHLIB_CFLAGS="-fpic"
-		    ;;
-		esac
-		SHLIB_LD='${CC} -shared ${SHLIB_CFLAGS}'
-		SHLIB_SUFFIX=".so"
-		AS_IF([test $doRpath = yes], [
-		    CC_SEARCH_FLAGS='-Wl,-rpath,${LIB_RUNTIME_DIR}'])
-		LD_SEARCH_FLAGS=${CC_SEARCH_FLAGS}
-		SHARED_LIB_SUFFIX='${TCL_TRIM_DOTS}.so${SHLIB_VERSION}'
-		LDFLAGS="-Wl,-export-dynamic"
+		SHLIB_CFLAGS="-fpic"
 		;;
 	    esac
-	    case "$arch" in
-	    vax)
-		CFLAGS_OPTIMIZE="-O1"
-		;;
-	    *)
-		CFLAGS_OPTIMIZE="-O2"
-		;;
-	    esac
+	    SHLIB_LD='${CC} -shared ${SHLIB_CFLAGS}'
+	    SHLIB_SUFFIX=".so"
+	    AS_IF([test $doRpath = yes], [
+		CC_SEARCH_FLAGS='-Wl,-rpath,${LIB_RUNTIME_DIR}'])
+	    LD_SEARCH_FLAGS=${CC_SEARCH_FLAGS}
+	    SHARED_LIB_SUFFIX='${TCL_TRIM_DOTS}.so${SHLIB_VERSION}'
+	    LDFLAGS="-Wl,-export-dynamic"
+	    CFLAGS_OPTIMIZE="-O2"
 	    AS_IF([test "${TCL_THREADS}" = "1"], [
 		# On OpenBSD:	Compile with -pthread
 		#		Don't link with -lpthread
@@ -2085,10 +2123,12 @@ dnl # preprocessing tests use only CPPFLAGS.
 
     AS_IF([test "$SHARED_LIB_SUFFIX" = ""], [
     # TEA specific: use PACKAGE_VERSION instead of VERSION
-    SHARED_LIB_SUFFIX='${PACKAGE_VERSION}${SHLIB_SUFFIX}'])
+    SHARED_LIB_SUFFIX='${PACKAGE_VERSION}${SHLIB_SUFFIX}'
+		])
     AS_IF([test "$UNSHARED_LIB_SUFFIX" = ""], [
     # TEA specific: use PACKAGE_VERSION instead of VERSION
-    UNSHARED_LIB_SUFFIX='${PACKAGE_VERSION}.a'])
+    UNSHARED_LIB_SUFFIX='${PACKAGE_VERSION}.a'
+		])
 
     if test "${GCC}" = "yes" -a ${SHLIB_SUFFIX} = ".dll"; then
 	AC_CACHE_CHECK(for SEH support in compiler,
@@ -2191,6 +2231,7 @@ dnl # preprocessing tests use only CPPFLAGS.
 
     AC_SUBST(STLIB_LD)
     AC_SUBST(SHLIB_LD)
+		AC_SUBST(SHLIB_SUFFIX)
 
     AC_SUBST(SHLIB_LD_LIBS)
     AC_SUBST(SHLIB_CFLAGS)
@@ -2436,7 +2477,7 @@ closedir(d);
 #--------------------------------------------------------------------
 
 AC_DEFUN([TEA_PATH_X], [
-    if test "${TEA_WINDOWINGSYSTEM}" = "x11" ; then
+    if test "${PRACTCL_WINDOWINGSYSTEM}" = "x11" ; then
 	TEA_PATH_UNIX_X
     fi
 ])
@@ -2915,7 +2956,6 @@ AC_DEFUN([TEA_INIT], [
     # TEA extensions pass this us the version of TEA they think they
     # are compatible with.
     TEA_VERSION="3.10"
-
     AC_MSG_CHECKING([for correct TEA configuration])
     if test x"${PACKAGE_NAME}" = x ; then
 	AC_MSG_ERROR([
@@ -2935,7 +2975,8 @@ TEA version not specified.])
     if test "${CFLAGS+set}" != "set" ; then
 	CFLAGS=""
     fi
-
+		TEA_TK_EXTENSION=0
+		AC_SUBST(TEA_TK_EXTENSION)
     case "`uname -s`" in
 	*win32*|*WIN32*|*MINGW32_*)
 	    AC_CHECK_PROG(CYGPATH, cygpath, cygpath -m, echo)
@@ -3181,8 +3222,12 @@ AC_DEFUN([TEA_ADD_LIBS], [
     vars="$@"
     for i in $vars; do
 	if test "${TEA_PLATFORM}" = "windows" -a "$GCC" = "yes" ; then
-	    # Convert foo.lib to -lfoo for GCC.  No-op if not *.lib
-	    i=`echo "$i" | sed -e 's/^\([[^-]].*\)\.lib[$]/-l\1/i'`
+          case $i in
+            *.lib)
+              # Convert foo.lib to -lfoo for GCC
+                i=-l`echo "$i" | sed -e 's/\.[[^.]]*$//' -e 's/\.lib.*//'`
+            ;;
+          esac
 	fi
 	PKG_LIBS="$PKG_LIBS $i"
     done
@@ -3386,98 +3431,131 @@ AC_DEFUN([TEA_SETUP_COMPILER], [
 #	MAKE_STUB_LIB	Makefile rule for building a stub library
 #	VC_MANIFEST_EMBED_DLL Makefile rule for embedded VC manifest in DLL
 #	VC_MANIFEST_EMBED_EXE Makefile rule for embedded VC manifest in EXE
+#
+# PRACTCL_TOOLSET     What toolset is in use (gcc or msvc)
+#	PRACTCL_SHARED_LIB	Template rule for building a shared library
+#	PRACTCL_STATIC_LIB	Template rule for building a static library
+#	PRACTCL_STUB_LIB	  Template rule for building a stub library
+# PRACTCL_VC_MANIFEST_EMBED_DLL Template rule for embedded VC manifest in DLL
+# PRACTCL_VC_MANIFEST_EMBED_EXE Template rule for embedded VC manifest in EXE
+# PRACTCL_NAME_LIBRARY Template rule for naming libraries
+# 
 #------------------------------------------------------------------------
 
 AC_DEFUN([TEA_MAKE_LIB], [
-    if test "${TEA_PLATFORM}" = "windows" -a "$GCC" != "yes"; then
-	MAKE_STATIC_LIB="\${STLIB_LD} -out:\[$]@ \$(PKG_OBJECTS)"
-	MAKE_SHARED_LIB="\${SHLIB_LD} \${SHLIB_LD_LIBS} \${LDFLAGS_DEFAULT} -out:\[$]@ \$(PKG_OBJECTS)"
-	AC_EGREP_CPP([manifest needed], [
+  PRACTCL_TOOLSET="gcc"
+	PRACTCL_VC_MANIFEST_EMBED_DLL=:
+	PRACTCL_VC_MANIFEST_EMBED_EXE=:
+  if test "${TEA_PLATFORM}" = "windows" -a "$GCC" != "yes"; then
+	  PRACTCL_TOOLSET="msvc"
+	  PRACTCL_STATIC_LIB="%STLIB_LD% -out:%OUTFILE% %LIBRARY_OBJECTS%"
+	  PRACTCL_SHARED_LIB="%SHLIB_LD% %SHLIB_LD_LIBS% %LDFLAGS_DEFAULT% -out:%OUTFILE% %LIBRARY_OBJECTS%"
+	  MAKE_STATIC_LIB="\${STLIB_LD} -out:\[$]@ \$(PKG_OBJECTS)"
+	  MAKE_SHARED_LIB="\${SHLIB_LD} \${SHLIB_LD_LIBS} \${LDFLAGS_DEFAULT} -out:\[$]@ \$(PKG_OBJECTS)"
+	  AC_EGREP_CPP([manifest needed], [
 #if defined(_MSC_VER) && _MSC_VER >= 1400
 print("manifest needed")
 #endif
-	], [
-	# Could do a CHECK_PROG for mt, but should always be with MSVC8+
-	VC_MANIFEST_EMBED_DLL="if test -f \[$]@.manifest ; then mt.exe -nologo -manifest \[$]@.manifest -outputresource:\[$]@\;2 ; fi"
-	VC_MANIFEST_EMBED_EXE="if test -f \[$]@.manifest ; then mt.exe -nologo -manifest \[$]@.manifest -outputresource:\[$]@\;1 ; fi"
-	MAKE_SHARED_LIB="${MAKE_SHARED_LIB} ; ${VC_MANIFEST_EMBED_DLL}"
-	TEA_ADD_CLEANFILES([*.manifest])
-	])
-	MAKE_STUB_LIB="\${STLIB_LD} -nodefaultlib -out:\[$]@ \$(PKG_STUB_OBJECTS)"
-    else
-	MAKE_STATIC_LIB="\${STLIB_LD} \[$]@ \$(PKG_OBJECTS)"
-	MAKE_SHARED_LIB="\${SHLIB_LD} -o \[$]@ \$(PKG_OBJECTS) \${SHLIB_LD_LIBS}"
-	MAKE_STUB_LIB="\${STLIB_LD} \[$]@ \$(PKG_STUB_OBJECTS)"
-    fi
+	  ], [
+	    # Could do a CHECK_PROG for mt, but should always be with MSVC8+
+	    PRACTCL_VC_MANIFEST_EMBED_DLL="mt.exe -nologo -manifest %OUTFILE%.manifest -outputresource:%OUTFILE%\;2"
+	    PRACTCL_VC_MANIFEST_EMBED_EXE="mt.exe -nologo -manifest %OUTFILE%.manifest -outputresource:%OUTFILE%\;1"
+	    VC_MANIFEST_EMBED_DLL="if test -f \[$]@.manifest ; then mt.exe -nologo -manifest \[$]@.manifest -outputresource:\[$]@\;2 ; fi"
+	    VC_MANIFEST_EMBED_EXE="if test -f \[$]@.manifest ; then mt.exe -nologo -manifest \[$]@.manifest -outputresource:\[$]@\;1 ; fi"
+	    MAKE_SHARED_LIB="${MAKE_SHARED_LIB} ; ${VC_MANIFEST_EMBED_DLL}"
+	    TEA_ADD_CLEANFILES([*.manifest])
+	  ])
+		PRACTCL_STUB_LIB="%STLIB_LD% -nodefaultlib -out:%OUTFILE% %LIBRARY_OBJECTS%"
+	  MAKE_STUB_LIB="\${STLIB_LD} -nodefaultlib -out:\[$]@ \$(PKG_STUB_OBJECTS)"
+  else
+	  MAKE_STATIC_LIB="\${STLIB_LD} \[$]@ \$(PKG_OBJECTS)"
+	  MAKE_SHARED_LIB="\${SHLIB_LD} -o \[$]@ \$(PKG_OBJECTS) \${SHLIB_LD_LIBS}"
+	  MAKE_STUB_LIB="\${STLIB_LD} \[$]@ \$(PKG_STUB_OBJECTS)"
+	
+	  PRACTCL_STATIC_LIB="%STLIB_LD% %OUTFILE% %LIBRARY_OBJECTS%"
+	  PRACTCL_SHARED_LIB="%SHLIB_LD% -o %OUTFILE% %LIBRARY_OBJECTS% %SHLIB_LD_LIBS%"
+    PRACTCL_STUB_LIB="%STLIB_LD% %OUTFILE% %LIBRARY_OBJECTS%"
+  fi
 
-    if test "${SHARED_BUILD}" = "1" ; then
-	MAKE_LIB="${MAKE_SHARED_LIB} "
-    else
-	MAKE_LIB="${MAKE_STATIC_LIB} "
-    fi
+  if test "${SHARED_BUILD}" = "1" ; then
+	  MAKE_LIB="${MAKE_SHARED_LIB} "
+  else
+	  MAKE_LIB="${MAKE_STATIC_LIB} "
+  fi
 
-    #--------------------------------------------------------------------
-    # Shared libraries and static libraries have different names.
-    # Use the double eval to make sure any variables in the suffix is
-    # substituted. (@@@ Might not be necessary anymore)
-    #--------------------------------------------------------------------
-
-    if test "${TEA_PLATFORM}" = "windows" ; then
-	if test "${SHARED_BUILD}" = "1" ; then
+  #--------------------------------------------------------------------
+  # Shared libraries and static libraries have different names.
+  # Use the double eval to make sure any variables in the suffix is
+  # substituted. (@@@ Might not be necessary anymore)
+  #--------------------------------------------------------------------
+  if test "${TEA_PLATFORM}" = "windows" ; then
+	  PRACTCL_NAME_LIBRARY="%LIBRARY_PREFIX%%LIBRARY_NAME%%LIBRARY_VERSION_NODOTS%"
+	  if test "${SHARED_BUILD}" = "1" ; then
 	    # We force the unresolved linking of symbols that are really in
 	    # the private libraries of Tcl and Tk.
 	    if test x"${TK_BIN_DIR}" != x ; then
-		SHLIB_LD_LIBS="${SHLIB_LD_LIBS} \"`${CYGPATH} ${TK_BIN_DIR}/${TK_STUB_LIB_FILE}`\""
+			  SHLIB_LD_LIBS="${SHLIB_LD_LIBS} \"`${CYGPATH} ${TK_BIN_DIR}/${TK_STUB_LIB_FILE}`\""
 	    fi
 	    SHLIB_LD_LIBS="${SHLIB_LD_LIBS} \"`${CYGPATH} ${TCL_BIN_DIR}/${TCL_STUB_LIB_FILE}`\""
 	    if test "$GCC" = "yes"; then
-		SHLIB_LD_LIBS="${SHLIB_LD_LIBS} -static-libgcc"
+        SHLIB_LD_LIBS="${SHLIB_LD_LIBS} -static-libgcc"
 	    fi
 	    eval eval "PKG_LIB_FILE=${PACKAGE_LIB_PREFIX}${PACKAGE_NAME}${SHARED_LIB_SUFFIX}"
-	else
+	  else
 	    eval eval "PKG_LIB_FILE=${PACKAGE_LIB_PREFIX}${PACKAGE_NAME}${UNSHARED_LIB_SUFFIX}"
 	    if test "$GCC" = "yes"; then
-		PKG_LIB_FILE=lib${PKG_LIB_FILE}
+        PKG_LIB_FILE=lib${PKG_LIB_FILE}
 	    fi
-	fi
-	# Some packages build their own stubs libraries
-	eval eval "PKG_STUB_LIB_FILE=${PACKAGE_LIB_PREFIX}${PACKAGE_NAME}stub${UNSHARED_LIB_SUFFIX}"
-	if test "$GCC" = "yes"; then
-	    PKG_STUB_LIB_FILE=lib${PKG_STUB_LIB_FILE}
-	fi
-	# These aren't needed on Windows (either MSVC or gcc)
-	RANLIB=:
-	RANLIB_STUB=:
+	  fi
+	  # Some packages build their own stubs libraries
+	  eval eval "PKG_STUB_LIB_FILE=${PACKAGE_LIB_PREFIX}${PACKAGE_NAME}stub${UNSHARED_LIB_SUFFIX}"
+    if test "$GCC" = "yes"; then
+      PKG_STUB_LIB_FILE=lib${PKG_STUB_LIB_FILE}
+    fi
+	  # These aren't needed on Windows (either MSVC or gcc)
+	  RANLIB=:
+	  RANLIB_STUB=:
+  else
+	  PRACTCL_NAME_LIBRARY="lib%LIBRARY_PREFIX%%LIBRARY_NAME%%LIBRARY_VERSION%"
+	  RANLIB_STUB="${RANLIB}"
+	  if test "${SHARED_BUILD}" = "1" ; then
+      SHLIB_LD_LIBS="${SHLIB_LD_LIBS} ${TCL_STUB_LIB_SPEC}"
+      if test x"${TK_BIN_DIR}" != x ; then
+        SHLIB_LD_LIBS="${SHLIB_LD_LIBS} ${TK_STUB_LIB_SPEC}"
+      fi
+      eval eval "PKG_LIB_FILE=lib${PACKAGE_LIB_PREFIX}${PACKAGE_NAME}${SHARED_LIB_SUFFIX}"
+      RANLIB=:
     else
-	RANLIB_STUB="${RANLIB}"
-	if test "${SHARED_BUILD}" = "1" ; then
-	    SHLIB_LD_LIBS="${SHLIB_LD_LIBS} ${TCL_STUB_LIB_SPEC}"
-	    if test x"${TK_BIN_DIR}" != x ; then
-		SHLIB_LD_LIBS="${SHLIB_LD_LIBS} ${TK_STUB_LIB_SPEC}"
-	    fi
-	    eval eval "PKG_LIB_FILE=lib${PACKAGE_LIB_PREFIX}${PACKAGE_NAME}${SHARED_LIB_SUFFIX}"
-	    RANLIB=:
-	else
-	    eval eval "PKG_LIB_FILE=lib${PACKAGE_LIB_PREFIX}${PACKAGE_NAME}${UNSHARED_LIB_SUFFIX}"
-	fi
-	# Some packages build their own stubs libraries
-	eval eval "PKG_STUB_LIB_FILE=lib${PACKAGE_LIB_PREFIX}${PACKAGE_NAME}stub${UNSHARED_LIB_SUFFIX}"
+      eval eval "PKG_LIB_FILE=lib${PACKAGE_LIB_PREFIX}${PACKAGE_NAME}${UNSHARED_LIB_SUFFIX}"
     fi
+    # Some packages build their own stubs libraries
+    eval eval "PKG_STUB_LIB_FILE=lib${PACKAGE_LIB_PREFIX}${PACKAGE_NAME}stub${UNSHARED_LIB_SUFFIX}"
+  fi
+  
+  # Store the raw CFLAGS before we add the trimmings
+  PRACTCL_CFLAGS=${CFLAGS}    
+  # These are escaped so that only CFLAGS is picked up at configure time.
+  # The other values will be substituted at make time.
+  CFLAGS="${CFLAGS} \${CFLAGS_DEFAULT} \${CFLAGS_WARNING}"
+  if test "${SHARED_BUILD}" = "1" ; then
+    CFLAGS="${CFLAGS} \${SHLIB_CFLAGS}"
+  fi
 
-    # These are escaped so that only CFLAGS is picked up at configure time.
-    # The other values will be substituted at make time.
-    CFLAGS="${CFLAGS} \${CFLAGS_DEFAULT} \${CFLAGS_WARNING}"
-    if test "${SHARED_BUILD}" = "1" ; then
-	CFLAGS="${CFLAGS} \${SHLIB_CFLAGS}"
-    fi
-
-    AC_SUBST(MAKE_LIB)
-    AC_SUBST(MAKE_SHARED_LIB)
-    AC_SUBST(MAKE_STATIC_LIB)
-    AC_SUBST(MAKE_STUB_LIB)
-    AC_SUBST(RANLIB_STUB)
-    AC_SUBST(VC_MANIFEST_EMBED_DLL)
-    AC_SUBST(VC_MANIFEST_EMBED_EXE)
+  AC_SUBST(MAKE_LIB)
+  AC_SUBST(MAKE_SHARED_LIB)
+  AC_SUBST(MAKE_STATIC_LIB)
+  AC_SUBST(MAKE_STUB_LIB)
+  AC_SUBST(RANLIB_STUB)
+  AC_SUBST(VC_MANIFEST_EMBED_DLL)
+  AC_SUBST(VC_MANIFEST_EMBED_EXE)
+  AC_SUBST(PRACTCL_CFLAGS)
+  AC_SUBST(PRACTCL_TOOLSET)
+  AC_SUBST(PRACTCL_SHARED_LIB)
+  AC_SUBST(PRACTCL_STATIC_LIB)
+  AC_SUBST(PRACTCL_STUB_LIB)
+  AC_SUBST(PRACTCL_VC_MANIFEST_EMBED_DLL)
+  AC_SUBST(PRACTCL_VC_MANIFEST_EMBED_EXE)
+  AC_SUBST(PRACTCL_NAME_LIBRARY)
 ])
 
 #------------------------------------------------------------------------
@@ -3772,12 +3850,24 @@ AC_DEFUN([TEA_PRIVATE_TK_HEADERS], [
 	if test -d "${TK_SRC_DIR}/generic/ttk"; then
 	   TK_INCLUDES="${TK_INCLUDES} -I\"${TK_SRC_DIR_NATIVE}/generic/ttk\""
 	fi
-	if test "${TEA_WINDOWINGSYSTEM}" != "x11"; then
+        case ${PRACTCL_WINDOWINGSYSTEM} in
+          cocoa)
 	   TK_INCLUDES="${TK_INCLUDES} -I\"${TK_XLIB_DIR_NATIVE}\""
-	fi
-	if test "${TEA_WINDOWINGSYSTEM}" = "aqua"; then
 	   TK_INCLUDES="${TK_INCLUDES} -I\"${TK_SRC_DIR_NATIVE}/macosx\""
-	fi
+            ;;
+          hitheme)
+	   TK_INCLUDES="${TK_INCLUDES} -I\"${TK_XLIB_DIR_NATIVE}\""
+	   TK_INCLUDES="${TK_INCLUDES} -I\"${TK_SRC_DIR_NATIVE}/macosx\""
+            ;;
+          sdl)
+	   TK_INCLUDES="${TK_INCLUDES} -I\"${TK_XLIB_DIR_NATIVE}\""
+            ;;
+          x11)
+            ;;
+          *)
+	   TK_INCLUDES="${TK_INCLUDES} -I\"${TK_XLIB_DIR_NATIVE}\""
+            ;;
+        esac
 	if test "`uname -s`" = "Darwin"; then
 	    # If Tk was built as a framework, attempt to use
 	    # the framework's Headers and PrivateHeaders directories
@@ -3902,7 +3992,7 @@ AC_DEFUN([TEA_PUBLIC_TK_HEADERS], [
 
     AC_SUBST(TK_INCLUDES)
 
-    if test "${TEA_WINDOWINGSYSTEM}" != "x11"; then
+    if test "${PRACTCL_WINDOWINGSYSTEM}" != "x11"; then
 	# On Windows and Aqua, we need the X compat headers
 	AC_MSG_CHECKING([for X11 header files])
 	if test ! -r "${INCLUDE_DIR_NATIVE}/X11/Xlib.h"; then
@@ -4239,6 +4329,114 @@ AC_DEFUN([TEA_PATH_CELIB], [
 	fi
     fi
 ])
+
+#--------------------------------------------------------------------
+# TEA_CONFIG_TEAPOT
+#
+#	Try to determine the canonical name for this package's binary
+# target
+#
+# Arguments:
+#	none
+AC_DEFUN([TEA_CONFIG_TEAPOT], [
+  AC_REQUIRE([TEA_INIT])
+  AC_REQUIRE([TEA_CONFIG_SYSTEM])
+  TEACUP_OS=$system
+  TEACUP_ARCH="unknown"
+  TEACUP_TOOLSET="gcc"
+  TEACUP_PROFILE="unknown"
+  arch="unknown"
+  case ${host_alias} in
+    *mingw32*)
+      arch="ix86"
+      TEACUP_PROFILE="win32-ix86"
+    ;;
+    *mingw64*)
+      arch="x86_64"
+      TEACUP_PROFILE="win32-x86_64"
+    ;;
+  esac
+  if test "${arch}" = "unknown" ; then
+    if test "${TEA_PLATFORM}" = "windows" ; then
+      if test "$GCC" = "yes" ; then
+        TEACUP_TOOLSET="gcc"
+      else
+        TEACUP_TOOLSET="msvc"
+      fi
+      if test "$do64bit" != "no" ; then
+        case "$do64bit" in
+          amd64|x64|yes)
+            arch="x86_64"
+            TEACUP_PROFILE="win32-x86_64"
+          ;;
+          ia64)
+            arch="ia64"
+            TEACUP_PROFILE="win32-ia64"
+          ;;
+        esac
+      else
+        arch="ix86"
+        TEACUP_PROFILE="win32-ix86"
+      fi
+    else
+      case $system in
+        Linux*)
+                TEACUP_OS="linux"
+                arch=`uname -m`
+                TEACUP_PROFILE="linux-glibc2.3-$arch"
+        ;;
+        GNU*)
+                TEACUP_OS="gnu"
+                arch=`uname -m`
+        ;;
+        NetBSD-Debian)
+                TEACUP_OS="netbsd-debian"
+                arch=`uname -m`
+        ;;
+        OpenBSD-*)
+                TEACUP_OS="openbsd"
+                arch=`arch -s`
+        ;;
+        Darwin*)
+                TEACUP_OS="macosx"
+                TEACUP_PROFILE="macosx-universal"
+                arch=`uname -m`
+                if test $arch = "x86_64"; then
+                        TEACUP_PROFILE="macosx10.5-i386-x86_84"
+                fi
+        ;;
+        OpenBSD*)
+                TEACUP_OS="openbsd"
+                arch=`arch -s`
+        ;;
+      esac
+    fi
+  fi
+  TEACUP_ARCH=$arch
+  if test "$TEACUP_PROFILE" = "unknown"; then
+    if test $arch = "unknown"; then
+      arch=`uname -m`
+    fi
+    case $arch in
+      i*86)
+        arch="ix86"
+      ;;
+      amd64)
+        arch="x86_64"
+      ;;
+    esac
+    TEACUP_PROFILE="$TEACUP_OS-$arch"
+  fi
+  TEA_SYSTEM=$system
+  AC_SUBST(TEA_SYSTEM)
+  AC_SUBST(TEA_PLATFORM)
+  AC_SUBST(TEA_WINDOWINGSYSTEM)
+  AC_SUBST(TEACUP_OS)
+  AC_SUBST(TEACUP_ARCH)
+  AC_SUBST(TEACUP_TOOLSET)
+  AC_SUBST(TEACUP_PROFILE)
+])
+
 # Local Variables:
 # mode: autoconf
 # End:
