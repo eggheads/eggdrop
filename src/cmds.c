@@ -1943,9 +1943,6 @@ static void cmd_botattr(struct userrec *u, int idx, char *par)
     pls.match = user.match;
     break_down_flags(chg, &pls, &mns);
     /* No-one can change these flags on-the-fly */
-    pls.global &=~BOT_BOT;
-    mns.global &=~BOT_BOT;
-
     if (chan && glob_owner(user)) {
       pls.chan &= BOT_SHARE;
       mns.chan &= BOT_SHARE;

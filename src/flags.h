@@ -88,7 +88,7 @@ struct flag_record {
 
 /* Flags specifically for bots */
 #define BOT_ALT        0x00000001 /* a  auto-link here if all hubs fail */
-#define BOT_BOT        0x00000002 /* b  sanity bot flag                 */
+#define BOT_B          0x00000002 /* b  unused                          */
 #define BOT_C          0x00000004 /* c  unused                          */
 #define BOT_D          0x00000008 /* d  unused                          */
 #define BOT_E          0x00000010 /* e  unused                          */
