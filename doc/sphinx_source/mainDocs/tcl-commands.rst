@@ -1176,7 +1176,9 @@ chanlist <channel> [flags[&chanflags]]
 
   Now you can use even more complex matching of flags, including +&- flags and & or | ('and' or 'or') matching.
 
-  Returns: list of nicknames currently on the bot's channel that have all of the flags specified;. If no flags are given, all of the nicknames are returned. Please note that if you're executing chanlist after a part or sign bind, the gone user will still be listed, so you can check for wasop, isop, etc.
+  Returns: Searching for flags preceded with a '+' will return a list of nicknames that have all the flags listed. Searching for flags preceded with a '-' will return a list of nicknames that do not have have any of the flags (differently said, '-' will hide users that have all flags listed). If no flags are given, all of the nicknames on the channel are returned.
+
+  Please note that if you're executing chanlist after a part or sign bind, the gone user will still be listed, so you can check for wasop, isop, etc.
 
   Module: irc
 
