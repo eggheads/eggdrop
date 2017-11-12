@@ -324,11 +324,9 @@ addbot <handle> <address>
 ^^^^^^^^^^^^^^^^^^^^^^^^^
   Description: adds a new bot to the userlist with the handle and botaddress given (with no password and no flags). <address> format is one of:
 
-  - ipaddress:botport/userport
   - ipaddress/botport/userport
-  - [ipv6address]:botport/userport
-
-  NOTE: The ipaddress:botport/userport format is depreciated and will be removed in a future version. It is recommended to use the other two formats.
+  - ipv4address:botport/userport    [DEPRECATED]
+  - [ipv6address]:botport/userport  [DEPRECATED]
 
   Returns: 1 if successful; 0 if the bot already exists
 
