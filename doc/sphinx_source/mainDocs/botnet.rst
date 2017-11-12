@@ -1,5 +1,5 @@
 Botnet Sharing and Linking
-Last revised: June 29, 2016
+Last revised: Nov 09, 2017
 
 ==========================
 Botnet Sharing and Linking
@@ -121,10 +121,10 @@ Here is an example scenario:
 
       BotA is on lame.org listening on port 3333, and BotB is on irc.org
       listening on port 4444. First, you have to add each Bot to the other's
-      userfile. On BotA, you would type '.+bot BotB irc.org:4444'. If BotB is
+      userfile. On BotA, you would type '.+bot BotB irc.org 4444'. If BotB is
       on a common channel with BotA, BotB's hostmask is automatically added.
       Otherwise, you have to add the hostmask manually with the '.+host'
-      command. On BotB, you would type '.+bot BotA lame.org:3333'.
+      command. On BotB, you would type '.+bot BotA lame.org 3333'.
 
 At this point, you can link the two bots by typing '.link BotA' on BotB (or '.link BotB' on BotA). The bots will now give themselves random passwords which are *not* stored encrypted in the userfile. Note that you can link as many bots as you wish to your botnet.
 
@@ -213,7 +213,7 @@ Making bots share user records
 
   On Lamestbot::
 
-    .+bot Lameshare eggdrop.com:3333
+    .+bot Lameshare eggdrop.com 3333
 
   This command adds a user record to
   Lamestbot for Lameshare. Lameshare is running from eggdrop.com and is
@@ -233,7 +233,7 @@ Making bots share user records
 
   On Lameshare::
 
-    .+bot Lamestbot best.com:3333/5555
+    .+bot Lamestbot best.com 3333/5555
 
   Again this will add a user on
   Lameshare called Lamestbot with the domain of best.com. The bot has
@@ -258,7 +258,7 @@ Making bots share user records
 
   On Lamestbot::
 
-    .+bot beldin llama.com:3333
+    .+bot beldin llama.com 3333
 
     .botattr beldin s|s #eggdrop
 

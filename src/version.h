@@ -27,5 +27,5 @@
  */
 
 #define EGG_STRINGVER "1.8.2"
-#define EGG_NUMVER 1080207
-#define EGG_PATCH "sslfatal"
+#define EGG_NUMVER 1080208
+#define EGG_PATCH "addbot"

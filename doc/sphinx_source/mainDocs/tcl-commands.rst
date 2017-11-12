@@ -322,7 +322,11 @@ adduser <handle> [hostmask]
 ^^^^^^^^^^^^^^^^^^^^^^^^^
 addbot <handle> <address>
 ^^^^^^^^^^^^^^^^^^^^^^^^^
-  Description: adds a new bot to the userlist with the handle and botaddress given (with no password and no flags)
+  Description: adds a new bot to the userlist with the handle and botaddress given (with no password and no flags). <address> format is one of:
+
+  - ipaddress/botport/userport
+  - ipv4address:botport/userport    [DEPRECATED]
+  - [ipv6address]:botport/userport  [DEPRECATED]
 
   Returns: 1 if successful; 0 if the bot already exists
 
