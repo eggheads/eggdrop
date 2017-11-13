@@ -1161,10 +1161,10 @@ onchansplit <nick> [channel]
   Module: irc
 
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-chanlist <channel> [flags[&chanflags]]
+chanlist <channel> [flags][<&|>chanflags]
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-  Description: flags are any global flags; the '&' denotes to look for channel specific flags. Examples:
+  Description: flags are any global flags; the '&' or '|' denotes to look for channel specific flags, where '&' will return users having ALL chanflags and '|' returns users having ANY of the chanflags. Examples:
 
   +--------+--------------------------------+
   | n      | (Global Owner)                 |
@@ -1176,7 +1176,7 @@ chanlist <channel> [flags[&chanflags]]
 
   Now you can use even more complex matching of flags, including +&- flags and & or | ('and' or 'or') matching.
 
-  Returns: Searching for flags preceded with a '+' will return a list of nicknames that have all the flags listed. Searching for flags preceded with a '-' will return a list of nicknames that do not have have any of the flags (differently said, '-' will hide users that have all flags listed). If no flags are given, all of the nicknames on the channel are returned.
+  Returns: Searching for flags optionally preceded with a '+' will return a list of nicknames that have all the flags listed. Searching for flags preceded with a '-' will return a list of nicknames that do not have have any of the flags (differently said, '-' will hide users that have all flags listed). If no flags are given, all of the nicknames on the channel are returned.
 
   Please note that if you're executing chanlist after a part or sign bind, the gone user will still be listed, so you can check for wasop, isop, etc.
 
