@@ -244,7 +244,7 @@ static int tcl_matchattr STDVAR
 {
   struct userrec *u;
   struct flag_record plus, minus, user;
-  int ok = 0, f;
+  int ok = 0;
 
   BADARGS(3, 4, " handle flags ?channel?");
 
@@ -253,16 +253,20 @@ static int tcl_matchattr STDVAR
     get_user_flagrec(u, &user, argv[3]);
     plus.match = user.match;
     break_down_flags(argv[2], &plus, &minus);
-    f = (minus.global || minus.udef_global || minus.chan || minus.udef_chan ||
-         minus.bot);
-    if (flagrec_eq(&plus, &user)) {
-      if (!f)
-        ok = 1;
-      else {
-        minus.match = plus.match ^ (FR_AND | FR_OR);
-        if (!flagrec_eq(&minus, &user))
-          ok = 1;
+    if (!minus.global && !minus.udef_global && !minus.chan && !minus.udef_chan
+        && !minus.bot) {
+      if (!plus.global && !plus.udef_global && !plus.chan && !plus.udef_chan
+          && !plus.bot) {
+        Tcl_AppendResult(irp, "0", NULL);
+        return TCL_OK;
       }
+    }
+    if (flagrec_eq(&plus, &user)) {
+      ok = 1;
+    } else {
+      minus.match = plus.match ^ (FR_AND | FR_OR);
+      if (!flagrec_eq(&minus, &user))
+        ok = 1;
     }
   }
   Tcl_AppendResult(irp, ok ? "1" : "0", NULL);
