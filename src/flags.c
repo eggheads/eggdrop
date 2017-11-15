@@ -488,7 +488,7 @@ static int bot2str(char *string, int bot)
 {
   char x = 'a', *old = string;
 
-  while (x < 'v') {
+  while (x <= 'z') {
     if (bot & 1)
       *string++ = x;
     x++;

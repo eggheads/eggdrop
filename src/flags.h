@@ -46,16 +46,16 @@ struct flag_record {
  *   unused letters: is
  *
  * botflags:
- *   0123456789ab????ghi??l???p?rs???????
- *   unused letters: cdefjkmnoqtuvwxyz
+ *   a?????ghi??l???p?rs???????0123456789
+ *   unused letters: bcdefjkmnoqtuvwxyz
  *
  * chanflags:
- *   a??defg???klmno?qr??uv??yz + user defined A-Z
- *   unused letters: bchijpstwx
+ *   a??defg???klmno?qr???vw?yz + user defined A-Z
+ *   unused letters: bchijpstuw
  */
-#define USER_VALID 0x03fbfeff   /* Sum of all USER_ flags */
-#define CHAN_VALID 0x03777c79   /* Sum of all CHAN_ flags */
-#define BOT_VALID  0x7fe689C1   /* Sum of all BOT_  flags */
+#define USER_VALID 0x003fbfeff   /* Sum of all valid USER_ flags */
+#define CHAN_VALID 0x003637c79   /* Sum of all valid CHAN_ flags */
+#define BOT_VALID  0xffc0689C1   /* Sum of all valid BOT_  flags */
 
 
 #define USER_AUTOOP        0x00000001 /* a  auto-op                               */
@@ -113,16 +113,16 @@ struct flag_record {
 #define BOT_X          0x00800000 /* x  unused                          */
 #define BOT_Y          0x01000000 /* y  unused                          */
 #define BOT_Z          0x02000000 /* z  unused                          */
-#define BOT_FLAG0      0x00200000 /* 0  user-defined flag #0            */
-#define BOT_FLAG1      0x00400000 /* 1  user-defined flag #1            */
-#define BOT_FLAG2      0x00800000 /* 2  user-defined flag #2            */
-#define BOT_FLAG3      0x01000000 /* 3  user-defined flag #3            */
-#define BOT_FLAG4      0x02000000 /* 4  user-defined flag #4            */
-#define BOT_FLAG5      0x04000000 /* 5  user-defined flag #5            */
-#define BOT_FLAG6      0x08000000 /* 6  user-defined flag #6            */
-#define BOT_FLAG7      0x10000000 /* 7  user-defined flag #7            */
-#define BOT_FLAG8      0x20000000 /* 8  user-defined flag #8            */
-#define BOT_FLAG9      0x40000000 /* 9  user-defined flag #9            */
+#define BOT_FLAG0      0x04000000 /* 0  user-defined flag #0            */
+#define BOT_FLAG1      0x08000000 /* 1  user-defined flag #1            */
+#define BOT_FLAG2      0x10000000 /* 2  user-defined flag #2            */
+#define BOT_FLAG3      0x20000000 /* 3  user-defined flag #3            */
+#define BOT_FLAG4      0x40000000 /* 4  user-defined flag #4            */
+#define BOT_FLAG5      0x80000000 /* 5  user-defined flag #5            */
+#define BOT_FLAG6      0x100000000 /* 6  user-defined flag #6            */
+#define BOT_FLAG7      0x200000000 /* 7  user-defined flag #7            */
+#define BOT_FLAG8      0x400000000 /* 8  user-defined flag #8            */
+#define BOT_FLAG9      0x800000000 /* 9  user-defined flag #9            */
 #define BOT_SHARE      (BOT_AGGRESSIVE|BOT_PASSIVE)
 
 
