@@ -3392,7 +3392,7 @@ are the four special characters:
 |     | word) (This character only works in binds, not in regular matching)      |
 +-----+--------------------------------------------------------------------------+
 | ~   | matches 1 or more space characters (can be used for whitespace between   |
-|     | words) (This char only works in binds, not in regluar matching)          |
+|     | words) (This char only works in binds, not in regular matching)          |
 +-----+--------------------------------------------------------------------------+
 
   Copyright (C) 1999 - 2017 Eggheads Development Team
