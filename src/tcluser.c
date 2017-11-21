@@ -252,16 +252,12 @@ static int tcl_matchattr STDVAR
     user.match = FR_GLOBAL | (argc == 4 ? FR_CHAN : 0) | FR_BOT;
     get_user_flagrec(u, &user, argv[3]);
     plus.match = user.match;
+    minus.match = plus.match ^ (FR_AND | FR_OR);
     break_down_flags(argv[2], &plus, &minus);
-    f = (minus.global || minus.udef_global || minus.chan || minus.udef_chan ||
-         minus.bot);
+    f = (!minus.global || !minus.udef_global || !minus.chan || !minus.udef_chan         || !minus.bot);
     if (flagrec_eq(&plus, &user)) {
-      if (!f)
+      if (f || !flagrec_eq(&minus, &user)) {
         ok = 1;
-      else {
-        minus.match = plus.match ^ (FR_AND | FR_OR);
-        if (!flagrec_eq(&minus, &user))
-          ok = 1;
       }
     }
   }
