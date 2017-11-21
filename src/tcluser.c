@@ -244,7 +244,7 @@ static int tcl_matchattr STDVAR
 {
   struct userrec *u;
   struct flag_record plus = {0}, minus = {0}, user = {0};
-  int ok = 0, nom = 0, nop = 0;
+  int ok = 0, nom = 0;
 
   BADARGS(3, 4, " handle flags ?channel?");
 
@@ -267,11 +267,6 @@ static int tcl_matchattr STDVAR
       if (nom || !flagrec_eq(&minus, &user)) {
         ok = 1;
       }
-//    if (!nop && flagrec_eq(&plus, &user)) {
-//      ok = 1;
-//    }
-//    if (!nom && !flagrec_eq(&minus, &user)) {
-//        ok = 1;
     }
   }
   Tcl_AppendResult(irp, ok ? "1" : "0", NULL);
