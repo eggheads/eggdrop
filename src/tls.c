@@ -645,7 +645,7 @@ void ssl_info(SSL *ssl, int where, int ret)
            (where & SSL_CB_READ) ? "read" : "write",
            SSL_alert_type_string_long(ret),
            SSL_alert_desc_string_long(ret));
-  } else if (where & SSL_CB_EXIT) {
+  } else if (ret <= 0 && where & SSL_CB_EXIT) {
     putlog(data->loglevel, "*", "TLS: failed in: %s.",
            SSL_state_string_long(ssl));
   } else {
