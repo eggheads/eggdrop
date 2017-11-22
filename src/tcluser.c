@@ -259,8 +259,8 @@ static int tcl_matchattr STDVAR
       nom = 1;
       if (!plus.global && !plus.udef_global && !plus.chan &&
           !plus.udef_chan && !plus.bot) {
-        Tcl_AppendResult(irp, "0 Unknown flag specified for matching", NULL); 
-        return TCL_OK;
+        Tcl_AppendResult(irp, "Unknown flag specified for matching", NULL); 
+        return TCL_ERROR;
       }
     }
     if (flagrec_eq(&plus, &user)) {
