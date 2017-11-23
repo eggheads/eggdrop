@@ -261,8 +261,7 @@ static void dcc_files(int idx, char *buf, int i)
       dcc[idx].status &= (~STAT_CHAT);
       dcc[idx].type = &DCC_CHAT;
       if (dcc[idx].u.chat->channel >= 0) {
-        chanout_but(-1, dcc[idx].u.chat->channel,
-                    "*** %s has returned.\n", dcc[idx].nick);
+        chanout_but(-1, dcc[idx].u.chat->channel, DCC_RETURN, dcc[idx].nick);
         if (dcc[idx].u.chat->channel < GLOBAL_CHANS)
           botnet_send_join_idx(idx, -1);
       }
@@ -345,8 +344,7 @@ static int cmd_files(struct userrec *u, int idx, char *par)
         dcc[idx].type = &DCC_CHAT;
         putlog(LOG_FILES, "*", "File system broken.");
         if (dcc[idx].u.chat->channel >= 0) {
-          chanout_but(-1, dcc[idx].u.chat->channel,
-                      "*** %s has returned.\n", dcc[idx].nick);
+          chanout_but(-1, dcc[idx].u.chat->channel, DCC_RETURN, dcc[idx].nick);
           if (dcc[idx].u.chat->channel < GLOBAL_CHANS)
             botnet_send_join_idx(idx, -1);
         }

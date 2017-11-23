@@ -402,7 +402,7 @@ Faites un Telnet sur le bot et entrez 'NEW' comme surnom.
 0xe16,Connexion DCC fermée (%s!%s)
 0xe17,Echec de la tentative de TELNET en cours (%s)
 0xe18,Refus %s/%d (mauvais port source)
-# 0xe19 - unused
+0xe19,*** %s est de retour.\n 
 0xe1a,Refus %s (mauvais hostname)
 0xe1b,Connexion telnet: %s/%d
 0xe1c,Echec de l'ident pour %s: %s

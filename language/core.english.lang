@@ -401,7 +401,7 @@ Telnet to the bot and enter 'NEW' as your nickname.
 0xe16,DCC connection closed (%s!%s)
 0xe17,Failed TELNET incoming (%s)
 0xe18,Refused %s/%d (bad src port)
-# 0xe19 - unused
+0xe19,*** %s has returned.\n
 0xe1a,Refused %s (bad hostname)
 0xe1b,Telnet connection: %s/%d
 0xe1c,Ident failed for %s: %s

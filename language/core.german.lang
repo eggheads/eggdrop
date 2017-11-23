@@ -410,7 +410,7 @@ Baue eine Telnetverbindung zu dem Bot auf und gib 'NEW' als Deinen Nickname ein.
 0xe16,DCC-Verbindung geschlossen (%s!%s)
 0xe17,Einkommende TELNET-Verbindung fehlgeschlagen (%s)
 0xe18,Verbindung zu %s/%d zurueckgewiesen (falscher Quellport)
-# 0xe19 - unused
+0xe19,*** %s ist zurueckgekehrt.\n 
 0xe1a,Verbindung zu %s zurueckgewiesen (falscher hostname)
 0xe1b,Telnet-Verbindung: %s/%d
 0xe1c,Ident fehlgeschlagen fuer %s: %s

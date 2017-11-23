@@ -401,7 +401,7 @@ Entre em ligação telnet com o bot e digite 'NEW' como o seu nick.
 0xe16,Ligação DCC fechada (%s!%s)
 0xe17,Ligação de entrada TELNET falhada (%s)
 0xe18,Recusado %s/%d (porta src inválida)
-# 0xe19 - não utilizado
+0xe19,*** %s retornou.\n 
 0xe1a,Recusado %s (máscara inválida)
 0xe1b,Ligação Telnet: %s/%d
 0xe1c,Ident falhada para %s: %s

@@ -401,7 +401,7 @@ Telnettaa botille ja syötä 'UUSI' kuin sinun nickkisi.
 0xe16,DCC yhteys suljettu (%s!%s)
 0xe17,TELNET yhdistäminen epäonnistui (%s)
 0xe18,Evätään %s/%d (huono src portti)
-# 0xe19 - ei käytössä
+0xe19,*** %s on palannut.\n 
 0xe1a,Evätään %s (huono hostname)
 0xe1b,Telnet yhteys: %s/%d
 0xe1c,Ident epäonnistui %s: %s
