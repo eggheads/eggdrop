@@ -869,6 +869,11 @@ static void cmd_pls_bot(struct userrec *u, int idx, char *par)
   if (strlen(addr) > 60)
     addr[60] = 0;
 
+/* Trim IPv6 []s out if present */
+  if (addr[0] == '[') {
+    addr[strlen(addr)-1] = 0;
+    memmove(addr, addr + 1, strlen(addr));
+  }
   userlist = adduser(userlist, handle, "none", "-", USER_BOT);
   u1 = get_user_by_handle(userlist, handle);
   bi = user_malloc(sizeof(struct bot_addr));
@@ -904,11 +909,6 @@ static void cmd_pls_bot(struct userrec *u, int idx, char *par)
     putlog(LOG_CMDS, "*", "#%s# +bot %s %s%s%s%s%s %s%s", dcc[idx].nick, handle,
            addr, port ? " " : "", port ? port : "", relay ? " " : "",
            relay ? relay : "", host[0] ? " " : "", host);
-/* Trim IPv6 []s out for display purposes */
-    if (addr[0] == '[') {
-      addr[strlen(addr)-1] = 0;
-      memmove(addr, addr + 1, strlen(addr));
-    }
 #ifdef TLS
     dprintf(idx, "Added bot '%s' with address [%s]:%s%d/%s%d and %s%s%s.\n",
             handle, addr, (bi->ssl & TLS_BOT) ? "+" : "", bi->telnet_port,
