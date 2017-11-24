@@ -1220,6 +1220,11 @@ static void cmd_chaddr(struct userrec *u, int idx, char *par)
 #endif
   }
 
+/* Trim IPv6 []s out if present */
+  if (addr[0] == '[') {
+    addr[strlen(addr)-1] = 0;
+    memmove(addr, addr + 1, strlen(addr));
+  }
   bi = user_malloc(sizeof(struct bot_addr));
   bi->address = user_malloc(strlen(addr) + 1);
   strcpy(bi->address, addr);
