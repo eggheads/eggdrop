@@ -305,7 +305,41 @@ botattr <handle> [changes [channel]]
 matchattr <handle> <flags> [channel]
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-  Returns: 1 if the specified user has the specified flags; 0 otherwise
+  Description: checks if the flags of the specified user match the flags provided. Default matching pattern uses the | (OR) convention. For example, specifying +mn for flags will check if the user has the m OR n flag.
+
++------------+-----------------------------------------------------------------+
+| Flag Mask  | Action                                                          |
++============+=================================================================+
+| +m         + Checks if the user has the m global flag                        |
++------------+-----------------------------------------------------------------+
+| +mn        | Checks if the user has the m or n global flag                   |
++------------+-----------------------------------------------------------------+
+| +mn&       | Checks if the user has the m and n global flag                  |
++------------+-----------------------------------------------------------------+
+| \|+o #foo  | Checks if the user has the o channel flag for #foo              |
++------------+-----------------------------------------------------------------+
+| &mn #foo   | Checks if the user has the m and n channel flag for #foo        |
++------------+-----------------------------------------------------------------+
+| +o|+n #foo | Checks if the user has the o global flag, or the n channel      |
+|            | flag for #foo                                                   |
++------------+-----------------------------------------------------------------+
+| +m&+v      | Checks if the user has the m global flag, and the v channel     |
+|            | flag for #foo                                                   |
++------------+-----------------------------------------------------------------+
+| -m         | Checks if the user does not have the m global flag              |
++------------+-----------------------------------------------------------------+
+| \|-n #foo  | Checks if the user does not have the n channel flag for #foo    |
++------------+-----------------------------------------------------------------+
+| +m|-n #foo | Checks if the user has the global m flag or does not have a     |
+|            | channel n flag for #foo                                         |
++------------+-----------------------------------------------------------------+
+| -n&-m #foo | Searches if the user does not have the global n flag and does   |
+|            | not have the channel m flag for #foo                            |
++------------+-----------------------------------------------------------------+
+| ||+b       | Searches if the user has the bot flag b                         |
++------------+-----------------------------------------------------------------+
+
+  Returns: 1 if the specified user has the flags matching the provided mask; 0 otherwise
 
   Module: core
 
@@ -1168,17 +1202,7 @@ onchansplit <nick> [channel]
 chanlist <channel> [flags][<&|>chanflags]
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-  Description: flags are any global flags; the '&' or '|' denotes to look for channel specific flags, where '&' will return users having ALL chanflags and '|' returns users having ANY of the chanflags. Examples:
-
-  +--------+--------------------------------+
-  | n      | (Global Owner)                 |
-  +--------+--------------------------------+
-  | &n     |  (Channel Owner)               |
-  +--------+--------------------------------+
-  | o&m    |  (Global Op, Channel Master)   |
-  +--------+--------------------------------+
-
-  Now you can use even more complex matching of flags, including +&- flags and & or | ('and' or 'or') matching.
+  Description: flags are any global flags; the '&' or '|' denotes to look for channel specific flags, where '&' will return users having ALL chanflags and '|' returns users having ANY of the chanflags (See matchattr above for additional examples).
 
   Returns: Searching for flags optionally preceded with a '+' will return a list of nicknames that have all the flags listed. Searching for flags preceded with a '-' will return a list of nicknames that do not have have any of the flags (differently said, '-' will hide users that have all flags listed). If no flags are given, all of the nicknames on the channel are returned.
 

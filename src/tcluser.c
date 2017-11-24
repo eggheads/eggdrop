@@ -259,7 +259,7 @@ static int tcl_matchattr STDVAR
       nom = 1;
       if (!plus.global && !plus.udef_global && !plus.chan &&
           !plus.udef_chan && !plus.bot) {
-        Tcl_AppendResult(irp, "Unknown flag specified for matching", NULL); 
+        Tcl_AppendResult(irp, "Unknown flag specified for matching", NULL);
         return TCL_ERROR;
       }
     }
