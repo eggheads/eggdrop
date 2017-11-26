@@ -799,6 +799,12 @@ static void cmd_pls_bot(struct userrec *u, int idx, char *par)
   port2 = newsplit(&par);
   port = strtok(port2, "/");
   relay = strtok(NULL, "/");
+
+  if (strtok(NULL, "/")) {
+    dprintf(idx, "You've supplied more than 2 ports, make up your mind.\n");
+    return;
+  }
+
   host = newsplit(&par);
 
   if (strlen(handle) > HANDLEN)
@@ -1149,6 +1155,11 @@ static void cmd_chaddr(struct userrec *u, int idx, char *par)
   port2 = newsplit(&par);
   port = strtok(port2, "/");
   relay = strtok(NULL, "/");
+
+  if (strtok(NULL, "/")) {
+    dprintf(idx, "You've supplied more than 2 ports, make up your mind.\n");
+    return;
+  }
 
   if (addr[0]) {
 #ifndef IPV6
