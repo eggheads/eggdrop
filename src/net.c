@@ -797,9 +797,15 @@ void safe_write(int fd, const void *buf, size_t count)
 {
   const char *bytes = buf;
   ssize_t ret;
+  static int inhere = 0;
+
   do {
     if ((ret = write(fd, bytes, count)) == -1 && errno != EINTR) {
-      putlog(LOG_MISC, "*", "Unexpected write() failure on attempt to write %zd bytes to fd %d: %s.", count, fd, strerror(errno));
+      if (!inhere) {
+        inhere = 1;
+        putlog(LOG_MISC, "*", "Unexpected write() failure on attempt to write %zd bytes to fd %d: %s.", count, fd, strerror(errno));
+        inhere = 0;
+      }
       break;
     }
   } while ((bytes += ret, count -= ret));
