@@ -350,6 +350,36 @@ static int tcl_addbot STDVAR
     } else {
       q = strchr(argv[2], '/');
     }
+
+    /* Verify ports */
+    if (q) {
+      /* Split and count */
+      *q++ = 0;
+      p = strchr(q, '/');
+      if (p)
+        *p++ = 0;
+
+#ifndef TLS
+      /* Check TLS */
+      if ((q && *q == '+') || (p && *p == '+')) {
+        Tcl_AppendResult(irp, "0", NULL);
+        return TCL_OK;
+      }
+
+#endif
+      /* Verify */
+      if (!check_int_range(q, 0, 65536)) {
+        Tcl_AppendResult(irp, "0", NULL);
+        return TCL_OK;
+      }
+      /* check_int_range returns 0 if p is NULL */
+      if (!check_int_range(p, 0, 65536)) {
+        Tcl_AppendResult(irp, "0", NULL);
+        return TCL_OK;
+      }
+
+    }
+
     userlist = adduser(userlist, argv[1], "none", "-", USER_BOT);
     bi = user_malloc(sizeof(struct bot_addr));
 #ifdef TLS
@@ -361,16 +391,26 @@ static int tcl_addbot STDVAR
       bi->telnet_port = 3333;
       bi->relay_port = 3333;
     } else {
-      bi->address = user_malloc(q - argv[2] + 1);
-      strncpy(bi->address, argv[2], q - argv[2]);
-      bi->address[q - argv[2]] = 0;
-      p = q + 1;
-      bi->telnet_port = atoi(p);
-      q = strchr(p, '/');
-      if (!q)
+      bi->address = user_malloc(q - argv[2]);
+      strncpy(bi->address, argv[2], q - argv[2] - 1);
+      bi->address[q - argv[2] - 1] = 0;
+      bi->telnet_port = atoi(q);
+#ifdef TLS
+      if (*q == '+')
+        bi->ssl = TLS_BOT;
+#endif
+      if (!p) {
         bi->relay_port = bi->telnet_port;
-      else
-        bi->relay_port = atoi(q + 1);
+#ifdef TLS
+        bi->ssl *= TLS_BOT + TLS_RELAY;
+#endif
+      } else {
+        bi->relay_port = atoi(p);
+#ifdef TLS
+      if (*p == '+')
+        bi->ssl |= TLS_RELAY;
+#endif
+      }
     }
     set_user(&USERENTRY_BOTADDR, get_user_by_handle(userlist, argv[1]), bi);
     Tcl_AppendResult(irp, "1", NULL);
