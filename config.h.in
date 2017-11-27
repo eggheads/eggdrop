@@ -210,6 +210,9 @@
 /* Define to 1 if you have the <netinet/in.h> header file. */
 #undef HAVE_NETINET_IN_H
 
+/* Do we have <net/errno.h>? */
+#undef HAVE_NET_ERRNO_H
+
 /* Define to 1 if you have the `NSLinkModule' function. */
 #undef HAVE_NSLINKMODULE
 
