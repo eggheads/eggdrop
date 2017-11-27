@@ -339,3 +339,210 @@ TEA version not specified.])
     AC_SUBST(PKG_LIBS)
     AC_SUBST(PKG_CFLAGS)
 ])
+
+#------------------------------------------------------------------------
+# TEA_LOAD_TCLCONFIG --
+#
+#	Load the tclConfig.sh file
+#
+# Arguments:
+#
+#	Requires the following vars to be set:
+#		TCL_BIN_DIR
+#
+# Results:
+#
+#	Substitutes the following vars:
+#		TCL_BIN_DIR
+#		TCL_SRC_DIR
+#		TCL_LIB_FILE
+#               TCL_ZIP_FILE
+#               TCL_ZIPFS_SUPPORT
+#------------------------------------------------------------------------
+
+AC_DEFUN([TEA_LOAD_TCLCONFIG], [
+    AC_MSG_CHECKING([for existence of ${TCL_BIN_DIR}/tclConfig.sh])
+
+    if test -f "${TCL_BIN_DIR}/tclConfig.sh" ; then
+        AC_MSG_RESULT([loading])
+	. "${TCL_BIN_DIR}/tclConfig.sh"
+    else
+        AC_MSG_RESULT([could not find ${TCL_BIN_DIR}/tclConfig.sh])
+    fi
+
+    # eval is required to do the TCL_DBGX substitution
+    eval "TCL_LIB_FILE=\"${TCL_LIB_FILE}\""
+    eval "TCL_STUB_LIB_FILE=\"${TCL_STUB_LIB_FILE}\""
+
+    # If the TCL_BIN_DIR is the build directory (not the install directory),
+    # then set the common variable name to the value of the build variables.
+    # For example, the variable TCL_LIB_SPEC will be set to the value
+    # of TCL_BUILD_LIB_SPEC. An extension should make use of TCL_LIB_SPEC
+    # instead of TCL_BUILD_LIB_SPEC since it will work with both an
+    # installed and uninstalled version of Tcl.
+    if test -f "${TCL_BIN_DIR}/Makefile" ; then
+        TCL_LIB_SPEC="${TCL_BUILD_LIB_SPEC}"
+        TCL_STUB_LIB_SPEC="${TCL_BUILD_STUB_LIB_SPEC}"
+        TCL_STUB_LIB_PATH="${TCL_BUILD_STUB_LIB_PATH}"
+    elif test "`uname -s`" = "Darwin"; then
+	# If Tcl was built as a framework, attempt to use the libraries
+	# from the framework at the given location so that linking works
+	# against Tcl.framework installed in an arbitrary location.
+	case ${TCL_DEFS} in
+	    *TCL_FRAMEWORK*)
+		if test -f "${TCL_BIN_DIR}/${TCL_LIB_FILE}"; then
+		    for i in "`cd "${TCL_BIN_DIR}"; pwd`" \
+			     "`cd "${TCL_BIN_DIR}"/../..; pwd`"; do
+			if test "`basename "$i"`" = "${TCL_LIB_FILE}.framework"; then
+			    TCL_LIB_SPEC="-F`dirname "$i" | sed -e 's/ /\\\\ /g'` -framework ${TCL_LIB_FILE}"
+			    break
+			fi
+		    done
+		fi
+		if test -f "${TCL_BIN_DIR}/${TCL_STUB_LIB_FILE}"; then
+		    TCL_STUB_LIB_SPEC="-L`echo "${TCL_BIN_DIR}"  | sed -e 's/ /\\\\ /g'` ${TCL_STUB_LIB_FLAG}"
+		    TCL_STUB_LIB_PATH="${TCL_BIN_DIR}/${TCL_STUB_LIB_FILE}"
+		fi
+		;;
+	esac
+    fi
+
+    # eval is required to do the TCL_DBGX substitution
+    eval "TCL_LIB_FLAG=\"${TCL_LIB_FLAG}\""
+    eval "TCL_LIB_SPEC=\"${TCL_LIB_SPEC}\""
+    eval "TCL_STUB_LIB_FLAG=\"${TCL_STUB_LIB_FLAG}\""
+    eval "TCL_STUB_LIB_SPEC=\"${TCL_STUB_LIB_SPEC}\""
+
+    AC_SUBST(TCL_VERSION)
+    AC_SUBST(TCL_PATCH_LEVEL)
+    AC_SUBST(TCL_BIN_DIR)
+    AC_SUBST(TCL_SRC_DIR)
+
+    AC_SUBST(TCL_LIB_FILE)
+    AC_SUBST(TCL_LIB_FLAG)
+    AC_SUBST(TCL_LIB_SPEC)
+
+    AC_SUBST(TCL_STUB_LIB_FILE)
+    AC_SUBST(TCL_STUB_LIB_FLAG)
+    AC_SUBST(TCL_STUB_LIB_SPEC)
+
+    AC_MSG_CHECKING([platform])
+    hold_cc=$CC; CC="$TCL_CC"
+    AC_TRY_COMPILE(,[
+	    #ifdef _WIN32
+		#error win32
+	    #endif
+	], [
+	    TEA_PLATFORM="unix"
+	    CYGPATH=echo
+	], [
+	    TEA_PLATFORM="windows"
+	    AC_CHECK_PROG(CYGPATH, cygpath, cygpath -m, echo)	]
+    )
+    CC=$hold_cc
+    AC_MSG_RESULT($TEA_PLATFORM)
+
+    # The BUILD_$pkg is to define the correct extern storage class
+    # handling when making this package
+    AC_DEFINE_UNQUOTED(BUILD_${PACKAGE_NAME}, [],
+	    [Building extension source?])
+    # Do this here as we have fully defined TEA_PLATFORM now
+    if test "${TEA_PLATFORM}" = "windows" ; then
+	EXEEXT=".exe"
+	CLEANFILES="$CLEANFILES *.lib *.dll *.pdb *.exp"
+    fi
+
+    # TEA specific:
+    AC_SUBST(CLEANFILES)
+    AC_SUBST(TCL_LIBS)
+    AC_SUBST(TCL_DEFS)
+    AC_SUBST(TCL_EXTRA_CFLAGS)
+    AC_SUBST(TCL_LD_FLAGS)
+    AC_SUBST(TCL_SHLIB_LD_LIBS)
+])
+
+#--------------------------------------------------------------------
+# TEA_TCL_LINK_LIBS
+#
+#	Search for the libraries needed to link the Tcl shell.
+#	Things like the math library (-lm) and socket stuff (-lsocket vs.
+#	-lnsl) are dealt with here.
+#
+# Arguments:
+#	Requires the following vars to be set in the Makefile:
+#		DL_LIBS (not in TEA, only needed in core)
+#		LIBS
+#		MATH_LIBS
+#
+# Results:
+#
+#	Substitutes the following vars:
+#		TCL_LIBS
+#		MATH_LIBS
+#
+#	Might append to the following vars:
+#		LIBS
+#
+#	Might define the following vars:
+#		HAVE_NET_ERRNO_H
+#--------------------------------------------------------------------
+
+AC_DEFUN([TEA_TCL_LINK_LIBS], [
+    #--------------------------------------------------------------------
+    # On a few very rare systems, all of the libm.a stuff is
+    # already in libc.a.  Set compiler flags accordingly.
+    # Also, Linux requires the "ieee" library for math to work
+    # right (and it must appear before "-lm").
+    #--------------------------------------------------------------------
+
+    AC_CHECK_FUNC(sin, MATH_LIBS="", MATH_LIBS="-lm")
+    AC_CHECK_LIB(ieee, main, [MATH_LIBS="-lieee $MATH_LIBS"])
+
+    #--------------------------------------------------------------------
+    # Interactive UNIX requires -linet instead of -lsocket, plus it
+    # needs net/errno.h to define the socket-related error codes.
+    #--------------------------------------------------------------------
+
+    AC_CHECK_LIB(inet, main, [LIBS="$LIBS -linet"])
+    AC_CHECK_HEADER(net/errno.h, [
+	AC_DEFINE(HAVE_NET_ERRNO_H, 1, [Do we have <net/errno.h>?])])
+
+    #--------------------------------------------------------------------
+    #	Check for the existence of the -lsocket and -lnsl libraries.
+    #	The order here is important, so that they end up in the right
+    #	order in the command line generated by make.  Here are some
+    #	special considerations:
+    #	1. Use "connect" and "accept" to check for -lsocket, and
+    #	   "gethostbyname" to check for -lnsl.
+    #	2. Use each function name only once:  can't redo a check because
+    #	   autoconf caches the results of the last check and won't redo it.
+    #	3. Use -lnsl and -lsocket only if they supply procedures that
+    #	   aren't already present in the normal libraries.  This is because
+    #	   IRIX 5.2 has libraries, but they aren't needed and they're
+    #	   bogus:  they goof up name resolution if used.
+    #	4. On some SVR4 systems, can't use -lsocket without -lnsl too.
+    #	   To get around this problem, check for both libraries together
+    #	   if -lsocket doesn't work by itself.
+    #--------------------------------------------------------------------
+
+    tcl_checkBoth=0
+    AC_CHECK_FUNC(connect, tcl_checkSocket=0, tcl_checkSocket=1)
+    if test "$tcl_checkSocket" = 1; then
+	AC_CHECK_FUNC(setsockopt, , [AC_CHECK_LIB(socket, setsockopt,
+	    LIBS="$LIBS -lsocket", tcl_checkBoth=1)])
+    fi
+    if test "$tcl_checkBoth" = 1; then
+	tk_oldLibs=$LIBS
+	LIBS="$LIBS -lsocket -lnsl"
+	AC_CHECK_FUNC(accept, tcl_checkNsl=0, [LIBS=$tk_oldLibs])
+    fi
+    AC_CHECK_FUNC(gethostbyname, , [AC_CHECK_LIB(nsl, gethostbyname,
+	    [LIBS="$LIBS -lnsl"])])
+
+    # TEA specific: Don't perform the eval of the libraries here because
+    # DL_LIBS won't be set until we call TEA_CONFIG_CFLAGS
+
+    TCL_LIBS='${DL_LIBS} ${LIBS} ${MATH_LIBS}'
+    AC_SUBST(TCL_LIBS)
+    AC_SUBST(MATH_LIBS)
+])
