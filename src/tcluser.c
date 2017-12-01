@@ -298,28 +298,31 @@ static int tcl_adduser STDVAR
 static int tcl_addbot STDVAR
 {
   struct bot_addr *bi;
-  char *p, *q;
+  /* Max addr len is 60 ? (see cmd_pls_bot in cmds.c) + brackets + delims + ports + 0 */
+  char *p, *q, addr[75], hand[HANDLEN + 1];
   int i, colon=0, braced = 0, ipv6 = 0, count = 0;
 
 
   BADARGS(3, 3, " handle address");
 
-  if (strlen(argv[1]) > HANDLEN)
-    argv[1][HANDLEN] = 0;
-  for (p = argv[1]; *p; p++)
+  /* Copy to adjustable char*'s */
+  strncpyz(hand, argv[1], sizeof hand);
+  strncpyz(addr, argv[2], sizeof addr);
+
+  for (p = hand; *p; p++)
     if ((unsigned char) *p <= 32 || *p == '@')
       *p = '?';
 
   if ((argv[1][0] == '*') || strchr(BADHANDCHARS, argv[1][0]) ||
-      get_user_by_handle(userlist, argv[1]))
+      get_user_by_handle(userlist, hand))
     Tcl_AppendResult(irp, "0", NULL);
   else {
-    for (i=0; argv[2][i]; i++) {
-      if (argv[2][i] == ':') {
+    for (i=0; addr[i]; i++) {
+      if (addr[i] == ':') {
         count++;
         colon=i;
       }
-      if (argv[2][i] == ']') {
+      if (addr[i] == ']') {
         braced = i;
       }
     }
@@ -335,20 +338,20 @@ static int tcl_addbot STDVAR
       return TCL_OK;
     }
 /* Check that the char following the / is not null */
-    if ((q = strrchr(argv[2], '/'))) {
+    if ((q = strrchr(addr, '/'))) {
       if (!q[1]) {
         *q = 0;
         q = 0;
       }
     }
     if (!ipv6) {
-      if (!(q = strchr(argv[2], ':'))) {
-        q = strchr(argv[2], '/');
+      if (!(q = strchr(addr, ':'))) {
+        q = strchr(addr, '/');
       }
     } else if (braced && (colon > braced)) {
-      q = strrchr(argv[2], ':');
+      q = strrchr(addr, ':');
     } else {
-      q = strchr(argv[2], '/');
+      q = strchr(addr, '/');
     }
 
     /* Verify ports */
@@ -380,32 +383,31 @@ static int tcl_addbot STDVAR
 
     }
 
-    userlist = adduser(userlist, argv[1], "none", "-", USER_BOT);
+    userlist = adduser(userlist, hand, "none", "-", USER_BOT);
     bi = user_malloc(sizeof(struct bot_addr));
 #ifdef TLS
     bi->ssl = 0;
 #endif
 
-    /* Max addr len is 60 ? (see cmd_pls_bot in cmds.c) */
-    if ((count = strlen(argv[2])) > 60) {
+    if ((count = strlen(addr)) > 60) {
       count = 60;
-      argv[2][count] = 0;
+      addr[count] = 0;
     }
     /* Trim IPv6 []s out if present */
     if (braced) {
       --count;
-      argv[2][count] = 0;
-      memmove(argv[2], argv[2] + 1, count);
+      addr[count] = 0;
+      memmove(addr, addr + 1, count);
     }
 
     if (!q) {
       bi->address = user_malloc(count + 1);
-      strcpy(bi->address, argv[2]);
+      strcpy(bi->address, addr);
       bi->telnet_port = 3333;
       bi->relay_port = 3333;
     } else {
       bi->address = user_malloc(count + 1);
-      strcpy(bi->address, argv[2]);
+      strcpy(bi->address, addr);
       bi->telnet_port = atoi(q);
 #ifdef TLS
       if (*q == '+')
@@ -424,7 +426,7 @@ static int tcl_addbot STDVAR
 #endif
       }
     }
-    set_user(&USERENTRY_BOTADDR, get_user_by_handle(userlist, argv[1]), bi);
+    set_user(&USERENTRY_BOTADDR, get_user_by_handle(userlist, hand), bi);
     Tcl_AppendResult(irp, "1", NULL);
   }
   return TCL_OK;
