@@ -373,7 +373,7 @@ static int tcl_addbot STDVAR
         return TCL_OK;
       }
       /* check_int_range returns 0 if p is NULL */
-      if (!check_int_range(p, 0, 65536)) {
+      if (p && !check_int_range(p, 0, 65536)) {
         Tcl_AppendResult(irp, "0", NULL);
         return TCL_OK;
       }
@@ -407,8 +407,8 @@ static int tcl_addbot STDVAR
       } else {
         bi->relay_port = atoi(p);
 #ifdef TLS
-      if (*p == '+')
-        bi->ssl |= TLS_RELAY;
+        if (*p == '+')
+          bi->ssl |= TLS_RELAY;
 #endif
       }
     }
