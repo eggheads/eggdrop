@@ -385,15 +385,27 @@ static int tcl_addbot STDVAR
 #ifdef TLS
     bi->ssl = 0;
 #endif
+
+    /* Max addr len is 60 ? (see cmd_pls_bot in cmds.c) */
+    if ((count = strlen(argv[2])) > 60) {
+      count = 60;
+      argv[2][count] = 0;
+    }
+    /* Trim IPv6 []s out if present */
+    if (braced) {
+      --count;
+      argv[2][count] = 0;
+      memmove(argv[2], argv[2] + 1, count);
+    }
+
     if (!q) {
-      bi->address = user_malloc(strlen(argv[2]) + 1);
+      bi->address = user_malloc(count + 1);
       strcpy(bi->address, argv[2]);
       bi->telnet_port = 3333;
       bi->relay_port = 3333;
     } else {
-      bi->address = user_malloc(q - argv[2]);
-      strncpy(bi->address, argv[2], q - argv[2] - 1);
-      bi->address[q - argv[2] - 1] = 0;
+      bi->address = user_malloc(count + 1);
+      strcpy(bi->address, argv[2]);
       bi->telnet_port = atoi(q);
 #ifdef TLS
       if (*q == '+')
