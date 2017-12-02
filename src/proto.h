@@ -119,6 +119,7 @@ float getcputime();
 /* cmds.c */
 int check_dcc_attrs(struct userrec *, int);
 int check_dcc_chanattrs(struct userrec *, char *, int, int);
+int check_int_range(char *value, int min, int max);
 int stripmodes(char *);
 char *stripmasktype(int);
 

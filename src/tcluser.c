@@ -298,28 +298,31 @@ static int tcl_adduser STDVAR
 static int tcl_addbot STDVAR
 {
   struct bot_addr *bi;
-  char *p, *q;
+  /* Max addr len is 60 ? (see cmd_pls_bot in cmds.c) + brackets + delims + ports + 0 */
+  char *p, *q, addr[75], hand[HANDLEN + 1];
   int i, colon=0, braced = 0, ipv6 = 0, count = 0;
 
 
   BADARGS(3, 3, " handle address");
 
-  if (strlen(argv[1]) > HANDLEN)
-    argv[1][HANDLEN] = 0;
-  for (p = argv[1]; *p; p++)
+  /* Copy to adjustable char*'s */
+  strncpyz(hand, argv[1], sizeof hand);
+  strncpyz(addr, argv[2], sizeof addr);
+
+  for (p = hand; *p; p++)
     if ((unsigned char) *p <= 32 || *p == '@')
       *p = '?';
 
   if ((argv[1][0] == '*') || strchr(BADHANDCHARS, argv[1][0]) ||
-      get_user_by_handle(userlist, argv[1]))
+      get_user_by_handle(userlist, hand))
     Tcl_AppendResult(irp, "0", NULL);
   else {
-    for (i=0; argv[2][i]; i++) {
-      if (argv[2][i] == ':') {
+    for (i=0; addr[i]; i++) {
+      if (addr[i] == ':') {
         count++;
         colon=i;
       }
-      if (argv[2][i] == ']') {
+      if (addr[i] == ']') {
         braced = i;
       }
     }
@@ -335,44 +338,95 @@ static int tcl_addbot STDVAR
       return TCL_OK;
     }
 /* Check that the char following the / is not null */
-    if ((q = strrchr(argv[2], '/'))) {
+    if ((q = strrchr(addr, '/'))) {
       if (!q[1]) {
         *q = 0;
         q = 0;
       }
     }
     if (!ipv6) {
-      if (!(q = strchr(argv[2], ':'))) {
-        q = strchr(argv[2], '/');
+      if (!(q = strchr(addr, ':'))) {
+        q = strchr(addr, '/');
       }
     } else if (braced && (colon > braced)) {
-      q = strrchr(argv[2], ':');
+      q = strrchr(addr, ':');
     } else {
-      q = strchr(argv[2], '/');
+      q = strchr(addr, '/');
     }
-    userlist = adduser(userlist, argv[1], "none", "-", USER_BOT);
+
+    /* Verify ports */
+    if (q) {
+      /* Split and count */
+      *q++ = 0;
+      p = strchr(q, '/');
+      if (p)
+        *p++ = 0;
+
+#ifndef TLS
+      /* Check TLS */
+      if ((q && *q == '+') || (p && *p == '+')) {
+        Tcl_AppendResult(irp, "0", NULL);
+        return TCL_OK;
+      }
+
+#endif
+      /* Verify */
+      if (!check_int_range(q, 0, 65536)) {
+        Tcl_AppendResult(irp, "0", NULL);
+        return TCL_OK;
+      }
+      /* check_int_range returns 0 if p is NULL */
+      if (p && !check_int_range(p, 0, 65536)) {
+        Tcl_AppendResult(irp, "0", NULL);
+        return TCL_OK;
+      }
+
+    }
+
+    userlist = adduser(userlist, hand, "none", "-", USER_BOT);
     bi = user_malloc(sizeof(struct bot_addr));
 #ifdef TLS
     bi->ssl = 0;
 #endif
+
+    if ((count = strlen(addr)) > 60) {
+      count = 60;
+      addr[count] = 0;
+    }
+    /* Trim IPv6 []s out if present */
+    if (braced) {
+      --count;
+      addr[count] = 0;
+      memmove(addr, addr + 1, count);
+    }
+
     if (!q) {
-      bi->address = user_malloc(strlen(argv[2]) + 1);
-      strcpy(bi->address, argv[2]);
+      bi->address = user_malloc(count + 1);
+      strcpy(bi->address, addr);
       bi->telnet_port = 3333;
       bi->relay_port = 3333;
     } else {
-      bi->address = user_malloc(q - argv[2] + 1);
-      strncpy(bi->address, argv[2], q - argv[2]);
-      bi->address[q - argv[2]] = 0;
-      p = q + 1;
-      bi->telnet_port = atoi(p);
-      q = strchr(p, '/');
-      if (!q)
+      bi->address = user_malloc(count + 1);
+      strcpy(bi->address, addr);
+      bi->telnet_port = atoi(q);
+#ifdef TLS
+      if (*q == '+')
+        bi->ssl = TLS_BOT;
+#endif
+      if (!p) {
         bi->relay_port = bi->telnet_port;
-      else
-        bi->relay_port = atoi(q + 1);
+#ifdef TLS
+        bi->ssl *= TLS_BOT + TLS_RELAY;
+#endif
+      } else {
+        bi->relay_port = atoi(p);
+#ifdef TLS
+        if (*p == '+')
+          bi->ssl |= TLS_RELAY;
+#endif
+      }
     }
-    set_user(&USERENTRY_BOTADDR, get_user_by_handle(userlist, argv[1]), bi);
+    set_user(&USERENTRY_BOTADDR, get_user_by_handle(userlist, hand), bi);
     Tcl_AppendResult(irp, "1", NULL);
   }
   return TCL_OK;
