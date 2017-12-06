@@ -462,7 +462,7 @@
 #define DCC_CLOSED              get_language(0xe16)
 #define DCC_FAILED              get_language(0xe17)
 #define DCC_BADSRC              get_language(0xe18)
-/* was: DCC_BADIP               0xe19            */
+#define DCC_RETURN              get_language(0xe19)
 #define DCC_BADHOST             get_language(0xe1a)
 #define DCC_TELCONN             get_language(0xe1b)
 #define DCC_IDENTFAIL           get_language(0xe1c)

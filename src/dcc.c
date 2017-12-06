@@ -2086,13 +2086,12 @@ static void dcc_script(int idx, char *buf, int len)
     }
     if (dcc[idx].type == &DCC_CHAT) {
       if (dcc[idx].u.chat->channel >= 0) {
-        chanout_but(-1, dcc[idx].u.chat->channel, DCC_JOIN, dcc[idx].nick);
+        chanout_but(-1, dcc[idx].u.chat->channel, DCC_RETURN, dcc[idx].nick);
         if (dcc[idx].u.chat->channel < 10000)
           botnet_send_join_idx(idx, -1);
         check_tcl_chjn(botnetnick, dcc[idx].nick, dcc[idx].u.chat->channel,
                        geticon(idx), dcc[idx].sock, dcc[idx].host);
       }
-      check_tcl_chon(dcc[idx].nick, dcc[idx].sock);
     }
   }
 }

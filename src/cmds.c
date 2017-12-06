@@ -1610,8 +1610,7 @@ int check_dcc_attrs(struct userrec *u, int oatr)
           dcc[i].status &= (~STAT_CHAT);
           dcc[i].type = &DCC_CHAT;
           if (dcc[i].u.chat->channel >= 0) {
-            chanout_but(-1, dcc[i].u.chat->channel,
-                        "*** %s has returned.\n", dcc[i].nick);
+            chanout_but(-1, dcc[i].u.chat->channel, DCC_RETURN, dcc[i].nick);
             if (dcc[i].u.chat->channel < GLOBAL_CHANS)
               botnet_send_join_idx(i, -1);
           }
