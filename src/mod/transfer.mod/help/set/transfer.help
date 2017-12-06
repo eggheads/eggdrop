@@ -18,12 +18,11 @@
    improve the speed of file transfers, and is recommended.
 %{help=set copy-to-tmp}%{+n}
 ###  %bset copy-to-tmp%b <0/1>
-   This specifies whether or not files will be copied into your /tmp
-   directory before they are sent to users who download them from the
-   filesystem. Turning this on protects ongoing transfers from being
-   affected by people moving files around in the file system, but if
-   you're short of disk space or using a slow disk such as an NFS
-   system, you should probably turn this off.
+   Enable this setting if you want to copy files to a temporary location
+   before sending or receiving them. This might be useful for file
+   stability, but if your directories are NFS mounted, it's a pain.
+   Setting this to 1 is not advised for big files or if you're low on
+   disk space.
 %{help=set xfer-timeout}%{+n}
 ###  %bset xfer-timeout%b <#>
    This is the number of seconds to wait before a dcc send or get is
