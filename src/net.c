@@ -1207,6 +1207,7 @@ void tputs(register int z, char *s, unsigned int len)
 #ifdef TLS
       if (socklist[i].ssl) {
         x = SSL_write(socklist[i].ssl, s, len);
+        putlog(LOG_MISC, "*", "TP Wrote %d bytes of %lu bytes wanted", x, len);
         if (x < 0) {
           int err = SSL_get_error(socklist[i].ssl, x);
           if (err == SSL_ERROR_WANT_WRITE || err == SSL_ERROR_WANT_READ)
@@ -1291,6 +1292,7 @@ void dequeue_sockets()
       if (socklist[i].ssl) {
         x = SSL_write(socklist[i].ssl, socklist[i].handler.sock.outbuf,
                       socklist[i].handler.sock.outbuflen);
+        putlog(LOG_MISC, "*", "DQ Wrote %d bytes of %lu bytes wanted", x, socklist[i].handler.sock.outbuflen);
         if (x < 0) {
           int err = SSL_get_error(socklist[i].ssl, x);
           if (err == SSL_ERROR_WANT_WRITE || err == SSL_ERROR_WANT_READ)

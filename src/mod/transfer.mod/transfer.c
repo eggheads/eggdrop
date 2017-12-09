@@ -610,6 +610,7 @@ static void dcc_send(int idx, char *buf, int len)
   char s[512];
   unsigned long sent;
 
+  putlog(LOG_MISC, "*", "Gotapacket from idx %d of %d bytes, already have %lu bytes", idx, len, dcc[idx].status);
   fwrite(buf, len, 1, dcc[idx].u.xfer->f);
   dcc[idx].status += len;
   /* Put in network byte order */
