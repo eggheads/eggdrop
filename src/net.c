@@ -891,6 +891,7 @@ int sockread(char *s, int *len, sock_list *slist, int slistmax, int tclonly)
       {
         if (slist[i].ssl) {
           x = SSL_read(slist[i].ssl, s, grab);
+          putlog(LOG_MISC, "*", "Read %d bytes of %d wanted from sock %d (fd %d)", x, grab, slist[i].sock, SSL_get_fd(slist[i].ssl));
           if (x < 0) {
             int err = SSL_get_error(slist[i].ssl, x);
             if (err == SSL_ERROR_WANT_READ || err == SSL_ERROR_WANT_WRITE)
@@ -1020,6 +1021,7 @@ int sockgets(char *s, int *len)
         }
       } else {
         /* Handling buffered binary data (must have been SOCK_BUFFER before). */
+        putlog(LOG_MISC, "*", "Inbuflen for sock %d is %lu", socklist[i].sock, socklist[i].handler.sock.inbuflen);
         if (socklist[i].handler.sock.inbuflen <= 510) {
           *len = socklist[i].handler.sock.inbuflen;
           egg_memcpy(s, socklist[i].handler.sock.inbuf, socklist[i].handler.sock.inbuflen);
@@ -1034,6 +1036,7 @@ int sockgets(char *s, int *len)
           socklist[i].handler.sock.inbuflen -= *len;
           socklist[i].handler.sock.inbuf = nrealloc(socklist[i].handler.sock.inbuf, socklist[i].handler.sock.inbuflen);
         }
+        putlog(LOG_MISC, "*", "Inbuflen for handled sock %d is %lu", socklist[i].sock, socklist[i].handler.sock.inbuflen);
         return socklist[i].sock;
       }
     }
@@ -1067,6 +1070,7 @@ int sockgets(char *s, int *len)
     return socklist[ret].sock;
   }
   if (socklist[ret].flags & SOCK_BINARY) {
+    putlog(LOG_MISC, "*", "Got %d bytes from sockread for sock %d", *len, socklist[ret].sock);
     egg_memcpy(s, xx, *len);
     return socklist[ret].sock;
   }
