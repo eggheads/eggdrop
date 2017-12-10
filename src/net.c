@@ -848,8 +848,10 @@ int sockread(char *s, int *len, sock_list *slist, int slistmax, int tclonly)
              SELECT_TYPE_ARG234 (have_w ? &fdw : NULL),
              SELECT_TYPE_ARG234 (have_e ? &fde : NULL),
              SELECT_TYPE_ARG5 &t);
-  if (x == -1)
+  if (x == -1) {
+    putlog(LOG_MISC, "*", "sockread select fds/have_r/w/e %d/%d/%d/%d, x=%d (%s)", fds, have_r, have_w, have_e, x, strerror(errno));
     return -2;                  /* socket error */
+  }
 
   for (i = 0; i < slistmax; i++) {
     if (!tclonly && ((!(slist[i].flags & (SOCK_UNUSED | SOCK_TCL))) &&
@@ -891,7 +893,7 @@ int sockread(char *s, int *len, sock_list *slist, int slistmax, int tclonly)
       {
         if (slist[i].ssl) {
           x = SSL_read(slist[i].ssl, s, grab);
-          putlog(LOG_MISC, "*", "Read %d bytes of %d wanted from sock %d (fd %d)", x, grab, slist[i].sock, SSL_get_fd(slist[i].ssl));
+          putlog(LOG_MISC, "*", "Read %d bytes of %d wanted from sock %d (flags 0x%x)", x, grab, slist[i].sock, slist[i].flags);
           if (x < 0) {
             int err = SSL_get_error(slist[i].ssl, x);
             if (err == SSL_ERROR_WANT_READ || err == SSL_ERROR_WANT_WRITE)
@@ -1021,7 +1023,6 @@ int sockgets(char *s, int *len)
         }
       } else {
         /* Handling buffered binary data (must have been SOCK_BUFFER before). */
-        putlog(LOG_MISC, "*", "Inbuflen for sock %d is %lu", socklist[i].sock, socklist[i].handler.sock.inbuflen);
         if (socklist[i].handler.sock.inbuflen <= 510) {
           *len = socklist[i].handler.sock.inbuflen;
           egg_memcpy(s, socklist[i].handler.sock.inbuf, socklist[i].handler.sock.inbuflen);
@@ -1036,7 +1037,6 @@ int sockgets(char *s, int *len)
           socklist[i].handler.sock.inbuflen -= *len;
           socklist[i].handler.sock.inbuf = nrealloc(socklist[i].handler.sock.inbuf, socklist[i].handler.sock.inbuflen);
         }
-        putlog(LOG_MISC, "*", "Inbuflen for handled sock %d is %lu", socklist[i].sock, socklist[i].handler.sock.inbuflen);
         return socklist[i].sock;
       }
     }
@@ -1211,7 +1211,6 @@ void tputs(register int z, char *s, unsigned int len)
 #ifdef TLS
       if (socklist[i].ssl) {
         x = SSL_write(socklist[i].ssl, s, len);
-        putlog(LOG_MISC, "*", "TP Wrote %d bytes of %lu bytes wanted", x, len);
         if (x < 0) {
           int err = SSL_get_error(socklist[i].ssl, x);
           if (err == SSL_ERROR_WANT_WRITE || err == SSL_ERROR_WANT_READ)
@@ -1296,7 +1295,6 @@ void dequeue_sockets()
       if (socklist[i].ssl) {
         x = SSL_write(socklist[i].ssl, socklist[i].handler.sock.outbuf,
                       socklist[i].handler.sock.outbuflen);
-        putlog(LOG_MISC, "*", "DQ Wrote %d bytes of %lu bytes wanted", x, socklist[i].handler.sock.outbuflen);
         if (x < 0) {
           int err = SSL_get_error(socklist[i].ssl, x);
           if (err == SSL_ERROR_WANT_WRITE || err == SSL_ERROR_WANT_READ)
