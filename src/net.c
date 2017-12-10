@@ -1054,6 +1054,11 @@ int sockgets(char *s, int *len)
     s[0] = 0;
     return ret;
   }
+  if (socklist[ret].flags & SOCK_BINARY) {
+    putlog(LOG_MISC, "*", "Got %d bytes from sockread for sock %d", *len, socklist[ret].sock);
+    egg_memcpy(s, xx, *len);
+    return socklist[ret].sock;
+  }
   /* Binary, listening and passed on sockets don't get buffered. */
   if (socklist[ret].flags & SOCK_CONNECT) {
     if (socklist[ret].flags & SOCK_STRONGCONN) {
@@ -1067,11 +1072,6 @@ int sockgets(char *s, int *len)
     }
     socklist[ret].flags &= ~SOCK_CONNECT;
     s[0] = 0;
-    return socklist[ret].sock;
-  }
-  if (socklist[ret].flags & SOCK_BINARY) {
-    putlog(LOG_MISC, "*", "Got %d bytes from sockread for sock %d", *len, socklist[ret].sock);
-    egg_memcpy(s, xx, *len);
     return socklist[ret].sock;
   }
   if (socklist[ret].flags & (SOCK_LISTEN | SOCK_PASS | SOCK_TCL)) {
