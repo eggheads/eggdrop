@@ -1180,10 +1180,7 @@ static void share_ufsend(int idx, char *par)
     putlog(LOG_MISC, "*", "NO MORE DCC CONNECTIONS -- can't grab userfile");
     dprintf(idx, "s e I can't open a DCC to you; I'm full.\n");
     zapfbot(idx);
-  } else if (copy_to_tmp && !(f = tmpfile())) {
-    putlog(LOG_MISC, "*", "CAN'T WRITE TEMPORARY USERFILE DOWNLOAD FILE!");
-    zapfbot(idx);
-  } else if (!copy_to_tmp && !(f = fopen(s, "wb"))) {
+  } else if (!(f = fopen(s, "wb"))) {
     putlog(LOG_MISC, "*", "CAN'T WRITE USERFILE DOWNLOAD FILE!");
     zapfbot(idx);
   } else {

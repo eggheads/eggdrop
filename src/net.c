@@ -848,10 +848,8 @@ int sockread(char *s, int *len, sock_list *slist, int slistmax, int tclonly)
              SELECT_TYPE_ARG234 (have_w ? &fdw : NULL),
              SELECT_TYPE_ARG234 (have_e ? &fde : NULL),
              SELECT_TYPE_ARG5 &t);
-  if (x == -1) {
-    putlog(LOG_MISC, "*", "sockread select fds/have_r/w/e %d/%d/%d/%d, x=%d (%s)", fds, have_r, have_w, have_e, x, strerror(errno));
+  if (x == -1)
     return -2;                  /* socket error */
-  }
 
   for (i = 0; i < slistmax; i++) {
     if (!tclonly && ((!(slist[i].flags & (SOCK_UNUSED | SOCK_TCL))) &&
@@ -893,7 +891,6 @@ int sockread(char *s, int *len, sock_list *slist, int slistmax, int tclonly)
       {
         if (slist[i].ssl) {
           x = SSL_read(slist[i].ssl, s, grab);
-          putlog(LOG_MISC, "*", "Read %d bytes of %d wanted from sock %d (flags 0x%x)", x, grab, slist[i].sock, slist[i].flags);
           if (x < 0) {
             int err = SSL_get_error(slist[i].ssl, x);
             if (err == SSL_ERROR_WANT_READ || err == SSL_ERROR_WANT_WRITE)
@@ -1054,10 +1051,9 @@ int sockgets(char *s, int *len)
     s[0] = 0;
     return ret;
   }
+  /* sockread can return binary data while socket still has connectflag, process first */
   if (socklist[ret].flags & SOCK_BINARY && *len > 0) {
-    if (socklist[ret].flags & SOCK_CONNECT)
-      socklist[ret].flags &= ~SOCK_CONNECT;
-    putlog(LOG_MISC, "*", "Got %d bytes from sockread for sock %d, idx %d", *len, socklist[ret].sock, ret);
+    socklist[ret].flags &= ~SOCK_CONNECT;
     egg_memcpy(s, xx, *len);
     return socklist[ret].sock;
   }
@@ -1193,6 +1189,8 @@ void tputs(register int z, char *s, unsigned int len)
           else if (!strncmp(dcc[idx].type->name, "FILES", 5))
             otraffic_filesys_today += len;
           else if (!strcmp(dcc[idx].type->name, "SEND"))
+            otraffic_trans_today += len;
+          else if (!strcmp(dcc[idx].type->name, "FORK_SEND"))
             otraffic_trans_today += len;
           else if (!strncmp(dcc[idx].type->name, "GET", 3))
             otraffic_trans_today += len;

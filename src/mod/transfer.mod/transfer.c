@@ -607,11 +607,9 @@ static void eof_dcc_get(int idx)
 
 static void dcc_send(int idx, char *buf, int len)
 {
-  char s[512], t[11];
+  char s[512];
   unsigned long sent;
 
-  strncpyz(t, buf, sizeof t);
-  putlog(LOG_MISC, "*", "Gotapacket from idx %d of %d bytes, already have %lu bytes, first 10 bytes are: %s", idx, len, dcc[idx].status, t);
   fwrite(buf, len, 1, dcc[idx].u.xfer->f);
   dcc[idx].status += len;
   /* Put in network byte order */
@@ -860,7 +858,8 @@ static void dcc_fork_send(int idx, char *x, int y)
   if (strcmp(dcc[idx].nick, "*users")) {
     egg_snprintf(s1, sizeof s1, "%s!%s", dcc[idx].nick, dcc[idx].host);
     putlog(LOG_MISC, "*", TRANSFER_DCC_CONN, dcc[idx].u.xfer->origname, s1);
-  } else if (dcc[idx].type->activity && y) {
+  }
+  if (dcc[idx].type->activity && y) {
     /* Could already have data! */
     dcc[idx].type->activity(idx, x, y);
   }
