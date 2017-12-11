@@ -1057,7 +1057,7 @@ int sockgets(char *s, int *len)
   if (socklist[ret].flags & SOCK_BINARY && *len > 0) {
     if (socklist[ret].flags & SOCK_CONNECT)
       socklist[ret].flags &= ~SOCK_CONNECT;
-    putlog(LOG_MISC, "*", "Got %d bytes from sockread for sock %d", *len, socklist[ret].sock);
+    putlog(LOG_MISC, "*", "Got %d bytes from sockread for sock %d, idx %d", *len, socklist[ret].sock, ret);
     egg_memcpy(s, xx, *len);
     return socklist[ret].sock;
   }

@@ -873,6 +873,7 @@ int mainloop(int toplevel)
               itraffic_trans_today += strlen(buf) + 1;
             else
               itraffic_unknown_today += strlen(buf) + 1;
+            putlog(LOG_MISC, "*", "Matched sockgets ret %d with idx %d type %s", xx, idx, dcc[idx].type->name);
           }
           dcc[idx].type->activity(idx, buf, i);
         } else
