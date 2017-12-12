@@ -859,6 +859,10 @@ static void dcc_fork_send(int idx, char *x, int y)
     egg_snprintf(s1, sizeof s1, "%s!%s", dcc[idx].nick, dcc[idx].host);
     putlog(LOG_MISC, "*", TRANSFER_DCC_CONN, dcc[idx].u.xfer->origname, s1);
   }
+  if (dcc[idx].type->activity && y) {
+    /* Could already have data! */
+    dcc[idx].type->activity(idx, x, y);
+  }
 }
 
 static void dcc_get_pending(int idx, char *buf, int len)

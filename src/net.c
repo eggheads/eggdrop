@@ -1051,6 +1051,12 @@ int sockgets(char *s, int *len)
     s[0] = 0;
     return ret;
   }
+  /* sockread can return binary data while socket still has connectflag, process first */
+  if (socklist[ret].flags & SOCK_BINARY && *len > 0) {
+    socklist[ret].flags &= ~SOCK_CONNECT;
+    egg_memcpy(s, xx, *len);
+    return socklist[ret].sock;
+  }
   /* Binary, listening and passed on sockets don't get buffered. */
   if (socklist[ret].flags & SOCK_CONNECT) {
     if (socklist[ret].flags & SOCK_STRONGCONN) {
@@ -1064,10 +1070,6 @@ int sockgets(char *s, int *len)
     }
     socklist[ret].flags &= ~SOCK_CONNECT;
     s[0] = 0;
-    return socklist[ret].sock;
-  }
-  if (socklist[ret].flags & SOCK_BINARY) {
-    egg_memcpy(s, xx, *len);
     return socklist[ret].sock;
   }
   if (socklist[ret].flags & (SOCK_LISTEN | SOCK_PASS | SOCK_TCL)) {
@@ -1187,6 +1189,8 @@ void tputs(register int z, char *s, unsigned int len)
           else if (!strncmp(dcc[idx].type->name, "FILES", 5))
             otraffic_filesys_today += len;
           else if (!strcmp(dcc[idx].type->name, "SEND"))
+            otraffic_trans_today += len;
+          else if (!strcmp(dcc[idx].type->name, "FORK_SEND"))
             otraffic_trans_today += len;
           else if (!strncmp(dcc[idx].type->name, "GET", 3))
             otraffic_trans_today += len;
