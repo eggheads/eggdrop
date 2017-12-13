@@ -303,7 +303,7 @@ static int tcl_addbot STDVAR
   int i, colon=0, braced = 0, ipv6 = 0, count = 0;
 
 
-  BADARGS(3, 3, " handle address");
+  BADARGS(3, 5, " handle address ?telnet-port ?relay-port??");
 
   /* Copy to adjustable char*'s */
   strncpyz(hand, argv[1], sizeof hand);
@@ -337,50 +337,59 @@ static int tcl_addbot STDVAR
       Tcl_AppendResult(irp, "0", NULL);
       return TCL_OK;
     }
-/* Check that the char following the / is not null */
+    /* Check that the char following the / is not null */
     if ((q = strrchr(addr, '/'))) {
       if (!q[1]) {
         *q = 0;
-        q = 0;
+        q = NULL;
       }
     }
+
+    /* Find ports, still allowing them in address for backward compat */
     if (!ipv6) {
-      if (!(q = strchr(addr, ':'))) {
-        q = strchr(addr, '/');
-      }
+      q = strchr(addr, ':');
     } else if (braced && (colon > braced)) {
       q = strrchr(addr, ':');
     } else {
-      q = strchr(addr, '/');
+      /* IPv6 address with no braces or braces without port(s) after */
+      q = NULL;
     }
 
-    /* Verify ports */
     if (q) {
-      /* Split and count */
+      /* Split and count, ignore any following args */
       *q++ = 0;
       p = strchr(q, '/');
       if (p)
         *p++ = 0;
-
-#ifndef TLS
-      /* Check TLS */
-      if ((q && *q == '+') || (p && *p == '+')) {
-        Tcl_AppendResult(irp, "0", NULL);
-        return TCL_OK;
+    } else {
+      /* No port in address field, check next args */
+      p = NULL;
+      if (argc == 4 || argc == 5) {
+        q = argv[3];
       }
+      if (argc == 5) {
+        p = argv[4];
+      }
+    }
+
+    /* Verify ports */
+#ifndef TLS
+    /* Check TLS */
+    if ((q && *q == '+') || (p && *p == '+')) {
+      Tcl_AppendResult(irp, "0", NULL);
+      return TCL_OK;
+    }
 
 #endif
-      /* Verify */
-      if (!check_int_range(q, 0, 65536)) {
-        Tcl_AppendResult(irp, "0", NULL);
-        return TCL_OK;
-      }
-      /* check_int_range returns 0 if p is NULL */
-      if (p && !check_int_range(p, 0, 65536)) {
-        Tcl_AppendResult(irp, "0", NULL);
-        return TCL_OK;
-      }
-
+    /* Verify */
+    /* check_int_range returns 0 if q or p is NULL */
+    if (q && !check_int_range(q, 0, 65536)) {
+      Tcl_AppendResult(irp, "0", NULL);
+      return TCL_OK;
+    }
+    if (p && !check_int_range(p, 0, 65536)) {
+      Tcl_AppendResult(irp, "0", NULL);
+      return TCL_OK;
     }
 
     userlist = adduser(userlist, hand, "none", "-", USER_BOT);

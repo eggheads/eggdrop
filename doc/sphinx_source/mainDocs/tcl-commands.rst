@@ -1,5 +1,5 @@
 Eggdrop Tcl Commands
-Last revised: June 20, 2016
+Last revised: December 14, 2017
 
 ====================
 Eggdrop Tcl Commands
@@ -353,16 +353,18 @@ adduser <handle> [hostmask]
 
   Module: core
 
-^^^^^^^^^^^^^^^^^^^^^^^^^
-addbot <handle> <address>
-^^^^^^^^^^^^^^^^^^^^^^^^^
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+addbot <handle> <address> [botport [userport]]
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
   Description: adds a new bot to the userlist with the handle and botaddress given (with no password and no flags). <address> format is one of:
 
-  - ipaddress/botport/userport
+  - ipaddress
   - ipv4address:botport/userport    [DEPRECATED]
   - [ipv6address]:botport/userport  [DEPRECATED]
 
-  Returns: 1 if successful; 0 if the bot already exists
+  In the latter two cases, another botport and/or userport given as separate arguments are ignored.
+
+  Returns: 1 if successful; 0 if the bot already exists or a port is invalid
 
   Module: core
 
