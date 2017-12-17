@@ -693,10 +693,10 @@ int readuserfile(char *file, struct userrec **ret)
   /* read opening comment */
   s = buf;
   if (fgets(s, 180, f) != NULL) {
-    if (s[1] < '4') {
+    if (s[0] == '#' && s[1] < '4' && s[1] >= '0' && s[2] == 'v') {
       fatal(USERF_OLDFMT, 0);
     }
-    if (s[1] > '4')
+    if (s[0] != '#' || s[1] > '4' || s[2] != 'v')
       fatal(USERF_INVALID, 0);
   }
   /* don't check for feof after fgets, skips last line if it has no \n (ie on windows) */
