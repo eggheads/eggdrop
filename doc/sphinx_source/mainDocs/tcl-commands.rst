@@ -362,7 +362,8 @@ addbot <handle> <address> [botport [userport]]
   - ipv4address:botport/userport    [DEPRECATED]
   - [ipv6address]:botport/userport  [DEPRECATED]
 
-  In the latter two cases, another botport and/or userport given as separate arguments are ignored.
+NOTE 1: The []s around the ipv6address argument are literal []s, not optional arguments.
+NOTE 2: In the deprecated formats, an additional botport and/or userport given as follow-on arguments are ignored.
 
   Returns: 1 if successful; 0 if the bot already exists or a port is invalid
 
