@@ -640,14 +640,18 @@ void ssl_info(SSL *ssl, int where, int ret)
     /* More verbose information, for debugging only */
     SSL_CIPHER_description(cipher, buf, sizeof buf);
     debug1("TLS: cipher details: %s", buf);
-  } else if (where & SSL_CB_ALERT &&
-             (strcmp(SSL_alert_type_string(ret), "W") ||
-             strcmp(SSL_alert_desc_string(ret), "CN"))) {
-    /* Ignore close notify alerts */
-    putlog(data->loglevel, "*", "TLS: alert during %s: %s (%s).",
-           (where & SSL_CB_READ) ? "read" : "write",
-           SSL_alert_type_string_long(ret),
-           SSL_alert_desc_string_long(ret));
+  } else if (where & SSL_CB_ALERT) {
+    if (strcmp(SSL_alert_type_string(ret), "W") ||
+        strcmp(SSL_alert_desc_string(ret), "CN")) {
+      putlog(data->loglevel, "*", "TLS: alert during %s: %s (%s).",
+             (where & SSL_CB_READ) ? "read" : "write",
+             SSL_alert_type_string_long(ret),
+             SSL_alert_desc_string_long(ret));
+    } else {
+      /* Ignore close notify warnings */
+      debug1("Received close notify warning during %s",
+             (where & SSL_CB_READ) ? "read" : "write");
+    }
   } else if (where & SSL_CB_EXIT) {
     /* SSL_CB_EXIT may point to soft error for non-blocking! */
     if (ret == 0) {
