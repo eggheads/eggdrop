@@ -42,7 +42,7 @@ static char OBUF[1024];
  */
 void tandout_but EGG_VARARGS_DEF(int, arg1)
 {
-  int i, x;
+  int i, x, len;
   char *format;
   char s[601];
   va_list va;
@@ -50,13 +50,16 @@ void tandout_but EGG_VARARGS_DEF(int, arg1)
   x = EGG_VARARGS_START(int, arg1, va);
   format = va_arg(va, char *);
 
-  egg_vsnprintf(s, 511, format, va);
+  len = egg_vsnprintf(s, 511, format, va);
   va_end(va);
-  s[sizeof(s) - 1] = 0;
+  if (len >= sizeof(s)) {
+    len = sizeof(s) - 1;
+    s[len] = 0;
+  }
 
   for (i = 0; i < dcc_total; i++)
     if ((dcc[i].type == &DCC_BOT) && (i != x) && (b_numver(i) < NEAT_BOTNET))
-      dprintf(i, s);
+      dprint(i, s, len);
 }
 #endif
 
@@ -196,13 +199,17 @@ void send_tand_but(int x, char *buf, int len)
   int i, iso = 0;
 
   if (len < 0) {
+    /* -INT_MIN is INT_MAX+1 which is... INT_MIN */
+    if (len == INT_MIN)
+      ++len;
+    len = -len;
     iso = 1;
   }
   for (i = 0; i < dcc_total; i++)
     if ((dcc[i].type == &DCC_BOT) && (i != x) &&
         (b_numver(i) >= NEAT_BOTNET) &&
         (!iso || !(bot_flags(dcc[i].user) & BOT_ISOLATE)))
-      dprintf(i, buf);
+      dprint(i, buf, len);
 }
 
 void botnet_send_bye()
@@ -286,7 +293,7 @@ void botnet_send_pong(int idx)
 
 void botnet_send_priv EGG_VARARGS_DEF(int, arg1)
 {
-  int idx;
+  int idx, l;
   char *from, *to, *tobot, *format;
   char tbuf[1024];
   va_list va;
@@ -304,31 +311,32 @@ void botnet_send_priv EGG_VARARGS_DEF(int, arg1)
   if (tobot) {
 #ifndef NO_OLD_BOTNET
     if (b_numver(idx) < NEAT_BOTNET)
-      simple_sprintf(OBUF, "priv %s %s@%s %s\n", from, to, tobot, tbuf);
+      l = simple_sprintf(OBUF, "priv %s %s@%s %s\n", from, to, tobot, tbuf);
     else
 #endif
-      simple_sprintf(OBUF, "p %s %s@%s %s\n", from, to, tobot, tbuf);
+      l = simple_sprintf(OBUF, "p %s %s@%s %s\n", from, to, tobot, tbuf);
   } else {
 #ifndef NO_OLD_BOTNET
     if (b_numver(idx) < NEAT_BOTNET)
-      simple_sprintf(OBUF, "priv %s %s %s\n", from, to, tbuf);
+      l = simple_sprintf(OBUF, "priv %s %s %s\n", from, to, tbuf);
     else
 #endif
-      simple_sprintf(OBUF, "p %s %s %s\n", from, to, tbuf);
+      l = simple_sprintf(OBUF, "p %s %s %s\n", from, to, tbuf);
   }
-  dprintf(idx, OBUF);
+  dprint(idx, OBUF, l);
 }
 
 void botnet_send_who(int idx, char *from, char *to, int chan)
 {
+  int l;
 
 #ifndef NO_OLD_BOTNET
   if (b_numver(idx) < NEAT_BOTNET)
-    simple_sprintf(OBUF, "who %s %s %d\n", from, to, chan);
+    l = simple_sprintf(OBUF, "who %s %s %d\n", from, to, chan);
   else
 #endif
-    simple_sprintf(OBUF, "w %s %s %D\n", from, to, chan);
-  dprintf(idx, OBUF);
+    l = simple_sprintf(OBUF, "w %s %s %D\n", from, to, chan);
+  dprint(idx, OBUF, l);
 }
 
 void botnet_send_infoq(int idx, char *par)
@@ -343,26 +351,27 @@ void botnet_send_infoq(int idx, char *par)
 
 void botnet_send_unlink(int idx, char *who, char *via, char *bot, char *reason)
 {
+  int l;
 
 #ifndef NO_OLD_BOTNET
   if (b_numver(idx) < NEAT_BOTNET)
-    simple_sprintf(OBUF, "unlink %s %s %s %s\n", who, via, bot, reason);
+    l = simple_sprintf(OBUF, "unlink %s %s %s %s\n", who, via, bot, reason);
   else
 #endif
-    simple_sprintf(OBUF, "ul %s %s %s %s\n", who, via, bot, reason);
-  dprintf(idx, OBUF);
+    l = simple_sprintf(OBUF, "ul %s %s %s %s\n", who, via, bot, reason);
+  dprint(idx, OBUF, l);
 }
 
 void botnet_send_link(int idx, char *who, char *via, char *bot)
 {
-
+  int l;
 #ifndef NO_OLD_BOTNET
   if (b_numver(idx) < NEAT_BOTNET)
-    simple_sprintf(OBUF, "link %s %s %s\n", who, via, bot);
+    l = simple_sprintf(OBUF, "link %s %s %s\n", who, via, bot);
   else
 #endif
-    simple_sprintf(OBUF, "l %s %s %s\n", who, via, bot);
-  dprintf(idx, OBUF);
+    l = simple_sprintf(OBUF, "l %s %s %s\n", who, via, bot);
+  dprint(idx, OBUF, l);
 }
 
 void botnet_send_unlinked(int idx, char *bot, char *args)
@@ -399,26 +408,28 @@ void botnet_send_nlinked(int idx, char *bot, char *next, char flag, int vernum)
 
 void botnet_send_traced(int idx, char *bot, char *buf)
 {
+  int l;
 
 #ifndef NO_OLD_BOTNET
   if (b_numver(idx) < NEAT_BOTNET)
-    simple_sprintf(OBUF, "traced %s %s\n", bot, buf);
+    l = simple_sprintf(OBUF, "traced %s %s\n", bot, buf);
   else
 #endif
-    simple_sprintf(OBUF, "td %s %s\n", bot, buf);
-  dprintf(idx, OBUF);
+    l = simple_sprintf(OBUF, "td %s %s\n", bot, buf);
+  dprint(idx, OBUF, l);
 }
 
 void botnet_send_trace(int idx, char *to, char *from, char *buf)
 {
+  int l;
 
 #ifndef NO_OLD_BOTNET
   if (b_numver(idx) < NEAT_BOTNET)
-    simple_sprintf(OBUF, "trace %s %s %s:%s\n", to, from, buf, botnetnick);
+    l = simple_sprintf(OBUF, "trace %s %s %s:%s\n", to, from, buf, botnetnick);
   else
 #endif
-    simple_sprintf(OBUF, "t %s %s %s:%s\n", to, from, buf, botnetnick);
-  dprintf(idx, OBUF);
+    l = simple_sprintf(OBUF, "t %s %s %s:%s\n", to, from, buf, botnetnick);
+  dprint(idx, OBUF, l);
 }
 
 void botnet_send_update(int idx, tand_t *ptr)
@@ -437,6 +448,7 @@ void botnet_send_update(int idx, tand_t *ptr)
 void botnet_send_reject(int idx, char *fromp, char *frombot, char *top,
                         char *tobot, char *reason)
 {
+  int l;
   char to[NOTENAMELEN + 1], from[NOTENAMELEN + 1];
 
   if (!(bot_flags(dcc[idx].user) & BOT_ISOLATE)) {
@@ -452,24 +464,25 @@ void botnet_send_reject(int idx, char *fromp, char *frombot, char *top,
       reason = "";
 #ifndef NO_OLD_BOTNET
     if (b_numver(idx) < NEAT_BOTNET)
-      simple_sprintf(OBUF, "reject %s %s %s\n", fromp, top, reason);
+      l = simple_sprintf(OBUF, "reject %s %s %s\n", fromp, top, reason);
     else
 #endif
-      simple_sprintf(OBUF, "r %s %s %s\n", fromp, top, reason);
-    dprintf(idx, OBUF);
+      l = simple_sprintf(OBUF, "r %s %s %s\n", fromp, top, reason);
+    dprint(idx, OBUF, l);
   }
 }
 
 void botnet_send_zapf(int idx, char *a, char *b, char *c)
 {
+  int l;
 
 #ifndef NO_OLD_BOTNET
   if (b_numver(idx) < NEAT_BOTNET)
-    simple_sprintf(OBUF, "zapf %s %s %s\n", a, b, c);
+    l = simple_sprintf(OBUF, "zapf %s %s %s\n", a, b, c);
   else
 #endif
-    simple_sprintf(OBUF, "z %s %s %s\n", a, b, c);
-  dprintf(idx, OBUF);
+    l = simple_sprintf(OBUF, "z %s %s %s\n", a, b, c);
+  dprint(idx, OBUF, l);
 }
 
 void botnet_send_zapf_broad(int idx, char *a, char *b, char *c)
@@ -487,50 +500,54 @@ void botnet_send_zapf_broad(int idx, char *a, char *b, char *c)
 
 void botnet_send_motd(int idx, char *from, char *to)
 {
+  int l;
 
 #ifndef NO_OLD_BOTNET
   if (b_numver(idx) < NEAT_BOTNET)
-    simple_sprintf(OBUF, "motd %s %s\n", from, to);
+    l = simple_sprintf(OBUF, "motd %s %s\n", from, to);
   else
 #endif
-    simple_sprintf(OBUF, "m %s %s\n", from, to);
-  dprintf(idx, OBUF);
+    l = simple_sprintf(OBUF, "m %s %s\n", from, to);
+  dprint(idx, OBUF, l);
 }
 
 void botnet_send_filereject(int idx, char *path, char *from, char *reason)
 {
+  int l;
 
 #ifndef NO_OLD_BOTNET
   if (b_numver(idx) < NEAT_BOTNET)
-    simple_sprintf(OBUF, "filereject %s %s %s\n", path, from, reason);
+    l = simple_sprintf(OBUF, "filereject %s %s %s\n", path, from, reason);
   else
 #endif
-    simple_sprintf(OBUF, "f! %s %s %s\n", path, from, reason);
-  dprintf(idx, OBUF);
+    l = simple_sprintf(OBUF, "f! %s %s %s\n", path, from, reason);
+  dprint(idx, OBUF, l);
 }
 
 void botnet_send_filesend(int idx, char *path, char *from, char *data)
 {
+  int l;
 
 #ifndef NO_OLD_BOTNET
   if (b_numver(idx) < NEAT_BOTNET)
-    simple_sprintf(OBUF, "filesend %s %s %s\n", path, from, data);
+    l = simple_sprintf(OBUF, "filesend %s %s %s\n", path, from, data);
   else
 #endif
-    simple_sprintf(OBUF, "fs %s %s %s\n", path, from, data);
-  dprintf(idx, OBUF);
+    l = simple_sprintf(OBUF, "fs %s %s %s\n", path, from, data);
+  dprint(idx, OBUF, l);
 }
 
 void botnet_send_filereq(int idx, char *from, char *bot, char *path)
 {
+  int l;
 
 #ifndef NO_OLD_BOTNET
   if (b_numver(idx) < NEAT_BOTNET)
-    simple_sprintf(OBUF, "filereq %s %s:%s\n", from, bot, path);
+    l = simple_sprintf(OBUF, "filereq %s %s:%s\n", from, bot, path);
   else
 #endif
-    simple_sprintf(OBUF, "fr %s %s:%s\n", from, bot, path);
-  dprintf(idx, OBUF);
+    l = simple_sprintf(OBUF, "fr %s %s:%s\n", from, bot, path);
+  dprint(idx, OBUF, l);
 }
 
 void botnet_send_idle(int idx, char *bot, int sock, int idle, char *away)
