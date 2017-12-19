@@ -641,13 +641,34 @@ void ssl_info(SSL *ssl, int where, int ret)
     SSL_CIPHER_description(cipher, buf, sizeof buf);
     debug1("TLS: cipher details: %s", buf);
   } else if (where & SSL_CB_ALERT) {
-    putlog(data->loglevel, "*", "TLS: alert during %s: %s (%s).",
-           (where & SSL_CB_READ) ? "read" : "write",
-           SSL_alert_type_string_long(ret),
-           SSL_alert_desc_string_long(ret));
-  } else if (ret <= 0 && where & SSL_CB_EXIT) {
-    putlog(data->loglevel, "*", "TLS: failed in: %s.",
-           SSL_state_string_long(ssl));
+    if (strcmp(SSL_alert_type_string(ret), "W") ||
+        strcmp(SSL_alert_desc_string(ret), "CN")) {
+      putlog(data->loglevel, "*", "TLS: alert during %s: %s (%s).",
+             (where & SSL_CB_READ) ? "read" : "write",
+             SSL_alert_type_string_long(ret),
+             SSL_alert_desc_string_long(ret));
+    } else {
+      /* Ignore close notify warnings */
+      debug1("Received close notify warning during %s",
+             (where & SSL_CB_READ) ? "read" : "write");
+    }
+  } else if (where & SSL_CB_EXIT) {
+    /* SSL_CB_EXIT may point to soft error for non-blocking! */
+    if (ret == 0) {
+      /* According to manpage, only 0 indicates a real error */
+      putlog(data->loglevel, "*", "TLS: failed in: %s.",
+             SSL_state_string_long(ssl));
+    } else if (ret < 0) {
+      int err = SSL_get_error(ssl, ret);
+      /* However we still check <0 as man example does so too */
+      if (err & (SSL_ERROR_WANT_READ | SSL_ERROR_WANT_WRITE)) {
+        /* Errors to be ignored for non-blocking */
+        debug1("TLS: awaiting more %s", err & SSL_ERROR_WANT_READ ? "reads" : "writes");
+      } else {
+        putlog(data->loglevel, "*", "TLS: failed in: %s.",
+               SSL_state_string_long(ssl));
+      }
+    }
   } else {
     /* Display the state of the engine for debugging purposes */
     debug1("TLS: state change: %s", SSL_state_string_long(ssl));
