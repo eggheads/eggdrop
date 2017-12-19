@@ -663,7 +663,7 @@ void ssl_info(SSL *ssl, int where, int ret)
       /* However we still check <0 as man example does so too */
       if (err & (SSL_ERROR_WANT_READ | SSL_ERROR_WANT_WRITE)) {
         /* Errors to be ignored for non-blocking */
-        debug1("TLS: awaiting more %s", err & SSL_ERROR_WANT_READ ? "reads" : "writes");
+        debug1("TLS: awaiting more %s", (err & SSL_ERROR_WANT_READ) ? "reads" : "writes");
       } else {
         putlog(data->loglevel, "*", "TLS: failed in: %s.",
                SSL_state_string_long(ssl));
