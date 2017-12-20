@@ -61,6 +61,7 @@ while [ $MINOR -le $MAX ]; do
 done
 git fetch origin
 git fetch -t origin
+echo "Running misc/genchanges -l $INCLUDE -i develop -r origin full > ChangeLog"
 misc/genchanges -l $INCLUDE -i develop -r origin full > ChangeLog
 gzip -f ChangeLog
 git add ChangeLog.gz
@@ -72,7 +73,8 @@ while [ $MINOR -le $MAX ]; do
   INCLUDE="${INCLUDE} -i v${MAJOR}.${MINOR}"
   MINOR=$(expr $MINOR + 1)
 done
-misc/genchanges -l -e v1.6.21 -e v1.8.0 $INCLUDE -i develop -v "" -r origin short > doc/Changes1.8
+echo "Running misc/genchanges -l -e v1.6.21 -e v1.8.0 $INCLUDE -i develop -v ${MAJOR}.${MINOR}rc1 -r origin short > doc/Changes1.8"
+misc/genchanges -l -e v1.6.21 -e v1.8.0 $INCLUDE -i develop -v ${MAJOR}.${MINOR}rc1 -r origin short > doc/Changes1.8
 git add doc/Changes1.8
 git commit -m "Generate ChangeLog/Changes files for ${NEW_EGGVERSION}" > /dev/null
 
