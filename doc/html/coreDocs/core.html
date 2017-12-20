@@ -7,7 +7,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Eggdrop Core Settings &mdash; Eggdrop 1.8.2 documentation</title>
+    <title>Eggdrop Core Settings &mdash; Eggdrop 1.8.3 documentation</title>
     
     <link rel="stylesheet" href="../_static/eggdrop.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -15,7 +15,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
-        VERSION:     '1.8.2',
+        VERSION:     '1.8.3',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -24,7 +24,7 @@
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
-    <link rel="top" title="Eggdrop 1.8.2 documentation" href="../index.html" />
+    <link rel="top" title="Eggdrop 1.8.3 documentation" href="../index.html" />
     <link rel="up" title="&lt;no title&gt;" href="index.html" />
     <link rel="next" title="Eggdrop Module Information" href="modules.html" />
     <link rel="prev" title="&lt;no title&gt;" href="index.html" /> 
@@ -36,7 +36,7 @@
             <img class="logo" src="../_static/eggman.png.gif" alt="Logo"/>
           </a></p>
         <div class="headertitle"><a
-          href="../index.html">Eggdrop 1.8.2 documentation</a></div>
+          href="../index.html">Eggdrop 1.8.3 documentation</a></div>
         <div class="rel">
           <a href="index.html" title="&lt;no title&gt;"
              accesskey="P">previous</a> |
@@ -178,10 +178,12 @@ usage).</dd>
 <dt>set raw-log 0</dt>
 <dd>This setting allows you the logging of raw incoming server traffic via
 console/log flag 'r', raw outgoing server traffic via console/log mode
-'v', raw botnet traffic via console/log mode 't', and raw share traffic
-via console/log mode 'h'. These flags can create a large security hole,
-allowing people to see user passwords. This is now restricted to +n users
-only. Please choose your owners with care.</dd>
+'v', raw incoming botnet traffic via console/log mode 't', raw outgoing
+botnet traffic via console/log mode 'u', raw outgoing share traffic via
+console/log mode 'g', and raw incoming share traffic via console/log
+mode 'h'. These flags can create a large security hole, allowing people
+to see user passwords. This is now restricted to +n users only. Please
+choose your owners with care.</dd>
 </dl>
 </div></blockquote>
 <dl class="docutils">
@@ -206,14 +208,20 @@ which file.</p>
 <tr class="row-odd"><td>d</td>
 <td>misc debug information</td>
 </tr>
-<tr class="row-even"><td>h</td>
-<td>raw share traffic</td>
+<tr class="row-even"><td>g</td>
+<td>raw outgoing share traffic</td>
 </tr>
-<tr class="row-odd"><td>j</td>
+<tr class="row-odd"><td>h</td>
+<td>raw incoming share traffic</td>
+</tr>
+<tr class="row-even"><td>j</td>
 <td>joins, parts, quits, and netsplits on the channel</td>
 </tr>
-<tr class="row-even"><td>k</td>
+<tr class="row-odd"><td>k</td>
 <td>kicks, bans, and mode changes on the channel</td>
+</tr>
+<tr class="row-even"><td>l</td>
+<td>linked bot messages</td>
 </tr>
 <tr class="row-odd"><td>m</td>
 <td>private msgs, notices and ctcps to the bot</td>
@@ -231,15 +239,18 @@ which file.</p>
 <td>server connects, disconnects, and notices</td>
 </tr>
 <tr class="row-even"><td>t</td>
-<td>raw botnet traffic</td>
+<td>raw incoming botnet traffic</td>
 </tr>
-<tr class="row-odd"><td>v</td>
+<tr class="row-odd"><td>u</td>
+<td>raw outgoing botnet traffic</td>
+</tr>
+<tr class="row-even"><td>v</td>
 <td>raw outgoing server traffic</td>
 </tr>
-<tr class="row-even"><td>w</td>
+<tr class="row-odd"><td>w</td>
 <td>wallops (make sure the bot sets +w in init-server)</td>
 </tr>
-<tr class="row-odd"><td>x</td>
+<tr class="row-even"><td>x</td>
 <td>file transfers and file-area commands</td>
 </tr>
 </tbody>
@@ -298,7 +309,7 @@ default format will be used _always_.</dd>
 <h2>Console Settings<a class="headerlink" href="#console-settings" title="Permalink to this headline">¶</a></h2>
 <blockquote>
 <div><dl class="docutils">
-<dt>set console &quot;mkcobxs&quot;</dt>
+<dt>set console &quot;mkcoblxs&quot;</dt>
 <dd>This is the default console mode. It uses the same event flags as the
 log files do. The console channel is automatically set to your &quot;primary&quot;
 channel, which is set in the modules section of the config file. Masters
@@ -795,7 +806,7 @@ source scripts/action.fix.tcl
           
     <div class="footer">
         &copy; Copyright 2017, Eggheads.
-      Last updated on Jul 06, 2017.
+      Last updated on Dec 20, 2017.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.3.
     </div>
         </div>

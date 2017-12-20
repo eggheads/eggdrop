@@ -145,8 +145,10 @@ overwritten by the logfile of the next day.
 
       This setting allows you the logging of raw incoming server traffic
       via console/log flag 'r', raw outgoing server traffic via
-      console/log mode 'v', raw botnet traffic via console/log mode 't',
-      and raw share traffic via console/log mode 'h'. These flags can
+      console/log mode 'v', raw incoming botnet traffic via console/log
+      mode 't', raw outgoing botnet traffic via console/log mode 'u',
+      raw outgoing share traffic via console/log mode 'g', and raw
+      incoming share traffic via console/log mode 'h'. These flags can
       create a large security hole, allowing people to see
       user passwords. This is now restricted to +n users only. Please
       choose your owners with care.
@@ -162,15 +164,18 @@ logfile <logflags> <channel> "logs/logfile"
         b    information about bot linking and userfile sharing
         c    commands
         d    misc debug information
-        h    raw share traffic
+        g    raw outgoing share traffic
+        h    raw incoming share traffic
         j    joins, parts, quits, and netsplits on the channel
         k    kicks, bans, and mode changes on the channel
+        l    linked bot messages
         m    private msgs, notices and ctcps to the bot
         o    misc info, errors, etc (IMPORTANT STUFF)
         p    public text on the channel
         r    raw incoming server traffic
         s    server connects, disconnects, and notices
-        t    raw botnet traffic
+        t    raw incoming botnet traffic
+        u    raw outgoing botnet traffic
         v    raw outgoing server traffic
         w    wallops (make sure the bot sets +w in init-server)
         x    file transfers and file-area commands
@@ -240,7 +245,7 @@ set logfile-suffix ".%d%b%Y"
 
 CONSOLE SETTINGS
 
-  set console "mkcobxs"
+  set console "mkcoblxs"
 
       This is the default console mode. It uses the same event flags as
       the log files do. The console channel is automatically set to your

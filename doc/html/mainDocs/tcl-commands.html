@@ -7,7 +7,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Eggdrop Tcl Commands &mdash; Eggdrop 1.8.2 documentation</title>
+    <title>Eggdrop Tcl Commands &mdash; Eggdrop 1.8.3 documentation</title>
     
     <link rel="stylesheet" href="../_static/eggdrop.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -15,7 +15,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
-        VERSION:     '1.8.2',
+        VERSION:     '1.8.3',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -24,7 +24,7 @@
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
-    <link rel="top" title="Eggdrop 1.8.2 documentation" href="../index.html" />
+    <link rel="top" title="Eggdrop 1.8.3 documentation" href="../index.html" />
     <link rel="up" title="&lt;no title&gt;" href="index.html" />
     <link rel="next" title="IPv6 support" href="ipv6.html" />
     <link rel="prev" title="Patch How-To" href="patch.html" /> 
@@ -36,7 +36,7 @@
             <img class="logo" src="../_static/eggman.png.gif" alt="Logo"/>
           </a></p>
         <div class="headertitle"><a
-          href="../index.html">Eggdrop 1.8.2 documentation</a></div>
+          href="../index.html">Eggdrop 1.8.3 documentation</a></div>
         <div class="rel">
           <a href="patch.html" title="Patch How-To"
              accesskey="P">previous</a> |
@@ -55,14 +55,14 @@
           <div class="body">
             
   <p>Eggdrop Tcl Commands
-Last revised: June 20, 2016</p>
+Last revised: December 14, 2017</p>
 <div class="section" id="eggdrop-tcl-commands">
 <h1>Eggdrop Tcl Commands<a class="headerlink" href="#eggdrop-tcl-commands" title="Permalink to this headline">¶</a></h1>
 <p>This is an exhaustive list of all the Tcl commands added to Eggdrop. All
 of the normal Tcl built-in commands are still there, of course, but you
 can also use these to manipulate features of the bot. They are listed
 according to category.</p>
-<p>This list is accurate for Eggdrop v1.8.2. Scripts written for v1.3, v1.4
+<p>This list is accurate for Eggdrop v1.8.3. Scripts written for v1.3, v1.4
 or 1.6 series of Eggdrop should probably work with a few minor modifications
 depending on the script. Scripts which were written for  v0.9, v1.0, v1.1
 or v1.2 will probably not work without modification. Commands which have
@@ -230,7 +230,7 @@ marked with vertical bars (|) on the left.</p>
 <td>returns the current bot-specific flags for the user (bot-only)</td>
 </tr>
 <tr class="row-even"><td>BOTADDR</td>
-<td>returns a list containing the bot's address, telnet port, and relay port (bot-only)</td>
+<td>returns a list containing the bot's address, bot listen port, and user listen port</td>
 </tr>
 <tr class="row-odd"><td>HOSTS</td>
 <td>returns a list of hosts for the user</td>
@@ -271,23 +271,46 @@ exists.</td>
 <col width="9%" />
 <col width="91%" />
 </colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Type</th>
+<th class="head">Extra Info</th>
+</tr>
+</thead>
 <tbody valign="top">
-<tr class="row-odd"><td>PASS</td>
-<td>sets a users password (no third arg will clear it)</td>
+<tr class="row-even"><td>PASS</td>
+<td><dl class="first last docutils">
+<dt>&lt;password&gt;</dt>
+<dd>Password string (Empty value will clear the password)</dd>
+</dl>
+</td>
+</tr>
+<tr class="row-odd"><td>BOTADDR</td>
+<td><dl class="first last docutils">
+<dt>&lt;address&gt; [bot listen port] [user listen port]</dt>
+<dd>Sets address, bot listen port and user listen port. If no listen ports are
+specified, only the bot address is updated. If only the bot listen port is
+specified, both the bot and user listen ports are set to the bot listen port.</dd>
+</dl>
+</td>
 </tr>
 <tr class="row-even"><td>HOSTS</td>
-<td>if used with no third arg, all hosts for the user will be cleared. Otherwise, <em>1</em>
-hostmask is added :P</td>
+<td><dl class="first last docutils">
+<dt>[hostmask]</dt>
+<dd>If no value is specified, all hosts for the user will be cleared. Otherwise, only
+<em>1</em> hostmask is added :P</dd>
+</dl>
+</td>
 </tr>
 <tr class="row-odd"><td>LASTON</td>
 <td><p class="first">This setting has 3 forms.</p>
-<blockquote class="last">
-<div><p><em>setuser &lt;handle&gt; LASTON &lt;unixtime&gt; &lt;place&gt;</em> sets global LASTON time</p>
-<p><em>setuser &lt;handle&gt; LASTON &lt;unixtime&gt;</em> sets global LASTON time (leaving the place
-field empty)</p>
-<p><em>setuser &lt;handle&gt; LASTON &lt;unixtime&gt; &lt;channel&gt;</em> sets a users LASTON time for a
-channel (if it is a  valid channel)</p>
-</div></blockquote>
+<dl class="last docutils">
+<dt>&lt;unixtime&gt; &lt;place&gt;</dt>
+<dd>sets global LASTON time</dd>
+<dt>&lt;unixtime&gt;</dt>
+<dd>sets global LASTON time (leaving the place field empty)</dd>
+<dt>&lt;unixtime&gt; &lt;channel&gt;</dt>
+<dd>sets a user's LASTON time for a channel (if it is a valid channel)</dd>
+</dl>
 </td>
 </tr>
 </tbody>
@@ -324,7 +347,63 @@ Changes are of the form '+f', '-o', '+dk', '-o+d', etc. If changes are specified
 <div class="section" id="matchattr-handle-flags-channel">
 <h3>matchattr &lt;handle&gt; &lt;flags&gt; [channel]<a class="headerlink" href="#matchattr-handle-flags-channel" title="Permalink to this headline">¶</a></h3>
 <blockquote>
-<div><p>Returns: 1 if the specified user has the specified flags; 0 otherwise</p>
+<div>Description: checks if the flags of the specified user match the flags provided. Default matching pattern uses the | (OR) convention. For example, specifying +mn for flags will check if the user has the m OR n flag.</div></blockquote>
+<table border="1" class="docutils">
+<colgroup>
+<col width="16%" />
+<col width="84%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Flag Mask</th>
+<th class="head">Action</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td rowspan="2">+m</td>
+<td rowspan="2">Checks if the user has the m global flag</td>
+</tr>
+<tr class="row-odd"></tr>
+<tr class="row-even"><td>+mn</td>
+<td>Checks if the user has the m or n global flag</td>
+</tr>
+<tr class="row-odd"><td>+mn&amp;</td>
+<td>Checks if the user has the m and n global flag</td>
+</tr>
+<tr class="row-even"><td>|+o #foo</td>
+<td>Checks if the user has the o channel flag for #foo</td>
+</tr>
+<tr class="row-odd"><td>&amp;mn #foo</td>
+<td>Checks if the user has the m and n channel flag for #foo</td>
+</tr>
+<tr class="row-even"><td>+o|+n #foo</td>
+<td>Checks if the user has the o global flag, or the n channel
+flag for #foo</td>
+</tr>
+<tr class="row-odd"><td>+m&amp;+v</td>
+<td>Checks if the user has the m global flag, and the v channel
+flag for #foo</td>
+</tr>
+<tr class="row-even"><td>-m</td>
+<td>Checks if the user does not have the m global flag</td>
+</tr>
+<tr class="row-odd"><td>|-n #foo</td>
+<td>Checks if the user does not have the n channel flag for #foo</td>
+</tr>
+<tr class="row-even"><td>+m|-n #foo</td>
+<td>Checks if the user has the global m flag or does not have a
+channel n flag for #foo</td>
+</tr>
+<tr class="row-odd"><td>-n&amp;-m #foo</td>
+<td>Searches if the user does not have the global n flag and does
+not have the channel m flag for #foo</td>
+</tr>
+<tr class="row-even"><td>||+b</td>
+<td>Searches if the user has the bot flag b</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<div><p>Returns: 1 if the specified user has the flags matching the provided mask; 0 otherwise</p>
 <p>Module: core</p>
 </div></blockquote>
 </div>
@@ -336,11 +415,20 @@ Changes are of the form '+f', '-o', '+dk', '-o+d', etc. If changes are specified
 <p>Module: core</p>
 </div></blockquote>
 </div>
-<div class="section" id="addbot-handle-address">
-<h3>addbot &lt;handle&gt; &lt;address&gt;<a class="headerlink" href="#addbot-handle-address" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="addbot-handle-address-botport-userport">
+<h3>addbot &lt;handle&gt; &lt;address&gt; [botport [userport]]<a class="headerlink" href="#addbot-handle-address-botport-userport" title="Permalink to this headline">¶</a></h3>
 <blockquote>
-<div><p>Description: adds a new bot to the userlist with the handle and botaddress given (with no password and no flags)</p>
-<p>Returns: 1 if successful; 0 if the bot already exists</p>
+<div><p>Description: adds a new bot to the userlist with the handle and botaddress given (with no password and no flags). &lt;address&gt; format is one of:</p>
+<ul class="simple">
+<li>ipaddress</li>
+<li>ipv4address:botport/userport    [DEPRECATED]</li>
+<li>[ipv6address]:botport/userport  [DEPRECATED]</li>
+</ul>
+</div></blockquote>
+<p>NOTE 1: The []s around the ipv6address argument are literal []s, not optional arguments.
+NOTE 2: In the deprecated formats, an additional botport and/or userport given as follow-on arguments are ignored.</p>
+<blockquote>
+<div><p>Returns: 1 if successful; 0 if the bot already exists or a port is invalid</p>
 <p>Module: core</p>
 </div></blockquote>
 </div>
@@ -1101,28 +1189,11 @@ channel's invite list is checked as well.</p>
 </div></blockquote>
 </div>
 <div class="section" id="chanlist-channel-flags-chanflags">
-<h3>chanlist &lt;channel&gt; [flags[&amp;chanflags]]<a class="headerlink" href="#chanlist-channel-flags-chanflags" title="Permalink to this headline">¶</a></h3>
+<h3>chanlist &lt;channel&gt; [flags][&lt;&amp;|&gt;chanflags]<a class="headerlink" href="#chanlist-channel-flags-chanflags" title="Permalink to this headline">¶</a></h3>
 <blockquote>
-<div><p>Description: flags are any global flags; the '&amp;' denotes to look for channel specific flags. Examples:</p>
-<table border="1" class="docutils">
-<colgroup>
-<col width="20%" />
-<col width="80%" />
-</colgroup>
-<tbody valign="top">
-<tr class="row-odd"><td>n</td>
-<td>(Global Owner)</td>
-</tr>
-<tr class="row-even"><td>&amp;n</td>
-<td>(Channel Owner)</td>
-</tr>
-<tr class="row-odd"><td>o&amp;m</td>
-<td>(Global Op, Channel Master)</td>
-</tr>
-</tbody>
-</table>
-<p>Now you can use even more complex matching of flags, including +&amp;- flags and &amp; or | ('and' or 'or') matching.</p>
-<p>Returns: list of nicknames currently on the bot's channel that have all of the flags specified;. If no flags are given, all of the nicknames are returned. Please note that if you're executing chanlist after a part or sign bind, the gone user will still be listed, so you can check for wasop, isop, etc.</p>
+<div><p>Description: flags are any global flags; the '&amp;' or '|' denotes to look for channel specific flags, where '&amp;' will return users having ALL chanflags and '|' returns users having ANY of the chanflags (See matchattr above for additional examples).</p>
+<p>Returns: Searching for flags optionally preceded with a '+' will return a list of nicknames that have all the flags listed. Searching for flags preceded with a '-' will return a list of nicknames that do not have have any of the flags (differently said, '-' will hide users that have all flags listed). If no flags are given, all of the nicknames on the channel are returned.</p>
+<p>Please note that if you're executing chanlist after a part or sign bind, the gone user will still be listed, so you can check for wasop, isop, etc.</p>
 <p>Module: irc</p>
 </div></blockquote>
 </div>
@@ -1238,7 +1309,7 @@ channel's invite list is checked as well.</p>
 <div class="section" id="dccbroadcast-message">
 <h3>dccbroadcast &lt;message&gt;<a class="headerlink" href="#dccbroadcast-message" title="Permalink to this headline">¶</a></h3>
 <blockquote>
-<div><p>Description: sends a message to everyone on the party line across the botnet, in the form of &quot;*** &lt;message&gt;&quot; for local users and &quot;*** (Bot) &lt;message&gt;&quot; for users on other bots</p>
+<div><p>Description: sends a message to everyone on the party line across the botnet, in the form of &quot;*** &lt;message&gt;&quot; for local users, &quot;*** (Bot) &lt;message&gt;&quot; for users on other bots with version below 1.8.3, and &quot;(Bot) &lt;message&gt;&quot; for users on other bots with version 1.8.3+ and console log mode 'l' enabled</p>
 <p>Returns: nothing</p>
 <p>Module: core</p>
 </div></blockquote>
@@ -1308,6 +1379,14 @@ channel's invite list is checked as well.</p>
 <blockquote>
 <div><p>Description: changes a dcc user's console mode, either to an absolute mode (like &quot;mpj&quot;) or just adding/removing flags (like &quot;+pj&quot; or &quot;-moc&quot; or &quot;+mp-c&quot;). The user's console channel view can be changed also (as long as the new channel is a valid channel).</p>
 <p>Returns: a list containing the user's (new) channel view and (new) console modes, or nothing if that user isn't currently on the partyline</p>
+<p>Module: core</p>
+</div></blockquote>
+</div>
+<div class="section" id="resetconsole-idx">
+<h3>resetconsole &lt;idx&gt;<a class="headerlink" href="#resetconsole-idx" title="Permalink to this headline">¶</a></h3>
+<blockquote>
+<div><p>Description: changes a dcc user's console mode to the default setting in the configfile.</p>
+<p>Returns: a list containing the user's channel view and (new) console modes, or nothing if that user isn't currently on the partyline</p>
 <p>Module: core</p>
 </div></blockquote>
 </div>
@@ -1916,14 +1995,20 @@ directory</td>
 <tr class="row-odd"><td>d</td>
 <td>misc debug information</td>
 </tr>
-<tr class="row-even"><td>h</td>
-<td>raw share traffic</td>
+<tr class="row-even"><td>g</td>
+<td>raw outgoing share traffic</td>
 </tr>
-<tr class="row-odd"><td>j</td>
+<tr class="row-odd"><td>h</td>
+<td>raw incoming share traffic</td>
+</tr>
+<tr class="row-even"><td>j</td>
 <td>joins, parts, quits, topic changes, and netsplits on the channel</td>
 </tr>
-<tr class="row-even"><td>k</td>
+<tr class="row-odd"><td>k</td>
 <td>kicks, bans, and mode changes on the channel</td>
+</tr>
+<tr class="row-even"><td>l</td>
+<td>linked bot messages</td>
 </tr>
 <tr class="row-odd"><td>m</td>
 <td>private msgs, notices and ctcps to the bot</td>
@@ -1941,15 +2026,18 @@ directory</td>
 <td>server connects, disconnects, and notices</td>
 </tr>
 <tr class="row-even"><td>t</td>
-<td>raw botnet traffic</td>
+<td>raw incoming botnet traffic</td>
 </tr>
-<tr class="row-odd"><td>v</td>
+<tr class="row-odd"><td>u</td>
+<td>raw outgoing botnet traffic</td>
+</tr>
+<tr class="row-even"><td>v</td>
 <td>raw outgoing server traffic</td>
 </tr>
-<tr class="row-even"><td>w</td>
+<tr class="row-odd"><td>w</td>
 <td>wallops (make sure the bot sets +w in init-server)</td>
 </tr>
-<tr class="row-odd"><td>x</td>
+<tr class="row-even"><td>x</td>
 <td>file transfers and file-area commands</td>
 </tr>
 </tbody>
@@ -2158,7 +2246,7 @@ will be used. Types 30-39 set the host to '*'.</p>
 <div class="section" id="encrypt-key-string">
 <h3>encrypt &lt;key&gt; &lt;string&gt;<a class="headerlink" href="#encrypt-key-string" title="Permalink to this headline">¶</a></h3>
 <blockquote>
-<div><p>Returns: encrypted string (using the currently loaded encryption module), encoded into ASCII using base-64. As of v1.8.2, the default blowfish encryption module can use either the older ECB mode (currently used by default for compatibility reasons), or the more recent and more-secure CBC mode. You can explicitely request which encryption mode to use by prefixing the encryption key with either &quot;ecb:&quot; or &quot;cbc:&quot;, or by using the blowfish-use-mode setting in the config file. Note: the default encryption mode for this function is planned to transition from ECB to CBC in v1.9.0.</p>
+<div><p>Returns: encrypted string (using the currently loaded encryption module), encoded into ASCII using base-64. As of v1.8.3, the default blowfish encryption module can use either the older ECB mode (currently used by default for compatibility reasons), or the more recent and more-secure CBC mode. You can explicitely request which encryption mode to use by prefixing the encryption key with either &quot;ecb:&quot; or &quot;cbc:&quot;, or by using the blowfish-use-mode setting in the config file. Note: the default encryption mode for this function is planned to transition from ECB to CBC in v1.9.0.</p>
 <p>Module: encryption</p>
 </div></blockquote>
 </div>
@@ -2343,7 +2431,7 @@ will be used. Types 30-39 set the host to '*'.</p>
 <h3>matchcidr &lt;block&gt; &lt;address&gt; &lt;prefix&gt;<a class="headerlink" href="#matchcidr-block-address-prefix" title="Permalink to this headline">¶</a></h3>
 <blockquote>
 <div><p>Description: performs a cidr match on the specified ip addresses. IPv6 is supported, if enabled at compile time.</p>
-<p>Example: matchcidr 192.1.8.2.0 192.1.8.2.17 16</p>
+<p>Example: matchcidr 192.168.0.0 192.168.1.17 16</p>
 <p>Returns: 1 if the address matches the block prefix, 0 otherwise.</p>
 <p>Module: core</p>
 </div></blockquote>
@@ -3221,7 +3309,7 @@ word) (This character only works in binds, not in regular matching)</td>
 </tr>
 <tr class="row-even"><td>~</td>
 <td>matches 1 or more space characters (can be used for whitespace between
-words) (This char only works in binds, not in regluar matching)</td>
+words) (This char only works in binds, not in regular matching)</td>
 </tr>
 </tbody>
 </table>
@@ -3310,7 +3398,7 @@ words) (This char only works in binds, not in regluar matching)</td>
           
     <div class="footer">
         &copy; Copyright 2017, Eggheads.
-      Last updated on Jul 06, 2017.
+      Last updated on Dec 20, 2017.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.3.
     </div>
         </div>
