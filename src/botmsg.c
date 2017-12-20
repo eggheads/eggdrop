@@ -44,16 +44,16 @@ void tandout_but EGG_VARARGS_DEF(int, arg1)
 {
   int i, x, len;
   char *format;
-  char s[601];
+  char s[511];
   va_list va;
 
   x = EGG_VARARGS_START(int, arg1, va);
   format = va_arg(va, char *);
 
-  len = egg_vsnprintf(s, 511, format, va);
+  len = egg_vsnprintf(s, sizeof s, format, va);
   va_end(va);
-  if (len >= sizeof(s)) {
-    len = sizeof(s) - 1;
+  if (len >= sizeof s) {
+    len = sizeof s - 1;
     s[len] = 0;
   }
 
@@ -199,9 +199,7 @@ void send_tand_but(int x, char *buf, int len)
   int i, iso = 0;
 
   if (len < 0) {
-    /* -INT_MIN is INT_MAX+1 which is... INT_MIN */
-    if (len == INT_MIN)
-      ++len;
+    /* Very unlikely len would be INT_MIN */
     len = -len;
     iso = 1;
   }
