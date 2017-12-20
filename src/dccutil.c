@@ -166,6 +166,12 @@ void dprintf EGG_VARARGS_DEF(int, arg1)
   buf[sizeof(buf) - 1] = 0;
   len = strlen(buf);
 
+  /* Send it out */
+  dprint(idx, buf, len);
+}
+
+void dprint(int idx, char *buf, int len)
+{
   if (idx < 0) {
     tputs(-idx, buf, len);
   } else if (idx > 0x7FF0) {
