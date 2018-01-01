@@ -7,7 +7,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Filesys Module &mdash; Eggdrop 1.8.2 documentation</title>
+    <title>Filesys Module &mdash; Eggdrop 1.8.3 documentation</title>
     
     <link rel="stylesheet" href="../_static/eggdrop.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -15,7 +15,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
-        VERSION:     '1.8.2',
+        VERSION:     '1.8.3',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -24,7 +24,7 @@
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
-    <link rel="top" title="Eggdrop 1.8.2 documentation" href="../index.html" />
+    <link rel="top" title="Eggdrop 1.8.3 documentation" href="../index.html" />
     <link rel="up" title="&lt;no title&gt;" href="index.html" />
     <link rel="next" title="IRC Module" href="irc.html" />
     <link rel="prev" title="DNS Module" href="dns.html" /> 
@@ -36,7 +36,7 @@
             <img class="logo" src="../_static/eggman.png.gif" alt="Logo"/>
           </a></p>
         <div class="headertitle"><a
-          href="../index.html">Eggdrop 1.8.2 documentation</a></div>
+          href="../index.html">Eggdrop 1.8.3 documentation</a></div>
         <div class="rel">
           <a href="dns.html" title="DNS Module"
              accesskey="P">previous</a> |
@@ -54,12 +54,14 @@
         <div class="bodywrapper">
           <div class="body">
             
-  <p>Last revised: May 26, 2004</p>
+  <p>Last revised: Dec 30, 2017</p>
 <div class="section" id="filesys-module">
 <span id="filesys"></span><h1>Filesys Module<a class="headerlink" href="#filesys-module" title="Permalink to this headline">¶</a></h1>
 <p>This module provides an area within the bot where users can store and manage
 files. With this module, the bot is usable as a file server.</p>
 <p>This module requires: transfer</p>
+<div class="section" id="config-file-setup">
+<h2>Config file setup<a class="headerlink" href="#config-file-setup" title="Permalink to this headline">¶</a></h2>
 <p>Put this line into your Eggdrop configuration file to load the filesys
 module:</p>
 <div class="highlight-python"><div class="highlight"><pre>loadmodule filesys
@@ -92,7 +94,180 @@ once. Setting this to 0 makes it effectively infinite.</dd>
 Setting this to 0 makes it effectively infinite.</dd>
 </dl>
 </div></blockquote>
+</div>
+<div class="section" id="partyline-usage">
+<h2>Partyline usage<a class="headerlink" href="#partyline-usage" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="files">
+<h3>.files<a class="headerlink" href="#files" title="Permalink to this headline">¶</a></h3>
+<blockquote>
+<div>Moves you into the file transfer sub-system, if it has been enabled on this
+bot. From there you can browse through the files online and use dcc file
+transfers to download and upload.</div></blockquote>
+</div>
+<div class="section" id="cancel-file-file">
+<h3>.cancel &lt;file&gt; [file] ...<a class="headerlink" href="#cancel-file-file" title="Permalink to this headline">¶</a></h3>
+<blockquote>
+<div>Tells the bot to stop sending a file that is pending (either
+queued, waiting, or in the process of being transferred).</div></blockquote>
+</div>
+<div class="section" id="cd-directory">
+<h3>.cd &lt;directory&gt;<a class="headerlink" href="#cd-directory" title="Permalink to this headline">¶</a></h3>
+<blockquote>
+<div>Changes your current directory if possible.  this works exactly
+like the unix command.</div></blockquote>
+</div>
+<div class="section" id="cp-source-dst">
+<h3>.cp &lt;source&gt; &lt;dst&gt;<a class="headerlink" href="#cp-source-dst" title="Permalink to this headline">¶</a></h3>
+<blockquote>
+<div>Copies a file or group of files from one place to another.</div></blockquote>
+</div>
+<div class="section" id="desc-file-description">
+<h3>.desc &lt;file&gt; &lt;description&gt;<a class="headerlink" href="#desc-file-description" title="Permalink to this headline">¶</a></h3>
+<blockquote>
+<div><p>Changes the description for a file.  if you are a master or
+file janitor, you can change the description for any file.
+otherwise you can only change the descriptions for files you
+have uploaded.</p>
+<p>The description is restricted to 3 lines of 60 characters
+each, and is broken up between words.  you can force a line
+break by putting a '|' in the comment.</p>
+</div></blockquote>
+</div>
+<div class="section" id="filestats-user-clear">
+<h3>.filestats &lt;user&gt; [clear]<a class="headerlink" href="#filestats-user-clear" title="Permalink to this headline">¶</a></h3>
+<blockquote>
+<div>Reports on the users upload &amp; download statistics. Optional argument
+'clear' clears a users upload and download statistics.</div></blockquote>
+</div>
+<div class="section" id="stats">
+<h3>.stats<a class="headerlink" href="#stats" title="Permalink to this headline">¶</a></h3>
+<blockquote>
+<div>Clears a users upload &amp; download statistics.</div></blockquote>
+</div>
+<div class="section" id="get-filename-nickname">
+<h3>.get &lt;filename&gt; [nickname]<a class="headerlink" href="#get-filename-nickname" title="Permalink to this headline">¶</a></h3>
+<blockquote>
+<div><p>Sends you the file(s) requested, over IRC.  you should get a
+DCC SEND notice on IRC, and have your client accept it.  if
+your nickname on IRC is different than the one you use on the
+bot, you should specify a nickname too.  you can also use that
+to send files to other people.  if a file you want is actually
+on another bot, it may take a little bit longer so be patient.
+if that bot isn't on the botnet right now, it will say the file
+isn't available.</p>
+<p>There is a limit to the number of transfers you can have going
+simultaneously, so if you go over this limit, the remainder of
+your file requests will be queued. As the first files finish
+transferring, the queued files will be sent.</p>
+</div></blockquote>
+</div>
+<div class="section" id="hide-file-files">
+<h3>.hide &lt;file&gt; [files] ...<a class="headerlink" href="#hide-file-files" title="Permalink to this headline">¶</a></h3>
+<blockquote>
+<div>Marks a file as hidden, so that normal users can't see it.
+Only a master or file janitor using %b'lsa'%b can see hidden files.</div></blockquote>
+</div>
+<div class="section" id="ln-bot-filepath-localfile">
+<h3>.ln &lt;bot:filepath&gt; &lt;localfile&gt;<a class="headerlink" href="#ln-bot-filepath-localfile" title="Permalink to this headline">¶</a></h3>
+<blockquote>
+<div><p>Creates a link to a file on another bot. The filepath has to
+be complete, like '/gifs/uglyman.gif'.  If the bot is not
+connected to the botnet, nobody will be able to download the
+file until that bot connects again. The local filename can be
+anything you want.</p>
+<p>Example:  ln Snowbot:/gifs/uglyman.gif ugly.gif</p>
+</div></blockquote>
+</div>
+<div class="section" id="ls-filemask">
+<h3>.ls [filemask]<a class="headerlink" href="#ls-filemask" title="Permalink to this headline">¶</a></h3>
+<blockquote>
+<div>Displays the files in the current directory. Subdirectories
+are shown with &quot;&lt;DIR&gt;&quot; next to them, and other files will display
+their size (typically in kilobytes), who uploaded them (and when),
+and how many times each file has been downloaded. If a description
+of the file exists, it is displayed below the filename. You can
+restrict the file listing by specifying a mask, just like in unix.</div></blockquote>
+</div>
+<div class="section" id="mkdir-dir-flags-channel">
+<h3>.mkdir &lt;dir&gt; [flags [channel]]<a class="headerlink" href="#mkdir-dir-flags-channel" title="Permalink to this headline">¶</a></h3>
+<blockquote>
+<div>Creates a subdirectory from this one, with the given name.  If
+flags are specified, then those flags are required to enter or
+even see the directory.  You can even specify a channel that the
+flags are matched against. You can use the %b'mkdir'%b command again
+to alter or remove those flags.</div></blockquote>
+<blockquote>
+<div>Moves a file or group of files from one place to another (it
+can also be used to rename files).</div></blockquote>
+</div>
+<div class="section" id="pending">
+<h3>.pending<a class="headerlink" href="#pending" title="Permalink to this headline">¶</a></h3>
+<blockquote>
+<div>Gives you a listing of every file you've requested which is
+still waiting, queued, or in the process of transferring.
+It shows you the nickname on IRC that the file is being sent
+to, and, if the transfer is in progress, tells you how far
+along the transfer is.</div></blockquote>
+</div>
+<div class="section" id="pwd">
+<h3>.pwd<a class="headerlink" href="#pwd" title="Permalink to this headline">¶</a></h3>
+<blockquote>
+<div>Tells you what your current directory is.</div></blockquote>
+</div>
+<div class="section" id="quit">
+<h3>.quit<a class="headerlink" href="#quit" title="Permalink to this headline">¶</a></h3>
+<blockquote>
+<div>Exits the file system.</div></blockquote>
+</div>
+<div class="section" id="rm-file-files">
+<h3>rm &lt;file&gt; [files] ...<a class="headerlink" href="#rm-file-files" title="Permalink to this headline">¶</a></h3>
+<blockquote>
+<div>Erase a file for good.</div></blockquote>
+</div>
+<div class="section" id="rmdir-dir">
+<h3>.rmdir &lt;dir&gt;<a class="headerlink" href="#rmdir-dir" title="Permalink to this headline">¶</a></h3>
+<blockquote>
+<div>Removes an existing directory, if there are no files in it.</div></blockquote>
+</div>
+<div class="section" id="share-file-files">
+<h3>.share &lt;file&gt; [files] ...<a class="headerlink" href="#share-file-files" title="Permalink to this headline">¶</a></h3>
+<blockquote>
+<div>Marks a file as shared. This means that other bots can get
+the file remotely for users on their file systems. By default,
+files are marked as unshared.</div></blockquote>
+</div>
+<div class="section" id="optimize">
+<h3>.optimize<a class="headerlink" href="#optimize" title="Permalink to this headline">¶</a></h3>
+<blockquote>
+<div>Cleans up the current directory's database. If you have a large
+directory with many files you may want to use this command if
+you experience slow-downs/delays over time. Normally, the db
+should clean up itsself though.</div></blockquote>
+</div>
+<div class="section" id="unhide">
+<h3>.unhide<a class="headerlink" href="#unhide" title="Permalink to this headline">¶</a></h3>
+<blockquote>
+<div>Makes a file be not hidden any more.</div></blockquote>
+</div>
+<div class="section" id="unshare-file-file">
+<h3>.unshare &lt;file&gt; [file] ...<a class="headerlink" href="#unshare-file-file" title="Permalink to this headline">¶</a></h3>
+<blockquote>
+<div>Removes the shared tag from a file.</div></blockquote>
+</div>
+<div class="section" id="id1">
+<h3>.filesys module<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h3>
+<blockquote>
+<div><p>This module provides an area within the bot where users can store and
+manage files. With this module, the bot is usable as a file server.</p>
+<p>The following commands are provided by the filesys module:</p>
+<dl class="docutils">
+<dt>For filesystem users:</dt>
+<dd>files</dd>
+</dl>
+</div></blockquote>
 <p>Copyright (C) 2000 - 2017 Eggheads Development Team</p>
+</div>
+</div>
 </div>
 
 
@@ -175,7 +350,7 @@ Setting this to 0 makes it effectively infinite.</dd>
           
     <div class="footer">
         &copy; Copyright 2017, Eggheads.
-      Last updated on Jul 06, 2017.
+      Last updated on Jan 01, 2018.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.3.
     </div>
         </div>

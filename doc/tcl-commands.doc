@@ -1,4 +1,4 @@
-Eggdrop Tcl Commands Last revised: June 20, 2016
+Eggdrop Tcl Commands Last revised: December 14, 2017
 
 
 
@@ -10,7 +10,7 @@ of the normal Tcl built-in commands are still there, of course, but you
 can also use these to manipulate features of the bot. They are listed
 according to category.
 
-This list is accurate for Eggdrop v1.8.1. Scripts written for v1.3, v1.4
+This list is accurate for Eggdrop v1.8.3. Scripts written for v1.3, v1.4
 or 1.6 series of Eggdrop should probably work with a few minor
 modifications depending on the script. Scripts which were written for
 v0.9, v1.0, v1.1 or v1.2 will probably not work without modification.
@@ -182,16 +182,17 @@ passwdok <handle> <pass>
 
   Module: core
 
-getuser <handle> <entry-type> [extra info]
+getuser <handle> [entry-type] [extra info]
 
-  Description: an interface to the new generic userfile support. Valid
-  entry types are:
+  Description: an interface to the new generic userfile support. Without
+  an entry-type, it returns a flat key/value list (dict) of all set
+  entries. Valid entry types are:
 
     -------- ---------------------------------------------------------------
     BOTFL    returns the current bot-specific flags for the user (bot-only)
 
-    BOTADDR  returns a list containing the bot's address, telnet port, and
-             relay port (bot-only)
+    BOTADDR  returns a list containing the bot's address, bot listen port,
+             and user listen port
 
     HOSTS    returns a list of hosts for the user
 
@@ -211,7 +212,7 @@ getuser <handle> <entry-type> [extra info]
     -------- ---------------------------------------------------------------
 
   For additional custom user fields, to include the deprecated "EMAIL"
-  and "URL" fields, reference scripts/userinfo.tcl
+  and "URL" fields, reference scripts/userinfo.tcl.
 
   Returns: info specific to each entry-type
 
@@ -224,21 +225,38 @@ setuser <handle> <entry-type> [extra info]
   the same as getuser's.
 
   +---------+------------------------------------------------------------------+
-  | PASS    | sets a users password (no third arg will clear it)               |
+  | Type    | Extra Info                                                       |
+  +=========+==================================================================+
+  | PASS    | <password>                                                       |
+  |         |                                                                  |
+  |         |     Password string (Empty value will clear the password)        |
   +---------+------------------------------------------------------------------+
-  | HOSTS   | if used with no third arg, all hosts for the user will be        |
-  |         | cleared. Otherwise, _1_ hostmask is added :P                     |
+  | BOTADDR | <address> [bot listen port] [user listen port]                   |
+  |         |                                                                  |
+  |         |     Sets address, bot listen port and user listen port. If no    |
+  |         |     listen ports are specified, only the bot address is updated. |
+  |         |     If only the bot listen port is specified, both the bot and   |
+  |         |     user listen ports are set to the bot listen port.            |
+  +---------+------------------------------------------------------------------+
+  | HOSTS   | [hostmask]                                                       |
+  |         |                                                                  |
+  |         |     If no value is specified, all hosts for the user will        |
+  |         |     be cleared. Otherwise, only _1_ hostmask is added :P         |
   +---------+------------------------------------------------------------------+
   | LASTON  | This setting has 3 forms.                                        |
   |         |                                                                  |
-  |         |   _setuser <handle> LASTON <unixtime> <place>_ sets global       |
-  |         |   LASTON time                                                    |
+  |         | <unixtime> <place>                                               |
   |         |                                                                  |
-  |         |   _setuser <handle> LASTON <unixtime>_ sets global LASTON time   |
-  |         |   (leaving the place field empty)                                |
+  |         |     sets global LASTON time                                      |
   |         |                                                                  |
-  |         |   _setuser <handle> LASTON <unixtime> <channel>_ sets a users    |
-  |         |   LASTON time for a channel (if it is a valid channel)           |
+  |         | <unixtime>                                                       |
+  |         |                                                                  |
+  |         |     sets global LASTON time (leaving the place field empty)      |
+  |         |                                                                  |
+  |         | <unixtime> <channel>                                             |
+  |         |                                                                  |
+  |         |     sets a user's LASTON time for a channel (if it is a          |
+  |         |     valid channel)                                               |
   +---------+------------------------------------------------------------------+
 
   Returns: nothing
@@ -285,7 +303,45 @@ botattr <handle> [changes [channel]]
 
 matchattr <handle> <flags> [channel]
 
-  Returns: 1 if the specified user has the specified flags; 0 otherwise
+  Description: checks if the flags of the specified user match the flags
+  provided. Default matching pattern uses the | (OR) convention. For
+  example, specifying +mn for flags will check if the user has the m OR
+  n flag.
+
+  ------------------------------------------------------------------------
+  Flag Mask   Action
+  ----------- ------------------------------------------------------------
+  +m +        Checks if the user has the m global flag
+
+  +mn         Checks if the user has the m or n global flag
+
+  +mn&        Checks if the user has the m and n global flag
+
+  |+o #foo    Checks if the user has the o channel flag for #foo
+
+  &mn #foo    Checks if the user has the m and n channel flag for #foo
+
+  +o|+n #foo  Checks if the user has the o global flag, or the n channel
+              flag for #foo
+
+  +m&+v       Checks if the user has the m global flag, and the v channel
+              flag for #foo
+
+  -m          Checks if the user does not have the m global flag
+
+  |-n #foo    Checks if the user does not have the n channel flag for #foo
+
+  +m|-n #foo  Checks if the user has the global m flag or does not have a
+              channel n flag for #foo
+
+  -n&-m #foo  Searches if the user does not have the global n flag and
+              does not have the channel m flag for #foo
+
+  ||+b        Searches if the user has the bot flag b
+  ------------------------------------------------------------------------
+
+  Returns: 1 if the specified user has the flags matching the provided
+  mask; 0 otherwise
 
   Module: core
 
@@ -298,12 +354,22 @@ adduser <handle> [hostmask]
 
   Module: core
 
-addbot <handle> <address>
+addbot <handle> <address> [botport [userport]]
 
   Description: adds a new bot to the userlist with the handle and
-  botaddress given (with no password and no flags)
+  botaddress given (with no password and no flags). <address> format is
+  one of:
 
-  Returns: 1 if successful; 0 if the bot already exists
+  -   ipaddress
+  -   ipv4address:botport/userport [DEPRECATED]
+  -   [ipv6address]:botport/userport [DEPRECATED]
+
+NOTE 1: The []s around the ipv6address argument are literal []s, not
+optional arguments. NOTE 2: In the deprecated formats, an additional
+botport and/or userport given as follow-on arguments are ignored.
+
+  Returns: 1 if successful; 0 if the bot already exists or a port is
+  invalid
 
   Module: core
 
@@ -1114,27 +1180,24 @@ onchansplit <nick> [channel]
 
   Module: irc
 
-chanlist <channel> [flags[&chanflags]]
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ chanlist <channel>
+[flags][<&|>chanflags] ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-  Description: flags are any global flags; the '&' denotes to look for
-  channel specific flags. Examples:
+  Description: flags are any global flags; the '&' or '|' denotes to
+  look for channel specific flags, where '&' will return users having
+  ALL chanflags and '|' returns users having ANY of the chanflags (See
+  matchattr above for additional examples).
 
-  +-----------+-----------------------------------+
-  | n         | (Global Owner)                    |
-  +-----------+-----------------------------------+
-  | &n        |   (Channel Owner)                 |
-  +-----------+-----------------------------------+
-  | o&m       |   (Global Op, Channel Master)     |
-  +-----------+-----------------------------------+
+  Returns: Searching for flags optionally preceded with a '+' will
+  return a list of nicknames that have all the flags listed. Searching
+  for flags preceded with a '-' will return a list of nicknames that do
+  not have have any of the flags (differently said, '-' will hide users
+  that have all flags listed). If no flags are given, all of the
+  nicknames on the channel are returned.
 
-  Now you can use even more complex matching of flags, including +&-
-  flags and & or | ('and' or 'or') matching.
-
-  Returns: list of nicknames currently on the bot's channel that have
-  all of the flags specified;. If no flags are given, all of the
-  nicknames are returned. Please note that if you're executing chanlist
-  after a part or sign bind, the gone user will still be listed, so you
-  can check for wasop, isop, etc.
+  Please note that if you're executing chanlist after a part or sign
+  bind, the gone user will still be listed, so you can check for wasop,
+  isop, etc.
 
   Module: irc
 
@@ -1267,8 +1330,10 @@ putdcc <idx> <text> [-raw]
 dccbroadcast <message>
 
   Description: sends a message to everyone on the party line across the
-  botnet, in the form of "*** <message>" for local users and "*** (Bot)
-  <message>" for users on other bots
+  botnet, in the form of "*** <message>" for local users, "*** (Bot)
+  <message>" for users on other bots with version below 1.8.3, and
+  "(Bot) <message>" for users on other bots with version 1.8.3+ and
+  console log mode 'l' enabled
 
   Returns: nothing
 
@@ -1352,6 +1417,16 @@ console <idx> [channel] [console-modes]
   Returns: a list containing the user's (new) channel view and (new)
   console modes, or nothing if that user isn't currently on the
   partyline
+
+  Module: core
+
+resetconsole <idx>
+
+  Description: changes a dcc user's console mode to the default setting
+  in the configfile.
+
+  Returns: a list containing the user's channel view and (new) console
+  modes, or nothing if that user isn't currently on the partyline
 
   Module: core
 
@@ -1928,15 +2003,18 @@ logfile [<modes> <channel> <filename>]
     b     information about bot linking and userfile sharing
     c     commands
     d     misc debug information
-    h     raw share traffic
+    g     raw outgoing share traffic
+    h     raw incoming share traffic
     j     joins, parts, quits, topic changes, and netsplits on the channel
     k     kicks, bans, and mode changes on the channel
+    l     linked bot messages
     m     private msgs, notices and ctcps to the bot
     o     misc info, errors, etc (IMPORTANT STUFF)
     p     public text on the channel
     r     raw incoming server traffic
     s     server connects, disconnects, and notices
-    t     raw botnet traffic
+    t     raw incoming botnet traffic
+    u     raw outgoing botnet traffic
     v     raw outgoing server traffic
     w     wallops (make sure the bot sets +w in init-server)
     x     file transfers and file-area commands
@@ -2127,14 +2205,25 @@ unlink <bot>
 encrypt <key> <string>
 
   Returns: encrypted string (using the currently loaded encryption
-  module), encoded into ASCII using base-64
+  module), encoded into ASCII using base-64. As of v1.8.3, the default
+  blowfish encryption module can use either the older ECB mode
+  (currently used by default for compatibility reasons), or the more
+  recent and more-secure CBC mode. You can explicitely request which
+  encryption mode to use by prefixing the encryption key with either
+  "ecb:" or "cbc:", or by using the blowfish-use-mode setting in the
+  config file. Note: the default encryption mode for this function is
+  planned to transition from ECB to CBC in v1.9.0.
 
   Module: encryption
 
 decrypt <key> <encrypted-base64-string>
 
   Returns: decrypted string (using the currently loaded encryption
-  module)
+  module). If the default blowfish encryption module is used, this
+  automatically picks the right decryption mode. You may still prefix
+  the key with "ecb:" or "cbc:" or use the blowfish-use-mode setting in
+  the config file (see the encrypt command for more detailed
+  information).
 
   Module: encryption
 
@@ -2308,7 +2397,7 @@ matchcidr <block> <address> <prefix>
   Description: performs a cidr match on the specified ip addresses. IPv6
   is supported, if enabled at compile time.
 
-  Example: matchcidr 192.1.8.1.0 192.168.1.17 16
+  Example: matchcidr 192.168.0.0 192.168.1.17 16
 
   Returns: 1 if the address matches the block prefix, 0 otherwise.
 
@@ -2474,6 +2563,13 @@ handlen
 config
 
   Value: the filename of the config file Eggdrop is currently using
+
+  Module: core
+
+configureargs
+
+  Value: a string (not list) of configure arguments in shell expansion
+  (single quotes)
 
   Module: core
 
@@ -3427,7 +3523,7 @@ the four special characters:
         matching)
 
   ~     matches 1 or more space characters (can be used for whitespace
-        between words) (This char only works in binds, not in regluar
+        between words) (This char only works in binds, not in regular
         matching)
   ----- ------------------------------------------------------------------
 
