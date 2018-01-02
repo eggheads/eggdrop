@@ -28,4 +28,4 @@ There are also some variables you can set in your config file:
       This is the default compression level used. These levels are the
       same as those used by GNU gzip.
 
-Copyright (C) 2000 - 2017 Eggheads Development Team
+Copyright (C) 2000 - 2018 Eggheads Development Team

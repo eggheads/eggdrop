@@ -252,4 +252,4 @@ rm <file> [files] ...
 
 
 
-Copyright (C) 2000 - 2017 Eggheads Development Team
+Copyright (C) 2000 - 2018 Eggheads Development Team
