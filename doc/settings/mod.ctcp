@@ -36,4 +36,4 @@ There are also several variables to help make your bot less noticeable.
 They are: ctcp-version, ctcp-finger, and ctcp-userinfo. You can use set
 to set them to values you'd like.
 
-Copyright (C) 2000 - 2017 Eggheads Development Team
+Copyright (C) 2000 - 2018 Eggheads Development Team

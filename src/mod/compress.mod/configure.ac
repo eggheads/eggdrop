@@ -9,7 +9,7 @@ AC_INIT([Eggdrop Compress Module],[1.8.3],[bugs@eggheads.org])
 AC_CONFIG_SRCDIR(compress.c)
 AC_CONFIG_AUX_DIR(../../../misc)
 
-AC_COPYRIGHT([Copyright (C) 1999 - 2017 Eggheads Development Team])
+AC_COPYRIGHT([Copyright (C) 1999 - 2018 Eggheads Development Team])
 AC_REVISION([m4_esyscmd([../../../misc/getcommit])])
 
 # Check for gzopen() in -lz.

@@ -128,4 +128,4 @@ Downloading a patch
 
     ftp://ftp.eggheads.org/pub/eggdrop/patches/1.8
 
-Copyright (C) 1999 - 2017 Eggheads Development Team
+Copyright (C) 1999 - 2018 Eggheads Development Team

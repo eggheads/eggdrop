@@ -377,4 +377,4 @@ Obtaining Help
 
 
 Copyright (C) 1997 Robey Pointer
-Copyright (C) 1999 - 2017 Eggheads Development Team
+Copyright (C) 1999 - 2018 Eggheads Development Team
