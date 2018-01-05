@@ -212,11 +212,10 @@ void send_tand_but(int x, char *buf, int len)
 
 void botnet_send_bye()
 {
-  strncpyz(OBUF, "bye\n", sizeof OBUF);
   if (tands > 0) {
-    send_tand_but(-1, OBUF, 4);
+    send_tand_but(-1, "bye\n", 4);
 #ifndef NO_OLD_BOTNET
-    tandout_but(-1, OBUF);
+    tandout_but(-1, "bye\n");
 #endif
   }
 }

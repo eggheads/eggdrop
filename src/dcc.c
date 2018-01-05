@@ -456,20 +456,21 @@ static void out_dcc_bot(int idx, char *buf, void *x)
 
   if (raw_log) {
     /* strip \n from end as putlog appends this */
-    char fnd = 0;
-    if (buf[len - 1] == '\n') {
-      fnd = 1;
-      buf[len - 1] = 0;
+    char *fnd = nmalloc(len + 1);
+    /* Make a copy as buf could be const */
+    strncpyz(fnd, buf, len + 1);
+
+    if (len && buf[len - 1] == '\n') {
+      fnd[len - 1] = 0;
     }
 
     if (!strncmp(buf, "s ", 2))
-      putlog(LOG_BOTSHROUT, "*", "{m->%s} %s", dcc[idx].nick, buf + 2);
+      putlog(LOG_BOTSHROUT, "*", "{m->%s} %s", dcc[idx].nick, fnd + 2);
     else
-      putlog(LOG_BOTNETOUT, "*", "[m->%s] %s", dcc[idx].nick, buf);
+      putlog(LOG_BOTNETOUT, "*", "[m->%s] %s", dcc[idx].nick, fnd);
 
-    /* Re-append \n if present */
-    if (fnd)
-      buf[len - 1] = '\n';
+    nfree(fnd);
+
   }
 
   tputs(dcc[idx].sock, buf, len);
