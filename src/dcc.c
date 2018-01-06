@@ -465,7 +465,7 @@ static void out_dcc_bot(int idx, char *buf, void *x)
       p = fnd;
     }
 
-    if (!strncmp(buf, "s ", 2))
+    if (!strncmp(p, "s ", 2))
       putlog(LOG_BOTSHROUT, "*", "{m->%s} %s", dcc[idx].nick, p + 2);
     else
       putlog(LOG_BOTNETOUT, "*", "[m->%s] %s", dcc[idx].nick, p);
