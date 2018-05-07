@@ -64,7 +64,7 @@ static int add_bot_hostmask(int idx, char *nick)
       memberlist *m = ismember(chan, nick);
 
       if (m) {
-        char s[UHOSTLEN];
+        char s[UHOSTLEN+NICKLEN+5];
         struct userrec *u;
 
         egg_snprintf(s, sizeof s, "%s!%s", m->nick, m->userhost);

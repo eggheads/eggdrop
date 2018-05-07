@@ -1170,7 +1170,7 @@ static int gotmode(char *from, char *origmsg)
           } else {
             op = newsplit(&msg);
             fixcolon(op);
-            if (op == '\0')
+            if (*op == '\0')
               break;
             chan->channel.maxmembers = atoi(op);
             check_tcl_mode(nick, from, u, chan->dname, ms2,
@@ -1199,7 +1199,7 @@ static int gotmode(char *from, char *origmsg)
             chan->channel.mode &= ~CHANKEY;
           op = newsplit(&msg);
           fixcolon(op);
-          if (op == '\0') {
+          if (*op == '\0') {
             break;
           }
           check_tcl_mode(nick, from, u, chan->dname, ms2, op);

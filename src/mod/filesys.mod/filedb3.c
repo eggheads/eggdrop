@@ -161,7 +161,8 @@ static int filedb_readtop(FILE *fdb, filedb_top *fdbt)
     fseek(fdb, 0L, SEEK_SET);
     if (feof(fdb))
       return 0;
-    fread(fdbt, 1, sizeof(filedb_top), fdb);
+    if (fread(fdbt, 1, sizeof(filedb_top), fdb) != 1)
+      return 0;
   } else
     fseek(fdb, sizeof(filedb_top), SEEK_SET);
   return 1;
@@ -187,7 +188,9 @@ static int filedb_delfile(FILE *fdb, long pos)
   fseek(fdb, pos, SEEK_SET);    /* Go to start of entry */
   if (feof(fdb))
     return 0;
-  fread(&fdh, 1, sizeof(filedb_header), fdb);   /* Read header          */
+  /* Read header */
+  if (fread(&fdh, 1, sizeof(filedb_header), fdb) != 1)
+    return 0;
   fdh.stat = FILE_UNUSED;
 
   /* Assign all available space to buffer. Simplifies
@@ -409,12 +412,15 @@ static int _filedb_addfile(FILE *fdb, filedb_entry *fdbe, char *file, int line)
 /* Short-cut macro to read an entry from disc to memory. Only
  * useful for filedb_getfile().
  */
-#define filedb_read(fdb, entry, len)    \
-{                                       \
-  if ((len) > 0) {                      \
-    (entry) = nmalloc((len));           \
-    fread((entry), 1, (len), (fdb));    \
-  }                                     \
+#define filedb_read(fdb, entry, len)            \
+{                                               \
+  if ((len) > 0) {                              \
+    (entry) = nmalloc((len));                   \
+    if (fread((entry), 1, (len), (fdb)) != 1) { \
+      nfree(entry);                             \
+      return NULL;                              \
+    }                                           \
+  }                                             \
 }
 
 /* Reads an entry from the fildb at the specified position. The
@@ -430,7 +436,8 @@ static filedb_entry *_filedb_getfile(FILE *fdb, long pos, int get,
 
   /* Read header */
   fseek(fdb, pos, SEEK_SET);
-  fread(&fdh, 1, sizeof(filedb_header), fdb);
+  if (fread(&fdh, 1, sizeof(filedb_header), fdb) != 1)
+    return NULL;
   if (feof(fdb))
     return NULL;
 

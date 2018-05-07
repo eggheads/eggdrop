@@ -1946,7 +1946,7 @@ static void dcc_telnet_pw(int idx, char *buf, int x)
   putlog(LOG_MISC, "*", DCC_NEWUSER, dcc[idx].nick, dcc[idx].host,
          dcc[idx].port);
   if (notify_new[0]) {
-    char s[121], s1[121], s2[121];
+    char s[NICKLEN+UHOSTMAX+32], s1[NICKLEN+UHOSTMAX+32], s2[NICKLEN+UHOSTMAX+32];
 
     sprintf(s, "Introduced to %s, %s", dcc[idx].nick, dcc[idx].host);
     strcpy(s1, notify_new);

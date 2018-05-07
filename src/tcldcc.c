@@ -681,7 +681,7 @@ static int tcl_dcclist STDVAR
 static int tcl_whom STDVAR
 {
   int chan, i;
-  char c[2], idle[11], work[20], *p;
+  char c[2], idle[32], work[20], *p;
   long tv = 0;
   EGG_CONST char *list[7];
 

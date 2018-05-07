@@ -179,7 +179,7 @@ static void do_mask(struct chanset_t *chan, masklist *m, char *mask, char mode)
 static int detect_chan_flood(char *floodnick, char *floodhost, char *from,
                              struct chanset_t *chan, int which, char *victim)
 {
-  char h[UHOSTLEN], ftype[12], *p;
+  char h[NICKMAX+UHOSTLEN+1], ftype[12], *p;
   struct userrec *u;
   memberlist *m;
   int thr = 0, lapse = 0;
@@ -383,7 +383,7 @@ static void kick_all(struct chanset_t *chan, char *hostmask, char *comment,
                      int bantype)
 {
   memberlist *m;
-  char kicknick[512], s[UHOSTLEN];
+  char kicknick[512], s[NICKMAX+UHOSTLEN+1];
   struct flag_record fr = { FR_GLOBAL | FR_CHAN, 0, 0, 0, 0, 0 };
   int k, l, flushed;
 
@@ -443,7 +443,7 @@ static void refresh_ban_kick(struct chanset_t *chan, char *user, char *nick)
       if (match_addr(b->mask, user)) {
         struct flag_record fr = { FR_GLOBAL | FR_CHAN, 0, 0, 0, 0, 0 };
         char c[512];            /* The ban comment.     */
-        char s[UHOSTLEN];
+        char s[NICKMAX+UHOSTLEN+1];
 
         sprintf(s, "%s!%s", m->nick, m->userhost);
         get_user_flagrec(m->user ? m->user : get_user_by_host(s), &fr,
@@ -636,7 +636,7 @@ static void resetmasks(struct chanset_t *chan, masklist *m, maskrec *mrec,
 static void check_this_ban(struct chanset_t *chan, char *banmask, int sticky)
 {
   memberlist *m;
-  char user[UHOSTLEN];
+  char user[NICKMAX+UHOSTLEN+1];
 
   if (HALFOP_CANTDOMODE('b'))
     return;
@@ -749,7 +749,7 @@ static void check_this_member(struct chanset_t *chan, char *nick,
                               struct flag_record *fr)
 {
   memberlist *m;
-  char s[UHOSTLEN], *p;
+  char s[NICKMAX+UHOSTLEN+1], *p;
 
   m = ismember(chan, nick);
   if (!m || match_my_nick(nick) || (!me_op(chan) && !me_halfop(chan)))
@@ -842,7 +842,7 @@ static void check_this_member(struct chanset_t *chan, char *nick,
 
 static void check_this_user(char *hand, int delete, char *host)
 {
-  char s[UHOSTLEN];
+  char s[NICKMAX+UHOSTLEN+1];
   memberlist *m;
   struct userrec *u;
   struct chanset_t *chan;
@@ -866,7 +866,7 @@ static void check_this_user(char *hand, int delete, char *host)
 static void recheck_channel(struct chanset_t *chan, int dobans)
 {
   memberlist *m;
-  char s[UHOSTLEN];
+  char s[NICKMAX+UHOSTLEN+1];
   struct flag_record fr = { FR_GLOBAL | FR_CHAN, 0, 0, 0, 0, 0 };
   static int stacking = 0;
   int stop_reset = 0;

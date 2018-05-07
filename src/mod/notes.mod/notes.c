@@ -440,7 +440,7 @@ static int tcl_listnotes STDVAR
 {
   int i, numnotes;
   int ln[128]; /* Is it enough? */
-  char s[8];
+  char s[32];
 
   BADARGS(3, 3, " handle noteslist#");
 
@@ -834,7 +834,7 @@ static void notes_hourly()
     register memberlist *m;
     int k;
     register int l;
-    char s1[256];
+    char s1[NICKMAX+UHOSTLEN+1];
     struct userrec *u;
 
     for (chan = chanset; chan; chan = chan->next) {

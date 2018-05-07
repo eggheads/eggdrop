@@ -434,7 +434,7 @@ char *lastbot(char *who)
 void answer_local_whom(int idx, int chan)
 {
   char format[81];
-  char c, idle[40];
+  char c, idle[64];
   int i, t, nicklen, botnicklen, total = 0;
 
   if (chan == -1)

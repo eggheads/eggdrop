@@ -216,7 +216,7 @@ static void check_tcl_toutlost(struct userrec *u, char *nick, char *path,
 static unsigned long pump_file_to_sock(FILE *file, long sock,
                                        register unsigned long pending_data)
 {
-  register unsigned long actual_size;
+  unsigned long actual_size, r;
   const unsigned long buf_len = pending_data >= PMAX_SIZE ?
                       PMAX_SIZE : pending_data;
   char *bf = nmalloc(buf_len);
@@ -224,9 +224,11 @@ static unsigned long pump_file_to_sock(FILE *file, long sock,
   if (bf) {
     do {
       actual_size = pending_data >= buf_len ? buf_len : pending_data;
-      fread(bf, actual_size, 1, file);
-      tputs(sock, bf, actual_size);
-      pending_data -= actual_size;
+      r = fread(bf, actual_size, 1, file);
+      if (r < 0)
+        break;
+      tputs(sock, bf, r);
+      pending_data -= r;
     } while (!sock_has_data(SOCK_DATA_OUTGOING, sock) && pending_data != 0);
     nfree(bf);
   }

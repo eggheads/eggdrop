@@ -266,7 +266,7 @@ static void set_key(struct chanset_t *chan, char *k)
 
 static int hand_on_chan(struct chanset_t *chan, struct userrec *u)
 {
-  char s[UHOSTLEN];
+  char s[NICKMAX+UHOSTLEN+1];
   memberlist *m;
 
   for (m = chan->channel.member; m && m->nick[0]; m = m->next) {
@@ -525,7 +525,7 @@ static void status_log()
 static void check_lonely_channel(struct chanset_t *chan)
 {
   memberlist *m;
-  char s[UHOSTLEN];
+  char s[NICKMAX+UHOSTLEN+1];
   int i = 0;
 
   if (channel_pending(chan) || !channel_active(chan) || me_op(chan) ||
@@ -595,7 +595,7 @@ static void check_expired_chanstuff()
 {
   masklist *b, *e;
   memberlist *m, *n;
-  char *key, s[UHOSTLEN];
+  char *key, s[NICKMAX+UHOSTLEN+1];
   struct chanset_t *chan;
   struct flag_record fr = { FR_GLOBAL | FR_CHAN, 0, 0, 0, 0, 0 };
 
