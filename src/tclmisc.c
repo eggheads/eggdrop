@@ -466,8 +466,8 @@ static int tcl_rand STDVAR
     Tcl_AppendResult(irp, "random limit must be greater than zero", NULL);
     return TCL_ERROR;
   } else if (i > RANDOM_MAX) {
-    Tcl_AppendResult(irp, "random limit must be less than ",
-		     int_to_base10(RANDOM_MAX), NULL);
+    Tcl_AppendResult(irp, "random limit must be equal to or less than ",
+                     int_to_base10(RANDOM_MAX), NULL);
     return TCL_ERROR;
   }
 
