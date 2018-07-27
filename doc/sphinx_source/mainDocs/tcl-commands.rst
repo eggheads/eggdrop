@@ -2220,7 +2220,7 @@ myip
 rand <limit>
 ^^^^^^^^^^^^
 
-  Returns: a random integer between 0 and limit-1
+  Returns: a random integer between 0 and limit-1. limit cannot be higher than RAND_MAX, which is generally 2147483648.
 
   Module: core
 
