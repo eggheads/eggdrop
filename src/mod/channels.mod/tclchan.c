@@ -138,7 +138,7 @@ static int tcl_stick STDVAR
     if (u_setsticky_ban(chan, argv[1], !strncmp(argv[0], "un", 2) ? 0 : 1))
       ok = 1;
   }
-  if (!ok && u_setsticky_ban(NULL, argv[1], !strncmp(argv[0], "un", 2) ?
+  else if (!ok && u_setsticky_ban(NULL, argv[1], !strncmp(argv[0], "un", 2) ?
       0 : 1))
     ok = 1;
   if (ok)
@@ -164,7 +164,7 @@ static int tcl_stickinvite STDVAR
     if (u_setsticky_invite(chan, argv[1], !strncmp(argv[0], "un", 2) ? 0 : 1))
       ok = 1;
   }
-  if (!ok && u_setsticky_invite(NULL, argv[1], !strncmp(argv[0], "un", 2) ?
+  else if (!ok && u_setsticky_invite(NULL, argv[1], !strncmp(argv[0], "un", 2) ?
       0 : 1))
     ok = 1;
   if (ok)
@@ -190,7 +190,7 @@ static int tcl_stickexempt STDVAR
     if (u_setsticky_exempt(chan, argv[1], !strncmp(argv[0], "un", 2) ? 0 : 1))
       ok = 1;
   }
-  if (!ok && u_setsticky_exempt(NULL, argv[1], !strncmp(argv[0], "un", 2) ?
+  else if (!ok && u_setsticky_exempt(NULL, argv[1], !strncmp(argv[0], "un", 2) ?
       0 : 1))
     ok = 1;
   if (ok)
@@ -216,7 +216,7 @@ static int tcl_isban STDVAR
     if (u_equals_mask(chan->bans, argv[1]))
       ok = 1;
   }
-  if (u_equals_mask(global_bans, argv[1]))
+  else if (u_equals_mask(global_bans, argv[1]))
     ok = 1;
   if (ok)
     Tcl_AppendResult(irp, "1", NULL);
@@ -241,7 +241,7 @@ static int tcl_isexempt STDVAR
     if (u_equals_mask(chan->exempts, argv[1]))
       ok = 1;
   }
-  if (u_equals_mask(global_exempts, argv[1]))
+  else if (u_equals_mask(global_exempts, argv[1]))
     ok = 1;
   if (ok)
     Tcl_AppendResult(irp, "1", NULL);
@@ -266,7 +266,7 @@ static int tcl_isinvite STDVAR
     if (u_equals_mask(chan->invites, argv[1]))
       ok = 1;
   }
-  if (u_equals_mask(global_invites, argv[1]))
+  else if (u_equals_mask(global_invites, argv[1]))
     ok = 1;
   if (ok)
     Tcl_AppendResult(irp, "1", NULL);
@@ -292,7 +292,7 @@ static int tcl_isbansticky STDVAR
     if (u_sticky_mask(chan->bans, argv[1]))
       ok = 1;
   }
-  if (u_sticky_mask(global_bans, argv[1]))
+  else if (u_sticky_mask(global_bans, argv[1]))
     ok = 1;
   if (ok)
     Tcl_AppendResult(irp, "1", NULL);
@@ -317,7 +317,7 @@ static int tcl_isexemptsticky STDVAR
     if (u_sticky_mask(chan->exempts, argv[1]))
       ok = 1;
   }
-  if (u_sticky_mask(global_exempts, argv[1]))
+  else if (u_sticky_mask(global_exempts, argv[1]))
     ok = 1;
   if (ok)
     Tcl_AppendResult(irp, "1", NULL);
@@ -342,7 +342,7 @@ static int tcl_isinvitesticky STDVAR
     if (u_sticky_mask(chan->invites, argv[1]))
       ok = 1;
   }
-  if (u_sticky_mask(global_invites, argv[1]))
+  else if (u_sticky_mask(global_invites, argv[1]))
     ok = 1;
   if (ok)
     Tcl_AppendResult(irp, "1", NULL);
@@ -367,7 +367,7 @@ static int tcl_ispermban STDVAR
     if (u_equals_mask(chan->bans, argv[1]) == 2)
       ok = 1;
   }
-  if (u_equals_mask(global_bans, argv[1]) == 2)
+  else if (u_equals_mask(global_bans, argv[1]) == 2)
     ok = 1;
   if (ok)
     Tcl_AppendResult(irp, "1", NULL);
@@ -392,7 +392,7 @@ static int tcl_ispermexempt STDVAR
     if (u_equals_mask(chan->exempts, argv[1]) == 2)
       ok = 1;
   }
-  if (u_equals_mask(global_exempts, argv[1]) == 2)
+  else if (u_equals_mask(global_exempts, argv[1]) == 2)
     ok = 1;
   if (ok)
     Tcl_AppendResult(irp, "1", NULL);
@@ -417,7 +417,7 @@ static int tcl_isperminvite STDVAR
     if (u_equals_mask(chan->invites, argv[1]) == 2)
       ok = 1;
   }
-  if (u_equals_mask(global_invites, argv[1]) == 2)
+  else if (u_equals_mask(global_invites, argv[1]) == 2)
     ok = 1;
   if (ok)
     Tcl_AppendResult(irp, "1", NULL);
@@ -442,7 +442,7 @@ static int tcl_matchban STDVAR
     if (u_match_mask(chan->bans, argv[1]))
       ok = 1;
   }
-  if (u_match_mask(global_bans, argv[1]))
+  else if (u_match_mask(global_bans, argv[1]))
     ok = 1;
   if (ok)
     Tcl_AppendResult(irp, "1", NULL);
@@ -467,7 +467,7 @@ static int tcl_matchexempt STDVAR
     if (u_match_mask(chan->exempts, argv[1]))
       ok = 1;
   }
-  if (u_match_mask(global_exempts, argv[1]))
+  else if (u_match_mask(global_exempts, argv[1]))
     ok = 1;
   if (ok)
     Tcl_AppendResult(irp, "1", NULL);
@@ -492,7 +492,7 @@ static int tcl_matchinvite STDVAR
     if (u_match_mask(chan->invites, argv[1]))
       ok = 1;
   }
-  if (u_match_mask(global_invites, argv[1]))
+  else if (u_match_mask(global_invites, argv[1]))
     ok = 1;
   if (ok)
     Tcl_AppendResult(irp, "1", NULL);
