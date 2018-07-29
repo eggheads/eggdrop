@@ -27,5 +27,5 @@
  */
 
 #define EGG_STRINGVER "1.8.3"
-#define EGG_NUMVER 1080300
-#define EGG_PATCH "alpha"
+#define EGG_NUMVER 1080301
+#define EGG_PATCH "archdetect"
