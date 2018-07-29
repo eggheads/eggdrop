@@ -1009,7 +1009,7 @@ static void cmd_handle(struct userrec *u, int idx, char *par)
     dprintf(idx,
             "Bizarre quantum forces prevent handle from starting with '%c'.\n",
             newhandle[0]);
-  else if (!egg_strcasecmp(u->handle, EGG_BG_HANDLE))
+  else if (!egg_strcasecmp(dcc[idx].nick, EGG_BG_HANDLE))
     dprintf(idx, "You can't change the handle of this temporary user.\n");
   else if (get_user_by_handle(userlist, newhandle) &&
            egg_strcasecmp(dcc[idx].nick, newhandle))
