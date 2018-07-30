@@ -79,6 +79,10 @@
 #  include <sys/resource.h>             /* setrlimit() */
 #endif
 
+#ifdef HAVE_GETRANDOM
+#  include <sys/random.h>
+#endif
+
 #ifndef _POSIX_SOURCE
 #  define _POSIX_SOURCE 1               /* Solaris needs this */
 #endif
@@ -1016,6 +1020,19 @@ int mainloop(int toplevel)
   return (eggbusy || tclbusy);
 }
 
+void init_random() {
+  unsigned int seed;
+#ifdef HAVE_GETRANDOM
+  if (getrandom(&seed, sizeof(seed), 0) != sizeof(seed))
+    fatal("ERROR: getrandom()\n", 0);
+#else
+  struct timeval tp;
+  gettimeofday(&tp, NULL);
+  seed = (tp.tv_sec * tp.tv_usec) ^ getpid();
+#endif
+  srandom(seed);
+}
+
 int main(int arg_c, char **arg_v)
 {
   int i, xx;
@@ -1106,7 +1123,7 @@ int main(int arg_c, char **arg_v)
   chanset = NULL;
   egg_memcpy(&nowtm, localtime(&now), sizeof(struct tm));
   lastmin = now / 60;
-  srandom((unsigned int) (now % (getpid() + getppid())));
+  init_random();
   init_mem();
   if (argc > 1)
     do_arg();
