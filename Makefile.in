@@ -364,7 +364,7 @@ install-start:
 		$(top_srcdir)/misc/mkinstalldirs $(DEST) >/dev/null; \
 	fi
 
-install-bin: | install-start
+install-bin: install-start
 	@if test -f $(DEST)/o$(EGGEXEC); then \
 		rm -f $(DEST)/o$(EGGEXEC); \
 	fi && \
@@ -380,7 +380,7 @@ install-bin: | install-start
 	$(INSTALL_PROGRAM) $(EGGEXEC) $(DEST)/$(EGGEXEC)-$(EGGVERSION) && \
 	(cd $(DEST) && $(LN_S) $(EGGEXEC)-$(EGGVERSION) $(EGGEXEC))
 
-install-modules: | install-start
+install-modules: install-start
 	@if test -h $(DEST)/modules; then \
 		echo "Removing symlink to archival modules subdirectory."; \
 		rm -f $(DEST)/modules; \
@@ -402,7 +402,7 @@ install-modules: | install-start
 		done; \
 	fi
 
-install-data: | install-start
+install-data: install-start
 	@if test ! -f $(DEST)/eggdrop.conf; then \
 		$(INSTALL_DATA) $(srcdir)/eggdrop.conf $(DEST)/; \
 	fi
@@ -415,7 +415,7 @@ install-data: | install-start
 		$(INSTALL_DATA) $(srcdir)/logs/CONTENTS $(DEST)/logs/; \
 	fi
 
-install-text: | install-start
+install-text: install-start
 	@if test ! -d $(DEST)/text; then \
 		echo "Creating 'text' subdirectory."; \
 		$(top_srcdir)/misc/mkinstalldirs $(DEST)/text >/dev/null; \
@@ -427,7 +427,7 @@ install-text: | install-start
 		$(INSTALL_DATA) $(srcdir)/text/banner $(DEST)/text/; \
 	fi
 
-install-help: | install-start
+install-help: install-start
 	+@echo "Copying help files." && \
 	if test ! "x`echo $(srcdir)/help/*.help`" = "x$(srcdir)/help/*.help"; then \
 		if test ! -d $(DEST)/help; then \
@@ -458,7 +458,7 @@ install-help: | install-start
 	fi && \
 	cd src/mod/ && $(MAKE_INSTALL) install-help
 
-install-language: | install-start
+install-language: install-start
 	+@echo "Copying language files." && \
 	if test ! "x`echo $(srcdir)/language/*.lang`" = "x$(srcdir)/language/*.lang"; then \
 		if test ! -d $(DEST)/language; then \
@@ -471,18 +471,18 @@ install-language: | install-start
 	fi && \
 	cd src/mod && $(MAKE_INSTALL) install-language
 
-install-filesys: | install-start
+install-filesys: install-start
 	@if test ! -d $(DEST)/filesys; then \
 		echo "Creating skeletal filesystem subdirectories."; \
 		$(top_srcdir)/misc/mkinstalldirs $(DEST)/filesys >/dev/null; \
 		$(top_srcdir)/misc/mkinstalldirs $(DEST)/filesys/incoming >/dev/null; \
 	fi
 
-install-doc: | install-start
+install-doc: install-start
 	+@$(INSTALL_DATA) $(srcdir)/README $(DEST) && \
 	cd doc/ && $(MAKE_INSTALL) install
 
-install-scripts: | install-start
+install-scripts: install-start
 	+@cd scripts/ && $(MAKE_INSTALL) install
 
 #safety hash
