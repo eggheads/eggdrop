@@ -2032,8 +2032,8 @@ static void start_sending_users(int idx)
           if (bi) {
 #ifdef TLS
             egg_snprintf(s2, sizeof s2, "s c BOTADDR %s %s %s%d %s%d\n",
-                         u->handle, bi->address, (bi->ssl & TLS_BOT) ? "+" : "",
-                         bi->telnet_port, (bi->ssl & TLS_RELAY) ? "+" : "",
+                         u->handle, bi->address, (bi->ssl & TLS_BOT) ? "+" : ((bi->ssl & TLS_BOT_REJ) ? "-" : ""),
+                         bi->telnet_port, (bi->ssl & TLS_RELAY) ? "+" : ((bi->ssl & TLS_RELAY_REJ) ? "-" : ""),
                          bi->relay_port);
 #else
             egg_snprintf(s2, sizeof s2, "s c BOTADDR %s %s %d %d\n", u->handle,

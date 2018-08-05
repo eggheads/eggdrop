@@ -854,20 +854,21 @@ static void cmd_pls_bot(struct userrec *u, int idx, char *par)
   }
 
 #ifndef TLS
-  if ((port && *port == '+') || (relay && relay[0] == '+')) {
-    dprintf(idx, "Ports prefixed with '+' are not enabled "
+  if ((port && (*port == '+' || *port == '-')) ||
+      (relay && (*relay == '+' || *relay == '-'))) {
+    dprintf(idx, "Ports prefixed with '+' or '-' are not enabled "
       "(this Eggdrop was compiled without TLS support).\n");
     return;
   }
 #endif
   if (port) {
-    if (!check_int_range(port, 0, 65536)) {
+    if (!check_int_range(port, 0, 65536) && !check_int_range(port, -65536, 0)) {
       dprintf(idx, "Ports must be integers between 1 and 65535.\n");
       return;
     }
   }
   if (relay) {
-    if (!check_int_range(relay, 0, 65536)) {
+    if (!check_int_range(relay, 0, 65536) && !check_int_range(relay, -65536, 0)) {
       dprintf(idx, "Ports must be integers between 1 and 65535.\n");
       return;
     }
@@ -897,19 +898,27 @@ static void cmd_pls_bot(struct userrec *u, int idx, char *par)
 #ifdef TLS
     if (*port == '+')
       bi->ssl |= TLS_BOT;
-#endif
+    else if (*port == '-')
+      bi->ssl |= TLS_BOT_REJ;
+    bi->telnet_port = abs(atoi(port));
+#else
     bi->telnet_port = atoi(port);
+#endif
     if (!relay) {
       bi->relay_port = bi->telnet_port;
 #ifdef TLS
-      bi->ssl *= TLS_BOT + TLS_RELAY;
+      bi->ssl |= (*port == '+') ? TLS_RELAY : ((*port == '-') ? TLS_RELAY_REJ : 0);
 #endif
     } else  {
 #ifdef TLS
-      if (relay[0] == '+')
+      if (*relay == '+')
         bi->ssl |= TLS_RELAY;
-#endif
+      else if (*relay == '-')
+        bi->ssl |= TLS_RELAY_REJ;
+      bi->relay_port = abs(atoi(relay));
+#else
       bi->relay_port = atoi(relay);
+#endif
     }
   }
 
@@ -920,9 +929,9 @@ static void cmd_pls_bot(struct userrec *u, int idx, char *par)
            relay ? relay : "", host[0] ? " " : "", host);
 #ifdef TLS
     dprintf(idx, "Added bot '%s' with address [%s]:%s%d/%s%d and %s%s%s.\n",
-            handle, addr, (bi->ssl & TLS_BOT) ? "+" : "", bi->telnet_port,
-            (bi->ssl & TLS_RELAY) ? "+" : "", bi->relay_port, host[0] ?
-            "hostmask '" : "no hostmask", host[0] ? host : "",
+            handle, addr, (bi->ssl & TLS_BOT) ? "+" : ((bi->ssl & TLS_BOT_REJ) ? "-" : ""),
+            bi->telnet_port, (bi->ssl & TLS_RELAY) ? "+" : ((bi->ssl & TLS_RELAY_REJ) ? "-" : ""),
+            bi->relay_port, host[0] ? "hostmask '" : "no hostmask", host[0] ? host : "",
             host[0] ? "'" : "");
 #else
     dprintf(idx, "Added bot '%s' with address [%s]:%d/%d and %s%s%s.\n", handle,
@@ -1194,20 +1203,21 @@ static void cmd_chaddr(struct userrec *u, int idx, char *par)
   }
 
 #ifndef TLS
-  if ((port && *port == '+') || (relay && relay[0] == '+')) {
-    dprintf(idx, "Ports prefixed with '+' are not enabled "
+  if ((port && (*port == '+' || *port == '-')) ||
+      (relay && (*relay == '+' || *relay == '-'))) {
+    dprintf(idx, "Ports prefixed with '+' or '-' are not enabled "
       "(this Eggdrop was compiled without TLS support).\n");
     return;
   }
 #endif
   if (port && port[0]) {
-    if (!check_int_range(port, 0, 65536)) {
+    if (!check_int_range(port, 0, 65536) && !check_int_range(port, -65536, 0)) {
       dprintf(idx, "Ports must be integers between 1 and 65535.\n");
       return;
     }
   }
   if (relay) {
-    if (!check_int_range(relay, 0, 65536)) {
+    if (!check_int_range(relay, 0, 65536) && !check_int_range(relay, -65536, 0)) {
       dprintf(idx, "Ports must be integers between 1 and 65535.\n");
       return;
     }
@@ -1252,22 +1262,27 @@ static void cmd_chaddr(struct userrec *u, int idx, char *par)
     bi->ssl = 0;
     if (*port == '+')
       bi->ssl |= TLS_BOT;
-    bi->telnet_port = atoi(port);
+    else if (*port == '-')
+      bi->ssl |= TLS_BOT_REJ;
+    bi->telnet_port = abs(atoi(port));
     if (!relay) {
       bi->relay_port = bi->telnet_port;
-      bi->ssl *= TLS_BOT + TLS_RELAY;
+      bi->ssl |= (*port == '+') ? TLS_RELAY : ((*port == '-') ? TLS_RELAY_REJ : 0);
     } else {
       if (*relay == '+') {
         bi->ssl |= TLS_RELAY;
+      } else if (*relay == '-') {
+        bi->ssl |= TLS_RELAY_REJ;
       }
+      bi->relay_port = abs(atoi(relay));
 #else
   } else {
     bi->telnet_port = atoi(port);
     if (!relay) {
       bi->relay_port = bi->telnet_port;
     } else {
+      bi->relay_port = atoi(relay);
 #endif
-     bi->relay_port = atoi(relay);
     }
   }
   set_user(&USERENTRY_BOTADDR, u1, bi);

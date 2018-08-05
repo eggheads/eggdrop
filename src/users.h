@@ -86,6 +86,8 @@ struct bot_addr {
 #ifdef TLS
 #  define TLS_BOT 1
 #  define TLS_RELAY 2
+#  define TLS_BOT_REJ 4
+#  define TLS_RELAY_REJ 8
   int ssl;
 #endif
 };

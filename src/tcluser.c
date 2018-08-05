@@ -383,11 +383,11 @@ static int tcl_addbot STDVAR
 #endif
     /* Verify */
     /* check_int_range returns 0 if q or p is NULL */
-    if (q && !check_int_range(q, 0, 65536)) {
+    if (q && (!check_int_range(q, -65536, 0) || !check_int_range(q, 0, 65536))) {
       Tcl_AppendResult(irp, "0", NULL);
       return TCL_OK;
     }
-    if (p && !check_int_range(p, 0, 65536)) {
+    if (p && (!check_int_range(p, -65536, 0) || !check_int_range(p, 0, 65536))) {
       Tcl_AppendResult(irp, "0", NULL);
       return TCL_OK;
     }
@@ -417,21 +417,27 @@ static int tcl_addbot STDVAR
     } else {
       bi->address = user_malloc(count + 1);
       strcpy(bi->address, addr);
-      bi->telnet_port = atoi(q);
+      /* Save to use abs() as q is guaranteed to be more than -65536 */
+      bi->telnet_port = abs(atoi(q));
 #ifdef TLS
       if (*q == '+')
         bi->ssl = TLS_BOT;
+      else if (*q == '-')
+        bi->ssl = TLS_BOT_REJ;
 #endif
       if (!p) {
         bi->relay_port = bi->telnet_port;
 #ifdef TLS
-        bi->ssl *= TLS_BOT + TLS_RELAY;
+        bi->ssl |= (*q == '+') ? TLS_RELAY : ((*q == '-') ? TLS_RELAY_REJ : 0);
 #endif
       } else {
-        bi->relay_port = atoi(p);
+        /* Save to use abs() as p is guaranteed to be more than -65536 */
+        bi->relay_port = abs(atoi(p));
 #ifdef TLS
         if (*p == '+')
           bi->ssl |= TLS_RELAY;
+        else if (*p == '-')
+          bi->ssl |= TLS_RELAY_REJ;
 #endif
       }
     }
