@@ -1024,25 +1024,33 @@ int botlink(char *linker, int idx, char *nick)
     } else {
       correct_handle(nick);
 
-      if (idx > -2)
+      if (idx > -2) {
 #ifdef IPV6
-      {
         if (strchr(bi->address, ':'))
+#  ifdef TLS
+          putlog(LOG_BOTS, "*", "%s %s at [%s]:%s%d ...", BOT_LINKING, nick,
+                 bi->address, (bi->ssl & TLS_BOT) ? "+" : ((bi->ssl & TLS_BOT_REJ) ? "-" : "")),
+                 bi->telnet_port);
+#  else
           putlog(LOG_BOTS, "*", "%s %s at [%s]:%d ...", BOT_LINKING, nick,
                  bi->address, bi->telnet_port);
+#  endif
         else
+#endif
+#ifdef TLS
+          putlog(LOG_BOTS, "*", "%s %s at %s:%s%d ...", BOT_LINKING, nick,
+                 bi->address, (bi->ssl & TLS_BOT) ? "+" : ((bi->ssl & TLS_BOT_REJ) ? "-" : "")),
+                 bi->telnet_port);
+#else
           putlog(LOG_BOTS, "*", "%s %s at %s:%d ...", BOT_LINKING, nick,
                  bi->address, bi->telnet_port);
-      }
-#else
-        putlog(LOG_BOTS, "*", "%s %s at %s:%d ...", BOT_LINKING, nick,
-               bi->address, bi->telnet_port);
 #endif
+      }
       i = new_dcc(&DCC_DNSWAIT, sizeof(struct dns_info));
       dcc[i].timeval = now;
       dcc[i].port = bi->telnet_port;
 #ifdef TLS
-      dcc[i].ssl = (bi->ssl & TLS_BOT);
+      dcc[i].ssl = (bi->ssl & (TLS_BOT | TLS_BOT_REJ));
 #endif
       dcc[i].user = u;
       strcpy(dcc[i].nick, nick);
@@ -1189,7 +1197,7 @@ void tandem_relay(int idx, char *nick, int i)
 
   dcc[i].port = bi->relay_port;
 #ifdef TLS
-  dcc[i].ssl = (bi->ssl & TLS_RELAY);
+  dcc[i].ssl = (bi->ssl & (TLS_RELAY | TLS_RELAY_REJ));
 #endif
   dcc[i].addr = 0L;
   strcpy(dcc[i].nick, nick);
@@ -1197,12 +1205,24 @@ void tandem_relay(int idx, char *nick, int i)
   strcpy(dcc[i].host, bi->address);
 #ifdef IPV6
   if (strchr(bi->address, ':'))
+#  ifdef TLS
+    dprintf(idx, "%s %s @ [%s]:%s%d ...\n", BOT_CONNECTINGTO, nick,
+            bi->address, (bi->ssl & TLS_RELAY) ? "+" : ((bi->ssl & TLS_RELAY_REJ) ? "-" : "")),
+            bi->relay_port);
+#  else
     dprintf(idx, "%s %s @ [%s]:%d ...\n", BOT_CONNECTINGTO, nick,
             bi->address, bi->relay_port);
+#  endif
   else
 #endif
+#ifdef TLS
+  dprintf(idx, "%s %s @ %s:%s%d ...\n", BOT_CONNECTINGTO, nick,
+          bi->address, (bi->ssl & TLS_RELAY) ? "+" : ((bi->ssl & TLS_RELAY_REJ) ? "-" : "")),
+          bi->relay_port);
+#else
   dprintf(idx, "%s %s @ %s:%d ...\n", BOT_CONNECTINGTO, nick,
           bi->address, bi->relay_port);
+#endif
   dprintf(idx, "%s\n", BOT_BYEINFO1);
   dcc[idx].type = &DCC_PRE_RELAY;
   ci = dcc[idx].u.chat;
