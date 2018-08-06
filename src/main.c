@@ -1020,7 +1020,7 @@ int mainloop(int toplevel)
   return (eggbusy || tclbusy);
 }
 
-static void init_random() {
+static void init_random(void) {
   unsigned int seed;
 #ifdef HAVE_GETRANDOM
   if (getrandom(&seed, sizeof(seed), 0) != sizeof(seed))
