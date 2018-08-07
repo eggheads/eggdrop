@@ -463,10 +463,11 @@ static int tcl_rand STDVAR
   i = atol(argv[1]);
 
   if (i <= 0) {
-    Tcl_AppendResult(irp, "random limit must be greater than zero", NULL);
+    Tcl_AppendResult(irp, "random limit must be greater than 0", NULL);
     return TCL_ERROR;
   } else if (i > RANDOM_MAX) {
-    Tcl_AppendResult(irp, "random limit must be less than ", RANDOM_MAX, NULL);
+    Tcl_AppendResult(irp, "random limit must be equal to or less than ",
+                     int_to_base10(RANDOM_MAX), NULL);
     return TCL_ERROR;
   }
 

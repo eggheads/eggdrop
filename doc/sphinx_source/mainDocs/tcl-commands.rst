@@ -2220,7 +2220,7 @@ myip
 rand <limit>
 ^^^^^^^^^^^^
 
-  Returns: a random integer between 0 and limit-1
+  Returns: a random integer between 0 and limit-1. Limit must be greater than 0 and equal to or less than RAND_MAX, which is generally 2147483647. The underlying pseudo-random number generator is not cryptographically secure.
 
   Module: core
 
