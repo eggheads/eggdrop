@@ -329,6 +329,9 @@ typedef u_32bit_t IP;
 #define egg_isspace(x)  isspace((int)  (unsigned char) (x))
 #define egg_islower(x)  islower((int)  (unsigned char) (x))
 
+/* Use egg_bzero instead of memset or bzero */
+#define egg_bzero(dest, n) memset(dest, 0, n)
+
 /***********************************************************************/
 
 /* It's used in so many places, let's put it here */

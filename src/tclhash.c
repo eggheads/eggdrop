@@ -71,7 +71,7 @@ static inline void *n_malloc_null(int size, const char *file, int line)
   void *ptr = nmalloc(size);
 #endif
 
-  memset(ptr, 0, size);
+  egg_bzero(ptr, size);
   return ptr;
 }
 
