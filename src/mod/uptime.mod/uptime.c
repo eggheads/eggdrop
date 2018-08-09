@@ -44,7 +44,6 @@
 #include <fcntl.h>
 #include <sys/stat.h>
 #include <unistd.h>
-#include <string.h>
 
 /*
  * regnr is unused; however, it must be here inorder for
