@@ -69,11 +69,13 @@ static int is_compressedfile(char *filename);
 
 static int is_compressedfile(char *filename)
 {
-  char buf1[50] = {0}, buf2[50] = {0};
+  char buf1[50], buf2[50];
   FILE *fin;
   gzFile zin;
   int len1, len2, i;
 
+  egg_bzero(buf1, sizeof(buf1));
+  egg_bzero(buf2, sizeof(buf2));
   if (!is_file(filename))
     return COMPF_FAILED;
 
