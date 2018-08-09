@@ -231,13 +231,13 @@ void MD5_Final(unsigned char *result, MD5_CTX *ctx)
 	free = 64 - used;
 
 	if (free < 8) {
-		egg_memset(&ctx->buffer[used], 0, free);
+		memset(&ctx->buffer[used], 0, free);
 		body(ctx, ctx->buffer, 64);
 		used = 0;
 		free = 64;
 	}
 
-	egg_memset(&ctx->buffer[used], 0, free - 8);
+	memset(&ctx->buffer[used], 0, free - 8);
 
 	ctx->lo <<= 3;
 	ctx->buffer[56] = ctx->lo;
@@ -268,6 +268,6 @@ void MD5_Final(unsigned char *result, MD5_CTX *ctx)
 	result[14] = ctx->d >> 16;
 	result[15] = ctx->d >> 24;
 
-	egg_memset(ctx, 0, sizeof(*ctx));
+	memset(ctx, 0, sizeof(*ctx));
 }
 #endif /* HAVE_OPENSSL_MD5 */

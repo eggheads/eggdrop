@@ -44,6 +44,7 @@
 #include <fcntl.h>
 #include <sys/stat.h>
 #include <unistd.h>
+#include <string.h>
 
 /*
  * regnr is unused; however, it must be here inorder for
@@ -151,7 +152,7 @@ int init_uptime(void)
     putlog(LOG_DEBUG, "*", "init_uptime socket returned < 0 %d", uptimesock);
     return ((uptimesock = -1));
   }
-  egg_memset(&sai, 0, sizeof(sai));
+  memset(&sai, 0, sizeof(sai));
   sai.sin_addr.s_addr = INADDR_ANY;
   sai.sin_family = AF_INET;
   if (bind(uptimesock, (struct sockaddr *) &sai, sizeof(sai)) < 0) {
