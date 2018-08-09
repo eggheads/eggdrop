@@ -181,7 +181,8 @@ static int ctcp_CHAT(char *nick, char *uhost, char *handle, char *object,
     for (i = 0; i < dcc_total; i++) {
       if ((dcc[i].type->flags & DCT_LISTEN) &&
 #ifdef TLS
-          (ssl == dcc[i].ssl) &&
+          ((ssl && dcc[i].ssl & DCC_TLS_USE) ||
+           (!ssl && dcc[i].ssl & DCC_TLS_REJ)) &&
 #endif
           (!strcmp(dcc[i].nick, "(telnet)") ||
            !strcmp(dcc[i].nick, "(users)")) &&

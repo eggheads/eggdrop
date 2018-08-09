@@ -1482,8 +1482,8 @@ static void bot_versions(int sock, char *par)
 static void bot_starttls(int idx, char *par)
 {
   char *con;
-  /* We're already using ssl, ignore the request */
-  if (dcc[idx].ssl)
+  /* We're already using ssl or rejecting it, ignore the request */
+  if (dcc[idx].ssl & (DCC_TLS_USE | DCC_TLS_REJ))
     return;
 
   con = newsplit(&par);
@@ -1497,7 +1497,7 @@ static void bot_starttls(int idx, char *par)
     ssl_handshake(dcc[idx].sock, TLS_CONNECT, tls_vfybots, LOG_BOTS,
                   dcc[idx].host, NULL);
   }
-  dcc[idx].ssl = 1;
+  dcc[idx].ssl = DCC_TLS_USE;
 }
 #endif
 

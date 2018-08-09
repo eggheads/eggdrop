@@ -1305,7 +1305,7 @@ static void server_resolve_success(int servidx)
     return;
   }
 #ifdef TLS
-  if (dcc[servidx].ssl && ssl_handshake(serv, TLS_CONNECT, tls_vfyserver,
+  if (dcc[servidx].ssl & DCC_TLS_USE && ssl_handshake(serv, TLS_CONNECT, tls_vfyserver,
                                         LOG_SERV, dcc[servidx].host, NULL)) {
     putlog(LOG_SERV, "*", "%s %s (%s)", IRC_FAILEDCONNECT, dcc[servidx].host,
            "TLS negotiation failure");

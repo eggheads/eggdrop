@@ -1089,7 +1089,7 @@ static void cmd_fprint(struct userrec *u, int idx, char *par)
   }
   new = newsplit(&par);
   if (!strcmp(new, "+")) {
-    if (!dcc[idx].ssl) {
+    if (!(dcc[idx].ssl & DCC_TLS_USE)) {
       dprintf(idx, "You aren't connected with SSL. "
               "Please set your fingerprint manually.\n");
       return;

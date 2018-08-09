@@ -682,7 +682,7 @@ static void filesys_dcc_send(char *nick, char *from, struct userrec *u,
       dcc[i].u.dns->ip = &dcc[i].sockname;
       dcc[i].sock = -1;
 #ifdef TLS
-      dcc[i].ssl = ssl;
+      dcc[i].ssl = ssl ? DCC_TLS_USE : 0;
 #endif
       dcc[i].user = u;
       strlcpy(dcc[i].nick, nick, sizeof dcc[i].nick);
@@ -805,8 +805,8 @@ static void filesys_dcc_send_hostresolved(int i)
       open_telnet_raw(dcc[i].sock, &dcc[i].sockname) < 0)
         dcc[i].type->eof(i);
 #ifdef TLS
-      else if (dcc[i].ssl && ssl_handshake(dcc[i].sock, TLS_CONNECT, tls_vfydcc,
-                                           LOG_FILES, dcc[i].host, NULL))
+      else if (dcc[i].ssl & DCC_TLS_USE && ssl_handshake(dcc[i].sock,
+               TLS_CONNECT, tls_vfydcc, LOG_FILES, dcc[i].host, NULL))
         dcc[i].type->eof(i);
 #endif
     }

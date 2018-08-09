@@ -427,7 +427,8 @@ void tell_dcc(int zidx)
     }
       dprintf(zidx, format, dcc[i].sock, iptostr(&dcc[i].sockname.addr.sa),
 #ifdef TLS
-              dcc[i].ssl ? '+' : ' ', dcc[i].port, dcc[i].nick, other);
+              (dcc[i].ssl & DCC_TLS_USE) ? '+' : ((dcc[i].ssl & DCC_TLS_REJ) ? '-' : ' '),
+              dcc[i].port, dcc[i].nick, other);
 #else
               ' ', dcc[i].port, dcc[i].nick, other);
 #endif

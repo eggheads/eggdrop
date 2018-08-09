@@ -1247,7 +1247,8 @@ static char *traced_serveraddress(ClientData cdata, Tcl_Interp *irp,
     int servidx = findanyidx(serv);
 
 #ifdef TLS
-    simple_sprintf(s, "%s:%s%u", dcc[servidx].host, dcc[servidx].ssl ? "+" : "",
+    simple_sprintf(s, "%s:%s%u", dcc[servidx].host,
+                   (dcc[servidx].ssl & DCC_TLS_USE) ? "+" : "",
                    dcc[servidx].port);
 #else
     simple_sprintf(s, "%s:%u", dcc[servidx].host, dcc[servidx].port);
@@ -1572,7 +1573,7 @@ static int ctcp_DCC_CHAT(char *nick, char *from, char *handle,
       return 1;
     }
 #ifdef TLS
-    dcc[i].ssl = ssl;
+    dcc[i].ssl = ssl ? DCC_TLS_USE : 0;
 #endif
     dcc[i].port = atoi(prt);
     (void) setsockname(&dcc[i].sockname, ip, dcc[i].port, 0);
@@ -1619,7 +1620,7 @@ static void dcc_chat_hostresolved(int i)
   if (dcc[i].sock < 0 || open_telnet_raw(dcc[i].sock, &dcc[i].sockname) < 0)
     egg_snprintf(buf, sizeof buf, "%s", strerror(errno));
 #ifdef TLS
-  else if (dcc[i].ssl && ssl_handshake(dcc[i].sock, TLS_CONNECT, tls_vfydcc,
+  else if (dcc[i].ssl & DCC_TLS_USE && ssl_handshake(dcc[i].sock, TLS_CONNECT, tls_vfydcc,
                                        LOG_MISC, dcc[i].host, &dcc_chat_sslcb))
     egg_snprintf(buf, sizeof buf, "TLS negotiation error");
 #endif
@@ -1646,7 +1647,7 @@ static void dcc_chat_hostresolved(int i)
 #ifdef TLS
     /* For SSL connections, the handshake callback will determine
        if we should request a password */
-    if (!dcc[i].ssl)
+    if (!(dcc[i].ssl & DCC_TLS_USE))
 #endif
     dprintf(i, "%s\n", DCC_ENTERPASS);
   }
@@ -1798,8 +1799,8 @@ static void server_report(int idx, int details)
       ((servidx = findanyidx(serv)) != -1)) {
 #ifdef TLS
     dprintf(idx, "    Server [%s]:%s%d %s\n", dcc[servidx].host,
-            dcc[servidx].ssl ? "+" : "", dcc[servidx].port, trying_server ?
-            "(trying)" : s);
+            (dcc[servidx].ssl & DCC_TLS_USE) ? "+" : "", dcc[servidx].port,
+            trying_server ? "(trying)" : s);
 #else
     dprintf(idx, "    Server [%s]:%d %s\n", dcc[servidx].host,
             dcc[servidx].port, trying_server ? "(trying)" : s);

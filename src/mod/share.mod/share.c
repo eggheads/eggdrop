@@ -1219,7 +1219,7 @@ static void share_ufsend(int idx, char *par)
       dcc[i].sock = sock;
 #ifdef TLS
       if (*port == '+')
-        dcc[i].ssl = 1;
+        dcc[i].ssl = DCC_TLS_USE;
 #endif
       strcpy(dcc[i].host, dcc[idx].nick);
 
@@ -2003,8 +2003,8 @@ static void start_sending_users(int idx)
     strcpy(dcc[i].host, dcc[idx].nick); /* Store bot's nick */
     getdccaddr(&dcc[i].sockname, s, sizeof s);
 #ifdef TLS
-    if (dcc[idx].ssl) {
-      dcc[i].ssl = 1;
+    if (dcc[idx].ssl & DCC_TLS_USE) {
+      dcc[i].ssl = DCC_TLS_USE;
       dprintf(idx, "s us %s +%d %lu\n", s, dcc[i].port, dcc[i].u.xfer->length);
     } else
 #endif

@@ -916,7 +916,9 @@ static int tcl_connect STDVAR
       Tcl_AppendResult(irp, s, NULL);
       return TCL_ERROR;
     } else
-      dcc[i].ssl = 1;
+      dcc[i].ssl = DCC_TLS_USE;
+  } else if (*argv[2] == '-') {
+      dcc[i].ssl = DCC_TLS_REJ;
   }
 #endif
   strcpy(dcc[i].nick, "*");
@@ -1005,7 +1007,9 @@ static int tcl_listen STDVAR
   }
 #ifdef TLS
   if (*argv[1] == '+')
-    dcc[idx].ssl = 1;
+    dcc[idx].ssl = DCC_TLS_USE;
+  else if (*argv[1] == '-')
+    dcc[idx].ssl = DCC_TLS_REJ;
   else
     dcc[idx].ssl = 0;
 #endif

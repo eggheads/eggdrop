@@ -373,14 +373,14 @@ static void dcc_bot_new(int idx, char *buf, int x)
      * in two steps is necessary in order to synchronize the handshake.
      */
     if (dcc[idx].status & STAT_STARTTLS) {
-      dcc[idx].ssl = 1;
       if (ssl_handshake(dcc[idx].sock, TLS_CONNECT, tls_vfybots, LOG_BOTS,
                     dcc[idx].host, NULL)) {
         putlog(LOG_BOTS, "*", "STARTTLS failed while linking to %s",
                dcc[idx].nick);
         if (!ssl_files_loaded)
           putlog(LOG_BOTS, "*", "SSL cert and/or key file not loaded");
-      }
+      } else
+        dcc[idx].ssl = DCC_TLS_USE;
       dcc[idx].status &= ~STAT_STARTTLS;
     }
 #endif
@@ -650,12 +650,12 @@ static void dcc_chat_pass(int idx, char *buf, int atr)
     }
 #ifdef TLS
     if (!egg_strncasecmp(buf, "starttls ", 9)) {
-      dcc[idx].ssl = 1;
       if (ssl_handshake(dcc[idx].sock, TLS_LISTEN, tls_vfybots, LOG_BOTS,
                         dcc[idx].host, NULL)) {
         killsock(dcc[idx].sock);
         lostdcc(idx);
-      }
+      } else
+        dcc[idx].ssl = DCC_TLS_USE;
       return;
     }
 #endif
@@ -1285,7 +1285,7 @@ static void dcc_telnet(int idx, char *buf, int i)
   dcc[i].port = port;
 #ifdef TLS
   dcc[i].ssl = dcc[idx].ssl;
-  if (dcc[i].ssl) {
+  if (dcc[i].ssl & DCC_TLS_USE) {
     /* In order to support certificate CN validation we need to wait for the dns
      * lookup to complete. Additional we need to mark the socket virtual so we
      * won't read SSL client-hello before ssl_handshake has happened.
@@ -1354,7 +1354,7 @@ static void dcc_telnet_hostresolved(int i)
   /* Remove SOCK_VIRTUAL and call ssl_handshake
    * Check out dcc_telnet for more details
    */
-  if (dcc[i].ssl && !(tls_vfyclients & TLS_VERIFYCN)) {
+  if (dcc[i].ssl & DCC_TLS_USE && !(tls_vfyclients & TLS_VERIFYCN)) {
     threaddata()->socklist[findsock(dcc[i].sock)].flags &= ~SOCK_VIRTUAL;
     if (ssl_handshake(dcc[i].sock, TLS_LISTEN, tls_vfyclients,
         LOG_MISC, dcc[i].host, NULL)) {
@@ -1570,7 +1570,7 @@ static void dcc_telnet_id(int idx, char *buf, int atr)
       putlog(LOG_BOTNETIN, "*", "[b<-%s] %s", dcc[idx].user->handle, buf);
   }
 #ifdef TLS
-  if (dcc[idx].ssl && (tls_auth == 2)) {
+  if (dcc[idx].ssl & DCC_TLS_USE && (tls_auth == 2)) {
     const char *uid = ssl_getuid(dcc[idx].sock);
 
     if (!uid || strcasecmp(uid, buf)) {
@@ -1663,7 +1663,7 @@ int dcc_fingerprint(int idx)
 
   get_user_flagrec(dcc[idx].user, &fr, NULL);
   /* Check if fingerprint authentication is allowed or required. */
-  if (dcc[idx].ssl && tls_auth) {
+  if (dcc[idx].ssl & DCC_TLS_USE && tls_auth) {
     /* Get the fingerprint of the current certificate */
     cf = ssl_getfp(dcc[idx].sock);
     /* Get the fingerprint of the user, if set */
@@ -1701,7 +1701,7 @@ static void dcc_telnet_pass(int idx, int atr)
   get_user_flagrec(dcc[idx].user, &fr, NULL);
 #ifdef TLS
   /* Check if fingerprint authentication is allowed or required. */
-  if (dcc[idx].ssl && tls_auth) {
+  if (dcc[idx].ssl & DCC_TLS_USE && tls_auth) {
     char *cf, *uf;
 
     /* Get the fingerprint of the current certificate */
