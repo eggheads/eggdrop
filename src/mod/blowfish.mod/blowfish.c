@@ -34,7 +34,8 @@
 #undef global
 static Function *global = NULL;
 
-static char bf_mode[4];
+/* ECB by default for now, change at v1.9.0! */
+static char bf_mode[] = "ecb";
 
 /* Each box takes up 4k so be very careful here */
 #define BOXES 3
@@ -728,8 +729,6 @@ char *blowfish_start(Function *global_funcs)
     add_hook(HOOK_DECRYPT_STRING, (Function) decrypt_string);
   }
 
-  /* ECB by default for now, change at v1.9.0! */
-  strncpyz(bf_mode, "ecb", sizeof bf_mode);
   add_tcl_commands(mytcls);
   add_tcl_strings(my_tcl_strings);
   add_help_reference("blowfish.help");
