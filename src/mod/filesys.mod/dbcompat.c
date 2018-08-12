@@ -145,8 +145,7 @@ static void convert_version1(FILE *fdb_s, FILE *fdb_t)
 
   fseek(fdb_s, 0L, SEEK_SET);
   while (!feof(fdb_s)) {
-    fread(&fdb1, sizeof(filedb1), 1, fdb_s);
-    if (!feof(fdb_s)) {
+    if (fread(&fdb1, 1, sizeof fdb1, fdb_s) && !feof(fdb_s)) {
       if (!(fdb1.stat & FILE_UNUSED)) {
         filedb_entry *fdbe = malloc_fdbe();
 
@@ -180,8 +179,7 @@ static void convert_version2(FILE *fdb_s, FILE *fdb_t)
 
   fseek(fdb_s, 0L, SEEK_SET);
   while (!feof(fdb_s)) {
-    fread(&fdb2, sizeof(filedb2), 1, fdb_s);
-    if (!feof(fdb_s)) {
+    if (fread(&fdb2, 1, sizeof fdb2, fdb_s) && !feof(fdb_s)) {
       if (!(fdb2.stat & FILE_UNUSED)) {
         filedb_entry *fdbe = malloc_fdbe();
 
