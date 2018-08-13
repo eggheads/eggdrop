@@ -55,7 +55,7 @@
  * repurposed and renamed as of uptime v1.3 to reflect
  * the number of packets the client thinks it has sent
  * over the life of the module.  Only the name has changed -
- * the type (unsigned long) is still the same.
+ * the type is still the same.
  */
 
 typedef struct PackUp {
