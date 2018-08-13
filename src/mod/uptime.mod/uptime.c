@@ -109,7 +109,7 @@ static void uptime_report(int idx, int details)
   }
 }
 
-unsigned long get_ip()
+static unsigned long get_ip()
 {
   struct hostent *hp;
   IP ip;
