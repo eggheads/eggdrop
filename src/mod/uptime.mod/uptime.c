@@ -59,14 +59,14 @@
  */
 
 typedef struct PackUp {
-  int regnr;
-  int pid;
-  int type;
-  unsigned long packets_sent;
-  unsigned long uptime;
-  unsigned long ontime;
-  unsigned long now2;
-  unsigned long sysup;
+  uint32_t regnr;
+  uint32_t pid;
+  uint32_t type;
+  uint32_t packets_sent;
+  uint32_t uptime;
+  uint32_t ontime;
+  uint32_t now2;
+  uint32_t sysup;
 } PackUp;
 
 PackUp upPack;
