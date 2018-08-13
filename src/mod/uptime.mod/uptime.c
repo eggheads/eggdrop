@@ -67,7 +67,6 @@ typedef struct PackUp {
   unsigned long ontime;
   unsigned long now2;
   unsigned long sysup;
-  char string[3];
 } PackUp;
 
 PackUp upPack;
@@ -173,7 +172,7 @@ int send_uptime(void)
 {
   struct sockaddr_in sai;
   struct stat st;
-  PackUp *mem;
+  char *mem;
   int len, servidx;
   char servhost[UHOSTLEN] = "none";
   module_entry *me;
@@ -212,14 +211,10 @@ int send_uptime(void)
     upPack.sysup = htonl(st.st_ctime);
 
   len = sizeof(upPack) + strlen(botnetnick) + strlen(servhost) +
-        strlen(uptime_version);
-  mem = (PackUp *) nmalloc(len);
-  egg_bzero(mem, len); /* mem *should* be completely filled before it's
-                             * sent to the server.  But belt-and-suspenders
-                             * is always good.
-                             */
+        strlen(uptime_version) + 3;
+  mem = nmalloc(len);
   my_memcpy(mem, &upPack, sizeof(upPack));
-  sprintf(mem->string, "%s %s %s", botnetnick, servhost, uptime_version);
+  sprintf(mem + sizeof(upPack), "%s %s %s", botnetnick, servhost, uptime_version);
   egg_bzero(&sai, sizeof(sai));
   sai.sin_family = AF_INET;
   sai.sin_addr.s_addr = uptimeip;
