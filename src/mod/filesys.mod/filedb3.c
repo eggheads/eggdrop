@@ -159,9 +159,7 @@ static int filedb_readtop(FILE *fdb, filedb_top *fdbt)
   if (fdbt) {
     /* Read header */
     fseek(fdb, 0L, SEEK_SET);
-    if (feof(fdb))
-      return 0;
-    if (!fread(fdbt, 1, sizeof *fdbt, fdb))
+    if (feof(fdb) || !fread(fdbt, sizeof *fdbt, 1, fdb) || ferror(fdb))
       return 0;
   } else
     fseek(fdb, sizeof(filedb_top), SEEK_SET);
@@ -186,10 +184,8 @@ static int filedb_delfile(FILE *fdb, long pos)
   filedb_header fdh;
 
   fseek(fdb, pos, SEEK_SET);    /* Go to start of entry */
-  if (feof(fdb))
-    return 0;
   /* Read header */
-  if (!fread(&fdh, 1, sizeof fdh, fdb))
+  if (feof(fdb) || !fread(&fdh, sizeof fdh, 1, fdb) || ferror(fdb))
     return 0;
   fdh.stat = FILE_UNUSED;
 
@@ -416,7 +412,9 @@ static int _filedb_addfile(FILE *fdb, filedb_entry *fdbe, char *file, int line)
 {                                               \
   if ((len) > 0) {                              \
     (entry) = nmalloc((len));                   \
-    if (!fread((entry), 1, (len), (fdb))) {     \
+    if (feof((fdb)) ||                          \
+        !fread((entry), (len), 1, (fdb)) ||     \
+        ferror((fdb))) {                         \
       nfree(entry);                             \
       return NULL;                              \
     }                                           \
@@ -436,9 +434,7 @@ static filedb_entry *_filedb_getfile(FILE *fdb, long pos, int get,
 
   /* Read header */
   fseek(fdb, pos, SEEK_SET);
-  if (!fread(&fdh, 1, sizeof fdh, fdb))
-    return NULL;
-  if (feof(fdb))
+  if (feof(fdb) || !fread(&fdh, sizeof fdh, 1, fdb) || ferror(fdb))
     return NULL;
 
   /* Allocate memory for file db entry */
