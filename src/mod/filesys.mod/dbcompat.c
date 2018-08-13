@@ -162,7 +162,7 @@ static void convert_version1(FILE *fdb_s, FILE *fdb_t)
       fdbe->gots = fdb1.gots;
       if (fdb1.sharelink[0])
         malloc_strcpy(fdbe->sharelink, fdb1.sharelink);
-      filedb_addfile(fdb_s, fdbe);
+      filedb_addfile(fdb_t, fdbe);
       free_fdbe(&fdbe);
     }
   }
