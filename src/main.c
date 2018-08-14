@@ -181,6 +181,10 @@ int ssl_cleanup();
  * strlcpy from freebsd /lib/libc/string/strlcpy.c
  * TODO: use system strlcpy if available and this code here as compat/fallback
  */
+#ifdef HAVE_STRLCPY
+#  include <string.h>
+#  define strncpyz strlcpy
+#else
 size_t strncpyz(char * __restrict dst, const char * __restrict src, size_t dsize)
 {
   const char *osrc = src;
@@ -204,6 +208,7 @@ size_t strncpyz(char * __restrict dst, const char * __restrict src, size_t dsize
 
   return(src - osrc - 1);	/* count does not include NUL */
 }
+#endif
 
 void fatal(const char *s, int recoverable)
 {

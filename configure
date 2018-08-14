@@ -6919,7 +6919,7 @@ ac_config_commands="$ac_config_commands $ac_stdint_h"
 
 
 # Checks for functions and their arguments.
-for ac_func in clock dprintf fsync getdtablesize getrusage inet_aton isascii mbrlen memcpy memset random rand lrand48 rename setpgid sigaction sigemptyset snprintf strcasecmp strncasecmp uname vsnprintf inet_ntop
+for ac_func in clock dprintf fsync getdtablesize getrusage inet_aton isascii mbrlen memcpy memset random rand lrand48 rename setpgid sigaction sigemptyset snprintf strcasecmp strlcpy strncasecmp uname vsnprintf inet_ntop
 do :
   as_ac_var=`$as_echo "ac_cv_func_$ac_func" | $as_tr_sh`
 ac_fn_c_check_func "$LINENO" "$ac_func" "$as_ac_var"
