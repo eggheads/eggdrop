@@ -1528,7 +1528,7 @@ static int tcl_channel_modify(Tcl_Interp *irp, struct chanset_t *chan,
         }
       } else {
         if ((*item[i]) && !strtol(item[i], &endptr, 10) && !(*endptr)) {
-          *pthr = 0;  // Shortcut for .chanset #chan flood-x 0 to activate 0:0
+          *pthr = 0; /* Shortcut for .chanset #chan flood-x 0 to activate 0:0 */
           *ptime = 0;
         } else {
           if (irp)
