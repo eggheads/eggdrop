@@ -260,14 +260,17 @@ char *splitnick(char **blah)
 
 void remove_crlf(char **line)
 {
-  char *p;
+  char *p = *line;
 
-  p = strchr(*line, '\n');
-  if (p != NULL)
-    *p = 0;
-  p = strchr(*line, '\r');
-  if (p != NULL)
-    *p = 0;
+  for (;*p != '\0'; ++p)
+  {
+    if (*p == '\n' || *p == '\r')
+    {
+      *p = 0;
+      break;
+    }
+    p++;
+  }
 }
 
 char *newsplit(char **rest)
