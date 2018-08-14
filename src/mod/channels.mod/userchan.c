@@ -629,10 +629,8 @@ static void display_ban(int idx, int number, maskrec *ban,
     daysago(now, ban->added, s);
     sprintf(dates, "%s %s", MODES_CREATED, s);
     if (ban->added < ban->lastactive) {
-      char tocat[sizeof dates];
       daysago(now, ban->lastactive, s);
-      egg_snprintf(tocat, sizeof tocat, ", %s %s", MODES_LASTUSED, s);
-      strncat(dates, tocat, sizeof dates - strlen(dates) - 1);
+      egg_snprintf(dates + strlen(dates), sizeof(dates) - strlen(dates), ", %s %s", MODES_LASTUSED, s);
     }
   } else
     dates[0] = 0;
@@ -674,10 +672,8 @@ static void display_exempt(int idx, int number, maskrec *exempt,
     daysago(now, exempt->added, s);
     sprintf(dates, "%s %s", MODES_CREATED, s);
     if (exempt->added < exempt->lastactive) {
-      char tocat[sizeof dates];
       daysago(now, exempt->lastactive, s);
-      egg_snprintf(tocat, sizeof tocat, ", %s %s", MODES_LASTUSED, s);
-      strncat(dates, tocat, sizeof dates - strlen(dates) - 1);
+      egg_snprintf(dates + strlen(dates), sizeof(dates) - strlen(dates), ", %s %s", MODES_LASTUSED, s);
     }
   } else
     dates[0] = 0;
@@ -719,10 +715,8 @@ static void display_invite(int idx, int number, maskrec *invite,
     daysago(now, invite->added, s);
     sprintf(dates, "%s %s", MODES_CREATED, s);
     if (invite->added < invite->lastactive) {
-      char tocat[sizeof dates];
       daysago(now, invite->lastactive, s);
-      egg_snprintf(tocat, sizeof tocat, ", %s %s", MODES_LASTUSED, s);
-      strncat(dates, tocat, sizeof dates - strlen(dates) - 1);
+      egg_snprintf(dates + strlen(dates), sizeof(dates) - strlen(dates), ", %s %s", MODES_LASTUSED, s);
     }
   } else
     dates[0] = 0;
