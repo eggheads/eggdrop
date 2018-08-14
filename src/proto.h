@@ -181,6 +181,7 @@ int del_lang_section(char *);
 int exist_lang_section(char *);
 
 /* main.c */
+size_t strncpyz(char * __restrict, const char * __restrict, size_t);
 void fatal(const char *, int);
 int expected_memory(void);
 void eggContext(const char *, int, const char *);

@@ -504,6 +504,7 @@
 #define tcl_resultint ((int (*)(void))global[300])
 #define tcl_resultstring ((const char *(*)(void))global[301])
 #define getdccfamilyaddr ((int (*) (sockname_t *, char *, socklen_t, int))global[302])
+#define strncpyz ((size_t (*) (char * __restrict, const char * __restrict, size_t))global[303])
 
 
 /* hostmasking */

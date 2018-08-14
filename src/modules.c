@@ -607,7 +607,8 @@ Function global_table[] = {
   /* 300 - 303 */
   (Function) tcl_resultint,
   (Function) tcl_resultstring,
-  (Function) getdccfamilyaddr
+  (Function) getdccfamilyaddr,
+  (Function) strncpyz
 };
 
 void init_modules(void)
