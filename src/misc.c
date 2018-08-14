@@ -571,7 +571,7 @@ void putlog EGG_VARARGS_DEF(int, arg1)
   }
   /* Place the timestamp in the string to be printed */
   if (out[0] && shtime) {
-    strncpy(s, stamp, tsl);
+    memcpy(s, stamp, tsl);
     out = s;
   }
   strcat(out, "\n");
