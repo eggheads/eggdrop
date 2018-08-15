@@ -269,7 +269,6 @@ void remove_crlf(char **line)
       *p = 0;
       break;
     }
-    p++;
   }
 }
 
