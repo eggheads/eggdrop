@@ -88,7 +88,7 @@ static lang_sec *langsection = NULL;
 static lang_pri *langpriority = NULL;
 
 static int del_lang(char *);
-static int add_message(int, char *);
+static int add_message(unsigned int, char *);
 static void recheck_lang_sections(void);
 static void read_lang(char *);
 void add_lang_section(char *);
@@ -160,7 +160,7 @@ static int del_lang(char *lang)
   return 0;
 }
 
-static int add_message(int lidx, char *ltext)
+static int add_message(unsigned int lidx, char *ltext)
 {
   lang_tab *l = langtab[lidx & 63];
 
@@ -213,7 +213,7 @@ static void read_lang(char *langfile)
   char lbuf[512];
   char *ltext = NULL;
   char *ctmp, *ctmp1;
-  int lidx;
+  unsigned int lidx;
   int lnew = 1;
   int lline = 1;
   int lskip = 0;
@@ -526,7 +526,8 @@ static int cmd_languagedump(struct userrec *u, int idx, char *par)
 {
   lang_tab *l;
   char ltext2[512];
-  int idx2, i;
+  unsigned int idx2;
+  int i;
 
   putlog(LOG_CMDS, "*", "#%s# ldump %s", dcc[idx].nick, par);
   if (par[0]) {
@@ -534,7 +535,7 @@ static int cmd_languagedump(struct userrec *u, int idx, char *par)
     if (strlen(par) > 2 && par[0] == '0' && par[1] == 'x')
       sscanf(par, "%x", &idx2);
     else
-      idx2 = (int) strtol(par, (char **) NULL, 10);
+      idx2 = strtol(par, (char **) NULL, 10);
     strncpyz(ltext2, get_language(idx2), sizeof ltext2);
     dprintf(idx, "0x%x: %s\n", idx2, ltext2);
     return 0;
