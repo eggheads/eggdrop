@@ -181,7 +181,12 @@ int del_lang_section(char *);
 int exist_lang_section(char *);
 
 /* main.c */
+#ifdef HAVE_STRLCPY
+#  include <string.h>
+#  define strncpyz strlcpy
+#else
 size_t strncpyz(char * __restrict, const char * __restrict, size_t);
+#endif
 void fatal(const char *, int);
 int expected_memory(void);
 void eggContext(const char *, int, const char *);
