@@ -1605,10 +1605,10 @@ setdccaway <idx> <message>
   Module: core
 
 ^^^^^^^^^^^^^^^^^^^^^^^^
-connect <host> <[+]port>
+connect <host> <[+|-]port>
 ^^^^^^^^^^^^^^^^^^^^^^^^
 
-  Description: makes an outgoing connection attempt and creates a dcc entry for it. A 'control' command should be used immediately after a successful 'connect' so no input is lost. If the port is prefixed with a plus sign, SSL encrypted connection will be attempted.
+  Description: makes an outgoing connection attempt and creates a dcc entry for it. A 'control' command should be used immediately after a successful 'connect' so no input is lost. If the port is prefixed with a plus sign, SSL encrypted connection will be attempted, when prefixed with a minus sign, secure connections are disallowed.
 
   Returns: idx of the new connection
 
@@ -1618,7 +1618,7 @@ connect <host> <[+]port>
 listen <port> <type> [options] [flag]
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-  Description: opens a listening port to accept incoming telnets; type must be one of "bots", "all", "users", "script", or "off". Prefixing the port with a plus sign will make eggdrop accept SSL connections on it.
+  Description: opens a listening port to accept incoming telnets; type must be one of "bots", "all", "users", "script", or "off". Prefixing the port with a plus sign will make eggdrop accept SSL connections on it, prefixing with a minus sign will disallow secure connections.
 
     listen <port> bots [mask]
 

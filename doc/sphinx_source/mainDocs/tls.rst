@@ -70,7 +70,8 @@ plain text connections from being allowed), prefix the listen port in the
 hub configuration file with a plus (+) sign. Conversely, to force a leaf 
 to only allow SSL (not plain text) connections with a hub, you must 
 prefix the hub's listen port with a plus when adding it to the leaf via 
-+bot/chaddr commands. The nickname and password are sent before SSL 
++bot/chaddr commands. To force not using TLS, prefix the ports on the leafs
+with a minus (-) sign instead. The nickname and password are sent before SSL 
 negotiation takes place (the password is not sent in plain text anyway).
 If SSL negotiation fails and either the hub or leaf is set to require SSL,
 the connection is deliberately aborted and no clear text is ever sent.
