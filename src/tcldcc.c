@@ -892,7 +892,7 @@ static int tcl_connect STDVAR
     Tcl_AppendResult(irp, "Could not allocate socket.", NULL);
     return TCL_ERROR;
   }
-  sock = open_telnet(i, argv[1], atoi(argv[2]));
+  sock = open_telnet(i, argv[1], abs(atoi(argv[2])));
   if (sock < 0) {
     switch (sock) {
       case -3:
@@ -942,7 +942,7 @@ static int tcl_listen STDVAR
 
   BADARGS(3, 5, " port type ?mask?/?proc ?flag??");
 
-  port = realport = atoi(argv[1]);
+  port = realport = abs(atoi(argv[1]));
   for (pmap = root; pmap; pold = pmap, pmap = pmap->next)
     if (pmap->realport == port) {
       port = pmap->mappedto;
