@@ -1008,11 +1008,11 @@ static int raw_dcc_resend_send(char *filename, char *nick, char *from,
   strcpy(dcc[i].host, "irc");
   dcc[i].u.xfer->filename = get_data_ptr(strlen(filename) + 1);
   strcpy(dcc[i].u.xfer->filename, filename);
-  replace_spaces(nfn);
-  dcc[i].u.xfer->origname = get_data_ptr(strlen(nfn) + 1);
-  strcpy(dcc[i].u.xfer->origname, nfn);
   strncpyz(dcc[i].u.xfer->from, from, NICKLEN);
   strncpyz(dcc[i].u.xfer->dir, filename, DIRLEN);
+  replace_spaces(nfn); /* modifying nfn modifies filename */
+  dcc[i].u.xfer->origname = get_data_ptr(strlen(nfn) + 1);
+  strcpy(dcc[i].u.xfer->origname, nfn);
   dcc[i].u.xfer->length = dccfilesize;
   dcc[i].timeval = now;
   dcc[i].u.xfer->f = f;
