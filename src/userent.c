@@ -612,9 +612,11 @@ static int botaddr_set(struct userrec *u, struct user_entry *e, void *buf)
   }
   if (bi && !noshare && !(u->flags & USER_UNSHARED)) {
 #ifdef TLS
-    shareout(NULL, "c BOTADDR %s %s %s%d %s%d\n", u->handle, bi->address,
-             (bi->ssl & TLS_BOT) ? "+" : ((bi->ssl & TLS_BOT_REJ) ? "-" : ""), bi->telnet_port,
-             (bi->ssl & TLS_RELAY) ? "+" : ((bi->ssl & TLS_RELAY_REJ) ? "-" : ""), bi->relay_port);
+    shareout(NULL, "c BOTADDR %s %s %s%d%s %s%d%s\n", u->handle, bi->address,
+             (bi->ssl & TLS_BOT) ? "+" : "", bi->telnet_port,
+             (bi->ssl & TLS_BOT_REJ) ? "-" : "",
+             (bi->ssl & TLS_RELAY) ? "+" : "", bi->relay_port,
+             (bi->ssl & TLS_RELAY_REJ) ? "-" : "");
 #else
     shareout(NULL, "c BOTADDR %s %s %d %d\n", u->handle,
              bi->address, bi->telnet_port, bi->relay_port);
@@ -768,15 +770,17 @@ static int botaddr_gotshare(struct userrec *u, struct user_entry *e,
 #ifdef TLS
   if (*arg == '+')
     bi->ssl |= TLS_BOT;
-  else if (*arg == '-')
+  /* For backward compat we put the '-' at the end of the port */
+  else if (*arg && arg[strlen(arg) - 1] == '-')
     bi->ssl |= TLS_BOT_REJ;
   if (*buf == '+')
     bi->ssl |= TLS_RELAY;
-  else if (*buf == '-')
+  /* For backward compat we put the '-' at the end of the port */
+  else if (*buf && buf[strlen(buf) - 1] == '-')
     bi->ssl |= TLS_RELAY_REJ;
 #endif
-  bi->telnet_port = abs(atoi(arg));
-  bi->relay_port = abs(atoi(buf));
+  bi->telnet_port = atoi(arg);
+  bi->relay_port = atoi(buf);
   if (!bi->telnet_port)
     bi->telnet_port = 3333;
   if (!bi->relay_port)
