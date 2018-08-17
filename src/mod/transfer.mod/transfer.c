@@ -126,20 +126,15 @@ static int at_limit(char *nick)
   return (x >= dcc_limit);
 }
 
-/* Replaces all spaces with underscores (' ' -> '_').  The returned buffer
- * needs to be freed after use.
+/* Replaces all spaces with underscores (' ' -> '_').
  */
-static char *replace_spaces(char *fn)
+static void *replace_spaces(char *p)
 {
-  register char *ret, *p;
-
-  p = ret = nmalloc(strlen(fn) + 1);
-  strcpy(ret, fn);
-  while ((p = strchr(p, ' ')) != NULL)
-    *p = '_';
-  return ret;
+  for (; *p != '\0'; ++p) {
+    if (*p == ' ')
+      *p = '_';
+  }
 }
-
 
 static int builtin_sentrcvd STDVAR
 {
@@ -951,7 +946,7 @@ static int raw_dcc_resend_send(char *filename, char *nick, char *from,
                                int resend)
 {
   int zz, port, i;
-  char *nfn, *buf = NULL;
+  char *nfn = NULL;
   long dccfilesize;
   FILE *f;
 
@@ -1013,12 +1008,11 @@ static int raw_dcc_resend_send(char *filename, char *nick, char *from,
   strcpy(dcc[i].host, "irc");
   dcc[i].u.xfer->filename = get_data_ptr(strlen(filename) + 1);
   strcpy(dcc[i].u.xfer->filename, filename);
-  if (strchr(nfn, ' '))
-    nfn = buf = replace_spaces(nfn);
-  dcc[i].u.xfer->origname = get_data_ptr(strlen(nfn) + 1);
-  strcpy(dcc[i].u.xfer->origname, nfn);
   strncpyz(dcc[i].u.xfer->from, from, NICKLEN);
   strncpyz(dcc[i].u.xfer->dir, filename, DIRLEN);
+  replace_spaces(nfn); /* modifying nfn modifies filename */
+  dcc[i].u.xfer->origname = get_data_ptr(strlen(nfn) + 1);
+  strcpy(dcc[i].u.xfer->origname, nfn);
   dcc[i].u.xfer->length = dccfilesize;
   dcc[i].timeval = now;
   dcc[i].u.xfer->f = f;
@@ -1037,9 +1031,6 @@ static int raw_dcc_resend_send(char *filename, char *nick, char *from,
              nick);
     }
   }
-
-  if (buf)
-    nfree(buf);
 
   return DCCSEND_OK;
 }
