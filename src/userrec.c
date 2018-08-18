@@ -354,27 +354,28 @@ struct userrec *get_user_by_equal_host(char *host)
   return NULL;
 }
 
-/* Try: pass_match_by_host("-",host)
- * If a '-' is sent as the password, it denotes the intent
- *   to merely check if a password is set for that user.
- * Returns 0 if password is set and does not match
- * Returns 1 if password matches, or if we are
- *   checking if a password is set and it is not
- *   (via the '-' char).
+/* Description: checks the password given against the user's password.
+ * Check against the password "-" to find out if a user has no password set.
+ *
+ * Returns: 1 if the password matches for that user; 0 otherwise. or if we are
+ * checking against the password "-": 1 if the user has no password set; 0
+ * otherwise.
  */
 int u_pass_match(struct userrec *u, char *pass)
 {
   char *cmp, new[32];
 
-  if (!u)
+  if (!u || !pass)
     return 0;
   cmp = get_user(&USERENTRY_PASS, u);
-  if (!cmp && (pass[0] == '-'))
-    return 1;
-/* If password is not set in userrecord, or password
- * is not sent, or '-' is sent
- */
-  if (!cmp || !pass || !pass[0] || (pass[0] == '-'))
+  if (pass[0] == '-') {
+    if (!cmp)
+      return 1;
+    else
+      return 0;
+  }
+  /* If password is not set in userrecord, or password is not sent */
+  if (!cmp || !pass[0])
     return 0;
   if (u->flags & USER_BOT) {
     if (!strcmp(cmp, pass))
