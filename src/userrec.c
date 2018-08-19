@@ -357,7 +357,7 @@ struct userrec *get_user_by_equal_host(char *host)
 /* Description: checks the password given against the user's password.
  * Check against the password "-" to find out if a user has no password set.
  *
- * Returns: 1 if the password matches for that user; 0 otherwise. or if we are
+ * Returns: 1 if the password matches for that user; 0 otherwise. Or if we are
  * checking against the password "-": 1 if the user has no password set; 0
  * otherwise.
  */
