@@ -151,7 +151,7 @@ struct chan_t {
 #define CHANINVIS  0x40000 /* d - QuakeNet's asuka     */
 #define CHANNOAMSG 0x80000 /* T - QuakeNet's snircd    */
 
-#define CHANNELLEN 80 /* FIXME rfc1459 <= 200 and/or RPL_ISUPPORT see #38*/
+#define CHANNELLEN 80 /* FIXME see issue #3 and issue #38 and rfc1459 <= 200 */
 
 struct chanset_t {
   struct chanset_t *next;
