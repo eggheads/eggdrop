@@ -17,7 +17,7 @@ modules: ../../../seen.$(MOD_EXT)
 	$(CC) $(CFLAGS) $(CPPFLAGS) -DMAKING_MODS -c $(srcdir)/seen.c && mv -f seen.o ../
 
 ../../../seen.$(MOD_EXT): ../seen.o
-	$(LD) -o ../../../seen.$(MOD_EXT) ../seen.o $(XLIBS) $(MODULE_XLIBS) && $(STRIP) ../../../seen.$(MOD_EXT)
+	$(LD) $(CFLAGS) -o ../../../seen.$(MOD_EXT) ../seen.o $(XLIBS) $(MODULE_XLIBS) && $(STRIP) ../../../seen.$(MOD_EXT)
 
 depend:
 	$(CC) $(CFLAGS) -MM $(srcdir)/seen.c -MT ../seen.o > .depend

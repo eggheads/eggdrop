@@ -17,7 +17,7 @@ modules: ../../../console.$(MOD_EXT)
 	$(CC) $(CFLAGS) $(CPPFLAGS) -DMAKING_MODS -c $(srcdir)/console.c && mv -f console.o ../
 
 ../../../console.$(MOD_EXT): ../console.o
-	$(LD) -o ../../../console.$(MOD_EXT) ../console.o $(XLIBS) $(MODULE_XLIBS) && $(STRIP) ../../../console.$(MOD_EXT)
+	$(LD) $(CFLAGS) -o ../../../console.$(MOD_EXT) ../console.o $(XLIBS) $(MODULE_XLIBS) && $(STRIP) ../../../console.$(MOD_EXT)
 
 depend:
 	$(CC) $(CFLAGS) -MM $(srcdir)/console.c -MT ../console.o > .depend

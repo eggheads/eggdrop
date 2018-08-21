@@ -17,7 +17,7 @@ modules: ../../../blowfish.$(MOD_EXT)
 	$(CC) $(CFLAGS) $(CPPFLAGS) -DMAKING_MODS -c $(srcdir)/blowfish.c && mv -f blowfish.o ../
 
 ../../../blowfish.$(MOD_EXT): ../blowfish.o
-	$(LD) -o ../../../blowfish.$(MOD_EXT) ../blowfish.o $(XLIBS) $(MODULE_XLIBS) && $(STRIP) ../../../blowfish.$(MOD_EXT)
+	$(LD) $(CFLAGS) -o ../../../blowfish.$(MOD_EXT) ../blowfish.o $(XLIBS) $(MODULE_XLIBS) && $(STRIP) ../../../blowfish.$(MOD_EXT)
 
 depend:
 	$(CC) $(CFLAGS) -MM $(srcdir)/blowfish.c -MT ../blowfish.o > .depend
