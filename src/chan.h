@@ -151,12 +151,14 @@ struct chan_t {
 #define CHANINVIS  0x40000 /* d - QuakeNet's asuka     */
 #define CHANNOAMSG 0x80000 /* T - QuakeNet's snircd    */
 
+#define CHANNELLEN 80 /* FIXME rfc1459 <= 200 and/or RPL_ISUPPORT see #38*/
+
 struct chanset_t {
   struct chanset_t *next;
   struct chan_t channel;
-  char dname[81]; /* display name (!eggdev) - THIS IS ALWAYS SET*/
-  char name[81];  /* actual name (!ABCDEeggdev) - THIS IS SET WHEN THE BOT
-                   * ACTUALLY JOINS THE CHANNEL */
+  char dname[CHANNELLEN + 1]; /* display name (!foo) - THIS IS ALWAYS SET */
+  char name[CHANNELLEN + 1];  /* actual name (!BARfoo) - THIS IS SET WHEN THE BOT
+                               * ACTUALLY JOINS THE CHANNEL */
   char need_op[121];
   char need_key[121];
   char need_limit[121];

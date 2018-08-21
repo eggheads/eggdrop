@@ -28,7 +28,7 @@
 static time_t last_ctcp = (time_t) 0L;
 static int count_ctcp = 0;
 static time_t last_invtime = (time_t) 0L;
-static char last_invchan[300] = "";
+static char last_invchan[CHANNELLEN + 1] = "";
 
 /* ID length for !channels.
  */
@@ -1510,8 +1510,7 @@ static int gotinvite(char *from, char *msg)
     if (now - last_invtime < 30)
       return 0; /* Two invites to the same channel in 30 seconds? */
   putlog(LOG_MISC, "*", "%s!%s invited me to %s", nick, from, msg);
-  strncpy(last_invchan, msg, 299);
-  last_invchan[299] = 0;
+  strncpyz(last_invchan, msg, sizeof(last_invchan));
   last_invtime = now;
   chan = findchan(msg);
   if (!chan)
