@@ -907,8 +907,15 @@ int check_tcl_bind(tcl_bind_list_t *tl, const char *match,
   if (htc)
     htc->hits++;
 
-  /* Now that we have found at least one bind, we can update the
+  if (cnt > 1)
+    return BIND_AMBIGUOUS;
+
+  /* Now that we have found exactly one bind, we can update the
    * preferred entries information.
+   * Do this only for cnt == 1,
+   * since we don't want to change the order of raw binds vs. builtin binds.
+   * reason 1: order should be raw than builtin
+   * reason 2: builtin could modify args
    */
   if (tm_p && tm_p->next) {
     tm = tm_p->next;            /* Move mask to front of bind's mask list. */
@@ -916,9 +923,6 @@ int check_tcl_bind(tcl_bind_list_t *tl, const char *match,
     tm->next = tl->first;       /* Readd mask to front of list. */
     tl->first = tm;
   }
-
-  if (cnt > 1)
-    return BIND_AMBIGUOUS;
 
   return trigger_bind(proc, param, mask);
 }

@@ -28,7 +28,7 @@
 static time_t last_ctcp = (time_t) 0L;
 static int count_ctcp = 0;
 static time_t last_invtime = (time_t) 0L;
-static char last_invchan[81] = "";
+static char last_invchan[300] = "";
 
 /* ID length for !channels.
  */
@@ -1498,15 +1498,11 @@ static int got475(char *from, char *msg)
 
 /* got invitation
  */
-static int gotinvite(const char *cfrom, const char *cmsg)
+static int gotinvite(char *from, char *msg)
 {
-  char *msg, *from, *nick, *key;
+  char *nick, *key;
   struct chanset_t *chan;
 
-  msg = nmalloc(strlen(cmsg) + 1);
-  memcpy(msg, cmsg, strlen(cmsg) + 1);
-  from = nmalloc(strlen(cfrom) + 1);
-  memcpy(from, cfrom, strlen(cfrom) + 1);
   newsplit(&msg);
   fixcolon(msg);
   nick = splitnick(&from);
@@ -1514,7 +1510,8 @@ static int gotinvite(const char *cfrom, const char *cmsg)
     if (now - last_invtime < 30)
       return 0; /* Two invites to the same channel in 30 seconds? */
   putlog(LOG_MISC, "*", "%s!%s invited me to %s", nick, from, msg);
-  strncpyz(last_invchan, msg, sizeof(last_invchan));
+  strncpy(last_invchan, msg, 299);
+  last_invchan[299] = 0;
   last_invtime = now;
   chan = findchan(msg);
   if (!chan)
