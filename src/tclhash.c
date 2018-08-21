@@ -914,7 +914,7 @@ int check_tcl_bind(tcl_bind_list_t *tl, const char *match,
    * preferred entries information.
    * Do this only for cnt == 1,
    * since we don't want to change the order of raw binds vs. builtin binds.
-   * reason 1: order should be raw than builtin
+   * reason 1: order should be raw then builtin
    * reason 2: builtin could modify args
    */
   if (tm_p && tm_p->next) {
