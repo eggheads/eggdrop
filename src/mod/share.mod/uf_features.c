@@ -37,7 +37,7 @@
  *                            |
  *                            +-->   uf_features_parse():
  *                                      Parses the given list of features,
- *                                      given in a string, seperated with
+ *                                      given in a string, separated with
  *                                      spaces. Decides which features to
  *                                      accept/use. Those features are then
  *                                      locally set:
