@@ -1523,7 +1523,7 @@ struct dcc_table DCC_DUPWAIT = {
 };
 
 /* This function is called if a bot gets removed from the list. It checks
- * wether we have a pending duplicate connection for that bot and continues
+ * whether we have a pending duplicate connection for that bot and continues
  * with the login in that case.
  */
 void dupwait_notify(char *who)

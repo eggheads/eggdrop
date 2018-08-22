@@ -49,7 +49,7 @@
  *                              +---    "s feats <accepted_features>"
  *                              |
  *   uf_features_check():    <--+
- *      Checks wether the responded
+ *      Checks whether the responded
  *      features are still accepted
  *      by us. If they are, we set
  *      the flags locally:
