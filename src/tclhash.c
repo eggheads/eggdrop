@@ -736,8 +736,19 @@ static inline int trigger_bind(const char *proc, const char *param,
    */
   Tcl_SetVar(interp, "lastbind", (char *) mask, TCL_GLOBAL_ONLY);
 
+  struct timeval tv1, tv2;
+  if(proc) {
+    debug1("triggered bind %s begin", proc);
+    gettimeofday(&tv1, NULL); 
+  }
   x = Tcl_VarEval(interp, proc, param, NULL);
   Context;
+  if (proc) {
+    gettimeofday(&tv2, NULL);
+    debug2("triggered bind %s total time = %.3fms", proc,
+	   (double) (tv2.tv_usec - tv1.tv_usec) / 1000 +
+	   (double) (tv2.tv_sec - tv1.tv_sec) * 1000);
+  }
 
   if (x == TCL_ERROR) {
     /* FIXME: we really should be able to log longer errors */
