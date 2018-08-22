@@ -350,9 +350,9 @@ static void dcc_bot_new(int idx, char *buf, int x)
 
   if (raw_log) {
     if (!strncmp(buf, "s ", 2))
-      putlog(LOG_BOTSHRIN, "*", "{m<-%s} %s", dcc[idx].nick, buf + 2);
+      putlog(LOG_BOTSHRIN, "*", "{b<-%s} %s", dcc[idx].nick, buf + 2);
     else
-      putlog(LOG_BOTNETIN, "*", "[m<-%s] %s", dcc[idx].nick, buf);
+      putlog(LOG_BOTNETIN, "*", "[b<-%s] %s", dcc[idx].nick, buf);
   }
 
   code = newsplit(&buf);
@@ -466,9 +466,9 @@ static void out_dcc_bot(int idx, char *buf, void *x)
     }
 
     if (!strncmp(p, "s ", 2))
-      putlog(LOG_BOTSHROUT, "*", "{m->%s} %s", dcc[idx].nick, p + 2);
+      putlog(LOG_BOTSHROUT, "*", "{b->%s} %s", dcc[idx].nick, p + 2);
     else
-      putlog(LOG_BOTNETOUT, "*", "[m->%s] %s", dcc[idx].nick, p);
+      putlog(LOG_BOTNETOUT, "*", "[b->%s] %s", dcc[idx].nick, p);
 
     if (fnd)
       nfree(fnd);
@@ -501,9 +501,9 @@ static void dcc_bot(int idx, char *code, int i)
 
   if (raw_log) {
     if (!strncmp(code, "s ", 2))
-      putlog(LOG_BOTSHRIN, "*", "{m<-%s} %s", dcc[idx].nick, code + 2);
+      putlog(LOG_BOTSHRIN, "*", "{b<-%s} %s", dcc[idx].nick, code + 2);
     else
-      putlog(LOG_BOTNETIN, "*", "[m<-%s] %s", dcc[idx].nick, code);
+      putlog(LOG_BOTNETIN, "*", "[b<-%s] %s", dcc[idx].nick, code);
   }
   msg = strchr(code, ' ');
   if (msg) {
@@ -642,9 +642,9 @@ static void dcc_chat_pass(int idx, char *buf, int atr)
   if (atr & USER_BOT) {
     if (raw_log) {
       if (!strncmp(buf, "s ", 2))
-        putlog(LOG_BOTSHRIN, "*", "{m<-%s} %s", dcc[idx].nick, buf + 2);
+        putlog(LOG_BOTSHRIN, "*", "{b<-%s} %s", dcc[idx].nick, buf + 2);
       else
-        putlog(LOG_BOTNETIN, "*", "[m<-%s] %s", dcc[idx].nick, buf);
+        putlog(LOG_BOTNETIN, "*", "[b<-%s] %s", dcc[idx].nick, buf);
     }
 #ifdef TLS
     if (!egg_strncasecmp(buf, "starttls ", 9)) {
@@ -1564,9 +1564,9 @@ static void dcc_telnet_id(int idx, char *buf, int atr)
 
   if (glob_bot(fr) && raw_log) {
     if (!strncmp(buf, "s ", 2))
-      putlog(LOG_BOTSHRIN, "*", "{m<-%s} %s", dcc[idx].user->handle, buf + 2);
+      putlog(LOG_BOTSHRIN, "*", "{b<-%s} %s", dcc[idx].user->handle, buf + 2);
     else
-      putlog(LOG_BOTNETIN, "*", "[m<-%s] %s", dcc[idx].user->handle, buf);
+      putlog(LOG_BOTNETIN, "*", "[b<-%s] %s", dcc[idx].user->handle, buf);
   }
 #ifdef TLS
   if (dcc[idx].ssl && (tls_auth == 2)) {

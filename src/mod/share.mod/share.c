@@ -1410,7 +1410,7 @@ static void shareout_mod EGG_VARARGS_DEF(struct chanset_t *, arg1)
           get_user_flagrec(dcc[i].user, &fr, chan->dname);
         }
         if (!chan || bot_chan(fr) || bot_global(fr)) {
-          putlog(LOG_BOTSHROUT, "*", "{m->%s} %s", dcc[i].nick, s + 2);
+          putlog(LOG_BOTSHROUT, "*", "{b->%s} %s", dcc[i].nick, s + 2);
           tputs(dcc[i].sock, s, l + 2);
         }
       }
@@ -1444,7 +1444,7 @@ static void shareout_but EGG_VARARGS_DEF(struct chanset_t *, arg1)
         get_user_flagrec(dcc[i].user, &fr, chan->dname);
       }
       if (!chan || bot_chan(fr) || bot_global(fr)) {
-        putlog(LOG_BOTSHROUT, "*", "{m->%s} %s", dcc[i].nick, s + 2);
+        putlog(LOG_BOTSHROUT, "*", "{b->%s} %s", dcc[i].nick, s + 2);
         tputs(dcc[i].sock, s, l + 2);
       }
     }
