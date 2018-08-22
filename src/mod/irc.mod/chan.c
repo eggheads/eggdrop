@@ -1510,7 +1510,7 @@ static int gotinvite(char *from, char *msg)
     if (now - last_invtime < 30)
       return 0; /* Two invites to the same channel in 30 seconds? */
   putlog(LOG_MISC, "*", "%s!%s invited me to %s", nick, from, msg);
-  strncpyz(last_invchan, msg, sizeof(last_invchan));
+  strncpyz(last_invchan, msg, sizeof last_invchan);
   last_invtime = now;
   chan = findchan(msg);
   if (!chan)
