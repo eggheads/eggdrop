@@ -2683,7 +2683,9 @@ as 'bind msg - stop msg:stop' (which makes a msg-command "stop" call the
 Tcl proc "msg:stop") will overwrite any previous binding you had for the
 msg command "stop". With stackable bindings, like 'msgm' for example,
 you can bind the same command to multiple procs. When the bind is triggered,
-ALL of the Tcl procs that are bound to it will be called.
+ALL of the Tcl procs that are bound to it will be called. Raw binds are
+triggered before builtin binds, as a builtin bind has the potential to
+modify args.
 
 To remove a bind, use the 'unbind' command. For example, to remove the
 bind for the "stop" msg command, use 'unbind msg - stop msg:stop'.
