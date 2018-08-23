@@ -531,9 +531,9 @@ int open_telnet_raw(int sock, sockname_t *addr)
       select(sock + 1, &sockset, NULL, NULL, &tv);
       res_len = sizeof(res);
       getsockopt(sock, SOL_SOCKET, SO_ERROR, &res, &res_len);
-      if (res == 115)
-        return sock;  // This could probably fail somewhere
-      if (res == 111) {
+      if (res == EINPROGRESS) /* Operation now in progress */
+        return sock; /* This could probably fail somewhere */
+      if (res == ECONNREFUSED) { /* Connection refused */
         debug1("net: attempted socket connection refused: %s", iptostr(&addr->addr.sa));
         return -4;
       }
