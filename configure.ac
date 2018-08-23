@@ -109,7 +109,7 @@ EGG_CHECK_SOCKLEN_T
 AX_CREATE_STDINT_H([eggint.h])
 
 # Checks for functions and their arguments.
-AC_CHECK_FUNCS([clock dprintf fsync getdtablesize getrusage inet_aton isascii mbrlen memcpy random rand lrand48 rename setpgid sigaction sigemptyset snprintf strcasecmp strncasecmp uname vsnprintf inet_ntop])
+AC_CHECK_FUNCS([clock dprintf fsync getdtablesize getrandom getrusage inet_aton inet_ntop isascii mbrlen memcpy random rand lrand48 rename setpgid sigaction sigemptyset snprintf strcasecmp strncasecmp uname vsnprintf])
 AC_FUNC_SELECT_ARGTYPES
 EGG_FUNC_VPRINTF
 AC_FUNC_STRFTIME

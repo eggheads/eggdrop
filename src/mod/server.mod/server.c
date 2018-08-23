@@ -1267,7 +1267,12 @@ static char *traced_server(ClientData cdata, Tcl_Interp *irp,
     int servidx = findanyidx(serv);
 
     /* return real server name */
+#ifdef TLS
+    simple_sprintf(s, "%s:%s%u", realservername, dcc[servidx].ssl ? "+" : "",
+                   dcc[servidx].port);
+#else
     simple_sprintf(s, "%s:%u", realservername, dcc[servidx].port);
+#endif
   } else
     s[0] = 0;
   Tcl_SetVar2(interp, name1, name2, s, TCL_GLOBAL_ONLY);

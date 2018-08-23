@@ -224,7 +224,7 @@ static unsigned long pump_file_to_sock(FILE *file, long sock,
   if (bf) {
     do {
       actual_size = pending_data >= buf_len ? buf_len : pending_data;
-      r = fread(bf, actual_size, 1, file);
+      r = fread(bf, 1, actual_size, file);
       if (!r)
         break;
       tputs(sock, bf, r);
