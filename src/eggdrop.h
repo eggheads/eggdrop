@@ -47,8 +47,9 @@
  *       You should leave this at 32 characters and modify nick-len in the
  *       configuration file instead.
  */
-#define HANDLEN 32   /* valid values 9->NICKMAX  */
-#define NICKMAX 32  /* valid values HANDLEN->32 */
+#define CHANNELLEN 80 /* FIXME see issue #3 and issue #38 and rfc1459 <= 200 */
+#define HANDLEN    32 /* valid values 9->NICKMAX                             */
+#define NICKMAX    32 /* valid values HANDLEN->32                            */
 
 
 /* Handy string lengths */
@@ -408,17 +409,17 @@ struct dcc_t {
 };
 
 struct chat_info {
-  char *away;                   /* non-NULL if user is away             */
-  int msgs_per_sec;             /* used to stop flooding                */
-  int con_flags;                /* with console: what to show           */
-  int strip_flags;              /* what codes to strip (b,r,u,c,a,g,*)  */
-  char con_chan[81];            /* with console: what channel to view   */
-  int channel;                  /* 0=party line, -1=off                 */
-  struct msgq *buffer;          /* a buffer of outgoing lines
-                                 * (for .page cmd)                      */
-  int max_line;                 /* maximum lines at once                */
-  int line_count;               /* number of lines sent since last page */
-  int current_lines;            /* number of lines total stored         */
+  char *away;                    /* non-NULL if user is away             */
+  int msgs_per_sec;              /* used to stop flooding                */
+  int con_flags;                 /* with console: what to show           */
+  int strip_flags;               /* what codes to strip (b,r,u,c,a,g,*)  */
+  char con_chan[CHANNELLEN + 1]; /* with console: what channel to view   */
+  int channel;                   /* 0=party line, -1=off                 */
+  struct msgq *buffer;           /* a buffer of outgoing lines
+                                  * (for .page cmd)                      */
+  int max_line;                  /* maximum lines at once                */
+  int line_count;                /* number of lines sent since last page */
+  int current_lines;             /* number of lines total stored         */
   char *su_nick;
 };
 
