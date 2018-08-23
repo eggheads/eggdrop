@@ -2605,24 +2605,24 @@ static void cmd_pls_ignore(struct userrec *u, int idx, char *par)
       case 'd':
         *p = 0;
         expire_foo = strtol(p_expire, NULL, 10);
-        if (expire_foo > (INT_MAX - now) / (60 * 60 * 24))
-          expire_foo = (INT_MAX - now) / (60 * 60 * 24);
-        expire_time += 60 * 60 * 24 * expire_foo;
+        if (expire_foo > 365)
+          expire_foo = 365;
+        expire_time += 86400 * expire_foo;
         p_expire = p + 1;
         break;
       case 'h':
         *p = 0;
         expire_foo = strtol(p_expire, NULL, 10);
-        if (expire_foo > (INT_MAX - now) / (60 * 60))
-          expire_foo = (INT_MAX - now) / (60 * 60);
-        expire_time += 60 * 60 * expire_foo;
+        if (expire_foo > 8760)
+          expire_foo = 8760;
+        expire_time += 3600 * expire_foo;
         p_expire = p + 1;
         break;
       case 'm':
         *p = 0;
         expire_foo = strtol(p_expire, NULL, 10);
-        if (expire_foo > (INT_MAX - now) / 60)
-          expire_foo = (INT_MAX - now) / 60;
+        if (expire_foo > 525600)
+          expire_foo = 525600;
         expire_time += 60 * expire_foo;
         p_expire = p + 1;
       }
