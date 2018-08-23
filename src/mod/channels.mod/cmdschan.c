@@ -935,7 +935,7 @@ static void cmd_stick_yn(int idx, char *par, int yn)
 {
   int i = 0, j;
   struct chanset_t *chan, *achan;
-  char *stick_type, s[UHOSTLEN], chname[81];
+  char *stick_type, s[UHOSTLEN], chname[CHANNELLEN + 1];
   module_entry *me;
 
   stick_type = newsplit(&par);
