@@ -1817,8 +1817,7 @@ static int gotjoin(char *from, char *chname)
           /* It was me joining! Need to update the channel record with the
            * unique name for the channel (as the server see's it). <cybah>
            */
-          strncpy(chan->name, chname, 81);
-          chan->name[80] = 0;
+          strncpyz(chan->name, chname, sizeof chan->name);
           chan->status &= ~CHAN_JUPED;
 
           /* ... and log us joining. Using chan->dname for the channel is
