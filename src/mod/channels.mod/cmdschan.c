@@ -91,7 +91,7 @@ static void cmd_pls_ban(struct userrec *u, int idx, char *par)
           p_expire = p + 1;
         }
       }
-      if (expire_time / (60 * 60 * 24) > 2000) {
+      if (expire_time > (60 * 60 * 24 * 2000)) {
         dprintf(idx, "Limit for expire time is 2000 days. Please select a lower value than %li\n",
                 expire_time / (60 * 60 * 24));
         expire_time = 60 * 60 * 24 * 2000;
@@ -227,7 +227,7 @@ static void cmd_pls_exempt(struct userrec *u, int idx, char *par)
           p_expire = p + 1;
         }
       }
-      if (expire_time / (60 * 60 * 24) > 2000) {
+      if (expire_time > (60 * 60 * 24 * 2000)) {
         dprintf(idx, "Limit for expire time is 2000 days. Please select a lower value than %li\n",
                 expire_time / (60 * 60 * 24));
         expire_time = 60 * 60 * 24 * 2000;
@@ -349,7 +349,7 @@ static void cmd_pls_invite(struct userrec *u, int idx, char *par)
           p_expire = p + 1;
         }
       }
-      if (expire_time / (60 * 60 * 24) > 2000) {
+      if (expire_time > (60 * 60 * 24 * 2000)) {
         dprintf(idx, "Limit for expire time is 2000 days. Please select a lower value than %li\n",
                 expire_time / (60 * 60 * 24));
         expire_time = 60 * 60 * 24 * 2000;
