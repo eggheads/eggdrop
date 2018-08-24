@@ -1486,7 +1486,7 @@ int hostsanitycheck_dcc(char *nick, char *from, sockname_t *ip, char *dnsname,
   return 0;
 }
 
-/* Checks wether the referenced socket has data queued.
+/* Checks whether the referenced socket has data queued.
  *
  * Returns true if the incoming/outgoing (depending on 'type') queues
  * contain data, otherwise false.
