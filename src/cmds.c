@@ -2585,8 +2585,8 @@ static void cmd_unloadmod(struct userrec *u, int idx, char *par)
 
 static void cmd_pls_ignore(struct userrec *u, int idx, char *par)
 {
-  char *who, s[UHOSTLEN];
-  unsigned long int expire_time = 0;
+  char *who, s[UHOSTLEN], *p, *p_expire;
+  unsigned long int expire_time = 0, expire_foo;
 
   if (!par[0]) {
     dprintf(idx, "Usage: +ignore <hostmask> [%%<XdXhXm>] [comment]\n");
@@ -2595,9 +2595,6 @@ static void cmd_pls_ignore(struct userrec *u, int idx, char *par)
 
   who = newsplit(&par);
   if (par[0] == '%') {
-    char *p, *p_expire;
-    unsigned long int expire_foo;
-
     p = newsplit(&par);
     p_expire = p + 1;
     while (*(++p) != 0) {
@@ -2605,27 +2602,27 @@ static void cmd_pls_ignore(struct userrec *u, int idx, char *par)
       case 'd':
         *p = 0;
         expire_foo = strtol(p_expire, NULL, 10);
-        if (expire_foo > (INT_MAX - now) / (60 * 60 * 24))
-          expire_foo = (INT_MAX - now) / (60 * 60 * 24);
         expire_time += 60 * 60 * 24 * expire_foo;
         p_expire = p + 1;
         break;
       case 'h':
         *p = 0;
         expire_foo = strtol(p_expire, NULL, 10);
-        if (expire_foo > (INT_MAX - now) / (60 * 60))
-          expire_foo = (INT_MAX - now) / (60 * 60);
         expire_time += 60 * 60 * expire_foo;
         p_expire = p + 1;
         break;
       case 'm':
         *p = 0;
         expire_foo = strtol(p_expire, NULL, 10);
-        if (expire_foo > (INT_MAX - now) / 60)
-          expire_foo = (INT_MAX - now) / 60;
         expire_time += 60 * expire_foo;
         p_expire = p + 1;
       }
+    }
+    if (expire_time / (60 * 60 * 24) > 2000) {
+      dprintf(idx, "Limit for expire time is 2000 days. Please select a lower value than %li\n",
+              expire_time / (60 * 60 * 24));
+      expire_time = 60 * 60 * 24 * 2000;
+      return;
     }
   }
   if (!par[0])
