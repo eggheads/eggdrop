@@ -2618,9 +2618,12 @@ static void cmd_pls_ignore(struct userrec *u, int idx, char *par)
         p_expire = p + 1;
       }
     }
+    if (expire_time < 0) {
+      dprintf(idx, "expire limit must be greater than 0 seconds\n");
+      return;
+    }
     if (expire_time > (60 * 60 * 24 * 2000)) {
-      dprintf(idx, "Limit for expire time is 2000 days.\n");
-      expire_time = 60 * 60 * 24 * 2000;
+      dprintf(idx, "limit must be equal to or less than 2000 days\n");
       return;
     }
   }
