@@ -92,7 +92,7 @@ static void cmd_pls_ban(struct userrec *u, int idx, char *par)
         }
       }
       if (expire_time > (60 * 60 * 24 * 2000)) {
-        dprintf(idx, "limit must be equal to or less than 2000 days\n");
+        dprintf(idx, "expire time must be equal to or less than 2000 days\n");
         return;
       }
     }
@@ -226,7 +226,7 @@ static void cmd_pls_exempt(struct userrec *u, int idx, char *par)
         }
       }
       if (expire_time > (60 * 60 * 24 * 2000)) {
-        dprintf(idx, "limit must be equal to or less than 2000 days\n");
+        dprintf(idx, "expire time must be equal to or less than 2000 days\n");
         return;
       }
     }
@@ -346,7 +346,7 @@ static void cmd_pls_invite(struct userrec *u, int idx, char *par)
         }
       }
       if (expire_time > (60 * 60 * 24 * 2000)) {
-        dprintf(idx, "limit must be equal to or less than 2000 days\n");
+        dprintf(idx, "expire time must be equal to or less than 2000 days\n");
         return;
       }
     }
