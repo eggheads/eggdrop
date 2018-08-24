@@ -284,7 +284,6 @@ int getdccaddr(sockname_t *, char *, size_t);
 int getdccfamilyaddr(sockname_t *, char *, size_t, int);
 void tputs(int, char *, unsigned int);
 void dequeue_sockets();
-int preparefdset(fd_set *, sock_list *, int, int, int);
 int sockread(char *, int *, sock_list *, int, int);
 int sockgets(char *, int *);
 void tell_netdebug(int);
