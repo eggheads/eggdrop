@@ -747,7 +747,7 @@ static inline int trigger_bind(const char *proc, const char *param,
   if (proc && !r) {
     clock_gettime(CLOCK_MONOTONIC, &tp2);
     debug2("triggered bind %s end time = %.3fms", proc,
-	   (double) (tp2.tv_nsec - tp1.tv_nsec) / 1000 +
+	   (double) (tp2.tv_nsec - tp1.tv_nsec) / 1000000 +
 	   (double) (tp2.tv_sec - tp1.tv_sec) * 1000);
   }
 
