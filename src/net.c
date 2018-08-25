@@ -319,10 +319,10 @@ int allocsock(int sock, int options)
  *
  * alloctclsock() can be called by Tcl threads
  */
-int alloctclsock(register int sock, int mask, Tcl_FileProc *proc, ClientData cd)
+int alloctclsock(int sock, int mask, Tcl_FileProc *proc, ClientData cd)
 {
   int f = -1;
-  register int i;
+  int i;
   struct threaddata *td = threaddata();
 
   for (i = 0; i < td->MAXSOCKS; i++) {
@@ -391,9 +391,9 @@ int getsock(int af, int options)
 
 /* Done with a socket
  */
-void killsock(register int sock)
+void killsock(int sock)
 {
-  register int i;
+  int i;
   struct threaddata *td = threaddata();
 
   /* Ignore invalid sockets.  */
@@ -433,9 +433,9 @@ void killsock(register int sock)
  *
  * killtclsock() can be called by Tcl threads
  */
-void killtclsock(register int sock)
+void killtclsock(int sock)
 {
-  register int i;
+  int i;
   struct threaddata *td = threaddata();
 
   if (sock < 0)
@@ -1162,9 +1162,9 @@ int sockgets(char *s, int *len)
  *
  * NOTE: Do NOT put Contexts in here if you want DEBUG to be meaningful!!
  */
-void tputs(register int z, char *s, unsigned int len)
+void tputs(int z, char *s, unsigned int len)
 {
-  register int i, x, idx;
+  int i, x, idx;
   char *p;
   static int inhere = 0;
 

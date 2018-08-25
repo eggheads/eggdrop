@@ -58,11 +58,11 @@ static struct dcc_table DCC_SEND, DCC_GET, DCC_GET_PENDING;
  * wildcard characters. This is basically a direct copy of wild_match_per(),
  * but without support for '%', or '~'.
  */
-static int wild_match_file(register char *m, register char *n)
+static int wild_match_file(char *m, char *n)
 {
   char *ma = m, *lsm = 0, *lsn = 0;
   int match = 1;
-  register unsigned int sofar = 0;
+  unsigned int sofar = 0;
 
   /* null strings should never match */
   if ((m == 0) || (n == 0) || (!*n))
@@ -131,7 +131,7 @@ static int at_limit(char *nick)
  */
 static char *replace_spaces(char *fn)
 {
-  register char *ret, *p;
+  char *ret, *p;
 
   p = ret = nmalloc(strlen(fn) + 1);
   strcpy(ret, fn);
@@ -214,7 +214,7 @@ static void check_tcl_toutlost(struct userrec *u, char *nick, char *path,
  */
 #define PMAX_SIZE 4096
 static unsigned long pump_file_to_sock(FILE *file, long sock,
-                                       register unsigned long pending_data)
+                                       unsigned long pending_data)
 {
   unsigned long actual_size, r;
   const unsigned long buf_len = pending_data >= PMAX_SIZE ?
@@ -750,7 +750,7 @@ static void display_dcc_fork_send(int idx, char *buf)
 
 static int expmem_dcc_xfer(void *x)
 {
-  register struct xfer_info *p = (struct xfer_info *) x;
+  struct xfer_info *p = (struct xfer_info *) x;
   int tot;
 
   tot = sizeof(struct xfer_info);
@@ -766,7 +766,7 @@ static int expmem_dcc_xfer(void *x)
 
 static void kill_dcc_xfer(int idx, void *x)
 {
-  register struct xfer_info *p = (struct xfer_info *) x;
+  struct xfer_info *p = (struct xfer_info *) x;
 
   if (p->filename)
     nfree(p->filename);

@@ -429,7 +429,7 @@ static void kick_all(struct chanset_t *chan, char *hostmask, char *comment,
  */
 static void refresh_ban_kick(struct chanset_t *chan, char *user, char *nick)
 {
-  register maskrec *b;
+  maskrec *b;
   memberlist *m;
   int cycle;
 

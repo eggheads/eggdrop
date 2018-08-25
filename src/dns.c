@@ -67,7 +67,7 @@ static void display_dcc_dnswait(int idx, char *buf)
 
 static int expmem_dcc_dnswait(void *x)
 {
-  register struct dns_info *p = (struct dns_info *) x;
+  struct dns_info *p = (struct dns_info *) x;
   int size = 0;
 
   if (p) {
@@ -82,7 +82,7 @@ static int expmem_dcc_dnswait(void *x)
 
 static void kill_dcc_dnswait(int idx, void *x)
 {
-  register struct dns_info *p = (struct dns_info *) x;
+  struct dns_info *p = (struct dns_info *) x;
 
   if (p) {
     if (p->host)
