@@ -714,6 +714,8 @@ static inline int trigger_bind(const char *proc, const char *param,
                                char *mask)
 {
   int x;
+  struct timespec tp1, tp2;
+  int r;
 #ifdef DEBUG_CONTEXT
   const char *msg = "Tcl proc: %s, param: %s";
   char *buf;
@@ -736,18 +738,17 @@ static inline int trigger_bind(const char *proc, const char *param,
    */
   Tcl_SetVar(interp, "lastbind", (char *) mask, TCL_GLOBAL_ONLY);
 
-  struct timeval tv1, tv2;
   if(proc) {
-    debug1("triggered bind %s begin", proc);
-    gettimeofday(&tv1, NULL); 
+    debug1("triggered bind %s start", proc);
+    r = clock_gettime(CLOCK_MONOTONIC, &tp1);
   }
   x = Tcl_VarEval(interp, proc, param, NULL);
   Context;
-  if (proc) {
-    gettimeofday(&tv2, NULL);
-    debug2("triggered bind %s total time = %.3fms", proc,
-	   (double) (tv2.tv_usec - tv1.tv_usec) / 1000 +
-	   (double) (tv2.tv_sec - tv1.tv_sec) * 1000);
+  if (proc && !r) {
+    clock_gettime(CLOCK_MONOTONIC, &tp2);
+    debug2("triggered bind %s end time = %.3fms", proc,
+	   (double) (tp2.tv_nsec - tp1.tv_nsec) / 1000 +
+	   (double) (tp2.tv_sec - tp1.tv_sec) * 1000);
   }
 
   if (x == TCL_ERROR) {
