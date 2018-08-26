@@ -77,7 +77,7 @@ static int minutes = 0;
 static int seconds = 0;
 static int next_seconds = 0;
 static int next_minutes = 0;
-static int update_interval = 720; /* rand(0..12) hours: ~6 hour average. */
+static int update_interval = 720; /* random(0..12) hours: ~6 hour average. */
 static time_t next_update = 0;
 static int uptimesock;
 static int uptimecount;
@@ -159,8 +159,8 @@ int init_uptime(void)
   }
   fcntl(uptimesock, F_SETFL, O_NONBLOCK | fcntl(uptimesock, F_GETFL));
 
-  next_minutes = rand() % update_interval; /* Initial update delay */
-  next_seconds = rand() % 59;
+  next_minutes = random() % update_interval; /* Initial update delay */
+  next_seconds = random() % 59;
   next_update = (time_t) ((time(NULL) / 60 * 60) + (next_minutes * 60) +
     next_seconds);
 
@@ -245,8 +245,8 @@ void check_secondly()
 
     minutes = 0; /* Reset for the next countdown. */
     seconds = 0;
-    next_minutes = rand() % update_interval;
-    next_seconds = rand() % 59;
+    next_minutes = random() % update_interval;
+    next_seconds = random() % 59;
     next_update = (time_t) ((time(NULL) / 60 * 60) + (next_minutes * 60) +
       next_seconds);
 
