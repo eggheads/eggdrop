@@ -666,7 +666,8 @@ static int tcl_dcclist STDVAR
       }
       list[0] = idxstr;
       list[1] = dcc[i].nick;
-      list[2] = dcc[i].host;
+      list[2] = (dcc[i].host == NULL || dcc[i].host[0] == '\0') ?
+                iptostr(&dcc[i].sockname.addr.sa) : dcc[i].host;
       list[3] = dcc[i].type ? dcc[i].type->name : "*UNKNOWN*";
       list[4] = other;
       list[5] = timestamp;
