@@ -73,7 +73,7 @@ Modules included with Eggdrop
     or save channel specific userfile information.
 
   :ref:`compress`
-    This module provides provides support for file compression. This
+    This module provides support for file compression. This
     allows the bot to transfer compressed user files and, therefore,
     save a significant amount of bandwidth.
 

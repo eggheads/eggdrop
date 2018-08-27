@@ -73,7 +73,7 @@ static char opchars[8];         /* the chars in a /who reply meaning op */
 #include "msgcmds.c"
 #include "tclirc.c"
 
-/* Contains the logic to decide wether we want to punish someone. Returns
+/* Contains the logic to decide whether we want to punish someone. Returns
  * true (1) if we want to, false (0) if not.
  */
 static int want_to_revenge(struct chanset_t *chan, struct userrec *u,
