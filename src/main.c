@@ -537,62 +537,68 @@ void show_help() {
   printf("\n%s\n\n", version);
   printf("Usage: eggdrop [options] [config-file]\n\n"
          "Options:\n"
-         "-n Don't background; send all log entries to console.\n"
-         "-nc  Don't background; display channel stats every 10 seconds.\n"
-         "-nt  Don't background; use terminal to simulate DCC chat.\n"
-         "-m   Create userfile.\n"
-         "-h   Show this help.\n"
-         "-v   Show version info, then quit.\n\n");
+         "-n  Don't background; send all log entries to console.\n"
+         "-nc Don't background; display channel stats every 10 seconds.\n"
+         "-nt Don't background; use terminal to simulate DCC chat.\n"
+         "-m  Create userfile.\n"
+         "-h  Show this help.\n"
+         "-v  Show version info, then quit.\n\n");
   bg_send_quit(BG_ABORT);
 }
 
 static void do_arg()
 {
   int option = 0;
-/* Bitmask structure to hold cli flags
-   | QUIT| BAD FLAG| h| n| c| t| m| v|
-   |  128|       64|32|16| 8| 4| 2| 1|
-*/
   unsigned char cliflags = 0;
+  #define CLI_V        1 << 0
+  #define CLI_M        1 << 1
+  #define CLI_T        1 << 2
+  #define CLI_C        1 << 3
+  #define CLI_N        1 << 4
+  #define CLI_H        1 << 5
+  #define CLI_BAD_FLAG 1 << 6
 
   while ((option = getopt(argc, argv, "hnctmv")) != -1) {
     switch (option) {
       case 'n':
-        cliflags |= 16;
+        cliflags |= CLI_N;
         backgrd = 0;
         break;
       case 'c':
-        cliflags |= 8;
+        cliflags |= CLI_C;
         con_chan = 1;
         term_z = 0;
         break;
       case 't':
-        cliflags |= 4;
+        cliflags |= CLI_T;
         con_chan = 0;
         term_z = 1;
         break;
       case 'm':
-        cliflags |= 2;
+        cliflags |= CLI_M;
         make_userfile = 1;
         break;
       case 'v':
-        cliflags |= 129;		//128 + 1
+        cliflags |= CLI_V;
         break;
       case 'h':
-        cliflags |= 160;		//128 + 32
+        cliflags |= CLI_H;
         break;
       default:
-        cliflags |= 192;		//128 + 64
+        cliflags |= CLI_BAD_FLAG;
         break;
     }
   }
-  if ((cliflags & 64) || (cliflags & 32)) {
+  if (cliflags & CLI_H) {
     show_help();
     exit(0);
-  } else if (cliflags & 1) {
+  } else if (cliflags & CLI_BAD_FLAG) {
+    show_help();
+    exit(1);
+  } else if (cliflags & CLI_V) {
     show_ver();
     exit(0);
-  } else if (!(cliflags & 16) && ((cliflags & 8) || (cliflags & 4))) {
+  } else if (!(cliflags & CLI_N) && ((cliflags & CLI_C) || (cliflags & CLI_T))) {
     printf("\n%s\n", version);
     printf("ERROR: The -n flag is required when using the -c or -t flags. Exiting...\n\n");
     exit(1);
