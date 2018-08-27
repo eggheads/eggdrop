@@ -665,7 +665,7 @@ void ssl_info(SSL *ssl, int where, int ret)
         /* Errors to be ignored for non-blocking */
         debug1("TLS: awaiting more %s", (err & SSL_ERROR_WANT_READ) ? "reads" : "writes");
       } else {
-        putlog(data->loglevel, "*", "TLS: failed in: %s.",
+        putlog(data->loglevel, "*", "TLS: error in: %s.",
                SSL_state_string_long(ssl));
       }
     }
