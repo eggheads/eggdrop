@@ -258,14 +258,14 @@ static struct resolve *allocresolve()
 
 /* Return the hash bucket number for id.
  */
-static inline u_32bit_t getidbash(u_16bit_t id)
+static u_32bit_t getidbash(u_16bit_t id)
 {
   return (u_32bit_t) BASH_MODULO(id);
 }
 
 /* Return the hash bucket number for ip.
  */
-static inline u_32bit_t getipbash(IP ip)
+static u_32bit_t getipbash(IP ip)
 {
   return (u_32bit_t) BASH_MODULO(ip);
 }

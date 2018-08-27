@@ -53,7 +53,7 @@ static memberlist *newmember(struct chanset_t *chan)
 }
 
 /* Remove channel members for which no WHO reply was received */
-static inline void sync_members(struct chanset_t *chan)
+static void sync_members(struct chanset_t *chan)
 {
   memberlist *m, *next, *prev;
 
