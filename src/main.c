@@ -503,7 +503,7 @@ void eggAssert(const char *file, int line, const char *module)
 }
 #endif
 
-void show_ver() {
+static void show_ver() {
   char x[512], *z = x;
 
   strncpyz(x, egg_version, sizeof x);
@@ -533,7 +533,7 @@ void show_ver() {
    meaning other languages can't be loaded yet.
    English (or an error) is the only possible option.
 */
-void show_help() {
+static void show_help() {
   printf("\n%s\n\n", version);
   printf("Usage: eggdrop [options] [config-file]\n\n"
          "Options:\n"
