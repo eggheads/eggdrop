@@ -21,8 +21,8 @@ dnl Load tcl macros
 builtin(include,tcl.m4)
 
 dnl Load gnu autoconf archive macros
-builtin(include,ax_create_stdint_h.m4)
-builtin(include,ax_lib_socket_nsl.m4)
+builtin(include,m4/ax_create_stdint_h.m4)
+builtin(include,m4/ax_lib_socket_nsl.m4)
 
 
 dnl
