@@ -265,6 +265,9 @@ int pass_set(struct userrec *u, struct user_entry *e, void *buf)
   }
   if (!noshare && !(u->flags & (USER_BOT | USER_UNSHARED)))
     shareout(NULL, "c PASS %s %s\n", u->handle, pass ? pass : "");
+#ifdef HAVE_EXPLICIT_BZERO 
+  explicit_bzero(pass, strlen(pass));
+#endif
   return 1;
 }
 
