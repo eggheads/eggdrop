@@ -535,7 +535,7 @@ static void disp_dcc_files_pass(int idx, char *buf)
 
 static void kill_dcc_files(int idx, void *x)
 {
-  register struct file_info *f = (struct file_info *) x;
+  struct file_info *f = (struct file_info *) x;
 
   if (f->chat)
     DCC_CHAT.kill(idx, f->chat);
@@ -553,7 +553,7 @@ static void eof_dcc_files(int idx)
 
 static int expmem_dcc_files(void *x)
 {
-  register struct file_info *p = (struct file_info *) x;
+  struct file_info *p = (struct file_info *) x;
   int tot = sizeof(struct file_info);
 
   if (p->chat)
@@ -563,7 +563,7 @@ static int expmem_dcc_files(void *x)
 
 static void out_dcc_files(int idx, char *buf, void *x)
 {
-  register struct file_info *p = (struct file_info *) x;
+  struct file_info *p = (struct file_info *) x;
 
   if (p->chat)
     DCC_CHAT.output(idx, buf, p->chat);

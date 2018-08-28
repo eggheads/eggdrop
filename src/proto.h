@@ -192,8 +192,8 @@ int mainloop(int);
 /* match.c */
 int casecharcmp(unsigned char, unsigned char);
 int charcmp(unsigned char, unsigned char);
-int _wild_match(register unsigned char *, register unsigned char *);
-int _wild_match_per(register unsigned char *, register unsigned char *,
+int _wild_match(unsigned char *, unsigned char *);
+int _wild_match_per(unsigned char *, unsigned char *,
                     int (*)(unsigned char, unsigned char),
                     int (*)(unsigned char, unsigned char),
                     unsigned char *);
@@ -255,8 +255,8 @@ int oatoi(const char *);
 int is_file(const char *);
 void logsuffix_change(char *);
 char *str_escape(const char *, const char, const char);
-char *strchr_unescape(char *, const char, register const char);
-void str_unescape(char *, register const char);
+char *strchr_unescape(char *, const char, const char);
+void str_unescape(char *, const char);
 int str_isdigit(const char *);
 void kill_bot(char *, char *);
 

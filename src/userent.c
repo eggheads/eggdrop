@@ -240,7 +240,7 @@ struct user_entry_type USERENTRY_INFO = {
 int pass_set(struct userrec *u, struct user_entry *e, void *buf)
 {
   char new[32];
-  register char *pass = buf;
+  char *pass = buf;
 
   if (e->u.extra)
     nfree(e->u.extra);
@@ -570,7 +570,7 @@ static int botaddr_write_userfile(FILE *f, struct userrec *u,
 {
   int ret = 1;
   char *p, *q, *addr;
-  register struct bot_addr *bi = (struct bot_addr *) e->u.extra;
+  struct bot_addr *bi = (struct bot_addr *) e->u.extra;
 
   p = bi->address;
   addr = user_malloc(strlen(bi->address) + 1);
@@ -595,7 +595,7 @@ static int botaddr_write_userfile(FILE *f, struct userrec *u,
 
 static int botaddr_set(struct userrec *u, struct user_entry *e, void *buf)
 {
-  register struct bot_addr *bi = (struct bot_addr *) e->u.extra;
+  struct bot_addr *bi = (struct bot_addr *) e->u.extra;
 
   if (!bi && !buf)
     return 1;
@@ -667,7 +667,7 @@ static int botaddr_tcl_append(Tcl_Interp * interp, struct userrec *u,
 static int botaddr_tcl_set(Tcl_Interp * irp, struct userrec *u,
                            struct user_entry *e, int argc, char **argv)
 {
-  register struct bot_addr *bi = (struct bot_addr *) e->u.extra;
+  struct bot_addr *bi = (struct bot_addr *) e->u.extra;
 
   BADARGS(4, 6, " handle type address ?telnetport ?relayport??");
 
@@ -721,14 +721,14 @@ static int botaddr_tcl_set(Tcl_Interp * irp, struct userrec *u,
 
 static int botaddr_expmem(struct user_entry *e)
 {
-  register struct bot_addr *bi = (struct bot_addr *) e->u.extra;
+  struct bot_addr *bi = (struct bot_addr *) e->u.extra;
 
   return strlen(bi->address) + 1 + sizeof(struct bot_addr);
 }
 
 static void botaddr_display(int idx, struct user_entry *e)
 {
-  register struct bot_addr *bi = (struct bot_addr *) e->u.extra;
+  struct bot_addr *bi = (struct bot_addr *) e->u.extra;
 
   dprintf(idx, "  ADDRESS: %.70s\n", bi->address);
 #ifdef TLS

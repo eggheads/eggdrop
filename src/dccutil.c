@@ -116,9 +116,9 @@ int findidx(int z)
   return -1;
 }
 
-int findanyidx(register int z)
+int findanyidx(int z)
 {
-  register int j;
+  int j;
 
   for (j = 0; j < dcc_total; j++)
     if (dcc[j].sock == z)

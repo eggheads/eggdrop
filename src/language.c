@@ -592,7 +592,7 @@ int expmem_language()
 static int cmd_languagestatus(struct userrec *u, int idx, char *par)
 {
   int ltexts = 0;
-  register int i, c, maxdepth = 0, used = 0, empty = 0;
+  int i, c, maxdepth = 0, used = 0, empty = 0;
   lang_tab *l;
   lang_sec *ls = langsection;
   lang_pri *lp = langpriority;
