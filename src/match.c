@@ -339,7 +339,7 @@ int cidr_match(char *m, char *n, int count)
 {
 #ifdef IPV6
   int c, af = AF_INET, rest;
-  u_8bit_t block[16], addr[16];
+  uint8_t block[16], addr[16];
 
   if (strchr(m, ':') || strchr(n, ':')) {
     af = AF_INET6;

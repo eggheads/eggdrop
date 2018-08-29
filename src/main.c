@@ -798,7 +798,7 @@ int ssl_init();
 
 static inline void garbage_collect(void)
 {
-  static u_8bit_t run_cnt = 0;
+  static uint8_t run_cnt = 0;
 
   if (run_cnt == 3)
     garbage_collect_tclhash();

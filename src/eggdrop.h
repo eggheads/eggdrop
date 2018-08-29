@@ -308,12 +308,8 @@ typedef int socklen_t;
 #  define free(x)   dont_use_old_free(x)
 #endif /* !COMPILING_MEM */
 
-typedef uint8_t u_8bit_t;
-typedef uint16_t u_16bit_t;
-typedef uint32_t u_32bit_t;
-
 /* IP type */
-typedef u_32bit_t IP;
+typedef uint32_t IP;
 
 /* Debug logging macros */
 #define debug0(x)             putlog(LOG_DEBUG,"*",x)
