@@ -77,7 +77,7 @@ static void filelist_addout(filelist_t *flist, char *desc)
 }
 
 /* Dump all data to specified idx */
-static inline void filelist_idxshow(filelist_t *flist, int idx)
+static void filelist_idxshow(filelist_t *flist, int idx)
 {
   int i;
 
