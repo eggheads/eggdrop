@@ -228,8 +228,8 @@ void check_expired_ignores()
   }
 }
 
-/*        Channel mask loaded from user file. This function is
- *      add(ban|invite|exempt)_fully merged into one. <cybah>
+/* Channel mask loaded from user file. This function is
+ * add(ban|invite|exempt)_fully merged into one. <cybah>
  */
 static void addmask_fully(struct chanset_t *chan, maskrec ** m, char *mask,
                           char *from, char *note, time_t expire_time, int flags,
