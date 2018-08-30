@@ -1103,20 +1103,19 @@ int sockgets(char *s, int *len)
       /* (leave the rest to be post-pended later) */
     }
   }
-  /* Look for EOL marker; if it's there, i have something to show */
-  p = strchr(xx, '\n');
-  if (p == NULL)
-    p = strchr(xx, '\r');
-  if (p != NULL) {
-    *p = 0;
-    strcpy(s, xx);
-    memmove(xx, p + 1, strlen(p + 1) + 1);
-    if (s[strlen(s) - 1] == '\r')
-      s[strlen(s) - 1] = 0;
-    data = 1; /* DCC_CHAT may now need to process a blank line */
+  for (p = xx; *p != 0 ; p++) {
+    if ((*p == '\r') || (*p == '\n')) {
+      memcpy(s, xx, p - xx);
+      s[p - xx] = 0;
+      for (p++; (*p == '\r') || (*p == '\n'); p++);
+      memmove(xx, p, strlen(p) + 1);
+      data = 1; /* DCC_CHAT may now need to process a blank line */
+      break;
+    }
+  }
 /* NO! */
 /* if (!s[0]) strcpy(s," ");  */
-  } else {
+  if (!data) { 
     s[0] = 0;
     if (strlen(xx) >= 510) {
       /* String is too long, so just insert fake \n */
