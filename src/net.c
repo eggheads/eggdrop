@@ -1103,6 +1103,7 @@ int sockgets(char *s, int *len)
       /* (leave the rest to be post-pended later) */
     }
   }
+  /* Look for EOL marker; if it's there, i have something to show */
   for (p = xx; *p != 0 ; p++) {
     if ((*p == '\r') || (*p == '\n')) {
       memcpy(s, xx, p - xx);
