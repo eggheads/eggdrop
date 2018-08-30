@@ -251,7 +251,7 @@ static void deq_msg()
 static int calc_penalty(char *msg)
 {
   char *cmd, *par1, *par2, *par3;
-  register int penalty, i, ii;
+  int penalty, i, ii;
 
   if (!use_penalties && net_type != NETT_UNDERNET &&
       net_type != NETT_HYBRID_EFNET)
@@ -380,7 +380,7 @@ static int calc_penalty(char *msg)
 
 char *splitnicks(char **rest)
 {
-  register char *o, *r;
+  char *o, *r;
 
   if (!rest)
     return *rest = "";
@@ -1199,7 +1199,7 @@ static char *nick_change(ClientData cdata, Tcl_Interp *irp,
  */
 static void rand_nick(char *nick)
 {
-  register char *p = nick;
+  char *p = nick;
 
   while ((p = strchr(p, '?')) != NULL) {
     *p = '0' + randint(10);
@@ -1724,7 +1724,7 @@ static void server_die()
 
 static void msgq_clear(struct msgq_head *qh)
 {
-  register struct msgq *q, *qq;
+  struct msgq *q, *qq;
 
   for (q = qh->head; q; q = qq) {
     qq = q->next;
@@ -1737,8 +1737,8 @@ static void msgq_clear(struct msgq_head *qh)
 
 static int msgq_expmem(struct msgq_head *qh)
 {
-  register int tot = 0;
-  register struct msgq *m;
+  int tot = 0;
+  struct msgq *m;
 
   for (m = qh->head; m; m = m->next) {
     tot += m->len + 1;

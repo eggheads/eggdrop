@@ -72,7 +72,7 @@ static int is_compressedfile(char *filename)
   char buf1[50], buf2[50];
   FILE *fin;
   gzFile zin;
-  register int len1, len2, i;
+  int len1, len2, i;
 
   egg_memset(buf1, 0, 50);
   egg_memset(buf2, 0, 50);
@@ -175,7 +175,7 @@ static int uncompress_to_file(char *f_src, char *f_target)
 
 /* Enforce limits.
  */
-static inline void adjust_mode_num(int *mode)
+static void adjust_mode_num(int *mode)
 {
   if (*mode > 9)
     *mode = 9;

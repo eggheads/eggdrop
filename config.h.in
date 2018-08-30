@@ -99,9 +99,6 @@
 /* Define to 1 if you have the `fsync' function. */
 #undef HAVE_FSYNC
 
-/* Define to 1 if you have the `getdtablesize' function. */
-#undef HAVE_GETDTABLESIZE
-
 /* Define to 1 if you have the `gethostbyname2' function. */
 #undef HAVE_GETHOSTBYNAME2
 

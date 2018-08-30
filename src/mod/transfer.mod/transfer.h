@@ -111,7 +111,7 @@ enum dccsend_types {
 #define queue_file(a,b,c,d) (((void (*)(char *,char *,char *,char *))transfer_funcs[8])(a,b,c,d))
 #define raw_dcc_send(a,b,c) (((int (*) (char *,char *,char *))transfer_funcs[9])(a,b,c))
 #define show_queued_files(a) (((void (*) (int))transfer_funcs[10])(a))
-#define wild_match_file(a,b) (((int (*)(register char *, register char *))transfer_funcs[11])(a,b))
+#define wild_match_file(a,b) (((int (*)(char *, char *))transfer_funcs[11])(a,b))
 /* 12 - 15 */
 /* Was wipe_tmp_filename (obsoleted) */
 #define DCC_GET (*(struct dcc_table *)(transfer_funcs[13]))
@@ -145,7 +145,7 @@ static int fstat_tcl_set(Tcl_Interp *irp, struct userrec *u,
                          struct user_entry *e, int argc, char **argv);
 static void stats_add_dnload(struct userrec *u, unsigned long bytes);
 static void stats_add_upload(struct userrec *u, unsigned long bytes);
-static int wild_match_file(register char *, register char *);
+static int wild_match_file(char *, char *);
 static int server_transfer_setup(char *);
 
 #define TRANSFER_REGET_PACKETID 0xfeab

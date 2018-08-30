@@ -17,7 +17,7 @@ modules: ../../../channels.$(MOD_EXT)
 	$(CC) $(CFLAGS) $(CPPFLAGS) -DMAKING_MODS -c $(srcdir)/channels.c && mv -f channels.o ../
 
 ../../../channels.$(MOD_EXT): ../channels.o
-	$(LD) -o ../../../channels.$(MOD_EXT) ../channels.o $(XLIBS) $(MODULE_XLIBS) && $(STRIP) ../../../channels.$(MOD_EXT)
+	$(LD) $(CFLAGS) -o ../../../channels.$(MOD_EXT) ../channels.o $(XLIBS) $(MODULE_XLIBS) && $(STRIP) ../../../channels.$(MOD_EXT)
 
 depend:
 	$(CC) $(CFLAGS) -MM $(srcdir)/channels.c -MT ../channels.o > .depend
