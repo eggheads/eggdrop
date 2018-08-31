@@ -1623,6 +1623,7 @@ AC_DEFUN(EGG_TLS_WITHSSL,
         else
           AC_SUBST(SSL_LIBS, [-L$withval])
         fi
+        ssllib="-L$withval"
       else
         AC_MSG_WARN([You have specified an invalid path to OpenSSL libs. $withval is not a directory.])
       fi
@@ -1637,6 +1638,7 @@ AC_DEFUN([EGG_TLS_DETECT],
 [
   tls_enabled="no"
   if test "$enable_tls" != "no"; then
+    LDFLAGS="${LDFLAGS} $ssllib"
     if test -z "$SSL_INCLUDES"; then
       AC_CHECK_HEADERS([openssl/ssl.h openssl/x509v3.h], , [havesslinc="no"], [
         #ifdef CYGWIN_HACKS
