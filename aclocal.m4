@@ -1616,13 +1616,13 @@ AC_DEFUN(EGG_TLS_WITHSSL,
   [
     if test "$enable_tls" != "no"; then
       if test -d "$withval"; then
-        AC_CHECK_LIB(ssl, SSL_accept, , [havessllib="no"], [-L$withval -lcrypto])
         AC_CHECK_LIB(crypto, X509_digest, , [havessllib="no"], [-L$withval -lssl])
+        AC_CHECK_LIB(ssl, SSL_accept, , [havessllib="no"], [-L$withval -lcrypto])
         if test "$havessllib" = "no"; then
           AC_MSG_WARN([Invalid path to OpenSSL libs. $withval doesn't contain the required files.])
         else
           AC_SUBST(SSL_LIBS, [-L$withval])
-          LDFLAGS="${LDFLAGS} $SSL_LIBS"
+          LDFLAGS="${LDFLAGS} -L$withval"
         fi
       else
         AC_MSG_WARN([You have specified an invalid path to OpenSSL libs. $withval is not a directory.])
@@ -1648,8 +1648,8 @@ AC_DEFUN([EGG_TLS_DETECT],
       ])
     fi
     if test -z "$SSL_LIBS"; then
-      AC_CHECK_LIB(ssl, SSL_accept, , [havessllib="no"], [-lcrypto])
       AC_CHECK_LIB(crypto, X509_digest, , [havessllib="no"], [-lssl])
+      AC_CHECK_LIB(ssl, SSL_accept, , [havessllib="no"], [-lcrypto])
       AC_CHECK_FUNCS([EVP_md5 EVP_sha1 a2i_IPADDRESS], , [[
         havessllib="no"
         break
