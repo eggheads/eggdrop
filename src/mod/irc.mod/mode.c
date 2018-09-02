@@ -799,7 +799,7 @@ static void got_ban(struct chanset_t *chan, char *nick, char *from, char *who,
   }
   refresh_exempt(chan, who);
   if (nick[0] && channel_enforcebans(chan)) {
-    register maskrec *b;
+    maskrec *b;
     int cycle;
     char resn[512] = "";
 

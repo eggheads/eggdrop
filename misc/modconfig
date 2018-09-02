@@ -169,12 +169,12 @@ Commands:
     static.h             Create \`src/mod/static.h'.
     Makefile             Create \`src/mod/Makefile'.
     configure            Interactively select modules.
-    is-configured        Exits 0/1 depending on wether modules where
+    is-configured        Exits 0/1 depending on whether modules where
                            configured or not.
     update-depends       Check all module dependencies and add modules missing.
     help                 Displays this information.
     detect-modules       Find all available modules.
-    modules-still-exist  Check wether all known modules still exist.
+    modules-still-exist  Check whether all known modules still exist.
 
 Options:
     --top_srcdir=DIR     Top directory         (At least one of these two
@@ -189,7 +189,7 @@ EOF
 ;;
 xis-configured)
 #
-#  Determine wether the modules were configured yet.
+#  Determine whether the modules were configured yet.
 #
 
 	if test -r "${mc_fmodules}"; then
@@ -200,14 +200,14 @@ xis-configured)
 ;;
 xmodules-still-exist)
 #
-#  Check wether all known modules still exist.
+#  Check whether all known modules still exist.
 #
 
 	if ${mc_self_call} -q is-configured; then
 		mc_known_mods=`cat ${mc_fknownmods}`
 
 		echo ${mc_n} "Checking for removed modules...${mc_c}" 1>&6
-		#  Check wether all known mods still exist
+		#  Check whether all known mods still exist
 		for mc_mod in ${mc_known_mods}; do
 			echo ${mc_n} ".${mc_c}" >&6
 			if test ! -d ${mc_mod_dir}/${mc_mod}; then
@@ -528,7 +528,7 @@ xupdate-depends)
 			#  Figure out the module's dependencies
 			mc_mod_depends=`grep "^DEPENDS:" ${mc_mod_dir}/${mc_mod}/modinfo | sed -e 's/^DEPENDS://'`
 
-			#  Check wether the dependencies are fulfilled
+			#  Check whether the dependencies are fulfilled
 			for mc_m_depend in ${mc_mod_depends}; do
 				if (echo ${mc_sel_modules} | \
 					grep " ${mc_m_depend}" 1>&7 2>&7) || \

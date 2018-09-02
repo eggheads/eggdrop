@@ -6,7 +6,7 @@ Last revised: May 27, 2004
 Compress Module
 ===============
 
-This module provides provides support for file compression. It can be used
+This module provides support for file compression. It can be used
 to compress files via Tcl or to transfer the userfile compressed during the
 share process, saving bandwidth.
 

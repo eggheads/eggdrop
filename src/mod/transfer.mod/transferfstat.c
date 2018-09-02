@@ -51,7 +51,7 @@ static int fstat_unpack(struct userrec *u, struct user_entry *e)
 
 static int fstat_pack(struct userrec *u, struct user_entry *e)
 {
-  register struct filesys_stats *fs;
+  struct filesys_stats *fs;
   struct list_type *l = user_malloc(sizeof(struct list_type));
 
   fs = e->u.extra;
@@ -68,7 +68,7 @@ static int fstat_pack(struct userrec *u, struct user_entry *e)
 static int fstat_write_userfile(FILE *f, struct userrec *u,
                                 struct user_entry *e)
 {
-  register struct filesys_stats *fs;
+  struct filesys_stats *fs;
 
   fs = e->u.extra;
   if (fprintf(f, "--FSTAT %09u %09u %09u %09u\n", fs->uploads, fs->upload_ks,
@@ -80,7 +80,7 @@ static int fstat_write_userfile(FILE *f, struct userrec *u,
 
 static int fstat_set(struct userrec *u, struct user_entry *e, void *buf)
 {
-  register struct filesys_stats *fs = buf;
+  struct filesys_stats *fs = buf;
 
   if (e->u.extra != fs) {
     if (e->u.extra)
@@ -265,7 +265,7 @@ static int fstat_dupuser(struct userrec *u, struct userrec *o,
 static void stats_add_dnload(struct userrec *u, unsigned long bytes)
 {
   struct user_entry *ue;
-  register struct filesys_stats *fs;
+  struct filesys_stats *fs;
 
   if (u) {
     if (!(ue = find_user_entry(&USERENTRY_FSTAT, u)) || !(fs = ue->u.extra)) {
@@ -282,7 +282,7 @@ static void stats_add_dnload(struct userrec *u, unsigned long bytes)
 static void stats_add_upload(struct userrec *u, unsigned long bytes)
 {
   struct user_entry *ue;
-  register struct filesys_stats *fs;
+  struct filesys_stats *fs;
 
   if (u) {
     if (!(ue = find_user_entry(&USERENTRY_FSTAT, u)) || !(fs = ue->u.extra)) {
@@ -299,7 +299,7 @@ static void stats_add_upload(struct userrec *u, unsigned long bytes)
 static int fstat_tcl_set(Tcl_Interp *irp, struct userrec *u,
                          struct user_entry *e, int argc, char **argv)
 {
-  register struct filesys_stats *fs;
+  struct filesys_stats *fs;
   int f = 0, k = 0;
 
   BADARGS(4, 6, " handle FSTAT u/d ?files ?ks??");

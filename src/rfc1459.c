@@ -27,9 +27,9 @@
 
 int _rfc_casecmp(const char *s1, const char *s2)
 {
-  register unsigned char *str1 = (unsigned char *) s1;
-  register unsigned char *str2 = (unsigned char *) s2;
-  register int res;
+  unsigned char *str1 = (unsigned char *) s1;
+  unsigned char *str2 = (unsigned char *) s2;
+  int res;
 
   while (!(res = rfc_toupper(*str1) - rfc_toupper(*str2))) {
     if (*str1 == '\0')
@@ -42,9 +42,9 @@ int _rfc_casecmp(const char *s1, const char *s2)
 
 int _rfc_ncasecmp(const char *str1, const char *str2, int n)
 {
-  register unsigned char *s1 = (unsigned char *) str1;
-  register unsigned char *s2 = (unsigned char *) str2;
-  register int res;
+  unsigned char *s1 = (unsigned char *) str1;
+  unsigned char *s2 = (unsigned char *) str2;
+  int res;
 
   while (!(res = rfc_toupper(*s1) - rfc_toupper(*s2))) {
     s1++;

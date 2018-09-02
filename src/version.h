@@ -27,5 +27,5 @@
  */
 
 #define EGG_STRINGVER "1.8.3"
-#define EGG_NUMVER 1080302
-#define EGG_PATCH "bandelimit"
+#define EGG_NUMVER 1080306
+#define EGG_PATCH "acupdates"

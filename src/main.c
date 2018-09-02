@@ -796,7 +796,7 @@ int init_language(int);
 int ssl_init();
 #endif
 
-static inline void garbage_collect(void)
+static void garbage_collect(void)
 {
   static u_8bit_t run_cnt = 0;
 

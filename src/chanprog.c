@@ -70,7 +70,7 @@ char owner[121] = "";              /* Permanent botowner(s)        */
  */
 void rmspace(char *s)
 {
-  register char *p = NULL, *q = NULL;
+  char *p = NULL, *q = NULL;
 
   if (!s || !*s)
     return;
@@ -91,7 +91,7 @@ void rmspace(char *s)
  */
 memberlist *ismember(struct chanset_t *chan, char *nick)
 {
-  register memberlist *x;
+  memberlist *x;
 
   for (x = chan->channel.member; x && x->nick[0]; x = x->next)
     if (!rfc_casecmp(x->nick, nick))
@@ -103,7 +103,7 @@ memberlist *ismember(struct chanset_t *chan, char *nick)
  */
 struct chanset_t *findchan(const char *name)
 {
-  register struct chanset_t *chan;
+  struct chanset_t *chan;
 
   for (chan = chanset; chan; chan = chan->next)
     if (!rfc_casecmp(chan->name, name))
@@ -115,7 +115,7 @@ struct chanset_t *findchan(const char *name)
  */
 struct chanset_t *findchan_by_dname(const char *name)
 {
-  register struct chanset_t *chan;
+  struct chanset_t *chan;
 
   for (chan = chanset; chan; chan = chan->next)
     if (!rfc_casecmp(chan->dname, name))
@@ -134,8 +134,8 @@ struct chanset_t *findchan_by_dname(const char *name)
 struct userrec *check_chanlist(const char *host)
 {
   char *nick, *uhost, buf[UHOSTLEN];
-  register memberlist *m;
-  register struct chanset_t *chan;
+  memberlist *m;
+  struct chanset_t *chan;
 
   strncpyz(buf, host, sizeof buf);
   uhost = buf;
@@ -151,8 +151,8 @@ struct userrec *check_chanlist(const char *host)
  */
 struct userrec *check_chanlist_hand(const char *hand)
 {
-  register struct chanset_t *chan;
-  register memberlist *m;
+  struct chanset_t *chan;
+  memberlist *m;
 
   for (chan = chanset; chan; chan = chan->next)
     for (m = chan->channel.member; m && m->nick[0]; m = m->next)
@@ -168,8 +168,8 @@ struct userrec *check_chanlist_hand(const char *hand)
  */
 void clear_chanlist(void)
 {
-  register memberlist *m;
-  register struct chanset_t *chan;
+  memberlist *m;
+  struct chanset_t *chan;
 
   for (chan = chanset; chan; chan = chan->next)
     for (m = chan->channel.member; m && m->nick[0]; m = m->next) {
@@ -185,8 +185,8 @@ void clear_chanlist(void)
  */
 void clear_chanlist_member(const char *nick)
 {
-  register memberlist *m;
-  register struct chanset_t *chan;
+  memberlist *m;
+  struct chanset_t *chan;
 
   for (chan = chanset; chan; chan = chan->next)
     for (m = chan->channel.member; m && m->nick[0]; m = m->next)
@@ -202,8 +202,8 @@ void clear_chanlist_member(const char *nick)
 void set_chanlist(const char *host, struct userrec *rec)
 {
   char *nick, *uhost, buf[UHOSTLEN];
-  register memberlist *m;
-  register struct chanset_t *chan;
+  memberlist *m;
+  struct chanset_t *chan;
 
   strncpyz(buf, host, sizeof buf);
   uhost = buf;
@@ -218,8 +218,8 @@ void set_chanlist(const char *host, struct userrec *rec)
  */
 int expmem_chanprog()
 {
-  register int tot = 0;
-  register tcl_timer_t *t;
+  int tot = 0;
+  tcl_timer_t *t;
 
   for (t = timer; t; t = t->next)
     tot += sizeof(tcl_timer_t) + strlen(t->cmd) + 1;
@@ -674,7 +674,7 @@ void list_timers(Tcl_Interp *irp, tcl_timer_t *stack)
  */
 int isowner(char *name)
 {
-  register char *ptr = NULL, *s = NULL, *n = NULL;
+  char *ptr = NULL, *s = NULL, *n = NULL;
 
   if (!name)
     return 0;
