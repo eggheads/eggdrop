@@ -2405,7 +2405,7 @@ static void dcc_telnet_got_ident(int i, char *host)
   /* Displays a customizable banner. */
   if (use_telnet_banner)
     show_banner(i);
-  /* This is so we dont tell someone doing a portscan anything
+  /* This is so we don't tell someone doing a portscan anything
    * about ourselves. <cybah>
    */
   if (stealth_telnets)

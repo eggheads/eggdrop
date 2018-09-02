@@ -1618,7 +1618,7 @@ static int tcl_channel_modify(Tcl_Interp *irp, struct chanset_t *chan,
     }
   }
   /* If protect_readonly == 0 and chan_hack == 0 then
-   * bot is now processing the configfile, so dont do anything,
+   * bot is now processing the configfile, so don't do anything,
    * we've to wait the channelfile that maybe override these settings
    * (note: it may cause problems if there is no chanfile!)
    * <drummer/1999/10/21>
