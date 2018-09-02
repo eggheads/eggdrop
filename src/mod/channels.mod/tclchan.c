@@ -1245,7 +1245,7 @@ static int tcl_channel_modify(Tcl_Interp *irp, struct chanset_t *chan,
   int i, x = 0, found, old_status = chan->status,
       old_mode_mns_prot = chan->mode_mns_prot,
       old_mode_pls_prot = chan->mode_pls_prot;
-  struct udef_struct *ul = udef;
+  struct udef_struct *ul;
   char s[121];
   char *endptr;
   module_entry *me;
