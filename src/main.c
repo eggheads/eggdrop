@@ -266,7 +266,7 @@ static void write_debug()
     /* Yoicks, if we have this there's serious trouble!
      * All of these are pretty reliable, so we'll try these.
      *
-     * NOTE: dont try and display context-notes in here, it's
+     * NOTE: don't try and display context-notes in here, it's
      *       _not_ safe <cybah>
      */
     x = creat("DEBUG.DEBUG", 0644);

@@ -297,7 +297,7 @@ static int tcl_do_console(Tcl_Interp *irp, ClientData cd, int argc,
     if (argv[arg][0] && !reset && ((strchr(CHANMETA, argv[arg][0]) 
         != NULL) || (argv[arg][0] == '*'))) {
       if ((argv[arg][0] != '*') && (!findchan_by_dname(argv[arg]))) {
-        /* If we dont find the channel, and it starts with a +, assume it
+        /* If we don't find the channel, and it starts with a +, assume it
          * should be the console flags to set. */
         if (argv[arg][0] == '+')
           goto do_console_flags;
