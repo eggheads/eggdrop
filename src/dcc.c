@@ -793,7 +793,7 @@ static void display_dcc_chat_pass(int idx, char *buf)
 
 static int expmem_dcc_general(void *x)
 {
-  register struct chat_info *p = (struct chat_info *) x;
+  struct chat_info *p = (struct chat_info *) x;
   int tot = sizeof(struct chat_info);
 
   if (p->away)
@@ -815,7 +815,7 @@ static int expmem_dcc_general(void *x)
 
 static void kill_dcc_general(int idx, void *x)
 {
-  register struct chat_info *p = (struct chat_info *) x;
+  struct chat_info *p = (struct chat_info *) x;
 
   if (p) {
     if (p->buffer) {
@@ -961,7 +961,7 @@ static void append_line(int idx, char *line)
 
 static void out_dcc_general(int idx, char *buf, void *x)
 {
-  register struct chat_info *p = (struct chat_info *) x;
+  struct chat_info *p = (struct chat_info *) x;
   char *y = buf;
 
   strip_mirc_codes(p->strip_flags, buf);
@@ -1490,7 +1490,7 @@ static void display_dupwait(int idx, char *buf)
 
 static int expmem_dupwait(void *x)
 {
-  register struct dupwait_info *p = (struct dupwait_info *) x;
+  struct dupwait_info *p = (struct dupwait_info *) x;
   int tot = sizeof(struct dupwait_info);
 
   if (p && p->chat && DCC_CHAT.expmem)
@@ -1500,7 +1500,7 @@ static int expmem_dupwait(void *x)
 
 static void kill_dupwait(int idx, void *x)
 {
-  register struct dupwait_info *p = (struct dupwait_info *) x;
+  struct dupwait_info *p = (struct dupwait_info *) x;
 
   if (p) {
     if (p->chat && DCC_CHAT.kill)
@@ -1523,12 +1523,12 @@ struct dcc_table DCC_DUPWAIT = {
 };
 
 /* This function is called if a bot gets removed from the list. It checks
- * wether we have a pending duplicate connection for that bot and continues
+ * whether we have a pending duplicate connection for that bot and continues
  * with the login in that case.
  */
 void dupwait_notify(char *who)
 {
-  register int idx;
+  int idx;
 
   Assert(who);
   for (idx = 0; idx < dcc_total; idx++)
@@ -2134,7 +2134,7 @@ static void display_dcc_script(int idx, char *buf)
 
 static int expmem_dcc_script(void *x)
 {
-  register struct script_info *p = (struct script_info *) x;
+  struct script_info *p = (struct script_info *) x;
   int tot = sizeof(struct script_info);
 
   if (p->type && p->u.other)
@@ -2144,7 +2144,7 @@ static int expmem_dcc_script(void *x)
 
 static void kill_dcc_script(int idx, void *x)
 {
-  register struct script_info *p = (struct script_info *) x;
+  struct script_info *p = (struct script_info *) x;
 
   if (p->type && p->u.other)
     p->type->kill(idx, p->u.other);
@@ -2153,7 +2153,7 @@ static void kill_dcc_script(int idx, void *x)
 
 static void out_dcc_script(int idx, char *buf, void *x)
 {
-  register struct script_info *p = (struct script_info *) x;
+  struct script_info *p = (struct script_info *) x;
 
   if (p && p->type && p->u.other)
     p->type->output(idx, buf, p->u.other);
@@ -2405,7 +2405,7 @@ static void dcc_telnet_got_ident(int i, char *host)
   /* Displays a customizable banner. */
   if (use_telnet_banner)
     show_banner(i);
-  /* This is so we dont tell someone doing a portscan anything
+  /* This is so we don't tell someone doing a portscan anything
    * about ourselves. <cybah>
    */
   if (stealth_telnets)

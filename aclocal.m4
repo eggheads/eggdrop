@@ -18,10 +18,11 @@ dnl Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 dnl
 
 dnl Load tcl macros
-builtin(include,tcl.m4)
+builtin(include,m4/tcl.m4)
 
-dnl Load GNU stdint.h creator
-builtin(include,ax_create_stdint_h.m4)
+dnl Load gnu autoconf archive macros
+builtin(include,m4/ax_create_stdint_h.m4)
+builtin(include,m4/ax_lib_socket_nsl.m4)
 
 
 dnl
@@ -852,9 +853,7 @@ AC_DEFUN([EGG_CHECK_LIBS],
   if test "$IRIX" = yes; then
     AC_MSG_WARN([Skipping library tests because they CONFUSE IRIX.])
   else
-    AC_CHECK_LIB(socket, socket)
-    AC_CHECK_LIB(nsl, connect)
-    AC_CHECK_LIB(dns, gethostbyname)
+    AX_LIB_SOCKET_NSL
     AC_CHECK_LIB(dl, dlopen)
     AC_CHECK_LIB(m, tan, EGG_MATH_LIB="-lm")
 

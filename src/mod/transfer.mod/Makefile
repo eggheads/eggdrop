@@ -17,7 +17,7 @@ modules: ../../../transfer.$(MOD_EXT)
 	$(CC) $(CFLAGS) $(CPPFLAGS) -DMAKING_MODS -c $(srcdir)/transfer.c && mv -f transfer.o ../
 
 ../../../transfer.$(MOD_EXT): ../transfer.o
-	$(LD) -o ../../../transfer.$(MOD_EXT) ../transfer.o $(XLIBS) $(MODULE_XLIBS) && $(STRIP) ../../../transfer.$(MOD_EXT)
+	$(LD) $(CFLAGS) -o ../../../transfer.$(MOD_EXT) ../transfer.o $(XLIBS) $(MODULE_XLIBS) && $(STRIP) ../../../transfer.$(MOD_EXT)
 
 depend:
 	$(CC) $(CFLAGS) -MM $(srcdir)/transfer.c -MT ../transfer.o > .depend

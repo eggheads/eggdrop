@@ -16,7 +16,7 @@ modules: ../../../uptime.$(MOD_EXT)
 	$(CC) $(CFLAGS) $(CPPFLAGS) -DMAKING_MODS -c $(srcdir)/uptime.c && mv -f uptime.o ../
 
 ../../../uptime.$(MOD_EXT): ../uptime.o
-	$(LD) -o ../../../uptime.$(MOD_EXT) ../uptime.o $(XLIBS) $(MODULE_XLIBS) && $(STRIP) ../../../uptime.$(MOD_EXT)
+	$(LD) $(CFLAGS) -o ../../../uptime.$(MOD_EXT) ../uptime.o $(XLIBS) $(MODULE_XLIBS) && $(STRIP) ../../../uptime.$(MOD_EXT)
 
 depend:
 	$(CC) $(CFLAGS) -MM $(srcdir)/uptime.c -MT ../uptime.o > .depend

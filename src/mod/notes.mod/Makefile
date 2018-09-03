@@ -17,7 +17,7 @@ modules: ../../../notes.$(MOD_EXT)
 	$(CC) $(CFLAGS) $(CPPFLAGS) -DMAKING_MODS -c $(srcdir)/notes.c && mv -f notes.o ../
 
 ../../../notes.$(MOD_EXT): ../notes.o
-	$(LD) -o ../../../notes.$(MOD_EXT) ../notes.o $(XLIBS) $(MODULE_XLIBS) && $(STRIP) ../../../notes.$(MOD_EXT)
+	$(LD) $(CFLAGS) -o ../../../notes.$(MOD_EXT) ../notes.o $(XLIBS) $(MODULE_XLIBS) && $(STRIP) ../../../notes.$(MOD_EXT)
 
 depend:
 	$(CC) $(CFLAGS) -MM $(srcdir)/notes.c -MT ../notes.o > .depend

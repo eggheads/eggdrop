@@ -17,7 +17,7 @@ modules: ../../../server.$(MOD_EXT)
 	$(CC) $(CFLAGS) $(CPPFLAGS) -DMAKING_MODS -c $(srcdir)/server.c && mv -f server.o ../
 
 ../../../server.$(MOD_EXT): ../server.o
-	$(LD) -o ../../../server.$(MOD_EXT) ../server.o $(XLIBS) $(MODULE_XLIBS) && $(STRIP) ../../../server.$(MOD_EXT)
+	$(LD) $(CFLAGS) -o ../../../server.$(MOD_EXT) ../server.o $(XLIBS) $(MODULE_XLIBS) && $(STRIP) ../../../server.$(MOD_EXT)
 
 depend:
 	$(CC) $(CFLAGS) -MM $(srcdir)/server.c -MT ../server.o > .depend

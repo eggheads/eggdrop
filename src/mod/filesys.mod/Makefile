@@ -17,7 +17,7 @@ modules: ../../../filesys.$(MOD_EXT)
 	$(CC) $(CFLAGS) $(CPPFLAGS) -DMAKING_MODS -c $(srcdir)/filesys.c && mv -f filesys.o ../
 
 ../../../filesys.$(MOD_EXT): ../filesys.o
-	$(LD) -o ../../../filesys.$(MOD_EXT) ../filesys.o $(XLIBS) $(MODULE_XLIBS) && $(STRIP) ../../../filesys.$(MOD_EXT)
+	$(LD) $(CFLAGS) -o ../../../filesys.$(MOD_EXT) ../filesys.o $(XLIBS) $(MODULE_XLIBS) && $(STRIP) ../../../filesys.$(MOD_EXT)
 
 depend:
 	$(CC) $(CFLAGS) -MM $(srcdir)/filesys.c -MT ../filesys.o > .depend

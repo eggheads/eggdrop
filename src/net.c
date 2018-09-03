@@ -46,14 +46,6 @@
 #  include <openssl/err.h>
 #endif
 
-#ifndef HAVE_GETDTABLESIZE
-#  ifdef FD_SETSIZE
-#    define getdtablesize() FD_SETSIZE
-#  else
-#    define getdtablesize() 200
-#  endif
-#endif
-
 extern struct dcc_t *dcc;
 extern int backgrd, use_stderr, resolve_timeout, dcc_total;
 extern unsigned long otraffic_irc_today, otraffic_bn_today, otraffic_dcc_today,
@@ -319,10 +311,10 @@ int allocsock(int sock, int options)
  *
  * alloctclsock() can be called by Tcl threads
  */
-int alloctclsock(register int sock, int mask, Tcl_FileProc *proc, ClientData cd)
+int alloctclsock(int sock, int mask, Tcl_FileProc *proc, ClientData cd)
 {
   int f = -1;
-  register int i;
+  int i;
   struct threaddata *td = threaddata();
 
   for (i = 0; i < td->MAXSOCKS; i++) {
@@ -391,9 +383,9 @@ int getsock(int af, int options)
 
 /* Done with a socket
  */
-void killsock(register int sock)
+void killsock(int sock)
 {
-  register int i;
+  int i;
   struct threaddata *td = threaddata();
 
   /* Ignore invalid sockets.  */
@@ -433,9 +425,9 @@ void killsock(register int sock)
  *
  * killtclsock() can be called by Tcl threads
  */
-void killtclsock(register int sock)
+void killtclsock(int sock)
 {
-  register int i;
+  int i;
   struct threaddata *td = threaddata();
 
   if (sock < 0)
@@ -760,17 +752,17 @@ int getdccfamilyaddr(sockname_t *addr, char *s, size_t l, int restrict_af)
  * sockets, but tcl also cares for writable/exceptions.
  * preparefdset() can be called by Tcl Threads
  */
-int preparefdset(fd_set *fd, sock_list *slist, int slistmax, int tclonly, int tclmask)
+static int preparefdset(fd_set *fds, sock_list *slist, int slistmax, int tclonly, int tclmask)
 {
-  int fdtmp, i, foundsocks = 0;
+  int fd, i, nfds = 0;
 
-  FD_ZERO(fd);
+  FD_ZERO(fds);
   for (i = 0; i < slistmax; i++) {
     if (!(slist[i].flags & (SOCK_UNUSED | SOCK_VIRTUAL))) {
       if ((slist[i].sock == STDOUT) && !backgrd)
-        fdtmp = STDIN;
+        fd = STDIN;
       else
-        fdtmp = slist[i].sock;
+        fd = slist[i].sock;
       /*
        * Looks like that having more than a call, in the same
        * program, to the FD_SET macro, triggers a bug in gcc.
@@ -785,11 +777,12 @@ int preparefdset(fd_set *fd, sock_list *slist, int slistmax, int tclonly, int tc
           continue;
       } else if (tclonly)
         continue;
-      foundsocks = 1;
-      FD_SET(fdtmp, fd);
+      if (fd > nfds)
+        nfds = fd;
+      FD_SET(fd, fds);
     }
   }
-  return foundsocks;
+  return nfds;
 }
 
 /* A safer version of write() that deals with partial writes. */
@@ -825,28 +818,29 @@ int sockread(char *s, int *len, sock_list *slist, int slistmax, int tclonly)
 {
   struct timeval t;
   fd_set fdr, fdw, fde;
-  int fds, i, x, have_r, have_w, have_e;
+  int i, x, nfds_r, nfds_w, nfds_e;
   int grab = 511, tclsock = -1, events = 0;
   struct threaddata *td = threaddata();
+  int nfds;
 
-  fds = getdtablesize();
-#ifdef FD_SETSIZE
-  if (fds > FD_SETSIZE)
-    fds = FD_SETSIZE;           /* Fixes YET ANOTHER freebsd bug!!! */
-#endif
+  nfds_r = preparefdset(&fdr, slist, slistmax, tclonly, TCL_READABLE);
+  nfds_w = preparefdset(&fdw, slist, slistmax, 1, TCL_WRITABLE);
+  nfds_e = preparefdset(&fde, slist, slistmax, 1, TCL_EXCEPTION);
 
-  have_r = preparefdset(&fdr, slist, slistmax, tclonly, TCL_READABLE);
-  have_w = preparefdset(&fdw, slist, slistmax, 1, TCL_WRITABLE);
-  have_e = preparefdset(&fde, slist, slistmax, 1, TCL_EXCEPTION);
+  nfds = nfds_r;
+  if (nfds_w > nfds)
+    nfds = nfds_w;
+  if (nfds_e > nfds)
+    nfds = nfds_e;
 
   /* select() may modify the timeval argument - copy it */
   t.tv_sec = td->blocktime.tv_sec;
   t.tv_usec = td->blocktime.tv_usec;
 
-  x = select((SELECT_TYPE_ARG1) fds,
-             SELECT_TYPE_ARG234 (have_r ? &fdr : NULL),
-             SELECT_TYPE_ARG234 (have_w ? &fdw : NULL),
-             SELECT_TYPE_ARG234 (have_e ? &fde : NULL),
+  x = select((SELECT_TYPE_ARG1) nfds + 1,
+             SELECT_TYPE_ARG234 (nfds_r ? &fdr : NULL),
+             SELECT_TYPE_ARG234 (nfds_w ? &fdw : NULL),
+             SELECT_TYPE_ARG234 (nfds_e ? &fde : NULL),
              SELECT_TYPE_ARG5 &t);
   if (x == -1)
     return -2;                  /* socket error */
@@ -1162,9 +1156,9 @@ int sockgets(char *s, int *len)
  *
  * NOTE: Do NOT put Contexts in here if you want DEBUG to be meaningful!!
  */
-void tputs(register int z, char *s, unsigned int len)
+void tputs(int z, char *s, unsigned int len)
 {
-  register int i, x, idx;
+  int i, x, idx;
   char *p;
   static int inhere = 0;
 
@@ -1256,31 +1250,28 @@ void tputs(register int z, char *s, unsigned int len)
 void dequeue_sockets()
 {
   int i, x;
-
-  int z = 0, fds;
+  int z = 0;
   fd_set wfds;
   struct timeval tv;
+  int nfds = 0;
 
 /* ^-- start poptix test code, this should avoid writes to sockets not ready to be written to. */
-  fds = getdtablesize();
 
-#ifdef FD_SETSIZE
-  if (fds > FD_SETSIZE)
-    fds = FD_SETSIZE;           /* Fixes YET ANOTHER freebsd bug!!! */
-#endif
   FD_ZERO(&wfds);
   tv.tv_sec = 0;
   tv.tv_usec = 0;               /* we only want to see if it's ready for writing, no need to actually wait.. */
   for (i = 0; i < threaddata()->MAXSOCKS; i++)
     if (!(socklist[i].flags & (SOCK_UNUSED | SOCK_TCL)) &&
         (socklist[i].handler.sock.outbuf != NULL)) {
+      if (socklist[i].sock > nfds)
+        nfds = socklist[i].sock;
       FD_SET(socklist[i].sock, &wfds);
       z = 1;
     }
   if (!z)
     return;                     /* nothing to write */
 
-  select((SELECT_TYPE_ARG1) fds, SELECT_TYPE_ARG234 NULL,
+  select((SELECT_TYPE_ARG1) nfds + 1, SELECT_TYPE_ARG234 NULL,
          SELECT_TYPE_ARG234 &wfds, SELECT_TYPE_ARG234 NULL,
          SELECT_TYPE_ARG5 &tv);
 
@@ -1486,7 +1477,7 @@ int hostsanitycheck_dcc(char *nick, char *from, sockname_t *ip, char *dnsname,
   return 0;
 }
 
-/* Checks wether the referenced socket has data queued.
+/* Checks whether the referenced socket has data queued.
  *
  * Returns true if the incoming/outgoing (depending on 'type') queues
  * contain data, otherwise false.

@@ -17,7 +17,7 @@ modules: ../../../irc.$(MOD_EXT)
 	$(CC) $(CFLAGS) $(CPPFLAGS) -DMAKING_MODS -c $(srcdir)/irc.c && mv -f irc.o ../
 
 ../../../irc.$(MOD_EXT): ../irc.o
-	$(LD) -o ../../../irc.$(MOD_EXT) ../irc.o $(XLIBS) $(MODULE_XLIBS) && $(STRIP) ../../../irc.$(MOD_EXT)
+	$(LD) $(CFLAGS) -o ../../../irc.$(MOD_EXT) ../irc.o $(XLIBS) $(MODULE_XLIBS) && $(STRIP) ../../../irc.$(MOD_EXT)
 
 depend:
 	$(CC) $(CFLAGS) -MM $(srcdir)/irc.c -MT ../irc.o > .depend

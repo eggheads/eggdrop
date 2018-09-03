@@ -17,7 +17,7 @@ modules: ../../../ctcp.$(MOD_EXT)
 	$(CC) $(CFLAGS) $(CPPFLAGS) -DMAKING_MODS -c $(srcdir)/ctcp.c && mv -f ctcp.o ../
 
 ../../../ctcp.$(MOD_EXT): ../ctcp.o
-	$(LD) -o ../../../ctcp.$(MOD_EXT) ../ctcp.o $(XLIBS) $(MODULE_XLIBS) && $(STRIP) ../../../ctcp.$(MOD_EXT)
+	$(LD) $(CFLAGS) -o ../../../ctcp.$(MOD_EXT) ../ctcp.o $(XLIBS) $(MODULE_XLIBS) && $(STRIP) ../../../ctcp.$(MOD_EXT)
 
 depend:
 	$(CC) $(CFLAGS) -MM $(srcdir)/ctcp.c -MT ../ctcp.o > .depend

@@ -17,7 +17,7 @@ modules: ../../../share.$(MOD_EXT)
 	$(CC) $(CFLAGS) $(CPPFLAGS) -DMAKING_MODS -c $(srcdir)/share.c && mv -f share.o ../
 
 ../../../share.$(MOD_EXT): ../share.o
-	$(LD) -o ../../../share.$(MOD_EXT) ../share.o $(XLIBS) $(MODULE_XLIBS) && $(STRIP) ../../../share.$(MOD_EXT)
+	$(LD) $(CFLAGS) -o ../../../share.$(MOD_EXT) ../share.o $(XLIBS) $(MODULE_XLIBS) && $(STRIP) ../../../share.$(MOD_EXT)
 
 depend:
 	$(CC) $(CFLAGS) -MM $(srcdir)/share.c -MT ../share.o > .depend
