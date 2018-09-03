@@ -601,9 +601,7 @@ AC_DEFUN([EGG_CHECK_MODULE_SUPPORT],
         AC_DEFINE(DLOPEN_1, 1, [Define if running on SunOS 4.0.])
       fi
     ;;
-    *BSD)
-      # FreeBSD/OpenBSD/NetBSD all support dlopen() and have had plenty of
-      # testing with Eggdrop.
+    FreeBSD|OpenBSD|NetBSD|DragonFly)
       WEIRD_OS="no"
     ;;
     Darwin)
@@ -806,10 +804,12 @@ AC_DEFUN([EGG_CHECK_OS],
         SHLIB_CC="$CC -PIC"
       fi
     ;;
-    *BSD)
-      # FreeBSD/OpenBSD/NetBSD
+    FreeBSD|OpenBSD|NetBSD)
       SHLIB_CC="$CC -fPIC"
       SHLIB_LD="$CC -shared"
+    ;;
+    DragonFly)
+      SHLIB_CC="$CC -fPIC"
     ;;
     Darwin)
       # Mac OS X
