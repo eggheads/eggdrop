@@ -1279,7 +1279,7 @@ static int init_dns_core(void)
          "  _res is not supported for multi-threaded programs.\n"
          "  [1]   Abort trap (core dumped) ./eggdrop -nt\n"
          "dns.mod must be disabled by commenting out in eggdrop.conf\n"
-         "  #loadmodule dns"
+         "  #loadmodule dns");
   #endif
   _res.options |= RES_RECURSE | RES_DEFNAMES | RES_DNSRCH;
   for (i = 0; i < _res.nscount; i++)
