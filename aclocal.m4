@@ -551,11 +551,6 @@ AC_DEFUN([EGG_CHECK_MODULE_SUPPORT],
   # Note to other maintainers:
   # Bourne shell has no concept of "fall through"
   case "$egg_cv_var_system_type" in
-    BSD/OS)
-      if test `echo "$egg_cv_var_system_release" | cut -d . -f 1` = 2; then
-        MODULES_OK="no"
-      fi
-    ;;
     CYGWI*)
       WEIRD_OS="no"
       MOD_EXT="dll"
@@ -688,29 +683,6 @@ AC_DEFUN([EGG_CHECK_OS],
   EGG_CYGWIN="no"
 
   case "$egg_cv_var_system_type" in
-    BSD/OS)
-      case `echo "$egg_cv_var_system_release" | cut -d . -f 1` in
-        2)
-          # do nothing
-        ;;
-        3)
-          MOD_CC="shlicc"
-          MOD_LD="shlicc"
-          if test "$STRIP" != touch; then
-            MOD_STRIP="$STRIP -d"
-          fi
-          SHLIB_LD="shlicc -r"
-          SHLIB_STRIP="touch"
-        ;;
-        *)
-          if test "$STRIP" != touch; then
-            MOD_STRIP="$STRIP -d"
-          fi
-          SHLIB_CC="$CC -export-dynamic -fPIC"
-          SHLIB_LD="$CC -shared -nostartfiles"
-        ;;
-      esac
-    ;;
     CYGWI*)
       SHLIB_LD="$CC -shared"
       MOD_CC="$CC"
