@@ -404,7 +404,7 @@ static tcl_strings def_tcl_strings[] = {
   {"timestamp-format",log_ts,         32,                      0},
   {"pidfile",         pid_file,       120,           STR_PROTECT},
   {"configureargs",   EGG_AC_ARGS,    0,             STR_PROTECT},
-  {"stealth-prompt",  stealth_prompt, 120,           STR_PROTECT},
+  {"stealth-prompt",  stealth_prompt, 80,                      0},
   {NULL,              NULL,           0,                       0}
 };
 
