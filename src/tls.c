@@ -43,6 +43,7 @@ char tls_capath[121] = "";    /* Path to trusted CA certificates              */
 char tls_cafile[121] = "";    /* File containing trusted CA certificates      */
 char tls_certfile[121] = "";  /* Our own digital certificate ;)               */
 char tls_keyfile[121] = "";   /* Private key for use with eggdrop             */
+char tls_protocols[121] = "TLSv1 TLSv1.1 TLSv1.2"; /* A list of protocols for SSL to use */
 char tls_ciphers[121] = "";   /* A list of ciphers for SSL to use             */
 
 
@@ -82,7 +83,7 @@ static int ssl_seed(void)
 #endif
   /* If '/dev/urandom' is present, OpenSSL will use it by default.
    * Otherwise we'll have to generate pseudorandom data ourselves,
-   * using system time, our process ID and some unitialized static
+   * using system time, our process ID and some uninitialized static
    * storage.
    */
   if ((fh = fopen("/dev/urandom", "r"))) {
@@ -104,7 +105,7 @@ static int ssl_seed(void)
   }
 #ifdef HAVE_RAND_STATUS
   if (!RAND_status())
-    return 2;   /* pseudo random data still not ehough */
+    return 2;   /* pseudo random data still not enough */
 #endif
   return 0;
 }
@@ -168,6 +169,62 @@ int ssl_init()
            ERR_error_string(ERR_get_error(), NULL));
     ERR_free_strings();
   }
+  /* Let advanced users specify the list of allowed ssl protocols */
+  #define EGG_SSLv2   1 << 0
+  #define EGG_SSLv3   1 << 1
+  #define EGG_TLSv1   1 << 2
+  #define EGG_TLSv1_1 1 << 3
+  #define EGG_TLSv1_2 1 << 4
+  #define EGG_TLSv1_3 1 << 5
+  char s[sizeof tls_protocols];
+  char *sep = " ";
+  char *word;
+  unsigned int protocols = 0;
+  strcpy(s, tls_protocols);
+  for (word = strtok(s, sep); word; word = strtok(NULL, sep)) {
+    if (!strcmp(word, "SSLv2"))
+      protocols |= EGG_SSLv2;
+    if (!strcmp(word, "SSLv3"))
+      protocols |= EGG_SSLv3;
+    if (!strcmp(word, "TLSv1"))
+      protocols |= EGG_TLSv1;
+    if (!strcmp(word, "TLSv1.1"))
+      protocols |= EGG_TLSv1_1;
+    if (!strcmp(word, "TLSv1.2"))
+      protocols |= EGG_TLSv1_2;
+    if (!strcmp(word, "TLSv1.3"))
+      protocols |= EGG_TLSv1_3;
+  }
+  if (!(protocols & EGG_SSLv2)) {
+    printf("DEBUG: set SSL_OP_NO_SSLv2\n");
+    SSL_CTX_set_options(ssl_ctx, SSL_OP_NO_SSLv2);
+  }
+  if (!(protocols & EGG_SSLv3)) {
+    printf("DEBUG: set SSL_OP_NO_SSLv3\n");
+    SSL_CTX_set_options(ssl_ctx, SSL_OP_NO_SSLv3);
+  }
+  if (!(protocols & EGG_TLSv1)) {
+    printf("DEBUG: set SSL_OP_NO_TLSv1\n");
+    SSL_CTX_set_options(ssl_ctx, SSL_OP_NO_TLSv1);
+  }
+#ifdef SSL_OP_NO_TLSv1_1
+  if (!(protocols & EGG_TLSv1_1)) {
+    printf("DEBUG: set SSL_OP_NO_TLSv1_1\n");
+    SSL_CTX_set_options(ssl_ctx, SSL_OP_NO_TLSv1_1);
+  }
+#endif
+#ifdef SSL_OP_NO_TLSv1_2
+  if (!(protocols & EGG_TLSv1_2)) {
+    printf("DEBUG: set SSL_OP_NO_TLSv1_2\n");
+    SSL_CTX_set_options(ssl_ctx, SSL_OP_NO_TLSv1_2);
+  }
+#endif
+#ifdef SSL_OP_NO_TLSv1_3
+  if (!(protocols & EGG_TLSv1_3)) {
+    printf("DEBUG: set SSL_OP_NO_TLSv1_3\n");
+    SSL_CTX_set_options(ssl_ctx, SSL_OP_NO_TLSv1_3);
+  }
+#endif
   /* Let advanced users specify the list of allowed ssl ciphers */
   if (tls_ciphers[0] && !SSL_CTX_set_cipher_list(ssl_ctx, tls_ciphers)) {
     /* this replaces any preset ciphers so an invalid list is fatal */
