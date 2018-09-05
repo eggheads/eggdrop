@@ -141,8 +141,9 @@ static void strip_telnet(int sock, char *buf, int *len)
           safe_write(sock, p + 1, 1);
         }
       } else if (*p == TLN_AYT) {
-        /* When we get an AYT (Are You There) just send back "[Yes]". */
-        static unsigned char sb[] = "\r\n[Yes]\r\n";
+        /* "Are You There?" */
+        /* response is: "Hell, yes!" */
+        static unsigned char sb[] = "\r\n[Hell, yes!]\r\n";
         safe_write(sock, sb, sizeof sb);
       } else if (*p == TLN_IAC) {
         /* IAC character in data, escaped with another IAC */
