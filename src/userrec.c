@@ -340,20 +340,6 @@ struct userrec *get_user_by_host(char *host)
   return ret;
 }
 
-/* use fixfrom() or dont? (drummer)
- */
-struct userrec *get_user_by_equal_host(char *host)
-{
-  struct userrec *u;
-  struct list_type *q;
-
-  for (u = userlist; u; u = u->next)
-    for (q = get_user(&USERENTRY_HOSTS, u); q; q = q->next)
-      if (!rfc_casecmp(q->extra, host))
-        return u;
-  return NULL;
-}
-
 /* Try: pass_match_by_host("-",host)
  * If a '-' is sent as the password, it denotes the intent
  *   to merely check if a password is set for that user.
