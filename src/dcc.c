@@ -65,11 +65,11 @@ int protect_telnet = 1;         /* Even bother with ident lookups :)          */
 int flood_telnet_thr = 5;       /* Number of telnet connections to be
                                  * considered a flood                         */
 int flood_telnet_time = 60;     /* In how many seconds?                       */
-char network[41] = "unknown-net";      /* Name of the IRC network you're on   */
-char bannerfile[121] = "text/banner";  /* File displayed on telnet login      */
-char stealth_prompt[81] = "login: ";   /* If stealth-telnets is 1, this
-                                        * setting will define the telnet
-                                        * prompt.                             */
+char network[41] = "unknown-net";       /* Name of the IRC network you're on  */
+char bannerfile[121] = "text/banner";   /* File displayed on telnet login     */
+char stealth_prompt[81] = "Nickname: "; /* If stealth-telnets is 1, this
+                                         * setting will define the telnet
+                                         * prompt.                            */
 
 static void dcc_telnet_hostresolved(int);
 static void dcc_telnet_got_ident(int, char *);
