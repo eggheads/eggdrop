@@ -127,7 +127,7 @@ Entre em ligação telnet com o bot e digite 'NEW' como o seu nick.
 0x53c,Ficheiro de utilizador em falta!
 0x53e,%B (%E)\n\nPor favor introduza o seu nick.\n
 0x53f,Rodando ficheiro de log %s, acima do máximo do tamanho (%d)
-0x540,\nNick.\n
+# 0x540 - unused / não utilizado
 0x541,Ultima mensagem repetida %d vez(s).\n
 0x542,bloqueado
 0x543,Sem sockets livres disponíveis.
