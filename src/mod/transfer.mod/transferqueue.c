@@ -71,7 +71,7 @@ static void deq_this(fileq_t *this)
  */
 static void flush_fileq(char *to)
 {
-  fileq_t *q = fileq;
+  fileq_t *q;
   int fnd = 1;
 
   while (fnd) {

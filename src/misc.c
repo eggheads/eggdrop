@@ -532,7 +532,6 @@ void putlog EGG_VARARGS_DEF(int, arg1)
   format = va_arg(va, char *);
 
   /* Create the timestamp */
-  t = localtime(&now2);
   if (shtime) {
     egg_strftime(stamp, sizeof(stamp) - 2, log_ts, t);
     strcat(stamp, " ");
