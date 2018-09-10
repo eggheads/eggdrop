@@ -460,7 +460,7 @@ See also: match, who, whom%{+m|m}, chattr%{+t}, botattr
           #|DAWG|Tcl: 42 members, enforcing "+tn" (lurking)
 
 
-   The first lineis contain information such as the bot's name, what version
+   The first lines contain information such as the bot's name, what version
    of Eggdrop it's running, the number of users the bot has records of, and 
    the amount of memory being used by the userfile. Following that is
    information such as the uptime of the bot, CPU time, and what compile
