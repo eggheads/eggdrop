@@ -28,7 +28,6 @@
 
 #include <netinet/in.h>
 #include <arpa/inet.h>
-#include <sys/stat.h>
 
 #include "src/chan.h"
 #include "src/users.h"
@@ -1671,7 +1670,6 @@ static int write_tmp_userfile(char *fn, struct userrec *bu, int idx)
   int ok = 0;
 
   if ((f = fopen(fn, "wb"))) {
-    chmod(fn, 0600);            /* make it -rw------- */
     fprintf(f, "#4v: %s -- %s -- transmit\n", ver, botnetnick);
     ok = 1;
     for (u = bu; u && ok; u = u->next)

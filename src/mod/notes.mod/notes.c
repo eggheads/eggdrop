@@ -28,7 +28,6 @@
 #define MAKING_NOTES
 
 #include <fcntl.h>
-#include <sys/stat.h>           /* chmod(..) */
 #include "src/mod/module.h"
 #include "src/tandem.h"
 #include "notes.h"
@@ -127,7 +126,6 @@ static void notes_change(char *oldnick, char *newnick)
     fclose(f);
     return;
   }
-  chmod(s, userfile_perm);      /* Use userfile permissions. */
   /* don't check for feof after fgets, skips last line if it has no \n (ie on windows) */
   while (!feof(f) && fgets(s, sizeof s, f) != NULL) {
     if (s[strlen(s) - 1] == '\n')
@@ -176,7 +174,6 @@ static void expire_notes()
     fclose(f);
     return;
   }
-  chmod(s, userfile_perm);      /* Use userfile permissions. */
   /* don't check for feof after fgets, skips last line if it has no \n (ie on windows) */
   while (!feof(f) && fgets(s, sizeof s, f) != NULL) {
     if (s[strlen(s) - 1] == '\n')
@@ -308,7 +305,6 @@ static int tcl_storenote STDVAR
         char *p, *blah = argv[3], *from = argv[1];
         int l = 0;
 
-        chmod(notefile, userfile_perm); /* Use userfile permissions. */
         while ((blah[0] == '<') || (blah[0] == '>')) {
           p = newsplit(&blah);
           if (*p == '<')
@@ -404,7 +400,6 @@ static int tcl_erasenotes STDVAR
     Tcl_AppendResult(irp, "-2", NULL);
     return TCL_OK;
   }
-  chmod(s, userfile_perm); /* Use userfile permissions. */
   read = 0;
   erased = 0;
   notes_parse(nl, (argv[2][0] == 0) ? "-" : argv[2]);
@@ -605,7 +600,6 @@ static void notes_del(char *hand, char *nick, char *sdl, int idx)
     fclose(f);
     return;
   }
-  chmod(s, userfile_perm);      /* Use userfile permissions. */
   notes_parse(dl, sdl);
   /* don't check for feof after fgets, skips last line if it has no \n (ie on windows) */
   while (!feof(f) && fgets(s, sizeof s, f) != NULL) {
@@ -813,7 +807,6 @@ static int msg_notes(char *nick, char *host, struct userrec *u, char *par)
       putlog(LOG_MISC, "*", "* %s", NOTES_NOTEFILE_UNREACHABLE);
       return 1;
     }
-    chmod(notefile, userfile_perm); /* Use userfile permissions. */
     fprintf(f, "%s %s %li %s\n", to, u->handle, (long) now, par);
     fclose(f);
     dprintf(DP_HELP, "NOTICE %s :%s\n", nick, NOTES_DELIVERED);

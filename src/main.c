@@ -52,6 +52,7 @@
 #include <signal.h>
 #include <netdb.h>
 #include <setjmp.h>
+#include <sys/stat.h>
 
 #ifdef TIME_WITH_SYS_TIME
 #  include <sys/time.h>
@@ -141,9 +142,10 @@ int notify_users_at = 0; /* Minutes past the hour to notify users of notes? */
 char version[81];    /* Version info (long form)  */
 char ver[41];        /* Version info (short form) */
 
-int do_restart = 0;       /* .restart has been called, restart ASAP */
-int resolve_timeout = 15; /* Hostname/address lookup timeout        */
-char quit_msg[1024];      /* Quit message                           */
+int do_restart = 0;       /* .restart has been called, restart ASAP   */
+int resolve_timeout = 15; /* Hostname/address lookup timeout          */
+char quit_msg[1024];      /* Quit message                             */
+int userfile_perm = 0600; /* Userfile permissions (default rw-------) */
 
 /* Traffic stats */
 unsigned long otraffic_irc = 0;
@@ -1118,6 +1120,7 @@ int main(int arg_c, char **arg_v)
   init_mem();
   if (argc > 1)
     do_arg();
+  umask(0666 - userfile_perm);
   init_language(1);
 
   printf("\n%s\n", version);

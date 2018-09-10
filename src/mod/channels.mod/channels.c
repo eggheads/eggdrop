@@ -24,7 +24,6 @@
 #define MODULE_NAME "channels"
 #define MAKING_CHANNELS
 
-#include <sys/stat.h>
 #include "src/mod/module.h"
 
 static Function *global = NULL;
@@ -394,7 +393,6 @@ static void write_channels()
     return;
   sprintf(s, "%s~new", chanfile);
   f = fopen(s, "w");
-  chmod(s, userfile_perm);
   if (f == NULL) {
     putlog(LOG_MISC, "*", "ERROR writing channel file.");
     return;
