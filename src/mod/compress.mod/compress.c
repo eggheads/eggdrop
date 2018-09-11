@@ -200,7 +200,7 @@ static int compress_to_file_mmap(gzFile fout, FILE *fin)
 
   /* mmap file contents to memory */
   buf = mmap(0, st.st_size, PROT_READ, MAP_SHARED, ifd, 0);
-  if (buf < 0)
+  if (buf == MAP_FAILED)
     return COMPF_ERROR;
 
   /* Compress the whole file in one go */

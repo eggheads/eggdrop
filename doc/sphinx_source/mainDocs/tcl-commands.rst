@@ -257,7 +257,9 @@ setuser <handle> <entry-type> [extra info]
   | LASTON  | This setting has 3 forms.                                                             |
   |         |                                                                                       |
   |         | <unixtime> <place>                                                                    |
-  |         |    sets global LASTON time                                                            |
+  |         |   sets global LASTON time. Standard values used by Eggdrop for <place> are partyline, |
+  |         |   linked, unlinked, filearea, <#channel>, and <@remotebotname>, but can be set to     |
+  |         |   anything.                                                                           |
   |         |                                                                                       |
   |         | <unixtime>                                                                            |
   |         |   sets global LASTON time (leaving the place field empty)                             |
