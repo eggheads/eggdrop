@@ -17,7 +17,7 @@ modules: ../../../woobie.$(MOD_EXT)
 	$(CC) $(CFLAGS) $(CPPFLAGS) -DMAKING_MODS -c $(srcdir)/woobie.c && mv -f woobie.o ../
 
 ../../../woobie.$(MOD_EXT): ../woobie.o
-	$(LD) -o ../../../woobie.$(MOD_EXT) ../woobie.o $(XLIBS) $(MODULE_XLIBS) && $(STRIP) ../../../woobie.$(MOD_EXT)
+	$(LD) $(CFLAGS) -o ../../../woobie.$(MOD_EXT) ../woobie.o $(XLIBS) $(MODULE_XLIBS) && $(STRIP) ../../../woobie.$(MOD_EXT)
 
 depend:
 	$(CC) $(CFLAGS) -MM $(srcdir)/woobie.c -MT ../woobie.o > .depend

@@ -18,10 +18,11 @@ dnl Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 dnl
 
 dnl Load tcl macros
-builtin(include,tcl.m4)
+builtin(include,m4/tcl.m4)
 
-dnl Load GNU stdint.h creator
-builtin(include,ax_create_stdint_h.m4)
+dnl Load gnu autoconf archive macros
+builtin(include,m4/ax_create_stdint_h.m4)
+builtin(include,m4/ax_lib_socket_nsl.m4)
 
 
 dnl
@@ -852,9 +853,7 @@ AC_DEFUN([EGG_CHECK_LIBS],
   if test "$IRIX" = yes; then
     AC_MSG_WARN([Skipping library tests because they CONFUSE IRIX.])
   else
-    AC_CHECK_LIB(socket, socket)
-    AC_CHECK_LIB(nsl, connect)
-    AC_CHECK_LIB(dns, gethostbyname)
+    AX_LIB_SOCKET_NSL
     AC_CHECK_LIB(dl, dlopen)
     AC_CHECK_LIB(m, tan, EGG_MATH_LIB="-lm")
 
@@ -1616,12 +1615,13 @@ AC_DEFUN(EGG_TLS_WITHSSL,
   [
     if test "$enable_tls" != "no"; then
       if test -d "$withval"; then
-        AC_CHECK_LIB(ssl, SSL_accept, , [havessllib="no"], [-L$withval -lcrypto])
         AC_CHECK_LIB(crypto, X509_digest, , [havessllib="no"], [-L$withval -lssl])
+        AC_CHECK_LIB(ssl, SSL_accept, , [havessllib="no"], [-L$withval -lcrypto])
         if test "$havessllib" = "no"; then
           AC_MSG_WARN([Invalid path to OpenSSL libs. $withval doesn't contain the required files.])
         else
           AC_SUBST(SSL_LIBS, [-L$withval])
+          LDFLAGS="${LDFLAGS} -L$withval"
         fi
       else
         AC_MSG_WARN([You have specified an invalid path to OpenSSL libs. $withval is not a directory.])
@@ -1647,8 +1647,8 @@ AC_DEFUN([EGG_TLS_DETECT],
       ])
     fi
     if test -z "$SSL_LIBS"; then
-      AC_CHECK_LIB(ssl, SSL_accept, , [havessllib="no"], [-lcrypto])
       AC_CHECK_LIB(crypto, X509_digest, , [havessllib="no"], [-lssl])
+      AC_CHECK_LIB(ssl, SSL_accept, , [havessllib="no"], [-lcrypto])
       AC_CHECK_FUNCS([EVP_md5 EVP_sha1 a2i_IPADDRESS], , [[
         havessllib="no"
         break

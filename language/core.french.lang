@@ -128,7 +128,7 @@ Faites un Telnet sur le bot et entrez 'NEW' comme surnom.
 0x53c,La liste utilisateurs est innexistante!
 0x53e,%B  (%E)\n\nEntrez votre surnom.\n
 0x53f,Rotation du fichier log %s, taille maximale depassée (%d)
-0x540,\nSurnom.\n
+# 0x540 - unused / inutilisé
 0x541,Dernier message repété %d fois.\n
 0x542,bloqué
 0x543,No free sockets available.

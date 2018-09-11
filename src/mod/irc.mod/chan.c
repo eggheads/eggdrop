@@ -53,7 +53,7 @@ static memberlist *newmember(struct chanset_t *chan)
 }
 
 /* Remove channel members for which no WHO reply was received */
-static inline void sync_members(struct chanset_t *chan)
+static void sync_members(struct chanset_t *chan)
 {
   memberlist *m, *next, *prev;
 
@@ -1680,7 +1680,7 @@ static int gotjoin(char *from, char *chname)
   if (!chan && chname[0] == '!') {
     /* As this is a !channel, we need to search for it by display (short)
      * name now. This will happen when we initially join the channel, as we
-     * dont know the unique channel name that the server has made up. <cybah>
+     * don't know the unique channel name that the server has made up. <cybah>
      */
     int l_chname = strlen(chname);
 
@@ -1712,7 +1712,7 @@ static int gotjoin(char *from, char *chname)
     }
   } else if (!chan) {
     /* As this is not a !chan, we need to search for it by display name now.
-     * Unlike !chan's, we dont need to remove the unique part.
+     * Unlike !chan's, we don't need to remove the unique part.
      */
     chan = findchan_by_dname(chname);
   }

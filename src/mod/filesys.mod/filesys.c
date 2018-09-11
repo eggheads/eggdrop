@@ -1018,7 +1018,7 @@ char *filesys_start(Function *global_funcs)
   my_memcpy(&USERENTRY_DCCDIR, &USERENTRY_INFO,
             sizeof(struct user_entry_type) - sizeof(char *));
 
-  USERENTRY_DCCDIR.got_share = 0;       /* We dont want it shared tho */
+  USERENTRY_DCCDIR.got_share = 0;       /* We don't want it shared tho */
   add_entry_type(&USERENTRY_DCCDIR);
   DCC_FILES_PASS.timeout_val = &password_timeout;
   add_lang_section("filesys");

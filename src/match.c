@@ -381,7 +381,7 @@ int cidr_match(char *m, char *n, int count)
 /* Inline for cron_match (obviously).
  * Matches a single field of a crontab expression.
  */
-static inline int cron_matchfld(char *mask, int match)
+static int cron_matchfld(char *mask, int match)
 {
   int skip = 0, f, t;
   char *p, *q;
