@@ -869,7 +869,7 @@ static void dcc_fork_send(int idx, char *x, int y)
 
 static void dcc_get_pending(int idx, char *buf, int len)
 {
-  unsigned short port;
+  uint16_t port;
   int i;
 
   i = answer(dcc[idx].sock, &dcc[idx].sockname, &port, 1);
@@ -885,7 +885,7 @@ static void dcc_get_pending(int idx, char *buf, int len)
 #endif
   dcc[idx].sock = i;
   dcc[idx].addr = 0;
-  dcc[idx].port = (int) port;
+  dcc[idx].port = port;
   if (dcc[idx].sock == -1) {
     dprintf(DP_HELP, TRANSFER_NOTICE_BAD_CONN, dcc[idx].nick, strerror(errno));
     putlog(LOG_FILES, "*", TRANSFER_LOG_BAD_CONN, dcc[idx].u.xfer->origname,

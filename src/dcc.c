@@ -1250,7 +1250,7 @@ static int detect_telnet_flood(char *floodhost)
 
 static void dcc_telnet(int idx, char *buf, int i)
 {
-  unsigned short port;
+  uint16_t port;
   int j = 0, sock;
 
   if (dcc_total + 1 > max_dcc && increase_socks_max()) {
@@ -1273,11 +1273,7 @@ static void dcc_telnet(int idx, char *buf, int i)
   /* Buffer data received on this socket.  */
   sockoptions(sock, EGG_OPTION_SET, SOCK_BUFFER);
 
-#if (SIZEOF_SHORT == 2)
-  if (port < 1024) {
-#else
   if (port < 1024 || port > 65535) {
-#endif
     putlog(LOG_BOTS, "*", DCC_BADSRC, iptostr(&dcc[i].sockname.addr.sa), port);
     killsock(sock);
     lostdcc(i);
