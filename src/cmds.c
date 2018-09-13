@@ -815,6 +815,11 @@ static void cmd_pls_bot(struct userrec *u, int idx, char *par)
     return;
   }
 
+  if (!egg_strcasecmp(handle, botnetnick)) {
+    dprintf(idx, "Same botnick as mine.\n");
+    return;
+  }
+
   if (strchr(BADHANDCHARS, handle[0]) != NULL) {
     dprintf(idx, "You can't start a botnick with '%c'.\n", handle[0]);
     return;
