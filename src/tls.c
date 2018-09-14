@@ -171,6 +171,9 @@ int ssl_init()
   }
   printf("DEBUG: tls_protocols = >>>%s<<<\n", tls_protocols);
   printf("DEBUG: tls_ciphers = >>>%s<<<\n", tls_ciphers);
+#ifdef SSL_OP_NO_COMPRESSION
+  SSL_CTX_set_options(ssl_ctx, SSL_OP_NO_COMPRESSION);
+#endif
   /* Let advanced users specify the list of allowed ssl protocols */
   #define EGG_SSLv2   1 << 0
   #define EGG_SSLv3   1 << 1
