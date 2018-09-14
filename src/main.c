@@ -79,6 +79,10 @@
 #  include <sys/resource.h>             /* setrlimit() */
 #endif
 
+#ifdef HAVE_GETRANDOM
+#  include <sys/random.h>
+#endif
+
 #ifndef _POSIX_SOURCE
 #  define _POSIX_SOURCE 1               /* Solaris needs this */
 #endif
@@ -262,7 +266,7 @@ static void write_debug()
     /* Yoicks, if we have this there's serious trouble!
      * All of these are pretty reliable, so we'll try these.
      *
-     * NOTE: dont try and display context-notes in here, it's
+     * NOTE: don't try and display context-notes in here, it's
      *       _not_ safe <cybah>
      */
     x = creat("DEBUG.DEBUG", 0644);
@@ -792,7 +796,7 @@ int init_language(int);
 int ssl_init();
 #endif
 
-static inline void garbage_collect(void)
+static void garbage_collect(void)
 {
   static u_8bit_t run_cnt = 0;
 
@@ -812,15 +816,6 @@ int mainloop(int toplevel)
    * calls to periodic_timers
    */
   now = time(NULL);
-  /*
-   * FIXME: Get rid of this, it's ugly and wastes lots of cpu.
-   *
-   * pre-1.3.0 Eggdrop had random() in the once a second block below.
-   *
-   * This attempts to keep random() more random by constantly
-   * calling random() and updating the state information.
-   */
-  random();                /* Woop, lets really jumble things */
 
   /* If we want to restart, we have to unwind to the toplevel.
    * Tcl will Panic if we kill the interp with Tcl_Eval in progress.
@@ -1016,6 +1011,19 @@ int mainloop(int toplevel)
   return (eggbusy || tclbusy);
 }
 
+static void init_random(void) {
+  unsigned int seed;
+#ifdef HAVE_GETRANDOM
+  if (getrandom(&seed, sizeof(seed), 0) != sizeof(seed))
+    fatal("ERROR: getrandom()\n", 0);
+#else
+  struct timeval tp;
+  gettimeofday(&tp, NULL);
+  seed = (tp.tv_sec * tp.tv_usec) ^ getpid();
+#endif
+  srandom(seed);
+}
+
 int main(int arg_c, char **arg_v)
 {
   int i, xx;
@@ -1106,7 +1114,7 @@ int main(int arg_c, char **arg_v)
   chanset = NULL;
   egg_memcpy(&nowtm, localtime(&now), sizeof(struct tm));
   lastmin = now / 60;
-  srandom((unsigned int) (now % (getpid() + getppid())));
+  init_random();
   init_mem();
   if (argc > 1)
     do_arg();

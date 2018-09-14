@@ -70,7 +70,7 @@ static char *getnick(char *handle, struct chanset_t *chan)
 {
   char s[UHOSTLEN];
   struct userrec *u;
-  register memberlist *m;
+  memberlist *m;
 
   for (m = chan->channel.member; m && m->nick[0]; m = m->next) {
     egg_snprintf(s, sizeof s, "%s!%s", m->nick, m->userhost);

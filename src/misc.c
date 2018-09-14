@@ -183,9 +183,9 @@ int egg_strcatn(char *dst, const char *src, size_t max)
   return tmpmax - max;
 }
 
-int my_strcpy(register char *a, register char *b)
+int my_strcpy(char *a, char *b)
 {
-  register char *c = b;
+  char *c = b;
 
   while (*b)
     *a++ = *b++;
@@ -272,7 +272,7 @@ void remove_crlf(char **line)
 
 char *newsplit(char **rest)
 {
-  register char *o, *r;
+  char *o, *r;
 
   if (!rest)
     return "";
@@ -320,7 +320,7 @@ char *newsplit(char **rest)
 void maskaddr(const char *s, char *nw, int type)
 {
   int d = type % 5, num = 1;
-  register char *p, *u = 0, *h = 0, *ss;
+  char *p, *u = 0, *h = 0, *ss;
 
   /* Look for user and host.. */
   ss = (char *)s;
@@ -532,7 +532,6 @@ void putlog EGG_VARARGS_DEF(int, arg1)
   format = va_arg(va, char *);
 
   /* Create the timestamp */
-  t = localtime(&now2);
   if (shtime) {
     egg_strftime(stamp, sizeof(stamp) - 2, log_ts, t);
     strcat(stamp, " ");
@@ -1457,7 +1456,7 @@ void make_rand_str(char *s, int len)
  */
 int oatoi(const char *octal)
 {
-  register int i;
+  int i;
 
   if (!*octal)
     return -1;
@@ -1523,10 +1522,10 @@ char *str_escape(const char *str, const char div, const char mask)
  * NOTE: If you look carefully, you'll notice that strchr_unescape()
  *       behaves differently than strchr().
  */
-char *strchr_unescape(char *str, const char div, register const char esc_char)
+char *strchr_unescape(char *str, const char div, const char esc_char)
 {
   char buf[3];
-  register char *s, *p;
+  char *s, *p;
 
   buf[2] = 0;
   for (s = p = str; *s; s++, p++) {
@@ -1561,7 +1560,7 @@ int str_isdigit(const char *str)
 /* As strchr_unescape(), but converts the complete string, without
  * searching for a specific delimiter character.
  */
-void str_unescape(char *str, register const char esc_char)
+void str_unescape(char *str, const char esc_char)
 {
   (void) strchr_unescape(str, 0, esc_char);
 }

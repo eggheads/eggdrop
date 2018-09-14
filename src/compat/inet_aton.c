@@ -104,12 +104,12 @@ const char *cp;
 struct in_addr *addr;
 {
   static const u_32bit_t max[4] = { 0xffffffff, 0xffffff, 0xffff, 0xff };
-  register u_32bit_t val;       /* changed from u_long --david */
-  register int base;
-  register int n;
-  register char c;
+  u_32bit_t val;       /* changed from u_long --david */
+  int base;
+  int n;
+  char c;
   u_32bit_t parts[4];
-  register u_32bit_t *pp = parts;
+  u_32bit_t *pp = parts;
 
   egg_bzero(parts, sizeof(parts));
 
