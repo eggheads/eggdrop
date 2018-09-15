@@ -79,7 +79,7 @@ int delignore(char *ign)
   int i, j;
   struct igrec **u;
   struct igrec *t;
-  char temp[320];
+  char temp[UHOSTLEN];
 
   i = 0;
   if (!strchr(ign, '!') && (j = atoi(ign))) {
