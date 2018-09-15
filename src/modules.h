@@ -61,8 +61,6 @@ extern struct hook_entry {
         }                                                       \
 } while (0)
 
-int call_hook_cccc(int, char *, char *, char *, char *);
-
 #endif
 
 typedef struct _dependancy {

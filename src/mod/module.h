@@ -68,9 +68,6 @@
 #ifdef egg_snprintf
 #  undef egg_snprintf
 #endif
-#ifdef egg_memset
-#  undef egg_memset
-#endif
 #ifdef egg_strcasecmp
 #  undef egg_strcasecmp
 #endif
@@ -440,7 +437,7 @@
 /* 252 - 255 */
 #define egg_snprintf (global[252])
 #define egg_vsnprintf ((int (*)(char *, size_t, const char *, va_list))global[253])
-#define egg_memset ((void *(*)(void *, int, size_t))global[254])
+/* was egg_memset -- UNUSED */
 #define egg_strcasecmp ((int (*)(const char *, const char *))global[255])
 /* 256 - 259 */
 #define egg_strncasecmp ((int (*)(const char *, const char *, size_t))global[256])

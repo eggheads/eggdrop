@@ -101,9 +101,9 @@ static void flush_mode(struct chanset_t *chan, int pri)
     nfree(chan->key), chan->key = NULL;
   }
 
-  /* max +l is signed 2^32 on IRCnet at least... so makesure we've got at least
+  /* max +l is signed 2^32 on IRCnet at least... so make sure we've got at least
    * a 13 char buffer for '-2147483647 \0'. We'll be overwriting the existing
-   * terminating null in 'post', so makesure postsize >= 12.
+   * terminating null in 'post', so make sure postsize >= 12.
    */
   if (chan->limit != 0 && postsize >= 12) {
     if (plus != 1) {
