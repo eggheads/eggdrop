@@ -74,8 +74,8 @@ static int is_compressedfile(char *filename)
   gzFile zin;
   int len1, len2, i;
 
-  egg_memset(buf1, 0, 50);
-  egg_memset(buf2, 0, 50);
+  egg_bzero(buf1, sizeof(buf1));
+  egg_bzero(buf2, sizeof(buf2));
   if (!is_file(filename))
     return COMPF_FAILED;
 
@@ -200,7 +200,7 @@ static int compress_to_file_mmap(gzFile fout, FILE *fin)
 
   /* mmap file contents to memory */
   buf = mmap(0, st.st_size, PROT_READ, MAP_SHARED, ifd, 0);
-  if (buf < 0)
+  if (buf == MAP_FAILED)
     return COMPF_ERROR;
 
   /* Compress the whole file in one go */

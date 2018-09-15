@@ -60,20 +60,6 @@ int match_ignore(char *uhost)
   return 0;
 }
 
-int equals_ignore(char *uhost)
-{
-  struct igrec *u = global_ign;
-
-  for (; u; u = u->next)
-    if (!rfc_casecmp(u->igmask, uhost)) {
-      if (u->flags & IGREC_PERM)
-        return 2;
-      else
-        return 1;
-    }
-  return 0;
-}
-
 int delignore(char *ign)
 {
   int i, j;
