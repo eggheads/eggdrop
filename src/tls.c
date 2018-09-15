@@ -43,7 +43,8 @@ char tls_capath[121] = "";    /* Path to trusted CA certificates              */
 char tls_cafile[121] = "";    /* File containing trusted CA certificates      */
 char tls_certfile[121] = "";  /* Our own digital certificate ;)               */
 char tls_keyfile[121] = "";   /* Private key for use with eggdrop             */
-char tls_protocols[121] = ""; /* A list of protocols for SSL to use */
+char tls_protocols[121] = "TLSv1 TLSv1.1 TLSv1.2 TLSv1.3" ; /* A list of protocols for SSL to use */
+char tls_dhparam[121] = "";   /* dhparam for SSL to use                       */
 char tls_ciphers[141] = "";   /* A list of ciphers for SSL to use             */
 
 
@@ -169,8 +170,6 @@ int ssl_init()
            ERR_error_string(ERR_get_error(), NULL));
     ERR_free_strings();
   }
-  printf("DEBUG: tls_protocols = >>>%s<<<\n", tls_protocols);
-  printf("DEBUG: tls_ciphers = >>>%s<<<\n", tls_ciphers);
   /* Let advanced users specify the list of allowed ssl protocols */
   #define EGG_SSLv2   1 << 0
   #define EGG_SSLv3   1 << 1
@@ -199,39 +198,66 @@ int ssl_init()
         protocols |= EGG_TLSv1_3;
     }
     if (!(protocols & EGG_SSLv2)) {
-      printf("DEBUG: set SSL_OP_NO_SSLv2\n");
+      debug0("TLS: set SSL_OP_NO_SSLv2");
       SSL_CTX_set_options(ssl_ctx, SSL_OP_NO_SSLv2);
     }
     if (!(protocols & EGG_SSLv3)) {
-      printf("DEBUG: set SSL_OP_NO_SSLv3\n");
+      debug0("TLS: set SSL_OP_NO_SSLv3");
       SSL_CTX_set_options(ssl_ctx, SSL_OP_NO_SSLv3);
     }
     if (!(protocols & EGG_TLSv1)) {
-      printf("DEBUG: set SSL_OP_NO_TLSv1\n");
+      debug0("TLS: set SSL_OP_NO_TLSv1");
       SSL_CTX_set_options(ssl_ctx, SSL_OP_NO_TLSv1);
     }
 #ifdef SSL_OP_NO_TLSv1_1
     if (!(protocols & EGG_TLSv1_1)) {
-      printf("DEBUG: set SSL_OP_NO_TLSv1_1\n");
+      debug0("TLS: set SSL_OP_NO_TLSv1_1");
       SSL_CTX_set_options(ssl_ctx, SSL_OP_NO_TLSv1_1);
     }
 #endif
 #ifdef SSL_OP_NO_TLSv1_2
     if (!(protocols & EGG_TLSv1_2)) {
-      printf("DEBUG: set SSL_OP_NO_TLSv1_2\n");
+      debug0("TLS: set SSL_OP_NO_TLSv1_2");
       SSL_CTX_set_options(ssl_ctx, SSL_OP_NO_TLSv1_2);
     }
 #endif
 #ifdef SSL_OP_NO_TLSv1_3
     if (!(protocols & EGG_TLSv1_3)) {
-      printf("DEBUG: set SSL_OP_NO_TLSv1_3\n");
+      debug0("TLS: set SSL_OP_NO_TLSv1_3");
       SSL_CTX_set_options(ssl_ctx, SSL_OP_NO_TLSv1_3);
     }
 #endif
   }
 #ifdef SSL_OP_NO_COMPRESSION
+  debug0("TLS: set SSL_OP_NO_COMPRESSION");
   SSL_CTX_set_options(ssl_ctx, SSL_OP_NO_COMPRESSION);
 #endif
+  /* Let advanced users specify dhparam */
+  if (tls_dhparam[0]) {
+    DH *dh;
+    FILE *paramfile = fopen(tls_dhparam, "r");
+    if (paramfile) {
+      dh = PEM_read_DHparams(paramfile, NULL, NULL, NULL);
+      fclose(paramfile);
+      if (dh) {
+        if (SSL_CTX_set_tmp_dh(ssl_ctx, dh) == 1) {
+          debug1("TLS: set dhparam %s", tls_dhparam);
+        }
+	else {
+          putlog(LOG_MISC, "*", "ERROR: TLS: unable to set tmp dh %s: %s",
+                 tls_dhparam, ERR_error_string(ERR_get_error(), NULL));
+        }
+      }
+      else {
+        putlog(LOG_MISC, "*", "ERROR: TLS: unable to read DHparams %s: %s",
+               tls_dhparam, ERR_error_string(ERR_get_error(), NULL));
+      }
+    }
+    else {
+      putlog(LOG_MISC, "*", "ERROR: TLS: unable to open %s: %s",
+             tls_dhparam, strerror(errno));
+    }
+  }
   /* Let advanced users specify the list of allowed ssl ciphers */
   if (tls_ciphers[0] && !SSL_CTX_set_cipher_list(ssl_ctx, tls_ciphers)) {
     /* this replaces any preset ciphers so an invalid list is fatal */
