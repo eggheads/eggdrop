@@ -56,19 +56,6 @@ int _rfc_ncasecmp(const char *str1, const char *str2, int n)
   return res;
 }
 
-unsigned char rfc_tolowertab[];
-unsigned char rfc_touppertab[];
-
-int _rfc_tolower(int c)
-{
-  return rfc_tolowertab[(unsigned char) (c)];
-}
-
-int _rfc_toupper(int c)
-{
-  return rfc_touppertab[(unsigned char) (c)];
-}
-
 unsigned char rfc_tolowertab[] =
   { 0, 0x1, 0x2, 0x3, 0x4, 0x5, 0x6, 0x7, 0x8, 0x9, 0xa,
   0xb, 0xc, 0xd, 0xe, 0xf, 0x10, 0x11, 0x12, 0x13, 0x14,
@@ -138,3 +125,13 @@ unsigned char rfc_touppertab[] =
   0xf0, 0xf1, 0xf2, 0xf3, 0xf4, 0xf5, 0xf6, 0xf7, 0xf8, 0xf9,
   0xfa, 0xfb, 0xfc, 0xfd, 0xfe, 0xff
 };
+
+int _rfc_tolower(int c)
+{
+  return rfc_tolowertab[(unsigned char) (c)];
+}
+
+int _rfc_toupper(int c)
+{
+  return rfc_touppertab[(unsigned char) (c)];
+}

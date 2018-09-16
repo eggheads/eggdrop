@@ -630,7 +630,7 @@ void putlog EGG_VARARGS_DEF(int, arg1)
   else if ((type & LOG_MISC) && use_stderr) {
     if (shtime)
       out += tsl;
-    dprintf(DP_STDERR, "%s", s);
+    dprintf(DP_STDERR, "%s", out);
   }
   va_end(va);
 }

@@ -1036,12 +1036,12 @@ static void next_server(int *ptr, char *serv, unsigned int *port, char *pass)
         if (!egg_strcasecmp(x->name, serv)) {
           *ptr = i;
 #ifdef TLS
-            x->ssl = use_ssl;
+          x->ssl = use_ssl;
 #endif
           return;
         } else if (x->realname && !egg_strcasecmp(x->realname, serv)) {
           *ptr = i;
-          strncpyz(serv, x->realname, sizeof serv);
+          strncpyz(serv, x->realname, UHOSTLEN);
 #ifdef TLS
           use_ssl = x->ssl;
 #endif
@@ -1691,15 +1691,12 @@ static void server_postrehash()
   strncpyz(botname, origbotname, NICKLEN);
   if (!botname[0])
     fatal("NO BOT NAME.", 0);
-  if ((serverlist == NULL)
 #ifndef TLS
-  && (sslserver)) {
+  if ((serverlist == NULL) && sslserver)
     fatal("NO NON-SSL SERVERS ADDED (TLS IS DISABLED).", 0);
-  } else if (serverlist == NULL
 #endif
-  ) {
+  if (serverlist == NULL)
     fatal("NO SERVERS ADDED.", 0);
-  }
   if (oldnick[0] && !rfc_casecmp(oldnick, botname) &&
       !rfc_casecmp(oldnick, get_altbotnick())) {
     /* Change botname back, don't be premature. */

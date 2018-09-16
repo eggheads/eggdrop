@@ -610,7 +610,7 @@ static int dcc_bot_check_digest(int idx, char *remote_digest)
 
   MD5_Init(&md5context);
 
-  egg_snprintf(digest_string, 33, "<%x%x@", getpid(),
+  egg_snprintf(digest_string, 33, "<%lx%x@", (long) getpid(),
                (unsigned int) dcc[idx].timeval);
   MD5_Update(&md5context, (unsigned char *) digest_string,
              strlen(digest_string));

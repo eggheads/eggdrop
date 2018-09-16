@@ -372,6 +372,9 @@
 /* Define if modules should be loaded using the shl_*() functions. */
 #undef MOD_USE_SHL
 
+/* Define if running under NetBSD. */
+#undef NETBSD_HACKS
+
 /* Define to the address where bug reports for this package should be sent. */
 #undef PACKAGE_BUGREPORT
 
