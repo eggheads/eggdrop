@@ -249,7 +249,7 @@ Last revised: September 4, 2018
              cd /
              tar -zxf tcl-8.5.9.tar.gz
 
-        3. Download Eggdrop from geteggdrop.com to your home directory.
+        3. Download Eggdrop from https://geteggdrop.com/ to your home directory.
            This is usually something like 'C:\cygwin\home\<username>\'. After
            downloading, extract the Eggdrop tarball:
 

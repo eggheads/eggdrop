@@ -67,13 +67,13 @@ HOW TO GET EGGDROP
     trying the command "tclsh". If it works, you will be given a "%" prompt
     and you can type "exit" to exit the program. This means Tcl is installed
     on your system. If tclsh doesn't load, then Tcl probably isn't on your
-    system, and you will need to install it. The best ftp site for Tcl is
-    ftp://tcl.activestate.com/pub/tcl/.
+    system, and you will need to install it. The website for Tcl is
+    https://tcl.tk/.
 
     Currently, the 1.8 tree of Eggdrop is developed at eggheads.org. You can
     get the latest STABLE version of Eggdrop from the following url:
 
-      http://geteggdrop.com/
+      https://geteggdrop.com/
 
     You might try www.eggheads.org for help and information.
 
