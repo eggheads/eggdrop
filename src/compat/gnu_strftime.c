@@ -182,45 +182,8 @@ my_strftime_localtime_r (t, tp)
 #endif /* ! defined _LIBC */
 
 
-#if !defined memset && !defined HAVE_MEMSET && !defined _LIBC
-/* Some systems lack the `memset' function and we don't want to
-   introduce additional dependencies.  */
-/* The SGI compiler reportedly barfs on the trailing null
-   if we use a string constant as the initializer.  28 June 1997, rms.  */
-static const char spaces[16] = /* "                " */
-  { ' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ' };
-static const char zeroes[16] = /* "0000000000000000" */
-  { '0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0' };
-
-# define memset_space(P, Len) \
-  do {									      \
-    int _len = (Len);							      \
-									      \
-    do									      \
-      {									      \
-	int _this = _len > 16 ? 16 : _len;				      \
-	(P) = MEMPCPY ((P), spaces, _this);				      \
-	_len -= _this;							      \
-      }									      \
-    while (_len > 0);							      \
-  } while (0)
-
-# define memset_zero(P, Len) \
-  do {									      \
-    int _len = (Len);							      \
-									      \
-    do									      \
-      {									      \
-	int _this = _len > 16 ? 16 : _len;				      \
-	(P) = MEMPCPY ((P), zeroes, _this);				      \
-	_len -= _this;							      \
-      }									      \
-    while (_len > 0);							      \
-  } while (0)
-#else
-# define memset_space(P, Len) (memset ((P), ' ', (Len)), (P) += (Len))
-# define memset_zero(P, Len) (memset ((P), '0', (Len)), (P) += (Len))
-#endif
+#define memset_space(P, Len) (memset ((P), ' ', (Len)), (P) += (Len))
+#define memset_zero(P, Len) (memset ((P), '0', (Len)), (P) += (Len))
 
 #define add(n, f)							      \
   do									      \
