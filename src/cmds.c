@@ -2586,7 +2586,8 @@ static void cmd_unloadmod(struct userrec *u, int idx, char *par)
 static void cmd_pls_ignore(struct userrec *u, int idx, char *par)
 {
   char *who, s[UHOSTLEN], *p, *p_expire;
-  unsigned long int expire_time = 0, expire_foo;
+  long expire_foo;
+  unsigned long expire_time = 0;
 
   if (!par[0]) {
     dprintf(idx, "Usage: +ignore <hostmask> [%%<XdXhXm>] [comment]\n");

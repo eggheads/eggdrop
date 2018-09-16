@@ -30,7 +30,8 @@ static struct flag_record victim = { FR_GLOBAL | FR_CHAN, 0, 0, 0, 0, 0 };
 static void cmd_pls_ban(struct userrec *u, int idx, char *par)
 {
   char *chname, *who, s[UHOSTLEN], s1[UHOSTLEN], *p, *p_expire;
-  unsigned long int expire_time = 0, expire_foo;
+  long expire_foo;
+  unsigned long expire_time = 0;
   int sticky = 0;
   struct chanset_t *chan = NULL;
   module_entry *me;
@@ -169,7 +170,8 @@ static void cmd_pls_ban(struct userrec *u, int idx, char *par)
 static void cmd_pls_exempt(struct userrec *u, int idx, char *par)
 {
   char *chname, *who, s[UHOSTLEN], *p, *p_expire;
-  unsigned long int expire_time = 0, expire_foo;
+  long expire_foo;
+  unsigned long expire_time = 0;
   struct chanset_t *chan = NULL;
 
   if (!use_exempts) {
@@ -288,7 +290,8 @@ static void cmd_pls_exempt(struct userrec *u, int idx, char *par)
 static void cmd_pls_invite(struct userrec *u, int idx, char *par)
 {
   char *chname, *who, s[UHOSTLEN], *p, *p_expire;
-  unsigned long int expire_time = 0, expire_foo;
+  long expire_foo;
+  unsigned long expire_time = 0;
   struct chanset_t *chan = NULL;
 
   if (!use_invites) {
