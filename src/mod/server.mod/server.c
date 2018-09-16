@@ -1036,12 +1036,12 @@ static void next_server(int *ptr, char *serv, unsigned int *port, char *pass)
         if (!egg_strcasecmp(x->name, serv)) {
           *ptr = i;
 #ifdef TLS
-            x->ssl = use_ssl;
+          x->ssl = use_ssl;
 #endif
           return;
         } else if (x->realname && !egg_strcasecmp(x->realname, serv)) {
           *ptr = i;
-          strncpyz(serv, x->realname, sizeof serv);
+          strncpyz(serv, x->realname, UHOSTLEN);
 #ifdef TLS
           use_ssl = x->ssl;
 #endif
