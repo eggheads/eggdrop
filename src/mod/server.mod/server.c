@@ -251,7 +251,7 @@ static void deq_msg()
 static int calc_penalty(char *msg)
 {
   char *cmd, *par1, *par2, *par3;
-  register int penalty, i, ii;
+  int penalty, i, ii;
 
   if (!use_penalties && net_type != NETT_UNDERNET &&
       net_type != NETT_HYBRID_EFNET)
@@ -380,7 +380,7 @@ static int calc_penalty(char *msg)
 
 char *splitnicks(char **rest)
 {
-  register char *o, *r;
+  char *o, *r;
 
   if (!rest)
     return *rest = "";
@@ -1036,12 +1036,12 @@ static void next_server(int *ptr, char *serv, unsigned int *port, char *pass)
         if (!egg_strcasecmp(x->name, serv)) {
           *ptr = i;
 #ifdef TLS
-            x->ssl = use_ssl;
+          x->ssl = use_ssl;
 #endif
           return;
         } else if (x->realname && !egg_strcasecmp(x->realname, serv)) {
           *ptr = i;
-          strncpyz(serv, x->realname, sizeof serv);
+          strncpyz(serv, x->realname, UHOSTLEN);
 #ifdef TLS
           use_ssl = x->ssl;
 #endif
@@ -1199,7 +1199,7 @@ static char *nick_change(ClientData cdata, Tcl_Interp *irp,
  */
 static void rand_nick(char *nick)
 {
-  register char *p = nick;
+  char *p = nick;
 
   while ((p = strchr(p, '?')) != NULL) {
     *p = '0' + randint(10);
@@ -1691,15 +1691,12 @@ static void server_postrehash()
   strncpyz(botname, origbotname, NICKLEN);
   if (!botname[0])
     fatal("NO BOT NAME.", 0);
-  if ((serverlist == NULL)
 #ifndef TLS
-  && (sslserver)) {
+  if ((serverlist == NULL) && sslserver)
     fatal("NO NON-SSL SERVERS ADDED (TLS IS DISABLED).", 0);
-  } else if (serverlist == NULL
 #endif
-  ) {
+  if (serverlist == NULL)
     fatal("NO SERVERS ADDED.", 0);
-  }
   if (oldnick[0] && !rfc_casecmp(oldnick, botname) &&
       !rfc_casecmp(oldnick, get_altbotnick())) {
     /* Change botname back, don't be premature. */
@@ -1724,7 +1721,7 @@ static void server_die()
 
 static void msgq_clear(struct msgq_head *qh)
 {
-  register struct msgq *q, *qq;
+  struct msgq *q, *qq;
 
   for (q = qh->head; q; q = qq) {
     qq = q->next;
@@ -1737,8 +1734,8 @@ static void msgq_clear(struct msgq_head *qh)
 
 static int msgq_expmem(struct msgq_head *qh)
 {
-  register int tot = 0;
-  register struct msgq *m;
+  int tot = 0;
+  struct msgq *m;
 
   for (m = qh->head; m; m = m->next) {
     tot += m->len + 1;

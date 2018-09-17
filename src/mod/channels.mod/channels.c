@@ -263,7 +263,7 @@ static int ismasked(masklist *m, char *user)
 
 /* Unlink chanset element from chanset list.
  */
-static inline int chanset_unlink(struct chanset_t *chan)
+static int chanset_unlink(struct chanset_t *chan)
 {
   struct chanset_t *c, *c_old = NULL;
 
@@ -678,7 +678,7 @@ static void channels_report(int idx, int details)
       if (channel_inactive(chan))
         i += my_strcpy(s + i, "inactive ");
       if (channel_nodesynch(chan))
-        i += my_strcpy(s + i, "nodesynch ");
+        my_strcpy(s + i, "nodesynch ");
 
       dprintf(idx, "      Options: %s\n", s);
 

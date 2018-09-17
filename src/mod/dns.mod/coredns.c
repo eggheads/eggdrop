@@ -258,14 +258,14 @@ static struct resolve *allocresolve()
 
 /* Return the hash bucket number for id.
  */
-static inline u_32bit_t getidbash(u_16bit_t id)
+static u_32bit_t getidbash(u_16bit_t id)
 {
   return (u_32bit_t) BASH_MODULO(id);
 }
 
 /* Return the hash bucket number for ip.
  */
-static inline u_32bit_t getipbash(IP ip)
+static u_32bit_t getipbash(IP ip)
 {
   return (u_32bit_t) BASH_MODULO(ip);
 }
@@ -1274,6 +1274,13 @@ static int init_dns_core(void)
 
   /* Initialise the resolv library. */
   res_init();
+  #ifdef NETBSD_HACKS
+    puts("netbsd found. if eggdrop crashes with\n"
+         "  _res is not supported for multi-threaded programs.\n"
+         "  [1]   Abort trap (core dumped) ./eggdrop -nt\n"
+         "dns.mod must be disabled by commenting out in eggdrop.conf\n"
+         "  #loadmodule dns");
+  #endif
   _res.options |= RES_RECURSE | RES_DEFNAMES | RES_DNSRCH;
   for (i = 0; i < _res.nscount; i++)
     _res.nsaddr_list[i].sin_family = AF_INET;

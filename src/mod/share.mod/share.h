@@ -42,7 +42,7 @@
 typedef struct {
   char *feature;            /* Name of the feature                           */
   int flag;                 /* Flag representing the feature                 */
-  int (*ask_func) (int);    /* Pointer to the function that tells us wether
+  int (*ask_func) (int);    /* Pointer to the function that tells us whether
                              * the feature should be considered as on.       */
   int priority;             /* Priority with which this entry gets called.   */
   int (*snd) (int, char *); /* Called before sending. Handled according to

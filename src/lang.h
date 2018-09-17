@@ -117,7 +117,7 @@
 /* was: MISC_BOTSCONNECTED      0x53d            */
 #define MISC_BANNER             get_language(0x53e)
 #define MISC_CLOGS              get_language(0x53f)
-#define MISC_BANNER_STEALTH     get_language(0x540)
+/* was: MISC_BANNER_STEALTH     0x540            */
 #define MISC_LOGREPEAT          get_language(0x541)
 #define MISC_JUPED              get_language(0x542)
 #define MISC_NOFREESOCK         get_language(0x543)

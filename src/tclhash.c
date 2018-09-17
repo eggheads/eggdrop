@@ -61,7 +61,7 @@ static int builtin_log();
 
 /* Allocate and initialise a chunk of memory.
  */
-static inline void *n_malloc_null(int size, const char *file, int line)
+static void *n_malloc_null(int size, const char *file, int line)
 {
 #ifdef DEBUG_MEM
 #  define nmalloc_null(size) n_malloc_null(size, __FILE__, __LINE__)
@@ -71,14 +71,14 @@ static inline void *n_malloc_null(int size, const char *file, int line)
   void *ptr = nmalloc(size);
 #endif
 
-  egg_memset(ptr, 0, size);
+  egg_bzero(ptr, size);
   return ptr;
 }
 
 
 /* Delete trigger/command.
  */
-static inline void tcl_cmd_delete(tcl_cmd_t *tc)
+static void tcl_cmd_delete(tcl_cmd_t *tc)
 {
   nfree(tc->func_name);
   nfree(tc);
@@ -86,7 +86,7 @@ static inline void tcl_cmd_delete(tcl_cmd_t *tc)
 
 /* Delete bind and its elements.
  */
-static inline void tcl_bind_mask_delete(tcl_bind_mask_t *tm)
+static void tcl_bind_mask_delete(tcl_bind_mask_t *tm)
 {
   tcl_cmd_t *tc, *tc_next;
 
@@ -100,7 +100,7 @@ static inline void tcl_bind_mask_delete(tcl_bind_mask_t *tm)
 
 /* Delete bind list and its elements.
  */
-static inline void tcl_bind_list_delete(tcl_bind_list_t *tl)
+static void tcl_bind_list_delete(tcl_bind_list_t *tl)
 {
   tcl_bind_mask_t *tm, *tm_next;
 
@@ -160,7 +160,7 @@ void garbage_collect_tclhash(void)
   }
 }
 
-static inline int tcl_cmd_expmem(tcl_cmd_t *tc)
+static int tcl_cmd_expmem(tcl_cmd_t *tc)
 {
   int tot;
 
@@ -170,7 +170,7 @@ static inline int tcl_cmd_expmem(tcl_cmd_t *tc)
   return tot;
 }
 
-static inline int tcl_bind_mask_expmem(tcl_bind_mask_t *tm)
+static int tcl_bind_mask_expmem(tcl_bind_mask_t *tm)
 {
   int tot = 0;
   tcl_cmd_t *tc;
@@ -183,7 +183,7 @@ static inline int tcl_bind_mask_expmem(tcl_bind_mask_t *tm)
   return tot;
 }
 
-static inline int tcl_bind_list_expmem(tcl_bind_list_t *tl)
+static int tcl_bind_list_expmem(tcl_bind_list_t *tl)
 {
   int tot = 0;
   tcl_bind_mask_t *tm;
@@ -710,7 +710,7 @@ static int builtin_idx STDVAR
  *
  * Note: This is INLINE code for check_tcl_bind().
  */
-static inline int trigger_bind(const char *proc, const char *param,
+static int trigger_bind(const char *proc, const char *param,
                                char *mask)
 {
   int x;
@@ -774,7 +774,7 @@ static inline int trigger_bind(const char *proc, const char *param,
  *
  * Note: This is INLINE code for check_tcl_bind().
  */
-static inline int check_bind_match(const char *match, char *mask,
+static int check_bind_match(const char *match, char *mask,
                                    int match_type)
 {
   switch (match_type & 0x07) {
@@ -808,7 +808,7 @@ static inline int check_bind_match(const char *match, char *mask,
  *
  * Note: This is INLINE code for check_tcl_bind().
  */
-static inline int check_bind_flags(struct flag_record *flags,
+static int check_bind_flags(struct flag_record *flags,
                                    struct flag_record *atr, int match_type)
 {
   if (match_type & BIND_USE_ATTR) {
@@ -816,9 +816,8 @@ static inline int check_bind_flags(struct flag_record *flags,
       return (flagrec_ok(flags, atr));
     else
       return (flagrec_eq(flags, atr));
-  } else
-    return 1;
-  return 0;
+  }
+  return 1;
 }
 
 
@@ -919,8 +918,15 @@ int check_tcl_bind(tcl_bind_list_t *tl, const char *match,
   if (htc)
     htc->hits++;
 
-  /* Now that we have found at least one bind, we can update the
+  if (cnt > 1)
+    return BIND_AMBIGUOUS;
+
+  /* Now that we have found exactly one bind, we can update the
    * preferred entries information.
+   * Do this only for cnt == 1,
+   * since we don't want to change the order of raw binds vs. builtin binds.
+   * reason 1: order should be raw then builtin
+   * reason 2: builtin could modify args
    */
   if (tm_p && tm_p->next) {
     tm = tm_p->next;            /* Move mask to front of bind's mask list. */
@@ -928,9 +934,6 @@ int check_tcl_bind(tcl_bind_list_t *tl, const char *match,
     tm->next = tl->first;       /* Readd mask to front of list. */
     tl->first = tm;
   }
-
-  if (cnt > 1)
-    return BIND_AMBIGUOUS;
 
   return trigger_bind(proc, param, mask);
 }

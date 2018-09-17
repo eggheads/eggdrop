@@ -266,7 +266,7 @@ static void write_debug()
     /* Yoicks, if we have this there's serious trouble!
      * All of these are pretty reliable, so we'll try these.
      *
-     * NOTE: dont try and display context-notes in here, it's
+     * NOTE: don't try and display context-notes in here, it's
      *       _not_ safe <cybah>
      */
     x = creat("DEBUG.DEBUG", 0644);
@@ -796,7 +796,7 @@ int init_language(int);
 int ssl_init();
 #endif
 
-static inline void garbage_collect(void)
+static void garbage_collect(void)
 {
   static u_8bit_t run_cnt = 0;
 
@@ -816,15 +816,6 @@ int mainloop(int toplevel)
    * calls to periodic_timers
    */
   now = time(NULL);
-  /*
-   * FIXME: Get rid of this, it's ugly and wastes lots of cpu.
-   *
-   * pre-1.3.0 Eggdrop had random() in the once a second block below.
-   *
-   * This attempts to keep random() more random by constantly
-   * calling random() and updating the state information.
-   */
-  random();                /* Woop, lets really jumble things */
 
   /* If we want to restart, we have to unwind to the toplevel.
    * Tcl will Panic if we kill the interp with Tcl_Eval in progress.

@@ -53,15 +53,13 @@ extern struct hook_entry {
 } *hook_list[REAL_HOOKS];
 
 #define call_hook(x) do {                                       \
-        register struct hook_entry *p, *pn;                     \
+        struct hook_entry *p, *pn;                              \
                                                                 \
         for (p = hook_list[x]; p; p = pn) {                     \
                 pn = p->next;                                   \
                 p->func();                                      \
         }                                                       \
 } while (0)
-
-int call_hook_cccc(int, char *, char *, char *, char *);
 
 #endif
 
