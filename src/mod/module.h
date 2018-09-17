@@ -74,9 +74,6 @@
 #ifdef egg_strncasecmp
 #  undef egg_strncasecmp
 #endif
-#ifdef strncpyz
-#  undef strncpyz
-#endif
 
 #if defined (__CYGWIN__) && !defined(STATIC)
 #  define EXPORT_SCOPE  __declspec(dllexport)
@@ -504,7 +501,11 @@
 #define tcl_resultint ((int (*)(void))global[300])
 #define tcl_resultstring ((const char *(*)(void))global[301])
 #define getdccfamilyaddr ((int (*) (sockname_t *, char *, socklen_t, int))global[302])
-#define strncpyz (global[303])
+#ifndef HAVE_STRLCPY
+# define strlcpy ((size_t (*) (char *, const char *, size_t))global[303])
+#endif
+/* 304 - 307 */
+#define strncpyz ((size_t (*) (char *, const char *, size_t))global[304])
 
 
 /* hostmasking */

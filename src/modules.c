@@ -76,7 +76,7 @@ void *dlsym(void *, char *);
 #  endif /* MOD_USE_DL */
 #endif /* !STATIC */
 
-
+#define strncpyz strlcpy
 
 extern struct dcc_t *dcc;
 extern struct userrec *userlist, *lastuser;
@@ -598,6 +598,12 @@ Function global_table[] = {
   (Function) tcl_resultint,
   (Function) tcl_resultstring,
   (Function) getdccfamilyaddr,
+#ifndef HAVE_STRLCPY
+  (Function) strlcpy,
+#else
+  (Function) 0,
+#endif
+  /* 304 - 307 */
   (Function) strncpyz
 };
 

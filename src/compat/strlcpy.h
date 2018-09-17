@@ -27,6 +27,4 @@
 size_t strlcpy(char * __restrict, const char * __restrict, size_t);
 #endif /* HAVE_STRLCPY */
 
-#define strncpyz strlcpy
-
 #endif /* _EGG_COMPAT_STRLCPY_H_ */
