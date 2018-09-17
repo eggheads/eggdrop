@@ -739,14 +739,14 @@ static int trigger_bind(const char *proc, const char *param,
   Tcl_SetVar(interp, "lastbind", (char *) mask, TCL_GLOBAL_ONLY);
 
   if(proc) {
-    debug1("triggered bind %s start", proc);
+    debug1("triggering bind %s", proc);
     r = clock_gettime(CLOCK_MONOTONIC, &tp1);
   }
   x = Tcl_VarEval(interp, proc, param, NULL);
   Context;
   if (proc && !r) {
     clock_gettime(CLOCK_MONOTONIC, &tp2);
-    debug2("triggered bind %s end time = %.3fms", proc,
+    debug2("triggered bind %s, duration = %.3fms", proc,
 	   (double) (tp2.tv_nsec - tp1.tv_nsec) / 1000000 +
 	   (double) (tp2.tv_sec - tp1.tv_sec) * 1000);
   }
