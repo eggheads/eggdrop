@@ -804,9 +804,8 @@ static int check_bind_flags(struct flag_record *flags,
       return (flagrec_ok(flags, atr));
     else
       return (flagrec_eq(flags, atr));
-  } else
-    return 1;
-  return 0;
+  }
+  return 1;
 }
 
 

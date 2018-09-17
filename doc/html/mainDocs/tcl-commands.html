@@ -211,8 +211,8 @@ marked with vertical bars (|) on the left.</p>
 <div class="section" id="passwdok-handle-pass">
 <h3>passwdok &lt;handle&gt; &lt;pass&gt;<a class="headerlink" href="#passwdok-handle-pass" title="Permalink to this headline">¶</a></h3>
 <blockquote>
-<div><p>Description: checks the password given against the user's password. Check against the password &quot;&quot; (a blank string) or &quot;-&quot; to find out if a user has no password set.</p>
-<p>Returns: 1 if the password matches for that user; 0 otherwise</p>
+<div><p>Description: checks the password given against the user's password. Check against the password &quot;-&quot; to find out if a user has no password set.</p>
+<p>Returns: 1 if the password matches for that user; 0 otherwise. Or if we are checking against the password &quot;-&quot;: 1 if the user has no password set; 0 otherwise.</p>
 <p>Module: core</p>
 </div></blockquote>
 </div>
@@ -305,7 +305,9 @@ specified, both the bot and user listen ports are set to the bot listen port.</d
 <td><p class="first">This setting has 3 forms.</p>
 <dl class="last docutils">
 <dt>&lt;unixtime&gt; &lt;place&gt;</dt>
-<dd>sets global LASTON time</dd>
+<dd>sets global LASTON time. Standard values used by Eggdrop for &lt;place&gt; are partyline,
+linked, unlinked, filearea, &lt;#channel&gt;, and &lt;&#64;remotebotname&gt;, but can be set to
+anything.</dd>
 <dt>&lt;unixtime&gt;</dt>
 <dd>sets global LASTON time (leaving the place field empty)</dd>
 <dt>&lt;unixtime&gt; &lt;channel&gt;</dt>
@@ -2181,7 +2183,7 @@ will be used. Types 30-39 set the host to '*'.</p>
 <div class="section" id="rand-limit">
 <h3>rand &lt;limit&gt;<a class="headerlink" href="#rand-limit" title="Permalink to this headline">¶</a></h3>
 <blockquote>
-<div><p>Returns: a random integer between 0 and limit-1</p>
+<div><p>Returns: a random integer between 0 and limit-1. Limit must be greater than 0 and equal to or less than RAND_MAX, which is generally 2147483647. The underlying pseudo-random number generator is not cryptographically secure.</p>
 <p>Module: core</p>
 </div></blockquote>
 </div>
@@ -2631,7 +2633,9 @@ as 'bind msg - stop msg:stop' (which makes a msg-command &quot;stop&quot; call t
 Tcl proc &quot;msg:stop&quot;) will overwrite any previous binding you had for the
 msg command &quot;stop&quot;. With stackable bindings, like 'msgm' for example,
 you can bind the same command to multiple procs. When the bind is triggered,
-ALL of the Tcl procs that are bound to it will be called.</p>
+ALL of the Tcl procs that are bound to it will be called. Raw binds are
+triggered before builtin binds, as a builtin bind has the potential to
+modify args.</p>
 <p>To remove a bind, use the 'unbind' command. For example, to remove the
 bind for the &quot;stop&quot; msg command, use 'unbind msg - stop msg:stop'.</p>
 <div class="section" id="bind-types">
@@ -3398,7 +3402,7 @@ words) (This char only works in binds, not in regular matching)</td>
           
     <div class="footer">
         &copy; Copyright 2018, Eggheads.
-      Last updated on Jan 01, 2018.
+      Last updated on Sep 16, 2018.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.3.
     </div>
         </div>
