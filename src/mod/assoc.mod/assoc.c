@@ -124,7 +124,7 @@ static void add_assoc(char *name, int chan)
       return;
     }
     if (a->channel == chan) {
-      strncpyz(a->name, name, sizeof a->name);
+      strlcpy(a->name, name, sizeof a->name);
       return;
     }
   }
@@ -134,7 +134,7 @@ static void add_assoc(char *name, int chan)
       b = nmalloc(sizeof *b);
       b->next = a;
       b->channel = chan;
-      strncpyz(b->name, name, sizeof b->name);
+      strlcpy(b->name, name, sizeof b->name);
       if (old == NULL)
         assoc = b;
       else
@@ -146,7 +146,7 @@ static void add_assoc(char *name, int chan)
   b = nmalloc(sizeof *b);
   b->next = NULL;
   b->channel = chan;
-  strncpyz(b->name, name, sizeof b->name);
+  strlcpy(b->name, name, sizeof b->name);
   if (old == NULL)
     assoc = b;
   else

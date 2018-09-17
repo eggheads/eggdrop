@@ -729,7 +729,7 @@ char *blowfish_start(Function *global_funcs)
   }
 
   /* ECB by default for now, change at v1.9.0! */
-  strncpyz(bf_mode, "ecb", sizeof bf_mode);
+  strlcpy(bf_mode, "ecb", sizeof bf_mode);
   add_tcl_commands(mytcls);
   add_tcl_strings(my_tcl_strings);
   add_help_reference("blowfish.help");

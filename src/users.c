@@ -71,14 +71,14 @@ int delignore(char *ign)
   if (!strchr(ign, '!') && (j = atoi(ign))) {
     for (u = &global_ign, j--; *u && j; u = &((*u)->next), j--);
     if (*u) {
-      strncpyz(temp, (*u)->igmask, sizeof temp);
+      strlcpy(temp, (*u)->igmask, sizeof temp);
       i = 1;
     }
   } else {
     /* find the matching host, if there is one */
     for (u = &global_ign; *u && !i; u = &((*u)->next))
       if (!rfc_casecmp(ign, (*u)->igmask)) {
-        strncpyz(temp, ign, sizeof temp);
+        strlcpy(temp, ign, sizeof temp);
         i = 1;
         break;
       }
@@ -758,7 +758,7 @@ int readuserfile(char *file, struct userrec **ret)
 
                 cr->next = u->chanrec;
                 u->chanrec = cr;
-                strncpyz(cr->channel, chname, 80);
+                strlcpy(cr->channel, chname, 80);
                 cr->laston = atoi(st);
                 cr->flags = fr.chan;
                 cr->flags_udef = fr.udef_chan;
@@ -922,7 +922,7 @@ int readuserfile(char *file, struct userrec **ret)
             } else {
               fr.match = FR_GLOBAL;
               break_down_flags(attr, &fr, 0);
-              strncpyz(lasthand, code, sizeof lasthand);
+              strlcpy(lasthand, code, sizeof lasthand);
               cst = NULL;
               if (strlen(code) > HANDLEN)
                 code[HANDLEN] = 0;
