@@ -1079,7 +1079,7 @@ static int got352(char *from, char *msg)
   char *nick, *user, *host, *chname, *flags;
   struct chanset_t *chan;
 
-  newsplit(&msg);               /* Skip my nick - effeciently */
+  newsplit(&msg);               /* Skip my nick - efficiently */
   chname = newsplit(&msg);      /* Grab the channel */
   chan = findchan(chname);      /* See if I'm on channel */
   if (chan) {                   /* Am I? */
@@ -1101,7 +1101,7 @@ static int got354(char *from, char *msg)
   struct chanset_t *chan;
 
   if (use_354) {
-    newsplit(&msg);             /* Skip my nick - effeciently */
+    newsplit(&msg);             /* Skip my nick - efficiently */
     if (msg[0] && (strchr(CHANMETA, msg[0]) != NULL)) {
       chname = newsplit(&msg);  /* Grab the channel */
       chan = findchan(chname);  /* See if I'm on channel */
