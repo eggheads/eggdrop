@@ -521,7 +521,7 @@ static void cmd_whois(struct userrec *u, int idx, char *par)
   }
 
   putlog(LOG_CMDS, "*", "#%s# whois %s", dcc[idx].nick, par);
-  tell_user_ident(idx, par);
+  tell_user_ident(idx, par, 0);
 }
 
 static void cmd_match(struct userrec *u, int idx, char *par)
@@ -547,7 +547,7 @@ static void cmd_match(struct userrec *u, int idx, char *par)
     } else
       limit = atoi(s1);
   }
-  tell_users_match(idx, s, start, limit, chname);
+  tell_users_match(idx, s, start, limit, 0, chname);
 }
 
 static void cmd_uptime(struct userrec *u, int idx, char *par)
