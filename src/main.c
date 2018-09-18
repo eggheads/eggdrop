@@ -87,7 +87,7 @@
 #  define _POSIX_SOURCE 1               /* Solaris needs this */
 #endif
 
-extern char origbotname[], userfile[], botnetnick[];
+extern char origbotname[], userfile[121], botnetnick[];
 extern int dcc_total, conmask, cache_hit, cache_miss, max_logs, quick_logs,
            quiet_save;
 extern struct dcc_t *dcc;
@@ -608,7 +608,7 @@ static void do_arg()
 
 void backup_userfile(void)
 {
-  char s[125];
+  char s[sizeof userfile + 4];
 
   if (quiet_save < 2)
     putlog(LOG_MISC, "*", USERF_BACKUP);

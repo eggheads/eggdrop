@@ -392,7 +392,7 @@ static void write_channels()
 
   if (!chanfile[0])
     return;
-  sprintf(s, "%s~new", chanfile);
+  egg_snprintf(s, sizeof s, "%s~new", chanfile);
   f = fopen(s, "w");
   chmod(s, userfile_perm);
   if (f == NULL) {
@@ -528,7 +528,7 @@ static void read_channels(int create, int reload)
 
 static void backup_chanfile()
 {
-  char s[125];
+  char s[sizeof chanfile + 4];
 
   if (quiet_save < 2)
     putlog(LOG_MISC, "*", "Backing up channel file...");
