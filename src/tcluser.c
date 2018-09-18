@@ -572,6 +572,7 @@ static int tcl_isignore STDVAR
 
 static int tcl_newignore STDVAR
 {
+  long expire_foo;
   time_t expire_time;
   char ign[UHOSTLEN], cmt[66], from[HANDLEN + 1];
 
@@ -582,12 +583,18 @@ static int tcl_newignore STDVAR
   strncpyz(cmt, argv[3], sizeof cmt);
 
   if (argc == 4)
-    expire_time = now + (60 * ignore_time);
+    expire_time = now + 60 * ignore_time;
   else {
-    if (argc == 5 && atol(argv[4]) == 0)
-      expire_time = 0L;
-    else
-      expire_time = now + (60 * atol(argv[4])); /* This is a potential crash. FIXME  -poptix */
+    expire_foo = atol(argv[4]);
+    if (expire_foo == 0)
+      expire_time = 0;
+    else {
+      if (expire_foo > (60 * 24 * 2000)) {
+        Tcl_AppendResult(irp, "expire time must be equal to or less than 2000 days", NULL);
+        return TCL_ERROR;
+      }
+      expire_time = now + 60 * expire_foo;
+    }
   }
   addignore(ign, from, cmt, expire_time);
   return TCL_OK;
