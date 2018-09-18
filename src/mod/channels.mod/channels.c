@@ -385,7 +385,7 @@ static char *convert_element(char *src, char *dst)
 static void write_channels()
 {
   FILE *f;
-  char s[121], w[1024], w2[1024], name[163];
+  char s[sizeof chanfile + 4], w[1024], w2[1024], name[163];
   char need1[242], need2[242], need3[242], need4[242], need5[242];
   struct chanset_t *chan;
   struct udef_struct *ul;
