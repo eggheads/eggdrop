@@ -1072,7 +1072,7 @@ static void server_activity(int idx, char *msg, int len)
       putlog(LOG_RAW, "*", "[@] %s %s %s", from, code, msg);
   }
   /* This has GOT to go into the raw binding table, * merely because this
-   * is less effecient.
+   * is less efficient.
    */
   check_tcl_raw(from, code, msg);
 }

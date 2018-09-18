@@ -139,16 +139,6 @@ void null_func()
 {
 }
 
-char *charp_func()
-{
-  return NULL;
-}
-
-int minus_func()
-{
-  return -1;
-}
-
 int false_func()
 {
   return 0;
@@ -543,7 +533,7 @@ Function global_table[] = {
   /* 252 - 255 */
   (Function) egg_snprintf,
   (Function) egg_vsnprintf,
-  (Function) egg_memset,
+  (Function) 0,                   /* was egg_memset -- use memset() or egg_bzero() instead */
   (Function) egg_strcasecmp,
   /* 256 - 259 */
   (Function) egg_strncasecmp,
@@ -1141,21 +1131,6 @@ void del_hook(int hook_num, Function func)
         dns_ipbyhost = block_dns_ipbyhost;
       break;
     }
-}
-
-int call_hook_cccc(int hooknum, char *a, char *b, char *c, char *d)
-{
-  struct hook_entry *p, *pn;
-  int f = 0;
-
-  if (hooknum >= REAL_HOOKS)
-    return 0;
-  p = hook_list[hooknum];
-  for (p = hook_list[hooknum]; p && !f; p = pn) {
-    pn = p->next;
-    f = p->func(a, b, c, d);
-  }
-  return f;
 }
 
 void do_module_report(int idx, int details, char *which)

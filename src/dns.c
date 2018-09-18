@@ -62,7 +62,7 @@ void eof_dcc_dnswait(int idx)
 
 static void display_dcc_dnswait(int idx, char *buf)
 {
-  sprintf(buf, "dns   waited %lis", (long) now - dcc[idx].timeval);
+  sprintf(buf, "dns   waited %lis", (long) (now - dcc[idx].timeval));
 }
 
 static int expmem_dcc_dnswait(void *x)

@@ -379,7 +379,7 @@ static void eof_dcc_send(int idx)
 
 /* Determine byte order. Used for resend DCC startup packets.
  */
-static inline uint8_t byte_order_test(void)
+static uint8_t byte_order_test(void)
 {
   uint16_t test = TRANSFER_REGET_PACKETID;
 
@@ -392,7 +392,7 @@ static inline uint8_t byte_order_test(void)
 
 /* Parse and handle resend DCC startup packets.
  */
-static inline void handle_resend_packet(int idx, transfer_reget *reget_data)
+static void handle_resend_packet(int idx, transfer_reget *reget_data)
 {
   if (byte_order_test() != reget_data->byte_order) {
     /* The sender's byte order does not match our's so we need to switch the

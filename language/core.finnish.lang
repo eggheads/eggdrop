@@ -127,7 +127,7 @@ Telnettaa botille ja syötä 'UUSI' kuin sinun nickkisi.
 0x53c,Käyttäjätiedosto hukassa!
 0x53e,%B  (%E)\n\nSyötä tähän sinun nickkisi.\n
 0x53f,Kierrätetään logitiedostoa %s, maksimi-logikoko (%d)
-0x540,\nNickki.\n
+# 0x540 - unused / käyttämätön
 0x541,Viimeinen viesti toistettu %d aika(a).\n
 0x542,juped
 0x543,Ei vapaita kohtia saatavilla.

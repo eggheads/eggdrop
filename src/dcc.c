@@ -67,6 +67,7 @@ int flood_telnet_thr = 5;       /* Number of telnet connections to be
 int flood_telnet_time = 60;     /* In how many seconds?                       */
 char network[41] = "unknown-net";      /* Name of the IRC network you're on   */
 char bannerfile[121] = "text/banner";  /* File displayed on telnet login      */
+char stealth_prompt[81] = "\n\nNickname.\n"; /* stealth_telnet prompt string  */
 
 static void dcc_telnet_hostresolved(int);
 static void dcc_telnet_got_ident(int, char *);
@@ -140,7 +141,8 @@ static void strip_telnet(int sock, char *buf, int *len)
       } else if (*p == TLN_AYT) {
         /* "Are You There?" */
         /* response is: "Hell, yes!" */
-        safe_write(sock, "\r\nHell, yes!\r\n", 14);
+        static unsigned char sb[] = "\r\n[Hell, yes!]\r\n";
+        safe_write(sock, sb, sizeof sb);
       } else if (*p == TLN_IAC) {
         /* IAC character in data, escaped with another IAC */
         *o++ = *p++;
@@ -608,7 +610,7 @@ static int dcc_bot_check_digest(int idx, char *remote_digest)
 
   MD5_Init(&md5context);
 
-  egg_snprintf(digest_string, 33, "<%x%x@", getpid(),
+  egg_snprintf(digest_string, 33, "<%lx%x@", (long) getpid(),
                (unsigned int) dcc[idx].timeval);
   MD5_Update(&md5context, (unsigned char *) digest_string,
              strlen(digest_string));
@@ -2390,7 +2392,7 @@ static void dcc_telnet_got_ident(int i, char *host)
   /* Note: we don't really care about telnet status here. We use the
    * STATUS option as a hopefully harmless way to detect if the other
    * side is a telnet client or not. */
-  dprintf(i, TLN_IAC_C TLN_WILL_C TLN_STATUS_C "\n");
+  dprintf(i, TLN_IAC_C TLN_WILL_C TLN_STATUS_C);
 
   /* Copy acceptable-nick/host mask */
   dcc[i].status = STAT_TELNET | STAT_ECHO;
@@ -2405,11 +2407,11 @@ static void dcc_telnet_got_ident(int i, char *host)
   /* Displays a customizable banner. */
   if (use_telnet_banner)
     show_banner(i);
-  /* This is so we dont tell someone doing a portscan anything
+  /* This is so we don't tell someone doing a portscan anything
    * about ourselves. <cybah>
    */
   if (stealth_telnets)
-    sub_lang(i, MISC_BANNER_STEALTH);
+    dprintf(i, stealth_prompt);
   else {
     dprintf(i, "\n\n");
     sub_lang(i, MISC_BANNER);

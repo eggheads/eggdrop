@@ -127,7 +127,7 @@ Telnet botten og skriv 'NEW' som dit nick.\n
 0x53c,Brugerfil mangler!
 0x53e,%B  (%E)\n\nSkriv venligst dit nick.\n
 0x53f,Skifter logfil %s, over max-logsize (%d)
-0x540,\nNick.\n
+# 0x540  unused / ubrugt
 0x541,Sidste besked gentaget %d gange\n
 0x542,juped
 0x543,Ingen ledige sockets tilgængelig.

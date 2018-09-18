@@ -724,7 +724,7 @@ static char *mktempfile(char *filename)
     fn[l] = 0;
   }
   tempname = nmalloc(l + MKTEMPFILE_TOT + 1);
-  sprintf(tempname, "%u-%s-%s", getpid(), rands, fn);
+  sprintf(tempname, "%li-%s-%s", (long) getpid(), rands, fn);
   if (fn != filename)
     my_free(fn);
   return tempname;
@@ -1018,7 +1018,7 @@ char *filesys_start(Function *global_funcs)
   my_memcpy(&USERENTRY_DCCDIR, &USERENTRY_INFO,
             sizeof(struct user_entry_type) - sizeof(char *));
 
-  USERENTRY_DCCDIR.got_share = 0;       /* We dont want it shared tho */
+  USERENTRY_DCCDIR.got_share = 0;       /* We don't want it shared tho */
   add_entry_type(&USERENTRY_DCCDIR);
   DCC_FILES_PASS.timeout_val = &password_timeout;
   add_lang_section("filesys");
