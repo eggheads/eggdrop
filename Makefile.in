@@ -84,7 +84,7 @@ MODULE_XLIBS = @MODULE_XLIBS@
 modconf = $(top_srcdir)/misc/modconfig --top_srcdir=$(top_srcdir)
 
 egg_test_run = if [ '$(EGG_CROSS_COMPILING)' = 'no' ]; \
-               	then EGG_LANGDIR=$(top_srcdir)/language ./$(EGGEXEC) -v; \
+               	then ./$(EGGEXEC) -v; \
                	else echo 'This build is a cross-compilation, skipping test run...'; \
                fi
 

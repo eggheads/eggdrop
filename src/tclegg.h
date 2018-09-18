@@ -169,7 +169,6 @@ typedef struct _cd_tcl_cmd {
 void add_tcl_commands(tcl_cmds *);
 void add_cd_tcl_cmds(cd_tcl_cmd *);
 void rem_tcl_commands(tcl_cmds *);
-void rem_cd_tcl_cmds(cd_tcl_cmd *);
 void add_tcl_strings(tcl_strings *);
 void rem_tcl_strings(tcl_strings *);
 void add_tcl_coups(tcl_coups *);

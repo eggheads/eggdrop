@@ -71,7 +71,7 @@ static void *n_malloc_null(int size, const char *file, int line)
   void *ptr = nmalloc(size);
 #endif
 
-  egg_memset(ptr, 0, size);
+  egg_bzero(ptr, size);
   return ptr;
 }
 
@@ -804,9 +804,8 @@ static int check_bind_flags(struct flag_record *flags,
       return (flagrec_ok(flags, atr));
     else
       return (flagrec_eq(flags, atr));
-  } else
-    return 1;
-  return 0;
+  }
+  return 1;
 }
 
 

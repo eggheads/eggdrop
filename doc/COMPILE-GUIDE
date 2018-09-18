@@ -1,5 +1,5 @@
 Eggdrop Compile Guide and FAQ
-Last revised: October 25, 2010
+Last revised: September 4, 2018
     _____________________________________________________________________
 
                         Eggdrop Compile Guide and FAQ
@@ -52,17 +52,7 @@ Last revised: October 25, 2010
     resources needed to test portability on uncommon operating systems, so
     your help is greatly appreciated.
 
-    A. Standard compile process (32-bit Linux, FreeBSD, NetBSD, OpenBSD, etc.)
-    B. HP-UX B.11.*
-    C. Ultrix
-    D. Mac OS X
-    E. AIX
-    F. IRIX
-    G. Solaris / SunOS
-    H. Cygwin / Windows
-    I. Tcl Detection and Installation
-
-    A. Standard compile process (32-bit Linux, FreeBSD, NetBSD, OpenBSD, etc.)
+    A. Standard compile process (Linux, FreeBSD, NetBSD, OpenBSD, etc)
       1. Type './configure' from the Eggdrop directory. Some of the options
          that can be given to ./configure are explained below.
 
@@ -114,6 +104,7 @@ Last revised: October 25, 2010
          For example:
 
            make install DEST=/home/user/otherdir
+
 
     B. HP-UX B.11.*
       Follow the standard compile process in Section A. To compile dynamically
@@ -258,7 +249,7 @@ Last revised: October 25, 2010
              cd /
              tar -zxf tcl-8.5.9.tar.gz
 
-        3. Download Eggdrop from geteggdrop.com to your home directory.
+        3. Download Eggdrop from https://geteggdrop.com/ to your home directory.
            This is usually something like 'C:\cygwin\home\<username>\'. After
            downloading, extract the Eggdrop tarball:
 
