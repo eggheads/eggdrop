@@ -35,7 +35,6 @@ distclean: clean
  ../../../src/tclhash.h ../../../src/chan.h ../../../src/users.h \
  ../../../src/compat/compat.h ../../../src/compat/inet_aton.h \
  ../../../src/compat/snprintf.h ../../../src/compat/memcpy.h \
- ../../../src/compat/strcasecmp.h ../../../src/compat/strftime.h \
- ../../../src/compat/inet_ntop.h ../../../src/compat/inet_pton.h \
- ../../../src/compat/gethostbyname2.h ../../../src/mod/modvals.h \
- ../../../src/tandem.h .././assoc.mod/assoc.h
+ ../../../src/compat/strcasecmp.h ../../../src/compat/inet_ntop.h \
+ ../../../src/compat/inet_pton.h ../../../src/compat/gethostbyname2.h \
+ ../../../src/mod/modvals.h ../../../src/tandem.h .././assoc.mod/assoc.h

@@ -27,7 +27,6 @@
 #include "snprintf.h"
 #include "memcpy.h"
 #include "strcasecmp.h"
-#include "strftime.h"
 #include "inet_ntop.h"
 #include "inet_pton.h"
 #include "gethostbyname2.h"

@@ -112,7 +112,6 @@ AX_CREATE_STDINT_H([eggint.h])
 AC_CHECK_FUNCS([clock dprintf fsync getrandom getrusage inet_aton inet_ntop isascii mbrlen memcpy random rand lrand48 rename setpgid sigaction sigemptyset snprintf strcasecmp strncasecmp uname vsnprintf])
 AC_FUNC_SELECT_ARGTYPES
 EGG_FUNC_VPRINTF
-AC_FUNC_STRFTIME
 AC_FUNC_MMAP
 
 

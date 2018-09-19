@@ -329,10 +329,12 @@ typedef u_32bit_t IP;
 #define egg_isspace(x)  isspace((int)  (unsigned char) (x))
 #define egg_islower(x)  islower((int)  (unsigned char) (x))
 
-/* Use egg_bzero instead of memset or bzero */
+/* Use egg_bzero() instead of memset() or bzero() */
 #define egg_bzero(dest, len) memset(dest, 0, len)
 /* Use memset() or egg_bzero() instead */
-#define egg_memset(dest, c, len) memset(dest, c, len)
+#define egg_memset memset
+/* Use strftime() instead */
+#define egg_strftime strftime
 
 /***********************************************************************/
 
