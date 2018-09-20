@@ -633,6 +633,8 @@ static int dcc_bot_check_digest(int idx, char *remote_digest)
 
 static void dcc_chat_pass(int idx, char *buf, int atr)
 {
+  char pass[16];
+
   if (!atr)
     return;
   if (dcc[idx].status & STAT_TELNET)
@@ -661,19 +663,17 @@ static void dcc_chat_pass(int idx, char *buf, int atr)
 #endif
     /* No password set? */
     if (u_pass_match(dcc[idx].user, "-")) {
-      char ps[20];
-
-      makepass(ps);
-      set_user(&USERENTRY_PASS, dcc[idx].user, ps);
+      makepass(pass);
+      set_user(&USERENTRY_PASS, dcc[idx].user, pass);
       changeover_dcc(idx, &DCC_BOT_NEW, sizeof(struct bot_info));
 
       dcc[idx].status = STAT_CALLED;
       dprintf(idx, "*hello!\n");
       greet_new_bot(idx);
 #ifdef NO_OLD_BOTNET
-      dprintf(idx, "h %s\n", ps);
+      dprintf(idx, "h %s\n", pass);
 #else
-      dprintf(idx, "handshake %s\n", ps);
+      dprintf(idx, "handshake %s\n", pass);
 #endif
       return;
     }

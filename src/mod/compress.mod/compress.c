@@ -293,14 +293,14 @@ static int compress_to_file(char *f_src, char *f_target, int mode_num)
  */
 static int compress_file(char *filename, int mode_num)
 {
-  char *temp_fn, randstr[5];
+  char *temp_fn, rands[8];
   int ret;
 
   /* Create temporary filename. */
-  temp_fn = nmalloc(strlen(filename) + 5);
-  make_rand_str(randstr, 4);
+  temp_fn = nmalloc(strlen(filename) + sizeof rands);
+  make_rand_str(rands, sizeof rands - 1);
   strcpy(temp_fn, filename);
-  strcat(temp_fn, randstr);
+  strcat(temp_fn, rands);
 
   /* Compress file. */
   ret = compress_to_file(filename, temp_fn, mode_num);
@@ -319,14 +319,14 @@ static int compress_file(char *filename, int mode_num)
  */
 static int uncompress_file(char *filename)
 {
-  char *temp_fn, randstr[5];
+  char *temp_fn, rands[8];
   int ret;
 
   /* Create temporary filename. */
-  temp_fn = nmalloc(strlen(filename) + 5);
-  make_rand_str(randstr, 4);
+  temp_fn = nmalloc(strlen(filename) + sizeof rands);
+  make_rand_str(rands, sizeof rands - 1);
   strcpy(temp_fn, filename);
-  strcat(temp_fn, randstr);
+  strcat(temp_fn, rands);
 
   /* Uncompress file. */
   ret = uncompress_to_file(filename, temp_fn);
