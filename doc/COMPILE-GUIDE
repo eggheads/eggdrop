@@ -307,9 +307,6 @@ Last revised: September 20, 2018
         doesn't help you can workaround with removal of directory
         pkgs/thread<VERSION>.
 
-        Follow the standard compile process in Section A. To compile dynamically
-        (with module support), use 'make eggdrop' instead of 'make'.
-
         Note that on Haiku, the LIBRARY_PATH environment variable must be used
         instead of LD_LIBRARY_PATH.
 
