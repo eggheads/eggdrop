@@ -304,7 +304,7 @@ Last revised: September 20, 2018
 
     I. Haiku
         If you compile tcl and it breaks with thread error and --disable-threads
-        doesnt help you can workaround with removal of directory
+        doesn't help you can workaround with removal of directory
         pkgs/thread<VERSION>.
 
         Follow the standard compile process in Section A. To compile dynamically
