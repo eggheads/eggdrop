@@ -268,10 +268,6 @@
 #  define sigemptyset(x) ((*(int *)(x))=0)
 #endif
 
-#ifndef HAVE_SOCKLEN_T
-typedef int socklen_t;
-#endif
-
 #ifdef TLS
 #  include <openssl/ssl.h>
 #endif
