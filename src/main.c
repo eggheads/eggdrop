@@ -535,14 +535,14 @@ static void show_ver() {
 */
 static void show_help() {
   printf("\n%s\n\n", version);
-  printf("Usage: eggdrop [options] [config-file]\n\n"
+  printf("Usage: %s [options] [config-file]\n\n"
          "Options:\n"
          "-n  Don't background; send all log entries to console.\n"
          "-nc Don't background; display channel stats every 10 seconds.\n"
          "-nt Don't background; use terminal to simulate DCC chat.\n"
          "-m  Create userfile.\n"
-         "-h  Show this help.\n"
-         "-v  Show version info, then quit.\n\n");
+         "-h  Show this help and exit.\n"
+         "-v  Show version info and exit.\n\n", argv[0]);
   bg_send_quit(BG_ABORT);
 }
 
