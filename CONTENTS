@@ -1,5 +1,5 @@
 Directory Contents - /
-Last revised: April 16, 2003
+Last revised: September 21, 2018
     _____________________________________________________________________
 
                            Directory Contents - /
@@ -16,6 +16,9 @@ Last revised: April 16, 2003
 
   logs/
     This is a good place for eggdrop to store log files.
+
+  m4/
+    M4 autoconf macros.
 
   misc/
     These are misc. source/script files.
@@ -47,8 +50,9 @@ Last revised: April 16, 2003
   disabled_modules
     Any module listed in this file will not be compiled by default.
 
+  eggdrop-basic.conf
   eggdrop.conf
-    This is a sample configuration file for your bot.
+    These are sample configuration files for your bot.
 
   FEATURES
     This tells you what Eggdrop can do -- a kind of advertisement.
@@ -70,6 +74,9 @@ Last revised: April 16, 2003
 
   THANKS
     Contains a full list of Eggdrop contributors.
+
+  UPGRADING
+    Contains upgrading information.
     _____________________________________________________________________
 
   Copyright (C) 2003 - 2018 Eggheads Development Team
