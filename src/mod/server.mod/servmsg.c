@@ -107,10 +107,6 @@ static int check_tcl_msg(char *cmd, char *nick, char *uhost,
   Tcl_SetVar(interp, "_msg4", args, 0);
   x = check_tcl_bind(H_msg, cmd, &fr, " $_msg1 $_msg2 $_msg3 $_msg4",
                      MATCH_EXACT | BIND_HAS_BUILTINS | BIND_USE_ATTR);
-  Tcl_UnsetVar(interp, "_msg1", 0);
-  Tcl_UnsetVar(interp, "_msg2", 0);
-  Tcl_UnsetVar(interp, "_msg3", 0);
-  Tcl_UnsetVar(interp, "_msg4", 0);
   if (x == BIND_EXEC_LOG)
     putlog(LOG_CMDS, "*", "(%s!%s) !%s! %s %s", nick, uhost, hand, cmd, args);
   return ((x == BIND_MATCHED) || (x == BIND_EXECUTED) || (x == BIND_EXEC_LOG));
@@ -134,10 +130,6 @@ static int check_tcl_msgm(char *cmd, char *nick, char *uhost,
   Tcl_SetVar(interp, "_msgm4", args, 0);
   x = check_tcl_bind(H_msgm, args, &fr, " $_msgm1 $_msgm2 $_msgm3 $_msgm4",
                      MATCH_MASK | BIND_USE_ATTR | BIND_STACKABLE | BIND_STACKRET);
-  Tcl_UnsetVar(interp, "_msgm1", 0);
-  Tcl_UnsetVar(interp, "_msgm2", 0);
-  Tcl_UnsetVar(interp, "_msgm3", 0);
-  Tcl_UnsetVar(interp, "_msgm4", 0);
 
   /*
    * 0 - no match
@@ -166,11 +158,6 @@ static int check_tcl_notc(char *nick, char *uhost, struct userrec *u,
   Tcl_SetVar(interp, "_notc5", dest, 0);
   x = check_tcl_bind(H_notc, arg, &fr, " $_notc1 $_notc2 $_notc3 $_notc4 $_notc5",
                      MATCH_MASK | BIND_USE_ATTR | BIND_STACKABLE | BIND_STACKRET);
-  Tcl_UnsetVar(interp, "_notc1", 0);
-  Tcl_UnsetVar(interp, "_notc2", 0);
-  Tcl_UnsetVar(interp, "_notc3", 0);
-  Tcl_UnsetVar(interp, "_notc4", 0);
-  Tcl_UnsetVar(interp, "_notc5", 0);
 
   /*
    * 0 - no match
@@ -194,9 +181,6 @@ static int check_tcl_raw(char *from, char *code, char *msg)
   Tcl_SetVar(interp, "_raw3", msg, 0);
   x = check_tcl_bind(H_raw, code, 0, " $_raw1 $_raw2 $_raw3",
                      MATCH_EXACT | BIND_STACKABLE | BIND_WANTRET);
-  Tcl_UnsetVar(interp, "_raw1", 0);
-  Tcl_UnsetVar(interp, "_raw2", 0);
-  Tcl_UnsetVar(interp, "_raw3", 0);
 
   /* Return 1 if processed */
   return (x == BIND_EXEC_LOG);
@@ -220,12 +204,6 @@ static int check_tcl_ctcpr(char *nick, char *uhost, struct userrec *u,
                      " $_ctcpr1 $_ctcpr2 $_ctcpr3 $_ctcpr4 $_ctcpr5 $_ctcpr6",
                      MATCH_MASK | BIND_USE_ATTR | BIND_STACKABLE |
                      ((table == H_ctcp) ? BIND_WANTRET : 0));
-  Tcl_UnsetVar(interp, "_ctcpr1", 0);
-  Tcl_UnsetVar(interp, "_ctcpr2", 0);
-  Tcl_UnsetVar(interp, "_ctcpr3", 0);
-  Tcl_UnsetVar(interp, "_ctcpr4", 0);
-  Tcl_UnsetVar(interp, "_ctcpr5", 0);
-  Tcl_UnsetVar(interp, "_ctcpr6", 0);
   return (x == BIND_EXEC_LOG) || (table == H_ctcr);
 }
 
@@ -237,8 +215,6 @@ static int check_tcl_wall(char *from, char *msg)
   Tcl_SetVar(interp, "_wall2", msg, 0);
   x = check_tcl_bind(H_wall, msg, 0, " $_wall1 $_wall2",
                      MATCH_MASK | BIND_STACKABLE | BIND_STACKRET);
-  Tcl_UnsetVar(interp, "_wall1", 0);
-  Tcl_UnsetVar(interp, "_wall2", 0);
 
   /*
    * 0 - no match
@@ -266,11 +242,6 @@ static int check_tcl_flud(char *nick, char *uhost, struct userrec *u,
   x = check_tcl_bind(H_flud, ftype, 0,
                      " $_flud1 $_flud2 $_flud3 $_flud4 $_flud5",
                      MATCH_MASK | BIND_STACKABLE | BIND_WANTRET);
-  Tcl_UnsetVar(interp, "_flud1", 0);
-  Tcl_UnsetVar(interp, "_flud2", 0);
-  Tcl_UnsetVar(interp, "_flud3", 0);
-  Tcl_UnsetVar(interp, "_flud4", 0);
-  Tcl_UnsetVar(interp, "_flud5", 0);
   return (x == BIND_EXEC_LOG);
 }
 
@@ -301,9 +272,6 @@ static int check_tcl_out(int which, char *msg, int sent)
   Tcl_SetVar(interp, "_out3", sent ? "sent" : "queued", 0);
   x = check_tcl_bind(H_out, args, 0, " $_out1 $_out2 $_out3",
                      MATCH_MASK | BIND_STACKABLE | BIND_WANTRET);
-  Tcl_UnsetVar(interp, "_out1", 0);
-  Tcl_UnsetVar(interp, "_out2", 0);
-  Tcl_UnsetVar(interp, "_out3", 0);
 
   return (x == BIND_EXEC_LOG);
 }
