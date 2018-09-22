@@ -942,7 +942,6 @@ finally:
        varName;
        varName = strtok_r(NULL, " $:", &brkt))
   {
-    printf("DEBUG: Tcl_UnsetVar(%s)\n", varName);
     Tcl_UnsetVar(interp, varName, 0);
   }
 
