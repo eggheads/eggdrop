@@ -763,6 +763,10 @@ static void check_tcl_joinspltrejn(char *nick, char *uhost, struct userrec *u,
   Tcl_SetVar(interp, "_jp4", chname, 0);
   check_tcl_bind(table, args, &fr, " $_jp1 $_jp2 $_jp3 $_jp4",
                  MATCH_MASK | BIND_USE_ATTR | BIND_STACKABLE);
+  Tcl_UnsetVar(interp, "_jp1", 0);
+  Tcl_UnsetVar(interp, "_jp2", 0);
+  Tcl_UnsetVar(interp, "_jp3", 0);
+  Tcl_UnsetVar(interp, "_jp4", 0);
 }
 
 /* we handle part messages now *sigh* (guppy 27Jan2000) */
@@ -782,6 +786,11 @@ static void check_tcl_part(char *nick, char *uhost, struct userrec *u,
   Tcl_SetVar(interp, "_p5", text ? text : "", 0);
   check_tcl_bind(H_part, args, &fr, " $_p1 $_p2 $_p3 $_p4 $_p5",
                  MATCH_MASK | BIND_USE_ATTR | BIND_STACKABLE);
+  Tcl_UnsetVar(interp, "_p1", 0);
+  Tcl_UnsetVar(interp, "_p2", 0);
+  Tcl_UnsetVar(interp, "_p3", 0);
+  Tcl_UnsetVar(interp, "_p4", 0);
+  Tcl_UnsetVar(interp, "_p5", 0);
 }
 
 static void check_tcl_signtopcnick(char *nick, char *uhost, struct userrec *u,
@@ -803,6 +812,11 @@ static void check_tcl_signtopcnick(char *nick, char *uhost, struct userrec *u,
   Tcl_SetVar(interp, "_stnm5", reason, 0);
   check_tcl_bind(table, args, &fr, " $_stnm1 $_stnm2 $_stnm3 $_stnm4 $_stnm5",
                  MATCH_MASK | BIND_USE_ATTR | BIND_STACKABLE);
+  Tcl_UnsetVar(interp, "_stnm1", 0);
+  Tcl_UnsetVar(interp, "_stnm2", 0);
+  Tcl_UnsetVar(interp, "_stnm3", 0);
+  Tcl_UnsetVar(interp, "_stnm4", 0);
+  Tcl_UnsetVar(interp, "_stnm5", 0);
 }
 
 static void check_tcl_mode(char *nick, char *uhost, struct userrec *u,
@@ -822,6 +836,12 @@ static void check_tcl_mode(char *nick, char *uhost, struct userrec *u,
   check_tcl_bind(H_mode, args, &fr,
                  " $_mode1 $_mode2 $_mode3 $_mode4 $_mode5 $_mode6",
                  MATCH_MODE | BIND_USE_ATTR | BIND_STACKABLE);
+  Tcl_UnsetVar(interp, "_mode1", 0);
+  Tcl_UnsetVar(interp, "_mode2", 0);
+  Tcl_UnsetVar(interp, "_mode3", 0);
+  Tcl_UnsetVar(interp, "_mode4", 0);
+  Tcl_UnsetVar(interp, "_mode5", 0);
+  Tcl_UnsetVar(interp, "_mode6", 0);
 }
 
 static void check_tcl_kick(char *nick, char *uhost, struct userrec *u,
@@ -841,6 +861,12 @@ static void check_tcl_kick(char *nick, char *uhost, struct userrec *u,
   check_tcl_bind(H_kick, args, &fr,
                  " $_kick1 $_kick2 $_kick3 $_kick4 $_kick5 $_kick6",
                  MATCH_MASK | BIND_USE_ATTR | BIND_STACKABLE);
+  Tcl_UnsetVar(interp, "_kick1", 0);
+  Tcl_UnsetVar(interp, "_kick2", 0);
+  Tcl_UnsetVar(interp, "_kick3", 0);
+  Tcl_UnsetVar(interp, "_kick4", 0);
+  Tcl_UnsetVar(interp, "_kick5", 0);
+  Tcl_UnsetVar(interp, "_kick6", 0);
 }
 
 static int check_tcl_pub(char *nick, char *from, char *chname, char *msg)
@@ -863,6 +889,11 @@ static int check_tcl_pub(char *nick, char *from, char *chname, char *msg)
   Tcl_SetVar(interp, "_pub5", args, 0);
   x = check_tcl_bind(H_pub, cmd, &fr, " $_pub1 $_pub2 $_pub3 $_pub4 $_pub5",
                      MATCH_EXACT | BIND_USE_ATTR | BIND_HAS_BUILTINS);
+  Tcl_UnsetVar(interp, "_pub1", 0);
+  Tcl_UnsetVar(interp, "_pub2", 0);
+  Tcl_UnsetVar(interp, "_pub3", 0);
+  Tcl_UnsetVar(interp, "_pub4", 0);
+  Tcl_UnsetVar(interp, "_pub5", 0);
   if (x == BIND_NOMATCH)
     return 0;
   if (x == BIND_EXEC_LOG)
@@ -888,6 +919,11 @@ static int check_tcl_pubm(char *nick, char *from, char *chname, char *msg)
   Tcl_SetVar(interp, "_pubm5", msg, 0);
   x = check_tcl_bind(H_pubm, buf, &fr, " $_pubm1 $_pubm2 $_pubm3 $_pubm4 $_pubm5",
                      MATCH_MASK | BIND_USE_ATTR | BIND_STACKABLE | BIND_STACKRET);
+  Tcl_UnsetVar(interp, "_pubm1", 0);
+  Tcl_UnsetVar(interp, "_pubm2", 0);
+  Tcl_UnsetVar(interp, "_pubm3", 0);
+  Tcl_UnsetVar(interp, "_pubm4", 0);
+  Tcl_UnsetVar(interp, "_pubm5", 0);
 
   /*
    * 0 - no match
@@ -911,6 +947,8 @@ static void check_tcl_need(char *chname, char *type)
   Tcl_SetVar(interp, "_need2", type, 0);
   check_tcl_bind(H_need, buf, 0, " $_need1 $_need2",
                  MATCH_MASK | BIND_STACKABLE);
+  Tcl_UnsetVar(interp, "_need1", 0);
+  Tcl_UnsetVar(interp, "_need2", 0);
 }
 
 static tcl_strings mystrings[] = {
