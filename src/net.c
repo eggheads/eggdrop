@@ -889,8 +889,12 @@ int sockread(char *s, int *len, sock_list *slist, int slistmax, int tclonly)
             int err = SSL_get_error(slist[i].ssl, x);
             if (err == SSL_ERROR_WANT_READ || err == SSL_ERROR_WANT_WRITE)
               errno = EAGAIN;
+            else if (err == SSL_ERROR_SYSCALL) {
+              debug0("net: sockread(): SSL_read() SSL_ERROR_SYSCALL");
+              putlog(LOG_MISC, "*", "NET: SSL read failed. Could have been a non ssl bot or telnet connecting to a ssl only port.");
+            }
             else
-              debug1("sockread(): SSL error = %s",
+              debug2("net: sockread(): SSL_read() err = %i error = %s", err,
                      ERR_error_string(ERR_get_error(), 0));
             x = -1;
           }
