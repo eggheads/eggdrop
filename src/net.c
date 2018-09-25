@@ -542,10 +542,6 @@ int open_telnet_raw(int sock, sockname_t *addr)
         debug1("net: getsockopt error %d", res);
         return -1;
       }
-      /*
-      debug2("net: attempted socket connection success: ip = %s port = %i",
-             iptostr(&addr->addr.sa), get_port_from_addr(addr));
-      */
       return sock; /* async success! */
     }
     else {
