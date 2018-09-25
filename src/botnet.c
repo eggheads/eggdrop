@@ -1103,8 +1103,13 @@ static void botlink_resolve_success(int i)
    * failed_link() try the next ports
    * FIXME: if we can break compatibility for 1.9 or 2.0, we can replace this
    * workaround
+   * could be a non ssl bot connecting to a ssl only port.
+   * but we can't log that error here, because we didn't get that error yet.
+   * and when we get this error in the future, we won't know we have been here.
+   * that is aniother ugly problem, yet to be fixed.
    */
-  dcc[i].port += 3;
+  else if (!dcc[i].ssl)
+    dcc[i].port += 3;
 
 #endif
 }
