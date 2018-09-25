@@ -51,8 +51,11 @@ Last revised: September 21, 2018
     Any module listed in this file will not be compiled by default.
 
   eggdrop-basic.conf
+    This is a minimal sample configuration file for your bot. To unlock the 
+    full potential of your eggdrop, please use eggdrop.conf.
+  
   eggdrop.conf
-    These are sample configuration files for your bot.
+    This is a full configuration file for your bot.
 
   FEATURES
     This tells you what Eggdrop can do -- a kind of advertisement.
