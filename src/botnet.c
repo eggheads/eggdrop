@@ -1098,14 +1098,6 @@ static void botlink_resolve_success(int i)
   else if (dcc[i].ssl && ssl_handshake(dcc[i].sock, TLS_CONNECT,
            tls_vfybots, LOG_BOTS, dcc[i].host, NULL))
     failed_link(i);
-
-  /* we got a connect and we dont want to connect with ssl so don't let
-   * failed_link() try the next ports
-   * FIXME: if we can break compatibility for 1.9 or 2.0, we can replace this
-   * workaround
-   */
-  dcc[i].port += 3;
-
 #endif
 }
 
