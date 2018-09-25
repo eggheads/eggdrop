@@ -485,6 +485,14 @@ static int proxy_connect(int sock, sockname_t *addr)
   return sock;
 }
 
+/* FIXME: if we can break compatibility for 1.9 or 2.0, we can replace this
+ * workaround with an additional port parameter for functions in need
+ */
+static int get_port_from_addr(const sockname_t *addr)
+{
+  return ntohs((addr->family == AF_INET) ? addr->addr.s4.sin_port : addr->addr.s6.sin6_port);
+}
+
 /* Starts a connection attempt through a socket
  *
  * The server address should be filled in addr by setsockname() or by the
@@ -526,13 +534,18 @@ int open_telnet_raw(int sock, sockname_t *addr)
       if (res == EINPROGRESS) /* Operation now in progress */
         return sock; /* This could probably fail somewhere */
       if (res == ECONNREFUSED) { /* Connection refused */
-        debug1("net: attempted socket connection refused: %s", iptostr(&addr->addr.sa));
+        debug2("net: attempted socket connection refused: ip = %s port = %i",
+               iptostr(&addr->addr.sa), get_port_from_addr(addr));
         return -4;
       }
       if (res != 0) {
         debug1("net: getsockopt error %d", res);
         return -1;
       }
+      /*
+      debug2("net: attempted socket connection success: ip = %s port = %i",
+             iptostr(&addr->addr.sa), get_port_from_addr(addr));
+      */
       return sock; /* async success! */
     }
     else {
