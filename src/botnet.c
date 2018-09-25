@@ -1106,7 +1106,7 @@ static void botlink_resolve_success(int i)
    * could be a non ssl bot connecting to a ssl only port.
    * but we can't log that error here, because we didn't get that error yet.
    * and when we get this error in the future, we won't know we have been here.
-   * that is aniother ugly problem, yet to be fixed.
+   * that is another ugly problem, yet to be fixed.
    */
   else if (!dcc[i].ssl)
     dcc[i].port += 3;
