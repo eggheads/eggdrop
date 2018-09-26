@@ -71,7 +71,7 @@ static void *n_malloc_null(int size, const char *file, int line)
   void *ptr = nmalloc(size);
 #endif
 
-  egg_memset(ptr, 0, size);
+  egg_bzero(ptr, size);
   return ptr;
 }
 
@@ -336,7 +336,7 @@ tcl_bind_list_t *find_bind_table(const char *nme)
 static void dump_bind_tables(Tcl_Interp *irp)
 {
   tcl_bind_list_t *tl;
-  u_8bit_t i;
+  uint8_t i;
 
   for (tl = bind_table_list, i = 0; tl; tl = tl->next) {
     if (tl->flags & HT_DELETED)
@@ -804,9 +804,8 @@ static int check_bind_flags(struct flag_record *flags,
       return (flagrec_ok(flags, atr));
     else
       return (flagrec_eq(flags, atr));
-  } else
-    return 1;
-  return 0;
+  }
+  return 1;
 }
 
 

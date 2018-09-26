@@ -340,20 +340,6 @@ struct userrec *get_user_by_host(char *host)
   return ret;
 }
 
-/* use fixfrom() or dont? (drummer)
- */
-struct userrec *get_user_by_equal_host(char *host)
-{
-  struct userrec *u;
-  struct list_type *q;
-
-  for (u = userlist; u; u = u->next)
-    for (q = get_user(&USERENTRY_HOSTS, u); q; q = q->next)
-      if (!rfc_casecmp(q->extra, host))
-        return u;
-  return NULL;
-}
-
 /* Description: checks the password given against the user's password.
  * Check against the password "-" to find out if a user has no password set.
  *

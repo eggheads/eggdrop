@@ -724,7 +724,7 @@ static char *mktempfile(char *filename)
     fn[l] = 0;
   }
   tempname = nmalloc(l + MKTEMPFILE_TOT + 1);
-  sprintf(tempname, "%u-%s-%s", getpid(), rands, fn);
+  sprintf(tempname, "%li-%s-%s", (long) getpid(), rands, fn);
   if (fn != filename)
     my_free(fn);
   return tempname;
