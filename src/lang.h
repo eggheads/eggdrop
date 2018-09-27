@@ -241,7 +241,6 @@
 #define IRC_NICK_FLOOD          get_language(0x673)
 
 /* Eggdrop command line usage */
-#define EGG_USAGE               get_language(0x700)
 #define EGG_RUNNING1            get_language(0x701)
 #define EGG_RUNNING2            get_language(0x702)
 #define EGG_NOWRITE             get_language(0x703)
