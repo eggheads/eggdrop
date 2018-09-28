@@ -40,8 +40,7 @@ Last revised: September 28, 2018
       9. I experience problems starting the configure script (AIX/various)
      10. I get a 'make: Permission denied' error when I type 'make config'
          or 'make' (FreeBSD / *BSD)
-     11. I get '/usr/bin/ld: cannot find -ldl' (OpenWrt)
-     12. I get '/usr/bin/ld: cannot find -lpthread' (OpenWrt)
+     11. I get '/usr/bin/ld: cannot find -lpthread' (OpenWrt)
 
 
   Compile Guide
@@ -531,11 +530,7 @@ Last revised: September 28, 2018
       A simple 'cd .', or changing to a different directory and then changing
       back, usually fixes this.
 
-   11. I get '/usr/bin/ld: cannot find -ldl' (OpenWrt)
-
-      ar -rc /usr/lib/libdl.a
-
-   12. I get '/usr/bin/ld: cannot find -lpthread' (OpenWrt)
+   11. I get '/usr/bin/ld: cannot find -lpthread' (OpenWrt)
 
       ar -rc /usr/lib/libpthread.a
     _____________________________________________________________________
