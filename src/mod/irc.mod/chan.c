@@ -2204,7 +2204,6 @@ static int gotquit(char *from, char *msg)
   struct userrec *u;
 
   strcpy(from2, from);
-  u = get_user_by_host(from2);
   nick = splitnick(&from);
   fixcolon(msg);
   /* Fred1: Instead of expensive wild_match on signoff, quicker method.
