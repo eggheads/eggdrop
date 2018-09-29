@@ -151,7 +151,7 @@ int setsockname(sockname_t *addr, char *src, int port, int allowres)
          !egg_inet_aton(src, &addr->addr.s4.sin_addr)))
       af = AF_UNSPEC;
 
-  if (af == AF_UNSPEC && allowres) {
+  if (af == AF_UNSPEC && allowres && *src) {
     /* src is a hostname. Attempt to resolve it.. */
     if (!sigsetjmp(alarmret, 1)) {
       alarm(resolve_timeout);
