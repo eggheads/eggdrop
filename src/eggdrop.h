@@ -248,7 +248,7 @@
 
 
 /* Use high-order bits for getting the random integer. With a modern
- * random() implmentation, modulo would probably be sufficient, but on
+ * random() implementation, modulo would probably be sufficient, but on
  * systems lacking random(), it may just be a macro for an older rand()
  * function.
  */
