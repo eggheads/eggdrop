@@ -151,11 +151,7 @@ typedef struct {
   uint16_t class;
   uint32_t ttl;
   uint16_t datalength;
-#ifndef HAIKU_HACKS
   uint8_t data[];
-#else
-  uint8_t data[0];
-#endif
 } res_record;
 
 #ifndef HFIXEDSZ

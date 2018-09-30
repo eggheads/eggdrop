@@ -797,9 +797,6 @@ AC_DEFUN([EGG_CHECK_OS],
       SHLIB_LD="ld -bundle -undefined error"
       AC_DEFINE(BIND_8_COMPAT, 1, [Define if running on Mac OS X with dns.mod.])
     ;;
-    Haiku)
-      AC_DEFINE(HAIKU_HACKS, 1, [Define if running under Haiku.])
-    ;;
     *)
       if test -r /mach; then
         # At this point, we're guessing this is NeXT Step.
