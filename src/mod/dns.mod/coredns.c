@@ -126,35 +126,35 @@ static const char *classtypes[CLASSTYPES_COUNT + 1] = {
 #endif /* DEBUG_DNS */
 
 typedef struct {
-  u_16bit_t id;                 /* Packet id */
-  u_8bit_t databyte_a;
+  uint16_t id;                 /* Packet id */
+  uint8_t databyte_a;
   /* rd:1                             recursion desired
    * tc:1                             truncated message
    * aa:1                             authoritive answer
    * opcode:4                         purpose of message
    * qr:1                             response flag
    */
-  u_8bit_t databyte_b;
+  uint8_t databyte_b;
   /* rcode:4                          response code
    * unassigned:2                     unassigned bits
    * pr:1                             primary server required (non standard)
    * ra:1                             recursion available
    */
-  u_16bit_t qdcount;            /* Query record count */
-  u_16bit_t ancount;            /* Answer record count */
-  u_16bit_t nscount;            /* Authority reference record count */
-  u_16bit_t arcount;            /* Resource reference record count */
+  uint16_t qdcount;            /* Query record count */
+  uint16_t ancount;            /* Answer record count */
+  uint16_t nscount;            /* Authority reference record count */
+  uint16_t arcount;            /* Resource reference record count */
 } packetheader;
 
 typedef struct {
-  u_16bit_t datatype;
-  u_16bit_t class;
-  u_32bit_t ttl;
-  u_16bit_t datalength;
+  uint16_t datatype;
+  uint16_t class;
+  uint32_t ttl;
+  uint16_t datalength;
 #ifndef HAIKU_HACKS
-  u_8bit_t data[];
+  uint8_t data[];
 #else
-  u_8bit_t data[0];
+  uint8_t data[0];
 #endif
 } res_record;
 
@@ -174,14 +174,14 @@ typedef struct {
 #define getheader_pr(x) ((x->databyte_b >> 6) & 1)
 #define getheader_ra(x) (x->databyte_b >> 7)
 
-#define sucknetword(x)  ((x)+=2,((u_16bit_t)  (((x)[-2] <<  8) | ((x)[-1] <<  0))))
+#define sucknetword(x)  ((x)+=2,((uint16_t)  (((x)[-2] <<  8) | ((x)[-1] <<  0))))
 #define sucknetshort(x) ((x)+=2,((short) (((x)[-2] <<  8) | ((x)[-1] <<  0))))
 #define sucknetdword(x) ((x)+=4,((dword) (((x)[-4] << 24) | ((x)[-3] << 16) | \
                                           ((x)[-2] <<  8) | ((x)[-1] <<  0))))
 #define sucknetlong(x)  ((x)+=4,((long)  (((x)[-4] << 24) | ((x)[-3] << 16) | \
                                           ((x)[-2] <<  8) | ((x)[-1] <<  0))))
 
-static u_32bit_t resrecvbuf[(MAX_PACKETSIZE + 7) >> 2]; /* MUST BE DWORD ALIGNED */
+static uint32_t resrecvbuf[(MAX_PACKETSIZE + 7) >> 2]; /* MUST BE DWORD ALIGNED */
 
 static struct resolve *idbash[BASH_SIZE];
 static struct resolve *ipbash[BASH_SIZE];
@@ -218,8 +218,8 @@ static const char nullstring[] = "";
  */
 static char *strtdiff(char *d, long signeddiff)
 {
-  u_32bit_t diff;
-  u_32bit_t seconds, minutes, hours;
+  uint32_t diff;
+  uint32_t seconds, minutes, hours;
   long day;
 
   if ((diff = labs(signeddiff))) {
@@ -262,21 +262,21 @@ static struct resolve *allocresolve()
 
 /* Return the hash bucket number for id.
  */
-static u_32bit_t getidbash(u_16bit_t id)
+static uint32_t getidbash(uint16_t id)
 {
-  return (u_32bit_t) BASH_MODULO(id);
+  return (uint32_t) BASH_MODULO(id);
 }
 
 /* Return the hash bucket number for ip.
  */
-static u_32bit_t getipbash(IP ip)
+static uint32_t getipbash(IP ip)
 {
-  return (u_32bit_t) BASH_MODULO(ip);
+  return (uint32_t) BASH_MODULO(ip);
 }
 
 #ifdef IPV6
 static unsigned long getip6bash(struct in6_addr *ip6) {
-  u_32bit_t x, y;
+  uint32_t x, y;
   egg_memcpy(&x, ip6->s6_addr     , sizeof x);
   egg_memcpy(&y, ip6->s6_addr + 12, sizeof y);
   x ^= y;
@@ -286,9 +286,9 @@ static unsigned long getip6bash(struct in6_addr *ip6) {
 
 /* Return the hash bucket number for host.
  */
-static u_32bit_t gethostbash(char *host)
+static uint32_t gethostbash(char *host)
 {
-  u_32bit_t bashvalue = 0;
+  uint32_t bashvalue = 0;
 
   for (; *host; host++) {
     bashvalue ^= *host;
@@ -302,7 +302,7 @@ static u_32bit_t gethostbash(char *host)
 static void linkresolveid(struct resolve *addrp)
 {
   struct resolve *rp;
-  u_32bit_t bashnum;
+  uint32_t bashnum;
 
   bashnum = getidbash(addrp->id);
   rp = idbash[bashnum];
@@ -334,7 +334,7 @@ static void linkresolveid(struct resolve *addrp)
  */
 static void unlinkresolveid(struct resolve *rp)
 {
-  u_32bit_t bashnum;
+  uint32_t bashnum;
 
   bashnum = getidbash(rp->id);
   if (idbash[bashnum] == rp) {
@@ -354,7 +354,7 @@ static void unlinkresolveid(struct resolve *rp)
 static void linkresolvehost(struct resolve *addrp)
 {
   struct resolve *rp;
-  u_32bit_t bashnum;
+  uint32_t bashnum;
   int ret;
 
   bashnum = gethostbash(addrp->hostn);
@@ -390,7 +390,7 @@ static void linkresolvehost(struct resolve *addrp)
  */
 static void unlinkresolvehost(struct resolve *rp)
 {
-  u_32bit_t bashnum;
+  uint32_t bashnum;
 
   bashnum = gethostbash(rp->hostn);
   if (hostbash[bashnum] == rp) {
@@ -411,7 +411,7 @@ static void unlinkresolvehost(struct resolve *rp)
 static void linkresolveip(struct resolve *addrp)
 {
   struct resolve *rp;
-  u_32bit_t bashnum;
+  uint32_t bashnum;
 
   bashnum = getipbash(addrp->ip);
   rp = ipbash[bashnum];
@@ -475,7 +475,7 @@ static void linkresolveip6(struct resolve *addrp){
 
 static void unlinkresolveip6(struct resolve *rp)
 {
-  u_32bit_t bashnum;
+  uint32_t bashnum;
 
   bashnum = getip6bash(&rp->sockname.addr.s6.sin6_addr);
   if (ip6bash[bashnum] == rp) {
@@ -495,7 +495,7 @@ static void unlinkresolveip6(struct resolve *rp)
  */
 static void unlinkresolveip(struct resolve *rp)
 {
-  u_32bit_t bashnum;
+  uint32_t bashnum;
 
   bashnum = getipbash(rp->ip);
   if (ipbash[bashnum] == rp) {
@@ -575,7 +575,7 @@ static void unlinkresolve(struct resolve *rp)
 
 /* Find request structure using the id.
  */
-static struct resolve *findid(u_16bit_t id)
+static struct resolve *findid(uint16_t id)
 {
   struct resolve *rp;
   int bashnum;
@@ -650,7 +650,7 @@ static struct resolve *findip6(struct in6_addr *ip6)
 static struct resolve *findip(IP ip)
 {
   struct resolve *rp;
-  u_32bit_t bashnum;
+  uint32_t bashnum;
   bashnum = getipbash(ip);
   rp = ipbash[bashnum];
   if (rp) {
@@ -670,10 +670,10 @@ static struct resolve *findip(IP ip)
 void ptrstring4(IP *ip, char *buf, size_t sz)
 {
   egg_snprintf(buf, sz, "%u.%u.%u.%u.in-addr.arpa",
-           ((u_8bit_t *) ip)[3],
-           ((u_8bit_t *) ip)[2],
-           ((u_8bit_t *) ip)[1],
-           ((u_8bit_t *) ip)[0]);
+           ((uint8_t *) ip)[3],
+           ((uint8_t *) ip)[2],
+           ((uint8_t *) ip)[1],
+           ((uint8_t *) ip)[0]);
 }
 
 #ifdef IPV6
@@ -715,11 +715,11 @@ void ptrstring(struct sockaddr *addr, char *buf, size_t sz)
 
 /* Create packet for the request and send it to all available nameservers.
  */
-static void dorequest(char *s, int type, u_16bit_t id)
+static void dorequest(char *s, int type, uint16_t id)
 {
   packetheader *hp;
   int r, i;
-  u_8bit_t *buf;
+  uint8_t *buf;
 
   /* Use malloc here instead of a static buffer, as per res_mkquery()'s manual
    * buf should be aligned on an eight byte boundary. malloc() should return a
@@ -775,7 +775,7 @@ static void sendrequest(struct resolve *rp, int type)
     idseed = (((idseed + idseed) | (long) time(NULL))
               + idseed - 0x54bad4a) ^ aseed;
     aseed ^= idseed;
-    rp->id = (u_16bit_t) idseed;
+    rp->id = (uint16_t) idseed;
   } while (findid(rp->id));
   linkresolveid(rp);            /* Add id to id hash table */
   resendrequest(rp, type);      /* Send request */
@@ -821,7 +821,7 @@ static void passrp(struct resolve *rp, long ttl, int type)
 
 /* Parses the response packets received.
  */
-void parserespacket(u_8bit_t *response, int len)
+void parserespacket(uint8_t *response, int len)
 {
 #ifdef IPV6
   int ready = 0;
@@ -830,8 +830,8 @@ void parserespacket(u_8bit_t *response, int len)
   res_record *rr;
   packetheader *hdr;
   struct resolve *rp;
-  u_8bit_t rc, *c = response;
-  u_16bit_t qdatatype, qclass;
+  uint8_t rc, *c = response;
+  uint16_t qdatatype, qclass;
   if (len < sizeof(packetheader)) {
     debug1(RES_ERR "Packet smaller than standard header size: %d bytes.", len);
     return;
@@ -1088,7 +1088,7 @@ static void dns_ack(void)
   socklen_t fromlen = sizeof(struct sockaddr_in);
   int r, i;
 
-  r = recvfrom(resfd, (u_8bit_t *) resrecvbuf, MAX_PACKETSIZE, 0,
+  r = recvfrom(resfd, (uint8_t *) resrecvbuf, MAX_PACKETSIZE, 0,
                (struct sockaddr *) &from, &fromlen);
   if (r <= 0) {
     ddebug1(RES_MSG "Socket error: %s", strerror(errno));
@@ -1110,7 +1110,7 @@ static void dns_ack(void)
     ddebug1(RES_ERR "Received reply from unknown source: %s",
                 iptostr((struct sockaddr *) &from));
   else
-    parserespacket((u_8bit_t *) resrecvbuf, r);
+    parserespacket((uint8_t *) resrecvbuf, r);
 }
 
 /* Remove or resend expired requests. Called once a second.
@@ -1293,7 +1293,7 @@ static int init_dns_core(void)
     return 0;
 
   /* Initialise the hash tables. */
-  aseed = time(NULL) ^ (time(NULL) << 3) ^ (u_32bit_t) getpid();
+  aseed = time(NULL) ^ (time(NULL) << 3) ^ (uint32_t) getpid();
   for (i = 0; i < BASH_SIZE; i++) {
     idbash[i] = NULL;
     ipbash[i] = NULL;

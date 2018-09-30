@@ -1,12 +1,12 @@
-News
-Last revised: June 7, 2017
+Upgrading
+Last revised: September 21, 2018
      _________________________________________________________________
 
 UPGRADING Eggdrop 1.6.x -> v1.8.x:
 
 
-  What's new? To gain a full understanding of changes to Eggdropi v1.8.0, 
-  you can read the following documents:
+  What's new? To gain a full understanding of changes to the Eggdrop
+  v1.8 version line, you can read the following documents:
 
     INSTALL
     README
@@ -318,7 +318,7 @@ Changes made to Eggdrop 1.6.x from Eggdrop1.4.x:
     Eggdrop now counts all of the traffic which it generates and receives
     through IRC, the botnet, scripts, and dcc. You can access these statistics
     via the dcc command '.traffic'. Please note that the counter gets reset
-every time a restart is done.
+    every time a restart is done.
 
   ________________________________________________________________________
 

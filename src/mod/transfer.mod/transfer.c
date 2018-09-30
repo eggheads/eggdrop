@@ -379,13 +379,13 @@ static void eof_dcc_send(int idx)
 
 /* Determine byte order. Used for resend DCC startup packets.
  */
-static u_8bit_t byte_order_test(void)
+static uint8_t byte_order_test(void)
 {
-  u_16bit_t test = TRANSFER_REGET_PACKETID;
+  uint16_t test = TRANSFER_REGET_PACKETID;
 
-  if (*((u_8bit_t *) & test) == ((TRANSFER_REGET_PACKETID & 0xff00) >> 8))
+  if (*((uint8_t *) & test) == ((TRANSFER_REGET_PACKETID & 0xff00) >> 8))
     return 0;
-  if (*((u_8bit_t *) & test) == (TRANSFER_REGET_PACKETID & 0x00ff))
+  if (*((uint8_t *) & test) == (TRANSFER_REGET_PACKETID & 0x00ff))
     return 1;
   return 0;
 }
