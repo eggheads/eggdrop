@@ -151,7 +151,7 @@ typedef struct {
   uint16_t class;
   uint32_t ttl;
   uint16_t datalength;
-  uint8_t data[];
+  uint8_t data[FLEXIBLE_ARRAY_MEMBER];
 } res_record;
 
 #ifndef HFIXEDSZ
