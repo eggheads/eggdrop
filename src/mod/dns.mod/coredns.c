@@ -1274,13 +1274,13 @@ static int init_dns_core(void)
 
   /* Initialise the resolv library. */
   res_init();
-#ifdef NETBSD_HACKS
-  puts("netbsd found. if eggdrop crashes with\n"
-       "  _res is not supported for multi-threaded programs.\n"
-       "  [1]   Abort trap (core dumped) ./eggdrop -nt\n"
-       "dns.mod must be disabled by commenting out in eggdrop.conf\n"
-       "  #loadmodule dns");
-#endif
+  #ifdef NETBSD_HACKS
+    puts("netbsd found. if eggdrop crashes with\n"
+         "  _res is not supported for multi-threaded programs.\n"
+         "  [1]   Abort trap (core dumped) ./eggdrop -nt\n"
+         "dns.mod must be disabled by commenting out in eggdrop.conf\n"
+         "  #loadmodule dns");
+  #endif
   _res.options |= RES_RECURSE | RES_DEFNAMES | RES_DNSRCH;
   for (i = 0; i < _res.nscount; i++)
     _res.nsaddr_list[i].sin_family = AF_INET;
