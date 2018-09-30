@@ -97,7 +97,7 @@ struct user_entry {
     char *string;
     void *extra;
     struct list_type *list;
-    unsigned long ulong;
+    unsigned long long ulong;
   } u;
   char *name;
 };
