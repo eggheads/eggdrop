@@ -141,9 +141,9 @@ int notify_users_at = 0; /* Minutes past the hour to notify users of notes? */
 char version[81];    /* Version info (long form)  */
 char ver[41];        /* Version info (short form) */
 
-int do_restart = 0;       /* .restart has been called, restart ASAP */
-int resolve_timeout = 15; /* Hostname/address lookup timeout        */
-char quit_msg[1024];      /* Quit message                           */
+volatile int do_restart = 0; /* .restart has been called, restart ASAP */
+int resolve_timeout = 15;    /* Hostname/address lookup timeout        */
+char quit_msg[1024];         /* Quit message                           */
 
 /* Traffic stats */
 unsigned long otraffic_irc = 0;
