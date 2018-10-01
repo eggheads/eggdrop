@@ -168,7 +168,7 @@ Partyline usage
 
 ^^^^^^^^^^^^^^^^^^^
 .mv <source> <dest>
-^^^^^^^^^^^^^^^^^^
+^^^^^^^^^^^^^^^^^^^
 
   Moves a file or group of files from one place to another (it
   can also be used to rename files).

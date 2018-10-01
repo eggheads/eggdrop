@@ -1245,7 +1245,7 @@ static int tcl_channel_modify(Tcl_Interp *irp, struct chanset_t *chan,
   int i, x = 0, found, old_status = chan->status,
       old_mode_mns_prot = chan->mode_mns_prot,
       old_mode_pls_prot = chan->mode_pls_prot;
-  struct udef_struct *ul = udef;
+  struct udef_struct *ul;
   char s[121];
   char *endptr;
   module_entry *me;
@@ -1528,7 +1528,7 @@ static int tcl_channel_modify(Tcl_Interp *irp, struct chanset_t *chan,
         }
       } else {
         if ((*item[i]) && !strtol(item[i], &endptr, 10) && !(*endptr)) {
-          *pthr = 0;  // Shortcut for .chanset #chan flood-x 0 to activate 0:0
+          *pthr = 0;  /* Shortcut for .chanset #chan flood-x 0 to activate 0:0 */
           *ptime = 0;
         } else {
           if (irp)
@@ -1618,7 +1618,7 @@ static int tcl_channel_modify(Tcl_Interp *irp, struct chanset_t *chan,
     }
   }
   /* If protect_readonly == 0 and chan_hack == 0 then
-   * bot is now processing the configfile, so dont do anything,
+   * bot is now processing the configfile, so don't do anything,
    * we've to wait the channelfile that maybe override these settings
    * (note: it may cause problems if there is no chanfile!)
    * <drummer/1999/10/21>

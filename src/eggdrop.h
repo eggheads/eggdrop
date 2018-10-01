@@ -308,12 +308,8 @@ typedef int socklen_t;
 #  define free(x)   dont_use_old_free(x)
 #endif /* !COMPILING_MEM */
 
-typedef uint8_t u_8bit_t;
-typedef uint16_t u_16bit_t;
-typedef uint32_t u_32bit_t;
-
 /* IP type */
-typedef u_32bit_t IP;
+typedef uint32_t IP;
 
 /* Debug logging macros */
 #define debug0(x)             putlog(LOG_DEBUG,"*",x)
@@ -328,6 +324,11 @@ typedef u_32bit_t IP;
 #define egg_isascii(x)  isascii((int)  (unsigned char) (x))
 #define egg_isspace(x)  isspace((int)  (unsigned char) (x))
 #define egg_islower(x)  islower((int)  (unsigned char) (x))
+
+/* Use egg_bzero instead of memset or bzero */
+#define egg_bzero(dest, len) memset(dest, 0, len)
+/* Use memset() or egg_bzero() instead */
+#define egg_memset(dest, c, len) memset(dest, c, len)
 
 /***********************************************************************/
 

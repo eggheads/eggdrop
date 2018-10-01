@@ -89,7 +89,7 @@ Eggdrop Changes (since version 0.9)
     used for detection.
 
   - msg_op requires a password to be set in order to op a user. Also,
-    msg_op can take a channel as an arguement and only op the user in that
+    msg_op can take a channel as an argument and only op the user in that
     channel instead of all the channels.
 
   - Fixed bug in tputs with logging an invalid socket.

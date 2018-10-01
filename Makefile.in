@@ -84,7 +84,7 @@ MODULE_XLIBS = @MODULE_XLIBS@
 modconf = $(top_srcdir)/misc/modconfig --top_srcdir=$(top_srcdir)
 
 egg_test_run = if [ '$(EGG_CROSS_COMPILING)' = 'no' ]; \
-               	then EGG_LANGDIR=$(top_srcdir)/language ./$(EGGEXEC) -v; \
+               	then ./$(EGGEXEC) -v; \
                	else echo 'This build is a cross-compilation, skipping test run...'; \
                fi
 
@@ -96,6 +96,14 @@ post_iconfig =  $(modconf) update-depends && \
 		$(modconf) Makefile && \
 		(cd src/mod && $(MAKE_CONFIG) config) && \
 		$(modconf) Makefile
+
+run_config   =  $(modconf) modules-still-exist && \
+		$(modconf) detect-modules && \
+		$(modconf) update-depends && \
+		$(modconf) Makefile && \
+		cd src/mod && $(MAKE_CONFIG) config && cd ../../ && \
+		$(modconf) Makefile && \
+		$(post_config)
 
 egg_install_msg =  echo "" && \
 		   echo "Now run \"make install\" to install your bot." && \
@@ -179,29 +187,23 @@ distrib:
 
 depend:
 	@cat /dev/null > lush.h
-	@cd src && $(MAKE_DEPEND) depend
-	@cd src/md5 && $(MAKE_DEPEND) depend
-	@cd src/mod && $(MAKE_DEPEND) depend
-	@cd src/compat && $(MAKE_DEPEND) depend
+	+@cd src && $(MAKE_DEPEND) depend
+	+@cd src/md5 && $(MAKE_DEPEND) depend
+	+@cd src/mod && $(MAKE_DEPEND) depend
+	+@cd src/compat && $(MAKE_DEPEND) depend
 
 config:
-	@$(modconf) modules-still-exist && \
-	$(modconf) detect-modules && \
-	$(modconf) update-depends && \
-	$(modconf) Makefile && \
-	cd src/mod && $(MAKE_CONFIG) config && cd ../../ && \
-	$(modconf) Makefile && \
-	$(post_config)
+	+@$(run_config)
 
 new-iconfig:
-	@$(modconf) modules-still-exist && \
+	+@$(modconf) modules-still-exist && \
 	$(modconf) update-depends && \
 	$(modconf) -n configure && \
 	$(post_iconfig) && \
 	$(post_config)
 
 iconfig:
-	@$(modconf) modules-still-exist && \
+	+@$(modconf) modules-still-exist && \
 	$(modconf) detect-modules && \
 	$(modconf) update-depends && \
 	$(modconf) configure && \
@@ -222,7 +224,8 @@ conftest:
 		exit 1; \
 	fi
 
-reconfig: clean-modconfig config
+reconfig: clean-modconfig
+	+@$(run_config)
 
 # Modular builds
 
@@ -284,6 +287,17 @@ sdebug: eggtest
 
 # Install
 
+install-end =	echo "" && echo "Installation completed." && echo "" && \
+		echo "If you intend to use this bot as a botnet hub for other 1.8 bots using SSL," && \
+		echo "please run \"make sslcert\" now. If you installed eggdrop to a custom path" && \
+		echo "during the make install process, use the same DEST= option here." && \
+		echo "" && \
+		echo "You MUST ensure that you edit/verify your configuration file." && \
+		echo "An example configuration file, eggdrop.conf, is distributed with Eggdrop." && \
+		echo "" && \
+		echo "Remember to change directory to $(DEST) before you proceed." && \
+		echo ""
+
 sslcert:
 	@if test ! -d $(DEST); then \
 		echo "You haven't installed eggdrop yet, or you installed using the DEST= flag.";\
@@ -301,13 +315,15 @@ sslcert:
 
 install: ainstall
 
-dinstall: eggdrop ainstall
+dinstall: eggdrop
+	@$(MAKE) ainstall
 
-sinstall: static ainstall
+sinstall: static
+	@$(MAKE) ainstall
 
-ainstall: install-start install-bin install-modules install-data install-text \
-install-help install-language install-filesys install-doc install-scripts \
-install-end
+ainstall: install-bin install-modules install-data install-text \
+install-help install-language install-filesys install-doc install-scripts
+	@$(install-end)
 
 install-start:
 	@if test ! -f $(EGGEXEC); then \
@@ -348,7 +364,7 @@ install-start:
 		$(top_srcdir)/misc/mkinstalldirs $(DEST) >/dev/null; \
 	fi
 
-install-bin:
+install-bin: install-start
 	@if test -f $(DEST)/o$(EGGEXEC); then \
 		rm -f $(DEST)/o$(EGGEXEC); \
 	fi && \
@@ -364,7 +380,7 @@ install-bin:
 	$(INSTALL_PROGRAM) $(EGGEXEC) $(DEST)/$(EGGEXEC)-$(EGGVERSION) && \
 	(cd $(DEST) && $(LN_S) $(EGGEXEC)-$(EGGVERSION) $(EGGEXEC))
 
-install-modules:
+install-modules: install-start
 	@if test -h $(DEST)/modules; then \
 		echo "Removing symlink to archival modules subdirectory."; \
 		rm -f $(DEST)/modules; \
@@ -386,7 +402,7 @@ install-modules:
 		done; \
 	fi
 
-install-data:
+install-data: install-start
 	@if test ! -f $(DEST)/eggdrop.conf; then \
 		$(INSTALL_DATA) $(srcdir)/eggdrop.conf $(DEST)/; \
 	fi
@@ -399,7 +415,7 @@ install-data:
 		$(INSTALL_DATA) $(srcdir)/logs/CONTENTS $(DEST)/logs/; \
 	fi
 
-install-text:
+install-text: install-start
 	@if test ! -d $(DEST)/text; then \
 		echo "Creating 'text' subdirectory."; \
 		$(top_srcdir)/misc/mkinstalldirs $(DEST)/text >/dev/null; \
@@ -411,8 +427,8 @@ install-text:
 		$(INSTALL_DATA) $(srcdir)/text/banner $(DEST)/text/; \
 	fi
 
-install-help:
-	@echo "Copying help files." && \
+install-help: install-start
+	+@echo "Copying help files." && \
 	if test ! "x`echo $(srcdir)/help/*.help`" = "x$(srcdir)/help/*.help"; then \
 		if test ! -d $(DEST)/help; then \
 			echo "Creating 'help' subdirectory."; \
@@ -442,8 +458,8 @@ install-help:
 	fi && \
 	cd src/mod/ && $(MAKE_INSTALL) install-help
 
-install-language:
-	@echo "Copying language files." && \
+install-language: install-start
+	+@echo "Copying language files." && \
 	if test ! "x`echo $(srcdir)/language/*.lang`" = "x$(srcdir)/language/*.lang"; then \
 		if test ! -d $(DEST)/language; then \
 			echo "Creating 'language' subdirectory."; \
@@ -455,30 +471,18 @@ install-language:
 	fi && \
 	cd src/mod && $(MAKE_INSTALL) install-language
 
-install-filesys:
+install-filesys: install-start
 	@if test ! -d $(DEST)/filesys; then \
 		echo "Creating skeletal filesystem subdirectories."; \
 		$(top_srcdir)/misc/mkinstalldirs $(DEST)/filesys >/dev/null; \
 		$(top_srcdir)/misc/mkinstalldirs $(DEST)/filesys/incoming >/dev/null; \
 	fi
 
-install-doc:
-	@$(INSTALL_DATA) $(srcdir)/README $(DEST) && \
+install-doc: install-start
+	+@$(INSTALL_DATA) $(srcdir)/README $(DEST) && \
 	cd doc/ && $(MAKE_INSTALL) install
 
-install-scripts:
-	@cd scripts/ && $(MAKE_INSTALL) install
-
-install-end:
-	@echo "" && echo "Installation completed." && echo "" && \
-	echo "If you intend to use this bot as a botnet hub for other 1.8 bots using SSL," && \
-	echo "please run \"make sslcert\" now. If you installed eggdrop to a custom path" && \
-	echo "during the make install process, use the same DEST= option here." && \
-	echo "" && \
-	echo "You MUST ensure that you edit/verify your configuration file." && \
-	echo "An example configuration file, eggdrop.conf, is distributed with Eggdrop." && \
-	echo "" && \
-	echo "Remember to change directory to $(DEST) before you proceed." && \
-	echo ""
+install-scripts: install-start
+	+@cd scripts/ && $(MAKE_INSTALL) install
 
 #safety hash

@@ -830,10 +830,10 @@ static void notes_hourly()
 {
   expire_notes();
   if (notify_users) {
-    register struct chanset_t *chan;
-    register memberlist *m;
+    struct chanset_t *chan;
+    memberlist *m;
     int k;
-    register int l;
+    int l;
     char s1[NICKMAX+UHOSTLEN+1];
     struct userrec *u;
 

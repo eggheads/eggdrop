@@ -68,9 +68,6 @@
 #ifdef egg_snprintf
 #  undef egg_snprintf
 #endif
-#ifdef egg_memset
-#  undef egg_memset
-#endif
 #ifdef egg_strcasecmp
 #  undef egg_strcasecmp
 #endif
@@ -437,7 +434,7 @@
 /* 252 - 255 */
 #define egg_snprintf (global[252])
 #define egg_vsnprintf ((int (*)(char *, size_t, const char *, va_list))global[253])
-#define egg_memset ((void *(*)(void *, int, size_t))global[254])
+/* was egg_memset -- UNUSED */
 #define egg_strcasecmp ((int (*)(const char *, const char *))global[255])
 /* 256 - 259 */
 #define egg_strncasecmp ((int (*)(const char *, const char *, size_t))global[256])
@@ -448,9 +445,9 @@
 #define party (*(party_t **)(global[260]))
 #define open_address_listen ((int (*)(sockname_t *, int *))global[261])
 #define str_escape ((char *(*)(const char *, const char, const char))global[262])
-#define strchr_unescape ((char *(*)(char *, const char, register const char))global[263])
+#define strchr_unescape ((char *(*)(char *, const char, const char))global[263])
 /* 264 - 267 */
-#define str_unescape ((void (*)(char *, register const char))global[264])
+#define str_unescape ((void (*)(char *, const char))global[264])
 #define egg_strcatn ((int (*)(char *dst, const char *src, size_t max))global[265])
 #define clear_chanlist_member ((void (*)(const char *nick))global[266])
 #define fixfrom ((char *(*)(char *))global[267])

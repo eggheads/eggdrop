@@ -25,7 +25,6 @@
 
 #include "inet_aton.h"
 #include "snprintf.h"
-#include "memset.h"
 #include "memcpy.h"
 #include "strcasecmp.h"
 #include "strftime.h"

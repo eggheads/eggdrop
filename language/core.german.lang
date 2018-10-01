@@ -135,7 +135,7 @@ Baue eine Telnetverbindung zu dem Bot auf und gib 'NEW' als Deinen Nickname ein.
 0x53c,Benutzerdatei fehlt!
 0x53e,%B  (%E)\n\nBitte gib Deinen Nickname ein:\n
 0x53f,Rotiere Logdatei %s da groesser als max-logsize (%d)
-0x540,\nNickname.\n
+# 0x540 - unused / Unbenutzt
 0x541,Die letzte Meldung wiederholte sich %d mal.\n
 0x543,Keine freien Sockets verfuegbar.
 0x544,Tcl version:
