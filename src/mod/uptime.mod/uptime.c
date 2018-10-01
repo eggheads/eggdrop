@@ -1,13 +1,15 @@
 /*
- * This module reports uptime information about your bot to http://uptime.eggheads.org. The
- * purpose for this is to see how your bot rates against many others (including EnergyMechs
- * and Eggdrops) -- It is a fun little project, jointly run by Eggheads.org and EnergyMech.net.
+ * This module reports uptime information about your bot to
+ * http://uptime.eggheads.org. The purpose for this is to see how your bot rates
+ * against many others (including EnergyMechs and Eggdrops) -- It is a fun
+ * little project, jointly run by Eggheads.org and EnergyMech.net.
  *
  * If you don't like being a part of it please just unload this module.
  *
- * Also for bot developers feel free to modify this code to make it a part of your bot and
- * e-mail webmaster@eggheads.org for more information on registering your bot type. See how
- * your bot's stability rates against ours and ours against yours <g>.
+ * Also for bot developers feel free to modify this code to make it a part of
+ * your bot and e-mail webmaster@eggheads.org for more information on
+ * registering your bot type. See how your bot's stability rates against ours
+ * and ours against yours <g>.
  */
 /*
  * Copyright (C) 2001 proton
@@ -46,18 +48,15 @@
 #include <unistd.h>
 
 /*
- * regnr is unused; however, it must be here inorder for
- * us to create a proper struct for the uptime server.
+ * regnr is unused; however, it must be here inorder for us to create a proper
+ * struct for the uptime server.
  *
- * "packets_sent" was originally defined as "cookie",
- * however this field was deprecated and set to zero
- * for most versions of the uptime client.  It has been
- * repurposed and renamed as of uptime v1.3 to reflect
- * the number of packets the client thinks it has sent
- * over the life of the module.  Only the name has changed -
- * the type is still the same.
+ * "packets_sent" was originally defined as "cookie", however this field was
+ * deprecated and set to zero for most versions of the uptime client. It has
+ * been repurposed and renamed as of uptime v1.3 to reflect the number of
+ * packets the client thinks it has sent over the life of the module. Only the
+ * name has changed - the type is still the same.
  */
-
 typedef struct PackUp {
   uint32_t regnr;
   uint32_t pid;
