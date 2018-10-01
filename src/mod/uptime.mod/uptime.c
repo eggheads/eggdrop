@@ -66,6 +66,7 @@ typedef struct PackUp {
   uint32_t ontime;
   uint32_t now2;
   uint32_t sysup;
+  char string[FLEXIBLE_ARRAY_MEMBER];
 } PackUp;
 
 PackUp upPack;
@@ -213,7 +214,7 @@ int send_uptime(void)
         strlen(uptime_version) + 3;
   mem = nmalloc(len);
   my_memcpy(mem, &upPack, sizeof(upPack));
-  sprintf(mem + sizeof(upPack), "%s %s %s", botnetnick, servhost, uptime_version);
+  sprintf(mem->string, "%s %s %s", botnetnick, servhost, uptime_version);
   egg_bzero(&sai, sizeof(sai));
   sai.sin_family = AF_INET;
   sai.sin_addr.s_addr = uptimeip;
