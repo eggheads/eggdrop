@@ -151,10 +151,10 @@ static int server_transfer_setup(char *);
 #define TRANSFER_REGET_PACKETID 0xfeab
 
 typedef struct {
-  u_16bit_t packet_id;          /* Identification ID, should be equal
+  uint16_t packet_id;          /* Identification ID, should be equal
                                  * to TRANSFER_REGET_PACKETID           */
-  u_8bit_t byte_order;          /* Byte ordering, see byte_order_test() */
-  u_32bit_t byte_offset;        /* Number of bytes to skip relative to
+  uint8_t byte_order;          /* Byte ordering, see byte_order_test() */
+  uint32_t byte_offset;        /* Number of bytes to skip relative to
                                  * the file beginning                   */
 } transfer_reget;
 

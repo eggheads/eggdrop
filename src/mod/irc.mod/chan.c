@@ -1079,7 +1079,7 @@ static int got352(char *from, char *msg)
   char *nick, *user, *host, *chname, *flags;
   struct chanset_t *chan;
 
-  newsplit(&msg);               /* Skip my nick - effeciently */
+  newsplit(&msg);               /* Skip my nick - efficiently */
   chname = newsplit(&msg);      /* Grab the channel */
   chan = findchan(chname);      /* See if I'm on channel */
   if (chan) {                   /* Am I? */
@@ -1101,7 +1101,7 @@ static int got354(char *from, char *msg)
   struct chanset_t *chan;
 
   if (use_354) {
-    newsplit(&msg);             /* Skip my nick - effeciently */
+    newsplit(&msg);             /* Skip my nick - efficiently */
     if (msg[0] && (strchr(CHANMETA, msg[0]) != NULL)) {
       chname = newsplit(&msg);  /* Grab the channel */
       chan = findchan(chname);  /* See if I'm on channel */
@@ -2026,15 +2026,14 @@ static int gotpart(char *from, char *msg)
  */
 static int gotkick(char *from, char *origmsg)
 {
-  char *nick, *whodid, *chname, s1[UHOSTLEN], buf[UHOSTLEN], *uhost = buf;
+  char *nick, *whodid, *chname, s1[UHOSTLEN], buf[UHOSTLEN], *uhost;
   char buf2[511], *msg, *key;
   memberlist *m;
   struct chanset_t *chan;
   struct userrec *u;
   struct flag_record fr = { FR_GLOBAL | FR_CHAN, 0, 0, 0, 0, 0 };
 
-  strncpy(buf2, origmsg, 510);
-  buf2[510] = 0;
+  strncpyz(buf2, origmsg, sizeof buf2);
   msg = buf2;
   chname = newsplit(&msg);
   chan = findchan(chname);
@@ -2053,12 +2052,13 @@ static int gotkick(char *from, char *origmsg)
       dprintf(DP_SERVER, "JOIN %s\n",
               chan->name[0] ? chan->name : chan->dname);
     clear_channel(chan, CHAN_RESETALL);
-    return 0;                   /* rejoin if kicked before getting needed info <Wcc[08/08/02]> */
+    return 0; /* rejoin if kicked before getting needed info <Wcc[08/08/02]> */
   }
   if (channel_active(chan)) {
     fixcolon(msg);
     u = get_user_by_host(from);
-    strlcpy(uhost, from, sizeof uhost);
+    strlcpy(buf, from, sizeof buf);
+    uhost = buf;
     whodid = splitnick(&uhost);
     detect_chan_flood(whodid, uhost, from, chan, FLOOD_KICK, nick);
 
