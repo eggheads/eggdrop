@@ -491,7 +491,7 @@ void block_dns_hostbyip(sockname_t *addr)
   }
 #endif
   if (i)
-    debug1("dns: getnameinfo(): ERROR = %s", gai_strerror(i));
+    debug1("dns: getnameinfo(): error = %s", gai_strerror(i));
   call_hostbyip(addr, host, !i);
 }
 
