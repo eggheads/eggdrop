@@ -47,6 +47,8 @@
 #include <sys/stat.h>
 #include <unistd.h>
 
+#define UPDATE_INTERVAL (12 * 60) /* random(0..12) hours: ~6 hour average. */
+
 /*
  * regnr is unused; however, it must be here inorder for us to create a proper
  * struct for the uptime server.
@@ -77,7 +79,6 @@ static int minutes = 0;
 static int seconds = 0;
 static int next_seconds = 0;
 static int next_minutes = 0;
-static int update_interval = 720; /* random(0..12) hours: ~6 hour average. */
 static time_t next_update = 0;
 static int uptimesock;
 static int uptimecount;
@@ -116,12 +117,12 @@ static unsigned long get_ip()
   struct in_addr *in;
 
   /* could be pre-defined */
-  if (uptime_host[0]) {
-    if ((uptime_host[strlen(uptime_host) - 1] >= '0') &&
-        (uptime_host[strlen(uptime_host) - 1] <= '9'))
-      return (IP) inet_addr(uptime_host);
+  if (UPTIME_HOST[0]) {
+    if ((UPTIME_HOST[strlen(UPTIME_HOST) - 1] >= '0') &&
+        (UPTIME_HOST[strlen(UPTIME_HOST) - 1] <= '9'))
+      return (IP) inet_addr(UPTIME_HOST);
   }
-  hp = gethostbyname(uptime_host);
+  hp = gethostbyname(UPTIME_HOST);
   if (hp == NULL)
     return -1;
   in = (struct in_addr *) (hp->h_addr_list[0]);
@@ -136,7 +137,7 @@ int init_uptime(void)
 
   upPack.regnr = 0;  /* unused */
   upPack.pid = 0;    /* must set this later */
-  upPack.type = htonl(uptime_type);
+  upPack.type = htonl(UPTIME_TYPE);
   upPack.packets_sent = 0; /* reused (abused?) to send our packet count */
   upPack.uptime = 0; /* must set this later */
   uptimecount = 0;
@@ -159,7 +160,7 @@ int init_uptime(void)
   }
   fcntl(uptimesock, F_SETFL, O_NONBLOCK | fcntl(uptimesock, F_GETFL));
 
-  next_minutes = random() % update_interval; /* Initial update delay */
+  next_minutes = random() % UPDATE_INTERVAL; /* Initial update delay */
   next_seconds = random() % 59;
   next_update = (time_t) ((time(NULL) / 60 * 60) + (next_minutes * 60) +
     next_seconds);
@@ -218,7 +219,7 @@ int send_uptime(void)
   egg_bzero(&sai, sizeof(sai));
   sai.sin_family = AF_INET;
   sai.sin_addr.s_addr = uptimeip;
-  sai.sin_port = htons(uptime_port);
+  sai.sin_port = htons(UPTIME_PORT);
   len = sendto(uptimesock, (void *) mem, len, 0, (struct sockaddr *) &sai,
                sizeof(sai));
   nfree(mem);
@@ -245,7 +246,7 @@ void check_secondly()
 
     minutes = 0; /* Reset for the next countdown. */
     seconds = 0;
-    next_minutes = random() % update_interval;
+    next_minutes = random() % UPDATE_INTERVAL;
     next_seconds = random() % 59;
     next_update = (time_t) ((time(NULL) / 60 * 60) + (next_minutes * 60) +
       next_seconds);
