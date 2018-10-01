@@ -172,7 +172,7 @@ int send_uptime(void)
 {
   struct sockaddr_in sai;
   struct stat st;
-  char *mem;
+  PackUp *mem;
   int len, servidx;
   char servhost[UHOSTLEN] = "none";
   module_entry *me;
