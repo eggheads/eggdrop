@@ -212,7 +212,7 @@ int send_uptime(void)
 
   len = sizeof(upPack) + strlen(botnetnick) + strlen(servhost) +
         strlen(uptime_version) + 3;
-  mem = nmalloc(len);
+  mem = (PackUp *) nmalloc(len);
   my_memcpy(mem, &upPack, sizeof(upPack));
   sprintf(mem->string, "%s %s %s", botnetnick, servhost, uptime_version);
   egg_bzero(&sai, sizeof(sai));
