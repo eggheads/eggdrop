@@ -650,9 +650,9 @@ static void core_secondly()
       tell_mem_status_dcc(DP_STDOUT);
     }
   }
-  egg_memcpy(&nowtm, localtime(&now), sizeof(struct tm));
   nowmins = time(NULL) / 60;
   if (nowmins > lastmin) {
+    egg_memcpy(&nowtm, localtime(&now), sizeof(struct tm));
     int i = 0;
 
     /* Once a minute */
@@ -1118,7 +1118,6 @@ int main(int arg_c, char **arg_v)
   /* Initialize variables and stuff */
   now = time(NULL);
   chanset = NULL;
-  egg_memcpy(&nowtm, localtime(&now), sizeof(struct tm));
   lastmin = now / 60;
   init_random();
   init_mem();
