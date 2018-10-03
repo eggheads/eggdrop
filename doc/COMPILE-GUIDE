@@ -303,8 +303,8 @@ Last revised: September 20, 2018
 
 
     I. Haiku
-        If you compile tcl and it breaks with thread error and --disable-threads
-        doesn't help you can workaround with removal of directory
+        If you compile Tcl and it breaks with thread error and --disable-threads
+        doesn't help, you can workaround with removal of directory
         pkgs/thread<VERSION>.
 
         Note that on Haiku, the LIBRARY_PATH environment variable must be used
