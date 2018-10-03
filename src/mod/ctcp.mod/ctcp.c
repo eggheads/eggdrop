@@ -157,7 +157,7 @@ static int ctcp_CHAT(char *nick, char *uhost, char *handle, char *object,
       return 1;
     }
 
-// * Check if SSL, IPv4, or IPv6 were requested
+/* Check if SSL, IPv4, or IPv6 were requested */
     if (
 #ifdef IPV6
     (!egg_strcasecmp(keyword, "CHAT6")) ||
