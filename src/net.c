@@ -792,17 +792,26 @@ void safe_write(int fd, const void *buf, size_t count)
   ssize_t ret;
   static int inhere = 0;
 
-  do {
-    if ((ret = write(fd, bytes, count)) == -1 && errno != EINTR) {
-      if (!inhere) {
-        inhere = 1;
-        putlog(LOG_MISC, "*", "Unexpected write() failure on attempt to write %zd bytes to fd %d: %s.", count, fd, strerror(errno));
-        inhere = 0;
-      }
-      break;
+  while ((ret = write(fd, bytes, count)) == -1) {
+    switch(errno) {
+      case EINTR:
+        bytes += ret;
+        count -= ret;
+        continue;
+      case EAGAIN:
+        continue;
+      default:
+        if (!inhere) {
+          inhere = 1;
+          putlog(LOG_MISC, "*", "Unexpected write() failure on attempt to write %zd bytes to fd %d: %s.", count, fd, strerror(errno));
+          inhere = 0;
+        }
+        break;
     }
-  } while ((bytes += ret, count -= ret));
+  }
 }
+
+
 
 /* Attempts to read from all sockets in slist (upper array boundary slistmax-1)
  * fills s with up to 511 bytes if available, and returns the array index
