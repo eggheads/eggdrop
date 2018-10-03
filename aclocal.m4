@@ -1040,7 +1040,7 @@ AC_DEFUN([EGG_TCL_TCLCONFIG],
     if test -r ${TCL_BIN_DIR}/tclConfig.sh; then
       . ${TCL_BIN_DIR}/tclConfig.sh
       # OpenBSD uses -pthread, but tclConfig.sh provides that flag in EXTRA_CFLAGS
-      if [[ "$(echo $TCL_EXTRA_CFLAGS | grep -- "-pthread")" != "" ]]; then
+      if test "$(echo $TCL_EXTRA_CFLAGS | grep -- -pthread)" != ""; then
         TCL_PTHREAD_LDFLAG="-pthread"
       else
         TCL_PTHREAD_LDFLAG=""
@@ -1058,7 +1058,7 @@ AC_DEFUN([EGG_TCL_TCLCONFIG],
     if test -r ${TCLLIB}/tclConfig.sh; then
       . ${TCLLIB}/tclConfig.sh
       # OpenBSD uses -pthread, but tclConfig.sh provides that flag in EXTRA_CFLAGS
-      if [[ "$(echo $TCL_EXTRA_CFLAGS | grep -- "-pthread")" != "" ]]; then
+      if test "$(echo $TCL_EXTRA_CFLAGS | grep -- -pthread)" != ""; then
         TCL_PTHREAD_LDFLAG="-pthread"
       else
         TCL_PTHREAD_LDFLAG=""
