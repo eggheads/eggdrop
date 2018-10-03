@@ -636,6 +636,7 @@ static void core_secondly()
   static int cnt = 0;
   int miltime;
   time_t nowmins;
+  int i;
 
   do_check_timers(&utimer);     /* Secondly timers */
   cnt++;
@@ -653,7 +654,7 @@ static void core_secondly()
   nowmins = time(NULL) / 60;
   if (nowmins > lastmin) {
     egg_memcpy(&nowtm, localtime(&now), sizeof(struct tm));
-    int i = 0;
+    i = 0;
 
     /* Once a minute */
     ++lastmin;
