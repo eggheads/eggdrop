@@ -366,7 +366,8 @@ void setsock(int sock, int options)
     setsockopt(sock, SOL_SOCKET, SO_REUSEADDR, (void *) &parm, sizeof(int));
   }
   /* Yay async i/o ! */
-  fcntl(sock, F_SETFL, O_NONBLOCK);
+  if ((sock != STDOUT) || backgrd)
+    fcntl(sock, F_SETFL, O_NONBLOCK);
 }
 
 int getsock(int af, int options)
