@@ -474,7 +474,7 @@ static char *ssl_printnum(ASN1_INTEGER *i)
 /* Show the user all relevant information about a certificate: subject,
  * issuer, validity dates and fingerprints.
  */
-static void ssl_showcert(const X509 *cert, const int loglev)
+static void ssl_showcert(X509 *cert, const int loglev)
 {
   X509_NAME *name;
   char *buf;
