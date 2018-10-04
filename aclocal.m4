@@ -1634,17 +1634,17 @@ AC_DEFUN([EGG_TLS_DETECT],
         break
       ]])
     fi
-    AC_CHECK_FUNC(hex_to_string, ,
-      AC_CHECK_FUNC(OPENSSL_hexstr2buf,
-          AC_DEFINE([hex_to_string], [OPENSSL_hexstr2buf], [Define this to OPENSSL_hexstr2buf when using OpenSSL 1.1.0+])
+    AC_CHECK_FUNC(OPENSSL_hexstr2buf, ,
+      AC_CHECK_FUNC(hex_to_string,
+          AC_DEFINE([OPENSSL_hexstr2buf], [hex_to_string], [Define this to hex_to_string when using OpenSSL < 1.1.0])
         , [[
           havessllib="no"
           break
       ]])
     )
-    AC_CHECK_FUNC(string_to_hex, ,
-      AC_CHECK_FUNC(OPENSSL_buf2hexstr,
-          AC_DEFINE([string_to_hex], [OPENSSL_buf2hexstr], [Define this to OPENSSL_buf2hexstr when using OpenSSL 1.1.0+])
+    AC_CHECK_FUNC(OPENSSL_buf2hexstr, ,
+      AC_CHECK_FUNC(string_to_hex,
+          AC_DEFINE([OPENSSL_buf2hexstr], [string_to_hex], [Define this to string_to_hex when using OpenSSL < 1.1.0])
         , [[
           havessllib="no"
           break
