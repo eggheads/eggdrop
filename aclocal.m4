@@ -1636,7 +1636,7 @@ AC_DEFUN([EGG_TLS_DETECT],
     fi
     AC_CHECK_FUNC(OPENSSL_buf2hexstr, ,
       AC_CHECK_FUNC(hex_to_string,
-          AC_DEFINE([OPENSSL_buf2hexstr], [hex_to_string], [Define this to hex_to_string string when using OpenSSL < 1.1.0])
+          AC_DEFINE([OPENSSL_buf2hexstr], [hex_to_string], [Define this to hex_to_string when using OpenSSL < 1.1.0])
         , [[
           havessllib="no"
           break
