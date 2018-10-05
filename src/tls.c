@@ -477,10 +477,9 @@ static char *ssl_printnum(ASN1_INTEGER *i)
 static void ssl_showcert(X509 *cert, const int loglev)
 {
   X509_NAME *name;
-  char *buf;
+  char *buf, *from, *to;
   unsigned char md[EVP_MAX_MD_SIZE];
   unsigned int len;
-  char *from, *to;
 
   /* Subject and issuer names */
   if ((name = X509_get_subject_name(cert))) {
