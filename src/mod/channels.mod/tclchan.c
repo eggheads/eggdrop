@@ -2100,7 +2100,7 @@ static int tcl_channel_add(Tcl_Interp *irp, char *newname, char *options)
      * any code later on. chan->name gets updated with the channel name as
      * the server knows it, when we join the channel. <cybah>
      */
-    strncpyz(chan->dname, newname, sizeof chan->dname);
+    strlcpy(chan->dname, newname, sizeof chan->dname);
 
     /* Initialize chan->channel info */
     init_channel(chan, 0);

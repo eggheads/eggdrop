@@ -43,7 +43,7 @@ static struct chanuserrec *add_chanrec(struct userrec *u, char *chname)
     ch->flags = 0;
     ch->flags_udef = 0;
     ch->laston = 0;
-    strncpyz(ch->channel, chname, sizeof ch->channel);
+    strlcpy(ch->channel, chname, sizeof ch->channel);
     if (!noshare && !(u->flags & USER_UNSHARED))
       shareout(findchan_by_dname(chname), "+cr %s %s\n", u->handle, chname);
   }
