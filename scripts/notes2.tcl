@@ -1,5 +1,5 @@
 #
-# notes2.tcl - v2.1.1 - released by MHT <mht@mygale.org>
+# notes2.tcl - v2.1.2 - released by MHT <mht@mygale.org>
 #                     - a bind apart script from #TSF
 #                     - for eggdrop 1.3.15+
 #
@@ -27,6 +27,8 @@
 #
 # 2.1.1 - fixed a couple of small bugs pertaining to $nick being used instead of
 #         $botnet-nick (found by takeda, fixed by guppy)
+#
+# 2.1.2 - fix matchattr for shared bots (found by maimizuno, fixed by Cizzle)
 #
 ####
 # Check your notes on every shared bot of the hub.
@@ -129,7 +131,7 @@ proc n2_noteserase {bot handle idx numlist} {
 
 ########
 proc *bot:notes2 {handle idx arg} {
-    if {(![matchattr $handle s])} {
+    if {(![matchattr $handle ||s])} {
 	return
     }
     set nick [lindex $arg 0]

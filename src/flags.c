@@ -376,7 +376,7 @@ void break_down_flags(const char *string, struct flag_record *plus,
     else if (flags & FR_CHAN)
       mode = 1;
     else
-      return;                   /* We dont actually want any..huh? */
+      return;                   /* We don't actually want any..huh? */
   }
   egg_bzero(plus, sizeof(struct flag_record));
 
@@ -586,7 +586,7 @@ int flagrec_ok(struct flag_record *req, struct flag_record *have)
       return 1;
     return 0;
   }
-  return 0;                     /* fr0k3 binding, dont pass it */
+  return 0;                     /* fr0k3 binding, don't pass it */
 }
 
 int flagrec_eq(struct flag_record *req, struct flag_record *have)
@@ -629,7 +629,7 @@ int flagrec_eq(struct flag_record *req, struct flag_record *have)
     }
     return 0;
   }
-  return 0;                     /* fr0k3 binding, dont pass it */
+  return 0;                     /* fr0k3 binding, don't pass it */
 }
 
 void set_user_flagrec(struct userrec *u, struct flag_record *fr,
@@ -666,7 +666,7 @@ void set_user_flagrec(struct userrec *u, struct flag_record *fr,
 
       cr->next = u->chanrec;
       u->chanrec = cr;
-      strncpyz(cr->channel, chname, sizeof cr->channel);
+      strlcpy(cr->channel, chname, sizeof cr->channel);
     }
     if (cr && ch) {
       cr->flags = fr->chan;
@@ -775,7 +775,7 @@ static int botfl_write_userfile(FILE *f, struct userrec *u,
 
 static int botfl_set(struct userrec *u, struct user_entry *e, void *buf)
 {
-  register long atr = ((long) buf & BOT_VALID);
+  long atr = ((long) buf & BOT_VALID);
 
   if (!(u->flags & USER_BOT))
     return 1;                   /* Don't even bother trying to set the

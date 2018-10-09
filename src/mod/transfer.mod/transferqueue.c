@@ -38,12 +38,12 @@ static void queue_file(char *dir, char *file, char *from, char *to)
   fileq->next = q;
   l = strlen(dir) + 1;
   fileq->dir = nmalloc(l);
-  strncpyz(fileq->dir, dir, l);
+  strlcpy(fileq->dir, dir, l);
   l = strlen(file) + 1;
   fileq->file = nmalloc(l);
-  strncpyz(fileq->file, file, l);
-  strncpyz(fileq->nick, from, sizeof fileq->nick);
-  strncpyz(fileq->to, to, sizeof fileq->to);
+  strlcpy(fileq->file, file, l);
+  strlcpy(fileq->nick, from, sizeof fileq->nick);
+  strlcpy(fileq->to, to, sizeof fileq->to);
 }
 
 static void deq_this(fileq_t *this)
@@ -71,7 +71,7 @@ static void deq_this(fileq_t *this)
  */
 static void flush_fileq(char *to)
 {
-  fileq_t *q = fileq;
+  fileq_t *q;
   int fnd = 1;
 
   while (fnd) {

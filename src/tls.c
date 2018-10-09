@@ -252,7 +252,7 @@ char *ssl_getfp(int sock)
     return NULL;
   if (!(p = hex_to_string(md, i)))
     return NULL;
-  strncpyz(fp, p, sizeof fp);
+  strlcpy(fp, p, sizeof fp);
   OPENSSL_free(p);
   return fp;
 }
@@ -425,7 +425,7 @@ static char *ssl_printname(X509_NAME *name)
   X509_NAME_print_ex(bio, name, 0, XN_FLAG_ONELINE & ~XN_FLAG_SPC_EQ);
   len = BIO_get_mem_data(bio, &data) + 1;
   buf = nmalloc(len);
-  strncpyz(buf, data, len);
+  strlcpy(buf, data, len);
   BIO_free(bio);
   return buf;
 }
@@ -446,7 +446,7 @@ static char *ssl_printtime(ASN1_UTCTIME *t)
   ASN1_UTCTIME_print(bio, t);
   len = BIO_get_mem_data(bio, &data) + 1;
   buf = nmalloc(len);
-  strncpyz(buf, data, len);
+  strlcpy(buf, data, len);
   BIO_free(bio);
   return buf;
 }
@@ -466,7 +466,7 @@ static char *ssl_printnum(ASN1_INTEGER *i)
   i2a_ASN1_INTEGER(bio, i);
   len = BIO_get_mem_data(bio, &data) + 1;
   buf = nmalloc(len);
-  strncpyz(buf, data, len);
+  strlcpy(buf, data, len);
   BIO_free(bio);
   return buf;
 }
@@ -665,7 +665,7 @@ void ssl_info(SSL *ssl, int where, int ret)
         /* Errors to be ignored for non-blocking */
         debug1("TLS: awaiting more %s", (err & SSL_ERROR_WANT_READ) ? "reads" : "writes");
       } else {
-        putlog(data->loglevel, "*", "TLS: failed in: %s.",
+        putlog(data->loglevel, "*", "TLS: error in: %s.",
                SSL_state_string_long(ssl));
       }
     }
@@ -739,7 +739,7 @@ int ssl_handshake(int sock, int flags, int verify, int loglevel, char *host,
                        TLS_VERIFYTO | TLS_VERIFYREV);
   data->loglevel = loglevel;
   data->cb = cb;
-  strncpyz(data->host, host ? host : "", sizeof(data->host));
+  strlcpy(data->host, host ? host : "", sizeof(data->host));
   SSL_set_app_data(td->socklist[i].ssl, data);
   SSL_set_info_callback(td->socklist[i].ssl, (void *) ssl_info);
   /* We set this +1 to be able to report extra long chains properly.

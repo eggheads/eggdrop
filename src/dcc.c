@@ -67,6 +67,7 @@ int flood_telnet_thr = 5;       /* Number of telnet connections to be
 int flood_telnet_time = 60;     /* In how many seconds?                       */
 char network[41] = "unknown-net";      /* Name of the IRC network you're on   */
 char bannerfile[121] = "text/banner";  /* File displayed on telnet login      */
+char stealth_prompt[81] = "\n\nNickname.\n"; /* stealth_telnet prompt string  */
 
 static void dcc_telnet_hostresolved(int);
 static void dcc_telnet_got_ident(int, char *);
@@ -140,7 +141,8 @@ static void strip_telnet(int sock, char *buf, int *len)
       } else if (*p == TLN_AYT) {
         /* "Are You There?" */
         /* response is: "Hell, yes!" */
-        safe_write(sock, "\r\nHell, yes!\r\n", 14);
+        static unsigned char sb[] = "\r\n[Hell, yes!]\r\n";
+        safe_write(sock, sb, sizeof sb);
       } else if (*p == TLN_IAC) {
         /* IAC character in data, escaped with another IAC */
         *o++ = *p++;
@@ -236,7 +238,7 @@ static void bot_version(int idx, char *par)
 #ifndef NO_OLD_BOTNET
   }
 #endif
-  strncpyz(dcc[idx].u.bot->version, par, 120);
+  strlcpy(dcc[idx].u.bot->version, par, 120);
   putlog(LOG_BOTS, "*", DCC_LINKED, dcc[idx].nick);
   botnet_send_nlinked(idx, dcc[idx].nick, botnetnick, '!',
                       dcc[idx].u.bot->numver);
@@ -461,7 +463,7 @@ static void out_dcc_bot(int idx, char *buf, void *x)
     if (len && buf[len - 1] == '\n') {
       /* Make a copy as buf could be const */
       fnd = nmalloc(len);
-      strncpyz(fnd, buf, len);
+      strlcpy(fnd, buf, len);
       p = fnd;
     }
 
@@ -608,7 +610,7 @@ static int dcc_bot_check_digest(int idx, char *remote_digest)
 
   MD5_Init(&md5context);
 
-  egg_snprintf(digest_string, 33, "<%x%x@", getpid(),
+  egg_snprintf(digest_string, 33, "<%lx%x@", (long) getpid(),
                (unsigned int) dcc[idx].timeval);
   MD5_Update(&md5context, (unsigned char *) digest_string,
              strlen(digest_string));
@@ -751,7 +753,7 @@ static void dcc_chat_pass(int idx, char *buf, int atr)
       if (dcc[idx].status & STAT_TELNET)
         tputs(dcc[idx].sock, TLN_IAC_C TLN_WONT_C TLN_ECHO_C "\n", 4);
       dcc[idx].user = get_user_by_handle(userlist, dcc[idx].u.chat->away);
-      strncpyz(dcc[idx].nick, dcc[idx].u.chat->away, sizeof dcc[idx].nick);
+      strlcpy(dcc[idx].nick, dcc[idx].u.chat->away, sizeof dcc[idx].nick);
       nfree(dcc[idx].u.chat->away);
       nfree(dcc[idx].u.chat->su_nick);
       dcc[idx].u.chat->away = NULL;
@@ -793,7 +795,7 @@ static void display_dcc_chat_pass(int idx, char *buf)
 
 static int expmem_dcc_general(void *x)
 {
-  register struct chat_info *p = (struct chat_info *) x;
+  struct chat_info *p = (struct chat_info *) x;
   int tot = sizeof(struct chat_info);
 
   if (p->away)
@@ -815,7 +817,7 @@ static int expmem_dcc_general(void *x)
 
 static void kill_dcc_general(int idx, void *x)
 {
-  register struct chat_info *p = (struct chat_info *) x;
+  struct chat_info *p = (struct chat_info *) x;
 
   if (p) {
     if (p->buffer) {
@@ -961,7 +963,7 @@ static void append_line(int idx, char *line)
 
 static void out_dcc_general(int idx, char *buf, void *x)
 {
-  register struct chat_info *p = (struct chat_info *) x;
+  struct chat_info *p = (struct chat_info *) x;
   char *y = buf;
 
   strip_mirc_codes(p->strip_flags, buf);
@@ -1037,7 +1039,7 @@ static void dcc_chat(int idx, char *buf, int i)
   if (buf[0]) {
     const char *filt = check_tcl_filt(idx, buf);
     if (filt != buf) {
-      strncpyz(filtbuf, filt, sizeof(filtbuf));
+      strlcpy(filtbuf, filt, sizeof(filtbuf));
       buf = filtbuf;
     }
   }
@@ -1103,7 +1105,7 @@ static void dcc_chat(int idx, char *buf, int i)
           if (dcc[idx].u.chat->su_nick) {
             dcc[idx].user = get_user_by_handle(userlist,
                                                dcc[idx].u.chat->su_nick);
-            strncpyz(dcc[idx].nick, dcc[idx].u.chat->su_nick, sizeof dcc[idx].nick);
+            strlcpy(dcc[idx].nick, dcc[idx].u.chat->su_nick, sizeof dcc[idx].nick);
             dcc[idx].type = &DCC_CHAT;
             dprintf(idx, "Returning to real nick %s!\n",
                     dcc[idx].u.chat->su_nick);
@@ -1221,7 +1223,7 @@ static int detect_telnet_flood(char *floodhost)
   if (!flood_telnet_thr || (glob_friend(fr) && !par_telnet_flood))
     return 0;                   /* No flood protection */
   if (egg_strcasecmp(lasttelnethost, floodhost)) {      /* New... */
-    strncpyz(lasttelnethost, floodhost, sizeof lasttelnethost);
+    strlcpy(lasttelnethost, floodhost, sizeof lasttelnethost);
     lasttelnettime = now;
     lasttelnets = 0;
     return 0;
@@ -1319,7 +1321,7 @@ static void dcc_telnet_hostresolved(int i)
   int j = 0, sock;
   char s[UHOSTLEN + 20], *userhost;
 
-  strncpyz(dcc[i].host, dcc[i].u.dns->host, UHOSTLEN);
+  strlcpy(dcc[i].host, dcc[i].u.dns->host, UHOSTLEN);
 
   for (idx = 0; idx < dcc_total; idx++)
     if ((dcc[idx].type == &DCC_TELNET) &&
@@ -1372,7 +1374,7 @@ static void dcc_telnet_hostresolved(int i)
     changeover_dcc(i, &DCC_SOCKET, 0);
     dcc[i].u.other = NULL;
     strcpy(dcc[i].nick, "*");
-    strncpyz(dcc[i].host, userhost, UHOSTLEN);
+    strlcpy(dcc[i].host, userhost, UHOSTLEN);
     check_tcl_listen(dcc[idx].host, dcc[i].sock);
     return;
   }
@@ -1490,7 +1492,7 @@ static void display_dupwait(int idx, char *buf)
 
 static int expmem_dupwait(void *x)
 {
-  register struct dupwait_info *p = (struct dupwait_info *) x;
+  struct dupwait_info *p = (struct dupwait_info *) x;
   int tot = sizeof(struct dupwait_info);
 
   if (p && p->chat && DCC_CHAT.expmem)
@@ -1500,7 +1502,7 @@ static int expmem_dupwait(void *x)
 
 static void kill_dupwait(int idx, void *x)
 {
-  register struct dupwait_info *p = (struct dupwait_info *) x;
+  struct dupwait_info *p = (struct dupwait_info *) x;
 
   if (p) {
     if (p->chat && DCC_CHAT.kill)
@@ -1523,12 +1525,12 @@ struct dcc_table DCC_DUPWAIT = {
 };
 
 /* This function is called if a bot gets removed from the list. It checks
- * wether we have a pending duplicate connection for that bot and continues
+ * whether we have a pending duplicate connection for that bot and continues
  * with the login in that case.
  */
 void dupwait_notify(char *who)
 {
-  register int idx;
+  int idx;
 
   Assert(who);
   for (idx = 0; idx < dcc_total; idx++)
@@ -1629,7 +1631,7 @@ static void dcc_telnet_id(int idx, char *buf, int atr)
     return;
   }
   correct_handle(buf);
-  strncpyz(dcc[idx].nick, buf, sizeof dcc[idx].nick);
+  strlcpy(dcc[idx].nick, buf, sizeof dcc[idx].nick);
   if (glob_bot(fr)) {
     if (!egg_strcasecmp(botnetnick, dcc[idx].nick)) {
       /* change here temp to use bot output */
@@ -2134,7 +2136,7 @@ static void display_dcc_script(int idx, char *buf)
 
 static int expmem_dcc_script(void *x)
 {
-  register struct script_info *p = (struct script_info *) x;
+  struct script_info *p = (struct script_info *) x;
   int tot = sizeof(struct script_info);
 
   if (p->type && p->u.other)
@@ -2144,7 +2146,7 @@ static int expmem_dcc_script(void *x)
 
 static void kill_dcc_script(int idx, void *x)
 {
-  register struct script_info *p = (struct script_info *) x;
+  struct script_info *p = (struct script_info *) x;
 
   if (p->type && p->u.other)
     p->type->kill(idx, p->u.other);
@@ -2153,7 +2155,7 @@ static void kill_dcc_script(int idx, void *x)
 
 static void out_dcc_script(int idx, char *buf, void *x)
 {
-  register struct script_info *p = (struct script_info *) x;
+  struct script_info *p = (struct script_info *) x;
 
   if (p && p->type && p->u.other)
     p->type->output(idx, buf, p->u.other);
@@ -2340,7 +2342,7 @@ static void dcc_telnet_got_ident(int i, char *host)
     lostdcc(i);
     return;
   }
-  strncpyz(dcc[i].host, host, UHOSTLEN);
+  strlcpy(dcc[i].host, host, UHOSTLEN);
   egg_snprintf(x, sizeof x, "-telnet!%s", dcc[i].host);
   if (protect_telnet && !make_userfile) {
     struct userrec *u;
@@ -2390,7 +2392,7 @@ static void dcc_telnet_got_ident(int i, char *host)
   /* Note: we don't really care about telnet status here. We use the
    * STATUS option as a hopefully harmless way to detect if the other
    * side is a telnet client or not. */
-  dprintf(i, TLN_IAC_C TLN_WILL_C TLN_STATUS_C "\n");
+  dprintf(i, TLN_IAC_C TLN_WILL_C TLN_STATUS_C);
 
   /* Copy acceptable-nick/host mask */
   dcc[i].status = STAT_TELNET | STAT_ECHO;
@@ -2399,17 +2401,17 @@ static void dcc_telnet_got_ident(int i, char *host)
   if (!strcmp(dcc[idx].nick, "(users)"))
     dcc[i].status |= STAT_USRONLY;
   /* Copy acceptable-nick/host mask */
-  strncpyz(dcc[i].nick, dcc[idx].host, HANDLEN);
+  strlcpy(dcc[i].nick, dcc[idx].host, HANDLEN);
   dcc[i].timeval = now;
   strcpy(dcc[i].u.chat->con_chan, chanset ? chanset->dname : "*");
   /* Displays a customizable banner. */
   if (use_telnet_banner)
     show_banner(i);
-  /* This is so we dont tell someone doing a portscan anything
+  /* This is so we don't tell someone doing a portscan anything
    * about ourselves. <cybah>
    */
   if (stealth_telnets)
-    sub_lang(i, MISC_BANNER_STEALTH);
+    dprintf(i, stealth_prompt);
   else {
     dprintf(i, "\n\n");
     sub_lang(i, MISC_BANNER);

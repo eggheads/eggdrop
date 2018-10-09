@@ -53,7 +53,7 @@ static memberlist *newmember(struct chanset_t *chan)
 }
 
 /* Remove channel members for which no WHO reply was received */
-static inline void sync_members(struct chanset_t *chan)
+static void sync_members(struct chanset_t *chan)
 {
   memberlist *m, *next, *prev;
 
@@ -279,7 +279,7 @@ static int detect_chan_flood(char *floodnick, char *floodhost, char *from,
     if (!rfc_casecmp(chan->deopd, victim))
       return 0;
     else
-      strncpyz(chan->deopd, victim, sizeof chan->deopd);
+      strlcpy(chan->deopd, victim, sizeof chan->deopd);
   }
   chan->floodnum[which]++;
   if (chan->floodnum[which] >= thr) {   /* FLOOD */
@@ -429,7 +429,7 @@ static void kick_all(struct chanset_t *chan, char *hostmask, char *comment,
  */
 static void refresh_ban_kick(struct chanset_t *chan, char *user, char *nick)
 {
-  register maskrec *b;
+  maskrec *b;
   memberlist *m;
   int cycle;
 
@@ -1040,7 +1040,7 @@ static int got352or4(struct chanset_t *chan, char *user, char *host,
     m->flags = 0;               /* No flags for now */
     m->last = now;              /* Last time I saw him */
   }
-  strncpyz(m->nick, nick, sizeof m->nick);        /* Store the nick in list */
+  strlcpy(m->nick, nick, sizeof m->nick);        /* Store the nick in list */
   /* Store the userhost */
   simple_sprintf(m->userhost, "%s@%s", user, host);
   simple_sprintf(userhost, "%s!%s", nick, m->userhost);
@@ -1079,7 +1079,7 @@ static int got352(char *from, char *msg)
   char *nick, *user, *host, *chname, *flags;
   struct chanset_t *chan;
 
-  newsplit(&msg);               /* Skip my nick - effeciently */
+  newsplit(&msg);               /* Skip my nick - efficiently */
   chname = newsplit(&msg);      /* Grab the channel */
   chan = findchan(chname);      /* See if I'm on channel */
   if (chan) {                   /* Am I? */
@@ -1101,7 +1101,7 @@ static int got354(char *from, char *msg)
   struct chanset_t *chan;
 
   if (use_354) {
-    newsplit(&msg);             /* Skip my nick - effeciently */
+    newsplit(&msg);             /* Skip my nick - efficiently */
     if (msg[0] && (strchr(CHANMETA, msg[0]) != NULL)) {
       chname = newsplit(&msg);  /* Grab the channel */
       chan = findchan(chname);  /* See if I'm on channel */
@@ -1679,7 +1679,7 @@ static int gotjoin(char *from, char *chname)
   if (!chan && chname[0] == '!') {
     /* As this is a !channel, we need to search for it by display (short)
      * name now. This will happen when we initially join the channel, as we
-     * dont know the unique channel name that the server has made up. <cybah>
+     * don't know the unique channel name that the server has made up. <cybah>
      */
     int l_chname = strlen(chname);
 
@@ -1711,7 +1711,7 @@ static int gotjoin(char *from, char *chname)
     }
   } else if (!chan) {
     /* As this is not a !chan, we need to search for it by display name now.
-     * Unlike !chan's, we dont need to remove the unique part.
+     * Unlike !chan's, we don't need to remove the unique part.
      */
     chan = findchan_by_dname(chname);
   }
@@ -1787,8 +1787,8 @@ static int gotjoin(char *from, char *chname)
         m->flags = 0;
         m->last = now;
         m->delay = 0L;
-        strncpyz(m->nick, nick, sizeof m->nick);
-        strncpyz(m->userhost, uhost, sizeof m->userhost);
+        strlcpy(m->nick, nick, sizeof m->nick);
+        strlcpy(m->userhost, uhost, sizeof m->userhost);
         m->user = u;
         m->flags |= STOPWHO;
 
@@ -2024,15 +2024,14 @@ static int gotpart(char *from, char *msg)
  */
 static int gotkick(char *from, char *origmsg)
 {
-  char *nick, *whodid, *chname, s1[UHOSTLEN], buf[UHOSTLEN], *uhost = buf;
+  char *nick, *whodid, *chname, s1[UHOSTLEN], buf[UHOSTLEN], *uhost;
   char buf2[511], *msg, *key;
   memberlist *m;
   struct chanset_t *chan;
   struct userrec *u;
   struct flag_record fr = { FR_GLOBAL | FR_CHAN, 0, 0, 0, 0, 0 };
 
-  strncpy(buf2, origmsg, 510);
-  buf2[510] = 0;
+  strncpyz(buf2, origmsg, sizeof buf2);
   msg = buf2;
   chname = newsplit(&msg);
   chan = findchan(chname);
@@ -2051,12 +2050,13 @@ static int gotkick(char *from, char *origmsg)
       dprintf(DP_SERVER, "JOIN %s\n",
               chan->name[0] ? chan->name : chan->dname);
     clear_channel(chan, CHAN_RESETALL);
-    return 0;                   /* rejoin if kicked before getting needed info <Wcc[08/08/02]> */
+    return 0; /* rejoin if kicked before getting needed info <Wcc[08/08/02]> */
   }
   if (channel_active(chan)) {
     fixcolon(msg);
     u = get_user_by_host(from);
-    strncpyz(uhost, from, sizeof uhost);
+    strlcpy(buf, from, sizeof buf);
+    uhost = buf;
     whodid = splitnick(&uhost);
     detect_chan_flood(whodid, uhost, from, chan, FLOOD_KICK, nick);
 
@@ -2148,7 +2148,7 @@ static int gotnick(char *from, char *msg)
        */
       /* Compose a nick!user@host for the new nick */
       sprintf(s1, "%s!%s", msg, uhost);
-      strncpyz(m->nick, msg, sizeof m->nick);
+      strlcpy(m->nick, msg, sizeof m->nick);
       detect_chan_flood(msg, uhost, from, chan, FLOOD_NICK, NULL);
 
       if (!findchan_by_dname(chname)) {
@@ -2313,7 +2313,7 @@ static int gotmsg(char *from, char *msg)
     if (*p == 1) {
       *p = 0;
       ctcp = buf2;
-      strncpyz(buf2, p1, sizeof buf2);
+      strlcpy(buf2, p1, sizeof buf2);
       strcpy(p1 - 1, p + 1);
       detect_chan_flood(nick, uhost, from, chan, strncmp(ctcp, "ACTION ", 7) ?
                         FLOOD_CTCP : FLOOD_PRIVMSG, NULL);

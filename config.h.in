@@ -99,9 +99,6 @@
 /* Define to 1 if you have the `fsync' function. */
 #undef HAVE_FSYNC
 
-/* Define to 1 if you have the `getdtablesize' function. */
-#undef HAVE_GETDTABLESIZE
-
 /* Define to 1 if you have the `gethostbyname2' function. */
 #undef HAVE_GETHOSTBYNAME2
 
@@ -147,15 +144,6 @@
 /* Define to 1 if you have the `dld' library (-ldld). */
 #undef HAVE_LIBDLD
 
-/* Define to 1 if you have the `dns' library (-ldns). */
-#undef HAVE_LIBDNS
-
-/* Define to 1 if you have the `nsl' library (-lnsl). */
-#undef HAVE_LIBNSL
-
-/* Define to 1 if you have the `socket' library (-lsocket). */
-#undef HAVE_LIBSOCKET
-
 /* Define to 1 if you have the `ssl' library (-lssl). */
 #undef HAVE_LIBSSL
 
@@ -197,9 +185,6 @@
 
 /* Define to 1 if you have the <memory.h> header file. */
 #undef HAVE_MEMORY_H
-
-/* Define to 1 if you have the `memset' function. */
-#undef HAVE_MEMSET
 
 /* Define to 1 if you have a working `mmap' system call. */
 #undef HAVE_MMAP
@@ -386,6 +371,9 @@
 
 /* Define if modules should be loaded using the shl_*() functions. */
 #undef MOD_USE_SHL
+
+/* Define if running under NetBSD. */
+#undef NETBSD_HACKS
 
 /* Define to the address where bug reports for this package should be sent. */
 #undef PACKAGE_BUGREPORT

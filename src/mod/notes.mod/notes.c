@@ -227,7 +227,7 @@ static int tcl_storenote STDVAR
     int ok = 1;
 
     /* User is valid & has a valid forwarding address */
-     strncpyz(fwd, f1, sizeof fwd); /* Only 40 bytes are stored in the userfile */
+     strlcpy(fwd, f1, sizeof fwd); /* Only 40 bytes are stored in the userfile */
      p = strchr(fwd, '@');
     if (p && !egg_strcasecmp(p + 1, botnetnick)) {
       *p = 0;
@@ -830,10 +830,10 @@ static void notes_hourly()
 {
   expire_notes();
   if (notify_users) {
-    register struct chanset_t *chan;
-    register memberlist *m;
+    struct chanset_t *chan;
+    memberlist *m;
     int k;
-    register int l;
+    int l;
     char s1[NICKMAX+UHOSTLEN+1];
     struct userrec *u;
 

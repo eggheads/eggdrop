@@ -535,7 +535,7 @@ static void disp_dcc_files_pass(int idx, char *buf)
 
 static void kill_dcc_files(int idx, void *x)
 {
-  register struct file_info *f = (struct file_info *) x;
+  struct file_info *f = (struct file_info *) x;
 
   if (f->chat)
     DCC_CHAT.kill(idx, f->chat);
@@ -553,7 +553,7 @@ static void eof_dcc_files(int idx)
 
 static int expmem_dcc_files(void *x)
 {
-  register struct file_info *p = (struct file_info *) x;
+  struct file_info *p = (struct file_info *) x;
   int tot = sizeof(struct file_info);
 
   if (p->chat)
@@ -563,7 +563,7 @@ static int expmem_dcc_files(void *x)
 
 static void out_dcc_files(int idx, char *buf, void *x)
 {
-  register struct file_info *p = (struct file_info *) x;
+  struct file_info *p = (struct file_info *) x;
 
   if (p->chat)
     DCC_CHAT.output(idx, buf, p->chat);
@@ -685,7 +685,7 @@ static void filesys_dcc_send(char *nick, char *from, struct userrec *u,
       dcc[i].ssl = ssl;
 #endif
       dcc[i].user = u;
-      strncpyz(dcc[i].nick, nick, sizeof dcc[i].nick);
+      strlcpy(dcc[i].nick, nick, sizeof dcc[i].nick);
       strcpy(dcc[i].host, from);
       dcc[i].u.dns->cbuf = get_data_ptr(strlen(param) + 1);
       strcpy(dcc[i].u.dns->cbuf, param);
@@ -724,7 +724,7 @@ static char *mktempfile(char *filename)
     fn[l] = 0;
   }
   tempname = nmalloc(l + MKTEMPFILE_TOT + 1);
-  sprintf(tempname, "%u-%s-%s", getpid(), rands, fn);
+  sprintf(tempname, "%li-%s-%s", (long) getpid(), rands, fn);
   if (fn != filename)
     my_free(fn);
   return tempname;
@@ -841,7 +841,7 @@ static int filesys_DCC_CHAT(char *nick, char *from, char *handle,
 #endif
   if (egg_strncasecmp(text, "CHAT ", 5) || !u)
     return 0;
-  strncpyz(buf, text + 5, sizeof buf);
+  strlcpy(buf, text + 5, sizeof buf);
   get_user_flagrec(u, &fr, 0);
   param = newsplit(&msg);
   if (dcc_total == max_dcc && increase_socks_max()) {
@@ -1018,7 +1018,7 @@ char *filesys_start(Function *global_funcs)
   my_memcpy(&USERENTRY_DCCDIR, &USERENTRY_INFO,
             sizeof(struct user_entry_type) - sizeof(char *));
 
-  USERENTRY_DCCDIR.got_share = 0;       /* We dont want it shared tho */
+  USERENTRY_DCCDIR.got_share = 0;       /* We don't want it shared tho */
   add_entry_type(&USERENTRY_DCCDIR);
   DCC_FILES_PASS.timeout_val = &password_timeout;
   add_lang_section("filesys");

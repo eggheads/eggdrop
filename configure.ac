@@ -109,7 +109,7 @@ EGG_CHECK_SOCKLEN_T
 AX_CREATE_STDINT_H([eggint.h])
 
 # Checks for functions and their arguments.
-AC_CHECK_FUNCS([clock dprintf fsync getdtablesize getrandom getrusage inet_aton inet_ntop isascii mbrlen memcpy memset random rand lrand48 rename setpgid sigaction sigemptyset snprintf strcasecmp strncasecmp uname vsnprintf])
+AC_CHECK_FUNCS([clock dprintf fsync getrandom getrusage inet_aton inet_ntop isascii mbrlen memcpy random rand lrand48 rename setpgid sigaction sigemptyset snprintf strcasecmp strlcpy strncasecmp uname vsnprintf])
 AC_FUNC_SELECT_ARGTYPES
 EGG_FUNC_VPRINTF
 AC_FUNC_STRFTIME
@@ -119,7 +119,7 @@ AC_FUNC_MMAP
 # Tcl version to recommend if no Tcl is found, and the site where it can be
 # found for download.
 tclrecommendver="8.6.X"
-tclrecommendsite="ftp://tcl.activestate.com/pub/tcl/tcl8_6/"
+tclrecommendsite="ftp://ftp.tcl.tk/pub/tcl/tcl8_6/"
 
 # Tcl header filenames.
 tclheadernames="tcl.h"

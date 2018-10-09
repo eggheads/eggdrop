@@ -183,9 +183,9 @@ int egg_strcatn(char *dst, const char *src, size_t max)
   return tmpmax - max;
 }
 
-int my_strcpy(register char *a, register char *b)
+int my_strcpy(char *a, char *b)
 {
-  register char *c = b;
+  char *c = b;
 
   while (*b)
     *a++ = *b++;
@@ -237,7 +237,7 @@ void splitcn(char *first, char *rest, char divider, size_t max)
   }
   *p = 0;
   if (first != NULL)
-    strncpyz(first, rest, max);
+    strlcpy(first, rest, max);
   if (first != rest)
     /*    In most circumstances, strcpy with src and dst being the same buffer
      *  can produce undefined results. We're safe here, as the src is
@@ -272,7 +272,7 @@ void remove_crlf(char **line)
 
 char *newsplit(char **rest)
 {
-  register char *o, *r;
+  char *o, *r;
 
   if (!rest)
     return "";
@@ -320,7 +320,7 @@ char *newsplit(char **rest)
 void maskaddr(const char *s, char *nw, int type)
 {
   int d = type % 5, num = 1;
-  register char *p, *u = 0, *h = 0, *ss;
+  char *p, *u = 0, *h = 0, *ss;
 
   /* Look for user and host.. */
   ss = (char *)s;
@@ -532,7 +532,6 @@ void putlog EGG_VARARGS_DEF(int, arg1)
   format = va_arg(va, char *);
 
   /* Create the timestamp */
-  t = localtime(&now2);
   if (shtime) {
     egg_strftime(stamp, sizeof(stamp) - 2, log_ts, t);
     strcat(stamp, " ");
@@ -612,7 +611,7 @@ void putlog EGG_VARARGS_DEF(int, arg1)
                */
             }
             fputs(out, logs[i].f);
-            strncpyz(logs[i].szlast, out + tsl, LOGLINEMAX);
+            strlcpy(logs[i].szlast, out + tsl, LOGLINEMAX);
           }
         }
       }
@@ -631,7 +630,7 @@ void putlog EGG_VARARGS_DEF(int, arg1)
   else if ((type & LOG_MISC) && use_stderr) {
     if (shtime)
       out += tsl;
-    dprintf(DP_STDERR, "%s", s);
+    dprintf(DP_STDERR, "%s", out);
   }
   va_end(va);
 }
@@ -649,7 +648,7 @@ void logsuffix_change(char *s)
     return;
 
   debug0("Logfile suffix changed. Closing all open logs.");
-  strncpyz(logfile_suffix, s, sizeof logfile_suffix);
+  strlcpy(logfile_suffix, s, sizeof logfile_suffix);
   while (s2[0]) {
     if (s2[0] == ' ')
       s2[0] = '_';
@@ -827,7 +826,7 @@ void help_subst(char *s, char *nick, struct flag_record *flags,
     help_flags = isdcc;
     return;
   }
-  strncpyz(xx, s, sizeof xx);
+  strlcpy(xx, s, sizeof xx);
   readidx = xx;
   writeidx = s;
   current = strchr(readidx, '%');
@@ -1057,7 +1056,7 @@ void help_subst(char *s, char *nick, struct flag_record *flags,
     }
   }
   if (cols) {
-    strncpyz(xx, s, sizeof xx);
+    strlcpy(xx, s, sizeof xx);
     s[0] = 0;
     subst_addcol(s, xx);
   }
@@ -1343,7 +1342,7 @@ void sub_lang(int idx, char *text)
   get_user_flagrec(dcc[idx].user, &fr, dcc[idx].u.chat->con_chan);
   help_subst(NULL, NULL, 0,
              (dcc[idx].status & STAT_TELNET) ? 0 : HELP_IRC, NULL);
-  strncpyz(s, text, sizeof s);
+  strlcpy(s, text, sizeof s);
   if (s[strlen(s) - 1] == '\n')
     s[strlen(s) - 1] = 0;
   if (!s[0])
@@ -1457,7 +1456,7 @@ void make_rand_str(char *s, int len)
  */
 int oatoi(const char *octal)
 {
-  register int i;
+  int i;
 
   if (!*octal)
     return -1;
@@ -1523,10 +1522,10 @@ char *str_escape(const char *str, const char div, const char mask)
  * NOTE: If you look carefully, you'll notice that strchr_unescape()
  *       behaves differently than strchr().
  */
-char *strchr_unescape(char *str, const char div, register const char esc_char)
+char *strchr_unescape(char *str, const char div, const char esc_char)
 {
   char buf[3];
-  register char *s, *p;
+  char *s, *p;
 
   buf[2] = 0;
   for (s = p = str; *s; s++, p++) {
@@ -1561,7 +1560,7 @@ int str_isdigit(const char *str)
 /* As strchr_unescape(), but converts the complete string, without
  * searching for a specific delimiter character.
  */
-void str_unescape(char *str, register const char esc_char)
+void str_unescape(char *str, const char esc_char)
 {
   (void) strchr_unescape(str, 0, esc_char);
 }

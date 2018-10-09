@@ -787,7 +787,7 @@ static void bot_trace(int idx, char *par)
  */
 static void bot_traced(int idx, char *par)
 {
-  char *to, *p;
+  char *to, *p, *c;
   int i, sock;
 
   to = newsplit(&par);
@@ -823,7 +823,7 @@ static void bot_traced(int idx, char *par)
           int j = 0;
 
           {
-            register char *c = p;
+            c = p;
 
             for (; *c != '\0'; c++)
               if (*c == ':')
@@ -952,7 +952,7 @@ static void bot_thisbot(int idx, char *par)
   noshare = 1;
   change_handle(dcc[idx].user, par);
   noshare = 0;
-  strncpyz(dcc[idx].nick, par, sizeof dcc[idx].nick);
+  strlcpy(dcc[idx].nick, par, sizeof dcc[idx].nick);
 }
 
 static void bot_handshake(int idx, char *par)
@@ -1302,6 +1302,7 @@ static void bot_part(int idx, char *par)
   struct userrec *u;
   int sock, partyidx;
   int silent = 0;
+  int chan;
 
   if (bot_flags(dcc[idx].user) & BOT_ISOLATE)
     return;
@@ -1330,7 +1331,7 @@ static void bot_part(int idx, char *par)
     if (party[partyidx].chan >= 0)
       check_tcl_chpt(bot, nick, sock, party[partyidx].chan);
     if ((b_numver(idx) >= NEAT_BOTNET) && !silent) {
-      register int chan = party[partyidx].chan;
+      chan = party[partyidx].chan;
 
       if (par[0])
         chanout_but(-1, chan, "*** (%s) %s %s %s (%s).\n", bot, nick,

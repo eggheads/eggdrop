@@ -47,12 +47,12 @@ devent_t *dns_events = NULL;
  *   DCC functions
  */
 
-void dcc_dnswait(int idx, char *buf, int len)
+static void dcc_dnswait(int idx, char *buf, int len)
 {
   /* Ignore anything now. */
 }
 
-void eof_dcc_dnswait(int idx)
+static void eof_dcc_dnswait(int idx)
 {
   putlog(LOG_MISC, "*", "Lost connection while resolving hostname [%s/%d]",
          iptostr(&dcc[idx].sockname.addr.sa), dcc[idx].port);
@@ -62,12 +62,12 @@ void eof_dcc_dnswait(int idx)
 
 static void display_dcc_dnswait(int idx, char *buf)
 {
-  sprintf(buf, "dns   waited %lis", (long) now - dcc[idx].timeval);
+  sprintf(buf, "dns   waited %lis", (long) (now - dcc[idx].timeval));
 }
 
 static int expmem_dcc_dnswait(void *x)
 {
-  register struct dns_info *p = (struct dns_info *) x;
+  struct dns_info *p = (struct dns_info *) x;
   int size = 0;
 
   if (p) {
@@ -82,7 +82,7 @@ static int expmem_dcc_dnswait(void *x)
 
 static void kill_dcc_dnswait(int idx, void *x)
 {
-  register struct dns_info *p = (struct dns_info *) x;
+  struct dns_info *p = (struct dns_info *) x;
 
   if (p) {
     if (p->host)
@@ -491,7 +491,7 @@ void block_dns_hostbyip(sockname_t *addr)
   }
 #endif
   if (hp)
-    strncpyz(s, hp->h_name, sizeof s);
+    strlcpy(s, hp->h_name, sizeof s);
   call_hostbyip(addr, s, hp ? 1 : 0);
 }
 

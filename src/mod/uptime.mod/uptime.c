@@ -143,15 +143,15 @@ int init_uptime(void)
   uptimecount = 0;
   uptimeip = -1;
 
-  strncpyz(x, ver, sizeof x);
+  strlcpy(x, ver, sizeof x);
   newsplit(&z);
-  strncpyz(uptime_version, z, sizeof uptime_version);
+  strlcpy(uptime_version, z, sizeof uptime_version);
 
   if ((uptimesock = socket(AF_INET, SOCK_DGRAM, 0)) < 0) {
     putlog(LOG_DEBUG, "*", "init_uptime socket returned < 0 %d", uptimesock);
     return ((uptimesock = -1));
   }
-  egg_memset(&sai, 0, sizeof(sai));
+  egg_bzero(&sai, sizeof(sai));
   sai.sin_addr.s_addr = INADDR_ANY;
   sai.sin_family = AF_INET;
   if (bind(uptimesock, (struct sockaddr *) &sai, sizeof(sai)) < 0) {
@@ -195,7 +195,7 @@ int send_uptime(void)
 
     if (server_online) {
       servidx = findanyidx(serv);
-      strncpyz(servhost, dcc[servidx].host, sizeof servhost);
+      strlcpy(servhost, dcc[servidx].host, sizeof servhost);
       upPack.ontime = htonl(server_online);
     }
   }
