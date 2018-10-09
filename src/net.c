@@ -460,7 +460,7 @@ static int proxy_connect(int sock, sockname_t *addr)
 #endif
   if (firewall[0] == '!') {
     proxy = PROXY_SUN;
-    strncpyz(host, &firewall[1], sizeof host);
+    strlcpy(host, &firewall[1], sizeof host);
   } else {
     proxy = PROXY_SOCKS;
     strcpy(host, firewall);
@@ -1462,7 +1462,7 @@ int hostsanitycheck_dcc(char *nick, char *from, sockname_t *ip, char *dnsname,
    * where the routines providing our data currently lose interest. I'm
    * using the n-variant in case someone changes that...
    */
-  strncpyz(hostn, extracthostname(from), sizeof hostn);
+  strlcpy(hostn, extracthostname(from), sizeof hostn);
   if (!egg_strcasecmp(hostn, dnsname)) {
     putlog(LOG_DEBUG, "*", "DNS information for submitted IP checks out.");
     return 1;
@@ -1571,8 +1571,8 @@ char *traced_myiphostname(ClientData cd, Tcl_Interp *irp, EGG_CONST char *name1,
   }
 
   value = Tcl_GetVar2(irp, name1, name2, TCL_GLOBAL_ONLY);
-  strncpyz(vhost, value, sizeof vhost);
-  strncpyz(listen_ip, value, sizeof listen_ip);
+  strlcpy(vhost, value, sizeof vhost);
+  strlcpy(listen_ip, value, sizeof listen_ip);
   putlog(LOG_MISC, "*", "WARNING: You are using the DEPRECATED variable '%s' in your config file.\n", name1);
   putlog(LOG_MISC, "*", "    To prevent future incompatibility, please use the vhost4/listen-addr variables instead.\n");
   putlog(LOG_MISC, "*", "    More information on this subject can be found in the eggdrop/doc/IPV6 file, or\n");

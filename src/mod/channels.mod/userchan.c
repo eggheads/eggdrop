@@ -239,7 +239,7 @@ static int u_delban(struct chanset_t *c, char *who, int doit)
     j--;
     for (; (*u) && j; u = &((*u)->next), j--);
     if (*u) {
-      strncpyz(temp, (*u)->mask, sizeof temp);
+      strlcpy(temp, (*u)->mask, sizeof temp);
       i = 1;
     } else
       return -j - 1;
@@ -247,7 +247,7 @@ static int u_delban(struct chanset_t *c, char *who, int doit)
     /* Find matching host, if there is one */
     for (; *u && !i; u = &((*u)->next))
       if (!rfc_casecmp((*u)->mask, who)) {
-        strncpyz(temp, who, sizeof temp);
+        strlcpy(temp, who, sizeof temp);
         i = 1;
         break;
       }
@@ -294,7 +294,7 @@ static int u_delexempt(struct chanset_t *c, char *who, int doit)
     j--;
     for (; (*u) && j; u = &((*u)->next), j--);
     if (*u) {
-      strncpyz(temp, (*u)->mask, sizeof temp);
+      strlcpy(temp, (*u)->mask, sizeof temp);
       i = 1;
     } else
       return -j - 1;
@@ -302,7 +302,7 @@ static int u_delexempt(struct chanset_t *c, char *who, int doit)
     /* Find matching host, if there is one */
     for (; *u && !i; u = &((*u)->next))
       if (!rfc_casecmp((*u)->mask, who)) {
-        strncpyz(temp, who, sizeof temp);
+        strlcpy(temp, who, sizeof temp);
         i = 1;
         break;
       }
@@ -350,7 +350,7 @@ static int u_delinvite(struct chanset_t *c, char *who, int doit)
     j--;
     for (; (*u) && j; u = &((*u)->next), j--);
     if (*u) {
-      strncpyz(temp, (*u)->mask, sizeof temp);
+      strlcpy(temp, (*u)->mask, sizeof temp);
       i = 1;
     } else
       return -j - 1;
@@ -358,7 +358,7 @@ static int u_delinvite(struct chanset_t *c, char *who, int doit)
     /* Find matching host, if there is one */
     for (; *u && !i; u = &((*u)->next))
       if (!rfc_casecmp((*u)->mask, who)) {
-        strncpyz(temp, who, sizeof temp);
+        strlcpy(temp, who, sizeof temp);
         i = 1;
         break;
       }
@@ -410,7 +410,7 @@ void fix_broken_mask(char *newmask, const char *oldmask, size_t len)
     else if (strbang == NULL)
       egg_snprintf(newmask, len, "%.*s!*%s", (int)(strat - oldmask), oldmask, strat);
     else
-      strncpyz(newmask, oldmask, len);
+      strlcpy(newmask, oldmask, len);
   }
 }
 
@@ -1239,7 +1239,7 @@ static int expired_mask(struct chanset_t *chan, char *who)
   if (force_expire)
     return 1;
 
-  strncpyz(buf, who, sizeof buf);
+  strlcpy(buf, who, sizeof buf);
   sfrom = buf;
   snick = splitnick(&sfrom);
 

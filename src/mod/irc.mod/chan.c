@@ -279,7 +279,7 @@ static int detect_chan_flood(char *floodnick, char *floodhost, char *from,
     if (!rfc_casecmp(chan->deopd, victim))
       return 0;
     else
-      strncpyz(chan->deopd, victim, sizeof chan->deopd);
+      strlcpy(chan->deopd, victim, sizeof chan->deopd);
   }
   chan->floodnum[which]++;
   if (chan->floodnum[which] >= thr) {   /* FLOOD */
@@ -1040,7 +1040,7 @@ static int got352or4(struct chanset_t *chan, char *user, char *host,
     m->flags = 0;               /* No flags for now */
     m->last = now;              /* Last time I saw him */
   }
-  strncpyz(m->nick, nick, sizeof m->nick);        /* Store the nick in list */
+  strlcpy(m->nick, nick, sizeof m->nick);        /* Store the nick in list */
   /* Store the userhost */
   simple_sprintf(m->userhost, "%s@%s", user, host);
   simple_sprintf(userhost, "%s!%s", nick, m->userhost);
@@ -1788,8 +1788,8 @@ static int gotjoin(char *from, char *chname)
         m->flags = 0;
         m->last = now;
         m->delay = 0L;
-        strncpyz(m->nick, nick, sizeof m->nick);
-        strncpyz(m->userhost, uhost, sizeof m->userhost);
+        strlcpy(m->nick, nick, sizeof m->nick);
+        strlcpy(m->userhost, uhost, sizeof m->userhost);
         m->user = u;
         m->flags |= STOPWHO;
 
@@ -2057,7 +2057,7 @@ static int gotkick(char *from, char *origmsg)
   if (channel_active(chan)) {
     fixcolon(msg);
     u = get_user_by_host(from);
-    strncpyz(buf, from, sizeof buf);
+    strlcpy(buf, from, sizeof buf);
     uhost = buf;
     whodid = splitnick(&uhost);
     detect_chan_flood(whodid, uhost, from, chan, FLOOD_KICK, nick);
@@ -2150,7 +2150,7 @@ static int gotnick(char *from, char *msg)
        */
       /* Compose a nick!user@host for the new nick */
       sprintf(s1, "%s!%s", msg, uhost);
-      strncpyz(m->nick, msg, sizeof m->nick);
+      strlcpy(m->nick, msg, sizeof m->nick);
       detect_chan_flood(msg, uhost, from, chan, FLOOD_NICK, NULL);
 
       if (!findchan_by_dname(chname)) {
@@ -2315,7 +2315,7 @@ static int gotmsg(char *from, char *msg)
     if (*p == 1) {
       *p = 0;
       ctcp = buf2;
-      strncpyz(buf2, p1, sizeof buf2);
+      strlcpy(buf2, p1, sizeof buf2);
       strcpy(p1 - 1, p + 1);
       detect_chan_flood(nick, uhost, from, chan, strncmp(ctcp, "ACTION ", 7) ?
                         FLOOD_CTCP : FLOOD_PRIVMSG, NULL);
