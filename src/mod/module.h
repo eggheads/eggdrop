@@ -24,6 +24,7 @@
 #define _EGG_MOD_MODULE_H
 
 /* Just include *all* the include files...it's slower but EASIER */
+#include "../mbedtls/base64.h"
 #include "src/main.h"
 #include "modvals.h"
 #include "src/tandem.h"
@@ -506,6 +507,7 @@
 #endif
 /* 304 - 307 */
 #define strncpyz ((size_t (*) (char *, const char *, size_t))global[304])
+#define mbedtls_base64_encode ((int (*) (unsigned char *, size_t, size_t *, const unsigned char *, size_t))global[305])
 
 
 /* hostmasking */

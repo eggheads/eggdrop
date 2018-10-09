@@ -20,8 +20,8 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
-#include  "../irc.mod/irc.h"
-#include  "../channels.mod/channels.h"
+#include "../irc.mod/irc.h"
+#include "../channels.mod/channels.h"
 
 static time_t last_ctcp = (time_t) 0L;
 static int count_ctcp = 0;
@@ -1137,6 +1137,8 @@ static int got311(char *from, char *msg)
 static int gotcap(char *from, char *msg)
 {
   char *s;
+  unsigned char dst[1024] = ""; // FIXME: size of the destination buffer
+  size_t olen;
 
   debug2("CAP: gotcap(): from = >>>%s<<< msg = >>>%s<<<", from, msg);
   s = newsplit(&msg);
@@ -1159,8 +1161,11 @@ static int gotcap(char *from, char *msg)
       if (!strcmp(s, "sasl")) {
         debug0("CAP: gotcap(): found capability sasl, so we send AUTHENTICATE PLAIN");
         dprintf(DP_MODE, "AUTHENTICATE PLAIN\n");
+        debug0("CAP: gotcap(): and AUTHENTICATE +");
         dprintf(DP_MODE, "AUTHENTICATE +\n");
-        dprintf(DP_MODE, "AUTHENTICATE foobarbase64\n"); /* FIXME: we need a Base64 (RFC 4648) function */
+        mbedtls_base64_encode(dst, sizeof dst, &olen, (const unsigned char *) sasl_password, strlen(sasl_password));
+        debug1("CAP: gotcap(): and AUTHENTICATE %s", dst);
+        dprintf(DP_MODE, "AUTHENTICATE %s\n", dst);
         }
       }
   } else if (s[0]) {
@@ -1358,8 +1363,8 @@ static void server_resolve_success(int servidx)
   strcpy(botname, origbotname);
   /* Start alternate nicks from the beginning */
   altnick_char = 0;
-  if (sasl_username[0]) {
-    debug1("CAP: server_resolve_success(): sasl_username = >>>%s<<< set, so we send CAP LS", sasl_username);
+  if (sasl_mechanism[0]) {
+    debug1("CAP: server_resolve_success(): sasl_mechanism = %s, so we send CAP LS", sasl_mechanism);
     dprintf(DP_MODE, "CAP LS\n");
   }
   check_tcl_event("preinit-server");
