@@ -105,9 +105,9 @@ server, but Eggdrop was not compiled with SSL libraries. Skipping...");
     putlog(LOG_CMDS, "*", "#%s# jump %s %d %s", dcc[idx].nick, other,
            port, par);
 #endif
-    strncpyz(newserver, other, sizeof newserver);
+    strlcpy(newserver, other, sizeof newserver);
     newserverport = port;
-    strncpyz(newserverpass, par, sizeof newserverpass);
+    strlcpy(newserverpass, par, sizeof newserverpass);
   } else
     putlog(LOG_CMDS, "*", "#%s# jump", dcc[idx].nick);
   dprintf(idx, "%s...\n", IRC_JUMP);
