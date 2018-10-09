@@ -535,7 +535,7 @@ static int cmd_languagedump(struct userrec *u, int idx, char *par)
       sscanf(par, "%x", &idx2);
     else
       idx2 = (int) strtol(par, (char **) NULL, 10);
-    strncpyz(ltext2, get_language(idx2), sizeof ltext2);
+    strlcpy(ltext2, get_language(idx2), sizeof ltext2);
     dprintf(idx, "0x%x: %s\n", idx2, ltext2);
     return 0;
   }

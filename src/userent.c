@@ -130,7 +130,7 @@ int def_set(struct userrec *u, struct user_entry *e, void *buf)
 
     e->u.string = user_realloc(e->u.string, l + 1);
 
-    strncpyz(e->u.string, string, l + 1);
+    strlcpy(e->u.string, string, l + 1);
 
     for (i = e->u.string; *i; i++)
       /* Allow bold, inverse, underline, color text here...
@@ -869,7 +869,7 @@ static int xtra_tcl_set(Tcl_Interp * irp, struct userrec *u,
   if (l > 500)
     l = 500;
   xk->key = user_malloc(l + 1);
-  strncpyz(xk->key, argv[3], l + 1);
+  strlcpy(xk->key, argv[3], l + 1);
 
   if (argc == 5) {
     int k = strlen(argv[4]);
@@ -877,7 +877,7 @@ static int xtra_tcl_set(Tcl_Interp * irp, struct userrec *u,
     if (k > 500 - l)
       k = 500 - l;
     xk->data = user_malloc(k + 1);
-    strncpyz(xk->data, argv[4], k + 1);
+    strlcpy(xk->data, argv[4], k + 1);
   }
   xtra_set(u, e, xk);
   return TCL_OK;
@@ -967,7 +967,7 @@ static int xtra_gotshare(struct userrec *u, struct user_entry *e,
   if (l > 500)
     l = 500;
   xk->key = user_malloc(l + 1);
-  strncpyz(xk->key, arg, l + 1);
+  strlcpy(xk->key, arg, l + 1);
 
   if (buf[0]) {
     int k = strlen(buf);
@@ -975,7 +975,7 @@ static int xtra_gotshare(struct userrec *u, struct user_entry *e,
     if (k > 500 - l)
       k = 500 - l;
     xk->data = user_malloc(k + 1);
-    strncpyz(xk->data, buf, k + 1);
+    strlcpy(xk->data, buf, k + 1);
   }
   xtra_set(u, e, xk);
   return 1;

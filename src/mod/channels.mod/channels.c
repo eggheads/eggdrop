@@ -151,7 +151,7 @@ static void set_mode_protect(struct chanset_t *chan, char *set)
       if (pos) {
         s1 = newsplit(&set);
         if (s1[0])
-          strncpyz(chan->key_prot, s1, sizeof chan->key_prot);
+          strlcpy(chan->key_prot, s1, sizeof chan->key_prot);
       }
       break;
     }
@@ -678,7 +678,7 @@ static void channels_report(int idx, int details)
       if (channel_inactive(chan))
         i += my_strcpy(s + i, "inactive ");
       if (channel_nodesynch(chan))
-        i += my_strcpy(s + i, "nodesynch ");
+        my_strcpy(s + i, "nodesynch ");
 
       dprintf(idx, "      Options: %s\n", s);
 

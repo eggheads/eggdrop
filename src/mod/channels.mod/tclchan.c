@@ -526,9 +526,9 @@ static int tcl_newchanban STDVAR
       return TCL_ERROR;
     }
   }
-  strncpyz(ban, argv[2], sizeof ban);
-  strncpyz(from, argv[3], sizeof from);
-  strncpyz(cmt, argv[4], sizeof cmt);
+  strlcpy(ban, argv[2], sizeof ban);
+  strlcpy(from, argv[3], sizeof from);
+  strlcpy(cmt, argv[4], sizeof cmt);
   if (argc == 5) {
     if (chan->ban_time == 0)
       expire_time = 0L;
@@ -566,9 +566,9 @@ static int tcl_newban STDVAR
       return TCL_ERROR;
     }
   }
-  strncpyz(ban, argv[1], sizeof ban);
-  strncpyz(from, argv[2], sizeof from);
-  strncpyz(cmt, argv[3], sizeof cmt);
+  strlcpy(ban, argv[1], sizeof ban);
+  strlcpy(from, argv[2], sizeof from);
+  strlcpy(cmt, argv[3], sizeof cmt);
   if (argc == 4) {
     if (global_ban_time == 0)
       expire_time = 0L;
@@ -611,9 +611,9 @@ static int tcl_newchanexempt STDVAR
       return TCL_ERROR;
     }
   }
-  strncpyz(exempt, argv[2], sizeof exempt);
-  strncpyz(from, argv[3], sizeof from);
-  strncpyz(cmt, argv[4], sizeof cmt);
+  strlcpy(exempt, argv[2], sizeof exempt);
+  strlcpy(from, argv[3], sizeof from);
+  strlcpy(cmt, argv[4], sizeof cmt);
   if (argc == 5) {
     if (chan->exempt_time == 0)
       expire_time = 0L;
@@ -649,9 +649,9 @@ static int tcl_newexempt STDVAR
       return TCL_ERROR;
     }
   }
-  strncpyz(exempt, argv[1], sizeof exempt);
-  strncpyz(from, argv[2], sizeof from);
-  strncpyz(cmt, argv[3], sizeof cmt);
+  strlcpy(exempt, argv[1], sizeof exempt);
+  strlcpy(from, argv[2], sizeof from);
+  strlcpy(cmt, argv[3], sizeof cmt);
   if (argc == 4) {
     if (global_exempt_time == 0)
       expire_time = 0L;
@@ -693,9 +693,9 @@ static int tcl_newchaninvite STDVAR
       return TCL_ERROR;
     }
   }
-  strncpyz(invite, argv[2], sizeof invite);
-  strncpyz(from, argv[3], sizeof from);
-  strncpyz(cmt, argv[4], sizeof cmt);
+  strlcpy(invite, argv[2], sizeof invite);
+  strlcpy(from, argv[3], sizeof from);
+  strlcpy(cmt, argv[4], sizeof cmt);
   if (argc == 5) {
     if (chan->invite_time == 0)
       expire_time = 0L;
@@ -731,9 +731,9 @@ static int tcl_newinvite STDVAR
       return TCL_ERROR;
     }
   }
-  strncpyz(invite, argv[1], sizeof invite);
-  strncpyz(from, argv[2], sizeof from);
-  strncpyz(cmt, argv[3], sizeof cmt);
+  strlcpy(invite, argv[1], sizeof invite);
+  strlcpy(from, argv[2], sizeof from);
+  strlcpy(cmt, argv[3], sizeof cmt);
   if (argc == 4) {
     if (global_invite_time == 0)
       expire_time = 0L;
@@ -1528,7 +1528,7 @@ static int tcl_channel_modify(Tcl_Interp *irp, struct chanset_t *chan,
         }
       } else {
         if ((*item[i]) && !strtol(item[i], &endptr, 10) && !(*endptr)) {
-          *pthr = 0;  // Shortcut for .chanset #chan flood-x 0 to activate 0:0
+          *pthr = 0;  /* Shortcut for .chanset #chan flood-x 0 to activate 0:0 */
           *ptime = 0;
         } else {
           if (irp)

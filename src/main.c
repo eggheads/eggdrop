@@ -272,7 +272,7 @@ static void write_debug()
     x = creat("DEBUG.DEBUG", 0644);
     if (x >= 0) {
       setsock(x, SOCK_NONSOCK);
-      strncpyz(s, ctime(&now), sizeof s);
+      strlcpy(s, ctime(&now), sizeof s);
       dprintf(-x, "Debug (%s) written %s\n", ver, s);
       dprintf(-x, "Please report problem to bugs@eggheads.org\n");
       dprintf(-x, "after a visit to http://www.eggheads.org/bugzilla/\n");
@@ -303,7 +303,7 @@ static void write_debug()
   if (x < 0) {
     putlog(LOG_MISC, "*", "* Failed to write DEBUG");
   } else {
-    strncpyz(s, ctime(&now), sizeof s);
+    strlcpy(s, ctime(&now), sizeof s);
     dprintf(-x, "Debug (%s) written %s\n", ver, s);
 #ifdef EGG_PATCH
     dprintf(-x, "Patch level: %s\n", egg_patch);
@@ -461,7 +461,7 @@ void eggContext(const char *file, int line, const char *module)
 
   p = strrchr(file, '/');
   if (!module) {
-    strncpyz(x, p ? p + 1 : file, sizeof x);
+    strlcpy(x, p ? p + 1 : file, sizeof x);
   } else
     egg_snprintf(x, 31, "%s:%s", module, p ? p + 1 : file);
   cx_ptr = ((cx_ptr + 1) & 15);
@@ -479,13 +479,13 @@ void eggContextNote(const char *file, int line, const char *module,
 
   p = strrchr(file, '/');
   if (!module)
-    strncpyz(x, p ? p + 1 : file, sizeof x);
+    strlcpy(x, p ? p + 1 : file, sizeof x);
   else
     egg_snprintf(x, 31, "%s:%s", module, p ? p + 1 : file);
   cx_ptr = ((cx_ptr + 1) & 15);
   strcpy(cx_file[cx_ptr], x);
   cx_line[cx_ptr] = line;
-  strncpyz(cx_note[cx_ptr], note, sizeof cx_note[cx_ptr]);
+  strlcpy(cx_note[cx_ptr], note, sizeof cx_note[cx_ptr]);
 }
 #endif /* DEBUG_CONTEXT */
 
@@ -503,10 +503,10 @@ void eggAssert(const char *file, int line, const char *module)
 }
 #endif
 
-void show_ver() {
+static void show_ver() {
   char x[512], *z = x;
 
-  strncpyz(x, egg_version, sizeof x);
+  strlcpy(x, egg_version, sizeof x);
   newsplit(&z);
   newsplit(&z);
   printf("%s\n", version);
@@ -533,66 +533,72 @@ void show_ver() {
    meaning other languages can't be loaded yet.
    English (or an error) is the only possible option.
 */
-void show_help() {
+static void show_help() {
   printf("\n%s\n\n", version);
-  printf("Usage: eggdrop [options] [config-file]\n\n"
+  printf("Usage: %s [options] [config-file]\n\n"
          "Options:\n"
-         "-n Don't background; send all log entries to console.\n"
-         "-nc  Don't background; display channel stats every 10 seconds.\n"
-         "-nt  Don't background; use terminal to simulate DCC chat.\n"
-         "-m   Create userfile.\n"
-         "-h   Show this help.\n"
-         "-v   Show version info, then quit.\n\n");
+         "-n  Don't background; send all log entries to console.\n"
+         "-nc Don't background; display channel stats every 10 seconds.\n"
+         "-nt Don't background; use terminal to simulate DCC chat.\n"
+         "-m  Create userfile.\n"
+         "-h  Show this help and exit.\n"
+         "-v  Show version info and exit.\n\n", argv[0]);
   bg_send_quit(BG_ABORT);
 }
 
 static void do_arg()
 {
   int option = 0;
-/* Bitmask structure to hold cli flags
-   | QUIT| BAD FLAG| h| n| c| t| m| v|
-   |  128|       64|32|16| 8| 4| 2| 1|
-*/
   unsigned char cliflags = 0;
+  #define CLI_V        1 << 0
+  #define CLI_M        1 << 1
+  #define CLI_T        1 << 2
+  #define CLI_C        1 << 3
+  #define CLI_N        1 << 4
+  #define CLI_H        1 << 5
+  #define CLI_BAD_FLAG 1 << 6
 
   while ((option = getopt(argc, argv, "hnctmv")) != -1) {
     switch (option) {
       case 'n':
-        cliflags |= 16;
+        cliflags |= CLI_N;
         backgrd = 0;
         break;
       case 'c':
-        cliflags |= 8;
+        cliflags |= CLI_C;
         con_chan = 1;
         term_z = 0;
         break;
       case 't':
-        cliflags |= 4;
+        cliflags |= CLI_T;
         con_chan = 0;
         term_z = 1;
         break;
       case 'm':
-        cliflags |= 2;
+        cliflags |= CLI_M;
         make_userfile = 1;
         break;
       case 'v':
-        cliflags |= 129;		//128 + 1
+        cliflags |= CLI_V;
         break;
       case 'h':
-        cliflags |= 160;		//128 + 32
+        cliflags |= CLI_H;
         break;
       default:
-        cliflags |= 192;		//128 + 64
+        cliflags |= CLI_BAD_FLAG;
         break;
     }
   }
-  if ((cliflags & 64) || (cliflags & 32)) {
+  if (cliflags & CLI_H) {
     show_help();
     exit(0);
-  } else if (cliflags & 1) {
+  } else if (cliflags & CLI_BAD_FLAG) {
+    show_help();
+    exit(1);
+  } else if (cliflags & CLI_V) {
     show_ver();
     exit(0);
-  } else if (!(cliflags & 16) && ((cliflags & 8) || (cliflags & 4))) {
+  } else if (!(cliflags & CLI_N) && ((cliflags & CLI_C) || (cliflags & CLI_T))) {
     printf("\n%s\n", version);
     printf("ERROR: The -n flag is required when using the -c or -t flags. Exiting...\n\n");
     exit(1);
@@ -602,7 +608,7 @@ static void do_arg()
     printf("         Using %s as config file\n", argv[optind]);
   }
   if (argc > optind) {
-    strncpyz(configfile, argv[optind], sizeof configfile);
+    strlcpy(configfile, argv[optind], sizeof configfile);
   }
 }
 
@@ -676,7 +682,7 @@ static void core_secondly()
         char s[25];
         int j;
 
-        strncpyz(s, ctime(&now), sizeof s);
+        strlcpy(s, ctime(&now), sizeof s);
         if (quiet_save < 3)
           putlog(LOG_ALL, "*", "--- %.11s%s", s, s + 20);
         call_hook(HOOK_BACKUP);
@@ -798,7 +804,7 @@ int ssl_init();
 
 static void garbage_collect(void)
 {
-  static u_8bit_t run_cnt = 0;
+  static uint8_t run_cnt = 0;
 
   if (run_cnt == 3)
     garbage_collect_tclhash();
@@ -950,7 +956,7 @@ int mainloop(int toplevel)
             d = d->next;
           }
           if (ok) {
-            strncpyz(name, p->name, sizeof name);
+            strlcpy(name, p->name, sizeof name);
             if (module_unload(name, botnetnick) == NULL) {
               f = 1;
               break;
@@ -1145,7 +1151,7 @@ int main(int arg_c, char **arg_v)
 #ifdef STATIC
   link_statics();
 #endif
-  strncpyz(s, ctime(&now), sizeof s);
+  strlcpy(s, ctime(&now), sizeof s);
   memmove(&s[11], &s[20], strlen(&s[20])+1);
   putlog(LOG_ALL, "*", "--- Loading %s (%s)", ver, s);
   chanprog();

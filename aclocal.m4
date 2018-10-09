@@ -551,11 +551,6 @@ AC_DEFUN([EGG_CHECK_MODULE_SUPPORT],
   # Note to other maintainers:
   # Bourne shell has no concept of "fall through"
   case "$egg_cv_var_system_type" in
-    BSD/OS)
-      if test `echo "$egg_cv_var_system_release" | cut -d . -f 1` = 2; then
-        MODULES_OK="no"
-      fi
-    ;;
     CYGWI*)
       WEIRD_OS="no"
       MOD_EXT="dll"
@@ -601,9 +596,7 @@ AC_DEFUN([EGG_CHECK_MODULE_SUPPORT],
         AC_DEFINE(DLOPEN_1, 1, [Define if running on SunOS 4.0.])
       fi
     ;;
-    *BSD)
-      # FreeBSD/OpenBSD/NetBSD all support dlopen() and have had plenty of
-      # testing with Eggdrop.
+    FreeBSD|OpenBSD|NetBSD|DragonFly)
       WEIRD_OS="no"
     ;;
     Darwin)
@@ -615,6 +608,9 @@ AC_DEFUN([EGG_CHECK_MODULE_SUPPORT],
       LOAD_METHOD="dyld"
       EGG_DARWIN_BUNDLE
       EGG_APPEND_VAR(MODULE_XLIBS, $BUNDLE)
+    ;;
+    Haiku)
+      WEIRD_OS="no"
     ;;
     Minix)
       WEIRD_OS="no"
@@ -693,29 +689,6 @@ AC_DEFUN([EGG_CHECK_OS],
   EGG_CYGWIN="no"
 
   case "$egg_cv_var_system_type" in
-    BSD/OS)
-      case `echo "$egg_cv_var_system_release" | cut -d . -f 1` in
-        2)
-          # do nothing
-        ;;
-        3)
-          MOD_CC="shlicc"
-          MOD_LD="shlicc"
-          if test "$STRIP" != touch; then
-            MOD_STRIP="$STRIP -d"
-          fi
-          SHLIB_LD="shlicc -r"
-          SHLIB_STRIP="touch"
-        ;;
-        *)
-          if test "$STRIP" != touch; then
-            MOD_STRIP="$STRIP -d"
-          fi
-          SHLIB_CC="$CC -export-dynamic -fPIC"
-          SHLIB_LD="$CC -shared -nostartfiles"
-        ;;
-      esac
-    ;;
     CYGWI*)
       SHLIB_LD="$CC -shared"
       MOD_CC="$CC"
@@ -809,10 +782,17 @@ AC_DEFUN([EGG_CHECK_OS],
         SHLIB_CC="$CC -PIC"
       fi
     ;;
-    *BSD)
-      # FreeBSD/OpenBSD/NetBSD
+    FreeBSD|OpenBSD|NetBSD)
       SHLIB_CC="$CC -fPIC"
       SHLIB_LD="$CC -shared"
+      case "$egg_cv_var_system_type" in
+        *NetBSD)
+          AC_DEFINE(NETBSD_HACKS, 1, [Define if running under NetBSD.])
+        ;;
+      esac
+    ;;
+    DragonFly)
+      SHLIB_CC="$CC -fPIC"
     ;;
     Darwin)
       # Mac OS X
