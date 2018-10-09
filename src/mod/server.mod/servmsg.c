@@ -1134,6 +1134,42 @@ static int got311(char *from, char *msg)
   return 0;
 }
 
+static int gotcap(char *from, char *msg)
+{
+  char *s;
+
+  debug2("CAP: gotcap(): from = >>>%s<<< msg = >>>%s<<<", from, msg);
+  s = newsplit(&msg);
+  s = newsplit(&msg);
+  if (!strcmp(s, "LS")) {
+    debug0("CAP: gotcap(): found subcommand LS");
+    for (s = newsplit(&msg); s[0]; s = newsplit(&msg)) {
+      if (s[0] == ':')
+        s++;
+      if (!strcmp(s, "sasl")) {
+        debug0("CAP: gotcap(): found capability sasl, so we send CAP REQ :sasl");
+        dprintf(DP_MODE, "CAP REQ :sasl\n");
+      }
+    }
+  } else if (!strcmp(s, "ACK")) {
+    debug0("CAP: gotcap(): found subcommand ACK");
+    for (s = newsplit(&msg); s[0]; s = newsplit(&msg)) {
+      if (s[0] == ':')
+        s++;
+      if (!strcmp(s, "sasl")) {
+        debug0("CAP: gotcap(): found capability sasl, so we send AUTHENTICATE PLAIN");
+        dprintf(DP_MODE, "AUTHENTICATE PLAIN\n");
+        dprintf(DP_MODE, "AUTHENTICATE +\n");
+        dprintf(DP_MODE, "AUTHENTICATE foobarbase64\n"); /* FIXME: we need a Base64 (RFC 4648) function */
+        }
+      }
+  } else if (s[0]) {
+    debug1("CAP: gotcap(): found subcommand >>>%s<<< not implemented yet", s);
+    dprintf(DP_MODE, "CAP END\n"); /* under construction */
+  }
+
+  return 0;
+}
 
 /*
  * 465     ERR_YOUREBANNEDCREEP :You are banned from this server
@@ -1174,6 +1210,7 @@ static cmd_t my_raw_binds[] = {
   {"KICK",    "",   (IntFunc) gotkick,      NULL},
   {"318",     "",   (IntFunc) whoispenalty, NULL},
   {"311",     "",   (IntFunc) got311,       NULL},
+  {"CAP",     "",   (IntFunc) gotcap,       NULL},
   {NULL,      NULL, NULL,                    NULL}
 };
 
@@ -1321,6 +1358,10 @@ static void server_resolve_success(int servidx)
   strcpy(botname, origbotname);
   /* Start alternate nicks from the beginning */
   altnick_char = 0;
+  if (sasl_username[0]) {
+    debug1("CAP: server_resolve_success(): sasl_username = >>>%s<<< set, so we send CAP LS", sasl_username);
+    dprintf(DP_MODE, "CAP LS\n");
+  }
   check_tcl_event("preinit-server");
   if (pass[0])
     dprintf(DP_MODE, "PASS %s\n", pass);

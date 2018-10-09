@@ -121,6 +121,8 @@ static void msgq_clear(struct msgq_head *qh);
 static int stack_limit;
 static char *realservername;
 
+static char sasl_username[81];
+
 #include "servmsg.c"
 
 #define MAXPENALTY 10
@@ -1380,6 +1382,7 @@ static tcl_strings my_tcl_strings[] = {
   {"connect-server",      connectserver,  120,               0},
   {"stackable-commands",  stackablecmds,  510,               0},
   {"stackable2-commands", stackable2cmds, 510,               0},
+  {"sasl-username",       sasl_username,  80,                0},
   {NULL,                  NULL,           0,                 0}
 };
 
