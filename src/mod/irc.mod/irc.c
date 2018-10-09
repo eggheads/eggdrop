@@ -170,7 +170,7 @@ static void punish_badguy(struct chanset_t *chan, char *whobad,
     else {
       strcpy(s1, whobad);
       maskaddr(s1, s, chan->ban_type);
-      strncpyz(s1, badnick, sizeof s1);
+      strlcpy(s1, badnick, sizeof s1);
       /* If that handle exists use "badX" (where X is an increasing number)
        * instead.
        */
@@ -850,7 +850,7 @@ static int check_tcl_pub(char *nick, char *from, char *chname, char *msg)
   char buf[512], *args = buf, *cmd, host[161], *hand;
   struct userrec *u;
 
-  strncpyz(buf, msg, sizeof buf);
+  strlcpy(buf, msg, sizeof buf);
   cmd = newsplit(&args);
   simple_sprintf(host, "%s!%s", nick, from);
   u = get_user_by_host(host);

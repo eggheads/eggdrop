@@ -138,7 +138,7 @@ int partysock(char *bot, char *nick)
 
 /* Set the botnetnick and truncate as necessary */
 void set_botnetnick(const char *newnick) {
-  strncpyz(botnetnick, newnick, sizeof botnetnick);
+  strlcpy(botnetnick, newnick, sizeof botnetnick);
 }
 
 /* New botnet member
@@ -304,7 +304,7 @@ void rembot(char *whoin)
   /* Need to save the nick for later as it MAY be a pointer to ptr->bot, and we free(ptr) in here. */
   len = strlen(whoin);
   who = nmalloc(len + 1);
-  strncpyz(who, whoin, len + 1);
+  strlcpy(who, whoin, len + 1);
 
   while (*ptr) {
     if (!egg_strcasecmp((*ptr)->bot, who))
@@ -1082,7 +1082,7 @@ static void botlink_resolve_success(int i)
 
   changeover_dcc(i, &DCC_FORK_BOT, sizeof(struct bot_info));
   dcc[i].timeval = now;
-  strncpyz(dcc[i].u.bot->linker, linker, sizeof dcc[i].u.bot->linker);
+  strlcpy(dcc[i].u.bot->linker, linker, sizeof dcc[i].u.bot->linker);
   strcpy(dcc[i].u.bot->version, "(primitive bot)");
   dcc[i].u.bot->numver = idx;
   dcc[i].u.bot->port = dcc[i].port;     /* Remember where i started */
