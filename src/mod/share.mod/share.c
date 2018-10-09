@@ -1461,14 +1461,14 @@ static void shareout_but EGG_VARARGS_DEF(struct chanset_t *, arg1)
  */
 static void new_tbuf(char *bot)
 {
-  tandbuf **old = &tbuf, *new;
+  tandbuf *new;
 
   new = nmalloc(sizeof(tandbuf));
   strncpyz(new->bot, bot, sizeof new->bot);
   new->q = NULL;
   new->timer = now;
-  new->next = *old;
-  *old = new;
+  new->next = tbuf;
+  tbuf = new;
   putlog(LOG_BOTS, "*", "Creating resync buffer for %s", bot);
 }
 
