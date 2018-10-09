@@ -137,7 +137,7 @@ struct userrec *check_chanlist(const char *host)
   memberlist *m;
   struct chanset_t *chan;
 
-  strncpyz(buf, host, sizeof buf);
+  strlcpy(buf, host, sizeof buf);
   uhost = buf;
   nick = splitnick(&uhost);
   for (chan = chanset; chan; chan = chan->next)
@@ -205,7 +205,7 @@ void set_chanlist(const char *host, struct userrec *rec)
   memberlist *m;
   struct chanset_t *chan;
 
-  strncpyz(buf, host, sizeof buf);
+  strlcpy(buf, host, sizeof buf);
   uhost = buf;
   nick = splitnick(&uhost);
   for (chan = chanset; chan; chan = chan->next)
@@ -325,14 +325,14 @@ void tell_verbose_status(int idx)
   sprintf(&s[strlen(s)], "%02d:%02d", (int) hr, (int) min);
   s1[0] = 0;
   if (backgrd)
-    strncpyz(s1, MISC_BACKGROUND, sizeof s1);
+    strlcpy(s1, MISC_BACKGROUND, sizeof s1);
   else {
     if (term_z >= 0)
-      strncpyz(s1, MISC_TERMMODE, sizeof s1);
+      strlcpy(s1, MISC_TERMMODE, sizeof s1);
     else if (con_chan)
-      strncpyz(s1, MISC_STATMODE, sizeof s1);
+      strlcpy(s1, MISC_STATMODE, sizeof s1);
     else
-      strncpyz(s1, MISC_LOGMODE, sizeof s1);
+      strlcpy(s1, MISC_LOGMODE, sizeof s1);
   }
   cputime = getcputime();
   if (cputime < 0)
@@ -428,7 +428,7 @@ void reaffirm_owners()
     q = owner;
     p = strchr(q, ',');
     while (p) {
-      strncpyz(s, q, (p - q) + 1);
+      strlcpy(s, q, (p - q) + 1);
       rmspace(s);
       u = get_user_by_handle(userlist, s);
       if (u)

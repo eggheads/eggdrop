@@ -609,6 +609,9 @@ AC_DEFUN([EGG_CHECK_MODULE_SUPPORT],
       EGG_DARWIN_BUNDLE
       EGG_APPEND_VAR(MODULE_XLIBS, $BUNDLE)
     ;;
+    Haiku)
+      WEIRD_OS="no"
+    ;;
     *)
       if test -r /mach; then
         # At this point, we're guessing this is NeXT Step. We support rld, so
