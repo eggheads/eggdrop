@@ -112,7 +112,7 @@ static void add_delay(struct chanset_t *chan, int plsmns, int mode, char *mask)
   d->seconds = now + randint(30);
 
   d->mask = nmalloc(strlen(mask) + 1);
-  strncpyz(d->mask, mask, strlen(mask) + 1);
+  strlcpy(d->mask, mask, strlen(mask) + 1);
 
   if (!delay_head)
     delay_head = d;
@@ -1464,7 +1464,7 @@ static void new_tbuf(char *bot)
   tandbuf *new;
 
   new = nmalloc(sizeof(tandbuf));
-  strncpyz(new->bot, bot, sizeof new->bot);
+  strlcpy(new->bot, bot, sizeof new->bot);
   new->q = NULL;
   new->timer = now;
   new->next = tbuf;
