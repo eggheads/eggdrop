@@ -162,7 +162,7 @@ static void check_exemptlist(struct chanset_t *chan, char *from)
 /* Check a channel and clean-out any more-specific matching masks.
  *
  * Moved all do_ban(), do_exempt() and do_invite() into this single function
- * as the code bloat is starting to get rediculous <cybah>
+ * as the code bloat is starting to get ridiculous <cybah>
  */
 static void do_mask(struct chanset_t *chan, masklist *m, char *mask, char mode)
 {
@@ -1855,7 +1855,7 @@ static int gotjoin(char *from, char *chname)
               if (!(u->flags & USER_BOT)) {
                 s = get_user(&USERENTRY_INFO, u);
                 get_handle_chaninfo(u->handle, chan->dname, s1);
-                /* Locked info line overides non-locked channel specific
+                /* Locked info line overrides non-locked channel specific
                  * info line.
                  */
                 if (!s || (s1[0] && (s[0] != '@' || s1[0] == '@')))

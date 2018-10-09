@@ -242,7 +242,7 @@ void correct_handle(char *handle)
   strcpy(handle, u->handle);
 }
 
-/* This will be usefull in a lot of places, much more code re-use so we
+/* This will be useful in a lot of places, much more code re-use so we
  * endup with a smaller executable bot. <cybah>
  */
 void clear_masks(maskrec *m)

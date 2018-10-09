@@ -258,7 +258,7 @@ static filedb_entry *filedb_findempty(FILE *fdb, int tot)
  *
  *   * If the new entry is the same size or smaller than the original
  *     one, we use the old position and just adjust the buffer length
- *     apropriately.
+ *     appropriately.
  *   * If the entry is completely _new_ or if the entry's new size is
  *     _bigger_ than the old one, we search for a new position which
  *     suits our needs.

@@ -229,7 +229,7 @@ static void uff_deltable(uff_table_t *ut)
  *    Userfile feature parsing functions
  */
 
-/* Parse the given features string, set internal flags apropriately and
+/* Parse the given features string, set internal flags appropriately and
  * eventually respond with all features we will use.
  */
 static void uf_features_parse(int idx, char *par)

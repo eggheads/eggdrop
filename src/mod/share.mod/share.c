@@ -1191,7 +1191,7 @@ static void share_ufsend(int idx, char *par)
     newsplit(&par);
     port = newsplit(&par);
     i = new_dcc(&DCC_FORK_SEND, sizeof(struct xfer_info));
-    /* Use same addr we succesfully linked to and change port */
+    /* Use same addr we successfully linked to and change port */
     memcpy(&dcc[i].sockname, &dcc[idx].sockname, sizeof dcc[i].sockname);
     dcc[i].port = atoi(port);
     setsnport(dcc[i].sockname, dcc[i].port);
@@ -1838,7 +1838,7 @@ static void finish_share(int idx)
   userlist = (void *) -1;       /* Do this to prevent .user messups     */
 
   /* Bot user pointers are updated to point to the new list, all others
-   * are set to NULL. If our userfile will be overriden, just set _all_
+   * are set to NULL. If our userfile will be overridden, just set _all_
    * to NULL directly.
    */
   if (u == NULL)

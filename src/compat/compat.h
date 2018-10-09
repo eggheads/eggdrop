@@ -1,6 +1,6 @@
 /*
  * compat.h
- *   wrap-around header for all compability functions.
+ *   wrap-around header for all compatibility functions.
  */
 /*
  * Copyright (C) 2000 - 2018 Eggheads Development Team

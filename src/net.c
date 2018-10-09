@@ -659,7 +659,7 @@ int getdccaddr(sockname_t *addr, char *s, size_t l)
  * If addr is not NULL, it should point to the listening socket's address.
  * Otherwise, this function will try to figure out the public address of the
  * machine, using listen_ip and natip. If restrict_af is set, it will limit
- * the possible IPs to the specified family. The result is a string useable
+ * the possible IPs to the specified family. The result is a string usable
  * for DCC requests
  */
 int getdccfamilyaddr(sockname_t *addr, char *s, size_t l, int restrict_af)
@@ -1505,7 +1505,7 @@ int sock_has_data(int type, int sock)
 
 /* flush_inbuf():
  * checks if there's data in the incoming buffer of an connection
- * and flushs the buffer if possible
+ * and flushes the buffer if possible
  *
  * returns: -1 if the dcc entry wasn't found
  *          -2 if dcc[idx].type->activity doesn't exist and the data couldn't

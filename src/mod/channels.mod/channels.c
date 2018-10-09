@@ -289,7 +289,7 @@ static void remove_channel(struct chanset_t *chan)
   int i;
   module_entry *me;
 
-  /* Remove the channel from the list, so that noone can pull it
+  /* Remove the channel from the list, so that no one can pull it
    * away from under our feet during the check_tcl_part() call. */
   (void) chanset_unlink(chan);
 
@@ -380,7 +380,7 @@ static char *convert_element(char *src, char *dst)
  * Note:
  *  - We write chanmode "" too, so that the bot won't use default-chanmode
  *    instead of ""
- *  - We will write empty need-xxxx too, why not? (less code + lazyness)
+ *  - We will write empty need-xxxx too, why not? (less code + laziness)
  */
 static void write_channels()
 {
@@ -505,7 +505,7 @@ static void read_channels(int create, int reload)
   if (!readtclprog(chanfile) && create) {
     FILE *f;
 
-    /* Assume file isnt there & therfore make it */
+    /* Assume file isnt there & therefore make it */
     putlog(LOG_MISC, "*", "Creating channel file");
     f = fopen(chanfile, "w");
     if (!f)
@@ -828,7 +828,7 @@ static tcl_ints my_tcl_ints[] = {
   {"global-exempt-time",      &global_exempt_time,      0},
   {"global-invite-time",      &global_invite_time,      0},
   {"global-ban-type",         &global_ban_type,         0},
-  /* keeping [ban|exempt|invite]-time for compatability <Wcc[07/20/02]> */
+  /* keeping [ban|exempt|invite]-time for compatibility <Wcc[07/20/02]> */
   {"ban-time",                &global_ban_time,         0},
   {"exempt-time",             &global_exempt_time,      0},
   {"invite-time",             &global_invite_time,      0},
