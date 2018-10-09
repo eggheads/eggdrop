@@ -1043,7 +1043,11 @@ AC_DEFUN([EGG_TCL_TCLCONFIG],
     if test -r ${TCL_BIN_DIR}/tclConfig.sh; then
       . ${TCL_BIN_DIR}/tclConfig.sh
       # OpenBSD uses -pthread, but tclConfig.sh provides that flag in EXTRA_CFLAGS
-      TCL_PTHREAD_LDFLAG=`echo $TCL_EXTRA_CFLAGS | grep -o -- '-pthread'`
+      if test "$(echo $TCL_EXTRA_CFLAGS | grep -- -pthread)"; then
+        TCL_PTHREAD_LDFLAG="-pthread"
+      else
+        TCL_PTHREAD_LDFLAG=""
+      fi
       AC_SUBST(SHLIB_LD, $TCL_SHLIB_LD)
       AC_MSG_CHECKING([for Tcl linker])
       AC_MSG_RESULT([$SHLIB_LD])
@@ -1057,7 +1061,11 @@ AC_DEFUN([EGG_TCL_TCLCONFIG],
     if test -r ${TCLLIB}/tclConfig.sh; then
       . ${TCLLIB}/tclConfig.sh
       # OpenBSD uses -pthread, but tclConfig.sh provides that flag in EXTRA_CFLAGS
-      TCL_PTHREAD_LDFLAG=`echo $TCL_EXTRA_CFLAGS | grep -o -- '-pthread'`
+      if test "$(echo $TCL_EXTRA_CFLAGS | grep -- -pthread)"; then
+        TCL_PTHREAD_LDFLAG="-pthread"
+      else
+        TCL_PTHREAD_LDFLAG=""
+      fi
       AC_SUBST(SHLIB_LD, $TCL_SHLIB_LD)
       AC_MSG_CHECKING([for Tcl linker])
       AC_MSG_RESULT([$SHLIB_LD])

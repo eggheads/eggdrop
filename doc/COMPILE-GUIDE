@@ -37,10 +37,14 @@ Last revised: September 20, 2018
       5. Unresolved or undefined symbols: ldclose, ldopen, ldnshread (AIX 3)
       6. Unsatisfied symbols 'shl_findsym' and 'shl_load' (HP-UX 9)
       7. Compile stops at the last minute with "ld fatal signal 11"! (Linux)
-      8. Undefined references in net.o (Sun OS)
+      8. Undefined references in net.o (SunOS)
       9. I experience problems starting the configure script (AIX/various)
      10. I get a 'make: Permission denied' error when I type 'make config'
          or 'make' (FreeBSD / *BSD)
+     11. I get a 'make: Fatal error in reader: Makefile, line 21: Badly formed
+         macro assignment' error when I type 'make config' (OpenIndiana)
+     12. I get a 'gmake: readlink: Command not found' error when I type 'gmake
+         install' (OpenIndiana)
 
 
   Compile Guide
@@ -538,6 +542,17 @@ Last revised: September 20, 2018
       This is caused by a bug in FreeBSD (and possibly other BSDs as well).
       A simple 'cd .', or changing to a different directory and then changing
       back, usually fixes this.
+
+    11. I get a 'make: Fatal error in reader: Makefile, line 21: Badly formed
+        macro assignment' error when I type 'make config' (OpenIndiana)
+
+      OpenIndiana does not use GNU make. Eggdrop uses a GNU make extension in
+      it's Makefile. Install and use GNU make on OpenIndiana.
+
+    12. I get a 'gmake: readlink: Command not found' error when I type 'gmake
+        install' (OpenIndiana)
+
+      Install gnu-coreutils on OpenIndiana.
     _____________________________________________________________________
 
    Copyright (C) 1997 Robey Pointer
