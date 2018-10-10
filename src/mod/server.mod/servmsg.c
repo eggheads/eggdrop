@@ -1136,36 +1136,33 @@ static int got311(char *from, char *msg)
 
 static int gotcap(char *from, char *msg)
 {
-  char *s;
+  char *cmd;
 
-  debug2("CAP: gotcap(): from = >>>%s<<< msg = >>>%s<<<", from, msg);
-  s = newsplit(&msg);
-  s = newsplit(&msg);
-  if (!strcmp(s, "LS")) {
-    debug0("CAP: gotcap(): found subcommand LS");
-    for (s = newsplit(&msg); s[0]; s = newsplit(&msg)) {
-      if (s[0] == ':')
-        s++;
-      if (!strcmp(s, "sasl")) {
+  newsplit(&msg);
+  putlog(LOG_SERV, "*", "CAP: %s", msg);
+  cmd = newsplit(&msg);
+  fixcolon(msg);
+  if (!strcmp(cmd, "LS")) {
+    putlog(LOG_MISC, "*", "%s supports CAP sub-commands: %s", from, msg);
+    for (cmd = newsplit(&msg); cmd[0]; cmd = newsplit(&msg)) {
+      if (!strcmp(cmd, "sasl")) {
         debug0("CAP: gotcap(): found capability sasl, so we send CAP REQ :sasl");
         dprintf(DP_MODE, "CAP REQ :sasl\n");
       }
     }
-  } else if (!strcmp(s, "ACK")) {
-    debug0("CAP: gotcap(): found subcommand ACK");
-    for (s = newsplit(&msg); s[0]; s = newsplit(&msg)) {
-      if (s[0] == ':')
-        s++;
-      if (!strcmp(s, "sasl")) {
+  } else if (!strcmp(cmd, "ACK")) {
+    putlog(LOG_MISC, "*", "%s acknowledged %s", from, msg);
+    for (cmd = newsplit(&msg); cmd[0]; cmd = newsplit(&msg)) {
+      if (!strcmp(cmd, "sasl")) {
         debug0("CAP: gotcap(): found capability sasl, so we send AUTHENTICATE PLAIN");
         dprintf(DP_MODE, "AUTHENTICATE PLAIN\n");
       }
     }
-  } else if (s[0]) {
-    debug1("CAP: gotcap(): found subcommand >>>%s<<< not implemented yet", s);
+  } else if (cmd[0]) {
+    debug1("CAP: gotcap(): found subcommand >>>%s<<< not implemented yet", cmd);
     dprintf(DP_MODE, "CAP END\n"); /* under construction */
   }
-  return 0;
+  return 1;
 }
 
 static int gotauthenticate(char *from, char *msg)
@@ -1175,18 +1172,25 @@ static int gotauthenticate(char *from, char *msg)
 
   debug2("SASL: gotauthenticate(): from = >>>%s<<< msg = >>>%s<<<", from, msg);
   /* we could (or must we) do sanity check: msg == "+" */
+  /* FIXME: sasl_username sasl_username sasl_password */
   mbedtls_base64_encode(dst, sizeof dst, &olen, (const unsigned char *) sasl_password, strlen(sasl_password));
   debug1("SASL: gotauthenticate(): so we send AUTHENTICATE %s", dst);
   dprintf(DP_MODE, "AUTHENTICATE %s\n", dst);
-  return 0;
+  return 1;
 }
 
 static int got904(char *from, char *msg)
 {
-  debug2("SASL: got904(): from = >>>%s<<< msg = >>>%s<<<", from, msg);
-  putlog(LOG_SERV, "*", "SASL authentication failed");
+  putlog(LOG_SERV, "*", "SASL: authentication failed");
   dprintf(DP_MODE, "CAP END\n");
-  return 0;
+  return 1;
+}
+
+static int got906(char *from, char *msg)
+{
+  putlog(LOG_SERV, "*", "SASL: authentication aborted");
+  dprintf(DP_MODE, "CAP END\n");
+  return 1;
 }
 
 /*
@@ -1214,6 +1218,8 @@ static cmd_t my_raw_binds[] = {
   {"WALLOPS", "",   (IntFunc) gotwall,      NULL},
   {"001",     "",   (IntFunc) got001,       NULL},
   {"303",     "",   (IntFunc) got303,       NULL},
+  {"318",     "",   (IntFunc) whoispenalty, NULL},
+  {"311",     "",   (IntFunc) got311,       NULL},
   {"432",     "",   (IntFunc) got432,       NULL},
   {"433",     "",   (IntFunc) got433,       NULL},
   {"437",     "",   (IntFunc) got437,       NULL},
@@ -1221,16 +1227,15 @@ static cmd_t my_raw_binds[] = {
   {"451",     "",   (IntFunc) got451,       NULL},
   {"442",     "",   (IntFunc) got442,       NULL},
   {"465",     "",   (IntFunc) got465,       NULL},
+  {"904",     "",   (IntFunc) got904,       NULL},
+  {"906",     "",   (IntFunc) got906,       NULL},
   {"NICK",    "",   (IntFunc) gotnick,      NULL},
   {"ERROR",   "",   (IntFunc) goterror,     NULL},
 /* ircu2.10.10 has a bug when a client is throttled ERROR is sent wrong */
   {"ERROR:",  "",   (IntFunc) goterror,     NULL},
   {"KICK",    "",   (IntFunc) gotkick,      NULL},
-  {"318",     "",   (IntFunc) whoispenalty, NULL},
-  {"311",     "",   (IntFunc) got311,       NULL},
   {"CAP",     "",   (IntFunc) gotcap,       NULL},
   {"AUTHENTICATE",     "",   (IntFunc) gotauthenticate,       NULL},
-  {"904",     "",   (IntFunc) got904,       NULL},
   {NULL,      NULL, NULL,                    NULL}
 };
 
