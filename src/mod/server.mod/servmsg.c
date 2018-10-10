@@ -20,8 +20,8 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
-#include "../irc.mod/irc.h"
-#include "../channels.mod/channels.h"
+#include  "../irc.mod/irc.h"
+#include  "../channels.mod/channels.h"
 
 static time_t last_ctcp = (time_t) 0L;
 static int count_ctcp = 0;
@@ -1137,8 +1137,6 @@ static int got311(char *from, char *msg)
 static int gotcap(char *from, char *msg)
 {
   char *s;
-  unsigned char dst[1024] = ""; // FIXME: size of the destination buffer
-  size_t olen;
 
   debug2("CAP: gotcap(): from = >>>%s<<< msg = >>>%s<<<", from, msg);
   s = newsplit(&msg);
@@ -1161,18 +1159,33 @@ static int gotcap(char *from, char *msg)
       if (!strcmp(s, "sasl")) {
         debug0("CAP: gotcap(): found capability sasl, so we send AUTHENTICATE PLAIN");
         dprintf(DP_MODE, "AUTHENTICATE PLAIN\n");
-        debug0("CAP: gotcap(): and AUTHENTICATE +");
-        dprintf(DP_MODE, "AUTHENTICATE +\n");
-        mbedtls_base64_encode(dst, sizeof dst, &olen, (const unsigned char *) sasl_password, strlen(sasl_password));
-        debug1("CAP: gotcap(): and AUTHENTICATE %s", dst);
-        dprintf(DP_MODE, "AUTHENTICATE %s\n", dst);
-        }
       }
+    }
   } else if (s[0]) {
     debug1("CAP: gotcap(): found subcommand >>>%s<<< not implemented yet", s);
     dprintf(DP_MODE, "CAP END\n"); /* under construction */
   }
+  return 0;
+}
 
+static int gotauthenticate(char *from, char *msg)
+{
+  unsigned char dst[1024] = ""; // FIXME: size of the destination buffer
+  size_t olen;
+
+  debug2("SASL: gotauthenticate(): from = >>>%s<<< msg = >>>%s<<<", from, msg);
+  /* we could (or must we) do sanity check: msg == "+" */
+  mbedtls_base64_encode(dst, sizeof dst, &olen, (const unsigned char *) sasl_password, strlen(sasl_password));
+  debug1("SASL: gotauthenticate(): so we send AUTHENTICATE %s", dst);
+  dprintf(DP_MODE, "AUTHENTICATE %s\n", dst);
+  return 0;
+}
+
+static int got904(char *from, char *msg)
+{
+  debug2("SASL: got904(): from = >>>%s<<< msg = >>>%s<<<", from, msg);
+  putlog(LOG_SERV, "*", "SASL authentication failed");
+  dprintf(DP_MODE, "CAP END\n");
   return 0;
 }
 
@@ -1216,6 +1229,8 @@ static cmd_t my_raw_binds[] = {
   {"318",     "",   (IntFunc) whoispenalty, NULL},
   {"311",     "",   (IntFunc) got311,       NULL},
   {"CAP",     "",   (IntFunc) gotcap,       NULL},
+  {"AUTHENTICATE",     "",   (IntFunc) gotauthenticate,       NULL},
+  {"904",     "",   (IntFunc) got904,       NULL},
   {NULL,      NULL, NULL,                    NULL}
 };
 
