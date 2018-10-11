@@ -1146,7 +1146,7 @@ static int gotcap(char *from, char *msg)
     putlog(LOG_MISC, "*", "%s supports CAP sub-commands: %s", from, msg);
     for (cmd = newsplit(&msg); cmd[0]; cmd = newsplit(&msg)) {
       if (!strcmp(cmd, "sasl")) {
-        debug0("CAP: gotcap(): found capability sasl, so we send CAP REQ :sasl");
+        putlog(LOG_SERV, "*", "SASL: CAP request sasl");
         dprintf(DP_MODE, "CAP REQ :sasl\n");
       }
     }
@@ -1154,40 +1154,72 @@ static int gotcap(char *from, char *msg)
     putlog(LOG_MISC, "*", "%s acknowledged %s", from, msg);
     for (cmd = newsplit(&msg); cmd[0]; cmd = newsplit(&msg)) {
       if (!strcmp(cmd, "sasl")) {
-        debug0("CAP: gotcap(): found capability sasl, so we send AUTHENTICATE PLAIN");
-        dprintf(DP_MODE, "AUTHENTICATE PLAIN\n");
+        putlog(LOG_SERV, "*", "SASL: put AUTHENTICATE %s", sasl_mechanism);
+        dprintf(DP_MODE, "AUTHENTICATE %s\n", sasl_mechanism);
       }
     }
   } else if (cmd[0]) {
-    debug1("CAP: gotcap(): found subcommand >>>%s<<< not implemented yet", cmd);
-    dprintf(DP_MODE, "CAP END\n"); /* under construction */
+    putlog(LOG_MISC, "*", "%s subcommand %s unknown, CAP END", from, cmd);
+    dprintf(DP_MODE, "CAP END\n");
   }
+
   return 1;
 }
 
 static int gotauthenticate(char *from, char *msg)
 {
-  unsigned char dst[1024] = ""; // FIXME: size of the destination buffer
+  char src[512] = ""; // FIXME: size
+  char *s;
+  size_t slen;
+  unsigned char dst[512] = ""; // FIXME: size
   size_t olen;
 
-  debug2("SASL: gotauthenticate(): from = >>>%s<<< msg = >>>%s<<<", from, msg);
+  putlog(LOG_SERV, "*", "SASL: got AUTHENTICATE %s", msg);
   /* we could (or must we) do sanity check: msg == "+" */
-  /* FIXME: sasl_username sasl_username sasl_password */
-  mbedtls_base64_encode(dst, sizeof dst, &olen, (const unsigned char *) sasl_password, strlen(sasl_password));
-  debug1("SASL: gotauthenticate(): so we send AUTHENTICATE %s", dst);
+  s = src;
+  strcpy(s, sasl_username);
+  s += strlen(sasl_username) + 1;
+  strcpy(s, sasl_username);
+  s += strlen(sasl_username) + 1;
+  strcpy(s, sasl_password);
+  slen = s + strlen(sasl_password) - src;
+  mbedtls_base64_encode(dst, sizeof dst, &olen, (const unsigned char *) src, slen);
+  putlog(LOG_SERV, "*", "SASL: put AUTHENTICATE %s", dst);
   dprintf(DP_MODE, "AUTHENTICATE %s\n", dst);
+  return 1;
+}
+
+static int got900(char *from, char *msg)
+{
+  newsplit(&msg);
+  newsplit(&msg);
+  newsplit(&msg);
+  fixcolon(msg);
+  putlog(LOG_SERV, "*", "SASL: %s", msg);
+  return 1;
+}
+
+static int got903(char *from, char *msg)
+{
+  newsplit(&msg);
+  fixcolon(msg);
+  putlog(LOG_SERV, "*", "SASL: %s", msg);
+  dprintf(DP_MODE, "CAP END\n");
   return 1;
 }
 
 static int got904(char *from, char *msg)
 {
-  putlog(LOG_SERV, "*", "SASL: authentication failed");
-  dprintf(DP_MODE, "CAP END\n");
+  newsplit(&msg);
+  fixcolon(msg);
+  putlog(LOG_SERV, "*", "SASL: %s", msg);
   return 1;
 }
 
 static int got906(char *from, char *msg)
 {
+  newsplit(&msg);
+  fixcolon(msg);
   putlog(LOG_SERV, "*", "SASL: authentication aborted");
   dprintf(DP_MODE, "CAP END\n");
   return 1;
@@ -1227,6 +1259,8 @@ static cmd_t my_raw_binds[] = {
   {"451",     "",   (IntFunc) got451,       NULL},
   {"442",     "",   (IntFunc) got442,       NULL},
   {"465",     "",   (IntFunc) got465,       NULL},
+  {"900",     "",   (IntFunc) got900,       NULL},
+  {"903",     "",   (IntFunc) got903,       NULL},
   {"904",     "",   (IntFunc) got904,       NULL},
   {"906",     "",   (IntFunc) got906,       NULL},
   {"NICK",    "",   (IntFunc) gotnick,      NULL},
@@ -1344,6 +1378,7 @@ static void server_resolve_failure(int servidx)
 static void server_resolve_success(int servidx)
 {
   char pass[121];
+  int i;
 
   resolvserv = 0;
   strlcpy(pass, dcc[servidx].u.dns->cbuf, sizeof pass);
@@ -1384,6 +1419,8 @@ static void server_resolve_success(int servidx)
   /* Start alternate nicks from the beginning */
   altnick_char = 0;
   if (sasl_mechanism[0]) {
+    for (i = 0; i < strlen(sasl_mechanism); i++)
+      sasl_mechanism[i] = toupper(sasl_mechanism[i]); 
     debug1("CAP: server_resolve_success(): sasl_mechanism = %s, so we send CAP LS", sasl_mechanism);
     dprintf(DP_MODE, "CAP LS\n");
   }
