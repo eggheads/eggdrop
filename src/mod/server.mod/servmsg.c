@@ -1422,7 +1422,8 @@ static void server_resolve_success(int servidx)
     for (i = 0; i < strlen(sasl_mechanism); i++)
       sasl_mechanism[i] = toupper(sasl_mechanism[i]); 
     debug1("CAP: server_resolve_success(): sasl_mechanism = %s, so we send CAP LS", sasl_mechanism);
-    dprintf(DP_MODE, "CAP LS\n");
+    /* dprintf(DP_MODE, "CAP LS\n"); */
+    dprintf(DP_MODE, "CAP REQ :sasl\n");
   }
   check_tcl_event("preinit-server");
   if (pass[0])
