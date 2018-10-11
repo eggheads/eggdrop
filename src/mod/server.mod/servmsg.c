@@ -1180,9 +1180,13 @@ static int gotauthenticate(char *from, char *msg)
   strcpy(s, sasl_username);
   s += strlen(sasl_username) + 1;
   strcpy(s, sasl_username);
-  s += strlen(sasl_username) + 1;
-  strcpy(s, sasl_password);
-  slen = s + strlen(sasl_password) - src;
+  s += strlen(sasl_username);
+  if (!strcasecmp(sasl_mechanism, "plain")) { /* don't add sasl_password for ecdsa-nist256p-challenge */
+    s++;
+    strcpy(s, sasl_password);
+    s += strlen(sasl_password);
+  }
+  slen = s - src;
   mbedtls_base64_encode(dst, sizeof dst, &olen, (const unsigned char *) src, slen);
   putlog(LOG_SERV, "*", "SASL: put AUTHENTICATE %s", dst);
   dprintf(DP_MODE, "AUTHENTICATE %s\n", dst);

@@ -124,6 +124,7 @@ static char *realservername;
 static char sasl_mechanism[25];
 static char sasl_username[81];
 static char sasl_password[81];
+static char sasl_key[121];
 
 #include "servmsg.c"
 
@@ -1390,6 +1391,7 @@ static tcl_strings my_tcl_strings[] = {
   {"sasl-mechanism",      sasl_mechanism, 24,                0},
   {"sasl-username",       sasl_username,  80,                0},
   {"sasl-password",       sasl_password,  80,                0},
+  {"sasl-key",            sasl_key,       120,               0},
   {NULL,                  NULL,           0,                 0}
 };
 
