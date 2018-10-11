@@ -813,7 +813,10 @@ static void queue_server(int which, char *msg, int len)
   len = strlen(buf);
 
   /* No queue for PING and PONG - drummer */
-  if (!egg_strncasecmp(buf, "PING", 4) || !egg_strncasecmp(buf, "PONG", 4)) {
+  /* Extended for AUTHENTICATE - michaelortmann */
+  if (!egg_strncasecmp(buf, "PING", 4) ||
+      !egg_strncasecmp(buf, "PONG", 4) ||
+      !egg_strncasecmp(buf, "AUTHENTICATE", 4)) {
     if (buf[1] == 'I' || buf[1] == 'i')
       lastpingtime = now;
     check_tcl_out(which, buf, 1);
