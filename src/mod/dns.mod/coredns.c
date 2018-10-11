@@ -1053,7 +1053,7 @@ void parserespacket(uint8_t *response, int len)
           return;
         }
         ddebug1(RES_MSG "answered domain is CNAME for: %s", namestring);
-        strncpy(stackstring, namestring, 1024);
+        strlcpy(stackstring, namestring, sizeof stackstring);
         break;
       default:
         ddebug2(RES_ERR "Received unimplemented data type: %u (%s)",

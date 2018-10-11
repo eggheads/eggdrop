@@ -41,7 +41,7 @@ EGG_SAVE_PARAMETERS
 
 
 # Check for a working C compiler
-AC_PROG_CC
+AC_PROG_CC([gcc cc clang])
 EGG_CHECK_CC
 
 # These 3 need to be done before any AC_COMPILE_IFELSE()'s.

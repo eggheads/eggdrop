@@ -612,6 +612,9 @@ AC_DEFUN([EGG_CHECK_MODULE_SUPPORT],
     Haiku)
       WEIRD_OS="no"
     ;;
+    Minix)
+      WEIRD_OS="no"
+    ;;
     *)
       if test -r /mach; then
         # At this point, we're guessing this is NeXT Step. We support rld, so

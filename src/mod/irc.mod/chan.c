@@ -2033,7 +2033,7 @@ static int gotkick(char *from, char *origmsg)
   struct userrec *u;
   struct flag_record fr = { FR_GLOBAL | FR_CHAN, 0, 0, 0, 0, 0 };
 
-  strncpyz(buf2, origmsg, sizeof buf2);
+  strlcpy(buf2, origmsg, sizeof buf2);
   msg = buf2;
   chname = newsplit(&msg);
   chan = findchan(chname);
