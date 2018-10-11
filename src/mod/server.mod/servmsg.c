@@ -1191,9 +1191,9 @@ static int gotauthenticate(char *from, char *msg)
 
 static int got900(char *from, char *msg)
 {
-  newsplit(&msg);
-  newsplit(&msg);
-  newsplit(&msg);
+  newsplit(&msg); /* nick */
+  newsplit(&msg); /* nick!ident@host */
+  newsplit(&msg); /* account */
   fixcolon(msg);
   putlog(LOG_SERV, "*", "SASL: %s", msg);
   return 1;
@@ -1201,7 +1201,7 @@ static int got900(char *from, char *msg)
 
 static int got903(char *from, char *msg)
 {
-  newsplit(&msg);
+  newsplit(&msg); /* nick */
   fixcolon(msg);
   putlog(LOG_SERV, "*", "SASL: %s", msg);
   dprintf(DP_MODE, "CAP END\n");
@@ -1210,18 +1210,18 @@ static int got903(char *from, char *msg)
 
 static int got904(char *from, char *msg)
 {
-  newsplit(&msg);
+  newsplit(&msg); /* nick */
   fixcolon(msg);
   putlog(LOG_SERV, "*", "SASL: %s", msg);
+  dprintf(DP_MODE, "CAP END\n");
   return 1;
 }
 
 static int got906(char *from, char *msg)
 {
-  newsplit(&msg);
+  newsplit(&msg); /* nick */
   fixcolon(msg);
-  putlog(LOG_SERV, "*", "SASL: authentication aborted");
-  dprintf(DP_MODE, "CAP END\n");
+  putlog(LOG_SERV, "*", "SASL: %s", msg);
   return 1;
 }
 
@@ -1250,8 +1250,8 @@ static cmd_t my_raw_binds[] = {
   {"WALLOPS", "",   (IntFunc) gotwall,      NULL},
   {"001",     "",   (IntFunc) got001,       NULL},
   {"303",     "",   (IntFunc) got303,       NULL},
-  {"318",     "",   (IntFunc) whoispenalty, NULL},
   {"311",     "",   (IntFunc) got311,       NULL},
+  {"318",     "",   (IntFunc) whoispenalty, NULL},
   {"432",     "",   (IntFunc) got432,       NULL},
   {"433",     "",   (IntFunc) got433,       NULL},
   {"437",     "",   (IntFunc) got437,       NULL},
