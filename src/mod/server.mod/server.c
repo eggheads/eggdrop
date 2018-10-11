@@ -1312,7 +1312,7 @@ static void do_nettype(void)
     check_mode_r = 1;
     use_penalties = 1;
     use_fastdeq = 3;
-    nick_len = 9;
+    nick_len = 15;
     simple_sprintf(stackablecmds, "INVITE AWAY VERSION NICK");
     kick_method = 4;
     break;
@@ -1327,7 +1327,7 @@ static void do_nettype(void)
   case NETT_DALNET:
     check_mode_r = 0;
     use_fastdeq = 2;
-    nick_len = 32;
+    nick_len = 30;
     simple_sprintf(stackablecmds,
                    "PRIVMSG NOTICE PART WHOIS WHOWAS USERHOST ISON WATCH DCCALLOW");
     simple_sprintf(stackable2cmds, "USERHOST ISON WATCH");
@@ -1335,6 +1335,15 @@ static void do_nettype(void)
   case NETT_HYBRID_EFNET:
     check_mode_r = 0;
     nick_len = 9;
+    break;
+  case NETT_FREENODE:
+    nick_len = 16;
+    break;
+  case NETT_QUAKENET:
+    nick_len = 15;
+    break;
+  case NETT_RIZON:
+    nick_len = 30;
     break;
   }
 }

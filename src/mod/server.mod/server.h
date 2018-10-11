@@ -111,7 +111,11 @@ enum {
   NETT_IRCNET       = 1, /* IRCnet                   */
   NETT_UNDERNET     = 2, /* UnderNet                 */
   NETT_DALNET       = 3, /* DALnet                   */
-  NETT_HYBRID_EFNET = 4  /* +e/+I/max-bans 20 Hybrid */
+  NETT_HYBRID_EFNET = 4, /* +e/+I/max-bans 20 Hybrid */
+  NETT_OTHERS       = 5, /* Others                   */
+  NETT_FREENODE     = 6, /* freenode                 */
+  NETT_QUAKENET     = 7, /* QuakeNet                 */
+  NETT_RIZON        = 8  /* Rizon                    */
 } nett_t;
 
 #endif /* _EGG_MOD_SERVER_SERVER_H */
