@@ -724,7 +724,7 @@ static int trigger_bind(const char *proc, const char *param,
    */
   Context;
   /* reuse x */
-  x = snprintf(0, 0, FORMAT, proc ? proc : "<null>", param ? param : "<null>");
+  x = snprintf(NULL, 0, FORMAT, proc ? proc : "<null>", param ? param : "<null>");
   buf = nmalloc(x + 1);
   sprintf(buf, FORMAT, proc ? proc : "<null>", param ? param : "<null>");
   ContextNote(buf);
