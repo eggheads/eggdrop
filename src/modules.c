@@ -606,7 +606,8 @@ Function global_table[] = {
 #endif
   /* 304 - 307 */
   (Function) strncpyz,
-  (Function) mbedtls_base64_encode
+  (Function) mbedtls_base64_encode,
+  (Function) mbedtls_base64_decode
 };
 
 void init_modules(void)

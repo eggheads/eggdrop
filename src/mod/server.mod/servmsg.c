@@ -20,6 +20,9 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
+#ifdef HAVE_OPENSSL_SSL_H 
+  #include <openssl/err.h>
+#endif
 #include  "../irc.mod/irc.h"
 #include  "../channels.mod/channels.h"
 
@@ -1173,24 +1176,47 @@ static int gotauthenticate(char *from, char *msg)
   size_t slen;
   unsigned char dst[512] = ""; // FIXME: size
   size_t olen;
+  unsigned char dst2[512] = ""; // FIXME: size
+  unsigned int olen2;
 
   putlog(LOG_SERV, "*", "SASL: got AUTHENTICATE %s", msg);
-  /* we could (or must we) do sanity check: msg == "+" */
-  s = src;
-  strcpy(s, sasl_username);
-  s += strlen(sasl_username) + 1;
-  strcpy(s, sasl_username);
-  s += strlen(sasl_username);
-  if (!strcasecmp(sasl_mechanism, "plain")) { /* don't add sasl_password for ecdsa-nist256p-challenge */
-    s++;
-    strcpy(s, sasl_password);
-    s += strlen(sasl_password);
+  if (msg[0] == '+') {
+    s = src;
+    strcpy(s, sasl_username);
+    s += strlen(sasl_username) + 1;
+    strcpy(s, sasl_username);
+    s += strlen(sasl_username);
+    if (!strcmp(sasl_mechanism, "plain")) { /* don't add sasl_password for ecdsa-nist256p-challenge */
+      s++;
+      strcpy(s, sasl_password);
+      s += strlen(sasl_password);
+    }
+    slen = s - src;
+    mbedtls_base64_encode(dst, sizeof dst, &olen, (const unsigned char *) src, slen);
+    putlog(LOG_SERV, "*", "SASL: put AUTHENTICATE %s", dst);
+    dprintf(DP_MODE, "AUTHENTICATE %s\n", dst);
+  } else {
+    putlog(LOG_SERV, "*", "SASL: got AUTHENTICATE Challange");
+    mbedtls_base64_decode(dst, sizeof dst, &olen, (const unsigned char *) msg, strlen(msg));
+    for (int j = 0; j < olen; j++)
+      printf("%2x ", dst[j]);
+    printf(" <- THATS MY DEBUG\n");
+
+    /* sign the challenge, see man ECDSA_sign */
+    /* FIXME: here we need to load our key file */
+    EC_KEY *eckey = EC_KEY_new_by_curve_name(NID_X9_62_prime256v1);
+    if (eckey == NULL)
+      printf("SASL: AUTHENTICATE: EC_KEY_new_by_curve_name(): SSL error = %s\n",
+             ERR_error_string(ERR_get_error(), 0));
+    if (EC_KEY_generate_key(eckey) == 0)
+      printf("SASL: AUTHENTICATE: EC_KEY_generate_key(): SSL error = %s\n",
+             ERR_error_string(ERR_get_error(), 0));
+    if (ECDSA_sign(0, dst, olen, dst2, &olen2, eckey) == 0)
+      printf("SASL: AUTHENTICATE: ECDSA_sign() SSL error = %s\n",
+             ERR_error_string(ERR_get_error(), 0));
+
   }
-  slen = s - src;
-  mbedtls_base64_encode(dst, sizeof dst, &olen, (const unsigned char *) src, slen);
-  putlog(LOG_SERV, "*", "SASL: put AUTHENTICATE %s", dst);
-  dprintf(DP_MODE, "AUTHENTICATE %s\n", dst);
-  return 1;
+  return 1; /* FIXME: 1 or 0 ? */
 }
 
 static int got900(char *from, char *msg)
@@ -1424,10 +1450,13 @@ static void server_resolve_success(int servidx)
   altnick_char = 0;
   if (sasl_mechanism[0]) {
     for (i = 0; i < strlen(sasl_mechanism); i++)
-      sasl_mechanism[i] = toupper(sasl_mechanism[i]); 
-    debug1("CAP: server_resolve_success(): sasl_mechanism = %s, so we send CAP LS", sasl_mechanism);
-    /* dprintf(DP_MODE, "CAP LS\n"); */
-    dprintf(DP_MODE, "CAP REQ :sasl\n");
+      sasl_mechanism[i] = toupper(sasl_mechanism[i]);
+    if (HAVE_OPENSSL_SSL_H || strncmp(sasl_mechanism,
+        "ECDSA-NIST256P-CHALLENGE", strlen("ECDSA-NIST256P-CHALLENGE"))) {
+      putlog(LOG_SERV, "*", "CAP: put CAP REQ :sasl");
+      /* dprintf(DP_MODE, "CAP LS\n"); */
+      dprintf(DP_MODE, "CAP REQ :sasl\n");
+    }
   }
   check_tcl_event("preinit-server");
   if (pass[0])

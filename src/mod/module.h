@@ -508,6 +508,7 @@
 /* 304 - 307 */
 #define strncpyz ((size_t (*) (char *, const char *, size_t))global[304])
 #define mbedtls_base64_encode ((int (*) (unsigned char *, size_t, size_t *, const unsigned char *, size_t))global[305])
+#define mbedtls_base64_decode ((int (*) (unsigned char *, size_t, size_t *, const unsigned char *, size_t))global[306])
 
 
 /* hostmasking */
