@@ -636,6 +636,7 @@ static void core_secondly()
   static int cnt = 0;
   int miltime;
   time_t nowmins;
+  int i;
 
   do_check_timers(&utimer);     /* Secondly timers */
   cnt++;
@@ -650,10 +651,10 @@ static void core_secondly()
       tell_mem_status_dcc(DP_STDOUT);
     }
   }
-  egg_memcpy(&nowtm, localtime(&now), sizeof(struct tm));
   nowmins = time(NULL) / 60;
   if (nowmins > lastmin) {
-    int i = 0;
+    egg_memcpy(&nowtm, localtime(&now), sizeof(struct tm));
+    i = 0;
 
     /* Once a minute */
     ++lastmin;
@@ -1118,7 +1119,6 @@ int main(int arg_c, char **arg_v)
   /* Initialize variables and stuff */
   now = time(NULL);
   chanset = NULL;
-  egg_memcpy(&nowtm, localtime(&now), sizeof(struct tm));
   lastmin = now / 60;
   init_random();
   init_mem();
