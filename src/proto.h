@@ -279,7 +279,7 @@ int setsockname(sockname_t *, char *, int, int);
 int open_address_listen(sockname_t *);
 int open_telnet_raw(int, sockname_t *);
 int open_telnet(int, char *, int);
-int answer(int, sockname_t *, unsigned short *, int);
+int answer(int, sockname_t *, uint16_t *, int);
 int getdccaddr(sockname_t *, char *, size_t);
 int getdccfamilyaddr(sockname_t *, char *, size_t, int);
 void tputs(int, char *, unsigned int);

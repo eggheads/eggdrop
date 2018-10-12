@@ -485,6 +485,14 @@ static int proxy_connect(int sock, sockname_t *addr)
   return sock;
 }
 
+/* FIXME: if we can break compatibility for 1.9 or 2.0, we can replace this
+ * workaround with an additional port parameter for functions in need
+ */
+static int get_port_from_addr(const sockname_t *addr)
+{
+  return ntohs((addr->family == AF_INET) ? addr->addr.s4.sin_port : addr->addr.s6.sin6_port);
+}
+
 /* Starts a connection attempt through a socket
  *
  * The server address should be filled in addr by setsockname() or by the
@@ -526,7 +534,8 @@ int open_telnet_raw(int sock, sockname_t *addr)
       if (res == EINPROGRESS) /* Operation now in progress */
         return sock; /* This could probably fail somewhere */
       if (res == ECONNREFUSED) { /* Connection refused */
-        debug1("net: attempted socket connection refused: %s", iptostr(&addr->addr.sa));
+        debug2("net: attempted socket connection refused: %s:%i",
+               iptostr(&addr->addr.sa), get_port_from_addr(addr));
         return -4;
       }
       if (res != 0) {
@@ -628,7 +637,7 @@ int open_listen(int *port)
  * If port is not NULL, it points to an integer to hold the port number
  * of the caller.
  */
-int answer(int sock, sockname_t *caller, unsigned short *port, int binary)
+int answer(int sock, sockname_t *caller, uint16_t *port, int binary)
 {
   int new_sock;
   caller->addrlen = sizeof(caller->addr);
@@ -889,9 +898,13 @@ int sockread(char *s, int *len, sock_list *slist, int slistmax, int tclonly)
             int err = SSL_get_error(slist[i].ssl, x);
             if (err == SSL_ERROR_WANT_READ || err == SSL_ERROR_WANT_WRITE)
               errno = EAGAIN;
+            else if (err == SSL_ERROR_SYSCALL) {
+              debug0("net: sockread(): SSL_read() SSL_ERROR_SYSCALL");
+              putlog(LOG_MISC, "*", "NET: SSL read failed. Non-SSL connection?");
+            }
             else
-              debug1("sockread(): SSL error = %s",
-                     ERR_error_string(ERR_get_error(), 0));
+              debug2("net: sockread(): SSL_read() error = %s (%i)",
+                     ERR_error_string(ERR_get_error(), 0), err);
             x = -1;
           }
         } else

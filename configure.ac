@@ -97,6 +97,7 @@ AC_CHECK_HEADERS([arpa/inet.h fcntl.h limits.h locale.h netdb.h netinet/in.h std
 AC_C_CONST
 AC_C_BIGENDIAN
 AC_C_INLINE
+AC_C_FLEXIBLE_ARRAY_MEMBER
 AC_TYPE_INTPTR_T
 AC_TYPE_PID_T
 AC_TYPE_SIZE_T
