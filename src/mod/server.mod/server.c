@@ -134,6 +134,16 @@ static int burst;
 #include "tclserv.c"
 
 
+static void write_to_server(char *s, unsigned int len) {
+  char *s2 = nmalloc(len + 2);
+
+  memcpy(s2, s, len);
+  s2[len] = '\r';
+  s2[len + 1] = '\n';
+  tputs(serv, s2, len + 2);
+  nfree(s2);
+}
+
 /*
  *     Bot server queues
  */
@@ -422,11 +432,11 @@ static int fast_deq(int which)
   }
 
   m = h->head;
-  strncpyz(msgstr, m->msg, sizeof msgstr);
+  strlcpy(msgstr, m->msg, sizeof msgstr);
   msg = msgstr;
   cmd = newsplit(&msg);
   if (use_fastdeq > 1) {
-    strncpyz(stackable, stackablecmds, sizeof stackable);
+    strlcpy(stackable, stackablecmds, sizeof stackable);
     stckbl = stackable;
     while (strlen(stckbl) > 0) {
       if (!egg_strcasecmp(newsplit(&stckbl), cmd)) {
@@ -444,7 +454,7 @@ static int fast_deq(int which)
       return 0;
 
     /* we check for the stacking method (default=1) */
-    strncpyz(stackable, stackable2cmds, sizeof stackable);
+    strlcpy(stackable, stackable2cmds, sizeof stackable);
     stckbl = stackable;
     while (strlen(stckbl) > 0)
       if (!egg_strcasecmp(newsplit(&stckbl), cmd)) {
@@ -459,7 +469,7 @@ static int fast_deq(int which)
     nm = m->next;
     if (!nm)
       break;
-    strncpyz(nextmsgstr, nm->msg, sizeof nextmsgstr);
+    strlcpy(nextmsgstr, nm->msg, sizeof nextmsgstr);
     nextmsg = nextmsgstr;
     nextcmd = newsplit(&nextmsg);
     nextto = newsplit(&nextmsg);
@@ -535,7 +545,7 @@ static void parse_q(struct msgq_head *q, char *oldnick, char *newnick)
     changed = 0;
     if (optimize_kicks == 2 && !egg_strncasecmp(m->msg, "KICK ", 5)) {
       newnicks[0] = 0;
-      strncpyz(buf, m->msg, sizeof buf);
+      strlcpy(buf, m->msg, sizeof buf);
       msg = buf;
       newsplit(&msg);
       chan = newsplit(&msg);
@@ -593,7 +603,7 @@ static void purge_kicks(struct msgq_head *q)
     if (!egg_strncasecmp(m->msg, "KICK", 4)) {
       newnicks[0] = 0;
       changed = 0;
-      strncpyz(buf, m->msg, sizeof buf);
+      strlcpy(buf, m->msg, sizeof buf);
       reason = buf;
       newsplit(&reason);
       chan = newsplit(&reason);
@@ -601,7 +611,7 @@ static void purge_kicks(struct msgq_head *q)
       while (strlen(nicks) > 0) {
         found = 0;
         nick = splitnicks(&nicks);
-        strncpyz(chans, chan, sizeof chans);
+        strlcpy(chans, chan, sizeof chans);
         chns = chans;
         while (strlen(chns) > 0) {
           ch = newsplit(&chns);
@@ -688,7 +698,7 @@ static int deq_kick(int which)
     return 0;
 
   msg = h->head;
-  strncpyz(buf, msg->msg, sizeof buf);
+  strlcpy(buf, msg->msg, sizeof buf);
   reason = buf;
   newsplit(&reason);
   chan = newsplit(&reason);
@@ -702,7 +712,7 @@ static int deq_kick(int which)
     if (!egg_strncasecmp(m->msg, "KICK", 4)) {
       changed = 0;
       newnicks2[0] = 0;
-      strncpyz(buf2, m->msg, sizeof buf2);
+      strlcpy(buf2, m->msg, sizeof buf2);
       reason2 = buf2;
       newsplit(&reason2);
       chan2 = newsplit(&reason2);
@@ -1041,7 +1051,7 @@ static void next_server(int *ptr, char *serv, unsigned int *port, char *pass)
           return;
         } else if (x->realname && !egg_strcasecmp(x->realname, serv)) {
           *ptr = i;
-          strncpyz(serv, x->realname, UHOSTLEN);
+          strlcpy(serv, x->realname, UHOSTLEN);
 #ifdef TLS
           use_ssl = x->ssl;
 #endif
@@ -1187,7 +1197,7 @@ static char *nick_change(ClientData cdata, Tcl_Interp *irp,
         putlog(LOG_MISC, "*", "* IRC NICK CHANGE: %s -> %s", origbotname, new);
         nick_juped = 0;
       }
-      strncpyz(origbotname, new, NICKLEN);
+      strlcpy(origbotname, new, NICKLEN);
       if (server_online)
         dprintf(DP_SERVER, "NICK %s\n", origbotname);
     }
@@ -1214,7 +1224,7 @@ static char *get_altbotnick(void)
   /* A random-number nick? */
   if (strchr(altnick, '?')) {
     if (!raltnick[0] && !wild_match(altnick, botname)) {
-      strncpyz(raltnick, altnick, NICKLEN);
+      strlcpy(raltnick, altnick, NICKLEN);
       rand_nick(raltnick);
     }
     return raltnick;
@@ -1519,7 +1529,7 @@ static int ctcp_DCC_CHAT(char *nick, char *from, char *handle,
   struct userrec *u = get_user_by_handle(userlist, handle);
   struct flag_record fr = { FR_GLOBAL | FR_CHAN | FR_ANYWH, 0, 0, 0, 0, 0 };
 
-  strncpyz(buf, text, sizeof buf);
+  strlcpy(buf, text, sizeof buf);
   action = newsplit(&msg);
   param = newsplit(&msg);
   ip = newsplit(&msg);
@@ -1683,12 +1693,12 @@ static void server_5minutely()
 
 static void server_prerehash()
 {
-  strncpyz(oldnick, botname, sizeof oldnick);
+  strlcpy(oldnick, botname, sizeof oldnick);
 }
 
 static void server_postrehash()
 {
-  strncpyz(botname, origbotname, NICKLEN);
+  strlcpy(botname, origbotname, NICKLEN);
   if (!botname[0])
     fatal("NO BOT NAME.", 0);
 #ifndef TLS
@@ -2027,7 +2037,7 @@ char *server_start(Function *global_funcs)
   tcl_traceserver("servers", NULL);
   s = Tcl_GetVar(interp, "nick", TCL_GLOBAL_ONLY);
   if (s)
-    strncpyz(origbotname, s, NICKLEN);
+    strlcpy(origbotname, s, NICKLEN);
   Tcl_TraceVar(interp, "nick",
                TCL_TRACE_READS | TCL_TRACE_WRITES | TCL_TRACE_UNSETS,
                nick_change, NULL);

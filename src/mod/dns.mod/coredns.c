@@ -151,7 +151,7 @@ typedef struct {
   uint16_t class;
   uint32_t ttl;
   uint16_t datalength;
-  uint8_t data[];
+  uint8_t data[FLEXIBLE_ARRAY_MEMBER];
 } res_record;
 
 #ifndef HFIXEDSZ
@@ -1053,7 +1053,7 @@ void parserespacket(uint8_t *response, int len)
           return;
         }
         ddebug1(RES_MSG "answered domain is CNAME for: %s", namestring);
-        strncpy(stackstring, namestring, 1024);
+        strlcpy(stackstring, namestring, sizeof stackstring);
         break;
       default:
         ddebug2(RES_ERR "Received unimplemented data type: %u (%s)",

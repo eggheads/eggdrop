@@ -12,11 +12,13 @@ AC_CONFIG_AUX_DIR(../../../misc)
 AC_COPYRIGHT([Copyright (C) 1999 - 2018 Eggheads Development Team])
 AC_REVISION([m4_esyscmd([../../../misc/getcommit])])
 
+AC_PROG_CC([gcc cc clang])
+
 dns_reslib_avail="false"
 
 AC_HEADER_RESOLV
 
-for lib in '' -lresolv -lbind -lsocket
+for lib in '' -lresolv -lbind -lsocket -lnetwork
 do
   LIBS="$lib"
   AC_LINK_IFELSE([AC_LANG_PROGRAM([

@@ -272,7 +272,7 @@ static void write_debug()
     x = creat("DEBUG.DEBUG", 0644);
     if (x >= 0) {
       setsock(x, SOCK_NONSOCK);
-      strncpyz(s, ctime(&now), sizeof s);
+      strlcpy(s, ctime(&now), sizeof s);
       dprintf(-x, "Debug (%s) written %s\n", ver, s);
       dprintf(-x, "Please report problem to bugs@eggheads.org\n");
       dprintf(-x, "after a visit to http://www.eggheads.org/bugzilla/\n");
@@ -303,7 +303,7 @@ static void write_debug()
   if (x < 0) {
     putlog(LOG_MISC, "*", "* Failed to write DEBUG");
   } else {
-    strncpyz(s, ctime(&now), sizeof s);
+    strlcpy(s, ctime(&now), sizeof s);
     dprintf(-x, "Debug (%s) written %s\n", ver, s);
 #ifdef EGG_PATCH
     dprintf(-x, "Patch level: %s\n", egg_patch);
@@ -461,7 +461,7 @@ void eggContext(const char *file, int line, const char *module)
 
   p = strrchr(file, '/');
   if (!module) {
-    strncpyz(x, p ? p + 1 : file, sizeof x);
+    strlcpy(x, p ? p + 1 : file, sizeof x);
   } else
     egg_snprintf(x, 31, "%s:%s", module, p ? p + 1 : file);
   cx_ptr = ((cx_ptr + 1) & 15);
@@ -479,13 +479,13 @@ void eggContextNote(const char *file, int line, const char *module,
 
   p = strrchr(file, '/');
   if (!module)
-    strncpyz(x, p ? p + 1 : file, sizeof x);
+    strlcpy(x, p ? p + 1 : file, sizeof x);
   else
     egg_snprintf(x, 31, "%s:%s", module, p ? p + 1 : file);
   cx_ptr = ((cx_ptr + 1) & 15);
   strcpy(cx_file[cx_ptr], x);
   cx_line[cx_ptr] = line;
-  strncpyz(cx_note[cx_ptr], note, sizeof cx_note[cx_ptr]);
+  strlcpy(cx_note[cx_ptr], note, sizeof cx_note[cx_ptr]);
 }
 #endif /* DEBUG_CONTEXT */
 
@@ -506,7 +506,7 @@ void eggAssert(const char *file, int line, const char *module)
 static void show_ver() {
   char x[512], *z = x;
 
-  strncpyz(x, egg_version, sizeof x);
+  strlcpy(x, egg_version, sizeof x);
   newsplit(&z);
   newsplit(&z);
   printf("%s\n", version);
@@ -608,7 +608,7 @@ static void do_arg()
     printf("         Using %s as config file\n", argv[optind]);
   }
   if (argc > optind) {
-    strncpyz(configfile, argv[optind], sizeof configfile);
+    strlcpy(configfile, argv[optind], sizeof configfile);
   }
 }
 
@@ -636,6 +636,7 @@ static void core_secondly()
   static int cnt = 0;
   int miltime;
   time_t nowmins;
+  int i;
 
   do_check_timers(&utimer);     /* Secondly timers */
   cnt++;
@@ -650,10 +651,10 @@ static void core_secondly()
       tell_mem_status_dcc(DP_STDOUT);
     }
   }
-  egg_memcpy(&nowtm, localtime(&now), sizeof(struct tm));
   nowmins = time(NULL) / 60;
   if (nowmins > lastmin) {
-    int i = 0;
+    egg_memcpy(&nowtm, localtime(&now), sizeof(struct tm));
+    i = 0;
 
     /* Once a minute */
     ++lastmin;
@@ -682,7 +683,7 @@ static void core_secondly()
         char s[25];
         int j;
 
-        strncpyz(s, ctime(&now), sizeof s);
+        strlcpy(s, ctime(&now), sizeof s);
         if (quiet_save < 3)
           putlog(LOG_ALL, "*", "--- %.11s%s", s, s + 20);
         call_hook(HOOK_BACKUP);
@@ -956,7 +957,7 @@ int mainloop(int toplevel)
             d = d->next;
           }
           if (ok) {
-            strncpyz(name, p->name, sizeof name);
+            strlcpy(name, p->name, sizeof name);
             if (module_unload(name, botnetnick) == NULL) {
               f = 1;
               break;
@@ -1118,7 +1119,6 @@ int main(int arg_c, char **arg_v)
   /* Initialize variables and stuff */
   now = time(NULL);
   chanset = NULL;
-  egg_memcpy(&nowtm, localtime(&now), sizeof(struct tm));
   lastmin = now / 60;
   init_random();
   init_mem();
@@ -1151,7 +1151,7 @@ int main(int arg_c, char **arg_v)
 #ifdef STATIC
   link_statics();
 #endif
-  strncpyz(s, ctime(&now), sizeof s);
+  strlcpy(s, ctime(&now), sizeof s);
   memmove(&s[11], &s[20], strlen(&s[20])+1);
   putlog(LOG_ALL, "*", "--- Loading %s (%s)", ver, s);
   chanprog();

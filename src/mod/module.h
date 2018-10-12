@@ -187,7 +187,7 @@
 #define egg_list_append ((int (*) ( struct list_type **, struct list_type *))global[74])
 #define egg_list_contains ((int (*) (struct list_type *, struct list_type *))global[75])
 /* 76 - 79 */
-#define answer ((int (*) (int, sockname_t *, unsigned short *, int))global[76])
+#define answer ((int (*) (int, sockname_t *, uint16_t *, int))global[76])
 #define getvhost ((void (*) (sockname_t *, int))global[77])
 /* was neterror() */
 #ifdef TLS
@@ -501,6 +501,11 @@
 #define tcl_resultint ((int (*)(void))global[300])
 #define tcl_resultstring ((const char *(*)(void))global[301])
 #define getdccfamilyaddr ((int (*) (sockname_t *, char *, socklen_t, int))global[302])
+#ifndef HAVE_STRLCPY
+# define strlcpy ((size_t (*) (char *, const char *, size_t))global[303])
+#endif
+/* 304 - 307 */
+#define strncpyz ((size_t (*) (char *, const char *, size_t))global[304])
 
 
 /* hostmasking */

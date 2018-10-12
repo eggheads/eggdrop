@@ -143,9 +143,9 @@ int init_uptime(void)
   uptimecount = 0;
   uptimeip = -1;
 
-  strncpyz(x, ver, sizeof x);
+  strlcpy(x, ver, sizeof x);
   newsplit(&z);
-  strncpyz(uptime_version, z, sizeof uptime_version);
+  strlcpy(uptime_version, z, sizeof uptime_version);
 
   if ((uptimesock = socket(AF_INET, SOCK_DGRAM, 0)) < 0) {
     putlog(LOG_DEBUG, "*", "init_uptime socket returned < 0 %d", uptimesock);
@@ -195,7 +195,7 @@ int send_uptime(void)
 
     if (server_online) {
       servidx = findanyidx(serv);
-      strncpyz(servhost, dcc[servidx].host, sizeof servhost);
+      strlcpy(servhost, dcc[servidx].host, sizeof servhost);
       upPack.ontime = htonl(server_online);
     }
   }
