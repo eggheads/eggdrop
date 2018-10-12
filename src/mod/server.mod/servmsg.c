@@ -1198,22 +1198,40 @@ static int gotauthenticate(char *from, char *msg)
   } else {
     putlog(LOG_SERV, "*", "SASL: got AUTHENTICATE Challange");
     mbedtls_base64_decode(dst, sizeof dst, &olen, (const unsigned char *) msg, strlen(msg));
-    for (int j = 0; j < olen; j++)
-      printf("%2x ", dst[j]);
-    printf(" <- THATS MY DEBUG\n");
 
     /* sign the challenge, see man ECDSA_sign */
-    /* FIXME: here we need to load our key file */
     EC_KEY *eckey = EC_KEY_new_by_curve_name(NID_X9_62_prime256v1);
     if (eckey == NULL)
       printf("SASL: AUTHENTICATE: EC_KEY_new_by_curve_name(): SSL error = %s\n",
              ERR_error_string(ERR_get_error(), 0));
-    if (EC_KEY_generate_key(eckey) == 0)
-      printf("SASL: AUTHENTICATE: EC_KEY_generate_key(): SSL error = %s\n",
-             ERR_error_string(ERR_get_error(), 0));
+
+    /* 
+     * The following code is very raw, ugly, need error checking, needs cleanup, etc,
+     * but i wanted to commit it like this
+     * for we can successfully connect with sasl mechanism ecdsa-nist256p-challenge now, yeah!
+     */
+    FILE *fp = fopen("/home/michael/.weechat/ecdsa.pem", "r");
+    if (!fp) {
+      printf( "Could not open private key file\n");
+      return 1; /* FIXME */
+    }
+    EVP_PKEY *privateKey;
+    privateKey = PEM_read_PrivateKey(fp, NULL, 0, NULL);
+    if (!privateKey)
+      printf("Could not extract private key from file\n");  
+    fclose(fp);
+    eckey = EVP_PKEY_get1_EC_KEY(privateKey);
+
+
+    /* sign */
     if (ECDSA_sign(0, dst, olen, dst2, &olen2, eckey) == 0)
       printf("SASL: AUTHENTICATE: ECDSA_sign() SSL error = %s\n",
              ERR_error_string(ERR_get_error(), 0));
+
+    /* base64 and send response */
+    mbedtls_base64_encode(dst, sizeof dst, &olen, dst2, olen2);
+    putlog(LOG_SERV, "*", "SASL: put AUTHENTICATE Response %s", dst);
+    dprintf(DP_MODE, "AUTHENTICATE %s\n", dst);
 
   }
   return 1; /* FIXME: 1 or 0 ? */
