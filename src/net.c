@@ -637,7 +637,7 @@ int open_listen(int *port)
  * If port is not NULL, it points to an integer to hold the port number
  * of the caller.
  */
-int answer(int sock, sockname_t *caller, unsigned short *port, int binary)
+int answer(int sock, sockname_t *caller, uint16_t *port, int binary)
 {
   int new_sock;
   caller->addrlen = sizeof(caller->addr);

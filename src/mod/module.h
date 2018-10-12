@@ -187,7 +187,7 @@
 #define egg_list_append ((int (*) ( struct list_type **, struct list_type *))global[74])
 #define egg_list_contains ((int (*) (struct list_type *, struct list_type *))global[75])
 /* 76 - 79 */
-#define answer ((int (*) (int, sockname_t *, unsigned short *, int))global[76])
+#define answer ((int (*) (int, sockname_t *, uint16_t *, int))global[76])
 #define getvhost ((void (*) (sockname_t *, int))global[77])
 /* was neterror() */
 #ifdef TLS
