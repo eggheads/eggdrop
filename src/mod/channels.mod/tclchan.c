@@ -2282,7 +2282,6 @@ static int tcl_chansettype STDVAR
              !strcmp(argv[1], "flood-kick") ||
              !strcmp(argv[1], "flood-deop") ||
              !strcmp(argv[1], "flood-nick") ||
-             !strcmp(argv[1], "flood-nick") ||
              !strcmp(argv[1], "aop-delay")) {
     Tcl_AppendResult(irp, "pair", NULL);
   /* Integers now */
