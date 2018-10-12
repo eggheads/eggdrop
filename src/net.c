@@ -534,7 +534,7 @@ int open_telnet_raw(int sock, sockname_t *addr)
       if (res == EINPROGRESS) /* Operation now in progress */
         return sock; /* This could probably fail somewhere */
       if (res == ECONNREFUSED) { /* Connection refused */
-        debug2("net: attempted socket connection refused: ip = %s port = %i",
+        debug2("net: attempted socket connection refused: %s:%i",
                iptostr(&addr->addr.sa), get_port_from_addr(addr));
         return -4;
       }
@@ -900,11 +900,11 @@ int sockread(char *s, int *len, sock_list *slist, int slistmax, int tclonly)
               errno = EAGAIN;
             else if (err == SSL_ERROR_SYSCALL) {
               debug0("net: sockread(): SSL_read() SSL_ERROR_SYSCALL");
-              putlog(LOG_MISC, "*", "NET: SSL read failed. Could have been a non ssl bot or telnet connecting to a ssl only port.");
+              putlog(LOG_MISC, "*", "NET: SSL read failed. Non-SSL connection?");
             }
             else
-              debug2("net: sockread(): SSL_read() err = %i error = %s", err,
-                     ERR_error_string(ERR_get_error(), 0));
+              debug2("net: sockread(): SSL_read() error = %s (%i)",
+                     ERR_error_string(ERR_get_error(), 0), err);
             x = -1;
           }
         } else
