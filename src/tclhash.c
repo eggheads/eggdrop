@@ -715,7 +715,7 @@ static int trigger_bind(const char *proc, const char *param,
 {
   int x;
 #ifdef DEBUG_CONTEXT
-  const char *msg = "Tcl proc: %s, param: %s";
+  #define FORMAT "Tcl proc: %s, param: %s"
   char *buf;
 
   /* We now try to debug the Tcl_VarEval() call below by remembering both
@@ -723,9 +723,10 @@ static int trigger_bind(const char *proc, const char *param,
    * less helpless when we see context dumps.
    */
   Context;
-  buf = nmalloc(strlen(msg) + (proc ? strlen(proc) : 6)
-                + (param ? strlen(param) : 6) + 1);
-  sprintf(buf, msg, proc ? proc : "<null>", param ? param : "<null>");
+  /* reuse x */
+  x = snprintf(NULL, 0, FORMAT, proc ? proc : "<null>", param ? param : "<null>");
+  buf = nmalloc(x + 1);
+  sprintf(buf, FORMAT, proc ? proc : "<null>", param ? param : "<null>");
   ContextNote(buf);
   nfree(buf);
 #endif /* DEBUG_CONTEXT */
