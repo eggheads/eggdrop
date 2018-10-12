@@ -134,6 +134,16 @@ static int burst;
 #include "tclserv.c"
 
 
+static void write_to_server(char *s, unsigned int len) {
+  char *s2 = nmalloc(len + 2);
+
+  memcpy(s2, s, len);
+  s2[len] = '\r';
+  s2[len + 1] = '\n';
+  tputs(serv, s2, len + 2);
+  nfree(s2);
+}
+
 /*
  *     Bot server queues
  */
