@@ -33,19 +33,11 @@
 #define MODULE_NAME "uptime"
 #define MAKING_UPTIME
 
+#include <fcntl.h>
+#include <sys/stat.h>
 #include "uptime.h"
 #include "../module.h"
 #include "../server.mod/server.h"
-#include <netdb.h>
-#include <netinet/in.h>
-#include <arpa/inet.h>
-#include <unistd.h>
-#include <fcntl.h>
-#include <sys/types.h>
-#include <sys/socket.h>
-#include <fcntl.h>
-#include <sys/stat.h>
-#include <unistd.h>
 
 #define UPDATE_INTERVAL (12 * 60) /* random(0..12) hours: ~6 hour average. */
 
