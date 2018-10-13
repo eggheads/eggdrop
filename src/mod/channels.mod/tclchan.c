@@ -2100,8 +2100,7 @@ static int tcl_channel_add(Tcl_Interp *irp, char *newname, char *options)
      * any code later on. chan->name gets updated with the channel name as
      * the server knows it, when we join the channel. <cybah>
      */
-    strncpy(chan->dname, newname, 81);
-    chan->dname[80] = 0;
+    strlcpy(chan->dname, newname, sizeof chan->dname);
 
     /* Initialize chan->channel info */
     init_channel(chan, 0);
@@ -2113,7 +2112,7 @@ static int tcl_channel_add(Tcl_Interp *irp, char *newname, char *options)
 
   }
   /* If chan_hack is set, we're loading the userfile. Ignore errors while
-   * reading userfile and just return TCL_OK. This is for compatability
+   * reading userfile and just return TCL_OK. This is for compatibility
    * if a user goes back to an eggdrop that no-longer supports certain
    * (channel) options.
    */

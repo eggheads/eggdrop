@@ -82,7 +82,7 @@ static int ssl_seed(void)
 #endif
   /* If '/dev/urandom' is present, OpenSSL will use it by default.
    * Otherwise we'll have to generate pseudorandom data ourselves,
-   * using system time, our process ID and some unitialized static
+   * using system time, our process ID and some uninitialized static
    * storage.
    */
   if ((fh = fopen("/dev/urandom", "r"))) {
@@ -104,7 +104,7 @@ static int ssl_seed(void)
   }
 #ifdef HAVE_RAND_STATUS
   if (!RAND_status())
-    return 2;   /* pseudo random data still not ehough */
+    return 2; /* pseudo random data still not enough */
 #endif
   return 0;
 }
@@ -567,7 +567,7 @@ int ssl_verify(int ok, X509_STORE_CTX *ctx)
     data->flags |= TLS_DEPTH0;
     /* Allow exceptions for certain common verification errors, if the
      * caller requested so. A lot of servers provide completely invalid
-     * certificates unuseful for any authentication.
+     * certificates useless for any authentication.
      */
     if (!ok || data->verify)
       if (((err == X509_V_ERR_DEPTH_ZERO_SELF_SIGNED_CERT) &&

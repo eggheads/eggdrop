@@ -28,7 +28,7 @@
 static time_t last_ctcp = (time_t) 0L;
 static int count_ctcp = 0;
 static time_t last_invtime = (time_t) 0L;
-static char last_invchan[300] = "";
+static char last_invchan[CHANNELLEN + 1] = "";
 
 /* ID length for !channels.
  */
@@ -162,7 +162,7 @@ static void check_exemptlist(struct chanset_t *chan, char *from)
 /* Check a channel and clean-out any more-specific matching masks.
  *
  * Moved all do_ban(), do_exempt() and do_invite() into this single function
- * as the code bloat is starting to get rediculous <cybah>
+ * as the code bloat is starting to get ridiculous <cybah>
  */
 static void do_mask(struct chanset_t *chan, masklist *m, char *mask, char mode)
 {
@@ -1510,8 +1510,7 @@ static int gotinvite(char *from, char *msg)
     if (now - last_invtime < 30)
       return 0; /* Two invites to the same channel in 30 seconds? */
   putlog(LOG_MISC, "*", "%s!%s invited me to %s", nick, from, msg);
-  strncpy(last_invchan, msg, 299);
-  last_invchan[299] = 0;
+  strlcpy(last_invchan, msg, sizeof last_invchan);
   last_invtime = now;
   chan = findchan(msg);
   if (!chan)
@@ -1818,8 +1817,7 @@ static int gotjoin(char *from, char *chname)
           /* It was me joining! Need to update the channel record with the
            * unique name for the channel (as the server see's it). <cybah>
            */
-          strncpy(chan->name, chname, 81);
-          chan->name[80] = 0;
+          strlcpy(chan->name, chname, sizeof chan->name);
           chan->status &= ~CHAN_JUPED;
 
           /* ... and log us joining. Using chan->dname for the channel is
@@ -1855,7 +1853,7 @@ static int gotjoin(char *from, char *chname)
               if (!(u->flags & USER_BOT)) {
                 s = get_user(&USERENTRY_INFO, u);
                 get_handle_chaninfo(u->handle, chan->dname, s1);
-                /* Locked info line overides non-locked channel specific
+                /* Locked info line overrides non-locked channel specific
                  * info line.
                  */
                 if (!s || (s1[0] && (s[0] != '@' || s1[0] == '@')))

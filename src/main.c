@@ -819,7 +819,7 @@ int mainloop(int toplevel)
   int xx, i, eggbusy = 1, tclbusy = 0;
   char buf[520];
 
-  /* Lets move some of this here, reducing the numer of actual
+  /* Lets move some of this here, reducing the number of actual
    * calls to periodic_timers
    */
   now = time(NULL);

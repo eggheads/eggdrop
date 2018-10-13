@@ -2102,7 +2102,7 @@ static void eof_dcc_script(int idx)
   void *old;
   int oldflags;
 
-  /* This will stop a killdcc from working, incase the script tries
+  /* This will stop a killdcc from working, in case the script tries
    * to kill it's controlling socket while handling an EOF <cybah>
    */
   oldflags = dcc[idx].type->flags;

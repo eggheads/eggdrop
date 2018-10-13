@@ -59,7 +59,7 @@ int shtime = 1;                 /* Display the time with console output */
 log_t *logs = 0;                /* Logfiles */
 int max_logs = 5;               /* Max log files, mismatch config on purpose */
 int max_logsize = 0;            /* Maximum logfile size, 0 for no limit */
-int raw_log = 0;                /* Disply output to server to LOG_SERVEROUT */
+int raw_log = 0;                /* Display output to server to LOG_SERVEROUT */
 
 int conmask = LOG_MODES | LOG_CMDS | LOG_MISC; /* Console mask */
 
@@ -168,7 +168,7 @@ int egg_strcatn(char *dst, const char *src, size_t max)
    */
   tmpmax = max;
 
-  /* copy upto, but not including the null terminator */
+  /* copy up to, but not including the null terminator */
   while (*src && max > 1) {
     *dst++ = *src++;
     max--;
