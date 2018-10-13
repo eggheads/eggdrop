@@ -1085,7 +1085,7 @@ static void cmd_fprint(struct userrec *u, int idx, char *par)
       return;
     } else if (!(new = ssl_getfp(dcc[idx].sock))) {
       dprintf(idx, "Can't get your current fingerprint. "
-              "Set up you client to send a certificate!\n");
+              "Set up your client to send a certificate!\n");
       return;
     }
   }
