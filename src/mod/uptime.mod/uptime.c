@@ -203,10 +203,10 @@ int send_uptime(void)
   else
     upPack.sysup = htonl(st.st_ctime);
 
-  len = sizeof(upPack) + strlen(botnetnick) + strlen(servhost) +
-        strlen(uptime_version) + 3;
+  len = offsetof(struct PackUp, string) + strlen(botnetnick) + strlen(servhost) +
+        strlen(uptime_version) + 3; /* whitespace + whitespace + \0 */
   mem = (PackUp *) nmalloc(len);
-  my_memcpy(mem, &upPack, sizeof(upPack));
+  memcpy(mem, &upPack, sizeof(upPack));
   sprintf(mem->string, "%s %s %s", botnetnick, servhost, uptime_version);
   egg_bzero(&sai, sizeof(sai));
   sai.sin_family = AF_INET;
