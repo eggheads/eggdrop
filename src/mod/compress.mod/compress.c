@@ -346,7 +346,7 @@ static int uncompress_file(char *filename)
 
 
 /*
- *    Userfile feature releated functions
+ *    Userfile feature related functions
  */
 
 static int uff_comp(int idx, char *filename)

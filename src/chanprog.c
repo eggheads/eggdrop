@@ -340,7 +340,7 @@ void tell_verbose_status(int idx)
   else {
     hr = cputime / 60;
     cputime -= hr * 60;
-    sprintf(s2, "CPU: %02d:%05.2f", (int) hr, cputime); /* Actally min/sec */
+    sprintf(s2, "CPU: %02d:%05.2f", (int) hr, cputime); /* Actually min/sec */
   }
   dprintf(idx, "%s %s (%s) - %s - %s: %4.1f%%\n", MISC_ONLINEFOR,
           s, s1, s2, MISC_CACHEHIT,

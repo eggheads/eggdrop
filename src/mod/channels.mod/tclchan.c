@@ -2113,7 +2113,7 @@ static int tcl_channel_add(Tcl_Interp *irp, char *newname, char *options)
 
   }
   /* If chan_hack is set, we're loading the userfile. Ignore errors while
-   * reading userfile and just return TCL_OK. This is for compatability
+   * reading userfile and just return TCL_OK. This is for compatibility
    * if a user goes back to an eggdrop that no-longer supports certain
    * (channel) options.
    */

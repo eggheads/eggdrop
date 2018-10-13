@@ -392,7 +392,7 @@ struct dcc_t {
   char host[UHOSTLEN];
   struct dcc_table *type;
   time_t timeval;               /* This is used for timeout checking. */
-  unsigned long status;         /* A LOT of dcc types have status things; makes it more availabe. */
+  unsigned long status;         /* A LOT of dcc types have status things; makes it more available. */
   union {
     struct chat_info *chat;
     struct file_info *file;

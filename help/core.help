@@ -60,7 +60,7 @@ and all matching help texts will be displayed.
    %b.chat%b <channel>   Makes you leave the main partyline channel and join a
                      specific channel (valid channels are 1 to 99999, channel 0
                      is the party line).
-   %b.me%b <action>      Preform an action to the party line.
+   %b.me%b <action>      Perform an action to the party line.
    %b.handle%b <handle>  Changes your nick on party line.
    %b.help%b <command>   Shows more help on a specific command.
 
