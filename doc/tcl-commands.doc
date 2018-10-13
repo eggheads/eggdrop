@@ -2215,7 +2215,7 @@ encrypt <key> <string>
   module), encoded into ASCII using base-64. As of v1.8.3, the default
   blowfish encryption module can use either the older ECB mode
   (currently used by default for compatibility reasons), or the more
-  recent and more-secure CBC mode. You can explicitly request which
+  recent and more-secure CBC mode. You can explicitely request which
   encryption mode to use by prefixing the encryption key with either
   "ecb:" or "cbc:", or by using the blowfish-use-mode setting in the
   config file. Note: the default encryption mode for this function is
