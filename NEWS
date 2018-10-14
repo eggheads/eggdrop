@@ -45,7 +45,7 @@ Eggdrop v1.8.3:
         being received is now properly being sent to a tmpfile first if
         copy-to-tmp is set.
       - Botnet sharing:  A slave will now use the address of the hub (to
-        which it's succesfully connected) instead of an IP given by the hub
+        which it's successfully connected) instead of an IP given by the hub
         which was wrong in certain cases (especially in NAT situations).
       - Bots request existing channel flags for users upon adding a new
         channel.
