@@ -670,33 +670,17 @@ void list_timers(Tcl_Interp *irp, tcl_timer_t *stack)
   }
 }
 
-/* Oddly enough, written by Sup (former(?) Eggdrop coder)
- */
-int isowner(char *name)
-{
-  char *ptr = NULL, *s = NULL, *n = NULL;
+int isowner(char *name) {
+  char s[sizeof owner];
+  char *sep = ", \t\n\v\f\r";
+  char *word;
 
-  if (!name)
-    return 0;
-
-  ptr = owner - 1;
-
-  do {
-    ptr++;
-    if (*ptr && !egg_isspace(*ptr) && *ptr != ',') {
-      if (!s)
-        s = ptr;
-    } else if (s) {
-      for (n = name; *n && *s && s < ptr &&
-           tolower((unsigned) *n) == tolower((unsigned) *s); n++, s++);
-
-      if (s == ptr && !*n)
-        return 1;
-
-      s = NULL;
+  strcpy(s, owner);
+  for (word = strtok(s, sep); word; word = strtok(NULL, sep)) {
+    if (!strcasecmp(name, word)) {
+      return 1;
     }
-  } while (*ptr);
-
+  }
   return 0;
 }
 
