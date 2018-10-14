@@ -171,12 +171,12 @@ int ssl_init()
     ERR_free_strings();
   }
   /* Let advanced users specify the list of allowed ssl protocols */
-  #define EGG_SSLv2   1 << 0
-  #define EGG_SSLv3   1 << 1
-  #define EGG_TLSv1   1 << 2
-  #define EGG_TLSv1_1 1 << 3
-  #define EGG_TLSv1_2 1 << 4
-  #define EGG_TLSv1_3 1 << 5
+  #define EGG_SSLv2   (1 << 0)
+  #define EGG_SSLv3   (1 << 1)
+  #define EGG_TLSv1   (1 << 2)
+  #define EGG_TLSv1_1 (1 << 3)
+  #define EGG_TLSv1_2 (1 << 4)
+  #define EGG_TLSv1_3 (1 << 5)
   if (tls_protocols[0]) {
     char s[sizeof tls_protocols];
     char *sep = " ";
@@ -243,7 +243,7 @@ int ssl_init()
         if (SSL_CTX_set_tmp_dh(ssl_ctx, dh) == 1) {
           debug1("TLS: set dhparam %s", tls_dhparam);
         }
-	else {
+        else {
           putlog(LOG_MISC, "*", "ERROR: TLS: unable to set tmp dh %s: %s",
                  tls_dhparam, ERR_error_string(ERR_get_error(), NULL));
         }
