@@ -1196,6 +1196,39 @@ static void dns_lookup(sockname_t *addr)
   sendrequest(rp, T_PTR);
 }
 
+static int dns_hosts(char *hostn) {
+  FILE* in;
+  char line[1024];
+  char *ptr;
+  int l = strlen(hostn);
+  const char *delim = " \t\n\v\f\r";
+  sockname_t name;
+
+  in = fopen("/etc/hosts", "rb");
+  if (in) {
+    while (fgets(line, sizeof line , in)) {
+      for(ptr = strstr(line, hostn); ptr; ptr = strstr(ptr + l, hostn)) {
+        if ((isspace(ptr[l]) || !ptr[l]) && ptr != line) {
+          ptr = line;
+          for (ptr = line; isspace(*ptr); ptr++);
+          ptr = strsep(&ptr, delim);
+          if (setsockname(&name, ptr, 0, 0) != AF_UNSPEC) {
+            call_ipbyhost(hostn, &name, 1);
+            ddebug2(RES_MSG "Used /etc/hosts: %s == %s", hostn, ptr);
+            return 1;
+          }
+        }
+      }
+    }
+    if (ferror(in))
+      ddebug1(RES_MSG "fgets(): %s ", strerror(errno));
+    fclose(in);
+  }
+  else
+    ddebug1(RES_MSG "fopen(): %s ", strerror(errno));
+  return 0;
+}
+
 /* Start searching for an ip-address, using it's host-name.
  */
 static void dns_forward(char *hostn)
@@ -1221,34 +1254,8 @@ static void dns_forward(char *hostn)
     return;
   }
 
-  FILE* in;
-  char line[1024];
-  char *ptr;
-  const char *delim = " \t\n\v\f\r";
-  int l = strlen(hostn);
-  in = fopen("/etc/hosts", "rb");
-  if (in) {
-    while (fgets(line, sizeof line , in)) {
-      for(ptr = strstr(line, hostn); ptr; ptr = strstr(ptr + l, hostn)) {
-        if ((isspace(ptr[l]) || !ptr[l]) && ptr != line) {
-          ptr = line;
-          for (ptr = line; isspace(*ptr); ptr++);
-          ptr = strsep(&ptr, delim);
-          ddebug2(RES_MSG "Found /etc/hosts >>>%s<<< -> >>>%s<<<", hostn, ptr);
-          if (setsockname(&name, ptr, 0, 0) != AF_UNSPEC) {
-            debug0(RES_MSG "setsockname() ok\n");
-            call_ipbyhost(hostn, &name, 1);
-            return;
-          }
-        }
-      }
-    }
-    if (ferror(in))
-      ddebug1(RES_MSG "fgets(): %s ", strerror(errno));
-    fclose(in);
-  }
-  else
-    ddebug1(RES_MSG "fopen(): %s ", strerror(errno));
+  if (dns_hosts(hostn))
+    return;
 
   ddebug0(RES_MSG "Creating new record");
   rp = allocresolve();
