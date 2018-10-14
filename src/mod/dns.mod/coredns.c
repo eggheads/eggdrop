@@ -1215,6 +1215,7 @@ static int dns_hosts(char *hostn) {
           if (setsockname(&name, ptr, 0, 0) != AF_UNSPEC) {
             call_ipbyhost(hostn, &name, 1);
             ddebug2(RES_MSG "Used /etc/hosts: %s == %s", hostn, ptr);
+            fclose(in);
             return 1;
           }
         }
