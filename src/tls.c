@@ -422,12 +422,18 @@ static char *ssl_printname(X509_NAME *name)
 
   /* X509_NAME_oneline() is easier and shorter, but is deprecated and
      the manual discourages it's usage, so let's not be lazy ;) */
-  X509_NAME_print_ex(bio, name, 0, XN_FLAG_ONELINE & ~XN_FLAG_SPC_EQ);
-  len = BIO_get_mem_data(bio, &data);
-  buf = nmalloc(len + 1);
-  memcpy(buf, data, len); // don't strlcpy() for it would read data[len]
-  buf[len] = 0;
-  BIO_free(bio);
+  if (X509_NAME_print_ex(bio, name, 0, XN_FLAG_ONELINE & ~XN_FLAG_SPC_EQ)) {
+    len = BIO_get_mem_data(bio, &data);
+    buf = nmalloc(len + 1);
+    memcpy(buf, data, len); // don't strlcpy() for it would read data[len]
+    buf[len] = 0;
+    BIO_free(bio);
+  }
+  else {
+    debug0("TLS: ssl_printname(): X509_NAME_print_ex(): error");
+    buf = nmalloc(1);
+    *buf = 0;
+  }
   return buf;
 }
 
