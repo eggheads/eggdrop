@@ -1,9 +1,9 @@
 /*
- * compat.h
- *   wrap-around header for all compatibility functions.
+ * strlcpy.h
+ *   prototypes for strlcpy.c
  */
 /*
- * Copyright (C) 2000 - 2018 Eggheads Development Team
+ * Copyright (C) 2010 - 2018 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -20,17 +20,11 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
-#ifndef _EGG_COMPAT_COMPAT_H
-#define _EGG_COMPAT_COMPAT_H
+#ifndef _EGG_COMPAT_STRLCPY_H_
+#define _EGG_COMPAT_STRLCPY_H_
 
-#include "inet_aton.h"
-#include "snprintf.h"
-#include "memcpy.h"
-#include "strcasecmp.h"
-#include "strftime.h"
-#include "inet_ntop.h"
-#include "inet_pton.h"
-#include "gethostbyname2.h"
-#include "strlcpy.h"
+#ifndef HAVE_STRLCPY
+size_t strlcpy(char * __restrict, const char * __restrict, size_t);
+#endif /* HAVE_STRLCPY */
 
-#endif /* !__EGG_COMPAT_COMPAT_H */
+#endif /* _EGG_COMPAT_STRLCPY_H_ */

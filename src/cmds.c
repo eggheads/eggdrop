@@ -653,7 +653,7 @@ static void do_console(struct userrec *u, int idx, char *par, int reset)
   module_entry *me;
 
   get_user_flagrec(u, &fr, dcc[idx].u.chat->con_chan);
-  strncpyz(s1, par, sizeof s1);
+  strlcpy(s1, par, sizeof s1);
   nick = newsplit(&par);
   /* Check if the parameter is a handle.
    * Don't remove '+' as someone couldn't have '+' in CHANMETA cause
@@ -691,7 +691,7 @@ static void do_console(struct userrec *u, int idx, char *par, int reset)
               nick);
       return;
     }
-    strncpyz(dcc[dest].u.chat->con_chan, nick,
+    strlcpy(dcc[dest].u.chat->con_chan, nick,
         sizeof dcc[dest].u.chat->con_chan);
     nick[0] = 0;
     if (dest != idx)
@@ -948,8 +948,8 @@ static void cmd_chhandle(struct userrec *u, int idx, char *par)
   int i, atr = u ? u->flags : 0, atr2;
   struct userrec *u2;
 
-  strncpyz(hand, newsplit(&par), sizeof hand);
-  strncpyz(newhand, newsplit(&par), sizeof newhand);
+  strlcpy(hand, newsplit(&par), sizeof hand);
+  strlcpy(newhand, newsplit(&par), sizeof newhand);
 
   if (!hand[0] || !newhand[0]) {
     dprintf(idx, "Usage: chhandle <oldhandle> <newhandle>\n");
@@ -995,7 +995,7 @@ static void cmd_handle(struct userrec *u, int idx, char *par)
   char oldhandle[HANDLEN + 1], newhandle[HANDLEN + 1];
   int i;
 
-  strncpyz(newhandle, newsplit(&par), sizeof newhandle);
+  strlcpy(newhandle, newsplit(&par), sizeof newhandle);
 
   if (!newhandle[0]) {
     dprintf(idx, "Usage: handle <new-handle>\n");
@@ -1016,7 +1016,7 @@ static void cmd_handle(struct userrec *u, int idx, char *par)
   else if (!egg_strcasecmp(newhandle, botnetnick))
     dprintf(idx, "Hey!  That's MY name!\n");
   else {
-    strncpyz(oldhandle, dcc[idx].nick, sizeof oldhandle);
+    strlcpy(oldhandle, dcc[idx].nick, sizeof oldhandle);
     if (change_handle(u, newhandle)) {
       putlog(LOG_CMDS, "*", "#%s# handle %s", oldhandle, newhandle);
       dprintf(idx, "Okay, changed.\n");
@@ -1352,13 +1352,13 @@ void cmd_die(struct userrec *u, int idx, char *par)
     egg_snprintf(s1, sizeof s1, "BOT SHUTDOWN (%s: %s)", dcc[idx].nick, par);
     egg_snprintf(s2, sizeof s2, "DIE BY %s!%s (%s)", dcc[idx].nick,
                  dcc[idx].host, par);
-    strncpyz(quit_msg, par, 1024);
+    strlcpy(quit_msg, par, 1024);
   } else {
     egg_snprintf(s1, sizeof s1, "BOT SHUTDOWN (Authorized by %s)",
                  dcc[idx].nick);
     egg_snprintf(s2, sizeof s2, "DIE BY %s!%s (request)", dcc[idx].nick,
                  dcc[idx].host);
-    strncpyz(quit_msg, dcc[idx].nick, 1024);
+    strlcpy(quit_msg, dcc[idx].nick, 1024);
   }
   kill_bot(s1, s2);
 }
@@ -2403,7 +2403,7 @@ static void cmd_su(struct userrec *u, int idx, char *par)
         dcc[idx].u.chat->su_nick = get_data_ptr(strlen(dcc[idx].nick) + 1);
         strcpy(dcc[idx].u.chat->su_nick, dcc[idx].nick);
         dcc[idx].user = u;
-        strncpyz(dcc[idx].nick, par, sizeof dcc[idx].nick);
+        strlcpy(dcc[idx].nick, par, sizeof dcc[idx].nick);
         dcc_chatter(idx);
       }
     }
@@ -2514,7 +2514,7 @@ static void cmd_set(struct userrec *u, int idx, char *msg)
     dumplots(idx, "Global vars: ", tcl_resultstring());
     return;
   }
-  strncpyz(s + 4, msg, sizeof s - 4);
+  strlcpy(s + 4, msg, sizeof s - 4);
   code = Tcl_Eval(interp, s);
 
   /* properly convert string to system encoding. */
@@ -2662,7 +2662,7 @@ static void cmd_mns_ignore(struct userrec *u, int idx, char *par)
     dprintf(idx, "Usage: -ignore <hostmask | ignore #>\n");
     return;
   }
-  strncpyz(buf, par, sizeof buf);
+  strlcpy(buf, par, sizeof buf);
   if (delignore(buf)) {
     putlog(LOG_CMDS, "*", "#%s# -ignore %s", dcc[idx].nick, buf);
     dprintf(idx, "No longer ignoring: %s\n", buf);

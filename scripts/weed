@@ -45,7 +45,7 @@ exec tclsh$lastver "$0" ${1+"$@"}
 #
 # when specifying other weed options they would unset the User() field and
 # a maxlast weed would try and weed again and cause the script to stop due
-# to User() being already unset  (array nonexistant)
+# to User() being already unset  (array nonexistent)
 #
 # when loadUserFile encountered an xtra field it would try and use the $info
 # variable, which was supposed to be $xtra (something overlooked when the

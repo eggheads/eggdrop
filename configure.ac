@@ -41,7 +41,7 @@ EGG_SAVE_PARAMETERS
 
 
 # Check for a working C compiler
-AC_PROG_CC
+AC_PROG_CC([gcc cc clang])
 EGG_CHECK_CC
 
 # These 3 need to be done before any AC_COMPILE_IFELSE()'s.
@@ -97,6 +97,7 @@ AC_CHECK_HEADERS([arpa/inet.h fcntl.h limits.h locale.h netdb.h netinet/in.h std
 AC_C_CONST
 AC_C_BIGENDIAN
 AC_C_INLINE
+AC_C_FLEXIBLE_ARRAY_MEMBER
 AC_TYPE_INTPTR_T
 AC_TYPE_PID_T
 AC_TYPE_SIZE_T
@@ -109,7 +110,7 @@ EGG_CHECK_SOCKLEN_T
 AX_CREATE_STDINT_H([eggint.h])
 
 # Checks for functions and their arguments.
-AC_CHECK_FUNCS([clock dprintf fsync getrandom getrusage inet_aton inet_ntop isascii mbrlen memcpy random rand lrand48 rename setpgid sigaction sigemptyset snprintf strcasecmp strncasecmp uname vsnprintf])
+AC_CHECK_FUNCS([clock dprintf fsync getrandom getrusage inet_aton inet_ntop isascii mbrlen memcpy random rand lrand48 rename setpgid sigaction sigemptyset snprintf strcasecmp strlcpy strncasecmp uname vsnprintf])
 AC_FUNC_SELECT_ARGTYPES
 EGG_FUNC_VPRINTF
 AC_FUNC_STRFTIME
@@ -119,7 +120,7 @@ AC_FUNC_MMAP
 # Tcl version to recommend if no Tcl is found, and the site where it can be
 # found for download.
 tclrecommendver="8.6.X"
-tclrecommendsite="ftp://tcl.activestate.com/pub/tcl/tcl8_6/"
+tclrecommendsite="ftp://ftp.tcl.tk/pub/tcl/tcl8_6/"
 
 # Tcl header filenames.
 tclheadernames="tcl.h"

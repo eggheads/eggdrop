@@ -145,7 +145,7 @@ int set_user(struct user_entry_type *, struct userrec *, void *);
  */
 struct chanuserrec {
   struct chanuserrec *next;
-  char channel[81];
+  char channel[CHANNELLEN + 1];
   time_t laston;
   unsigned long flags;
   unsigned long flags_udef;
