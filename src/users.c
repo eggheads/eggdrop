@@ -519,7 +519,7 @@ static void tell_user(int idx, struct userrec *u)
 }
 
 /* show user by ident */
-void tell_user_ident(int idx, char *id, int unused_parameter)
+void tell_user_ident(int idx, char *id)
 {
   char format[81];
   struct userrec *u;
@@ -540,8 +540,7 @@ void tell_user_ident(int idx, char *id, int unused_parameter)
 /* match string:
  * wildcard to match nickname or hostmasks
  * +attr to find all with attr */
-void tell_users_match(int idx, char *mtch, int start, int limit,
-                      int unused_parameter, char *chname)
+void tell_users_match(int idx, char *mtch, int start, int limit, char *chname)
 {
   char format[81];
   struct userrec *u;
