@@ -45,8 +45,8 @@ extern struct dcc_t *dcc;
 extern struct userrec *userlist;
 extern log_t *logs;
 extern Tcl_Interp *interp;
-extern char ver[], botnetnick[], firewall[], motdfile[], userfile[], helpdir[],
-            moddir[], notify_new[], configfile[];
+extern char ver[], botnetnick[], firewall[], motdfile[], helpdir[], moddir[],
+            notify_new[], configfile[];
 extern time_t now, online_since;
 extern int backgrd, term_z, con_chan, cache_hit, cache_miss, firewallport,
            default_flags, max_logs, conmask, protect_readonly, make_userfile,

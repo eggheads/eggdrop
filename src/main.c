@@ -88,7 +88,6 @@
 #endif
 
 extern char origbotname[], botnetnick[]; 
-extern char userfile[121];        /* 121 = sizeof userfile from users.c */
 extern int dcc_total, conmask, cache_hit, cache_miss, max_logs, quick_logs,
            quiet_save;
 extern struct dcc_t *dcc;
@@ -615,7 +614,7 @@ static void do_arg()
 
 void backup_userfile(void)
 {
-  char s[sizeof userfile + 4];
+  char s[sizeof userfile + 4]; /* 4 = sizeof "~bak" */
 
   if (quiet_save < 2)
     putlog(LOG_MISC, "*", USERF_BACKUP);
