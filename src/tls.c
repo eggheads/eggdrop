@@ -427,13 +427,13 @@ static char *ssl_printname(X509_NAME *name)
     buf = nmalloc(len + 1);
     memcpy(buf, data, len); // don't strlcpy() for it would read data[len]
     buf[len] = 0;
-    BIO_free(bio);
   }
   else {
     debug0("TLS: ssl_printname(): X509_NAME_print_ex(): error");
     buf = nmalloc(1);
     *buf = 0;
   }
+  BIO_free(bio);
   return buf;
 }
 
