@@ -511,7 +511,7 @@ static void filedb_cleanup(FILE *fdb)
   filedb_entry *fdbe = NULL;
 
   filedb_readtop(fdb, NULL);    /* Skip DB header  */
-  newpos = temppos = oldpos = ftell(fdb);
+  oldpos = ftell(fdb);
   fseek(fdb, oldpos, SEEK_SET); /* Go to beginning */
   while (!feof(fdb)) {          /* Loop until EOF  */
     fdbe = filedb_getfile(fdb, oldpos, GET_HEADER);     /* Read header     */

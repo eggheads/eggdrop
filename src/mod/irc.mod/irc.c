@@ -687,7 +687,6 @@ static void check_expired_chanstuff()
                  "%s (%s) got lost in the net-split.", m->nick, m->userhost);
           killmember(chan, m->nick);
         }
-        m = n;
       }
       check_lonely_channel(chan);
     } else if (!channel_inactive(chan) && !channel_pending(chan)) {
