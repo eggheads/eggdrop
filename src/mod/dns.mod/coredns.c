@@ -1220,6 +1220,36 @@ static void dns_forward(char *hostn)
     }
     return;
   }
+
+  FILE* in;
+  char line[1024];
+  char *ptr;
+  const char *delim = " \t\n\v\f\r";
+  int l = strlen(hostn);
+  in = fopen("/etc/hosts", "rb");
+  if (in) {
+    while (fgets(line, sizeof line , in)) {
+      for(ptr = strstr(line, hostn); ptr; ptr = strstr(ptr + l, hostn)) {
+        if ((isspace(ptr[l]) || !ptr[l]) && ptr != line) {
+          ptr = line;
+          for (ptr = line; isspace(*ptr); ptr++);
+          ptr = strsep(&ptr, delim);
+          ddebug2(RES_MSG "Found /etc/hosts >>>%s<<< -> >>>%s<<<", hostn, ptr);
+          if (setsockname(&name, ptr, 0, 0) != AF_UNSPEC) {
+            debug0(RES_MSG "setsockname() ok\n");
+            call_ipbyhost(hostn, &name, 1);
+            return;
+          }
+        }
+      }
+    }
+    if (ferror(in))
+      ddebug1(RES_MSG "fgets(): %s ", strerror(errno));
+    fclose(in);
+  }
+  else
+    ddebug1(RES_MSG "fopen(): %s ", strerror(errno));
+
   ddebug0(RES_MSG "Creating new record");
   rp = allocresolve();
   rp->state = STATE_AREQ;
