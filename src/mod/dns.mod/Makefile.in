@@ -30,6 +30,7 @@ clean:
 
 distclean: clean
 	@rm -f Makefile config.cache config.log config.status
+	@rm -rf autom4te.cache
 
 #safety hash
 ../dns.o: .././dns.mod/dns.c ../../../src/mod/module.h \
