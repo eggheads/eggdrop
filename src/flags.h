@@ -50,11 +50,11 @@ struct flag_record {
  *   unused letters: bcdefjkmnoqtuvwxyz
  *
  * chanflags:
- *   a??defg???klmno?qr???vw?yz + user defined A-Z
- *   unused letters: bchijpstuw
+ *   a??defg???klmno?qrs??vw?yz + user defined A-Z
+ *   unused letters: bchijptuw (s from bot flags)
  */
 #define USER_VALID 0x003fbfeff   /* Sum of all valid USER_ flags */
-#define CHAN_VALID 0x003637c79   /* Sum of all valid CHAN_ flags */
+#define CHAN_VALID 0x003677c79   /* Sum of all valid CHAN_ flags */
 #define BOT_VALID  0x07fe689C1   /* Sum of all valid BOT_  flags */
 
 

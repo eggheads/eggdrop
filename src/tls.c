@@ -106,7 +106,7 @@ static int ssl_seed(void)
   }
 #ifdef HAVE_RAND_STATUS
   if (!RAND_status())
-    return 2;   /* pseudo random data still not enough */
+    return 2; /* pseudo random data still not enough */
 #endif
   return 0;
 }
@@ -342,7 +342,7 @@ char *ssl_getfp(int sock)
     return NULL;
   if (!(p = hex_to_string(md, i)))
     return NULL;
-  strncpyz(fp, p, sizeof fp);
+  strlcpy(fp, p, sizeof fp);
   OPENSSL_free(p);
   return fp;
 }
@@ -515,7 +515,7 @@ static char *ssl_printname(X509_NAME *name)
   X509_NAME_print_ex(bio, name, 0, XN_FLAG_ONELINE & ~XN_FLAG_SPC_EQ);
   len = BIO_get_mem_data(bio, &data) + 1;
   buf = nmalloc(len);
-  strncpyz(buf, data, len);
+  strlcpy(buf, data, len);
   BIO_free(bio);
   return buf;
 }
@@ -536,7 +536,7 @@ static char *ssl_printtime(ASN1_UTCTIME *t)
   ASN1_UTCTIME_print(bio, t);
   len = BIO_get_mem_data(bio, &data) + 1;
   buf = nmalloc(len);
-  strncpyz(buf, data, len);
+  strlcpy(buf, data, len);
   BIO_free(bio);
   return buf;
 }
@@ -556,7 +556,7 @@ static char *ssl_printnum(ASN1_INTEGER *i)
   i2a_ASN1_INTEGER(bio, i);
   len = BIO_get_mem_data(bio, &data) + 1;
   buf = nmalloc(len);
-  strncpyz(buf, data, len);
+  strlcpy(buf, data, len);
   BIO_free(bio);
   return buf;
 }
@@ -657,7 +657,7 @@ int ssl_verify(int ok, X509_STORE_CTX *ctx)
     data->flags |= TLS_DEPTH0;
     /* Allow exceptions for certain common verification errors, if the
      * caller requested so. A lot of servers provide completely invalid
-     * certificates unuseful for any authentication.
+     * certificates useless for any authentication.
      */
     if (!ok || data->verify)
       if (((err == X509_V_ERR_DEPTH_ZERO_SELF_SIGNED_CERT) &&
@@ -829,7 +829,7 @@ int ssl_handshake(int sock, int flags, int verify, int loglevel, char *host,
                        TLS_VERIFYTO | TLS_VERIFYREV);
   data->loglevel = loglevel;
   data->cb = cb;
-  strncpyz(data->host, host ? host : "", sizeof(data->host));
+  strlcpy(data->host, host ? host : "", sizeof(data->host));
   SSL_set_app_data(td->socklist[i].ssl, data);
   SSL_set_info_callback(td->socklist[i].ssl, (void *) ssl_info);
   /* We set this +1 to be able to report extra long chains properly.

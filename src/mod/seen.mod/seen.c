@@ -295,7 +295,7 @@ static void do_seen(int idx, char *prefix, char *nick, char *hand,
     /* "your admin" */
     if (!egg_strcasecmp(word1, "owner") || !egg_strcasecmp(word1, "admin")) {
       if (admin[0]) {
-        strncpyz(word2, admin, sizeof word2);
+        strlcpy(word2, admin, sizeof word2);
         wordshift(whotarget, word2);
         strcat(whoredirect, "My owner is ");
         strcat(whoredirect, whotarget);
