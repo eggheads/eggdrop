@@ -77,8 +77,8 @@ static int uptimecount;
 static unsigned long uptimeip;
 static char uptime_version[48] = "";
 
-void check_secondly(void);
-void check_minutely(void);
+static void check_secondly(void);
+static void check_minutely(void);
 
 static int uptime_expmem()
 {
@@ -102,27 +102,7 @@ static void uptime_report(int idx, int details)
   }
 }
 
-static unsigned long get_ip()
-{
-  struct hostent *hp;
-  IP ip;
-  struct in_addr *in;
-
-  /* could be pre-defined */
-  if (UPTIME_HOST[0]) {
-    if ((UPTIME_HOST[strlen(UPTIME_HOST) - 1] >= '0') &&
-        (UPTIME_HOST[strlen(UPTIME_HOST) - 1] <= '9'))
-      return (IP) inet_addr(UPTIME_HOST);
-  }
-  hp = gethostbyname(UPTIME_HOST);
-  if (hp == NULL)
-    return -1;
-  in = (struct in_addr *) (hp->h_addr_list[0]);
-  ip = (IP) (in->s_addr);
-  return ip;
-}
-
-int init_uptime(void)
+static int init_uptime(void)
 {
   struct sockaddr_in sai;
   char x[64], *z = x;
@@ -161,19 +141,24 @@ int init_uptime(void)
 }
 
 
-int send_uptime(void)
+static int send_uptime(void)
 {
-  struct sockaddr_in sai;
+  struct addrinfo hints, *res0;
+  int error;
   struct stat st;
   PackUp *mem;
   int len, servidx;
   char servhost[UHOSTLEN] = "none";
   module_entry *me;
 
-  if (uptimeip == -1) {
-    uptimeip = get_ip();
-    if (uptimeip == -1)
-      return -2;
+  egg_bzero(&hints, sizeof(hints));
+  hints.ai_family = AF_UNSPEC;
+  hints.ai_socktype = SOCK_DGRAM;
+  error = getaddrinfo(UPTIME_HOST, UPTIME_PORT, &hints, &res0);
+  if (error) {
+    putlog(LOG_DEBUG, "*", "send_uptime(): getaddrinfo(): %s",
+           gai_strerror(error));
+    return -2;
   }
 
   uptimecount++;
@@ -203,22 +188,20 @@ int send_uptime(void)
   else
     upPack.sysup = htonl(st.st_ctime);
 
-  len = offsetof(struct PackUp, string) + strlen(botnetnick) + strlen(servhost) +
-        strlen(uptime_version) + 3; /* whitespace + whitespace + \0 */
+  len = offsetof(struct PackUp, string) + strlen(botnetnick) + strlen(servhost)
+        + strlen(uptime_version) + 3; /* whitespace + whitespace + \0 */
   mem = (PackUp *) nmalloc(len);
   memcpy(mem, &upPack, sizeof(upPack));
   sprintf(mem->string, "%s %s %s", botnetnick, servhost, uptime_version);
-  egg_bzero(&sai, sizeof(sai));
-  sai.sin_family = AF_INET;
-  sai.sin_addr.s_addr = uptimeip;
-  sai.sin_port = htons(UPTIME_PORT);
-  len = sendto(uptimesock, (void *) mem, len, 0, (struct sockaddr *) &sai,
-               sizeof(sai));
+  len = sendto(uptimesock, (void *) mem, len, 0, res0->ai_addr,
+               res0->ai_addrlen);
+  if (len < 0)
+    putlog(LOG_DEBUG, "*", "send_uptime(): sendto(): %s", gai_strerror(error));
   nfree(mem);
   return len;
 }
 
-void check_minutely()
+static void check_minutely()
 {
   minutes++;
   if (minutes >= next_minutes) {
@@ -228,7 +211,7 @@ void check_minutely()
   }
 }
 
-void check_secondly()
+static void check_secondly()
 {
   seconds++;
   if (seconds >= next_seconds) {  /* DING! */

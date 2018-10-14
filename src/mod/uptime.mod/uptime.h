@@ -24,7 +24,7 @@
 #define _EGG_MOD_UPTIME_UPTIME_H
 
 #define UPTIME_TYPE 2
-#define UPTIME_PORT 9969
 #define UPTIME_HOST "uptime.eggheads.org"
+#define UPTIME_PORT "9969"
 
 #endif /* _EGG_MOD_UPTIME_UPTIME_H */
