@@ -1466,7 +1466,7 @@ static void dcc_dupwait(int idx, char *buf, int i)
  */
 static void timeout_dupwait(int idx)
 {
-  char x[100];
+  char x[NICKLEN + UHOSTLEN];
 
   /* Still duplicate? */
   if (in_chain(dcc[idx].nick)) {
