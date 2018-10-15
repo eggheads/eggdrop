@@ -1057,7 +1057,7 @@ AC_DEFUN([EGG_TCL_TCLCONFIG],
     fi
   fi
 
-  if [[ "$ac_cv_lib_dlopen" == "" ]]; then
+  if test -z "$ac_cv_lib_dlopen"; then
     TCL_LIB_SPEC=$(echo $TCL_LIB_SPEC | sed -- 's/-ldl//g')
   fi
 
