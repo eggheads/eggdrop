@@ -103,7 +103,7 @@ GIT USAGE
   ~/eggdrop by default, and it can be confusing to have your source there as
   well. You could specify a destination dir like this:
 
-      git clone https://github.com/eggheads/eggdrop.git <dir>
+      git clone https://github.com/eggheads/eggdrop.git [dir]
 
   Otherwise, you can download the development snapshot as a tar archive
   from:
