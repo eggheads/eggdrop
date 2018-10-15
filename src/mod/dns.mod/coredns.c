@@ -1201,7 +1201,7 @@ static int dns_hosts(char *hostn) {
   char line[1024];
   char *ptr;
   int l = strlen(hostn);
-  const char *delim = " \t\n\v\f\r";
+  const char *sep = " \t\n\v\f\r";
   sockname_t name;
 
   in = fopen("/etc/hosts", "rb");
@@ -1209,9 +1209,8 @@ static int dns_hosts(char *hostn) {
     while (fgets(line, sizeof line , in)) {
       for(ptr = strstr(line, hostn); ptr; ptr = strstr(ptr + l, hostn)) {
         if ((isspace(ptr[l]) || !ptr[l]) && ptr != line) {
-          ptr = line;
           for (ptr = line; isspace(*ptr); ptr++);
-          ptr = strsep(&ptr, delim);
+          ptr = strtok(ptr, sep);
           if (setsockname(&name, ptr, 0, 0) != AF_UNSPEC) {
             call_ipbyhost(hostn, &name, 1);
             ddebug2(RES_MSG "Used /etc/hosts: %s == %s", hostn, ptr);
