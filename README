@@ -100,7 +100,7 @@ GIT USAGE
 
     https://github.com/eggheads/eggdrop/archive/develop.tar.gz
 
-  Please be carefule where you save your source code. Eggdrop installs to
+  Please be careful where you save your source code. Eggdrop installs to
   ~/eggdrop by default, and it can be confusing to have your source there as
   well.
 
