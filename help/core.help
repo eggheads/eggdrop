@@ -6,7 +6,7 @@ DCC commands for %B, %V:
       %bbots         newpass      chat         handle%b
       %bwhoami       echo         strip        su%b
       %btrace        fixcodes     bottree      vbottree%b
-      %bbotinfo      relay        -host%b
+      %bbotinfo      relay        -host        fprint%b
 %{o|o}
    For ops:
       %baddlog       console      match        whois%b
@@ -213,7 +213,7 @@ ssl-verify-clients
       %bbots         newpass      chat         handle%b
       %bwhoami       echo         strip        su%b
       %btrace        fixcodes     bottree      vbottree%b
-      %bbotinfo      relay        -host%b
+      %bbotinfo      relay        -host        fprint%b
 %{o|o}
    For ops:
       %baddlog       console      match        whois%b
