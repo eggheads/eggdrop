@@ -107,7 +107,7 @@ static int want_to_revenge(struct chanset_t *chan, struct userrec *u,
   return 0;
 }
 
-/* Dependant on revenge_mode, punish the offender.
+/* Dependent on revenge_mode, punish the offender.
  */
 static void punish_badguy(struct chanset_t *chan, char *whobad,
                           struct userrec *u, char *badnick, char *victim,
@@ -687,7 +687,6 @@ static void check_expired_chanstuff()
                  "%s (%s) got lost in the net-split.", m->nick, m->userhost);
           killmember(chan, m->nick);
         }
-        m = n;
       }
       check_lonely_channel(chan);
     } else if (!channel_inactive(chan) && !channel_pending(chan)) {

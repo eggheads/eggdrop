@@ -23,6 +23,7 @@ builtin(include,m4/tcl.m4)
 dnl Load gnu autoconf archive macros
 builtin(include,m4/ax_create_stdint_h.m4)
 builtin(include,m4/ax_lib_socket_nsl.m4)
+builtin(include,m4/ax_type_socklen_t.m4)
 
 
 dnl
@@ -281,40 +282,6 @@ AC_DEFUN([EGG_CHECK_CCWALL],
 dnl
 dnl Checks for types and functions.
 dnl
-
-
-dnl EGG_CHECK_SOCKLEN_T()
-dnl
-dnl Check for the socklen_t type.
-dnl
-AC_DEFUN([EGG_CHECK_SOCKLEN_T],
-[
-  AC_CACHE_CHECK([for socklen_t], egg_cv_socklen_t, [
-    AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[
-      #include <unistd.h>
-      #include <sys/param.h>
-      #include <sys/types.h>
-      #include <sys/socket.h>
-      #include <netinet/in.h>
-      #include <arpa/inet.h>
-    ]],[[
-        socklen_t test = 55;
-
-        if (test != 55)
-          return(1);
-
-        return(0);
-    ]])], [
-      egg_cv_socklen_t="yes"
-    ], [
-      egg_cv_socklen_t="no"
-    ])
-  ])
-
-  if test "$egg_cv_socklen_t" = yes; then
-    AC_DEFINE(HAVE_SOCKLEN_T, 1, [Define to 1 if you have the `socklen_t' type.])
-  fi
-])
 
 
 dnl EGG_FUNC_VPRINTF()
@@ -610,6 +577,9 @@ AC_DEFUN([EGG_CHECK_MODULE_SUPPORT],
       EGG_APPEND_VAR(MODULE_XLIBS, $BUNDLE)
     ;;
     Haiku)
+      WEIRD_OS="no"
+    ;;
+    Minix)
       WEIRD_OS="no"
     ;;
     *)

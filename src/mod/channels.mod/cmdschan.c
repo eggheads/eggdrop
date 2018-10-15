@@ -471,7 +471,7 @@ static void cmd_mns_ban(struct userrec *u, int idx, char *par)
   }
   if (str_isdigit(ban)) {
     i = atoi(ban);
-    /* substract the numer of global bans to get the number of the channel ban */
+    /* subtract the number of global bans to get the number of the channel ban */
     egg_snprintf(s, sizeof s, "%d", i);
     j = u_delban(0, s, 0);
     if (j < 0) {
@@ -582,7 +582,7 @@ static void cmd_mns_exempt(struct userrec *u, int idx, char *par)
   }
   if (str_isdigit(exempt)) {
     i = atoi(exempt);
-    /* substract the numer of global exempts to get the number of the channel exempt */
+    /* subtract the number of global exempts to get the number of the channel exempt */
     egg_snprintf(s, sizeof s, "%d", i);
     j = u_delexempt(0, s, 0);
     if (j < 0) {
@@ -694,7 +694,7 @@ static void cmd_mns_invite(struct userrec *u, int idx, char *par)
   }
   if (str_isdigit(invite)) {
     i = atoi(invite);
-    /* substract the numer of global invites to get the number of the channel invite */
+    /* subtract the number of global invites to get the number of the channel invite */
     egg_snprintf(s, sizeof s, "%d", i);
     j = u_delinvite(0, s, 0);
     if (j < 0) {
@@ -935,7 +935,7 @@ static void cmd_stick_yn(int idx, char *par, int yn)
 {
   int i = 0, j;
   struct chanset_t *chan, *achan;
-  char *stick_type, s[UHOSTLEN], chname[81];
+  char *stick_type, s[UHOSTLEN], chname[CHANNELLEN + 1];
   module_entry *me;
 
   stick_type = newsplit(&par);
@@ -977,7 +977,7 @@ static void cmd_stick_yn(int idx, char *par, int yn)
       return;
     }
     if (str_isdigit(s)) {
-      /* substract the numer of global exempts to get the number of the channel exempt */
+      /* subtract the number of global exempts to get the number of the channel exempt */
       j = u_setsticky_exempt(NULL, s, -1);
       if (j < 0)
         egg_snprintf(s, sizeof s, "%d", -j);
@@ -1015,7 +1015,7 @@ static void cmd_stick_yn(int idx, char *par, int yn)
       return;
     }
     if (str_isdigit(s)) {
-      /* substract the numer of global invites to get the number of the channel invite */
+      /* subtract the number of global invites to get the number of the channel invite */
       j = u_setsticky_invite(NULL, s, -1);
       if (j < 0)
         egg_snprintf(s, sizeof s, "%d", -j);
@@ -1050,7 +1050,7 @@ static void cmd_stick_yn(int idx, char *par, int yn)
     return;
   }
   if (str_isdigit(s)) {
-    /* substract the numer of global bans to get the number of the channel ban */
+    /* subtract the number of global bans to get the number of the channel ban */
     j = u_setsticky_ban(NULL, s, -1);
     if (j < 0)
       egg_snprintf(s, sizeof s, "%d", -j);

@@ -134,6 +134,16 @@ static int burst;
 #include "tclserv.c"
 
 
+static void write_to_server(char *s, unsigned int len) {
+  char *s2 = nmalloc(len + 2);
+
+  memcpy(s2, s, len);
+  s2[len] = '\r';
+  s2[len + 1] = '\n';
+  tputs(serv, s2, len + 2);
+  nfree(s2);
+}
+
 /*
  *     Bot server queues
  */
@@ -142,9 +152,9 @@ static int burst;
  *
  * 'mode' queue gets priority now.
  *
- * Most servers will allow 'bursts' of upto 5 msgs, so let's put something
+ * Most servers will allow 'bursts' of up to 5 msgs, so let's put something
  * in to support flushing modeq a little faster if possible.
- * Will send upto 4 msgs from modeq, and then send 1 msg every time
+ * Will send up to 4 msgs from modeq, and then send 1 msg every time
  * it will *not* send anything from hq until the 'burst' value drops
  * down to 0 again (allowing a sudden mq flood to sneak through).
  */
@@ -164,7 +174,7 @@ static void deq_msg()
   if (serv < 0)
     return;
 
-  /* Send upto 4 msgs to server if the *critical queue* has anything in it */
+  /* Send up to 4 msgs to server if the *critical queue* has anything in it */
   if (modeq.head) {
     while (modeq.head && (burst < 4) && ((last_time - now) < MAXPENALTY)) {
       if (deq_kick(DP_MODE)) {
@@ -453,7 +463,6 @@ static int fast_deq(int which)
       }
   }
   to = newsplit(&msg);
-  len = strlen(to);
   simple_sprintf(victims, "%s", to);
   while (m) {
     nm = m->next;
@@ -463,7 +472,6 @@ static int fast_deq(int which)
     nextmsg = nextmsgstr;
     nextcmd = newsplit(&nextmsg);
     nextto = newsplit(&nextmsg);
-    len = strlen(nextto);
     if (strcmp(to, nextto) && !strcmp(cmd, nextcmd) && !strcmp(msg, nextmsg) &&
         ((strlen(cmd) + strlen(victims) + strlen(nextto) + strlen(msg) + 2) <
         510) && (!stack_limit || cmd_count < stack_limit - 1)) {
@@ -984,7 +992,6 @@ Eggdrop was not compiled with SSL libraries. Skipping...");
     z->next = x;
   else
     serverlist = x;
-  z = x;
 
   x->name = nmalloc(strlen(name) + 1);
   strcpy(x->name, name);
@@ -1703,7 +1710,7 @@ static void server_postrehash()
     strcpy(botname, oldnick);
     dprintf(DP_SERVER, "NICK %s\n", origbotname);
   }
-  /* Change botname back incase we were using altnick previous to rehash. */
+  /* Change botname back in case we were using altnick previous to rehash. */
   else if (oldnick[0])
     strcpy(botname, oldnick);
 }

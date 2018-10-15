@@ -1250,7 +1250,7 @@ static int detect_telnet_flood(char *floodhost)
 
 static void dcc_telnet(int idx, char *buf, int i)
 {
-  unsigned short port;
+  uint16_t port;
   int j = 0, sock;
 
   if (dcc_total + 1 > max_dcc && increase_socks_max()) {
@@ -1273,11 +1273,7 @@ static void dcc_telnet(int idx, char *buf, int i)
   /* Buffer data received on this socket.  */
   sockoptions(sock, EGG_OPTION_SET, SOCK_BUFFER);
 
-#if (SIZEOF_SHORT == 2)
   if (port < 1024) {
-#else
-  if (port < 1024 || port > 65535) {
-#endif
     putlog(LOG_BOTS, "*", DCC_BADSRC, iptostr(&dcc[i].sockname.addr.sa), port);
     killsock(sock);
     lostdcc(i);
@@ -1470,7 +1466,7 @@ static void dcc_dupwait(int idx, char *buf, int i)
  */
 static void timeout_dupwait(int idx)
 {
-  char x[100];
+  char x[NICKLEN + UHOSTLEN];
 
   /* Still duplicate? */
   if (in_chain(dcc[idx].nick)) {
@@ -1561,6 +1557,9 @@ static void dcc_telnet_id(int idx, char *buf, int atr)
     lostdcc(idx);
     return;
   }
+  /* rxvt-unicode */
+  if (!strncmp(buf, "\e[?1;2c", 7))
+    buf += 7;
   dcc[idx].user = get_user_by_handle(userlist, buf);
   get_user_flagrec(dcc[idx].user, &fr, NULL);
 
@@ -2106,7 +2105,7 @@ static void eof_dcc_script(int idx)
   void *old;
   int oldflags;
 
-  /* This will stop a killdcc from working, incase the script tries
+  /* This will stop a killdcc from working, in case the script tries
    * to kill it's controlling socket while handling an EOF <cybah>
    */
   oldflags = dcc[idx].type->flags;

@@ -130,7 +130,7 @@ typedef struct {
   uint8_t databyte_a;
   /* rd:1                             recursion desired
    * tc:1                             truncated message
-   * aa:1                             authoritive answer
+   * aa:1                             authoritative answer
    * opcode:4                         purpose of message
    * qr:1                             response flag
    */
@@ -151,7 +151,7 @@ typedef struct {
   uint16_t class;
   uint32_t ttl;
   uint16_t datalength;
-  uint8_t data[];
+  uint8_t data[FLEXIBLE_ARRAY_MEMBER];
 } res_record;
 
 #ifndef HFIXEDSZ
@@ -537,7 +537,7 @@ static void linkresolve(struct resolve *rp)
   }
 }
 
-/* Remove reqeust structure rp from the expireresolves list.
+/* Remove request structure rp from the expireresolves list.
  */
 static void untieresolve(struct resolve *rp)
 {
@@ -720,7 +720,7 @@ static void dorequest(char *s, int type, uint16_t id)
   /* Use malloc here instead of a static buffer, as per res_mkquery()'s manual
    * buf should be aligned on an eight byte boundary. malloc() should return a
    * pointer to an address properly aligned for any data type. Failing to
-   * provide a aligned buffer will result in a SIGBUS crash atleast on SPARC
+   * provide a aligned buffer will result in a SIGBUS crash at least on SPARC
    * CPUs.
    */
   buf = nmalloc(MAX_PACKETSIZE + 1);
@@ -1053,7 +1053,7 @@ void parserespacket(uint8_t *response, int len)
           return;
         }
         ddebug1(RES_MSG "answered domain is CNAME for: %s", namestring);
-        strncpy(stackstring, namestring, 1024);
+        strlcpy(stackstring, namestring, sizeof stackstring);
         break;
       default:
         ddebug2(RES_ERR "Received unimplemented data type: %u (%s)",

@@ -120,11 +120,8 @@ To create a patch using the diff tool:
   Also, please don't add credit lines all over the source when patching.
   Patch contributors will receive credit in Changes1.8 and THANKS.
 
--------------------
-Downloading a patch
--------------------
-
-  Some patches for Eggdrop 1.8.x can be found at the following location:
+  Patches submitted this way for Eggdrop 1.8.x can be found at the
+  following location:
 
     ftp://ftp.eggheads.org/pub/eggdrop/patches/1.8
 
