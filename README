@@ -85,10 +85,7 @@ GIT USAGE
   to git. If you are interested in trying out the VERY LATEST updates to
   Eggdrop, you may want be interested in pulling the most recent code
   from there. BE WARNED, the development branch of Eggdrop is not to be
-  considered stable and may (haha) have some significant bugs in it. The
-  Eggheads Development Team will in NO WAY take any responsibility for
-  whatever might happen to you or your shell if you use the development
-  branch of Eggdrop!
+  considered stable and may (haha) have some significant bugs in it.
 
   To obtain Eggdrop via the git repository (hosted by GitHub), you can
   either clone the repository via git or download a development
@@ -102,6 +99,10 @@ GIT USAGE
   from:
 
     https://github.com/eggheads/eggdrop/archive/develop.tar.gz
+
+  Please be carefule where you save your source code. Eggdrop installs to
+  ~/eggdrop by default, and it can be confusing to have your source there as
+  well.
 
 
 QUICK STARTUP
