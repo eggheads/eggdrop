@@ -491,7 +491,11 @@ static int proxy_connect(int sock, sockname_t *addr)
  */
 static int get_port_from_addr(const sockname_t *addr)
 {
+#ifdef IPV6
   return ntohs((addr->family == AF_INET) ? addr->addr.s4.sin_port : addr->addr.s6.sin6_port);
+#else
+  return addr->addr.s4.sin_port;
+#endif
 }
 
 /* Starts a connection attempt through a socket
