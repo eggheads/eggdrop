@@ -558,8 +558,8 @@ Last revised: September 28, 2018
     13. I get '/usr/bin/ld: cannot find -lpthread' (OpenWrt)
 
       Pthread primitives are part of the core libc.so library. To satisfy
-      -lpthread, create an empty AR archive somewhere in the library search
-      path. E.g.:
+      -lpthread, create an empty AR archive (a static library) somewhere in the
+      library search path. E.g.:
 
         ar -rc /usr/lib/libpthread.a
     _____________________________________________________________________
