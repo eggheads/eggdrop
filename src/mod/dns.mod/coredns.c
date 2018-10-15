@@ -1213,6 +1213,8 @@ static int dns_hosts(char *hostn) {
     for(ptr = strstr(line, hostn); ptr; ptr = strstr(ptr + l, hostn)) {
       if ((isspace(ptr[l]) || !ptr[l]) && ptr != line) {
         for (ptr = line; isspace(*ptr); ptr++);
+        if (*ptr == '#')
+          break;
         ptr = strtok(ptr, sep);
         if (setsockname(&name, ptr, 0, 0) != AF_UNSPEC) {
           call_ipbyhost(hostn, &name, 1);
@@ -1220,7 +1222,7 @@ static int dns_hosts(char *hostn) {
           fclose(f);
           return 1;
         }
-        break; 
+        break;
       }
     }
   }
