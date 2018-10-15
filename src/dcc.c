@@ -1557,6 +1557,9 @@ static void dcc_telnet_id(int idx, char *buf, int atr)
     lostdcc(idx);
     return;
   }
+  /* rxvt-unicode */
+  if (!strncmp(buf, "\e[?1;2c", 7))
+    buf += 7;
   dcc[idx].user = get_user_by_handle(userlist, buf);
   get_user_flagrec(dcc[idx].user, &fr, NULL);
 
