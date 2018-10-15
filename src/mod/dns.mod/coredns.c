@@ -1220,6 +1220,7 @@ static int dns_hosts(char *hostn) {
           fclose(f);
           return 1;
         }
+        break; 
       }
     }
   }
