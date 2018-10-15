@@ -26,6 +26,7 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
+#include <sys/resource.h>
 #include "main.h"
 #include "chan.h"
 #include "users.h"
@@ -714,6 +715,8 @@ static int trigger_bind(const char *proc, const char *param,
                                char *mask)
 {
   int x;
+  struct rusage ru1, ru2;
+  int r = 0;
 #ifdef DEBUG_CONTEXT
   #define FORMAT "Tcl proc: %s, param: %s"
   char *buf;
@@ -737,8 +740,21 @@ static int trigger_bind(const char *proc, const char *param,
    */
   Tcl_SetVar(interp, "lastbind", (char *) mask, TCL_GLOBAL_ONLY);
 
+  if(proc && proc[0] != '*') { // proc[0] != '*' excludes internal binds
+    debug1("triggering bind %s", proc);
+    r = getrusage(RUSAGE_SELF, &ru1);
+  }
   x = Tcl_VarEval(interp, proc, param, NULL);
   Context;
+  if (proc && proc[0] != '*' && !r) {
+    if (!getrusage(RUSAGE_SELF, &ru2)) {
+      debug3("triggered bind %s, user %.3fms sys %.3fms", proc,
+             (double) (ru2.ru_utime.tv_usec - ru1.ru_utime.tv_usec) / 1000 +
+             (double) (ru2.ru_utime.tv_sec  - ru1.ru_utime.tv_sec ) * 1000,
+             (double) (ru2.ru_stime.tv_usec - ru1.ru_stime.tv_usec) / 1000 +
+             (double) (ru2.ru_stime.tv_sec  - ru1.ru_stime.tv_sec ) * 1000);
+    }
+  }
 
   if (x == TCL_ERROR) {
     /* FIXME: we really should be able to log longer errors */
