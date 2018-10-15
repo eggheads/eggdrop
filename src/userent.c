@@ -364,7 +364,7 @@ static int laston_set(struct userrec *u, struct user_entry *e, void *buf)
       nfree(li);
     }
 
-    li = e->u.extra = buf;
+    e->u.extra = buf;
   }
   /* donut share laston info */
   return 1;

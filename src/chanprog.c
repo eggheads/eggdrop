@@ -272,7 +272,7 @@ void tell_verbose_uptime(int idx)
   if (backgrd)
     strcpy(s1, MISC_BACKGROUND);
   else {
-    if (term_z)
+    if (term_z >= 0)
       strcpy(s1, MISC_TERMMODE);
     else if (con_chan)
       strcpy(s1, MISC_STATMODE);
@@ -327,7 +327,7 @@ void tell_verbose_status(int idx)
   if (backgrd)
     strlcpy(s1, MISC_BACKGROUND, sizeof s1);
   else {
-    if (term_z)
+    if (term_z >= 0)
       strlcpy(s1, MISC_TERMMODE, sizeof s1);
     else if (con_chan)
       strlcpy(s1, MISC_STATMODE, sizeof s1);
@@ -689,7 +689,7 @@ int isowner(char *name) {
  */
 void add_hq_user()
 {
-  if (!backgrd && term_z > 0 && userlist) {
+  if (!backgrd && term_z >= 0 && userlist) {
     /* HACK: Workaround using dcc[].nick not to pass literal "-HQ" as a non-const arg */
     dcc[term_z].user = get_user_by_handle(userlist, dcc[term_z].nick);
     /* Make sure there's an innocuous -HQ user if needed */

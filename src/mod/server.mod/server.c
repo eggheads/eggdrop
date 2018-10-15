@@ -463,7 +463,6 @@ static int fast_deq(int which)
       }
   }
   to = newsplit(&msg);
-  len = strlen(to);
   simple_sprintf(victims, "%s", to);
   while (m) {
     nm = m->next;
@@ -473,7 +472,6 @@ static int fast_deq(int which)
     nextmsg = nextmsgstr;
     nextcmd = newsplit(&nextmsg);
     nextto = newsplit(&nextmsg);
-    len = strlen(nextto);
     if (strcmp(to, nextto) && !strcmp(cmd, nextcmd) && !strcmp(msg, nextmsg) &&
         ((strlen(cmd) + strlen(victims) + strlen(nextto) + strlen(msg) + 2) <
         510) && (!stack_limit || cmd_count < stack_limit - 1)) {
@@ -994,7 +992,6 @@ Eggdrop was not compiled with SSL libraries. Skipping...");
     z->next = x;
   else
     serverlist = x;
-  z = x;
 
   x->name = nmalloc(strlen(name) + 1);
   strcpy(x->name, name);

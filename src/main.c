@@ -119,10 +119,10 @@ char notify_new[121] = "";      /* Person to send a note to for new users */
 int default_flags = 0;          /* Default user flags                     */
 int default_uflags = 0;         /* Default user-definied flags            */
 
-int backgrd = 1;        /* Run in the background?                        */
-int con_chan = 0;       /* Foreground: constantly display channel stats? */
-int term_z = 0;         /* Foreground: use the terminal as a partyline?  */
-int use_stderr = 1;     /* Send stuff to stderr instead of logfiles?     */
+int backgrd = 1;    /* Run in the background?                        */
+int con_chan = 0;   /* Foreground: constantly display channel stats? */
+int term_z = -1;    /* Foreground: use the terminal as a partyline?  */
+int use_stderr = 1; /* Send stuff to stderr instead of logfiles?     */
 
 char configfile[121] = "eggdrop.conf";  /* Default config file name */
 char pid_file[121];                     /* Name of the pid file     */
@@ -568,12 +568,12 @@ static void do_arg()
       case 'c':
         cliflags |= CLI_C;
         con_chan = 1;
-        term_z = 0;
+        term_z = -1;
         break;
       case 't':
         cliflags |= CLI_T;
         con_chan = 0;
-        term_z = 1;
+        term_z = 0;
         break;
       case 'm':
         cliflags |= CLI_M;
@@ -1240,12 +1240,12 @@ int main(int arg_c, char **arg_v)
   }
 
   /* Terminal emulating dcc chat */
-  if (!backgrd && term_z) {
+  if (!backgrd && term_z >= 0) {
     /* reuse term_z as glob var to pass it's index in the dcc table around */
     term_z = new_dcc(&DCC_CHAT, sizeof(struct chat_info));
 
-    /* new_dcc returns -1 on error, and 0 should always be taken by the listening socket */
-    if (term_z < 1)
+    /* new_dcc returns -1 on error */
+    if (term_z < 0)
       fatal("ERROR: Failed to initialize foreground chat.", 0);
 
     getvhost(&dcc[term_z].sockname, AF_INET);
