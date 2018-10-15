@@ -1197,35 +1197,35 @@ static void dns_lookup(sockname_t *addr)
 }
 
 static int dns_hosts(char *hostn) {
-  FILE* in;
+  FILE* f;
   char line[1024];
   char *ptr;
   int l = strlen(hostn);
   const char *sep = " \t\n\v\f\r";
   sockname_t name;
 
-  in = fopen("/etc/hosts", "rb");
-  if (in) {
-    while (fgets(line, sizeof line , in)) {
-      for(ptr = strstr(line, hostn); ptr; ptr = strstr(ptr + l, hostn)) {
-        if ((isspace(ptr[l]) || !ptr[l]) && ptr != line) {
-          for (ptr = line; isspace(*ptr); ptr++);
-          ptr = strtok(ptr, sep);
-          if (setsockname(&name, ptr, 0, 0) != AF_UNSPEC) {
-            call_ipbyhost(hostn, &name, 1);
-            ddebug2(RES_MSG "Used /etc/hosts: %s == %s", hostn, ptr);
-            fclose(in);
-            return 1;
-          }
+  f = fopen("/etc/hosts", "rb");
+  if (!f) {
+    ddebug1(RES_MSG "fopen(): %s ", strerror(errno));
+    return 0;
+  }
+  while (fgets(line, sizeof line , f)) {
+    for(ptr = strstr(line, hostn); ptr; ptr = strstr(ptr + l, hostn)) {
+      if ((isspace(ptr[l]) || !ptr[l]) && ptr != line) {
+        for (ptr = line; isspace(*ptr); ptr++);
+        ptr = strtok(ptr, sep);
+        if (setsockname(&name, ptr, 0, 0) != AF_UNSPEC) {
+          call_ipbyhost(hostn, &name, 1);
+          ddebug2(RES_MSG "Used /etc/hosts: %s == %s", hostn, ptr);
+          fclose(f);
+          return 1;
         }
       }
     }
-    if (ferror(in))
-      ddebug1(RES_MSG "fgets(): %s ", strerror(errno));
-    fclose(in);
   }
-  else
-    ddebug1(RES_MSG "fopen(): %s ", strerror(errno));
+  if (ferror(f))
+    ddebug1(RES_MSG "fgets(): %s ", strerror(errno));
+  fclose(f);
   return 0;
 }
 
