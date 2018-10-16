@@ -13,10 +13,10 @@
  *
  * If for some reason someone who maintains the source for ircd decides
  * to change the code to be completely RFC compliant, the change here
- * would be absolutely miniscule.
+ * would be absolutely minuscule.
  *
  * BTW, since carat characters are allowed in nicknames and tildes are
- * not, I stronly suggest that people convert to uppercase when doing
+ * not, I strongly suggest that people convert to uppercase when doing
  * comparisons or creation of hash elements (which tcl laughably calls
  * arrays) to avoid making entries with impossible nicknames in them.
  *

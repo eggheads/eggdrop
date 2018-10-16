@@ -18,7 +18,7 @@ CFLAGS = @CFLAGS@ -I../.. -I$(top_srcdir) -I$(top_srcdir)/src @SSL_INCLUDES@ @DE
 CPPFLAGS = @CPPFLAGS@
 
 OBJS = gethostbyname2.o in6.o inet_aton.o inet_ntop.o inet_pton.o snprintf.o \
-	memcpy.o strcasecmp.o
+	memcpy.o strcasecmp.o strlcpy.o
 
 doofus:
 	@echo ""
@@ -49,7 +49,8 @@ gethostbyname2.o: gethostbyname2.c gethostbyname2.h ../../src/main.h \
  ../../src/users.h ../../src/compat/compat.h ../../src/compat/inet_aton.h \
  ../../src/compat/snprintf.h ../../src/compat/memcpy.h \
  ../../src/compat/strcasecmp.h ../../src/compat/inet_ntop.h \
- ../../src/compat/inet_pton.h ../../src/compat/gethostbyname2.h
+ ../../src/compat/inet_pton.h ../../src/compat/gethostbyname2.h \
+ ../../src/compat/strlcpy.h
 in6.o: in6.c in6.h
 inet_aton.o: inet_aton.c ../../src/main.h ../../config.h ../../eggint.h \
  ../../lush.h ../../src/lang.h ../../src/eggdrop.h ../../src/compat/in6.h \
@@ -59,7 +60,7 @@ inet_aton.o: inet_aton.c ../../src/main.h ../../config.h ../../eggint.h \
  ../../src/main.h ../../src/compat/snprintf.h ../../src/compat/memcpy.h \
  ../../src/compat/strcasecmp.h ../../src/compat/inet_ntop.h \
  ../../src/compat/inet_pton.h ../../src/compat/gethostbyname2.h \
- inet_aton.h
+ ../../src/compat/strlcpy.h inet_aton.h
 inet_ntop.o: inet_ntop.c inet_ntop.h ../../src/main.h ../../config.h \
  ../../eggint.h ../../lush.h ../../src/lang.h ../../src/eggdrop.h \
  ../../src/compat/in6.h ../../src/flags.h ../../src/proto.h \
@@ -68,7 +69,8 @@ inet_ntop.o: inet_ntop.c inet_ntop.h ../../src/main.h ../../config.h \
  ../../src/compat/compat.h ../../src/compat/inet_aton.h \
  ../../src/compat/snprintf.h ../../src/compat/memcpy.h \
  ../../src/compat/strcasecmp.h ../../src/compat/inet_ntop.h \
- ../../src/compat/inet_pton.h ../../src/compat/gethostbyname2.h
+ ../../src/compat/inet_pton.h ../../src/compat/gethostbyname2.h \
+ ../../src/compat/strlcpy.h
 inet_pton.o: inet_pton.c inet_pton.h ../../src/main.h ../../config.h \
  ../../eggint.h ../../lush.h ../../src/lang.h ../../src/eggdrop.h \
  ../../src/compat/in6.h ../../src/flags.h ../../src/proto.h \
@@ -77,7 +79,8 @@ inet_pton.o: inet_pton.c inet_pton.h ../../src/main.h ../../config.h \
  ../../src/compat/compat.h ../../src/compat/inet_aton.h \
  ../../src/compat/snprintf.h ../../src/compat/memcpy.h \
  ../../src/compat/strcasecmp.h ../../src/compat/inet_ntop.h \
- ../../src/compat/inet_pton.h ../../src/compat/gethostbyname2.h
+ ../../src/compat/inet_pton.h ../../src/compat/gethostbyname2.h \
+ ../../src/compat/strlcpy.h
 memcpy.o: memcpy.c ../../src/main.h ../../config.h ../../eggint.h \
  ../../lush.h ../../src/lang.h ../../src/eggdrop.h ../../src/compat/in6.h \
  ../../src/flags.h ../../src/proto.h ../../src/misc_file.h \
@@ -85,7 +88,8 @@ memcpy.o: memcpy.c ../../src/main.h ../../config.h ../../eggint.h \
  ../../src/users.h ../../src/compat/compat.h ../../src/compat/inet_aton.h \
  ../../src/main.h ../../src/compat/snprintf.h ../../src/compat/memcpy.h \
  ../../src/compat/strcasecmp.h ../../src/compat/inet_ntop.h \
- ../../src/compat/inet_pton.h ../../src/compat/gethostbyname2.h memcpy.h
+ ../../src/compat/inet_pton.h ../../src/compat/gethostbyname2.h \
+ ../../src/compat/strlcpy.h memcpy.h
 snprintf.o: snprintf.c ../../src/main.h ../../config.h ../../eggint.h \
  ../../lush.h ../../src/lang.h ../../src/eggdrop.h ../../src/compat/in6.h \
  ../../src/flags.h ../../src/proto.h ../../src/misc_file.h \
@@ -94,7 +98,7 @@ snprintf.o: snprintf.c ../../src/main.h ../../config.h ../../eggint.h \
  ../../src/main.h ../../src/compat/snprintf.h ../../src/compat/memcpy.h \
  ../../src/compat/strcasecmp.h ../../src/compat/inet_ntop.h \
  ../../src/compat/inet_pton.h ../../src/compat/gethostbyname2.h \
- snprintf.h
+ ../../src/compat/strlcpy.h snprintf.h
 strcasecmp.o: strcasecmp.c ../../src/main.h ../../config.h ../../eggint.h \
  ../../lush.h ../../src/lang.h ../../src/eggdrop.h ../../src/compat/in6.h \
  ../../src/flags.h ../../src/proto.h ../../src/misc_file.h \
@@ -102,4 +106,6 @@ strcasecmp.o: strcasecmp.c ../../src/main.h ../../config.h ../../eggint.h \
  ../../src/users.h ../../src/compat/compat.h ../../src/compat/inet_aton.h \
  ../../src/main.h ../../src/compat/snprintf.h ../../src/compat/memcpy.h \
  ../../src/compat/strcasecmp.h ../../src/compat/inet_ntop.h \
- ../../src/compat/inet_pton.h ../../src/compat/gethostbyname2.h memcpy.h
+ ../../src/compat/inet_pton.h ../../src/compat/gethostbyname2.h \
+ ../../src/compat/strlcpy.h memcpy.h
+strlcpy.o: strlcpy.c ../../config.h
