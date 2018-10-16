@@ -37,9 +37,9 @@
 #ifndef HAVE_STRUCT_IN6_ADDR
 struct in6_addr {
   union {
-    u_8bit_t	__u6_addr8[16];
-    u_16bit_t	__u6_addr16[8];
-    u_32bit_t	__u6_addr32[4];
+    uint8_t	__u6_addr8[16];
+    uint16_t	__u6_addr16[8];
+    uint32_t	__u6_addr32[4];
   } __u6_addr;
 #define	s6_addr	__u6_addr.__u6_addr8
 };
@@ -47,11 +47,11 @@ struct in6_addr {
 
 #ifndef HAVE_STRUCT_SOCKADDR_IN6
 struct sockaddr_in6 {
-  u_16bit_t 	  sin6_family;
-  u_16bit_t 	  sin6_port;
-  u_32bit_t 	  sin6_flowinfo;
+  uint16_t 	  sin6_family;
+  uint16_t 	  sin6_port;
+  uint32_t 	  sin6_flowinfo;
   struct in6_addr sin6_addr;
-  u_32bit_t       sin6_scope_id;
+  uint32_t       sin6_scope_id;
 };
 #endif
 
@@ -77,33 +77,33 @@ extern const struct in6_addr in6addr_loopback;
 
 #ifndef IN6_IS_ADDR_UNSPECIFIED
 # define IN6_IS_ADDR_UNSPECIFIED(a) \
-  (((const u_32bit_t *) (a))[0] == 0                                   \
-   && ((const u_32bit_t *) (a))[1] == 0                                \
-   && ((const u_32bit_t *) (a))[2] == 0                                \
-   && ((const u_32bit_t *) (a))[3] == 0)
+  (((const uint32_t *) (a))[0] == 0                                   \
+   && ((const uint32_t *) (a))[1] == 0                                \
+   && ((const uint32_t *) (a))[2] == 0                                \
+   && ((const uint32_t *) (a))[3] == 0)
 #endif
 
 #ifndef IN6_IS_ADDR_LOOPBACK
 # define IN6_IS_ADDR_LOOPBACK(a) \
-  (((const u_32bit_t *) (a))[0] == 0                                   \
-   && ((const u_32bit_t *) (a))[1] == 0                                \
-   && ((const u_32bit_t *) (a))[2] == 0                                \
-   && ((const u_32bit_t *) (a))[3] == htonl (1))
+  (((const uint32_t *) (a))[0] == 0                                   \
+   && ((const uint32_t *) (a))[1] == 0                                \
+   && ((const uint32_t *) (a))[2] == 0                                \
+   && ((const uint32_t *) (a))[3] == htonl (1))
 #endif
 
 #ifndef IN6_IS_ADDR_V4MAPPED
 # define IN6_IS_ADDR_V4MAPPED(a) \
-  ((((const u_32bit_t *) (a))[0] == 0)                                 \
-   && (((const u_32bit_t *) (a))[1] == 0)                              \
-   && (((const u_32bit_t *) (a))[2] == htonl (0xffff)))
+  ((((const uint32_t *) (a))[0] == 0)                                 \
+   && (((const uint32_t *) (a))[1] == 0)                              \
+   && (((const uint32_t *) (a))[2] == htonl (0xffff)))
 #endif
 
 #ifndef IN6_ARE_ADDR_EQUAL
 # define IN6_ARE_ADDR_EQUAL(a,b) \
-  ((((const u_32bit_t *) (a))[0] == ((const u_32bit_t *) (b))[0])     \
-   && (((const u_32bit_t *) (a))[1] == ((const u_32bit_t *) (b))[1])  \
-   && (((const u_32bit_t *) (a))[2] == ((const u_32bit_t *) (b))[2])  \
-   && (((const u_32bit_t *) (a))[3] == ((const u_32bit_t *) (b))[3]))
+  ((((const uint32_t *) (a))[0] == ((const uint32_t *) (b))[0])     \
+   && (((const uint32_t *) (a))[1] == ((const uint32_t *) (b))[1])  \
+   && (((const uint32_t *) (a))[2] == ((const uint32_t *) (b))[2])  \
+   && (((const uint32_t *) (a))[3] == ((const uint32_t *) (b))[3]))
 #endif
 
 #endif /* IPV6 */

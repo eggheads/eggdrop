@@ -379,13 +379,13 @@ static void eof_dcc_send(int idx)
 
 /* Determine byte order. Used for resend DCC startup packets.
  */
-static u_8bit_t byte_order_test(void)
+static uint8_t byte_order_test(void)
 {
-  u_16bit_t test = TRANSFER_REGET_PACKETID;
+  uint16_t test = TRANSFER_REGET_PACKETID;
 
-  if (*((u_8bit_t *) & test) == ((TRANSFER_REGET_PACKETID & 0xff00) >> 8))
+  if (*((uint8_t *) & test) == ((TRANSFER_REGET_PACKETID & 0xff00) >> 8))
     return 0;
-  if (*((u_8bit_t *) & test) == (TRANSFER_REGET_PACKETID & 0x00ff))
+  if (*((uint8_t *) & test) == (TRANSFER_REGET_PACKETID & 0x00ff))
     return 1;
   return 0;
 }
@@ -869,7 +869,7 @@ static void dcc_fork_send(int idx, char *x, int y)
 
 static void dcc_get_pending(int idx, char *buf, int len)
 {
-  unsigned short port;
+  uint16_t port;
   int i;
 
   i = answer(dcc[idx].sock, &dcc[idx].sockname, &port, 1);
@@ -885,7 +885,7 @@ static void dcc_get_pending(int idx, char *buf, int len)
 #endif
   dcc[idx].sock = i;
   dcc[idx].addr = 0;
-  dcc[idx].port = (int) port;
+  dcc[idx].port = port;
   if (dcc[idx].sock == -1) {
     dprintf(DP_HELP, TRANSFER_NOTICE_BAD_CONN, dcc[idx].nick, strerror(errno));
     putlog(LOG_FILES, "*", TRANSFER_LOG_BAD_CONN, dcc[idx].u.xfer->origname,
@@ -1017,8 +1017,8 @@ static int raw_dcc_resend_send(char *filename, char *nick, char *from,
     nfn = buf = replace_spaces(nfn);
   dcc[i].u.xfer->origname = get_data_ptr(strlen(nfn) + 1);
   strcpy(dcc[i].u.xfer->origname, nfn);
-  strncpyz(dcc[i].u.xfer->from, from, NICKLEN);
-  strncpyz(dcc[i].u.xfer->dir, filename, DIRLEN);
+  strlcpy(dcc[i].u.xfer->from, from, NICKLEN);
+  strlcpy(dcc[i].u.xfer->dir, filename, DIRLEN);
   dcc[i].u.xfer->length = dccfilesize;
   dcc[i].timeval = now;
   dcc[i].u.xfer->f = f;
@@ -1065,7 +1065,7 @@ static int ctcp_DCC_RESUME(char *nick, char *from, char *handle,
   int i, port;
   unsigned long offset;
 
-  strncpyz(buf, text, sizeof buf);
+  strlcpy(buf, text, sizeof buf);
   action = newsplit(&msg);
 
   if (egg_strcasecmp(action, "RESUME"))

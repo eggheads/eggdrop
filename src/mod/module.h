@@ -35,7 +35,7 @@
  * some modules.
  *
  * This is intimately related to the table in `modules.c'. Don't change
- * the files unless you have flamable underwear.
+ * the files unless you have flammable underwear.
  *
  * Do not read this file whilst unless heavily sedated, I will not be
  * held responsible for mental break-downs caused by this file <G>
@@ -58,7 +58,7 @@
 #undef ContextNote
 #undef Assert
 
-/* Compability functions. */
+/* Compatibility functions. */
 #ifdef egg_inet_aton
 #  undef egg_inet_aton
 #endif
@@ -67,9 +67,6 @@
 #endif
 #ifdef egg_snprintf
 #  undef egg_snprintf
-#endif
-#ifdef egg_memset
-#  undef egg_memset
 #endif
 #ifdef egg_strcasecmp
 #  undef egg_strcasecmp
@@ -190,7 +187,7 @@
 #define egg_list_append ((int (*) ( struct list_type **, struct list_type *))global[74])
 #define egg_list_contains ((int (*) (struct list_type *, struct list_type *))global[75])
 /* 76 - 79 */
-#define answer ((int (*) (int, sockname_t *, unsigned short *, int))global[76])
+#define answer ((int (*) (int, sockname_t *, uint16_t *, int))global[76])
 #define getvhost ((void (*) (sockname_t *, int))global[77])
 /* was neterror() */
 #ifdef TLS
@@ -437,7 +434,7 @@
 /* 252 - 255 */
 #define egg_snprintf (global[252])
 #define egg_vsnprintf ((int (*)(char *, size_t, const char *, va_list))global[253])
-#define egg_memset ((void *(*)(void *, int, size_t))global[254])
+/* was egg_memset -- UNUSED */
 #define egg_strcasecmp ((int (*)(const char *, const char *))global[255])
 /* 256 - 259 */
 #define egg_strncasecmp ((int (*)(const char *, const char *, size_t))global[256])
@@ -504,6 +501,11 @@
 #define tcl_resultint ((int (*)(void))global[300])
 #define tcl_resultstring ((const char *(*)(void))global[301])
 #define getdccfamilyaddr ((int (*) (sockname_t *, char *, socklen_t, int))global[302])
+#ifndef HAVE_STRLCPY
+# define strlcpy ((size_t (*) (char *, const char *, size_t))global[303])
+#endif
+/* 304 - 307 */
+#define strncpyz ((size_t (*) (char *, const char *, size_t))global[304])
 
 
 /* hostmasking */

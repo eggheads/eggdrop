@@ -685,7 +685,7 @@ static void filesys_dcc_send(char *nick, char *from, struct userrec *u,
       dcc[i].ssl = ssl;
 #endif
       dcc[i].user = u;
-      strncpyz(dcc[i].nick, nick, sizeof dcc[i].nick);
+      strlcpy(dcc[i].nick, nick, sizeof dcc[i].nick);
       strcpy(dcc[i].host, from);
       dcc[i].u.dns->cbuf = get_data_ptr(strlen(param) + 1);
       strcpy(dcc[i].u.dns->cbuf, param);
@@ -724,7 +724,7 @@ static char *mktempfile(char *filename)
     fn[l] = 0;
   }
   tempname = nmalloc(l + MKTEMPFILE_TOT + 1);
-  sprintf(tempname, "%u-%s-%s", getpid(), rands, fn);
+  sprintf(tempname, "%li-%s-%s", (long) getpid(), rands, fn);
   if (fn != filename)
     my_free(fn);
   return tempname;
@@ -841,7 +841,7 @@ static int filesys_DCC_CHAT(char *nick, char *from, char *handle,
 #endif
   if (egg_strncasecmp(text, "CHAT ", 5) || !u)
     return 0;
-  strncpyz(buf, text + 5, sizeof buf);
+  strlcpy(buf, text + 5, sizeof buf);
   get_user_flagrec(u, &fr, 0);
   param = newsplit(&msg);
   if (dcc_total == max_dcc && increase_socks_max()) {

@@ -29,9 +29,12 @@
 
 #include <string.h>
 #include <errno.h>
-#include <zlib.h>
 
 #include "src/mod/module.h"
+
+#include <zlib.h> /* after src/mod/module.h because it could collide with
+		     crypto.h free_func */
+
 #include "share.mod/share.h"
 
 #ifdef HAVE_MMAP
@@ -74,8 +77,8 @@ static int is_compressedfile(char *filename)
   gzFile zin;
   int len1, len2, i;
 
-  egg_memset(buf1, 0, 50);
-  egg_memset(buf2, 0, 50);
+  egg_bzero(buf1, sizeof(buf1));
+  egg_bzero(buf2, sizeof(buf2));
   if (!is_file(filename))
     return COMPF_FAILED;
 
@@ -343,7 +346,7 @@ static int uncompress_file(char *filename)
 
 
 /*
- *    Userfile feature releated functions
+ *    Userfile feature related functions
  */
 
 static int uff_comp(int idx, char *filename)
