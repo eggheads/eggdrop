@@ -151,7 +151,7 @@ int setsockname(sockname_t *addr, char *src, int port, int allowres)
          !egg_inet_aton(src, &addr->addr.s4.sin_addr)))
       af = AF_UNSPEC;
 
-  if (af == AF_UNSPEC && allowres) {
+  if (af == AF_UNSPEC && allowres && *src) {
     /* src is a hostname. Attempt to resolve it.. */
     if (!sigsetjmp(alarmret, 1)) {
       alarm(resolve_timeout);
@@ -366,7 +366,8 @@ void setsock(int sock, int options)
     setsockopt(sock, SOL_SOCKET, SO_REUSEADDR, (void *) &parm, sizeof(int));
   }
   /* Yay async i/o ! */
-  fcntl(sock, F_SETFL, O_NONBLOCK);
+  if ((sock != STDOUT) || backgrd)
+    fcntl(sock, F_SETFL, O_NONBLOCK);
 }
 
 int getsock(int af, int options)
@@ -490,7 +491,11 @@ static int proxy_connect(int sock, sockname_t *addr)
  */
 static int get_port_from_addr(const sockname_t *addr)
 {
+#ifdef IPV6
   return ntohs((addr->family == AF_INET) ? addr->addr.s4.sin_port : addr->addr.s6.sin6_port);
+#else
+  return addr->addr.s4.sin_port;
+#endif
 }
 
 /* Starts a connection attempt through a socket
@@ -668,7 +673,7 @@ int getdccaddr(sockname_t *addr, char *s, size_t l)
  * If addr is not NULL, it should point to the listening socket's address.
  * Otherwise, this function will try to figure out the public address of the
  * machine, using listen_ip and natip. If restrict_af is set, it will limit
- * the possible IPs to the specified family. The result is a string useable
+ * the possible IPs to the specified family. The result is a string usable
  * for DCC requests
  */
 int getdccfamilyaddr(sockname_t *addr, char *s, size_t l, int restrict_af)
@@ -1518,7 +1523,7 @@ int sock_has_data(int type, int sock)
 
 /* flush_inbuf():
  * checks if there's data in the incoming buffer of an connection
- * and flushs the buffer if possible
+ * and flushes the buffer if possible
  *
  * returns: -1 if the dcc entry wasn't found
  *          -2 if dcc[idx].type->activity doesn't exist and the data couldn't

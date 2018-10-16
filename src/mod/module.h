@@ -36,7 +36,7 @@
  * some modules.
  *
  * This is intimately related to the table in `modules.c'. Don't change
- * the files unless you have flamable underwear.
+ * the files unless you have flammable underwear.
  *
  * Do not read this file whilst unless heavily sedated, I will not be
  * held responsible for mental break-downs caused by this file <G>
@@ -59,7 +59,7 @@
 #undef ContextNote
 #undef Assert
 
-/* Compability functions. */
+/* Compatibility functions. */
 #ifdef egg_inet_aton
 #  undef egg_inet_aton
 #endif

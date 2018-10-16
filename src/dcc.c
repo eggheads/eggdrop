@@ -1466,7 +1466,7 @@ static void dcc_dupwait(int idx, char *buf, int i)
  */
 static void timeout_dupwait(int idx)
 {
-  char x[100];
+  char x[NICKLEN + UHOSTLEN];
 
   /* Still duplicate? */
   if (in_chain(dcc[idx].nick)) {
@@ -1557,6 +1557,9 @@ static void dcc_telnet_id(int idx, char *buf, int atr)
     lostdcc(idx);
     return;
   }
+  /* rxvt-unicode */
+  if (!strncmp(buf, "\e[?1;2c", 7))
+    buf += 7;
   dcc[idx].user = get_user_by_handle(userlist, buf);
   get_user_flagrec(dcc[idx].user, &fr, NULL);
 
@@ -2102,7 +2105,7 @@ static void eof_dcc_script(int idx)
   void *old;
   int oldflags;
 
-  /* This will stop a killdcc from working, incase the script tries
+  /* This will stop a killdcc from working, in case the script tries
    * to kill it's controlling socket while handling an EOF <cybah>
    */
   oldflags = dcc[idx].type->flags;

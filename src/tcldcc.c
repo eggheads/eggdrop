@@ -304,7 +304,7 @@ static int tcl_do_console(Tcl_Interp *irp, ClientData cd, int argc,
         Tcl_AppendResult(irp, "invalid channel", NULL);
         return TCL_ERROR;
       }
-      strlcpy(dcc[i].u.chat->con_chan, argv[arg], 81);
+      strlcpy(dcc[i].u.chat->con_chan, argv[arg], sizeof dcc[i].u.chat->con_chan);
     } else {
       if (!reset && (argv[arg][0] != '+') && (argv[arg][0] != '-'))
         dcc[i].u.chat->con_flags = 0;
