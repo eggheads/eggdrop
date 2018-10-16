@@ -1187,15 +1187,23 @@ static int gotauthenticate(char *from, char *msg)
   putlog(LOG_SERV, "*", "SASL: got AUTHENTICATE %s", msg);
   if (msg[0] == '+') {
     s = src;
-    strcpy(s, sasl_username);
-    s += strlen(sasl_username) + 1;
-    strcpy(s, sasl_username);
-    s += strlen(sasl_username);
-    if (!strcmp(sasl_mechanism, "plain")) { /* don't add sasl_password for ecdsa-nist256p-challenge */
-      s++;
+    /* Don't use snprintf due to \0 inside */
+    if (!strcmp(sasl_mechanism, "PLAIN")) {
+      strcpy(s, sasl_username);
+      s += strlen(sasl_username) + 1;
+      strcpy(s, sasl_username);
+      s += strlen(sasl_username) + 1;
       strcpy(s, sasl_password);
       s += strlen(sasl_password);
     }
+    else if (!strcmp(sasl_mechanism, "ECDSA-NIST256P-CHALLENGE")) {
+      strcpy(s, sasl_username);
+      s += strlen(sasl_username) + 1;
+      strcpy(s, sasl_username);
+      s += strlen(sasl_username);
+    }
+    else /* sasl_mechanism == EXTERNAL */
+      *s++ = '+';
     slen = s - src;
     mbedtls_base64_encode(dst, sizeof dst, &olen, (const unsigned char *) src, slen);
     putlog(LOG_SERV, "*", "SASL: put AUTHENTICATE %s", dst);

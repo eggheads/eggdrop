@@ -821,11 +821,13 @@ static void queue_server(int which, char *msg, int len)
   buf[510] = 0;
   len = strlen(buf);
 
-  /* No queue for PING and PONG - drummer */
-  /* Extended for AUTHENTICATE - michaelortmann */
-  if (!egg_strncasecmp(buf, "PING", 4) ||
-      !egg_strncasecmp(buf, "PONG", 4) ||
-      !egg_strncasecmp(buf, "AUTHENTICATE", 4)) {
+  /* No queue for PING, PONG and AUTHENTICATE */
+  #define PING "PING"
+  #define PONG "PONG"
+  #define AUTHENTICATE "AUTHENTICATE"
+  if (!egg_strncasecmp(buf, PING, sizeof PING - 1) ||
+      !egg_strncasecmp(buf, PONG, sizeof PONG - 1) ||
+      !egg_strncasecmp(buf, AUTHENTICATE, sizeof AUTHENTICATE - 1)) {
     if (buf[1] == 'I' || buf[1] == 'i')
       lastpingtime = now;
     check_tcl_out(which, buf, 1);
