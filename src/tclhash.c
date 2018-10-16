@@ -1217,7 +1217,7 @@ void check_tcl_cron(struct tm *tm)
   egg_snprintf(y, sizeof y, "%02d", tm->tm_wday);
   Tcl_SetVar(interp, "_cron5", (char *) y, 0);
   egg_snprintf(y, sizeof y, "%02d %02d %02d %02d %02d", tm->tm_min, tm->tm_hour,
-               tm->tm_mday, (unsigned int) tm->tm_mon + 1, tm->tm_wday);
+               tm->tm_mday, (unsigned int) (tm->tm_mon + 1), tm->tm_wday);
   check_tcl_bind(H_cron, y, 0,
                  " $_cron1 $_cron2 $_cron3 $_cron4 $_cron5",
                  MATCH_CRON | BIND_STACKABLE);
