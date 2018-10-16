@@ -342,6 +342,23 @@ static int got001(char *from, char *msg)
   return 0;
 }
 
+static int got005(char *from, char *msg)
+{
+  char *s;
+
+  newsplit(&msg); /* nick */
+  for (s = newsplit(&msg); s[0]; s = newsplit(&msg)) {
+    if (!strncmp(s, "NICKLEN", strlen("NICKLEN")))
+      if (strlen(s) > strlen("NICKLEN")) { /* paranoid */
+        nick_len = strtol(s + strlen("NICKLEN") + 1, NULL, 10);
+        putlog(LOG_MISC, "*", "005: NICKLEN = %i", nick_len);
+      }
+    if (s[0] == ':')
+      break;
+  }
+  return 0;
+}
+
 /* Got 442: not on channel
  */
 static int got442(char *from, char *msg)
@@ -1159,6 +1176,7 @@ static cmd_t my_raw_binds[] = {
   {"PONG",    "",   (IntFunc) gotpong,      NULL},
   {"WALLOPS", "",   (IntFunc) gotwall,      NULL},
   {"001",     "",   (IntFunc) got001,       NULL},
+  {"005",     "",   (IntFunc) got005,       NULL},
   {"303",     "",   (IntFunc) got303,       NULL},
   {"432",     "",   (IntFunc) got432,       NULL},
   {"433",     "",   (IntFunc) got433,       NULL},
