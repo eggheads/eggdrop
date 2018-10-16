@@ -740,7 +740,7 @@ static int trigger_bind(const char *proc, const char *param,
    */
   Tcl_SetVar(interp, "lastbind", (char *) mask, TCL_GLOBAL_ONLY);
 
-  if(proc && proc[0] != '*') { // proc[0] != '*' excludes internal binds
+  if(proc && proc[0] != '*') { /* proc[0] != '*' excludes internal binds */
     debug1("triggering bind %s", proc);
     r = getrusage(RUSAGE_SELF, &ru1);
   }
