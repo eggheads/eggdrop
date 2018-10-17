@@ -112,7 +112,7 @@ static void add_delay(struct chanset_t *chan, int plsmns, int mode, char *mask)
   d->seconds = now + randint(30);
 
   d->mask = nmalloc(strlen(mask) + 1);
-  strlcpy(d->mask, mask, strlen(mask) + 1);
+  strcpy(d->mask, mask);
 
   if (!delay_head)
     delay_head = d;
