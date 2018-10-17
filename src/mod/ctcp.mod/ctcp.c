@@ -191,8 +191,8 @@ static int ctcp_CHAT(char *nick, char *uhost, char *handle, char *object,
          * CTCP replies are NOTICE's this has to be a PRIVMSG
          * -poptix 5/1/1997 */
 #ifdef TLS
-	  dprintf(DP_SERVER, "PRIVMSG %s :\001DCC %sCHAT chat %s %u\001\n",
-		  nick, (ssl ? "S" : ""), s, dcc[i].port);
+          dprintf(DP_SERVER, "PRIVMSG %s :\001DCC %sCHAT chat %s %u\001\n",
+                  nick, (ssl ? "S" : ""), s, dcc[i].port);
 #else
           dprintf(DP_SERVER, "PRIVMSG %s :\001DCC CHAT chat %s %u\001\n",
                   nick, s, dcc[i].port);
@@ -202,7 +202,7 @@ static int ctcp_CHAT(char *nick, char *uhost, char *handle, char *object,
     }
 #ifdef TLS
     simple_sprintf(ctcp_reply, "%s\001ERROR no %stelnet port\001", ctcp_reply,
-	 	   (ssl ? "SSL enabled " : ""));
+                   (ssl ? "SSL enabled " : ""));
 #else
     simple_sprintf(ctcp_reply, "%s\001ERROR no telnet port\001", ctcp_reply);
 #endif

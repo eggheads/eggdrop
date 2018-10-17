@@ -95,7 +95,7 @@ static int optimize_kicks;
 static int msgrate;             /* Number of seconds between sending
                                  * queued lines to server. */
 #ifdef TLS
-static int use_ssl;		/* Use SSL for the next server connection? */
+static int use_ssl;             /* Use SSL for the next server connection? */
 static int tls_vfyserver;       /* Certificate validation mode for servrs  */
 #endif
 
@@ -1909,7 +1909,7 @@ static Function server_table[] = {
   (Function) NULL,              /* char * (points to botname later on)  */
   (Function) botuserhost,       /* char *                               */
 #ifdef TLS
-  (Function) & use_ssl,		/* int					*/
+  (Function) & use_ssl,         /* int                                  */
 #else
   (Function) NULL,              /* Was quiet_reject <Wcc[01/21/03]>.    */
 #endif

@@ -932,9 +932,9 @@ static int tcl_channel_info(Tcl_Interp *irp, struct chanset_t *chan)
   return TCL_OK;
 }
 
-#define APPEND_KEYVAL(x, y) {	\
-  Tcl_AppendElement(irp, x);	\
-  Tcl_AppendElement(irp, y);	\
+#define APPEND_KEYVAL(x, y) { \
+  Tcl_AppendElement(irp, x);  \
+  Tcl_AppendElement(irp, y);  \
 }
 
 static int tcl_channel_getlist(Tcl_Interp *irp, struct chanset_t *chan)
@@ -1541,8 +1541,8 @@ static int tcl_channel_modify(Tcl_Interp *irp, struct chanset_t *chan,
 
       i++;
       if (i >= items) {
-		if (irp)
-		  Tcl_AppendResult(irp, item[i - 1], " needs argument", NULL);
+        if (irp)
+          Tcl_AppendResult(irp, item[i - 1], " needs argument", NULL);
         return TCL_ERROR;
       }
       p = strchr(item[i], ':');
