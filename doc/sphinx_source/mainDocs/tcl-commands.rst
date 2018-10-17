@@ -193,9 +193,9 @@ userlist [flags]
 passwdok <handle> <pass>
 ^^^^^^^^^^^^^^^^^^^^^^^^
 
-  Description: checks the password given against the user's password. Check against the password "" (a blank string) or "-" to find out if a user has no password set.
+  Description: checks the password given against the user's password. Check against the password "-" to find out if a user has no password set.
 
-  Returns: 1 if the password matches for that user; 0 otherwise
+  Returns: 1 if the password matches for that user; 0 otherwise. Or if we are checking against the password "-": 1 if the user has no password set; 0 otherwise.
 
   Module: core
 
@@ -1203,9 +1203,9 @@ onchansplit <nick> [channel]
 
   Module: irc
 
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 chanlist <channel> [flags][<&|>chanflags]
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
   Description: flags are any global flags; the '&' or '|' denotes to look for channel specific flags, where '&' will return users having ALL chanflags and '|' returns users having ANY of the chanflags (See matchattr above for additional examples).
 
@@ -2284,7 +2284,7 @@ unlink <bot>
 encrypt <key> <string>
 ^^^^^^^^^^^^^^^^^^^^^^
 
-  Returns: encrypted string (using the currently loaded encryption module), encoded into ASCII using base-64. As of v1.8.3, the default blowfish encryption module can use either the older ECB mode (currently used by default for compatibility reasons), or the more recent and more-secure CBC mode. You can explicitely request which encryption mode to use by prefixing the encryption key with either "ecb:" or "cbc:", or by using the blowfish-use-mode setting in the config file. Note: the default encryption mode for this function is planned to transition from ECB to CBC in v1.9.0.
+  Returns: encrypted string (using the currently loaded encryption module), encoded into ASCII using base-64. As of v1.8.3, the default blowfish encryption module can use either the older ECB mode (currently used by default for compatibility reasons), or the more recent and more-secure CBC mode. You can explicitly request which encryption mode to use by prefixing the encryption key with either "ecb:" or "cbc:", or by using the blowfish-use-mode setting in the config file. Note: the default encryption mode for this function is planned to transition from ECB to CBC in v1.9.0.
 
   Module: encryption
 

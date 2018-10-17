@@ -59,7 +59,7 @@ static int tcl_putnow STDVAR
     if ((p - r) > (sizeof(buf) - 2 - (q - buf)))
       break; /* That's all folks, no space left */
     len = p - r + 1; /* leave space for '\0' */
-    strncpyz(q, r, len);
+    strlcpy(q, r, len);
     if (check_tcl_out(0, q, 0)) {
       if (!*p || ((argc == 3) && !egg_strcasecmp(argv[2], "-oneline")))
         break;
@@ -171,7 +171,7 @@ static int tcl_jump STDVAR
   BADARGS(1, 4, " ?server? ?port? ?pass?");
 
   if (argc >= 2) {
-    strncpyz(newserver, argv[1], sizeof newserver);
+    strlcpy(newserver, argv[1], sizeof newserver);
     if (argc >= 3)
 #ifdef TLS
     {
@@ -187,7 +187,7 @@ static int tcl_jump STDVAR
     else
       newserverport = default_port;
     if (argc == 4)
-      strncpyz(newserverpass, argv[3], sizeof newserverpass);
+      strlcpy(newserverpass, argv[3], sizeof newserverpass);
   }
   cycle_time = 0;
 

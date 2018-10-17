@@ -21,7 +21,7 @@
 # -----------------------------------------------------------------------------
 
 # 2.3c by PPSlim <ppslim@ntlworld.com>
-#  - Small fix on timer hanlding.
+#  - Small fix on timer handling.
 #    Not list formatted, allowing command parsing of channel name
 
 # 2.3b by gregul <unknown>

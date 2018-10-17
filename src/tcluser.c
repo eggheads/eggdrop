@@ -306,8 +306,8 @@ static int tcl_addbot STDVAR
   BADARGS(3, 5, " handle address ?telnet-port ?relay-port??");
 
   /* Copy to adjustable char*'s */
-  strncpyz(hand, argv[1], sizeof hand);
-  strncpyz(addr, argv[2], sizeof addr);
+  strlcpy(hand, argv[1], sizeof hand);
+  strlcpy(addr, argv[2], sizeof addr);
 
   for (p = hand; *p; p++)
     if ((unsigned char) *p <= 32 || *p == '@')
@@ -523,7 +523,7 @@ static int tcl_chhandle STDVAR
   if (!u)
     x = 0;
   else {
-    strncpyz(newhand, argv[2], sizeof newhand);
+    strlcpy(newhand, argv[2], sizeof newhand);
     for (i = 0; i < strlen(newhand); i++)
       if (((unsigned char) newhand[i] <= 32) || (newhand[i] == '@'))
         newhand[i] = '?';
@@ -577,9 +577,9 @@ static int tcl_newignore STDVAR
 
   BADARGS(4, 5, " hostmask creator comment ?lifetime?");
 
-  strncpyz(ign, argv[1], sizeof ign);
-  strncpyz(from, argv[2], sizeof from);
-  strncpyz(cmt, argv[3], sizeof cmt);
+  strlcpy(ign, argv[1], sizeof ign);
+  strlcpy(from, argv[2], sizeof from);
+  strlcpy(cmt, argv[3], sizeof cmt);
 
   if (argc == 4)
     expire_time = now + (60 * ignore_time);

@@ -224,7 +224,7 @@ static int tcl_storenote STDVAR
     int ok = 1;
 
     /* User is valid & has a valid forwarding address */
-     strncpyz(fwd, f1, sizeof fwd); /* Only 40 bytes are stored in the userfile */
+     strlcpy(fwd, f1, sizeof fwd); /* Only 40 bytes are stored in the userfile */
      p = strchr(fwd, '@');
     if (p && !egg_strcasecmp(p + 1, botnetnick)) {
       *p = 0;
@@ -247,7 +247,7 @@ static int tcl_storenote STDVAR
       p = NULL;
     }
     if ((argv[1][0] != '@') && ((argv[3][0] == '<') || (argv[3][0] == '>')))
-      ok = 0; /* Probablly fake pre 1.3 hax0r */
+      ok = 0; /* Probably fake pre 1.3 hax0r */
 
     if (ok && (!p || in_chain(p + 1))) {
       if (p)

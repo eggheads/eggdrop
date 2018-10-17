@@ -40,7 +40,7 @@ typedef struct {
 typedef struct devent_str {
   struct devent_str *next;      /* Pointer to next dns_event      */
   devent_type *type;
-  u_8bit_t lookup;              /* RES_IPBYHOST or RES_HOSTBYIP   */
+  uint8_t lookup;              /* RES_IPBYHOST or RES_HOSTBYIP   */
   union {
     sockname_t *ip_addr;	/* Pointer to address placeholder */
     char *hostname;             /* Hostname                       */

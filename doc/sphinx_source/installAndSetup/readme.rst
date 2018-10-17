@@ -67,13 +67,16 @@ HOW TO GET EGGDROP
     trying the command "tclsh". If it works, you will be given a "%" prompt
     and you can type "exit" to exit the program. This means Tcl is installed
     on your system. If tclsh doesn't load, then Tcl probably isn't on your
-    system, and you will need to install it. The best ftp site for Tcl is
-    ftp://tcl.activestate.com/pub/tcl/.
+    system, and you will need to install it. The website to download Tcl is
+    https://www.tcl.tk/software/tcltk/download.html and most OS distros have
+    a binary installation available. If installing via an OS package manager,
+    make sure to install the development library as well, usually called
+    something similar to 'tcl-dev'.
 
     Currently, the 1.8 tree of Eggdrop is developed at eggheads.org. You can
     get the latest STABLE version of Eggdrop from the following url:
 
-      http://geteggdrop.com/
+      https://geteggdrop.com/
 
     You might try www.eggheads.org for help and information.
 
@@ -83,7 +86,7 @@ Git Usage
 
     Eggdrop development has moved from a CVS-based version control system to
     git. If you are interested in trying out the VERY LATEST updates to 
-    Eggdrop, you may want be interested in pulling the most recent code from
+    Eggdrop, you may be interested in pulling the most recent code from
     there. BE WARNED, the development branch of Eggdrop is not to be
     considered stable and may (haha) have some significant bugs in it. The
     Eggheads Development Team will in NO WAY take any responsibility for 
