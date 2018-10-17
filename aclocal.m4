@@ -804,7 +804,7 @@ AC_DEFUN([EGG_CHECK_LIBS],
     AC_MSG_WARN([Skipping library tests because they CONFUSE IRIX.])
   else
     AX_LIB_SOCKET_NSL
-    AC_CHECK_LIB(dl, dlopen)
+    AC_SEARCH_LIBS([dlopen], [dl])
     AC_CHECK_LIB(m, tan, EGG_MATH_LIB="-lm")
 
     # This is needed for Tcl libraries compiled with thread support
@@ -1055,6 +1055,10 @@ AC_DEFUN([EGG_TCL_TCLCONFIG],
         TCL_LIB_SPEC="$TCL_LIB_SPEC -lz"
       fi
     fi
+  fi
+
+  if test -z "$ac_cv_lib_dlopen"; then
+    TCL_LIB_SPEC=$(echo $TCL_LIB_SPEC | sed -- 's/-ldl//g')
   fi
 
   AC_MSG_CHECKING([for Tcl version])
