@@ -583,9 +583,9 @@ void putlog EGG_VARARGS_DEF(int, arg1)
           /* Open this logfile */
           if (keep_all_logs) {
             egg_snprintf(s1, 256, "%s%s", logs[i].filename, ct);
-            logs[i].f = fopen(s1, "a+");
+            logs[i].f = fopen(s1, "a");
           } else
-            logs[i].f = fopen(logs[i].filename, "a+");
+            logs[i].f = fopen(logs[i].filename, "a");
         }
         if (logs[i].f != NULL) {
           /* Check if this is the same as the last line added to
