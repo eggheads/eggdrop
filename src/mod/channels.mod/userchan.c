@@ -638,7 +638,7 @@ static void display_ban(int idx, int number, maskrec *ban,
   if (ban->flags & MASKREC_PERM)
     strcpy(s, "(perm)");
   else {
-    char s1[30];
+    char s1[29];
 
     days(ban->expire, now, s1);
     sprintf(s, "(expires %s)", s1);
@@ -683,7 +683,7 @@ static void display_exempt(int idx, int number, maskrec *exempt,
   if (exempt->flags & MASKREC_PERM)
     strcpy(s, "(perm)");
   else {
-    char s1[30];
+    char s1[29];
 
     days(exempt->expire, now, s1);
     sprintf(s, "(expires %s)", s1);
@@ -728,7 +728,7 @@ static void display_invite(int idx, int number, maskrec *invite,
   if (invite->flags & MASKREC_PERM)
     strcpy(s, "(perm)");
   else {
-    char s1[30];
+    char s1[29];
 
     days(invite->expire, now, s1);
     sprintf(s, "(expires %s)", s1);
