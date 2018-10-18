@@ -1,8 +1,14 @@
-Known Problems Last revised: April 16, 2003
+Known Problems Last revised: October 19, 2018
 
 
 
 KNOWN PROBLEMS
+
+  Things that are broken and need API changes to get fixed:
+
+    -   On architectures where a pointer is less than 64bit (like 32bit
+        architectures), the 4 user definable botflags 6, 7, 8 and 9 are
+        not stored.
 
 
   Things that are broken, but aren't getting fixed anytime soon:
