@@ -484,7 +484,7 @@ static int flag2str(char *string, int bot, int udef)
   return string - old;
 }
 
-static int bot2str(char *string, unsigned long long bot)
+static int bot2str(char *string, uint64_t bot)
 {
   char x = 'a', *old = string;
 
@@ -703,7 +703,7 @@ void get_user_flagrec(struct userrec *u, struct flag_record *fr,
     fr->udef_global = 0;
   }
   if (fr->match & FR_BOT) {
-    fr->bot = (unsigned long long) get_user(&USERENTRY_BOTFL, u);
+    fr->bot = (uint64_t) get_user(&USERENTRY_BOTFL, u);
   } else
     fr->bot = 0;
   if (fr->match & FR_CHAN) {
@@ -775,7 +775,7 @@ static int botfl_write_userfile(FILE *f, struct userrec *u,
 
 static int botfl_set(struct userrec *u, struct user_entry *e, void *buf)
 {
-  unsigned long long atr = ((unsigned long long) buf & BOT_VALID);
+  uint64_t atr = ((uint64_t) buf & BOT_VALID);
 
   if (!(u->flags & USER_BOT))
     return 1;                   /* Don't even bother trying to set the
