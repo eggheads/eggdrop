@@ -1544,9 +1544,8 @@ static void cmd_chanset(struct userrec *u, int idx, char *par)
           strcpy(parcpy, par);
           irp = Tcl_CreateInterp();
           if (tcl_channel_modify(irp, chan, 2, list) == TCL_OK) {
-            char tocat[sizeof answers];
-            egg_snprintf(tocat, sizeof tocat, "%s { %s }", list[0], parcpy);
-            strncat(answers, tocat, sizeof answers - strlen(answers) - 1);
+            int len = strlen(answers);
+            egg_snprintf(answers + len, (sizeof answers) - len, "%s { %s }", list[0], parcpy); /* Concatenation */
           } else if (!all || !chan->next)
             dprintf(idx, "Error trying to set %s for %s, %s\n",
                     list[0], all ? "all channels" : chname, Tcl_GetStringResult(irp));
