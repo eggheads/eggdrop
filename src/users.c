@@ -157,7 +157,7 @@ void display_ignore(int idx, int number, struct igrec *ignore)
   if (ignore->flags & IGREC_PERM)
     strcpy(s, "(perm)");
   else {
-    char s1[41];
+    char s1[30];
 
     days(ignore->expire, now, s1);
     sprintf(s, "(expires %s)", s1);
