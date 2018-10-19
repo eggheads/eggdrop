@@ -37,14 +37,14 @@ static void cmd_pls_ban(struct userrec *u, int idx, char *par)
   module_entry *me;
 
   if (!par[0]) {
-    dprintf(idx, "Usage: +ban <hostmask> [channel] [%%<XdXhXm>] [reason]\n");
+    dprintf(idx, "Usage: +ban <hostmask> [channel] [%%<XyXMXdXhXm>] [reason]\n");
   } else {
     who = newsplit(&par);
     /* Sanity check for <channel> <ban> vs. <ban> <channel> */
     if (par[0] && strchr(CHANMETA, who[0])) {
       chname = who;
       who = newsplit(&par);
-      dprintf(idx, "Usage: +ban <hostmask> [channel] [%%<XdXhXm>] [reason]\n");
+      dprintf(idx, "Usage: +ban <hostmask> [channel] [%%<XyXMXdXhXm>] [reason]\n");
       dprintf(idx, "Did you mean: .+ban %s %s %s\n", who, chname, par);
       return;
     } else if (par[0] && strchr(CHANMETA, par[0]))
@@ -73,6 +73,18 @@ static void cmd_pls_ban(struct userrec *u, int idx, char *par)
       p_expire = p + 1;
       while (*(++p) != 0) {
         switch (tolower((unsigned) *p)) {
+        case 'y':
+          *p = 0;
+          expire_foo = strtol(p_expire, NULL, 10);
+          expire_time += 60 * 60 * 24 * 365 * expire_foo;
+          p_expire = p + 1;
+          break;
+        case 'M':
+          *p = 0;
+          expire_foo = strtol(p_expire, NULL, 10);
+          expire_time += 60 * 60 * 24 * 30 * expire_foo;
+          p_expire = p + 1;
+          break;
         case 'd':
           *p = 0;
           expire_foo = strtol(p_expire, NULL, 10);
@@ -179,7 +191,7 @@ static void cmd_pls_exempt(struct userrec *u, int idx, char *par)
     return;
   }
   if (!par[0]) {
-    dprintf(idx, "Usage: +exempt <hostmask> [channel] [%%<XdXhXm>] [reason]\n");
+    dprintf(idx, "Usage: +exempt <hostmask> [channel] [%%<XyXMXdXhXm>] [reason]\n");
   } else {
     who = newsplit(&par);
     if (par[0] && strchr(CHANMETA, par[0]))
@@ -208,6 +220,18 @@ static void cmd_pls_exempt(struct userrec *u, int idx, char *par)
       p_expire = p + 1;
       while (*(++p) != 0) {
         switch (tolower((unsigned) *p)) {
+        case 'y':
+          *p = 0;
+          expire_foo = strtol(p_expire, NULL, 10);
+          expire_time += 60 * 60 * 24 * 365 * expire_foo;
+          p_expire = p + 1;
+          break;
+        case 'M':
+          *p = 0;
+          expire_foo = strtol(p_expire, NULL, 10);
+          expire_time += 60 * 60 * 24 * 30 * expire_foo;
+          p_expire = p + 1;
+          break;
         case 'd':
           *p = 0;
           expire_foo = strtol(p_expire, NULL, 10);
@@ -300,7 +324,7 @@ static void cmd_pls_invite(struct userrec *u, int idx, char *par)
   }
 
   if (!par[0]) {
-    dprintf(idx, "Usage: +invite <hostmask> [channel] [%%<XdXhXm>] [reason]\n");
+    dprintf(idx, "Usage: +invite <hostmask> [channel] [%%<XyXMXdXhXm>] [reason]\n");
   } else {
     who = newsplit(&par);
     if (par[0] && strchr(CHANMETA, par[0]))
@@ -329,6 +353,18 @@ static void cmd_pls_invite(struct userrec *u, int idx, char *par)
       p_expire = p + 1;
       while (*(++p) != 0) {
         switch (tolower((unsigned) *p)) {
+        case 'y':
+          *p = 0;
+          expire_foo = strtol(p_expire, NULL, 10);
+          expire_time += 60 * 60 * 24 * 365 * expire_foo;
+          p_expire = p + 1;
+          break;
+        case 'M':
+          *p = 0;
+          expire_foo = strtol(p_expire, NULL, 10);
+          expire_time += 60 * 60 * 24 * 30 * expire_foo;
+          p_expire = p + 1;
+          break;
         case 'd':
           *p = 0;
           expire_foo = strtol(p_expire, NULL, 10);
