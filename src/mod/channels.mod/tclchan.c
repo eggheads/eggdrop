@@ -526,9 +526,9 @@ static int tcl_newchanban STDVAR
       return TCL_ERROR;
     }
   }
-  strncpyz(ban, argv[2], sizeof ban);
-  strncpyz(from, argv[3], sizeof from);
-  strncpyz(cmt, argv[4], sizeof cmt);
+  strlcpy(ban, argv[2], sizeof ban);
+  strlcpy(from, argv[3], sizeof from);
+  strlcpy(cmt, argv[4], sizeof cmt);
   if (argc == 5) {
     if (chan->ban_time == 0)
       expire_time = 0L;
@@ -566,9 +566,9 @@ static int tcl_newban STDVAR
       return TCL_ERROR;
     }
   }
-  strncpyz(ban, argv[1], sizeof ban);
-  strncpyz(from, argv[2], sizeof from);
-  strncpyz(cmt, argv[3], sizeof cmt);
+  strlcpy(ban, argv[1], sizeof ban);
+  strlcpy(from, argv[2], sizeof from);
+  strlcpy(cmt, argv[3], sizeof cmt);
   if (argc == 4) {
     if (global_ban_time == 0)
       expire_time = 0L;
@@ -611,9 +611,9 @@ static int tcl_newchanexempt STDVAR
       return TCL_ERROR;
     }
   }
-  strncpyz(exempt, argv[2], sizeof exempt);
-  strncpyz(from, argv[3], sizeof from);
-  strncpyz(cmt, argv[4], sizeof cmt);
+  strlcpy(exempt, argv[2], sizeof exempt);
+  strlcpy(from, argv[3], sizeof from);
+  strlcpy(cmt, argv[4], sizeof cmt);
   if (argc == 5) {
     if (chan->exempt_time == 0)
       expire_time = 0L;
@@ -649,9 +649,9 @@ static int tcl_newexempt STDVAR
       return TCL_ERROR;
     }
   }
-  strncpyz(exempt, argv[1], sizeof exempt);
-  strncpyz(from, argv[2], sizeof from);
-  strncpyz(cmt, argv[3], sizeof cmt);
+  strlcpy(exempt, argv[1], sizeof exempt);
+  strlcpy(from, argv[2], sizeof from);
+  strlcpy(cmt, argv[3], sizeof cmt);
   if (argc == 4) {
     if (global_exempt_time == 0)
       expire_time = 0L;
@@ -693,9 +693,9 @@ static int tcl_newchaninvite STDVAR
       return TCL_ERROR;
     }
   }
-  strncpyz(invite, argv[2], sizeof invite);
-  strncpyz(from, argv[3], sizeof from);
-  strncpyz(cmt, argv[4], sizeof cmt);
+  strlcpy(invite, argv[2], sizeof invite);
+  strlcpy(from, argv[3], sizeof from);
+  strlcpy(cmt, argv[4], sizeof cmt);
   if (argc == 5) {
     if (chan->invite_time == 0)
       expire_time = 0L;
@@ -731,9 +731,9 @@ static int tcl_newinvite STDVAR
       return TCL_ERROR;
     }
   }
-  strncpyz(invite, argv[1], sizeof invite);
-  strncpyz(from, argv[2], sizeof from);
-  strncpyz(cmt, argv[3], sizeof cmt);
+  strlcpy(invite, argv[1], sizeof invite);
+  strlcpy(from, argv[2], sizeof from);
+  strlcpy(cmt, argv[3], sizeof cmt);
   if (argc == 4) {
     if (global_invite_time == 0)
       expire_time = 0L;
@@ -932,9 +932,9 @@ static int tcl_channel_info(Tcl_Interp *irp, struct chanset_t *chan)
   return TCL_OK;
 }
 
-#define APPEND_KEYVAL(x, y) {	\
-  Tcl_AppendElement(irp, x);	\
-  Tcl_AppendElement(irp, y);	\
+#define APPEND_KEYVAL(x, y) { \
+  Tcl_AppendElement(irp, x);  \
+  Tcl_AppendElement(irp, y);  \
 }
 
 static int tcl_channel_getlist(Tcl_Interp *irp, struct chanset_t *chan)
@@ -1528,7 +1528,7 @@ static int tcl_channel_modify(Tcl_Interp *irp, struct chanset_t *chan,
         }
       } else {
         if ((*item[i]) && !strtol(item[i], &endptr, 10) && !(*endptr)) {
-          *pthr = 0;  // Shortcut for .chanset #chan flood-x 0 to activate 0:0
+          *pthr = 0;  /* Shortcut for .chanset #chan flood-x 0 to activate 0:0 */
           *ptime = 0;
         } else {
           if (irp)
@@ -1541,8 +1541,8 @@ static int tcl_channel_modify(Tcl_Interp *irp, struct chanset_t *chan,
 
       i++;
       if (i >= items) {
-		if (irp)
-		  Tcl_AppendResult(irp, item[i - 1], " needs argument", NULL);
+        if (irp)
+          Tcl_AppendResult(irp, item[i - 1], " needs argument", NULL);
         return TCL_ERROR;
       }
       p = strchr(item[i], ':');
@@ -2100,8 +2100,7 @@ static int tcl_channel_add(Tcl_Interp *irp, char *newname, char *options)
      * any code later on. chan->name gets updated with the channel name as
      * the server knows it, when we join the channel. <cybah>
      */
-    strncpy(chan->dname, newname, 81);
-    chan->dname[80] = 0;
+    strlcpy(chan->dname, newname, sizeof chan->dname);
 
     /* Initialize chan->channel info */
     init_channel(chan, 0);
@@ -2113,7 +2112,7 @@ static int tcl_channel_add(Tcl_Interp *irp, char *newname, char *options)
 
   }
   /* If chan_hack is set, we're loading the userfile. Ignore errors while
-   * reading userfile and just return TCL_OK. This is for compatability
+   * reading userfile and just return TCL_OK. This is for compatibility
    * if a user goes back to an eggdrop that no-longer supports certain
    * (channel) options.
    */
@@ -2281,7 +2280,6 @@ static int tcl_chansettype STDVAR
              !strcmp(argv[1], "flood-join") ||
              !strcmp(argv[1], "flood-kick") ||
              !strcmp(argv[1], "flood-deop") ||
-             !strcmp(argv[1], "flood-nick") ||
              !strcmp(argv[1], "flood-nick") ||
              !strcmp(argv[1], "aop-delay")) {
     Tcl_AppendResult(irp, "pair", NULL);

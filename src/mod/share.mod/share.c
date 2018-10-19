@@ -112,7 +112,7 @@ static void add_delay(struct chanset_t *chan, int plsmns, int mode, char *mask)
   d->seconds = now + randint(30);
 
   d->mask = nmalloc(strlen(mask) + 1);
-  strncpyz(d->mask, mask, strlen(mask) + 1);
+  strcpy(d->mask, mask);
 
   if (!delay_head)
     delay_head = d;
@@ -1191,7 +1191,7 @@ static void share_ufsend(int idx, char *par)
     newsplit(&par);
     port = newsplit(&par);
     i = new_dcc(&DCC_FORK_SEND, sizeof(struct xfer_info));
-    /* Use same addr we succesfully linked to and change port */
+    /* Use same addr we successfully linked to and change port */
     memcpy(&dcc[i].sockname, &dcc[idx].sockname, sizeof dcc[i].sockname);
     dcc[i].port = atoi(port);
     setsnport(dcc[i].sockname, dcc[i].port);
@@ -1410,7 +1410,7 @@ static void shareout_mod EGG_VARARGS_DEF(struct chanset_t *, arg1)
           get_user_flagrec(dcc[i].user, &fr, chan->dname);
         }
         if (!chan || bot_chan(fr) || bot_global(fr)) {
-          putlog(LOG_BOTSHROUT, "*", "{m->%s} %s", dcc[i].nick, s + 2);
+          putlog(LOG_BOTSHROUT, "*", "{b->%s} %s", dcc[i].nick, s + 2);
           tputs(dcc[i].sock, s, l + 2);
         }
       }
@@ -1444,7 +1444,7 @@ static void shareout_but EGG_VARARGS_DEF(struct chanset_t *, arg1)
         get_user_flagrec(dcc[i].user, &fr, chan->dname);
       }
       if (!chan || bot_chan(fr) || bot_global(fr)) {
-        putlog(LOG_BOTSHROUT, "*", "{m->%s} %s", dcc[i].nick, s + 2);
+        putlog(LOG_BOTSHROUT, "*", "{b->%s} %s", dcc[i].nick, s + 2);
         tputs(dcc[i].sock, s, l + 2);
       }
     }
@@ -1461,14 +1461,14 @@ static void shareout_but EGG_VARARGS_DEF(struct chanset_t *, arg1)
  */
 static void new_tbuf(char *bot)
 {
-  tandbuf **old = &tbuf, *new;
+  tandbuf *new;
 
   new = nmalloc(sizeof(tandbuf));
-  strncpyz(new->bot, bot, sizeof new->bot);
+  strlcpy(new->bot, bot, sizeof new->bot);
   new->q = NULL;
   new->timer = now;
-  new->next = *old;
-  *old = new;
+  new->next = tbuf;
+  tbuf = new;
   putlog(LOG_BOTS, "*", "Creating resync buffer for %s", bot);
 }
 
@@ -1838,7 +1838,7 @@ static void finish_share(int idx)
   userlist = (void *) -1;       /* Do this to prevent .user messups     */
 
   /* Bot user pointers are updated to point to the new list, all others
-   * are set to NULL. If our userfile will be overriden, just set _all_
+   * are set to NULL. If our userfile will be overridden, just set _all_
    * to NULL directly.
    */
   if (u == NULL)

@@ -1,6 +1,6 @@
 /*
  * dbcompat.c -- part of filesys.mod
- *   Compability functions to convert older DBs to the newest version.
+ *   Compatibility functions to convert older DBs to the newest version.
  *
  * Written for filedb3 by Fabian Knittel <fknittel@gmx.de>
  */

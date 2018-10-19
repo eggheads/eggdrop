@@ -76,7 +76,7 @@ void *dlsym(void *, char *);
 #  endif /* MOD_USE_DL */
 #endif /* !STATIC */
 
-
+#define strncpyz strlcpy
 
 extern struct dcc_t *dcc;
 extern struct userrec *userlist, *lastuser;
@@ -577,7 +577,7 @@ Function global_table[] = {
   (Function) open_telnet_raw,
   /* 288 - 291 */
 #ifdef IPV6
-  (Function) & pref_af,		  /* int                                 */
+  (Function) & pref_af,           /* int                                 */
 #else
   (Function) 0,                   /* IPv6 leftovers: 288                 */
 #endif
@@ -597,7 +597,14 @@ Function global_table[] = {
   /* 300 - 303 */
   (Function) tcl_resultint,
   (Function) tcl_resultstring,
-  (Function) getdccfamilyaddr
+  (Function) getdccfamilyaddr,
+#ifndef HAVE_STRLCPY
+  (Function) strlcpy,
+#else
+  (Function) 0,
+#endif
+  /* 304 - 307 */
+  (Function) strncpyz
 };
 
 void init_modules(void)

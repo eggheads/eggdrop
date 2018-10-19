@@ -203,8 +203,8 @@ char *masktype(int x)
 
 char *maskname(int x)
 {
-  static char s[275];           /* Change this if you change the levels */
-  int i = 0;			/* 6+8+7+13+6+6+6+17+5+7+8+7+9+15+17+17+24+24+(8*9)+1 */
+  static char s[275]; /* Change this if you change the levels */
+  int i = 0;          /* 6+8+7+13+6+6+6+17+5+7+8+7+9+15+17+17+24+24+(8*9)+1 */
 
   s[0] = 0;
   if (x & LOG_MSGS)
@@ -666,7 +666,7 @@ void set_user_flagrec(struct userrec *u, struct flag_record *fr,
 
       cr->next = u->chanrec;
       u->chanrec = cr;
-      strncpyz(cr->channel, chname, sizeof cr->channel);
+      strlcpy(cr->channel, chname, sizeof cr->channel);
     }
     if (cr && ch) {
       cr->flags = fr->chan;

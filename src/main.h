@@ -129,14 +129,6 @@ extern struct dcc_table DCC_CHAT, DCC_BOT, DCC_LOST, DCC_SCRIPT, DCC_BOT_NEW,
           (x) = newsplit(&(x));                                         \
 } while (0)
 
-/* This macro copies (_len - 1) bytes from _source to _target. The
- * target string is NULL-terminated.
- */
-#define strncpyz(_target, _source, _len) do {                           \
-        strncpy((_target), (_source), (_len) - 1);                      \
-        (_target)[(_len) - 1] = 0;                                      \
-} while (0)
-
 #ifdef BORGCUBES
 #  define O_NONBLOCK 00000004 /* POSIX non-blocking I/O */
 #endif /* BORGCUBES */

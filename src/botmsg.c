@@ -1,7 +1,7 @@
 /*
  * botmsg.c -- handles:
  *   formatting of messages to be sent on the botnet
- *   sending differnet messages to different versioned bots
+ *   sending different messages to different versioned bots
  *
  * by Darrin Smith (beldin@light.iinet.net.au)
  */

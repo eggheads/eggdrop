@@ -126,6 +126,8 @@
 ###  %bset resolve-timeout%b <seconds>
    Set here the amount of seconds before giving up on hostname/address
    lookup (you might want to increase this if you are on a slow network).
+   The default is RES_TIMEOUT, which is generally 5, the allowed maximum is
+   RES_MAXRETRANS (see <resolv.h>).
 %{help=set dupwait-timeout}%{+n}
 ###  %bset dupwait-timeout%b <seconds>
    If your Eggdrop rejects bots that actually have already
@@ -303,7 +305,7 @@ See also: set ssl-capath
    Specify the list of ciphers (in order of preference) allowed for
    use with ssl. The cipher list is one or more cipher strings
    separated by colons, commas or spaces. Unavailable ciphers are
-   silently ignored unless no useable cipher could be found. For the
+   silently ignored unless no usable cipher could be found. For the
    list of possible cipher strings and their meanings, please refer
    to the ciphers(1) manual.
    If you set this, the value replaces any ciphers OpenSSL might use
