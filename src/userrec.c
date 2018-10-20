@@ -23,7 +23,6 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
-#include <sys/stat.h>
 #include "main.h"
 #include "users.h"
 #include "chan.h"
@@ -43,8 +42,6 @@ maskrec *global_bans = NULL, *global_exempts = NULL, *global_invites = NULL;
 struct igrec *global_ign = NULL;
 int cache_hit = 0, cache_miss = 0; /* temporary cache accounting    */
 int strict_host = 1;
-int userfile_perm = 0600;         /* Userfile permissions
-                                   * (default rw-------) */
 
 void *_user_malloc(int size, const char *file, int line)
 {
@@ -545,7 +542,6 @@ void write_userfile(int idx)
   sprintf(new_userfile, "%s~new", userfile);
 
   f = fopen(new_userfile, "w");
-  chmod(new_userfile, userfile_perm);
   if (f == NULL) {
     putlog(LOG_MISC, "*", USERF_ERRWRITE);
     nfree(new_userfile);
