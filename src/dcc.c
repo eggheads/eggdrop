@@ -1390,7 +1390,7 @@ static void dcc_telnet_hostresolved(int i)
   if (j < 0)
     putlog(LOG_MISC, "*", DCC_IDENTFAIL, dcc[i].host, strerror(errno));
   else {
-    egg_memcpy(&dcc[j].sockname, &dcc[i].sockname, sizeof(sockname_t));
+    memcpy(&dcc[j].sockname, &dcc[i].sockname, sizeof(sockname_t));
     dcc[j].sock = getsock(dcc[j].sockname.family, 0);
     if (dcc[j].sock >= 0) {
       sockname_t name;
