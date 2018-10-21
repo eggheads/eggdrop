@@ -324,7 +324,7 @@ static void zapf_assoc(char *botnick, char *code, char *par)
       nick = newsplit(&par);
       s1 = get_assoc_name(chan);
       if (linking && ((s1 == NULL) || (s1[0] == 0) ||
-          (((uint64_t) get_user(find_entry_type("BOTFL"),
+          (((intptr_t) get_user(find_entry_type("BOTFL"),
           dcc[idx].user) & BOT_HUB)))) {
         add_assoc(par, chan);
         botnet_send_assoc(idx, chan, nick, par);

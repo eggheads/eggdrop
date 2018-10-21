@@ -97,7 +97,7 @@ struct user_entry {
     char *string;
     void *extra;
     struct list_type *list;
-    uint64_t ulong;
+    unsigned long long ulong;
   } u;
   char *name;
 };
@@ -130,7 +130,7 @@ struct user_entry *find_user_entry(struct user_entry_type *, struct userrec *);
 void *get_user(struct user_entry_type *, struct userrec *);
 int set_user(struct user_entry_type *, struct userrec *, void *);
 
-#define bot_flags(u) ((uint64_t)get_user(&USERENTRY_BOTFL, (u)))
+#define bot_flags(u) ((long)get_user(&USERENTRY_BOTFL, (u)))
 #define is_bot(u)    ((u) && ((u)->flags & USER_BOT))
 #define is_owner(u)  ((u) && ((u)->flags & USER_OWNER))
 

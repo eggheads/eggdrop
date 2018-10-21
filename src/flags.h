@@ -27,7 +27,7 @@ struct flag_record {
   int match;
   int global;
   int udef_global;
-  uint64_t bot; /* 36 bits needed */
+  unsigned long long bot; /* 36 bits needed */
   int chan;
   int udef_chan;
 };
@@ -55,7 +55,7 @@ struct flag_record {
  */
 #define USER_VALID 0x003fbfeff   /* Sum of all valid USER_ flags */
 #define CHAN_VALID 0x003677c79   /* Sum of all valid CHAN_ flags */
-#define BOT_VALID  UINT64_C(0xffc0689c1) /* Sum of all valid BOT_  flags */
+#define BOT_VALID  0xffc0689c1ULL /* Sum of all valid BOT_  flags */
 
 
 #define USER_AUTOOP        0x00000001 /* a  auto-op                               */
@@ -87,42 +87,42 @@ struct flag_record {
 #define USER_DEFAULT       0x40000000 /*    use default-flags                     */
 
 /* Flags specifically for bots */
-#define BOT_ALT        UINT64_C(0x00000001) /* a  auto-link here if all hubs fail */
-#define BOT_B          UINT64_C(0x00000002) /* b  unused                          */
-#define BOT_C          UINT64_C(0x00000004) /* c  unused                          */
-#define BOT_D          UINT64_C(0x00000008) /* d  unused                          */
-#define BOT_E          UINT64_C(0x00000010) /* e  unused                          */
-#define BOT_F          UINT64_C(0x00000020) /* f  unused                          */
-#define BOT_GLOBAL     UINT64_C(0x00000040) /* g  all channel are shared          */
-#define BOT_HUB        UINT64_C(0x00000080) /* h  auto-link to ONE of these bots  */
-#define BOT_ISOLATE    UINT64_C(0x00000100) /* i  isolate party line from botnet  */
-#define BOT_J          UINT64_C(0x00000200) /* j  unused                          */
-#define BOT_K          UINT64_C(0x00000400) /* k  unused                          */
-#define BOT_LEAF       UINT64_C(0x00000800) /* l  may not link other bots         */
-#define BOT_M          UINT64_C(0x00001000) /* m  unused                          */
-#define BOT_N          UINT64_C(0x00002000) /* n  unused                          */
-#define BOT_O          UINT64_C(0x00004000) /* o  unused                          */
-#define BOT_PASSIVE    UINT64_C(0x00008000) /* p  share passively with this bot   */
-#define BOT_Q          UINT64_C(0x00010000) /* q  unused                          */
-#define BOT_REJECT     UINT64_C(0x00020000) /* r  automatically reject anywhere   */
-#define BOT_AGGRESSIVE UINT64_C(0x00040000) /* s  bot shares user files           */
-#define BOT_T          UINT64_C(0x00080000) /* t  unused                          */
-#define BOT_U          UINT64_C(0x00100000) /* u  unused                          */
-#define BOT_V          UINT64_C(0x00200000) /* v  unused                          */
-#define BOT_W          UINT64_C(0x00400000) /* w  unused                          */
-#define BOT_X          UINT64_C(0x00800000) /* x  unused                          */
-#define BOT_Y          UINT64_C(0x01000000) /* y  unused                          */
-#define BOT_Z          UINT64_C(0x02000000) /* z  unused                          */
-#define BOT_FLAG0      UINT64_C(0x04000000) /* 0  user-defined flag #0            */
-#define BOT_FLAG1      UINT64_C(0x08000000) /* 1  user-defined flag #1            */
-#define BOT_FLAG2      UINT64_C(0x10000000) /* 2  user-defined flag #2            */
-#define BOT_FLAG3      UINT64_C(0x20000000) /* 3  user-defined flag #3            */
-#define BOT_FLAG4      UINT64_C(0x40000000) /* 4  user-defined flag #4            */
-#define BOT_FLAG5      UINT64_C(0x80000000) /* 5  user-defined flag #5            */
-#define BOT_FLAG6      UINT64_C(0x100000000) /* 6  user-defined flag #6           */
-#define BOT_FLAG7      UINT64_C(0x200000000) /* 7  user-defined flag #7           */
-#define BOT_FLAG8      UINT64_C(0x400000000) /* 8  user-defined flag #8           */
-#define BOT_FLAG9      UINT64_C(0x800000000) /* 9  user-defined flag #9           */
+#define BOT_ALT        0x00000001ULL /* a  auto-link here if all hubs fail */
+#define BOT_B          0x00000002ULL /* b  unused                          */
+#define BOT_C          0x00000004ULL /* c  unused                          */
+#define BOT_D          0x00000008ULL /* d  unused                          */
+#define BOT_E          0x00000010ULL /* e  unused                          */
+#define BOT_F          0x00000020ULL /* f  unused                          */
+#define BOT_GLOBAL     0x00000040ULL /* g  all channel are shared          */
+#define BOT_HUB        0x00000080ULL /* h  auto-link to ONE of these bots  */
+#define BOT_ISOLATE    0x00000100ULL /* i  isolate party line from botnet  */
+#define BOT_J          0x00000200ULL /* j  unused                          */
+#define BOT_K          0x00000400ULL /* k  unused                          */
+#define BOT_LEAF       0x00000800ULL /* l  may not link other bots         */
+#define BOT_M          0x00001000ULL /* m  unused                          */
+#define BOT_N          0x00002000ULL /* n  unused                          */
+#define BOT_O          0x00004000ULL /* o  unused                          */
+#define BOT_PASSIVE    0x00008000ULL /* p  share passively with this bot   */
+#define BOT_Q          0x00010000ULL /* q  unused                          */
+#define BOT_REJECT     0x00020000ULL /* r  automatically reject anywhere   */
+#define BOT_AGGRESSIVE 0x00040000ULL /* s  bot shares user files           */
+#define BOT_T          0x00080000ULL /* t  unused                          */
+#define BOT_U          0x00100000ULL /* u  unused                          */
+#define BOT_V          0x00200000ULL /* v  unused                          */
+#define BOT_W          0x00400000ULL /* w  unused                          */
+#define BOT_X          0x00800000ULL /* x  unused                          */
+#define BOT_Y          0x01000000ULL /* y  unused                          */
+#define BOT_Z          0x02000000ULL /* z  unused                          */
+#define BOT_FLAG0      0x04000000ULL /* 0  user-defined flag #0            */
+#define BOT_FLAG1      0x08000000ULL /* 1  user-defined flag #1            */
+#define BOT_FLAG2      0x10000000ULL /* 2  user-defined flag #2            */
+#define BOT_FLAG3      0x20000000ULL /* 3  user-defined flag #3            */
+#define BOT_FLAG4      0x40000000ULL /* 4  user-defined flag #4            */
+#define BOT_FLAG5      0x80000000ULL /* 5  user-defined flag #5            */
+#define BOT_FLAG6      0x100000000ULL /* 6  user-defined flag #6           */
+#define BOT_FLAG7      0x200000000ULL /* 7  user-defined flag #7           */
+#define BOT_FLAG8      0x400000000ULL /* 8  user-defined flag #8           */
+#define BOT_FLAG9      0x800000000ULL /* 9  user-defined flag #9           */
 #define BOT_SHARE      (BOT_AGGRESSIVE|BOT_PASSIVE)
 
 
