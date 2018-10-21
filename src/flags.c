@@ -418,7 +418,8 @@ void break_down_flags(const char *string, struct flag_record *plus,
           which->chan |= 1 << (*string - 'a');
           break;
         case 2:
-          which->bot |= 1 << (*string - 'a');
+          if (*string <= 'u')
+            which->bot |= 1 << (*string - 'a');
         }
       } else if ((*string >= 'A') && (*string <= 'Z')) {
         switch (mode) {
@@ -488,7 +489,7 @@ static int bot2str(char *string, int bot)
 {
   char x = 'a', *old = string;
 
-  while (x <= 'z') {
+  while (x <= 'u') {
     if (bot & 1)
       *string++ = x;
     x++;
