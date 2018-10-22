@@ -488,3 +488,10 @@ See also: status
    a ? if nothing is known.
 
 See also: bots, botinfo, bottree
+%{help=fprint}%{-}
+### %bfprint <+/SHA1 fingerprint>%b
+   Adds an SSL certificate fingerprint to your user account. This allows you
+   to authenticate to Eggdrop with a certificate instead of a password. You
+   can log in to the partyline using SSL and use %b'.fprint +'%b to add the
+   current certificate, or use %b'.fprint <SHA1 fingerprint>'%b to manually
+   add a certificate fingerprint.

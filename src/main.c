@@ -47,11 +47,11 @@
 
 #include "main.h"
 
-#include <fcntl.h>
 #include <errno.h>
-#include <signal.h>
-#include <netdb.h>
+#include <fcntl.h>
+#include <resolv.h>
 #include <setjmp.h>
+#include <signal.h>
 
 #ifdef TIME_WITH_SYS_TIME
 #  include <sys/time.h>
@@ -87,7 +87,8 @@
 #  define _POSIX_SOURCE 1               /* Solaris needs this */
 #endif
 
-extern char origbotname[], userfile[], botnetnick[];
+extern char origbotname[], botnetnick[]; 
+extern char userfile[121];        /* 121 = sizeof userfile from users.c */
 extern int dcc_total, conmask, cache_hit, cache_miss, max_logs, quick_logs,
            quiet_save;
 extern struct dcc_t *dcc;
@@ -118,10 +119,10 @@ char notify_new[121] = "";      /* Person to send a note to for new users */
 int default_flags = 0;          /* Default user flags                     */
 int default_uflags = 0;         /* Default user-definied flags            */
 
-int backgrd = 1;        /* Run in the background?                        */
-int con_chan = 0;       /* Foreground: constantly display channel stats? */
-int term_z = 0;         /* Foreground: use the terminal as a partyline?  */
-int use_stderr = 1;     /* Send stuff to stderr instead of logfiles?     */
+int backgrd = 1;    /* Run in the background?                        */
+int con_chan = 0;   /* Foreground: constantly display channel stats? */
+int term_z = -1;    /* Foreground: use the terminal as a partyline?  */
+int use_stderr = 1; /* Send stuff to stderr instead of logfiles?     */
 
 char configfile[121] = "eggdrop.conf";  /* Default config file name */
 char pid_file[121];                     /* Name of the pid file     */
@@ -141,9 +142,9 @@ int notify_users_at = 0; /* Minutes past the hour to notify users of notes? */
 char version[81];    /* Version info (long form)  */
 char ver[41];        /* Version info (short form) */
 
-int do_restart = 0;       /* .restart has been called, restart ASAP */
-int resolve_timeout = 15; /* Hostname/address lookup timeout        */
-char quit_msg[1024];      /* Quit message                           */
+int do_restart = 0;                /* .restart has been called, restart ASAP */
+int resolve_timeout = RES_TIMEOUT; /* Hostname/address lookup timeout        */
+char quit_msg[1024];               /* Quit message                           */
 
 /* Traffic stats */
 unsigned long otraffic_irc = 0;
@@ -567,12 +568,12 @@ static void do_arg()
       case 'c':
         cliflags |= CLI_C;
         con_chan = 1;
-        term_z = 0;
+        term_z = -1;
         break;
       case 't':
         cliflags |= CLI_T;
         con_chan = 0;
-        term_z = 1;
+        term_z = 0;
         break;
       case 'm':
         cliflags |= CLI_M;
@@ -614,7 +615,7 @@ static void do_arg()
 
 void backup_userfile(void)
 {
-  char s[125];
+  char s[sizeof userfile + 4];
 
   if (quiet_save < 2)
     putlog(LOG_MISC, "*", USERF_BACKUP);
@@ -1239,12 +1240,12 @@ int main(int arg_c, char **arg_v)
   }
 
   /* Terminal emulating dcc chat */
-  if (!backgrd && term_z) {
+  if (!backgrd && term_z >= 0) {
     /* reuse term_z as glob var to pass it's index in the dcc table around */
     term_z = new_dcc(&DCC_CHAT, sizeof(struct chat_info));
 
-    /* new_dcc returns -1 on error, and 0 should always be taken by the listening socket */
-    if (term_z < 1)
+    /* new_dcc returns -1 on error */
+    if (term_z < 0)
       fatal("ERROR: Failed to initialize foreground chat.", 0);
 
     getvhost(&dcc[term_z].sockname, AF_INET);

@@ -151,7 +151,7 @@ int setsockname(sockname_t *addr, char *src, int port, int allowres)
          !egg_inet_aton(src, &addr->addr.s4.sin_addr)))
       af = AF_UNSPEC;
 
-  if (af == AF_UNSPEC && allowres) {
+  if (af == AF_UNSPEC && allowres && *src) {
     /* src is a hostname. Attempt to resolve it.. */
     if (!sigsetjmp(alarmret, 1)) {
       alarm(resolve_timeout);
@@ -366,7 +366,8 @@ void setsock(int sock, int options)
     setsockopt(sock, SOL_SOCKET, SO_REUSEADDR, (void *) &parm, sizeof(int));
   }
   /* Yay async i/o ! */
-  fcntl(sock, F_SETFL, O_NONBLOCK);
+  if ((sock != STDOUT) || backgrd)
+    fcntl(sock, F_SETFL, O_NONBLOCK);
 }
 
 int getsock(int af, int options)
@@ -490,7 +491,11 @@ static int proxy_connect(int sock, sockname_t *addr)
  */
 static int get_port_from_addr(const sockname_t *addr)
 {
+#ifdef IPV6
   return ntohs((addr->family == AF_INET) ? addr->addr.s4.sin_port : addr->addr.s6.sin6_port);
+#else
+  return addr->addr.s4.sin_port;
+#endif
 }
 
 /* Starts a connection attempt through a socket

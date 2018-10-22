@@ -127,7 +127,7 @@ static int console_set(struct userrec *u, struct user_entry *e, void *buf)
       nfree(ci->channel);
       nfree(ci);
     }
-    ci = e->u.extra = buf;
+    e->u.extra = buf;
   }
 
   /* Note: Do not share console info */

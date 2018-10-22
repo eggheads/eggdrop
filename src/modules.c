@@ -577,7 +577,7 @@ Function global_table[] = {
   (Function) open_telnet_raw,
   /* 288 - 291 */
 #ifdef IPV6
-  (Function) & pref_af,		  /* int                                 */
+  (Function) & pref_af,           /* int                                 */
 #else
   (Function) 0,                   /* IPv6 leftovers: 288                 */
 #endif
