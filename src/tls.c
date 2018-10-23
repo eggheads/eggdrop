@@ -416,7 +416,7 @@ static int ssl_verifycn(X509 *cert, ssl_appdata *data)
  */
 static char *ssl_printname(X509_NAME *name)
 {
-  int len;
+  long len;
   char *data, *buf;
   BIO *bio = BIO_new(BIO_s_mem());
 
@@ -424,9 +424,16 @@ static char *ssl_printname(X509_NAME *name)
      the manual discourages it's usage, so let's not be lazy ;) */
   if (X509_NAME_print_ex(bio, name, 0, XN_FLAG_ONELINE & ~XN_FLAG_SPC_EQ)) {
     len = BIO_get_mem_data(bio, &data);
-    buf = nmalloc(len + 1);
-    memcpy(buf, data, len); /* don't strlcpy() for it would read data[len] */
-    buf[len] = 0;
+    if (len > 0) {
+      buf = nmalloc(len + 1);
+      memcpy(buf, data, len); /* don't strlcpy() for it would read data[len] */
+      buf[len] = 0;
+    }
+    else {
+      debug0("TLS: ssl_printname(): BIO_get_mem_data(): error");
+      buf = nmalloc(1);
+      *buf = 0;
+    }
   }
   else {
     debug0("TLS: ssl_printname(): X509_NAME_print_ex(): error");
@@ -446,15 +453,22 @@ static char *ssl_printname(X509_NAME *name)
  */
 static char *ssl_printtime(ASN1_UTCTIME *t)
 {
-  int len;
+  long len;
   char *data, *buf;
   BIO *bio = BIO_new(BIO_s_mem());
 
   ASN1_UTCTIME_print(bio, t);
   len = BIO_get_mem_data(bio, &data);
-  buf = nmalloc(len + 1);
-  memcpy(buf, data, len); /* don't strlcpy() for it would read data[len] */
-  buf[len] = 0;
+  if (len > 0) {
+    buf = nmalloc(len + 1);
+    memcpy(buf, data, len); /* don't strlcpy() for it would read data[len] */
+    buf[len] = 0;
+  }
+  else {
+    debug0("TLS: ssl_printtime(): BIO_get_mem_data(): error");
+    buf = nmalloc(1);
+    *buf = 0;
+  }
   BIO_free(bio);
   return buf;
 }
@@ -467,15 +481,22 @@ static char *ssl_printtime(ASN1_UTCTIME *t)
  */
 static char *ssl_printnum(ASN1_INTEGER *i)
 {
-  int len;
+  long len;
   char *data, *buf;
   BIO *bio = BIO_new(BIO_s_mem());
 
   i2a_ASN1_INTEGER(bio, i);
   len = BIO_get_mem_data(bio, &data);
-  buf = nmalloc(len + 1);
-  memcpy(buf, data, len); /* don't strlcpy() for it would read data[len] */
-  buf[len] = 0;
+  if (len > 0) {
+    buf = nmalloc(len + 1);
+    memcpy(buf, data, len); /* don't strlcpy() for it would read data[len] */
+    buf[len] = 0;
+  }
+  else {
+    debug0("TLS: ssl_printnum(): BIO_get_mem_data(): error");
+    buf = nmalloc(1);
+    *buf = 0;
+  }
   BIO_free(bio);
   return buf;
 }
