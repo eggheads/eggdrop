@@ -428,14 +428,12 @@ static char *ssl_printname(X509_NAME *name)
       buf = nmalloc(len + 1);
       memcpy(buf, data, len); /* don't strlcpy() for it would read data[len] */
       buf[len] = 0;
-    }
-    else {
+    } else {
       debug0("TLS: ssl_printname(): BIO_get_mem_data(): error");
       buf = nmalloc(1);
       *buf = 0;
     }
-  }
-  else {
+  } else {
     debug0("TLS: ssl_printname(): X509_NAME_print_ex(): error");
     buf = nmalloc(1);
     *buf = 0;
@@ -463,8 +461,7 @@ static char *ssl_printtime(ASN1_UTCTIME *t)
     buf = nmalloc(len + 1);
     memcpy(buf, data, len); /* don't strlcpy() for it would read data[len] */
     buf[len] = 0;
-  }
-  else {
+  } else {
     debug0("TLS: ssl_printtime(): BIO_get_mem_data(): error");
     buf = nmalloc(1);
     *buf = 0;
@@ -491,8 +488,7 @@ static char *ssl_printnum(ASN1_INTEGER *i)
     buf = nmalloc(len + 1);
     memcpy(buf, data, len); /* don't strlcpy() for it would read data[len] */
     buf[len] = 0;
-  }
-  else {
+  } else {
     debug0("TLS: ssl_printnum(): BIO_get_mem_data(): error");
     buf = nmalloc(1);
     *buf = 0;
