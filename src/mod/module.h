@@ -24,6 +24,7 @@
 #define _EGG_MOD_MODULE_H
 
 /* Just include *all* the include files...it's slower but EASIER */
+#include <signal.h>
 #include "src/main.h"
 #include "modvals.h"
 #include "src/tandem.h"

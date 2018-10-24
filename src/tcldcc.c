@@ -25,6 +25,7 @@
 #include "tandem.h"
 #include "modules.h"
 #include <errno.h>
+#include <signal.h>
 
 extern Tcl_Interp *interp;
 extern tcl_timer_t *timer, *utimer;
