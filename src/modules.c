@@ -24,6 +24,7 @@
  */
 
 #include <ctype.h>
+#include <signal.h>
 #include "main.h"
 #include "modules.h"
 #include "tandem.h"
