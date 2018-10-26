@@ -90,7 +90,7 @@ putkick <channel> <nick,nick,...> [reason]
 putlog <text>
 ^^^^^^^^^^^^^
 
-  Description: logs <text> to the logfile and partyline if the 'misc' flag (o) is active via the 'set console' config file setting and the '.console' partyline setting, respectively.
+  Description: logs <text> to the logfile and partyline if the 'misc' flag (o) is active via the 'logfile' config file setting and the '.console' partyline setting, respectively.
 
   Returns: nothing
 
@@ -100,7 +100,7 @@ putlog <text>
 putcmdlog <text>
 ^^^^^^^^^^^^^^^^
 
-Description: logs <text> to the logfile and partyline if the 'cmds' flag (c) is active via the 'set console' config file setting and the '.console' partyline setting, respectively.
+Description: logs <text> to the logfile and partyline if the 'cmds' flag (c) is active via the 'logfile' config file setting and the '.console' partyline setting, respectively.
 
   Returns: nothing
 
@@ -110,7 +110,7 @@ Description: logs <text> to the logfile and partyline if the 'cmds' flag (c) is 
 putxferlog <text>
 ^^^^^^^^^^^^^^^^^
 
-Description: logs <text> to the logfile and partyline if the 'files' flag (x) is active via the 'set console' config file setting and the '.console' partyline setting, respectively.
+Description: logs <text> to the logfile and partyline if the 'files' flag (x) is active via the 'logfile' config file setting and the '.console' partyline setting, respectively.
 
   Returns: nothing
 
@@ -119,7 +119,7 @@ Description: logs <text> to the logfile and partyline if the 'files' flag (x) is
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 putloglev <flag(s)> <channel> <text>
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  Description: sends text to the bot's logfile, tagged with all of the valid levels given. Use "*" to indicate all log levels.
+
   Description: logs <text> to the logfile and partyline at the flag level specified. Use "*" to indicate all flag levels. 
 
   Returns: nothing
