@@ -26,13 +26,15 @@
 #include "tandem.h"
 #include "modules.h"
 #include <ctype.h>
+#include <signal.h>
 
 extern struct chanset_t *chanset;
 extern struct dcc_t *dcc;
 extern struct userrec *userlist;
 extern tcl_timer_t *timer, *utimer;
-extern int dcc_total, remote_boots, backgrd, make_userfile, do_restart,
-           conmask, require_p, must_be_owner, strict_host;
+extern int dcc_total, remote_boots, backgrd, make_userfile, conmask, require_p,
+           must_be_owner, strict_host;
+extern volatile sig_atomic_t do_restart;
 extern unsigned long otraffic_irc, otraffic_irc_today, itraffic_irc,
                      itraffic_irc_today, otraffic_bn, otraffic_bn_today,
                      itraffic_bn, itraffic_bn_today, otraffic_dcc,
@@ -521,7 +523,7 @@ static void cmd_whois(struct userrec *u, int idx, char *par)
   }
 
   putlog(LOG_CMDS, "*", "#%s# whois %s", dcc[idx].nick, par);
-  tell_user_ident(idx, par, u ? (u->flags & USER_MASTER) : 0);
+  tell_user_ident(idx, par);
 }
 
 static void cmd_match(struct userrec *u, int idx, char *par)
@@ -547,8 +549,7 @@ static void cmd_match(struct userrec *u, int idx, char *par)
     } else
       limit = atoi(s1);
   }
-  tell_users_match(idx, s, start, limit, u ? (u->flags & USER_MASTER) : 0,
-                   chname);
+  tell_users_match(idx, s, start, limit, chname);
 }
 
 static void cmd_uptime(struct userrec *u, int idx, char *par)
@@ -1085,7 +1086,7 @@ static void cmd_fprint(struct userrec *u, int idx, char *par)
       return;
     } else if (!(new = ssl_getfp(dcc[idx].sock))) {
       dprintf(idx, "Can't get your current fingerprint. "
-              "Set up you client to send a certificate!\n");
+              "Set up your client to send a certificate!\n");
       return;
     }
   }

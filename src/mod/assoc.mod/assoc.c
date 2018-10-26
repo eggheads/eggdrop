@@ -334,7 +334,6 @@ static void zapf_assoc(char *botnick, char *code, char *par)
         chanout_but(-1, chan, ASSOC_CHNAME_REM, botnick, nick);
       } else if (get_assoc(par) != chan) {
         /* New one i didn't know about -- pass it on */
-        s1 = get_assoc_name(chan);
         add_assoc(par, chan);
         chanout_but(-1, chan, ASSOC_CHNAME_NAMED2, botnick, nick, par);
       }

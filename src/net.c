@@ -35,6 +35,7 @@
 #  include <sys/select.h>
 #endif
 #include <netinet/in.h>
+#include <netinet/tcp.h>
 #include <arpa/inet.h>
 #include <errno.h>
 #if HAVE_UNISTD_H
@@ -151,7 +152,7 @@ int setsockname(sockname_t *addr, char *src, int port, int allowres)
          !egg_inet_aton(src, &addr->addr.s4.sin_addr)))
       af = AF_UNSPEC;
 
-  if (af == AF_UNSPEC && allowres) {
+  if (af == AF_UNSPEC && allowres && *src) {
     /* src is a hostname. Attempt to resolve it.. */
     if (!sigsetjmp(alarmret, 1)) {
       alarm(resolve_timeout);
@@ -348,6 +349,7 @@ void setsock(int sock, int options)
 {
   int i = allocsock(sock, options), parm;
   struct threaddata *td = threaddata();
+  int res;
 
   if (i == -1) {
     putlog(LOG_MISC, "*", "Sockettable full.");
@@ -359,6 +361,11 @@ void setsock(int sock, int options)
 
     parm = 0;
     setsockopt(sock, SOL_SOCKET, SO_LINGER, (void *) &parm, sizeof(int));
+
+    /* Turn off Nagle's algorithm, see man tcp */
+    parm = 1;
+    if ((res = setsockopt(sock, IPPROTO_TCP, TCP_NODELAY, &parm, sizeof parm)))
+      debug2("net: setsock(): setsockopt() s %i level IPPROTO_TCP optname TCP_NODELAY error %i", sock, res);
   }
   if (options & SOCK_LISTEN) {
     /* Tris says this lets us grab the same port again next time */
@@ -491,7 +498,11 @@ static int proxy_connect(int sock, sockname_t *addr)
  */
 static int get_port_from_addr(const sockname_t *addr)
 {
+#ifdef IPV6
   return ntohs((addr->family == AF_INET) ? addr->addr.s4.sin_port : addr->addr.s6.sin6_port);
+#else
+  return addr->addr.s4.sin_port;
+#endif
 }
 
 /* Starts a connection attempt through a socket

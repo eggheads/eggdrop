@@ -972,7 +972,7 @@ void parserespacket(uint8_t *response, int len)
       return;
     }
     c += 10 + rr->datalength;
-    if (0 > response + len) {
+    if (c > response + len) {
       ddebug0(RES_ERR "Specified rdata length exceeds packet size.");
       return;
     }

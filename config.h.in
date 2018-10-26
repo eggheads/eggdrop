@@ -258,9 +258,6 @@
 /* Define to 1 if you have the `snprintf' function. */
 #undef HAVE_SNPRINTF
 
-/* Define to 1 if you have the `socklen_t' type. */
-#undef HAVE_SOCKLEN_T
-
 /* Define to 1 if you have the <stdarg.h> header file. */
 #undef HAVE_STDARG_H
 
@@ -519,6 +516,9 @@
 
 /* Define to `unsigned int' if <sys/types.h> does not define. */
 #undef size_t
+
+/* Substitute for socklen_t */
+#undef socklen_t
 
 /* Define this to OPENSSL_buf2hexstr when using OpenSSL 1.1.0+ */
 #undef string_to_hex

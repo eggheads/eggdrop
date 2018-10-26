@@ -25,12 +25,15 @@
 #include "tandem.h"
 #include "modules.h"
 #include <errno.h>
+#include <signal.h>
 
 extern Tcl_Interp *interp;
 extern tcl_timer_t *timer, *utimer;
 extern struct dcc_t *dcc;
 extern char botnetnick[];
-extern int dcc_total, backgrd, parties, make_userfile, do_restart, remote_boots, max_dcc, conmask;
+extern int dcc_total, backgrd, parties, make_userfile, remote_boots, max_dcc,
+           conmask;
+extern volatile sig_atomic_t do_restart;
 #ifdef TLS
 extern int tls_vfydcc;
 extern sock_list *socklist;
