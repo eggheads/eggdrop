@@ -35,6 +35,7 @@
 #  include <sys/select.h>
 #endif
 #include <netinet/in.h>
+#include <netinet/tcp.h>
 #include <arpa/inet.h>
 #include <errno.h>
 #if HAVE_UNISTD_H
@@ -151,7 +152,7 @@ int setsockname(sockname_t *addr, char *src, int port, int allowres)
          !egg_inet_aton(src, &addr->addr.s4.sin_addr)))
       af = AF_UNSPEC;
 
-  if (af == AF_UNSPEC && allowres) {
+  if (af == AF_UNSPEC && allowres && *src) {
     /* src is a hostname. Attempt to resolve it.. */
     if (!sigsetjmp(alarmret, 1)) {
       alarm(resolve_timeout);
@@ -348,6 +349,7 @@ void setsock(int sock, int options)
 {
   int i = allocsock(sock, options), parm;
   struct threaddata *td = threaddata();
+  int res;
 
   if (i == -1) {
     putlog(LOG_MISC, "*", "Sockettable full.");
@@ -359,6 +361,11 @@ void setsock(int sock, int options)
 
     parm = 0;
     setsockopt(sock, SOL_SOCKET, SO_LINGER, (void *) &parm, sizeof(int));
+
+    /* Turn off Nagle's algorithm, see man tcp */
+    parm = 1;
+    if ((res = setsockopt(sock, IPPROTO_TCP, TCP_NODELAY, &parm, sizeof parm)))
+      debug2("net: setsock(): setsockopt() s %i level IPPROTO_TCP optname TCP_NODELAY error %i", sock, res);
   }
   if (options & SOCK_LISTEN) {
     /* Tris says this lets us grab the same port again next time */
@@ -366,7 +373,8 @@ void setsock(int sock, int options)
     setsockopt(sock, SOL_SOCKET, SO_REUSEADDR, (void *) &parm, sizeof(int));
   }
   /* Yay async i/o ! */
-  fcntl(sock, F_SETFL, O_NONBLOCK);
+  if ((sock != STDOUT) || backgrd)
+    fcntl(sock, F_SETFL, O_NONBLOCK);
 }
 
 int getsock(int af, int options)
@@ -460,7 +468,7 @@ static int proxy_connect(int sock, sockname_t *addr)
 #endif
   if (firewall[0] == '!') {
     proxy = PROXY_SUN;
-    strncpyz(host, &firewall[1], sizeof host);
+    strlcpy(host, &firewall[1], sizeof host);
   } else {
     proxy = PROXY_SOCKS;
     strcpy(host, firewall);
@@ -483,6 +491,18 @@ static int proxy_connect(int sock, sockname_t *addr)
     tputs(sock, s, strlen(s));  /* drummer */
   }
   return sock;
+}
+
+/* FIXME: if we can break compatibility for 1.9 or 2.0, we can replace this
+ * workaround with an additional port parameter for functions in need
+ */
+static int get_port_from_addr(const sockname_t *addr)
+{
+#ifdef IPV6
+  return ntohs((addr->family == AF_INET) ? addr->addr.s4.sin_port : addr->addr.s6.sin6_port);
+#else
+  return addr->addr.s4.sin_port;
+#endif
 }
 
 /* Starts a connection attempt through a socket
@@ -526,7 +546,8 @@ int open_telnet_raw(int sock, sockname_t *addr)
       if (res == EINPROGRESS) /* Operation now in progress */
         return sock; /* This could probably fail somewhere */
       if (res == ECONNREFUSED) { /* Connection refused */
-        debug1("net: attempted socket connection refused: %s", iptostr(&addr->addr.sa));
+        debug2("net: attempted socket connection refused: %s:%i",
+               iptostr(&addr->addr.sa), get_port_from_addr(addr));
         return -4;
       }
       if (res != 0) {
@@ -628,7 +649,7 @@ int open_listen(int *port)
  * If port is not NULL, it points to an integer to hold the port number
  * of the caller.
  */
-int answer(int sock, sockname_t *caller, unsigned short *port, int binary)
+int answer(int sock, sockname_t *caller, uint16_t *port, int binary)
 {
   int new_sock;
   caller->addrlen = sizeof(caller->addr);
@@ -659,7 +680,7 @@ int getdccaddr(sockname_t *addr, char *s, size_t l)
  * If addr is not NULL, it should point to the listening socket's address.
  * Otherwise, this function will try to figure out the public address of the
  * machine, using listen_ip and natip. If restrict_af is set, it will limit
- * the possible IPs to the specified family. The result is a string useable
+ * the possible IPs to the specified family. The result is a string usable
  * for DCC requests
  */
 int getdccfamilyaddr(sockname_t *addr, char *s, size_t l, int restrict_af)
@@ -889,9 +910,13 @@ int sockread(char *s, int *len, sock_list *slist, int slistmax, int tclonly)
             int err = SSL_get_error(slist[i].ssl, x);
             if (err == SSL_ERROR_WANT_READ || err == SSL_ERROR_WANT_WRITE)
               errno = EAGAIN;
+            else if (err == SSL_ERROR_SYSCALL) {
+              debug0("net: sockread(): SSL_read() SSL_ERROR_SYSCALL");
+              putlog(LOG_MISC, "*", "NET: SSL read failed. Non-SSL connection?");
+            }
             else
-              debug1("sockread(): SSL error = %s",
-                     ERR_error_string(ERR_get_error(), 0));
+              debug2("net: sockread(): SSL_read() error = %s (%i)",
+                     ERR_error_string(ERR_get_error(), 0), err);
             x = -1;
           }
         } else
@@ -1462,7 +1487,7 @@ int hostsanitycheck_dcc(char *nick, char *from, sockname_t *ip, char *dnsname,
    * where the routines providing our data currently lose interest. I'm
    * using the n-variant in case someone changes that...
    */
-  strncpyz(hostn, extracthostname(from), sizeof hostn);
+  strlcpy(hostn, extracthostname(from), sizeof hostn);
   if (!egg_strcasecmp(hostn, dnsname)) {
     putlog(LOG_DEBUG, "*", "DNS information for submitted IP checks out.");
     return 1;
@@ -1505,7 +1530,7 @@ int sock_has_data(int type, int sock)
 
 /* flush_inbuf():
  * checks if there's data in the incoming buffer of an connection
- * and flushs the buffer if possible
+ * and flushes the buffer if possible
  *
  * returns: -1 if the dcc entry wasn't found
  *          -2 if dcc[idx].type->activity doesn't exist and the data couldn't
@@ -1571,8 +1596,8 @@ char *traced_myiphostname(ClientData cd, Tcl_Interp *irp, EGG_CONST char *name1,
   }
 
   value = Tcl_GetVar2(irp, name1, name2, TCL_GLOBAL_ONLY);
-  strncpyz(vhost, value, sizeof vhost);
-  strncpyz(listen_ip, value, sizeof listen_ip);
+  strlcpy(vhost, value, sizeof vhost);
+  strlcpy(listen_ip, value, sizeof listen_ip);
   putlog(LOG_MISC, "*", "WARNING: You are using the DEPRECATED variable '%s' in your config file.\n", name1);
   putlog(LOG_MISC, "*", "    To prevent future incompatibility, please use the vhost4/listen-addr variables instead.\n");
   putlog(LOG_MISC, "*", "    More information on this subject can be found in the eggdrop/doc/IPV6 file, or\n");

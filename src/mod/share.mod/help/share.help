@@ -3,8 +3,8 @@
    First you need to decide two things:
      %b1.%b Which bot will be 'active' and which 'passive'.
         The active bot will SEND a userfile to the passive bot. %bThe passive%b
-	%bbot's userfile will be overwritten.%b We shall call the %bACTIVE%b bot
-	"A", and the %bPASSIVE%b bot B.
+        %bbot's userfile will be overwritten.%b We shall call the %bACTIVE%b bot
+        "A", and the %bPASSIVE%b bot B.
 
      %b2.%b Which channels you want to share between the 2 bots. ALL global
         info will be shared, but only the channels you mark as shared will be

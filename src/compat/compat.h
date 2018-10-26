@@ -1,6 +1,6 @@
 /*
  * compat.h
- *   wrap-around header for all compability functions.
+ *   wrap-around header for all compatibility functions.
  */
 /*
  * Copyright (C) 2000 - 2018 Eggheads Development Team
@@ -31,5 +31,6 @@
 #include "inet_ntop.h"
 #include "inet_pton.h"
 #include "gethostbyname2.h"
+#include "strlcpy.h"
 
 #endif /* !__EGG_COMPAT_COMPAT_H */

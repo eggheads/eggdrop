@@ -28,7 +28,7 @@
 static time_t last_ctcp = (time_t) 0L;
 static int count_ctcp = 0;
 static time_t last_invtime = (time_t) 0L;
-static char last_invchan[300] = "";
+static char last_invchan[CHANNELLEN + 1] = "";
 
 /* ID length for !channels.
  */
@@ -162,7 +162,7 @@ static void check_exemptlist(struct chanset_t *chan, char *from)
 /* Check a channel and clean-out any more-specific matching masks.
  *
  * Moved all do_ban(), do_exempt() and do_invite() into this single function
- * as the code bloat is starting to get rediculous <cybah>
+ * as the code bloat is starting to get ridiculous <cybah>
  */
 static void do_mask(struct chanset_t *chan, masklist *m, char *mask, char mode)
 {
@@ -279,7 +279,7 @@ static int detect_chan_flood(char *floodnick, char *floodhost, char *from,
     if (!rfc_casecmp(chan->deopd, victim))
       return 0;
     else
-      strncpyz(chan->deopd, victim, sizeof chan->deopd);
+      strlcpy(chan->deopd, victim, sizeof chan->deopd);
   }
   chan->floodnum[which]++;
   if (chan->floodnum[which] >= thr) {   /* FLOOD */
@@ -324,10 +324,10 @@ static int detect_chan_flood(char *floodnick, char *floodhost, char *from,
       strcpy(ftype + 4, " flood");
       u_addban(chan, h, botnetnick, ftype, now + (60 * chan->ban_time), 0);
       if (!channel_enforcebans(chan) && (me_op(chan) || me_halfop(chan))) {
-        char s[UHOSTLEN];
+        char s[NICKLEN + UHOSTLEN];
 
         for (m = chan->channel.member; m && m->nick[0]; m = m->next) {
-          sprintf(s, "%s!%s", m->nick, m->userhost);
+          egg_snprintf(s, sizeof s, "%s!%s", m->nick, m->userhost);
           if (wild_match(h, s) && (m->joined >= chan->floodtime[which]) &&
               !chan_sentkick(m) && !match_my_nick(m->nick) && (me_op(chan) ||
               (me_halfop(chan) && !chan_hasop(m)))) {
@@ -755,7 +755,6 @@ static void check_this_member(struct chanset_t *chan, char *nick,
   if (!m || match_my_nick(nick) || (!me_op(chan) && !me_halfop(chan)))
     return;
 
-
 #ifdef NO_HALFOP_CHANMODES
   if (me_op(chan)) {
 #else
@@ -764,14 +763,16 @@ static void check_this_member(struct chanset_t *chan, char *nick,
     if (HALFOP_CANDOMODE('o')) {
       if (chan_hasop(m) && ((chan_deop(*fr) || (glob_deop(*fr) &&
           !chan_op(*fr))) || (channel_bitch(chan) && (!chan_op(*fr) &&
-          !(glob_op(*fr) && !chan_deop(*fr)))))) {
+          !(glob_op(*fr) && !chan_deop(*fr))))) && !chan_stopcheck(m)) {
         add_mode(chan, '-', 'o', m->nick);
       }
       if (!chan_hasop(m) && (chan_op(*fr) || (glob_op(*fr) &&
           !chan_deop(*fr))) && (channel_autoop(chan) || glob_autoop(*fr) ||
           chan_autoop(*fr))) {
-        if (!chan->aop_min)
-          add_mode(chan, '+', 'o', m->nick);
+        if (!chan->aop_min) {
+          if (!chan_stopcheck(m))
+            add_mode(chan, '+', 'o', m->nick);
+        }
         else {
           set_delay(chan, m->nick);
           m->flags |= SENTOP;
@@ -782,14 +783,16 @@ static void check_this_member(struct chanset_t *chan, char *nick,
     if (HALFOP_CANDOMODE('h')) {
       if (chan_hashalfop(m) && ((chan_dehalfop(*fr) || (glob_dehalfop(*fr) &&
           !chan_halfop(*fr)) || (channel_bitch(chan) && (!chan_halfop(*fr) &&
-          !(glob_halfop(*fr) && !chan_dehalfop(*fr)))))))
+          !(glob_halfop(*fr) && !chan_dehalfop(*fr)))))) && !chan_stopcheck(m))
         add_mode(chan, '-', 'h', m->nick);
       if (!chan_sentop(m) && !chan_hasop(m) && !chan_hashalfop(m) &&
           (chan_halfop(*fr) || (glob_halfop(*fr) && !chan_dehalfop(*fr))) &&
           (channel_autohalfop(chan) || glob_autohalfop(*fr) ||
           chan_autohalfop(*fr))) {
-        if (!chan->aop_min)
-          add_mode(chan, '+', 'h', m->nick);
+        if (!chan->aop_min) {
+          if (!chan_stopcheck(m))
+            add_mode(chan, '+', 'h', m->nick);
+        }
         else {
           set_delay(chan, m->nick);
           m->flags |= SENTHALFOP;
@@ -799,13 +802,15 @@ static void check_this_member(struct chanset_t *chan, char *nick,
 
     if (HALFOP_CANDOMODE('v')) {
       if (chan_hasvoice(m) && (chan_quiet(*fr) || (glob_quiet(*fr) &&
-          !chan_voice(*fr))))
+          !chan_voice(*fr))) && !chan_stopcheck(m))
         add_mode(chan, '-', 'v', m->nick);
       if (!chan_hasvoice(m) && !chan_hasop(m) && !chan_hashalfop(m) &&
           (chan_voice(*fr) || (glob_voice(*fr) && !chan_quiet(*fr))) &&
           (channel_autovoice(chan) || glob_gvoice(*fr) || chan_gvoice(*fr))) {
-        if (!chan->aop_min)
-          add_mode(chan, '+', 'v', m->nick);
+        if (!chan->aop_min) {
+          if (!chan_stopcheck(m))
+            add_mode(chan, '+', 'v', m->nick);
+        }
         else {
           set_delay(chan, m->nick);
           m->flags |= SENTVOICE;
@@ -814,28 +819,30 @@ static void check_this_member(struct chanset_t *chan, char *nick,
     }
   }
 
-  if (!me_op(chan) && (!me_halfop(chan) ||
-      (strchr(NOHALFOPS_MODES, 'b') != NULL) ||
-      (strchr(NOHALFOPS_MODES, 'e') != NULL) ||
-      (strchr(NOHALFOPS_MODES, 'I') != NULL)))
-    return;
+  if (!chan_stopcheck(m)) {
+    if (!me_op(chan) && (!me_halfop(chan) ||
+        (strchr(NOHALFOPS_MODES, 'b') != NULL) ||
+        (strchr(NOHALFOPS_MODES, 'e') != NULL) ||
+        (strchr(NOHALFOPS_MODES, 'I') != NULL)))
+      return;
 
-  sprintf(s, "%s!%s", m->nick, m->userhost);
-  if (use_invites && (u_match_mask(global_invites, s) ||
-      u_match_mask(chan->invites, s)))
-    refresh_invite(chan, s);
-  if (!(use_exempts && (u_match_mask(global_exempts, s) ||
-      u_match_mask(chan->exempts, s)))) {
-    if (u_match_mask(global_bans, s) || u_match_mask(chan->bans, s))
-      refresh_ban_kick(chan, s, m->nick);
-    if (!chan_sentkick(m) && (chan_kick(*fr) || glob_kick(*fr)) &&
-        (me_op(chan) || (me_halfop(chan) && !chan_hasop(m)))) {
-      check_exemptlist(chan, s);
-      quickban(chan, m->userhost);
-      p = get_user(&USERENTRY_COMMENT, m->user);
-      dprintf(DP_SERVER, "KICK %s %s :%s\n", chan->name, m->nick,
-              p ? p : IRC_POLITEKICK);
-      m->flags |= SENTKICK;
+    sprintf(s, "%s!%s", m->nick, m->userhost);
+    if (use_invites && (u_match_mask(global_invites, s) ||
+        u_match_mask(chan->invites, s)))
+      refresh_invite(chan, s);
+    if (!(use_exempts && (u_match_mask(global_exempts, s) ||
+        u_match_mask(chan->exempts, s)))) {
+      if (u_match_mask(global_bans, s) || u_match_mask(chan->bans, s))
+        refresh_ban_kick(chan, s, m->nick);
+      if (!chan_sentkick(m) && (chan_kick(*fr) || glob_kick(*fr)) &&
+          (me_op(chan) || (me_halfop(chan) && !chan_hasop(m)))) {
+        check_exemptlist(chan, s);
+        quickban(chan, m->userhost);
+        p = get_user(&USERENTRY_COMMENT, m->user);
+        dprintf(DP_SERVER, "KICK %s %s :%s\n", chan->name, m->nick,
+                p ? p : IRC_POLITEKICK);
+        m->flags |= SENTKICK;
+      }
     }
   }
 }
@@ -1040,7 +1047,7 @@ static int got352or4(struct chanset_t *chan, char *user, char *host,
     m->flags = 0;               /* No flags for now */
     m->last = now;              /* Last time I saw him */
   }
-  strncpyz(m->nick, nick, sizeof m->nick);        /* Store the nick in list */
+  strlcpy(m->nick, nick, sizeof m->nick);        /* Store the nick in list */
   /* Store the userhost */
   simple_sprintf(m->userhost, "%s@%s", user, host);
   simple_sprintf(userhost, "%s!%s", nick, m->userhost);
@@ -1510,8 +1517,7 @@ static int gotinvite(char *from, char *msg)
     if (now - last_invtime < 30)
       return 0; /* Two invites to the same channel in 30 seconds? */
   putlog(LOG_MISC, "*", "%s!%s invited me to %s", nick, from, msg);
-  strncpy(last_invchan, msg, 299);
-  last_invchan[299] = 0;
+  strlcpy(last_invchan, msg, sizeof last_invchan);
   last_invtime = now;
   chan = findchan(msg);
   if (!chan)
@@ -1788,8 +1794,8 @@ static int gotjoin(char *from, char *chname)
         m->flags = 0;
         m->last = now;
         m->delay = 0L;
-        strncpyz(m->nick, nick, sizeof m->nick);
-        strncpyz(m->userhost, uhost, sizeof m->userhost);
+        strlcpy(m->nick, nick, sizeof m->nick);
+        strlcpy(m->userhost, uhost, sizeof m->userhost);
         m->user = u;
         m->flags |= STOPWHO;
 
@@ -1818,8 +1824,7 @@ static int gotjoin(char *from, char *chname)
           /* It was me joining! Need to update the channel record with the
            * unique name for the channel (as the server see's it). <cybah>
            */
-          strncpy(chan->name, chname, 81);
-          chan->name[80] = 0;
+          strlcpy(chan->name, chname, sizeof chan->name);
           chan->status &= ~CHAN_JUPED;
 
           /* ... and log us joining. Using chan->dname for the channel is
@@ -1855,7 +1860,7 @@ static int gotjoin(char *from, char *chname)
               if (!(u->flags & USER_BOT)) {
                 s = get_user(&USERENTRY_INFO, u);
                 get_handle_chaninfo(u->handle, chan->dname, s1);
-                /* Locked info line overides non-locked channel specific
+                /* Locked info line overrides non-locked channel specific
                  * info line.
                  */
                 if (!s || (s1[0] && (s[0] != '@' || s1[0] == '@')))
@@ -2033,7 +2038,7 @@ static int gotkick(char *from, char *origmsg)
   struct userrec *u;
   struct flag_record fr = { FR_GLOBAL | FR_CHAN, 0, 0, 0, 0, 0 };
 
-  strncpyz(buf2, origmsg, sizeof buf2);
+  strlcpy(buf2, origmsg, sizeof buf2);
   msg = buf2;
   chname = newsplit(&msg);
   chan = findchan(chname);
@@ -2057,7 +2062,7 @@ static int gotkick(char *from, char *origmsg)
   if (channel_active(chan)) {
     fixcolon(msg);
     u = get_user_by_host(from);
-    strncpyz(buf, from, sizeof buf);
+    strlcpy(buf, from, sizeof buf);
     uhost = buf;
     whodid = splitnick(&uhost);
     detect_chan_flood(whodid, uhost, from, chan, FLOOD_KICK, nick);
@@ -2150,7 +2155,7 @@ static int gotnick(char *from, char *msg)
        */
       /* Compose a nick!user@host for the new nick */
       sprintf(s1, "%s!%s", msg, uhost);
-      strncpyz(m->nick, msg, sizeof m->nick);
+      strlcpy(m->nick, msg, sizeof m->nick);
       detect_chan_flood(msg, uhost, from, chan, FLOOD_NICK, NULL);
 
       if (!findchan_by_dname(chname)) {
@@ -2166,11 +2171,9 @@ static int gotnick(char *from, char *msg)
       m->flags &= ~(SENTKICK | SENTDEOP | SENTOP | SENTDEHALFOP | SENTHALFOP |
                     SENTVOICE | SENTDEVOICE);
       /* nick-ban or nick is +k or something? */
-      if (!chan_stopcheck(m)) {
-        get_user_flagrec(m->user ? m->user : get_user_by_host(s1), &fr,
-                         chan->dname);
-        check_this_member(chan, m->nick, &fr);
-      }
+      get_user_flagrec(m->user ? m->user : get_user_by_host(s1), &fr,
+                       chan->dname);
+      check_this_member(chan, m->nick, &fr);
       /* Make sure this is in the loop, someone could have changed the record
        * in an earlier iteration of the loop. */
       u = get_user_by_host(from);
@@ -2204,7 +2207,6 @@ static int gotquit(char *from, char *msg)
   struct userrec *u;
 
   strcpy(from2, from);
-  u = get_user_by_host(from2);
   nick = splitnick(&from);
   fixcolon(msg);
   /* Fred1: Instead of expensive wild_match on signoff, quicker method.
@@ -2315,7 +2317,7 @@ static int gotmsg(char *from, char *msg)
     if (*p == 1) {
       *p = 0;
       ctcp = buf2;
-      strncpyz(buf2, p1, sizeof buf2);
+      strlcpy(buf2, p1, sizeof buf2);
       strcpy(p1 - 1, p + 1);
       detect_chan_flood(nick, uhost, from, chan, strncmp(ctcp, "ACTION ", 7) ?
                         FLOOD_CTCP : FLOOD_PRIVMSG, NULL);

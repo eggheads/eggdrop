@@ -12,6 +12,8 @@ AC_CONFIG_AUX_DIR(../../../misc)
 AC_COPYRIGHT([Copyright (C) 1999 - 2018 Eggheads Development Team])
 AC_REVISION([m4_esyscmd([../../../misc/getcommit])])
 
+AC_PROG_CC([gcc cc clang])
+
 # Check for gzopen() in -lz.
 AC_CHECK_LIB(z, gzopen, [ZLIB="-lz"], [])
 AC_CHECK_HEADER(zlib.h)

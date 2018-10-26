@@ -869,7 +869,7 @@ static void dcc_fork_send(int idx, char *x, int y)
 
 static void dcc_get_pending(int idx, char *buf, int len)
 {
-  unsigned short port;
+  uint16_t port;
   int i;
 
   i = answer(dcc[idx].sock, &dcc[idx].sockname, &port, 1);
@@ -885,7 +885,7 @@ static void dcc_get_pending(int idx, char *buf, int len)
 #endif
   dcc[idx].sock = i;
   dcc[idx].addr = 0;
-  dcc[idx].port = (int) port;
+  dcc[idx].port = port;
   if (dcc[idx].sock == -1) {
     dprintf(DP_HELP, TRANSFER_NOTICE_BAD_CONN, dcc[idx].nick, strerror(errno));
     putlog(LOG_FILES, "*", TRANSFER_LOG_BAD_CONN, dcc[idx].u.xfer->origname,
@@ -1017,8 +1017,8 @@ static int raw_dcc_resend_send(char *filename, char *nick, char *from,
     nfn = buf = replace_spaces(nfn);
   dcc[i].u.xfer->origname = get_data_ptr(strlen(nfn) + 1);
   strcpy(dcc[i].u.xfer->origname, nfn);
-  strncpyz(dcc[i].u.xfer->from, from, NICKLEN);
-  strncpyz(dcc[i].u.xfer->dir, filename, DIRLEN);
+  strlcpy(dcc[i].u.xfer->from, from, NICKLEN);
+  strlcpy(dcc[i].u.xfer->dir, filename, DIRLEN);
   dcc[i].u.xfer->length = dccfilesize;
   dcc[i].timeval = now;
   dcc[i].u.xfer->f = f;
@@ -1065,7 +1065,7 @@ static int ctcp_DCC_RESUME(char *nick, char *from, char *handle,
   int i, port;
   unsigned long offset;
 
-  strncpyz(buf, text, sizeof buf);
+  strlcpy(buf, text, sizeof buf);
   action = newsplit(&msg);
 
   if (egg_strcasecmp(action, "RESUME"))

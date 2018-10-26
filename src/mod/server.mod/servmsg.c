@@ -122,7 +122,7 @@ static int check_tcl_msgm(char *cmd, char *nick, char *uhost,
   if (arg[0])
     simple_sprintf(args, "%s %s", cmd, arg);
   else
-    strncpyz(args, cmd, sizeof args);
+    strlcpy(args, cmd, sizeof args);
   get_user_flagrec(u, &fr, NULL);
   Tcl_SetVar(interp, "_msgm1", nick, 0);
   Tcl_SetVar(interp, "_msgm2", uhost, 0);
@@ -313,7 +313,7 @@ static int got001(char *from, char *msg)
 
   server_online = now;
   fixcolon(msg);
-  strncpyz(botname, msg, NICKLEN);
+  strlcpy(botname, msg, NICKLEN);
   altnick_char = 0;
   dprintf(DP_SERVER, "WHOIS %s\n", botname); /* get user@host */
   if (initserver[0])
@@ -442,7 +442,7 @@ static int detect_flood(char *floodnick, char *floodhost, char *from, int which)
   if (p) {
     p++;
     if (egg_strcasecmp(lastmsghost[which], p)) {        /* New */
-      strncpyz(lastmsghost[which], p, sizeof lastmsghost[which]);
+      strlcpy(lastmsghost[which], p, sizeof lastmsghost[which]);
       lastmsgtime[which] = now;
       lastmsgs[which] = 0;
       return 0;
@@ -491,7 +491,7 @@ static int gotmsg(char *from, char *msg)
   ignoring = match_ignore(from);
   to = newsplit(&msg);
   fixcolon(msg);
-  strncpyz(uhost, from, sizeof(buf));
+  strlcpy(uhost, from, sizeof(buf));
   nick = splitnick(&uhost);
   /* Apparently servers can send CTCPs now too, not just nicks */
   if (nick[0] == '\0')
@@ -507,7 +507,7 @@ static int gotmsg(char *from, char *msg)
       p++;
     if (*p == 1) {
       *p = 0;
-      strncpyz(ctcpbuf, p1, sizeof(ctcpbuf));
+      strlcpy(ctcpbuf, p1, sizeof(ctcpbuf));
       ctcp = ctcpbuf;
 
       /* remove the ctcp in msg */
@@ -729,7 +729,7 @@ static void minutely_checks()
   if (!server_online)
     return;
   if (keepnick) {
-    /* NOTE: now that botname can but upto NICKLEN bytes long,
+    /* NOTE: now that botname can but up to NICKLEN bytes long,
      * check that it's not just a truncation of the full nick.
      */
     if (strncmp(botname, origbotname, strlen(botname))) {
@@ -793,19 +793,19 @@ static void got303(char *from, char *msg)
  */
 static int got432(char *from, char *msg)
 {
-  char *erroneus;
+  char *erroneous;
 
   newsplit(&msg);
-  erroneus = newsplit(&msg);
+  erroneous = newsplit(&msg);
   if (server_online)
-    putlog(LOG_MISC, "*", "NICK IS INVALID: %s (keeping '%s').", erroneus,
+    putlog(LOG_MISC, "*", "NICK IS INVALID: %s (keeping '%s').", erroneous,
            botname);
   else {
     putlog(LOG_MISC, "*", IRC_BADBOTNICK);
     if (!keepnick) {
-      makepass(erroneus);
-      erroneus[NICKMAX] = 0;
-      dprintf(DP_MODE, "NICK %s\n", erroneus);
+      makepass(erroneous);
+      erroneous[NICKMAX] = 0;
+      dprintf(DP_MODE, "NICK %s\n", erroneous);
     }
     return 0;
   }
@@ -918,7 +918,7 @@ static int gotnick(char *from, char *msg)
   check_queues(nick, msg);
   if (match_my_nick(nick)) {
     /* Regained nick! */
-    strncpyz(botname, msg, NICKLEN);
+    strlcpy(botname, msg, NICKLEN);
     altnick_char = 0;
     if (!strcmp(msg, origbotname)) {
       putlog(LOG_SERV | LOG_MISC, "*", "Regained nickname '%s'.", msg);
@@ -1235,7 +1235,7 @@ static void connect_server(void)
 #endif
     dcc[servidx].port = botserverport;
     strcpy(dcc[servidx].nick, "(server)");
-    strncpyz(dcc[servidx].host, botserver, UHOSTLEN);
+    strlcpy(dcc[servidx].host, botserver, UHOSTLEN);
 
     botuserhost[0] = 0;
 
@@ -1284,7 +1284,7 @@ static void server_resolve_success(int servidx)
   char pass[121];
 
   resolvserv = 0;
-  strncpyz(pass, dcc[servidx].u.dns->cbuf, sizeof pass);
+  strlcpy(pass, dcc[servidx].u.dns->cbuf, sizeof pass);
   changeover_dcc(servidx, &SERVER_SOCKET, 0);
   dcc[servidx].sock = getsock(dcc[servidx].sockname.family, 0);
   setsnport(dcc[servidx].sockname, dcc[servidx].port);
