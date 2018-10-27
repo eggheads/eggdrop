@@ -100,7 +100,7 @@ putlog <text>
 putcmdlog <text>
 ^^^^^^^^^^^^^^^^
 
-Description: logs <text> to the logfile and partyline if the 'cmds' flag (c) is active via the 'logfile' config file setting and the '.console' partyline setting, respectively.
+  Description: logs <text> to the logfile and partyline if the 'cmds' flag (c) is active via the 'logfile' config file setting and the '.console' partyline setting, respectively.
 
   Returns: nothing
 
@@ -110,7 +110,7 @@ Description: logs <text> to the logfile and partyline if the 'cmds' flag (c) is 
 putxferlog <text>
 ^^^^^^^^^^^^^^^^^
 
-Description: logs <text> to the logfile and partyline if the 'files' flag (x) is active via the 'logfile' config file setting and the '.console' partyline setting, respectively.
+  Description: logs <text> to the logfile and partyline if the 'files' flag (x) is active via the 'logfile' config file setting and the '.console' partyline setting, respectively.
 
   Returns: nothing
 
