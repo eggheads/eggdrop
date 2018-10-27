@@ -30,20 +30,21 @@ static struct flag_record victim = { FR_GLOBAL | FR_CHAN, 0, 0, 0, 0, 0 };
 static void cmd_pls_ban(struct userrec *u, int idx, char *par)
 {
   char *chname, *who, s[UHOSTLEN], s1[UHOSTLEN], *p, *p_expire;
-  unsigned long int expire_time = 0, expire_foo;
+  long expire_foo;
+  unsigned long expire_time = 0;
   int sticky = 0;
   struct chanset_t *chan = NULL;
   module_entry *me;
 
   if (!par[0]) {
-    dprintf(idx, "Usage: +ban <hostmask> [channel] [%%<XdXhXm>] [reason]\n");
+    dprintf(idx, "Usage: +ban <hostmask> [channel] [%%<XyXdXhXm>] [reason]\n");
   } else {
     who = newsplit(&par);
     /* Sanity check for <channel> <ban> vs. <ban> <channel> */
     if (par[0] && strchr(CHANMETA, who[0])) {
       chname = who;
       who = newsplit(&par);
-      dprintf(idx, "Usage: +ban <hostmask> [channel] [%%<XdXhXm>] [reason]\n");
+      dprintf(idx, "Usage: +ban <hostmask> [channel] [%%<XyXdXhXm>] [reason]\n");
       dprintf(idx, "Did you mean: .+ban %s %s %s\n", who, chname, par);
       return;
     } else if (par[0] && strchr(CHANMETA, par[0]))
@@ -72,30 +73,35 @@ static void cmd_pls_ban(struct userrec *u, int idx, char *par)
       p_expire = p + 1;
       while (*(++p) != 0) {
         switch (tolower((unsigned) *p)) {
+        case 'y':
+          *p = 0;
+          expire_foo = strtol(p_expire, NULL, 10);
+          expire_time += 60 * 60 * 24 * 365 * expire_foo;
+          p_expire = p + 1;
+          break;
         case 'd':
           *p = 0;
           expire_foo = strtol(p_expire, NULL, 10);
-          if (expire_foo > 365)
-            expire_foo = 365;
-          expire_time += 86400 * expire_foo;
+          expire_time += 60 * 60 * 24 * expire_foo;
           p_expire = p + 1;
           break;
         case 'h':
           *p = 0;
           expire_foo = strtol(p_expire, NULL, 10);
-          if (expire_foo > 8760)
-            expire_foo = 8760;
-          expire_time += 3600 * expire_foo;
+          expire_time += 60 * 60 * expire_foo;
           p_expire = p + 1;
           break;
         case 'm':
           *p = 0;
           expire_foo = strtol(p_expire, NULL, 10);
-          if (expire_foo > 525600)
-            expire_foo = 525600;
           expire_time += 60 * expire_foo;
           p_expire = p + 1;
         }
+      }
+      if (expire_time > (60 * 60 * 24 * 365 * 5)) {
+        dprintf(idx, "Ban expiration time cannot exceed 5 years "
+            "(1825 days)\n");
+        return;
       }
     }
     if (!par[0])
@@ -171,7 +177,8 @@ static void cmd_pls_ban(struct userrec *u, int idx, char *par)
 static void cmd_pls_exempt(struct userrec *u, int idx, char *par)
 {
   char *chname, *who, s[UHOSTLEN], *p, *p_expire;
-  unsigned long int expire_time = 0, expire_foo;
+  long expire_foo;
+  unsigned long expire_time = 0;
   struct chanset_t *chan = NULL;
 
   if (!use_exempts) {
@@ -179,7 +186,7 @@ static void cmd_pls_exempt(struct userrec *u, int idx, char *par)
     return;
   }
   if (!par[0]) {
-    dprintf(idx, "Usage: +exempt <hostmask> [channel] [%%<XdXhXm>] [reason]\n");
+    dprintf(idx, "Usage: +exempt <hostmask> [channel] [%%<XydXhXm>] [reason]\n");
   } else {
     who = newsplit(&par);
     if (par[0] && strchr(CHANMETA, par[0]))
@@ -208,30 +215,35 @@ static void cmd_pls_exempt(struct userrec *u, int idx, char *par)
       p_expire = p + 1;
       while (*(++p) != 0) {
         switch (tolower((unsigned) *p)) {
+        case 'y':
+          *p = 0;
+          expire_foo = strtol(p_expire, NULL, 10);
+          expire_time += 60 * 60 * 24 * 365 * expire_foo;
+          p_expire = p + 1;
+          break;
         case 'd':
           *p = 0;
           expire_foo = strtol(p_expire, NULL, 10);
-          if (expire_foo > 365)
-            expire_foo = 365;
-          expire_time += 86400 * expire_foo;
+          expire_time += 60 * 60 * 24 * expire_foo;
           p_expire = p + 1;
           break;
         case 'h':
           *p = 0;
           expire_foo = strtol(p_expire, NULL, 10);
-          if (expire_foo > 8760)
-            expire_foo = 8760;
-          expire_time += 3600 * expire_foo;
+          expire_time += 60 * 60 * expire_foo;
           p_expire = p + 1;
           break;
         case 'm':
           *p = 0;
           expire_foo = strtol(p_expire, NULL, 10);
-          if (expire_foo > 525600)
-            expire_foo = 525600;
           expire_time += 60 * expire_foo;
           p_expire = p + 1;
         }
+      }
+      if (expire_time > (60 * 60 * 24 * 365 * 5)) {
+        dprintf(idx, "Exempt expiration time cannot exceed 5 years "
+            "(1825 days)\n");
+        return;
       }
     }
     if (!par[0])
@@ -292,7 +304,8 @@ static void cmd_pls_exempt(struct userrec *u, int idx, char *par)
 static void cmd_pls_invite(struct userrec *u, int idx, char *par)
 {
   char *chname, *who, s[UHOSTLEN], *p, *p_expire;
-  unsigned long int expire_time = 0, expire_foo;
+  long expire_foo;
+  unsigned long expire_time = 0;
   struct chanset_t *chan = NULL;
 
   if (!use_invites) {
@@ -301,7 +314,7 @@ static void cmd_pls_invite(struct userrec *u, int idx, char *par)
   }
 
   if (!par[0]) {
-    dprintf(idx, "Usage: +invite <hostmask> [channel] [%%<XdXhXm>] [reason]\n");
+    dprintf(idx, "Usage: +invite <hostmask> [channel] [%%<XyXdXhXm>] [reason]\n");
   } else {
     who = newsplit(&par);
     if (par[0] && strchr(CHANMETA, par[0]))
@@ -330,30 +343,35 @@ static void cmd_pls_invite(struct userrec *u, int idx, char *par)
       p_expire = p + 1;
       while (*(++p) != 0) {
         switch (tolower((unsigned) *p)) {
+        case 'y':
+          *p = 0;
+          expire_foo = strtol(p_expire, NULL, 10);
+          expire_time += 60 * 60 * 24 * 365 * expire_foo;
+          p_expire = p + 1;
+          break;
         case 'd':
           *p = 0;
           expire_foo = strtol(p_expire, NULL, 10);
-          if (expire_foo > 365)
-            expire_foo = 365;
-          expire_time += 86400 * expire_foo;
+          expire_time += 60 * 60 * 24 * expire_foo;
           p_expire = p + 1;
           break;
         case 'h':
           *p = 0;
           expire_foo = strtol(p_expire, NULL, 10);
-          if (expire_foo > 8760)
-            expire_foo = 8760;
-          expire_time += 3600 * expire_foo;
+          expire_time += 60 * 60 * expire_foo;
           p_expire = p + 1;
           break;
         case 'm':
           *p = 0;
           expire_foo = strtol(p_expire, NULL, 10);
-          if (expire_foo > 525600)
-            expire_foo = 525600;
           expire_time += 60 * expire_foo;
           p_expire = p + 1;
         }
+      }
+      if (expire_time > (60 * 60 * 24 * 365 * 5)) {
+        dprintf(idx, "Invite expiration time cannot exceed 5 years "
+            "(1825 days)\n");
+        return;
       }
     }
     if (!par[0])
