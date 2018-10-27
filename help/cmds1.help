@@ -15,10 +15,10 @@ See also: -bot
 
 See also: -host
 %{help=+ignore}%{+m}
-###  %b+ignore%b <hostmask> [%%<XyXMXdXhXm>] [comment]
+###  %b+ignore%b <hostmask> [%%<XyXdXhXm>] [comment]
    Adds an ignore to the list of ignores stored on the bot, with optional
    comment and ignore time. This ignore is stored with your handle as the
-   creator. Ignore time has to be expressed in years, months, days, hours and/or
+   creator. Ignore time has to be expressed in years, days, hours and/or
    minutes.
 
 See also: -ignore, ignores
