@@ -2598,7 +2598,7 @@ static void cmd_pls_ignore(struct userrec *u, int idx, char *par)
     p = newsplit(&par);
     p_expire = p + 1;
     while (*(++p) != 0) {
-      switch (*p) {
+      switch (tolower((unsigned) *p)) {
       case 'y':
         *p = 0;
         expire_foo = strtol(p_expire, NULL, 10);

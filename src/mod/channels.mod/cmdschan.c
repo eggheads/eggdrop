@@ -72,7 +72,7 @@ static void cmd_pls_ban(struct userrec *u, int idx, char *par)
       p = newsplit(&par);
       p_expire = p + 1;
       while (*(++p) != 0) {
-        switch (*p) {
+        switch (tolower((unsigned) *p)) {
         case 'y':
           *p = 0;
           expire_foo = strtol(p_expire, NULL, 10);
@@ -219,7 +219,7 @@ static void cmd_pls_exempt(struct userrec *u, int idx, char *par)
       p = newsplit(&par);
       p_expire = p + 1;
       while (*(++p) != 0) {
-        switch (*p) {
+        switch (tolower((unsigned) *p)) {
         case 'y':
           *p = 0;
           expire_foo = strtol(p_expire, NULL, 10);
@@ -352,7 +352,7 @@ static void cmd_pls_invite(struct userrec *u, int idx, char *par)
       p = newsplit(&par);
       p_expire = p + 1;
       while (*(++p) != 0) {
-        switch (*p) {
+        switch (tolower((unsigned) *p)) {
         case 'y':
           *p = 0;
           expire_foo = strtol(p_expire, NULL, 10);
