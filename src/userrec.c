@@ -635,17 +635,15 @@ struct userrec *adduser(struct userrec *bu, char *handle, char *host,
   }
   set_user(&USERENTRY_PASS, u, pass);
   if (!noxtra) {
-    char *now2;
+    int l;
     xk = nmalloc(sizeof *xk);
     xk->key = nmalloc(8);
     strcpy(xk->key, "created");
-    now2 = nmalloc(15);
     tv = now;
-    sprintf(now2, "%li", tv);
-    xk->data = nmalloc(strlen(now2) + 1);
+    l = snprintf(NULL, 0, "%li", tv);
+    xk->data = nmalloc(l + 1);
     sprintf(xk->data, "%li", tv);
     set_user(&USERENTRY_XTRA, u, xk);
-    nfree(now2);
   }
   /* Strip out commas -- they're illegal */
   if (host && host[0]) {
