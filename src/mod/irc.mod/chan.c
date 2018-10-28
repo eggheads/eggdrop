@@ -1100,7 +1100,7 @@ static int got352(char *from, char *msg)
   return 0;
 }
 
-/* got a 354: who info! - iru style
+/* got a 354: who info! - ircu style whox
  */
 static int got354(char *from, char *msg)
 {
@@ -1116,6 +1116,10 @@ static int got354(char *from, char *msg)
         user = newsplit(&msg);  /* Grab the user */
         host = newsplit(&msg);  /* Grab the host */
         nick = newsplit(&msg);  /* Grab the nick */
+        if (strchr(nick, '.')) { /* FIXME: Use 005 WHOX instead */
+          host = nick;
+          nick = newsplit(&msg);
+        }
         flags = newsplit(&msg); /* Grab the flags */
         got352or4(chan, user, host, nick, flags);
       }
