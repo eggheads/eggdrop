@@ -766,17 +766,18 @@ static void cmd_resetconsole(struct userrec *u, int idx, char *par)
   do_console(u, idx, par, 1);
 }
 
-/* Check if a string is a valid integer and lies non-inclusive
- * between two given integers. Returns 1 if true, 0 if not.
+/* Check if a string is a valid port between 0 and 65536 non-inclusive.
+ * Negative portnumbers are also valid.
+ * Returns 0 if not valid or the absolute port value if valid.
  */
-int check_int_range(char *value, int min, int max) {
+int strtoport(char *value) {
   char *endptr = NULL;
-  long intvalue;
+  int intvalue;
 
   if (value && value[0]) {
-    intvalue = strtol(value, &endptr, 10);
-    if ((intvalue < max) && (intvalue > min) && (*endptr == '\0')) {
-      return 1;
+    intvalue = abs((int) strtol(value, &endptr, 10));
+    if ((intvalue < 65536) && (intvalue > 0) && (*endptr == '\0')) {
+      return intvalue;
     }
   }
   return 0;
@@ -787,7 +788,7 @@ static void cmd_pls_bot(struct userrec *u, int idx, char *par)
   char *handle, *addr, *port, *port2, *relay, *host;
   struct userrec *u1;
   struct bot_addr *bi;
-  int i, found = 0;
+  int i, tport = 3333, rport = 3333, found = 0;
 
   if (!par[0]) {
     dprintf(idx, "Usage: +bot <handle> [address [telnet-port[/relay-port]]] "
@@ -862,13 +863,13 @@ static void cmd_pls_bot(struct userrec *u, int idx, char *par)
   }
 #endif
   if (port) {
-    if (!check_int_range(port, 0, 65536) && !check_int_range(port, -65536, 0)) {
+    if (!(tport = strtoport(port))) {
       dprintf(idx, "Ports must be integers between 1 and 65535.\n");
       return;
     }
   }
   if (relay) {
-    if (!check_int_range(relay, 0, 65536) && !check_int_range(relay, -65536, 0)) {
+    if (!(rport = strtoport(relay))) {
       dprintf(idx, "Ports must be integers between 1 and 65535.\n");
       return;
     }
@@ -892,18 +893,16 @@ static void cmd_pls_bot(struct userrec *u, int idx, char *par)
   strcpy(bi->address, addr);
 
   if (!port) {
-    bi->telnet_port = 3333;
-    bi->relay_port = 3333;
+    bi->telnet_port = tport;
+    bi->relay_port = rport;
   } else {
 #ifdef TLS
     if (*port == '+')
       bi->ssl |= TLS_BOT;
     else if (*port == '-')
       bi->ssl |= TLS_BOT_REJ;
-    bi->telnet_port = abs(atoi(port));
-#else
-    bi->telnet_port = atoi(port);
 #endif
+    bi->telnet_port = tport;
     if (!relay) {
       bi->relay_port = bi->telnet_port;
 #ifdef TLS
@@ -915,10 +914,8 @@ static void cmd_pls_bot(struct userrec *u, int idx, char *par)
         bi->ssl |= TLS_RELAY;
       else if (*relay == '-')
         bi->ssl |= TLS_RELAY_REJ;
-      bi->relay_port = abs(atoi(relay));
-#else
-      bi->relay_port = atoi(relay);
 #endif
+      bi->relay_port = rport;
     }
   }
 
@@ -1211,13 +1208,13 @@ static void cmd_chaddr(struct userrec *u, int idx, char *par)
   }
 #endif
   if (port && port[0]) {
-    if (!check_int_range(port, 0, 65536) && !check_int_range(port, -65536, 0)) {
+    if (!(telnet_port = strtoport(port))) {
       dprintf(idx, "Ports must be integers between 1 and 65535.\n");
       return;
     }
   }
   if (relay) {
-    if (!check_int_range(relay, 0, 65536) && !check_int_range(relay, -65536, 0)) {
+    if (!(relay_port = strtoport(relay))) {
       dprintf(idx, "Ports must be integers between 1 and 65535.\n");
       return;
     }
@@ -1264,7 +1261,7 @@ static void cmd_chaddr(struct userrec *u, int idx, char *par)
       bi->ssl |= TLS_BOT;
     else if (*port == '-')
       bi->ssl |= TLS_BOT_REJ;
-    bi->telnet_port = abs(atoi(port));
+    bi->telnet_port = telnet_port;
     if (!relay) {
       bi->relay_port = bi->telnet_port;
       bi->ssl |= (*port == '+') ? TLS_RELAY : ((*port == '-') ? TLS_RELAY_REJ : 0);
@@ -1274,14 +1271,14 @@ static void cmd_chaddr(struct userrec *u, int idx, char *par)
       } else if (*relay == '-') {
         bi->ssl |= TLS_RELAY_REJ;
       }
-      bi->relay_port = abs(atoi(relay));
+      bi->relay_port = relay_port;
 #else
   } else {
-    bi->telnet_port = atoi(port);
+    bi->telnet_port = telnet_port;
     if (!relay) {
       bi->relay_port = bi->telnet_port;
     } else {
-      bi->relay_port = atoi(relay);
+      bi->relay_port = relay_port;
 #endif
     }
   }

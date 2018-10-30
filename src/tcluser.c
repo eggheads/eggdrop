@@ -300,7 +300,7 @@ static int tcl_addbot STDVAR
   struct bot_addr *bi;
   /* Max addr len is 60 ? (see cmd_pls_bot in cmds.c) + brackets + delims + ports + 0 */
   char *p, *q, addr[75], hand[HANDLEN + 1];
-  int i, colon=0, braced = 0, ipv6 = 0, count = 0;
+  int i, tport, rport, colon=0, braced = 0, ipv6 = 0, count = 0;
 
 
   BADARGS(3, 5, " handle address ?telnet-port ?relay-port??");
@@ -382,12 +382,12 @@ static int tcl_addbot STDVAR
 
 #endif
     /* Verify */
-    /* check_int_range returns 0 if q or p is NULL */
-    if (q && (!check_int_range(q, -65536, 0) || !check_int_range(q, 0, 65536))) {
+    /* strtoport returns 0 if q or p is NULL */
+    if (q && !(tport = strtoport(q))) {
       Tcl_AppendResult(irp, "0", NULL);
       return TCL_OK;
     }
-    if (p && (!check_int_range(p, -65536, 0) || !check_int_range(p, 0, 65536))) {
+    if (p && !(rport = strtoport(p))) {
       Tcl_AppendResult(irp, "0", NULL);
       return TCL_OK;
     }
