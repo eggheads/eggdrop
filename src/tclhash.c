@@ -1182,43 +1182,37 @@ void check_tcl_away(const char *bot, int idx, const char *msg)
                  MATCH_MASK | BIND_STACKABLE);
 }
 
-void check_tcl_time(struct tm *tm)
+void check_tcl_time_and_cron(struct tm *tm)
 {
-  char y[17];
+  /* Undersized due to sane assumption that struct tm is sane and at the same
+   * time oversized to silence a gcc format-truncation warning */
+  char y[24];
 
   egg_snprintf(y, sizeof y, "%02d", tm->tm_min);
   Tcl_SetVar(interp, "_time1", (char *) y, 0);
+  Tcl_SetVar(interp, "_cron1", (char *) y, 0);
   egg_snprintf(y, sizeof y, "%02d", tm->tm_hour);
   Tcl_SetVar(interp, "_time2", (char *) y, 0);
+  Tcl_SetVar(interp, "_cron2", (char *) y, 0);
   egg_snprintf(y, sizeof y, "%02d", tm->tm_mday);
   Tcl_SetVar(interp, "_time3", (char *) y, 0);
+  Tcl_SetVar(interp, "_cron3", (char *) y, 0);
   egg_snprintf(y, sizeof y, "%02d", tm->tm_mon);
   Tcl_SetVar(interp, "_time4", (char *) y, 0);
   egg_snprintf(y, sizeof y, "%04d", tm->tm_year + 1900);
   Tcl_SetVar(interp, "_time5", (char *) y, 0);
   egg_snprintf(y, sizeof y, "%02d %02d %02d %02d %04d", tm->tm_min, tm->tm_hour,
-               tm->tm_mday, tm->tm_mon, (unsigned int) (tm->tm_year + 1900));
+               tm->tm_mday, tm->tm_mon, tm->tm_year + 1900);
   check_tcl_bind(H_time, y, 0,
                  " $_time1 $_time2 $_time3 $_time4 $_time5",
                  MATCH_MASK | BIND_STACKABLE);
-}
 
-void check_tcl_cron(struct tm *tm)
-{
-  char y[15];
-
-  egg_snprintf(y, sizeof y, "%02d", tm->tm_min);
-  Tcl_SetVar(interp, "_cron1", (char *) y, 0);
-  egg_snprintf(y, sizeof y, "%02d", tm->tm_hour);
-  Tcl_SetVar(interp, "_cron2", (char *) y, 0);
-  egg_snprintf(y, sizeof y, "%02d", tm->tm_mday);
-  Tcl_SetVar(interp, "_cron3", (char *) y, 0);
   egg_snprintf(y, sizeof y, "%02d", tm->tm_mon + 1);
   Tcl_SetVar(interp, "_cron4", (char *) y, 0);
   egg_snprintf(y, sizeof y, "%02d", tm->tm_wday);
   Tcl_SetVar(interp, "_cron5", (char *) y, 0);
   egg_snprintf(y, sizeof y, "%02d %02d %02d %02d %02d", tm->tm_min, tm->tm_hour,
-               tm->tm_mday, (unsigned int) (tm->tm_mon + 1), tm->tm_wday);
+               tm->tm_mday, tm->tm_mon + 1, tm->tm_wday);
   check_tcl_bind(H_cron, y, 0,
                  " $_cron1 $_cron2 $_cron3 $_cron4 $_cron5",
                  MATCH_CRON | BIND_STACKABLE);
