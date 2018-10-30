@@ -260,14 +260,16 @@ char *splitnick(char **blah)
 
 void remove_crlf(char **line)
 {
-  char *p;
+  char *p = *line;
 
-  p = strchr(*line, '\n');
-  if (p != NULL)
-    *p = 0;
-  p = strchr(*line, '\r');
-  if (p != NULL)
-    *p = 0;
+  while (*p) {
+    if (*p == '\r' || *p == '\n')
+    {
+      *p = 0;
+      break;
+    }
+    p++;
+  }
 }
 
 char *newsplit(char **rest)
@@ -306,12 +308,12 @@ char *newsplit(char **rest)
  *
  * "nick!user@is.the.lamest.bg"  -> *!*user@*.the.lamest.bg (ccTLD)
  * "nick!user@is.the.lamest.com" -> *!*user@*.lamest.com (gTLD)
- * "lamest.example"	         -> *!*@lamest.example
+ * "lamest.example"              -> *!*@lamest.example
  * "whatever@lamest.example"     -> *!*whatever@lamest.example
  * "com.example@user!nick"       -> *!*com.example@user!nick
- * "!"			         -> *!*@!
- * "@"			         -> *!*@*
- * ""				 -> *!*@*
+ * "!"                           -> *!*@!
+ * "@"                           -> *!*@*
+ * ""                            -> *!*@*
  * "abc!user@2001:db8:618:5c0:263:15:dead:babe"
  * -> *!*user@2001:db8:618:5c0:263:15:dead:*
  * "abc!user@0:0:0:0:0:ffff:1.2.3.4"
@@ -583,9 +585,9 @@ void putlog EGG_VARARGS_DEF(int, arg1)
           /* Open this logfile */
           if (keep_all_logs) {
             egg_snprintf(s1, 256, "%s%s", logs[i].filename, ct);
-            logs[i].f = fopen(s1, "a+");
+            logs[i].f = fopen(s1, "a");
           } else
-            logs[i].f = fopen(logs[i].filename, "a+");
+            logs[i].f = fopen(logs[i].filename, "a");
         }
         if (logs[i].f != NULL) {
           /* Check if this is the same as the last line added to

@@ -707,10 +707,10 @@ enum {
 
 /* Context information to attach to SSL sockets */
 typedef struct {
-  int flags;			/* listen/connect, generic ssl flags      */
-  int verify;			/* certificate validation mode            */
-  int loglevel;			/* log level to output TLS information to */
-  char host[256];		/* host or IP for certificate validation  */
+  int flags;                    /* listen/connect, generic ssl flags      */
+  int verify;                   /* certificate validation mode            */
+  int loglevel;                 /* log level to output TLS information to */
+  char host[256];               /* host or IP for certificate validation  */
   IntFunc cb;
 } ssl_appdata;
 #endif /* TLS */

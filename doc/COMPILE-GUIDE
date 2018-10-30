@@ -1,5 +1,5 @@
 Eggdrop Compile Guide and FAQ
-Last revised: September 20, 2018
+Last revised: October 16, 2018
     _____________________________________________________________________
 
                         Eggdrop Compile Guide and FAQ
@@ -45,6 +45,7 @@ Last revised: September 20, 2018
          macro assignment' error when I type 'make config' (OpenIndiana)
      12. I get a 'gmake: readlink: Command not found' error when I type 'gmake
          install' (OpenIndiana)
+     13. I get '/usr/bin/ld: cannot find -lpthread' (OpenWrt)
 
 
   Compile Guide
@@ -553,6 +554,14 @@ Last revised: September 20, 2018
         install' (OpenIndiana)
 
       Install gnu-coreutils on OpenIndiana.
+
+    13. I get '/usr/bin/ld: cannot find -lpthread' (OpenWrt)
+
+      Pthread primitives are part of the core libc.so library. To satisfy
+      -lpthread, create an empty AR archive (a static library) somewhere in the
+      library search path. E.g.:
+
+        ar -rc /usr/lib/libpthread.a
     _____________________________________________________________________
 
    Copyright (C) 1997 Robey Pointer

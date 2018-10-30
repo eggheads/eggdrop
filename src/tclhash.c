@@ -26,6 +26,7 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
+#include <sys/time.h>
 #include <sys/resource.h>
 #include "main.h"
 #include "chan.h"
@@ -740,7 +741,7 @@ static int trigger_bind(const char *proc, const char *param,
    */
   Tcl_SetVar(interp, "lastbind", (char *) mask, TCL_GLOBAL_ONLY);
 
-  if(proc && proc[0] != '*') { // proc[0] != '*' excludes internal binds
+  if(proc && proc[0] != '*') { /* proc[0] != '*' excludes internal binds */
     debug1("triggering bind %s", proc);
     r = getrusage(RUSAGE_SELF, &ru1);
   }

@@ -26,13 +26,15 @@
 #include "tandem.h"
 #include "modules.h"
 #include <ctype.h>
+#include <signal.h>
 
 extern struct chanset_t *chanset;
 extern struct dcc_t *dcc;
 extern struct userrec *userlist;
 extern tcl_timer_t *timer, *utimer;
-extern int dcc_total, remote_boots, backgrd, make_userfile, do_restart,
-           conmask, require_p, must_be_owner, strict_host;
+extern int dcc_total, remote_boots, backgrd, make_userfile, conmask, require_p,
+           must_be_owner, strict_host;
+extern volatile sig_atomic_t do_restart;
 extern unsigned long otraffic_irc, otraffic_irc_today, itraffic_irc,
                      itraffic_irc_today, otraffic_bn, otraffic_bn_today,
                      itraffic_bn, itraffic_bn_today, otraffic_dcc,
@@ -521,7 +523,7 @@ static void cmd_whois(struct userrec *u, int idx, char *par)
   }
 
   putlog(LOG_CMDS, "*", "#%s# whois %s", dcc[idx].nick, par);
-  tell_user_ident(idx, par, u ? (u->flags & USER_MASTER) : 0);
+  tell_user_ident(idx, par);
 }
 
 static void cmd_match(struct userrec *u, int idx, char *par)
@@ -547,8 +549,7 @@ static void cmd_match(struct userrec *u, int idx, char *par)
     } else
       limit = atoi(s1);
   }
-  tell_users_match(idx, s, start, limit, u ? (u->flags & USER_MASTER) : 0,
-                   chname);
+  tell_users_match(idx, s, start, limit, chname);
 }
 
 static void cmd_uptime(struct userrec *u, int idx, char *par)
@@ -2585,47 +2586,55 @@ static void cmd_unloadmod(struct userrec *u, int idx, char *par)
 
 static void cmd_pls_ignore(struct userrec *u, int idx, char *par)
 {
-  char *who, s[UHOSTLEN];
-  unsigned long int expire_time = 0;
+  char *who, s[UHOSTLEN], *p, *p_expire;
+  long expire_foo;
+  unsigned long expire_time = 0;
 
   if (!par[0]) {
-    dprintf(idx, "Usage: +ignore <hostmask> [%%<XdXhXm>] [comment]\n");
+    dprintf(idx, "Usage: +ignore <hostmask> [%%<XyXdXhXm>] [comment]\n");
     return;
   }
 
   who = newsplit(&par);
   if (par[0] == '%') {
-    char *p, *p_expire;
-    unsigned long int expire_foo;
-
     p = newsplit(&par);
     p_expire = p + 1;
     while (*(++p) != 0) {
       switch (tolower((unsigned) *p)) {
+      case 'y':
+        *p = 0;
+        expire_foo = strtol(p_expire, NULL, 10);
+        expire_time += 60 * 60 * 24 * 365 * expire_foo;
+        p_expire = p + 1;
+        break;
       case 'd':
         *p = 0;
         expire_foo = strtol(p_expire, NULL, 10);
-        if (expire_foo > 365)
-          expire_foo = 365;
-        expire_time += 86400 * expire_foo;
+        expire_time += 60 * 60 * 24 * expire_foo;
         p_expire = p + 1;
         break;
       case 'h':
         *p = 0;
         expire_foo = strtol(p_expire, NULL, 10);
-        if (expire_foo > 8760)
-          expire_foo = 8760;
-        expire_time += 3600 * expire_foo;
+        expire_time += 60 * 60 * expire_foo;
         p_expire = p + 1;
         break;
       case 'm':
         *p = 0;
         expire_foo = strtol(p_expire, NULL, 10);
-        if (expire_foo > 525600)
-          expire_foo = 525600;
         expire_time += 60 * expire_foo;
         p_expire = p + 1;
       }
+    }
+    /* For whomever is stuck with maintaining this in 2033- this will
+     * break. Hopefully we've dealt with the max unixtime issue by now
+     * (Year 2038 problem), but if you're reading this, clearly we
+     * haven't because we are lazy. Sorry.
+     */
+    if (expire_time > (60 * 60 * 24 * 365 * 5)) {
+      dprintf(idx, "expire time must be equal to or less than 5 years" 
+          "(1825 days)\n");
+      return;
     }
   }
   if (!par[0])
