@@ -59,7 +59,7 @@ int shtime = 1;                 /* Display the time with console output */
 log_t *logs = 0;                /* Logfiles */
 int max_logs = 5;               /* Max log files, mismatch config on purpose */
 int max_logsize = 0;            /* Maximum logfile size, 0 for no limit */
-int raw_log = 0;                /* Disply output to server to LOG_SERVEROUT */
+int raw_log = 0;                /* Display output to server to LOG_SERVEROUT */
 
 int conmask = LOG_MODES | LOG_CMDS | LOG_MISC; /* Console mask */
 
@@ -168,7 +168,7 @@ int egg_strcatn(char *dst, const char *src, size_t max)
    */
   tmpmax = max;
 
-  /* copy upto, but not including the null terminator */
+  /* copy up to, but not including the null terminator */
   while (*src && max > 1) {
     *dst++ = *src++;
     max--;
@@ -260,14 +260,16 @@ char *splitnick(char **blah)
 
 void remove_crlf(char **line)
 {
-  char *p;
+  char *p = *line;
 
-  p = strchr(*line, '\n');
-  if (p != NULL)
-    *p = 0;
-  p = strchr(*line, '\r');
-  if (p != NULL)
-    *p = 0;
+  while (*p) {
+    if (*p == '\r' || *p == '\n')
+    {
+      *p = 0;
+      break;
+    }
+    p++;
+  }
 }
 
 char *newsplit(char **rest)
@@ -306,12 +308,12 @@ char *newsplit(char **rest)
  *
  * "nick!user@is.the.lamest.bg"  -> *!*user@*.the.lamest.bg (ccTLD)
  * "nick!user@is.the.lamest.com" -> *!*user@*.lamest.com (gTLD)
- * "lamest.example"	         -> *!*@lamest.example
+ * "lamest.example"              -> *!*@lamest.example
  * "whatever@lamest.example"     -> *!*whatever@lamest.example
  * "com.example@user!nick"       -> *!*com.example@user!nick
- * "!"			         -> *!*@!
- * "@"			         -> *!*@*
- * ""				 -> *!*@*
+ * "!"                           -> *!*@!
+ * "@"                           -> *!*@*
+ * ""                            -> *!*@*
  * "abc!user@2001:db8:618:5c0:263:15:dead:babe"
  * -> *!*user@2001:db8:618:5c0:263:15:dead:*
  * "abc!user@0:0:0:0:0:ffff:1.2.3.4"
@@ -570,7 +572,7 @@ void putlog EGG_VARARGS_DEF(int, arg1)
   }
   /* Place the timestamp in the string to be printed */
   if (out[0] && shtime) {
-    strncpy(s, stamp, tsl);
+    memcpy(s, stamp, tsl);
     out = s;
   }
   strcat(out, "\n");
@@ -583,9 +585,9 @@ void putlog EGG_VARARGS_DEF(int, arg1)
           /* Open this logfile */
           if (keep_all_logs) {
             egg_snprintf(s1, 256, "%s%s", logs[i].filename, ct);
-            logs[i].f = fopen(s1, "a+");
+            logs[i].f = fopen(s1, "a");
           } else
-            logs[i].f = fopen(logs[i].filename, "a+");
+            logs[i].f = fopen(logs[i].filename, "a");
         }
         if (logs[i].f != NULL) {
           /* Check if this is the same as the last line added to
@@ -625,7 +627,7 @@ void putlog EGG_VARARGS_DEF(int, arg1)
       }
     }
   }
-  if (!backgrd && !con_chan && !term_z)
+  if (!backgrd && !con_chan && term_z < 0)
     dprintf(DP_STDOUT, "%s", out);
   else if ((type & LOG_MISC) && use_stderr) {
     if (shtime)

@@ -729,7 +729,7 @@ static void minutely_checks()
   if (!server_online)
     return;
   if (keepnick) {
-    /* NOTE: now that botname can but upto NICKLEN bytes long,
+    /* NOTE: now that botname can but up to NICKLEN bytes long,
      * check that it's not just a truncation of the full nick.
      */
     if (strncmp(botname, origbotname, strlen(botname))) {
@@ -793,19 +793,19 @@ static void got303(char *from, char *msg)
  */
 static int got432(char *from, char *msg)
 {
-  char *erroneus;
+  char *erroneous;
 
   newsplit(&msg);
-  erroneus = newsplit(&msg);
+  erroneous = newsplit(&msg);
   if (server_online)
-    putlog(LOG_MISC, "*", "NICK IS INVALID: %s (keeping '%s').", erroneus,
+    putlog(LOG_MISC, "*", "NICK IS INVALID: %s (keeping '%s').", erroneous,
            botname);
   else {
     putlog(LOG_MISC, "*", IRC_BADBOTNICK);
     if (!keepnick) {
-      makepass(erroneus);
-      erroneus[NICKMAX] = 0;
-      dprintf(DP_MODE, "NICK %s\n", erroneus);
+      makepass(erroneous);
+      erroneous[NICKMAX] = 0;
+      dprintf(DP_MODE, "NICK %s\n", erroneous);
     }
     return 0;
   }

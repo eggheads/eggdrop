@@ -41,7 +41,7 @@ EGG_SAVE_PARAMETERS
 
 
 # Check for a working C compiler
-AC_PROG_CC
+AC_PROG_CC([gcc cc clang])
 EGG_CHECK_CC
 
 # These 3 need to be done before any AC_COMPILE_IFELSE()'s.
@@ -97,12 +97,13 @@ AC_CHECK_HEADERS([arpa/inet.h fcntl.h limits.h locale.h netdb.h netinet/in.h std
 AC_C_CONST
 AC_C_BIGENDIAN
 AC_C_INLINE
+AC_C_FLEXIBLE_ARRAY_MEMBER
 AC_TYPE_INTPTR_T
 AC_TYPE_PID_T
 AC_TYPE_SIZE_T
 AC_STRUCT_TIMEZONE
 AC_C_VOLATILE
-EGG_CHECK_SOCKLEN_T
+AX_TYPE_SOCKLEN_T
 
 
 # Create stdint.h C99 compatibility header.

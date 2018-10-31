@@ -22,7 +22,7 @@
    If the server is not in the server list already, it will be added to it.
    Jumping servers ALWAYS makes the bot lose ops! Be careful!
 
-   Remember, you can't specify a password without specifing a port as well.
+   Remember, you can't specify a password without specifying a port as well.
 
 See also: servers
 %{help=servers}%{+o|o}

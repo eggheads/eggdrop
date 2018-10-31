@@ -47,8 +47,9 @@
  *       You should leave this at 32 characters and modify nick-len in the
  *       configuration file instead.
  */
-#define HANDLEN 32   /* valid values 9->NICKMAX  */
-#define NICKMAX 32  /* valid values HANDLEN->32 */
+#define CHANNELLEN 80 /* FIXME see issue #3 and issue #38 and rfc1459 <= 200 */
+#define HANDLEN    32 /* valid values 9->NICKMAX                             */
+#define NICKMAX    32 /* valid values HANDLEN->32                            */
 
 
 /* Handy string lengths */
@@ -248,7 +249,7 @@
 
 
 /* Use high-order bits for getting the random integer. With a modern
- * random() implmentation, modulo would probably be sufficient, but on
+ * random() implementation, modulo would probably be sufficient, but on
  * systems lacking random(), it may just be a macro for an older rand()
  * function.
  */
@@ -266,10 +267,6 @@
 
 #ifndef HAVE_SIGEMPTYSET
 #  define sigemptyset(x) ((*(int *)(x))=0)
-#endif
-
-#ifndef HAVE_SOCKLEN_T
-typedef int socklen_t;
 #endif
 
 #ifdef TLS
@@ -392,7 +389,7 @@ struct dcc_t {
   char host[UHOSTLEN];
   struct dcc_table *type;
   time_t timeval;               /* This is used for timeout checking. */
-  unsigned long status;         /* A LOT of dcc types have status things; makes it more availabe. */
+  unsigned long status;         /* A LOT of dcc types have status things; makes it more available. */
   union {
     struct chat_info *chat;
     struct file_info *file;
@@ -409,17 +406,17 @@ struct dcc_t {
 };
 
 struct chat_info {
-  char *away;                   /* non-NULL if user is away             */
-  int msgs_per_sec;             /* used to stop flooding                */
-  int con_flags;                /* with console: what to show           */
-  int strip_flags;              /* what codes to strip (b,r,u,c,a,g,*)  */
-  char con_chan[81];            /* with console: what channel to view   */
-  int channel;                  /* 0=party line, -1=off                 */
-  struct msgq *buffer;          /* a buffer of outgoing lines
-                                 * (for .page cmd)                      */
-  int max_line;                 /* maximum lines at once                */
-  int line_count;               /* number of lines sent since last page */
-  int current_lines;            /* number of lines total stored         */
+  char *away;                    /* non-NULL if user is away             */
+  int msgs_per_sec;              /* used to stop flooding                */
+  int con_flags;                 /* with console: what to show           */
+  int strip_flags;               /* what codes to strip (b,r,u,c,a,g,*)  */
+  char con_chan[CHANNELLEN + 1]; /* with console: what channel to view   */
+  int channel;                   /* 0=party line, -1=off                 */
+  struct msgq *buffer;           /* a buffer of outgoing lines
+                                  * (for .page cmd)                      */
+  int max_line;                  /* maximum lines at once                */
+  int line_count;                /* number of lines sent since last page */
+  int current_lines;             /* number of lines total stored         */
   char *su_nick;
 };
 
@@ -710,10 +707,10 @@ enum {
 
 /* Context information to attach to SSL sockets */
 typedef struct {
-  int flags;			/* listen/connect, generic ssl flags      */
-  int verify;			/* certificate validation mode            */
-  int loglevel;			/* log level to output TLS information to */
-  char host[256];		/* host or IP for certificate validation  */
+  int flags;                    /* listen/connect, generic ssl flags      */
+  int verify;                   /* certificate validation mode            */
+  int loglevel;                 /* log level to output TLS information to */
+  char host[256];               /* host or IP for certificate validation  */
   IntFunc cb;
 } ssl_appdata;
 #endif /* TLS */

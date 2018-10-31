@@ -24,6 +24,7 @@
 #define _EGG_MOD_MODULE_H
 
 /* Just include *all* the include files...it's slower but EASIER */
+#include <signal.h>
 #include "src/main.h"
 #include "modvals.h"
 #include "src/tandem.h"
@@ -35,7 +36,7 @@
  * some modules.
  *
  * This is intimately related to the table in `modules.c'. Don't change
- * the files unless you have flamable underwear.
+ * the files unless you have flammable underwear.
  *
  * Do not read this file whilst unless heavily sedated, I will not be
  * held responsible for mental break-downs caused by this file <G>
@@ -58,7 +59,7 @@
 #undef ContextNote
 #undef Assert
 
-/* Compability functions. */
+/* Compatibility functions. */
 #ifdef egg_inet_aton
 #  undef egg_inet_aton
 #endif
@@ -187,7 +188,7 @@
 #define egg_list_append ((int (*) ( struct list_type **, struct list_type *))global[74])
 #define egg_list_contains ((int (*) (struct list_type *, struct list_type *))global[75])
 /* 76 - 79 */
-#define answer ((int (*) (int, sockname_t *, unsigned short *, int))global[76])
+#define answer ((int (*) (int, sockname_t *, uint16_t *, int))global[76])
 #define getvhost ((void (*) (sockname_t *, int))global[77])
 /* was neterror() */
 #ifdef TLS
@@ -318,7 +319,7 @@
 /* 168 - 171 */
 #define expected_memory ((int(*)(void))global[168])
 #define tell_mem_status ((void(*)(char *))global[169])
-#define do_restart (*(int *)(global[170]))
+#define do_restart (*(volatile sig_atomic_t *)(global[170]))
 #define check_tcl_filt ((const char *(*)(int, const char *))global[171])
 /* 172 - 175 */
 #define add_hook(a,b) (((void (*) (int, Function))global[172])(a,b))

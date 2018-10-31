@@ -932,9 +932,9 @@ static int tcl_channel_info(Tcl_Interp *irp, struct chanset_t *chan)
   return TCL_OK;
 }
 
-#define APPEND_KEYVAL(x, y) {	\
-  Tcl_AppendElement(irp, x);	\
-  Tcl_AppendElement(irp, y);	\
+#define APPEND_KEYVAL(x, y) { \
+  Tcl_AppendElement(irp, x);  \
+  Tcl_AppendElement(irp, y);  \
 }
 
 static int tcl_channel_getlist(Tcl_Interp *irp, struct chanset_t *chan)
@@ -1066,22 +1066,17 @@ static int tcl_channel_get(Tcl_Interp *irp, struct chanset_t *chan,
 
   if (!strcmp(setting, "chanmode"))
     get_mode_protect(chan, s);
-  else if (!strcmp(setting, "need-op")) {
-    strncpy(s, chan->need_op, 120);
-    s[120] = 0;
-  } else if (!strcmp(setting, "need-invite")) {
-    strncpy(s, chan->need_invite, 120);
-    s[120] = 0;
-  } else if (!strcmp(setting, "need-key")) {
-    strncpy(s, chan->need_key, 120);
-    s[120] = 0;
-  } else if (!strcmp(setting, "need-unban")) {
-    strncpy(s, chan->need_unban, 120);
-    s[120] = 0;
-  } else if (!strcmp(setting, "need-limit")) {
-    strncpy(s, chan->need_limit, 120);
-    s[120] = 0;
-  } else if (!strcmp(setting, "idle-kick"))
+  else if (!strcmp(setting, "need-op"))
+    strlcpy(s, chan->need_op, sizeof s);
+  else if (!strcmp(setting, "need-invite"))
+    strlcpy(s, chan->need_invite, sizeof s);
+  else if (!strcmp(setting, "need-key"))
+    strlcpy(s, chan->need_key, sizeof s);
+  else if (!strcmp(setting, "need-unban"))
+    strlcpy(s, chan->need_unban, sizeof s);
+  else if (!strcmp(setting, "need-limit"))
+    strlcpy(s, chan->need_limit, sizeof s);
+  else if (!strcmp(setting, "idle-kick"))
     simple_sprintf(s, "%d", chan->idle_kick);
   else if (!strcmp(setting, "stopnethack-mode") || !strcmp(setting, "stop-net-hack"))
     simple_sprintf(s, "%d", chan->stopnethack_mode);
@@ -1258,8 +1253,7 @@ static int tcl_channel_modify(Tcl_Interp *irp, struct chanset_t *chan,
           Tcl_AppendResult(irp, "channel need-op needs argument", NULL);
         return TCL_ERROR;
       }
-      strncpy(chan->need_op, item[i], 120);
-      chan->need_op[120] = 0;
+      strlcpy(chan->need_op, item[i], sizeof chan->need_op);
     } else if (!strcmp(item[i], "need-invite")) {
       i++;
       if (i >= items) {
@@ -1267,8 +1261,7 @@ static int tcl_channel_modify(Tcl_Interp *irp, struct chanset_t *chan,
           Tcl_AppendResult(irp, "channel need-invite needs argument", NULL);
         return TCL_ERROR;
       }
-      strncpy(chan->need_invite, item[i], 120);
-      chan->need_invite[120] = 0;
+      strlcpy(chan->need_invite, item[i], sizeof chan->need_invite);
     } else if (!strcmp(item[i], "need-key")) {
       i++;
       if (i >= items) {
@@ -1276,8 +1269,7 @@ static int tcl_channel_modify(Tcl_Interp *irp, struct chanset_t *chan,
           Tcl_AppendResult(irp, "channel need-key needs argument", NULL);
         return TCL_ERROR;
       }
-      strncpy(chan->need_key, item[i], 120);
-      chan->need_key[120] = 0;
+      strlcpy(chan->need_key, item[i], sizeof chan->need_key);
     } else if (!strcmp(item[i], "need-limit")) {
       i++;
       if (i >= items) {
@@ -1285,8 +1277,7 @@ static int tcl_channel_modify(Tcl_Interp *irp, struct chanset_t *chan,
           Tcl_AppendResult(irp, "channel need-limit needs argument", NULL);
         return TCL_ERROR;
       }
-      strncpy(chan->need_limit, item[i], 120);
-      chan->need_limit[120] = 0;
+      strlcpy(chan->need_limit, item[i], sizeof chan->need_limit);
     } else if (!strcmp(item[i], "need-unban")) {
       i++;
       if (i >= items) {
@@ -1294,8 +1285,7 @@ static int tcl_channel_modify(Tcl_Interp *irp, struct chanset_t *chan,
           Tcl_AppendResult(irp, "channel need-unban needs argument", NULL);
         return TCL_ERROR;
       }
-      strncpy(chan->need_unban, item[i], 120);
-      chan->need_unban[120] = 0;
+      strlcpy(chan->need_unban, item[i], sizeof chan->need_unban);
     } else if (!strcmp(item[i], "chanmode")) {
       i++;
       if (i >= items) {
@@ -1303,8 +1293,7 @@ static int tcl_channel_modify(Tcl_Interp *irp, struct chanset_t *chan,
           Tcl_AppendResult(irp, "channel chanmode needs argument", NULL);
         return TCL_ERROR;
       }
-      strncpy(s, item[i], 120);
-      s[120] = 0;
+      strlcpy(s, item[i], sizeof s);
       set_mode_protect(chan, s);
     } else if (!strcmp(item[i], "idle-kick")) {
       i++;
@@ -1541,8 +1530,8 @@ static int tcl_channel_modify(Tcl_Interp *irp, struct chanset_t *chan,
 
       i++;
       if (i >= items) {
-		if (irp)
-		  Tcl_AppendResult(irp, item[i - 1], " needs argument", NULL);
+        if (irp)
+          Tcl_AppendResult(irp, item[i - 1], " needs argument", NULL);
         return TCL_ERROR;
       }
       p = strchr(item[i], ':');
@@ -2100,8 +2089,7 @@ static int tcl_channel_add(Tcl_Interp *irp, char *newname, char *options)
      * any code later on. chan->name gets updated with the channel name as
      * the server knows it, when we join the channel. <cybah>
      */
-    strncpy(chan->dname, newname, 81);
-    chan->dname[80] = 0;
+    strlcpy(chan->dname, newname, sizeof chan->dname);
 
     /* Initialize chan->channel info */
     init_channel(chan, 0);
@@ -2113,7 +2101,7 @@ static int tcl_channel_add(Tcl_Interp *irp, char *newname, char *options)
 
   }
   /* If chan_hack is set, we're loading the userfile. Ignore errors while
-   * reading userfile and just return TCL_OK. This is for compatability
+   * reading userfile and just return TCL_OK. This is for compatibility
    * if a user goes back to an eggdrop that no-longer supports certain
    * (channel) options.
    */
@@ -2281,7 +2269,6 @@ static int tcl_chansettype STDVAR
              !strcmp(argv[1], "flood-join") ||
              !strcmp(argv[1], "flood-kick") ||
              !strcmp(argv[1], "flood-deop") ||
-             !strcmp(argv[1], "flood-nick") ||
              !strcmp(argv[1], "flood-nick") ||
              !strcmp(argv[1], "aop-delay")) {
     Tcl_AppendResult(irp, "pair", NULL);

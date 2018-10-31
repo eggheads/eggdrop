@@ -33,7 +33,7 @@
 #include "src/mod/module.h"
 
 #include <zlib.h> /* after src/mod/module.h because it could collide with
-		     crypto.h free_func */
+                     crypto.h free_func */
 
 #include "share.mod/share.h"
 
@@ -346,7 +346,7 @@ static int uncompress_file(char *filename)
 
 
 /*
- *    Userfile feature releated functions
+ *    Userfile feature related functions
  */
 
 static int uff_comp(int idx, char *filename)

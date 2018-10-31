@@ -107,7 +107,7 @@ static void bg_do_detach(pid_t p)
   if (fp != NULL) {
     fprintf(fp, "%li\n", (long) p);
     if (fflush(fp)) {
-      /* Kill bot incase a botchk is run from crond. */
+      /* Kill bot in case a botchk is run from crond. */
       printf(EGG_NOWRITE, pid_file);
       printf("  Try freeing some disk space\n");
       fclose(fp);

@@ -24,6 +24,7 @@
  */
 
 #include <ctype.h>
+#include <signal.h>
 #include "main.h"
 #include "modules.h"
 #include "tandem.h"
@@ -85,11 +86,12 @@ extern struct chanset_t *chanset;
 extern char botnetnick[], botname[], origbotname[], botuser[], ver[], log_ts[],
             admin[], userfile[], notify_new[], helpdir[], version[], quit_msg[];
 
-extern int parties, noshare, dcc_total, egg_numver, userfile_perm, do_restart,
-           ignore_time, must_be_owner, raw_log, max_dcc, make_userfile,
-           default_flags, require_p, share_greet, use_invites, use_exempts,
-           password_timeout, force_expire, protect_readonly, reserved_port_min,
-           reserved_port_max, copy_to_tmp, quiet_reject;
+extern int parties, noshare, dcc_total, egg_numver, userfile_perm, ignore_time,
+           must_be_owner, raw_log, max_dcc, make_userfile, default_flags,
+           require_p, share_greet, use_invites, use_exempts, password_timeout,
+           force_expire, protect_readonly, reserved_port_min, reserved_port_max,
+           copy_to_tmp, quiet_reject;
+extern volatile sig_atomic_t do_restart;
 
 #ifdef IPV6
 extern int pref_af;
@@ -420,7 +422,7 @@ Function global_table[] = {
   /* 168 - 171 */
   (Function) expected_memory,
   (Function) tell_mem_status,
-  (Function) & do_restart,        /* int                                 */
+  (Function) & do_restart,        /* volatile sig_atomic_t               */
   (Function) check_tcl_filt,
   /* 172 - 175 */
   (Function) add_hook,
@@ -577,7 +579,7 @@ Function global_table[] = {
   (Function) open_telnet_raw,
   /* 288 - 291 */
 #ifdef IPV6
-  (Function) & pref_af,		  /* int                                 */
+  (Function) & pref_af,           /* int                                 */
 #else
   (Function) 0,                   /* IPv6 leftovers: 288                 */
 #endif

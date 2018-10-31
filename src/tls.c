@@ -82,7 +82,7 @@ static int ssl_seed(void)
 #endif
   /* If '/dev/urandom' is present, OpenSSL will use it by default.
    * Otherwise we'll have to generate pseudorandom data ourselves,
-   * using system time, our process ID and some unitialized static
+   * using system time, our process ID and some uninitialized static
    * storage.
    */
   if ((fh = fopen("/dev/urandom", "r"))) {
@@ -104,7 +104,7 @@ static int ssl_seed(void)
   }
 #ifdef HAVE_RAND_STATUS
   if (!RAND_status())
-    return 2;   /* pseudo random data still not ehough */
+    return 2; /* pseudo random data still not enough */
 #endif
   return 0;
 }
@@ -416,16 +416,28 @@ static int ssl_verifycn(X509 *cert, ssl_appdata *data)
  */
 static char *ssl_printname(X509_NAME *name)
 {
-  int len;
+  long len;
   char *data, *buf;
   BIO *bio = BIO_new(BIO_s_mem());
 
   /* X509_NAME_oneline() is easier and shorter, but is deprecated and
      the manual discourages it's usage, so let's not be lazy ;) */
-  X509_NAME_print_ex(bio, name, 0, XN_FLAG_ONELINE & ~XN_FLAG_SPC_EQ);
-  len = BIO_get_mem_data(bio, &data) + 1;
-  buf = nmalloc(len);
-  strlcpy(buf, data, len);
+  if (X509_NAME_print_ex(bio, name, 0, XN_FLAG_ONELINE & ~XN_FLAG_SPC_EQ)) {
+    len = BIO_get_mem_data(bio, &data);
+    if (len > 0) {
+      buf = nmalloc(len + 1);
+      memcpy(buf, data, len); /* don't strlcpy() for it would read data[len] */
+      buf[len] = 0;
+    } else {
+      debug0("TLS: ssl_printname(): BIO_get_mem_data(): error");
+      buf = nmalloc(1);
+      *buf = 0;
+    }
+  } else {
+    debug0("TLS: ssl_printname(): X509_NAME_print_ex(): error");
+    buf = nmalloc(1);
+    *buf = 0;
+  }
   BIO_free(bio);
   return buf;
 }
@@ -439,14 +451,21 @@ static char *ssl_printname(X509_NAME *name)
  */
 static char *ssl_printtime(ASN1_UTCTIME *t)
 {
-  int len;
+  long len;
   char *data, *buf;
   BIO *bio = BIO_new(BIO_s_mem());
 
   ASN1_UTCTIME_print(bio, t);
-  len = BIO_get_mem_data(bio, &data) + 1;
-  buf = nmalloc(len);
-  strlcpy(buf, data, len);
+  len = BIO_get_mem_data(bio, &data);
+  if (len > 0) {
+    buf = nmalloc(len + 1);
+    memcpy(buf, data, len); /* don't strlcpy() for it would read data[len] */
+    buf[len] = 0;
+  } else {
+    debug0("TLS: ssl_printtime(): BIO_get_mem_data(): error");
+    buf = nmalloc(1);
+    *buf = 0;
+  }
   BIO_free(bio);
   return buf;
 }
@@ -459,14 +478,21 @@ static char *ssl_printtime(ASN1_UTCTIME *t)
  */
 static char *ssl_printnum(ASN1_INTEGER *i)
 {
-  int len;
+  long len;
   char *data, *buf;
   BIO *bio = BIO_new(BIO_s_mem());
 
   i2a_ASN1_INTEGER(bio, i);
-  len = BIO_get_mem_data(bio, &data) + 1;
-  buf = nmalloc(len);
-  strlcpy(buf, data, len);
+  len = BIO_get_mem_data(bio, &data);
+  if (len > 0) {
+    buf = nmalloc(len + 1);
+    memcpy(buf, data, len); /* don't strlcpy() for it would read data[len] */
+    buf[len] = 0;
+  } else {
+    debug0("TLS: ssl_printnum(): BIO_get_mem_data(): error");
+    buf = nmalloc(1);
+    *buf = 0;
+  }
   BIO_free(bio);
   return buf;
 }
@@ -567,7 +593,7 @@ int ssl_verify(int ok, X509_STORE_CTX *ctx)
     data->flags |= TLS_DEPTH0;
     /* Allow exceptions for certain common verification errors, if the
      * caller requested so. A lot of servers provide completely invalid
-     * certificates unuseful for any authentication.
+     * certificates useless for any authentication.
      */
     if (!ok || data->verify)
       if (((err == X509_V_ERR_DEPTH_ZERO_SELF_SIGNED_CERT) &&

@@ -172,10 +172,8 @@ static int msg_ident(char *nick, char *host, struct userrec *u, char *par)
   pass = newsplit(&par);
   if (!par[0])
     strlcpy(who, nick, sizeof who);
-  else {
-    strncpy(who, par, NICKMAX);
-    who[NICKMAX] = 0;
-  }
+  else
+    strlcpy(who, par, sizeof who);
   u2 = get_user_by_handle(userlist, who);
   if (!u2) {
     if (u && !quiet_reject)

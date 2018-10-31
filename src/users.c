@@ -157,7 +157,7 @@ void display_ignore(int idx, int number, struct igrec *ignore)
   if (ignore->flags & IGREC_PERM)
     strcpy(s, "(perm)");
   else {
-    char s1[41];
+    char s1[29];
 
     days(ignore->expire, now, s1);
     sprintf(s, "(expires %s)", s1);
@@ -453,7 +453,7 @@ static void restore_ignore(char *host)
   putlog(LOG_MISC, "*", "*** Malformed ignore line.");
 }
 
-void tell_user(int idx, struct userrec *u, int master)
+static void tell_user(int idx, struct userrec *u)
 {
   char s[81], s1[81], format[81];
   int n = 0;
@@ -519,7 +519,7 @@ void tell_user(int idx, struct userrec *u, int master)
 }
 
 /* show user by ident */
-void tell_user_ident(int idx, char *id, int master)
+void tell_user_ident(int idx, char *id)
 {
   char format[81];
   struct userrec *u;
@@ -534,14 +534,13 @@ void tell_user_ident(int idx, char *id, int master)
   egg_snprintf(format, sizeof format,
                "%%-%us PASS NOTES FLAGS           LAST\n", HANDLEN);
   dprintf(idx, format, "HANDLE");
-  tell_user(idx, u, master);
+  tell_user(idx, u);
 }
 
 /* match string:
  * wildcard to match nickname or hostmasks
  * +attr to find all with attr */
-void tell_users_match(int idx, char *mtch, int start, int limit,
-                      int master, char *chname)
+void tell_users_match(int idx, char *mtch, int start, int limit, char *chname)
 {
   char format[81];
   struct userrec *u;
@@ -582,7 +581,7 @@ void tell_users_match(int idx, char *mtch, int start, int limit,
         if (nomns || !flagrec_eq(&mns, &user)) {
           cnt++;
           if ((cnt <= limit) && (cnt >= start)) {
-            tell_user(idx, u, master);
+            tell_user(idx, u);
           }
           if (cnt == limit + 1) {
             dprintf(idx, MISC_TRUNCATED, limit);
@@ -592,7 +591,7 @@ void tell_users_match(int idx, char *mtch, int start, int limit,
     } else if (wild_match(mtch, u->handle)) {
       cnt++;
       if ((cnt <= limit) && (cnt >= start)) {
-        tell_user(idx, u, master);
+        tell_user(idx, u);
       }
       if (cnt == limit + 1) {
         dprintf(idx, MISC_TRUNCATED, limit);
@@ -604,7 +603,7 @@ void tell_users_match(int idx, char *mtch, int start, int limit,
           cnt++;
           fnd = 1;
           if ((cnt <= limit) && (cnt >= start)) {
-            tell_user(idx, u, master);
+            tell_user(idx, u);
           }
           if (cnt == limit + 1) {
             dprintf(idx, MISC_TRUNCATED, limit);
