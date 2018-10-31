@@ -2586,47 +2586,55 @@ static void cmd_unloadmod(struct userrec *u, int idx, char *par)
 
 static void cmd_pls_ignore(struct userrec *u, int idx, char *par)
 {
-  char *who, s[UHOSTLEN];
-  unsigned long int expire_time = 0;
+  char *who, s[UHOSTLEN], *p, *p_expire;
+  long expire_foo;
+  unsigned long expire_time = 0;
 
   if (!par[0]) {
-    dprintf(idx, "Usage: +ignore <hostmask> [%%<XdXhXm>] [comment]\n");
+    dprintf(idx, "Usage: +ignore <hostmask> [%%<XyXdXhXm>] [comment]\n");
     return;
   }
 
   who = newsplit(&par);
   if (par[0] == '%') {
-    char *p, *p_expire;
-    unsigned long int expire_foo;
-
     p = newsplit(&par);
     p_expire = p + 1;
     while (*(++p) != 0) {
       switch (tolower((unsigned) *p)) {
+      case 'y':
+        *p = 0;
+        expire_foo = strtol(p_expire, NULL, 10);
+        expire_time += 60 * 60 * 24 * 365 * expire_foo;
+        p_expire = p + 1;
+        break;
       case 'd':
         *p = 0;
         expire_foo = strtol(p_expire, NULL, 10);
-        if (expire_foo > 365)
-          expire_foo = 365;
-        expire_time += 86400 * expire_foo;
+        expire_time += 60 * 60 * 24 * expire_foo;
         p_expire = p + 1;
         break;
       case 'h':
         *p = 0;
         expire_foo = strtol(p_expire, NULL, 10);
-        if (expire_foo > 8760)
-          expire_foo = 8760;
-        expire_time += 3600 * expire_foo;
+        expire_time += 60 * 60 * expire_foo;
         p_expire = p + 1;
         break;
       case 'm':
         *p = 0;
         expire_foo = strtol(p_expire, NULL, 10);
-        if (expire_foo > 525600)
-          expire_foo = 525600;
         expire_time += 60 * expire_foo;
         p_expire = p + 1;
       }
+    }
+    /* For whomever is stuck with maintaining this in 2033- this will
+     * break. Hopefully we've dealt with the max unixtime issue by now
+     * (Year 2038 problem), but if you're reading this, clearly we
+     * haven't because we are lazy. Sorry.
+     */
+    if (expire_time > (60 * 60 * 24 * 365 * 5)) {
+      dprintf(idx, "expire time must be equal to or less than 5 years" 
+          "(1825 days)\n");
+      return;
     }
   }
   if (!par[0])
