@@ -471,7 +471,8 @@ void block_dns_hostbyip(sockname_t *addr)
     if (!sigsetjmp(alarmret, 1)) {
       alarm(resolve_timeout);
       i = getnameinfo((const struct sockaddr *) &addr->addr.s4,
-                      sizeof (struct sockaddr_in), host, sizeof host, 0, 0, 0);
+                      sizeof (struct sockaddr_in), host, sizeof host, NULL, 0,
+                      0);
       alarm(0);
       if (i)
         debug1("dns: getnameinfo(): error = %s", gai_strerror(i));
@@ -483,7 +484,8 @@ void block_dns_hostbyip(sockname_t *addr)
     if (!sigsetjmp(alarmret, 1)) {
       alarm(resolve_timeout);
       i = getnameinfo((const struct sockaddr *) &addr->addr.s6,
-                      sizeof (struct sockaddr_in6), host, sizeof host, 0, 0, 0);
+                      sizeof (struct sockaddr_in6), host, sizeof host, NULL, 0,
+                      0);
       alarm(0);
       if (i)
         debug1("dns: getnameinfo(): error = %s", gai_strerror(i));
