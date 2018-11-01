@@ -24,6 +24,7 @@
 #define _EGG_MOD_MODULE_H
 
 /* Just include *all* the include files...it's slower but EASIER */
+#include <signal.h>
 #include "src/main.h"
 #include "modvals.h"
 #include "src/tandem.h"
@@ -318,7 +319,7 @@
 /* 168 - 171 */
 #define expected_memory ((int(*)(void))global[168])
 #define tell_mem_status ((void(*)(char *))global[169])
-#define do_restart (*(int *)(global[170]))
+#define do_restart (*(volatile sig_atomic_t *)(global[170]))
 #define check_tcl_filt ((const char *(*)(int, const char *))global[171])
 /* 172 - 175 */
 #define add_hook(a,b) (((void (*) (int, Function))global[172])(a,b))

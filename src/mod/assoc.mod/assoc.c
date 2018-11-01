@@ -295,8 +295,7 @@ static int tcl_assoc STDVAR
     return TCL_ERROR;
   }
   if (argc == 3) {
-    strncpy(name, argv[2], 20);
-    name[20] = 0;
+    strlcpy(name, argv[2], sizeof name);
     add_assoc(name, chan);
     botnet_send_assoc(-1, chan, "*script*", name);
   }

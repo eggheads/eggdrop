@@ -810,10 +810,9 @@ static void queue_server(int which, char *msg, int len)
   /* Remove \r\n. We will add these back when we send the text to the server.
    * - Wcc [01/09/2004]
    */
-  strncpy(buf, msg, sizeof buf);
+  strlcpy(buf, msg, sizeof buf);
   msg = buf;
   remove_crlf(&msg);
-  buf[510] = 0;
   len = strlen(buf);
 
   /* No queue for PING and PONG - drummer */

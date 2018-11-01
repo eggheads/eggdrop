@@ -35,6 +35,7 @@
 #  include <sys/select.h>
 #endif
 #include <netinet/in.h>
+#include <netinet/tcp.h>
 #include <arpa/inet.h>
 #include <errno.h>
 #if HAVE_UNISTD_H
@@ -348,6 +349,7 @@ void setsock(int sock, int options)
 {
   int i = allocsock(sock, options), parm;
   struct threaddata *td = threaddata();
+  int res;
 
   if (i == -1) {
     putlog(LOG_MISC, "*", "Sockettable full.");
@@ -359,6 +361,11 @@ void setsock(int sock, int options)
 
     parm = 0;
     setsockopt(sock, SOL_SOCKET, SO_LINGER, (void *) &parm, sizeof(int));
+
+    /* Turn off Nagle's algorithm, see man tcp */
+    parm = 1;
+    if ((res = setsockopt(sock, IPPROTO_TCP, TCP_NODELAY, &parm, sizeof parm)))
+      debug2("net: setsock(): setsockopt() s %i level IPPROTO_TCP optname TCP_NODELAY error %i", sock, res);
   }
   if (options & SOCK_LISTEN) {
     /* Tris says this lets us grab the same port again next time */
