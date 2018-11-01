@@ -132,8 +132,7 @@ static int ctcp_TIME(char *nick, char *uhost, char *handle, char *object,
 
   if (ctcp_mode == 1)
     return 1;
-  strncpy(tms, ctime(&now), 24);
-  tms[24] = 0;
+  strlcpy(tms, ctime(&now), sizeof tms);
   simple_sprintf(ctcp_reply, "%s\001TIME %s\001", ctcp_reply, tms);
   return 1;
 }
@@ -282,17 +281,11 @@ char *ctcp_start(Function *global_funcs)
   add_tcl_ints(myints);
   add_builtins(H_ctcp, myctcp);
   add_help_reference("ctcp.help");
-  if (!ctcp_version[0]) {
-    strncpy(ctcp_version, ver, 120);
-    ctcp_version[120] = 0;
-  }
-  if (!ctcp_finger[0]) {
-    strncpy(ctcp_finger, ver, 120);
-    ctcp_finger[120] = 0;
-  }
-  if (!ctcp_userinfo[0]) {
-    strncpy(ctcp_userinfo, ver, 120);
-    ctcp_userinfo[120] = 0;
-  }
+  if (!ctcp_version[0])
+    strlcpy(ctcp_version, ver, sizeof ctcp_version);
+  if (!ctcp_finger[0])
+    strlcpy(ctcp_finger, ver, sizeof ctcp_finger);
+  if (!ctcp_userinfo[0])
+    strlcpy(ctcp_userinfo, ver, sizeof ctcp_userinfo);
   return NULL;
 }
