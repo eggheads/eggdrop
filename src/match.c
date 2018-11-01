@@ -252,7 +252,6 @@ int addr_match(char *m, char *n, int user, int cmp)
     return wild_match(mu, nu);
 
   *r++ = *s++ = 0;
-  tmpscore = wild_match(mu, nu);
   if (!(tmpscore = wild_match(mu, nu)))
     return NOMATCH; /* nick!ident parts don't match */
   score += tmpscore;
@@ -339,7 +338,7 @@ int cidr_match(char *m, char *n, int count)
 {
 #ifdef IPV6
   int c, af = AF_INET, rest;
-  u_8bit_t block[16], addr[16];
+  uint8_t block[16], addr[16];
 
   if (strchr(m, ':') || strchr(n, ':')) {
     af = AF_INET6;
@@ -386,7 +385,7 @@ static int cron_matchfld(char *mask, int match)
   int skip = 0, f, t;
   char *p, *q;
 
-  for (p = mask; mask && *mask; mask = p) {
+  for (; mask && *mask; mask = p) {
     /* loop through a list of values, if such is given */
     if ((p = strchr(mask, ',')))
       *p++ = 0;

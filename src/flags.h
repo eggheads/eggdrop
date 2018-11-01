@@ -46,16 +46,17 @@ struct flag_record {
  *   unused letters: is
  *
  * botflags:
- *   a?????ghi??l???p?rs??0123456789?????
- *   unused letters: bcdefjkmnoqtuvwxyz
+ *   a?????ghi??l???p?rs??0123456789
+ *   unused letters: bcdefjkmnoqtu
+ *   unusable letters: vwxyz
  *
  * chanflags:
- *   a??defg???klmno?qr???vw?yz + user defined A-Z
- *   unused letters: bchijpstuw
+ *   a??defg???klmno?qrs??vw?yz + user defined A-Z
+ *   unused letters: bchijptuw (s from bot flags)
  */
 #define USER_VALID 0x003fbfeff   /* Sum of all valid USER_ flags */
-#define CHAN_VALID 0x003637c79   /* Sum of all valid CHAN_ flags */
-#define BOT_VALID  0x07fe689C1   /* Sum of all valid BOT_  flags */
+#define CHAN_VALID 0x003677c79   /* Sum of all valid CHAN_ flags */
+#define BOT_VALID  0x07fe689c1   /* Sum of all valid BOT_  flags */
 
 
 #define USER_AUTOOP        0x00000001 /* a  auto-op                               */
@@ -108,11 +109,7 @@ struct flag_record {
 #define BOT_AGGRESSIVE 0x00040000 /* s  bot shares user files           */
 #define BOT_T          0x00080000 /* t  unused                          */
 #define BOT_U          0x00100000 /* u  unused                          */
-#define BOT_V          0x80000000 /* v  unused                          */
-#define BOT_W          0x100000000 /* w  unused                          */
-#define BOT_X          0x200000000 /* x  unused                          */
-#define BOT_Y          0x400000000 /* y  unused                          */
-#define BOT_Z          0x800000000 /* z  unused                          */
+/* BOT_V to BOT_Z not usable as they're bitflags 32-36 */
 #define BOT_FLAG0      0x00200000 /* 0  user-defined flag #0            */
 #define BOT_FLAG1      0x00400000 /* 1  user-defined flag #1            */
 #define BOT_FLAG2      0x00800000 /* 2  user-defined flag #2            */

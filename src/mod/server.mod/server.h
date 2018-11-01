@@ -86,11 +86,6 @@
         ptr = NULL;                                     \
 } while (0)
 
-#define write_to_server(x,y) do {                       \
-        tputs(serv, (x), (y));                          \
-        tputs(serv, "\r\n", 2);                         \
-} while (0)
-
 #endif /* MAKING_SERVER */
 
 struct server_list {

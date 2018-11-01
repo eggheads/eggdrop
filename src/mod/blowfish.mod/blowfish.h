@@ -30,8 +30,8 @@
 #define KEYBYTES     8
 
 union aword {
-  u_32bit_t word;
-  u_8bit_t byte[4];
+  uint32_t word;
+  uint8_t byte[4];
   struct {
 #ifdef WORDS_BIGENDIAN
     unsigned int byte0:8;

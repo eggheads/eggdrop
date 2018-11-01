@@ -30,20 +30,21 @@ static struct flag_record victim = { FR_GLOBAL | FR_CHAN, 0, 0, 0, 0, 0 };
 static void cmd_pls_ban(struct userrec *u, int idx, char *par)
 {
   char *chname, *who, s[UHOSTLEN], s1[UHOSTLEN], *p, *p_expire;
-  unsigned long int expire_time = 0, expire_foo;
+  long expire_foo;
+  unsigned long expire_time = 0;
   int sticky = 0;
   struct chanset_t *chan = NULL;
   module_entry *me;
 
   if (!par[0]) {
-    dprintf(idx, "Usage: +ban <hostmask> [channel] [%%<XdXhXm>] [reason]\n");
+    dprintf(idx, "Usage: +ban <hostmask> [channel] [%%<XyXdXhXm>] [reason]\n");
   } else {
     who = newsplit(&par);
     /* Sanity check for <channel> <ban> vs. <ban> <channel> */
     if (par[0] && strchr(CHANMETA, who[0])) {
       chname = who;
       who = newsplit(&par);
-      dprintf(idx, "Usage: +ban <hostmask> [channel] [%%<XdXhXm>] [reason]\n");
+      dprintf(idx, "Usage: +ban <hostmask> [channel] [%%<XyXdXhXm>] [reason]\n");
       dprintf(idx, "Did you mean: .+ban %s %s %s\n", who, chname, par);
       return;
     } else if (par[0] && strchr(CHANMETA, par[0]))
@@ -72,30 +73,35 @@ static void cmd_pls_ban(struct userrec *u, int idx, char *par)
       p_expire = p + 1;
       while (*(++p) != 0) {
         switch (tolower((unsigned) *p)) {
+        case 'y':
+          *p = 0;
+          expire_foo = strtol(p_expire, NULL, 10);
+          expire_time += 60 * 60 * 24 * 365 * expire_foo;
+          p_expire = p + 1;
+          break;
         case 'd':
           *p = 0;
           expire_foo = strtol(p_expire, NULL, 10);
-          if (expire_foo > 365)
-            expire_foo = 365;
-          expire_time += 86400 * expire_foo;
+          expire_time += 60 * 60 * 24 * expire_foo;
           p_expire = p + 1;
           break;
         case 'h':
           *p = 0;
           expire_foo = strtol(p_expire, NULL, 10);
-          if (expire_foo > 8760)
-            expire_foo = 8760;
-          expire_time += 3600 * expire_foo;
+          expire_time += 60 * 60 * expire_foo;
           p_expire = p + 1;
           break;
         case 'm':
           *p = 0;
           expire_foo = strtol(p_expire, NULL, 10);
-          if (expire_foo > 525600)
-            expire_foo = 525600;
           expire_time += 60 * expire_foo;
           p_expire = p + 1;
         }
+      }
+      if (expire_time > (60 * 60 * 24 * 365 * 5)) {
+        dprintf(idx, "Ban expiration time cannot exceed 5 years "
+            "(1825 days)\n");
+        return;
       }
     }
     if (!par[0])
@@ -113,7 +119,7 @@ static void cmd_pls_ban(struct userrec *u, int idx, char *par)
     } else if (!strchr(who, '@'))
       egg_snprintf(s, sizeof s, "%s@*", who);   /* brain-dead? */
     else
-      strncpyz(s, who, sizeof s);
+      strlcpy(s, who, sizeof s);
     if ((me = module_find("server", 0, 0)) && me->funcs) {
       egg_snprintf(s1, sizeof s1, "%s!%s", me->funcs[SERVER_BOTNAME],
                    me->funcs[SERVER_BOTUSERHOST]);
@@ -171,7 +177,8 @@ static void cmd_pls_ban(struct userrec *u, int idx, char *par)
 static void cmd_pls_exempt(struct userrec *u, int idx, char *par)
 {
   char *chname, *who, s[UHOSTLEN], *p, *p_expire;
-  unsigned long int expire_time = 0, expire_foo;
+  long expire_foo;
+  unsigned long expire_time = 0;
   struct chanset_t *chan = NULL;
 
   if (!use_exempts) {
@@ -179,7 +186,7 @@ static void cmd_pls_exempt(struct userrec *u, int idx, char *par)
     return;
   }
   if (!par[0]) {
-    dprintf(idx, "Usage: +exempt <hostmask> [channel] [%%<XdXhXm>] [reason]\n");
+    dprintf(idx, "Usage: +exempt <hostmask> [channel] [%%<XydXhXm>] [reason]\n");
   } else {
     who = newsplit(&par);
     if (par[0] && strchr(CHANMETA, par[0]))
@@ -208,30 +215,35 @@ static void cmd_pls_exempt(struct userrec *u, int idx, char *par)
       p_expire = p + 1;
       while (*(++p) != 0) {
         switch (tolower((unsigned) *p)) {
+        case 'y':
+          *p = 0;
+          expire_foo = strtol(p_expire, NULL, 10);
+          expire_time += 60 * 60 * 24 * 365 * expire_foo;
+          p_expire = p + 1;
+          break;
         case 'd':
           *p = 0;
           expire_foo = strtol(p_expire, NULL, 10);
-          if (expire_foo > 365)
-            expire_foo = 365;
-          expire_time += 86400 * expire_foo;
+          expire_time += 60 * 60 * 24 * expire_foo;
           p_expire = p + 1;
           break;
         case 'h':
           *p = 0;
           expire_foo = strtol(p_expire, NULL, 10);
-          if (expire_foo > 8760)
-            expire_foo = 8760;
-          expire_time += 3600 * expire_foo;
+          expire_time += 60 * 60 * expire_foo;
           p_expire = p + 1;
           break;
         case 'm':
           *p = 0;
           expire_foo = strtol(p_expire, NULL, 10);
-          if (expire_foo > 525600)
-            expire_foo = 525600;
           expire_time += 60 * expire_foo;
           p_expire = p + 1;
         }
+      }
+      if (expire_time > (60 * 60 * 24 * 365 * 5)) {
+        dprintf(idx, "Exempt expiration time cannot exceed 5 years "
+            "(1825 days)\n");
+        return;
       }
     }
     if (!par[0])
@@ -249,7 +261,7 @@ static void cmd_pls_exempt(struct userrec *u, int idx, char *par)
     } else if (!strchr(who, '@'))
       egg_snprintf(s, sizeof s, "%s@*", who);   /* brain-dead? */
     else
-      strncpyz(s, who, sizeof s);
+      strlcpy(s, who, sizeof s);
 
     /* IRC can't understand exempts longer than 70 characters */
     if (strlen(s) > 70) {
@@ -292,7 +304,8 @@ static void cmd_pls_exempt(struct userrec *u, int idx, char *par)
 static void cmd_pls_invite(struct userrec *u, int idx, char *par)
 {
   char *chname, *who, s[UHOSTLEN], *p, *p_expire;
-  unsigned long int expire_time = 0, expire_foo;
+  long expire_foo;
+  unsigned long expire_time = 0;
   struct chanset_t *chan = NULL;
 
   if (!use_invites) {
@@ -301,7 +314,7 @@ static void cmd_pls_invite(struct userrec *u, int idx, char *par)
   }
 
   if (!par[0]) {
-    dprintf(idx, "Usage: +invite <hostmask> [channel] [%%<XdXhXm>] [reason]\n");
+    dprintf(idx, "Usage: +invite <hostmask> [channel] [%%<XyXdXhXm>] [reason]\n");
   } else {
     who = newsplit(&par);
     if (par[0] && strchr(CHANMETA, par[0]))
@@ -330,30 +343,35 @@ static void cmd_pls_invite(struct userrec *u, int idx, char *par)
       p_expire = p + 1;
       while (*(++p) != 0) {
         switch (tolower((unsigned) *p)) {
+        case 'y':
+          *p = 0;
+          expire_foo = strtol(p_expire, NULL, 10);
+          expire_time += 60 * 60 * 24 * 365 * expire_foo;
+          p_expire = p + 1;
+          break;
         case 'd':
           *p = 0;
           expire_foo = strtol(p_expire, NULL, 10);
-          if (expire_foo > 365)
-            expire_foo = 365;
-          expire_time += 86400 * expire_foo;
+          expire_time += 60 * 60 * 24 * expire_foo;
           p_expire = p + 1;
           break;
         case 'h':
           *p = 0;
           expire_foo = strtol(p_expire, NULL, 10);
-          if (expire_foo > 8760)
-            expire_foo = 8760;
-          expire_time += 3600 * expire_foo;
+          expire_time += 60 * 60 * expire_foo;
           p_expire = p + 1;
           break;
         case 'm':
           *p = 0;
           expire_foo = strtol(p_expire, NULL, 10);
-          if (expire_foo > 525600)
-            expire_foo = 525600;
           expire_time += 60 * expire_foo;
           p_expire = p + 1;
         }
+      }
+      if (expire_time > (60 * 60 * 24 * 365 * 5)) {
+        dprintf(idx, "Invite expiration time cannot exceed 5 years "
+            "(1825 days)\n");
+        return;
       }
     }
     if (!par[0])
@@ -371,7 +389,7 @@ static void cmd_pls_invite(struct userrec *u, int idx, char *par)
     } else if (!strchr(who, '@'))
       egg_snprintf(s, sizeof s, "%s@*", who);   /* brain-dead? */
     else
-      strncpyz(s, who, sizeof s);
+      strlcpy(s, who, sizeof s);
 
     /* IRC can't understand invites longer than 70 characters */
     if (strlen(s) > 70) {
@@ -447,7 +465,7 @@ static void cmd_mns_ban(struct userrec *u, int idx, char *par)
       return;
     }
   }
-  strncpyz(s, ban, sizeof s);
+  strlcpy(s, ban, sizeof s);
   if (console) {
     i = u_delban(NULL, s, (u->flags & USER_OP));
     if (i > 0) {
@@ -471,7 +489,7 @@ static void cmd_mns_ban(struct userrec *u, int idx, char *par)
   }
   if (str_isdigit(ban)) {
     i = atoi(ban);
-    /* substract the numer of global bans to get the number of the channel ban */
+    /* subtract the number of global bans to get the number of the channel ban */
     egg_snprintf(s, sizeof s, "%d", i);
     j = u_delban(0, s, 0);
     if (j < 0) {
@@ -558,7 +576,7 @@ static void cmd_mns_exempt(struct userrec *u, int idx, char *par)
       return;
     }
   }
-  strncpyz(s, exempt, sizeof s);
+  strlcpy(s, exempt, sizeof s);
   if (console) {
     i = u_delexempt(NULL, s, (u->flags & USER_OP));
     if (i > 0) {
@@ -582,7 +600,7 @@ static void cmd_mns_exempt(struct userrec *u, int idx, char *par)
   }
   if (str_isdigit(exempt)) {
     i = atoi(exempt);
-    /* substract the numer of global exempts to get the number of the channel exempt */
+    /* subtract the number of global exempts to get the number of the channel exempt */
     egg_snprintf(s, sizeof s, "%d", i);
     j = u_delexempt(0, s, 0);
     if (j < 0) {
@@ -670,7 +688,7 @@ static void cmd_mns_invite(struct userrec *u, int idx, char *par)
       return;
     }
   }
-  strncpyz(s, invite, sizeof s);
+  strlcpy(s, invite, sizeof s);
   if (console) {
     i = u_delinvite(NULL, s, (u->flags & USER_OP));
     if (i > 0) {
@@ -694,7 +712,7 @@ static void cmd_mns_invite(struct userrec *u, int idx, char *par)
   }
   if (str_isdigit(invite)) {
     i = atoi(invite);
-    /* substract the numer of global invites to get the number of the channel invite */
+    /* subtract the number of global invites to get the number of the channel invite */
     egg_snprintf(s, sizeof s, "%d", i);
     j = u_delinvite(0, s, 0);
     if (j < 0) {
@@ -935,18 +953,18 @@ static void cmd_stick_yn(int idx, char *par, int yn)
 {
   int i = 0, j;
   struct chanset_t *chan, *achan;
-  char *stick_type, s[UHOSTLEN], chname[81];
+  char *stick_type, s[UHOSTLEN], chname[CHANNELLEN + 1];
   module_entry *me;
 
   stick_type = newsplit(&par);
-  strncpyz(s, newsplit(&par), sizeof s);
-  strncpyz(chname, newsplit(&par), sizeof chname);
+  strlcpy(s, newsplit(&par), sizeof s);
+  strlcpy(chname, newsplit(&par), sizeof chname);
 
   if (egg_strcasecmp(stick_type, "exempt") &&
       egg_strcasecmp(stick_type, "invite") &&
       egg_strcasecmp(stick_type, "ban")) {
-    strncpyz(chname, s, sizeof chname);
-    strncpyz(s, stick_type, sizeof s);
+    strlcpy(chname, s, sizeof chname);
+    strlcpy(s, stick_type, sizeof s);
   }
   if (!s[0]) {
     dprintf(idx, "Usage: %sstick [ban/exempt/invite] <hostmask or number> "
@@ -969,7 +987,7 @@ static void cmd_stick_yn(int idx, char *par, int yn)
         dprintf(idx, "%stuck exempt: %s\n", yn ? "S" : "Uns", s);
         return;
       }
-      strncpyz(chname, dcc[idx].u.chat->con_chan, sizeof chname);
+      strlcpy(chname, dcc[idx].u.chat->con_chan, sizeof chname);
     }
     /* Channel-specific exempt? */
     if (!(chan = findchan_by_dname(chname))) {
@@ -977,7 +995,7 @@ static void cmd_stick_yn(int idx, char *par, int yn)
       return;
     }
     if (str_isdigit(s)) {
-      /* substract the numer of global exempts to get the number of the channel exempt */
+      /* subtract the number of global exempts to get the number of the channel exempt */
       j = u_setsticky_exempt(NULL, s, -1);
       if (j < 0)
         egg_snprintf(s, sizeof s, "%d", -j);
@@ -1007,7 +1025,7 @@ static void cmd_stick_yn(int idx, char *par, int yn)
         dprintf(idx, "%stuck invite: %s\n", yn ? "S" : "Uns", s);
         return;
       }
-      strncpyz(chname, dcc[idx].u.chat->con_chan, sizeof chname);
+      strlcpy(chname, dcc[idx].u.chat->con_chan, sizeof chname);
     }
     /* Channel-specific invite? */
     if (!(chan = findchan_by_dname(chname))) {
@@ -1015,7 +1033,7 @@ static void cmd_stick_yn(int idx, char *par, int yn)
       return;
     }
     if (str_isdigit(s)) {
-      /* substract the numer of global invites to get the number of the channel invite */
+      /* subtract the number of global invites to get the number of the channel invite */
       j = u_setsticky_invite(NULL, s, -1);
       if (j < 0)
         egg_snprintf(s, sizeof s, "%d", -j);
@@ -1042,7 +1060,7 @@ static void cmd_stick_yn(int idx, char *par, int yn)
           (me->funcs[IRC_CHECK_THIS_BAN]) (achan, s, yn);
       return;
     }
-    strncpyz(chname, dcc[idx].u.chat->con_chan, sizeof chname);
+    strlcpy(chname, dcc[idx].u.chat->con_chan, sizeof chname);
   }
   /* Channel-specific ban? */
   if (!(chan = findchan_by_dname(chname))) {
@@ -1050,7 +1068,7 @@ static void cmd_stick_yn(int idx, char *par, int yn)
     return;
   }
   if (str_isdigit(s)) {
-    /* substract the numer of global bans to get the number of the channel ban */
+    /* subtract the number of global bans to get the number of the channel ban */
     j = u_setsticky_ban(NULL, s, -1);
     if (j < 0)
       egg_snprintf(s, sizeof s, "%d", -j);
@@ -1544,9 +1562,8 @@ static void cmd_chanset(struct userrec *u, int idx, char *par)
           strcpy(parcpy, par);
           irp = Tcl_CreateInterp();
           if (tcl_channel_modify(irp, chan, 2, list) == TCL_OK) {
-            char tocat[sizeof answers];
-            egg_snprintf(tocat, sizeof tocat, "%s { %s }", list[0], parcpy);
-            strncat(answers, tocat, sizeof answers - strlen(answers) - 1);
+            int len = strlen(answers);
+            egg_snprintf(answers + len, (sizeof answers) - len, "%s { %s }", list[0], parcpy); /* Concatenation */
           } else if (!all || !chan->next)
             dprintf(idx, "Error trying to set %s for %s, %s\n",
                     list[0], all ? "all channels" : chname, Tcl_GetStringResult(irp));

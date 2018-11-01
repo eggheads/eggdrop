@@ -184,7 +184,7 @@ Baue eine Telnetverbindung zu dem Bot auf und gib 'NEW' als Deinen Nickname ein.
 0x62a,Setze Channelinfo zurueck.
 0x62b,Springe auf anderen Server...
 0x62c,Channel ist im Moment versteckt.
-0x62d,Momentan auf auf dem Channel
+0x62d,Momentan auf dem Channel
 0x62e,Nie einen meiner Channels betreten.
 0x62f,Zuletzt gesehen am
 0x630,Ich kenne Dich nicht, bitte stell Dich mir zuerst vor.
@@ -199,7 +199,7 @@ Baue eine Telnetverbindung zu dem Bot auf und gib 'NEW' als Deinen Nickname ein.
 0x639,Nickname wurde jupiterisiert
 0x63a,Channel %s ist jupiterisiert. :(
 0x63b,%s sagt ich sei nicht registriert, ich probiere den naechsten.
-0x63c,Du hast einen hirnamputierten Server.
+0x63c,Der Server sagt wir seien noch nicht registriert.
 0x63d,Flood von @%s!  Wird ab sofort ignoriert!
 0x63f,JOIN flood von @%s!  Wird gebannt.
 0x640,Channel flood von %s -- wird gekickt.
@@ -368,13 +368,13 @@ Baue eine Telnetverbindung zu dem Bot auf und gib 'NEW' als Deinen Nickname ein.
 0xc04,DCC Chat abgewiesen (kein Passwort)
 0xc05,DCC Chat abgewiesen (+x aber kein Dateisystem)
 0xc07,Im Moment sind zu viele Benutzer im Dateisystem.
-0xc0c,Sorry, zu viele DCC Verbindungen.
+0xc0c,Entschuldigung, zu viele DCC Verbindungen.
 0xc0d,DCC Verbindungen ueberfuellt: %s %s (%s!%s)
 0xc19,Verbindung nicht zustandegekommen
 0xc1a,DCC Verbindung nicht zustandegekommen
 0xc1c,Gib Dein Passwort ein.
 0xc1d,%s wurde gewaltsam entfernt wegen Flood.\n
-0xc1e,-=- poof -=-\n
+0xc1e,-=- Simsalabim -=-\n
 0xc1f,Du wurdest von dem %s runtergeworfen von %s%s%s\n
 0xc20,%s hat %s aus der Partyline rausgeschmissen%s%s
 0xc21,DCC Chat abgewiesen (falscher Port)
