@@ -252,7 +252,6 @@ int addr_match(char *m, char *n, int user, int cmp)
     return wild_match(mu, nu);
 
   *r++ = *s++ = 0;
-  wild_match(mu, nu);
   if (!(tmpscore = wild_match(mu, nu)))
     return NOMATCH; /* nick!ident parts don't match */
   score += tmpscore;
