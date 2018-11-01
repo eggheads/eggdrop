@@ -265,9 +265,9 @@ static void blowfish_init(uint8_t *key, int keybytes)
 #define SALT2  0x23f6b095
 
 /* Convert 64-bit encrypted password to text for userfile */
-static const char *base64 =
+static char *base64 =
             "./0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
-static const char *cbcbase64 =
+static char *cbcbase64 =
             "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=";
 
 static int base64dec(char c)
