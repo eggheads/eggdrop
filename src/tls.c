@@ -627,7 +627,10 @@ void ssl_info(SSL *ssl, int where, int ret)
   X509 *cert;
   char buf[256];
   ssl_appdata *data;
-  const SSL_CIPHER *cipher;
+#if OPENSSL_VERSION_NUMBER >= 0x009080d1L /* 0.9.8m-beta1 */
+  const
+#endif
+  SSL_CIPHER *cipher;
   int secret, processed;
 
   if (!(data = (ssl_appdata *) SSL_get_app_data(ssl)))
