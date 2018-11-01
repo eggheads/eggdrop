@@ -86,7 +86,7 @@ Git Usage
 
     Eggdrop development has moved from a CVS-based version control system to
     git. If you are interested in trying out the VERY LATEST updates to 
-    Eggdrop, you may want be interested in pulling the most recent code from
+    Eggdrop, you may be interested in pulling the most recent code from
     there. BE WARNED, the development branch of Eggdrop is not to be
     considered stable and may (haha) have some significant bugs in it. The
     Eggheads Development Team will in NO WAY take any responsibility for 

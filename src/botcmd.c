@@ -327,7 +327,7 @@ static void remote_tell_who(int idx, char *nick, int chan)
       /* for 2nd and more chans we need to prepend ','; i is > 10 */
       if (i > 10) {
         /* check if ", #chan" fits or if there is a next chan, if ", #chan," fits */
-	if ((c->next && i + l + 3 <= ssize) || (!c->next && i + l + 2 <= ssize)) {
+        if ((c->next && i + l + 3 <= ssize) || (!c->next && i + l + 2 <= ssize)) {
           strcat(s, ", ");
           i += 2;
         } else {
@@ -952,7 +952,7 @@ static void bot_thisbot(int idx, char *par)
   noshare = 1;
   change_handle(dcc[idx].user, par);
   noshare = 0;
-  strncpyz(dcc[idx].nick, par, sizeof dcc[idx].nick);
+  strlcpy(dcc[idx].nick, par, sizeof dcc[idx].nick);
 }
 
 static void bot_handshake(int idx, char *par)

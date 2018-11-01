@@ -117,7 +117,7 @@ do {                                                                    \
         (fdh).sharelink_len     = 0;                                    \
 }
 
-/* Memory debugging makros */
+/* Memory debugging macros */
 #define malloc_fdbe() _malloc_fdbe(__FILE__, __LINE__)
 #define filedb_getfile(fdb, pos, get) _filedb_getfile(fdb, pos, get, __FILE__, __LINE__)
 #define filedb_matchfile(fdb, pos, match) _filedb_matchfile(fdb, pos, match, __FILE__, __LINE__)

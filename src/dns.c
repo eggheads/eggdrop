@@ -491,7 +491,7 @@ void block_dns_hostbyip(sockname_t *addr)
   }
 #endif
   if (hp)
-    strncpyz(s, hp->h_name, sizeof s);
+    strlcpy(s, hp->h_name, sizeof s);
   call_hostbyip(addr, s, hp ? 1 : 0);
 }
 

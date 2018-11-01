@@ -81,7 +81,7 @@ You can change the basic Eggdrop appearance and behavior in this section.
 
   set prefer-ipv6 "1"
     Prefer IPv6 over IPv4 for connections and dns resolution.
-    If the preferred protocol family is not suppored, other possible
+    If the preferred protocol family is not supported, other possible
     families will be tried.
 
   addlang "english"
@@ -544,7 +544,7 @@ support.
     Specify the list of ciphers (in order of preference) allowed for use with
     ssl. The cipher list is one or more cipher strings separated by colons,
     commas or spaces. Unavailable ciphers are silently ignored unless no
-    useable cipher could be found. For the list of possible cipher strings
+    usable cipher could be found. For the list of possible cipher strings
     and their meanings, please refer to the ciphers(1) manual.
     Note: if you set this, the value replaces any ciphers OpenSSL might use by
     default. To include the default ciphers, you can put DEFAULT as a cipher

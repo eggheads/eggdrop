@@ -259,10 +259,10 @@ static void read_lang(char *langfile)
         lnew = 0;
         ctmp[-1] = 0;
       } else {
-      	ltexts++;
-      	lnew = 1;
-      	/* Convert literal \n and \t escapes */
-      	for (ctmp1 = ctmp = ltext; *ctmp1; ctmp++, ctmp1++) {
+        ltexts++;
+        lnew = 1;
+        /* Convert literal \n and \t escapes */
+        for (ctmp1 = ctmp = ltext; *ctmp1; ctmp++, ctmp1++) {
           if ((*ctmp1 == '\\') && ctmp1[1] == 'n') {
             *ctmp = '\n';
             ctmp1++;
@@ -302,7 +302,7 @@ int exist_lang_section(char *section)
 }
 
 /* Add a new language section. e.g. section "core"
- * Load an apropriate language file for the specified section.
+ * Load an appropriate language file for the specified section.
  */
 void add_lang_section(char *section)
 {
@@ -415,7 +415,7 @@ static char *get_langfile(lang_sec *sec)
 
 /* Split up a string /path/<section>.<language>.lang into the
  * needed information for the new language system.
- * Only needed for compability functions.
+ * Only needed for compatibility functions.
  */
 static int split_lang(char *par, char **lang, char **section)
 {
@@ -439,7 +439,7 @@ static int split_lang(char *par, char **lang, char **section)
   return 1;
 }
 
-/* Compability function to allow users/modules to use the old command.
+/* Compatibility function to allow users/modules to use the old command.
  */
 int cmd_loadlanguage(struct userrec *u, int idx, char *par)
 {
@@ -535,7 +535,7 @@ static int cmd_languagedump(struct userrec *u, int idx, char *par)
       sscanf(par, "%x", &idx2);
     else
       idx2 = (int) strtol(par, (char **) NULL, 10);
-    strncpyz(ltext2, get_language(idx2), sizeof ltext2);
+    strlcpy(ltext2, get_language(idx2), sizeof ltext2);
     dprintf(idx, "0x%x: %s\n", idx2, ltext2);
     return 0;
   }
@@ -635,7 +635,7 @@ static int cmd_languagestatus(struct userrec *u, int idx, char *par)
   return 0;
 }
 
-/* Compability function to allow scripts to use the old command.
+/* Compatibility function to allow scripts to use the old command.
  */
 static int tcl_language STDVAR
 {
@@ -740,7 +740,7 @@ void init_language(int flag)
     for (i = 0; i < 32; i++)
       langtab[i] = 0;
     /* The default language is always BASELANG as language files are
-     * gauranteed to exist in that language.
+     * guaranteed to exist in that language.
      */
     add_lang(BASELANG);
     /* Let the user choose a different, preferred language */

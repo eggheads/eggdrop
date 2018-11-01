@@ -26,6 +26,8 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
+#include <sys/time.h>
+#include <sys/resource.h>
 #include "main.h"
 #include "chan.h"
 #include "users.h"
@@ -714,8 +716,10 @@ static int trigger_bind(const char *proc, const char *param,
                                char *mask)
 {
   int x;
+  struct rusage ru1, ru2;
+  int r = 0;
 #ifdef DEBUG_CONTEXT
-  const char *msg = "Tcl proc: %s, param: %s";
+  #define FORMAT "Tcl proc: %s, param: %s"
   char *buf;
 
   /* We now try to debug the Tcl_VarEval() call below by remembering both
@@ -723,9 +727,10 @@ static int trigger_bind(const char *proc, const char *param,
    * less helpless when we see context dumps.
    */
   Context;
-  buf = nmalloc(strlen(msg) + (proc ? strlen(proc) : 6)
-                + (param ? strlen(param) : 6) + 1);
-  sprintf(buf, msg, proc ? proc : "<null>", param ? param : "<null>");
+  /* reuse x */
+  x = snprintf(NULL, 0, FORMAT, proc ? proc : "<null>", param ? param : "<null>");
+  buf = nmalloc(x + 1);
+  sprintf(buf, FORMAT, proc ? proc : "<null>", param ? param : "<null>");
   ContextNote(buf);
   nfree(buf);
 #endif /* DEBUG_CONTEXT */
@@ -736,8 +741,21 @@ static int trigger_bind(const char *proc, const char *param,
    */
   Tcl_SetVar(interp, "lastbind", (char *) mask, TCL_GLOBAL_ONLY);
 
+  if(proc && proc[0] != '*') { /* proc[0] != '*' excludes internal binds */
+    debug1("triggering bind %s", proc);
+    r = getrusage(RUSAGE_SELF, &ru1);
+  }
   x = Tcl_VarEval(interp, proc, param, NULL);
   Context;
+  if (proc && proc[0] != '*' && !r) {
+    if (!getrusage(RUSAGE_SELF, &ru2)) {
+      debug3("triggered bind %s, user %.3fms sys %.3fms", proc,
+             (double) (ru2.ru_utime.tv_usec - ru1.ru_utime.tv_usec) / 1000 +
+             (double) (ru2.ru_utime.tv_sec  - ru1.ru_utime.tv_sec ) * 1000,
+             (double) (ru2.ru_stime.tv_usec - ru1.ru_stime.tv_usec) / 1000 +
+             (double) (ru2.ru_stime.tv_sec  - ru1.ru_stime.tv_sec ) * 1000);
+    }
+  }
 
   if (x == TCL_ERROR) {
     /* FIXME: we really should be able to log longer errors */
@@ -817,6 +835,7 @@ int check_tcl_bind(tcl_bind_list_t *tl, const char *match,
   char *proc = NULL, *mask = NULL;
   tcl_bind_mask_t *tm, *tm_last = NULL, *tm_p = NULL;
   tcl_cmd_t *tc, *htc = NULL;
+  char *str, *varName, *brkt;
 
   for (tm = tl->first; tm && !finish; tm_last = tm, tm = tm->next) {
 
@@ -873,7 +892,7 @@ int check_tcl_bind(tcl_bind_list_t *tl, const char *match,
 
           if (match_type & BIND_ALTER_ARGS) {
             if (tcl_resultempty())
-              return x;
+              goto finally;
           } else if ((match_type & BIND_STACKRET) && x == BIND_EXEC_LOG) {
             /* If we have multiple commands/triggers, and if any of the
              * commands return 1, we store the result so we can return it
@@ -884,30 +903,38 @@ int check_tcl_bind(tcl_bind_list_t *tl, const char *match,
             continue;
           } else if ((match_type & BIND_WANTRET) && x == BIND_EXEC_LOG)
             /* Return immediately if any commands return 1 */
-            return x;
+            goto finally;
         }
       }
     }
   }
 
-  if (!cnt)
-    return BIND_NOMATCH;
+  if (!cnt) {
+    x = BIND_NOMATCH;
+    goto finally;
+  }
 
   /* Do this before updating the preferred entries information,
    * since we don't want to change the order of stacked binds
    */
-  if (result)           /* BIND_STACKRET */
-    return result;
+  if (result) {           /* BIND_STACKRET */
+    x = result;
+    goto finally;
+  }
 
-  if ((match_type & 0x07) == MATCH_MASK || (match_type & 0x07) == MATCH_CASE)
-    return BIND_EXECUTED;
+  if ((match_type & 0x07) == MATCH_MASK || (match_type & 0x07) == MATCH_CASE) {
+    x = BIND_EXECUTED;
+    goto finally;
+  }
 
   /* Hit counter */
   if (htc)
     htc->hits++;
 
-  if (cnt > 1)
-    return BIND_AMBIGUOUS;
+  if (cnt > 1) {
+    x = BIND_AMBIGUOUS;
+    goto finally;
+  }
 
   /* Now that we have found exactly one bind, we can update the
    * preferred entries information.
@@ -923,7 +950,21 @@ int check_tcl_bind(tcl_bind_list_t *tl, const char *match,
     tl->first = tm;
   }
 
-  return trigger_bind(proc, param, mask);
+  x = trigger_bind(proc, param, mask);
+
+finally:
+  str = nmalloc(strlen(param) + 1);
+  strcpy(str, param);
+
+  for (varName = strtok_r(str,  " $:", &brkt);
+       varName;
+       varName = strtok_r(NULL, " $:", &brkt))
+  {
+    Tcl_UnsetVar(interp, varName, 0);
+  }
+
+  nfree(str);
+  return x;
 }
 
 

@@ -265,9 +265,9 @@ static void blowfish_init(uint8_t *key, int keybytes)
 #define SALT2  0x23f6b095
 
 /* Convert 64-bit encrypted password to text for userfile */
-static char *base64 =
+static const char *base64 =
             "./0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
-static char *cbcbase64 =
+static const char *cbcbase64 =
             "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=";
 
 static int base64dec(char c)
@@ -729,7 +729,7 @@ char *blowfish_start(Function *global_funcs)
   }
 
   /* ECB by default for now, change at v1.9.0! */
-  strncpyz(bf_mode, "ecb", sizeof bf_mode);
+  strlcpy(bf_mode, "ecb", sizeof bf_mode);
   add_tcl_commands(mytcls);
   add_tcl_strings(my_tcl_strings);
   add_help_reference("blowfish.help");
