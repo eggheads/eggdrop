@@ -504,8 +504,8 @@ static void ssl_showcert(X509 *cert, const int loglev)
 {
   char *buf, *from, *to;
   X509_NAME *name;
-  unsigned char md[EVP_MAX_MD_SIZE];
   unsigned int len;
+  unsigned char md[EVP_MAX_MD_SIZE];
 
   /* Subject and issuer names */
   if ((name = X509_get_subject_name(cert))) {
