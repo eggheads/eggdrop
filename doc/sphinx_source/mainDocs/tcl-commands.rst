@@ -120,7 +120,7 @@ putxferlog <text>
 putloglev <flag(s)> <channel> <text>
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-  Description: logs <text> to the logfile and partyline at the flag level specified. Use "*" to indicate all flag levels. 
+  Description: logs <text> to the logfile and partyline at the log level of the specified flag. Use "*" in lieu of a flag to indicate all log levels.
 
   Returns: nothing
 
