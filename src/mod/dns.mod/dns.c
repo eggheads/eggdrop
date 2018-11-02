@@ -307,7 +307,7 @@ char *dns_start(Function *global_funcs)
   dcc[idx].sock = resfd;
   dcc[idx].timeval = now;
   strcpy(dcc[idx].nick, "(dns)");
-  egg_memcpy(&dcc[idx].sockname.addr.sa, &_res.nsaddr_list[0],
+  memcpy(&dcc[idx].sockname.addr.sa, &_res.nsaddr_list[0],
              sizeof(_res.nsaddr_list[0]));
   dcc[idx].sockname.addrlen = sizeof(_res.nsaddr_list[0]);
 

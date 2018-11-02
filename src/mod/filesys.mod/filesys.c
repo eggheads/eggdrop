@@ -1015,7 +1015,7 @@ char *filesys_start(Function *global_funcs)
   add_builtins(H_load, myload);
   add_help_reference("filesys.help");
   init_server_ctcps(0);
-  my_memcpy(&USERENTRY_DCCDIR, &USERENTRY_INFO,
+  memcpy(&USERENTRY_DCCDIR, &USERENTRY_INFO,
             sizeof(struct user_entry_type) - sizeof(char *));
 
   USERENTRY_DCCDIR.got_share = 0;       /* We don't want it shared tho */
