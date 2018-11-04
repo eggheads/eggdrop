@@ -254,7 +254,8 @@ static void bot_version(int idx, char *par)
 
 void failed_link(int idx)
 {
-  char s[81], s1[512];
+  char s[51], s1[512];
+  int port;
 
   if (dcc[idx].port >= dcc[idx].u.bot->port + 3) {
     if (dcc[idx].u.bot->linker[0]) {
@@ -274,7 +275,27 @@ void failed_link(int idx)
   /* Try next port, if it makes sense (no AF_UNSPEC, ...) */
   killsock(dcc[idx].sock);
   dcc[idx].timeval = now;
-  if (open_telnet(idx, dcc[idx].host, dcc[idx].port + 1) < 0)
+#ifdef TLS
+  /* Order of attempts:
+   * 1. port     ssl
+   * 2. port     plain
+   * 3. port + 1 ssl
+   * 4. port + 1 plain
+   * 5. port + 2 ssl
+   * 6. port + 2 plain
+   * ...
+   */
+  if (dcc[idx].ssl) {
+    port = dcc[idx].port;
+    dcc[idx].ssl = 0;
+  } else {
+    port = dcc[idx].port +1;
+    dcc[idx].ssl = 1;
+  }
+#else
+  port = dcc[idx].port +1;
+#endif
+  if (open_telnet(idx, dcc[idx].host, port) < 0)
     failed_link(idx);
 }
 
