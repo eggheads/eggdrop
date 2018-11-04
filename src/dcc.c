@@ -255,7 +255,7 @@ static void bot_version(int idx, char *par)
 void failed_link(int idx)
 {
   char s[51], s1[512];
-  int port;
+  int ret;
 
   if (dcc[idx].port >= dcc[idx].u.bot->port + 3) {
     if (dcc[idx].u.bot->linker[0]) {
@@ -286,17 +286,28 @@ void failed_link(int idx)
    * ...
    */
   if (dcc[idx].ssl) {
-    port = dcc[idx].port;
     dcc[idx].ssl = 0;
   } else {
-    port = dcc[idx].port +1;
+    dcc[idx].port +=1;
     dcc[idx].ssl = 1;
   }
 #else
-  port = dcc[idx].port +1;
+  dcc[idx].port += 1;
 #endif
-  if (open_telnet(idx, dcc[idx].host, port) < 0)
+
+  /* FIXME: Code duplication from botnet.c:botlink_resolve_success() */
+  setsnport(dcc[idx].sockname, dcc[idx].port);
+  dcc[idx].sock = getsock(dcc[idx].sockname.family, SOCK_STRONGCONN);
+  if (dcc[idx].sock < 0)
     failed_link(idx);
+  ret = open_telnet_raw(dcc[idx].sock, &dcc[idx].sockname);
+  if (ret < 0)
+    failed_link(idx);
+#ifdef TLS
+  else if (dcc[idx].ssl && ssl_handshake(dcc[idx].sock, TLS_CONNECT,
+           tls_vfybots, LOG_BOTS, dcc[idx].host, NULL))
+    failed_link(idx);
+#endif
 }
 
 static void cont_link(int idx, char *buf, int i)
