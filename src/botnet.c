@@ -1042,7 +1042,7 @@ int botlink(char *linker, int idx, char *nick)
       dcc[i].timeval = now;
       dcc[i].port = bi->telnet_port;
 #ifdef TLS
-      dcc[i].ssl = (bi->ssl & TLS_BOT);
+      dcc[i].ssl = TLS_BOT;
 #endif
       dcc[i].user = u;
       strcpy(dcc[i].nick, nick);
