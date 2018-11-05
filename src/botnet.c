@@ -1041,8 +1041,6 @@ int botlink(char *linker, int idx, char *nick)
       i = new_dcc(&DCC_DNSWAIT, sizeof(struct dns_info));
       dcc[i].timeval = now;
       dcc[i].port = bi->telnet_port;
-/* By default, eggdrop now automatically attempts to protect botnet links with
- * SSL if it is compiled with TLS support. */
 #ifdef TLS
       dcc[i].ssl = (bi->ssl & TLS_BOT);
 #endif
