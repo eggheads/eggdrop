@@ -252,6 +252,15 @@ static void bot_version(int idx, char *par)
   dprintf(idx, "el\n");
 }
 
+/* Order of attempts:
+ * 1. port     ssl
+ * 2. port     plain
+ * 3. port + 1 ssl
+ * 4. port + 1 plain
+ * 5. port + 2 ssl
+ * 6. port + 2 plain
+ * ...
+ */
 void failed_link(int idx)
 {
   char s[51], s1[512];
@@ -275,26 +284,7 @@ void failed_link(int idx)
   /* Try next port, if it makes sense (no AF_UNSPEC, ...) */
   killsock(dcc[idx].sock);
   dcc[idx].timeval = now;
-#ifdef TLS
-  /* Order of attempts:
-   * 1. port     ssl
-   * 2. port     plain
-   * 3. port + 1 ssl
-   * 4. port + 1 plain
-   * 5. port + 2 ssl
-   * 6. port + 2 plain
-   * ...
-   */
-  if (dcc[idx].ssl) {
-    dcc[idx].ssl = 0;
-  } else {
-    dcc[idx].port +=1;
-    dcc[idx].ssl = 1;
-  }
-#else
   dcc[idx].port += 1;
-#endif
-
   /* FIXME: Code duplication from botnet.c:botlink_resolve_success() */
   setsnport(dcc[idx].sockname, dcc[idx].port);
   dcc[idx].sock = getsock(dcc[idx].sockname.family, SOCK_STRONGCONN);
@@ -304,7 +294,7 @@ void failed_link(int idx)
   if (ret < 0)
     failed_link(idx);
 #ifdef TLS
-  else if (dcc[idx].ssl && ssl_handshake(dcc[idx].sock, TLS_CONNECT,
+  else if (ssl_handshake(dcc[idx].sock, TLS_CONNECT,
            tls_vfybots, LOG_BOTS, dcc[idx].host, NULL))
     failed_link(idx);
 #endif
