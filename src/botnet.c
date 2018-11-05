@@ -1095,7 +1095,7 @@ static void botlink_resolve_success(int i)
   if (ret < 0)
     failed_link(i);
 #ifdef TLS
-  else if (dcc[i].ssl && ssl_handshake(dcc[i].sock, TLS_CONNECT,
+  else if (ssl_handshake(dcc[i].sock, TLS_CONNECT,
            tls_vfybots, LOG_BOTS, dcc[i].host, NULL))
     failed_link(i);
 #endif
