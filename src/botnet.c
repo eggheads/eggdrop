@@ -1044,7 +1044,7 @@ int botlink(char *linker, int idx, char *nick)
 /* By default, eggdrop now automatically attempts to protect botnet links with
  * SSL if it is compiled with TLS support. */
 #ifdef TLS
-      dcc[i].ssl = 1;
+      dcc[i].ssl = (bi->ssl & TLS_BOT);
 #endif
       dcc[i].user = u;
       strcpy(dcc[i].nick, nick);
