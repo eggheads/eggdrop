@@ -106,7 +106,7 @@ int expmem_tcl()
 
 static void botnet_change(char *new)
 {
-  if (egg_strcasecmp(botnetnick, new)) {
+  if (strcasecmp(botnetnick, new)) {
     /* Trying to change bot's nickname */
     if (tands > 0) {
       putlog(LOG_MISC, "*", "* Tried to change my botnet nick, but I'm still "

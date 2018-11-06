@@ -357,12 +357,12 @@ static void linkresolvehost(struct resolve *addrp)
   rp = hostbash[bashnum];
   if (rp) {
     while ((rp->nexthost) &&
-           (egg_strcasecmp(addrp->hostn, rp->nexthost->hostn) < 0))
+           (strcasecmp(addrp->hostn, rp->nexthost->hostn) < 0))
       rp = rp->nexthost;
     while ((rp->previoushost) &&
-           (egg_strcasecmp(addrp->hostn, rp->previoushost->hostn) > 0))
+           (strcasecmp(addrp->hostn, rp->previoushost->hostn) > 0))
       rp = rp->previoushost;
-    ret = egg_strcasecmp(addrp->hostn, rp->hostn);
+    ret = strcasecmp(addrp->hostn, rp->hostn);
     if (ret < 0) {
       addrp->previoushost = rp;
       addrp->nexthost = rp->nexthost;
@@ -603,12 +603,12 @@ static struct resolve *findhost(char *hostn)
   rp = hostbash[bashnum];
   if (rp) {
     while ((rp->nexthost) &&
-          (egg_strcasecmp(hostn, rp->nexthost->hostn) >= 0))
+          (strcasecmp(hostn, rp->nexthost->hostn) >= 0))
       rp = rp->nexthost;
     while ((rp->previoushost) &&
-           (egg_strcasecmp(hostn, rp->previoushost->hostn) <= 0))
+           (strcasecmp(hostn, rp->previoushost->hostn) <= 0))
       rp = rp->previoushost;
-    if (egg_strcasecmp(hostn, rp->hostn))
+    if (strcasecmp(hostn, rp->hostn))
       return NULL;
     else {
       hostbash[bashnum] = rp;
@@ -890,7 +890,7 @@ void parserespacket(uint8_t *response, int len)
     ddebug0(RES_ERR "dn_expand() failed while expanding query domain.");
     return;
   }
-  if (egg_strcasecmp(stackstring, namestring)) {
+  if (strcasecmp(stackstring, namestring)) {
     ddebug2(RES_MSG "Unknown query packet dropped. (\"%s\" does not "
             "match \"%s\")", stackstring, namestring);
     return;
@@ -976,7 +976,7 @@ void parserespacket(uint8_t *response, int len)
       ddebug0(RES_ERR "Specified rdata length exceeds packet size.");
       return;
     }
-    if (egg_strcasecmp(stackstring, namestring))
+    if (strcasecmp(stackstring, namestring))
       continue;
     if (rr->datatype != qdatatype && rr->datatype != T_CNAME) {
       ddebug2(RES_MSG "Ignoring resource type %u. (%s)",

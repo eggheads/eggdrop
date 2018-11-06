@@ -456,16 +456,16 @@ static char *encrypt_string_cbc(char *key, char *str)
  */
 static char *encrypt_string(char *key, char *str)
 {
-  if (!egg_strncasecmp(key, "ecb:", 4)) {
+  if (!strncasecmp(key, "ecb:", 4)) {
     return encrypt_string_ecb(key + 4, str);
 
-  } else if (!egg_strncasecmp(key, "cbc:", 4)) {
+  } else if (!strncasecmp(key, "cbc:", 4)) {
     return encrypt_string_cbc(key + 4, str);
 
-  } else if (!egg_strncasecmp(bf_mode, "ecb", sizeof bf_mode)) {
+  } else if (!strncasecmp(bf_mode, "ecb", sizeof bf_mode)) {
     return encrypt_string_ecb(key, str);
 
-  } else if (!egg_strncasecmp(bf_mode, "cbc", sizeof bf_mode)) {
+  } else if (!strncasecmp(bf_mode, "cbc", sizeof bf_mode)) {
     return encrypt_string_cbc(key, str);
 
   }
@@ -605,7 +605,7 @@ static char *decrypt_string_cbc(char *key, char *str)
  */
 static char *decrypt_string(char *key, char *str)
 {
-  if (!egg_strncasecmp(key, "ecb:", 4)) {
+  if (!strncasecmp(key, "ecb:", 4)) {
     if (str[0] == '*') {
       /* ecb strings shouldn't start with * */
       return decrypt_string_cbc(key + 4, str + 1);
@@ -613,7 +613,7 @@ static char *decrypt_string(char *key, char *str)
     /* else */
     return decrypt_string_ecb(key + 4, str);
 
-  } else if (!egg_strncasecmp(key, "cbc:", 4)) {
+  } else if (!strncasecmp(key, "cbc:", 4)) {
     if (str[0] != '*') {
       /* cbc strings should start with * */
       return decrypt_string_ecb(key + 4, str);

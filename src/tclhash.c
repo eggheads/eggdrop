@@ -278,7 +278,7 @@ tcl_bind_list_t *add_bind_table(const char *nme, int flg, IntFunc func)
   for (tl = bind_table_list, tl_prev = NULL; tl; tl_prev = tl, tl = tl->next) {
     if (tl->flags & HT_DELETED)
       continue;
-    v = egg_strcasecmp(tl->name, nme);
+    v = strcasecmp(tl->name, nme);
     if (!v)
       return tl;                /* Duplicate, just return old value.    */
     if (v > 0)
@@ -326,7 +326,7 @@ tcl_bind_list_t *find_bind_table(const char *nme)
   for (tl = bind_table_list; tl; tl = tl->next) {
     if (tl->flags & HT_DELETED)
       continue;
-    v = egg_strcasecmp(tl->name, nme);
+    v = strcasecmp(tl->name, nme);
     if (!v)
       return tl;
     if (v > 0)
@@ -371,7 +371,7 @@ static int unbind_bind_entry(tcl_bind_list_t *tl, const char *flags,
     for (tc = tm->first; tc; tc = tc->next) {
       if (tc->attributes & TC_DELETED)
         continue;
-      if (!egg_strcasecmp(tc->func_name, proc)) {
+      if (!strcasecmp(tc->func_name, proc)) {
         /* Erase proc regardless of flags. */
         tc->attributes |= TC_DELETED;
         return 1;               /* Match.       */
@@ -412,7 +412,7 @@ static int bind_bind_entry(tcl_bind_list_t *tl, const char *flags,
   for (tc = tm->first; tc; tc = tc->next) {
     if (tc->attributes & TC_DELETED)
       continue;
-    if (!egg_strcasecmp(tc->func_name, proc)) {
+    if (!strcasecmp(tc->func_name, proc)) {
       tc->flags.match = FR_GLOBAL | FR_CHAN;
       break_down_flags(flags, &(tc->flags), NULL);
       return 1;
@@ -451,7 +451,7 @@ static int tcl_getbinds(tcl_bind_list_t *tl_kind, const char *name)
   for (tm = tl_kind->first; tm; tm = tm->next) {
     if (tm->flags & TBM_DELETED)
       continue;
-    if (!egg_strcasecmp(tm->mask, name)) {
+    if (!strcasecmp(tm->mask, name)) {
       tcl_cmd_t *tc;
 
       for (tc = tm->first; tc; tc = tc->next) {
@@ -785,10 +785,10 @@ static int check_bind_match(const char *match, char *mask,
 {
   switch (match_type & 0x07) {
   case MATCH_PARTIAL:
-    return (!egg_strncasecmp(match, mask, strlen(match)));
+    return (!strncasecmp(match, mask, strlen(match)));
     break;
   case MATCH_EXACT:
-    return (!egg_strcasecmp(match, mask));
+    return (!strcasecmp(match, mask));
     break;
   case MATCH_CASE:
     return (!strcmp(match, mask));
@@ -868,7 +868,7 @@ int check_tcl_bind(tcl_bind_list_t *tl, const char *match,
              */
             if ((match_type & 0x07) != MATCH_PARTIAL ||
               /* ... or this happens to be an exact match. */
-              !egg_strcasecmp(match, tm->mask)) {
+              !strcasecmp(match, tm->mask)) {
               cnt = 1;
               finish = 1;
             }
@@ -1289,10 +1289,10 @@ void tell_binds(int idx, char *par)
   else
     tl_kind = NULL;
 
-  if ((name && name[0] && !egg_strcasecmp(name, "all")) ||
-      (s && s[0] && !egg_strcasecmp(s, "all")))
+  if ((name && name[0] && !strcasecmp(name, "all")) ||
+      (s && s[0] && !strcasecmp(s, "all")))
     showall = 1;
-  if (tl_kind == NULL && name && name[0] && egg_strcasecmp(name, "all"))
+  if (tl_kind == NULL && name && name[0] && strcasecmp(name, "all"))
     patmatc = 1;
 
   dprintf(idx, MISC_CMDBINDS);

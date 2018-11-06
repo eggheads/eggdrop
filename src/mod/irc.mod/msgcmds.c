@@ -299,7 +299,7 @@ static int msg_info(char *nick, char *host, struct userrec *u, char *par)
       dprintf(DP_HELP, "NOTICE %s :%s\n", nick, IRC_INFOLOCKED);
       return 1;
     }
-    if (!egg_strcasecmp(par, "none")) {
+    if (!strcasecmp(par, "none")) {
       par[0] = 0;
       if (chname) {
         set_handle_chaninfo(userlist, u->handle, chname, NULL);
@@ -485,7 +485,7 @@ static int msg_whois(char *nick, char *host, struct userrec *u, char *par)
   if (s2 && s2[0] && !(u2->flags & USER_BOT))
     dprintf(DP_HELP, "NOTICE %s :[%s] %s\n", nick, u2->handle, s2);
   for (xk = get_user(&USERENTRY_XTRA, u2); xk; xk = xk->next)
-    if (!egg_strcasecmp(xk->key, "EMAIL"))
+    if (!strcasecmp(xk->key, "EMAIL"))
       dprintf(DP_HELP, "NOTICE %s :[%s] E-mail: %s\n", nick, u2->handle,
               xk->data);
   ok = 0;

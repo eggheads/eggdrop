@@ -64,7 +64,7 @@ static int tcl_getfileq STDVAR
   BADARGS(2, 2, " handle");
 
   for (q = fileq; q; q = q->next) {
-    if (!egg_strcasecmp(q->nick, argv[1])) {
+    if (!strcasecmp(q->nick, argv[1])) {
       s = nrealloc(s, strlen(q->to) + strlen(q->dir) + strlen(q->file) + 4);
       if (q->dir[0] == '*')
         sprintf(s, "%s %s/%s", q->to, &q->dir[1], q->file);

@@ -253,7 +253,7 @@ void debug_mem_to_dcc(int idx)
       for (j = 0; j < lastused; j++) {
         if ((p = strchr(memtbl[j].file, ':')))
           *p = 0;
-        if (!egg_strcasecmp(memtbl[j].file, fn)) {
+        if (!strcasecmp(memtbl[j].file, fn)) {
           if (p)
             sprintf(&sofar[strlen(sofar)], "%-10s/%-4d:(%04d) ",
                     p + 1, memtbl[j].line, memtbl[j].size);
@@ -294,7 +294,7 @@ void debug_mem_to_dcc(int idx)
         strcpy(fn, memtbl[j].file);
         if ((p = strchr(fn, ':')) != NULL) {
           *p = 0;
-          if (!egg_strcasecmp(fn, me->name)) {
+          if (!strcasecmp(fn, me->name)) {
             sprintf(&sofar[strlen(sofar)], "%-10s/%-4d:(%04X) ", p + 1,
                     memtbl[j].line, memtbl[j].size);
             if (strlen(sofar) > 60) {

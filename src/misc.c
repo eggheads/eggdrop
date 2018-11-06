@@ -592,7 +592,7 @@ void putlog EGG_VARARGS_DEF(int, arg1)
           /* Check if this is the same as the last line added to
            * the log. <cybah>
            */
-          if (!egg_strcasecmp(out + tsl, logs[i].szlast))
+          if (!strcasecmp(out + tsl, logs[i].szlast))
             /* It is a repeat, so increment repeats */
             logs[i].repeats++;
           else {
@@ -964,7 +964,7 @@ void help_subst(char *s, char *nick, struct flag_record *flags,
         q += 2;
         /* Now q is the string and p is where the rest of the fcn expects */
         if (!strncmp(q, "help=", 5)) {
-          if (topic && egg_strcasecmp(q + 5, topic))
+          if (topic && strcasecmp(q + 5, topic))
             blind |= 2;
           else
             blind &= ~2;
@@ -983,7 +983,7 @@ void help_subst(char *s, char *nick, struct flag_record *flags,
               blind &= ~1;
           } else if (q[0] == '-')
             blind &= ~1;
-          else if (!egg_strcasecmp(q, "end")) {
+          else if (!strcasecmp(q, "end")) {
             blind &= ~1;
             subwidth = 70;
             if (cols) {
@@ -994,7 +994,7 @@ void help_subst(char *s, char *nick, struct flag_record *flags,
               cols = 0;
               towrite = sub;
             }
-          } else if (!egg_strcasecmp(q, "center"))
+          } else if (!strcasecmp(q, "center"))
             center = 1;
           else if (!strncmp(q, "cols=", 5)) {
             char *r;

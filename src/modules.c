@@ -662,7 +662,7 @@ int module_register(char *name, Function *funcs, int major, int minor)
   module_entry *p;
 
   for (p = module_list; p && p->name; p = p->next) {
-    if (!egg_strcasecmp(name, p->name)) {
+    if (!strcasecmp(name, p->name)) {
       p->major = major;
       p->minor = minor;
       p->funcs = funcs;
@@ -797,7 +797,7 @@ const char *module_load(char *name)
 #endif /* !STATIC */
 
 #ifdef STATIC
-  for (sl = static_modules; sl && egg_strcasecmp(sl->name, name); sl = sl->next);
+  for (sl = static_modules; sl && strcasecmp(sl->name, name); sl = sl->next);
   if (!sl)
     return "Unknown module.";
   f = (Function) sl->func;
@@ -892,7 +892,7 @@ module_entry *module_find(char *name, int major, int minor)
 
   for (p = module_list; p && p->name; p = p->next) {
     if ((major == p->major || !major) && minor <= p->minor &&
-        !egg_strcasecmp(name, p->name))
+        !strcasecmp(name, p->name))
       return p;
   }
   return NULL;
@@ -903,11 +903,11 @@ static int module_rename(char *name, char *newname)
   module_entry *p;
 
   for (p = module_list; p; p = p->next)
-    if (!egg_strcasecmp(newname, p->name))
+    if (!strcasecmp(newname, p->name))
       return 0;
 
   for (p = module_list; p && p->name; p = p->next) {
-    if (!egg_strcasecmp(name, p->name)) {
+    if (!strcasecmp(name, p->name)) {
       nfree(p->name);
       p->name = nmalloc(strlen(newname) + 1);
       strcpy(p->name, newname);
@@ -1148,7 +1148,7 @@ void do_module_report(int idx, int details, char *which)
   if (p && !which)
     dprintf(idx, "Loaded module information:\n");
   for (; p; p = p->next) {
-    if (!which || !egg_strcasecmp(which, p->name)) {
+    if (!which || !strcasecmp(which, p->name)) {
       dependancy *d;
 
       if (details)
