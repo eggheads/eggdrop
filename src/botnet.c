@@ -766,7 +766,7 @@ void dump_links(int z)
             (dcc[i].u.chat->channel < GLOBAL_CHANS)) {
 #ifndef NO_OLD_BOTNET
           if (b_numver(z) < NEAT_BOTNET)
-             l =simple_sprintf(x, "join %s %s %d %c%d %s\n",
+            l = simple_sprintf(x, "join %s %s %d %c%d %s\n",
                                botnetnick, dcc[i].nick,
                                dcc[i].u.chat->channel, geticon(i),
                                dcc[i].sock, dcc[i].host);
