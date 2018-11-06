@@ -24,7 +24,6 @@
  */
 
 #include "main.h"
-#include <ctype.h>
 #include <errno.h>
 #include "modules.h"
 #include "tandem.h"

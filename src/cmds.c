@@ -25,7 +25,6 @@
 #include "main.h"
 #include "tandem.h"
 #include "modules.h"
-#include <ctype.h>
 #include <signal.h>
 
 extern struct chanset_t *chanset;

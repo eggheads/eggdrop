@@ -23,7 +23,6 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
-#include <ctype.h>
 #include <signal.h>
 #include "main.h"
 #include "modules.h"
@@ -536,9 +535,9 @@ Function global_table[] = {
   (Function) egg_snprintf,
   (Function) egg_vsnprintf,
   (Function) 0,                   /* was egg_memset -- use memset() or egg_bzero() instead */
-  (Function) egg_strcasecmp,
+  (Function) 0,                   /* was egg_strcasecmp -- use strcasecmp() instead */
   /* 256 - 259 */
-  (Function) egg_strncasecmp,
+  (Function) 0,                   /* was egg_strncasecmp -- use strncasecmp() instead */
   (Function) is_file,
   (Function) & must_be_owner,     /* int                                 */
   (Function) & tandbot,           /* tand_t *                            */
