@@ -757,8 +757,9 @@ void botnet_send_nkch_part(int butidx, int useridx, char *oldnick)
  */
 int add_note(char *to, char *from, char *msg, int idx, int echo)
 {
+  #define FROMLEN 40
   int status, i, iaway, sock;
-  char *p, botf[81], ss[81], ssf[81];
+  char *p, botf[FROMLEN + 1 + HANDLEN + 1], ss[81], ssf[81];
   struct userrec *u;
 
   /* Notes have a length limit. Note + PRIVMSG header + nick + date must
@@ -783,8 +784,8 @@ int add_note(char *to, char *from, char *msg, int idx, int echo)
       return add_note(x, from, msg, idx, echo); /* Start over, dimwit. */
 
     if (egg_strcasecmp(from, botnetnick)) {
-      if (strlen(from) > 40)
-        from[40] = 0;
+      if (strlen(from) > FROMLEN)
+        from[FROMLEN] = 0;
 
       if (strchr(from, '@')) {
         strcpy(botf, from);
