@@ -818,7 +818,9 @@ void parserespacket(uint8_t *response, int len)
   packetheader *hdr;
   struct resolve *rp;
   uint8_t rc, *c = response;
-  uint16_t qdatatype, qclass;
+  uint16_t qdatatype, qclass, datatype, class, datalength;
+  uint32_t ttl;
+
   if (len < sizeof(packetheader)) {
     debug1(RES_ERR "Packet smaller than standard header size: %d bytes.", len);
     return;
@@ -949,15 +951,10 @@ void parserespacket(uint8_t *response, int len)
       ddebug0(RES_ERR "Resource record truncated.");
       return;
     }
-    int datatype, class, ttl, datalength;
-    datatype = ns_get16(c);
-    c += INT16SZ;
-    class = ns_get16(c);
-    c += INT16SZ;
-    ttl = ns_get32(c);
-    c += INT32SZ;
-    datalength = ns_get16(c);
-    c += INT16SZ;
+    NS_GET16(datatype, c);
+    NS_GET16(class, c);
+    NS_GET32(ttl, c);
+    NS_GET16(datalength, c);
     if (class != qclass) {
       ddebug2(RES_ERR "Answered class (%s) does not match queried class (%s).",
               (class < CLASSTYPES_COUNT) ?
