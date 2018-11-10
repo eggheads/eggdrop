@@ -41,6 +41,13 @@
 #include <resolv.h>
 #include <errno.h>
 
+/* OpenBSD */
+#ifndef NS_GET16
+#define NS_GET16 GETSHORT
+#endif
+#ifndef NS_GET32
+#define NS_GET32 GETLONG
+#endif
 
 /* Defines */
 
