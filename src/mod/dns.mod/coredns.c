@@ -169,13 +169,6 @@ typedef struct {
 #define getheader_pr(x) ((x->databyte_b >> 6) & 1)
 #define getheader_ra(x) (x->databyte_b >> 7)
 
-#define sucknetword(x)  ((x)+=2,((uint16_t)  (((x)[-2] <<  8) | ((x)[-1] <<  0))))
-#define sucknetshort(x) ((x)+=2,((short) (((x)[-2] <<  8) | ((x)[-1] <<  0))))
-#define sucknetdword(x) ((x)+=4,((dword) (((x)[-4] << 24) | ((x)[-3] << 16) | \
-                                          ((x)[-2] <<  8) | ((x)[-1] <<  0))))
-#define sucknetlong(x)  ((x)+=4,((long)  (((x)[-4] << 24) | ((x)[-3] << 16) | \
-                                          ((x)[-2] <<  8) | ((x)[-1] <<  0))))
-
 static uint32_t resrecvbuf[(MAX_PACKETSIZE + 7) >> 2]; /* MUST BE DWORD ALIGNED */
 
 static struct resolve *idbash[BASH_SIZE];
@@ -900,8 +893,8 @@ void parserespacket(uint8_t *response, int len)
     ddebug0(RES_ERR "Query resource record truncated.");
     return;
   }
-  qdatatype = sucknetword(c);
-  qclass = sucknetword(c);
+  NS_GET16(qdatatype, c);
+  NS_GET16(qclass, c);
   if (qclass != C_IN) {
     ddebug2(RES_ERR "Received unsupported query class: %u (%s)",
             qclass, (qclass < CLASSTYPES_COUNT) ?
