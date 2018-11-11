@@ -752,11 +752,6 @@ AC_DEFUN([EGG_CHECK_OS],
     FreeBSD|OpenBSD|NetBSD)
       SHLIB_CC="$CC -fPIC"
       SHLIB_LD="$CC -shared"
-      case "$egg_cv_var_system_type" in
-        *NetBSD)
-          AC_DEFINE(NETBSD_HACKS, 1, [Define if running under NetBSD.])
-        ;;
-      esac
     ;;
     DragonFly)
       SHLIB_CC="$CC -fPIC"
