@@ -1469,6 +1469,17 @@ int sanitycheck_dcc(char *nick, char *from, char *ipaddy, char *port)
   return 1;
 }
 
+/* This will return a pointer to the first character after the @ in the
+ * string given it.  Possibly it's time to think about a regexp library
+ * for eggdrop...
+ */
+static char *extracthostname(const char *hostmask)
+{
+  char *p = strrchr(hostmask, '@');
+
+  return p ? p + 1 : "";
+}
+
 int hostsanitycheck_dcc(char *nick, char *from, sockname_t *ip, char *dnsname,
                         char *prt)
 {

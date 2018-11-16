@@ -1354,17 +1354,6 @@ void sub_lang(int idx, char *text)
     dprintf(idx, "%s\n", s);
 }
 
-/* This will return a pointer to the first character after the @ in the
- * string given it.  Possibly it's time to think about a regexp library
- * for eggdrop...
- */
-char *extracthostname(char *hostmask)
-{
-  char *p = strrchr(hostmask, '@');
-
-  return p ? p + 1 : "";
-}
-
 /* Show motd to dcc chatter
  */
 void show_motd(int idx)
