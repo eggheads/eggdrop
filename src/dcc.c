@@ -1782,6 +1782,11 @@ static void dcc_telnet_pass(int idx, int atr)
    * will simply ignore the request and everything will go on as usual.
    */
     if (!dcc[idx].ssl) {
+      /* find number in socklist */
+      int i = findsock(dcc[idx].sock);
+      struct threaddata *td = threaddata();
+      /* mark socket to read next incoming at reduced len */
+      td->socklist[i].flags |= SOCK_SENTTLS;
       dprintf(idx, "starttls\n");
       putlog(LOG_BOTS, "*", "Sent STARTTLS to %s...", dcc[idx].nick);
     }
