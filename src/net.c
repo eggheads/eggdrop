@@ -115,7 +115,7 @@ char *iptostr(struct sockaddr *sa)
               s, sizeof s);
   else
 #else
-  static char s[sizeof "255.255.255.255"] = "";
+  static char s[INET_ADDRSTRLEN] = "";
 #endif
     inet_ntop(AF_INET, &((struct sockaddr_in *)sa)->sin_addr.s_addr, s,
               sizeof s);
@@ -1025,14 +1025,15 @@ int sockgets(char *s, int *len)
     if (!(socklist[i].flags & (SOCK_UNUSED | SOCK_TCL | SOCK_BUFFER)) &&
         (socklist[i].handler.sock.inbuf != NULL)) {
       if (!(socklist[i].flags & SOCK_BINARY)) {
-        /* look for \r too cos windows can't follow RFCs */
+        /* IRC messages are always lines of characters terminated with a CR-LF
+         * (Carriage Return - Line Feed) pair.
+         */
         p = strpbrk(socklist[i].handler.sock.inbuf, "\r\n");
         if (p != NULL) {
+          *p++ = 0;
           while (*p == '\n' || *p == '\r')
-            *p++ = 0;
-          if (strlen(socklist[i].handler.sock.inbuf) > 510)
-            socklist[i].handler.sock.inbuf[510] = 0;
-          strcpy(s, socklist[i].handler.sock.inbuf);
+            p++;
+          strlcpy(s, socklist[i].handler.sock.inbuf, 511);
           if (*p) {
             px = nmalloc(strlen(p) + 1);
             strcpy(px, p);
@@ -1439,7 +1440,7 @@ int sanitycheck_dcc(char *nick, char *from, char *ipaddy, char *port)
   sockname_t name;
   IP ip = 0;
 #else
-  char badaddress[sizeof "255.255.255.255"];
+  char badaddress[INET_ADDRSTRLEN];
   IP ip = my_atoul(ipaddy);
 #endif
   int prt = atoi(port);
