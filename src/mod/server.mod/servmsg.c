@@ -626,7 +626,7 @@ static int gotnotice(char *from, char *msg)
   ignoring = match_ignore(from);
   to = newsplit(&msg);
   fixcolon(msg);
-  strcpy(uhost, from);
+  strlcpy(uhost, from, sizeof(buf));
   nick = splitnick(&uhost);
 
   /* Check for CTCP: */
