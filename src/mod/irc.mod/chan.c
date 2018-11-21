@@ -1724,7 +1724,7 @@ static int gotjoin(char *from, char *chname)
   }
 
   if (!chan || channel_inactive(chan)) {
-    strlcpy(uhost, from, sizeof(buf));
+    strlcpy(uhost, from, sizeof buf);
     nick = splitnick(&uhost);
     if (match_my_nick(nick)) {
       putlog(LOG_MISC, "*", "joined %s but didn't want to!", chname);
@@ -1732,7 +1732,7 @@ static int gotjoin(char *from, char *chname)
     }
   } else if (!channel_pending(chan)) {
     chan->status &= ~CHAN_STOP_CYCLE;
-    strlcpy(uhost, from, sizeof(buf));
+    strlcpy(uhost, from, sizeof buf);
     nick = splitnick(&uhost);
     detect_chan_flood(nick, uhost, from, chan, FLOOD_JOIN, NULL);
 
@@ -2125,7 +2125,7 @@ static int gotnick(char *from, char *msg)
   struct userrec *u;
   struct flag_record fr = { FR_GLOBAL | FR_CHAN, 0, 0, 0, 0, 0 };
 
-  strlcpy(uhost, from, sizeof(buf));
+  strlcpy(uhost, from, sizeof buf);
   nick = splitnick(&uhost);
   fixcolon(msg);
   clear_chanlist_member(nick);  /* Cache for nick 'nick' is meaningless now. */
@@ -2206,7 +2206,7 @@ static int gotquit(char *from, char *msg)
   struct chanset_t *chan, *oldchan = NULL;
   struct userrec *u;
 
-  strlcpy(from2, from, sizeof(from2));
+  strlcpy(from2, from, sizeof from2);
   nick = splitnick(&from);
   fixcolon(msg);
   /* Fred1: Instead of expensive wild_match on signoff, quicker method.
@@ -2302,7 +2302,7 @@ static int gotmsg(char *from, char *msg)
     return 0; /* Unknown channel; don't process. */
 
   fixcolon(msg);
-  strlcpy(uhost, from, sizeof(buf));
+  strlcpy(uhost, from, sizeof buf);
   nick = splitnick(&uhost);
   ignoring = match_ignore(from);
 
@@ -2422,7 +2422,7 @@ static int gotnotice(char *from, char *msg)
   if (!chan)
     return 0;                   /* Notice to an unknown channel?? */
   fixcolon(msg);
-  strlcpy(uhost, from, sizeof(buf));
+  strlcpy(uhost, from, sizeof buf);
   nick = splitnick(&uhost);
   u = get_user_by_host(from);
 
