@@ -35,9 +35,7 @@
 #  endif
 #endif
 
-#ifdef HAVE_UNAME
-#  include <sys/utsname.h>
-#endif
+#include <sys/utsname.h>
 
 #include "modules.h"
 
@@ -291,19 +289,15 @@ void tell_verbose_status(int idx)
   int i;
   time_t now2 = now - online_since, hr, min;
   float cputime;
-#ifdef HAVE_UNAME
   struct utsname un;
 
   if (uname(&un) < 0) {
-#endif
     vers_t = " ";
     uni_t  = "*unknown*";
-#ifdef HAVE_UNAME
   } else {
     vers_t = un.release;
     uni_t  = un.sysname;
   }
-#endif
 
   i = count_users(userlist);
   dprintf(idx, "I am %s, running %s: %d user%s (mem: %uk).\n",

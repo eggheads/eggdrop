@@ -38,10 +38,7 @@
 #endif
 
 #include <sys/stat.h>
-
-#ifdef HAVE_UNAME
-#  include <sys/utsname.h>
-#endif
+#include <sys/utsname.h>
 
 extern p_tcl_bind_list bind_table_list;
 extern tcl_timer_t *timer, *utimer;
@@ -574,19 +571,15 @@ static int tcl_unloadmodule STDVAR
 static int tcl_unames STDVAR
 {
   char *unix_n, *vers_n;
-#ifdef HAVE_UNAME
   struct utsname un;
 
   if (uname(&un) < 0) {
-#endif
     unix_n = "*unknown*";
     vers_n = "";
-#ifdef HAVE_UNAME
   } else {
     unix_n = un.sysname;
     vers_n = un.release;
   }
-#endif
   Tcl_AppendResult(irp, unix_n, " ", vers_n, NULL);
   return TCL_OK;
 }

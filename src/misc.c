@@ -35,9 +35,7 @@
 #include "tandem.h"
 #include "modules.h"
 
-#ifdef HAVE_UNAME
-#  include <sys/utsname.h>
-#endif
+#include <sys/utsname.h>
 
 #include "stat.h"
 
@@ -811,10 +809,7 @@ void help_subst(char *s, char *nick, struct flag_record *flags,
   struct chanset_t *chan;
   int i, j, center = 0;
   static int help_flags;
-
-#ifdef HAVE_UNAME
   struct utsname uname_info;
-#endif
 
   if (s == NULL) {
     /* Used to reset substitutions */
@@ -904,13 +899,11 @@ void help_subst(char *s, char *nick, struct flag_record *flags,
       }
       break;
     case 'U':
-#ifdef HAVE_UNAME
       if (uname(&uname_info) >= 0) {
         egg_snprintf(sub, sizeof sub, "%s %s", uname_info.sysname,
                      uname_info.release);
         towrite = sub;
       } else
-#endif
         towrite = "*UNKNOWN*";
       break;
     case 'B':

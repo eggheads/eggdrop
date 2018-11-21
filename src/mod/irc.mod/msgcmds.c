@@ -788,19 +788,15 @@ static int msg_status(char *nick, char *host, struct userrec *u, char *par)
   struct chanset_t *chan;
   time_t now2 = now - online_since, hr, min;
 
-#ifdef HAVE_UNAME
   struct utsname un;
 
   if (uname(&un) < 0) {
-#endif
     vers_t = " ";
     uni_t  = "*unknown*";
-#ifdef HAVE_UNAME
   } else {
     vers_t = un.release;
     uni_t  = un.sysname;
   }
-#endif
 
   if (match_my_nick(nick))
     return 1;
