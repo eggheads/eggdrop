@@ -2206,7 +2206,7 @@ static int gotquit(char *from, char *msg)
   struct chanset_t *chan, *oldchan = NULL;
   struct userrec *u;
 
-  strcpy(from2, from);
+  strlcpy(from2, from, sizeof(from2));
   nick = splitnick(&from);
   fixcolon(msg);
   /* Fred1: Instead of expensive wild_match on signoff, quicker method.
