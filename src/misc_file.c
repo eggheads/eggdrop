@@ -70,9 +70,7 @@ int copyfile(char *oldpath, char *newpath)
       }
     }
   }
-#ifdef HAVE_FSYNC
   fsync(fo);
-#endif /* HAVE_FSYNC */
   close(fo);
   close(fi);
   return 0;
@@ -121,9 +119,7 @@ int copyfilef(char *oldpath, FILE *newfile)
     }
   }
 
-#ifdef HAVE_FSYNC
   fsync(fileno(newfile));
-#endif /* HAVE_FSYNC */
   close(fi);
 
   fseek(newfile, oripos, SEEK_SET);
@@ -171,9 +167,7 @@ int fcopyfile(FILE *oldfile, char *newpath)
     }
   }
 
-#ifdef HAVE_FSYNC
   fsync(fo);
-#endif /* HAVE_FSYNC */
   close(fo);
 
   fseek(oldfile, oripos, SEEK_SET);
