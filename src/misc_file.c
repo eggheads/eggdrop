@@ -185,11 +185,9 @@ int movefile(char *oldpath, char *newpath)
 {
   int ret;
 
-#ifdef HAVE_RENAME
   /* Try to use rename first */
   if (!rename(oldpath, newpath))
     return 0;
-#endif /* HAVE_RENAME */
 
   /* If that fails, fall back to just copying and then
    * deleting the file.
