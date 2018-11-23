@@ -645,7 +645,7 @@ AC_DEFUN([EGG_CHECK_OS],
   SHLIB_STRIP="$STRIP"
   LINUX="no"
   IRIX="no"
-  SUNOS="no"
+  SUNOS_GCC="no"
   HPUX="no"
   EGG_CYGWIN="no"
 
@@ -727,8 +727,8 @@ AC_DEFUN([EGG_CHECK_OS],
       AC_DEFINE(STOP_UAC, 1, [Define if running on OSF/1 platform.])
     ;;
     SunOS)
-      SUNOS="yes"
       if test -n "$GCC"; then
+        SUNOS_GCC="yes"
         SHLIB_CC="$CC -fPIC"
         SHLIB_LD="$CC -shared"
       else
@@ -1043,9 +1043,8 @@ AC_DEFUN([EGG_TCL_TCLCONFIG],
     TCL_LIB_SPEC=$(echo $TCL_LIB_SPEC | sed -- 's/-ldl//g')
   fi
 
-  if test "$SUNOS" = yes; then
+  if test "$SUNOS_GCC" = yes; then
     SHLIB_LD=$(echo $SHLIB_LD | sed -- 's/-z text//')
-    dnl AC_SUBST(SHLIB_LD, sed 's/\-z text//' <<<$SHLIB_LD)
     AC_MSG_NOTICE([SunOS found, SHLIB_LD = $SHLIB_LD])
   fi
 
