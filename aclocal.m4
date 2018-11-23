@@ -555,13 +555,7 @@ AC_DEFUN([EGG_CHECK_MODULE_SUPPORT],
       esac
     ;;
     SunOS)
-      if test `echo "$egg_cv_var_system_release" | cut -d . -f 1` = 5; then
-        # We've had quite a bit of testing on Solaris.
         WEIRD_OS="no"
-      else
-        # SunOS 4
-        AC_DEFINE(DLOPEN_1, 1, [Define if running on SunOS 4.0.])
-      fi
     ;;
     FreeBSD|OpenBSD|NetBSD|DragonFly)
       WEIRD_OS="no"
@@ -733,20 +727,13 @@ AC_DEFUN([EGG_CHECK_OS],
       AC_DEFINE(STOP_UAC, 1, [Define if running on OSF/1 platform.])
     ;;
     SunOS)
-      if test `echo "$egg_cv_var_system_release" | cut -d . -f 1` = 5; then
-        # Solaris
-        if test -n "$GCC"; then
-          SHLIB_CC="$CC -fPIC"
-          SHLIB_LD="$CC -shared"
-        else
-          SHLIB_CC="$CC -KPIC"
-          SHLIB_LD="$CC -G -z text"
-        fi
+      SUNOS="yes"
+      if test -n "$GCC"; then
+        SHLIB_CC="$CC -fPIC"
+        SHLIB_LD="$CC -shared"
       else
-        # SunOS 4
-        SUNOS="yes"
-        SHLIB_LD="ld"
-        SHLIB_CC="$CC -PIC"
+        SHLIB_CC="$CC -KPIC"
+        SHLIB_LD="$CC -G -z text"
       fi
     ;;
     FreeBSD|OpenBSD|NetBSD)
@@ -830,13 +817,8 @@ AC_DEFUN([EGG_CHECK_LIBS],
       )]
     )])
 
-    if test "$SUNOS" = yes; then
-      # For suns without yp
-      AC_CHECK_LIB(dl, main)
-    else
-      if test "$HPUX" = yes; then
-        AC_CHECK_LIB(dld, shl_load)
-      fi
+    if test "$HPUX" = yes; then
+      AC_CHECK_LIB(dld, shl_load)
     fi
   fi
 ])
@@ -1059,6 +1041,12 @@ AC_DEFUN([EGG_TCL_TCLCONFIG],
 
   if test -z "$ac_cv_lib_dlopen"; then
     TCL_LIB_SPEC=$(echo $TCL_LIB_SPEC | sed -- 's/-ldl//g')
+  fi
+
+  if test "$SUNOS" = yes; then
+    SHLIB_LD=$(echo $SHLIB_LD | sed -- 's/-z text//')
+    dnl AC_SUBST(SHLIB_LD, sed 's/\-z text//' <<<$SHLIB_LD)
+    AC_MSG_NOTICE([SunOS found, SHLIB_LD = $SHLIB_LD])
   fi
 
   AC_MSG_CHECKING([for Tcl version])

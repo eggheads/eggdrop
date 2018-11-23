@@ -53,27 +53,19 @@
 #  endif
 
 #  ifdef MOD_USE_DL
-#    ifdef DLOPEN_1
-char *dlerror();
-void *dlopen(const char *, int);
-int dlclose(void *);
-void *dlsym(void *, char *);
-#      define DLFLAGS 1
-#    else /* DLOPEN_1 */
-#      include <dlfcn.h>
+#    include <dlfcn.h>
 
-#      ifndef RTLD_GLOBAL
-#        define RTLD_GLOBAL 0
-#      endif
-#      ifndef RTLD_NOW
-#        define RTLD_NOW 1
-#      endif
-#      ifdef RTLD_LAZY
-#        define DLFLAGS RTLD_LAZY|RTLD_GLOBAL
-#      else
-#        define DLFLAGS RTLD_NOW|RTLD_GLOBAL
-#      endif
-#    endif /* DLOPEN_1 */
+#    ifndef RTLD_GLOBAL
+#      define RTLD_GLOBAL 0
+#    endif
+#    ifndef RTLD_NOW
+#      define RTLD_NOW 1
+#    endif
+#    ifdef RTLD_LAZY
+#      define DLFLAGS RTLD_LAZY|RTLD_GLOBAL
+#    else
+#      define DLFLAGS RTLD_NOW|RTLD_GLOBAL
+#    endif
 #  endif /* MOD_USE_DL */
 #endif /* !STATIC */
 
