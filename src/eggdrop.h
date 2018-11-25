@@ -50,6 +50,7 @@
 #define CHANNELLEN 80 /* FIXME see issue #3 and issue #38 and rfc1459 <= 200 */
 #define HANDLEN    32 /* valid values 9->NICKMAX                             */
 #define NICKMAX    32 /* valid values HANDLEN->32                            */
+#define USERLEN    10
 
 
 /* Handy string lengths */

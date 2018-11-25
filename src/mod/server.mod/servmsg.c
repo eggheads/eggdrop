@@ -1282,7 +1282,7 @@ static void server_resolve_failure(int servidx)
 
 static void do_oident() {
   char *home = getenv("HOME");
-  char path[121], buf[(sizeof "global{reply \"\"}") + 10];
+  char path[121], buf[(sizeof "global{reply \"\"}") + USERLEN];
   int nbytes;
   int fd;
 
