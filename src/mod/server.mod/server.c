@@ -120,6 +120,7 @@ static int deq_kick(int);
 static void msgq_clear(struct msgq_head *qh);
 static int stack_limit;
 static char *realservername;
+static int oident;
 
 #include "servmsg.c"
 
@@ -1422,6 +1423,7 @@ static tcl_ints my_tcl_ints[] = {
   {"stack-limit",       &stack_limit,               0},
   {"exclusive-binds",   &exclusive_binds,           0},
   {"msg-rate",          &msgrate,                   0},
+  {"oident",            &oident,                    0},
 #ifdef TLS
   {"ssl-verify-server", &tls_vfyserver,             0},
 #endif
@@ -2017,6 +2019,7 @@ char *server_start(Function *global_funcs)
   stack_limit = 4;
   realservername = 0;
   msgrate = 2;
+  oident = 0;
 #ifdef TLS
   tls_vfyserver = 0;
 #endif
