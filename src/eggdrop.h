@@ -466,6 +466,9 @@ struct bot_info {
   char linker[NOTENAMELEN + 1]; /* who requested this link              */
   int numver;
   int port;                     /* base port                            */
+#ifdef TLS
+  int ssl;                      /* base ssl                             */
+#endif
   int uff_flags;                /* user file feature flags              */
 };
 
@@ -652,6 +655,10 @@ typedef struct {
 #define SOCK_VIRTUAL    0x0200  /* not-connected socket (dont read it!) */
 #define SOCK_BUFFER     0x0400  /* buffer data; don't notify dcc funcs  */
 #define SOCK_TCL        0x0800  /* tcl socket, don't do anything on it  */
+#ifdef TLS
+#  define SOCK_SENTTLS  0x1000  /* Socket that awaits a starttls in the
+                                 * next read                            */
+#endif
 
 /* Flags to sock_has_data
  */

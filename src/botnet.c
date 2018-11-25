@@ -766,7 +766,7 @@ void dump_links(int z)
             (dcc[i].u.chat->channel < GLOBAL_CHANS)) {
 #ifndef NO_OLD_BOTNET
           if (b_numver(z) < NEAT_BOTNET)
-             l =simple_sprintf(x, "join %s %s %d %c%d %s\n",
+            l = simple_sprintf(x, "join %s %s %d %c%d %s\n",
                                botnetnick, dcc[i].nick,
                                dcc[i].u.chat->channel, geticon(i),
                                dcc[i].sock, dcc[i].host);
@@ -1042,7 +1042,7 @@ int botlink(char *linker, int idx, char *nick)
       dcc[i].timeval = now;
       dcc[i].port = bi->telnet_port;
 #ifdef TLS
-      dcc[i].ssl = TLS_BOT;
+      dcc[i].ssl = (bi->ssl & TLS_BOT);
 #endif
       dcc[i].user = u;
       strcpy(dcc[i].nick, nick);
@@ -1086,18 +1086,20 @@ static void botlink_resolve_success(int i)
   strcpy(dcc[i].u.bot->version, "(primitive bot)");
   dcc[i].u.bot->numver = idx;
   dcc[i].u.bot->port = dcc[i].port;     /* Remember where i started */
+#ifdef TLS
+  dcc[i].u.bot->ssl = dcc[i].ssl;       /* Remember where I started */
+#endif
   nfree(linker);
   setsnport(dcc[i].sockname, dcc[i].port);
   dcc[i].sock = getsock(dcc[i].sockname.family, SOCK_STRONGCONN);
-  if (dcc[i].sock < 0)
+  if (dcc[i].sock < 0 || open_telnet_raw(dcc[i].sock, &dcc[i].sockname) < 0) {
     failed_link(i);
-  ret = open_telnet_raw(dcc[i].sock, &dcc[i].sockname);
-  if (ret < 0)
-    failed_link(i);
+}
 #ifdef TLS
-  else if (ssl_handshake(dcc[i].sock, TLS_CONNECT,
-           tls_vfybots, LOG_BOTS, dcc[i].host, NULL))
+  else if (dcc[i].ssl && ssl_handshake(dcc[i].sock, TLS_CONNECT,
+           tls_vfybots, LOG_BOTS, dcc[i].host, NULL)) {
     failed_link(i);
+}
 #endif
 }
 

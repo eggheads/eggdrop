@@ -254,10 +254,14 @@ static void bot_version(int idx, char *par)
 
 void failed_link(int idx)
 {
-  char s[51], s1[512];
-  int ret;
+  char s[NICKLEN + 18], s1[512];
 
+#ifdef TLS
+  /* Stop trying when we are sslport+3 */
+  if (dcc[idx].port >= dcc[idx].u.bot->port + 3 && dcc[idx].ssl) {
+#else
   if (dcc[idx].port >= dcc[idx].u.bot->port + 3) {
+#endif
     if (dcc[idx].u.bot->linker[0]) {
       egg_snprintf(s, sizeof s, "Couldn't link to %s.", dcc[idx].nick);
       strcpy(s1, dcc[idx].u.bot->linker);
@@ -277,31 +281,22 @@ void failed_link(int idx)
   dcc[idx].timeval = now;
 #ifdef TLS
   /* Order of attempts:
-   * 1. port     ssl
-   * 2. port     plain
-   * 3. port + 1 ssl
-   * 4. port + 1 plain
-   * 5. port + 2 ssl
-   * 6. port + 2 plain
-   * ...
+   * If initial SSL: sslport+1; sslport+2; sslport+3
+   * Else: sslport; plain+1; sslport+1; plain+2; sslport+2; plain+3; sslport+3
    */
-  if (dcc[idx].ssl) {
+  if (dcc[idx].u.bot->ssl) {
+    ++dcc[idx].port;
+  } else if (dcc[idx].ssl) {
     dcc[idx].ssl = 0;
+    ++dcc[idx].port;
   } else {
-    dcc[idx].port +=1;
     dcc[idx].ssl = 1;
   }
 #else
-  dcc[idx].port += 1;
+    ++dcc[idx].port;
 #endif
 
-  /* FIXME: Code duplication from botnet.c:botlink_resolve_success() */
-  setsnport(dcc[idx].sockname, dcc[idx].port);
-  dcc[idx].sock = getsock(dcc[idx].sockname.family, SOCK_STRONGCONN);
-  if (dcc[idx].sock < 0)
-    failed_link(idx);
-  ret = open_telnet_raw(dcc[idx].sock, &dcc[idx].sockname);
-  if (ret < 0)
+  if (open_telnet(idx, dcc[idx].host, dcc[idx].port) < 0)
     failed_link(idx);
 #ifdef TLS
   else if (dcc[idx].ssl && ssl_handshake(dcc[idx].sock, TLS_CONNECT,
@@ -1814,7 +1809,13 @@ static void dcc_telnet_pass(int idx, int atr)
    * will simply ignore the request and everything will go on as usual.
    */
     if (!dcc[idx].ssl) {
-      dprintf(idx, "starttls\n");
+      /* find number in socklist */
+      int i = findsock(dcc[idx].sock);
+      struct threaddata *td = threaddata();
+      /* mark socket to read next incoming at reduced len */
+      td->socklist[i].flags |= SOCK_SENTTLS;
+      /* Prefix with \n in case of newline-less ending stealth_prompt */
+      dprintf(idx, "\nstarttls\n");
       putlog(LOG_BOTS, "*", "Sent STARTTLS to %s...", dcc[idx].nick);
     }
 #endif
@@ -1829,7 +1830,8 @@ static void dcc_telnet_pass(int idx, int atr)
      * <Cybah>
      */
     putlog(LOG_BOTS, "*", "Challenging %s...", dcc[idx].nick);
-    dprintf(idx, "passreq <%x%x@%s>\n", getpid(), dcc[idx].timeval, botnetnick);
+    /* Prefix with \n in case of newline-less ending stealth_prompt */
+    dprintf(idx, "\npassreq <%x%x@%s>\n", getpid(), dcc[idx].timeval, botnetnick);
     dcc[idx].type = old;
   } else {
     /* NOTE: The MD5 digest used above to prevent cleartext passwords being
@@ -2441,12 +2443,16 @@ static void dcc_telnet_got_ident(int i, char *host)
   /* This is so we don't tell someone doing a portscan anything
    * about ourselves. <cybah>
    */
-  if (stealth_telnets)
+  if (stealth_telnets) {
+    /* Show here so it doesn't interfere with newline-less stealth_prompt */
+    if (allow_new_telnets)
+      dprintf(i, "(If you are new, enter 'NEW' here.)\n");
     dprintf(i, stealth_prompt);
-  else {
+  } else {
     dprintf(i, "\n\n");
     sub_lang(i, MISC_BANNER);
+    /* Show here so it doesn't get lost before the banner */
+    if (allow_new_telnets)
+      dprintf(i, "(If you are new, enter 'NEW' here.)\n");
   }
-  if (allow_new_telnets)
-    dprintf(i, "(If you are new, enter 'NEW' here.)\n");
 }
