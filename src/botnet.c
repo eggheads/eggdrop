@@ -1468,36 +1468,44 @@ static void eof_dcc_relaying(int idx)
 
 static void dcc_relay(int idx, char *buf, int j)
 {
-  unsigned char *p = (unsigned char *) buf;
-  int mark;
+  unsigned char *src, *dst;
 
   for (j = 0; dcc[j].sock != dcc[idx].u.relay->sock ||
        dcc[j].type != &DCC_RELAYING; j++);
-  /* If redirecting to a non-telnet user, swallow telnet codes and
-   * escape sequences. */
+  /* If redirecting to a non-telnet user, swallow telnet IAC, escape sequences
+   * and CR. */
   if (!(dcc[j].status & STAT_TELNET)) {
-    while (*p != 0) {
-      while (*p != 255 && (*p != '\033' || *(p + 1) != '[') && *p != '\r' && *p)
-        p++;                    /* Search for IAC, escape sequences and CR. */
-      if (*p == 255) {
-        mark = 2;
-        if (!*(p + 1))
-          mark = 1;             /* Bogus */
-        if ((*(p + 1) >= 251) || (*(p + 1) <= 254)) {
-          mark = 3;
-          if (!*(p + 2))
-            mark = 2;           /* Bogus */
+    src = (unsigned char *) buf;
+    dst = (unsigned char *) buf;
+    while (*src) {
+      /* Search for IAC, escape sequences and CR. */
+      if (*src == 255) { /* IAC */
+        src++;
+        if ((*src >= 251) && (*src <= 254)) /* 251 = WILL, 254 = DON'T */
+          src++;
+          if (*src)
+            src++;
+        else if (*src)
+          src++;
+      } else if (*src == '\033') { /* ESC */
+        src++;
+        if (*src == '[') { /* CSI */
+          src++;
+          /* Search for the end of the escape sequence. */
+          while (*src && *src != 'm')
+            src++;
         }
-        strcpy((char *) p, (char *) (p + mark));
-      } else if (*p == '\033') {
-        unsigned char *e;
-
-        /* Search for the end of the escape sequence. */
-        for (e = p + 2; *e != 'm' && *e; e++);
-        strcpy((char *) p, (char *) (e + 1));
-      } else if (*p == '\r')
-        memmove(p, p + 1, strlen((char *)p + 1) + 1);
+      } else if (*src == '\r') /* CR */
+        src++;
+      else {
+        if (src > dst)
+          *dst = *src;
+        src++;
+        dst++;
+      }
     }
+    if (src > dst)
+      *dst = 0;
     if (!buf[0])
       dprintf(-dcc[idx].u.relay->sock, " \n");
     else
