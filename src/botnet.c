@@ -1481,10 +1481,11 @@ static void dcc_relay(int idx, char *buf, int j)
       /* Search for IAC, escape sequences and CR. */
       if (*src == TLN_IAC) {
         src++;
-        if ((*src >= TLN_WILL) && (*src <= TLN_DONT))
+        if ((*src >= TLN_WILL) && (*src <= TLN_DONT)) {
           src++;
           if (*src)
             src++;
+        }
         else if (*src)
           src++;
       } else if (*src == '\033') { /* ESC */
