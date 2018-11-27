@@ -1488,13 +1488,12 @@ static void dcc_relay(int idx, char *buf, int j)
         }
         else if (*src)
           src++;
-      } else if (*src == '\033') { /* ESC */
+      } else if (*src == ESC) {
         src++;
         if (*src == '[') { /* CSI */
           src++;
           /* Search for the end of the escape sequence. */
-          while (*src && *src != 'm')
-            src++;
+          while (*src && *src++ != 'm');
         }
       } else if (*src == '\r') /* CR */
         src++;
