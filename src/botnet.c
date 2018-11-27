@@ -1479,9 +1479,9 @@ static void dcc_relay(int idx, char *buf, int j)
     dst = (unsigned char *) buf;
     while (*src) {
       /* Search for IAC, escape sequences and CR. */
-      if (*src == 255) { /* IAC */
+      if (*src == TLN_IAC) {
         src++;
-        if ((*src >= 251) && (*src <= 254)) /* 251 = WILL, 254 = DON'T */
+        if ((*src >= TLN_WILL) && (*src <= TLN_DONT))
           src++;
           if (*src)
             src++;
