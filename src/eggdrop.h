@@ -256,19 +256,6 @@
 #define randint(n) (unsigned long) (random() / (RANDOM_MAX + 1.0) * n)
 
 
-#ifndef HAVE_SIGACTION /* old "weird signals" */
-#  define sigaction sigvec
-#  ifndef sa_handler
-#    define sa_handler sv_handler
-#    define sa_mask sv_mask
-#    define sa_flags sv_flags
-#  endif
-#endif
-
-#ifndef HAVE_SIGEMPTYSET
-#  define sigemptyset(x) ((*(int *)(x))=0)
-#endif
-
 #ifdef TLS
 #  include <openssl/ssl.h>
 #endif
