@@ -1094,12 +1094,12 @@ static void botlink_resolve_success(int i)
   dcc[i].sock = getsock(dcc[i].sockname.family, SOCK_STRONGCONN);
   if (dcc[i].sock < 0 || open_telnet_raw(dcc[i].sock, &dcc[i].sockname) < 0) {
     failed_link(i);
-}
+  }
 #ifdef TLS
   else if (dcc[i].ssl && ssl_handshake(dcc[i].sock, TLS_CONNECT,
            tls_vfybots, LOG_BOTS, dcc[i].host, NULL)) {
     failed_link(i);
-}
+  }
 #endif
 }
 
