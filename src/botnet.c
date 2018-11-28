@@ -1076,7 +1076,6 @@ static void botlink_resolve_failure(int i)
 
 static void botlink_resolve_success(int i)
 {
-  int ret;
   int idx = dcc[i].u.dns->ibuf;
   char *linker = dcc[i].u.dns->cptr;
 
