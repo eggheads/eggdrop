@@ -137,20 +137,22 @@ int setsockname(sockname_t *addr, char *src, int port, int allowres)
 
   /* Clean start */
   egg_bzero(addr, sizeof(sockname_t));
-  af = pref = pref_af ? AF_INET6 : AF_INET;
+  pref = pref_af ? AF_INET6 : AF_INET;
   if (pref == AF_INET) {
-    if (!egg_inet_aton(src, &addr->addr.s4.sin_addr))
-      af = AF_INET6;
-  } else {
-    if (inet_pton(af, src, &addr->addr.s6.sin6_addr) != 1)
+    if (inet_pton(AF_INET, src, &addr->addr.s4.sin_addr) == 1)
       af = AF_INET;
-  }
-  if (af != pref)
-    if (((af == AF_INET6) &&
-         (inet_pton(af, src, &addr->addr.s6.sin6_addr) != 1)) ||
-        ((af == AF_INET)  &&
-         !egg_inet_aton(src, &addr->addr.s4.sin_addr)))
+    else if (inet_pton(AF_INET6, src, &addr->addr.s6.sin6_addr) == 1)
+      af = AF_INET6;
+    else
       af = AF_UNSPEC;
+  } else {
+    if (inet_pton(AF_INET6, src, &addr->addr.s6.sin6_addr) == 1)
+      af = AF_INET6;
+    else if (inet_pton(AF_INET, src, &addr->addr.s4.sin_addr) == 1)
+      af = AF_INET;
+    else
+      af = AF_UNSPEC;
+  }
 
   if (af == AF_UNSPEC && allowres && *src) {
     /* src is a hostname. Attempt to resolve it.. */
@@ -734,7 +736,7 @@ int getdccfamilyaddr(sockname_t *addr, char *s, size_t l, int restrict_af)
       !pref_af ||
 #endif
       af) && (restrict_af != AF_INET6)) {
-      if (!egg_inet_aton(vhost, &r->addr.s4.sin_addr)) {
+      if (inet_pton(AF_INET, vhost, &r->addr.s4.sin_addr) != 1) {
         /* And if THAT fails, try DNS resolution of hostname */
         r = &name;
         gethostname(h, sizeof h);
