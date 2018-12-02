@@ -370,7 +370,7 @@ static tcl_strings def_tcl_strings[] = {
 #ifdef TLS
   {"ssl-capath",      tls_capath,     120, STR_DIR | STR_PROTECT},
   {"ssl-cafile",      tls_cafile,     120,           STR_PROTECT},
-  {"ssl-ciphers",     tls_ciphers,    120,           STR_PROTECT},
+  {"ssl-ciphers",     tls_ciphers,    140,           STR_PROTECT},
   {"ssl-privatekey",  tls_keyfile,    120,           STR_PROTECT},
   {"ssl-certificate", tls_certfile,   120,           STR_PROTECT},
 #endif
