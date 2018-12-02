@@ -322,10 +322,11 @@ typedef uint32_t IP;
 #define egg_isspace(x)  isspace((int)  (unsigned char) (x))
 #define egg_islower(x)  islower((int)  (unsigned char) (x))
 
-/* Use egg_bzero instead of memset or bzero */
+/* The following 3 functions are for backward compatibility only */
 #define egg_bzero(dest, len) memset(dest, 0, len)
-/* Use memset() or egg_bzero() instead */
+#define egg_memcpy(dst, src, len) memcpy(dst, src, len)
 #define egg_memset(dest, c, len) memset(dest, c, len)
+#define my_memcpy(dst, src, len) memcpy(dst, src, len)
 
 /***********************************************************************/
 
@@ -651,6 +652,10 @@ typedef struct {
 #define SOCK_VIRTUAL    0x0200  /* not-connected socket (dont read it!) */
 #define SOCK_BUFFER     0x0400  /* buffer data; don't notify dcc funcs  */
 #define SOCK_TCL        0x0800  /* tcl socket, don't do anything on it  */
+#ifdef TLS
+#  define SOCK_SENTTLS  0x1000  /* Socket that awaits a starttls in the
+                                 * next read                            */
+#endif
 
 /* Flags to sock_has_data
  */

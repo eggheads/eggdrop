@@ -654,7 +654,7 @@ static void core_secondly()
   }
   nowmins = time(NULL) / 60;
   if (nowmins > lastmin) {
-    egg_memcpy(&nowtm, localtime(&now), sizeof(struct tm));
+    memcpy(&nowtm, localtime(&now), sizeof(struct tm));
     i = 0;
 
     /* Once a minute */
@@ -725,8 +725,7 @@ static void core_secondly()
 
 static void core_minutely()
 {
-  check_tcl_time(&nowtm);
-  check_tcl_cron(&nowtm);
+  check_tcl_time_and_cron(&nowtm);
   do_check_timers(&timer);
   if (quick_logs != 0) {
     flushlogs();

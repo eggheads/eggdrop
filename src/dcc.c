@@ -1390,7 +1390,7 @@ static void dcc_telnet_hostresolved(int i)
   if (j < 0)
     putlog(LOG_MISC, "*", DCC_IDENTFAIL, dcc[i].host, strerror(errno));
   else {
-    egg_memcpy(&dcc[j].sockname, &dcc[i].sockname, sizeof(sockname_t));
+    memcpy(&dcc[j].sockname, &dcc[i].sockname, sizeof(sockname_t));
     dcc[j].sock = getsock(dcc[j].sockname.family, 0);
     if (dcc[j].sock >= 0) {
       sockname_t name;
@@ -1558,7 +1558,7 @@ static void dcc_telnet_id(int idx, char *buf, int atr)
     return;
   }
   /* rxvt-unicode */
-  if (!strncmp(buf, "\e[?1;2c", 7))
+  if (!strncmp(buf, "\x1B[?1;2c", 7)) /* \e isn't C standard so we use \x1B instead */
     buf += 7;
   dcc[idx].user = get_user_by_handle(userlist, buf);
   get_user_flagrec(dcc[idx].user, &fr, NULL);
@@ -1782,7 +1782,13 @@ static void dcc_telnet_pass(int idx, int atr)
    * will simply ignore the request and everything will go on as usual.
    */
     if (!dcc[idx].ssl) {
-      dprintf(idx, "starttls\n");
+      /* find number in socklist */
+      int i = findsock(dcc[idx].sock);
+      struct threaddata *td = threaddata();
+      /* mark socket to read next incoming at reduced len */
+      td->socklist[i].flags |= SOCK_SENTTLS;
+      /* Prefix with \n in case of newline-less ending stealth_prompt */
+      dprintf(idx, "\nstarttls\n");
       putlog(LOG_BOTS, "*", "Sent STARTTLS to %s...", dcc[idx].nick);
     }
 #endif
@@ -1797,7 +1803,8 @@ static void dcc_telnet_pass(int idx, int atr)
      * <Cybah>
      */
     putlog(LOG_BOTS, "*", "Challenging %s...", dcc[idx].nick);
-    dprintf(idx, "passreq <%x%x@%s>\n", getpid(), dcc[idx].timeval, botnetnick);
+    /* Prefix with \n in case of newline-less ending stealth_prompt */
+    dprintf(idx, "\npassreq <%x%x@%s>\n", getpid(), dcc[idx].timeval, botnetnick);
     dcc[idx].type = old;
   } else {
     /* NOTE: The MD5 digest used above to prevent cleartext passwords being
@@ -2409,12 +2416,16 @@ static void dcc_telnet_got_ident(int i, char *host)
   /* This is so we don't tell someone doing a portscan anything
    * about ourselves. <cybah>
    */
-  if (stealth_telnets)
+  if (stealth_telnets) {
+    /* Show here so it doesn't interfere with newline-less stealth_prompt */
+    if (allow_new_telnets)
+      dprintf(i, "(If you are new, enter 'NEW' here.)\n");
     dprintf(i, stealth_prompt);
-  else {
+  } else {
     dprintf(i, "\n\n");
     sub_lang(i, MISC_BANNER);
+    /* Show here so it doesn't get lost before the banner */
+    if (allow_new_telnets)
+      dprintf(i, "(If you are new, enter 'NEW' here.)\n");
   }
-  if (allow_new_telnets)
-    dprintf(i, "(If you are new, enter 'NEW' here.)\n");
 }

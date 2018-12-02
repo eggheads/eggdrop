@@ -308,7 +308,7 @@ Function global_table[] = {
   (Function) open_telnet,
   /* 88 - 91 */
   (Function) check_tcl_event,
-  (Function) egg_memcpy,
+  (Function) 0,                   /* was egg_memcpy -- use memcpy() instead */
   (Function) my_atoul,
   (Function) my_strcpy,
   /* 92 - 95 */

@@ -388,7 +388,7 @@ static int calc_penalty(char *msg)
   return penalty;
 }
 
-char *splitnicks(char **rest)
+static char *splitnicks(char **rest)
 {
   char *o, *r;
 
@@ -903,7 +903,7 @@ static void queue_server(int which, char *msg, int len)
 
     q->len = len;
     q->msg = nmalloc(len + 1);
-    egg_memcpy(q->msg, buf, len);
+    memcpy(q->msg, buf, len);
     q->msg[len] = 0;
     h->tot++;
     h->warned = 0;

@@ -27,5 +27,5 @@
  */
 
 #define EGG_STRINGVER "1.8.3"
-#define EGG_NUMVER 1080309
-#define EGG_PATCH "fnagle"
+#define EGG_NUMVER 1080310
+#define EGG_PATCH "sendfprint"

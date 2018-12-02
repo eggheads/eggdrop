@@ -1317,7 +1317,7 @@ static int fprint_tcl_set(Tcl_Interp * irp, struct userrec *u,
 struct user_entry_type USERENTRY_FPRINT = {
   0,
   def_gotshare,
-  0,
+  def_dupuser,
   fprint_unpack,
   def_pack,
   def_write_userfile,

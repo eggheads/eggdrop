@@ -217,9 +217,9 @@ void check_expired_ignores()
 /* Channel mask loaded from user file. This function is
  * add(ban|invite|exempt)_fully merged into one. <cybah>
  */
-static void addmask_fully(struct chanset_t *chan, maskrec ** m, char *mask,
-                          char *from, char *note, time_t expire_time, int flags,
-                          time_t added, time_t last)
+static void addmask_fully(maskrec ** m, char *mask, char *from, char *note,
+                          time_t expire_time, int flags, time_t added,
+                          time_t last)
 {
   maskrec *p = user_malloc(sizeof(maskrec));
 
@@ -269,8 +269,8 @@ static void restore_chanban(struct chanset_t *chan, char *host)
             if (desc) {
               *desc = 0;
               desc++;
-              addmask_fully(chan, chan ? &chan->bans : &global_bans, host, user,
-                            desc, atoi(expi), flags, atoi(add), atoi(last));
+              addmask_fully(chan ? &chan->bans : &global_bans, host, user, desc,
+                            atoi(expi), flags, atoi(add), atoi(last));
               return;
             }
           }
@@ -280,8 +280,8 @@ static void restore_chanban(struct chanset_t *chan, char *host)
         if (desc) {
           *desc = 0;
           desc++;
-          addmask_fully(chan, chan ? &chan->bans : &global_bans, host, add,
-                        desc, atoi(expi), flags, now, 0);
+          addmask_fully(chan ? &chan->bans : &global_bans, host, add, desc,
+                        atoi(expi), flags, now, 0);
           return;
         }
       }
@@ -323,9 +323,8 @@ static void restore_chanexempt(struct chanset_t *chan, char *host)
             if (desc) {
               *desc = 0;
               desc++;
-              addmask_fully(chan, chan ? &chan->exempts : &global_exempts, host,
-                            user, desc, atoi(expi), flags, atoi(add),
-                            atoi(last));
+              addmask_fully(chan ? &chan->exempts : &global_exempts, host, user,
+                            desc, atoi(expi), flags, atoi(add), atoi(last));
               return;
             }
           }
@@ -335,7 +334,7 @@ static void restore_chanexempt(struct chanset_t *chan, char *host)
         if (desc) {
           *desc = 0;
           desc++;
-          addmask_fully(chan, chan ? &chan->exempts : &global_exempts, host, add,
+          addmask_fully(chan ? &chan->exempts : &global_exempts, host, add,
                         desc, atoi(expi), flags, now, 0);
           return;
         }
@@ -378,8 +377,8 @@ static void restore_chaninvite(struct chanset_t *chan, char *host)
             if (desc) {
               *desc = 0;
               desc++;
-              addmask_fully(chan, chan ? &chan->invites : &global_invites, host,
-                            user, desc, atoi(expi), flags, atoi(add),
+              addmask_fully(chan ? &chan->invites : &global_invites, host, user,
+                            desc, atoi(expi), flags, atoi(add),
                             atoi(last));
               return;
             }
@@ -390,8 +389,8 @@ static void restore_chaninvite(struct chanset_t *chan, char *host)
         if (desc) {
           *desc = 0;
           desc++;
-          addmask_fully(chan, chan ? &chan->invites : &global_invites, host,
-                        add, desc, atoi(expi), flags, now, 0);
+          addmask_fully(chan ? &chan->invites : &global_invites, host, add,
+                        desc, atoi(expi), flags, now, 0);
           return;
         }
       }

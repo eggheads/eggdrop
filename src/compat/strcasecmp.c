@@ -21,7 +21,6 @@
  */
 
 #include "main.h"
-#include "memcpy.h"
 
 #ifndef HAVE_STRCASECMP
 int egg_strcasecmp(const char *s1, const char *s2)

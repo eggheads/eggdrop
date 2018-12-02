@@ -372,7 +372,7 @@ static tcl_strings def_tcl_strings[] = {
   {"ssl-cafile",      tls_cafile,     120,           STR_PROTECT},
   {"ssl-protocols",   tls_protocols,   60,           STR_PROTECT},
   {"ssl-dhparam",     tls_dhparam,    120,           STR_PROTECT},
-  {"ssl-ciphers",     tls_ciphers,    140,           STR_PROTECT},
+  {"ssl-ciphers",     tls_ciphers,    2048,          STR_PROTECT},
   {"ssl-privatekey",  tls_keyfile,    120,           STR_PROTECT},
   {"ssl-certificate", tls_certfile,   120,           STR_PROTECT},
 #endif

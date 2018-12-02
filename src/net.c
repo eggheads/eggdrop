@@ -164,9 +164,9 @@ int setsockname(sockname_t *addr, char *src, int port, int allowres)
       hp = NULL;
     if (hp) {
       if (hp->h_addrtype == AF_INET)
-        egg_memcpy(&addr->addr.s4.sin_addr, hp->h_addr, hp->h_length);
+        memcpy(&addr->addr.s4.sin_addr, hp->h_addr, hp->h_length);
       else
-        egg_memcpy(&addr->addr.s6.sin6_addr, hp->h_addr, hp->h_length);
+        memcpy(&addr->addr.s6.sin6_addr, hp->h_addr, hp->h_length);
       af = hp->h_addrtype;
     }
   }
@@ -220,7 +220,7 @@ but this Eggdrop was not compiled with IPv6 support.");
       } else
         hp = NULL;
       if (hp) {
-        egg_memcpy(&addr->addr.s4.sin_addr, hp->h_addr, hp->h_length);
+        memcpy(&addr->addr.s4.sin_addr, hp->h_addr, hp->h_length);
         af = hp->h_addrtype;
       }
     } else
@@ -481,7 +481,7 @@ static int proxy_connect(int sock, sockname_t *addr)
     for (i = 0; i < threaddata()->MAXSOCKS; i++)
       if (!(socklist[i].flags & SOCK_UNUSED) && socklist[i].sock == sock)
         socklist[i].flags |= SOCK_PROXYWAIT;    /* drummer */
-    egg_memcpy(host, &addr->addr.s4.sin_addr.s_addr, 4);
+    memcpy(host, &addr->addr.s4.sin_addr.s_addr, 4);
     egg_snprintf(s, sizeof s, "\004\001%c%c%c%c%c%c%s", port % 256,
                  (port >> 8) % 256, host[0], host[1], host[2], host[3], botuser);
     tputs(sock, s, strlen(botuser) + 9);        /* drummer */
@@ -757,7 +757,7 @@ int getdccfamilyaddr(sockname_t *addr, char *s, size_t l, int restrict_af)
   if (r->family == AF_INET6) {
     if (IN6_IS_ADDR_V4MAPPED(&r->addr.s6.sin6_addr) ||
         IN6_IS_ADDR_UNSPECIFIED(&r->addr.s6.sin6_addr)) {
-      egg_memcpy(&ip, r->addr.s6.sin6_addr.s6_addr + 12, sizeof ip);
+      memcpy(&ip, r->addr.s6.sin6_addr.s6_addr + 12, sizeof ip);
       egg_snprintf(s, l, "%lu", natip[0] ? iptolong(inet_addr(natip)) :
                ntohl(ip));
     } else
@@ -919,6 +919,12 @@ int sockread(char *s, int *len, sock_list *slist, int slistmax, int tclonly)
                      ERR_error_string(ERR_get_error(), 0), err);
             x = -1;
           }
+        } else if (slist[i].flags & SOCK_SENTTLS) {
+          /* We are awaiting a reply on our "starttls", only read
+           * strlen("starttls -\n") bytes so we don't accidently
+           * read the Client Hello from the ssl handshake */
+          x = read(slist[i].sock, s, strlen("starttls -\n"));
+          slist[i].flags &= ~SOCK_SENTTLS;
         } else
           x = read(slist[i].sock, s, grab);
       }
@@ -1041,15 +1047,15 @@ int sockgets(char *s, int *len)
         /* Handling buffered binary data (must have been SOCK_BUFFER before). */
         if (socklist[i].handler.sock.inbuflen <= 510) {
           *len = socklist[i].handler.sock.inbuflen;
-          egg_memcpy(s, socklist[i].handler.sock.inbuf, socklist[i].handler.sock.inbuflen);
+          memcpy(s, socklist[i].handler.sock.inbuf, socklist[i].handler.sock.inbuflen);
           nfree(socklist[i].handler.sock.inbuf);
           socklist[i].handler.sock.inbuf = NULL;
           socklist[i].handler.sock.inbuflen = 0;
         } else {
           /* Split up into chunks of 510 bytes. */
           *len = 510;
-          egg_memcpy(s, socklist[i].handler.sock.inbuf, *len);
-          egg_memcpy(socklist[i].handler.sock.inbuf, socklist[i].handler.sock.inbuf + *len, *len);
+          memcpy(s, socklist[i].handler.sock.inbuf, *len);
+          memcpy(socklist[i].handler.sock.inbuf, socklist[i].handler.sock.inbuf + *len, *len);
           socklist[i].handler.sock.inbuflen -= *len;
           socklist[i].handler.sock.inbuf = nrealloc(socklist[i].handler.sock.inbuf, socklist[i].handler.sock.inbuflen);
         }
@@ -1073,7 +1079,7 @@ int sockgets(char *s, int *len)
   /* sockread can return binary data while socket still has connectflag, process first */
   if (socklist[ret].flags & SOCK_BINARY && *len > 0) {
     socklist[ret].flags &= ~SOCK_CONNECT;
-    egg_memcpy(s, xx, *len);
+    memcpy(s, xx, *len);
     return socklist[ret].sock;
   }
   /* Binary, listening and passed on sockets don't get buffered. */
@@ -1084,7 +1090,7 @@ int sockgets(char *s, int *len)
       socklist[ret].handler.sock.inbuflen = *len;
       socklist[ret].handler.sock.inbuf = nmalloc(*len + 1);
       /* It might be binary data. You never know. */
-      egg_memcpy(socklist[ret].handler.sock.inbuf, xx, *len);
+      memcpy(socklist[ret].handler.sock.inbuf, xx, *len);
       socklist[ret].handler.sock.inbuf[*len] = 0;
     }
     socklist[ret].flags &= ~SOCK_CONNECT;
@@ -1098,7 +1104,7 @@ int sockgets(char *s, int *len)
   if (socklist[ret].flags & SOCK_BUFFER) {
     socklist[ret].handler.sock.inbuf = (char *) nrealloc(socklist[ret].handler.sock.inbuf,
                                             socklist[ret].handler.sock.inbuflen + *len + 1);
-    egg_memcpy(socklist[ret].handler.sock.inbuf + socklist[ret].handler.sock.inbuflen, xx, *len);
+    memcpy(socklist[ret].handler.sock.inbuf + socklist[ret].handler.sock.inbuflen, xx, *len);
     socklist[ret].handler.sock.inbuflen += *len;
     /* We don't know whether it's binary data. Make sure normal strings
      * will be handled properly later on too. */
@@ -1222,7 +1228,7 @@ void tputs(int z, char *s, unsigned int len)
       if (socklist[i].handler.sock.outbuf != NULL) {
         /* Already queueing: just add it */
         p = (char *) nrealloc(socklist[i].handler.sock.outbuf, socklist[i].handler.sock.outbuflen + len);
-        egg_memcpy(p + socklist[i].handler.sock.outbuflen, s, len);
+        memcpy(p + socklist[i].handler.sock.outbuflen, s, len);
         socklist[i].handler.sock.outbuf = p;
         socklist[i].handler.sock.outbuflen += len;
         return;
@@ -1251,7 +1257,7 @@ void tputs(int z, char *s, unsigned int len)
       if (x < len) {
         /* Socket is full, queue it */
         socklist[i].handler.sock.outbuf = nmalloc(len - x);
-        egg_memcpy(socklist[i].handler.sock.outbuf, &s[x], len - x);
+        memcpy(socklist[i].handler.sock.outbuf, &s[x], len - x);
         socklist[i].handler.sock.outbuflen = len - x;
       }
       return;
@@ -1347,7 +1353,7 @@ void dequeue_sockets()
         /* This removes any sent bytes from the beginning of the buffer */
         socklist[i].handler.sock.outbuf =
                             nmalloc(socklist[i].handler.sock.outbuflen - x);
-        egg_memcpy(socklist[i].handler.sock.outbuf, p + x,
+        memcpy(socklist[i].handler.sock.outbuf, p + x,
                    socklist[i].handler.sock.outbuflen - x);
         socklist[i].handler.sock.outbuflen -= x;
         nfree(p);
@@ -1455,7 +1461,7 @@ int sanitycheck_dcc(char *nick, char *from, char *ipaddy, char *port)
       return 0;
     }
     if (IN6_IS_ADDR_V4MAPPED(&name.addr.s6.sin6_addr)) {
-      egg_memcpy(&ip, name.addr.s6.sin6_addr.s6_addr + 12, sizeof ip);
+      memcpy(&ip, name.addr.s6.sin6_addr.s6_addr + 12, sizeof ip);
       ip = ntohl(ip);
     }
   }

@@ -1235,7 +1235,7 @@ char *notes_start(Function *global_funcs)
   add_lang_section("notes");
   notes_server_setup(0);
   notes_irc_setup(0);
-  my_memcpy(&USERENTRY_FWD, &USERENTRY_INFO, sizeof(void *) * 12);
+  memcpy(&USERENTRY_FWD, &USERENTRY_INFO, sizeof(void *) * 12);
   add_entry_type(&USERENTRY_FWD);
   return NULL;
 }
