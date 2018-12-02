@@ -43,7 +43,7 @@ char tls_capath[121] = "";    /* Path to trusted CA certificates              */
 char tls_cafile[121] = "";    /* File containing trusted CA certificates      */
 char tls_certfile[121] = "";  /* Our own digital certificate ;)               */
 char tls_keyfile[121] = "";   /* Private key for use with eggdrop             */
-char tls_ciphers[121] = "";   /* A list of ciphers for SSL to use             */
+char tls_ciphers[2049] = "";  /* A list of ciphers for SSL to use             */
 
 
 /* Count allocated memory for SSL. This excludes memory allocated by OpenSSL's
