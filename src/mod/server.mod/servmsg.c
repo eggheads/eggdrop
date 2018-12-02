@@ -278,9 +278,7 @@ static int check_tcl_out(int which, char *msg, int sent)
 
 static int match_my_nick(char *nick)
 {
-  if (!rfc_casecmp(nick, botname))
-    return 1;
-  return 0;
+  return (!rfc_casecmp(nick, botname));
 }
 
 /* 001: welcome to IRC (use it to fix the server name) */
@@ -491,7 +489,7 @@ static int gotmsg(char *from, char *msg)
   ignoring = match_ignore(from);
   to = newsplit(&msg);
   fixcolon(msg);
-  strlcpy(uhost, from, sizeof(buf));
+  strlcpy(uhost, from, sizeof buf);
   nick = splitnick(&uhost);
   /* Apparently servers can send CTCPs now too, not just nicks */
   if (nick[0] == '\0')
@@ -626,7 +624,7 @@ static int gotnotice(char *from, char *msg)
   ignoring = match_ignore(from);
   to = newsplit(&msg);
   fixcolon(msg);
-  strcpy(uhost, from);
+  strlcpy(uhost, from, sizeof buf);
   nick = splitnick(&uhost);
 
   /* Check for CTCP: */

@@ -43,7 +43,7 @@ char tls_capath[121] = "";    /* Path to trusted CA certificates              */
 char tls_cafile[121] = "";    /* File containing trusted CA certificates      */
 char tls_certfile[121] = "";  /* Our own digital certificate ;)               */
 char tls_keyfile[121] = "";   /* Private key for use with eggdrop             */
-char tls_ciphers[121] = "";   /* A list of ciphers for SSL to use             */
+char tls_ciphers[2049] = "";  /* A list of ciphers for SSL to use             */
 
 
 /* Count allocated memory for SSL. This excludes memory allocated by OpenSSL's
@@ -780,7 +780,10 @@ int ssl_handshake(int sock, int flags, int verify, int loglevel, char *host,
   SSL_set_mode(td->socklist[i].ssl, SSL_MODE_ENABLE_PARTIAL_WRITE |
                SSL_MODE_ACCEPT_MOVING_WRITE_BUFFER);
   if (data->flags & TLS_CONNECT) {
+    struct timespec req = { 0, 1000000L };
     SSL_set_verify(td->socklist[i].ssl, SSL_VERIFY_PEER, ssl_verify);
+    /* Introduce 1ms lag so an unpatched hub has time to setup the ssl handshake */
+    nanosleep(&req, NULL);
     ret = SSL_connect(td->socklist[i].ssl);
     if (!ret)
       debug0("TLS: connect handshake failed.");
