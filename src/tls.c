@@ -804,10 +804,14 @@ int ssl_handshake(int sock, int flags, int verify, int loglevel, char *host,
     debug0("TLS: handshake in progress");
     return 0;
   }
-  if (ERR_peek_error())
+  if ((err = ERR_peek_error())) {
+    putlog(data->loglevel, "*",
+           "TLS: handshake failed due to the following error: %s",
+           ERR_reason_error_string(err));
     debug0("TLS: handshake failed due to the following errors: ");
-  while ((err = ERR_get_error()))
-    debug1("TLS: %s", ERR_error_string(err, NULL));
+    while ((err = ERR_get_error()))
+      debug1("TLS: %s", ERR_error_string(err, NULL));
+  }
 
   /* Attempt failed, cleanup and abort */
   SSL_shutdown(td->socklist[i].ssl);
