@@ -1431,7 +1431,7 @@ static void eof_dcc_telnet(int idx)
 
 static void display_telnet(int idx, char *buf)
 {
-  sprintf(buf, "lstn  %d%s", dcc[idx].port,
+  sprintf(buf, "lstn  %s%d%s", dcc[idx].ssl ? "+" : "", dcc[idx].port,
           (dcc[idx].status & LSTN_PUBLIC) ? " pub" : "");
 }
 
