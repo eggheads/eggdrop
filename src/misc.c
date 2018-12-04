@@ -1064,6 +1064,18 @@ void help_subst(char *s, char *nick, struct flag_record *flags,
   }
 }
 
+/* As strdup() but with nmalloc() */
+char *egg_strdup(const char *str)
+{
+  size_t len;
+  char *copy;
+
+  len = strlen(str) + 1;
+  copy = nmalloc(len);
+  memcpy(copy, str, len);
+  return copy;
+}
+
 static void scan_help_file(struct help_ref *current, char *filename, int type)
 {
   FILE *f;
@@ -1080,8 +1092,7 @@ static void scan_help_file(struct help_ref *current, char *filename, int type)
           *p = 0;
           list = nmalloc(sizeof *list);
 
-          list->name = nmalloc(p - q + 1);
-          strcpy(list->name, q);
+          list->name = egg_strdup(q);
           list->next = current->first;
           list->type = type;
           current->first = list;
@@ -1108,8 +1119,7 @@ void add_help_reference(char *file)
       return;                   /* Already exists, can't re-add :P */
   current = nmalloc(sizeof *current);
 
-  current->name = nmalloc(strlen(file) + 1);
-  strcpy(current->name, file);
+  current->name = egg_strdup(file);
   current->next = help_list;
   current->first = NULL;
   help_list = current;

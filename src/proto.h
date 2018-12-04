@@ -259,6 +259,7 @@ char *strchr_unescape(char *, const char, const char);
 void str_unescape(char *, const char);
 int str_isdigit(const char *);
 void kill_bot(char *, char *);
+char *egg_strdup(const char *);
 
 void maskaddr(const char *, char *, int);
 #define maskhost(a,b) maskaddr((a),(b),3)

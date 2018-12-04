@@ -1038,8 +1038,7 @@ void parserespacket(uint8_t *response, int len)
           return;
         }
         if (!rp->hostn) {
-          rp->hostn = nmalloc(strlen(namestring) + 1);
-          strcpy(rp->hostn, namestring);
+          rp->hostn = egg_strdup(namestring);
           linkresolvehost(rp);
           passrp(rp, rr->ttl, T_PTR);
           return;
@@ -1224,8 +1223,7 @@ static void dns_forward(char *hostn)
   rp = allocresolve();
   rp->state = STATE_AREQ;
   rp->sends = 1;
-  rp->hostn = nmalloc(strlen(hostn) + 1);
-  strcpy(rp->hostn, hostn);
+  rp->hostn = egg_strdup(hostn);
   rp->type = T_A;
   linkresolvehost(rp);
   sendrequest(rp, T_A);

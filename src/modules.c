@@ -606,7 +606,8 @@ Function global_table[] = {
   (Function) 0,
 #endif
   /* 304 - 307 */
-  (Function) strncpyz
+  (Function) strncpyz,
+  (Function) egg_strdup
 };
 
 void init_modules(void)

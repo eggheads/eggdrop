@@ -507,6 +507,7 @@
 #endif
 /* 304 - 307 */
 #define strncpyz ((size_t (*) (char *, const char *, size_t))global[304])
+#define egg_strdup ((char *(*) (const char *))global[305])
 
 
 /* hostmasking */
