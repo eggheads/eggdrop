@@ -38,4 +38,8 @@ There are also some variables you can set in your config file:
     Set here the time (in seconds) to wait before an inactive transfer
     times out.
 
+  set share-unlink 1
+    By default, linked bots will unlink when the userfile sharing fails.
+    Set this to 0 to keep the bots linked and retry every minute.
+
 Copyright (C) 2000 - 2019 Eggheads Development Team
