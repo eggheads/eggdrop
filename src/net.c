@@ -1039,8 +1039,10 @@ int sockgets(char *s, int *len)
             strcpy(px, p);
             nfree(socklist[i].handler.sock.inbuf);
             socklist[i].handler.sock.inbuf = px;
-          } else
+          } else {
+            nfree(socklist[i].handler.sock.inbuf);
             socklist[i].handler.sock.inbuf = NULL;
+          }
           *len = strlen(s);
           return socklist[i].sock;
         }
