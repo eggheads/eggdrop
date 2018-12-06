@@ -1019,6 +1019,7 @@ int sockgets(char *s, int *len)
 {
   char xx[514], *p, *px;
   int ret, i, data = 0;
+  size_t len2;
 
   for (i = 0; i < threaddata()->MAXSOCKS; i++) {
     /* Check for stored-up data waiting to be processed */
@@ -1035,8 +1036,9 @@ int sockgets(char *s, int *len)
             p++;
           strlcpy(s, socklist[i].handler.sock.inbuf, 511);
           if (*p) {
-            px = nmalloc(strlen(p) + 1);
-            strcpy(px, p);
+            len2 = strlen(p) + 1;
+            px = nmalloc(len2);
+            memcpy(px, p, len2);
             nfree(socklist[i].handler.sock.inbuf);
             socklist[i].handler.sock.inbuf = px;
           } else {
@@ -1177,8 +1179,9 @@ int sockgets(char *s, int *len)
     nfree(p);
   } else {
     socklist[ret].handler.sock.inbuflen = strlen(xx);
-    socklist[ret].handler.sock.inbuf = nmalloc(socklist[ret].handler.sock.inbuflen + 1);
-    strcpy(socklist[ret].handler.sock.inbuf, xx);
+    len2 = socklist[ret].handler.sock.inbuflen + 1;
+    socklist[ret].handler.sock.inbuf = nmalloc(len2);
+    memcpy(socklist[ret].handler.sock.inbuf, xx, len2);
   }
   if (data)
     return socklist[ret].sock;
