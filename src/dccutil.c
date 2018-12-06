@@ -57,7 +57,7 @@ int max_dcc = 0;       /* indicates the current dcc limit in the main thread */
 int increase_socks_max()
 {
   struct threaddata *td = threaddata();
-  int osock = td->MAXSOCKS;
+  int osock = td->MAXSOCKS, max_dcc_new;
 
   if (max_socks < 1)
     max_socks = 1;
@@ -79,9 +79,17 @@ int increase_socks_max()
     td->socklist[osock].flags = SOCK_UNUSED;
 
   if (td->mainthread) {
-    max_dcc = td->MAXSOCKS - 10;
-    if (max_dcc < 1)
-      max_dcc = 1;
+    max_dcc_new = td->MAXSOCKS - 10;
+    if (max_dcc_new > max_dcc)
+      max_dcc = max_dcc_new;
+    else {
+      if (max_dcc == 0)
+        max_dcc = 1;
+      else {
+        putlog(LOG_MISC, "*", "Maximum dcc limit reached. Consider raising max-socks.");
+        return -1;
+      }
+    }
     if (dcc)
       dcc = nrealloc(dcc, sizeof(struct dcc_t) * max_dcc);
     else
