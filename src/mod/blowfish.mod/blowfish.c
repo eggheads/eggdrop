@@ -147,12 +147,16 @@ static void blowfish_report(int idx, int details)
         tot++;
 
     dprintf(idx, "    Blowfish encryption module:\n");
-    dprintf(idx, "      %d of %d boxes in use: ", tot, BOXES);
-    for (i = 0; i < BOXES; i++)
-      if (box[i].P != NULL) {
-        dprintf(idx, "(age: %d) ", now - box[i].lastuse);
-      }
-    dprintf(idx, "\n");
+    if (!tot)
+      dprintf(idx, "      0 of %d boxes in use\n", BOXES);
+    else {
+      dprintf(idx, "      %d of %d boxes in use:", tot, BOXES);
+      for (i = 0; i < BOXES; i++)
+        if (box[i].P != NULL) {
+          dprintf(idx, " (age: %d)", now - box[i].lastuse);
+        }
+      dprintf(idx, "\n");
+    }
     dprintf(idx, "      Using %d byte%s of memory\n", size,
             (size != 1) ? "s" : "");
   }
