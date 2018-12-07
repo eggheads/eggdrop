@@ -1076,7 +1076,6 @@ static void botlink_resolve_failure(int i)
 
 static void botlink_resolve_success(int i)
 {
-  int ret;
   int idx = dcc[i].u.dns->ibuf;
   char *linker = dcc[i].u.dns->cptr;
 
@@ -1086,18 +1085,20 @@ static void botlink_resolve_success(int i)
   strcpy(dcc[i].u.bot->version, "(primitive bot)");
   dcc[i].u.bot->numver = idx;
   dcc[i].u.bot->port = dcc[i].port;     /* Remember where i started */
+#ifdef TLS
+  dcc[i].u.bot->ssl = dcc[i].ssl;       /* Remember where I started */
+#endif
   nfree(linker);
   setsnport(dcc[i].sockname, dcc[i].port);
   dcc[i].sock = getsock(dcc[i].sockname.family, SOCK_STRONGCONN);
-  if (dcc[i].sock < 0)
+  if (dcc[i].sock < 0 || open_telnet_raw(dcc[i].sock, &dcc[i].sockname) < 0) {
     failed_link(i);
-  ret = open_telnet_raw(dcc[i].sock, &dcc[i].sockname);
-  if (ret < 0)
-    failed_link(i);
+  }
 #ifdef TLS
   else if (dcc[i].ssl && ssl_handshake(dcc[i].sock, TLS_CONNECT,
-           tls_vfybots, LOG_BOTS, dcc[i].host, NULL))
+           tls_vfybots, LOG_BOTS, dcc[i].host, NULL)) {
     failed_link(i);
+  }
 #endif
 }
 

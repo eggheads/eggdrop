@@ -521,6 +521,17 @@ int open_telnet_raw(int sock, sockname_t *addr)
   struct timeval tv;
   int i, rc, res;
 
+  for (i = 0; i < dcc_total; i++)
+    if (dcc[i].sock == sock) { /* Got idx from sock ? */
+#ifdef TLS
+      debug4("net: open_telnet_raw(): idx %i host %s port %i ssl %i",
+             i, dcc[i].host, dcc[i].port, dcc[i].ssl);
+#else
+      debug3("net: open_telnet_raw(): idx %i host %s port %i",
+             i, dcc[i].host, dcc[i].port);
+#endif
+      break;
+    }
   getvhost(&name, addr->family);
   if (bind(sock, &name.addr.sa, name.addrlen) < 0) {
     return -1;

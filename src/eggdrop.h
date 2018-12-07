@@ -466,6 +466,9 @@ struct bot_info {
   char linker[NOTENAMELEN + 1]; /* who requested this link              */
   int numver;
   int port;                     /* base port                            */
+#ifdef TLS
+  int ssl;                      /* base ssl                             */
+#endif
   int uff_flags;                /* user file feature flags              */
 };
 
