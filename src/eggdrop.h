@@ -756,6 +756,13 @@ enum {
   EGG_OPTION_UNSET = 2          /* Unset option(s).             */
 };
 
+#define ESC             27      /* Oct              033
+                                 * Hex              1B
+                                 * Caret notation   ^[
+                                 * Escape sequences \e
+                                 * \e is not supported in all compilers
+                                 */
+
 /* Telnet codes.  See "TELNET Protocol Specification" (RFC 854) and
  * "TELNET Echo Option" (RFC 875) for details. */
 
