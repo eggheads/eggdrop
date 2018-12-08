@@ -389,7 +389,7 @@ static int calc_penalty(char *msg)
   return penalty;
 }
 
-char *splitnicks(char **rest)
+static char *splitnicks(char **rest)
 {
   char *o, *r;
 

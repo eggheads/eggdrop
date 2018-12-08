@@ -467,6 +467,9 @@ struct bot_info {
   char linker[NOTENAMELEN + 1]; /* who requested this link              */
   int numver;
   int port;                     /* base port                            */
+#ifdef TLS
+  int ssl;                      /* base ssl                             */
+#endif
   int uff_flags;                /* user file feature flags              */
 };
 
@@ -753,6 +756,13 @@ enum {
   EGG_OPTION_SET = 1,           /* Set option(s).               */
   EGG_OPTION_UNSET = 2          /* Unset option(s).             */
 };
+
+#define ESC             27      /* Oct              033
+                                 * Hex              1B
+                                 * Caret notation   ^[
+                                 * Escape sequences \e
+                                 * \e is not supported in all compilers
+                                 */
 
 /* Telnet codes.  See "TELNET Protocol Specification" (RFC 854) and
  * "TELNET Echo Option" (RFC 875) for details. */
