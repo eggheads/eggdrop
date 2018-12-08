@@ -1278,7 +1278,7 @@ static void server_resolve_failure(int servidx)
   lostdcc(servidx);
 }
 
-static void do_oident() {
+static void do_oidentd() {
   char *home = getenv("HOME");
   char path[121], buf[(sizeof "global{reply \"\"}") + USERLEN];
   int nbytes;
@@ -1286,17 +1286,17 @@ static void do_oident() {
 
   if (!home) {
     putlog(LOG_SERV, "*",
-           "do_oident(): getenv(): variable HOME is not in the current environment");
+           "do_oidentd(): getenv(): variable HOME is not in the current environment");
     return;
   }
   snprintf(path, sizeof path, "%s/.oidentd.conf", home);
   nbytes = snprintf(buf, sizeof buf, "global{reply \"%s\"}", botuser);
   if ((fd = open(path, O_WRONLY | O_CREAT | O_TRUNC, S_IRUSR | S_IWUSR | S_IROTH)) < 0) {
-    putlog(LOG_SERV, "*", "do_oident(): open(): %s", strerror(errno));
+    putlog(LOG_SERV, "*", "do_oidentd(): open(): %s", strerror(errno));
     return;
   }
   if (write(fd, buf, nbytes) < 0)
-    putlog(LOG_SERV, "*", "do_oident(): write(): %s", strerror(errno));
+    putlog(LOG_SERV, "*", "do_oidentd(): write(): %s", strerror(errno));
   close(fd);
 }
 
@@ -1309,11 +1309,11 @@ static void server_resolve_success(int servidx)
   changeover_dcc(servidx, &SERVER_SOCKET, 0);
   dcc[servidx].sock = getsock(dcc[servidx].sockname.family, 0);
   setsnport(dcc[servidx].sockname, dcc[servidx].port);
-  if (oident)
-    /* Overwrite oident config right before opening the socket to the IRC server
-     * to minimize race.
+  if (oidentd)
+    /* Overwrite oidentd config file right before opening the socket to the IRC
+     * server to minimize race.
      */
-    do_oident();
+    do_oidentd();
   serv = open_telnet_raw(dcc[servidx].sock, &dcc[servidx].sockname);
   if (serv < 0) {
     char *errstr = NULL;
