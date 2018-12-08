@@ -1289,12 +1289,15 @@ static void do_oidentd() {
            "do_oidentd(): getenv(): variable HOME is not in the current environment");
     return;
   }
-  snprintf(path, sizeof path, "%s/.oidentd.conf", home);
-  nbytes = snprintf(buf, sizeof buf, "global{reply \"%s\"}", botuser);
+  if (snprintf(path, sizeof path, "%s/.oidentd.conf", home) >= sizeof path) {
+    putlog(LOG_SERV, "*", "do_oidentd(): path too long");
+    return;
+  }
   if ((fd = open(path, O_WRONLY | O_CREAT | O_TRUNC, S_IRUSR | S_IWUSR | S_IROTH)) < 0) {
     putlog(LOG_SERV, "*", "do_oidentd(): open(): %s", strerror(errno));
     return;
   }
+  nbytes = snprintf(buf, sizeof buf, "global{reply \"%s\"}", botuser);
   if (write(fd, buf, nbytes) < 0)
     putlog(LOG_SERV, "*", "do_oidentd(): write(): %s", strerror(errno));
   close(fd);
