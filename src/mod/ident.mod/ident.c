@@ -133,7 +133,6 @@ static char *ident_close()
   rem_builtins(H_event, ident_event);
   rem_builtins(H_raw, ident_raw);
   rem_tcl_ints(identints);
-  del_hook(HOOK_IDENT, (Function) ident_ident);
   module_undepend(MODULE_NAME);
   return NULL;
 }
@@ -165,7 +164,6 @@ char *ident_start(Function *global_funcs)
   add_builtins(H_event, ident_event);
   add_builtins(H_raw, ident_raw);
   add_tcl_ints(identints);
-  add_hook(HOOK_IDENT, (Function) ident_ident);
 
   return NULL;
 }

@@ -51,7 +51,6 @@
 #define HOOK_DNS_IPBYHOST       113
 #define HOOK_ENCRYPT_STRING     114
 #define HOOK_DECRYPT_STRING     115
-#define HOOK_IDENT              116
 
 /* These are FIXED once they are in a release they STAY */
 #define MODCALL_START             0
