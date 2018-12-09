@@ -20,7 +20,6 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
-#include <fcntl.h>
 #include "../irc.mod/irc.h"
 #include "../channels.mod/channels.h"
 
@@ -1278,31 +1277,6 @@ static void server_resolve_failure(int servidx)
   lostdcc(servidx);
 }
 
-static void do_oidentd() {
-  char *home = getenv("HOME");
-  char path[121], buf[(sizeof "global{reply \"\"}") + USERLEN];
-  int nbytes;
-  int fd;
-
-  if (!home) {
-    putlog(LOG_SERV, "*",
-           "do_oidentd(): getenv(): variable HOME is not in the current environment");
-    return;
-  }
-  if (snprintf(path, sizeof path, "%s/.oidentd.conf", home) >= sizeof path) {
-    putlog(LOG_SERV, "*", "do_oidentd(): path too long");
-    return;
-  }
-  if ((fd = open(path, O_WRONLY | O_CREAT | O_TRUNC, S_IRUSR | S_IWUSR | S_IROTH)) < 0) {
-    putlog(LOG_SERV, "*", "do_oidentd(): open(): %s", strerror(errno));
-    return;
-  }
-  nbytes = snprintf(buf, sizeof buf, "global{reply \"%s\"}", botuser);
-  if (write(fd, buf, nbytes) < 0)
-    putlog(LOG_SERV, "*", "do_oidentd(): write(): %s", strerror(errno));
-  close(fd);
-}
-
 static void server_resolve_success(int servidx)
 {
   char pass[121];
@@ -1312,11 +1286,10 @@ static void server_resolve_success(int servidx)
   changeover_dcc(servidx, &SERVER_SOCKET, 0);
   dcc[servidx].sock = getsock(dcc[servidx].sockname.family, 0);
   setsnport(dcc[servidx].sockname, dcc[servidx].port);
-  if (oidentd)
-    /* Overwrite oidentd config file right before opening the socket to the IRC
-     * server to minimize race.
-     */
-    do_oidentd();
+  /* Setup ident right before opening the socket to the IRC server to minimize
+   * race.
+   */
+  check_tcl_event("ident");
   serv = open_telnet_raw(dcc[servidx].sock, &dcc[servidx].sockname);
   if (serv < 0) {
     char *errstr = NULL;
