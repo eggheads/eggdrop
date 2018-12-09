@@ -44,19 +44,39 @@ static tcl_ints identints[] = {
   {NULL,           NULL,          0}
 };
 
-static void ident_builtin_off()
-{
-  putlog(LOG_MISC, "*", "Ident: ident_builtin_off() not implemented yet.");
-}
+static void ident_builtin_off();
 
 static cmd_t ident_raw[] = {
   {"001", "",   (IntFunc) ident_builtin_off, "ident:001"},
   {NULL,  NULL, NULL,                        NULL}
 };
 
+static void ident_builtin_off()
+{
+  rem_builtins(H_raw, ident_raw);
+}
+
 static void ident_activity(int idx, char *buf, int len)
 {
-  putlog(LOG_MISC, "*", "Ident: ident_activity() not implemented yet.");
+  int s;
+  char buf2[128], *pos;
+  ssize_t i;
+
+  s = answer(dcc[idx].sock, &dcc[idx].sockname, 0, 0);
+  if ((i = read(s, buf2, 64)) < 0) {
+    putlog(LOG_MISC, "*", "Ident error: %s", strerror(errno));
+    return;
+  }
+  buf2[i - 1] = 0;
+  if (!(pos = strpbrk(buf2, "\n\r\\0"))) {
+    putlog(LOG_MISC, "*", "Ident error: couldnt read request");
+    return;
+  } 
+  snprintf(pos, (sizeof buf2) - (pos - buf2), " : USERID : UNIX : %s\n\r", botname);
+  if ((i = write(s, buf2, strlen(buf2) + 1)) < 0) {
+    putlog(LOG_MISC, "*", "Ident error: %s", strerror(errno));
+    return;
+  }
 }
 
 static void ident_display(int idx, char *buf)
@@ -105,14 +125,28 @@ static void ident_oidentd()
 
 static void ident_builtin_on()
 {
-  int idx;
+  int idx, port = 113, s;
 
   idx = new_dcc(&DCC_IDENTD, 0);
   if (idx < 0) {
     putlog(LOG_MISC, "*", "Ident error: could not get new dcc.");
     return;
   }
-  putlog(LOG_MISC, "*", "Ident: ident_builtin_on() not implemented yet.");
+  s = open_listen(&port);
+  if (s == -2) {
+    lostdcc(idx);
+    putlog(LOG_MISC, "*", "Ident error: could not bind socket.");
+    return;
+  } else if (s == -1) {
+    lostdcc(idx);
+    putlog(LOG_MISC, "*", "Ident error: could not get socket.");
+    return;
+  }
+  dcc[idx].sock = s;
+  /* dcc[idx].timeval = now; */
+  strcpy(dcc[idx].nick, "(ident)");
+  
+  add_builtins(H_raw, ident_raw);
 }
 
 static void ident_ident()
@@ -162,7 +196,6 @@ char *ident_start(Function *global_funcs)
   }
 
   add_builtins(H_event, ident_event);
-  add_builtins(H_raw, ident_raw);
   add_tcl_ints(identints);
 
   return NULL;
