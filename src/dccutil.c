@@ -498,11 +498,11 @@ void *_get_data_ptr(int size, char *file, int line)
   return p;
 }
 
-/* Make a password with 15 random lower case letters and digits
+/* Make a password with (PASSWORDLEN - 1) random lower case letters and digits
  */
 void makepass(char *pass)
 {
-  make_rand_str(pass, 15);
+  make_rand_str(pass, PASSWORDLEN - 1);
 }
 
 void flush_lines(int idx, struct chat_info *ci)

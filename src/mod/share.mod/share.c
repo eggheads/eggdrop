@@ -586,7 +586,7 @@ static void share_pls_host(int idx, char *par)
 
 static void share_pls_bothost(int idx, char *par)
 {
-  char *hand, pass[16];
+  char *hand, pass[PASSWORDLEN];
   struct userrec *u;
 
   if ((dcc[idx].status & STAT_SHARE) && !private_user) {
@@ -630,7 +630,7 @@ static void share_mns_host(int idx, char *par)
 
 static void share_change(int idx, char *par)
 {
-  char *key, *hand, pass[16];
+  char *key, *hand, pass[PASSWORDLEN];
   struct userrec *u;
   struct user_entry_type *uet;
   struct user_entry *e;

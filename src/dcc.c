@@ -660,7 +660,7 @@ static int dcc_bot_check_digest(int idx, char *remote_digest)
 
 static void dcc_chat_pass(int idx, char *buf, int atr)
 {
-  char pass[16];
+  char pass[PASSWORDLEN];
 
   if (!atr)
     return;
