@@ -1442,11 +1442,11 @@ void show_banner(int idx)
  */
 void make_rand_str(char *s, const int len)
 {
+  int i;
   static const char chars[] = "0123456789abcdefghijklmnopqrstuvwxyz";
 
-  for (int i = 0; i < len; i++) {
-    s[i] = chars[randint(sizeof chars - 1)];
-  }
+  for (i = 0; i < len; i++)
+    s[i] = chars[randint((sizeof chars) - 1)];
   s[len] = 0;
 }
 
