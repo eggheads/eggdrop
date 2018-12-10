@@ -2080,9 +2080,9 @@ struct dcc_table DCC_TELNET_PW = {
 
 static int call_tcl_func(char *name, int idx, char *args)
 {
-  char s[11];
+  char s[12];
 
-  sprintf(s, "%d", idx);
+  snprintf(s, sizeof s, "%d", idx);
   Tcl_SetVar(interp, "_n", s, 0);
   Tcl_SetVar(interp, "_a", args, 0);
   if (Tcl_VarEval(interp, name, " $_n $_a", NULL) == TCL_ERROR) {
