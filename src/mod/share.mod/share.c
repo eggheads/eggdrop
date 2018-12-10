@@ -2309,7 +2309,7 @@ char *share_start(Function *global_funcs)
   return NULL;
 }
 
-int private_globals_bitmask()
+static int private_globals_bitmask()
 {
   struct flag_record fr = { FR_GLOBAL, 0, 0, 0, 0, 0 };
 

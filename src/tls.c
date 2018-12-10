@@ -43,7 +43,7 @@ char tls_capath[121] = "";    /* Path to trusted CA certificates              */
 char tls_cafile[121] = "";    /* File containing trusted CA certificates      */
 char tls_certfile[121] = "";  /* Our own digital certificate ;)               */
 char tls_keyfile[121] = "";   /* Private key for use with eggdrop             */
-char tls_ciphers[121] = "";   /* A list of ciphers for SSL to use             */
+char tls_ciphers[2049] = "";  /* A list of ciphers for SSL to use             */
 
 
 /* Count allocated memory for SSL. This excludes memory allocated by OpenSSL's
@@ -201,8 +201,8 @@ char *ssl_fpconv(char *in, char *out)
   if (!in)
     return NULL;
 
-  if ((md5 = string_to_hex(in, &len))) {
-    fp = hex_to_string(md5, len);
+  if ((md5 = OPENSSL_hexstr2buf(in, &len))) {
+    fp = OPENSSL_buf2hexstr(md5, len);
     if (fp) {
       out = user_realloc(out, strlen(fp) + 1);
       strcpy(out, fp);
@@ -241,7 +241,7 @@ static X509 *ssl_getcert(int sock)
 char *ssl_getfp(int sock)
 {
   char *p;
-  unsigned i;
+  unsigned int i;
   X509 *cert;
   static char fp[64];
   unsigned char md[EVP_MAX_MD_SIZE];
@@ -250,7 +250,7 @@ char *ssl_getfp(int sock)
     return NULL;
   if (!X509_digest(cert, EVP_sha1(), md, &i))
     return NULL;
-  if (!(p = hex_to_string(md, i)))
+  if (!(p = OPENSSL_buf2hexstr(md, i)))
     return NULL;
   strlcpy(fp, p, sizeof fp);
   OPENSSL_free(p);
@@ -500,7 +500,7 @@ static char *ssl_printnum(ASN1_INTEGER *i)
 /* Show the user all relevant information about a certificate: subject,
  * issuer, validity dates and fingerprints.
  */
-static void ssl_showcert(X509 *cert, int loglev)
+static void ssl_showcert(X509 *cert, const int loglev)
 {
   char *buf, *from, *to;
   X509_NAME *name;
@@ -522,18 +522,17 @@ static void ssl_showcert(X509 *cert, int loglev)
     putlog(loglev, "*", "TLS: cannot get issuer name from certificate!");
 
   /* Fingerprints */
-  X509_digest(cert, EVP_md5(), md, &len); /* MD5 hash */
-  if (len <= sizeof(md)) {
-    buf = hex_to_string(md, len);
-    putlog(loglev, "*", "TLS: certificate MD5 Fingerprint: %s", buf);
-    OPENSSL_free(buf);
-  }
-  X509_digest(cert, EVP_sha1(), md, &len); /* SHA-1 hash */
-  if (len <= sizeof(md)) {
-    buf = hex_to_string(md, len);
+  if (X509_digest(cert, EVP_sha1(), md, &len)) {
+    buf = OPENSSL_buf2hexstr(md, len);
     putlog(loglev, "*", "TLS: certificate SHA1 Fingerprint: %s", buf);
     OPENSSL_free(buf);
   }
+  if (X509_digest(cert, EVP_sha256(), md, &len)) {
+    buf = OPENSSL_buf2hexstr(md, len);
+    putlog(loglev, "*", "TLS: certificate SHA-256 Fingerprint: %s", buf);
+    OPENSSL_free(buf);
+  }
+
 
   /* Validity time */
   from = ssl_printtime(X509_get_notBefore(cert));
@@ -627,7 +626,10 @@ void ssl_info(SSL *ssl, int where, int ret)
   X509 *cert;
   char buf[256];
   ssl_appdata *data;
-  const SSL_CIPHER *cipher;
+#if OPENSSL_VERSION_NUMBER >= 0x009080d1L /* 0.9.8m-beta1 */
+  const
+#endif
+  SSL_CIPHER *cipher;
   int secret, processed;
 
   if (!(data = (ssl_appdata *) SSL_get_app_data(ssl)))
@@ -778,7 +780,10 @@ int ssl_handshake(int sock, int flags, int verify, int loglevel, char *host,
   SSL_set_mode(td->socklist[i].ssl, SSL_MODE_ENABLE_PARTIAL_WRITE |
                SSL_MODE_ACCEPT_MOVING_WRITE_BUFFER);
   if (data->flags & TLS_CONNECT) {
+    struct timespec req = { 0, 1000000L };
     SSL_set_verify(td->socklist[i].ssl, SSL_VERIFY_PEER, ssl_verify);
+    /* Introduce 1ms lag so an unpatched hub has time to setup the ssl handshake */
+    nanosleep(&req, NULL);
     ret = SSL_connect(td->socklist[i].ssl);
     if (!ret)
       debug0("TLS: connect handshake failed.");
@@ -799,10 +804,14 @@ int ssl_handshake(int sock, int flags, int verify, int loglevel, char *host,
     debug0("TLS: handshake in progress");
     return 0;
   }
-  if (ERR_peek_error())
+  if ((err = ERR_peek_error())) {
+    putlog(data->loglevel, "*",
+           "TLS: handshake failed due to the following error: %s",
+           ERR_reason_error_string(err));
     debug0("TLS: handshake failed due to the following errors: ");
-  while ((err = ERR_get_error()))
-    debug1("TLS: %s", ERR_error_string(err, NULL));
+    while ((err = ERR_get_error()))
+      debug1("TLS: %s", ERR_error_string(err, NULL));
+  }
 
   /* Attempt failed, cleanup and abort */
   SSL_shutdown(td->socklist[i].ssl);

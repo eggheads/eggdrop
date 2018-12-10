@@ -90,7 +90,7 @@ putkick <channel> <nick,nick,...> [reason]
 putlog <text>
 ^^^^^^^^^^^^^
 
-  Description: sends text to the bot's logfile, marked as 'misc' (o)
+  Description: logs <text> to the logfile and partyline if the 'misc' flag (o) is active via the 'logfile' config file setting and the '.console' partyline setting, respectively.
 
   Returns: nothing
 
@@ -100,7 +100,7 @@ putlog <text>
 putcmdlog <text>
 ^^^^^^^^^^^^^^^^
 
-  Description: sends text to the bot's logfile, marked as 'command' (c)
+  Description: logs <text> to the logfile and partyline if the 'cmds' flag (c) is active via the 'logfile' config file setting and the '.console' partyline setting, respectively.
 
   Returns: nothing
 
@@ -109,16 +109,18 @@ putcmdlog <text>
 ^^^^^^^^^^^^^^^^^
 putxferlog <text>
 ^^^^^^^^^^^^^^^^^
-  Description: sends text to the bot's logfile, marked as 'file-area' (x)
+
+  Description: logs <text> to the logfile and partyline if the 'files' flag (x) is active via the 'logfile' config file setting and the '.console' partyline setting, respectively.
 
   Returns: nothing
 
   Module: core
 
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-putloglev <level(s)> <channel> <text>
+putloglev <flag(s)> <channel> <text>
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  Description: sends text to the bot's logfile, tagged with all of the valid levels given. Use "*" to indicate all log levels.
+
+  Description: logs <text> to the logfile and partyline at the log level of the specified flag. Use "*" in lieu of a flag to indicate all log levels.
 
   Returns: nothing
 

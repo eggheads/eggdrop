@@ -189,9 +189,6 @@
 /* Define to 1 if you have the `MD5_Update' function. */
 #undef HAVE_MD5_UPDATE
 
-/* Define to 1 if you have the `memcpy' function. */
-#undef HAVE_MEMCPY
-
 /* Define to 1 if you have the <memory.h> header file. */
 #undef HAVE_MEMORY_H
 
@@ -384,6 +381,12 @@
 /* Define if running under NetBSD. */
 #undef NETBSD_HACKS
 
+/* Define this to hex_to_string when using OpenSSL < 1.1.0 */
+#undef OPENSSL_buf2hexstr
+
+/* Define this to string_to_hex when using OpenSSL < 1.1.0 */
+#undef OPENSSL_hexstr2buf
+
 /* Define to the address where bug reports for this package should be sent. */
 #undef PACKAGE_BUGREPORT
 
@@ -498,9 +501,6 @@
    ASN1_STRING_data otherwise. */
 #undef egg_ASN1_string_data
 
-/* Define this to OPENSSL_hexstr2buf when using OpenSSL 1.1.0+ */
-#undef hex_to_string
-
 /* Define to `__inline__' or `__inline' if that's what the C compiler
    calls it, or to nothing if 'inline' is not supported under any name.  */
 #ifndef __cplusplus
@@ -519,9 +519,6 @@
 
 /* Substitute for socklen_t */
 #undef socklen_t
-
-/* Define this to OPENSSL_buf2hexstr when using OpenSSL 1.1.0+ */
-#undef string_to_hex
 
 /* Define to empty if the keyword `volatile' does not work. Warning: valid
    code using `volatile' can become incorrect without. Disable with care. */

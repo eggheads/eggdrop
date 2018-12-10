@@ -147,12 +147,16 @@ static void blowfish_report(int idx, int details)
         tot++;
 
     dprintf(idx, "    Blowfish encryption module:\n");
-    dprintf(idx, "      %d of %d boxes in use: ", tot, BOXES);
-    for (i = 0; i < BOXES; i++)
-      if (box[i].P != NULL) {
-        dprintf(idx, "(age: %d) ", now - box[i].lastuse);
-      }
-    dprintf(idx, "\n");
+    if (!tot)
+      dprintf(idx, "      0 of %d boxes in use\n", BOXES);
+    else {
+      dprintf(idx, "      %d of %d boxes in use:", tot, BOXES);
+      for (i = 0; i < BOXES; i++)
+        if (box[i].P != NULL) {
+          dprintf(idx, " (age: %d)", now - box[i].lastuse);
+        }
+      dprintf(idx, "\n");
+    }
     dprintf(idx, "      Using %d byte%s of memory\n", size,
             (size != 1) ? "s" : "");
   }
@@ -265,9 +269,9 @@ static void blowfish_init(uint8_t *key, int keybytes)
 #define SALT2  0x23f6b095
 
 /* Convert 64-bit encrypted password to text for userfile */
-static char *base64 =
+static const char *base64 =
             "./0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
-static char *cbcbase64 =
+static const char *cbcbase64 =
             "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=";
 
 static int base64dec(char c)

@@ -105,8 +105,8 @@ To create a patch using the diff tool:
           PATCH1.8: my-patch-filename.patch
 
       You should also include the nick/handle, name, and email address
-      you would like used for attribution in the Changes1.8 and
-      THANKS files.
+      you would like used for attribution in the Changes1.8 and THANKS
+      files.
 
   Never modify src/version.h or one of the Changes files. We will do it.
   If your patch includes changes related to autotools (./configure,
@@ -115,10 +115,8 @@ To create a patch using the diff tool:
   Also, please don't add credit lines all over the source when patching.
   Patch contributors will receive credit in Changes1.8 and THANKS.
 
-
-DOWNLOADING A PATCH
-
-  Some patches for Eggdrop 1.8.x can be found at the following location:
+  Patches submitted this way for Eggdrop 1.8.x can be found at the
+  following location:
 
     ftp://ftp.eggheads.org/pub/eggdrop/patches/1.8
 

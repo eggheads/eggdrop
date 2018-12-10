@@ -322,10 +322,11 @@ typedef uint32_t IP;
 #define egg_isspace(x)  isspace((int)  (unsigned char) (x))
 #define egg_islower(x)  islower((int)  (unsigned char) (x))
 
-/* Use egg_bzero instead of memset or bzero */
+/* The following 3 functions are for backward compatibility only */
 #define egg_bzero(dest, len) memset(dest, 0, len)
-/* Use memset() or egg_bzero() instead */
+#define egg_memcpy(dst, src, len) memcpy(dst, src, len)
 #define egg_memset(dest, c, len) memset(dest, c, len)
+#define my_memcpy(dst, src, len) memcpy(dst, src, len)
 
 /***********************************************************************/
 
@@ -465,6 +466,9 @@ struct bot_info {
   char linker[NOTENAMELEN + 1]; /* who requested this link              */
   int numver;
   int port;                     /* base port                            */
+#ifdef TLS
+  int ssl;                      /* base ssl                             */
+#endif
   int uff_flags;                /* user file feature flags              */
 };
 
@@ -651,6 +655,10 @@ typedef struct {
 #define SOCK_VIRTUAL    0x0200  /* not-connected socket (dont read it!) */
 #define SOCK_BUFFER     0x0400  /* buffer data; don't notify dcc funcs  */
 #define SOCK_TCL        0x0800  /* tcl socket, don't do anything on it  */
+#ifdef TLS
+#  define SOCK_SENTTLS  0x1000  /* Socket that awaits a starttls in the
+                                 * next read                            */
+#endif
 
 /* Flags to sock_has_data
  */
@@ -747,6 +755,13 @@ enum {
   EGG_OPTION_SET = 1,           /* Set option(s).               */
   EGG_OPTION_UNSET = 2          /* Unset option(s).             */
 };
+
+#define ESC             27      /* Oct              033
+                                 * Hex              1B
+                                 * Caret notation   ^[
+                                 * Escape sequences \e
+                                 * \e is not supported in all compilers
+                                 */
 
 /* Telnet codes.  See "TELNET Protocol Specification" (RFC 854) and
  * "TELNET Echo Option" (RFC 875) for details. */

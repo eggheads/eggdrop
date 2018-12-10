@@ -218,7 +218,7 @@ int send_uptime(void)
                              * sent to the server.  But belt-and-suspenders
                              * is always good.
                              */
-  my_memcpy(mem, &upPack, sizeof(upPack));
+  memcpy(mem, &upPack, sizeof(upPack));
   sprintf(mem->string, "%s %s %s", botnetnick, servhost, uptime_version);
   egg_bzero(&sai, sizeof(sai));
   sai.sin_family = AF_INET;
