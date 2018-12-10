@@ -689,7 +689,7 @@ int isowner(char *name) {
  */
 void add_hq_user()
 {
-  if (!backgrd && term_z >= 0 && userlist) {
+  if (!backgrd && term_z >= 0) {
     /* HACK: Workaround using dcc[].nick not to pass literal "-HQ" as a non-const arg */
     dcc[term_z].user = get_user_by_handle(userlist, dcc[term_z].nick);
     /* Make sure there's an innocuous -HQ user if needed */

@@ -45,9 +45,8 @@ There are also some variables you can set in your config file:
   set private-user 0
 
       When sharing user lists, don't accept ANY userfile changes from
-      other bots? Paranoid people should use this feature on their
-      hub bot. This will force all userlist changes to be made via
-      the hub.
+      other bots? Paranoid people should use this feature on their hub
+      bot. This will force all userlist changes to be made via the hub.
 
   set override-bots 0
 

@@ -273,8 +273,8 @@ static uint32_t getipbash(IP ip)
 #ifdef IPV6
 static unsigned long getip6bash(struct in6_addr *ip6) {
   uint32_t x, y;
-  egg_memcpy(&x, ip6->s6_addr     , sizeof x);
-  egg_memcpy(&y, ip6->s6_addr + 12, sizeof y);
+  memcpy(&x, ip6->s6_addr     , sizeof x);
+  memcpy(&y, ip6->s6_addr + 12, sizeof y);
   x ^= y;
   return (unsigned long) BASH_MODULO(x);
 }
@@ -972,7 +972,7 @@ void parserespacket(uint8_t *response, int len)
       return;
     }
     c += 10 + rr->datalength;
-    if (0 > response + len) {
+    if (c > response + len) {
       ddebug0(RES_ERR "Specified rdata length exceeds packet size.");
       return;
     }
@@ -998,7 +998,7 @@ void parserespacket(uint8_t *response, int len)
         rp->ttl = rr->ttl;
         rp->sockname.addrlen = sizeof(struct sockaddr_in);
         rp->sockname.addr.sa.sa_family = AF_INET;
-        egg_memcpy(&rp->sockname.addr.s4.sin_addr, rr->data, 4);
+        memcpy(&rp->sockname.addr.s4.sin_addr, rr->data, 4);
 #ifndef IPV6
         passrp(rp, rr->ttl, T_A);
         return;
@@ -1017,7 +1017,7 @@ void parserespacket(uint8_t *response, int len)
         rp->ttl = rr->ttl;
         rp->sockname.addrlen = sizeof(struct sockaddr_in6);
         rp->sockname.addr.sa.sa_family = AF_INET6;
-        egg_memcpy(&rp->sockname.addr.s6.sin6_addr, rr->data, 16);
+        memcpy(&rp->sockname.addr.s6.sin6_addr, rr->data, 16);
         if (ready || pref_af) {
           passrp(rp, rr->ttl, T_A);
           return;
@@ -1184,7 +1184,7 @@ static void dns_lookup(sockname_t *addr)
   rp->state = STATE_PTRREQ;
   rp->sends = 1;
   rp->type = T_PTR;
-  egg_memcpy(&rp->sockname, addr, sizeof(sockname_t));
+  memcpy(&rp->sockname, addr, sizeof(sockname_t));
   if (addr->family == AF_INET) {
     rp->ip = addr->addr.s4.sin_addr.s_addr;
     linkresolveip(rp);
