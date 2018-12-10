@@ -532,7 +532,7 @@ void sort_userlist()
 void write_userfile(int idx)
 {
   FILE *f;
-  char new_userfile[sizeof userfile + 4]; /* 4 = sizeof "~new" */
+  char new_userfile[(sizeof userfile) + 4]; /* 4 = strlen("~new") */
   char s1[81];
   time_t tt;
   struct userrec *u;
