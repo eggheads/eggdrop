@@ -718,13 +718,13 @@ int getdccfamilyaddr(sockname_t *addr, char *s, size_t l, int restrict_af)
 #ifdef IPV6
      /* If it's listening on an IPv6 :: address,
         try using vhost6 as the source IP */
-    if (pref_af && (r->family == AF_INET6) && (restrict_af != AF_INET)) {
+    if (r->family == AF_INET6 && restrict_af != AF_INET) {
       if (inet_pton(AF_INET6, vhost6, &r->addr.s6.sin6_addr) != 1) {
         r = &name;
         gethostname(h, sizeof h);
         setsockname(r, h, 0, 1);
         if (r->family == AF_INET) {
-        /* setsockname tries to resolve  both ipv4 and ipv6. ipv4 dns
+        /* setsockname tries to resolve both ipv4 and ipv6. ipv4 dns
            resolution comes later in precedence, so if we get an ipv4
            back, reset it to the original addr struct and try
            again */
@@ -733,18 +733,18 @@ int getdccfamilyaddr(sockname_t *addr, char *s, size_t l, int restrict_af)
           } else {
             setsockname(r, listen_ip, 0, 1);
           }
-          af = AF_INET;
-        }
+        } else
+          af = AF_INET6;
       }
     }
 #endif
-     /* If IPv6 didn't work, or it's listening on an IPv4
+     /* If IPv6 didn't work or is disabled, or it's listening on an IPv4
         0.0.0.0 address, try using vhost4 as the source */
-    if ((
+    if (!af
 #ifdef IPV6
-      !pref_af ||
+        && restrict_af != AF_INET6
 #endif
-      af) && (restrict_af != AF_INET6)) {
+       ) {
       if (!egg_inet_aton(vhost, &r->addr.s4.sin_addr)) {
         /* And if THAT fails, try DNS resolution of hostname */
         r = &name;
