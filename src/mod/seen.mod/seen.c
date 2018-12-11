@@ -486,7 +486,7 @@ targetcont:
             (tv == 1) ? "" : "s");
   }
   if (!word2[0] && (work < 60)) {
-    strncpy(word2, "just moments ago!!", sizeof word2);
+    strlcpy(word2, "just moments ago!!", sizeof word2);
   } else {
     strcpy(word2 + strlen(word2) - 2, " ago.");
   }
