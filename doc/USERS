@@ -21,18 +21,16 @@ all of them. Some flags are good, some are bad. Each flag is identified
 by a letter. A channel flag applies only to a specific channel, and a
 global flag applies to all channels. The standard global flags are:
 
-    --- ---------------- --------------------------------------------------
+    --- ---------------- ---------------------------------------------------
     n   owner            user has absolute control. Only give this flag to
                          people you trust completely.
 
-    m   master           user has access to almost every feature of the
-                         bot.
+    m   master           user has access to almost every feature of the bot.
 
     t   botnet-master    user has access to all features dealing with the
                          botnet.
 
-    a   auto-op          user is opped automatically upon joining a
-                         channel.
+    a   auto-op          user is opped automatically upon joining a channel.
 
     o   op               user has op access to all of the bot's channels.
 
@@ -84,7 +82,7 @@ global flag applies to all channels. The standard global flags are:
     u   unshared         user record is not sent to other bots.
 
     h   highlight        use bold text in help/text files.
-    --- ---------------- --------------------------------------------------
+    --- ---------------- ---------------------------------------------------
 
   All global flags other then u, h, b, c, x, j, and p are also
   channel-specific flags. Flags are set with the chattr command. The
