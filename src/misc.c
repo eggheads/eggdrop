@@ -208,11 +208,7 @@ void splitc(char *first, char *rest, char divider)
   if (first != NULL)
     strcpy(first, rest);
   if (first != rest)
-    /*    In most circumstances, strcpy with src and dst being the same buffer
-     *  can produce undefined results. We're safe here, as the src is
-     *  guaranteed to be at least 2 bytes higher in memory than dest. <Cybah>
-     */
-    strcpy(rest, p + 1);
+    memmove(rest, p + 1, strlen(p + 1) + 1);
 }
 
 /*    As above, but lets you specify the 'max' number of bytes (EXCLUDING the

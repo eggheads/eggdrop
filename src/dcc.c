@@ -254,9 +254,14 @@ static void bot_version(int idx, char *par)
 
 void failed_link(int idx)
 {
-  char s[81], s1[512];
+  char s[NICKLEN + 18], s1[512];
 
+#ifdef TLS
+  /* Stop trying when we are sslport+3 */
+  if (dcc[idx].port >= dcc[idx].u.bot->port + 3 && dcc[idx].ssl) {
+#else
   if (dcc[idx].port >= dcc[idx].u.bot->port + 3) {
+#endif
     if (dcc[idx].u.bot->linker[0]) {
       egg_snprintf(s, sizeof s, "Couldn't link to %s.", dcc[idx].nick);
       strcpy(s1, dcc[idx].u.bot->linker);
@@ -274,8 +279,30 @@ void failed_link(int idx)
   /* Try next port, if it makes sense (no AF_UNSPEC, ...) */
   killsock(dcc[idx].sock);
   dcc[idx].timeval = now;
-  if (open_telnet(idx, dcc[idx].host, dcc[idx].port + 1) < 0)
+#ifdef TLS
+  /* Order of attempts:
+   * If initial SSL: sslport+1; sslport+2; sslport+3
+   * Else: sslport; plain+1; sslport+1; plain+2; sslport+2; plain+3; sslport+3
+   */
+  if (dcc[idx].u.bot->ssl) {
+    ++dcc[idx].port;
+  } else if (dcc[idx].ssl) {
+    dcc[idx].ssl = 0;
+    ++dcc[idx].port;
+  } else {
+    dcc[idx].ssl = 1;
+  }
+#else
+    ++dcc[idx].port;
+#endif
+
+  if (open_telnet(idx, dcc[idx].host, dcc[idx].port) < 0)
     failed_link(idx);
+#ifdef TLS
+  else if (dcc[idx].ssl && ssl_handshake(dcc[idx].sock, TLS_CONNECT,
+           tls_vfybots, LOG_BOTS, dcc[idx].host, NULL))
+    failed_link(idx);
+#endif
 }
 
 static void cont_link(int idx, char *buf, int i)
@@ -2053,9 +2080,9 @@ struct dcc_table DCC_TELNET_PW = {
 
 static int call_tcl_func(char *name, int idx, char *args)
 {
-  char s[11];
+  char s[12];
 
-  sprintf(s, "%d", idx);
+  snprintf(s, sizeof s, "%d", idx);
   Tcl_SetVar(interp, "_n", s, 0);
   Tcl_SetVar(interp, "_a", args, 0);
   if (Tcl_VarEval(interp, name, " $_n $_a", NULL) == TCL_ERROR) {
