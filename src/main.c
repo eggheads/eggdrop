@@ -614,7 +614,7 @@ static void do_arg()
 
 void backup_userfile(void)
 {
-  char s[sizeof userfile + 4]; /* 4 = sizeof "~bak" */
+  char s[(sizeof userfile) + 4]; /* 4 = strlen("~bak") */
 
   if (quiet_save < 2)
     putlog(LOG_MISC, "*", USERF_BACKUP);
