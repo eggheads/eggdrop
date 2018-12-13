@@ -1021,12 +1021,20 @@ int mainloop(int toplevel)
 static void init_random(void) {
   unsigned int seed;
 #ifdef HAVE_GETRANDOM
-  if (getrandom(&seed, sizeof(seed), 0) != sizeof(seed))
-    fatal("ERROR: getrandom()\n", 0);
-#else
-  struct timeval tp;
-  gettimeofday(&tp, NULL);
-  seed = (tp.tv_sec * tp.tv_usec) ^ getpid();
+  if (getrandom(&seed, sizeof(seed), 0) != sizeof(seed)) {
+    if (errno != ENOSYS) {
+      fatal("ERROR: getrandom()\n", 0);
+    } else {
+      /* getrandom() is available in header but syscall is not!
+       * This can happen with glibc>=2.25 and linux<3.17
+       */
+#endif
+      struct timeval tp;
+      gettimeofday(&tp, NULL);
+      seed = (tp.tv_sec * tp.tv_usec) ^ getpid();
+#ifdef HAVE_GETRANDOM
+    }
+  }
 #endif
   srandom(seed);
 }
