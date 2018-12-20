@@ -1458,8 +1458,13 @@ static void eof_dcc_telnet(int idx)
 
 static void display_telnet(int idx, char *buf)
 {
+#ifdef TLS
   sprintf(buf, "lstn  %s%d%s", dcc[idx].ssl ? "+" : "", dcc[idx].port,
           (dcc[idx].status & LSTN_PUBLIC) ? " pub" : "");
+#else
+  sprintf(buf, "lstn  %d%s", dcc[idx].port,
+          (dcc[idx].status & LSTN_PUBLIC) ? " pub" : "");
+#endif
 }
 
 struct dcc_table DCC_TELNET = {
