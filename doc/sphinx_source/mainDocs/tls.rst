@@ -133,9 +133,9 @@ ssl client::
 
   openssl s_client -cert my.crt -key my.key -connect host:sslport 
     
-------------
+----------------
 SSL/TLS Settings
-------------
+----------------
  
 There are some new settings allowing control over certificate
 verification and authorization.
