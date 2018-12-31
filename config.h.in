@@ -55,6 +55,15 @@
 /* Defines the current Eggdrop version. */
 #undef EGG_VERSION
 
+/* Define to nothing if C supports flexible array members, and to 1 if it does
+   not. That way, with a declaration like `struct s { int n; double
+   d[FLEXIBLE_ARRAY_MEMBER]; };', the struct hack can be used with pre-C99
+   compilers. When computing the size of such an object, don't use 'sizeof
+   (struct s)' as it overestimates the size. Use 'offsetof (struct s, d)'
+   instead. Don't use 'offsetof (struct s, d[0])', as this doesn't work with
+   MSVC and with C++ compilers. */
+#undef FLEXIBLE_ARRAY_MEMBER
+
 /* Define to 1 if you have the `a2i_IPADDRESS' function. */
 #undef HAVE_A2I_IPADDRESS
 
@@ -144,15 +153,6 @@
 /* Define to 1 if you have the `dld' library (-ldld). */
 #undef HAVE_LIBDLD
 
-/* Define to 1 if you have the `dns' library (-ldns). */
-#undef HAVE_LIBDNS
-
-/* Define to 1 if you have the `nsl' library (-lnsl). */
-#undef HAVE_LIBNSL
-
-/* Define to 1 if you have the `socket' library (-lsocket). */
-#undef HAVE_LIBSOCKET
-
 /* Define to 1 if you have the `ssl' library (-lssl). */
 #undef HAVE_LIBSSL
 
@@ -189,14 +189,8 @@
 /* Define to 1 if you have the `MD5_Update' function. */
 #undef HAVE_MD5_UPDATE
 
-/* Define to 1 if you have the `memcpy' function. */
-#undef HAVE_MEMCPY
-
 /* Define to 1 if you have the <memory.h> header file. */
 #undef HAVE_MEMORY_H
-
-/* Define to 1 if you have the `memset' function. */
-#undef HAVE_MEMSET
 
 /* Define to 1 if you have a working `mmap' system call. */
 #undef HAVE_MMAP
@@ -261,9 +255,6 @@
 /* Define to 1 if you have the `snprintf' function. */
 #undef HAVE_SNPRINTF
 
-/* Define to 1 if you have the `socklen_t' type. */
-#undef HAVE_SOCKLEN_T
-
 /* Define to 1 if you have the <stdarg.h> header file. */
 #undef HAVE_STDARG_H
 
@@ -290,6 +281,9 @@
 
 /* Define to 1 if you have the <string.h> header file. */
 #undef HAVE_STRING_H
+
+/* Define to 1 if you have the `strlcpy' function. */
+#undef HAVE_STRLCPY
 
 /* Define to 1 if you have the `strncasecmp' function. */
 #undef HAVE_STRNCASECMP
@@ -383,6 +377,15 @@
 
 /* Define if modules should be loaded using the shl_*() functions. */
 #undef MOD_USE_SHL
+
+/* Define if running under NetBSD. */
+#undef NETBSD_HACKS
+
+/* Define this to hex_to_string when using OpenSSL < 1.1.0 */
+#undef OPENSSL_buf2hexstr
+
+/* Define this to string_to_hex when using OpenSSL < 1.1.0 */
+#undef OPENSSL_hexstr2buf
 
 /* Define to the address where bug reports for this package should be sent. */
 #undef PACKAGE_BUGREPORT
@@ -498,9 +501,6 @@
    ASN1_STRING_data otherwise. */
 #undef egg_ASN1_string_data
 
-/* Define this to OPENSSL_hexstr2buf when using OpenSSL 1.1.0+ */
-#undef hex_to_string
-
 /* Define to `__inline__' or `__inline' if that's what the C compiler
    calls it, or to nothing if 'inline' is not supported under any name.  */
 #ifndef __cplusplus
@@ -517,8 +517,8 @@
 /* Define to `unsigned int' if <sys/types.h> does not define. */
 #undef size_t
 
-/* Define this to OPENSSL_buf2hexstr when using OpenSSL 1.1.0+ */
-#undef string_to_hex
+/* Substitute for socklen_t */
+#undef socklen_t
 
 /* Define to empty if the keyword `volatile' does not work. Warning: valid
    code using `volatile' can become incorrect without. Disable with care. */

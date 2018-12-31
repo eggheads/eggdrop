@@ -18,10 +18,12 @@ dnl Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 dnl
 
 dnl Load tcl macros
-builtin(include,tcl.m4)
+builtin(include,m4/tcl.m4)
 
-dnl Load GNU stdint.h creator
-builtin(include,ax_create_stdint_h.m4)
+dnl Load gnu autoconf archive macros
+builtin(include,m4/ax_create_stdint_h.m4)
+builtin(include,m4/ax_lib_socket_nsl.m4)
+builtin(include,m4/ax_type_socklen_t.m4)
 
 
 dnl
@@ -282,40 +284,6 @@ dnl Checks for types and functions.
 dnl
 
 
-dnl EGG_CHECK_SOCKLEN_T()
-dnl
-dnl Check for the socklen_t type.
-dnl
-AC_DEFUN([EGG_CHECK_SOCKLEN_T],
-[
-  AC_CACHE_CHECK([for socklen_t], egg_cv_socklen_t, [
-    AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[
-      #include <unistd.h>
-      #include <sys/param.h>
-      #include <sys/types.h>
-      #include <sys/socket.h>
-      #include <netinet/in.h>
-      #include <arpa/inet.h>
-    ]],[[
-        socklen_t test = 55;
-
-        if (test != 55)
-          return(1);
-
-        return(0);
-    ]])], [
-      egg_cv_socklen_t="yes"
-    ], [
-      egg_cv_socklen_t="no"
-    ])
-  ])
-
-  if test "$egg_cv_socklen_t" = yes; then
-    AC_DEFINE(HAVE_SOCKLEN_T, 1, [Define to 1 if you have the `socklen_t' type.])
-  fi
-])
-
-
 dnl EGG_FUNC_VPRINTF()
 dnl
 AC_DEFUN([EGG_FUNC_VPRINTF],
@@ -550,11 +518,6 @@ AC_DEFUN([EGG_CHECK_MODULE_SUPPORT],
   # Note to other maintainers:
   # Bourne shell has no concept of "fall through"
   case "$egg_cv_var_system_type" in
-    BSD/OS)
-      if test `echo "$egg_cv_var_system_release" | cut -d . -f 1` = 2; then
-        MODULES_OK="no"
-      fi
-    ;;
     CYGWI*)
       WEIRD_OS="no"
       MOD_EXT="dll"
@@ -600,9 +563,7 @@ AC_DEFUN([EGG_CHECK_MODULE_SUPPORT],
         AC_DEFINE(DLOPEN_1, 1, [Define if running on SunOS 4.0.])
       fi
     ;;
-    *BSD)
-      # FreeBSD/OpenBSD/NetBSD all support dlopen() and have had plenty of
-      # testing with Eggdrop.
+    FreeBSD|OpenBSD|NetBSD|DragonFly)
       WEIRD_OS="no"
     ;;
     Darwin)
@@ -614,6 +575,12 @@ AC_DEFUN([EGG_CHECK_MODULE_SUPPORT],
       LOAD_METHOD="dyld"
       EGG_DARWIN_BUNDLE
       EGG_APPEND_VAR(MODULE_XLIBS, $BUNDLE)
+    ;;
+    Haiku)
+      WEIRD_OS="no"
+    ;;
+    Minix)
+      WEIRD_OS="no"
     ;;
     *)
       if test -r /mach; then
@@ -689,29 +656,6 @@ AC_DEFUN([EGG_CHECK_OS],
   EGG_CYGWIN="no"
 
   case "$egg_cv_var_system_type" in
-    BSD/OS)
-      case `echo "$egg_cv_var_system_release" | cut -d . -f 1` in
-        2)
-          # do nothing
-        ;;
-        3)
-          MOD_CC="shlicc"
-          MOD_LD="shlicc"
-          if test "$STRIP" != touch; then
-            MOD_STRIP="$STRIP -d"
-          fi
-          SHLIB_LD="shlicc -r"
-          SHLIB_STRIP="touch"
-        ;;
-        *)
-          if test "$STRIP" != touch; then
-            MOD_STRIP="$STRIP -d"
-          fi
-          SHLIB_CC="$CC -export-dynamic -fPIC"
-          SHLIB_LD="$CC -shared -nostartfiles"
-        ;;
-      esac
-    ;;
     CYGWI*)
       SHLIB_LD="$CC -shared"
       MOD_CC="$CC"
@@ -805,10 +749,17 @@ AC_DEFUN([EGG_CHECK_OS],
         SHLIB_CC="$CC -PIC"
       fi
     ;;
-    *BSD)
-      # FreeBSD/OpenBSD/NetBSD
+    FreeBSD|OpenBSD|NetBSD)
       SHLIB_CC="$CC -fPIC"
       SHLIB_LD="$CC -shared"
+      case "$egg_cv_var_system_type" in
+        *NetBSD)
+          AC_DEFINE(NETBSD_HACKS, 1, [Define if running under NetBSD.])
+        ;;
+      esac
+    ;;
+    DragonFly)
+      SHLIB_CC="$CC -fPIC"
     ;;
     Darwin)
       # Mac OS X
@@ -852,10 +803,8 @@ AC_DEFUN([EGG_CHECK_LIBS],
   if test "$IRIX" = yes; then
     AC_MSG_WARN([Skipping library tests because they CONFUSE IRIX.])
   else
-    AC_CHECK_LIB(socket, socket)
-    AC_CHECK_LIB(nsl, connect)
-    AC_CHECK_LIB(dns, gethostbyname)
-    AC_CHECK_LIB(dl, dlopen)
+    AX_LIB_SOCKET_NSL
+    AC_SEARCH_LIBS([dlopen], [dl])
     AC_CHECK_LIB(m, tan, EGG_MATH_LIB="-lm")
 
     # This is needed for Tcl libraries compiled with thread support
@@ -1064,7 +1013,11 @@ AC_DEFUN([EGG_TCL_TCLCONFIG],
     if test -r ${TCL_BIN_DIR}/tclConfig.sh; then
       . ${TCL_BIN_DIR}/tclConfig.sh
       # OpenBSD uses -pthread, but tclConfig.sh provides that flag in EXTRA_CFLAGS
-      TCL_PTHREAD_LDFLAG=`echo $TCL_EXTRA_CFLAGS | grep -o -- '-pthread'`
+      if test "$(echo $TCL_EXTRA_CFLAGS | grep -- -pthread)"; then
+        TCL_PTHREAD_LDFLAG="-pthread"
+      else
+        TCL_PTHREAD_LDFLAG=""
+      fi
       AC_SUBST(SHLIB_LD, $TCL_SHLIB_LD)
       AC_MSG_CHECKING([for Tcl linker])
       AC_MSG_RESULT([$SHLIB_LD])
@@ -1078,7 +1031,11 @@ AC_DEFUN([EGG_TCL_TCLCONFIG],
     if test -r ${TCLLIB}/tclConfig.sh; then
       . ${TCLLIB}/tclConfig.sh
       # OpenBSD uses -pthread, but tclConfig.sh provides that flag in EXTRA_CFLAGS
-      TCL_PTHREAD_LDFLAG=`echo $TCL_EXTRA_CFLAGS | grep -o -- '-pthread'`
+      if test "$(echo $TCL_EXTRA_CFLAGS | grep -- -pthread)"; then
+        TCL_PTHREAD_LDFLAG="-pthread"
+      else
+        TCL_PTHREAD_LDFLAG=""
+      fi
       AC_SUBST(SHLIB_LD, $TCL_SHLIB_LD)
       AC_MSG_CHECKING([for Tcl linker])
       AC_MSG_RESULT([$SHLIB_LD])
@@ -1098,6 +1055,10 @@ AC_DEFUN([EGG_TCL_TCLCONFIG],
         TCL_LIB_SPEC="$TCL_LIB_SPEC -lz"
       fi
     fi
+  fi
+
+  if test -z "$ac_cv_lib_dlopen"; then
+    TCL_LIB_SPEC=$(echo $TCL_LIB_SPEC | sed -- 's/-ldl//g')
   fi
 
   AC_MSG_CHECKING([for Tcl version])
@@ -1616,12 +1577,13 @@ AC_DEFUN(EGG_TLS_WITHSSL,
   [
     if test "$enable_tls" != "no"; then
       if test -d "$withval"; then
-        AC_CHECK_LIB(ssl, SSL_accept, , [havessllib="no"], [-L$withval -lcrypto])
         AC_CHECK_LIB(crypto, X509_digest, , [havessllib="no"], [-L$withval -lssl])
+        AC_CHECK_LIB(ssl, SSL_accept, , [havessllib="no"], [-L$withval -lcrypto])
         if test "$havessllib" = "no"; then
           AC_MSG_WARN([Invalid path to OpenSSL libs. $withval doesn't contain the required files.])
         else
           AC_SUBST(SSL_LIBS, [-L$withval])
+          LDFLAGS="${LDFLAGS} -L$withval"
         fi
       else
         AC_MSG_WARN([You have specified an invalid path to OpenSSL libs. $withval is not a directory.])
@@ -1647,24 +1609,24 @@ AC_DEFUN([EGG_TLS_DETECT],
       ])
     fi
     if test -z "$SSL_LIBS"; then
-      AC_CHECK_LIB(ssl, SSL_accept, , [havessllib="no"], [-lcrypto])
       AC_CHECK_LIB(crypto, X509_digest, , [havessllib="no"], [-lssl])
+      AC_CHECK_LIB(ssl, SSL_accept, , [havessllib="no"], [-lcrypto])
       AC_CHECK_FUNCS([EVP_md5 EVP_sha1 a2i_IPADDRESS], , [[
         havessllib="no"
         break
       ]])
     fi
-    AC_CHECK_FUNC(hex_to_string, ,
-      AC_CHECK_FUNC(OPENSSL_hexstr2buf,
-          AC_DEFINE([hex_to_string], [OPENSSL_hexstr2buf], [Define this to OPENSSL_hexstr2buf when using OpenSSL 1.1.0+])
+    AC_CHECK_FUNC(OPENSSL_buf2hexstr, ,
+      AC_CHECK_FUNC(hex_to_string,
+          AC_DEFINE([OPENSSL_buf2hexstr], [hex_to_string], [Define this to hex_to_string when using OpenSSL < 1.1.0])
         , [[
           havessllib="no"
           break
       ]])
     )
-    AC_CHECK_FUNC(string_to_hex, ,
-      AC_CHECK_FUNC(OPENSSL_buf2hexstr,
-          AC_DEFINE([string_to_hex], [OPENSSL_buf2hexstr], [Define this to OPENSSL_buf2hexstr when using OpenSSL 1.1.0+])
+    AC_CHECK_FUNC(OPENSSL_hexstr2buf, ,
+      AC_CHECK_FUNC(string_to_hex,
+          AC_DEFINE([OPENSSL_hexstr2buf], [string_to_hex], [Define this to string_to_hex when using OpenSSL < 1.1.0])
         , [[
           havessllib="no"
           break

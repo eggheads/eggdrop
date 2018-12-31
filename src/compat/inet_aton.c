@@ -103,13 +103,13 @@ int egg_inet_aton(cp, addr)
 const char *cp;
 struct in_addr *addr;
 {
-  static const u_32bit_t max[4] = { 0xffffffff, 0xffffff, 0xffff, 0xff };
-  u_32bit_t val;       /* changed from u_long --david */
+  static const uint32_t max[4] = { 0xffffffff, 0xffffff, 0xffff, 0xff };
+  uint32_t val;       /* changed from u_long --david */
   int base;
   int n;
   char c;
-  u_32bit_t parts[4];
-  u_32bit_t *pp = parts;
+  uint32_t parts[4];
+  uint32_t *pp = parts;
 
   egg_bzero(parts, sizeof(parts));
 

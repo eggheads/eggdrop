@@ -1,9 +1,9 @@
 /*
- * memset.h
- *   prototypes for memset.c
+ * strlcpy.h
+ *   prototypes for strlcpy.c
  */
 /*
- * Copyright (C) 2000 - 2018 Eggheads Development Team
+ * Copyright (C) 2010 - 2018 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -20,21 +20,11 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
-#ifndef _EGG_COMPAT_MEMSET_H
-#define _EGG_COMPAT_MEMSET_H
+#ifndef _EGG_COMPAT_STRLCPY_H_
+#define _EGG_COMPAT_STRLCPY_H_
 
-#include "src/main.h"
-#include <string.h>
+#ifndef HAVE_STRLCPY
+size_t strlcpy(char * __restrict, const char * __restrict, size_t);
+#endif /* HAVE_STRLCPY */
 
-#ifndef HAVE_MEMSET
-/* Use our own implementation. */
-void *egg_memset(void *dest, int c, size_t n);
-#else
-#  define egg_memset memset
-#endif
-
-/* Use memset instead of bzero.
- */
-#define egg_bzero(dest, n) egg_memset(dest, 0, n)
-
-#endif /* !__EGG_COMPAT_MEMSET_H */
+#endif /* _EGG_COMPAT_STRLCPY_H_ */

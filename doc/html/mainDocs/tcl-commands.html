@@ -7,7 +7,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Eggdrop Tcl Commands &mdash; Eggdrop 1.8.3 documentation</title>
+    <title>Eggdrop Tcl Commands &mdash; Eggdrop 1.8.4 documentation</title>
     
     <link rel="stylesheet" href="../_static/eggdrop.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -15,7 +15,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
-        VERSION:     '1.8.3',
+        VERSION:     '1.8.4',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -24,7 +24,7 @@
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
-    <link rel="top" title="Eggdrop 1.8.3 documentation" href="../index.html" />
+    <link rel="top" title="Eggdrop 1.8.4 documentation" href="../index.html" />
     <link rel="up" title="&lt;no title&gt;" href="index.html" />
     <link rel="next" title="IPv6 support" href="ipv6.html" />
     <link rel="prev" title="Patch How-To" href="patch.html" /> 
@@ -36,7 +36,7 @@
             <img class="logo" src="../_static/eggman.png.gif" alt="Logo"/>
           </a></p>
         <div class="headertitle"><a
-          href="../index.html">Eggdrop 1.8.3 documentation</a></div>
+          href="../index.html">Eggdrop 1.8.4 documentation</a></div>
         <div class="rel">
           <a href="patch.html" title="Patch How-To"
              accesskey="P">previous</a> |
@@ -62,7 +62,7 @@ Last revised: December 14, 2017</p>
 of the normal Tcl built-in commands are still there, of course, but you
 can also use these to manipulate features of the bot. They are listed
 according to category.</p>
-<p>This list is accurate for Eggdrop v1.8.3. Scripts written for v1.3, v1.4
+<p>This list is accurate for Eggdrop v1.8.4. Scripts written for v1.3, v1.4
 or 1.6 series of Eggdrop should probably work with a few minor modifications
 depending on the script. Scripts which were written for  v0.9, v1.0, v1.1
 or v1.2 will probably not work without modification. Commands which have
@@ -124,7 +124,7 @@ marked with vertical bars (|) on the left.</p>
 <div class="section" id="putlog-text">
 <h3>putlog &lt;text&gt;<a class="headerlink" href="#putlog-text" title="Permalink to this headline">¶</a></h3>
 <blockquote>
-<div><p>Description: sends text to the bot's logfile, marked as 'misc' (o)</p>
+<div><p>Description: logs &lt;text&gt; to the logfile and partyline if the 'misc' flag (o) is active via the 'logfile' config file setting and the '.console' partyline setting, respectively.</p>
 <p>Returns: nothing</p>
 <p>Module: core</p>
 </div></blockquote>
@@ -132,7 +132,7 @@ marked with vertical bars (|) on the left.</p>
 <div class="section" id="putcmdlog-text">
 <h3>putcmdlog &lt;text&gt;<a class="headerlink" href="#putcmdlog-text" title="Permalink to this headline">¶</a></h3>
 <blockquote>
-<div><p>Description: sends text to the bot's logfile, marked as 'command' (c)</p>
+<div><p>Description: logs &lt;text&gt; to the logfile and partyline if the 'cmds' flag (c) is active via the 'logfile' config file setting and the '.console' partyline setting, respectively.</p>
 <p>Returns: nothing</p>
 <p>Module: core</p>
 </div></blockquote>
@@ -140,15 +140,15 @@ marked with vertical bars (|) on the left.</p>
 <div class="section" id="putxferlog-text">
 <h3>putxferlog &lt;text&gt;<a class="headerlink" href="#putxferlog-text" title="Permalink to this headline">¶</a></h3>
 <blockquote>
-<div><p>Description: sends text to the bot's logfile, marked as 'file-area' (x)</p>
+<div><p>Description: logs &lt;text&gt; to the logfile and partyline if the 'files' flag (x) is active via the 'logfile' config file setting and the '.console' partyline setting, respectively.</p>
 <p>Returns: nothing</p>
 <p>Module: core</p>
 </div></blockquote>
 </div>
-<div class="section" id="putloglev-level-s-channel-text">
-<h3>putloglev &lt;level(s)&gt; &lt;channel&gt; &lt;text&gt;<a class="headerlink" href="#putloglev-level-s-channel-text" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="putloglev-flag-s-channel-text">
+<h3>putloglev &lt;flag(s)&gt; &lt;channel&gt; &lt;text&gt;<a class="headerlink" href="#putloglev-flag-s-channel-text" title="Permalink to this headline">¶</a></h3>
 <blockquote>
-<div><p>Description: sends text to the bot's logfile, tagged with all of the valid levels given. Use &quot;*&quot; to indicate all log levels.</p>
+<div><p>Description: logs &lt;text&gt; to the logfile and partyline at the log level of the specified flag. Use &quot;*&quot; in lieu of a flag to indicate all log levels.</p>
 <p>Returns: nothing</p>
 <p>Module: core</p>
 </div></blockquote>
@@ -211,8 +211,8 @@ marked with vertical bars (|) on the left.</p>
 <div class="section" id="passwdok-handle-pass">
 <h3>passwdok &lt;handle&gt; &lt;pass&gt;<a class="headerlink" href="#passwdok-handle-pass" title="Permalink to this headline">¶</a></h3>
 <blockquote>
-<div><p>Description: checks the password given against the user's password. Check against the password &quot;&quot; (a blank string) or &quot;-&quot; to find out if a user has no password set.</p>
-<p>Returns: 1 if the password matches for that user; 0 otherwise</p>
+<div><p>Description: checks the password given against the user's password. Check against the password &quot;-&quot; to find out if a user has no password set.</p>
+<p>Returns: 1 if the password matches for that user; 0 otherwise. Or if we are checking against the password &quot;-&quot;: 1 if the user has no password set; 0 otherwise.</p>
 <p>Module: core</p>
 </div></blockquote>
 </div>
@@ -305,7 +305,9 @@ specified, both the bot and user listen ports are set to the bot listen port.</d
 <td><p class="first">This setting has 3 forms.</p>
 <dl class="last docutils">
 <dt>&lt;unixtime&gt; &lt;place&gt;</dt>
-<dd>sets global LASTON time</dd>
+<dd>sets global LASTON time. Standard values used by Eggdrop for &lt;place&gt; are partyline,
+linked, unlinked, filearea, &lt;#channel&gt;, and &lt;&#64;remotebotname&gt;, but can be set to
+anything.</dd>
 <dt>&lt;unixtime&gt;</dt>
 <dd>sets global LASTON time (leaving the place field empty)</dd>
 <dt>&lt;unixtime&gt; &lt;channel&gt;</dt>
@@ -1309,7 +1311,7 @@ channel's invite list is checked as well.</p>
 <div class="section" id="dccbroadcast-message">
 <h3>dccbroadcast &lt;message&gt;<a class="headerlink" href="#dccbroadcast-message" title="Permalink to this headline">¶</a></h3>
 <blockquote>
-<div><p>Description: sends a message to everyone on the party line across the botnet, in the form of &quot;*** &lt;message&gt;&quot; for local users, &quot;*** (Bot) &lt;message&gt;&quot; for users on other bots with version below 1.8.3, and &quot;(Bot) &lt;message&gt;&quot; for users on other bots with version 1.8.3+ and console log mode 'l' enabled</p>
+<div><p>Description: sends a message to everyone on the party line across the botnet, in the form of &quot;*** &lt;message&gt;&quot; for local users, &quot;*** (Bot) &lt;message&gt;&quot; for users on other bots with version below 1.8.4, and &quot;(Bot) &lt;message&gt;&quot; for users on other bots with version 1.8.4+ and console log mode 'l' enabled</p>
 <p>Returns: nothing</p>
 <p>Module: core</p>
 </div></blockquote>
@@ -2181,7 +2183,7 @@ will be used. Types 30-39 set the host to '*'.</p>
 <div class="section" id="rand-limit">
 <h3>rand &lt;limit&gt;<a class="headerlink" href="#rand-limit" title="Permalink to this headline">¶</a></h3>
 <blockquote>
-<div><p>Returns: a random integer between 0 and limit-1</p>
+<div><p>Returns: a random integer between 0 and limit-1. Limit must be greater than 0 and equal to or less than RAND_MAX, which is generally 2147483647. The underlying pseudo-random number generator is not cryptographically secure.</p>
 <p>Module: core</p>
 </div></blockquote>
 </div>
@@ -2246,7 +2248,7 @@ will be used. Types 30-39 set the host to '*'.</p>
 <div class="section" id="encrypt-key-string">
 <h3>encrypt &lt;key&gt; &lt;string&gt;<a class="headerlink" href="#encrypt-key-string" title="Permalink to this headline">¶</a></h3>
 <blockquote>
-<div><p>Returns: encrypted string (using the currently loaded encryption module), encoded into ASCII using base-64. As of v1.8.3, the default blowfish encryption module can use either the older ECB mode (currently used by default for compatibility reasons), or the more recent and more-secure CBC mode. You can explicitely request which encryption mode to use by prefixing the encryption key with either &quot;ecb:&quot; or &quot;cbc:&quot;, or by using the blowfish-use-mode setting in the config file. Note: the default encryption mode for this function is planned to transition from ECB to CBC in v1.9.0.</p>
+<div><p>Returns: encrypted string (using the currently loaded encryption module), encoded into ASCII using base-64. As of v1.8.4, the default blowfish encryption module can use either the older ECB mode (currently used by default for compatibility reasons), or the more recent and more-secure CBC mode. You can explicitly request which encryption mode to use by prefixing the encryption key with either &quot;ecb:&quot; or &quot;cbc:&quot;, or by using the blowfish-use-mode setting in the config file. Note: the default encryption mode for this function is planned to transition from ECB to CBC in v1.9.0.</p>
 <p>Module: encryption</p>
 </div></blockquote>
 </div>
@@ -2631,7 +2633,9 @@ as 'bind msg - stop msg:stop' (which makes a msg-command &quot;stop&quot; call t
 Tcl proc &quot;msg:stop&quot;) will overwrite any previous binding you had for the
 msg command &quot;stop&quot;. With stackable bindings, like 'msgm' for example,
 you can bind the same command to multiple procs. When the bind is triggered,
-ALL of the Tcl procs that are bound to it will be called.</p>
+ALL of the Tcl procs that are bound to it will be called. Raw binds are
+triggered before builtin binds, as a builtin bind has the potential to
+modify args.</p>
 <p>To remove a bind, use the 'unbind' command. For example, to remove the
 bind for the &quot;stop&quot; msg command, use 'unbind msg - stop msg:stop'.</p>
 <div class="section" id="bind-types">
@@ -3398,7 +3402,7 @@ words) (This char only works in binds, not in regular matching)</td>
           
     <div class="footer">
         &copy; Copyright 2018, Eggheads.
-      Last updated on Jan 01, 2018.
+      Last updated on Dec 11, 2018.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.3.
     </div>
         </div>

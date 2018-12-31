@@ -19,7 +19,7 @@ modules: ../../../compress.$(MOD_EXT)
 	$(CC) $(CFLAGS) $(CPPFLAGS) -DMAKING_MODS -c $(srcdir)/compress.c && mv -f compress.o ../
 
 ../../../compress.$(MOD_EXT): ../compress.o
-	$(LD) -o ../../../compress.$(MOD_EXT) ../compress.o $(ZLIB) $(XLIBS) $(MODULE_XLIBS) && $(STRIP) ../../../compress.$(MOD_EXT)
+	$(LD) $(CFLAGS) -o ../../../compress.$(MOD_EXT) ../compress.o $(ZLIB) $(XLIBS) $(MODULE_XLIBS) && $(STRIP) ../../../compress.$(MOD_EXT)
 
 depend:
 	$(CC) $(CFLAGS) -MM $(srcdir)/compress.c -MT ../compress.o > .depend
@@ -28,7 +28,8 @@ clean:
 	@rm -f .depend *.o *.$(MOD_EXT) *~
 
 distclean: clean
-	@rm -f Makefile config.cache config.log config.status config.h
+	@rm -f Makefile config.cache config.log config.status
+	@rm -rf autom4te.cache
 
 #safety hash
 ../compress.o: .././compress.mod/compress.c ../../../src/mod/module.h \
@@ -37,10 +38,9 @@ distclean: clean
  ../../../src/flags.h ../../../src/cmdt.h ../../../src/tclegg.h \
  ../../../src/tclhash.h ../../../src/chan.h ../../../src/users.h \
  ../../../src/compat/compat.h ../../../src/compat/inet_aton.h \
- ../../../src/compat/snprintf.h ../../../src/compat/memset.h \
- ../../../src/compat/memcpy.h ../../../src/compat/strcasecmp.h \
+ ../../../src/compat/snprintf.h ../../../src/compat/strcasecmp.h \
  ../../../src/compat/strftime.h ../../../src/compat/inet_ntop.h \
  ../../../src/compat/inet_pton.h ../../../src/compat/gethostbyname2.h \
- ../../../src/mod/modvals.h ../../../src/tandem.h \
- ../../../src/mod/share.mod/share.h .././compress.mod/compress.h \
- .././compress.mod/tclcompress.c
+ ../../../src/compat/strlcpy.h ../../../src/mod/modvals.h \
+ ../../../src/tandem.h ../../../src/mod/share.mod/share.h \
+ .././compress.mod/compress.h .././compress.mod/tclcompress.c

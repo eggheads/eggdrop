@@ -49,17 +49,17 @@ static char bf_mode[4];
 
 /* Keep a set of rotating P & S boxes */
 static struct box_t {
-  u_32bit_t *P;
-  u_32bit_t **S;
+  uint32_t *P;
+  uint32_t **S;
   char key[81];
   char keybytes;
   time_t lastuse;
 } box[BOXES];
 
-/* static u_32bit_t bf_P[bf_N+2]; */
-/* static u_32bit_t bf_S[4][256]; */
-static u_32bit_t *bf_P;
-static u_32bit_t **bf_S;
+/* static uint32_t bf_P[bf_N+2]; */
+/* static uint32_t bf_S[4][256]; */
+static uint32_t *bf_P;
+static uint32_t **bf_S;
 
 static int blowfish_expmem()
 {
@@ -67,14 +67,14 @@ static int blowfish_expmem()
 
   for (i = 0; i < BOXES; i++)
     if (box[i].P != NULL) {
-      tot += ((bf_N + 2) * sizeof(u_32bit_t));
-      tot += (4 * sizeof(u_32bit_t *));
-      tot += (4 * 256 * sizeof(u_32bit_t));
+      tot += ((bf_N + 2) * sizeof(uint32_t));
+      tot += (4 * sizeof(uint32_t *));
+      tot += (4 * 256 * sizeof(uint32_t));
     }
   return tot;
 }
 
-static void blowfish_encipher(u_32bit_t *xl, u_32bit_t *xr)
+static void blowfish_encipher(uint32_t *xl, uint32_t *xr)
 {
   union aword Xl;
   union aword Xr;
@@ -105,7 +105,7 @@ static void blowfish_encipher(u_32bit_t *xl, u_32bit_t *xr)
   *xl = Xr.word;
 }
 
-static void blowfish_decipher(u_32bit_t *xl, u_32bit_t *xr)
+static void blowfish_decipher(uint32_t *xl, uint32_t *xr)
 {
   union aword Xl;
   union aword Xr;
@@ -147,24 +147,28 @@ static void blowfish_report(int idx, int details)
         tot++;
 
     dprintf(idx, "    Blowfish encryption module:\n");
-    dprintf(idx, "      %d of %d boxes in use: ", tot, BOXES);
-    for (i = 0; i < BOXES; i++)
-      if (box[i].P != NULL) {
-        dprintf(idx, "(age: %d) ", now - box[i].lastuse);
-      }
-    dprintf(idx, "\n");
+    if (!tot)
+      dprintf(idx, "      0 of %d boxes in use\n", BOXES);
+    else {
+      dprintf(idx, "      %d of %d boxes in use:", tot, BOXES);
+      for (i = 0; i < BOXES; i++)
+        if (box[i].P != NULL) {
+          dprintf(idx, " (age: %d)", now - box[i].lastuse);
+        }
+      dprintf(idx, "\n");
+    }
     dprintf(idx, "      Using %d byte%s of memory\n", size,
             (size != 1) ? "s" : "");
   }
 }
 
-static void blowfish_init(u_8bit_t *key, int keybytes)
+static void blowfish_init(uint8_t *key, int keybytes)
 {
   int i, j, bx;
   time_t lowest;
-  u_32bit_t data;
-  u_32bit_t datal;
-  u_32bit_t datar;
+  uint32_t data;
+  uint32_t datal;
+  uint32_t datar;
   union aword temp;
 
   /* drummer: Fixes crash if key is longer than 80 char. This may cause the key
@@ -209,10 +213,10 @@ static void blowfish_init(u_8bit_t *key, int keybytes)
   }
   /* Initialize new buffer */
   /* uh... this is over 4k */
-  box[bx].P = nmalloc((bf_N + 2) * sizeof(u_32bit_t));
-  box[bx].S = nmalloc(4 * sizeof(u_32bit_t *));
+  box[bx].P = nmalloc((bf_N + 2) * sizeof(uint32_t));
+  box[bx].S = nmalloc(4 * sizeof(uint32_t *));
   for (i = 0; i < 4; i++)
-    box[bx].S[i] = nmalloc(256 * sizeof(u_32bit_t));
+    box[bx].S[i] = nmalloc(256 * sizeof(uint32_t));
   bf_P = box[bx].P;
   bf_S = box[bx].S;
   box[bx].keybytes = keybytes;
@@ -265,9 +269,9 @@ static void blowfish_init(u_8bit_t *key, int keybytes)
 #define SALT2  0x23f6b095
 
 /* Convert 64-bit encrypted password to text for userfile */
-static char *base64 =
+static const char *base64 =
             "./0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
-static char *cbcbase64 =
+static const char *cbcbase64 =
             "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=";
 
 static int base64dec(char c)
@@ -288,7 +292,7 @@ static int cbcbase64dec(char c)
 
 static void blowfish_encrypt_pass(char *text, char *new)
 {
-  u_32bit_t left, right;
+  uint32_t left, right;
   int n;
   char *p;
 
@@ -317,7 +321,7 @@ static void blowfish_encrypt_pass(char *text, char *new)
  */
 static char *encrypt_string_ecb(char *key, char *str)
 {
-  u_32bit_t left, right;
+  uint32_t left, right;
   unsigned char *p;
   char *s, *dest, *d;
   int i;
@@ -364,7 +368,7 @@ static char *encrypt_string_ecb(char *key, char *str)
  */
 static char *encrypt_string_cbc(char *key, char *str)
 {
-  u_32bit_t left, right, prevleft = 0, prevright = 0;
+  uint32_t left, right, prevleft = 0, prevright = 0;
   unsigned char *p;
   char *s, *dest;
   int i, slen;
@@ -478,7 +482,7 @@ static char *encrypt_string(char *key, char *str)
  */
 static char *decrypt_string_ecb(char *key, char *str)
 {
-  u_32bit_t left, right;
+  uint32_t left, right;
   char *p, *s, *dest, *d;
   int i;
 
@@ -518,7 +522,7 @@ static char *decrypt_string_ecb(char *key, char *str)
  */
 static char *decrypt_string_cbc(char *key, char *str)
 {
-  u_32bit_t left, right, prevleft = 0, prevright = 0, prevencleft, prevencright;
+  uint32_t left, right, prevleft = 0, prevright = 0, prevencleft, prevencright;
   unsigned char *p;
   char *s, *dest;
   int i, slen, dlen;
@@ -729,7 +733,7 @@ char *blowfish_start(Function *global_funcs)
   }
 
   /* ECB by default for now, change at v1.9.0! */
-  strncpyz(bf_mode, "ecb", sizeof bf_mode);
+  strlcpy(bf_mode, "ecb", sizeof bf_mode);
   add_tcl_commands(mytcls);
   add_tcl_strings(my_tcl_strings);
   add_help_reference("blowfish.help");

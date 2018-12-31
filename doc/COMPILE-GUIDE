@@ -1,5 +1,5 @@
 Eggdrop Compile Guide and FAQ
-Last revised: October 25, 2010
+Last revised: October 16, 2018
     _____________________________________________________________________
 
                         Eggdrop Compile Guide and FAQ
@@ -25,7 +25,8 @@ Last revised: October 25, 2010
       F. IRIX
       G. Solaris / SunOS
       H. Cygwin / Windows
-      I. Tcl Detection and Installation
+      I. Haiku
+      J. Tcl Detection and Installation
 
     Frequently Asked Questions:
       1. I get a lot of warnings.
@@ -36,10 +37,15 @@ Last revised: October 25, 2010
       5. Unresolved or undefined symbols: ldclose, ldopen, ldnshread (AIX 3)
       6. Unsatisfied symbols 'shl_findsym' and 'shl_load' (HP-UX 9)
       7. Compile stops at the last minute with "ld fatal signal 11"! (Linux)
-      8. Undefined references in net.o (Sun OS)
+      8. Undefined references in net.o (SunOS)
       9. I experience problems starting the configure script (AIX/various)
      10. I get a 'make: Permission denied' error when I type 'make config'
          or 'make' (FreeBSD / *BSD)
+     11. I get a 'make: Fatal error in reader: Makefile, line 21: Badly formed
+         macro assignment' error when I type 'make config' (OpenIndiana)
+     12. I get a 'gmake: readlink: Command not found' error when I type 'gmake
+         install' (OpenIndiana)
+     13. I get '/usr/bin/ld: cannot find -lpthread' (OpenWrt)
 
 
   Compile Guide
@@ -52,17 +58,7 @@ Last revised: October 25, 2010
     resources needed to test portability on uncommon operating systems, so
     your help is greatly appreciated.
 
-    A. Standard compile process (32-bit Linux, FreeBSD, NetBSD, OpenBSD, etc.)
-    B. HP-UX B.11.*
-    C. Ultrix
-    D. Mac OS X
-    E. AIX
-    F. IRIX
-    G. Solaris / SunOS
-    H. Cygwin / Windows
-    I. Tcl Detection and Installation
-
-    A. Standard compile process (32-bit Linux, FreeBSD, NetBSD, OpenBSD, etc.)
+    A. Standard compile process (Linux, FreeBSD, NetBSD, OpenBSD, etc)
       1. Type './configure' from the Eggdrop directory. Some of the options
          that can be given to ./configure are explained below.
 
@@ -114,6 +110,7 @@ Last revised: October 25, 2010
          For example:
 
            make install DEST=/home/user/otherdir
+
 
     B. HP-UX B.11.*
       Follow the standard compile process in Section A. To compile dynamically
@@ -258,11 +255,11 @@ Last revised: October 25, 2010
              cd /
              tar -zxf tcl-8.5.9.tar.gz
 
-        3. Download Eggdrop from geteggdrop.com to your home directory.
+        3. Download Eggdrop from https://geteggdrop.com/ to your home directory.
            This is usually something like 'C:\cygwin\home\<username>\'. After
            downloading, extract the Eggdrop tarball:
 
-             tar -zxf eggdrop1.8.3.tar.gz
+             tar -zxf eggdrop1.8.4.tar.gz
 
         4. Run './configure --enable-strip'. Debugging information under
            Windows is basically useless to the development team, and this will
@@ -286,8 +283,8 @@ Last revised: October 25, 2010
              cd 'C:/<install path>/' (example: cd 'C:/eggdrop')
              rm modules
              rm eggdrop.exe
-             mv eggdrop.exe-1.8.3 eggdrop.exe
-             mv modules-1.8.3 modules
+             mv eggdrop.exe-1.8.4 eggdrop.exe
+             mv modules-1.8.4 modules
 
         9. Create a 'lib' directory and copy needed libraries using the
            following commands. This assumes that you installed your Eggdrop in
@@ -310,31 +307,40 @@ Last revised: October 25, 2010
              cp /bin/cygz.dll 'C:/eggdrop' (if you selected compress.mod)
 
 
-    I. Tcl Detection and Installation
-        If ./configure does not correctly detect the location of your Tcl
-        library and header file, or if you experience errors related to Tcl
-        during linking, perform these steps:
+    I. Haiku
+      If you compile Tcl from source and it breaks with a thread error 
+      (and --disable-threads doesn't help), you can workaround this by
+      removing the 'pkgs/thread<VERSION>' directory.
 
-          1. Depending on what shell your using:
+      Note that on Haiku, the LIBRARY_PATH environment variable must be used
+      instead of LD_LIBRARY_PATH.
 
-            bash/ksh:
-              export LD_LIBRARY_PATH=<path to DIRECTORY containing Tcl library>:${LD_LIBRARY_PATH}
 
-            csh/tcsh/tclsh:
-              setenv LD_LIBRARY_PATH <path to DIRECTORY containing Tcl library>:${LD_LIBRARY_PATH}
+    J. Tcl Detection and Installation
+      If ./configure does not correctly detect the location of your Tcl
+      library and header file, or if you experience errors related to Tcl
+      during linking, perform these steps:
 
-            Note that some OS's use a different environment variable to tell
-            ld where to look for a library. See the notes for your specific OS
-            above (if applicable).
+        1. Depending on what shell your using:
 
-          2. Run the following command from your Eggdrop compilation directory
-             (this is all one command):
+          bash/ksh:
+            export LD_LIBRARY_PATH=<path to DIRECTORY containing Tcl library>:${LD_LIBRARY_PATH}
 
-            ./configure --with-tclinc='<full path to tcl.h>'
-            --with-tcllib='<full path to Tcl library>'
+          csh/tcsh/tclsh:
+            setenv LD_LIBRARY_PATH <path to DIRECTORY containing Tcl library>:${LD_LIBRARY_PATH}
 
-          3. Continue compiling the bot as outlined in Section A., starting
-             with 'make config'.
+          Note that some OS's use a different environment variable to tell
+          ld where to look for a library. See the notes for your specific OS
+          above (if applicable).
+
+        2. Run the following command from your Eggdrop compilation directory
+           (this is all one command):
+
+          ./configure --with-tclinc='<full path to tcl.h>'
+          --with-tcllib='<full path to Tcl library>'
+
+        3. Continue compiling the bot as outlined in Section A., starting
+           with 'make config'.
 
         If you do not have Tcl installed on your system, you can compile it in
         your /home directory. Download Tcl from Tcl's SourceForge project page
@@ -537,6 +543,25 @@ Last revised: October 25, 2010
       This is caused by a bug in FreeBSD (and possibly other BSDs as well).
       A simple 'cd .', or changing to a different directory and then changing
       back, usually fixes this.
+
+    11. I get a 'make: Fatal error in reader: Makefile, line 21: Badly formed
+        macro assignment' error when I type 'make config' (OpenIndiana)
+
+      OpenIndiana does not use GNU make. Eggdrop uses a GNU make extension in
+      it's Makefile. Install and use GNU make on OpenIndiana.
+
+    12. I get a 'gmake: readlink: Command not found' error when I type 'gmake
+        install' (OpenIndiana)
+
+      Install gnu-coreutils on OpenIndiana.
+
+    13. I get '/usr/bin/ld: cannot find -lpthread' (OpenWrt)
+
+      Pthread primitives are part of the core libc.so library. To satisfy
+      -lpthread, create an empty AR archive (a static library) somewhere in the
+      library search path. E.g.:
+
+        ar -rc /usr/lib/libpthread.a
     _____________________________________________________________________
 
    Copyright (C) 1997 Robey Pointer

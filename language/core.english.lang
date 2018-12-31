@@ -127,7 +127,7 @@ Telnet to the bot and enter 'NEW' as your nickname.
 0x53c,User file is missing!
 0x53e,%B  (%E)\n\nPlease enter your nickname.\n
 0x53f,Cycling logfile %s, over max-logsize (%d)
-0x540,\nNickname.\n
+# 0x540 - unused
 0x541,Last message repeated %d time(s).\n
 0x542,juped
 0x543,No free sockets available.
@@ -192,7 +192,7 @@ Telnet to the bot and enter 'NEW' as your nickname.
 0x639,Nickname has been juped
 0x63a,Channel %s is juped. :(
 0x63b,%s says I'm not registered, trying next one.
-0x63c,The server says we are not registered yet..
+0x63c,The server says we are not registered yet.
 0x63d,Flood from @%s!  Placing on ignore!
 0x63f,JOIN flood from @%s!  Banning.
 0x640,Channel flood from %s -- kicking

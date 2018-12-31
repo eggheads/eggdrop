@@ -1,7 +1,7 @@
 dnl configure.ac: this file is processed by autoconf to produce ./configure.
 
-AC_PREREQ(2.60)
-AC_INIT([Eggdrop],[1.8.3],[bugs@eggheads.org])
+AC_PREREQ(2.61)
+AC_INIT([Eggdrop],[1.8.4],[bugs@eggheads.org])
 AC_COPYRIGHT([Copyright (C) 1999 - 2018 Eggheads Development Team])
 AC_LANG([C])
 AC_REVISION([m4_esyscmd([misc/getcommit])])
@@ -41,7 +41,7 @@ EGG_SAVE_PARAMETERS
 
 
 # Check for a working C compiler
-AC_PROG_CC
+AC_PROG_CC([gcc cc clang])
 EGG_CHECK_CC
 
 # These 3 need to be done before any AC_COMPILE_IFELSE()'s.
@@ -61,6 +61,7 @@ EGG_EXEEXT
 
 # Checks for programs.
 AC_PROG_INSTALL
+AC_CHECK_PROGS(MAKE, make gmake)
 AC_PROG_MAKE_SET
 AC_PROG_RANLIB
 AC_PROG_LN_S
@@ -97,19 +98,20 @@ AC_CHECK_HEADERS([arpa/inet.h fcntl.h limits.h locale.h netdb.h netinet/in.h std
 AC_C_CONST
 AC_C_BIGENDIAN
 AC_C_INLINE
+AC_C_FLEXIBLE_ARRAY_MEMBER
 AC_TYPE_INTPTR_T
 AC_TYPE_PID_T
 AC_TYPE_SIZE_T
 AC_STRUCT_TIMEZONE
 AC_C_VOLATILE
-EGG_CHECK_SOCKLEN_T
+AX_TYPE_SOCKLEN_T
 
 
 # Create stdint.h C99 compatibility header.
 AX_CREATE_STDINT_H([eggint.h])
 
 # Checks for functions and their arguments.
-AC_CHECK_FUNCS([clock dprintf explicit_bzero fsync getrandom getrusage inet_aton inet_ntop isascii mbrlen memcpy memset random rand lrand48 rename setpgid sigaction sigemptyset snprintf strcasecmp strncasecmp uname vsnprintf])
+AC_CHECK_FUNCS([clock dprintf explicit_bzero fsync getrandom getrusage inet_aton inet_ntop isascii mbrlen random rand lrand48 rename setpgid sigaction sigemptyset snprintf strcasecmp strlcpy strncasecmp uname vsnprintf])
 AC_FUNC_SELECT_ARGTYPES
 EGG_FUNC_VPRINTF
 AC_FUNC_STRFTIME
@@ -119,7 +121,7 @@ AC_FUNC_MMAP
 # Tcl version to recommend if no Tcl is found, and the site where it can be
 # found for download.
 tclrecommendver="8.6.X"
-tclrecommendsite="ftp://tcl.activestate.com/pub/tcl/tcl8_6/"
+tclrecommendsite="ftp://ftp.tcl.tk/pub/tcl/tcl8_6/"
 
 # Tcl header filenames.
 tclheadernames="tcl.h"

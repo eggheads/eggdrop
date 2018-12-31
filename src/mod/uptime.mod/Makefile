@@ -16,7 +16,7 @@ modules: ../../../uptime.$(MOD_EXT)
 	$(CC) $(CFLAGS) $(CPPFLAGS) -DMAKING_MODS -c $(srcdir)/uptime.c && mv -f uptime.o ../
 
 ../../../uptime.$(MOD_EXT): ../uptime.o
-	$(LD) -o ../../../uptime.$(MOD_EXT) ../uptime.o $(XLIBS) $(MODULE_XLIBS) && $(STRIP) ../../../uptime.$(MOD_EXT)
+	$(LD) $(CFLAGS) -o ../../../uptime.$(MOD_EXT) ../uptime.o $(XLIBS) $(MODULE_XLIBS) && $(STRIP) ../../../uptime.$(MOD_EXT)
 
 depend:
 	$(CC) $(CFLAGS) -MM $(srcdir)/uptime.c -MT ../uptime.o > .depend
@@ -34,8 +34,8 @@ distclean: clean
  ../../../src/cmdt.h ../../../src/tclegg.h ../../../src/tclhash.h \
  ../../../src/chan.h ../../../src/users.h ../../../src/compat/compat.h \
  ../../../src/compat/inet_aton.h ../../../src/compat/snprintf.h \
- ../../../src/compat/memset.h ../../../src/compat/memcpy.h \
  ../../../src/compat/strcasecmp.h ../../../src/compat/strftime.h \
  ../../../src/compat/inet_ntop.h ../../../src/compat/inet_pton.h \
- ../../../src/compat/gethostbyname2.h .././uptime.mod/../modvals.h \
- ../../../src/tandem.h .././uptime.mod/../server.mod/server.h
+ ../../../src/compat/gethostbyname2.h ../../../src/compat/strlcpy.h \
+ .././uptime.mod/../modvals.h ../../../src/tandem.h \
+ .././uptime.mod/../server.mod/server.h

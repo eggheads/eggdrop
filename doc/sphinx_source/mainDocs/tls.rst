@@ -54,22 +54,33 @@ To connect to IRC using SSL, specify the port number and prefix it with
 a plus sign. Example: .jump irc.server.com +6697. The same goes for
 the server list in the config file.
 
+Some NickServ services allow you to authenticate with a certificate.
+Eggdrop will use the certificte pair specified in ssl-privatekey/
+ssl-certificate for authentication.
+
 ^^^^^^
 Botnet
 ^^^^^^
 
-By default, eggdrop now automatically attempts to protect botnet links
-with SSL if it is compiled with TLS support. If one of the bots linking 
-does not have TLS support enabled, the connection will fall back to plain 
-text. To explicitly require all links to a hub be SSL-only (ie, prevent 
-plain text connections from being allowed), prefix the listen port in the
-hub configuration file with a plus (+) sign. Conversely, to force a leaf 
-to only allow SSL (not plain text) connections with a hub, you must 
-prefix the hub's listen port with a plus when adding it to the leaf via 
-+bot/chaddr commands. The nickname and password are sent before SSL 
-negotiation takes place (the password is not sent in plain text anyway).
-If SSL negotiation fails and either the hub or leaf is set to require SSL,
-the connection is deliberately aborted and no clear text is ever sent.
+Eggdrop can use TLS connections to protect botnet links if it is compiled with TLS support. TLS-enabled 1.8 bots are backwards compatible with bots that do not have TLS, whether because they are an earlier version or they were not compiled with TLS libraries. Depending on how the user configures the botnet, Eggdrop will use one of two methods to create a TLS connection: raw TLS sockets, and starttls. The difference is that a socket listening for TLS will first create a TLS connection before exchanging any eggdrop-specific data; a starttls connection will first establish the botnet link in the clear, then upgrade to a TLS connection (This means the nickname and, since v1.3.29, a challenge/response password hash are sent before TLS negotiation takes place- not the actual plaintext password).
+
+By prefixing a listen port in the Eggdrop configuration with a plus (+), that specifies that port as a TLS-enabled port, and will only accept TLS connections (no plain text connections will be allowed). Additionally, Eggdrop 1.8 has starttls functionality, where a plain text connection can first be made to a non-TLS port (ie, one that is not prefixed with a plus) and then upgraded to a TLS connection. Currently, Eggdrop automatically attempts a starttls upgrade on all botnet connections. With two TLS-enabled Eggdrops, it graphically looks like this:
+
++------------------------------+----------------------------+------------------------------+
+| Leaf bot sets hub port as... | and Hub bot config uses... | the connection will...       |
++------------------------------+----------------------------+------------------------------+
+| port                         | listen port                | upgrade to TLS with starttls |
++------------------------------+----------------------------+------------------------------+
+| port                         | listen +port               | connect with TLS             |
++------------------------------+----------------------------+------------------------------+
+| +port                        | listen port                | fail. This is a known issue. |
++------------------------------+----------------------------+------------------------------+
+| +port                        | listen +port               | connect with TLS             |
++------------------------------+----------------------------+------------------------------+
+
+* Currently, adding a bot with +port and connecting to a hub listening on port does not work. This will be remedied in a future release.
+
+To explicitly require all links to a hub be TLS-only (ie, prevent any plain text connection from being allowed), prefix the listen port in the hub configuration file with a plus (+) sign. Conversely, to force a leaf to only allow TLS (not plain text) connections with a hub, you must prefix the hub's listen port with a plus when adding it to the leaf via +bot/chaddr commands. If TLS negotiation fails and either the hub or leaf is set to require TLS, the connection is deliberately aborted and no clear text is ever sent by the TLS-requiring party.
 
 ^^^^^^^^^^
 Secure DCC
@@ -85,10 +96,10 @@ from the bot with /ctcp bot chat), consult the KVIrc documentation.
 Scripts
 ^^^^^^^
 
-Scripts can open or connect to SSL ports the usual way specifying the
+Scripts can open or connect to TLS ports the usual way specifying the
 port with a plus sign. Alternatively, the connection could be
 established as plaintext and later switched on with the starttls Tcl
-command. (Note that the other side should also switch to SSL at the same
+command. (Note that the other side should also switch to TLS at the same
 time - the synchronization is the script's job, not eggdrop's.)
 
 -------------------------------------
@@ -97,7 +108,7 @@ Keys, certificates and authentication
 
 You need a private key and a digital certificate whenever your bot will
 act as a server in a connection of any type. Common examples are hub
-bots and SSL listening ports. General information about certificates and
+bots and TLS listening ports. General information about certificates and
 public key infrastructure can be obtained from Internet. This document
 only contains eggdrop-specific information on the subject.
 The easy way to create a key and a certificate is to type 'make sslcert'
@@ -108,7 +119,7 @@ you fill in therequired fields.
 
 To authenticate with a certificate instead of using password, you should
 make a ssl certificate for yourself and enable ssl-cert-auth in the config
-file. Then either connect to the bot using SSL and type ".fprint +" or
+file. Then either connect to the bot using TLS and type ".fprint +" or
 enter your certificate fingerprint with .fprint SHA1-FINGERPRINT.
 To generate a ssl certificate for yourself, you can run the following
 command from the eggdrop source directory::
@@ -122,9 +133,9 @@ ssl client::
 
   openssl s_client -cert my.crt -key my.key -connect host:sslport 
     
-------------
-SSL Settings
-------------
+----------------
+SSL/TLS Settings
+----------------
  
 There are some new settings allowing control over certificate
 verification and authorization.

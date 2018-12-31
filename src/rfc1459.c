@@ -13,10 +13,10 @@
  *
  * If for some reason someone who maintains the source for ircd decides
  * to change the code to be completely RFC compliant, the change here
- * would be absolutely miniscule.
+ * would be absolutely minuscule.
  *
  * BTW, since carat characters are allowed in nicknames and tildes are
- * not, I stronly suggest that people convert to uppercase when doing
+ * not, I strongly suggest that people convert to uppercase when doing
  * comparisons or creation of hash elements (which tcl laughably calls
  * arrays) to avoid making entries with impossible nicknames in them.
  *
@@ -54,19 +54,6 @@ int _rfc_ncasecmp(const char *str1, const char *str2, int n)
       return 0;
   }
   return res;
-}
-
-unsigned char rfc_tolowertab[];
-unsigned char rfc_touppertab[];
-
-int _rfc_tolower(int c)
-{
-  return rfc_tolowertab[(unsigned char) (c)];
-}
-
-int _rfc_toupper(int c)
-{
-  return rfc_touppertab[(unsigned char) (c)];
 }
 
 unsigned char rfc_tolowertab[] =
@@ -138,3 +125,13 @@ unsigned char rfc_touppertab[] =
   0xf0, 0xf1, 0xf2, 0xf3, 0xf4, 0xf5, 0xf6, 0xf7, 0xf8, 0xf9,
   0xfa, 0xfb, 0xfc, 0xfd, 0xfe, 0xff
 };
+
+int _rfc_tolower(int c)
+{
+  return rfc_tolowertab[(unsigned char) (c)];
+}
+
+int _rfc_toupper(int c)
+{
+  return rfc_touppertab[(unsigned char) (c)];
+}

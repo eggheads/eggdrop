@@ -43,8 +43,7 @@ static struct chanuserrec *add_chanrec(struct userrec *u, char *chname)
     ch->flags = 0;
     ch->flags_udef = 0;
     ch->laston = 0;
-    strncpy(ch->channel, chname, 81);
-    ch->channel[80] = 0;
+    strlcpy(ch->channel, chname, sizeof ch->channel);
     if (!noshare && !(u->flags & USER_UNSHARED))
       shareout(findchan_by_dname(chname), "+cr %s %s\n", u->handle, chname);
   }
@@ -239,7 +238,7 @@ static int u_delban(struct chanset_t *c, char *who, int doit)
     j--;
     for (; (*u) && j; u = &((*u)->next), j--);
     if (*u) {
-      strncpyz(temp, (*u)->mask, sizeof temp);
+      strlcpy(temp, (*u)->mask, sizeof temp);
       i = 1;
     } else
       return -j - 1;
@@ -247,7 +246,7 @@ static int u_delban(struct chanset_t *c, char *who, int doit)
     /* Find matching host, if there is one */
     for (; *u && !i; u = &((*u)->next))
       if (!rfc_casecmp((*u)->mask, who)) {
-        strncpyz(temp, who, sizeof temp);
+        strlcpy(temp, who, sizeof temp);
         i = 1;
         break;
       }
@@ -294,7 +293,7 @@ static int u_delexempt(struct chanset_t *c, char *who, int doit)
     j--;
     for (; (*u) && j; u = &((*u)->next), j--);
     if (*u) {
-      strncpyz(temp, (*u)->mask, sizeof temp);
+      strlcpy(temp, (*u)->mask, sizeof temp);
       i = 1;
     } else
       return -j - 1;
@@ -302,7 +301,7 @@ static int u_delexempt(struct chanset_t *c, char *who, int doit)
     /* Find matching host, if there is one */
     for (; *u && !i; u = &((*u)->next))
       if (!rfc_casecmp((*u)->mask, who)) {
-        strncpyz(temp, who, sizeof temp);
+        strlcpy(temp, who, sizeof temp);
         i = 1;
         break;
       }
@@ -350,7 +349,7 @@ static int u_delinvite(struct chanset_t *c, char *who, int doit)
     j--;
     for (; (*u) && j; u = &((*u)->next), j--);
     if (*u) {
-      strncpyz(temp, (*u)->mask, sizeof temp);
+      strlcpy(temp, (*u)->mask, sizeof temp);
       i = 1;
     } else
       return -j - 1;
@@ -358,7 +357,7 @@ static int u_delinvite(struct chanset_t *c, char *who, int doit)
     /* Find matching host, if there is one */
     for (; *u && !i; u = &((*u)->next))
       if (!rfc_casecmp((*u)->mask, who)) {
-        strncpyz(temp, who, sizeof temp);
+        strlcpy(temp, who, sizeof temp);
         i = 1;
         break;
       }
@@ -410,7 +409,7 @@ void fix_broken_mask(char *newmask, const char *oldmask, size_t len)
     else if (strbang == NULL)
       egg_snprintf(newmask, len, "%.*s!*%s", (int)(strat - oldmask), oldmask, strat);
     else
-      strncpyz(newmask, oldmask, len);
+      strlcpy(newmask, oldmask, len);
   }
 }
 
@@ -629,17 +628,16 @@ static void display_ban(int idx, int number, maskrec *ban,
     daysago(now, ban->added, s);
     sprintf(dates, "%s %s", MODES_CREATED, s);
     if (ban->added < ban->lastactive) {
-      char tocat[sizeof dates];
+      int len = strlen(dates);
       daysago(now, ban->lastactive, s);
-      egg_snprintf(tocat, sizeof tocat, ", %s %s", MODES_LASTUSED, s);
-      strncat(dates, tocat, sizeof dates - strlen(dates) - 1);
+      egg_snprintf(dates + len, (sizeof dates) - len, ", %s %s", MODES_LASTUSED, s); /* Concatenation */
     }
   } else
     dates[0] = 0;
   if (ban->flags & MASKREC_PERM)
     strcpy(s, "(perm)");
   else {
-    char s1[41];
+    char s1[29];
 
     days(ban->expire, now, s1);
     sprintf(s, "(expires %s)", s1);
@@ -674,17 +672,16 @@ static void display_exempt(int idx, int number, maskrec *exempt,
     daysago(now, exempt->added, s);
     sprintf(dates, "%s %s", MODES_CREATED, s);
     if (exempt->added < exempt->lastactive) {
-      char tocat[sizeof dates];
+      int len = strlen(dates);
       daysago(now, exempt->lastactive, s);
-      egg_snprintf(tocat, sizeof tocat, ", %s %s", MODES_LASTUSED, s);
-      strncat(dates, tocat, sizeof dates - strlen(dates) - 1);
+      egg_snprintf(dates + len, (sizeof dates) - len, ", %s %s", MODES_LASTUSED, s); /* Concatenation */
     }
   } else
     dates[0] = 0;
   if (exempt->flags & MASKREC_PERM)
     strcpy(s, "(perm)");
   else {
-    char s1[41];
+    char s1[29];
 
     days(exempt->expire, now, s1);
     sprintf(s, "(expires %s)", s1);
@@ -719,17 +716,16 @@ static void display_invite(int idx, int number, maskrec *invite,
     daysago(now, invite->added, s);
     sprintf(dates, "%s %s", MODES_CREATED, s);
     if (invite->added < invite->lastactive) {
-      char tocat[sizeof dates];
+      int len = strlen(dates);
       daysago(now, invite->lastactive, s);
-      egg_snprintf(tocat, sizeof tocat, ", %s %s", MODES_LASTUSED, s);
-      strncat(dates, tocat, sizeof dates - strlen(dates) - 1);
+      egg_snprintf(dates + len, (sizeof dates) - len, ", %s %s", MODES_LASTUSED, s); /* Concatenation */
     }
   } else
     dates[0] = 0;
   if (invite->flags & MASKREC_PERM)
     strcpy(s, "(perm)");
   else {
-    char s1[41];
+    char s1[29];
 
     days(invite->expire, now, s1);
     sprintf(s, "(expires %s)", s1);
@@ -1239,7 +1235,7 @@ static int expired_mask(struct chanset_t *chan, char *who)
   if (force_expire)
     return 1;
 
-  strncpyz(buf, who, sizeof buf);
+  strlcpy(buf, who, sizeof buf);
   sfrom = buf;
   snick = splitnick(&sfrom);
 

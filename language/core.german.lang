@@ -135,7 +135,7 @@ Baue eine Telnetverbindung zu dem Bot auf und gib 'NEW' als Deinen Nickname ein.
 0x53c,Benutzerdatei fehlt!
 0x53e,%B  (%E)\n\nBitte gib Deinen Nickname ein:\n
 0x53f,Rotiere Logdatei %s da groesser als max-logsize (%d)
-0x540,\nNickname.\n
+# 0x540 - unused / Unbenutzt
 0x541,Die letzte Meldung wiederholte sich %d mal.\n
 0x543,Keine freien Sockets verfuegbar.
 0x544,Tcl version:
@@ -149,7 +149,7 @@ Baue eine Telnetverbindung zu dem Bot auf und gib 'NEW' als Deinen Nickname ein.
 0x604,Hallo
 0x605,Auf Wiedersehen
 0x606,Du bist gebannt, mein Lieber.
-0x607,NOTICE %s :Dein Nick ist zu lange und wurde deshalb in '%s' umgewandelt.\n
+0x607,NOTICE %s :Dein Nick war zu lang und wurde daher auf '%s' gekuerzt.\n
 0x608,Bekanntschaft gemacht mit
 0x609,kein eigener Client
 0x60a,NOTICE %s :Hallo %s!  Ich bin %s, ein Eggdrop Bot.\n
@@ -184,7 +184,7 @@ Baue eine Telnetverbindung zu dem Bot auf und gib 'NEW' als Deinen Nickname ein.
 0x62a,Setze Channelinfo zurueck.
 0x62b,Springe auf anderen Server...
 0x62c,Channel ist im Moment versteckt.
-0x62d,Momentan auf auf dem Channel
+0x62d,Momentan auf dem Channel
 0x62e,Nie einen meiner Channels betreten.
 0x62f,Zuletzt gesehen am
 0x630,Ich kenne Dich nicht, bitte stell Dich mir zuerst vor.
@@ -199,7 +199,7 @@ Baue eine Telnetverbindung zu dem Bot auf und gib 'NEW' als Deinen Nickname ein.
 0x639,Nickname wurde jupiterisiert
 0x63a,Channel %s ist jupiterisiert. :(
 0x63b,%s sagt ich sei nicht registriert, ich probiere den naechsten.
-0x63c,Du hast einen hirnamputierten Server.
+0x63c,Der Server sagt wir seien noch nicht registriert.
 0x63d,Flood von @%s!  Wird ab sofort ignoriert!
 0x63f,JOIN flood von @%s!  Wird gebannt.
 0x640,Channel flood von %s -- wird gekickt.
@@ -243,8 +243,8 @@ Baue eine Telnetverbindung zu dem Bot auf und gib 'NEW' als Deinen Nickname ein.
 0x663,NOTICE %s :Entweder Du benutzt den Nicknamen von jemand anders oder Du musst eingeben: /MSG %s IDENT (passwort)\n
 0x664,NOTICE %s :Als Master solltest Du nun wirklich ein Passwort setzen: mit /MSG %s pass <Dein-neues-passwort>.\n
 0x665,NOTICE %s :Alle wichtigen Befehle werden per DCC Chat eingegeben. Von nun an brauchst Du nicht mehr die -m Option zu verwenden wenn Du den Bot startest. Viel Spass !!!\n
-0x666,Dies ist die Telnet-Schnittstelle zu %s, einem Eggdrop Bot.\nMissbrauche sie nicht, and sie wird auch allen Deinen Freunden offenstehen.\n
-0x667,Du musst Dir jetzt einen Nickname aussuchen, den Du auf dem Bot benutzt\nund ein Passwort, damit niemand sonst vorgeben kann, er sei Du.\nBitte behalte an beides!
+0x666,Dies ist die Telnet-Schnittstelle zu %s, einem Eggdrop Bot.\nMissbrauche sie nicht, und sie wird auch allen Deinen Freunden offenstehen.\n
+0x667,Du musst Dir jetzt einen Nickname aussuchen, den Du auf dem Bot benutzt\nund ein Passwort, damit niemand sonst vorgeben kann, er sei Du.\nBitte beide merken!
 0x668,Von nun an brauchst Du nicht mehr die -m Option zu verwenden wenn Du den Bot startest.\nViel Spass !!!
 0x669,Telnet-Verbindungsaufbau-Flood von %s!  Wird ab sofort ignoriert!
 0x66a,Gebannt:
@@ -296,7 +296,7 @@ Baue eine Telnetverbindung zu dem Bot auf und gib 'NEW' als Deinen Nickname ein.
 0xb1d,Andere Leute auf dem Bot
 0xb1f,Versuche Verbindung herzustellen zu
 0xb20,Nicht online; Nachricht gespeichert.
-0xb21,Nachrichtenkorb ist volll, tut mir leid.
+0xb21,Nachrichtenkorb ist voll, tut mir leid.
 0xb22,ist nicht da; Nachricht gespeichert.
 0xb23,Nachricht gesendet an
 0xb24,Verbindung getrennt von:
@@ -368,13 +368,13 @@ Baue eine Telnetverbindung zu dem Bot auf und gib 'NEW' als Deinen Nickname ein.
 0xc04,DCC Chat abgewiesen (kein Passwort)
 0xc05,DCC Chat abgewiesen (+x aber kein Dateisystem)
 0xc07,Im Moment sind zu viele Benutzer im Dateisystem.
-0xc0c,Sorry, zu viele DCC Verbindungen.
+0xc0c,Entschuldigung, zu viele DCC Verbindungen.
 0xc0d,DCC Verbindungen ueberfuellt: %s %s (%s!%s)
 0xc19,Verbindung nicht zustandegekommen
 0xc1a,DCC Verbindung nicht zustandegekommen
 0xc1c,Gib Dein Passwort ein.
 0xc1d,%s wurde gewaltsam entfernt wegen Flood.\n
-0xc1e,-=- poof -=-\n
+0xc1e,-=- Simsalabim -=-\n
 0xc1f,Du wurdest von dem %s runtergeworfen von %s%s%s\n
 0xc20,%s hat %s aus der Partyline rausgeschmissen%s%s
 0xc21,DCC Chat abgewiesen (falscher Port)

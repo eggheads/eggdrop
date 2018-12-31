@@ -17,7 +17,7 @@ modules: ../../../server.$(MOD_EXT)
 	$(CC) $(CFLAGS) $(CPPFLAGS) -DMAKING_MODS -c $(srcdir)/server.c && mv -f server.o ../
 
 ../../../server.$(MOD_EXT): ../server.o
-	$(LD) -o ../../../server.$(MOD_EXT) ../server.o $(XLIBS) $(MODULE_XLIBS) && $(STRIP) ../../../server.$(MOD_EXT)
+	$(LD) $(CFLAGS) -o ../../../server.$(MOD_EXT) ../server.o $(XLIBS) $(MODULE_XLIBS) && $(STRIP) ../../../server.$(MOD_EXT)
 
 depend:
 	$(CC) $(CFLAGS) -MM $(srcdir)/server.c -MT ../server.o > .depend
@@ -34,12 +34,11 @@ distclean: clean
  ../../../src/flags.h ../../../src/cmdt.h ../../../src/tclegg.h \
  ../../../src/tclhash.h ../../../src/chan.h ../../../src/users.h \
  ../../../src/compat/compat.h ../../../src/compat/inet_aton.h \
- ../../../src/compat/snprintf.h ../../../src/compat/memset.h \
- ../../../src/compat/memcpy.h ../../../src/compat/strcasecmp.h \
+ ../../../src/compat/snprintf.h ../../../src/compat/strcasecmp.h \
  ../../../src/compat/strftime.h ../../../src/compat/inet_ntop.h \
  ../../../src/compat/inet_pton.h ../../../src/compat/gethostbyname2.h \
- ../../../src/mod/modvals.h ../../../src/tandem.h \
- .././server.mod/server.h .././server.mod/servmsg.c \
+ ../../../src/compat/strlcpy.h ../../../src/mod/modvals.h \
+ ../../../src/tandem.h .././server.mod/server.h .././server.mod/servmsg.c \
  .././server.mod/../irc.mod/irc.h \
  .././server.mod/../channels.mod/channels.h .././server.mod/cmdsserv.c \
  .././server.mod/tclserv.c

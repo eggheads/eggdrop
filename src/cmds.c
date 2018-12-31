@@ -26,13 +26,15 @@
 #include "tandem.h"
 #include "modules.h"
 #include <ctype.h>
+#include <signal.h>
 
 extern struct chanset_t *chanset;
 extern struct dcc_t *dcc;
 extern struct userrec *userlist;
 extern tcl_timer_t *timer, *utimer;
-extern int dcc_total, remote_boots, backgrd, make_userfile, do_restart,
-           conmask, require_p, must_be_owner, strict_host;
+extern int dcc_total, remote_boots, backgrd, make_userfile, conmask, require_p,
+           must_be_owner, strict_host;
+extern volatile sig_atomic_t do_restart;
 extern unsigned long otraffic_irc, otraffic_irc_today, itraffic_irc,
                      itraffic_irc_today, otraffic_bn, otraffic_bn_today,
                      itraffic_bn, itraffic_bn_today, otraffic_dcc,
@@ -521,7 +523,7 @@ static void cmd_whois(struct userrec *u, int idx, char *par)
   }
 
   putlog(LOG_CMDS, "*", "#%s# whois %s", dcc[idx].nick, par);
-  tell_user_ident(idx, par, u ? (u->flags & USER_MASTER) : 0);
+  tell_user_ident(idx, par);
 }
 
 static void cmd_match(struct userrec *u, int idx, char *par)
@@ -547,8 +549,7 @@ static void cmd_match(struct userrec *u, int idx, char *par)
     } else
       limit = atoi(s1);
   }
-  tell_users_match(idx, s, start, limit, u ? (u->flags & USER_MASTER) : 0,
-                   chname);
+  tell_users_match(idx, s, start, limit, chname);
 }
 
 static void cmd_uptime(struct userrec *u, int idx, char *par)
@@ -654,7 +655,7 @@ static void do_console(struct userrec *u, int idx, char *par, int reset)
   module_entry *me;
 
   get_user_flagrec(u, &fr, dcc[idx].u.chat->con_chan);
-  strncpyz(s1, par, sizeof s1);
+  strlcpy(s1, par, sizeof s1);
   nick = newsplit(&par);
   /* Check if the parameter is a handle.
    * Don't remove '+' as someone couldn't have '+' in CHANMETA cause
@@ -692,7 +693,7 @@ static void do_console(struct userrec *u, int idx, char *par, int reset)
               nick);
       return;
     }
-    strncpyz(dcc[dest].u.chat->con_chan, nick,
+    strlcpy(dcc[dest].u.chat->con_chan, nick,
         sizeof dcc[dest].u.chat->con_chan);
     nick[0] = 0;
     if (dest != idx)
@@ -949,8 +950,8 @@ static void cmd_chhandle(struct userrec *u, int idx, char *par)
   int i, atr = u ? u->flags : 0, atr2;
   struct userrec *u2;
 
-  strncpyz(hand, newsplit(&par), sizeof hand);
-  strncpyz(newhand, newsplit(&par), sizeof newhand);
+  strlcpy(hand, newsplit(&par), sizeof hand);
+  strlcpy(newhand, newsplit(&par), sizeof newhand);
 
   if (!hand[0] || !newhand[0]) {
     dprintf(idx, "Usage: chhandle <oldhandle> <newhandle>\n");
@@ -996,7 +997,7 @@ static void cmd_handle(struct userrec *u, int idx, char *par)
   char oldhandle[HANDLEN + 1], newhandle[HANDLEN + 1];
   int i;
 
-  strncpyz(newhandle, newsplit(&par), sizeof newhandle);
+  strlcpy(newhandle, newsplit(&par), sizeof newhandle);
 
   if (!newhandle[0]) {
     dprintf(idx, "Usage: handle <new-handle>\n");
@@ -1017,7 +1018,7 @@ static void cmd_handle(struct userrec *u, int idx, char *par)
   else if (!egg_strcasecmp(newhandle, botnetnick))
     dprintf(idx, "Hey!  That's MY name!\n");
   else {
-    strncpyz(oldhandle, dcc[idx].nick, sizeof oldhandle);
+    strlcpy(oldhandle, dcc[idx].nick, sizeof oldhandle);
     if (change_handle(u, newhandle)) {
       putlog(LOG_CMDS, "*", "#%s# handle %s", oldhandle, newhandle);
       dprintf(idx, "Okay, changed.\n");
@@ -1085,7 +1086,7 @@ static void cmd_fprint(struct userrec *u, int idx, char *par)
       return;
     } else if (!(new = ssl_getfp(dcc[idx].sock))) {
       dprintf(idx, "Can't get your current fingerprint. "
-              "Set up you client to send a certificate!\n");
+              "Set up your client to send a certificate!\n");
       return;
     }
   }
@@ -1353,13 +1354,13 @@ void cmd_die(struct userrec *u, int idx, char *par)
     egg_snprintf(s1, sizeof s1, "BOT SHUTDOWN (%s: %s)", dcc[idx].nick, par);
     egg_snprintf(s2, sizeof s2, "DIE BY %s!%s (%s)", dcc[idx].nick,
                  dcc[idx].host, par);
-    strncpyz(quit_msg, par, 1024);
+    strlcpy(quit_msg, par, 1024);
   } else {
     egg_snprintf(s1, sizeof s1, "BOT SHUTDOWN (Authorized by %s)",
                  dcc[idx].nick);
     egg_snprintf(s2, sizeof s2, "DIE BY %s!%s (request)", dcc[idx].nick,
                  dcc[idx].host);
-    strncpyz(quit_msg, dcc[idx].nick, 1024);
+    strlcpy(quit_msg, dcc[idx].nick, 1024);
   }
   kill_bot(s1, s2);
 }
@@ -2404,7 +2405,7 @@ static void cmd_su(struct userrec *u, int idx, char *par)
         dcc[idx].u.chat->su_nick = get_data_ptr(strlen(dcc[idx].nick) + 1);
         strcpy(dcc[idx].u.chat->su_nick, dcc[idx].nick);
         dcc[idx].user = u;
-        strncpyz(dcc[idx].nick, par, sizeof dcc[idx].nick);
+        strlcpy(dcc[idx].nick, par, sizeof dcc[idx].nick);
         dcc_chatter(idx);
       }
     }
@@ -2515,7 +2516,7 @@ static void cmd_set(struct userrec *u, int idx, char *msg)
     dumplots(idx, "Global vars: ", tcl_resultstring());
     return;
   }
-  strncpyz(s + 4, msg, sizeof s - 4);
+  strlcpy(s + 4, msg, sizeof s - 4);
   code = Tcl_Eval(interp, s);
 
   /* properly convert string to system encoding. */
@@ -2585,47 +2586,55 @@ static void cmd_unloadmod(struct userrec *u, int idx, char *par)
 
 static void cmd_pls_ignore(struct userrec *u, int idx, char *par)
 {
-  char *who, s[UHOSTLEN];
-  unsigned long int expire_time = 0;
+  char *who, s[UHOSTLEN], *p, *p_expire;
+  long expire_foo;
+  unsigned long expire_time = 0;
 
   if (!par[0]) {
-    dprintf(idx, "Usage: +ignore <hostmask> [%%<XdXhXm>] [comment]\n");
+    dprintf(idx, "Usage: +ignore <hostmask> [%%<XyXdXhXm>] [comment]\n");
     return;
   }
 
   who = newsplit(&par);
   if (par[0] == '%') {
-    char *p, *p_expire;
-    unsigned long int expire_foo;
-
     p = newsplit(&par);
     p_expire = p + 1;
     while (*(++p) != 0) {
       switch (tolower((unsigned) *p)) {
+      case 'y':
+        *p = 0;
+        expire_foo = strtol(p_expire, NULL, 10);
+        expire_time += 60 * 60 * 24 * 365 * expire_foo;
+        p_expire = p + 1;
+        break;
       case 'd':
         *p = 0;
         expire_foo = strtol(p_expire, NULL, 10);
-        if (expire_foo > 365)
-          expire_foo = 365;
-        expire_time += 86400 * expire_foo;
+        expire_time += 60 * 60 * 24 * expire_foo;
         p_expire = p + 1;
         break;
       case 'h':
         *p = 0;
         expire_foo = strtol(p_expire, NULL, 10);
-        if (expire_foo > 8760)
-          expire_foo = 8760;
-        expire_time += 3600 * expire_foo;
+        expire_time += 60 * 60 * expire_foo;
         p_expire = p + 1;
         break;
       case 'm':
         *p = 0;
         expire_foo = strtol(p_expire, NULL, 10);
-        if (expire_foo > 525600)
-          expire_foo = 525600;
         expire_time += 60 * expire_foo;
         p_expire = p + 1;
       }
+    }
+    /* For whomever is stuck with maintaining this in 2033- this will
+     * break. Hopefully we've dealt with the max unixtime issue by now
+     * (Year 2038 problem), but if you're reading this, clearly we
+     * haven't because we are lazy. Sorry.
+     */
+    if (expire_time > (60 * 60 * 24 * 365 * 5)) {
+      dprintf(idx, "expire time must be equal to or less than 5 years" 
+          "(1825 days)\n");
+      return;
     }
   }
   if (!par[0])
@@ -2663,7 +2672,7 @@ static void cmd_mns_ignore(struct userrec *u, int idx, char *par)
     dprintf(idx, "Usage: -ignore <hostmask | ignore #>\n");
     return;
   }
-  strncpyz(buf, par, sizeof buf);
+  strlcpy(buf, par, sizeof buf);
   if (delignore(buf)) {
     putlog(LOG_CMDS, "*", "#%s# -ignore %s", dcc[idx].nick, buf);
     dprintf(idx, "No longer ignoring: %s\n", buf);

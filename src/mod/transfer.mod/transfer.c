@@ -379,20 +379,20 @@ static void eof_dcc_send(int idx)
 
 /* Determine byte order. Used for resend DCC startup packets.
  */
-static inline u_8bit_t byte_order_test(void)
+static uint8_t byte_order_test(void)
 {
-  u_16bit_t test = TRANSFER_REGET_PACKETID;
+  uint16_t test = TRANSFER_REGET_PACKETID;
 
-  if (*((u_8bit_t *) & test) == ((TRANSFER_REGET_PACKETID & 0xff00) >> 8))
+  if (*((uint8_t *) & test) == ((TRANSFER_REGET_PACKETID & 0xff00) >> 8))
     return 0;
-  if (*((u_8bit_t *) & test) == (TRANSFER_REGET_PACKETID & 0x00ff))
+  if (*((uint8_t *) & test) == (TRANSFER_REGET_PACKETID & 0x00ff))
     return 1;
   return 0;
 }
 
 /* Parse and handle resend DCC startup packets.
  */
-static inline void handle_resend_packet(int idx, transfer_reget *reget_data)
+static void handle_resend_packet(int idx, transfer_reget *reget_data)
 {
   if (byte_order_test() != reget_data->byte_order) {
     /* The sender's byte order does not match our's so we need to switch the
@@ -432,7 +432,7 @@ static void dcc_get(int idx, char *buf, int len)
    * This is either a 4 bit ack or the 8 bit reget packet.
    */
   if (w < 4 || (w < 8 && dcc[idx].u.xfer->type == XFER_RESEND_PEND)) {
-    my_memcpy(&(dcc[idx].u.xfer->buf[dcc[idx].u.xfer->sofar]), buf, len);
+    memcpy(&(dcc[idx].u.xfer->buf[dcc[idx].u.xfer->sofar]), buf, len);
     dcc[idx].u.xfer->sofar += len;
     return;
     /* Waiting for the 8 bit reget packet? */
@@ -441,8 +441,8 @@ static void dcc_get(int idx, char *buf, int len)
     if (w == 8) {
       transfer_reget reget_data;
 
-      my_memcpy(&reget_data, dcc[idx].u.xfer->buf, dcc[idx].u.xfer->sofar);
-      my_memcpy(&reget_data + dcc[idx].u.xfer->sofar, buf, len);
+      memcpy(&reget_data, dcc[idx].u.xfer->buf, dcc[idx].u.xfer->sofar);
+      memcpy(&reget_data + dcc[idx].u.xfer->sofar, buf, len);
       handle_resend_packet(idx, &reget_data);
       cmp = dcc[idx].u.xfer->offset;
     } else
@@ -452,16 +452,16 @@ static void dcc_get(int idx, char *buf, int len)
   } else {
     /* Complete packet? */
     if (w == 4) {
-      my_memcpy(bbuf, dcc[idx].u.xfer->buf, dcc[idx].u.xfer->sofar);
-      my_memcpy(&(bbuf[dcc[idx].u.xfer->sofar]), buf, len);
+      memcpy(bbuf, dcc[idx].u.xfer->buf, dcc[idx].u.xfer->sofar);
+      memcpy(&(bbuf[dcc[idx].u.xfer->sofar]), buf, len);
     } else {
       p = ((w - 1) & ~3) - dcc[idx].u.xfer->sofar;
       w = w - ((w - 1) & ~3);
       if (w < 4) {
-        my_memcpy(dcc[idx].u.xfer->buf, &(buf[p]), w);
+        memcpy(dcc[idx].u.xfer->buf, &(buf[p]), w);
         return;
       }
-      my_memcpy(bbuf, &(buf[p]), w);
+      memcpy(bbuf, &(buf[p]), w);
     }
     /* This is more compatible than ntohl for machines where an int
      * is more than 4 bytes:
@@ -609,18 +609,12 @@ static void eof_dcc_get(int idx)
 
 static void dcc_send(int idx, char *buf, int len)
 {
-  char s[512];
-  unsigned long sent;
+  uint32_t sentn;
 
   fwrite(buf, len, 1, dcc[idx].u.xfer->f);
   dcc[idx].status += len;
-  /* Put in network byte order */
-  sent = dcc[idx].status;
-  s[0] = (sent / (1 << 24));
-  s[1] = (sent % (1 << 24)) / (1 << 16);
-  s[2] = (sent % (1 << 16)) / (1 << 8);
-  s[3] = (sent % (1 << 8));
-  tputs(dcc[idx].sock, s, 4);
+  sentn = htonl(dcc[idx].status); /* Put in network byte order */
+  tputs(dcc[idx].sock, (char *) &sentn, 4);
   dcc[idx].timeval = now;
   if (dcc[idx].status > dcc[idx].u.xfer->length && dcc[idx].u.xfer->length > 0) {
     dprintf(DP_HELP, TRANSFER_BOGUS_FILE_LENGTH, dcc[idx].nick);
@@ -869,7 +863,7 @@ static void dcc_fork_send(int idx, char *x, int y)
 
 static void dcc_get_pending(int idx, char *buf, int len)
 {
-  unsigned short port;
+  uint16_t port;
   int i;
 
   i = answer(dcc[idx].sock, &dcc[idx].sockname, &port, 1);
@@ -885,7 +879,7 @@ static void dcc_get_pending(int idx, char *buf, int len)
 #endif
   dcc[idx].sock = i;
   dcc[idx].addr = 0;
-  dcc[idx].port = (int) port;
+  dcc[idx].port = port;
   if (dcc[idx].sock == -1) {
     dprintf(DP_HELP, TRANSFER_NOTICE_BAD_CONN, dcc[idx].nick, strerror(errno));
     putlog(LOG_FILES, "*", TRANSFER_LOG_BAD_CONN, dcc[idx].u.xfer->origname,
@@ -1017,8 +1011,8 @@ static int raw_dcc_resend_send(char *filename, char *nick, char *from,
     nfn = buf = replace_spaces(nfn);
   dcc[i].u.xfer->origname = get_data_ptr(strlen(nfn) + 1);
   strcpy(dcc[i].u.xfer->origname, nfn);
-  strncpyz(dcc[i].u.xfer->from, from, NICKLEN);
-  strncpyz(dcc[i].u.xfer->dir, filename, DIRLEN);
+  strlcpy(dcc[i].u.xfer->from, from, NICKLEN);
+  strlcpy(dcc[i].u.xfer->dir, filename, DIRLEN);
   dcc[i].u.xfer->length = dccfilesize;
   dcc[i].timeval = now;
   dcc[i].u.xfer->f = f;
@@ -1065,7 +1059,7 @@ static int ctcp_DCC_RESUME(char *nick, char *from, char *handle,
   int i, port;
   unsigned long offset;
 
-  strncpyz(buf, text, sizeof buf);
+  strlcpy(buf, text, sizeof buf);
   action = newsplit(&msg);
 
   if (egg_strcasecmp(action, "RESUME"))

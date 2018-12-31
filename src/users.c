@@ -60,39 +60,25 @@ int match_ignore(char *uhost)
   return 0;
 }
 
-int equals_ignore(char *uhost)
-{
-  struct igrec *u = global_ign;
-
-  for (; u; u = u->next)
-    if (!rfc_casecmp(u->igmask, uhost)) {
-      if (u->flags & IGREC_PERM)
-        return 2;
-      else
-        return 1;
-    }
-  return 0;
-}
-
 int delignore(char *ign)
 {
   int i, j;
   struct igrec **u;
   struct igrec *t;
-  char temp[256];
+  char temp[UHOSTLEN];
 
   i = 0;
   if (!strchr(ign, '!') && (j = atoi(ign))) {
     for (u = &global_ign, j--; *u && j; u = &((*u)->next), j--);
     if (*u) {
-      strncpyz(temp, (*u)->igmask, sizeof temp);
+      strlcpy(temp, (*u)->igmask, sizeof temp);
       i = 1;
     }
   } else {
     /* find the matching host, if there is one */
     for (u = &global_ign; *u && !i; u = &((*u)->next))
       if (!rfc_casecmp(ign, (*u)->igmask)) {
-        strncpyz(temp, ign, sizeof temp);
+        strlcpy(temp, ign, sizeof temp);
         i = 1;
         break;
       }
@@ -171,7 +157,7 @@ void display_ignore(int idx, int number, struct igrec *ignore)
   if (ignore->flags & IGREC_PERM)
     strcpy(s, "(perm)");
   else {
-    char s1[41];
+    char s1[29];
 
     days(ignore->expire, now, s1);
     sprintf(s, "(expires %s)", s1);
@@ -228,19 +214,17 @@ void check_expired_ignores()
   }
 }
 
-/*        Channel mask loaded from user file. This function is
- *      add(ban|invite|exempt)_fully merged into one. <cybah>
+/* Channel mask loaded from user file. This function is
+ * add(ban|invite|exempt)_fully merged into one. <cybah>
  */
-static void addmask_fully(struct chanset_t *chan, maskrec ** m,
-                          maskrec ** global, char *mask, char *from, char *note,
+static void addmask_fully(maskrec ** m, char *mask, char *from, char *note,
                           time_t expire_time, int flags, time_t added,
                           time_t last)
 {
   maskrec *p = user_malloc(sizeof(maskrec));
-  maskrec **u = (chan) ? m : global;
 
-  p->next = *u;
-  *u = p;
+  p->next = *m;
+  *m = p;
   p->expire = expire_time;
   p->added = added;
   p->lastactive = last;
@@ -285,8 +269,8 @@ static void restore_chanban(struct chanset_t *chan, char *host)
             if (desc) {
               *desc = 0;
               desc++;
-              addmask_fully(chan, &chan->bans, &global_bans, host, user,
-                            desc, atoi(expi), flags, atoi(add), atoi(last));
+              addmask_fully(chan ? &chan->bans : &global_bans, host, user, desc,
+                            atoi(expi), flags, atoi(add), atoi(last));
               return;
             }
           }
@@ -296,7 +280,7 @@ static void restore_chanban(struct chanset_t *chan, char *host)
         if (desc) {
           *desc = 0;
           desc++;
-          addmask_fully(chan, &chan->bans, &global_bans, host, add, desc,
+          addmask_fully(chan ? &chan->bans : &global_bans, host, add, desc,
                         atoi(expi), flags, now, 0);
           return;
         }
@@ -339,7 +323,7 @@ static void restore_chanexempt(struct chanset_t *chan, char *host)
             if (desc) {
               *desc = 0;
               desc++;
-              addmask_fully(chan, &chan->exempts, &global_exempts, host, user,
+              addmask_fully(chan ? &chan->exempts : &global_exempts, host, user,
                             desc, atoi(expi), flags, atoi(add), atoi(last));
               return;
             }
@@ -350,7 +334,7 @@ static void restore_chanexempt(struct chanset_t *chan, char *host)
         if (desc) {
           *desc = 0;
           desc++;
-          addmask_fully(chan, &chan->exempts, &global_exempts, host, add,
+          addmask_fully(chan ? &chan->exempts : &global_exempts, host, add,
                         desc, atoi(expi), flags, now, 0);
           return;
         }
@@ -393,8 +377,9 @@ static void restore_chaninvite(struct chanset_t *chan, char *host)
             if (desc) {
               *desc = 0;
               desc++;
-              addmask_fully(chan, &chan->invites, &global_invites, host, user,
-                            desc, atoi(expi), flags, atoi(add), atoi(last));
+              addmask_fully(chan ? &chan->invites : &global_invites, host, user,
+                            desc, atoi(expi), flags, atoi(add),
+                            atoi(last));
               return;
             }
           }
@@ -404,7 +389,7 @@ static void restore_chaninvite(struct chanset_t *chan, char *host)
         if (desc) {
           *desc = 0;
           desc++;
-          addmask_fully(chan, &chan->invites, &global_invites, host, add,
+          addmask_fully(chan ? &chan->invites : &global_invites, host, add,
                         desc, atoi(expi), flags, now, 0);
           return;
         }
@@ -467,7 +452,7 @@ static void restore_ignore(char *host)
   putlog(LOG_MISC, "*", "*** Malformed ignore line.");
 }
 
-void tell_user(int idx, struct userrec *u, int master)
+static void tell_user(int idx, struct userrec *u)
 {
   char s[81], s1[81], format[81];
   int n = 0;
@@ -533,7 +518,7 @@ void tell_user(int idx, struct userrec *u, int master)
 }
 
 /* show user by ident */
-void tell_user_ident(int idx, char *id, int master)
+void tell_user_ident(int idx, char *id)
 {
   char format[81];
   struct userrec *u;
@@ -548,14 +533,13 @@ void tell_user_ident(int idx, char *id, int master)
   egg_snprintf(format, sizeof format,
                "%%-%us PASS NOTES FLAGS           LAST\n", HANDLEN);
   dprintf(idx, format, "HANDLE");
-  tell_user(idx, u, master);
+  tell_user(idx, u);
 }
 
 /* match string:
  * wildcard to match nickname or hostmasks
  * +attr to find all with attr */
-void tell_users_match(int idx, char *mtch, int start, int limit,
-                      int master, char *chname)
+void tell_users_match(int idx, char *mtch, int start, int limit, char *chname)
 {
   char format[81];
   struct userrec *u;
@@ -596,7 +580,7 @@ void tell_users_match(int idx, char *mtch, int start, int limit,
         if (nomns || !flagrec_eq(&mns, &user)) {
           cnt++;
           if ((cnt <= limit) && (cnt >= start)) {
-            tell_user(idx, u, master);
+            tell_user(idx, u);
           }
           if (cnt == limit + 1) {
             dprintf(idx, MISC_TRUNCATED, limit);
@@ -606,7 +590,7 @@ void tell_users_match(int idx, char *mtch, int start, int limit,
     } else if (wild_match(mtch, u->handle)) {
       cnt++;
       if ((cnt <= limit) && (cnt >= start)) {
-        tell_user(idx, u, master);
+        tell_user(idx, u);
       }
       if (cnt == limit + 1) {
         dprintf(idx, MISC_TRUNCATED, limit);
@@ -618,7 +602,7 @@ void tell_users_match(int idx, char *mtch, int start, int limit,
           cnt++;
           fnd = 1;
           if ((cnt <= limit) && (cnt >= start)) {
-            tell_user(idx, u, master);
+            tell_user(idx, u);
           }
           if (cnt == limit + 1) {
             dprintf(idx, MISC_TRUNCATED, limit);
@@ -772,7 +756,7 @@ int readuserfile(char *file, struct userrec **ret)
 
                 cr->next = u->chanrec;
                 u->chanrec = cr;
-                strncpyz(cr->channel, chname, 80);
+                strlcpy(cr->channel, chname, 80);
                 cr->laston = atoi(st);
                 cr->flags = fr.chan;
                 cr->flags_udef = fr.udef_chan;
@@ -936,7 +920,7 @@ int readuserfile(char *file, struct userrec **ret)
             } else {
               fr.match = FR_GLOBAL;
               break_down_flags(attr, &fr, 0);
-              strncpyz(lasthand, code, sizeof lasthand);
+              strlcpy(lasthand, code, sizeof lasthand);
               cst = NULL;
               if (strlen(code) > HANDLEN)
                 code[HANDLEN] = 0;

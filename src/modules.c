@@ -24,6 +24,7 @@
  */
 
 #include <ctype.h>
+#include <signal.h>
 #include "main.h"
 #include "modules.h"
 #include "tandem.h"
@@ -76,7 +77,7 @@ void *dlsym(void *, char *);
 #  endif /* MOD_USE_DL */
 #endif /* !STATIC */
 
-
+#define strncpyz strlcpy
 
 extern struct dcc_t *dcc;
 extern struct userrec *userlist, *lastuser;
@@ -85,11 +86,12 @@ extern struct chanset_t *chanset;
 extern char botnetnick[], botname[], origbotname[], botuser[], ver[], log_ts[],
             admin[], userfile[], notify_new[], helpdir[], version[], quit_msg[];
 
-extern int parties, noshare, dcc_total, egg_numver, userfile_perm, do_restart,
-           ignore_time, must_be_owner, raw_log, max_dcc, make_userfile,
-           default_flags, require_p, share_greet, use_invites, use_exempts,
-           password_timeout, force_expire, protect_readonly, reserved_port_min,
-           reserved_port_max, copy_to_tmp, quiet_reject;
+extern int parties, noshare, dcc_total, egg_numver, userfile_perm, ignore_time,
+           must_be_owner, raw_log, max_dcc, make_userfile, default_flags,
+           require_p, share_greet, use_invites, use_exempts, password_timeout,
+           force_expire, protect_readonly, reserved_port_min, reserved_port_max,
+           copy_to_tmp, quiet_reject;
+extern volatile sig_atomic_t do_restart;
 
 #ifdef IPV6
 extern int pref_af;
@@ -137,16 +139,6 @@ void check_static(char *name, char *(*func) ())
 /* The null functions */
 void null_func()
 {
-}
-
-char *charp_func()
-{
-  return NULL;
-}
-
-int minus_func()
-{
-  return -1;
 }
 
 int false_func()
@@ -316,7 +308,7 @@ Function global_table[] = {
   (Function) open_telnet,
   /* 88 - 91 */
   (Function) check_tcl_event,
-  (Function) egg_memcpy,
+  (Function) 0,                   /* was egg_memcpy -- use memcpy() instead */
   (Function) my_atoul,
   (Function) my_strcpy,
   /* 92 - 95 */
@@ -430,7 +422,7 @@ Function global_table[] = {
   /* 168 - 171 */
   (Function) expected_memory,
   (Function) tell_mem_status,
-  (Function) & do_restart,        /* int                                 */
+  (Function) & do_restart,        /* volatile sig_atomic_t               */
   (Function) check_tcl_filt,
   /* 172 - 175 */
   (Function) add_hook,
@@ -543,7 +535,7 @@ Function global_table[] = {
   /* 252 - 255 */
   (Function) egg_snprintf,
   (Function) egg_vsnprintf,
-  (Function) egg_memset,
+  (Function) 0,                   /* was egg_memset -- use memset() or egg_bzero() instead */
   (Function) egg_strcasecmp,
   /* 256 - 259 */
   (Function) egg_strncasecmp,
@@ -587,7 +579,7 @@ Function global_table[] = {
   (Function) open_telnet_raw,
   /* 288 - 291 */
 #ifdef IPV6
-  (Function) & pref_af,		  /* int                                 */
+  (Function) & pref_af,           /* int                                 */
 #else
   (Function) 0,                   /* IPv6 leftovers: 288                 */
 #endif
@@ -607,7 +599,14 @@ Function global_table[] = {
   /* 300 - 303 */
   (Function) tcl_resultint,
   (Function) tcl_resultstring,
-  (Function) getdccfamilyaddr
+  (Function) getdccfamilyaddr,
+#ifndef HAVE_STRLCPY
+  (Function) strlcpy,
+#else
+  (Function) 0,
+#endif
+  /* 304 - 307 */
+  (Function) strncpyz
 };
 
 void init_modules(void)
@@ -1141,21 +1140,6 @@ void del_hook(int hook_num, Function func)
         dns_ipbyhost = block_dns_ipbyhost;
       break;
     }
-}
-
-int call_hook_cccc(int hooknum, char *a, char *b, char *c, char *d)
-{
-  struct hook_entry *p, *pn;
-  int f = 0;
-
-  if (hooknum >= REAL_HOOKS)
-    return 0;
-  p = hook_list[hooknum];
-  for (p = hook_list[hooknum]; p && !f; p = pn) {
-    pn = p->next;
-    f = p->func(a, b, c, d);
-  }
-  return f;
 }
 
 void do_module_report(int idx, int details, char *which)

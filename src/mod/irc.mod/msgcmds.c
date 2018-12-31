@@ -42,7 +42,7 @@ static int msg_hello(char *nick, char *h, struct userrec *u, char *p)
       return 1;
     }
   }
-  strncpyz(handle, nick, sizeof(handle));
+  strlcpy(handle, nick, sizeof(handle));
   if (get_user_by_handle(userlist, handle)) {
     dprintf(DP_HELP, IRC_BADHOST1, nick);
     dprintf(DP_HELP, IRC_BADHOST2, nick, botname);
@@ -111,7 +111,7 @@ static int msg_hello(char *nick, char *h, struct userrec *u, char *p)
       if (p1 == NULL)
         s1[0] = 0;
       else
-        strncpyz(s1, p1, sizeof s1);
+        strlcpy(s1, p1, sizeof s1);
     }
   }
   return 1;
@@ -171,11 +171,9 @@ static int msg_ident(char *nick, char *host, struct userrec *u, char *par)
   }
   pass = newsplit(&par);
   if (!par[0])
-    strncpyz(who, nick, sizeof who);
-  else {
-    strncpy(who, par, NICKMAX);
-    who[NICKMAX] = 0;
-  }
+    strlcpy(who, nick, sizeof who);
+  else
+    strlcpy(who, par, sizeof who);
   u2 = get_user_by_handle(userlist, who);
   if (!u2) {
     if (u && !quiet_reject)
@@ -849,7 +847,7 @@ static int msg_status(char *nick, char *host, struct userrec *u, char *par)
 
   /* This shouldn't overflow anymore -Wcc */
   s[0] = 0;
-  strncpyz(s, "Channels: ", sizeof s);
+  strlcpy(s, "Channels: ", sizeof s);
   for (chan = chanset; chan; chan = chan->next) {
     strncat(s, chan->dname, sizeof(s) - 1 - strlen(s));
     if (!channel_active(chan))

@@ -47,7 +47,7 @@ extern char origbotname[], botuser[], motdfile[], admin[], userfile[],
             firewall[], helpdir[], notify_new[], vhost[], moddir[], owner[],
             network[], botnetnick[], bannerfile[], egg_version[], natip[],
             configfile[], logfile_suffix[], log_ts[], textdir[], pid_file[],
-            listen_ip[];
+            listen_ip[], stealth_prompt[];
 
 
 extern int flood_telnet_thr, flood_telnet_time, shtime, share_greet,
@@ -184,7 +184,7 @@ static char *tcl_eggint(ClientData cdata, Tcl_Interp *irp,
   if (flags & (TCL_TRACE_READS | TCL_TRACE_UNSETS)) {
     /* Special cases */
     if ((int *) ii->var == &conmask)
-      strncpyz(s1, masktype(conmask), sizeof s1);
+      strlcpy(s1, masktype(conmask), sizeof s1);
     else if ((int *) ii->var == &default_flags) {
       struct flag_record fr = { FR_GLOBAL, 0, 0, 0, 0, 0 };
       fr.global = default_flags;
@@ -328,14 +328,6 @@ void rem_tcl_commands(tcl_cmds *table)
     Tcl_DeleteCommand(interp, table[i].name);
 }
 
-void rem_cd_tcl_cmds(cd_tcl_cmd *table)
-{
-  while (table->name) {
-    Tcl_DeleteCommand(interp, table->name);
-    table++;
-  }
-}
-
 void add_tcl_objcommands(tcl_cmds *table)
 {
   int i;
@@ -378,7 +370,7 @@ static tcl_strings def_tcl_strings[] = {
 #ifdef TLS
   {"ssl-capath",      tls_capath,     120, STR_DIR | STR_PROTECT},
   {"ssl-cafile",      tls_cafile,     120,           STR_PROTECT},
-  {"ssl-ciphers",     tls_ciphers,    120,           STR_PROTECT},
+  {"ssl-ciphers",     tls_ciphers,    2048,          STR_PROTECT},
   {"ssl-privatekey",  tls_keyfile,    120,           STR_PROTECT},
   {"ssl-certificate", tls_certfile,   120,           STR_PROTECT},
 #endif
@@ -404,6 +396,7 @@ static tcl_strings def_tcl_strings[] = {
   {"timestamp-format",log_ts,         32,                      0},
   {"pidfile",         pid_file,       120,           STR_PROTECT},
   {"configureargs",   EGG_AC_ARGS,    0,             STR_PROTECT},
+  {"stealth-prompt",  stealth_prompt, 80,                      0},
   {NULL,              NULL,           0,                       0}
 };
 

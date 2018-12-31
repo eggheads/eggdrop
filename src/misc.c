@@ -59,7 +59,7 @@ int shtime = 1;                 /* Display the time with console output */
 log_t *logs = 0;                /* Logfiles */
 int max_logs = 5;               /* Max log files, mismatch config on purpose */
 int max_logsize = 0;            /* Maximum logfile size, 0 for no limit */
-int raw_log = 0;                /* Disply output to server to LOG_SERVEROUT */
+int raw_log = 0;                /* Display output to server to LOG_SERVEROUT */
 
 int conmask = LOG_MODES | LOG_CMDS | LOG_MISC; /* Console mask */
 
@@ -168,7 +168,7 @@ int egg_strcatn(char *dst, const char *src, size_t max)
    */
   tmpmax = max;
 
-  /* copy upto, but not including the null terminator */
+  /* copy up to, but not including the null terminator */
   while (*src && max > 1) {
     *dst++ = *src++;
     max--;
@@ -208,11 +208,7 @@ void splitc(char *first, char *rest, char divider)
   if (first != NULL)
     strcpy(first, rest);
   if (first != rest)
-    /*    In most circumstances, strcpy with src and dst being the same buffer
-     *  can produce undefined results. We're safe here, as the src is
-     *  guaranteed to be at least 2 bytes higher in memory than dest. <Cybah>
-     */
-    strcpy(rest, p + 1);
+    memmove(rest, p + 1, strlen(p + 1) + 1);
 }
 
 /*    As above, but lets you specify the 'max' number of bytes (EXCLUDING the
@@ -237,7 +233,7 @@ void splitcn(char *first, char *rest, char divider, size_t max)
   }
   *p = 0;
   if (first != NULL)
-    strncpyz(first, rest, max);
+    strlcpy(first, rest, max);
   if (first != rest)
     /*    In most circumstances, strcpy with src and dst being the same buffer
      *  can produce undefined results. We're safe here, as the src is
@@ -260,14 +256,16 @@ char *splitnick(char **blah)
 
 void remove_crlf(char **line)
 {
-  char *p;
+  char *p = *line;
 
-  p = strchr(*line, '\n');
-  if (p != NULL)
-    *p = 0;
-  p = strchr(*line, '\r');
-  if (p != NULL)
-    *p = 0;
+  while (*p) {
+    if (*p == '\r' || *p == '\n')
+    {
+      *p = 0;
+      break;
+    }
+    p++;
+  }
 }
 
 char *newsplit(char **rest)
@@ -306,12 +304,12 @@ char *newsplit(char **rest)
  *
  * "nick!user@is.the.lamest.bg"  -> *!*user@*.the.lamest.bg (ccTLD)
  * "nick!user@is.the.lamest.com" -> *!*user@*.lamest.com (gTLD)
- * "lamest.example"	         -> *!*@lamest.example
+ * "lamest.example"              -> *!*@lamest.example
  * "whatever@lamest.example"     -> *!*whatever@lamest.example
  * "com.example@user!nick"       -> *!*com.example@user!nick
- * "!"			         -> *!*@!
- * "@"			         -> *!*@*
- * ""				 -> *!*@*
+ * "!"                           -> *!*@!
+ * "@"                           -> *!*@*
+ * ""                            -> *!*@*
  * "abc!user@2001:db8:618:5c0:263:15:dead:babe"
  * -> *!*user@2001:db8:618:5c0:263:15:dead:*
  * "abc!user@0:0:0:0:0:ffff:1.2.3.4"
@@ -532,7 +530,6 @@ void putlog EGG_VARARGS_DEF(int, arg1)
   format = va_arg(va, char *);
 
   /* Create the timestamp */
-  t = localtime(&now2);
   if (shtime) {
     egg_strftime(stamp, sizeof(stamp) - 2, log_ts, t);
     strcat(stamp, " ");
@@ -571,7 +568,7 @@ void putlog EGG_VARARGS_DEF(int, arg1)
   }
   /* Place the timestamp in the string to be printed */
   if (out[0] && shtime) {
-    strncpy(s, stamp, tsl);
+    memcpy(s, stamp, tsl);
     out = s;
   }
   strcat(out, "\n");
@@ -584,9 +581,9 @@ void putlog EGG_VARARGS_DEF(int, arg1)
           /* Open this logfile */
           if (keep_all_logs) {
             egg_snprintf(s1, 256, "%s%s", logs[i].filename, ct);
-            logs[i].f = fopen(s1, "a+");
+            logs[i].f = fopen(s1, "a");
           } else
-            logs[i].f = fopen(logs[i].filename, "a+");
+            logs[i].f = fopen(logs[i].filename, "a");
         }
         if (logs[i].f != NULL) {
           /* Check if this is the same as the last line added to
@@ -612,7 +609,7 @@ void putlog EGG_VARARGS_DEF(int, arg1)
                */
             }
             fputs(out, logs[i].f);
-            strncpyz(logs[i].szlast, out + tsl, LOGLINEMAX);
+            strlcpy(logs[i].szlast, out + tsl, LOGLINEMAX);
           }
         }
       }
@@ -626,12 +623,12 @@ void putlog EGG_VARARGS_DEF(int, arg1)
       }
     }
   }
-  if (!backgrd && !con_chan && !term_z)
+  if (!backgrd && !con_chan && term_z < 0)
     dprintf(DP_STDOUT, "%s", out);
   else if ((type & LOG_MISC) && use_stderr) {
     if (shtime)
       out += tsl;
-    dprintf(DP_STDERR, "%s", s);
+    dprintf(DP_STDERR, "%s", out);
   }
   va_end(va);
 }
@@ -649,7 +646,7 @@ void logsuffix_change(char *s)
     return;
 
   debug0("Logfile suffix changed. Closing all open logs.");
-  strncpyz(logfile_suffix, s, sizeof logfile_suffix);
+  strlcpy(logfile_suffix, s, sizeof logfile_suffix);
   while (s2[0]) {
     if (s2[0] == ' ')
       s2[0] = '_';
@@ -827,7 +824,7 @@ void help_subst(char *s, char *nick, struct flag_record *flags,
     help_flags = isdcc;
     return;
   }
-  strncpyz(xx, s, sizeof xx);
+  strlcpy(xx, s, sizeof xx);
   readidx = xx;
   writeidx = s;
   current = strchr(readidx, '%');
@@ -1057,7 +1054,7 @@ void help_subst(char *s, char *nick, struct flag_record *flags,
     }
   }
   if (cols) {
-    strncpyz(xx, s, sizeof xx);
+    strlcpy(xx, s, sizeof xx);
     s[0] = 0;
     subst_addcol(s, xx);
   }
@@ -1343,7 +1340,7 @@ void sub_lang(int idx, char *text)
   get_user_flagrec(dcc[idx].user, &fr, dcc[idx].u.chat->con_chan);
   help_subst(NULL, NULL, 0,
              (dcc[idx].status & STAT_TELNET) ? 0 : HELP_IRC, NULL);
-  strncpyz(s, text, sizeof s);
+  strlcpy(s, text, sizeof s);
   if (s[strlen(s) - 1] == '\n')
     s[strlen(s) - 1] = 0;
   if (!s[0])

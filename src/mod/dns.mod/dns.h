@@ -47,12 +47,12 @@ struct resolve {
   time_t expiretime;
   char *hostn;
   IP ip;
-  u_32bit_t ttl;
-  u_16bit_t type;
+  uint32_t ttl;
+  uint16_t type;
   sockname_t sockname;
-  u_16bit_t id;
-  u_8bit_t state;
-  u_8bit_t sends;
+  uint16_t id;
+  uint8_t state;
+  uint8_t sends;
 };
 
 enum resolve_states {

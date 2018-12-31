@@ -74,7 +74,7 @@ void *_user_realloc(void *ptr, int size, const char *file, int line)
 #endif
 }
 
-int expmem_mask(struct maskrec *m)
+static int expmem_mask(struct maskrec *m)
 {
   int result = 0;
 
@@ -242,7 +242,7 @@ void correct_handle(char *handle)
   strcpy(handle, u->handle);
 }
 
-/* This will be usefull in a lot of places, much more code re-use so we
+/* This will be useful in a lot of places, much more code re-use so we
  * endup with a smaller executable bot. <cybah>
  */
 void clear_masks(maskrec *m)
@@ -321,7 +321,7 @@ struct userrec *get_user_by_host(char *host)
     return ret;
   }
   cache_miss++;
-  strncpyz(host2, host, sizeof host2);
+  strlcpy(host2, host, sizeof host2);
   host = fixfrom(host);
   for (u = userlist; u; u = u->next) {
     q = get_user(&USERENTRY_HOSTS, u);
@@ -340,41 +340,28 @@ struct userrec *get_user_by_host(char *host)
   return ret;
 }
 
-/* use fixfrom() or dont? (drummer)
- */
-struct userrec *get_user_by_equal_host(char *host)
-{
-  struct userrec *u;
-  struct list_type *q;
-
-  for (u = userlist; u; u = u->next)
-    for (q = get_user(&USERENTRY_HOSTS, u); q; q = q->next)
-      if (!rfc_casecmp(q->extra, host))
-        return u;
-  return NULL;
-}
-
-/* Try: pass_match_by_host("-",host)
- * If a '-' is sent as the password, it denotes the intent
- *   to merely check if a password is set for that user.
- * Returns 0 if password is set and does not match
- * Returns 1 if password matches, or if we are
- *   checking if a password is set and it is not
- *   (via the '-' char).
+/* Description: checks the password given against the user's password.
+ * Check against the password "-" to find out if a user has no password set.
+ *
+ * Returns: 1 if the password matches for that user; 0 otherwise. Or if we are
+ * checking against the password "-": 1 if the user has no password set; 0
+ * otherwise.
  */
 int u_pass_match(struct userrec *u, char *pass)
 {
   char *cmp, new[32];
 
-  if (!u)
+  if (!u || !pass)
     return 0;
   cmp = get_user(&USERENTRY_PASS, u);
-  if (!cmp && (pass[0] == '-'))
-    return 1;
-/* If password is not set in userrecord, or password
- * is not sent, or '-' is sent
- */
-  if (!cmp || !pass || !pass[0] || (pass[0] == '-'))
+  if (pass[0] == '-') {
+    if (!cmp)
+      return 1;
+    else
+      return 0;
+  }
+  /* If password is not set in userrecord, or password is not sent */
+  if (!cmp || !pass[0])
     return 0;
   if (u->flags & USER_BOT) {
     if (!strcmp(cmp, pass))
@@ -569,7 +556,7 @@ void write_userfile(int idx)
 
   sort_userlist();
   tt = now;
-  strncpyz(s1, ctime(&tt), sizeof s1);
+  strlcpy(s1, ctime(&tt), sizeof s1);
   fprintf(f, "#4v: %s -- %s -- written %s", ver, botnetnick, s1);
   ok = 1;
   /* Add all users except the -tn user */
@@ -605,12 +592,12 @@ int change_handle(struct userrec *u, char *newh)
   /* Yes, even send bot nick changes now: */
   if (!noshare && !(u->flags & USER_UNSHARED))
     shareout(NULL, "h %s %s\n", u->handle, newh);
-  strncpyz(s, u->handle, sizeof s);
-  strncpyz(u->handle, newh, sizeof u->handle);
+  strlcpy(s, u->handle, sizeof s);
+  strlcpy(u->handle, newh, sizeof u->handle);
   for (i = 0; i < dcc_total; i++)
     if ((dcc[i].type == &DCC_CHAT || dcc[i].type == &DCC_CHAT_PASS) &&
         !egg_strcasecmp(dcc[i].nick, s)) {
-      strncpyz(dcc[i].nick, newh, sizeof dcc[i].nick);
+      strlcpy(dcc[i].nick, newh, sizeof dcc[i].nick);
       if (dcc[i].type == &DCC_CHAT && dcc[i].u.chat->channel >= 0) {
         chanout_but(-1, dcc[i].u.chat->channel,
                     "*** Handle change: %s -> %s\n", s, newh);
@@ -635,7 +622,7 @@ struct userrec *adduser(struct userrec *bu, char *handle, char *host,
   u = nmalloc(sizeof *u);
 
   /* u->next=bu; bu=u; */
-  strncpyz(u->handle, handle, sizeof u->handle);
+  strlcpy(u->handle, handle, sizeof u->handle);
   u->next = NULL;
   u->chanrec = NULL;
   u->entries = NULL;
@@ -648,17 +635,15 @@ struct userrec *adduser(struct userrec *bu, char *handle, char *host,
   }
   set_user(&USERENTRY_PASS, u, pass);
   if (!noxtra) {
-    char *now2;
+    int l;
     xk = nmalloc(sizeof *xk);
     xk->key = nmalloc(8);
     strcpy(xk->key, "created");
-    now2 = nmalloc(15);
     tv = now;
-    sprintf(now2, "%li", tv);
-    xk->data = nmalloc(strlen(now2) + 1);
+    l = snprintf(NULL, 0, "%li", tv);
+    xk->data = nmalloc(l + 1);
     sprintf(xk->data, "%li", tv);
     set_user(&USERENTRY_XTRA, u, xk);
-    nfree(now2);
   }
   /* Strip out commas -- they're illegal */
   if (host && host[0]) {

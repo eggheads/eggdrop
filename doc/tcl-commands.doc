@@ -10,7 +10,7 @@ of the normal Tcl built-in commands are still there, of course, but you
 can also use these to manipulate features of the bot. They are listed
 according to category.
 
-This list is accurate for Eggdrop v1.8.3. Scripts written for v1.3, v1.4
+This list is accurate for Eggdrop v1.8.4. Scripts written for v1.3, v1.4
 or 1.6 series of Eggdrop should probably work with a few minor
 modifications depending on the script. Scripts which were written for
 v0.9, v1.0, v1.1 or v1.2 will probably not work without modification.
@@ -81,7 +81,9 @@ putkick <channel> <nick,nick,...> [reason]
 
 putlog <text>
 
-  Description: sends text to the bot's logfile, marked as 'misc' (o)
+  Description: logs <text> to the logfile and partyline if the 'misc'
+  flag (o) is active via the 'logfile' config file setting and the
+  '.console' partyline setting, respectively.
 
   Returns: nothing
 
@@ -89,7 +91,9 @@ putlog <text>
 
 putcmdlog <text>
 
-  Description: sends text to the bot's logfile, marked as 'command' (c)
+  Description: logs <text> to the logfile and partyline if the 'cmds'
+  flag (c) is active via the 'logfile' config file setting and the
+  '.console' partyline setting, respectively.
 
   Returns: nothing
 
@@ -97,17 +101,19 @@ putcmdlog <text>
 
 putxferlog <text>
 
-  Description: sends text to the bot's logfile, marked as 'file-area'
-  (x)
+  Description: logs <text> to the logfile and partyline if the 'files'
+  flag (x) is active via the 'logfile' config file setting and the
+  '.console' partyline setting, respectively.
 
   Returns: nothing
 
   Module: core
 
-putloglev <level(s)> <channel> <text>
+putloglev <flag(s)> <channel> <text>
 
-  Description: sends text to the bot's logfile, tagged with all of the
-  valid levels given. Use "*" to indicate all log levels.
+  Description: logs <text> to the logfile and partyline at the log level
+  of the specified flag. Use "*" in lieu of a flag to indicate all log
+  levels.
 
   Returns: nothing
 
@@ -175,10 +181,12 @@ userlist [flags]
 passwdok <handle> <pass>
 
   Description: checks the password given against the user's password.
-  Check against the password "" (a blank string) or "-" to find out if a
-  user has no password set.
+  Check against the password "-" to find out if a user has no password
+  set.
 
-  Returns: 1 if the password matches for that user; 0 otherwise
+  Returns: 1 if the password matches for that user; 0 otherwise. Or if
+  we are checking against the password "-": 1 if the user has no
+  password set; 0 otherwise.
 
   Module: core
 
@@ -247,7 +255,10 @@ setuser <handle> <entry-type> [extra info]
   |         |                                                                  |
   |         | <unixtime> <place>                                               |
   |         |                                                                  |
-  |         |     sets global LASTON time                                      |
+  |         |     sets global LASTON time. Standard values used by Eggdrop for |
+  |         |     <place> are partyline, linked, unlinked, filearea,           |
+  |         |     <#channel>, and <@remotebotname>, but can be set             |
+  |         |     to anything.                                                 |
   |         |                                                                  |
   |         | <unixtime>                                                       |
   |         |                                                                  |
@@ -1180,8 +1191,7 @@ onchansplit <nick> [channel]
 
   Module: irc
 
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ chanlist <channel>
-[flags][<&|>chanflags] ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+chanlist <channel> [flags][<&|>chanflags]
 
   Description: flags are any global flags; the '&' or '|' denotes to
   look for channel specific flags, where '&' will return users having
@@ -1331,8 +1341,8 @@ dccbroadcast <message>
 
   Description: sends a message to everyone on the party line across the
   botnet, in the form of "*** <message>" for local users, "*** (Bot)
-  <message>" for users on other bots with version below 1.8.3, and
-  "(Bot) <message>" for users on other bots with version 1.8.3+ and
+  <message>" for users on other bots with version below 1.8.4, and
+  "(Bot) <message>" for users on other bots with version 1.8.4+ and
   console log mode 'l' enabled
 
   Returns: nothing
@@ -2149,7 +2159,10 @@ myip
 
 rand <limit>
 
-  Returns: a random integer between 0 and limit-1
+  Returns: a random integer between 0 and limit-1. Limit must be greater
+  than 0 and equal to or less than RAND_MAX, which is generally
+  2147483647. The underlying pseudo-random number generator is not
+  cryptographically secure.
 
   Module: core
 
@@ -2205,10 +2218,10 @@ unlink <bot>
 encrypt <key> <string>
 
   Returns: encrypted string (using the currently loaded encryption
-  module), encoded into ASCII using base-64. As of v1.8.3, the default
+  module), encoded into ASCII using base-64. As of v1.8.4, the default
   blowfish encryption module can use either the older ECB mode
   (currently used by default for compatibility reasons), or the more
-  recent and more-secure CBC mode. You can explicitely request which
+  recent and more-secure CBC mode. You can explicitly request which
   encryption mode to use by prefixing the encryption key with either
   "ecb:" or "cbc:", or by using the blowfish-use-mode setting in the
   config file. Note: the default encryption mode for this function is
@@ -2587,6 +2600,8 @@ call the Tcl proc "msg:stop") will overwrite any previous binding you
 had for the msg command "stop". With stackable bindings, like 'msgm' for
 example, you can bind the same command to multiple procs. When the bind
 is triggered, ALL of the Tcl procs that are bound to it will be called.
+Raw binds are triggered before builtin binds, as a builtin bind has the
+potential to modify args.
 
 To remove a bind, use the 'unbind' command. For example, to remove the
 bind for the "stop" msg command, use 'unbind msg - stop msg:stop'.

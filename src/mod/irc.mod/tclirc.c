@@ -532,7 +532,7 @@ static int tcl_getchanidle STDVAR
   return TCL_OK;
 }
 
-static inline int tcl_chanmasks(masklist *m, Tcl_Interp *irp)
+static int tcl_chanmasks(masklist *m, Tcl_Interp *irp)
 {
   char work[20], *p;
   EGG_CONST char *list[3];

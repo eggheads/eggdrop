@@ -18,7 +18,7 @@ APPLYING A PATCH
   To apply a patch to an Eggdrop, you have to first obtain the Eggdrop
   source code. You should always keep a tar.gz archive with the source
   of your current Eggdrop on your shell. In the next step, you have to
-  change to your source directory (i.e.: /home/user/eggdrop1.8.3/) and
+  change to your source directory (i.e.: /home/user/eggdrop1.8.4/) and
   type the following command:
 
       patch -p1 < ../path.to.the/patch
@@ -115,10 +115,8 @@ To create a patch using the diff tool:
   Also, please don't add credit lines all over the source when patching.
   Patch contributors will receive credit in Changes1.8 and THANKS.
 
-
-DOWNLOADING A PATCH
-
-  Some patches for Eggdrop 1.8.x can be found at the following location:
+  Patches submitted this way for Eggdrop 1.8.x can be found at the
+  following location:
 
     ftp://ftp.eggheads.org/pub/eggdrop/patches/1.8
 

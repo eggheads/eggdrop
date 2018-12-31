@@ -13,7 +13,7 @@
 # 2.0.2 - Message bug corrected: "erased <m> notes; <n> left." is better.
 #       - Corrected weird switch tcl syntax, bug found by Islandic.
 #         It's so different from C (I hate tcl!).
-#       - Desactivated message "I don't know you", boring me !
+#       - Deactivated message "I don't know you", boring me !
 #       - No more logs for notes-indexing on join :-)
 #
 # 2.0.3 - Corrected invalid idx bug, if user quits before receiving

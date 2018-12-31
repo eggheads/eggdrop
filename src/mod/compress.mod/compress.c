@@ -29,9 +29,12 @@
 
 #include <string.h>
 #include <errno.h>
-#include <zlib.h>
 
 #include "src/mod/module.h"
+
+#include <zlib.h> /* after src/mod/module.h because it could collide with
+                     crypto.h free_func */
+
 #include "share.mod/share.h"
 
 #ifdef HAVE_MMAP
@@ -74,8 +77,8 @@ static int is_compressedfile(char *filename)
   gzFile zin;
   int len1, len2, i;
 
-  egg_memset(buf1, 0, 50);
-  egg_memset(buf2, 0, 50);
+  egg_bzero(buf1, sizeof(buf1));
+  egg_bzero(buf2, sizeof(buf2));
   if (!is_file(filename))
     return COMPF_FAILED;
 
@@ -175,7 +178,7 @@ static int uncompress_to_file(char *f_src, char *f_target)
 
 /* Enforce limits.
  */
-static inline void adjust_mode_num(int *mode)
+static void adjust_mode_num(int *mode)
 {
   if (*mode > 9)
     *mode = 9;
@@ -200,7 +203,7 @@ static int compress_to_file_mmap(gzFile fout, FILE *fin)
 
   /* mmap file contents to memory */
   buf = mmap(0, st.st_size, PROT_READ, MAP_SHARED, ifd, 0);
-  if (buf < 0)
+  if (buf == MAP_FAILED)
     return COMPF_ERROR;
 
   /* Compress the whole file in one go */
@@ -293,14 +296,14 @@ static int compress_to_file(char *f_src, char *f_target, int mode_num)
  */
 static int compress_file(char *filename, int mode_num)
 {
-  char *temp_fn, randstr[5];
+  char *temp_fn, rands[8];
   int ret;
 
   /* Create temporary filename. */
-  temp_fn = nmalloc(strlen(filename) + 5);
-  make_rand_str(randstr, 4);
+  temp_fn = nmalloc(strlen(filename) + sizeof rands);
+  make_rand_str(rands, sizeof rands - 1);
   strcpy(temp_fn, filename);
-  strcat(temp_fn, randstr);
+  strcat(temp_fn, rands);
 
   /* Compress file. */
   ret = compress_to_file(filename, temp_fn, mode_num);
@@ -319,14 +322,14 @@ static int compress_file(char *filename, int mode_num)
  */
 static int uncompress_file(char *filename)
 {
-  char *temp_fn, randstr[5];
+  char *temp_fn, rands[8];
   int ret;
 
   /* Create temporary filename. */
-  temp_fn = nmalloc(strlen(filename) + 5);
-  make_rand_str(randstr, 4);
+  temp_fn = nmalloc(strlen(filename) + sizeof rands);
+  make_rand_str(rands, sizeof rands - 1);
   strcpy(temp_fn, filename);
-  strcat(temp_fn, randstr);
+  strcat(temp_fn, rands);
 
   /* Uncompress file. */
   ret = uncompress_to_file(filename, temp_fn);
@@ -343,7 +346,7 @@ static int uncompress_file(char *filename)
 
 
 /*
- *    Userfile feature releated functions
+ *    Userfile feature related functions
  */
 
 static int uff_comp(int idx, char *filename)
@@ -391,6 +394,7 @@ static int compress_report(int idx, int details)
   if (details) {
     int size = compress_expmem();
 
+    dprintf(idx, "    zlib version %s\n", ZLIB_VERSION);
     dprintf(idx, "    %u file%s compressed\n", compressed_files,
             (compressed_files != 1) ? "s" : "");
     dprintf(idx, "    %u file%s uncompressed\n", uncompressed_files,

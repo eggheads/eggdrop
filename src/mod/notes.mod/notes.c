@@ -227,7 +227,7 @@ static int tcl_storenote STDVAR
     int ok = 1;
 
     /* User is valid & has a valid forwarding address */
-     strncpyz(fwd, f1, sizeof fwd); /* Only 40 bytes are stored in the userfile */
+     strlcpy(fwd, f1, sizeof fwd); /* Only 40 bytes are stored in the userfile */
      p = strchr(fwd, '@');
     if (p && !egg_strcasecmp(p + 1, botnetnick)) {
       *p = 0;
@@ -250,7 +250,7 @@ static int tcl_storenote STDVAR
       p = NULL;
     }
     if ((argv[1][0] != '@') && ((argv[3][0] == '<') || (argv[3][0] == '>')))
-      ok = 0; /* Probablly fake pre 1.3 hax0r */
+      ok = 0; /* Probably fake pre 1.3 hax0r */
 
     if (ok && (!p || in_chain(p + 1))) {
       if (p)
@@ -1235,7 +1235,7 @@ char *notes_start(Function *global_funcs)
   add_lang_section("notes");
   notes_server_setup(0);
   notes_irc_setup(0);
-  my_memcpy(&USERENTRY_FWD, &USERENTRY_INFO, sizeof(void *) * 12);
+  memcpy(&USERENTRY_FWD, &USERENTRY_INFO, sizeof(void *) * 12);
   add_entry_type(&USERENTRY_FWD);
   return NULL;
 }

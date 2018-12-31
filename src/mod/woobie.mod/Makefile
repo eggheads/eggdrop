@@ -17,7 +17,7 @@ modules: ../../../woobie.$(MOD_EXT)
 	$(CC) $(CFLAGS) $(CPPFLAGS) -DMAKING_MODS -c $(srcdir)/woobie.c && mv -f woobie.o ../
 
 ../../../woobie.$(MOD_EXT): ../woobie.o
-	$(LD) -o ../../../woobie.$(MOD_EXT) ../woobie.o $(XLIBS) $(MODULE_XLIBS) && $(STRIP) ../../../woobie.$(MOD_EXT)
+	$(LD) $(CFLAGS) -o ../../../woobie.$(MOD_EXT) ../woobie.o $(XLIBS) $(MODULE_XLIBS) && $(STRIP) ../../../woobie.$(MOD_EXT)
 
 depend:
 	$(CC) $(CFLAGS) -MM $(srcdir)/woobie.c -MT ../woobie.o > .depend
@@ -34,8 +34,7 @@ distclean: clean
  ../../../src/cmdt.h ../../../src/tclegg.h ../../../src/tclhash.h \
  ../../../src/chan.h ../../../src/users.h ../../../src/compat/compat.h \
  ../../../src/compat/inet_aton.h ../../../src/compat/snprintf.h \
- ../../../src/compat/memset.h ../../../src/compat/memcpy.h \
  ../../../src/compat/strcasecmp.h ../../../src/compat/strftime.h \
  ../../../src/compat/inet_ntop.h ../../../src/compat/inet_pton.h \
- ../../../src/compat/gethostbyname2.h ../../../src/mod/modvals.h \
- ../../../src/tandem.h
+ ../../../src/compat/gethostbyname2.h ../../../src/compat/strlcpy.h \
+ ../../../src/mod/modvals.h ../../../src/tandem.h

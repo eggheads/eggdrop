@@ -67,6 +67,7 @@ int flood_telnet_thr = 5;       /* Number of telnet connections to be
 int flood_telnet_time = 60;     /* In how many seconds?                       */
 char network[41] = "unknown-net";      /* Name of the IRC network you're on   */
 char bannerfile[121] = "text/banner";  /* File displayed on telnet login      */
+char stealth_prompt[81] = "\n\nNickname.\n"; /* stealth_telnet prompt string  */
 
 static void dcc_telnet_hostresolved(int);
 static void dcc_telnet_got_ident(int, char *);
@@ -140,7 +141,8 @@ static void strip_telnet(int sock, char *buf, int *len)
       } else if (*p == TLN_AYT) {
         /* "Are You There?" */
         /* response is: "Hell, yes!" */
-        safe_write(sock, "\r\nHell, yes!\r\n", 14);
+        static unsigned char sb[] = "\r\n[Hell, yes!]\r\n";
+        safe_write(sock, sb, sizeof sb);
       } else if (*p == TLN_IAC) {
         /* IAC character in data, escaped with another IAC */
         *o++ = *p++;
@@ -236,7 +238,7 @@ static void bot_version(int idx, char *par)
 #ifndef NO_OLD_BOTNET
   }
 #endif
-  strncpyz(dcc[idx].u.bot->version, par, 120);
+  strlcpy(dcc[idx].u.bot->version, par, 120);
   putlog(LOG_BOTS, "*", DCC_LINKED, dcc[idx].nick);
   botnet_send_nlinked(idx, dcc[idx].nick, botnetnick, '!',
                       dcc[idx].u.bot->numver);
@@ -252,9 +254,14 @@ static void bot_version(int idx, char *par)
 
 void failed_link(int idx)
 {
-  char s[81], s1[512];
+  char s[NICKLEN + 18], s1[512];
 
+#ifdef TLS
+  /* Stop trying when we are sslport+3 */
+  if (dcc[idx].port >= dcc[idx].u.bot->port + 3 && dcc[idx].ssl) {
+#else
   if (dcc[idx].port >= dcc[idx].u.bot->port + 3) {
+#endif
     if (dcc[idx].u.bot->linker[0]) {
       egg_snprintf(s, sizeof s, "Couldn't link to %s.", dcc[idx].nick);
       strcpy(s1, dcc[idx].u.bot->linker);
@@ -272,8 +279,30 @@ void failed_link(int idx)
   /* Try next port, if it makes sense (no AF_UNSPEC, ...) */
   killsock(dcc[idx].sock);
   dcc[idx].timeval = now;
-  if (open_telnet(idx, dcc[idx].host, dcc[idx].port + 1) < 0)
+#ifdef TLS
+  /* Order of attempts:
+   * If initial SSL: sslport+1; sslport+2; sslport+3
+   * Else: sslport; plain+1; sslport+1; plain+2; sslport+2; plain+3; sslport+3
+   */
+  if (dcc[idx].u.bot->ssl) {
+    ++dcc[idx].port;
+  } else if (dcc[idx].ssl) {
+    dcc[idx].ssl = 0;
+    ++dcc[idx].port;
+  } else {
+    dcc[idx].ssl = 1;
+  }
+#else
+    ++dcc[idx].port;
+#endif
+
+  if (open_telnet(idx, dcc[idx].host, dcc[idx].port) < 0)
     failed_link(idx);
+#ifdef TLS
+  else if (dcc[idx].ssl && ssl_handshake(dcc[idx].sock, TLS_CONNECT,
+           tls_vfybots, LOG_BOTS, dcc[idx].host, NULL))
+    failed_link(idx);
+#endif
 }
 
 static void cont_link(int idx, char *buf, int i)
@@ -350,9 +379,9 @@ static void dcc_bot_new(int idx, char *buf, int x)
 
   if (raw_log) {
     if (!strncmp(buf, "s ", 2))
-      putlog(LOG_BOTSHRIN, "*", "{m<-%s} %s", dcc[idx].nick, buf + 2);
+      putlog(LOG_BOTSHRIN, "*", "{b<-%s} %s", dcc[idx].nick, buf + 2);
     else
-      putlog(LOG_BOTNETIN, "*", "[m<-%s] %s", dcc[idx].nick, buf);
+      putlog(LOG_BOTNETIN, "*", "[b<-%s] %s", dcc[idx].nick, buf);
   }
 
   code = newsplit(&buf);
@@ -461,14 +490,14 @@ static void out_dcc_bot(int idx, char *buf, void *x)
     if (len && buf[len - 1] == '\n') {
       /* Make a copy as buf could be const */
       fnd = nmalloc(len);
-      strncpyz(fnd, buf, len);
+      strlcpy(fnd, buf, len);
       p = fnd;
     }
 
     if (!strncmp(p, "s ", 2))
-      putlog(LOG_BOTSHROUT, "*", "{m->%s} %s", dcc[idx].nick, p + 2);
+      putlog(LOG_BOTSHROUT, "*", "{b->%s} %s", dcc[idx].nick, p + 2);
     else
-      putlog(LOG_BOTNETOUT, "*", "[m->%s] %s", dcc[idx].nick, p);
+      putlog(LOG_BOTNETOUT, "*", "[b->%s] %s", dcc[idx].nick, p);
 
     if (fnd)
       nfree(fnd);
@@ -501,9 +530,9 @@ static void dcc_bot(int idx, char *code, int i)
 
   if (raw_log) {
     if (!strncmp(code, "s ", 2))
-      putlog(LOG_BOTSHRIN, "*", "{m<-%s} %s", dcc[idx].nick, code + 2);
+      putlog(LOG_BOTSHRIN, "*", "{b<-%s} %s", dcc[idx].nick, code + 2);
     else
-      putlog(LOG_BOTNETIN, "*", "[m<-%s] %s", dcc[idx].nick, code);
+      putlog(LOG_BOTNETIN, "*", "[b<-%s] %s", dcc[idx].nick, code);
   }
   msg = strchr(code, ' ');
   if (msg) {
@@ -608,7 +637,7 @@ static int dcc_bot_check_digest(int idx, char *remote_digest)
 
   MD5_Init(&md5context);
 
-  egg_snprintf(digest_string, 33, "<%x%x@", getpid(),
+  egg_snprintf(digest_string, 33, "<%lx%x@", (long) getpid(),
                (unsigned int) dcc[idx].timeval);
   MD5_Update(&md5context, (unsigned char *) digest_string,
              strlen(digest_string));
@@ -642,9 +671,9 @@ static void dcc_chat_pass(int idx, char *buf, int atr)
   if (atr & USER_BOT) {
     if (raw_log) {
       if (!strncmp(buf, "s ", 2))
-        putlog(LOG_BOTSHRIN, "*", "{m<-%s} %s", dcc[idx].nick, buf + 2);
+        putlog(LOG_BOTSHRIN, "*", "{b<-%s} %s", dcc[idx].nick, buf + 2);
       else
-        putlog(LOG_BOTNETIN, "*", "[m<-%s] %s", dcc[idx].nick, buf);
+        putlog(LOG_BOTNETIN, "*", "[b<-%s] %s", dcc[idx].nick, buf);
     }
 #ifdef TLS
     if (!egg_strncasecmp(buf, "starttls ", 9)) {
@@ -751,7 +780,7 @@ static void dcc_chat_pass(int idx, char *buf, int atr)
       if (dcc[idx].status & STAT_TELNET)
         tputs(dcc[idx].sock, TLN_IAC_C TLN_WONT_C TLN_ECHO_C "\n", 4);
       dcc[idx].user = get_user_by_handle(userlist, dcc[idx].u.chat->away);
-      strncpyz(dcc[idx].nick, dcc[idx].u.chat->away, sizeof dcc[idx].nick);
+      strlcpy(dcc[idx].nick, dcc[idx].u.chat->away, sizeof dcc[idx].nick);
       nfree(dcc[idx].u.chat->away);
       nfree(dcc[idx].u.chat->su_nick);
       dcc[idx].u.chat->away = NULL;
@@ -1037,7 +1066,7 @@ static void dcc_chat(int idx, char *buf, int i)
   if (buf[0]) {
     const char *filt = check_tcl_filt(idx, buf);
     if (filt != buf) {
-      strncpyz(filtbuf, filt, sizeof(filtbuf));
+      strlcpy(filtbuf, filt, sizeof(filtbuf));
       buf = filtbuf;
     }
   }
@@ -1103,7 +1132,7 @@ static void dcc_chat(int idx, char *buf, int i)
           if (dcc[idx].u.chat->su_nick) {
             dcc[idx].user = get_user_by_handle(userlist,
                                                dcc[idx].u.chat->su_nick);
-            strncpyz(dcc[idx].nick, dcc[idx].u.chat->su_nick, sizeof dcc[idx].nick);
+            strlcpy(dcc[idx].nick, dcc[idx].u.chat->su_nick, sizeof dcc[idx].nick);
             dcc[idx].type = &DCC_CHAT;
             dprintf(idx, "Returning to real nick %s!\n",
                     dcc[idx].u.chat->su_nick);
@@ -1221,7 +1250,7 @@ static int detect_telnet_flood(char *floodhost)
   if (!flood_telnet_thr || (glob_friend(fr) && !par_telnet_flood))
     return 0;                   /* No flood protection */
   if (egg_strcasecmp(lasttelnethost, floodhost)) {      /* New... */
-    strncpyz(lasttelnethost, floodhost, sizeof lasttelnethost);
+    strlcpy(lasttelnethost, floodhost, sizeof lasttelnethost);
     lasttelnettime = now;
     lasttelnets = 0;
     return 0;
@@ -1248,7 +1277,7 @@ static int detect_telnet_flood(char *floodhost)
 
 static void dcc_telnet(int idx, char *buf, int i)
 {
-  unsigned short port;
+  uint16_t port;
   int j = 0, sock;
 
   if (dcc_total + 1 > max_dcc && increase_socks_max()) {
@@ -1271,11 +1300,7 @@ static void dcc_telnet(int idx, char *buf, int i)
   /* Buffer data received on this socket.  */
   sockoptions(sock, EGG_OPTION_SET, SOCK_BUFFER);
 
-#if (SIZEOF_SHORT == 2)
   if (port < 1024) {
-#else
-  if (port < 1024 || port > 65535) {
-#endif
     putlog(LOG_BOTS, "*", DCC_BADSRC, iptostr(&dcc[i].sockname.addr.sa), port);
     killsock(sock);
     lostdcc(i);
@@ -1319,7 +1344,7 @@ static void dcc_telnet_hostresolved(int i)
   int j = 0, sock;
   char s[UHOSTLEN + 20], *userhost;
 
-  strncpyz(dcc[i].host, dcc[i].u.dns->host, UHOSTLEN);
+  strlcpy(dcc[i].host, dcc[i].u.dns->host, UHOSTLEN);
 
   for (idx = 0; idx < dcc_total; idx++)
     if ((dcc[idx].type == &DCC_TELNET) &&
@@ -1372,7 +1397,7 @@ static void dcc_telnet_hostresolved(int i)
     changeover_dcc(i, &DCC_SOCKET, 0);
     dcc[i].u.other = NULL;
     strcpy(dcc[i].nick, "*");
-    strncpyz(dcc[i].host, userhost, UHOSTLEN);
+    strlcpy(dcc[i].host, userhost, UHOSTLEN);
     check_tcl_listen(dcc[idx].host, dcc[i].sock);
     return;
   }
@@ -1392,7 +1417,7 @@ static void dcc_telnet_hostresolved(int i)
   if (j < 0)
     putlog(LOG_MISC, "*", DCC_IDENTFAIL, dcc[i].host, strerror(errno));
   else {
-    egg_memcpy(&dcc[j].sockname, &dcc[i].sockname, sizeof(sockname_t));
+    memcpy(&dcc[j].sockname, &dcc[i].sockname, sizeof(sockname_t));
     dcc[j].sock = getsock(dcc[j].sockname.family, 0);
     if (dcc[j].sock >= 0) {
       sockname_t name;
@@ -1433,8 +1458,13 @@ static void eof_dcc_telnet(int idx)
 
 static void display_telnet(int idx, char *buf)
 {
+#ifdef TLS
+  sprintf(buf, "lstn  %s%d%s", dcc[idx].ssl ? "+" : "", dcc[idx].port,
+          (dcc[idx].status & LSTN_PUBLIC) ? " pub" : "");
+#else
   sprintf(buf, "lstn  %d%s", dcc[idx].port,
           (dcc[idx].status & LSTN_PUBLIC) ? " pub" : "");
+#endif
 }
 
 struct dcc_table DCC_TELNET = {
@@ -1468,7 +1498,7 @@ static void dcc_dupwait(int idx, char *buf, int i)
  */
 static void timeout_dupwait(int idx)
 {
-  char x[100];
+  char x[NICKLEN + UHOSTLEN];
 
   /* Still duplicate? */
   if (in_chain(dcc[idx].nick)) {
@@ -1559,14 +1589,17 @@ static void dcc_telnet_id(int idx, char *buf, int atr)
     lostdcc(idx);
     return;
   }
+  /* rxvt-unicode */
+  if (!strncmp(buf, "\x1B[?1;2c", 7)) /* \e isn't C standard so we use \x1B instead */
+    buf += 7;
   dcc[idx].user = get_user_by_handle(userlist, buf);
   get_user_flagrec(dcc[idx].user, &fr, NULL);
 
   if (glob_bot(fr) && raw_log) {
     if (!strncmp(buf, "s ", 2))
-      putlog(LOG_BOTSHRIN, "*", "{m<-%s} %s", dcc[idx].user->handle, buf + 2);
+      putlog(LOG_BOTSHRIN, "*", "{b<-%s} %s", dcc[idx].user->handle, buf + 2);
     else
-      putlog(LOG_BOTNETIN, "*", "[m<-%s] %s", dcc[idx].user->handle, buf);
+      putlog(LOG_BOTNETIN, "*", "[b<-%s] %s", dcc[idx].user->handle, buf);
   }
 #ifdef TLS
   if (dcc[idx].ssl && (tls_auth == 2)) {
@@ -1629,7 +1662,7 @@ static void dcc_telnet_id(int idx, char *buf, int atr)
     return;
   }
   correct_handle(buf);
-  strncpyz(dcc[idx].nick, buf, sizeof dcc[idx].nick);
+  strlcpy(dcc[idx].nick, buf, sizeof dcc[idx].nick);
   if (glob_bot(fr)) {
     if (!egg_strcasecmp(botnetnick, dcc[idx].nick)) {
       /* change here temp to use bot output */
@@ -1781,7 +1814,13 @@ static void dcc_telnet_pass(int idx, int atr)
    * will simply ignore the request and everything will go on as usual.
    */
     if (!dcc[idx].ssl) {
-      dprintf(idx, "starttls\n");
+      /* find number in socklist */
+      int i = findsock(dcc[idx].sock);
+      struct threaddata *td = threaddata();
+      /* mark socket to read next incoming at reduced len */
+      td->socklist[i].flags |= SOCK_SENTTLS;
+      /* Prefix with \n in case of newline-less ending stealth_prompt */
+      dprintf(idx, "\nstarttls\n");
       putlog(LOG_BOTS, "*", "Sent STARTTLS to %s...", dcc[idx].nick);
     }
 #endif
@@ -1796,7 +1835,8 @@ static void dcc_telnet_pass(int idx, int atr)
      * <Cybah>
      */
     putlog(LOG_BOTS, "*", "Challenging %s...", dcc[idx].nick);
-    dprintf(idx, "passreq <%x%x@%s>\n", getpid(), dcc[idx].timeval, botnetnick);
+    /* Prefix with \n in case of newline-less ending stealth_prompt */
+    dprintf(idx, "\npassreq <%x%x@%s>\n", getpid(), dcc[idx].timeval, botnetnick);
     dcc[idx].type = old;
   } else {
     /* NOTE: The MD5 digest used above to prevent cleartext passwords being
@@ -2045,9 +2085,9 @@ struct dcc_table DCC_TELNET_PW = {
 
 static int call_tcl_func(char *name, int idx, char *args)
 {
-  char s[11];
+  char s[12];
 
-  sprintf(s, "%d", idx);
+  snprintf(s, sizeof s, "%d", idx);
   Tcl_SetVar(interp, "_n", s, 0);
   Tcl_SetVar(interp, "_a", args, 0);
   if (Tcl_VarEval(interp, name, " $_n $_a", NULL) == TCL_ERROR) {
@@ -2104,7 +2144,7 @@ static void eof_dcc_script(int idx)
   void *old;
   int oldflags;
 
-  /* This will stop a killdcc from working, incase the script tries
+  /* This will stop a killdcc from working, in case the script tries
    * to kill it's controlling socket while handling an EOF <cybah>
    */
   oldflags = dcc[idx].type->flags;
@@ -2340,7 +2380,7 @@ static void dcc_telnet_got_ident(int i, char *host)
     lostdcc(i);
     return;
   }
-  strncpyz(dcc[i].host, host, UHOSTLEN);
+  strlcpy(dcc[i].host, host, UHOSTLEN);
   egg_snprintf(x, sizeof x, "-telnet!%s", dcc[i].host);
   if (protect_telnet && !make_userfile) {
     struct userrec *u;
@@ -2390,7 +2430,7 @@ static void dcc_telnet_got_ident(int i, char *host)
   /* Note: we don't really care about telnet status here. We use the
    * STATUS option as a hopefully harmless way to detect if the other
    * side is a telnet client or not. */
-  dprintf(i, TLN_IAC_C TLN_WILL_C TLN_STATUS_C "\n");
+  dprintf(i, TLN_IAC_C TLN_WILL_C TLN_STATUS_C);
 
   /* Copy acceptable-nick/host mask */
   dcc[i].status = STAT_TELNET | STAT_ECHO;
@@ -2399,21 +2439,25 @@ static void dcc_telnet_got_ident(int i, char *host)
   if (!strcmp(dcc[idx].nick, "(users)"))
     dcc[i].status |= STAT_USRONLY;
   /* Copy acceptable-nick/host mask */
-  strncpyz(dcc[i].nick, dcc[idx].host, HANDLEN);
+  strlcpy(dcc[i].nick, dcc[idx].host, HANDLEN);
   dcc[i].timeval = now;
   strcpy(dcc[i].u.chat->con_chan, chanset ? chanset->dname : "*");
   /* Displays a customizable banner. */
   if (use_telnet_banner)
     show_banner(i);
-  /* This is so we dont tell someone doing a portscan anything
+  /* This is so we don't tell someone doing a portscan anything
    * about ourselves. <cybah>
    */
-  if (stealth_telnets)
-    sub_lang(i, MISC_BANNER_STEALTH);
-  else {
+  if (stealth_telnets) {
+    /* Show here so it doesn't interfere with newline-less stealth_prompt */
+    if (allow_new_telnets)
+      dprintf(i, "(If you are new, enter 'NEW' here.)\n");
+    dprintf(i, stealth_prompt);
+  } else {
     dprintf(i, "\n\n");
     sub_lang(i, MISC_BANNER);
+    /* Show here so it doesn't get lost before the banner */
+    if (allow_new_telnets)
+      dprintf(i, "(If you are new, enter 'NEW' here.)\n");
   }
-  if (allow_new_telnets)
-    dprintf(i, "(If you are new, enter 'NEW' here.)\n");
 }

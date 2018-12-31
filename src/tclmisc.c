@@ -156,7 +156,7 @@ static int tcl_putlog STDVAR
 
   BADARGS(2, 2, " text");
 
-  strncpyz(logtext, argv[1], sizeof logtext);
+  strlcpy(logtext, argv[1], sizeof logtext);
   putlog(LOG_MISC, "*", "%s", logtext);
   return TCL_OK;
 }
@@ -167,7 +167,7 @@ static int tcl_putcmdlog STDVAR
 
   BADARGS(2, 2, " text");
 
-  strncpyz(logtext, argv[1], sizeof logtext);
+  strlcpy(logtext, argv[1], sizeof logtext);
   putlog(LOG_CMDS, "*", "%s", logtext);
   return TCL_OK;
 }
@@ -178,7 +178,7 @@ static int tcl_putxferlog STDVAR
 
   BADARGS(2, 2, " text");
 
-  strncpyz(logtext, argv[1], sizeof logtext);
+  strlcpy(logtext, argv[1], sizeof logtext);
   putlog(LOG_FILES, "*", "%s", logtext);
   return TCL_OK;
 }
@@ -188,14 +188,14 @@ static int tcl_putloglev STDVAR
   int lev = 0;
   char logtext[501];
 
-  BADARGS(4, 4, " level(s) channel text");
+  BADARGS(4, 4, " flag(s) channel text");
 
   lev = logmodes(argv[1]);
   if (!lev) {
-    Tcl_AppendResult(irp, "No valid log-level given", NULL);
+    Tcl_AppendResult(irp, "No valid log flag given", NULL);
     return TCL_ERROR;
   }
-  strncpyz(logtext, argv[3], sizeof logtext);
+  strlcpy(logtext, argv[3], sizeof logtext);
 
   putlog(lev, argv[2], "%s", logtext);
   return TCL_OK;
@@ -410,7 +410,7 @@ static int tcl_ctime STDVAR
   BADARGS(2, 2, " unixtime");
 
   tt = (time_t) atol(argv[1]);
-  strncpyz(s, ctime(&tt), sizeof s);
+  strlcpy(s, ctime(&tt), sizeof s);
   Tcl_AppendResult(irp, s, NULL);
   return TCL_OK;
 }
@@ -485,9 +485,9 @@ static int tcl_sendnote STDVAR
 
   BADARGS(4, 4, " from to message");
 
-  strncpyz(from, argv[1], sizeof from);
-  strncpyz(to, argv[2], sizeof to);
-  strncpyz(msg, argv[3], sizeof msg);
+  strlcpy(from, argv[1], sizeof from);
+  strlcpy(to, argv[2], sizeof to);
+  strlcpy(msg, argv[3], sizeof msg);
   egg_snprintf(s, sizeof s, "%d", add_note(to, from, msg, -1, 0));
   Tcl_AppendResult(irp, s, NULL);
   return TCL_OK;
@@ -500,7 +500,7 @@ static int tcl_dumpfile STDVAR
 
   BADARGS(3, 3, " nickname filename");
 
-  strncpyz(nick, argv[1], sizeof nick);
+  strlcpy(nick, argv[1], sizeof nick);
   get_user_flagrec(get_user_by_nick(nick), &fr, NULL);
   showhelp(argv[1], argv[2], &fr, HELP_TEXT);
   return TCL_OK;
@@ -541,9 +541,9 @@ static int tcl_die STDVAR
 
   if (argc == 2) {
     egg_snprintf(s, sizeof s, "BOT SHUTDOWN (%s)", argv[1]);
-    strncpyz(quit_msg, argv[1], 1024);
+    strlcpy(quit_msg, argv[1], 1024);
   } else {
-    strncpyz(s, "BOT SHUTDOWN (No reason)", sizeof s);
+    strlcpy(s, "BOT SHUTDOWN (No reason)", sizeof s);
     quit_msg[0] = 0;
   }
   kill_bot(s, quit_msg[0] ? quit_msg : "EXIT");

@@ -138,7 +138,7 @@ int partysock(char *bot, char *nick)
 
 /* Set the botnetnick and truncate as necessary */
 void set_botnetnick(const char *newnick) {
-  strncpyz(botnetnick, newnick, sizeof botnetnick);
+  strlcpy(botnetnick, newnick, sizeof botnetnick);
 }
 
 /* New botnet member
@@ -304,7 +304,7 @@ void rembot(char *whoin)
   /* Need to save the nick for later as it MAY be a pointer to ptr->bot, and we free(ptr) in here. */
   len = strlen(whoin);
   who = nmalloc(len + 1);
-  strncpyz(who, whoin, len + 1);
+  strlcpy(who, whoin, len + 1);
 
   while (*ptr) {
     if (!egg_strcasecmp((*ptr)->bot, who))
@@ -766,7 +766,7 @@ void dump_links(int z)
             (dcc[i].u.chat->channel < GLOBAL_CHANS)) {
 #ifndef NO_OLD_BOTNET
           if (b_numver(z) < NEAT_BOTNET)
-             l =simple_sprintf(x, "join %s %s %d %c%d %s\n",
+            l = simple_sprintf(x, "join %s %s %d %c%d %s\n",
                                botnetnick, dcc[i].nick,
                                dcc[i].u.chat->channel, geticon(i),
                                dcc[i].sock, dcc[i].host);
@@ -1076,28 +1076,29 @@ static void botlink_resolve_failure(int i)
 
 static void botlink_resolve_success(int i)
 {
-  int ret;
   int idx = dcc[i].u.dns->ibuf;
   char *linker = dcc[i].u.dns->cptr;
 
   changeover_dcc(i, &DCC_FORK_BOT, sizeof(struct bot_info));
   dcc[i].timeval = now;
-  strncpyz(dcc[i].u.bot->linker, linker, sizeof dcc[i].u.bot->linker);
+  strlcpy(dcc[i].u.bot->linker, linker, sizeof dcc[i].u.bot->linker);
   strcpy(dcc[i].u.bot->version, "(primitive bot)");
   dcc[i].u.bot->numver = idx;
   dcc[i].u.bot->port = dcc[i].port;     /* Remember where i started */
+#ifdef TLS
+  dcc[i].u.bot->ssl = dcc[i].ssl;       /* Remember where I started */
+#endif
   nfree(linker);
   setsnport(dcc[i].sockname, dcc[i].port);
   dcc[i].sock = getsock(dcc[i].sockname.family, SOCK_STRONGCONN);
-  if (dcc[i].sock < 0)
+  if (dcc[i].sock < 0 || open_telnet_raw(dcc[i].sock, &dcc[i].sockname) < 0) {
     failed_link(i);
-  ret = open_telnet_raw(dcc[i].sock, &dcc[i].sockname);
-  if (ret < 0)
-    failed_link(i);
+  }
 #ifdef TLS
   else if (dcc[i].ssl && ssl_handshake(dcc[i].sock, TLS_CONNECT,
-           tls_vfybots, LOG_BOTS, dcc[i].host, NULL))
+           tls_vfybots, LOG_BOTS, dcc[i].host, NULL)) {
     failed_link(i);
+  }
 #endif
 }
 
@@ -1468,36 +1469,44 @@ static void eof_dcc_relaying(int idx)
 
 static void dcc_relay(int idx, char *buf, int j)
 {
-  unsigned char *p = (unsigned char *) buf;
-  int mark;
+  unsigned char *src, *dst;
 
   for (j = 0; dcc[j].sock != dcc[idx].u.relay->sock ||
        dcc[j].type != &DCC_RELAYING; j++);
-  /* If redirecting to a non-telnet user, swallow telnet codes and
-   * escape sequences. */
+  /* If redirecting to a non-telnet user, swallow telnet IAC, escape sequences
+   * and CR. */
   if (!(dcc[j].status & STAT_TELNET)) {
-    while (*p != 0) {
-      while (*p != 255 && (*p != '\033' || *(p + 1) != '[') && *p != '\r' && *p)
-        p++;                    /* Search for IAC, escape sequences and CR. */
-      if (*p == 255) {
-        mark = 2;
-        if (!*(p + 1))
-          mark = 1;             /* Bogus */
-        if ((*(p + 1) >= 251) || (*(p + 1) <= 254)) {
-          mark = 3;
-          if (!*(p + 2))
-            mark = 2;           /* Bogus */
+    src = (unsigned char *) buf;
+    dst = (unsigned char *) buf;
+    while (*src) {
+      /* Search for IAC, escape sequences and CR. */
+      if (*src == TLN_IAC) {
+        src++;
+        if ((*src >= TLN_WILL) && (*src <= TLN_DONT)) {
+          src++;
+          if (*src)
+            src++;
         }
-        strcpy((char *) p, (char *) (p + mark));
-      } else if (*p == '\033') {
-        unsigned char *e;
-
-        /* Search for the end of the escape sequence. */
-        for (e = p + 2; *e != 'm' && *e; e++);
-        strcpy((char *) p, (char *) (e + 1));
-      } else if (*p == '\r')
-        memmove(p, p + 1, strlen((char *)p + 1) + 1);
+        else if (*src)
+          src++;
+      } else if (*src == ESC) {
+        src++;
+        if (*src == '[') { /* CSI */
+          src++;
+          /* Search for the end of the escape sequence. */
+          while (*src && *src++ != 'm');
+        }
+      } else if (*src == '\r') /* CR */
+        src++;
+      else {
+        if (src > dst)
+          *dst = *src;
+        src++;
+        dst++;
+      }
     }
+    if (src > dst)
+      *dst = 0;
     if (!buf[0])
       dprintf(-dcc[idx].u.relay->sock, " \n");
     else

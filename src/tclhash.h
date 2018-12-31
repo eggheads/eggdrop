@@ -33,7 +33,7 @@ typedef struct tcl_cmd_b {
   char *func_name;              /* Proc name. */
   /* FIXME: 'hits' could overflow if a bind is triggered enough. */
   int hits;                     /* Number of times this proc was triggered. */
-  u_8bit_t attributes;          /* Flags for this entry. TC_* */
+  uint8_t attributes;          /* Flags for this entry. TC_* */
 } tcl_cmd_t;
 
 struct threaddata {
@@ -52,7 +52,7 @@ typedef struct tcl_bind_mask_b {
 
   tcl_cmd_t *first;             /* List of commands registered for this bind. */
   char *mask;
-  u_8bit_t flags;               /* Flags for this entry. TBM_* */
+  uint8_t flags;               /* Flags for this entry. TBM_* */
 } tcl_bind_mask_t;
 
 
@@ -65,7 +65,7 @@ typedef struct tcl_bind_list_b {
 
   tcl_bind_mask_t *first;       /* Pointer to registered binds for this list. */
   char name[5];                 /* Name of the bind. */
-  u_8bit_t flags;               /* Flags for this element. HT_* */
+  uint8_t flags;               /* Flags for this element. HT_* */
   IntFunc func;                 /* Function used as the Tcl calling interface
                                  * for procs actually representing C functions. */
 } tcl_bind_list_t, *p_tcl_bind_list;
@@ -95,8 +95,7 @@ void check_tcl_disc(const char *);
 const char *check_tcl_filt(int, const char *);
 int check_tcl_note(const char *, const char *, const char *);
 void check_tcl_listen(const char *, int);
-void check_tcl_time(struct tm *);
-void check_tcl_cron(struct tm *);
+void check_tcl_time_and_cron(struct tm *);
 void tell_binds(int, char *);
 void check_tcl_nkch(const char *, const char *);
 void check_tcl_away(const char *, int, const char *);

@@ -1,5 +1,5 @@
 News
-Last revised: Dec 19, 2017
+Last revised: Dec 11, 2018
      _________________________________________________________________
 
                                 What's new?
@@ -11,7 +11,40 @@ Last revised: Dec 19, 2017
 
   For upgrading from a pre-1.6 version of Eggdrop: Read the UPGRADING file.
 
-  In general, always make a BACKUP of your config and user-/chanfile.
+  In general, always make a BACKUP of your config and user/chanfile.
+
+     _________________________________________________________________
+
+Eggdrop v1.8.4:
+
+  General changes:
+      - Lots of work on the compile process for less commonly-seen systems
+        (SunOS, DragonFly, etc) and making Eggdrop more compiler-friendly in
+        general.
+      - Prevented eggdrop from crashing when .handle was used in terminal mode.
+      - Added and enhanced SSL/TLS warnings, making them more useful to the
+        user.
+      - Display a '+' to denote TLS connections in the Tcl dcclist.
+      - Enhanced random number generation capability.
+      - Added logging of some forgotten sharing commands.
+      - Raised ban/ignore/exempt expiration limit from 365 days to 5 years.
+        Introduced the optional %y field to these commands to accept year
+        arguments.
+      - Updated stealth-prompt to look more like a traditional telnet login 
+        prompt, with the cursor on the same line as the prompt.
+      - Updated the channels module to use the same defaults as shown in
+        eggdrop.conf.
+      - Added additional debug logging that shows when a bind or proc executed,
+        and how much cpu time it took to execute.
+    Botnet changes:
+      - Fixed botnet link scenario where leaf bots could not connect via
+        starttls to TLS-only listening sockets.
+      - Documented known bug where bots added with +port in botaddr cannot
+        connect to a bot listening in a config with +port.
+      - Made TLS fingerprint storage persistant across shared botnets, instead
+        of (incorrectly) being removed after a relink.
+      - Fixed a corner case where the linking IP was not being correctly sent
+        during a share, preventing Eggdrop from exchanging user files.
 
      _________________________________________________________________
 
@@ -23,7 +56,8 @@ Eggdrop v1.8.3:
     General changes:
       - Fixed a bug where ssl-enabled ports were not able to be reverted to
         non-SSL ports via the setuser Tcl command.
-      - SSL certs: Fail earlier if SSL certs have issues. Also fatally error
+      - SSL certs: Fail earlier if SSL certs have issues. Also fatally
+        error
         if only one of ssl-privatekey/certificate config settings is set.
       - Correctly check against invalid flags with the .match partyline
         command and matchattr Tcl command.
@@ -45,7 +79,7 @@ Eggdrop v1.8.3:
         being received is now properly being sent to a tmpfile first if
         copy-to-tmp is set.
       - Botnet sharing:  A slave will now use the address of the hub (to
-        which it's succesfully connected) instead of an IP given by the hub
+        which it's successfully connected) instead of an IP given by the hub
         which was wrong in certain cases (especially in NAT situations).
       - Bots request existing channel flags for users upon adding a new
         channel.

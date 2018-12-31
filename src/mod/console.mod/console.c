@@ -127,7 +127,7 @@ static int console_set(struct userrec *u, struct user_entry *e, void *buf)
       nfree(ci->channel);
       nfree(ci);
     }
-    ci = e->u.extra = buf;
+    e->u.extra = buf;
   }
 
   /* Note: Do not share console info */
@@ -230,7 +230,7 @@ static int console_dupuser(struct userrec *new, struct userrec *old,
   struct console_info *i = e->u.extra, *j;
 
   j = user_malloc(sizeof(struct console_info));
-  my_memcpy(j, i, sizeof(struct console_info));
+  memcpy(j, i, sizeof(struct console_info));
 
   j->channel = user_malloc(strlen(i->channel) + 1);
   strcpy(j->channel, i->channel);
@@ -263,7 +263,7 @@ static int console_chon(char *handle, int idx)
   if (dcc[idx].type == &DCC_CHAT) {
     if (i) {
       if (i->channel && i->channel[0])
-        strncpyz(dcc[idx].u.chat->con_chan, i->channel, sizeof dcc[idx].u.chat->con_chan);
+        strlcpy(dcc[idx].u.chat->con_chan, i->channel, sizeof dcc[idx].u.chat->con_chan);
       get_user_flagrec(dcc[idx].user, &fr, i->channel);
       dcc[idx].u.chat->con_flags = check_conflags(&fr, i->conflags);
       dcc[idx].u.chat->strip_flags = i->stripflags;

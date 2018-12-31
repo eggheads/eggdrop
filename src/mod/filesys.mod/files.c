@@ -89,7 +89,7 @@ static int welcome_to_files(int idx)
   sub_lang(idx, FILES_WELCOME);
   sub_lang(idx, FILES_WELCOME1);
   if (p)
-    strncpyz(dcc[idx].u.file->dir, p, sizeof dcc[idx].u.file->dir);
+    strlcpy(dcc[idx].u.file->dir, p, sizeof dcc[idx].u.file->dir);
   else
     dcc[idx].u.file->dir[0] = 0;
   /* Does this dir even exist any more? */
@@ -962,7 +962,7 @@ static void cmd_mkdir(int idx, char *par)
     flags = newsplit(&par);
     chan = newsplit(&par);
     if (!chan[0] && flags[0] && (strchr(CHANMETA, flags[0]) != NULL)) {
-      /* Need some extra checking here to makesure we dont mix up
+      /* Need some extra checking here to make sure we don't mix up
        * the flags with a +channel. <cybah>
        */
       if (!findchan(flags) && flags[0] != '+') {
@@ -1493,7 +1493,7 @@ static void files_setpwd(int idx, char *where)
 
   if (!resolve_dir(dcc[idx].u.file->dir, where, &s, idx))
     return;
-  strncpyz(dcc[idx].u.file->dir, s, sizeof dcc[idx].u.file->dir);
+  strlcpy(dcc[idx].u.file->dir, s, sizeof dcc[idx].u.file->dir);
   set_user(&USERENTRY_DCCDIR, get_user_by_handle(userlist, dcc[idx].nick),
            dcc[idx].u.file->dir);
   my_free(s);
