@@ -19,6 +19,8 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
+#include <config.h>
+
 #ifndef HAVE_EXPLICIT_BZERO
 /* https://raw.githubusercontent.com/jedisct1/libsodium/f2942b9c880ef398ecf68693a27e504927bc62c4/src/libsodium/sodium/utils.c */
 
@@ -40,6 +42,8 @@
  * ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 */
+
+#include <stddef.h>
 
 /* LCOV_EXCL_START */
 #ifdef HAVE_WEAK_SYMBOLS
@@ -65,8 +69,6 @@ explicit_bzero(void *const pnt, const size_t len)
     if (len > 0U && memset_s(pnt, (rsize_t) len, 0, (rsize_t) len) != 0) {
         sodium_misuse(); /* LCOV_EXCL_LINE */
     }
-#elif defined(HAVE_EXPLICIT_BZERO)
-    explicit_bzero(pnt, len);
 #elif defined(HAVE_EXPLICIT_MEMSET)
     explicit_memset(pnt, 0, len);
 #elif HAVE_WEAK_SYMBOLS
