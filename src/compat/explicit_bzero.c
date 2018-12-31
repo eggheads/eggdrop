@@ -44,6 +44,7 @@
 */
 
 #include <stddef.h>
+#include <string.h>
 
 /* LCOV_EXCL_START */
 #ifdef HAVE_WEAK_SYMBOLS
