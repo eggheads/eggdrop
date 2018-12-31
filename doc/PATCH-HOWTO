@@ -105,8 +105,8 @@ To create a patch using the diff tool:
           PATCH1.8: my-patch-filename.patch
 
       You should also include the nick/handle, name, and email address
-      you would like used for attribution in the Changes1.8 and
-      THANKS files.
+      you would like used for attribution in the Changes1.8 and THANKS
+      files.
 
   Never modify src/version.h or one of the Changes files. We will do it.
   If your patch includes changes related to autotools (./configure,
@@ -120,4 +120,4 @@ To create a patch using the diff tool:
 
     ftp://ftp.eggheads.org/pub/eggdrop/patches/1.8
 
-Copyright (C) 1999 - 2018 Eggheads Development Team
+Copyright (C) 1999 - 2019 Eggheads Development Team

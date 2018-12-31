@@ -3428,4 +3428,4 @@ are the four special characters:
 |     | words) (This char only works in binds, not in regular matching)          |
 +-----+--------------------------------------------------------------------------+
 
-  Copyright (C) 1999 - 2018 Eggheads Development Team
+  Copyright (C) 1999 - 2019 Eggheads Development Team

@@ -1,31 +1,28 @@
 
+
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    
-    <title>TLS support &mdash; Eggdrop 1.8.4 documentation</title>
-    
+    <title>TLS support &#8212; Eggdrop 1.8.4 documentation</title>
     <link rel="stylesheet" href="../_static/eggdrop.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-    
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
         VERSION:     '1.8.4',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
-        HAS_SOURCE:  true
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
       };
     </script>
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
-    <link rel="top" title="Eggdrop 1.8.4 documentation" href="../index.html" />
-    <link rel="up" title="&lt;no title&gt;" href="index.html" />
+    <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="&lt;no title&gt;" href="../coreDocs/index.html" />
     <link rel="prev" title="IPv6 support" href="ipv6.html" /> 
   </head>
@@ -52,7 +49,7 @@
             
       <div class="documentwrapper">
         <div class="bodywrapper">
-          <div class="body">
+          <div class="body" role="main">
             
   <p>TLS support
 Last revised: Oct 17, 2010</p>
@@ -172,14 +169,14 @@ file. Then either connect to the bot using TLS and type &quot;.fprint +&quot; or
 enter your certificate fingerprint with .fprint SHA1-FINGERPRINT.
 To generate a ssl certificate for yourself, you can run the following
 command from the eggdrop source directory:</p>
-<div class="highlight-python"><div class="highlight"><pre>openssl req -new -x509 -nodes -keyout my.key -out my.crt -config ssl.conf
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">openssl</span> <span class="n">req</span> <span class="o">-</span><span class="n">new</span> <span class="o">-</span><span class="n">x509</span> <span class="o">-</span><span class="n">nodes</span> <span class="o">-</span><span class="n">keyout</span> <span class="n">my</span><span class="o">.</span><span class="n">key</span> <span class="o">-</span><span class="n">out</span> <span class="n">my</span><span class="o">.</span><span class="n">crt</span> <span class="o">-</span><span class="n">config</span> <span class="n">ssl</span><span class="o">.</span><span class="n">conf</span>
 </pre></div>
 </div>
 <p>When asked about bot's handle, put your handle instead. How to use your
 new certificate to connect to eggdrop, depends on your irc client.
 To connect to your bot from the command line, you can use the OpenSSL
 ssl client:</p>
-<div class="highlight-python"><div class="highlight"><pre>openssl s_client -cert my.crt -key my.key -connect host:sslport
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">openssl</span> <span class="n">s_client</span> <span class="o">-</span><span class="n">cert</span> <span class="n">my</span><span class="o">.</span><span class="n">crt</span> <span class="o">-</span><span class="n">key</span> <span class="n">my</span><span class="o">.</span><span class="n">key</span> <span class="o">-</span><span class="n">connect</span> <span class="n">host</span><span class="p">:</span><span class="n">sslport</span>
 </pre></div>
 </div>
 </div>
@@ -239,7 +236,7 @@ verification completely. A value of 1 enables full verification.
 Higher values enable specific exceptions like allowing self-signed
 or expired certificates. Details are documented in eggdrop.conf.</div></blockquote>
 </div></blockquote>
-<p>Copyright (C) 2010 - 2018 Eggheads Development Team</p>
+<p>Copyright (C) 2010 - 2019 Eggheads Development Team</p>
 </div>
 </div>
 
@@ -265,7 +262,7 @@ or expired certificates. Details are documented in eggdrop.conf.</div></blockquo
 <li class="toctree-l1"><a class="reference internal" href="patch.html">Patch How-To</a></li>
 <li class="toctree-l1"><a class="reference internal" href="tcl-commands.html">Eggdrop Tcl Commands</a></li>
 <li class="toctree-l1"><a class="reference internal" href="ipv6.html">IPv6 support</a></li>
-<li class="toctree-l1 current"><a class="current reference internal" href="">TLS support</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">TLS support</a></li>
 </ul>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../coreDocs/core.html">Eggdrop Core Settings</a></li>
@@ -321,10 +318,10 @@ or expired certificates. Details are documented in eggdrop.conf.</div></blockquo
 
         <div class="right">
           
-    <div class="footer">
-        &copy; Copyright 2018, Eggheads.
-      Last updated on Dec 11, 2018.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.3.
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2019, Eggheads.
+      Last updated on Dec 31, 2018.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.6.7.
     </div>
         </div>
         <div class="clearer"></div>

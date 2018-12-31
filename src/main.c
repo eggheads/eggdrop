@@ -7,7 +7,7 @@
  */
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2018 Eggheads Development Team
+ * Copyright (C) 1999 - 2019 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -1082,7 +1082,7 @@ int main(int arg_c, char **arg_v)
 #endif
   egg_snprintf(ver, sizeof ver, "eggdrop v%s", egg_version);
   egg_snprintf(version, sizeof version,
-               "Eggdrop v%s (C) 1997 Robey Pointer (C) 2010-2018 Eggheads",
+               "Eggdrop v%s (C) 1997 Robey Pointer (C) 2010-2019 Eggheads",
                egg_version);
   /* Now add on the patchlevel (for Tcl) */
   sprintf(&egg_version[strlen(egg_version)], " %u", egg_numver);

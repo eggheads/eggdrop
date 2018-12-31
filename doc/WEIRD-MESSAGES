@@ -45,10 +45,10 @@ WEIRD MESSAGES THAT GET LOGGED
         not uncommon during netsplits and other joins for the server to
         lose track of killed or collided join notices. Also, in some
         servers, it is possible to specify non-standard characters, such
-        as caret symbols, which get falsely interpreted as
-        capital letters.
+        as caret symbols, which get falsely interpreted as capital
+        letters.
 
         When converted to lowercase, these symbols fail to get
         processed, and joins are not reported, although parts are.
 
-  Copyright (C) 2003 - 2018 Eggheads Development Team
+  Copyright (C) 2003 - 2019 Eggheads Development Team
