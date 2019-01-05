@@ -11,7 +11,7 @@
  */
 /*
  * Copyright (C) 2001 proton
- * Copyright (C) 2001 - 2018 Eggheads Development Team
+ * Copyright (C) 2001 - 2019 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -218,7 +218,7 @@ int send_uptime(void)
                              * sent to the server.  But belt-and-suspenders
                              * is always good.
                              */
-  my_memcpy(mem, &upPack, sizeof(upPack));
+  memcpy(mem, &upPack, sizeof(upPack));
   sprintf(mem->string, "%s %s %s", botnetnick, servhost, uptime_version);
   egg_bzero(&sai, sizeof(sai));
   sai.sin_family = AF_INET;

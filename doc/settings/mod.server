@@ -22,14 +22,14 @@ There are also some variables you can set in your config file:
 
       What is your network?
 
-          ---- ----------------------------
-          0    EFnet
-          1    IRCnet
-          2    Undernet
-          3    DALnet
-          4    +e/+I/max-bans 20 Hybrid
-          5    Others
-          ---- ----------------------------
+          ---------------- ----------------------------------------------------------------------------------------------------------------
+          0                EFnet
+          1                IRCnet
+          2                Undernet
+          3                DALnet
+          4                +e/+I/max-bans 20 Hybrid
+          5                Others
+          ---------------- ----------------------------------------------------------------------------------------------------------------
 
   set nick "LamestBot"
 
@@ -51,6 +51,7 @@ There are also some variables you can set in your config file:
 
       Set here what to display in the real-name field for the bot.
 
+  &nbsp;
       bind evnt - init-server evnt:init_server
       proc evnt:init_server {type} {
         global botnick
@@ -108,9 +109,9 @@ There are also some variables you can set in your config file:
 
   set msg-rate 2
 
-      Number of seconds to wait between transmitting queued lines to
-      the server. Lower this value at your own risk. ircd is known to
-      start flood control at 512 bytes/2 seconds.
+      Number of seconds to wait between transmitting queued lines to the
+      server. Lower this value at your own risk. ircd is known to start
+      flood control at 512 bytes/2 seconds.
 
   set ssl-verify-servers 0
 
@@ -122,15 +123,15 @@ There are also some variables you can set in your config file:
 
       The numbers are the following:
 
-          ---- ----------------------------------------------
-          0    disable verification
-          1    enable certificate verification
-          2    allow self-signed certificates
-          4    don't check peer common or alt names
-          8    allow expired certificates
-          16   allow certificates which are not valid yet
-          32   allow revoked certificates
-          ---- ----------------------------------------------
+          ------------- ----------------------------------------------------------------------------------------------------------------------------------------------------------------
+          0             disable verification
+          1             enable certificate verification
+          2             allow self-signed certificates
+          4             don't check peer common or alt names
+          8             allow expired certificates
+          16            allow certificates which are not valid yet
+          32            allow revoked certificates
+          ------------- ----------------------------------------------------------------------------------------------------------------------------------------------------------------
 
   set server-cycle-wait 60
 
@@ -142,14 +143,14 @@ There are also some variables you can set in your config file:
   set server-timeout 60
 
       Set here how long Eggdrop should wait for a response when
-      connecting to a server before giving up and moving on to
-      next server.
+      connecting to a server before giving up and moving on to next
+      server.
 
   set check-stoned 1
 
       Set this to 1 if Eggdrop should check for stoned servers? (where
-      the server connection has died, but Eggdrop hasn't been
-      notified yet).
+      the server connection has died, but Eggdrop hasn't been notified
+      yet).
 
   set serverror-quit 1
 
@@ -160,8 +161,8 @@ There are also some variables you can set in your config file:
 
       Set here the maximum number of lines to queue to the server. If
       you're going to dump large chunks of text to people over IRC, you
-      will probably want to raise this. 300 is fine for most
-      people though.
+      will probably want to raise this. 300 is fine for most people
+      though.
 
   set quiet-reject 1
 
@@ -222,10 +223,10 @@ There are also some variables you can set in your config file:
 
       This enables Eggdrop's penalty calculation. Every command Eggdrop
       sends to the IRC server raises its penalty points. If Eggdrop
-      reaches a server limit, it gets disconnected with "excess
-      flood" message. Eggdrop is able to count internal those penalty
-      points, too and take measures against excess flooding. Note: it's
-      highly advised to turn this on!
+      reaches a server limit, it gets disconnected with "excess flood"
+      message. Eggdrop is able to count internal those penalty points,
+      too and take measures against excess flooding. Note: it's highly
+      advised to turn this on!
 
   set optimize-kicks 1
 
@@ -233,15 +234,11 @@ There are also some variables you can set in your config file:
       parts in the channel and changes the kick queue accordingly. There
       are three different options for this setting:
 
-          ---- -------------------------------------------------------------------
-          0    Turn it off.
-
-          1    Optimize the kick queue by summarizing kicks.
-
-          2    Trace nick changes and parts on the channel and change the
-               queue accordingly. For example, bot will not try to kick users who
-               have already parted the channel.
-          ---- -------------------------------------------------------------------
+          ------------- ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+          0             Turn it off.
+          1             Optimize the kick queue by summarizing kicks.
+          2             Trace nick changes and parts on the channel and change the queue accordingly. For example, bot will not try to kick users who have already parted the channel.
+          ------------- ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
       ATTENTION: Setting 2 is very CPU intensive.
 
@@ -266,4 +263,4 @@ There are additional settings for 'net-type' 5.
         supported by your network. The default setting is 9. The maximum
         supported length by Eggdrop is 32.
 
-  Copyright (C) 2000 - 2018 Eggheads Development Team
+  Copyright (C) 2000 - 2019 Eggheads Development Team

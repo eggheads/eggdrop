@@ -241,7 +241,7 @@ this function. See below for various things you can do.
 
 You also will need to return a value. Returning NULL implies the
 module loaded successfully. Returning a non-NULL STRING is an error
-message. The module (and any other dependant modules) will stop
+message. The module (and any other dependent modules) will stop
 loading and an error will be returned.
 
 ^^^^^^^^^^^^
@@ -467,4 +467,4 @@ What to do with a module?
    directory on ftp.eggheads.org. Don't forget to mention in your text file
    which version Eggdrop the module is written for.
 
-Copyright (C) 1999 - 2018 Eggheads Development Team
+Copyright (C) 1999 - 2019 Eggheads Development Team

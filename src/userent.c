@@ -4,7 +4,7 @@
  */
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2018 Eggheads Development Team
+ * Copyright (C) 1999 - 2019 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -364,7 +364,7 @@ static int laston_set(struct userrec *u, struct user_entry *e, void *buf)
       nfree(li);
     }
 
-    li = e->u.extra = buf;
+    e->u.extra = buf;
   }
   /* donut share laston info */
   return 1;
@@ -1317,7 +1317,7 @@ static int fprint_tcl_set(Tcl_Interp * irp, struct userrec *u,
 struct user_entry_type USERENTRY_FPRINT = {
   0,
   def_gotshare,
-  0,
+  def_dupuser,
   fprint_unpack,
   def_pack,
   def_write_userfile,

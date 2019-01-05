@@ -3,7 +3,7 @@
  */
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2018 Eggheads Development Team
+ * Copyright (C) 1999 - 2019 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -94,9 +94,8 @@ static int tcl_putquick STDVAR
                      "-normal -next", NULL);
     return TCL_ERROR;
   }
-  strncpy(s, argv[1], 510);
+  strlcpy(s, argv[1], sizeof s);
 
-  s[510] = 0;
   p = strchr(s, '\n');
   if (p != NULL)
     *p = 0;
@@ -122,9 +121,8 @@ static int tcl_putserv STDVAR
                      "-normal -next", NULL);
     return TCL_ERROR;
   }
-  strncpy(s, argv[1], 510);
+  strlcpy(s, argv[1], sizeof s);
 
-  s[510] = 0;
   p = strchr(s, '\n');
   if (p != NULL)
     *p = 0;
@@ -150,9 +148,8 @@ static int tcl_puthelp STDVAR
                      "-normal -next", NULL);
     return TCL_ERROR;
   }
-  strncpy(s, argv[1], 510);
+  strlcpy(s, argv[1], sizeof s);
 
-  s[510] = 0;
   p = strchr(s, '\n');
   if (p != NULL)
     *p = 0;

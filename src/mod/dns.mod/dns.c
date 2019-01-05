@@ -5,7 +5,7 @@
  * Written by Fabian Knittel <fknittel@gmx.de>
  */
 /*
- * Copyright (C) 1999 - 2018 Eggheads Development Team
+ * Copyright (C) 1999 - 2019 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -307,7 +307,7 @@ char *dns_start(Function *global_funcs)
   dcc[idx].sock = resfd;
   dcc[idx].timeval = now;
   strcpy(dcc[idx].nick, "(dns)");
-  egg_memcpy(&dcc[idx].sockname.addr.sa, &_res.nsaddr_list[0],
+  memcpy(&dcc[idx].sockname.addr.sa, &_res.nsaddr_list[0],
              sizeof(_res.nsaddr_list[0]));
   dcc[idx].sockname.addrlen = sizeof(_res.nsaddr_list[0]);
 

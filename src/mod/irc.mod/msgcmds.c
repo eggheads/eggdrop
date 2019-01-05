@@ -4,7 +4,7 @@
  */
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2018 Eggheads Development Team
+ * Copyright (C) 1999 - 2019 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -172,10 +172,8 @@ static int msg_ident(char *nick, char *host, struct userrec *u, char *par)
   pass = newsplit(&par);
   if (!par[0])
     strlcpy(who, nick, sizeof who);
-  else {
-    strncpy(who, par, NICKMAX);
-    who[NICKMAX] = 0;
-  }
+  else
+    strlcpy(who, par, sizeof who);
   u2 = get_user_by_handle(userlist, who);
   if (!u2) {
     if (u && !quiet_reject)

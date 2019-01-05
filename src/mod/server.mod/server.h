@@ -3,7 +3,7 @@
  */
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2018 Eggheads Development Team
+ * Copyright (C) 1999 - 2019 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -84,11 +84,6 @@
 #define free_null(ptr)  do {                            \
         nfree(ptr);                                     \
         ptr = NULL;                                     \
-} while (0)
-
-#define write_to_server(x,y) do {                       \
-        tputs(serv, (x), (y));                          \
-        tputs(serv, "\r\n", 2);                         \
 } while (0)
 
 #endif /* MAKING_SERVER */

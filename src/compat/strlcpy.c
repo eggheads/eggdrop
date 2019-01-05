@@ -2,7 +2,7 @@
  * strlcpy.c -- provides strlcpy() if necessary
  */
 /*
- * Copyright (C) 2010 - 2018 Eggheads Development Team
+ * Copyright (C) 2010 - 2019 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -19,7 +19,7 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
-#include "../../config.h"
+#include <config.h>
 
 #ifndef HAVE_STRLCPY
 /*	$OpenBSD: strlcpy.c,v 1.12 2015/01/15 03:54:12 millert Exp $	*/

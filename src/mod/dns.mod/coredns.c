@@ -7,7 +7,7 @@
  * IPv6 support added by pseudo <pseudo@egg6.net>
  */
 /*
- * Portions Copyright (C) 1999 - 2018 Eggheads Development Team
+ * Portions Copyright (C) 1999 - 2019 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -130,7 +130,7 @@ typedef struct {
   uint8_t databyte_a;
   /* rd:1                             recursion desired
    * tc:1                             truncated message
-   * aa:1                             authoritive answer
+   * aa:1                             authoritative answer
    * opcode:4                         purpose of message
    * qr:1                             response flag
    */
@@ -151,7 +151,7 @@ typedef struct {
   uint16_t class;
   uint32_t ttl;
   uint16_t datalength;
-  uint8_t data[];
+  uint8_t data[FLEXIBLE_ARRAY_MEMBER];
 } res_record;
 
 #ifndef HFIXEDSZ
@@ -273,8 +273,8 @@ static uint32_t getipbash(IP ip)
 #ifdef IPV6
 static unsigned long getip6bash(struct in6_addr *ip6) {
   uint32_t x, y;
-  egg_memcpy(&x, ip6->s6_addr     , sizeof x);
-  egg_memcpy(&y, ip6->s6_addr + 12, sizeof y);
+  memcpy(&x, ip6->s6_addr     , sizeof x);
+  memcpy(&y, ip6->s6_addr + 12, sizeof y);
   x ^= y;
   return (unsigned long) BASH_MODULO(x);
 }
@@ -537,7 +537,7 @@ static void linkresolve(struct resolve *rp)
   }
 }
 
-/* Remove reqeust structure rp from the expireresolves list.
+/* Remove request structure rp from the expireresolves list.
  */
 static void untieresolve(struct resolve *rp)
 {
@@ -720,7 +720,7 @@ static void dorequest(char *s, int type, uint16_t id)
   /* Use malloc here instead of a static buffer, as per res_mkquery()'s manual
    * buf should be aligned on an eight byte boundary. malloc() should return a
    * pointer to an address properly aligned for any data type. Failing to
-   * provide a aligned buffer will result in a SIGBUS crash atleast on SPARC
+   * provide a aligned buffer will result in a SIGBUS crash at least on SPARC
    * CPUs.
    */
   buf = nmalloc(MAX_PACKETSIZE + 1);
@@ -972,7 +972,7 @@ void parserespacket(uint8_t *response, int len)
       return;
     }
     c += 10 + rr->datalength;
-    if (0 > response + len) {
+    if (c > response + len) {
       ddebug0(RES_ERR "Specified rdata length exceeds packet size.");
       return;
     }
@@ -998,7 +998,7 @@ void parserespacket(uint8_t *response, int len)
         rp->ttl = rr->ttl;
         rp->sockname.addrlen = sizeof(struct sockaddr_in);
         rp->sockname.addr.sa.sa_family = AF_INET;
-        egg_memcpy(&rp->sockname.addr.s4.sin_addr, rr->data, 4);
+        memcpy(&rp->sockname.addr.s4.sin_addr, rr->data, 4);
 #ifndef IPV6
         passrp(rp, rr->ttl, T_A);
         return;
@@ -1017,7 +1017,7 @@ void parserespacket(uint8_t *response, int len)
         rp->ttl = rr->ttl;
         rp->sockname.addrlen = sizeof(struct sockaddr_in6);
         rp->sockname.addr.sa.sa_family = AF_INET6;
-        egg_memcpy(&rp->sockname.addr.s6.sin6_addr, rr->data, 16);
+        memcpy(&rp->sockname.addr.s6.sin6_addr, rr->data, 16);
         if (ready || pref_af) {
           passrp(rp, rr->ttl, T_A);
           return;
@@ -1184,7 +1184,7 @@ static void dns_lookup(sockname_t *addr)
   rp->state = STATE_PTRREQ;
   rp->sends = 1;
   rp->type = T_PTR;
-  egg_memcpy(&rp->sockname, addr, sizeof(sockname_t));
+  memcpy(&rp->sockname, addr, sizeof(sockname_t));
   if (addr->family == AF_INET) {
     rp->ip = addr->addr.s4.sin_addr.s_addr;
     linkresolveip(rp);

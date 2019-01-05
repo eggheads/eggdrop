@@ -65,8 +65,8 @@ Eggdrop uses the GNU autoconfigure scripts to make things easier.
         output on a (highly unlikely :) crash. This will help the
         development team track down the crash and fix the bug. Debug and
         sdebug will take a little longer to compile and will enlarge the
-        binary a bit, but it's worth it if you want to support
-        Eggdrop development.
+        binary a bit, but it's worth it if you want to support Eggdrop
+        development.
 
 4.  
 
@@ -87,8 +87,8 @@ Eggdrop uses the GNU autoconfigure scripts to make things easier.
 
             make install DEST=/home/user/otherdir
 
-        Note that you must use full path for every file to be
-        correctly installed.
+        Note that you must use full path for every file to be correctly
+        installed.
 
         [The following is performed from the directory installed above.]
 
@@ -127,8 +127,8 @@ Eggdrop uses the GNU autoconfigure scripts to make things easier.
         From then on, you will be able to use your config file as a
         shell script. You can just type "./LamestBot.conf" from your
         shell prompt to start up your bot. For this to work, the top
-        line of your script MUST contain the correct path to the
-        Eggdrop executable.
+        line of your script MUST contain the correct path to the Eggdrop
+        executable.
 
 9.  
 
@@ -182,13 +182,13 @@ FREQUENTLY ASKED QUESTIONS
   (W) But...
   (X) Well, go to www.egghelp.org or www.eggheads.org and see if you can
       find there what you're looking for. There are also lots of IRC
-      help channels and various mailing lists, as seen in the
-      README FILE.
+      help channels and various mailing lists, as seen in the README
+      FILE.
 
 This is the end. If you read to this point, hopefully you have also read
 the README file. If not, then READ IT!&@#%@!
 
 Have fun with Eggdrop!
 
-  Copyright (C) 1997 Robey Pointer Copyright (C) 1999 - 2018 Eggheads
+  Copyright (C) 1997 Robey Pointer Copyright (C) 1999 - 2019 Eggheads
   Development Team

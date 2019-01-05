@@ -3,7 +3,7 @@
  */
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2018 Eggheads Development Team
+ * Copyright (C) 1999 - 2019 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -278,9 +278,7 @@ static int check_tcl_out(int which, char *msg, int sent)
 
 static int match_my_nick(char *nick)
 {
-  if (!rfc_casecmp(nick, botname))
-    return 1;
-  return 0;
+  return (!rfc_casecmp(nick, botname));
 }
 
 /* 001: welcome to IRC (use it to fix the server name) */
@@ -491,7 +489,7 @@ static int gotmsg(char *from, char *msg)
   ignoring = match_ignore(from);
   to = newsplit(&msg);
   fixcolon(msg);
-  strlcpy(uhost, from, sizeof(buf));
+  strlcpy(uhost, from, sizeof buf);
   nick = splitnick(&uhost);
   /* Apparently servers can send CTCPs now too, not just nicks */
   if (nick[0] == '\0')
@@ -626,7 +624,7 @@ static int gotnotice(char *from, char *msg)
   ignoring = match_ignore(from);
   to = newsplit(&msg);
   fixcolon(msg);
-  strcpy(uhost, from);
+  strlcpy(uhost, from, sizeof buf);
   nick = splitnick(&uhost);
 
   /* Check for CTCP: */
@@ -729,7 +727,7 @@ static void minutely_checks()
   if (!server_online)
     return;
   if (keepnick) {
-    /* NOTE: now that botname can but upto NICKLEN bytes long,
+    /* NOTE: now that botname can but up to NICKLEN bytes long,
      * check that it's not just a truncation of the full nick.
      */
     if (strncmp(botname, origbotname, strlen(botname))) {
@@ -793,19 +791,19 @@ static void got303(char *from, char *msg)
  */
 static int got432(char *from, char *msg)
 {
-  char *erroneus;
+  char *erroneous;
 
   newsplit(&msg);
-  erroneus = newsplit(&msg);
+  erroneous = newsplit(&msg);
   if (server_online)
-    putlog(LOG_MISC, "*", "NICK IS INVALID: %s (keeping '%s').", erroneus,
+    putlog(LOG_MISC, "*", "NICK IS INVALID: %s (keeping '%s').", erroneous,
            botname);
   else {
     putlog(LOG_MISC, "*", IRC_BADBOTNICK);
     if (!keepnick) {
-      makepass(erroneus);
-      erroneus[NICKMAX] = 0;
-      dprintf(DP_MODE, "NICK %s\n", erroneus);
+      makepass(erroneous);
+      erroneous[NICKMAX] = 0;
+      dprintf(DP_MODE, "NICK %s\n", erroneous);
     }
     return 0;
   }

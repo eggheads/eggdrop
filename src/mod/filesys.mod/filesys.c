@@ -4,7 +4,7 @@
  */
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2018 Eggheads Development Team
+ * Copyright (C) 1999 - 2019 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -714,7 +714,7 @@ static char *mktempfile(char *filename)
   char rands[8], *tempname, *fn = filename;
   int l;
 
-  make_rand_str(rands, 7);
+  make_rand_str(rands, sizeof rands - 1);
   l = strlen(filename);
   if ((l + MKTEMPFILE_TOT) > NAME_MAX) {
     fn[NAME_MAX - MKTEMPFILE_TOT] = 0;
@@ -1015,7 +1015,7 @@ char *filesys_start(Function *global_funcs)
   add_builtins(H_load, myload);
   add_help_reference("filesys.help");
   init_server_ctcps(0);
-  my_memcpy(&USERENTRY_DCCDIR, &USERENTRY_INFO,
+  memcpy(&USERENTRY_DCCDIR, &USERENTRY_INFO,
             sizeof(struct user_entry_type) - sizeof(char *));
 
   USERENTRY_DCCDIR.got_share = 0;       /* We don't want it shared tho */

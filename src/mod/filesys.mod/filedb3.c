@@ -6,7 +6,7 @@
  */
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2018 Eggheads Development Team
+ * Copyright (C) 1999 - 2019 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -258,7 +258,7 @@ static filedb_entry *filedb_findempty(FILE *fdb, int tot)
  *
  *   * If the new entry is the same size or smaller than the original
  *     one, we use the old position and just adjust the buffer length
- *     apropriately.
+ *     appropriately.
  *   * If the entry is completely _new_ or if the entry's new size is
  *     _bigger_ than the old one, we search for a new position which
  *     suits our needs.
@@ -511,7 +511,7 @@ static void filedb_cleanup(FILE *fdb)
   filedb_entry *fdbe = NULL;
 
   filedb_readtop(fdb, NULL);    /* Skip DB header  */
-  newpos = temppos = oldpos = ftell(fdb);
+  oldpos = ftell(fdb);
   fseek(fdb, oldpos, SEEK_SET); /* Go to beginning */
   while (!feof(fdb)) {          /* Loop until EOF  */
     fdbe = filedb_getfile(fdb, oldpos, GET_HEADER);     /* Read header     */

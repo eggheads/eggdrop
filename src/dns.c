@@ -7,7 +7,7 @@
 /*
  * Written by Fabian Knittel <fknittel@gmx.de>
  *
- * Copyright (C) 1999 - 2018 Eggheads Development Team
+ * Copyright (C) 1999 - 2019 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -153,9 +153,9 @@ static void dns_dccipbyhost(sockname_t *ip, char *hostn, int ok, void *other)
         !egg_strcasecmp(dcc[idx].u.dns->host, hostn)) {
       if (ok) {
         if (dcc[idx].u.dns->ip)
-          egg_memcpy(dcc[idx].u.dns->ip, ip, sizeof(sockname_t));
+          memcpy(dcc[idx].u.dns->ip, ip, sizeof(sockname_t));
         else
-          egg_memcpy(&dcc[idx].sockname, ip, sizeof(sockname_t));
+          memcpy(&dcc[idx].sockname, ip, sizeof(sockname_t));
         dcc[idx].u.dns->dns_success(idx);
       } else
         dcc[idx].u.dns->dns_failure(idx);

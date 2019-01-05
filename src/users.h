@@ -4,7 +4,7 @@
  */
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2018 Eggheads Development Team
+ * Copyright (C) 1999 - 2019 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -145,7 +145,7 @@ int set_user(struct user_entry_type *, struct userrec *, void *);
  */
 struct chanuserrec {
   struct chanuserrec *next;
-  char channel[81];
+  char channel[CHANNELLEN + 1];
   time_t laston;
   unsigned long flags;
   unsigned long flags_udef;
