@@ -1337,6 +1337,7 @@ static void do_nettype(void)
     simple_sprintf(stackablecmds,
                    "PRIVMSG NOTICE PART WHOIS WHOWAS USERHOST ISON WATCH DCCALLOW");
     simple_sprintf(stackable2cmds, "USERHOST ISON WATCH");
+    stack_limit = 20;
     break;
   case NETT_HYBRID_EFNET:
     check_mode_r = 0;
