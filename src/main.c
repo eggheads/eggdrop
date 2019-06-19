@@ -634,7 +634,7 @@ static struct tm nowtm;
  */
 static void core_secondly()
 {
-  static int cnt = 0;
+  static int cnt = 10; /* Don't wait the first 10 seconds to display */
   int miltime;
   time_t nowmins;
   int i;
