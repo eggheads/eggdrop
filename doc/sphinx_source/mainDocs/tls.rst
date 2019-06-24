@@ -115,7 +115,7 @@ The easy way to create a key and a certificate is to type 'make sslcert'
 after compiling your bot (If you installed eggdrop to a non-standard
 location, use make sslcert DEST=/path/to/eggdrop). This will generate a
 4096-bit private key (eggdrop.key) and a certificate (eggdrop.crt) after
-you fill in therequired fields. Alternatively, you can use 'make sslsilent'
+you fill in the required fields. Alternatively, you can use 'make sslsilent'
 to generate a key and certificate non-interactively, using pre-set values.
 This is useful when installing Eggdrop via a scripted process.
 
