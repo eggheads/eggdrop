@@ -49,8 +49,9 @@ ABOUT EGGDROP
   To use Eggdrop, you need:
 
     -   Some sort of Unix account
-    -   A pretty good knowledge of IRC and Unix, including what DCC
-        chat is, at absolute minimum.
+    -   A decent knowledge of Unix 
+    -   A decent knowledge of IRC, including what DCC chat is
+        and how to administer an IRC channel
     -   Tcl -- Eggdrop cannot compile without Tcl installed on your
         shell.
 
