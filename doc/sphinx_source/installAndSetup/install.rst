@@ -88,6 +88,11 @@ Eggdrop uses the GNU autoconfigure scripts to make things easier.
 
        make sslcert DEST=<directory>
 
+    For those using scripts to install Eggdrop, you can non-interactively
+    generate a key and certificate by running:
+
+       make sslsilent
+
      Read docs/TLS for more info on this process.
 
 6. Edit your config file completely.
