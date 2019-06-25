@@ -892,11 +892,12 @@ module_entry *module_find(char *name, int major, int minor)
   module_entry *p;
 
   for (p = module_list; p && p->name; p = p->next) {
-    if ((major == p->major || !major) && minor <= p->minor &&
-        !egg_strcasecmp(name, p->name))
+    if ( (((major < p->major) || !major) || ((major == p->major) &&
+        (minor <= p->minor))) && !egg_strcasecmp(name, p->name) )
       return p;
   }
   return NULL;
+
 }
 
 static int module_rename(char *name, char *newname)
