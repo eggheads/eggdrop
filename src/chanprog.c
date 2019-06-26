@@ -290,7 +290,7 @@ void tell_verbose_status(int idx)
   char *vers_t, *uni_t;
   int i;
   time_t now2 = now - online_since, hr, min;
-  float cputime, cache_total;
+  double cputime, cache_total;
 #ifdef HAVE_UNAME
   struct utsname un;
 
@@ -342,8 +342,8 @@ void tell_verbose_status(int idx)
     cputime -= hr * 60;
     sprintf(s2, "CPU: %02d:%05.2f", (int) hr, cputime); /* Actually min/sec */
   }
-  if ((float) (cache_hit + cache_miss)) {      /* 2019, still can't divide by zero */
-    cache_total = 100.0 * ((float) cache_hit) / ((float) (cache_hit + cache_miss));
+  if ((cache_hit + cache_miss)) {      /* 2019, still can't divide by zero */
+    cache_total = 100.0 * (cache_hit) / ((cache_hit + cache_miss));
   } else cache_total = 0;
     dprintf(idx, "%s %s (%s) - %s - %s: %4.1f%%\n", MISC_ONLINEFOR,
             s, s1, s2, MISC_CACHEHIT, cache_total);
