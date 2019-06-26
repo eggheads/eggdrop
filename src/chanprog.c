@@ -9,7 +9,7 @@
  */
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2018 Eggheads Development Team
+ * Copyright (C) 1999 - 2019 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -290,7 +290,7 @@ void tell_verbose_status(int idx)
   char *vers_t, *uni_t;
   int i;
   time_t now2 = now - online_since, hr, min;
-  float cputime;
+  double cputime, cache_total;
 #ifdef HAVE_UNAME
   struct utsname un;
 
@@ -342,9 +342,11 @@ void tell_verbose_status(int idx)
     cputime -= hr * 60;
     sprintf(s2, "CPU: %02d:%05.2f", (int) hr, cputime); /* Actually min/sec */
   }
-  dprintf(idx, "%s %s (%s) - %s - %s: %4.1f%%\n", MISC_ONLINEFOR,
-          s, s1, s2, MISC_CACHEHIT,
-          100.0 * ((float) cache_hit) / ((float) (cache_hit + cache_miss)));
+  if (cache_hit + cache_miss) {      /* 2019, still can't divide by zero */
+    cache_total = 100.0 * (cache_hit) / (cache_hit + cache_miss);
+  } else cache_total = 0;
+    dprintf(idx, "%s %s (%s) - %s - %s: %4.1f%%\n", MISC_ONLINEFOR,
+            s, s1, s2, MISC_CACHEHIT, cache_total);
 
   dprintf(idx, "Configured with: " EGG_AC_ARGS "\n");
   if (admin[0])
@@ -689,7 +691,7 @@ int isowner(char *name) {
  */
 void add_hq_user()
 {
-  if (!backgrd && term_z >= 0 && userlist) {
+  if (!backgrd && term_z >= 0) {
     /* HACK: Workaround using dcc[].nick not to pass literal "-HQ" as a non-const arg */
     dcc[term_z].user = get_user_by_handle(userlist, dcc[term_z].nick);
     /* Make sure there's an innocuous -HQ user if needed */

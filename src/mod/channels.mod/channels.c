@@ -4,7 +4,7 @@
  */
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2018 Eggheads Development Team
+ * Copyright (C) 1999 - 2019 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -591,9 +591,8 @@ static void channels_report(int idx, int details)
       get_mode_protect(chan, s2);
 
       if (s2[0]) {
-        s1[0] = 0;
-        sprintf(s1, ", enforcing \"%s\"", s2);
-        strcat(s, s1);
+        int len = strlen(s);
+        egg_snprintf(s + len, (sizeof s) - len, ", enforcing \"%s\"", s2); /* Concatenation */
       }
 
       s2[0] = 0;
@@ -606,18 +605,15 @@ static void channels_report(int idx, int details)
         strcat(s2, "bitch, ");
 
       if (s2[0]) {
+        int len = strlen(s);
         s2[strlen(s2) - 2] = 0;
-
-        s1[0] = 0;
-        sprintf(s1, " (%s)", s2);
-        strcat(s, s1);
+        egg_snprintf(s + len, (sizeof s) - len, " (%s)", s2); /* Concatenation */
       }
 
       /* If it's a !chan, we want to display it's unique name too <cybah> */
       if (chan->dname[0] == '!') {
-        s1[0] = 0;
-        sprintf(s1, ", unique name %s", chan->name);
-        strcat(s, s1);
+        int len = strlen(s);
+        egg_snprintf(s + len, (sizeof s) - len, ", unique name %s", chan->name); /* Concatenation */
       }
     }
 

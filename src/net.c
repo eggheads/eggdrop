@@ -8,7 +8,7 @@
  *
  * Changes after Feb 23, 1999 Copyright Eggheads Development Team
  *
- * Copyright (C) 1999 - 2018 Eggheads Development Team
+ * Copyright (C) 1999 - 2019 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -35,6 +35,7 @@
 #  include <sys/select.h>
 #endif
 #include <netinet/in.h>
+#include <netinet/tcp.h>
 #include <arpa/inet.h>
 #include <errno.h>
 #if HAVE_UNISTD_H
@@ -114,7 +115,7 @@ char *iptostr(struct sockaddr *sa)
               s, sizeof s);
   else
 #else
-  static char s[sizeof "255.255.255.255"] = "";
+  static char s[INET_ADDRSTRLEN] = "";
 #endif
     inet_ntop(AF_INET, &((struct sockaddr_in *)sa)->sin_addr.s_addr, s,
               sizeof s);
@@ -163,9 +164,9 @@ int setsockname(sockname_t *addr, char *src, int port, int allowres)
       hp = NULL;
     if (hp) {
       if (hp->h_addrtype == AF_INET)
-        egg_memcpy(&addr->addr.s4.sin_addr, hp->h_addr, hp->h_length);
+        memcpy(&addr->addr.s4.sin_addr, hp->h_addr, hp->h_length);
       else
-        egg_memcpy(&addr->addr.s6.sin6_addr, hp->h_addr, hp->h_length);
+        memcpy(&addr->addr.s6.sin6_addr, hp->h_addr, hp->h_length);
       af = hp->h_addrtype;
     }
   }
@@ -219,7 +220,7 @@ but this Eggdrop was not compiled with IPv6 support.");
       } else
         hp = NULL;
       if (hp) {
-        egg_memcpy(&addr->addr.s4.sin_addr, hp->h_addr, hp->h_length);
+        memcpy(&addr->addr.s4.sin_addr, hp->h_addr, hp->h_length);
         af = hp->h_addrtype;
       }
     } else
@@ -348,6 +349,7 @@ void setsock(int sock, int options)
 {
   int i = allocsock(sock, options), parm;
   struct threaddata *td = threaddata();
+  int res;
 
   if (i == -1) {
     putlog(LOG_MISC, "*", "Sockettable full.");
@@ -359,6 +361,11 @@ void setsock(int sock, int options)
 
     parm = 0;
     setsockopt(sock, SOL_SOCKET, SO_LINGER, (void *) &parm, sizeof(int));
+
+    /* Turn off Nagle's algorithm, see man tcp */
+    parm = 1;
+    if ((res = setsockopt(sock, IPPROTO_TCP, TCP_NODELAY, &parm, sizeof parm)))
+      debug2("net: setsock(): setsockopt() s %i level IPPROTO_TCP optname TCP_NODELAY error %i", sock, res);
   }
   if (options & SOCK_LISTEN) {
     /* Tris says this lets us grab the same port again next time */
@@ -474,7 +481,7 @@ static int proxy_connect(int sock, sockname_t *addr)
     for (i = 0; i < threaddata()->MAXSOCKS; i++)
       if (!(socklist[i].flags & SOCK_UNUSED) && socklist[i].sock == sock)
         socklist[i].flags |= SOCK_PROXYWAIT;    /* drummer */
-    egg_memcpy(host, &addr->addr.s4.sin_addr.s_addr, 4);
+    memcpy(host, &addr->addr.s4.sin_addr.s_addr, 4);
     egg_snprintf(s, sizeof s, "\004\001%c%c%c%c%c%c%s", port % 256,
                  (port >> 8) % 256, host[0], host[1], host[2], host[3], botuser);
     tputs(sock, s, strlen(botuser) + 9);        /* drummer */
@@ -514,6 +521,17 @@ int open_telnet_raw(int sock, sockname_t *addr)
   struct timeval tv;
   int i, rc, res;
 
+  for (i = 0; i < dcc_total; i++)
+    if (dcc[i].sock == sock) { /* Got idx from sock ? */
+#ifdef TLS
+      debug4("net: open_telnet_raw(): idx %i host %s port %i ssl %i",
+             i, dcc[i].host, dcc[i].port, dcc[i].ssl);
+#else
+      debug3("net: open_telnet_raw(): idx %i host %s port %i",
+             i, dcc[i].host, dcc[i].port);
+#endif
+      break;
+    }
   getvhost(&name, addr->family);
   if (bind(sock, &name.addr.sa, name.addrlen) < 0) {
     return -1;
@@ -700,13 +718,13 @@ int getdccfamilyaddr(sockname_t *addr, char *s, size_t l, int restrict_af)
 #ifdef IPV6
      /* If it's listening on an IPv6 :: address,
         try using vhost6 as the source IP */
-    if (pref_af && (r->family == AF_INET6) && (restrict_af != AF_INET)) {
+    if (r->family == AF_INET6 && restrict_af != AF_INET) {
       if (inet_pton(AF_INET6, vhost6, &r->addr.s6.sin6_addr) != 1) {
         r = &name;
         gethostname(h, sizeof h);
         setsockname(r, h, 0, 1);
         if (r->family == AF_INET) {
-        /* setsockname tries to resolve  both ipv4 and ipv6. ipv4 dns
+        /* setsockname tries to resolve both ipv4 and ipv6. ipv4 dns
            resolution comes later in precedence, so if we get an ipv4
            back, reset it to the original addr struct and try
            again */
@@ -715,18 +733,18 @@ int getdccfamilyaddr(sockname_t *addr, char *s, size_t l, int restrict_af)
           } else {
             setsockname(r, listen_ip, 0, 1);
           }
-          af = AF_INET;
-        }
+        } else
+          af = AF_INET6;
       }
     }
 #endif
-     /* If IPv6 didn't work, or it's listening on an IPv4
+     /* If IPv6 didn't work or is disabled, or it's listening on an IPv4
         0.0.0.0 address, try using vhost4 as the source */
-    if ((
+    if (!af
 #ifdef IPV6
-      !pref_af ||
+        && restrict_af != AF_INET6
 #endif
-      af) && (restrict_af != AF_INET6)) {
+       ) {
       if (!egg_inet_aton(vhost, &r->addr.s4.sin_addr)) {
         /* And if THAT fails, try DNS resolution of hostname */
         r = &name;
@@ -750,7 +768,7 @@ int getdccfamilyaddr(sockname_t *addr, char *s, size_t l, int restrict_af)
   if (r->family == AF_INET6) {
     if (IN6_IS_ADDR_V4MAPPED(&r->addr.s6.sin6_addr) ||
         IN6_IS_ADDR_UNSPECIFIED(&r->addr.s6.sin6_addr)) {
-      egg_memcpy(&ip, r->addr.s6.sin6_addr.s6_addr + 12, sizeof ip);
+      memcpy(&ip, r->addr.s6.sin6_addr.s6_addr + 12, sizeof ip);
       egg_snprintf(s, l, "%lu", natip[0] ? iptolong(inet_addr(natip)) :
                ntohl(ip));
     } else
@@ -912,6 +930,12 @@ int sockread(char *s, int *len, sock_list *slist, int slistmax, int tclonly)
                      ERR_error_string(ERR_get_error(), 0), err);
             x = -1;
           }
+        } else if (slist[i].flags & SOCK_SENTTLS) {
+          /* We are awaiting a reply on our "starttls", only read
+           * strlen("starttls -\n") bytes so we don't accidently
+           * read the Client Hello from the ssl handshake */
+          x = read(slist[i].sock, s, strlen("starttls -\n"));
+          slist[i].flags &= ~SOCK_SENTTLS;
         } else
           x = read(slist[i].sock, s, grab);
       }
@@ -1006,27 +1030,32 @@ int sockgets(char *s, int *len)
 {
   char xx[514], *p, *px;
   int ret, i, data = 0;
+  size_t len2;
 
   for (i = 0; i < threaddata()->MAXSOCKS; i++) {
     /* Check for stored-up data waiting to be processed */
     if (!(socklist[i].flags & (SOCK_UNUSED | SOCK_TCL | SOCK_BUFFER)) &&
         (socklist[i].handler.sock.inbuf != NULL)) {
       if (!(socklist[i].flags & SOCK_BINARY)) {
-        /* look for \r too cos windows can't follow RFCs */
+        /* IRC messages are always lines of characters terminated with a CR-LF
+         * (Carriage Return - Line Feed) pair.
+         */
         p = strpbrk(socklist[i].handler.sock.inbuf, "\r\n");
         if (p != NULL) {
+          *p++ = 0;
           while (*p == '\n' || *p == '\r')
-            *p++ = 0;
-          if (strlen(socklist[i].handler.sock.inbuf) > 510)
-            socklist[i].handler.sock.inbuf[510] = 0;
-          strcpy(s, socklist[i].handler.sock.inbuf);
+            p++;
+          strlcpy(s, socklist[i].handler.sock.inbuf, 511);
           if (*p) {
-            px = nmalloc(strlen(p) + 1);
-            strcpy(px, p);
+            len2 = strlen(p) + 1;
+            px = nmalloc(len2);
+            memcpy(px, p, len2);
             nfree(socklist[i].handler.sock.inbuf);
             socklist[i].handler.sock.inbuf = px;
-          } else
+          } else {
+            nfree(socklist[i].handler.sock.inbuf);
             socklist[i].handler.sock.inbuf = NULL;
+          }
           *len = strlen(s);
           return socklist[i].sock;
         }
@@ -1034,15 +1063,15 @@ int sockgets(char *s, int *len)
         /* Handling buffered binary data (must have been SOCK_BUFFER before). */
         if (socklist[i].handler.sock.inbuflen <= 510) {
           *len = socklist[i].handler.sock.inbuflen;
-          egg_memcpy(s, socklist[i].handler.sock.inbuf, socklist[i].handler.sock.inbuflen);
+          memcpy(s, socklist[i].handler.sock.inbuf, socklist[i].handler.sock.inbuflen);
           nfree(socklist[i].handler.sock.inbuf);
           socklist[i].handler.sock.inbuf = NULL;
           socklist[i].handler.sock.inbuflen = 0;
         } else {
           /* Split up into chunks of 510 bytes. */
           *len = 510;
-          egg_memcpy(s, socklist[i].handler.sock.inbuf, *len);
-          egg_memcpy(socklist[i].handler.sock.inbuf, socklist[i].handler.sock.inbuf + *len, *len);
+          memcpy(s, socklist[i].handler.sock.inbuf, *len);
+          memcpy(socklist[i].handler.sock.inbuf, socklist[i].handler.sock.inbuf + *len, *len);
           socklist[i].handler.sock.inbuflen -= *len;
           socklist[i].handler.sock.inbuf = nrealloc(socklist[i].handler.sock.inbuf, socklist[i].handler.sock.inbuflen);
         }
@@ -1066,7 +1095,7 @@ int sockgets(char *s, int *len)
   /* sockread can return binary data while socket still has connectflag, process first */
   if (socklist[ret].flags & SOCK_BINARY && *len > 0) {
     socklist[ret].flags &= ~SOCK_CONNECT;
-    egg_memcpy(s, xx, *len);
+    memcpy(s, xx, *len);
     return socklist[ret].sock;
   }
   /* Binary, listening and passed on sockets don't get buffered. */
@@ -1077,7 +1106,7 @@ int sockgets(char *s, int *len)
       socklist[ret].handler.sock.inbuflen = *len;
       socklist[ret].handler.sock.inbuf = nmalloc(*len + 1);
       /* It might be binary data. You never know. */
-      egg_memcpy(socklist[ret].handler.sock.inbuf, xx, *len);
+      memcpy(socklist[ret].handler.sock.inbuf, xx, *len);
       socklist[ret].handler.sock.inbuf[*len] = 0;
     }
     socklist[ret].flags &= ~SOCK_CONNECT;
@@ -1091,7 +1120,7 @@ int sockgets(char *s, int *len)
   if (socklist[ret].flags & SOCK_BUFFER) {
     socklist[ret].handler.sock.inbuf = (char *) nrealloc(socklist[ret].handler.sock.inbuf,
                                             socklist[ret].handler.sock.inbuflen + *len + 1);
-    egg_memcpy(socklist[ret].handler.sock.inbuf + socklist[ret].handler.sock.inbuflen, xx, *len);
+    memcpy(socklist[ret].handler.sock.inbuf + socklist[ret].handler.sock.inbuflen, xx, *len);
     socklist[ret].handler.sock.inbuflen += *len;
     /* We don't know whether it's binary data. Make sure normal strings
      * will be handled properly later on too. */
@@ -1161,8 +1190,9 @@ int sockgets(char *s, int *len)
     nfree(p);
   } else {
     socklist[ret].handler.sock.inbuflen = strlen(xx);
-    socklist[ret].handler.sock.inbuf = nmalloc(socklist[ret].handler.sock.inbuflen + 1);
-    strcpy(socklist[ret].handler.sock.inbuf, xx);
+    len2 = socklist[ret].handler.sock.inbuflen + 1;
+    socklist[ret].handler.sock.inbuf = nmalloc(len2);
+    memcpy(socklist[ret].handler.sock.inbuf, xx, len2);
   }
   if (data)
     return socklist[ret].sock;
@@ -1215,7 +1245,7 @@ void tputs(int z, char *s, unsigned int len)
       if (socklist[i].handler.sock.outbuf != NULL) {
         /* Already queueing: just add it */
         p = (char *) nrealloc(socklist[i].handler.sock.outbuf, socklist[i].handler.sock.outbuflen + len);
-        egg_memcpy(p + socklist[i].handler.sock.outbuflen, s, len);
+        memcpy(p + socklist[i].handler.sock.outbuflen, s, len);
         socklist[i].handler.sock.outbuf = p;
         socklist[i].handler.sock.outbuflen += len;
         return;
@@ -1244,7 +1274,7 @@ void tputs(int z, char *s, unsigned int len)
       if (x < len) {
         /* Socket is full, queue it */
         socklist[i].handler.sock.outbuf = nmalloc(len - x);
-        egg_memcpy(socklist[i].handler.sock.outbuf, &s[x], len - x);
+        memcpy(socklist[i].handler.sock.outbuf, &s[x], len - x);
         socklist[i].handler.sock.outbuflen = len - x;
       }
       return;
@@ -1340,7 +1370,7 @@ void dequeue_sockets()
         /* This removes any sent bytes from the beginning of the buffer */
         socklist[i].handler.sock.outbuf =
                             nmalloc(socklist[i].handler.sock.outbuflen - x);
-        egg_memcpy(socklist[i].handler.sock.outbuf, p + x,
+        memcpy(socklist[i].handler.sock.outbuf, p + x,
                    socklist[i].handler.sock.outbuflen - x);
         socklist[i].handler.sock.outbuflen -= x;
         nfree(p);
@@ -1426,7 +1456,7 @@ int sanitycheck_dcc(char *nick, char *from, char *ipaddy, char *port)
   sockname_t name;
   IP ip = 0;
 #else
-  char badaddress[sizeof "255.255.255.255"];
+  char badaddress[INET_ADDRSTRLEN];
   IP ip = my_atoul(ipaddy);
 #endif
   int prt = atoi(port);
@@ -1448,7 +1478,7 @@ int sanitycheck_dcc(char *nick, char *from, char *ipaddy, char *port)
       return 0;
     }
     if (IN6_IS_ADDR_V4MAPPED(&name.addr.s6.sin6_addr)) {
-      egg_memcpy(&ip, name.addr.s6.sin6_addr.s6_addr + 12, sizeof ip);
+      memcpy(&ip, name.addr.s6.sin6_addr.s6_addr + 12, sizeof ip);
       ip = ntohl(ip);
     }
   }

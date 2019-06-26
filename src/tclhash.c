@@ -9,7 +9,7 @@
  */
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2018 Eggheads Development Team
+ * Copyright (C) 1999 - 2019 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -26,6 +26,7 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
+#include <sys/time.h>
 #include <sys/resource.h>
 #include "main.h"
 #include "chan.h"
@@ -740,7 +741,7 @@ static int trigger_bind(const char *proc, const char *param,
    */
   Tcl_SetVar(interp, "lastbind", (char *) mask, TCL_GLOBAL_ONLY);
 
-  if(proc && proc[0] != '*') { // proc[0] != '*' excludes internal binds
+  if(proc && proc[0] != '*') { /* proc[0] != '*' excludes internal binds */
     debug1("triggering bind %s", proc);
     r = getrusage(RUSAGE_SELF, &ru1);
   }
@@ -1181,16 +1182,21 @@ void check_tcl_away(const char *bot, int idx, const char *msg)
                  MATCH_MASK | BIND_STACKABLE);
 }
 
-void check_tcl_time(struct tm *tm)
+void check_tcl_time_and_cron(struct tm *tm)
 {
-  char y[18];
+  /* Undersized due to sane assumption that struct tm is sane and at the same
+   * time oversized to silence a gcc format-truncation warning */
+  char y[24];
 
   egg_snprintf(y, sizeof y, "%02d", tm->tm_min);
   Tcl_SetVar(interp, "_time1", (char *) y, 0);
+  Tcl_SetVar(interp, "_cron1", (char *) y, 0);
   egg_snprintf(y, sizeof y, "%02d", tm->tm_hour);
   Tcl_SetVar(interp, "_time2", (char *) y, 0);
+  Tcl_SetVar(interp, "_cron2", (char *) y, 0);
   egg_snprintf(y, sizeof y, "%02d", tm->tm_mday);
   Tcl_SetVar(interp, "_time3", (char *) y, 0);
+  Tcl_SetVar(interp, "_cron3", (char *) y, 0);
   egg_snprintf(y, sizeof y, "%02d", tm->tm_mon);
   Tcl_SetVar(interp, "_time4", (char *) y, 0);
   egg_snprintf(y, sizeof y, "%04d", tm->tm_year + 1900);
@@ -1200,18 +1206,7 @@ void check_tcl_time(struct tm *tm)
   check_tcl_bind(H_time, y, 0,
                  " $_time1 $_time2 $_time3 $_time4 $_time5",
                  MATCH_MASK | BIND_STACKABLE);
-}
 
-void check_tcl_cron(struct tm *tm)
-{
-  char y[15];
-
-  egg_snprintf(y, sizeof y, "%02d", tm->tm_min);
-  Tcl_SetVar(interp, "_cron1", (char *) y, 0);
-  egg_snprintf(y, sizeof y, "%02d", tm->tm_hour);
-  Tcl_SetVar(interp, "_cron2", (char *) y, 0);
-  egg_snprintf(y, sizeof y, "%02d", tm->tm_mday);
-  Tcl_SetVar(interp, "_cron3", (char *) y, 0);
   egg_snprintf(y, sizeof y, "%02d", tm->tm_mon + 1);
   Tcl_SetVar(interp, "_cron4", (char *) y, 0);
   egg_snprintf(y, sizeof y, "%02d", tm->tm_wday);

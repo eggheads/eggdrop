@@ -4,7 +4,7 @@
  */
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2018 Eggheads Development Team
+ * Copyright (C) 1999 - 2019 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -95,7 +95,7 @@ static int optimize_kicks;
 static int msgrate;             /* Number of seconds between sending
                                  * queued lines to server. */
 #ifdef TLS
-static int use_ssl;		/* Use SSL for the next server connection? */
+static int use_ssl;             /* Use SSL for the next server connection? */
 static int tls_vfyserver;       /* Certificate validation mode for servrs  */
 #endif
 
@@ -388,7 +388,7 @@ static int calc_penalty(char *msg)
   return penalty;
 }
 
-char *splitnicks(char **rest)
+static char *splitnicks(char **rest)
 {
   char *o, *r;
 
@@ -810,10 +810,9 @@ static void queue_server(int which, char *msg, int len)
   /* Remove \r\n. We will add these back when we send the text to the server.
    * - Wcc [01/09/2004]
    */
-  strncpy(buf, msg, sizeof buf);
+  strlcpy(buf, msg, sizeof buf);
   msg = buf;
   remove_crlf(&msg);
-  buf[510] = 0;
   len = strlen(buf);
 
   /* No queue for PING and PONG - drummer */
@@ -904,7 +903,7 @@ static void queue_server(int which, char *msg, int len)
 
     q->len = len;
     q->msg = nmalloc(len + 1);
-    egg_memcpy(q->msg, buf, len);
+    memcpy(q->msg, buf, len);
     q->msg[len] = 0;
     h->tot++;
     h->warned = 0;
@@ -1909,7 +1908,7 @@ static Function server_table[] = {
   (Function) NULL,              /* char * (points to botname later on)  */
   (Function) botuserhost,       /* char *                               */
 #ifdef TLS
-  (Function) & use_ssl,		/* int					*/
+  (Function) & use_ssl,         /* int                                  */
 #else
   (Function) NULL,              /* Was quiet_reject <Wcc[01/21/03]>.    */
 #endif

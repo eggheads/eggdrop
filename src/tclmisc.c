@@ -4,7 +4,7 @@
  */
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2018 Eggheads Development Team
+ * Copyright (C) 1999 - 2019 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -188,11 +188,11 @@ static int tcl_putloglev STDVAR
   int lev = 0;
   char logtext[501];
 
-  BADARGS(4, 4, " level(s) channel text");
+  BADARGS(4, 4, " flag(s) channel text");
 
   lev = logmodes(argv[1]);
   if (!lev) {
-    Tcl_AppendResult(irp, "No valid log-level given", NULL);
+    Tcl_AppendResult(irp, "No valid log flag given", NULL);
     return TCL_ERROR;
   }
   strlcpy(logtext, argv[3], sizeof logtext);

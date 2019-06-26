@@ -1,7 +1,7 @@
 /*
  * transferfstat.c -- part of transfer.mod
  *
- * Copyright (C) 2003 - 2018 Eggheads Development Team
+ * Copyright (C) 2003 - 2019 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -98,7 +98,7 @@ static int fstat_set(struct userrec *u, struct user_entry *e, void *buf)
        * Someone could do:
        *  e->u.extra->uploads = 12345;
        *  fs = user_malloc(sizeof(struct filesys_stats));
-       *  my_memcpy(...e->u.extra...fs...);
+       *  memcpy(...e->u.extra...fs...);
        *  set_user(&USERENTRY_FSTAT, u, fs);
        *
        * Then we wouldn't detect here that something's changed.
@@ -255,7 +255,7 @@ static int fstat_dupuser(struct userrec *u, struct userrec *o,
 
   if (e->u.extra) {
     fs = user_malloc(sizeof(struct filesys_stats));
-    my_memcpy(fs, e->u.extra, sizeof(struct filesys_stats));
+    memcpy(fs, e->u.extra, sizeof(struct filesys_stats));
     return set_user(&USERENTRY_FSTAT, u, fs);
   }
 

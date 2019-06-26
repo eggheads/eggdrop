@@ -3,7 +3,7 @@
  */
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2018 Eggheads Development Team
+ * Copyright (C) 1999 - 2019 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -21,7 +21,6 @@
  */
 
 #include "main.h"
-#include "memcpy.h"
 
 #ifndef HAVE_STRCASECMP
 int egg_strcasecmp(const char *s1, const char *s2)

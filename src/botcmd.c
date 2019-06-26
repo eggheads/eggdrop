@@ -5,7 +5,7 @@
  */
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2018 Eggheads Development Team
+ * Copyright (C) 1999 - 2019 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -327,7 +327,7 @@ static void remote_tell_who(int idx, char *nick, int chan)
       /* for 2nd and more chans we need to prepend ','; i is > 10 */
       if (i > 10) {
         /* check if ", #chan" fits or if there is a next chan, if ", #chan," fits */
-	if ((c->next && i + l + 3 <= ssize) || (!c->next && i + l + 2 <= ssize)) {
+        if ((c->next && i + l + 3 <= ssize) || (!c->next && i + l + 2 <= ssize)) {
           strcat(s, ", ");
           i += 2;
         } else {
