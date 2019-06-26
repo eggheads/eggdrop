@@ -77,6 +77,7 @@
 #define DIRLEN       DIRMAX + 1
 #define LOGLINELEN   LOGLINEMAX + 1
 #define NOTENAMELEN  ((HANDLEN * 2) + 1)
+#define PASSWORDLEN  16
 
 
 /* We have to generate compiler errors in a weird way since not all compilers

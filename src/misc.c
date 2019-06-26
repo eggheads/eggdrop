@@ -1434,18 +1434,15 @@ void show_banner(int idx)
   fclose(vv);
 }
 
-/* Create a string with random letters and digits
+/* Create a string with random lower case letters and digits
  */
-void make_rand_str(char *s, int len)
+void make_rand_str(char *s, const int len)
 {
-  int j;
+  int i;
+  static const char chars[] = "0123456789abcdefghijklmnopqrstuvwxyz";
 
-  for (j = 0; j < len; j++) {
-    if (!randint(3))
-      s[j] = '0' + randint(10);
-    else
-      s[j] = 'a' + randint(26);
-  }
+  for (i = 0; i < len; i++)
+    s[i] = chars[randint((sizeof chars) - 1)];
   s[len] = 0;
 }
 
