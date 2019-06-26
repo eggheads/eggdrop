@@ -6,7 +6,7 @@
  */
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2018 Eggheads Development Team
+ * Copyright (C) 1999 - 2019 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -78,6 +78,7 @@
 #define DIRLEN       DIRMAX + 1
 #define LOGLINELEN   LOGLINEMAX + 1
 #define NOTENAMELEN  ((HANDLEN * 2) + 1)
+#define PASSWORDLEN  16
 
 
 /* We have to generate compiler errors in a weird way since not all compilers

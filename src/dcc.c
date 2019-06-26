@@ -6,7 +6,7 @@
  */
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2018 Eggheads Development Team
+ * Copyright (C) 1999 - 2019 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -660,6 +660,8 @@ static int dcc_bot_check_digest(int idx, char *remote_digest)
 
 static void dcc_chat_pass(int idx, char *buf, int atr)
 {
+  char pass[PASSWORDLEN];
+
   if (!atr)
     return;
   if (dcc[idx].status & STAT_TELNET)
@@ -688,19 +690,17 @@ static void dcc_chat_pass(int idx, char *buf, int atr)
 #endif
     /* No password set? */
     if (u_pass_match(dcc[idx].user, "-")) {
-      char ps[20];
-
-      makepass(ps);
-      set_user(&USERENTRY_PASS, dcc[idx].user, ps);
+      makepass(pass);
+      set_user(&USERENTRY_PASS, dcc[idx].user, pass);
       changeover_dcc(idx, &DCC_BOT_NEW, sizeof(struct bot_info));
 
       dcc[idx].status = STAT_CALLED;
       dprintf(idx, "*hello!\n");
       greet_new_bot(idx);
 #ifdef NO_OLD_BOTNET
-      dprintf(idx, "h %s\n", ps);
+      dprintf(idx, "h %s\n", pass);
 #else
-      dprintf(idx, "handshake %s\n", ps);
+      dprintf(idx, "handshake %s\n", pass);
 #endif
       return;
     }
@@ -1458,8 +1458,13 @@ static void eof_dcc_telnet(int idx)
 
 static void display_telnet(int idx, char *buf)
 {
+#ifdef TLS
   sprintf(buf, "lstn  %s%d%s", dcc[idx].ssl ? "+" : "", dcc[idx].port,
           (dcc[idx].status & LSTN_PUBLIC) ? " pub" : "");
+#else
+  sprintf(buf, "lstn  %d%s", dcc[idx].port,
+          (dcc[idx].status & LSTN_PUBLIC) ? " pub" : "");
+#endif
 }
 
 struct dcc_table DCC_TELNET = {

@@ -6,7 +6,7 @@
  */
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2018 Eggheads Development Team
+ * Copyright (C) 1999 - 2019 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -892,11 +892,12 @@ module_entry *module_find(char *name, int major, int minor)
   module_entry *p;
 
   for (p = module_list; p && p->name; p = p->next) {
-    if ((major == p->major || !major) && minor <= p->minor &&
-        !egg_strcasecmp(name, p->name))
+    if ( (((major < p->major) || !major) || ((major == p->major) &&
+        (minor <= p->minor))) && !egg_strcasecmp(name, p->name) )
       return p;
   }
   return NULL;
+
 }
 
 static int module_rename(char *name, char *newname)

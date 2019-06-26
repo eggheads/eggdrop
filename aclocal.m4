@@ -1,6 +1,6 @@
 dnl aclocal.m4: macros autoconf uses when building configure from configure.ac
 dnl
-dnl Copyright (C) 1999 - 2018 Eggheads Development Team
+dnl Copyright (C) 1999 - 2019 Eggheads Development Team
 dnl
 dnl This program is free software; you can redistribute it and/or
 dnl modify it under the terms of the GNU General Public License
@@ -752,11 +752,6 @@ AC_DEFUN([EGG_CHECK_OS],
     FreeBSD|OpenBSD|NetBSD)
       SHLIB_CC="$CC -fPIC"
       SHLIB_LD="$CC -shared"
-      case "$egg_cv_var_system_type" in
-        *NetBSD)
-          AC_DEFINE(NETBSD_HACKS, 1, [Define if running under NetBSD.])
-        ;;
-      esac
     ;;
     DragonFly)
       SHLIB_CC="$CC -fPIC"
