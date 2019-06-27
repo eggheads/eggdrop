@@ -2,27 +2,22 @@
  * ident.c -- part of ident.mod
  */
 /*
- * MIT License
+ * Copyright (c) 2018 - 2019 Michael Ortmann MIT License
+ * Copyright (C) 2019 Eggheads Development Team
  *
- * Copyright (c) 2018 - 2019 Michael Ortmann
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
  *
- * The above copyright notice and this permission notice shall be included in all
- * copies or substantial portions of the Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
- * SOFTWARE.
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
 #define MODULE_NAME "ident"
@@ -35,15 +30,15 @@
 #define IDENT_METHOD_OIDENT  0
 #define IDENT_METHOD_BUILTIN 1
 
-static Function *global = NULL, *server_funcs = NULL;;
+static Function *global = NULL, *server_funcs = NULL;
 
 static int ident_method = IDENT_METHOD_OIDENT;
-
 static int ident_port = 113;
+static int idx = 0;
 
 static tcl_ints identints[] = {
   {"ident-method", &ident_method, 0},
-  {"ident-port", &ident_port, 0},
+  {"ident-port",   &ident_port,   0},
   {NULL,           NULL,          0}
 };
 
@@ -59,7 +54,7 @@ static void ident_builtin_off()
   rem_builtins(H_raw, ident_raw);
 }
 
-static void ident_activity(int idx, char *buf, int len)
+static void ident_activity(int idx_unused, char *buf, int len)
 {
   int s;
   char buf2[128], *pos;
@@ -80,6 +75,10 @@ static void ident_activity(int idx, char *buf, int len)
     putlog(LOG_MISC, "*", "Ident error: %s", strerror(errno));
     return;
   }
+
+  killsock(dcc[idx].sock);
+  lostdcc(idx);
+  idx = 0;
 }
 
 static void ident_display(int idx, char *buf)
@@ -128,28 +127,30 @@ static void ident_oidentd()
 
 static void ident_builtin_on()
 {
-  int idx, s;
+  int s;
 
-  idx = new_dcc(&DCC_IDENTD, 0);
-  if (idx < 0) {
-    putlog(LOG_MISC, "*", "Ident error: could not get new dcc.");
-    return;
+  if (!idx) {
+    idx = new_dcc(&DCC_IDENTD, 0);
+    if (idx < 0) {
+      putlog(LOG_MISC, "*", "Ident error: could not get new dcc.");
+      return;
+    }
+    s = open_listen(&ident_port);
+    if (s == -2) {
+      lostdcc(idx);
+      putlog(LOG_MISC, "*", "Ident error: could not bind socket port %i.", ident_port);
+      return;
+    } else if (s == -1) {
+      lostdcc(idx);
+      putlog(LOG_MISC, "*", "Ident error: could not get socket.");
+      return;
+    }
+    dcc[idx].sock = s;
+    dcc[idx].port = ident_port;
+    strcpy(dcc[idx].nick, "(ident)");
+    
+    add_builtins(H_raw, ident_raw);
   }
-  s = open_listen(&ident_port);
-  if (s == -2) {
-    lostdcc(idx);
-    putlog(LOG_MISC, "*", "Ident error: could not bind socket.");
-    return;
-  } else if (s == -1) {
-    lostdcc(idx);
-    putlog(LOG_MISC, "*", "Ident error: could not get socket.");
-    return;
-  }
-  dcc[idx].sock = s;
-  /* dcc[idx].timeval = now; */
-  strcpy(dcc[idx].nick, "(ident)");
-  
-  add_builtins(H_raw, ident_raw);
 }
 
 static void ident_ident()
@@ -167,6 +168,11 @@ static cmd_t ident_event[] = {
 
 static char *ident_close()
 {
+  if (idx) {
+    killsock(dcc[idx].sock);
+    lostdcc(idx);
+  }
+
   rem_builtins(H_event, ident_event);
   rem_builtins(H_raw, ident_raw);
   rem_tcl_ints(identints);
