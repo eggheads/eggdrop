@@ -8,7 +8,7 @@ Ident Module
 
 This module adds Eggdrop support for the externally-provided oident
 service, or alternatively the ability for Eggdrop to act as its own ident
-server. 
+daemon. 
 
 Traditionally, an IRC server queries port 113 on an irc client's host to
 determine the ident for the client. The client's host normally replies with

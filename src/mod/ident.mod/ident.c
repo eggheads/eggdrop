@@ -39,8 +39,11 @@ static Function *global = NULL, *server_funcs = NULL;;
 
 static int ident_method = IDENT_METHOD_OIDENT;
 
+static int ident_port = 113;
+
 static tcl_ints identints[] = {
   {"ident-method", &ident_method, 0},
+  {"ident-port", &ident_port, 0},
   {NULL,           NULL,          0}
 };
 
@@ -125,14 +128,14 @@ static void ident_oidentd()
 
 static void ident_builtin_on()
 {
-  int idx, port = 113, s;
+  int idx, s;
 
   idx = new_dcc(&DCC_IDENTD, 0);
   if (idx < 0) {
     putlog(LOG_MISC, "*", "Ident error: could not get new dcc.");
     return;
   }
-  s = open_listen(&port);
+  s = open_listen(&ident_port);
   if (s == -2) {
     lostdcc(idx);
     putlog(LOG_MISC, "*", "Ident error: could not bind socket.");
@@ -186,9 +189,9 @@ char *ident_start(Function *global_funcs)
 
   module_register(MODULE_NAME, ident_table, 0, 1);
 
-  if (!module_depend(MODULE_NAME, "eggdrop", 108, 4)) {
+  if (!module_depend(MODULE_NAME, "eggdrop", 109, 0)) {
     module_undepend(MODULE_NAME);
-    return "This module requires Eggdrop 1.8.4 or later.";
+    return "This module requires Eggdrop 1.9.0 or later.";
   }
   if (!(server_funcs = module_depend(MODULE_NAME, "server", 1, 0))) {
     module_undepend(MODULE_NAME);
