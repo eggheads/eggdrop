@@ -116,6 +116,7 @@ mv tmpdocs/faq.txt $BASEDIR/../doc/FAQ
 mv tmpdocs/features.txt $BASEDIR/../FEATURES
 mv tmpdocs/filesys.txt $BASEDIR/../doc/settings/mod.filesys
 mv tmpdocs/first-script.txt $BASEDIR/../doc/FIRST-SCRIPT
+mv tmpdocs/ident.txt $BASEDIR/../doc/settings/mod.ident
 mv tmpdocs/install.txt $BASEDIR/../INSTALL
 mv tmpdocs/ipv6.txt $BASEDIR/../doc/IPV6
 mv tmpdocs/irc.txt $BASEDIR/../doc/settings/mod.irc
