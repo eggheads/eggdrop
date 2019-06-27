@@ -2200,7 +2200,7 @@ duration <seconds>
 strftime <formatstring> [time]
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-  Returns: a formatted string of time using standard strftime format. If time is specified, the value of the specified time is used. Otherwise, the current time is used. Systems may provide non posix flag characters and may accept flags in conjunction with conversion specifiers other than posix; but portable Tcl scripts cannot depend on such extensions.
+  Returns: a formatted string of time using standard strftime format. If time is specified, the value of the specified time is used. Otherwise, the current time is used. Note: The implementation of strftime varies from platform to platform, so the user should only use POSIX-compliant format specifiers to ensure fully portable code.
 
   Module: core
 
