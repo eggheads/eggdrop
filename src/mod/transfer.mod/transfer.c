@@ -2,7 +2,7 @@
  * transfer.c -- part of transfer.mod
  *
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2018 Eggheads Development Team
+ * Copyright (C) 1999 - 2019 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -609,18 +609,12 @@ static void eof_dcc_get(int idx)
 
 static void dcc_send(int idx, char *buf, int len)
 {
-  char s[512];
-  unsigned long sent;
+  uint32_t sentn;
 
   fwrite(buf, len, 1, dcc[idx].u.xfer->f);
   dcc[idx].status += len;
-  /* Put in network byte order */
-  sent = dcc[idx].status;
-  s[0] = (sent / (1 << 24));
-  s[1] = (sent % (1 << 24)) / (1 << 16);
-  s[2] = (sent % (1 << 16)) / (1 << 8);
-  s[3] = (sent % (1 << 8));
-  tputs(dcc[idx].sock, s, 4);
+  sentn = htonl(dcc[idx].status); /* Put in network byte order */
+  tputs(dcc[idx].sock, (char *) &sentn, 4);
   dcc[idx].timeval = now;
   if (dcc[idx].status > dcc[idx].u.xfer->length && dcc[idx].u.xfer->length > 0) {
     dprintf(DP_HELP, TRANSFER_BOGUS_FILE_LENGTH, dcc[idx].nick);

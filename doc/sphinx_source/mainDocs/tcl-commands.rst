@@ -11,7 +11,7 @@ of the normal Tcl built-in commands are still there, of course, but you
 can also use these to manipulate features of the bot. They are listed
 according to category.
 
-This list is accurate for Eggdrop v1.8.3. Scripts written for v1.3, v1.4
+This list is accurate for Eggdrop v1.8.4. Scripts written for v1.3, v1.4
 or 1.6 series of Eggdrop should probably work with a few minor modifications
 depending on the script. Scripts which were written for  v0.9, v1.0, v1.1
 or v1.2 will probably not work without modification. Commands which have
@@ -1352,7 +1352,7 @@ putdcc <idx> <text> [-raw]
 dccbroadcast <message>
 ^^^^^^^^^^^^^^^^^^^^^^
 
-  Description: sends a message to everyone on the party line across the botnet, in the form of "\*\*\* <message>" for local users, "\*\*\* (Bot) <message>" for users on other bots with version below 1.8.3, and "(Bot) <message>" for users on other bots with version 1.8.3+ and console log mode 'l' enabled
+  Description: sends a message to everyone on the party line across the botnet, in the form of "\*\*\* <message>" for local users, "\*\*\* (Bot) <message>" for users on other bots with version below 1.8.4, and "(Bot) <message>" for users on other bots with version 1.8.4+ and console log mode 'l' enabled
 
   Returns: nothing
 
@@ -2128,7 +2128,7 @@ maskhost <nick!user@host> [masktype]
 timer <minutes> <tcl-command> [count]
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-  Description: executes the given Tcl command after a certain number of minutes have passed. If count is specified, the command will be executed count times with the given interval in between. If you specify a count of 0, the timer will repeat until it's removed with killtimer or until the bot is restarted.
+  Description: executes the given Tcl command after a certain number of minutes have passed, at the top of the minute (ie, if a timer is started at 10:03:34 with 1 minute specified, it will execute at 10:04:00. If a timer is started at 10:06:34 with 2 minutes specified, it will execute at 10:08:00). If count is specified, the command will be executed count times with the given interval in between. If you specify a count of 0, the timer will repeat until it's removed with killtimer or until the bot is restarted.
 
   Returns: a timerID
 
@@ -2286,7 +2286,7 @@ unlink <bot>
 encrypt <key> <string>
 ^^^^^^^^^^^^^^^^^^^^^^
 
-  Returns: encrypted string (using the currently loaded encryption module), encoded into ASCII using base-64. As of v1.8.3, the default blowfish encryption module can use either the older ECB mode (currently used by default for compatibility reasons), or the more recent and more-secure CBC mode. You can explicitly request which encryption mode to use by prefixing the encryption key with either "ecb:" or "cbc:", or by using the blowfish-use-mode setting in the config file. Note: the default encryption mode for this function is planned to transition from ECB to CBC in v1.9.0.
+  Returns: encrypted string (using the currently loaded encryption module), encoded into ASCII using base-64. As of v1.8.4, the default blowfish encryption module can use either the older ECB mode (currently used by default for compatibility reasons), or the more recent and more-secure CBC mode. You can explicitly request which encryption mode to use by prefixing the encryption key with either "ecb:" or "cbc:", or by using the blowfish-use-mode setting in the config file. Note: the default encryption mode for this function is planned to transition from ECB to CBC in v1.9.0.
 
   Module: encryption
 
@@ -3428,4 +3428,4 @@ are the four special characters:
 |     | words) (This char only works in binds, not in regular matching)          |
 +-----+--------------------------------------------------------------------------+
 
-  Copyright (C) 1999 - 2018 Eggheads Development Team
+  Copyright (C) 1999 - 2019 Eggheads Development Team

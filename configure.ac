@@ -1,8 +1,8 @@
 dnl configure.ac: this file is processed by autoconf to produce ./configure.
 
-AC_PREREQ(2.60)
-AC_INIT([Eggdrop],[1.8.3],[bugs@eggheads.org])
-AC_COPYRIGHT([Copyright (C) 1999 - 2018 Eggheads Development Team])
+AC_PREREQ(2.61)
+AC_INIT([Eggdrop],[1.8.4],[bugs@eggheads.org])
+AC_COPYRIGHT([Copyright (C) 1999 - 2019 Eggheads Development Team])
 AC_LANG([C])
 AC_REVISION([m4_esyscmd([misc/getcommit])])
 AC_CONFIG_SRCDIR(src/eggdrop.h)
@@ -14,7 +14,7 @@ AC_PRESERVE_HELP_ORDER
 dnl config.h stuff
 AH_TOP([/*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2018 Eggheads Development Team
+ * Copyright (C) 1999 - 2019 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -61,6 +61,7 @@ EGG_EXEEXT
 
 # Checks for programs.
 AC_PROG_INSTALL
+AC_CHECK_PROGS(MAKE, make gmake)
 AC_PROG_MAKE_SET
 AC_PROG_RANLIB
 AC_PROG_LN_S

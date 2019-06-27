@@ -9,7 +9,7 @@
  */
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2018 Eggheads Development Team
+ * Copyright (C) 1999 - 2019 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -208,11 +208,7 @@ void splitc(char *first, char *rest, char divider)
   if (first != NULL)
     strcpy(first, rest);
   if (first != rest)
-    /*    In most circumstances, strcpy with src and dst being the same buffer
-     *  can produce undefined results. We're safe here, as the src is
-     *  guaranteed to be at least 2 bytes higher in memory than dest. <Cybah>
-     */
-    strcpy(rest, p + 1);
+    memmove(rest, p + 1, strlen(p + 1) + 1);
 }
 
 /*    As above, but lets you specify the 'max' number of bytes (EXCLUDING the
@@ -1438,18 +1434,15 @@ void show_banner(int idx)
   fclose(vv);
 }
 
-/* Create a string with random letters and digits
+/* Create a string with random lower case letters and digits
  */
-void make_rand_str(char *s, int len)
+void make_rand_str(char *s, const int len)
 {
-  int j;
+  int i;
+  static const char chars[] = "0123456789abcdefghijklmnopqrstuvwxyz";
 
-  for (j = 0; j < len; j++) {
-    if (!randint(3))
-      s[j] = '0' + randint(10);
-    else
-      s[j] = 'a' + randint(26);
-  }
+  for (i = 0; i < len; i++)
+    s[i] = chars[randint((sizeof chars) - 1)];
   s[len] = 0;
 }
 
