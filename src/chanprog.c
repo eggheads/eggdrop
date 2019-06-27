@@ -9,7 +9,7 @@
  */
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2018 Eggheads Development Team
+ * Copyright (C) 1999 - 2019 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -272,7 +272,7 @@ void tell_verbose_uptime(int idx)
   if (backgrd)
     strcpy(s1, MISC_BACKGROUND);
   else {
-    if (term_z)
+    if (term_z >= 0)
       strcpy(s1, MISC_TERMMODE);
     else if (con_chan)
       strcpy(s1, MISC_STATMODE);
@@ -290,7 +290,7 @@ void tell_verbose_status(int idx)
   char *vers_t, *uni_t;
   int i;
   time_t now2 = now - online_since, hr, min;
-  float cputime;
+  double cputime, cache_total;
 #ifdef HAVE_UNAME
   struct utsname un;
 
@@ -327,7 +327,7 @@ void tell_verbose_status(int idx)
   if (backgrd)
     strlcpy(s1, MISC_BACKGROUND, sizeof s1);
   else {
-    if (term_z)
+    if (term_z >= 0)
       strlcpy(s1, MISC_TERMMODE, sizeof s1);
     else if (con_chan)
       strlcpy(s1, MISC_STATMODE, sizeof s1);
@@ -342,9 +342,11 @@ void tell_verbose_status(int idx)
     cputime -= hr * 60;
     sprintf(s2, "CPU: %02d:%05.2f", (int) hr, cputime); /* Actually min/sec */
   }
-  dprintf(idx, "%s %s (%s) - %s - %s: %4.1f%%\n", MISC_ONLINEFOR,
-          s, s1, s2, MISC_CACHEHIT,
-          100.0 * ((float) cache_hit) / ((float) (cache_hit + cache_miss)));
+  if (cache_hit + cache_miss) {      /* 2019, still can't divide by zero */
+    cache_total = 100.0 * (cache_hit) / (cache_hit + cache_miss);
+  } else cache_total = 0;
+    dprintf(idx, "%s %s (%s) - %s - %s: %4.1f%%\n", MISC_ONLINEFOR,
+            s, s1, s2, MISC_CACHEHIT, cache_total);
 
   dprintf(idx, "Configured with: " EGG_AC_ARGS "\n");
   if (admin[0])
@@ -670,33 +672,17 @@ void list_timers(Tcl_Interp *irp, tcl_timer_t *stack)
   }
 }
 
-/* Oddly enough, written by Sup (former(?) Eggdrop coder)
- */
-int isowner(char *name)
-{
-  char *ptr = NULL, *s = NULL, *n = NULL;
+int isowner(char *name) {
+  char s[sizeof owner];
+  char *sep = ", \t\n\v\f\r";
+  char *word;
 
-  if (!name)
-    return 0;
-
-  ptr = owner - 1;
-
-  do {
-    ptr++;
-    if (*ptr && !egg_isspace(*ptr) && *ptr != ',') {
-      if (!s)
-        s = ptr;
-    } else if (s) {
-      for (n = name; *n && *s && s < ptr &&
-           tolower((unsigned) *n) == tolower((unsigned) *s); n++, s++);
-
-      if (s == ptr && !*n)
-        return 1;
-
-      s = NULL;
+  strcpy(s, owner);
+  for (word = strtok(s, sep); word; word = strtok(NULL, sep)) {
+    if (!strcasecmp(name, word)) {
+      return 1;
     }
-  } while (*ptr);
-
+  }
   return 0;
 }
 
@@ -705,7 +691,7 @@ int isowner(char *name)
  */
 void add_hq_user()
 {
-  if (!backgrd && term_z > 0 && userlist) {
+  if (!backgrd && term_z >= 0) {
     /* HACK: Workaround using dcc[].nick not to pass literal "-HQ" as a non-const arg */
     dcc[term_z].user = get_user_by_handle(userlist, dcc[term_z].nick);
     /* Make sure there's an innocuous -HQ user if needed */

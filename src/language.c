@@ -4,7 +4,7 @@
  */
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2018 Eggheads Development Team
+ * Copyright (C) 1999 - 2019 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -259,10 +259,10 @@ static void read_lang(char *langfile)
         lnew = 0;
         ctmp[-1] = 0;
       } else {
-      	ltexts++;
-      	lnew = 1;
-      	/* Convert literal \n and \t escapes */
-      	for (ctmp1 = ctmp = ltext; *ctmp1; ctmp++, ctmp1++) {
+        ltexts++;
+        lnew = 1;
+        /* Convert literal \n and \t escapes */
+        for (ctmp1 = ctmp = ltext; *ctmp1; ctmp++, ctmp1++) {
           if ((*ctmp1 == '\\') && ctmp1[1] == 'n') {
             *ctmp = '\n';
             ctmp1++;

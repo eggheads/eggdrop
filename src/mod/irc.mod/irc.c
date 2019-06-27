@@ -4,7 +4,7 @@
  */
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2018 Eggheads Development Team
+ * Copyright (C) 1999 - 2019 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -687,7 +687,6 @@ static void check_expired_chanstuff()
                  "%s (%s) got lost in the net-split.", m->nick, m->userhost);
           killmember(chan, m->nick);
         }
-        m = n;
       }
       check_lonely_channel(chan);
     } else if (!channel_inactive(chan) && !channel_pending(chan)) {

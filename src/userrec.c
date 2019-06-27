@@ -6,7 +6,7 @@
  */
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2018 Eggheads Development Team
+ * Copyright (C) 1999 - 2019 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -74,7 +74,7 @@ void *_user_realloc(void *ptr, int size, const char *file, int line)
 #endif
 }
 
-int expmem_mask(struct maskrec *m)
+static int expmem_mask(struct maskrec *m)
 {
   int result = 0;
 
@@ -635,17 +635,15 @@ struct userrec *adduser(struct userrec *bu, char *handle, char *host,
   }
   set_user(&USERENTRY_PASS, u, pass);
   if (!noxtra) {
-    char *now2;
+    int l;
     xk = nmalloc(sizeof *xk);
     xk->key = nmalloc(8);
     strcpy(xk->key, "created");
-    now2 = nmalloc(15);
     tv = now;
-    sprintf(now2, "%li", tv);
-    xk->data = nmalloc(strlen(now2) + 1);
+    l = snprintf(NULL, 0, "%li", tv);
+    xk->data = nmalloc(l + 1);
     sprintf(xk->data, "%li", tv);
     set_user(&USERENTRY_XTRA, u, xk);
-    nfree(now2);
   }
   /* Strip out commas -- they're illegal */
   if (host && host[0]) {

@@ -9,7 +9,7 @@
  */
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2018 Eggheads Development Team
+ * Copyright (C) 1999 - 2019 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -208,11 +208,7 @@ void splitc(char *first, char *rest, char divider)
   if (first != NULL)
     strcpy(first, rest);
   if (first != rest)
-    /*    In most circumstances, strcpy with src and dst being the same buffer
-     *  can produce undefined results. We're safe here, as the src is
-     *  guaranteed to be at least 2 bytes higher in memory than dest. <Cybah>
-     */
-    strcpy(rest, p + 1);
+    memmove(rest, p + 1, strlen(p + 1) + 1);
 }
 
 /*    As above, but lets you specify the 'max' number of bytes (EXCLUDING the
@@ -260,14 +256,16 @@ char *splitnick(char **blah)
 
 void remove_crlf(char **line)
 {
-  char *p;
+  char *p = *line;
 
-  p = strchr(*line, '\n');
-  if (p != NULL)
-    *p = 0;
-  p = strchr(*line, '\r');
-  if (p != NULL)
-    *p = 0;
+  while (*p) {
+    if (*p == '\r' || *p == '\n')
+    {
+      *p = 0;
+      break;
+    }
+    p++;
+  }
 }
 
 char *newsplit(char **rest)
@@ -306,12 +304,12 @@ char *newsplit(char **rest)
  *
  * "nick!user@is.the.lamest.bg"  -> *!*user@*.the.lamest.bg (ccTLD)
  * "nick!user@is.the.lamest.com" -> *!*user@*.lamest.com (gTLD)
- * "lamest.example"	         -> *!*@lamest.example
+ * "lamest.example"              -> *!*@lamest.example
  * "whatever@lamest.example"     -> *!*whatever@lamest.example
  * "com.example@user!nick"       -> *!*com.example@user!nick
- * "!"			         -> *!*@!
- * "@"			         -> *!*@*
- * ""				 -> *!*@*
+ * "!"                           -> *!*@!
+ * "@"                           -> *!*@*
+ * ""                            -> *!*@*
  * "abc!user@2001:db8:618:5c0:263:15:dead:babe"
  * -> *!*user@2001:db8:618:5c0:263:15:dead:*
  * "abc!user@0:0:0:0:0:ffff:1.2.3.4"
@@ -570,7 +568,7 @@ void putlog EGG_VARARGS_DEF(int, arg1)
   }
   /* Place the timestamp in the string to be printed */
   if (out[0] && shtime) {
-    strncpy(s, stamp, tsl);
+    memcpy(s, stamp, tsl);
     out = s;
   }
   strcat(out, "\n");
@@ -583,9 +581,9 @@ void putlog EGG_VARARGS_DEF(int, arg1)
           /* Open this logfile */
           if (keep_all_logs) {
             egg_snprintf(s1, 256, "%s%s", logs[i].filename, ct);
-            logs[i].f = fopen(s1, "a+");
+            logs[i].f = fopen(s1, "a");
           } else
-            logs[i].f = fopen(logs[i].filename, "a+");
+            logs[i].f = fopen(logs[i].filename, "a");
         }
         if (logs[i].f != NULL) {
           /* Check if this is the same as the last line added to
@@ -625,7 +623,7 @@ void putlog EGG_VARARGS_DEF(int, arg1)
       }
     }
   }
-  if (!backgrd && !con_chan && !term_z)
+  if (!backgrd && !con_chan && term_z < 0)
     dprintf(DP_STDOUT, "%s", out);
   else if ((type & LOG_MISC) && use_stderr) {
     if (shtime)
@@ -1436,18 +1434,15 @@ void show_banner(int idx)
   fclose(vv);
 }
 
-/* Create a string with random letters and digits
+/* Create a string with random lower case letters and digits
  */
-void make_rand_str(char *s, int len)
+void make_rand_str(char *s, const int len)
 {
-  int j;
+  int i;
+  static const char chars[] = "0123456789abcdefghijklmnopqrstuvwxyz";
 
-  for (j = 0; j < len; j++) {
-    if (!randint(3))
-      s[j] = '0' + randint(10);
-    else
-      s[j] = 'a' + randint(26);
-  }
+  for (i = 0; i < len; i++)
+    s[i] = chars[randint((sizeof chars) - 1)];
   s[len] = 0;
 }
 

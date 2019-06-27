@@ -1,14 +1,343 @@
 
-Eggdrop Changes (Last Updated 2017-12-20):
+Eggdrop Changes (Last Updated 2018-12-11):
 __________________________________________
 
-Eggdrop v1.8.3rc1:
+Eggdrop v1.8.4rc1:
+
+  2018-12-11 * Update TLS docs
+             * Fix buffer sizes in seen.mod
+                 [Found by: michaelortmann / Patch by: michaelortmann]
+             * Fix segfault for small max-socks
+                 [Patch by: michaelortmann]
+             * Update AUTHORS THANKS NEWS for 1.8.4
+             * Adjust buffer size in add_note()
+                 [Patch by: michaelortmann]
+  2018-12-10 * Format trailing null
+                 [Patch by: michaelortmann]
+             * Fix strcpy param overlap
+                 [Patch by: michaelortmann]
+             * add zlib version info to status report
+                 [Patch by: michaelortmann]
+             * Fix AC_PREREQ in configure.ac files
+                 [Patch by: michaelortmann]
+             * Fix param overlap
+                 [Patch by: michaelortmann]
+             * Fix Sunos gmake check
+                 [Patch by: michaelortmann]
+             * Fix always sending IP for DCC
+                 [Found by: Geo / Patch by: Cizzle]
+             * Update old code to htonl()
+                 [Patch by: michaelortmann]
+  2018-12-09 * Update AUTHORS
+  2018-12-07 * Cleanup net.c
+                 [Patch by: michaelortmann]
+             * Improve plain-to-TLS botlinks. Closes #754
+                 [Found by: michaelortmann / Patch by: Cizzle, michaelortmann]
+             * Rewrite dcc relay filter
+                 [Patch by: michaelortmann]
+  2018-12-04 * Add + when using TLS for TELNET in Tcl dcclist. Closes #555
+                 [Found by: maimizuno / Patch by: maimizuno]
+             * German language typo fix
+                 [Patch by: michaelortmann]
+  2018-12-03 * Enhance OpenSSL handshake error reporting
+                 [Found by: Robby- / Patch by: michaelortmann]
+  2018-12-02 * Streamline return
+                 [Patch by: michaelortmann]
+             * Add static keyword
+                 [Patch by: michaelortmann]
+             * Delete unused addmask_fully() parameter
+                 [Patch by: michaelortmann]
+             * Raise ssl-ciphers length to 140
+                 [Patch by: michaelortmann]
+             * Raise tls_ciphers to 2048 (openssl ciphers | wc -c -gt 1330)
+  2018-12-01 * Wording fix
+                 [Patch by: michaelortmann]
+             * Fix build from another directory
+                 [Patch by: michaelortmann]
+  2018-11-25 * More strcpy() -> strlcpy()
+                 [Found by: thommey, michaelortmann / Patch by: michaelortmann]
+  2018-11-23 * Typo fix
+                 [Patch by: michaelortmann]
+  2018-11-20 * Fix starttls or passreq being on same line as stealth-prompt
+                 [Found by: Cizzle, (but, mostly, Geo) / Patch by: Cizzle]
+  2018-11-18 * Fix failing tls upgrade of plain-to-plain botlink. Fixes #580
+                 [Found by: maimizuno, Cizzle / Patch by: Cizzle]
+  2018-11-06 * Cosmetic spacing fix.
+  2018-11-02 * Enhance openssl compatibility. Fixes #676
+                 [Patch by: michaelortmann]
+             * When sending userfile, also send FPRINT. Fixes #462
+                 [Found by: Krekas / Patch by: michaelortmann]
+             * Fix 2 Wformat-truncation compile warnings
+                 [Patch by: michaelortmann]
+             * \e isnt C standard so use \x1B instead
+                 [Patch by: michaelortmann]
+             * buffer size cleanups
+                 [Patch by: michaelortmann]
+             * Remove compat memcpy
+                 [Patch by: michaelortmann]
+             * Clarify logfile/putlog command descriptions
+                 [Patch by: Geo]
+             * run autotools
+             * Update docs
+  2018-11-01 * Made 2 char arrays const
+                 [Patch by: michaelortmann]
+             * Remove rands magic number
+                 [Patch by: michaelortmann]
+             * Fix usage of SSL_CIPHER_description() under OpenSSL ver < 0.9.8m-beta1 (#720)
+                 [Patch by: michaelortmann]
+  2018-10-30 * Update help regarding stealth- settings.
+  2018-10-28 * More strncpy() to strlcpy()
+                 [Patch by: michaelortmann]
+             * Make userrec:expmem_mask() static
+                 [Patch by: michaelortmann]
+             * Fix more compiler warnings, clarify code
+                 [Patch by: michaelortmann]
+             * Optimize remove_crlf()
+                 [Patch by: michaelortmann]
+  2018-10-27 * Fix buffer size
+                 [Patch by: michaelortmann]
+             * Change strncpy to strlcpy
+                 [Patch by: michaelortmann]
+             * Fix Wstringop-truncation, Wformat-overflow warnings
+                 [Patch by: michaelortmann]
+             * Fix heap bug
+                 [Patch by: michaelortmann]
+             * Raise ban/exempt/ignore limit to 5 years. Closes #541
+                 [Found by: Robby / Patch by: michaelortmann]
+  2018-10-26 * Run autotools
+             * Allow -HQ to be added when no userfile is present. Closes #727
+                 [Found by: Geo / Patch by: Cizzle]
+  2018-10-24 * Fix forgoten #include <signal.h>. Fixes #732
+                 [Patch by: michaelortmann]
+             * Fix nwcc compiler error. Fixes #729
+                 [Patch by: michaelortmann]
+  2018-10-23 * Remove obsoleted line from PR #654, erroneously introduced by commit 6528e34.
+             * Add sys/time.h for older systems. Fixes #718
+                 [Patch by: michaelortmann]
+             * Change SSL cert default to 4096
+                 [Patch by: michaelortmann]
+             * Add volatile keyword to do_restart
+                 [Patch by: michaelortmann]
+             * Fix botattr flag validation, usage. Fixes #597
+                 [Found by: Geo / Patch by: Cizzle]
+             * Turn off Nagle's algorithm
+                 [Found by: simple / Patch by: michaelortmann]
+  2018-10-18 * Remove unneeded file access param
+                 [Patch by: michaelortmann]
+  2018-10-17 * Enhance OpenWrt / musl libc support.
+                 [Patch by: michaelortmann]
+             * Fix nickchange mode tracking. Fixes #94
+                 [Found by: assassin / Patch by: michaelortmann]
+             * Fix c89 comment
+             * Fix clang compiler warning -Wstrlcpy-strlcat-size
+                 [Patch by: michaelortmann]
+             * tab -> space
+             * Change output for logmodes ghtu to show b instead of m. Closes #521
+                 [Found by: maimizuno / Patch by: Cizzle]
+             * Cleanup tell_user functions (#631)
+                 [Patch by: michaelortmann]
+  2018-10-15 * Add debug log showing time executed binds/procs took. Closes #201
+                 [Found by: saapete / Patch by: michaelortmann]
+             * Utilize RES_TIMEOUT as default
+                 [Patch by: michaelortmann]
+             * Fix invalid handle openssl s_client fail. Fixes #679
+                 [Found by: michaelortmann / Patch by: michaelortmann]
+             * Add help for fprint. Closes #681
+                 [Found by: michaelortmann / Patch by: Geo]
+             * Add missing IPV6 ifdef
+  2018-10-14 * Update patch howto doc. Closes #629
+             * Fix buffer size in channels.c:write_channel()
+                 [Patch by: michaelortmann]
+             * Fix distclean
+                 [Patch by: michaelortmann]
+             * rewrite isowner()
+                 [Patch by: michaelortmann]
+             * Fix truncation (partial write) of output to foreground STDOUT
+                 [Found by: michaelortmann / Patch by: michaelortmann]
+             * Replace strncpy with memcpy here
+                 [Patch by: michaelortmann]
+             * Enhance configure socklen_t (#640)
+                 [Patch by: michaelortmann]
+             * Fix buffer size, gcc 8 format-truncation warnings
+                 [Patch by: michaelortmann]
+             * Cleanup dead store, assignment
+                 [Patch by: michaelortmann]
+             * Don't call gethostbyname2() if unnecessary. Fixes #518
+                 [Found by: maimizuno / Patch by: michaelortmann]
+             * Fix mismanaged idx allocation on some startup cases
+                 [Found by: paigeadelethompson / Patch by: michaelortmann]
+  2018-10-13 * Fix typos in docs, comments (?!) and even variables (!!!)
+                 [Patch by: michaelortmann]
+             * define/use CHANNELLEN; convert some strncpy + \0 into strlcpy()
+             * fix readme typo
+             * Add NickServ certificate auth to docs
+  2018-10-12 * Replace stuct with FLEXIBLE_ARRAY_MEMBER
+                 [Patch by: michaelortmann]
+             * Fix information leak through TCL variables. Fixes #137. Fixes #414
+                 [Found by: maimizuno / Patch by: michaelortmann]
+             * Enhance error log for SSL. Fixes #458
+                 [Found by: Geo / Patch by: michaelortmann]
+             * Don't send \r\n as an extra tcp packet. Fixes #689
+                 [Found by: michaelortmann / Patch by: michaelortmann]
+             * Performance enhancement
+                 [Patch by: michaelortmann]
+             * trigger_bind() overallocation
+             * Fix 'comparison is always false' / 'SIZEOF_SHORT undeclared' in dcc.c
+                 [Patch by: michaelortmann]
+             * Update language files
+             * run autotools
+             * Remove dupe logic expression
+  2018-10-11 * Fix gcc 8 stringop-truncation warning
+  2018-10-10 * Typo fix
+             * Enhance Minix support, enable shared build
+                 [Patch by: michaelortmann]
+             * strncpyz() -> strlcpy()
+  2018-10-09 * Use strlcpy() instead of strncpyz()
+                 [Patch by: michaelortmann]
+             * Fix aclocal.m4 grep under SunOS / OpenIndiana. Fixes #589
+  2018-10-04 * Fix eggdrop to compile and run under Haiku
+                 [Patch by: michaelortmann]
+             * Make 2 functions in dns.c static
+                 [Patch by: michaelortmann]
+             * Fix Nullpointer warning
+                 [Patch by: michaelortmann]
+  2018-10-01 * Fix adding botflag s for a channel. Fixes #525
+                 [Found by: A, user / Patch by: Cizzle]
+             * Fix kick event handler to not truncate uhost. Fixes #598
+                 [Found by: wilkowy / Patch by: michaelortmann]
+             * Fix possible truncations in delignore()
+                 [Found by: michaelortmann / Patch by: michaelortmann]
+  2018-09-26 * Update MD5 inclusion
+                 [Patch by: michaelortmann]
+             * Replace some typedefs
+                 [Patch by: michaelortmann]
+             * Fix c89 comments and arg validation
+                 [Patch by: michaelortmann]
+  2018-09-25 * Update CONTENTS and UPGRADING
+                 [Found by: michaelortmann / Patch by: michaelortmann]
+  2018-09-18 * Typo fix: effecient -> efficient (#632)
+                 [Found by: michaelortmann / Patch by: michaelortmann]
+             * Update docs links
+                 [Found by: michaelortmann / Patch by: michaelortmann]
+  2018-09-16 * Fix putlog() for foreground/LOG_MISC/use_stderr to not output timestamp
+                 [Found by: michaelortmann / Patch by: michaelortmann]
+             * Fix for tcc compiler
+                 [Found by: michaelortmann / Patch by: michaelortmann]
+             * Fix parentheses-equality compiler warning
+                 [Found by: michaelortmann / Patch by: michaelortmann]
+             * Fix format compiler warning in dns.c
+                 [Found by: michaelortmann / Patch by: michaelortmann]
+             * Help catch some dns.mod netbsd problems
+                 [Found by: fhorst / Patch by: michaelortmann]
+             * Fix small issues found while compiling on SunOS
+                 [Found by: michaelortmann / Patch by: michaelortmann]
+             * Fix invalid memory access
+                 [Found by: michaelortmann / Patch by: michaelortmann]
+             * Fix SizeofPtr bug
+                 [Found by: michaelortmann / Patch by: michaelortmann]
+             * Remove bloat from Makefile.in
+                 [Found by: michaelortmann / Patch by: michaelortmann]
+             * Add DragonFly, TrueOS support; remove BSD/OS
+                 [Found by: michaelortmann / Patch by: michaelortmann]
+             * Run autotools
+             * Docs formatting fixes
+             * Generate docs
+  2018-09-15 * Re-remove get_user_by_equal_host()
+             * Add support links to motd
+                 [Found by: michaelortmann]
+             * Remove compat memset. Closes #226
+                 [Found by: vanosg / Patch by: michaelortmann]
+  2018-09-14 * Synchronize documentation/function for passwdok command. Fixes #560
+                 [Found by: maimizuno / Patch by: michaelortmann]
+  2018-09-10 * Typo fix
+  2018-09-09 * Fix --with-sslinc --with-sslib for openssl 1.0. Fixes #504
+                 [Found by: cpg / Patch by: michaelortmann]
+             * Cleanup dead store / dead initialization
+                 [Found by: michaelortmann / Patch by: michaelortmann]
+             * Fix mmap() return value handling
+                 [Found by: michaelortmann / Patch by: michaelortmann]
+  2018-09-08 * Delete unused functions
+                 [Found by: michaelortmann / Patch by: michaelortmann]
+  2018-09-07 * Add stealth-prompt option to eggdrop.conf to configure stealth-telnet prompt. Fixes #607
+                 [Found by: jack3, and, simple / Patch by: michaelortmann]
+             * Update .status help. Closes #596
+                 [Found by: michaelortmann / Patch by: Geo]
+             * Add place values for LASTON to tcl-commands.doc
+  2018-09-02 * Fix typos
+                 [Found by: michaelortmann / Patch by: michaelortmann]
+  2018-08-31 * Update aclocal.m4 and others
+                 [Found by: michaelortmann / Patch by: michaelortmann]
+             * Run autotools
+  2018-08-29 * Respect CFLAGS. Fixes #526
+                 [Found by: sbraz / Patch by: michaelortmann]
+             * Remove all inline keywords
+                 [Found by: michaelortmann / Patch by: michaelortmann]
+  2018-08-28 * Delete register keyword
+                 [Found by: michaelortmann / Patch by: michaelortmann]
+             * replace getdtablesize() and FD_SETSIZE with maxfd+1
+                 [Found by: michaelortmann / Patch by: michaelortmann]
+  2018-08-27 * Fix matchattr for shared bots. Fixes #558
+                 [Found by: maimizuno / Patch by: Cizzle]
+             * Differentiate TLS fail/error cases
+                 [Found by: michaelortmann / Patch by: michaelortmann]
+  2018-08-24 * Doc typo fixes
+                 [Found by: michaelortmann / Patch by: michaelortmann]
+  2018-08-23 * Revert "fix541"
+             * Fix main Makefile for parallellisation. Closes #527
+             * fix errno OS dependency
+                 [Found by: michaelortmann / Patch by: michaelortmann]
+             * Get rid of less useful random() in mainloop
+                 [Found by: michaelortmann / Patch by: michaelortmann]
+  2018-08-22 * Fix order raw/builtin binds are called. Closes #354 and #387
+                 [Found by: jack3, and, maimizuno / Patch by: michaelortmann]
+             * Allow bans, ignores, exempts, invites to persist longer than 365 days. Closes #541
+                 [Found by: Robby / Patch by: michaelortmann]
+             * Fix fread checks. (#546)
+                 [Found by: Cizzle / Patch by: Cizzle]
+  2018-08-20 * enhance seed for random
+                 [Patch by: michaelortmann]
+             * Add forgotten logging of certain outgoing sharecmds
+                 [Found by: Cizzle / Patch by: Cizzle]
+  2018-08-16 * Fix (user)file sharing
+  2018-08-14 * Update to include '+' port prefix. Closes #538
+                 [Found by: maimizuno / Patch by: Geo]
+  2018-08-07 * Prevent crash when using large number with rand. Fixes #517
+                 [Found by: maimizuno / Patch by: michaelortmann]
+  2018-08-05 * Prevent crash when using .handle in -mnt mode. Fixes #512
+                 [Found by: eelcohn / Patch by: michaelortmann]
+  2018-07-28 * Update config.sub/guess. Closes #529
+                 [Found by: lag-linaro, odidev]
+  2018-05-07 * Fix compiler warnings.
+             * Fix fread result check
+  2018-02-04 * Update THANKS file
+  2018-01-07 * Fix segfault when linked bot dies.
+                 [Found by: Cizzle / Patch by: Cizzle]
+  2018-01-02 * Update copyright
+  2018-01-01 * Update docs for v1.8.3
+  2017-12-31 * Update filesys docs with partyline commands
+
+Eggdrop v1.8.3 (2018-02-04):
+
+  2018-02-04 * Update filesys docs with partyline commands
+             * Update copyright
+             * Update THANKS file
+             * Eggdrop v1.8.3
+
+Eggdrop v1.8.3rc2 (2018-01-13):
+
+  2018-01-13 * Fix segfault when linked bot dies.
+                 [Found by: Cizzle / Patch by: Cizzle]
+             * Eggdrop v1.8.3rc2
+  2017-12-20 * Eggdrop v1.8.3 Release Candidate 1
+
+Eggdrop v1.8.3rc1 (2017-12-20):
 
   2017-12-20 * Fix percentsign being interpreted by format printers. Fixes #498
                  [Found by: VertigoRN / Patch by: Cizzle]
              * Update NEWS for 1.8.3
              * Update newversion script
              * Update version strings to 1.8.3
+             * Add version number to Changes1.8
   2017-12-19 * Remove false SSL noise
              * Clarify precedence of & and ?
   2017-12-18 * Update THANKS file

@@ -27,7 +27,7 @@
 #define QUOTE '\\' /* quoting character (overrides wildcards) */
 #define WILDS '*'  /* matches 0 or more characters (including spaces) */
 #define WILDP '%'  /* matches 0 or more non-space characters */
-#define WILDQ '?'  /* matches ecactly one character */
+#define WILDQ '?'  /* matches exactly one character */
 #define WILDT '~'  /* matches 1 or more spaces */
 
 #define NOMATCH 0
@@ -252,7 +252,6 @@ int addr_match(char *m, char *n, int user, int cmp)
     return wild_match(mu, nu);
 
   *r++ = *s++ = 0;
-  tmpscore = wild_match(mu, nu);
   if (!(tmpscore = wild_match(mu, nu)))
     return NOMATCH; /* nick!ident parts don't match */
   score += tmpscore;
@@ -386,7 +385,7 @@ static int cron_matchfld(char *mask, int match)
   int skip = 0, f, t;
   char *p, *q;
 
-  for (p = mask; mask && *mask; mask = p) {
+  for (; mask && *mask; mask = p) {
     /* loop through a list of values, if such is given */
     if ((p = strchr(mask, ',')))
       *p++ = 0;

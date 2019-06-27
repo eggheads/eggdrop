@@ -4,7 +4,7 @@
  */
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2018 Eggheads Development Team
+ * Copyright (C) 1999 - 2019 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -385,14 +385,14 @@ static char *convert_element(char *src, char *dst)
 static void write_channels()
 {
   FILE *f;
-  char s[121], w[1024], w2[1024], name[163];
+  char s[sizeof chanfile + 4], w[1024], w2[1024], name[163];
   char need1[242], need2[242], need3[242], need4[242], need5[242];
   struct chanset_t *chan;
   struct udef_struct *ul;
 
   if (!chanfile[0])
     return;
-  sprintf(s, "%s~new", chanfile);
+  egg_snprintf(s, sizeof s, "%s~new", chanfile);
   f = fopen(s, "w");
   chmod(s, userfile_perm);
   if (f == NULL) {
@@ -528,7 +528,7 @@ static void read_channels(int create, int reload)
 
 static void backup_chanfile()
 {
-  char s[125];
+  char s[sizeof chanfile + 4];
 
   if (quiet_save < 2)
     putlog(LOG_MISC, "*", "Backing up channel file...");
@@ -591,9 +591,8 @@ static void channels_report(int idx, int details)
       get_mode_protect(chan, s2);
 
       if (s2[0]) {
-        s1[0] = 0;
-        sprintf(s1, ", enforcing \"%s\"", s2);
-        strcat(s, s1);
+        int len = strlen(s);
+        egg_snprintf(s + len, (sizeof s) - len, ", enforcing \"%s\"", s2); /* Concatenation */
       }
 
       s2[0] = 0;
@@ -606,18 +605,15 @@ static void channels_report(int idx, int details)
         strcat(s2, "bitch, ");
 
       if (s2[0]) {
+        int len = strlen(s);
         s2[strlen(s2) - 2] = 0;
-
-        s1[0] = 0;
-        sprintf(s1, " (%s)", s2);
-        strcat(s, s1);
+        egg_snprintf(s + len, (sizeof s) - len, " (%s)", s2); /* Concatenation */
       }
 
       /* If it's a !chan, we want to display it's unique name too <cybah> */
       if (chan->dname[0] == '!') {
-        s1[0] = 0;
-        sprintf(s1, ", unique name %s", chan->name);
-        strcat(s, s1);
+        int len = strlen(s);
+        egg_snprintf(s + len, (sizeof s) - len, ", unique name %s", chan->name); /* Concatenation */
       }
     }
 

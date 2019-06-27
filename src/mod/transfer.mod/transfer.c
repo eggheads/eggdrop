@@ -2,7 +2,7 @@
  * transfer.c -- part of transfer.mod
  *
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2018 Eggheads Development Team
+ * Copyright (C) 1999 - 2019 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -432,7 +432,7 @@ static void dcc_get(int idx, char *buf, int len)
    * This is either a 4 bit ack or the 8 bit reget packet.
    */
   if (w < 4 || (w < 8 && dcc[idx].u.xfer->type == XFER_RESEND_PEND)) {
-    my_memcpy(&(dcc[idx].u.xfer->buf[dcc[idx].u.xfer->sofar]), buf, len);
+    memcpy(&(dcc[idx].u.xfer->buf[dcc[idx].u.xfer->sofar]), buf, len);
     dcc[idx].u.xfer->sofar += len;
     return;
     /* Waiting for the 8 bit reget packet? */
@@ -441,8 +441,8 @@ static void dcc_get(int idx, char *buf, int len)
     if (w == 8) {
       transfer_reget reget_data;
 
-      my_memcpy(&reget_data, dcc[idx].u.xfer->buf, dcc[idx].u.xfer->sofar);
-      my_memcpy(&reget_data + dcc[idx].u.xfer->sofar, buf, len);
+      memcpy(&reget_data, dcc[idx].u.xfer->buf, dcc[idx].u.xfer->sofar);
+      memcpy(&reget_data + dcc[idx].u.xfer->sofar, buf, len);
       handle_resend_packet(idx, &reget_data);
       cmp = dcc[idx].u.xfer->offset;
     } else
@@ -452,16 +452,16 @@ static void dcc_get(int idx, char *buf, int len)
   } else {
     /* Complete packet? */
     if (w == 4) {
-      my_memcpy(bbuf, dcc[idx].u.xfer->buf, dcc[idx].u.xfer->sofar);
-      my_memcpy(&(bbuf[dcc[idx].u.xfer->sofar]), buf, len);
+      memcpy(bbuf, dcc[idx].u.xfer->buf, dcc[idx].u.xfer->sofar);
+      memcpy(&(bbuf[dcc[idx].u.xfer->sofar]), buf, len);
     } else {
       p = ((w - 1) & ~3) - dcc[idx].u.xfer->sofar;
       w = w - ((w - 1) & ~3);
       if (w < 4) {
-        my_memcpy(dcc[idx].u.xfer->buf, &(buf[p]), w);
+        memcpy(dcc[idx].u.xfer->buf, &(buf[p]), w);
         return;
       }
-      my_memcpy(bbuf, &(buf[p]), w);
+      memcpy(bbuf, &(buf[p]), w);
     }
     /* This is more compatible than ntohl for machines where an int
      * is more than 4 bytes:
@@ -609,18 +609,12 @@ static void eof_dcc_get(int idx)
 
 static void dcc_send(int idx, char *buf, int len)
 {
-  char s[512];
-  unsigned long sent;
+  uint32_t sentn;
 
   fwrite(buf, len, 1, dcc[idx].u.xfer->f);
   dcc[idx].status += len;
-  /* Put in network byte order */
-  sent = dcc[idx].status;
-  s[0] = (sent / (1 << 24));
-  s[1] = (sent % (1 << 24)) / (1 << 16);
-  s[2] = (sent % (1 << 16)) / (1 << 8);
-  s[3] = (sent % (1 << 8));
-  tputs(dcc[idx].sock, s, 4);
+  sentn = htonl(dcc[idx].status); /* Put in network byte order */
+  tputs(dcc[idx].sock, (char *) &sentn, 4);
   dcc[idx].timeval = now;
   if (dcc[idx].status > dcc[idx].u.xfer->length && dcc[idx].u.xfer->length > 0) {
     dprintf(DP_HELP, TRANSFER_BOGUS_FILE_LENGTH, dcc[idx].nick);
