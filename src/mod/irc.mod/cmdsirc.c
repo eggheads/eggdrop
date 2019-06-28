@@ -764,9 +764,9 @@ static void cmd_channel(struct userrec *u, int idx, char *par)
     for (m = chan->channel.member; m && m->nick[0]; m = m->next) {
       if (m->joined > 0) {
         if ((now - (m->joined)) > 86400)
-          egg_strftime(s, 6, "%d%b", localtime(&(m->joined)));
+          strftime(s, 6, "%d%b", localtime(&(m->joined)));
         else
-          egg_strftime(s, 6, "%H:%M", localtime(&(m->joined)));
+          strftime(s, 6, "%H:%M", localtime(&(m->joined)));
       } else
         strlcpy(s, " --- ", sizeof s);
       if (m->user == NULL) {

@@ -123,7 +123,7 @@ static void punish_badguy(struct chanset_t *chan, char *whobad,
   get_user_flagrec(u, &fr, chan->dname);
 
   /* Get current time into a string */
-  egg_strftime(ct, 7, "%d %b", localtime(&now));
+  strftime(ct, 7, "%d %b", localtime(&now));
 
   /* Put together log and kick messages */
   reason[0] = 0;

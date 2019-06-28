@@ -501,7 +501,7 @@ static int msg_whois(char *nick, char *host, struct userrec *u, char *par)
           hand_on_chan(chan, u) || (glob_op(fr) && !chan_deop(fr)) ||
           glob_friend(fr) || chan_op(fr) || chan_friend(fr))) {
         tt = cr->laston;
-        egg_strftime(s, 14, "%b %d %H:%M", localtime(&tt));
+        strftime(s, 14, "%b %d %H:%M", localtime(&tt));
         ok = 1;
         egg_snprintf(s1, sizeof s1, "NOTICE %s :[%s] %s %s on %s", nick,
                      u2->handle, IRC_LASTSEENAT, s, chan->dname);

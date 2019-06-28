@@ -2200,7 +2200,7 @@ duration <seconds>
 strftime <formatstring> [time]
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-  Returns: a formatted string of time using standard strftime format. If time is specified, the value of the specified time is used. Otherwise, the current time is used.
+  Returns: a formatted string of time using standard strftime format. If time is specified, the value of the specified time is used. Otherwise, the current time is used. Note: The implementation of strftime varies from platform to platform, so the user should only use POSIX-compliant format specifiers to ensure fully portable code.
 
   Module: core
 

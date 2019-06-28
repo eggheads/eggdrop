@@ -323,10 +323,11 @@ typedef uint32_t IP;
 #define egg_isspace(x)  isspace((int)  (unsigned char) (x))
 #define egg_islower(x)  islower((int)  (unsigned char) (x))
 
-/* The following 3 functions are for backward compatibility only */
+/* The following 4 functions are for backward compatibility only */
 #define egg_bzero(dest, len) memset(dest, 0, len)
-#define egg_memcpy(dst, src, len) memcpy(dst, src, len)
-#define egg_memset(dest, c, len) memset(dest, c, len)
+#define egg_memcpy memcpy
+#define egg_memset memset
+#define egg_strftime strftime
 #define my_memcpy(dst, src, len) memcpy(dst, src, len)
 
 /***********************************************************************/

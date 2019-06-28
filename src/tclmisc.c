@@ -428,7 +428,7 @@ static int tcl_strftime STDVAR
   else
     t = now;
   tm1 = localtime(&t);
-  if (egg_strftime(buf, sizeof(buf) - 1, argv[1], tm1)) {
+  if (strftime(buf, sizeof(buf) - 1, argv[1], tm1)) {
     Tcl_AppendResult(irp, buf, NULL);
     return TCL_OK;
   }
