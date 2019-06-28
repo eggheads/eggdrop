@@ -76,6 +76,7 @@ static void ident_activity(int idx_unused, char *buf, int len)
     return;
   }
 
+  putlog(LOG_DEBUG, "*", "Ident: Stopping ident server");
   killsock(dcc[idx].sock);
   lostdcc(idx);
   idx = 0;
@@ -135,6 +136,7 @@ static void ident_builtin_on()
       putlog(LOG_MISC, "*", "Ident error: could not get new dcc.");
       return;
     }
+    putlog(LOG_DEBUG, "*", "Ident: Activating ident server.");
     s = open_listen(&ident_port);
     if (s == -2) {
       lostdcc(idx);
@@ -169,6 +171,7 @@ static cmd_t ident_event[] = {
 static char *ident_close()
 {
   if (idx) {
+    putlog(LOG_DEBUG, "*", "Ident: Stopping ident server");
     killsock(dcc[idx].sock);
     lostdcc(idx);
   }
