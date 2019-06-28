@@ -34,7 +34,6 @@ static Function *global = NULL, *server_funcs = NULL;
 
 static int ident_method = IDENT_METHOD_OIDENT;
 static int ident_port = 113;
-static int idx = 0;
 
 static tcl_ints identints[] = {
   {"ident-method", &ident_method, 0},
@@ -49,12 +48,7 @@ static cmd_t ident_raw[] = {
   {NULL,  NULL, NULL,                        NULL}
 };
 
-static void ident_builtin_off()
-{
-  rem_builtins(H_raw, ident_raw);
-}
-
-static void ident_activity(int idx_unused, char *buf, int len)
+static void ident_activity(int idx, char *buf, int len)
 {
   int s;
   char buf2[128], *pos;
@@ -67,7 +61,7 @@ static void ident_activity(int idx_unused, char *buf, int len)
   }
   buf2[i - 1] = 0;
   if (!(pos = strpbrk(buf2, "\r\n"))) {
-    putlog(LOG_MISC, "*", "Ident error: couldnt read request");
+    putlog(LOG_MISC, "*", "Ident error: couldnt read request.");
     return;
   } 
   snprintf(pos, (sizeof buf2) - (pos - buf2), " : USERID : UNIX : %s\r\n", botname);
@@ -75,10 +69,6 @@ static void ident_activity(int idx_unused, char *buf, int len)
     putlog(LOG_MISC, "*", "Ident error: %s", strerror(errno));
     return;
   }
-
-  killsock(dcc[idx].sock);
-  lostdcc(idx);
-  idx = 0;
 }
 
 static void ident_display(int idx, char *buf)
@@ -127,30 +117,46 @@ static void ident_oidentd()
 
 static void ident_builtin_on()
 {
-  int s;
+  int idx, s;
 
-  if (!idx) {
-    idx = new_dcc(&DCC_IDENTD, 0);
-    if (idx < 0) {
-      putlog(LOG_MISC, "*", "Ident error: could not get new dcc.");
+  for (idx = 0; idx < dcc_total; idx++)
+    if (dcc[idx].type == &DCC_IDENTD)
       return;
-    }
-    s = open_listen(&ident_port);
-    if (s == -2) {
-      lostdcc(idx);
-      putlog(LOG_MISC, "*", "Ident error: could not bind socket port %i.", ident_port);
-      return;
-    } else if (s == -1) {
-      lostdcc(idx);
-      putlog(LOG_MISC, "*", "Ident error: could not get socket.");
-      return;
-    }
-    dcc[idx].sock = s;
-    dcc[idx].port = ident_port;
-    strcpy(dcc[idx].nick, "(ident)");
-    
-    add_builtins(H_raw, ident_raw);
+
+  idx = new_dcc(&DCC_IDENTD, 0);
+  if (idx < 0) {
+    putlog(LOG_MISC, "*", "Ident error: could not get new dcc.");
+    return;
   }
+  s = open_listen(&ident_port);
+  if (s == -2) {
+    lostdcc(idx);
+    putlog(LOG_MISC, "*", "Ident error: could not bind socket port %i.", ident_port);
+    return;
+  } else if (s == -1) {
+    lostdcc(idx);
+    putlog(LOG_MISC, "*", "Ident error: could not get socket.");
+    return;
+  }
+  dcc[idx].sock = s;
+  dcc[idx].port = ident_port;
+  strcpy(dcc[idx].nick, "(ident)");
+  
+  add_builtins(H_raw, ident_raw);
+}
+
+static void ident_builtin_off()
+{
+  int idx;
+
+  for (idx = 0; idx < dcc_total; idx++)
+    if (dcc[idx].type == &DCC_IDENTD) {
+      killsock(dcc[idx].sock);
+      lostdcc(idx);
+      break;
+    }
+
+  rem_builtins(H_raw, ident_raw);
 }
 
 static void ident_ident()
@@ -168,10 +174,14 @@ static cmd_t ident_event[] = {
 
 static char *ident_close()
 {
-  if (idx) {
-    killsock(dcc[idx].sock);
-    lostdcc(idx);
-  }
+  int idx;
+
+  for (idx = 0; idx < dcc_total; idx++)
+    if (dcc[idx].type == &DCC_IDENTD) {
+      killsock(dcc[idx].sock);
+      lostdcc(idx);
+      break;
+    }
 
   rem_builtins(H_event, ident_event);
   rem_builtins(H_raw, ident_raw);
@@ -193,7 +203,7 @@ char *ident_start(Function *global_funcs)
 {
   global = global_funcs;
 
-  module_register(MODULE_NAME, ident_table, 0, 1);
+  module_register(MODULE_NAME, ident_table, 0, 2);
 
   if (!module_depend(MODULE_NAME, "eggdrop", 109, 0)) {
     module_undepend(MODULE_NAME);
