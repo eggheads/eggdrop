@@ -122,12 +122,12 @@ static void ident_builtin_on()
   for (idx = 0; idx < dcc_total; idx++)
     if (dcc[idx].type == &DCC_IDENTD)
       return;
-
   idx = new_dcc(&DCC_IDENTD, 0);
   if (idx < 0) {
     putlog(LOG_MISC, "*", "Ident error: could not get new dcc.");
     return;
   }
+  putlog(LOG_DEBUG, "*", "Ident: Activating ident server.");
   s = open_listen(&ident_port);
   if (s == -2) {
     lostdcc(idx);
@@ -141,7 +141,6 @@ static void ident_builtin_on()
   dcc[idx].sock = s;
   dcc[idx].port = ident_port;
   strcpy(dcc[idx].nick, "(ident)");
-  
   add_builtins(H_raw, ident_raw);
 }
 
@@ -149,13 +148,13 @@ static void ident_builtin_off()
 {
   int idx;
 
+  putlog(LOG_DEBUG, "*", "Ident: Stopping ident server.");
   for (idx = 0; idx < dcc_total; idx++)
     if (dcc[idx].type == &DCC_IDENTD) {
       killsock(dcc[idx].sock);
       lostdcc(idx);
       break;
     }
-
   rem_builtins(H_raw, ident_raw);
 }
 
@@ -178,11 +177,11 @@ static char *ident_close()
 
   for (idx = 0; idx < dcc_total; idx++)
     if (dcc[idx].type == &DCC_IDENTD) {
+      putlog(LOG_DEBUG, "*", "Ident: Stopping ident server");
       killsock(dcc[idx].sock);
       lostdcc(idx);
       break;
     }
-
   rem_builtins(H_event, ident_event);
   rem_builtins(H_raw, ident_raw);
   rem_tcl_ints(identints);
