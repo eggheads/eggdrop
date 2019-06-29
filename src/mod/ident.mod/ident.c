@@ -56,6 +56,8 @@ static void ident_activity(int idx, char *buf, int len)
   ssize_t i;
 
   s = answer(dcc[idx].sock, &dcc[idx].sockname, 0, 0);
+  killsock(dcc[idx].sock);
+  dcc[idx].sock = s;
   if ((i = read(s, buf2, IDENT_SIZE)) < 0) {
     putlog(LOG_MISC, "*", "Ident error: %s", strerror(errno));
     return;
