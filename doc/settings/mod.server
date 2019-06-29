@@ -22,19 +22,14 @@ There are also some variables you can set in your config file:
 
       What is your network?
 
-          --- ---------------------------
-          0   EFnet
-
-          1   IRCnet
-
-          2   Undernet
-
-          3   DALnet
-
-          4   +e/+I/max-bans 20 Hybrid
-
-          5   Others
-          --- ---------------------------
+          ---------------- ----------------------------------------------------------------------------------------------------------------
+          0                EFnet
+          1                IRCnet
+          2                Undernet
+          3                DALnet
+          4                +e/+I/max-bans 20 Hybrid
+          5                Others
+          ---------------- ----------------------------------------------------------------------------------------------------------------
 
   set nick "LamestBot"
 
@@ -56,6 +51,7 @@ There are also some variables you can set in your config file:
 
       Set here what to display in the real-name field for the bot.
 
+  &nbsp;
       bind evnt - init-server evnt:init_server
       proc evnt:init_server {type} {
         global botnick
@@ -127,21 +123,15 @@ There are also some variables you can set in your config file:
 
       The numbers are the following:
 
-          ---- ---------------------------------------------
-          0    disable verification
-
-          1    enable certificate verification
-
-          2    allow self-signed certificates
-
-          4    don't check peer common or alt names
-
-          8    allow expired certificates
-
-          16   allow certificates which are not valid yet
-
-          32   allow revoked certificates
-          ---- ---------------------------------------------
+          ------------- ----------------------------------------------------------------------------------------------------------------------------------------------------------------
+          0             disable verification
+          1             enable certificate verification
+          2             allow self-signed certificates
+          4             don't check peer common or alt names
+          8             allow expired certificates
+          16            allow certificates which are not valid yet
+          32            allow revoked certificates
+          ------------- ----------------------------------------------------------------------------------------------------------------------------------------------------------------
 
   set server-cycle-wait 60
 
@@ -244,15 +234,11 @@ There are also some variables you can set in your config file:
       parts in the channel and changes the kick queue accordingly. There
       are three different options for this setting:
 
-          --- ------------------------------------------------------------------
-          0   Turn it off.
-
-          1   Optimize the kick queue by summarizing kicks.
-
-          2   Trace nick changes and parts on the channel and change the queue
-              accordingly. For example, bot will not try to kick users who have
-              already parted the channel.
-          --- ------------------------------------------------------------------
+          ------------- ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+          0             Turn it off.
+          1             Optimize the kick queue by summarizing kicks.
+          2             Trace nick changes and parts on the channel and change the queue accordingly. For example, bot will not try to kick users who have already parted the channel.
+          ------------- ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
       ATTENTION: Setting 2 is very CPU intensive.
 
@@ -277,4 +263,4 @@ There are additional settings for 'net-type' 5.
         supported by your network. The default setting is 9. The maximum
         supported length by Eggdrop is 32.
 
-  Copyright (C) 2000 - 2018 Eggheads Development Team
+  Copyright (C) 2000 - 2019 Eggheads Development Team

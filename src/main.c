@@ -7,7 +7,7 @@
  */
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2018 Eggheads Development Team
+ * Copyright (C) 1999 - 2019 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -634,7 +634,7 @@ static struct tm nowtm;
  */
 static void core_secondly()
 {
-  static int cnt = 0;
+  static int cnt = 10; /* Don't wait the first 10 seconds to display */
   int miltime;
   time_t nowmins;
   int i;
@@ -1021,12 +1021,20 @@ int mainloop(int toplevel)
 static void init_random(void) {
   unsigned int seed;
 #ifdef HAVE_GETRANDOM
-  if (getrandom(&seed, sizeof(seed), 0) != sizeof(seed))
-    fatal("ERROR: getrandom()\n", 0);
-#else
-  struct timeval tp;
-  gettimeofday(&tp, NULL);
-  seed = (tp.tv_sec * tp.tv_usec) ^ getpid();
+  if (getrandom(&seed, sizeof(seed), 0) != sizeof(seed)) {
+    if (errno != ENOSYS) {
+      fatal("ERROR: getrandom()\n", 0);
+    } else {
+      /* getrandom() is available in header but syscall is not!
+       * This can happen with glibc>=2.25 and linux<3.17
+       */
+#endif
+      struct timeval tp;
+      gettimeofday(&tp, NULL);
+      seed = (tp.tv_sec * tp.tv_usec) ^ getpid();
+#ifdef HAVE_GETRANDOM
+    }
+  }
 #endif
   srandom(seed);
 }
@@ -1074,7 +1082,7 @@ int main(int arg_c, char **arg_v)
 #endif
   egg_snprintf(ver, sizeof ver, "eggdrop v%s", egg_version);
   egg_snprintf(version, sizeof version,
-               "Eggdrop v%s (C) 1997 Robey Pointer (C) 2010-2018 Eggheads",
+               "Eggdrop v%s (C) 1997 Robey Pointer (C) 2010-2019 Eggheads",
                egg_version);
   /* Now add on the patchlevel (for Tcl) */
   sprintf(&egg_version[strlen(egg_version)], " %u", egg_numver);

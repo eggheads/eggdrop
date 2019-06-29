@@ -8,7 +8,7 @@
  */
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2018 Eggheads Development Team
+ * Copyright (C) 1999 - 2019 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -57,7 +57,7 @@ int max_dcc = 0;       /* indicates the current dcc limit in the main thread */
 int increase_socks_max()
 {
   struct threaddata *td = threaddata();
-  int osock = td->MAXSOCKS;
+  int osock = td->MAXSOCKS, max_dcc_new;
 
   if (max_socks < 1)
     max_socks = 1;
@@ -79,9 +79,15 @@ int increase_socks_max()
     td->socklist[osock].flags = SOCK_UNUSED;
 
   if (td->mainthread) {
-    max_dcc = td->MAXSOCKS - 10;
-    if (max_dcc < 1)
-      max_dcc = 1;
+    max_dcc_new = td->MAXSOCKS - 10;
+    if (max_dcc_new > max_dcc)
+      max_dcc = max_dcc_new;
+    else if (max_dcc == 0)
+        max_dcc = 1;
+    else {
+        putlog(LOG_MISC, "*", "Maximum dcc limit reached. Consider raising max-socks.");
+        return -1;
+    }
     if (dcc)
       dcc = nrealloc(dcc, sizeof(struct dcc_t) * max_dcc);
     else
@@ -498,14 +504,11 @@ void *_get_data_ptr(int size, char *file, int line)
   return p;
 }
 
-/* Make a password, 10-15 random letters and digits
+/* Make a password with (PASSWORDLEN - 1) random lower case letters and digits
  */
-void makepass(char *s)
+void makepass(char *pass)
 {
-  int i;
-
-  i = 10 + randint(6);
-  make_rand_str(s, i);
+  make_rand_str(pass, PASSWORDLEN - 1);
 }
 
 void flush_lines(int idx, struct chat_info *ci)

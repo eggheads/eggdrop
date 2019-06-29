@@ -6,13 +6,13 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>Eggdrop Tcl Commands &#8212; Eggdrop 1.8.3 documentation</title>
+    <title>Eggdrop Tcl Commands &#8212; Eggdrop 1.8.4 documentation</title>
     <link rel="stylesheet" href="../_static/eggdrop.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
-        VERSION:     '1.8.3',
+        VERSION:     '1.8.4',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true,
@@ -33,7 +33,7 @@
             <img class="logo" src="../_static/eggman.png.gif" alt="Logo"/>
           </a></p>
         <div class="headertitle"><a
-          href="../index.html">Eggdrop 1.8.3 documentation</a></div>
+          href="../index.html">Eggdrop 1.8.4 documentation</a></div>
         <div class="rel">
           <a href="patch.html" title="Patch How-To"
              accesskey="P">previous</a> |
@@ -59,7 +59,7 @@ Last revised: December 14, 2017</p>
 of the normal Tcl built-in commands are still there, of course, but you
 can also use these to manipulate features of the bot. They are listed
 according to category.</p>
-<p>This list is accurate for Eggdrop v1.8.3. Scripts written for v1.3, v1.4
+<p>This list is accurate for Eggdrop v1.8.4. Scripts written for v1.3, v1.4
 or 1.6 series of Eggdrop should probably work with a few minor modifications
 depending on the script. Scripts which were written for  v0.9, v1.0, v1.1
 or v1.2 will probably not work without modification. Commands which have
@@ -1308,7 +1308,7 @@ channel's invite list is checked as well.</p>
 <div class="section" id="dccbroadcast-message">
 <h3>dccbroadcast &lt;message&gt;<a class="headerlink" href="#dccbroadcast-message" title="Permalink to this headline">¶</a></h3>
 <blockquote>
-<div><p>Description: sends a message to everyone on the party line across the botnet, in the form of &quot;*** &lt;message&gt;&quot; for local users, &quot;*** (Bot) &lt;message&gt;&quot; for users on other bots with version below 1.8.3, and &quot;(Bot) &lt;message&gt;&quot; for users on other bots with version 1.8.3+ and console log mode 'l' enabled</p>
+<div><p>Description: sends a message to everyone on the party line across the botnet, in the form of &quot;*** &lt;message&gt;&quot; for local users, &quot;*** (Bot) &lt;message&gt;&quot; for users on other bots with version below 1.8.4, and &quot;(Bot) &lt;message&gt;&quot; for users on other bots with version 1.8.4+ and console log mode 'l' enabled</p>
 <p>Returns: nothing</p>
 <p>Module: core</p>
 </div></blockquote>
@@ -2245,7 +2245,7 @@ will be used. Types 30-39 set the host to '*'.</p>
 <div class="section" id="encrypt-key-string">
 <h3>encrypt &lt;key&gt; &lt;string&gt;<a class="headerlink" href="#encrypt-key-string" title="Permalink to this headline">¶</a></h3>
 <blockquote>
-<div><p>Returns: encrypted string (using the currently loaded encryption module), encoded into ASCII using base-64. As of v1.8.3, the default blowfish encryption module can use either the older ECB mode (currently used by default for compatibility reasons), or the more recent and more-secure CBC mode. You can explicitly request which encryption mode to use by prefixing the encryption key with either &quot;ecb:&quot; or &quot;cbc:&quot;, or by using the blowfish-use-mode setting in the config file. Note: the default encryption mode for this function is planned to transition from ECB to CBC in v1.9.0.</p>
+<div><p>Returns: encrypted string (using the currently loaded encryption module), encoded into ASCII using base-64. As of v1.8.4, the default blowfish encryption module can use either the older ECB mode (currently used by default for compatibility reasons), or the more recent and more-secure CBC mode. You can explicitly request which encryption mode to use by prefixing the encryption key with either &quot;ecb:&quot; or &quot;cbc:&quot;, or by using the blowfish-use-mode setting in the config file. Note: the default encryption mode for this function is planned to transition from ECB to CBC in v1.9.0.</p>
 <p>Module: encryption</p>
 </div></blockquote>
 </div>
@@ -3315,7 +3315,7 @@ words) (This char only works in binds, not in regular matching)</td>
 </tbody>
 </table>
 <blockquote>
-<div>Copyright (C) 1999 - 2018 Eggheads Development Team</div></blockquote>
+<div>Copyright (C) 1999 - 2019 Eggheads Development Team</div></blockquote>
 </div>
 </div>
 
@@ -3398,8 +3398,8 @@ words) (This char only works in binds, not in regular matching)</td>
         <div class="right">
           
     <div class="footer" role="contentinfo">
-        &#169; Copyright 2018, Eggheads.
-      Last updated on Nov 01, 2018.
+        &#169; Copyright 2019, Eggheads.
+      Last updated on Dec 31, 2018.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.6.7.
     </div>
         </div>

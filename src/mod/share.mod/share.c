@@ -4,7 +4,7 @@
  */
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2018 Eggheads Development Team
+ * Copyright (C) 1999 - 2019 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -586,7 +586,7 @@ static void share_pls_host(int idx, char *par)
 
 static void share_pls_bothost(int idx, char *par)
 {
-  char *hand, p[32];
+  char *hand, pass[PASSWORDLEN];
   struct userrec *u;
 
   if ((dcc[idx].status & STAT_SHARE) && !private_user) {
@@ -601,8 +601,8 @@ static void share_pls_bothost(int idx, char *par)
           return;               /* ignore */
         set_user(&USERENTRY_HOSTS, u, par);
       } else {
-        makepass(p);
-        userlist = adduser(userlist, hand, par, p, USER_BOT);
+        makepass(pass);
+        userlist = adduser(userlist, hand, par, pass, USER_BOT);
       }
       if (!(dcc[idx].status & STAT_GETTING))
         putlog(LOG_CMDS, "*", "%s: +host %s %s", dcc[idx].nick, hand, par);
@@ -630,7 +630,7 @@ static void share_mns_host(int idx, char *par)
 
 static void share_change(int idx, char *par)
 {
-  char *key, *hand;
+  char *key, *hand, pass[PASSWORDLEN];
   struct userrec *u;
   struct user_entry_type *uet;
   struct user_entry *e;
@@ -648,8 +648,6 @@ static void share_change(int idx, char *par)
           shareout_but(NULL, idx, "c %s %s %s\n", key, hand, par);
         noshare = 1;
         if (!u && (uet == &USERENTRY_BOTADDR)) {
-          char pass[30];
-
           makepass(pass);
           userlist = adduser(userlist, hand, "none", pass, USER_BOT);
           u = get_user_by_handle(userlist, hand);
@@ -2311,7 +2309,7 @@ char *share_start(Function *global_funcs)
   return NULL;
 }
 
-int private_globals_bitmask()
+static int private_globals_bitmask()
 {
   struct flag_record fr = { FR_GLOBAL, 0, 0, 0, 0, 0 };
 
