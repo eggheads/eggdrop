@@ -6,7 +6,7 @@
  */
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2018 Eggheads Development Team
+ * Copyright (C) 1999 - 2019 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -52,27 +52,19 @@
 #  endif
 
 #  ifdef MOD_USE_DL
-#    ifdef DLOPEN_1
-char *dlerror();
-void *dlopen(const char *, int);
-int dlclose(void *);
-void *dlsym(void *, char *);
-#      define DLFLAGS 1
-#    else /* DLOPEN_1 */
-#      include <dlfcn.h>
+#    include <dlfcn.h>
 
-#      ifndef RTLD_GLOBAL
-#        define RTLD_GLOBAL 0
-#      endif
-#      ifndef RTLD_NOW
-#        define RTLD_NOW 1
-#      endif
-#      ifdef RTLD_LAZY
-#        define DLFLAGS RTLD_LAZY|RTLD_GLOBAL
-#      else
-#        define DLFLAGS RTLD_NOW|RTLD_GLOBAL
-#      endif
-#    endif /* DLOPEN_1 */
+#    ifndef RTLD_GLOBAL
+#      define RTLD_GLOBAL 0
+#    endif
+#    ifndef RTLD_NOW
+#      define RTLD_NOW 1
+#    endif
+#    ifdef RTLD_LAZY
+#      define DLFLAGS RTLD_LAZY|RTLD_GLOBAL
+#    else
+#      define DLFLAGS RTLD_NOW|RTLD_GLOBAL
+#    endif
 #  endif /* MOD_USE_DL */
 #endif /* !STATIC */
 
@@ -891,11 +883,12 @@ module_entry *module_find(char *name, int major, int minor)
   module_entry *p;
 
   for (p = module_list; p && p->name; p = p->next) {
-    if ((major == p->major || !major) && minor <= p->minor &&
-        !strcasecmp(name, p->name))
+    if ( (((major < p->major) || !major) || ((major == p->major) &&
+        (minor <= p->minor))) && !strcasecmp(name, p->name) )
       return p;
   }
   return NULL;
+
 }
 
 static int module_rename(char *name, char *newname)

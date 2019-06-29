@@ -7,7 +7,7 @@
  * IPv6 support added by pseudo <pseudo@egg6.net>
  */
 /*
- * Portions Copyright (C) 1999 - 2018 Eggheads Development Team
+ * Portions Copyright (C) 1999 - 2019 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -203,6 +203,18 @@ static char sendstring[1024 + 1];
 #endif /* DEBUG_DNS */
 
 static const char nullstring[] = "";
+
+#ifdef res_ninit
+#define MY_RES_INIT() res_ninit(&myres);
+#define RES_MKQUERY(a, b, c, d, e, f, g, h, i) \
+    res_nmkquery(&myres, a, b, c, d, e, f, g, h, i)
+struct __res_state myres;
+#else
+#define MY_RES_INIT() res_init();
+#define RES_MKQUERY(a, b, c, d, e, f, g, h, i) \
+    res_mkquery(a, b, c, d, e, f, g, h, i)
+#define myres _res
+#endif
 
 
 /*
@@ -724,16 +736,17 @@ static void dorequest(char *s, int type, uint16_t id)
    * CPUs.
    */
   buf = nmalloc(MAX_PACKETSIZE + 1);
-  r = res_mkquery(QUERY, s, C_IN, type, NULL, 0, NULL, buf, MAX_PACKETSIZE);
+  r = RES_MKQUERY(QUERY, s, C_IN, type, NULL, 0, NULL, buf, MAX_PACKETSIZE);
   if (r == -1) {
+    nfree(buf);
     ddebug0(RES_ERR "Query too large.");
     return;
   }
   hp = (packetheader *) buf;
   hp->id = id;                  /* htons() deliberately left out (redundant) */
-  for (i = 0; i < _res.nscount; i++)
+  for (i = 0; i < myres.nscount; i++)
     (void) sendto(resfd, buf, r, 0,
-                  (struct sockaddr *) &_res.nsaddr_list[i],
+                  (struct sockaddr *) &myres.nsaddr_list[i],
                   sizeof(struct sockaddr));
   nfree(buf);
 }
@@ -1092,17 +1105,17 @@ static void dns_ack(void)
   }
   /* Check to see if this server is actually one we sent to */
   if (from.sin_addr.s_addr == localhost) {
-    for (i = 0; i < _res.nscount; i++)
+    for (i = 0; i < myres.nscount; i++)
       /* 0.0.0.0 replies as 127.0.0.1 */
-      if ((_res.nsaddr_list[i].sin_addr.s_addr == from.sin_addr.s_addr) ||
-          (!_res.nsaddr_list[i].sin_addr.s_addr))
+      if ((myres.nsaddr_list[i].sin_addr.s_addr == from.sin_addr.s_addr) ||
+          (!myres.nsaddr_list[i].sin_addr.s_addr))
         break;
   } else {
-    for (i = 0; i < _res.nscount; i++)
-      if (_res.nsaddr_list[i].sin_addr.s_addr == from.sin_addr.s_addr)
+    for (i = 0; i < myres.nscount; i++)
+      if (myres.nsaddr_list[i].sin_addr.s_addr == from.sin_addr.s_addr)
         break;
   }
-  if (i == _res.nscount)
+  if (i == myres.nscount)
     ddebug1(RES_ERR "Received reply from unknown source: %s",
                 iptostr((struct sockaddr *) &from));
   else
@@ -1273,17 +1286,14 @@ static int init_dns_core(void)
   int i;
 
   /* Initialise the resolv library. */
-  res_init();
-  #ifdef NETBSD_HACKS
-    puts("netbsd found. if eggdrop crashes with\n"
-         "  _res is not supported for multi-threaded programs.\n"
-         "  [1]   Abort trap (core dumped) ./eggdrop -nt\n"
-         "dns.mod must be disabled by commenting out in eggdrop.conf\n"
-         "  #loadmodule dns");
-  #endif
-  _res.options |= RES_RECURSE | RES_DEFNAMES | RES_DNSRCH;
-  for (i = 0; i < _res.nscount; i++)
-    _res.nsaddr_list[i].sin_family = AF_INET;
+  MY_RES_INIT();
+  if (!myres.nscount) {
+    putlog(LOG_MISC, "*", "No nameservers defined.");
+    return 0;
+  }
+  myres.options |= RES_RECURSE | RES_DEFNAMES | RES_DNSRCH;
+  for (i = 0; i < myres.nscount; i++)
+    myres.nsaddr_list[i].sin_family = AF_INET;
 
   if (!init_dns_network())
     return 0;

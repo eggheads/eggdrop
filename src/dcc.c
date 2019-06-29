@@ -6,7 +6,7 @@
  */
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2018 Eggheads Development Team
+ * Copyright (C) 1999 - 2019 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -253,9 +253,14 @@ static void bot_version(int idx, char *par)
 
 void failed_link(int idx)
 {
-  char s[81], s1[512];
+  char s[NICKLEN + 18], s1[512];
 
+#ifdef TLS
+  /* Stop trying when we are sslport+3 */
+  if (dcc[idx].port >= dcc[idx].u.bot->port + 3 && dcc[idx].ssl) {
+#else
   if (dcc[idx].port >= dcc[idx].u.bot->port + 3) {
+#endif
     if (dcc[idx].u.bot->linker[0]) {
       egg_snprintf(s, sizeof s, "Couldn't link to %s.", dcc[idx].nick);
       strcpy(s1, dcc[idx].u.bot->linker);
@@ -273,8 +278,30 @@ void failed_link(int idx)
   /* Try next port, if it makes sense (no AF_UNSPEC, ...) */
   killsock(dcc[idx].sock);
   dcc[idx].timeval = now;
-  if (open_telnet(idx, dcc[idx].host, dcc[idx].port + 1) < 0)
+#ifdef TLS
+  /* Order of attempts:
+   * If initial SSL: sslport+1; sslport+2; sslport+3
+   * Else: sslport; plain+1; sslport+1; plain+2; sslport+2; plain+3; sslport+3
+   */
+  if (dcc[idx].u.bot->ssl) {
+    ++dcc[idx].port;
+  } else if (dcc[idx].ssl) {
+    dcc[idx].ssl = 0;
+    ++dcc[idx].port;
+  } else {
+    dcc[idx].ssl = 1;
+  }
+#else
+    ++dcc[idx].port;
+#endif
+
+  if (open_telnet(idx, dcc[idx].host, dcc[idx].port) < 0)
     failed_link(idx);
+#ifdef TLS
+  else if (dcc[idx].ssl && ssl_handshake(dcc[idx].sock, TLS_CONNECT,
+           tls_vfybots, LOG_BOTS, dcc[idx].host, NULL))
+    failed_link(idx);
+#endif
 }
 
 static void cont_link(int idx, char *buf, int i)
@@ -632,6 +659,8 @@ static int dcc_bot_check_digest(int idx, char *remote_digest)
 
 static void dcc_chat_pass(int idx, char *buf, int atr)
 {
+  char pass[PASSWORDLEN];
+
   if (!atr)
     return;
   if (dcc[idx].status & STAT_TELNET)
@@ -660,19 +689,17 @@ static void dcc_chat_pass(int idx, char *buf, int atr)
 #endif
     /* No password set? */
     if (u_pass_match(dcc[idx].user, "-")) {
-      char ps[20];
-
-      makepass(ps);
-      set_user(&USERENTRY_PASS, dcc[idx].user, ps);
+      makepass(pass);
+      set_user(&USERENTRY_PASS, dcc[idx].user, pass);
       changeover_dcc(idx, &DCC_BOT_NEW, sizeof(struct bot_info));
 
       dcc[idx].status = STAT_CALLED;
       dprintf(idx, "*hello!\n");
       greet_new_bot(idx);
 #ifdef NO_OLD_BOTNET
-      dprintf(idx, "h %s\n", ps);
+      dprintf(idx, "h %s\n", pass);
 #else
-      dprintf(idx, "handshake %s\n", ps);
+      dprintf(idx, "handshake %s\n", pass);
 #endif
       return;
     }
@@ -1430,8 +1457,13 @@ static void eof_dcc_telnet(int idx)
 
 static void display_telnet(int idx, char *buf)
 {
+#ifdef TLS
+  sprintf(buf, "lstn  %s%d%s", dcc[idx].ssl ? "+" : "", dcc[idx].port,
+          (dcc[idx].status & LSTN_PUBLIC) ? " pub" : "");
+#else
   sprintf(buf, "lstn  %d%s", dcc[idx].port,
           (dcc[idx].status & LSTN_PUBLIC) ? " pub" : "");
+#endif
 }
 
 struct dcc_table DCC_TELNET = {
@@ -1781,7 +1813,13 @@ static void dcc_telnet_pass(int idx, int atr)
    * will simply ignore the request and everything will go on as usual.
    */
     if (!dcc[idx].ssl) {
-      dprintf(idx, "starttls\n");
+      /* find number in socklist */
+      int i = findsock(dcc[idx].sock);
+      struct threaddata *td = threaddata();
+      /* mark socket to read next incoming at reduced len */
+      td->socklist[i].flags |= SOCK_SENTTLS;
+      /* Prefix with \n in case of newline-less ending stealth_prompt */
+      dprintf(idx, "\nstarttls\n");
       putlog(LOG_BOTS, "*", "Sent STARTTLS to %s...", dcc[idx].nick);
     }
 #endif
@@ -1796,7 +1834,8 @@ static void dcc_telnet_pass(int idx, int atr)
      * <Cybah>
      */
     putlog(LOG_BOTS, "*", "Challenging %s...", dcc[idx].nick);
-    dprintf(idx, "passreq <%x%x@%s>\n", getpid(), dcc[idx].timeval, botnetnick);
+    /* Prefix with \n in case of newline-less ending stealth_prompt */
+    dprintf(idx, "\npassreq <%x%x@%s>\n", getpid(), dcc[idx].timeval, botnetnick);
     dcc[idx].type = old;
   } else {
     /* NOTE: The MD5 digest used above to prevent cleartext passwords being
@@ -2045,9 +2084,9 @@ struct dcc_table DCC_TELNET_PW = {
 
 static int call_tcl_func(char *name, int idx, char *args)
 {
-  char s[11];
+  char s[12];
 
-  sprintf(s, "%d", idx);
+  snprintf(s, sizeof s, "%d", idx);
   Tcl_SetVar(interp, "_n", s, 0);
   Tcl_SetVar(interp, "_a", args, 0);
   if (Tcl_VarEval(interp, name, " $_n $_a", NULL) == TCL_ERROR) {
@@ -2408,12 +2447,16 @@ static void dcc_telnet_got_ident(int i, char *host)
   /* This is so we don't tell someone doing a portscan anything
    * about ourselves. <cybah>
    */
-  if (stealth_telnets)
+  if (stealth_telnets) {
+    /* Show here so it doesn't interfere with newline-less stealth_prompt */
+    if (allow_new_telnets)
+      dprintf(i, "(If you are new, enter 'NEW' here.)\n");
     dprintf(i, stealth_prompt);
-  else {
+  } else {
     dprintf(i, "\n\n");
     sub_lang(i, MISC_BANNER);
+    /* Show here so it doesn't get lost before the banner */
+    if (allow_new_telnets)
+      dprintf(i, "(If you are new, enter 'NEW' here.)\n");
   }
-  if (allow_new_telnets)
-    dprintf(i, "(If you are new, enter 'NEW' here.)\n");
 }
