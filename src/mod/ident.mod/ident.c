@@ -27,8 +27,9 @@
 #include "src/mod/module.h"
 #include "server.mod/server.h"
 
-#define IDENT_METHOD_OIDENT  0
-#define IDENT_METHOD_BUILTIN 1
+#define IDENT_METHOD_OIDENT     0
+#define IDENT_METHOD_BUILTIN    1
+#define IDENT_SIZE           1000 /* rfc1413 */
 
 static Function *global = NULL, *server_funcs = NULL;
 
@@ -51,11 +52,11 @@ static cmd_t ident_raw[] = {
 static void ident_activity(int idx, char *buf, int len)
 {
   int s;
-  char buf2[128], *pos;
+  char buf2[IDENT_SIZE + sizeof " : USERID : UNIX : \r\n" + NICKLEN + 1], *pos;
   ssize_t i;
 
   s = answer(dcc[idx].sock, &dcc[idx].sockname, 0, 0);
-  if ((i = read(s, buf2, 64)) < 0) {
+  if ((i = read(s, buf2, IDENT_SIZE)) < 0) {
     putlog(LOG_MISC, "*", "Ident error: %s", strerror(errno));
     return;
   }
@@ -69,6 +70,7 @@ static void ident_activity(int idx, char *buf, int len)
     putlog(LOG_MISC, "*", "Ident error: %s", strerror(errno));
     return;
   }
+  putlog(LOG_MISC, "*", "Ident: Responsed.");
 }
 
 static void ident_display(int idx, char *buf)
