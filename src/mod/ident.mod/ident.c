@@ -71,6 +71,7 @@ static void ident_activity(int idx, char *buf, int len)
     return;
   }
   putlog(LOG_MISC, "*", "Ident: Responsed.");
+  ident_builtin_off();
 }
 
 static void ident_display(int idx, char *buf)
@@ -150,9 +151,9 @@ static void ident_builtin_off()
 {
   int idx;
 
-  putlog(LOG_DEBUG, "*", "Ident: Stopping ident server.");
   for (idx = 0; idx < dcc_total; idx++)
     if (dcc[idx].type == &DCC_IDENTD) {
+      putlog(LOG_DEBUG, "*", "Ident: Stopping ident server.");
       killsock(dcc[idx].sock);
       lostdcc(idx);
       break;
@@ -175,17 +176,8 @@ static cmd_t ident_event[] = {
 
 static char *ident_close()
 {
-  int idx;
-
-  for (idx = 0; idx < dcc_total; idx++)
-    if (dcc[idx].type == &DCC_IDENTD) {
-      putlog(LOG_DEBUG, "*", "Ident: Stopping ident server");
-      killsock(dcc[idx].sock);
-      lostdcc(idx);
-      break;
-    }
+  ident_builtin_off();
   rem_builtins(H_event, ident_event);
-  rem_builtins(H_raw, ident_raw);
   rem_tcl_ints(identints);
   module_undepend(MODULE_NAME);
   return NULL;
