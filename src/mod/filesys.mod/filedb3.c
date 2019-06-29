@@ -6,7 +6,7 @@
  */
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2018 Eggheads Development Team
+ * Copyright (C) 1999 - 2019 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -951,7 +951,7 @@ static void filedb_ls(FILE *fdb, int idx, char *mask, int showall)
           if (fdbe->stat & FILE_HIDDEN)
             strcat(s2, " (hid)");
         }
-        egg_strftime(t, 10, "%d%b%Y", localtime(&fdbe->uploaded));
+        strftime(t, 10, "%d%b%Y", localtime(&fdbe->uploaded));
         if (fdbe->size < 1024)
           sprintf(s1, "%5d", fdbe->size);
         else

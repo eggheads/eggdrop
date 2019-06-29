@@ -6,7 +6,7 @@
  */
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2018 Eggheads Development Team
+ * Copyright (C) 1999 - 2019 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -77,6 +77,7 @@
 #define DIRLEN       DIRMAX + 1
 #define LOGLINELEN   LOGLINEMAX + 1
 #define NOTENAMELEN  ((HANDLEN * 2) + 1)
+#define PASSWORDLEN  16
 
 
 /* We have to generate compiler errors in a weird way since not all compilers
@@ -309,10 +310,11 @@ typedef uint32_t IP;
 #define egg_isspace(x)  isspace((int)  (unsigned char) (x))
 #define egg_islower(x)  islower((int)  (unsigned char) (x))
 
-/* The following 3 functions are for backward compatibility only */
+/* The following 4 functions are for backward compatibility only */
 #define egg_bzero(dest, len) memset(dest, 0, len)
-#define egg_memcpy(dst, src, len) memcpy(dst, src, len)
-#define egg_memset(dest, c, len) memset(dest, c, len)
+#define egg_memcpy memcpy
+#define egg_memset memset
+#define egg_strftime strftime
 #define my_memcpy(dst, src, len) memcpy(dst, src, len)
 
 /***********************************************************************/
@@ -453,6 +455,9 @@ struct bot_info {
   char linker[NOTENAMELEN + 1]; /* who requested this link              */
   int numver;
   int port;                     /* base port                            */
+#ifdef TLS
+  int ssl;                      /* base ssl                             */
+#endif
   int uff_flags;                /* user file feature flags              */
 };
 
@@ -739,6 +744,13 @@ enum {
   EGG_OPTION_SET = 1,           /* Set option(s).               */
   EGG_OPTION_UNSET = 2          /* Unset option(s).             */
 };
+
+#define ESC             27      /* Oct              033
+                                 * Hex              1B
+                                 * Caret notation   ^[
+                                 * Escape sequences \e
+                                 * \e is not supported in all compilers
+                                 */
 
 /* Telnet codes.  See "TELNET Protocol Specification" (RFC 854) and
  * "TELNET Echo Option" (RFC 875) for details. */
