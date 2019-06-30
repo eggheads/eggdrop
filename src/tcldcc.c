@@ -645,7 +645,8 @@ static int tcl_botlist STDVAR
 static int tcl_dcclist STDVAR
 {
   int i;
-  char *p, idxstr[10], timestamp[11], other[160], portstring[7];
+  char *p, idxstr[10], timestamp[11], other[160];
+  char portstring[7];
   long tv;
   EGG_CONST char *list[7];
 
