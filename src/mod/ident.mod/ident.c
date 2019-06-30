@@ -198,7 +198,7 @@ char *ident_start(Function *global_funcs)
 {
   global = global_funcs;
 
-  module_register(MODULE_NAME, ident_table, 0, 2);
+  module_register(MODULE_NAME, ident_table, 0, 9);
 
   if (!module_depend(MODULE_NAME, "eggdrop", 109, 0)) {
     module_undepend(MODULE_NAME);
