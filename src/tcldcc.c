@@ -645,9 +645,9 @@ static int tcl_botlist STDVAR
 static int tcl_dcclist STDVAR
 {
   int i;
-  char *p, idxstr[10], timestamp[11], other[160];
+  char *p, idxstr[10], timestamp[11], other[160], portstring[7];
   long tv;
-  EGG_CONST char *list[6];
+  EGG_CONST char *list[7];
 
   BADARGS(1, 2, " ?type?");
 
@@ -668,10 +668,16 @@ static int tcl_dcclist STDVAR
       list[1] = dcc[i].nick;
       list[2] = (dcc[i].host == NULL || dcc[i].host[0] == '\0') ?
                 iptostr(&dcc[i].sockname.addr.sa) : dcc[i].host;
-      list[3] = dcc[i].type ? dcc[i].type->name : "*UNKNOWN*";
-      list[4] = other;
-      list[5] = timestamp;
-      p = Tcl_Merge(6, list);
+#ifdef TLS
+      egg_snprintf(portstring, sizeof portstring, "%s%d", dcc[i].ssl ? "+" : "", dcc[i].port);
+#else
+      portstring =  dcc[i].port;
+#endif
+      list[3] = portstring;
+      list[4] = dcc[i].type ? dcc[i].type->name : "*UNKNOWN*";
+      list[5] = other;
+      list[6] = timestamp;
+      p = Tcl_Merge(7, list);
       Tcl_AppendElement(irp, p);
       Tcl_Free((char *) p);
     }
