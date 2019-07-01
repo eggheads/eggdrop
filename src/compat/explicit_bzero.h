@@ -24,7 +24,7 @@
 #define _EGG_COMPAT_EXPLICIT_BZERO_H_
 
 #ifndef HAVE_EXPLICIT_BZERO
-void explicit_bzero(void *, size_t);
+void explicit_bzero(void *const, const size_t);
 #endif /* HAVE_EXPLICIT_BZERO */
 
 #endif /* _EGG_COMPAT_EXPLICIT_BZERO_H_ */
