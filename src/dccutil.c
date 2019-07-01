@@ -8,7 +8,7 @@
  */
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2018 Eggheads Development Team
+ * Copyright (C) 1999 - 2019 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -504,14 +504,11 @@ void *_get_data_ptr(int size, char *file, int line)
   return p;
 }
 
-/* Make a password, 10-15 random letters and digits
+/* Make a password with (PASSWORDLEN - 1) random lower case letters and digits
  */
-void makepass(char *s)
+void makepass(char *pass)
 {
-  int i;
-
-  i = 10 + randint(6);
-  make_rand_str(s, i);
+  make_rand_str(pass, PASSWORDLEN - 1);
 }
 
 void flush_lines(int idx, struct chat_info *ci)

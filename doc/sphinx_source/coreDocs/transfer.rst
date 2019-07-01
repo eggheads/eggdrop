@@ -38,4 +38,4 @@ There are also some variables you can set in your config file:
     Set here the time (in seconds) to wait before an inactive transfer
     times out.
 
-Copyright (C) 2000 - 2018 Eggheads Development Team
+Copyright (C) 2000 - 2019 Eggheads Development Team

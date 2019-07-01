@@ -1,31 +1,28 @@
 
+
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    
-    <title>Patch How-To &mdash; Eggdrop 1.8.4 documentation</title>
-    
+    <title>Patch How-To &#8212; Eggdrop 1.8.4 documentation</title>
     <link rel="stylesheet" href="../_static/eggdrop.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-    
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
         VERSION:     '1.8.4',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
-        HAS_SOURCE:  true
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
       };
     </script>
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
-    <link rel="top" title="Eggdrop 1.8.4 documentation" href="../index.html" />
-    <link rel="up" title="&lt;no title&gt;" href="index.html" />
+    <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="Eggdrop Tcl Commands" href="tcl-commands.html" />
     <link rel="prev" title="Botnet Sharing and Linking" href="botnet.html" /> 
   </head>
@@ -52,7 +49,7 @@
             
       <div class="documentwrapper">
         <div class="bodywrapper">
-          <div class="body">
+          <div class="body" role="main">
             
   <p>Last revised: July 10, 2016</p>
 <div class="section" id="patch-how-to">
@@ -70,7 +67,7 @@ source code. You should always keep a tar.gz archive with the source of
 your current Eggdrop on your shell. In the next step, you have to change
 to your source directory (i.e.: /home/user/eggdrop1.8.4/) and type
 the following command:</p>
-<div class="highlight-python"><div class="highlight"><pre>patch -p1 &lt; ../path.to.the/patch
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">patch</span> <span class="o">-</span><span class="n">p1</span> <span class="o">&lt;</span> <span class="o">../</span><span class="n">path</span><span class="o">.</span><span class="n">to</span><span class="o">.</span><span class="n">the</span><span class="o">/</span><span class="n">patch</span>
 </pre></div>
 </div>
 <p>Once this is complete, execute the following command:</p>
@@ -81,15 +78,15 @@ patch didn't apply properly. Ensure that the patch is intended for your
 version and that you have the original source. You should also try to
 re-download the patch to ensure that the patch is not corrupted.</p>
 <p>If you get an error such as this:</p>
-<div class="highlight-python"><div class="highlight"><pre>|Index: Makefile.in
-|===================================================================
-|RCS file: /usr/local/cvsroot/eggdrop1.8/Makefile.in,v
-|retrieving revision 1.38
-|diff -u -r1.38 Makefile.in
-|--- Makefile.in    17 Jun 2004 05:43:28 -0000      1.38
-|+++ Makefile.in    23 Jul 2004 21:58:23 -0000
---------------------------
-File to patch:
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="o">|</span><span class="n">Index</span><span class="p">:</span> <span class="n">Makefile</span><span class="o">.</span><span class="ow">in</span>
+<span class="o">|===================================================================</span>
+<span class="o">|</span><span class="n">RCS</span> <span class="n">file</span><span class="p">:</span> <span class="o">/</span><span class="n">usr</span><span class="o">/</span><span class="n">local</span><span class="o">/</span><span class="n">cvsroot</span><span class="o">/</span><span class="n">eggdrop1</span><span class="o">.</span><span class="mi">8</span><span class="o">/</span><span class="n">Makefile</span><span class="o">.</span><span class="ow">in</span><span class="p">,</span><span class="n">v</span>
+<span class="o">|</span><span class="n">retrieving</span> <span class="n">revision</span> <span class="mf">1.38</span>
+<span class="o">|</span><span class="n">diff</span> <span class="o">-</span><span class="n">u</span> <span class="o">-</span><span class="n">r1</span><span class="o">.</span><span class="mi">38</span> <span class="n">Makefile</span><span class="o">.</span><span class="ow">in</span>
+<span class="o">|---</span> <span class="n">Makefile</span><span class="o">.</span><span class="ow">in</span>    <span class="mi">17</span> <span class="n">Jun</span> <span class="mi">2004</span> <span class="mi">05</span><span class="p">:</span><span class="mi">43</span><span class="p">:</span><span class="mi">28</span> <span class="o">-</span><span class="mi">0000</span>      <span class="mf">1.38</span>
+<span class="o">|+++</span> <span class="n">Makefile</span><span class="o">.</span><span class="ow">in</span>    <span class="mi">23</span> <span class="n">Jul</span> <span class="mi">2004</span> <span class="mi">21</span><span class="p">:</span><span class="mi">58</span><span class="p">:</span><span class="mi">23</span> <span class="o">-</span><span class="mi">0000</span>
+<span class="o">--------------------------</span>
+<span class="n">File</span> <span class="n">to</span> <span class="n">patch</span><span class="p">:</span>
 </pre></div>
 </div>
 <p>Then you should try using a different '-p' option. Try -p0 first, and then
@@ -111,7 +108,7 @@ clicking the fork button at the top of the screen. Follow the
 directions it provides to configure your local repo.</p>
 </li>
 <li><p class="first">Enter the local directory and create a new branch for your patch:</p>
-<div class="highlight-python"><div class="highlight"><pre>git checkout -b &lt;DescriptiveBranchName&gt;
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">git</span> <span class="n">checkout</span> <span class="o">-</span><span class="n">b</span> <span class="o">&lt;</span><span class="n">DescriptiveBranchName</span><span class="o">&gt;</span>
 </pre></div>
 </div>
 </li>
@@ -119,7 +116,7 @@ directions it provides to configure your local repo.</p>
 </li>
 <li><p class="first">Once you confirm your patch works, push the changes back to your
 GitHub repo - this is usually done by something similar to:</p>
-<div class="highlight-python"><div class="highlight"><pre>git push origin &lt;DescriptiveBranchName&gt;
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">git</span> <span class="n">push</span> <span class="n">origin</span> <span class="o">&lt;</span><span class="n">DescriptiveBranchName</span><span class="o">&gt;</span>
 </pre></div>
 </div>
 </li>
@@ -144,7 +141,7 @@ to the open source community! Karma++!</p>
 source tree.</p>
 </li>
 <li><p class="first">Run the following:</p>
-<div class="highlight-python"><div class="highlight"><pre>diff -urN eggdrop1.8.original eggdrop1.8.modified &gt; patchname.patch
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">diff</span> <span class="o">-</span><span class="n">urN</span> <span class="n">eggdrop1</span><span class="o">.</span><span class="mf">8.</span><span class="n">original</span> <span class="n">eggdrop1</span><span class="o">.</span><span class="mf">8.</span><span class="n">modified</span> <span class="o">&gt;</span> <span class="n">patchname</span><span class="o">.</span><span class="n">patch</span>
 </pre></div>
 </div>
 <p>DO NOT add any other diff options.</p>
@@ -156,7 +153,7 @@ which your patch was created.</p>
 <p>It helps if you include the major release number that the patch is
 for in the subject line. For the 1.8.x series, the subject line
 should look like this:</p>
-<div class="highlight-python"><div class="highlight"><pre>PATCH1.8: my-patch-filename.patch
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">PATCH1</span><span class="o">.</span><span class="mi">8</span><span class="p">:</span> <span class="n">my</span><span class="o">-</span><span class="n">patch</span><span class="o">-</span><span class="n">filename</span><span class="o">.</span><span class="n">patch</span>
 </pre></div>
 </div>
 <p>You should also include the nick/handle, name, and email address
@@ -174,7 +171,7 @@ following location:</p>
 <blockquote>
 <div><a class="reference external" href="ftp://ftp.eggheads.org/pub/eggdrop/patches/1.8">ftp://ftp.eggheads.org/pub/eggdrop/patches/1.8</a></div></blockquote>
 </div></blockquote>
-<p>Copyright (C) 1999 - 2018 Eggheads Development Team</p>
+<p>Copyright (C) 1999 - 2019 Eggheads Development Team</p>
 </div>
 </div>
 
@@ -197,7 +194,7 @@ following location:</p>
 <li class="toctree-l1"><a class="reference internal" href="partyline.html">The Party Line</a></li>
 <li class="toctree-l1"><a class="reference internal" href="bans.html">Bans, Invites, and Exempts</a></li>
 <li class="toctree-l1"><a class="reference internal" href="botnet.html">Botnet Sharing and Linking</a></li>
-<li class="toctree-l1 current"><a class="current reference internal" href="">Patch How-To</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Patch How-To</a></li>
 <li class="toctree-l1"><a class="reference internal" href="tcl-commands.html">Eggdrop Tcl Commands</a></li>
 <li class="toctree-l1"><a class="reference internal" href="ipv6.html">IPv6 support</a></li>
 <li class="toctree-l1"><a class="reference internal" href="tls.html">TLS support</a></li>
@@ -256,10 +253,10 @@ following location:</p>
 
         <div class="right">
           
-    <div class="footer">
-        &copy; Copyright 2018, Eggheads.
-      Last updated on Dec 11, 2018.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.3.
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2019, Eggheads.
+      Last updated on Dec 31, 2018.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.6.7.
     </div>
         </div>
         <div class="clearer"></div>

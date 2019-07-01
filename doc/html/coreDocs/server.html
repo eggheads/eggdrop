@@ -1,31 +1,28 @@
 
+
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    
-    <title>Server Module &mdash; Eggdrop 1.8.4 documentation</title>
-    
+    <title>Server Module &#8212; Eggdrop 1.8.4 documentation</title>
     <link rel="stylesheet" href="../_static/eggdrop.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-    
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
         VERSION:     '1.8.4',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
-        HAS_SOURCE:  true
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
       };
     </script>
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
-    <link rel="top" title="Eggdrop 1.8.4 documentation" href="../index.html" />
-    <link rel="up" title="&lt;no title&gt;" href="index.html" />
+    <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="Share Module" href="share.html" />
     <link rel="prev" title="Seen Module" href="seen.html" /> 
   </head>
@@ -52,7 +49,7 @@
             
       <div class="documentwrapper">
         <div class="bodywrapper">
-          <div class="body">
+          <div class="body" role="main">
             
   <p>Last revised: October 25, 2010</p>
 <div class="section" id="server-module">
@@ -63,7 +60,7 @@ old NO_IRC define.</p>
 <p>This module requires: none</p>
 <p>Put this line into your Eggdrop configuration file to load the server
 module:</p>
-<div class="highlight-python"><div class="highlight"><pre>loadmodule server
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">loadmodule</span> <span class="n">server</span>
 </pre></div>
 </div>
 <p>There are also some variables you can set in your config file:</p>
@@ -113,38 +110,38 @@ primary nickname is already in use.</dd>
 <dt>set realname &quot;/msg LamestBot hello&quot;</dt>
 <dd>Set here what to display in the real-name field for the bot.</dd>
 </dl>
-<div class="highlight-python"><div class="highlight"><pre>bind evnt - init-server evnt:init_server
-proc evnt:init_server {type} {
-  global botnick
-  putquick &quot;MODE $botnick +i-ws&quot;
-}
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">bind</span> <span class="n">evnt</span> <span class="o">-</span> <span class="n">init</span><span class="o">-</span><span class="n">server</span> <span class="n">evnt</span><span class="p">:</span><span class="n">init_server</span>
+<span class="n">proc</span> <span class="n">evnt</span><span class="p">:</span><span class="n">init_server</span> <span class="p">{</span><span class="nb">type</span><span class="p">}</span> <span class="p">{</span>
+  <span class="k">global</span> <span class="n">botnick</span>
+  <span class="n">putquick</span> <span class="s2">&quot;MODE $botnick +i-ws&quot;</span>
+<span class="p">}</span>
 </pre></div>
 </div>
 <p>... is Tcl scripting that is run immediately after connecting to a server.</p>
-<div class="highlight-python"><div class="highlight"><pre>set init-server { putquick &quot;MODE $botnick +i-ws&quot; }
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="nb">set</span> <span class="n">init</span><span class="o">-</span><span class="n">server</span> <span class="p">{</span> <span class="n">putquick</span> <span class="s2">&quot;MODE $botnick +i-ws&quot;</span> <span class="p">}</span>
 </pre></div>
 </div>
 <p>... is Tcl scripting that is run immediately after connecting to a server.
 It is limited to 120 characters, and is depriciated due to the EVNT bind
 (see doc/tcl-commands.doc).</p>
-<div class="highlight-python"><div class="highlight"><pre>set connect-server { putlog &quot;Connecting to server.&quot; }
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="nb">set</span> <span class="n">connect</span><span class="o">-</span><span class="n">server</span> <span class="p">{</span> <span class="n">putlog</span> <span class="s2">&quot;Connecting to server.&quot;</span> <span class="p">}</span>
 </pre></div>
 </div>
 <p>... is Tcl scripting that is run immediately before connecting to a server.
 It is limited to 120 characters, and is depriciated due to the EVNT bind
 (see doc/tcl-commands.doc).</p>
-<div class="highlight-python"><div class="highlight"><pre>set disconnect-server { putlog &quot;Disconnected from server.&quot; }
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="nb">set</span> <span class="n">disconnect</span><span class="o">-</span><span class="n">server</span> <span class="p">{</span> <span class="n">putlog</span> <span class="s2">&quot;Disconnected from server.&quot;</span> <span class="p">}</span>
 </pre></div>
 </div>
 <p>... is a Tcl script that is run immediately after disconnecting from a
 server. It is limited to 120 characters, and is depriciated due to the
 EVNT bind (see doc/tcl-commands.doc).</p>
-<div class="highlight-python"><div class="highlight"><pre>set servers {
-  you.need.to.change.this:6667
-  another.example.com:7000:password
-  [2001:db8:618:5c0:263::]:6669:password
-  ssl.example.net:+6697
-}
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="nb">set</span> <span class="n">servers</span> <span class="p">{</span>
+  <span class="n">you</span><span class="o">.</span><span class="n">need</span><span class="o">.</span><span class="n">to</span><span class="o">.</span><span class="n">change</span><span class="o">.</span><span class="n">this</span><span class="p">:</span><span class="mi">6667</span>
+  <span class="n">another</span><span class="o">.</span><span class="n">example</span><span class="o">.</span><span class="n">com</span><span class="p">:</span><span class="mi">7000</span><span class="p">:</span><span class="n">password</span>
+  <span class="p">[</span><span class="mi">2001</span><span class="p">:</span><span class="n">db8</span><span class="p">:</span><span class="mi">618</span><span class="p">:</span><span class="mi">5</span><span class="n">c0</span><span class="p">:</span><span class="mi">263</span><span class="p">::]:</span><span class="mi">6669</span><span class="p">:</span><span class="n">password</span>
+  <span class="n">ssl</span><span class="o">.</span><span class="n">example</span><span class="o">.</span><span class="n">net</span><span class="p">:</span><span class="o">+</span><span class="mi">6697</span>
+<span class="p">}</span>
 </pre></div>
 </div>
 <p>... is the bot's server list. The bot will start at the first server
@@ -310,7 +307,7 @@ your network. The default setting is 9. The maximum supported length by
 Eggdrop is 32.</dd>
 </dl>
 </div></blockquote>
-<p>Copyright (C) 2000 - 2018 Eggheads Development Team</p>
+<p>Copyright (C) 2000 - 2019 Eggheads Development Team</p>
 </div></blockquote>
 </div>
 
@@ -352,7 +349,7 @@ Eggdrop is 32.</dd>
 <li class="toctree-l1"><a class="reference internal" href="irc.html">IRC Module</a></li>
 <li class="toctree-l1"><a class="reference internal" href="notes.html">Notes Module</a></li>
 <li class="toctree-l1"><a class="reference internal" href="seen.html">Seen Module</a></li>
-<li class="toctree-l1 current"><a class="current reference internal" href="">Server Module</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Server Module</a></li>
 <li class="toctree-l1"><a class="reference internal" href="share.html">Share Module</a></li>
 <li class="toctree-l1"><a class="reference internal" href="transfer.html">Transfer Module</a></li>
 <li class="toctree-l1"><a class="reference internal" href="uptime.html">Uptime Module</a></li>
@@ -392,10 +389,10 @@ Eggdrop is 32.</dd>
 
         <div class="right">
           
-    <div class="footer">
-        &copy; Copyright 2018, Eggheads.
-      Last updated on Dec 11, 2018.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.3.
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2019, Eggheads.
+      Last updated on Dec 31, 2018.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.6.7.
     </div>
         </div>
         <div class="clearer"></div>

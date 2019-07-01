@@ -34,8 +34,8 @@ There are also some variables you can set in your config file:
 
   set use-info 1
 
-      Set this setting to 1 if you want to allow users to store an
-      info line.
+      Set this setting to 1 if you want to allow users to store an info
+      line.
 
   set allow-ps 0
 
@@ -57,8 +57,8 @@ There are also some variables you can set in your config file:
 
       idle-kick 0
 
-          This setting will make the bot check every minute for
-          idle users. Set this to 0 to disable idle check.
+          This setting will make the bot check every minute for idle
+          users. Set this to 0 to disable idle check.
 
       stopnethack-mode 0
 
@@ -66,77 +66,63 @@ There are also some variables you can set in your config file:
           channel with serverops. There are seven different modes for
           this settings:
 
-            +------+-----------------------------------------------------------+
-            | 0    | turn off                                                  |
-            +------+-----------------------------------------------------------+
-            | 1    | isoptest (allow serverop if registered op)                |
-            +------+-----------------------------------------------------------+
-            | 2    | wasoptest (allow serverop if user had op before split)    |
-            +------+-----------------------------------------------------------+
-            | 3    | allow serverop if isop or wasop                           |
-            +------+-----------------------------------------------------------+
-            | 4    | allow serverop if isop and wasop.                         |
-            +------+-----------------------------------------------------------+
-            | 5    |   If the channel is -bitch, see stopnethack-mode 3        |
-            |      |                                                           |
-            |      | --------------------------------------------------------+ |
-            | +    |                                                           |
-            |      |     If the channel is +bitch, see stopnethack-mode 1      |
-            +------+-----------------------------------------------------------+
-            | 6    |   If the channel is -bitch, see stopnethack-mode 2        |
-            |      |                                                           |
-            |      | --------------------------------------------------------+ |
-            | +    |                                                           |
-            |      |     If the channel is +bitch, see stopnethack-mode 4      |
-            +------+-----------------------------------------------------------+
+            +---+--------------------------------------------------------+
+            | 0 | turn off                                               |
+            +---+--------------------------------------------------------+
+            | 1 | isoptest (allow serverop if registered op)             |
+            +---+--------------------------------------------------------+
+            | 2 | wasoptest (allow serverop if user had op before split) |
+            +---+--------------------------------------------------------+
+            | 3 | allow serverop if isop or wasop                        |
+            +---+--------------------------------------------------------+
+            | 4 | allow serverop if isop and wasop.                      |
+            +---+--------------------------------------------------------+
+            | 5 |   If the channel is -bitch, see stopnethack-mode 3     |
+            |   |                                                        |
+            |   | ------------------------------------------------------ |
+            |   | --+                                                    |
+            |   |                                                        |
+            |   |     If the channel is +bitch, see stopnethack-mode 1   |
+            | + |                                                        |
+            +---+--------------------------------------------------------+
+            | 6 |   If the channel is -bitch, see stopnethack-mode 2     |
+            |   |                                                        |
+            |   | ------------------------------------------------------ |
+            |   | --+                                                    |
+            |   |                                                        |
+            |   |     If the channel is +bitch, see stopnethack-mode 4   |
+            | + |                                                        |
+            +---+--------------------------------------------------------+
 
       revenge-mode 0
 
-          This settings defines how the bot should punish bad users
-          when revenging. There are four possible settings:
+          This settings defines how the bot should punish bad users when
+          revenging. There are four possible settings:
 
-              --- --------------------------------------------------------------------
-              0   Deop the user.
-
-              1   Deop the user and give them the +d flag for the channel.
-
-              2   Deop the user, give them the +d flag for the channel, and kick them.
-
-              3   Deop the user, give them the +d flag for the channel, kick, and
-                  ban them.
-              --- --------------------------------------------------------------------
+              ---------- -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+              0          Deop the user.
+              1          Deop the user and give them the +d flag for the channel.
+              2          Deop the user, give them the +d flag for the channel, and kick them.
+              3          Deop the user, give them the +d flag for the channel, kick, and ban them.
+              ---------- -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
       ban-type 3
 
   This setting defines what type of bans should eggdrop place for +k
   users or when revenge-mode is 3. Available types are:
 
-      ---- -------------------------
-      0    *!user@host
-           
-
-      1    *!*user@host
-           
-
-      2    *!*@host
-           
-
-      3    *!*user@*.host
-           
-
-      4    _!*@_.host
-           
-
-      5 n  ick!user@host
-
-      6 n  ick!*user@host
-
-      7 n  ick!*@host
-
-      8 n  ick!*user@*.host
-
-      9 n  ick!*@*.host
-      ---- -------------------------
+      ------------------ ----------------------------------------------------------------------------------------------------------------
+      0                  *!user@host
+      1                  *!*user@host
+      2                  *!*@host
+      3                  *!*user@*.host
+      4                  _!*@_.host
+      5 n                ick!user@host
+      6 n                ick!*user@host
+      7 n                ick!*@host
+      8 n                ick!*user@*.host
+      9 n                ick!*@*.host
+      ------------------ ----------------------------------------------------------------------------------------------------------------
 
   You can also specify types from 10 to 19 which correspond to types 0
   to 9, but instead of using a * wildcard to replace portions of the
@@ -154,10 +140,10 @@ There are also some variables you can set in your config file:
         Set here how long temporary exempts will last (in minutes). If
         you set this setting to 0, the bot will never remove them. The
         bot will check the exempts every X minutes, but will not remove
-        the exempt if a ban is set on the channel that matches
-        that exempt. Once the ban is removed, then the exempt will be
-        removed the next time the bot checks. Please note that this is
-        an IRCnet feature.
+        the exempt if a ban is set on the channel that matches that
+        exempt. Once the ban is removed, then the exempt will be removed
+        the next time the bot checks. Please note that this is an IRCnet
+        feature.
 
     invite-time 60
 
@@ -271,23 +257,23 @@ There are also some variables you can set in your config file:
             Only activate bans on the channel when necessary? This keeps
             the channel's ban list from getting excessively long. The
             bot still remembers every ban, but it only activates a ban
-            on the channel when it sees someone join who matches
-            that ban.
+            on the channel when it sees someone join who matches that
+            ban.
 
         userbans
 
             Allow bans to be made by users directly? If turned off, the
-            bot will require all bans to be made through the
-            bot's console.
+            bot will require all bans to be made through the bot's
+            console.
 
         dynamicexempts
 
             Only activate exempts on the channel when necessary? This
-            keeps the channel's exempt list from getting
-            excessively long. The bot still remembers every exempt, but
-            it only activates a exempt on the channel when it sees a ban
-            set that matches the exempt. The exempt remains active on
-            the channel for as long as the ban is still active.
+            keeps the channel's exempt list from getting excessively
+            long. The bot still remembers every exempt, but it only
+            activates a exempt on the channel when it sees a ban set
+            that matches the exempt. The exempt remains active on the
+            channel for as long as the ban is still active.
 
         userexempts
 
@@ -298,11 +284,11 @@ There are also some variables you can set in your config file:
         dynamicinvites
 
             Only activate invites on the channel when necessary? This
-            keeps the channel's invite list from getting
-            excessively long. The bot still remembers every invite, but
-            the invites are only activated when the channel is set to
-            invite only and a user joins after requesting an invite.
-            Once set, the invite remains until the channel goes to -i.
+            keeps the channel's invite list from getting excessively
+            long. The bot still remembers every invite, but the invites
+            are only activated when the channel is set to invite only
+            and a user joins after requesting an invite. Once set, the
+            invite remains until the channel goes to -i.
 
         userinvites
 
@@ -400,8 +386,8 @@ There are also some variables you can set in your config file:
 
             Allow non-ops to perform channel modes? This can stop the
             bot from fighting with services such as ChanServ, or from
-            kicking IRCops when setting channel modes without
-            having ops.
+            kicking IRCops when setting channel modes without having
+            ops.
 
         static
 
@@ -472,4 +458,4 @@ There are also some variables you can set in your config file:
 
     }
 
-  Copyright (C) 2000 - 2018 Eggheads Development Team
+  Copyright (C) 2000 - 2019 Eggheads Development Team

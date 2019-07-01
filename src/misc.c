@@ -9,7 +9,7 @@
  */
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2018 Eggheads Development Team
+ * Copyright (C) 1999 - 2019 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -35,9 +35,7 @@
 #include "tandem.h"
 #include "modules.h"
 
-#ifdef HAVE_UNAME
-#  include <sys/utsname.h>
-#endif
+#include <sys/utsname.h>
 
 #include "stat.h"
 
@@ -469,7 +467,7 @@ void daysago(time_t now, time_t then, char *out)
     sprintf(out, "%d day%s ago", days, (days == 1) ? "" : "s");
     return;
   }
-  egg_strftime(out, 6, "%H:%M", localtime(&then));
+  strftime(out, 6, "%H:%M", localtime(&then));
 }
 
 /* Convert an interval (in seconds) to one of:
@@ -483,7 +481,7 @@ void days(time_t now, time_t then, char *out)
     sprintf(out, "in %d day%s", days, (days == 1) ? "" : "s");
     return;
   }
-  egg_strftime(out, 9, "at %H:%M", localtime(&now));
+  strftime(out, 9, "at %H:%M", localtime(&now));
 }
 
 /* Convert an interval (in seconds) to one of:
@@ -531,7 +529,7 @@ void putlog EGG_VARARGS_DEF(int, arg1)
 
   /* Create the timestamp */
   if (shtime) {
-    egg_strftime(stamp, sizeof(stamp) - 2, log_ts, t);
+    strftime(stamp, sizeof(stamp) - 2, log_ts, t);
     strcat(stamp, " ");
     tsl = strlen(stamp);
   }
@@ -547,9 +545,9 @@ void putlog EGG_VARARGS_DEF(int, arg1)
   out[LOGLINEMAX - tsl] = 0;
   if (keep_all_logs) {
     if (!logfile_suffix[0])
-      egg_strftime(ct, 12, ".%d%b%Y", t);
+      strftime(ct, 12, ".%d%b%Y", t);
     else {
-      egg_strftime(ct, 80, logfile_suffix, t);
+      strftime(ct, 80, logfile_suffix, t);
       ct[80] = 0;
       s2 = ct;
       /* replace spaces by underscores */
@@ -715,7 +713,7 @@ void flushlogs()
          */
         char stamp[33];
 
-        egg_strftime(stamp, sizeof(stamp) - 1, log_ts, localtime(&now));
+        strftime(stamp, sizeof(stamp) - 1, log_ts, localtime(&now));
         fprintf(logs[i].f, "%s ", stamp);
         fprintf(logs[i].f, MISC_LOGREPEAT, logs[i].repeats);
         /* Reset repeats */
@@ -807,10 +805,7 @@ void help_subst(char *s, char *nick, struct flag_record *flags,
   struct chanset_t *chan;
   int i, j, center = 0;
   static int help_flags;
-
-#ifdef HAVE_UNAME
   struct utsname uname_info;
-#endif
 
   if (s == NULL) {
     /* Used to reset substitutions */
@@ -900,13 +895,11 @@ void help_subst(char *s, char *nick, struct flag_record *flags,
       }
       break;
     case 'U':
-#ifdef HAVE_UNAME
       if (uname(&uname_info) >= 0) {
         egg_snprintf(sub, sizeof sub, "%s %s", uname_info.sysname,
                      uname_info.release);
         towrite = sub;
       } else
-#endif
         towrite = "*UNKNOWN*";
       break;
     case 'B':
@@ -925,7 +918,7 @@ void help_subst(char *s, char *nick, struct flag_record *flags,
       towrite = network;
       break;
     case 'T':
-      egg_strftime(sub, 6, "%H:%M", localtime(&now));
+      strftime(sub, 6, "%H:%M", localtime(&now));
       towrite = sub;
       break;
     case 'N':
@@ -1434,18 +1427,15 @@ void show_banner(int idx)
   fclose(vv);
 }
 
-/* Create a string with random letters and digits
+/* Create a string with random lower case letters and digits
  */
-void make_rand_str(char *s, int len)
+void make_rand_str(char *s, const int len)
 {
-  int j;
+  int i;
+  static const char chars[] = "0123456789abcdefghijklmnopqrstuvwxyz";
 
-  for (j = 0; j < len; j++) {
-    if (!randint(3))
-      s[j] = '0' + randint(10);
-    else
-      s[j] = 'a' + randint(26);
-  }
+  for (i = 0; i < len; i++)
+    s[i] = chars[randint((sizeof chars) - 1)];
   s[len] = 0;
 }
 

@@ -30,8 +30,8 @@ section.
   set username "lamest"
 
       This setting defines the username the bot uses on IRC. This
-      setting has no effect if an ident daemon is running on your
-      bot's machine.
+      setting has no effect if an ident daemon is running on your bot's
+      machine.
 
   set admin "Lamer <email: lamer@lamest.lame.org>"
 
@@ -64,8 +64,8 @@ section.
   set env(TZ) "$timezone $offset" (disabled by default)
 
       If you don't want to use the timezone setting for scripting
-      purposes only, but instead everywhere possible, then use
-      this setting.
+      purposes only, but instead everywhere possible, then use this
+      setting.
 
   set vhost4 "99.99.0.0"
   set vhost4 "virtual.host.com"
@@ -103,8 +103,8 @@ section.
       alternative would be to set the environment variable EGG_LANG to
       that value.
 
-      Languages included with Eggdrop: Danish, English, French,
-      Finnish, German.
+      Languages included with Eggdrop: Danish, English, French, Finnish,
+      German.
 
 
 LOG FILES
@@ -149,9 +149,9 @@ overwritten by the logfile of the next day.
       mode 't', raw outgoing botnet traffic via console/log mode 'u',
       raw outgoing share traffic via console/log mode 'g', and raw
       incoming share traffic via console/log mode 'h'. These flags can
-      create a large security hole, allowing people to see
-      user passwords. This is now restricted to +n users only. Please
-      choose your owners with care.
+      create a large security hole, allowing people to see user
+      passwords. This is now restricted to +n users only. Please choose
+      your owners with care.
 
 logfile <logflags> <channel> "logs/logfile"
 
@@ -160,26 +160,26 @@ logfile <logflags> <channel> "logs/logfile"
 
     Logfile flags:
 
-        ---- -------------------------------------------------------
-        b    information about bot linking and userfile sharing
-        c    commands
-        d    misc debug information
-        g    raw outgoing share traffic
-        h    raw incoming share traffic
-        j    joins, parts, quits, and netsplits on the channel
-        k    kicks, bans, and mode changes on the channel
-        l    linked bot messages
-        m    private msgs, notices and ctcps to the bot
-        o    misc info, errors, etc (IMPORTANT STUFF)
-        p    public text on the channel
-        r    raw incoming server traffic
-        s    server connects, disconnects, and notices
-        t    raw incoming botnet traffic
-        u    raw outgoing botnet traffic
-        v    raw outgoing server traffic
-        w    wallops (make sure the bot sets +w in init-server)
-        x    file transfers and file-area commands
-        ---- -------------------------------------------------------
+        ------------- ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+        b             information about bot linking and userfile sharing
+        c             commands
+        d             misc debug information
+        g             raw outgoing share traffic
+        h             raw incoming share traffic
+        j             joins, parts, quits, and netsplits on the channel
+        k             kicks, bans, and mode changes on the channel
+        l             linked bot messages
+        m             private msgs, notices and ctcps to the bot
+        o             misc info, errors, etc (IMPORTANT STUFF)
+        p             public text on the channel
+        r             raw incoming server traffic
+        s             server connects, disconnects, and notices
+        t             raw incoming botnet traffic
+        u             raw outgoing botnet traffic
+        v             raw outgoing server traffic
+        w             wallops (make sure the bot sets +w in init-server)
+        x             file transfers and file-area commands
+        ------------- ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
     Note that modes d, h, r, t, and v can fill disk quotas quickly.
     There are also eight user-defined levels (1-8) which can be used by
@@ -236,11 +236,11 @@ set quiet-save 0
 
 set logfile-suffix ".%d%b%Y"
 
-    If keep-all-logs is 1, this setting will define the suffix of
-    the logfiles. The default will result in a suffix like "04May2000".
+    If keep-all-logs is 1, this setting will define the suffix of the
+    logfiles. The default will result in a suffix like "04May2000".
     "%Y%m%d" will produce the often used yyyymmdd format. Read the
     strftime manpages for more options. NOTE: On systems which don't
-    support strftime, the default format will be used _always_.
+    support strftime, the default format will be used _always.
 
 
 CONSOLE SETTINGS
@@ -359,11 +359,11 @@ efficiency). You should read doc/BOTNET before modifying these settings.
       This setting defines whether or not people can boot users on the
       Eggdrop from other bots in your botnet. Valid settings are:
 
-        ---- -----------------------------
-        0    allow _no_ outside boots
-        1    allow boots from sharebots
-        2    allow any boots
-        ---- -----------------------------
+        ----------- -------------------------------------------------------------------------------
+        0           allow _no_ outside boots
+        1           allow boots from sharebots
+        2           allow any boots
+        ----------- -------------------------------------------------------------------------------
 
   set share-unlinks 1
 
@@ -372,8 +372,8 @@ efficiency). You should read doc/BOTNET before modifying these settings.
 
   set protect-telnet 0
 
-      This setting will drop telnet connections not matching a
-      known host.
+      This setting will drop telnet connections not matching a known
+      host.
 
   set dcc-sanitycheck 0
 
@@ -397,9 +397,8 @@ efficiency). You should read doc/BOTNET before modifying these settings.
   set open-telnets 0
 
       If you want people allow to telnet in and type 'NEW' to become a
-      new user, set this to 1. This is similar to the 'hello'
-      msg command. The protect-telnet setting must be set to 0 to
-      use this.
+      new user, set this to 1. This is similar to the 'hello' msg
+      command. The protect-telnet setting must be set to 0 to use this.
 
   set stealth-telnets 0
 
@@ -410,8 +409,8 @@ efficiency). You should read doc/BOTNET before modifying these settings.
   set use-telnet-banner 0
 
       If you want Eggdrop to display a banner when telneting in, set
-      this setting to 1. The telnet banner is set by
-      'set telnet-banner'.
+      this setting to 1. The telnet banner is set by 'set
+      telnet-banner'.
 
   set connect-timeout 15
 
@@ -446,9 +445,9 @@ ADVANCED SETTINGS
 
   set firewall "!sun-barr.ebay:3666"
 
-      Set this to your socks host if your Eggdrop sits behind
-      a firewall. If you use a Sun "telnet passthru" firewall, prefix
-      the host with a "!".
+      Set this to your socks host if your Eggdrop sits behind a
+      firewall. If you use a Sun "telnet passthru" firewall, prefix the
+      host with a "!".
 
   set nat-ip "127.0.0.1"
 
@@ -459,8 +458,8 @@ ADVANCED SETTINGS
       for your box) or you have IP masquerading between you and the rest
       of the world, and /dcc chat, /ctcp chat or userfile sharing aren't
       working, enter your outside IP here. This IP is used for transfers
-      only, and has nothing to do with the vhost4/6 or
-      listen-addr settings. You may still need to set them.
+      only, and has nothing to do with the vhost4/6 or listen-addr
+      settings. You may still need to set them.
 
   set reserved-portrange 2010:2020
 
@@ -496,16 +495,16 @@ ADVANCED SETTINGS
   set default-flags "hp"
 
       Enter the flags that all new users should get by default. See
-      '.help whois' on the partyline for a list of flags and
-      their descriptions.
+      '.help whois' on the partyline for a list of flags and their
+      descriptions.
 
   set whois-fields "url birthday"
 
       Enter all user-defined fields that should be displayed in a
       '.whois'. This will only be shown if the user has one of these
       extra fields. You might prefer to comment this out and use the
-      userinfo1.0.tcl script which provides commands for changing all
-      of these.
+      userinfo1.0.tcl script which provides commands for changing all of
+      these.
 
   unbind dcc n tcl *dcc:tcl
   unbind dcc n set *dcc:set
@@ -646,20 +645,20 @@ support.
 
   The options are the following:
 
-      ---- ----------------------------------------------
-      0    disable verification
-      1    enable certificate verification
-      2    allow self-signed certificates
-      4    don't check peer common or alt names
-      8    allow expired certificates
-      16   allow certificates which are not valid yet
-      32   allow revoked certificates
-      ---- ----------------------------------------------
+      ------------- ----------------------------------------------------------------------------------------------------------------------------------------------------------------
+      0             disable verification
+      1             enable certificate verification
+      2             allow self-signed certificates
+      4             don't check peer common or alt names
+      8             allow expired certificates
+      16            allow certificates which are not valid yet
+      32            allow revoked certificates
+      ------------- ----------------------------------------------------------------------------------------------------------------------------------------------------------------
 
   set ssl-verify-dcc 0
 
-      Control certificate verification for DCC chats (only /dcc
-      chat botnick)
+      Control certificate verification for DCC chats (only /dcc chat
+      botnick)
 
   set ssl-verify-bots 0
 
@@ -668,8 +667,8 @@ support.
   set ssl-verify-clients 0
 
       Control cerfificate verification for SSL listening ports. This
-      includes leaf bots connecting, users telneting in and /ctcp
-      bot chat.
+      includes leaf bots connecting, users telneting in and /ctcp bot
+      chat.
 
 
 MODULES
@@ -725,4 +724,4 @@ point.
           source scripts/alltools.tcl
           source scripts/action.fix.tcl
 
-Copyright (C) 2000 - 2018 Eggheads Development Team
+Copyright (C) 2000 - 2019 Eggheads Development Team

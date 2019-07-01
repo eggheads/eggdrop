@@ -125,4 +125,4 @@ To create a patch using the diff tool:
 
     ftp://ftp.eggheads.org/pub/eggdrop/patches/1.8
 
-Copyright (C) 1999 - 2018 Eggheads Development Team
+Copyright (C) 1999 - 2019 Eggheads Development Team

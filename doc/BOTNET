@@ -31,8 +31,8 @@ LINK
 
 HUB
 
-    A bot is described as a hub-bot if one or more bots are linked
-    to it.
+    A bot is described as a hub-bot if one or more bots are linked to
+    it.
 
 LEAF
 
@@ -56,14 +56,14 @@ SHARE BOT
 
 AGGRESSIVE SHARE
 
-    Aggressive share is a term used to describe the direction of
-    sharing user-files. Aggressive share bots will SEND userfiles to
-    another passive bot.
+    Aggressive share is a term used to describe the direction of sharing
+    user-files. Aggressive share bots will SEND userfiles to another
+    passive bot.
 
 PASSIVE SHARE
 
-    Passive share is a term used to describe the direction of
-    sharing user-files. Passive share bots will accept userfiles from an
+    Passive share is a term used to describe the direction of sharing
+    user-files. Passive share bots will accept userfiles from an
     aggressive share bot.
 
 ADDRESS
@@ -76,8 +76,8 @@ ADDRESS
 RELAY PORT
 
     The relay port number of the bot is defined in the config file. Note
-    that you can define one port for bots and another for
-    user connections.
+    that you can define one port for bots and another for user
+    connections.
 
 RELAY
 
@@ -115,26 +115,17 @@ Flags can be either global (such as +s) or channel specific (such as |+s
 
 The following is a list of valid bot flags:
 
-  ------- ----------------------------------------------------------------
-  s       share aggressively (SEND userfile to a passive bot)
-
-  p       share passively (ACCEPT userfile from an aggressive bot)
-
-  g       global share (share all channels)
-
-  h       hub (automatically link to this bot)
-
-  a       alternate (automatically link to this bot if the hub bot can't
-          be linked)
-
-  l       leaf (bot is not allowed to link in other bots)
-
-  r       reject (bot will not be allowed to link)
-
-  i       isolate (isolate the party line across a bot link)
-
-  0-9     user defined flags
-  ------- ----------------------------------------------------------------
+  ---------------- --------------------------------------------------------------------------------------------------------------------------------------------------
+  s                share aggressively (SEND userfile to a passive bot)
+  p                share passively (ACCEPT userfile from an aggressive bot)
+  g                global share (share all channels)
+  h                hub (automatically link to this bot)
+  a                alternate (automatically link to this bot if the hub bot can't be linked)
+  l                leaf (bot is not allowed to link in other bots)
+  r                reject (bot will not be allowed to link)
+  i                isolate (isolate the party line across a bot link)
+  0-9              user defined flags
+  ---------------- --------------------------------------------------------------------------------------------------------------------------------------------------
 
 
 ADDING AND LINKING BOTS
@@ -326,4 +317,4 @@ MAKING BOTS SHARE USER RECORDS
         |-+beldin
         `-+Lameshare
 
-Copyright (C) 1999 - 2018 Eggheads Development Team
+Copyright (C) 1999 - 2019 Eggheads Development Team

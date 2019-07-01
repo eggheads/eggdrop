@@ -39,14 +39,14 @@ There are also some variables you can set in your config file:
   set max-modes 30
 
       There is a global limit for +b/+e/+I modes. This limit should be
-      set to the same value as max-bans for networks that do not
-      support +e/+I.
+      set to the same value as max-bans for networks that do not support
+      +e/+I.
 
   set max-bans 30
 
       Set here the maximum number of bans you want the bot to set on a
-      channel. Eggdrop will not place any more bans if this limit
-      is reached. Undernet currently allows 45 bans, IRCnet allows 30,
+      channel. Eggdrop will not place any more bans if this limit is
+      reached. Undernet currently allows 45 bans, IRCnet allows 30,
       EFnet allows 100, and DALnet allows 100.
 
   set max-exempts 20
@@ -74,8 +74,8 @@ There are also some variables you can set in your config file:
   set learn-users 0
 
       If you want people to be able to add themselves to the bot's
-      userlist with the default userflags (defined above in the
-      config file) via the 'hello' msg command, set this to 1.
+      userlist with the default userflags (defined above in the config
+      file) via the 'hello' msg command, set this to 1.
 
   set wait-split 600
 
@@ -109,8 +109,8 @@ There are also some variables you can set in your config file:
     command by default to discourage them. You can enable this command
     by un-commenting these two lines.
 
-  set opchars %22@%22
-  #set opchars %22@&~%22
+  set opchars "@"
+  #set opchars "@&~"
 
     Some IRC servers are using some non-standard op-like channel
     prefixes/modes. Define them here so the bot can recognize them. Just
@@ -135,8 +135,8 @@ Use the following settings only if you set 'net-type' to 1!
 
       At the moment, the current IRCnet IRCd version (2.10) doesn't
       support the mixing of b, o and v modes with e and I modes. This
-      might be changed in the future, so use 1 at the moment for
-      this setting.
+      might be changed in the future, so use 1 at the moment for this
+      setting.
 
   Use the following settings only if you set 'net-type' to 5!
 
@@ -164,12 +164,12 @@ Use the following settings only if you set 'net-type' to 1!
   set use-354 0
 
       Set this to 1 if your network uses IRCu2.10.01 specific /who
-      requests. Eggdrop can, therefore, ask only for exactly
-      what's needed.
+      requests. Eggdrop can, therefore, ask only for exactly what's
+      needed.
 
   set rfc-compliant 1
 
       If your network doesn't use rfc 1459 compliant string matching
       routines, set this to 0.
 
-Copyright (C) 2000 - 2018 Eggheads Development Team
+Copyright (C) 2000 - 2019 Eggheads Development Team

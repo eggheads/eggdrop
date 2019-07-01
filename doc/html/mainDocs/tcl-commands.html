@@ -1,31 +1,28 @@
 
+
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    
-    <title>Eggdrop Tcl Commands &mdash; Eggdrop 1.8.4 documentation</title>
-    
+    <title>Eggdrop Tcl Commands &#8212; Eggdrop 1.8.4 documentation</title>
     <link rel="stylesheet" href="../_static/eggdrop.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-    
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
         VERSION:     '1.8.4',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
-        HAS_SOURCE:  true
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
       };
     </script>
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
-    <link rel="top" title="Eggdrop 1.8.4 documentation" href="../index.html" />
-    <link rel="up" title="&lt;no title&gt;" href="index.html" />
+    <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="IPv6 support" href="ipv6.html" />
     <link rel="prev" title="Patch How-To" href="patch.html" /> 
   </head>
@@ -52,7 +49,7 @@
             
       <div class="documentwrapper">
         <div class="bodywrapper">
-          <div class="body">
+          <div class="body" role="main">
             
   <p>Eggdrop Tcl Commands
 Last revised: December 14, 2017</p>
@@ -1610,7 +1607,7 @@ channel's invite list is checked as well.</p>
 <h3>notes &lt;user&gt; [numberlist]<a class="headerlink" href="#notes-user-numberlist" title="Permalink to this headline">¶</a></h3>
 <blockquote>
 <div><p>Returns: -1 if no such user, -2 if notefile failure. If a numberlist is not specified, the number of notes stored for the user is returned. Otherwise, a list of sublists containing information about notes stored for the user is returned. Each sublist is in the format of:</p>
-<div class="highlight-python"><div class="highlight"><pre>{&lt;from&gt; &lt;timestamp&gt; &lt;note text&gt;}
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="p">{</span><span class="o">&lt;</span><span class="n">from</span><span class="o">&gt;</span> <span class="o">&lt;</span><span class="n">timestamp</span><span class="o">&gt;</span> <span class="o">&lt;</span><span class="n">note</span> <span class="n">text</span><span class="o">&gt;</span><span class="p">}</span>
 </pre></div>
 </div>
 <p>Module: notes</p>
@@ -2715,7 +2712,7 @@ bind for the &quot;stop&quot; msg command, use 'unbind msg - stop msg:stop'.</p>
 <p>procname &lt;nick&gt; &lt;user&#64;host&gt; &lt;handle&gt; &lt;text&gt; &lt;dest&gt;</p>
 <p>Description: dest will be a nickname (the bot's nickname, obviously) or a channel name. mask is matched against the entire text of the notice and can contain wildcards. It is considered a breach of protocol to respond to a /notice on IRC, so this is intended for internal use (logging, etc.) only. Note that server notices do not trigger the NOTC bind. If the proc returns 1, Eggdrop will not log the message that triggered this bind.</p>
 <p>New Tcl procs should be declared as:</p>
-<div class="highlight-python"><div class="highlight"><pre>proc notcproc {nick uhost hand text {dest &quot;&quot;}} {
+<div class="highlight-default"><div class="highlight"><pre><span></span>proc notcproc {nick uhost hand text {dest &quot;&quot;}} {
   global botnick; if {$dest == &quot;&quot;} {set dest $botnick}
   ...
 }
@@ -2741,7 +2738,7 @@ bind for the &quot;stop&quot; msg command, use 'unbind msg - stop msg:stop'.</p>
 <p>procname &lt;nick&gt; &lt;user&#64;host&gt; &lt;handle&gt; &lt;channel&gt; &lt;msg&gt;</p>
 <p>Description: triggered by someone leaving the channel. The mask is matched against &quot;#channel nick!user&#64;host&quot; and can contain wildcards. If no part message is specified, msg will be set to &quot;&quot;.</p>
 <p>New Tcl procs should be declared as:</p>
-<div class="highlight-python"><div class="highlight"><pre>proc partproc {nick uhost hand chan {msg &quot;&quot;}} { ... }
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">proc</span> <span class="n">partproc</span> <span class="p">{</span><span class="n">nick</span> <span class="n">uhost</span> <span class="n">hand</span> <span class="n">chan</span> <span class="p">{</span><span class="n">msg</span> <span class="s2">&quot;&quot;</span><span class="p">}}</span> <span class="p">{</span> <span class="o">...</span> <span class="p">}</span>
 </pre></div>
 </div>
 <p>for compatibility.</p>
@@ -2794,12 +2791,12 @@ bind for the &quot;stop&quot; msg command, use 'unbind msg - stop msg:stop'.</p>
 <p>Note that &quot;target&quot; was added in 1.3.17 and that this will break Tcl scripts that were written for pre-1.3.17 Eggdrop that use the mode binding. Also, due to a typo, mode binds were broken completely in 1.3.17 but were fixed in 1.3.18. Mode bindings are not triggered at all in 1.3.17.</p>
 <p>One easy example (from guppy) of how to support the &quot;target&quot; parameter in 1.3.18 and later and still remain compatible with older Eggdrop versions is:</p>
 <p>Old script looks as follows:</p>
-<div class="highlight-python"><div class="highlight"><pre>bind mode - * mode_proc
-proc mode_proc {nick uhost hand chan mode} { ... }
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">bind</span> <span class="n">mode</span> <span class="o">-</span> <span class="o">*</span> <span class="n">mode_proc</span>
+<span class="n">proc</span> <span class="n">mode_proc</span> <span class="p">{</span><span class="n">nick</span> <span class="n">uhost</span> <span class="n">hand</span> <span class="n">chan</span> <span class="n">mode</span><span class="p">}</span> <span class="p">{</span> <span class="o">...</span> <span class="p">}</span>
 </pre></div>
 </div>
 <p>To make it work with 1.3.18+ and stay compatible with older bots, do:</p>
-<div class="highlight-python"><div class="highlight"><pre>bind mode - * mode_proc_fix
+<div class="highlight-default"><div class="highlight"><pre><span></span>bind mode - * mode_proc_fix
 proc mode_proc_fix {nick uhost hand chan mode {target &quot;&quot;}} {
   if {$target != &quot;&quot;} {append mode &quot; $target&quot;}
   mode_proc $nick $uhost $hand $chan $mode
@@ -2944,8 +2941,8 @@ proc mode_proc {nick uhost hand chan mode} { ... }
 <p>procname &lt;channel&gt; &lt;type&gt;</p>
 <p>Description: this bind is triggered on certain events, like when the bot needs operator status or the key for a channel. The types are: op, unban, invite, limit, and key; the mask is matched against '#channel type' and can contain wildcards. flags are ignored.</p>
 <p>Example:</p>
-<div class="highlight-python"><div class="highlight"><pre>bind need - &quot;% op&quot; needop &lt; handles only need op
-bind need - &quot;*&quot; needall   &lt; handles all needs
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">bind</span> <span class="n">need</span> <span class="o">-</span> <span class="s2">&quot;</span><span class="si">% o</span><span class="s2">p&quot;</span> <span class="n">needop</span> <span class="o">&lt;</span> <span class="n">handles</span> <span class="n">only</span> <span class="n">need</span> <span class="n">op</span>
+<span class="n">bind</span> <span class="n">need</span> <span class="o">-</span> <span class="s2">&quot;*&quot;</span> <span class="n">needall</span>   <span class="o">&lt;</span> <span class="n">handles</span> <span class="nb">all</span> <span class="n">needs</span>
 </pre></div>
 </div>
 <p>Module: irc</p>
@@ -3067,22 +3064,22 @@ flags are ignored.</p>
 <div><p>bind evnt &lt;flags&gt; &lt;type&gt; &lt;proc&gt;</p>
 <p>procname &lt;type&gt;</p>
 <p>Description: triggered whenever one of these events happen. flags are ignored. Pre-defined events triggered by Eggdrop are:</p>
-<div class="highlight-python"><div class="highlight"><pre>sighup            - called on a kill -HUP &lt;pid&gt;
-sigterm           - called on a kill -TERM &lt;pid&gt;
-sigill            - called on a kill -ILL &lt;pid&gt;
-sigquit           - called on a kill -QUIT &lt;pid&gt;
-save              - called when the userfile is saved
-rehash            - called just after a rehash
-prerehash         - called just before a rehash
-prerestart        - called just before a restart
-logfile           - called when the logs are switched daily
-loaded            - called when the bot is done loading
-userfile-loaded   - called after userfile has been loaded
-connect-server    - called just before we connect to an IRC server
-preinit-server    - called immediately when we connect to the server
-init-server       - called when we actually get on our IRC server
-disconnect-server - called when we disconnect from our IRC server
-fail-server       - called when an IRC server fails to respond
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">sighup</span>            <span class="o">-</span> <span class="n">called</span> <span class="n">on</span> <span class="n">a</span> <span class="n">kill</span> <span class="o">-</span><span class="n">HUP</span> <span class="o">&lt;</span><span class="n">pid</span><span class="o">&gt;</span>
+<span class="n">sigterm</span>           <span class="o">-</span> <span class="n">called</span> <span class="n">on</span> <span class="n">a</span> <span class="n">kill</span> <span class="o">-</span><span class="n">TERM</span> <span class="o">&lt;</span><span class="n">pid</span><span class="o">&gt;</span>
+<span class="n">sigill</span>            <span class="o">-</span> <span class="n">called</span> <span class="n">on</span> <span class="n">a</span> <span class="n">kill</span> <span class="o">-</span><span class="n">ILL</span> <span class="o">&lt;</span><span class="n">pid</span><span class="o">&gt;</span>
+<span class="n">sigquit</span>           <span class="o">-</span> <span class="n">called</span> <span class="n">on</span> <span class="n">a</span> <span class="n">kill</span> <span class="o">-</span><span class="n">QUIT</span> <span class="o">&lt;</span><span class="n">pid</span><span class="o">&gt;</span>
+<span class="n">save</span>              <span class="o">-</span> <span class="n">called</span> <span class="n">when</span> <span class="n">the</span> <span class="n">userfile</span> <span class="ow">is</span> <span class="n">saved</span>
+<span class="n">rehash</span>            <span class="o">-</span> <span class="n">called</span> <span class="n">just</span> <span class="n">after</span> <span class="n">a</span> <span class="n">rehash</span>
+<span class="n">prerehash</span>         <span class="o">-</span> <span class="n">called</span> <span class="n">just</span> <span class="n">before</span> <span class="n">a</span> <span class="n">rehash</span>
+<span class="n">prerestart</span>        <span class="o">-</span> <span class="n">called</span> <span class="n">just</span> <span class="n">before</span> <span class="n">a</span> <span class="n">restart</span>
+<span class="n">logfile</span>           <span class="o">-</span> <span class="n">called</span> <span class="n">when</span> <span class="n">the</span> <span class="n">logs</span> <span class="n">are</span> <span class="n">switched</span> <span class="n">daily</span>
+<span class="n">loaded</span>            <span class="o">-</span> <span class="n">called</span> <span class="n">when</span> <span class="n">the</span> <span class="n">bot</span> <span class="ow">is</span> <span class="n">done</span> <span class="n">loading</span>
+<span class="n">userfile</span><span class="o">-</span><span class="n">loaded</span>   <span class="o">-</span> <span class="n">called</span> <span class="n">after</span> <span class="n">userfile</span> <span class="n">has</span> <span class="n">been</span> <span class="n">loaded</span>
+<span class="n">connect</span><span class="o">-</span><span class="n">server</span>    <span class="o">-</span> <span class="n">called</span> <span class="n">just</span> <span class="n">before</span> <span class="n">we</span> <span class="n">connect</span> <span class="n">to</span> <span class="n">an</span> <span class="n">IRC</span> <span class="n">server</span>
+<span class="n">preinit</span><span class="o">-</span><span class="n">server</span>    <span class="o">-</span> <span class="n">called</span> <span class="n">immediately</span> <span class="n">when</span> <span class="n">we</span> <span class="n">connect</span> <span class="n">to</span> <span class="n">the</span> <span class="n">server</span>
+<span class="n">init</span><span class="o">-</span><span class="n">server</span>       <span class="o">-</span> <span class="n">called</span> <span class="n">when</span> <span class="n">we</span> <span class="n">actually</span> <span class="n">get</span> <span class="n">on</span> <span class="n">our</span> <span class="n">IRC</span> <span class="n">server</span>
+<span class="n">disconnect</span><span class="o">-</span><span class="n">server</span> <span class="o">-</span> <span class="n">called</span> <span class="n">when</span> <span class="n">we</span> <span class="n">disconnect</span> <span class="kn">from</span> <span class="nn">our</span> <span class="n">IRC</span> <span class="n">server</span>
+<span class="n">fail</span><span class="o">-</span><span class="n">server</span>       <span class="o">-</span> <span class="n">called</span> <span class="n">when</span> <span class="n">an</span> <span class="n">IRC</span> <span class="n">server</span> <span class="n">fails</span> <span class="n">to</span> <span class="n">respond</span>
 </pre></div>
 </div>
 <p>Note that Tcl scripts can trigger arbitrary events, including ones that are not pre-defined or used by Eggdrop.</p>
@@ -3158,22 +3155,22 @@ fail-server       - called when an IRC server fails to respond
 <p>Here's a list of the bindings that use the return value from procs they trigger:</p>
 <ol class="arabic">
 <li><p class="first">MSG   Return 1 to make Eggdrop log the command as:</p>
-<div class="highlight-python"><div class="highlight"><pre>(nick!user@host) !handle! command
+<div class="highlight-default"><div class="highlight"><pre><span></span>(nick!user@host) !handle! command
 </pre></div>
 </div>
 </li>
 <li><p class="first">DCC   Return 1 to make Eggdrop log the command as:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="c">#handle# command</span>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="c1">#handle# command</span>
 </pre></div>
 </div>
 </li>
 <li><p class="first">FIL   Return 1 to make Eggdrop log the command as:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="c">#handle# files: command</span>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="c1">#handle# files: command</span>
 </pre></div>
 </div>
 </li>
 <li><p class="first">PUB   Return 1 to make Eggdrop log the command as:</p>
-<div class="highlight-python"><div class="highlight"><pre>&lt;&lt;nick&gt;&gt; !handle! command
+<div class="highlight-default"><div class="highlight"><pre><span></span>&lt;&lt;nick&gt;&gt; !handle! command
 </pre></div>
 </div>
 </li>
@@ -3215,7 +3212,7 @@ TCP connection) in control of a script. All text received from the
 connection is sent to the proc you specify. All outgoing text should
 be sent with 'putdcc'.</p>
 <p>The control procedure is called with these parameters:</p>
-<div class="highlight-python"><div class="highlight"><pre>procname &lt;idx&gt; &lt;input-text&gt;
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">procname</span> <span class="o">&lt;</span><span class="n">idx</span><span class="o">&gt;</span> <span class="o">&lt;</span><span class="nb">input</span><span class="o">-</span><span class="n">text</span><span class="o">&gt;</span>
 </pre></div>
 </div>
 <p>This allows you to use the same proc for several connections. The
@@ -3241,7 +3238,7 @@ trigger your procs when something happens on the connection, and your
 proc is expected to return as soon as possible. Waiting in a proc for
 more input is a no-no.</p>
 <p>To initiate an outgoing connection, use:</p>
-<div class="highlight-python"><div class="highlight"><pre>set idx [connect &lt;hostname&gt; &lt;[+]port&gt;]
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="nb">set</span> <span class="n">idx</span> <span class="p">[</span><span class="n">connect</span> <span class="o">&lt;</span><span class="n">hostname</span><span class="o">&gt;</span> <span class="o">&lt;</span><span class="p">[</span><span class="o">+</span><span class="p">]</span><span class="n">port</span><span class="o">&gt;</span><span class="p">]</span>
 </pre></div>
 </div>
 <p>For SSL connections, prefix the port with a plus sign.</p>
@@ -3269,18 +3266,18 @@ connections, like 'killdcc' and 'putdcc', will work on this idx, too.
 The 'killdcc' command will fail with &quot;invalid idx&quot; if you attempt to use
 it on a closed socket.</p>
 <p>To create a listen port, use:</p>
-<div class="highlight-python"><div class="highlight"><pre>listen &lt;[+]port&gt; script &lt;proc&gt;
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">listen</span> <span class="o">&lt;</span><span class="p">[</span><span class="o">+</span><span class="p">]</span><span class="n">port</span><span class="o">&gt;</span> <span class="n">script</span> <span class="o">&lt;</span><span class="n">proc</span><span class="o">&gt;</span>
 </pre></div>
 </div>
 <p>By default, a listen port will allow both plaintext and SSL connections.
 To restrict a port to allow only SSL connections, prefix the port with a
 plus sign.</p>
 <p>Procs should be declared as:</p>
-<div class="highlight-python"><div class="highlight"><pre>&lt;procname&gt; &lt;newidx&gt;
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="o">&lt;</span><span class="n">procname</span><span class="o">&gt;</span> <span class="o">&lt;</span><span class="n">newidx</span><span class="o">&gt;</span>
 </pre></div>
 </div>
 <p>For example:</p>
-<div class="highlight-python"><div class="highlight"><pre>listen 6687 script listen:grab
+<div class="highlight-default"><div class="highlight"><pre><span></span>listen 6687 script listen:grab
 
 proc listen:grab {newidx} {
   control $newidx listen:control
@@ -3318,7 +3315,7 @@ words) (This char only works in binds, not in regular matching)</td>
 </tbody>
 </table>
 <blockquote>
-<div>Copyright (C) 1999 - 2018 Eggheads Development Team</div></blockquote>
+<div>Copyright (C) 1999 - 2019 Eggheads Development Team</div></blockquote>
 </div>
 </div>
 
@@ -3342,7 +3339,7 @@ words) (This char only works in binds, not in regular matching)</td>
 <li class="toctree-l1"><a class="reference internal" href="bans.html">Bans, Invites, and Exempts</a></li>
 <li class="toctree-l1"><a class="reference internal" href="botnet.html">Botnet Sharing and Linking</a></li>
 <li class="toctree-l1"><a class="reference internal" href="patch.html">Patch How-To</a></li>
-<li class="toctree-l1 current"><a class="current reference internal" href="">Eggdrop Tcl Commands</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Eggdrop Tcl Commands</a></li>
 <li class="toctree-l1"><a class="reference internal" href="ipv6.html">IPv6 support</a></li>
 <li class="toctree-l1"><a class="reference internal" href="tls.html">TLS support</a></li>
 </ul>
@@ -3400,10 +3397,10 @@ words) (This char only works in binds, not in regular matching)</td>
 
         <div class="right">
           
-    <div class="footer">
-        &copy; Copyright 2018, Eggheads.
-      Last updated on Dec 11, 2018.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.3.
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2019, Eggheads.
+      Last updated on Dec 31, 2018.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.6.7.
     </div>
         </div>
         <div class="clearer"></div>

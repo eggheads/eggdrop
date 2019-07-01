@@ -2128,7 +2128,7 @@ maskhost <nick!user@host> [masktype]
 timer <minutes> <tcl-command> [count]
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-  Description: executes the given Tcl command after a certain number of minutes have passed. If count is specified, the command will be executed count times with the given interval in between. If you specify a count of 0, the timer will repeat until it's removed with killtimer or until the bot is restarted.
+  Description: executes the given Tcl command after a certain number of minutes have passed, at the top of the minute (ie, if a timer is started at 10:03:34 with 1 minute specified, it will execute at 10:04:00. If a timer is started at 10:06:34 with 2 minutes specified, it will execute at 10:08:00). If count is specified, the command will be executed count times with the given interval in between. If you specify a count of 0, the timer will repeat until it's removed with killtimer or until the bot is restarted.
 
   Returns: a timerID
 
@@ -2200,7 +2200,7 @@ duration <seconds>
 strftime <formatstring> [time]
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-  Returns: a formatted string of time using standard strftime format. If time is specified, the value of the specified time is used. Otherwise, the current time is used.
+  Returns: a formatted string of time using standard strftime format. If time is specified, the value of the specified time is used. Otherwise, the current time is used. Note: The implementation of strftime varies from platform to platform, so the user should only use POSIX-compliant format specifiers to ensure fully portable code.
 
   Module: core
 
@@ -3428,4 +3428,4 @@ are the four special characters:
 |     | words) (This char only works in binds, not in regular matching)          |
 +-----+--------------------------------------------------------------------------+
 
-  Copyright (C) 1999 - 2018 Eggheads Development Team
+  Copyright (C) 1999 - 2019 Eggheads Development Team
