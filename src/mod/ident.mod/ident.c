@@ -124,6 +124,7 @@ static void ident_builtin_on()
 {
   int idx, s;
 
+  debug0("Ident: Starting ident server.");
   for (idx = 0; idx < dcc_total; idx++)
     if (dcc[idx].type == &DCC_IDENTD)
       return;
@@ -132,7 +133,6 @@ static void ident_builtin_on()
     putlog(LOG_MISC, "*", "Ident error: could not get new dcc.");
     return;
   }
-  putlog(LOG_DEBUG, "*", "Ident: Activating ident server.");
   s = open_listen(&ident_port);
   if (s == -2) {
     lostdcc(idx);
@@ -155,7 +155,7 @@ static void ident_builtin_off()
 
   for (idx = 0; idx < dcc_total; idx++)
     if (dcc[idx].type == &DCC_IDENTD) {
-      putlog(LOG_DEBUG, "*", "Ident: Stopping ident server.");
+      debug0("Ident: Stopping ident server.");
       killsock(dcc[idx].sock);
       lostdcc(idx);
       break;
