@@ -6,7 +6,7 @@
  */
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2018 Eggheads Development Team
+ * Copyright (C) 1999 - 2019 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -106,7 +106,7 @@ int expmem_tcl()
 
 static void botnet_change(char *new)
 {
-  if (egg_strcasecmp(botnetnick, new)) {
+  if (strcasecmp(botnetnick, new)) {
     /* Trying to change bot's nickname */
     if (tands > 0) {
       putlog(LOG_MISC, "*", "* Tried to change my botnet nick, but I'm still "
@@ -370,7 +370,7 @@ static tcl_strings def_tcl_strings[] = {
 #ifdef TLS
   {"ssl-capath",      tls_capath,     120, STR_DIR | STR_PROTECT},
   {"ssl-cafile",      tls_cafile,     120,           STR_PROTECT},
-  {"ssl-ciphers",     tls_ciphers,    120,           STR_PROTECT},
+  {"ssl-ciphers",     tls_ciphers,    2048,          STR_PROTECT},
   {"ssl-privatekey",  tls_keyfile,    120,           STR_PROTECT},
   {"ssl-certificate", tls_certfile,   120,           STR_PROTECT},
 #endif
@@ -387,7 +387,7 @@ static tcl_strings def_tcl_strings[] = {
   {"network",         network,        40,                      0},
   {"whois-fields",    whois_fields,   1024,                    0},
   {"nat-ip",          natip,          120,                     0},
-  {"username",        botuser,        10,                      0},
+  {"username",        botuser,        USERLEN,                 0},
   {"version",         egg_version,    0,                       0},
   {"firewall",        firewall,       120,                     0},
   {"config",          configfile,     0,                       0},

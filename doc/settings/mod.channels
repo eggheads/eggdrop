@@ -83,10 +83,7 @@ There are also some variables you can set in your config file:
             |   | --+                                                    |
             |   |                                                        |
             |   |     If the channel is +bitch, see stopnethack-mode 1   |
-            | - |                                                        |
-            |   |                                                        |
-            |   |                                                        |
-            |   |                                                        |
+            | + |                                                        |
             +---+--------------------------------------------------------+
             | 6 |   If the channel is -bitch, see stopnethack-mode 2     |
             |   |                                                        |
@@ -94,10 +91,7 @@ There are also some variables you can set in your config file:
             |   | --+                                                    |
             |   |                                                        |
             |   |     If the channel is +bitch, see stopnethack-mode 4   |
-            | - |                                                        |
-            |   |                                                        |
-            |   |                                                        |
-            |   |                                                        |
+            | + |                                                        |
             +---+--------------------------------------------------------+
 
       revenge-mode 0
@@ -105,44 +99,30 @@ There are also some variables you can set in your config file:
           This settings defines how the bot should punish bad users when
           revenging. There are four possible settings:
 
-              --- -------------------------------------------------------------------
-              0   Deop the user.
-
-              1   Deop the user and give them the +d flag for the channel.
-
-              2   Deop the user, give them the +d flag for the channel, and kick
-                  them.
-
-              3   Deop the user, give them the +d flag for the channel, kick, and ban
-                  them.
-              --- -------------------------------------------------------------------
+              ---------- -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+              0          Deop the user.
+              1          Deop the user and give them the +d flag for the channel.
+              2          Deop the user, give them the +d flag for the channel, and kick them.
+              3          Deop the user, give them the +d flag for the channel, kick, and ban them.
+              ---------- -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
       ban-type 3
 
   This setting defines what type of bans should eggdrop place for +k
   users or when revenge-mode is 3. Available types are:
 
-      --- ------------------------
-      0   *!user@host
-
-      1   *!*user@host
-
-      2   *!*@host
-
-      3   *!*user@*.host
-
-      4   _!*@_.host
-
-      5 n ick!user@host
-
-      6 n ick!*user@host
-
-      7 n ick!*@host
-
-      8 n ick!*user@*.host
-
-      9 n ick!*@*.host
-      --- ------------------------
+      ------------------ ----------------------------------------------------------------------------------------------------------------
+      0                  *!user@host
+      1                  *!*user@host
+      2                  *!*@host
+      3                  *!*user@*.host
+      4                  _!*@_.host
+      5 n                ick!user@host
+      6 n                ick!*user@host
+      7 n                ick!*@host
+      8 n                ick!*user@*.host
+      9 n                ick!*@*.host
+      ------------------ ----------------------------------------------------------------------------------------------------------------
 
   You can also specify types from 10 to 19 which correspond to types 0
   to 9, but instead of using a * wildcard to replace portions of the
@@ -180,13 +160,11 @@ There are also some variables you can set in your config file:
         voice joins a channel while another op or voice is pending, the
         bot will attempt to put both modes on one line.
 
-            -------------- -----------------------------------------
-            aop-delay 0    No delay is used.
-
-            aop-delay X    An X second delay is used.
-
-            aop-delay X:Y  A random delay between X and Y is used.
-            -------------- -----------------------------------------
+            --------------- ------------------------------------------
+            aop-delay 0     No delay is used.
+            aop-delay X     An X second delay is used.
+            aop-delay X:Y   A random delay between X and Y is used.
+            --------------- ------------------------------------------
 
     need-op { putserv "PRIVMSG #lamest :op me cos i'm lame!" }
 
@@ -480,4 +458,4 @@ There are also some variables you can set in your config file:
 
     }
 
-  Copyright (C) 2000 - 2018 Eggheads Development Team
+  Copyright (C) 2000 - 2019 Eggheads Development Team

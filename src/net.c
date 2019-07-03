@@ -8,7 +8,7 @@
  *
  * Changes after Feb 23, 1999 Copyright Eggheads Development Team
  *
- * Copyright (C) 1999 - 2018 Eggheads Development Team
+ * Copyright (C) 1999 - 2019 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -62,7 +62,7 @@ int pref_af = 0;              /* Prefer IPv6 over IPv4?                       */
 #endif
 char firewall[121] = "";      /* Socks server for firewall.                   */
 int firewallport = 1080;      /* Default port of socks 4/5 firewalls.         */
-char botuser[11] = "eggdrop"; /* Username of the user running the bot.        */
+char botuser[USERLEN + 1] = "eggdrop"; /* Username of the user running the bot. */
 int dcc_sanitycheck = 0;      /* Do some sanity checking on dcc connections.  */
 
 sock_list *socklist = NULL;   /* Enough to be safe.                           */
@@ -115,7 +115,7 @@ char *iptostr(struct sockaddr *sa)
               s, sizeof s);
   else
 #else
-  static char s[sizeof "255.255.255.255"] = "";
+  static char s[INET_ADDRSTRLEN] = "";
 #endif
     inet_ntop(AF_INET, &((struct sockaddr_in *)sa)->sin_addr.s_addr, s,
               sizeof s);
@@ -521,6 +521,17 @@ int open_telnet_raw(int sock, sockname_t *addr)
   struct timeval tv;
   int i, rc, res;
 
+  for (i = 0; i < dcc_total; i++)
+    if (dcc[i].sock == sock) { /* Got idx from sock ? */
+#ifdef TLS
+      debug4("net: open_telnet_raw(): idx %i host %s port %i ssl %i",
+             i, dcc[i].host, dcc[i].port, dcc[i].ssl);
+#else
+      debug3("net: open_telnet_raw(): idx %i host %s port %i",
+             i, dcc[i].host, dcc[i].port);
+#endif
+      break;
+    }
   getvhost(&name, addr->family);
   if (bind(sock, &name.addr.sa, name.addrlen) < 0) {
     return -1;
@@ -707,13 +718,13 @@ int getdccfamilyaddr(sockname_t *addr, char *s, size_t l, int restrict_af)
 #ifdef IPV6
      /* If it's listening on an IPv6 :: address,
         try using vhost6 as the source IP */
-    if (pref_af && (r->family == AF_INET6) && (restrict_af != AF_INET)) {
+    if (r->family == AF_INET6 && restrict_af != AF_INET) {
       if (inet_pton(AF_INET6, vhost6, &r->addr.s6.sin6_addr) != 1) {
         r = &name;
         gethostname(h, sizeof h);
         setsockname(r, h, 0, 1);
         if (r->family == AF_INET) {
-        /* setsockname tries to resolve  both ipv4 and ipv6. ipv4 dns
+        /* setsockname tries to resolve both ipv4 and ipv6. ipv4 dns
            resolution comes later in precedence, so if we get an ipv4
            back, reset it to the original addr struct and try
            again */
@@ -722,18 +733,18 @@ int getdccfamilyaddr(sockname_t *addr, char *s, size_t l, int restrict_af)
           } else {
             setsockname(r, listen_ip, 0, 1);
           }
-          af = AF_INET;
-        }
+        } else
+          af = AF_INET6;
       }
     }
 #endif
-     /* If IPv6 didn't work, or it's listening on an IPv4
+     /* If IPv6 didn't work or is disabled, or it's listening on an IPv4
         0.0.0.0 address, try using vhost4 as the source */
-    if ((
+    if (!af
 #ifdef IPV6
-      !pref_af ||
+        && restrict_af != AF_INET6
 #endif
-      af) && (restrict_af != AF_INET6)) {
+       ) {
       if (!egg_inet_aton(vhost, &r->addr.s4.sin_addr)) {
         /* And if THAT fails, try DNS resolution of hostname */
         r = &name;
@@ -1019,27 +1030,32 @@ int sockgets(char *s, int *len)
 {
   char xx[514], *p, *px;
   int ret, i, data = 0;
+  size_t len2;
 
   for (i = 0; i < threaddata()->MAXSOCKS; i++) {
     /* Check for stored-up data waiting to be processed */
     if (!(socklist[i].flags & (SOCK_UNUSED | SOCK_TCL | SOCK_BUFFER)) &&
         (socklist[i].handler.sock.inbuf != NULL)) {
       if (!(socklist[i].flags & SOCK_BINARY)) {
-        /* look for \r too cos windows can't follow RFCs */
+        /* IRC messages are always lines of characters terminated with a CR-LF
+         * (Carriage Return - Line Feed) pair.
+         */
         p = strpbrk(socklist[i].handler.sock.inbuf, "\r\n");
         if (p != NULL) {
+          *p++ = 0;
           while (*p == '\n' || *p == '\r')
-            *p++ = 0;
-          if (strlen(socklist[i].handler.sock.inbuf) > 510)
-            socklist[i].handler.sock.inbuf[510] = 0;
-          strcpy(s, socklist[i].handler.sock.inbuf);
+            p++;
+          strlcpy(s, socklist[i].handler.sock.inbuf, 511);
           if (*p) {
-            px = nmalloc(strlen(p) + 1);
-            strcpy(px, p);
+            len2 = strlen(p) + 1;
+            px = nmalloc(len2);
+            memcpy(px, p, len2);
             nfree(socklist[i].handler.sock.inbuf);
             socklist[i].handler.sock.inbuf = px;
-          } else
+          } else {
+            nfree(socklist[i].handler.sock.inbuf);
             socklist[i].handler.sock.inbuf = NULL;
+          }
           *len = strlen(s);
           return socklist[i].sock;
         }
@@ -1174,8 +1190,9 @@ int sockgets(char *s, int *len)
     nfree(p);
   } else {
     socklist[ret].handler.sock.inbuflen = strlen(xx);
-    socklist[ret].handler.sock.inbuf = nmalloc(socklist[ret].handler.sock.inbuflen + 1);
-    strcpy(socklist[ret].handler.sock.inbuf, xx);
+    len2 = socklist[ret].handler.sock.inbuflen + 1;
+    socklist[ret].handler.sock.inbuf = nmalloc(len2);
+    memcpy(socklist[ret].handler.sock.inbuf, xx, len2);
   }
   if (data)
     return socklist[ret].sock;
@@ -1439,7 +1456,7 @@ int sanitycheck_dcc(char *nick, char *from, char *ipaddy, char *port)
   sockname_t name;
   IP ip = 0;
 #else
-  char badaddress[sizeof "255.255.255.255"];
+  char badaddress[INET_ADDRSTRLEN];
   IP ip = my_atoul(ipaddy);
 #endif
   int prt = atoi(port);
@@ -1494,7 +1511,7 @@ int hostsanitycheck_dcc(char *nick, char *from, sockname_t *ip, char *dnsname,
    * using the n-variant in case someone changes that...
    */
   strlcpy(hostn, extracthostname(from), sizeof hostn);
-  if (!egg_strcasecmp(hostn, dnsname)) {
+  if (!strcasecmp(hostn, dnsname)) {
     putlog(LOG_DEBUG, "*", "DNS information for submitted IP checks out.");
     return 1;
   }

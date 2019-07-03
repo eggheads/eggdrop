@@ -4,7 +4,7 @@
  */
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2018 Eggheads Development Team
+ * Copyright (C) 1999 - 2019 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -147,12 +147,16 @@ static void blowfish_report(int idx, int details)
         tot++;
 
     dprintf(idx, "    Blowfish encryption module:\n");
-    dprintf(idx, "      %d of %d boxes in use: ", tot, BOXES);
-    for (i = 0; i < BOXES; i++)
-      if (box[i].P != NULL) {
-        dprintf(idx, "(age: %d) ", now - box[i].lastuse);
-      }
-    dprintf(idx, "\n");
+    if (!tot)
+      dprintf(idx, "      0 of %d boxes in use\n", BOXES);
+    else {
+      dprintf(idx, "      %d of %d boxes in use:", tot, BOXES);
+      for (i = 0; i < BOXES; i++)
+        if (box[i].P != NULL) {
+          dprintf(idx, " (age: %d)", now - box[i].lastuse);
+        }
+      dprintf(idx, "\n");
+    }
     dprintf(idx, "      Using %d byte%s of memory\n", size,
             (size != 1) ? "s" : "");
   }
@@ -456,16 +460,16 @@ static char *encrypt_string_cbc(char *key, char *str)
  */
 static char *encrypt_string(char *key, char *str)
 {
-  if (!egg_strncasecmp(key, "ecb:", 4)) {
+  if (!strncasecmp(key, "ecb:", 4)) {
     return encrypt_string_ecb(key + 4, str);
 
-  } else if (!egg_strncasecmp(key, "cbc:", 4)) {
+  } else if (!strncasecmp(key, "cbc:", 4)) {
     return encrypt_string_cbc(key + 4, str);
 
-  } else if (!egg_strncasecmp(bf_mode, "ecb", sizeof bf_mode)) {
+  } else if (!strncasecmp(bf_mode, "ecb", sizeof bf_mode)) {
     return encrypt_string_ecb(key, str);
 
-  } else if (!egg_strncasecmp(bf_mode, "cbc", sizeof bf_mode)) {
+  } else if (!strncasecmp(bf_mode, "cbc", sizeof bf_mode)) {
     return encrypt_string_cbc(key, str);
 
   }
@@ -605,7 +609,7 @@ static char *decrypt_string_cbc(char *key, char *str)
  */
 static char *decrypt_string(char *key, char *str)
 {
-  if (!egg_strncasecmp(key, "ecb:", 4)) {
+  if (!strncasecmp(key, "ecb:", 4)) {
     if (str[0] == '*') {
       /* ecb strings shouldn't start with * */
       return decrypt_string_cbc(key + 4, str + 1);
@@ -613,7 +617,7 @@ static char *decrypt_string(char *key, char *str)
     /* else */
     return decrypt_string_ecb(key + 4, str);
 
-  } else if (!egg_strncasecmp(key, "cbc:", 4)) {
+  } else if (!strncasecmp(key, "cbc:", 4)) {
     if (str[0] != '*') {
       /* cbc strings should start with * */
       return decrypt_string_ecb(key + 4, str);
