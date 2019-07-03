@@ -1511,7 +1511,7 @@ int hostsanitycheck_dcc(char *nick, char *from, sockname_t *ip, char *dnsname,
    * using the n-variant in case someone changes that...
    */
   strlcpy(hostn, extracthostname(from), sizeof hostn);
-  if (!egg_strcasecmp(hostn, dnsname)) {
+  if (!strcasecmp(hostn, dnsname)) {
     putlog(LOG_DEBUG, "*", "DNS information for submitted IP checks out.");
     return 1;
   }

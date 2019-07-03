@@ -189,7 +189,7 @@ struct userrec *check_dcclist_hand(char *handle)
   int i;
 
   for (i = 0; i < dcc_total; i++)
-    if (!egg_strcasecmp(dcc[i].nick, handle))
+    if (!strcasecmp(dcc[i].nick, handle))
       return dcc[i].user;
   return NULL;
 }
@@ -205,7 +205,7 @@ struct userrec *get_user_by_handle(struct userrec *bu, char *handle)
   if (!handle[0] || (handle[0] == '*'))
     return NULL;
   if (bu == userlist) {
-    if (lastuser && !egg_strcasecmp(lastuser->handle, handle)) {
+    if (lastuser && !strcasecmp(lastuser->handle, handle)) {
       cache_hit++;
       return lastuser;
     }
@@ -222,7 +222,7 @@ struct userrec *get_user_by_handle(struct userrec *bu, char *handle)
     cache_miss++;
   }
   for (u = bu; u; u = u->next)
-    if (!egg_strcasecmp(u->handle, handle)) {
+    if (!strcasecmp(u->handle, handle)) {
       if (bu == userlist)
         lastuser = u;
       return u;
@@ -493,7 +493,7 @@ int sort_compare(struct userrec *a, struct userrec *b)
     if (a->flags & ~b->flags & USER_HALFOP)
       return 0;
   }
-  return (egg_strcasecmp(a->handle, b->handle) > 0);
+  return (strcasecmp(a->handle, b->handle) > 0);
 }
 
 void sort_userlist()
@@ -561,7 +561,7 @@ void write_userfile(int idx)
   ok = 1;
   /* Add all users except the -tn user */
   for (u = userlist; u && ok; u = u->next)
-    if (egg_strcasecmp(u->handle, EGG_BG_HANDLE) && !write_user(u, f, idx))
+    if (strcasecmp(u->handle, EGG_BG_HANDLE) && !write_user(u, f, idx))
       ok = 0;
   if (!ok || !write_ignores(f, -1) || fflush(f)) {
     putlog(LOG_MISC, "*", "%s (%s)", USERF_ERRWRITE, strerror(ferror(f)));
@@ -583,7 +583,7 @@ int change_handle(struct userrec *u, char *newh)
   if (!u)
     return 0;
   /* Don't allow the -tn handle to be changed */
-  if (!egg_strcasecmp(u->handle, EGG_BG_HANDLE))
+  if (!strcasecmp(u->handle, EGG_BG_HANDLE))
     return 0;
   /* Nothing that will confuse the userfile */
   if (!newh[1] && strchr(BADHANDCHARS, newh[0]))
@@ -596,7 +596,7 @@ int change_handle(struct userrec *u, char *newh)
   strlcpy(u->handle, newh, sizeof u->handle);
   for (i = 0; i < dcc_total; i++)
     if ((dcc[i].type == &DCC_CHAT || dcc[i].type == &DCC_CHAT_PASS) &&
-        !egg_strcasecmp(dcc[i].nick, s)) {
+        !strcasecmp(dcc[i].nick, s)) {
       strlcpy(dcc[i].nick, newh, sizeof dcc[i].nick);
       if (dcc[i].type == &DCC_CHAT && dcc[i].u.chat->channel >= 0) {
         chanout_but(-1, dcc[i].u.chat->channel,
@@ -736,7 +736,7 @@ int deluser(char *handle)
   int fnd = 0;
 
   while ((u != NULL) && (!fnd)) {
-    if (!egg_strcasecmp(u->handle, handle))
+    if (!strcasecmp(u->handle, handle))
       fnd = 1;
     else {
       prev = u;
