@@ -20,8 +20,8 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
-#include  "../irc.mod/irc.h"
-#include  "../channels.mod/channels.h"
+#include "../irc.mod/irc.h"
+#include "../channels.mod/channels.h"
 
 static time_t last_ctcp = (time_t) 0L;
 static int count_ctcp = 0;
@@ -1286,6 +1286,10 @@ static void server_resolve_success(int servidx)
   changeover_dcc(servidx, &SERVER_SOCKET, 0);
   dcc[servidx].sock = getsock(dcc[servidx].sockname.family, 0);
   setsnport(dcc[servidx].sockname, dcc[servidx].port);
+  /* Setup ident right before opening the socket to the IRC server to minimize
+   * race.
+   */
+  check_tcl_event("ident");
   serv = open_telnet_raw(dcc[servidx].sock, &dcc[servidx].sockname);
   if (serv < 0) {
     char *errstr = NULL;

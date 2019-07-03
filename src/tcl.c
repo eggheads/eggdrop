@@ -387,7 +387,7 @@ static tcl_strings def_tcl_strings[] = {
   {"network",         network,        40,                      0},
   {"whois-fields",    whois_fields,   1024,                    0},
   {"nat-ip",          natip,          120,                     0},
-  {"username",        botuser,        10,                      0},
+  {"username",        botuser,        USERLEN,                 0},
   {"version",         egg_version,    0,                       0},
   {"firewall",        firewall,       120,                     0},
   {"config",          configfile,     0,                       0},
