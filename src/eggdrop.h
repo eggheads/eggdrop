@@ -26,6 +26,8 @@
 #ifndef _EGG_EGGDROP_H
 #define _EGG_EGGDROP_H
 
+#include <ctype.h>
+
 /*
  * If you're *only* going to link to new version bots (1.3.0 or higher)
  * then you can safely define this.
@@ -50,6 +52,7 @@
 #define CHANNELLEN 80 /* FIXME see issue #3 and issue #38 and rfc1459 <= 200 */
 #define HANDLEN    32 /* valid values 9->NICKMAX                             */
 #define NICKMAX    32 /* valid values HANDLEN->32                            */
+#define USERLEN    10
 
 
 /* Handy string lengths */
@@ -310,12 +313,14 @@ typedef uint32_t IP;
 #define egg_isspace(x)  isspace((int)  (unsigned char) (x))
 #define egg_islower(x)  islower((int)  (unsigned char) (x))
 
-/* The following 4 functions are for backward compatibility only */
+/* The following functions are for backward compatibility only */
 #define egg_bzero(dest, len) memset(dest, 0, len)
 #define egg_memcpy memcpy
 #define egg_memset memset
+#define egg_strcasecmp strcasecmp
 #define egg_strftime strftime
-#define my_memcpy(dst, src, len) memcpy(dst, src, len)
+#define egg_strncasecmp strncasecmp
+#define my_memcpy memcpy
 
 /***********************************************************************/
 

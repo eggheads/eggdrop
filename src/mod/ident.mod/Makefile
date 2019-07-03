@@ -1,4 +1,4 @@
-# Makefile for src/mod/assoc.mod/
+# Makefile for src/mod/ident.mod/
 
 srcdir = .
 
@@ -9,18 +9,18 @@ doofus:
 	echo "" && \
 	cd ../../../ && $(MAKE)
 
-static: ../assoc.o
+static: ../ident.o
 
-modules: ../../../assoc.$(MOD_EXT)
+modules: ../../../ident.$(MOD_EXT)
 
-../assoc.o:
-	$(CC) $(CFLAGS) $(CPPFLAGS) -DMAKING_MODS -c $(srcdir)/assoc.c && mv -f assoc.o ../
+../ident.o:
+	$(CC) $(CFLAGS) $(CPPFLAGS) -DMAKING_MODS -c $(srcdir)/ident.c && mv -f ident.o ../
 
-../../../assoc.$(MOD_EXT): ../assoc.o
-	$(LD) $(CFLAGS) -o ../../../assoc.$(MOD_EXT) ../assoc.o $(XLIBS) $(MODULE_XLIBS) && $(STRIP) ../../../assoc.$(MOD_EXT)
+../../../ident.$(MOD_EXT): ../ident.o
+	$(LD) $(CFLAGS) -o ../../../ident.$(MOD_EXT) ../ident.o $(XLIBS) $(MODULE_XLIBS) && $(STRIP) ../../../ident.$(MOD_EXT)
 
 depend:
-	$(CC) $(CFLAGS) -MM $(srcdir)/assoc.c -MT ../assoc.o > .depend
+	$(CC) $(CFLAGS) -MM $(srcdir)/ident.c -MT ../ident.o > .depend
 
 clean:
 	@rm -f .depend *.o *.$(MOD_EXT) *~
@@ -28,7 +28,7 @@ clean:
 distclean: clean
 
 #safety hash
-../assoc.o: .././assoc.mod/assoc.c ../../../src/mod/module.h \
+../ident.o: .././ident.mod/ident.c ../../../src/mod/module.h \
  ../../../src/main.h ../../../config.h ../../../eggint.h ../../../lush.h \
  ../../../src/lang.h ../../../src/eggdrop.h ../../../src/compat/in6.h \
  ../../../src/flags.h ../../../src/cmdt.h ../../../src/tclegg.h \
@@ -37,4 +37,4 @@ distclean: clean
  ../../../src/compat/snprintf.h ../../../src/compat/inet_ntop.h \
  ../../../src/compat/inet_pton.h ../../../src/compat/gethostbyname2.h \
  ../../../src/compat/strlcpy.h ../../../src/mod/modvals.h \
- ../../../src/tandem.h .././assoc.mod/assoc.h
+ ../../../src/tandem.h ../../../src/mod/server.mod/server.h

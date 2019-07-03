@@ -20,8 +20,8 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
-#include  "../irc.mod/irc.h"
-#include  "../channels.mod/channels.h"
+#include "../irc.mod/irc.h"
+#include "../channels.mod/channels.h"
 
 static time_t last_ctcp = (time_t) 0L;
 static int count_ctcp = 0;
@@ -347,7 +347,7 @@ static int got442(char *from, char *msg)
   char *chname, *key;
   struct chanset_t *chan;
 
-  if (!realservername || egg_strcasecmp(from, realservername))
+  if (!realservername || strcasecmp(from, realservername))
     return 0;
   newsplit(&msg);
   chname = newsplit(&msg);
@@ -411,7 +411,7 @@ static int detect_flood(char *floodnick, char *floodhost, char *from, int which)
     return 0;
 
   /* My user@host (?) */
-  if (!egg_strcasecmp(floodhost, botuserhost))
+  if (!strcasecmp(floodhost, botuserhost))
     return 0;
 
   u = get_user_by_host(from);
@@ -439,7 +439,7 @@ static int detect_flood(char *floodnick, char *floodhost, char *from, int which)
   p = strchr(floodhost, '@');
   if (p) {
     p++;
-    if (egg_strcasecmp(lastmsghost[which], p)) {        /* New */
+    if (strcasecmp(lastmsghost[which], p)) {        /* New */
       strlcpy(lastmsghost[which], p, sizeof lastmsghost[which]);
       lastmsgtime[which] = now;
       lastmsgs[which] = 0;
@@ -530,7 +530,7 @@ static int gotmsg(char *from, char *msg)
             u = get_user_by_host(from);
             if (!ignoring || trigger_on_ignore) {
               if (!check_tcl_ctcp(nick, uhost, u, to, code, ctcp) && !ignoring) {
-                if ((lowercase_ctcp && !egg_strcasecmp(code, "DCC")) ||
+                if ((lowercase_ctcp && !strcasecmp(code, "DCC")) ||
                     (!lowercase_ctcp && !strcmp(code, "DCC"))) {
                   /* If it gets this far unhandled, it means that
                    * the user is totally unknown.
@@ -733,7 +733,7 @@ static void minutely_checks()
     if (strncmp(botname, origbotname, strlen(botname))) {
       /* See if my nickname is in use and if if my nick is right. */
       alt = get_altbotnick();
-      if (alt[0] && egg_strcasecmp(botname, alt))
+      if (alt[0] && strcasecmp(botname, alt))
         dprintf(DP_SERVER, "ISON :%s %s %s\n", botname, origbotname, alt);
       else
         dprintf(DP_SERVER, "ISON :%s %s\n", botname, origbotname);
@@ -930,7 +930,7 @@ static int gotnick(char *from, char *msg)
         putlog(LOG_MISC, "*", IRC_GETORIGNICK, origbotname);
         dprintf(DP_SERVER, "NICK %s\n", origbotname);
       } else if (alt[0] && !rfc_casecmp(nick, alt) &&
-               egg_strcasecmp(botname, origbotname)) {
+               strcasecmp(botname, origbotname)) {
         putlog(LOG_MISC, "*", IRC_GETALTNICK, alt);
         dprintf(DP_SERVER, "NICK %s\n", alt);
       }
@@ -942,7 +942,7 @@ static int gotnick(char *from, char *msg)
       putlog(LOG_MISC, "*", IRC_GETORIGNICK, origbotname);
       dprintf(DP_SERVER, "NICK %s\n", origbotname);
     } else if (alt[0] && !rfc_casecmp(nick, alt) &&
-             egg_strcasecmp(botname, origbotname)) {
+             strcasecmp(botname, origbotname)) {
       putlog(LOG_MISC, "*", IRC_GETALTNICK, altnick);
       dprintf(DP_SERVER, "NICK %s\n", altnick);
     }
@@ -1103,7 +1103,7 @@ static int gotkick(char *from, char *msg)
 static int whoispenalty(char *from, char *msg)
 {
   if (realservername && use_penalties &&
-      egg_strcasecmp(from, realservername)) {
+      strcasecmp(from, realservername)) {
 
     last_time += 1;
 
@@ -1286,6 +1286,10 @@ static void server_resolve_success(int servidx)
   changeover_dcc(servidx, &SERVER_SOCKET, 0);
   dcc[servidx].sock = getsock(dcc[servidx].sockname.family, 0);
   setsnport(dcc[servidx].sockname, dcc[servidx].port);
+  /* Setup ident right before opening the socket to the IRC server to minimize
+   * race.
+   */
+  check_tcl_event("ident");
   serv = open_telnet_raw(dcc[servidx].sock, &dcc[servidx].sockname);
   if (serv < 0) {
     char *errstr = NULL;
