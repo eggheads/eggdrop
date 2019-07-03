@@ -72,7 +72,7 @@ static void ident_activity(int idx, char *buf, int len)
     putlog(LOG_MISC, "*", "Ident error: %s", strerror(errno));
     return;
   }
-  putlog(LOG_MISC, "*", "Ident: Responsed.");
+  putlog(LOG_MISC, "*", "Ident: Responded.");
   ident_builtin_off();
 }
 
