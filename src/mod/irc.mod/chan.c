@@ -198,7 +198,7 @@ static int detect_chan_flood(char *floodnick, char *floodhost, char *from,
 
   m = ismember(chan, floodnick);
 
-  /* Do not punish non-existant channel members and IRC services like
+  /* Do not punish non-existent channel members and IRC services like
    * ChanServ
    */
   if (!m && (which != FLOOD_JOIN))
@@ -552,7 +552,7 @@ static void recheck_bans(struct chanset_t *chan)
 /* Make sure that all who are exempted on the userlist are actually in fact
  * exempted on the channel.
  *
- * Note: Since i was getting an excempt list, i assume i'm chop.
+ * Note: Since i was getting an exempt list, i assume i'm chop.
  */
 static void recheck_exempts(struct chanset_t *chan)
 {
