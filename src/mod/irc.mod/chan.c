@@ -1314,7 +1314,7 @@ static int got405(char *from, char *msg)
 }
 
 /* This is only of use to us with !channels. We get this message when
- * attempting to join a non-existant !channel... The channel must be
+ * attempting to join a non-existent !channel... The channel must be
  * created by sending 'JOIN !!<channel>'. <cybah>
  *
  * 403 - ERR_NOSUCHCHANNEL
