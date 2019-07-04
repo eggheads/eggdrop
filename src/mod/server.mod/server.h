@@ -105,11 +105,6 @@ typedef struct cap_list {
   char negotiated[CAPMAX];
 } cap_list;
 
-#define INIT_CAP_LIST(X) cap_list X = { \
-  .supported = "",                      \
-  .negotiated = ""                      \
-}
-
 extern struct cap_list cap;
 
 /* Available net types.  */
