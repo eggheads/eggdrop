@@ -4,7 +4,7 @@
  */
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2017 Eggheads Development Team
+ * Copyright (C) 1999 - 2019 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -105,9 +105,9 @@ server, but Eggdrop was not compiled with SSL libraries. Skipping...");
     putlog(LOG_CMDS, "*", "#%s# jump %s %d %s", dcc[idx].nick, other,
            port, par);
 #endif
-    strncpyz(newserver, other, sizeof newserver);
+    strlcpy(newserver, other, sizeof newserver);
     newserverport = port;
-    strncpyz(newserverpass, par, sizeof newserverpass);
+    strlcpy(newserverpass, par, sizeof newserverpass);
   } else
     putlog(LOG_CMDS, "*", "#%s# jump", dcc[idx].nick);
   dprintf(idx, "%s...\n", IRC_JUMP);
@@ -123,7 +123,7 @@ static void cmd_clearqueue(struct userrec *u, int idx, char *par)
     dprintf(idx, "Usage: clearqueue <mode|server|help|all>\n");
     return;
   }
-  if (!egg_strcasecmp(par, "all")) {
+  if (!strcasecmp(par, "all")) {
     msgs = modeq.tot + mq.tot + hq.tot;
     msgq_clear(&modeq);
     msgq_clear(&mq);
@@ -131,7 +131,7 @@ static void cmd_clearqueue(struct userrec *u, int idx, char *par)
     double_warned = burst = 0;
     dprintf(idx, "Removed %d message%s from all queues.\n", msgs,
             (msgs != 1) ? "s" : "");
-  } else if (!egg_strcasecmp(par, "mode")) {
+  } else if (!strcasecmp(par, "mode")) {
     msgs = modeq.tot;
     msgq_clear(&modeq);
     if (mq.tot == 0)
@@ -139,13 +139,13 @@ static void cmd_clearqueue(struct userrec *u, int idx, char *par)
     double_warned = 0;
     dprintf(idx, "Removed %d message%s from the mode queue.\n", msgs,
             (msgs != 1) ? "s" : "");
-  } else if (!egg_strcasecmp(par, "help")) {
+  } else if (!strcasecmp(par, "help")) {
     msgs = hq.tot;
     msgq_clear(&hq);
     double_warned = 0;
     dprintf(idx, "Removed %d message%s from the help queue.\n", msgs,
             (msgs != 1) ? "s" : "");
-  } else if (!egg_strcasecmp(par, "server")) {
+  } else if (!strcasecmp(par, "server")) {
     msgs = mq.tot;
     msgq_clear(&mq);
     if (modeq.tot == 0)

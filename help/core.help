@@ -6,7 +6,7 @@ DCC commands for %B, %V:
       %bbots         newpass      chat         handle%b
       %bwhoami       echo         strip        su%b
       %btrace        fixcodes     bottree      vbottree%b
-      %bbotinfo      relay        -host%b
+      %bbotinfo      relay        -host        fprint%b
 %{o|o}
    For ops:
       %baddlog       console      match        whois%b
@@ -60,7 +60,7 @@ and all matching help texts will be displayed.
    %b.chat%b <channel>   Makes you leave the main partyline channel and join a
                      specific channel (valid channels are 1 to 99999, channel 0
                      is the party line).
-   %b.me%b <action>      Preform an action to the party line.
+   %b.me%b <action>      Perform an action to the party line.
    %b.handle%b <handle>  Changes your nick on party line.
    %b.help%b <command>   Shows more help on a specific command.
 
@@ -132,7 +132,7 @@ See also: +lang, -lang, +lsec, -lsec, lstat
    Executes the specified Tcl command.
 
    See doc/tcl-commands.doc for details on Tcl commands added to Eggdrop, and
-   visit http://tcl.activestate.com/ for more information on Tcl.
+   visit https://tcl.tk/ for more information on Tcl.
 %{help=set}%{+n}
 ###  %bset%b <variable> [value]
    Changes the values of config-file settings of the bot, or, if used without
@@ -174,6 +174,7 @@ require-p
 keep-all-logs
 open-telnets
 stealth-telnets
+stealth-prompt
 handlen
 reserved-portrange
 console
@@ -213,7 +214,7 @@ ssl-verify-clients
       %bbots         newpass      chat         handle%b
       %bwhoami       echo         strip        su%b
       %btrace        fixcodes     bottree      vbottree%b
-      %bbotinfo      relay        -host%b
+      %bbotinfo      relay        -host        fprint%b
 %{o|o}
    For ops:
       %baddlog       console      match        whois%b

@@ -5,7 +5,7 @@
  * Written by Fabian Knittel <fknittel@gmx.de>
  */
 /*
- * Copyright (C) 1999 - 2017 Eggheads Development Team
+ * Copyright (C) 1999 - 2019 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -77,7 +77,7 @@ static void filelist_addout(filelist_t *flist, char *desc)
 }
 
 /* Dump all data to specified idx */
-static inline void filelist_idxshow(filelist_t *flist, int idx)
+static void filelist_idxshow(filelist_t *flist, int idx)
 {
   int i;
 

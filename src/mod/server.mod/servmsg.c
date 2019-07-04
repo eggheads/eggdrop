@@ -3,7 +3,7 @@
  */
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2017 Eggheads Development Team
+ * Copyright (C) 1999 - 2019 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -124,7 +124,7 @@ static int check_tcl_msgm(char *cmd, char *nick, char *uhost,
   if (arg[0])
     simple_sprintf(args, "%s %s", cmd, arg);
   else
-    strncpyz(args, cmd, sizeof args);
+    strlcpy(args, cmd, sizeof args);
   get_user_flagrec(u, &fr, NULL);
   Tcl_SetVar(interp, "_msgm1", nick, 0);
   Tcl_SetVar(interp, "_msgm2", uhost, 0);
@@ -280,9 +280,7 @@ static int check_tcl_out(int which, char *msg, int sent)
 
 static int match_my_nick(char *nick)
 {
-  if (!rfc_casecmp(nick, botname))
-    return 1;
-  return 0;
+  return (!rfc_casecmp(nick, botname));
 }
 
 /* 001: welcome to IRC (use it to fix the server name) */
@@ -315,7 +313,7 @@ static int got001(char *from, char *msg)
 
   server_online = now;
   fixcolon(msg);
-  strncpyz(botname, msg, NICKLEN);
+  strlcpy(botname, msg, NICKLEN);
   altnick_char = 0;
   dprintf(DP_SERVER, "WHOIS %s\n", botname); /* get user@host */
   if (initserver[0])
@@ -351,7 +349,7 @@ static int got442(char *from, char *msg)
   char *chname, *key;
   struct chanset_t *chan;
 
-  if (!realservername || egg_strcasecmp(from, realservername))
+  if (!realservername || strcasecmp(from, realservername))
     return 0;
   newsplit(&msg);
   chname = newsplit(&msg);
@@ -415,7 +413,7 @@ static int detect_flood(char *floodnick, char *floodhost, char *from, int which)
     return 0;
 
   /* My user@host (?) */
-  if (!egg_strcasecmp(floodhost, botuserhost))
+  if (!strcasecmp(floodhost, botuserhost))
     return 0;
 
   u = get_user_by_host(from);
@@ -443,8 +441,8 @@ static int detect_flood(char *floodnick, char *floodhost, char *from, int which)
   p = strchr(floodhost, '@');
   if (p) {
     p++;
-    if (egg_strcasecmp(lastmsghost[which], p)) {        /* New */
-      strncpyz(lastmsghost[which], p, sizeof lastmsghost[which]);
+    if (strcasecmp(lastmsghost[which], p)) {        /* New */
+      strlcpy(lastmsghost[which], p, sizeof lastmsghost[which]);
       lastmsgtime[which] = now;
       lastmsgs[which] = 0;
       return 0;
@@ -493,7 +491,7 @@ static int gotmsg(char *from, char *msg)
   ignoring = match_ignore(from);
   to = newsplit(&msg);
   fixcolon(msg);
-  strncpyz(uhost, from, sizeof(buf));
+  strlcpy(uhost, from, sizeof buf);
   nick = splitnick(&uhost);
   /* Apparently servers can send CTCPs now too, not just nicks */
   if (nick[0] == '\0')
@@ -509,7 +507,7 @@ static int gotmsg(char *from, char *msg)
       p++;
     if (*p == 1) {
       *p = 0;
-      strncpyz(ctcpbuf, p1, sizeof(ctcpbuf));
+      strlcpy(ctcpbuf, p1, sizeof(ctcpbuf));
       ctcp = ctcpbuf;
 
       /* remove the ctcp in msg */
@@ -534,7 +532,7 @@ static int gotmsg(char *from, char *msg)
             u = get_user_by_host(from);
             if (!ignoring || trigger_on_ignore) {
               if (!check_tcl_ctcp(nick, uhost, u, to, code, ctcp) && !ignoring) {
-                if ((lowercase_ctcp && !egg_strcasecmp(code, "DCC")) ||
+                if ((lowercase_ctcp && !strcasecmp(code, "DCC")) ||
                     (!lowercase_ctcp && !strcmp(code, "DCC"))) {
                   /* If it gets this far unhandled, it means that
                    * the user is totally unknown.
@@ -628,7 +626,7 @@ static int gotnotice(char *from, char *msg)
   ignoring = match_ignore(from);
   to = newsplit(&msg);
   fixcolon(msg);
-  strcpy(uhost, from);
+  strlcpy(uhost, from, sizeof buf);
   nick = splitnick(&uhost);
 
   /* Check for CTCP: */
@@ -731,13 +729,13 @@ static void minutely_checks()
   if (!server_online)
     return;
   if (keepnick) {
-    /* NOTE: now that botname can but upto NICKLEN bytes long,
+    /* NOTE: now that botname can but up to NICKLEN bytes long,
      * check that it's not just a truncation of the full nick.
      */
     if (strncmp(botname, origbotname, strlen(botname))) {
       /* See if my nickname is in use and if if my nick is right. */
       alt = get_altbotnick();
-      if (alt[0] && egg_strcasecmp(botname, alt))
+      if (alt[0] && strcasecmp(botname, alt))
         dprintf(DP_SERVER, "ISON :%s %s %s\n", botname, origbotname, alt);
       else
         dprintf(DP_SERVER, "ISON :%s %s\n", botname, origbotname);
@@ -795,19 +793,19 @@ static void got303(char *from, char *msg)
  */
 static int got432(char *from, char *msg)
 {
-  char *erroneus;
+  char *erroneous;
 
   newsplit(&msg);
-  erroneus = newsplit(&msg);
+  erroneous = newsplit(&msg);
   if (server_online)
-    putlog(LOG_MISC, "*", "NICK IS INVALID: %s (keeping '%s').", erroneus,
+    putlog(LOG_MISC, "*", "NICK IS INVALID: %s (keeping '%s').", erroneous,
            botname);
   else {
     putlog(LOG_MISC, "*", IRC_BADBOTNICK);
     if (!keepnick) {
-      makepass(erroneus);
-      erroneus[NICKMAX] = 0;
-      dprintf(DP_MODE, "NICK %s\n", erroneus);
+      makepass(erroneous);
+      erroneous[NICKMAX] = 0;
+      dprintf(DP_MODE, "NICK %s\n", erroneous);
     }
     return 0;
   }
@@ -920,7 +918,7 @@ static int gotnick(char *from, char *msg)
   check_queues(nick, msg);
   if (match_my_nick(nick)) {
     /* Regained nick! */
-    strncpyz(botname, msg, NICKLEN);
+    strlcpy(botname, msg, NICKLEN);
     altnick_char = 0;
     if (!strcmp(msg, origbotname)) {
       putlog(LOG_SERV | LOG_MISC, "*", "Regained nickname '%s'.", msg);
@@ -934,7 +932,7 @@ static int gotnick(char *from, char *msg)
         putlog(LOG_MISC, "*", IRC_GETORIGNICK, origbotname);
         dprintf(DP_SERVER, "NICK %s\n", origbotname);
       } else if (alt[0] && !rfc_casecmp(nick, alt) &&
-               egg_strcasecmp(botname, origbotname)) {
+               strcasecmp(botname, origbotname)) {
         putlog(LOG_MISC, "*", IRC_GETALTNICK, alt);
         dprintf(DP_SERVER, "NICK %s\n", alt);
       }
@@ -946,7 +944,7 @@ static int gotnick(char *from, char *msg)
       putlog(LOG_MISC, "*", IRC_GETORIGNICK, origbotname);
       dprintf(DP_SERVER, "NICK %s\n", origbotname);
     } else if (alt[0] && !rfc_casecmp(nick, alt) &&
-             egg_strcasecmp(botname, origbotname)) {
+             strcasecmp(botname, origbotname)) {
       putlog(LOG_MISC, "*", IRC_GETALTNICK, altnick);
       dprintf(DP_SERVER, "NICK %s\n", altnick);
     }
@@ -1076,7 +1074,7 @@ static void server_activity(int idx, char *msg, int len)
       putlog(LOG_RAW, "*", "[@] %s %s %s", from, code, msg);
   }
   /* This has GOT to go into the raw binding table, * merely because this
-   * is less effecient.
+   * is less efficient.
    */
   check_tcl_raw(from, code, msg);
 }
@@ -1109,7 +1107,7 @@ static int gotkick(char *from, char *msg)
 static int whoispenalty(char *from, char *msg)
 {
   if (realservername && use_penalties &&
-      egg_strcasecmp(from, realservername)) {
+      strcasecmp(from, realservername)) {
 
     last_time += 1;
 
@@ -1283,7 +1281,7 @@ static void connect_server(void)
 #endif
     dcc[servidx].port = botserverport;
     strcpy(dcc[servidx].nick, "(server)");
-    strncpyz(dcc[servidx].host, botserver, UHOSTLEN);
+    strlcpy(dcc[servidx].host, botserver, UHOSTLEN);
 
     botuserhost[0] = 0;
 
@@ -1332,10 +1330,14 @@ static void server_resolve_success(int servidx)
   char pass[121];
 
   resolvserv = 0;
-  strncpyz(pass, dcc[servidx].u.dns->cbuf, sizeof pass);
+  strlcpy(pass, dcc[servidx].u.dns->cbuf, sizeof pass);
   changeover_dcc(servidx, &SERVER_SOCKET, 0);
   dcc[servidx].sock = getsock(dcc[servidx].sockname.family, 0);
   setsnport(dcc[servidx].sockname, dcc[servidx].port);
+  /* Setup ident right before opening the socket to the IRC server to minimize
+   * race.
+   */
+  check_tcl_event("ident");
   serv = open_telnet_raw(dcc[servidx].sock, &dcc[servidx].sockname);
   if (serv < 0) {
     char *errstr = NULL;

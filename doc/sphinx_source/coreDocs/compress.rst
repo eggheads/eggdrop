@@ -6,7 +6,7 @@ Last revised: May 27, 2004
 Compress Module
 ===============
 
-This module provides provides support for file compression. It can be used
+This module provides support for file compression. It can be used
 to compress files via Tcl or to transfer the userfile compressed during the
 share process, saving bandwidth.
 
@@ -28,4 +28,4 @@ There are also some variables you can set in your config file:
     as those used by GNU gzip.
 
 
-Copyright (C) 2000 - 2017 Eggheads Development Team
+Copyright (C) 2000 - 2019 Eggheads Development Team

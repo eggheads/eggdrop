@@ -1,31 +1,28 @@
 
+
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    
-    <title>TLS support &mdash; Eggdrop 1.8.2 documentation</title>
-    
+    <title>TLS support &#8212; Eggdrop 1.8.4 documentation</title>
     <link rel="stylesheet" href="../_static/eggdrop.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-    
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
-        VERSION:     '1.8.2',
+        VERSION:     '1.8.4',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
-        HAS_SOURCE:  true
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
       };
     </script>
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
-    <link rel="top" title="Eggdrop 1.8.2 documentation" href="../index.html" />
-    <link rel="up" title="&lt;no title&gt;" href="index.html" />
+    <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="&lt;no title&gt;" href="../coreDocs/index.html" />
     <link rel="prev" title="IPv6 support" href="ipv6.html" /> 
   </head>
@@ -36,7 +33,7 @@
             <img class="logo" src="../_static/eggman.png.gif" alt="Logo"/>
           </a></p>
         <div class="headertitle"><a
-          href="../index.html">Eggdrop 1.8.2 documentation</a></div>
+          href="../index.html">Eggdrop 1.8.4 documentation</a></div>
         <div class="rel">
           <a href="ipv6.html" title="IPv6 support"
              accesskey="P">previous</a> |
@@ -52,7 +49,7 @@
             
       <div class="documentwrapper">
         <div class="bodywrapper">
-          <div class="body">
+          <div class="body" role="main">
             
   <p>TLS support
 Last revised: Oct 17, 2010</p>
@@ -95,21 +92,47 @@ to TLS, using the starttls Tcl command.</p>
 <p>To connect to IRC using SSL, specify the port number and prefix it with
 a plus sign. Example: .jump irc.server.com +6697. The same goes for
 the server list in the config file.</p>
+<p>Some NickServ services allow you to authenticate with a certificate.
+Eggdrop will use the certificte pair specified in ssl-privatekey/
+ssl-certificate for authentication.</p>
 </div>
 <div class="section" id="botnet">
 <h3>Botnet<a class="headerlink" href="#botnet" title="Permalink to this headline">¶</a></h3>
-<p>By default, eggdrop now automatically attempts to protect botnet links
-with SSL if it is compiled with TLS support. If one of the bots linking
-does not have TLS support enabled, the connection will fall back to plain
-text. To explicitly require all links to a hub be SSL-only (ie, prevent
-plain text connections from being allowed), prefix the listen port in the
-hub configuration file with a plus (+) sign. Conversely, to force a leaf
-to only allow SSL (not plain text) connections with a hub, you must
-prefix the hub's listen port with a plus when adding it to the leaf via
-+bot/chaddr commands. The nickname and password are sent before SSL
-negotiation takes place (the password is not sent in plain text anyway).
-If SSL negotiation fails and either the hub or leaf is set to require SSL,
-the connection is deliberately aborted and no clear text is ever sent.</p>
+<p>Eggdrop can use TLS connections to protect botnet links if it is compiled with TLS support. TLS-enabled 1.8 bots are backwards compatible with bots that do not have TLS, whether because they are an earlier version or they were not compiled with TLS libraries. Depending on how the user configures the botnet, Eggdrop will use one of two methods to create a TLS connection: raw TLS sockets, and starttls. The difference is that a socket listening for TLS will first create a TLS connection before exchanging any eggdrop-specific data; a starttls connection will first establish the botnet link in the clear, then upgrade to a TLS connection (This means the nickname and, since v1.3.29, a challenge/response password hash are sent before TLS negotiation takes place- not the actual plaintext password).</p>
+<p>By prefixing a listen port in the Eggdrop configuration with a plus (+), that specifies that port as a TLS-enabled port, and will only accept TLS connections (no plain text connections will be allowed). Additionally, Eggdrop 1.8 has starttls functionality, where a plain text connection can first be made to a non-TLS port (ie, one that is not prefixed with a plus) and then upgraded to a TLS connection. Currently, Eggdrop automatically attempts a starttls upgrade on all botnet connections. With two TLS-enabled Eggdrops, it graphically looks like this:</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="34%" />
+<col width="32%" />
+<col width="34%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td>Leaf bot sets hub port as...</td>
+<td>and Hub bot config uses...</td>
+<td>the connection will...</td>
+</tr>
+<tr class="row-even"><td>port</td>
+<td>listen port</td>
+<td>upgrade to TLS with starttls</td>
+</tr>
+<tr class="row-odd"><td>port</td>
+<td>listen +port</td>
+<td>connect with TLS</td>
+</tr>
+<tr class="row-even"><td>+port</td>
+<td>listen port</td>
+<td>fail. This is a known issue.</td>
+</tr>
+<tr class="row-odd"><td>+port</td>
+<td>listen +port</td>
+<td>connect with TLS</td>
+</tr>
+</tbody>
+</table>
+<ul class="simple">
+<li>Currently, adding a bot with +port and connecting to a hub listening on port does not work. This will be remedied in a future release.</li>
+</ul>
+<p>To explicitly require all links to a hub be TLS-only (ie, prevent any plain text connection from being allowed), prefix the listen port in the hub configuration file with a plus (+) sign. Conversely, to force a leaf to only allow TLS (not plain text) connections with a hub, you must prefix the hub's listen port with a plus when adding it to the leaf via +bot/chaddr commands. If TLS negotiation fails and either the hub or leaf is set to require TLS, the connection is deliberately aborted and no clear text is ever sent by the TLS-requiring party.</p>
 </div>
 <div class="section" id="secure-dcc">
 <h3>Secure DCC<a class="headerlink" href="#secure-dcc" title="Permalink to this headline">¶</a></h3>
@@ -121,10 +144,10 @@ from the bot with /ctcp bot chat), consult the KVIrc documentation.</p>
 </div>
 <div class="section" id="scripts">
 <h3>Scripts<a class="headerlink" href="#scripts" title="Permalink to this headline">¶</a></h3>
-<p>Scripts can open or connect to SSL ports the usual way specifying the
+<p>Scripts can open or connect to TLS ports the usual way specifying the
 port with a plus sign. Alternatively, the connection could be
 established as plaintext and later switched on with the starttls Tcl
-command. (Note that the other side should also switch to SSL at the same
+command. (Note that the other side should also switch to TLS at the same
 time - the synchronization is the script's job, not eggdrop's.)</p>
 </div>
 </div>
@@ -132,7 +155,7 @@ time - the synchronization is the script's job, not eggdrop's.)</p>
 <h2>Keys, certificates and authentication<a class="headerlink" href="#keys-certificates-and-authentication" title="Permalink to this headline">¶</a></h2>
 <p>You need a private key and a digital certificate whenever your bot will
 act as a server in a connection of any type. Common examples are hub
-bots and SSL listening ports. General information about certificates and
+bots and TLS listening ports. General information about certificates and
 public key infrastructure can be obtained from Internet. This document
 only contains eggdrop-specific information on the subject.
 The easy way to create a key and a certificate is to type 'make sslcert'
@@ -142,23 +165,23 @@ location, use make sslcert DEST=/path/to/eggdrop). This will generate a
 you fill in therequired fields.</p>
 <p>To authenticate with a certificate instead of using password, you should
 make a ssl certificate for yourself and enable ssl-cert-auth in the config
-file. Then either connect to the bot using SSL and type &quot;.fprint +&quot; or
+file. Then either connect to the bot using TLS and type &quot;.fprint +&quot; or
 enter your certificate fingerprint with .fprint SHA1-FINGERPRINT.
 To generate a ssl certificate for yourself, you can run the following
 command from the eggdrop source directory:</p>
-<div class="highlight-python"><div class="highlight"><pre>openssl req -new -x509 -nodes -keyout my.key -out my.crt -config ssl.conf
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">openssl</span> <span class="n">req</span> <span class="o">-</span><span class="n">new</span> <span class="o">-</span><span class="n">x509</span> <span class="o">-</span><span class="n">nodes</span> <span class="o">-</span><span class="n">keyout</span> <span class="n">my</span><span class="o">.</span><span class="n">key</span> <span class="o">-</span><span class="n">out</span> <span class="n">my</span><span class="o">.</span><span class="n">crt</span> <span class="o">-</span><span class="n">config</span> <span class="n">ssl</span><span class="o">.</span><span class="n">conf</span>
 </pre></div>
 </div>
 <p>When asked about bot's handle, put your handle instead. How to use your
 new certificate to connect to eggdrop, depends on your irc client.
 To connect to your bot from the command line, you can use the OpenSSL
 ssl client:</p>
-<div class="highlight-python"><div class="highlight"><pre>openssl s_client -cert my.crt -key my.key -connect host:sslport
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">openssl</span> <span class="n">s_client</span> <span class="o">-</span><span class="n">cert</span> <span class="n">my</span><span class="o">.</span><span class="n">crt</span> <span class="o">-</span><span class="n">key</span> <span class="n">my</span><span class="o">.</span><span class="n">key</span> <span class="o">-</span><span class="n">connect</span> <span class="n">host</span><span class="p">:</span><span class="n">sslport</span>
 </pre></div>
 </div>
 </div>
-<div class="section" id="ssl-settings">
-<h2>SSL Settings<a class="headerlink" href="#ssl-settings" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="ssl-tls-settings">
+<h2>SSL/TLS Settings<a class="headerlink" href="#ssl-tls-settings" title="Permalink to this headline">¶</a></h2>
 <p>There are some new settings allowing control over certificate
 verification and authorization.</p>
 <blockquote>
@@ -213,7 +236,7 @@ verification completely. A value of 1 enables full verification.
 Higher values enable specific exceptions like allowing self-signed
 or expired certificates. Details are documented in eggdrop.conf.</div></blockquote>
 </div></blockquote>
-<p>Copyright (C) 2010 - 2017 Eggheads Development Team</p>
+<p>Copyright (C) 2010 - 2019 Eggheads Development Team</p>
 </div>
 </div>
 
@@ -239,7 +262,7 @@ or expired certificates. Details are documented in eggdrop.conf.</div></blockquo
 <li class="toctree-l1"><a class="reference internal" href="patch.html">Patch How-To</a></li>
 <li class="toctree-l1"><a class="reference internal" href="tcl-commands.html">Eggdrop Tcl Commands</a></li>
 <li class="toctree-l1"><a class="reference internal" href="ipv6.html">IPv6 support</a></li>
-<li class="toctree-l1 current"><a class="current reference internal" href="">TLS support</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">TLS support</a></li>
 </ul>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../coreDocs/core.html">Eggdrop Core Settings</a></li>
@@ -295,10 +318,10 @@ or expired certificates. Details are documented in eggdrop.conf.</div></blockquo
 
         <div class="right">
           
-    <div class="footer">
-        &copy; Copyright 2017, Eggheads.
-      Last updated on Jul 06, 2017.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.3.
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2019, Eggheads.
+      Last updated on Dec 31, 2018.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.6.7.
     </div>
         </div>
         <div class="clearer"></div>

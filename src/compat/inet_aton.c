@@ -2,7 +2,7 @@
  * inet_aton.c -- provides inet_aton() if necessary.
  */
 /*
- * Portions Copyright (C) 2000 - 2017 Eggheads Development Team
+ * Portions Copyright (C) 2000 - 2019 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -103,13 +103,13 @@ int egg_inet_aton(cp, addr)
 const char *cp;
 struct in_addr *addr;
 {
-  static const u_32bit_t max[4] = { 0xffffffff, 0xffffff, 0xffff, 0xff };
-  register u_32bit_t val;       /* changed from u_long --david */
-  register int base;
-  register int n;
-  register char c;
-  u_32bit_t parts[4];
-  register u_32bit_t *pp = parts;
+  static const uint32_t max[4] = { 0xffffffff, 0xffffff, 0xffff, 0xff };
+  uint32_t val;       /* changed from u_long --david */
+  int base;
+  int n;
+  char c;
+  uint32_t parts[4];
+  uint32_t *pp = parts;
 
   egg_bzero(parts, sizeof(parts));
 

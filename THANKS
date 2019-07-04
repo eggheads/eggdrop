@@ -1,5 +1,5 @@
 Eggdrop Developers and Contributors
-Last revised: June 09, 2017
+Last revised: December 21, 2018
 
 ------------------------------------------------------------------------------
 
@@ -29,7 +29,6 @@ drummer        Dobos Lorant                    drummer@buli.sk
 dw             Per Johansson                   dw@lixom.nu
 EraseMe                                        pyro@imag.net
 Ernst          Ernesto Baschny                 ernst@baschny.de
-Eugene         Michael Ortmann                 eugene3@web.de
 Eule           Axel Franke                     eule@berlin.snafu.de
 Fabian         Fabian Knittel                  fabian.knittel@avona.com
 Fred1          Chris Fuller
@@ -42,6 +41,7 @@ John`          John                            Johnny@technik.sth.ac.at
 KingKurly      Gregory Kubaryk                 kurly@mindless.com
 Kirben         Travis Howell                   kirben@optushome.com.au
 Kirk           Ian Kaney                       ikaney@crisiant.com
+mortmann       Michael Ortmann                 
 LuckyStar                                      lucky@binet.lv
 NC
 poptix         Matthew Hallacy                 poptix@poptix.net
@@ -67,11 +67,11 @@ Wild           Mike Hartman                    wild@klondike.com
 Contributors:
 
 
+                                               os2warp@invlogic.com
                                                Turner@Undernet
                                                pepsi@gear.torque.net
                                                vince@who.net
                                                zathras3@hotmail.com
-                                               os2warp@invlogic.com
                a person                        
                Aaron Zollman                   
 aaronwl                                        
@@ -124,6 +124,7 @@ bleah
 Bob                                            
 BoGuS                                          
 Boing                                          
+               Boris Capitanu                  
 boro                                           
 Bosko                                          
                Bow Sineath                     
@@ -228,14 +229,14 @@ easton
 Ec|ipse                                        
 Eden                                           
 edmiester                                      
-eelcohuininga                                  eelco@huininga.nl
+eelcohuininga  Eelco Huininga                  
 Ehrenberg                                      
 ejm                                            
                Emmanuel Marty                  
 Erick-         Erick Velez                     erick@erick.org
 Evo|ver                                        
 exile                                          
-Exterminador   Vitor                           droider.pc@gmail.com
+Exterminador   Vitor                           droider.bnc@gmail.com
 eye                                            
                Fabian Knittel                  fabian.knittel@avona.com
 Fabulous                                       fabulous@brasnet.org
@@ -282,6 +283,7 @@ gwyn
 Habeeb                                         
 hal                                            
 Hanno                                          
+Harekiet       Sjoerd van der Berg             
 Hath                                           hath@cyberops.org
 hdclown                                        
 herz                                           
@@ -297,6 +299,7 @@ IpAddress
 islandic                                       
 izy`                                           
                J. Lehto                        
+jack3                                          the_kink_@hotmail.com
 jackal^                                        
 James                                          
                James Colton                    
@@ -344,6 +347,7 @@ Kuja
 KuNgFo0                                        kungfo0@techmonkeys.org
 L0RE                                           
 labtec                                         
+lag-linaro                                     
 Lam                                            
 Larry                                          
 lasher-                                        
@@ -395,6 +399,7 @@ Mo-Ize         Guillaume Leclanche             mo-ize@nul-en.info
                Mohammad Ali Rezaei             
 moonwolf                                       
 MORA                                           
+mortmann       Michael Ortmann                 
                Mr. Wizard                      
 mrbond                                         
 mrBuG                                          mrbug@eggdrop.org.ru
@@ -426,8 +431,10 @@ nitemoon
 NML_375        Fredrik Löhr                    
 Nobody                                         
 node                                           
+nomis          Simon Arlott                    70171+nomis@users.noreply.github
 NoPleX                                         
 Noyga                                          
+odidev                                         
 offspring                                      
 okey                                           
 OldGhost                                       
@@ -483,6 +490,7 @@ RebuM          Martin Matuska                  rebum@gmx.at
 redbird                                        
 ReDDawG        Mike Chambers                   mike@netlyncs.com
 reed                                           
+               Regan Wallace                   
 Rich                                           
                Rick Cuoto                      
 ridens                                         
@@ -497,6 +505,7 @@ S7reaM
 sabi                                           
 Sandoz                                         
 sandvik                                        
+sbraz                                          Louis Sautier
 scipio                                         
 Scorpius                                       
 scott                                          

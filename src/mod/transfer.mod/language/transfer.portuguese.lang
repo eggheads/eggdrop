@@ -1,0 +1,64 @@
+
+# transfer.portuguese.lang
+#   portuguese language messages for transfer module
+
+0xf00,Recusada obtenção dcc %s: cópia para localização temporária FALHADA!
+0xf01,NOTICE %s :Sistema de ficheiros corrompido; abortando ficheiros em espera.\n
+0xf02,NOTICE %s :Aqui está um ficheiro de %s ...\n
+0xf03,Máximo de ligações DCC atingido: GET %s [%s]
+0xf04,NOTICE %s :Máximo de ligações DCC atingido; abortando ficheiros em espera.\n
+0xf05,Erro de DCC socket: GET %s [%s]
+0xf06,NOTICE %s :Erro de DCC socket; abortando ficheiros em espera.\n
+0xf07,Abortada obtenção dcc %s: Ficheiro vazio!
+0xf08,NOTICE %s :Ficheiro %s está vazio, abortando transferência.\n
+0xf09,  Enviando para  %s  Ficheiro\n
+0xf0a,  ---------------%s  --------------------\n
+0xf0b,  %s%s           %s  [ESPERANDO]\n
+0xf0c,  %s%s           %s  (%.1f%% completado)\n
+0xf0d,Sem ficheiros em espera.\n
+0xf0e,Total: %d\n
+0xf0f,Cancelados: %s para %s\n
+0xf10,Cancelados: %s  (abortado envio dcc)\n
+0xf11,NOTICE %s :Transferência de %s abortada por %s\n
+0xf12,Cancelado DCC: GET %s (%s) a %lu/%lu
+0xf13,Sem correspondências.\n
+0xf14,Cancelados %d ficheiro%s.\n
+0xf15,Completado envio dcc %s de %s!%s
+0xf16,Nome do ficheiro %d demasiado longo.
+0xf17,NOTICE %s :Nome do ficheiro %d demasiado LONGO!\n
+0xf18,Too Bad So Sad Your Dad!
+0xf19,NOTICE %s :Too Bad So Sad Your Dad!\n
+0xf1a,FALHADA tentativa de mover `%s' da localização temporária! Ficheiro perdido!
+0xf1b,Obrigado pelo ficheiro!\n
+0xf1c,NOTICE %s :Obrigado pelo ficheiro!\n
+0xf1d,Tranferência do ficheiro de utilizador de %s perdida; abortando.
+# 0xf1e, < this one is now empty
+0xf1f,Desligado %s (transferência de ficheiro de utilizador abortada)
+0xf20,Perdido envio dcc %s de %s!%s (%lu/%lu)
+0xf21,(!) pacote reget de %s para %s é inválido!
+0xf22,!! Retomando transferência do ficheiro atrás do ficheiro final desde %s para %s
+0xf23,!!! Tentando avançar na transferência de arquivos de utilizador
+0xf24,Retomando a transferência de ficheiros em %dk desde %s para %s
+0xf25,Transferência de ficheiro de utilizador concluída para %s.
+0xf26,Terminado envio dcc %s para %s
+0xf27,Perdida transferência do ficheiro de utilizador; abortando.
+0xf28,Perdida obtenção dcc %s de %s!%s
+0xf29,NOTICE %s :Comprimento de ficheiro malformada.\n
+0xf2a,Ficheiro demasiado longo: cancelando envio dcc %s desde %s!%s
+0xf2b,Tempo de ligação esgotado na transferência do ficheiro de utilizador.
+0xf2c,Desligado %s (tempo de ligação esgotado na transferência do ficheiro de utilizador)
+0xf2d,NOTICE %s :Tempo de ligação esgotado durante transferência, abortando %s.\n
+0xf2f,Tempo de ligação esgotado em DCC: GET %s (%s) a %lu/%lu
+0xf30,Tempo de ligação esgotado em DCC: SEND %s (%s) a %lu/%lu
+0xf31,envio  (%lu)/%lu\n    Ficheiro: %s\n
+0xf32,envio esperou %lus\n    Ficheiro: %s\n
+0xf33,envio de ligação
+0xf34,Ligação DCC: SEND %s (%s)
+0xf35,NOTICE %s :Ligação imprópria (%s)\n
+0xf36,Ligação DCC imprópria: GET %s (%s!%s)
+0xf37,Iniciando DCC %senvio %s para %s
+0xf38,re
+0xf39,NOTICE %s :Ignorando retoma de `%s': sem dados pedidos.\n
+0xf40,Descarregando módulo transfer, desligando todas as transferências...
+0xf41,    Tamanho do bloco DCC: %d%s\n
+0xf42,    Máximo de downloads simultâneos por utilizador: %d\n

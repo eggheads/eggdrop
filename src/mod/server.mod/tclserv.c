@@ -3,7 +3,7 @@
  *
  *
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2017 Eggheads Development Team
+ * Copyright (C) 1999 - 2019 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -38,7 +38,7 @@ static int tcl_putnow STDVAR
 
   BADARGS(2, 3, " text ?options?");
 
-  if ((argc == 3) && egg_strcasecmp(argv[2], "-oneline")) {
+  if ((argc == 3) && strcasecmp(argv[2], "-oneline")) {
     Tcl_AppendResult(irp, "unknown putnow option: should be ",
                      "-oneline", NULL);
     return TCL_ERROR;
@@ -59,9 +59,9 @@ static int tcl_putnow STDVAR
     if ((p - r) > (sizeof(buf) - 2 - (q - buf)))
       break; /* That's all folks, no space left */
     len = p - r + 1; /* leave space for '\0' */
-    strncpyz(q, r, len);
+    strlcpy(q, r, len);
     if (check_tcl_out(0, q, 0)) {
-      if (!*p || ((argc == 3) && !egg_strcasecmp(argv[2], "-oneline")))
+      if (!*p || ((argc == 3) && !strcasecmp(argv[2], "-oneline")))
         break;
       r = p + 1;
       continue;
@@ -74,7 +74,7 @@ static int tcl_putnow STDVAR
     q += len - 1; /* the '\0' must be overwritten */
     *q++ = '\r';
     *q++ = '\n'; /* comply with the RFC */
-    if (!*p || ((argc == 3) && !egg_strcasecmp(argv[2], "-oneline")))
+    if (!*p || ((argc == 3) && !strcasecmp(argv[2], "-oneline")))
       break; /* cut on newline requested or message ended */
     r = p + 1;
   }
@@ -88,22 +88,21 @@ static int tcl_putquick STDVAR
 
   BADARGS(2, 3, " text ?options?");
 
-  if ((argc == 3) && egg_strcasecmp(argv[2], "-next") &&
-      egg_strcasecmp(argv[2], "-normal")) {
+  if ((argc == 3) && strcasecmp(argv[2], "-next") &&
+      strcasecmp(argv[2], "-normal")) {
     Tcl_AppendResult(irp, "unknown putquick option: should be one of: ",
                      "-normal -next", NULL);
     return TCL_ERROR;
   }
-  strncpy(s, argv[1], 510);
+  strlcpy(s, argv[1], sizeof s);
 
-  s[510] = 0;
   p = strchr(s, '\n');
   if (p != NULL)
     *p = 0;
   p = strchr(s, '\r');
   if (p != NULL)
     *p = 0;
-  if (argc == 3 && !egg_strcasecmp(argv[2], "-next"))
+  if (argc == 3 && !strcasecmp(argv[2], "-next"))
     dprintf(DP_MODE_NEXT, "%s\n", s);
   else
     dprintf(DP_MODE, "%s\n", s);
@@ -116,22 +115,21 @@ static int tcl_putserv STDVAR
 
   BADARGS(2, 3, " text ?options?");
 
-  if ((argc == 3) && egg_strcasecmp(argv[2], "-next") &&
-      egg_strcasecmp(argv[2], "-normal")) {
+  if ((argc == 3) && strcasecmp(argv[2], "-next") &&
+      strcasecmp(argv[2], "-normal")) {
     Tcl_AppendResult(irp, "unknown putserv option: should be one of: ",
                      "-normal -next", NULL);
     return TCL_ERROR;
   }
-  strncpy(s, argv[1], 510);
+  strlcpy(s, argv[1], sizeof s);
 
-  s[510] = 0;
   p = strchr(s, '\n');
   if (p != NULL)
     *p = 0;
   p = strchr(s, '\r');
   if (p != NULL)
     *p = 0;
-  if (argc == 3 && !egg_strcasecmp(argv[2], "-next"))
+  if (argc == 3 && !strcasecmp(argv[2], "-next"))
     dprintf(DP_SERVER_NEXT, "%s\n", s);
   else
     dprintf(DP_SERVER, "%s\n", s);
@@ -144,22 +142,21 @@ static int tcl_puthelp STDVAR
 
   BADARGS(2, 3, " text ?options?");
 
-  if ((argc == 3) && egg_strcasecmp(argv[2], "-next") &&
-      egg_strcasecmp(argv[2], "-normal")) {
+  if ((argc == 3) && strcasecmp(argv[2], "-next") &&
+      strcasecmp(argv[2], "-normal")) {
     Tcl_AppendResult(irp, "unknown puthelp option: should be one of: ",
                      "-normal -next", NULL);
     return TCL_ERROR;
   }
-  strncpy(s, argv[1], 510);
+  strlcpy(s, argv[1], sizeof s);
 
-  s[510] = 0;
   p = strchr(s, '\n');
   if (p != NULL)
     *p = 0;
   p = strchr(s, '\r');
   if (p != NULL)
     *p = 0;
-  if (argc == 3 && !egg_strcasecmp(argv[2], "-next"))
+  if (argc == 3 && !strcasecmp(argv[2], "-next"))
     dprintf(DP_HELP_NEXT, "%s\n", s);
   else
     dprintf(DP_HELP, "%s\n", s);
@@ -193,7 +190,7 @@ static int tcl_jump STDVAR
   BADARGS(1, 4, " ?server? ?port? ?pass?");
 
   if (argc >= 2) {
-    strncpyz(newserver, argv[1], sizeof newserver);
+    strlcpy(newserver, argv[1], sizeof newserver);
     if (argc >= 3)
 #ifdef TLS
     {
@@ -209,7 +206,7 @@ static int tcl_jump STDVAR
     else
       newserverport = default_port;
     if (argc == 4)
-      strncpyz(newserverpass, argv[3], sizeof newserverpass);
+      strlcpy(newserverpass, argv[3], sizeof newserverpass);
   }
   cycle_time = 0;
 

@@ -51,11 +51,11 @@ Eggdrop Changes (since version 1.4.0)
     Patch by: jeffx
 
   - We were missing 0xe33 in the core.german.lang
-    Patch by: Eugene
+    Patch by: mortmann
 
   - Changed the priority of a WHO done when users are de-opped to DP_HELP
     from DP_MODE
-    Found by: Ben Dover / Patch by: Eugene
+    Found by: Ben Dover / Patch by: mortmann
 
   - Increased the size of whois_fields to 1024.
     Patch by: Tothwolf
@@ -152,7 +152,7 @@ Eggdrop Changes (since version 1.4.0)
 
   - kick_msg in the revenge code was mixed up, revenge message used "kick"
     for deop and "deop" for kick
-    Found by: paravoid / Patch by: Eugene
+    Found by: paravoid / Patch by: mortmann
 
   - msg_die now sends the reason along with the BOT SHUTDOWN message.
     Found by: Wiktor / Patch by: guppy
@@ -161,7 +161,7 @@ Eggdrop Changes (since version 1.4.0)
     Patch by: Sup
 
   - Cleaned up language load messages. Most are now moved to debug level.
-    Each "Module loaded:" message also states wether the module has language
+    Each "Module loaded:" message also states whether the module has language
     support. \t is supported in language entries. tcl_language is
     depreciated.
     Patch by: Fabian
@@ -249,7 +249,7 @@ Eggdrop Changes (since version 1.4.0)
     Patch by: nakee
 
   - Wrong notice target in msg_hello
-    Found by: tabo / Patch by: Eugene
+    Found by: tabo / Patch by: mortmann
 
   - msg_voice works now for channel ops
     Patch by: drummer
@@ -317,7 +317,7 @@ Eggdrop Changes (since version 1.4.0)
     Patch by: mho
 
   - irc.help missed %b in a cpl of places.
-    Patch by: Eugene
+    Patch by: mortmann
 
   - Channel owner could +host/-host global master.
     Found by: deaf / Patch by: dw
@@ -387,7 +387,7 @@ Eggdrop Changes (since version 1.4.0)
 
   - +I modes used the wrong queue and was not stacked also fixed a minor +e
     prob.
-    Found by: Eugene / Patch by: Jason Ede
+    Found by: mortmann / Patch by: Jason Ede
 
   - Updated INSTALL & compiling.FAQ documents
     Patch by: Wiktor
@@ -641,8 +641,8 @@ Eggdrop Changes (since version 1.4.0)
 
 1.4.0 (November 9, 1999):
 
-  - Changed alot of putlog's to use the right log level, redid all the
-    EGG_VARARGS junk and fixed alot of places where Tcl_Free should have
+  - Changed a lot of putlog's to use the right log level, redid all the
+    EGG_VARARGS junk and fixed a lot of places where Tcl_Free should have
     been used but wasn't being used -- and much much more <g>
     Patch by: Tothwolf
 
@@ -916,7 +916,7 @@ Eggdrop Changes (since version 1.4.0)
   - Duplicate entries removed from core.english.lang.
     Patch by: arthur2
 
-  - killsock() could accidently free unused socket entries
+  - killsock() could accidentally free unused socket entries
     Found by: Beige / Patch by: Fabian
 
   - Fixed way we get version number for Tcl_PkgProvide()

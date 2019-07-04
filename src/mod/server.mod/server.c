@@ -4,7 +4,7 @@
  */
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2017 Eggheads Development Team
+ * Copyright (C) 1999 - 2019 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -95,7 +95,7 @@ static int optimize_kicks;
 static int msgrate;             /* Number of seconds between sending
                                  * queued lines to server. */
 #ifdef TLS
-static int use_ssl;		/* Use SSL for the next server connection? */
+static int use_ssl;             /* Use SSL for the next server connection? */
 static int tls_vfyserver;       /* Certificate validation mode for servrs  */
 #endif
 
@@ -134,6 +134,16 @@ static int burst;
 #include "tclserv.c"
 
 
+static void write_to_server(char *s, unsigned int len) {
+  char *s2 = nmalloc(len + 2);
+
+  memcpy(s2, s, len);
+  s2[len] = '\r';
+  s2[len + 1] = '\n';
+  tputs(serv, s2, len + 2);
+  nfree(s2);
+}
+
 /*
  *     Bot server queues
  */
@@ -142,9 +152,9 @@ static int burst;
  *
  * 'mode' queue gets priority now.
  *
- * Most servers will allow 'bursts' of upto 5 msgs, so let's put something
+ * Most servers will allow 'bursts' of up to 5 msgs, so let's put something
  * in to support flushing modeq a little faster if possible.
- * Will send upto 4 msgs from modeq, and then send 1 msg every time
+ * Will send up to 4 msgs from modeq, and then send 1 msg every time
  * it will *not* send anything from hq until the 'burst' value drops
  * down to 0 again (allowing a sudden mq flood to sneak through).
  */
@@ -164,7 +174,7 @@ static void deq_msg()
   if (serv < 0)
     return;
 
-  /* Send upto 4 msgs to server if the *critical queue* has anything in it */
+  /* Send up to 4 msgs to server if the *critical queue* has anything in it */
   if (modeq.head) {
     while (modeq.head && (burst < 4) && ((last_time - now) < MAXPENALTY)) {
       if (deq_kick(DP_MODE)) {
@@ -251,7 +261,7 @@ static void deq_msg()
 static int calc_penalty(char *msg)
 {
   char *cmd, *par1, *par2, *par3;
-  register int penalty, i, ii;
+  int penalty, i, ii;
 
   if (!use_penalties && net_type != NETT_UNDERNET &&
       net_type != NETT_HYBRID_EFNET)
@@ -268,7 +278,7 @@ static int calc_penalty(char *msg)
     return 0;
   }
   penalty = (1 + i / 100);
-  if (!egg_strcasecmp(cmd, "KICK")) {
+  if (!strcasecmp(cmd, "KICK")) {
     par1 = newsplit(&msg);      /* channel */
     par2 = newsplit(&msg);      /* victim(s) */
     par3 = splitnicks(&par2);
@@ -283,7 +293,7 @@ static int calc_penalty(char *msg)
       par3 = splitnicks(&par1);
       penalty += ii;
     }
-  } else if (!egg_strcasecmp(cmd, "MODE")) {
+  } else if (!strcasecmp(cmd, "MODE")) {
     i = 0;
     par1 = newsplit(&msg);      /* channel */
     par2 = newsplit(&msg);      /* mode(s) */
@@ -306,7 +316,7 @@ static int calc_penalty(char *msg)
       ii++;
     }
     penalty += (ii * i);
-  } else if (!egg_strcasecmp(cmd, "TOPIC")) {
+  } else if (!strcasecmp(cmd, "TOPIC")) {
     penalty++;
     par1 = newsplit(&msg);      /* channel */
     par2 = newsplit(&msg);      /* topic */
@@ -318,15 +328,15 @@ static int calc_penalty(char *msg)
         penalty += 2;
       }
     }
-  } else if (!egg_strcasecmp(cmd, "PRIVMSG") ||
-             !egg_strcasecmp(cmd, "NOTICE")) {
+  } else if (!strcasecmp(cmd, "PRIVMSG") ||
+             !strcasecmp(cmd, "NOTICE")) {
     par1 = newsplit(&msg);      /* channel(s)/nick(s) */
     /* Add one sec penalty for each recipient */
     while (strlen(par1) > 0) {
       splitnicks(&par1);
       penalty++;
     }
-  } else if (!egg_strcasecmp(cmd, "WHO")) {
+  } else if (!strcasecmp(cmd, "WHO")) {
     par1 = newsplit(&msg);      /* masks */
     par2 = par1;
     while (strlen(par1) > 0) {
@@ -336,33 +346,33 @@ static int calc_penalty(char *msg)
       else
         penalty += 5;
     }
-  } else if (!egg_strcasecmp(cmd, "AWAY")) {
+  } else if (!strcasecmp(cmd, "AWAY")) {
     if (strlen(msg) > 0)
       penalty += 2;
     else
       penalty += 1;
-  } else if (!egg_strcasecmp(cmd, "INVITE")) {
+  } else if (!strcasecmp(cmd, "INVITE")) {
     /* Successful invite receives 2 or 3 penalty points. Let's go
      * with the maximum.
      */
     penalty += 3;
-  } else if (!egg_strcasecmp(cmd, "JOIN")) {
+  } else if (!strcasecmp(cmd, "JOIN")) {
     penalty += 2;
-  } else if (!egg_strcasecmp(cmd, "PART")) {
+  } else if (!strcasecmp(cmd, "PART")) {
     penalty += 4;
-  } else if (!egg_strcasecmp(cmd, "VERSION")) {
+  } else if (!strcasecmp(cmd, "VERSION")) {
     penalty += 2;
-  } else if (!egg_strcasecmp(cmd, "TIME")) {
+  } else if (!strcasecmp(cmd, "TIME")) {
     penalty += 2;
-  } else if (!egg_strcasecmp(cmd, "TRACE")) {
+  } else if (!strcasecmp(cmd, "TRACE")) {
     penalty += 2;
-  } else if (!egg_strcasecmp(cmd, "NICK")) {
+  } else if (!strcasecmp(cmd, "NICK")) {
     penalty += 3;
-  } else if (!egg_strcasecmp(cmd, "ISON")) {
+  } else if (!strcasecmp(cmd, "ISON")) {
     penalty += 1;
-  } else if (!egg_strcasecmp(cmd, "WHOIS")) {
+  } else if (!strcasecmp(cmd, "WHOIS")) {
     penalty += 2;
-  } else if (!egg_strcasecmp(cmd, "DNS")) {
+  } else if (!strcasecmp(cmd, "DNS")) {
     penalty += 2;
   } else
     penalty++;                  /* just add standard-penalty */
@@ -378,9 +388,9 @@ static int calc_penalty(char *msg)
   return penalty;
 }
 
-char *splitnicks(char **rest)
+static char *splitnicks(char **rest)
 {
-  register char *o, *r;
+  char *o, *r;
 
   if (!rest)
     return *rest = "";
@@ -422,14 +432,14 @@ static int fast_deq(int which)
   }
 
   m = h->head;
-  strncpyz(msgstr, m->msg, sizeof msgstr);
+  strlcpy(msgstr, m->msg, sizeof msgstr);
   msg = msgstr;
   cmd = newsplit(&msg);
   if (use_fastdeq > 1) {
-    strncpyz(stackable, stackablecmds, sizeof stackable);
+    strlcpy(stackable, stackablecmds, sizeof stackable);
     stckbl = stackable;
     while (strlen(stckbl) > 0) {
-      if (!egg_strcasecmp(newsplit(&stckbl), cmd)) {
+      if (!strcasecmp(newsplit(&stckbl), cmd)) {
         found = 1;
         break;
       }
@@ -444,26 +454,24 @@ static int fast_deq(int which)
       return 0;
 
     /* we check for the stacking method (default=1) */
-    strncpyz(stackable, stackable2cmds, sizeof stackable);
+    strlcpy(stackable, stackable2cmds, sizeof stackable);
     stckbl = stackable;
     while (strlen(stckbl) > 0)
-      if (!egg_strcasecmp(newsplit(&stckbl), cmd)) {
+      if (!strcasecmp(newsplit(&stckbl), cmd)) {
         stack_method = 2;
         break;
       }
   }
   to = newsplit(&msg);
-  len = strlen(to);
   simple_sprintf(victims, "%s", to);
   while (m) {
     nm = m->next;
     if (!nm)
       break;
-    strncpyz(nextmsgstr, nm->msg, sizeof nextmsgstr);
+    strlcpy(nextmsgstr, nm->msg, sizeof nextmsgstr);
     nextmsg = nextmsgstr;
     nextcmd = newsplit(&nextmsg);
     nextto = newsplit(&nextmsg);
-    len = strlen(nextto);
     if (strcmp(to, nextto) && !strcmp(cmd, nextcmd) && !strcmp(msg, nextmsg) &&
         ((strlen(cmd) + strlen(victims) + strlen(nextto) + strlen(msg) + 2) <
         510) && (!stack_limit || cmd_count < stack_limit - 1)) {
@@ -533,16 +541,16 @@ static void parse_q(struct msgq_head *q, char *oldnick, char *newnick)
 
   for (m = q->head; m;) {
     changed = 0;
-    if (optimize_kicks == 2 && !egg_strncasecmp(m->msg, "KICK ", 5)) {
+    if (optimize_kicks == 2 && !strncasecmp(m->msg, "KICK ", 5)) {
       newnicks[0] = 0;
-      strncpyz(buf, m->msg, sizeof buf);
+      strlcpy(buf, m->msg, sizeof buf);
       msg = buf;
       newsplit(&msg);
       chan = newsplit(&msg);
       nicks = newsplit(&msg);
       while (strlen(nicks) > 0) {
         nick = splitnicks(&nicks);
-        if (!egg_strcasecmp(nick, oldnick) &&
+        if (!strcasecmp(nick, oldnick) &&
             ((9 + strlen(chan) + strlen(newnicks) + strlen(newnick) +
               strlen(nicks) + strlen(msg)) < 510)) {
           if (newnick)
@@ -590,10 +598,10 @@ static void purge_kicks(struct msgq_head *q)
   struct chanset_t *cs;
 
   for (m = q->head; m;) {
-    if (!egg_strncasecmp(m->msg, "KICK", 4)) {
+    if (!strncasecmp(m->msg, "KICK", 4)) {
       newnicks[0] = 0;
       changed = 0;
-      strncpyz(buf, m->msg, sizeof buf);
+      strlcpy(buf, m->msg, sizeof buf);
       reason = buf;
       newsplit(&reason);
       chan = newsplit(&reason);
@@ -601,7 +609,7 @@ static void purge_kicks(struct msgq_head *q)
       while (strlen(nicks) > 0) {
         found = 0;
         nick = splitnicks(&nicks);
-        strncpyz(chans, chan, sizeof chans);
+        strlcpy(chans, chan, sizeof chans);
         chns = chans;
         while (strlen(chns) > 0) {
           ch = newsplit(&chns);
@@ -675,7 +683,7 @@ static int deq_kick(int which)
     return 0;
   }
 
-  if (egg_strncasecmp(h->head->msg, "KICK", 4))
+  if (strncasecmp(h->head->msg, "KICK", 4))
     return 0;
 
   if (optimize_kicks == 2) {
@@ -684,11 +692,11 @@ static int deq_kick(int which)
       return 1;
   }
 
-  if (egg_strncasecmp(h->head->msg, "KICK", 4))
+  if (strncasecmp(h->head->msg, "KICK", 4))
     return 0;
 
   msg = h->head;
-  strncpyz(buf, msg->msg, sizeof buf);
+  strlcpy(buf, msg->msg, sizeof buf);
   reason = buf;
   newsplit(&reason);
   chan = newsplit(&reason);
@@ -699,15 +707,15 @@ static int deq_kick(int which)
     nr++;
   }
   for (m = msg->next, lm = NULL; m && (nr < kick_method);) {
-    if (!egg_strncasecmp(m->msg, "KICK", 4)) {
+    if (!strncasecmp(m->msg, "KICK", 4)) {
       changed = 0;
       newnicks2[0] = 0;
-      strncpyz(buf2, m->msg, sizeof buf2);
+      strlcpy(buf2, m->msg, sizeof buf2);
       reason2 = buf2;
       newsplit(&reason2);
       chan2 = newsplit(&reason2);
       nicks = newsplit(&reason2);
-      if (!egg_strcasecmp(chan, chan2) && !egg_strcasecmp(reason, reason2)) {
+      if (!strcasecmp(chan, chan2) && !strcasecmp(reason, reason2)) {
         while (strlen(nicks) > 0) {
           nick = splitnicks(&nicks);
           if ((nr < kick_method) && ((9 + strlen(chan) + strlen(newnicks) +
@@ -802,14 +810,13 @@ static void queue_server(int which, char *msg, int len)
   /* Remove \r\n. We will add these back when we send the text to the server.
    * - Wcc [01/09/2004]
    */
-  strncpy(buf, msg, sizeof buf);
+  strlcpy(buf, msg, sizeof buf);
   msg = buf;
   remove_crlf(&msg);
-  buf[510] = 0;
   len = strlen(buf);
 
   /* No queue for PING and PONG - drummer */
-  if (!egg_strncasecmp(buf, "PING", 4) || !egg_strncasecmp(buf, "PONG", 4)) {
+  if (!strncasecmp(buf, "PING", 4) || !strncasecmp(buf, "PONG", 4)) {
     if (buf[1] == 'I' || buf[1] == 'i')
       lastpingtime = now;
     check_tcl_out(which, buf, 1);
@@ -863,7 +870,7 @@ static void queue_server(int which, char *msg, int len)
     if (!doublemsg) {
       for (tq = tempq.head; tq; tq = tqq) {
         tqq = tq->next;
-        if (!egg_strcasecmp(tq->msg, buf)) {
+        if (!strcasecmp(tq->msg, buf)) {
           if (!double_warned) {
             debug1("Message already queued; skipping: %s", buf);
             double_warned = 1;
@@ -896,7 +903,7 @@ static void queue_server(int which, char *msg, int len)
 
     q->len = len;
     q->msg = nmalloc(len + 1);
-    egg_memcpy(q->msg, buf, len);
+    memcpy(q->msg, buf, len);
     q->msg[len] = 0;
     h->tot++;
     h->warned = 0;
@@ -984,7 +991,6 @@ Eggdrop was not compiled with SSL libraries. Skipping...");
     z->next = x;
   else
     serverlist = x;
-  z = x;
 
   x->name = nmalloc(strlen(name) + 1);
   strcpy(x->name, name);
@@ -1033,15 +1039,15 @@ static void next_server(int *ptr, char *serv, unsigned int *port, char *pass)
   if (*ptr == -1) {
     for (; x; x = x->next) {
       if (x->port == *port) {
-        if (!egg_strcasecmp(x->name, serv)) {
+        if (!strcasecmp(x->name, serv)) {
           *ptr = i;
 #ifdef TLS
-            x->ssl = use_ssl;
+          x->ssl = use_ssl;
 #endif
           return;
-        } else if (x->realname && !egg_strcasecmp(x->realname, serv)) {
+        } else if (x->realname && !strcasecmp(x->realname, serv)) {
           *ptr = i;
-          strncpyz(serv, x->realname, sizeof serv);
+          strlcpy(serv, x->realname, UHOSTLEN);
 #ifdef TLS
           use_ssl = x->ssl;
 #endif
@@ -1187,7 +1193,7 @@ static char *nick_change(ClientData cdata, Tcl_Interp *irp,
         putlog(LOG_MISC, "*", "* IRC NICK CHANGE: %s -> %s", origbotname, new);
         nick_juped = 0;
       }
-      strncpyz(origbotname, new, NICKLEN);
+      strlcpy(origbotname, new, NICKLEN);
       if (server_online)
         dprintf(DP_SERVER, "NICK %s\n", origbotname);
     }
@@ -1199,7 +1205,7 @@ static char *nick_change(ClientData cdata, Tcl_Interp *irp,
  */
 static void rand_nick(char *nick)
 {
-  register char *p = nick;
+  char *p = nick;
 
   while ((p = strchr(p, '?')) != NULL) {
     *p = '0' + randint(10);
@@ -1214,7 +1220,7 @@ static char *get_altbotnick(void)
   /* A random-number nick? */
   if (strchr(altnick, '?')) {
     if (!raltnick[0] && !wild_match(altnick, botname)) {
-      strncpyz(raltnick, altnick, NICKLEN);
+      strlcpy(raltnick, altnick, NICKLEN);
       rand_nick(raltnick);
     }
     return raltnick;
@@ -1267,7 +1273,12 @@ static char *traced_server(ClientData cdata, Tcl_Interp *irp,
     int servidx = findanyidx(serv);
 
     /* return real server name */
+#ifdef TLS
+    simple_sprintf(s, "%s:%s%u", realservername, dcc[servidx].ssl ? "+" : "",
+                   dcc[servidx].port);
+#else
     simple_sprintf(s, "%s:%u", realservername, dcc[servidx].port);
+#endif
   } else
     s[0] = 0;
   Tcl_SetVar2(interp, name1, name2, s, TCL_GLOBAL_ONLY);
@@ -1514,21 +1525,21 @@ static int ctcp_DCC_CHAT(char *nick, char *from, char *handle,
   struct userrec *u = get_user_by_handle(userlist, handle);
   struct flag_record fr = { FR_GLOBAL | FR_CHAN | FR_ANYWH, 0, 0, 0, 0, 0 };
 
-  strncpyz(buf, text, sizeof buf);
+  strlcpy(buf, text, sizeof buf);
   action = newsplit(&msg);
   param = newsplit(&msg);
   ip = newsplit(&msg);
   prt = newsplit(&msg);
 #ifdef TLS
-  if (egg_strcasecmp(action, "CHAT") || egg_strcasecmp(object, botname) || !u)
+  if (strcasecmp(action, "CHAT") || strcasecmp(object, botname) || !u)
   {
-    if (!egg_strcasecmp(action, "SCHAT"))
+    if (!strcasecmp(action, "SCHAT"))
       ssl = 1;
     else
       return 0;
   }
 #else
-  if (egg_strcasecmp(action, "CHAT") || egg_strcasecmp(object, botname) || !u)
+  if (strcasecmp(action, "CHAT") || strcasecmp(object, botname) || !u)
     return 0;
 #endif
   get_user_flagrec(u, &fr, 0);
@@ -1678,30 +1689,27 @@ static void server_5minutely()
 
 static void server_prerehash()
 {
-  strncpyz(oldnick, botname, sizeof oldnick);
+  strlcpy(oldnick, botname, sizeof oldnick);
 }
 
 static void server_postrehash()
 {
-  strncpyz(botname, origbotname, NICKLEN);
+  strlcpy(botname, origbotname, NICKLEN);
   if (!botname[0])
     fatal("NO BOT NAME.", 0);
-  if ((serverlist == NULL)
 #ifndef TLS
-  && (sslserver)) {
+  if ((serverlist == NULL) && sslserver)
     fatal("NO NON-SSL SERVERS ADDED (TLS IS DISABLED).", 0);
-  } else if (serverlist == NULL
 #endif
-  ) {
+  if (serverlist == NULL)
     fatal("NO SERVERS ADDED.", 0);
-  }
   if (oldnick[0] && !rfc_casecmp(oldnick, botname) &&
       !rfc_casecmp(oldnick, get_altbotnick())) {
     /* Change botname back, don't be premature. */
     strcpy(botname, oldnick);
     dprintf(DP_SERVER, "NICK %s\n", origbotname);
   }
-  /* Change botname back incase we were using altnick previous to rehash. */
+  /* Change botname back in case we were using altnick previous to rehash. */
   else if (oldnick[0])
     strcpy(botname, oldnick);
 }
@@ -1719,7 +1727,7 @@ static void server_die()
 
 static void msgq_clear(struct msgq_head *qh)
 {
-  register struct msgq *q, *qq;
+  struct msgq *q, *qq;
 
   for (q = qh->head; q; q = qq) {
     qq = q->next;
@@ -1732,8 +1740,8 @@ static void msgq_clear(struct msgq_head *qh)
 
 static int msgq_expmem(struct msgq_head *qh)
 {
-  register int tot = 0;
-  register struct msgq *m;
+  int tot = 0;
+  struct msgq *m;
 
   for (m = qh->head; m; m = m->next) {
     tot += m->len + 1;
@@ -1902,7 +1910,7 @@ static Function server_table[] = {
   (Function) NULL,              /* char * (points to botname later on)  */
   (Function) botuserhost,       /* char *                               */
 #ifdef TLS
-  (Function) & use_ssl,		/* int					*/
+  (Function) & use_ssl,         /* int                                  */
 #else
   (Function) NULL,              /* Was quiet_reject <Wcc[01/21/03]>.    */
 #endif
@@ -2027,7 +2035,7 @@ char *server_start(Function *global_funcs)
   tcl_traceserver("servers", NULL);
   s = Tcl_GetVar(interp, "nick", TCL_GLOBAL_ONLY);
   if (s)
-    strncpyz(origbotname, s, NICKLEN);
+    strlcpy(origbotname, s, NICKLEN);
   Tcl_TraceVar(interp, "nick",
                TCL_TRACE_READS | TCL_TRACE_WRITES | TCL_TRACE_UNSETS,
                nick_change, NULL);

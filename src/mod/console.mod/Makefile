@@ -4,23 +4,20 @@ srcdir = .
 
 
 doofus:
-	@echo ""
-	@echo "Let's try this from the right directory..."
-	@echo ""
-	@cd ../../../ && make
+	@echo "" && \
+	echo "Let's try this from the right directory..." && \
+	echo "" && \
+	cd ../../../ && $(MAKE)
 
 static: ../console.o
 
 modules: ../../../console.$(MOD_EXT)
 
 ../console.o:
-	$(CC) $(CFLAGS) $(CPPFLAGS) -DMAKING_MODS -c $(srcdir)/console.c
-	@rm -f ../console.o
-	mv console.o ../
+	$(CC) $(CFLAGS) $(CPPFLAGS) -DMAKING_MODS -c $(srcdir)/console.c && mv -f console.o ../
 
 ../../../console.$(MOD_EXT): ../console.o
-	$(LD) -o ../../../console.$(MOD_EXT) ../console.o $(XLIBS) $(MODULE_XLIBS)
-	$(STRIP) ../../../console.$(MOD_EXT)
+	$(LD) $(CFLAGS) -o ../../../console.$(MOD_EXT) ../console.o $(XLIBS) $(MODULE_XLIBS) && $(STRIP) ../../../console.$(MOD_EXT)
 
 depend:
 	$(CC) $(CFLAGS) -MM $(srcdir)/console.c -MT ../console.o > .depend
@@ -37,9 +34,7 @@ distclean: clean
  ../../../src/flags.h ../../../src/cmdt.h ../../../src/tclegg.h \
  ../../../src/tclhash.h ../../../src/chan.h ../../../src/users.h \
  ../../../src/compat/compat.h ../../../src/compat/inet_aton.h \
- ../../../src/compat/snprintf.h ../../../src/compat/memset.h \
- ../../../src/compat/memcpy.h ../../../src/compat/strcasecmp.h \
- ../../../src/compat/strftime.h ../../../src/compat/inet_ntop.h \
+ ../../../src/compat/snprintf.h ../../../src/compat/inet_ntop.h \
  ../../../src/compat/inet_pton.h ../../../src/compat/gethostbyname2.h \
- ../../../src/mod/modvals.h ../../../src/tandem.h \
- .././console.mod/console.h
+ ../../../src/compat/strlcpy.h ../../../src/mod/modvals.h \
+ ../../../src/tandem.h .././console.mod/console.h

@@ -63,11 +63,12 @@ DO NOT SEND HTML E-MAIL TO THE LISTS.
 
 3.1) OS type:
      ( ) BeOS
-     ( ) BSD/OS
      ( ) Cygwin
      ( ) Darwin/Mac OS X
      ( ) Dell SVR4
-     ( ) FreeBSD
+     ( ) DragonFly BSD
+     ( ) FreeBSD/TrueOS
+     ( ) Haiku
      ( ) HP-UX
      ( ) IRIX
      ( ) Linux
@@ -78,7 +79,7 @@ DO NOT SEND HTML E-MAIL TO THE LISTS.
      ( ) OSF/Tru64
      ( ) QNX
      ( ) SINIX
-     ( ) Solaris/SunOS
+     ( ) Solaris/SunOS/OpenIndiana
      ( ) Ultrix
      ( ) Other - Which? _____________
 

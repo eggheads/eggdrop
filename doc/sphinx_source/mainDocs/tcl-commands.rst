@@ -1,5 +1,5 @@
 Eggdrop Tcl Commands
-Last revised: June 20, 2016
+Last revised: December 14, 2017
 
 ====================
 Eggdrop Tcl Commands
@@ -11,7 +11,7 @@ of the normal Tcl built-in commands are still there, of course, but you
 can also use these to manipulate features of the bot. They are listed
 according to category.
 
-This list is accurate for Eggdrop v1.8.2. Scripts written for v1.3, v1.4
+This list is accurate for Eggdrop v1.8.4. Scripts written for v1.3, v1.4
 or 1.6 series of Eggdrop should probably work with a few minor modifications
 depending on the script. Scripts which were written for  v0.9, v1.0, v1.1
 or v1.2 will probably not work without modification. Commands which have
@@ -90,7 +90,7 @@ putkick <channel> <nick,nick,...> [reason]
 putlog <text>
 ^^^^^^^^^^^^^
 
-  Description: sends text to the bot's logfile, marked as 'misc' (o)
+  Description: logs <text> to the logfile and partyline if the 'misc' flag (o) is active via the 'logfile' config file setting and the '.console' partyline setting, respectively.
 
   Returns: nothing
 
@@ -100,7 +100,7 @@ putlog <text>
 putcmdlog <text>
 ^^^^^^^^^^^^^^^^
 
-  Description: sends text to the bot's logfile, marked as 'command' (c)
+  Description: logs <text> to the logfile and partyline if the 'cmds' flag (c) is active via the 'logfile' config file setting and the '.console' partyline setting, respectively.
 
   Returns: nothing
 
@@ -109,16 +109,18 @@ putcmdlog <text>
 ^^^^^^^^^^^^^^^^^
 putxferlog <text>
 ^^^^^^^^^^^^^^^^^
-  Description: sends text to the bot's logfile, marked as 'file-area' (x)
+
+  Description: logs <text> to the logfile and partyline if the 'files' flag (x) is active via the 'logfile' config file setting and the '.console' partyline setting, respectively.
 
   Returns: nothing
 
   Module: core
 
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-putloglev <level(s)> <channel> <text>
+putloglev <flag(s)> <channel> <text>
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  Description: sends text to the bot's logfile, tagged with all of the valid levels given. Use "*" to indicate all log levels.
+
+  Description: logs <text> to the logfile and partyline at the log level of the specified flag. Use "*" in lieu of a flag to indicate all log levels.
 
   Returns: nothing
 
@@ -203,9 +205,9 @@ userlist [flags]
 passwdok <handle> <pass>
 ^^^^^^^^^^^^^^^^^^^^^^^^
 
-  Description: checks the password given against the user's password. Check against the password "" (a blank string) or "-" to find out if a user has no password set.
+  Description: checks the password given against the user's password. Check against the password "-" to find out if a user has no password set.
 
-  Returns: 1 if the password matches for that user; 0 otherwise
+  Returns: 1 if the password matches for that user; 0 otherwise. Or if we are checking against the password "-": 1 if the user has no password set; 0 otherwise.
 
   Module: core
 
@@ -218,7 +220,7 @@ getuser <handle> [entry-type] [extra info]
   +----------+-------------------------------------------------------------------------------------+
   | BOTFL    | returns the current bot-specific flags for the user (bot-only)                      |
   +----------+-------------------------------------------------------------------------------------+
-  | BOTADDR  | returns a list containing the bot's address, telnet port, and relay port (bot-only) |
+  | BOTADDR  | returns a list containing the bot's address, bot listen port, and user listen port  |
   +----------+-------------------------------------------------------------------------------------+
   | HOSTS    | returns a list of hosts for the user                                                |
   +----------+-------------------------------------------------------------------------------------+
@@ -250,20 +252,32 @@ setuser <handle> <entry-type> [extra info]
   Description: this is the counterpart of getuser. It lets you set the various values. Other then the ones listed below, the entry-types are the same as getuser's.
 
   +---------+---------------------------------------------------------------------------------------+
-  | PASS    | sets a users password (no third arg will clear it)                                    |
+  | Type    | Extra Info                                                                            |
+  +=========+=======================================================================================+
+  | PASS    | <password>                                                                            |
+  |         |   Password string (Empty value will clear the password)                               |
   +---------+---------------------------------------------------------------------------------------+
-  | HOSTS   | if used with no third arg, all hosts for the user will be cleared. Otherwise, *1*     |
-  |         | hostmask is added :P                                                                  |
+  | BOTADDR | <address> [bot listen port] [user listen port]                                        |
+  |         |   Sets address, bot listen port and user listen port. If no listen ports are          |
+  |         |   specified, only the bot address is updated. If only the bot listen port is          |
+  |         |   specified, both the bot and user listen ports are set to the bot listen port.       |
+  +---------+---------------------------------------------------------------------------------------+
+  | HOSTS   | [hostmask]                                                                            |
+  |         |   If no value is specified, all hosts for the user will be cleared. Otherwise, only   |
+  |         |   *1* hostmask is added :P                                                            |
   +---------+---------------------------------------------------------------------------------------+
   | LASTON  | This setting has 3 forms.                                                             |
   |         |                                                                                       |
-  |         |   *setuser <handle> LASTON <unixtime> <place>* sets global LASTON time                |
+  |         | <unixtime> <place>                                                                    |
+  |         |   sets global LASTON time. Standard values used by Eggdrop for <place> are partyline, |
+  |         |   linked, unlinked, filearea, <#channel>, and <@remotebotname>, but can be set to     |
+  |         |   anything.                                                                           |
   |         |                                                                                       |
-  |         |   *setuser <handle> LASTON <unixtime>* sets global LASTON time (leaving the place     |
-  |         |   field empty)                                                                        |
+  |         | <unixtime>                                                                            |
+  |         |   sets global LASTON time (leaving the place field empty)                             |
   |         |                                                                                       |
-  |         |   *setuser <handle> LASTON <unixtime> <channel>* sets a users LASTON time for a       |
-  |         |   channel (if it is a  valid channel)                                                 |
+  |         | <unixtime> <channel>                                                                  |
+  |         |   sets a user's LASTON time for a channel (if it is a valid channel)                  |
   +---------+---------------------------------------------------------------------------------------+
 
   Returns: nothing
@@ -305,7 +319,41 @@ botattr <handle> [changes [channel]]
 matchattr <handle> <flags> [channel]
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-  Returns: 1 if the specified user has the specified flags; 0 otherwise
+  Description: checks if the flags of the specified user match the flags provided. Default matching pattern uses the | (OR) convention. For example, specifying +mn for flags will check if the user has the m OR n flag.
+
++------------+-----------------------------------------------------------------+
+| Flag Mask  | Action                                                          |
++============+=================================================================+
+| +m         + Checks if the user has the m global flag                        |
++------------+-----------------------------------------------------------------+
+| +mn        | Checks if the user has the m or n global flag                   |
++------------+-----------------------------------------------------------------+
+| +mn&       | Checks if the user has the m and n global flag                  |
++------------+-----------------------------------------------------------------+
+| \|+o #foo  | Checks if the user has the o channel flag for #foo              |
++------------+-----------------------------------------------------------------+
+| &mn #foo   | Checks if the user has the m and n channel flag for #foo        |
++------------+-----------------------------------------------------------------+
+| +o|+n #foo | Checks if the user has the o global flag, or the n channel      |
+|            | flag for #foo                                                   |
++------------+-----------------------------------------------------------------+
+| +m&+v      | Checks if the user has the m global flag, and the v channel     |
+|            | flag for #foo                                                   |
++------------+-----------------------------------------------------------------+
+| -m         | Checks if the user does not have the m global flag              |
++------------+-----------------------------------------------------------------+
+| \|-n #foo  | Checks if the user does not have the n channel flag for #foo    |
++------------+-----------------------------------------------------------------+
+| +m|-n #foo | Checks if the user has the global m flag or does not have a     |
+|            | channel n flag for #foo                                         |
++------------+-----------------------------------------------------------------+
+| -n&-m #foo | Searches if the user does not have the global n flag and does   |
+|            | not have the channel m flag for #foo                            |
++------------+-----------------------------------------------------------------+
+| ||+b       | Searches if the user has the bot flag b                         |
++------------+-----------------------------------------------------------------+
+
+  Returns: 1 if the specified user has the flags matching the provided mask; 0 otherwise
 
   Module: core
 
@@ -319,12 +367,19 @@ adduser <handle> [hostmask]
 
   Module: core
 
-^^^^^^^^^^^^^^^^^^^^^^^^^
-addbot <handle> <address>
-^^^^^^^^^^^^^^^^^^^^^^^^^
-  Description: adds a new bot to the userlist with the handle and botaddress given (with no password and no flags)
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+addbot <handle> <address> [botport [userport]]
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  Description: adds a new bot to the userlist with the handle and botaddress given (with no password and no flags). <address> format is one of:
 
-  Returns: 1 if successful; 0 if the bot already exists
+  - ipaddress
+  - ipv4address:botport/userport    [DEPRECATED]
+  - [ipv6address]:botport/userport  [DEPRECATED]
+
+NOTE 1: The []s around the ipv6address argument are literal []s, not optional arguments.
+NOTE 2: In the deprecated formats, an additional botport and/or userport given as follow-on arguments are ignored.
+
+  Returns: 1 if successful; 0 if the bot already exists or a port is invalid
 
   Module: core
 
@@ -1160,23 +1215,15 @@ onchansplit <nick> [channel]
 
   Module: irc
 
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-chanlist <channel> [flags[&chanflags]]
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+chanlist <channel> [flags][<&|>chanflags]
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-  Description: flags are any global flags; the '&' denotes to look for channel specific flags. Examples:
+  Description: flags are any global flags; the '&' or '|' denotes to look for channel specific flags, where '&' will return users having ALL chanflags and '|' returns users having ANY of the chanflags (See matchattr above for additional examples).
 
-  +--------+--------------------------------+
-  | n      | (Global Owner)                 |
-  +--------+--------------------------------+
-  | &n     |  (Channel Owner)               |
-  +--------+--------------------------------+
-  | o&m    |  (Global Op, Channel Master)   |
-  +--------+--------------------------------+
+  Returns: Searching for flags optionally preceded with a '+' will return a list of nicknames that have all the flags listed. Searching for flags preceded with a '-' will return a list of nicknames that do not have have any of the flags (differently said, '-' will hide users that have all flags listed). If no flags are given, all of the nicknames on the channel are returned.
 
-  Now you can use even more complex matching of flags, including +&- flags and & or | ('and' or 'or') matching.
-
-  Returns: list of nicknames currently on the bot's channel that have all of the flags specified;. If no flags are given, all of the nicknames are returned. Please note that if you're executing chanlist after a part or sign bind, the gone user will still be listed, so you can check for wasop, isop, etc.
+  Please note that if you're executing chanlist after a part or sign bind, the gone user will still be listed, so you can check for wasop, isop, etc.
 
   Module: irc
 
@@ -1315,7 +1362,7 @@ putdcc <idx> <text> [-raw]
 dccbroadcast <message>
 ^^^^^^^^^^^^^^^^^^^^^^
 
-  Description: sends a message to everyone on the party line across the botnet, in the form of "\*\*\* <message>" for local users and "\*\*\* (Bot) <message>" for users on other bots
+  Description: sends a message to everyone on the party line across the botnet, in the form of "\*\*\* <message>" for local users, "\*\*\* (Bot) <message>" for users on other bots with version below 1.8.4, and "(Bot) <message>" for users on other bots with version 1.8.4+ and console log mode 'l' enabled
 
   Returns: nothing
 
@@ -1399,6 +1446,16 @@ console <idx> [channel] [console-modes]
   Description: changes a dcc user's console mode, either to an absolute mode (like "mpj") or just adding/removing flags (like "+pj" or "-moc" or "+mp-c"). The user's console channel view can be changed also (as long as the new channel is a valid channel).
 
   Returns: a list containing the user's (new) channel view and (new) console modes, or nothing if that user isn't currently on the partyline
+
+  Module: core
+
+^^^^^^^^^^^^^^^^^^
+resetconsole <idx>
+^^^^^^^^^^^^^^^^^^
+
+  Description: changes a dcc user's console mode to the default setting in the configfile.
+
+  Returns: a list containing the user's channel view and (new) console modes, or nothing if that user isn't currently on the partyline
 
   Module: core
 
@@ -2004,11 +2061,15 @@ logfile [<modes> <channel> <filename>]
   +-----+---------------------------------------------------------------------+
   | d   | misc debug information                                              |
   +-----+---------------------------------------------------------------------+
-  | h   | raw share traffic                                                   |
+  | g   | raw outgoing share traffic                                          |
+  +-----+---------------------------------------------------------------------+
+  | h   | raw incoming share traffic                                          |
   +-----+---------------------------------------------------------------------+
   | j   | joins, parts, quits, topic changes, and netsplits on the channel    |
   +-----+---------------------------------------------------------------------+
   | k   | kicks, bans, and mode changes on the channel                        |
+  +-----+---------------------------------------------------------------------+
+  | l   | linked bot messages                                                 |
   +-----+---------------------------------------------------------------------+
   | m   | private msgs, notices and ctcps to the bot                          |
   +-----+---------------------------------------------------------------------+
@@ -2020,7 +2081,9 @@ logfile [<modes> <channel> <filename>]
   +-----+---------------------------------------------------------------------+
   | s   | server connects, disconnects, and notices                           |
   +-----+---------------------------------------------------------------------+
-  | t   | raw botnet traffic                                                  |
+  | t   | raw incoming botnet traffic                                         |
+  +-----+---------------------------------------------------------------------+
+  | u   | raw outgoing botnet traffic                                         |
   +-----+---------------------------------------------------------------------+
   | v   | raw outgoing server traffic                                         |
   +-----+---------------------------------------------------------------------+
@@ -2075,7 +2138,7 @@ maskhost <nick!user@host> [masktype]
 timer <minutes> <tcl-command> [count]
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-  Description: executes the given Tcl command after a certain number of minutes have passed. If count is specified, the command will be executed count times with the given interval in between. If you specify a count of 0, the timer will repeat until it's removed with killtimer or until the bot is restarted.
+  Description: executes the given Tcl command after a certain number of minutes have passed, at the top of the minute (ie, if a timer is started at 10:03:34 with 1 minute specified, it will execute at 10:04:00. If a timer is started at 10:06:34 with 2 minutes specified, it will execute at 10:08:00). If count is specified, the command will be executed count times with the given interval in between. If you specify a count of 0, the timer will repeat until it's removed with killtimer or until the bot is restarted.
 
   Returns: a timerID
 
@@ -2147,7 +2210,7 @@ duration <seconds>
 strftime <formatstring> [time]
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-  Returns: a formatted string of time using standard strftime format. If time is specified, the value of the specified time is used. Otherwise, the current time is used.
+  Returns: a formatted string of time using standard strftime format. If time is specified, the value of the specified time is used. Otherwise, the current time is used. Note: The implementation of strftime varies from platform to platform, so the user should only use POSIX-compliant format specifiers to ensure fully portable code.
 
   Module: core
 
@@ -2171,7 +2234,7 @@ myip
 rand <limit>
 ^^^^^^^^^^^^
 
-  Returns: a random integer between 0 and limit-1
+  Returns: a random integer between 0 and limit-1. Limit must be greater than 0 and equal to or less than RAND_MAX, which is generally 2147483647. The underlying pseudo-random number generator is not cryptographically secure.
 
   Module: core
 
@@ -2233,7 +2296,7 @@ unlink <bot>
 encrypt <key> <string>
 ^^^^^^^^^^^^^^^^^^^^^^
 
-  Returns: encrypted string (using the currently loaded encryption module), encoded into ASCII using base-64. As of v1.8.2, the default blowfish encryption module can use either the older ECB mode (currently used by default for compatibility reasons), or the more recent and more-secure CBC mode. You can explicitely request which encryption mode to use by prefixing the encryption key with either "ecb:" or "cbc:", or by using the blowfish-use-mode setting in the config file. Note: the default encryption mode for this function is planned to transition from ECB to CBC in v1.9.0.
+  Returns: encrypted string (using the currently loaded encryption module), encoded into ASCII using base-64. As of v1.8.4, the default blowfish encryption module can use either the older ECB mode (currently used by default for compatibility reasons), or the more recent and more-secure CBC mode. You can explicitly request which encryption mode to use by prefixing the encryption key with either "ecb:" or "cbc:", or by using the blowfish-use-mode setting in the config file. Note: the default encryption mode for this function is planned to transition from ECB to CBC in v1.9.0.
 
   Module: encryption
 
@@ -2634,7 +2697,9 @@ as 'bind msg - stop msg:stop' (which makes a msg-command "stop" call the
 Tcl proc "msg:stop") will overwrite any previous binding you had for the
 msg command "stop". With stackable bindings, like 'msgm' for example,
 you can bind the same command to multiple procs. When the bind is triggered,
-ALL of the Tcl procs that are bound to it will be called.
+ALL of the Tcl procs that are bound to it will be called. Raw binds are
+triggered before builtin binds, as a builtin bind has the potential to
+modify args.
 
 To remove a bind, use the 'unbind' command. For example, to remove the
 bind for the "stop" msg command, use 'unbind msg - stop msg:stop'.
@@ -3370,7 +3435,7 @@ are the four special characters:
 |     | word) (This character only works in binds, not in regular matching)      |
 +-----+--------------------------------------------------------------------------+
 | ~   | matches 1 or more space characters (can be used for whitespace between   |
-|     | words) (This char only works in binds, not in regluar matching)          |
+|     | words) (This char only works in binds, not in regular matching)          |
 +-----+--------------------------------------------------------------------------+
 
-  Copyright (C) 1999 - 2017 Eggheads Development Team
+  Copyright (C) 1999 - 2019 Eggheads Development Team

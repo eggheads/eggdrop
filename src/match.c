@@ -27,7 +27,7 @@
 #define QUOTE '\\' /* quoting character (overrides wildcards) */
 #define WILDS '*'  /* matches 0 or more characters (including spaces) */
 #define WILDP '%'  /* matches 0 or more non-space characters */
-#define WILDQ '?'  /* matches ecactly one character */
+#define WILDQ '?'  /* matches exactly one character */
 #define WILDT '~'  /* matches 1 or more spaces */
 
 #define NOMATCH 0
@@ -49,14 +49,14 @@ int charcmp(unsigned char a, unsigned char b)
 /* Wildcard-matches mask m to n. Uses the comparison function cmp1. If chgpoint
  * isn't NULL, it points at the first character in n where we start using cmp2.
  */
-int _wild_match_per(register unsigned char *m, register unsigned char *n,
+int _wild_match_per(unsigned char *m, unsigned char *n,
                            int (*cmp1)(unsigned char, unsigned char),
                            int (*cmp2)(unsigned char, unsigned char),
                            unsigned char *chgpoint)
 {
   unsigned char *ma = m, *lsm = 0, *lsn = 0, *lpm = 0, *lpn = 0;
   int match = 1, saved = 0, space;
-  register unsigned int sofar = 0;
+  unsigned int sofar = 0;
 
   /* null strings should never match */
   if ((m == 0) || (n == 0) || (!*n) || (!cmp1))
@@ -152,11 +152,11 @@ int _wild_match_per(register unsigned char *m, register unsigned char *n,
 }
 
 /* Generic string matching, use addr_match() for hostmasks! */
-int _wild_match(register unsigned char *m, register unsigned char *n)
+int _wild_match(unsigned char *m, unsigned char *n)
 {
   unsigned char *ma = m, *na = n, *lsm = 0, *lsn = 0;
   int match = 1;
-  register int sofar = 0;
+  int sofar = 0;
 
   /* null strings should never match */
   if ((ma == 0) || (na == 0) || (!*ma) || (!*na))
@@ -252,7 +252,6 @@ int addr_match(char *m, char *n, int user, int cmp)
     return wild_match(mu, nu);
 
   *r++ = *s++ = 0;
-  tmpscore = wild_match(mu, nu);
   if (!(tmpscore = wild_match(mu, nu)))
     return NOMATCH; /* nick!ident parts don't match */
   score += tmpscore;
@@ -339,7 +338,7 @@ int cidr_match(char *m, char *n, int count)
 {
 #ifdef IPV6
   int c, af = AF_INET, rest;
-  u_8bit_t block[16], addr[16];
+  uint8_t block[16], addr[16];
 
   if (strchr(m, ':') || strchr(n, ':')) {
     af = AF_INET6;
@@ -381,12 +380,12 @@ int cidr_match(char *m, char *n, int count)
 /* Inline for cron_match (obviously).
  * Matches a single field of a crontab expression.
  */
-static inline int cron_matchfld(char *mask, int match)
+static int cron_matchfld(char *mask, int match)
 {
   int skip = 0, f, t;
   char *p, *q;
 
-  for (p = mask; mask && *mask; mask = p) {
+  for (; mask && *mask; mask = p) {
     /* loop through a list of values, if such is given */
     if ((p = strchr(mask, ',')))
       *p++ = 0;

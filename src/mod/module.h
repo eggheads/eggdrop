@@ -3,7 +3,7 @@
  */
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2017 Eggheads Development Team
+ * Copyright (C) 1999 - 2019 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -24,6 +24,7 @@
 #define _EGG_MOD_MODULE_H
 
 /* Just include *all* the include files...it's slower but EASIER */
+#include <signal.h>
 #include "src/main.h"
 #include "modvals.h"
 #include "src/tandem.h"
@@ -35,7 +36,7 @@
  * some modules.
  *
  * This is intimately related to the table in `modules.c'. Don't change
- * the files unless you have flamable underwear.
+ * the files unless you have flammable underwear.
  *
  * Do not read this file whilst unless heavily sedated, I will not be
  * held responsible for mental break-downs caused by this file <G>
@@ -58,7 +59,7 @@
 #undef ContextNote
 #undef Assert
 
-/* Compability functions. */
+/* Compatibility functions. */
 #ifdef egg_inet_aton
 #  undef egg_inet_aton
 #endif
@@ -67,15 +68,6 @@
 #endif
 #ifdef egg_snprintf
 #  undef egg_snprintf
-#endif
-#ifdef egg_memset
-#  undef egg_memset
-#endif
-#ifdef egg_strcasecmp
-#  undef egg_strcasecmp
-#endif
-#ifdef egg_strncasecmp
-#  undef egg_strncasecmp
 #endif
 
 #if defined (__CYGWIN__) && !defined(STATIC)
@@ -190,7 +182,7 @@
 #define egg_list_append ((int (*) ( struct list_type **, struct list_type *))global[74])
 #define egg_list_contains ((int (*) (struct list_type *, struct list_type *))global[75])
 /* 76 - 79 */
-#define answer ((int (*) (int, sockname_t *, unsigned short *, int))global[76])
+#define answer ((int (*) (int, sockname_t *, uint16_t *, int))global[76])
 #define getvhost ((void (*) (sockname_t *, int))global[77])
 /* was neterror() */
 #ifdef TLS
@@ -209,7 +201,7 @@
 #define open_telnet ((int (*) (int, char *, int))global[87])
 /* 88 - 91 */
 #define check_tcl_event ((void (*) (const char *))global[88])
-#define my_memcpy ((void * (*) (void *, const void *, size_t))global[89])
+/* was my_memcpy -- use memcpy() instead */
 #define my_atoul ((IP(*)(char *))global[90])
 #define my_strcpy ((int (*)(char *, const char *))global[91])
 /* 92 - 95 */
@@ -321,7 +313,7 @@
 /* 168 - 171 */
 #define expected_memory ((int(*)(void))global[168])
 #define tell_mem_status ((void(*)(char *))global[169])
-#define do_restart (*(int *)(global[170]))
+#define do_restart (*(volatile sig_atomic_t *)(global[170]))
 #define check_tcl_filt ((const char *(*)(int, const char *))global[171])
 /* 172 - 175 */
 #define add_hook(a,b) (((void (*) (int, Function))global[172])(a,b))
@@ -437,10 +429,10 @@
 /* 252 - 255 */
 #define egg_snprintf (global[252])
 #define egg_vsnprintf ((int (*)(char *, size_t, const char *, va_list))global[253])
-#define egg_memset ((void *(*)(void *, int, size_t))global[254])
-#define egg_strcasecmp ((int (*)(const char *, const char *))global[255])
+/* was egg_memset -- use memset() instead */
+/* was egg_strcasecmp -- use strcasecmp instead */
 /* 256 - 259 */
-#define egg_strncasecmp ((int (*)(const char *, const char *, size_t))global[256])
+/* was egg_strncasecmp -- use strncasecmp instead */
 #define is_file ((int (*)(const char *))global[257])
 #define must_be_owner (*(int *)(global[258]))
 #define tandbot (*(tand_t **)(global[259]))
@@ -448,9 +440,9 @@
 #define party (*(party_t **)(global[260]))
 #define open_address_listen ((int (*)(sockname_t *, int *))global[261])
 #define str_escape ((char *(*)(const char *, const char, const char))global[262])
-#define strchr_unescape ((char *(*)(char *, const char, register const char))global[263])
+#define strchr_unescape ((char *(*)(char *, const char, const char))global[263])
 /* 264 - 267 */
-#define str_unescape ((void (*)(char *, register const char))global[264])
+#define str_unescape ((void (*)(char *, const char))global[264])
 #define egg_strcatn ((int (*)(char *dst, const char *src, size_t max))global[265])
 #define clear_chanlist_member ((void (*)(const char *nick))global[266])
 #define fixfrom ((char *(*)(char *))global[267])
@@ -504,6 +496,11 @@
 #define tcl_resultint ((int (*)(void))global[300])
 #define tcl_resultstring ((const char *(*)(void))global[301])
 #define getdccfamilyaddr ((int (*) (sockname_t *, char *, socklen_t, int))global[302])
+#ifndef HAVE_STRLCPY
+# define strlcpy ((size_t (*) (char *, const char *, size_t))global[303])
+#endif
+/* 304 - 307 */
+#define strncpyz ((size_t (*) (char *, const char *, size_t))global[304])
 
 
 /* hostmasking */

@@ -4,7 +4,7 @@
  */
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2017 Eggheads Development Team
+ * Copyright (C) 1999 - 2019 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -117,7 +117,7 @@
 /* was: MISC_BOTSCONNECTED      0x53d            */
 #define MISC_BANNER             get_language(0x53e)
 #define MISC_CLOGS              get_language(0x53f)
-#define MISC_BANNER_STEALTH     get_language(0x540)
+/* was: MISC_BANNER_STEALTH     0x540            */
 #define MISC_LOGREPEAT          get_language(0x541)
 #define MISC_JUPED              get_language(0x542)
 #define MISC_NOFREESOCK         get_language(0x543)
@@ -197,8 +197,8 @@
 #define IRC_MODEQUEUE           get_language(0x647)
 #define IRC_SERVERQUEUE         get_language(0x648)
 #define IRC_HELPQUEUE           get_language(0x649)
-#define IRC_VHOSTWRONGNET	get_language(0x64a)
-#define IRC_VHOSTBADADDR	get_language(0x64b)
+#define IRC_VHOSTWRONGNET       get_language(0x64a)
+#define IRC_VHOSTBADADDR        get_language(0x64b)
 #define IRC_PROCESSINGCHAN      get_language(0x64c)
 #define IRC_CHANNEL             get_language(0x64d)
 #define IRC_DESIRINGCHAN        get_language(0x64e)
@@ -241,7 +241,6 @@
 #define IRC_NICK_FLOOD          get_language(0x673)
 
 /* Eggdrop command line usage */
-#define EGG_USAGE               get_language(0x700)
 #define EGG_RUNNING1            get_language(0x701)
 #define EGG_RUNNING2            get_language(0x702)
 #define EGG_NOWRITE             get_language(0x703)
@@ -462,7 +461,7 @@
 #define DCC_CLOSED              get_language(0xe16)
 #define DCC_FAILED              get_language(0xe17)
 #define DCC_BADSRC              get_language(0xe18)
-/* was: DCC_BADIP               0xe19            */
+#define DCC_RETURN              get_language(0xe19)
 #define DCC_BADHOST             get_language(0xe1a)
 #define DCC_TELCONN             get_language(0xe1b)
 #define DCC_IDENTFAIL           get_language(0xe1c)

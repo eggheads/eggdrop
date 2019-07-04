@@ -4,7 +4,7 @@
  */
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2017 Eggheads Development Team
+ * Copyright (C) 1999 - 2019 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -69,7 +69,7 @@ static void link_assoc(char *bot, char *via)
 {
   char x[1024];
 
-  if (!egg_strcasecmp(via, botnetnick)) {
+  if (!strcasecmp(via, botnetnick)) {
     int idx = nextbot(bot);
     assoc_t *a;
 
@@ -118,13 +118,13 @@ static void add_assoc(char *name, int chan)
   assoc_t *a, *b, *old = NULL;
 
   for (a = assoc; a; a = a->next) {
-    if (name[0] != 0 && !egg_strcasecmp(a->name, name)) {
+    if (name[0] != 0 && !strcasecmp(a->name, name)) {
       kill_assoc(a->channel);
       add_assoc(name, chan);
       return;
     }
     if (a->channel == chan) {
-      strncpyz(a->name, name, sizeof a->name);
+      strlcpy(a->name, name, sizeof a->name);
       return;
     }
   }
@@ -134,7 +134,7 @@ static void add_assoc(char *name, int chan)
       b = nmalloc(sizeof *b);
       b->next = a;
       b->channel = chan;
-      strncpyz(b->name, name, sizeof b->name);
+      strlcpy(b->name, name, sizeof b->name);
       if (old == NULL)
         assoc = b;
       else
@@ -146,7 +146,7 @@ static void add_assoc(char *name, int chan)
   b = nmalloc(sizeof *b);
   b->next = NULL;
   b->channel = chan;
-  strncpyz(b->name, name, sizeof b->name);
+  strlcpy(b->name, name, sizeof b->name);
   if (old == NULL)
     assoc = b;
   else
@@ -158,7 +158,7 @@ static int get_assoc(char *name)
   assoc_t *a;
 
   for (a = assoc; a; a = a->next)
-    if (!egg_strcasecmp(a->name, name))
+    if (!strcasecmp(a->name, name))
       return a->channel;
   return -1;
 }
@@ -295,8 +295,7 @@ static int tcl_assoc STDVAR
     return TCL_ERROR;
   }
   if (argc == 3) {
-    strncpy(name, argv[2], 20);
-    name[20] = 0;
+    strlcpy(name, argv[2], sizeof name);
     add_assoc(name, chan);
     botnet_send_assoc(-1, chan, "*script*", name);
   }
@@ -316,7 +315,7 @@ static void zapf_assoc(char *botnick, char *code, char *par)
   int linking = 0, chan;
 
   if ((idx >= 0) && !(bot_flags(dcc[idx].user) & BOT_ISOLATE)) {
-    if (!egg_strcasecmp(dcc[idx].nick, botnick))
+    if (!strcasecmp(dcc[idx].nick, botnick))
       linking = b_status(idx) & STAT_LINKING;
     s = newsplit(&par);
     chan = base64_to_int(s);
@@ -334,7 +333,6 @@ static void zapf_assoc(char *botnick, char *code, char *par)
         chanout_but(-1, chan, ASSOC_CHNAME_REM, botnick, nick);
       } else if (get_assoc(par) != chan) {
         /* New one i didn't know about -- pass it on */
-        s1 = get_assoc_name(chan);
         add_assoc(par, chan);
         chanout_but(-1, chan, ASSOC_CHNAME_NAMED2, botnick, nick, par);
       }

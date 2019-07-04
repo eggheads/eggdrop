@@ -4,7 +4,7 @@
  */
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2017 Eggheads Development Team
+ * Copyright (C) 1999 - 2019 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -63,6 +63,10 @@ int logmodes(char *s)
     case 'B':
       res |= LOG_BOTS;
       break;
+    case 'l':
+    case 'L':
+      res |= LOG_BOTMSG;
+      break;
     case 'r':
     case 'R':
       res |= raw_log ? LOG_RAW : 0;
@@ -89,11 +93,19 @@ int logmodes(char *s)
       break;
     case 't':
     case 'T':
-      res |= raw_log ? LOG_BOTNET : 0;
+      res |= raw_log ? LOG_BOTNETIN : 0;
+      break;
+    case 'u':
+    case 'U':
+      res |= raw_log ? LOG_BOTNETOUT : 0;
       break;
     case 'h':
     case 'H':
-      res |= raw_log ? LOG_BOTSHARE : 0;
+      res |= raw_log ? LOG_BOTSHRIN : 0;
+      break;
+    case 'g':
+    case 'G':
+      res |= raw_log ? LOG_BOTSHROUT : 0;
       break;
     case '1':
       res |= LOG_LEV1;
@@ -128,7 +140,7 @@ int logmodes(char *s)
 
 char *masktype(int x)
 {
-  static char s[24];            /* Change this if you change the levels */
+  static char s[27];            /* Change this if you change the levels */
   char *p = s;
 
   if (x & LOG_MSGS)
@@ -145,6 +157,8 @@ char *masktype(int x)
     *p++ = 'o';
   if (x & LOG_BOTS)
     *p++ = 'b';
+  if (x & LOG_BOTMSG)
+    *p++ = 'l';
   if ((x & LOG_RAW) && raw_log)
     *p++ = 'r';
   if (x & LOG_FILES)
@@ -157,10 +171,14 @@ char *masktype(int x)
     *p++ = 'w';
   if ((x & LOG_SRVOUT) && raw_log)
     *p++ = 'v';
-  if ((x & LOG_BOTNET) && raw_log)
+  if ((x & LOG_BOTNETIN) && raw_log)
     *p++ = 't';
-  if ((x & LOG_BOTSHARE) && raw_log)
+  if ((x & LOG_BOTNETOUT) && raw_log)
+    *p++ = 'u';
+  if ((x & LOG_BOTSHRIN) && raw_log)
     *p++ = 'h';
+  if ((x & LOG_BOTSHROUT) && raw_log)
+    *p++ = 'g';
   if (x & LOG_LEV1)
     *p++ = '1';
   if (x & LOG_LEV2)
@@ -185,56 +203,62 @@ char *masktype(int x)
 
 char *maskname(int x)
 {
-  static char s[207];           /* Change this if you change the levels */
-  int i = 0;
+  static char s[275]; /* Change this if you change the levels */
+  int i = 0;          /* 6+8+7+13+6+6+6+17+5+7+8+7+9+15+17+17+24+24+(8*9)+1 */
 
   s[0] = 0;
   if (x & LOG_MSGS)
-    i += my_strcpy(s, "msgs, ");
+    i += my_strcpy(s, "msgs, "); /* 6 */
   if (x & LOG_PUBLIC)
-    i += my_strcpy(s + i, "public, ");
+    i += my_strcpy(s + i, "public, "); /* 8 */
   if (x & LOG_JOIN)
-    i += my_strcpy(s + i, "joins, ");
+    i += my_strcpy(s + i, "joins, "); /* 7 */
   if (x & LOG_MODES)
-    i += my_strcpy(s + i, "kicks/modes, ");
+    i += my_strcpy(s + i, "kicks/modes, "); /* 13 */
   if (x & LOG_CMDS)
-    i += my_strcpy(s + i, "cmds, ");
+    i += my_strcpy(s + i, "cmds, "); /* 6 */
   if (x & LOG_MISC)
-    i += my_strcpy(s + i, "misc, ");
+    i += my_strcpy(s + i, "misc, "); /* 6 */
   if (x & LOG_BOTS)
-    i += my_strcpy(s + i, "bots, ");
+    i += my_strcpy(s + i, "bots, "); /* 6 */
+  if (x & LOG_BOTMSG)
+    i += my_strcpy(s + i, "linked bot msgs, "); /* 17 */
   if ((x & LOG_RAW) && raw_log)
-    i += my_strcpy(s + i, "raw, ");
+    i += my_strcpy(s + i, "raw, "); /* 5 */
   if (x & LOG_FILES)
-    i += my_strcpy(s + i, "files, ");
+    i += my_strcpy(s + i, "files, "); /* 7 */
   if (x & LOG_SERV)
-    i += my_strcpy(s + i, "server, ");
+    i += my_strcpy(s + i, "server, "); /* 8 */
   if (x & LOG_DEBUG)
-    i += my_strcpy(s + i, "debug, ");
+    i += my_strcpy(s + i, "debug, "); /* 7 */
   if (x & LOG_WALL)
-    i += my_strcpy(s + i, "wallops, ");
+    i += my_strcpy(s + i, "wallops, "); /* 9 */
   if ((x & LOG_SRVOUT) && raw_log)
-    i += my_strcpy(s + i, "server output, ");
-  if ((x & LOG_BOTNET) && raw_log)
-    i += my_strcpy(s + i, "botnet traffic, ");
-  if ((x & LOG_BOTSHARE) && raw_log)
-    i += my_strcpy(s + i, "share traffic, ");
+    i += my_strcpy(s + i, "server output, "); /* 15 */
+  if ((x & LOG_BOTNETIN) && raw_log)
+    i += my_strcpy(s + i, "botnet incoming, "); /* 17 */
+  if ((x & LOG_BOTNETOUT) && raw_log)
+    i += my_strcpy(s + i, "botnet outgoing, "); /* 17 */
+  if ((x & LOG_BOTSHRIN) && raw_log)
+    i += my_strcpy(s + i, "incoming share traffic, "); /* 24 */
+  if ((x & LOG_BOTSHROUT) && raw_log)
+    i += my_strcpy(s + i, "outgoing share traffic, "); /* 24 */
   if (x & LOG_LEV1)
-    i += my_strcpy(s + i, "level 1, ");
+    i += my_strcpy(s + i, "level 1, "); /* 9 */
   if (x & LOG_LEV2)
-    i += my_strcpy(s + i, "level 2, ");
+    i += my_strcpy(s + i, "level 2, "); /* 9 */
   if (x & LOG_LEV3)
-    i += my_strcpy(s + i, "level 3, ");
+    i += my_strcpy(s + i, "level 3, "); /* 9 */
   if (x & LOG_LEV4)
-    i += my_strcpy(s + i, "level 4, ");
+    i += my_strcpy(s + i, "level 4, "); /* 9 */
   if (x & LOG_LEV5)
-    i += my_strcpy(s + i, "level 5, ");
+    i += my_strcpy(s + i, "level 5, "); /* 9 */
   if (x & LOG_LEV6)
-    i += my_strcpy(s + i, "level 6, ");
+    i += my_strcpy(s + i, "level 6, "); /* 9 */
   if (x & LOG_LEV7)
-    i += my_strcpy(s + i, "level 7, ");
+    i += my_strcpy(s + i, "level 7, "); /* 9 */
   if (x & LOG_LEV8)
-    i += my_strcpy(s + i, "level 8, ");
+    i += my_strcpy(s + i, "level 8, "); /* 9 */
   if (i)
     s[i - 2] = 0;
   else
@@ -352,7 +376,7 @@ void break_down_flags(const char *string, struct flag_record *plus,
     else if (flags & FR_CHAN)
       mode = 1;
     else
-      return;                   /* We dont actually want any..huh? */
+      return;                   /* We don't actually want any..huh? */
   }
   egg_bzero(plus, sizeof(struct flag_record));
 
@@ -394,7 +418,8 @@ void break_down_flags(const char *string, struct flag_record *plus,
           which->chan |= 1 << (*string - 'a');
           break;
         case 2:
-          which->bot |= 1 << (*string - 'a');
+          if (*string <= 'u')
+            which->bot |= 1 << (*string - 'a');
         }
       } else if ((*string >= 'A') && (*string <= 'Z')) {
         switch (mode) {
@@ -464,7 +489,7 @@ static int bot2str(char *string, int bot)
 {
   char x = 'a', *old = string;
 
-  while (x < 'v') {
+  while (x <= 'u') {
     if (bot & 1)
       *string++ = x;
     x++;
@@ -562,7 +587,7 @@ int flagrec_ok(struct flag_record *req, struct flag_record *have)
       return 1;
     return 0;
   }
-  return 0;                     /* fr0k3 binding, dont pass it */
+  return 0;                     /* fr0k3 binding, don't pass it */
 }
 
 int flagrec_eq(struct flag_record *req, struct flag_record *have)
@@ -605,7 +630,7 @@ int flagrec_eq(struct flag_record *req, struct flag_record *have)
     }
     return 0;
   }
-  return 0;                     /* fr0k3 binding, dont pass it */
+  return 0;                     /* fr0k3 binding, don't pass it */
 }
 
 void set_user_flagrec(struct userrec *u, struct flag_record *fr,
@@ -642,7 +667,7 @@ void set_user_flagrec(struct userrec *u, struct flag_record *fr,
 
       cr->next = u->chanrec;
       u->chanrec = cr;
-      strncpyz(cr->channel, chname, sizeof cr->channel);
+      strlcpy(cr->channel, chname, sizeof cr->channel);
     }
     if (cr && ch) {
       cr->flags = fr->chan;
@@ -751,7 +776,7 @@ static int botfl_write_userfile(FILE *f, struct userrec *u,
 
 static int botfl_set(struct userrec *u, struct user_entry *e, void *buf)
 {
-  register long atr = ((long) buf & BOT_VALID);
+  long atr = ((long) buf & BOT_VALID);
 
   if (!(u->flags & USER_BOT))
     return 1;                   /* Don't even bother trying to set the

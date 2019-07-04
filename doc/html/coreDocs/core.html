@@ -1,31 +1,28 @@
 
+
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    
-    <title>Eggdrop Core Settings &mdash; Eggdrop 1.8.2 documentation</title>
-    
+    <title>Eggdrop Core Settings &#8212; Eggdrop 1.8.4 documentation</title>
     <link rel="stylesheet" href="../_static/eggdrop.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-    
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
-        VERSION:     '1.8.2',
+        VERSION:     '1.8.4',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
-        HAS_SOURCE:  true
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
       };
     </script>
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
-    <link rel="top" title="Eggdrop 1.8.2 documentation" href="../index.html" />
-    <link rel="up" title="&lt;no title&gt;" href="index.html" />
+    <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="Eggdrop Module Information" href="modules.html" />
     <link rel="prev" title="&lt;no title&gt;" href="index.html" /> 
   </head>
@@ -36,7 +33,7 @@
             <img class="logo" src="../_static/eggman.png.gif" alt="Logo"/>
           </a></p>
         <div class="headertitle"><a
-          href="../index.html">Eggdrop 1.8.2 documentation</a></div>
+          href="../index.html">Eggdrop 1.8.4 documentation</a></div>
         <div class="rel">
           <a href="index.html" title="&lt;no title&gt;"
              accesskey="P">previous</a> |
@@ -52,7 +49,7 @@
             
       <div class="documentwrapper">
         <div class="bodywrapper">
-          <div class="body">
+          <div class="body" role="main">
             
   <p>Last revised: October 25, 2010</p>
 <div class="section" id="eggdrop-core-settings">
@@ -67,7 +64,7 @@ a fully qualified path to your Eggdrop executable. It has to be
 implemented in the way the example shows to make the config file
 work as a shell script.</p>
 <p>Example:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="c">#! /path/to/eggdrop</span>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="ch">#! /path/to/eggdrop</span>
 </pre></div>
 </div>
 </div>
@@ -136,7 +133,7 @@ IPv4 and IPv6 connections.</div>
 <dl class="docutils">
 <dt>set prefer-ipv6 &quot;1&quot;</dt>
 <dd>Prefer IPv6 over IPv4 for connections and dns resolution.
-If the preferred protocol family is not suppored, other possible
+If the preferred protocol family is not supported, other possible
 families will be tried.</dd>
 <dt>addlang &quot;english&quot;</dt>
 <dd><p class="first">If you want to have your Eggdrop messages displayed in another language,
@@ -178,10 +175,12 @@ usage).</dd>
 <dt>set raw-log 0</dt>
 <dd>This setting allows you the logging of raw incoming server traffic via
 console/log flag 'r', raw outgoing server traffic via console/log mode
-'v', raw botnet traffic via console/log mode 't', and raw share traffic
-via console/log mode 'h'. These flags can create a large security hole,
-allowing people to see user passwords. This is now restricted to +n users
-only. Please choose your owners with care.</dd>
+'v', raw incoming botnet traffic via console/log mode 't', raw outgoing
+botnet traffic via console/log mode 'u', raw outgoing share traffic via
+console/log mode 'g', and raw incoming share traffic via console/log
+mode 'h'. These flags can create a large security hole, allowing people
+to see user passwords. This is now restricted to +n users only. Please
+choose your owners with care.</dd>
 </dl>
 </div></blockquote>
 <dl class="docutils">
@@ -206,14 +205,20 @@ which file.</p>
 <tr class="row-odd"><td>d</td>
 <td>misc debug information</td>
 </tr>
-<tr class="row-even"><td>h</td>
-<td>raw share traffic</td>
+<tr class="row-even"><td>g</td>
+<td>raw outgoing share traffic</td>
 </tr>
-<tr class="row-odd"><td>j</td>
+<tr class="row-odd"><td>h</td>
+<td>raw incoming share traffic</td>
+</tr>
+<tr class="row-even"><td>j</td>
 <td>joins, parts, quits, and netsplits on the channel</td>
 </tr>
-<tr class="row-even"><td>k</td>
+<tr class="row-odd"><td>k</td>
 <td>kicks, bans, and mode changes on the channel</td>
+</tr>
+<tr class="row-even"><td>l</td>
+<td>linked bot messages</td>
 </tr>
 <tr class="row-odd"><td>m</td>
 <td>private msgs, notices and ctcps to the bot</td>
@@ -231,15 +236,18 @@ which file.</p>
 <td>server connects, disconnects, and notices</td>
 </tr>
 <tr class="row-even"><td>t</td>
-<td>raw botnet traffic</td>
+<td>raw incoming botnet traffic</td>
 </tr>
-<tr class="row-odd"><td>v</td>
+<tr class="row-odd"><td>u</td>
+<td>raw outgoing botnet traffic</td>
+</tr>
+<tr class="row-even"><td>v</td>
 <td>raw outgoing server traffic</td>
 </tr>
-<tr class="row-even"><td>w</td>
+<tr class="row-odd"><td>w</td>
 <td>wallops (make sure the bot sets +w in init-server)</td>
 </tr>
-<tr class="row-odd"><td>x</td>
+<tr class="row-even"><td>x</td>
 <td>file transfers and file-area commands</td>
 </tr>
 </tbody>
@@ -252,8 +260,8 @@ also eight user-defined levels (1-8) which can be used by Tcl scripts.</p>
 are currently logged to every channel. You can make a logfile belong to
 all channels by assigning it to channel &quot;*&quot;.</p>
 <p>Examples:</p>
-<div class="highlight-python"><div class="highlight"><pre>logfile mco * &quot;logs/eggdrop.log&quot;
-logfile jpk #lamest &quot;logs/lamest.log&quot;
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">logfile</span> <span class="n">mco</span> <span class="o">*</span> <span class="s2">&quot;logs/eggdrop.log&quot;</span>
+<span class="n">logfile</span> <span class="n">jpk</span> <span class="c1">#lamest &quot;logs/lamest.log&quot;</span>
 </pre></div>
 </div>
 <p>In 'eggdrop.log', put private msgs/ctcps, commands, misc info, and errors
@@ -298,7 +306,7 @@ default format will be used _always_.</dd>
 <h2>Console Settings<a class="headerlink" href="#console-settings" title="Permalink to this headline">¶</a></h2>
 <blockquote>
 <div><dl class="docutils">
-<dt>set console &quot;mkcobxs&quot;</dt>
+<dt>set console &quot;mkcoblxs&quot;</dt>
 <dd>This is the default console mode. It uses the same event flags as the
 log files do. The console channel is automatically set to your &quot;primary&quot;
 channel, which is set in the modules section of the config file. Masters
@@ -331,10 +339,10 @@ doc/text-substitutions.doc for options.</dd>
 <dd><p class="first">This specifies what permissions the user, channel, and notes files should
 be set to. The octal values are the same as for the chmod system command.</p>
 <p>To remind you:</p>
-<div class="highlight-python"><div class="highlight"><pre>|      u  g  o           u  g  o           u  g  o
-|0600  rw-------   0400  r--------   0200  -w-------    u - user
-|0660  rw-rw----   0440  r--r-----   0220  -w--w----    g - group
-|0666  rw-rw-rw-   0444  r--r--r--   0222  -w--w--w-    o - others
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="o">|</span>      <span class="n">u</span>  <span class="n">g</span>  <span class="n">o</span>           <span class="n">u</span>  <span class="n">g</span>  <span class="n">o</span>           <span class="n">u</span>  <span class="n">g</span>  <span class="n">o</span>
+<span class="o">|</span><span class="mi">0600</span>  <span class="n">rw</span><span class="o">-------</span>   <span class="mi">0400</span>  <span class="n">r</span><span class="o">--------</span>   <span class="mi">0200</span>  <span class="o">-</span><span class="n">w</span><span class="o">-------</span>    <span class="n">u</span> <span class="o">-</span> <span class="n">user</span>
+<span class="o">|</span><span class="mi">0660</span>  <span class="n">rw</span><span class="o">-</span><span class="n">rw</span><span class="o">----</span>   <span class="mi">0440</span>  <span class="n">r</span><span class="o">--</span><span class="n">r</span><span class="o">-----</span>   <span class="mi">0220</span>  <span class="o">-</span><span class="n">w</span><span class="o">--</span><span class="n">w</span><span class="o">----</span>    <span class="n">g</span> <span class="o">-</span> <span class="n">group</span>
+<span class="o">|</span><span class="mi">0666</span>  <span class="n">rw</span><span class="o">-</span><span class="n">rw</span><span class="o">-</span><span class="n">rw</span><span class="o">-</span>   <span class="mi">0444</span>  <span class="n">r</span><span class="o">--</span><span class="n">r</span><span class="o">--</span><span class="n">r</span><span class="o">--</span>   <span class="mi">0222</span>  <span class="o">-</span><span class="n">w</span><span class="o">--</span><span class="n">w</span><span class="o">--</span><span class="n">w</span><span class="o">-</span>    <span class="n">o</span> <span class="o">-</span> <span class="n">others</span>
 </pre></div>
 </div>
 <p class="last">Note that the default 0600 is the most secure one and should only be
@@ -371,16 +379,16 @@ better.</p>
 port is not already in use.</p>
 <p>If you would like the bot to listen for users and bots in separate ports,
 use the following format:</p>
-<div class="highlight-python"><div class="highlight"><pre>listen 3333 bots
-listen 4444 users
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">listen</span> <span class="mi">3333</span> <span class="n">bots</span>
+<span class="n">listen</span> <span class="mi">4444</span> <span class="n">users</span>
 </pre></div>
 </div>
 <p>If you wish to use only one port, use this format:</p>
-<div class="highlight-python"><div class="highlight"><pre>listen 3333 all
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">listen</span> <span class="mi">3333</span> <span class="nb">all</span>
 </pre></div>
 </div>
 <p>You can setup a SSL port by prepending a plus sign to it:</p>
-<div class="highlight-python"><div class="highlight"><pre>listen +5555 all
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">listen</span> <span class="o">+</span><span class="mi">5555</span> <span class="nb">all</span>
 </pre></div>
 </div>
 <p class="last">You need to un-comment this line and change the port number in order to
@@ -480,7 +488,7 @@ here.</dd>
 <dd><p class="first">Define here what Eggdrop considers 'hourly'. All calls to it, including
 such things as note notifying or userfile saving, are affected by this.</p>
 <p>Example:</p>
-<div class="highlight-python"><div class="highlight"><pre>set hourly-updates 15
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="nb">set</span> <span class="n">hourly</span><span class="o">-</span><span class="n">updates</span> <span class="mi">15</span>
 </pre></div>
 </div>
 <p class="last">The bot will save its userfile 15 minutes past every hour.</p>
@@ -550,7 +558,7 @@ support.</p>
 <dt>set ssl-privatekey &quot;eggdrop.key&quot;</dt>
 <dd><p class="first">File containing your private key, needed for the SSL certificate
 (see below). You can create one issuing the following command:</p>
-<div class="highlight-python"><div class="highlight"><pre>openssl genrsa -out eggdrop.key 4096
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">openssl</span> <span class="n">genrsa</span> <span class="o">-</span><span class="n">out</span> <span class="n">eggdrop</span><span class="o">.</span><span class="n">key</span> <span class="mi">4096</span>
 </pre></div>
 </div>
 <p class="last">It will create a 4096 bit RSA key, strong enough for eggdrop.
@@ -565,7 +573,7 @@ don't set this, eggdrop will not be able to act as a server in SSL
 connections, as with most ciphers a certificate and a private key
 are required on the server side. Must be in PEM format.
 If you don't have one, you can create it using the following command:</p>
-<div class="highlight-python"><div class="highlight"><pre>openssl req -new -key eggdrop.key -x509 -out eggdrop.crt -days 365
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">openssl</span> <span class="n">req</span> <span class="o">-</span><span class="n">new</span> <span class="o">-</span><span class="n">key</span> <span class="n">eggdrop</span><span class="o">.</span><span class="n">key</span> <span class="o">-</span><span class="n">x509</span> <span class="o">-</span><span class="n">out</span> <span class="n">eggdrop</span><span class="o">.</span><span class="n">crt</span> <span class="o">-</span><span class="n">days</span> <span class="mi">365</span>
 </pre></div>
 </div>
 <p class="last">This is required for SSL hubs/listen ports, secure file transfer and
@@ -592,18 +600,18 @@ certificate verification will not work.</div>
 <dd><p class="first">Specify the list of ciphers (in order of preference) allowed for use with
 ssl. The cipher list is one or more cipher strings separated by colons,
 commas or spaces. Unavailable ciphers are silently ignored unless no
-useable cipher could be found. For the list of possible cipher strings
+usable cipher could be found. For the list of possible cipher strings
 and their meanings, please refer to the ciphers(1) manual.
 Note: if you set this, the value replaces any ciphers OpenSSL might use by
 default. To include the default ciphers, you can put DEFAULT as a cipher
 string in the list.
 For example:</p>
-<div class="highlight-python"><div class="highlight"><pre>set ssl-ciphers &quot;DEFAULT ADH&quot;
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="nb">set</span> <span class="n">ssl</span><span class="o">-</span><span class="n">ciphers</span> <span class="s2">&quot;DEFAULT ADH&quot;</span>
 </pre></div>
 </div>
 <p>... will make eggdrop allow the default OpenSSL selection plus anonymous
 DH ciphers.</p>
-<div class="highlight-python"><div class="highlight"><pre>set ssl-ciphers &quot;ALL&quot;
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="nb">set</span> <span class="n">ssl</span><span class="o">-</span><span class="n">ciphers</span> <span class="s2">&quot;ALL&quot;</span>
 </pre></div>
 </div>
 <p class="last">... will make eggdrop allow all ciphers supported by OpenSSL, in a
@@ -704,14 +712,14 @@ place them where you like as long as you can supply a fully qualified
 path to them.</p>
 <p>Some commonly loaded scripts are alltools.tcl and action.fix.tcl.</p>
 <p>The appropriate source lines are:</p>
-<div class="last highlight-python"><div class="highlight"><pre>source scripts/alltools.tcl
-source scripts/action.fix.tcl
+<div class="last highlight-default"><div class="highlight"><pre><span></span><span class="n">source</span> <span class="n">scripts</span><span class="o">/</span><span class="n">alltools</span><span class="o">.</span><span class="n">tcl</span>
+<span class="n">source</span> <span class="n">scripts</span><span class="o">/</span><span class="n">action</span><span class="o">.</span><span class="n">fix</span><span class="o">.</span><span class="n">tcl</span>
 </pre></div>
 </div>
 </dd>
 </dl>
 </div></blockquote>
-<p>Copyright (C) 2000 - 2017 Eggheads Development Team</p>
+<p>Copyright (C) 2000 - 2019 Eggheads Development Team</p>
 </div>
 </div>
 
@@ -740,7 +748,7 @@ source scripts/action.fix.tcl
 <li class="toctree-l1"><a class="reference internal" href="../mainDocs/tls.html">TLS support</a></li>
 </ul>
 <ul class="current">
-<li class="toctree-l1 current"><a class="current reference internal" href="">Eggdrop Core Settings</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Eggdrop Core Settings</a></li>
 <li class="toctree-l1"><a class="reference internal" href="modules.html">Eggdrop Module Information</a></li>
 <li class="toctree-l1"><a class="reference internal" href="assoc.html">Assoc Module</a></li>
 <li class="toctree-l1"><a class="reference internal" href="blowfish.html">Blowfish Module</a></li>
@@ -793,10 +801,10 @@ source scripts/action.fix.tcl
 
         <div class="right">
           
-    <div class="footer">
-        &copy; Copyright 2017, Eggheads.
-      Last updated on Jul 06, 2017.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.3.
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2019, Eggheads.
+      Last updated on Dec 31, 2018.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.6.7.
     </div>
         </div>
         <div class="clearer"></div>
