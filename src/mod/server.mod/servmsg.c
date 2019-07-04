@@ -1506,14 +1506,18 @@ static void server_resolve_success(int servidx)
   altnick_char = 0;
   /* See if server supports CAP command */
   dprintf(DP_MODE, "CAP LS");
-  /* TODO: check cap ls before sal/cap req ?! */
+  /* TODO: check cap ls before sal/cap req ?! now thatg cap ls is send..
+   * gotcap() is async i guess? how does the following code knows, if cap ls
+   * was successful or not, we dont want to wait on anything.
+   * i guess solution is to move the sasl code from here into a function
+   * triggered by gotcap()
+   */
   if (sasl_mechanism[0]) {
     for (i = 0; i < strlen(sasl_mechanism); i++)
       sasl_mechanism[i] = toupper(sasl_mechanism[i]);
     if (HAVE_OPENSSL_SSL_H || strncmp(sasl_mechanism,
         "ECDSA-NIST256P-CHALLENGE", strlen("ECDSA-NIST256P-CHALLENGE"))) {
       putlog(LOG_SERV, "*", "CAP: put CAP REQ :sasl");
-      /* dprintf(DP_MODE, "CAP LS\n"); */
       dprintf(DP_MODE, "CAP REQ :sasl\n");
     }
   }
