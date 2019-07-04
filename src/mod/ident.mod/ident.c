@@ -24,6 +24,7 @@
 
 #include <errno.h>
 #include <fcntl.h>
+#include <sys/stat.h>
 #include "src/mod/module.h"
 #include "server.mod/server.h"
 
