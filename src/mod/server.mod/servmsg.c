@@ -1187,7 +1187,7 @@ static int gotcap(char *from, char *msg) {
     strlcpy(cap.negotiated, msg, sizeof cap.negotiated);
   } else if (!strcmp(cmd, "ACK")) {
     putlog(LOG_MISC, "*", "%s acknowledged %s", from, msg);
-    strncat(cap.negotiated, msg, sizeof(cap.negotiated));
+    strncat(cap.negotiated, msg, (sizeof cap.negotiated - strlen(cap.negotiated) - 1));
   }
   dprintf(DP_MODE, "CAP END");
   return 1;

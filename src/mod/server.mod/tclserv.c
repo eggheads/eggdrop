@@ -166,12 +166,13 @@ static int tcl_puthelp STDVAR
 /* Tcl interface to send CAP messages to server */
 static int tcl_cap STDVAR {
   char s[CAPMAX];
-  BADARGS(1, 3, " sub-cmd ?arg?");
+  BADARGS(2, 3, " sub-cmd ?arg?");
 
-  if (!egg_strcasecmp(argv[1], "-list")) {
+  simple_sprintf(s, "CAP requires a sub-command");
+  if (!strcasecmp(argv[1], "-list")) {
     Tcl_AppendResult(irp, cap.supported, NULL);
     return TCL_OK;
-  } else if (!egg_strcasecmp(argv[1], "-active")) {
+  } else if (!strcasecmp(argv[1], "-active")) {
     Tcl_AppendResult(irp, cap.negotiated, NULL);
     return TCL_OK;
   }
@@ -184,6 +185,7 @@ static int tcl_cap STDVAR {
   dprintf(DP_SERVER, "%s\n", s);
   return TCL_OK;
 }
+
 
 static int tcl_jump STDVAR
 {
