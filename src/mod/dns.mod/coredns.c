@@ -7,7 +7,7 @@
  * IPv6 support added by pseudo <pseudo@egg6.net>
  */
 /*
- * Portions Copyright (C) 1999 - 2018 Eggheads Development Team
+ * Portions Copyright (C) 1999 - 2019 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -204,6 +204,18 @@ static char sendstring[1024 + 1];
 
 static const char nullstring[] = "";
 
+#ifdef res_ninit
+#define MY_RES_INIT() res_ninit(&myres);
+#define RES_MKQUERY(a, b, c, d, e, f, g, h, i) \
+    res_nmkquery(&myres, a, b, c, d, e, f, g, h, i)
+struct __res_state myres;
+#else
+#define MY_RES_INIT() res_init();
+#define RES_MKQUERY(a, b, c, d, e, f, g, h, i) \
+    res_mkquery(a, b, c, d, e, f, g, h, i)
+#define myres _res
+#endif
+
 
 /*
  *    Miscellaneous helper functions
@@ -273,8 +285,8 @@ static uint32_t getipbash(IP ip)
 #ifdef IPV6
 static unsigned long getip6bash(struct in6_addr *ip6) {
   uint32_t x, y;
-  egg_memcpy(&x, ip6->s6_addr     , sizeof x);
-  egg_memcpy(&y, ip6->s6_addr + 12, sizeof y);
+  memcpy(&x, ip6->s6_addr     , sizeof x);
+  memcpy(&y, ip6->s6_addr + 12, sizeof y);
   x ^= y;
   return (unsigned long) BASH_MODULO(x);
 }
@@ -357,12 +369,12 @@ static void linkresolvehost(struct resolve *addrp)
   rp = hostbash[bashnum];
   if (rp) {
     while ((rp->nexthost) &&
-           (egg_strcasecmp(addrp->hostn, rp->nexthost->hostn) < 0))
+           (strcasecmp(addrp->hostn, rp->nexthost->hostn) < 0))
       rp = rp->nexthost;
     while ((rp->previoushost) &&
-           (egg_strcasecmp(addrp->hostn, rp->previoushost->hostn) > 0))
+           (strcasecmp(addrp->hostn, rp->previoushost->hostn) > 0))
       rp = rp->previoushost;
-    ret = egg_strcasecmp(addrp->hostn, rp->hostn);
+    ret = strcasecmp(addrp->hostn, rp->hostn);
     if (ret < 0) {
       addrp->previoushost = rp;
       addrp->nexthost = rp->nexthost;
@@ -603,12 +615,12 @@ static struct resolve *findhost(char *hostn)
   rp = hostbash[bashnum];
   if (rp) {
     while ((rp->nexthost) &&
-          (egg_strcasecmp(hostn, rp->nexthost->hostn) >= 0))
+          (strcasecmp(hostn, rp->nexthost->hostn) >= 0))
       rp = rp->nexthost;
     while ((rp->previoushost) &&
-           (egg_strcasecmp(hostn, rp->previoushost->hostn) <= 0))
+           (strcasecmp(hostn, rp->previoushost->hostn) <= 0))
       rp = rp->previoushost;
-    if (egg_strcasecmp(hostn, rp->hostn))
+    if (strcasecmp(hostn, rp->hostn))
       return NULL;
     else {
       hostbash[bashnum] = rp;
@@ -724,16 +736,17 @@ static void dorequest(char *s, int type, uint16_t id)
    * CPUs.
    */
   buf = nmalloc(MAX_PACKETSIZE + 1);
-  r = res_mkquery(QUERY, s, C_IN, type, NULL, 0, NULL, buf, MAX_PACKETSIZE);
+  r = RES_MKQUERY(QUERY, s, C_IN, type, NULL, 0, NULL, buf, MAX_PACKETSIZE);
   if (r == -1) {
+    nfree(buf);
     ddebug0(RES_ERR "Query too large.");
     return;
   }
   hp = (packetheader *) buf;
   hp->id = id;                  /* htons() deliberately left out (redundant) */
-  for (i = 0; i < _res.nscount; i++)
+  for (i = 0; i < myres.nscount; i++)
     (void) sendto(resfd, buf, r, 0,
-                  (struct sockaddr *) &_res.nsaddr_list[i],
+                  (struct sockaddr *) &myres.nsaddr_list[i],
                   sizeof(struct sockaddr));
   nfree(buf);
 }
@@ -890,7 +903,7 @@ void parserespacket(uint8_t *response, int len)
     ddebug0(RES_ERR "dn_expand() failed while expanding query domain.");
     return;
   }
-  if (egg_strcasecmp(stackstring, namestring)) {
+  if (strcasecmp(stackstring, namestring)) {
     ddebug2(RES_MSG "Unknown query packet dropped. (\"%s\" does not "
             "match \"%s\")", stackstring, namestring);
     return;
@@ -972,11 +985,11 @@ void parserespacket(uint8_t *response, int len)
       return;
     }
     c += 10 + rr->datalength;
-    if (0 > response + len) {
+    if (c > response + len) {
       ddebug0(RES_ERR "Specified rdata length exceeds packet size.");
       return;
     }
-    if (egg_strcasecmp(stackstring, namestring))
+    if (strcasecmp(stackstring, namestring))
       continue;
     if (rr->datatype != qdatatype && rr->datatype != T_CNAME) {
       ddebug2(RES_MSG "Ignoring resource type %u. (%s)",
@@ -998,7 +1011,7 @@ void parserespacket(uint8_t *response, int len)
         rp->ttl = rr->ttl;
         rp->sockname.addrlen = sizeof(struct sockaddr_in);
         rp->sockname.addr.sa.sa_family = AF_INET;
-        egg_memcpy(&rp->sockname.addr.s4.sin_addr, rr->data, 4);
+        memcpy(&rp->sockname.addr.s4.sin_addr, rr->data, 4);
 #ifndef IPV6
         passrp(rp, rr->ttl, T_A);
         return;
@@ -1017,7 +1030,7 @@ void parserespacket(uint8_t *response, int len)
         rp->ttl = rr->ttl;
         rp->sockname.addrlen = sizeof(struct sockaddr_in6);
         rp->sockname.addr.sa.sa_family = AF_INET6;
-        egg_memcpy(&rp->sockname.addr.s6.sin6_addr, rr->data, 16);
+        memcpy(&rp->sockname.addr.s6.sin6_addr, rr->data, 16);
         if (ready || pref_af) {
           passrp(rp, rr->ttl, T_A);
           return;
@@ -1092,17 +1105,17 @@ static void dns_ack(void)
   }
   /* Check to see if this server is actually one we sent to */
   if (from.sin_addr.s_addr == localhost) {
-    for (i = 0; i < _res.nscount; i++)
+    for (i = 0; i < myres.nscount; i++)
       /* 0.0.0.0 replies as 127.0.0.1 */
-      if ((_res.nsaddr_list[i].sin_addr.s_addr == from.sin_addr.s_addr) ||
-          (!_res.nsaddr_list[i].sin_addr.s_addr))
+      if ((myres.nsaddr_list[i].sin_addr.s_addr == from.sin_addr.s_addr) ||
+          (!myres.nsaddr_list[i].sin_addr.s_addr))
         break;
   } else {
-    for (i = 0; i < _res.nscount; i++)
-      if (_res.nsaddr_list[i].sin_addr.s_addr == from.sin_addr.s_addr)
+    for (i = 0; i < myres.nscount; i++)
+      if (myres.nsaddr_list[i].sin_addr.s_addr == from.sin_addr.s_addr)
         break;
   }
-  if (i == _res.nscount)
+  if (i == myres.nscount)
     ddebug1(RES_ERR "Received reply from unknown source: %s",
                 iptostr((struct sockaddr *) &from));
   else
@@ -1184,7 +1197,7 @@ static void dns_lookup(sockname_t *addr)
   rp->state = STATE_PTRREQ;
   rp->sends = 1;
   rp->type = T_PTR;
-  egg_memcpy(&rp->sockname, addr, sizeof(sockname_t));
+  memcpy(&rp->sockname, addr, sizeof(sockname_t));
   if (addr->family == AF_INET) {
     rp->ip = addr->addr.s4.sin_addr.s_addr;
     linkresolveip(rp);
@@ -1273,17 +1286,14 @@ static int init_dns_core(void)
   int i;
 
   /* Initialise the resolv library. */
-  res_init();
-  #ifdef NETBSD_HACKS
-    puts("netbsd found. if eggdrop crashes with\n"
-         "  _res is not supported for multi-threaded programs.\n"
-         "  [1]   Abort trap (core dumped) ./eggdrop -nt\n"
-         "dns.mod must be disabled by commenting out in eggdrop.conf\n"
-         "  #loadmodule dns");
-  #endif
-  _res.options |= RES_RECURSE | RES_DEFNAMES | RES_DNSRCH;
-  for (i = 0; i < _res.nscount; i++)
-    _res.nsaddr_list[i].sin_family = AF_INET;
+  MY_RES_INIT();
+  if (!myres.nscount) {
+    putlog(LOG_MISC, "*", "No nameservers defined.");
+    return 0;
+  }
+  myres.options |= RES_RECURSE | RES_DEFNAMES | RES_DNSRCH;
+  for (i = 0; i < myres.nscount; i++)
+    myres.nsaddr_list[i].sin_family = AF_INET;
 
   if (!init_dns_network())
     return 0;

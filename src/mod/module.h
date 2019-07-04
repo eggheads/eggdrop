@@ -3,7 +3,7 @@
  */
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2018 Eggheads Development Team
+ * Copyright (C) 1999 - 2019 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -24,8 +24,9 @@
 #define _EGG_MOD_MODULE_H
 
 /* Just include *all* the include files...it's slower but EASIER */
-#include "../mbedtls/base64.h"
+#include <signal.h>
 #include "src/main.h"
+#include "src/mbedtls/base64.h"
 #include "modvals.h"
 #include "src/tandem.h"
 
@@ -68,12 +69,6 @@
 #endif
 #ifdef egg_snprintf
 #  undef egg_snprintf
-#endif
-#ifdef egg_strcasecmp
-#  undef egg_strcasecmp
-#endif
-#ifdef egg_strncasecmp
-#  undef egg_strncasecmp
 #endif
 
 #if defined (__CYGWIN__) && !defined(STATIC)
@@ -207,7 +202,7 @@
 #define open_telnet ((int (*) (int, char *, int))global[87])
 /* 88 - 91 */
 #define check_tcl_event ((void (*) (const char *))global[88])
-#define my_memcpy ((void * (*) (void *, const void *, size_t))global[89])
+/* was my_memcpy -- use memcpy() instead */
 #define my_atoul ((IP(*)(char *))global[90])
 #define my_strcpy ((int (*)(char *, const char *))global[91])
 /* 92 - 95 */
@@ -319,7 +314,7 @@
 /* 168 - 171 */
 #define expected_memory ((int(*)(void))global[168])
 #define tell_mem_status ((void(*)(char *))global[169])
-#define do_restart (*(int *)(global[170]))
+#define do_restart (*(volatile sig_atomic_t *)(global[170]))
 #define check_tcl_filt ((const char *(*)(int, const char *))global[171])
 /* 172 - 175 */
 #define add_hook(a,b) (((void (*) (int, Function))global[172])(a,b))
@@ -435,10 +430,10 @@
 /* 252 - 255 */
 #define egg_snprintf (global[252])
 #define egg_vsnprintf ((int (*)(char *, size_t, const char *, va_list))global[253])
-/* was egg_memset -- UNUSED */
-#define egg_strcasecmp ((int (*)(const char *, const char *))global[255])
+/* was egg_memset -- use memset() instead */
+/* was egg_strcasecmp -- use strcasecmp instead */
 /* 256 - 259 */
-#define egg_strncasecmp ((int (*)(const char *, const char *, size_t))global[256])
+/* was egg_strncasecmp -- use strncasecmp instead */
 #define is_file ((int (*)(const char *))global[257])
 #define must_be_owner (*(int *)(global[258]))
 #define tandbot (*(tand_t **)(global[259]))

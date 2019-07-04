@@ -4,7 +4,7 @@
  */
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2018 Eggheads Development Team
+ * Copyright (C) 1999 - 2019 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -25,12 +25,15 @@
 #include "tandem.h"
 #include "modules.h"
 #include <errno.h>
+#include <signal.h>
 
 extern Tcl_Interp *interp;
 extern tcl_timer_t *timer, *utimer;
 extern struct dcc_t *dcc;
 extern char botnetnick[];
-extern int dcc_total, backgrd, parties, make_userfile, do_restart, remote_boots, max_dcc, conmask;
+extern int dcc_total, backgrd, parties, make_userfile, remote_boots, max_dcc,
+           conmask;
+extern volatile sig_atomic_t do_restart;
 #ifdef TLS
 extern int tls_vfydcc;
 extern sock_list *socklist;
@@ -65,7 +68,7 @@ static int tcl_putdcc STDVAR
 
   BADARGS(3, 4, " idx text ?options?");
 
-  if ((argc == 4) && egg_strcasecmp(argv[3], "-raw")) {
+  if ((argc == 4) && strcasecmp(argv[3], "-raw")) {
     Tcl_AppendResult(irp, "unknown putdcc option: should be ",
                      "-raw", NULL);
     return TCL_ERROR;
@@ -170,7 +173,7 @@ static int tcl_hand2idx STDVAR
 
   for (i = 0; i < dcc_total; i++)
     if ((dcc[i].type->flags & (DCT_SIMUL | DCT_BOT)) &&
-        !egg_strcasecmp(argv[1], dcc[i].nick)) {
+        !strcasecmp(argv[1], dcc[i].nick)) {
       egg_snprintf(s, sizeof s, "%ld", dcc[i].sock);
       Tcl_AppendResult(irp, s, NULL);
       return TCL_OK;
@@ -216,7 +219,7 @@ static int tcl_setchan STDVAR
     return TCL_ERROR;
   }
   if (argv[2][0] < '0' || argv[2][0] > '9') {
-    if (!strcmp(argv[2], "-1") || !egg_strcasecmp(argv[2], "off"))
+    if (!strcmp(argv[2], "-1") || !strcasecmp(argv[2], "off"))
       chan = -1;
     else {
       Tcl_SetVar(irp, "_chan", argv[2], 0);
@@ -653,7 +656,7 @@ static int tcl_dcclist STDVAR
 
   for (i = 0; i < dcc_total; i++) {
     if (argc == 1 || ((argc == 2) && (dcc[i].type &&
-        !egg_strcasecmp(dcc[i].type->name, argv[1])))) {
+        !strcasecmp(dcc[i].type->name, argv[1])))) {
       egg_snprintf(idxstr, sizeof idxstr, "%ld", dcc[i].sock);
       tv = dcc[i].timeval;
       egg_snprintf(timestamp, sizeof timestamp, "%ld", tv);
@@ -861,7 +864,7 @@ static int tcl_unlink STDVAR
     x = 0;
   else {
     x = 1;
-    if (!egg_strcasecmp(bot, dcc[i].nick))
+    if (!strcasecmp(bot, dcc[i].nick))
       x = botunlink(-2, bot, argv[2], botnetnick);
     else
       botnet_send_unlink(i, botnetnick, lastbot(bot), bot, argv[2]);
@@ -946,7 +949,7 @@ static int tcl_listen STDVAR
   for (i = 0; i < dcc_total; i++)
     if ((dcc[i].type == &DCC_TELNET) && (dcc[i].port == port))
       idx = i;
-  if (!egg_strcasecmp(argv[2], "off")) {
+  if (!strcasecmp(argv[2], "off")) {
     if (pmap) {
       if (pold)
         pold->next = pmap->next;
@@ -1077,7 +1080,7 @@ static int tcl_boot STDVAR
 
     splitc(whonick, who, '@');
     whonick[HANDLEN] = 0;
-    if (!egg_strcasecmp(who, botnetnick))
+    if (!strcasecmp(who, botnetnick))
       strlcpy(who, whonick, sizeof who);
     else if (remote_boots > 0) {
       i = nextbot(who);
@@ -1090,7 +1093,7 @@ static int tcl_boot STDVAR
   }
   for (i = 0; i < dcc_total; i++)
     if (!ok && (dcc[i].type->flags & DCT_CANBOOT) &&
-        !egg_strcasecmp(dcc[i].nick, who)) {
+        !strcasecmp(dcc[i].nick, who)) {
       do_boot(i, botnetnick, argv[2] ? argv[2] : "");
       ok = 1;
     }

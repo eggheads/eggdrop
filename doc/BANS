@@ -15,8 +15,8 @@ BANS, INVITES, AND EXEMPTS
 
         These modes will be active on every channel the bot monitors.
         Some will "expire" after a while (be removed automatically).
-        Others are considered "permanent" and can only be removed by
-        a master.
+        Others are considered "permanent" and can only be removed by a
+        master.
 
     Channel modes
 
@@ -36,9 +36,9 @@ BANS, INVITES, AND EXEMPTS
 
     Sticky
 
-        These modes are usually set by a user using the
-        ".stick" command. Modes with this attribute are attempted to be
-        kept active on the channel at all times by the bot, even if the
+        These modes are usually set by a user using the ".stick"
+        command. Modes with this attribute are attempted to be kept
+        active on the channel at all times by the bot, even if the
         channel is set to use dynamic modes. Obviously, if the channel
         isn't set to use dynamic modes, this won't have any effect.
 
@@ -74,8 +74,8 @@ BANS, INVITES, AND EXEMPTS
         If the channel does not support dynamic invites, then they are
         set at all times. Otherwise, the invite is set when the channel
         is +i and a user requests an invite into the channel. The invite
-        then remains set for 'invite-time' minutes (defined in
-        config file) or until the channel goes -i again, whichever
-        happens last.
+        then remains set for 'invite-time' minutes (defined in config
+        file) or until the channel goes -i again, whichever happens
+        last.
 
-  Copyright (C) 1999 - 2018 Eggheads Development Team
+  Copyright (C) 1999 - 2019 Eggheads Development Team

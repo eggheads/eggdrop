@@ -2,7 +2,7 @@
  * transfer.c -- part of transfer.mod
  *
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2018 Eggheads Development Team
+ * Copyright (C) 1999 - 2019 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -120,7 +120,7 @@ static int at_limit(char *nick)
 
   for (i = 0; i < dcc_total; i++)
     if ((dcc[i].type == &DCC_GET || dcc[i].type == &DCC_GET_PENDING) &&
-        !egg_strcasecmp(dcc[i].nick, nick))
+        !strcasecmp(dcc[i].nick, nick))
       x++;
 
   return (x >= dcc_limit);
@@ -242,7 +242,7 @@ static void eof_dcc_fork_send(int idx)
     int x, y = 0;
 
     for (x = 0; x < dcc_total; x++)
-      if ((!egg_strcasecmp(dcc[x].nick, dcc[idx].host)) &&
+      if ((!strcasecmp(dcc[x].nick, dcc[idx].host)) &&
           (dcc[x].type->flags & DCT_BOT)) {
         y = x;
         break;
@@ -330,7 +330,7 @@ static void eof_dcc_send(int idx)
 
       for (j = 0; j < dcc_total; j++)
         if (!ok && (dcc[j].type->flags & (DCT_GETNOTES | DCT_FILES)) &&
-            !egg_strcasecmp(dcc[j].nick, hand)) {
+            !strcasecmp(dcc[j].nick, hand)) {
           ok = 1;
           dprintf(j, TRANSFER_THANKS);
         }
@@ -349,7 +349,7 @@ static void eof_dcc_send(int idx)
     int x, y = 0;
 
     for (x = 0; x < dcc_total; x++)
-      if ((!egg_strcasecmp(dcc[x].nick, dcc[idx].host)) &&
+      if ((!strcasecmp(dcc[x].nick, dcc[idx].host)) &&
           (dcc[x].type->flags & DCT_BOT))
         y = x;
     if (y) {
@@ -432,7 +432,7 @@ static void dcc_get(int idx, char *buf, int len)
    * This is either a 4 bit ack or the 8 bit reget packet.
    */
   if (w < 4 || (w < 8 && dcc[idx].u.xfer->type == XFER_RESEND_PEND)) {
-    my_memcpy(&(dcc[idx].u.xfer->buf[dcc[idx].u.xfer->sofar]), buf, len);
+    memcpy(&(dcc[idx].u.xfer->buf[dcc[idx].u.xfer->sofar]), buf, len);
     dcc[idx].u.xfer->sofar += len;
     return;
     /* Waiting for the 8 bit reget packet? */
@@ -441,8 +441,8 @@ static void dcc_get(int idx, char *buf, int len)
     if (w == 8) {
       transfer_reget reget_data;
 
-      my_memcpy(&reget_data, dcc[idx].u.xfer->buf, dcc[idx].u.xfer->sofar);
-      my_memcpy(&reget_data + dcc[idx].u.xfer->sofar, buf, len);
+      memcpy(&reget_data, dcc[idx].u.xfer->buf, dcc[idx].u.xfer->sofar);
+      memcpy(&reget_data + dcc[idx].u.xfer->sofar, buf, len);
       handle_resend_packet(idx, &reget_data);
       cmp = dcc[idx].u.xfer->offset;
     } else
@@ -452,16 +452,16 @@ static void dcc_get(int idx, char *buf, int len)
   } else {
     /* Complete packet? */
     if (w == 4) {
-      my_memcpy(bbuf, dcc[idx].u.xfer->buf, dcc[idx].u.xfer->sofar);
-      my_memcpy(&(bbuf[dcc[idx].u.xfer->sofar]), buf, len);
+      memcpy(bbuf, dcc[idx].u.xfer->buf, dcc[idx].u.xfer->sofar);
+      memcpy(&(bbuf[dcc[idx].u.xfer->sofar]), buf, len);
     } else {
       p = ((w - 1) & ~3) - dcc[idx].u.xfer->sofar;
       w = w - ((w - 1) & ~3);
       if (w < 4) {
-        my_memcpy(dcc[idx].u.xfer->buf, &(buf[p]), w);
+        memcpy(dcc[idx].u.xfer->buf, &(buf[p]), w);
         return;
       }
-      my_memcpy(bbuf, &(buf[p]), w);
+      memcpy(bbuf, &(buf[p]), w);
     }
     /* This is more compatible than ntohl for machines where an int
      * is more than 4 bytes:
@@ -513,7 +513,7 @@ static void dcc_get(int idx, char *buf, int len)
       int x, y = 0;
 
       for (x = 0; x < dcc_total; x++)
-        if (!egg_strcasecmp(dcc[x].nick, dcc[idx].host) &&
+        if (!strcasecmp(dcc[x].nick, dcc[idx].host) &&
             (dcc[x].type->flags & DCT_BOT))
           y = x;
       if (y != 0)
@@ -568,7 +568,7 @@ static void eof_dcc_get(int idx)
     int x, y = 0;
 
     for (x = 0; x < dcc_total; x++)
-      if (!egg_strcasecmp(dcc[x].nick, dcc[idx].host) &&
+      if (!strcasecmp(dcc[x].nick, dcc[idx].host) &&
           (dcc[x].type->flags & DCT_BOT))
         y = x;
     putlog(LOG_BOTS, "*", TRANSFER_ABORT_USERFILE);
@@ -609,18 +609,12 @@ static void eof_dcc_get(int idx)
 
 static void dcc_send(int idx, char *buf, int len)
 {
-  char s[512];
-  unsigned long sent;
+  uint32_t sentn;
 
   fwrite(buf, len, 1, dcc[idx].u.xfer->f);
   dcc[idx].status += len;
-  /* Put in network byte order */
-  sent = dcc[idx].status;
-  s[0] = (sent / (1 << 24));
-  s[1] = (sent % (1 << 24)) / (1 << 16);
-  s[2] = (sent % (1 << 16)) / (1 << 8);
-  s[3] = (sent % (1 << 8));
-  tputs(dcc[idx].sock, s, 4);
+  sentn = htonl(dcc[idx].status); /* Put in network byte order */
+  tputs(dcc[idx].sock, (char *) &sentn, 4);
   dcc[idx].timeval = now;
   if (dcc[idx].status > dcc[idx].u.xfer->length && dcc[idx].u.xfer->length > 0) {
     dprintf(DP_HELP, TRANSFER_BOGUS_FILE_LENGTH, dcc[idx].nick);
@@ -641,7 +635,7 @@ static void transfer_get_timeout(int i)
     int x, y = 0;
 
     for (x = 0; x < dcc_total; x++)
-      if ((!egg_strcasecmp(dcc[x].nick, dcc[i].host)) &&
+      if ((!strcasecmp(dcc[x].nick, dcc[i].host)) &&
           (dcc[x].type->flags & DCT_BOT))
         y = x;
     if (y != 0) {
@@ -698,7 +692,7 @@ static void tout_dcc_send(int idx)
     int x, y = 0;
 
     for (x = 0; x < dcc_total; x++)
-      if (!egg_strcasecmp(dcc[x].nick, dcc[idx].host) &&
+      if (!strcasecmp(dcc[x].nick, dcc[idx].host) &&
           (dcc[x].type->flags & DCT_BOT))
         y = x;
 
@@ -1068,7 +1062,7 @@ static int ctcp_DCC_RESUME(char *nick, char *from, char *handle,
   strlcpy(buf, text, sizeof buf);
   action = newsplit(&msg);
 
-  if (egg_strcasecmp(action, "RESUME"))
+  if (strcasecmp(action, "RESUME"))
     return 0;
 
   fn = newsplit(&msg);

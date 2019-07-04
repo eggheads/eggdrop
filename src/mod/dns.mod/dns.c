@@ -5,7 +5,7 @@
  * Written by Fabian Knittel <fknittel@gmx.de>
  */
 /*
- * Copyright (C) 1999 - 2018 Eggheads Development Team
+ * Copyright (C) 1999 - 2019 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -148,9 +148,9 @@ static char *dns_change(ClientData cdata, Tcl_Interp *irp,
     Tcl_DString ds;
 
     Tcl_DStringInit(&ds);
-    for (i = 0; i < _res.nscount; i++) {
+    for (i = 0; i < myres.nscount; i++) {
       egg_snprintf(buf, sizeof buf, "%s:%d", iptostr((struct sockaddr *)
-               &_res.nsaddr_list[i]), ntohs(_res.nsaddr_list[i].sin_port));
+               &myres.nsaddr_list[i]), ntohs(myres.nsaddr_list[i].sin_port));
       Tcl_DStringAppendElement(&ds, buf);
     }
     slist = Tcl_DStringValue(&ds);
@@ -162,7 +162,7 @@ static char *dns_change(ClientData cdata, Tcl_Interp *irp,
     if (code == TCL_ERROR)
       return "variable must be a list";
     /* reinitialize the list */
-    _res.nscount = 0;
+    myres.nscount = 0;
     for (i = 0; i < lc; i++) {
       if ((p = strchr(list[i], ':'))) {
         *p++ = 0;
@@ -171,10 +171,10 @@ static char *dns_change(ClientData cdata, Tcl_Interp *irp,
       } else
         port = NAMESERVER_PORT; /* port 53 */
       /* Ignore invalid addresses */
-      if (egg_inet_aton(list[i], &_res.nsaddr_list[_res.nscount].sin_addr)) {
-        _res.nsaddr_list[_res.nscount].sin_port = htons(port);
-        _res.nsaddr_list[_res.nscount].sin_family = AF_INET;
-        _res.nscount++;
+      if (egg_inet_aton(list[i], &myres.nsaddr_list[myres.nscount].sin_addr)) {
+        myres.nsaddr_list[myres.nscount].sin_port = htons(port);
+        myres.nsaddr_list[myres.nscount].sin_family = AF_INET;
+        myres.nscount++;
       }
     }
     Tcl_Free((char *) list);
@@ -225,10 +225,10 @@ static int dns_report(int idx, int details)
 
     dprintf(idx, "    Async DNS resolver is active.\n");
     dprintf(idx, "    DNS server list:");
-    for (i = 0; i < _res.nscount; i++)
-      dprintf(idx, " %s:%d", iptostr((struct sockaddr *) &_res.nsaddr_list[i]),
-              ntohs(_res.nsaddr_list[i].sin_port));
-    if (!_res.nscount)
+    for (i = 0; i < myres.nscount; i++)
+      dprintf(idx, " %s:%d", iptostr((struct sockaddr *) &myres.nsaddr_list[i]),
+              ntohs(myres.nsaddr_list[i].sin_port));
+    if (!myres.nscount)
       dprintf(idx, " NO DNS SERVERS FOUND!\n");
     dprintf(idx, "\n");
     dprintf(idx, "    Using %d byte%s of memory\n", size,
@@ -240,10 +240,10 @@ static int dns_report(int idx, int details)
 static int dns_check_servercount(void)
 {
   static int oldcount = -1;
-  if (oldcount != _res.nscount && !_res.nscount) {
+  if (oldcount != myres.nscount && !myres.nscount) {
     putlog(LOG_MISC, "*", "WARNING: No nameservers found. Please set the dns-servers config variable.");
   }
-  oldcount = _res.nscount;
+  oldcount = myres.nscount;
   return 0;
 }
 
@@ -307,9 +307,9 @@ char *dns_start(Function *global_funcs)
   dcc[idx].sock = resfd;
   dcc[idx].timeval = now;
   strcpy(dcc[idx].nick, "(dns)");
-  egg_memcpy(&dcc[idx].sockname.addr.sa, &_res.nsaddr_list[0],
-             sizeof(_res.nsaddr_list[0]));
-  dcc[idx].sockname.addrlen = sizeof(_res.nsaddr_list[0]);
+  memcpy(&dcc[idx].sockname.addr.sa, &myres.nsaddr_list[0],
+             sizeof(myres.nsaddr_list[0]));
+  dcc[idx].sockname.addrlen = sizeof(myres.nsaddr_list[0]);
 
   Tcl_TraceVar(interp, "dns-servers",
                TCL_TRACE_READS | TCL_TRACE_WRITES | TCL_TRACE_UNSETS,

@@ -3,7 +3,7 @@
  */
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2018 Eggheads Development Team
+ * Copyright (C) 1999 - 2019 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -628,17 +628,16 @@ static void display_ban(int idx, int number, maskrec *ban,
     daysago(now, ban->added, s);
     sprintf(dates, "%s %s", MODES_CREATED, s);
     if (ban->added < ban->lastactive) {
-      char tocat[sizeof dates];
+      int len = strlen(dates);
       daysago(now, ban->lastactive, s);
-      egg_snprintf(tocat, sizeof tocat, ", %s %s", MODES_LASTUSED, s);
-      strncat(dates, tocat, sizeof dates - strlen(dates) - 1);
+      egg_snprintf(dates + len, (sizeof dates) - len, ", %s %s", MODES_LASTUSED, s); /* Concatenation */
     }
   } else
     dates[0] = 0;
   if (ban->flags & MASKREC_PERM)
     strcpy(s, "(perm)");
   else {
-    char s1[41];
+    char s1[29];
 
     days(ban->expire, now, s1);
     sprintf(s, "(expires %s)", s1);
@@ -673,17 +672,16 @@ static void display_exempt(int idx, int number, maskrec *exempt,
     daysago(now, exempt->added, s);
     sprintf(dates, "%s %s", MODES_CREATED, s);
     if (exempt->added < exempt->lastactive) {
-      char tocat[sizeof dates];
+      int len = strlen(dates);
       daysago(now, exempt->lastactive, s);
-      egg_snprintf(tocat, sizeof tocat, ", %s %s", MODES_LASTUSED, s);
-      strncat(dates, tocat, sizeof dates - strlen(dates) - 1);
+      egg_snprintf(dates + len, (sizeof dates) - len, ", %s %s", MODES_LASTUSED, s); /* Concatenation */
     }
   } else
     dates[0] = 0;
   if (exempt->flags & MASKREC_PERM)
     strcpy(s, "(perm)");
   else {
-    char s1[41];
+    char s1[29];
 
     days(exempt->expire, now, s1);
     sprintf(s, "(expires %s)", s1);
@@ -718,17 +716,16 @@ static void display_invite(int idx, int number, maskrec *invite,
     daysago(now, invite->added, s);
     sprintf(dates, "%s %s", MODES_CREATED, s);
     if (invite->added < invite->lastactive) {
-      char tocat[sizeof dates];
+      int len = strlen(dates);
       daysago(now, invite->lastactive, s);
-      egg_snprintf(tocat, sizeof tocat, ", %s %s", MODES_LASTUSED, s);
-      strncat(dates, tocat, sizeof dates - strlen(dates) - 1);
+      egg_snprintf(dates + len, (sizeof dates) - len, ", %s %s", MODES_LASTUSED, s); /* Concatenation */
     }
   } else
     dates[0] = 0;
   if (invite->flags & MASKREC_PERM)
     strcpy(s, "(perm)");
   else {
-    char s1[41];
+    char s1[29];
 
     days(invite->expire, now, s1);
     sprintf(s, "(expires %s)", s1);
@@ -1248,7 +1245,7 @@ static int expired_mask(struct chanset_t *chan, char *who)
   m = ismember(chan, snick);
   if (!m)
     for (m2 = chan->channel.member; m2 && m2->nick[0]; m2 = m2->next)
-      if (!egg_strcasecmp(sfrom, m2->userhost)) {
+      if (!strcasecmp(sfrom, m2->userhost)) {
         m = m2;
         break;
       }

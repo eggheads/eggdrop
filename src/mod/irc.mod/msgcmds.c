@@ -4,7 +4,7 @@
  */
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2018 Eggheads Development Team
+ * Copyright (C) 1999 - 2019 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -172,10 +172,8 @@ static int msg_ident(char *nick, char *host, struct userrec *u, char *par)
   pass = newsplit(&par);
   if (!par[0])
     strlcpy(who, nick, sizeof who);
-  else {
-    strncpy(who, par, NICKMAX);
-    who[NICKMAX] = 0;
-  }
+  else
+    strlcpy(who, par, sizeof who);
   u2 = get_user_by_handle(userlist, who);
   if (!u2) {
     if (u && !quiet_reject)
@@ -301,7 +299,7 @@ static int msg_info(char *nick, char *host, struct userrec *u, char *par)
       dprintf(DP_HELP, "NOTICE %s :%s\n", nick, IRC_INFOLOCKED);
       return 1;
     }
-    if (!egg_strcasecmp(par, "none")) {
+    if (!strcasecmp(par, "none")) {
       par[0] = 0;
       if (chname) {
         set_handle_chaninfo(userlist, u->handle, chname, NULL);
@@ -487,7 +485,7 @@ static int msg_whois(char *nick, char *host, struct userrec *u, char *par)
   if (s2 && s2[0] && !(u2->flags & USER_BOT))
     dprintf(DP_HELP, "NOTICE %s :[%s] %s\n", nick, u2->handle, s2);
   for (xk = get_user(&USERENTRY_XTRA, u2); xk; xk = xk->next)
-    if (!egg_strcasecmp(xk->key, "EMAIL"))
+    if (!strcasecmp(xk->key, "EMAIL"))
       dprintf(DP_HELP, "NOTICE %s :[%s] E-mail: %s\n", nick, u2->handle,
               xk->data);
   ok = 0;
@@ -503,7 +501,7 @@ static int msg_whois(char *nick, char *host, struct userrec *u, char *par)
           hand_on_chan(chan, u) || (glob_op(fr) && !chan_deop(fr)) ||
           glob_friend(fr) || chan_op(fr) || chan_friend(fr))) {
         tt = cr->laston;
-        egg_strftime(s, 14, "%b %d %H:%M", localtime(&tt));
+        strftime(s, 14, "%b %d %H:%M", localtime(&tt));
         ok = 1;
         egg_snprintf(s1, sizeof s1, "NOTICE %s :[%s] %s %s on %s", nick,
                      u2->handle, IRC_LASTSEENAT, s, chan->dname);
@@ -790,19 +788,15 @@ static int msg_status(char *nick, char *host, struct userrec *u, char *par)
   struct chanset_t *chan;
   time_t now2 = now - online_since, hr, min;
 
-#ifdef HAVE_UNAME
   struct utsname un;
 
   if (uname(&un) < 0) {
-#endif
     vers_t = " ";
     uni_t  = "*unknown*";
-#ifdef HAVE_UNAME
   } else {
     vers_t = un.release;
     uni_t  = un.sysname;
   }
-#endif
 
   if (match_my_nick(nick))
     return 1;

@@ -7,7 +7,7 @@
  */
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2018 Eggheads Development Team
+ * Copyright (C) 1999 - 2019 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -142,9 +142,9 @@ int notify_users_at = 0; /* Minutes past the hour to notify users of notes? */
 char version[81];    /* Version info (long form)  */
 char ver[41];        /* Version info (short form) */
 
-int do_restart = 0;                /* .restart has been called, restart ASAP */
-int resolve_timeout = RES_TIMEOUT; /* Hostname/address lookup timeout        */
-char quit_msg[1024];               /* Quit message                           */
+volatile sig_atomic_t do_restart = 0; /* .restart has been called, restart ASAP */
+int resolve_timeout = RES_TIMEOUT;    /* Hostname/address lookup timeout        */
+char quit_msg[1024];                  /* Quit message                           */
 
 /* Traffic stats */
 unsigned long otraffic_irc = 0;
@@ -634,7 +634,7 @@ static struct tm nowtm;
  */
 static void core_secondly()
 {
-  static int cnt = 0;
+  static int cnt = 10; /* Don't wait the first 10 seconds to display */
   int miltime;
   time_t nowmins;
   int i;
@@ -654,7 +654,7 @@ static void core_secondly()
   }
   nowmins = time(NULL) / 60;
   if (nowmins > lastmin) {
-    egg_memcpy(&nowtm, localtime(&now), sizeof(struct tm));
+    memcpy(&nowtm, localtime(&now), sizeof(struct tm));
     i = 0;
 
     /* Once a minute */
@@ -725,8 +725,7 @@ static void core_secondly()
 
 static void core_minutely()
 {
-  check_tcl_time(&nowtm);
-  check_tcl_cron(&nowtm);
+  check_tcl_time_and_cron(&nowtm);
   do_check_timers(&timer);
   if (quick_logs != 0) {
     flushlogs();
@@ -1022,12 +1021,20 @@ int mainloop(int toplevel)
 static void init_random(void) {
   unsigned int seed;
 #ifdef HAVE_GETRANDOM
-  if (getrandom(&seed, sizeof(seed), 0) != sizeof(seed))
-    fatal("ERROR: getrandom()\n", 0);
-#else
-  struct timeval tp;
-  gettimeofday(&tp, NULL);
-  seed = (tp.tv_sec * tp.tv_usec) ^ getpid();
+  if (getrandom(&seed, sizeof(seed), 0) != sizeof(seed)) {
+    if (errno != ENOSYS) {
+      fatal("ERROR: getrandom()\n", 0);
+    } else {
+      /* getrandom() is available in header but syscall is not!
+       * This can happen with glibc>=2.25 and linux<3.17
+       */
+#endif
+      struct timeval tp;
+      gettimeofday(&tp, NULL);
+      seed = (tp.tv_sec * tp.tv_usec) ^ getpid();
+#ifdef HAVE_GETRANDOM
+    }
+  }
 #endif
   srandom(seed);
 }
@@ -1075,7 +1082,7 @@ int main(int arg_c, char **arg_v)
 #endif
   egg_snprintf(ver, sizeof ver, "eggdrop v%s", egg_version);
   egg_snprintf(version, sizeof version,
-               "Eggdrop v%s (C) 1997 Robey Pointer (C) 2010-2018 Eggheads",
+               "Eggdrop v%s (C) 1997 Robey Pointer (C) 2010-2019 Eggheads",
                egg_version);
   /* Now add on the patchlevel (for Tcl) */
   sprintf(&egg_version[strlen(egg_version)], " %u", egg_numver);

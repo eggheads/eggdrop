@@ -2,7 +2,7 @@
 
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2018 Eggheads Development Team
+ * Copyright (C) 1999 - 2019 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -39,9 +39,6 @@
 
 /* Define for context debugging. */
 #undef DEBUG_CONTEXT
-
-/* Define if running on SunOS 4.0. */
-#undef DLOPEN_1
 
 /* Arguments passed to configure */
 #undef EGG_AC_ARGS_RAW
@@ -105,9 +102,6 @@
 /* Define to 1 if you have the <fcntl.h> header file. */
 #undef HAVE_FCNTL_H
 
-/* Define to 1 if you have the `fsync' function. */
-#undef HAVE_FSYNC
-
 /* Define to 1 if you have the `gethostbyname2' function. */
 #undef HAVE_GETHOSTBYNAME2
 
@@ -147,9 +141,6 @@
 /* Define to 1 if you have the `crypto' library (-lcrypto). */
 #undef HAVE_LIBCRYPTO
 
-/* Define to 1 if you have the `dl' library (-ldl). */
-#undef HAVE_LIBDL
-
 /* Define to 1 if you have the `dld' library (-ldld). */
 #undef HAVE_LIBDLD
 
@@ -177,9 +168,6 @@
 /* Define to 1 if you have the <mach-o/rld.h> header file. */
 #undef HAVE_MACH_O_RLD_H
 
-/* Define to 1 if you have the `mbrlen' function. */
-#undef HAVE_MBRLEN
-
 /* Define to 1 if you have the `MD5_Final' function. */
 #undef HAVE_MD5_FINAL
 
@@ -188,9 +176,6 @@
 
 /* Define to 1 if you have the `MD5_Update' function. */
 #undef HAVE_MD5_UPDATE
-
-/* Define to 1 if you have the `memcpy' function. */
-#undef HAVE_MEMCPY
 
 /* Define to 1 if you have the <memory.h> header file. */
 #undef HAVE_MEMORY_H
@@ -234,9 +219,6 @@
 /* Define to 1 if you have the `RAND_status' function. */
 #undef HAVE_RAND_STATUS
 
-/* Define to 1 if you have the `rename' function. */
-#undef HAVE_RENAME
-
 /* Define to 1 if you have the <rld.h> header file. */
 #undef HAVE_RLD_H
 
@@ -249,17 +231,8 @@
 /* Define to 1 if you have the `shl_load' function. */
 #undef HAVE_SHL_LOAD
 
-/* Define to 1 if you have the `sigaction' function. */
-#undef HAVE_SIGACTION
-
-/* Define to 1 if you have the `sigemptyset' function. */
-#undef HAVE_SIGEMPTYSET
-
 /* Define to 1 if you have the `snprintf' function. */
 #undef HAVE_SNPRINTF
-
-/* Define to 1 if you have the `socklen_t' type. */
-#undef HAVE_SOCKLEN_T
 
 /* Define to 1 if you have the <stdarg.h> header file. */
 #undef HAVE_STDARG_H
@@ -276,12 +249,6 @@
 /* Define to 1 if you have the <stdlib.h> header file. */
 #undef HAVE_STDLIB_H
 
-/* Define to 1 if you have the `strcasecmp' function. */
-#undef HAVE_STRCASECMP
-
-/* Define to 1 if you have the `strftime' function. */
-#undef HAVE_STRFTIME
-
 /* Define to 1 if you have the <strings.h> header file. */
 #undef HAVE_STRINGS_H
 
@@ -290,9 +257,6 @@
 
 /* Define to 1 if you have the `strlcpy' function. */
 #undef HAVE_STRLCPY
-
-/* Define to 1 if you have the `strncasecmp' function. */
-#undef HAVE_STRNCASECMP
 
 /* Define to 1 if the system has the type `struct in6_addr'. */
 #undef HAVE_STRUCT_IN6_ADDR
@@ -347,9 +311,6 @@
    `tzname'. */
 #undef HAVE_TZNAME
 
-/* Define to 1 if you have the `uname' function. */
-#undef HAVE_UNAME
-
 /* Define to 1 if you have the <unistd.h> header file. */
 #undef HAVE_UNISTD_H
 
@@ -384,8 +345,11 @@
 /* Define if modules should be loaded using the shl_*() functions. */
 #undef MOD_USE_SHL
 
-/* Define if running under NetBSD. */
-#undef NETBSD_HACKS
+/* Define this to hex_to_string when using OpenSSL < 1.1.0 */
+#undef OPENSSL_buf2hexstr
+
+/* Define this to string_to_hex when using OpenSSL < 1.1.0 */
+#undef OPENSSL_hexstr2buf
 
 /* Define to the address where bug reports for this package should be sent. */
 #undef PACKAGE_BUGREPORT
@@ -501,9 +465,6 @@
    ASN1_STRING_data otherwise. */
 #undef egg_ASN1_string_data
 
-/* Define this to OPENSSL_hexstr2buf when using OpenSSL 1.1.0+ */
-#undef hex_to_string
-
 /* Define to `__inline__' or `__inline' if that's what the C compiler
    calls it, or to nothing if 'inline' is not supported under any name.  */
 #ifndef __cplusplus
@@ -520,8 +481,8 @@
 /* Define to `unsigned int' if <sys/types.h> does not define. */
 #undef size_t
 
-/* Define this to OPENSSL_buf2hexstr when using OpenSSL 1.1.0+ */
-#undef string_to_hex
+/* Substitute for socklen_t */
+#undef socklen_t
 
 /* Define to empty if the keyword `volatile' does not work. Warning: valid
    code using `volatile' can become incorrect without. Disable with care. */
