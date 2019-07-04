@@ -1302,8 +1302,6 @@ static cmd_t my_raw_binds[] = {
   {"WALLOPS", "",   (IntFunc) gotwall,      NULL},
   {"001",     "",   (IntFunc) got001,       NULL},
   {"303",     "",   (IntFunc) got303,       NULL},
-  {"311",     "",   (IntFunc) got311,       NULL},
-  {"318",     "",   (IntFunc) whoispenalty, NULL},
   {"432",     "",   (IntFunc) got432,       NULL},
   {"433",     "",   (IntFunc) got433,       NULL},
   {"437",     "",   (IntFunc) got437,       NULL},
@@ -1320,6 +1318,8 @@ static cmd_t my_raw_binds[] = {
 /* ircu2.10.10 has a bug when a client is throttled ERROR is sent wrong */
   {"ERROR:",  "",   (IntFunc) goterror,     NULL},
   {"KICK",    "",   (IntFunc) gotkick,      NULL},
+  {"311",     "",   (IntFunc) got311,       NULL},
+  {"318",     "",   (IntFunc) whoispenalty, NULL},
   {"CAP",     "",   (IntFunc) gotcap,       NULL},
   {"AUTHENTICATE",     "",   (IntFunc) gotauthenticate,       NULL},
   {NULL,      NULL, NULL,                    NULL}
