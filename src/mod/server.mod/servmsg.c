@@ -20,9 +20,9 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
-#include  "../irc.mod/irc.h"
-#include  "../channels.mod/channels.h"
-#include  "server.h"
+#include "../irc.mod/irc.h"
+#include "../channels.mod/channels.h"
+#include "server.h"
 
 static time_t last_ctcp = (time_t) 0L;
 static int count_ctcp = 0;
