@@ -1318,8 +1318,8 @@ static cmd_t my_raw_binds[] = {
 /* ircu2.10.10 has a bug when a client is throttled ERROR is sent wrong */
   {"ERROR:",  "",   (IntFunc) goterror,     NULL},
   {"KICK",    "",   (IntFunc) gotkick,      NULL},
-  {"311",     "",   (IntFunc) got311,       NULL},
   {"318",     "",   (IntFunc) whoispenalty, NULL},
+  {"311",     "",   (IntFunc) got311,       NULL},
   {"CAP",     "",   (IntFunc) gotcap,       NULL},
   {"AUTHENTICATE",     "",   (IntFunc) gotauthenticate,       NULL},
   {NULL,      NULL, NULL,                    NULL}
