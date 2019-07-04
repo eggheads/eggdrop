@@ -1180,11 +1180,11 @@ static int gotcap(char *from, char *msg) {
   fixcolon(msg);
   if (!strcmp(cmd, "LS")) {
     putlog(LOG_MISC, "*", "%s supports CAP sub-commands: %s", from, msg);
-    strncpyz(cap.supported, msg, sizeof cap.supported);
+    strlcpy(cap.supported, msg, sizeof cap.supported);
   }
   else if (!strcmp(cmd, "LIST")) {
     putlog(LOG_MISC, "*", "Negotiated CAP capabilities: %s", msg);
-    strncpyz(cap.negotiated, msg, sizeof cap.negotiated);
+    strlcpy(cap.negotiated, msg, sizeof cap.negotiated);
   } else if (!strcmp(cmd, "ACK")) {
     putlog(LOG_MISC, "*", "%s acknowledged %s", from, msg);
     strncat(cap.negotiated, msg, sizeof(cap.negotiated));
