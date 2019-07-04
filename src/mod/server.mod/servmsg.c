@@ -1139,38 +1139,6 @@ static int got311(char *from, char *msg)
   return 0;
 }
 
-static int gotcap(char *from, char *msg)
-{
-  char *cmd;
-
-  newsplit(&msg);
-  putlog(LOG_SERV, "*", "CAP: %s", msg);
-  cmd = newsplit(&msg);
-  fixcolon(msg);
-  if (!strcmp(cmd, "LS")) {
-    putlog(LOG_MISC, "*", "%s supports CAP sub-commands: %s", from, msg);
-    for (cmd = newsplit(&msg); cmd[0]; cmd = newsplit(&msg)) {
-      if (!strcmp(cmd, "sasl")) {
-        putlog(LOG_SERV, "*", "SASL: CAP request sasl");
-        dprintf(DP_MODE, "CAP REQ :sasl\n");
-      }
-    }
-  } else if (!strcmp(cmd, "ACK")) {
-    putlog(LOG_MISC, "*", "%s acknowledged %s", from, msg);
-    for (cmd = newsplit(&msg); cmd[0]; cmd = newsplit(&msg)) {
-      if (!strcmp(cmd, "sasl")) {
-        putlog(LOG_SERV, "*", "SASL: put AUTHENTICATE %s", sasl_mechanism);
-        dprintf(DP_MODE, "AUTHENTICATE %s\n", sasl_mechanism);
-      }
-    }
-  } else if (cmd[0]) {
-    putlog(LOG_MISC, "*", "%s subcommand %s unknown, CAP END", from, cmd);
-    dprintf(DP_MODE, "CAP END\n");
-  }
-
-  return 1;
-}
-
 static int gotauthenticate(char *from, char *msg)
 {
   char src[256] = ""; // FIXME: size
@@ -1315,7 +1283,8 @@ static int got421(char *from, char *msg) {
   return 1;
 }
 
-static int gotcap(char *from, char *msg) {
+static int gotcap(char *from, char *msg)
+{
   char *cmd;
 
   newsplit(&msg);
@@ -1325,6 +1294,12 @@ static int gotcap(char *from, char *msg) {
   if (!strcmp(cmd, "LS")) {
     putlog(LOG_MISC, "*", "%s supports CAP sub-commands: %s", from, msg);
     strlcpy(cap.supported, msg, sizeof cap.supported);
+    for (cmd = newsplit(&msg); cmd[0]; cmd = newsplit(&msg)) {
+      if (!strcmp(cmd, "sasl")) {
+        putlog(LOG_SERV, "*", "SASL: CAP request sasl");
+        dprintf(DP_MODE, "CAP REQ :sasl\n");
+      }
+    }
   }
   else if (!strcmp(cmd, "LIST")) {
     putlog(LOG_MISC, "*", "Negotiated CAP capabilities: %s", msg);
@@ -1332,8 +1307,16 @@ static int gotcap(char *from, char *msg) {
   } else if (!strcmp(cmd, "ACK")) {
     putlog(LOG_MISC, "*", "%s acknowledged %s", from, msg);
     strncat(cap.negotiated, msg, (sizeof cap.negotiated - strlen(cap.negotiated) - 1));
+    for (cmd = newsplit(&msg); cmd[0]; cmd = newsplit(&msg)) {
+      if (!strcmp(cmd, "sasl")) {
+        putlog(LOG_SERV, "*", "SASL: put AUTHENTICATE %s", sasl_mechanism);
+        dprintf(DP_MODE, "AUTHENTICATE %s\n", sasl_mechanism);
+      }
+    }
+  } else if (cmd[0]) {
+    putlog(LOG_MISC, "*", "%s subcommand %s unknown, CAP END", from, cmd);
+    dprintf(DP_MODE, "CAP END\n");
   }
-  dprintf(DP_MODE, "CAP END");
   return 1;
 }
 
