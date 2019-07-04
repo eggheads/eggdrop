@@ -25,10 +25,12 @@
 #endif
 #include "../irc.mod/irc.h"
 #include "../channels.mod/channels.h"
+#include "server.h"
 
 static time_t last_ctcp = (time_t) 0L;
 static int count_ctcp = 0;
 static char altnick_char = 0;
+struct cap_list cap = {"", ""};  
 
 /* We try to change to a preferred unique nick here. We always first try the
  * specified alternate nick. If that failes, we repeatedly modify the nick
@@ -985,6 +987,8 @@ static void disconnect_server(int idx)
 {
   if (server_online > 0)
     check_tcl_event("disconnect-server");
+  strcpy(cap.supported, "");
+  strcpy(cap.negotiated, "");
   server_online = 0;
   if (realservername)
     nfree(realservername);
@@ -1292,6 +1296,47 @@ static int got465(char *from, char *msg)
   return 1;
 }
 
+static int got410(char *from, char *msg) {
+  char *cmd;
+
+  newsplit(&msg);
+ 
+  putlog(LOG_SERV, "*", "%s", msg);
+  cmd = newsplit(&msg);
+  putlog(LOG_MISC, "*", "CAP sub-command %s not supported", cmd);
+
+  return 1;
+}
+
+static int got421(char *from, char *msg) {
+  newsplit(&msg);
+  putlog(LOG_SERV, "*", "%s reported an error: %s", from, msg);
+
+  return 1;
+}
+
+static int gotcap(char *from, char *msg) {
+  char *cmd;
+
+  newsplit(&msg);
+  putlog(LOG_SERV, "*", "CAP: %s", msg);
+  cmd = newsplit(&msg);
+  fixcolon(msg);
+  if (!strcmp(cmd, "LS")) {
+    putlog(LOG_MISC, "*", "%s supports CAP sub-commands: %s", from, msg);
+    strlcpy(cap.supported, msg, sizeof cap.supported);
+  }
+  else if (!strcmp(cmd, "LIST")) {
+    putlog(LOG_MISC, "*", "Negotiated CAP capabilities: %s", msg);
+    strlcpy(cap.negotiated, msg, sizeof cap.negotiated);
+  } else if (!strcmp(cmd, "ACK")) {
+    putlog(LOG_MISC, "*", "%s acknowledged %s", from, msg);
+    strncat(cap.negotiated, msg, (sizeof cap.negotiated - strlen(cap.negotiated) - 1));
+  }
+  dprintf(DP_MODE, "CAP END");
+  return 1;
+}
+
 
 static cmd_t my_raw_binds[] = {
   {"PRIVMSG", "",   (IntFunc) gotmsg,       NULL},
@@ -1302,6 +1347,10 @@ static cmd_t my_raw_binds[] = {
   {"WALLOPS", "",   (IntFunc) gotwall,      NULL},
   {"001",     "",   (IntFunc) got001,       NULL},
   {"303",     "",   (IntFunc) got303,       NULL},
+  {"311",     "",   (IntFunc) got311,       NULL},
+  {"318",     "",   (IntFunc) whoispenalty, NULL},
+  {"410",     "",   (IntFunc) got410,       NULL},
+  {"421",     "",   (IntFunc) got421,       NULL},
   {"432",     "",   (IntFunc) got432,       NULL},
   {"433",     "",   (IntFunc) got433,       NULL},
   {"437",     "",   (IntFunc) got437,       NULL},
@@ -1318,8 +1367,6 @@ static cmd_t my_raw_binds[] = {
 /* ircu2.10.10 has a bug when a client is throttled ERROR is sent wrong */
   {"ERROR:",  "",   (IntFunc) goterror,     NULL},
   {"KICK",    "",   (IntFunc) gotkick,      NULL},
-  {"318",     "",   (IntFunc) whoispenalty, NULL},
-  {"311",     "",   (IntFunc) got311,       NULL},
   {"CAP",     "",   (IntFunc) gotcap,       NULL},
   {"AUTHENTICATE",     "",   (IntFunc) gotauthenticate,       NULL},
   {NULL,      NULL, NULL,                    NULL}
@@ -1474,6 +1521,9 @@ static void server_resolve_success(int servidx)
   strcpy(botname, origbotname);
   /* Start alternate nicks from the beginning */
   altnick_char = 0;
+  /* See if server supports CAP command */
+  dprintf(DP_MODE, "CAP LS");
+  /* TODO: check cap ls before sal/cap req ?! */
   if (sasl_mechanism[0]) {
     for (i = 0; i < strlen(sasl_mechanism); i++)
       sasl_mechanism[i] = toupper(sasl_mechanism[i]);

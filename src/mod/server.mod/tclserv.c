@@ -1,7 +1,7 @@
 /*
  * tclserv.c -- part of server.mod
- */
-/*
+ *
+ *
  * Copyright (C) 1997 Robey Pointer
  * Copyright (C) 1999 - 2019 Eggheads Development Team
  *
@@ -163,6 +163,30 @@ static int tcl_puthelp STDVAR
   return TCL_OK;
 }
 
+/* Tcl interface to send CAP messages to server */
+static int tcl_cap STDVAR {
+  char s[CAPMAX];
+  BADARGS(2, 3, " sub-cmd ?arg?");
+
+  simple_sprintf(s, "CAP requires a sub-command");
+  if (!strcasecmp(argv[1], "-list")) {
+    Tcl_AppendResult(irp, cap.supported, NULL);
+    return TCL_OK;
+  } else if (!strcasecmp(argv[1], "-active")) {
+    Tcl_AppendResult(irp, cap.negotiated, NULL);
+    return TCL_OK;
+  }
+  if (argc == 2) {
+    simple_sprintf(s, "CAP %s", argv[1]);
+  }
+  else if (argc == 3) {
+    simple_sprintf(s, "CAP %s %s", argv[1], argv[2]);
+  }
+  dprintf(DP_SERVER, "%s\n", s);
+  return TCL_OK;
+}
+
+
 static int tcl_jump STDVAR
 {
   BADARGS(1, 4, " ?server? ?port? ?pass?");
@@ -311,6 +335,7 @@ static int tcl_queuesize STDVAR
 
 static tcl_cmds my_tcl_cmds[] = {
   {"jump",       tcl_jump},
+  {"cap",        tcl_cap},
   {"isbotnick",  tcl_isbotnick},
   {"clearqueue", tcl_clearqueue},
   {"queuesize",  tcl_queuesize},
