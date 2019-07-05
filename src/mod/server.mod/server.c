@@ -1818,7 +1818,7 @@ static void server_report(int idx, int details)
     dprintf(idx, "    %s %d%% (%d msgs)\n", IRC_HELPQUEUE,
             (int) ((float) (hq.tot * 100.0) / (float) maxqmsg), (int) hq.tot);
   if (cap.negotiated)
-    dprintf(idx, "      Active CAP negotiations: %s\n", cap.negotiated);
+    dprintf(idx, "      Active CAP negotiations: %s\n", *cap.negotiated);
 
   if (details) {
     int size = server_expmem();

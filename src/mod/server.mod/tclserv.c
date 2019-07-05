@@ -1,7 +1,6 @@
 /*
  * tclserv.c -- part of server.mod
  *
- *
  * Copyright (C) 1997 Robey Pointer
  * Copyright (C) 1999 - 2019 Eggheads Development Team
  *
