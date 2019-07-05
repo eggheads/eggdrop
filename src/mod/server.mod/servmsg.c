@@ -30,7 +30,7 @@ static char altnick_char = 0;
 struct cap_list cap = {"", ""};  
 
 /* We try to change to a preferred unique nick here. We always first try the
- * specified alternate nick. If that failes, we repeatedly modify the nick
+ * specified alternate nick. If that fails, we repeatedly modify the nick
  * until it gets accepted.
  *
  * sent nick:
@@ -39,7 +39,7 @@ struct cap_list cap = {"", ""};
  *          ^--------- given, alternate nick
  *
  * The last added character is always saved in altnick_char. At the very first
- * attempt (were altnick_char is 0), we try the alternate nick without any
+ * attempt (where altnick_char is 0), we try the alternate nick without any
  * additions.
  *
  * fixed by guppy (1999/02/24) and Fabian (1999/11/26)
