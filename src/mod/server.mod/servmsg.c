@@ -1152,6 +1152,9 @@ static int got465(char *from, char *msg)
   return 1;
 }
 
+/*
+ * Invalid CAP command
+ */
 static int got410(char *from, char *msg) {
   char *cmd;
 
@@ -1371,9 +1374,9 @@ static void server_resolve_success(int servidx)
   strcpy(botname, origbotname);
   /* Start alternate nicks from the beginning */
   altnick_char = 0;
+  check_tcl_event("preinit-server");
   /* See if server supports CAP command */
   dprintf(DP_MODE, "CAP LS");
-  check_tcl_event("preinit-server");
   if (pass[0])
     dprintf(DP_MODE, "PASS %s\n", pass);
   dprintf(DP_MODE, "NICK %s\n", botname);
