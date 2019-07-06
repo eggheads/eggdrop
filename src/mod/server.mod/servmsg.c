@@ -1209,11 +1209,17 @@ static int gotcap(char *from, char *msg) {
     putlog(LOG_SERV, "*", "CAP: Negotiated CAP capabilities: %s", msg);
     strlcpy(cap.negotiated, msg, sizeof cap.negotiated);
   } else if (!strcmp(cmd, "ACK")) {
-    putlog(LOG_MISC, "*", "CAP: Successfully negotiated %s with %s", msg, from);
-    strncat(cap.negotiated, msg, (sizeof cap.negotiated -
-        strlen(cap.negotiated) - 1));
-    if (strstr(cap.negotiated, "sasl") != NULL) {
-      putlog(LOG_MISC, "*", "SASL AUTH CALL GOES HERE!");   //TODO
+    if (msg[0] == '-') {
+      msg++;
+      putlog (LOG_MISC, "*", "CAP: Successfully disabled %s with %s", msg, from); 
+      //TODO Remove from .negotiated
+    } else {
+      putlog(LOG_MISC, "*", "CAP: Successfully negotiated %s with %s", msg, from);
+      strncat(cap.negotiated, msg, (sizeof cap.negotiated -
+          strlen(cap.negotiated) - 1));
+      if (strstr(cap.negotiated, "sasl") != NULL) {
+        putlog(LOG_MISC, "*", "SASL AUTH CALL GOES HERE!");   //TODO
+      }
     }
     dprintf(DP_MODE, "CAP END");
   } else if (!strcmp(cmd, "NAK")) {

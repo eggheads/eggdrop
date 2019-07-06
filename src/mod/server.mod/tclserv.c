@@ -179,7 +179,7 @@ static int tcl_cap STDVAR {
     simple_sprintf(s, "CAP %s", argv[1]);
   }
   else if (argc == 3) {
-    simple_sprintf(s, "CAP %s %s", argv[1], argv[2]);
+    simple_sprintf(s, "CAP %s :%s", argv[1], argv[2]);
   }
   dprintf(DP_SERVER, "%s\n", s);
   return TCL_OK;
