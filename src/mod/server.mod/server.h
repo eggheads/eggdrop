@@ -101,9 +101,9 @@ struct server_list {
 };
 
 typedef struct cap_list {
-  char supported[CAPMAX];
-  char negotiated[CAPMAX];
-  char desired[CAPMAX];
+  char supported[CAPMAX];   /* Capes supportd by IRCD                   */
+  char negotiated[CAPMAX];  /* Common capes between IRCD and client     */
+  char desired[CAPMAX];     /* Capes Eggdrop wants to request from IRCD */
 } cap_list;
 
 extern struct cap_list cap;

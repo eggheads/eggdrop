@@ -122,7 +122,7 @@ static int stack_limit;
 static char *realservername;
 
 static int sasl = 0;
-static int account_notify = 1;
+static int account_notify = 0; //TODO Remove after testing
 
 #include "servmsg.c"
 
@@ -1822,8 +1822,8 @@ static void server_report(int idx, int details)
   if (hq.tot)
     dprintf(idx, "    %s %d%% (%d msgs)\n", IRC_HELPQUEUE,
             (int) ((float) (hq.tot * 100.0) / (float) maxqmsg), (int) hq.tot);
-  if (cap.negotiated)
-    dprintf(idx, "      Active CAP negotiations: %s\n", *cap.negotiated);
+  dprintf(idx, "    Active CAP negotiations: %s\n", (strlen(cap.negotiated) > 0) ?
+            cap.negotiated : "None" );
 
   if (details) {
     int size = server_expmem();

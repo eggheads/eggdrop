@@ -1181,7 +1181,7 @@ void create_cap_req(char *cap_list) {
   if (sasl) {
     strncat(cap_list, "sasl ", (CAPMAX - strlen(cap_list) - 1));
   }
-  if (account_notify) {
+  if (account_notify) { //TODO Remove after testing, or add it for real...
     strncat(cap_list, "account-notify ", (CAPMAX - strlen(cap_list) - 1));
   }
 }
@@ -1191,7 +1191,7 @@ static int gotcap(char *from, char *msg) {
 
   newsplit(&msg);
   create_cap_req(cap.desired);
-  putlog(LOG_SERV, "*", "CAP: %s", msg);
+  putlog(LOG_DEBUG, "*", "CAP: %s", msg);
   cmd = newsplit(&msg);
   fixcolon(msg);
   if (!strcmp(cmd, "LS")) {
@@ -1199,16 +1199,32 @@ static int gotcap(char *from, char *msg) {
     putlog(LOG_DEBUG, "*", "CAP: Eggdrop desired capabilities: %s", cap.desired);
     strlcpy(cap.supported, msg, sizeof cap.supported);
 //    putlog(LOG_SERV, "*" "CAP: Requesting foo");    <-- TODO: only request available capes
-    dprintf(DP_MODE, "CAP REQ :%s", cap.desired);
+    if (strlen(cap.desired) > 0) {
+      dprintf(DP_MODE, "CAP REQ :%s", cap.desired);
+    } else {
+      dprintf(DP_MODE, "CAP END");
+    }
   }
   else if (!strcmp(cmd, "LIST")) {
-    putlog(LOG_MISC, "*", "CAP: Negotiated CAP capabilities: %s", msg);
+    putlog(LOG_SERV, "*", "CAP: Negotiated CAP capabilities: %s", msg);
     strlcpy(cap.negotiated, msg, sizeof cap.negotiated);
   } else if (!strcmp(cmd, "ACK")) {
     putlog(LOG_MISC, "*", "CAP: Successfully negotiated %s with %s", msg, from);
-    strncat(cap.negotiated, msg, (sizeof cap.negotiated - strlen(cap.negotiated) - 1));
+    strncat(cap.negotiated, msg, (sizeof cap.negotiated -
+        strlen(cap.negotiated) - 1));
+    if (strstr(cap.negotiated, "sasl") != NULL) {
+      putlog(LOG_MISC, "*", "SASL AUTH CALL GOES HERE!");   //TODO
+    }
+    dprintf(DP_MODE, "CAP END");
+  } else if (!strcmp(cmd, "NAK")) {
+    putlog(LOG_SERV, "*", "CAP: Requested capability change %s rejected by %s",
+        msg, from);
+    dprintf(DP_MODE, "CAP END");    /* TODO: Handle whatever caused it to reject? */
+  } else if (!strcmp(cmd, "NEW")) {  //TODO: CAP 302 stuff?
+    // Do things
+  } else if (!strcmp(cmd, "DEL")) { // TODO: CAP 302 stuff?
+    // Do thigs
   }
-  dprintf(DP_MODE, "CAP END");
   return 1;
 }
 
