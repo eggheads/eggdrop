@@ -121,6 +121,9 @@ static void msgq_clear(struct msgq_head *qh);
 static int stack_limit;
 static char *realservername;
 
+static int sasl = 0;
+static int account_notify = 1;
+
 #include "servmsg.c"
 
 #define MAXPENALTY 10
@@ -1425,6 +1428,8 @@ static tcl_ints my_tcl_ints[] = {
 #ifdef TLS
   {"ssl-verify-server", &tls_vfyserver,             0},
 #endif
+  {"sasl",              &sasl,                      0},
+  {"account-notify",    &account_notify,            0},
   {NULL,                NULL,                       0}
 };
 

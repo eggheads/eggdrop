@@ -27,7 +27,7 @@
 static time_t last_ctcp = (time_t) 0L;
 static int count_ctcp = 0;
 static char altnick_char = 0;
-struct cap_list cap = {"", ""};  
+struct cap_list cap = {"", "", ""};
 
 /* We try to change to a preferred unique nick here. We always first try the
  * specified alternate nick. If that fails, we repeatedly modify the nick
@@ -1174,28 +1174,43 @@ static int got421(char *from, char *msg) {
   return 1;
 }
 
+/*
+ * Smash CAP requests into a one-liner to send to server
+ */
+void create_cap_req(char *cap_list) {
+  if (sasl) {
+    strncat(cap_list, "sasl ", (CAPMAX - strlen(cap_list) - 1));
+  }
+  if (account_notify) {
+    strncat(cap_list, "account-notify ", (CAPMAX - strlen(cap_list) - 1));
+  }
+}
+
 static int gotcap(char *from, char *msg) {
   char *cmd;
 
   newsplit(&msg);
+  create_cap_req(cap.desired);
   putlog(LOG_SERV, "*", "CAP: %s", msg);
   cmd = newsplit(&msg);
   fixcolon(msg);
   if (!strcmp(cmd, "LS")) {
-    putlog(LOG_MISC, "*", "%s supports CAP sub-commands: %s", from, msg);
+    putlog(LOG_SERV, "*", "CAP: %s supports CAP sub-commands: %s", from, msg);
+    putlog(LOG_DEBUG, "*", "CAP: Eggdrop desired capabilities: %s", cap.desired);
     strlcpy(cap.supported, msg, sizeof cap.supported);
+//    putlog(LOG_SERV, "*" "CAP: Requesting foo");    <-- TODO: only request available capes
+    dprintf(DP_MODE, "CAP REQ :%s", cap.desired);
   }
   else if (!strcmp(cmd, "LIST")) {
-    putlog(LOG_MISC, "*", "Negotiated CAP capabilities: %s", msg);
+    putlog(LOG_MISC, "*", "CAP: Negotiated CAP capabilities: %s", msg);
     strlcpy(cap.negotiated, msg, sizeof cap.negotiated);
   } else if (!strcmp(cmd, "ACK")) {
-    putlog(LOG_MISC, "*", "%s acknowledged %s", from, msg);
+    putlog(LOG_MISC, "*", "CAP: Successfully negotiated %s with %s", msg, from);
     strncat(cap.negotiated, msg, (sizeof cap.negotiated - strlen(cap.negotiated) - 1));
   }
   dprintf(DP_MODE, "CAP END");
   return 1;
 }
-
 
 static cmd_t my_raw_binds[] = {
   {"PRIVMSG", "",   (IntFunc) gotmsg,       NULL},

@@ -103,6 +103,7 @@ struct server_list {
 typedef struct cap_list {
   char supported[CAPMAX];
   char negotiated[CAPMAX];
+  char desired[CAPMAX];
 } cap_list;
 
 extern struct cap_list cap;
