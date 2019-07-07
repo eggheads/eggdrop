@@ -28,6 +28,8 @@ static time_t last_ctcp = (time_t) 0L;
 static int count_ctcp = 0;
 static char altnick_char = 0;
 struct cap_list cap = {"", "", ""};
+char capes[64][32] = { 0 };
+
 
 /* We try to change to a preferred unique nick here. We always first try the
  * specified alternate nick. If that fails, we repeatedly modify the nick
@@ -1175,30 +1177,63 @@ static int got421(char *from, char *msg) {
 }
 
 /*
- * Smash CAP requests into a one-liner to send to server
+ * Helper function to add CAP capability to next empty array slot
  */
-void create_cap_req(char *cap_list) {
+void add_cape(char *cape) {
+  int i = 0;
+  for (i = 0; i < (sizeof capes / sizeof capes[0]); i++) {
+    if (!strlen(capes[i])) {
+      strlcpy(capes[i], cape, sizeof capes[0]);
+      break;
+    }
+  }
+}
+
+/*
+ * Add desired CAP requests to an array for easier parsing against supported
+ * server capabilities later on
+ */
+void create_cap_req() {
   if (sasl) {
-    strncat(cap_list, "sasl ", (CAPMAX - strlen(cap_list) - 1));
+    add_cape("sasl");
   }
   if (account_notify) { //TODO Remove after testing, or add it for real...
-    strncat(cap_list, "account-notify ", (CAPMAX - strlen(cap_list) - 1));
+    add_cape("account-notify");
+  }
+  if (foober) {
+    add_cape("foober");
   }
 }
 
 static int gotcap(char *from, char *msg) {
   char *cmd;
+  int i = 0, found = 0;
 
   newsplit(&msg);
-  create_cap_req(cap.desired);
+  create_cap_req();
   putlog(LOG_DEBUG, "*", "CAP: %s", msg);
   cmd = newsplit(&msg);
   fixcolon(msg);
   if (!strcmp(cmd, "LS")) {
     putlog(LOG_SERV, "*", "CAP: %s supports CAP sub-commands: %s", from, msg);
-    putlog(LOG_DEBUG, "*", "CAP: Eggdrop desired capabilities: %s", cap.desired);
     strlcpy(cap.supported, msg, sizeof cap.supported);
-//    putlog(LOG_SERV, "*" "CAP: Requesting foo");    <-- TODO: only request available capes
+    /* Check each desired cape against supported capes on server */
+    for (i = 0; i < (sizeof capes / sizeof capes[0]); i++) {
+      found = 0;
+      if (strlen(capes[i])) {
+        if (strstr(cap.supported, capes[i])) {
+          found = 1;
+        }
+        if (found) {
+          strncat(cap.desired, capes[i], (CAPMAX - strlen(cap.desired) - 1));
+          strncat(cap.desired, " ", (CAPMAX - strlen(cap.desired) - 1));
+        } else {
+          putlog(LOG_DEBUG, "*","CAP: desired capability %s not supported " 
+              "on %s, removing from request...", capes[i], from);
+        }
+      }
+    }
+    putlog(LOG_DEBUG, "*", "CAP: Eggdrop desired capabilities: %s", cap.desired);
     if (strlen(cap.desired) > 0) {
       dprintf(DP_MODE, "CAP REQ :%s", cap.desired);
     } else {

@@ -123,6 +123,7 @@ static char *realservername;
 
 static int sasl = 0;
 static int account_notify = 0; //TODO Remove after testing
+static int foober = 1;
 
 #include "servmsg.c"
 
