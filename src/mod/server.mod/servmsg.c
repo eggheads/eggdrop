@@ -1206,8 +1206,8 @@ void create_cap_req() {
 }
 
 static int gotcap(char *from, char *msg) {
-  char *cmd;
-  int i = 0, found = 0;
+  char *cmd, match;
+  int len, i = 0, found = 0;
 
   newsplit(&msg);
   create_cap_req();
@@ -1224,7 +1224,7 @@ static int gotcap(char *from, char *msg) {
         if (strstr(cap.supported, capes[i])) {
           found = 1;
         }
-        if (found) {
+        if (found) {    /* Add to REQ list string to send to server */
           strncat(cap.desired, capes[i], (CAPMAX - strlen(cap.desired) - 1));
           strncat(cap.desired, " ", (CAPMAX - strlen(cap.desired) - 1));
         } else {
@@ -1246,14 +1246,18 @@ static int gotcap(char *from, char *msg) {
   } else if (!strcmp(cmd, "ACK")) {
     if (msg[0] == '-') {
       msg++;
-      putlog (LOG_MISC, "*", "CAP: Successfully disabled %s with %s", msg, from); 
-      //TODO Remove from .negotiated
+      len = strlen(msg);    /* Remove capability from .negotiated list */
+      while ((match = strstr(cap.negotiated, msg))) {
+        *match = '\0';
+        strcat(cap.negotiated, match+len);
+      }
+      putlog (LOG_SERV, "*", "CAP: Successfully disabled %s with %s", msg, from);
     } else {
-      putlog(LOG_MISC, "*", "CAP: Successfully negotiated %s with %s", msg, from);
+      putlog(LOG_SERV, "*", "CAP: Successfully negotiated %s with %s", msg, from);
       strncat(cap.negotiated, msg, (sizeof cap.negotiated -
           strlen(cap.negotiated) - 1));
       if (strstr(cap.negotiated, "sasl") != NULL) {
-        putlog(LOG_MISC, "*", "SASL AUTH CALL GOES HERE!");   //TODO
+        putlog(LOG_SERV, "*", "SASL AUTH CALL GOES HERE!");   //TODO
       }
     }
     dprintf(DP_MODE, "CAP END");
