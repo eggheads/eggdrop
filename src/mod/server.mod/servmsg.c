@@ -1206,7 +1206,7 @@ void create_cap_req() {
 }
 
 static int gotcap(char *from, char *msg) {
-  char *cmd, match;
+  char *cmd, *match;
   int len, i = 0, found = 0;
 
   newsplit(&msg);
