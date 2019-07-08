@@ -1207,24 +1207,20 @@ void create_cap_req() {
 
 static int gotcap(char *from, char *msg) {
   char *cmd, *match;
-  int len, i = 0, found = 0;
+  int len, i = 0;
 
   newsplit(&msg);
-  create_cap_req();
   putlog(LOG_DEBUG, "*", "CAP: %s", msg);
   cmd = newsplit(&msg);
   fixcolon(msg);
   if (!strcmp(cmd, "LS")) {
-    putlog(LOG_SERV, "*", "CAP: %s supports CAP sub-commands: %s", from, msg);
+    putlog(LOG_DEBUG, "*", "CAP: %s supports CAP sub-commands: %s", from, msg);
     strlcpy(cap.supported, msg, sizeof cap.supported);
+    create_cap_req();
     /* Check each desired cape against supported capes on server */
     for (i = 0; i < (sizeof capes / sizeof capes[0]); i++) {
-      found = 0;
       if (strlen(capes[i])) {
         if (strstr(cap.supported, capes[i])) {
-          found = 1;
-        }
-        if (found) {    /* Add to REQ list string to send to server */
           strncat(cap.desired, capes[i], (CAPMAX - strlen(cap.desired) - 1));
           strncat(cap.desired, " ", (CAPMAX - strlen(cap.desired) - 1));
         } else {
@@ -1233,14 +1229,13 @@ static int gotcap(char *from, char *msg) {
         }
       }
     }
-    putlog(LOG_DEBUG, "*", "CAP: Eggdrop desired capabilities: %s", cap.desired);
+    putlog(LOG_DEBUG, "*", "CAP: Requesting %s capabilities from server", cap.desired);
     if (strlen(cap.desired) > 0) {
       dprintf(DP_MODE, "CAP REQ :%s", cap.desired);
     } else {
       dprintf(DP_MODE, "CAP END");
     }
-  }
-  else if (!strcmp(cmd, "LIST")) {
+  } else if (!strcmp(cmd, "LIST")) {
     putlog(LOG_SERV, "*", "CAP: Negotiated CAP capabilities: %s", msg);
     strlcpy(cap.negotiated, msg, sizeof cap.negotiated);
   } else if (!strcmp(cmd, "ACK")) {
@@ -1251,12 +1246,16 @@ static int gotcap(char *from, char *msg) {
         *match = '\0';
         strcat(cap.negotiated, match+len);
       }
-      putlog (LOG_SERV, "*", "CAP: Successfully disabled %s with %s", msg, from);
+      putlog (LOG_SERV, "*", "CAP: Disabled %s with %s", msg, from);
     } else {
       putlog(LOG_SERV, "*", "CAP: Successfully negotiated %s with %s", msg, from);
-      strncat(cap.negotiated, msg, (sizeof cap.negotiated -
-          strlen(cap.negotiated) - 1));
-      if (strstr(cap.negotiated, "sasl") != NULL) {
+      if (!strstr(cap.negotiated, msg)) {  //TODO break apart msg in case multiple capes requeseted at once
+        strncat(cap.negotiated, msg, (sizeof cap.negotiated -
+            strlen(cap.negotiated) - 1));
+      }
+      /* If a negotiated capability requires immediate action by Eggdrop,
+       * add it here                                                   */
+      if (strstr(msg, "sasl") != NULL) {
         putlog(LOG_SERV, "*", "SASL AUTH CALL GOES HERE!");   //TODO
       }
     }
