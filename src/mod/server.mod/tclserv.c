@@ -1,7 +1,6 @@
 /*
  * tclserv.c -- part of server.mod
  *
- *
  * Copyright (C) 1997 Robey Pointer
  * Copyright (C) 1999 - 2019 Eggheads Development Team
  *
@@ -180,7 +179,7 @@ static int tcl_cap STDVAR {
     simple_sprintf(s, "CAP %s", argv[1]);
   }
   else if (argc == 3) {
-    simple_sprintf(s, "CAP %s %s", argv[1], argv[2]);
+    simple_sprintf(s, "CAP %s :%s", argv[1], argv[2]);
   }
   dprintf(DP_SERVER, "%s\n", s);
   return TCL_OK;

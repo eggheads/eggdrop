@@ -30,10 +30,12 @@
 static time_t last_ctcp = (time_t) 0L;
 static int count_ctcp = 0;
 static char altnick_char = 0;
-struct cap_list cap = {"", ""};  
+struct cap_list cap = {"", "", ""};
+char capes[64][32] = { 0 };
+
 
 /* We try to change to a preferred unique nick here. We always first try the
- * specified alternate nick. If that failes, we repeatedly modify the nick
+ * specified alternate nick. If that fails, we repeatedly modify the nick
  * until it gets accepted.
  *
  * sent nick:
@@ -42,7 +44,7 @@ struct cap_list cap = {"", ""};
  *          ^--------- given, alternate nick
  *
  * The last added character is always saved in altnick_char. At the very first
- * attempt (were altnick_char is 0), we try the alternate nick without any
+ * attempt (where altnick_char is 0), we try the alternate nick without any
  * additions.
  *
  * fixed by guppy (1999/02/24) and Fabian (1999/11/26)
@@ -1264,6 +1266,9 @@ static int got465(char *from, char *msg)
   return 1;
 }
 
+/*
+ * Invalid CAP command
+ */
 static int got410(char *from, char *msg) {
   char *cmd;
 
@@ -1283,43 +1288,113 @@ static int got421(char *from, char *msg) {
   return 1;
 }
 
-static int gotcap(char *from, char *msg)
-{
-  char *cmd;
+/*
+ * Helper function to add CAP capability to next empty array slot
+ */
+void add_cape(char *cape) {
+  int i = 0;
+  for (i = 0; i < (sizeof capes / sizeof capes[0]); i++) {
+    if (!strlen(capes[i])) {
+      strlcpy(capes[i], cape, sizeof capes[0]);
+      break;
+    }
+  }
+}
+
+/*
+ * Add desired CAP requests to an array for easier parsing against supported
+ * server capabilities later on
+ */
+void create_cap_req() {
+  if (sasl) {
+    add_cape("sasl");
+  }
+  if (account_notify) { //TODO Remove after testing, or add it for real...
+    add_cape("account-notify");
+  }
+  if (foober) {
+    add_cape("foober");
+  }
+}
+
+static int gotcap(char *from, char *msg) {
+  char *cmd, *match;
+  int len, i = 0;
 
   newsplit(&msg);
-  putlog(LOG_SERV, "*", "CAP: %s", msg);
+  putlog(LOG_DEBUG, "*", "CAP: %s", msg);
   cmd = newsplit(&msg);
   fixcolon(msg);
   if (!strcmp(cmd, "LS")) {
-    putlog(LOG_MISC, "*", "%s supports CAP sub-commands: %s", from, msg);
+    putlog(LOG_DEBUG, "*", "CAP: %s supports CAP sub-commands: %s", from, msg);
     strlcpy(cap.supported, msg, sizeof cap.supported);
-    for (cmd = newsplit(&msg); cmd[0]; cmd = newsplit(&msg)) {
-      if (!strcmp(cmd, "sasl")) {
-        putlog(LOG_SERV, "*", "SASL: CAP request sasl");
-        dprintf(DP_MODE, "CAP REQ :sasl\n");
+    create_cap_req();
+    /* Check each desired cape against supported capes on server */
+    for (i = 0; i < (sizeof capes / sizeof capes[0]); i++) {
+      if (strlen(capes[i])) {
+        if (strstr(cap.supported, capes[i])) {
+          strncat(cap.desired, capes[i], (CAPMAX - strlen(cap.desired) - 1));
+          strncat(cap.desired, " ", (CAPMAX - strlen(cap.desired) - 1));
+        } else {
+          putlog(LOG_DEBUG, "*","CAP: desired capability %s not supported " 
+              "on %s, removing from request...", capes[i], from);
+        }
       }
     }
-  }
-  else if (!strcmp(cmd, "LIST")) {
-    putlog(LOG_MISC, "*", "Negotiated CAP capabilities: %s", msg);
+    putlog(LOG_DEBUG, "*", "CAP: Requesting %s capabilities from server", cap.desired);
+    if (strlen(cap.desired) > 0) {
+      dprintf(DP_MODE, "CAP REQ :%s", cap.desired);
+    } else {
+      dprintf(DP_MODE, "CAP END");
+    }
+  } else if (!strcmp(cmd, "LIST")) {
+    putlog(LOG_SERV, "*", "CAP: Negotiated CAP capabilities: %s", msg);
     strlcpy(cap.negotiated, msg, sizeof cap.negotiated);
   } else if (!strcmp(cmd, "ACK")) {
-    putlog(LOG_MISC, "*", "%s acknowledged %s", from, msg);
-    strncat(cap.negotiated, msg, (sizeof cap.negotiated - strlen(cap.negotiated) - 1));
-    for (cmd = newsplit(&msg); cmd[0]; cmd = newsplit(&msg)) {
-      if (!strcmp(cmd, "sasl")) {
+    if (msg[0] == '-') {
+      msg++;
+      len = strlen(msg);    /* Remove capability from .negotiated list */
+      while ((match = strstr(cap.negotiated, msg))) {
+        *match = '\0';
+        strcat(cap.negotiated, match+len);
+      }
+      putlog (LOG_SERV, "*", "CAP: Disabled %s with %s", msg, from);
+    } else {
+      putlog(LOG_SERV, "*", "CAP: Successfully negotiated %s with %s", msg, from);
+      if (!strstr(cap.negotiated, msg)) {  //TODO break apart msg in case multiple capes requeseted at once
+        strncat(cap.negotiated, msg, (sizeof cap.negotiated -
+            strlen(cap.negotiated) - 1));
+      }
+      /* If a negotiated capability requires immediate action by Eggdrop,
+       * add it here                                                   */
+      if (strstr(msg, "sasl") != NULL) {
+        /* TODO: check the following old code, which seems to say, that maybe
+         * cap request for sasl should / must not be sent under following
+         * conditions:
+        if (sasl_mechanism[0]) {
+          for (i = 0; i < strlen(sasl_mechanism); i++)
+            sasl_mechanism[i] = toupper(sasl_mechanism[i]);
+          if (HAVE_OPENSSL_SSL_H || strncmp(sasl_mechanism,
+              "ECDSA-NIST256P-CHALLENGE", strlen("ECDSA-NIST256P-CHALLENGE"))) {
+            putlog(LOG_SERV, "*", "CAP: put CAP REQ :sasl");
+            dprintf(DP_MODE, "CAP REQ :sasl\n");
+        */
         putlog(LOG_SERV, "*", "SASL: put AUTHENTICATE %s", sasl_mechanism);
         dprintf(DP_MODE, "AUTHENTICATE %s\n", sasl_mechanism);
       }
     }
-  } else if (cmd[0]) {
-    putlog(LOG_MISC, "*", "%s subcommand %s unknown, CAP END", from, cmd);
-    dprintf(DP_MODE, "CAP END\n");
+    dprintf(DP_MODE, "CAP END");
+  } else if (!strcmp(cmd, "NAK")) {
+    putlog(LOG_SERV, "*", "CAP: Requested capability change %s rejected by %s",
+        msg, from);
+    dprintf(DP_MODE, "CAP END");    /* TODO: Handle whatever caused it to reject? */
+  } else if (!strcmp(cmd, "NEW")) {  //TODO: CAP 302 stuff?
+    // Do things
+  } else if (!strcmp(cmd, "DEL")) { // TODO: CAP 302 stuff?
+    // Do thigs
   }
   return 1;
 }
-
 
 static cmd_t my_raw_binds[] = {
   {"PRIVMSG", "",   (IntFunc) gotmsg,       NULL},
@@ -1460,7 +1535,6 @@ static void server_resolve_failure(int servidx)
 static void server_resolve_success(int servidx)
 {
   char pass[121];
-  int i;
 
   resolvserv = 0;
   strlcpy(pass, dcc[servidx].u.dns->cbuf, sizeof pass);
@@ -1504,24 +1578,9 @@ static void server_resolve_success(int servidx)
   strcpy(botname, origbotname);
   /* Start alternate nicks from the beginning */
   altnick_char = 0;
+  check_tcl_event("preinit-server");
   /* See if server supports CAP command */
   dprintf(DP_MODE, "CAP LS");
-  /* TODO: check cap ls before sal/cap req ?! now thatg cap ls is send..
-   * gotcap() is async i guess? how does the following code knows, if cap ls
-   * was successful or not, we dont want to wait on anything.
-   * i guess solution is to move the sasl code from here into a function
-   * triggered by gotcap()
-   */
-  if (sasl_mechanism[0]) {
-    for (i = 0; i < strlen(sasl_mechanism); i++)
-      sasl_mechanism[i] = toupper(sasl_mechanism[i]);
-    if (HAVE_OPENSSL_SSL_H || strncmp(sasl_mechanism,
-        "ECDSA-NIST256P-CHALLENGE", strlen("ECDSA-NIST256P-CHALLENGE"))) {
-      putlog(LOG_SERV, "*", "CAP: put CAP REQ :sasl");
-      dprintf(DP_MODE, "CAP REQ :sasl\n");
-    }
-  }
-  check_tcl_event("preinit-server");
   if (pass[0])
     dprintf(DP_MODE, "PASS %s\n", pass);
   dprintf(DP_MODE, "NICK %s\n", botname);

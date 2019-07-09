@@ -59,7 +59,6 @@
 #define UHOSTMAX    291 + NICKMAX /* 32 (ident) + 3 (\0, !, @) + NICKMAX */
 #define DIRMAX      512           /* paranoia                            */
 #define LOGLINEMAX  767           /* for misc.c/putlog() <cybah>         */
-#define CAPMAX      1024           /* Arbitrary CAP list string max      */
 
 /* Invalid characters */
 #define BADNICKCHARS "-,+*=:!.@#;$%&"
