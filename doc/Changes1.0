@@ -151,7 +151,7 @@ Eggdrop Changes (since version 0.9)
     Patch by: cmwagner
 
   - 437 numeric (nickname/channel is juped) has been changed to reflect
-    whether it is specfically the channel or the nickname, bot will not
+    whether it is specifically the channel or the nickname, bot will not
     change nicknames if the channel is juped :)
     Found by: Ernst / Patch by: Robey
 
@@ -453,7 +453,7 @@ Eggdrop Changes (since version 0.9)
   - Access check removed from filedb (not all OS's understand it)
 
   - Bogus bans/channel keys weren't queueing correctly (could cause
-    inadvertant flood) (fixed)
+    inadvertent flood) (fixed)
     Found by: coolio
 
   - 'die' Tcl command added
@@ -886,7 +886,7 @@ Eggdrop Changes (since version 0.9)
     Patch by: cmwagner
 
   - New 'note' binding to have the bot do special actions when a note is
-    received for a particular (possibly non-existant) user
+    received for a particular (possibly non-existent) user
 
   - Don't set console default to '*' for dcc users on a limbo bot when there
     are channels defined
@@ -943,7 +943,7 @@ Eggdrop Changes (since version 0.9)
     buffer (fixed)
     Patch by: Gilles d'Andrea, cmwagner
 
-  - Made lots of dangerous and slightly incompatable changes to the way bans
+  - Made lots of dangerous and slightly incompatible changes to the way bans
     are stored and created
 
   - New team of Tcl commands to add/remove bans (more flexible)
@@ -951,7 +951,7 @@ Eggdrop Changes (since version 0.9)
   - List returned by Tcl 'banlist' contains extra element: creator of the
     ban
 
-  - Similar dangerous and incompatable changes to the ignore list (a comment
+  - Similar dangerous and incompatible changes to the ignore list (a comment
     and timestamp are now stored)
 
   - New Tcl 'ignorelist' similar to 'banlist'
@@ -1758,7 +1758,7 @@ Eggdrop Changes (since version 0.9)
 
   - '.debug' shows abridged socket table
 
-  - '-nt' mode was leaving you on a screwy nonexistant channel (fixed)
+  - '-nt' mode was leaving you on a screwy nonexistent channel (fixed)
 
   - Lame -v option
 
@@ -1844,7 +1844,7 @@ Eggdrop Changes (since version 0.9)
   - Small fix to quesedilla
     Patch by: Gord-
 
-  - Dropped relay connections weren't REALLY reseting echo (fixed)
+  - Dropped relay connections weren't REALLY resetting echo (fixed)
     Found by: imoq
 
   - 'rehash' saves the user file first before reloading it -- new command
@@ -2123,7 +2123,7 @@ Eggdrop Changes (since version 0.9)
 
   - Added 'save-users-at' and 'switch-logfiles-at' timing options
 
-  - Killed forked processes were giving "unforseen error 234" (fixed)
+  - Killed forked processes were giving "unforeseen error 234" (fixed)
     Found by: plof
 
   - 'putbot' wasn't up to speed (fixed)
@@ -2279,7 +2279,7 @@ Eggdrop Changes (since version 0.9)
 
   - Added 'save-users-at' and 'switch-logfiles-at' timing options
 
-  - Killed forked processes were giving "unforseen error 234" (fixed)
+  - Killed forked processes were giving "unforeseen error 234" (fixed)
     Found by: plof
 
   - 'putbot' wasn't up to speed (fixed)

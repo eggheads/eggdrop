@@ -28,7 +28,7 @@ static int count_ctcp = 0;
 static char altnick_char = 0;
 
 /* We try to change to a preferred unique nick here. We always first try the
- * specified alternate nick. If that failes, we repeatedly modify the nick
+ * specified alternate nick. If that fails, we repeatedly modify the nick
  * until it gets accepted.
  *
  * sent nick:

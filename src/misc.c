@@ -1173,7 +1173,7 @@ FILE *resolve_help(int dcc, char *file)
   struct help_ref *current;
   struct help_list_t *item;
 
-  /* Somewhere here goes the eventual substituation */
+  /* Somewhere here goes the eventual substitution */
   if (!(dcc & HELP_TEXT)) {
     for (current = help_list; current; current = current->next)
       for (item = current->first; item; item = item->next)
