@@ -1225,7 +1225,7 @@ static int got900(char *from, char *msg)
   return 1;
 }
 
-static int got903(char *from, char *msg)
+static int got903and904(char *from, char *msg)
 {
   newsplit(&msg); /* nick */
   fixcolon(msg);
@@ -1234,16 +1234,7 @@ static int got903(char *from, char *msg)
   return 1;
 }
 
-static int got904(char *from, char *msg)
-{
-  newsplit(&msg); /* nick */
-  fixcolon(msg);
-  putlog(LOG_SERV, "*", "SASL: %s", msg);
-  dprintf(DP_MODE, "CAP END\n");
-  return 1;
-}
-
-static int got906(char *from, char *msg)
+static int got906and908(char *from, char *msg)
 {
   newsplit(&msg); /* nick */
   fixcolon(msg);
@@ -1428,9 +1419,10 @@ static cmd_t my_raw_binds[] = {
   {"442",     "",   (IntFunc) got442,       NULL},
   {"465",     "",   (IntFunc) got465,       NULL},
   {"900",     "",   (IntFunc) got900,       NULL},
-  {"903",     "",   (IntFunc) got903,       NULL},
-  {"904",     "",   (IntFunc) got904,       NULL},
-  {"906",     "",   (IntFunc) got906,       NULL},
+  {"903",     "",   (IntFunc) got903and904, NULL},
+  {"904",     "",   (IntFunc) got903and904, NULL},
+  {"906",     "",   (IntFunc) got906and908, NULL},
+  {"908",     "",   (IntFunc) got906and908, NULL},
   {"NICK",    "",   (IntFunc) gotnick,      NULL},
   {"ERROR",   "",   (IntFunc) goterror,     NULL},
 /* ircu2.10.10 has a bug when a client is throttled ERROR is sent wrong */
