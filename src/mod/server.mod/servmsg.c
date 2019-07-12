@@ -1384,7 +1384,13 @@ static int gotcap(char *from, char *msg) {
         /* } */
       }
     }
-    dprintf(DP_MODE, "CAP END");
+    /* Add capabilities that require completion before ending CAP negotiation.
+     * These capabilities must send a CAP END in their respective code instead
+     * of here. Right now, this doesn't extend to more than one capability..."
+     */
+    if (!strstr(cap.negotiated, "sasl")) {
+      dprintf(DP_MODE, "CAP END");
+    }
   } else if (!strcmp(cmd, "NAK")) {
     putlog(LOG_SERV, "*", "CAP: Requested capability change %s rejected by %s",
         msg, from);
