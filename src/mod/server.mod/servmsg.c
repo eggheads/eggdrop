@@ -1368,19 +1368,22 @@ static int gotcap(char *from, char *msg) {
       /* If a negotiated capability requires immediate action by Eggdrop,
        * add it here                                                   */
       if (strstr(msg, "sasl") != NULL) {
-        /* TODO: check the following old code, which seems to say, that maybe
-         * cap request for sasl should / must not be sent under following
-         * conditions:
         if (sasl_mechanism[0]) {
           for (i = 0; i < strlen(sasl_mechanism); i++)
             sasl_mechanism[i] = toupper(sasl_mechanism[i]);
           if (HAVE_OPENSSL_SSL_H || strncmp(sasl_mechanism,
               "ECDSA-NIST256P-CHALLENGE", strlen("ECDSA-NIST256P-CHALLENGE"))) {
+            /*
+            TODO: the old sasl code, before cap pr, was doing cap request only
+            under certain conditions, see the if HAVE_OPENSSL_SSL_H statement
+            above.
             putlog(LOG_SERV, "*", "CAP: put CAP REQ :sasl");
             dprintf(DP_MODE, "CAP REQ :sasl\n");
-        */
-        putlog(LOG_SERV, "*", "SASL: put AUTHENTICATE %s", sasl_mechanism);
-        dprintf(DP_MODE, "AUTHENTICATE %s\n", sasl_mechanism);
+            */
+            putlog(LOG_SERV, "*", "SASL: put AUTHENTICATE %s", sasl_mechanism);
+            dprintf(DP_MODE, "AUTHENTICATE %s\n", sasl_mechanism);
+          }
+        }
       }
     }
     dprintf(DP_MODE, "CAP END");
