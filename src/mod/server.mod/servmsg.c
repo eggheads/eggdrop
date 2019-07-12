@@ -1231,9 +1231,9 @@ static int gotcap(char *from, char *msg) {
     }
     if (strlen(cap.desired) > 0) {
       putlog(LOG_DEBUG, "*", "CAP: Requesting %scapabilities from server", cap.desired);
-      dprintf(DP_MODE, "CAP REQ :%s", cap.desired);
+      dprintf(DP_MODE, "CAP REQ :%s\n", cap.desired);
     } else {
-      dprintf(DP_MODE, "CAP END");
+      dprintf(DP_MODE, "CAP END\n");
     }
   } else if (!strcmp(cmd, "LIST")) {
     putlog(LOG_SERV, "*", "CAP: Negotiated CAP capabilities: %s", msg);
@@ -1259,11 +1259,13 @@ static int gotcap(char *from, char *msg) {
         putlog(LOG_SERV, "*", "SASL AUTH CALL GOES HERE!");   //TODO
       }
     }
-    dprintf(DP_MODE, "CAP END");
+    if (!strstr(cap.negotiated, "sasl")) {
+      dprintf(DP_MODE, "CAP END\n");
+    }
   } else if (!strcmp(cmd, "NAK")) {
     putlog(LOG_SERV, "*", "CAP: Requested capability change %s rejected by %s",
         msg, from);
-    dprintf(DP_MODE, "CAP END");    /* TODO: Handle whatever caused it to reject? */
+    dprintf(DP_MODE, "CAP END\n");    /* TODO: Handle whatever caused it to reject? */
   } else if (!strcmp(cmd, "NEW")) {  //TODO: CAP 302 stuff?
     // Do things
   } else if (!strcmp(cmd, "DEL")) { // TODO: CAP 302 stuff?
@@ -1451,7 +1453,7 @@ static void server_resolve_success(int servidx)
   altnick_char = 0;
   check_tcl_event("preinit-server");
   /* See if server supports CAP command */
-  dprintf(DP_MODE, "CAP LS");
+  dprintf(DP_MODE, "CAP LS\n");
   if (pass[0])
     dprintf(DP_MODE, "PASS %s\n", pass);
   dprintf(DP_MODE, "NICK %s\n", botname);
