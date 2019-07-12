@@ -1160,7 +1160,7 @@ static int gotauthenticate(char *from, char *msg)
   if (msg[0] == '+') {
     s = src;
     /* Don't use snprintf due to \0 inside */
-    if (!strcmp(sasl_mechanism, "PLAIN")) {
+    if (sasl_mechanism == SASL_MECHANISM_PLAIN) {
       strcpy(s, sasl_username);
       s += strlen(sasl_username) + 1;
       strcpy(s, sasl_username);
@@ -1168,13 +1168,13 @@ static int gotauthenticate(char *from, char *msg)
       strcpy(s, sasl_password);
       s += strlen(sasl_password);
     }
-    else if (!strcmp(sasl_mechanism, "ECDSA-NIST256P-CHALLENGE")) {
+    else if (sasl_mechanism == SASL_MECHANISM_ECDSA_NIST256P_CHALLENGE) {
       strcpy(s, sasl_username);
       s += strlen(sasl_username) + 1;
       strcpy(s, sasl_username);
       s += strlen(sasl_username);
     }
-    else /* sasl_mechanism == EXTERNAL */
+    else /* sasl_mechanism == SASL_MECHANISM_EXTERNAL */
       *s++ = '+';
     slen = s - src;
     mbedtls_base64_encode(dst, sizeof dst, &olen, (const unsigned char *) src, slen);
@@ -1367,23 +1367,21 @@ static int gotcap(char *from, char *msg) {
       }
       /* If a negotiated capability requires immediate action by Eggdrop,
        * add it here                                                   */
-      if (strstr(msg, "sasl") != NULL) {
-        if (sasl_mechanism[0]) {
-          for (i = 0; i < strlen(sasl_mechanism); i++)
-            sasl_mechanism[i] = toupper(sasl_mechanism[i]);
-          if (HAVE_OPENSSL_SSL_H || strncmp(sasl_mechanism,
-              "ECDSA-NIST256P-CHALLENGE", strlen("ECDSA-NIST256P-CHALLENGE"))) {
-            /*
-            TODO: the old sasl code, before cap pr, was doing cap request only
-            under certain conditions, see the if HAVE_OPENSSL_SSL_H statement
-            above.
-            putlog(LOG_SERV, "*", "CAP: put CAP REQ :sasl");
-            dprintf(DP_MODE, "CAP REQ :sasl\n");
-            */
-            putlog(LOG_SERV, "*", "SASL: put AUTHENTICATE %s", sasl_mechanism);
-            dprintf(DP_MODE, "AUTHENTICATE %s\n", sasl_mechanism);
-          }
+      if (strstr(msg, "sasl")) {
+        /* if (sasl) { TODO: do we need this here? */
+        if ((sasl_mechanism != SASL_MECHANISM_ECDSA_NIST256P_CHALLENGE) ||
+            HAVE_OPENSSL_SSL_H) {
+          /*
+          TODO: the old sasl code, before cap pr, was doing cap request only
+          under certain conditions, see the if HAVE_OPENSSL_SSL_H statement
+          above.
+          putlog(LOG_SERV, "*", "CAP: put CAP REQ :sasl");
+          dprintf(DP_MODE, "CAP REQ :sasl\n");
+          */
+          putlog(LOG_SERV, "*", "SASL: put AUTHENTICATE %s", SASL_MECHANISMS[sasl_mechanism]);
+          dprintf(DP_MODE, "AUTHENTICATE %s\n", SASL_MECHANISMS[sasl_mechanism]);
         }
+        /* } */
       }
     }
     dprintf(DP_MODE, "CAP END");
