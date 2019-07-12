@@ -1388,7 +1388,11 @@ static int gotcap(char *from, char *msg) {
      * These capabilities must send a CAP END in their respective code instead
      * of here. Right now, this doesn't extend to more than one capability..."
      */
-    if (!strstr(cap.negotiated, "sasl")) {
+    /* https://ircv3.net/specs/extensions/sasl-3.1.html
+     * it is RECOMMENDED to only send CAP END when the SASL exchange is
+     * completed or needs to be aborted
+     */
+    if (!sasl) {
       dprintf(DP_MODE, "CAP END\n");
     }
   } else if (!strcmp(cmd, "NAK")) {
