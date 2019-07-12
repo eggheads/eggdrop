@@ -1197,12 +1197,6 @@ void create_cap_req() {
   if (sasl) {
     add_cape("sasl");
   }
-  if (account_notify) { //TODO Remove after testing, or add it for real...
-    add_cape("account-notify");
-  }
-  if (foober) {
-    add_cape("foober");
-  }
 }
 
 static int gotcap(char *from, char *msg) {
@@ -1269,7 +1263,7 @@ static int gotcap(char *from, char *msg) {
   } else if (!strcmp(cmd, "NEW")) {  //TODO: CAP 302 stuff?
     // Do things
   } else if (!strcmp(cmd, "DEL")) { // TODO: CAP 302 stuff?
-    // Do thigs
+    // Do things
   }
   return 1;
 }
