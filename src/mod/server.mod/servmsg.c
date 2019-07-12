@@ -1341,8 +1341,8 @@ static int gotcap(char *from, char *msg) {
         }
       }
     }
-    putlog(LOG_DEBUG, "*", "CAP: Requesting %s capabilities from server", cap.desired);
     if (strlen(cap.desired) > 0) {
+      putlog(LOG_DEBUG, "*", "CAP: Requesting %scapabilities from server", cap.desired);
       dprintf(DP_MODE, "CAP REQ :%s", cap.desired);
     } else {
       dprintf(DP_MODE, "CAP END");
