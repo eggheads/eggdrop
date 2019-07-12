@@ -988,6 +988,7 @@ static void disconnect_server(int idx)
     check_tcl_event("disconnect-server");
   strcpy(cap.supported, "");
   strcpy(cap.negotiated, "");
+  strcpy(cap.desired, "");
   server_online = 0;
   if (realservername)
     nfree(realservername);
@@ -1194,6 +1195,7 @@ void add_cape(char *cape) {
  * server capabilities later on
  */
 void create_cap_req() {
+  memset(capes, 0, sizeof capes[0]);
   if (sasl) {
     add_cape("sasl");
   }
