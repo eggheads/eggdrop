@@ -122,8 +122,6 @@ static int stack_limit;
 static char *realservername;
 
 static int sasl = 0;
-static int account_notify = 0; //TODO Remove after testing
-static int foober = 1;
 
 #include "servmsg.c"
 
@@ -1430,7 +1428,6 @@ static tcl_ints my_tcl_ints[] = {
   {"ssl-verify-server", &tls_vfyserver,             0},
 #endif
   {"sasl",              &sasl,                      0},
-  {"account-notify",    &account_notify,            0},
   {NULL,                NULL,                       0}
 };
 
