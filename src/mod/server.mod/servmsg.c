@@ -991,6 +991,7 @@ static void disconnect_server(int idx)
     check_tcl_event("disconnect-server");
   strcpy(cap.supported, "");
   strcpy(cap.negotiated, "");
+  strcpy(cap.desired, "");
   server_online = 0;
   if (realservername)
     nfree(realservername);
@@ -1298,14 +1299,9 @@ void add_cape(char *cape) {
  * server capabilities later on
  */
 void create_cap_req() {
+  memset(capes, 0, sizeof capes[0]);
   if (sasl) {
     add_cape("sasl");
-  }
-  if (account_notify) { //TODO Remove after testing, or add it for real...
-    add_cape("account-notify");
-  }
-  if (foober) {
-    add_cape("foober");
   }
 }
 
@@ -1379,8 +1375,7 @@ static int gotcap(char *from, char *msg) {
     /* Add capabilities that require completion before ending CAP negotiation.
      * These capabilities must send a CAP END in their respective code instead
      * of here. Right now, this doesn't extend to more than one capability..."
-     */
-    /* https://ircv3.net/specs/extensions/sasl-3.1.html
+     * https://ircv3.net/specs/extensions/sasl-3.1.html
      * it is RECOMMENDED to only send CAP END when the SASL exchange is
      * completed or needs to be aborted
      */
@@ -1394,7 +1389,7 @@ static int gotcap(char *from, char *msg) {
   } else if (!strcmp(cmd, "NEW")) {  //TODO: CAP 302 stuff?
     // Do things
   } else if (!strcmp(cmd, "DEL")) { // TODO: CAP 302 stuff?
-    // Do thigs
+    // Do things
   }
   return 1;
 }

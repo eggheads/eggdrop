@@ -122,8 +122,6 @@ static int stack_limit;
 static char *realservername;
 
 static int sasl = 0;
-static int account_notify = 0; //TODO Remove after testing
-static int foober = 1;
 
 static int sasl_mechanism = 0;
 static char sasl_username[NICKMAX + 1];
@@ -1444,7 +1442,6 @@ static tcl_ints my_tcl_ints[] = {
 #endif
   {"sasl",              &sasl,                      0},
   {"sasl-mechanism",    &sasl_mechanism,            0},
-  {"account-notify",    &account_notify,            0},
   {NULL,                NULL,                       0}
 };
 
