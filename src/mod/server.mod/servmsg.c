@@ -1145,7 +1145,6 @@ static int gotauthenticate(char *from, char *msg)
 {
   char src[256] = ""; // FIXME: size
   char *s;
-  size_t slen;
   unsigned char dst[256] = ""; // FIXME: size
   size_t olen;
   unsigned char dst2[256] = ""; // FIXME: size
@@ -1167,17 +1166,19 @@ static int gotauthenticate(char *from, char *msg)
       s += strlen(sasl_username) + 1;
       strcpy(s, sasl_password);
       s += strlen(sasl_password);
+      mbedtls_base64_encode(dst, sizeof dst, &olen, (const unsigned char *) src, s - src);
     }
     else if (sasl_mechanism == SASL_MECHANISM_ECDSA_NIST256P_CHALLENGE) {
       strcpy(s, sasl_username);
       s += strlen(sasl_username) + 1;
       strcpy(s, sasl_username);
       s += strlen(sasl_username);
+      mbedtls_base64_encode(dst, sizeof dst, &olen, (const unsigned char *) src, s - src);
     }
-    else /* sasl_mechanism == SASL_MECHANISM_EXTERNAL */
-      *s++ = '+';
-    slen = s - src;
-    mbedtls_base64_encode(dst, sizeof dst, &olen, (const unsigned char *) src, slen);
+    else { /* sasl_mechanism == SASL_MECHANISM_EXTERNAL */
+      dst[0] = '+';
+      dst[1] = 0;
+    }
     putlog(LOG_SERV, "*", "SASL: put AUTHENTICATE %s", dst);
     dprintf(DP_MODE, "AUTHENTICATE %s\n", dst);
   } else {
