@@ -22,10 +22,14 @@
 
 #include "../irc.mod/irc.h"
 #include "../channels.mod/channels.h"
+#include "server.h"
 
 static time_t last_ctcp = (time_t) 0L;
 static int count_ctcp = 0;
 static char altnick_char = 0;
+struct cap_list cap = {"", "", ""};
+char capes[64][32] = {{ 0 }};
+
 
 /* We try to change to a preferred unique nick here. We always first try the
  * specified alternate nick. If that fails, we repeatedly modify the nick
@@ -37,7 +41,7 @@ static char altnick_char = 0;
  *          ^--------- given, alternate nick
  *
  * The last added character is always saved in altnick_char. At the very first
- * attempt (were altnick_char is 0), we try the alternate nick without any
+ * attempt (where altnick_char is 0), we try the alternate nick without any
  * additions.
  *
  * fixed by guppy (1999/02/24) and Fabian (1999/11/26)
@@ -982,6 +986,9 @@ static void disconnect_server(int idx)
 {
   if (server_online > 0)
     check_tcl_event("disconnect-server");
+  strcpy(cap.supported, "");
+  strcpy(cap.negotiated, "");
+  strcpy(cap.desired, "");
   server_online = 0;
   if (realservername)
     nfree(realservername);
@@ -1148,6 +1155,120 @@ static int got465(char *from, char *msg)
   return 1;
 }
 
+/*
+ * Invalid CAP command
+ */
+static int got410(char *from, char *msg) {
+  char *cmd;
+
+  newsplit(&msg);
+ 
+  putlog(LOG_SERV, "*", "%s", msg);
+  cmd = newsplit(&msg);
+  putlog(LOG_MISC, "*", "CAP sub-command %s not supported", cmd);
+
+  return 1;
+}
+
+static int got421(char *from, char *msg) {
+  newsplit(&msg);
+  putlog(LOG_SERV, "*", "%s reported an error: %s", from, msg);
+
+  return 1;
+}
+
+/*
+ * Helper function to add CAP capability to next empty array slot
+ */
+void add_cape(char *cape) {
+  int i = 0;
+  for (i = 0; i < (sizeof capes / sizeof capes[0]); i++) {
+    if (!strlen(capes[i])) {
+      strlcpy(capes[i], cape, sizeof capes[0]);
+      break;
+    }
+  }
+}
+
+/*
+ * Add desired CAP requests to an array for easier parsing against supported
+ * server capabilities later on
+ */
+void create_cap_req() {
+  memset(capes, 0, sizeof capes[0]);
+  if (sasl) {
+    add_cape("sasl");
+  }
+}
+
+static int gotcap(char *from, char *msg) {
+  char *cmd, *match;
+  int len, i = 0;
+
+  newsplit(&msg);
+  putlog(LOG_DEBUG, "*", "CAP: %s", msg);
+  cmd = newsplit(&msg);
+  fixcolon(msg);
+  if (!strcmp(cmd, "LS")) {
+    putlog(LOG_DEBUG, "*", "CAP: %s supports CAP sub-commands: %s", from, msg);
+    strlcpy(cap.supported, msg, sizeof cap.supported);
+    create_cap_req();
+    /* Check each desired cape against supported capes on server */
+    for (i = 0; i < (sizeof capes / sizeof capes[0]); i++) {
+      if (strlen(capes[i])) {
+        if (strstr(cap.supported, capes[i])) {
+          strncat(cap.desired, capes[i], (CAPMAX - strlen(cap.desired) - 1));
+          strncat(cap.desired, " ", (CAPMAX - strlen(cap.desired) - 1));
+        } else {
+          putlog(LOG_DEBUG, "*","CAP: desired capability %s not supported " 
+              "on %s, removing from request...", capes[i], from);
+        }
+      }
+    }
+    if (strlen(cap.desired) > 0) {
+      putlog(LOG_DEBUG, "*", "CAP: Requesting %scapabilities from server", cap.desired);
+      dprintf(DP_MODE, "CAP REQ :%s\n", cap.desired);
+    } else {
+      dprintf(DP_MODE, "CAP END\n");
+    }
+  } else if (!strcmp(cmd, "LIST")) {
+    putlog(LOG_SERV, "*", "CAP: Negotiated CAP capabilities: %s", msg);
+    strlcpy(cap.negotiated, msg, sizeof cap.negotiated);
+  } else if (!strcmp(cmd, "ACK")) {
+    if (msg[0] == '-') {
+      msg++;
+      len = strlen(msg);    /* Remove capability from .negotiated list */
+      while ((match = strstr(cap.negotiated, msg))) {
+        *match = '\0';
+        strcat(cap.negotiated, match+len);
+      }
+      putlog (LOG_SERV, "*", "CAP: Disabled %s with %s", msg, from);
+    } else {
+      putlog(LOG_SERV, "*", "CAP: Successfully negotiated %s with %s", msg, from);
+      if (!strstr(cap.negotiated, msg)) {  //TODO break apart msg in case multiple capes requeseted at once
+        strncat(cap.negotiated, msg, (sizeof cap.negotiated -
+            strlen(cap.negotiated) - 1));
+      }
+      /* If a negotiated capability requires immediate action by Eggdrop,
+       * add it here                                                   */
+      if (strstr(msg, "sasl") != NULL) {
+        putlog(LOG_SERV, "*", "SASL AUTH CALL GOES HERE!");   //TODO
+      }
+    }
+    if (!strstr(cap.negotiated, "sasl")) {
+      dprintf(DP_MODE, "CAP END\n");
+    }
+  } else if (!strcmp(cmd, "NAK")) {
+    putlog(LOG_SERV, "*", "CAP: Requested capability change %s rejected by %s",
+        msg, from);
+    dprintf(DP_MODE, "CAP END\n");    /* TODO: Handle whatever caused it to reject? */
+  } else if (!strcmp(cmd, "NEW")) {  //TODO: CAP 302 stuff?
+    // Do things
+  } else if (!strcmp(cmd, "DEL")) { // TODO: CAP 302 stuff?
+    // Do things
+  }
+  return 1;
+}
 
 static cmd_t my_raw_binds[] = {
   {"PRIVMSG", "",   (IntFunc) gotmsg,       NULL},
@@ -1158,6 +1279,10 @@ static cmd_t my_raw_binds[] = {
   {"WALLOPS", "",   (IntFunc) gotwall,      NULL},
   {"001",     "",   (IntFunc) got001,       NULL},
   {"303",     "",   (IntFunc) got303,       NULL},
+  {"311",     "",   (IntFunc) got311,       NULL},
+  {"318",     "",   (IntFunc) whoispenalty, NULL},
+  {"410",     "",   (IntFunc) got410,       NULL},
+  {"421",     "",   (IntFunc) got421,       NULL},
   {"432",     "",   (IntFunc) got432,       NULL},
   {"433",     "",   (IntFunc) got433,       NULL},
   {"437",     "",   (IntFunc) got437,       NULL},
@@ -1170,8 +1295,7 @@ static cmd_t my_raw_binds[] = {
 /* ircu2.10.10 has a bug when a client is throttled ERROR is sent wrong */
   {"ERROR:",  "",   (IntFunc) goterror,     NULL},
   {"KICK",    "",   (IntFunc) gotkick,      NULL},
-  {"318",     "",   (IntFunc) whoispenalty, NULL},
-  {"311",     "",   (IntFunc) got311,       NULL},
+  {"CAP",     "",   (IntFunc) gotcap,       NULL},
   {NULL,      NULL, NULL,                    NULL}
 };
 
@@ -1324,6 +1448,8 @@ static void server_resolve_success(int servidx)
   /* Start alternate nicks from the beginning */
   altnick_char = 0;
   check_tcl_event("preinit-server");
+  /* See if server supports CAP command */
+  dprintf(DP_MODE, "CAP LS\n");
   if (pass[0])
     dprintf(DP_MODE, "PASS %s\n", pass);
   dprintf(DP_MODE, "NICK %s\n", botname);
