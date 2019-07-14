@@ -126,7 +126,8 @@ static int sasl = 0;
 static int sasl_mechanism = 0;
 static char sasl_username[NICKMAX + 1];
 static char sasl_password[81];
-static char sasl_key[121];
+static int sasl_continue = 0;
+static char ecdsa_key[121];
 
 #include "servmsg.c"
 
@@ -1400,7 +1401,7 @@ static tcl_strings my_tcl_strings[] = {
   {"stackable2-commands", stackable2cmds, 510,               0},
   {"sasl-username",       sasl_username,  NICKMAX,           0},
   {"sasl-password",       sasl_password,  80,                0},
-  {"sasl-key",            sasl_key,       120,               0},
+  {"ecdsa-key",           ecdsa_key,      120,               0},
   {NULL,                  NULL,           0,                 0}
 };
 
@@ -1442,6 +1443,7 @@ static tcl_ints my_tcl_ints[] = {
 #endif
   {"sasl",              &sasl,                      0},
   {"sasl-mechanism",    &sasl_mechanism,            0},
+  {"sasl-continue",     &sasl_continue,             0},
   {NULL,                NULL,                       0}
 };
 
