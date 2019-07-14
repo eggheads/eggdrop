@@ -11,6 +11,7 @@ EGGDROP FEATURES
 
     -   Support for SSL-enabled IRC servers
     -   Support for IPv6 users
+    -   Extended IRC server features such as SASL
     -   Completely separate channel user lists like having a separate
         bot for each channel.
     -   A "party line" available through dcc chat or telnet, with
