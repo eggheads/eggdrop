@@ -31,7 +31,7 @@ static time_t last_ctcp = (time_t) 0L;
 static int count_ctcp = 0;
 static char altnick_char = 0;
 struct cap_list cap = {"", "", ""};
-char capes[64][32] = { 0 };
+char capes[64][32] = {{ 0 }};
 
 
 /* We try to change to a preferred unique nick here. We always first try the
@@ -1376,10 +1376,8 @@ static int gotcap(char *from, char *msg) {
      * These capabilities must send a CAP END in their respective code instead
      * of here. Right now, this doesn't extend to more than one capability..."
      * https://ircv3.net/specs/extensions/sasl-3.1.html
-     * it is RECOMMENDED to only send CAP END when the SASL exchange is
-     * completed or needs to be aborted
      */
-    if (!sasl) {
+    if (!strstr(cap.negotiated, "sasl")) {
       dprintf(DP_MODE, "CAP END\n");
     }
   } else if (!strcmp(cmd, "NAK")) {
