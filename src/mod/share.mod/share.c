@@ -4,7 +4,7 @@
  */
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2018 Eggheads Development Team
+ * Copyright (C) 1999 - 2019 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -586,7 +586,7 @@ static void share_pls_host(int idx, char *par)
 
 static void share_pls_bothost(int idx, char *par)
 {
-  char *hand, p[32];
+  char *hand, pass[PASSWORDLEN];
   struct userrec *u;
 
   if ((dcc[idx].status & STAT_SHARE) && !private_user) {
@@ -601,8 +601,8 @@ static void share_pls_bothost(int idx, char *par)
           return;               /* ignore */
         set_user(&USERENTRY_HOSTS, u, par);
       } else {
-        makepass(p);
-        userlist = adduser(userlist, hand, par, p, USER_BOT);
+        makepass(pass);
+        userlist = adduser(userlist, hand, par, pass, USER_BOT);
       }
       if (!(dcc[idx].status & STAT_GETTING))
         putlog(LOG_CMDS, "*", "%s: +host %s %s", dcc[idx].nick, hand, par);
@@ -630,7 +630,7 @@ static void share_mns_host(int idx, char *par)
 
 static void share_change(int idx, char *par)
 {
-  char *key, *hand;
+  char *key, *hand, pass[PASSWORDLEN];
   struct userrec *u;
   struct user_entry_type *uet;
   struct user_entry *e;
@@ -648,8 +648,6 @@ static void share_change(int idx, char *par)
           shareout_but(NULL, idx, "c %s %s %s\n", key, hand, par);
         noshare = 1;
         if (!u && (uet == &USERENTRY_BOTADDR)) {
-          char pass[30];
-
           makepass(pass);
           userlist = adduser(userlist, hand, "none", pass, USER_BOT);
           u = get_user_by_handle(userlist, hand);
@@ -1375,7 +1373,7 @@ static void sharein_mod(int idx, char *msg)
 
   code = newsplit(&msg);
   for (f = 0, i = 0; C_share[i].name && !f; i++) {
-    int y = egg_strcasecmp(code, C_share[i].name);
+    int y = strcasecmp(code, C_share[i].name);
 
     if (!y)
       /* Found a match */
@@ -1502,7 +1500,7 @@ static int flush_tbuf(char *bot)
 
   for (t = tbuf; t; t = tnext) {
     tnext = t->next;
-    if (!egg_strcasecmp(t->bot, bot)) {
+    if (!strcasecmp(t->bot, bot)) {
       del_tbuf(t);
       return 1;
     }
@@ -1581,7 +1579,7 @@ static void q_tbuf(char *bot, char *s, struct chanset_t *chan)
   tandbuf *t;
 
   for (t = tbuf; t && t->bot[0]; t = t->next)
-    if (!egg_strcasecmp(t->bot, bot)) {
+    if (!strcasecmp(t->bot, bot)) {
       if (chan) {
         fr.match = (FR_CHAN | FR_BOT);
         get_user_flagrec(get_user_by_handle(userlist, bot), &fr, chan->dname);
@@ -1618,7 +1616,7 @@ static int can_resync(char *bot)
   tandbuf *t;
 
   for (t = tbuf; t && t->bot[0]; t = t->next)
-    if (!egg_strcasecmp(bot, t->bot))
+    if (!strcasecmp(bot, t->bot))
       return 1;
   return 0;
 }
@@ -1631,7 +1629,7 @@ static void dump_resync(int idx)
   tandbuf *t;
 
   for (t = tbuf; t && t->bot[0]; t = t->next)
-    if (!egg_strcasecmp(dcc[idx].nick, t->bot)) {
+    if (!strcasecmp(dcc[idx].nick, t->bot)) {
       for (q = t->q; q && q->msg[0]; q = q->next) {
         dprintf(idx, "%s", q->msg);
       }
@@ -1787,7 +1785,7 @@ static void finish_share(int idx)
   int i, j = -1;
 
   for (i = 0; i < dcc_total; i++)
-    if (!egg_strcasecmp(dcc[i].nick, dcc[idx].host) &&
+    if (!strcasecmp(dcc[i].nick, dcc[idx].host) &&
         (dcc[i].type->flags & DCT_BOT))
       j = i;
   if (j == -1)
@@ -2092,7 +2090,7 @@ static void cancel_user_xfer(int idx, void *x)
     if (dcc[idx].status & STAT_GETTING) {
       j = 0;
       for (i = 0; i < dcc_total; i++)
-        if (!egg_strcasecmp(dcc[i].host, dcc[idx].nick) &&
+        if (!strcasecmp(dcc[i].host, dcc[idx].nick) &&
             ((dcc[i].type->flags & (DCT_FILETRAN | DCT_FILESEND)) ==
              (DCT_FILETRAN | DCT_FILESEND)))
           j = i;
@@ -2106,7 +2104,7 @@ static void cancel_user_xfer(int idx, void *x)
     if (dcc[idx].status & STAT_SENDING) {
       j = 0;
       for (i = 0; i < dcc_total; i++)
-        if ((!egg_strcasecmp(dcc[i].host, dcc[idx].nick)) &&
+        if ((!strcasecmp(dcc[i].host, dcc[idx].nick)) &&
             ((dcc[i].type->flags & (DCT_FILETRAN | DCT_FILESEND)) ==
             DCT_FILETRAN))
           j = i;
@@ -2226,7 +2224,7 @@ static void share_report(int idx, int details)
           for (j = 0; j < dcc_total; j++)
             if (((dcc[j].type->flags & (DCT_FILETRAN | DCT_FILESEND)) ==
                 (DCT_FILETRAN | DCT_FILESEND)) &&
-                !egg_strcasecmp(dcc[j].host, dcc[i].nick)) {
+                !strcasecmp(dcc[j].host, dcc[i].nick)) {
               dprintf(idx, "    Downloading userlist from %s (%d%% done)\n",
                       dcc[i].nick, (int) (100.0 * ((float) dcc[j].status) /
                       ((float) dcc[j].u.xfer->length)));
@@ -2239,7 +2237,7 @@ static void share_report(int idx, int details)
         } else if (dcc[i].status & STAT_SENDING) {
           for (j = 0; j < dcc_total; j++) {
             if (((dcc[j].type->flags & (DCT_FILETRAN | DCT_FILESEND)) ==
-                DCT_FILETRAN) && !egg_strcasecmp(dcc[j].host, dcc[i].nick)) {
+                DCT_FILETRAN) && !strcasecmp(dcc[j].host, dcc[i].nick)) {
               if (dcc[j].type == &DCC_GET)
                 dprintf(idx, "    Sending userlist to %s (%d%% done)\n",
                         dcc[i].nick, (int) (100.0 * ((float) dcc[j].status) /
@@ -2311,7 +2309,7 @@ char *share_start(Function *global_funcs)
   return NULL;
 }
 
-int private_globals_bitmask()
+static int private_globals_bitmask()
 {
   struct flag_record fr = { FR_GLOBAL, 0, 0, 0, 0, 0 };
 

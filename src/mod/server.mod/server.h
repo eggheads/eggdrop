@@ -3,7 +3,7 @@
  */
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2018 Eggheads Development Team
+ * Copyright (C) 1999 - 2019 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -19,6 +19,8 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
+
+#define CAPMAX      511           /* CAP list string max                 */
 
 #ifndef _EGG_MOD_SERVER_SERVER_H
 #define _EGG_MOD_SERVER_SERVER_H
@@ -99,6 +101,14 @@ struct server_list {
   char *pass;
   char *realname;
 };
+
+typedef struct cap_list {
+  char supported[CAPMAX];   /* Capes supportd by IRCD                   */
+  char negotiated[CAPMAX];  /* Common capes between IRCD and client     */
+  char desired[CAPMAX];     /* Capes Eggdrop wants to request from IRCD */
+} cap_list;
+
+extern struct cap_list cap;
 
 /* Available net types.  */
 enum {

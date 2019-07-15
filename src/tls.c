@@ -7,7 +7,7 @@
 /*
  * Written by Rumen Stoyanov <pseudo@egg6.net>
  *
- * Copyright (C) 2010 - 2018 Eggheads Development Team
+ * Copyright (C) 2010 - 2019 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -43,7 +43,7 @@ char tls_capath[121] = "";    /* Path to trusted CA certificates              */
 char tls_cafile[121] = "";    /* File containing trusted CA certificates      */
 char tls_certfile[121] = "";  /* Our own digital certificate ;)               */
 char tls_keyfile[121] = "";   /* Private key for use with eggdrop             */
-char tls_ciphers[121] = "";   /* A list of ciphers for SSL to use             */
+char tls_ciphers[2049] = "";  /* A list of ciphers for SSL to use             */
 
 
 /* Count allocated memory for SSL. This excludes memory allocated by OpenSSL's
@@ -804,10 +804,14 @@ int ssl_handshake(int sock, int flags, int verify, int loglevel, char *host,
     debug0("TLS: handshake in progress");
     return 0;
   }
-  if (ERR_peek_error())
+  if ((err = ERR_peek_error())) {
+    putlog(data->loglevel, "*",
+           "TLS: handshake failed due to the following error: %s",
+           ERR_reason_error_string(err));
     debug0("TLS: handshake failed due to the following errors: ");
-  while ((err = ERR_get_error()))
-    debug1("TLS: %s", ERR_error_string(err, NULL));
+    while ((err = ERR_get_error()))
+      debug1("TLS: %s", ERR_error_string(err, NULL));
+  }
 
   /* Attempt failed, cleanup and abort */
   SSL_shutdown(td->socklist[i].ssl);

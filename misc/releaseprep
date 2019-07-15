@@ -2,7 +2,7 @@
 #
 # releaseprep - prepares the tree for release
 #
-# Copyright (C) 2004 - 2018 Eggheads Development Team
+# Copyright (C) 2004 - 2019 Eggheads Development Team
 #
 # This file is free software; you can redistribute it and/or modify it
 # under the terms of the GNU General Public License as published by
@@ -26,8 +26,9 @@
 show_usage() {
 	echo "Usage: `basename $0` [-h|-r <#>]"
 	echo ""
-	echo "  -h, --help - Print this help and exit."
-	echo "  -r, --rc   - Prepare to release Release Candidate '#'."
+	echo "  -h, --help     - Print this help and exit."
+	echo "  -r, --rc       - Prepare to release Release Candidate '#'."
+    echo "  -s  --stable   - Prepare to release stable release."
 	exit 1
 }
 
@@ -129,23 +130,25 @@ all:
 _EOF
 }
 
-if [ $# -eq 0 ]; then
-  echo "No args specified, use -h to view help"
-  exit 1
-fi
-
+do_rc=0
 if test "x${1}" = "x-h" || test "x${1}" = "x--help"; then
 	show_usage
-fi
 
-do_rc=0
-if test "x${1}" = "x-r" || test "x${1}" = "x--rc"; then
+elif test "x${1}" = "x-r" || test "x${1}" = "x--rc"; then
 	do_rc=1
 	if test "x${2}" = "x"; then
 		show_usage
 	fi
 	rc_number=$2
+
+elif test "x${1}" = "x-s" || test "x${1}" = "x--stable"; then
+    echo "About damn time"
+
+else
+  echo "No args specified, use -h to view help"
+  exit 1
 fi
+
 
 if test ! -f src/main.c; then
 	echo "You are not in the Eggdrop root directory."

@@ -3,7 +3,7 @@
  */
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2018 Eggheads Development Team
+ * Copyright (C) 1999 - 2019 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -20,15 +20,19 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
-#include  "../irc.mod/irc.h"
-#include  "../channels.mod/channels.h"
+#include "../irc.mod/irc.h"
+#include "../channels.mod/channels.h"
+#include "server.h"
 
 static time_t last_ctcp = (time_t) 0L;
 static int count_ctcp = 0;
 static char altnick_char = 0;
+struct cap_list cap = {"", "", ""};
+char capes[64][32] = {{ 0 }};
+
 
 /* We try to change to a preferred unique nick here. We always first try the
- * specified alternate nick. If that failes, we repeatedly modify the nick
+ * specified alternate nick. If that fails, we repeatedly modify the nick
  * until it gets accepted.
  *
  * sent nick:
@@ -37,7 +41,7 @@ static char altnick_char = 0;
  *          ^--------- given, alternate nick
  *
  * The last added character is always saved in altnick_char. At the very first
- * attempt (were altnick_char is 0), we try the alternate nick without any
+ * attempt (where altnick_char is 0), we try the alternate nick without any
  * additions.
  *
  * fixed by guppy (1999/02/24) and Fabian (1999/11/26)
@@ -278,9 +282,7 @@ static int check_tcl_out(int which, char *msg, int sent)
 
 static int match_my_nick(char *nick)
 {
-  if (!rfc_casecmp(nick, botname))
-    return 1;
-  return 0;
+  return (!rfc_casecmp(nick, botname));
 }
 
 /* 001: welcome to IRC (use it to fix the server name) */
@@ -349,7 +351,7 @@ static int got442(char *from, char *msg)
   char *chname, *key;
   struct chanset_t *chan;
 
-  if (!realservername || egg_strcasecmp(from, realservername))
+  if (!realservername || strcasecmp(from, realservername))
     return 0;
   newsplit(&msg);
   chname = newsplit(&msg);
@@ -413,7 +415,7 @@ static int detect_flood(char *floodnick, char *floodhost, char *from, int which)
     return 0;
 
   /* My user@host (?) */
-  if (!egg_strcasecmp(floodhost, botuserhost))
+  if (!strcasecmp(floodhost, botuserhost))
     return 0;
 
   u = get_user_by_host(from);
@@ -441,7 +443,7 @@ static int detect_flood(char *floodnick, char *floodhost, char *from, int which)
   p = strchr(floodhost, '@');
   if (p) {
     p++;
-    if (egg_strcasecmp(lastmsghost[which], p)) {        /* New */
+    if (strcasecmp(lastmsghost[which], p)) {        /* New */
       strlcpy(lastmsghost[which], p, sizeof lastmsghost[which]);
       lastmsgtime[which] = now;
       lastmsgs[which] = 0;
@@ -532,7 +534,7 @@ static int gotmsg(char *from, char *msg)
             u = get_user_by_host(from);
             if (!ignoring || trigger_on_ignore) {
               if (!check_tcl_ctcp(nick, uhost, u, to, code, ctcp) && !ignoring) {
-                if ((lowercase_ctcp && !egg_strcasecmp(code, "DCC")) ||
+                if ((lowercase_ctcp && !strcasecmp(code, "DCC")) ||
                     (!lowercase_ctcp && !strcmp(code, "DCC"))) {
                   /* If it gets this far unhandled, it means that
                    * the user is totally unknown.
@@ -735,7 +737,7 @@ static void minutely_checks()
     if (strncmp(botname, origbotname, strlen(botname))) {
       /* See if my nickname is in use and if if my nick is right. */
       alt = get_altbotnick();
-      if (alt[0] && egg_strcasecmp(botname, alt))
+      if (alt[0] && strcasecmp(botname, alt))
         dprintf(DP_SERVER, "ISON :%s %s %s\n", botname, origbotname, alt);
       else
         dprintf(DP_SERVER, "ISON :%s %s\n", botname, origbotname);
@@ -932,7 +934,7 @@ static int gotnick(char *from, char *msg)
         putlog(LOG_MISC, "*", IRC_GETORIGNICK, origbotname);
         dprintf(DP_SERVER, "NICK %s\n", origbotname);
       } else if (alt[0] && !rfc_casecmp(nick, alt) &&
-               egg_strcasecmp(botname, origbotname)) {
+               strcasecmp(botname, origbotname)) {
         putlog(LOG_MISC, "*", IRC_GETALTNICK, alt);
         dprintf(DP_SERVER, "NICK %s\n", alt);
       }
@@ -944,7 +946,7 @@ static int gotnick(char *from, char *msg)
       putlog(LOG_MISC, "*", IRC_GETORIGNICK, origbotname);
       dprintf(DP_SERVER, "NICK %s\n", origbotname);
     } else if (alt[0] && !rfc_casecmp(nick, alt) &&
-             egg_strcasecmp(botname, origbotname)) {
+             strcasecmp(botname, origbotname)) {
       putlog(LOG_MISC, "*", IRC_GETALTNICK, altnick);
       dprintf(DP_SERVER, "NICK %s\n", altnick);
     }
@@ -984,6 +986,9 @@ static void disconnect_server(int idx)
 {
   if (server_online > 0)
     check_tcl_event("disconnect-server");
+  strcpy(cap.supported, "");
+  strcpy(cap.negotiated, "");
+  strcpy(cap.desired, "");
   server_online = 0;
   if (realservername)
     nfree(realservername);
@@ -1105,7 +1110,7 @@ static int gotkick(char *from, char *msg)
 static int whoispenalty(char *from, char *msg)
 {
   if (realservername && use_penalties &&
-      egg_strcasecmp(from, realservername)) {
+      strcasecmp(from, realservername)) {
 
     last_time += 1;
 
@@ -1150,6 +1155,120 @@ static int got465(char *from, char *msg)
   return 1;
 }
 
+/*
+ * Invalid CAP command
+ */
+static int got410(char *from, char *msg) {
+  char *cmd;
+
+  newsplit(&msg);
+ 
+  putlog(LOG_SERV, "*", "%s", msg);
+  cmd = newsplit(&msg);
+  putlog(LOG_MISC, "*", "CAP sub-command %s not supported", cmd);
+
+  return 1;
+}
+
+static int got421(char *from, char *msg) {
+  newsplit(&msg);
+  putlog(LOG_SERV, "*", "%s reported an error: %s", from, msg);
+
+  return 1;
+}
+
+/*
+ * Helper function to add CAP capability to next empty array slot
+ */
+void add_cape(char *cape) {
+  int i = 0;
+  for (i = 0; i < (sizeof capes / sizeof capes[0]); i++) {
+    if (!strlen(capes[i])) {
+      strlcpy(capes[i], cape, sizeof capes[0]);
+      break;
+    }
+  }
+}
+
+/*
+ * Add desired CAP requests to an array for easier parsing against supported
+ * server capabilities later on
+ */
+void create_cap_req() {
+  memset(capes, 0, sizeof capes[0]);
+  if (sasl) {
+    add_cape("sasl");
+  }
+}
+
+static int gotcap(char *from, char *msg) {
+  char *cmd, *match;
+  int len, i = 0;
+
+  newsplit(&msg);
+  putlog(LOG_DEBUG, "*", "CAP: %s", msg);
+  cmd = newsplit(&msg);
+  fixcolon(msg);
+  if (!strcmp(cmd, "LS")) {
+    putlog(LOG_DEBUG, "*", "CAP: %s supports CAP sub-commands: %s", from, msg);
+    strlcpy(cap.supported, msg, sizeof cap.supported);
+    create_cap_req();
+    /* Check each desired cape against supported capes on server */
+    for (i = 0; i < (sizeof capes / sizeof capes[0]); i++) {
+      if (strlen(capes[i])) {
+        if (strstr(cap.supported, capes[i])) {
+          strncat(cap.desired, capes[i], (CAPMAX - strlen(cap.desired) - 1));
+          strncat(cap.desired, " ", (CAPMAX - strlen(cap.desired) - 1));
+        } else {
+          putlog(LOG_DEBUG, "*","CAP: desired capability %s not supported " 
+              "on %s, removing from request...", capes[i], from);
+        }
+      }
+    }
+    if (strlen(cap.desired) > 0) {
+      putlog(LOG_DEBUG, "*", "CAP: Requesting %scapabilities from server", cap.desired);
+      dprintf(DP_MODE, "CAP REQ :%s\n", cap.desired);
+    } else {
+      dprintf(DP_MODE, "CAP END\n");
+    }
+  } else if (!strcmp(cmd, "LIST")) {
+    putlog(LOG_SERV, "*", "CAP: Negotiated CAP capabilities: %s", msg);
+    strlcpy(cap.negotiated, msg, sizeof cap.negotiated);
+  } else if (!strcmp(cmd, "ACK")) {
+    if (msg[0] == '-') {
+      msg++;
+      len = strlen(msg);    /* Remove capability from .negotiated list */
+      while ((match = strstr(cap.negotiated, msg))) {
+        *match = '\0';
+        strcat(cap.negotiated, match+len);
+      }
+      putlog (LOG_SERV, "*", "CAP: Disabled %s with %s", msg, from);
+    } else {
+      putlog(LOG_SERV, "*", "CAP: Successfully negotiated %s with %s", msg, from);
+      if (!strstr(cap.negotiated, msg)) {  //TODO break apart msg in case multiple capes requeseted at once
+        strncat(cap.negotiated, msg, (sizeof cap.negotiated -
+            strlen(cap.negotiated) - 1));
+      }
+      /* If a negotiated capability requires immediate action by Eggdrop,
+       * add it here                                                   */
+      if (strstr(msg, "sasl") != NULL) {
+        putlog(LOG_SERV, "*", "SASL AUTH CALL GOES HERE!");   //TODO
+      }
+    }
+    if (!strstr(cap.negotiated, "sasl")) {
+      dprintf(DP_MODE, "CAP END\n");
+    }
+  } else if (!strcmp(cmd, "NAK")) {
+    putlog(LOG_SERV, "*", "CAP: Requested capability change %s rejected by %s",
+        msg, from);
+    dprintf(DP_MODE, "CAP END\n");    /* TODO: Handle whatever caused it to reject? */
+  } else if (!strcmp(cmd, "NEW")) {  //TODO: CAP 302 stuff?
+    // Do things
+  } else if (!strcmp(cmd, "DEL")) { // TODO: CAP 302 stuff?
+    // Do things
+  }
+  return 1;
+}
 
 static cmd_t my_raw_binds[] = {
   {"PRIVMSG", "",   (IntFunc) gotmsg,       NULL},
@@ -1160,6 +1279,10 @@ static cmd_t my_raw_binds[] = {
   {"WALLOPS", "",   (IntFunc) gotwall,      NULL},
   {"001",     "",   (IntFunc) got001,       NULL},
   {"303",     "",   (IntFunc) got303,       NULL},
+  {"311",     "",   (IntFunc) got311,       NULL},
+  {"318",     "",   (IntFunc) whoispenalty, NULL},
+  {"410",     "",   (IntFunc) got410,       NULL},
+  {"421",     "",   (IntFunc) got421,       NULL},
   {"432",     "",   (IntFunc) got432,       NULL},
   {"433",     "",   (IntFunc) got433,       NULL},
   {"437",     "",   (IntFunc) got437,       NULL},
@@ -1172,8 +1295,7 @@ static cmd_t my_raw_binds[] = {
 /* ircu2.10.10 has a bug when a client is throttled ERROR is sent wrong */
   {"ERROR:",  "",   (IntFunc) goterror,     NULL},
   {"KICK",    "",   (IntFunc) gotkick,      NULL},
-  {"318",     "",   (IntFunc) whoispenalty, NULL},
-  {"311",     "",   (IntFunc) got311,       NULL},
+  {"CAP",     "",   (IntFunc) gotcap,       NULL},
   {NULL,      NULL, NULL,                    NULL}
 };
 
@@ -1288,6 +1410,10 @@ static void server_resolve_success(int servidx)
   changeover_dcc(servidx, &SERVER_SOCKET, 0);
   dcc[servidx].sock = getsock(dcc[servidx].sockname.family, 0);
   setsnport(dcc[servidx].sockname, dcc[servidx].port);
+  /* Setup ident right before opening the socket to the IRC server to minimize
+   * race.
+   */
+  check_tcl_event("ident");
   serv = open_telnet_raw(dcc[servidx].sock, &dcc[servidx].sockname);
   if (serv < 0) {
     char *errstr = NULL;
@@ -1322,6 +1448,8 @@ static void server_resolve_success(int servidx)
   /* Start alternate nicks from the beginning */
   altnick_char = 0;
   check_tcl_event("preinit-server");
+  /* See if server supports CAP command */
+  dprintf(DP_MODE, "CAP LS\n");
   if (pass[0])
     dprintf(DP_MODE, "PASS %s\n", pass);
   dprintf(DP_MODE, "NICK %s\n", botname);

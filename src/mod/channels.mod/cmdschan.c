@@ -4,7 +4,7 @@
  */
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2018 Eggheads Development Team
+ * Copyright (C) 1999 - 2019 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -772,7 +772,7 @@ static void cmd_mns_invite(struct userrec *u, int idx, char *par)
 
 static void cmd_bans(struct userrec *u, int idx, char *par)
 {
-  if (!egg_strcasecmp(par, "all")) {
+  if (!strcasecmp(par, "all")) {
     putlog(LOG_CMDS, "*", "#%s# bans all", dcc[idx].nick);
     tell_bans(idx, 1, "");
   } else {
@@ -787,7 +787,7 @@ static void cmd_exempts(struct userrec *u, int idx, char *par)
     dprintf(idx, "This command can only be used with use-exempts enabled.\n");
     return;
   }
-  if (!egg_strcasecmp(par, "all")) {
+  if (!strcasecmp(par, "all")) {
     putlog(LOG_CMDS, "*", "#%s# exempts all", dcc[idx].nick);
     tell_exempts(idx, 1, "");
   } else {
@@ -802,7 +802,7 @@ static void cmd_invites(struct userrec *u, int idx, char *par)
     dprintf(idx, "This command can only be used with use-invites enabled.\n");
     return;
   }
-  if (!egg_strcasecmp(par, "all")) {
+  if (!strcasecmp(par, "all")) {
     putlog(LOG_CMDS, "*", "#%s# invites all", dcc[idx].nick);
     tell_invites(idx, 1, "");
   } else {
@@ -855,7 +855,7 @@ static void cmd_info(struct userrec *u, int idx, char *par)
     dprintf(idx, "Your info line is locked.  Sorry.\n");
     return;
   }
-  if (!egg_strcasecmp(par, "none")) {
+  if (!strcasecmp(par, "none")) {
     if (chname) {
       par[0] = 0;
       set_handle_chaninfo(userlist, dcc[idx].nick, chname, NULL);
@@ -927,7 +927,7 @@ static void cmd_chinfo(struct userrec *u, int idx, char *par)
   }
   putlog(LOG_CMDS, "*", "#%s# chinfo %s %s %s", dcc[idx].nick, handle,
          chname ? chname : par, chname ? par : "");
-  if (!egg_strcasecmp(par, "none"))
+  if (!strcasecmp(par, "none"))
     par[0] = 0;
   if (chname) {
     set_handle_chaninfo(userlist, handle, chname, par);
@@ -960,9 +960,9 @@ static void cmd_stick_yn(int idx, char *par, int yn)
   strlcpy(s, newsplit(&par), sizeof s);
   strlcpy(chname, newsplit(&par), sizeof chname);
 
-  if (egg_strcasecmp(stick_type, "exempt") &&
-      egg_strcasecmp(stick_type, "invite") &&
-      egg_strcasecmp(stick_type, "ban")) {
+  if (strcasecmp(stick_type, "exempt") &&
+      strcasecmp(stick_type, "invite") &&
+      strcasecmp(stick_type, "ban")) {
     strlcpy(chname, s, sizeof chname);
     strlcpy(s, stick_type, sizeof s);
   }
@@ -972,7 +972,7 @@ static void cmd_stick_yn(int idx, char *par, int yn)
     return;
   }
   /* Now deal with exemptions */
-  if (!egg_strcasecmp(stick_type, "exempt")) {
+  if (!strcasecmp(stick_type, "exempt")) {
     if (!use_exempts) {
       dprintf(idx, "This command can only be used with use-exempts "
               "enabled.\n");
@@ -1011,7 +1011,7 @@ static void cmd_stick_yn(int idx, char *par, int yn)
     return;
   }
   /* Now the invites */
-  else if (!egg_strcasecmp(stick_type, "invite")) {
+  else if (!strcasecmp(stick_type, "invite")) {
     if (!use_invites) {
       dprintf(idx, "This command can only be used with use-invites enabled.\n");
       return;
