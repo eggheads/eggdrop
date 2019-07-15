@@ -1185,9 +1185,9 @@ static int gotauthenticate(char *from, char *msg)
   } else {
     putlog(LOG_SERV, "*", "SASL: got AUTHENTICATE Challange");
     mbedtls_base64_decode(dst, sizeof dst, &olen, (const unsigned char *) msg, strlen(msg));
-    fp = fopen(ecdsa_key, "r");
+    fp = fopen(sasl_ecdsa_key, "r");
     if (!fp) {
-      putlog(LOG_SERV, "*", "SASL: AUTHENTICATE: fopen(): %s\n", ecdsa_key);
+      putlog(LOG_SERV, "*", "SASL: AUTHENTICATE: fopen(): %s\n", sasl_ecdsa_key);
       return 1; /* FIXME: 1 or 0 ? */
     }
     privateKey = PEM_read_PrivateKey(fp, NULL, 0, NULL);
