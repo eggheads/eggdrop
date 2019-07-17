@@ -167,21 +167,23 @@ static int tcl_cap STDVAR {
   char s[CAPMAX];
   BADARGS(2, 3, " sub-cmd ?arg?");
 
-  simple_sprintf(s, "CAP requires a sub-command");
-  if (!strcasecmp(argv[1], "-list")) {
+  if (!strcasecmp(argv[1], "available")) {
     Tcl_AppendResult(irp, cap.supported, NULL);
-    return TCL_OK;
-  } else if (!strcasecmp(argv[1], "-active")) {
+  } else if (!strcasecmp(argv[1], "active")) {
     Tcl_AppendResult(irp, cap.negotiated, NULL);
-    return TCL_OK;
+  } else if (!strcasecmp(argv[1], "raw")) {
+    if (argc == 3) {
+      simple_sprintf(s, "CAP %s", argv[2]);
+      dprintf(DP_SERVER, "%s\n", s);
+    } else {
+      Tcl_AppendResult(irp, "Raw requires a CAP sub-command to be provided",
+        NULL);
+      return TCL_ERROR;
+    }
+  } else {
+      Tcl_AppendResult(irp, "Invalid cap command", NULL);
   }
-  if (argc == 2) {
-    simple_sprintf(s, "CAP %s", argv[1]);
-  }
-  else if (argc == 3) {
-    simple_sprintf(s, "CAP %s :%s", argv[1], argv[2]);
-  }
-  dprintf(DP_SERVER, "%s\n", s);
+//   simple_sprintf(s, "CAP %s :%s", argv[1], argv[2]);
   return TCL_OK;
 }
 
