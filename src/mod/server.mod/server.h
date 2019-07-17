@@ -20,7 +20,7 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
-#define CAPMAX      511           /* CAP list string max                 */
+#define CAPMAX      499           /*  (512 - "CAP REQ :XXX\r\n")   */
 
 #ifndef _EGG_MOD_SERVER_SERVER_H
 #define _EGG_MOD_SERVER_SERVER_H
