@@ -1285,9 +1285,9 @@ static int gotcap(char *from, char *msg) {
     putlog(LOG_SERV, "*", "CAP: Current Negotiations %s with %s", cap.negotiated, from);
     /* If a negotiated capability requires immediate action by Eggdrop,
      * add it here                                                   */
-    if (strstr(msg, "sasl") != NULL) {
-      putlog(LOG_SERV, "*", "SASL AUTH CALL GOES HERE!");   //TODO
-    }
+//    if (strstr(msg, "sasl") != NULL) {
+//      putlog(LOG_SERV, "*", "SASL AUTH CALL GOES HERE!");   //TODO
+//    }
     if (!strstr(cap.negotiated, "sasl")) {
       dprintf(DP_MODE, "CAP END\n");
     }
