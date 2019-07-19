@@ -28,15 +28,9 @@ static time_t last_ctcp = (time_t) 0L;
 static int count_ctcp = 0;
 static char altnick_char = 0;
 struct cap_list cap = {"", "", ""};
-//char capes[64][32] = {{ 0 }};
 
-int dcapesc, ncapesc;
-Tcl_Obj **dcapesv, **ncapesv;
-Tcl_Obj *dcapeslist;
-Tcl_Obj *ncapeslist;
-
-//Tcl_Obj *capeslist = Tcl_NewListObj(0, NULL);
-
+int ncapesc;
+Tcl_Obj **ncapesv, *ncapeslist;
 
 
 /* We try to change to a preferred unique nick here. We always first try the
@@ -1487,7 +1481,6 @@ static void server_resolve_success(int servidx)
   /* Start alternate nicks from the beginning */
   altnick_char = 0;
   check_tcl_event("preinit-server");
-  dcapeslist = Tcl_NewListObj(0, NULL);
   ncapeslist = Tcl_NewListObj(0, NULL);
   /* See if server supports CAP command */
   dprintf(DP_MODE, "CAP LS\n");
