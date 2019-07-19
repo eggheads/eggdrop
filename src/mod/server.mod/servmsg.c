@@ -1210,7 +1210,7 @@ void add_cape(char *cape) {
   }
 }
 
-/* Remove capability from CAP request array */
+/* Remove capability from internal CAP request list */
 void del_cape(char *cape) {
   int len = 0, i = 0;
   if (strstr(cap.negotiated, cape)) {
@@ -1231,10 +1231,7 @@ void del_cape(char *cape) {
   }
 }
 
-/*
- * Add desired CAP requests to an array for easier parsing against supported
- * server capabilities later on
- */
+/* Smash desired CAP capabilities into a single string */
 void add_req(char *cape) {
   int len = strlen(cap.desired);
   len += snprintf(cap.desired+len, sizeof cap.desired - strlen(cap.desired) - 1,
@@ -1264,8 +1261,7 @@ static int gotcap(char *from, char *msg) {
     }
   } else if (!strcmp(cmd, "LIST")) {
     putlog(LOG_SERV, "*", "CAP: Negotiated CAP capabilities: %s", msg);
-    /* You're getting the current list, may as well clear old stuff */
-//    strlcpy(cap.negotiated, msg, sizeof cap.negotiated);
+    /* You're getting the current list, may as well the clear old stuff */
     memset(cap.negotiated, 0, strlen(cap.negotiated));
     Tcl_ListObjLength(interp, ncapeslist, &listlen);
     Tcl_ListObjReplace(interp, ncapeslist, 0, listlen, 0, NULL);
