@@ -675,7 +675,7 @@ static int tcl_dcclist STDVAR
 #ifdef TLS
       egg_snprintf(portstring, sizeof portstring, "%s%d", dcc[i].ssl ? "+" : "", dcc[i].port);
 #else
-      portstring =  dcc[i].port;
+      egg_snprintf(portstring, sizeof portstring, "%d", dcc[i].port);
 #endif
       list[3] = portstring;
       list[4] = dcc[i].type ? dcc[i].type->name : "*UNKNOWN*";
