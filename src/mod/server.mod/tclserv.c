@@ -183,7 +183,6 @@ static int tcl_cap STDVAR {
   } else {
       Tcl_AppendResult(irp, "Invalid cap command", NULL);
   }
-//   simple_sprintf(s, "CAP %s :%s", argv[1], argv[2]);
   return TCL_OK;
 }
 
