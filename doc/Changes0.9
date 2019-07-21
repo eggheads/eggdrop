@@ -140,10 +140,10 @@ Eggdrop Changes (since version 0.8)
     (fixed)
     Found by: Mohammad Ali Rezaei
 
-  - Won't complain about killmember/nonexistant if it still hasn't finished
+  - Won't complain about killmember/nonexistent if it still hasn't finished
     getting the /who list yet
 
-  - Sends message to random (nonexistant) nickname every 5 minutes to keep
+  - Sends message to random (nonexistent) nickname every 5 minutes to keep
     from being idle
 
   - Boots were getting mislogged (fixed)
@@ -207,7 +207,7 @@ Eggdrop Changes (since version 0.8)
 
   BUGS:
 
-  - Occasional "killmember -> nonexistant" notices still appear
+  - Occasional "killmember -> nonexistent" notices still appear
 
 
 0.9r (December 1, 1995):
@@ -355,7 +355,7 @@ Eggdrop Changes (since version 0.8)
     immediately fail (instead of reverting later) -- the return value for
     the 'set' command will be the old value if the new one was rejected
 
-  - The 'idx' paramater sent to controlling functions (using Tcl 'control')
+  - The 'idx' parameter sent to controlling functions (using Tcl 'control')
     was incorrect (fixed)
     Found by: seljo
 
@@ -429,7 +429,7 @@ Eggdrop Changes (since version 0.8)
   - Compile-time option to use slower pings on the botnet
     Suggested by: Fred1
 
-  - New config-file setting 'keep-nick' which will alow you to turn off the
+  - New config-file setting 'keep-nick' which will allow you to turn off the
     bot's wish to always keep the same nickname
 
   - New command 'echo' lets you turn on or off the echoing of your own
@@ -934,7 +934,7 @@ Eggdrop Changes (since version 0.8)
 
   BUGS:
 
-  - Sometimes "???" appears in the tandem chain for no discernable reason
+  - Sometimes "???" appears in the tandem chain for no discernible reason
   - Bizarre file problem on SYSV systems, also telnet doesn't work
 
 
@@ -1024,7 +1024,7 @@ Eggdrop Changes (since version 0.8)
 
   BUGS:
 
-  - Sometimes "???" appears in the tandem chain for no discernable reason
+  - Sometimes "???" appears in the tandem chain for no discernible reason
   - Bizarre file problem on SYSV systems, also telnet doesn't work
 
 
@@ -1199,7 +1199,7 @@ Eggdrop Changes (since version 0.8)
 
   BUGS:
 
-  - Sometimes "???" appears in the tandem chain for no discernable reason
+  - Sometimes "???" appears in the tandem chain for no discernible reason
   - Bizarre file problem on SYSV systems, also telnet doesn't work
   - Blows up after some dcc/tandem connects
 
@@ -1263,7 +1263,7 @@ Eggdrop Changes (since version 0.8)
   - Various efficiency changes
     Patch by: Fred1
 
-  - '.comment' was pretending to be successful even on nonexistant users
+  - '.comment' was pretending to be successful even on nonexistent users
     (fixed)
     Found by: guy
 
@@ -1282,7 +1282,7 @@ Eggdrop Changes (since version 0.8)
 
   # Released by: Robey [Robey Pointer <robey@annwfn.indstate.edu>]
 
-  - '.chpass' would pretend to change passwords of nonexistant users (fixed)
+  - '.chpass' would pretend to change passwords of nonexistent users (fixed)
     Found by: miltrypet
 
   - Changes control characters to '?' in '.handle' and '.nick'
@@ -1328,7 +1328,7 @@ Eggdrop Changes (since version 0.8)
   - Sends out the ban faster on join flood now
     Found by: Fred1
 
-  - Replaced many redundant lookups by hostname -- should cause a noticable
+  - Replaced many redundant lookups by hostname -- should cause a noticeable
     speed increase
 
   - New reg.c for slightly faster matching
@@ -1412,7 +1412,7 @@ Eggdrop Changes (since version 0.8)
 
   - '.status all' will give a much more detailed list
 
-  - It will tell you if you try to 'ident' from a nonexistant nickname, and
+  - It will tell you if you try to 'ident' from a nonexistent nickname, and
     it already knows you
     Suggested by: kibbles
 
@@ -1496,7 +1496,7 @@ Eggdrop Changes (since version 0.8)
   - Detects and tries to correct a situation where an auto-linked sharebot
     is in the bot-chain, but not directly connected
 
-  - Tandem-bot user records are no longer transfered across share-bot links:
+  - Tandem-bot user records are no longer transferred across share-bot links:
     each bot is responsible for its own tandem-bot list
 
   - Requests ops from other bots tandem-linked which are on the same channel
@@ -1623,23 +1623,23 @@ Eggdrop Changes (since version 0.8)
 
   # Released by: Robey [Robey Pointer <robey@ulca10.residence.gatech.edu>]
 
-  - Uses more compatable 'sigaction' now instead of sigvec
+  - Uses more compatible 'sigaction' now instead of sigvec
 
   - Actually uses TABLESIZE in net.c now (oops!)
 
-  - Uses sigemptyset() instead of setting sigmal mask to 0 (more compatable)
+  - Uses sigemptyset() instead of setting sigmal mask to 0 (more compatible)
 
   - Wasn't checking that it had ops before trying to remove channel bans
     with perm-bans off: fixed
     Found by: denali
 
-  - Changed format of '.ignores' to be more consistant
+  - Changed format of '.ignores' to be more consistent
     Suggested by: miltrypet
 
   - '.handle' wasn't giving any error messages: fixed
     Found by: denali
 
-  - '.chpass' would let you change nonexistant password: fixed
+  - '.chpass' would let you change nonexistent password: fixed
     Found by: denali
 
   - Added '.topic' command to change the channel's topic
