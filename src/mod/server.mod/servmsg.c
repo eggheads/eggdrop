@@ -28,8 +28,8 @@ static time_t last_ctcp = (time_t) 0L;
 static int count_ctcp = 0;
 static char altnick_char = 0;
 struct cap_list cap = {"", "", ""};
-char capes[64][32] = {{ 0 }};
-
+int ncapesc;
+Tcl_Obj **ncapesv, *ncapeslist;
 
 /* We try to change to a preferred unique nick here. We always first try the
  * specified alternate nick. If that fails, we repeatedly modify the nick
@@ -1178,32 +1178,62 @@ static int got421(char *from, char *msg) {
 }
 
 /*
- * Helper function to add CAP capability to next empty array slot
+ * Add desired capability to Tcl List for easy addition/deletion. First
+ * checks if requested cape is available on the list provided by the server
+ * before adding to the desired list.
  */
 void add_cape(char *cape) {
-  int i = 0;
-  for (i = 0; i < (sizeof capes / sizeof capes[0]); i++) {
-    if (!strlen(capes[i])) {
-      strlcpy(capes[i], cape, sizeof capes[0]);
-      break;
+  int len = 0, i = 0;
+  if (strstr(cap.supported, cape)) {
+    if (!strstr(cap.negotiated, cape)) {
+      putlog(LOG_DEBUG, "*", "CAP: Adding cape %s to negotiated list", cape);
+      Tcl_ListObjAppendElement(interp, ncapeslist, Tcl_NewStringObj(cape, -1));
+    } else {
+      putlog(LOG_DEBUG, "*", "CAP: %s is already added to negotiated list", cape);
     }
+  } else {   //TODO: Remove?
+    putlog(LOG_DEBUG, "*","CAP: desired capability %s not supported "
+        "by server, removing from request...", cape);
+  }
+  Tcl_ListObjGetElements(interp, ncapeslist, &ncapesc, &ncapesv);
+  for (i = 0; i < ncapesc; i++) {
+    len += snprintf(cap.negotiated+len, sizeof cap.negotiated - strlen(cap.negotiated) - 1,
+        "%s%s", (len == 0 ? "" : " "), Tcl_GetString(ncapesv[i]));
   }
 }
 
-/*
- * Add desired CAP requests to an array for easier parsing against supported
- * server capabilities later on
- */
-void create_cap_req() {
-  memset(capes, 0, sizeof capes[0]);
-  if (sasl) {
-    add_cape("sasl");
+/* Remove capability from internal CAP request list */
+void del_cape(char *cape) {
+  int len = 0, i = 0;
+  if (strstr(cap.negotiated, cape)) {
+    putlog(LOG_DEBUG, "*", "CAP: Removing %s from negotiated list", cape);
+    Tcl_ListObjGetElements(interp, ncapeslist, &ncapesc, &ncapesv);
+    for (i = 0; i < ncapesc; i++) {
+      if (!strcmp(cape, Tcl_GetString(ncapesv[i]))) {
+        Tcl_ListObjReplace(interp, ncapeslist, i, 1, 0, NULL);
+      }
+    }
+  } else {
+    putlog(LOG_DEBUG, "*", "CAP: %s is not on negotiated list", cape);
   }
+  Tcl_ListObjGetElements(interp, ncapeslist, &ncapesc, &ncapesv);
+  for (i = 0; i < ncapesc; i++) {
+    len += snprintf(cap.negotiated+len, sizeof cap.negotiated - strlen(cap.negotiated) - 1,
+        "%s%s", (len == 0 ? "" : " "), Tcl_GetString(ncapesv[i]));
+  }
+}
+
+/* Smash desired CAP capabilities into a single string */
+void add_req(char *cape) {
+  int len = strlen(cap.desired);
+  len += snprintf(cap.desired+len, sizeof cap.desired - strlen(cap.desired) - 1,
+        "%s%s", (len == 0 ? "" : " "), cape);
 }
 
 static int gotcap(char *from, char *msg) {
-  char *cmd, *match;
-  int len, i = 0;
+  char *cmd, *splitstr;
+  int len = 0, i = 0;
+  int listlen = 0;
 
   newsplit(&msg);
   putlog(LOG_DEBUG, "*", "CAP: %s", msg);
@@ -1212,49 +1242,53 @@ static int gotcap(char *from, char *msg) {
   if (!strcmp(cmd, "LS")) {
     putlog(LOG_DEBUG, "*", "CAP: %s supports CAP sub-commands: %s", from, msg);
     strlcpy(cap.supported, msg, sizeof cap.supported);
-    create_cap_req();
-    /* Check each desired cape against supported capes on server */
-    for (i = 0; i < (sizeof capes / sizeof capes[0]); i++) {
-      if (strlen(capes[i])) {
-        if (strstr(cap.supported, capes[i])) {
-          strncat(cap.desired, capes[i], (CAPMAX - strlen(cap.desired) - 1));
-          strncat(cap.desired, " ", (CAPMAX - strlen(cap.desired) - 1));
-        } else {
-          putlog(LOG_DEBUG, "*","CAP: desired capability %s not supported " 
-              "on %s, removing from request...", capes[i], from);
-        }
-      }
+    if (sasl) {
+      add_req("sasl");
     }
     if (strlen(cap.desired) > 0) {
-      putlog(LOG_DEBUG, "*", "CAP: Requesting %scapabilities from server", cap.desired);
+      putlog(LOG_DEBUG, "*", "CAP: Requesting %s capabilities from server", cap.desired);
       dprintf(DP_MODE, "CAP REQ :%s\n", cap.desired);
     } else {
       dprintf(DP_MODE, "CAP END\n");
     }
   } else if (!strcmp(cmd, "LIST")) {
     putlog(LOG_SERV, "*", "CAP: Negotiated CAP capabilities: %s", msg);
-    strlcpy(cap.negotiated, msg, sizeof cap.negotiated);
-  } else if (!strcmp(cmd, "ACK")) {
-    if (msg[0] == '-') {
-      msg++;
-      len = strlen(msg);    /* Remove capability from .negotiated list */
-      while ((match = strstr(cap.negotiated, msg))) {
-        *match = '\0';
-        strcat(cap.negotiated, match+len);
-      }
-      putlog (LOG_SERV, "*", "CAP: Disabled %s with %s", msg, from);
-    } else {
-      putlog(LOG_SERV, "*", "CAP: Successfully negotiated %s with %s", msg, from);
-      if (!strstr(cap.negotiated, msg)) {  //TODO break apart msg in case multiple capes requeseted at once
-        strncat(cap.negotiated, msg, (sizeof cap.negotiated -
-            strlen(cap.negotiated) - 1));
-      }
-      /* If a negotiated capability requires immediate action by Eggdrop,
-       * add it here                                                   */
-      if (strstr(msg, "sasl") != NULL) {
-        putlog(LOG_SERV, "*", "SASL AUTH CALL GOES HERE!");   //TODO
-      }
+    /* You're getting the current list, may as well the clear old stuff */
+    memset(cap.negotiated, 0, strlen(cap.negotiated));
+    Tcl_ListObjLength(interp, ncapeslist, &listlen);
+    Tcl_ListObjReplace(interp, ncapeslist, 0, listlen, 0, NULL);
+    splitstr = strtok(msg, " ");
+    while (splitstr != NULL) {
+      add_cape(splitstr);
+      splitstr = strtok(NULL, " ");
     }
+  } else if (!strcmp(cmd, "ACK")) {
+    Tcl_ListObjGetElements(interp, ncapeslist, &ncapesc, &ncapesv);
+    splitstr = strtok(msg, " ");
+    while (splitstr != NULL) {
+      if (splitstr[0] == '-') { /* Remove this cape from negotiated list */
+        splitstr++;
+        del_cape(splitstr);
+      } else {
+        add_cape(splitstr);
+      }
+      splitstr = strtok(NULL, " ");
+    }
+    len = 0;
+    Tcl_ListObjGetElements(interp, ncapeslist, &ncapesc, &ncapesv);
+    for (i = 0; i < ncapesc; i++) {
+      len += snprintf(cap.negotiated+len, sizeof cap.negotiated - strlen(cap.negotiated) - 1,
+          "%s%s", (len == 0 ? "" : " "), Tcl_GetString(ncapesv[i]));
+    }
+    putlog(LOG_SERV, "*", "CAP: Current Negotiations %s with %s", cap.negotiated, from);
+    /* If a negotiated capability requires immediate action by Eggdrop, add it
+     * here. However, that capability must take responsibility for sending an
+     * END. Future eggheads: add support for more than 1 of these async
+     * capabilities, right now SASL is the only one so we're OK.
+     */
+//    if (strstr(msg, "sasl") != NULL) {
+//      putlog(LOG_SERV, "*", "SASL AUTH CALL GOES HERE!");   //TODO
+//    }
     if (!strstr(cap.negotiated, "sasl")) {
       dprintf(DP_MODE, "CAP END\n");
     }
@@ -1448,6 +1482,7 @@ static void server_resolve_success(int servidx)
   /* Start alternate nicks from the beginning */
   altnick_char = 0;
   check_tcl_event("preinit-server");
+  ncapeslist = Tcl_NewListObj(0, NULL);
   /* See if server supports CAP command */
   dprintf(DP_MODE, "CAP LS\n");
   if (pass[0])
