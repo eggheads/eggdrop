@@ -1283,8 +1283,11 @@ static int gotcap(char *from, char *msg) {
           "%s%s", (len == 0 ? "" : " "), Tcl_GetString(ncapesv[i]));
     }
     putlog(LOG_SERV, "*", "CAP: Current Negotiations %s with %s", cap.negotiated, from);
-    /* If a negotiated capability requires immediate action by Eggdrop,
-     * add it here                                                   */
+    /* If a negotiated capability requires immediate action by Eggdrop, add it
+     * here. However, that capability must take responsibility for sending an
+     * END. Future eggheads: add support for more than 1 of these async
+     * capabilities, right now SASL is the only one so we're OK.
+     */
 //    if (strstr(msg, "sasl") != NULL) {
 //      putlog(LOG_SERV, "*", "SASL AUTH CALL GOES HERE!");   //TODO
 //    }
