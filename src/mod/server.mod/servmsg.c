@@ -22,13 +22,17 @@
 
 #include "../irc.mod/irc.h"
 #include "../channels.mod/channels.h"
+#include "server.h"
 
 static time_t last_ctcp = (time_t) 0L;
 static int count_ctcp = 0;
 static char altnick_char = 0;
+struct cap_list cap = {"", "", ""};
+int ncapesc;
+Tcl_Obj **ncapesv, *ncapeslist;
 
 /* We try to change to a preferred unique nick here. We always first try the
- * specified alternate nick. If that failes, we repeatedly modify the nick
+ * specified alternate nick. If that fails, we repeatedly modify the nick
  * until it gets accepted.
  *
  * sent nick:
@@ -37,7 +41,7 @@ static char altnick_char = 0;
  *          ^--------- given, alternate nick
  *
  * The last added character is always saved in altnick_char. At the very first
- * attempt (were altnick_char is 0), we try the alternate nick without any
+ * attempt (where altnick_char is 0), we try the alternate nick without any
  * additions.
  *
  * fixed by guppy (1999/02/24) and Fabian (1999/11/26)
@@ -982,6 +986,9 @@ static void disconnect_server(int idx)
 {
   if (server_online > 0)
     check_tcl_event("disconnect-server");
+  strcpy(cap.supported, "");
+  strcpy(cap.negotiated, "");
+  strcpy(cap.desired, "");
   server_online = 0;
   if (realservername)
     nfree(realservername);
@@ -1148,6 +1155,154 @@ static int got465(char *from, char *msg)
   return 1;
 }
 
+/*
+ * Invalid CAP command
+ */
+static int got410(char *from, char *msg) {
+  char *cmd;
+
+  newsplit(&msg);
+ 
+  putlog(LOG_SERV, "*", "%s", msg);
+  cmd = newsplit(&msg);
+  putlog(LOG_MISC, "*", "CAP sub-command %s not supported", cmd);
+
+  return 1;
+}
+
+static int got421(char *from, char *msg) {
+  newsplit(&msg);
+  putlog(LOG_SERV, "*", "%s reported an error: %s", from, msg);
+
+  return 1;
+}
+
+/*
+ * Add desired capability to Tcl List for easy addition/deletion. First
+ * checks if requested cape is available on the list provided by the server
+ * before adding to the desired list.
+ */
+void add_cape(char *cape) {
+  int len = 0, i = 0;
+  if (strstr(cap.supported, cape)) {
+    if (!strstr(cap.negotiated, cape)) {
+      putlog(LOG_DEBUG, "*", "CAP: Adding cape %s to negotiated list", cape);
+      Tcl_ListObjAppendElement(interp, ncapeslist, Tcl_NewStringObj(cape, -1));
+    } else {
+      putlog(LOG_DEBUG, "*", "CAP: %s is already added to negotiated list", cape);
+    }
+  } else {   //TODO: Remove?
+    putlog(LOG_DEBUG, "*","CAP: desired capability %s not supported "
+        "by server, removing from request...", cape);
+  }
+  Tcl_ListObjGetElements(interp, ncapeslist, &ncapesc, &ncapesv);
+  for (i = 0; i < ncapesc; i++) {
+    len += snprintf(cap.negotiated+len, sizeof cap.negotiated - strlen(cap.negotiated) - 1,
+        "%s%s", (len == 0 ? "" : " "), Tcl_GetString(ncapesv[i]));
+  }
+}
+
+/* Remove capability from internal CAP request list */
+void del_cape(char *cape) {
+  int len = 0, i = 0;
+  if (strstr(cap.negotiated, cape)) {
+    putlog(LOG_DEBUG, "*", "CAP: Removing %s from negotiated list", cape);
+    Tcl_ListObjGetElements(interp, ncapeslist, &ncapesc, &ncapesv);
+    for (i = 0; i < ncapesc; i++) {
+      if (!strcmp(cape, Tcl_GetString(ncapesv[i]))) {
+        Tcl_ListObjReplace(interp, ncapeslist, i, 1, 0, NULL);
+      }
+    }
+  } else {
+    putlog(LOG_DEBUG, "*", "CAP: %s is not on negotiated list", cape);
+  }
+  Tcl_ListObjGetElements(interp, ncapeslist, &ncapesc, &ncapesv);
+  for (i = 0; i < ncapesc; i++) {
+    len += snprintf(cap.negotiated+len, sizeof cap.negotiated - strlen(cap.negotiated) - 1,
+        "%s%s", (len == 0 ? "" : " "), Tcl_GetString(ncapesv[i]));
+  }
+}
+
+/* Smash desired CAP capabilities into a single string */
+void add_req(char *cape) {
+  int len = strlen(cap.desired);
+  len += snprintf(cap.desired+len, sizeof cap.desired - strlen(cap.desired) - 1,
+        "%s%s", (len == 0 ? "" : " "), cape);
+}
+
+static int gotcap(char *from, char *msg) {
+  char *cmd, *splitstr;
+  int len = 0, i = 0;
+  int listlen = 0;
+
+  newsplit(&msg);
+  putlog(LOG_DEBUG, "*", "CAP: %s", msg);
+  cmd = newsplit(&msg);
+  fixcolon(msg);
+  if (!strcmp(cmd, "LS")) {
+    putlog(LOG_DEBUG, "*", "CAP: %s supports CAP sub-commands: %s", from, msg);
+    strlcpy(cap.supported, msg, sizeof cap.supported);
+    if (sasl) {
+      add_req("sasl");
+    }
+    if (strlen(cap.desired) > 0) {
+      putlog(LOG_DEBUG, "*", "CAP: Requesting %s capabilities from server", cap.desired);
+      dprintf(DP_MODE, "CAP REQ :%s\n", cap.desired);
+    } else {
+      dprintf(DP_MODE, "CAP END\n");
+    }
+  } else if (!strcmp(cmd, "LIST")) {
+    putlog(LOG_SERV, "*", "CAP: Negotiated CAP capabilities: %s", msg);
+    /* You're getting the current list, may as well the clear old stuff */
+    memset(cap.negotiated, 0, strlen(cap.negotiated));
+    Tcl_ListObjLength(interp, ncapeslist, &listlen);
+    Tcl_ListObjReplace(interp, ncapeslist, 0, listlen, 0, NULL);
+    splitstr = strtok(msg, " ");
+    while (splitstr != NULL) {
+      add_cape(splitstr);
+      splitstr = strtok(NULL, " ");
+    }
+  } else if (!strcmp(cmd, "ACK")) {
+    Tcl_ListObjGetElements(interp, ncapeslist, &ncapesc, &ncapesv);
+    splitstr = strtok(msg, " ");
+    while (splitstr != NULL) {
+      if (splitstr[0] == '-') { /* Remove this cape from negotiated list */
+        splitstr++;
+        del_cape(splitstr);
+      } else {
+        add_cape(splitstr);
+      }
+      splitstr = strtok(NULL, " ");
+    }
+    len = 0;
+    Tcl_ListObjGetElements(interp, ncapeslist, &ncapesc, &ncapesv);
+    for (i = 0; i < ncapesc; i++) {
+      len += snprintf(cap.negotiated+len, sizeof cap.negotiated - strlen(cap.negotiated) - 1,
+          "%s%s", (len == 0 ? "" : " "), Tcl_GetString(ncapesv[i]));
+    }
+    putlog(LOG_SERV, "*", "CAP: Current Negotiations %s with %s", cap.negotiated, from);
+    /* If a negotiated capability requires immediate action by Eggdrop, add it
+     * here. However, that capability must take responsibility for sending an
+     * END. Future eggheads: add support for more than 1 of these async
+     * capabilities, right now SASL is the only one so we're OK.
+     */
+//    if (strstr(msg, "sasl") != NULL) {
+//      putlog(LOG_SERV, "*", "SASL AUTH CALL GOES HERE!");   //TODO
+//    }
+    if (!strstr(cap.negotiated, "sasl")) {
+      dprintf(DP_MODE, "CAP END\n");
+    }
+  } else if (!strcmp(cmd, "NAK")) {
+    putlog(LOG_SERV, "*", "CAP: Requested capability change %s rejected by %s",
+        msg, from);
+    dprintf(DP_MODE, "CAP END\n");    /* TODO: Handle whatever caused it to reject? */
+  } else if (!strcmp(cmd, "NEW")) {  //TODO: CAP 302 stuff?
+    // Do things
+  } else if (!strcmp(cmd, "DEL")) { // TODO: CAP 302 stuff?
+    // Do things
+  }
+  return 1;
+}
 
 static cmd_t my_raw_binds[] = {
   {"PRIVMSG", "",   (IntFunc) gotmsg,       NULL},
@@ -1158,6 +1313,10 @@ static cmd_t my_raw_binds[] = {
   {"WALLOPS", "",   (IntFunc) gotwall,      NULL},
   {"001",     "",   (IntFunc) got001,       NULL},
   {"303",     "",   (IntFunc) got303,       NULL},
+  {"311",     "",   (IntFunc) got311,       NULL},
+  {"318",     "",   (IntFunc) whoispenalty, NULL},
+  {"410",     "",   (IntFunc) got410,       NULL},
+  {"421",     "",   (IntFunc) got421,       NULL},
   {"432",     "",   (IntFunc) got432,       NULL},
   {"433",     "",   (IntFunc) got433,       NULL},
   {"437",     "",   (IntFunc) got437,       NULL},
@@ -1170,8 +1329,7 @@ static cmd_t my_raw_binds[] = {
 /* ircu2.10.10 has a bug when a client is throttled ERROR is sent wrong */
   {"ERROR:",  "",   (IntFunc) goterror,     NULL},
   {"KICK",    "",   (IntFunc) gotkick,      NULL},
-  {"318",     "",   (IntFunc) whoispenalty, NULL},
-  {"311",     "",   (IntFunc) got311,       NULL},
+  {"CAP",     "",   (IntFunc) gotcap,       NULL},
   {NULL,      NULL, NULL,                    NULL}
 };
 
@@ -1324,6 +1482,9 @@ static void server_resolve_success(int servidx)
   /* Start alternate nicks from the beginning */
   altnick_char = 0;
   check_tcl_event("preinit-server");
+  ncapeslist = Tcl_NewListObj(0, NULL);
+  /* See if server supports CAP command */
+  dprintf(DP_MODE, "CAP LS\n");
   if (pass[0])
     dprintf(DP_MODE, "PASS %s\n", pass);
   dprintf(DP_MODE, "NICK %s\n", botname);

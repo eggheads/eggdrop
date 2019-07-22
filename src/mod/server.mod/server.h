@@ -20,6 +20,8 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
+#define CAPMAX      499           /*  (512 - "CAP REQ :XXX\r\n")   */
+
 #ifndef _EGG_MOD_SERVER_SERVER_H
 #define _EGG_MOD_SERVER_SERVER_H
 
@@ -99,6 +101,14 @@ struct server_list {
   char *pass;
   char *realname;
 };
+
+typedef struct cap_list {
+  char supported[CAPMAX];   /* Capes supportd by IRCD                   */
+  char negotiated[CAPMAX];  /* Common capes between IRCD and client     */
+  char desired[CAPMAX];     /* Capes Eggdrop wants to request from IRCD */
+} cap_list;
+
+extern struct cap_list cap;
 
 /* Available net types.  */
 enum {

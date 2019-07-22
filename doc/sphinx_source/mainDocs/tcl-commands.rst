@@ -154,6 +154,16 @@ clearqueue <queue>
 
   Module: server
 
+^^^^^^^^^^^^^^^^^^^^^^^
+cap <active/available/raw> [arg]
+^^^^^^^^^^^^^^^^^^^^^^^
+
+  Description: displays CAP status or sends a raw CAP command to the server. "available" will list the capabilities supported by the server, "active" will list the capabilities Eggdrop has negotiated with the server, and raw will send a raw CAP command to the server. If sending a raw command, it must be submitted in arg as a single string. For example, to request capabilities foo and bar, you would use [cap raw "REQ :foo bar"]. 
+
+  Returns: nothing
+
+  Module: server
+
 User Record Manipulation Commands
 ---------------------------------
 

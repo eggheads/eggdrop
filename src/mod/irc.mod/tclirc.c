@@ -973,7 +973,7 @@ static int tcl_putkick STDVAR
       return TCL_ERROR;
     }
     if (!m)
-      continue;                 /* Skip non-existant nicks */
+      continue;                 /* Skip non-existent nicks */
     m->flags |= SENTKICK;       /* Mark as pending kick */
     if (kicknick[0])
       strncat(kicknick, ",", sizeof kicknick - strlen(kicknick) - 1);

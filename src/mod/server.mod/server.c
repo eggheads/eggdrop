@@ -121,6 +121,8 @@ static void msgq_clear(struct msgq_head *qh);
 static int stack_limit;
 static char *realservername;
 
+static int sasl = 0;
+
 #include "servmsg.c"
 
 #define MAXPENALTY 10
@@ -1425,6 +1427,7 @@ static tcl_ints my_tcl_ints[] = {
 #ifdef TLS
   {"ssl-verify-server", &tls_vfyserver,             0},
 #endif
+  {"sasl",              &sasl,                      0},
   {NULL,                NULL,                       0}
 };
 
@@ -1817,6 +1820,8 @@ static void server_report(int idx, int details)
   if (hq.tot)
     dprintf(idx, "    %s %d%% (%d msgs)\n", IRC_HELPQUEUE,
             (int) ((float) (hq.tot * 100.0) / (float) maxqmsg), (int) hq.tot);
+  dprintf(idx, "    Active CAP negotiations: %s\n", (strlen(cap.negotiated) > 0) ?
+            cap.negotiated : "None" );
 
   if (details) {
     int size = server_expmem();

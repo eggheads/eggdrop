@@ -818,7 +818,7 @@ int xtra_set(struct userrec *u, struct user_entry *e, void *buf)
     }
   }
   if (!old && (!new->data || !new->data[0])) {
-    /* Delete non-existant entry -- doh ++rtc */
+    /* Delete non-existent entry -- doh ++rtc */
     nfree(new->key);
     if (new->data)
       nfree(new->data);
