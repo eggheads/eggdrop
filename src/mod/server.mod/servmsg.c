@@ -1286,9 +1286,10 @@ static int gotcap(char *from, char *msg) {
      * END. Future eggheads: add support for more than 1 of these async
      * capabilities, right now SASL is the only one so we're OK.
      */
-//    if (strstr(msg, "sasl") != NULL) {
-//      putlog(LOG_SERV, "*", "SASL AUTH CALL GOES HERE!");   //TODO
-//    }
+    if (strstr(msg, "sasl")) {
+      // TODO: INSTEAD OF CAP END, SASL AUTH CALL WILL GO HERE
+      dprintf(DP_MODE, "CAP END\n");
+    }
     if (!strstr(cap.negotiated, "sasl")) {
       dprintf(DP_MODE, "CAP END\n");
     }
