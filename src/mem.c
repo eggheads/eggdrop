@@ -22,8 +22,8 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
-#define MEMTBLSIZE_START (1 << 12) /* 4096   */
-#define MEMTBLSIZE_MAX   (1 << 18) /* 262144 */
+#define MEMTBLSIZE_START (1 << 12) /* 4096    */
+#define MEMTBLSIZE_MAX   (1 << 20) /* 1048576 */
 #define COMPILING_MEM
 
 #include "main.h"
