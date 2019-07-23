@@ -1142,7 +1142,7 @@ static int got311(char *from, char *msg)
   return 0;
 }
 
-static void gotauthenticate(char *from, char *msg)
+static int gotauthenticate(char *from, char *msg)
 {
   char src[256] = ""; // FIXME: size
   char *s;
@@ -1188,60 +1188,60 @@ static void gotauthenticate(char *from, char *msg)
     fp = fopen(sasl_ecdsa_key, "r");
     if (!fp) {
       putlog(LOG_SERV, "*", "SASL: AUTHENTICATE: fopen(): %s\n", sasl_ecdsa_key);
-      return;
+      return 1;
     }
     privateKey = PEM_read_PrivateKey(fp, NULL, 0, NULL);
     if (!privateKey) {
       putlog(LOG_SERV, "*", "SASL: AUTHENTICATE: PEM_read_PrivateKey(): SSL error = %s\n",
              ERR_error_string(ERR_get_error(), 0));
       fclose(fp);
-      return;
+      return 1;
     }
     fclose(fp);
     eckey = EVP_PKEY_get1_EC_KEY(privateKey);
     if (!eckey) {
       putlog(LOG_SERV, "*", "SASL: AUTHENTICATE: EVP_PKEY_get1_EC_KEY(): SSL error = %s\n",
              ERR_error_string(ERR_get_error(), 0));
-      return;
+      return 1;
     }
     if (ECDSA_sign(0, dst, olen, dst2, &olen2, eckey) == 0) {
       printf("SASL: AUTHENTICATE: ECDSA_sign() SSL error = %s\n",
              ERR_error_string(ERR_get_error(), 0));
-      return;
+      return 1;
     } 
     mbedtls_base64_encode(dst, sizeof dst, &olen, dst2, olen2);
     putlog(LOG_SERV, "*", "SASL: put AUTHENTICATE Response %s", dst);
     dprintf(DP_MODE, "AUTHENTICATE %s\n", dst);
 
   }
-  return;
+  return 0;
 }
 
-static void got900(char *from, char *msg)
+static int got900(char *from, char *msg)
 {
   newsplit(&msg); /* nick */
   newsplit(&msg); /* nick!ident@host */
   newsplit(&msg); /* account */
   fixcolon(msg);
   putlog(LOG_SERV, "*", "SASL: %s", msg);
-  return;
+  return 0;
 }
 
-static void got903and904(char *from, char *msg)
+static int got903and904(char *from, char *msg)
 {
   newsplit(&msg); /* nick */
   fixcolon(msg);
   putlog(LOG_SERV, "*", "SASL: %s", msg);
   dprintf(DP_MODE, "CAP END\n");
-  return;
+  return 0;
 }
 
-static void got906and908(char *from, char *msg)
+static int got906and908(char *from, char *msg)
 {
   newsplit(&msg); /* nick */
   fixcolon(msg);
   putlog(LOG_SERV, "*", "SASL: %s", msg);
-  return;
+  return 0;
 }
 
 /*
