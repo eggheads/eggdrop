@@ -22,7 +22,8 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
-#define MEMTBLSIZE 250000       /* yikes! */
+#define MEMTBLSIZE_START (1 << 12) /* 4096    */
+#define MEMTBLSIZE_MAX   (1 << 20) /* 1048576 */
 #define COMPILING_MEM
 
 #include "main.h"
@@ -45,7 +46,9 @@ struct {
   int size;
   short line;
   char file[20];
-} memtbl[MEMTBLSIZE];
+} *memtbl;
+
+static int memtbl_size = MEMTBLSIZE_START;
 #endif
 
 /* Prototypes */
@@ -73,9 +76,16 @@ int expmem_tls();
 void init_mem()
 {
 #ifdef DEBUG_MEM
+  size_t size;
   int i;
 
-  for (i = 0; i < MEMTBLSIZE; i++)
+  size = sizeof(*memtbl) * memtbl_size;
+  if (!(memtbl = malloc(size))) {
+    putlog(LOG_MISC, "*", "*** FAILED MALLOC mem.c (memtbl) (%i): %s", size,
+           strerror(errno));
+    fatal("Memory allocation failed", 0);
+  } 
+  for (i = 0; i < memtbl_size; i++)
     memtbl[i].ptr = NULL;
 #endif
 }
@@ -87,9 +97,9 @@ void tell_mem_status(char *nick)
 #ifdef DEBUG_MEM
   float per;
 
-  per = ((lastused * 1.0) / (MEMTBLSIZE * 1.0)) * 100.0;
+  per = ((lastused * 1.0) / (memtbl_size * 1.0)) * 100.0;
   dprintf(DP_HELP, "NOTICE %s :Memory table usage: %d/%d (%.1f%% full)\n",
-          nick, lastused, MEMTBLSIZE, per);
+          nick, lastused, memtbl_size, per);
 #endif
   dprintf(DP_HELP, "NOTICE %s :Think I'm using about %dk.\n", nick,
           (int) (expected_memory() / 1024));
@@ -102,8 +112,8 @@ void tell_mem_status_dcc(int idx)
   float per;
 
   exp = expected_memory();      /* in main.c ? */
-  per = ((lastused * 1.0) / (MEMTBLSIZE * 1.0)) * 100.0;
-  dprintf(idx, "Memory table: %d/%d (%.1f%% full)\n", lastused, MEMTBLSIZE,
+  per = ((lastused * 1.0) / (memtbl_size * 1.0)) * 100.0;
+  dprintf(idx, "Memory table: %d/%d (%.1f%% full)\n", lastused, memtbl_size,
           per);
   per = ((exp * 1.0) / (memused * 1.0)) * 100.0;
   if (per != 100.0)
@@ -325,6 +335,7 @@ void *n_malloc(int size, const char *file, int line)
   void *x;
 
 #ifdef DEBUG_MEM
+  size_t size2;
   int i = 0;
   char *p;
 #endif
@@ -336,9 +347,21 @@ void *n_malloc(int size, const char *file, int line)
     fatal("Memory allocation failed", 0);
   }
 #ifdef DEBUG_MEM
-  if (lastused == MEMTBLSIZE) {
-    putlog(LOG_MISC, "*", "*** MEMORY TABLE FULL: %s (%d)", file, line);
-    fatal("Memory table full", 0);
+  if (lastused == memtbl_size) {
+    memtbl_size <<= 1;
+    if (memtbl_size > MEMTBLSIZE_MAX) {
+      putlog(LOG_MISC, "*", "*** MEMORY TABLE FULL: %s (%d)", file, line);
+      fatal("Memory table full", 0);
+    }
+    size2 = sizeof(*memtbl) * memtbl_size;
+    if (!(memtbl = realloc(memtbl, size2))) {
+      putlog(LOG_MISC, "*", "*** FAILED REALLOC mem.c (memtbl) (%i): %s", size2,
+             strerror(errno));
+      fatal("Memory allocation failed", 0);
+    } 
+    for (i = lastused; i < memtbl_size; i++)
+      memtbl[i].ptr = NULL;
+    debug1("mem: memtbl size doubled to %i.", memtbl_size);
   }
   i = lastused;
   memtbl[i].ptr = x;
