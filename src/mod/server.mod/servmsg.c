@@ -1390,8 +1390,7 @@ static int gotcap(char *from, char *msg) {
      * END. Future eggheads: add support for more than 1 of these async
      * capabilities, right now SASL is the only one so we're OK.
      */
-    if (strstr(msg, "sasl")) {
-      /* if (sasl) { TODO: do we need this here? */
+    if (strstr(cap.negotiated, "sasl")) {
       if ((sasl_mechanism != SASL_MECHANISM_ECDSA_NIST256P_CHALLENGE) ||
           HAVE_OPENSSL_SSL_H) {
         /*
@@ -1405,7 +1404,7 @@ static int gotcap(char *from, char *msg) {
         dprintf(DP_MODE, "AUTHENTICATE %s\n", SASL_MECHANISMS[sasl_mechanism]);
       }
     }
-    if (!strstr(cap.negotiated, "sasl")) {
+    else {
       dprintf(DP_MODE, "CAP END\n");
     }
   } else if (!strcmp(cmd, "NAK")) {
