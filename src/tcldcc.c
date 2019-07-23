@@ -670,7 +670,7 @@ static int tcl_dcclist STDVAR
       }
       list[0] = idxstr;
       list[1] = dcc[i].nick;
-      list[2] = (dcc[i].host == NULL || dcc[i].host[0] == '\0') ?
+      list[2] = (dcc[i].host[0] == '\0') ?
                 iptostr(&dcc[i].sockname.addr.sa) : dcc[i].host;
 #ifdef TLS
       egg_snprintf(portstring, sizeof portstring, "%s%d", dcc[i].ssl ? "+" : "", dcc[i].port);
