@@ -1144,11 +1144,11 @@ static int got311(char *from, char *msg)
 
 static int gotauthenticate(char *from, char *msg)
 {
-  char src[256] = ""; // FIXME: size
+  char src[256] = ""; /* FIXME: size */
   char *s;
-  unsigned char dst[256] = ""; // FIXME: size
+  unsigned char dst[256] = ""; /* FIXME: size */
   size_t olen;
-  unsigned char dst2[256] = ""; // FIXME: size
+  unsigned char dst2[256] = ""; /* FIXME: size */
   unsigned int olen2;
 #ifdef HAVE_OPENSSL_SSL_H
   FILE *fp;
@@ -1295,7 +1295,7 @@ void add_cape(char *cape) {
     } else {
       putlog(LOG_DEBUG, "*", "CAP: %s is already added to negotiated list", cape);
     }
-  } else {   //TODO: Remove?
+  } else { /* TODO: Remove? */
     putlog(LOG_DEBUG, "*","CAP: desired capability %s not supported "
         "by server, removing from request...", cape);
   }
@@ -1410,11 +1410,11 @@ static int gotcap(char *from, char *msg) {
   } else if (!strcmp(cmd, "NAK")) {
     putlog(LOG_SERV, "*", "CAP: Requested capability change %s rejected by %s",
         msg, from);
-    dprintf(DP_MODE, "CAP END\n");    /* TODO: Handle whatever caused it to reject? */
-  } else if (!strcmp(cmd, "NEW")) {  //TODO: CAP 302 stuff?
-    // Do things
-  } else if (!strcmp(cmd, "DEL")) { // TODO: CAP 302 stuff?
-    // Do things
+    dprintf(DP_MODE, "CAP END\n");  /* TODO: Handle whatever caused it to reject? */
+  } else if (!strcmp(cmd, "NEW")) { /* TODO: CAP 302 stuff? */
+    /* Do things */
+  } else if (!strcmp(cmd, "DEL")) { /* TODO: CAP 302 stuff? */
+    /* Do things */
   }
   return 1;
 }
