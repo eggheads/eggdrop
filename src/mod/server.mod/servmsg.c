@@ -1144,11 +1144,14 @@ static int got311(char *from, char *msg)
 
 static int gotauthenticate(char *from, char *msg)
 {
-  char src[256] = ""; /* FIXME: size */
+  char src[(sizeof sasl_username) + (sizeof sasl_username) +
+           (sizeof sasl_password)] = "";
   char *s;
-  unsigned char dst[256] = ""; /* FIXME: size */
+  /* 400-byte chunk, see: https://ircv3.net/specs/extensions/sasl-3.1.html
+   * base64 padding */
+  unsigned char dst[((MAX((sizeof src), 400) + 2) / 3) << 2] = "";
   size_t olen;
-  unsigned char dst2[256] = ""; /* FIXME: size */
+  unsigned char *dst2;
   unsigned int olen2;
 #ifdef HAVE_OPENSSL_SSL_H
   FILE *fp;
@@ -1185,9 +1188,10 @@ static int gotauthenticate(char *from, char *msg)
   } else {
     putlog(LOG_SERV, "*", "SASL: got AUTHENTICATE Challange");
     mbedtls_base64_decode(dst, sizeof dst, &olen, (const unsigned char *) msg, strlen(msg));
+    /* TODO: maybe check for key file before starting AUTHENTICATE */
     fp = fopen(sasl_ecdsa_key, "r");
     if (!fp) {
-      putlog(LOG_SERV, "*", "SASL: AUTHENTICATE: fopen(): %s\n", sasl_ecdsa_key);
+      putlog(LOG_SERV, "*", "SASL: AUTHENTICATE error: could not open file sasl_ecdsa_key %s: %s\n", sasl_ecdsa_key, strerror(errno));
       return 1;
     }
     privateKey = PEM_read_PrivateKey(fp, NULL, 0, NULL);
@@ -1204,12 +1208,15 @@ static int gotauthenticate(char *from, char *msg)
              ERR_error_string(ERR_get_error(), 0));
       return 1;
     }
+    dst2 = nmalloc(ECDSA_size(eckey));
     if (ECDSA_sign(0, dst, olen, dst2, &olen2, eckey) == 0) {
       printf("SASL: AUTHENTICATE: ECDSA_sign() SSL error = %s\n",
              ERR_error_string(ERR_get_error(), 0));
+      nfree(dst2);
       return 1;
     } 
     mbedtls_base64_encode(dst, sizeof dst, &olen, dst2, olen2);
+    nfree(dst2);
     putlog(LOG_SERV, "*", "SASL: put AUTHENTICATE Response %s", dst);
     dprintf(DP_MODE, "AUTHENTICATE %s\n", dst);
 
