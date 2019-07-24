@@ -179,7 +179,7 @@ AC_SUBST(EGG_CROSS_COMPILING)
 
 
 # Create Makefiles
-AC_CONFIG_FILES([Makefile doc/Makefile scripts/Makefile src/Makefile src/compat/Makefile src/md5/Makefile src/mod/Makefile src/mbedtls/Makefile])
+AC_CONFIG_FILES([Makefile doc/Makefile scripts/Makefile src/Makefile src/compat/Makefile src/md5/Makefile src/mod/Makefile])
 AC_OUTPUT
 
 

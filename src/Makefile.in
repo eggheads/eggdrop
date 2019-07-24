@@ -41,7 +41,7 @@ linkstart:
 	touch mod/mod.xlibs
 
 link:
-	$(LD) $(CFLAGS) -o ../$(EGGEXEC) $(eggdrop_objs) $(MODOBJS) $(XLIBS) md5/md5c.o compat/*.o mbedtls/base64.o `cat mod/mod.xlibs`
+	$(LD) $(CFLAGS) -o ../$(EGGEXEC) $(eggdrop_objs) $(MODOBJS) $(XLIBS) md5/md5c.o compat/*.o `cat mod/mod.xlibs`
 
 linkfinish:
 	@$(STRIP) ../$(EGGEXEC) && \
@@ -49,7 +49,7 @@ linkfinish:
 	echo "Successful compile: $(EGGEXEC)" && \
 	echo ""
 
-../$(EGGEXEC): $(eggdrop_objs) compile_md5 compatibility compile_mbedtls
+../$(EGGEXEC): $(eggdrop_objs) compile_md5 compatibility
 	$(MAKE) linkstart && $(MAKE) link && $(MAKE) linkfinish
 
 $(EGGEXEC): ../$(EGGEXEC)
@@ -71,9 +71,6 @@ compatibility:
 
 compile_md5:
 	@cd md5 && $(MAKE) $(MAKE_GENERIC_ARGS) md5
-
-compile_mbedtls:
-	@cd mbedtls && $(MAKE) $(MAKE_GENERIC_ARGS) mbedtls
 
 eggdrop.h:
 	@echo "You do not have the eggdrop source!" && exit 1
@@ -176,7 +173,7 @@ modules.o: modules.c main.h ../config.h ../eggint.h ../lush.h lang.h \
  tclhash.h chan.h users.h compat/compat.h compat/inet_aton.h \
  ../src/main.h compat/snprintf.h compat/inet_ntop.h compat/inet_pton.h \
  compat/gethostbyname2.h compat/strlcpy.h modules.h mod/modvals.h \
- tandem.h mbedtls/base64.h md5/md5.h
+ tandem.h md5/md5.h
 net.o: net.c main.h ../config.h ../eggint.h ../lush.h lang.h eggdrop.h \
  compat/in6.h flags.h proto.h misc_file.h cmdt.h tclegg.h tclhash.h \
  chan.h users.h compat/compat.h compat/inet_aton.h ../src/main.h \

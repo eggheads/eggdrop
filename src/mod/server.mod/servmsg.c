@@ -1142,6 +1142,39 @@ static int got311(char *from, char *msg)
   return 0;
 }
 
+static void base64_encode(unsigned char *dst, const unsigned char *src, size_t slen) {
+  BIO *b64, *bio;
+  char *data;
+  long len;
+
+  b64 = BIO_new(BIO_f_base64());
+  BIO_set_flags(b64, BIO_FLAGS_BASE64_NO_NL);
+  bio = BIO_new(BIO_s_mem());
+  BIO_push(b64, bio);
+  BIO_write(b64, src, slen);
+  BIO_flush(b64);
+  len = BIO_get_mem_data(bio, &data);
+  if (len > 0) {
+    memcpy(dst, data, len); /* don't strlcpy() for it would read data[len] */
+    dst[len] = 0;
+  } else {
+    debug0("base64_encode(): BIO_get_mem_data(): error");
+    *dst = 0;
+  }
+  BIO_free_all(b64);
+}
+
+static void base64_decode(unsigned char *dst, size_t *olen, const unsigned char *src) {
+  BIO *b64, *bio;
+
+  b64 = BIO_new(BIO_f_base64());
+  BIO_set_flags(b64, BIO_FLAGS_BASE64_NO_NL);
+  bio = BIO_new_mem_buf(src, strlen((const char *) src));
+  BIO_push(b64, bio);
+  *olen = BIO_read(b64, dst, strlen((const char *) src));
+  BIO_free_all(b64);
+}
+
 static int gotauthenticate(char *from, char *msg)
 {
   char src[(sizeof sasl_username) + (sizeof sasl_username) +
@@ -1170,14 +1203,16 @@ static int gotauthenticate(char *from, char *msg)
       s += strlen(sasl_username) + 1;
       strcpy(s, sasl_password);
       s += strlen(sasl_password);
-      mbedtls_base64_encode(dst, sizeof dst, &olen, (const unsigned char *) src, s - src);
+      // mbedtls_base64_encode(dst, sizeof dst, &olen, (const unsigned char *) src, s - src);
+      base64_encode(dst, (const unsigned char *) src, s - src);
     }
     else if (sasl_mechanism == SASL_MECHANISM_ECDSA_NIST256P_CHALLENGE) {
       strcpy(s, sasl_username);
       s += strlen(sasl_username) + 1;
       strcpy(s, sasl_username);
       s += strlen(sasl_username);
-      mbedtls_base64_encode(dst, sizeof dst, &olen, (const unsigned char *) src, s - src);
+      // mbedtls_base64_encode(dst, sizeof dst, &olen, (const unsigned char *) src, s - src);
+      base64_encode(dst, (const unsigned char *) src, s - src);
     }
     else { /* sasl_mechanism == SASL_MECHANISM_EXTERNAL */
       dst[0] = '+';
@@ -1187,7 +1222,8 @@ static int gotauthenticate(char *from, char *msg)
     dprintf(DP_MODE, "AUTHENTICATE %s\n", dst);
   } else {
     putlog(LOG_SERV, "*", "SASL: got AUTHENTICATE Challange");
-    mbedtls_base64_decode(dst, sizeof dst, &olen, (const unsigned char *) msg, strlen(msg));
+    // mbedtls_base64_decode(dst, sizeof dst, &olen, (const unsigned char *) msg, strlen(msg));
+    base64_decode(dst, &olen, (const unsigned char *) msg);
     /* TODO: maybe check for key file before starting AUTHENTICATE */
     fp = fopen(sasl_ecdsa_key, "r");
     if (!fp) {
@@ -1215,7 +1251,8 @@ static int gotauthenticate(char *from, char *msg)
       nfree(dst2);
       return 1;
     } 
-    mbedtls_base64_encode(dst, sizeof dst, &olen, dst2, olen2);
+    // mbedtls_base64_encode(dst, sizeof dst, &olen, dst2, olen2);
+    base64_encode(dst, dst2, olen2);
     nfree(dst2);
     putlog(LOG_SERV, "*", "SASL: put AUTHENTICATE Response %s", dst);
     dprintf(DP_MODE, "AUTHENTICATE %s\n", dst);

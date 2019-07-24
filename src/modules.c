@@ -27,7 +27,6 @@
 #include "main.h"
 #include "modules.h"
 #include "tandem.h"
-#include "mbedtls/base64.h"
 #include "md5/md5.h"
 #include "users.h"
 
@@ -598,9 +597,7 @@ Function global_table[] = {
   (Function) 0,
 #endif
   /* 304 - 307 */
-  (Function) strncpyz,
-  (Function) mbedtls_base64_encode,
-  (Function) mbedtls_base64_decode
+  (Function) strncpyz
 };
 
 void init_modules(void)
