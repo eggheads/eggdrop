@@ -20,6 +20,7 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
+#include <resolv.h> /* base64 encode b64_ntop() and base64 decode b64_pton() */
 #ifdef HAVE_OPENSSL_SSL_H
   #include <openssl/err.h>
 #endif
@@ -1142,39 +1143,6 @@ static int got311(char *from, char *msg)
   return 0;
 }
 
-static void base64_encode(unsigned char *dst, const unsigned char *src, size_t slen) {
-  BIO *b64, *bio;
-  char *data;
-  long len;
-
-  b64 = BIO_new(BIO_f_base64());
-  BIO_set_flags(b64, BIO_FLAGS_BASE64_NO_NL);
-  bio = BIO_new(BIO_s_mem());
-  BIO_push(b64, bio);
-  BIO_write(b64, src, slen);
-  BIO_flush(b64);
-  len = BIO_get_mem_data(bio, &data);
-  if (len > 0) {
-    memcpy(dst, data, len); /* don't strlcpy() for it would read data[len] */
-    dst[len] = 0;
-  } else {
-    debug0("base64_encode(): BIO_get_mem_data(): error");
-    *dst = 0;
-  }
-  BIO_free_all(b64);
-}
-
-static void base64_decode(unsigned char *dst, size_t *olen, const unsigned char *src) {
-  BIO *b64, *bio;
-
-  b64 = BIO_new(BIO_f_base64());
-  BIO_set_flags(b64, BIO_FLAGS_BASE64_NO_NL);
-  bio = BIO_new_mem_buf(src, strlen((const char *) src));
-  BIO_push(b64, bio);
-  *olen = BIO_read(b64, dst, strlen((const char *) src));
-  BIO_free_all(b64);
-}
-
 static int gotauthenticate(char *from, char *msg)
 {
   char src[(sizeof sasl_username) + (sizeof sasl_username) +
@@ -1203,16 +1171,23 @@ static int gotauthenticate(char *from, char *msg)
       s += strlen(sasl_username) + 1;
       strcpy(s, sasl_password);
       s += strlen(sasl_password);
-      // mbedtls_base64_encode(dst, sizeof dst, &olen, (const unsigned char *) src, s - src);
-      base64_encode(dst, (const unsigned char *) src, s - src);
+      dst[0] = 0;
+      if (b64_ntop((unsigned char *) src, s - src, (char *) dst, sizeof dst) == -1) {
+        putlog(LOG_SERV, "*", "SASL: AUTHENTICATE error: could not base64 encode");
+        /* TODO: send cap end for all error cases in this function ? */
+        return 1;
+      }
+      /* TODO: what about olen we used for mbedtls_base64_encode() ? */
     }
     else if (sasl_mechanism == SASL_MECHANISM_ECDSA_NIST256P_CHALLENGE) {
       strcpy(s, sasl_username);
       s += strlen(sasl_username) + 1;
       strcpy(s, sasl_username);
       s += strlen(sasl_username);
-      // mbedtls_base64_encode(dst, sizeof dst, &olen, (const unsigned char *) src, s - src);
-      base64_encode(dst, (const unsigned char *) src, s - src);
+      if (b64_ntop((unsigned char *) src, s - src, (char *) dst, sizeof dst) == -1) {
+        putlog(LOG_SERV, "*", "SASL: AUTHENTICATE error: could not base64 encode");
+        return 1;
+      }
     }
     else { /* sasl_mechanism == SASL_MECHANISM_EXTERNAL */
       dst[0] = '+';
@@ -1222,8 +1197,11 @@ static int gotauthenticate(char *from, char *msg)
     dprintf(DP_MODE, "AUTHENTICATE %s\n", dst);
   } else {
     putlog(LOG_SERV, "*", "SASL: got AUTHENTICATE Challange");
-    // mbedtls_base64_decode(dst, sizeof dst, &olen, (const unsigned char *) msg, strlen(msg));
-    base64_decode(dst, &olen, (const unsigned char *) msg);
+    olen = b64_pton(msg, dst, sizeof dst);
+    if (olen == -1) {
+      putlog(LOG_SERV, "*", "SASL: AUTHENTICATE error: could not base64 encode");
+      return 1;
+    }
     /* TODO: maybe check for key file before starting AUTHENTICATE */
     fp = fopen(sasl_ecdsa_key, "r");
     if (!fp) {
@@ -1251,8 +1229,10 @@ static int gotauthenticate(char *from, char *msg)
       nfree(dst2);
       return 1;
     } 
-    // mbedtls_base64_encode(dst, sizeof dst, &olen, dst2, olen2);
-    base64_encode(dst, dst2, olen2);
+    if (b64_ntop(dst2, olen2, (char *) dst, sizeof dst) == -1) {
+      putlog(LOG_SERV, "*", "SASL: AUTHENTICATE error: could not base64 encode");
+      return 1;
+    }
     nfree(dst2);
     putlog(LOG_SERV, "*", "SASL: put AUTHENTICATE Response %s", dst);
     dprintf(DP_MODE, "AUTHENTICATE %s\n", dst);
