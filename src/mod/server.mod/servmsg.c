@@ -1150,6 +1150,9 @@ static int gotauthenticate(char *from, char *msg)
   char *s;
   /* 400-byte chunk, see: https://ircv3.net/specs/extensions/sasl-3.1.html
    * base64 padding */
+  #ifndef MAX
+    #define MAX(a,b) (((a)>(b))?(a):(b))
+  #endif
   unsigned char dst[((MAX((sizeof src), 400) + 2) / 3) << 2] = "";
   size_t olen;
   unsigned char *dst2;
