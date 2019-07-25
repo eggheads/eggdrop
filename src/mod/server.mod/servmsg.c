@@ -1374,7 +1374,14 @@ static int gotcap(char *from, char *msg) {
     putlog(LOG_DEBUG, "*", "CAP: %s supports CAP sub-commands: %s", from, msg);
     strlcpy(cap.supported, msg, sizeof cap.supported);
     if (sasl) {
-      add_req("sasl");
+      /* TODO: is this the right place to check for error in eggdrop conf setting ?
+       * (with error i mean, bot would crash, if the config setting is not validated) */
+      if (sasl_mechanism < 0)
+        putlog(LOG_SERV, "*", "SASL error: sasl-mechanism must be equal to or greater than 0");
+      else if (sasl_mechanism >= SASL_MECHANISM_NUM)
+        putlog(LOG_SERV, "*", "SASL error: sasl-mechanism must be less than %i", SASL_MECHANISM_NUM);
+      else
+        add_req("sasl");
     }
     if (strlen(cap.desired) > 0) {
       putlog(LOG_DEBUG, "*", "CAP: Requesting %s capabilities from server", cap.desired);
