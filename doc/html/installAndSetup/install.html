@@ -6,13 +6,13 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>Installing Eggdrop &#8212; Eggdrop 1.8.4 documentation</title>
+    <title>Installing Eggdrop &#8212; Eggdrop 1.9.0 documentation</title>
     <link rel="stylesheet" href="../_static/eggdrop.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
-        VERSION:     '1.8.4',
+        VERSION:     '1.9.0',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true,
@@ -33,7 +33,7 @@
             <img class="logo" src="../_static/eggman.png.gif" alt="Logo"/>
           </a></p>
         <div class="headertitle"><a
-          href="../index.html">Eggdrop 1.8.4 documentation</a></div>
+          href="../index.html">Eggdrop 1.9.0 documentation</a></div>
         <div class="rel">
           <a href="readme.html" title="README"
              accesskey="P">previous</a> |
@@ -138,7 +138,8 @@ installed.</p>
 </li>
 <li><dl class="first docutils">
 <dt>By default, version 1.8 uses SSL to protect botnet links. If you intend</dt>
-<dd><p class="first">on linking 1.8 bots together, you must run:</p>
+<dd><blockquote class="first">
+<div><p>on linking 1.8 bots together, you must run:</p>
 <div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">make</span> <span class="n">sslcert</span>
 </pre></div>
 </div>
@@ -147,7 +148,15 @@ will want to run:</p>
 <blockquote>
 <div><p>make sslcert DEST=&lt;directory&gt;</p>
 </div></blockquote>
-<p class="last">Read docs/TLS for more info on this process.</p>
+</div></blockquote>
+<p>For those using scripts to install Eggdrop, you can non-interactively
+generate a key and certificate by running:</p>
+<blockquote class="last">
+<div><blockquote>
+<div><p>make sslsilent</p>
+</div></blockquote>
+<p>Read docs/TLS for more info on this process.</p>
+</div></blockquote>
 </dd>
 </dl>
 </li>
@@ -288,6 +297,7 @@ Copyright (C) 1999 - 2019 Eggheads Development Team</div></blockquote>
 <li class="toctree-l1"><a class="reference internal" href="../coreDocs/ctcp.html">CTCP Module</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../coreDocs/dns.html">DNS Module</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../coreDocs/filesys.html">Filesys Module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../coreDocs/ident.html">Ident Module</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../coreDocs/irc.html">IRC Module</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../coreDocs/notes.html">Notes Module</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../coreDocs/seen.html">Seen Module</a></li>
@@ -333,7 +343,7 @@ Copyright (C) 1999 - 2019 Eggheads Development Team</div></blockquote>
           
     <div class="footer" role="contentinfo">
         &#169; Copyright 2019, Eggheads.
-      Last updated on Dec 31, 2018.
+      Last updated on Jul 25, 2019.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.6.7.
     </div>
         </div>
