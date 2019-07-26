@@ -651,8 +651,10 @@ void ssl_info(SSL *ssl, int where, int ret)
     putlog(data->loglevel, "*", "TLS: handshake successful. Secure connection "
            "established.");
 
-    if ((cert = SSL_get_peer_certificate(ssl)))
+    if ((cert = SSL_get_peer_certificate(ssl))) {
       ssl_showcert(cert, data->loglevel);
+      X509_free(cert);
+    }
     else
       putlog(data->loglevel, "*", "TLS: peer did not present a certificate");
 
