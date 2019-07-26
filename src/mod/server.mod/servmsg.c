@@ -117,7 +117,7 @@ static int check_tcl_msg(char *cmd, char *nick, char *uhost,
 }
 
 static int check_tcl_msgm(char *cmd, char *nick, char *uhost,
-                           struct userrec *u, char *arg)
+                          struct userrec *u, char *arg)
 {
   struct flag_record fr = { FR_GLOBAL | FR_CHAN | FR_ANYWH, 0, 0, 0, 0, 0 };
   int x;
@@ -149,7 +149,7 @@ static int check_tcl_msgm(char *cmd, char *nick, char *uhost,
 }
 
 static int check_tcl_notc(char *nick, char *uhost, struct userrec *u,
-                           char *dest, char *arg)
+                          char *dest, char *arg)
 {
   struct flag_record fr = { FR_GLOBAL | FR_CHAN | FR_ANYWH, 0, 0, 0, 0, 0 };
   int x;
