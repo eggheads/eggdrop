@@ -1,6 +1,6 @@
 Last revised: June 27, 2019
 
-.. _notes:
+.. _ident:
 
 ============
 Ident Module
@@ -24,14 +24,19 @@ may be of use to a very specific group of people, it requires additional
 external configuration via root access. Because most modern OSs do not allow
 user-level programs to bind to port 113, required by this option, a user must
 either:
-    - Allow Eggdrop to bind to ports <1024 via the command: 
-        'sudo setcap "cap_net_bind_service=+ep" /path/to/eggdrop'
-      Warning: this will allow Eggdrop to *any* port below 1024, potentially
-      allowing a user to impersonate a standard system service with Eggdrop
-    - Use iptables to re-route ident queries destined for port 113 to a
-      >1024 port that Eggdrop can bind to, for example by running:
-        'sudo iptables -t nat -A PREROUTING -i eth0 -p tcp --dport \
-         113 -j REDIRECT --to-port <ident port in config>'
+
+- Allow Eggdrop to bind to ports <1024 via the command::
+
+    sudo setcap "cap_net_bind_service=+ep" /path/to/eggdrop
+
+  Warning: this will allow Eggdrop to *any* port below 1024, potentially
+  allowing a user to impersonate a standard system service with Eggdrop
+
+- Use iptables to re-route ident queries destined for port 113 to a
+  >1024 port that Eggdrop can bind to, for example by running::
+
+    sudo iptables -t nat -A PREROUTING -i eth0 -p tcp --dport \
+    113 -j REDIRECT --to-port <ident port in config>'
 
 Additionally, using Eggdrop as a built-in ident daemon can cause issues
 when running multiple bots from the same account. The ident server is only
@@ -42,8 +47,8 @@ reboot, only one bot can bind to port 113 at a time, creating ident conflicts.
 Thus, this option is best suited for single-bot environments.
 
 This module requires: 
-    - oident to be running on your shell host, configured to allow user
-      spoofing, for the oidentd method.
+  - oident to be running on your shell host, configured to allow user
+    spoofing, for the oidentd method.
 
 Put this line into your Eggdrop configuration file to load the ident
 module::
@@ -54,9 +59,9 @@ There are also some variables you can set in your config file:
 
   set ident-method 0
     This sets which ident method you wish to use:
-      0 = oidentd / Your bot will overwrite $HOME/.oidentd.conf right before
-        opening the socket to the IRC server with the global reply.
-      1 = Builtin / Your bot will automatically turn its builtin identd on and
+     0 = oidentd / Your bot will overwrite $HOME/.oidentd.conf right before
+       opening the socket to the IRC server with the global reply.
+     1 = Builtin / Your bot will automatically turn its builtin identd on and
        off when needed so it shouldn't conflict with other identds that do the
        same. Ident port 113 is normally restricted to privileged processes on
        UNIX systems.
