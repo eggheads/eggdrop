@@ -1154,10 +1154,10 @@ static int gotauthenticate(char *from, char *msg)
     #define MAX(a,b) (((a)>(b))?(a):(b))
   #endif
   unsigned char dst[((MAX((sizeof src), 400) + 2) / 3) << 2] = "";
+#ifdef HAVE_OPENSSL_SSL_H
   size_t olen;
   unsigned char *dst2;
   unsigned int olen2;
-#ifdef HAVE_OPENSSL_SSL_H
   FILE *fp;
   EC_KEY *eckey;
   EVP_PKEY *privateKey;
@@ -1198,6 +1198,7 @@ static int gotauthenticate(char *from, char *msg)
     }
     putlog(LOG_SERV, "*", "SASL: put AUTHENTICATE %s", dst);
     dprintf(DP_MODE, "AUTHENTICATE %s\n", dst);
+#ifdef HAVE_OPENSSL_SSL_H
   } else {
     putlog(LOG_SERV, "*", "SASL: got AUTHENTICATE Challange");
     olen = b64_pton(msg, dst, sizeof dst);
@@ -1239,7 +1240,7 @@ static int gotauthenticate(char *from, char *msg)
     nfree(dst2);
     putlog(LOG_SERV, "*", "SASL: put AUTHENTICATE Response %s", dst);
     dprintf(DP_MODE, "AUTHENTICATE %s\n", dst);
-
+#endif
   }
   return 0;
 }
@@ -1425,8 +1426,11 @@ static int gotcap(char *from, char *msg) {
      * capabilities, right now SASL is the only one so we're OK.
      */
     if (strstr(cap.negotiated, "sasl")) {
-      if ((sasl_mechanism != SASL_MECHANISM_ECDSA_NIST256P_CHALLENGE) ||
-          HAVE_OPENSSL_SSL_H) {
+      if ((sasl_mechanism != SASL_MECHANISM_ECDSA_NIST256P_CHALLENGE) 
+#ifdef HAVE_OPENSSL_SSL_H
+        || HAVE_OPENSSL_SSL_H
+#endif
+        ){
         /*
         TODO: the old sasl code, before cap pr, was doing cap request only
         under certain conditions, see the if HAVE_OPENSSL_SSL_H statement
