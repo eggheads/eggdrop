@@ -1240,6 +1240,9 @@ static int gotauthenticate(char *from, char *msg)
     nfree(dst2);
     putlog(LOG_SERV, "*", "SASL: put AUTHENTICATE Response %s", dst);
     dprintf(DP_MODE, "AUTHENTICATE %s\n", dst);
+#else
+    putlog(LOG_DEBUG, "*", "SASL: TLS libs not present for authentication, try PLAIN method");
+    return 1;
 #endif
   }
   return 0;
@@ -1419,18 +1422,18 @@ static int gotcap(char *from, char *msg) {
       len += snprintf(cap.negotiated+len, sizeof cap.negotiated - strlen(cap.negotiated) - 1,
           "%s%s", (len == 0 ? "" : " "), Tcl_GetString(ncapesv[i]));
     }
-    putlog(LOG_SERV, "*", "CAP: Current Negotiations %s with %s", cap.negotiated, from);
+    putlog(LOG_SERV, "*", "CAP: Current negotiations on %s: %s", from, cap.negotiated);
     /* If a negotiated capability requires immediate action by Eggdrop, add it
      * here. However, that capability must take responsibility for sending an
      * END. Future eggheads: add support for more than 1 of these async
      * capabilities, right now SASL is the only one so we're OK.
      */
     if (strstr(cap.negotiated, "sasl")) {
-      if ((sasl_mechanism != SASL_MECHANISM_ECDSA_NIST256P_CHALLENGE) 
-#ifdef HAVE_OPENSSL_SSL_H
-        || HAVE_OPENSSL_SSL_H
+      if ((sasl_mechanism != SASL_MECHANISM_ECDSA_NIST256P_CHALLENGE)
+#ifdef HAVE_OPENSSL_H
+          || HAVE_OPENSSL_SSL_H
 #endif
-        ){
+          ) {
         /*
         TODO: the old sasl code, before cap pr, was doing cap request only
         under certain conditions, see the if HAVE_OPENSSL_SSL_H statement
@@ -1440,9 +1443,11 @@ static int gotcap(char *from, char *msg) {
         */
         putlog(LOG_SERV, "*", "SASL: put AUTHENTICATE %s", SASL_MECHANISMS[sasl_mechanism]);
         dprintf(DP_MODE, "AUTHENTICATE %s\n", SASL_MECHANISMS[sasl_mechanism]);
+      } else {
+        putlog(LOG_SERV, "*", "SASL: No TLS libs, aborting authentication");
+        dprintf(DP_MODE, "CAP END\n");
       }
-    }
-    else {
+    } else {
       dprintf(DP_MODE, "CAP END\n");
     }
   } else if (!strcmp(cmd, "NAK")) {
