@@ -1143,7 +1143,7 @@ static int got311(char *from, char *msg)
   return 0;
 }
 
-static int gotauthenticate(char *from, char *msg)
+static int tryauthenticate(char *from, char *msg) 
 {
   char src[(sizeof sasl_username) + (sizeof sasl_username) +
            (sizeof sasl_password)] = "";
@@ -1248,6 +1248,16 @@ static int gotauthenticate(char *from, char *msg)
   return 0;
 }
 
+static int gotauthenticate(char *from, char *msg)
+{
+  if (tryauthenticate(from, msg) && !sasl_continue) {
+    putlog(LOG_DEBUG, "*", "SASL: Aborting connection and retrying");
+    nuke_server("Quitting...");
+    return 1;
+  }
+  return 0;
+}
+
 static int got900(char *from, char *msg)
 {
   newsplit(&msg); /* nick */
@@ -1258,7 +1268,20 @@ static int got900(char *from, char *msg)
   return 0;
 }
 
-static int got903and904(char *from, char *msg)
+static int got904905and906(char *from, char *msg)
+{
+  newsplit(&msg); /* nick */
+  fixcolon(msg);
+  putlog(LOG_SERV, "*", "SASL: %s", msg);
+  dprintf(DP_MODE, "CAP END\n");
+  if (!sasl_continue) {
+    putlog(LOG_DEBUG, "*", "SASL: Aborting connection and retrying");
+    nuke_server("Quitting...");
+  }
+  return 1;
+}
+
+static int got903(char *from, char *msg)
 {
   newsplit(&msg); /* nick */
   fixcolon(msg);
@@ -1267,7 +1290,7 @@ static int got903and904(char *from, char *msg)
   return 0;
 }
 
-static int got906and908(char *from, char *msg)
+static int got908(char *from, char *msg)
 {
   newsplit(&msg); /* nick */
   fixcolon(msg);
@@ -1446,9 +1469,15 @@ static int gotcap(char *from, char *msg) {
       } else {
         putlog(LOG_SERV, "*", "SASL: No TLS libs, aborting authentication");
         dprintf(DP_MODE, "CAP END\n");
+        if (!sasl_continue) {
+          putlog(LOG_DEBUG, "*", "SASL: Aborting connection and retrying");
+          nuke_server("Quitting...");
+        }
+        return 1;
       }
     } else {
       dprintf(DP_MODE, "CAP END\n");
+      return 0;
     }
   } else if (!strcmp(cmd, "NAK")) {
     putlog(LOG_SERV, "*", "CAP: Requested capability change %s rejected by %s",
@@ -1483,10 +1512,11 @@ static cmd_t my_raw_binds[] = {
   {"442",          "",   (IntFunc) got442,          NULL},
   {"465",          "",   (IntFunc) got465,          NULL},
   {"900",          "",   (IntFunc) got900,          NULL},
-  {"903",          "",   (IntFunc) got903and904,    NULL},
-  {"904",          "",   (IntFunc) got903and904,    NULL},
-  {"906",          "",   (IntFunc) got906and908,    NULL},
-  {"908",          "",   (IntFunc) got906and908,    NULL},
+  {"903",          "",   (IntFunc) got903,          NULL},
+  {"904",          "",   (IntFunc) got904905and906, NULL},
+  {"905",          "",   (IntFunc) got904905and906, NULL},
+  {"906",          "",   (IntFunc) got904905and906, NULL},
+  {"908",          "",   (IntFunc) got908,          NULL},
   {"NICK",         "",   (IntFunc) gotnick,         NULL},
   {"ERROR",        "",   (IntFunc) goterror,        NULL},
 /* ircu2.10.10 has a bug when a client is throttled ERROR is sent wrong */
