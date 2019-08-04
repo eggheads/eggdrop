@@ -1206,7 +1206,6 @@ static int tryauthenticate(char *from, char *msg)
       putlog(LOG_SERV, "*", "SASL: AUTHENTICATE error: could not base64 encode");
       return 1;
     }
-    /* TODO: maybe check for key file before starting AUTHENTICATE */
     fp = fopen(sasl_ecdsa_key, "r");
     if (!fp) {
       putlog(LOG_SERV, "*", "SASL: AUTHENTICATE error: could not open file sasl_ecdsa_key %s: %s\n", sasl_ecdsa_key, strerror(errno));
@@ -1336,22 +1335,17 @@ static int got421(char *from, char *msg) {
 }
 
 /*
- * Add desired capability to Tcl List for easy addition/deletion. First
+ * Add capability to Tcl List for easy addition/deletion. First
  * checks if requested cape is available on the list provided by the server
  * before adding to the desired list.
  */
 void add_cape(char *cape) {
   int len = 0, i = 0;
-  if (strstr(cap.supported, cape)) {
-    if (!strstr(cap.negotiated, cape)) {
-      putlog(LOG_DEBUG, "*", "CAP: Adding cape %s to negotiated list", cape);
-      Tcl_ListObjAppendElement(interp, ncapeslist, Tcl_NewStringObj(cape, -1));
-    } else {
-      putlog(LOG_DEBUG, "*", "CAP: %s is already added to negotiated list", cape);
-    }
-  } else { /* TODO: Remove? */
-    putlog(LOG_DEBUG, "*","CAP: desired capability %s not supported "
-        "by server, removing from request...", cape);
+  if (!strstr(cap.negotiated, cape)) {
+    putlog(LOG_DEBUG, "*", "CAP: Adding cape %s to negotiated list", cape);
+    Tcl_ListObjAppendElement(interp, ncapeslist, Tcl_NewStringObj(cape, -1));
+  } else {
+    putlog(LOG_DEBUG, "*", "CAP: %s is already added to negotiated list", cape);
   }
   Tcl_ListObjGetElements(interp, ncapeslist, &ncapesc, &ncapesv);
   for (i = 0; i < ncapesc; i++) {
@@ -1445,18 +1439,17 @@ static int gotcap(char *from, char *msg) {
       len += snprintf(cap.negotiated+len, sizeof cap.negotiated - strlen(cap.negotiated) - 1,
           "%s%s", (len == 0 ? "" : " "), Tcl_GetString(ncapesv[i]));
     }
-    putlog(LOG_SERV, "*", "CAP: Current negotiations on %s: %s", from, cap.negotiated);
+    putlog(LOG_SERV, "*", "CAP: Current negotiations on %s: %s",
+        from, cap.negotiated);
     /* If a negotiated capability requires immediate action by Eggdrop, add it
      * here. However, that capability must take responsibility for sending an
      * END. Future eggheads: add support for more than 1 of these async
      * capabilities, right now SASL is the only one so we're OK.
      */
     if (strstr(cap.negotiated, "sasl")) {
-      if ((sasl_mechanism != SASL_MECHANISM_ECDSA_NIST256P_CHALLENGE)
-#ifdef HAVE_OPENSSL_H
-          || HAVE_OPENSSL_SSL_H
+#ifndef HAVE_OPENSSL_SSL_H
+      if (sasl_mechanism != SASL_MECHANISM_ECDSA_NIST256P_CHALLENGE) {
 #endif
-          ) {
         /*
         TODO: the old sasl code, before cap pr, was doing cap request only
         under certain conditions, see the if HAVE_OPENSSL_SSL_H statement
@@ -1464,8 +1457,10 @@ static int gotcap(char *from, char *msg) {
         putlog(LOG_SERV, "*", "CAP: put CAP REQ :sasl");
         dprintf(DP_MODE, "CAP REQ :sasl\n");
         */
-        putlog(LOG_SERV, "*", "SASL: put AUTHENTICATE %s", SASL_MECHANISMS[sasl_mechanism]);
+        putlog(LOG_SERV, "*", "SASL: put AUTHENTICATE %s",
+            SASL_MECHANISMS[sasl_mechanism]);
         dprintf(DP_MODE, "AUTHENTICATE %s\n", SASL_MECHANISMS[sasl_mechanism]);
+#ifndef HAVE_OPENSSL_SSL_H
       } else {
         putlog(LOG_SERV, "*", "SASL: No TLS libs, aborting authentication");
         dprintf(DP_MODE, "CAP END\n");
@@ -1475,6 +1470,7 @@ static int gotcap(char *from, char *msg) {
         }
         return 1;
       }
+#endif
     } else {
       dprintf(DP_MODE, "CAP END\n");
       return 0;
