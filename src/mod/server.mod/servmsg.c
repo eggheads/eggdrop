@@ -1200,7 +1200,7 @@ static int tryauthenticate(char *from, char *msg)
     dprintf(DP_MODE, "AUTHENTICATE %s\n", dst);
 #ifdef HAVE_OPENSSL_SSL_H
   } else {
-    putlog(LOG_SERV, "*", "SASL: got AUTHENTICATE Challange");
+    putlog(LOG_SERV, "*", "SASL: got AUTHENTICATE Challenge");
     olen = b64_pton(msg, dst, sizeof dst);
     if (olen == -1) {
       putlog(LOG_SERV, "*", "SASL: AUTHENTICATE error: could not base64 encode");

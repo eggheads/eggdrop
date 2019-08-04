@@ -814,7 +814,7 @@ void addhost_by_handle(char *handle, char *host)
   struct userrec *u = get_user_by_handle(userlist, handle);
 
   set_user(&USERENTRY_HOSTS, u, host);
-  /* u will be cached, so really no overhead, even tho this looks dumb: */
+  /* u will be cached, so really no overhead, even though this looks dumb: */
   if ((!noshare) && !(u->flags & USER_UNSHARED)) {
     if (u->flags & USER_BOT)
       shareout(NULL, "+bh %s %s\n", handle, host);
