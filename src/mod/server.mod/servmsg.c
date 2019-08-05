@@ -21,7 +21,7 @@
  */
 
 #include <resolv.h> /* base64 encode b64_ntop() and base64 decode b64_pton() */
-#ifdef HAVE_OPENSSL_SSL_H
+#ifdef TLS
   #include <openssl/err.h>
 #endif
 #include "../irc.mod/irc.h"
@@ -1154,7 +1154,7 @@ static int tryauthenticate(char *from, char *msg)
     #define MAX(a,b) (((a)>(b))?(a):(b))
   #endif
   unsigned char dst[((MAX((sizeof src), 400) + 2) / 3) << 2] = "";
-#ifdef HAVE_OPENSSL_SSL_H
+#ifdef TLS
   size_t olen;
   unsigned char *dst2;
   unsigned int olen2;
@@ -1198,7 +1198,7 @@ static int tryauthenticate(char *from, char *msg)
     }
     putlog(LOG_SERV, "*", "SASL: put AUTHENTICATE %s", dst);
     dprintf(DP_MODE, "AUTHENTICATE %s\n", dst);
-#ifdef HAVE_OPENSSL_SSL_H
+#ifdef TLS
   } else {
     putlog(LOG_SERV, "*", "SASL: got AUTHENTICATE Challange");
     olen = b64_pton(msg, dst, sizeof dst);
@@ -1447,12 +1447,12 @@ static int gotcap(char *from, char *msg) {
      * capabilities, right now SASL is the only one so we're OK.
      */
     if (strstr(cap.negotiated, "sasl")) {
-#ifndef HAVE_OPENSSL_SSL_H
+#ifndef TLS
       if (sasl_mechanism != SASL_MECHANISM_ECDSA_NIST256P_CHALLENGE) {
 #endif
         /*
         TODO: the old sasl code, before cap pr, was doing cap request only
-        under certain conditions, see the if HAVE_OPENSSL_SSL_H statement
+        under certain conditions, see the if TLS statement
         above.
         putlog(LOG_SERV, "*", "CAP: put CAP REQ :sasl");
         dprintf(DP_MODE, "CAP REQ :sasl\n");
@@ -1460,7 +1460,7 @@ static int gotcap(char *from, char *msg) {
         putlog(LOG_SERV, "*", "SASL: put AUTHENTICATE %s",
             SASL_MECHANISMS[sasl_mechanism]);
         dprintf(DP_MODE, "AUTHENTICATE %s\n", SASL_MECHANISMS[sasl_mechanism]);
-#ifndef HAVE_OPENSSL_SSL_H
+#ifndef TLS
       } else {
         putlog(LOG_SERV, "*", "SASL: No TLS libs, aborting authentication");
         dprintf(DP_MODE, "CAP END\n");
