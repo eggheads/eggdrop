@@ -35,6 +35,19 @@ struct cap_list cap = {"", "", ""};
 int ncapesc;
 Tcl_Obj **ncapesv, *ncapeslist;
 
+enum {
+  SASL_MECHANISM_PLAIN,
+  SASL_MECHANISM_ECDSA_NIST256P_CHALLENGE,
+  SASL_MECHANISM_EXTERNAL,
+  SASL_MECHANISM_NUM
+};
+
+char const *const SASL_MECHANISMS[SASL_MECHANISM_NUM] = {
+  [SASL_MECHANISM_PLAIN]                    = "PLAIN",
+  [SASL_MECHANISM_ECDSA_NIST256P_CHALLENGE] = "ECDSA-NIST256P-CHALLENGE",
+  [SASL_MECHANISM_EXTERNAL]                 = "EXTERNAL"
+};
+
 /* We try to change to a preferred unique nick here. We always first try the
  * specified alternate nick. If that fails, we repeatedly modify the nick
  * until it gets accepted.
