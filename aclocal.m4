@@ -284,6 +284,52 @@ dnl Checks for types and functions.
 dnl
 
 
+dnl EGG_FUNC_B64_NTOP()
+dnl
+AC_DEFUN([EGG_FUNC_B64_NTOP],
+[
+  # Check for b64_ntop. If we have b64_ntop, we assume b64_pton as well.
+  AC_MSG_CHECKING(for b64_ntop)
+  AC_TRY_LINK(
+    [
+      #include <sys/types.h>
+      #include <netinet/in.h>
+      #include <resolv.h>
+    ],
+    [b64_ntop(NULL, 0, NULL, 0);],
+    found_b64_ntop=yes,
+    found_b64_ntop=no
+  )
+  if test "x$found_b64_ntop" = xno; then
+    AC_MSG_RESULT(no)
+
+    AC_MSG_CHECKING(for b64_ntop with -lresolv)
+    OLD_LIBS="$LIBS"
+    LIBS="$LIBS -lresolv"
+    AC_TRY_LINK(
+      [
+        #include <sys/types.h>
+        #include <netinet/in.h>
+        #include <resolv.h>
+      ],
+      [b64_ntop(NULL, 0, NULL, 0);],
+      found_b64_ntop=yes,
+      found_b64_ntop=no
+    )
+    if test "x$found_b64_ntop" = xno; then
+      LIBS="$OLD_LIBS"
+      AC_MSG_RESULT(no)
+    fi
+  fi
+  if test "x$found_b64_ntop" = xyes; then
+    AC_DEFINE([HAVE_B64_NTOP], [1], [Define if b64_ntop exists.])
+    AC_MSG_RESULT(yes)
+  else
+    AC_LIBOBJ(base64)
+  fi
+])
+
+
 dnl EGG_FUNC_VPRINTF()
 dnl
 AC_DEFUN([EGG_FUNC_VPRINTF],
