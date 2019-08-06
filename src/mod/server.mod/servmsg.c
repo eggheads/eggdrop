@@ -1161,6 +1161,7 @@ static int tryauthenticate(char *from, char *msg)
   FILE *fp;
   EC_KEY *eckey;
   EVP_PKEY *privateKey;
+  int ret;
 #endif
 
   putlog(LOG_SERV, "*", "SASL: got AUTHENTICATE %s", msg);
@@ -1220,13 +1221,16 @@ static int tryauthenticate(char *from, char *msg)
     }
     fclose(fp);
     eckey = EVP_PKEY_get1_EC_KEY(privateKey);
+    EVP_PKEY_free(privateKey);
     if (!eckey) {
       putlog(LOG_SERV, "*", "SASL: AUTHENTICATE: EVP_PKEY_get1_EC_KEY(): SSL error = %s\n",
              ERR_error_string(ERR_get_error(), 0));
       return 1;
     }
     dst2 = nmalloc(ECDSA_size(eckey));
-    if (ECDSA_sign(0, dst, olen, dst2, &olen2, eckey) == 0) {
+    ret = ECDSA_sign(0, dst, olen, dst2, &olen2, eckey);
+    EC_KEY_free(eckey);
+    if (!ret) {
       printf("SASL: AUTHENTICATE: ECDSA_sign() SSL error = %s\n",
              ERR_error_string(ERR_get_error(), 0));
       nfree(dst2);
