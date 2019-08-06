@@ -322,7 +322,7 @@ AC_DEFUN([EGG_FUNC_B64_NTOP],
     fi
   fi
   if test "x$found_b64_ntop" = xyes; then
-    AC_DEFINE([HAVE_B64_NTOP], [1], [Define if b64_ntop exists.])
+    AC_DEFINE([HAVE_BASE64], [1], [Define if b64_ntop exists.])
     AC_MSG_RESULT(yes)
   else
     AC_LIBOBJ(base64)
