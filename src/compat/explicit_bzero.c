@@ -22,7 +22,7 @@
 #include <config.h>
 
 #ifndef HAVE_EXPLICIT_BZERO
-/* https://raw.githubusercontent.com/jedisct1/libsodium/f2942b9c880ef398ecf68693a27e504927bc62c4/src/libsodium/sodium/utils.c */
+/* https://raw.githubusercontent.com/jedisct1/libsodium/d47ded1867af69965b2374b8fb90aee01e6ff291/src/libsodium/sodium/utils.c */
 
 /*
  * ISC License
