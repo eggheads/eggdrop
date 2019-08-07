@@ -22,6 +22,8 @@
 #include <config.h>
 
 #ifndef HAVE_BASE64
+/* https://raw.githubusercontent.com/freebsd/freebsd/f0171d33b464dee5ac308f1d13ede2ddd9d030a7/lib/libc/net/base64.c */
+
 /*
  * Copyright (c) 1996, 1998 by Internet Software Consortium.
  *

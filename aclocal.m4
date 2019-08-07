@@ -288,6 +288,8 @@ dnl EGG_FUNC_B64_NTOP()
 dnl
 AC_DEFUN([EGG_FUNC_B64_NTOP],
 [
+  # https://raw.githubusercontent.com/tmux/tmux/2dd9a4fb9cd73987bdca5b8b2f85ca8b1a6e4e73/configure.ac
+
   # Check for b64_ntop. If we have b64_ntop, we assume b64_pton as well.
   AC_MSG_CHECKING(for b64_ntop)
   AC_TRY_LINK(
