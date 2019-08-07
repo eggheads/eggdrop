@@ -630,7 +630,7 @@ static int dcc_bot_check_digest(int idx, char *remote_digest)
   MD5_CTX md5context;
   char digest_string[33];       /* 32 for digest in hex + null */
   unsigned char digest[16];
-  int i;
+  int i, ret;
   char *password = get_user(&USERENTRY_PASS, dcc[idx].user);
 
   if (!password)
@@ -651,16 +651,14 @@ static int dcc_bot_check_digest(int idx, char *remote_digest)
   for (i = 0; i < 16; i++)
     sprintf(digest_string + (i * 2), "%.2x", digest[i]);
 
-  if (!strcmp(digest_string, remote_digest)) {
-    explicit_bzero(digest_string, sizeof(digest_string));
-    explicit_bzero(digest, sizeof(digest));
-    explicit_bzero(password, sizeof(password));
-    return 1;
-  }
-
+  ret = strcmp(digest_string, remote_digest);
   explicit_bzero(digest_string, sizeof(digest_string));
   explicit_bzero(digest, sizeof(digest));
   explicit_bzero(password, sizeof(password));
+
+  if (!ret)
+    return 1;
+
   putlog(LOG_BOTS, "*", "Response (password hash) from %s incorrect",
          dcc[idx].nick);
   return 0;
