@@ -25,9 +25,9 @@ respective values:
 +------+---------------------------------------------------------+
 | %B   | bot's nickname (i.e. "LamestBot")                       |
 +------+---------------------------------------------------------+
-| %V   | current Eggdrop version (i.e. "eggdrop v1.8.4")         |
+| %V   | current Eggdrop version (i.e. "eggdrop v1.9.0")         |
 +------+---------------------------------------------------------+
-| %E   | long form of %V (i.e. "Eggdrop v1.8.4 (C) 1997 Robey    |
+| %E   | long form of %V (i.e. "Eggdrop v1.9.0 (C) 1997 Robey    |
 |      | Pointer (C) 2010 Eggheads Development Team")            |
 +------+---------------------------------------------------------+
 | %C   | channels the bot is on (i.e. "#lamest, #botnetcentral") |

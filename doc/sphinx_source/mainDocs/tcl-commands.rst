@@ -11,9 +11,9 @@ of the normal Tcl built-in commands are still there, of course, but you
 can also use these to manipulate features of the bot. They are listed
 according to category.
 
-This list is accurate for Eggdrop v1.8.4. Scripts written for v1.3, v1.4
-or 1.6 series of Eggdrop should probably work with a few minor modifications
-depending on the script. Scripts which were written for  v0.9, v1.0, v1.1
+This list is accurate for Eggdrop v1.9.0. Scripts written for v1.3, v1.4,
+1.6 and 1.8 series of Eggdrop should probably work with a few minor modifications
+depending on the script. Scripts which were written for v0.9, v1.0, v1.1
 or v1.2 will probably not work without modification. Commands which have
 been changed in this version of Eggdrop (or are just new commands) are
 marked with vertical bars (|) on the left.
@@ -151,6 +151,16 @@ clearqueue <queue>
   Description: removes all messages from a queue. Valid arguments are: mode, server, help, or all.
 
   Returns: the number of deleted lines from the specified queue.
+
+  Module: server
+
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+cap <active/available/raw> [arg]
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+  Description: displays CAP status or sends a raw CAP command to the server. "available" will list the capabilities supported by the server, "active" will list the capabilities Eggdrop has negotiated with the server, and raw will send a raw CAP command to the server. If sending a raw command, it must be submitted in arg as a single string. For example, to request capabilities foo and bar, you would use [cap raw "REQ :foo bar"]. 
+
+  Returns: nothing
 
   Module: server
 

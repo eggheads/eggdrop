@@ -20,6 +20,8 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
+#define CAPMAX      499           /*  (512 - "CAP REQ :XXX\r\n")   */
+
 #ifndef _EGG_MOD_SERVER_SERVER_H
 #define _EGG_MOD_SERVER_SERVER_H
 
@@ -100,13 +102,35 @@ struct server_list {
   char *realname;
 };
 
-/* Available net types.  */
+typedef struct cap_list {
+  char supported[CAPMAX];   /* Capes supportd by IRCD                   */
+  char negotiated[CAPMAX];  /* Common capes between IRCD and client     */
+  char desired[CAPMAX];     /* Capes Eggdrop wants to request from IRCD */
+} cap_list;
+
+extern struct cap_list cap;
+
+/* Available net types. */
 enum {
   NETT_EFNET        = 0, /* EFnet                    */
   NETT_IRCNET       = 1, /* IRCnet                   */
   NETT_UNDERNET     = 2, /* UnderNet                 */
   NETT_DALNET       = 3, /* DALnet                   */
   NETT_HYBRID_EFNET = 4  /* +e/+I/max-bans 20 Hybrid */
-} nett_t;
+};
+
+/* Available sasl mechanisms. */
+enum {
+  SASL_MECHANISM_PLAIN,
+  SASL_MECHANISM_ECDSA_NIST256P_CHALLENGE,
+  SASL_MECHANISM_EXTERNAL,
+  SASL_MECHANISM_NUM
+};
+
+char const *const SASL_MECHANISMS[SASL_MECHANISM_NUM] = {
+  [SASL_MECHANISM_PLAIN]                    = "PLAIN",
+  [SASL_MECHANISM_ECDSA_NIST256P_CHALLENGE] = "ECDSA-NIST256P-CHALLENGE",
+  [SASL_MECHANISM_EXTERNAL]                 = "EXTERNAL"
+};
 
 #endif /* _EGG_MOD_SERVER_SERVER_H */

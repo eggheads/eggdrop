@@ -24,6 +24,7 @@
 
 #include <errno.h>
 #include <fcntl.h>
+#include <sys/stat.h>
 #include "src/mod/module.h"
 #include "server.mod/server.h"
 
@@ -64,7 +65,7 @@ static void ident_activity(int idx, char *buf, int len)
   }
   buf2[i - 1] = 0;
   if (!(pos = strpbrk(buf2, "\r\n"))) {
-    putlog(LOG_MISC, "*", "Ident error: couldnt read request.");
+    putlog(LOG_MISC, "*", "Ident error: could not read request.");
     return;
   } 
   snprintf(pos, (sizeof buf2) - (pos - buf2), " : USERID : UNIX : %s\r\n", botname);
@@ -72,7 +73,7 @@ static void ident_activity(int idx, char *buf, int len)
     putlog(LOG_MISC, "*", "Ident error: %s", strerror(errno));
     return;
   }
-  putlog(LOG_MISC, "*", "Ident: Responsed.");
+  putlog(LOG_MISC, "*", "Ident: Responded.");
   ident_builtin_off();
 }
 
