@@ -21,7 +21,7 @@
 
 #include <config.h>
 
-#ifndef HAVE_STRLCPY
+#ifndef HAVE_BASE64
 /*
  * Copyright (c) 1996, 1998 by Internet Software Consortium.
  *
@@ -338,4 +338,4 @@ b64_pton(const char *src, u_char *target, size_t targsize)
 
 	return (tarindex);
 }
-#endif /* HAVE_STRLCPY */
+#endif /* HAVE_BASE64 */
