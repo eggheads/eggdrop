@@ -1268,7 +1268,6 @@ static int got900(char *from, char *msg)
   newsplit(&msg); /* account */
   fixcolon(msg);
   putlog(LOG_SERV, "*", "SASL: %s", msg);
-  sasl_timeout_time = 0;
   return 0;
 }
 
@@ -1467,7 +1466,6 @@ static int gotcap(char *from, char *msg) {
         putlog(LOG_SERV, "*", "SASL: put AUTHENTICATE %s",
             SASL_MECHANISMS[sasl_mechanism]);
         dprintf(DP_MODE, "AUTHENTICATE %s\n", SASL_MECHANISMS[sasl_mechanism]);
-        /* TODO: (re-)start sasl_timeout here */
         sasl_timeout_time = time(NULL) + sasl_timeout;
 #ifndef TLS
       } else {
