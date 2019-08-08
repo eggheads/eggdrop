@@ -47,6 +47,8 @@
 #  include <openssl/err.h>
 #endif
 
+#include "modules.h"
+
 extern struct dcc_t *dcc;
 extern int backgrd, use_stderr, resolve_timeout, dcc_total;
 extern unsigned long otraffic_irc_today, otraffic_bn_today, otraffic_dcc_today,
@@ -67,6 +69,7 @@ int dcc_sanitycheck = 0;      /* Do some sanity checking on dcc connections.  */
 
 sock_list *socklist = NULL;   /* Enough to be safe.                           */
 sigjmp_buf alarmret;          /* Env buffer for alarm() returns.              */
+int sasl_timeout_time = 0;
 
 /* Types of proxies */
 #define PROXY_SOCKS   1
@@ -874,6 +877,8 @@ int sockread(char *s, int *len, sock_list *slist, int slistmax, int tclonly)
              SELECT_TYPE_ARG234 (nfds_w ? &fdw : NULL),
              SELECT_TYPE_ARG234 (nfds_e ? &fde : NULL),
              SELECT_TYPE_ARG5 &t);
+  if (sasl_timeout_time == time(NULL))
+    debug0("TODO: got sasl timeout, handle it here");
   if (x == -1)
     return -2;                  /* socket error */
 
