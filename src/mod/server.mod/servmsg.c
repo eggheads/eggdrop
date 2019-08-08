@@ -1271,10 +1271,8 @@ static int got900(char *from, char *msg)
   return 0;
 }
 
-static int got904905and906(char *from, char *msg)
+static int sasl_error(char *msg)
 {
-  newsplit(&msg); /* nick */
-  fixcolon(msg);
   putlog(LOG_SERV, "*", "SASL: %s", msg);
   dprintf(DP_MODE, "CAP END\n");
   sasl_timeout_time = 0;
@@ -1283,6 +1281,13 @@ static int got904905and906(char *from, char *msg)
     nuke_server("Quitting...");
   }
   return 1;
+}
+
+static int got904905and906(char *from, char *msg)
+{
+  newsplit(&msg); /* nick */
+  fixcolon(msg);
+  return sasl_error(msg);
 }
 
 static int got903(char *from, char *msg)
@@ -1305,14 +1310,7 @@ static int got908(char *from, char *msg)
 
 static int handle_sasl_timeout()
 {
-  putlog(LOG_SERV, "*", "SASL: timeout");
-  dprintf(DP_MODE, "CAP END\n");
-  sasl_timeout_time = 0;
-  if (!sasl_continue) {
-    putlog(LOG_DEBUG, "*", "SASL: Aborting connection and retrying");
-    nuke_server("Quitting...");
-  }
-  return 1;
+  return sasl_error("timeout");
 }
 
 /*
@@ -1481,13 +1479,7 @@ static int gotcap(char *from, char *msg) {
         sasl_timeout_time = time(NULL) + sasl_timeout;
 #ifndef TLS
       } else {
-        putlog(LOG_SERV, "*", "SASL: No TLS libs, aborting authentication");
-        dprintf(DP_MODE, "CAP END\n");
-        if (!sasl_continue) {
-          putlog(LOG_DEBUG, "*", "SASL: Aborting connection and retrying");
-          nuke_server("Quitting...");
-        }
-        return 1;
+        return sasl_error("No TLS libs, aborting authentication");
       }
 #endif
     } else {
