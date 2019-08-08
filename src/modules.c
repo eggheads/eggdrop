@@ -81,7 +81,7 @@ extern int parties, noshare, dcc_total, egg_numver, userfile_perm, ignore_time,
            must_be_owner, raw_log, max_dcc, make_userfile, default_flags,
            require_p, share_greet, use_invites, use_exempts, password_timeout,
            force_expire, protect_readonly, reserved_port_min, reserved_port_max,
-           copy_to_tmp, quiet_reject, sasl_timeout_time;
+           copy_to_tmp, quiet_reject;
 extern volatile sig_atomic_t do_restart;
 
 #ifdef IPV6
@@ -597,8 +597,7 @@ Function global_table[] = {
   (Function) 0,
 #endif
   /* 304 - 307 */
-  (Function) strncpyz,
-  (Function) & sasl_timeout_time  /* int                                 */
+  (Function) strncpyz
 };
 
 void init_modules(void)

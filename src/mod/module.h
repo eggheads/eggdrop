@@ -501,7 +501,6 @@
 #endif
 /* 304 - 307 */
 #define strncpyz ((size_t (*) (char *, const char *, size_t))global[304])
-#define sasl_timeout_time (*(int *)(global[305]))
 
 
 /* hostmasking */
