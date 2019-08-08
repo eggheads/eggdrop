@@ -1687,7 +1687,7 @@ static void server_secondly()
   deq_msg();
   if (!resolvserv && serv < 0)
     connect_server();
-  if (sasl_timeout_time == time(NULL))
+  if (sasl_timeout_time == now)
     debug0("TODO: got sasl timeout, handle it here");
 }
 
