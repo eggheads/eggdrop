@@ -1303,6 +1303,18 @@ static int got908(char *from, char *msg)
   return 0;
 }
 
+static int handle_sasl_timeout()
+{
+  putlog(LOG_SERV, "*", "SASL: timeout");
+  dprintf(DP_MODE, "CAP END\n");
+  sasl_timeout_time = 0;
+  if (!sasl_continue) {
+    putlog(LOG_DEBUG, "*", "SASL: Aborting connection and retrying");
+    nuke_server("Quitting...");
+  }
+  return 1;
+}
+
 /*
  * 465     ERR_YOUREBANNEDCREEP :You are banned from this server
  */
