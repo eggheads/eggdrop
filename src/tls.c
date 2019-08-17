@@ -749,14 +749,11 @@ void ssl_info(SSL *ssl, int where, int ret)
     else
       putlog(data->loglevel, "*", "TLS: peer did not present a certificate");
 
-    /* Display protocol information */
-    debug1("TLS: protocol used: %s", SSL_get_version(ssl));
-
     /* Display cipher information */
     cipher = SSL_get_current_cipher(ssl);
     processed = SSL_CIPHER_get_bits(cipher, &secret);
     putlog(data->loglevel, "*", "TLS: cipher used: %s %s; %d bits (%d secret)",
-           SSL_CIPHER_get_name(cipher), SSL_CIPHER_get_version(cipher),
+           SSL_CIPHER_get_name(cipher), SSL_get_version(ssl),
            processed, secret);
     /* secret are the actually secret bits. If processed and secret differ,
        the rest of the bits are fixed, i.e. for limited export ciphers */
