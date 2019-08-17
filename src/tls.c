@@ -749,6 +749,9 @@ void ssl_info(SSL *ssl, int where, int ret)
     else
       putlog(data->loglevel, "*", "TLS: peer did not present a certificate");
 
+    /* Display protocol information */
+    debug1("TLS: protocol used: %s", SSL_get_version(ssl));
+
     /* Display cipher information */
     cipher = SSL_get_current_cipher(ssl);
     processed = SSL_CIPHER_get_bits(cipher, &secret);
