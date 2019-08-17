@@ -288,7 +288,7 @@ sdebug: eggtest
 # Install
 
 install-end =	echo "" && echo "Installation completed." && echo "" && \
-		echo "If you intend to use this bot as a botnet hub for other 1.8 bots using SSL," && \
+		echo "If you intend to use this bot as a botnet hub for other Eggdrops using SSL," && \
 		echo "please run \"make sslcert\" now. If you installed eggdrop to a custom path" && \
 		echo "during the make install process, use the same DEST= option here." && \
 		echo "" && \
@@ -298,7 +298,7 @@ install-end =	echo "" && echo "Installation completed." && echo "" && \
 		echo "Remember to change directory to $(DEST) before you proceed." && \
 		echo ""
 
-sslcert:
+sslstart:
 	@if test ! -d $(DEST); then \
 		echo "You haven't installed eggdrop yet, or you installed using the DEST= flag.";\
 		echo "Please run \"make install\" first.";\
@@ -310,8 +310,14 @@ sslcert:
 	fi && \
 	if test -f $(DEST)/eggdrop.crt; then \
 		cp $(DEST)/eggdrop.crt $(DEST)/eggdrop.crt~old; \
-	fi && \
-	openssl req -new -x509 -nodes -days 365 -keyout $(DEST)/eggdrop.key -out $(DEST)/eggdrop.crt -config ssl.conf; \
+	fi
+
+sslcert: sslstart
+	openssl req -new -x509 -nodes -days 365 -keyout $(DEST)/eggdrop.key -out $(DEST)/eggdrop.crt -config ssl.conf
+
+sslsilent: sslstart
+	openssl req -new -x509 -nodes -days 365 -keyout $(DEST)/eggdrop.key -out $(DEST)/eggdrop.crt -config ssl.conf \
+	    -subj "/O=Eggheads/OU=Eggdrop/CN=Self-generated Eggdrop Certificate"
 
 install: ainstall
 

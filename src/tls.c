@@ -7,7 +7,7 @@
 /*
  * Written by Rumen Stoyanov <pseudo@egg6.net>
  *
- * Copyright (C) 2010 - 2018 Eggheads Development Team
+ * Copyright (C) 2010 - 2019 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -198,38 +198,38 @@ int ssl_init()
         protocols |= EGG_TLSv1_3;
     }
     if (!(protocols & EGG_SSLv2)) {
-      debug0("TLS: set SSL_OP_NO_SSLv2");
+      putlog(LOG_MISC, "*", "TLS: set SSL_OP_NO_SSLv2");
       SSL_CTX_set_options(ssl_ctx, SSL_OP_NO_SSLv2);
     }
     if (!(protocols & EGG_SSLv3)) {
-      debug0("TLS: set SSL_OP_NO_SSLv3");
+      putlog(LOG_MISC, "*", "TLS: set SSL_OP_NO_SSLv3");
       SSL_CTX_set_options(ssl_ctx, SSL_OP_NO_SSLv3);
     }
     if (!(protocols & EGG_TLSv1)) {
-      debug0("TLS: set SSL_OP_NO_TLSv1");
+      putlog(LOG_MISC, "*", "TLS: set SSL_OP_NO_TLSv1");
       SSL_CTX_set_options(ssl_ctx, SSL_OP_NO_TLSv1);
     }
 #ifdef SSL_OP_NO_TLSv1_1
     if (!(protocols & EGG_TLSv1_1)) {
-      debug0("TLS: set SSL_OP_NO_TLSv1_1");
+      putlog(LOG_MISC, "*", "TLS: set SSL_OP_NO_TLSv1_1");
       SSL_CTX_set_options(ssl_ctx, SSL_OP_NO_TLSv1_1);
     }
 #endif
 #ifdef SSL_OP_NO_TLSv1_2
     if (!(protocols & EGG_TLSv1_2)) {
-      debug0("TLS: set SSL_OP_NO_TLSv1_2");
+      putlog(LOG_MISC, "*", "TLS: set SSL_OP_NO_TLSv1_2");
       SSL_CTX_set_options(ssl_ctx, SSL_OP_NO_TLSv1_2);
     }
 #endif
 #ifdef SSL_OP_NO_TLSv1_3
     if (!(protocols & EGG_TLSv1_3)) {
-      debug0("TLS: set SSL_OP_NO_TLSv1_3");
+      putlog(LOG_MISC, "*", "TLS: set SSL_OP_NO_TLSv1_3");
       SSL_CTX_set_options(ssl_ctx, SSL_OP_NO_TLSv1_3);
     }
 #endif
   }
 #ifdef SSL_OP_NO_COMPRESSION
-  debug0("TLS: set SSL_OP_NO_COMPRESSION");
+  putlog(LOG_MISC, "*", "TLS: set SSL_OP_NO_COMPRESSION");
   SSL_CTX_set_options(ssl_ctx, SSL_OP_NO_COMPRESSION);
 #endif
   /* Let advanced users specify dhparam */
@@ -241,7 +241,7 @@ int ssl_init()
       fclose(paramfile);
       if (dh) {
         if (SSL_CTX_set_tmp_dh(ssl_ctx, dh) == 1) {
-          debug1("TLS: set dhparam %s", tls_dhparam);
+          putlog(LOG_MISC, "*", "TLS: set dhparam %s", tls_dhparam);
         }
         else {
           putlog(LOG_MISC, "*", "ERROR: TLS: unable to set tmp dh %s: %s",
@@ -741,8 +741,10 @@ void ssl_info(SSL *ssl, int where, int ret)
     putlog(data->loglevel, "*", "TLS: handshake successful. Secure connection "
            "established.");
 
-    if ((cert = SSL_get_peer_certificate(ssl)))
+    if ((cert = SSL_get_peer_certificate(ssl))) {
       ssl_showcert(cert, data->loglevel);
+      X509_free(cert);
+    }
     else
       putlog(data->loglevel, "*", "TLS: peer did not present a certificate");
 
@@ -894,10 +896,14 @@ int ssl_handshake(int sock, int flags, int verify, int loglevel, char *host,
     debug0("TLS: handshake in progress");
     return 0;
   }
-  if (ERR_peek_error())
+  if ((err = ERR_peek_error())) {
+    putlog(data->loglevel, "*",
+           "TLS: handshake failed due to the following error: %s",
+           ERR_reason_error_string(err));
     debug0("TLS: handshake failed due to the following errors: ");
-  while ((err = ERR_get_error()))
-    debug1("TLS: %s", ERR_error_string(err, NULL));
+    while ((err = ERR_get_error()))
+      debug1("TLS: %s", ERR_error_string(err, NULL));
+  }
 
   /* Attempt failed, cleanup and abort */
   SSL_shutdown(td->socklist[i].ssl);

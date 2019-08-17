@@ -5,7 +5,7 @@
  */
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2018 Eggheads Development Team
+ * Copyright (C) 1999 - 2019 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -25,7 +25,6 @@
 #include "main.h"
 #include "tandem.h"
 #include "modules.h"
-#include <ctype.h>
 #include <signal.h>
 
 extern struct chanset_t *chanset;
@@ -163,7 +162,7 @@ static void tell_who(struct userrec *u, int idx, int chan)
         ok = 1;
         dprintf(idx, "Bots connected:\n");
       }
-      egg_strftime(s, 14, "%d %b %H:%M", localtime(&dcc[i].timeval));
+      strftime(s, 14, "%d %b %H:%M", localtime(&dcc[i].timeval));
       if (atr & USER_OWNER) {
         egg_snprintf(format, sizeof format,
                      "  [%%.2lu]  %%s%%c%%-%us (%%s) %%s\n", nicklen);
@@ -360,7 +359,7 @@ static void cmd_motd(struct userrec *u, int idx, char *par)
 
   if (par[0]) {
     putlog(LOG_CMDS, "*", "#%s# motd %s", dcc[idx].nick, par);
-    if (!egg_strcasecmp(par, botnetnick))
+    if (!strcasecmp(par, botnetnick))
       show_motd(idx);
     else {
       i = nextbot(par);
@@ -491,7 +490,7 @@ static void cmd_who(struct userrec *u, int idx, char *par)
       return;
     }
     putlog(LOG_CMDS, "*", "#%s# who %s", dcc[idx].nick, par);
-    if (!egg_strcasecmp(par, botnetnick))
+    if (!strcasecmp(par, botnetnick))
       tell_who(u, idx, dcc[idx].u.chat->channel);
     else {
       i = nextbot(par);
@@ -562,7 +561,7 @@ static void cmd_status(struct userrec *u, int idx, char *par)
 {
   int atr = u ? u->flags : 0;
 
-  if (!egg_strcasecmp(par, "all")) {
+  if (!strcasecmp(par, "all")) {
     if (!(atr & USER_MASTER)) {
       dprintf(idx, "You do not have Bot Master privileges.\n");
       return;
@@ -602,7 +601,7 @@ static void cmd_boot(struct userrec *u, int idx, char *par)
     char whonick[HANDLEN + 1];
 
     splitcn(whonick, who, '@', HANDLEN + 1);
-    if (!egg_strcasecmp(who, botnetnick)) {
+    if (!strcasecmp(who, botnetnick)) {
       cmd_boot(u, idx, whonick);
       return;
     }
@@ -621,11 +620,11 @@ static void cmd_boot(struct userrec *u, int idx, char *par)
     return;
   }
   for (i = 0; i < dcc_total; i++)
-    if (!egg_strcasecmp(dcc[i].nick, who) && !ok &&
+    if (!strcasecmp(dcc[i].nick, who) && !ok &&
         (dcc[i].type->flags & DCT_CANBOOT)) {
       u2 = get_user_by_handle(userlist, dcc[i].nick);
       if (u2 && (u2->flags & USER_OWNER) &&
-          egg_strcasecmp(dcc[idx].nick, who)) {
+          strcasecmp(dcc[idx].nick, who)) {
         dprintf(idx, "You can't boot a bot owner.\n");
         return;
       }
@@ -663,7 +662,7 @@ static void do_console(struct userrec *u, int idx, char *par, int reset)
    */
   if (nick[0] && !strchr(CHANMETA "+-*", nick[0]) && glob_master(fr)) {
     for (i = 0; i < dcc_total; i++) {
-      if (!egg_strcasecmp(nick, dcc[i].nick) &&
+      if (!strcasecmp(nick, dcc[i].nick) &&
           (dcc[i].type == &DCC_CHAT) && (!ok)) {
         ok = 1;
         dest = i;
@@ -964,23 +963,23 @@ static void cmd_chhandle(struct userrec *u, int idx, char *par)
     dprintf(idx, "Bizarre quantum forces prevent nicknames from starting with "
             "'%c'.\n", newhand[0]);
   else if (get_user_by_handle(userlist, newhand) &&
-           egg_strcasecmp(hand, newhand))
+           strcasecmp(hand, newhand))
     dprintf(idx, "Somebody is already using %s.\n", newhand);
   else {
     u2 = get_user_by_handle(userlist, hand);
     atr2 = u2 ? u2->flags : 0;
     if ((atr & USER_BOTMAST) && !(atr & USER_MASTER) && !(atr2 & USER_BOT))
       dprintf(idx, "You can't change handles for non-bots.\n");
-    else if (!egg_strcasecmp(hand, EGG_BG_HANDLE))
+    else if (!strcasecmp(hand, EGG_BG_HANDLE))
       dprintf(idx, "You can't change the handle of a temporary user.\n");
     else if ((bot_flags(u2) & BOT_SHARE) && !(atr & USER_OWNER))
       dprintf(idx, "You can't change share bot's nick.\n");
     else if ((atr2 & USER_OWNER) && !(atr & USER_OWNER) &&
-             egg_strcasecmp(dcc[idx].nick, hand))
+             strcasecmp(dcc[idx].nick, hand))
       dprintf(idx, "You can't change a bot owner's handle.\n");
-    else if (isowner(hand) && egg_strcasecmp(dcc[idx].nick, hand))
+    else if (isowner(hand) && strcasecmp(dcc[idx].nick, hand))
       dprintf(idx, "You can't change a permanent bot owner's handle.\n");
-    else if (!egg_strcasecmp(newhand, botnetnick) && (!(atr2 & USER_BOT) ||
+    else if (!strcasecmp(newhand, botnetnick) && (!(atr2 & USER_BOT) ||
              nextbot(hand) != -1))
       dprintf(idx, "Hey! That's MY name!\n");
     else if (change_handle(u2, newhand)) {
@@ -1010,12 +1009,12 @@ static void cmd_handle(struct userrec *u, int idx, char *par)
     dprintf(idx,
             "Bizarre quantum forces prevent handle from starting with '%c'.\n",
             newhandle[0]);
-  else if (!egg_strcasecmp(dcc[idx].nick, EGG_BG_HANDLE))
+  else if (!strcasecmp(dcc[idx].nick, EGG_BG_HANDLE))
     dprintf(idx, "You can't change the handle of this temporary user.\n");
   else if (get_user_by_handle(userlist, newhandle) &&
-           egg_strcasecmp(dcc[idx].nick, newhandle))
+           strcasecmp(dcc[idx].nick, newhandle))
     dprintf(idx, "Somebody is already using %s.\n", newhandle);
-  else if (!egg_strcasecmp(newhandle, botnetnick))
+  else if (!strcasecmp(newhandle, botnetnick))
     dprintf(idx, "Hey!  That's MY name!\n");
   else {
     strlcpy(oldhandle, dcc[idx].nick, sizeof oldhandle);
@@ -1045,9 +1044,9 @@ static void cmd_chpass(struct userrec *u, int idx, char *par)
     else if ((bot_flags(u) & BOT_SHARE) && !(atr & USER_OWNER))
       dprintf(idx, "You can't change a share bot's password.\n");
     else if ((u->flags & USER_OWNER) && !(atr & USER_OWNER) &&
-             egg_strcasecmp(handle, dcc[idx].nick))
+             strcasecmp(handle, dcc[idx].nick))
       dprintf(idx, "You can't change a bot owner's password.\n");
-    else if (isowner(handle) && egg_strcasecmp(dcc[idx].nick, handle))
+    else if (isowner(handle) && strcasecmp(dcc[idx].nick, handle))
       dprintf(idx, "You can't change a permanent bot owner's password.\n");
     else if (!par[0]) {
       putlog(LOG_CMDS, "*", "#%s# chpass %s [nothing]", dcc[idx].nick, handle);
@@ -1115,9 +1114,9 @@ static void cmd_chfinger(struct userrec *u, int idx, char *par)
     else if ((bot_flags(u) & BOT_SHARE) && !(atr & USER_OWNER))
       dprintf(idx, "You can't change a share bot's fingerprint.\n");
     else if ((u->flags & USER_OWNER) && !(atr & USER_OWNER) &&
-             egg_strcasecmp(handle, dcc[idx].nick))
+             strcasecmp(handle, dcc[idx].nick))
       dprintf(idx, "You can't change a bot owner's fingerprint.\n");
-    else if (isowner(handle) && egg_strcasecmp(dcc[idx].nick, handle))
+    else if (isowner(handle) && strcasecmp(dcc[idx].nick, handle))
       dprintf(idx, "You can't change a permanent bot owner's fingerprint.\n");
     else if (!par[0]) {
       putlog(LOG_CMDS, "*", "#%s# chfinger %s [nothing]", dcc[idx].nick, handle);
@@ -1292,12 +1291,12 @@ static void cmd_comment(struct userrec *u, int idx, char *par)
     return;
   }
   if ((u1->flags & USER_OWNER) && !(u && (u->flags & USER_OWNER)) &&
-      egg_strcasecmp(handle, dcc[idx].nick)) {
+      strcasecmp(handle, dcc[idx].nick)) {
     dprintf(idx, "You can't change comment on a bot owner.\n");
     return;
   }
   putlog(LOG_CMDS, "*", "#%s# comment %s %s", dcc[idx].nick, handle, par);
-  if (!egg_strcasecmp(par, "none")) {
+  if (!strcasecmp(par, "none")) {
     dprintf(idx, "Okay, comment blanked.\n");
     set_user(&USERENTRY_COMMENT, u1, NULL);
     return;
@@ -1367,7 +1366,7 @@ void cmd_die(struct userrec *u, int idx, char *par)
 
 static void cmd_debug(struct userrec *u, int idx, char *par)
 {
-  if (!egg_strcasecmp(par, "help")) {
+  if (!strcasecmp(par, "help")) {
     putlog(LOG_CMDS, "*", "#%s# debug help", dcc[idx].nick);
     debug_help(idx);
   } else {
@@ -1391,7 +1390,7 @@ static void cmd_simul(struct userrec *u, int idx, char *par)
     return;
   }
   for (i = 0; i < dcc_total; i++)
-    if (!egg_strcasecmp(nick, dcc[i].nick) && !ok &&
+    if (!strcasecmp(nick, dcc[i].nick) && !ok &&
         (dcc[i].type->flags & DCT_SIMUL)) {
       putlog(LOG_CMDS, "*", "#%s# simul %s %s", dcc[idx].nick, nick, par);
       if (dcc[i].type && dcc[i].type->activity) {
@@ -1414,7 +1413,7 @@ static void cmd_link(struct userrec *u, int idx, char *par)
   }
   putlog(LOG_CMDS, "*", "#%s# link %s", dcc[idx].nick, par);
   s = newsplit(&par);
-  if (!par[0] || !egg_strcasecmp(par, botnetnick))
+  if (!par[0] || !strcasecmp(par, botnetnick))
     botlink(dcc[idx].nick, idx, s);
   else {
     char x[40];
@@ -1448,7 +1447,7 @@ static void cmd_unlink(struct userrec *u, int idx, char *par)
   /* If we're directly connected to that bot, just do it
    * (is nike gunna sue?)
    */
-  if (!egg_strcasecmp(dcc[i].nick, bot))
+  if (!strcasecmp(dcc[i].nick, bot))
     botunlink(idx, bot, par, dcc[i].nick);
   else {
     char x[40];
@@ -1491,7 +1490,7 @@ static void cmd_trace(struct userrec *u, int idx, char *par)
     dprintf(idx, "Usage: trace <botname>\n");
     return;
   }
-  if (!egg_strcasecmp(par, botnetnick)) {
+  if (!strcasecmp(par, botnetnick)) {
     dprintf(idx, "That's me!  Hiya! :)\n");
     return;
   }
@@ -1543,7 +1542,7 @@ int check_dcc_attrs(struct userrec *u, int oatr)
   }
   for (i = 0; i < dcc_total; i++) {
     if ((dcc[i].type->flags & DCT_MASTER) &&
-        (!egg_strcasecmp(u->handle, dcc[i].nick))) {
+        (!strcasecmp(u->handle, dcc[i].nick))) {
       stat = dcc[i].status;
       if ((dcc[i].type == &DCC_CHAT) &&
           ((u->flags & (USER_OP | USER_MASTER | USER_OWNER | USER_BOTMAST)) !=
@@ -1622,7 +1621,7 @@ int check_dcc_attrs(struct userrec *u, int oatr)
       }
     }
 
-    if (dcc[i].type == &DCC_BOT && !egg_strcasecmp(u->handle, dcc[i].nick)) {
+    if (dcc[i].type == &DCC_BOT && !strcasecmp(u->handle, dcc[i].nick)) {
       if ((dcc[i].status & STAT_LEAF) && !(bot_flags(u) & BOT_LEAF))
         dcc[i].status &= ~(STAT_LEAF | STAT_WARNED);
       if (!(dcc[i].status & STAT_LEAF) && (bot_flags(u) & BOT_LEAF))
@@ -1644,7 +1643,7 @@ int check_dcc_chanattrs(struct userrec *u, char *chname, int chflags,
     return 0;
   for (i = 0; i < dcc_total; i++) {
     if ((dcc[i].type->flags & DCT_MASTER) &&
-        !egg_strcasecmp(u->handle, dcc[i].nick)) {
+        !strcasecmp(u->handle, dcc[i].nick)) {
       if ((dcc[i].type == &DCC_CHAT) &&
           ((chflags & (USER_OP | USER_MASTER | USER_OWNER)) !=
           (ochatr & (USER_OP | USER_MASTER | USER_OWNER))))
@@ -1896,7 +1895,7 @@ static void cmd_botattr(struct userrec *u, int idx, char *par)
   }
   for (idx2 = 0; idx2 < dcc_total; idx2++)
     if (dcc[idx2].type != &DCC_RELAY && dcc[idx2].type != &DCC_FORK_BOT &&
-        !egg_strcasecmp(dcc[idx2].nick, hand))
+        !strcasecmp(dcc[idx2].nick, hand))
       break;
   if (idx2 != dcc_total) {
     dprintf(idx,
@@ -2027,7 +2026,7 @@ static void cmd_chat(struct userrec *u, int idx, char *par)
   module_entry *me;
 
   arg = newsplit(&par);
-  if (!egg_strcasecmp(arg, "off")) {
+  if (!strcasecmp(arg, "off")) {
     /* Turn chat off */
     if (dcc[idx].u.chat->channel < 0) {
       dprintf(idx, "You weren't in chat anyway!\n");
@@ -2068,7 +2067,7 @@ static void cmd_chat(struct userrec *u, int idx, char *par)
       }
     } else {
       if (((arg[0] < '0') || (arg[0] > '9')) && (arg[0])) {
-        if (!egg_strcasecmp(arg, "on"))
+        if (!strcasecmp(arg, "on"))
           newchan = 0;
         else {
           Tcl_SetVar(interp, "_chan", arg, 0);
@@ -2150,10 +2149,10 @@ static void cmd_echo(struct userrec *u, int idx, char *par)
             "on" : "off");
     return;
   }
-  if (!egg_strcasecmp(par, "on")) {
+  if (!strcasecmp(par, "on")) {
     dprintf(idx, "Echo turned on.\n");
     dcc[idx].status |= STAT_ECHO;
-  } else if (!egg_strcasecmp(par, "off")) {
+  } else if (!strcasecmp(par, "off")) {
     dprintf(idx, "Echo turned off.\n");
     dcc[idx].status &= ~STAT_ECHO;
   } else {
@@ -2276,7 +2275,7 @@ static void cmd_strip(struct userrec *u, int idx, char *par)
   nick = newsplit(&par);
   if ((nick[0] != '+') && (nick[0] != '-') && u && (u->flags & USER_MASTER)) {
     for (i = 0; i < dcc_total; i++)
-      if (!egg_strcasecmp(nick, dcc[i].nick) && dcc[i].type == &DCC_CHAT && !ok) {
+      if (!strcasecmp(nick, dcc[i].nick) && dcc[i].type == &DCC_CHAT && !ok) {
         ok = 1;
         dest = i;
       }
@@ -2441,7 +2440,7 @@ static void cmd_page(struct userrec *u, int idx, char *par)
     return;
   }
   a = atoi(par);
-  if ((!a && !par[0]) || !egg_strcasecmp(par, "off")) {
+  if ((!a && !par[0]) || !strcasecmp(par, "off")) {
     dcc[idx].status &= ~STAT_PAGE;
     dcc[idx].u.chat->max_line = 0x7ffffff;      /* flush_lines needs this */
     while (dcc[idx].u.chat->buffer)
@@ -2702,7 +2701,7 @@ static void cmd_pls_user(struct userrec *u, int idx, char *par)
     dprintf(idx, "Someone already exists by that name.\n");
   else if (strchr(BADNICKCHARS, handle[0]) != NULL)
     dprintf(idx, "You can't start a nick with '%c'.\n", handle[0]);
-  else if (!egg_strcasecmp(handle, botnetnick))
+  else if (!strcasecmp(handle, botnetnick))
     dprintf(idx, "Hey! That's MY name!\n");
   else {
     putlog(LOG_CMDS, "*", "#%s# +user %s %s", dcc[idx].nick, handle, host);
@@ -2748,7 +2747,7 @@ static void cmd_mns_user(struct userrec *u, int idx, char *par)
     }
     for (idx2 = 0; idx2 < dcc_total; idx2++)
       if (dcc[idx2].type != &DCC_RELAY && dcc[idx2].type != &DCC_FORK_BOT &&
-          !egg_strcasecmp(dcc[idx2].nick, handle))
+          !strcasecmp(dcc[idx2].nick, handle))
         break;
     if (idx2 != dcc_total) {
       dprintf(idx, "You can't remove a directly linked bot.\n");
@@ -2801,7 +2800,7 @@ static void cmd_pls_host(struct userrec *u, int idx, char *par)
     return;
   }
   get_user_flagrec(u, &fr, NULL);
-  if (egg_strcasecmp(handle, dcc[idx].nick)) {
+  if (strcasecmp(handle, dcc[idx].nick)) {
     get_user_flagrec(u2, &fr2, NULL);
     if (!glob_master(fr) && !glob_bot(fr2) && !chan_master(fr)) {
       dprintf(idx, "You can't add hostmasks to non-bots.\n");
@@ -2830,7 +2829,7 @@ static void cmd_pls_host(struct userrec *u, int idx, char *par)
     return;
   }
   for (q = get_user(&USERENTRY_HOSTS, u); q; q = q->next)
-    if (!egg_strcasecmp(q->extra, host)) {
+    if (!strcasecmp(q->extra, host)) {
       dprintf(idx, "That hostmask is already there.\n");
       return;
     }
@@ -2880,7 +2879,7 @@ static void cmd_mns_host(struct userrec *u, int idx, char *par)
     return;
   }
 
-  if (egg_strcasecmp(handle, dcc[idx].nick)) {
+  if (strcasecmp(handle, dcc[idx].nick)) {
     if (!glob_master(fr) && !glob_bot(fr2) && !chan_master(fr)) {
       dprintf(idx, "You can't remove hostmasks from non-bots.\n");
       return;

@@ -160,43 +160,26 @@ logfile <logflags> <channel> "logs/logfile"
 
     Logfile flags:
 
-        --- ------------------------------------------------------
-        b   information about bot linking and userfile sharing
-
-        c   commands
-
-        d   misc debug information
-
-        g   raw outgoing share traffic
-
-        h   raw incoming share traffic
-
-        j   joins, parts, quits, and netsplits on the channel
-
-        k   kicks, bans, and mode changes on the channel
-
-        l   linked bot messages
-
-        m   private msgs, notices and ctcps to the bot
-
-        o   misc info, errors, etc (IMPORTANT STUFF)
-
-        p   public text on the channel
-
-        r   raw incoming server traffic
-
-        s   server connects, disconnects, and notices
-
-        t   raw incoming botnet traffic
-
-        u   raw outgoing botnet traffic
-
-        v   raw outgoing server traffic
-
-        w   wallops (make sure the bot sets +w in init-server)
-
-        x   file transfers and file-area commands
-        --- ------------------------------------------------------
+        ------------- ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+        b             information about bot linking and userfile sharing
+        c             commands
+        d             misc debug information
+        g             raw outgoing share traffic
+        h             raw incoming share traffic
+        j             joins, parts, quits, and netsplits on the channel
+        k             kicks, bans, and mode changes on the channel
+        l             linked bot messages
+        m             private msgs, notices and ctcps to the bot
+        o             misc info, errors, etc (IMPORTANT STUFF)
+        p             public text on the channel
+        r             raw incoming server traffic
+        s             server connects, disconnects, and notices
+        t             raw incoming botnet traffic
+        u             raw outgoing botnet traffic
+        v             raw outgoing server traffic
+        w             wallops (make sure the bot sets +w in init-server)
+        x             file transfers and file-area commands
+        ------------- ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
     Note that modes d, h, r, t, and v can fill disk quotas quickly.
     There are also eight user-defined levels (1-8) which can be used by
@@ -376,13 +359,11 @@ efficiency). You should read doc/BOTNET before modifying these settings.
       This setting defines whether or not people can boot users on the
       Eggdrop from other bots in your botnet. Valid settings are:
 
-        --- ----------------------------
-        0   allow _no_ outside boots
-
-        1   allow boots from sharebots
-
-        2   allow any boots
-        --- ----------------------------
+        ----------- -------------------------------------------------------------------------------
+        0           allow _no_ outside boots
+        1           allow boots from sharebots
+        2           allow any boots
+        ----------- -------------------------------------------------------------------------------
 
   set share-unlinks 1
 
@@ -664,21 +645,15 @@ support.
 
   The options are the following:
 
-      ---- ---------------------------------------------
-      0    disable verification
-
-      1    enable certificate verification
-
-      2    allow self-signed certificates
-
-      4    don't check peer common or alt names
-
-      8    allow expired certificates
-
-      16   allow certificates which are not valid yet
-
-      32   allow revoked certificates
-      ---- ---------------------------------------------
+      ------------- ----------------------------------------------------------------------------------------------------------------------------------------------------------------
+      0             disable verification
+      1             enable certificate verification
+      2             allow self-signed certificates
+      4             don't check peer common or alt names
+      8             allow expired certificates
+      16            allow certificates which are not valid yet
+      32            allow revoked certificates
+      ------------- ----------------------------------------------------------------------------------------------------------------------------------------------------------------
 
   set ssl-verify-dcc 0
 
@@ -749,4 +724,4 @@ point.
           source scripts/alltools.tcl
           source scripts/action.fix.tcl
 
-Copyright (C) 2000 - 2018 Eggheads Development Team
+Copyright (C) 2000 - 2019 Eggheads Development Team

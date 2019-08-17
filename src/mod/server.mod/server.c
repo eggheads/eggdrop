@@ -4,7 +4,7 @@
  */
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2018 Eggheads Development Team
+ * Copyright (C) 1999 - 2019 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -120,6 +120,14 @@ static int deq_kick(int);
 static void msgq_clear(struct msgq_head *qh);
 static int stack_limit;
 static char *realservername;
+
+static int sasl = 0;
+
+static int sasl_mechanism = 0;
+static char sasl_username[NICKMAX + 1];
+static char sasl_password[81];
+static int sasl_continue = 1;
+static char sasl_ecdsa_key[121];
 
 #include "servmsg.c"
 
@@ -278,7 +286,7 @@ static int calc_penalty(char *msg)
     return 0;
   }
   penalty = (1 + i / 100);
-  if (!egg_strcasecmp(cmd, "KICK")) {
+  if (!strcasecmp(cmd, "KICK")) {
     par1 = newsplit(&msg);      /* channel */
     par2 = newsplit(&msg);      /* victim(s) */
     par3 = splitnicks(&par2);
@@ -293,7 +301,7 @@ static int calc_penalty(char *msg)
       par3 = splitnicks(&par1);
       penalty += ii;
     }
-  } else if (!egg_strcasecmp(cmd, "MODE")) {
+  } else if (!strcasecmp(cmd, "MODE")) {
     i = 0;
     par1 = newsplit(&msg);      /* channel */
     par2 = newsplit(&msg);      /* mode(s) */
@@ -316,7 +324,7 @@ static int calc_penalty(char *msg)
       ii++;
     }
     penalty += (ii * i);
-  } else if (!egg_strcasecmp(cmd, "TOPIC")) {
+  } else if (!strcasecmp(cmd, "TOPIC")) {
     penalty++;
     par1 = newsplit(&msg);      /* channel */
     par2 = newsplit(&msg);      /* topic */
@@ -328,15 +336,15 @@ static int calc_penalty(char *msg)
         penalty += 2;
       }
     }
-  } else if (!egg_strcasecmp(cmd, "PRIVMSG") ||
-             !egg_strcasecmp(cmd, "NOTICE")) {
+  } else if (!strcasecmp(cmd, "PRIVMSG") ||
+             !strcasecmp(cmd, "NOTICE")) {
     par1 = newsplit(&msg);      /* channel(s)/nick(s) */
     /* Add one sec penalty for each recipient */
     while (strlen(par1) > 0) {
       splitnicks(&par1);
       penalty++;
     }
-  } else if (!egg_strcasecmp(cmd, "WHO")) {
+  } else if (!strcasecmp(cmd, "WHO")) {
     par1 = newsplit(&msg);      /* masks */
     par2 = par1;
     while (strlen(par1) > 0) {
@@ -346,33 +354,33 @@ static int calc_penalty(char *msg)
       else
         penalty += 5;
     }
-  } else if (!egg_strcasecmp(cmd, "AWAY")) {
+  } else if (!strcasecmp(cmd, "AWAY")) {
     if (strlen(msg) > 0)
       penalty += 2;
     else
       penalty += 1;
-  } else if (!egg_strcasecmp(cmd, "INVITE")) {
+  } else if (!strcasecmp(cmd, "INVITE")) {
     /* Successful invite receives 2 or 3 penalty points. Let's go
      * with the maximum.
      */
     penalty += 3;
-  } else if (!egg_strcasecmp(cmd, "JOIN")) {
+  } else if (!strcasecmp(cmd, "JOIN")) {
     penalty += 2;
-  } else if (!egg_strcasecmp(cmd, "PART")) {
+  } else if (!strcasecmp(cmd, "PART")) {
     penalty += 4;
-  } else if (!egg_strcasecmp(cmd, "VERSION")) {
+  } else if (!strcasecmp(cmd, "VERSION")) {
     penalty += 2;
-  } else if (!egg_strcasecmp(cmd, "TIME")) {
+  } else if (!strcasecmp(cmd, "TIME")) {
     penalty += 2;
-  } else if (!egg_strcasecmp(cmd, "TRACE")) {
+  } else if (!strcasecmp(cmd, "TRACE")) {
     penalty += 2;
-  } else if (!egg_strcasecmp(cmd, "NICK")) {
+  } else if (!strcasecmp(cmd, "NICK")) {
     penalty += 3;
-  } else if (!egg_strcasecmp(cmd, "ISON")) {
+  } else if (!strcasecmp(cmd, "ISON")) {
     penalty += 1;
-  } else if (!egg_strcasecmp(cmd, "WHOIS")) {
+  } else if (!strcasecmp(cmd, "WHOIS")) {
     penalty += 2;
-  } else if (!egg_strcasecmp(cmd, "DNS")) {
+  } else if (!strcasecmp(cmd, "DNS")) {
     penalty += 2;
   } else
     penalty++;                  /* just add standard-penalty */
@@ -439,7 +447,7 @@ static int fast_deq(int which)
     strlcpy(stackable, stackablecmds, sizeof stackable);
     stckbl = stackable;
     while (strlen(stckbl) > 0) {
-      if (!egg_strcasecmp(newsplit(&stckbl), cmd)) {
+      if (!strcasecmp(newsplit(&stckbl), cmd)) {
         found = 1;
         break;
       }
@@ -457,7 +465,7 @@ static int fast_deq(int which)
     strlcpy(stackable, stackable2cmds, sizeof stackable);
     stckbl = stackable;
     while (strlen(stckbl) > 0)
-      if (!egg_strcasecmp(newsplit(&stckbl), cmd)) {
+      if (!strcasecmp(newsplit(&stckbl), cmd)) {
         stack_method = 2;
         break;
       }
@@ -541,7 +549,7 @@ static void parse_q(struct msgq_head *q, char *oldnick, char *newnick)
 
   for (m = q->head; m;) {
     changed = 0;
-    if (optimize_kicks == 2 && !egg_strncasecmp(m->msg, "KICK ", 5)) {
+    if (optimize_kicks == 2 && !strncasecmp(m->msg, "KICK ", 5)) {
       newnicks[0] = 0;
       strlcpy(buf, m->msg, sizeof buf);
       msg = buf;
@@ -550,7 +558,7 @@ static void parse_q(struct msgq_head *q, char *oldnick, char *newnick)
       nicks = newsplit(&msg);
       while (strlen(nicks) > 0) {
         nick = splitnicks(&nicks);
-        if (!egg_strcasecmp(nick, oldnick) &&
+        if (!strcasecmp(nick, oldnick) &&
             ((9 + strlen(chan) + strlen(newnicks) + strlen(newnick) +
               strlen(nicks) + strlen(msg)) < 510)) {
           if (newnick)
@@ -598,7 +606,7 @@ static void purge_kicks(struct msgq_head *q)
   struct chanset_t *cs;
 
   for (m = q->head; m;) {
-    if (!egg_strncasecmp(m->msg, "KICK", 4)) {
+    if (!strncasecmp(m->msg, "KICK", 4)) {
       newnicks[0] = 0;
       changed = 0;
       strlcpy(buf, m->msg, sizeof buf);
@@ -683,7 +691,7 @@ static int deq_kick(int which)
     return 0;
   }
 
-  if (egg_strncasecmp(h->head->msg, "KICK", 4))
+  if (strncasecmp(h->head->msg, "KICK", 4))
     return 0;
 
   if (optimize_kicks == 2) {
@@ -692,7 +700,7 @@ static int deq_kick(int which)
       return 1;
   }
 
-  if (egg_strncasecmp(h->head->msg, "KICK", 4))
+  if (strncasecmp(h->head->msg, "KICK", 4))
     return 0;
 
   msg = h->head;
@@ -707,7 +715,7 @@ static int deq_kick(int which)
     nr++;
   }
   for (m = msg->next, lm = NULL; m && (nr < kick_method);) {
-    if (!egg_strncasecmp(m->msg, "KICK", 4)) {
+    if (!strncasecmp(m->msg, "KICK", 4)) {
       changed = 0;
       newnicks2[0] = 0;
       strlcpy(buf2, m->msg, sizeof buf2);
@@ -715,7 +723,7 @@ static int deq_kick(int which)
       newsplit(&reason2);
       chan2 = newsplit(&reason2);
       nicks = newsplit(&reason2);
-      if (!egg_strcasecmp(chan, chan2) && !egg_strcasecmp(reason, reason2)) {
+      if (!strcasecmp(chan, chan2) && !strcasecmp(reason, reason2)) {
         while (strlen(nicks) > 0) {
           nick = splitnicks(&nicks);
           if ((nr < kick_method) && ((9 + strlen(chan) + strlen(newnicks) +
@@ -815,8 +823,13 @@ static void queue_server(int which, char *msg, int len)
   remove_crlf(&msg);
   len = strlen(buf);
 
-  /* No queue for PING and PONG - drummer */
-  if (!egg_strncasecmp(buf, "PING", 4) || !egg_strncasecmp(buf, "PONG", 4)) {
+  /* No queue for PING, PONG and AUTHENTICATE */
+  #define PING "PING"
+  #define PONG "PONG"
+  #define AUTHENTICATE "AUTHENTICATE"
+  if (!strncasecmp(buf, PING, sizeof PING - 1) ||
+      !strncasecmp(buf, PONG, sizeof PONG - 1) ||
+      !strncasecmp(buf, AUTHENTICATE, sizeof AUTHENTICATE - 1)) {
     if (buf[1] == 'I' || buf[1] == 'i')
       lastpingtime = now;
     check_tcl_out(which, buf, 1);
@@ -870,7 +883,7 @@ static void queue_server(int which, char *msg, int len)
     if (!doublemsg) {
       for (tq = tempq.head; tq; tq = tqq) {
         tqq = tq->next;
-        if (!egg_strcasecmp(tq->msg, buf)) {
+        if (!strcasecmp(tq->msg, buf)) {
           if (!double_warned) {
             debug1("Message already queued; skipping: %s", buf);
             double_warned = 1;
@@ -1039,13 +1052,13 @@ static void next_server(int *ptr, char *serv, unsigned int *port, char *pass)
   if (*ptr == -1) {
     for (; x; x = x->next) {
       if (x->port == *port) {
-        if (!egg_strcasecmp(x->name, serv)) {
+        if (!strcasecmp(x->name, serv)) {
           *ptr = i;
 #ifdef TLS
           x->ssl = use_ssl;
 #endif
           return;
-        } else if (x->realname && !egg_strcasecmp(x->realname, serv)) {
+        } else if (x->realname && !strcasecmp(x->realname, serv)) {
           *ptr = i;
           strlcpy(serv, x->realname, UHOSTLEN);
 #ifdef TLS
@@ -1386,6 +1399,9 @@ static tcl_strings my_tcl_strings[] = {
   {"connect-server",      connectserver,  120,               0},
   {"stackable-commands",  stackablecmds,  510,               0},
   {"stackable2-commands", stackable2cmds, 510,               0},
+  {"sasl-username",       sasl_username,  NICKMAX,           0},
+  {"sasl-password",       sasl_password,  80,                0},
+  {"sasl-ecdsa-key",      sasl_ecdsa_key, 120,               0},
   {NULL,                  NULL,           0,                 0}
 };
 
@@ -1425,6 +1441,9 @@ static tcl_ints my_tcl_ints[] = {
 #ifdef TLS
   {"ssl-verify-server", &tls_vfyserver,             0},
 #endif
+  {"sasl",              &sasl,                      0},
+  {"sasl-mechanism",    &sasl_mechanism,            0},
+  {"sasl-continue",     &sasl_continue,             0},
   {NULL,                NULL,                       0}
 };
 
@@ -1531,15 +1550,15 @@ static int ctcp_DCC_CHAT(char *nick, char *from, char *handle,
   ip = newsplit(&msg);
   prt = newsplit(&msg);
 #ifdef TLS
-  if (egg_strcasecmp(action, "CHAT") || egg_strcasecmp(object, botname) || !u)
+  if (strcasecmp(action, "CHAT") || strcasecmp(object, botname) || !u)
   {
-    if (!egg_strcasecmp(action, "SCHAT"))
+    if (!strcasecmp(action, "SCHAT"))
       ssl = 1;
     else
       return 0;
   }
 #else
-  if (egg_strcasecmp(action, "CHAT") || egg_strcasecmp(object, botname) || !u)
+  if (strcasecmp(action, "CHAT") || strcasecmp(object, botname) || !u)
     return 0;
 #endif
   get_user_flagrec(u, &fr, 0);
@@ -1817,6 +1836,8 @@ static void server_report(int idx, int details)
   if (hq.tot)
     dprintf(idx, "    %s %d%% (%d msgs)\n", IRC_HELPQUEUE,
             (int) ((float) (hq.tot * 100.0) / (float) maxqmsg), (int) hq.tot);
+  dprintf(idx, "    Active CAP negotiations: %s\n", (strlen(cap.negotiated) > 0) ?
+            cap.negotiated : "None" );
 
   if (details) {
     int size = server_expmem();
