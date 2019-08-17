@@ -31,6 +31,7 @@
 #include <openssl/err.h>
 #include <openssl/rand.h>
 #include <openssl/x509v3.h>
+#include <openssl/ssl.h>
 
 extern int tls_vfydcc;
 extern struct dcc_t *dcc;
