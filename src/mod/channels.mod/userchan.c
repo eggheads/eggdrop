@@ -3,7 +3,7 @@
  */
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2018 Eggheads Development Team
+ * Copyright (C) 1999 - 2019 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -1245,7 +1245,7 @@ static int expired_mask(struct chanset_t *chan, char *who)
   m = ismember(chan, snick);
   if (!m)
     for (m2 = chan->channel.member; m2 && m2->nick[0]; m2 = m2->next)
-      if (!egg_strcasecmp(sfrom, m2->userhost)) {
+      if (!strcasecmp(sfrom, m2->userhost)) {
         m = m2;
         break;
       }

@@ -4,7 +4,7 @@
  */
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2018 Eggheads Development Team
+ * Copyright (C) 1999 - 2019 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -69,7 +69,7 @@ static void link_assoc(char *bot, char *via)
 {
   char x[1024];
 
-  if (!egg_strcasecmp(via, botnetnick)) {
+  if (!strcasecmp(via, botnetnick)) {
     int idx = nextbot(bot);
     assoc_t *a;
 
@@ -118,7 +118,7 @@ static void add_assoc(char *name, int chan)
   assoc_t *a, *b, *old = NULL;
 
   for (a = assoc; a; a = a->next) {
-    if (name[0] != 0 && !egg_strcasecmp(a->name, name)) {
+    if (name[0] != 0 && !strcasecmp(a->name, name)) {
       kill_assoc(a->channel);
       add_assoc(name, chan);
       return;
@@ -158,7 +158,7 @@ static int get_assoc(char *name)
   assoc_t *a;
 
   for (a = assoc; a; a = a->next)
-    if (!egg_strcasecmp(a->name, name))
+    if (!strcasecmp(a->name, name))
       return a->channel;
   return -1;
 }
@@ -315,7 +315,7 @@ static void zapf_assoc(char *botnick, char *code, char *par)
   int linking = 0, chan;
 
   if ((idx >= 0) && !(bot_flags(dcc[idx].user) & BOT_ISOLATE)) {
-    if (!egg_strcasecmp(dcc[idx].nick, botnick))
+    if (!strcasecmp(dcc[idx].nick, botnick))
       linking = b_status(idx) & STAT_LINKING;
     s = newsplit(&par);
     chan = base64_to_int(s);

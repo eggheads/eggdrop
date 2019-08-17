@@ -7,7 +7,7 @@
 /*
  * Written by Fabian Knittel <fknittel@gmx.de>
  *
- * Copyright (C) 1999 - 2018 Eggheads Development Team
+ * Copyright (C) 1999 - 2019 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -150,7 +150,7 @@ static void dns_dccipbyhost(sockname_t *ip, char *hostn, int ok, void *other)
   for (idx = 0; idx < dcc_total; idx++) {
     if ((dcc[idx].type == &DCC_DNSWAIT) &&
         (dcc[idx].u.dns->dns_type == RES_IPBYHOST) &&
-        !egg_strcasecmp(dcc[idx].u.dns->host, hostn)) {
+        !strcasecmp(dcc[idx].u.dns->host, hostn)) {
       if (ok) {
         if (dcc[idx].u.dns->ip)
           memcpy(dcc[idx].u.dns->ip, ip, sizeof(sockname_t));
@@ -188,7 +188,7 @@ void dcc_dnsipbyhost(char *hostn)
     if (de->type && (de->type == &DNS_DCCEVENT_IPBYHOST) &&
         (de->lookup == RES_IPBYHOST)) {
       if (de->res_data.hostname &&
-          !egg_strcasecmp(de->res_data.hostname, hostn))
+          !strcasecmp(de->res_data.hostname, hostn))
         /* No need to add anymore. */
         return;
     }
@@ -434,7 +434,7 @@ void call_ipbyhost(char *hostn, sockname_t *ip, int ok)
   while (de) {
     nde = de->next;
     if ((de->lookup == RES_IPBYHOST) && (!de->res_data.hostname ||
-        !egg_strcasecmp(de->res_data.hostname, hostn))) {
+        !strcasecmp(de->res_data.hostname, hostn))) {
       /* Remove the event from the list here, to avoid conflicts if one of
        * the event handlers re-adds another event. */
       if (ode)

@@ -4,7 +4,7 @@
  */
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2018 Eggheads Development Team
+ * Copyright (C) 1999 - 2019 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -92,29 +92,29 @@ static int ctcp_CLIENTINFO(char *nick, char *uhosr, char *handle,
     return 1;
   else if (!msg[0])
     p = CLIENTINFO;
-  else if (!egg_strcasecmp(msg, "sed"))
+  else if (!strcasecmp(msg, "sed"))
     p = CLIENTINFO_SED;
-  else if (!egg_strcasecmp(msg, "version"))
+  else if (!strcasecmp(msg, "version"))
     p = CLIENTINFO_VERSION;
-  else if (!egg_strcasecmp(msg, "clientinfo"))
+  else if (!strcasecmp(msg, "clientinfo"))
     p = CLIENTINFO_CLIENTINFO;
-  else if (!egg_strcasecmp(msg, "userinfo"))
+  else if (!strcasecmp(msg, "userinfo"))
     p = CLIENTINFO_USERINFO;
-  else if (!egg_strcasecmp(msg, "errmsg"))
+  else if (!strcasecmp(msg, "errmsg"))
     p = CLIENTINFO_ERRMSG;
-  else if (!egg_strcasecmp(msg, "finger"))
+  else if (!strcasecmp(msg, "finger"))
     p = CLIENTINFO_FINGER;
-  else if (!egg_strcasecmp(msg, "time"))
+  else if (!strcasecmp(msg, "time"))
     p = CLIENTINFO_TIME;
-  else if (!egg_strcasecmp(msg, "action"))
+  else if (!strcasecmp(msg, "action"))
     p = CLIENTINFO_ACTION;
-  else if (!egg_strcasecmp(msg, "dcc"))
+  else if (!strcasecmp(msg, "dcc"))
     p = CLIENTINFO_DCC;
-  else if (!egg_strcasecmp(msg, "utc"))
+  else if (!strcasecmp(msg, "utc"))
     p = CLIENTINFO_UTC;
-  else if (!egg_strcasecmp(msg, "ping"))
+  else if (!strcasecmp(msg, "ping"))
     p = CLIENTINFO_PING;
-  else if (!egg_strcasecmp(msg, "echo"))
+  else if (!strcasecmp(msg, "echo"))
     p = CLIENTINFO_ECHO;
   if (p == NULL) {
     simple_sprintf(ctcp_reply,
@@ -159,22 +159,22 @@ static int ctcp_CHAT(char *nick, char *uhost, char *handle, char *object,
 /* Check if SSL, IPv4, or IPv6 were requested */
     if (
 #ifdef IPV6
-    (!egg_strcasecmp(keyword, "CHAT6")) ||
-        (!egg_strcasecmp(keyword, "SCHAT6"))) {
+    (!strcasecmp(keyword, "CHAT6")) ||
+        (!strcasecmp(keyword, "SCHAT6"))) {
       chatv = AF_INET6;
     } else if (
 #endif
 #ifdef TLS
-    (!egg_strcasecmp(keyword, "SCHAT")) ||
+    (!strcasecmp(keyword, "SCHAT")) ||
 #ifdef IPV6
-        (!egg_strcasecmp(keyword, "SCHAT6")) ||
+        (!strcasecmp(keyword, "SCHAT6")) ||
 #endif
-        (!egg_strcasecmp(keyword, "SCHAT4"))) {
+        (!strcasecmp(keyword, "SCHAT4"))) {
       ssl = 1;
     } else if (
 #endif
-    (!egg_strcasecmp(keyword, "CHAT4")) ||
-        (!egg_strcasecmp(keyword, "SCHAT4"))) {
+    (!strcasecmp(keyword, "CHAT4")) ||
+        (!strcasecmp(keyword, "SCHAT4"))) {
       chatv = AF_INET;
     }
   

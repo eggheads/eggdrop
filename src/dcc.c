@@ -6,7 +6,7 @@
  */
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2018 Eggheads Development Team
+ * Copyright (C) 1999 - 2019 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -24,7 +24,6 @@
  */
 
 #include "main.h"
-#include <ctype.h>
 #include <errno.h>
 #include "modules.h"
 #include "tandem.h"
@@ -254,9 +253,14 @@ static void bot_version(int idx, char *par)
 
 void failed_link(int idx)
 {
-  char s[81], s1[512];
+  char s[NICKLEN + 18], s1[512];
 
+#ifdef TLS
+  /* Stop trying when we are sslport+3 */
+  if (dcc[idx].port >= dcc[idx].u.bot->port + 3 && dcc[idx].ssl) {
+#else
   if (dcc[idx].port >= dcc[idx].u.bot->port + 3) {
+#endif
     if (dcc[idx].u.bot->linker[0]) {
       egg_snprintf(s, sizeof s, "Couldn't link to %s.", dcc[idx].nick);
       strcpy(s1, dcc[idx].u.bot->linker);
@@ -274,8 +278,30 @@ void failed_link(int idx)
   /* Try next port, if it makes sense (no AF_UNSPEC, ...) */
   killsock(dcc[idx].sock);
   dcc[idx].timeval = now;
-  if (open_telnet(idx, dcc[idx].host, dcc[idx].port + 1) < 0)
+#ifdef TLS
+  /* Order of attempts:
+   * If initial SSL: sslport+1; sslport+2; sslport+3
+   * Else: sslport; plain+1; sslport+1; plain+2; sslport+2; plain+3; sslport+3
+   */
+  if (dcc[idx].u.bot->ssl) {
+    ++dcc[idx].port;
+  } else if (dcc[idx].ssl) {
+    dcc[idx].ssl = 0;
+    ++dcc[idx].port;
+  } else {
+    dcc[idx].ssl = 1;
+  }
+#else
+    ++dcc[idx].port;
+#endif
+
+  if (open_telnet(idx, dcc[idx].host, dcc[idx].port) < 0)
     failed_link(idx);
+#ifdef TLS
+  else if (dcc[idx].ssl && ssl_handshake(dcc[idx].sock, TLS_CONNECT,
+           tls_vfybots, LOG_BOTS, dcc[idx].host, NULL))
+    failed_link(idx);
+#endif
 }
 
 static void cont_link(int idx, char *buf, int i)
@@ -358,14 +384,14 @@ static void dcc_bot_new(int idx, char *buf, int x)
   }
 
   code = newsplit(&buf);
-  if (!egg_strcasecmp(code, "*hello!"))
+  if (!strcasecmp(code, "*hello!"))
     greet_new_bot(idx);
-  else if (!egg_strcasecmp(code, "version") || !egg_strcasecmp(code, "v"))
+  else if (!strcasecmp(code, "version") || !strcasecmp(code, "v"))
     bot_version(idx, buf);
-  else if (!egg_strcasecmp(code, "badpass"))
+  else if (!strcasecmp(code, "badpass"))
     /* We entered the wrong password */
     putlog(LOG_BOTS, "*", DCC_BADPASS, dcc[idx].nick);
-  else if (!egg_strcasecmp(code, "passreq")) {
+  else if (!strcasecmp(code, "passreq")) {
     char *pass = get_user(&USERENTRY_PASS, u);
 
 #ifdef TLS
@@ -397,7 +423,7 @@ static void dcc_bot_new(int idx, char *buf, int x)
         dprintf(idx, "%s\n", pass);
     }
 #ifdef TLS
-  } else if (!egg_strcasecmp(code, "starttls") && !dcc[idx].ssl) {
+  } else if (!strcasecmp(code, "starttls") && !dcc[idx].ssl) {
     /* Mark the connection for secure communication, but don't switch yet.
      * The hub has to send a plaintext passreq right after the starttls command
      * and if we switch now, we'll break the handshake. Instead, we'll only
@@ -408,7 +434,7 @@ static void dcc_bot_new(int idx, char *buf, int x)
     /* needs to have space to be distinguished from a plaintext password */
     dprintf(idx, "starttls -\n");
 #endif
-  } else if (!egg_strcasecmp(code, "error"))
+  } else if (!strcasecmp(code, "error"))
     putlog(LOG_BOTS, "*", DCC_LINKERROR, dcc[idx].nick, buf);
   /* Ignore otherwise */
 }
@@ -514,7 +540,7 @@ static void dcc_bot(int idx, char *code, int i)
   } else
     msg = "";
   for (f = i = 0; C_bot[i].name && !f; i++) {
-    int y = egg_strcasecmp(code, C_bot[i].name);
+    int y = strcasecmp(code, C_bot[i].name);
 
     if (!y) {
       /* Found a match */
@@ -633,6 +659,8 @@ static int dcc_bot_check_digest(int idx, char *remote_digest)
 
 static void dcc_chat_pass(int idx, char *buf, int atr)
 {
+  char pass[PASSWORDLEN];
+
   if (!atr)
     return;
   if (dcc[idx].status & STAT_TELNET)
@@ -649,7 +677,7 @@ static void dcc_chat_pass(int idx, char *buf, int atr)
         putlog(LOG_BOTNETIN, "*", "[b<-%s] %s", dcc[idx].nick, buf);
     }
 #ifdef TLS
-    if (!egg_strncasecmp(buf, "starttls ", 9)) {
+    if (!strncasecmp(buf, "starttls ", 9)) {
       dcc[idx].ssl = 1;
       if (ssl_handshake(dcc[idx].sock, TLS_LISTEN, tls_vfybots, LOG_BOTS,
                         dcc[idx].host, NULL)) {
@@ -661,25 +689,23 @@ static void dcc_chat_pass(int idx, char *buf, int atr)
 #endif
     /* No password set? */
     if (u_pass_match(dcc[idx].user, "-")) {
-      char ps[20];
-
-      makepass(ps);
-      set_user(&USERENTRY_PASS, dcc[idx].user, ps);
+      makepass(pass);
+      set_user(&USERENTRY_PASS, dcc[idx].user, pass);
       changeover_dcc(idx, &DCC_BOT_NEW, sizeof(struct bot_info));
 
       dcc[idx].status = STAT_CALLED;
       dprintf(idx, "*hello!\n");
       greet_new_bot(idx);
 #ifdef NO_OLD_BOTNET
-      dprintf(idx, "h %s\n", ps);
+      dprintf(idx, "h %s\n", pass);
 #else
-      dprintf(idx, "handshake %s\n", ps);
+      dprintf(idx, "handshake %s\n", pass);
 #endif
       return;
     }
   }
   /* Check for MD5 digest from remote _bot_. <cybah> */
-  if ((atr & USER_BOT) && !egg_strncasecmp(buf, "digest ", 7)) {
+  if ((atr & USER_BOT) && !strncasecmp(buf, "digest ", 7)) {
     if (dcc_bot_check_digest(idx, buf + 7)) {
       nfree(dcc[idx].u.chat);
       dcc[idx].type = &DCC_BOT_NEW;
@@ -1222,7 +1248,7 @@ static int detect_telnet_flood(char *floodhost)
   get_user_flagrec(get_user_by_host(floodhost), &fr, NULL);
   if (!flood_telnet_thr || (glob_friend(fr) && !par_telnet_flood))
     return 0;                   /* No flood protection */
-  if (egg_strcasecmp(lasttelnethost, floodhost)) {      /* New... */
+  if (strcasecmp(lasttelnethost, floodhost)) {      /* New... */
     strlcpy(lasttelnethost, floodhost, sizeof lasttelnethost);
     lasttelnettime = now;
     lasttelnets = 0;
@@ -1431,8 +1457,13 @@ static void eof_dcc_telnet(int idx)
 
 static void display_telnet(int idx, char *buf)
 {
+#ifdef TLS
+  sprintf(buf, "lstn  %s%d%s", dcc[idx].ssl ? "+" : "", dcc[idx].port,
+          (dcc[idx].status & LSTN_PUBLIC) ? " pub" : "");
+#else
   sprintf(buf, "lstn  %d%s", dcc[idx].port,
           (dcc[idx].status & LSTN_PUBLIC) ? " pub" : "");
+#endif
 }
 
 struct dcc_table DCC_TELNET = {
@@ -1531,7 +1562,7 @@ void dupwait_notify(char *who)
   Assert(who);
   for (idx = 0; idx < dcc_total; idx++)
     if ((dcc[idx].type == &DCC_DUPWAIT) &&
-        !egg_strcasecmp(dcc[idx].nick, who)) {
+        !strcasecmp(dcc[idx].nick, who)) {
       dcc_telnet_pass(idx, dcc[idx].u.dupwait->atr);
       break;
     }
@@ -1606,7 +1637,7 @@ static void dcc_telnet_id(int idx, char *buf, int atr)
     return;
   }
   dcc[idx].status &= ~(STAT_BOTONLY | STAT_USRONLY);
-  if (!egg_strcasecmp(buf, "NEW") && (allow_new_telnets || make_userfile)) {
+  if (!strcasecmp(buf, "NEW") && (allow_new_telnets || make_userfile)) {
     dcc[idx].type = &DCC_TELNET_NEW;
     dcc[idx].timeval = now;
     dprintf(idx, "\n");
@@ -1632,7 +1663,7 @@ static void dcc_telnet_id(int idx, char *buf, int atr)
   correct_handle(buf);
   strlcpy(dcc[idx].nick, buf, sizeof dcc[idx].nick);
   if (glob_bot(fr)) {
-    if (!egg_strcasecmp(botnetnick, dcc[idx].nick)) {
+    if (!strcasecmp(botnetnick, dcc[idx].nick)) {
       /* change here temp to use bot output */
       dcc[idx].type = &DCC_BOT_NEW;
       dprintf(idx, "error You cannot link using my botnetnick.\n");
@@ -1885,7 +1916,7 @@ static void dcc_telnet_new(int idx, char *buf, int x)
     dprintf(idx, "\nSorry, that nickname is taken already.\n");
     dprintf(idx, "Try another one please:\n");
     return;
-  } else if (!egg_strcasecmp(buf, botnetnick))
+  } else if (!strcasecmp(buf, botnetnick))
     dprintf(idx, "Sorry, can't use my name for a nick.\n");
   else {
     strcpy(dcc[idx].nick, buf);
@@ -2053,9 +2084,9 @@ struct dcc_table DCC_TELNET_PW = {
 
 static int call_tcl_func(char *name, int idx, char *args)
 {
-  char s[11];
+  char s[12];
 
-  sprintf(s, "%d", idx);
+  snprintf(s, sizeof s, "%d", idx);
   Tcl_SetVar(interp, "_n", s, 0);
   Tcl_SetVar(interp, "_a", args, 0);
   if (Tcl_VarEval(interp, name, " $_n $_a", NULL) == TCL_ERROR) {

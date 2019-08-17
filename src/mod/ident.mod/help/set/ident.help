@@ -1,0 +1,18 @@
+%{help=set ident-method}%{+n}
+###  %bset ident-method%b <0/1>
+   Set the ident method you wish to use. See doc/settings/mod.ident for
+   additional information.
+    %b0%b: oidentd
+        Your bot will overwrite $HOME/.oidentd.conf right before opening the
+        socket to the IRC server with the global reply.
+        NOTE: requires the oident service to be running on the host machine
+    %b1%b: Builtin
+        Your bot will automatically turn its builtin identd on and off when
+        needed so it shouldn't conflict with other identds that do the same.
+### %bset ident-port%b <port>
+   This sets the port which port Eggdrop will attempt to bind to for option 1
+   of ident-method. Most OSs do not allow non-privileged programs such as
+   Eggdrop to bind to ports <1024; please read doc/settings/mod.ident for
+   suggestions on how to implement this setting.
+~                                                                                                                                                                       
+~                                                                         

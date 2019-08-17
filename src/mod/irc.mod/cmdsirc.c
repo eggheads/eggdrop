@@ -4,7 +4,7 @@
  */
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2018 Eggheads Development Team
+ * Copyright (C) 1999 - 2019 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -74,7 +74,7 @@ static char *getnick(char *handle, struct chanset_t *chan)
 
   for (m = chan->channel.member; m && m->nick[0]; m = m->next) {
     egg_snprintf(s, sizeof s, "%s!%s", m->nick, m->userhost);
-    if ((u = get_user_by_host(s)) && !egg_strcasecmp(u->handle, handle))
+    if ((u = get_user_by_host(s)) && !strcasecmp(u->handle, handle))
       return m->nick;
   }
   return NULL;
@@ -764,9 +764,9 @@ static void cmd_channel(struct userrec *u, int idx, char *par)
     for (m = chan->channel.member; m && m->nick[0]; m = m->next) {
       if (m->joined > 0) {
         if ((now - (m->joined)) > 86400)
-          egg_strftime(s, 6, "%d%b", localtime(&(m->joined)));
+          strftime(s, 6, "%d%b", localtime(&(m->joined)));
         else
-          egg_strftime(s, 6, "%H:%M", localtime(&(m->joined)));
+          strftime(s, 6, "%H:%M", localtime(&(m->joined)));
       } else
         strlcpy(s, " --- ", sizeof s);
       if (m->user == NULL) {
@@ -1030,7 +1030,7 @@ static void cmd_adduser(struct userrec *u, int idx, char *par)
   }
   u = get_user_by_handle(userlist, hand);
   if (u && (u->flags & (USER_OWNER | USER_MASTER)) &&
-      !(atr & USER_OWNER) && egg_strcasecmp(dcc[idx].nick, hand)) {
+      !(atr & USER_OWNER) && strcasecmp(dcc[idx].nick, hand)) {
     dprintf(idx, "You can't add hostmasks to the bot owner/master.\n");
     return;
   }
@@ -1100,7 +1100,7 @@ static void cmd_deluser(struct userrec *u, int idx, char *par)
    * so deluser on a channel they're not on should work
    */
   /* Shouldn't allow people to remove permanent owners (guppy 9Jan1999) */
-  if ((glob_owner(victim) && egg_strcasecmp(dcc[idx].nick, nick)) ||
+  if ((glob_owner(victim) && strcasecmp(dcc[idx].nick, nick)) ||
       isowner(u->handle)) {
     dprintf(idx, "You can't remove a bot owner!\n");
   } else if (glob_botmast(victim) && !glob_owner(user)) {
