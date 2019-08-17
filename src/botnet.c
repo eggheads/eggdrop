@@ -85,20 +85,43 @@ tand_t *findbot(char *who)
  */
 void addbot(char *who, char *from, char *next, char flag, int vernum)
 {
-  tand_t **ptr = &tandbot, *ptr2;
+  tand_t **ptr = &tandbot, *ptr2, *ptr_next;
+  int r;
 
-  while (*ptr) {
-    if (!strcasecmp((*ptr)->bot, who))
-      putlog(LOG_BOTS, "*", "!!! Duplicate botnet bot entry!!");
-    ptr = &((*ptr)->next);
-  }
+  /* create new node */
   ptr2 = nmalloc(sizeof(tand_t));
-  strncpy(ptr2->bot, who, HANDLEN);
-  ptr2->bot[HANDLEN] = 0;
+  strlcpy(ptr2->bot, who, sizeof ptr2->bot);
   ptr2->share = flag;
   ptr2->ver = vernum;
-  ptr2->next = *ptr;
-  *ptr = ptr2;
+
+  /* sorted insert*/
+  if(!*ptr) {
+    ptr2->next = *ptr;
+    *ptr = ptr2;
+  }
+  else {
+    r = strcasecmp((*ptr)->bot, who);
+    if (!r)
+      putlog(LOG_BOTS, "*", "!!! Duplicate botnet bot entry!!");
+    else if (r > 0) {
+      ptr2->next = *ptr;
+      *ptr = ptr2;
+    }
+    else {
+      ptr_next = *ptr;
+      while (ptr_next->next) {
+        r = strcasecmp((*ptr)->next->bot, who);
+        if (!r)
+          putlog(LOG_BOTS, "*", "!!! Duplicate botnet bot entry!!");
+        else if (r > 0)
+          break;
+        ptr_next = ptr_next->next;
+      }
+      ptr2->next = ptr_next->next;
+      ptr_next->next = ptr2;
+    }
+  }
+
   /* May be via itself */
   ptr2->via = findbot(from);
   if (!strcasecmp(next, botnetnick))
