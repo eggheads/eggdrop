@@ -49,11 +49,9 @@ int tls_vfybots = 0;               /* Verify SSL certificates from bots? */
 int expmem_botnet()
 {
   int size = 0, i;
-  tand_t *bot;
 
-  for (bot = tandbot; bot; bot = bot->next)
-    size += sizeof(tand_t);
-  size += (party_size * sizeof(party_t));
+  size = tands * sizeof(tand_t);
+  size += party_size * sizeof(party_t);
   for (i = 0; i < parties; i++) {
     if (party[i].away)
       size += strlen(party[i].away) + 1;
