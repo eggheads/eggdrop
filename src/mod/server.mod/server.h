@@ -20,10 +20,10 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
-#define CAPMAX      499           /*  (512 - "CAP REQ :XXX\r\n")   */
-
 #ifndef _EGG_MOD_SERVER_SERVER_H
 #define _EGG_MOD_SERVER_SERVER_H
+
+#define CAPMAX      499           /*  (512 - "CAP REQ :XXX\r\n")   */
 
 #define check_tcl_ctcp(a,b,c,d,e,f) check_tcl_ctcpr(a,b,c,d,e,f,H_ctcp)
 #define check_tcl_ctcr(a,b,c,d,e,f) check_tcl_ctcpr(a,b,c,d,e,f,H_ctcr)
@@ -127,10 +127,6 @@ enum {
   SASL_MECHANISM_NUM
 };
 
-char const *const SASL_MECHANISMS[SASL_MECHANISM_NUM] = {
-  [SASL_MECHANISM_PLAIN]                    = "PLAIN",
-  [SASL_MECHANISM_ECDSA_NIST256P_CHALLENGE] = "ECDSA-NIST256P-CHALLENGE",
-  [SASL_MECHANISM_EXTERNAL]                 = "EXTERNAL"
-};
+extern char const *SASL_MECHANISMS[];
 
 #endif /* _EGG_MOD_SERVER_SERVER_H */
