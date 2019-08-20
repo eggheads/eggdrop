@@ -199,38 +199,31 @@ int ssl_init()
         protocols |= EGG_TLSv1_3;
     }
     if (!(protocols & EGG_SSLv2)) {
-      putlog(LOG_MISC, "*", "TLS: set SSL_OP_NO_SSLv2");
       SSL_CTX_set_options(ssl_ctx, SSL_OP_NO_SSLv2);
     }
     if (!(protocols & EGG_SSLv3)) {
-      putlog(LOG_MISC, "*", "TLS: set SSL_OP_NO_SSLv3");
       SSL_CTX_set_options(ssl_ctx, SSL_OP_NO_SSLv3);
     }
     if (!(protocols & EGG_TLSv1)) {
-      putlog(LOG_MISC, "*", "TLS: set SSL_OP_NO_TLSv1");
       SSL_CTX_set_options(ssl_ctx, SSL_OP_NO_TLSv1);
     }
 #ifdef SSL_OP_NO_TLSv1_1
     if (!(protocols & EGG_TLSv1_1)) {
-      putlog(LOG_MISC, "*", "TLS: set SSL_OP_NO_TLSv1_1");
       SSL_CTX_set_options(ssl_ctx, SSL_OP_NO_TLSv1_1);
     }
 #endif
 #ifdef SSL_OP_NO_TLSv1_2
     if (!(protocols & EGG_TLSv1_2)) {
-      putlog(LOG_MISC, "*", "TLS: set SSL_OP_NO_TLSv1_2");
       SSL_CTX_set_options(ssl_ctx, SSL_OP_NO_TLSv1_2);
     }
 #endif
 #ifdef SSL_OP_NO_TLSv1_3
     if (!(protocols & EGG_TLSv1_3)) {
-      putlog(LOG_MISC, "*", "TLS: set SSL_OP_NO_TLSv1_3");
       SSL_CTX_set_options(ssl_ctx, SSL_OP_NO_TLSv1_3);
     }
 #endif
   }
 #ifdef SSL_OP_NO_COMPRESSION
-  putlog(LOG_MISC, "*", "TLS: set SSL_OP_NO_COMPRESSION");
   SSL_CTX_set_options(ssl_ctx, SSL_OP_NO_COMPRESSION);
 #endif
   /* Let advanced users specify dhparam */
@@ -241,10 +234,7 @@ int ssl_init()
       dh = PEM_read_DHparams(paramfile, NULL, NULL, NULL);
       fclose(paramfile);
       if (dh) {
-        if (SSL_CTX_set_tmp_dh(ssl_ctx, dh) == 1) {
-          putlog(LOG_MISC, "*", "TLS: set dhparam %s", tls_dhparam);
-        }
-        else {
+        if (SSL_CTX_set_tmp_dh(ssl_ctx, dh) != 1) {
           putlog(LOG_MISC, "*", "ERROR: TLS: unable to set tmp dh %s: %s",
                  tls_dhparam, ERR_error_string(ERR_get_error(), NULL));
         }
