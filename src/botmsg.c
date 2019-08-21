@@ -1,13 +1,13 @@
 /*
  * botmsg.c -- handles:
  *   formatting of messages to be sent on the botnet
- *   sending differnet messages to different versioned bots
+ *   sending different messages to different versioned bots
  *
  * by Darrin Smith (beldin@light.iinet.net.au)
  */
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2018 Eggheads Development Team
+ * Copyright (C) 1999 - 2019 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -757,8 +757,9 @@ void botnet_send_nkch_part(int butidx, int useridx, char *oldnick)
  */
 int add_note(char *to, char *from, char *msg, int idx, int echo)
 {
+  #define FROMLEN 40
   int status, i, iaway, sock;
-  char *p, botf[81], ss[81], ssf[81];
+  char *p, botf[FROMLEN + 1 + HANDLEN + 1], ss[81], ssf[81];
   struct userrec *u;
 
   /* Notes have a length limit. Note + PRIVMSG header + nick + date must
@@ -775,17 +776,16 @@ int add_note(char *to, char *from, char *msg, int idx, int echo)
     char x[21];
 
     *p = 0;
-    strncpy(x, to, 20);
-    x[20] = 0;
+    strlcpy(x, to, sizeof x);
     *p = '@';
     p++;
 
-    if (!egg_strcasecmp(p, botnetnick)) /* To me?? */
+    if (!strcasecmp(p, botnetnick)) /* To me?? */
       return add_note(x, from, msg, idx, echo); /* Start over, dimwit. */
 
-    if (egg_strcasecmp(from, botnetnick)) {
-      if (strlen(from) > 40)
-        from[40] = 0;
+    if (strcasecmp(from, botnetnick)) {
+      if (strlen(from) > FROMLEN)
+        from[FROMLEN] = 0;
 
       if (strchr(from, '@')) {
         strcpy(botf, from);
@@ -867,7 +867,7 @@ int add_note(char *to, char *from, char *msg, int idx, int echo)
   for (i = 0; i < dcc_total; i++) {
     if ((dcc[i].type->flags & DCT_GETNOTES) &&
         (sock == -1 || sock == dcc[i].sock) &&
-        !egg_strcasecmp(dcc[i].nick, to)) {
+        !strcasecmp(dcc[i].nick, to)) {
       int aok = 1;
 
       if (dcc[i].type == &DCC_CHAT) {
@@ -899,7 +899,7 @@ int add_note(char *to, char *from, char *msg, int idx, int echo)
             fr = p + 1;
         }
 
-        if (idx == -2 || !egg_strcasecmp(from, botnetnick))
+        if (idx == -2 || !strcasecmp(from, botnetnick))
           dprintf(i, "*** [%s] %s%s\n", fr, l ? work : "", msg);
         else
           dprintf(i, "%cNote [%s]: %s%s\n", 7, fr, l ? work : "", msg);

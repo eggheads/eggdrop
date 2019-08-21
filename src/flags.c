@@ -4,7 +4,7 @@
  */
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2018 Eggheads Development Team
+ * Copyright (C) 1999 - 2019 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -203,8 +203,8 @@ char *masktype(int x)
 
 char *maskname(int x)
 {
-  static char s[275];           /* Change this if you change the levels */
-  int i = 0;			/* 6+8+7+13+6+6+6+17+5+7+8+7+9+15+17+17+24+24+(8*9)+1 */
+  static char s[275]; /* Change this if you change the levels */
+  int i = 0;          /* 6+8+7+13+6+6+6+17+5+7+8+7+9+15+17+17+24+24+(8*9)+1 */
 
   s[0] = 0;
   if (x & LOG_MSGS)
@@ -418,7 +418,8 @@ void break_down_flags(const char *string, struct flag_record *plus,
           which->chan |= 1 << (*string - 'a');
           break;
         case 2:
-          which->bot |= 1 << (*string - 'a');
+          if (*string <= 'u')
+            which->bot |= 1 << (*string - 'a');
         }
       } else if ((*string >= 'A') && (*string <= 'Z')) {
         switch (mode) {
@@ -488,7 +489,7 @@ static int bot2str(char *string, int bot)
 {
   char x = 'a', *old = string;
 
-  while (x <= 'z') {
+  while (x <= 'u') {
     if (bot & 1)
       *string++ = x;
     x++;
@@ -666,7 +667,7 @@ void set_user_flagrec(struct userrec *u, struct flag_record *fr,
 
       cr->next = u->chanrec;
       u->chanrec = cr;
-      strncpyz(cr->channel, chname, sizeof cr->channel);
+      strlcpy(cr->channel, chname, sizeof cr->channel);
     }
     if (cr && ch) {
       cr->flags = fr->chan;

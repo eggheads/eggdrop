@@ -4,7 +4,7 @@
  */
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2018 Eggheads Development Team
+ * Copyright (C) 1999 - 2019 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -419,7 +419,7 @@ static int _dcc_send(int idx, char *filename, char *nick, int resend)
       *p = '_';
   }
 
-  if (egg_strcasecmp(nick, dcc[idx].nick))
+  if (strcasecmp(nick, dcc[idx].nick))
     dprintf(DP_HELP, "NOTICE %s :Here is %s file from %s %s...\n", nick,
             resend ? "the" : "a", dcc[idx].nick, resend ? "again " : "");
   dprintf(idx, "%sending: %s to %s\n", resend ? "Res" : "S", nfn, nick);
@@ -685,7 +685,7 @@ static void filesys_dcc_send(char *nick, char *from, struct userrec *u,
       dcc[i].ssl = ssl;
 #endif
       dcc[i].user = u;
-      strncpyz(dcc[i].nick, nick, sizeof dcc[i].nick);
+      strlcpy(dcc[i].nick, nick, sizeof dcc[i].nick);
       strcpy(dcc[i].host, from);
       dcc[i].u.dns->cbuf = get_data_ptr(strlen(param) + 1);
       strcpy(dcc[i].u.dns->cbuf, param);
@@ -714,7 +714,7 @@ static char *mktempfile(char *filename)
   char rands[8], *tempname, *fn = filename;
   int l;
 
-  make_rand_str(rands, 7);
+  make_rand_str(rands, sizeof rands - 1);
   l = strlen(filename);
   if ((l + MKTEMPFILE_TOT) > NAME_MAX) {
     fn[NAME_MAX - MKTEMPFILE_TOT] = 0;
@@ -823,9 +823,9 @@ static int filesys_DCC_CHAT(char *nick, char *from, char *handle,
   struct userrec *u = get_user_by_handle(userlist, handle);
   struct flag_record fr = { FR_GLOBAL | FR_CHAN | FR_ANYWH, 0, 0, 0, 0, 0 };
 
-  if (egg_strcasecmp(object, botname))
+  if (strcasecmp(object, botname))
     return 0;
-  if (!egg_strncasecmp(text, "SEND ", 5)) {
+  if (!strncasecmp(text, "SEND ", 5)) {
 #ifdef TLS
     filesys_dcc_send(nick, from, u, text + 5, 0);
 #else
@@ -834,14 +834,14 @@ static int filesys_DCC_CHAT(char *nick, char *from, char *handle,
     return 1;
   }
 #ifdef TLS
-  if (!egg_strncasecmp(text, "SSEND ", 5)) {
+  if (!strncasecmp(text, "SSEND ", 5)) {
     filesys_dcc_send(nick, from, u, text + 5, 1);
     return 1;
   }
 #endif
-  if (egg_strncasecmp(text, "CHAT ", 5) || !u)
+  if (strncasecmp(text, "CHAT ", 5) || !u)
     return 0;
-  strncpyz(buf, text + 5, sizeof buf);
+  strlcpy(buf, text + 5, sizeof buf);
   get_user_flagrec(u, &fr, 0);
   param = newsplit(&msg);
   if (dcc_total == max_dcc && increase_socks_max()) {
@@ -1015,7 +1015,7 @@ char *filesys_start(Function *global_funcs)
   add_builtins(H_load, myload);
   add_help_reference("filesys.help");
   init_server_ctcps(0);
-  my_memcpy(&USERENTRY_DCCDIR, &USERENTRY_INFO,
+  memcpy(&USERENTRY_DCCDIR, &USERENTRY_INFO,
             sizeof(struct user_entry_type) - sizeof(char *));
 
   USERENTRY_DCCDIR.got_share = 0;       /* We don't want it shared tho */

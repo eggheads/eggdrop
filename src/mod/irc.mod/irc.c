@@ -4,7 +4,7 @@
  */
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2018 Eggheads Development Team
+ * Copyright (C) 1999 - 2019 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -29,9 +29,7 @@
 #include "server.mod/server.h"
 #include "channels.mod/channels.h"
 
-#ifdef HAVE_UNAME
-#  include <sys/utsname.h>
-#endif
+#include <sys/utsname.h>
 
 static p_tcl_bind_list H_topc, H_splt, H_sign, H_rejn, H_part, H_pub, H_pubm;
 static p_tcl_bind_list H_nick, H_mode, H_kick, H_join, H_need;
@@ -107,7 +105,7 @@ static int want_to_revenge(struct chanset_t *chan, struct userrec *u,
   return 0;
 }
 
-/* Dependant on revenge_mode, punish the offender.
+/* Dependent on revenge_mode, punish the offender.
  */
 static void punish_badguy(struct chanset_t *chan, char *whobad,
                           struct userrec *u, char *badnick, char *victim,
@@ -123,7 +121,7 @@ static void punish_badguy(struct chanset_t *chan, char *whobad,
   get_user_flagrec(u, &fr, chan->dname);
 
   /* Get current time into a string */
-  egg_strftime(ct, 7, "%d %b", localtime(&now));
+  strftime(ct, 7, "%d %b", localtime(&now));
 
   /* Put together log and kick messages */
   reason[0] = 0;
@@ -170,7 +168,7 @@ static void punish_badguy(struct chanset_t *chan, char *whobad,
     else {
       strcpy(s1, whobad);
       maskaddr(s1, s, chan->ban_type);
-      strncpyz(s1, badnick, sizeof s1);
+      strlcpy(s1, badnick, sizeof s1);
       /* If that handle exists use "badX" (where X is an increasing number)
        * instead.
        */
@@ -687,7 +685,6 @@ static void check_expired_chanstuff()
                  "%s (%s) got lost in the net-split.", m->nick, m->userhost);
           killmember(chan, m->nick);
         }
-        m = n;
       }
       check_lonely_channel(chan);
     } else if (!channel_inactive(chan) && !channel_pending(chan)) {
@@ -850,7 +847,7 @@ static int check_tcl_pub(char *nick, char *from, char *chname, char *msg)
   char buf[512], *args = buf, *cmd, host[161], *hand;
   struct userrec *u;
 
-  strncpyz(buf, msg, sizeof buf);
+  strlcpy(buf, msg, sizeof buf);
   cmd = newsplit(&args);
   simple_sprintf(host, "%s!%s", nick, from);
   u = get_user_by_host(host);

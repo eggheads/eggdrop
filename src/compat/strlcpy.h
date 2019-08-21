@@ -1,9 +1,9 @@
 /*
- * strcasecmp.h
- *   prototypes for strcasecmp.c
+ * strlcpy.h
+ *   prototypes for strlcpy.c
  */
 /*
- * Copyright (C) 2000 - 2018 Eggheads Development Team
+ * Copyright (C) 2010 - 2019 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -20,25 +20,11 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
-#ifndef _EGG_COMPAT_STRCASECMP_H
-#define _EGG_COMPAT_STRCASECMP_H
+#ifndef _EGG_COMPAT_STRLCPY_H_
+#define _EGG_COMPAT_STRLCPY_H_
 
-#include "src/main.h"
-#include <ctype.h>
+#ifndef HAVE_STRLCPY
+size_t strlcpy(char * __restrict, const char * __restrict, size_t);
+#endif /* HAVE_STRLCPY */
 
-
-#ifndef HAVE_STRCASECMP
-/* Use our own implementation. */
-int egg_strcasecmp(const char *, const char *);
-#else
-#  define egg_strcasecmp strcasecmp
-#endif
-
-#ifndef HAVE_STRNCASECMP
-/* Use our own implementation. */
-int egg_strncasecmp(const char *, const char *, size_t);
-#else
-#  define egg_strncasecmp strncasecmp
-#endif
-
-#endif /* !__EGG_COMPAT_STRCASECMP_H */
+#endif /* _EGG_COMPAT_STRLCPY_H_ */

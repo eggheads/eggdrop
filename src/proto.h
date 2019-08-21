@@ -9,7 +9,7 @@
  */
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2018 Eggheads Development Team
+ * Copyright (C) 1999 - 2019 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -279,7 +279,7 @@ int setsockname(sockname_t *, char *, int, int);
 int open_address_listen(sockname_t *);
 int open_telnet_raw(int, sockname_t *);
 int open_telnet(int, char *, int);
-int answer(int, sockname_t *, unsigned short *, int);
+int answer(int, sockname_t *, uint16_t *, int);
 int getdccaddr(sockname_t *, char *, size_t);
 int getdccfamilyaddr(sockname_t *, char *, size_t, int);
 void tputs(int, char *, unsigned int);
@@ -347,8 +347,8 @@ int match_ignore(char *);
 void check_expired_ignores();
 void autolink_cycle(char *);
 void tell_file_stats(int, char *);
-void tell_user_ident(int, char *, int);
-void tell_users_match(int, char *, int, int, int, char *);
+void tell_user_ident(int, char *);
+void tell_users_match(int, char *, int, int, char *);
 int readuserfile(char *, struct userrec **);
 
 /* rfc1459.c */

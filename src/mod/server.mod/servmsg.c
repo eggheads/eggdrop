@@ -3,7 +3,7 @@
  */
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2018 Eggheads Development Team
+ * Copyright (C) 1999 - 2019 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -20,15 +20,23 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
-#include  "../irc.mod/irc.h"
-#include  "../channels.mod/channels.h"
+#include <resolv.h> /* base64 encode b64_ntop() and base64 decode b64_pton() */
+#ifdef TLS
+  #include <openssl/err.h>
+#endif
+#include "../irc.mod/irc.h"
+#include "../channels.mod/channels.h"
+#include "server.h"
 
 static time_t last_ctcp = (time_t) 0L;
 static int count_ctcp = 0;
 static char altnick_char = 0;
+struct cap_list cap = {"", "", ""};
+int ncapesc;
+Tcl_Obj **ncapesv, *ncapeslist;
 
 /* We try to change to a preferred unique nick here. We always first try the
- * specified alternate nick. If that failes, we repeatedly modify the nick
+ * specified alternate nick. If that fails, we repeatedly modify the nick
  * until it gets accepted.
  *
  * sent nick:
@@ -37,7 +45,7 @@ static char altnick_char = 0;
  *          ^--------- given, alternate nick
  *
  * The last added character is always saved in altnick_char. At the very first
- * attempt (were altnick_char is 0), we try the alternate nick without any
+ * attempt (where altnick_char is 0), we try the alternate nick without any
  * additions.
  *
  * fixed by guppy (1999/02/24) and Fabian (1999/11/26)
@@ -113,7 +121,7 @@ static int check_tcl_msg(char *cmd, char *nick, char *uhost,
 }
 
 static int check_tcl_msgm(char *cmd, char *nick, char *uhost,
-                           struct userrec *u, char *arg)
+                          struct userrec *u, char *arg)
 {
   struct flag_record fr = { FR_GLOBAL | FR_CHAN | FR_ANYWH, 0, 0, 0, 0, 0 };
   int x;
@@ -122,7 +130,7 @@ static int check_tcl_msgm(char *cmd, char *nick, char *uhost,
   if (arg[0])
     simple_sprintf(args, "%s %s", cmd, arg);
   else
-    strncpyz(args, cmd, sizeof args);
+    strlcpy(args, cmd, sizeof args);
   get_user_flagrec(u, &fr, NULL);
   Tcl_SetVar(interp, "_msgm1", nick, 0);
   Tcl_SetVar(interp, "_msgm2", uhost, 0);
@@ -145,7 +153,7 @@ static int check_tcl_msgm(char *cmd, char *nick, char *uhost,
 }
 
 static int check_tcl_notc(char *nick, char *uhost, struct userrec *u,
-                           char *dest, char *arg)
+                          char *dest, char *arg)
 {
   struct flag_record fr = { FR_GLOBAL | FR_CHAN | FR_ANYWH, 0, 0, 0, 0, 0 };
   int x;
@@ -278,9 +286,7 @@ static int check_tcl_out(int which, char *msg, int sent)
 
 static int match_my_nick(char *nick)
 {
-  if (!rfc_casecmp(nick, botname))
-    return 1;
-  return 0;
+  return (!rfc_casecmp(nick, botname));
 }
 
 /* 001: welcome to IRC (use it to fix the server name) */
@@ -313,7 +319,7 @@ static int got001(char *from, char *msg)
 
   server_online = now;
   fixcolon(msg);
-  strncpyz(botname, msg, NICKLEN);
+  strlcpy(botname, msg, NICKLEN);
   altnick_char = 0;
   dprintf(DP_SERVER, "WHOIS %s\n", botname); /* get user@host */
   if (initserver[0])
@@ -349,7 +355,7 @@ static int got442(char *from, char *msg)
   char *chname, *key;
   struct chanset_t *chan;
 
-  if (!realservername || egg_strcasecmp(from, realservername))
+  if (!realservername || strcasecmp(from, realservername))
     return 0;
   newsplit(&msg);
   chname = newsplit(&msg);
@@ -413,7 +419,7 @@ static int detect_flood(char *floodnick, char *floodhost, char *from, int which)
     return 0;
 
   /* My user@host (?) */
-  if (!egg_strcasecmp(floodhost, botuserhost))
+  if (!strcasecmp(floodhost, botuserhost))
     return 0;
 
   u = get_user_by_host(from);
@@ -441,8 +447,8 @@ static int detect_flood(char *floodnick, char *floodhost, char *from, int which)
   p = strchr(floodhost, '@');
   if (p) {
     p++;
-    if (egg_strcasecmp(lastmsghost[which], p)) {        /* New */
-      strncpyz(lastmsghost[which], p, sizeof lastmsghost[which]);
+    if (strcasecmp(lastmsghost[which], p)) {        /* New */
+      strlcpy(lastmsghost[which], p, sizeof lastmsghost[which]);
       lastmsgtime[which] = now;
       lastmsgs[which] = 0;
       return 0;
@@ -491,7 +497,7 @@ static int gotmsg(char *from, char *msg)
   ignoring = match_ignore(from);
   to = newsplit(&msg);
   fixcolon(msg);
-  strncpyz(uhost, from, sizeof(buf));
+  strlcpy(uhost, from, sizeof buf);
   nick = splitnick(&uhost);
   /* Apparently servers can send CTCPs now too, not just nicks */
   if (nick[0] == '\0')
@@ -507,7 +513,7 @@ static int gotmsg(char *from, char *msg)
       p++;
     if (*p == 1) {
       *p = 0;
-      strncpyz(ctcpbuf, p1, sizeof(ctcpbuf));
+      strlcpy(ctcpbuf, p1, sizeof(ctcpbuf));
       ctcp = ctcpbuf;
 
       /* remove the ctcp in msg */
@@ -532,7 +538,7 @@ static int gotmsg(char *from, char *msg)
             u = get_user_by_host(from);
             if (!ignoring || trigger_on_ignore) {
               if (!check_tcl_ctcp(nick, uhost, u, to, code, ctcp) && !ignoring) {
-                if ((lowercase_ctcp && !egg_strcasecmp(code, "DCC")) ||
+                if ((lowercase_ctcp && !strcasecmp(code, "DCC")) ||
                     (!lowercase_ctcp && !strcmp(code, "DCC"))) {
                   /* If it gets this far unhandled, it means that
                    * the user is totally unknown.
@@ -626,7 +632,7 @@ static int gotnotice(char *from, char *msg)
   ignoring = match_ignore(from);
   to = newsplit(&msg);
   fixcolon(msg);
-  strcpy(uhost, from);
+  strlcpy(uhost, from, sizeof buf);
   nick = splitnick(&uhost);
 
   /* Check for CTCP: */
@@ -729,13 +735,13 @@ static void minutely_checks()
   if (!server_online)
     return;
   if (keepnick) {
-    /* NOTE: now that botname can but upto NICKLEN bytes long,
+    /* NOTE: now that botname can but up to NICKLEN bytes long,
      * check that it's not just a truncation of the full nick.
      */
     if (strncmp(botname, origbotname, strlen(botname))) {
       /* See if my nickname is in use and if if my nick is right. */
       alt = get_altbotnick();
-      if (alt[0] && egg_strcasecmp(botname, alt))
+      if (alt[0] && strcasecmp(botname, alt))
         dprintf(DP_SERVER, "ISON :%s %s %s\n", botname, origbotname, alt);
       else
         dprintf(DP_SERVER, "ISON :%s %s\n", botname, origbotname);
@@ -793,19 +799,19 @@ static void got303(char *from, char *msg)
  */
 static int got432(char *from, char *msg)
 {
-  char *erroneus;
+  char *erroneous;
 
   newsplit(&msg);
-  erroneus = newsplit(&msg);
+  erroneous = newsplit(&msg);
   if (server_online)
-    putlog(LOG_MISC, "*", "NICK IS INVALID: %s (keeping '%s').", erroneus,
+    putlog(LOG_MISC, "*", "NICK IS INVALID: %s (keeping '%s').", erroneous,
            botname);
   else {
     putlog(LOG_MISC, "*", IRC_BADBOTNICK);
     if (!keepnick) {
-      makepass(erroneus);
-      erroneus[NICKMAX] = 0;
-      dprintf(DP_MODE, "NICK %s\n", erroneus);
+      makepass(erroneous);
+      erroneous[NICKMAX] = 0;
+      dprintf(DP_MODE, "NICK %s\n", erroneous);
     }
     return 0;
   }
@@ -918,7 +924,7 @@ static int gotnick(char *from, char *msg)
   check_queues(nick, msg);
   if (match_my_nick(nick)) {
     /* Regained nick! */
-    strncpyz(botname, msg, NICKLEN);
+    strlcpy(botname, msg, NICKLEN);
     altnick_char = 0;
     if (!strcmp(msg, origbotname)) {
       putlog(LOG_SERV | LOG_MISC, "*", "Regained nickname '%s'.", msg);
@@ -932,7 +938,7 @@ static int gotnick(char *from, char *msg)
         putlog(LOG_MISC, "*", IRC_GETORIGNICK, origbotname);
         dprintf(DP_SERVER, "NICK %s\n", origbotname);
       } else if (alt[0] && !rfc_casecmp(nick, alt) &&
-               egg_strcasecmp(botname, origbotname)) {
+               strcasecmp(botname, origbotname)) {
         putlog(LOG_MISC, "*", IRC_GETALTNICK, alt);
         dprintf(DP_SERVER, "NICK %s\n", alt);
       }
@@ -944,7 +950,7 @@ static int gotnick(char *from, char *msg)
       putlog(LOG_MISC, "*", IRC_GETORIGNICK, origbotname);
       dprintf(DP_SERVER, "NICK %s\n", origbotname);
     } else if (alt[0] && !rfc_casecmp(nick, alt) &&
-             egg_strcasecmp(botname, origbotname)) {
+             strcasecmp(botname, origbotname)) {
       putlog(LOG_MISC, "*", IRC_GETALTNICK, altnick);
       dprintf(DP_SERVER, "NICK %s\n", altnick);
     }
@@ -984,6 +990,9 @@ static void disconnect_server(int idx)
 {
   if (server_online > 0)
     check_tcl_event("disconnect-server");
+  strcpy(cap.supported, "");
+  strcpy(cap.negotiated, "");
+  strcpy(cap.desired, "");
   server_online = 0;
   if (realservername)
     nfree(realservername);
@@ -1072,7 +1081,7 @@ static void server_activity(int idx, char *msg, int len)
       putlog(LOG_RAW, "*", "[@] %s %s %s", from, code, msg);
   }
   /* This has GOT to go into the raw binding table, * merely because this
-   * is less effecient.
+   * is less efficient.
    */
   check_tcl_raw(from, code, msg);
 }
@@ -1105,7 +1114,7 @@ static int gotkick(char *from, char *msg)
 static int whoispenalty(char *from, char *msg)
 {
   if (realservername && use_penalties &&
-      egg_strcasecmp(from, realservername)) {
+      strcasecmp(from, realservername)) {
 
     last_time += 1;
 
@@ -1134,6 +1143,163 @@ static int got311(char *from, char *msg)
   return 0;
 }
 
+static int tryauthenticate(char *from, char *msg) 
+{
+  char src[(sizeof sasl_username) + (sizeof sasl_username) +
+           (sizeof sasl_password)] = "";
+  char *s;
+  /* 400-byte chunk, see: https://ircv3.net/specs/extensions/sasl-3.1.html
+   * base64 padding */
+  #ifndef MAX
+    #define MAX(a,b) (((a)>(b))?(a):(b))
+  #endif
+  unsigned char dst[((MAX((sizeof src), 400) + 2) / 3) << 2] = "";
+#ifdef TLS
+  size_t olen;
+  unsigned char *dst2;
+  unsigned int olen2;
+  FILE *fp;
+  EC_KEY *eckey;
+  EVP_PKEY *privateKey;
+  int ret;
+#endif
+
+  putlog(LOG_SERV, "*", "SASL: got AUTHENTICATE %s", msg);
+  if (msg[0] == '+') {
+    s = src;
+    /* Don't use snprintf due to \0 inside */
+    if (sasl_mechanism == SASL_MECHANISM_PLAIN) {
+      strcpy(s, sasl_username);
+      s += strlen(sasl_username) + 1;
+      strcpy(s, sasl_username);
+      s += strlen(sasl_username) + 1;
+      strcpy(s, sasl_password);
+      s += strlen(sasl_password);
+      dst[0] = 0;
+      if (b64_ntop((unsigned char *) src, s - src, (char *) dst, sizeof dst) == -1) {
+        putlog(LOG_SERV, "*", "SASL: AUTHENTICATE error: could not base64 encode");
+        /* TODO: send cap end for all error cases in this function ? */
+        return 1;
+      }
+      /* TODO: what about olen we used for mbedtls_base64_encode() ? */
+    }
+    else if (sasl_mechanism == SASL_MECHANISM_ECDSA_NIST256P_CHALLENGE) {
+      strcpy(s, sasl_username);
+      s += strlen(sasl_username) + 1;
+      strcpy(s, sasl_username);
+      s += strlen(sasl_username);
+      if (b64_ntop((unsigned char *) src, s - src, (char *) dst, sizeof dst) == -1) {
+        putlog(LOG_SERV, "*", "SASL: AUTHENTICATE error: could not base64 encode");
+        return 1;
+      }
+    }
+    else { /* sasl_mechanism == SASL_MECHANISM_EXTERNAL */
+      dst[0] = '+';
+      dst[1] = 0;
+    }
+    putlog(LOG_SERV, "*", "SASL: put AUTHENTICATE %s", dst);
+    dprintf(DP_MODE, "AUTHENTICATE %s\n", dst);
+#ifdef TLS
+  } else {
+    putlog(LOG_SERV, "*", "SASL: got AUTHENTICATE Challange");
+    olen = b64_pton(msg, dst, sizeof dst);
+    if (olen == -1) {
+      putlog(LOG_SERV, "*", "SASL: AUTHENTICATE error: could not base64 encode");
+      return 1;
+    }
+    fp = fopen(sasl_ecdsa_key, "r");
+    if (!fp) {
+      putlog(LOG_SERV, "*", "SASL: AUTHENTICATE error: could not open file sasl_ecdsa_key %s: %s\n", sasl_ecdsa_key, strerror(errno));
+      return 1;
+    }
+    privateKey = PEM_read_PrivateKey(fp, NULL, 0, NULL);
+    if (!privateKey) {
+      putlog(LOG_SERV, "*", "SASL: AUTHENTICATE: PEM_read_PrivateKey(): SSL error = %s\n",
+             ERR_error_string(ERR_get_error(), 0));
+      fclose(fp);
+      return 1;
+    }
+    fclose(fp);
+    eckey = EVP_PKEY_get1_EC_KEY(privateKey);
+    EVP_PKEY_free(privateKey);
+    if (!eckey) {
+      putlog(LOG_SERV, "*", "SASL: AUTHENTICATE: EVP_PKEY_get1_EC_KEY(): SSL error = %s\n",
+             ERR_error_string(ERR_get_error(), 0));
+      return 1;
+    }
+    dst2 = nmalloc(ECDSA_size(eckey));
+    ret = ECDSA_sign(0, dst, olen, dst2, &olen2, eckey);
+    EC_KEY_free(eckey);
+    if (!ret) {
+      printf("SASL: AUTHENTICATE: ECDSA_sign() SSL error = %s\n",
+             ERR_error_string(ERR_get_error(), 0));
+      nfree(dst2);
+      return 1;
+    } 
+    if (b64_ntop(dst2, olen2, (char *) dst, sizeof dst) == -1) {
+      putlog(LOG_SERV, "*", "SASL: AUTHENTICATE error: could not base64 encode");
+      return 1;
+    }
+    nfree(dst2);
+    putlog(LOG_SERV, "*", "SASL: put AUTHENTICATE Response %s", dst);
+    dprintf(DP_MODE, "AUTHENTICATE %s\n", dst);
+#else
+    putlog(LOG_DEBUG, "*", "SASL: TLS libs not present for authentication, try PLAIN method");
+    return 1;
+#endif
+  }
+  return 0;
+}
+
+static int gotauthenticate(char *from, char *msg)
+{
+  if (tryauthenticate(from, msg) && !sasl_continue) {
+    putlog(LOG_DEBUG, "*", "SASL: Aborting connection and retrying");
+    nuke_server("Quitting...");
+    return 1;
+  }
+  return 0;
+}
+
+static int got900(char *from, char *msg)
+{
+  newsplit(&msg); /* nick */
+  newsplit(&msg); /* nick!ident@host */
+  newsplit(&msg); /* account */
+  fixcolon(msg);
+  putlog(LOG_SERV, "*", "SASL: %s", msg);
+  return 0;
+}
+
+static int got904905and906(char *from, char *msg)
+{
+  newsplit(&msg); /* nick */
+  fixcolon(msg);
+  putlog(LOG_SERV, "*", "SASL: %s", msg);
+  dprintf(DP_MODE, "CAP END\n");
+  if (!sasl_continue) {
+    putlog(LOG_DEBUG, "*", "SASL: Aborting connection and retrying");
+    nuke_server("Quitting...");
+  }
+  return 1;
+}
+
+static int got903(char *from, char *msg)
+{
+  newsplit(&msg); /* nick */
+  fixcolon(msg);
+  putlog(LOG_SERV, "*", "SASL: %s", msg);
+  dprintf(DP_MODE, "CAP END\n");
+  return 0;
+}
+
+static int got908(char *from, char *msg)
+{
+  newsplit(&msg); /* nick */
+  fixcolon(msg);
+  putlog(LOG_SERV, "*", "SASL: %s", msg);
+  return 0;
+}
 
 /*
  * 465     ERR_YOUREBANNEDCREEP :You are banned from this server
@@ -1150,31 +1316,215 @@ static int got465(char *from, char *msg)
   return 1;
 }
 
+/*
+ * Invalid CAP command
+ */
+static int got410(char *from, char *msg) {
+  char *cmd;
+
+  newsplit(&msg);
+ 
+  putlog(LOG_SERV, "*", "%s", msg);
+  cmd = newsplit(&msg);
+  putlog(LOG_MISC, "*", "CAP sub-command %s not supported", cmd);
+
+  return 1;
+}
+
+static int got421(char *from, char *msg) {
+  newsplit(&msg);
+  putlog(LOG_SERV, "*", "%s reported an error: %s", from, msg);
+
+  return 1;
+}
+
+/*
+ * Add capability to Tcl List for easy addition/deletion. First
+ * checks if requested cape is available on the list provided by the server
+ * before adding to the desired list.
+ */
+void add_cape(char *cape) {
+  int len = 0, i = 0;
+  if (!strstr(cap.negotiated, cape)) {
+    putlog(LOG_DEBUG, "*", "CAP: Adding cape %s to negotiated list", cape);
+    Tcl_ListObjAppendElement(interp, ncapeslist, Tcl_NewStringObj(cape, -1));
+  } else {
+    putlog(LOG_DEBUG, "*", "CAP: %s is already added to negotiated list", cape);
+  }
+  Tcl_ListObjGetElements(interp, ncapeslist, &ncapesc, &ncapesv);
+  for (i = 0; i < ncapesc; i++) {
+    len += snprintf(cap.negotiated+len, sizeof cap.negotiated - strlen(cap.negotiated) - 1,
+        "%s%s", (len == 0 ? "" : " "), Tcl_GetString(ncapesv[i]));
+  }
+}
+
+/* Remove capability from internal CAP request list */
+void del_cape(char *cape) {
+  int len = 0, i = 0;
+  if (strstr(cap.negotiated, cape)) {
+    putlog(LOG_DEBUG, "*", "CAP: Removing %s from negotiated list", cape);
+    Tcl_ListObjGetElements(interp, ncapeslist, &ncapesc, &ncapesv);
+    for (i = 0; i < ncapesc; i++) {
+      if (!strcmp(cape, Tcl_GetString(ncapesv[i]))) {
+        Tcl_ListObjReplace(interp, ncapeslist, i, 1, 0, NULL);
+      }
+    }
+  } else {
+    putlog(LOG_DEBUG, "*", "CAP: %s is not on negotiated list", cape);
+  }
+  Tcl_ListObjGetElements(interp, ncapeslist, &ncapesc, &ncapesv);
+  for (i = 0; i < ncapesc; i++) {
+    len += snprintf(cap.negotiated+len, sizeof cap.negotiated - strlen(cap.negotiated) - 1,
+        "%s%s", (len == 0 ? "" : " "), Tcl_GetString(ncapesv[i]));
+  }
+}
+
+/* Smash desired CAP capabilities into a single string */
+void add_req(char *cape) {
+  int len = strlen(cap.desired);
+  len += snprintf(cap.desired+len, sizeof cap.desired - strlen(cap.desired) - 1,
+        "%s%s", (len == 0 ? "" : " "), cape);
+}
+
+static int gotcap(char *from, char *msg) {
+  char *cmd, *splitstr;
+  int len = 0, i = 0;
+  int listlen = 0;
+
+  newsplit(&msg);
+  putlog(LOG_DEBUG, "*", "CAP: %s", msg);
+  cmd = newsplit(&msg);
+  fixcolon(msg);
+  if (!strcmp(cmd, "LS")) {
+    putlog(LOG_DEBUG, "*", "CAP: %s supports CAP sub-commands: %s", from, msg);
+    strlcpy(cap.supported, msg, sizeof cap.supported);
+    if (sasl) {
+      /* TODO: is this the right place to check for error in eggdrop conf setting ?
+       * (with error i mean, bot would crash, if the config setting is not validated) */
+      if (sasl_mechanism < 0)
+        putlog(LOG_SERV, "*", "SASL error: sasl-mechanism must be equal to or greater than 0");
+      else if (sasl_mechanism >= SASL_MECHANISM_NUM)
+        putlog(LOG_SERV, "*", "SASL error: sasl-mechanism must be less than %i", SASL_MECHANISM_NUM);
+      else
+        add_req("sasl");
+    }
+    if (strlen(cap.desired) > 0) {
+      putlog(LOG_DEBUG, "*", "CAP: Requesting %s capabilities from server", cap.desired);
+      dprintf(DP_MODE, "CAP REQ :%s\n", cap.desired);
+    } else {
+      dprintf(DP_MODE, "CAP END\n");
+    }
+  } else if (!strcmp(cmd, "LIST")) {
+    putlog(LOG_SERV, "*", "CAP: Negotiated CAP capabilities: %s", msg);
+    /* You're getting the current list, may as well the clear old stuff */
+    memset(cap.negotiated, 0, strlen(cap.negotiated));
+    Tcl_ListObjLength(interp, ncapeslist, &listlen);
+    Tcl_ListObjReplace(interp, ncapeslist, 0, listlen, 0, NULL);
+    splitstr = strtok(msg, " ");
+    while (splitstr != NULL) {
+      add_cape(splitstr);
+      splitstr = strtok(NULL, " ");
+    }
+  } else if (!strcmp(cmd, "ACK")) {
+    Tcl_ListObjGetElements(interp, ncapeslist, &ncapesc, &ncapesv);
+    splitstr = strtok(msg, " ");
+    while (splitstr != NULL) {
+      if (splitstr[0] == '-') { /* Remove this cape from negotiated list */
+        splitstr++;
+        del_cape(splitstr);
+      } else {
+        add_cape(splitstr);
+      }
+      splitstr = strtok(NULL, " ");
+    }
+    len = 0;
+    Tcl_ListObjGetElements(interp, ncapeslist, &ncapesc, &ncapesv);
+    for (i = 0; i < ncapesc; i++) {
+      len += snprintf(cap.negotiated+len, sizeof cap.negotiated - strlen(cap.negotiated) - 1,
+          "%s%s", (len == 0 ? "" : " "), Tcl_GetString(ncapesv[i]));
+    }
+    putlog(LOG_SERV, "*", "CAP: Current negotiations on %s: %s",
+        from, cap.negotiated);
+    /* If a negotiated capability requires immediate action by Eggdrop, add it
+     * here. However, that capability must take responsibility for sending an
+     * END. Future eggheads: add support for more than 1 of these async
+     * capabilities, right now SASL is the only one so we're OK.
+     */
+    if (strstr(cap.negotiated, "sasl")) {
+#ifndef TLS
+      if (sasl_mechanism != SASL_MECHANISM_ECDSA_NIST256P_CHALLENGE) {
+#endif
+        /*
+        TODO: the old sasl code, before cap pr, was doing cap request only
+        under certain conditions, see the if TLS statement
+        above.
+        putlog(LOG_SERV, "*", "CAP: put CAP REQ :sasl");
+        dprintf(DP_MODE, "CAP REQ :sasl\n");
+        */
+        putlog(LOG_SERV, "*", "SASL: put AUTHENTICATE %s",
+            SASL_MECHANISMS[sasl_mechanism]);
+        dprintf(DP_MODE, "AUTHENTICATE %s\n", SASL_MECHANISMS[sasl_mechanism]);
+#ifndef TLS
+      } else {
+        putlog(LOG_SERV, "*", "SASL: No TLS libs, aborting authentication");
+        dprintf(DP_MODE, "CAP END\n");
+        if (!sasl_continue) {
+          putlog(LOG_DEBUG, "*", "SASL: Aborting connection and retrying");
+          nuke_server("Quitting...");
+        }
+        return 1;
+      }
+#endif
+    } else {
+      dprintf(DP_MODE, "CAP END\n");
+      return 0;
+    }
+  } else if (!strcmp(cmd, "NAK")) {
+    putlog(LOG_SERV, "*", "CAP: Requested capability change %s rejected by %s",
+        msg, from);
+    dprintf(DP_MODE, "CAP END\n");  /* TODO: Handle whatever caused it to reject? */
+  } else if (!strcmp(cmd, "NEW")) { /* TODO: CAP 302 stuff? */
+    /* Do things */
+  } else if (!strcmp(cmd, "DEL")) { /* TODO: CAP 302 stuff? */
+    /* Do things */
+  }
+  return 1;
+}
 
 static cmd_t my_raw_binds[] = {
-  {"PRIVMSG", "",   (IntFunc) gotmsg,       NULL},
-  {"NOTICE",  "",   (IntFunc) gotnotice,    NULL},
-  {"MODE",    "",   (IntFunc) gotmode,      NULL},
-  {"PING",    "",   (IntFunc) gotping,      NULL},
-  {"PONG",    "",   (IntFunc) gotpong,      NULL},
-  {"WALLOPS", "",   (IntFunc) gotwall,      NULL},
-  {"001",     "",   (IntFunc) got001,       NULL},
-  {"303",     "",   (IntFunc) got303,       NULL},
-  {"432",     "",   (IntFunc) got432,       NULL},
-  {"433",     "",   (IntFunc) got433,       NULL},
-  {"437",     "",   (IntFunc) got437,       NULL},
-  {"438",     "",   (IntFunc) got438,       NULL},
-  {"451",     "",   (IntFunc) got451,       NULL},
-  {"442",     "",   (IntFunc) got442,       NULL},
-  {"465",     "",   (IntFunc) got465,       NULL},
-  {"NICK",    "",   (IntFunc) gotnick,      NULL},
-  {"ERROR",   "",   (IntFunc) goterror,     NULL},
+  {"PRIVMSG",      "",   (IntFunc) gotmsg,          NULL},
+  {"NOTICE",       "",   (IntFunc) gotnotice,       NULL},
+  {"MODE",         "",   (IntFunc) gotmode,         NULL},
+  {"PING",         "",   (IntFunc) gotping,         NULL},
+  {"PONG",         "",   (IntFunc) gotpong,         NULL},
+  {"WALLOPS",      "",   (IntFunc) gotwall,         NULL},
+  {"001",          "",   (IntFunc) got001,          NULL},
+  {"303",          "",   (IntFunc) got303,          NULL},
+  {"311",          "",   (IntFunc) got311,          NULL},
+  {"318",          "",   (IntFunc) whoispenalty,    NULL},
+  {"410",          "",   (IntFunc) got410,          NULL},
+  {"421",          "",   (IntFunc) got421,          NULL},
+  {"432",          "",   (IntFunc) got432,          NULL},
+  {"433",          "",   (IntFunc) got433,          NULL},
+  {"437",          "",   (IntFunc) got437,          NULL},
+  {"438",          "",   (IntFunc) got438,          NULL},
+  {"451",          "",   (IntFunc) got451,          NULL},
+  {"442",          "",   (IntFunc) got442,          NULL},
+  {"465",          "",   (IntFunc) got465,          NULL},
+  {"900",          "",   (IntFunc) got900,          NULL},
+  {"903",          "",   (IntFunc) got903,          NULL},
+  {"904",          "",   (IntFunc) got904905and906, NULL},
+  {"905",          "",   (IntFunc) got904905and906, NULL},
+  {"906",          "",   (IntFunc) got904905and906, NULL},
+  {"908",          "",   (IntFunc) got908,          NULL},
+  {"NICK",         "",   (IntFunc) gotnick,         NULL},
+  {"ERROR",        "",   (IntFunc) goterror,        NULL},
 /* ircu2.10.10 has a bug when a client is throttled ERROR is sent wrong */
-  {"ERROR:",  "",   (IntFunc) goterror,     NULL},
-  {"KICK",    "",   (IntFunc) gotkick,      NULL},
-  {"318",     "",   (IntFunc) whoispenalty, NULL},
-  {"311",     "",   (IntFunc) got311,       NULL},
-  {NULL,      NULL, NULL,                    NULL}
+  {"ERROR:",       "",   (IntFunc) goterror,        NULL},
+  {"KICK",         "",   (IntFunc) gotkick,         NULL},
+  {"CAP",          "",   (IntFunc) gotcap,          NULL},
+  {"AUTHENTICATE", "",   (IntFunc) gotauthenticate, NULL},
+  {NULL,           NULL, NULL,                      NULL}
 };
 
 static void server_resolve_success(int);
@@ -1235,7 +1585,7 @@ static void connect_server(void)
 #endif
     dcc[servidx].port = botserverport;
     strcpy(dcc[servidx].nick, "(server)");
-    strncpyz(dcc[servidx].host, botserver, UHOSTLEN);
+    strlcpy(dcc[servidx].host, botserver, UHOSTLEN);
 
     botuserhost[0] = 0;
 
@@ -1284,10 +1634,14 @@ static void server_resolve_success(int servidx)
   char pass[121];
 
   resolvserv = 0;
-  strncpyz(pass, dcc[servidx].u.dns->cbuf, sizeof pass);
+  strlcpy(pass, dcc[servidx].u.dns->cbuf, sizeof pass);
   changeover_dcc(servidx, &SERVER_SOCKET, 0);
   dcc[servidx].sock = getsock(dcc[servidx].sockname.family, 0);
   setsnport(dcc[servidx].sockname, dcc[servidx].port);
+  /* Setup ident right before opening the socket to the IRC server to minimize
+   * race.
+   */
+  check_tcl_event("ident");
   serv = open_telnet_raw(dcc[servidx].sock, &dcc[servidx].sockname);
   if (serv < 0) {
     char *errstr = NULL;
@@ -1322,6 +1676,9 @@ static void server_resolve_success(int servidx)
   /* Start alternate nicks from the beginning */
   altnick_char = 0;
   check_tcl_event("preinit-server");
+  ncapeslist = Tcl_NewListObj(0, NULL);
+  /* See if server supports CAP command */
+  dprintf(DP_MODE, "CAP LS\n");
   if (pass[0])
     dprintf(DP_MODE, "PASS %s\n", pass);
   dprintf(DP_MODE, "NICK %s\n", botname);

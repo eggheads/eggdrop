@@ -6,7 +6,7 @@
  */
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2018 Eggheads Development Team
+ * Copyright (C) 1999 - 2019 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -23,7 +23,7 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
-#include <ctype.h>
+#include <signal.h>
 #include "main.h"
 #include "modules.h"
 #include "tandem.h"
@@ -52,31 +52,23 @@
 #  endif
 
 #  ifdef MOD_USE_DL
-#    ifdef DLOPEN_1
-char *dlerror();
-void *dlopen(const char *, int);
-int dlclose(void *);
-void *dlsym(void *, char *);
-#      define DLFLAGS 1
-#    else /* DLOPEN_1 */
-#      include <dlfcn.h>
+#    include <dlfcn.h>
 
-#      ifndef RTLD_GLOBAL
-#        define RTLD_GLOBAL 0
-#      endif
-#      ifndef RTLD_NOW
-#        define RTLD_NOW 1
-#      endif
-#      ifdef RTLD_LAZY
-#        define DLFLAGS RTLD_LAZY|RTLD_GLOBAL
-#      else
-#        define DLFLAGS RTLD_NOW|RTLD_GLOBAL
-#      endif
-#    endif /* DLOPEN_1 */
+#    ifndef RTLD_GLOBAL
+#      define RTLD_GLOBAL 0
+#    endif
+#    ifndef RTLD_NOW
+#      define RTLD_NOW 1
+#    endif
+#    ifdef RTLD_LAZY
+#      define DLFLAGS RTLD_LAZY|RTLD_GLOBAL
+#    else
+#      define DLFLAGS RTLD_NOW|RTLD_GLOBAL
+#    endif
 #  endif /* MOD_USE_DL */
 #endif /* !STATIC */
 
-
+#define strncpyz strlcpy
 
 extern struct dcc_t *dcc;
 extern struct userrec *userlist, *lastuser;
@@ -85,11 +77,12 @@ extern struct chanset_t *chanset;
 extern char botnetnick[], botname[], origbotname[], botuser[], ver[], log_ts[],
             admin[], userfile[], notify_new[], helpdir[], version[], quit_msg[];
 
-extern int parties, noshare, dcc_total, egg_numver, userfile_perm, do_restart,
-           ignore_time, must_be_owner, raw_log, max_dcc, make_userfile,
-           default_flags, require_p, share_greet, use_invites, use_exempts,
-           password_timeout, force_expire, protect_readonly, reserved_port_min,
-           reserved_port_max, copy_to_tmp, quiet_reject;
+extern int parties, noshare, dcc_total, egg_numver, userfile_perm, ignore_time,
+           must_be_owner, raw_log, max_dcc, make_userfile, default_flags,
+           require_p, share_greet, use_invites, use_exempts, password_timeout,
+           force_expire, protect_readonly, reserved_port_min, reserved_port_max,
+           copy_to_tmp, quiet_reject;
+extern volatile sig_atomic_t do_restart;
 
 #ifdef IPV6
 extern int pref_af;
@@ -306,7 +299,7 @@ Function global_table[] = {
   (Function) open_telnet,
   /* 88 - 91 */
   (Function) check_tcl_event,
-  (Function) egg_memcpy,
+  (Function) 0,                   /* was egg_memcpy -- use memcpy() instead */
   (Function) my_atoul,
   (Function) my_strcpy,
   /* 92 - 95 */
@@ -420,7 +413,7 @@ Function global_table[] = {
   /* 168 - 171 */
   (Function) expected_memory,
   (Function) tell_mem_status,
-  (Function) & do_restart,        /* int                                 */
+  (Function) & do_restart,        /* volatile sig_atomic_t               */
   (Function) check_tcl_filt,
   /* 172 - 175 */
   (Function) add_hook,
@@ -534,9 +527,9 @@ Function global_table[] = {
   (Function) egg_snprintf,
   (Function) egg_vsnprintf,
   (Function) 0,                   /* was egg_memset -- use memset() or egg_bzero() instead */
-  (Function) egg_strcasecmp,
+  (Function) 0,                   /* was egg_strcasecmp -- use strcasecmp() instead */
   /* 256 - 259 */
-  (Function) egg_strncasecmp,
+  (Function) 0,                   /* was egg_strncasecmp -- use strncasecmp() instead */
   (Function) is_file,
   (Function) & must_be_owner,     /* int                                 */
   (Function) & tandbot,           /* tand_t *                            */
@@ -577,7 +570,7 @@ Function global_table[] = {
   (Function) open_telnet_raw,
   /* 288 - 291 */
 #ifdef IPV6
-  (Function) & pref_af,		  /* int                                 */
+  (Function) & pref_af,           /* int                                 */
 #else
   (Function) 0,                   /* IPv6 leftovers: 288                 */
 #endif
@@ -597,7 +590,14 @@ Function global_table[] = {
   /* 300 - 303 */
   (Function) tcl_resultint,
   (Function) tcl_resultstring,
-  (Function) getdccfamilyaddr
+  (Function) getdccfamilyaddr,
+#ifndef HAVE_STRLCPY
+  (Function) strlcpy,
+#else
+  (Function) 0,
+#endif
+  /* 304 - 307 */
+  (Function) strncpyz
 };
 
 void init_modules(void)
@@ -654,7 +654,7 @@ int module_register(char *name, Function *funcs, int major, int minor)
   module_entry *p;
 
   for (p = module_list; p && p->name; p = p->next) {
-    if (!egg_strcasecmp(name, p->name)) {
+    if (!strcasecmp(name, p->name)) {
       p->major = major;
       p->minor = minor;
       p->funcs = funcs;
@@ -789,7 +789,7 @@ const char *module_load(char *name)
 #endif /* !STATIC */
 
 #ifdef STATIC
-  for (sl = static_modules; sl && egg_strcasecmp(sl->name, name); sl = sl->next);
+  for (sl = static_modules; sl && strcasecmp(sl->name, name); sl = sl->next);
   if (!sl)
     return "Unknown module.";
   f = (Function) sl->func;
@@ -883,11 +883,12 @@ module_entry *module_find(char *name, int major, int minor)
   module_entry *p;
 
   for (p = module_list; p && p->name; p = p->next) {
-    if ((major == p->major || !major) && minor <= p->minor &&
-        !egg_strcasecmp(name, p->name))
+    if ( (((major < p->major) || !major) || ((major == p->major) &&
+        (minor <= p->minor))) && !strcasecmp(name, p->name) )
       return p;
   }
   return NULL;
+
 }
 
 static int module_rename(char *name, char *newname)
@@ -895,11 +896,11 @@ static int module_rename(char *name, char *newname)
   module_entry *p;
 
   for (p = module_list; p; p = p->next)
-    if (!egg_strcasecmp(newname, p->name))
+    if (!strcasecmp(newname, p->name))
       return 0;
 
   for (p = module_list; p && p->name; p = p->next) {
-    if (!egg_strcasecmp(name, p->name)) {
+    if (!strcasecmp(name, p->name)) {
       nfree(p->name);
       p->name = nmalloc(strlen(newname) + 1);
       strcpy(p->name, newname);
@@ -1140,7 +1141,7 @@ void do_module_report(int idx, int details, char *which)
   if (p && !which)
     dprintf(idx, "Loaded module information:\n");
   for (; p; p = p->next) {
-    if (!which || !egg_strcasecmp(which, p->name)) {
+    if (!which || !strcasecmp(which, p->name)) {
       dependancy *d;
 
       if (details)

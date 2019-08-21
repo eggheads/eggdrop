@@ -464,7 +464,7 @@ See also: match, who, whom%{+m|m}, chattr%{+t}, botattr
    of Eggdrop it's running, the number of users the bot has records of, and 
    the amount of memory being used by the userfile. Following that is
    information such as the uptime of the bot, CPU time, and what compile
-   options, if any, the bot was configued with, along with the bot's admin and
+   options, if any, the bot was configured with, along with the bot's admin and
    and filename of the running config file. The subsequent lines show
    information such as the operating system the bot is running on, information
    on the Tcl libraries used to compile the Eggdrop, and if SSL and IPv6
@@ -488,3 +488,10 @@ See also: status
    a ? if nothing is known.
 
 See also: bots, botinfo, bottree
+%{help=fprint}%{-}
+### %bfprint <+/SHA1 fingerprint>%b
+   Adds an SSL certificate fingerprint to your user account. This allows you
+   to authenticate to Eggdrop with a certificate instead of a password. You
+   can log in to the partyline using SSL and use %b'.fprint +'%b to add the
+   current certificate, or use %b'.fprint <SHA1 fingerprint>'%b to manually
+   add a certificate fingerprint.

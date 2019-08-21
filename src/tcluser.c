@@ -4,7 +4,7 @@
  */
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2018 Eggheads Development Team
+ * Copyright (C) 1999 - 2019 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -306,8 +306,8 @@ static int tcl_addbot STDVAR
   BADARGS(3, 5, " handle address ?telnet-port ?relay-port??");
 
   /* Copy to adjustable char*'s */
-  strncpyz(hand, argv[1], sizeof hand);
-  strncpyz(addr, argv[2], sizeof addr);
+  strlcpy(hand, argv[1], sizeof hand);
+  strlcpy(addr, argv[2], sizeof addr);
 
   for (p = hand; *p; p++)
     if ((unsigned char) *p <= 32 || *p == '@')
@@ -523,7 +523,7 @@ static int tcl_chhandle STDVAR
   if (!u)
     x = 0;
   else {
-    strncpyz(newhand, argv[2], sizeof newhand);
+    strlcpy(newhand, argv[2], sizeof newhand);
     for (i = 0; i < strlen(newhand); i++)
       if (((unsigned char) newhand[i] <= 32) || (newhand[i] == '@'))
         newhand[i] = '?';
@@ -533,7 +533,7 @@ static int tcl_chhandle STDVAR
       x = 0;
     else if (get_user_by_handle(userlist, newhand))
       x = 0;
-    else if (!egg_strcasecmp(botnetnick, newhand) && (!(u->flags & USER_BOT) ||
+    else if (!strcasecmp(botnetnick, newhand) && (!(u->flags & USER_BOT) ||
              nextbot(argv[1]) != -1))
       x = 0;
     else if (newhand[0] == '*')
@@ -578,9 +578,9 @@ static int tcl_newignore STDVAR
 
   BADARGS(4, 5, " hostmask creator comment ?lifetime?");
 
-  strncpyz(ign, argv[1], sizeof ign);
-  strncpyz(from, argv[2], sizeof from);
-  strncpyz(cmt, argv[3], sizeof cmt);
+  strlcpy(ign, argv[1], sizeof ign);
+  strlcpy(from, argv[2], sizeof from);
+  strlcpy(cmt, argv[3], sizeof cmt);
 
   if (argc == 4)
     expire_time = now + 60 * ignore_time;
@@ -654,11 +654,11 @@ static int tcl_getuser STDVAR
   }
   if (argc >= 3) {
     if (!(et = find_entry_type(argv[2])) &&
-        egg_strcasecmp(argv[2], "HANDLE")) {
+        strcasecmp(argv[2], "HANDLE")) {
       Tcl_AppendResult(irp, "No such info type: ", argv[2], NULL);
       return TCL_ERROR;
     }
-    if (!egg_strcasecmp(argv[2], "HANDLE"))
+    if (!strcasecmp(argv[2], "HANDLE"))
       Tcl_AppendResult(irp, u->handle, NULL);
     else {
       e = find_user_entry(et, u);

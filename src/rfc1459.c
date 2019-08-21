@@ -3,7 +3,7 @@
  */
 /*
  * Copyright (C) 1990 Jarkko Oikarinen
- * Copyright (C) 1999 - 2018 Eggheads Development Team
+ * Copyright (C) 1999 - 2019 Eggheads Development Team
  *
  * This code was more or less cloned from the ircd-hybrid 5.3 source.
  * The original code was written by Otto Harkoonen and even though it
@@ -13,10 +13,10 @@
  *
  * If for some reason someone who maintains the source for ircd decides
  * to change the code to be completely RFC compliant, the change here
- * would be absolutely miniscule.
+ * would be absolutely minuscule.
  *
  * BTW, since carat characters are allowed in nicknames and tildes are
- * not, I stronly suggest that people convert to uppercase when doing
+ * not, I strongly suggest that people convert to uppercase when doing
  * comparisons or creation of hash elements (which tcl laughably calls
  * arrays) to avoid making entries with impossible nicknames in them.
  *

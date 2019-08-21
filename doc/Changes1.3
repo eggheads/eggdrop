@@ -373,7 +373,7 @@ Eggdrop Changes (since version 1.3.0)
   - '.-chan' no longer tells sharebots to remove all bans for that channel.
     Patch by: drummer
 
-  - '.-chrec' now works on non-existant channels.
+  - '.-chrec' now works on non-existent channels.
     Patch by: drummer
 
   - Dont display info line when on channel -1 (chat off).
@@ -530,7 +530,7 @@ Eggdrop Changes (since version 1.3.0)
 
   - dcc/msg_info didn't send NULL to remove chan info, also tcl_setchaninfo
     now supports using "none" to remove info, and rewrote it to prevent it
-    crashing on non-existant channels.
+    crashing on non-existent channels.
     Patch by: guppy
 
   - '=== Fred: X channels, X users.' should use the botnetnick not
@@ -1138,7 +1138,7 @@ Eggdrop Changes (since version 1.3.0)
     didn't have a server.
     Patch by: guppy
 
-  - '.+ban' will now show if you try to add bans to non-existant channels.
+  - '.+ban' will now show if you try to add bans to non-existent channels.
     Patch by: guppy
 
   - '.+ban' will now show if you don't have access to add the ban on the
@@ -1221,7 +1221,7 @@ Eggdrop Changes (since version 1.3.0)
   - Lang'd a string in .info
     Patch by: smok
 
-  - msg info would add info for non-existant channels.
+  - msg info would add info for non-existent channels.
     Found by: TheUnknown / Patch by: smok
 
   - Simple Quoting of silly channel names in channel files implemented.
@@ -1308,7 +1308,7 @@ Eggdrop Changes (since version 1.3.0)
   - Quickbans really need a * in case of ~'s etc
     Found by: Daklop / Patch by: Beldin
 
-  - It was possible to create arbritary directories anywhere on the shell
+  - It was possible to create arbitrary directories anywhere on the shell
     with the filesys
     Found by: |SKY| / Patch by: Beldin
 
@@ -1356,7 +1356,7 @@ Eggdrop Changes (since version 1.3.0)
     Found by: Michael / Patch by: Beldin
 
   - TRACE is being used for detect added use-ison variable to use ISON if
-    requried
+    required
     Found by: poptix / Patch by: Beldin
 
   - It was possible for global +o's to set global bans (should be +m only)
@@ -1492,7 +1492,7 @@ Eggdrop Changes (since version 1.3.0)
   - Extremely small fixes to userinfo1.0.tcl
     Patch by: Kirk
 
-  - args for mode bind tabe separate mode change from victim
+  - args for mode bind table separate mode change from victim
     Found by: ButchBub / Patch by: Beldin
 
   - gamespak wants me_op exported from irc.mod
@@ -1554,7 +1554,7 @@ Eggdrop Changes (since version 1.3.0)
   - Slight error in flush_mode
     Patch by: Beldin
 
-  - newuser wasn't being share-relayed correclty
+  - newuser wasn't being share-relayed correctly
     Found by: Daklop / Patch by: Beldin
 
   - Bots should not accept links for bots > HANDLEN, it's bogus
@@ -1782,7 +1782,7 @@ Eggdrop Changes (since version 1.3.0)
   - tcl_setchan was broadcast parts from channels > GLOBALCHANS
     Found by: wheely / Patch by: Beldin
 
-  - Console flags for a user were'nt being unset on certain .su's
+  - Console flags for a user weren't being unset on certain .su's
     Found by: vod / Patch by: Beldin
 
   - Shared channel-changes immediately after a shared newuser were being
@@ -1846,7 +1846,7 @@ Eggdrop Changes (since version 1.3.0)
   - '.chaddr' allowed too-long addresses
     Patch by: Beldin
 
-  - Buffer overflow in start_sending_users with long entires
+  - Buffer overflow in start_sending_users with long entries
     Patch by: Beldin
 
   - setuser laston global time setting
@@ -1855,7 +1855,7 @@ Eggdrop Changes (since version 1.3.0)
   - console.mod stored local channels still got broadcast join
     Found by: Daklop / Patch by: Beldin
 
-  - Config file name made avaliable to scripts
+  - Config file name made available to scripts
     Patch by: aaronwl
 
   - Setting sticky bans using * as the first character of the comment has
@@ -1884,7 +1884,7 @@ Eggdrop Changes (since version 1.3.0)
   - Also made chon handlers verify they are using DCC_CHAT's
     Found by: tdmarti / Patch by: Beldin
 
-  - Part messages were still being passed on for unkown users
+  - Part messages were still being passed on for unknown users
     Found by: tdmarti / Patch by: Beldin
 
   - HP-UX module support (does it even work?)
@@ -2024,7 +2024,7 @@ Eggdrop Changes (since version 1.3.0)
   - Default .fwd binding was wrong
     Found by: C. Massam / Patch by: Beldin
 
-  - Finally the dissapearing channel bans are fixed
+  - Finally the disappearing channel bans are fixed
     Patch by: dk
 
   - Kicked ops were not being revenged
@@ -2277,7 +2277,7 @@ Eggdrop Changes (since version 1.3.0)
   - Shouldn't erase core hooks during .restart
     Patch by: Beldin
 
-  - tcl_rehash from within a proc was being bizzare, moved rehash handling
+  - tcl_rehash from within a proc was being bizarre, moved rehash handling
     out to the main loop
     Patch by: Beldin
 
