@@ -507,6 +507,7 @@ static int tcl_newchanban STDVAR
   struct chanset_t *chan;
   char ban[161], cmt[MASKREASON_LEN], from[HANDLEN + 1];
   int sticky = 0;
+  long expire_foo;
   module_entry *me;
 
   BADARGS(5, 7, " channel ban creator comment ?lifetime? ?options?");
@@ -531,14 +532,20 @@ static int tcl_newchanban STDVAR
   strlcpy(cmt, argv[4], sizeof cmt);
   if (argc == 5) {
     if (chan->ban_time == 0)
-      expire_time = 0L;
+      expire_time = 0;
     else
-      expire_time = now + (60 * chan->ban_time);
+      expire_time = now + 60 * chan->ban_time;
   } else {
-    if (atoi(argv[5]) == 0)
-      expire_time = 0L;
-    else
-      expire_time = now + (atoi(argv[5]) * 60);
+    expire_foo = atol(argv[5]);
+    if (expire_foo == 0)
+      expire_time = 0;
+    else {
+      if (expire_foo > (60 * 24 * 2000)) {
+        Tcl_AppendResult(irp, "expire time must be equal to or less than 2000 days", NULL);
+        return TCL_ERROR;
+      }
+      expire_time = now + 60 * expire_foo;
+    }
   }
   if (u_addban(chan, ban, from, cmt, expire_time, sticky))
     if ((me = module_find("irc", 0, 0)))

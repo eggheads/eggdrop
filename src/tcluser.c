@@ -572,9 +572,9 @@ static int tcl_isignore STDVAR
 
 static int tcl_newignore STDVAR
 {
-  long expire_foo;
   time_t expire_time;
   char ign[UHOSTLEN], cmt[66], from[HANDLEN + 1];
+  long expire_foo;
 
   BADARGS(4, 5, " hostmask creator comment ?lifetime?");
 
