@@ -3,7 +3,7 @@
  *   user definable channel flags/settings
  */
 /*
- * Copyright (C) 1999 - 2018 Eggheads Development Team
+ * Copyright (C) 1999 - 2019 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -50,7 +50,7 @@ static intptr_t getudef(struct udef_chans *ul, char *name)
   intptr_t val = 0;
 
   for (; ul; ul = ul->next)
-    if (!egg_strcasecmp(ul->chan, name)) {
+    if (!strcasecmp(ul->chan, name)) {
       val = ul->value;
       break;
     }
@@ -63,9 +63,9 @@ static intptr_t ngetudef(char *name, char *chan)
   struct udef_chans *ll;
 
   for (l = udef; l; l = l->next)
-    if (!egg_strcasecmp(l->name, name)) {
+    if (!strcasecmp(l->name, name)) {
       for (ll = l->values; ll; ll = ll->next)
-        if (!egg_strcasecmp(ll->chan, chan))
+        if (!strcasecmp(ll->chan, chan))
           return ll->value;
       break;
     }
@@ -77,7 +77,7 @@ static void setudef(struct udef_struct *us, char *name, intptr_t value)
   struct udef_chans *ul, *ul_last = NULL;
 
   for (ul = us->values; ul; ul_last = ul, ul = ul->next)
-    if (!egg_strcasecmp(ul->chan, name)) {
+    if (!strcasecmp(ul->chan, name)) {
       ul->value = value;
       return;
     }
@@ -101,7 +101,7 @@ static void initudef(int type, char *name, int defined)
     return;
 
   for (ul = udef; ul; ul_last = ul, ul = ul->next)
-    if (ul->name && !egg_strcasecmp(ul->name, name)) {
+    if (ul->name && !strcasecmp(ul->name, name)) {
       if (defined) {
         debug1("UDEF: %s defined", ul->name);
         ul->defined = 1;

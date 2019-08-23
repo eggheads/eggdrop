@@ -9,7 +9,7 @@
  */
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2018 Eggheads Development Team
+ * Copyright (C) 1999 - 2019 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -26,6 +26,7 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
+#include <sys/time.h>
 #include <sys/resource.h>
 #include "main.h"
 #include "chan.h"
@@ -277,7 +278,7 @@ tcl_bind_list_t *add_bind_table(const char *nme, int flg, IntFunc func)
   for (tl = bind_table_list, tl_prev = NULL; tl; tl_prev = tl, tl = tl->next) {
     if (tl->flags & HT_DELETED)
       continue;
-    v = egg_strcasecmp(tl->name, nme);
+    v = strcasecmp(tl->name, nme);
     if (!v)
       return tl;                /* Duplicate, just return old value.    */
     if (v > 0)
@@ -325,7 +326,7 @@ tcl_bind_list_t *find_bind_table(const char *nme)
   for (tl = bind_table_list; tl; tl = tl->next) {
     if (tl->flags & HT_DELETED)
       continue;
-    v = egg_strcasecmp(tl->name, nme);
+    v = strcasecmp(tl->name, nme);
     if (!v)
       return tl;
     if (v > 0)
@@ -370,7 +371,7 @@ static int unbind_bind_entry(tcl_bind_list_t *tl, const char *flags,
     for (tc = tm->first; tc; tc = tc->next) {
       if (tc->attributes & TC_DELETED)
         continue;
-      if (!egg_strcasecmp(tc->func_name, proc)) {
+      if (!strcasecmp(tc->func_name, proc)) {
         /* Erase proc regardless of flags. */
         tc->attributes |= TC_DELETED;
         return 1;               /* Match.       */
@@ -411,7 +412,7 @@ static int bind_bind_entry(tcl_bind_list_t *tl, const char *flags,
   for (tc = tm->first; tc; tc = tc->next) {
     if (tc->attributes & TC_DELETED)
       continue;
-    if (!egg_strcasecmp(tc->func_name, proc)) {
+    if (!strcasecmp(tc->func_name, proc)) {
       tc->flags.match = FR_GLOBAL | FR_CHAN;
       break_down_flags(flags, &(tc->flags), NULL);
       return 1;
@@ -450,7 +451,7 @@ static int tcl_getbinds(tcl_bind_list_t *tl_kind, const char *name)
   for (tm = tl_kind->first; tm; tm = tm->next) {
     if (tm->flags & TBM_DELETED)
       continue;
-    if (!egg_strcasecmp(tm->mask, name)) {
+    if (!strcasecmp(tm->mask, name)) {
       tcl_cmd_t *tc;
 
       for (tc = tm->first; tc; tc = tc->next) {
@@ -740,7 +741,7 @@ static int trigger_bind(const char *proc, const char *param,
    */
   Tcl_SetVar(interp, "lastbind", (char *) mask, TCL_GLOBAL_ONLY);
 
-  if(proc && proc[0] != '*') { // proc[0] != '*' excludes internal binds
+  if(proc && proc[0] != '*') { /* proc[0] != '*' excludes internal binds */
     debug1("triggering bind %s", proc);
     r = getrusage(RUSAGE_SELF, &ru1);
   }
@@ -784,10 +785,10 @@ static int check_bind_match(const char *match, char *mask,
 {
   switch (match_type & 0x07) {
   case MATCH_PARTIAL:
-    return (!egg_strncasecmp(match, mask, strlen(match)));
+    return (!strncasecmp(match, mask, strlen(match)));
     break;
   case MATCH_EXACT:
-    return (!egg_strcasecmp(match, mask));
+    return (!strcasecmp(match, mask));
     break;
   case MATCH_CASE:
     return (!strcmp(match, mask));
@@ -867,7 +868,7 @@ int check_tcl_bind(tcl_bind_list_t *tl, const char *match,
              */
             if ((match_type & 0x07) != MATCH_PARTIAL ||
               /* ... or this happens to be an exact match. */
-              !egg_strcasecmp(match, tm->mask)) {
+              !strcasecmp(match, tm->mask)) {
               cnt = 1;
               finish = 1;
             }
@@ -1181,16 +1182,21 @@ void check_tcl_away(const char *bot, int idx, const char *msg)
                  MATCH_MASK | BIND_STACKABLE);
 }
 
-void check_tcl_time(struct tm *tm)
+void check_tcl_time_and_cron(struct tm *tm)
 {
-  char y[18];
+  /* Undersized due to sane assumption that struct tm is sane and at the same
+   * time oversized to silence a gcc format-truncation warning */
+  char y[24];
 
   egg_snprintf(y, sizeof y, "%02d", tm->tm_min);
   Tcl_SetVar(interp, "_time1", (char *) y, 0);
+  Tcl_SetVar(interp, "_cron1", (char *) y, 0);
   egg_snprintf(y, sizeof y, "%02d", tm->tm_hour);
   Tcl_SetVar(interp, "_time2", (char *) y, 0);
+  Tcl_SetVar(interp, "_cron2", (char *) y, 0);
   egg_snprintf(y, sizeof y, "%02d", tm->tm_mday);
   Tcl_SetVar(interp, "_time3", (char *) y, 0);
+  Tcl_SetVar(interp, "_cron3", (char *) y, 0);
   egg_snprintf(y, sizeof y, "%02d", tm->tm_mon);
   Tcl_SetVar(interp, "_time4", (char *) y, 0);
   egg_snprintf(y, sizeof y, "%04d", tm->tm_year + 1900);
@@ -1200,18 +1206,7 @@ void check_tcl_time(struct tm *tm)
   check_tcl_bind(H_time, y, 0,
                  " $_time1 $_time2 $_time3 $_time4 $_time5",
                  MATCH_MASK | BIND_STACKABLE);
-}
 
-void check_tcl_cron(struct tm *tm)
-{
-  char y[15];
-
-  egg_snprintf(y, sizeof y, "%02d", tm->tm_min);
-  Tcl_SetVar(interp, "_cron1", (char *) y, 0);
-  egg_snprintf(y, sizeof y, "%02d", tm->tm_hour);
-  Tcl_SetVar(interp, "_cron2", (char *) y, 0);
-  egg_snprintf(y, sizeof y, "%02d", tm->tm_mday);
-  Tcl_SetVar(interp, "_cron3", (char *) y, 0);
   egg_snprintf(y, sizeof y, "%02d", tm->tm_mon + 1);
   Tcl_SetVar(interp, "_cron4", (char *) y, 0);
   egg_snprintf(y, sizeof y, "%02d", tm->tm_wday);
@@ -1294,10 +1289,10 @@ void tell_binds(int idx, char *par)
   else
     tl_kind = NULL;
 
-  if ((name && name[0] && !egg_strcasecmp(name, "all")) ||
-      (s && s[0] && !egg_strcasecmp(s, "all")))
+  if ((name && name[0] && !strcasecmp(name, "all")) ||
+      (s && s[0] && !strcasecmp(s, "all")))
     showall = 1;
-  if (tl_kind == NULL && name && name[0] && egg_strcasecmp(name, "all"))
+  if (tl_kind == NULL && name && name[0] && strcasecmp(name, "all"))
     patmatc = 1;
 
   dprintf(idx, MISC_CMDBINDS);

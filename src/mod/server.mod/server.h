@@ -3,7 +3,7 @@
  */
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2018 Eggheads Development Team
+ * Copyright (C) 1999 - 2019 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -22,6 +22,8 @@
 
 #ifndef _EGG_MOD_SERVER_SERVER_H
 #define _EGG_MOD_SERVER_SERVER_H
+
+#define CAPMAX      499           /*  (512 - "CAP REQ :XXX\r\n")   */
 
 #define check_tcl_ctcp(a,b,c,d,e,f) check_tcl_ctcpr(a,b,c,d,e,f,H_ctcp)
 #define check_tcl_ctcr(a,b,c,d,e,f) check_tcl_ctcpr(a,b,c,d,e,f,H_ctcr)
@@ -100,13 +102,31 @@ struct server_list {
   char *realname;
 };
 
-/* Available net types.  */
+typedef struct cap_list {
+  char supported[CAPMAX];   /* Capes supportd by IRCD                   */
+  char negotiated[CAPMAX];  /* Common capes between IRCD and client     */
+  char desired[CAPMAX];     /* Capes Eggdrop wants to request from IRCD */
+} cap_list;
+
+extern struct cap_list cap;
+
+/* Available net types. */
 enum {
   NETT_EFNET        = 0, /* EFnet                    */
   NETT_IRCNET       = 1, /* IRCnet                   */
   NETT_UNDERNET     = 2, /* UnderNet                 */
   NETT_DALNET       = 3, /* DALnet                   */
   NETT_HYBRID_EFNET = 4  /* +e/+I/max-bans 20 Hybrid */
-} nett_t;
+};
+
+/* Available sasl mechanisms. */
+enum {
+  SASL_MECHANISM_PLAIN,
+  SASL_MECHANISM_ECDSA_NIST256P_CHALLENGE,
+  SASL_MECHANISM_EXTERNAL,
+  SASL_MECHANISM_NUM
+};
+
+extern char const *SASL_MECHANISMS[];
 
 #endif /* _EGG_MOD_SERVER_SERVER_H */

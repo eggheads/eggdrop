@@ -1,6 +1,6 @@
 dnl aclocal.m4: macros autoconf uses when building configure from configure.ac
 dnl
-dnl Copyright (C) 1999 - 2018 Eggheads Development Team
+dnl Copyright (C) 1999 - 2019 Eggheads Development Team
 dnl
 dnl This program is free software; you can redistribute it and/or
 dnl modify it under the terms of the GNU General Public License
@@ -555,13 +555,7 @@ AC_DEFUN([EGG_CHECK_MODULE_SUPPORT],
       esac
     ;;
     SunOS)
-      if test `echo "$egg_cv_var_system_release" | cut -d . -f 1` = 5; then
-        # We've had quite a bit of testing on Solaris.
         WEIRD_OS="no"
-      else
-        # SunOS 4
-        AC_DEFINE(DLOPEN_1, 1, [Define if running on SunOS 4.0.])
-      fi
     ;;
     FreeBSD|OpenBSD|NetBSD|DragonFly)
       WEIRD_OS="no"
@@ -651,7 +645,7 @@ AC_DEFUN([EGG_CHECK_OS],
   SHLIB_STRIP="$STRIP"
   LINUX="no"
   IRIX="no"
-  SUNOS="no"
+  SUNOS_GCC="no"
   HPUX="no"
   EGG_CYGWIN="no"
 
@@ -733,30 +727,18 @@ AC_DEFUN([EGG_CHECK_OS],
       AC_DEFINE(STOP_UAC, 1, [Define if running on OSF/1 platform.])
     ;;
     SunOS)
-      if test `echo "$egg_cv_var_system_release" | cut -d . -f 1` = 5; then
-        # Solaris
-        if test -n "$GCC"; then
-          SHLIB_CC="$CC -fPIC"
-          SHLIB_LD="$CC -shared"
-        else
-          SHLIB_CC="$CC -KPIC"
-          SHLIB_LD="$CC -G -z text"
-        fi
+      if test -n "$GCC"; then
+        SUNOS_GCC="yes"
+        SHLIB_CC="$CC -fPIC"
+        SHLIB_LD="$CC -shared"
       else
-        # SunOS 4
-        SUNOS="yes"
-        SHLIB_LD="ld"
-        SHLIB_CC="$CC -PIC"
+        SHLIB_CC="$CC -KPIC"
+        SHLIB_LD="$CC -G -z text"
       fi
     ;;
     FreeBSD|OpenBSD|NetBSD)
       SHLIB_CC="$CC -fPIC"
       SHLIB_LD="$CC -shared"
-      case "$egg_cv_var_system_type" in
-        *NetBSD)
-          AC_DEFINE(NETBSD_HACKS, 1, [Define if running under NetBSD.])
-        ;;
-      esac
     ;;
     DragonFly)
       SHLIB_CC="$CC -fPIC"
@@ -804,7 +786,7 @@ AC_DEFUN([EGG_CHECK_LIBS],
     AC_MSG_WARN([Skipping library tests because they CONFUSE IRIX.])
   else
     AX_LIB_SOCKET_NSL
-    AC_CHECK_LIB(dl, dlopen)
+    AC_SEARCH_LIBS([dlopen], [dl])
     AC_CHECK_LIB(m, tan, EGG_MATH_LIB="-lm")
 
     # This is needed for Tcl libraries compiled with thread support
@@ -830,13 +812,8 @@ AC_DEFUN([EGG_CHECK_LIBS],
       )]
     )])
 
-    if test "$SUNOS" = yes; then
-      # For suns without yp
-      AC_CHECK_LIB(dl, main)
-    else
-      if test "$HPUX" = yes; then
-        AC_CHECK_LIB(dld, shl_load)
-      fi
+    if test "$HPUX" = yes; then
+      AC_CHECK_LIB(dld, shl_load)
     fi
   fi
 ])
@@ -1055,6 +1032,15 @@ AC_DEFUN([EGG_TCL_TCLCONFIG],
         TCL_LIB_SPEC="$TCL_LIB_SPEC -lz"
       fi
     fi
+  fi
+
+  if test -z "$ac_cv_lib_dlopen"; then
+    TCL_LIB_SPEC=$(echo $TCL_LIB_SPEC | sed -- 's/-ldl//g')
+  fi
+
+  if test "$SUNOS_GCC" = yes; then
+    SHLIB_LD=$(echo $SHLIB_LD | sed -- 's/-z text//')
+    AC_MSG_NOTICE([SunOS found, SHLIB_LD = $SHLIB_LD])
   fi
 
   AC_MSG_CHECKING([for Tcl version])
@@ -1612,17 +1598,17 @@ AC_DEFUN([EGG_TLS_DETECT],
         break
       ]])
     fi
-    AC_CHECK_FUNC(hex_to_string, ,
-      AC_CHECK_FUNC(OPENSSL_hexstr2buf,
-          AC_DEFINE([hex_to_string], [OPENSSL_hexstr2buf], [Define this to OPENSSL_hexstr2buf when using OpenSSL 1.1.0+])
+    AC_CHECK_FUNC(OPENSSL_buf2hexstr, ,
+      AC_CHECK_FUNC(hex_to_string,
+          AC_DEFINE([OPENSSL_buf2hexstr], [hex_to_string], [Define this to hex_to_string when using OpenSSL < 1.1.0])
         , [[
           havessllib="no"
           break
       ]])
     )
-    AC_CHECK_FUNC(string_to_hex, ,
-      AC_CHECK_FUNC(OPENSSL_buf2hexstr,
-          AC_DEFINE([string_to_hex], [OPENSSL_buf2hexstr], [Define this to OPENSSL_buf2hexstr when using OpenSSL 1.1.0+])
+    AC_CHECK_FUNC(OPENSSL_hexstr2buf, ,
+      AC_CHECK_FUNC(string_to_hex,
+          AC_DEFINE([OPENSSL_hexstr2buf], [string_to_hex], [Define this to string_to_hex when using OpenSSL < 1.1.0])
         , [[
           havessllib="no"
           break

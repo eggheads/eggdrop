@@ -7,7 +7,7 @@
  * by Jean-loup Gailly and Miguel Albrecht.
  */
 /*
- * Copyright (C) 2000 - 2018 Eggheads Development Team
+ * Copyright (C) 2000 - 2019 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -33,7 +33,7 @@
 #include "src/mod/module.h"
 
 #include <zlib.h> /* after src/mod/module.h because it could collide with
-		     crypto.h free_func */
+                     crypto.h free_func */
 
 #include "share.mod/share.h"
 
@@ -296,14 +296,14 @@ static int compress_to_file(char *f_src, char *f_target, int mode_num)
  */
 static int compress_file(char *filename, int mode_num)
 {
-  char *temp_fn, randstr[5];
+  char *temp_fn, rands[8];
   int ret;
 
   /* Create temporary filename. */
-  temp_fn = nmalloc(strlen(filename) + 5);
-  make_rand_str(randstr, 4);
+  temp_fn = nmalloc(strlen(filename) + sizeof rands);
+  make_rand_str(rands, sizeof rands - 1);
   strcpy(temp_fn, filename);
-  strcat(temp_fn, randstr);
+  strcat(temp_fn, rands);
 
   /* Compress file. */
   ret = compress_to_file(filename, temp_fn, mode_num);
@@ -322,14 +322,14 @@ static int compress_file(char *filename, int mode_num)
  */
 static int uncompress_file(char *filename)
 {
-  char *temp_fn, randstr[5];
+  char *temp_fn, rands[8];
   int ret;
 
   /* Create temporary filename. */
-  temp_fn = nmalloc(strlen(filename) + 5);
-  make_rand_str(randstr, 4);
+  temp_fn = nmalloc(strlen(filename) + sizeof rands);
+  make_rand_str(rands, sizeof rands - 1);
   strcpy(temp_fn, filename);
-  strcat(temp_fn, randstr);
+  strcat(temp_fn, rands);
 
   /* Uncompress file. */
   ret = uncompress_to_file(filename, temp_fn);
@@ -394,6 +394,7 @@ static int compress_report(int idx, int details)
   if (details) {
     int size = compress_expmem();
 
+    dprintf(idx, "    zlib version %s\n", ZLIB_VERSION);
     dprintf(idx, "    %u file%s compressed\n", compressed_files,
             (compressed_files != 1) ? "s" : "");
     dprintf(idx, "    %u file%s uncompressed\n", uncompressed_files,

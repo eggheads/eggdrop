@@ -6,7 +6,7 @@
  */
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2018 Eggheads Development Team
+ * Copyright (C) 1999 - 2019 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -25,6 +25,8 @@
 
 #ifndef _EGG_EGGDROP_H
 #define _EGG_EGGDROP_H
+
+#include <ctype.h>
 
 /*
  * If you're *only* going to link to new version bots (1.3.0 or higher)
@@ -50,6 +52,7 @@
 #define CHANNELLEN 80 /* FIXME see issue #3 and issue #38 and rfc1459 <= 200 */
 #define HANDLEN    32 /* valid values 9->NICKMAX                             */
 #define NICKMAX    32 /* valid values HANDLEN->32                            */
+#define USERLEN    10
 
 
 /* Handy string lengths */
@@ -77,6 +80,7 @@
 #define DIRLEN       DIRMAX + 1
 #define LOGLINELEN   LOGLINEMAX + 1
 #define NOTENAMELEN  ((HANDLEN * 2) + 1)
+#define PASSWORDLEN  16
 
 
 /* We have to generate compiler errors in a weird way since not all compilers
@@ -256,19 +260,6 @@
 #define randint(n) (unsigned long) (random() / (RANDOM_MAX + 1.0) * n)
 
 
-#ifndef HAVE_SIGACTION /* old "weird signals" */
-#  define sigaction sigvec
-#  ifndef sa_handler
-#    define sa_handler sv_handler
-#    define sa_mask sv_mask
-#    define sa_flags sv_flags
-#  endif
-#endif
-
-#ifndef HAVE_SIGEMPTYSET
-#  define sigemptyset(x) ((*(int *)(x))=0)
-#endif
-
 #ifdef TLS
 #  include <openssl/ssl.h>
 #endif
@@ -322,10 +313,14 @@ typedef uint32_t IP;
 #define egg_isspace(x)  isspace((int)  (unsigned char) (x))
 #define egg_islower(x)  islower((int)  (unsigned char) (x))
 
-/* Use egg_bzero instead of memset or bzero */
+/* The following functions are for backward compatibility only */
 #define egg_bzero(dest, len) memset(dest, 0, len)
-/* Use memset() or egg_bzero() instead */
-#define egg_memset(dest, c, len) memset(dest, c, len)
+#define egg_memcpy memcpy
+#define egg_memset memset
+#define egg_strcasecmp strcasecmp
+#define egg_strftime strftime
+#define egg_strncasecmp strncasecmp
+#define my_memcpy memcpy
 
 /***********************************************************************/
 
@@ -465,6 +460,9 @@ struct bot_info {
   char linker[NOTENAMELEN + 1]; /* who requested this link              */
   int numver;
   int port;                     /* base port                            */
+#ifdef TLS
+  int ssl;                      /* base ssl                             */
+#endif
   int uff_flags;                /* user file feature flags              */
 };
 
@@ -651,6 +649,10 @@ typedef struct {
 #define SOCK_VIRTUAL    0x0200  /* not-connected socket (dont read it!) */
 #define SOCK_BUFFER     0x0400  /* buffer data; don't notify dcc funcs  */
 #define SOCK_TCL        0x0800  /* tcl socket, don't do anything on it  */
+#ifdef TLS
+#  define SOCK_SENTTLS  0x1000  /* Socket that awaits a starttls in the
+                                 * next read                            */
+#endif
 
 /* Flags to sock_has_data
  */
@@ -707,10 +709,10 @@ enum {
 
 /* Context information to attach to SSL sockets */
 typedef struct {
-  int flags;			/* listen/connect, generic ssl flags      */
-  int verify;			/* certificate validation mode            */
-  int loglevel;			/* log level to output TLS information to */
-  char host[256];		/* host or IP for certificate validation  */
+  int flags;                    /* listen/connect, generic ssl flags      */
+  int verify;                   /* certificate validation mode            */
+  int loglevel;                 /* log level to output TLS information to */
+  char host[256];               /* host or IP for certificate validation  */
   IntFunc cb;
 } ssl_appdata;
 #endif /* TLS */
@@ -747,6 +749,13 @@ enum {
   EGG_OPTION_SET = 1,           /* Set option(s).               */
   EGG_OPTION_UNSET = 2          /* Unset option(s).             */
 };
+
+#define ESC             27      /* Oct              033
+                                 * Hex              1B
+                                 * Caret notation   ^[
+                                 * Escape sequences \e
+                                 * \e is not supported in all compilers
+                                 */
 
 /* Telnet codes.  See "TELNET Protocol Specification" (RFC 854) and
  * "TELNET Echo Option" (RFC 875) for details. */

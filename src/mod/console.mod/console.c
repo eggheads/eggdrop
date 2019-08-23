@@ -4,7 +4,7 @@
  *   by cmwagner/billyjoe/D. Senso
  */
 /*
- * Copyright (C) 1999 - 2018 Eggheads Development Team
+ * Copyright (C) 1999 - 2019 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -230,7 +230,7 @@ static int console_dupuser(struct userrec *new, struct userrec *old,
   struct console_info *i = e->u.extra, *j;
 
   j = user_malloc(sizeof(struct console_info));
-  my_memcpy(j, i, sizeof(struct console_info));
+  memcpy(j, i, sizeof(struct console_info));
 
   j->channel = user_malloc(strlen(i->channel) + 1);
   strcpy(j->channel, i->channel);

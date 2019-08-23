@@ -9,7 +9,7 @@
  */
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2018 Eggheads Development Team
+ * Copyright (C) 1999 - 2019 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -35,9 +35,7 @@
 #  endif
 #endif
 
-#ifdef HAVE_UNAME
-#  include <sys/utsname.h>
-#endif
+#include <sys/utsname.h>
 
 #include "modules.h"
 
@@ -142,7 +140,7 @@ struct userrec *check_chanlist(const char *host)
   nick = splitnick(&uhost);
   for (chan = chanset; chan; chan = chan->next)
     for (m = chan->channel.member; m && m->nick[0]; m = m->next)
-      if (!rfc_casecmp(nick, m->nick) && !egg_strcasecmp(uhost, m->userhost))
+      if (!rfc_casecmp(nick, m->nick) && !strcasecmp(uhost, m->userhost))
         return m->user;
   return NULL;
 }
@@ -156,7 +154,7 @@ struct userrec *check_chanlist_hand(const char *hand)
 
   for (chan = chanset; chan; chan = chan->next)
     for (m = chan->channel.member; m && m->nick[0]; m = m->next)
-      if (m->user && !egg_strcasecmp(m->user->handle, hand))
+      if (m->user && !strcasecmp(m->user->handle, hand))
         return m->user;
   return NULL;
 }
@@ -210,7 +208,7 @@ void set_chanlist(const char *host, struct userrec *rec)
   nick = splitnick(&uhost);
   for (chan = chanset; chan; chan = chan->next)
     for (m = chan->channel.member; m && m->nick[0]; m = m->next)
-      if (!rfc_casecmp(nick, m->nick) && !egg_strcasecmp(uhost, m->userhost))
+      if (!rfc_casecmp(nick, m->nick) && !strcasecmp(uhost, m->userhost))
         m->user = rec;
 }
 
@@ -290,20 +288,16 @@ void tell_verbose_status(int idx)
   char *vers_t, *uni_t;
   int i;
   time_t now2 = now - online_since, hr, min;
-  float cputime;
-#ifdef HAVE_UNAME
+  double cputime, cache_total;
   struct utsname un;
 
   if (uname(&un) < 0) {
-#endif
     vers_t = " ";
     uni_t  = "*unknown*";
-#ifdef HAVE_UNAME
   } else {
     vers_t = un.release;
     uni_t  = un.sysname;
   }
-#endif
 
   i = count_users(userlist);
   dprintf(idx, "I am %s, running %s: %d user%s (mem: %uk).\n",
@@ -342,9 +336,11 @@ void tell_verbose_status(int idx)
     cputime -= hr * 60;
     sprintf(s2, "CPU: %02d:%05.2f", (int) hr, cputime); /* Actually min/sec */
   }
-  dprintf(idx, "%s %s (%s) - %s - %s: %4.1f%%\n", MISC_ONLINEFOR,
-          s, s1, s2, MISC_CACHEHIT,
-          100.0 * ((float) cache_hit) / ((float) (cache_hit + cache_miss)));
+  if (cache_hit + cache_miss) {      /* 2019, still can't divide by zero */
+    cache_total = 100.0 * (cache_hit) / (cache_hit + cache_miss);
+  } else cache_total = 0;
+    dprintf(idx, "%s %s (%s) - %s - %s: %4.1f%%\n", MISC_ONLINEFOR,
+            s, s1, s2, MISC_CACHEHIT, cache_total);
 
   dprintf(idx, "Configured with: " EGG_AC_ARGS "\n");
   if (admin[0])
@@ -689,7 +685,7 @@ int isowner(char *name) {
  */
 void add_hq_user()
 {
-  if (!backgrd && term_z >= 0 && userlist) {
+  if (!backgrd && term_z >= 0) {
     /* HACK: Workaround using dcc[].nick not to pass literal "-HQ" as a non-const arg */
     dcc[term_z].user = get_user_by_handle(userlist, dcc[term_z].nick);
     /* Make sure there's an innocuous -HQ user if needed */

@@ -18,6 +18,7 @@ Contents:
    ctcp
    dns
    filesys
+   ident
    irc
    notes
    seen
