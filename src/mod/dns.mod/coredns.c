@@ -1218,7 +1218,7 @@ static int dns_hosts(char *hostn) {
   #define PATH "/etc/hosts"
   int fd, len, i, found = 0;
   struct stat sb;
-  char *addr, l, u, *c, *c2, ip[256];
+  char *addr, *c, *c2, ip[256];
   sockname_t name;
 
   fd = open(PATH, O_RDONLY);
@@ -1237,12 +1237,10 @@ static int dns_hosts(char *hostn) {
     close(fd);
     return 0;
   }
-  l = tolower(*hostn);
-  u = toupper(*hostn);
   len = strlen(hostn);
   /* addr + 4 is shortest ip "::1 " */
   for (c = addr + 4; (c < (addr + sb.st_size - len)) && *c; c++) {
-    if (((*c == l) || (*c == u)) && !strncasecmp(c, hostn, len)) {
+    if (!strncasecmp(c, hostn, len)) {
       if (((c == (addr + sb.st_size - len - 1)) || isspace(*(c + len))) && isspace(*(c - 1))) {
         for (c2 = c - 2; (c2 >= addr) && (*c2 != '#'); c2--) {
           if ((*c2 == '\n') || (*c2 == '\r')) {
@@ -1257,18 +1255,15 @@ static int dns_hosts(char *hostn) {
                   ddebug2(RES_MSG "Used /etc/hosts: %s == %s", hostn, ip);
                 }
                 found = 1;
-                break;
+                goto exit;
               }
             }
-            if (found)
-              break;
           }
         }
-        if (found)
-          break;
       }
     }
   }
+exit:
   if (munmap(addr, sb.st_size) < 0) {
     ddebug1(RES_MSG "munmap(" PATH "): %s ", strerror(errno));
     close(fd);
