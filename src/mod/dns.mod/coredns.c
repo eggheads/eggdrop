@@ -42,6 +42,9 @@
 		 (dietlibc) */
 #include <resolv.h>
 #include <errno.h>
+#include <fcntl.h>
+#include <sys/mman.h>
+#include <sys/stat.h>
 
 
 /* Defines */
@@ -1212,41 +1215,67 @@ static void dns_lookup(sockname_t *addr)
 }
 
 static int dns_hosts(char *hostn) {
-  FILE* f;
-  char line[1024];
-  char *ptr1, *ptr2;
-  int l = strlen(hostn);
-  const char *sep = " \t\n\v\f\r";
+  #define PATH "/etc/hosts"
+  int fd, len, i, found = 0;
+  struct stat sb;
+  char *addr, l, u, *c, *c2, ip[256];
   sockname_t name;
 
-  f = fopen("/etc/hosts", "rb");
-  if (!f) {
-    ddebug1(RES_MSG "fopen(): %s ", strerror(errno));
+  fd = open(PATH, O_RDONLY);
+  if (fd < 0) {
+    ddebug1(RES_MSG "open(" PATH "): %s ", strerror(errno));
     return 0;
   }
-  while (fgets(line, sizeof line , f)) {
-    ptr1 = line;
-    while (isspace(*ptr1))
-      ptr1++;
-    if ((ptr2 = strchr(ptr1, '#')))
-      *ptr2 = '\0';
-    for(ptr2 = strstr(ptr1, hostn); ptr2; ptr2 = strstr(ptr2 + l, hostn)) {
-      if ((isspace(ptr2[l]) || !ptr2[l]) && ptr2 != ptr1) {
-        ptr1 = strtok(ptr1, sep);
-        if (setsockname(&name, ptr1, 0, 0) != AF_UNSPEC) {
-          call_ipbyhost(hostn, &name, 1);
-          ddebug2(RES_MSG "Used /etc/hosts: %s == %s", hostn, ptr1);
-          fclose(f);
-          return 1;
+  if (fstat(fd, &sb) < 0) {
+    ddebug1(RES_MSG "fstat(" PATH "): %s ", strerror(errno));
+    close(fd);
+    return 0;
+  }
+  addr = mmap(NULL, sb.st_size, PROT_READ, MAP_PRIVATE, fd, 0);
+  if (addr == MAP_FAILED) {
+    ddebug1(RES_MSG "mmap(" PATH "): %s ", strerror(errno));
+    close(fd);
+    return 0;
+  }
+  l = tolower(*hostn);
+  u = toupper(*hostn);
+  len = strlen(hostn);
+  /* addr + 4 is shortest ip "::1 " */
+  for (c = addr + 4; (c < (addr + sb.st_size - len)) && *c; c++) {
+    if (((*c == l) || (*c == u)) && !strncasecmp(c, hostn, len)) {
+      if (((c == (addr + sb.st_size - len - 1)) || isspace(*(c + len))) && isspace(*(c - 1))) {
+        for (c2 = c - 2; (c2 >= addr) && (*c2 != '#'); c2--) {
+          if ((*c2 == '\n') || (*c2 == '\r')) {
+            for (i = 0; i < (sizeof ip); i++) {
+              c2++;
+              if (!isspace(*c2))
+                ip[i] = *c2;
+              else {
+                ip[i] = 0;
+                if (setsockname(&name, ip, 0, 0) != AF_UNSPEC) {
+                  call_ipbyhost(hostn, &name, 1);
+                  ddebug2(RES_MSG "Used /etc/hosts: %s == %s", hostn, ip);
+                }
+                found = 1;
+                break;
+              }
+            }
+            if (found)
+              break;
+          }
         }
-        break;
+        if (found)
+          break;
       }
     }
   }
-  if (ferror(f))
-    ddebug1(RES_MSG "fgets(): %s ", strerror(errno));
-  fclose(f);
-  return 0;
+  if (munmap(addr, sb.st_size) < 0) {
+    ddebug1(RES_MSG "munmap(" PATH "): %s ", strerror(errno));
+    close(fd);
+    return 0;
+  }
+  close(fd);
+  return found;
 }
 
 /* Start searching for an ip-address, using it's host-name.
