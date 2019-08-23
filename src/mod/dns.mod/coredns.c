@@ -1214,7 +1214,7 @@ static void dns_lookup(sockname_t *addr)
 static int dns_hosts(char *hostn) {
   FILE* f;
   char line[1024];
-  char *ptr;
+  char *ptr1, *ptr2;
   int l = strlen(hostn);
   const char *sep = " \t\n\v\f\r";
   sockname_t name;
@@ -1225,15 +1225,17 @@ static int dns_hosts(char *hostn) {
     return 0;
   }
   while (fgets(line, sizeof line , f)) {
-    if ((ptr = strchr(line, '#')))
-      *ptr = '\0';
-    for(ptr = strstr(line, hostn); ptr; ptr = strstr(ptr + l, hostn)) {
-      if ((isspace(ptr[l]) || !ptr[l]) && ptr != line) {
-        for (ptr = line; isspace(*ptr); ptr++);
-        ptr = strtok(ptr, sep);
-        if (setsockname(&name, ptr, 0, 0) != AF_UNSPEC) {
+    ptr1 = line;
+    while (isspace(*ptr1))
+      ptr1++;
+    if ((ptr2 = strchr(ptr1, '#')))
+      *ptr2 = '\0';
+    for(ptr2 = strstr(ptr1, hostn); ptr2; ptr2 = strstr(ptr2 + l, hostn)) {
+      if ((isspace(ptr2[l]) || !ptr2[l]) && ptr2 != ptr1) {
+        ptr1 = strtok(ptr1, sep);
+        if (setsockname(&name, ptr1, 0, 0) != AF_UNSPEC) {
           call_ipbyhost(hostn, &name, 1);
-          ddebug2(RES_MSG "Used /etc/hosts: %s == %s", hostn, ptr);
+          ddebug2(RES_MSG "Used /etc/hosts: %s == %s", hostn, ptr1);
           fclose(f);
           return 1;
         }
