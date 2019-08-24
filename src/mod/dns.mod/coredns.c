@@ -1238,11 +1238,14 @@ static int dns_hosts(char *hostn) {
     return 0;
   }
   len = strlen(hostn);
-  /* case insensitive search for hostn, begin at addr + 4 to skip shortest ip "::1 " */
+  /* case insensitive search for hostn, begin at addr + 4 to skip shortest ip
+   * "::1 " */
   for (c = addr + 4; (c < (addr + sb.st_size - len)) && *c; c++) {
     if (!strncasecmp(c, hostn, len)) {
-      if (((c == (addr + sb.st_size - len - 1)) || isspace(*(c + len))) && isspace(*(c - 1))) {
-        for (c2 = c - 2; (c2 >= addr) && (*c2 != '#'); c2--) { /* search backwards */
+      if (((c == (addr + sb.st_size - len - 1)) || isspace(*(c + len))) &&
+          isspace(*(c - 1))) {
+        /* search backwards, as long as no comment char # found */
+        for (c2 = c - 2; (c2 >= addr) && (*c2 != '#'); c2--) {
           if ((*c2 == '\n') || (*c2 == '\r')) { /* until begin of line */
             while (isspace(*++c2)); /* skip space chars */
             for (i = 0; i < (sizeof ip); i++) { /* copy chars of ip */
