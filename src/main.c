@@ -143,6 +143,10 @@ volatile sig_atomic_t do_restart = 0; /* .restart has been called, restart ASAP 
 int resolve_timeout = RES_TIMEOUT;    /* Hostname/address lookup timeout        */
 char quit_msg[1024];                  /* Quit message                           */
 
+/* Temp moved here for 1.9, put back in do_arg for 2.0 */
+unsigned char cliflags = 0;
+
+
 /* Traffic stats */
 unsigned long otraffic_irc = 0;
 unsigned long otraffic_irc_today = 0;
@@ -536,8 +540,8 @@ static void show_help() {
   printf("Usage: %s [options] [config-file]\n\n"
          "Options:\n"
          "-n  Don't background; send all log entries to console.\n"
-         "-nc Don't background; display channel stats every 10 seconds.\n"
-         "-nt Don't background; use terminal to simulate DCC chat.\n"
+         "-c Don't background; display channel stats every 10 seconds.\n"
+         "-t Don't background; use terminal to simulate DCC chat.\n"
          "-m  Create userfile.\n"
          "-h  Show this help and exit.\n"
          "-v  Show version info and exit.\n\n", argv[0]);
@@ -547,7 +551,9 @@ static void show_help() {
 static void do_arg()
 {
   int option = 0;
+/* Put this back in 2.0 
   unsigned char cliflags = 0;
+*/
   #define CLI_V        1 << 0
   #define CLI_M        1 << 1
   #define CLI_T        1 << 2
@@ -566,11 +572,13 @@ static void do_arg()
         cliflags |= CLI_C;
         con_chan = 1;
         term_z = -1;
+        backgrd = 0;
         break;
       case 't':
         cliflags |= CLI_T;
         con_chan = 0;
         term_z = 0;
+        backgrd = 0;
         break;
       case 'm':
         cliflags |= CLI_M;
@@ -596,14 +604,17 @@ static void do_arg()
   } else if (cliflags & CLI_V) {
     show_ver();
     exit(0);
-  } else if (!(cliflags & CLI_N) && ((cliflags & CLI_C) || (cliflags & CLI_T))) {
-    printf("\n%s\n", version);
-    printf("ERROR: The -n flag is required when using the -c or -t flags. Exiting...\n\n");
-    exit(1);
   } else if (argc > (optind + 1)) {
     printf("\n");
     printf("WARNING: More than one config file value detected\n");
     printf("         Using %s as config file\n", argv[optind]);
+  }
+/* This lives in two other places in code to make sure the user has a chance
+   to see it on load, make sure to find them when removing for 2.0 */
+  if ((cliflags & CLI_N) && ((cliflags & CLI_C) || (cliflags & CLI_T))) {
+    printf("WARNING: Using the -n flag with the -c or -t flag is deprecated\n");
+    printf("         and will be blocked in a future release. Please use\n");
+    printf("         only the -c or -t flag when launching Eggdrop.\n");
   }
   if (argc > optind) {
     strlcpy(configfile, argv[optind], sizeof configfile);
@@ -643,6 +654,11 @@ static void core_secondly()
     check_expired_dcc();
     if (con_chan && !backgrd) {
       dprintf(DP_STDOUT, "\033[2J\033[1;1H");
+      if ((cliflags & CLI_N) && (cliflags & CLI_C)) {
+        printf("WARNING: Using the -n flag with the -c flag is deprecated\n");
+        printf("         and will be blocked in a future release. Please use\n");
+        printf("         the -c flag by itself when launching Eggdrop.\n");
+      }
       tell_verbose_status(DP_STDOUT);
       do_module_report(DP_STDOUT, 0, "server");
       do_module_report(DP_STDOUT, 0, "channels");
@@ -1173,6 +1189,12 @@ int main(int arg_c, char **arg_v)
     i++;
   putlog(LOG_MISC, "*", "=== %s: %d channels, %d users.",
          botnetnick, i, count_users(userlist));
+  if ((cliflags & CLI_N) && (cliflags & CLI_T)) {
+    printf("\n");
+    printf("WARNING: Using the -n flag with the -t flag is deprecated\n");
+    printf("         and will be blocked in a future release. Please use\n");
+    printf("         the -t flag by itself when launching Eggdrop.\n");
+  }
 #ifdef TLS
   ssl_init();
 #endif
