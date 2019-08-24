@@ -110,6 +110,9 @@ The following is a list of valid bot flags:
 +------+---------------------------------------------------------------+
 | i    | isolate (isolate the party line across a bot link)            |
 +------+---------------------------------------------------------------+
+| j    | invite sharing (passive bot is allowed to share invites with  |
+|      | aggressive bot)                                               |
++------+---------------------------------------------------------------+
 | l    | leaf (bot is not allowed to link in other bots)               |
 +------+---------------------------------------------------------------+
 | n    | ignore sharing (passive bot is allowed to share ignores with  |
@@ -123,9 +126,6 @@ The following is a list of valid bot flags:
 +------+---------------------------------------------------------------+
 | u    | user sharing (passive bot is allowed to share user changes    |
 |      | with aggressive bot)                                          |
-+------+---------------------------------------------------------------+
-| v    | invite sharing (passive bot is allowed to share invites with  |
-|      | aggressive bot)                                               |
 +------+---------------------------------------------------------------+
 | 0-9  | user defined flags                                            |
 +------+---------------------------------------------------------------+

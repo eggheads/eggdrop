@@ -421,13 +421,13 @@ See also: whom
       %bg%b - global share (bot is sharing all channels)
       %bh%b - hub (bot is autolinked at highest priority)
       %bi%b - isolate (isolate the party line across a botlink)
+      %bj%b - invite sharing (pasv bot can share invites with aggr bot)
       %bl%b - leaf (bot is not allowed to link other bots onto the botnet)
       %bn%b - ignore sharing (pasv bot can share ignores with aggr bot)
       %bp%b - share passively (ACCEPT userfile from an aggressive bot)
       %br%b - reject (bot will not be allowed to link to the botnet)
       %bs%b - share aggressively (SEND userfile to a passive bot)
       %bu%b - user sharing (pasv bot can share user changes with aggr bot)
-      %bv%b - invite sharing (pasv bot can share invites with aggr bot)
 
       There are also 10 user-defined bot flags (0-9). Bots may also have +s
       (share) settings for individual channels.
