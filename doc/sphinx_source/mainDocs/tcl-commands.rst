@@ -1575,7 +1575,7 @@ dccused
 dcclist [type]
 ^^^^^^^^^^^^^^
 
-  Returns: a list of active connections, each item in the list is a sublist containing six elements:
+  Returns: a list of active connections, each item in the list is a sublist containing seven elements:
   {<idx> <handle> <hostname> <[+]port> <type> {<other>} <timestamp>}.
 
   The types are: chat, bot, files, file_receiving, file_sending, file_send_pending, script, socket (these are connections that have not yet been put under 'control'), telnet, and server. The timestamp is in unixtime format.
