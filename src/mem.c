@@ -79,7 +79,7 @@ void init_mem()
   size_t size;
   int i;
 
-  size = sizeof(*memtbl) * memtbl_size;
+  size =  memtbl_size * sizeof(*memtbl);
   if (!(memtbl = malloc(size))) {
     putlog(LOG_MISC, "*", "*** FAILED MALLOC mem.c (memtbl) (%i): %s", size,
            strerror(errno));
@@ -353,7 +353,7 @@ void *n_malloc(int size, const char *file, int line)
       putlog(LOG_MISC, "*", "*** MEMORY TABLE FULL: %s (%d)", file, line);
       fatal("Memory table full", 0);
     }
-    size2 = sizeof(*memtbl) * memtbl_size;
+    size2 = memtbl_size * sizeof(*memtbl);
     if (!(memtbl = realloc(memtbl, size2))) {
       putlog(LOG_MISC, "*", "*** FAILED REALLOC mem.c (memtbl) (%i): %s", size2,
              strerror(errno));
