@@ -238,6 +238,7 @@ int ssl_init()
           putlog(LOG_MISC, "*", "ERROR: TLS: unable to set tmp dh %s: %s",
                  tls_dhparam, ERR_error_string(ERR_get_error(), NULL));
         }
+        DH_free(dh);
       }
       else {
         putlog(LOG_MISC, "*", "ERROR: TLS: unable to read DHparams %s: %s",
