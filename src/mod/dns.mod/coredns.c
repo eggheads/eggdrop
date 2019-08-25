@@ -45,6 +45,7 @@
 #include <fcntl.h>
 #include <sys/mman.h>
 #include <sys/stat.h>
+#include <sys/resource.h>
 
 
 /* Defines */
@@ -1218,7 +1219,7 @@ static int dns_hosts(char *hostn) {
   #define PATH "/etc/hosts"
   int fd, len, i, found = 0;
   struct stat sb;
-  char *addr, *c, *c2, ip[256];
+  char *addr, hostn_upper[256], hostn_lower[256], *c, *c2, ip[256];
   sockname_t name;
 
   fd = open(PATH, O_RDONLY);
@@ -1238,10 +1239,20 @@ static int dns_hosts(char *hostn) {
     return 0;
   }
   len = strlen(hostn);
+  /* due to strncasecmp() and strncmp() being slow if used in loop, precalculate
+   * lower and upper string from hostn and compare with handcrafted code */
+  for (i = 0; (i < len) && (i < sizeof hostn_lower); i++)
+      hostn_lower[i] = tolower(hostn[i]);
+  hostn_lower[i] = 0;
+  for (i = 0; (i < len) && (i < sizeof hostn_upper); i++)
+      hostn_upper[i] = toupper(hostn[i]);
+  hostn_upper[i] = 0;
   /* case insensitive search for hostn, begin at addr + 4 to skip shortest ip
    * "::1 " */
   for (c = addr + 4; (c < (addr + sb.st_size - len)) && *c; c++) {
-    if (!strncasecmp(c, hostn, len)) {
+    /* if (!strncasecmp(c, hostn, len)) { */
+    for (i = 0; (i < len) && (c[i] == hostn_lower[i] || (c[i] == hostn_upper[i])); i++);
+    if ((i == len) && (hostn[i] == 0)) {
       if (((c == (addr + sb.st_size - len - 1)) || isspace(*(c + len))) &&
           isspace(*(c - 1))) {
         /* search backwards, as long as no comment char # found */
