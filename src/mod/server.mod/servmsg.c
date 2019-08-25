@@ -1476,7 +1476,7 @@ static int gotcap(char *from, char *msg) {
         putlog(LOG_SERV, "*", "SASL: put AUTHENTICATE %s",
             SASL_MECHANISMS[sasl_mechanism]);
         dprintf(DP_MODE, "AUTHENTICATE %s\n", SASL_MECHANISMS[sasl_mechanism]);
-        sasl_timeout_time = time(NULL) + sasl_timeout;
+        sasl_timeout_time = sasl_timeout;
 #ifndef TLS
       } else {
         return sasl_error("No TLS libs, aborting authentication");

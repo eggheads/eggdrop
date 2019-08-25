@@ -1694,7 +1694,7 @@ static void server_secondly()
   deq_msg();
   if (!resolvserv && serv < 0)
     connect_server();
-  if (sasl_timeout_time == now)
+  if (!--sasl_timeout_time)
     handle_sasl_timeout();
 }
 
