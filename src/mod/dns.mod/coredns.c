@@ -1241,11 +1241,11 @@ static int dns_hosts(char *hostn) {
   len = strlen(hostn);
   /* due to strncasecmp() and strncmp() being slow if used in loop, precalculate
    * lower and upper string from hostn and compare with handcrafted code */
-  for (i = 0; (i < len) && (i < sizeof hostn_lower); i++)
+  for (i = 0; (i < len) && (i < sizeof hostn_lower); i++) {
       hostn_lower[i] = tolower(hostn[i]);
-  hostn_lower[i] = 0;
-  for (i = 0; (i < len) && (i < sizeof hostn_upper); i++)
       hostn_upper[i] = toupper(hostn[i]);
+  }
+  hostn_lower[i] = 0;
   hostn_upper[i] = 0;
   /* case insensitive search for hostn, begin at addr + 4 to skip shortest ip
    * "::1 " */
