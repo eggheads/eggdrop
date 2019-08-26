@@ -385,7 +385,6 @@ void break_down_flags(const char *string, struct flag_record *plus,
 
   plus->match = FR_OR;          /* Default binding type OR */
   while (*string) {
-    debug1("TEST840: string = %s", string);
     switch (*string) {
     case '+':
       which = plus;
@@ -403,10 +402,9 @@ void break_down_flags(const char *string, struct flag_record *plus,
       }
       which = plus;
       mode++;
-      if ((mode == 2) && !(flags & (FR_CHAN | FR_BOT))) {
-        debug0("TEST840: BOOM SHAKE SHAKE SHAKE THE ROOM");
-        string = "";
-      }
+      if ((mode == 2) && !(flags & (FR_CHAN | FR_BOT)))
+        string = "\0"; /* we need \0\0 here to break out of while() / nested
+                          switch(), see "string++;" below. */
       else if (mode == 3)
         mode = 1;
       break;
