@@ -45,6 +45,7 @@ int cache_hit = 0, cache_miss = 0; /* temporary cache accounting    */
 int strict_host = 1;
 int userfile_perm = 0600;         /* Userfile permissions
                                    * (default rw-------) */
+char userfile[121];
 
 void *_user_malloc(int size, const char *file, int line)
 {
@@ -569,6 +570,16 @@ void write_userfile(int idx)
   fclose(f);
   call_hook(HOOK_USERFILE);
   movefile(new_userfile, userfile);
+}
+
+void backup_userfile(void)
+{
+  char s[(sizeof userfile) + 4]; /* 4 = strlen("~bak") */
+
+  if (quiet_save < 2)
+    putlog(LOG_MISC, "*", USERF_BACKUP);
+  egg_snprintf(s, sizeof s, "%s~bak", userfile);
+  copyfile(userfile, s);
 }
 
 int change_handle(struct userrec *u, char *newh)

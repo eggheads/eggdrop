@@ -609,16 +609,6 @@ static void do_arg()
   }
 }
 
-void backup_userfile(void)
-{
-  char s[(sizeof userfile) + 4]; /* 4 = strlen("~bak") */
-
-  if (quiet_save < 2)
-    putlog(LOG_MISC, "*", USERF_BACKUP);
-  egg_snprintf(s, sizeof s, "%s~bak", userfile);
-  copyfile(userfile, s);
-}
-
 /* Timer info */
 static time_t lastmin;
 static time_t then;
