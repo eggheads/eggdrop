@@ -3,7 +3,7 @@
  */
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2018 Eggheads Development Team
+ * Copyright (C) 1999 - 2019 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -68,12 +68,6 @@
 #endif
 #ifdef egg_snprintf
 #  undef egg_snprintf
-#endif
-#ifdef egg_strcasecmp
-#  undef egg_strcasecmp
-#endif
-#ifdef egg_strncasecmp
-#  undef egg_strncasecmp
 #endif
 
 #if defined (__CYGWIN__) && !defined(STATIC)
@@ -436,9 +430,9 @@
 #define egg_snprintf (global[252])
 #define egg_vsnprintf ((int (*)(char *, size_t, const char *, va_list))global[253])
 /* was egg_memset -- use memset() instead */
-#define egg_strcasecmp ((int (*)(const char *, const char *))global[255])
+/* was egg_strcasecmp -- use strcasecmp instead */
 /* 256 - 259 */
-#define egg_strncasecmp ((int (*)(const char *, const char *, size_t))global[256])
+/* was egg_strncasecmp -- use strncasecmp instead */
 #define is_file ((int (*)(const char *))global[257])
 #define must_be_owner (*(int *)(global[258]))
 #define tandbot (*(tand_t **)(global[259]))

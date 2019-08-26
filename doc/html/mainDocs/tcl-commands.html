@@ -6,13 +6,13 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>Eggdrop Tcl Commands &#8212; Eggdrop 1.8.3 documentation</title>
+    <title>Eggdrop Tcl Commands &#8212; Eggdrop 1.9.0 documentation</title>
     <link rel="stylesheet" href="../_static/eggdrop.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
-        VERSION:     '1.8.3',
+        VERSION:     '1.9.0',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true,
@@ -33,7 +33,7 @@
             <img class="logo" src="../_static/eggman.png.gif" alt="Logo"/>
           </a></p>
         <div class="headertitle"><a
-          href="../index.html">Eggdrop 1.8.3 documentation</a></div>
+          href="../index.html">Eggdrop 1.9.0 documentation</a></div>
         <div class="rel">
           <a href="patch.html" title="Patch How-To"
              accesskey="P">previous</a> |
@@ -59,9 +59,9 @@ Last revised: December 14, 2017</p>
 of the normal Tcl built-in commands are still there, of course, but you
 can also use these to manipulate features of the bot. They are listed
 according to category.</p>
-<p>This list is accurate for Eggdrop v1.8.3. Scripts written for v1.3, v1.4
-or 1.6 series of Eggdrop should probably work with a few minor modifications
-depending on the script. Scripts which were written for  v0.9, v1.0, v1.1
+<p>This list is accurate for Eggdrop v1.9.0. Scripts written for v1.3, v1.4,
+1.6 and 1.8 series of Eggdrop should probably work with a few minor modifications
+depending on the script. Scripts which were written for v0.9, v1.0, v1.1
 or v1.2 will probably not work without modification. Commands which have
 been changed in this version of Eggdrop (or are just new commands) are
 marked with vertical bars (|) on the left.</p>
@@ -170,6 +170,14 @@ marked with vertical bars (|) on the left.</p>
 <blockquote>
 <div><p>Description: removes all messages from a queue. Valid arguments are: mode, server, help, or all.</p>
 <p>Returns: the number of deleted lines from the specified queue.</p>
+<p>Module: server</p>
+</div></blockquote>
+</div>
+<div class="section" id="cap-active-available-raw-arg">
+<h3>cap &lt;active/available/raw&gt; [arg]<a class="headerlink" href="#cap-active-available-raw-arg" title="Permalink to this headline">¶</a></h3>
+<blockquote>
+<div><p>Description: displays CAP status or sends a raw CAP command to the server. &quot;available&quot; will list the capabilities supported by the server, &quot;active&quot; will list the capabilities Eggdrop has negotiated with the server, and raw will send a raw CAP command to the server. If sending a raw command, it must be submitted in arg as a single string. For example, to request capabilities foo and bar, you would use [cap raw &quot;REQ :foo bar&quot;].</p>
+<p>Returns: nothing</p>
 <p>Module: server</p>
 </div></blockquote>
 </div>
@@ -1308,7 +1316,7 @@ channel's invite list is checked as well.</p>
 <div class="section" id="dccbroadcast-message">
 <h3>dccbroadcast &lt;message&gt;<a class="headerlink" href="#dccbroadcast-message" title="Permalink to this headline">¶</a></h3>
 <blockquote>
-<div><p>Description: sends a message to everyone on the party line across the botnet, in the form of &quot;*** &lt;message&gt;&quot; for local users, &quot;*** (Bot) &lt;message&gt;&quot; for users on other bots with version below 1.8.3, and &quot;(Bot) &lt;message&gt;&quot; for users on other bots with version 1.8.3+ and console log mode 'l' enabled</p>
+<div><p>Description: sends a message to everyone on the party line across the botnet, in the form of &quot;*** &lt;message&gt;&quot; for local users, &quot;*** (Bot) &lt;message&gt;&quot; for users on other bots with version below 1.8.4, and &quot;(Bot) &lt;message&gt;&quot; for users on other bots with version 1.8.4+ and console log mode 'l' enabled</p>
 <p>Returns: nothing</p>
 <p>Module: core</p>
 </div></blockquote>
@@ -2099,7 +2107,7 @@ will be used. Types 30-39 set the host to '*'.</p>
 <div class="section" id="timer-minutes-tcl-command-count">
 <h3>timer &lt;minutes&gt; &lt;tcl-command&gt; [count]<a class="headerlink" href="#timer-minutes-tcl-command-count" title="Permalink to this headline">¶</a></h3>
 <blockquote>
-<div><p>Description: executes the given Tcl command after a certain number of minutes have passed. If count is specified, the command will be executed count times with the given interval in between. If you specify a count of 0, the timer will repeat until it's removed with killtimer or until the bot is restarted.</p>
+<div><p>Description: executes the given Tcl command after a certain number of minutes have passed, at the top of the minute (ie, if a timer is started at 10:03:34 with 1 minute specified, it will execute at 10:04:00. If a timer is started at 10:06:34 with 2 minutes specified, it will execute at 10:08:00). If count is specified, the command will be executed count times with the given interval in between. If you specify a count of 0, the timer will repeat until it's removed with killtimer or until the bot is restarted.</p>
 <p>Returns: a timerID</p>
 <p>Module: core</p>
 </div></blockquote>
@@ -2159,7 +2167,7 @@ will be used. Types 30-39 set the host to '*'.</p>
 <div class="section" id="strftime-formatstring-time">
 <h3>strftime &lt;formatstring&gt; [time]<a class="headerlink" href="#strftime-formatstring-time" title="Permalink to this headline">¶</a></h3>
 <blockquote>
-<div><p>Returns: a formatted string of time using standard strftime format. If time is specified, the value of the specified time is used. Otherwise, the current time is used.</p>
+<div><p>Returns: a formatted string of time using standard strftime format. If time is specified, the value of the specified time is used. Otherwise, the current time is used. Note: The implementation of strftime varies from platform to platform, so the user should only use POSIX-compliant format specifiers to ensure fully portable code.</p>
 <p>Module: core</p>
 </div></blockquote>
 </div>
@@ -2245,7 +2253,7 @@ will be used. Types 30-39 set the host to '*'.</p>
 <div class="section" id="encrypt-key-string">
 <h3>encrypt &lt;key&gt; &lt;string&gt;<a class="headerlink" href="#encrypt-key-string" title="Permalink to this headline">¶</a></h3>
 <blockquote>
-<div><p>Returns: encrypted string (using the currently loaded encryption module), encoded into ASCII using base-64. As of v1.8.3, the default blowfish encryption module can use either the older ECB mode (currently used by default for compatibility reasons), or the more recent and more-secure CBC mode. You can explicitly request which encryption mode to use by prefixing the encryption key with either &quot;ecb:&quot; or &quot;cbc:&quot;, or by using the blowfish-use-mode setting in the config file. Note: the default encryption mode for this function is planned to transition from ECB to CBC in v1.9.0.</p>
+<div><p>Returns: encrypted string (using the currently loaded encryption module), encoded into ASCII using base-64. As of v1.8.4, the default blowfish encryption module can use either the older ECB mode (currently used by default for compatibility reasons), or the more recent and more-secure CBC mode. You can explicitly request which encryption mode to use by prefixing the encryption key with either &quot;ecb:&quot; or &quot;cbc:&quot;, or by using the blowfish-use-mode setting in the config file. Note: the default encryption mode for this function is planned to transition from ECB to CBC in v1.9.0.</p>
 <p>Module: encryption</p>
 </div></blockquote>
 </div>
@@ -3315,7 +3323,7 @@ words) (This char only works in binds, not in regular matching)</td>
 </tbody>
 </table>
 <blockquote>
-<div>Copyright (C) 1999 - 2018 Eggheads Development Team</div></blockquote>
+<div>Copyright (C) 1999 - 2019 Eggheads Development Team</div></blockquote>
 </div>
 </div>
 
@@ -3354,6 +3362,7 @@ words) (This char only works in binds, not in regular matching)</td>
 <li class="toctree-l1"><a class="reference internal" href="../coreDocs/ctcp.html">CTCP Module</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../coreDocs/dns.html">DNS Module</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../coreDocs/filesys.html">Filesys Module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../coreDocs/ident.html">Ident Module</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../coreDocs/irc.html">IRC Module</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../coreDocs/notes.html">Notes Module</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../coreDocs/seen.html">Seen Module</a></li>
@@ -3398,8 +3407,8 @@ words) (This char only works in binds, not in regular matching)</td>
         <div class="right">
           
     <div class="footer" role="contentinfo">
-        &#169; Copyright 2018, Eggheads.
-      Last updated on Nov 01, 2018.
+        &#169; Copyright 2019, Eggheads.
+      Last updated on Jul 25, 2019.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.6.7.
     </div>
         </div>

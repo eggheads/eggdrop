@@ -8,7 +8,7 @@
  */
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2018 Eggheads Development Team
+ * Copyright (C) 1999 - 2019 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -193,12 +193,12 @@ static int detect_chan_flood(char *floodnick, char *floodhost, char *from,
     return 0;
 
   /* My user@host (?) */
-  if (!egg_strcasecmp(floodhost, botuserhost))
+  if (!strcasecmp(floodhost, botuserhost))
     return 0;
 
   m = ismember(chan, floodnick);
 
-  /* Do not punish non-existant channel members and IRC services like
+  /* Do not punish non-existent channel members and IRC services like
    * ChanServ
    */
   if (!m && (which != FLOOD_JOIN))
@@ -552,7 +552,7 @@ static void recheck_bans(struct chanset_t *chan)
 /* Make sure that all who are exempted on the userlist are actually in fact
  * exempted on the channel.
  *
- * Note: Since i was getting an excempt list, i assume i'm chop.
+ * Note: Since i was getting an exempt list, i assume i'm chop.
  */
 static void recheck_exempts(struct chanset_t *chan)
 {
@@ -859,7 +859,7 @@ static void check_this_user(char *hand, int delete, char *host)
     for (m = chan->channel.member; m && m->nick[0]; m = m->next) {
       sprintf(s, "%s!%s", m->nick, m->userhost);
       u = m->user ? m->user : get_user_by_host(s);
-      if ((u && !egg_strcasecmp(u->handle, hand) && delete < 2) ||
+      if ((u && !strcasecmp(u->handle, hand) && delete < 2) ||
           (!u && delete == 2 && match_addr(host, fixfrom(s)))) {
         u = delete ? NULL : u;
         get_user_flagrec(u, &fr, chan->dname);
@@ -1100,7 +1100,7 @@ static int got352(char *from, char *msg)
   return 0;
 }
 
-/* got a 354: who info! - iru style
+/* got a 354: who info! - ircu style whox
  */
 static int got354(char *from, char *msg)
 {
@@ -1116,6 +1116,10 @@ static int got354(char *from, char *msg)
         user = newsplit(&msg);  /* Grab the user */
         host = newsplit(&msg);  /* Grab the host */
         nick = newsplit(&msg);  /* Grab the nick */
+        if (strchr(nick, '.') || strchr(nick, ':')) { /* FIXME: Use 005 WHOX instead */
+          host = nick;
+          nick = newsplit(&msg);
+        }
         flags = newsplit(&msg); /* Grab the flags */
         got352or4(chan, user, host, nick, flags);
       }
@@ -1314,7 +1318,7 @@ static int got405(char *from, char *msg)
 }
 
 /* This is only of use to us with !channels. We get this message when
- * attempting to join a non-existant !channel... The channel must be
+ * attempting to join a non-existent !channel... The channel must be
  * created by sending 'JOIN !!<channel>'. <cybah>
  *
  * 403 - ERR_NOSUCHCHANNEL
@@ -1760,7 +1764,7 @@ static int gotjoin(char *from, char *chname)
       reset_chan_info(chan, CHAN_RESETALL);
     } else {
       m = ismember(chan, nick);
-      if (m && m->split && !egg_strcasecmp(m->userhost, uhost)) {
+      if (m && m->split && !strcasecmp(m->userhost, uhost)) {
         check_tcl_rejn(nick, uhost, u, chan->dname);
 
         chan = findchan(chname);
