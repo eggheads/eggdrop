@@ -40,6 +40,7 @@ There are also some variables you can set in your config file:
 
   set sharefail-unlink 1
     By default, linked bots will unlink when the userfile sharing fails.
-    Set this to 0 to keep the bots linked and retry every minute.
+    Set this to 0 to keep the bots linked and retry every minute (Both 
+    bots must be v1.9.0 or higher).
 
 Copyright (C) 2000 - 2019 Eggheads Development Team
