@@ -1251,7 +1251,6 @@ static void dns_forward(char *hostn)
 static int init_dns_network(void)
 {
   int option;
-  struct in_addr inaddr;
 
   resfd = socket(AF_INET, SOCK_DGRAM, 0);
   if (resfd == -1) {
@@ -1267,8 +1266,7 @@ static int init_dns_network(void)
     return 0;
   }
   option = 1;
-  if (setsockopt(resfd, SOL_SOCKET, SO_BROADCAST, (char *) &option,
-                 sizeof(option))) {
+  if (setsockopt(resfd, SOL_SOCKET, SO_BROADCAST, &option, sizeof(option))) {
     putlog(LOG_MISC, "*",
            "Unable to setsockopt() on nameserver communication socket: %s",
            strerror(errno));
@@ -1276,8 +1274,7 @@ static int init_dns_network(void)
     return 0;
   }
 
-  egg_inet_aton("127.0.0.1", &inaddr);
-  localhost = inaddr.s_addr;
+  localhost = htonl(INADDR_LOOPBACK);
   return 1;
 }
 
