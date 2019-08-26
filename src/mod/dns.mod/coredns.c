@@ -1218,7 +1218,7 @@ static int dns_hosts(char *hostn) {
   #define PATH "/etc/hosts"
   int fd, len, i, found = 0;
   struct stat sb;
-  char *addr, hostn_upper[256], hostn_lower[256], *c, *c2, ip[256];
+  char *addr, hostn_lower[256], hostn_upper[256], *c, *c2, ip[256];
   sockname_t name;
 
   fd = open(PATH, O_RDONLY);
@@ -1309,10 +1309,8 @@ static void dns_forward(char *hostn)
     }
     return;
   }
-
   if (dns_hosts(hostn))
     return;
-
   ddebug0(RES_MSG "Creating new record");
   rp = allocresolve();
   rp->state = STATE_AREQ;
