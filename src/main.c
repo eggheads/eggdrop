@@ -109,11 +109,8 @@ static char **argv;
  * modified versions of this bot.
  */
 
-char egg_version[1024] = EGG_STRINGVER;
+char egg_version[1024];
 int egg_numver = EGG_NUMVER;
-#ifdef EGG_PATCH
-char egg_patch[] = EGG_PATCH;
-#endif
 
 char notify_new[121] = "";      /* Person to send a note to for new users */
 int default_flags = 0;          /* Default user flags                     */
@@ -278,7 +275,7 @@ static void write_debug()
       dprintf(-x, "Please report problem to bugs@eggheads.org\n");
       dprintf(-x, "after a visit to http://www.eggheads.org/bugzilla/\n");
 #ifdef EGG_PATCH
-      dprintf(-x, "Patch level: %s\n", egg_patch);
+      dprintf(-x, "Patch level: %s\n", EGG_PATCH);
 #else
       dprintf(-x, "Patch level: %s\n", "stable");
 #endif
@@ -307,7 +304,7 @@ static void write_debug()
     strlcpy(s, ctime(&now), sizeof s);
     dprintf(-x, "Debug (%s) written %s\n", ver, s);
 #ifdef EGG_PATCH
-    dprintf(-x, "Patch level: %s\n", egg_patch);
+    dprintf(-x, "Patch level: %s\n", EGG_PATCH);
 #else
     dprintf(-x, "Patch level: %s\n", "stable");
 #endif
@@ -634,7 +631,7 @@ static struct tm nowtm;
  */
 static void core_secondly()
 {
-  static int cnt = 0;
+  static int cnt = 10; /* Don't wait the first 10 seconds to display */
   int miltime;
   time_t nowmins;
   int i;
@@ -1077,15 +1074,18 @@ int main(int arg_c, char **arg_v)
 
   /* Version info! */
 #ifdef EGG_PATCH
-  egg_snprintf(&egg_version[strlen(egg_version)], sizeof egg_version, 
-               "+%s", egg_patch);
-#endif
-  egg_snprintf(ver, sizeof ver, "eggdrop v%s", egg_version);
+  egg_snprintf(egg_version, sizeof egg_version, "%s+%s %u", EGG_STRINGVER, EGG_PATCH, egg_numver);
+  egg_snprintf(ver, sizeof ver, "eggdrop v%s+%s", EGG_STRINGVER, EGG_PATCH);
+  egg_snprintf(version, sizeof version,
+               "Eggdrop v%s+%s (C) 1997 Robey Pointer (C) 2010-2018 Eggheads",
+                EGG_STRINGVER, EGG_PATCH);
+#else
+  egg_snprintf(egg_version, sizeof egg_version, "%s %u", EGG_STRINGVER, egg_numver);
+  egg_snprintf(ver, sizeof ver, "eggdrop v%s", EGG_STRINGVER);
   egg_snprintf(version, sizeof version,
                "Eggdrop v%s (C) 1997 Robey Pointer (C) 2010-2019 Eggheads",
-               egg_version);
-  /* Now add on the patchlevel (for Tcl) */
-  sprintf(&egg_version[strlen(egg_version)], " %u", egg_numver);
+                EGG_STRINGVER);
+#endif
 
 /* For OSF/1 */
 #ifdef STOP_UAC

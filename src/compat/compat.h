@@ -23,10 +23,9 @@
 #ifndef _EGG_COMPAT_COMPAT_H
 #define _EGG_COMPAT_COMPAT_H
 
+#include "base64.h"
 #include "inet_aton.h"
 #include "snprintf.h"
-#include "strcasecmp.h"
-#include "strftime.h"
 #include "inet_ntop.h"
 #include "inet_pton.h"
 #include "gethostbyname2.h"

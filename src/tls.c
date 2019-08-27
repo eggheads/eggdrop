@@ -31,6 +31,7 @@
 #include <openssl/err.h>
 #include <openssl/rand.h>
 #include <openssl/x509v3.h>
+#include <openssl/ssl.h>
 
 extern int tls_vfydcc;
 extern struct dcc_t *dcc;
@@ -43,6 +44,8 @@ char tls_capath[121] = "";    /* Path to trusted CA certificates              */
 char tls_cafile[121] = "";    /* File containing trusted CA certificates      */
 char tls_certfile[121] = "";  /* Our own digital certificate ;)               */
 char tls_keyfile[121] = "";   /* Private key for use with eggdrop             */
+char tls_protocols[61] = "TLSv1 TLSv1.1 TLSv1.2 TLSv1.3" ; /* A list of protocols for SSL to use */
+char tls_dhparam[121] = "";   /* dhparam for SSL to use                       */
 char tls_ciphers[2049] = "";  /* A list of ciphers for SSL to use             */
 
 
@@ -167,6 +170,84 @@ int ssl_init()
     putlog(LOG_MISC, "*", "ERROR: TLS: unable to set CA certificates location: %s",
            ERR_error_string(ERR_get_error(), NULL));
     ERR_free_strings();
+  }
+  /* Let advanced users specify the list of allowed ssl protocols */
+  #define EGG_SSLv2   (1 << 0)
+  #define EGG_SSLv3   (1 << 1)
+  #define EGG_TLSv1   (1 << 2)
+  #define EGG_TLSv1_1 (1 << 3)
+  #define EGG_TLSv1_2 (1 << 4)
+  #define EGG_TLSv1_3 (1 << 5)
+  if (tls_protocols[0]) {
+    char s[sizeof tls_protocols];
+    char *sep = " ";
+    char *word;
+    unsigned int protocols = 0;
+    strcpy(s, tls_protocols);
+    for (word = strtok(s, sep); word; word = strtok(NULL, sep)) {
+      if (!strcmp(word, "SSLv2"))
+        protocols |= EGG_SSLv2;
+      if (!strcmp(word, "SSLv3"))
+        protocols |= EGG_SSLv3;
+      if (!strcmp(word, "TLSv1"))
+        protocols |= EGG_TLSv1;
+      if (!strcmp(word, "TLSv1.1"))
+        protocols |= EGG_TLSv1_1;
+      if (!strcmp(word, "TLSv1.2"))
+        protocols |= EGG_TLSv1_2;
+      if (!strcmp(word, "TLSv1.3"))
+        protocols |= EGG_TLSv1_3;
+    }
+    if (!(protocols & EGG_SSLv2)) {
+      SSL_CTX_set_options(ssl_ctx, SSL_OP_NO_SSLv2);
+    }
+    if (!(protocols & EGG_SSLv3)) {
+      SSL_CTX_set_options(ssl_ctx, SSL_OP_NO_SSLv3);
+    }
+    if (!(protocols & EGG_TLSv1)) {
+      SSL_CTX_set_options(ssl_ctx, SSL_OP_NO_TLSv1);
+    }
+#ifdef SSL_OP_NO_TLSv1_1
+    if (!(protocols & EGG_TLSv1_1)) {
+      SSL_CTX_set_options(ssl_ctx, SSL_OP_NO_TLSv1_1);
+    }
+#endif
+#ifdef SSL_OP_NO_TLSv1_2
+    if (!(protocols & EGG_TLSv1_2)) {
+      SSL_CTX_set_options(ssl_ctx, SSL_OP_NO_TLSv1_2);
+    }
+#endif
+#ifdef SSL_OP_NO_TLSv1_3
+    if (!(protocols & EGG_TLSv1_3)) {
+      SSL_CTX_set_options(ssl_ctx, SSL_OP_NO_TLSv1_3);
+    }
+#endif
+  }
+#ifdef SSL_OP_NO_COMPRESSION
+  SSL_CTX_set_options(ssl_ctx, SSL_OP_NO_COMPRESSION);
+#endif
+  /* Let advanced users specify dhparam */
+  if (tls_dhparam[0]) {
+    DH *dh;
+    FILE *paramfile = fopen(tls_dhparam, "r");
+    if (paramfile) {
+      dh = PEM_read_DHparams(paramfile, NULL, NULL, NULL);
+      fclose(paramfile);
+      if (dh) {
+        if (SSL_CTX_set_tmp_dh(ssl_ctx, dh) != 1) {
+          putlog(LOG_MISC, "*", "ERROR: TLS: unable to set tmp dh %s: %s",
+                 tls_dhparam, ERR_error_string(ERR_get_error(), NULL));
+        }
+      }
+      else {
+        putlog(LOG_MISC, "*", "ERROR: TLS: unable to read DHparams %s: %s",
+               tls_dhparam, ERR_error_string(ERR_get_error(), NULL));
+      }
+    }
+    else {
+      putlog(LOG_MISC, "*", "ERROR: TLS: unable to open %s: %s",
+             tls_dhparam, strerror(errno));
+    }
   }
   /* Let advanced users specify the list of allowed ssl ciphers */
   if (tls_ciphers[0] && !SSL_CTX_set_cipher_list(ssl_ctx, tls_ciphers)) {
@@ -651,8 +732,10 @@ void ssl_info(SSL *ssl, int where, int ret)
     putlog(data->loglevel, "*", "TLS: handshake successful. Secure connection "
            "established.");
 
-    if ((cert = SSL_get_peer_certificate(ssl)))
+    if ((cert = SSL_get_peer_certificate(ssl))) {
       ssl_showcert(cert, data->loglevel);
+      X509_free(cert);
+    }
     else
       putlog(data->loglevel, "*", "TLS: peer did not present a certificate");
 
@@ -660,7 +743,7 @@ void ssl_info(SSL *ssl, int where, int ret)
     cipher = SSL_get_current_cipher(ssl);
     processed = SSL_CIPHER_get_bits(cipher, &secret);
     putlog(data->loglevel, "*", "TLS: cipher used: %s %s; %d bits (%d secret)",
-           SSL_CIPHER_get_name(cipher), SSL_CIPHER_get_version(cipher),
+           SSL_CIPHER_get_name(cipher), SSL_get_version(ssl),
            processed, secret);
     /* secret are the actually secret bits. If processed and secret differ,
        the rest of the bits are fixed, i.e. for limited export ciphers */

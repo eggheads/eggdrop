@@ -1,7 +1,6 @@
 /*
  * tclserv.c -- part of server.mod
- */
-/*
+ *
  * Copyright (C) 1997 Robey Pointer
  * Copyright (C) 1999 - 2019 Eggheads Development Team
  *
@@ -38,7 +37,7 @@ static int tcl_putnow STDVAR
 
   BADARGS(2, 3, " text ?options?");
 
-  if ((argc == 3) && egg_strcasecmp(argv[2], "-oneline")) {
+  if ((argc == 3) && strcasecmp(argv[2], "-oneline")) {
     Tcl_AppendResult(irp, "unknown putnow option: should be ",
                      "-oneline", NULL);
     return TCL_ERROR;
@@ -61,7 +60,7 @@ static int tcl_putnow STDVAR
     len = p - r + 1; /* leave space for '\0' */
     strlcpy(q, r, len);
     if (check_tcl_out(0, q, 0)) {
-      if (!*p || ((argc == 3) && !egg_strcasecmp(argv[2], "-oneline")))
+      if (!*p || ((argc == 3) && !strcasecmp(argv[2], "-oneline")))
         break;
       r = p + 1;
       continue;
@@ -74,7 +73,7 @@ static int tcl_putnow STDVAR
     q += len - 1; /* the '\0' must be overwritten */
     *q++ = '\r';
     *q++ = '\n'; /* comply with the RFC */
-    if (!*p || ((argc == 3) && !egg_strcasecmp(argv[2], "-oneline")))
+    if (!*p || ((argc == 3) && !strcasecmp(argv[2], "-oneline")))
       break; /* cut on newline requested or message ended */
     r = p + 1;
   }
@@ -88,8 +87,8 @@ static int tcl_putquick STDVAR
 
   BADARGS(2, 3, " text ?options?");
 
-  if ((argc == 3) && egg_strcasecmp(argv[2], "-next") &&
-      egg_strcasecmp(argv[2], "-normal")) {
+  if ((argc == 3) && strcasecmp(argv[2], "-next") &&
+      strcasecmp(argv[2], "-normal")) {
     Tcl_AppendResult(irp, "unknown putquick option: should be one of: ",
                      "-normal -next", NULL);
     return TCL_ERROR;
@@ -102,7 +101,7 @@ static int tcl_putquick STDVAR
   p = strchr(s, '\r');
   if (p != NULL)
     *p = 0;
-  if (argc == 3 && !egg_strcasecmp(argv[2], "-next"))
+  if (argc == 3 && !strcasecmp(argv[2], "-next"))
     dprintf(DP_MODE_NEXT, "%s\n", s);
   else
     dprintf(DP_MODE, "%s\n", s);
@@ -115,8 +114,8 @@ static int tcl_putserv STDVAR
 
   BADARGS(2, 3, " text ?options?");
 
-  if ((argc == 3) && egg_strcasecmp(argv[2], "-next") &&
-      egg_strcasecmp(argv[2], "-normal")) {
+  if ((argc == 3) && strcasecmp(argv[2], "-next") &&
+      strcasecmp(argv[2], "-normal")) {
     Tcl_AppendResult(irp, "unknown putserv option: should be one of: ",
                      "-normal -next", NULL);
     return TCL_ERROR;
@@ -129,7 +128,7 @@ static int tcl_putserv STDVAR
   p = strchr(s, '\r');
   if (p != NULL)
     *p = 0;
-  if (argc == 3 && !egg_strcasecmp(argv[2], "-next"))
+  if (argc == 3 && !strcasecmp(argv[2], "-next"))
     dprintf(DP_SERVER_NEXT, "%s\n", s);
   else
     dprintf(DP_SERVER, "%s\n", s);
@@ -142,8 +141,8 @@ static int tcl_puthelp STDVAR
 
   BADARGS(2, 3, " text ?options?");
 
-  if ((argc == 3) && egg_strcasecmp(argv[2], "-next") &&
-      egg_strcasecmp(argv[2], "-normal")) {
+  if ((argc == 3) && strcasecmp(argv[2], "-next") &&
+      strcasecmp(argv[2], "-normal")) {
     Tcl_AppendResult(irp, "unknown puthelp option: should be one of: ",
                      "-normal -next", NULL);
     return TCL_ERROR;
@@ -156,12 +155,37 @@ static int tcl_puthelp STDVAR
   p = strchr(s, '\r');
   if (p != NULL)
     *p = 0;
-  if (argc == 3 && !egg_strcasecmp(argv[2], "-next"))
+  if (argc == 3 && !strcasecmp(argv[2], "-next"))
     dprintf(DP_HELP_NEXT, "%s\n", s);
   else
     dprintf(DP_HELP, "%s\n", s);
   return TCL_OK;
 }
+
+/* Tcl interface to send CAP messages to server */
+static int tcl_cap STDVAR {
+  char s[CAPMAX];
+  BADARGS(2, 3, " sub-cmd ?arg?");
+
+  if (!strcasecmp(argv[1], "available")) {
+    Tcl_AppendResult(irp, cap.supported, NULL);
+  } else if (!strcasecmp(argv[1], "active")) {
+    Tcl_AppendResult(irp, cap.negotiated, NULL);
+  } else if (!strcasecmp(argv[1], "raw")) {
+    if (argc == 3) {
+      simple_sprintf(s, "CAP %s", argv[2]);
+      dprintf(DP_SERVER, "%s\n", s);
+    } else {
+      Tcl_AppendResult(irp, "Raw requires a CAP sub-command to be provided",
+        NULL);
+      return TCL_ERROR;
+    }
+  } else {
+      Tcl_AppendResult(irp, "Invalid cap command", NULL);
+  }
+  return TCL_OK;
+}
+
 
 static int tcl_jump STDVAR
 {
@@ -311,6 +335,7 @@ static int tcl_queuesize STDVAR
 
 static tcl_cmds my_tcl_cmds[] = {
   {"jump",       tcl_jump},
+  {"cap",        tcl_cap},
   {"isbotnick",  tcl_isbotnick},
   {"clearqueue", tcl_clearqueue},
   {"queuesize",  tcl_queuesize},

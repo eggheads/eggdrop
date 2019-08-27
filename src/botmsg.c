@@ -780,10 +780,10 @@ int add_note(char *to, char *from, char *msg, int idx, int echo)
     *p = '@';
     p++;
 
-    if (!egg_strcasecmp(p, botnetnick)) /* To me?? */
+    if (!strcasecmp(p, botnetnick)) /* To me?? */
       return add_note(x, from, msg, idx, echo); /* Start over, dimwit. */
 
-    if (egg_strcasecmp(from, botnetnick)) {
+    if (strcasecmp(from, botnetnick)) {
       if (strlen(from) > FROMLEN)
         from[FROMLEN] = 0;
 
@@ -867,7 +867,7 @@ int add_note(char *to, char *from, char *msg, int idx, int echo)
   for (i = 0; i < dcc_total; i++) {
     if ((dcc[i].type->flags & DCT_GETNOTES) &&
         (sock == -1 || sock == dcc[i].sock) &&
-        !egg_strcasecmp(dcc[i].nick, to)) {
+        !strcasecmp(dcc[i].nick, to)) {
       int aok = 1;
 
       if (dcc[i].type == &DCC_CHAT) {
@@ -899,7 +899,7 @@ int add_note(char *to, char *from, char *msg, int idx, int echo)
             fr = p + 1;
         }
 
-        if (idx == -2 || !egg_strcasecmp(from, botnetnick))
+        if (idx == -2 || !strcasecmp(from, botnetnick))
           dprintf(i, "*** [%s] %s%s\n", fr, l ? work : "", msg);
         else
           dprintf(i, "%cNote [%s]: %s%s\n", 7, fr, l ? work : "", msg);
