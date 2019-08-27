@@ -80,6 +80,7 @@
 #define exclusive_binds (*(int *)(server_funcs[39]))
 /* 40 - 43 */
 #define H_out (*(p_tcl_bind_list *)(server_funcs[40]))
+#define net_type (*(int *)(server_funcs[41]))
 #else /* MAKING_SERVER */
 
 /* Macros for commonly used commands. */
