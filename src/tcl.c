@@ -68,7 +68,7 @@ extern int pref_af;
 #ifdef TLS
 extern int tls_maxdepth, tls_vfybots, tls_vfyclients, tls_vfydcc, tls_auth;
 extern char tls_capath[], tls_cafile[], tls_certfile[], tls_keyfile[],
-            tls_ciphers[];
+            tls_protocols[], tls_dhparam[], tls_ciphers[];
 #endif
 
 extern struct dcc_t *dcc;
@@ -370,7 +370,9 @@ static tcl_strings def_tcl_strings[] = {
 #ifdef TLS
   {"ssl-capath",      tls_capath,     120, STR_DIR | STR_PROTECT},
   {"ssl-cafile",      tls_cafile,     120,           STR_PROTECT},
-  {"ssl-ciphers",     tls_ciphers,    2048,          STR_PROTECT},
+  {"ssl-protocols",   tls_protocols,  60,            STR_PROTECT},
+  {"ssl-dhparam",     tls_dhparam,    120,           STR_PROTECT},
+  {"ssl-ciphers",     tls_ciphers,    2048,           STR_PROTECT},
   {"ssl-privatekey",  tls_keyfile,    120,           STR_PROTECT},
   {"ssl-certificate", tls_certfile,   120,           STR_PROTECT},
 #endif

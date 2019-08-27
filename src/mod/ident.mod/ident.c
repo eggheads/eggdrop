@@ -65,7 +65,7 @@ static void ident_activity(int idx, char *buf, int len)
   }
   buf2[i - 1] = 0;
   if (!(pos = strpbrk(buf2, "\r\n"))) {
-    putlog(LOG_MISC, "*", "Ident error: couldnt read request.");
+    putlog(LOG_MISC, "*", "Ident error: could not read request.");
     return;
   } 
   snprintf(pos, (sizeof buf2) - (pos - buf2), " : USERID : UNIX : %s\r\n", botname);

@@ -38,6 +38,8 @@
 #include <netinet/in.h>
 #include <arpa/inet.h>
 #include <arpa/nameser.h>
+#undef answer /* before resolv.h because it could collide with src/mod/module.h
+		 (dietlibc) */
 #include <resolv.h>
 #include <errno.h>
 

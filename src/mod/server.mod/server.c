@@ -123,6 +123,12 @@ static char *realservername;
 
 static int sasl = 0;
 
+static int sasl_mechanism = 0;
+static char sasl_username[NICKMAX + 1];
+static char sasl_password[81];
+static int sasl_continue = 1;
+static char sasl_ecdsa_key[121];
+
 #include "servmsg.c"
 
 #define MAXPENALTY 10
@@ -134,6 +140,13 @@ static int burst;
 
 #include "cmdsserv.c"
 #include "tclserv.c"
+
+/* Available sasl mechanisms. */
+char const *SASL_MECHANISMS[SASL_MECHANISM_NUM] = {
+  [SASL_MECHANISM_PLAIN]                    = "PLAIN",
+  [SASL_MECHANISM_ECDSA_NIST256P_CHALLENGE] = "ECDSA-NIST256P-CHALLENGE",
+  [SASL_MECHANISM_EXTERNAL]                 = "EXTERNAL"
+};
 
 
 static void write_to_server(char *s, unsigned int len) {
@@ -817,8 +830,13 @@ static void queue_server(int which, char *msg, int len)
   remove_crlf(&msg);
   len = strlen(buf);
 
-  /* No queue for PING and PONG - drummer */
-  if (!strncasecmp(buf, "PING", 4) || !strncasecmp(buf, "PONG", 4)) {
+  /* No queue for PING, PONG and AUTHENTICATE */
+  #define PING "PING"
+  #define PONG "PONG"
+  #define AUTHENTICATE "AUTHENTICATE"
+  if (!strncasecmp(buf, PING, sizeof PING - 1) ||
+      !strncasecmp(buf, PONG, sizeof PONG - 1) ||
+      !strncasecmp(buf, AUTHENTICATE, sizeof AUTHENTICATE - 1)) {
     if (buf[1] == 'I' || buf[1] == 'i')
       lastpingtime = now;
     check_tcl_out(which, buf, 1);
@@ -1388,6 +1406,9 @@ static tcl_strings my_tcl_strings[] = {
   {"connect-server",      connectserver,  120,               0},
   {"stackable-commands",  stackablecmds,  510,               0},
   {"stackable2-commands", stackable2cmds, 510,               0},
+  {"sasl-username",       sasl_username,  NICKMAX,           0},
+  {"sasl-password",       sasl_password,  80,                0},
+  {"sasl-ecdsa-key",      sasl_ecdsa_key, 120,               0},
   {NULL,                  NULL,           0,                 0}
 };
 
@@ -1428,6 +1449,8 @@ static tcl_ints my_tcl_ints[] = {
   {"ssl-verify-server", &tls_vfyserver,             0},
 #endif
   {"sasl",              &sasl,                      0},
+  {"sasl-mechanism",    &sasl_mechanism,            0},
+  {"sasl-continue",     &sasl_continue,             0},
   {NULL,                NULL,                       0}
 };
 
