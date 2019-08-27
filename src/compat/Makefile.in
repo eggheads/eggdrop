@@ -41,7 +41,7 @@ compat: $(OBJS)
 	$(CC) $(CFLAGS) $(CPPFLAGS) -c $<
 
 #safety hash
-base64.o: base64.c
+base64.o: base64.c ../../config.h
 gethostbyname2.o: gethostbyname2.c gethostbyname2.h ../../src/main.h \
  ../../config.h ../../eggint.h ../../lush.h ../../src/lang.h \
  ../../src/eggdrop.h ../../src/compat/in6.h ../../src/flags.h \
