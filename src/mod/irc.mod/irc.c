@@ -1017,7 +1017,7 @@ static void irc_report(int idx, int details)
 static void do_nettype()
 {
   switch (net_type) {
-  case 0: /* EFnet */
+  case NETT_EFNET:
     kick_method = 1;
     modesperline = 4;
     use_354 = 0;
@@ -1030,7 +1030,7 @@ static void do_nettype()
     rfc_compliant = 1;
     include_lk = 0;
     break;
-  case 1: /* IRCnet */
+  case NETT_IRCNET:
     kick_method = 4;
     modesperline = 3;
     use_354 = 0;
@@ -1043,7 +1043,7 @@ static void do_nettype()
     rfc_compliant = 1;
     include_lk = 1;
     break;
-  case 2: /* UnderNet */
+  case NETT_UNDERNET:
     kick_method = 1;
     modesperline = 6;
     use_354 = 1;
@@ -1056,7 +1056,7 @@ static void do_nettype()
     rfc_compliant = 1;
     include_lk = 1;
     break;
-  case 3: /* DALnet */
+  case NETT_DALNET:
     kick_method = 1;
     modesperline = 6;
     use_354 = 0;
@@ -1069,7 +1069,7 @@ static void do_nettype()
     rfc_compliant = 0;
     include_lk = 1;
     break;
-  case 4: /* Hybrid-6+ */
+  case NETT_HYBRID_EFNET:
     kick_method = 1;
     modesperline = 4;
     use_354 = 0;

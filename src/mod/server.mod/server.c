@@ -1992,7 +1992,8 @@ static Function server_table[] = {
   (Function) check_tcl_notc,
   (Function) & exclusive_binds, /* int                                  */
   /* 40 - 43 */
-  (Function) & H_out            /* p_tcl_bind_list                      */
+  (Function) & H_out,           /* p_tcl_bind_list                      */
+  (Function) & net_type         /* int                                  */
 };
 
 char *server_start(Function *global_funcs)

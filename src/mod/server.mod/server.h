@@ -113,15 +113,15 @@ extern struct cap_list cap;
 
 /* Available net types. */
 enum {
-  NETT_EFNET        = 0, /* EFnet                    */
-  NETT_IRCNET       = 1, /* IRCnet                   */
-  NETT_UNDERNET     = 2, /* UnderNet                 */
-  NETT_DALNET       = 3, /* DALnet                   */
-  NETT_HYBRID_EFNET = 4, /* +e/+I/max-bans 20 Hybrid */
-  NETT_OTHERS       = 5, /* Others                   */
-  NETT_FREENODE     = 6, /* freenode                 */
-  NETT_QUAKENET     = 7, /* QuakeNet                 */
-  NETT_RIZON        = 8  /* Rizon                    */
+  NETT_EFNET,        /* EFnet                             */
+  NETT_IRCNET,       /* IRCnet                            */
+  NETT_UNDERNET,     /* UnderNet                          */
+  NETT_DALNET,       /* DALnet                            */
+  NETT_HYBRID_EFNET, /* Hybrid-6+ EFnet +e/+I/max-bans 20 */
+  NETT_OTHERS,       /* Others                            */
+  NETT_FREENODE,     /* freenode                          */
+  NETT_QUAKENET,     /* QuakeNet                          */
+  NETT_RIZON         /* Rizon                             */
 };
 
 /* Available sasl mechanisms. */
