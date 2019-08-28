@@ -1400,18 +1400,30 @@ static char *traced_nettype(ClientData cdata, Tcl_Interp *irp,
     net_type_int = NETT_RIZON;
   else if (!strcasecmp(net_type, "Undernet"))
     net_type_int = NETT_UNDERNET;
-  else if (!strcasecmp(net_type, "0")) /* For backwards compatibility */
+  else if (!strcasecmp(net_type, "0")) { /* For backwards compatibility */
+    strlcpy(net_type, "EFnet", sizeof net_type);
     net_type_int = NETT_EFNET;
-  else if (!strcasecmp(net_type, "1")) /* For backwards compatibility */
+  }
+  else if (!strcasecmp(net_type, "1")) { /* For backwards compatibility */
+    strlcpy(net_type, "IRCnet", sizeof net_type);
     net_type_int = NETT_IRCNET;
-  else if (!strcasecmp(net_type, "2")) /* For backwards compatibility */
+  }
+  else if (!strcasecmp(net_type, "2")) { /* For backwards compatibility */
+    strlcpy(net_type, "Undernet", sizeof net_type);
     net_type_int = NETT_UNDERNET;
-  else if (!strcasecmp(net_type, "3")) /* For backwards compatibility */
+  }
+  else if (!strcasecmp(net_type, "3")) { /* For backwards compatibility */
+    strlcpy(net_type, "DALnet", sizeof net_type);
     net_type_int = NETT_DALNET;
-  else if (!strcasecmp(net_type, "4")) /* For backwards compatibility */
+  }
+  else if (!strcasecmp(net_type, "4")) { /* For backwards compatibility */
+    strlcpy(net_type, "Hybrid", sizeof net_type);
     net_type_int = NETT_HYBRID_EFNET;
-  else
+  }
+  else {
+    strlcpy(net_type, "Others", sizeof net_type);
     net_type_int = NETT_OTHERS;
+  }
   do_nettype();
   return NULL;
 }
