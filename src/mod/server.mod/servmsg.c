@@ -1354,7 +1354,6 @@ void update_cap_negotiated() {
  * before adding to the desired list.
  */
 void add_cape(char *cape) {
-  int len = 0, i = 0;
   if (!strstr(cap.negotiated, cape)) {
     putlog(LOG_DEBUG, "*", "CAP: Adding cape %s to negotiated list", cape);
     Tcl_ListObjAppendElement(interp, ncapeslist, Tcl_NewStringObj(cape, -1));
