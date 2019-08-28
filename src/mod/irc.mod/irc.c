@@ -1058,15 +1058,15 @@ static void do_nettype()
     include_lk = 1;
     break;
   case NETT_DALNET:
-    kick_method = 1;
+    kick_method = 4;
     modesperline = 6;
     use_354 = 0;
     use_exempts = 1;
     use_invites = 1;
     max_bans = 200;
-    max_exempts = 200;
-    max_invites = 200;
-    max_modes = 200;
+    max_exempts = 100;
+    max_invites = 100;
+    max_modes = 100;
     rfc_compliant = 0;
     include_lk = 1;
     break;
