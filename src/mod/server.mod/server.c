@@ -1360,6 +1360,7 @@ static void do_nettype(void)
                    "PRIVMSG NOTICE PART WHOIS WHOWAS USERHOST ISON WATCH DCCALLOW");
     simple_sprintf(stackable2cmds, "USERHOST ISON WATCH");
     stack_limit = 20;
+    kick_method = 4;
     break;
   case NETT_FREENODE:
     nick_len = 16;
