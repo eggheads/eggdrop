@@ -280,7 +280,7 @@ static int calc_penalty(char *msg)
   int penalty, i, ii;
 
   if (!use_penalties && net_type_int != NETT_UNDERNET &&
-      net_type_int != NETT_HYBRID_EFNET)
+      net_type_int != NETT_QUAKENET && net_type_int != NETT_HYBRID_EFNET)
     return 0;
 
   cmd = newsplit(&msg);
@@ -289,7 +289,8 @@ static int calc_penalty(char *msg)
   else
     i = strlen(cmd);
   last_time -= 2;               /* undo eggdrop standard flood prot */
-  if (net_type_int == NETT_UNDERNET || net_type_int == NETT_HYBRID_EFNET) {
+  if (net_type_int == NETT_UNDERNET || net_type_int == NETT_QUAKENET ||
+      net_type_int == NETT_HYBRID_EFNET) {
     last_time += (2 + i / 120);
     return 0;
   }
