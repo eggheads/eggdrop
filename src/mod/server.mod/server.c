@@ -1365,7 +1365,12 @@ static void do_nettype(void)
     nick_len = 16;
     break;
   case NETT_QUAKENET:
+    check_mode_r = 0;
+    use_fastdeq = 2;
     nick_len = 15;
+    simple_sprintf(stackablecmds,
+                   "PRIVMSG NOTICE TOPIC PART WHOIS USERHOST USERIP ISON");
+    simple_sprintf(stackable2cmds, "USERHOST USERIP ISON");
     break;
   case NETT_RIZON:
     nick_len = 30;
