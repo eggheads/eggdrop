@@ -1089,10 +1089,10 @@ static void do_nettype()
     use_354 = 1;
     use_exempts = 0;
     use_invites = 0;
-    max_bans = 100;
-    max_exempts = 100;
-    max_invites = 100;
-    max_modes = 100;
+    max_bans = 45;
+    max_exempts = 45;
+    max_invites = 45;
+    max_modes = 45;
     rfc_compliant = 1;
     include_lk = 1;
     break;
