@@ -30,5 +30,7 @@
    in the given time, it closes.
 %{help=set sharefail-unlink}%{+n}
 ###  %bset sharefail-unlink%b <0/1>
-   By default, linked bots will unlink when the userfile sharing fails.
-   Set this to 0 to keep the bots linked and retry every minute.
+    By default, Eggdrop will abort the linking process if userfile sharing is
+    enabled but the userfile transfer fails. Set this to 0 to keep the bots
+    linked if the userfile transfer fails and retry every minute (both bots must
+    be v1.9.0 or higher).
