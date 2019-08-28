@@ -1332,6 +1332,7 @@ static void do_nettype(void)
 {
   switch (net_type_int) {
   case NETT_EFNET:
+  case NETT_HYBRID_EFNET:
     check_mode_r = 0;
     nick_len = 9;
     break;
@@ -1359,10 +1360,6 @@ static void do_nettype(void)
                    "PRIVMSG NOTICE PART WHOIS WHOWAS USERHOST ISON WATCH DCCALLOW");
     simple_sprintf(stackable2cmds, "USERHOST ISON WATCH");
     stack_limit = 20;
-    break;
-  case NETT_HYBRID_EFNET:
-    check_mode_r = 0;
-    nick_len = 9;
     break;
   case NETT_FREENODE:
     nick_len = 16;
