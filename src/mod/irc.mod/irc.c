@@ -1016,7 +1016,7 @@ static void irc_report(int idx, int details)
 
 static void do_nettype()
 {
-  switch (net_type) {
+  switch (net_type_int) {
   case NETT_EFNET:
     kick_method = 1;
     modesperline = 4;

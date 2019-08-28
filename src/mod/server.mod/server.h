@@ -80,7 +80,7 @@
 #define exclusive_binds (*(int *)(server_funcs[39]))
 /* 40 - 43 */
 #define H_out (*(p_tcl_bind_list *)(server_funcs[40]))
-#define net_type (*(int *)(server_funcs[41]))
+#define net_type_int (*(int *)(server_funcs[41]))
 #else /* MAKING_SERVER */
 
 /* Macros for commonly used commands. */
@@ -113,15 +113,15 @@ extern struct cap_list cap;
 
 /* Available net types. */
 enum {
-  NETT_EFNET,        /* EFnet                             */
-  NETT_IRCNET,       /* IRCnet                            */
-  NETT_UNDERNET,     /* UnderNet                          */
   NETT_DALNET,       /* DALnet                            */
-  NETT_HYBRID_EFNET, /* Hybrid-6+ EFnet +e/+I/max-bans 20 */
-  NETT_OTHERS,       /* Others                            */
+  NETT_EFNET,        /* EFnet                             */
   NETT_FREENODE,     /* freenode                          */
+  NETT_HYBRID_EFNET, /* Hybrid-6+ EFnet +e/+I/max-bans 20 */
+  NETT_IRCNET,       /* IRCnet                            */
   NETT_QUAKENET,     /* QuakeNet                          */
-  NETT_RIZON         /* Rizon                             */
+  NETT_RIZON,        /* Rizon                             */
+  NETT_UNDERNET,     /* UnderNet                          */
+  NETT_OTHERS,       /* Others                            */
 };
 
 /* Available sasl mechanisms. */

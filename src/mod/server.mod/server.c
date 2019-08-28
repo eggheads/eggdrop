@@ -74,7 +74,8 @@ static int exclusive_binds;     /* configures PUBM and MSGM binds to be
 static int answer_ctcp;         /* answer how many stacked ctcp's ? */
 static int lowercase_ctcp;      /* answer lowercase CTCP's (non-standard) */
 static int check_mode_r;        /* check for IRCnet +r modes */
-static int net_type;
+static char net_type[9];
+static int net_type_int;
 static char connectserver[121]; /* what, if anything, to do before connect
                                  * to the server */
 static int resolvserv;          /* in the process of resolving a server host */
@@ -278,8 +279,8 @@ static int calc_penalty(char *msg)
   char *cmd, *par1, *par2, *par3;
   int penalty, i, ii;
 
-  if (!use_penalties && net_type != NETT_UNDERNET &&
-      net_type != NETT_HYBRID_EFNET)
+  if (!use_penalties && net_type_int != NETT_UNDERNET &&
+      net_type_int != NETT_HYBRID_EFNET)
     return 0;
 
   cmd = newsplit(&msg);
@@ -288,7 +289,7 @@ static int calc_penalty(char *msg)
   else
     i = strlen(cmd);
   last_time -= 2;               /* undo eggdrop standard flood prot */
-  if (net_type == NETT_UNDERNET || net_type == NETT_HYBRID_EFNET) {
+  if (net_type_int == NETT_UNDERNET || net_type_int == NETT_HYBRID_EFNET) {
     last_time += (2 + i / 120);
     return 0;
   }
@@ -1329,7 +1330,7 @@ static char *traced_botname(ClientData cdata, Tcl_Interp *irp,
 
 static void do_nettype(void)
 {
-  switch (net_type) {
+  switch (net_type_int) {
   case NETT_EFNET:
     check_mode_r = 0;
     nick_len = 9;
@@ -1379,6 +1380,34 @@ static char *traced_nettype(ClientData cdata, Tcl_Interp *irp,
                             EGG_CONST char *name1,
                             EGG_CONST char *name2, int flags)
 {
+  if (!strcasecmp(net_type, "DALnet"))
+    net_type_int = NETT_DALNET;
+  else if (!strcasecmp(net_type, "EFnet"))
+    net_type_int = NETT_EFNET;
+  else if (!strcasecmp(net_type, "freenode"))
+    net_type_int = NETT_FREENODE;
+  else if (!strcasecmp(net_type, "Hybrid"))
+    net_type_int = NETT_HYBRID_EFNET;
+  else if (!strcasecmp(net_type, "IRCnet"))
+    net_type_int = NETT_IRCNET;
+  else if (!strcasecmp(net_type, "QuakeNet"))
+    net_type_int = NETT_QUAKENET;
+  else if (!strcasecmp(net_type, "Rizon"))
+    net_type_int = NETT_RIZON;
+  else if (!strcasecmp(net_type, "Undernet"))
+    net_type_int = NETT_UNDERNET;
+  else if (!strcasecmp(net_type, "0")) /* For backwards compatibility */
+    net_type_int = NETT_EFNET;
+  else if (!strcasecmp(net_type, "1")) /* For backwards compatibility */
+    net_type_int = NETT_IRCNET;
+  else if (!strcasecmp(net_type, "2")) /* For backwards compatibility */
+    net_type_int = NETT_UNDERNET;
+  else if (!strcasecmp(net_type, "3")) /* For backwards compatibility */
+    net_type_int = NETT_DALNET;
+  else if (!strcasecmp(net_type, "4")) /* For backwards compatibility */
+    net_type_int = NETT_HYBRID_EFNET;
+  else
+    net_type_int = NETT_OTHERS;
   do_nettype();
   return NULL;
 }
@@ -1419,6 +1448,7 @@ static tcl_strings my_tcl_strings[] = {
   {"sasl-username",       sasl_username,  NICKMAX,           0},
   {"sasl-password",       sasl_password,  80,                0},
   {"sasl-ecdsa-key",      sasl_ecdsa_key, 120,               0},
+  {"net-type",            net_type,       8,                 0},
   {NULL,                  NULL,           0,                 0}
 };
 
@@ -1441,7 +1471,6 @@ static tcl_ints my_tcl_ints[] = {
   {"server-cycle-wait", (int *) &server_cycle_wait, 0},
   {"default-port",      &default_port,              0},
   {"check-mode-r",      &check_mode_r,              0},
-  {"net-type",          &net_type,                  0},
   {"ctcp-mode",         &ctcp_mode,                 0},
   {"double-mode",       &double_mode,               0},
   {"double-server",     &double_server,             0},
@@ -1993,7 +2022,7 @@ static Function server_table[] = {
   (Function) & exclusive_binds, /* int                                  */
   /* 40 - 43 */
   (Function) & H_out,           /* p_tcl_bind_list                      */
-  (Function) & net_type         /* int                                  */
+  (Function) & net_type_int     /* int                                  */
 };
 
 char *server_start(Function *global_funcs)
@@ -2039,7 +2068,7 @@ char *server_start(Function *global_funcs)
   check_mode_r = 0;
   maxqmsg = 300;
   burst = 0;
-  net_type = NETT_EFNET;
+  strlcpy(net_type, "EFnet", sizeof net_type);
   double_mode = 0;
   double_server = 0;
   double_help = 0;
