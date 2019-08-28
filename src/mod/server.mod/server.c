@@ -1373,6 +1373,7 @@ static void do_nettype(void)
     simple_sprintf(stackable2cmds, "USERHOST USERIP ISON");
     break;
   case NETT_RIZON:
+    check_mode_r = 0;
     nick_len = 30;
     break;
   }

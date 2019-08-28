@@ -1096,6 +1096,19 @@ static void do_nettype()
     rfc_compliant = 1;
     include_lk = 1;
     break;
+  case NETT_RIZON:
+    kick_method = 1;
+    modesperline = 4;
+    use_354 = 0;
+    use_exempts = 1;
+    use_invites = 1;
+    max_bans = 250;
+    max_exempts = 250;
+    max_invites = 250;
+    max_modes = 250;
+    rfc_compliant = 1;
+    include_lk = 0;
+    break;
   default:
     break;
   }
