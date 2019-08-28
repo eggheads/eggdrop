@@ -1018,6 +1018,7 @@ static void do_nettype()
 {
   switch (net_type_int) {
   case NETT_EFNET:
+  case NETT_FREENODE:
     kick_method = 1;
     modesperline = 4;
     use_354 = 0;
