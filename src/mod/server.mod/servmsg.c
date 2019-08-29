@@ -1529,8 +1529,8 @@ static void server_resolve_failure(int);
  */
 static void connect_server(void)
 {
-  char pass[121], botserver[UHOSTLEN];
-  int servidx;
+  char pass[121], botserver[UHOSTLEN], buf[16];
+  int servidx, v = 0;
   unsigned int botserverport = 0;
 
   lastpingcheck = 0;
@@ -1570,14 +1570,28 @@ static void connect_server(void)
       do_tcl("connect-server", connectserver);
     check_tcl_event("connect-server");
     next_server(&curserv, botserver, &botserverport, pass);
+#ifdef IPV6
+    if (inet_pton(AF_INET6, botserver, buf)) {
+      v = 6;     /* Because ipv6! Get it? */
+    }
+#endif
+    if (v) {
 #ifdef TLS
     putlog(LOG_SERV, "*", "%s [%s]:%s%d", IRC_SERVERTRY, botserver,
            use_ssl ? "+" : "", botserverport);
-    dcc[servidx].ssl = use_ssl;
 #else
     putlog(LOG_SERV, "*", "%s [%s]:%d", IRC_SERVERTRY, botserver,
            botserverport);
 #endif
+    } else {
+#ifdef TLS
+    putlog(LOG_SERV, "*", "%s %s:%s%d", IRC_SERVERTRY, botserver,
+           use_ssl ? "+" : "", botserverport);
+#else
+    putlog(LOG_SERV, "*", "%s [%s]:%d", IRC_SERVERTRY, botserver,
+           botserverport);
+#endif
+    }
     dcc[servidx].port = botserverport;
     strcpy(dcc[servidx].nick, "(server)");
     strlcpy(dcc[servidx].host, botserver, UHOSTLEN);

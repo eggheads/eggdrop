@@ -333,6 +333,23 @@ static int tcl_queuesize STDVAR
   return TCL_ERROR;
 }
 
+static int tcl_addserver STDVAR {
+  char name[121] = "";
+  char port[7] = "";
+  char pass[121] = "";
+
+  BADARGS(2, 4, "server ?port? ?pass?");
+  strlcpy(name, argv[1], sizeof name);
+  if (argc >= 3) {
+      strlcpy(port, argv[2], sizeof port);
+  }
+  if (argc == 4) {
+    strlcpy(pass, argv[3], sizeof pass);
+  }
+  add_server(name, port, pass);
+  return 0;
+}
+
 static tcl_cmds my_tcl_cmds[] = {
   {"jump",       tcl_jump},
   {"cap",        tcl_cap},
@@ -343,5 +360,7 @@ static tcl_cmds my_tcl_cmds[] = {
   {"putserv",    tcl_putserv},
   {"putquick",   tcl_putquick},
   {"putnow",     tcl_putnow},
+  {"addserver",  tcl_addserver},
+  {"delserver",  tcl_addserver},
   {NULL,         NULL}
 };

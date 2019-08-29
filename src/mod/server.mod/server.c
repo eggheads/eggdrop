@@ -120,6 +120,7 @@ static int deq_kick(int);
 static void msgq_clear(struct msgq_head *qh);
 static int stack_limit;
 static char *realservername;
+static void add_server(char *, char *, char *);
 
 static int sasl = 0;
 
@@ -980,19 +981,28 @@ static void queue_server(int which, char *msg, int len)
     deq_msg(); /* DP_MODE needs to be sent ASAP, flush if possible. */
 }
 
-/* Add a new server to the server_list.
- */
-static void add_server(const char *ss)
-{
-  struct server_list *x, *z;
-  char name[256] = "", port[11] = "", pass[121] = "";
 
-  for (z = serverlist; z && z->next; z = z->next);
-
-  /* Allow IPv6 and IPv4-mapped addresses in [] */
+/* This will be removed in v2.0
+   It is used to split the 'old' server lists prior to sending to
+   the new add_server as of v1.9.0
+*/
+static void old_add_server(const char *ss) {
+  char name[121] = "";
+  char port[7] = "";
+  char pass[121] = "";
   if (!sscanf(ss, "[%255[0-9.A-F:a-f]]:%10[+0-9]:%120[^\r\n]", name, port, pass) &&
       !sscanf(ss, "%255[^:]:%10[+0-9]:%120[^\r\n]", name, port, pass))
     return;
+  add_server(name, port, pass);
+}
+
+/* Add a new server to the server_list.
+ */
+static void add_server(char *name, char *port, char *pass)
+{
+  struct server_list *x, *z;
+
+  for (z = serverlist; z && z->next; z = z->next);
 
 #ifndef TLS
   if (port[0] == '+') {
@@ -1504,7 +1514,7 @@ static char *tcl_eggserver(ClientData cdata, Tcl_Interp *irp,
       if (code == TCL_ERROR)
         return "variable must be a list";
       for (i = 0; i < lc && i < 50; i++)
-        add_server((char *) list[i]);
+        old_add_server((char *) list[i]);
 
       /* Tricky way to make the bot reset its server pointers
        * perform part of a '.jump <current-server>':
@@ -1982,7 +1992,8 @@ static Function server_table[] = {
   (Function) check_tcl_notc,
   (Function) & exclusive_binds, /* int                                  */
   /* 40 - 43 */
-  (Function) & H_out            /* p_tcl_bind_list                      */
+  (Function) & H_out,           /* p_tcl_bind_list                      */
+  (Function) add_server
 };
 
 char *server_start(Function *global_funcs)
