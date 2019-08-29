@@ -1588,7 +1588,7 @@ static void connect_server(void)
     putlog(LOG_SERV, "*", "%s %s:%s%d", IRC_SERVERTRY, botserver,
            use_ssl ? "+" : "", botserverport);
 #else
-    putlog(LOG_SERV, "*", "%s [%s]:%d", IRC_SERVERTRY, botserver,
+    putlog(LOG_SERV, "*", "%s %s:%d", IRC_SERVERTRY, botserver,
            botserverport);
 #endif
     }
