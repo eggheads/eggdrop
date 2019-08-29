@@ -520,7 +520,13 @@ void putlog EGG_VARARGS_DEF(int, arg1)
   char *format, *chname, s[LOGLINELEN], s1[256], *out, ct[81], *s2, stamp[34];
   va_list va;
   time_t now2 = time(NULL);
-  struct tm *t = localtime(&now2);
+  static time_t now2_last = 0; /* cache expensive localtime() */
+  static struct tm *t;
+ 
+  if (now2 != now2_last) {
+    now2_last = now2;
+    t = localtime(&now2);
+  }
 
   type = EGG_VARARGS_START(int, arg1, va);
   chname = va_arg(va, char *);
