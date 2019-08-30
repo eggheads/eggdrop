@@ -135,9 +135,8 @@ int setsockname(sockname_t *addr, char *src, int port, int allowres)
 #ifdef IPV6
   char *endptr;
   long val;
-  int i;
   char src2[INET_ADDRSTRLEN];
-  int pref;
+  int i, pref;
 
   /* Note that inet_pton() does not accept 1-, 2-, or 3-part dotted addresses;
    * all four parts must be specified and are interpreted only as decimal
