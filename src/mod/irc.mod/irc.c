@@ -1232,9 +1232,9 @@ char *irc_start(Function *global_funcs)
     module_undepend(MODULE_NAME);
     return "This module requires Eggdrop 1.8.0 or later.";
   }
-  if (!(server_funcs = module_depend(MODULE_NAME, "server", 1, 0))) {
+  if (!(server_funcs = module_depend(MODULE_NAME, "server", 1, 5))) {
     module_undepend(MODULE_NAME);
-    return "This module requires server module 1.0 or later.";
+    return "This module requires server module 1.5 or later.";
   }
   if (!(channels_funcs = module_depend(MODULE_NAME, "channels", 1, 1))) {
     module_undepend(MODULE_NAME);
