@@ -130,12 +130,13 @@ char *iptostr(struct sockaddr *sa)
  */
 int setsockname(sockname_t *addr, char *src, int port, int allowres)
 {
+  struct hostent *hp;
+  int af = AF_UNSPEC;
+#ifdef IPV6
   char *endptr;
   long val;
+  int i;
   char src2[INET_ADDRSTRLEN];
-  struct hostent *hp;
-  int i, af = AF_UNSPEC;
-#ifdef IPV6
   int pref;
 
   /* Note that inet_pton() does not accept 1-, 2-, or 3-part dotted addresses;
