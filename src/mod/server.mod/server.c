@@ -1543,19 +1543,25 @@ static void dcc_chat_hostresolved(int);
 static int ctcp_DCC_CHAT(char *nick, char *from, char *handle,
                          char *object, char *keyword, char *text)
 {
-  char *action, *param, *ip, *prt, buf[512], *msg = buf;
+  char *action, *param, *ip, *port, buf[512], *msg = buf;
   int i;
 #ifdef TLS
   int ssl = 0;
 #endif
   struct userrec *u = get_user_by_handle(userlist, handle);
   struct flag_record fr = { FR_GLOBAL | FR_CHAN | FR_ANYWH, 0, 0, 0, 0, 0 };
+  unsigned int port_sane;
 
   strlcpy(buf, text, sizeof buf);
   action = newsplit(&msg);
   param = newsplit(&msg);
   ip = newsplit(&msg);
-  prt = newsplit(&msg);
+  port = newsplit(&msg);
+#ifdef IPV6
+  char ip_sane[INET6_ADDRSTRLEN];
+#else
+  char ip_sane[INET_ADDRSTRLEN];
+#endif
 #ifdef TLS
   if (strcasecmp(action, "CHAT") || strcasecmp(object, botname) || !u)
   {
@@ -1583,25 +1589,27 @@ static int ctcp_DCC_CHAT(char *nick, char *from, char *handle,
     if (!quiet_reject)
       dprintf(DP_HELP, "NOTICE %s :%s\n", nick, DCC_REFUSED3);
     putlog(LOG_MISC, "*", "%s: %s!%s", DCC_REFUSED4, nick, from);
-  } else if (atoi(prt) < 1024 || atoi(prt) > 65535) {
-    /* Invalid port */
-    if (!quiet_reject)
-      dprintf(DP_HELP, "NOTICE %s :%s (invalid port)\n", nick,
-              DCC_CONNECTFAILED1);
-    putlog(LOG_MISC, "*", "%s: CHAT (%s!%s)", DCC_CONNECTFAILED3, nick, from);
   } else {
-    if (!sanitycheck_dcc(nick, from, ip, prt))
+    if (!sanitycheck_dcc(nick, from, ip, port, &port_sane, ip_sane)) {
+      if (port_sane) {
+        if (!quiet_reject)
+          dprintf(DP_HELP, "NOTICE %s :%s (invalid port %s)\n", nick,
+                  DCC_CONNECTFAILED1, port);
+        putlog(LOG_MISC, "*", "%s: CHAT (%s!%s): invalid port %s",
+               DCC_CONNECTFAILED3, nick, from, port);
+      }
       return 1;
+    }
     i = new_dcc(&DCC_DNSWAIT, sizeof(struct dns_info));
     if (i < 0) {
-      putlog(LOG_MISC, "*", "DCC connection: CHAT (%s!%s)", nick, ip);
+      putlog(LOG_MISC, "*", "DCC connection: CHAT (%s!%s)", nick, ip_sane);
       return 1;
     }
 #ifdef TLS
     dcc[i].ssl = ssl;
 #endif
-    dcc[i].port = atoi(prt);
-    (void) setsockname(&dcc[i].sockname, ip, dcc[i].port, 0);
+    dcc[i].port = port_sane;
+    (void) setsockname(&dcc[i].sockname, ip_sane, dcc[i].port, 0);
     dcc[i].u.dns->ip = &dcc[i].sockname;
     dcc[i].sock = -1;
     strcpy(dcc[i].nick, u->handle);

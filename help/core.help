@@ -157,7 +157,6 @@ notify-newusers
 owner
 nat-ip
 cidr-support
-dcc-sanitycheck
 network
 whois-fields
 username

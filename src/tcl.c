@@ -433,7 +433,6 @@ static tcl_ints def_tcl_ints[] = {
   {"quick-logs",            &quick_logs,           0},
   {"raw-log",               &raw_log,              1},
   {"protect-telnet",        &protect_telnet,       0},
-  {"dcc-sanitycheck",       &dcc_sanitycheck,      0},
   {"ident-timeout",         &identtimeout,         0},
   {"share-unlinks",         &share_unlinks,        0},
   {"log-time",              &shtime,               0},
