@@ -1473,7 +1473,7 @@ int sanitycheck_dcc(char *nick, char *from, char *ip_insane, char *port, unsigne
       return 0;
     }
     if (IN6_IS_ADDR_V4MAPPED(&ip6)) {
-      memcpy(&ip, &in6_addr.s6_addr + 12, sizeof ip);
+      memcpy(&ip, &ip6.s6_addr + 12, sizeof ip);
       ip = ntohl(ip);
       if (inet_ntop(AF_INET, &ip, badaddress, sizeof badaddress)) {
         putlog(LOG_MISC, "*", "ALERT: (%s!%s) specified an invalid IPv4-mapped "
