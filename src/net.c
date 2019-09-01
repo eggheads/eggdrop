@@ -136,7 +136,7 @@ int setsockname(sockname_t *addr, char *src, int port, int allowres)
   char *endptr;
   long val;
   char src2[INET_ADDRSTRLEN];
-  int pref;
+  int i, pref;
 
   /* Note that inet_pton() does not accept 1-, 2-, or 3-part dotted addresses;
    * all four parts must be specified and are interpreted only as decimal
@@ -144,11 +144,12 @@ int setsockname(sockname_t *addr, char *src, int port, int allowres)
   if (*src) {
     val = strtol(src, &endptr, 10);
     if(!*endptr) {
+      i = htonl(val);
       snprintf(src2, sizeof src2, "%u.%u.%u.%u",
-               ((uint8_t *) &val)[3],
-               ((uint8_t *) &val)[2],
-               ((uint8_t *) &val)[1],
-               ((uint8_t *) &val)[0]);
+               ((uint8_t *) &i)[3],
+               ((uint8_t *) &i)[2],
+               ((uint8_t *) &i)[1],
+               ((uint8_t *) &i)[0]);
       src = src2;
     }
   }
