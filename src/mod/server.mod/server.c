@@ -1591,7 +1591,7 @@ static int ctcp_DCC_CHAT(char *nick, char *from, char *handle,
     putlog(LOG_MISC, "*", "%s: %s!%s", DCC_REFUSED4, nick, from);
   } else {
     if (!sanitycheck_dcc(nick, from, ip, port, &port_sane, ip_sane)) {
-      if (!port_sane) {
+      if (port_sane) {
         if (!quiet_reject)
           dprintf(DP_HELP, "NOTICE %s :%s (invalid port %s)\n", nick,
                   DCC_CONNECTFAILED1, port);
