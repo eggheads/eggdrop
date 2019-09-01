@@ -287,7 +287,7 @@ void dequeue_sockets();
 int sockread(char *, int *, sock_list *, int, int);
 int sockgets(char *, int *);
 void tell_netdebug(int);
-int sanitycheck_dcc(char *, char *, char *, char *, unsigned int *, char *);
+int sanitycheck_dcc(char *, char *, char *, char *);
 int hostsanitycheck_dcc(char *, char *, sockname_t *, char *, char *);
 char *iptostr(struct sockaddr *);
 int sock_has_data(int, int);

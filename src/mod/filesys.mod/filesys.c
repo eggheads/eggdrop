@@ -615,14 +615,8 @@ static void filesys_dcc_send(char *nick, char *from, struct userrec *u,
                              char *text)
 #endif
 {
-  char *param, *ip, *port, *buf = NULL, *msg;
+  char *param, *ip, *prt, *buf = NULL, *msg;
   int atr = u ? u->flags : 0, i, j = 0;
-  unsigned int port_sane;
-#ifdef IPV6
-  char ip_sane[INET6_ADDRSTRLEN];
-#else
-  char ip_sane[INET_ADDRSTRLEN];
-#endif
 
   if (text[j] == '"') {
     text[j] = ' ';
@@ -654,17 +648,13 @@ static void filesys_dcc_send(char *nick, char *from, struct userrec *u,
     putlog(LOG_FILES, "*", "Refused dcc send %s from %s!%s", param, nick, from);
   } else {
     ip = newsplit(&msg);
-    port = newsplit(&msg);
-    if (!sanitycheck_dcc(nick, from, ip, port, &port_sane, ip_sane)) {
-      if (!port_sane) {
-        if (!quiet_reject)
-          dprintf(DP_HELP, "NOTICE %s :%s (invalid port %s)\n", nick,
-                  DCC_CONNECTFAILED1, port);
-        putlog(LOG_FILES, "*", "Refused dcc send %s (%s): invalid port %s",
-               param, nick, port);
-      }
-      my_free(buf);
-      return;
+    prt = newsplit(&msg);
+    if (atoi(prt) < 1024 || atoi(prt) > 65535) {
+      /* Invalid port */
+      dprintf(DP_HELP, "NOTICE %s :%s (invalid port)\n", nick,
+              DCC_CONNECTFAILED1);
+      putlog(LOG_FILES, "*", "Refused dcc send %s (%s): invalid port", param,
+             nick);
     } else if (atoi(msg) == 0) {
       dprintf(DP_HELP, "NOTICE %s :Sorry, file size info must be included.\n",
               nick);
@@ -675,6 +665,11 @@ static void filesys_dcc_send(char *nick, char *from, struct userrec *u,
       putlog(LOG_FILES, "*", "Refused dcc send %s (%s): file too large", param,
              nick);
     } else {
+      /* This looks like a good place for a sanity check. */
+      if (!sanitycheck_dcc(nick, from, ip, prt)) {
+        my_free(buf);
+        return;
+      }
       i = new_dcc(&DCC_DNSWAIT, sizeof(struct dns_info));
       if (i < 0) {
         dprintf(DP_HELP, "NOTICE %s :Sorry, too many DCC connections.\n", nick);
@@ -682,8 +677,8 @@ static void filesys_dcc_send(char *nick, char *from, struct userrec *u,
                nick, from);
         return;
       }
-      dcc[i].port = port_sane;
-      (void) setsockname(&dcc[i].sockname, ip_sane, dcc[i].port, 0);
+      dcc[i].port = atoi(prt);
+      (void) setsockname(&dcc[i].sockname, ip, dcc[i].port, 0);
       dcc[i].u.dns->ip = &dcc[i].sockname;
       dcc[i].sock = -1;
 #ifdef TLS
@@ -823,16 +818,10 @@ static void filesys_dcc_send_hostresolved(int i)
 static int filesys_DCC_CHAT(char *nick, char *from, char *handle,
                             char *object, char *keyword, char *text)
 {
-  char *param, *ip, *port, buf[512], *msg = buf;
+  char *param, *ip, *prt, buf[512], *msg = buf;
   int i;
   struct userrec *u = get_user_by_handle(userlist, handle);
   struct flag_record fr = { FR_GLOBAL | FR_CHAN | FR_ANYWH, 0, 0, 0, 0, 0 };
-  unsigned int port_sane;
-#ifdef IPV6
-  char ip_sane[INET6_ADDRSTRLEN];
-#else
-  char ip_sane[INET_ADDRSTRLEN];
-#endif
 
   if (strcasecmp(object, botname))
     return 0;
@@ -871,19 +860,17 @@ static int filesys_DCC_CHAT(char *nick, char *from, char *handle,
     putlog(LOG_MISC, "*", "%s: %s!%s", DCC_REFUSED5, nick, from);
   } else {
     ip = newsplit(&msg);
-    port = newsplit(&msg);
-    if (!sanitycheck_dcc(nick, from, ip, port, &port_sane, ip_sane)) {
-      if (!port_sane) {
-        if (!quiet_reject)
-          dprintf(DP_HELP, "NOTICE %s :%s (invalid port %s)\n", nick,
-                  DCC_CONNECTFAILED1, port);
-        putlog(LOG_FILES, "*", "%s: %s!%s: invalid port %s", DCC_REFUSED7, nick,
-               from, port);
-      }
+    prt = newsplit(&msg);
+    if (atoi(prt) < 1024 || atoi(prt) > 65535) {
+      /* Invalid port */
+      if (!quiet_reject)
+        dprintf(DP_HELP, "NOTICE %s :%s (invalid port)\n", nick,
+                DCC_CONNECTFAILED1);
+      putlog(LOG_FILES, "*", "%s: %s!%s", DCC_REFUSED7, nick, from);
       return 1;
     }
     i = new_dcc(&DCC_FILES_PASS, sizeof(struct file_info));
-    dcc[i].sock = open_telnet(i, ip_sane, port_sane);
+    dcc[i].sock = open_telnet(i, ip, atoi(prt));
     if (dcc[i].sock < 0) {
       lostdcc(i);
       if (!quiet_reject)

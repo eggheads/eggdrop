@@ -352,6 +352,13 @@ should read doc/BOTNET before modifying these settings.
   set protect-telnet 0
     This setting will drop telnet connections not matching a known host.
 
+  set dcc-sanitycheck 0
+    This setting will make the bot ignore DCC chat requests which appear to
+    have bogus information on the grounds that the user may have been trying
+    to make the bot connect to somewhere that will get it into trouble, or
+    that the user has a broken client, in which case the connect wouldn't
+    work anyway.
+
   set ident-timeout 5
     This setting defines the time in seconds the bot should wait for ident reply
     before the lookup fails. The default ident on timeout is 'telnet'.

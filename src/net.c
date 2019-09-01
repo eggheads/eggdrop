@@ -63,6 +63,7 @@ int pref_af = 0;              /* Prefer IPv6 over IPv4?                       */
 char firewall[121] = "";      /* Socks server for firewall.                   */
 int firewallport = 1080;      /* Default port of socks 4/5 firewalls.         */
 char botuser[USERLEN + 1] = "eggdrop"; /* Username of the user running the bot. */
+int dcc_sanitycheck = 0;      /* Do some sanity checking on dcc connections.  */
 
 sock_list *socklist = NULL;   /* Enough to be safe.                           */
 sigjmp_buf alarmret;          /* Env buffer for alarm() returns.              */
@@ -132,8 +133,25 @@ int setsockname(sockname_t *addr, char *src, int port, int allowres)
   struct hostent *hp;
   int af = AF_UNSPEC;
 #ifdef IPV6
+  char *endptr;
+  long val;
+  char src2[INET_ADDRSTRLEN];
   int pref;
 
+  /* Note that inet_pton() does not accept 1-, 2-, or 3-part dotted addresses;
+   * all four parts must be specified and are interpreted only as decimal
+   * values. This is a narrower input set than that accepted by inet_aton(). */
+  if (*src) {
+    val = strtol(src, &endptr, 10);
+    if(!*endptr) {
+      snprintf(src2, sizeof src2, "%u.%u.%u.%u",
+               ((uint8_t *) &val)[3],
+               ((uint8_t *) &val)[2],
+               ((uint8_t *) &val)[1],
+               ((uint8_t *) &val)[0]);
+      src = src2;
+    }
+  }
   /* Clean start */
   egg_bzero(addr, sizeof(sockname_t));
   pref = pref_af ? AF_INET6 : AF_INET;
@@ -1446,52 +1464,50 @@ void tell_netdebug(int idx)
  * isn't going to work anyway due to masquerading firewalls, NAT routers,
  * or bugs in mIRC.
  */
-int sanitycheck_dcc(char *nick, char *from, char *ip_insane, char *port, unsigned int *port_sane, char *ip_sane)
+int sanitycheck_dcc(char *nick, char *from, char *ipaddy, char *port)
 {
   /* According to the latest RFC, the clients SHOULD be able to handle
    * DNS names that are up to 255 characters long.  This is not broken.
    */
-  char *endptr;
-  IP ip;
+
 #ifdef IPV6
-  struct in6_addr ip6;
   char badaddress[INET6_ADDRSTRLEN];
+  sockname_t name;
+  IP ip = 0;
 #else
   char badaddress[INET_ADDRSTRLEN];
+  IP ip = my_atoul(ipaddy);
 #endif
+  int prt = atoi(port);
 
-  *port_sane = strtol(port, &endptr, 10);
-  if (*endptr || *port_sane < 1024 || *port_sane > 65535) {
-    *port_sane = 0;
+  /* It is disabled HERE so we only have to check in *one* spot! */
+  if (!dcc_sanitycheck)
+    return 1;
+
+  if (prt < 1) {
+    putlog(LOG_MISC, "*", "ALERT: (%s!%s) specified an impossible port of %u!",
+           nick, from, prt);
     return 0;
   }
 #ifdef IPV6
-  if (strchr(ip_insane, ':')) {
-    if (inet_pton(AF_INET6, ip_insane, &ip6) != 1) {
-      putlog(LOG_MISC, "*", "ALERT: (%s!%s) specified an invalid IPv6 address "
-             "of %s!", nick, from, ip_insane);
+  if (strchr(ipaddy, ':')) {
+    if (inet_pton(AF_INET6, ipaddy, &name.addr.s6.sin6_addr) != 1) {
+      putlog(LOG_MISC, "*", "ALERT: (%s!%s) specified an invalid IPv6 "
+             "address of %s!", nick, from, ipaddy);
       return 0;
     }
-    if (IN6_IS_ADDR_V4MAPPED(&ip6)) {
-      memcpy(&ip, &in6_addr.s6_addr + 12, sizeof ip);
+    if (IN6_IS_ADDR_V4MAPPED(&name.addr.s6.sin6_addr)) {
+      memcpy(&ip, name.addr.s6.sin6_addr.s6_addr + 12, sizeof ip);
       ip = ntohl(ip);
-      if (inet_ntop(AF_INET, &ip, badaddress, sizeof badaddress)) {
-        putlog(LOG_MISC, "*", "ALERT: (%s!%s) specified an invalid IPv4-mapped "
-               "IPv6 address of %s!", nick, from, ip_insane);
-      return 0;
-      }
     }
-    strcpy(ip_sane, ip_insane);
-    return 1;
   }
 #endif
-  ip = htonl(strtol(ip_insane, &endptr, 10));
-  if (*endptr || !inet_ntop(AF_INET, &ip, badaddress, sizeof badaddress)) {
-    putlog(LOG_MISC, "*", "ALERT: (%s!%s) specified an invalid IP address of "
-           "%s!", nick, from, ip_insane);
+  if (ip && inet_ntop(AF_INET, &ip, badaddress, sizeof badaddress) &&
+      (ip < (1 << 24))) {
+    putlog(LOG_MISC, "*", "ALERT: (%s!%s) specified an impossible IP of %s!",
+           nick, from, badaddress);
     return 0;
   }
-  strcpy(ip_sane, badaddress);
   return 1;
 }
 
@@ -1505,10 +1521,13 @@ int hostsanitycheck_dcc(char *nick, char *from, sockname_t *ip, char *dnsname,
    */
   char hostn[256];
 
+  /* It is disabled HERE so we only have to check in *one* spot! */
+  if (!dcc_sanitycheck)
+    return 1;
   strcpy(badaddress, iptostr(&ip->addr.sa));
   /* These should pad like crazy with zeros, since 120 bytes or so is
    * where the routines providing our data currently lose interest. I'm
-   * using the l-variant in case someone changes that...
+   * using the n-variant in case someone changes that...
    */
   strlcpy(hostn, extracthostname(from), sizeof hostn);
   if (!strcasecmp(hostn, dnsname)) {

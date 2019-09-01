@@ -368,7 +368,7 @@
 /* 212 - 215 */
 /* 212: remove_gunk() -- UNUSED (drummer) */
 #define check_tcl_chjn ((void (*) (const char *,const char *,int,char,int,const char *))global[213])
-#define sanitycheck_dcc ((int (*)(char *, char *, char *, char *, unsigned int *, char *))global[214])
+#define sanitycheck_dcc ((int (*)(char *, char *, char *, char *))global[214])
 #define isowner ((int (*)(char *))global[215])
 /* 216 - 219 */
 #define fcopyfile ((int (*) (FILE *, char *))global[216])
