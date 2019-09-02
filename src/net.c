@@ -147,7 +147,7 @@ int setsockname(sockname_t *addr, char *src, int port, int allowres)
    * or 3-part dotted addresses all four parts must be specified and are
    * interpreted only as decimal values. */
   val = strtol(src, &endptr, 10);
-  if (!*endptr) {
+  if (val && !*endptr) {
     ip = htonl(val);
     if (inet_ntop(AF_INET, &ip, ip2, sizeof ip2)) {
       debug2("net: setsockname(): ip %s -> %s", src, ip2);
