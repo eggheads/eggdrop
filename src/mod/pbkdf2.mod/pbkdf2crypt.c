@@ -31,10 +31,6 @@ static int pbkdf2crypt_base64_dec_len(const unsigned char *str, int len);
 #  include "pbkdf2crypt_openssl.c"
 #endif
 
-#if defined(MAKING_DEPEND) || !defined(PBKDF2_OPENSSL)
-#  include "pbkdf2crypt_mbedtls.c"
-#endif
-
 /* Global functions exported to other modules (egg_malloc, egg_free, ..) */
 /* Also, undefine some random stuff that collides by accident */
 #undef global

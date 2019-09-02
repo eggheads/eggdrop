@@ -1,6 +1,6 @@
 /*
  * pbkdf2.h -- part of pbkdf2.mod
- *   PBKDF2 config, included in mbedtls/config.h
+ *   PBKDF2 config
  */
 /*
  * Copyright (C) 1997 Robey Pointer
