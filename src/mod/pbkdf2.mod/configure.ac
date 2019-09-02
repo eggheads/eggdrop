@@ -31,6 +31,16 @@ if test "$have_openssl" = "yes"; then
   LDFLAGS="$LDFLAGS $OPENSSL_LDFLAGS"
   LIBS="$OPENSSL_LIBS $LIBS"
   CPPFLAGS="$OPENSSL_INCLUDES $CPPFLAGS -DPBKDF2_OPENSSL=1"
+else
+  cat >&2 <<EOF
+configure: warning:
+
+  Your system does not provide a working openssl library or the necessary openssl
+  functions EVP_sha256() and PKCS5_PBKDF2_HMAC(). The pbkdf2 module will therefore
+  be disabled.
+
+EOF
+  EGG_REMOVE_MOD(compress)
 fi
 
 AC_SUBST([LDFLAGS])
