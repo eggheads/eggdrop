@@ -139,8 +139,8 @@ int setsockname(sockname_t *addr, char *src, int port, int allowres)
   char ip2[INET6_ADDRSTRLEN];
   int pref;
 #else
-  int i, count;
   char ip2[INET_ADDRSTRLEN];
+  int i, count;
 #endif
 
   /* DCC CHAT ip is expressed as integer but inet_pton() does not accept 1-, 2-,
