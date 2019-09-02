@@ -156,6 +156,8 @@ static void null_share(int idx, char *x)
 }
 
 void (*encrypt_pass) (char *, char *) = 0;
+void (*encrypt_pass2) (char *, char *) = 0;
+int (*verify_pass2) (char *, char *) = 0;
 char *(*encrypt_string) (char *, char *) = 0;
 char *(*decrypt_string) (char *, char *) = 0;
 void (*shareout) () = null_func;
@@ -1022,6 +1024,12 @@ void add_hook(int hook_num, Function func)
     case HOOK_ENCRYPT_PASS:
       encrypt_pass = (void (*)(char *, char *)) func;
       break;
+    case HOOK_ENCRYPT_PASS2:
+      encrypt_pass2 = (void (*)(char *, char *)) func;
+      break;
+    case HOOK_VERIFY_PASS2:
+      verify_pass2 = (int (*)(char *, char*)) func;
+      break;
     case HOOK_ENCRYPT_STRING:
       encrypt_string = (char *(*)(char *, char *)) func;
       break;
@@ -1094,6 +1102,14 @@ void del_hook(int hook_num, Function func)
     case HOOK_ENCRYPT_PASS:
       if (encrypt_pass == (void (*)(char *, char *)) func)
         encrypt_pass = (void (*)(char *, char *)) null_func;
+      break;
+    case HOOK_ENCRYPT_PASS2:
+      if (encrypt_pass2 == (void (*)(char *, char *)) func)
+        encrypt_pass2 = (void (*)(char *, char *)) null_func;
+      break;
+    case HOOK_VERIFY_PASS2:
+      if (verify_pass2 == (int (*)(char *, char *)) func)
+        verify_pass2 = (int (*)(char *, char *)) null_func;
       break;
     case HOOK_ENCRYPT_STRING:
       if (encrypt_string == (char *(*)(char *, char *)) func)

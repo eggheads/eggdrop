@@ -17,11 +17,12 @@ LD = @CC@
 STRIP = @STRIP@
 CFLAGS = @CFLAGS@ -I../.. -I$(top_srcdir) @SSL_INCLUDES@ @DEFS@ $(CFLGS)
 CPPFLAGS = @CPPFLAGS@
-MOD_CFLAGS = @CFLAGS@ -I. -I../../.. -I$(MOD_UPDIR)$(top_srcdir) \
-  -I$(MOD_UPDIR)$(top_srcdir)/src/mod @SSL_INCLUDES@ @DEFS@ $(CFLGS)
+MOD_INCLUDES = -I. -I../../../ -I$(MOD_UPDIR)$(top_srcdir) \
+  -I$(MOD_UPDIR)$(top_srcdir)/src/mod
+MOD_CFLAGS = @CFLAGS@ @SSL_INCLUDES@ @DEFS@ $(CFLGS)
 MOD_CPPFLAGS = @CPPFLAGS@
-XLIBS = @XLIBS@
 MOD_EXT = @MOD_EXT@
+RANLIB = @RANLIB@
 
 # Note: The following lines are automatically adjusted by
 #       misc/modconfig. They have to be present here.
@@ -33,10 +34,10 @@ modconfig = $(top_srcdir)/misc/modconfig --bindir=../.. \
   --top_srcdir=$(top_srcdir)
 egg_ac_parameters = @egg_ac_parameters@
 
-MAKE_MOD = $(MAKE) 'MAKE=$(MAKE)' 'CC=$(CC)' 'LD=$(LD)' \
-'STRIP=$(STRIP)' 'CFLAGS=$(MOD_CFLAGS)' 'CPPFLAGS=$(MOD_CPPFLAGS)' \
+MAKE_MOD = $(MAKE) 'MAKE=$(MAKE)' 'CC=$(CC)' 'LD=$(LD)' 'CFLAGS_NOINC=$(MOD_CFLAGS)' \
+'STRIP=$(STRIP)' 'CFLAGS=$(MOD_CFLAGS) $(MOD_INCLUDES)' 'CPPFLAGS=$(MOD_CPPFLAGS)' \
 'XLIBS=$(XLIBS)' 'MOD_EXT=$(MOD_EXT)' 'SHELL=$(SHELL)' \
-'MODULE_XLIBS=$(MODULE_XLIBS)'
+'MODULE_XLIBS=$(MODULE_XLIBS)' 'RANLIB=$(RANLIB)'
 
 MAKE_MODDEPEND = $(MAKE) 'MAKE=$(MAKE)' 'CC=$(CC)' \
 'CFLAGS=-I../../.. -I../../../src/mod -DMAKING_DEPEND -DHAVE_CONFIG_H -DMAKING_MODS'
@@ -86,13 +87,14 @@ config:
 			echo ""; \
 			echo "Configuring module '$${modname}'."; \
 			if test ! -d $$i; then mkdir $$i; fi; \
+			if test -r mod.$$i.xlibs; then rm $$i; fi; \
 			(cd $$i && $(MOD_UPDIR)$(srcdir)/$$i/configure --disable-option-checking $(egg_ac_parameters) --cache-file=../../../config.cache --srcdir=$(MOD_UPDIR)$(top_srcdir)/src/mod/$$i); \
 		fi; \
 	done; \
 	echo ""
 
 clean:
-	@rm -f *.o *.$(MOD_EXT) *~ static.h mod.xlibs
+	@rm -f *.o *.$(MOD_EXT) *~ static.h mod*.xlibs
 	@for i in *.mod; do \
 		if test ! -d $$i; then mkdir $$i; fi; \
 		if (test ! -r $$i/Makefile) && \
@@ -105,7 +107,7 @@ clean:
 	done
 
 distclean:
-	@rm -f *.o *.$(MOD_EXT) *~ static.h mod.xlibs
+	@rm -f *.o *.$(MOD_EXT) *~ static.h mod*.xlibs
 	@for i in *.mod; do \
 		if test ! -d $$i; then mkdir $$i; fi; \
 		if (test ! -r $$i/Makefile) && \
