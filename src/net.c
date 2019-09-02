@@ -143,9 +143,8 @@ int setsockname(sockname_t *addr, char *src, int port, int allowres)
   int i, count;
 #endif
 
-  /* DCC CHAT ip is expressed as integer but inet_pton() does not accept 1-, 2-,
-   * or 3-part dotted addresses all four parts must be specified and are
-   * interpreted only as decimal values. */
+  /* DCC CHAT ip is expressed as integer but inet_pton() only accepts dotted
+   * addresses */
   val = strtol(src, &endptr, 10);
   if (val && !*endptr) {
     ip = htonl(val);
