@@ -597,8 +597,7 @@ Function global_table[] = {
   (Function) 0,
 #endif
   /* 304 - 307 */
-  (Function) strncpyz,
-  (Function) decimal_ipv4_to_dotted
+  (Function) strncpyz
 };
 
 void init_modules(void)

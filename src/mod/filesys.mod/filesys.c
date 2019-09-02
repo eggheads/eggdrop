@@ -617,11 +617,6 @@ static void filesys_dcc_send(char *nick, char *from, struct userrec *u,
 {
   char *param, *ip, *prt, *buf = NULL, *msg;
   int atr = u ? u->flags : 0, i, j = 0;
-#ifdef IPV6
-  char ip2[INET6_ADDRSTRLEN];
-#else
-  char ip2[INET_ADDRSTRLEN];
-#endif
 
   if (text[j] == '"') {
     text[j] = ' ';
@@ -683,9 +678,6 @@ static void filesys_dcc_send(char *nick, char *from, struct userrec *u,
         return;
       }
       dcc[i].port = atoi(prt);
-      if (decimal_ipv4_to_dotted(ip2, ip, sizeof ip2))
-        (void) setsockname(&dcc[i].sockname, ip2, dcc[i].port, 0);
-      else
       (void) setsockname(&dcc[i].sockname, ip, dcc[i].port, 0);
       dcc[i].u.dns->ip = &dcc[i].sockname;
       dcc[i].sock = -1;
