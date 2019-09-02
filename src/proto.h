@@ -295,6 +295,7 @@ int sockoptions(int sock, int operation, int sock_options);
 int flush_inbuf(int idx);
 int findsock(int sock);
 void safe_write(int, const void *, size_t);
+int decimal_ipv4_to_dotted(char *, const char *, size_t);
 
 /* tcl.c */
 struct threaddata *threaddata();

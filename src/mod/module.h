@@ -501,6 +501,7 @@
 #endif
 /* 304 - 307 */
 #define strncpyz ((size_t (*) (char *, const char *, size_t))global[304])
+#define decimal_ipv4_to_dotted ((int (*) (char *, const char *, size_t))global[305])
 
 
 /* hostmasking */

@@ -1550,6 +1550,11 @@ static int ctcp_DCC_CHAT(char *nick, char *from, char *handle,
 #endif
   struct userrec *u = get_user_by_handle(userlist, handle);
   struct flag_record fr = { FR_GLOBAL | FR_CHAN | FR_ANYWH, 0, 0, 0, 0, 0 };
+#ifdef IPV6
+  char ip2[INET6_ADDRSTRLEN];
+#else
+  char ip2[INET_ADDRSTRLEN];
+#endif
 
   strlcpy(buf, text, sizeof buf);
   action = newsplit(&msg);
@@ -1601,7 +1606,10 @@ static int ctcp_DCC_CHAT(char *nick, char *from, char *handle,
     dcc[i].ssl = ssl;
 #endif
     dcc[i].port = atoi(prt);
-    (void) setsockname(&dcc[i].sockname, ip, dcc[i].port, 0);
+    if (decimal_ipv4_to_dotted(ip2, ip, sizeof ip2))
+      (void) setsockname(&dcc[i].sockname, ip2, dcc[i].port, 0);
+    else
+      (void) setsockname(&dcc[i].sockname, ip, dcc[i].port, 0);
     dcc[i].u.dns->ip = &dcc[i].sockname;
     dcc[i].sock = -1;
     strcpy(dcc[i].nick, u->handle);

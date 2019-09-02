@@ -1629,3 +1629,19 @@ char *traced_myiphostname(ClientData cd, Tcl_Interp *irp, EGG_CONST char *name1,
   putlog(LOG_MISC, "*", "    in the comments above those settings in the example eggdrop.conf that is included with Eggdrop.\n");
   return NULL;
 }
+
+int decimal_ipv4_to_dotted(char *dst, const char *src, size_t dsize) {
+  char *endptr;
+  long val;
+  IP ip;
+
+  val = strtol(src, &endptr, 10);
+  if (*endptr)
+    return 0;
+  ip = htonl(val);
+  if (!inet_ntop(AF_INET, &ip, dst, dsize)) {
+    return 0;
+  }
+  debug2("net: decimal_ipv4_to_dotted(): src %s dst %s", src, dst);
+  return 1;
+}
