@@ -131,9 +131,9 @@ char *pbkdf2_start(Function *global_funcs)
     if (!module_rename("pbkdf2", MODULE_NAME))
       return "Already loaded.";
     module_register(MODULE_NAME, exported_functions, 0, 1);
-    if (!module_depend(MODULE_NAME, "eggdrop", 108, 0)) {
+    if (!module_depend(MODULE_NAME, "eggdrop", 109, 0)) {
       module_undepend(MODULE_NAME);
-      return "This module requires Eggdrop 1.8.0 or later.";
+      return "This module requires Eggdrop 1.9.0 or later.";
     }
     if (pbkdf2crypt_init() != 0) {
       module_undepend(MODULE_NAME);

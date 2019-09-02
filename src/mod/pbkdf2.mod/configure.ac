@@ -5,7 +5,7 @@ AC_PREREQ(2.59)
 sinclude(../eggmod.m4)
 sinclude(ax_check_openssl.m4)
 
-AC_INIT([Eggdrop PBKDF2 Module],[1.8.1],[bugs@eggheads.org])
+AC_INIT([Eggdrop PBKDF2 Module],[1.9.0],[bugs@eggheads.org])
 
 AC_CONFIG_SRCDIR(pbkdf2.c)
 
