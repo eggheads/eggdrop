@@ -120,8 +120,8 @@ static int deq_kick(int);
 static void msgq_clear(struct msgq_head *qh);
 static int stack_limit;
 static char *realservername;
-static void add_server(char *, char *, char *);
-static void del_server(char *, char *);
+static char add_server(char *, char *, char *);
+static char del_server(char *, char *);
 static void free_server(struct server_list *);
 
 static int sasl = 0;
@@ -1000,18 +1000,20 @@ static void old_add_server(const char *ss) {
 
 /* Add a new server to the server_list.
  */
-static void add_server(char *name, char *port, char *pass)
+static char add_server(char *name, char *port, char *pass)
 {
   struct server_list *x, *z;
 
   for (z = serverlist; z && z->next; z = z->next);
 
+  if (strchr(name, ':')) {
+    return 1;
+  }
+
 #ifndef TLS
   if (port[0] == '+') {
-    putlog(LOG_MISC, "*", "ERROR: Attempted to add SSL-enabled server, but \
-Eggdrop was not compiled with SSL libraries. Skipping...");
     sslserver = 1;
-    return;
+    return 2;
   }
 #endif
 
@@ -1036,19 +1038,22 @@ Eggdrop was not compiled with SSL libraries. Skipping...");
 #ifdef TLS
   x->ssl = (port[0] == '+') ? 1 : 0;
 #endif
+  return 0;
 }
 
 /* Remove a server from the server list.
  * Checks based on IP and then the port, if one is provided. If no port is
  * provided, remove only the first matching host.
  */
-static void del_server(char *name, char *port)
+static char del_server(char *name, char *port)
 {
   struct server_list *z, *curr, *prev;
 
   if (!serverlist) {
-    putlog(LOG_MISC, "*", "Server list is empty");
-    return;
+    return 1;
+  }
+  if (strchr(name, ':')) {
+    return 3;
   }
   if (!strcasecmp(name, serverlist->name)) {
     z = serverlist;
@@ -1061,12 +1066,12 @@ static void del_server(char *name, char *port)
 #endif
         serverlist = serverlist->next;
         free_server(z);
-        return;
+        return 0;
       }
     } else {
       serverlist = serverlist->next;
       free_server(z);
-      return;
+      return 0;
     }
   }
   curr = serverlist->next;
@@ -1088,12 +1093,12 @@ static void del_server(char *name, char *port)
       z = curr;
       prev->next = curr->next;
       free_server(z);
-      return;
+      return 0;
     }
     prev = curr;
     curr = curr->next;
   }
-  putlog(LOG_MISC, "*", "Server %s%s%s not found.", name, strlen(port) ? ":" : "", strlen(port) ? port : "");
+  return 2;
 }
 
 /* Free a single removed server from server link list */
