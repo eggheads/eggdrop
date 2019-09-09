@@ -121,6 +121,7 @@ static void msgq_clear(struct msgq_head *qh);
 static int stack_limit;
 static char *realservername;
 static void add_server(char *, char *, char *);
+static void del_server(char *, char *);
 
 static int sasl = 0;
 
@@ -1034,6 +1035,51 @@ Eggdrop was not compiled with SSL libraries. Skipping...");
 #ifdef TLS
   x->ssl = (port[0] == '+') ? 1 : 0;
 #endif
+}
+
+/* Remove a server from the server list.
+ * Checks based on IP and then the port, if one is provided. If no port is
+ * provided, remove only the first matching host.
+ */
+static void del_server(char *name, char *port)
+{
+  struct server_list *z, *curr, *prev;
+
+  if (!serverlist) {
+    putlog(LOG_MISC, "*", "Server list is empty");
+    return;
+  }
+  if (!strcasecmp(name, serverlist->name)) {
+    z = serverlist;
+    serverlist = serverlist->next;
+    nfree(z);
+    return;
+  }
+  curr = serverlist->next;
+  prev = serverlist;
+  while (curr != NULL && prev != NULL) {
+    if (!strcasecmp(name, curr->name)) {
+      if (strlen(port)) {
+        if ((atoi(port) != curr->port)
+#ifdef TLS
+            || ((port[0] != '+') && curr->ssl )) {
+#else
+            ) {
+#endif
+          prev = curr;
+          curr = curr->next;
+          continue;
+        }
+      }
+      z = curr;
+      prev->next = curr->next;
+      nfree(z);
+      return;
+    }
+    prev = curr;
+    curr = curr->next;
+  }
+  putlog(LOG_MISC, "*", "Server %s%s%s not found.", name, strlen(port) ? ":" : "", strlen(port) ? port : "");
 }
 
 
@@ -1993,7 +2039,8 @@ static Function server_table[] = {
   (Function) & exclusive_binds, /* int                                  */
   /* 40 - 43 */
   (Function) & H_out,           /* p_tcl_bind_list                      */
-  (Function) add_server
+  (Function) add_server,
+  (Function) del_server
 };
 
 char *server_start(Function *global_funcs)

@@ -350,6 +350,19 @@ static int tcl_addserver STDVAR {
   return 0;
 }
 
+static int tcl_delserver STDVAR {
+  char name[121] = "";
+  char port[7] = "";
+
+  BADARGS(2, 3, "server, ?port?");
+  strlcpy(name, argv[1], sizeof name);
+  if (argc == 3) {
+    strlcpy(port, argv[2], sizeof port);
+  }
+  del_server(name, port);
+  return 0;
+}
+
 static tcl_cmds my_tcl_cmds[] = {
   {"jump",       tcl_jump},
   {"cap",        tcl_cap},
@@ -361,6 +374,6 @@ static tcl_cmds my_tcl_cmds[] = {
   {"putquick",   tcl_putquick},
   {"putnow",     tcl_putnow},
   {"addserver",  tcl_addserver},
-  {"delserver",  tcl_addserver},
+  {"delserver",  tcl_delserver},
   {NULL,         NULL}
 };
