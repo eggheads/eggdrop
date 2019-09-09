@@ -122,6 +122,7 @@ static int stack_limit;
 static char *realservername;
 static void add_server(char *, char *, char *);
 static void del_server(char *, char *);
+static void free_server(struct server_list *);
 
 static int sasl = 0;
 
@@ -1051,9 +1052,22 @@ static void del_server(char *name, char *port)
   }
   if (!strcasecmp(name, serverlist->name)) {
     z = serverlist;
-    serverlist = serverlist->next;
-    nfree(z);
-    return;
+    if (strlen(port)) {
+      if ((atoi(port) != serverlist->port)
+#ifdef TLS
+          || ((port[0] != '+') && serverlist->ssl )) {
+#else
+          ) {
+#endif
+        serverlist = serverlist->next;
+        free_server(z);
+        return;
+      }
+    } else {
+      serverlist = serverlist->next;
+      free_server(z);
+      return;
+    }
   }
   curr = serverlist->next;
   prev = serverlist;
@@ -1073,13 +1087,25 @@ static void del_server(char *name, char *port)
       }
       z = curr;
       prev->next = curr->next;
-      nfree(z);
+      free_server(z);
       return;
     }
     prev = curr;
     curr = curr->next;
   }
   putlog(LOG_MISC, "*", "Server %s%s%s not found.", name, strlen(port) ? ":" : "", strlen(port) ? port : "");
+}
+
+/* Free a single removed server from server link list */
+static void free_server(struct server_list *z) {
+  if (z->name)
+    nfree(z->name);
+  if (z->pass)
+    nfree(z->pass);
+  if (z->realname)
+    nfree(z->realname);
+  nfree(z);
+  return;
 }
 
 
