@@ -351,9 +351,9 @@ static int tcl_addserver STDVAR {
   if (ret == 0) {
     return TCL_OK;
   } else if (ret == 1) {
-    Tcl_AppendResult(irp, "A ':' was detected in ", name, " Make sure "\
-                "the port is separated by a space, not a ':'. Skipping...",
-                NULL);
+    Tcl_AppendResult(irp, "A ':' was detected in the non-IPv6 address ", name,
+                " Make sure the port is separated by a space, not a ':'. "\
+                "Skipping...", NULL);
   } else if (ret == 2) {
     Tcl_AppendResult(irp, "Attempted to add SSL-enabled server, but Eggdrop "\
                 "was not compiled with SSL libraries. Skipping...", NULL);
@@ -375,13 +375,13 @@ static int tcl_delserver STDVAR {
   if (!ret) {
     return TCL_OK;
   } else if (ret == 1) {
-    Tcl_AppendResult(irp, "Server list is empty", NULL);
+    Tcl_AppendResult(irp, "A ':' was detected in the non-IPv6 address ", name,
+                " Make sure the port is separated by a space, not a ':'. "\
+                "Skipping...", NULL);
   } else if (ret == 2) {
-    Tcl_AppendResult(irp, "Server ", name, strlen(port) ? ":" : "", strlen(port) ? port : ""," not found.", NULL);
+    Tcl_AppendResult(irp, "Server list is empty", NULL);
   } else if (ret == 3) {
-    Tcl_AppendResult(irp, "A ':' was detected in ", name, " Make sure "\
-                "the port is separated by a space, not a ':'. Skipping...",
-                NULL);
+    Tcl_AppendResult(irp, "Server ", name, strlen(port) ? ":" : "", strlen(port) ? port : ""," not found.", NULL);
   }
   return TCL_ERROR;
 }

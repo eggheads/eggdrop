@@ -1003,11 +1003,14 @@ static void old_add_server(const char *ss) {
 static char add_server(char *name, char *port, char *pass)
 {
   struct server_list *x, *z;
+  char *ret;
 
   for (z = serverlist; z && z->next; z = z->next);
 
-  if (strchr(name, ':')) {
-    return 1;
+  if ((ret = strchr(name, ':'))) {
+    if (!strchr(ret+1, ':')) {
+      return 1;
+    }
   }
 
 #ifndef TLS
@@ -1048,12 +1051,15 @@ static char add_server(char *name, char *port, char *pass)
 static char del_server(char *name, char *port)
 {
   struct server_list *z, *curr, *prev;
+  char *ret;
 
   if (!serverlist) {
-    return 1;
+    return 2;
   }
-  if (strchr(name, ':')) {
-    return 3;
+  if ((ret = strchr(name, ':'))) {
+    if (!strchr(ret+1, ':')) {
+      return 1;
+    }
   }
   if (!strcasecmp(name, serverlist->name)) {
     z = serverlist;
@@ -1098,7 +1104,7 @@ static char del_server(char *name, char *port)
     prev = curr;
     curr = curr->next;
   }
-  return 2;
+  return 3;
 }
 
 /* Free a single removed server from server link list */

@@ -24,7 +24,7 @@
 static void cmd_servers(struct userrec *u, int idx, char *par)
 {
   struct server_list *x = serverlist;
-  int i, v, len = 0;
+  int i, len = 0;
   char buf[16];
   char s[1024];
 
@@ -35,19 +35,18 @@ static void cmd_servers(struct userrec *u, int idx, char *par)
     dprintf(idx, "Server list:\n");
     i = 0;
     for (; x; x = x->next) {
-      v = 0;
       len = 0;
-#ifdef IPV6
-      if (inet_pton(AF_INET6, x->name, buf)) {
-        v = 6;     /* Because ipv6! Get it? */
-      }
-#endif
 /* Build server display line, section by section */
-      if (v) {
+#ifdef IPV6
+      if (inet_pton(AF_INET6, x->name, buf) == 1) {
         len += egg_snprintf(s, sizeof s, "  [%s]:", x->name);
       } else {
+#endif
         len += egg_snprintf(s, sizeof s, "  %s:", x->name);
+#ifdef IPV6
       }
+#endif
+
 #ifdef TLS
       len += egg_snprintf(s+len, 1024 - len, "%s", x->ssl ? "+" : "");
 #endif
