@@ -128,6 +128,8 @@ static char sasl_username[NICKMAX + 1];
 static char sasl_password[81];
 static int sasl_continue = 1;
 static char sasl_ecdsa_key[121];
+static int sasl_timeout = 15;
+static int sasl_timeout_time = 0;
 
 #include "servmsg.c"
 
@@ -1451,6 +1453,7 @@ static tcl_ints my_tcl_ints[] = {
   {"sasl",              &sasl,                      0},
   {"sasl-mechanism",    &sasl_mechanism,            0},
   {"sasl-continue",     &sasl_continue,             0},
+  {"sasl-timeout",      &sasl_timeout,              0},
   {NULL,                NULL,                       0}
 };
 
@@ -1691,6 +1694,8 @@ static void server_secondly()
   deq_msg();
   if (!resolvserv && serv < 0)
     connect_server();
+  if (!--sasl_timeout_time)
+    handle_sasl_timeout();
 }
 
 static void server_5minutely()
