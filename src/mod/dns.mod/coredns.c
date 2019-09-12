@@ -700,7 +700,6 @@ void ptrstring6(struct in6_addr *ip6, char *buf, size_t sz)
      *p++ = '.';
      *p++ = hex[(ip6->s6_addr[i] >> 4) & 0x0f];
      *p++ = '.';
-     *p = '\0';
   }
   strcpy(p, "ip6.arpa"); /* ip6.int is deprecated */
 }
@@ -1266,7 +1265,7 @@ static int init_dns_network(void)
     return 0;
   }
   option = 1;
-  if (setsockopt(resfd, SOL_SOCKET, SO_BROADCAST, &option, sizeof(option))) {
+  if (setsockopt(resfd, SOL_SOCKET, SO_BROADCAST, &option, sizeof option)) {
     putlog(LOG_MISC, "*",
            "Unable to setsockopt() on nameserver communication socket: %s",
            strerror(errno));
