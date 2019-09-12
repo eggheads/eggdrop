@@ -2,8 +2,6 @@
 
 srcdir = .
 
-MODNAME=pbkdf2
-
 MYCPPFLAGS=@CPPFLAGS@ $(CPPFLAGS)
 MYCFLAGS=$(CFLAGS) $(MYCPPFLAGS) -I.
 LIBS=@LIBS@ $(MODULE_XLIBS) $(XLIBS)
@@ -19,22 +17,22 @@ doofus:
 	@echo ""
 	@cd ../../../ && make
 
-static: ../$(MODNAME).o
-	cp modxobjs ../mod.$(MODNAME).xlibs
+static: ../pbkdf2.o
+	cp modxobjs ../mod.xlibs
 
-modules: ../../../$(MODNAME).$(MOD_EXT)
+modules: ../../../pbkdf2.$(MOD_EXT)
 
-../$(MODNAME).o:
-	$(CC) $(MYCFLAGS) -DMAKING_MODS -c $(srcdir)/$(MODNAME).c
-	@rm -f ../$(MODNAME).o
-	mv $(MODNAME).o ../
+../pbkdf2.o:
+	$(CC) $(MYCFLAGS) -DMAKING_MODS -c $(srcdir)/pbkdf2.c
+	@rm -f ../pbkdf2.o
+	mv pbkdf2.o ../
 
-../../../$(MODNAME).$(MOD_EXT): ../$(MODNAME).o
-	$(LD) $(LDFLAGS) -o ../../../$(MODNAME).$(MOD_EXT) ../$(MODNAME).o `cat xobjs` $(LIBS)
-	$(STRIP) ../../../$(MODNAME).$(MOD_EXT)
+../../../pbkdf2.$(MOD_EXT): ../pbkdf2.o
+	$(LD) $(LDFLAGS) -o ../../../pbkdf2.$(MOD_EXT) ../pbkdf2.o $(LIBS)
+	$(STRIP) ../../../pbkdf2.$(MOD_EXT)
 
 depend:
-	$(CC) $(MYCFLAGS) -MM $(srcdir)/$(MODNAME).c -MT ../$(MODNAME).o > .depend
+	$(CC) $(MYCFLAGS) -MM $(srcdir)/pbkdf2.c -MT ../pbkdf2.o > .depend
 
 clean:
 	@rm -f .depend *.o *.$(MOD_EXT) *~ xobjs modxobjs

@@ -40,7 +40,7 @@ configure: warning:
   be disabled.
 
 EOF
-  EGG_REMOVE_MOD(compress)
+  EGG_REMOVE_MOD(pbkdf2)
 fi
 
 AC_SUBST([LDFLAGS])
