@@ -367,8 +367,8 @@ static void dcc_bot_digest(int idx, char *challenge, char *password)
   for (i = 0; i < 16; i++)
     sprintf(digest_string + (i * 2), "%.2x", digest[i]);
   dprintf(idx, "digest %s\n", digest_string);
-  explicit_bzero(digest_string, sizeof(digest_string));
-  explicit_bzero(digest, sizeof(digest));
+  explicit_bzero(digest_string, sizeof digest_string);
+  explicit_bzero(digest, sizeof digest);
   putlog(LOG_BOTS, "*", "Received challenge from %s... sending response ...",
          dcc[idx].nick);
 }
@@ -652,9 +652,9 @@ static int dcc_bot_check_digest(int idx, char *remote_digest)
     sprintf(digest_string + (i * 2), "%.2x", digest[i]);
 
   ret = strcmp(digest_string, remote_digest);
-  explicit_bzero(digest_string, sizeof(digest_string));
-  explicit_bzero(digest, sizeof(digest));
-  explicit_bzero(password, sizeof(password));
+  explicit_bzero(digest_string, sizeof digest_string);
+  explicit_bzero(digest, sizeof digest);
+  explicit_bzero(password, sizeof password);
 
   if (!ret)
     return 1;

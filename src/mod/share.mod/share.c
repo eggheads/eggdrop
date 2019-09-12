@@ -603,7 +603,7 @@ static void share_pls_bothost(int idx, char *par)
       } else {
         makepass(pass);
         userlist = adduser(userlist, hand, par, pass, USER_BOT);
-        explicit_bzero(pass, sizeof(pass));
+        explicit_bzero(pass, sizeof pass);
       }
       if (!(dcc[idx].status & STAT_GETTING))
         putlog(LOG_CMDS, "*", "%s: +host %s %s", dcc[idx].nick, hand, par);
@@ -651,7 +651,7 @@ static void share_change(int idx, char *par)
         if (!u && (uet == &USERENTRY_BOTADDR)) {
           makepass(pass);
           userlist = adduser(userlist, hand, "none", pass, USER_BOT);
-          explicit_bzero(pass, sizeof(pass));
+          explicit_bzero(pass, sizeof pass);
           u = get_user_by_handle(userlist, hand);
         } else if (!u) {
           noshare = 0;
