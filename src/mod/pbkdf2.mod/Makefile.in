@@ -53,5 +53,4 @@ distclean: clean
  ../../../src/compat/snprintf.h ../../../src/compat/inet_ntop.h \
  ../../../src/compat/inet_pton.h ../../../src/compat/gethostbyname2.h \
  ../../../src/compat/strlcpy.h ../../../src/mod/modvals.h \
- ../../../src/tandem.h .././pbkdf2.mod/pbkdf2crypt.c \
- .././pbkdf2.mod/pbkdf2crypt_openssl.c
+ ../../../src/tandem.h .././pbkdf2.mod/pbkdf2crypt.c

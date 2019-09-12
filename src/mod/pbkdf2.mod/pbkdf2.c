@@ -68,7 +68,8 @@ static int pbkdf2_verify_pass(const char *pass, const char *encrypted)
 {
   int digest_idx, bufsize, ret, b64saltlen, saltlen;
   long cycles;
-  unsigned char *buf, *salt;
+  char *buf;
+  unsigned char *salt;
   const char *b64salt, *hash = encrypted;
 
   if (strncmp(hash, "$PBKDF2$", strlen("$PBKDF2$")))
@@ -95,7 +96,8 @@ static int pbkdf2_verify_pass(const char *pass, const char *encrypted)
   bufsize = pbkdf2crypt_get_size(digests[digest_idx].digest, saltlen);
   buf = nmalloc(bufsize);
   salt = nmalloc(saltlen);
-  if (PBKDF2CRYPT_BASE64_DEC(salt, saltlen, (unsigned char *)b64salt, b64saltlen) != 0) {
+  b64saltlen = b64_pton(b64salt, salt, saltlen);
+  if (b64saltlen == -1) {
     ret = -1;
     goto verify_pass_out;
   }
@@ -104,7 +106,7 @@ static int pbkdf2_verify_pass(const char *pass, const char *encrypted)
     ret = -1;
     goto verify_pass_out;
   }
-  if (strncmp(encrypted, (char *)buf, bufsize)) {
+  if (strncmp(encrypted, buf, bufsize)) {
     ret = 0;
     goto verify_pass_out;
   }

@@ -21,15 +21,13 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
+#include <resolv.h> /* base64 encode b64_ntop() and base64 decode b64_pton() */
+#include <openssl/rand.h>
+
 static int pbkdf2crypt_base64_dec_len(const unsigned char *str, int len);
 
 #define PBKDF2CRYPT_BASE64_ENC_LEN(x) (4*(1+((x)-1)/3))
 #define PBKDF2CRYPT_BASE64_DEC_LEN(x, len) pbkdf2crypt_base64_dec_len((x), (len))
-
-/* Load crypto module dependent routines */
-#if defined(MAKING_DEPEND) || defined(PBKDF2_OPENSSL)
-#  include "pbkdf2crypt_openssl.c"
-#endif
 
 /* Global functions exported to other modules (egg_malloc, egg_free, ..) */
 /* Also, undefine some random stuff that collides by accident */
@@ -43,7 +41,7 @@ static int pbkdf2crypt_base64_dec_len(const unsigned char *str, int len);
  */
 static struct {
   const char name[16];
-  const digest_t *digest;
+  const EVP_MD *digest;
 } digests[] = {{"SHA256"}, {""}};
 
 static int maxdigestlen = 1;
@@ -68,18 +66,15 @@ static int pbkdf2crypt_init(void)
     putlog(LOG_MISC, "*", "Cycle value outside its allowed range.");
     return -1;
   }
-  if (PBKDF2CRYPT_INIT_MODULE() != 0) {
-    putlog(LOG_MISC, "*", "Failed to initialize RNG.");
-    return -1;
-  }
+  OpenSSL_add_all_digests();
   for (i = 0; digests[i].name[0]; i++) {
-    digests[i].digest = PBKDF2CRYPT_GET_DIGEST_BY_NAME(digests[i].name);
+    digests[i].digest = EVP_get_digestbyname(digests[i].name);
     if (!digests[i].digest) {
       putlog(LOG_MISC, "*", "Failed to initialize digests '%s'.", digests[i].name);
       return -1;
     }
-    if (PBKDF2CRYPT_GET_DIGEST_SIZE(digests[i].digest) > maxdigestlen)
-      maxdigestlen = PBKDF2CRYPT_GET_DIGEST_SIZE(digests[i].digest);
+    if (EVP_MD_size(digests[i].digest) > maxdigestlen)
+      maxdigestlen = EVP_MD_size(digests[i].digest);
   }
   if (PBKDF2CRYPT_DIGEST_IDX_INVALID(PBKDF2CONF_DIGESTIDX)) {
     putlog(LOG_MISC, "*", "Invalid Digest IDX.");
@@ -96,10 +91,10 @@ static int pbkdf2crypt_base64_dec_len(const unsigned char *str, int len)
   return len / 4 * 3 - pad;
 }
 
-static int pbkdf2crypt_get_size(const digest_t *digest, int saltlen)
+static int pbkdf2crypt_get_size(const EVP_MD *digest, int saltlen)
 {
   /* "$PBKDF2$<digestID>$<cycles>$<salt>$<hash>$" */
-  return strlen("$PBKDF2$") + strlen("FF") + 1 + strlen("FFFFFFFF") + 1 + PBKDF2CRYPT_BASE64_ENC_LEN(saltlen) + 1 + PBKDF2CRYPT_BASE64_ENC_LEN(PBKDF2CRYPT_GET_DIGEST_SIZE(digest)) + 1;
+  return strlen("$PBKDF2$") + strlen("FF") + 1 + strlen("FFFFFFFF") + 1 + PBKDF2CRYPT_BASE64_ENC_LEN(saltlen) + 1 + PBKDF2CRYPT_BASE64_ENC_LEN(EVP_MD_size(digest)) + 1;
 }
 
 static int pbkdf2crypt_get_default_size(void)
@@ -107,7 +102,7 @@ static int pbkdf2crypt_get_default_size(void)
   return pbkdf2crypt_get_size(digests[PBKDF2CONF_DIGESTIDX].digest, PBKDF2CONF_SALTLEN);
 }
 
-static void bufcount(unsigned char **buf, int *buflen, int bytes)
+static void bufcount(char **buf, int *buflen, int bytes)
 {
   *buf += bytes;
   *buflen -= bytes;
@@ -123,18 +118,18 @@ static int pbkdf2crypt_digestidx_by_string(const char *digest_idx_str)
 }
 
 /* Write base64 PBKDF2 hash */
-static int pbkdf2crypt_make_base64_hash(const digest_t *digest, const char *pass, int passlen, const unsigned char *salt, int saltlen, int cycles, unsigned char *out, int outlen)
+static int pbkdf2crypt_make_base64_hash(const EVP_MD *digest, const char *pass, int passlen, const unsigned char *salt, int saltlen, int cycles, char *out, int outlen)
 {
   static unsigned char *buf;
   int digestlen;
   if (!buf)
     buf = nmalloc(maxdigestlen);
-  digestlen = PBKDF2CRYPT_GET_DIGEST_SIZE(digest);
+  digestlen = EVP_MD_size(digest);
   if (outlen < PBKDF2CRYPT_BASE64_ENC_LEN(digestlen))
     return -2;
-  if (PBKDF2CRYPT_MAKE_HASH(digest, pass, passlen, salt, saltlen, cycles, maxdigestlen, buf) != 0)
+  if (!PKCS5_PBKDF2_HMAC(pass, passlen, salt, saltlen, cycles, digest, maxdigestlen, buf))
     return -5;
-  if (PBKDF2CRYPT_BASE64_ENC(out, outlen, buf, digestlen) != 0)
+  if (b64_ntop(buf, digestlen, out, outlen) != 0)
     return -5;
   return 0;
 }
@@ -142,10 +137,10 @@ static int pbkdf2crypt_make_base64_hash(const digest_t *digest, const char *pass
 /* Encrypt a password with flexible settings for verification.
  * Returns 0 on success, -1 on digest not found, -2 on outbuffer too small, -3 on salt error, -4 on cycles outside range, -5 on pbkdf2 error
  */
-static int pbkdf2crypt_verify_pass(const char *pass, int digest_idx, const unsigned char *salt, int saltlen, int cycles, unsigned char *out, int outlen)
+static int pbkdf2crypt_verify_pass(const char *pass, int digest_idx, const unsigned char *salt, int saltlen, int cycles, char *out, int outlen)
 {
   int size, ret;
-  const digest_t *digest;
+  const EVP_MD *digest;
 
   if (PBKDF2CRYPT_DIGEST_IDX_INVALID(digest_idx))
     return -1;
@@ -164,7 +159,7 @@ static int pbkdf2crypt_verify_pass(const char *pass, int digest_idx, const unsig
     return -4;
 
   bufcount(&out, &outlen, snprintf((char *)out, outlen, "$PBKDF2$%02lX$%08X$", (unsigned long)digest_idx, (unsigned int)cycles));
-  ret = PBKDF2CRYPT_BASE64_ENC(out, outlen, salt, saltlen);
+  ret = b64_ntop(salt, saltlen, out, outlen);
   if (ret != 0)
     return -2;
   bufcount(&out, &outlen, PBKDF2CRYPT_BASE64_ENC_LEN(saltlen));
@@ -172,7 +167,7 @@ static int pbkdf2crypt_verify_pass(const char *pass, int digest_idx, const unsig
   ret = pbkdf2crypt_make_base64_hash(digests[digest_idx].digest, pass, strlen(pass), salt, saltlen, cycles, out, outlen);
   if (ret != 0)
     return ret;
-  out[PBKDF2CRYPT_BASE64_ENC_LEN(PBKDF2CRYPT_GET_DIGEST_SIZE(digest))] = '$';
+  out[PBKDF2CRYPT_BASE64_ENC_LEN(EVP_MD_size(digest))] = '$';
   return 0;
 }
 
@@ -187,8 +182,8 @@ static int pbkdf2crypt_pass(const char *pass, char *out, int outlen)
   unsigned char salt[PBKDF2CONF_SALTLEN];
   if (!out)
     return pbkdf2crypt_get_default_size();
-  if (PBKDF2CRYPT_MAKE_SALT(salt, sizeof salt) != 0)
+  if (RAND_bytes(salt, sizeof salt) != 1)
     return -3;
-  return pbkdf2crypt_verify_pass(pass, PBKDF2CONF_DIGESTIDX, salt, sizeof salt, PBKDF2CONF_CYCLES, (unsigned char *)out, outlen);
+  return pbkdf2crypt_verify_pass(pass, PBKDF2CONF_DIGESTIDX, salt, sizeof salt, PBKDF2CONF_CYCLES, out, outlen);
 }
 
