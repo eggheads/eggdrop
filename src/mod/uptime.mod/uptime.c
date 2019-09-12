@@ -151,7 +151,7 @@ static int send_uptime(void)
   char servhost[UHOSTLEN] = "none";
   module_entry *me;
 
-  egg_bzero(&hints, sizeof(hints));
+  egg_bzero(&hints, sizeof hints);
   hints.ai_family = AF_UNSPEC;
   hints.ai_socktype = SOCK_DGRAM;
   error = getaddrinfo(UPTIME_HOST, UPTIME_PORT, &hints, &res0);
