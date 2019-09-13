@@ -48,13 +48,13 @@ static void cmd_servers(struct userrec *u, int idx, char *par)
 #endif
 
 #ifdef TLS
-      len += egg_snprintf(s+len, 1024 - len, "%s", x->ssl ? "+" : "");
+      len += egg_snprintf(s+len, sizeof s - len, "%s", x->ssl ? "+" : "");
 #endif
       if ((i == curserv) && realservername) {
-        len += egg_snprintf(s+len, 1024 - len, "%d (%s) <- I am here",
+        len += egg_snprintf(s+len, sizeof s - len, "%d (%s) <- I am here",
                 x->port ? x->port : default_port, realservername);
       }  else {
-        len += egg_snprintf(s+len, 1024 - len, "%d %s",
+        len += egg_snprintf(s+len, sizeof s - len, "%d %s",
                 x->port ? x->port : default_port,
                 (i == curserv) ? "<- I am here" : "");
       }

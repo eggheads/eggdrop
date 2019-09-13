@@ -1582,10 +1582,10 @@ static void connect_server(void)
 #endif
 
 #ifdef TLS
-    len += egg_snprintf(s + len, (sizeof s) - len, ":%s%d",
+    len += egg_snprintf(s + len, sizeof s - len, ":%s%d",
             use_ssl ? "+" : "", botserverport);
 #else
-    len += egg_snprintf(s + len, (sizeof s) - len, ":%d", botserverport);
+    len += egg_snprintf(s + len, sizeof s - len, ":%d", botserverport);
 #endif
     putlog(LOG_SERV, "*", "%s", s);
     dcc[servidx].port = botserverport;

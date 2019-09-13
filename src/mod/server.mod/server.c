@@ -120,8 +120,8 @@ static int deq_kick(int);
 static void msgq_clear(struct msgq_head *qh);
 static int stack_limit;
 static char *realservername;
-static char add_server(char *, char *, char *);
-static char del_server(char *, char *);
+static char add_server(const char *, const char *, const char *);
+static char del_server(const char *, const char *);
 static void free_server(struct server_list *);
 
 static int sasl = 0;
@@ -1000,7 +1000,7 @@ static void old_add_server(const char *ss) {
 
 /* Add a new server to the server_list.
  */
-static char add_server(char *name, char *port, char *pass)
+static char add_server(const char *name, const char *port, const char *pass)
 {
   struct server_list *x, *z;
   char *ret;
@@ -1048,7 +1048,7 @@ static char add_server(char *name, char *port, char *pass)
  * Checks based on IP and then the port, if one is provided. If no port is
  * provided, remove only the first matching host.
  */
-static char del_server(char *name, char *port)
+static char del_server(const char *name, const char *port)
 {
   struct server_list *z, *curr, *prev;
   char *ret;
@@ -1072,13 +1072,12 @@ static char del_server(char *name, char *port)
 #endif
         serverlist = serverlist->next;
         free_server(z);
-        return 0;
       }
     } else {
       serverlist = serverlist->next;
       free_server(z);
-      return 0;
     }
+    return 0;
   }
   curr = serverlist->next;
   prev = serverlist;

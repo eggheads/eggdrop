@@ -347,15 +347,15 @@ static int tcl_addserver STDVAR {
   if (argc == 4) {
     strlcpy(pass, argv[3], sizeof pass);
   }
-  ret = (add_server(name, port, pass));
+  ret = add_server(name, port, pass);
   if (ret == 0) {
     return TCL_OK;
   } else if (ret == 1) {
     Tcl_AppendResult(irp, "A ':' was detected in the non-IPv6 address ", name,
-                " Make sure the port is separated by a space, not a ':'. "\
+                " Make sure the port is separated by a space, not a ':'. "
                 "Skipping...", NULL);
   } else if (ret == 2) {
-    Tcl_AppendResult(irp, "Attempted to add SSL-enabled server, but Eggdrop "\
+    Tcl_AppendResult(irp, "Attempted to add SSL-enabled server, but Eggdrop "
                 "was not compiled with SSL libraries. Skipping...", NULL);
   }
   return TCL_ERROR;
@@ -376,7 +376,7 @@ static int tcl_delserver STDVAR {
     return TCL_OK;
   } else if (ret == 1) {
     Tcl_AppendResult(irp, "A ':' was detected in the non-IPv6 address ", name,
-                " Make sure the port is separated by a space, not a ':'. "\
+                " Make sure the port is separated by a space, not a ':'. "
                 "Skipping...", NULL);
   } else if (ret == 2) {
     Tcl_AppendResult(irp, "Server list is empty", NULL);
