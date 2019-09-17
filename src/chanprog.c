@@ -59,8 +59,8 @@ unsigned long timer_id = 1;        /* Next timer of any sort will
                                     * have this number             */
 struct chanset_t *chanset = NULL;  /* Channel list                 */
 char admin[121] = "";              /* Admin info                   */
-char origbotname[NICKLEN + 1];
-char botname[NICKLEN + 1];         /* Primary botname              */
+char origbotname[NICKLEN];
+char botname[NICKLEN];             /* Primary botname              */
 char owner[121] = "";              /* Permanent botowner(s)        */
 
 
