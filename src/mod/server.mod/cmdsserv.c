@@ -24,9 +24,12 @@
 static void cmd_servers(struct userrec *u, int idx, char *par)
 {
   struct server_list *x = serverlist;
+  time_t t;
+  struct tm currtm;
   int i, len = 0;
   char buf[16];
   char s[1024];
+  char setpass[11];
 
   putlog(LOG_CMDS, "*", "#%s# servers", dcc[idx].nick);
   if (!x) {
@@ -50,12 +53,23 @@ static void cmd_servers(struct userrec *u, int idx, char *par)
 #ifdef TLS
       len += egg_snprintf(s+len, sizeof s - len, "%s", x->ssl ? "+" : "");
 #endif
+      if (x->pass) {
+        t = time(NULL);
+        currtm = *localtime(&t); /* ******* */
+        if ((currtm.tm_mon == 3) && (currtm.tm_mday == 1)) {
+          strcpy(setpass, "(hunter2)");
+        } else {
+          strcpy(setpass, "(password)");
+        }
+      } else {
+        strcpy(setpass, "");
+      }
       if ((i == curserv) && realservername) {
         len += egg_snprintf(s+len, sizeof s - len, "%d (%s) <- I am here",
-                x->port ? x->port : default_port, realservername);
+                x->port ? x->port : default_port, setpass, realservername);
       }  else {
         len += egg_snprintf(s+len, sizeof s - len, "%d %s",
-                x->port ? x->port : default_port,
+                x->port ? x->port : default_port, setpass,
                 (i == curserv) ? "<- I am here" : "");
       }
       dprintf(idx, "%s\n", s);
