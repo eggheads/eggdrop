@@ -501,13 +501,25 @@ static int tcl_matchinvite STDVAR
   return TCL_OK;
 }
 
+/* Copy of tcluser.c:get_expire_time() */
+static time_t get_expire_time(Tcl_Interp * irp, const char *s) {
+  long expire_foo = atol(s);;
+
+  if (expire_foo == 0)
+    return 0;
+  if (expire_foo > (60 * 24 * 2000)) {
+    Tcl_AppendResult(irp, "expire time must be equal to or less than 2000 days", NULL);
+    return -1;
+  }
+  return now + 60 * expire_foo;
+}
+
 static int tcl_newchanban STDVAR
 {
   time_t expire_time;
   struct chanset_t *chan;
   char ban[161], cmt[MASKREASON_LEN], from[HANDLEN + 1];
   int sticky = 0;
-  long expire_foo;
   module_entry *me;
 
   BADARGS(5, 7, " channel ban creator comment ?lifetime? ?options?");
@@ -535,18 +547,8 @@ static int tcl_newchanban STDVAR
       expire_time = 0;
     else
       expire_time = now + 60 * chan->ban_time;
-  } else {
-    expire_foo = atol(argv[5]);
-    if (expire_foo == 0)
-      expire_time = 0;
-    else {
-      if (expire_foo > (60 * 24 * 2000)) {
-        Tcl_AppendResult(irp, "expire time must be equal to or less than 2000 days", NULL);
-        return TCL_ERROR;
-      }
-      expire_time = now + 60 * expire_foo;
-    }
-  }
+  } else if ((expire_time = get_expire_time(irp, argv[5])) == -1)
+    return TCL_ERROR;
   if (u_addban(chan, ban, from, cmt, expire_time, sticky))
     if ((me = module_find("irc", 0, 0)))
       (me->funcs[IRC_CHECK_THIS_BAN]) (chan, ban, sticky);
@@ -578,15 +580,11 @@ static int tcl_newban STDVAR
   strlcpy(cmt, argv[3], sizeof cmt);
   if (argc == 4) {
     if (global_ban_time == 0)
-      expire_time = 0L;
+      expire_time = 0;
     else
-      expire_time = now + (60 * global_ban_time);
-  } else {
-    if (atoi(argv[4]) == 0)
-      expire_time = 0L;
-    else
-      expire_time = now + (atoi(argv[4]) * 60);
-  }
+      expire_time = now + 60 * global_ban_time;
+  } else if ((expire_time = get_expire_time(irp, argv[4])) == -1)
+    return TCL_ERROR;
   if (u_addban(NULL, ban, from, cmt, expire_time, sticky))
     if ((me = module_find("irc", 0, 0)))
       for (chan = chanset; chan != NULL; chan = chan->next)

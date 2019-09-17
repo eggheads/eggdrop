@@ -570,32 +570,32 @@ static int tcl_isignore STDVAR
   return TCL_OK;
 }
 
+static time_t get_expire_time(Tcl_Interp * irp, const char *s) { 
+  long expire_foo = atol(s);;
+
+  if (expire_foo == 0)
+    return 0;
+  if (expire_foo > (60 * 24 * 2000)) {
+    Tcl_AppendResult(irp, "expire time must be equal to or less than 2000 days", NULL);
+    return -1;
+  }
+  return now + 60 * expire_foo;
+}
+
 static int tcl_newignore STDVAR
 {
   time_t expire_time;
   char ign[UHOSTLEN], cmt[66], from[HANDLEN + 1];
-  long expire_foo;
 
   BADARGS(4, 5, " hostmask creator comment ?lifetime?");
 
   strlcpy(ign, argv[1], sizeof ign);
   strlcpy(from, argv[2], sizeof from);
   strlcpy(cmt, argv[3], sizeof cmt);
-
   if (argc == 4)
     expire_time = now + 60 * ignore_time;
-  else {
-    expire_foo = atol(argv[4]);
-    if (expire_foo == 0)
-      expire_time = 0;
-    else {
-      if (expire_foo > (60 * 24 * 2000)) {
-        Tcl_AppendResult(irp, "expire time must be equal to or less than 2000 days", NULL);
-        return TCL_ERROR;
-      }
-      expire_time = now + 60 * expire_foo;
-    }
-  }
+  else if ((expire_time = get_expire_time(irp, argv[4])) == -1)
+    return TCL_ERROR;
   addignore(ign, from, cmt, expire_time);
   return TCL_OK;
 }
