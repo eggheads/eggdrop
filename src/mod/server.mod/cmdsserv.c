@@ -56,8 +56,8 @@ static void cmd_servers(struct userrec *u, int idx, char *par)
 #endif
       if (x->pass) {
         t = time(NULL);
-        currtm = *localtime(&t); /* ******* */
-        if ((currtm.tm_mon == 3) && (currtm.tm_mday == 1)) {
+        currtm = localtime(&t); /* ******* */
+        if ((currtm->tm_mon == 3) && (currtm->tm_mday == 1)) {
           strlcpy(setpass, "(hunter2)", sizeof setpass);
         } else {
           strlcpy(setpass, "(password)", sizeof setpass);
