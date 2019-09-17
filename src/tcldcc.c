@@ -649,7 +649,7 @@ static int tcl_dcclist STDVAR
 {
   int i;
   char *p, idxstr[10], timestamp[11], other[160];
-  char portstring[7];
+  char portstring[7]; /* ssl + portmax + NULL */
   long tv;
   EGG_CONST char *list[7];
 

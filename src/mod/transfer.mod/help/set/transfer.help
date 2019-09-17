@@ -28,3 +28,9 @@
    This is the number of seconds to wait before a dcc send or get is
    considered to have timed out. If no traffic occurs on the transfer
    in the given time, it closes.
+%{help=set sharefail-unlink}%{+n}
+###  %bset sharefail-unlink%b <0/1>
+    By default, Eggdrop will abort the linking process if userfile sharing is
+    enabled but the userfile transfer fails. Set this to 0 to keep the bots
+    linked if the userfile transfer fails and retry every minute (both bots must
+    be v1.9.0 or higher).
