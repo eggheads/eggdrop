@@ -120,8 +120,8 @@ static int deq_kick(int);
 static void msgq_clear(struct msgq_head *qh);
 static int stack_limit;
 static char *realservername;
-static char add_server(const char *, const char *, const char *);
-static char del_server(const char *, const char *);
+static int add_server(const char *, const char *, const char *);
+static int del_server(const char *, const char *);
 static void free_server(struct server_list *);
 
 static int sasl = 0;
@@ -984,9 +984,9 @@ static void queue_server(int which, char *msg, int len)
 }
 
 
-/* This will be removed in v2.0
-   It is used to split the 'old' server lists prior to sending to
-   the new add_server as of v1.9.0
+/* This is used to split the 'old' server lists prior to sending to the new
+   add_server as of v1.9.0. It can be removed if the 'old' server method is
+   removed from Eggdrop.
 */
 static void old_add_server(const char *ss) {
   char name[121] = "";
@@ -1000,7 +1000,7 @@ static void old_add_server(const char *ss) {
 
 /* Add a new server to the server_list.
  */
-static char add_server(const char *name, const char *port, const char *pass)
+static int add_server(const char *name, const char *port, const char *pass)
 {
   struct server_list *x, *z;
   char *ret;
@@ -1048,7 +1048,7 @@ static char add_server(const char *name, const char *port, const char *pass)
  * Checks based on IP and then the port, if one is provided. If no port is
  * provided, remove only the first matching host.
  */
-static char del_server(const char *name, const char *port)
+static int del_server(const char *name, const char *port)
 {
   struct server_list *z, *curr, *prev;
   char *ret;

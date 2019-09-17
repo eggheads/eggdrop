@@ -26,7 +26,7 @@ static void cmd_servers(struct userrec *u, int idx, char *par)
 {
   struct server_list *x = serverlist;
   time_t t;
-  struct tm currtm;
+  struct tm *currtm;
   int i, len = 0;
   char buf[16];
   char s[1024];
@@ -58,12 +58,12 @@ static void cmd_servers(struct userrec *u, int idx, char *par)
         t = time(NULL);
         currtm = *localtime(&t); /* ******* */
         if ((currtm.tm_mon == 3) && (currtm.tm_mday == 1)) {
-          strcpy(setpass, "(hunter2)");
+          strlcpy(setpass, "(hunter2)", sizeof setpass);
         } else {
-          strcpy(setpass, "(password)");
+          strlcpy(setpass, "(password)", sizeof setpass);
         }
       } else {
-        strcpy(setpass, "");
+        strlcpy(setpass, "", sizeof setpass);
       }
       if ((i == curserv) && realservername) {
         len += egg_snprintf(s+len, sizeof s - len, "%d (%s) <- I am here",
