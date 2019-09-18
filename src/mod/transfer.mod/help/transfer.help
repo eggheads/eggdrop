@@ -5,5 +5,5 @@
 
    Config file variables for configuring the transfer module:
       %bxfer-timeout    copy-to-tmp         dcc-block%b
-      %bmax-dloads%b
+      %bmax-dloads      sharefail-unlink%b
    (Use %b'.help set <variable>'%b for more info)

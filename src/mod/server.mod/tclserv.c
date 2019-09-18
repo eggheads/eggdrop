@@ -333,6 +333,59 @@ static int tcl_queuesize STDVAR
   return TCL_ERROR;
 }
 
+static int tcl_addserver STDVAR {
+  char name[121] = "";
+  char port[7] = "";
+  char pass[121] = "";
+  char ret = 0;
+
+  BADARGS(2, 4, "server ?port? ?pass?");
+  strlcpy(name, argv[1], sizeof name);
+  if (argc >= 3) {
+      strlcpy(port, argv[2], sizeof port);
+  }
+  if (argc == 4) {
+    strlcpy(pass, argv[3], sizeof pass);
+  }
+  ret = add_server(name, port, pass);
+  if (ret == 0) {
+    return TCL_OK;
+  } else if (ret == 1) {
+    Tcl_AppendResult(irp, "A ':' was detected in the non-IPv6 address ", name,
+                " Make sure the port is separated by a space, not a ':'. "
+                "Skipping...", NULL);
+  } else if (ret == 2) {
+    Tcl_AppendResult(irp, "Attempted to add SSL-enabled server, but Eggdrop "
+                "was not compiled with SSL libraries. Skipping...", NULL);
+  }
+  return TCL_ERROR;
+}
+
+static int tcl_delserver STDVAR {
+  char name[121] = "";
+  char port[7] = "";
+  char ret = 0;
+
+  BADARGS(2, 3, "server, ?port?");
+  strlcpy(name, argv[1], sizeof name);
+  if (argc == 3) {
+    strlcpy(port, argv[2], sizeof port);
+  }
+  ret = del_server(name, port);
+  if (!ret) {
+    return TCL_OK;
+  } else if (ret == 1) {
+    Tcl_AppendResult(irp, "A ':' was detected in the non-IPv6 address ", name,
+                " Make sure the port is separated by a space, not a ':'. "
+                "Skipping...", NULL);
+  } else if (ret == 2) {
+    Tcl_AppendResult(irp, "Server list is empty", NULL);
+  } else if (ret == 3) {
+    Tcl_AppendResult(irp, "Server ", name, strlen(port) ? ":" : "", strlen(port) ? port : ""," not found.", NULL);
+  }
+  return TCL_ERROR;
+}
+
 static tcl_cmds my_tcl_cmds[] = {
   {"jump",       tcl_jump},
   {"cap",        tcl_cap},
@@ -343,5 +396,7 @@ static tcl_cmds my_tcl_cmds[] = {
   {"putserv",    tcl_putserv},
   {"putquick",   tcl_putquick},
   {"putnow",     tcl_putnow},
+  {"addserver",  tcl_addserver},
+  {"delserver",  tcl_delserver},
   {NULL,         NULL}
 };

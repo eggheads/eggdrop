@@ -164,6 +164,21 @@ cap <active/available/raw> [arg]
 
   Module: server
 
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+addserver <ip/host> [port [password]]
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  Description: adds a server to the list of servers Eggdrop will connect to. A port value is required if password is to be specified. 
+
+  Returns: nothing
+
+  Module: server
+
+^^^^^^^^^^^^^^^^^^^^^^^^^^
+delserver <ip/host> [[+]port]
+^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+  Description: removes a server from the list of servers Eggdrop will connect to. If no port is specified, Eggdrop will remove the first server matching the ip or hostname provided. The SSL status (+) of the provided port is matched against as well (ie, 7000 is not the same as +7000).
+
 User Record Manipulation Commands
 ---------------------------------
 

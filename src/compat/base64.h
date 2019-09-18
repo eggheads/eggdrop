@@ -1,9 +1,9 @@
 /*
- * compat.h
- *   wrap-around header for all compatibility functions.
+ * base64.h
+ *   prototypes for base64.c
  */
 /*
- * Copyright (C) 2000 - 2019 Eggheads Development Team
+ * Copyright (C) 2010 - 2019 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -20,14 +20,12 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
-#ifndef _EGG_COMPAT_COMPAT_H
-#define _EGG_COMPAT_COMPAT_H
+#ifndef _EGG_COMPAT_BASE64_H_
+#define _EGG_COMPAT_BASE64_H_
 
-#include "base64.h"
-#include "inet_aton.h"
-#include "snprintf.h"
-#include "inet_pton.h"
-#include "gethostbyname2.h"
-#include "strlcpy.h"
+#ifndef HAVE_BASE64
+int b64_ntop(u_char const *, size_t, char *, size_t);
+int b64_pton(const char *, u_char *, size_t);
+#endif /* HAVE_BASE64 */
 
-#endif /* !__EGG_COMPAT_COMPAT_H */
+#endif /* _EGG_COMPAT_BASE64_H_ */
