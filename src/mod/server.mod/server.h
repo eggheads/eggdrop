@@ -20,10 +20,10 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
-#define CAPMAX      499           /*  (512 - "CAP REQ :XXX\r\n")   */
-
 #ifndef _EGG_MOD_SERVER_SERVER_H
 #define _EGG_MOD_SERVER_SERVER_H
+
+#define CAPMAX      499           /*  (512 - "CAP REQ :XXX\r\n")   */
 
 #define check_tcl_ctcp(a,b,c,d,e,f) check_tcl_ctcpr(a,b,c,d,e,f,H_ctcp)
 #define check_tcl_ctcr(a,b,c,d,e,f) check_tcl_ctcpr(a,b,c,d,e,f,H_ctcr)
@@ -80,6 +80,8 @@
 #define exclusive_binds (*(int *)(server_funcs[39]))
 /* 40 - 43 */
 #define H_out (*(p_tcl_bind_list *)(server_funcs[40]))
+#define addserver ((void(*)(char *))server_funcs[41])
+#define delserver ((void(*)(char *))server_funcs[42])
 #else /* MAKING_SERVER */
 
 /* Macros for commonly used commands. */
@@ -103,7 +105,7 @@ struct server_list {
 };
 
 typedef struct cap_list {
-  char supported[CAPMAX];   /* Capes supportd by IRCD                   */
+  char supported[CAPMAX];   /* Capes supported by IRCD                  */
   char negotiated[CAPMAX];  /* Common capes between IRCD and client     */
   char desired[CAPMAX];     /* Capes Eggdrop wants to request from IRCD */
 } cap_list;
@@ -127,10 +129,6 @@ enum {
   SASL_MECHANISM_NUM
 };
 
-char const *const SASL_MECHANISMS[SASL_MECHANISM_NUM] = {
-  [SASL_MECHANISM_PLAIN]                    = "PLAIN",
-  [SASL_MECHANISM_ECDSA_NIST256P_CHALLENGE] = "ECDSA-NIST256P-CHALLENGE",
-  [SASL_MECHANISM_EXTERNAL]                 = "EXTERNAL"
-};
+extern char const *SASL_MECHANISMS[];
 
 #endif /* _EGG_MOD_SERVER_SERVER_H */
