@@ -695,15 +695,11 @@ static int tcl_newchaninvite STDVAR
   strlcpy(cmt, argv[4], sizeof cmt);
   if (argc == 5) {
     if (chan->invite_time == 0)
-      expire_time = 0L;
+      expire_time = 0;
     else
-      expire_time = now + (60 * chan->invite_time);
-  } else {
-    if (atoi(argv[5]) == 0)
-      expire_time = 0L;
-    else
-      expire_time = now + (atoi(argv[5]) * 60);
-  }
+      expire_time = now + 60 * chan->invite_time;
+  } else if ((expire_time = get_expire_time(irp, argv[5])) == -1)
+    return TCL_ERROR;
   if (u_addinvite(chan, invite, from, cmt, expire_time, sticky))
     add_mode(chan, '+', 'I', invite);
   return TCL_OK;
@@ -733,15 +729,11 @@ static int tcl_newinvite STDVAR
   strlcpy(cmt, argv[3], sizeof cmt);
   if (argc == 4) {
     if (global_invite_time == 0)
-      expire_time = 0L;
+      expire_time = 0;
     else
-      expire_time = now + (60 * global_invite_time);
-  } else {
-    if (atoi(argv[4]) == 0)
-      expire_time = 0L;
-    else
-      expire_time = now + (atoi(argv[4]) * 60);
-  }
+      expire_time = now + 60 * global_invite_time;
+  } else if ((expire_time = get_expire_time(irp, argv[4])) == -1)
+    return TCL_ERROR;
   u_addinvite(NULL, invite, from, cmt, expire_time, sticky);
   for (chan = chanset; chan; chan = chan->next)
     add_mode(chan, '+', 'I', invite);
