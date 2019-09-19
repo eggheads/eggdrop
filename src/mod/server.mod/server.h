@@ -80,6 +80,8 @@
 #define exclusive_binds (*(int *)(server_funcs[39]))
 /* 40 - 43 */
 #define H_out (*(p_tcl_bind_list *)(server_funcs[40]))
+#define addserver ((void(*)(char *))server_funcs[41])
+#define delserver ((void(*)(char *))server_funcs[42])
 #else /* MAKING_SERVER */
 
 /* Macros for commonly used commands. */
