@@ -464,8 +464,8 @@ void call_ipbyhost(char *hostn, sockname_t *ip, int ok)
  */
 void block_dns_hostbyip(sockname_t *addr)
 {
-  static char host[UHOSTLEN];
-  int i = 1;
+  char host[UHOSTLEN];
+  static int i = 1;
 
   if (addr->family == AF_INET) {
     if (!sigsetjmp(alarmret, 1)) {
