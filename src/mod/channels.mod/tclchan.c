@@ -655,15 +655,11 @@ static int tcl_newexempt STDVAR
   strlcpy(cmt, argv[3], sizeof cmt);
   if (argc == 4) {
     if (global_exempt_time == 0)
-      expire_time = 0L;
+      expire_time = 0;
     else
-      expire_time = now + (60 * global_exempt_time);
-  } else {
-    if (atoi(argv[4]) == 0)
-      expire_time = 0L;
-    else
-      expire_time = now + (atoi(argv[4]) * 60);
-  }
+      expire_time = now + 60 * global_exempt_time;
+  } else if ((expire_time = get_expire_time(irp, argv[4])) == -1)
+    return TCL_ERROR;
   u_addexempt(NULL, exempt, from, cmt, expire_time, sticky);
   for (chan = chanset; chan; chan = chan->next)
     add_mode(chan, '+', 'e', exempt);
