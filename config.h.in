@@ -67,6 +67,9 @@
 /* Define to 1 if you have the <arpa/inet.h> header file. */
 #undef HAVE_ARPA_INET_H
 
+/* Define if b64_ntop exists. */
+#undef HAVE_BASE64
+
 /* Define to 1 if you have the `clock' function. */
 #undef HAVE_CLOCK
 

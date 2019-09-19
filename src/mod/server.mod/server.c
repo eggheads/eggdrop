@@ -120,6 +120,9 @@ static int deq_kick(int);
 static void msgq_clear(struct msgq_head *qh);
 static int stack_limit;
 static char *realservername;
+static int add_server(const char *, const char *, const char *);
+static int del_server(const char *, const char *);
+static void free_server(struct server_list *);
 
 static int sasl = 0;
 
@@ -128,6 +131,8 @@ static char sasl_username[NICKMAX + 1];
 static char sasl_password[81];
 static int sasl_continue = 1;
 static char sasl_ecdsa_key[121];
+static int sasl_timeout = 15;
+static int sasl_timeout_time = 0;
 
 #include "servmsg.c"
 
@@ -140,6 +145,13 @@ static int burst;
 
 #include "cmdsserv.c"
 #include "tclserv.c"
+
+/* Available sasl mechanisms. */
+char const *SASL_MECHANISMS[SASL_MECHANISM_NUM] = {
+  [SASL_MECHANISM_PLAIN]                    = "PLAIN",
+  [SASL_MECHANISM_ECDSA_NIST256P_CHALLENGE] = "ECDSA-NIST256P-CHALLENGE",
+  [SASL_MECHANISM_EXTERNAL]                 = "EXTERNAL"
+};
 
 
 static void write_to_server(char *s, unsigned int len) {
@@ -973,26 +985,40 @@ static void queue_server(int which, char *msg, int len)
     deq_msg(); /* DP_MODE needs to be sent ASAP, flush if possible. */
 }
 
-/* Add a new server to the server_list.
- */
-static void add_server(const char *ss)
-{
-  struct server_list *x, *z;
-  char name[256] = "", port[11] = "", pass[121] = "";
 
-  for (z = serverlist; z && z->next; z = z->next);
-
-  /* Allow IPv6 and IPv4-mapped addresses in [] */
+/* This is used to split the 'old' server lists prior to sending to the new
+   add_server as of v1.9.0. It can be removed if the 'old' server method is
+   removed from Eggdrop.
+*/
+static void old_add_server(const char *ss) {
+  char name[121] = "";
+  char port[7] = "";
+  char pass[121] = "";
   if (!sscanf(ss, "[%255[0-9.A-F:a-f]]:%10[+0-9]:%120[^\r\n]", name, port, pass) &&
       !sscanf(ss, "%255[^:]:%10[+0-9]:%120[^\r\n]", name, port, pass))
     return;
+  add_server(name, port, pass);
+}
+
+/* Add a new server to the server_list.
+ */
+static int add_server(const char *name, const char *port, const char *pass)
+{
+  struct server_list *x, *z;
+  char *ret;
+
+  for (z = serverlist; z && z->next; z = z->next);
+
+  if ((ret = strchr(name, ':'))) {
+    if (!strchr(ret+1, ':')) {
+      return 1;
+    }
+  }
 
 #ifndef TLS
   if (port[0] == '+') {
-    putlog(LOG_MISC, "*", "ERROR: Attempted to add SSL-enabled server, but \
-Eggdrop was not compiled with SSL libraries. Skipping...");
     sslserver = 1;
-    return;
+    return 2;
   }
 #endif
 
@@ -1017,6 +1043,81 @@ Eggdrop was not compiled with SSL libraries. Skipping...");
 #ifdef TLS
   x->ssl = (port[0] == '+') ? 1 : 0;
 #endif
+  return 0;
+}
+
+/* Remove a server from the server list.
+ * Checks based on IP and then the port, if one is provided. If no port is
+ * provided, remove only the first matching host.
+ */
+static int del_server(const char *name, const char *port)
+{
+  struct server_list *z, *curr, *prev;
+  char *ret;
+
+  if (!serverlist) {
+    return 2;
+  }
+  if ((ret = strchr(name, ':'))) {
+    if (!strchr(ret+1, ':')) {
+      return 1;
+    }
+  }
+  if (!strcasecmp(name, serverlist->name)) {
+    z = serverlist;
+    if (strlen(port)) {
+      if ((atoi(port) != serverlist->port)
+#ifdef TLS
+          || ((port[0] != '+') && serverlist->ssl )) {
+#else
+          ) {
+#endif
+        serverlist = serverlist->next;
+        free_server(z);
+      }
+    } else {
+      serverlist = serverlist->next;
+      free_server(z);
+    }
+    return 0;
+  }
+  curr = serverlist->next;
+  prev = serverlist;
+  while (curr != NULL && prev != NULL) {
+    if (!strcasecmp(name, curr->name)) {
+      if (strlen(port)) {
+        if ((atoi(port) != curr->port)
+#ifdef TLS
+            || ((port[0] != '+') && curr->ssl )) {
+#else
+            ) {
+#endif
+          prev = curr;
+          curr = curr->next;
+          continue;
+        }
+      }
+      z = curr;
+      prev->next = curr->next;
+      free_server(z);
+      return 0;
+    }
+    prev = curr;
+    curr = curr->next;
+  }
+  return 3;
+}
+
+/* Free a single removed server from server link list */
+static void free_server(struct server_list *z) {
+  if (z->name)
+    nfree(z->name);
+  if (z->pass)
+    nfree(z->pass);
+  if (z->realname)
+    nfree(z->realname);
+  nfree(z);
+  return;
 }
 
 
@@ -1444,6 +1545,7 @@ static tcl_ints my_tcl_ints[] = {
   {"sasl",              &sasl,                      0},
   {"sasl-mechanism",    &sasl_mechanism,            0},
   {"sasl-continue",     &sasl_continue,             0},
+  {"sasl-timeout",      &sasl_timeout,              0},
   {NULL,                NULL,                       0}
 };
 
@@ -1497,7 +1599,7 @@ static char *tcl_eggserver(ClientData cdata, Tcl_Interp *irp,
       if (code == TCL_ERROR)
         return "variable must be a list";
       for (i = 0; i < lc && i < 50; i++)
-        add_server((char *) list[i]);
+        old_add_server((char *) list[i]);
 
       /* Tricky way to make the bot reset its server pointers
        * perform part of a '.jump <current-server>':
@@ -1684,6 +1786,8 @@ static void server_secondly()
   deq_msg();
   if (!resolvserv && serv < 0)
     connect_server();
+  if (!--sasl_timeout_time)
+    handle_sasl_timeout();
 }
 
 static void server_5minutely()
@@ -1975,7 +2079,9 @@ static Function server_table[] = {
   (Function) check_tcl_notc,
   (Function) & exclusive_binds, /* int                                  */
   /* 40 - 43 */
-  (Function) & H_out            /* p_tcl_bind_list                      */
+  (Function) & H_out,           /* p_tcl_bind_list                      */
+  (Function) add_server,
+  (Function) del_server
 };
 
 char *server_start(Function *global_funcs)

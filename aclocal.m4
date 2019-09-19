@@ -284,6 +284,54 @@ dnl Checks for types and functions.
 dnl
 
 
+dnl EGG_FUNC_B64_NTOP()
+dnl
+AC_DEFUN([EGG_FUNC_B64_NTOP],
+[
+  # https://raw.githubusercontent.com/tmux/tmux/2dd9a4fb9cd73987bdca5b8b2f85ca8b1a6e4e73/configure.ac
+
+  # Check for b64_ntop. If we have b64_ntop, we assume b64_pton as well.
+  AC_MSG_CHECKING(for b64_ntop)
+  AC_TRY_LINK(
+    [
+      #include <sys/types.h>
+      #include <netinet/in.h>
+      #include <resolv.h>
+    ],
+    [b64_ntop(NULL, 0, NULL, 0);],
+    found_b64_ntop=yes,
+    found_b64_ntop=no
+  )
+  if test "x$found_b64_ntop" = xno; then
+    AC_MSG_RESULT(no)
+
+    AC_MSG_CHECKING(for b64_ntop with -lresolv)
+    OLD_LIBS="$LIBS"
+    LIBS="$LIBS -lresolv"
+    AC_TRY_LINK(
+      [
+        #include <sys/types.h>
+        #include <netinet/in.h>
+        #include <resolv.h>
+      ],
+      [b64_ntop(NULL, 0, NULL, 0);],
+      found_b64_ntop=yes,
+      found_b64_ntop=no
+    )
+    if test "x$found_b64_ntop" = xno; then
+      LIBS="$OLD_LIBS"
+      AC_MSG_RESULT(no)
+    fi
+  fi
+  if test "x$found_b64_ntop" = xyes; then
+    AC_DEFINE([HAVE_BASE64], [1], [Define if b64_ntop exists.])
+    AC_MSG_RESULT(yes)
+  else
+    AC_LIBOBJ(base64)
+  fi
+])
+
+
 dnl EGG_FUNC_VPRINTF()
 dnl
 AC_DEFUN([EGG_FUNC_VPRINTF],
@@ -1024,8 +1072,8 @@ AC_DEFUN([EGG_TCL_TCLCONFIG],
         TCL_LIB_SPEC="$TCL_LIB_SPEC $ac_cv_lib_pthread"
       fi
       TCL_INCLUDE_SPEC=""
-      TCL_VERSION=`grep TCL_VERSION $TCLINC/$TCLINCFN | $HEAD_1 | $AWK '{gsub(/\"/, "", [$]3); print [$]3}'`
-      TCL_PATCHLEVEL=`grep TCL_PATCH_LEVEL $TCLINC/$TCLINCFN | $HEAD_1 | $AWK '{gsub(/\"/, "", [$]3); print [$]3}'`
+      TCL_VERSION=`grep TCL_VERSION $TCLINC/$TCLINCFN | $HEAD_1 | $AWK '{gsub(/"/, "", [$]3); print [$]3}'`
+      TCL_PATCHLEVEL=`grep TCL_PATCH_LEVEL $TCLINC/$TCLINCFN | $HEAD_1 | $AWK '{gsub(/"/, "", [$]3); print [$]3}'`
       TCL_MAJOR_VERSION=`echo $TCL_VERSION | cut -d. -f1`
       TCL_MINOR_VERSION=`echo $TCL_VERSION | cut -d. -f2`
       if test $TCL_MAJOR_VERSION -gt 8 || test $TCL_MAJOR_VERSION -eq 8 -a $TCL_MINOR_VERSION -ge 6; then
@@ -1101,7 +1149,7 @@ dnl
 AC_DEFUN([EGG_SUBST_EGGVERSION],
 [
 
-  EGGVERSION=`grep '^ *# *define  *EGG_STRINGVER ' $srcdir/src/version.h | $AWK '{gsub(/(\")/, "", $NF); print $NF}'`
+  EGGVERSION=`grep '^ *# *define  *EGG_STRINGVER ' $srcdir/src/version.h | $AWK '{gsub(/(")/, "", $NF); print $NF}'`
   egg_version_num=`echo $EGGVERSION | $AWK 'BEGIN {FS = "."} {printf("%d%02d%02d", [$]1, [$]2, [$]3)}'`
   AC_SUBST(EGGVERSION)
   AC_DEFINE_UNQUOTED(EGG_VERSION, $egg_version_num, [Defines the current Eggdrop version.])
