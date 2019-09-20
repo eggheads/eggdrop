@@ -252,7 +252,7 @@ int pass_set(struct userrec *u, struct user_entry *e, void *buf)
     if (strlen(pass) > 30)
       pass[30] = 0;
     while (*p) {
-      if ((*p <= 32) || (*p == 127))
+      if ((*p < 32) || (*p == 127))
         *p = '?';
       p++;
     }
