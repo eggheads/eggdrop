@@ -51,7 +51,7 @@ static char *pbkdf2_encrypt_pass(const char *pass)
     hashlen = pbkdf2crypt_get_default_size();
     buf = nmalloc(hashlen + 1);
   }
-  if (pbkdf2crypt_pass(pass, buf, hashlen) != 0)
+  if (pbkdf2crypt_pass(pass, buf, hashlen))
     return NULL;
   buf[hashlen] = '\0';
   return buf;

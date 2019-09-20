@@ -45,6 +45,7 @@ void init_userent()
   add_entry_type(&USERENTRY_LASTON);
   add_entry_type(&USERENTRY_BOTADDR);
   add_entry_type(&USERENTRY_PASS);
+  add_entry_type(&USERENTRY_PASS2);
   add_entry_type(&USERENTRY_HOSTS);
   add_entry_type(&USERENTRY_BOTFL);
 #ifdef TLS
@@ -237,9 +238,35 @@ struct user_entry_type USERENTRY_INFO = {
   def_tcl_append
 };
 
+int pass2_set(struct userrec *u, struct user_entry *e, void *new)
+{
+  e->u.extra = user_malloc(strlen(new) + 1);
+  strcpy(e->u.extra, new);
+  return 1;
+}
+
+struct user_entry_type USERENTRY_PASS2 = {
+  0,
+  0,
+  0,
+  def_unpack,
+  def_pack,
+  def_write_userfile,
+  def_kill,
+  def_get,
+  pass2_set,
+  def_tcl_get, /* TODO: check which functions can/must be 0 and */
+  0,
+  def_expmem,
+  0,
+  "PASS2",
+  def_tcl_append
+};
+
 int pass_set(struct userrec *u, struct user_entry *e, void *buf)
 {
   char new[32];
+  char *new2;
   char *pass = buf;
 
   if (e->u.extra)
@@ -256,12 +283,17 @@ int pass_set(struct userrec *u, struct user_entry *e, void *buf)
         *p = '?';
       p++;
     }
-    if ((u->flags & USER_BOT) || (pass[0] == '+'))
-      strcpy(new, pass);
-    else
+    if ((u->flags & USER_BOT) || (pass[0] == '+')) {
+      strlcpy(new, pass, sizeof new);
+      new2 = new;
+    }
+    else {
       encrypt_pass(pass, new);
+      new2 = encrypt_pass2(pass);
+    }
     e->u.extra = user_malloc(strlen(new) + 1);
     strcpy(e->u.extra, new);
+    set_user(&USERENTRY_PASS2, u, new2);
   }
   if (!noshare && !(u->flags & (USER_BOT | USER_UNSHARED)))
     shareout(NULL, "c PASS %s %s\n", u->handle, pass ? pass : "");
