@@ -27,8 +27,10 @@ static void cmd_servers(struct userrec *u, int idx, char *par)
   struct server_list *x = serverlist;
   time_t t;
   struct tm *currtm;
-  int i, len = 0;
-  char buf[16];
+  int i, len;
+#ifdef IPV6
+  char buf[sizeof(struct in6_addr)];
+#endif
   char s[1024];
   char setpass[11];
 
@@ -39,20 +41,19 @@ static void cmd_servers(struct userrec *u, int idx, char *par)
     dprintf(idx, "Server list:\n");
     i = 0;
     for (; x; x = x->next) {
-      len = 0;
 /* Build server display line, section by section */
 #ifdef IPV6
       if (inet_pton(AF_INET6, x->name, buf) == 1) {
-        len += egg_snprintf(s, sizeof s, "  [%s]:", x->name);
+        len = egg_snprintf(s, sizeof s, "  [%s]:", x->name);
       } else {
 #endif
-        len += egg_snprintf(s, sizeof s, "  %s:", x->name);
+        len = egg_snprintf(s, sizeof s, "  %s:", x->name);
 #ifdef IPV6
       }
 #endif
 
 #ifdef TLS
-      len += egg_snprintf(s+len, sizeof s - len, "%s", x->ssl ? "+" : "");
+      len += egg_snprintf(s + len, sizeof s - len, "%s", x->ssl ? "+" : "");
 #endif
       if (x->pass) {
         t = time(NULL);
@@ -66,12 +67,12 @@ static void cmd_servers(struct userrec *u, int idx, char *par)
         strlcpy(setpass, "", sizeof setpass);
       }
       if ((i == curserv) && realservername) {
-        len += egg_snprintf(s+len, sizeof s - len, "%d (%s) <- I am here",
-                x->port ? x->port : default_port, setpass, realservername);
+        egg_snprintf(s + len, sizeof s - len, "%d (%s) <- I am here",
+                     x->port ? x->port : default_port, setpass, realservername);
       }  else {
-        len += egg_snprintf(s+len, sizeof s - len, "%d %s",
-                x->port ? x->port : default_port, setpass,
-                (i == curserv) ? "<- I am here" : "");
+        egg_snprintf(s + len, sizeof s - len, "%d %s",
+                     x->port ? x->port : default_port, setpass,
+                     (i == curserv) ? "<- I am here" : "");
       }
       dprintf(idx, "%s\n", s);
       i++;

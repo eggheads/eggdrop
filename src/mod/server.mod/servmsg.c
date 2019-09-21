@@ -1536,15 +1536,18 @@ static void server_resolve_failure(int);
  */
 static void connect_server(void)
 {
-  char pass[121], botserver[UHOSTLEN], buf[16], s[1024];
+  char pass[121], botserver[UHOSTLEN], s[1024];
+#ifdef IPV6
+  char buf[sizeof(struct in6_addr)];
+#endif
   int servidx, len = 0;
   unsigned int botserverport = 0;
 
   lastpingcheck = 0;
   trying_server = now;
   empty_msgq();
-  if (newserverport) {          /* Jump to specified server */
-    curserv = -1;             /* Reset server list */
+  if (newserverport) { /* Jump to specified server */
+    curserv = -1;      /* Reset server list */
     strcpy(botserver, newserver);
     botserverport = newserverport;
     strcpy(pass, newserverpass);
@@ -1580,19 +1583,19 @@ static void connect_server(void)
 
 #ifdef IPV6
     if (inet_pton(AF_INET6, botserver, buf)) {
-      len += egg_snprintf(s, sizeof s, "%s [%s]", IRC_SERVERTRY, botserver);
+      egg_snprintf(s, sizeof s, "%s [%s]", IRC_SERVERTRY, botserver);
     } else {
 #endif
-     len += egg_snprintf(s, sizeof s, "%s %s", IRC_SERVERTRY, botserver);
+      egg_snprintf(s, sizeof s, "%s %s", IRC_SERVERTRY, botserver);
 #ifdef IPV6
     }
 #endif
 
 #ifdef TLS
-    len += egg_snprintf(s + len, sizeof s - len, ":%s%d",
-            use_ssl ? "+" : "", botserverport);
+    egg_snprintf(s + len, sizeof s - len, ":%s%d",
+                 use_ssl ? "+" : "", botserverport);
 #else
-    len += egg_snprintf(s + len, sizeof s - len, ":%d", botserverport);
+    egg_snprintf(s + len, sizeof s - len, ":%d", botserverport);
 #endif
     putlog(LOG_SERV, "*", "%s", s);
     dcc[servidx].port = botserverport;
