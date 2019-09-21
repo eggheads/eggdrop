@@ -21,7 +21,9 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
-#include "pbkdf2.h"
+#define MODULE_NAME "encryption2"
+
+#include "src/mod/module.h"
 
 Function *pbkdf2_global = NULL;
 
@@ -62,7 +64,7 @@ static char *pbkdf2_encrypt_pass(const char *pass)
  * 0 - no match
  * 1 - match
  * 2 - match, suggest re-hashing password (more cycles, new algorithm, ...)
- * hash = "$PBKDF2$<digestID>$<cycles>$<salt>$<hash>$"
+ * hash = "$PBKDF2$<digestID>$rounds=<cycles>$<salt>$<hash>$"
  */
 static int pbkdf2_verify_pass(const char *pass, const char *encrypted)
 {
@@ -83,7 +85,8 @@ static int pbkdf2_verify_pass(const char *pass, const char *encrypted)
   hash = strchr(hash, '$');
   if (!hash)
     return -1;
-  cycles = strtol(hash+1, (char **)&b64salt, 16);
+  /* TODO: check/skip "rounds=" ? */
+  cycles = strtol(hash+1, (char **) &b64salt, 16);
   if (cycles > INT_MAX || cycles <= 0 || b64salt[0] != '$')
     return -1;
 
@@ -151,4 +154,3 @@ static char *pbkdf2_close(void)
 {
   return "You cannot unload the PBKDF2 module.";
 }
-

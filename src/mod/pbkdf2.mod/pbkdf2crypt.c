@@ -51,7 +51,7 @@ static int maxdigestlen = 1;
 /* Salt length in bytes, will be base64 encoded after (so, pick something divisible by 3) */
 #define PBKDF2CONF_SALTLEN 24
 /* Rounds for PBKDF2 */
-#define PBKDF2CONF_CYCLES 16000
+#define PBKDF2CONF_CYCLES 5000
 
 /* Skip "" entry at the end */
 #define PBKDF2CRYPT_DIGEST_IDX_INVALID(idx) ((idx) < 0 || (idx) > sizeof digests / sizeof *digests - 2)
@@ -93,8 +93,8 @@ static int pbkdf2crypt_base64_dec_len(const unsigned char *str, int len)
 
 static int pbkdf2crypt_get_size(const EVP_MD *digest, int saltlen)
 {
-  /* "$PBKDF2$<digestID>$<cycles>$<salt>$<hash>$" */
-  return strlen("$PBKDF2$") + strlen("FF") + 1 + strlen("FFFFFFFF") + 1 + PBKDF2CRYPT_BASE64_ENC_LEN(saltlen) + 1 + PBKDF2CRYPT_BASE64_ENC_LEN(EVP_MD_size(digest)) + 1;
+  /* hash = "$PBKDF2$<digestID>$rounds=<cycles>$<salt>$<hash>$" */
+  return strlen("$PBKDF2$") + strlen("FF") + 1 + strlen("rounds=FFFFFFFF") + 1 + PBKDF2CRYPT_BASE64_ENC_LEN(saltlen) + 1 + PBKDF2CRYPT_BASE64_ENC_LEN(EVP_MD_size(digest)) + 1;
 }
 
 static int pbkdf2crypt_get_default_size(void)
@@ -158,7 +158,7 @@ static int pbkdf2crypt_verify_pass(const char *pass, int digest_idx, const unsig
   if (cycles <= 0)
     return -4;
 
-  bufcount(&out, &outlen, snprintf((char *)out, outlen, "$PBKDF2$%02lX$%08X$", (unsigned long)digest_idx, (unsigned int)cycles));
+  bufcount(&out, &outlen, snprintf((char *) out, outlen, "$PBKDF2$%02lX$rounds=%i$", (unsigned long) digest_idx, (unsigned int) cycles));
   ret = b64_ntop(salt, saltlen, out, outlen);
   if (ret < 0) {
     return -2;
@@ -171,7 +171,6 @@ static int pbkdf2crypt_verify_pass(const char *pass, int digest_idx, const unsig
   out[PBKDF2CRYPT_BASE64_ENC_LEN(EVP_MD_size(digest))] = '$';
   return 0;
 }
-
 
 /* Encrypt a password with standard settings to store.
  * out = NULL returns necessary buffer size
@@ -187,4 +186,3 @@ static int pbkdf2crypt_pass(const char *pass, char *out, int outlen)
     return -3;
   return pbkdf2crypt_verify_pass(pass, PBKDF2CONF_DIGESTIDX, salt, sizeof salt, PBKDF2CONF_CYCLES, out, outlen);
 }
-
