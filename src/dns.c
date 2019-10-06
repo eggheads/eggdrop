@@ -464,8 +464,8 @@ void call_ipbyhost(char *hostn, sockname_t *ip, int ok)
  */
 void block_dns_hostbyip(sockname_t *addr)
 {
-  static char host[UHOSTLEN];
-  int i = 1;
+  char host[UHOSTLEN];
+  volatile int i = 1;
 
   if (addr->family == AF_INET) {
     if (!sigsetjmp(alarmret, 1)) {
@@ -477,7 +477,7 @@ void block_dns_hostbyip(sockname_t *addr)
         debug1("dns: getnameinfo(): error = %s", gai_strerror(i));
     }
     if (i)
-     inet_ntop(AF_INET, &addr->addr.s4.sin_addr.s_addr, host, sizeof host);
+      inet_ntop(AF_INET, &addr->addr.s4.sin_addr.s_addr, host, sizeof host);
 #ifdef IPV6
   } else {
     if (!sigsetjmp(alarmret, 1)) {
