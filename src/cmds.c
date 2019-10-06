@@ -3004,7 +3004,7 @@ static void cmd_traffic(struct userrec *u, int idx, char *par)
 static char traffictxt[20];
 static char *btos(unsigned long bytes)
 {
-  char *unit;
+  const char *unit;
   float xbytes;
 
   xbytes = bytes;
