@@ -1591,6 +1591,7 @@ static void connect_server(void)
 #ifdef TLS
     len += egg_snprintf(s + len, sizeof s - len, ":%s%d",
             use_ssl ? "+" : "", botserverport);
+    dcc[servidx].ssl = use_ssl;
 #else
     len += egg_snprintf(s + len, sizeof s - len, ":%d", botserverport);
 #endif
