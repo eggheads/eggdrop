@@ -1072,8 +1072,8 @@ AC_DEFUN([EGG_TCL_TCLCONFIG],
         TCL_LIB_SPEC="$TCL_LIB_SPEC $ac_cv_lib_pthread"
       fi
       TCL_INCLUDE_SPEC=""
-      TCL_VERSION=`grep TCL_VERSION $TCLINC/$TCLINCFN | $HEAD_1 | $AWK '{gsub(/\"/, "", [$]3); print [$]3}'`
-      TCL_PATCHLEVEL=`grep TCL_PATCH_LEVEL $TCLINC/$TCLINCFN | $HEAD_1 | $AWK '{gsub(/\"/, "", [$]3); print [$]3}'`
+      TCL_VERSION=`grep TCL_VERSION $TCLINC/$TCLINCFN | $HEAD_1 | $AWK '{gsub(/"/, "", [$]3); print [$]3}'`
+      TCL_PATCHLEVEL=`grep TCL_PATCH_LEVEL $TCLINC/$TCLINCFN | $HEAD_1 | $AWK '{gsub(/"/, "", [$]3); print [$]3}'`
       TCL_MAJOR_VERSION=`echo $TCL_VERSION | cut -d. -f1`
       TCL_MINOR_VERSION=`echo $TCL_VERSION | cut -d. -f2`
       if test $TCL_MAJOR_VERSION -gt 8 || test $TCL_MAJOR_VERSION -eq 8 -a $TCL_MINOR_VERSION -ge 6; then
@@ -1149,7 +1149,7 @@ dnl
 AC_DEFUN([EGG_SUBST_EGGVERSION],
 [
 
-  EGGVERSION=`grep '^ *# *define  *EGG_STRINGVER ' $srcdir/src/version.h | $AWK '{gsub(/(\")/, "", $NF); print $NF}'`
+  EGGVERSION=`grep '^ *# *define  *EGG_STRINGVER ' $srcdir/src/version.h | $AWK '{gsub(/(")/, "", $NF); print $NF}'`
   egg_version_num=`echo $EGGVERSION | $AWK 'BEGIN {FS = "."} {printf("%d%02d%02d", [$]1, [$]2, [$]3)}'`
   AC_SUBST(EGGVERSION)
   AC_DEFINE_UNQUOTED(EGG_VERSION, $egg_version_num, [Defines the current Eggdrop version.])

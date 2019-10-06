@@ -1271,17 +1271,23 @@ static int got900(char *from, char *msg)
   return 0;
 }
 
-static int got904905and906(char *from, char *msg)
+static int sasl_error(char *msg)
 {
-  newsplit(&msg); /* nick */
-  fixcolon(msg);
   putlog(LOG_SERV, "*", "SASL: %s", msg);
   dprintf(DP_MODE, "CAP END\n");
+  sasl_timeout_time = 0;
   if (!sasl_continue) {
     putlog(LOG_DEBUG, "*", "SASL: Aborting connection and retrying");
     nuke_server("Quitting...");
   }
   return 1;
+}
+
+static int got904905and906(char *from, char *msg)
+{
+  newsplit(&msg); /* nick */
+  fixcolon(msg);
+  return sasl_error(msg);
 }
 
 static int got903(char *from, char *msg)
@@ -1290,6 +1296,7 @@ static int got903(char *from, char *msg)
   fixcolon(msg);
   putlog(LOG_SERV, "*", "SASL: %s", msg);
   dprintf(DP_MODE, "CAP END\n");
+  sasl_timeout_time = 0;
   return 0;
 }
 
@@ -1299,6 +1306,11 @@ static int got908(char *from, char *msg)
   fixcolon(msg);
   putlog(LOG_SERV, "*", "SASL: %s", msg);
   return 0;
+}
+
+static int handle_sasl_timeout()
+{
+  return sasl_error("timeout");
 }
 
 /*
@@ -1459,15 +1471,10 @@ static int gotcap(char *from, char *msg) {
         putlog(LOG_SERV, "*", "SASL: put AUTHENTICATE %s",
             SASL_MECHANISMS[sasl_mechanism]);
         dprintf(DP_MODE, "AUTHENTICATE %s\n", SASL_MECHANISMS[sasl_mechanism]);
+        sasl_timeout_time = sasl_timeout;
 #ifndef TLS
       } else {
-        putlog(LOG_SERV, "*", "SASL: No TLS libs, aborting authentication");
-        dprintf(DP_MODE, "CAP END\n");
-        if (!sasl_continue) {
-          putlog(LOG_DEBUG, "*", "SASL: Aborting connection and retrying");
-          nuke_server("Quitting...");
-        }
-        return 1;
+        return sasl_error("No TLS libs, aborting authentication");
       }
 #endif
     } else {
@@ -1529,15 +1536,18 @@ static void server_resolve_failure(int);
  */
 static void connect_server(void)
 {
-  char pass[121], botserver[UHOSTLEN];
-  int servidx;
+  char pass[121], botserver[UHOSTLEN], s[1024];
+#ifdef IPV6
+  char buf[sizeof(struct in6_addr)];
+#endif
+  int servidx, len = 0;
   unsigned int botserverport = 0;
 
   lastpingcheck = 0;
   trying_server = now;
   empty_msgq();
-  if (newserverport) {          /* Jump to specified server */
-    curserv = -1;             /* Reset server list */
+  if (newserverport) { /* Jump to specified server */
+    curserv = -1;      /* Reset server list */
     strcpy(botserver, newserver);
     botserverport = newserverport;
     strcpy(pass, newserverpass);
@@ -1570,14 +1580,24 @@ static void connect_server(void)
       do_tcl("connect-server", connectserver);
     check_tcl_event("connect-server");
     next_server(&curserv, botserver, &botserverport, pass);
-#ifdef TLS
-    putlog(LOG_SERV, "*", "%s [%s]:%s%d", IRC_SERVERTRY, botserver,
-           use_ssl ? "+" : "", botserverport);
-    dcc[servidx].ssl = use_ssl;
-#else
-    putlog(LOG_SERV, "*", "%s [%s]:%d", IRC_SERVERTRY, botserver,
-           botserverport);
+
+#ifdef IPV6
+    if (inet_pton(AF_INET6, botserver, buf)) {
+      egg_snprintf(s, sizeof s, "%s [%s]", IRC_SERVERTRY, botserver);
+    } else {
 #endif
+      egg_snprintf(s, sizeof s, "%s %s", IRC_SERVERTRY, botserver);
+#ifdef IPV6
+    }
+#endif
+
+#ifdef TLS
+    egg_snprintf(s + len, sizeof s - len, ":%s%d",
+                 use_ssl ? "+" : "", botserverport);
+#else
+    egg_snprintf(s + len, sizeof s - len, ":%d", botserverport);
+#endif
+    putlog(LOG_SERV, "*", "%s", s);
     dcc[servidx].port = botserverport;
     strcpy(dcc[servidx].nick, "(server)");
     strlcpy(dcc[servidx].host, botserver, UHOSTLEN);

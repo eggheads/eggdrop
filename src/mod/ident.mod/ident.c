@@ -53,7 +53,7 @@ static cmd_t ident_raw[] = {
 static void ident_activity(int idx, char *buf, int len)
 {
   int s;
-  char buf2[IDENT_SIZE + sizeof " : USERID : UNIX : \r\n" + NICKLEN + 1], *pos;
+  char buf2[IDENT_SIZE + sizeof " : USERID : UNIX : \r\n" + NICKLEN], *pos;
   ssize_t i;
 
   s = answer(dcc[idx].sock, &dcc[idx].sockname, 0, 0);

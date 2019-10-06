@@ -238,6 +238,7 @@ int ssl_init()
           putlog(LOG_MISC, "*", "ERROR: TLS: unable to set tmp dh %s: %s",
                  tls_dhparam, ERR_error_string(ERR_get_error(), NULL));
         }
+        DH_free(dh);
       }
       else {
         putlog(LOG_MISC, "*", "ERROR: TLS: unable to read DHparams %s: %s",
@@ -867,6 +868,15 @@ int ssl_handshake(int sock, int flags, int verify, int loglevel, char *host,
     SSL_set_verify(td->socklist[i].ssl, SSL_VERIFY_PEER, ssl_verify);
     /* Introduce 1ms lag so an unpatched hub has time to setup the ssl handshake */
     nanosleep(&req, NULL);
+#ifdef SSL_set_tlsext_host_name
+    if (!SSL_set_tlsext_host_name(td->socklist[i].ssl, data->host))
+       debug1("TLS: setting the server name indication (SNI) to %s failed", data->host);
+    else
+       debug1("TLS: setting the server name indication (SNI) to %s successful", data->host);
+#else
+    debug1("TLS: setting the server name indication (SNI) not supported by ssl "
+           "lib, probably < openssl 0.9.8f", data->host);
+#endif
     ret = SSL_connect(td->socklist[i].ssl);
     if (!ret)
       debug0("TLS: connect handshake failed.");
