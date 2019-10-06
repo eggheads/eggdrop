@@ -597,7 +597,14 @@ Function global_table[] = {
   (Function) 0,
 #endif
   /* 304 - 307 */
-  (Function) strncpyz
+  (Function) strncpyz,
+#ifndef HAVE_BASE64
+  (Function) b64_ntop,
+  (Function) b64_pton
+#else
+  (Function) 0,
+  (Function) 0
+#endif
 };
 
 void init_modules(void)
