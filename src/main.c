@@ -1066,7 +1066,7 @@ int main(int arg_c, char **arg_v)
   egg_snprintf(egg_version, sizeof egg_version, "%s+%s %u", EGG_STRINGVER, EGG_PATCH, egg_numver);
   egg_snprintf(ver, sizeof ver, "eggdrop v%s+%s", EGG_STRINGVER, EGG_PATCH);
   egg_snprintf(version, sizeof version,
-               "Eggdrop v%s+%s (C) 1997 Robey Pointer (C) 2010-2018 Eggheads",
+               "Eggdrop v%s+%s (C) 1997 Robey Pointer (C) 2010-2019 Eggheads",
                 EGG_STRINGVER, EGG_PATCH);
 #else
   egg_snprintf(egg_version, sizeof egg_version, "%s %u", EGG_STRINGVER, egg_numver);
