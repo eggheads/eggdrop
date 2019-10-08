@@ -1159,10 +1159,12 @@ static int tryauthenticate(char *from, char *msg)
   unsigned char *dst2;
   unsigned int olen2;
   FILE *fp;
-  EC_KEY *eckey;
   EVP_PKEY *privateKey;
   int ret;
-#endif
+#ifdef HAVE_EVP_PKEY_GET1_EC_KEY
+  EC_KEY *eckey;
+#endif /* HAVE_EVP_PKEY_GET1_EC_KEY */
+#endif /* TLS */
 
   putlog(LOG_SERV, "*", "SASL: got AUTHENTICATE %s", msg);
   if (msg[0] == '+') {
@@ -1200,6 +1202,7 @@ static int tryauthenticate(char *from, char *msg)
     putlog(LOG_SERV, "*", "SASL: put AUTHENTICATE %s", dst);
     dprintf(DP_MODE, "AUTHENTICATE %s\n", dst);
 #ifdef TLS
+#ifdef HAVE_EVP_PKEY_GET1_EC_KEY
   } else {
     putlog(LOG_SERV, "*", "SASL: got AUTHENTICATE Challenge");
     olen = b64_pton(msg, dst, sizeof dst);
@@ -1243,10 +1246,14 @@ static int tryauthenticate(char *from, char *msg)
     nfree(dst2);
     putlog(LOG_SERV, "*", "SASL: put AUTHENTICATE Response %s", dst);
     dprintf(DP_MODE, "AUTHENTICATE %s\n", dst);
-#else
+#else /* HAVE_EVP_PKEY_GET1_EC_KEY */
+    putlog(LOG_DEBUG, "*", "SASL: TLS libs without EC, try PLAIN method");
+    return 1;
+#endif /* HAVE_EVP_PKEY_GET1_EC_KEY */
+#else /* TLS */
     putlog(LOG_DEBUG, "*", "SASL: TLS libs not present for authentication, try PLAIN method");
     return 1;
-#endif
+#endif /* TLS */
   }
   return 0;
 }

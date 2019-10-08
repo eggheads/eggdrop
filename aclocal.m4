@@ -1645,6 +1645,8 @@ AC_DEFUN([EGG_TLS_DETECT],
         havessllib="no"
         break
       ]])
+      dnl OpenSSL without EC (SunOS 5.11 Solaris 11.3 I love you Oracle)
+      AC_CHECK_FUNCS([EVP_PKEY_get1_EC_KEY])
     fi
     AC_CHECK_FUNC(OPENSSL_buf2hexstr, ,
       AC_CHECK_FUNC(hex_to_string,
