@@ -308,7 +308,7 @@ static void bot_bye(int idx, char *par)
 
 static void remote_tell_who(int idx, char *nick, int chan)
 {
-  int i = 0, k, l, ok = 0;
+  int i = 10, k, l, ok = 0;
   /* botnet_send_priv truncates at 450 */
   char s[450] = "Channels: ", *realnick;
   struct chanset_t *c;
@@ -324,8 +324,8 @@ static void remote_tell_who(int idx, char *nick, int chan)
   for (c = chanset; c; c = c->next) {
     if (!channel_secret(c) && !channel_inactive(c)) {
       l = strlen(c->dname);
-      /* for 2nd and more chans we need to prepend ','; i is > 0 */
-      if (i > 0) {
+      /* for 2nd and more chans we need to prepend ','; i is > 10 */
+      if (i > 10) {
         /* check if ", #chan" fits or if there is a next chan, if ", #chan," fits */
         if ((c->next && i + l + 3 <= ssize) || (!c->next && i + l + 2 <= ssize)) {
           strcat(s, ", ");
