@@ -338,7 +338,7 @@ static void remote_tell_who(int idx, char *nick, int chan)
           i = 10;
         }
       }
-      strncat(s, c->dname, sizeof s - l - 1);
+      strncat(s, c->dname, sizeof s - strlen(s) - 1);
       i += l;
     }
   }
