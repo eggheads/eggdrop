@@ -324,7 +324,7 @@ static void remote_tell_who(int idx, char *nick, int chan)
   for (c = chanset; c; c = c->next) {
     if (!channel_secret(c) && !channel_inactive(c)) {
       l = strlen(c->dname);
-      /* for 2nd and more chans we need to prepend ','; i is > 10 */
+      /* for 2nd and more chans we need to prepend ','; i is > 0 */
       if (i > 0) {
         /* check if ", #chan" fits or if there is a next chan, if ", #chan," fits */
         if ((c->next && i + l + 3 <= ssize) || (!c->next && i + l + 2 <= ssize)) {
