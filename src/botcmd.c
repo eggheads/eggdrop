@@ -308,7 +308,7 @@ static void bot_bye(int idx, char *par)
 
 static void remote_tell_who(int idx, char *nick, int chan)
 {
-  int i = 10, k, l, ok = 0;
+  int i = 0, k, l, ok = 0;
   /* botnet_send_priv truncates at 450 */
   char s[450] = "Channels: ", *realnick;
   struct chanset_t *c;
@@ -325,7 +325,7 @@ static void remote_tell_who(int idx, char *nick, int chan)
     if (!channel_secret(c) && !channel_inactive(c)) {
       l = strlen(c->dname);
       /* for 2nd and more chans we need to prepend ','; i is > 10 */
-      if (i > 10) {
+      if (i > 0) {
         /* check if ", #chan" fits or if there is a next chan, if ", #chan," fits */
         if ((c->next && i + l + 3 <= ssize) || (!c->next && i + l + 2 <= ssize)) {
           strcat(s, ", ");
@@ -338,21 +338,8 @@ static void remote_tell_who(int idx, char *nick, int chan)
           i = 10;
         }
       }
-
+      strncat(s, c->dname, sizeof s - l - 1);
       i += l;
-      strncat(s, c->dname, ssize);
-
-      /* check if we need to trunc, normally only for first chans on the line */
-      if (i > ssize) {
-        unsigned int trunc = 4;
-        if (c->next) {
-          /* more to come, leave place for ',' */
-          ++trunc;
-        }
-        strcpy(s + ssize - trunc, " ...");
-        s[ssize - trunc + 4] = '\0';
-        i = ssize - trunc + 4;
-      }
     }
   }
   if (i > 10) {
