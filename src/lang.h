@@ -488,5 +488,6 @@
 #define DCC_NOACCESS            get_language(0xe31)
 #define DCC_MYBOTNETNICK        get_language(0xe32)
 #define DCC_LOSTDUP             get_language(0xe33)
+#define DCC_TIMEOUTIDENT        get_language(0xe34)
 
 #endif /* _EGG_LANG_H */

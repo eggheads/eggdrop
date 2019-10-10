@@ -423,8 +423,9 @@ Telnet to the bot and enter 'NEW' as your nickname.
 0xe2c,Tcl error [%s]: %s
 0xe2d,*** ATTENTION: DEAD SOCKET (%d) OF TYPE %s UNTRAPPED
 0xe2e,Lost connection while identing [%s/%d]
-0xe2f,Timeout/EOF ident connection
+0xe2f,EOF ident connection
 0xe30,Lost ident wait telnet socket!!
 0xe31,Denied telnet: %s, No Access
 0xe32,Refused telnet connection from %s (tried using my botnetnick)
 0xe33,Lost telnet connection from %s while checking for duplicate
+0xe34,TIMEOUT ident connection

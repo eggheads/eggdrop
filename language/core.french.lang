@@ -424,8 +424,9 @@ Faites un Telnet sur le bot et entrez 'NEW' comme surnom.
 0xe2c,Erreur tcl [%s]: %s
 0xe2d,*** ATTENTION: DEAD SOCKET (%d) OF TYPE %s UNTRAPPED
 0xe2e,Connexion perdue pendant l'ident [%s/%d]
-0xe2f,Timeout/EOF ident connection
+0xe2f,EOF ident connection
 0xe30,Lost ident wait telnet socket!!
 0xe31,Telnet refusé: %s, aucun accès
 0xe32,Refus de la connexion telnet de %s (essai avec mon surnom botnet)
 0xe33,Connexion telnet de %s perdue pendant la vérification des doublons
+0xe34,Timeout ident connection

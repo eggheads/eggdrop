@@ -423,8 +423,9 @@ Entre em ligação telnet com o bot e digite 'NEW' como o seu nick.
 0xe2c,Erro de Tcl [%s]: %s
 0xe2d,*** ATENÇÃO: SOCKET INOPERANTE (%d) DO TIPO %s NÃO DESENVOLVIDA
 0xe2e,Perdida ligação aquando identificação [%s/%d]
-0xe2f,Timeout/EOF em ligação de identificação
+0xe2f,EOF em ligação de identificação
 0xe30,Perdida identificação aguardando por socket telnet!!
 0xe31,Telnet negada: %s, Sem acesso
 0xe32,Recusada ligação telnet de %s (tentou usar o meu nick de botnet)
 0xe33,Perdida ligação telnet de %s aquando verificação de duplicados
+0xe34,Timeout em ligação de identificação
