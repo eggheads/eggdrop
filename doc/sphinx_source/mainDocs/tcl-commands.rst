@@ -2699,6 +2699,13 @@ configureargs
 
   Module: core
 
+^^^^^^^^
+language
+^^^^^^^^
+  Value: a string containing the language with the highest priority for use by Eggdrop. This commonly reflects what is added with addlang in the config file
+
+  Module: core
+
 Binds
 -----
 
