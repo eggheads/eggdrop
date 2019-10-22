@@ -1536,7 +1536,10 @@ static void server_resolve_failure(int);
  */
 static void connect_server(void)
 {
-  char pass[121], botserver[UHOSTLEN], buf[16], s[1024];
+  char pass[121], botserver[UHOSTLEN], s[1024];
+#ifdef IPV6
+  char buf[sizeof(struct in6_addr)];
+#endif
   int servidx, len = 0;
   unsigned int botserverport = 0;
 
