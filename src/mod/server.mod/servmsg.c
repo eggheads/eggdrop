@@ -1261,6 +1261,7 @@ static int gotauthenticate(char *from, char *msg)
   return 0;
 }
 
+/* Got 900: RPL_SASLLOGGEDIN, user account name is set */
 static int got900(char *from, char *msg)
 {
   newsplit(&msg); /* nick */
@@ -1283,6 +1284,10 @@ static int sasl_error(char *msg)
   return 1;
 }
 
+/* Got 904: ERR_SASLFAIL, invalid credentials (or something not covered)
+   Got 905: ERR_SASLTOOLONG, AUTHENTICATE command was too long (>400 bytes)
+   Got 906: ERR_SASL_ABORTED, sent AUTHENTICATE command with * as parameter
+ */
 static int got904905and906(char *from, char *msg)
 {
   newsplit(&msg); /* nick */
@@ -1290,6 +1295,7 @@ static int got904905and906(char *from, char *msg)
   return sasl_error(msg);
 }
 
+/* Got 903: RPL_SASLSUCCESS, authentication successful */
 static int got903(char *from, char *msg)
 {
   newsplit(&msg); /* nick */
@@ -1300,6 +1306,7 @@ static int got903(char *from, char *msg)
   return 0;
 }
 
+/* Got 908: RPL_SASLMECHS, mechanisms supported by network */
 static int got908(char *from, char *msg)
 {
   newsplit(&msg); /* nick */
