@@ -1320,6 +1320,17 @@ static int handle_sasl_timeout()
   return sasl_error("timeout");
 }
 
+static int gotaway(char *from, char *msg)
+{
+  fixcolon(msg);
+  if (strlen(msg)) {
+    putlog(LOG_SERV, "*", "%s is now away: %s", from, msg);
+  } else {
+    putlog(LOG_SERV, "*", "%s has returned from away status", from);
+  }
+  return 0;
+}
+
 /*
  * 465     ERR_YOUREBANNEDCREEP :You are banned from this server
  */
@@ -1507,6 +1518,7 @@ static cmd_t my_raw_binds[] = {
   {"PING",         "",   (IntFunc) gotping,         NULL},
   {"PONG",         "",   (IntFunc) gotpong,         NULL},
   {"WALLOPS",      "",   (IntFunc) gotwall,         NULL},
+  {"AWAY",         "",   (IntFunc) gotaway,         NULL},
   {"001",          "",   (IntFunc) got001,          NULL},
   {"303",          "",   (IntFunc) got303,          NULL},
   {"311",          "",   (IntFunc) got311,          NULL},
