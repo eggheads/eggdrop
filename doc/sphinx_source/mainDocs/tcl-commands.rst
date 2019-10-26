@@ -3154,7 +3154,7 @@ The following is a list of bind types and how they work. Below each bind type is
 
   procname <botname> <idx> <text>
 
-  Description: triggers when a user goes away or comes back on the botnet. text is the reason than has been specified (text is "" when returning). mask is matched against the botnet-nick of the bot the user is connected to and supports wildcards. flags are ignored.
+  Description: triggers when a user goes away or comes back on the botnet. text is the reason that has been specified (text is "" when returning). mask is matched against the botnet-nick of the bot the user is connected to and supports wildcards. flags are ignored.
 
   Module: core
 
@@ -3287,6 +3287,16 @@ The following is a list of bind types and how they work. Below each bind type is
   Description: triggered when eggdrop is about to die. The mask is matched against the shutdown reason. The bind won't be triggered if the bot crashes or is being terminated by SIGKILL.
 
   Module: core
+
+(50) AWY3 (stackable)
+
+  bind awy3 <flags> <mask> <proc>
+
+  procname <from> <msg>
+
+  Description: triggered when a user enters or returns from an away status on the IRC server, ONLY when the away-notify IRCv3 capability is enabled via CAP. text is the reason that has been specified. To catch a user returning from an away status, use "" as the mask. flags is ignored. This bind will only work with IRC servers that support the IRCv3 away-notify capability and the away-notify capability must be enabled, otherwise it is ignored.
+
+  Module: server
 
 ^^^^^^^^^^^^^
 Return Values
