@@ -3288,6 +3288,14 @@ The following is a list of bind types and how they work. Below each bind type is
 
   Module: core
 
+(51) INVT (stackable)
+
+  bind invt <flags> <mask> <prov>
+
+  procname <nick> <user@host> <invitee> <channel>
+
+  Description: triggered when eggdrop received an INVITE message. nick is the nickname of the person sending the invite request, user@host is the user@host of the person sending the invite, invitee is the target of the invite, channel is the channel the invitee is being invited to. The invitee argument was added to support the IRCv3 invite-notify capability, where the eggdrop may be able to see invite messages for other people that are not the eggdrop.
+
 ^^^^^^^^^^^^^
 Return Values
 ^^^^^^^^^^^^^
