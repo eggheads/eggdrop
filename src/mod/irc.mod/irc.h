@@ -36,6 +36,7 @@
 #ifdef MAKING_IRC
 static void check_tcl_need(char *, char *);
 static void check_tcl_kick(char *, char *, struct userrec *, char *, char *, char *);
+static void check_tcl_invite(char *, char *, char *, char *);
 static void check_tcl_mode(char *, char *, struct userrec *, char *, char *, char *);
 static void check_tcl_joinspltrejn(char *, char *, struct userrec *, char *,
                                    p_tcl_bind_list);

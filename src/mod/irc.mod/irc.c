@@ -32,7 +32,7 @@
 #include <sys/utsname.h>
 
 static p_tcl_bind_list H_topc, H_splt, H_sign, H_rejn, H_part, H_pub, H_pubm;
-static p_tcl_bind_list H_nick, H_mode, H_kick, H_join, H_need;
+static p_tcl_bind_list H_nick, H_mode, H_kick, H_join, H_need, H_invt;
 
 static Function *global = NULL, *channels_funcs = NULL, *server_funcs = NULL;
 
@@ -746,6 +746,18 @@ static int channels_2char STDVAR
   return TCL_OK;
 }
 
+static int invite_4char STDVAR
+{
+  Function F = (Function) cd;
+
+  BADARGS(5, 5, " nick uhost invitee channel");
+
+  CHECKVALIDITY(invite_4char);
+  F(argv[1], argv[2], argv[3], argv[4]);
+  return TCL_OK;
+}
+
+
 static void check_tcl_joinspltrejn(char *nick, char *uhost, struct userrec *u,
                                    char *chname, p_tcl_bind_list table)
 {
@@ -838,6 +850,16 @@ static void check_tcl_kick(char *nick, char *uhost, struct userrec *u,
   check_tcl_bind(H_kick, args, &fr,
                  " $_kick1 $_kick2 $_kick3 $_kick4 $_kick5 $_kick6",
                  MATCH_MASK | BIND_USE_ATTR | BIND_STACKABLE);
+}
+
+static void check_tcl_invite(char *nick, char *from, char *invitee, char *chan)
+{
+  Tcl_SetVar(interp, "_invite1", nick, 0);
+  Tcl_SetVar(interp, "_invite2", from, 0);
+  Tcl_SetVar(interp, "_invite3", invitee, 0);
+  Tcl_SetVar(interp, "_invite4", chan, 0);
+  check_tcl_bind(H_invt, from, 0, " $_invite1 $_invite2 $_invite3 $_invite4",
+                    MATCH_MASK | BIND_STACKABLE);
 }
 
 static int check_tcl_pub(char *nick, char *from, char *chname, char *msg)
@@ -1133,6 +1155,7 @@ static char *irc_close()
   del_bind_table(H_nick);
   del_bind_table(H_mode);
   del_bind_table(H_kick);
+  del_bind_table(H_invt);
   del_bind_table(H_join);
   del_bind_table(H_pubm);
   del_bind_table(H_pub);
@@ -1193,7 +1216,8 @@ static Function irc_table[] = {
   (Function) me_voice,
   /* 24 - 27 */
   (Function) getchanmode,
-  (Function) reset_chan_info
+  (Function) reset_chan_info,
+  (Function) & H_invt           /* p_tcl_bind_list              */
 };
 
 char *irc_start(Function *global_funcs)
@@ -1253,6 +1277,7 @@ char *irc_start(Function *global_funcs)
   H_nick = add_bind_table("nick", HT_STACKABLE, channels_5char);
   H_mode = add_bind_table("mode", HT_STACKABLE, channels_6char);
   H_kick = add_bind_table("kick", HT_STACKABLE, channels_6char);
+  H_invt = add_bind_table("invt", HT_STACKABLE, invite_4char);
   H_join = add_bind_table("join", HT_STACKABLE, channels_4char);
   H_pubm = add_bind_table("pubm", HT_STACKABLE, channels_5char);
   H_pub = add_bind_table("pub", 0, channels_5char);
