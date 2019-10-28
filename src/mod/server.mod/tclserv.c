@@ -162,6 +162,34 @@ static int tcl_puthelp STDVAR
   return TCL_OK;
 }
 
+/* Send a msg to the server prefixed with an IRCv3 message-tag */
+static int tcl_tagmsg STDVAR {
+  char tag[TAGMAX];
+  char target[MSGMAX];
+  char *p;
+  BADARGS(3, 3, " tag target");
+
+  if (!msgtag) {
+    Tcl_AppendResult(irp, "message-tags not enabled, cannot send tag", NULL);
+    return TCL_ERROR;
+  }
+  strlcpy(tag, argv[1], sizeof tag);
+  strlcpy(target, argv[2], sizeof target);
+  if (*tag == '@') {
+    Tcl_AppendResult(irp, "tag cannot be prefixed with @", NULL);
+    return TCL_ERROR;
+  }
+  p = strchr(target, '\n');
+  if (p != NULL)
+    *p = 0;
+  p = strchr(target, '\r');
+  if (p != NULL)
+    *p = 0;
+  dprintf(DP_SERVER, "@%s TAGMSG %s\n", tag, target);
+  return TCL_OK;
+}
+
+
 /* Tcl interface to send CAP messages to server */
 static int tcl_cap STDVAR {
   char s[CAPMAX];
@@ -396,6 +424,7 @@ static tcl_cmds my_tcl_cmds[] = {
   {"putserv",    tcl_putserv},
   {"putquick",   tcl_putquick},
   {"putnow",     tcl_putnow},
+  {"tagmsg",     tcl_tagmsg},
   {"addserver",  tcl_addserver},
   {"delserver",  tcl_delserver},
   {NULL,         NULL}

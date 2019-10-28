@@ -1120,7 +1120,7 @@ static void server_activity(int idx, char *msg, int len)
       !match_ignore(from))) {
       rawlen = egg_snprintf(s, sizeof s, "[@] ");
       if (tag) {
-        rawlen += egg_snprintf(s + rawlen, sizeof s - rawlen, "%s", tag);
+        rawlen += egg_snprintf(s + rawlen, sizeof s - rawlen, "%s ", tag);
       }
       if (strcmp(from, "")) {
         rawlen += egg_snprintf(s + rawlen, sizeof s - rawlen, "%s ", from);

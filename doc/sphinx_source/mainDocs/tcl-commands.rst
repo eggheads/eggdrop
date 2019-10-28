@@ -164,6 +164,16 @@ cap <active/available/raw> [arg]
 
   Module: server
 
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+tagmsg <tag string> <target>
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+  Description: sends an IRCv3 TAGMSG command to the target. Only works if message-tags as been negotiated with the server via the cap command. tag string is a single string containing the tags you wish to send separated by commas (do not include the @prefix), and target is the nickname or channel you wish to send the tags to.
+
+  Returns: nothing
+
+  Module: server
+
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 addserver <ip/host> [port [password]]
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
