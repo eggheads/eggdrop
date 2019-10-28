@@ -94,6 +94,7 @@ static int kick_method;
 static int optimize_kicks;
 static int msgrate;             /* Number of seconds between sending
                                  * queued lines to server. */
+static int msgtag;              /* Enable IRCv3 message-tags capability    */
 #ifdef TLS
 static int use_ssl;             /* Use SSL for the next server connection? */
 static int tls_vfyserver;       /* Certificate validation mode for servrs  */
@@ -104,7 +105,7 @@ static char sslserver = 0;
 #endif
 
 static p_tcl_bind_list H_wall, H_raw, H_notc, H_msgm, H_msg, H_flud, H_ctcr,
-                       H_ctcp, H_out;
+                       H_ctcp, H_out, H_rawt;
 
 static void empty_msgq(void);
 static void next_server(int *, char *, unsigned int *, char *);
@@ -1276,6 +1277,17 @@ static int server_raw STDVAR
   return TCL_OK;
 }
 
+static int server_tag STDVAR
+{
+  Function F = (Function) cd;
+
+  BADARGS(5, 5, " from code args tag");
+
+  CHECKVALIDITY(server_tag);
+  Tcl_AppendResult(irp, int_to_base10(F(argv[1], argv[3], argv[4])), NULL);
+  return TCL_OK;
+}
+
 static int server_out STDVAR
 {
   Function F = (Function) cd;
@@ -1973,10 +1985,12 @@ static char *server_close()
   clearq(serverlist);
   rem_builtins(H_dcc, C_dcc_serv);
   rem_builtins(H_raw, my_raw_binds);
+  rem_builtins(H_rawt, my_raw_binds);
   rem_builtins(H_ctcp, my_ctcps);
   /* Restore original commands. */
   del_bind_table(H_wall);
   del_bind_table(H_raw);
+  del_bind_table(H_rawt);
   del_bind_table(H_notc);
   del_bind_table(H_msgm);
   del_bind_table(H_msg);
@@ -2046,7 +2060,7 @@ static Function server_table[] = {
   /* 12 - 15 */
   (Function) match_my_nick,
   (Function) check_tcl_flud,
-  (Function) NULL,              /* fixfrom - moved to core (drummer)    */
+  (Function) & msgtag,          /* int                                  */
   (Function) & answer_ctcp,     /* int                                  */
   /* 16 - 19 */
   (Function) & trigger_on_ignore, /* int                                */
@@ -2061,7 +2075,7 @@ static Function server_table[] = {
   /* 24 - 27 */
   (Function) & default_port,    /* int                                  */
   (Function) & server_online,   /* int                                  */
-  (Function) NULL,              /* min_servs -- removed (guppy)         */
+  (Function) & H_rawt,           /* p_tcl_bind_list                      */
   (Function) & H_raw,           /* p_tcl_bind_list                      */
   /* 28 - 31 */
   (Function) & H_wall,          /* p_tcl_bind_list                      */
@@ -2184,6 +2198,7 @@ char *server_start(Function *global_funcs)
 
   H_wall = add_bind_table("wall", HT_STACKABLE, server_2char);
   H_raw = add_bind_table("raw", HT_STACKABLE, server_raw);
+  H_rawt = add_bind_table("rawt", HT_STACKABLE, server_tag);
   H_notc = add_bind_table("notc", HT_STACKABLE, server_5char);
   H_msgm = add_bind_table("msgm", HT_STACKABLE, server_msg);
   H_msg = add_bind_table("msg", 0, server_msg);
@@ -2192,6 +2207,7 @@ char *server_start(Function *global_funcs)
   H_ctcp = add_bind_table("ctcp", HT_STACKABLE, server_6char);
   H_out = add_bind_table("out", HT_STACKABLE, server_out);
   add_builtins(H_raw, my_raw_binds);
+  add_builtins(H_rawt, my_raw_binds);
   add_builtins(H_dcc, C_dcc_serv);
   add_builtins(H_ctcp, my_ctcps);
   add_help_reference("server.help");

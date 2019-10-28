@@ -2935,7 +2935,7 @@ The following is a list of bind types and how they work. Below each bind type is
 
   procname <from> <keyword> <text>
 
-  Description: previous versions of Eggdrop required a special compile option to enable this binding, but it's now standard. The keyword is either a numeric, like "368", or a keyword, such as "PRIVMSG". "from" will be the server name or the source user (depending on the keyword); flags are ignored. The order of the arguments is identical to the order that the IRC server sends to the bot. The pre-processing  only splits it apart enough to determine the keyword. If the proc returns 1, Eggdrop will not process the line any further (this could cause unexpected behavior in some cases).
+  Description: previous versions of Eggdrop required a special compile option to enable this binding, but it's now standard. The keyword is either a numeric, like "368", or a keyword, such as "PRIVMSG". "from" will be the server name or the source user (depending on the keyword); flags are ignored. The order of the arguments is identical to the order that the IRC server sends to the bot. The pre-processing  only splits it apart enough to determine the keyword. If the proc returns 1, Eggdrop will not process the line any further (this could cause unexpected behavior in some cases). RAW and RAWT binds are exclusive; RAW binds will only trigger if the IRCv3 message-tags capability is not negotiated with the server.
 
   Module: server
 
@@ -3287,6 +3287,14 @@ The following is a list of bind types and how they work. Below each bind type is
   Description: triggered when eggdrop is about to die. The mask is matched against the shutdown reason. The bind won't be triggered if the bot crashes or is being terminated by SIGKILL.
 
   Module: core
+
+(52) RAWT (stackable)
+
+  bind rawt <flags> <keyword> <proc>
+
+  procname <from> <keyword> <text> <tag>
+
+  Description: triggered when a raw message of type keyword that includes an IRCv3 message-tag is processed by Eggdrop. RAW and RAWT binds are exclusive; RAWT binds will only trigger if the IRCv3 message-tags capability is not negotiated with the server. The keyword is either a numeric, like "368", or a keyword, such as "PRIVMSG". "from" will be the server name or the source user (depending on the keyword); flags are ignored. "tag" will be the contents of the entire tag message prefixed to the server message, such as "msgid=890~1572172797~68;aaa=bbb". The order of the arguments is identical to the order that the IRC server sends to the bot. If the proc returns 1, Eggdrop will not process the line any further (this could cause unexpected behavior in some cases).
 
 ^^^^^^^^^^^^^
 Return Values

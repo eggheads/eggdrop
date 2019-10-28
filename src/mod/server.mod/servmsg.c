@@ -194,6 +194,19 @@ static int check_tcl_raw(char *from, char *code, char *msg)
   return (x == BIND_EXEC_LOG);
 }
 
+static int check_tcl_rawt(char *from, char *code, char *msg, char *tag)
+{
+  int x;
+
+  Tcl_SetVar(interp, "_rawt1", from, 0);
+  Tcl_SetVar(interp, "_rawt2", code, 0);
+  Tcl_SetVar(interp, "_rawt3", msg, 0);
+  Tcl_SetVar(interp, "_rawt4", tag, 0);
+  x = check_tcl_bind(H_rawt, code, 0, " $_rawt1 $_rawt2 $_rawt3 $_rawt4",
+                    MATCH_EXACT | BIND_STACKABLE | BIND_WANTRET);
+  return (x == BIND_EXEC_LOG);
+}
+
 static int check_tcl_ctcpr(char *nick, char *uhost, struct userrec *u,
                            char *dest, char *keyword, char *args,
                            p_tcl_bind_list table)
@@ -1058,7 +1071,9 @@ static struct dcc_table SERVER_SOCKET = {
 
 static void server_activity(int idx, char *msg, int len)
 {
-  char *from, *code;
+  char *from, *code, *tag = 0;
+  char s[TAGMAX];
+  int rawlen;
 
   if (trying_server) {
     strcpy(dcc[idx].nick, "(server)");
@@ -1067,6 +1082,22 @@ static void server_activity(int idx, char *msg, int len)
     SERVER_SOCKET.timeout_val = 0;
   }
   lastpingcheck = 0;
+/* Check if IRCv3 message-tags are enabled and, if so, check/grab the tag */
+  if (msgtag) {
+    if (*msg == '@') {
+      tag = ++msg;
+      while ((*msg != '\0') && (*msg != ' ')) {
+        msg++;
+      }
+      if (*msg == ' ') {
+        *msg++ = '\0';
+        while (*msg == ' ') {
+          msg++;
+        }
+      }
+      putlog(LOG_DEBUG, "*", "Found message-tag %s on msg %s", tag, msg);
+    }
+  }
   from = "";
   if (msg[0] == ':') {
     msg++;
@@ -1075,15 +1106,25 @@ static void server_activity(int idx, char *msg, int len)
   code = newsplit(&msg);
   if (raw_log && ((strcmp(code, "PRIVMSG") && strcmp(code, "NOTICE")) ||
       !match_ignore(from))) {
-    if (!strcmp(from, ""))
-      putlog(LOG_RAW, "*", "[@] %s %s", code, msg);
-    else
-      putlog(LOG_RAW, "*", "[@] %s %s %s", from, code, msg);
+      rawlen = egg_snprintf(s, sizeof s, "[@] ");
+      if (tag) {
+        rawlen += egg_snprintf(s + rawlen, sizeof s - rawlen, "%s", tag);
+      }
+      if (strcmp(from, "")) {
+        rawlen += egg_snprintf(s + rawlen, sizeof s - rawlen, "%s ", from);
+      }
+      egg_snprintf(s + rawlen, sizeof s - rawlen, "%s %s", code, msg);
+      putlog(LOG_RAW, "*", "%s", s);
   }
   /* This has GOT to go into the raw binding table, * merely because this
    * is less efficient.
    */
-  check_tcl_raw(from, code, msg);
+//  check_tcl_raw(from, code, msg);
+  if (msgtag && tag) {
+    check_tcl_rawt(from, code, msg, tag);
+  } else {
+    check_tcl_raw(from, code, msg);
+  }
 }
 
 static int gotping(char *from, char *msg)
@@ -1343,6 +1384,14 @@ static int got410(char *from, char *msg) {
   return 1;
 }
 
+/* got417: ERR_INPUTTOOLONG. Client sent a message longer than allowed limit */
+static int got417(char *from, char *msg) {
+  newsplit(&msg);
+  putlog (LOG_SERV, "*", "MESSAGE-TAG: %s reported error: %s", from, msg);
+
+  return 1;
+}
+
 static int got421(char *from, char *msg) {
   newsplit(&msg);
   putlog(LOG_SERV, "*", "%s reported an error: %s", from, msg);
@@ -1369,6 +1418,9 @@ void add_cape(char *cape) {
   if (!strstr(cap.negotiated, cape)) {
     putlog(LOG_DEBUG, "*", "CAP: Adding cape %s to negotiated list", cape);
     Tcl_ListObjAppendElement(interp, ncapeslist, Tcl_NewStringObj(cape, -1));
+    if (!strcmp(cape, "message-tags")) {
+      msgtag = 1;
+    }
   } else {
     putlog(LOG_DEBUG, "*", "CAP: %s is already added to negotiated list", cape);
   }
@@ -1384,6 +1436,9 @@ void del_cape(char *cape) {
     for (i = 0; i < ncapesc; i++) {
       if (!strcmp(cape, Tcl_GetString(ncapesv[i]))) {
         Tcl_ListObjReplace(interp, ncapeslist, i, 1, 0, NULL);
+        if (!strcmp(cape, "message-tags")) {
+          msgtag = 0;
+        }
       }
     }
   } else {
@@ -1505,6 +1560,7 @@ static cmd_t my_raw_binds[] = {
   {"311",          "",   (IntFunc) got311,          NULL},
   {"318",          "",   (IntFunc) whoispenalty,    NULL},
   {"410",          "",   (IntFunc) got410,          NULL},
+  {"417",          "",   (IntFunc) got417,          NULL},
   {"421",          "",   (IntFunc) got421,          NULL},
   {"432",          "",   (IntFunc) got432,          NULL},
   {"433",          "",   (IntFunc) got433,          NULL},

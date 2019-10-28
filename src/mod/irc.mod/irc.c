@@ -1142,6 +1142,7 @@ static char *irc_close()
   rem_builtins(H_dcc, irc_dcc);
   rem_builtins(H_msg, C_msg);
   rem_builtins(H_raw, irc_raw);
+  rem_builtins(H_rawt, irc_raw);
   rem_tcl_commands(tclchan_cmds);
   rem_help_reference("irc.help");
   del_hook(HOOK_MINUTELY, (Function) check_expired_chanstuff);
@@ -1243,6 +1244,7 @@ char *irc_start(Function *global_funcs)
   add_builtins(H_dcc, irc_dcc);
   add_builtins(H_msg, C_msg);
   add_builtins(H_raw, irc_raw);
+  add_builtins(H_rawt, irc_raw);
   add_tcl_commands(tclchan_cmds);
   add_help_reference("irc.help");
   H_topc = add_bind_table("topc", HT_STACKABLE, channels_5char);
