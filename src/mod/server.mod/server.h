@@ -25,7 +25,7 @@
 
 #define CAPMAX      499           /*  (512 - "CAP REQ :XXX\r\n")     */
 #define TAGMAX      8191          /* Max size for IRCv3 message-tags */
-#define MSGMAX      512           /* Max size of IRC message line    */
+#define MSGMAX      511           /* Max size of IRC message line    */
 
 #define check_tcl_ctcp(a,b,c,d,e,f) check_tcl_ctcpr(a,b,c,d,e,f,H_ctcp)
 #define check_tcl_ctcr(a,b,c,d,e,f) check_tcl_ctcpr(a,b,c,d,e,f,H_ctcr)

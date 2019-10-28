@@ -33,7 +33,7 @@ static int tcl_isbotnick STDVAR
 static int tcl_putnow STDVAR
 {
   int len;
-  char buf[512], *p, *q, *r;
+  char buf[MSGMAX], *p, *q, *r;
 
   BADARGS(2, 3, " text ?options?");
 
@@ -83,7 +83,7 @@ static int tcl_putnow STDVAR
 
 static int tcl_putquick STDVAR
 {
-  char s[511], *p;
+  char s[MSGMAX], *p;
 
   BADARGS(2, 3, " text ?options?");
 
@@ -110,7 +110,7 @@ static int tcl_putquick STDVAR
 
 static int tcl_putserv STDVAR
 {
-  char s[511], *p;
+  char s[MSGMAX], *p;
 
   BADARGS(2, 3, " text ?options?");
 
@@ -137,7 +137,7 @@ static int tcl_putserv STDVAR
 
 static int tcl_puthelp STDVAR
 {
-  char s[511], *p;
+  char s[MSGMAX], *p;
 
   BADARGS(2, 3, " text ?options?");
 

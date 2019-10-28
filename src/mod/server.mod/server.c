@@ -83,8 +83,8 @@ static int double_server;
 static int double_help;
 static int double_warned;
 static int lastpingtime;        /* IRCnet LAGmeter support -- drummer */
-static char stackablecmds[511];
-static char stackable2cmds[511];
+static char stackablecmds[MSGMAX];
+static char stackable2cmds[MSGMAX];
 static time_t last_time;
 static int use_penalties;
 static int use_fastdeq;
@@ -431,7 +431,7 @@ static int fast_deq(int which)
 {
   struct msgq_head *h;
   struct msgq *m, *nm;
-  char msgstr[511], nextmsgstr[511], tosend[511], victims[511], stackable[511],
+  char msgstr[MSGMAX], nextmsgstr[MSGMAX], tosend[MSGMAX], victims[MSGMAX], stackable[MSGMAX],
        *msg, *nextmsg, *cmd, *nextcmd, *to, *nextto, *stckbl;
   int len, doit = 0, found = 0, cmd_count = 0, stack_method = 1;
 
@@ -557,7 +557,7 @@ static void check_queues(char *oldnick, char *newnick)
 static void parse_q(struct msgq_head *q, char *oldnick, char *newnick)
 {
   struct msgq *m, *lm = NULL;
-  char buf[511], *msg, *nicks, *nick, *chan, newnicks[511], newmsg[511];
+  char buf[MSGMAX], *msg, *nicks, *nick, *chan, newnicks[MSGMAX], newmsg[MSGMAX];
   int changed;
 
   for (m = q->head; m;) {
@@ -613,8 +613,8 @@ static void parse_q(struct msgq_head *q, char *oldnick, char *newnick)
 static void purge_kicks(struct msgq_head *q)
 {
   struct msgq *m, *lm = NULL;
-  char buf[511], *reason, *nicks, *nick, *chan, newnicks[511],
-       newmsg[511], chans[511], *chns, *ch;
+  char buf[MSGMAX], *reason, *nicks, *nick, *chan, newnicks[MSGMAX],
+       newmsg[MSGMAX], chans[MSGMAX], *chns, *ch;
   int changed, found;
   struct chanset_t *cs;
 
@@ -682,8 +682,8 @@ static int deq_kick(int which)
 {
   struct msgq_head *h;
   struct msgq *msg, *m, *lm;
-  char buf[511], buf2[511], *reason2, *nicks, *chan, *chan2, *reason, *nick,
-       newnicks[511], newnicks2[511], newmsg[511];
+  char buf[MSGMAX], buf2[MSGMAX], *reason2, *nicks, *chan, *chan2, *reason, *nick,
+       newnicks[MSGMAX], newnicks2[MSGMAX], newmsg[MSGMAX];
   int changed = 0, nr = 0;
 
   if (!optimize_kicks)
@@ -822,7 +822,7 @@ static void queue_server(int which, char *msg, int len)
   struct msgq_head *h = NULL, tempq;
   struct msgq *q, *tq, *tqq;
   int doublemsg = 0, qnext = 0;
-  char buf[511];
+  char buf[MSGMAX];
 
   /* Don't even BOTHER if there's no server online. */
   if (serv < 0)
