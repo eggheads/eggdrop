@@ -720,6 +720,18 @@ static int gotnotice(char *from, char *msg)
   return 0;
 }
 
+static int gottagmsg(char *from, char *msg) {
+  char *nick;
+  fixcolon(msg);
+    if (strchr(from, '!')) {
+      nick = splitnick(&from);
+      putlog(LOG_SERV, "*", "[#]%s(%s)[#] %s", nick, from, msg);
+    } else {
+      putlog(LOG_SERV, "*", "[#]%s[#] %s");
+    }
+  return 0;
+}
+
 /* WALLOPS: oper's nuisance
  */
 static int gotwall(char *from, char *msg)
@@ -1582,6 +1594,7 @@ static cmd_t my_raw_binds[] = {
   {"KICK",         "",   (IntFunc) gotkick,         NULL},
   {"CAP",          "",   (IntFunc) gotcap,          NULL},
   {"AUTHENTICATE", "",   (IntFunc) gotauthenticate, NULL},
+  {"TAGMSG",       "",   (IntFunc) gottagmsg,       NULL},
   {NULL,           NULL, NULL,                      NULL}
 };
 
