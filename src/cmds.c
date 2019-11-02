@@ -3004,25 +3004,24 @@ static void cmd_traffic(struct userrec *u, int idx, char *par)
 static char traffictxt[20];
 static char *btos(unsigned long bytes)
 {
-  char unit[10];
+  const char *unit;
   float xbytes;
 
-  sprintf(unit, "Bytes");
   xbytes = bytes;
   if (xbytes > 1024.0) {
-    sprintf(unit, "KBytes");
+    unit = "KBytes";
     xbytes = xbytes / 1024.0;
   }
   if (xbytes > 1024.0) {
-    sprintf(unit, "MBytes");
+    unit = "MBytes";
     xbytes = xbytes / 1024.0;
   }
   if (xbytes > 1024.0) {
-    sprintf(unit, "GBytes");
+    unit = "GBytes";
     xbytes = xbytes / 1024.0;
   }
   if (xbytes > 1024.0) {
-    sprintf(unit, "TBytes");
+    unit = "TBytes";
     xbytes = xbytes / 1024.0;
   }
   if (bytes > 1024)
