@@ -113,6 +113,7 @@ AX_CREATE_STDINT_H([eggint.h])
 # Checks for functions and their arguments.
 AC_CHECK_FUNCS([clock dprintf getrandom getrusage inet_aton inet_ntop isascii random rand lrand48 setpgid snprintf strlcpy vsnprintf])
 AC_FUNC_SELECT_ARGTYPES
+EGG_FUNC_B64_NTOP
 EGG_FUNC_VPRINTF
 AC_FUNC_MMAP
 

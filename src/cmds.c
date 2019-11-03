@@ -2508,14 +2508,13 @@ static void cmd_set(struct userrec *u, int idx, char *msg)
     return;
   }
   putlog(LOG_CMDS, "*", "#%s# set %s", dcc[idx].nick, msg);
-  strcpy(s, "set ");
   if (!msg[0]) {
-    strcpy(s, "info globals");
-    Tcl_Eval(interp, s);
+    Tcl_Eval(interp, "info globals");
     dumplots(idx, "Global vars: ", tcl_resultstring());
     return;
   }
-  strlcpy(s + 4, msg, sizeof s - 4);
+  strcpy(s, "set ");
+  strlcpy(s + 4, msg, (sizeof s) - 4);
   code = Tcl_Eval(interp, s);
 
   /* properly convert string to system encoding. */
@@ -3005,25 +3004,24 @@ static void cmd_traffic(struct userrec *u, int idx, char *par)
 static char traffictxt[20];
 static char *btos(unsigned long bytes)
 {
-  char unit[10];
+  const char *unit;
   float xbytes;
 
-  sprintf(unit, "Bytes");
   xbytes = bytes;
   if (xbytes > 1024.0) {
-    sprintf(unit, "KBytes");
+    unit = "KBytes";
     xbytes = xbytes / 1024.0;
   }
   if (xbytes > 1024.0) {
-    sprintf(unit, "MBytes");
+    unit = "MBytes";
     xbytes = xbytes / 1024.0;
   }
   if (xbytes > 1024.0) {
-    sprintf(unit, "GBytes");
+    unit = "GBytes";
     xbytes = xbytes / 1024.0;
   }
   if (xbytes > 1024.0) {
-    sprintf(unit, "TBytes");
+    unit = "TBytes";
     xbytes = xbytes / 1024.0;
   }
   if (bytes > 1024)
