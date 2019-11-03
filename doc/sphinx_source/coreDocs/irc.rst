@@ -113,17 +113,17 @@ There are also some variables you can set in your config file:
     longer than wait-info).
 
 These were the core irc module settings. There are more settings for
-'net-type' 1 and 5. net-type has to be set in the server module config
+'net-type' IRCnet and Efnet. net-type has to be set in the server module config
 section.
 
-Use the following settings only if you set 'net-type' to 1!
+Use the following settings only if you set 'net-type' to IRCnet!
 
   set prevent-mixing 1
     At the moment, the current IRCnet IRCd version (2.10) doesn't support the
     mixing of b, o and v modes with e and I modes. This might be changed in
     the future, so use 1 at the moment for this setting.
 
-  Use the following settings only if you set 'net-type' to 5!
+  Use the following settings only if you set 'net-type' to Efnet!
 
   set kick-method 1
     If your network supports more users per kick command then 1, you can
