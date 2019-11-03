@@ -1495,12 +1495,19 @@ static char *traced_nettype(ClientData cdata, Tcl_Interp *irp,
     net_type_int = NETT_UNDERNET;
   else if (!strcasecmp(net_type, "Other"))
     net_type_int = NETT_OTHER;
-  else if (strcmp(net_type, "0") && strcmp(net_type, "1") &&
-        strcmp(net_type, "2") && strcmp(net_type, "3") &&
-        strcmp(net_type, "4") && strcmp(net_type, "5")) {
+  else if (!strcasecmp(net_type, "1")) /* For backwards compatibility */
+    net_type_int = NETT_IRCNET;
+  else if (!strcasecmp(net_type, "2")) /* For backwards compatibility */
+    net_type_int = NETT_UNDERNET;
+  else if (!strcasecmp(net_type, "3")) /* For backwards compatibility */
+    net_type_int = NETT_DALNET;
+  else if (!strcasecmp(net_type, "4")) /* For backwards compatibility */
+    net_type_int = NETT_HYBRID_EFNET;
+  else if (!strcasecmp(net_type, "5")) /* For backwards compatibility */
+    net_type_int = NETT_OTHER; 
+  else 
     fatal("ERROR: NET-TYPE NOT SET.\n Must be one of DALNet, EFnet, freenode,"
         " IRCnet, Quakenet, Rizon, Undernet, Other.", 0);
-  }
   do_nettype();
   return NULL;
 }
