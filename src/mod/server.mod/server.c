@@ -1527,8 +1527,8 @@ static char *traced_nettype(ClientData cdata, Tcl_Interp *irp,
   if (warn) {
     putlog(LOG_MISC, "*",
             "WARNING: Using an integer for net-type is deprecated and will be\n"
-            "         removed in a future release. Please use an updated\n"
-            "         configuration file and use the provided string values\n");
+            "         removed in a future release. Please reference an updated\n"
+            "         configuration file for the new allowed string values");
   }
   do_nettype();
   return NULL;
