@@ -1014,10 +1014,15 @@ static void irc_report(int idx, int details)
   }
 }
 
+/* Many networks either support max_bans/invite/exempts/ *or*
+ * they support max_modes. If they support max_modes, set each of
+ * other sub-max settings equal to max_modes
+ */
 static void do_nettype()
 {
   switch (net_type_int) {
   case NETT_EFNET:
+  case NETT_HYBRID_EFNET:
   case NETT_FREENODE:
     kick_method = 1;
     modesperline = 4;
@@ -1050,10 +1055,10 @@ static void do_nettype()
     use_354 = 1;
     use_exempts = 0;
     use_invites = 0;
-    max_bans = 45;
-    max_exempts = 45;
-    max_invites = 45;
-    max_modes = 45;
+    max_bans = 100;
+    max_exempts = 0;
+    max_invites = 0;
+    max_modes = 100;
     rfc_compliant = 1;
     include_lk = 1;
     break;
@@ -1066,22 +1071,9 @@ static void do_nettype()
     max_bans = 200;
     max_exempts = 100;
     max_invites = 100;
-    max_modes = 100;
+    max_modes = 400;
     rfc_compliant = 0;
     include_lk = 1;
-    break;
-  case NETT_HYBRID_EFNET:
-    kick_method = 1;
-    modesperline = 4;
-    use_354 = 0;
-    use_exempts = 1;
-    use_invites = 1;
-    max_bans = 20;
-    max_exempts = 20;
-    max_invites = 20;
-    max_modes = 20;
-    rfc_compliant = 1;
-    include_lk = 0;
     break;
   case NETT_QUAKENET:
     kick_method = 1;
@@ -1090,8 +1082,8 @@ static void do_nettype()
     use_exempts = 0;
     use_invites = 0;
     max_bans = 45;
-    max_exempts = 45;
-    max_invites = 45;
+    max_exempts = 0;
+    max_invites = 0;
     max_modes = 45;
     rfc_compliant = 1;
     include_lk = 1;

@@ -1485,8 +1485,6 @@ static char *traced_nettype(ClientData cdata, Tcl_Interp *irp,
     net_type_int = NETT_EFNET;
   else if (!strcasecmp(net_type, "freenode"))
     net_type_int = NETT_FREENODE;
-  else if (!strcasecmp(net_type, "Hybrid"))
-    net_type_int = NETT_HYBRID_EFNET;
   else if (!strcasecmp(net_type, "IRCnet"))
     net_type_int = NETT_IRCNET;
   else if (!strcasecmp(net_type, "QuakeNet"))
@@ -1495,29 +1493,13 @@ static char *traced_nettype(ClientData cdata, Tcl_Interp *irp,
     net_type_int = NETT_RIZON;
   else if (!strcasecmp(net_type, "Undernet"))
     net_type_int = NETT_UNDERNET;
-  else if (!strcasecmp(net_type, "0")) { /* For backwards compatibility */
-    strlcpy(net_type, "EFnet", sizeof net_type);
-    net_type_int = NETT_EFNET;
-  }
-  else if (!strcasecmp(net_type, "1")) { /* For backwards compatibility */
-    strlcpy(net_type, "IRCnet", sizeof net_type);
-    net_type_int = NETT_IRCNET;
-  }
-  else if (!strcasecmp(net_type, "2")) { /* For backwards compatibility */
-    strlcpy(net_type, "Undernet", sizeof net_type);
-    net_type_int = NETT_UNDERNET;
-  }
-  else if (!strcasecmp(net_type, "3")) { /* For backwards compatibility */
-    strlcpy(net_type, "DALnet", sizeof net_type);
-    net_type_int = NETT_DALNET;
-  }
-  else if (!strcasecmp(net_type, "4")) { /* For backwards compatibility */
-    strlcpy(net_type, "Hybrid", sizeof net_type);
-    net_type_int = NETT_HYBRID_EFNET;
-  }
-  else {
-    strlcpy(net_type, "Others", sizeof net_type);
-    net_type_int = NETT_OTHERS;
+  else if (!strcasecmp(net_type, "Other"))
+    net_type_int = NETT_OTHER;
+  else if (strcmp(net_type, "0") && strcmp(net_type, "1") &&
+        strcmp(net_type, "2") && strcmp(net_type, "3") &&
+        strcmp(net_type, "4") && strcmp(net_type, "5")) {
+    fatal("ERROR: NET-TYPE NOT SET.\n Must be one of DALNet, EFnet, freenode,"
+        " IRCnet, Quakenet, Rizon, Undernet, Other.", 0);
   }
   do_nettype();
   return NULL;

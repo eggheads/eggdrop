@@ -123,7 +123,7 @@ enum {
   NETT_QUAKENET,     /* QuakeNet                          */
   NETT_RIZON,        /* Rizon                             */
   NETT_UNDERNET,     /* UnderNet                          */
-  NETT_OTHERS,       /* Others                            */
+  NETT_OTHER         /* Others                            */
 };
 
 /* Available sasl mechanisms. */
