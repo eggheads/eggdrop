@@ -1149,7 +1149,7 @@ int main(int arg_c, char **arg_v)
   link_statics();
 #endif
   strlcpy(s, ctime(&now), sizeof s);
-  memmove(&s[11], &s[20], strlen(&s[20])+1);
+  memmove(&s[11], &s[20], strlen(&s[20]) + 1);
   putlog(LOG_ALL, "*", "--- Loading %s (%s)", ver, s);
   chanprog();
   if (!encrypt_pass2 && !encrypt_pass) {
