@@ -37,7 +37,6 @@ static p_tcl_bind_list H_nick, H_mode, H_kick, H_join, H_need;
 static Function *global = NULL, *channels_funcs = NULL, *server_funcs = NULL;
 
 static int ctcp_mode;
-static int net_type;
 static int strict_host;
 static int wait_split = 300;    /* Time to wait for user to return from net-split. */
 static int max_bans = 20;       /* Modified by net-type 1-4 */
@@ -933,7 +932,6 @@ static tcl_ints myints[] = {
   {"max-exempts",     &max_exempts,     0},
   {"max-invites",     &max_invites,     0},
   {"max-modes",       &max_modes,       0},
-  {"net-type",        &net_type,        0},
   {"strict-host",     &strict_host,     0}, /* arthur2 */
   {"ctcp-mode",       &ctcp_mode,       0}, /* arthur2 */
   {"keep-nick",       &keepnick,        0}, /* guppy */
@@ -1016,10 +1014,16 @@ static void irc_report(int idx, int details)
   }
 }
 
+/* Many networks either support max_bans/invite/exempts/ *or*
+ * they support max_modes. If they support max_modes, set each of
+ * other sub-max settings equal to max_modes
+ */
 static void do_nettype()
 {
-  switch (net_type) {
-  case 0: /* EFnet */
+  switch (net_type_int) {
+  case NETT_EFNET:
+  case NETT_HYBRID_EFNET:
+  case NETT_FREENODE:
     kick_method = 1;
     modesperline = 4;
     use_354 = 0;
@@ -1032,7 +1036,7 @@ static void do_nettype()
     rfc_compliant = 1;
     include_lk = 0;
     break;
-  case 1: /* IRCnet */
+  case NETT_IRCNET:
     kick_method = 4;
     modesperline = 3;
     use_354 = 0;
@@ -1045,42 +1049,55 @@ static void do_nettype()
     rfc_compliant = 1;
     include_lk = 1;
     break;
-  case 2: /* UnderNet */
+  case NETT_UNDERNET:
+    kick_method = 1;
+    modesperline = 6;
+    use_354 = 1;
+    use_exempts = 0;
+    use_invites = 0;
+    max_bans = 100;
+    max_exempts = 0;
+    max_invites = 0;
+    max_modes = 100;
+    rfc_compliant = 1;
+    include_lk = 1;
+    break;
+  case NETT_DALNET:
+    kick_method = 4;
+    modesperline = 6;
+    use_354 = 0;
+    use_exempts = 1;
+    use_invites = 1;
+    max_bans = 200;
+    max_exempts = 100;
+    max_invites = 100;
+    max_modes = 400;
+    rfc_compliant = 0;
+    include_lk = 1;
+    break;
+  case NETT_QUAKENET:
     kick_method = 1;
     modesperline = 6;
     use_354 = 1;
     use_exempts = 0;
     use_invites = 0;
     max_bans = 45;
-    max_exempts = 45;
-    max_invites = 45;
+    max_exempts = 0;
+    max_invites = 0;
     max_modes = 45;
     rfc_compliant = 1;
     include_lk = 1;
     break;
-  case 3: /* DALnet */
-    kick_method = 1;
-    modesperline = 6;
-    use_354 = 0;
-    use_exempts = 0;
-    use_invites = 0;
-    max_bans = 100;
-    max_exempts = 100;
-    max_invites = 100;
-    max_modes = 100;
-    rfc_compliant = 0;
-    include_lk = 1;
-    break;
-  case 4: /* Hybrid-6+ */
+  case NETT_RIZON:
     kick_method = 1;
     modesperline = 4;
     use_354 = 0;
     use_exempts = 1;
     use_invites = 1;
-    max_bans = 20;
-    max_exempts = 20;
-    max_invites = 20;
-    max_modes = 20;
+    max_bans = 250;
+    max_exempts = 250;
+    max_invites = 250;
+    max_modes = 250;
     rfc_compliant = 1;
     include_lk = 0;
     break;
@@ -1208,9 +1225,9 @@ char *irc_start(Function *global_funcs)
     module_undepend(MODULE_NAME);
     return "This module requires Eggdrop 1.8.0 or later.";
   }
-  if (!(server_funcs = module_depend(MODULE_NAME, "server", 1, 0))) {
+  if (!(server_funcs = module_depend(MODULE_NAME, "server", 1, 5))) {
     module_undepend(MODULE_NAME);
-    return "This module requires server module 1.0 or later.";
+    return "This module requires server module 1.5 or later.";
   }
   if (!(channels_funcs = module_depend(MODULE_NAME, "channels", 1, 1))) {
     module_undepend(MODULE_NAME);
