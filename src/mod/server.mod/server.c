@@ -1479,6 +1479,8 @@ static char *traced_nettype(ClientData cdata, Tcl_Interp *irp,
                             EGG_CONST char *name1,
                             EGG_CONST char *name2, int flags)
 {
+  int warn = 0;
+
   if (!strcasecmp(net_type, "DALnet"))
     net_type_int = NETT_DALNET;
   else if (!strcasecmp(net_type, "EFnet"))
@@ -1495,19 +1497,39 @@ static char *traced_nettype(ClientData cdata, Tcl_Interp *irp,
     net_type_int = NETT_UNDERNET;
   else if (!strcasecmp(net_type, "Other"))
     net_type_int = NETT_OTHER;
-  else if (!strcasecmp(net_type, "1")) /* For backwards compatibility */
+  else if (!strcasecmp(net_type, "0")) { /* For backwards compatibility */
+    net_type_int = NETT_EFNET;
+    warn = 1;
+  }
+  else if (!strcasecmp(net_type, "1")) { /* For backwards compatibility */
     net_type_int = NETT_IRCNET;
-  else if (!strcasecmp(net_type, "2")) /* For backwards compatibility */
+    warn = 1;
+  }
+  else if (!strcasecmp(net_type, "2")) { /* For backwards compatibility */
     net_type_int = NETT_UNDERNET;
-  else if (!strcasecmp(net_type, "3")) /* For backwards compatibility */
+    warn = 1;
+  }
+  else if (!strcasecmp(net_type, "3")) { /* For backwards compatibility */
     net_type_int = NETT_DALNET;
-  else if (!strcasecmp(net_type, "4")) /* For backwards compatibility */
+    warn = 1;
+  }
+  else if (!strcasecmp(net_type, "4")) { /* For backwards compatibility */
     net_type_int = NETT_HYBRID_EFNET;
-  else if (!strcasecmp(net_type, "5")) /* For backwards compatibility */
+    warn = 1;
+  }
+  else if (!strcasecmp(net_type, "5")) { /* For backwards compatibility */
     net_type_int = NETT_OTHER; 
-  else 
+    warn = 1;
+  } else {
     fatal("ERROR: NET-TYPE NOT SET.\n Must be one of DALNet, EFnet, freenode,"
         " IRCnet, Quakenet, Rizon, Undernet, Other.", 0);
+  }
+  if (warn) {
+    putlog(LOG_MISC, "*",
+            "WARNING: Using an integer for net-type is deprecated and will be\n"
+            "         removed in a future release. Please use an updated\n"
+            "         configuration file and use the provided string values\n");
+  }
   do_nettype();
   return NULL;
 }
