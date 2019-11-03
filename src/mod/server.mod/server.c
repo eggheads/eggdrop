@@ -2071,7 +2071,7 @@ static char *server_close()
                  TCL_TRACE_READS | TCL_TRACE_WRITES | TCL_TRACE_UNSETS,
                  traced_serveraddress, NULL);
   Tcl_UntraceVar(interp, "net-type",
-                 TCL_TRACE_READS | TCL_TRACE_WRITES | TCL_TRACE_UNSETS,
+                 TCL_TRACE_WRITES | TCL_TRACE_UNSETS,
                  traced_nettype, NULL);
   Tcl_UntraceVar(interp, "nick-len",
                  TCL_TRACE_READS | TCL_TRACE_WRITES | TCL_TRACE_UNSETS,
@@ -2244,7 +2244,7 @@ char *server_start(Function *global_funcs)
                TCL_TRACE_READS | TCL_TRACE_WRITES | TCL_TRACE_UNSETS,
                traced_serveraddress, NULL);
   Tcl_TraceVar(interp, "net-type",
-               TCL_TRACE_READS | TCL_TRACE_WRITES | TCL_TRACE_UNSETS,
+               TCL_TRACE_WRITES | TCL_TRACE_UNSETS,
                traced_nettype, NULL);
   Tcl_TraceVar(interp, "nick-len",
                TCL_TRACE_READS | TCL_TRACE_WRITES | TCL_TRACE_UNSETS,
