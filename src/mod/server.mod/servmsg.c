@@ -495,7 +495,7 @@ static int detect_flood(char *floodnick, char *floodhost, char *from, int which)
 
 /* Got a private message.
  */
-static int gotmsg(char *from, char *msg)
+static int gotmsg(char *from, char *msg, char *tag)
 {
   char *to, buf[UHOSTLEN], *nick, ctcpbuf[512], *uhost = buf, *ctcp,
        *p, *p1, *code;
@@ -723,12 +723,12 @@ static int gotnotice(char *from, char *msg)
 static int gottagmsg(char *from, char *msg) {
   char *nick;
   fixcolon(msg);
-    if (strchr(from, '!')) {
-      nick = splitnick(&from);
-      putlog(LOG_SERV, "*", "[#]%s(%s)[#] %s", nick, from, msg);
-    } else {
-      putlog(LOG_SERV, "*", "[#]%s[#] %s");
-    }
+  if (strchr(from, '!')) {
+    nick = splitnick(&from);
+    putlog(LOG_SERV, "*", "[#]%s(%s)[#] %s", nick, from, msg);
+  } else {
+    putlog(LOG_SERV, "*", "[#]%s[#] %s");
+  }
   return 0;
 }
 
@@ -1083,7 +1083,7 @@ static struct dcc_table SERVER_SOCKET = {
 
 static void server_activity(int idx, char *msg, int len)
 {
-  char *from, *code, *tag = 0;
+  char *from, *code, *tag = NULL;
   char s[TAGMAX];
   int rawlen;
 
@@ -1122,7 +1122,7 @@ static void server_activity(int idx, char *msg, int len)
       if (tag) {
         rawlen += egg_snprintf(s + rawlen, sizeof s - rawlen, "%s ", tag);
       }
-      if (strcmp(from, "")) {
+      if (strcmp(from, "") == 0) {
         rawlen += egg_snprintf(s + rawlen, sizeof s - rawlen, "%s ", from);
       }
       egg_snprintf(s + rawlen, sizeof s - rawlen, "%s %s", code, msg);
@@ -1430,7 +1430,7 @@ void add_cape(char *cape) {
   if (!strstr(cap.negotiated, cape)) {
     putlog(LOG_DEBUG, "*", "CAP: Adding cape %s to negotiated list", cape);
     Tcl_ListObjAppendElement(interp, ncapeslist, Tcl_NewStringObj(cape, -1));
-    if (!strcmp(cape, "message-tags")) {
+    if (!strcmp(cape, "message-tags") || !strcmp(cape, "twitch.tv/tags")) {
       msgtag = 1;
     }
   } else {

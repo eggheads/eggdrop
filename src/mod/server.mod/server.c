@@ -1279,7 +1279,7 @@ static int server_raw STDVAR
   BADARGS(4, 4, " from code args");
 
   CHECKVALIDITY(server_raw);
-  Tcl_AppendResult(irp, int_to_base10(F(argv[1], argv[3])), NULL);
+  Tcl_AppendResult(irp, int_to_base10(F(argv[1], argv[3], "")), NULL);
   return TCL_OK;
 }
 
