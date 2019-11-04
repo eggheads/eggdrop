@@ -127,7 +127,11 @@ static int del_server(const char *, const char *);
 static void free_server(struct server_list *);
 
 static int sasl = 0;
+static int away_notify = 0;
+static int invite_notify = 0;
+static int message_tags = 0;
 
+static char cap_request[CAPMAX - 9];
 static int sasl_mechanism = 0;
 static char sasl_username[NICKMAX + 1];
 static char sasl_password[81];
@@ -1579,6 +1583,7 @@ static tcl_strings my_tcl_strings[] = {
   {"connect-server",      connectserver,  120,               0},
   {"stackable-commands",  stackablecmds,  510,               0},
   {"stackable2-commands", stackable2cmds, 510,               0},
+  {"cap-request",         cap_request,    CAPMAX - 9,        0},
   {"sasl-username",       sasl_username,  NICKMAX,           0},
   {"sasl-password",       sasl_password,  80,                0},
   {"sasl-ecdsa-key",      sasl_ecdsa_key, 120,               0},
@@ -1625,6 +1630,9 @@ static tcl_ints my_tcl_ints[] = {
   {"sasl-mechanism",    &sasl_mechanism,            0},
   {"sasl-continue",     &sasl_continue,             0},
   {"sasl-timeout",      &sasl_timeout,              0},
+  {"away-notify",       &away_notify,               0},
+  {"invite-notify",     &invite_notify,             0},
+  {"message-tags",      &message_tags,              0},
   {NULL,                NULL,                       0}
 };
 
