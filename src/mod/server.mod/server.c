@@ -1525,14 +1525,14 @@ static char *traced_nettype(ClientData cdata, Tcl_Interp *irp,
     net_type_int = NETT_OTHER; 
     warn = 1;
   } else {
-    fatal("ERROR: NET-TYPE NOT SET.\n Must be one of DALNet, EFnet, freenode,"
-        " IRCnet, Quakenet, Rizon, Undernet, Other.", 0);
+    fatal("ERROR: NET-TYPE NOT SET.\n Must be one of DALNet, EFnet, freenode, "
+          "IRCnet, Quakenet, Rizon, Undernet, Other.", 0);
   }
   if (warn) {
     putlog(LOG_MISC, "*",
-            "WARNING: Using an integer for net-type is deprecated and will be\n"
-            "         removed in a future release. Please reference an updated\n"
-            "         configuration file for the new allowed string values");
+           "WARNING: Using an integer for net-type is deprecated and will be\n"
+           "         removed in a future release. Please reference an updated\n"
+           "         configuration file for the new allowed string values");
   }
   do_nettype();
   return NULL;
