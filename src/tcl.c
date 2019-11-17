@@ -57,8 +57,7 @@ extern int flood_telnet_thr, flood_telnet_time, shtime, share_greet,
            ignore_time, reserved_port_min, reserved_port_max, max_logs,
            max_logsize, dcc_total, raw_log, identtimeout, dcc_sanitycheck,
            dupwait_timeout, egg_numver, share_unlinks, protect_telnet,
-           strict_host, resolve_timeout, default_uflags, userfile_perm,
-           cidr_support;
+           resolve_timeout, default_uflags, userfile_perm, cidr_support;
 
 #ifdef IPV6
 extern char vhost6[];
@@ -446,7 +445,6 @@ static tcl_ints def_tcl_ints[] = {
   {"quiet-save",            &quiet_save,           0},
   {"force-expire",          &force_expire,         0},
   {"dupwait-timeout",       &dupwait_timeout,      0},
-  {"strict-host",           &strict_host,          0},
   {"userfile-perm",         &userfile_perm,        0},
   {"copy-to-tmp",           &copy_to_tmp,          0},
   {"quiet-reject",          &quiet_reject,         0},
