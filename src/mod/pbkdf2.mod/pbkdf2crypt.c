@@ -62,8 +62,12 @@ static int maxdigestlen = 1;
 static int pbkdf2crypt_init(void)
 {
   int i;
-  if (PBKDF2CONF_CYCLES <= 0 || PBKDF2CONF_CYCLES > INT_MAX) {
-    putlog(LOG_MISC, "*", "Cycle value outside its allowed range.");
+  if (PBKDF2CONF_CYCLES <= 0) {
+    putlog(LOG_MISC, "*", "Cycle must be greater than 0");
+    return -1;
+  }
+  if (PBKDF2CONF_CYCLES > INT_MAX) {
+    putlog(LOG_MISC, "*", "Cycle must be equal to or less than %i", INT_MAX);
     return -1;
   }
   OpenSSL_add_all_digests();
