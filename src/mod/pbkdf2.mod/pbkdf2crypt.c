@@ -145,9 +145,9 @@ static int pbkdf2crypt_verify_pass(const char *pass, int digest_idx, const unsig
   if (PBKDF2CRYPT_DIGEST_IDX_INVALID(digest_idx))
     return -1;
   digest = digests[digest_idx].digest;
-  size = pbkdf2crypt_get_size(digest, saltlen);
   if (!digest)
     return -1;
+  size = pbkdf2crypt_get_size(digest, saltlen);
   if (!out)
     return size;
   /* Sanity check */
