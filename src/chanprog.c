@@ -35,9 +35,7 @@
 #  endif
 #endif
 
-#ifdef HAVE_UNAME
-#  include <sys/utsname.h>
-#endif
+#include <sys/utsname.h>
 
 #include "modules.h"
 
@@ -61,8 +59,8 @@ unsigned long timer_id = 1;        /* Next timer of any sort will
                                     * have this number             */
 struct chanset_t *chanset = NULL;  /* Channel list                 */
 char admin[121] = "";              /* Admin info                   */
-char origbotname[NICKLEN + 1];
-char botname[NICKLEN + 1];         /* Primary botname              */
+char origbotname[NICKLEN];
+char botname[NICKLEN];             /* Primary botname              */
 char owner[121] = "";              /* Permanent botowner(s)        */
 
 
@@ -142,7 +140,7 @@ struct userrec *check_chanlist(const char *host)
   nick = splitnick(&uhost);
   for (chan = chanset; chan; chan = chan->next)
     for (m = chan->channel.member; m && m->nick[0]; m = m->next)
-      if (!rfc_casecmp(nick, m->nick) && !egg_strcasecmp(uhost, m->userhost))
+      if (!rfc_casecmp(nick, m->nick) && !strcasecmp(uhost, m->userhost))
         return m->user;
   return NULL;
 }
@@ -156,7 +154,7 @@ struct userrec *check_chanlist_hand(const char *hand)
 
   for (chan = chanset; chan; chan = chan->next)
     for (m = chan->channel.member; m && m->nick[0]; m = m->next)
-      if (m->user && !egg_strcasecmp(m->user->handle, hand))
+      if (m->user && !strcasecmp(m->user->handle, hand))
         return m->user;
   return NULL;
 }
@@ -210,7 +208,7 @@ void set_chanlist(const char *host, struct userrec *rec)
   nick = splitnick(&uhost);
   for (chan = chanset; chan; chan = chan->next)
     for (m = chan->channel.member; m && m->nick[0]; m = m->next)
-      if (!rfc_casecmp(nick, m->nick) && !egg_strcasecmp(uhost, m->userhost))
+      if (!rfc_casecmp(nick, m->nick) && !strcasecmp(uhost, m->userhost))
         m->user = rec;
 }
 
@@ -291,19 +289,15 @@ void tell_verbose_status(int idx)
   int i;
   time_t now2 = now - online_since, hr, min;
   double cputime, cache_total;
-#ifdef HAVE_UNAME
   struct utsname un;
 
   if (uname(&un) < 0) {
-#endif
     vers_t = " ";
     uni_t  = "*unknown*";
-#ifdef HAVE_UNAME
   } else {
     vers_t = un.release;
     uni_t  = un.sysname;
   }
-#endif
 
   i = count_users(userlist);
   dprintf(idx, "I am %s, running %s: %d user%s (mem: %uk).\n",

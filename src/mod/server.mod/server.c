@@ -74,7 +74,8 @@ static int exclusive_binds;     /* configures PUBM and MSGM binds to be
 static int answer_ctcp;         /* answer how many stacked ctcp's ? */
 static int lowercase_ctcp;      /* answer lowercase CTCP's (non-standard) */
 static int check_mode_r;        /* check for IRCnet +r modes */
-static int net_type;
+static char net_type[9];
+static int net_type_int;
 static char connectserver[121]; /* what, if anything, to do before connect
                                  * to the server */
 static int resolvserv;          /* in the process of resolving a server host */
@@ -120,6 +121,23 @@ static int deq_kick(int);
 static void msgq_clear(struct msgq_head *qh);
 static int stack_limit;
 static char *realservername;
+static int add_server(const char *, const char *, const char *);
+static int del_server(const char *, const char *);
+static void free_server(struct server_list *);
+
+static int sasl = 0;
+static int away_notify = 0;
+static int invite_notify = 0;
+static int message_tags = 0;
+
+static char cap_request[CAPMAX - 9];
+static int sasl_mechanism = 0;
+static char sasl_username[NICKMAX + 1];
+static char sasl_password[81];
+static int sasl_continue = 1;
+static char sasl_ecdsa_key[121];
+static int sasl_timeout = 15;
+static int sasl_timeout_time = 0;
 
 #include "servmsg.c"
 
@@ -132,6 +150,13 @@ static int burst;
 
 #include "cmdsserv.c"
 #include "tclserv.c"
+
+/* Available sasl mechanisms. */
+char const *SASL_MECHANISMS[SASL_MECHANISM_NUM] = {
+  [SASL_MECHANISM_PLAIN]                    = "PLAIN",
+  [SASL_MECHANISM_ECDSA_NIST256P_CHALLENGE] = "ECDSA-NIST256P-CHALLENGE",
+  [SASL_MECHANISM_EXTERNAL]                 = "EXTERNAL"
+};
 
 
 static void write_to_server(char *s, unsigned int len) {
@@ -263,8 +288,8 @@ static int calc_penalty(char *msg)
   char *cmd, *par1, *par2, *par3;
   int penalty, i, ii;
 
-  if (!use_penalties && net_type != NETT_UNDERNET &&
-      net_type != NETT_HYBRID_EFNET)
+  if (!use_penalties && net_type_int != NETT_UNDERNET &&
+      net_type_int != NETT_QUAKENET && net_type_int != NETT_HYBRID_EFNET)
     return 0;
 
   cmd = newsplit(&msg);
@@ -273,12 +298,13 @@ static int calc_penalty(char *msg)
   else
     i = strlen(cmd);
   last_time -= 2;               /* undo eggdrop standard flood prot */
-  if (net_type == NETT_UNDERNET || net_type == NETT_HYBRID_EFNET) {
+  if (net_type_int == NETT_UNDERNET || net_type_int == NETT_QUAKENET ||
+      net_type_int == NETT_HYBRID_EFNET) {
     last_time += (2 + i / 120);
     return 0;
   }
   penalty = (1 + i / 100);
-  if (!egg_strcasecmp(cmd, "KICK")) {
+  if (!strcasecmp(cmd, "KICK")) {
     par1 = newsplit(&msg);      /* channel */
     par2 = newsplit(&msg);      /* victim(s) */
     par3 = splitnicks(&par2);
@@ -293,7 +319,7 @@ static int calc_penalty(char *msg)
       par3 = splitnicks(&par1);
       penalty += ii;
     }
-  } else if (!egg_strcasecmp(cmd, "MODE")) {
+  } else if (!strcasecmp(cmd, "MODE")) {
     i = 0;
     par1 = newsplit(&msg);      /* channel */
     par2 = newsplit(&msg);      /* mode(s) */
@@ -316,7 +342,7 @@ static int calc_penalty(char *msg)
       ii++;
     }
     penalty += (ii * i);
-  } else if (!egg_strcasecmp(cmd, "TOPIC")) {
+  } else if (!strcasecmp(cmd, "TOPIC")) {
     penalty++;
     par1 = newsplit(&msg);      /* channel */
     par2 = newsplit(&msg);      /* topic */
@@ -328,15 +354,15 @@ static int calc_penalty(char *msg)
         penalty += 2;
       }
     }
-  } else if (!egg_strcasecmp(cmd, "PRIVMSG") ||
-             !egg_strcasecmp(cmd, "NOTICE")) {
+  } else if (!strcasecmp(cmd, "PRIVMSG") ||
+             !strcasecmp(cmd, "NOTICE")) {
     par1 = newsplit(&msg);      /* channel(s)/nick(s) */
     /* Add one sec penalty for each recipient */
     while (strlen(par1) > 0) {
       splitnicks(&par1);
       penalty++;
     }
-  } else if (!egg_strcasecmp(cmd, "WHO")) {
+  } else if (!strcasecmp(cmd, "WHO")) {
     par1 = newsplit(&msg);      /* masks */
     par2 = par1;
     while (strlen(par1) > 0) {
@@ -346,33 +372,33 @@ static int calc_penalty(char *msg)
       else
         penalty += 5;
     }
-  } else if (!egg_strcasecmp(cmd, "AWAY")) {
+  } else if (!strcasecmp(cmd, "AWAY")) {
     if (strlen(msg) > 0)
       penalty += 2;
     else
       penalty += 1;
-  } else if (!egg_strcasecmp(cmd, "INVITE")) {
+  } else if (!strcasecmp(cmd, "INVITE")) {
     /* Successful invite receives 2 or 3 penalty points. Let's go
      * with the maximum.
      */
     penalty += 3;
-  } else if (!egg_strcasecmp(cmd, "JOIN")) {
+  } else if (!strcasecmp(cmd, "JOIN")) {
     penalty += 2;
-  } else if (!egg_strcasecmp(cmd, "PART")) {
+  } else if (!strcasecmp(cmd, "PART")) {
     penalty += 4;
-  } else if (!egg_strcasecmp(cmd, "VERSION")) {
+  } else if (!strcasecmp(cmd, "VERSION")) {
     penalty += 2;
-  } else if (!egg_strcasecmp(cmd, "TIME")) {
+  } else if (!strcasecmp(cmd, "TIME")) {
     penalty += 2;
-  } else if (!egg_strcasecmp(cmd, "TRACE")) {
+  } else if (!strcasecmp(cmd, "TRACE")) {
     penalty += 2;
-  } else if (!egg_strcasecmp(cmd, "NICK")) {
+  } else if (!strcasecmp(cmd, "NICK")) {
     penalty += 3;
-  } else if (!egg_strcasecmp(cmd, "ISON")) {
+  } else if (!strcasecmp(cmd, "ISON")) {
     penalty += 1;
-  } else if (!egg_strcasecmp(cmd, "WHOIS")) {
+  } else if (!strcasecmp(cmd, "WHOIS")) {
     penalty += 2;
-  } else if (!egg_strcasecmp(cmd, "DNS")) {
+  } else if (!strcasecmp(cmd, "DNS")) {
     penalty += 2;
   } else
     penalty++;                  /* just add standard-penalty */
@@ -439,7 +465,7 @@ static int fast_deq(int which)
     strlcpy(stackable, stackablecmds, sizeof stackable);
     stckbl = stackable;
     while (strlen(stckbl) > 0) {
-      if (!egg_strcasecmp(newsplit(&stckbl), cmd)) {
+      if (!strcasecmp(newsplit(&stckbl), cmd)) {
         found = 1;
         break;
       }
@@ -457,7 +483,7 @@ static int fast_deq(int which)
     strlcpy(stackable, stackable2cmds, sizeof stackable);
     stckbl = stackable;
     while (strlen(stckbl) > 0)
-      if (!egg_strcasecmp(newsplit(&stckbl), cmd)) {
+      if (!strcasecmp(newsplit(&stckbl), cmd)) {
         stack_method = 2;
         break;
       }
@@ -541,7 +567,7 @@ static void parse_q(struct msgq_head *q, char *oldnick, char *newnick)
 
   for (m = q->head; m;) {
     changed = 0;
-    if (optimize_kicks == 2 && !egg_strncasecmp(m->msg, "KICK ", 5)) {
+    if (optimize_kicks == 2 && !strncasecmp(m->msg, "KICK ", 5)) {
       newnicks[0] = 0;
       strlcpy(buf, m->msg, sizeof buf);
       msg = buf;
@@ -550,7 +576,7 @@ static void parse_q(struct msgq_head *q, char *oldnick, char *newnick)
       nicks = newsplit(&msg);
       while (strlen(nicks) > 0) {
         nick = splitnicks(&nicks);
-        if (!egg_strcasecmp(nick, oldnick) &&
+        if (!strcasecmp(nick, oldnick) &&
             ((9 + strlen(chan) + strlen(newnicks) + strlen(newnick) +
               strlen(nicks) + strlen(msg)) < 510)) {
           if (newnick)
@@ -598,7 +624,7 @@ static void purge_kicks(struct msgq_head *q)
   struct chanset_t *cs;
 
   for (m = q->head; m;) {
-    if (!egg_strncasecmp(m->msg, "KICK", 4)) {
+    if (!strncasecmp(m->msg, "KICK", 4)) {
       newnicks[0] = 0;
       changed = 0;
       strlcpy(buf, m->msg, sizeof buf);
@@ -683,7 +709,7 @@ static int deq_kick(int which)
     return 0;
   }
 
-  if (egg_strncasecmp(h->head->msg, "KICK", 4))
+  if (strncasecmp(h->head->msg, "KICK", 4))
     return 0;
 
   if (optimize_kicks == 2) {
@@ -692,7 +718,7 @@ static int deq_kick(int which)
       return 1;
   }
 
-  if (egg_strncasecmp(h->head->msg, "KICK", 4))
+  if (strncasecmp(h->head->msg, "KICK", 4))
     return 0;
 
   msg = h->head;
@@ -707,7 +733,7 @@ static int deq_kick(int which)
     nr++;
   }
   for (m = msg->next, lm = NULL; m && (nr < kick_method);) {
-    if (!egg_strncasecmp(m->msg, "KICK", 4)) {
+    if (!strncasecmp(m->msg, "KICK", 4)) {
       changed = 0;
       newnicks2[0] = 0;
       strlcpy(buf2, m->msg, sizeof buf2);
@@ -715,7 +741,7 @@ static int deq_kick(int which)
       newsplit(&reason2);
       chan2 = newsplit(&reason2);
       nicks = newsplit(&reason2);
-      if (!egg_strcasecmp(chan, chan2) && !egg_strcasecmp(reason, reason2)) {
+      if (!strcasecmp(chan, chan2) && !strcasecmp(reason, reason2)) {
         while (strlen(nicks) > 0) {
           nick = splitnicks(&nicks);
           if ((nr < kick_method) && ((9 + strlen(chan) + strlen(newnicks) +
@@ -815,8 +841,13 @@ static void queue_server(int which, char *msg, int len)
   remove_crlf(&msg);
   len = strlen(buf);
 
-  /* No queue for PING and PONG - drummer */
-  if (!egg_strncasecmp(buf, "PING", 4) || !egg_strncasecmp(buf, "PONG", 4)) {
+  /* No queue for PING, PONG and AUTHENTICATE */
+  #define PING "PING"
+  #define PONG "PONG"
+  #define AUTHENTICATE "AUTHENTICATE"
+  if (!strncasecmp(buf, PING, sizeof PING - 1) ||
+      !strncasecmp(buf, PONG, sizeof PONG - 1) ||
+      !strncasecmp(buf, AUTHENTICATE, sizeof AUTHENTICATE - 1)) {
     if (buf[1] == 'I' || buf[1] == 'i')
       lastpingtime = now;
     check_tcl_out(which, buf, 1);
@@ -870,7 +901,7 @@ static void queue_server(int which, char *msg, int len)
     if (!doublemsg) {
       for (tq = tempq.head; tq; tq = tqq) {
         tqq = tq->next;
-        if (!egg_strcasecmp(tq->msg, buf)) {
+        if (!strcasecmp(tq->msg, buf)) {
           if (!double_warned) {
             debug1("Message already queued; skipping: %s", buf);
             double_warned = 1;
@@ -960,26 +991,40 @@ static void queue_server(int which, char *msg, int len)
     deq_msg(); /* DP_MODE needs to be sent ASAP, flush if possible. */
 }
 
-/* Add a new server to the server_list.
- */
-static void add_server(const char *ss)
-{
-  struct server_list *x, *z;
-  char name[256] = "", port[11] = "", pass[121] = "";
 
-  for (z = serverlist; z && z->next; z = z->next);
-
-  /* Allow IPv6 and IPv4-mapped addresses in [] */
+/* This is used to split the 'old' server lists prior to sending to the new
+   add_server as of v1.9.0. It can be removed if the 'old' server method is
+   removed from Eggdrop.
+*/
+static void old_add_server(const char *ss) {
+  char name[121] = "";
+  char port[7] = "";
+  char pass[121] = "";
   if (!sscanf(ss, "[%255[0-9.A-F:a-f]]:%10[+0-9]:%120[^\r\n]", name, port, pass) &&
       !sscanf(ss, "%255[^:]:%10[+0-9]:%120[^\r\n]", name, port, pass))
     return;
+  add_server(name, port, pass);
+}
+
+/* Add a new server to the server_list.
+ */
+static int add_server(const char *name, const char *port, const char *pass)
+{
+  struct server_list *x, *z;
+  char *ret;
+
+  for (z = serverlist; z && z->next; z = z->next);
+
+  if ((ret = strchr(name, ':'))) {
+    if (!strchr(ret+1, ':')) {
+      return 1;
+    }
+  }
 
 #ifndef TLS
   if (port[0] == '+') {
-    putlog(LOG_MISC, "*", "ERROR: Attempted to add SSL-enabled server, but \
-Eggdrop was not compiled with SSL libraries. Skipping...");
     sslserver = 1;
-    return;
+    return 2;
   }
 #endif
 
@@ -1004,6 +1049,81 @@ Eggdrop was not compiled with SSL libraries. Skipping...");
 #ifdef TLS
   x->ssl = (port[0] == '+') ? 1 : 0;
 #endif
+  return 0;
+}
+
+/* Remove a server from the server list.
+ * Checks based on IP and then the port, if one is provided. If no port is
+ * provided, remove only the first matching host.
+ */
+static int del_server(const char *name, const char *port)
+{
+  struct server_list *z, *curr, *prev;
+  char *ret;
+
+  if (!serverlist) {
+    return 2;
+  }
+  if ((ret = strchr(name, ':'))) {
+    if (!strchr(ret+1, ':')) {
+      return 1;
+    }
+  }
+  if (!strcasecmp(name, serverlist->name)) {
+    z = serverlist;
+    if (strlen(port)) {
+      if ((atoi(port) != serverlist->port)
+#ifdef TLS
+          || ((port[0] != '+') && serverlist->ssl )) {
+#else
+          ) {
+#endif
+        serverlist = serverlist->next;
+        free_server(z);
+      }
+    } else {
+      serverlist = serverlist->next;
+      free_server(z);
+    }
+    return 0;
+  }
+  curr = serverlist->next;
+  prev = serverlist;
+  while (curr != NULL && prev != NULL) {
+    if (!strcasecmp(name, curr->name)) {
+      if (strlen(port)) {
+        if ((atoi(port) != curr->port)
+#ifdef TLS
+            || ((port[0] != '+') && curr->ssl )) {
+#else
+            ) {
+#endif
+          prev = curr;
+          curr = curr->next;
+          continue;
+        }
+      }
+      z = curr;
+      prev->next = curr->next;
+      free_server(z);
+      return 0;
+    }
+    prev = curr;
+    curr = curr->next;
+  }
+  return 3;
+}
+
+/* Free a single removed server from server link list */
+static void free_server(struct server_list *z) {
+  if (z->name)
+    nfree(z->name);
+  if (z->pass)
+    nfree(z->pass);
+  if (z->realname)
+    nfree(z->realname);
+  nfree(z);
+  return;
 }
 
 
@@ -1039,13 +1159,13 @@ static void next_server(int *ptr, char *serv, unsigned int *port, char *pass)
   if (*ptr == -1) {
     for (; x; x = x->next) {
       if (x->port == *port) {
-        if (!egg_strcasecmp(x->name, serv)) {
+        if (!strcasecmp(x->name, serv)) {
           *ptr = i;
 #ifdef TLS
           x->ssl = use_ssl;
 #endif
           return;
-        } else if (x->realname && !egg_strcasecmp(x->realname, serv)) {
+        } else if (x->realname && !strcasecmp(x->realname, serv)) {
           *ptr = i;
           strlcpy(serv, x->realname, UHOSTLEN);
 #ifdef TLS
@@ -1309,8 +1429,9 @@ static char *traced_botname(ClientData cdata, Tcl_Interp *irp,
 
 static void do_nettype(void)
 {
-  switch (net_type) {
+  switch (net_type_int) {
   case NETT_EFNET:
+  case NETT_HYBRID_EFNET:
     check_mode_r = 0;
     nick_len = 9;
     break;
@@ -1318,7 +1439,7 @@ static void do_nettype(void)
     check_mode_r = 1;
     use_penalties = 1;
     use_fastdeq = 3;
-    nick_len = 9;
+    nick_len = 15;
     simple_sprintf(stackablecmds, "INVITE AWAY VERSION NICK");
     kick_method = 4;
     break;
@@ -1333,14 +1454,27 @@ static void do_nettype(void)
   case NETT_DALNET:
     check_mode_r = 0;
     use_fastdeq = 2;
-    nick_len = 32;
+    nick_len = 30;
     simple_sprintf(stackablecmds,
                    "PRIVMSG NOTICE PART WHOIS WHOWAS USERHOST ISON WATCH DCCALLOW");
     simple_sprintf(stackable2cmds, "USERHOST ISON WATCH");
+    stack_limit = 20;
+    kick_method = 4;
     break;
-  case NETT_HYBRID_EFNET:
+  case NETT_FREENODE:
+    nick_len = 16;
+    break;
+  case NETT_QUAKENET:
     check_mode_r = 0;
-    nick_len = 9;
+    use_fastdeq = 2;
+    nick_len = 15;
+    simple_sprintf(stackablecmds,
+                   "PRIVMSG NOTICE TOPIC PART WHOIS USERHOST USERIP ISON");
+    simple_sprintf(stackable2cmds, "USERHOST USERIP ISON");
+    break;
+  case NETT_RIZON:
+    check_mode_r = 0;
+    nick_len = 30;
     break;
   }
 }
@@ -1349,6 +1483,57 @@ static char *traced_nettype(ClientData cdata, Tcl_Interp *irp,
                             EGG_CONST char *name1,
                             EGG_CONST char *name2, int flags)
 {
+  int warn = 0;
+
+  if (!strcasecmp(net_type, "DALnet"))
+    net_type_int = NETT_DALNET;
+  else if (!strcasecmp(net_type, "EFnet"))
+    net_type_int = NETT_EFNET;
+  else if (!strcasecmp(net_type, "freenode"))
+    net_type_int = NETT_FREENODE;
+  else if (!strcasecmp(net_type, "IRCnet"))
+    net_type_int = NETT_IRCNET;
+  else if (!strcasecmp(net_type, "QuakeNet"))
+    net_type_int = NETT_QUAKENET;
+  else if (!strcasecmp(net_type, "Rizon"))
+    net_type_int = NETT_RIZON;
+  else if (!strcasecmp(net_type, "Undernet"))
+    net_type_int = NETT_UNDERNET;
+  else if (!strcasecmp(net_type, "Other"))
+    net_type_int = NETT_OTHER;
+  else if (!strcasecmp(net_type, "0")) { /* For backwards compatibility */
+    net_type_int = NETT_EFNET;
+    warn = 1;
+  }
+  else if (!strcasecmp(net_type, "1")) { /* For backwards compatibility */
+    net_type_int = NETT_IRCNET;
+    warn = 1;
+  }
+  else if (!strcasecmp(net_type, "2")) { /* For backwards compatibility */
+    net_type_int = NETT_UNDERNET;
+    warn = 1;
+  }
+  else if (!strcasecmp(net_type, "3")) { /* For backwards compatibility */
+    net_type_int = NETT_DALNET;
+    warn = 1;
+  }
+  else if (!strcasecmp(net_type, "4")) { /* For backwards compatibility */
+    net_type_int = NETT_HYBRID_EFNET;
+    warn = 1;
+  }
+  else if (!strcasecmp(net_type, "5")) { /* For backwards compatibility */
+    net_type_int = NETT_OTHER; 
+    warn = 1;
+  } else {
+    fatal("ERROR: NET-TYPE NOT SET.\n Must be one of DALNet, EFnet, freenode, "
+          "IRCnet, Quakenet, Rizon, Undernet, Other.", 0);
+  }
+  if (warn) {
+    putlog(LOG_MISC, "*",
+           "WARNING: Using an integer for net-type is deprecated and will be\n"
+           "         removed in a future release. Please reference an updated\n"
+           "         configuration file for the new allowed string values");
+  }
   do_nettype();
   return NULL;
 }
@@ -1386,6 +1571,11 @@ static tcl_strings my_tcl_strings[] = {
   {"connect-server",      connectserver,  120,               0},
   {"stackable-commands",  stackablecmds,  510,               0},
   {"stackable2-commands", stackable2cmds, 510,               0},
+  {"cap-request",         cap_request,    CAPMAX - 9,        0},
+  {"sasl-username",       sasl_username,  NICKMAX,           0},
+  {"sasl-password",       sasl_password,  80,                0},
+  {"sasl-ecdsa-key",      sasl_ecdsa_key, 120,               0},
+  {"net-type",            net_type,       8,                 0},
   {NULL,                  NULL,           0,                 0}
 };
 
@@ -1408,7 +1598,6 @@ static tcl_ints my_tcl_ints[] = {
   {"server-cycle-wait", (int *) &server_cycle_wait, 0},
   {"default-port",      &default_port,              0},
   {"check-mode-r",      &check_mode_r,              0},
-  {"net-type",          &net_type,                  0},
   {"ctcp-mode",         &ctcp_mode,                 0},
   {"double-mode",       &double_mode,               0},
   {"double-server",     &double_server,             0},
@@ -1425,6 +1614,13 @@ static tcl_ints my_tcl_ints[] = {
 #ifdef TLS
   {"ssl-verify-server", &tls_vfyserver,             0},
 #endif
+  {"sasl",              &sasl,                      0},
+  {"sasl-mechanism",    &sasl_mechanism,            0},
+  {"sasl-continue",     &sasl_continue,             0},
+  {"sasl-timeout",      &sasl_timeout,              0},
+  {"away-notify",       &away_notify,               0},
+  {"invite-notify",     &invite_notify,             0},
+  {"message-tags",      &message_tags,              0},
   {NULL,                NULL,                       0}
 };
 
@@ -1478,7 +1674,7 @@ static char *tcl_eggserver(ClientData cdata, Tcl_Interp *irp,
       if (code == TCL_ERROR)
         return "variable must be a list";
       for (i = 0; i < lc && i < 50; i++)
-        add_server((char *) list[i]);
+        old_add_server((char *) list[i]);
 
       /* Tricky way to make the bot reset its server pointers
        * perform part of a '.jump <current-server>':
@@ -1531,15 +1727,15 @@ static int ctcp_DCC_CHAT(char *nick, char *from, char *handle,
   ip = newsplit(&msg);
   prt = newsplit(&msg);
 #ifdef TLS
-  if (egg_strcasecmp(action, "CHAT") || egg_strcasecmp(object, botname) || !u)
+  if (strcasecmp(action, "CHAT") || strcasecmp(object, botname) || !u)
   {
-    if (!egg_strcasecmp(action, "SCHAT"))
+    if (!strcasecmp(action, "SCHAT"))
       ssl = 1;
     else
       return 0;
   }
 #else
-  if (egg_strcasecmp(action, "CHAT") || egg_strcasecmp(object, botname) || !u)
+  if (strcasecmp(action, "CHAT") || strcasecmp(object, botname) || !u)
     return 0;
 #endif
   get_user_flagrec(u, &fr, 0);
@@ -1665,6 +1861,8 @@ static void server_secondly()
   deq_msg();
   if (!resolvserv && serv < 0)
     connect_server();
+  if (!--sasl_timeout_time)
+    handle_sasl_timeout();
 }
 
 static void server_5minutely()
@@ -1817,6 +2015,8 @@ static void server_report(int idx, int details)
   if (hq.tot)
     dprintf(idx, "    %s %d%% (%d msgs)\n", IRC_HELPQUEUE,
             (int) ((float) (hq.tot * 100.0) / (float) maxqmsg), (int) hq.tot);
+  dprintf(idx, "    Active CAP negotiations: %s\n", (strlen(cap.negotiated) > 0) ?
+            cap.negotiated : "None" );
 
   if (details) {
     int size = server_expmem();
@@ -1954,7 +2154,10 @@ static Function server_table[] = {
   (Function) check_tcl_notc,
   (Function) & exclusive_binds, /* int                                  */
   /* 40 - 43 */
-  (Function) & H_out            /* p_tcl_bind_list                      */
+  (Function) & H_out,           /* p_tcl_bind_list                      */
+  (Function) add_server,
+  (Function) del_server,
+  (Function) & net_type_int     /* int                                  */
 };
 
 char *server_start(Function *global_funcs)
@@ -2000,7 +2203,7 @@ char *server_start(Function *global_funcs)
   check_mode_r = 0;
   maxqmsg = 300;
   burst = 0;
-  net_type = NETT_EFNET;
+  strlcpy(net_type, "EFnet", sizeof net_type);
   double_mode = 0;
   double_server = 0;
   double_help = 0;
@@ -2022,7 +2225,7 @@ char *server_start(Function *global_funcs)
 #endif
 
   server_table[4] = (Function) botname;
-  module_register(MODULE_NAME, server_table, 1, 4);
+  module_register(MODULE_NAME, server_table, 1, 5);
   if (!module_depend(MODULE_NAME, "eggdrop", 108, 0)) {
     module_undepend(MODULE_NAME);
     return "This module requires Eggdrop 1.8.0 or later.";

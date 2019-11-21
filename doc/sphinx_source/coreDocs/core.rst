@@ -228,7 +228,7 @@ logfile <logflags> <channel> "logs/logfile"
     logfiles. The default will result in a suffix like "04May2000". "%Y%m%d"
     will produce the often used yyyymmdd format. Read the strftime manpages
     for more options. NOTE: On systems which don't support strftime, the
-    default format will be used _always_.
+    default format will always be used.
 
 Console Settings
 ----------------

@@ -951,7 +951,7 @@ static void filedb_ls(FILE *fdb, int idx, char *mask, int showall)
           if (fdbe->stat & FILE_HIDDEN)
             strcat(s2, " (hid)");
         }
-        egg_strftime(t, 10, "%d%b%Y", localtime(&fdbe->uploaded));
+        strftime(t, 10, "%d%b%Y", localtime(&fdbe->uploaded));
         if (fdbe->size < 1024)
           sprintf(s1, "%5d", fdbe->size);
         else

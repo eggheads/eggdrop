@@ -203,8 +203,8 @@ void dprint(int idx, char *buf, int len)
     return;
   } else {
     if (len > 500) {            /* Truncate to fit */
-      buf[500] = 0;
-      strcat(buf, "\n");
+      buf[500] = '\n';
+      buf[501] = 0;
       len = 501;
     }
     if (dcc[idx].type && ((long) (dcc[idx].type->output) == 1)) {

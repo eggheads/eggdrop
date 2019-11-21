@@ -27,5 +27,5 @@
  */
 
 #define EGG_STRINGVER "1.9.0"
-#define EGG_NUMVER 1090000
-#define EGG_PATCH "base"
+#define EGG_NUMVER 1090002
+#define EGG_PATCH "addserver"

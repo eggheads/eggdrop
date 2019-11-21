@@ -41,7 +41,7 @@ Eggdrop v1.8.4:
         starttls to TLS-only listening sockets.
       - Documented known bug where bots added with +port in botaddr cannot
         connect to a bot listening in a config with +port.
-      - Made TLS fingerprint storage persistant across shared botnets, instead
+      - Made TLS fingerprint storage persistent across shared botnets, instead
         of (incorrectly) being removed after a relink.
       - Fixed a corner case where the linking IP was not being correctly sent
         during a share, preventing Eggdrop from exchanging user files.
@@ -192,7 +192,7 @@ Eggdrop v1.8.0:
 
   BOTNET
 
-    Because 1.8 bots attempt to link with SSL if available everytime, make
+    Because 1.8 bots attempt to link with SSL if available every time, make
     sure you generate a certificate on your hub bot with "make sslcert" after
     "make install".
 

@@ -62,7 +62,7 @@ int pref_af = 0;              /* Prefer IPv6 over IPv4?                       */
 #endif
 char firewall[121] = "";      /* Socks server for firewall.                   */
 int firewallport = 1080;      /* Default port of socks 4/5 firewalls.         */
-char botuser[11] = "eggdrop"; /* Username of the user running the bot.        */
+char botuser[USERLEN + 1] = "eggdrop"; /* Username of the user running the bot. */
 int dcc_sanitycheck = 0;      /* Do some sanity checking on dcc connections.  */
 
 sock_list *socklist = NULL;   /* Enough to be safe.                           */
@@ -130,27 +130,51 @@ char *iptostr(struct sockaddr *sa)
  */
 int setsockname(sockname_t *addr, char *src, int port, int allowres)
 {
+  char *endptr;
+  long val;
+  IP ip;
   struct hostent *hp;
   int af = AF_UNSPEC;
 #ifdef IPV6
+  char ip2[INET6_ADDRSTRLEN];
+  char *src2 = src;
   int pref;
+#else
+  char ip2[INET_ADDRSTRLEN];
+  int i, count;
+#endif
 
+  /* DCC CHAT ip is expressed as integer but inet_pton() only accepts dotted
+   * addresses */
+  val = strtol(src, &endptr, 10);
+  if (val && !*endptr) {
+    ip = htonl(val);
+    if (inet_ntop(AF_INET, &ip, ip2, sizeof ip2)) {
+      debug2("net: setsockname(): ip %s -> %s", src, ip2);
+#ifdef IPV6
+      src2 = ip2;
+#endif
+    }
+  }
+#ifdef IPV6
   /* Clean start */
   egg_bzero(addr, sizeof(sockname_t));
-  af = pref = pref_af ? AF_INET6 : AF_INET;
+  pref = pref_af ? AF_INET6 : AF_INET;
   if (pref == AF_INET) {
-    if (!egg_inet_aton(src, &addr->addr.s4.sin_addr))
-      af = AF_INET6;
-  } else {
-    if (inet_pton(af, src, &addr->addr.s6.sin6_addr) != 1)
+    if (inet_pton(AF_INET, src2, &addr->addr.s4.sin_addr) == 1)
       af = AF_INET;
-  }
-  if (af != pref)
-    if (((af == AF_INET6) &&
-         (inet_pton(af, src, &addr->addr.s6.sin6_addr) != 1)) ||
-        ((af == AF_INET)  &&
-         !egg_inet_aton(src, &addr->addr.s4.sin_addr)))
+    else if (inet_pton(AF_INET6, src2, &addr->addr.s6.sin6_addr) == 1)
+      af = AF_INET6;
+    else
       af = AF_UNSPEC;
+  } else {
+    if (inet_pton(AF_INET6, src2, &addr->addr.s6.sin6_addr) == 1)
+      af = AF_INET6;
+    else if (inet_pton(AF_INET, src2, &addr->addr.s4.sin_addr) == 1)
+      af = AF_INET;
+    else
+      af = AF_UNSPEC;
+  }
 
   if (af == AF_UNSPEC && allowres && *src) {
     /* src is a hostname. Attempt to resolve it.. */
@@ -183,8 +207,6 @@ int setsockname(sockname_t *addr, char *src, int port, int allowres)
     addr->addr.s4.sin_family = AF_INET;
   }
 #else
-  int i, count;
-
   egg_bzero(addr, sizeof(sockname_t));
 
 /* If it's not an IPv4 address, check if its IPv6 (so it can fail/error
@@ -745,7 +767,7 @@ int getdccfamilyaddr(sockname_t *addr, char *s, size_t l, int restrict_af)
         && restrict_af != AF_INET6
 #endif
        ) {
-      if (!egg_inet_aton(vhost, &r->addr.s4.sin_addr)) {
+      if (inet_pton(AF_INET, vhost, &r->addr.s4.sin_addr) != 1) {
         /* And if THAT fails, try DNS resolution of hostname */
         r = &name;
         gethostname(h, sizeof h);
@@ -932,7 +954,7 @@ int sockread(char *s, int *len, sock_list *slist, int slistmax, int tclonly)
           }
         } else if (slist[i].flags & SOCK_SENTTLS) {
           /* We are awaiting a reply on our "starttls", only read
-           * strlen("starttls -\n") bytes so we don't accidently
+           * strlen("starttls -\n") bytes so we don't accidentally
            * read the Client Hello from the ssl handshake */
           x = read(slist[i].sock, s, strlen("starttls -\n"));
           slist[i].flags &= ~SOCK_SENTTLS;
@@ -1511,7 +1533,7 @@ int hostsanitycheck_dcc(char *nick, char *from, sockname_t *ip, char *dnsname,
    * using the n-variant in case someone changes that...
    */
   strlcpy(hostn, extracthostname(from), sizeof hostn);
-  if (!egg_strcasecmp(hostn, dnsname)) {
+  if (!strcasecmp(hostn, dnsname)) {
     putlog(LOG_DEBUG, "*", "DNS information for submitted IP checks out.");
     return 1;
   }

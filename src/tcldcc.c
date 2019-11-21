@@ -68,7 +68,7 @@ static int tcl_putdcc STDVAR
 
   BADARGS(3, 4, " idx text ?options?");
 
-  if ((argc == 4) && egg_strcasecmp(argv[3], "-raw")) {
+  if ((argc == 4) && strcasecmp(argv[3], "-raw")) {
     Tcl_AppendResult(irp, "unknown putdcc option: should be ",
                      "-raw", NULL);
     return TCL_ERROR;
@@ -173,7 +173,7 @@ static int tcl_hand2idx STDVAR
 
   for (i = 0; i < dcc_total; i++)
     if ((dcc[i].type->flags & (DCT_SIMUL | DCT_BOT)) &&
-        !egg_strcasecmp(argv[1], dcc[i].nick)) {
+        !strcasecmp(argv[1], dcc[i].nick)) {
       egg_snprintf(s, sizeof s, "%ld", dcc[i].sock);
       Tcl_AppendResult(irp, s, NULL);
       return TCL_OK;
@@ -219,7 +219,7 @@ static int tcl_setchan STDVAR
     return TCL_ERROR;
   }
   if (argv[2][0] < '0' || argv[2][0] > '9') {
-    if (!strcmp(argv[2], "-1") || !egg_strcasecmp(argv[2], "off"))
+    if (!strcmp(argv[2], "-1") || !strcasecmp(argv[2], "off"))
       chan = -1;
     else {
       Tcl_SetVar(irp, "_chan", argv[2], 0);
@@ -649,14 +649,15 @@ static int tcl_dcclist STDVAR
 {
   int i;
   char *p, idxstr[10], timestamp[11], other[160];
+  char portstring[7]; /* ssl + portmax + NULL */
   long tv;
-  EGG_CONST char *list[6];
+  EGG_CONST char *list[7];
 
   BADARGS(1, 2, " ?type?");
 
   for (i = 0; i < dcc_total; i++) {
     if (argc == 1 || ((argc == 2) && (dcc[i].type &&
-        !egg_strcasecmp(dcc[i].type->name, argv[1])))) {
+        !strcasecmp(dcc[i].type->name, argv[1])))) {
       egg_snprintf(idxstr, sizeof idxstr, "%ld", dcc[i].sock);
       tv = dcc[i].timeval;
       egg_snprintf(timestamp, sizeof timestamp, "%ld", tv);
@@ -669,11 +670,18 @@ static int tcl_dcclist STDVAR
       }
       list[0] = idxstr;
       list[1] = dcc[i].nick;
-      list[2] = dcc[i].host;
-      list[3] = dcc[i].type ? dcc[i].type->name : "*UNKNOWN*";
-      list[4] = other;
-      list[5] = timestamp;
-      p = Tcl_Merge(6, list);
+      list[2] = (dcc[i].host[0] == '\0') ?
+                iptostr(&dcc[i].sockname.addr.sa) : dcc[i].host;
+#ifdef TLS
+      egg_snprintf(portstring, sizeof portstring, "%s%d", dcc[i].ssl ? "+" : "", dcc[i].port);
+#else
+      egg_snprintf(portstring, sizeof portstring, "%d", dcc[i].port);
+#endif
+      list[3] = portstring;
+      list[4] = dcc[i].type ? dcc[i].type->name : "*UNKNOWN*";
+      list[5] = other;
+      list[6] = timestamp;
+      p = Tcl_Merge(7, list);
       Tcl_AppendElement(irp, p);
       Tcl_Free((char *) p);
     }
@@ -864,7 +872,7 @@ static int tcl_unlink STDVAR
     x = 0;
   else {
     x = 1;
-    if (!egg_strcasecmp(bot, dcc[i].nick))
+    if (!strcasecmp(bot, dcc[i].nick))
       x = botunlink(-2, bot, argv[2], botnetnick);
     else
       botnet_send_unlink(i, botnetnick, lastbot(bot), bot, argv[2]);
@@ -949,7 +957,7 @@ static int tcl_listen STDVAR
   for (i = 0; i < dcc_total; i++)
     if ((dcc[i].type == &DCC_TELNET) && (dcc[i].port == port))
       idx = i;
-  if (!egg_strcasecmp(argv[2], "off")) {
+  if (!strcasecmp(argv[2], "off")) {
     if (pmap) {
       if (pold)
         pold->next = pmap->next;
@@ -1080,7 +1088,7 @@ static int tcl_boot STDVAR
 
     splitc(whonick, who, '@');
     whonick[HANDLEN] = 0;
-    if (!egg_strcasecmp(who, botnetnick))
+    if (!strcasecmp(who, botnetnick))
       strlcpy(who, whonick, sizeof who);
     else if (remote_boots > 0) {
       i = nextbot(who);
@@ -1093,7 +1101,7 @@ static int tcl_boot STDVAR
   }
   for (i = 0; i < dcc_total; i++)
     if (!ok && (dcc[i].type->flags & DCT_CANBOOT) &&
-        !egg_strcasecmp(dcc[i].nick, who)) {
+        !strcasecmp(dcc[i].nick, who)) {
       do_boot(i, botnetnick, argv[2] ? argv[2] : "");
       ok = 1;
     }

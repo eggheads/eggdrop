@@ -11,9 +11,9 @@ of the normal Tcl built-in commands are still there, of course, but you
 can also use these to manipulate features of the bot. They are listed
 according to category.
 
-This list is accurate for Eggdrop v1.8.4. Scripts written for v1.3, v1.4
-or 1.6 series of Eggdrop should probably work with a few minor modifications
-depending on the script. Scripts which were written for  v0.9, v1.0, v1.1
+This list is accurate for Eggdrop v1.9.0. Scripts written for v1.3, v1.4,
+1.6 and 1.8 series of Eggdrop should probably work with a few minor modifications
+depending on the script. Scripts which were written for v0.9, v1.0, v1.1
 or v1.2 will probably not work without modification. Commands which have
 been changed in this version of Eggdrop (or are just new commands) are
 marked with vertical bars (|) on the left.
@@ -153,6 +153,31 @@ clearqueue <queue>
   Returns: the number of deleted lines from the specified queue.
 
   Module: server
+
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+cap <active/available/raw> [arg]
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+  Description: displays CAP status or sends a raw CAP command to the server. "available" will list the capabilities supported by the server, "active" will list the capabilities Eggdrop has negotiated with the server, and raw will send a raw CAP command to the server. If sending a raw command, it must be submitted in arg as a single string. For example, to request capabilities foo and bar, you would use [cap raw "REQ :foo bar"]. 
+
+  Returns: nothing
+
+  Module: server
+
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+addserver <ip/host> [port [password]]
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  Description: adds a server to the list of servers Eggdrop will connect to. A port value is required if password is to be specified. 
+
+  Returns: nothing
+
+  Module: server
+
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+delserver <ip/host> [[+]port]
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+  Description: removes a server from the list of servers Eggdrop will connect to. If no port is specified, Eggdrop will remove the first server matching the ip or hostname provided. The SSL status (+) of the provided port is matched against as well (ie, 7000 is not the same as +7000).
 
 User Record Manipulation Commands
 ---------------------------------
@@ -1209,7 +1234,7 @@ onchansplit <nick> [channel]
 chanlist <channel> [flags][<&|>chanflags]
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-  Description: flags are any global flags; the '&' or '|' denotes to look for channel specific flags, where '&' will return users having ALL chanflags and '|' returns users having ANY of the chanflags (See matchattr above for additional examples).
+  Description: flags are any global flags; the '&' or '\|' denotes to look for channel specific flags, where '&' will return users having ALL chanflags and '|' returns users having ANY of the chanflags (See matchattr above for additional examples).
 
   Returns: Searching for flags optionally preceded with a '+' will return a list of nicknames that have all the flags listed. Searching for flags preceded with a '-' will return a list of nicknames that do not have have any of the flags (differently said, '-' will hide users that have all flags listed). If no flags are given, all of the nicknames on the channel are returned.
 
@@ -1565,8 +1590,8 @@ dccused
 dcclist [type]
 ^^^^^^^^^^^^^^
 
-  Returns: a list of active connections, each item in the list is a sublist containing six elements:
-  {<idx> <handle> <hostname> <type> {<other>} <timestamp>}.
+  Returns: a list of active connections, each item in the list is a sublist containing seven elements:
+  {<idx> <handle> <hostname> <[+]port> <type> {<other>} <timestamp>}.
 
   The types are: chat, bot, files, file_receiving, file_sending, file_send_pending, script, socket (these are connections that have not yet been put under 'control'), telnet, and server. The timestamp is in unixtime format.
 
@@ -2200,7 +2225,7 @@ duration <seconds>
 strftime <formatstring> [time]
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-  Returns: a formatted string of time using standard strftime format. If time is specified, the value of the specified time is used. Otherwise, the current time is used.
+  Returns: a formatted string of time using standard strftime format. If time is specified, the value of the specified time is used. Otherwise, the current time is used. Note: The implementation of strftime varies from platform to platform, so the user should only use POSIX-compliant format specifiers to ensure fully portable code.
 
   Module: core
 

@@ -24,7 +24,6 @@
  */
 
 #include "main.h"
-#include <ctype.h>
 #include <errno.h>
 #include "modules.h"
 #include "tandem.h"
@@ -385,14 +384,14 @@ static void dcc_bot_new(int idx, char *buf, int x)
   }
 
   code = newsplit(&buf);
-  if (!egg_strcasecmp(code, "*hello!"))
+  if (!strcasecmp(code, "*hello!"))
     greet_new_bot(idx);
-  else if (!egg_strcasecmp(code, "version") || !egg_strcasecmp(code, "v"))
+  else if (!strcasecmp(code, "version") || !strcasecmp(code, "v"))
     bot_version(idx, buf);
-  else if (!egg_strcasecmp(code, "badpass"))
+  else if (!strcasecmp(code, "badpass"))
     /* We entered the wrong password */
     putlog(LOG_BOTS, "*", DCC_BADPASS, dcc[idx].nick);
-  else if (!egg_strcasecmp(code, "passreq")) {
+  else if (!strcasecmp(code, "passreq")) {
     char *pass = get_user(&USERENTRY_PASS, u);
 
 #ifdef TLS
@@ -424,7 +423,7 @@ static void dcc_bot_new(int idx, char *buf, int x)
         dprintf(idx, "%s\n", pass);
     }
 #ifdef TLS
-  } else if (!egg_strcasecmp(code, "starttls") && !dcc[idx].ssl) {
+  } else if (!strcasecmp(code, "starttls") && !dcc[idx].ssl) {
     /* Mark the connection for secure communication, but don't switch yet.
      * The hub has to send a plaintext passreq right after the starttls command
      * and if we switch now, we'll break the handshake. Instead, we'll only
@@ -435,7 +434,7 @@ static void dcc_bot_new(int idx, char *buf, int x)
     /* needs to have space to be distinguished from a plaintext password */
     dprintf(idx, "starttls -\n");
 #endif
-  } else if (!egg_strcasecmp(code, "error"))
+  } else if (!strcasecmp(code, "error"))
     putlog(LOG_BOTS, "*", DCC_LINKERROR, dcc[idx].nick, buf);
   /* Ignore otherwise */
 }
@@ -541,7 +540,7 @@ static void dcc_bot(int idx, char *code, int i)
   } else
     msg = "";
   for (f = i = 0; C_bot[i].name && !f; i++) {
-    int y = egg_strcasecmp(code, C_bot[i].name);
+    int y = strcasecmp(code, C_bot[i].name);
 
     if (!y) {
       /* Found a match */
@@ -678,7 +677,7 @@ static void dcc_chat_pass(int idx, char *buf, int atr)
         putlog(LOG_BOTNETIN, "*", "[b<-%s] %s", dcc[idx].nick, buf);
     }
 #ifdef TLS
-    if (!egg_strncasecmp(buf, "starttls ", 9)) {
+    if (!strncasecmp(buf, "starttls ", 9)) {
       dcc[idx].ssl = 1;
       if (ssl_handshake(dcc[idx].sock, TLS_LISTEN, tls_vfybots, LOG_BOTS,
                         dcc[idx].host, NULL)) {
@@ -706,7 +705,7 @@ static void dcc_chat_pass(int idx, char *buf, int atr)
     }
   }
   /* Check for MD5 digest from remote _bot_. <cybah> */
-  if ((atr & USER_BOT) && !egg_strncasecmp(buf, "digest ", 7)) {
+  if ((atr & USER_BOT) && !strncasecmp(buf, "digest ", 7)) {
     if (dcc_bot_check_digest(idx, buf + 7)) {
       nfree(dcc[idx].u.chat);
       dcc[idx].type = &DCC_BOT_NEW;
@@ -1249,7 +1248,7 @@ static int detect_telnet_flood(char *floodhost)
   get_user_flagrec(get_user_by_host(floodhost), &fr, NULL);
   if (!flood_telnet_thr || (glob_friend(fr) && !par_telnet_flood))
     return 0;                   /* No flood protection */
-  if (egg_strcasecmp(lasttelnethost, floodhost)) {      /* New... */
+  if (strcasecmp(lasttelnethost, floodhost)) {      /* New... */
     strlcpy(lasttelnethost, floodhost, sizeof lasttelnethost);
     lasttelnettime = now;
     lasttelnets = 0;
@@ -1563,7 +1562,7 @@ void dupwait_notify(char *who)
   Assert(who);
   for (idx = 0; idx < dcc_total; idx++)
     if ((dcc[idx].type == &DCC_DUPWAIT) &&
-        !egg_strcasecmp(dcc[idx].nick, who)) {
+        !strcasecmp(dcc[idx].nick, who)) {
       dcc_telnet_pass(idx, dcc[idx].u.dupwait->atr);
       break;
     }
@@ -1638,7 +1637,7 @@ static void dcc_telnet_id(int idx, char *buf, int atr)
     return;
   }
   dcc[idx].status &= ~(STAT_BOTONLY | STAT_USRONLY);
-  if (!egg_strcasecmp(buf, "NEW") && (allow_new_telnets || make_userfile)) {
+  if (!strcasecmp(buf, "NEW") && (allow_new_telnets || make_userfile)) {
     dcc[idx].type = &DCC_TELNET_NEW;
     dcc[idx].timeval = now;
     dprintf(idx, "\n");
@@ -1664,7 +1663,7 @@ static void dcc_telnet_id(int idx, char *buf, int atr)
   correct_handle(buf);
   strlcpy(dcc[idx].nick, buf, sizeof dcc[idx].nick);
   if (glob_bot(fr)) {
-    if (!egg_strcasecmp(botnetnick, dcc[idx].nick)) {
+    if (!strcasecmp(botnetnick, dcc[idx].nick)) {
       /* change here temp to use bot output */
       dcc[idx].type = &DCC_BOT_NEW;
       dprintf(idx, "error You cannot link using my botnetnick.\n");
@@ -1917,7 +1916,7 @@ static void dcc_telnet_new(int idx, char *buf, int x)
     dprintf(idx, "\nSorry, that nickname is taken already.\n");
     dprintf(idx, "Try another one please:\n");
     return;
-  } else if (!egg_strcasecmp(buf, botnetnick))
+  } else if (!strcasecmp(buf, botnetnick))
     dprintf(idx, "Sorry, can't use my name for a nick.\n");
   else {
     strcpy(dcc[idx].nick, buf);

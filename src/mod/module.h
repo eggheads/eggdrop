@@ -69,12 +69,6 @@
 #ifdef egg_snprintf
 #  undef egg_snprintf
 #endif
-#ifdef egg_strcasecmp
-#  undef egg_strcasecmp
-#endif
-#ifdef egg_strncasecmp
-#  undef egg_strncasecmp
-#endif
 
 #if defined (__CYGWIN__) && !defined(STATIC)
 #  define EXPORT_SCOPE  __declspec(dllexport)
@@ -436,9 +430,9 @@
 #define egg_snprintf (global[252])
 #define egg_vsnprintf ((int (*)(char *, size_t, const char *, va_list))global[253])
 /* was egg_memset -- use memset() instead */
-#define egg_strcasecmp ((int (*)(const char *, const char *))global[255])
+/* was egg_strcasecmp -- use strcasecmp instead */
 /* 256 - 259 */
-#define egg_strncasecmp ((int (*)(const char *, const char *, size_t))global[256])
+/* was egg_strncasecmp -- use strncasecmp instead */
 #define is_file ((int (*)(const char *))global[257])
 #define must_be_owner (*(int *)(global[258]))
 #define tandbot (*(tand_t **)(global[259]))
@@ -507,6 +501,10 @@
 #endif
 /* 304 - 307 */
 #define strncpyz ((size_t (*) (char *, const char *, size_t))global[304])
+#ifndef HAVE_BASE64
+# define b64_ntop ((int (*) (u_char const *, size_t, char *, size_t))global[305])
+# define b64_pton ((int (*) (const char *, u_char *, size_t))global[306])
+#endif
 
 
 /* hostmasking */
