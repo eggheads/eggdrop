@@ -1204,7 +1204,7 @@ static int tryauthenticate(char *from, char *msg)
     putlog(LOG_SERV, "*", "SASL: got AUTHENTICATE Challenge");
     olen = b64_pton(msg, dst, sizeof dst);
     if (olen == -1) {
-      putlog(LOG_SERV, "*", "SASL: AUTHENTICATE error: could not base64 encode");
+      putlog(LOG_SERV, "*", "SASL: AUTHENTICATE error: could not base64 decode line from server");
       return 1;
     }
     fp = fopen(sasl_ecdsa_key, "r");
