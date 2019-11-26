@@ -134,8 +134,7 @@ static int init_uptime(void)
 
   next_minutes = random() % UPDATE_INTERVAL; /* Initial update delay */
   next_seconds = random() % 59;
-  next_update = (time_t) ((time(NULL) / 60 * 60) + (next_minutes * 60) +
-    next_seconds);
+  next_update = (time_t) (time(NULL) + next_minutes * 60 + next_seconds);
 
   return 0;
 }
