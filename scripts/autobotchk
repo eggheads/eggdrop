@@ -170,12 +170,12 @@ while {[set opt [newsplit argv]] != ""} {
 }
 
 switch -- $delay {
-  "30" { set minutes "0,30" }
-  "20" { set minutes "0,20,40" }
-  "15" { set minutes "0,15,30,45" }
-  "5" { set minutes "0,5,10,15,20,25,30,35,40,45,50,55" }
+  "30" { set minutes "*/30" }
+  "20" { set minutes "*/20" }
+  "15" { set minutes "*/15" }
+  "5" { set minutes "*/5" }
   "1" { set minutes "*" }
-  default { set minutes "0,10,20,30,40,50" }
+  default { set minutes "*/10" }
 }
 
 if {[string match "*/scripts" $dir]} {
