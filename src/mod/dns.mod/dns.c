@@ -161,14 +161,14 @@ static char *dns_change(ClientData cdata, Tcl_Interp *irp,
     code = Tcl_SplitList(interp, slist, &lc, &list);
     if (code == TCL_ERROR)
       return "variable must be a list";
-    if (lc > MAXNS) {
-      putlog(LOG_MISC, "*", "WARNING: %i dns-servers configured but MAXNS is "
-             "%i.\n         Surplus dns-servers ignored.", lc, MAXNS);
-      lc = MAXNS;
-    }
     /* reinitialize the list */
     myres.nscount = 0;
     for (i = 0; i < lc; i++) {
+      if (myres.nscount >= MAXNS) {
+        putlog(LOG_MISC, "*", "WARNING: %i dns-servers configured but MAXNS is "
+               "%i\n         Surplus dns-servers ignored", lc, MAXNS);
+        break;
+      }
       if ((p = strchr(list[i], ':'))) {
         *p++ = 0;
         /* allow non-standard ports */
@@ -181,6 +181,8 @@ static char *dns_change(ClientData cdata, Tcl_Interp *irp,
         myres.nsaddr_list[myres.nscount].sin_family = AF_INET;
         myres.nscount++;
       }
+      else
+        putlog(LOG_MISC, "*", "WARNING: invalid dns-server %s", list[i]);
     }
     Tcl_Free((char *) list);
   }
