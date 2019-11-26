@@ -37,7 +37,7 @@ static int dns_retrydelay = 3;
 static int dns_cache = 86400;
 static int dns_negcache = 600;
 
-static char dns_servers[121] = "";
+static char dns_servers[144] = "";
 
 #include "coredns.c"
 
@@ -131,7 +131,7 @@ static tcl_ints dnsints[] = {
 };
 
 static tcl_strings dnsstrings[] = {
-  {"dns-servers", dns_servers, 120,           0},
+  {"dns-servers", dns_servers, 143,           0},
   {NULL,          NULL,          0,           0}
 };
 
@@ -139,7 +139,7 @@ static char *dns_change(ClientData cdata, Tcl_Interp *irp,
                            EGG_CONST char *name1,
                            EGG_CONST char *name2, int flags)
 {
-  char buf[121], *p;
+  char buf[sizeof dns_servers], *p;
   unsigned short port;
   int i, lc, code;
   EGG_CONST char **list, *slist;
