@@ -47,7 +47,7 @@ extern char origbotname[], botuser[], motdfile[], admin[], userfile[],
             firewall[], helpdir[], notify_new[], vhost[], moddir[], owner[],
             network[], botnetnick[], bannerfile[], egg_version[], natip[],
             configfile[], logfile_suffix[], log_ts[], textdir[], pid_file[],
-            listen_ip[], stealth_prompt[];
+            listen_ip[], stealth_prompt[], language[];
 
 
 extern int flood_telnet_thr, flood_telnet_time, shtime, share_greet,
@@ -399,6 +399,7 @@ static tcl_strings def_tcl_strings[] = {
   {"pidfile",         pid_file,       120,           STR_PROTECT},
   {"configureargs",   EGG_AC_ARGS,    0,             STR_PROTECT},
   {"stealth-prompt",  stealth_prompt, 80,                      0},
+  {"language",        language,       64,            STR_PROTECT},
   {NULL,              NULL,           0,                       0}
 };
 
