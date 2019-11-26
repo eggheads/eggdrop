@@ -182,7 +182,7 @@ static char *dns_change(ClientData cdata, Tcl_Interp *irp,
         myres.nscount++;
       }
       else
-        putlog(LOG_MISC, "*", "WARNING: invalid dns-server %s", list[i]);
+        putlog(LOG_MISC, "*", "WARNING: Invalid dns-server %s", list[i]);
     }
     Tcl_Free((char *) list);
   }
