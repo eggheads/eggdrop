@@ -1253,7 +1253,7 @@ static int tryauthenticate(char *from, char *msg)
 
 static int gotauthenticate(char *from, char *msg)
 {
-  fixcolon(msg);
+  fixcolon(msg); /* Because Inspircd does its own thing */
   if (tryauthenticate(from, msg) && !sasl_continue) {
     putlog(LOG_DEBUG, "*", "SASL: Aborting connection and retrying");
     nuke_server("Quitting...");
