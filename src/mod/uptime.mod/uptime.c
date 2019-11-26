@@ -222,8 +222,7 @@ static void check_secondly()
     seconds = 0;
     next_minutes = random() % UPDATE_INTERVAL;
     next_seconds = random() % 59;
-    next_update = (time_t) ((time(NULL) / 60 * 60) + (next_minutes * 60) +
-      next_seconds);
+    next_update = (time_t) (time(NULL) + next_minutes * 60 + next_seconds);
 
     /* Go back to checking every minute. */
     add_hook(HOOK_MINUTELY, (Function) check_minutely);
