@@ -387,7 +387,9 @@ static void isupport_parse(const char *str,
       if (key[keylen] == '=') {
         putlog(LOG_MISC, "*", "isupport key %.*s is unset but has a value!", keylen, key);
       }
-      unset_cb(key, keylen);
+      if (unset_cb) {
+        unset_cb(key, keylen);
+      }
       str = key + keylen;
     } else {
       value = key + keylen + (key[keylen] == '=');
