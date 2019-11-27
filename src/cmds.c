@@ -32,7 +32,7 @@ extern struct dcc_t *dcc;
 extern struct userrec *userlist;
 extern tcl_timer_t *timer, *utimer;
 extern int dcc_total, remote_boots, backgrd, make_userfile, conmask, require_p,
-           must_be_owner, strict_host;
+           must_be_owner;
 extern volatile sig_atomic_t do_restart;
 extern unsigned long otraffic_irc, otraffic_irc_today, itraffic_irc,
                      itraffic_irc_today, otraffic_bn, otraffic_bn_today,
@@ -76,8 +76,7 @@ static int add_bot_hostmask(int idx, char *nick)
           return 0;
         }
         if (strchr("~^+=-", m->userhost[0]))
-          egg_snprintf(s, sizeof s, "*!%s%s", strict_host ? "?" : "",
-                       m->userhost + 1);
+          egg_snprintf(s, sizeof s, "*!?%s", m->userhost + 1);
         else
           egg_snprintf(s, sizeof s, "*!%s", m->userhost);
         dprintf(idx, "(Added hostmask for %s from %s)\n", nick, chan->dname);

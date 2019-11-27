@@ -37,7 +37,6 @@ static p_tcl_bind_list H_nick, H_mode, H_kick, H_join, H_need;
 static Function *global = NULL, *channels_funcs = NULL, *server_funcs = NULL;
 
 static int ctcp_mode;
-static int strict_host;
 static int wait_split = 300;    /* Time to wait for user to return from net-split. */
 static int max_bans = 20;       /* Modified by net-type 1-4 */
 static int max_exempts = 20;    /* Modified by net-type 1-4 */
@@ -932,7 +931,6 @@ static tcl_ints myints[] = {
   {"max-exempts",     &max_exempts,     0},
   {"max-invites",     &max_invites,     0},
   {"max-modes",       &max_modes,       0},
-  {"strict-host",     &strict_host,     0}, /* arthur2 */
   {"ctcp-mode",       &ctcp_mode,       0}, /* arthur2 */
   {"keep-nick",       &keepnick,        0}, /* guppy */
   {"prevent-mixing",  &prevent_mixing,  0},
