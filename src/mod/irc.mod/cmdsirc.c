@@ -1040,12 +1040,7 @@ static void cmd_adduser(struct userrec *u, int idx, char *par)
     strlcpy(s1, s, sizeof s1);
     p1 = strchr(s1, '!');
     if (strchr("~^+=-", p1[1])) {
-      if (strict_host)
-        p1[1] = '?';
-      else {
-        p1[1] = '!';
-        p1++;
-      }
+      p1[1] = '?';
     }
     p1--;
     p1[0] = '*';

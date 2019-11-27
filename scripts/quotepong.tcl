@@ -286,3 +286,4 @@ proc quotepong_bind {type} {
   bind raw - 998 quotepong_servermsg
 }
 
+putlog "Loaded quotepong.tcl"

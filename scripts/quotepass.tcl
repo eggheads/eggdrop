@@ -37,3 +37,4 @@ proc quotepass_bind {type} {
   bind raw - NOTICE quotepass_notice
 } 
 
+putlog "Loaded quotepass.tcl"

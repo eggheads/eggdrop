@@ -137,6 +137,7 @@ int setsockname(sockname_t *addr, char *src, int port, int allowres)
   int af = AF_UNSPEC;
 #ifdef IPV6
   char ip2[INET6_ADDRSTRLEN];
+  char *src2 = src;
   int pref;
 #else
   char ip2[INET_ADDRSTRLEN];
@@ -150,7 +151,9 @@ int setsockname(sockname_t *addr, char *src, int port, int allowres)
     ip = htonl(val);
     if (inet_ntop(AF_INET, &ip, ip2, sizeof ip2)) {
       debug2("net: setsockname(): ip %s -> %s", src, ip2);
-      src = ip2;
+#ifdef IPV6
+      src2 = ip2;
+#endif
     }
   }
 #ifdef IPV6
@@ -158,16 +161,16 @@ int setsockname(sockname_t *addr, char *src, int port, int allowres)
   egg_bzero(addr, sizeof(sockname_t));
   pref = pref_af ? AF_INET6 : AF_INET;
   if (pref == AF_INET) {
-    if (inet_pton(AF_INET, src, &addr->addr.s4.sin_addr) == 1)
+    if (inet_pton(AF_INET, src2, &addr->addr.s4.sin_addr) == 1)
       af = AF_INET;
-    else if (inet_pton(AF_INET6, src, &addr->addr.s6.sin6_addr) == 1)
+    else if (inet_pton(AF_INET6, src2, &addr->addr.s6.sin6_addr) == 1)
       af = AF_INET6;
     else
       af = AF_UNSPEC;
   } else {
-    if (inet_pton(AF_INET6, src, &addr->addr.s6.sin6_addr) == 1)
+    if (inet_pton(AF_INET6, src2, &addr->addr.s6.sin6_addr) == 1)
       af = AF_INET6;
-    else if (inet_pton(AF_INET, src, &addr->addr.s4.sin_addr) == 1)
+    else if (inet_pton(AF_INET, src2, &addr->addr.s4.sin_addr) == 1)
       af = AF_INET;
     else
       af = AF_UNSPEC;
