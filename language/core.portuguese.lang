@@ -127,7 +127,7 @@ Entre em ligação telnet com o bot e digite 'NEW' como o seu nick.
 0x53c,Ficheiro de utilizador em falta!
 0x53e,%B (%E)\n\nPor favor introduza o seu nick.\n
 0x53f,Rodando ficheiro de log %s, acima do máximo do tamanho (%d)
-0x540,\nNick.\n
+# 0x540 - unused / não utilizado
 0x541,Ultima mensagem repetida %d vez(s).\n
 0x542,bloqueado
 0x543,Sem sockets livres disponíveis.
@@ -401,7 +401,7 @@ Entre em ligação telnet com o bot e digite 'NEW' como o seu nick.
 0xe16,Ligação DCC fechada (%s!%s)
 0xe17,Ligação de entrada TELNET falhada (%s)
 0xe18,Recusado %s/%d (porta src inválida)
-# 0xe19 - não utilizado
+0xe19,*** %s retornou.\n 
 0xe1a,Recusado %s (máscara inválida)
 0xe1b,Ligação Telnet: %s/%d
 0xe1c,Ident falhada para %s: %s
@@ -428,4 +428,3 @@ Entre em ligação telnet com o bot e digite 'NEW' como o seu nick.
 0xe31,Telnet negada: %s, Sem acesso
 0xe32,Recusada ligação telnet de %s (tentou usar o meu nick de botnet)
 0xe33,Perdida ligação telnet de %s aquando verificação de duplicados
-

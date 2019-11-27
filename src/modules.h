@@ -6,7 +6,7 @@
  */
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2017 Eggheads Development Team
+ * Copyright (C) 1999 - 2019 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -53,15 +53,13 @@ extern struct hook_entry {
 } *hook_list[REAL_HOOKS];
 
 #define call_hook(x) do {                                       \
-        register struct hook_entry *p, *pn;                     \
+        struct hook_entry *p, *pn;                              \
                                                                 \
         for (p = hook_list[x]; p; p = pn) {                     \
                 pn = p->next;                                   \
                 p->func();                                      \
         }                                                       \
 } while (0)
-
-int call_hook_cccc(int, char *, char *, char *, char *);
 
 #endif
 

@@ -4,23 +4,20 @@ srcdir = .
 
 
 doofus:
-	@echo ""
-	@echo "Let's try this from the right directory..."
-	@echo ""
-	@cd ../../../ && make
+	@echo "" && \
+	echo "Let's try this from the right directory..." && \
+	echo "" && \
+	cd ../../../ && $(MAKE)
 
 static: ../server.o
 
 modules: ../../../server.$(MOD_EXT)
 
 ../server.o:
-	$(CC) $(CFLAGS) $(CPPFLAGS) -DMAKING_MODS -c $(srcdir)/server.c
-	@rm -f ../server.o
-	mv server.o ../
+	$(CC) $(CFLAGS) $(CPPFLAGS) -DMAKING_MODS -c $(srcdir)/server.c && mv -f server.o ../
 
 ../../../server.$(MOD_EXT): ../server.o
-	$(LD) -o ../../../server.$(MOD_EXT) ../server.o $(XLIBS) $(MODULE_XLIBS)
-	$(STRIP) ../../../server.$(MOD_EXT)
+	$(LD) $(CFLAGS) -o ../../../server.$(MOD_EXT) ../server.o $(XLIBS) $(MODULE_XLIBS) && $(STRIP) ../../../server.$(MOD_EXT)
 
 depend:
 	$(CC) $(CFLAGS) -MM $(srcdir)/server.c -MT ../server.o > .depend
@@ -36,14 +33,11 @@ distclean: clean
  ../../../src/lang.h ../../../src/eggdrop.h ../../../src/compat/in6.h \
  ../../../src/flags.h ../../../src/cmdt.h ../../../src/tclegg.h \
  ../../../src/tclhash.h ../../../src/chan.h ../../../src/users.h \
- ../../../src/compat/compat.h ../../../src/compat/inet_aton.h \
- ../../../src/compat/snprintf.h ../../../src/compat/memset.h \
- ../../../src/compat/memcpy.h ../../../src/compat/strcasecmp.h \
- ../../../src/compat/strftime.h ../../../src/compat/inet_ntop.h \
+ ../../../src/compat/compat.h ../../../src/compat/base64.h \
+ ../../../src/compat/inet_aton.h ../../../src/compat/snprintf.h \
  ../../../src/compat/inet_pton.h ../../../src/compat/gethostbyname2.h \
- ../../../src/list.h ../../../src/mod/modvals.h ../../../src/tandem.h \
- .././server.mod/server.h .././server.mod/isupport.c \
- .././server.mod/tclisupport.c .././server.mod/servmsg.c \
+ ../../../src/compat/strlcpy.h ../../../src/mod/modvals.h \
+ ../../../src/tandem.h .././server.mod/server.h .././server.mod/servmsg.c \
  .././server.mod/../irc.mod/irc.h \
  .././server.mod/../channels.mod/channels.h .././server.mod/cmdsserv.c \
- .././server.mod/tclserv.c
+ .././server.mod/tclserv.c ../../../list.h

@@ -4,7 +4,7 @@
  */
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2017 Eggheads Development Team
+ * Copyright (C) 1999 - 2019 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -29,9 +29,7 @@
 #include "server.mod/server.h"
 #include "channels.mod/channels.h"
 
-#ifdef HAVE_UNAME
-#  include <sys/utsname.h>
-#endif
+#include <sys/utsname.h>
 
 static p_tcl_bind_list H_topc, H_splt, H_sign, H_rejn, H_part, H_pub, H_pubm;
 static p_tcl_bind_list H_nick, H_mode, H_kick, H_join, H_need;
@@ -39,8 +37,6 @@ static p_tcl_bind_list H_nick, H_mode, H_kick, H_join, H_need;
 static Function *global = NULL, *channels_funcs = NULL, *server_funcs = NULL;
 
 static int ctcp_mode;
-static int net_type;
-static int strict_host;
 static int wait_split = 300;    /* Time to wait for user to return from net-split. */
 static int max_bans = 20;       /* Modified by net-type 1-4 */
 static int max_exempts = 20;    /* Modified by net-type 1-4 */
@@ -73,7 +69,7 @@ static char opchars[8];         /* the chars in a /who reply meaning op */
 #include "msgcmds.c"
 #include "tclirc.c"
 
-/* Contains the logic to decide wether we want to punish someone. Returns
+/* Contains the logic to decide whether we want to punish someone. Returns
  * true (1) if we want to, false (0) if not.
  */
 static int want_to_revenge(struct chanset_t *chan, struct userrec *u,
@@ -107,7 +103,7 @@ static int want_to_revenge(struct chanset_t *chan, struct userrec *u,
   return 0;
 }
 
-/* Dependant on revenge_mode, punish the offender.
+/* Dependent on revenge_mode, punish the offender.
  */
 static void punish_badguy(struct chanset_t *chan, char *whobad,
                           struct userrec *u, char *badnick, char *victim,
@@ -123,7 +119,7 @@ static void punish_badguy(struct chanset_t *chan, char *whobad,
   get_user_flagrec(u, &fr, chan->dname);
 
   /* Get current time into a string */
-  egg_strftime(ct, 7, "%d %b", localtime(&now));
+  strftime(ct, 7, "%d %b", localtime(&now));
 
   /* Put together log and kick messages */
   reason[0] = 0;
@@ -170,7 +166,7 @@ static void punish_badguy(struct chanset_t *chan, char *whobad,
     else {
       strcpy(s1, whobad);
       maskaddr(s1, s, chan->ban_type);
-      strncpyz(s1, badnick, sizeof s1);
+      strlcpy(s1, badnick, sizeof s1);
       /* If that handle exists use "badX" (where X is an increasing number)
        * instead.
        */
@@ -266,7 +262,7 @@ static void set_key(struct chanset_t *chan, char *k)
 
 static int hand_on_chan(struct chanset_t *chan, struct userrec *u)
 {
-  char s[UHOSTLEN];
+  char s[NICKMAX+UHOSTLEN+1];
   memberlist *m;
 
   for (m = chan->channel.member; m && m->nick[0]; m = m->next) {
@@ -525,7 +521,7 @@ static void status_log()
 static void check_lonely_channel(struct chanset_t *chan)
 {
   memberlist *m;
-  char s[UHOSTLEN];
+  char s[NICKMAX+UHOSTLEN+1];
   int i = 0;
 
   if (channel_pending(chan) || !channel_active(chan) || me_op(chan) ||
@@ -595,7 +591,7 @@ static void check_expired_chanstuff()
 {
   masklist *b, *e;
   memberlist *m, *n;
-  char *key, s[UHOSTLEN];
+  char *key, s[NICKMAX+UHOSTLEN+1];
   struct chanset_t *chan;
   struct flag_record fr = { FR_GLOBAL | FR_CHAN, 0, 0, 0, 0, 0 };
 
@@ -687,7 +683,6 @@ static void check_expired_chanstuff()
                  "%s (%s) got lost in the net-split.", m->nick, m->userhost);
           killmember(chan, m->nick);
         }
-        m = n;
       }
       check_lonely_channel(chan);
     } else if (!channel_inactive(chan) && !channel_pending(chan)) {
@@ -850,7 +845,7 @@ static int check_tcl_pub(char *nick, char *from, char *chname, char *msg)
   char buf[512], *args = buf, *cmd, host[161], *hand;
   struct userrec *u;
 
-  strncpyz(buf, msg, sizeof buf);
+  strlcpy(buf, msg, sizeof buf);
   cmd = newsplit(&args);
   simple_sprintf(host, "%s!%s", nick, from);
   u = get_user_by_host(host);
@@ -936,8 +931,6 @@ static tcl_ints myints[] = {
   {"max-exempts",     &max_exempts,     0},
   {"max-invites",     &max_invites,     0},
   {"max-modes",       &max_modes,       0},
-  {"net-type",        &net_type,        0},
-  {"strict-host",     &strict_host,     0}, /* arthur2 */
   {"ctcp-mode",       &ctcp_mode,       0}, /* arthur2 */
   {"keep-nick",       &keepnick,        0}, /* guppy */
   {"prevent-mixing",  &prevent_mixing,  0},
@@ -1019,10 +1012,16 @@ static void irc_report(int idx, int details)
   }
 }
 
+/* Many networks either support max_bans/invite/exempts/ *or*
+ * they support max_modes. If they support max_modes, set each of
+ * other sub-max settings equal to max_modes
+ */
 static void do_nettype()
 {
-  switch (net_type) {
-  case 0: /* EFnet */
+  switch (net_type_int) {
+  case NETT_EFNET:
+  case NETT_HYBRID_EFNET:
+  case NETT_FREENODE:
     kick_method = 1;
     modesperline = 4;
     use_354 = 0;
@@ -1035,7 +1034,7 @@ static void do_nettype()
     rfc_compliant = 1;
     include_lk = 0;
     break;
-  case 1: /* IRCnet */
+  case NETT_IRCNET:
     kick_method = 4;
     modesperline = 3;
     use_354 = 0;
@@ -1048,42 +1047,55 @@ static void do_nettype()
     rfc_compliant = 1;
     include_lk = 1;
     break;
-  case 2: /* UnderNet */
+  case NETT_UNDERNET:
+    kick_method = 1;
+    modesperline = 6;
+    use_354 = 1;
+    use_exempts = 0;
+    use_invites = 0;
+    max_bans = 100;
+    max_exempts = 0;
+    max_invites = 0;
+    max_modes = 100;
+    rfc_compliant = 1;
+    include_lk = 1;
+    break;
+  case NETT_DALNET:
+    kick_method = 4;
+    modesperline = 6;
+    use_354 = 0;
+    use_exempts = 1;
+    use_invites = 1;
+    max_bans = 200;
+    max_exempts = 100;
+    max_invites = 100;
+    max_modes = 400;
+    rfc_compliant = 0;
+    include_lk = 1;
+    break;
+  case NETT_QUAKENET:
     kick_method = 1;
     modesperline = 6;
     use_354 = 1;
     use_exempts = 0;
     use_invites = 0;
     max_bans = 45;
-    max_exempts = 45;
-    max_invites = 45;
+    max_exempts = 0;
+    max_invites = 0;
     max_modes = 45;
     rfc_compliant = 1;
     include_lk = 1;
     break;
-  case 3: /* DALnet */
-    kick_method = 1;
-    modesperline = 6;
-    use_354 = 0;
-    use_exempts = 0;
-    use_invites = 0;
-    max_bans = 100;
-    max_exempts = 100;
-    max_invites = 100;
-    max_modes = 100;
-    rfc_compliant = 0;
-    include_lk = 1;
-    break;
-  case 4: /* Hybrid-6+ */
+  case NETT_RIZON:
     kick_method = 1;
     modesperline = 4;
     use_354 = 0;
     use_exempts = 1;
     use_invites = 1;
-    max_bans = 20;
-    max_exempts = 20;
-    max_invites = 20;
-    max_modes = 20;
+    max_bans = 250;
+    max_exempts = 250;
+    max_invites = 250;
+    max_modes = 250;
     rfc_compliant = 1;
     include_lk = 0;
     break;
@@ -1210,9 +1222,9 @@ char *irc_start(Function *global_funcs)
     module_undepend(MODULE_NAME);
     return "This module requires Eggdrop 1.8.0 or later.";
   }
-  if (!(server_funcs = module_depend(MODULE_NAME, "server", 1, 0))) {
+  if (!(server_funcs = module_depend(MODULE_NAME, "server", 1, 5))) {
     module_undepend(MODULE_NAME);
-    return "This module requires server module 1.0 or later.";
+    return "This module requires server module 1.5 or later.";
   }
   if (!(channels_funcs = module_depend(MODULE_NAME, "channels", 1, 1))) {
     module_undepend(MODULE_NAME);

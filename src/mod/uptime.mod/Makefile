@@ -3,23 +3,20 @@ srcdir = .
 
 
 doofus:
-	@echo ""
-	@echo "Let's try this from the right directory..."
-	@echo ""
-	@cd ../../../ && make
+	@echo "" && \
+	echo "Let's try this from the right directory..." && \
+	echo "" && \
+	cd ../../../ && $(MAKE)
 
 static: ../uptime.o
 
 modules: ../../../uptime.$(MOD_EXT)
 
 ../uptime.o:
-	$(CC) $(CFLAGS) $(CPPFLAGS) -DMAKING_MODS -c $(srcdir)/uptime.c
-	@rm -f ../uptime.o
-	mv uptime.o ../
+	$(CC) $(CFLAGS) $(CPPFLAGS) -DMAKING_MODS -c $(srcdir)/uptime.c && mv -f uptime.o ../
 
 ../../../uptime.$(MOD_EXT): ../uptime.o
-	$(LD) -o ../../../uptime.$(MOD_EXT) ../uptime.o $(XLIBS) $(MODULE_XLIBS)
-	$(STRIP) ../../../uptime.$(MOD_EXT)
+	$(LD) $(CFLAGS) -o ../../../uptime.$(MOD_EXT) ../uptime.o $(XLIBS) $(MODULE_XLIBS) && $(STRIP) ../../../uptime.$(MOD_EXT)
 
 depend:
 	$(CC) $(CFLAGS) -MM $(srcdir)/uptime.c -MT ../uptime.o > .depend
@@ -36,10 +33,8 @@ distclean: clean
  ../../../src/eggdrop.h ../../../src/compat/in6.h ../../../src/flags.h \
  ../../../src/cmdt.h ../../../src/tclegg.h ../../../src/tclhash.h \
  ../../../src/chan.h ../../../src/users.h ../../../src/compat/compat.h \
- ../../../src/compat/inet_aton.h ../../../src/compat/snprintf.h \
- ../../../src/compat/memset.h ../../../src/compat/memcpy.h \
- ../../../src/compat/strcasecmp.h ../../../src/compat/strftime.h \
- ../../../src/compat/inet_ntop.h ../../../src/compat/inet_pton.h \
- ../../../src/compat/gethostbyname2.h ../../../src/list.h \
+ ../../../src/compat/base64.h ../../../src/compat/inet_aton.h \
+ ../../../src/compat/snprintf.h ../../../src/compat/inet_pton.h \
+ ../../../src/compat/gethostbyname2.h ../../../src/compat/strlcpy.h \
  .././uptime.mod/../modvals.h ../../../src/tandem.h \
- .././uptime.mod/../server.mod/server.h
+ .././uptime.mod/../server.mod/server.h ../../../src/list.h

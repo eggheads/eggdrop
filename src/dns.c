@@ -7,7 +7,7 @@
 /*
  * Written by Fabian Knittel <fknittel@gmx.de>
  *
- * Copyright (C) 1999 - 2017 Eggheads Development Team
+ * Copyright (C) 1999 - 2019 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -47,12 +47,12 @@ devent_t *dns_events = NULL;
  *   DCC functions
  */
 
-void dcc_dnswait(int idx, char *buf, int len)
+static void dcc_dnswait(int idx, char *buf, int len)
 {
   /* Ignore anything now. */
 }
 
-void eof_dcc_dnswait(int idx)
+static void eof_dcc_dnswait(int idx)
 {
   putlog(LOG_MISC, "*", "Lost connection while resolving hostname [%s/%d]",
          iptostr(&dcc[idx].sockname.addr.sa), dcc[idx].port);
@@ -62,12 +62,12 @@ void eof_dcc_dnswait(int idx)
 
 static void display_dcc_dnswait(int idx, char *buf)
 {
-  sprintf(buf, "dns   waited %lis", (long) now - dcc[idx].timeval);
+  sprintf(buf, "dns   waited %lis", (long) (now - dcc[idx].timeval));
 }
 
 static int expmem_dcc_dnswait(void *x)
 {
-  register struct dns_info *p = (struct dns_info *) x;
+  struct dns_info *p = (struct dns_info *) x;
   int size = 0;
 
   if (p) {
@@ -82,7 +82,7 @@ static int expmem_dcc_dnswait(void *x)
 
 static void kill_dcc_dnswait(int idx, void *x)
 {
-  register struct dns_info *p = (struct dns_info *) x;
+  struct dns_info *p = (struct dns_info *) x;
 
   if (p) {
     if (p->host)
@@ -150,12 +150,12 @@ static void dns_dccipbyhost(sockname_t *ip, char *hostn, int ok, void *other)
   for (idx = 0; idx < dcc_total; idx++) {
     if ((dcc[idx].type == &DCC_DNSWAIT) &&
         (dcc[idx].u.dns->dns_type == RES_IPBYHOST) &&
-        !egg_strcasecmp(dcc[idx].u.dns->host, hostn)) {
+        !strcasecmp(dcc[idx].u.dns->host, hostn)) {
       if (ok) {
         if (dcc[idx].u.dns->ip)
-          egg_memcpy(dcc[idx].u.dns->ip, ip, sizeof(sockname_t));
+          memcpy(dcc[idx].u.dns->ip, ip, sizeof(sockname_t));
         else
-          egg_memcpy(&dcc[idx].sockname, ip, sizeof(sockname_t));
+          memcpy(&dcc[idx].sockname, ip, sizeof(sockname_t));
         dcc[idx].u.dns->dns_success(idx);
       } else
         dcc[idx].u.dns->dns_failure(idx);
@@ -188,7 +188,7 @@ void dcc_dnsipbyhost(char *hostn)
     if (de->type && (de->type == &DNS_DCCEVENT_IPBYHOST) &&
         (de->lookup == RES_IPBYHOST)) {
       if (de->res_data.hostname &&
-          !egg_strcasecmp(de->res_data.hostname, hostn))
+          !strcasecmp(de->res_data.hostname, hostn))
         /* No need to add anymore. */
         return;
     }
@@ -434,7 +434,7 @@ void call_ipbyhost(char *hostn, sockname_t *ip, int ok)
   while (de) {
     nde = de->next;
     if ((de->lookup == RES_IPBYHOST) && (!de->res_data.hostname ||
-        !egg_strcasecmp(de->res_data.hostname, hostn))) {
+        !strcasecmp(de->res_data.hostname, hostn))) {
       /* Remove the event from the list here, to avoid conflicts if one of
        * the event handlers re-adds another event. */
       if (ode)
@@ -464,35 +464,37 @@ void call_ipbyhost(char *hostn, sockname_t *ip, int ok)
  */
 void block_dns_hostbyip(sockname_t *addr)
 {
-  struct hostent *hp = 0;
-  static char s[UHOSTLEN];
+  char host[UHOSTLEN];
+  volatile int i = 1;
 
   if (addr->family == AF_INET) {
     if (!sigsetjmp(alarmret, 1)) {
       alarm(resolve_timeout);
-      hp = gethostbyaddr((const char *) &addr->addr.s4.sin_addr,
-                         sizeof (struct in_addr), AF_INET);
+      i = getnameinfo((const struct sockaddr *) &addr->addr.s4,
+                      sizeof (struct sockaddr_in), host, sizeof host, NULL, 0, 0);
       alarm(0);
+      if (i)
+        debug1("dns: getnameinfo(): error = %s", gai_strerror(i));
     }
-    if (!hp)
-     inet_ntop(AF_INET, &addr->addr.s4.sin_addr.s_addr, s, sizeof s);
+    if (i)
+      inet_ntop(AF_INET, &addr->addr.s4.sin_addr.s_addr, host, sizeof host);
 #ifdef IPV6
   } else {
     if (!sigsetjmp(alarmret, 1)) {
       alarm(resolve_timeout);
-      hp = gethostbyaddr((const char *) &addr->addr.s6.sin6_addr,
-                         sizeof (struct in6_addr), AF_INET6);
+      i = getnameinfo((const struct sockaddr *) &addr->addr.s6,
+                      sizeof (struct sockaddr_in6), host, sizeof host, NULL, 0, 0);
       alarm(0);
+      if (i)
+        debug1("dns: getnameinfo(): error = %s", gai_strerror(i));
     }
-    if (!hp)
-      inet_ntop(AF_INET6, &addr->addr.s6.sin6_addr, s, sizeof s);
+    if (i)
+      inet_ntop(AF_INET6, &addr->addr.s6.sin6_addr, host, sizeof host);
   }
 #else
   }
 #endif
-  if (hp)
-    strncpyz(s, hp->h_name, sizeof s);
-  call_hostbyip(addr, s, hp ? 1 : 0);
+  call_hostbyip(addr, host, !i);
 }
 
 void block_dns_ipbyhost(char *host)

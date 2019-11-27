@@ -9,7 +9,7 @@
  */
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2017 Eggheads Development Team
+ * Copyright (C) 1999 - 2019 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -26,6 +26,8 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
+#include <sys/time.h>
+#include <sys/resource.h>
 #include "main.h"
 #include "chan.h"
 #include "users.h"
@@ -61,7 +63,7 @@ static int builtin_log();
 
 /* Allocate and initialise a chunk of memory.
  */
-static inline void *n_malloc_null(int size, const char *file, int line)
+static void *n_malloc_null(int size, const char *file, int line)
 {
 #ifdef DEBUG_MEM
 #  define nmalloc_null(size) n_malloc_null(size, __FILE__, __LINE__)
@@ -71,14 +73,14 @@ static inline void *n_malloc_null(int size, const char *file, int line)
   void *ptr = nmalloc(size);
 #endif
 
-  egg_memset(ptr, 0, size);
+  egg_bzero(ptr, size);
   return ptr;
 }
 
 
 /* Delete trigger/command.
  */
-static inline void tcl_cmd_delete(tcl_cmd_t *tc)
+static void tcl_cmd_delete(tcl_cmd_t *tc)
 {
   nfree(tc->func_name);
   nfree(tc);
@@ -86,7 +88,7 @@ static inline void tcl_cmd_delete(tcl_cmd_t *tc)
 
 /* Delete bind and its elements.
  */
-static inline void tcl_bind_mask_delete(tcl_bind_mask_t *tm)
+static void tcl_bind_mask_delete(tcl_bind_mask_t *tm)
 {
   tcl_cmd_t *tc, *tc_next;
 
@@ -100,7 +102,7 @@ static inline void tcl_bind_mask_delete(tcl_bind_mask_t *tm)
 
 /* Delete bind list and its elements.
  */
-static inline void tcl_bind_list_delete(tcl_bind_list_t *tl)
+static void tcl_bind_list_delete(tcl_bind_list_t *tl)
 {
   tcl_bind_mask_t *tm, *tm_next;
 
@@ -160,7 +162,7 @@ void garbage_collect_tclhash(void)
   }
 }
 
-static inline int tcl_cmd_expmem(tcl_cmd_t *tc)
+static int tcl_cmd_expmem(tcl_cmd_t *tc)
 {
   int tot;
 
@@ -170,7 +172,7 @@ static inline int tcl_cmd_expmem(tcl_cmd_t *tc)
   return tot;
 }
 
-static inline int tcl_bind_mask_expmem(tcl_bind_mask_t *tm)
+static int tcl_bind_mask_expmem(tcl_bind_mask_t *tm)
 {
   int tot = 0;
   tcl_cmd_t *tc;
@@ -183,7 +185,7 @@ static inline int tcl_bind_mask_expmem(tcl_bind_mask_t *tm)
   return tot;
 }
 
-static inline int tcl_bind_list_expmem(tcl_bind_list_t *tl)
+static int tcl_bind_list_expmem(tcl_bind_list_t *tl)
 {
   int tot = 0;
   tcl_bind_mask_t *tm;
@@ -277,7 +279,7 @@ tcl_bind_list_t *add_bind_table(const char *nme, int flg, IntFunc func)
   for (tl = bind_table_list, tl_prev = NULL; tl; tl_prev = tl, tl = tl->next) {
     if (tl->flags & HT_DELETED)
       continue;
-    v = egg_strcasecmp(tl->name, nme);
+    v = strcasecmp(tl->name, nme);
     if (!v)
       return tl;                /* Duplicate, just return old value.    */
     if (v > 0)
@@ -325,7 +327,7 @@ tcl_bind_list_t *find_bind_table(const char *nme)
   for (tl = bind_table_list; tl; tl = tl->next) {
     if (tl->flags & HT_DELETED)
       continue;
-    v = egg_strcasecmp(tl->name, nme);
+    v = strcasecmp(tl->name, nme);
     if (!v)
       return tl;
     if (v > 0)
@@ -337,7 +339,7 @@ tcl_bind_list_t *find_bind_table(const char *nme)
 static void dump_bind_tables(Tcl_Interp *irp)
 {
   tcl_bind_list_t *tl;
-  u_8bit_t i;
+  uint8_t i;
 
   for (tl = bind_table_list, i = 0; tl; tl = tl->next) {
     if (tl->flags & HT_DELETED)
@@ -370,7 +372,7 @@ static int unbind_bind_entry(tcl_bind_list_t *tl, const char *flags,
     for (tc = tm->first; tc; tc = tc->next) {
       if (tc->attributes & TC_DELETED)
         continue;
-      if (!egg_strcasecmp(tc->func_name, proc)) {
+      if (!strcasecmp(tc->func_name, proc)) {
         /* Erase proc regardless of flags. */
         tc->attributes |= TC_DELETED;
         return 1;               /* Match.       */
@@ -411,7 +413,7 @@ static int bind_bind_entry(tcl_bind_list_t *tl, const char *flags,
   for (tc = tm->first; tc; tc = tc->next) {
     if (tc->attributes & TC_DELETED)
       continue;
-    if (!egg_strcasecmp(tc->func_name, proc)) {
+    if (!strcasecmp(tc->func_name, proc)) {
       tc->flags.match = FR_GLOBAL | FR_CHAN;
       break_down_flags(flags, &(tc->flags), NULL);
       return 1;
@@ -450,7 +452,7 @@ static int tcl_getbinds(tcl_bind_list_t *tl_kind, const char *name)
   for (tm = tl_kind->first; tm; tm = tm->next) {
     if (tm->flags & TBM_DELETED)
       continue;
-    if (!egg_strcasecmp(tm->mask, name)) {
+    if (!strcasecmp(tm->mask, name)) {
       tcl_cmd_t *tc;
 
       for (tc = tm->first; tc; tc = tc->next) {
@@ -711,12 +713,14 @@ static int builtin_idx STDVAR
  *
  * Note: This is INLINE code for check_tcl_bind().
  */
-static inline int trigger_bind(const char *proc, const char *param,
+static int trigger_bind(const char *proc, const char *param,
                                char *mask)
 {
   int x;
+  struct rusage ru1, ru2;
+  int r = 0;
 #ifdef DEBUG_CONTEXT
-  const char *msg = "Tcl proc: %s, param: %s";
+  #define FORMAT "Tcl proc: %s, param: %s"
   char *buf;
 
   /* We now try to debug the Tcl_VarEval() call below by remembering both
@@ -724,9 +728,10 @@ static inline int trigger_bind(const char *proc, const char *param,
    * less helpless when we see context dumps.
    */
   Context;
-  buf = nmalloc(strlen(msg) + (proc ? strlen(proc) : 6)
-                + (param ? strlen(param) : 6) + 1);
-  sprintf(buf, msg, proc ? proc : "<null>", param ? param : "<null>");
+  /* reuse x */
+  x = snprintf(NULL, 0, FORMAT, proc ? proc : "<null>", param ? param : "<null>");
+  buf = nmalloc(x + 1);
+  sprintf(buf, FORMAT, proc ? proc : "<null>", param ? param : "<null>");
   ContextNote(buf);
   nfree(buf);
 #endif /* DEBUG_CONTEXT */
@@ -737,8 +742,21 @@ static inline int trigger_bind(const char *proc, const char *param,
    */
   Tcl_SetVar(interp, "lastbind", (char *) mask, TCL_GLOBAL_ONLY);
 
+  if(proc && proc[0] != '*') { /* proc[0] != '*' excludes internal binds */
+    debug1("triggering bind %s", proc);
+    r = getrusage(RUSAGE_SELF, &ru1);
+  }
   x = Tcl_VarEval(interp, proc, param, NULL);
   Context;
+  if (proc && proc[0] != '*' && !r) {
+    if (!getrusage(RUSAGE_SELF, &ru2)) {
+      debug3("triggered bind %s, user %.3fms sys %.3fms", proc,
+             (double) (ru2.ru_utime.tv_usec - ru1.ru_utime.tv_usec) / 1000 +
+             (double) (ru2.ru_utime.tv_sec  - ru1.ru_utime.tv_sec ) * 1000,
+             (double) (ru2.ru_stime.tv_usec - ru1.ru_stime.tv_usec) / 1000 +
+             (double) (ru2.ru_stime.tv_sec  - ru1.ru_stime.tv_sec ) * 1000);
+    }
+  }
 
   if (x == TCL_ERROR) {
     /* FIXME: we really should be able to log longer errors */
@@ -763,15 +781,15 @@ static inline int trigger_bind(const char *proc, const char *param,
  *
  * Note: This is INLINE code for check_tcl_bind().
  */
-static inline int check_bind_match(const char *match, char *mask,
+static int check_bind_match(const char *match, char *mask,
                                    int match_type)
 {
   switch (match_type & 0x07) {
   case MATCH_PARTIAL:
-    return (!egg_strncasecmp(match, mask, strlen(match)));
+    return (!strncasecmp(match, mask, strlen(match)));
     break;
   case MATCH_EXACT:
-    return (!egg_strcasecmp(match, mask));
+    return (!strcasecmp(match, mask));
     break;
   case MATCH_CASE:
     return (!strcmp(match, mask));
@@ -797,7 +815,7 @@ static inline int check_bind_match(const char *match, char *mask,
  *
  * Note: This is INLINE code for check_tcl_bind().
  */
-static inline int check_bind_flags(struct flag_record *flags,
+static int check_bind_flags(struct flag_record *flags,
                                    struct flag_record *atr, int match_type)
 {
   if (match_type & BIND_USE_ATTR) {
@@ -805,9 +823,8 @@ static inline int check_bind_flags(struct flag_record *flags,
       return (flagrec_ok(flags, atr));
     else
       return (flagrec_eq(flags, atr));
-  } else
-    return 1;
-  return 0;
+  }
+  return 1;
 }
 
 
@@ -819,6 +836,7 @@ int check_tcl_bind(tcl_bind_list_t *tl, const char *match,
   char *proc = NULL, *mask = NULL;
   tcl_bind_mask_t *tm, *tm_last = NULL, *tm_p = NULL;
   tcl_cmd_t *tc, *htc = NULL;
+  char *str, *varName, *brkt;
 
   for (tm = tl->first; tm && !finish; tm_last = tm, tm = tm->next) {
 
@@ -851,7 +869,7 @@ int check_tcl_bind(tcl_bind_list_t *tl, const char *match,
              */
             if ((match_type & 0x07) != MATCH_PARTIAL ||
               /* ... or this happens to be an exact match. */
-              !egg_strcasecmp(match, tm->mask)) {
+              !strcasecmp(match, tm->mask)) {
               cnt = 1;
               finish = 1;
             }
@@ -875,7 +893,7 @@ int check_tcl_bind(tcl_bind_list_t *tl, const char *match,
 
           if (match_type & BIND_ALTER_ARGS) {
             if (tcl_resultempty())
-              return x;
+              goto finally;
           } else if ((match_type & BIND_STACKRET) && x == BIND_EXEC_LOG) {
             /* If we have multiple commands/triggers, and if any of the
              * commands return 1, we store the result so we can return it
@@ -886,30 +904,45 @@ int check_tcl_bind(tcl_bind_list_t *tl, const char *match,
             continue;
           } else if ((match_type & BIND_WANTRET) && x == BIND_EXEC_LOG)
             /* Return immediately if any commands return 1 */
-            return x;
+            goto finally;
         }
       }
     }
   }
 
-  if (!cnt)
-    return BIND_NOMATCH;
+  if (!cnt) {
+    x = BIND_NOMATCH;
+    goto finally;
+  }
 
   /* Do this before updating the preferred entries information,
    * since we don't want to change the order of stacked binds
    */
-  if (result)           /* BIND_STACKRET */
-    return result;
+  if (result) {           /* BIND_STACKRET */
+    x = result;
+    goto finally;
+  }
 
-  if ((match_type & 0x07) == MATCH_MASK || (match_type & 0x07) == MATCH_CASE)
-    return BIND_EXECUTED;
+  if ((match_type & 0x07) == MATCH_MASK || (match_type & 0x07) == MATCH_CASE) {
+    x = BIND_EXECUTED;
+    goto finally;
+  }
 
   /* Hit counter */
   if (htc)
     htc->hits++;
 
-  /* Now that we have found at least one bind, we can update the
+  if (cnt > 1) {
+    x = BIND_AMBIGUOUS;
+    goto finally;
+  }
+
+  /* Now that we have found exactly one bind, we can update the
    * preferred entries information.
+   * Do this only for cnt == 1,
+   * since we don't want to change the order of raw binds vs. builtin binds.
+   * reason 1: order should be raw then builtin
+   * reason 2: builtin could modify args
    */
   if (tm_p && tm_p->next) {
     tm = tm_p->next;            /* Move mask to front of bind's mask list. */
@@ -918,10 +951,21 @@ int check_tcl_bind(tcl_bind_list_t *tl, const char *match,
     tl->first = tm;
   }
 
-  if (cnt > 1)
-    return BIND_AMBIGUOUS;
+  x = trigger_bind(proc, param, mask);
 
-  return trigger_bind(proc, param, mask);
+finally:
+  str = nmalloc(strlen(param) + 1);
+  strcpy(str, param);
+
+  for (varName = strtok_r(str,  " $:", &brkt);
+       varName;
+       varName = strtok_r(NULL, " $:", &brkt))
+  {
+    Tcl_UnsetVar(interp, varName, 0);
+  }
+
+  nfree(str);
+  return x;
 }
 
 
@@ -1139,16 +1183,21 @@ void check_tcl_away(const char *bot, int idx, const char *msg)
                  MATCH_MASK | BIND_STACKABLE);
 }
 
-void check_tcl_time(struct tm *tm)
+void check_tcl_time_and_cron(struct tm *tm)
 {
-  char y[18];
+  /* Undersized due to sane assumption that struct tm is sane and at the same
+   * time oversized to silence a gcc format-truncation warning */
+  char y[24];
 
   egg_snprintf(y, sizeof y, "%02d", tm->tm_min);
   Tcl_SetVar(interp, "_time1", (char *) y, 0);
+  Tcl_SetVar(interp, "_cron1", (char *) y, 0);
   egg_snprintf(y, sizeof y, "%02d", tm->tm_hour);
   Tcl_SetVar(interp, "_time2", (char *) y, 0);
+  Tcl_SetVar(interp, "_cron2", (char *) y, 0);
   egg_snprintf(y, sizeof y, "%02d", tm->tm_mday);
   Tcl_SetVar(interp, "_time3", (char *) y, 0);
+  Tcl_SetVar(interp, "_cron3", (char *) y, 0);
   egg_snprintf(y, sizeof y, "%02d", tm->tm_mon);
   Tcl_SetVar(interp, "_time4", (char *) y, 0);
   egg_snprintf(y, sizeof y, "%04d", tm->tm_year + 1900);
@@ -1158,18 +1207,7 @@ void check_tcl_time(struct tm *tm)
   check_tcl_bind(H_time, y, 0,
                  " $_time1 $_time2 $_time3 $_time4 $_time5",
                  MATCH_MASK | BIND_STACKABLE);
-}
 
-void check_tcl_cron(struct tm *tm)
-{
-  char y[15];
-
-  egg_snprintf(y, sizeof y, "%02d", tm->tm_min);
-  Tcl_SetVar(interp, "_cron1", (char *) y, 0);
-  egg_snprintf(y, sizeof y, "%02d", tm->tm_hour);
-  Tcl_SetVar(interp, "_cron2", (char *) y, 0);
-  egg_snprintf(y, sizeof y, "%02d", tm->tm_mday);
-  Tcl_SetVar(interp, "_cron3", (char *) y, 0);
   egg_snprintf(y, sizeof y, "%02d", tm->tm_mon + 1);
   Tcl_SetVar(interp, "_cron4", (char *) y, 0);
   egg_snprintf(y, sizeof y, "%02d", tm->tm_wday);
@@ -1252,10 +1290,10 @@ void tell_binds(int idx, char *par)
   else
     tl_kind = NULL;
 
-  if ((name && name[0] && !egg_strcasecmp(name, "all")) ||
-      (s && s[0] && !egg_strcasecmp(s, "all")))
+  if ((name && name[0] && !strcasecmp(name, "all")) ||
+      (s && s[0] && !strcasecmp(s, "all")))
     showall = 1;
-  if (tl_kind == NULL && name && name[0] && egg_strcasecmp(name, "all"))
+  if (tl_kind == NULL && name && name[0] && strcasecmp(name, "all"))
     patmatc = 1;
 
   dprintf(idx, MISC_CMDBINDS);

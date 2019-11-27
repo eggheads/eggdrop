@@ -4,7 +4,7 @@
  */
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2017 Eggheads Development Team
+ * Copyright (C) 1999 - 2019 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -130,7 +130,7 @@ int def_set(struct userrec *u, struct user_entry *e, void *buf)
 
     e->u.string = user_realloc(e->u.string, l + 1);
 
-    strncpyz(e->u.string, string, l + 1);
+    strlcpy(e->u.string, string, l + 1);
 
     for (i = e->u.string; *i; i++)
       /* Allow bold, inverse, underline, color text here...
@@ -240,7 +240,7 @@ struct user_entry_type USERENTRY_INFO = {
 int pass_set(struct userrec *u, struct user_entry *e, void *buf)
 {
   char new[32];
-  register char *pass = buf;
+  char *pass = buf;
 
   if (e->u.extra)
     nfree(e->u.extra);
@@ -364,7 +364,7 @@ static int laston_set(struct userrec *u, struct user_entry *e, void *buf)
       nfree(li);
     }
 
-    li = e->u.extra = buf;
+    e->u.extra = buf;
   }
   /* donut share laston info */
   return 1;
@@ -570,7 +570,7 @@ static int botaddr_write_userfile(FILE *f, struct userrec *u,
 {
   int ret = 1;
   char *p, *q, *addr;
-  register struct bot_addr *bi = (struct bot_addr *) e->u.extra;
+  struct bot_addr *bi = (struct bot_addr *) e->u.extra;
 
   p = bi->address;
   addr = user_malloc(strlen(bi->address) + 1);
@@ -595,7 +595,7 @@ static int botaddr_write_userfile(FILE *f, struct userrec *u,
 
 static int botaddr_set(struct userrec *u, struct user_entry *e, void *buf)
 {
-  register struct bot_addr *bi = (struct bot_addr *) e->u.extra;
+  struct bot_addr *bi = (struct bot_addr *) e->u.extra;
 
   if (!bi && !buf)
     return 1;
@@ -667,7 +667,7 @@ static int botaddr_tcl_append(Tcl_Interp * interp, struct userrec *u,
 static int botaddr_tcl_set(Tcl_Interp * irp, struct userrec *u,
                            struct user_entry *e, int argc, char **argv)
 {
-  register struct bot_addr *bi = (struct bot_addr *) e->u.extra;
+  struct bot_addr *bi = (struct bot_addr *) e->u.extra;
 
   BADARGS(4, 6, " handle type address ?telnetport ?relayport??");
 
@@ -680,26 +680,36 @@ static int botaddr_tcl_set(Tcl_Interp * irp, struct userrec *u,
       nfree(bi->address);
     bi->address = user_malloc(strlen(argv[3]) + 1);
     strcpy(bi->address, argv[3]);
-    if (argc > 4)
+    if (argc > 4) {
 #ifdef TLS
-    {
-      if (*argv[4] == '+')
+      /* If no user port set, use bot port for both entries */
+      if (*argv[4] == '+') {
         bi->ssl |= TLS_BOT;
-      bi->telnet_port = atoi(argv[4]);
-    }
-#else
-      bi->telnet_port = atoi(argv[4]);
+        if (argc == 5) {
+          bi->ssl |= TLS_RELAY;
+        } 
+      } else {
+        bi->ssl &= ~TLS_BOT;
+        if (argc == 5) {
+          bi->ssl &= ~TLS_RELAY;
+        }
+      }
 #endif
-    if (argc > 5)
+      bi->telnet_port = atoi(argv[4]);
+      if (argc == 5) {
+        bi->relay_port = atoi(argv[4]);
+      }
+    }
+    if (argc > 5) {
 #ifdef TLS
-    {
-      if (*argv[5] == '+')
+      if (*argv[5] == '+') {
         bi->ssl |= TLS_RELAY;
+      } else {
+        bi->ssl &= ~TLS_RELAY;
+      }
+#endif
       bi->relay_port = atoi(argv[5]);
     }
-#else
-      bi->relay_port = atoi(argv[5]);
-#endif
     if (!bi->telnet_port)
       bi->telnet_port = 3333;
     if (!bi->relay_port)
@@ -711,14 +721,14 @@ static int botaddr_tcl_set(Tcl_Interp * irp, struct userrec *u,
 
 static int botaddr_expmem(struct user_entry *e)
 {
-  register struct bot_addr *bi = (struct bot_addr *) e->u.extra;
+  struct bot_addr *bi = (struct bot_addr *) e->u.extra;
 
   return strlen(bi->address) + 1 + sizeof(struct bot_addr);
 }
 
 static void botaddr_display(int idx, struct user_entry *e)
 {
-  register struct bot_addr *bi = (struct bot_addr *) e->u.extra;
+  struct bot_addr *bi = (struct bot_addr *) e->u.extra;
 
   dprintf(idx, "  ADDRESS: %.70s\n", bi->address);
 #ifdef TLS
@@ -802,13 +812,13 @@ int xtra_set(struct userrec *u, struct user_entry *e, void *buf)
   struct xtra_key *curr, *old = NULL, *new = buf;
 
   for (curr = e->u.extra; curr; curr = curr->next) {
-    if (curr->key && !egg_strcasecmp(curr->key, new->key)) {
+    if (curr->key && !strcasecmp(curr->key, new->key)) {
       old = curr;
       break;
     }
   }
   if (!old && (!new->data || !new->data[0])) {
-    /* Delete non-existant entry -- doh ++rtc */
+    /* Delete non-existent entry -- doh ++rtc */
     nfree(new->key);
     if (new->data)
       nfree(new->data);
@@ -859,7 +869,7 @@ static int xtra_tcl_set(Tcl_Interp * irp, struct userrec *u,
   if (l > 500)
     l = 500;
   xk->key = user_malloc(l + 1);
-  strncpyz(xk->key, argv[3], l + 1);
+  strlcpy(xk->key, argv[3], l + 1);
 
   if (argc == 5) {
     int k = strlen(argv[4]);
@@ -867,7 +877,7 @@ static int xtra_tcl_set(Tcl_Interp * irp, struct userrec *u,
     if (k > 500 - l)
       k = 500 - l;
     xk->data = user_malloc(k + 1);
-    strncpyz(xk->data, argv[4], k + 1);
+    strlcpy(xk->data, argv[4], k + 1);
   }
   xtra_set(u, e, xk);
   return TCL_OK;
@@ -933,7 +943,7 @@ static void xtra_display(int idx, struct user_entry *e)
   for (xk = e->u.extra; xk; xk = xk->next) {
     /* Ok, it's a valid xtra field entry */
     for (j = 0; j < lc; j++) {
-      if (!egg_strcasecmp(list[j], xk->key))
+      if (!strcasecmp(list[j], xk->key))
         dprintf(idx, "  %s: %s\n", xk->key, xk->data);
     }
   }
@@ -957,7 +967,7 @@ static int xtra_gotshare(struct userrec *u, struct user_entry *e,
   if (l > 500)
     l = 500;
   xk->key = user_malloc(l + 1);
-  strncpyz(xk->key, arg, l + 1);
+  strlcpy(xk->key, arg, l + 1);
 
   if (buf[0]) {
     int k = strlen(buf);
@@ -965,7 +975,7 @@ static int xtra_gotshare(struct userrec *u, struct user_entry *e,
     if (k > 500 - l)
       k = 500 - l;
     xk->data = user_malloc(k + 1);
-    strncpyz(xk->data, buf, k + 1);
+    strlcpy(xk->data, buf, k + 1);
   }
   xtra_set(u, e, xk);
   return 1;
@@ -1044,7 +1054,7 @@ static int xtra_tcl_get(Tcl_Interp * irp, struct userrec *u,
     return TCL_OK;
   }
   for (x = e->u.extra; x; x = x->next)
-    if (!egg_strcasecmp(argv[3], x->key)) {
+    if (!strcasecmp(argv[3], x->key)) {
       Tcl_AppendResult(irp, x->data, NULL);
       return TCL_OK;
     }
@@ -1141,7 +1151,7 @@ static void hosts_display(int idx, struct user_entry *e)
   strcpy(s, "  HOSTS: ");
   for (q = e->u.list; q; q = q->next) {
     if (s[0] && !s[9])
-      strncpyz(s, q->extra, sizeof s);
+      strncat(s, q->extra, (sizeof s - strlen(s) -1));
     else if (!s[0])
       sprintf(s, "         %s", q->extra);
     else {
@@ -1160,7 +1170,7 @@ static void hosts_display(int idx, struct user_entry *e)
 
 static int hosts_set(struct userrec *u, struct user_entry *e, void *buf)
 {
-  if (!buf || !egg_strcasecmp(buf, "none")) {
+  if (!buf || !strcasecmp(buf, "none")) {
     /* When the bot crashes, it's in this part, not in the 'else' part */
     list_type_kill(e->u.list);
     e->u.list = NULL;
@@ -1307,7 +1317,7 @@ static int fprint_tcl_set(Tcl_Interp * irp, struct userrec *u,
 struct user_entry_type USERENTRY_FPRINT = {
   0,
   def_gotshare,
-  0,
+  def_dupuser,
   fprint_unpack,
   def_pack,
   def_write_userfile,
@@ -1391,7 +1401,7 @@ struct user_entry_type *find_entry_type(char *name)
   struct user_entry_type *p;
 
   for (p = entry_type_list; p; p = p->next) {
-    if (!egg_strcasecmp(name, p->name))
+    if (!strcasecmp(name, p->name))
       return p;
   }
   return NULL;
@@ -1404,7 +1414,7 @@ struct user_entry *find_user_entry(struct user_entry_type *et,
 
   for (e = &(u->entries); *e; e = &((*e)->next)) {
     if (((*e)->type == et) ||
-        ((*e)->name && !egg_strcasecmp((*e)->name, et->name))) {
+        ((*e)->name && !strcasecmp((*e)->name, et->name))) {
       t = *e;
       *e = t->next;
       t->next = u->entries;

@@ -1,12 +1,12 @@
 /*
  * dbcompat.c -- part of filesys.mod
- *   Compability functions to convert older DBs to the newest version.
+ *   Compatibility functions to convert older DBs to the newest version.
  *
  * Written for filedb3 by Fabian Knittel <fknittel@gmx.de>
  */
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2017 Eggheads Development Team
+ * Copyright (C) 1999 - 2019 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -144,29 +144,26 @@ static void convert_version1(FILE *fdb_s, FILE *fdb_t)
   filedb1 fdb1;
 
   fseek(fdb_s, 0L, SEEK_SET);
-  while (!feof(fdb_s)) {
-    fread(&fdb1, sizeof(filedb1), 1, fdb_s);
-    if (!feof(fdb_s)) {
-      if (!(fdb1.stat & FILE_UNUSED)) {
-        filedb_entry *fdbe = malloc_fdbe();
+  while (!feof(fdb_s) && fread(&fdb1, sizeof fdb1, 1, fdb_s) && !ferror(fdb_s)) {
+    if (!(fdb1.stat & FILE_UNUSED)) {
+      filedb_entry *fdbe = malloc_fdbe();
 
-        fdbe->stat = fdb1.stat;
-        if (fdb1.filename[0])
-          malloc_strcpy(fdbe->filename, fdb1.filename);
-        if (fdb1.desc[0])
-          malloc_strcpy(fdbe->desc, fdb1.desc);
-        if (fdb1.uploader[0])
-          malloc_strcpy(fdbe->uploader, fdb1.uploader);
-        if (fdb1.flags_req[0])
-          malloc_strcpy(fdbe->flags_req, (char *) fdb1.flags_req);
-        fdbe->uploaded = fdb1.uploaded;
-        fdbe->size = fdb1.size;
-        fdbe->gots = fdb1.gots;
-        if (fdb1.sharelink[0])
-          malloc_strcpy(fdbe->sharelink, fdb1.sharelink);
-        filedb_addfile(fdb_s, fdbe);
-        free_fdbe(&fdbe);
-      }
+      fdbe->stat = fdb1.stat;
+      if (fdb1.filename[0])
+        malloc_strcpy(fdbe->filename, fdb1.filename);
+      if (fdb1.desc[0])
+        malloc_strcpy(fdbe->desc, fdb1.desc);
+      if (fdb1.uploader[0])
+        malloc_strcpy(fdbe->uploader, fdb1.uploader);
+      if (fdb1.flags_req[0])
+        malloc_strcpy(fdbe->flags_req, (char *) fdb1.flags_req);
+      fdbe->uploaded = fdb1.uploaded;
+      fdbe->size = fdb1.size;
+      fdbe->gots = fdb1.gots;
+      if (fdb1.sharelink[0])
+        malloc_strcpy(fdbe->sharelink, fdb1.sharelink);
+      filedb_addfile(fdb_t, fdbe);
+      free_fdbe(&fdbe);
     }
   }
 }
@@ -179,31 +176,28 @@ static void convert_version2(FILE *fdb_s, FILE *fdb_t)
   filedb2 fdb2;
 
   fseek(fdb_s, 0L, SEEK_SET);
-  while (!feof(fdb_s)) {
-    fread(&fdb2, sizeof(filedb2), 1, fdb_s);
-    if (!feof(fdb_s)) {
-      if (!(fdb2.stat & FILE_UNUSED)) {
-        filedb_entry *fdbe = malloc_fdbe();
+  while (!feof(fdb_s) && fread(&fdb2, sizeof fdb2, 1, fdb_s) && !ferror(fdb_s)) {
+    if (!(fdb2.stat & FILE_UNUSED)) {
+      filedb_entry *fdbe = malloc_fdbe();
 
-        fdbe->stat = fdb2.stat;
-        if (fdb2.filename[0])
-          malloc_strcpy(fdbe->filename, fdb2.filename);
-        if (fdb2.desc[0])
-          malloc_strcpy(fdbe->desc, fdb2.desc);
-        if (fdb2.chname[0])
-          malloc_strcpy(fdbe->chan, fdb2.chname);
-        if (fdb2.uploader[0])
-          malloc_strcpy(fdbe->uploader, fdb2.uploader);
-        if (fdb2.flags_req[0])
-          malloc_strcpy(fdbe->flags_req, fdb2.flags_req);
-        fdbe->uploaded = fdb2.uploaded;
-        fdbe->size = fdb2.size;
-        fdbe->gots = fdb2.gots;
-        if (fdb2.sharelink[0])
-          malloc_strcpy(fdbe->sharelink, fdb2.sharelink);
-        filedb_addfile(fdb_t, fdbe);
-        free_fdbe(&fdbe);
-      }
+      fdbe->stat = fdb2.stat;
+      if (fdb2.filename[0])
+        malloc_strcpy(fdbe->filename, fdb2.filename);
+      if (fdb2.desc[0])
+        malloc_strcpy(fdbe->desc, fdb2.desc);
+      if (fdb2.chname[0])
+        malloc_strcpy(fdbe->chan, fdb2.chname);
+      if (fdb2.uploader[0])
+        malloc_strcpy(fdbe->uploader, fdb2.uploader);
+      if (fdb2.flags_req[0])
+        malloc_strcpy(fdbe->flags_req, fdb2.flags_req);
+      fdbe->uploaded = fdb2.uploaded;
+      fdbe->size = fdb2.size;
+      fdbe->gots = fdb2.gots;
+      if (fdb2.sharelink[0])
+        malloc_strcpy(fdbe->sharelink, fdb2.sharelink);
+      filedb_addfile(fdb_t, fdbe);
+      free_fdbe(&fdbe);
     }
   }
 }

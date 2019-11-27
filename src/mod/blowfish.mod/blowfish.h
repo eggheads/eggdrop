@@ -3,7 +3,7 @@
  */
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2017 Eggheads Development Team
+ * Copyright (C) 1999 - 2019 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -30,8 +30,8 @@
 #define KEYBYTES     8
 
 union aword {
-  u_32bit_t word;
-  u_8bit_t byte[4];
+  uint32_t word;
+  uint8_t byte[4];
   struct {
 #ifdef WORDS_BIGENDIAN
     unsigned int byte0:8;

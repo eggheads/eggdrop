@@ -1,0 +1,19 @@
+# assoc.pt.lang
+#   mensagens em português para o módulo assoc
+
+0xb000,Sem nomes de canais
+0xb001,Canal
+0xb002,Nome
+0xb003,Canal # fora de alcance: dever ser entre *0-*99999
+0xb004,Canal # fora de alcance: deve ser entre 1-99999
+0xb005,Não podes renomear a party line principal; é apenas uma party line.
+0xb006,O canal %s%d não tem nome.\n
+0xb007,Okay, removido o nome para o canal %s%d.\n
+0xb008,--- %s removeu o nome deste canal.\n
+0xb009,Okay, o canal %s%d é agora '%s'.\n
+0xb00a,--- %s renomeou este canal como '%s'\n
+0xb00b,--- (%s) renomeou este canal como '%s'.\n
+0xb00c,--- (%s) %s renomeou este canal como '%s'.\n
+0xb00d,--- (%s) %s removeu o nome deste canal.\n
+0xb00e,Os nomes de canais não podem ser tão extensos (máximo de 20 caracteres).
+0xb00f,O primeiro caractere de um canal não pode ser um digito.

@@ -30,14 +30,22 @@ There are also some variables you can set in your config file:
 
   set copy-to-tmp 1
 
-      Enable this setting if you want to copy files to a temporary location
-      before sending them. This might be useful for file stability, but if your
-      directories are NFS mounted, it's a pain. Setting this to 1 is not
-      advised for big files or if you're low on disk space.
+      Enable this setting if you want to copy files to a temporary
+      location before sending or receiving them. This might be useful
+      for file stability, but if your directories are NFS mounted, it's
+      a pain. Setting this to 1 is not advised for big files or if
+      you're low on disk space.
 
   set xfer-timeout 30
 
       Set here the time (in seconds) to wait before an inactive transfer
       times out.
 
-Copyright (C) 2000 - 2017 Eggheads Development Team
+  set sharefail-unlink 1
+
+      By default, Eggdrop will abort the linking process if userfile
+      sharing is enabled but the userfile transfer fails. Set this to 0
+      to keep the bots linked if the userfile transfer fails and retry
+      every minute (both bots must be v1.9.0 or higher).
+
+Copyright (C) 2000 - 2019 Eggheads Development Team

@@ -6,7 +6,7 @@
  */
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2017 Eggheads Development Team
+ * Copyright (C) 1999 - 2019 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -101,9 +101,9 @@ static void flush_mode(struct chanset_t *chan, int pri)
     nfree(chan->key), chan->key = NULL;
   }
 
-  /* max +l is signed 2^32 on IRCnet at least... so makesure we've got at least
+  /* max +l is signed 2^32 on IRCnet at least... so make sure we've got at least
    * a 13 char buffer for '-2147483647 \0'. We'll be overwriting the existing
-   * terminating null in 'post', so makesure postsize >= 12.
+   * terminating null in 'post', so make sure postsize >= 12.
    */
   if (chan->limit != 0 && postsize >= 12) {
     if (plus != 1) {
@@ -799,7 +799,7 @@ static void got_ban(struct chanset_t *chan, char *nick, char *from, char *who,
   }
   refresh_exempt(chan, who);
   if (nick[0] && channel_enforcebans(chan)) {
-    register maskrec *b;
+    maskrec *b;
     int cycle;
     char resn[512] = "";
 
@@ -1170,7 +1170,7 @@ static int gotmode(char *from, char *origmsg)
           } else {
             op = newsplit(&msg);
             fixcolon(op);
-            if (op == '\0')
+            if (*op == '\0')
               break;
             chan->channel.maxmembers = atoi(op);
             check_tcl_mode(nick, from, u, chan->dname, ms2,
@@ -1199,7 +1199,7 @@ static int gotmode(char *from, char *origmsg)
             chan->channel.mode &= ~CHANKEY;
           op = newsplit(&msg);
           fixcolon(op);
-          if (op == '\0') {
+          if (*op == '\0') {
             break;
           }
           check_tcl_mode(nick, from, u, chan->dname, ms2, op);

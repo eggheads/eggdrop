@@ -17,7 +17,7 @@ Applying a patch
   To apply a patch to an Eggdrop, you have to first obtain the Eggdrop
   source code. You should always keep a tar.gz archive with the source of
   your current Eggdrop on your shell. In the next step, you have to change
-  to your source directory (i.e.: /home/user/eggdrop1.8.2/) and type
+  to your source directory (i.e.: /home/user/eggdrop-1.9.0/) and type
   the following command::
 
     patch -p1 < ../path.to.the/patch
@@ -110,7 +110,7 @@ To create a patch using the diff tool:
        PATCH1.8: my-patch-filename.patch
 
      You should also include the nick/handle, name, and email address
-     you would like used for attribution in the Changes1.8 and THANKS
+     you would like used for attribution in the Changes1.9 and THANKS
      files.
 
   Never modify src/version.h or one of the Changes files. We will do it. If
@@ -118,14 +118,11 @@ To create a patch using the diff tool:
   NOT run autoconf, autoheader, etc; we will do this as well.
 
   Also, please don't add credit lines all over the source when patching.
-  Patch contributors will receive credit in Changes1.8 and THANKS.
+  Patch contributors will receive credit in Changes1.9 and THANKS.
 
--------------------
-Downloading a patch
--------------------
+  Patches submitted this way for Eggdrop 1.9.x can be found at the
+  following location:
 
-  Some patches for Eggdrop 1.8.x can be found at the following location:
+    ftp://ftp.eggheads.org/pub/eggdrop/patches/1.9
 
-    ftp://ftp.eggheads.org/pub/eggdrop/patches/1.8
-
-Copyright (C) 1999 - 2017 Eggheads Development Team
+Copyright (C) 1999 - 2019 Eggheads Development Team

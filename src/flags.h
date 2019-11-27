@@ -3,7 +3,7 @@
  */
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2017 Eggheads Development Team
+ * Copyright (C) 1999 - 2019 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -46,16 +46,17 @@ struct flag_record {
  *   unused letters: is
  *
  * botflags:
- *   0123456789ab????ghi??l???p?rs???????
- *   unused letters: cdefjkmnoqtuvwxyz
+ *   a?????ghi??l???p?rs??0123456789
+ *   unused letters: bcdefjkmnoqtu
+ *   unusable letters: vwxyz
  *
  * chanflags:
- *   a??defg???klmno?qr??uv??yz + user defined A-Z
- *   unused letters: bchijpstwx
+ *   a??defg???klmno?qrs??vw?yz + user defined A-Z
+ *   unused letters: bchijptuw (s from bot flags)
  */
-#define USER_VALID 0x03fbfeff   /* Sum of all USER_ flags */
-#define CHAN_VALID 0x03777c79   /* Sum of all CHAN_ flags */
-#define BOT_VALID  0x7fe689C1   /* Sum of all BOT_  flags */
+#define USER_VALID 0x003fbfeff   /* Sum of all valid USER_ flags */
+#define CHAN_VALID 0x003677c79   /* Sum of all valid CHAN_ flags */
+#define BOT_VALID  0x07fe689c1   /* Sum of all valid BOT_  flags */
 
 
 #define USER_AUTOOP        0x00000001 /* a  auto-op                               */
@@ -88,7 +89,7 @@ struct flag_record {
 
 /* Flags specifically for bots */
 #define BOT_ALT        0x00000001 /* a  auto-link here if all hubs fail */
-#define BOT_BOT        0x00000002 /* b  sanity bot flag                 */
+#define BOT_B          0x00000002 /* b  unused                          */
 #define BOT_C          0x00000004 /* c  unused                          */
 #define BOT_D          0x00000008 /* d  unused                          */
 #define BOT_E          0x00000010 /* e  unused                          */
@@ -108,11 +109,7 @@ struct flag_record {
 #define BOT_AGGRESSIVE 0x00040000 /* s  bot shares user files           */
 #define BOT_T          0x00080000 /* t  unused                          */
 #define BOT_U          0x00100000 /* u  unused                          */
-#define BOT_V          0x00200000 /* v  unused                          */
-#define BOT_W          0x00400000 /* w  unused                          */
-#define BOT_X          0x00800000 /* x  unused                          */
-#define BOT_Y          0x01000000 /* y  unused                          */
-#define BOT_Z          0x02000000 /* z  unused                          */
+/* BOT_V to BOT_Z not usable as they're bitflags 32-36 */
 #define BOT_FLAG0      0x00200000 /* 0  user-defined flag #0            */
 #define BOT_FLAG1      0x00400000 /* 1  user-defined flag #1            */
 #define BOT_FLAG2      0x00800000 /* 2  user-defined flag #2            */

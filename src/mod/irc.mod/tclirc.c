@@ -3,7 +3,7 @@
  */
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2017 Eggheads Development Team
+ * Copyright (C) 1999 - 2019 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -532,7 +532,7 @@ static int tcl_getchanidle STDVAR
   return TCL_OK;
 }
 
-static inline int tcl_chanmasks(masklist *m, Tcl_Interp *irp)
+static int tcl_chanmasks(masklist *m, Tcl_Interp *irp)
 {
   char work[20], *p;
   EGG_CONST char *list[3];
@@ -973,7 +973,7 @@ static int tcl_putkick STDVAR
       return TCL_ERROR;
     }
     if (!m)
-      continue;                 /* Skip non-existant nicks */
+      continue;                 /* Skip non-existent nicks */
     m->flags |= SENTKICK;       /* Mark as pending kick */
     if (kicknick[0])
       strncat(kicknick, ",", sizeof kicknick - strlen(kicknick) - 1);

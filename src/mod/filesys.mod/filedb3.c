@@ -6,7 +6,7 @@
  */
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2017 Eggheads Development Team
+ * Copyright (C) 1999 - 2019 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -159,9 +159,8 @@ static int filedb_readtop(FILE *fdb, filedb_top *fdbt)
   if (fdbt) {
     /* Read header */
     fseek(fdb, 0L, SEEK_SET);
-    if (feof(fdb))
+    if (feof(fdb) || !fread(fdbt, sizeof *fdbt, 1, fdb) || ferror(fdb))
       return 0;
-    fread(fdbt, 1, sizeof(filedb_top), fdb);
   } else
     fseek(fdb, sizeof(filedb_top), SEEK_SET);
   return 1;
@@ -185,9 +184,9 @@ static int filedb_delfile(FILE *fdb, long pos)
   filedb_header fdh;
 
   fseek(fdb, pos, SEEK_SET);    /* Go to start of entry */
-  if (feof(fdb))
+  /* Read header */
+  if (feof(fdb) || !fread(&fdh, sizeof fdh, 1, fdb) || ferror(fdb))
     return 0;
-  fread(&fdh, 1, sizeof(filedb_header), fdb);   /* Read header          */
   fdh.stat = FILE_UNUSED;
 
   /* Assign all available space to buffer. Simplifies
@@ -259,7 +258,7 @@ static filedb_entry *filedb_findempty(FILE *fdb, int tot)
  *
  *   * If the new entry is the same size or smaller than the original
  *     one, we use the old position and just adjust the buffer length
- *     apropriately.
+ *     appropriately.
  *   * If the entry is completely _new_ or if the entry's new size is
  *     _bigger_ than the old one, we search for a new position which
  *     suits our needs.
@@ -409,12 +408,17 @@ static int _filedb_addfile(FILE *fdb, filedb_entry *fdbe, char *file, int line)
 /* Short-cut macro to read an entry from disc to memory. Only
  * useful for filedb_getfile().
  */
-#define filedb_read(fdb, entry, len)    \
-{                                       \
-  if ((len) > 0) {                      \
-    (entry) = nmalloc((len));           \
-    fread((entry), 1, (len), (fdb));    \
-  }                                     \
+#define filedb_read(fdb, entry, len)            \
+{                                               \
+  if ((len) > 0) {                              \
+    (entry) = nmalloc((len));                   \
+    if (feof((fdb)) ||                          \
+        !fread((entry), (len), 1, (fdb)) ||     \
+        ferror((fdb))) {                         \
+      nfree(entry);                             \
+      return NULL;                              \
+    }                                           \
+  }                                             \
 }
 
 /* Reads an entry from the fildb at the specified position. The
@@ -430,8 +434,7 @@ static filedb_entry *_filedb_getfile(FILE *fdb, long pos, int get,
 
   /* Read header */
   fseek(fdb, pos, SEEK_SET);
-  fread(&fdh, 1, sizeof(filedb_header), fdb);
-  if (feof(fdb))
+  if (feof(fdb) || !fread(&fdh, sizeof fdh, 1, fdb) || ferror(fdb))
     return NULL;
 
   /* Allocate memory for file db entry */
@@ -508,7 +511,7 @@ static void filedb_cleanup(FILE *fdb)
   filedb_entry *fdbe = NULL;
 
   filedb_readtop(fdb, NULL);    /* Skip DB header  */
-  newpos = temppos = oldpos = ftell(fdb);
+  oldpos = ftell(fdb);
   fseek(fdb, oldpos, SEEK_SET); /* Go to beginning */
   while (!feof(fdb)) {          /* Loop until EOF  */
     fdbe = filedb_getfile(fdb, oldpos, GET_HEADER);     /* Read header     */
@@ -948,7 +951,7 @@ static void filedb_ls(FILE *fdb, int idx, char *mask, int showall)
           if (fdbe->stat & FILE_HIDDEN)
             strcat(s2, " (hid)");
         }
-        egg_strftime(t, 10, "%d%b%Y", localtime(&fdbe->uploaded));
+        strftime(t, 10, "%d%b%Y", localtime(&fdbe->uploaded));
         if (fdbe->size < 1024)
           sprintf(s1, "%5d", fdbe->size);
         else

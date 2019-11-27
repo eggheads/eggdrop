@@ -7,7 +7,7 @@
  */
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2017 Eggheads Development Team
+ * Copyright (C) 1999 - 2019 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -47,11 +47,11 @@
 
 #include "main.h"
 
-#include <fcntl.h>
 #include <errno.h>
-#include <signal.h>
-#include <netdb.h>
+#include <fcntl.h>
+#include <resolv.h>
 #include <setjmp.h>
+#include <signal.h>
 
 #ifdef TIME_WITH_SYS_TIME
 #  include <sys/time.h>
@@ -79,11 +79,15 @@
 #  include <sys/resource.h>             /* setrlimit() */
 #endif
 
+#ifdef HAVE_GETRANDOM
+#  include <sys/random.h>
+#endif
+
 #ifndef _POSIX_SOURCE
 #  define _POSIX_SOURCE 1               /* Solaris needs this */
 #endif
 
-extern char origbotname[], userfile[], botnetnick[];
+extern char origbotname[], botnetnick[]; 
 extern int dcc_total, conmask, cache_hit, cache_miss, max_logs, quick_logs,
            quiet_save;
 extern struct dcc_t *dcc;
@@ -104,20 +108,17 @@ static char **argv;
  * modified versions of this bot.
  */
 
-char egg_version[1024] = EGG_STRINGVER;
+char egg_version[1024];
 int egg_numver = EGG_NUMVER;
-#ifdef EGG_PATCH
-char egg_patch[] = EGG_PATCH;
-#endif
 
 char notify_new[121] = "";      /* Person to send a note to for new users */
 int default_flags = 0;          /* Default user flags                     */
 int default_uflags = 0;         /* Default user-definied flags            */
 
-int backgrd = 1;        /* Run in the background?                        */
-int con_chan = 0;       /* Foreground: constantly display channel stats? */
-int term_z = 0;         /* Foreground: use the terminal as a partyline?  */
-int use_stderr = 1;     /* Send stuff to stderr instead of logfiles?     */
+int backgrd = 1;    /* Run in the background?                        */
+int con_chan = 0;   /* Foreground: constantly display channel stats? */
+int term_z = -1;    /* Foreground: use the terminal as a partyline?  */
+int use_stderr = 1; /* Send stuff to stderr instead of logfiles?     */
 
 char configfile[121] = "eggdrop.conf";  /* Default config file name */
 char pid_file[121];                     /* Name of the pid file     */
@@ -137,9 +138,9 @@ int notify_users_at = 0; /* Minutes past the hour to notify users of notes? */
 char version[81];    /* Version info (long form)  */
 char ver[41];        /* Version info (short form) */
 
-int do_restart = 0;       /* .restart has been called, restart ASAP */
-int resolve_timeout = 15; /* Hostname/address lookup timeout        */
-char quit_msg[1024];      /* Quit message                           */
+volatile sig_atomic_t do_restart = 0; /* .restart has been called, restart ASAP */
+int resolve_timeout = RES_TIMEOUT;    /* Hostname/address lookup timeout        */
+char quit_msg[1024];                  /* Quit message                           */
 
 /* Traffic stats */
 unsigned long otraffic_irc = 0;
@@ -262,18 +263,18 @@ static void write_debug()
     /* Yoicks, if we have this there's serious trouble!
      * All of these are pretty reliable, so we'll try these.
      *
-     * NOTE: dont try and display context-notes in here, it's
+     * NOTE: don't try and display context-notes in here, it's
      *       _not_ safe <cybah>
      */
     x = creat("DEBUG.DEBUG", 0644);
     if (x >= 0) {
       setsock(x, SOCK_NONSOCK);
-      strncpyz(s, ctime(&now), sizeof s);
+      strlcpy(s, ctime(&now), sizeof s);
       dprintf(-x, "Debug (%s) written %s\n", ver, s);
       dprintf(-x, "Please report problem to bugs@eggheads.org\n");
       dprintf(-x, "after a visit to http://www.eggheads.org/bugzilla/\n");
 #ifdef EGG_PATCH
-      dprintf(-x, "Patch level: %s\n", egg_patch);
+      dprintf(-x, "Patch level: %s\n", EGG_PATCH);
 #else
       dprintf(-x, "Patch level: %s\n", "stable");
 #endif
@@ -299,10 +300,10 @@ static void write_debug()
   if (x < 0) {
     putlog(LOG_MISC, "*", "* Failed to write DEBUG");
   } else {
-    strncpyz(s, ctime(&now), sizeof s);
+    strlcpy(s, ctime(&now), sizeof s);
     dprintf(-x, "Debug (%s) written %s\n", ver, s);
 #ifdef EGG_PATCH
-    dprintf(-x, "Patch level: %s\n", egg_patch);
+    dprintf(-x, "Patch level: %s\n", EGG_PATCH);
 #else
     dprintf(-x, "Patch level: %s\n", "stable");
 #endif
@@ -457,7 +458,7 @@ void eggContext(const char *file, int line, const char *module)
 
   p = strrchr(file, '/');
   if (!module) {
-    strncpyz(x, p ? p + 1 : file, sizeof x);
+    strlcpy(x, p ? p + 1 : file, sizeof x);
   } else
     egg_snprintf(x, 31, "%s:%s", module, p ? p + 1 : file);
   cx_ptr = ((cx_ptr + 1) & 15);
@@ -475,13 +476,13 @@ void eggContextNote(const char *file, int line, const char *module,
 
   p = strrchr(file, '/');
   if (!module)
-    strncpyz(x, p ? p + 1 : file, sizeof x);
+    strlcpy(x, p ? p + 1 : file, sizeof x);
   else
     egg_snprintf(x, 31, "%s:%s", module, p ? p + 1 : file);
   cx_ptr = ((cx_ptr + 1) & 15);
   strcpy(cx_file[cx_ptr], x);
   cx_line[cx_ptr] = line;
-  strncpyz(cx_note[cx_ptr], note, sizeof cx_note[cx_ptr]);
+  strlcpy(cx_note[cx_ptr], note, sizeof cx_note[cx_ptr]);
 }
 #endif /* DEBUG_CONTEXT */
 
@@ -499,10 +500,10 @@ void eggAssert(const char *file, int line, const char *module)
 }
 #endif
 
-void show_ver() {
+static void show_ver() {
   char x[512], *z = x;
 
-  strncpyz(x, egg_version, sizeof x);
+  strlcpy(x, egg_version, sizeof x);
   newsplit(&z);
   newsplit(&z);
   printf("%s\n", version);
@@ -529,66 +530,72 @@ void show_ver() {
    meaning other languages can't be loaded yet.
    English (or an error) is the only possible option.
 */
-void show_help() {
+static void show_help() {
   printf("\n%s\n\n", version);
-  printf("Usage: eggdrop [options] [config-file]\n\n"
+  printf("Usage: %s [options] [config-file]\n\n"
          "Options:\n"
-         "-n Don't background; send all log entries to console.\n"
-         "-nc  Don't background; display channel stats every 10 seconds.\n"
-         "-nt  Don't background; use terminal to simulate DCC chat.\n"
-         "-m   Create userfile.\n"
-         "-h   Show this help.\n"
-         "-v   Show version info, then quit.\n\n");
+         "-n  Don't background; send all log entries to console.\n"
+         "-nc Don't background; display channel stats every 10 seconds.\n"
+         "-nt Don't background; use terminal to simulate DCC chat.\n"
+         "-m  Create userfile.\n"
+         "-h  Show this help and exit.\n"
+         "-v  Show version info and exit.\n\n", argv[0]);
   bg_send_quit(BG_ABORT);
 }
 
 static void do_arg()
 {
   int option = 0;
-/* Bitmask structure to hold cli flags
-   | QUIT| BAD FLAG| h| n| c| t| m| v|
-   |  128|       64|32|16| 8| 4| 2| 1|
-*/
   unsigned char cliflags = 0;
+  #define CLI_V        1 << 0
+  #define CLI_M        1 << 1
+  #define CLI_T        1 << 2
+  #define CLI_C        1 << 3
+  #define CLI_N        1 << 4
+  #define CLI_H        1 << 5
+  #define CLI_BAD_FLAG 1 << 6
 
   while ((option = getopt(argc, argv, "hnctmv")) != -1) {
     switch (option) {
       case 'n':
-        cliflags |= 16;
+        cliflags |= CLI_N;
         backgrd = 0;
         break;
       case 'c':
-        cliflags |= 8;
+        cliflags |= CLI_C;
         con_chan = 1;
-        term_z = 0;
+        term_z = -1;
         break;
       case 't':
-        cliflags |= 4;
+        cliflags |= CLI_T;
         con_chan = 0;
-        term_z = 1;
+        term_z = 0;
         break;
       case 'm':
-        cliflags |= 2;
+        cliflags |= CLI_M;
         make_userfile = 1;
         break;
       case 'v':
-        cliflags |= 129;		//128 + 1
+        cliflags |= CLI_V;
         break;
       case 'h':
-        cliflags |= 160;		//128 + 32
+        cliflags |= CLI_H;
         break;
       default:
-        cliflags |= 192;		//128 + 64
+        cliflags |= CLI_BAD_FLAG;
         break;
     }
   }
-  if ((cliflags & 64) || (cliflags & 32)) {
+  if (cliflags & CLI_H) {
     show_help();
     exit(0);
-  } else if (cliflags & 1) {
+  } else if (cliflags & CLI_BAD_FLAG) {
+    show_help();
+    exit(1);
+  } else if (cliflags & CLI_V) {
     show_ver();
     exit(0);
-  } else if (!(cliflags & 16) && ((cliflags & 8) || (cliflags & 4))) {
+  } else if (!(cliflags & CLI_N) && ((cliflags & CLI_C) || (cliflags & CLI_T))) {
     printf("\n%s\n", version);
     printf("ERROR: The -n flag is required when using the -c or -t flags. Exiting...\n\n");
     exit(1);
@@ -598,18 +605,8 @@ static void do_arg()
     printf("         Using %s as config file\n", argv[optind]);
   }
   if (argc > optind) {
-    strncpyz(configfile, argv[optind], sizeof configfile);
+    strlcpy(configfile, argv[optind], sizeof configfile);
   }
-}
-
-void backup_userfile(void)
-{
-  char s[125];
-
-  if (quiet_save < 2)
-    putlog(LOG_MISC, "*", USERF_BACKUP);
-  egg_snprintf(s, sizeof s, "%s~bak", userfile);
-  copyfile(userfile, s);
 }
 
 /* Timer info */
@@ -623,9 +620,10 @@ static struct tm nowtm;
  */
 static void core_secondly()
 {
-  static int cnt = 0;
+  static int cnt = 10; /* Don't wait the first 10 seconds to display */
   int miltime;
   time_t nowmins;
+  int i;
 
   do_check_timers(&utimer);     /* Secondly timers */
   cnt++;
@@ -640,10 +638,10 @@ static void core_secondly()
       tell_mem_status_dcc(DP_STDOUT);
     }
   }
-  egg_memcpy(&nowtm, localtime(&now), sizeof(struct tm));
   nowmins = time(NULL) / 60;
   if (nowmins > lastmin) {
-    int i = 0;
+    memcpy(&nowtm, localtime(&now), sizeof(struct tm));
+    i = 0;
 
     /* Once a minute */
     ++lastmin;
@@ -672,7 +670,7 @@ static void core_secondly()
         char s[25];
         int j;
 
-        strncpyz(s, ctime(&now), sizeof s);
+        strlcpy(s, ctime(&now), sizeof s);
         if (quiet_save < 3)
           putlog(LOG_ALL, "*", "--- %.11s%s", s, s + 20);
         call_hook(HOOK_BACKUP);
@@ -713,8 +711,7 @@ static void core_secondly()
 
 static void core_minutely()
 {
-  check_tcl_time(&nowtm);
-  check_tcl_cron(&nowtm);
+  check_tcl_time_and_cron(&nowtm);
   do_check_timers(&timer);
   if (quick_logs != 0) {
     flushlogs();
@@ -792,9 +789,9 @@ int init_language(int);
 int ssl_init();
 #endif
 
-static inline void garbage_collect(void)
+static void garbage_collect(void)
 {
-  static u_8bit_t run_cnt = 0;
+  static uint8_t run_cnt = 0;
 
   if (run_cnt == 3)
     garbage_collect_tclhash();
@@ -808,19 +805,10 @@ int mainloop(int toplevel)
   int xx, i, eggbusy = 1, tclbusy = 0;
   char buf[520];
 
-  /* Lets move some of this here, reducing the numer of actual
+  /* Lets move some of this here, reducing the number of actual
    * calls to periodic_timers
    */
   now = time(NULL);
-  /*
-   * FIXME: Get rid of this, it's ugly and wastes lots of cpu.
-   *
-   * pre-1.3.0 Eggdrop had random() in the once a second block below.
-   *
-   * This attempts to keep random() more random by constantly
-   * calling random() and updating the state information.
-   */
-  random();                /* Woop, lets really jumble things */
 
   /* If we want to restart, we have to unwind to the toplevel.
    * Tcl will Panic if we kill the interp with Tcl_Eval in progress.
@@ -868,6 +856,8 @@ int mainloop(int toplevel)
             else if (!strncmp(dcc[idx].type->name, "FILES", 5))
               itraffic_dcc_today += strlen(buf) + 1;
             else if (!strcmp(dcc[idx].type->name, "SEND"))
+              itraffic_trans_today += strlen(buf) + 1;
+            else if (!strcmp(dcc[idx].type->name, "FORK_SEND"))
               itraffic_trans_today += strlen(buf) + 1;
             else if (!strncmp(dcc[idx].type->name, "GET", 3))
               itraffic_trans_today += strlen(buf) + 1;
@@ -953,7 +943,7 @@ int mainloop(int toplevel)
             d = d->next;
           }
           if (ok) {
-            strncpyz(name, p->name, sizeof name);
+            strlcpy(name, p->name, sizeof name);
             if (module_unload(name, botnetnick) == NULL) {
               f = 1;
               break;
@@ -1014,6 +1004,27 @@ int mainloop(int toplevel)
   return (eggbusy || tclbusy);
 }
 
+static void init_random(void) {
+  unsigned int seed;
+#ifdef HAVE_GETRANDOM
+  if (getrandom(&seed, sizeof(seed), 0) != sizeof(seed)) {
+    if (errno != ENOSYS) {
+      fatal("ERROR: getrandom()\n", 0);
+    } else {
+      /* getrandom() is available in header but syscall is not!
+       * This can happen with glibc>=2.25 and linux<3.17
+       */
+#endif
+      struct timeval tp;
+      gettimeofday(&tp, NULL);
+      seed = (tp.tv_sec * tp.tv_usec) ^ getpid();
+#ifdef HAVE_GETRANDOM
+    }
+  }
+#endif
+  srandom(seed);
+}
+
 int main(int arg_c, char **arg_v)
 {
   int i, xx;
@@ -1052,15 +1063,18 @@ int main(int arg_c, char **arg_v)
 
   /* Version info! */
 #ifdef EGG_PATCH
-  egg_snprintf(&egg_version[strlen(egg_version)], sizeof egg_version, 
-               "+%s", egg_patch);
-#endif
-  egg_snprintf(ver, sizeof ver, "eggdrop v%s", egg_version);
+  egg_snprintf(egg_version, sizeof egg_version, "%s+%s %u", EGG_STRINGVER, EGG_PATCH, egg_numver);
+  egg_snprintf(ver, sizeof ver, "eggdrop v%s+%s", EGG_STRINGVER, EGG_PATCH);
   egg_snprintf(version, sizeof version,
-               "Eggdrop v%s (C) 1997 Robey Pointer (C) 1999-2017 Eggheads",
-               egg_version);
-  /* Now add on the patchlevel (for Tcl) */
-  sprintf(&egg_version[strlen(egg_version)], " %u", egg_numver);
+               "Eggdrop v%s+%s (C) 1997 Robey Pointer (C) 2010-2018 Eggheads",
+                EGG_STRINGVER, EGG_PATCH);
+#else
+  egg_snprintf(egg_version, sizeof egg_version, "%s %u", EGG_STRINGVER, egg_numver);
+  egg_snprintf(ver, sizeof ver, "eggdrop v%s", EGG_STRINGVER);
+  egg_snprintf(version, sizeof version,
+               "Eggdrop v%s (C) 1997 Robey Pointer (C) 2010-2019 Eggheads",
+                EGG_STRINGVER);
+#endif
 
 /* For OSF/1 */
 #ifdef STOP_UAC
@@ -1102,9 +1116,8 @@ int main(int arg_c, char **arg_v)
   /* Initialize variables and stuff */
   now = time(NULL);
   chanset = NULL;
-  egg_memcpy(&nowtm, localtime(&now), sizeof(struct tm));
   lastmin = now / 60;
-  srandom((unsigned int) (now % (getpid() + getppid())));
+  init_random();
   init_mem();
   if (argc > 1)
     do_arg();
@@ -1135,7 +1148,7 @@ int main(int arg_c, char **arg_v)
 #ifdef STATIC
   link_statics();
 #endif
-  strncpyz(s, ctime(&now), sizeof s);
+  strlcpy(s, ctime(&now), sizeof s);
   memmove(&s[11], &s[20], strlen(&s[20])+1);
   putlog(LOG_ALL, "*", "--- Loading %s (%s)", ver, s);
   chanprog();
@@ -1223,18 +1236,18 @@ int main(int arg_c, char **arg_v)
   }
 
   /* Terminal emulating dcc chat */
-  if (!backgrd && term_z) {
+  if (!backgrd && term_z >= 0) {
     /* reuse term_z as glob var to pass it's index in the dcc table around */
     term_z = new_dcc(&DCC_CHAT, sizeof(struct chat_info));
 
-    /* new_dcc returns -1 on error, and 0 should always be taken by the listening socket */
-    if (term_z < 1)
+    /* new_dcc returns -1 on error */
+    if (term_z < 0)
       fatal("ERROR: Failed to initialize foreground chat.", 0);
 
     getvhost(&dcc[term_z].sockname, AF_INET);
     dcc[term_z].sock = STDOUT;
     dcc[term_z].timeval = now;
-    dcc[term_z].u.chat->con_flags = conmask;
+    dcc[term_z].u.chat->con_flags = conmask | EGG_BG_CONMASK;
     dcc[term_z].u.chat->strip_flags = STRIP_ALL;
     dcc[term_z].status = STAT_ECHO;
     strcpy(dcc[term_z].nick, EGG_BG_HANDLE);

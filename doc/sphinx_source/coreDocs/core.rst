@@ -81,7 +81,7 @@ You can change the basic Eggdrop appearance and behavior in this section.
 
   set prefer-ipv6 "1"
     Prefer IPv6 over IPv4 for connections and dns resolution.
-    If the preferred protocol family is not suppored, other possible
+    If the preferred protocol family is not supported, other possible
     families will be tried.
 
   addlang "english"
@@ -126,10 +126,12 @@ the logfile of the next day.
   set raw-log 0
     This setting allows you the logging of raw incoming server traffic via
     console/log flag 'r', raw outgoing server traffic via console/log mode
-    'v', raw botnet traffic via console/log mode 't', and raw share traffic
-    via console/log mode 'h'. These flags can create a large security hole,
-    allowing people to see user passwords. This is now restricted to +n users
-    only. Please choose your owners with care.
+    'v', raw incoming botnet traffic via console/log mode 't', raw outgoing
+    botnet traffic via console/log mode 'u', raw outgoing share traffic via
+    console/log mode 'g', and raw incoming share traffic via console/log
+    mode 'h'. These flags can create a large security hole, allowing people
+    to see user passwords. This is now restricted to +n users only. Please
+    choose your owners with care.
 
 logfile <logflags> <channel> "logs/logfile"
     This setting tells the bot what should be logged, from where, and to
@@ -144,11 +146,15 @@ logfile <logflags> <channel> "logs/logfile"
       +---+------------------------------------------------------+
       | d | misc debug information                               |
       +---+------------------------------------------------------+
-      | h | raw share traffic                                    |
+      | g | raw outgoing share traffic                           |
+      +---+------------------------------------------------------+
+      | h | raw incoming share traffic                           |
       +---+------------------------------------------------------+
       | j | joins, parts, quits, and netsplits on the channel    |
       +---+------------------------------------------------------+
       | k | kicks, bans, and mode changes on the channel         |
+      +---+------------------------------------------------------+
+      | l | linked bot messages                                  |
       +---+------------------------------------------------------+
       | m | private msgs, notices and ctcps to the bot           |
       +---+------------------------------------------------------+
@@ -160,7 +166,9 @@ logfile <logflags> <channel> "logs/logfile"
       +---+------------------------------------------------------+
       | s | server connects, disconnects, and notices            |
       +---+------------------------------------------------------+
-      | t | raw botnet traffic                                   |
+      | t | raw incoming botnet traffic                          |
+      +---+------------------------------------------------------+
+      | u | raw outgoing botnet traffic                          |
       +---+------------------------------------------------------+
       | v | raw outgoing server traffic                          |
       +---+------------------------------------------------------+
@@ -220,12 +228,12 @@ logfile <logflags> <channel> "logs/logfile"
     logfiles. The default will result in a suffix like "04May2000". "%Y%m%d"
     will produce the often used yyyymmdd format. Read the strftime manpages
     for more options. NOTE: On systems which don't support strftime, the
-    default format will be used _always_.
+    default format will always be used.
 
 Console Settings
 ----------------
 
-  set console "mkcobxs"
+  set console "mkcoblxs"
     This is the default console mode. It uses the same event flags as the
     log files do. The console channel is automatically set to your "primary"
     channel, which is set in the modules section of the config file. Masters
@@ -476,12 +484,6 @@ Advanced Settings
     dupwait-timeout seconds before it checks again and then finally
     reject the bot.
 
-  set strict-host 1
-    Set this to 0 if you want the bot to strip '~+-^=' characters from
-    user@hosts before matching them. This setting is currently kept for
-    compatibility, but will be removed from the next release. Please leave
-    it set to 1 for now to avoid problems with your user files in the future.
-
   set cidr-support 0
     Enables cidr support for b/e/I modes if set to 1. This means the bot
     will understand and match modes in cidr notation, and will be able to
@@ -536,7 +538,7 @@ support.
     Specify the list of ciphers (in order of preference) allowed for use with
     ssl. The cipher list is one or more cipher strings separated by colons,
     commas or spaces. Unavailable ciphers are silently ignored unless no
-    useable cipher could be found. For the list of possible cipher strings
+    usable cipher could be found. For the list of possible cipher strings
     and their meanings, please refer to the ciphers(1) manual.
     Note: if you set this, the value replaces any ciphers OpenSSL might use by
     default. To include the default ciphers, you can put DEFAULT as a cipher
@@ -645,4 +647,4 @@ modules should be loaded and their variables should be set at this point.
       source scripts/alltools.tcl
       source scripts/action.fix.tcl
 
-Copyright (C) 2000 - 2017 Eggheads Development Team
+Copyright (C) 2000 - 2019 Eggheads Development Team

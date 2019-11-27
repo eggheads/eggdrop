@@ -6,7 +6,7 @@
  */
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2017 Eggheads Development Team
+ * Copyright (C) 1999 - 2019 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -33,7 +33,7 @@
 extern struct dcc_t *dcc;
 extern struct chanset_t *chanset;
 extern int default_flags, default_uflags, quiet_save, dcc_total, share_greet;
-extern char userfile[], ver[], botnetnick[];
+extern char ver[], botnetnick[];
 extern time_t now;
 
 int noshare = 1;                   /* don't send out to sharebots   */
@@ -42,9 +42,9 @@ struct userrec *lastuser = NULL;   /* last accessed user record     */
 maskrec *global_bans = NULL, *global_exempts = NULL, *global_invites = NULL;
 struct igrec *global_ign = NULL;
 int cache_hit = 0, cache_miss = 0; /* temporary cache accounting    */
-int strict_host = 1;
 int userfile_perm = 0600;         /* Userfile permissions
                                    * (default rw-------) */
+char userfile[121];
 
 void *_user_malloc(int size, const char *file, int line)
 {
@@ -74,7 +74,7 @@ void *_user_realloc(void *ptr, int size, const char *file, int line)
 #endif
 }
 
-int expmem_mask(struct maskrec *m)
+static int expmem_mask(struct maskrec *m)
 {
   int result = 0;
 
@@ -160,36 +160,12 @@ int count_users(struct userrec *bu)
   return tot;
 }
 
-/* Removes a username prefix (~+-^=) from a userhost.
- * e.g, "nick!~user@host" -> "nick!user@host"
- */
-char *fixfrom(char *s)
-{
-  static char uhost[UHOSTLEN];
-  char *p = uhost;
-
-  if (!s || !*s || strict_host)
-    return s;
-
-  while (*s) {
-    *p++ = *s;
-    if (*s == '!' && strchr("~+-^=", s[1]) && s[2] != '@') {
-      strcpy(p, s + 2);
-      return uhost;
-    }
-    s++;
-  }
-
-  *p = 0;
-  return uhost;
-}
-
 struct userrec *check_dcclist_hand(char *handle)
 {
   int i;
 
   for (i = 0; i < dcc_total; i++)
-    if (!egg_strcasecmp(dcc[i].nick, handle))
+    if (!strcasecmp(dcc[i].nick, handle))
       return dcc[i].user;
   return NULL;
 }
@@ -205,7 +181,7 @@ struct userrec *get_user_by_handle(struct userrec *bu, char *handle)
   if (!handle[0] || (handle[0] == '*'))
     return NULL;
   if (bu == userlist) {
-    if (lastuser && !egg_strcasecmp(lastuser->handle, handle)) {
+    if (lastuser && !strcasecmp(lastuser->handle, handle)) {
       cache_hit++;
       return lastuser;
     }
@@ -222,7 +198,7 @@ struct userrec *get_user_by_handle(struct userrec *bu, char *handle)
     cache_miss++;
   }
   for (u = bu; u; u = u->next)
-    if (!egg_strcasecmp(u->handle, handle)) {
+    if (!strcasecmp(u->handle, handle)) {
       if (bu == userlist)
         lastuser = u;
       return u;
@@ -242,7 +218,7 @@ void correct_handle(char *handle)
   strcpy(handle, u->handle);
 }
 
-/* This will be usefull in a lot of places, much more code re-use so we
+/* This will be useful in a lot of places, much more code re-use so we
  * endup with a smaller executable bot. <cybah>
  */
 void clear_masks(maskrec *m)
@@ -321,8 +297,7 @@ struct userrec *get_user_by_host(char *host)
     return ret;
   }
   cache_miss++;
-  strncpyz(host2, host, sizeof host2);
-  host = fixfrom(host);
+  strlcpy(host2, host, sizeof host2);
   for (u = userlist; u; u = u->next) {
     q = get_user(&USERENTRY_HOSTS, u);
     for (; q; q = q->next) {
@@ -340,41 +315,28 @@ struct userrec *get_user_by_host(char *host)
   return ret;
 }
 
-/* use fixfrom() or dont? (drummer)
- */
-struct userrec *get_user_by_equal_host(char *host)
-{
-  struct userrec *u;
-  struct list_type *q;
-
-  for (u = userlist; u; u = u->next)
-    for (q = get_user(&USERENTRY_HOSTS, u); q; q = q->next)
-      if (!rfc_casecmp(q->extra, host))
-        return u;
-  return NULL;
-}
-
-/* Try: pass_match_by_host("-",host)
- * If a '-' is sent as the password, it denotes the intent
- *   to merely check if a password is set for that user.
- * Returns 0 if password is set and does not match
- * Returns 1 if password matches, or if we are
- *   checking if a password is set and it is not
- *   (via the '-' char).
+/* Description: checks the password given against the user's password.
+ * Check against the password "-" to find out if a user has no password set.
+ *
+ * Returns: 1 if the password matches for that user; 0 otherwise. Or if we are
+ * checking against the password "-": 1 if the user has no password set; 0
+ * otherwise.
  */
 int u_pass_match(struct userrec *u, char *pass)
 {
   char *cmp, new[32];
 
-  if (!u)
+  if (!u || !pass)
     return 0;
   cmp = get_user(&USERENTRY_PASS, u);
-  if (!cmp && (pass[0] == '-'))
-    return 1;
-/* If password is not set in userrecord, or password
- * is not sent, or '-' is sent
- */
-  if (!cmp || !pass || !pass[0] || (pass[0] == '-'))
+  if (pass[0] == '-') {
+    if (!cmp)
+      return 1;
+    else
+      return 0;
+  }
+  /* If password is not set in userrecord, or password is not sent */
+  if (!cmp || !pass[0])
     return 0;
   if (u->flags & USER_BOT) {
     if (!strcmp(cmp, pass))
@@ -506,7 +468,7 @@ int sort_compare(struct userrec *a, struct userrec *b)
     if (a->flags & ~b->flags & USER_HALFOP)
       return 0;
   }
-  return (egg_strcasecmp(a->handle, b->handle) > 0);
+  return (strcasecmp(a->handle, b->handle) > 0);
 }
 
 void sort_userlist()
@@ -545,7 +507,7 @@ void sort_userlist()
 void write_userfile(int idx)
 {
   FILE *f;
-  char *new_userfile;
+  char new_userfile[(sizeof userfile) + 4]; /* 4 = strlen("~new") */
   char s1[81];
   time_t tt;
   struct userrec *u;
@@ -554,14 +516,12 @@ void write_userfile(int idx)
   if (userlist == NULL)
     return;                     /* No point in saving userfile */
 
-  new_userfile = nmalloc(strlen(userfile) + 5);
-  sprintf(new_userfile, "%s~new", userfile);
+  egg_snprintf(new_userfile, sizeof new_userfile, "%s~new", userfile);
 
   f = fopen(new_userfile, "w");
   chmod(new_userfile, userfile_perm);
   if (f == NULL) {
     putlog(LOG_MISC, "*", USERF_ERRWRITE);
-    nfree(new_userfile);
     return;
   }
   if (!quiet_save)
@@ -569,23 +529,31 @@ void write_userfile(int idx)
 
   sort_userlist();
   tt = now;
-  strncpyz(s1, ctime(&tt), sizeof s1);
+  strlcpy(s1, ctime(&tt), sizeof s1);
   fprintf(f, "#4v: %s -- %s -- written %s", ver, botnetnick, s1);
   ok = 1;
   /* Add all users except the -tn user */
   for (u = userlist; u && ok; u = u->next)
-    if (egg_strcasecmp(u->handle, EGG_BG_HANDLE) && !write_user(u, f, idx))
+    if (strcasecmp(u->handle, EGG_BG_HANDLE) && !write_user(u, f, idx))
       ok = 0;
   if (!ok || !write_ignores(f, -1) || fflush(f)) {
     putlog(LOG_MISC, "*", "%s (%s)", USERF_ERRWRITE, strerror(ferror(f)));
     fclose(f);
-    nfree(new_userfile);
     return;
   }
   fclose(f);
   call_hook(HOOK_USERFILE);
   movefile(new_userfile, userfile);
-  nfree(new_userfile);
+}
+
+void backup_userfile(void)
+{
+  char s[(sizeof userfile) + 4]; /* 4 = strlen("~bak") */
+
+  if (quiet_save < 2)
+    putlog(LOG_MISC, "*", USERF_BACKUP);
+  egg_snprintf(s, sizeof s, "%s~bak", userfile);
+  copyfile(userfile, s);
 }
 
 int change_handle(struct userrec *u, char *newh)
@@ -596,7 +564,7 @@ int change_handle(struct userrec *u, char *newh)
   if (!u)
     return 0;
   /* Don't allow the -tn handle to be changed */
-  if (!egg_strcasecmp(u->handle, EGG_BG_HANDLE))
+  if (!strcasecmp(u->handle, EGG_BG_HANDLE))
     return 0;
   /* Nothing that will confuse the userfile */
   if (!newh[1] && strchr(BADHANDCHARS, newh[0]))
@@ -605,12 +573,12 @@ int change_handle(struct userrec *u, char *newh)
   /* Yes, even send bot nick changes now: */
   if (!noshare && !(u->flags & USER_UNSHARED))
     shareout(NULL, "h %s %s\n", u->handle, newh);
-  strncpyz(s, u->handle, sizeof s);
-  strncpyz(u->handle, newh, sizeof u->handle);
+  strlcpy(s, u->handle, sizeof s);
+  strlcpy(u->handle, newh, sizeof u->handle);
   for (i = 0; i < dcc_total; i++)
     if ((dcc[i].type == &DCC_CHAT || dcc[i].type == &DCC_CHAT_PASS) &&
-        !egg_strcasecmp(dcc[i].nick, s)) {
-      strncpyz(dcc[i].nick, newh, sizeof dcc[i].nick);
+        !strcasecmp(dcc[i].nick, s)) {
+      strlcpy(dcc[i].nick, newh, sizeof dcc[i].nick);
       if (dcc[i].type == &DCC_CHAT && dcc[i].u.chat->channel >= 0) {
         chanout_but(-1, dcc[i].u.chat->channel,
                     "*** Handle change: %s -> %s\n", s, newh);
@@ -635,7 +603,7 @@ struct userrec *adduser(struct userrec *bu, char *handle, char *host,
   u = nmalloc(sizeof *u);
 
   /* u->next=bu; bu=u; */
-  strncpyz(u->handle, handle, sizeof u->handle);
+  strlcpy(u->handle, handle, sizeof u->handle);
   u->next = NULL;
   u->chanrec = NULL;
   u->entries = NULL;
@@ -648,28 +616,19 @@ struct userrec *adduser(struct userrec *bu, char *handle, char *host,
   }
   set_user(&USERENTRY_PASS, u, pass);
   if (!noxtra) {
-    char *now2;
+    int l;
     xk = nmalloc(sizeof *xk);
     xk->key = nmalloc(8);
     strcpy(xk->key, "created");
-    now2 = nmalloc(15);
     tv = now;
-    sprintf(now2, "%li", tv);
-    xk->data = nmalloc(strlen(now2) + 1);
+    l = snprintf(NULL, 0, "%li", tv);
+    xk->data = nmalloc(l + 1);
     sprintf(xk->data, "%li", tv);
     set_user(&USERENTRY_XTRA, u, xk);
-    nfree(now2);
   }
   /* Strip out commas -- they're illegal */
   if (host && host[0]) {
     char *p;
-
-    /* About this fixfrom():
-     *   We should use this fixfrom before every call of adduser()
-     *   but its much easier to use here...  (drummer)
-     *   Only use it if we have a host :) (dw)
-     */
-    host = fixfrom(host);
 
     p = strchr(host, ',');
     while (p != NULL) {
@@ -751,7 +710,7 @@ int deluser(char *handle)
   int fnd = 0;
 
   while ((u != NULL) && (!fnd)) {
-    if (!egg_strcasecmp(u->handle, handle))
+    if (!strcasecmp(u->handle, handle))
       fnd = 1;
     else {
       prev = u;
@@ -923,7 +882,7 @@ void user_del_chan(char *dname)
 int check_conflags(struct flag_record *fr, int md)
 {
   if (!glob_owner(*fr))
-    md &= ~(LOG_RAW | LOG_SRVOUT | LOG_BOTNET | LOG_BOTSHARE);
+    md &= ~(LOG_RAW | LOG_SRVOUT | LOG_BOTNETIN | LOG_BOTNETOUT | LOG_BOTSHRIN | LOG_BOTSHROUT);
   if (!glob_master(*fr)) {
     md &= ~(LOG_FILES | LOG_LEV1 | LOG_LEV2 | LOG_LEV3 | LOG_LEV4 |
             LOG_LEV5 | LOG_LEV6 | LOG_LEV7 | LOG_LEV8 | LOG_DEBUG |
@@ -932,6 +891,6 @@ int check_conflags(struct flag_record *fr, int md)
       md &= ~(LOG_MISC | LOG_CMDS);
   }
   if (!glob_botmast(*fr))
-    md &= ~LOG_BOTS;
+    md &= ~(LOG_BOTS | LOG_BOTMSG);
   return md;
 }

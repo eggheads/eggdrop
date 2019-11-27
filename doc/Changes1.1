@@ -358,7 +358,7 @@ Eggdrop Changes (since version 1.0)
   - Only 1 bit per userflag please! *doh*
     Patch by: Beldin
 
-  - Some tclegg.h prototypes needed PROTO()' & therefore tclegg.h incudes
+  - Some tclegg.h prototypes needed PROTO()' & therefore tclegg.h includes
     proto.h now
     Patch by: Beldin
 
@@ -435,7 +435,7 @@ Eggdrop Changes (since version 1.0)
 
   # Patch by: Wild <jmcleod@pris.bc.ca>, Beldin [Darrin Smith <beldin@light.iinet.net.au>]
 
-  - Made ctcp_version default acutally SAY eggdrop, and sanity check on
+  - Made ctcp_version default actually SAY eggdrop, and sanity check on
     string lengths
     Patch by: Beldin
 
@@ -719,7 +719,7 @@ Eggdrop Changes (since version 1.0)
     Fixed problems created with the addition of dynamic channels:
     + Added flag CHANSTATIC for channels defined in the config file
     + Added a '\n' to one of the fprintf statements in the save channel's
-      routine (was cuasing a crash if there were no dynamic channels)
+      routine (was causing a crash if there were no dynamic channels)
     + Channels written to channel-file no longer include channels defined in
       the config-file (will only write the header there are no dynamic
       channels)
@@ -741,7 +741,7 @@ Eggdrop Changes (since version 1.0)
     Patch by: Wild
 
   - Bot was confused about current channel modes with new added channels
-    before it recieved channel mode info back from the server
+    before it received channel mode info back from the server
     Patch by: Wild
 
   - The last patch messed up tell_user (so sue me :)
@@ -938,7 +938,7 @@ Eggdrop Changes (since version 1.0)
     Patch by: Beldin
 
   - Fixed the showinfo on join, so that nasty '@' wouldnt show up, also, a
-    globaly locked info line will overide a channel one, unless the channel
+    globaly locked info line will override a channel one, unless the channel
     one is locked too (comments???)
     Patch by: Beldin
 
@@ -1095,7 +1095,7 @@ Eggdrop Changes (since version 1.0)
     Patch by: Beldin
 
   - Fixed the showinfo on join, so that nasty '@' wouldnt show up, also, a
-    globaly locked info line will overide a channel one, unless the channel
+    globaly locked info line will override a channel one, unless the channel
     one is locked too (comments???)
     Patch by: Beldin
 
@@ -1156,7 +1156,7 @@ Eggdrop Changes (since version 1.0)
   # Released by: Wade
 
   - Had to comment out the chpt code in tclhash.c since it was crashing
-    everytime it was triggered, someone fix this please :)
+    every time it was triggered, someone fix this please :)
     Patch by: poptix
 
   - The 'chanlist bug' code has been changed back to its previous state and
@@ -1182,7 +1182,7 @@ Eggdrop Changes (since version 1.0)
   - Fixed memory usage growing when using .restart
     Patch by: Wild
 
-  - Using console +d you were able to see acutal passwords when changed, now
+  - Using console +d you were able to see actual passwords when changed, now
     just shows as [something].
     Patch by: Wild
 
@@ -1252,7 +1252,7 @@ Eggdrop Changes (since version 1.0)
     Patch by: poptix
 
   - Fixed an op/deop flood making the bot flood off, the bot was sending a
-    'WHO #chan' and a 'MODE #chan +b' everytime it saw a 'o'
+    'WHO #chan' and a 'MODE #chan +b' every time it saw a 'o'
     Patch by: poptix
 
   - Fixed a '.console' problem with MASTER and OWNER stuff (+n-m)
@@ -1295,7 +1295,7 @@ Eggdrop Changes (since version 1.0)
     Patch by: poptix
 
   - Made it do a "JOIN #channel,#channel2,#channel3,#channel4" instead of
-    sending a lot of seperate ones.
+    sending a lot of separate ones.
     Patch by: poptix
 
   - Fixed a tprintf in cmds.c causing this:
@@ -1375,7 +1375,7 @@ Eggdrop Changes (since version 1.0)
   - Fixed all DEFAULT_PORT log bugs
     Found by: LuckyStar / Patch by: dk
 
-  - Added botnet master in dcc_check_attrs for reseting party-line flags
+  - Added botnet master in dcc_check_attrs for resetting party-line flags
     Patch by: dk
 
   - Added wallops and log levels 6-8 to check_dcc_attrs for master console
@@ -1439,7 +1439,7 @@ Eggdrop Changes (since version 1.0)
     whenever it tried to run gain-ops on a channel it had ops on already.
     Patch by: dk
 
-  - Fixed "DEFAULT PORT" bug in loging of server jumps
+  - Fixed "DEFAULT PORT" bug in logging of server jumps
     Found by: LuckyStar / Patch by: dk
 
   - Fixed botnet master help bug when botmaster had no global ops
@@ -1514,13 +1514,13 @@ Eggdrop Changes (since version 1.0)
     channel master has master access on.
     Patch by: dk
 
-  - Implemented psuedo flags +O/M/N for Tcl commands binds against channel
+  - Implemented pseudo flags +O/M/N for Tcl commands binds against channel
     op, master, and owner flags respectively. Binds that came with a channel
     check against that channel's flags. Binds that don't, check against all
     channel's flags. +M/N/O cannot be set to a user in the bot.
     Patch by: dk
 
-  - Changed .topic command so that if no arguements are provided, it returns
+  - Changed .topic command so that if no arguments are provided, it returns
     the channel's current topic. also added Tcl command topic <channel> that
     returns the topic of that channel.
     Suggested by: Ernst / Patch by: dk
@@ -1553,7 +1553,7 @@ Eggdrop Changes (since version 1.0)
     Patch by: dk
 
   - Set ENABLE_TCL to undefined by default
-    Suggested by: alot of people
+    Suggested by: a lot of people
 
   - Added feature that bot notifies users in the bot or on a channel that
     they have notes every hour. minute after the hour that this is done can
@@ -1577,7 +1577,7 @@ Eggdrop Changes (since version 1.0)
     now.
     Found by: LSC / Patch by: dk
 
-  - Extened Tcl dcclist command to include bots, files receiving, files
+  - Extended Tcl dcclist command to include bots, files receiving, files
     sending, and files send pending.
     Suggested by: Ernst / Patch by: dk
 
@@ -1632,7 +1632,7 @@ Eggdrop Changes (since version 1.0)
   - Fixed memory usage growing when using .restart
     Patch by: Wild
 
-  - Using console +d you were able to see acutal passwords when changed, now
+  - Using console +d you were able to see actual passwords when changed, now
     just shows as [something].
     Patch by: Wild
 
@@ -1741,7 +1741,7 @@ Eggdrop Changes (since version 1.0)
   - Fixed all DEFAULT_PORT log bugs
     Found by: LuckyStar / Patch by: dk
 
-  - Added botnet master in dcc_check_attrs for reseting party-line flags
+  - Added botnet master in dcc_check_attrs for resetting party-line flags
     Patch by: dk
 
   - Added wallops and log levels 6-8 to check_dcc_attrs for master console
@@ -1811,7 +1811,7 @@ Eggdrop Changes (since version 1.0)
     whenever it tried to run gain-ops on a channel it had ops on already.
     Patch by: dk
 
-  - Fixed "DEFAULT PORT" bug in loging of server jumps
+  - Fixed "DEFAULT PORT" bug in logging of server jumps
     Found by: LuckyStar / Patch by: dk
 
   - Fixed botnet master help bug when botmaster had no global ops
@@ -1892,13 +1892,13 @@ Eggdrop Changes (since version 1.0)
     channel master has master access on.
     Patch by: dk
 
-  - Implemented psuedo flags +O/M/N for Tcl commands binds against channel
+  - Implemented pseudo flags +O/M/N for Tcl commands binds against channel
     op, master, and owner flags respectively. Binds that came with a channel
     check against that channel's flags. Binds that don't, check against all
     channel's flags. +M/N/O cannot be set to a user in the bot.
     Patch by: dk
 
-  - Changed .topic command so that if no arguements are provided, it returns
+  - Changed .topic command so that if no arguments are provided, it returns
     the channel's current topic. also added Tcl command topic <channel> that
     returns the topic of that channel.
     Suggested by: Ernst / Patch by: dk
@@ -1931,7 +1931,7 @@ Eggdrop Changes (since version 1.0)
     Patch by: dk
 
   - Set ENABLE_TCL to undefined by default
-    Suggested by: alot of people
+    Suggested by: a lot of people
 
   - Added feature that bot notifies users in the bot or on a channel that
     they have notes every hour. minute after the hour that this is done can
@@ -1955,7 +1955,7 @@ Eggdrop Changes (since version 1.0)
     now.
     Found by: LSC / Patch by: dk
 
-  - Extened Tcl dcclist command to include bots, files receiving, files
+  - Extended Tcl dcclist command to include bots, files receiving, files
     sending, and files send pending.
     Suggested by: Ernst / Patch by: dk
 
@@ -2157,7 +2157,7 @@ Eggdrop Changes (since version 1.0)
       Patch by: cmwagner
 
     + 437 numeric (nickname/channel is juped) has been changed to reflect
-      whether it is specfically the channel or the nickname, bot will not
+      whether it is specifically the channel or the nickname, bot will not
       change nicknames if the channel is juped :)
       Found by: Ernst / Patch by: Robey
 
@@ -2321,7 +2321,7 @@ Eggdrop Changes (since version 1.0)
       Patch by: cmwagner
 
     + 437 numeric (nickname/channel is juped) has been changed to reflect
-      whether it is specfically the channel or the nickname, bot will not
+      whether it is specifically the channel or the nickname, bot will not
       change nicknames if the channel is juped :)
       Found by: Ernst / Patch by: Robey
 
@@ -2399,7 +2399,7 @@ Eggdrop Changes (since version 1.0)
   # Patch by: Beldin [Darrin Smith <beldin@light.iinet.net.au>]
     [included in 1.1alpha+julius]
 
-  - Miscelaneous bug fixes + adding cmw's patches
+  - Miscellaneous bug fixes + adding cmw's patches
     Patch by: Beldin
 
 
@@ -2685,7 +2685,7 @@ Eggdrop Changes (since version 1.0)
   # Patch by: Gaven Cohen <kinslayer@nxp.co.za>
     [partially included in 1.1alpha+grant]
 
-  - {created [unixtime]} extra field added everytime userfile is loaded.
+  - {created [unixtime]} extra field added every time userfile is loaded.
     (disabled until someone who knows C fixes up)
     [not included in 1.1alpha+grant]
     Patch by: Gaven Cohen
@@ -2735,7 +2735,7 @@ Eggdrop Changes (since version 1.0)
   - Can specify a parting comment with '.quit'
     Suggested by: a person
 
-  - 'u' flag on user specifies "unshared" (not transfered to other bots when
+  - 'u' flag on user specifies "unshared" (not transferred to other bots when
     sending the userfile, and kept even when downloading the userfile --
     just like bot records)
     Suggested by: exile
@@ -2824,7 +2824,7 @@ Eggdrop Changes (since version 1.0)
   - Can set 'whois-fields' which specifies which "xtra" fields to display in
     a '.whois' listing
 
-  - Userfile resync can cause disasterous DEsync of userfiles, so it's
+  - Userfile resync can cause disastrous DEsync of userfiles, so it's
     turned off by default now
 
   - Tried to make whom info trading be more compatible -- 1.1 bots should be

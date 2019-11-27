@@ -4,7 +4,7 @@
  */
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2017 Eggheads Development Team
+ * Copyright (C) 1999 - 2019 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -89,7 +89,7 @@ static int welcome_to_files(int idx)
   sub_lang(idx, FILES_WELCOME);
   sub_lang(idx, FILES_WELCOME1);
   if (p)
-    strncpyz(dcc[idx].u.file->dir, p, sizeof dcc[idx].u.file->dir);
+    strlcpy(dcc[idx].u.file->dir, p, sizeof dcc[idx].u.file->dir);
   else
     dcc[idx].u.file->dir[0] = 0;
   /* Does this dir even exist any more? */
@@ -479,7 +479,7 @@ static void cmd_reget_get(int idx, char *par, int resend)
         /* This is a link to a file on another bot... */
         bot = nmalloc(strlen(fdbe->sharelink) + 1);
         splitc(bot, fdbe->sharelink, ':');
-        if (!egg_strcasecmp(bot, botnetnick))
+        if (!strcasecmp(bot, botnetnick))
           dprintf(idx, "Can't get that file, it's linked to this bot!\n");
         else if (!in_chain(bot))
           dprintf(idx, FILES_NOTAVAIL, fdbe->filename);
@@ -531,15 +531,16 @@ static void cmd_get(int idx, char *par)
 
 static void cmd_file_help(int idx, char *par)
 {
+  int l;
   char *s;
   struct flag_record fr = { FR_GLOBAL | FR_CHAN, 0, 0, 0, 0, 0 };
 
   get_user_flagrec(dcc[idx].user, &fr, dcc[idx].u.file->chat->con_chan);
   if (par[0]) {
     putlog(LOG_FILES, "*", "files: #%s# help %s", dcc[idx].nick, par);
-    s = nmalloc(strlen(par) + 9);
+    l = snprintf(NULL, 0, "filesys/%s", par);
+    s = nmalloc(l + 1);
     sprintf(s, "filesys/%s", par);
-    s[256] = 0;
     tellhelp(idx, s, &fr, 0);
     my_free(s);
   } else {
@@ -855,7 +856,7 @@ static void cmd_desc(int idx, char *par)
     if (!(fdbe->stat & FILE_HIDDEN)) {
       ok = 1;
       if ((!(dcc[idx].user->flags & USER_JANITOR)) &&
-          (egg_strcasecmp(fdbe->uploader, dcc[idx].nick)))
+          (strcasecmp(fdbe->uploader, dcc[idx].nick)))
         dprintf(idx, FILES_NOTOWNER, fdbe->filename);
       else {
         if (desc[0]) {
@@ -962,7 +963,7 @@ static void cmd_mkdir(int idx, char *par)
     flags = newsplit(&par);
     chan = newsplit(&par);
     if (!chan[0] && flags[0] && (strchr(CHANMETA, flags[0]) != NULL)) {
-      /* Need some extra checking here to makesure we dont mix up
+      /* Need some extra checking here to make sure we don't mix up
        * the flags with a +channel. <cybah>
        */
       if (!findchan(flags) && flags[0] != '+') {
@@ -1436,7 +1437,7 @@ static int files_reget(int idx, char *fn, char *nick, int resend)
     /* This is a link to a file on another bot... */
     bot = nmalloc(strlen(fdbe->sharelink) + 1);
     splitc(bot, fdbe->sharelink, ':');
-    if (!egg_strcasecmp(bot, botnetnick)) {
+    if (!strcasecmp(bot, botnetnick)) {
       /* Linked to myself *duh* */
       filedb_close(fdb);
       my_free(what);
@@ -1493,7 +1494,7 @@ static void files_setpwd(int idx, char *where)
 
   if (!resolve_dir(dcc[idx].u.file->dir, where, &s, idx))
     return;
-  strncpyz(dcc[idx].u.file->dir, s, sizeof dcc[idx].u.file->dir);
+  strlcpy(dcc[idx].u.file->dir, s, sizeof dcc[idx].u.file->dir);
   set_user(&USERENTRY_DCCDIR, get_user_by_handle(userlist, dcc[idx].nick),
            dcc[idx].u.file->dir);
   my_free(s);

@@ -1,9 +1,9 @@
 /*
  * compat.h
- *   wrap-around header for all compability functions.
+ *   wrap-around header for all compatibility functions.
  */
 /*
- * Copyright (C) 2000 - 2017 Eggheads Development Team
+ * Copyright (C) 2000 - 2019 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -23,14 +23,11 @@
 #ifndef _EGG_COMPAT_COMPAT_H
 #define _EGG_COMPAT_COMPAT_H
 
+#include "base64.h"
 #include "inet_aton.h"
 #include "snprintf.h"
-#include "memset.h"
-#include "memcpy.h"
-#include "strcasecmp.h"
-#include "strftime.h"
-#include "inet_ntop.h"
 #include "inet_pton.h"
 #include "gethostbyname2.h"
+#include "strlcpy.h"
 
 #endif /* !__EGG_COMPAT_COMPAT_H */

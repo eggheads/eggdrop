@@ -5,7 +5,7 @@
  */
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2017 Eggheads Development Team
+ * Copyright (C) 1999 - 2019 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -105,9 +105,9 @@ static void bg_do_detach(pid_t p)
   unlink(pid_file);
   fp = fopen(pid_file, "w");
   if (fp != NULL) {
-    fprintf(fp, "%u\n", p);
+    fprintf(fp, "%li\n", (long) p);
     if (fflush(fp)) {
-      /* Kill bot incase a botchk is run from crond. */
+      /* Kill bot in case a botchk is run from crond. */
       printf(EGG_NOWRITE, pid_file);
       printf("  Try freeing some disk space\n");
       fclose(fp);
@@ -117,7 +117,7 @@ static void bg_do_detach(pid_t p)
     fclose(fp);
   } else
     printf(EGG_NOWRITE, pid_file);
-  printf("Launched into the background  (pid: %d)\n\n", p);
+  printf("Launched into the background  (pid: %li)\n\n", (long) p);
 #ifdef HAVE_SETPGID
   setpgid(p, p);
 #endif

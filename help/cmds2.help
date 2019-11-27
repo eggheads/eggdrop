@@ -436,13 +436,22 @@ See also: match, who, whom%{+m|m}, chattr%{+t}, botattr
    Displays a condensed block of status information about the bot.
    is running. For example:
       [01:15] #Wcc# status
-      I am Anakha, running eggdrop v1.6.16+stripping:  171 users (mem: 315k)
+      I am Anakha, running eggdrop v1.8.3:  171 users (mem: 315k)
       Online for 14 days, 02:50  (background)  CPU 71:29  cache hit 40.3%
       Admin: Wcc
       Config file: eggdrop.conf
       OS: FreeBSD 4.8-RELEASE-p1
+      Process ID: 5109 (parent 3489)
       Tcl library: /usr/local/lib/tcl8.4
-      Tcl version: 8.4.2 (header version 8.4.2)
+      Tcl version: 8.6.8 (header version 8.6.8)
+      Tcl is threaded.
+      TLS support is enabled.
+      TLS library: OpenSSL 1.1.0g 2 Nov 2017
+      IPv6 support is enabled.
+      Socket table: 20/100
+      Memory table: 3182/250000 (1.3% full)
+      Memory fault: only accounting for 106336/109829 (96.8%)
+      Memory table itself occupies an additional 9765K static
       Loaded module information:
           Channels: #|DAWG|Net, #|DAWG|Tcl
           Online as: D|Anakha!wcc@cia.nu (|DAWG|Anakha - |DAWG|Net)
@@ -451,14 +460,16 @@ See also: match, who, whom%{+m|m}, chattr%{+t}, botattr
           #|DAWG|Tcl: 42 members, enforcing "+tn" (lurking)
 
 
-   The first line tells you the bot's name, what version of Eggdrop it's
-   running, the number of users the bot has records of, and the amount of
-   memory being used by the userfile. The second line tells you the uptime of
-   the bot, CPU time, and cache hit. The third shows the bot's admin, and the
-   forth shows its current config file. The fifth line shows what operating
-   system the bot is running on. The next two lines show Tcl information. If
-   debug mode is enabled, additional info may be shown. Sharing information
-   will also be shown if it's being used.
+   The first lines contain information such as the bot's name, what version
+   of Eggdrop it's running, the number of users the bot has records of, and 
+   the amount of memory being used by the userfile. Following that is
+   information such as the uptime of the bot, CPU time, and what compile
+   options, if any, the bot was configured with, along with the bot's admin and
+   and filename of the running config file. The subsequent lines show
+   information such as the operating system the bot is running on, information
+   on the Tcl libraries used to compile the Eggdrop, and if SSL and IPv6
+   support are enabled. If debug mode is enabled, additional info may be shown. 
+   Sharing information will also be shown if it's being used.
 
    Select information from modules will be displayed after the core
    information. If you use %b'.status all'%b instead, you will see all status
@@ -477,3 +488,10 @@ See also: status
    a ? if nothing is known.
 
 See also: bots, botinfo, bottree
+%{help=fprint}%{-}
+### %bfprint <+/SHA1 fingerprint>%b
+   Adds an SSL certificate fingerprint to your user account. This allows you
+   to authenticate to Eggdrop with a certificate instead of a password. You
+   can log in to the partyline using SSL and use %b'.fprint +'%b to add the
+   current certificate, or use %b'.fprint <SHA1 fingerprint>'%b to manually
+   add a certificate fingerprint.

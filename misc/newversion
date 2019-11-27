@@ -2,7 +2,7 @@
 #
 # newversion - prepares the tree for a new version number in git
 #
-# Copyright (C) 2004 - 2017 Eggheads Development Team
+# Copyright (C) 2004 - 2019 Eggheads Development Team
 #
 # This file is free software; you can redistribute it and/or modify it
 # under the terms of the GNU General Public License as published by
@@ -41,8 +41,10 @@ fi
 umask 022
 
 OLD_EGGVERSION=$(grep AC_INIT configure.ac | sed -e 's/AC_INIT(\[Eggdrop\],\[//g' -e 's/\],\[bugs@eggheads.org\])//g')
-NEW_EGGVERSION=$(echo $OLD_EGGVERSION | cut -d. -f1-2).$(($(echo $OLD_EGGVERSION | cut -d. -f3) + 1))
-NEW_NUMVERSION=$(($(grep '^#define EGG_NUMVER.*' src/version.h |cut -d " " -f 3|sed -e 's/..$/00/') + 100))
+#NEW_EGGVERSION=$(echo $OLD_EGGVERSION | cut -d. -f1-2).$(($(echo $OLD_EGGVERSION | cut -d. -f3) + 1))
+NEW_EGGVERSION="1.9.0"
+#NEW_NUMVERSION=$(($(grep '^#define EGG_NUMVER.*' src/version.h |cut -d " " -f 3|sed -e 's/..$/00/') + 100))
+NEW_NUMVERSION="1090000"
 
 #Remove existing staged files
 git reset HEAD -- .
@@ -61,9 +63,10 @@ while [ $MINOR -le $MAX ]; do
 done
 git fetch origin
 git fetch -t origin
-misc/genchanges -l $INCLUDE -i develop -r origin full > ChangeLog
-gzip -f ChangeLog
-git add ChangeLog.gz
+#echo "Running misc/genchanges -l $INCLUDE -i develop -r origin full > ChangeLog"
+#misc/genchanges -l $INCLUDE -i develop -r origin full > ChangeLog
+#gzip -f ChangeLog
+#git add ChangeLog.gz
 
 #Generate doc/ChangesX.Y file
 MINOR=1
@@ -72,19 +75,20 @@ while [ $MINOR -le $MAX ]; do
   INCLUDE="${INCLUDE} -i v${MAJOR}.${MINOR}"
   MINOR=$(expr $MINOR + 1)
 done
-misc/genchanges -l -e v1.6.21 -e v1.8.0 $INCLUDE -i develop -v "" -r origin short > doc/Changes1.8
-git add doc/Changes1.8
-git commit -m "Generate ChangeLog/Changes files for ${NEW_EGGVERSION}" > /dev/null
+#echo "Running misc/genchanges -l -e v1.6.21 -e v1.8.0 $INCLUDE -i develop -v ${MAJOR}.${MINOR}rc1 -r origin short > doc/Changes1.8"
+#misc/genchanges -l -e v1.6.21 -e v1.8.0 $INCLUDE -i develop -v ${MAJOR}.${MINOR}rc1 -r origin short > doc/Changes1.8
+#git add doc/Changes1.8
+#git commit -m "Generate ChangeLog/Changes files for ${NEW_EGGVERSION}" > /dev/null
 
 # Remove patchlevel.
-echo -n "Setting alpha patchlevel for a stable release..."
-misc/setpatch alpha >/dev/null
-echo " done."
+#echo -n "Setting alpha patchlevel for a stable release..."
+#misc/setpatch alpha >/dev/null
+#echo " done."
 
 # Fix version.h.
-echo -n "Updating src/version.h..."
-fix_version_h
-echo " done."
+#echo -n "Updating src/version.h..."
+#fix_version_h
+#echo " done."
 
 # Fix configure.ac's.
 echo -n "Fixing configure.ac files..."

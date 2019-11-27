@@ -1,9 +1,8 @@
 /*
  * tclserv.c -- part of server.mod
- */
-/*
+ *
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2017 Eggheads Development Team
+ * Copyright (C) 1999 - 2019 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -38,7 +37,7 @@ static int tcl_putnow STDVAR
 
   BADARGS(2, 3, " text ?options?");
 
-  if ((argc == 3) && egg_strcasecmp(argv[2], "-oneline")) {
+  if ((argc == 3) && strcasecmp(argv[2], "-oneline")) {
     Tcl_AppendResult(irp, "unknown putnow option: should be ",
                      "-oneline", NULL);
     return TCL_ERROR;
@@ -59,9 +58,9 @@ static int tcl_putnow STDVAR
     if ((p - r) > (sizeof(buf) - 2 - (q - buf)))
       break; /* That's all folks, no space left */
     len = p - r + 1; /* leave space for '\0' */
-    strncpyz(q, r, len);
+    strlcpy(q, r, len);
     if (check_tcl_out(0, q, 0)) {
-      if (!*p || ((argc == 3) && !egg_strcasecmp(argv[2], "-oneline")))
+      if (!*p || ((argc == 3) && !strcasecmp(argv[2], "-oneline")))
         break;
       r = p + 1;
       continue;
@@ -74,7 +73,7 @@ static int tcl_putnow STDVAR
     q += len - 1; /* the '\0' must be overwritten */
     *q++ = '\r';
     *q++ = '\n'; /* comply with the RFC */
-    if (!*p || ((argc == 3) && !egg_strcasecmp(argv[2], "-oneline")))
+    if (!*p || ((argc == 3) && !strcasecmp(argv[2], "-oneline")))
       break; /* cut on newline requested or message ended */
     r = p + 1;
   }
@@ -88,22 +87,21 @@ static int tcl_putquick STDVAR
 
   BADARGS(2, 3, " text ?options?");
 
-  if ((argc == 3) && egg_strcasecmp(argv[2], "-next") &&
-      egg_strcasecmp(argv[2], "-normal")) {
+  if ((argc == 3) && strcasecmp(argv[2], "-next") &&
+      strcasecmp(argv[2], "-normal")) {
     Tcl_AppendResult(irp, "unknown putquick option: should be one of: ",
                      "-normal -next", NULL);
     return TCL_ERROR;
   }
-  strncpy(s, argv[1], 510);
+  strlcpy(s, argv[1], sizeof s);
 
-  s[510] = 0;
   p = strchr(s, '\n');
   if (p != NULL)
     *p = 0;
   p = strchr(s, '\r');
   if (p != NULL)
     *p = 0;
-  if (argc == 3 && !egg_strcasecmp(argv[2], "-next"))
+  if (argc == 3 && !strcasecmp(argv[2], "-next"))
     dprintf(DP_MODE_NEXT, "%s\n", s);
   else
     dprintf(DP_MODE, "%s\n", s);
@@ -116,22 +114,21 @@ static int tcl_putserv STDVAR
 
   BADARGS(2, 3, " text ?options?");
 
-  if ((argc == 3) && egg_strcasecmp(argv[2], "-next") &&
-      egg_strcasecmp(argv[2], "-normal")) {
+  if ((argc == 3) && strcasecmp(argv[2], "-next") &&
+      strcasecmp(argv[2], "-normal")) {
     Tcl_AppendResult(irp, "unknown putserv option: should be one of: ",
                      "-normal -next", NULL);
     return TCL_ERROR;
   }
-  strncpy(s, argv[1], 510);
+  strlcpy(s, argv[1], sizeof s);
 
-  s[510] = 0;
   p = strchr(s, '\n');
   if (p != NULL)
     *p = 0;
   p = strchr(s, '\r');
   if (p != NULL)
     *p = 0;
-  if (argc == 3 && !egg_strcasecmp(argv[2], "-next"))
+  if (argc == 3 && !strcasecmp(argv[2], "-next"))
     dprintf(DP_SERVER_NEXT, "%s\n", s);
   else
     dprintf(DP_SERVER, "%s\n", s);
@@ -144,34 +141,58 @@ static int tcl_puthelp STDVAR
 
   BADARGS(2, 3, " text ?options?");
 
-  if ((argc == 3) && egg_strcasecmp(argv[2], "-next") &&
-      egg_strcasecmp(argv[2], "-normal")) {
+  if ((argc == 3) && strcasecmp(argv[2], "-next") &&
+      strcasecmp(argv[2], "-normal")) {
     Tcl_AppendResult(irp, "unknown puthelp option: should be one of: ",
                      "-normal -next", NULL);
     return TCL_ERROR;
   }
-  strncpy(s, argv[1], 510);
+  strlcpy(s, argv[1], sizeof s);
 
-  s[510] = 0;
   p = strchr(s, '\n');
   if (p != NULL)
     *p = 0;
   p = strchr(s, '\r');
   if (p != NULL)
     *p = 0;
-  if (argc == 3 && !egg_strcasecmp(argv[2], "-next"))
+  if (argc == 3 && !strcasecmp(argv[2], "-next"))
     dprintf(DP_HELP_NEXT, "%s\n", s);
   else
     dprintf(DP_HELP, "%s\n", s);
   return TCL_OK;
 }
 
+/* Tcl interface to send CAP messages to server */
+static int tcl_cap STDVAR {
+  char s[CAPMAX];
+  BADARGS(2, 3, " sub-cmd ?arg?");
+
+  if (!strcasecmp(argv[1], "available")) {
+    Tcl_AppendResult(irp, cap.supported, NULL);
+  } else if (!strcasecmp(argv[1], "active")) {
+    Tcl_AppendResult(irp, cap.negotiated, NULL);
+  } else if (!strcasecmp(argv[1], "raw")) {
+    if (argc == 3) {
+      simple_sprintf(s, "CAP %s", argv[2]);
+      dprintf(DP_SERVER, "%s\n", s);
+    } else {
+      Tcl_AppendResult(irp, "Raw requires a CAP sub-command to be provided",
+        NULL);
+      return TCL_ERROR;
+    }
+  } else {
+      Tcl_AppendResult(irp, "Invalid cap command", NULL);
+  }
+  return TCL_OK;
+}
+
+
 static int tcl_jump STDVAR
 {
   BADARGS(1, 4, " ?server? ?port? ?pass?");
 
   if (argc >= 2) {
-    strncpyz(newserver, argv[1], sizeof newserver);
+    strlcpy(newserver, argv[1], sizeof newserver);
     if (argc >= 3)
 #ifdef TLS
     {
@@ -187,7 +208,7 @@ static int tcl_jump STDVAR
     else
       newserverport = default_port;
     if (argc == 4)
-      strncpyz(newserverpass, argv[3], sizeof newserverpass);
+      strlcpy(newserverpass, argv[3], sizeof newserverpass);
   }
   cycle_time = 0;
 
@@ -312,8 +333,62 @@ static int tcl_queuesize STDVAR
   return TCL_ERROR;
 }
 
+static int tcl_addserver STDVAR {
+  char name[121] = "";
+  char port[7] = "";
+  char pass[121] = "";
+  char ret = 0;
+
+  BADARGS(2, 4, "server ?port? ?pass?");
+  strlcpy(name, argv[1], sizeof name);
+  if (argc >= 3) {
+      strlcpy(port, argv[2], sizeof port);
+  }
+  if (argc == 4) {
+    strlcpy(pass, argv[3], sizeof pass);
+  }
+  ret = add_server(name, port, pass);
+  if (ret == 0) {
+    return TCL_OK;
+  } else if (ret == 1) {
+    Tcl_AppendResult(irp, "A ':' was detected in the non-IPv6 address ", name,
+                " Make sure the port is separated by a space, not a ':'. "
+                "Skipping...", NULL);
+  } else if (ret == 2) {
+    Tcl_AppendResult(irp, "Attempted to add SSL-enabled server, but Eggdrop "
+                "was not compiled with SSL libraries. Skipping...", NULL);
+  }
+  return TCL_ERROR;
+}
+
+static int tcl_delserver STDVAR {
+  char name[121] = "";
+  char port[7] = "";
+  char ret = 0;
+
+  BADARGS(2, 3, "server, ?port?");
+  strlcpy(name, argv[1], sizeof name);
+  if (argc == 3) {
+    strlcpy(port, argv[2], sizeof port);
+  }
+  ret = del_server(name, port);
+  if (!ret) {
+    return TCL_OK;
+  } else if (ret == 1) {
+    Tcl_AppendResult(irp, "A ':' was detected in the non-IPv6 address ", name,
+                " Make sure the port is separated by a space, not a ':'. "
+                "Skipping...", NULL);
+  } else if (ret == 2) {
+    Tcl_AppendResult(irp, "Server list is empty", NULL);
+  } else if (ret == 3) {
+    Tcl_AppendResult(irp, "Server ", name, strlen(port) ? ":" : "", strlen(port) ? port : ""," not found.", NULL);
+  }
+  return TCL_ERROR;
+}
+
 static tcl_cmds my_tcl_cmds[] = {
   {"jump",       tcl_jump},
+  {"cap",        tcl_cap},
   {"isbotnick",  tcl_isbotnick},
   {"clearqueue", tcl_clearqueue},
   {"queuesize",  tcl_queuesize},
@@ -321,6 +396,8 @@ static tcl_cmds my_tcl_cmds[] = {
   {"putserv",    tcl_putserv},
   {"putquick",   tcl_putquick},
   {"putnow",     tcl_putnow},
+  {"addserver",  tcl_addserver},
+  {"delserver",  tcl_delserver},
   {NULL,         NULL}
 };
 
