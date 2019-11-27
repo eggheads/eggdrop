@@ -484,12 +484,6 @@ Advanced Settings
     dupwait-timeout seconds before it checks again and then finally
     reject the bot.
 
-  set strict-host 1
-    Set this to 0 if you want the bot to strip '~+-^=' characters from
-    user@hosts before matching them. This setting is currently kept for
-    compatibility, but will be removed from the next release. Please leave
-    it set to 1 for now to avoid problems with your user files in the future.
-
   set cidr-support 0
     Enables cidr support for b/e/I modes if set to 1. This means the bot
     will understand and match modes in cidr notation, and will be able to
