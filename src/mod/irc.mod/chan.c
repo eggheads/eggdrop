@@ -860,7 +860,7 @@ static void check_this_user(char *hand, int delete, char *host)
       sprintf(s, "%s!%s", m->nick, m->userhost);
       u = m->user ? m->user : get_user_by_host(s);
       if ((u && !strcasecmp(u->handle, hand) && delete < 2) ||
-          (!u && delete == 2 && match_addr(host, fixfrom(s)))) {
+          (!u && delete == 2 && match_addr(host, s))) {
         u = delete ? NULL : u;
         get_user_flagrec(u, &fr, chan->dname);
         check_this_member(chan, m->nick, &fr);

@@ -65,7 +65,6 @@
 
 extern struct dcc_t *dcc;
 
-
 typedef struct lang_st {
   struct lang_st *next;
   char *lang;
@@ -98,6 +97,7 @@ static char *get_specific_langfile(char *, lang_sec *);
 static char *get_langfile(lang_sec *);
 static int split_lang(char *, char **, char **);
 int cmd_loadlanguage(struct userrec *, int, char *);
+char language[64];
 
 
 /* Add a new preferred language to the list of languages. Newly added
@@ -665,6 +665,7 @@ static int tcl_plslang STDVAR
 {
   BADARGS(2, 2, " language");
 
+  strlcpy(language, argv[1], sizeof language);
   add_lang(argv[1]);
   recheck_lang_sections();
 

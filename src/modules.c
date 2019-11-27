@@ -542,7 +542,7 @@ Function global_table[] = {
   (Function) str_unescape,
   (Function) egg_strcatn,
   (Function) clear_chanlist_member,
-  (Function) fixfrom,
+  (Function) 0,                   /* was fixfrom */
   /* 268 - 271 */
   (Function) & socklist,          /* sock_list *                         */
   (Function) sockoptions,

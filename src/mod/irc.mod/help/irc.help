@@ -121,7 +121,7 @@ See also: kickban, console
         .kickban -nick  *!*dent@host.name.domain
         .kickban @nick  *!*@host.name.domain
 
-     Or with a host of nick!~ident@host.name.domain (strict-host set to 1):
+     Or with a host of nick!~ident@host.name.domain:
 
         Command        Banmask
         .kickban nick  *!*ident@*.name.domain
@@ -219,8 +219,8 @@ See also: console, devoice
       %bbounce-modes    use-354             bounce-invites%b
       %bmax-exempts     max-modes           bounce-exempts%b
       %bmax-invites     kick-method         modes-per-line%b
-      %bno-chanrec-info ctcp-mode           strict-host%b
-      %bkeep-nick       include-lk          prevent-mixing%b
+      %bno-chanrec-info ctcp-mode           prevent-mixing%b
+      %bkeep-nick       include-lk%b
    (Use %b'.help set <variable>'%b for more info)
 %{help=all}%{+o|o}
 ###  %birc module%b commands
