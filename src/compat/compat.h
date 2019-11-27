@@ -26,7 +26,6 @@
 #include "base64.h"
 #include "inet_aton.h"
 #include "snprintf.h"
-#include "inet_ntop.h"
 #include "inet_pton.h"
 #include "gethostbyname2.h"
 #include "strlcpy.h"
