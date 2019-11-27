@@ -228,7 +228,7 @@ char *maskname(int x)
   if (x & LOG_FILES)
     i += my_strcpy(s + i, "files, "); /* 7 */
   if (x & LOG_SERV)
-    i += my_strcpy(s + i, "server, "); /* 8 */
+    i += my_strcpy(s + i, "server input, "); /* 8 */
   if (x & LOG_DEBUG)
     i += my_strcpy(s + i, "debug, "); /* 7 */
   if (x & LOG_WALL)

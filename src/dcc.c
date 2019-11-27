@@ -255,53 +255,21 @@ void failed_link(int idx)
 {
   char s[NICKLEN + 18], s1[512];
 
-#ifdef TLS
-  /* Stop trying when we are sslport+3 */
-  if (dcc[idx].port >= dcc[idx].u.bot->port + 3 && dcc[idx].ssl) {
-#else
-  if (dcc[idx].port >= dcc[idx].u.bot->port + 3) {
-#endif
-    if (dcc[idx].u.bot->linker[0]) {
-      egg_snprintf(s, sizeof s, "Couldn't link to %s.", dcc[idx].nick);
-      strcpy(s1, dcc[idx].u.bot->linker);
-      add_note(s1, botnetnick, s, -2, 0);
-    }
-    if (dcc[idx].u.bot->numver >= -1)
-      putlog(LOG_BOTS, "*", DCC_LINKFAIL, dcc[idx].nick);
-    killsock(dcc[idx].sock);
-    strcpy(s, dcc[idx].nick);
-    lostdcc(idx);
-    autolink_cycle(s);          /* Check for more auto-connections */
-    return;
+  if (dcc[idx].u.bot->linker[0]) {
+    egg_snprintf(s, sizeof s, "Couldn't link to %s.", dcc[idx].nick);
+    strcpy(s1, dcc[idx].u.bot->linker);
+    add_note(s1, botnetnick, s, -2, 0);
   }
+  if (dcc[idx].u.bot->numver >= -1)
+    putlog(LOG_BOTS, "*", DCC_LINKFAIL, dcc[idx].nick);
+  killsock(dcc[idx].sock);
+  strcpy(s, dcc[idx].nick);
+  lostdcc(idx);
+  autolink_cycle(s);          /* Check for more auto-connections */
+  return;
 
-  /* Try next port, if it makes sense (no AF_UNSPEC, ...) */
   killsock(dcc[idx].sock);
   dcc[idx].timeval = now;
-#ifdef TLS
-  /* Order of attempts:
-   * If initial SSL: sslport+1; sslport+2; sslport+3
-   * Else: sslport; plain+1; sslport+1; plain+2; sslport+2; plain+3; sslport+3
-   */
-  if (dcc[idx].u.bot->ssl) {
-    ++dcc[idx].port;
-  } else if (dcc[idx].ssl) {
-    dcc[idx].ssl = 0;
-    ++dcc[idx].port;
-  } else {
-    dcc[idx].ssl = 1;
-  }
-#else
-    ++dcc[idx].port;
-#endif
-
-  if (open_telnet(idx, dcc[idx].host, dcc[idx].port) < 0)
-    failed_link(idx);
-#ifdef TLS
-  else if (dcc[idx].ssl && ssl_handshake(dcc[idx].sock, TLS_CONNECT,
-           tls_vfybots, LOG_BOTS, dcc[idx].host, NULL))
-    failed_link(idx);
-#endif
 }
 
 static void cont_link(int idx, char *buf, int i)

@@ -544,7 +544,7 @@ Function global_table[] = {
   (Function) str_unescape,
   (Function) egg_strcatn,
   (Function) clear_chanlist_member,
-  (Function) fixfrom,
+  (Function) 0,                   /* was fixfrom */
   /* 268 - 271 */
   (Function) & socklist,          /* sock_list *                         */
   (Function) sockoptions,
@@ -599,7 +599,14 @@ Function global_table[] = {
   (Function) 0,
 #endif
   /* 304 - 307 */
-  (Function) strncpyz
+  (Function) strncpyz,
+#ifndef HAVE_BASE64
+  (Function) b64_ntop,
+  (Function) b64_pton
+#else
+  (Function) 0,
+  (Function) 0
+#endif
 };
 
 void init_modules(void)

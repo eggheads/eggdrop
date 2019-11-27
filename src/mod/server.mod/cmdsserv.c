@@ -28,7 +28,9 @@ static void cmd_servers(struct userrec *u, int idx, char *par)
   time_t t;
   struct tm *currtm;
   int i, len = 0;
-  char buf[16];
+#ifdef IPV6
+  char buf[sizeof(struct in6_addr)];
+#endif
   char s[1024];
   char setpass[11];
 

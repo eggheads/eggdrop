@@ -42,7 +42,6 @@ struct userrec *lastuser = NULL;   /* last accessed user record     */
 maskrec *global_bans = NULL, *global_exempts = NULL, *global_invites = NULL;
 struct igrec *global_ign = NULL;
 int cache_hit = 0, cache_miss = 0; /* temporary cache accounting    */
-int strict_host = 1;
 int userfile_perm = 0600;         /* Userfile permissions
                                    * (default rw-------) */
 char userfile[121];
@@ -159,30 +158,6 @@ int count_users(struct userrec *bu)
   for (u = bu; u; u = u->next)
     tot++;
   return tot;
-}
-
-/* Removes a username prefix (~+-^=) from a userhost.
- * e.g, "nick!~user@host" -> "nick!user@host"
- */
-char *fixfrom(char *s)
-{
-  static char uhost[UHOSTLEN];
-  char *p = uhost;
-
-  if (!s || !*s || strict_host)
-    return s;
-
-  while (*s) {
-    *p++ = *s;
-    if (*s == '!' && strchr("~+-^=", s[1]) && s[2] != '@') {
-      strcpy(p, s + 2);
-      return uhost;
-    }
-    s++;
-  }
-
-  *p = 0;
-  return uhost;
 }
 
 struct userrec *check_dcclist_hand(char *handle)
@@ -323,7 +298,6 @@ struct userrec *get_user_by_host(char *host)
   }
   cache_miss++;
   strlcpy(host2, host, sizeof host2);
-  host = fixfrom(host);
   for (u = userlist; u; u = u->next) {
     q = get_user(&USERENTRY_HOSTS, u);
     for (; q; q = q->next) {
@@ -655,13 +629,6 @@ struct userrec *adduser(struct userrec *bu, char *handle, char *host,
   /* Strip out commas -- they're illegal */
   if (host && host[0]) {
     char *p;
-
-    /* About this fixfrom():
-     *   We should use this fixfrom before every call of adduser()
-     *   but its much easier to use here...  (drummer)
-     *   Only use it if we have a host :) (dw)
-     */
-    host = fixfrom(host);
 
     p = strchr(host, ',');
     while (p != NULL) {
