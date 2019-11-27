@@ -43,4 +43,4 @@ distclean: clean
  .././filesys.mod/dbcompat.h .././filesys.mod/filelist.h \
  .././filesys.mod/files.c ../../../src/stat.h .././filesys.mod/filedb3.c \
  .././filesys.mod/tclfiles.c .././filesys.mod/dbcompat.c \
- .././filesys.mod/filelist.c ../../../list.h
+ .././filesys.mod/filelist.c ../../../src/list.h

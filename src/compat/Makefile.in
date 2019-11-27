@@ -79,4 +79,4 @@ snprintf.o: snprintf.c ../../src/main.h ../../config.h ../../eggint.h \
  ../../src/compat/snprintf.h ../../src/compat/inet_pton.h \
  ../../src/compat/gethostbyname2.h ../../src/compat/strlcpy.h snprintf.h \
  ../../src/list.h
-strlcpy.o: strlcpy.c ../../config.h ../../list.h
+strlcpy.o: strlcpy.c ../../config.h ../../src/list.h

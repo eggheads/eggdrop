@@ -37,4 +37,4 @@ distclean: clean
  ../../../src/compat/inet_aton.h ../../../src/compat/snprintf.h \
  ../../../src/compat/inet_pton.h ../../../src/compat/gethostbyname2.h \
  ../../../src/compat/strlcpy.h ../../../src/mod/modvals.h \
- ../../../src/tandem.h .././console.mod/console.h ../../../list.h
+ ../../../src/tandem.h .././console.mod/console.h ../../../src/list.h

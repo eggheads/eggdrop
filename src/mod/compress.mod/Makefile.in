@@ -43,4 +43,4 @@ distclean: clean
  ../../../src/compat/strlcpy.h ../../../src/mod/modvals.h \
  ../../../src/tandem.h ../../../src/mod/share.mod/share.h \
  .././compress.mod/compress.h .././compress.mod/tclcompress.c \
- ../../../list.h
+ ../../../src/list.h

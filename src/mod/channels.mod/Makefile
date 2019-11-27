@@ -40,4 +40,4 @@ distclean: clean
  ../../../src/tandem.h .././channels.mod/channels.h \
  .././channels.mod/cmdschan.c .././channels.mod/tclchan.c \
  .././channels.mod/userchan.c .././channels.mod/udefchan.c \
- ../../../list.h
+ ../../../src/list.h
