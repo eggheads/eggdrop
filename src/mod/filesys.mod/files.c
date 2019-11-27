@@ -531,15 +531,16 @@ static void cmd_get(int idx, char *par)
 
 static void cmd_file_help(int idx, char *par)
 {
+  int l;
   char *s;
   struct flag_record fr = { FR_GLOBAL | FR_CHAN, 0, 0, 0, 0, 0 };
 
   get_user_flagrec(dcc[idx].user, &fr, dcc[idx].u.file->chat->con_chan);
   if (par[0]) {
     putlog(LOG_FILES, "*", "files: #%s# help %s", dcc[idx].nick, par);
-    s = nmalloc(strlen(par) + 9);
+    l = snprintf(NULL, 0, "filesys/%s", par);
+    s = nmalloc(l + 1);
     sprintf(s, "filesys/%s", par);
-    s[256] = 0;
     tellhelp(idx, s, &fr, 0);
     my_free(s);
   } else {
