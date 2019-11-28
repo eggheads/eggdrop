@@ -115,7 +115,7 @@ static int pbkdf2_verify_pass(const char *pass, const char *encrypted)
     goto verify_pass_out;
   }
   /* match, check if we suggest re-hashing */
-  if (PBKDF2CONF_CYCLES > rounds || PBKDF2CONF_DIGESTIDX != digest_idx)
+  if (PBKDF2CONF_ROUNDS > rounds || PBKDF2CONF_DIGESTIDX != digest_idx)
     ret = 2;
   else
     ret = 1;

@@ -51,7 +51,7 @@ static int maxdigestlen = 1;
 /* Salt length in bytes, will be base64 encoded after (so, pick something divisible by 3) */
 #define PBKDF2CONF_SALTLEN 24
 /* Rounds for PBKDF2 */
-#define PBKDF2CONF_CYCLES 5000
+#define PBKDF2CONF_ROUNDS 5000
 
 /* Skip "" entry at the end */
 #define PBKDF2CRYPT_DIGEST_IDX_INVALID(idx) ((idx) < 0 || (idx) > sizeof digests / sizeof *digests - 2)
@@ -62,12 +62,12 @@ static int maxdigestlen = 1;
 static int pbkdf2crypt_init(void)
 {
   int i;
-  if (PBKDF2CONF_CYCLES <= 0) {
-    putlog(LOG_MISC, "*", "Cycle must be greater than 0");
+  if (PBKDF2CONF_ROUNDS <= 0) {
+    putlog(LOG_MISC, "*", "rounds must be greater than 0");
     return -1;
   }
-  if (PBKDF2CONF_CYCLES > INT_MAX) {
-    putlog(LOG_MISC, "*", "Cycle must be equal to or less than %i", INT_MAX);
+  if (PBKDF2CONF_ROUNDS > INT_MAX) {
+    putlog(LOG_MISC, "*", "rounds must be equal to or less than %i", INT_MAX);
     return -1;
   }
   OpenSSL_add_all_digests();
@@ -188,5 +188,5 @@ static int pbkdf2crypt_pass(const char *pass, char *out, int outlen)
     return pbkdf2crypt_get_default_size();
   if (RAND_bytes(salt, sizeof salt) != 1)
     return -3;
-  return pbkdf2crypt_verify_pass(pass, PBKDF2CONF_DIGESTIDX, salt, sizeof salt, PBKDF2CONF_CYCLES, out, outlen);
+  return pbkdf2crypt_verify_pass(pass, PBKDF2CONF_DIGESTIDX, salt, sizeof salt, PBKDF2CONF_ROUNDS, out, outlen);
 }
