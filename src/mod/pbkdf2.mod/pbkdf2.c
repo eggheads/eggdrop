@@ -63,13 +63,14 @@ static char *pbkdf2_encrypt_pass(const char *pass)
  * -1 - cannot parse hash
  * 0 - no match
  * 1 - match
- * 2 - match, suggest re-hashing password (more cycles, new algorithm, ...)
- * hash = "$PBKDF2$<digestID>$rounds=<cycles>$<salt>$<hash>$"
+ * 2 - match, suggest re-hashing password (more rounds, new algorithm, ...)
+ * PHC string format
+ * hash = "$pbkdf2-<digest>$rounds=<rounds>$<salt>$<hash>"
  */
 static int pbkdf2_verify_pass(const char *pass, const char *encrypted)
 {
   int digest_idx, bufsize, ret, b64saltlen, saltlen;
-  long cycles;
+  long rounds;
   char *buf;
   unsigned char *salt;
   const char *b64salt, *hash = encrypted;
@@ -86,8 +87,8 @@ static int pbkdf2_verify_pass(const char *pass, const char *encrypted)
   if (!hash)
     return -1;
   /* TODO: check/skip "rounds=" ? */
-  cycles = strtol(hash+1, (char **) &b64salt, 16);
-  if (cycles > INT_MAX || cycles <= 0 || b64salt[0] != '$')
+  rounds = strtol(hash+1, (char **) &b64salt, 16);
+  if (rounds > INT_MAX || rounds <= 0 || b64salt[0] != '$')
     return -1;
 
   hash = strchr(++b64salt, '$');
@@ -96,7 +97,7 @@ static int pbkdf2_verify_pass(const char *pass, const char *encrypted)
   if (!hash || !++hash)
     return -1;
 
-  bufsize = pbkdf2crypt_get_size(digests[digest_idx].digest, saltlen);
+  bufsize = pbkdf2crypt_get_size(digests[digest_idx].name, digests[digest_idx].digest, saltlen);
   buf = nmalloc(bufsize);
   salt = nmalloc(saltlen);
   b64saltlen = b64_pton(b64salt, salt, saltlen);
@@ -105,7 +106,7 @@ static int pbkdf2_verify_pass(const char *pass, const char *encrypted)
     goto verify_pass_out;
   }
 
-  if (pbkdf2crypt_verify_pass(pass, digest_idx, (unsigned char *)salt, saltlen, cycles, buf, bufsize) != 0) {
+  if (pbkdf2crypt_verify_pass(pass, digest_idx, (unsigned char *)salt, saltlen, rounds, buf, bufsize) != 0) {
     ret = -1;
     goto verify_pass_out;
   }
@@ -114,7 +115,7 @@ static int pbkdf2_verify_pass(const char *pass, const char *encrypted)
     goto verify_pass_out;
   }
   /* match, check if we suggest re-hashing */
-  if (PBKDF2CONF_CYCLES > cycles || PBKDF2CONF_DIGESTIDX != digest_idx)
+  if (PBKDF2CONF_CYCLES > rounds || PBKDF2CONF_DIGESTIDX != digest_idx)
     ret = 2;
   else
     ret = 1;

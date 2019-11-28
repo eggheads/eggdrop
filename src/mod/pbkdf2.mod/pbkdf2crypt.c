@@ -42,7 +42,7 @@ static int pbkdf2crypt_base64_dec_len(const unsigned char *str, int len);
 static struct {
   const char name[16];
   const EVP_MD *digest;
-} digests[] = {{"SHA256"}, {""}};
+} digests[] = {{"sha512"}, {"sha256"}, {""}};
 
 static int maxdigestlen = 1;
 
@@ -95,15 +95,16 @@ static int pbkdf2crypt_base64_dec_len(const unsigned char *str, int len)
   return len / 4 * 3 - pad;
 }
 
-static int pbkdf2crypt_get_size(const EVP_MD *digest, int saltlen)
+static int pbkdf2crypt_get_size(const char* digest_name, const EVP_MD *digest, int saltlen)
 {
-  /* hash = "$PBKDF2$<digestID>$rounds=<cycles>$<salt>$<hash>$" */
-  return strlen("$PBKDF2$") + strlen("FF") + 1 + strlen("rounds=FFFFFFFF") + 1 + PBKDF2CRYPT_BASE64_ENC_LEN(saltlen) + 1 + PBKDF2CRYPT_BASE64_ENC_LEN(EVP_MD_size(digest)) + 1;
+  /* PHC string format */
+  /* hash = "$pbkdf2-<digest>$rounds=<rounds>$<salt>$<hash>" */
+  return strlen("$pbkdf2-") + strlen(digest_name) + 1 + strlen("rounds=FFFFFFFF") + 1 + PBKDF2CRYPT_BASE64_ENC_LEN(saltlen) + 1 + PBKDF2CRYPT_BASE64_ENC_LEN(EVP_MD_size(digest));
 }
 
 static int pbkdf2crypt_get_default_size(void)
 {
-  return pbkdf2crypt_get_size(digests[PBKDF2CONF_DIGESTIDX].digest, PBKDF2CONF_SALTLEN);
+  return pbkdf2crypt_get_size(digests[PBKDF2CONF_DIGESTIDX].name, digests[PBKDF2CONF_DIGESTIDX].digest, PBKDF2CONF_SALTLEN);
 }
 
 static void bufcount(char **buf, int *buflen, int bytes)
@@ -122,7 +123,7 @@ static int pbkdf2crypt_digestidx_by_string(const char *digest_idx_str)
 }
 
 /* Write base64 PBKDF2 hash */
-static int pbkdf2crypt_make_base64_hash(const EVP_MD *digest, const char *pass, int passlen, const unsigned char *salt, int saltlen, int cycles, char *out, int outlen)
+static int pbkdf2crypt_make_base64_hash(const EVP_MD *digest, const char *pass, int passlen, const unsigned char *salt, int saltlen, int rounds, char *out, int outlen)
 {
   static unsigned char *buf;
   int digestlen;
@@ -131,7 +132,7 @@ static int pbkdf2crypt_make_base64_hash(const EVP_MD *digest, const char *pass, 
   digestlen = EVP_MD_size(digest);
   if (outlen < PBKDF2CRYPT_BASE64_ENC_LEN(digestlen))
     return -2;
-  if (!PKCS5_PBKDF2_HMAC(pass, passlen, salt, saltlen, cycles, digest, maxdigestlen, buf))
+  if (!PKCS5_PBKDF2_HMAC(pass, passlen, salt, saltlen, rounds, digest, maxdigestlen, buf))
     return -5;
   if (b64_ntop(buf, digestlen, out, outlen) < 0)
     return -5;
@@ -139,9 +140,9 @@ static int pbkdf2crypt_make_base64_hash(const EVP_MD *digest, const char *pass, 
 }
 
 /* Encrypt a password with flexible settings for verification.
- * Returns 0 on success, -1 on digest not found, -2 on outbuffer too small, -3 on salt error, -4 on cycles outside range, -5 on pbkdf2 error
+ * Returns 0 on success, -1 on digest not found, -2 on outbuffer too small, -3 on salt error, -4 on rounds outside range, -5 on pbkdf2 error
  */
-static int pbkdf2crypt_verify_pass(const char *pass, int digest_idx, const unsigned char *salt, int saltlen, int cycles, char *out, int outlen)
+static int pbkdf2crypt_verify_pass(const char *pass, int digest_idx, const unsigned char *salt, int saltlen, int rounds, char *out, int outlen)
 {
   int size, ret;
   const EVP_MD *digest;
@@ -151,7 +152,7 @@ static int pbkdf2crypt_verify_pass(const char *pass, int digest_idx, const unsig
   digest = digests[digest_idx].digest;
   if (!digest)
     return -1;
-  size = pbkdf2crypt_get_size(digest, saltlen);
+  size = pbkdf2crypt_get_size(digests[digest_idx].name, digest, saltlen);
   if (!out)
     return size;
   /* Sanity check */
@@ -159,20 +160,19 @@ static int pbkdf2crypt_verify_pass(const char *pass, int digest_idx, const unsig
     return -2;
   if (saltlen <= 0)
     return -3;
-  if (cycles <= 0)
+  if (rounds <= 0)
     return -4;
 
-  bufcount(&out, &outlen, snprintf((char *) out, outlen, "$PBKDF2$%02lX$rounds=%i$", (unsigned long) digest_idx, (unsigned int) cycles));
+  bufcount(&out, &outlen, snprintf((char *) out, outlen, "$pbkdf2-%s$rounds=%i$", digests[digest_idx].name, (unsigned int) rounds));
   ret = b64_ntop(salt, saltlen, out, outlen);
   if (ret < 0) {
     return -2;
   }
   bufcount(&out, &outlen, PBKDF2CRYPT_BASE64_ENC_LEN(saltlen));
   bufcount(&out, &outlen, (out[0] = '$', 1));
-  ret = pbkdf2crypt_make_base64_hash(digests[digest_idx].digest, pass, strlen(pass), salt, saltlen, cycles, out, outlen);
+  ret = pbkdf2crypt_make_base64_hash(digests[digest_idx].digest, pass, strlen(pass), salt, saltlen, rounds, out, outlen);
   if (ret != 0)
     return ret;
-  out[PBKDF2CRYPT_BASE64_ENC_LEN(EVP_MD_size(digest))] = '$';
   return 0;
 }
 
