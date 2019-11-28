@@ -75,9 +75,9 @@ static int pbkdf2_verify_pass(const char *pass, const char *encrypted)
   unsigned char *salt;
   const char *b64salt, *hash = encrypted;
 
-  if (strncmp(hash, "$PBKDF2$", strlen("$PBKDF2$")))
+  if (strncmp(hash, "$pbkdf2", strlen("$pbkdf2")))
     return -1;
-  hash += strlen("$PBKDF2$");
+  hash += strlen("$pbkdf2");
 
   digest_idx = pbkdf2crypt_digestidx_by_string(hash);
   if (PBKDF2CRYPT_DIGEST_IDX_INVALID(digest_idx))
