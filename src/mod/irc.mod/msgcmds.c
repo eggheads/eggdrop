@@ -144,11 +144,9 @@ static int msg_pass(char *nick, char *host, struct userrec *u, char *par)
   } else
     new = old;
   putlog(LOG_CMDS, "*", "(%s!%s) !%s! PASS...", nick, host, u->handle);
-  if (strlen(new) > 15)
-    new[15] = 0;
-  if (strlen(new) < 6) {
-    dprintf(DP_HELP, "NOTICE %s :%s\n", nick, IRC_PASSFORMAT);
-    return 0;
+  if (strlen(new) > PASSWORDLEN) {
+    new[PASSWORDLEN] = 0;
+    dprintf(DP_HELP, "NOTICE %s :Password cut to %i chars\n", nick, PASSWORDLEN);
   }
   set_user(&USERENTRY_PASS, u, new);
   dprintf(DP_HELP, "NOTICE %s :%s '%s'.\n", nick,
