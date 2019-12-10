@@ -46,8 +46,7 @@ extern char botnetnick[];
 extern Tcl_Interp *interp;
 extern time_t now;
 
-char userfile[121] = "";        /* where the user records are stored */
-int ignore_time = 10;           /* how many minutes will ignores last? */
+int ignore_time = 10; /* how many minutes will ignores last? */
 
 /* is this nick!user@host being ignored? */
 int match_ignore(char *uhost)
