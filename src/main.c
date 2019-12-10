@@ -866,9 +866,8 @@ int mainloop(int toplevel)
           }
           dcc[idx].type->activity(idx, buf, i);
         } else
-          putlog(LOG_MISC, "*",
-                 "!!! untrapped dcc activity: type %s, sock %d",
-                 dcc[idx].type->name, dcc[idx].sock);
+          putlog(LOG_MISC, "*", "ERROR: untrapped dcc activity: type %s, sock %d",
+                 dcc[idx].type ? dcc[idx].type->name : "UNKNOWN", dcc[idx].sock);
         break;
       }
   } else if (xx == -1) {        /* EOF from someone */
