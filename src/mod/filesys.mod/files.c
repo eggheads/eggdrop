@@ -345,9 +345,8 @@ static void cmd_chdir(int idx, char *msg)
     my_free(s);
     return;
   }
-  strncpy(dcc[idx].u.file->dir, s, 160);
+  strlcpy(dcc[idx].u.file->dir, s, sizeof dcc[idx].u.file->dir);
   my_free(s);
-  dcc[idx].u.file->dir[160] = 0;
   set_user(&USERENTRY_DCCDIR, dcc[idx].user, dcc[idx].u.file->dir);
   putlog(LOG_FILES, "*", "files: #%s# cd /%s", dcc[idx].nick,
          dcc[idx].u.file->dir);
