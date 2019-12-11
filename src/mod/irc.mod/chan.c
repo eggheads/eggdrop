@@ -728,7 +728,7 @@ static void recheck_channel_modes(struct chanset_t *chan)
     else if ((mns & CHANQUIET) && (cur & CHANQUIET))
       add_mode(chan, '-', 'q', "");
     if ((chan->limit_prot != 0) && (chan->channel.maxmembers == 0)) {
-      char s[50];
+      char s[21];
 
       sprintf(s, "%d", chan->limit_prot);
       add_mode(chan, '+', 'l', s);
