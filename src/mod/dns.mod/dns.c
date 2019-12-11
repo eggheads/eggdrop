@@ -165,7 +165,7 @@ static char *dns_change(ClientData cdata, Tcl_Interp *irp,
     myres.nscount = 0;
     for (i = 0; i < lc; i++) {
       if (myres.nscount >= MAXNS) {
-        putlog(LOG_MISC, "*", "WARNING: %i dns-servers configured but kernel-defined"
+        putlog(LOG_MISC, "*", "WARNING: %i dns-servers configured but kernel-defined "
                "limit is %i, ignoring extra servers\n", lc, MAXNS);
         break;
       }
