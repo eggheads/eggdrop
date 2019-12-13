@@ -10,6 +10,7 @@ jobs:
     name: compile test
     runs-on: ubuntu-latest
     steps:
+    - uses: actions/checkout@v1
     - name: install dependencies
       run: apt-get install tcl tcl-dev openssl libssl-dev
     - name: configure
