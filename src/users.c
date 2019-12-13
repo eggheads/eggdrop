@@ -756,7 +756,7 @@ int readuserfile(char *file, struct userrec **ret)
 
                 cr->next = u->chanrec;
                 u->chanrec = cr;
-                strlcpy(cr->channel, chname, 80);
+                strlcpy(cr->channel, chname, sizeof cr->channel);
                 cr->laston = atoi(st);
                 cr->flags = fr.chan;
                 cr->flags_udef = fr.udef_chan;
