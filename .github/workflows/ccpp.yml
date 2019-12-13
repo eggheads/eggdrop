@@ -1,0 +1,22 @@
+name: C/C++ CI
+
+on:
+  pull_request:
+    branches: 
+      - develop
+
+jobs:
+  build:
+    name: compile test
+    runs-on: ubuntu-latest
+    steps:
+    - name: install dependencies
+      run: apt-get install tcl tcl-dev openssl libssl-dev
+    - name: configure
+      run: ./configure
+    - name: make config
+      run: make config
+    - name: make
+      run: make
+    - name: make install
+      run: make install
