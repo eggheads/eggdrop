@@ -1155,14 +1155,14 @@ static int tryauthenticate(char *from, char *msg)
   #endif
   unsigned char dst[((MAX((sizeof src), 400) + 2) / 3) << 2] = "";
 #ifdef TLS
-  size_t olen;
-  unsigned char *dst2;
-  unsigned int olen2;
-  FILE *fp;
-  EVP_PKEY *privateKey;
-  int ret;
 #ifdef HAVE_EVP_PKEY_GET1_EC_KEY
   EC_KEY *eckey;
+  int ret;
+  size_t olen;
+  unsigned int olen2;
+  unsigned char dst2;
+  FILE *fp;
+  EVP_PKEY *privateKey;
 #endif /* HAVE_EVP_PKEY_GET1_EC_KEY */
 #endif /* TLS */
 
