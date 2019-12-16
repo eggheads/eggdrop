@@ -12,7 +12,7 @@ jobs:
     steps:
     - uses: actions/checkout@v1
     - name: install dependencies
-      run: apt-get install tcl tcl-dev openssl libssl-dev
+      run: sudo apt-get install tcl tcl-dev openssl libssl-dev
     - name: configure
       run: ./configure
     - name: make config
