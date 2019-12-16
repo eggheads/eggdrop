@@ -997,11 +997,11 @@ static void queue_server(int which, char *msg, int len)
    removed from Eggdrop.
 */
 static void old_add_server(const char *ss) {
-  char name[121] = "";
+  char name[256] = "";
   char port[7] = "";
   char pass[121] = "";
-  if (!sscanf(ss, "[%255[0-9.A-F:a-f]]:%10[+0-9]:%120[^\r\n]", name, port, pass) &&
-      !sscanf(ss, "%255[^:]:%10[+0-9]:%120[^\r\n]", name, port, pass))
+  if (!sscanf(ss, "[%255[0-9.A-F:a-f]]:%6[+0-9]:%120[^\r\n]", name, port, pass) &&
+      !sscanf(ss, "%255[^:]:%6[+0-9]:%120[^\r\n]", name, port, pass))
     return;
   add_server(name, port, pass);
 }
