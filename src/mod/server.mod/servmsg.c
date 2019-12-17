@@ -1154,7 +1154,6 @@ static int tryauthenticate(char *from, char *msg)
     #define MAX(a,b) (((a)>(b))?(a):(b))
   #endif
   unsigned char dst[((MAX((sizeof src), 400) + 2) / 3) << 2] = "";
-#ifdef TLS
 #ifdef HAVE_EVP_PKEY_GET1_EC_KEY
   EC_KEY *eckey;
   int ret;
@@ -1164,8 +1163,6 @@ static int tryauthenticate(char *from, char *msg)
   FILE *fp;
   EVP_PKEY *privateKey;
 #endif /* HAVE_EVP_PKEY_GET1_EC_KEY */
-#endif /* TLS */
-
   putlog(LOG_SERV, "*", "SASL: got AUTHENTICATE %s", msg);
   if (msg[0] == '+') {
     s = src;
@@ -1247,11 +1244,11 @@ static int tryauthenticate(char *from, char *msg)
     putlog(LOG_SERV, "*", "SASL: put AUTHENTICATE Response %s", dst);
     dprintf(DP_MODE, "AUTHENTICATE %s\n", dst);
 #else /* HAVE_EVP_PKEY_GET1_EC_KEY */
-    putlog(LOG_DEBUG, "*", "SASL: TLS libs without EC, try PLAIN method");
+    putlog(LOG_DEBUG, "*", "SASL: TLS libs missing EC support, try PLAIN or EXTERNAL method");
     return 1;
 #endif /* HAVE_EVP_PKEY_GET1_EC_KEY */
 #else /* TLS */
-    putlog(LOG_DEBUG, "*", "SASL: TLS libs not present for authentication, try PLAIN method");
+    putlog(LOG_DEBUG, "*", "SASL: TLS libs not present, try PLAIN method");
     return 1;
 #endif /* TLS */
   }
