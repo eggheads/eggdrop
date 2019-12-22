@@ -1,5 +1,5 @@
 TLS support
-Last revised: Oct 17, 2010
+Last revised: Jan 2, 2020
 
 ===========
 TLS support
@@ -36,9 +36,9 @@ custom one, as they take precedence over any system-wide paths.
 Usage
 -----
 
-By default, without additional configuration, TLS support will provide
-opportunistic encryption for botnet links. For other connection types,
-TLS must be requested explicitly.
+By default and before 1.9.0, without additional configuration, TLS support
+will provide opportunistic encryption for botnet links. From 1.9.0 onward
+or for other connection types, TLS must be requested explicitly.
 
 Secure connections are created the same way as plaintext ones. The only
 difference is that you must prefix the port number with a plus sign.
@@ -62,23 +62,23 @@ ssl-certificate for authentication.
 Botnet
 ^^^^^^
 
-Eggdrop can use TLS connections to protect botnet links if it is compiled with TLS support. TLS-enabled 1.8 bots are backwards compatible with bots that do not have TLS, whether because they are an earlier version or they were not compiled with TLS libraries. Depending on how the user configures the botnet, Eggdrop will use one of two methods to create a TLS connection: raw TLS sockets, and starttls. The difference is that a socket listening for TLS will first create a TLS connection before exchanging any eggdrop-specific data; a starttls connection will first establish the botnet link in the clear, then upgrade to a TLS connection (This means the nickname and, since v1.3.29, a challenge/response password hash are sent before TLS negotiation takes place- not the actual plaintext password).
+Eggdrop can use TLS connections to protect botnet links if it is compiled with TLS support. TLS-enabled 1.9 bots are backwards compatible with bots that do not have TLS, whether because they are an earlier version or they were not compiled with TLS libraries. Before 1.9 two methods were used to create a TLS connection, depending on how the user configured the botnet: raw TLS sockets, and starttls. The difference was that a socket listening for TLS will first create a TLS connection before exchanging any eggdrop-specific data; a starttls connection will first establish the botnet link in the clear, then upgrade to a TLS connection (This means the nickname and, since v1.3.29, a challenge/response password hash are sent before TLS negotiation takes place- not the actual plaintext password). Since 1.9 only raw TLS sockets are used.
 
-By prefixing a listen port in the Eggdrop configuration with a plus (+), that specifies that port as a TLS-enabled port, and will only accept TLS connections (no plain text connections will be allowed). Additionally, Eggdrop 1.8 has starttls functionality, where a plain text connection can first be made to a non-TLS port (ie, one that is not prefixed with a plus) and then upgraded to a TLS connection. Currently, Eggdrop automatically attempts a starttls upgrade on all botnet connections. With two TLS-enabled Eggdrops, it graphically looks like this:
+By prefixing a listen port in the Eggdrop configuration with a plus (+), that specifies that port as a TLS-enabled port, and will only accept TLS connections (no plain text connections will be allowed). Additionally, Eggdrop 1.8 has starttls functionality, where a plain text connection can first be made to a non-TLS port (ie, one that is not prefixed with a plus) and then upgraded to a TLS connection. In Eggdrop 1.8 an automatic attempt for a starttls upgrade on all botnet connections was made, since 1.9 this can only be done with the starttls Tcl/bot command. With two TLS-enabled Eggdrops, it graphically looks like this:
 
 +------------------------------+----------------------------+------------------------------+
 | Leaf bot sets hub port as... | and Hub bot config uses... | the connection will...       |
 +------------------------------+----------------------------+------------------------------+
-| port                         | listen port                | upgrade to TLS with starttls |
+| port                         | listen port                | be plain but can be upgraded |
+|                              |                            | to TLS manually with the     |
+|                              |                            | starttls Tcl/bot command     |
 +------------------------------+----------------------------+------------------------------+
-| port                         | listen +port               | connect with TLS             |
+| port                         | listen +port               | fail as hub only wants TLS   |
 +------------------------------+----------------------------+------------------------------+
-| +port                        | listen port                | fail. This is a known issue. |
+| +port                        | listen port                | fail as leaf only wants TLS  |
 +------------------------------+----------------------------+------------------------------+
 | +port                        | listen +port               | connect with TLS             |
 +------------------------------+----------------------------+------------------------------+
-
-* Currently, adding a bot with +port and connecting to a hub listening on port does not work. This will be remedied in a future release.
 
 To explicitly require all links to a hub be TLS-only (ie, prevent any plain text connection from being allowed), prefix the listen port in the hub configuration file with a plus (+) sign. Conversely, to force a leaf to only allow TLS (not plain text) connections with a hub, you must prefix the hub's listen port with a plus when adding it to the leaf via +bot/chaddr commands. If TLS negotiation fails and either the hub or leaf is set to require TLS, the connection is deliberately aborted and no clear text is ever sent by the TLS-requiring party.
 
