@@ -571,7 +571,7 @@ static int tcl_isignore STDVAR
 }
 
 static time_t get_expire_time(Tcl_Interp * irp, const char *s) { 
-  long expire_foo = atol(s);;
+  long expire_foo = atol(s);
 
   if (expire_foo == 0)
     return 0;
