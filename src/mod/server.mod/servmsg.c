@@ -1159,7 +1159,7 @@ static int tryauthenticate(char *from, char *msg)
   int ret;
   size_t olen;
   unsigned int olen2;
-  unsigned char dst2;
+  unsigned char *dst2;
   FILE *fp;
   EVP_PKEY *privateKey;
 #endif /* HAVE_EVP_PKEY_GET1_EC_KEY */
