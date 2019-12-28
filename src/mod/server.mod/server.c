@@ -149,7 +149,9 @@ static int burst;
 /* Available sasl mechanisms. */
 char const *SASL_MECHANISMS[SASL_MECHANISM_NUM] = {
   [SASL_MECHANISM_PLAIN]                    = "PLAIN",
+#ifdef HAVE_EVP_PKEY_GET1_EC_KEY
   [SASL_MECHANISM_ECDSA_NIST256P_CHALLENGE] = "ECDSA-NIST256P-CHALLENGE",
+#endif
   [SASL_MECHANISM_EXTERNAL]                 = "EXTERNAL"
 };
 
@@ -1236,6 +1238,7 @@ static int server_5char STDVAR
 {
   Function F = (Function) cd;
 
+#endif
   BADARGS(6, 6, " nick user@host handle dest/channel text");
 
   CHECKVALIDITY(server_5char);
