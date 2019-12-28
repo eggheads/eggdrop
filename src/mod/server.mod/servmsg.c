@@ -1182,6 +1182,7 @@ static int tryauthenticate(char *from, char *msg)
       }
       /* TODO: what about olen we used for mbedtls_base64_encode() ? */
     }
+#ifdef HAVE_EVP_PKEY_GET1_EC_KEY
     else if (sasl_mechanism == SASL_MECHANISM_ECDSA_NIST256P_CHALLENGE) {
       strcpy(s, sasl_username);
       s += strlen(sasl_username) + 1;
@@ -1192,6 +1193,7 @@ static int tryauthenticate(char *from, char *msg)
         return 1;
       }
     }
+#endif
     else { /* sasl_mechanism == SASL_MECHANISM_EXTERNAL */
       dst[0] = '+';
       dst[1] = 0;
