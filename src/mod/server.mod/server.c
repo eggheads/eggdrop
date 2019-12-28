@@ -1238,7 +1238,6 @@ static int server_5char STDVAR
 {
   Function F = (Function) cd;
 
-#endif
   BADARGS(6, 6, " nick user@host handle dest/channel text");
 
   CHECKVALIDITY(server_5char);
