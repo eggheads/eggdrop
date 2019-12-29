@@ -540,8 +540,8 @@ static void show_help() {
   printf("Usage: %s [options] [config-file]\n\n"
          "Options:\n"
          "-n  Don't background; send all log entries to console.\n"
-         "-c Don't background; display channel stats every 10 seconds.\n"
-         "-t Don't background; use terminal to simulate DCC chat.\n"
+         "-c  Don't background; display channel stats every 10 seconds.\n"
+         "-t  Don't background; use terminal to simulate DCC chat.\n"
          "-m  Create userfile.\n"
          "-h  Show this help and exit.\n"
          "-v  Show version info and exit.\n\n", argv[0]);
