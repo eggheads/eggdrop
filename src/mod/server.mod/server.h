@@ -124,9 +124,7 @@ enum {
 /* Available sasl mechanisms. */
 enum {
   SASL_MECHANISM_PLAIN,
-#ifdef HAVE_EVP_PKEY_GET1_EC_KEY
   SASL_MECHANISM_ECDSA_NIST256P_CHALLENGE,
-#endif
   SASL_MECHANISM_EXTERNAL,
   SASL_MECHANISM_NUM
 };
@@ -134,9 +132,7 @@ enum {
 /* Available sasl mechanisms. */
 char const *SASL_MECHANISMS[SASL_MECHANISM_NUM] = {
   [SASL_MECHANISM_PLAIN]                    = "PLAIN",
-#ifdef HAVE_EVP_PKEY_GET1_EC_KEY
   [SASL_MECHANISM_ECDSA_NIST256P_CHALLENGE] = "ECDSA-NIST256P-CHALLENGE",
-#endif
   [SASL_MECHANISM_EXTERNAL]                 = "EXTERNAL"
 };
 

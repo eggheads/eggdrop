@@ -2146,19 +2146,6 @@ char *server_start(Function *global_funcs)
     module_undepend(MODULE_NAME);
     return "This module requires Eggdrop 1.8.0 or later.";
   }
-/* Some pre-compiled OpenSSL libs (SunOS, I'm looking at you) omit ECC keys
-   due to export restrictions. This prevents us from being able to use the
-   NIST256P method */
-#ifdef TLS
-#ifndef HAVE_EVP_PKEY_GET1_EC_KEY
-if (sasl) {
-  if (sasl_mechanism == SASL_MECHANISM_ECDSA_NIST256P_CHALLENGE) {
-    fatal("ERROR: NIST256P functionality missing from OpenSSL libs, please "\
-        "choose a different SASL method", 0);
-  }
-}
-#endif /* HAVE_EVP_PKEY_GET!-EC_KEY */
-#endif /* TLS */
 
   /* Fool bot in reading the values. */
   tcl_eggserver(NULL, interp, "servers", NULL, 0);
@@ -2203,6 +2190,16 @@ if (sasl) {
   my_tcl_strings[0].buf = botname;
   add_tcl_strings(my_tcl_strings);
   add_tcl_ints(my_tcl_ints);
+#ifdef TLS
+#ifndef HAVE_EVP_PKEY_GET1_EC_KEY
+if (sasl) {
+  if (sasl_mechanism == SASL_MECHANISM_ECDSA_NIST256P_CHALLENGE) {
+    fatal("ERROR: NIST256P functionality missing from OpenSSL libs, please "\
+        "choose a different SASL method", 0);
+  }
+}
+#endif /* HAVE_EVP_PKEY_GET1_EC_KEY */
+#endif /* TLS */
   add_tcl_commands(my_tcl_cmds);
   add_tcl_coups(my_tcl_coups);
   add_hook(HOOK_SECONDLY, (Function) server_secondly);
