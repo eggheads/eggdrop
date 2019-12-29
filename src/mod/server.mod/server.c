@@ -146,16 +146,6 @@ static int burst;
 #include "cmdsserv.c"
 #include "tclserv.c"
 
-/* Available sasl mechanisms. */
-char const *SASL_MECHANISMS[SASL_MECHANISM_NUM] = {
-  [SASL_MECHANISM_PLAIN]                    = "PLAIN",
-#ifdef HAVE_EVP_PKEY_GET1_EC_KEY
-  [SASL_MECHANISM_ECDSA_NIST256P_CHALLENGE] = "ECDSA-NIST256P-CHALLENGE",
-#endif
-  [SASL_MECHANISM_EXTERNAL]                 = "EXTERNAL"
-};
-
-
 static void write_to_server(char *s, unsigned int len) {
   char *s2 = nmalloc(len + 2);
 
@@ -2156,6 +2146,19 @@ char *server_start(Function *global_funcs)
     module_undepend(MODULE_NAME);
     return "This module requires Eggdrop 1.8.0 or later.";
   }
+/* Some pre-compiled OpenSSL libs (SunOS, I'm looking at you) omit ECC keys
+   due to export restrictions. This prevents us from being able to use the
+   NIST256P method */
+#ifdef TLS
+#ifndef HAVE_EVP_PKEY_GET1_EC_KEY
+if (sasl) {
+  if (sasl_mechanism == SASL_MECHANISM_ECDSA_NIST256P_CHALLENGE) {
+    fatal("ERROR: NIST256P functionality missing from OpenSSL libs, please "\
+        "choose a different SASL method", 0);
+  }
+}
+#endif /* HAVE_EVP_PKEY_GET!-EC_KEY */
+#endif /* TLS */
 
   /* Fool bot in reading the values. */
   tcl_eggserver(NULL, interp, "servers", NULL, 0);

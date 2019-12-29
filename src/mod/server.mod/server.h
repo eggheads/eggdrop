@@ -131,6 +131,14 @@ enum {
   SASL_MECHANISM_NUM
 };
 
-extern char const *SASL_MECHANISMS[];
+/* Available sasl mechanisms. */
+char const *SASL_MECHANISMS[SASL_MECHANISM_NUM] = {
+  [SASL_MECHANISM_PLAIN]                    = "PLAIN",
+#ifdef HAVE_EVP_PKEY_GET1_EC_KEY
+  [SASL_MECHANISM_ECDSA_NIST256P_CHALLENGE] = "ECDSA-NIST256P-CHALLENGE",
+#endif
+  [SASL_MECHANISM_EXTERNAL]                 = "EXTERNAL"
+};
+
 
 #endif /* _EGG_MOD_SERVER_SERVER_H */
