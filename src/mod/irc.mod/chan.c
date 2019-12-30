@@ -30,7 +30,6 @@ static int count_ctcp = 0;
 static time_t last_invtime = (time_t) 0L;
 static char last_invchan[CHANNELLEN + 1] = "";
 
-
 /* ID length for !channels.
  */
 #define CHANNEL_ID_LEN 5
@@ -1520,12 +1519,12 @@ static int gotinvite(char *from, char *msg)
   invitee = newsplit(&msg);
   fixcolon(msg);
   nick = splitnick(&from);
-  check_tcl_invite(nick, from, invitee, msg);
+  check_tcl_invite(nick, from, msg, invitee);
 /* Because who needs RFCs? Freakin IRCv3... */
   if (!match_my_nick(invitee)) {
     putlog(LOG_DEBUG, "*", "Received invite notifiation for %s to %s by %s.",
             invitee, msg, nick);
-  return 1;
+    return 1;
   }
   if (!rfc_casecmp(last_invchan, msg))
     if (now - last_invtime < 30)

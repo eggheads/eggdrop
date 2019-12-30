@@ -750,7 +750,7 @@ static int invite_4char STDVAR
 {
   Function F = (Function) cd;
 
-  BADARGS(5, 5, " nick uhost invitee channel");
+  BADARGS(5, 5, " nick uhost channel invitee");
 
   CHECKVALIDITY(invite_4char);
   F(argv[1], argv[2], argv[3], argv[4]);
@@ -852,13 +852,16 @@ static void check_tcl_kick(char *nick, char *uhost, struct userrec *u,
                  MATCH_MASK | BIND_USE_ATTR | BIND_STACKABLE);
 }
 
-static void check_tcl_invite(char *nick, char *from, char *invitee, char *chan)
+static void check_tcl_invite(char *nick, char *from, char *chan, char *invitee)
 {
+  char args[512];
+
   Tcl_SetVar(interp, "_invite1", nick, 0);
   Tcl_SetVar(interp, "_invite2", from, 0);
-  Tcl_SetVar(interp, "_invite3", invitee, 0);
-  Tcl_SetVar(interp, "_invite4", chan, 0);
-  check_tcl_bind(H_invt, from, 0, " $_invite1 $_invite2 $_invite3 $_invite4",
+  Tcl_SetVar(interp, "_invite3", chan, 0);
+  Tcl_SetVar(interp, "_invite4", invitee, 0);
+  simple_sprintf(args, "%s %s", chan, invitee);
+  check_tcl_bind(H_invt, args, 0, " $_invite1 $_invite2 $_invite3 $_invite4",
                     MATCH_MASK | BIND_STACKABLE);
 }
 
