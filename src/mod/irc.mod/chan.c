@@ -1507,16 +1507,25 @@ static int got475(char *from, char *msg)
   return 0;
 }
 
-/* got invitation
+/* got invitation. Updated 2019 to handle IRCv3 invite-notify capability
+ * where invites seen may not be for you, so we have to check the target and
+ * and ignore if it is not for us.
  */
 static int gotinvite(char *from, char *msg)
 {
-  char *nick, *key;
+  char *nick, *key, *invitee;
   struct chanset_t *chan;
 
-  newsplit(&msg);
+  invitee = newsplit(&msg);
   fixcolon(msg);
   nick = splitnick(&from);
+  check_tcl_invite(nick, from, msg, invitee);
+/* Because who needs RFCs? Freakin IRCv3... */
+  if (!match_my_nick(invitee)) {
+    putlog(LOG_DEBUG, "*", "Received invite notifiation for %s to %s by %s.",
+            invitee, msg, nick);
+    return 1;
+  }
   if (!rfc_casecmp(last_invchan, msg))
     if (now - last_invtime < 30)
       return 0; /* Two invites to the same channel in 30 seconds? */
