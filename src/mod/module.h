@@ -445,7 +445,7 @@
 #define str_unescape ((void (*)(char *, const char))global[264])
 #define egg_strcatn ((int (*)(char *dst, const char *src, size_t max))global[265])
 #define clear_chanlist_member ((void (*)(const char *nick))global[266])
-#define fixfrom ((char *(*)(char *))global[267])
+/* was fixfrom */
 /* 268 - 271 */
 /* Please don't modify socklist directly, unless there's no other way.
  * Its structure might be changed, or it might be completely removed,

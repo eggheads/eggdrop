@@ -37,7 +37,7 @@ static int dns_retrydelay = 3;
 static int dns_cache = 86400;
 static int dns_negcache = 600;
 
-static char dns_servers[121] = "";
+static char dns_servers[144] = "";
 
 #include "coredns.c"
 
@@ -131,7 +131,7 @@ static tcl_ints dnsints[] = {
 };
 
 static tcl_strings dnsstrings[] = {
-  {"dns-servers", dns_servers, 120,           0},
+  {"dns-servers", dns_servers, 143,           0},
   {NULL,          NULL,          0,           0}
 };
 
@@ -139,7 +139,7 @@ static char *dns_change(ClientData cdata, Tcl_Interp *irp,
                            EGG_CONST char *name1,
                            EGG_CONST char *name2, int flags)
 {
-  char buf[121], *p;
+  char buf[sizeof dns_servers], *p;
   unsigned short port;
   int i, lc, code;
   EGG_CONST char **list, *slist;
@@ -164,6 +164,11 @@ static char *dns_change(ClientData cdata, Tcl_Interp *irp,
     /* reinitialize the list */
     myres.nscount = 0;
     for (i = 0; i < lc; i++) {
+      if (myres.nscount >= MAXNS) {
+        putlog(LOG_MISC, "*", "WARNING: %i dns-servers configured but kernel-defined "
+               "limit is %i, ignoring extra servers\n", lc, MAXNS);
+        break;
+      }
       if ((p = strchr(list[i], ':'))) {
         *p++ = 0;
         /* allow non-standard ports */
@@ -176,6 +181,8 @@ static char *dns_change(ClientData cdata, Tcl_Interp *irp,
         myres.nsaddr_list[myres.nscount].sin_family = AF_INET;
         myres.nscount++;
       }
+      else
+        putlog(LOG_MISC, "*", "WARNING: Invalid dns-server %s", list[i]);
     }
     Tcl_Free((char *) list);
   }
@@ -291,7 +298,7 @@ char *dns_start(Function *global_funcs)
 
   global = global_funcs;
 
-  module_register(MODULE_NAME, dns_table, 1, 1);
+  module_register(MODULE_NAME, dns_table, 1, 2);
   if (!module_depend(MODULE_NAME, "eggdrop", 108, 0)) {
     module_undepend(MODULE_NAME);
     return "This module requires Eggdrop 1.8.0 or later.";

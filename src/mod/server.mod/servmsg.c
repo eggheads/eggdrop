@@ -1204,7 +1204,7 @@ static int tryauthenticate(char *from, char *msg)
     putlog(LOG_SERV, "*", "SASL: got AUTHENTICATE Challenge");
     olen = b64_pton(msg, dst, sizeof dst);
     if (olen == -1) {
-      putlog(LOG_SERV, "*", "SASL: AUTHENTICATE error: could not base64 encode");
+      putlog(LOG_SERV, "*", "SASL: AUTHENTICATE error: could not base64 decode line from server");
       return 1;
     }
     fp = fopen(sasl_ecdsa_key, "r");
@@ -1253,6 +1253,7 @@ static int tryauthenticate(char *from, char *msg)
 
 static int gotauthenticate(char *from, char *msg)
 {
+  fixcolon(msg); /* Because Inspircd does its own thing */
   if (tryauthenticate(from, msg) && !sasl_continue) {
     putlog(LOG_DEBUG, "*", "SASL: Aborting connection and retrying");
     nuke_server("Quitting...");
@@ -1402,6 +1403,7 @@ void add_req(char *cape) {
 
 static int gotcap(char *from, char *msg) {
   char *cmd, *splitstr;
+  char *cape, *p;
   int listlen = 0;
 
   newsplit(&msg);
@@ -1411,15 +1413,28 @@ static int gotcap(char *from, char *msg) {
   if (!strcmp(cmd, "LS")) {
     putlog(LOG_DEBUG, "*", "CAP: %s supports CAP sub-commands: %s", from, msg);
     strlcpy(cap.supported, msg, sizeof cap.supported);
+/* CAP is supported, yay! Lets load what we want to request */
     if (sasl) {
-      /* TODO: is this the right place to check for error in eggdrop conf setting ?
-       * (with error i mean, bot would crash, if the config setting is not validated) */
       if (sasl_mechanism < 0)
         putlog(LOG_SERV, "*", "SASL error: sasl-mechanism must be equal to or greater than 0");
       else if (sasl_mechanism >= SASL_MECHANISM_NUM)
         putlog(LOG_SERV, "*", "SASL error: sasl-mechanism must be less than %i", SASL_MECHANISM_NUM);
       else
         add_req("sasl");
+    }
+    if (away_notify)
+      add_req("away-notify");
+    if (invite_notify)
+      add_req("invite-notify");
+    if (message_tags)
+      add_req("message-tags");
+/* Add any custom capes the user listed */
+    cape = cap_request;
+    if ( (p = strtok(cape, " ")) ) {
+      while (p != NULL) {
+        add_req(p);
+        p = strtok(NULL, " ");
+      }
     }
     if (strlen(cap.desired) > 0) {
       putlog(LOG_DEBUG, "*", "CAP: Requesting %s capabilities from server", cap.desired);
@@ -1450,7 +1465,7 @@ static int gotcap(char *from, char *msg) {
       }
       splitstr = strtok(NULL, " ");
     }
-    update_cap_negotiated(); /* TODO: do we realy need this call here? */
+    update_cap_negotiated(); /* TODO: do we really need this call here? */
     putlog(LOG_SERV, "*", "CAP: Current Negotiations %s with %s", cap.negotiated, from);
     /* If a negotiated capability requires immediate action by Eggdrop, add it
      * here. However, that capability must take responsibility for sending an
@@ -1536,7 +1551,10 @@ static void server_resolve_failure(int);
  */
 static void connect_server(void)
 {
-  char pass[121], botserver[UHOSTLEN], buf[16], s[1024];
+  char pass[121], botserver[UHOSTLEN], s[1024];
+#ifdef IPV6
+  char buf[sizeof(struct in6_addr)];
+#endif
   int servidx, len = 0;
   unsigned int botserverport = 0;
 

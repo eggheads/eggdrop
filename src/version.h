@@ -27,5 +27,5 @@
  */
 
 #define EGG_STRINGVER "1.9.0"
-#define EGG_NUMVER 1090001
-#define EGG_PATCH "sasl"
+#define EGG_NUMVER 1090003
+#define EGG_PATCH "serverlen"

@@ -74,7 +74,8 @@ static int exclusive_binds;     /* configures PUBM and MSGM binds to be
 static int answer_ctcp;         /* answer how many stacked ctcp's ? */
 static int lowercase_ctcp;      /* answer lowercase CTCP's (non-standard) */
 static int check_mode_r;        /* check for IRCnet +r modes */
-static int net_type;
+static char net_type[9];
+static int net_type_int;
 static char connectserver[121]; /* what, if anything, to do before connect
                                  * to the server */
 static int resolvserv;          /* in the process of resolving a server host */
@@ -125,7 +126,11 @@ static int del_server(const char *, const char *);
 static void free_server(struct server_list *);
 
 static int sasl = 0;
+static int away_notify = 0;
+static int invite_notify = 0;
+static int message_tags = 0;
 
+static char cap_request[CAPMAX - 9];
 static int sasl_mechanism = 0;
 static char sasl_username[NICKMAX + 1];
 static char sasl_password[81];
@@ -283,8 +288,8 @@ static int calc_penalty(char *msg)
   char *cmd, *par1, *par2, *par3;
   int penalty, i, ii;
 
-  if (!use_penalties && net_type != NETT_UNDERNET &&
-      net_type != NETT_HYBRID_EFNET)
+  if (!use_penalties && net_type_int != NETT_UNDERNET &&
+      net_type_int != NETT_QUAKENET && net_type_int != NETT_HYBRID_EFNET)
     return 0;
 
   cmd = newsplit(&msg);
@@ -293,7 +298,8 @@ static int calc_penalty(char *msg)
   else
     i = strlen(cmd);
   last_time -= 2;               /* undo eggdrop standard flood prot */
-  if (net_type == NETT_UNDERNET || net_type == NETT_HYBRID_EFNET) {
+  if (net_type_int == NETT_UNDERNET || net_type_int == NETT_QUAKENET ||
+      net_type_int == NETT_HYBRID_EFNET) {
     last_time += (2 + i / 120);
     return 0;
   }
@@ -991,11 +997,11 @@ static void queue_server(int which, char *msg, int len)
    removed from Eggdrop.
 */
 static void old_add_server(const char *ss) {
-  char name[121] = "";
+  char name[256] = "";
   char port[7] = "";
   char pass[121] = "";
-  if (!sscanf(ss, "[%255[0-9.A-F:a-f]]:%10[+0-9]:%120[^\r\n]", name, port, pass) &&
-      !sscanf(ss, "%255[^:]:%10[+0-9]:%120[^\r\n]", name, port, pass))
+  if (!sscanf(ss, "[%255[0-9.A-F:a-f]]:%6[+0-9]:%120[^\r\n]", name, port, pass) &&
+      !sscanf(ss, "%255[^:]:%6[+0-9]:%120[^\r\n]", name, port, pass))
     return;
   add_server(name, port, pass);
 }
@@ -1423,8 +1429,9 @@ static char *traced_botname(ClientData cdata, Tcl_Interp *irp,
 
 static void do_nettype(void)
 {
-  switch (net_type) {
+  switch (net_type_int) {
   case NETT_EFNET:
+  case NETT_HYBRID_EFNET:
     check_mode_r = 0;
     nick_len = 9;
     break;
@@ -1432,7 +1439,7 @@ static void do_nettype(void)
     check_mode_r = 1;
     use_penalties = 1;
     use_fastdeq = 3;
-    nick_len = 9;
+    nick_len = 15;
     simple_sprintf(stackablecmds, "INVITE AWAY VERSION NICK");
     kick_method = 4;
     break;
@@ -1447,14 +1454,27 @@ static void do_nettype(void)
   case NETT_DALNET:
     check_mode_r = 0;
     use_fastdeq = 2;
-    nick_len = 32;
+    nick_len = 30;
     simple_sprintf(stackablecmds,
                    "PRIVMSG NOTICE PART WHOIS WHOWAS USERHOST ISON WATCH DCCALLOW");
     simple_sprintf(stackable2cmds, "USERHOST ISON WATCH");
+    stack_limit = 20;
+    kick_method = 4;
     break;
-  case NETT_HYBRID_EFNET:
+  case NETT_FREENODE:
+    nick_len = 16;
+    break;
+  case NETT_QUAKENET:
     check_mode_r = 0;
-    nick_len = 9;
+    use_fastdeq = 2;
+    nick_len = 15;
+    simple_sprintf(stackablecmds,
+                   "PRIVMSG NOTICE TOPIC PART WHOIS USERHOST USERIP ISON");
+    simple_sprintf(stackable2cmds, "USERHOST USERIP ISON");
+    break;
+  case NETT_RIZON:
+    check_mode_r = 0;
+    nick_len = 30;
     break;
   }
 }
@@ -1463,6 +1483,57 @@ static char *traced_nettype(ClientData cdata, Tcl_Interp *irp,
                             EGG_CONST char *name1,
                             EGG_CONST char *name2, int flags)
 {
+  int warn = 0;
+
+  if (!strcasecmp(net_type, "DALnet"))
+    net_type_int = NETT_DALNET;
+  else if (!strcasecmp(net_type, "EFnet"))
+    net_type_int = NETT_EFNET;
+  else if (!strcasecmp(net_type, "freenode"))
+    net_type_int = NETT_FREENODE;
+  else if (!strcasecmp(net_type, "IRCnet"))
+    net_type_int = NETT_IRCNET;
+  else if (!strcasecmp(net_type, "QuakeNet"))
+    net_type_int = NETT_QUAKENET;
+  else if (!strcasecmp(net_type, "Rizon"))
+    net_type_int = NETT_RIZON;
+  else if (!strcasecmp(net_type, "Undernet"))
+    net_type_int = NETT_UNDERNET;
+  else if (!strcasecmp(net_type, "Other"))
+    net_type_int = NETT_OTHER;
+  else if (!strcasecmp(net_type, "0")) { /* For backwards compatibility */
+    net_type_int = NETT_EFNET;
+    warn = 1;
+  }
+  else if (!strcasecmp(net_type, "1")) { /* For backwards compatibility */
+    net_type_int = NETT_IRCNET;
+    warn = 1;
+  }
+  else if (!strcasecmp(net_type, "2")) { /* For backwards compatibility */
+    net_type_int = NETT_UNDERNET;
+    warn = 1;
+  }
+  else if (!strcasecmp(net_type, "3")) { /* For backwards compatibility */
+    net_type_int = NETT_DALNET;
+    warn = 1;
+  }
+  else if (!strcasecmp(net_type, "4")) { /* For backwards compatibility */
+    net_type_int = NETT_HYBRID_EFNET;
+    warn = 1;
+  }
+  else if (!strcasecmp(net_type, "5")) { /* For backwards compatibility */
+    net_type_int = NETT_OTHER; 
+    warn = 1;
+  } else {
+    fatal("ERROR: NET-TYPE NOT SET.\n Must be one of DALNet, EFnet, freenode, "
+          "IRCnet, Quakenet, Rizon, Undernet, Other.", 0);
+  }
+  if (warn) {
+    putlog(LOG_MISC, "*",
+           "WARNING: Using an integer for net-type is deprecated and will be\n"
+           "         removed in a future release. Please reference an updated\n"
+           "         configuration file for the new allowed string values");
+  }
   do_nettype();
   return NULL;
 }
@@ -1500,9 +1571,11 @@ static tcl_strings my_tcl_strings[] = {
   {"connect-server",      connectserver,  120,               0},
   {"stackable-commands",  stackablecmds,  510,               0},
   {"stackable2-commands", stackable2cmds, 510,               0},
+  {"cap-request",         cap_request,    CAPMAX - 9,        0},
   {"sasl-username",       sasl_username,  NICKMAX,           0},
   {"sasl-password",       sasl_password,  80,                0},
   {"sasl-ecdsa-key",      sasl_ecdsa_key, 120,               0},
+  {"net-type",            net_type,       8,                 0},
   {NULL,                  NULL,           0,                 0}
 };
 
@@ -1525,7 +1598,6 @@ static tcl_ints my_tcl_ints[] = {
   {"server-cycle-wait", (int *) &server_cycle_wait, 0},
   {"default-port",      &default_port,              0},
   {"check-mode-r",      &check_mode_r,              0},
-  {"net-type",          &net_type,                  0},
   {"ctcp-mode",         &ctcp_mode,                 0},
   {"double-mode",       &double_mode,               0},
   {"double-server",     &double_server,             0},
@@ -1546,6 +1618,9 @@ static tcl_ints my_tcl_ints[] = {
   {"sasl-mechanism",    &sasl_mechanism,            0},
   {"sasl-continue",     &sasl_continue,             0},
   {"sasl-timeout",      &sasl_timeout,              0},
+  {"away-notify",       &away_notify,               0},
+  {"invite-notify",     &invite_notify,             0},
+  {"message-tags",      &message_tags,              0},
   {NULL,                NULL,                       0}
 };
 
@@ -2081,7 +2156,8 @@ static Function server_table[] = {
   /* 40 - 43 */
   (Function) & H_out,           /* p_tcl_bind_list                      */
   (Function) add_server,
-  (Function) del_server
+  (Function) del_server,
+  (Function) & net_type_int     /* int                                  */
 };
 
 char *server_start(Function *global_funcs)
@@ -2127,7 +2203,7 @@ char *server_start(Function *global_funcs)
   check_mode_r = 0;
   maxqmsg = 300;
   burst = 0;
-  net_type = NETT_EFNET;
+  strlcpy(net_type, "EFnet", sizeof net_type);
   double_mode = 0;
   double_server = 0;
   double_help = 0;
@@ -2149,7 +2225,7 @@ char *server_start(Function *global_funcs)
 #endif
 
   server_table[4] = (Function) botname;
-  module_register(MODULE_NAME, server_table, 1, 4);
+  module_register(MODULE_NAME, server_table, 1, 5);
   if (!module_depend(MODULE_NAME, "eggdrop", 108, 0)) {
     module_undepend(MODULE_NAME);
     return "This module requires Eggdrop 1.8.0 or later.";

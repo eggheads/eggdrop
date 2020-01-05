@@ -82,14 +82,7 @@
 #define H_out (*(p_tcl_bind_list *)(server_funcs[40]))
 #define addserver ((void(*)(char *))server_funcs[41])
 #define delserver ((void(*)(char *))server_funcs[42])
-#else /* MAKING_SERVER */
-
-/* Macros for commonly used commands. */
-#define free_null(ptr)  do {                            \
-        nfree(ptr);                                     \
-        ptr = NULL;                                     \
-} while (0)
-
+#define net_type_int (*(int *)(server_funcs[43]))
 #endif /* MAKING_SERVER */
 
 struct server_list {
@@ -114,11 +107,15 @@ extern struct cap_list cap;
 
 /* Available net types. */
 enum {
-  NETT_EFNET        = 0, /* EFnet                    */
-  NETT_IRCNET       = 1, /* IRCnet                   */
-  NETT_UNDERNET     = 2, /* UnderNet                 */
-  NETT_DALNET       = 3, /* DALnet                   */
-  NETT_HYBRID_EFNET = 4  /* +e/+I/max-bans 20 Hybrid */
+  NETT_DALNET,       /* DALnet                            */
+  NETT_EFNET,        /* EFnet                             */
+  NETT_FREENODE,     /* freenode                          */
+  NETT_HYBRID_EFNET, /* Hybrid-6+ EFnet +e/+I/max-bans 20 */
+  NETT_IRCNET,       /* IRCnet                            */
+  NETT_QUAKENET,     /* QuakeNet                          */
+  NETT_RIZON,        /* Rizon                             */
+  NETT_UNDERNET,     /* UnderNet                          */
+  NETT_OTHER         /* Others                            */
 };
 
 /* Available sasl mechanisms. */

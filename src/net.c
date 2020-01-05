@@ -130,7 +130,6 @@ char *iptostr(struct sockaddr *sa)
  */
 int setsockname(sockname_t *addr, char *src, int port, int allowres)
 {
-  char *src2 = src;
   char *endptr;
   long val;
   IP ip;
@@ -138,6 +137,7 @@ int setsockname(sockname_t *addr, char *src, int port, int allowres)
   int af = AF_UNSPEC;
 #ifdef IPV6
   char ip2[INET6_ADDRSTRLEN];
+  char *src2 = src;
   int pref;
 #else
   char ip2[INET_ADDRSTRLEN];
@@ -151,7 +151,9 @@ int setsockname(sockname_t *addr, char *src, int port, int allowres)
     ip = htonl(val);
     if (inet_ntop(AF_INET, &ip, ip2, sizeof ip2)) {
       debug2("net: setsockname(): ip %s -> %s", src, ip2);
+#ifdef IPV6
       src2 = ip2;
+#endif
     }
   }
 #ifdef IPV6

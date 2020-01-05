@@ -336,7 +336,6 @@ void write_userfile(int);
 struct userrec *check_dcclist_hand(char *);
 void touch_laston(struct userrec *, char *, time_t);
 void user_del_chan(char *);
-char *fixfrom(char *);
 int check_conflags(struct flag_record *fr, int md);
 
 /* users.c */
