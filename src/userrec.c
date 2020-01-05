@@ -840,7 +840,7 @@ struct userrec *get_user_by_nick(char *nick)
 
         egg_snprintf(word, sizeof word, "%s!%s", m->nick, m->userhost);
         /* No need to check the return value ourself */
-        return get_user_by_host(word);;
+        return get_user_by_host(word);
       }
     }
   }
