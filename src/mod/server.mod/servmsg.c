@@ -1083,9 +1083,10 @@ static struct dcc_table SERVER_SOCKET = {
 
 static void server_activity(int idx, char *msg, int len)
 {
-  char *from, *code, *tag = NULL;
-  char s[TAGMAX];
-  int rawlen;
+  char *from, *code, *s1, *s2, *saveptr1, *saveptr2, *tagstrptr=NULL;
+  char *token, *subtoken, tagstr[TOTALTAGMAX], tagdict[TOTALTAGMAX];
+  char s[RECVLINEMAX+7];
+  int rawlen, taglen, i;
 
   if (trying_server) {
     strcpy(dcc[idx].nick, "(server)");
@@ -1097,17 +1098,33 @@ static void server_activity(int idx, char *msg, int len)
 /* Check if IRCv3 message-tags are enabled and, if so, check/grab the tag */
   if (msgtag) {
     if (*msg == '@') {
-      tag = ++msg;
-      while ((*msg != '\0') && (*msg != ' ')) {
-        msg++;
-      }
-      if (*msg == ' ') {
-        *msg++ = '\0';
-        while (*msg == ' ') {
-          msg++;
+      taglen = 0;
+      memset(tagdict, '\0', TOTALTAGMAX);
+      strncpy(tagstr, msg, TOTALTAGMAX);
+      tagstrptr = strtok(tagstr, " ");
+      tagstrptr++;         /* Remove @ */
+      putlog(LOG_DEBUG, "*", "Found message-tag %s on msg %s", tagstr, msg);
+      for (i = 0, s1 = tagstrptr; ; i++, s1 = NULL){
+        token = strtok_r(s1, ";", &saveptr1);
+        if (token == NULL) {
+          break;
+        }
+        if (*token == '+') {
+          token++;
+        }
+        //putlog(LOG_DEBUG, "*", "Pair: %s", token);
+        for (s2 = token; ; s2 = NULL) {
+          subtoken = strtok_r(s2, "=", &saveptr2);
+          if (subtoken == NULL) {
+            break;
+          }
+          //putlog(LOG_DEBUG, "*", "key/value: %s", subtoken);
+          taglen += egg_snprintf(tagdict + taglen, TOTALTAGMAX - taglen,
+                "%s ", subtoken);
         }
       }
-      putlog(LOG_DEBUG, "*", "Found message-tag %s on msg %s", tag, msg);
+      tagdict[taglen] = '\0';
+      putlog(LOG_DEBUG, "*", "About to pass dict values of:  %s", tagdict);
     }
   }
   from = "";
@@ -1119,8 +1136,8 @@ static void server_activity(int idx, char *msg, int len)
   if (raw_log && ((strcmp(code, "PRIVMSG") && strcmp(code, "NOTICE")) ||
       !match_ignore(from))) {
       rawlen = egg_snprintf(s, sizeof s, "[@] ");
-      if (tag) {
-        rawlen += egg_snprintf(s + rawlen, sizeof s - rawlen, "%s ", tag);
+      if (tagstrptr) {
+        rawlen += egg_snprintf(s + rawlen, sizeof s - rawlen, "%s ", tagstr);
       }
       if (strcmp(from, "") == 0) {
         rawlen += egg_snprintf(s + rawlen, sizeof s - rawlen, "%s ", from);
@@ -1132,8 +1149,8 @@ static void server_activity(int idx, char *msg, int len)
    * is less efficient.
    */
 //  check_tcl_raw(from, code, msg);
-  if (msgtag && tag) {
-    check_tcl_rawt(from, code, msg, tag);
+  if (msgtag && tagstrptr) {
+    check_tcl_rawt(from, code, msg, tagstr);
   } else {
     check_tcl_raw(from, code, msg);
   }
