@@ -194,16 +194,26 @@ static int check_tcl_raw(char *from, char *code, char *msg)
   return (x == BIND_EXEC_LOG);
 }
 
-static int check_tcl_rawt(char *from, char *code, char *msg, char *tag)
+/* tagstr is a space-separated list of key/value pairs */
+static int check_tcl_rawt(char *from, char *code, char *msg, char *tagstr)
 {
   int x;
+  char * ptr;
+  Tcl_DString tagdict;
 
+  Tcl_DStringInit(&tagdict);
   Tcl_SetVar(interp, "_rawt1", from, 0);
   Tcl_SetVar(interp, "_rawt2", code, 0);
   Tcl_SetVar(interp, "_rawt3", msg, 0);
-  Tcl_SetVar(interp, "_rawt4", tag, 0);
+  ptr = strtok(tagstr, " ");
+  while (ptr != NULL) {
+    Tcl_DStringAppendElement(&tagdict, ptr);
+    ptr = strtok(NULL, " ");
+  }
+  Tcl_SetVar(interp, "_rawt4", Tcl_DStringValue(&tagdict), 0);
   x = check_tcl_bind(H_rawt, code, 0, " $_rawt1 $_rawt2 $_rawt3 $_rawt4",
                     MATCH_EXACT | BIND_STACKABLE | BIND_WANTRET);
+  Tcl_DStringFree(&tagdict);
   return (x == BIND_EXEC_LOG);
 }
 
@@ -1081,10 +1091,10 @@ static struct dcc_table SERVER_SOCKET = {
   NULL
 };
 
-static void server_activity(int idx, char *msg, int len)
+static void server_activity(int idx, char *tagmsg, int len)
 {
   char *from, *code, *s1, *s2, *saveptr1, *saveptr2, *tagstrptr=NULL;
-  char *token, *subtoken, tagstr[TOTALTAGMAX], tagdict[TOTALTAGMAX];
+  char *token, *subtoken, tagstr[TOTALTAGMAX], tagdict[TOTALTAGMAX], *msgptr;
   char s[RECVLINEMAX+7];
   int rawlen, taglen, i;
 
@@ -1096,14 +1106,17 @@ static void server_activity(int idx, char *msg, int len)
   }
   lastpingcheck = 0;
 /* Check if IRCv3 message-tags are enabled and, if so, check/grab the tag */
+  msgptr = tagmsg;
   if (msgtag) {
-    if (*msg == '@') {
+    if (*tagmsg == '@') {
       taglen = 0;
       memset(tagdict, '\0', TOTALTAGMAX);
-      strncpy(tagstr, msg, TOTALTAGMAX);
-      tagstrptr = strtok(tagstr, " ");
-      tagstrptr++;         /* Remove @ */
-      putlog(LOG_DEBUG, "*", "Found message-tag %s on msg %s", tagstr, msg);
+      strncpy(tagstr, tagmsg, TOTALTAGMAX);
+      tagstrptr = strtok_r(tagmsg, " ", &msgptr);
+      tagstrptr++;     /* Remove @ */
+      putlog(LOG_DEBUG, "*", "Found message-tag %s on msg %s",
+            tagstrptr, msgptr);
+      /* Split each key/value pair apart, then split the key from the value */
       for (i = 0, s1 = tagstrptr; ; i++, s1 = NULL){
         token = strtok_r(s1, ";", &saveptr1);
         if (token == NULL) {
@@ -1112,27 +1125,30 @@ static void server_activity(int idx, char *msg, int len)
         if (*token == '+') {
           token++;
         }
-        //putlog(LOG_DEBUG, "*", "Pair: %s", token);
-        for (s2 = token; ; s2 = NULL) {
-          subtoken = strtok_r(s2, "=", &saveptr2);
-          if (subtoken == NULL) {
-            break;
+        if (strchr(token, '=')) {
+          for (s2 = token; ; s2 = NULL) {
+            subtoken = strtok_r(s2, "=", &saveptr2);
+            if (subtoken == NULL) {
+              break;
+            }
+            taglen += egg_snprintf(tagdict + taglen, TOTALTAGMAX - taglen,
+                  "%s ", subtoken);
           }
-          //putlog(LOG_DEBUG, "*", "key/value: %s", subtoken);
+        /* Account for tags (not key/value pairs), prep empty value for Tcl */
+        } else {
           taglen += egg_snprintf(tagdict + taglen, TOTALTAGMAX - taglen,
-                "%s ", subtoken);
+                "%s {} ", token);
         }
       }
-      tagdict[taglen] = '\0';
-      putlog(LOG_DEBUG, "*", "About to pass dict values of:  %s", tagdict);
+      tagdict[taglen-1] = '\0';     /* Remove trailing space */
     }
   }
   from = "";
-  if (msg[0] == ':') {
-    msg++;
-    from = newsplit(&msg);
+  if (*msgptr == ':') {
+    msgptr++;
+    from = newsplit(&msgptr);
   }
-  code = newsplit(&msg);
+  code = newsplit(&msgptr);
   if (raw_log && ((strcmp(code, "PRIVMSG") && strcmp(code, "NOTICE")) ||
       !match_ignore(from))) {
       rawlen = egg_snprintf(s, sizeof s, "[@] ");
@@ -1142,17 +1158,15 @@ static void server_activity(int idx, char *msg, int len)
       if (strcmp(from, "") == 0) {
         rawlen += egg_snprintf(s + rawlen, sizeof s - rawlen, "%s ", from);
       }
-      egg_snprintf(s + rawlen, sizeof s - rawlen, "%s %s", code, msg);
+      egg_snprintf(s + rawlen, sizeof s - rawlen, "%s %s", code, msgptr);
       putlog(LOG_RAW, "*", "%s", s);
   }
-  /* This has GOT to go into the raw binding table, * merely because this
-   * is less efficient.
-   */
-//  check_tcl_raw(from, code, msg);
+  /* Check both raw and rawt, to allow backwards compatibility with older
+   * scripts */
   if (msgtag && tagstrptr) {
-    check_tcl_rawt(from, code, msg, tagstr);
+    check_tcl_rawt(from, code, msgptr, tagdict);
   } else {
-    check_tcl_raw(from, code, msg);
+    check_tcl_raw(from, code, msgptr);
   }
 }
 
