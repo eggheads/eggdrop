@@ -1168,6 +1168,8 @@ static void server_activity(int idx, char *tagmsg, int len)
   } else {
     check_tcl_raw(from, code, msgptr);
   }
+//  check_tcl_rawt(from, code, msgptr, tagdict);
+//  check_tcl_raw(from, code, msgptr);
 }
 
 static int gotping(char *from, char *msg)

@@ -437,8 +437,9 @@ static int fast_deq(int which)
 {
   struct msgq_head *h;
   struct msgq *m, *nm;
-  char msgstr[MSGMAX], nextmsgstr[MSGMAX], tosend[MSGMAX], victims[MSGMAX], stackable[MSGMAX],
-       *msg, *nextmsg, *cmd, *nextcmd, *to, *nextto, *stckbl;
+  char msgstr[SENDLINEMAX], nextmsgstr[SENDLINEMAX], tosend[SENDLINEMAX],
+       victims[SENDLINEMAX], stackable[SENDLINEMAX], *msg, *nextmsg, *cmd,
+       *nextcmd, *to, *nextto, *stckbl;
   int len, doit = 0, found = 0, cmd_count = 0, stack_method = 1;
 
   if (!use_fastdeq)
@@ -501,7 +502,7 @@ static int fast_deq(int which)
     nextto = newsplit(&nextmsg);
     if (strcmp(to, nextto) && !strcmp(cmd, nextcmd) && !strcmp(msg, nextmsg) &&
         ((strlen(cmd) + strlen(victims) + strlen(nextto) + strlen(msg) + 2) <
-        510) && (!stack_limit || cmd_count < stack_limit - 1)) {
+        SENDLINEMAX-2) && (!stack_limit || cmd_count < stack_limit - 1)) {
       cmd_count++;
       if (stack_method == 1)
         simple_sprintf(victims, "%s,%s", victims, nextto);
@@ -563,7 +564,7 @@ static void check_queues(char *oldnick, char *newnick)
 static void parse_q(struct msgq_head *q, char *oldnick, char *newnick)
 {
   struct msgq *m, *lm = NULL;
-  char buf[MSGMAX], *msg, *nicks, *nick, *chan, newnicks[MSGMAX], newmsg[MSGMAX];
+  char buf[SENDLINEMAX], *msg, *nicks, *nick, *chan, newnicks[SENDLINEMAX], newmsg[SENDLINEMAX];
   int changed;
 
   for (m = q->head; m;) {
@@ -579,7 +580,7 @@ static void parse_q(struct msgq_head *q, char *oldnick, char *newnick)
         nick = splitnicks(&nicks);
         if (!strcasecmp(nick, oldnick) &&
             ((9 + strlen(chan) + strlen(newnicks) + strlen(newnick) +
-              strlen(nicks) + strlen(msg)) < 510)) {
+              strlen(nicks) + strlen(msg)) < SENDLINEMAX-1)) {
           if (newnick)
             egg_snprintf(newnicks, sizeof newnicks, "%s,%s", newnicks, newnick);
           changed = 1;
@@ -828,7 +829,7 @@ static void queue_server(int which, char *msg, int len)
   struct msgq_head *h = NULL, tempq;
   struct msgq *q, *tq, *tqq;
   int doublemsg = 0, qnext = 0;
-  char buf[MSGMAX];
+  char buf[SENDLINEMAX];
 
   /* Don't even BOTHER if there's no server online. */
   if (serv < 0)

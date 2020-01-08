@@ -164,7 +164,7 @@ static int tcl_puthelp STDVAR
 
 /* Send a msg to the server prefixed with an IRCv3 message-tag */
 static int tcl_tagmsg STDVAR {
-  char tag[TAGMAX];
+  char tag[CLITAGMAX];
   char target[MSGMAX];
   char *p;
   BADARGS(3, 3, " tag target");
