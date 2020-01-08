@@ -9,7 +9,7 @@ AC_INIT([Eggdrop PBKDF2 Module],[1.9.0],[bugs@eggheads.org])
 
 AC_CONFIG_SRCDIR(pbkdf2.c)
 
-AC_COPYRIGHT([Copyright (C) 1999 - 2019 Eggheads Development Team])
+AC_COPYRIGHT([Copyright (C) 1999 - 2020 Eggheads Development Team])
 AC_REVISION([m4_esyscmd([../../../misc/getcommit])])
 
 AX_CHECK_OPENSSL([
