@@ -1163,13 +1163,8 @@ static void server_activity(int idx, char *tagmsg, int len)
   }
   /* Check both raw and rawt, to allow backwards compatibility with older
    * scripts */
-  if (msgtag && tagstrptr) {
-    check_tcl_rawt(from, code, msgptr, tagdict);
-  } else {
-    check_tcl_raw(from, code, msgptr);
-  }
-//  check_tcl_rawt(from, code, msgptr, tagdict);
-//  check_tcl_raw(from, code, msgptr);
+  check_tcl_rawt(from, code, msgptr, tagdict);
+  check_tcl_raw(from, code, msgptr);
 }
 
 static int gotping(char *from, char *msg)
