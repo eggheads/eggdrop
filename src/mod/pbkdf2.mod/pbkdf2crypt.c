@@ -29,12 +29,6 @@ static int pbkdf2crypt_base64_dec_len(const unsigned char *str, int len);
 #define PBKDF2CRYPT_BASE64_ENC_LEN(x) (4*(1+((x)-1)/3))
 #define PBKDF2CRYPT_BASE64_DEC_LEN(x, len) pbkdf2crypt_base64_dec_len((x), (len))
 
-/* Global functions exported to other modules (egg_malloc, egg_free, ..) */
-/* Also, undefine some random stuff that collides by accident */
-#undef global
-#undef ver
-#define global pbkdf2_global
-
 /* Only ever add to the end, never remove, last one must have empty name.
  * This MUST be the same on all bots, or you might render your userfile useless.
  * This COULD also be subject to change in Eggdrop itself, just don't touch this list.

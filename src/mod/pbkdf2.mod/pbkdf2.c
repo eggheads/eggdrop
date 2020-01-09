@@ -25,12 +25,12 @@
 
 #include "src/mod/module.h"
 
-Function *pbkdf2_global = NULL;
+static Function *global = NULL;
 
 /* Cryptographic functions */
 #include "pbkdf2crypt.c"
 
-EXPORT_SCOPE char *pbkdf2_start(Function *global_funcs);
+EXPORT_SCOPE char *pbkdf2_start();
 static char *pbkdf2_close(void);
 static char *pbkdf2_encrypt_pass(const char *pass);
 static int pbkdf2_verify_pass(const char *pass, const char *hash);
@@ -132,8 +132,13 @@ verify_pass_out:
  */
 char *pbkdf2_start(Function *global_funcs)
 {
+  /* `global_funcs' is NULL if eggdrop is recovering from a restart.
+   *
+   * As the encryption module is never unloaded, only initialise stuff
+   * that got reset during restart, e.g. the tcl bindings.
+   */
   if (global_funcs) {
-    pbkdf2_global = global_funcs;
+    global = global_funcs;
     if (!module_rename("pbkdf2", MODULE_NAME))
       return "Already loaded.";
     module_register(MODULE_NAME, exported_functions, 0, 1);
