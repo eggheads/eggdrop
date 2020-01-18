@@ -25,16 +25,15 @@
 #include <openssl/rand.h>
 #include "src/mod/module.h"
 
+#define PBKDF2_BASE64_DEC_LEN(x, len) pbkdf2_base64_dec_len((x), (len))
 #define PBKDF2_BASE64_ENC_LEN(x) (4*(1+((x)-1)/3))
-/* Preferred digest as array index from above struct */
-#define PBKDF2_DIGESTIDX 0
-/* Salt length in bytes, will be base64 encoded after (so, pick something divisible by 3) */
-#define PBKDF2_SALTLEN 2
 /* Skip "" entry at the end */
 #define PBKDF2_DIGEST_IDX_INVALID(idx) ((idx) < 0 || (idx) > sizeof digests / sizeof *digests - 2)
-/* Rounds for PBKDF2 */
-#define PBKDF2_ROUNDS 5000
-#define PBKDF2_BASE64_DEC_LEN(x, len) pbkdf2_base64_dec_len((x), (len))
+/* Preferred digest as array index from above struct */
+#define PBKDF2_DIGESTIDX 0
+#define PBKDF2_ROUNDS 5000 /* glibc sha512-crypt.c */
+/* Salt length in bytes, will be base64 encoded after (so, pick something divisible by 3) */
+#define PBKDF2_SALTLEN 2
 
 static Function *global = NULL;
 
@@ -48,6 +47,12 @@ static struct {
 } digests[] = {{"sha512"}, {"sha256"}, {""}};
 
 static int maxdigestlen = 1;
+static int pbkdf2_rounds = PBKDF2_ROUNDS;
+
+static tcl_ints pbkdf2_ints[] = {
+  {"pbkdf2-rounds", &pbkdf2_rounds, 0},
+  {NULL,           NULL,          0}
+};
 
 static int pbkdf2_base64_dec_len(const unsigned char *str, int len)
 {
@@ -146,7 +151,7 @@ static int pbkdf2_pass(const char *pass, char *out, int outlen)
     return pbkdf2_get_default_size();
   if (RAND_bytes(salt, sizeof salt) != 1)
     return -3;
-  return pbkdf2crypt_verify_pass(pass, PBKDF2_DIGESTIDX, salt, sizeof salt, PBKDF2_ROUNDS, out, outlen);
+  return pbkdf2crypt_verify_pass(pass, PBKDF2_DIGESTIDX, salt, sizeof salt, pbkdf2_rounds, out, outlen);
 }
 
 static char *pbkdf2_encrypt_pass(const char *pass)
@@ -229,7 +234,7 @@ static int pbkdf2_verify_pass(const char *pass, const char *encrypted)
     goto verify_pass_out;
   }
   /* match, check if we suggest re-hashing */
-  if (PBKDF2_ROUNDS > rounds || PBKDF2_DIGESTIDX != digest_idx)
+  if (pbkdf2_rounds > rounds || PBKDF2_DIGESTIDX != digest_idx)
     ret = 2;
   else
     ret = 1;
@@ -257,14 +262,6 @@ static Function pbkdf2_table[] = {
 static int pbkdf2_init(void)
 {
   int i;
-  if (PBKDF2_ROUNDS <= 0) {
-    putlog(LOG_MISC, "*", "rounds must be greater than 0");
-    return -1;
-  }
-  if (PBKDF2_ROUNDS > INT_MAX) {
-    putlog(LOG_MISC, "*", "rounds must be equal to or less than %i", INT_MAX);
-    return -1;
-  }
   OpenSSL_add_all_digests();
   for (i = 0; digests[i].name[0]; i++) {
     digests[i].digest = EVP_get_digestbyname(digests[i].name);
@@ -304,6 +301,7 @@ char *pbkdf2_start(Function *global_funcs)
     }
     add_hook(HOOK_ENCRYPT_PASS2, (Function) pbkdf2_encrypt_pass);
     add_hook(HOOK_VERIFY_PASS2, (Function) pbkdf2_verify_pass);
+    add_tcl_ints(pbkdf2_ints);
   }
   return NULL;
 }
