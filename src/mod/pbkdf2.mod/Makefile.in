@@ -1,6 +1,7 @@
-# Makefile for src/mod/pbkdf2.mod/
+# Makefile.in for src/mod/pbkdf2.mod
 
 srcdir = .
+
 
 MYCPPFLAGS=@CPPFLAGS@ $(CPPFLAGS)
 MYCFLAGS=$(CFLAGS) $(MYCPPFLAGS) -I.
@@ -9,36 +10,30 @@ LDFLAGS=@LDFLAGS@
 RANLIB=@RANLIB@
 
 MAKE_DEPEND = $(MAKE) 'MAKE=$(MAKE)' 'CC=$(CC)' \
-              'CFLAGS=-I.. -I../../../.. -DMAKING_DEPEND -DHAVE_CONFIG_H -DMAKING_MODS'
-
+	      'CFLAGS=-I.. -I../../../.. -DMAKING_DEPEND -DHAVE_CONFIG_H -DMAKING_MODS'
 doofus:
-	@echo ""
-	@echo "Let's try this from the right directory..."
-	@echo ""
-	@cd ../../../ && make
+	@echo "" && \
+	echo "Let's try this from the right directory..." && \
+	echo "" && \
+	cd ../../../ && $(MAKE)
 
 static: ../pbkdf2.o
-	cp modxobjs ../mod.xlibs
 
 modules: ../../../pbkdf2.$(MOD_EXT)
 
 ../pbkdf2.o:
-	$(CC) $(MYCFLAGS) -DMAKING_MODS -c $(srcdir)/pbkdf2.c
-	@rm -f ../pbkdf2.o
-	mv pbkdf2.o ../
+	$(CC) $(CFLAGS) $(CPPFLAGS) -DMAKING_MODS -c $(srcdir)/pbkdf2.c && mv -f pbkdf2.o ../
 
 ../../../pbkdf2.$(MOD_EXT): ../pbkdf2.o
-	$(LD) $(LDFLAGS) -o ../../../pbkdf2.$(MOD_EXT) ../pbkdf2.o $(LIBS)
-	$(STRIP) ../../../pbkdf2.$(MOD_EXT)
+	$(LD) $(CFLAGS) -o ../../../pbkdf2.$(MOD_EXT) ../pbkdf2.o $(XLIBS) $(MODULE_XLIBS) && $(STRIP) ../../../pbkdf2.$(MOD_EXT)
 
 depend:
-	$(CC) $(MYCFLAGS) -MM $(srcdir)/pbkdf2.c -MT ../pbkdf2.o > .depend
+	$(CC) $(CFLAGS) -MM $(srcdir)/pbkdf2.c -MT ../pbkdf2.o > .depend
 
 clean:
-	@rm -f .depend *.o *.$(MOD_EXT) *~ xobjs modxobjs
+	@rm -f .depend *.o *.$(MOD_EXT) *~
 
 distclean: clean
-	@rm -rf autom4te.cache Makefile config.log config.status config.cache
 
 #safety hash
-../pbkdf2.o: .././pbkdf2.mod/pbkdf2.c .././pbkdf2.mod/pbkdf2crypt.c
+../pbkdf2.o: .././pbkdf2.mod/pbkdf2.c
