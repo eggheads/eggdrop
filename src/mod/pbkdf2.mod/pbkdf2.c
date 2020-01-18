@@ -2,7 +2,7 @@
  * pbkdf2.c -- part of pbkdf2.mod
  */
 /*
- * Copyright (C) 2020 Eggheads Development Team
+ * Copyright (C) 2017 - 2020 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
