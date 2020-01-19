@@ -27,10 +27,10 @@
 
 #define PBKDF2_BASE64_DEC_LEN(x, len) pbkdf2_base64_dec_len((x), (len))
 #define PBKDF2_BASE64_ENC_LEN(x) (4*(1+((x)-1)/3))
+/* Preferred digest as array index from struct digests */
+#define PBKDF2_DIGEST_IDX 0
 /* Skip "" entry at the end */
 #define PBKDF2_DIGEST_IDX_INVALID(idx) ((idx) < 0 || (idx) > sizeof digests / sizeof *digests - 2)
-/* Preferred digest as array index from above struct */
-#define PBKDF2_DIGESTIDX 0
 /* Default number of rounds if not explicitly specified */
 #define PBKDF2_ROUNDS 5000
 /* Salt string length */
@@ -77,7 +77,7 @@ static int pbkdf2_get_size(const char* digest_name, const EVP_MD *digest, int sa
 
 static int pbkdf2_get_default_size(void)
 {
-  return pbkdf2_get_size(digests[PBKDF2_DIGESTIDX].name, digests[PBKDF2_DIGESTIDX].digest, PBKDF2_SALT_LEN);
+  return pbkdf2_get_size(digests[PBKDF2_DIGEST_IDX].name, digests[PBKDF2_DIGEST_IDX].digest, PBKDF2_SALT_LEN);
 }
 
 static void bufcount(char **buf, int *buflen, int bytes)
@@ -152,7 +152,7 @@ static int pbkdf2_pass(const char *pass, char *out, int outlen)
     return pbkdf2_get_default_size();
   if (RAND_bytes(salt, sizeof salt) != 1)
     return -3;
-  return pbkdf2crypt_verify_pass(pass, PBKDF2_DIGESTIDX, salt, sizeof salt, pbkdf2_rounds, out, outlen);
+  return pbkdf2crypt_verify_pass(pass, PBKDF2_DIGEST_IDX, salt, sizeof salt, pbkdf2_rounds, out, outlen);
 }
 
 static char *pbkdf2_encrypt_pass(const char *pass)
@@ -235,7 +235,7 @@ static int pbkdf2_verify_pass(const char *pass, const char *encrypted)
     goto verify_pass_out;
   }
   /* match, check if we suggest re-hashing */
-  if (pbkdf2_rounds > rounds || PBKDF2_DIGESTIDX != digest_idx)
+  if (pbkdf2_rounds > rounds || PBKDF2_DIGEST_IDX != digest_idx)
     ret = 2;
   else
     ret = 1;
@@ -273,7 +273,7 @@ static int pbkdf2_init(void)
     if (EVP_MD_size(digests[i].digest) > maxdigestlen)
       maxdigestlen = EVP_MD_size(digests[i].digest);
   }
-  if (PBKDF2_DIGEST_IDX_INVALID(PBKDF2_DIGESTIDX)) {
+  if (PBKDF2_DIGEST_IDX_INVALID(PBKDF2_DIGEST_IDX)) {
     putlog(LOG_MISC, "*", "Invalid Digest IDX.");
     return -1;
   }
