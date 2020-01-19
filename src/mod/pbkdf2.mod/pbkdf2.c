@@ -31,9 +31,10 @@
 #define PBKDF2_DIGEST_IDX_INVALID(idx) ((idx) < 0 || (idx) > sizeof digests / sizeof *digests - 2)
 /* Preferred digest as array index from above struct */
 #define PBKDF2_DIGESTIDX 0
-#define PBKDF2_ROUNDS 5000 /* glibc sha512-crypt.c */
-/* Salt length in bytes, will be base64 encoded after (so, pick something divisible by 3) */
-#define PBKDF2_SALTLEN 2
+/* Default number of rounds if not explicitly specified */
+#define PBKDF2_ROUNDS 5000
+/* Salt string length */
+#define PBKDF2_SALT_LEN 16
 
 static Function *global = NULL;
 
@@ -76,7 +77,7 @@ static int pbkdf2_get_size(const char* digest_name, const EVP_MD *digest, int sa
 
 static int pbkdf2_get_default_size(void)
 {
-  return pbkdf2_get_size(digests[PBKDF2_DIGESTIDX].name, digests[PBKDF2_DIGESTIDX].digest, PBKDF2_SALTLEN);
+  return pbkdf2_get_size(digests[PBKDF2_DIGESTIDX].name, digests[PBKDF2_DIGESTIDX].digest, PBKDF2_SALT_LEN);
 }
 
 static void bufcount(char **buf, int *buflen, int bytes)
@@ -146,7 +147,7 @@ static int pbkdf2crypt_verify_pass(const char *pass, int digest_idx, const unsig
  */
 static int pbkdf2_pass(const char *pass, char *out, int outlen)
 {
-  unsigned char salt[PBKDF2_SALTLEN];
+  unsigned char salt[PBKDF2_SALT_LEN];
   if (!out)
     return pbkdf2_get_default_size();
   if (RAND_bytes(salt, sizeof salt) != 1)
