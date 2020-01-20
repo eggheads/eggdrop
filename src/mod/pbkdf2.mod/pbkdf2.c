@@ -22,6 +22,7 @@
 #define MODULE_NAME "encryption2"
 
 #include <resolv.h> /* base64 encode b64_ntop() and base64 decode b64_pton() */
+#include <sys/resource.h>
 #include <openssl/rand.h>
 #include "src/mod/module.h"
 
@@ -85,14 +86,24 @@ int b64_ntop_without_padding(u_char const *src, size_t srclength, char *target, 
 static int pbkdf2_make_base64_hash(const EVP_MD *digest, const char *pass, int passlen, const unsigned char *salt, int saltlen, int rounds, char *out, int outlen)
 {
   static unsigned char *buf;
-  int digestlen;
+  int digestlen, r;
+  struct rusage ru1, ru2;
+
   digestlen = EVP_MD_size(digest);
   if (!buf)
     buf = nmalloc(digestlen);
   if (outlen < B64_NTOP_CALCULATE_SIZE(digestlen))
     return -2;
+  r = getrusage(RUSAGE_SELF, &ru1);
   if (!PKCS5_PBKDF2_HMAC(pass, passlen, salt, saltlen, rounds, digest, digestlen, buf))
     return -5;
+  if (!r && !getrusage(RUSAGE_SELF, &ru2)) {
+    debug4("pbkdf2 method %s rounds %i, user %.3fms sys %.3fms", pbkdf2_method, pbkdf2_rounds,
+           (double) (ru2.ru_utime.tv_usec - ru1.ru_utime.tv_usec) / 1000 +
+           (double) (ru2.ru_utime.tv_sec  - ru1.ru_utime.tv_sec ) * 1000,
+           (double) (ru2.ru_stime.tv_usec - ru1.ru_stime.tv_usec) / 1000 +
+           (double) (ru2.ru_stime.tv_sec  - ru1.ru_stime.tv_sec ) * 1000);
+  }
   if (b64_ntop_without_padding(buf, digestlen, out, outlen) < 0) 
     return -5;
   return 0;
