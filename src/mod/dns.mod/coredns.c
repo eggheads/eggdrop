@@ -7,7 +7,7 @@
  * IPv6 support added by pseudo <pseudo@egg6.net>
  */
 /*
- * Portions Copyright (C) 1999 - 2019 Eggheads Development Team
+ * Portions Copyright (C) 1999 - 2020 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License

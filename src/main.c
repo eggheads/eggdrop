@@ -7,7 +7,7 @@
  */
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2019 Eggheads Development Team
+ * Copyright (C) 1999 - 2020 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -1066,13 +1066,13 @@ int main(int arg_c, char **arg_v)
   egg_snprintf(egg_version, sizeof egg_version, "%s+%s %u", EGG_STRINGVER, EGG_PATCH, egg_numver);
   egg_snprintf(ver, sizeof ver, "eggdrop v%s+%s", EGG_STRINGVER, EGG_PATCH);
   egg_snprintf(version, sizeof version,
-               "Eggdrop v%s+%s (C) 1997 Robey Pointer (C) 2010-2019 Eggheads",
+               "Eggdrop v%s+%s (C) 1997 Robey Pointer (C) 2010-2020 Eggheads",
                 EGG_STRINGVER, EGG_PATCH);
 #else
   egg_snprintf(egg_version, sizeof egg_version, "%s %u", EGG_STRINGVER, egg_numver);
   egg_snprintf(ver, sizeof ver, "eggdrop v%s", EGG_STRINGVER);
   egg_snprintf(version, sizeof version,
-               "Eggdrop v%s (C) 1997 Robey Pointer (C) 2010-2019 Eggheads",
+               "Eggdrop v%s (C) 1997 Robey Pointer (C) 2010-2020 Eggheads",
                 EGG_STRINGVER);
 #endif
 
