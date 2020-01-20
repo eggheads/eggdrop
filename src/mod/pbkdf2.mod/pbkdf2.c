@@ -25,8 +25,9 @@
 #include <openssl/rand.h>
 #include "src/mod/module.h"
 
-#define PBKDF2_BASE64_DEC_LEN(x, len) pbkdf2_base64_dec_len((x), (len))
-#define PBKDF2_BASE64_ENC_LEN(x) (4*(1+((x)-1)/3))
+/* TODO: move the following 2 macros to base64.h and change servmsg.c to also use them */
+#define B64_NTOP_CALCULATE_SIZE(x) ((x + 2) / 3 * 4 + 1)
+#define B64_PTON_CALCULATE_SIZE(x) (x * 3 / 4)
 /* Preferred digest as array index from struct digests */
 #define PBKDF2_DIGEST_IDX 0
 /* Skip "" entry at the end */
@@ -55,14 +56,6 @@ static tcl_ints pbkdf2_ints[] = {
   {NULL,           NULL,          0}
 };
 
-static int pbkdf2_base64_dec_len(const unsigned char *str, int len)
-{
-  int pad = (str[len-1] == '=');
-  if (pad && str[len-2] == '=')
-    pad++;
-  return len / 4 * 3 - pad;
-}
-
 static char *pbkdf2_close(void)
 {
   return "You cannot unload the " MODULE_NAME " module.";
@@ -72,7 +65,7 @@ static int pbkdf2_get_size(const char* digest_name, const EVP_MD *digest, int sa
 {
   /* PHC string format */
   /* hash = "$pbkdf2-<digest>$rounds=<rounds>$<salt>$<hash>" */
-  return strlen("$pbkdf2-") + strlen(digest_name) + 1 + strlen("rounds=FFFFFFFF") + 1 + PBKDF2_BASE64_ENC_LEN(saltlen) + 1 + PBKDF2_BASE64_ENC_LEN(EVP_MD_size(digest));
+  return strlen("$pbkdf2-") + strlen(digest_name) + 1 + strlen("rounds=FFFFFFFF") + 1 + B64_NTOP_CALCULATE_SIZE(saltlen) + 1 + B64_NTOP_CALCULATE_SIZE(EVP_MD_size(digest));
 }
 
 static int pbkdf2_get_default_size(void)
@@ -107,7 +100,7 @@ static int pbkdf2_make_base64_hash(const EVP_MD *digest, const char *pass, int p
   if (!buf)
     buf = nmalloc(maxdigestlen);
   digestlen = EVP_MD_size(digest);
-  if (outlen < PBKDF2_BASE64_ENC_LEN(digestlen))
+  if (outlen < B64_NTOP_CALCULATE_SIZE(digestlen))
     return -2;
   if (!PKCS5_PBKDF2_HMAC(pass, passlen, salt, saltlen, rounds, digest, maxdigestlen, buf))
     return -5;
@@ -155,7 +148,6 @@ static int pbkdf2crypt_verify_pass(const char *pass, int digest_idx, const unsig
 
 /* Encrypt a password with standard settings to store.
  * out = NULL returns necessary buffer size
- * Salt intentionally not static, so it gets overwritten.
  * Return values are the same as pbkdf2crypt_verify_pass
  */
 static int pbkdf2_pass(const char *pass, char *out, int outlen)
@@ -226,7 +218,7 @@ static int pbkdf2_verify_pass(const char *pass, const char *encrypted)
 
   hash = strchr(++b64salt, '$');
   b64saltlen = hash - b64salt;
-  saltlen = PBKDF2_BASE64_DEC_LEN((unsigned char *)b64salt, b64saltlen);
+  saltlen = B64_PTON_CALCULATE_SIZE(b64saltlen);
   if (!hash || !++hash)
     return -1;
 
