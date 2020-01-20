@@ -28,10 +28,6 @@
 /* TODO: move the following 2 macros to base64.h and change servmsg.c to also use them */
 #define B64_NTOP_CALCULATE_SIZE(x) ((x + 2) / 3 * 4 + 1)
 #define B64_PTON_CALCULATE_SIZE(x) (x * 3 / 4)
-/* Preferred digest as array index from struct digests */
-#define PBKDF2_DIGEST_IDX 0
-/* Skip "" entry at the end */
-#define PBKDF2_DIGEST_IDX_INVALID(idx) ((idx) < 0 || (idx) > sizeof digests / sizeof *digests - 2)
 /* Default number of rounds if not explicitly specified */
 #define PBKDF2_ROUNDS 5000
 /* Salt string length */
@@ -39,20 +35,18 @@
 
 static Function *global = NULL;
 
-/* Only ever add to the end, never remove, last one must have empty name.
- * This MUST be the same on all bots, or you might render your userfile useless.
- * This COULD also be subject to change in Eggdrop itself, just don't touch this list.
- */
-static struct {
-  const char name[16];
-  const EVP_MD *digest;
-} digests[] = {{"sha512"}, {"sha256"}, {""}};
+/*  const EVP_MD *digest; */
 
-static int maxdigestlen = 1;
+static char pbkdf2_method[28] = "SHA512"; /* TODO: can we do this or do we have to use strlcpy before init()? */
 static int pbkdf2_rounds = PBKDF2_ROUNDS;
 
-static tcl_ints pbkdf2_ints[] = {
+static tcl_ints my_tcl_ints[] = {
   {"pbkdf2-rounds", &pbkdf2_rounds, 0},
+  {NULL,           NULL,          0}
+};
+
+static tcl_strings my_tcl_strings[] = {
+  {"pbkdf2-method", pbkdf2_method, 27, 0},
   {NULL,           NULL,          0}
 };
 
@@ -65,12 +59,7 @@ static int pbkdf2_get_size(const char* digest_name, const EVP_MD *digest, int sa
 {
   /* PHC string format */
   /* hash = "$pbkdf2-<digest>$rounds=<rounds>$<salt>$<hash>" */
-  return strlen("$pbkdf2-") + strlen(digest_name) + 1 + strlen("rounds=FFFFFFFF") + 1 + B64_NTOP_CALCULATE_SIZE(saltlen) + 1 + B64_NTOP_CALCULATE_SIZE(EVP_MD_size(digest));
-}
-
-static int pbkdf2_get_default_size(void)
-{
-  return pbkdf2_get_size(digests[PBKDF2_DIGEST_IDX].name, digests[PBKDF2_DIGEST_IDX].digest, PBKDF2_SALT_LEN);
+  return strlen("$pbkdf2-") + strlen(digest_name) + strlen("$rounds=FFFFFFFF$") + B64_NTOP_CALCULATE_SIZE(saltlen) + 1 + B64_NTOP_CALCULATE_SIZE(EVP_MD_size(digest));
 }
 
 static void bufcount(char **buf, int *buflen, int bytes)
@@ -97,12 +86,12 @@ static int pbkdf2_make_base64_hash(const EVP_MD *digest, const char *pass, int p
 {
   static unsigned char *buf;
   int digestlen;
-  if (!buf)
-    buf = nmalloc(maxdigestlen);
   digestlen = EVP_MD_size(digest);
+  if (!buf)
+    buf = nmalloc(digestlen);
   if (outlen < B64_NTOP_CALCULATE_SIZE(digestlen))
     return -2;
-  if (!PKCS5_PBKDF2_HMAC(pass, passlen, salt, saltlen, rounds, digest, maxdigestlen, buf))
+  if (!PKCS5_PBKDF2_HMAC(pass, passlen, salt, saltlen, rounds, digest, digestlen, buf))
     return -5;
   if (b64_ntop_without_padding(buf, digestlen, out, outlen) < 0) 
     return -5;
@@ -112,17 +101,15 @@ static int pbkdf2_make_base64_hash(const EVP_MD *digest, const char *pass, int p
 /* Encrypt a password with flexible settings for verification.
  * Returns 0 on success, -1 on digest not found, -2 on outbuffer too small, -3 on salt error, -4 on rounds outside range, -5 on pbkdf2 error
  */
-static int pbkdf2crypt_verify_pass(const char *pass, int digest_idx, const unsigned char *salt, int saltlen, int rounds, char *out, int outlen)
+static int pbkdf2crypt_verify_pass(const char *pass, const char *digest_name, const unsigned char *salt, int saltlen, int rounds, char *out, int outlen)
 {
   int size, ret;
   const EVP_MD *digest;
 
-  if (PBKDF2_DIGEST_IDX_INVALID(digest_idx))
-    return -1;
-  digest = digests[digest_idx].digest;
+  digest = EVP_get_digestbyname(digest_name);
   if (!digest)
     return -1;
-  size = pbkdf2_get_size(digests[digest_idx].name, digest, saltlen);
+  size = pbkdf2_get_size(digest_name, digest, saltlen);
   if (!out)
     return size;
   /* Sanity check */
@@ -133,14 +120,14 @@ static int pbkdf2crypt_verify_pass(const char *pass, int digest_idx, const unsig
   if (rounds <= 0)
     return -4;
 
-  bufcount(&out, &outlen, snprintf((char *) out, outlen, "$pbkdf2-%s$rounds=%i$", digests[digest_idx].name, (unsigned int) rounds));
+  bufcount(&out, &outlen, snprintf((char *) out, outlen, "$pbkdf2-%s$rounds=%i$", digest_name, (unsigned int) rounds));
   ret = b64_ntop_without_padding(salt, saltlen, out, outlen);
   if (ret < 0) {
     return -2;
   }
   bufcount(&out, &outlen, ret);
   bufcount(&out, &outlen, (out[0] = '$', 1));
-  ret = pbkdf2_make_base64_hash(digests[digest_idx].digest, pass, strlen(pass), salt, saltlen, rounds, out, outlen);
+  ret = pbkdf2_make_base64_hash(digest, pass, strlen(pass), salt, saltlen, rounds, out, outlen);
   if (ret != 0)
     return ret;
   return 0;
@@ -154,10 +141,10 @@ static int pbkdf2_pass(const char *pass, char *out, int outlen)
 {
   unsigned char salt[PBKDF2_SALT_LEN];
   if (!out)
-    return pbkdf2_get_default_size();
+    return pbkdf2_get_size(pbkdf2_method, EVP_get_digestbyname(pbkdf2_method), PBKDF2_SALT_LEN);
   if (RAND_bytes(salt, sizeof salt) != 1)
     return -3;
-  return pbkdf2crypt_verify_pass(pass, PBKDF2_DIGEST_IDX, salt, sizeof salt, pbkdf2_rounds, out, outlen);
+  return pbkdf2crypt_verify_pass(pass, pbkdf2_method, salt, sizeof salt, pbkdf2_rounds, out, outlen);
 }
 
 static char *pbkdf2_encrypt_pass(const char *pass)
@@ -166,22 +153,13 @@ static char *pbkdf2_encrypt_pass(const char *pass)
   static char *buf;
 
   if (!hashlen) {
-    hashlen = pbkdf2_get_default_size();
+    hashlen = pbkdf2_get_size(pbkdf2_method, EVP_get_digestbyname(pbkdf2_method), PBKDF2_SALT_LEN);
     buf = nmalloc(hashlen + 1);
   }
   if (pbkdf2_pass(pass, buf, hashlen))
     return NULL;
   buf[hashlen] = '\0';
   return buf;
-}
-
-static int pbkdf2_digestidx_by_string(const char *digest_idx_str)
-{
-  long digest_idx = strtol(digest_idx_str, NULL, 16);
-  /* Skip "" entry at the end */
-  if (PBKDF2_DIGEST_IDX_INVALID(digest_idx))
-    return -1;
-  return digest_idx;
 }
 
 /* Return values:
@@ -194,19 +172,19 @@ static int pbkdf2_digestidx_by_string(const char *digest_idx_str)
  */
 static int pbkdf2_verify_pass(const char *pass, const char *encrypted)
 {
-  int digest_idx, bufsize, ret, b64saltlen, saltlen;
+  int bufsize, ret, b64saltlen, saltlen;
   long rounds;
   char *buf;
   unsigned char *salt;
-  const char *b64salt, *hash = encrypted;
+  const char *b64salt, *hash = encrypted, *digest_name;
+  const EVP_MD *digest;
 
-  if (strncmp(hash, "$pbkdf2", strlen("$pbkdf2")))
+  if (strncmp(hash, "$pbkdf2-", strlen("$pbkdf2-")))
     return -1;
-  hash += strlen("$pbkdf2");
+  hash += strlen("$pbkdf2-");
 
-  digest_idx = pbkdf2_digestidx_by_string(hash);
-  if (PBKDF2_DIGEST_IDX_INVALID(digest_idx))
-    return -1;
+  digest_name = hash;
+  digest = EVP_get_digestbyname(digest_name);
 
   hash = strchr(hash, '$');
   if (!hash)
@@ -222,7 +200,7 @@ static int pbkdf2_verify_pass(const char *pass, const char *encrypted)
   if (!hash || !++hash)
     return -1;
 
-  bufsize = pbkdf2_get_size(digests[digest_idx].name, digests[digest_idx].digest, saltlen);
+  bufsize = pbkdf2_get_size(digest_name, digest, saltlen);
   buf = nmalloc(bufsize);
   salt = nmalloc(saltlen);
   b64saltlen = b64_pton(b64salt, salt, saltlen);
@@ -231,7 +209,7 @@ static int pbkdf2_verify_pass(const char *pass, const char *encrypted)
     goto verify_pass_out;
   }
 
-  if (pbkdf2crypt_verify_pass(pass, digest_idx, (unsigned char *)salt, saltlen, rounds, buf, bufsize) != 0) {
+  if (pbkdf2crypt_verify_pass(pass, digest_name, (unsigned char *)salt, saltlen, rounds, buf, bufsize) != 0) {
     ret = -1;
     goto verify_pass_out;
   }
@@ -240,7 +218,7 @@ static int pbkdf2_verify_pass(const char *pass, const char *encrypted)
     goto verify_pass_out;
   }
   /* match, check if we suggest re-hashing */
-  if (pbkdf2_rounds > rounds || PBKDF2_DIGEST_IDX != digest_idx)
+  if (pbkdf2_rounds > rounds || pbkdf2_method != digest_name)
     ret = 2;
   else
     ret = 1;
@@ -267,19 +245,11 @@ static Function pbkdf2_table[] = {
  */
 static int pbkdf2_init(void)
 {
-  int i;
+  const EVP_MD *digest;
   OpenSSL_add_all_digests();
-  for (i = 0; digests[i].name[0]; i++) {
-    digests[i].digest = EVP_get_digestbyname(digests[i].name);
-    if (!digests[i].digest) {
-      putlog(LOG_MISC, "*", "Failed to initialize digests '%s'.", digests[i].name);
-      return -1;
-    }
-    if (EVP_MD_size(digests[i].digest) > maxdigestlen)
-      maxdigestlen = EVP_MD_size(digests[i].digest);
-  }
-  if (PBKDF2_DIGEST_IDX_INVALID(PBKDF2_DIGEST_IDX)) {
-    putlog(LOG_MISC, "*", "Invalid Digest IDX.");
+  digest = EVP_get_digestbyname(pbkdf2_method);
+  if (!digest) {
+    putlog(LOG_MISC, "*", "Failed to initialize digest '%s'.", pbkdf2_method);
     return -1;
   }
   return 0;
@@ -307,7 +277,8 @@ char *pbkdf2_start(Function *global_funcs)
     }
     add_hook(HOOK_ENCRYPT_PASS2, (Function) pbkdf2_encrypt_pass);
     add_hook(HOOK_VERIFY_PASS2, (Function) pbkdf2_verify_pass);
-    add_tcl_ints(pbkdf2_ints);
+    add_tcl_ints(my_tcl_ints);
+    add_tcl_strings(my_tcl_strings);
   }
   return NULL;
 }
