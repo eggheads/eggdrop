@@ -86,6 +86,19 @@ static void bufcount(char **buf, int *buflen, int bytes)
   *buflen -= bytes;
 }
 
+int b64_ntop_without_padding(u_char const *src, size_t srclength, char *target, size_t targsize) {
+  char *c;
+
+  if (b64_ntop(src, srclength, target, targsize) < 0)
+    return -1;
+  c = strchr(target, '=');
+  if (c) {
+    *c = 0;
+    targsize = (c - target);
+  }
+  return targsize;
+}
+
 /* Write base64 PBKDF2 hash */
 static int pbkdf2_make_base64_hash(const EVP_MD *digest, const char *pass, int passlen, const unsigned char *salt, int saltlen, int rounds, char *out, int outlen)
 {
@@ -98,7 +111,7 @@ static int pbkdf2_make_base64_hash(const EVP_MD *digest, const char *pass, int p
     return -2;
   if (!PKCS5_PBKDF2_HMAC(pass, passlen, salt, saltlen, rounds, digest, maxdigestlen, buf))
     return -5;
-  if (b64_ntop(buf, digestlen, out, outlen) < 0)
+  if (b64_ntop_without_padding(buf, digestlen, out, outlen) < 0) 
     return -5;
   return 0;
 }
@@ -128,11 +141,11 @@ static int pbkdf2crypt_verify_pass(const char *pass, int digest_idx, const unsig
     return -4;
 
   bufcount(&out, &outlen, snprintf((char *) out, outlen, "$pbkdf2-%s$rounds=%i$", digests[digest_idx].name, (unsigned int) rounds));
-  ret = b64_ntop(salt, saltlen, out, outlen);
+  ret = b64_ntop_without_padding(salt, saltlen, out, outlen);
   if (ret < 0) {
     return -2;
   }
-  bufcount(&out, &outlen, PBKDF2_BASE64_ENC_LEN(saltlen));
+  bufcount(&out, &outlen, ret);
   bufcount(&out, &outlen, (out[0] = '$', 1));
   ret = pbkdf2_make_base64_hash(digests[digest_idx].digest, pass, strlen(pass), salt, saltlen, rounds, out, outlen);
   if (ret != 0)
