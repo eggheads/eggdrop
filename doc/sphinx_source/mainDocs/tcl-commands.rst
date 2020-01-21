@@ -165,10 +165,14 @@ cap <active/available/raw> [arg]
   Module: server
 
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-tagmsg <tag string> <target>
+tagmsg <tags> <target>
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-  Description: sends an IRCv3 TAGMSG command to the target. Only works if message-tags as been negotiated with the server via the cap command. tag string is a single string containing the tags you wish to send separated by commas (do not include the @prefix), and target is the nickname or channel you wish to send the tags to.
+  Description: sends an IRCv3 TAGMSG command to the target. Only works if message-tags has been negotiated with the server via the cap command. tags is a Tcl dict (or space-separated string) of the tags you wish to send separated by commas (do not include the @prefix), and target is the nickname or channel you wish to send the tags to. To send a tag only (not a key/value pair), use a "" as the value for a key in a dict, or a "{}" if you are sending as a space-separated string.
+
+  Examples:
+    set mytags [dict create +foo bar moo baa +last ""]; tagmsg $mytags #channel
+    tagmsg "+foo bar moo baa +last {}" #channel
 
   Returns: nothing
 
@@ -2945,7 +2949,9 @@ The following is a list of bind types and how they work. Below each bind type is
 
   procname <from> <keyword> <text>
 
-  Description: previous versions of Eggdrop required a special compile option to enable this binding, but it's now standard. The keyword is either a numeric, like "368", or a keyword, such as "PRIVMSG". "from" will be the server name or the source user (depending on the keyword); flags are ignored. The order of the arguments is identical to the order that the IRC server sends to the bot. The pre-processing  only splits it apart enough to determine the keyword. If the proc returns 1, Eggdrop will not process the line any further (this could cause unexpected behavior in some cases). RAW and RAWT binds are exclusive; RAW binds will only trigger if the IRCv3 message-tags capability is not negotiated with the server.
+  IMPORTANT: While not necessarily deprecated, this bind has been supplanted by the RAWT bind as of 1.9.0. You probably want to be using RAWT, not RAW.
+
+  Description: previous versions of Eggdrop required a special compile option to enable this binding, but it's now standard. The keyword is either a numeric, like "368", or a keyword, such as "PRIVMSG". "from" will be the server name or the source user (depending on the keyword); flags are ignored. The order of the arguments is identical to the order that the IRC server sends to the bot. The pre-processing only splits it apart enough to determine the keyword. If the proc returns 1, Eggdrop will not process the line any further (this could cause unexpected behavior in some cases). The RAW bind does not support the IRCv3 message-tags capability, please see RAWT for more information.
 
   Module: server
 
@@ -3304,7 +3310,7 @@ The following is a list of bind types and how they work. Below each bind type is
 
   procname <from> <keyword> <text> <tag>
 
-  Description: triggered when a raw message of type keyword that includes an IRCv3 message-tag is processed by Eggdrop. RAW and RAWT binds are exclusive; RAWT binds will only trigger if the IRCv3 message-tags capability is not negotiated with the server. The keyword is either a numeric, like "368", or a keyword, such as "PRIVMSG". "from" will be the server name or the source user (depending on the keyword); flags are ignored. "tag" will be the contents of the entire tag message prefixed to the server message, such as "msgid=890~1572172797~68;aaa=bbb". The order of the arguments is identical to the order that the IRC server sends to the bot. If the proc returns 1, Eggdrop will not process the line any further (this could cause unexpected behavior in some cases).
+  Description: similar to the RAW bind, but allows an extra field for the IRCv3 message-tags capability. The keyword is either a numeric, like "368", or a keyword, such as "PRIVMSG" or "TAGMSG". "from" will be the server name or the source user (depending on the keyword); flags are ignored. "tag" will be the contents, if any, of the entire tag message prefixed to the server message in a dict format, such as "msgid 890157217279768 aaa bbb". The order of the arguments is identical to the order that the IRC server sends to the bot. If the proc returns 1, Eggdrop will not process the line any further (this could cause unexpected behavior in some cases). As of 1.9.0, it is recommended to use the RAWT bind instead of the RAW bind.
 
 ^^^^^^^^^^^^^
 Return Values

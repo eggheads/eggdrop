@@ -164,20 +164,32 @@ static int tcl_puthelp STDVAR
 
 /* Send a msg to the server prefixed with an IRCv3 message-tag */
 static int tcl_tagmsg STDVAR {
-  char tag[CLITAGMAX];
+  char tag[CLITAGMAX-9];    /* minus @, TAGMSG and two spaces */
+  char tagdict[CLITAGMAX-9];
   char target[MSGMAX];
   char *p;
+  int taglen = 0, i = 1;
   BADARGS(3, 3, " tag target");
 
   if (!msgtag) {
     Tcl_AppendResult(irp, "message-tags not enabled, cannot send tag", NULL);
     return TCL_ERROR;
   }
-  strlcpy(tag, argv[1], sizeof tag);
+  strlcpy(tagdict, argv[1], sizeof tag);
   strlcpy(target, argv[2], sizeof target);
-  if (*tag == '@') {
-    Tcl_AppendResult(irp, "tag cannot be prefixed with @", NULL);
-    return TCL_ERROR;
+  p = strtok(tagdict, " ");
+  while (p != NULL) {
+    if ((i % 2) != 0) {
+      taglen += egg_snprintf(tag + taglen, CLITAGMAX - 9 - taglen, "%s", p);
+    } else {
+      if (strcmp(p, "{}") != 0) {
+        taglen += egg_snprintf(tag + taglen, CLITAGMAX - 9 - taglen, "=%s;", p);
+      } else {
+        taglen += egg_snprintf(tag + taglen, CLITAGMAX - 9 - taglen, ";");
+      }
+    }
+    i++;
+    p = strtok(NULL, " ");
   }
   p = strchr(target, '\n');
   if (p != NULL)

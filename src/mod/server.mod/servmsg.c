@@ -1114,8 +1114,6 @@ static void server_activity(int idx, char *tagmsg, int len)
       strncpy(tagstr, tagmsg, TOTALTAGMAX);
       tagstrptr = strtok_r(tagmsg, " ", &msgptr);
       tagstrptr++;     /* Remove @ */
-      putlog(LOG_DEBUG, "*", "Found message-tag %s on msg %s",
-            tagstrptr, msgptr);
       /* Split each key/value pair apart, then split the key from the value */
       for (i = 0, s1 = tagstrptr; ; i++, s1 = NULL){
         token = strtok_r(s1, ";", &saveptr1);
