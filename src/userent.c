@@ -288,12 +288,17 @@ int pass_set(struct userrec *u, struct user_entry *e, void *buf)
       new2 = new;
     }
     else {
-      encrypt_pass(pass, new);
-      new2 = encrypt_pass2(pass);
+      if (encrypt_pass)
+        encrypt_pass(pass, new);
+      if (encrypt_pass2)
+        new2 = encrypt_pass2(pass);
     }
-    e->u.extra = user_malloc(strlen(new) + 1);
-    strcpy(e->u.extra, new);
-    set_user(&USERENTRY_PASS2, u, new2);
+    if (encrypt_pass) {
+      e->u.extra = user_malloc(strlen(new) + 1);
+      strcpy(e->u.extra, new);
+    }
+    if (encrypt_pass2)
+      set_user(&USERENTRY_PASS2, u, new2);
   }
   if (!noshare && !(u->flags & (USER_BOT | USER_UNSHARED)))
     shareout(NULL, "c PASS %s %s\n", u->handle, pass ? pass : "");
