@@ -27,7 +27,7 @@
 #include "src/mod/module.h"
 
 /* TODO: move the following 2 macros to base64.h and change servmsg.c to also use them */
-#define B64_NTOP_CALCULATE_SIZE(x) ((x + 2) / 3 * 4 + 1)
+#define B64_NTOP_CALCULATE_SIZE(x) ((x + 2) / 3 * 4)
 #define B64_PTON_CALCULATE_SIZE(x) (x * 3 / 4)
 /* Default number of rounds if not explicitly specified */
 #define PBKDF2_ROUNDS 5000
