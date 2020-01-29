@@ -23,6 +23,9 @@
 #ifndef _EGG_COMPAT_BASE64_H_
 #define _EGG_COMPAT_BASE64_H_
 
+#define B64_NTOP_CALCULATE_SIZE(x) ((x + 2) / 3 * 4)
+#define B64_PTON_CALCULATE_SIZE(x) (x * 3 / 4)
+
 #ifndef HAVE_BASE64
 int b64_ntop(u_char const *, size_t, char *, size_t);
 int b64_pton(const char *, u_char *, size_t);
