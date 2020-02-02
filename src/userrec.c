@@ -325,10 +325,18 @@ struct userrec *get_user_by_host(char *host)
 int u_pass_match(struct userrec *u, char *pass)
 {
   char *cmp, new[32];
+  int pass2;
 
   if (!u || !pass)
     return 0;
-  cmp = get_user(&USERENTRY_PASS, u);
+  if (encrypt_pass2) {
+    cmp = get_user(&USERENTRY_PASS2, u);
+    pass2 = 1;
+  }
+  if (!cmp && encrypt_pass) {
+    cmp = get_user(&USERENTRY_PASS, u);
+    pass2 = 0;
+  }
   if (pass[0] == '-') {
     if (!cmp)
       return 1;
@@ -344,9 +352,15 @@ int u_pass_match(struct userrec *u, char *pass)
   } else {
     if (strlen(pass) > 30)
       pass[30] = 0;
-    encrypt_pass(pass, new);
-    if (!strcmp(cmp, new))
-      return 1;
+    if (pass2) {
+      if (verify_pass2(pass, cmp) == 1)
+        return 1;
+    }
+    else {
+      encrypt_pass(pass, new);
+      if (!strcmp(cmp, new))
+        return 1;
+    }
   }
   return 0;
 }

@@ -183,61 +183,56 @@ static char *pbkdf2_encrypt_pass(const char *pass)
  */
 static int pbkdf2_verify_pass(const char *pass, const char *encrypted)
 {
-  int bufsize, ret, b64saltlen, saltlen;
-  long rounds;
-  char *buf;
-  unsigned char *salt;
-  const char *b64salt, *hash = encrypted, *digest_name;
+  char method[sizeof pbkdf2_method],
+       b64salt[B64_NTOP_CALCULATE_SIZE(PBKDF2_SALT_LEN) + 1],
+       b64hash[B64_NTOP_CALCULATE_SIZE(256) + 1];
+  unsigned int rounds;
   const EVP_MD *digest;
+  unsigned char salt[PBKDF2_SALT_LEN + 1];
+  static int hashlen;
+  static char *buf;
 
-  if (strncmp(hash, "$pbkdf2-", strlen("$pbkdf2-")))
+  if (!sscanf(encrypted, "$pbkdf2-%34[^$]$rounds=%u$%24[^$]$%344s", method, &rounds, b64salt, b64hash)) {
+    putlog(LOG_MISC, "*", "PBKDF2 error: could not parse hashed password.");
     return -1;
-  hash += strlen("$pbkdf2-");
-
-  digest_name = hash;
-  digest = EVP_get_digestbyname(digest_name);
-
-  hash = strchr(hash, '$');
-  if (!hash)
-    return -1;
-  /* TODO: check/skip "rounds=" ? */
-  rounds = strtol(hash+1, (char **) &b64salt, 16);
-  if (rounds > INT_MAX || rounds <= 0 || b64salt[0] != '$')
-    return -1;
-
-  hash = strchr(++b64salt, '$');
-  b64saltlen = hash - b64salt;
-  saltlen = B64_PTON_CALCULATE_SIZE(b64saltlen);
-  if (!hash || !++hash)
-    return -1;
-
-  bufsize = pbkdf2_get_size(digest_name, digest, saltlen);
-  buf = nmalloc(bufsize);
-  salt = nmalloc(saltlen);
-  b64saltlen = b64_pton(b64salt, salt, saltlen);
-  if (b64saltlen == -1) {
-    ret = -1;
-    goto verify_pass_out;
   }
-
-  if (pbkdf2crypt_verify_pass(pass, digest_name, (unsigned char *)salt, saltlen, rounds, buf, bufsize) != 0) {
-    ret = -1;
-    goto verify_pass_out;
+  digest = EVP_get_digestbyname(method);
+  if (!digest) {
+    putlog(LOG_MISC, "*", "PBKDF2 error: EVP_get_digestbyname(%s).", method);
+    return -1;
   }
-  if (strncmp(encrypted, buf, bufsize)) {
-    ret = 0;
-    goto verify_pass_out;
+  if (b64salt[22] == 0) {
+    b64salt[22] = '=';
+    b64salt[23] = '=';
+    b64salt[24] = 0;
   }
-  /* match, check if we suggest re-hashing */
-  if (pbkdf2_rounds > rounds || pbkdf2_method != digest_name)
-    ret = 2;
-  else
-    ret = 1;
+  else if (b64salt[23] == 0) {
+    b64salt[23] = '=';
+    b64salt[24] = 0;
+  }
+  if (b64_pton(b64salt, salt, sizeof salt) != PBKDF2_SALT_LEN) {
+    putlog(LOG_MISC, "*", "PBKDF2 error: b64_pton(%s).", b64salt);
+    return -1;
+  }
+  hashlen = pbkdf2_get_size(method, digest, PBKDF2_SALT_LEN);
+  buf = nmalloc(hashlen + 1);
+  if (pbkdf2crypt_verify_pass(pass, method, salt, PBKDF2_SALT_LEN, rounds, buf, hashlen) != 0) {
+    putlog(LOG_MISC, "*", "PBKDF2 error: pbkdf2crypt_verify_pass()");
+    nfree(buf);
+    return -1;
+  }
+  if (strncmp(encrypted, buf, hashlen)) {
+    putlog(LOG_MISC, "*", "PBKDF2 error: strncmp(hashlen):\n  %s\n  %s", encrypted, buf);
+    nfree(buf);
+    /*
+    TODO: re-hashing password (new method, more rounds)
+    if (strncmp(method, pbkdf2_method, sizeof pbkdf2_method) || rounds != pbkdf2_rounds)
+    */
 
-verify_pass_out:
+    return 0;
+  }
   nfree(buf);
-  nfree(salt);
-  return ret;
+  return 1;
 }
 
 EXPORT_SCOPE char *pbkdf2_start();
