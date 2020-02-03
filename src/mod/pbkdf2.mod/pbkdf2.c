@@ -36,7 +36,7 @@
 
 static Function *global = NULL;
 
-static char pbkdf2_method[28] = "SHA512"; /* TODO: can we do this or do we have to use strlcpy before init()? */
+static char pbkdf2_method[28] = "SHA512";
 static int pbkdf2_remove_old = 0; /* TODO: not implemented yet */
 static int pbkdf2_rounds = PBKDF2_ROUNDS;
 
