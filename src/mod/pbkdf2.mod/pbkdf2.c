@@ -36,19 +36,19 @@
 
 static Function *global = NULL;
 
-/*  const EVP_MD *digest; */
-
 static char pbkdf2_method[28] = "SHA512"; /* TODO: can we do this or do we have to use strlcpy before init()? */
+static int pbkdf2_remove_old = 0; /* TODO: not implemented yet */
 static int pbkdf2_rounds = PBKDF2_ROUNDS;
 
 static tcl_ints my_tcl_ints[] = {
-  {"pbkdf2-rounds", &pbkdf2_rounds, 0},
-  {NULL,           NULL,          0}
+  {"pbkdf2-remove-old", &pbkdf2_remove_old, 0},
+  {"pbkdf2-rounds",     &pbkdf2_rounds,     0},
+  {NULL,                NULL,               0}
 };
 
 static tcl_strings my_tcl_strings[] = {
   {"pbkdf2-method", pbkdf2_method, 27, 0},
-  {NULL,           NULL,          0}
+  {NULL,            NULL,          0,  0}
 };
 
 static char *pbkdf2_close(void)
@@ -60,7 +60,7 @@ static int pbkdf2_get_size(const char* digest_name, const EVP_MD *digest, int sa
 {
   /* PHC string format */
   /* hash = "$pbkdf2-<digest>$rounds=<rounds>$<salt>$<hash>" */
-  return strlen("$pbkdf2-") + strlen(digest_name) + strlen("$rounds=FFFFFFFF$") + B64_NTOP_CALCULATE_SIZE(saltlen) + 1 + B64_NTOP_CALCULATE_SIZE(EVP_MD_size(digest));
+  return strlen("$pbkdf2-") + strlen(digest_name) + strlen("$rounds=2147483647$") + B64_NTOP_CALCULATE_SIZE(saltlen) + 1 + B64_NTOP_CALCULATE_SIZE(EVP_MD_size(digest));
 }
 
 static void bufcount(char **buf, int *buflen, int bytes)
