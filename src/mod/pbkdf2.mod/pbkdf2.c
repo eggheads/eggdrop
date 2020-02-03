@@ -192,7 +192,7 @@ static int pbkdf2_verify_pass(const char *pass, const char *encrypted)
   static int hashlen;
   static char *buf;
 
-  if (!sscanf(encrypted, "$pbkdf2-%34[^$]$rounds=%u$%24[^$]$%344s", method, &rounds, b64salt, b64hash)) {
+  if (!sscanf(encrypted, "$pbkdf2-%27[^$]$rounds=%u$%24[^$]$%344s", method, &rounds, b64salt, b64hash)) {
     putlog(LOG_MISC, "*", "PBKDF2 error: could not parse hashed password.");
     return -1;
   }
