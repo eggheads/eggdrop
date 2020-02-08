@@ -12,7 +12,7 @@
  */
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2019 Eggheads Development Team
+ * Copyright (C) 1999 - 2020 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -756,7 +756,7 @@ int readuserfile(char *file, struct userrec **ret)
 
                 cr->next = u->chanrec;
                 u->chanrec = cr;
-                strlcpy(cr->channel, chname, 80);
+                strlcpy(cr->channel, chname, sizeof cr->channel);
                 cr->laston = atoi(st);
                 cr->flags = fr.chan;
                 cr->flags_udef = fr.udef_chan;

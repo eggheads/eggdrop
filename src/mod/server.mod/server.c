@@ -4,7 +4,7 @@
  */
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2019 Eggheads Development Team
+ * Copyright (C) 1999 - 2020 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -999,11 +999,11 @@ static void queue_server(int which, char *msg, int len)
    removed from Eggdrop.
 */
 static void old_add_server(const char *ss) {
-  char name[121] = "";
+  char name[256] = "";
   char port[7] = "";
   char pass[121] = "";
-  if (!sscanf(ss, "[%255[0-9.A-F:a-f]]:%10[+0-9]:%120[^\r\n]", name, port, pass) &&
-      !sscanf(ss, "%255[^:]:%10[+0-9]:%120[^\r\n]", name, port, pass))
+  if (!sscanf(ss, "[%255[0-9.A-F:a-f]]:%6[+0-9]:%120[^\r\n]", name, port, pass) &&
+      !sscanf(ss, "%255[^:]:%6[+0-9]:%120[^\r\n]", name, port, pass))
     return;
   add_server(name, port, pass);
 }
@@ -1538,14 +1538,14 @@ static char *traced_nettype(ClientData cdata, Tcl_Interp *irp,
     net_type_int = NETT_OTHER; 
     warn = 1;
   } else {
-    fatal("ERROR: NET-TYPE NOT SET.\n Must be one of DALNet, EFnet, freenode,"
-        " IRCnet, Quakenet, Rizon, Undernet, Other.", 0);
+    fatal("ERROR: NET-TYPE NOT SET.\n Must be one of DALNet, EFnet, freenode, "
+          "IRCnet, Quakenet, Rizon, Undernet, Other.", 0);
   }
   if (warn) {
     putlog(LOG_MISC, "*",
-            "WARNING: Using an integer for net-type is deprecated and will be\n"
-            "         removed in a future release. Please reference an updated\n"
-            "         configuration file for the new allowed string values");
+           "WARNING: Using an integer for net-type is deprecated and will be\n"
+           "         removed in a future release. Please reference an updated\n"
+           "         configuration file for the new allowed string values");
   }
   do_nettype();
   return NULL;

@@ -3,7 +3,7 @@
  */
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2019 Eggheads Development Team
+ * Copyright (C) 1999 - 2020 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -88,14 +88,6 @@
 #define addserver ((void(*)(char *))server_funcs[41])
 #define delserver ((void(*)(char *))server_funcs[42])
 #define net_type_int (*(int *)(server_funcs[43]))
-#else /* MAKING_SERVER */
-
-/* Macros for commonly used commands. */
-#define free_null(ptr)  do {                            \
-        nfree(ptr);                                     \
-        ptr = NULL;                                     \
-} while (0)
-
 #endif /* MAKING_SERVER */
 
 struct server_list {

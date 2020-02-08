@@ -267,8 +267,11 @@
 <p>Additionally, you can kill the bot via the command line (<code class="docutils literal notranslate"><span class="pre">kill</span> <span class="pre">pid</span></code>, the pid is shown to you when you started the bot or can be viewed by running <code class="docutils literal notranslate"><span class="pre">ps</span> <span class="pre">x</span></code>) and then restart it with the -mnt flag, which will launch you directly into the partyline, to assist with troubleshooting. Note that if you use the -nt flag, the bot will not persist and you will kill it once you quit the partyline.</p>
 <p>If you’re still unsure what the problem is, try asking in #eggdrop on Freenode, and be sure to include any relevant information from the logfile. Good luck!</p>
 </div>
-<div class="section" id="first-steps-log-on-to-the-partyline">
-<h3>First steps- log on to the partyline<a class="headerlink" href="#first-steps-log-on-to-the-partyline" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="first-steps">
+<h2>First steps<a class="headerlink" href="#first-steps" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="log-on-to-the-partyline">
+<h3>Log on to the partyline<a class="headerlink" href="#log-on-to-the-partyline" title="Permalink to this headline">¶</a></h3>
 <p>Now that your bot is online, you’ll want to join the partyline to further use the bot. First, read what it tells you when you started it up:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">STARTING</span> <span class="n">BOT</span> <span class="n">IN</span> <span class="n">USERFILE</span> <span class="n">CREATION</span> <span class="n">MODE</span><span class="o">.</span>
 <span class="n">Telnet</span> <span class="n">to</span> <span class="n">the</span> <span class="n">bot</span> <span class="ow">and</span> <span class="n">enter</span> <span class="s1">&#39;NEW&#39;</span> <span class="k">as</span> <span class="n">your</span> <span class="n">nickname</span><span class="o">.</span>
@@ -276,7 +279,51 @@
 <span class="n">This</span> <span class="n">will</span> <span class="n">make</span> <span class="n">the</span> <span class="n">bot</span> <span class="n">recognize</span> <span class="n">you</span> <span class="k">as</span> <span class="n">the</span> <span class="n">master</span><span class="o">.</span>
 </pre></div>
 </div>
-<p>If you choose not to telnet to connect to the partyline, you can either <code class="docutils literal notranslate"><span class="pre">/dcc</span> <span class="pre">chat</span> <span class="pre">BotNick</span></code> or <code class="docutils literal notranslate"><span class="pre">/ctcp</span> <span class="pre">BotNick</span> <span class="pre">chat</span></code>. If one of those methods does not work for you, try the other. Once you’re on the bot for the first time, type <code class="docutils literal notranslate"><span class="pre">.help</span></code> for a short list of available commands, or <code class="docutils literal notranslate"><span class="pre">.help</span> <span class="pre">all</span></code> for a more thorough list. Common first commands you’ll want to review are <code class="docutils literal notranslate"><span class="pre">.help</span> <span class="pre">+chan</span></code> to tell the bot to join a channel, <code class="docutils literal notranslate"><span class="pre">.help</span> <span class="pre">+user</span></code> to add a user, <code class="docutils literal notranslate"><span class="pre">.help</span> <span class="pre">whois</span></code> for a list of flags you can add to that user, and <code class="docutils literal notranslate"><span class="pre">.help</span> <span class="pre">chattr</span></code> to add those flags to a user.</p>
+<p>You can either telnet to the bot, or connect to the bot using DCC Chat. To telnet, you’ll either need a program like Putty (Windows), or you can do it from the command line of your shell using the telnet command:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">telnet</span> <span class="o">&lt;</span><span class="n">IP</span> <span class="n">of</span> <span class="n">bot</span><span class="o">&gt;</span> <span class="o">&lt;</span><span class="n">listen</span> <span class="n">port</span><span class="o">&gt;</span>
+</pre></div>
+</div>
+<p>You can find the IP and port the bot is listening on by a) remembering what you set in the config file ;) or b) reading the display the bot presented when it started up. Look for a line that looks similar to this:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Listening</span> <span class="k">for</span> <span class="n">telnet</span> <span class="n">connections</span> <span class="n">on</span> <span class="mf">2.4</span><span class="o">.</span><span class="mf">6.9</span><span class="p">:</span><span class="mi">3183</span> <span class="p">(</span><span class="nb">all</span><span class="p">)</span><span class="o">.</span>
+</pre></div>
+</div>
+<p>This tells you that the bot is listening on IP 2.4.6.9, port 3183. If you see 0.0.0.0 listed, that means Eggdrop is listening on all available IPs on that particular host.</p>
+<p>If you choose not to telnet to connect to the partyline, you can either <code class="docutils literal notranslate"><span class="pre">/dcc</span> <span class="pre">chat</span> <span class="pre">BotNick</span></code> or <code class="docutils literal notranslate"><span class="pre">/ctcp</span> <span class="pre">BotNick</span> <span class="pre">chat</span></code>. If one of those methods does not work for you, try the other. Once you’re on the bot for the first time, type <code class="docutils literal notranslate"><span class="pre">.help</span></code> for a short list of available commands, or <code class="docutils literal notranslate"><span class="pre">.help</span> <span class="pre">all</span></code> for a more thorough list.</p>
+</div>
+<div class="section" id="common-first-steps">
+<h3>Common first steps<a class="headerlink" href="#common-first-steps" title="Permalink to this headline">¶</a></h3>
+<p>To learn more about any of these commands, type .help &lt;command&gt; on the partyline. It will provide you the syntax you need, as well as a short description of how to use the command.</p>
+<p>To tell the Eggdrop to join a channel, use:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">.+</span><span class="n">chan</span> <span class="c1">#channel</span>
+</pre></div>
+</div>
+<p>To register a user with the bot, use:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">.+</span><span class="n">user</span> <span class="o">&lt;</span><span class="n">handle</span><span class="o">&gt;</span>
+</pre></div>
+</div>
+<p>The handle is the name that the bot uses to track a user. No matter what nickname on IRC a user uses, a single handle is used to track the user by their hostmask. To add a hostmask of a user to a handle, use:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">.+</span><span class="n">host</span> <span class="o">&lt;</span><span class="n">handle</span><span class="o">&gt;</span> <span class="o">&lt;</span><span class="n">hostmask</span><span class="o">&gt;</span>
+</pre></div>
+</div>
+<p>where the hostmask is in the format of &lt;nick&gt;!&lt;ident&gt;&#64;hostname.com . Wildcards can be used; common formats are <a class="reference external" href="mailto:*!*&#37;&#52;&#48;hostname&#46;com">*!*<span>&#64;</span>hostname<span>&#46;</span>com</a> for static hosts, or <a class="reference external" href="mailto:*!ident&#37;&#52;&#48;*&#46;foo&#46;com">*!ident<span>&#64;</span>*<span>&#46;</span>foo<span>&#46;</span>com</a> for dynamic hostnames.</p>
+<p>To assign an access level to a user, first read <code class="docutils literal notranslate"><span class="pre">.help</span> <span class="pre">whois</span></code> for a listing of possible access levels and their corresponding flags. Then, assign the desired flag to the user with:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">.</span><span class="n">chattr</span> <span class="o">&lt;+</span><span class="n">flag</span><span class="o">&gt;</span> <span class="o">&lt;</span><span class="n">handle</span><span class="o">&gt;</span>
+</pre></div>
+</div>
+<p>So to grant a user the voice flag, you would do:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">.</span><span class="n">chattr</span> <span class="o">+</span><span class="n">v</span> <span class="n">handle</span>
+</pre></div>
+</div>
+<p>It is important to note that, when on the partyline, you want to use the handle of the user, not their current nickname.</p>
+<p>Finally, Eggdrop is often used to moderate and control channels. This is done via the <code class="docutils literal notranslate"><span class="pre">.chanset</span></code> command. To learn more about the (numerous!) settings that can be used to control a channel, read:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">.</span><span class="n">help</span> <span class="n">chaninfo</span>
+</pre></div>
+</div>
+<p>Common uses involve setting channels modes. This can be done with the chanmode channel setting:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">.</span><span class="n">chanset</span> <span class="c1">#channel chanmode +snt</span>
+</pre></div>
+</div>
+<p>which will enforce the s, n, and t flags on a channel.</p>
 </div>
 </div>
 </div>
@@ -302,8 +349,8 @@
         <div class="right">
           
     <div class="footer" role="contentinfo">
-        &#169; Copyright 2019, Eggheads.
-      Last updated on Oct 25, 2019.
+        &#169; Copyright 2020, Eggheads.
+      Last updated on Jan 20, 2020.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.5.
     </div>
         </div>

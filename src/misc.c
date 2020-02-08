@@ -9,7 +9,7 @@
  */
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2019 Eggheads Development Team
+ * Copyright (C) 1999 - 2020 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -44,7 +44,7 @@ extern struct chanset_t *chanset;
 extern char helpdir[], version[], origbotname[], botname[], admin[], network[],
             motdfile[], ver[], botnetnick[], bannerfile[], textdir[];
 extern int  backgrd, con_chan, term_z, use_stderr, dcc_total, keep_all_logs,
-            quick_logs, strict_host;
+            quick_logs;
 
 extern time_t now;
 extern Tcl_Interp *interp;

@@ -2713,6 +2713,13 @@ configureargs
 
   Module: core
 
+^^^^^^^^
+language
+^^^^^^^^
+  Value: a string containing the language with the highest priority for use by Eggdrop. This commonly reflects what is added with addlang in the config file
+
+  Module: core
+
 Binds
 -----
 
@@ -3304,6 +3311,14 @@ The following is a list of bind types and how they work. Below each bind type is
 
   Module: core
 
+(51) INVT (stackable)
+
+  bind invt <flags> <mask> <proc>
+
+  procname <nick> <user@host> <channel> <invitee>
+
+  Description: triggered when eggdrop received an INVITE message. The mask for the bind is in the format "#channel nickname", where nickname (not a hostmask) is that of the invitee. For the proc, nick is the nickname of the person sending the invite request, user@host is the user@host of the person sending the invite, channel is the channel the invitee is being invited to, and invitee is the target (nickname only) of the invite. The invitee argument was added to support the IRCv3 invite-notify capability, where the eggdrop may be able to see invite messages for other people that are not the eggdrop.
+
 (52) RAWT (stackable)
 
   bind rawt <flags> <keyword> <proc>
@@ -3477,4 +3492,4 @@ are the four special characters:
 |     | words) (This char only works in binds, not in regular matching)          |
 +-----+--------------------------------------------------------------------------+
 
-  Copyright (C) 1999 - 2019 Eggheads Development Team
+  Copyright (C) 1999 - 2020 Eggheads Development Team

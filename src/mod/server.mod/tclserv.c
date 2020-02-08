@@ -2,7 +2,7 @@
  * tclserv.c -- part of server.mod
  *
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2019 Eggheads Development Team
+ * Copyright (C) 1999 - 2020 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -374,7 +374,7 @@ static int tcl_queuesize STDVAR
 }
 
 static int tcl_addserver STDVAR {
-  char name[121] = "";
+  char name[256] = "";
   char port[7] = "";
   char pass[121] = "";
   char ret = 0;
@@ -402,7 +402,7 @@ static int tcl_addserver STDVAR {
 }
 
 static int tcl_delserver STDVAR {
-  char name[121] = "";
+  char name[256] = "";
   char port[7] = "";
   char ret = 0;
 

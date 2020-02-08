@@ -3,7 +3,7 @@
  */
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2019 Eggheads Development Team
+ * Copyright (C) 1999 - 2020 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -445,7 +445,7 @@
 #define str_unescape ((void (*)(char *, const char))global[264])
 #define egg_strcatn ((int (*)(char *dst, const char *src, size_t max))global[265])
 #define clear_chanlist_member ((void (*)(const char *nick))global[266])
-#define fixfrom ((char *(*)(char *))global[267])
+/* was fixfrom */
 /* 268 - 271 */
 /* Please don't modify socklist directly, unless there's no other way.
  * Its structure might be changed, or it might be completely removed,

@@ -1,0 +1,33 @@
+name: CI
+
+on:
+  repository_dispatch:
+  schedule:
+    - cron: '3 4 * * 1'
+
+name: Run tests
+jobs:
+  build:
+    name: build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Setup BATS
+        uses: mig4/setup-bats@master
+        with:
+          bats-version: 1.1.0
+      - name: Check out code
+        uses: actions/checkout@v2
+      - name: Check out tests
+        uses: actions/checkout@v2
+        with:
+          repository: eggheads/eggdrop-tests
+          path: /tmp/build/tests
+#      - name: Test
+#        run: bats -r 
+  test:
+    if: github.event.action == 'run_tests'
+    name: Run BATS tests
+    runs-on: ubuntu-latest
+    steps:
+      - run: |
+          echo "I just ran all your tests!"
