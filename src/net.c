@@ -952,12 +952,6 @@ int sockread(char *s, int *len, sock_list *slist, int slistmax, int tclonly)
                      ERR_error_string(ERR_get_error(), 0), err);
             x = -1;
           }
-        } else if (slist[i].flags & SOCK_SENTTLS) {
-          /* We are awaiting a reply on our "starttls", only read
-           * strlen("starttls -\n") bytes so we don't accidentally
-           * read the Client Hello from the ssl handshake */
-          x = read(slist[i].sock, s, strlen("starttls -\n"));
-          slist[i].flags &= ~SOCK_SENTTLS;
         } else
           x = read(slist[i].sock, s, grab);
       }
