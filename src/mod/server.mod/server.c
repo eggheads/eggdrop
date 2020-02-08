@@ -84,8 +84,8 @@ static int double_server;
 static int double_help;
 static int double_warned;
 static int lastpingtime;        /* IRCnet LAGmeter support -- drummer */
-static char stackablecmds[511];
-static char stackable2cmds[511];
+static char stackablecmds[MSGMAX];
+static char stackable2cmds[MSGMAX];
 static time_t last_time;
 static int use_penalties;
 static int use_fastdeq;
@@ -95,6 +95,7 @@ static int kick_method;
 static int optimize_kicks;
 static int msgrate;             /* Number of seconds between sending
                                  * queued lines to server. */
+static int msgtag;              /* Enable IRCv3 message-tags capability    */
 #ifdef TLS
 static int use_ssl;             /* Use SSL for the next server connection? */
 static int tls_vfyserver;       /* Certificate validation mode for servrs  */
@@ -105,7 +106,7 @@ static char sslserver = 0;
 #endif
 
 static p_tcl_bind_list H_wall, H_raw, H_notc, H_msgm, H_msg, H_flud, H_ctcr,
-                       H_ctcp, H_out;
+                       H_ctcp, H_out, H_rawt;
 
 static void empty_msgq(void);
 static void next_server(int *, char *, unsigned int *, char *);
@@ -436,8 +437,9 @@ static int fast_deq(int which)
 {
   struct msgq_head *h;
   struct msgq *m, *nm;
-  char msgstr[511], nextmsgstr[511], tosend[511], victims[511], stackable[511],
-       *msg, *nextmsg, *cmd, *nextcmd, *to, *nextto, *stckbl;
+  char msgstr[SENDLINEMAX], nextmsgstr[SENDLINEMAX], tosend[SENDLINEMAX],
+       victims[SENDLINEMAX], stackable[SENDLINEMAX], *msg, *nextmsg, *cmd,
+       *nextcmd, *to, *nextto, *stckbl;
   int len, doit = 0, found = 0, cmd_count = 0, stack_method = 1;
 
   if (!use_fastdeq)
@@ -500,7 +502,7 @@ static int fast_deq(int which)
     nextto = newsplit(&nextmsg);
     if (strcmp(to, nextto) && !strcmp(cmd, nextcmd) && !strcmp(msg, nextmsg) &&
         ((strlen(cmd) + strlen(victims) + strlen(nextto) + strlen(msg) + 2) <
-        510) && (!stack_limit || cmd_count < stack_limit - 1)) {
+        SENDLINEMAX-2) && (!stack_limit || cmd_count < stack_limit - 1)) {
       cmd_count++;
       if (stack_method == 1)
         simple_sprintf(victims, "%s,%s", victims, nextto);
@@ -562,7 +564,7 @@ static void check_queues(char *oldnick, char *newnick)
 static void parse_q(struct msgq_head *q, char *oldnick, char *newnick)
 {
   struct msgq *m, *lm = NULL;
-  char buf[511], *msg, *nicks, *nick, *chan, newnicks[511], newmsg[511];
+  char buf[SENDLINEMAX], *msg, *nicks, *nick, *chan, newnicks[SENDLINEMAX], newmsg[SENDLINEMAX];
   int changed;
 
   for (m = q->head; m;) {
@@ -578,7 +580,7 @@ static void parse_q(struct msgq_head *q, char *oldnick, char *newnick)
         nick = splitnicks(&nicks);
         if (!strcasecmp(nick, oldnick) &&
             ((9 + strlen(chan) + strlen(newnicks) + strlen(newnick) +
-              strlen(nicks) + strlen(msg)) < 510)) {
+              strlen(nicks) + strlen(msg)) < SENDLINEMAX-1)) {
           if (newnick)
             egg_snprintf(newnicks, sizeof newnicks, "%s,%s", newnicks, newnick);
           changed = 1;
@@ -618,8 +620,8 @@ static void parse_q(struct msgq_head *q, char *oldnick, char *newnick)
 static void purge_kicks(struct msgq_head *q)
 {
   struct msgq *m, *lm = NULL;
-  char buf[511], *reason, *nicks, *nick, *chan, newnicks[511],
-       newmsg[511], chans[511], *chns, *ch;
+  char buf[MSGMAX], *reason, *nicks, *nick, *chan, newnicks[MSGMAX],
+       newmsg[MSGMAX], chans[MSGMAX], *chns, *ch;
   int changed, found;
   struct chanset_t *cs;
 
@@ -687,8 +689,8 @@ static int deq_kick(int which)
 {
   struct msgq_head *h;
   struct msgq *msg, *m, *lm;
-  char buf[511], buf2[511], *reason2, *nicks, *chan, *chan2, *reason, *nick,
-       newnicks[511], newnicks2[511], newmsg[511];
+  char buf[MSGMAX], buf2[MSGMAX], *reason2, *nicks, *chan, *chan2, *reason, *nick,
+       newnicks[MSGMAX], newnicks2[MSGMAX], newmsg[MSGMAX];
   int changed = 0, nr = 0;
 
   if (!optimize_kicks)
@@ -827,7 +829,7 @@ static void queue_server(int which, char *msg, int len)
   struct msgq_head *h = NULL, tempq;
   struct msgq *q, *tq, *tqq;
   int doublemsg = 0, qnext = 0;
-  char buf[511];
+  char buf[SENDLINEMAX];
 
   /* Don't even BOTHER if there's no server online. */
   if (serv < 0)
@@ -1278,7 +1280,18 @@ static int server_raw STDVAR
   BADARGS(4, 4, " from code args");
 
   CHECKVALIDITY(server_raw);
-  Tcl_AppendResult(irp, int_to_base10(F(argv[1], argv[3])), NULL);
+  Tcl_AppendResult(irp, int_to_base10(F(argv[1], argv[3], "")), NULL);
+  return TCL_OK;
+}
+
+static int server_tag STDVAR
+{
+  Function F = (Function) cd;
+
+  BADARGS(5, 5, " from code args tag");
+
+  CHECKVALIDITY(server_tag);
+  Tcl_AppendResult(irp, int_to_base10(F(argv[1], argv[3], argv[4])), NULL);
   return TCL_OK;
 }
 
@@ -2048,10 +2061,12 @@ static char *server_close()
   clearq(serverlist);
   rem_builtins(H_dcc, C_dcc_serv);
   rem_builtins(H_raw, my_raw_binds);
+  rem_builtins(H_rawt, my_raw_binds);
   rem_builtins(H_ctcp, my_ctcps);
   /* Restore original commands. */
   del_bind_table(H_wall);
   del_bind_table(H_raw);
+  del_bind_table(H_rawt);
   del_bind_table(H_notc);
   del_bind_table(H_msgm);
   del_bind_table(H_msg);
@@ -2121,7 +2136,7 @@ static Function server_table[] = {
   /* 12 - 15 */
   (Function) match_my_nick,
   (Function) check_tcl_flud,
-  (Function) NULL,              /* fixfrom - moved to core (drummer)    */
+  (Function) & msgtag,          /* int                                  */
   (Function) & answer_ctcp,     /* int                                  */
   /* 16 - 19 */
   (Function) & trigger_on_ignore, /* int                                */
@@ -2136,7 +2151,7 @@ static Function server_table[] = {
   /* 24 - 27 */
   (Function) & default_port,    /* int                                  */
   (Function) & server_online,   /* int                                  */
-  (Function) NULL,              /* min_servs -- removed (guppy)         */
+  (Function) & H_rawt,           /* p_tcl_bind_list                      */
   (Function) & H_raw,           /* p_tcl_bind_list                      */
   /* 28 - 31 */
   (Function) & H_wall,          /* p_tcl_bind_list                      */
@@ -2260,6 +2275,7 @@ char *server_start(Function *global_funcs)
 
   H_wall = add_bind_table("wall", HT_STACKABLE, server_2char);
   H_raw = add_bind_table("raw", HT_STACKABLE, server_raw);
+  H_rawt = add_bind_table("rawt", HT_STACKABLE, server_tag);
   H_notc = add_bind_table("notc", HT_STACKABLE, server_5char);
   H_msgm = add_bind_table("msgm", HT_STACKABLE, server_msg);
   H_msg = add_bind_table("msg", 0, server_msg);

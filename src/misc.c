@@ -517,12 +517,12 @@ void putlog EGG_VARARGS_DEF(int, arg1)
 {
   static int inhere = 0;
   int i, type, tsl = 0;
-  char *format, *chname, s[LOGLINELEN], s1[256], *out, ct[81], *s2, stamp[34];
+  char *format, *chname, s[LOGLINELEN], s1[LOGLINELEN], *out, ct[81], *s2, stamp[34];
   va_list va;
   time_t now2 = time(NULL);
   static time_t now2_last = 0; /* cache expensive localtime() */
   static struct tm *t;
- 
+
   if (now2 != now2_last) {
     now2_last = now2;
     t = localtime(&now2);

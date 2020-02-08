@@ -58,7 +58,7 @@
 /* Handy string lengths */
 #define UHOSTMAX    291 + NICKMAX /* 32 (ident) + 3 (\0, !, @) + NICKMAX */
 #define DIRMAX      512           /* paranoia                            */
-#define LOGLINEMAX  767           /* for misc.c/putlog() <cybah>         */
+#define LOGLINEMAX  9000          /* for misc.c/putlog() <cybah>         */
 
 /* Invalid characters */
 #define BADNICKCHARS "-,+*=:!.@#;$%&"

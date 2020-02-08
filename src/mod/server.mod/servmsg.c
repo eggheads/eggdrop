@@ -194,6 +194,29 @@ static int check_tcl_raw(char *from, char *code, char *msg)
   return (x == BIND_EXEC_LOG);
 }
 
+/* tagstr is a space-separated list of key/value pairs */
+static int check_tcl_rawt(char *from, char *code, char *msg, char *tagstr)
+{
+  int x;
+  char * ptr;
+  Tcl_DString tagdict;
+
+  Tcl_DStringInit(&tagdict);
+  Tcl_SetVar(interp, "_rawt1", from, 0);
+  Tcl_SetVar(interp, "_rawt2", code, 0);
+  Tcl_SetVar(interp, "_rawt3", msg, 0);
+  ptr = strtok(tagstr, " ");
+  while (ptr != NULL) {
+    Tcl_DStringAppendElement(&tagdict, ptr);
+    ptr = strtok(NULL, " ");
+  }
+  Tcl_SetVar(interp, "_rawt4", Tcl_DStringValue(&tagdict), 0);
+  x = check_tcl_bind(H_rawt, code, 0, " $_rawt1 $_rawt2 $_rawt3 $_rawt4",
+                    MATCH_EXACT | BIND_STACKABLE | BIND_WANTRET);
+  Tcl_DStringFree(&tagdict);
+  return (x == BIND_EXEC_LOG);
+}
+
 static int check_tcl_ctcpr(char *nick, char *uhost, struct userrec *u,
                            char *dest, char *keyword, char *args,
                            p_tcl_bind_list table)
@@ -482,7 +505,7 @@ static int detect_flood(char *floodnick, char *floodhost, char *from, int which)
 
 /* Got a private message.
  */
-static int gotmsg(char *from, char *msg)
+static int gotmsg(char *from, char *msg, char *tag)
 {
   char *to, buf[UHOSTLEN], *nick, ctcpbuf[512], *uhost = buf, *ctcp,
        *p, *p1, *code;
@@ -703,6 +726,18 @@ static int gotnotice(char *from, char *msg)
 
     if (!ignoring)
       putlog(LOG_MSGS, "*", "-%s (%s)- %s", nick, uhost, msg);
+  }
+  return 0;
+}
+
+static int gottagmsg(char *from, char *msg) {
+  char *nick;
+  fixcolon(msg);
+  if (strchr(from, '!')) {
+    nick = splitnick(&from);
+    putlog(LOG_SERV, "*", "[#]%s(%s)[#] %s", nick, from, msg);
+  } else {
+    putlog(LOG_SERV, "*", "[#]%s[#] %s");
   }
   return 0;
 }
@@ -1056,9 +1091,12 @@ static struct dcc_table SERVER_SOCKET = {
   NULL
 };
 
-static void server_activity(int idx, char *msg, int len)
+static void server_activity(int idx, char *tagmsg, int len)
 {
-  char *from, *code;
+  char *from, *code, *s1, *s2, *saveptr1, *saveptr2, *tagstrptr=NULL;
+  char *token, *subtoken, tagstr[TOTALTAGMAX], tagdict[TOTALTAGMAX], *msgptr;
+  char s[RECVLINEMAX+7];
+  int rawlen, taglen, i;
 
   if (trying_server) {
     strcpy(dcc[idx].nick, "(server)");
@@ -1067,23 +1105,64 @@ static void server_activity(int idx, char *msg, int len)
     SERVER_SOCKET.timeout_val = 0;
   }
   lastpingcheck = 0;
-  from = "";
-  if (msg[0] == ':') {
-    msg++;
-    from = newsplit(&msg);
+/* Check if IRCv3 message-tags are enabled and, if so, check/grab the tag */
+  msgptr = tagmsg;
+  if (msgtag) {
+    if (*tagmsg == '@') {
+      taglen = 0;
+      memset(tagdict, '\0', TOTALTAGMAX);
+      strncpy(tagstr, tagmsg, TOTALTAGMAX);
+      tagstrptr = strtok_r(tagmsg, " ", &msgptr);
+      tagstrptr++;     /* Remove @ */
+      /* Split each key/value pair apart, then split the key from the value */
+      for (i = 0, s1 = tagstrptr; ; i++, s1 = NULL){
+        token = strtok_r(s1, ";", &saveptr1);
+        if (token == NULL) {
+          break;
+        }
+        if (*token == '+') {
+          token++;
+        }
+        if (strchr(token, '=')) {
+          for (s2 = token; ; s2 = NULL) {
+            subtoken = strtok_r(s2, "=", &saveptr2);
+            if (subtoken == NULL) {
+              break;
+            }
+            taglen += egg_snprintf(tagdict + taglen, TOTALTAGMAX - taglen,
+                  "%s ", subtoken);
+          }
+        /* Account for tags (not key/value pairs), prep empty value for Tcl */
+        } else {
+          taglen += egg_snprintf(tagdict + taglen, TOTALTAGMAX - taglen,
+                "%s {} ", token);
+        }
+      }
+      tagdict[taglen-1] = '\0';     /* Remove trailing space */
+    }
   }
-  code = newsplit(&msg);
+  from = "";
+  if (*msgptr == ':') {
+    msgptr++;
+    from = newsplit(&msgptr);
+  }
+  code = newsplit(&msgptr);
   if (raw_log && ((strcmp(code, "PRIVMSG") && strcmp(code, "NOTICE")) ||
       !match_ignore(from))) {
-    if (!strcmp(from, ""))
-      putlog(LOG_RAW, "*", "[@] %s %s", code, msg);
-    else
-      putlog(LOG_RAW, "*", "[@] %s %s %s", from, code, msg);
+      rawlen = egg_snprintf(s, sizeof s, "[@] ");
+      if (tagstrptr) {
+        rawlen += egg_snprintf(s + rawlen, sizeof s - rawlen, "%s ", tagstr);
+      }
+      if (strcmp(from, "") == 0) {
+        rawlen += egg_snprintf(s + rawlen, sizeof s - rawlen, "%s ", from);
+      }
+      egg_snprintf(s + rawlen, sizeof s - rawlen, "%s %s", code, msgptr);
+      putlog(LOG_RAW, "*", "%s", s);
   }
-  /* This has GOT to go into the raw binding table, * merely because this
-   * is less efficient.
-   */
-  check_tcl_raw(from, code, msg);
+  /* Check both raw and rawt, to allow backwards compatibility with older
+   * scripts */
+  check_tcl_rawt(from, code, msgptr, tagdict);
+  check_tcl_raw(from, code, msgptr);
 }
 
 static int gotping(char *from, char *msg)
@@ -1344,6 +1423,14 @@ static int got410(char *from, char *msg) {
   return 1;
 }
 
+/* got417: ERR_INPUTTOOLONG. Client sent a message longer than allowed limit */
+static int got417(char *from, char *msg) {
+  newsplit(&msg);
+  putlog (LOG_SERV, "*", "MESSAGE-TAG: %s reported error: %s", from, msg);
+
+  return 1;
+}
+
 static int got421(char *from, char *msg) {
   newsplit(&msg);
   putlog(LOG_SERV, "*", "%s reported an error: %s", from, msg);
@@ -1370,6 +1457,9 @@ void add_cape(char *cape) {
   if (!strstr(cap.negotiated, cape)) {
     putlog(LOG_DEBUG, "*", "CAP: Adding cape %s to negotiated list", cape);
     Tcl_ListObjAppendElement(interp, ncapeslist, Tcl_NewStringObj(cape, -1));
+    if (!strcmp(cape, "message-tags") || !strcmp(cape, "twitch.tv/tags")) {
+      msgtag = 1;
+    }
   } else {
     putlog(LOG_DEBUG, "*", "CAP: %s is already added to negotiated list", cape);
   }
@@ -1385,6 +1475,9 @@ void del_cape(char *cape) {
     for (i = 0; i < ncapesc; i++) {
       if (!strcmp(cape, Tcl_GetString(ncapesv[i]))) {
         Tcl_ListObjReplace(interp, ncapeslist, i, 1, 0, NULL);
+        if (!strcmp(cape, "message-tags")) {
+          msgtag = 0;
+        }
       }
     }
   } else {
@@ -1520,6 +1613,7 @@ static cmd_t my_raw_binds[] = {
   {"311",          "",   (IntFunc) got311,          NULL},
   {"318",          "",   (IntFunc) whoispenalty,    NULL},
   {"410",          "",   (IntFunc) got410,          NULL},
+  {"417",          "",   (IntFunc) got417,          NULL},
   {"421",          "",   (IntFunc) got421,          NULL},
   {"432",          "",   (IntFunc) got432,          NULL},
   {"433",          "",   (IntFunc) got433,          NULL},
@@ -1541,6 +1635,7 @@ static cmd_t my_raw_binds[] = {
   {"KICK",         "",   (IntFunc) gotkick,         NULL},
   {"CAP",          "",   (IntFunc) gotcap,          NULL},
   {"AUTHENTICATE", "",   (IntFunc) gotauthenticate, NULL},
+  {"TAGMSG",       "",   (IntFunc) gottagmsg,       NULL},
   {NULL,           NULL, NULL,                      NULL}
 };
 

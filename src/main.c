@@ -803,7 +803,7 @@ int mainloop(int toplevel)
 {
   static int socket_cleanup = 0;
   int xx, i, eggbusy = 1, tclbusy = 0;
-  char buf[520];
+  char buf[8702];
 
   /* Lets move some of this here, reducing the number of actual
    * calls to periodic_timers
