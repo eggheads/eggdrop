@@ -27,5 +27,5 @@
  */
 
 #define EGG_STRINGVER "1.9.0"
-#define EGG_NUMVER 1090003
-#define EGG_PATCH "serverlen"
+#define EGG_NUMVER 1090004
+#define EGG_PATCH "msgtags"
