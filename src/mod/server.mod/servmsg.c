@@ -1095,8 +1095,8 @@ static void server_activity(int idx, char *tagmsg, int len)
 {
   char *from, *code, *s1, *s2, *saveptr1, *saveptr2, *tagstrptr=NULL;
   char *token, *subtoken, tagstr[TOTALTAGMAX], tagdict[TOTALTAGMAX], *msgptr;
-  char s[RECVLINEMAX+7];
-  int rawlen, taglen, i;
+  char rawmsg[RECVLINEMAX+7];
+  int taglen, i;
 
   if (trying_server) {
     strcpy(dcc[idx].nick, "(server)");
@@ -1107,6 +1107,7 @@ static void server_activity(int idx, char *tagmsg, int len)
   lastpingcheck = 0;
 /* Check if IRCv3 message-tags are enabled and, if so, check/grab the tag */
   msgptr = tagmsg;
+  strncpy(rawmsg, tagmsg, TOTALTAGMAX);
   if (msgtag) {
     if (*tagmsg == '@') {
       taglen = 0;
@@ -1149,15 +1150,7 @@ static void server_activity(int idx, char *tagmsg, int len)
   code = newsplit(&msgptr);
   if (raw_log && ((strcmp(code, "PRIVMSG") && strcmp(code, "NOTICE")) ||
       !match_ignore(from))) {
-    rawlen = egg_snprintf(s, sizeof s, "[@] ");
-    if (tagstrptr) {
-      rawlen += egg_snprintf(s + rawlen, sizeof s - rawlen, "%s ", tagstr);
-    }
-    if (strcmp(from, "") == 0) {
-      rawlen += egg_snprintf(s + rawlen, sizeof s - rawlen, "%s ", from);
-    }
-    egg_snprintf(s + rawlen, sizeof s - rawlen, "%s %s", code, msgptr);
-    putlog(LOG_RAW, "*", "%s", s);
+    putlog(LOG_RAW, "*", "[@] %s", rawmsg);
   }
   /* Check both raw and rawt, to allow backwards compatibility with older
    * scripts */
