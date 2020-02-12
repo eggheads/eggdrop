@@ -1111,8 +1111,8 @@ static void server_activity(int idx, char *tagmsg, int len)
     if (*tagmsg == '@') {
       taglen = 0;
       memset(tagdict, '\0', TOTALTAGMAX);
-      strncpy(tagstr, tagmsg, TOTALTAGMAX);
-      tagstrptr = strtok_r(tagmsg, " ", &msgptr);
+      tagstrptr = newsplit(&msgptr);
+      strncpy(tagstr, tagstrptr, TOTALTAGMAX);
       tagstrptr++;     /* Remove @ */
       /* Split each key/value pair apart, then split the key from the value */
       for (i = 0, s1 = tagstrptr; ; i++, s1 = NULL){
@@ -1149,15 +1149,15 @@ static void server_activity(int idx, char *tagmsg, int len)
   code = newsplit(&msgptr);
   if (raw_log && ((strcmp(code, "PRIVMSG") && strcmp(code, "NOTICE")) ||
       !match_ignore(from))) {
-      rawlen = egg_snprintf(s, sizeof s, "[@] ");
-      if (tagstrptr) {
-        rawlen += egg_snprintf(s + rawlen, sizeof s - rawlen, "%s ", tagstr);
-      }
-      if (strcmp(from, "") == 0) {
-        rawlen += egg_snprintf(s + rawlen, sizeof s - rawlen, "%s ", from);
-      }
-      egg_snprintf(s + rawlen, sizeof s - rawlen, "%s %s", code, msgptr);
-      putlog(LOG_RAW, "*", "%s", s);
+    rawlen = egg_snprintf(s, sizeof s, "[@] ");
+    if (tagstrptr) {
+      rawlen += egg_snprintf(s + rawlen, sizeof s - rawlen, "%s ", tagstr);
+    }
+    if (strcmp(from, "") == 0) {
+      rawlen += egg_snprintf(s + rawlen, sizeof s - rawlen, "%s ", from);
+    }
+    egg_snprintf(s + rawlen, sizeof s - rawlen, "%s %s", code, msgptr);
+    putlog(LOG_RAW, "*", "%s", s);
   }
   /* Check both raw and rawt, to allow backwards compatibility with older
    * scripts */
