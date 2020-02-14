@@ -8,11 +8,6 @@ bind out - "% queued" twitch:who
 bind rawt - ROOMSTATE   twitch:roomstate
 bind rawt - CLEARCHAT   twitch:clearchat
 bind rawt - CLEARMSG    twitch:clearmsg
-######## TO DO- 
-#05:54:12] [@] @login=eggdroptest;room-id=;target-msg-id=34d44768-bd3b-4d4a-bcb6-9f8128219fe8;tmi-sent-ts=1581400452150 :tmi.twitch.tv CLEARMSG #eggdroptest :sdfggs CLEARMSG #eggdroptest :sdfggs
-#[05:54:12] triggering bind twitch:clearmsg
-#[05:54:12] === Detected clearmsg values: login eggdroptest room-id target-msg-id 34d44768-bd3b-4d4a-bcb6-9f8128219fe8 tmi-sent-ts 1581400452150
-#^^^ missing {} for room-id empty var?
 bind rawt - HOSTTARGET  twitch:hosttarget
 #### Fix (3 error ?
 bind rawt - GLOBALUSERSTATE twitch:guserstate
@@ -89,7 +84,6 @@ proc twitch:clearchat {from key text tags} {
 }
 
 proc twitch:clearmsg {from key text tags} {
-########## BROKE UNTIL TO DO FIXED
   putlog "=== Detected clearmsg values: $tags"
   set clearmsg [makedict $tags]
   putlog "*  Message ID [dict get $clearmsg target-msg-id] sent by [dict get $clearmsg login] was deleted"
@@ -97,9 +91,9 @@ proc twitch:clearmsg {from key text tags} {
 
 proc twitch:hosttarget {from key text tags} {
   putlog "=== Detected hosttarget values: $text"
-    if ([string match [lindex $text 1] ":-"]) {
-      putlog "* Exited host mode"
-    } else {
+  if ([string match [lindex $text 1] ":-"]) {
+    putlog "* Exited host mode"
+  } else {
     if ([llength $text] > 2) {
       set numviewers "(Viewers: "
       append numviewers [lindex $text 2]
@@ -120,59 +114,60 @@ proc twitch:guserstate {from key text tags} {
 
 proc twitch:privmsg {from key text tags} {
   set privtags [makedict $tags]
+  putlog "==== $privtags"
   if [dict exists privtags bits] {
-    putlog "* [dict get privtags login-name] cheered [dict get privtags bits] bits"
+    putlog "* [dict get $privtags login-name] cheered [dict get $privtags bits] bits"
   }
 }
 
 proc twitch:usernotice {from key text tags} {
   set usertags [makedict $tags]
   if [dict exists usertags display-name] {
-    set displayname [dict get usertags display-name]
+    set displayname [dict get $usertags display-name]
   } else {
-    set displayname [dict get usertags login]
+    set displayname [dict get $usertags login]
   }
 ### Handle msg-id events sent via usernotice
   if [dict exists usertags msg-id] {
-    if [string match [dict get usertags msg-id] sub] {
-      putlog "* $displayname subscribed to the [dict get usertags msg-param-sub-plan-name] plan"
+    if [string match [dict get $usertags msg-id] sub] {
+      putlog "* $displayname subscribed to the [dict get $usertags msg-param-sub-plan-name] plan"
     }
-    if [string match [dict get usertags msg-id] resub] {
-      putlog "* $displayname re-subscribed to the [dict get usertags msg-param-sub-plan-name] for a total of [dict get usertags msg-param-cumulative-months]"
+    if [string match [dict get $usertags msg-id] resub] {
+      putlog "* $displayname re-subscribed to the [dict get $usertags msg-param-sub-plan-name] for a total of [dict get $usertags msg-param-cumulative-months]"
     }
-    if [string match [dict get usertags msg-id] subgift] {
-      putlog "* $displayname gifted a [dict get usertags msg-param-sub-plan-name] subscription to [dict get usertags msg-param-recipient-display-name]"
+    if [string match [dict get $usertags msg-id] subgift] {
+      putlog "* $displayname gifted a [dict get $usertags msg-param-sub-plan-name] subscription to [dict get $usertags msg-param-recipient-display-name]"
     }
-    if [string match [dict get usertags msg-id] anonsubgift] {
-      putlog "* Someone anonomously gifted a [dict get usertags msg-param-sub-plan-name] subscription to [dict get usertags msg-param-recipient-display-name]""
+    if [string match [dict get $usertags msg-id] anonsubgift] {
+      putlog "* Someone anonomously gifted a [dict get $usertags msg-param-sub-plan-name] subscription to [dict get $usertags msg-param-recipient-display-name]""
     }
-    if [string match [dict get usertags msg-id] submystergift] {
-      putlog "* $displayname sent a mystery gift to [dict get usertags msg-param-recipient-display-name]"
-    }
-#### ????????????
-    if [string match [dict get usertags msg-id] giftpaidupgrade] {
-      putlog "* [dict get usertags msg-param-sender-name] gifted a subscription upgrade to $displayname"
+    if [string match [dict get $usertags msg-id] submystergift] {
+      putlog "* $displayname sent a mystery gift to [dict get $usertags msg-param-recipient-display-name]"
     }
 #### ????????????
-    if [string match [dict get usertags msg-id] rewardgift] {
+    if [string match [dict get $usertags msg-id] giftpaidupgrade] {
+      putlog "* [dict get $usertags msg-param-sender-name] gifted a subscription upgrade to $displayname"
+    }
+#### ????????????
+    if [string match [dict get $usertags msg-id] rewardgift] {
       putlog "* $displayname send a reward gift to... someone?"
     }
 #### ????????????
-    if [string match [dict get usertags msg-id] anongiftpaidupgrade] {
+    if [string match [dict get $usertags msg-id] anongiftpaidupgrade] {
       putlog "* Someone anonomously gifted a subscription upgrade to $displayname"
     }
-    if [string match [dict get usertags msg-id] raid] {
-      putlog "* [dict get usertags msg-param-displayName] initiated a raid with [dict get usertags msg-param-viewerCount] users"
+    if [string match [dict get $usertags msg-id] raid] {
+      putlog "* [dict get $usertags msg-param-displayName] initiated a raid with [dict get $usertags msg-param-viewerCount] users"
     }
 #### ????????????
-    if [string match [dict get usertags msg-id] unraid] {
+    if [string match [dict get $usertags msg-id] unraid] {
       putlog "* $diplayname ended their raid"
     }
-    if [string match [dict get usertags msg-id] ritual] {
-      putlog "* $displayname initiated a [dict get usertags msg-param-ritual-name] ritual"
+    if [string match [dict get $usertags msg-id] ritual] {
+      putlog "* $displayname initiated a [dict get $usertags msg-param-ritual-name] ritual"
     }
-    if [string match [dict get usertags msg-id] bitsbadgetier] {
-      putlog "* $displayname earned a [dict get usertags msg-param-threshold] bits badge"
+    if [string match [dict get $usertags msg-id] bitsbadgetier] {
+      putlog "* $displayname earned a [dict get $usertags msg-param-threshold] bits badge"
     }
   }
 }
