@@ -1096,7 +1096,7 @@ static void server_activity(int idx, char *tagmsg, int len)
   char *from, *code, *s1, *s2, *saveptr1, *saveptr2, *tagstrptr=NULL;
   char *token, *subtoken, tagstr[TOTALTAGMAX], tagdict[TOTALTAGMAX], *msgptr;
   char rawmsg[RECVLINEMAX+7];
-  int taglen, i;
+  int taglen, i, found;
 
   if (trying_server) {
     strcpy(dcc[idx].nick, "(server)");
@@ -1125,6 +1125,7 @@ static void server_activity(int idx, char *tagmsg, int len)
           token++;
         }
         if (strchr(token, '=')) {
+          found = 0;
           for (s2 = token; ; s2 = NULL) {
             subtoken = strtok_r(s2, "=", &saveptr2);
             if (subtoken == NULL) {
@@ -1132,11 +1133,13 @@ static void server_activity(int idx, char *tagmsg, int len)
             }
             taglen += egg_snprintf(tagdict + taglen, TOTALTAGMAX - taglen,
                   "%s ", subtoken);
+            found++;
           }
-        /* Account for tags (not key/value pairs), prep empty value for Tcl */
-        } else {
-          taglen += egg_snprintf(tagdict + taglen, TOTALTAGMAX - taglen,
-                "%s {} ", token);
+          /* Account for tags (not key/value pairs), prep empty value for Tcl */
+          if (found < 2) {
+            taglen += egg_snprintf(tagdict + taglen, TOTALTAGMAX - taglen,
+                "{} ");
+          }
         }
       }
       tagdict[taglen-1] = '\0';     /* Remove trailing space */
