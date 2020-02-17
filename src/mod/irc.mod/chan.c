@@ -2500,7 +2500,44 @@ static int gotnotice(char *from, char *msg)
   return 0;
 }
 
+static int dummy() {
+  return 0;
+}
+
 static cmd_t irc_raw[] = {
+  {"324",     "",   (IntFunc) dummy,       NULL},
+  {"352",     "",   (IntFunc) dummy,       NULL},
+  {"354",     "",   (IntFunc) dummy,       NULL},
+  {"315",     "",   (IntFunc) dummy,       NULL},
+  {"367",     "",   (IntFunc) dummy,       NULL},
+  {"368",     "",   (IntFunc) dummy,       NULL},
+  {"403",     "",   (IntFunc) dummy,       NULL},
+  {"405",     "",   (IntFunc) dummy,       NULL},
+  {"471",     "",   (IntFunc) dummy,       NULL},
+  {"473",     "",   (IntFunc) dummy,       NULL},
+  {"474",     "",   (IntFunc) dummy,       NULL},
+  {"475",     "",   (IntFunc) dummy,       NULL},
+  {"INVITE",  "",   (IntFunc) dummy,       NULL},
+  {"TOPIC",   "",   (IntFunc) dummy,       NULL},
+  {"331",     "",   (IntFunc) dummy,       NULL},
+  {"332",     "",   (IntFunc) dummy,       NULL},
+  {"JOIN",    "",   (IntFunc) dummy,       NULL},
+  {"PART",    "",   (IntFunc) dummy,       NULL},
+  {"KICK",    "",   (IntFunc) dummy,       NULL},
+  {"NICK",    "",   (IntFunc) dummy,       NULL},
+  {"QUIT",    "",   (IntFunc) dummy,       NULL},
+  {"PRIVMSG", "",   (IntFunc) dummy,       NULL},
+  {"NOTICE",  "",   (IntFunc) dummy,       NULL},
+  {"MODE",    "",   (IntFunc) dummy,       NULL},
+  {"346",     "",   (IntFunc) dummy,       NULL},
+  {"347",     "",   (IntFunc) dummy,       NULL},
+  {"348",     "",   (IntFunc) dummy,       NULL},
+  {"349",     "",   (IntFunc) dummy,       NULL},
+  {NULL,      NULL, NULL,                  NULL}
+};
+
+
+static cmd_t irc_rawt[] = {
   {"324",     "",   (IntFunc) got324,       "irc:324"},
   {"352",     "",   (IntFunc) got352,       "irc:352"},
   {"354",     "",   (IntFunc) got354,       "irc:354"},

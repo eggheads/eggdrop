@@ -1597,7 +1597,50 @@ static int gotcap(char *from, char *msg) {
   return 1;
 }
 
+static int dummy() {
+  return 0;
+}
+
 static cmd_t my_raw_binds[] = {
+  {"PRIVMSG",      "",   (IntFunc) dummy,           NULL},
+  {"NOTICE",       "",   (IntFunc) dummy,           NULL},
+  {"MODE",         "",   (IntFunc) dummy,           NULL},
+  {"PING",         "",   (IntFunc) dummy,           NULL},
+  {"PONG",         "",   (IntFunc) dummy,           NULL},
+  {"WALLOPS",      "",   (IntFunc) dummy,           NULL},
+  {"001",          "",   (IntFunc) dummy,           NULL},
+  {"303",          "",   (IntFunc) dummy,           NULL},
+  {"311",          "",   (IntFunc) dummy,           NULL},
+  {"318",          "",   (IntFunc) dummy,           NULL},
+  {"410",          "",   (IntFunc) dummy,           NULL},
+  {"417",          "",   (IntFunc) dummy,           NULL},
+  {"421",          "",   (IntFunc) dummy,           NULL},
+  {"432",          "",   (IntFunc) dummy,           NULL},
+  {"433",          "",   (IntFunc) dummy,           NULL},
+  {"437",          "",   (IntFunc) dummy,           NULL},
+  {"438",          "",   (IntFunc) dummy,           NULL},
+  {"451",          "",   (IntFunc) dummy,           NULL},
+  {"442",          "",   (IntFunc) dummy,           NULL},
+  {"465",          "",   (IntFunc) dummy,           NULL},
+  {"900",          "",   (IntFunc) dummy,           NULL},
+  {"903",          "",   (IntFunc) dummy,           NULL},
+  {"904",          "",   (IntFunc) dummy,           NULL},
+  {"905",          "",   (IntFunc) dummy,           NULL},
+  {"906",          "",   (IntFunc) dummy,           NULL},
+  {"908",          "",   (IntFunc) dummy,           NULL},
+  {"NICK",         "",   (IntFunc) dummy,           NULL},
+  {"ERROR",        "",   (IntFunc) dummy,           NULL},
+/* ircu2.10.10 has a bug when a client is throttled ERROR is sent wrong */
+  {"ERROR:",       "",   (IntFunc) dummy,           NULL},
+  {"KICK",         "",   (IntFunc) dummy,           NULL},
+  {"CAP",          "",   (IntFunc) dummy,           NULL},
+  {"AUTHENTICATE", "",   (IntFunc) dummy,           NULL},
+  {"TAGMSG",       "",   (IntFunc) dummy,           NULL},
+  {NULL,           NULL, NULL,                      NULL}
+};
+
+
+static cmd_t my_rawt_binds[] = {
   {"PRIVMSG",      "",   (IntFunc) gotmsg,          NULL},
   {"NOTICE",       "",   (IntFunc) gotnotice,       NULL},
   {"MODE",         "",   (IntFunc) gotmode,         NULL},
