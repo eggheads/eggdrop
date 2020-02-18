@@ -9,11 +9,11 @@ bind rawt - ROOMSTATE   twitch:roomstate
 bind rawt - CLEARCHAT   twitch:clearchat
 bind rawt - CLEARMSG    twitch:clearmsg
 bind rawt - HOSTTARGET  twitch:hosttarget
-#### Fix (3 error ?
 bind rawt - GLOBALUSERSTATE twitch:guserstate
 ##### Server doesn't wait for CAP END before registering, can't get GLOBALUSERSTATE?
-bind rawt - PRIVMSG twitch:privmsg
-bind rawt - USERNOTICE twitch:usernotice
+bind rawt - PRIVMSG     twitch:privmsg
+bind rawt - USERNOTICE  twitch:usernotice
+bind rawt - WHISPER     twitch:whisper
 
 set keep-nick 0
 
@@ -42,7 +42,7 @@ proc twitch:names {from key text} {
    foreach nick $nicks {
       # fake WHO reply:
       # underworld2.no.quakenet.org 352 TCL #testchannel tcl TCL.users.quakenet.org *.quakenet.org TCL Hx :0 #testchannel
-      *raw:irc:352 $from 352 "$::botnick $chan $nick $nick.tmi.twitch.tv $::server $nick H :0 $chan"
+      *rawt:irc:352 $from 352 "$::botnick $chan $nick $nick.tmi.twitch.tv $::server $nick H :0 $chan" ""
    }
    return 0
 }
@@ -51,7 +51,7 @@ proc twitch:names {from key text} {
 proc twitch:eonames {from key text} {
    lassign [split $text] botnick chan
    # first, make sure the bot knows it's on the channel, fake 352
-   *raw:irc:352 $from 352 "$::botnick $chan $::botnick $::botnick.tmi.twitch.tv $::server $::botnick H :0 $chan"
+   *rawt:irc:352 $from 352 "$::botnick $chan $::botnick $::botnick.tmi.twitch.tv $::server $::botnick H :0 $chan" ""
    # fake end of WHO reply
    # underworld2.no.quakenet.org 315 TCL #testchannel:End of /WHO list.
    *raw:irc:315 $from 315 "$::botnick $chan :End of /WHO list."
@@ -68,7 +68,13 @@ proc makedict {taglist} {
 proc twitch:roomstate {from key text tags} {
   global roomstate
   putlog "=== Detected roomstate values: $tags"
-  set roomstate [makedict $tags]
+  foreach {k v} $tags {
+    if {[dict exists $roomstate $k]} {
+      dict set roomstate $k $v
+    } else {
+      dict append roomstate $k $v
+    }
+  }
   putlog "=== The dict is: $roomstate"
 }
 
@@ -91,17 +97,17 @@ proc twitch:clearmsg {from key text tags} {
 
 proc twitch:hosttarget {from key text tags} {
   putlog "=== Detected hosttarget values: $text"
-  if ([string match [lindex $text 1] ":-"]) {
+  if [string match [lindex $text 1] ":-"] {
     putlog "* Exited host mode"
   } else {
-    if ([llength $text] > 2) {
+    if {([llength $text] > 2) && ([lindex $text 2] > 0)} {
       set numviewers "(Viewers: "
       append numviewers [lindex $text 2]
       append numviewers ")"
     } else {
       set numviewers ""
     }
-    putlog "* Host mode started for [lindex $text 1] $numviewers"
+    putlog "* Host mode started for [string trimleft [lindex $text 1] ":"] $numviewers"
   }
 }
 
@@ -170,4 +176,8 @@ proc twitch:usernotice {from key text tags} {
       putlog "* $displayname earned a [dict get $usertags msg-param-threshold] bits badge"
     }
   }
+}
+
+proc twitch:usernotice {from key text tags} {
+  putlog "$from whispered: $text"
 }
