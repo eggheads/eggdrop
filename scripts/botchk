@@ -19,7 +19,8 @@
 # change this to the directory you run your bot from (capitalization COUNTS):
 botdir="/home/mydir/mybot"
 
-# change this to the name of your bot's config file (capitalization COUNTS):
+# change this to the name of your bot's config file (capitalization COUNTS)
+# (also make sure that file is executable and has proper shebang line):
 botscript="mybot"
 
 # change this to the botnet-nick of your bot (capitalization COUNTS):
