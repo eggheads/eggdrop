@@ -10,10 +10,10 @@
 #
 # To check for your bot every 10 minutes, put the following line in your
 # crontab:
-#    0,10,20,30,40,50 * * * *   /home/mydir/mybot/botchk
+#    */10 * * * *   /home/mydir/mybot/botchk
 # And if you don't want to get email from crontab when it checks you bot,
 # put the following in your crontab:
-#    0,10,20,30,40,50 * * * *   /home/mydir/mybot/botchk >/dev/null 2>&1
+#    */10 * * * *   /home/mydir/mybot/botchk >/dev/null 2>&1
 #
 
 # change this to the directory you run your bot from (capitalization COUNTS):
