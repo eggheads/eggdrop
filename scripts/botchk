@@ -21,7 +21,7 @@ botdir="/home/mydir/mybot"
 
 # change this to the name of your bot's config file (capitalization COUNTS)
 # (also make sure that file is executable and has proper shebang line):
-botscript="mybot"
+botscript="LamestBot.conf"
 
 # change this to the botnet-nick of your bot (capitalization COUNTS):
 botname="LamestBot"
