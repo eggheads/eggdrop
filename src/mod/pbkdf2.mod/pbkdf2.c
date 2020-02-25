@@ -23,6 +23,7 @@
 
 #include <resolv.h> /* base64 encode b64_ntop() and base64 decode b64_pton() */
 #include <sys/resource.h>
+#include <openssl/err.h>
 #include <openssl/rand.h>
 #include "src/mod/module.h"
 
@@ -150,8 +151,11 @@ static int pbkdf2_pass(const char *pass, char *out, int outlen)
   unsigned char salt[PBKDF2_SALT_LEN];
   if (!out)
     return pbkdf2_get_size(pbkdf2_method, EVP_get_digestbyname(pbkdf2_method), PBKDF2_SALT_LEN);
-  if (RAND_bytes(salt, sizeof salt) != 1)
+  if (RAND_bytes(salt, sizeof salt) != 1) {
+    /* TODO: Do we need ERR_load_crypto_strings(), SSL_load_error_strings() and ERR_free_strings(void) ? */
+    putlog(LOG_MISC, "*", "PBKDF2 error: %s", ERR_error_string(ERR_get_error(), NULL));
     return -3;
+  }
   return pbkdf2crypt_verify_pass(pass, pbkdf2_method, salt, sizeof salt, pbkdf2_rounds, out, outlen);
 }
 
@@ -245,6 +249,7 @@ static Function pbkdf2_table[] = {
 
 /* Initializes API with hash algorithm
  * Returns -1 on digest not found, module should report and unload
+ * Returns -2 on RAND_status() error
  */
 static int pbkdf2_init(void)
 {
@@ -252,8 +257,12 @@ static int pbkdf2_init(void)
   OpenSSL_add_all_digests();
   digest = EVP_get_digestbyname(pbkdf2_method);
   if (!digest) {
-    putlog(LOG_MISC, "*", "Failed to initialize digest '%s'.", pbkdf2_method);
+    putlog(LOG_MISC, "*", "PBKDF2 error: Failed to initialize digest '%s'.", pbkdf2_method);
     return -1;
+  }
+  if (!RAND_status()) {
+    putlog(LOG_MISC, "*", "PBKDF2 error: random generator has not been seeded with enough data.");
+    return -2;
   }
   return 0;
 }
