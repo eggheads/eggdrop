@@ -1900,7 +1900,14 @@ static void server_5minutely()
 
 static void server_prerehash()
 {
+  struct server_list *x = serverlist;
+  char port[7];
+
   strlcpy(oldnick, botname, sizeof oldnick);
+  for (; x; x = x->next) {
+    egg_snprintf(port, sizeof port, "%d", x->port);
+    del_server(x->name, port);
+  }
 }
 
 static void server_postrehash()
