@@ -1286,7 +1286,7 @@ char *irc_start(Function *global_funcs)
   add_builtins(H_dcc, irc_dcc);
   add_builtins(H_msg, C_msg);
   add_builtins(H_raw, irc_raw);
-  add_builtins(H_raw, irc_rawt);
+  add_builtins(H_rawt, irc_rawt);
   add_tcl_commands(tclchan_cmds);
   add_help_reference("irc.help");
   H_topc = add_bind_table("topc", HT_STACKABLE, channels_5char);
