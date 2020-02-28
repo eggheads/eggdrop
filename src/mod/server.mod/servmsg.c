@@ -206,9 +206,13 @@ static int check_tcl_rawt(char *from, char *code, char *msg, char *tagstr)
   Tcl_SetVar(interp, "_rawt2", code, 0);
   Tcl_SetVar(interp, "_rawt3", msg, 0);
   ptr = strtok(tagstr, " ");
-  while (ptr != NULL) {
-    Tcl_DStringAppendElement(&tagdict, ptr);
-    ptr = strtok(NULL, " ");
+  if (!msgtag) {
+    Tcl_SetVar(interp, "_rawt4", NULL, 0);
+  } else {
+    while (ptr != NULL) {
+      Tcl_DStringAppendElement(&tagdict, ptr);
+      ptr = strtok(NULL, " ");
+    }
   }
   Tcl_SetVar(interp, "_rawt4", Tcl_DStringValue(&tagdict), 0);
   x = check_tcl_bind(H_rawt, code, 0, " $_rawt1 $_rawt2 $_rawt3 $_rawt4",
@@ -1094,8 +1098,8 @@ static struct dcc_table SERVER_SOCKET = {
 static void server_activity(int idx, char *tagmsg, int len)
 {
   char *from, *code, *s1, *s2, *saveptr1, *saveptr2, *tagstrptr=NULL;
-  char *token, *subtoken, tagstr[TOTALTAGMAX], tagdict[TOTALTAGMAX], *msgptr;
-  char rawmsg[RECVLINEMAX+7];
+  char *token, *subtoken, tagstr[TOTALTAGMAX], tagdict[TOTALTAGMAX] = "";
+  char *msgptr, rawmsg[RECVLINEMAX+7];
   int taglen, i, found;
 
   if (trying_server) {
@@ -1631,6 +1635,10 @@ static cmd_t my_raw_binds[] = {
   {"KICK",         "",   (IntFunc) gotkick,         NULL},
   {"CAP",          "",   (IntFunc) gotcap,          NULL},
   {"AUTHENTICATE", "",   (IntFunc) gotauthenticate, NULL},
+  {NULL,           NULL, NULL,                      NULL}
+};
+
+static cmd_t my_rawt_binds[] = {
   {"TAGMSG",       "",   (IntFunc) gottagmsg,       NULL},
   {NULL,           NULL, NULL,                      NULL}
 };

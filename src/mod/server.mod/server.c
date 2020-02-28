@@ -1280,7 +1280,7 @@ static int server_raw STDVAR
   BADARGS(4, 4, " from code args");
 
   CHECKVALIDITY(server_raw);
-  Tcl_AppendResult(irp, int_to_base10(F(argv[1], argv[3], "")), NULL);
+  Tcl_AppendResult(irp, int_to_base10(F(argv[1], argv[3])), NULL);
   return TCL_OK;
 }
 
@@ -2061,7 +2061,7 @@ static char *server_close()
   clearq(serverlist);
   rem_builtins(H_dcc, C_dcc_serv);
   rem_builtins(H_raw, my_raw_binds);
-  rem_builtins(H_rawt, my_raw_binds);
+  rem_builtins(H_rawt, my_rawt_binds);
   rem_builtins(H_ctcp, my_ctcps);
   /* Restore original commands. */
   del_bind_table(H_wall);
@@ -2284,6 +2284,7 @@ char *server_start(Function *global_funcs)
   H_ctcp = add_bind_table("ctcp", HT_STACKABLE, server_6char);
   H_out = add_bind_table("out", HT_STACKABLE, server_out);
   add_builtins(H_raw, my_raw_binds);
+  add_builtins(H_rawt, my_rawt_binds);
   add_builtins(H_dcc, C_dcc_serv);
   add_builtins(H_ctcp, my_ctcps);
   add_help_reference("server.help");
