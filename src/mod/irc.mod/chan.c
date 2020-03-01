@@ -2531,3 +2531,7 @@ static cmd_t irc_raw[] = {
   {"349",     "",   (IntFunc) got349,       "irc:349"},
   {NULL,      NULL, NULL,                         NULL}
 };
+
+static cmd_t irc_rawt[] = {
+  {NULL,      NULL, NULL,                         NULL}
+};
