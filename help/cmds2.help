@@ -495,3 +495,9 @@ See also: bots, botinfo, bottree
    can log in to the partyline using SSL and use %b'.fprint +'%b to add the
    current certificate, or use %b'.fprint <SHA1 fingerprint>'%b to manually
    add a certificate fingerprint.
+
+%{help=chfinger}%{-}
+### %bchfinger <handle> [fingerprint]%b
+   Changes the SSL certificate fingerprint associated with your user account.
+   Not specifying a value for 'fingerprint' will remove an existing certificate
+   associated with your user account.
