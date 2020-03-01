@@ -1071,6 +1071,7 @@ static int del_server(const char *name, const char *port)
       return 1;
     }
   }
+/* Check if server to be deleted is first node in list */
   if (!strcasecmp(name, serverlist->name)) {
     z = serverlist;
     if (strlen(port)) {
@@ -1091,6 +1092,7 @@ static int del_server(const char *name, const char *port)
   }
   curr = serverlist->next;
   prev = serverlist;
+/* Check the remaining nodes in list */
   while (curr != NULL && prev != NULL) {
     if (!strcasecmp(name, curr->name)) {
       if (strlen(port)) {
@@ -1900,13 +1902,14 @@ static void server_5minutely()
 
 static void server_prerehash()
 {
-  struct server_list *x = serverlist;
-  char port[7];
+  struct server_list *x;
 
   strlcpy(oldnick, botname, sizeof oldnick);
-  for (; x; x = x->next) {
-    egg_snprintf(port, sizeof port, "%d", x->port);
-    del_server(x->name, port);
+/* Clear out servers, any addservers in config file are about to be re-run */
+  while (serverlist != NULL) {
+      x = serverlist;
+      serverlist = serverlist->next;
+      free_server(x);
   }
 }
 
