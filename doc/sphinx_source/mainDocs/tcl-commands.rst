@@ -179,9 +179,9 @@ tagmsg <tags> <target>
   Module: server
 
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-addserver <ip/host> [port [password]]
+addserver <ip/host> [[+]port [password]]
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  Description: adds a server to the list of servers Eggdrop will connect to. A port value is required if password is to be specified. 
+  Description: adds a server to the list of servers Eggdrop will connect to. Prefix the port with '+' to indicate an SSL-protected port. A port value is required if password is to be specified. 
 
   Returns: nothing
 
