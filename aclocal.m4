@@ -1683,7 +1683,6 @@ AC_DEFUN([EGG_TLS_DETECT],
           AC_DEFINE([__int64], [long long], [Define this to a 64-bit type on Cygwin to satisfy OpenSSL dependencies.])
         ])
       fi
-      AC_CHECK_FUNCS([RAND_status])
       AC_DEFINE(TLS, 1, [Define this to enable SSL support.])
       AC_CHECK_FUNC(ASN1_STRING_get0_data,
         AC_DEFINE([egg_ASN1_string_data], [ASN1_STRING_get0_data], [Define this to ASN1_STRING_get0_data when using OpenSSL 1.1.0+, ASN1_STRING_data otherwise.])
