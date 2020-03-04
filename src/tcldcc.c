@@ -972,10 +972,12 @@ static int setlisten(Tcl_Interp *irp, char *ip, char *portp, char *type, char *m
       Tcl_AppendResult(irp, "No more DCC slots available.", NULL);
       return TCL_ERROR;
     }
-    /* Try to grab port */
-    j = port + 20;
+    /* We used to try up to 20 ports here, but have scientifically concluded
+     * that is just silly. But now we'll try the same port 3 times 'just in
+     * case' */
+    j = 3;
     i = -2;
-    while (port < j && i < 0) {
+    while (j && i < 0) {
       if (strlen(ip)) {
         setsockname(&name, ip, port, 1);
         i = open_address_listen(&name);
@@ -984,8 +986,7 @@ static int setlisten(Tcl_Interp *irp, char *ip, char *portp, char *type, char *m
       }
       if (i == -1)
         break;
-      else if (i == -2)
-        port++;
+      j--;
     }
 
     if (i == -1) {
