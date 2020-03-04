@@ -934,21 +934,13 @@ static int tcl_connect STDVAR
   return TCL_OK;
 }
 
-/* Create a new listening port (or destroy one)
- *
- * listen <port> bots/all/users [mask]
- * listen <port> script <proc> [flag]
- * listen <port> off
- */
-static int tcl_listen STDVAR
-{
+static int setlisten(Tcl_Interp *irp, char *ip, char *portp, char *type, char *maskproc, char *flag) {
   int i, j, idx = -1, port, realport;
   char s[11], msg[256];
   struct portmap *pmap = NULL, *pold = NULL;
+  sockname_t name;
 
-  BADARGS(3, 5, " port type ?mask?/?proc ?flag??");
-
-  port = realport = atoi(argv[1]);
+  port = realport = atoi(portp);
   for (pmap = root; pmap; pold = pmap, pmap = pmap->next)
     if (pmap->realport == port) {
       port = pmap->mappedto;
@@ -957,7 +949,7 @@ static int tcl_listen STDVAR
   for (i = 0; i < dcc_total; i++)
     if ((dcc[i].type == &DCC_TELNET) && (dcc[i].port == port))
       idx = i;
-  if (!strcasecmp(argv[2], "off")) {
+  if (!strcasecmp(type, "off")) {
     if (pmap) {
       if (pold)
         pold->next = pmap->next;
@@ -984,7 +976,12 @@ static int tcl_listen STDVAR
     j = port + 20;
     i = -2;
     while (port < j && i < 0) {
-      i = open_listen(&port);
+      if (strlen(ip)) {
+        setsockname(&name, ip, port, 1);
+        i = open_address_listen(&name);
+      } else {
+        i = open_listen(&port);
+      }
       if (i == -1)
         break;
       else if (i == -2)
@@ -1012,51 +1009,31 @@ static int tcl_listen STDVAR
     dcc[idx].timeval = now;
   }
 #ifdef TLS
-  if (*argv[1] == '+')
+  if (port == '+')
     dcc[idx].ssl = 1;
   else
     dcc[idx].ssl = 0;
 #endif
   /* script? */
-  if (!strcmp(argv[2], "script")) {
+  if (!strcmp(type, "script")) {
     strcpy(dcc[idx].nick, "(script)");
-    if (argc < 4) {
-      Tcl_AppendResult(irp, "a proc name must be specified for a script listen", NULL);
-      killsock(dcc[idx].sock);
-      lostdcc(idx);
-      return TCL_ERROR;
-    }
-    if (argc == 5) {
-      if (strcmp(argv[4], "pub")) {
-        Tcl_AppendResult(irp, "unknown flag: ", argv[4], ". allowed flags: pub",
-                         NULL);
-        killsock(dcc[idx].sock);
-        lostdcc(idx);
-        return TCL_ERROR;
-      }
+    if (flag) {
       dcc[idx].status = LSTN_PUBLIC;
     }
-    strlcpy(dcc[idx].host, argv[3], UHOSTMAX);
+    strlcpy(dcc[idx].host, maskproc, UHOSTMAX);
     egg_snprintf(s, sizeof s, "%d", port);
     Tcl_AppendResult(irp, s, NULL);
     return TCL_OK;
   }
   /* bots/users/all */
-  if (!strcmp(argv[2], "bots"))
+  if (!strcmp(type, "bots"))
     strcpy(dcc[idx].nick, "(bots)");
-  else if (!strcmp(argv[2], "users"))
+  else if (!strcmp(type, "users"))
     strcpy(dcc[idx].nick, "(users)");
-  else if (!strcmp(argv[2], "all"))
+  else if (!strcmp(type, "all"))
     strcpy(dcc[idx].nick, "(telnet)");
-  if (!dcc[idx].nick[0]) {
-    Tcl_AppendResult(irp, "invalid listen type: must be one of ",
-                     "bots, users, all, off, script", NULL);
-    killsock(dcc[idx].sock);
-    dcc_total--;
-    return TCL_ERROR;
-  }
-  if (argc == 4)
-    strlcpy(dcc[idx].host, argv[3], UHOSTMAX);
+  if (strlen(maskproc))
+    strlcpy(dcc[idx].host, maskproc, UHOSTMAX);
   else
     strcpy(dcc[idx].host, "*");
   egg_snprintf(s, sizeof s, "%d", port);
@@ -1069,9 +1046,84 @@ static int tcl_listen STDVAR
   pmap->realport = realport;
   pmap->mappedto = port;
 
-  putlog(LOG_MISC, "*", "Listening for telnet connections on %s:%d (%s).", iptostr(&dcc[idx].sockname.addr.sa), port, argv[2]);
+  putlog(LOG_MISC, "*", "Listening for telnet connections on %s:%d (%s).", iptostr(&dcc[idx].sockname.addr.sa), port, type);
 
   return TCL_OK;
+}
+
+/* Create a new listening port (or destroy one)
+ *
+ * listen <port> bots/all/users [mask]
+ * listen <port> script <proc> <flag>
+ * listen <port> off
+ */
+static int tcl_listen STDVAR
+{
+  char ip[121], port[7], type[7], maskproc[UHOSTMAX] = "", flag[4], *endptr;
+  unsigned char buf[sizeof(struct in6_addr)];
+  int i = 1;
+
+  BADARGS(3, 6, " ip port type ?mask?/?proc flag?");
+
+/* Check if IP exists, set to NULL if not */
+  strtol(argv[1], &endptr, 10);
+  if (*endptr != '\0') {
+    if (inet_pton(AF_INET, argv[1], buf) || inet_pton(AF_INET6, argv[1], buf)) {
+      strlcpy(ip, argv[1], sizeof(ip));
+      i++;
+    } else {
+      Tcl_AppendResult(irp, "invalid ip address", NULL);
+      return TCL_ERROR;
+    }
+  } else {
+    strcpy(ip, "");
+  }
+/* Check for port */
+  if ((atoi(argv[i]) > 65535) || (atoi(argv[i]) < 1)) {
+    Tcl_AppendResult(irp, "invalid listen port", NULL);
+    return TCL_ERROR;
+  }
+  strlcpy(port, argv[i], sizeof(port));
+  i++;
+/* Check for listen type */
+  if (!argv[i]) {
+    Tcl_AppendResult(irp, "missing listen type", NULL);
+    return TCL_ERROR;
+  }
+  if ((strcmp(argv[i], "bots")) && (strcmp(argv[i], "users"))
+        && (strcmp(argv[i], "all")) && (strcmp(argv[i], "off"))
+        && (strcmp(argv[i], "script"))) {
+    Tcl_AppendResult(irp, "invalid listen type: must be one of ",
+          "bots, users, all, off, script", NULL);
+    return TCL_ERROR;
+  }
+  strlcpy(type, argv[i], sizeof(type));
+/* Check if mask or proc exists */
+  if (((argc>3) && !strlen(ip)) || ((argc >4) && strlen(ip))) {
+    i++;
+    strlcpy(maskproc, argv[i], sizeof(maskproc));
+  }
+/* If script, check for proc and flag */
+  if (!strcmp(type, "script")) {
+    if (!strlen(maskproc)) {
+      Tcl_AppendResult(irp, "a proc name must be specified for a script listen", NULL);
+      return TCL_ERROR;
+    }
+    if ((!strlen(ip) && (argc==4)) || (strlen(ip) && argc==5)) {
+      Tcl_AppendResult(irp, "missing flag. allowed flags: pub", NULL);
+      return TCL_ERROR;
+    }
+    if ((!strlen(ip) && (argc==5)) || (argc == 6)) {
+      i++;
+      if (strcmp(argv[i], "pub")) {
+        Tcl_AppendResult(irp, "unknown flag: ", flag, ". allowed flags: pub",
+              NULL);
+        return TCL_ERROR;
+      }
+      strlcpy(flag, argv[i], sizeof flag);
+    }
+  }
+  return setlisten(irp, ip, port, type, maskproc, flag);
 }
 
 static int tcl_boot STDVAR

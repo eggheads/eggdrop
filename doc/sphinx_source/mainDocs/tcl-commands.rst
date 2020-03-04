@@ -1656,7 +1656,7 @@ connect <host> <[+]port>
   Module: core
 
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-listen <port> <type> [options] [flag]
+listen <port> <type> [options [flag]]
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
   Description: opens a listening port to accept incoming telnets; type must be one of "bots", "all", "users", "script", or "off". Prefixing the port with a plus sign will make eggdrop accept SSL connections on it.
@@ -1679,9 +1679,9 @@ listen <port> <type> [options] [flag]
 
       Returns: port number
 
-    listen <port> script <proc> [flag]
+    listen <port> script <proc> <flag>
 
-      Description: accepts connections which are immediately routed to a proc. The proc is called with one parameter: the idx of the new connection. Flag may currently only be 'pub', which makes the bot allow anyone to connect and not perform an ident lookup.
+      Description: accepts connections which are immediately routed to a proc. The proc is called with one parameter: the idx of the new connection. If the script type is used, flag must also be set. Flag may currently only be 'pub', which makes the bot allow anyone to connect and not perform an ident lookup.
 
       Returns: port number
 
