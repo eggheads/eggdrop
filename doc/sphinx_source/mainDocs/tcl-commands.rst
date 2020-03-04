@@ -1656,36 +1656,36 @@ connect <host> <[+]port>
   Module: core
 
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-listen <port> <type> [options [flag]]
+listen [ip/host] <port> <type> [options [flag]]
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-  Description: opens a listening port to accept incoming telnets; type must be one of "bots", "all", "users", "script", or "off". Prefixing the port with a plus sign will make eggdrop accept SSL connections on it.
+  Description: opens a listening port to accept incoming telnets; type must be one of "bots", "all", "users", "script", or "off". Prefixing the port with a plus sign will make eggdrop accept SSL connections on it. An IP or hostname may optionally be listed before the mandatory port argument. If no IP is specified, 0.0.0.0 (all available addresses) is used.
 
-    listen <port> bots [mask]
+    listen [ip] <port> bots [mask]
 
       Description: accepts connections from bots only; the optional mask is used to identify permitted bot names. If the mask begins with '@', it is interpreted to be a mask of permitted hosts to accept connections from.
 
       Returns: port number
 
-    listen <port> users [mask]
+    listen [ip] <port> users [mask]
     
       Description: accepts connections from users only (no bots); the optional mask is used to identify permitted nicknames. If the mask begins with '@', it is interpreted to be a mask of permitted hosts to accept connections from.
 
       Returns: port number
 
-    listen <port> all [mask]
+    listen [ip] <port> all [mask]
 
       Description: accepts connections from anyone; the optional mask is used to identify permitted nicknames/botnames. If the mask begins with '@', it is interpreted to be a mask of permitted hosts to accept connections from.
 
       Returns: port number
 
-    listen <port> script <proc> <flag>
+    listen [ip] <port> script <proc> <flag>
 
       Description: accepts connections which are immediately routed to a proc. The proc is called with one parameter: the idx of the new connection. If the script type is used, flag must also be set. Flag may currently only be 'pub', which makes the bot allow anyone to connect and not perform an ident lookup.
 
       Returns: port number
 
-    listen <port> off
+    listen [ip] <port> off
 
       Description: stop listening on a port
 
