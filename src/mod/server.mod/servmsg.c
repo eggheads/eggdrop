@@ -3,7 +3,7 @@
  */
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2019 Eggheads Development Team
+ * Copyright (C) 1999 - 2020 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -191,6 +191,33 @@ static int check_tcl_raw(char *from, char *code, char *msg)
                      MATCH_EXACT | BIND_STACKABLE | BIND_WANTRET);
 
   /* Return 1 if processed */
+  return (x == BIND_EXEC_LOG);
+}
+
+/* tagstr is a space-separated list of key/value pairs */
+static int check_tcl_rawt(char *from, char *code, char *msg, char *tagstr)
+{
+  int x;
+  char * ptr;
+  Tcl_DString tagdict;
+
+  Tcl_DStringInit(&tagdict);
+  Tcl_SetVar(interp, "_rawt1", from, 0);
+  Tcl_SetVar(interp, "_rawt2", code, 0);
+  Tcl_SetVar(interp, "_rawt3", msg, 0);
+  ptr = strtok(tagstr, " ");
+  if (!msgtag) {
+    Tcl_SetVar(interp, "_rawt4", NULL, 0);
+  } else {
+    while (ptr != NULL) {
+      Tcl_DStringAppendElement(&tagdict, ptr);
+      ptr = strtok(NULL, " ");
+    }
+  }
+  Tcl_SetVar(interp, "_rawt4", Tcl_DStringValue(&tagdict), 0);
+  x = check_tcl_bind(H_rawt, code, 0, " $_rawt1 $_rawt2 $_rawt3 $_rawt4",
+                    MATCH_EXACT | BIND_STACKABLE | BIND_WANTRET);
+  Tcl_DStringFree(&tagdict);
   return (x == BIND_EXEC_LOG);
 }
 
@@ -482,7 +509,7 @@ static int detect_flood(char *floodnick, char *floodhost, char *from, int which)
 
 /* Got a private message.
  */
-static int gotmsg(char *from, char *msg)
+static int gotmsg(char *from, char *msg, char *tag)
 {
   char *to, buf[UHOSTLEN], *nick, ctcpbuf[512], *uhost = buf, *ctcp,
        *p, *p1, *code;
@@ -703,6 +730,18 @@ static int gotnotice(char *from, char *msg)
 
     if (!ignoring)
       putlog(LOG_MSGS, "*", "-%s (%s)- %s", nick, uhost, msg);
+  }
+  return 0;
+}
+
+static int gottagmsg(char *from, char *msg) {
+  char *nick;
+  fixcolon(msg);
+  if (strchr(from, '!')) {
+    nick = splitnick(&from);
+    putlog(LOG_SERV, "*", "[#]%s(%s)[#] %s", nick, from, msg);
+  } else {
+    putlog(LOG_SERV, "*", "[#]%s[#] %s");
   }
   return 0;
 }
@@ -1056,9 +1095,12 @@ static struct dcc_table SERVER_SOCKET = {
   NULL
 };
 
-static void server_activity(int idx, char *msg, int len)
+static void server_activity(int idx, char *tagmsg, int len)
 {
-  char *from, *code;
+  char *from, *code, *s1, *s2, *saveptr1, *saveptr2, *tagstrptr=NULL;
+  char *token, *subtoken, tagstr[TOTALTAGMAX+1], tagdict[TOTALTAGMAX+1];
+  char *msgptr, rawmsg[RECVLINEMAX+7];
+  int taglen, i, found;
 
   if (trying_server) {
     strcpy(dcc[idx].nick, "(server)");
@@ -1067,23 +1109,60 @@ static void server_activity(int idx, char *msg, int len)
     SERVER_SOCKET.timeout_val = 0;
   }
   lastpingcheck = 0;
-  from = "";
-  if (msg[0] == ':') {
-    msg++;
-    from = newsplit(&msg);
+/* Check if IRCv3 message-tags are enabled and, if so, check/grab the tag */
+  msgptr = tagmsg;
+  strlcpy(rawmsg, tagmsg, TOTALTAGMAX+1);
+  if (msgtag) {
+    if (*tagmsg == '@') {
+      taglen = 0;
+      memset(tagdict, '\0', TOTALTAGMAX);
+      tagstrptr = newsplit(&msgptr);
+      strlcpy(tagstr, tagstrptr, TOTALTAGMAX+1);
+      tagstrptr++;     /* Remove @ */
+      /* Split each key/value pair apart, then split the key from the value */
+      for (i = 0, s1 = tagstrptr; ; i++, s1 = NULL){
+        token = strtok_r(s1, ";", &saveptr1);
+        if (token == NULL) {
+          break;
+        }
+        if (*token == '+') {
+          token++;
+        }
+        if (strchr(token, '=')) {
+          found = 0;
+          for (s2 = token; ; s2 = NULL) {
+            subtoken = strtok_r(s2, "=", &saveptr2);
+            if (subtoken == NULL) {
+              break;
+            }
+            taglen += egg_snprintf(tagdict + taglen, TOTALTAGMAX - taglen,
+                  "%s ", subtoken);
+            found++;
+          }
+          /* Account for tags (not key/value pairs), prep empty value for Tcl */
+          if (found < 2) {
+            taglen += egg_snprintf(tagdict + taglen, TOTALTAGMAX - taglen,
+                "{} ");
+          }
+        }
+      }
+      tagdict[taglen-1] = '\0';     /* Remove trailing space */
+    }
   }
-  code = newsplit(&msg);
+  from = "";
+  if (*msgptr == ':') {
+    msgptr++;
+    from = newsplit(&msgptr);
+  }
+  code = newsplit(&msgptr);
   if (raw_log && ((strcmp(code, "PRIVMSG") && strcmp(code, "NOTICE")) ||
       !match_ignore(from))) {
-    if (!strcmp(from, ""))
-      putlog(LOG_RAW, "*", "[@] %s %s", code, msg);
-    else
-      putlog(LOG_RAW, "*", "[@] %s %s %s", from, code, msg);
+    putlog(LOG_RAW, "*", "[@] %s", rawmsg);
   }
-  /* This has GOT to go into the raw binding table, * merely because this
-   * is less efficient.
-   */
-  check_tcl_raw(from, code, msg);
+  /* Check both raw and rawt, to allow backwards compatibility with older
+   * scripts */
+  check_tcl_rawt(from, code, msgptr, tagdict);
+  check_tcl_raw(from, code, msgptr);
 }
 
 static int gotping(char *from, char *msg)
@@ -1206,7 +1285,7 @@ static int tryauthenticate(char *from, char *msg)
     putlog(LOG_SERV, "*", "SASL: got AUTHENTICATE Challenge");
     olen = b64_pton(msg, dst, sizeof dst);
     if (olen == -1) {
-      putlog(LOG_SERV, "*", "SASL: AUTHENTICATE error: could not base64 encode");
+      putlog(LOG_SERV, "*", "SASL: AUTHENTICATE error: could not base64 decode line from server");
       return 1;
     }
     fp = fopen(sasl_ecdsa_key, "r");
@@ -1259,6 +1338,7 @@ static int tryauthenticate(char *from, char *msg)
 
 static int gotauthenticate(char *from, char *msg)
 {
+  fixcolon(msg); /* Because Inspircd does its own thing */
   if (tryauthenticate(from, msg) && !sasl_continue) {
     putlog(LOG_DEBUG, "*", "SASL: Aborting connection and retrying");
     nuke_server("Quitting...");
@@ -1349,6 +1429,14 @@ static int got410(char *from, char *msg) {
   return 1;
 }
 
+/* got417: ERR_INPUTTOOLONG. Client sent a message longer than allowed limit */
+static int got417(char *from, char *msg) {
+  newsplit(&msg);
+  putlog (LOG_SERV, "*", "MESSAGE-TAG: %s reported error: %s", from, msg);
+
+  return 1;
+}
+
 static int got421(char *from, char *msg) {
   newsplit(&msg);
   putlog(LOG_SERV, "*", "%s reported an error: %s", from, msg);
@@ -1375,6 +1463,9 @@ void add_cape(char *cape) {
   if (!strstr(cap.negotiated, cape)) {
     putlog(LOG_DEBUG, "*", "CAP: Adding cape %s to negotiated list", cape);
     Tcl_ListObjAppendElement(interp, ncapeslist, Tcl_NewStringObj(cape, -1));
+    if (!strcmp(cape, "message-tags") || !strcmp(cape, "twitch.tv/tags")) {
+      msgtag = 1;
+    }
   } else {
     putlog(LOG_DEBUG, "*", "CAP: %s is already added to negotiated list", cape);
   }
@@ -1390,6 +1481,9 @@ void del_cape(char *cape) {
     for (i = 0; i < ncapesc; i++) {
       if (!strcmp(cape, Tcl_GetString(ncapesv[i]))) {
         Tcl_ListObjReplace(interp, ncapeslist, i, 1, 0, NULL);
+        if (!strcmp(cape, "message-tags")) {
+          msgtag = 0;
+        }
       }
     }
   } else {
@@ -1408,6 +1502,7 @@ void add_req(char *cape) {
 
 static int gotcap(char *from, char *msg) {
   char *cmd, *splitstr;
+  char *cape, *p;
   int listlen = 0;
 
   newsplit(&msg);
@@ -1417,15 +1512,28 @@ static int gotcap(char *from, char *msg) {
   if (!strcmp(cmd, "LS")) {
     putlog(LOG_DEBUG, "*", "CAP: %s supports CAP sub-commands: %s", from, msg);
     strlcpy(cap.supported, msg, sizeof cap.supported);
+/* CAP is supported, yay! Lets load what we want to request */
     if (sasl) {
-      /* TODO: is this the right place to check for error in eggdrop conf setting ?
-       * (with error i mean, bot would crash, if the config setting is not validated) */
       if (sasl_mechanism < 0)
         putlog(LOG_SERV, "*", "SASL error: sasl-mechanism must be equal to or greater than 0");
       else if (sasl_mechanism >= SASL_MECHANISM_NUM)
         putlog(LOG_SERV, "*", "SASL error: sasl-mechanism must be less than %i", SASL_MECHANISM_NUM);
       else
         add_req("sasl");
+    }
+    if (away_notify)
+      add_req("away-notify");
+    if (invite_notify)
+      add_req("invite-notify");
+    if (message_tags)
+      add_req("message-tags");
+/* Add any custom capes the user listed */
+    cape = cap_request;
+    if ( (p = strtok(cape, " ")) ) {
+      while (p != NULL) {
+        add_req(p);
+        p = strtok(NULL, " ");
+      }
     }
     if (strlen(cap.desired) > 0) {
       putlog(LOG_DEBUG, "*", "CAP: Requesting %s capabilities from server", cap.desired);
@@ -1456,7 +1564,7 @@ static int gotcap(char *from, char *msg) {
       }
       splitstr = strtok(NULL, " ");
     }
-    update_cap_negotiated(); /* TODO: do we realy need this call here? */
+    update_cap_negotiated(); /* TODO: do we really need this call here? */
     putlog(LOG_SERV, "*", "CAP: Current Negotiations %s with %s", cap.negotiated, from);
     /* If a negotiated capability requires immediate action by Eggdrop, add it
      * here. However, that capability must take responsibility for sending an
@@ -1511,6 +1619,7 @@ static cmd_t my_raw_binds[] = {
   {"311",          "",   (IntFunc) got311,          NULL},
   {"318",          "",   (IntFunc) whoispenalty,    NULL},
   {"410",          "",   (IntFunc) got410,          NULL},
+  {"417",          "",   (IntFunc) got417,          NULL},
   {"421",          "",   (IntFunc) got421,          NULL},
   {"432",          "",   (IntFunc) got432,          NULL},
   {"433",          "",   (IntFunc) got433,          NULL},
@@ -1535,6 +1644,11 @@ static cmd_t my_raw_binds[] = {
   {NULL,           NULL, NULL,                      NULL}
 };
 
+static cmd_t my_rawt_binds[] = {
+  {"TAGMSG",       "",   (IntFunc) gottagmsg,       NULL},
+  {NULL,           NULL, NULL,                      NULL}
+};
+
 static void server_resolve_success(int);
 static void server_resolve_failure(int);
 
@@ -1542,7 +1656,10 @@ static void server_resolve_failure(int);
  */
 static void connect_server(void)
 {
-  char pass[121], botserver[UHOSTLEN], buf[16], s[1024];
+  char pass[121], botserver[UHOSTLEN], s[1024];
+#ifdef IPV6
+  char buf[sizeof(struct in6_addr)];
+#endif
   int servidx, len = 0;
   unsigned int botserverport = 0;
 

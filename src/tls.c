@@ -7,7 +7,7 @@
 /*
  * Written by Rumen Stoyanov <pseudo@egg6.net>
  *
- * Copyright (C) 2010 - 2019 Eggheads Development Team
+ * Copyright (C) 2010 - 2020 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -79,15 +79,14 @@ static int ssl_seed(void)
   static char rand_file[120];
   FILE *fh;
 
-#ifdef HAVE_RAND_STATUS
   if (RAND_status())
     return 0;     /* Status OK */
-#endif
   /* If '/dev/urandom' is present, OpenSSL will use it by default.
    * Otherwise we'll have to generate pseudorandom data ourselves,
    * using system time, our process ID and some uninitialized static
    * storage.
    */
+  putlog(LOG_MISC, "*", "WARNING: TLS: PRNG has not been sufficiently seeded. Seeding now.");
   if ((fh = fopen("/dev/urandom", "r"))) {
     fclose(fh);
     return 0;
@@ -105,10 +104,8 @@ static int ssl_seed(void)
     RAND_seed(&c, sizeof(c));
     RAND_seed(stackdata, sizeof(stackdata));
   }
-#ifdef HAVE_RAND_STATUS
   if (!RAND_status())
     return 2; /* pseudo random data still not enough */
-#endif
   return 0;
 }
 

@@ -164,18 +164,32 @@ cap <active/available/raw> [arg]
 
   Module: server
 
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-addserver <ip/host> [port [password]]
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  Description: adds a server to the list of servers Eggdrop will connect to. A port value is required if password is to be specified. 
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+tagmsg <tags> <target>
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+  Description: sends an IRCv3 TAGMSG command to the target. Only works if message-tags has been negotiated with the server via the cap command. tags is a Tcl dict (or space-separated string) of the tags you wish to send separated by commas (do not include the @prefix), and target is the nickname or channel you wish to send the tags to. To send a tag only (not a key/value pair), use a "" as the value for a key in a dict, or a "{}" if you are sending as a space-separated string.
+
+  Examples:
+    set mytags [dict create +foo bar moo baa +last ""]; tagmsg $mytags #channel
+    tagmsg "+foo bar moo baa +last {}" #channel
 
   Returns: nothing
 
   Module: server
 
-^^^^^^^^^^^^^^^^^^^^^^^^^^
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+addserver <ip/host> [[+]port [password]]
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  Description: adds a server to the list of servers Eggdrop will connect to. Prefix the port with '+' to indicate an SSL-protected port. A port value is required if password is to be specified. 
+
+  Returns: nothing
+
+  Module: server
+
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 delserver <ip/host> [[+]port]
-^^^^^^^^^^^^^^^^^^^^^^^^^^
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
   Description: removes a server from the list of servers Eggdrop will connect to. If no port is specified, Eggdrop will remove the first server matching the ip or hostname provided. The SSL status (+) of the provided port is matched against as well (ie, 7000 is not the same as +7000).
 
@@ -1234,7 +1248,7 @@ onchansplit <nick> [channel]
 chanlist <channel> [flags][<&|>chanflags]
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-  Description: flags are any global flags; the '&' or '|' denotes to look for channel specific flags, where '&' will return users having ALL chanflags and '|' returns users having ANY of the chanflags (See matchattr above for additional examples).
+  Description: flags are any global flags; the '&' or '\|' denotes to look for channel specific flags, where '&' will return users having ALL chanflags and '|' returns users having ANY of the chanflags (See matchattr above for additional examples).
 
   Returns: Searching for flags optionally preceded with a '+' will return a list of nicknames that have all the flags listed. Searching for flags preceded with a '-' will return a list of nicknames that do not have have any of the flags (differently said, '-' will hide users that have all flags listed). If no flags are given, all of the nicknames on the channel are returned.
 
@@ -2699,6 +2713,13 @@ configureargs
 
   Module: core
 
+^^^^^^^^
+language
+^^^^^^^^
+  Value: a string containing the language with the highest priority for use by Eggdrop. This commonly reflects what is added with addlang in the config file
+
+  Module: core
+
 Binds
 -----
 
@@ -2935,7 +2956,9 @@ The following is a list of bind types and how they work. Below each bind type is
 
   procname <from> <keyword> <text>
 
-  Description: previous versions of Eggdrop required a special compile option to enable this binding, but it's now standard. The keyword is either a numeric, like "368", or a keyword, such as "PRIVMSG". "from" will be the server name or the source user (depending on the keyword); flags are ignored. The order of the arguments is identical to the order that the IRC server sends to the bot. The pre-processing  only splits it apart enough to determine the keyword. If the proc returns 1, Eggdrop will not process the line any further (this could cause unexpected behavior in some cases).
+  IMPORTANT: While not necessarily deprecated, this bind has been supplanted by the RAWT bind as of 1.9.0. You probably want to be using RAWT, not RAW.
+
+  Description: previous versions of Eggdrop required a special compile option to enable this binding, but it's now standard. The keyword is either a numeric, like "368", or a keyword, such as "PRIVMSG". "from" will be the server name or the source user (depending on the keyword); flags are ignored. The order of the arguments is identical to the order that the IRC server sends to the bot. The pre-processing only splits it apart enough to determine the keyword. If the proc returns 1, Eggdrop will not process the line any further (this could cause unexpected behavior in some cases). The RAW bind does not support the IRCv3 message-tags capability, please see RAWT for more information.
 
   Module: server
 
@@ -3288,6 +3311,22 @@ The following is a list of bind types and how they work. Below each bind type is
 
   Module: core
 
+(51) INVT (stackable)
+
+  bind invt <flags> <mask> <proc>
+
+  procname <nick> <user@host> <channel> <invitee>
+
+  Description: triggered when eggdrop received an INVITE message. The mask for the bind is in the format "#channel nickname", where nickname (not a hostmask) is that of the invitee. For the proc, nick is the nickname of the person sending the invite request, user@host is the user@host of the person sending the invite, channel is the channel the invitee is being invited to, and invitee is the target (nickname only) of the invite. The invitee argument was added to support the IRCv3 invite-notify capability, where the eggdrop may be able to see invite messages for other people that are not the eggdrop.
+
+(52) RAWT (stackable)
+
+  bind rawt <flags> <keyword> <proc>
+
+  procname <from> <keyword> <text> <tag>
+
+  Description: similar to the RAW bind, but allows an extra field for the IRCv3 message-tags capability. The keyword is either a numeric, like "368", or a keyword, such as "PRIVMSG" or "TAGMSG". "from" will be the server name or the source user (depending on the keyword); flags are ignored. "tag" will be the contents, if any, of the entire tag message prefixed to the server message in a dict format, such as "msgid 890157217279768 aaa bbb". The order of the arguments is identical to the order that the IRC server sends to the bot. If the proc returns 1, Eggdrop will not process the line any further (this could cause unexpected behavior in some cases). As of 1.9.0, it is recommended to use the RAWT bind instead of the RAW bind.
+
 ^^^^^^^^^^^^^
 Return Values
 ^^^^^^^^^^^^^
@@ -3453,4 +3492,4 @@ are the four special characters:
 |     | words) (This char only works in binds, not in regular matching)          |
 +-----+--------------------------------------------------------------------------+
 
-  Copyright (C) 1999 - 2019 Eggheads Development Team
+  Copyright (C) 1999 - 2020 Eggheads Development Team
