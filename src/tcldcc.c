@@ -1047,7 +1047,8 @@ static int setlisten(Tcl_Interp *irp, char *ip, char *portp, char *type, char *m
   pmap->realport = realport;
   pmap->mappedto = port;
 
-  putlog(LOG_MISC, "*", "Listening for telnet connections on %s:%d (%s).", iptostr(&dcc[idx].sockname.addr.sa), port, type);
+  putlog(LOG_MISC, "*", "Listening for telnet connections on %s port %d (%s).",
+        iptostr(&dcc[idx].sockname.addr.sa), port, type);
 
   return TCL_OK;
 }
