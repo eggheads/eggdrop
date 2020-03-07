@@ -135,7 +135,7 @@ int setsockname(sockname_t *addr, char *src, int port, int allowres)
   long val;
   IP ip;
   struct hostent *hp;
-  int af = AF_UNSPEC;
+  volatile int af = AF_UNSPEC;
 #ifdef IPV6
   char ip2[INET6_ADDRSTRLEN];
   char *src2 = src;
