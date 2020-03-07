@@ -1097,7 +1097,7 @@ static struct dcc_table SERVER_SOCKET = {
 
 static void server_activity(int idx, char *tagmsg, int len)
 {
-  char *from, *code, *s1, *s2, *saveptr1, *saveptr2, *tagstrptr=NULL;
+  char *from, *code, *s1, *s2, *saveptr1=NULL, *saveptr2=NULL, *tagstrptr=NULL;
   char *token, *subtoken, tagstr[TOTALTAGMAX+1], tagdict[TOTALTAGMAX+1];
   char *msgptr, rawmsg[RECVLINEMAX+7];
   int taglen, i, found;
