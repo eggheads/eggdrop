@@ -889,7 +889,7 @@ void parserespacket(uint8_t *response, int len)
       ptrstring(&rp->sockname.addr.sa, stackstring, sizeof stackstring);
       break;
     case STATE_AREQ:
-      strncpy(stackstring, rp->hostn, 1024);
+      strlcpy(stackstring, rp->hostn, sizeof stackstring);
   }
   c = response + HFIXEDSZ;
   r = dn_expand(response, response + len, c, namestring, MAXDNAME);
