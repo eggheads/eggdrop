@@ -36,15 +36,15 @@ extern int default_flags, default_uflags, quiet_save, dcc_total, share_greet;
 extern char ver[], botnetnick[];
 extern time_t now;
 
-int noshare = 1;                   /* don't send out to sharebots   */
-struct userrec *userlist = NULL;   /* user records are stored here  */
-struct userrec *lastuser = NULL;   /* last accessed user record     */
+int noshare = 1;                   /* don't send out to sharebots       */
+struct userrec *userlist = NULL;   /* user records are stored here      */
+struct userrec *lastuser = NULL;   /* last accessed user record         */
 maskrec *global_bans = NULL, *global_exempts = NULL, *global_invites = NULL;
 struct igrec *global_ign = NULL;
-int cache_hit = 0, cache_miss = 0; /* temporary cache accounting    */
-int userfile_perm = 0600;         /* Userfile permissions
-                                   * (default rw-------) */
-char userfile[121];
+int cache_hit = 0, cache_miss = 0; /* temporary cache accounting        */
+int userfile_perm = 0600;          /* Userfile permissions
+                                    * (default rw-------)               */
+char userfile[121];                /* where the user records are stored */
 
 void *_user_malloc(int size, const char *file, int line)
 {
