@@ -735,7 +735,7 @@ static void filesys_dcc_send_hostresolved(int i)
   char *s1, *param, prt[6], *tempf;
   int len = dcc[i].u.dns->ibuf, j;
 
-  snprintf(prt, sizeof prt "%d", dcc[i].port);
+  snprintf(prt, sizeof prt, "%d", dcc[i].port);
   if (!hostsanitycheck_dcc(dcc[i].nick, dcc[i].u.dns->host, &dcc[i].sockname,
                            dcc[i].u.dns->host, prt)) {
     lostdcc(i);
