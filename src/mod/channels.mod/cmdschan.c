@@ -29,7 +29,7 @@ static struct flag_record victim = { FR_GLOBAL | FR_CHAN, 0, 0, 0, 0, 0 };
 
 static void cmd_pls_ban(struct userrec *u, int idx, char *par)
 {
-  char *chname, *who, s[UHOSTLEN], s1[UHOSTLEN], *p, *p_expire;
+  char *chname, *who, s[UHOSTLEN], s1[UHOSTLEN], *p, *p_expire, *r;
   long expire_foo;
   unsigned long expire_time = 0;
   int sticky = 0;
@@ -129,54 +129,57 @@ static void cmd_pls_ban(struct userrec *u, int idx, char *par)
         return;
       }
     }
-      /* IRC can't understand bans longer than 70 characters */
-      if (strlen(s) > 70) {
-        s[69] = '*';
-        s[70] = 0;
+    /* RFC 2812, hostmasks can't be longer than 63 characters */
+    if ( (r = strchr(s, '@')) ) {
+      r++;
+      if (strlen(r)  > 64) { /* 63 + NULL */
+        strcpy(r+62, "*");   /* 63rd character of string */
+        strcpy(r+63, "");    /* 64th character null terminated */
       }
-      if (chan) {
-        u_addban(chan, s, dcc[idx].nick, par,
-                 expire_time ? now + expire_time : 0, 0);
-        if (par[0] == '*') {
-          sticky = 1;
-          par++;
-          putlog(LOG_CMDS, "*", "#%s# (%s) +ban %s %s (%s) (sticky)",
-                 dcc[idx].nick, dcc[idx].u.chat->con_chan, s, chan->dname, par);
-          dprintf(idx, "New %s sticky ban: %s (%s)\n", chan->dname, s, par);
-        } else {
-          putlog(LOG_CMDS, "*", "#%s# (%s) +ban %s %s (%s)", dcc[idx].nick,
-                 dcc[idx].u.chat->con_chan, s, chan->dname, par);
-          dprintf(idx, "New %s ban: %s (%s)\n", chan->dname, s, par);
-        }
-        /* Avoid unnesessary modes if you got +dynamicbans, and there is
-         * no reason to set mode if irc.mod aint loaded. (dw 001120)
-         */
-        if ((me = module_find("irc", 0, 0)))
-          (me->funcs[IRC_CHECK_THIS_BAN]) (chan, s, sticky);
+    }
+    if (chan) {
+      u_addban(chan, s, dcc[idx].nick, par,
+               expire_time ? now + expire_time : 0, 0);
+      if (par[0] == '*') {
+        sticky = 1;
+        par++;
+        putlog(LOG_CMDS, "*", "#%s# (%s) +ban %s %s (%s) (sticky)",
+               dcc[idx].nick, dcc[idx].u.chat->con_chan, s, chan->dname, par);
+        dprintf(idx, "New %s sticky ban: %s (%s)\n", chan->dname, s, par);
       } else {
-        u_addban(NULL, s, dcc[idx].nick, par,
-                 expire_time ? now + expire_time : 0, 0);
-        if (par[0] == '*') {
-          sticky = 1;
-          par++;
-          putlog(LOG_CMDS, "*", "#%s# (GLOBAL) +ban %s (%s) (sticky)",
-                 dcc[idx].nick, s, par);
-          dprintf(idx, "New sticky ban: %s (%s)\n", s, par);
-        } else {
-          putlog(LOG_CMDS, "*", "#%s# (GLOBAL) +ban %s (%s)", dcc[idx].nick,
-                 s, par);
-          dprintf(idx, "New ban: %s (%s)\n", s, par);
-        }
-        if ((me = module_find("irc", 0, 0)))
-          for (chan = chanset; chan != NULL; chan = chan->next)
-            (me->funcs[IRC_CHECK_THIS_BAN]) (chan, s, sticky);
+        putlog(LOG_CMDS, "*", "#%s# (%s) +ban %s %s (%s)", dcc[idx].nick,
+               dcc[idx].u.chat->con_chan, s, chan->dname, par);
+        dprintf(idx, "New %s ban: %s (%s)\n", chan->dname, s, par);
       }
+      /* Avoid unnesessary modes if you got +dynamicbans, and there is
+       * no reason to set mode if irc.mod aint loaded. (dw 001120)
+       */
+      if ((me = module_find("irc", 0, 0)))
+        (me->funcs[IRC_CHECK_THIS_BAN]) (chan, s, sticky);
+    } else {
+      u_addban(NULL, s, dcc[idx].nick, par,
+               expire_time ? now + expire_time : 0, 0);
+      if (par[0] == '*') {
+        sticky = 1;
+        par++;
+        putlog(LOG_CMDS, "*", "#%s# (GLOBAL) +ban %s (%s) (sticky)",
+               dcc[idx].nick, s, par);
+        dprintf(idx, "New sticky ban: %s (%s)\n", s, par);
+      } else {
+        putlog(LOG_CMDS, "*", "#%s# (GLOBAL) +ban %s (%s)", dcc[idx].nick,
+               s, par);
+        dprintf(idx, "New ban: %s (%s)\n", s, par);
+      }
+      if ((me = module_find("irc", 0, 0)))
+        for (chan = chanset; chan != NULL; chan = chan->next)
+          (me->funcs[IRC_CHECK_THIS_BAN]) (chan, s, sticky);
+    }
   }
 }
 
 static void cmd_pls_exempt(struct userrec *u, int idx, char *par)
 {
-  char *chname, *who, s[UHOSTLEN], *p, *p_expire;
+  char *chname, *who, s[UHOSTLEN], *p, *p_expire, *r;
   long expire_foo;
   unsigned long expire_time = 0;
   struct chanset_t *chan = NULL;
@@ -263,10 +266,13 @@ static void cmd_pls_exempt(struct userrec *u, int idx, char *par)
     else
       strlcpy(s, who, sizeof s);
 
-    /* IRC can't understand exempts longer than 70 characters */
-    if (strlen(s) > 70) {
-      s[69] = '*';
-      s[70] = 0;
+    /* RFC 2812, hostmasks can't be longer than 63 characters */
+    if ( (r = strchr(s, '@')) ) {
+      r++;
+      if (strlen(r)  > 64) { /* 63 + NULL */
+        strcpy(r+62, "*");   /* 63rd character of string */
+        strcpy(r+63, "");    /* 64th character null terminated */
+      }
     }
     if (chan) {
       u_addexempt(chan, s, dcc[idx].nick, par,
@@ -303,7 +309,7 @@ static void cmd_pls_exempt(struct userrec *u, int idx, char *par)
 
 static void cmd_pls_invite(struct userrec *u, int idx, char *par)
 {
-  char *chname, *who, s[UHOSTLEN], *p, *p_expire;
+  char *chname, *who, s[UHOSTLEN], *p, *p_expire, *r;
   long expire_foo;
   unsigned long expire_time = 0;
   struct chanset_t *chan = NULL;
@@ -391,10 +397,13 @@ static void cmd_pls_invite(struct userrec *u, int idx, char *par)
     else
       strlcpy(s, who, sizeof s);
 
-    /* IRC can't understand invites longer than 70 characters */
-    if (strlen(s) > 70) {
-      s[69] = '*';
-      s[70] = 0;
+    /* RFC 2812, hostmasks can't be longer than 63 characters */
+    if ( (r = strchr(s, '@')) ) {
+      r++;
+      if (strlen(r)  > 64) { /* 63 + NULL */
+        strcpy(r+62, "*");   /* 63rd character of string */
+        strcpy(r+63, "");    /* 64th character null terminated */
+      }
     }
     if (chan) {
       u_addinvite(chan, s, dcc[idx].nick, par,
