@@ -27,9 +27,22 @@ static struct flag_record user = { FR_GLOBAL | FR_CHAN, 0, 0, 0, 0, 0 };
 static struct flag_record victim = { FR_GLOBAL | FR_CHAN, 0, 0, 0, 0, 0 };
 
 
+/* RFC 2812, hostmasks can't be longer than 63 characters */
+void truncate_host(char *s) {
+char *r = NULL;
+
+  if ( (r = strchr(s, '@')) ) {
+    r++;
+    if (strlen(r)  > 64) { /* 63 + NULL */
+      strcpy(r+62, "*");   /* 63rd character of string */
+      strcpy(r+63, "");    /* 64th character null terminated */
+    }
+  }
+}
+
 static void cmd_pls_ban(struct userrec *u, int idx, char *par)
 {
-  char *chname, *who, s[UHOSTLEN], s1[UHOSTLEN], *p, *p_expire, *r;
+  char *chname, *who, s[UHOSTLEN], s1[UHOSTLEN], *p, *p_expire;
   long expire_foo;
   unsigned long expire_time = 0;
   int sticky = 0;
@@ -129,14 +142,7 @@ static void cmd_pls_ban(struct userrec *u, int idx, char *par)
         return;
       }
     }
-    /* RFC 2812, hostmasks can't be longer than 63 characters */
-    if ( (r = strchr(s, '@')) ) {
-      r++;
-      if (strlen(r)  > 64) { /* 63 + NULL */
-        strcpy(r+62, "*");   /* 63rd character of string */
-        strcpy(r+63, "");    /* 64th character null terminated */
-      }
-    }
+    truncate_host(s);
     if (chan) {
       u_addban(chan, s, dcc[idx].nick, par,
                expire_time ? now + expire_time : 0, 0);
@@ -179,7 +185,7 @@ static void cmd_pls_ban(struct userrec *u, int idx, char *par)
 
 static void cmd_pls_exempt(struct userrec *u, int idx, char *par)
 {
-  char *chname, *who, s[UHOSTLEN], *p, *p_expire, *r;
+  char *chname, *who, s[UHOSTLEN], *p, *p_expire;
   long expire_foo;
   unsigned long expire_time = 0;
   struct chanset_t *chan = NULL;
@@ -266,14 +272,7 @@ static void cmd_pls_exempt(struct userrec *u, int idx, char *par)
     else
       strlcpy(s, who, sizeof s);
 
-    /* RFC 2812, hostmasks can't be longer than 63 characters */
-    if ( (r = strchr(s, '@')) ) {
-      r++;
-      if (strlen(r)  > 64) { /* 63 + NULL */
-        strcpy(r+62, "*");   /* 63rd character of string */
-        strcpy(r+63, "");    /* 64th character null terminated */
-      }
-    }
+    truncate_host(s);
     if (chan) {
       u_addexempt(chan, s, dcc[idx].nick, par,
                   expire_time ? now + expire_time : 0, 0);
@@ -309,7 +308,7 @@ static void cmd_pls_exempt(struct userrec *u, int idx, char *par)
 
 static void cmd_pls_invite(struct userrec *u, int idx, char *par)
 {
-  char *chname, *who, s[UHOSTLEN], *p, *p_expire, *r;
+  char *chname, *who, s[UHOSTLEN], *p, *p_expire;
   long expire_foo;
   unsigned long expire_time = 0;
   struct chanset_t *chan = NULL;
@@ -397,14 +396,7 @@ static void cmd_pls_invite(struct userrec *u, int idx, char *par)
     else
       strlcpy(s, who, sizeof s);
 
-    /* RFC 2812, hostmasks can't be longer than 63 characters */
-    if ( (r = strchr(s, '@')) ) {
-      r++;
-      if (strlen(r)  > 64) { /* 63 + NULL */
-        strcpy(r+62, "*");   /* 63rd character of string */
-        strcpy(r+63, "");    /* 64th character null terminated */
-      }
-    }
+    truncate_host(s);
     if (chan) {
       u_addinvite(chan, s, dcc[idx].nick, par,
                   expire_time ? now + expire_time : 0, 0);
