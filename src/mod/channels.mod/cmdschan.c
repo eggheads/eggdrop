@@ -1,5 +1,4 @@
 /*
- * cmdschan.c -- part of channels.mod
  *   commands from a user via dcc that cause server interaction
  */
 /*
@@ -27,15 +26,16 @@ static struct flag_record user = { FR_GLOBAL | FR_CHAN, 0, 0, 0, 0, 0 };
 static struct flag_record victim = { FR_GLOBAL | FR_CHAN, 0, 0, 0, 0, 0 };
 
 
-/* RFC 2812, hostmasks can't be longer than 63 characters */
-void truncate_host(char *s) {
+/* RFC 1035/2812- hostmasks can't be longer than 63 characters */
+void truncate_mask_hostname(char *s) {
 char *r = NULL;
 
   if ( (r = strchr(s, '@')) ) {
     r++;
-    if (strlen(r)  > 64) { /* 63 + NULL */
-      strcpy(r+62, "*");   /* 63rd character of string */
-      strcpy(r+63, "");    /* 64th character null terminated */
+    if (strlen(r)  > (HOSTMAX + 1)) { /* 63 + NULL */
+      r[62] = '*';
+      r[63] = 0;
+      putlog(LOG_MISC, "*", "Maximum hostlength exceeded, truncating");
     }
   }
 }
@@ -142,7 +142,7 @@ static void cmd_pls_ban(struct userrec *u, int idx, char *par)
         return;
       }
     }
-    truncate_host(s);
+    truncate_mask_hostname(s);
     if (chan) {
       u_addban(chan, s, dcc[idx].nick, par,
                expire_time ? now + expire_time : 0, 0);
@@ -272,7 +272,7 @@ static void cmd_pls_exempt(struct userrec *u, int idx, char *par)
     else
       strlcpy(s, who, sizeof s);
 
-    truncate_host(s);
+    truncate_mask_hostname(s);
     if (chan) {
       u_addexempt(chan, s, dcc[idx].nick, par,
                   expire_time ? now + expire_time : 0, 0);
@@ -396,7 +396,7 @@ static void cmd_pls_invite(struct userrec *u, int idx, char *par)
     else
       strlcpy(s, who, sizeof s);
 
-    truncate_host(s);
+    truncate_mask_hostname(s);
     if (chan) {
       u_addinvite(chan, s, dcc[idx].nick, par,
                   expire_time ? now + expire_time : 0, 0);
