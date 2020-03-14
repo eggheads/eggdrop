@@ -1688,6 +1688,8 @@ AC_DEFUN([EGG_TLS_DETECT],
         AC_DEFINE([egg_ASN1_string_data], [ASN1_STRING_get0_data], [Define this to ASN1_STRING_get0_data when using OpenSSL 1.1.0+, ASN1_STRING_data otherwise.])
         , AC_DEFINE([egg_ASN1_string_data], [ASN1_STRING_data], [Define this to ASN1_STRING_get0_data when using OpenSSL 1.1.0+, ASN1_STRING_data otherwise.])
       )
+      dnl EVP_PKEY_get1_EC_KEY: OpenSSL without EC (SunOS 5.11 Solaris 11.3 I love you Oracle)
+      AC_CHECK_FUNCS([EVP_PKEY_get1_EC_KEY])
       tls_enabled="yes"
       EGG_MD5_COMPAT
     fi

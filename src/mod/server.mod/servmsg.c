@@ -1233,16 +1233,15 @@ static int tryauthenticate(char *from, char *msg)
     #define MAX(a,b) (((a)>(b))?(a):(b))
   #endif
   unsigned char dst[((MAX((sizeof src), 400) + 2) / 3) << 2] = "";
-#ifdef TLS
-  size_t olen;
-  unsigned char *dst2;
-  unsigned int olen2;
-  FILE *fp;
+#ifdef HAVE_EVP_PKEY_GET1_EC_KEY
   EC_KEY *eckey;
-  EVP_PKEY *privateKey;
   int ret;
-#endif
-
+  size_t olen;
+  unsigned int olen2;
+  unsigned char *dst2;
+  FILE *fp;
+  EVP_PKEY *privateKey;
+#endif /* HAVE_EVP_PKEY_GET1_EC_KEY */
   putlog(LOG_SERV, "*", "SASL: got AUTHENTICATE %s", msg);
   if (msg[0] == '+') {
     s = src;
@@ -1262,6 +1261,7 @@ static int tryauthenticate(char *from, char *msg)
       }
       /* TODO: what about olen we used for mbedtls_base64_encode() ? */
     }
+#ifdef HAVE_EVP_PKEY_GET1_EC_KEY
     else if (sasl_mechanism == SASL_MECHANISM_ECDSA_NIST256P_CHALLENGE) {
       strcpy(s, sasl_username);
       s += strlen(sasl_username) + 1;
@@ -1272,6 +1272,7 @@ static int tryauthenticate(char *from, char *msg)
         return 1;
       }
     }
+#endif
     else { /* sasl_mechanism == SASL_MECHANISM_EXTERNAL */
       dst[0] = '+';
       dst[1] = 0;
@@ -1279,6 +1280,7 @@ static int tryauthenticate(char *from, char *msg)
     putlog(LOG_SERV, "*", "SASL: put AUTHENTICATE %s", dst);
     dprintf(DP_MODE, "AUTHENTICATE %s\n", dst);
 #ifdef TLS
+#ifdef HAVE_EVP_PKEY_GET1_EC_KEY
   } else {
     putlog(LOG_SERV, "*", "SASL: got AUTHENTICATE Challenge");
     olen = b64_pton(msg, dst, sizeof dst);
@@ -1322,10 +1324,14 @@ static int tryauthenticate(char *from, char *msg)
     nfree(dst2);
     putlog(LOG_SERV, "*", "SASL: put AUTHENTICATE Response %s", dst);
     dprintf(DP_MODE, "AUTHENTICATE %s\n", dst);
-#else
-    putlog(LOG_DEBUG, "*", "SASL: TLS libs not present for authentication, try PLAIN method");
+#else /* HAVE_EVP_PKEY_GET1_EC_KEY */
+    putlog(LOG_DEBUG, "*", "SASL: TLS libs missing EC support, try PLAIN or EXTERNAL method");
     return 1;
-#endif
+#endif /* HAVE_EVP_PKEY_GET1_EC_KEY */
+#else /* TLS */
+    putlog(LOG_DEBUG, "*", "SASL: TLS libs not present, try PLAIN method");
+    return 1;
+#endif /* TLS */
   }
   return 0;
 }

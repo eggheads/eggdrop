@@ -152,14 +152,6 @@ static int burst;
 #include "cmdsserv.c"
 #include "tclserv.c"
 
-/* Available sasl mechanisms. */
-char const *SASL_MECHANISMS[SASL_MECHANISM_NUM] = {
-  [SASL_MECHANISM_PLAIN]                    = "PLAIN",
-  [SASL_MECHANISM_ECDSA_NIST256P_CHALLENGE] = "ECDSA-NIST256P-CHALLENGE",
-  [SASL_MECHANISM_EXTERNAL]                 = "EXTERNAL"
-};
-
-
 static void write_to_server(char *s, unsigned int len) {
   char *s2 = nmalloc(len + 2);
 
@@ -2301,6 +2293,16 @@ char *server_start(Function *global_funcs)
   my_tcl_strings[0].buf = botname;
   add_tcl_strings(my_tcl_strings);
   add_tcl_ints(my_tcl_ints);
+#ifdef TLS
+#ifndef HAVE_EVP_PKEY_GET1_EC_KEY
+if (sasl) {
+  if (sasl_mechanism == SASL_MECHANISM_ECDSA_NIST256P_CHALLENGE) {
+    fatal("ERROR: NIST256P functionality missing from OpenSSL libs, please "\
+        "choose a different SASL method", 0);
+  }
+}
+#endif /* HAVE_EVP_PKEY_GET1_EC_KEY */
+#endif /* TLS */
   add_tcl_commands(my_tcl_cmds);
   add_tcl_coups(my_tcl_coups);
   add_hook(HOOK_SECONDLY, (Function) server_secondly);

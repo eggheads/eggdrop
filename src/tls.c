@@ -699,7 +699,7 @@ int ssl_verify(int ok, X509_STORE_CTX *ctx)
  * and to check when the handshake is finished, so we can display
  * some cipher and session information and process callbacks.
  */
-void ssl_info(SSL *ssl, int where, int ret)
+static void ssl_info(const SSL *ssl, int where, int ret)
 {
   int sock;
   X509 *cert;
@@ -850,7 +850,7 @@ int ssl_handshake(int sock, int flags, int verify, int loglevel, char *host,
   data->cb = cb;
   strlcpy(data->host, host ? host : "", sizeof(data->host));
   SSL_set_app_data(td->socklist[i].ssl, data);
-  SSL_set_info_callback(td->socklist[i].ssl, (void *) ssl_info);
+  SSL_set_info_callback(td->socklist[i].ssl, ssl_info);
   /* We set this +1 to be able to report extra long chains properly.
    * Otherwise, OpenSSL will break the verification reporting about
    * missing certificates instead. The rest of the fix is in
