@@ -1155,8 +1155,9 @@ static int tryauthenticate(char *from, char *msg)
   #endif
   unsigned char dst[((MAX((sizeof src), 400) + 2) / 3) << 2] = "";
 #ifdef TLS
-  int olen, olen2;
+  int olen;
   unsigned char *dst2;
+  unsigned int olen2;
   FILE *fp;
   EC_KEY *eckey;
   EVP_PKEY *privateKey;
@@ -1227,7 +1228,7 @@ static int tryauthenticate(char *from, char *msg)
       return 1;
     }
     dst2 = nmalloc(ECDSA_size(eckey));
-    ret = ECDSA_sign(0, dst, olen, dst2, (unsigned int *) &olen2, eckey);
+    ret = ECDSA_sign(0, dst, olen, dst2, &olen2, eckey);
     EC_KEY_free(eckey);
     if (!ret) {
       printf("SASL: AUTHENTICATE: ECDSA_sign() SSL error = %s\n",
