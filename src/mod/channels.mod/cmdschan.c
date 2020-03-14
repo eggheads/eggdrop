@@ -32,7 +32,7 @@ char *r = NULL;
 
   if ( (r = strchr(s, '@')) ) {
     r++;
-    if (strlen(r)  > (HOSTMAX + 1)) { /* 63 + NULL */
+    if (strlen(r)  > HOSTMAX) {
       r[62] = '*';
       r[63] = 0;
       putlog(LOG_MISC, "*", "Maximum hostlength exceeded, truncating");
