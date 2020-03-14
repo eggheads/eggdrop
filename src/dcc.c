@@ -335,6 +335,8 @@ static void dcc_bot_digest(int idx, char *challenge, char *password)
   for (i = 0; i < 16; i++)
     sprintf(digest_string + (i * 2), "%.2x", digest[i]);
   dprintf(idx, "digest %s\n", digest_string);
+  explicit_bzero(digest_string, sizeof digest_string);
+  explicit_bzero(digest, sizeof digest);
   putlog(LOG_BOTS, "*", "Received challenge from %s... sending response ...",
          dcc[idx].nick);
 }
@@ -568,7 +570,7 @@ static int dcc_bot_check_digest(int idx, char *remote_digest)
   MD5_CTX md5context;
   char digest_string[33];       /* 32 for digest in hex + null */
   unsigned char digest[16];
-  int i;
+  int i, ret;
   char *password = get_user(&USERENTRY_PASS, dcc[idx].user);
 
   if (!password)
@@ -589,7 +591,12 @@ static int dcc_bot_check_digest(int idx, char *remote_digest)
   for (i = 0; i < 16; i++)
     sprintf(digest_string + (i * 2), "%.2x", digest[i]);
 
-  if (!strcmp(digest_string, remote_digest))
+  ret = strcmp(digest_string, remote_digest);
+  explicit_bzero(digest_string, sizeof digest_string);
+  explicit_bzero(digest, sizeof digest);
+  explicit_bzero(password, sizeof password);
+
+  if (!ret)
     return 1;
 
   putlog(LOG_BOTS, "*", "Response (password hash) from %s incorrect",

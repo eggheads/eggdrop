@@ -1,9 +1,9 @@
 /*
- * compat.h
- *   wrap-around header for all compatibility functions.
+ * explicit_bzero.h
+ *   prototypes for explicit_bzero.c
  */
 /*
- * Copyright (C) 2000 - 2020 Eggheads Development Team
+ * Copyright (C) 2010 - 2018 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -20,15 +20,11 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
-#ifndef _EGG_COMPAT_COMPAT_H
-#define _EGG_COMPAT_COMPAT_H
+#ifndef _EGG_COMPAT_EXPLICIT_BZERO_H_
+#define _EGG_COMPAT_EXPLICIT_BZERO_H_
 
-#include "base64.h"
-#include "inet_aton.h"
-#include "snprintf.h"
-#include "inet_pton.h"
-#include "gethostbyname2.h"
-#include "explicit_bzero.h"
-#include "strlcpy.h"
+#ifndef HAVE_EXPLICIT_BZERO
+void explicit_bzero(void *const, const size_t);
+#endif /* HAVE_EXPLICIT_BZERO */
 
-#endif /* !__EGG_COMPAT_COMPAT_H */
+#endif /* _EGG_COMPAT_EXPLICIT_BZERO_H_ */

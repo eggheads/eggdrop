@@ -262,6 +262,7 @@ int pass_set(struct userrec *u, struct user_entry *e, void *buf)
       encrypt_pass(pass, new);
     e->u.extra = user_malloc(strlen(new) + 1);
     strcpy(e->u.extra, new);
+    explicit_bzero(new, sizeof new);
   }
   if (!noshare && !(u->flags & (USER_BOT | USER_UNSHARED)))
     shareout(NULL, "c PASS %s %s\n", u->handle, pass ? pass : "");
