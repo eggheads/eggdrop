@@ -2241,7 +2241,7 @@ void dcc_ident(int idx, char *buf, int len)
   lostdcc(idx);
 }
 
-void eof_dcc_ident(int idx)
+void eof_timeout_dcc_ident(int idx, const char *s)
 {
   char buf[UHOSTLEN];
   int i;
@@ -2249,13 +2249,23 @@ void eof_dcc_ident(int idx)
   for (i = 0; i < dcc_total; i++)
     if ((dcc[i].type == &DCC_IDENTWAIT) &&
         (dcc[i].sock == dcc[idx].u.ident_sock)) {
-      putlog(LOG_MISC, "*", DCC_EOFIDENT);
+      putlog(LOG_MISC, "*", s);
       simple_sprintf(buf, "telnet@%s", dcc[idx].host);
       dcc_telnet_got_ident(i, buf);
     }
   killsock(dcc[idx].sock);
   dcc[idx].u.other = 0;
   lostdcc(idx);
+}
+
+void eof_dcc_ident(int idx)
+{
+  eof_timeout_dcc_ident(idx, DCC_EOFIDENT);
+}
+
+void timeout_dcc_ident(int idx)
+{
+  eof_timeout_dcc_ident(idx, DCC_TIMEOUTIDENT);
 }
 
 static void display_dcc_ident(int idx, char *buf)
@@ -2269,7 +2279,7 @@ struct dcc_table DCC_IDENT = {
   eof_dcc_ident,
   dcc_ident,
   &identtimeout,
-  eof_dcc_ident,
+  timeout_dcc_ident,
   display_dcc_ident,
   NULL,
   NULL,
