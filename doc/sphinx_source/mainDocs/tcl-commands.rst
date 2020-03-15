@@ -1656,10 +1656,10 @@ connect <host> <[+]port>
   Module: core
 
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-listen [ip/host] <port> <type> [options [flag]]
+listen [ip] <port> <type> [options [flag]]
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-  Description: opens a listening port to accept incoming telnets; type must be one of "bots", "all", "users", "script", or "off". Prefixing the port with a plus sign will make eggdrop accept SSL connections on it. An IP or hostname may optionally be listed before the mandatory port argument. If no IP is specified, 0.0.0.0 (all available addresses) is used. If a port is specified that is already in use by Eggdrop, the existing ip/port combo will be replaced by the newly specified ip/port combo.
+  Description: opens a listening port to accept incoming telnets; type must be one of "bots", "all", "users", "script", or "off". Prefixing the port with a plus sign will make eggdrop accept SSL connections on it. An IP may optionally be listed before the mandatory port argument. If no IP is specified, 0.0.0.0 (all available addresses) is used. If a port is specified that is already in use by Eggdrop, the existing ip/port combo will be replaced by the newly specified ip/port combo.
 
     listen [ip] <port> bots [mask]
 

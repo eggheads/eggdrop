@@ -1053,9 +1053,9 @@ static int setlisten(Tcl_Interp *irp, char *ip, char *portp, char *type, char *m
 
 /* Create a new listening port (or destroy one)
  *
- * listen <port> bots/all/users [mask]
- * listen <port> script <proc> <flag>
- * listen <port> off
+ * listen [ip] <port> bots/all/users [mask]
+ * listen [ip] <port> script <proc> <flag>
+ * listen [ip] <port> off
  */
 static int tcl_listen STDVAR
 {
@@ -1068,7 +1068,11 @@ static int tcl_listen STDVAR
 /* Check if IP exists, set to NULL if not */
   strtol(argv[1], &endptr, 10);
   if (*endptr != '\0') {
-    if (inet_pton(AF_INET, argv[1], buf) || inet_pton(AF_INET6, argv[1], buf)) {
+    if (inet_pton(AF_INET, argv[1], buf)
+#ifdef IPV6
+        || inet_pton(AF_INET6, argv[1], buf)
+#endif
+      ) {
       strlcpy(ip, argv[1], sizeof(ip));
       i++;
     } else {
