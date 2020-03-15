@@ -4,7 +4,7 @@
  */
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2019 Eggheads Development Team
+ * Copyright (C) 1999 - 2020 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -296,6 +296,7 @@ int pass_set(struct userrec *u, struct user_entry *e, void *buf)
     if (encrypt_pass) {
       e->u.extra = user_malloc(strlen(new) + 1);
       strcpy(e->u.extra, new);
+      explicit_bzero(new, sizeof new);
     }
     if (encrypt_pass2)
       set_user(&USERENTRY_PASS2, u, new2);

@@ -6,7 +6,7 @@
  */
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2019 Eggheads Development Team
+ * Copyright (C) 1999 - 2020 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -36,15 +36,15 @@ extern int default_flags, default_uflags, quiet_save, dcc_total, share_greet;
 extern char ver[], botnetnick[];
 extern time_t now;
 
-int noshare = 1;                   /* don't send out to sharebots   */
-struct userrec *userlist = NULL;   /* user records are stored here  */
-struct userrec *lastuser = NULL;   /* last accessed user record     */
+int noshare = 1;                   /* don't send out to sharebots       */
+struct userrec *userlist = NULL;   /* user records are stored here      */
+struct userrec *lastuser = NULL;   /* last accessed user record         */
 maskrec *global_bans = NULL, *global_exempts = NULL, *global_invites = NULL;
 struct igrec *global_ign = NULL;
-int cache_hit = 0, cache_miss = 0; /* temporary cache accounting    */
-int userfile_perm = 0600;         /* Userfile permissions
-                                   * (default rw-------) */
-char userfile[121];
+int cache_hit = 0, cache_miss = 0; /* temporary cache accounting        */
+int userfile_perm = 0600;          /* Userfile permissions
+                                    * (default rw-------)               */
+char userfile[121];                /* where the user records are stored */
 
 void *_user_malloc(int size, const char *file, int line)
 {
@@ -854,7 +854,7 @@ struct userrec *get_user_by_nick(char *nick)
 
         egg_snprintf(word, sizeof word, "%s!%s", m->nick, m->userhost);
         /* No need to check the return value ourself */
-        return get_user_by_host(word);;
+        return get_user_by_host(word);
       }
     }
   }
