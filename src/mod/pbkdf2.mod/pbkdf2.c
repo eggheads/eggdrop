@@ -159,9 +159,10 @@ static int pbkdf2_pass(const char *pass, char *out, int outlen)
   return pbkdf2crypt_verify_pass(pass, pbkdf2_method, salt, sizeof salt, pbkdf2_rounds, out, outlen);
 }
 
+/* Caller must free() returned malloc()ed char *. */
 static char *pbkdf2_encrypt_pass(const char *pass)
 {
-  static int hashlen;
+  static int hashlen; /* static object is initialized to zero (Standard C) */
   static char *buf;
 
   if (!hashlen) {

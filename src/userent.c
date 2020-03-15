@@ -291,7 +291,7 @@ int pass_set(struct userrec *u, struct user_entry *e, void *buf)
       if (encrypt_pass)
         encrypt_pass(pass, new);
       if (encrypt_pass2)
-        new2 = encrypt_pass2(pass);
+        new2 = encrypt_pass2(pass); /* TODO: free() ? */
     }
     if (encrypt_pass) {
       e->u.extra = user_malloc(strlen(new) + 1);
