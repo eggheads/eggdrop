@@ -946,9 +946,31 @@ static int setlisten(Tcl_Interp *irp, char *ip, char *portp, char *type, char *m
       port = pmap->mappedto;
       break;
   }
-  for (i = 0; i < dcc_total; i++)
-    if ((dcc[i].type == &DCC_TELNET) && (dcc[i].port == port))
+  for (i = 0; i < dcc_total; i++) {
+    if ((dcc[i].type == &DCC_TELNET) && (dcc[i].port == port)) {
       idx = i;
+    } else {
+      continue;
+    }
+    if ((!strcasecmp(iptostr(&dcc[idx].sockname.addr.sa), ip)) && (dcc[i].port == port) &&
+            strcasecmp(type, "off")) {
+      Tcl_AppendResult(irp, "this ip/port is already in use; use 'off' as type "
+            "to remove this entry first", NULL);
+      return TCL_ERROR;
+    }
+    if (!strcasecmp(ip, "0.0.0.0") && strcasecmp(type, "off")) {
+      Tcl_AppendResult(irp, "this port is already bound to a specific IP on "
+            "this machine, remove it before trying bind to 0.0.0.0", NULL);
+      return TCL_ERROR;
+    }
+    if ((!strcasecmp(iptostr(&dcc[idx].sockname.addr.sa), "0.0.0.0")) &&
+            (dcc[i].port == port) && strcasecmp(type, "off")) {
+      Tcl_AppendResult(irp, "WARNING: port is already bound to 0.0.0.0; first "
+            "remove that entry with 'off' before adding the one just entered",
+            NULL);
+      return TCL_ERROR;
+    }
+  }
   if (!strcasecmp(type, "off")) {
     if (pmap) {
       if (pold)
@@ -975,27 +997,17 @@ static int setlisten(Tcl_Interp *irp, char *ip, char *portp, char *type, char *m
     /* We used to try up to 20 ports here, but have scientifically concluded
      * that is just silly.
      */
-    i = -2;
-    while (i < 0) {
-      if (strlen(ip)) {
-        setsockname(&name, ip, port, 1);
-        i = open_address_listen(&name);
-      } else {
-        i = open_listen(&port);
-      }
-      if (i == -1)
-        break;
+    i = -1;
+    if (strlen(ip)) {
+      setsockname(&name, ip, port, 1);
+      i = open_address_listen(&name);
+    } else {
+      i = open_listen(&port);
     }
-
-    if (i == -1) {
+    if (i < 0) {
       egg_snprintf(msg, sizeof msg, "Couldn't listen on port '%d' on the given "
-                   "address: %s", realport, strerror(errno));
-      Tcl_AppendResult(irp, msg, NULL);
-      return TCL_ERROR;
-    } else if (i == -2) {
-      egg_snprintf(msg, sizeof msg, "Couldn't listen on port '%d' on the given "
-                   "address. Please make sure 'listen-addr' is set properly"
-                   " or try choosing a different port.", realport);
+                   "address: %s. Please check that the port is not already in use",
+                    realport, strerror(errno));
       Tcl_AppendResult(irp, msg, NULL);
       return TCL_ERROR;
     }
