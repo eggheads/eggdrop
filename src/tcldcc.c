@@ -997,7 +997,6 @@ static int setlisten(Tcl_Interp *irp, char *ip, char *portp, char *type, char *m
     /* We used to try up to 20 ports here, but have scientifically concluded
      * that is just silly.
      */
-    i = -1;
     if (strlen(ip)) {
       setsockname(&name, ip, port, 1);
       i = open_address_listen(&name);
