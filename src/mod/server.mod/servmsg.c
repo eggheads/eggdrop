@@ -1279,9 +1279,9 @@ static int tryauthenticate(char *from, char *msg)
     }
     putlog(LOG_SERV, "*", "SASL: put AUTHENTICATE %s", dst);
     dprintf(DP_MODE, "AUTHENTICATE %s\n", dst);
+  } else {
 #ifdef TLS
 #ifdef HAVE_EVP_PKEY_GET1_EC_KEY
-  } else {
     putlog(LOG_SERV, "*", "SASL: got AUTHENTICATE Challenge");
     olen = b64_pton(msg, dst, sizeof dst);
     if (olen == -1) {
