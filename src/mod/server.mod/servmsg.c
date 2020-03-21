@@ -1241,6 +1241,9 @@ static int tryauthenticate(char *from, char *msg)
   unsigned char *dst2;
   FILE *fp;
   EVP_PKEY *privateKey;
+#else /* HAVE_EVP_PKEY_GET1_EC_KEY */
+  putlog(LOG_DEBUG, "*", "SASL: TLS libs missing EC support, try PLAIN or EXTERNAL method");
+  return 1;
 #endif /* HAVE_EVP_PKEY_GET1_EC_KEY */
   putlog(LOG_SERV, "*", "SASL: got AUTHENTICATE %s", msg);
   if (msg[0] == '+') {
@@ -1324,9 +1327,6 @@ static int tryauthenticate(char *from, char *msg)
     nfree(dst2);
     putlog(LOG_SERV, "*", "SASL: put AUTHENTICATE Response %s", dst);
     dprintf(DP_MODE, "AUTHENTICATE %s\n", dst);
-#else /* HAVE_EVP_PKEY_GET1_EC_KEY */
-    putlog(LOG_DEBUG, "*", "SASL: TLS libs missing EC support, try PLAIN or EXTERNAL method");
-    return 1;
 #endif /* HAVE_EVP_PKEY_GET1_EC_KEY */
 #else /* TLS */
     putlog(LOG_DEBUG, "*", "SASL: TLS libs not present, try PLAIN method");
