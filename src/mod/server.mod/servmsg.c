@@ -1572,7 +1572,7 @@ static int gotcap(char *from, char *msg) {
      * capabilities, right now SASL is the only one so we're OK.
      */
     if (strstr(cap.negotiated, "sasl")) {
-#ifndef TLS
+#ifndef HAVE_EVP_PKEY_GET1_EC_KEY
       if (sasl_mechanism != SASL_MECHANISM_ECDSA_NIST256P_CHALLENGE) {
 #endif
         /*
@@ -1586,9 +1586,15 @@ static int gotcap(char *from, char *msg) {
             SASL_MECHANISMS[sasl_mechanism]);
         dprintf(DP_MODE, "AUTHENTICATE %s\n", SASL_MECHANISMS[sasl_mechanism]);
         sasl_timeout_time = sasl_timeout;
-#ifndef TLS
+#ifndef HAVE_EVP_PKEY_GET1_EC_KEY
       } else {
-        return sasl_error("No TLS libs, aborting authentication");
+#ifdef TLS
+        if (sasl_mechanism == SASL_MECHANISM_ECDSA_NIST256P_CHALLENGE)
+          return sasl_error("TLS libs missing EC support, try PLAIN or EXTERNAL method, aborting authentication");
+#else
+        if (sasl_mechanism != SASL_MECHANISM_PLAIN)
+	  return sasl_error("TLS libs not present, try PLAIN method, aborting authentication");
+#endif
       }
 #endif
     } else {
