@@ -44,11 +44,19 @@ static tcl_ints identints[] = {
 };
 
 static void ident_builtin_off();
+static void ident_oident_off();
 
-static cmd_t ident_raw[] = {
+static cmd_t ident_raw_builtin_off[] = {
   {"001", "",   (IntFunc) ident_builtin_off, "ident:001"},
-  {NULL,  NULL, NULL,                        NULL}
+  {NULL,  NULL, NULL,                        NULL       }
 };
+
+static cmd_t ident_raw_oident_off[] = {
+  {"001", "",   (IntFunc) ident_oident_off,  "ident:001"},
+  {NULL,  NULL, NULL,                        NULL       }
+};
+
+char path[121]; /* oidentd.conf */
 
 static void ident_activity(int idx, char *buf, int len)
 {
@@ -98,7 +106,7 @@ static struct dcc_table DCC_IDENTD = {
 static void ident_oidentd()
 {
   char *home = getenv("HOME");
-  char path[121], buf[(sizeof "global{reply \"\"}") + USERLEN];
+  char buf[(sizeof "global{reply \"\"}") + USERLEN];
   int nbytes;
   int fd;
 
@@ -111,14 +119,20 @@ static void ident_oidentd()
     putlog(LOG_MISC, "*", "Ident error: path too long.");
     return;
   }
+  debug1("Ident: Creating / writing %s.", path);
   if ((fd = open(path, O_WRONLY | O_CREAT | O_TRUNC, S_IRUSR | S_IWUSR | S_IROTH)) < 0) {
     putlog(LOG_MISC, "*", "Ident error: %s", strerror(errno));
     return;
   }
   nbytes = snprintf(buf, sizeof buf, "global{reply \"%s\"}", botuser);
-  if (write(fd, buf, nbytes) < 0)
+  if (write(fd, buf, nbytes) < 0) {
     putlog(LOG_MISC, "*", "Ident error: %s", strerror(errno));
+    close(fd);
+    ident_oident_off();
+    return;
+  }
   close(fd);
+  add_builtins(H_raw, ident_raw_oident_off);
 }
 
 static void ident_builtin_on()
@@ -147,7 +161,7 @@ static void ident_builtin_on()
   dcc[idx].sock = s;
   dcc[idx].port = ident_port;
   strcpy(dcc[idx].nick, "(ident)");
-  add_builtins(H_raw, ident_raw);
+  add_builtins(H_raw, ident_raw_builtin_off);
 }
 
 static void ident_builtin_off()
@@ -161,7 +175,15 @@ static void ident_builtin_off()
       lostdcc(idx);
       break;
     }
-  rem_builtins(H_raw, ident_raw);
+  rem_builtins(H_raw, ident_raw_builtin_off);
+}
+
+static void ident_oident_off()
+{
+  debug1("Ident: Removing %s.", path);
+  if (remove(path) < 0)
+    putlog(LOG_MISC, "*", "Ident error: %s", strerror(errno));
+  rem_builtins(H_raw, ident_raw_oident_off);
 }
 
 static void ident_ident()
@@ -174,7 +196,7 @@ static void ident_ident()
 
 static cmd_t ident_event[] = {
   {"ident", "",   (IntFunc) ident_ident, "ident:ident"},
-  {NULL,    NULL, NULL,                  NULL}
+  {NULL,    NULL, NULL,                  NULL         }
 };
 
 static char *ident_close()
