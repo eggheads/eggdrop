@@ -181,7 +181,7 @@ static void ident_builtin_off()
 static void ident_oident_off()
 {
   debug1("Ident: Removing %s.", path);
-  if (remove(path) < 0)
+  if (unlink(path) < 0)
     putlog(LOG_MISC, "*", "Ident error: %s", strerror(errno));
   rem_builtins(H_raw, ident_raw_oident_off);
 }
