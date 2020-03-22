@@ -1255,7 +1255,8 @@ static int tryauthenticate(char *from, char *msg)
       s += strlen(sasl_password);
       dst[0] = 0;
       if (b64_ntop((unsigned char *) src, s - src, (char *) dst, sizeof dst) == -1) {
-        putlog(LOG_SERV, "*", "SASL: AUTHENTICATE error: could not base64 encode");
+        putlog(LOG_SERV, "*", "SASL: AUTHENTICATE error: could not base64 "
+                    "encode");
         /* TODO: send cap end for all error cases in this function ? */
         return 1;
       }
@@ -1268,39 +1269,49 @@ static int tryauthenticate(char *from, char *msg)
       strcpy(s, sasl_username);
       s += strlen(sasl_username);
       if (b64_ntop((unsigned char *) src, s - src, (char *) dst, sizeof dst) == -1) {
-        putlog(LOG_SERV, "*", "SASL: AUTHENTICATE error: could not base64 encode");
+        putlog(LOG_SERV, "*", "SASL: AUTHENTICATE error: could not base64 "
+                "encode");
         return 1;
       }
     }
 #else
-      putlog(LOG_DEBUG, "*", "SASL: TLS libs missing EC support, try PLAIN or EXTERNAL method");
+      putlog(LOG_DEBUG, "*", "SASL: TLS libs missing EC support, try PLAIN or "
+                "EXTERNAL method");
       return 1;
     }
 #endif
-    else { /* sasl_mechanism == SASL_MECHANISM_EXTERNAL */
+    else {          /* sasl_mechanism == SASL_MECHANISM_EXTERNAL */
+#ifdef TLS          /* TLS required for EXTERNAL sasl */ 
       dst[0] = '+';
       dst[1] = 0;
     }
     putlog(LOG_SERV, "*", "SASL: put AUTHENTICATE %s", dst);
     dprintf(DP_MODE, "AUTHENTICATE %s\n", dst);
+#else
+    putlog(LOG_DEBUG, "*", "SASL: TLS libs required for EXTERNAL but are not "
+            "installed, try PLAIN method");
+    }
+#endif /* TLS */
   } else {      /* Only EC-challenges get extra auth messages w/o a + */
 #ifdef TLS
 #ifdef HAVE_EVP_PKEY_GET1_EC_KEY
     putlog(LOG_SERV, "*", "SASL: got AUTHENTICATE Challenge");
     olen = b64_pton(msg, dst, sizeof dst);
     if (olen == -1) {
-      putlog(LOG_SERV, "*", "SASL: AUTHENTICATE error: could not base64 decode line from server");
+      putlog(LOG_SERV, "*", "SASL: AUTHENTICATE error: could not base64 decode "
+                "line from server");
       return 1;
     }
     fp = fopen(sasl_ecdsa_key, "r");
     if (!fp) {
-      putlog(LOG_SERV, "*", "SASL: AUTHENTICATE error: could not open file sasl_ecdsa_key %s: %s\n", sasl_ecdsa_key, strerror(errno));
+      putlog(LOG_SERV, "*", "SASL: AUTHENTICATE error: could not open file "
+                "sasl_ecdsa_key %s: %s\n", sasl_ecdsa_key, strerror(errno));
       return 1;
     }
     privateKey = PEM_read_PrivateKey(fp, NULL, 0, NULL);
     if (!privateKey) {
-      putlog(LOG_SERV, "*", "SASL: AUTHENTICATE: PEM_read_PrivateKey(): SSL error = %s\n",
-             ERR_error_string(ERR_get_error(), 0));
+      putlog(LOG_SERV, "*", "SASL: AUTHENTICATE: PEM_read_PrivateKey(): SSL "
+                "error = %s\n", ERR_error_string(ERR_get_error(), 0));
       fclose(fp);
       return 1;
     }
