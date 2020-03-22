@@ -1241,9 +1241,6 @@ static int tryauthenticate(char *from, char *msg)
   unsigned char *dst2;
   FILE *fp;
   EVP_PKEY *privateKey;
-#else /* HAVE_EVP_PKEY_GET1_EC_KEY */
-  putlog(LOG_DEBUG, "*", "SASL: TLS libs missing EC support, try PLAIN or EXTERNAL method");
-  return 1;
 #endif /* HAVE_EVP_PKEY_GET1_EC_KEY */
   putlog(LOG_SERV, "*", "SASL: got AUTHENTICATE %s", msg);
   if (msg[0] == '+') {
@@ -1264,8 +1261,8 @@ static int tryauthenticate(char *from, char *msg)
       }
       /* TODO: what about olen we used for mbedtls_base64_encode() ? */
     }
-#ifdef HAVE_EVP_PKEY_GET1_EC_KEY
     else if (sasl_mechanism == SASL_MECHANISM_ECDSA_NIST256P_CHALLENGE) {
+#ifdef HAVE_EVP_PKEY_GET1_EC_KEY
       strcpy(s, sasl_username);
       s += strlen(sasl_username) + 1;
       strcpy(s, sasl_username);
@@ -1275,6 +1272,10 @@ static int tryauthenticate(char *from, char *msg)
         return 1;
       }
     }
+#else
+      putlog(LOG_DEBUG, "*", "SASL: TLS libs missing EC support, try PLAIN or EXTERNAL method");
+      return 1;
+    }
 #endif
     else { /* sasl_mechanism == SASL_MECHANISM_EXTERNAL */
       dst[0] = '+';
@@ -1282,7 +1283,7 @@ static int tryauthenticate(char *from, char *msg)
     }
     putlog(LOG_SERV, "*", "SASL: put AUTHENTICATE %s", dst);
     dprintf(DP_MODE, "AUTHENTICATE %s\n", dst);
-  } else {
+  } else {      /* Only EC-challenges get extra auth messages w/o a + */
 #ifdef TLS
 #ifdef HAVE_EVP_PKEY_GET1_EC_KEY
     putlog(LOG_SERV, "*", "SASL: got AUTHENTICATE Challenge");
@@ -1329,7 +1330,8 @@ static int tryauthenticate(char *from, char *msg)
     dprintf(DP_MODE, "AUTHENTICATE %s\n", dst);
 #endif /* HAVE_EVP_PKEY_GET1_EC_KEY */
 #else /* TLS */
-    putlog(LOG_DEBUG, "*", "SASL: TLS libs not present, try PLAIN method");
+    dprintf(LOG_DEBUG, "*", "SASL: Received EC message, but no TLS EC libs "
+                "present. Try PLAIN method");
     return 1;
 #endif /* TLS */
   }
