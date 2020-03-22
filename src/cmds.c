@@ -407,8 +407,8 @@ static void cmd_newpass(struct userrec *u, int idx, char *par)
     dprintf(idx, "%s\n", IRC_PASSFORMAT);
     return;
   }
-  if (l > PASSWORDLEN) {
-    dprintf(idx, "Please use at most %i characters.\n", PASSWORDLEN);
+  if (l > (PASSWORDLEN - 1)) {
+    dprintf(idx, "Please use at most %i characters.\n", (PASSWORDLEN - 1));
     return;
   }
   set_user(&USERENTRY_PASS, u, new);
@@ -1062,8 +1062,8 @@ static void cmd_chpass(struct userrec *u, int idx, char *par)
         dprintf(idx, "%s\n", IRC_PASSFORMAT);
         return;
       }
-      if (l > PASSWORDLEN) {
-        dprintf(idx, "Please use at most %i characters.\n", PASSWORDLEN);
+      if (l > (PASSWORDLEN - 1)) {
+        dprintf(idx, "Please use at most %i characters.\n", (PASSWORDLEN - 1));
         return;
       }
       set_user(&USERENTRY_PASS, u, new);

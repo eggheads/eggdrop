@@ -150,8 +150,8 @@ static int msg_pass(char *nick, char *host, struct userrec *u, char *par)
     dprintf(DP_HELP, "NOTICE %s :%s\n", nick, IRC_PASSFORMAT);
     return 1;
   }
-  if (l > PASSWORDLEN) {
-    dprintf(DP_HELP, "NOTICE %s :Please use at most %i characters.\n", nick, PASSWORDLEN);
+  if (l > (PASSWORDLEN - 1)) {
+    dprintf(DP_HELP, "NOTICE %s :Please use at most %i characters.\n", nick, (PASSWORDLEN - 1));
     return 1;
   }
   set_user(&USERENTRY_PASS, u, new);
