@@ -122,12 +122,12 @@ Telnet botten og skriv 'NEW' som dit nick.\n
 0x537,ELLER gå på IRC og skriv:  /msg %s hello\n
 0x538,Dette vil få botten til at genkende dig som master.
 0x539,BRUGERFIL FINDES ALLEREDE (brug ikke '-m')
-# 0x53a - unused / ubrugt
+# 0x53a  unused / ubrugt
 0x53b,Kan ikke genindlæse brugerfil!
 0x53c,Brugerfil mangler!
 0x53e,%B  (%E)\n\nSkriv venligst dit nick.\n
 0x53f,Skifter logfil %s, over max-logsize (%d)
-# 0x540 - unused / ubrugt
+# 0x540  unused / ubrugt
 0x541,Sidste besked gentaget %d gange\n
 0x542,juped
 0x543,Ingen ledige sockets tilgængelig.
@@ -156,7 +156,7 @@ Telnet botten og skriv 'NEW' som dit nick.\n
 0x612,Du har sat et password.
 0x613,Du har ikke sat et password.
 0x615,Du har allerede sat et password.
-# 0x616 - unused / ubrugt
+0x616,Brug venligst mindst 6 tegn.
 0x617,Password sat til:
 0x618,Forkert password.
 0x619,Password skiftet til:
@@ -183,7 +183,7 @@ Telnet botten og skriv 'NEW' som dit nick.\n
 0x630,Jeg kender dig ikke; Venligst introducer dig selv først.
 0x631,Ingen hjælp.
 0x632,Ingen hjælp tilgængelig til det.
-# 0x633 - unused / ubrugt
+# 0x633 - unused
 0x634,Er ikke på den kanal lige nu.
 0x635,Skifter tilbage til nicket %s
 0x636,Serveren siger, at mit nick er ugyldigt.
@@ -249,7 +249,7 @@ Telnet botten og skriv 'NEW' som dit nick.\n
 0x673,nick flood
 
 # EGG_
-# 0x700 - unused / ubrugt
+#0x700 - unused / ubrugt
 0x701,Jeg observerer, at %s allerede kører fra dette bibliotek.\n
 0x702,Hvis dette er forkert, slet %s\n
 0x703,* Advarsel!  Kunne ikke skrive filen %s!\n

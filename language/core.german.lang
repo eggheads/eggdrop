@@ -163,7 +163,7 @@ Baue eine Telnetverbindung zu dem Bot auf und gib 'NEW' als Deinen Nickname ein.
 0x612,Du hast ein Passwort.
 0x613,Du hast kein Passwort.
 0x615,Du hast bereits ein Passwort eingestellt.
-# 0x616 - unused / Unbenutzt
+0x616,Bitte benutze mindestens 6 Zeichen.
 0x617,Passwort gesetzt auf:
 0x618,Falsches Passwort.
 0x619,Passwort geaendert zu:
@@ -190,7 +190,7 @@ Baue eine Telnetverbindung zu dem Bot auf und gib 'NEW' als Deinen Nickname ein.
 0x630,Ich kenne Dich nicht, bitte stell Dich mir zuerst vor.
 0x631,Keine Hilfe.
 0x632,Keine Hilfe dazu verfuegbar.
-# 0x633 - unused / Unbenutzt
+# 0x633 - unused
 0x634,Im Moment nicht auf diesem Channel.
 0x635,Wechsele zurueck zu Nickname %s
 0x636,Server sagt mein Nickname sei ungueltig.
@@ -259,7 +259,7 @@ Baue eine Telnetverbindung zu dem Bot auf und gib 'NEW' als Deinen Nickname ein.
 0x673,nick Flood
 
 # EGG_
-# 0x700 - unused / Unbenutzt
+#0x700 - unused / Unbenutzt
 0x701,%s scheint in diesem Verzeichnis bereits zu laufen.\n
 0x702,Loesche '%s' wenn das nicht stimmt\n
 0x703,* Warnung!  Konnte Datei %s nicht schreiben!

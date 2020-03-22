@@ -156,7 +156,7 @@ Telnet to the bot and enter 'NEW' as your nickname.
 0x612,You have a password set.
 0x613,You don't have a password set.
 0x615,You already have a password set.
-# 0x616 unused
+0x616,Please use at least 6 characters.
 0x617,Password set to:
 0x618,Incorrect password.
 0x619,Password changed to:
@@ -249,7 +249,7 @@ Telnet to the bot and enter 'NEW' as your nickname.
 0x673,nick flood
 
 # EGG_
-# 0x700 - unused
+#0x700 - unused
 0x701,I detect %s already running from this directory.\n
 0x702,If this is incorrect, erase the '%s'\n
 0x703,* Warning! Could not write %s file!\n

@@ -156,7 +156,7 @@ Entre em ligação telnet com o bot e digite 'NEW' como o seu nick.
 0x612,Tens uma password definida.
 0x613,Não tens uma password definida.
 0x615,Já tens uma password definida.
-# 0x616 - unused / não utilizado
+0x616,Por favor, utiliza ao menos 6 carateres.
 0x617,Password definida como:
 0x618,Password incorreta.
 0x619,Password alterada para:
@@ -183,7 +183,7 @@ Entre em ligação telnet com o bot e digite 'NEW' como o seu nick.
 0x630,Eu não te conheço; apresenta-te primeiro.
 0x631,Sem ajuda.
 0x632,Sem ajuda disponível para isso.
-# 0x633 - unused / não utilizado
+# 0x633 - não utilizado
 0x634,Não presente nesse canal agora mesmo.
 0x635,Voltando ao nick %s
 0x636,Servidor diz que o meu nick é inválido.
@@ -249,7 +249,7 @@ Entre em ligação telnet com o bot e digite 'NEW' como o seu nick.
 0x673,nick flood
 
 # EGG_
-# 0x700 - unused / não utilizado
+# 0x700 - não utilizado
 0x701,Eu deteto %s já a correr a partir desta diretoria.\n
 0x702,Se isto está incorrecto, apaga o '%s'\n
 0x703,* Aviso! Impossível criar ficheiro %s!\n

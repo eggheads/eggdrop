@@ -146,6 +146,7 @@
 #define IRC_NOPASS              get_language(0x613)
 /* was: IRC_NOPASS2             0x614            */
 #define IRC_EXISTPASS           get_language(0x615)
+#define IRC_PASSFORMAT          get_language(0x616)
 #define IRC_SETPASS             get_language(0x617)
 #define IRC_FAILPASS            get_language(0x618)
 #define IRC_CHANGEPASS          get_language(0x619)

@@ -157,7 +157,7 @@ Faites un Telnet sur le bot et entrez 'NEW' comme surnom.
 0x612,Vous avez un mot de passe de défini.
 0x613,Vous n'avez pas de mot de passe de défini.
 0x615,Vous avez déjà un mot de passe de défini.
-# 0x616 - unused / inutilisé
+0x616,Employez au moins 6 caractères.
 0x617,Mot de passe défini:
 0x618,Mot de passe incorrect.
 0x619,Nouveau mot de passe:
@@ -184,7 +184,7 @@ Faites un Telnet sur le bot et entrez 'NEW' comme surnom.
 0x630,Vous n'êtes pas enregistré ; présentez vous d'abord.
 0x631,Aucune aide.
 0x632,Aucune aide disponible là-dessus.
-# 0x633 - unused / inutilisé
+# 0x633 - unused
 0x634,Pas sur ce canal en ce moment.
 0x635,Je récupère mon surnom (%s)
 0x636,Le serveur me dit que mon surnom est invalide.
@@ -250,7 +250,7 @@ Faites un Telnet sur le bot et entrez 'NEW' comme surnom.
 0x673,flood de surnoms
 
 # EGG_
-# 0x700 - unused / inutilisé
+#0x700 - unused / inutilisé
 0x701,Je détecte que %s est s'exécute déjà depuis ce répertoire.\n
 0x702,Si ce n'est pas le cas, supprimez '%s'\n
 0x703,* Attention! Impossible d'écrire le fichier %s!\n

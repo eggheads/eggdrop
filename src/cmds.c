@@ -404,7 +404,7 @@ static void cmd_newpass(struct userrec *u, int idx, char *par)
   new = newsplit(&par);
   l = strlen(new);
   if (l < 6) {
-    dprintf(idx, "Please use at least 6 characters.\n");
+    dprintf(idx, "%s\n", IRC_PASSFORMAT);
     return;
   }
   if (l > PASSWORDLEN) {
@@ -1059,7 +1059,7 @@ static void cmd_chpass(struct userrec *u, int idx, char *par)
       new = newsplit(&par);
       l = strlen(new);
       if (l < 6) {
-        dprintf(idx, "Please use at least 6 characters.\n");
+        dprintf(idx, "%s\n", IRC_PASSFORMAT);
         return;
       }
       if (l > PASSWORDLEN) {

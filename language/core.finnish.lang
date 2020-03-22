@@ -156,7 +156,7 @@ Telnettaa botille ja syötä 'UUSI' kuin sinun nickkisi.
 0x612,Sinä olet asettanut salasanan.
 0x613,Et ole asettanut salasanaa.
 0x615,Olet jo asettanut salasanan.
-# 0x616 - unused / käyttämätön
+0x616,Käytä vähintään 6 merkkiä.
 0x617,Salasana asetettu:
 0x618,Virheellinen salasana.
 0x619,Salasana vaihdettu:
@@ -183,7 +183,7 @@ Telnettaa botille ja syötä 'UUSI' kuin sinun nickkisi.
 0x630,En tunne sinua; esittele itsesi ensin.
 0x631,Ei apua.
 0x632,Ei apua saatavilla tästä.
-# 0x633 - unused / käyttämätön
+# 0x633 - käyttämätön
 0x634,Ei kanavalla juuri nyt.
 0x635,Vaihdetaan takaisin nickki %s
 0x636,Serveri sanoo, minun nickkini on viallinen.
@@ -249,7 +249,7 @@ Telnettaa botille ja syötä 'UUSI' kuin sinun nickkisi.
 0x673,nickki floodi
 
 # EGG_
-# 0x700 - unused / käyttämätön
+#0x700 - unused / käyttämätön
 0x701,Tunnistan %s valmiiksi päällä tässä kansiossa.\n
 0x702,Jos tämä ei ole korjattu, poista '%s'\n
 0x703,* Varoitus!  Ei pysty kirjoittamaan %s tiedostoa!\n

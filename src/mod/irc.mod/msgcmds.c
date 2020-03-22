@@ -120,6 +120,7 @@ static int msg_hello(char *nick, char *h, struct userrec *u, char *p)
 static int msg_pass(char *nick, char *host, struct userrec *u, char *par)
 {
   char *old, *new;
+  int l;
 
   if (!u || match_my_nick(nick) || (u->flags & (USER_BOT | USER_COMMON)))
     return 1;
@@ -144,14 +145,19 @@ static int msg_pass(char *nick, char *host, struct userrec *u, char *par)
   } else
     new = old;
   putlog(LOG_CMDS, "*", "(%s!%s) !%s! PASS...", nick, host, u->handle);
-  if (strlen(new) > PASSWORDLEN) {
-    new[PASSWORDLEN] = 0;
-    dprintf(DP_HELP, "NOTICE %s :Password cut to %i chars\n", nick, PASSWORDLEN);
+  l = strlen(new);
+  if (l < 6) {
+    dprintf(DP_HELP, "NOTICE %s :%s\n", nick, IRC_PASSFORMAT);
+    return 1;
+  }
+  if (l > PASSWORDLEN) {
+    dprintf(DP_HELP, "NOTICE %s :Please use at most %i characters.\n", nick, PASSWORDLEN);
+    return 1;
   }
   set_user(&USERENTRY_PASS, u, new);
   dprintf(DP_HELP, "NOTICE %s :%s '%s'.\n", nick,
           new == old ? IRC_SETPASS : IRC_CHANGEPASS, new);
-  return 1;
+  return 0;
 }
 
 static int msg_ident(char *nick, char *host, struct userrec *u, char *par)
