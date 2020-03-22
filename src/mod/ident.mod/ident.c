@@ -52,8 +52,8 @@ static cmd_t ident_raw_builtin_off[] = {
 };
 
 static cmd_t ident_raw_oident_off[] = {
-  {"001", "",   (IntFunc) ident_oident_off,  "ident:001"},
-  {NULL,  NULL, NULL,                        NULL       }
+  {"001", "",   (IntFunc) ident_oident_off, "ident:001"},
+  {NULL,  NULL, NULL,                       NULL       }
 };
 
 char path[121]; /* oidentd.conf */
