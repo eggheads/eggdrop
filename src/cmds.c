@@ -395,15 +395,21 @@ static void cmd_back(struct userrec *u, int idx, char *par)
 static void cmd_newpass(struct userrec *u, int idx, char *par)
 {
   char *new;
+  int l;
 
   if (!par[0]) {
     dprintf(idx, "Usage: newpass <newpassword>\n");
     return;
   }
   new = newsplit(&par);
-  if (strlen(new) > PASSWORDLEN) {
-    new[PASSWORDLEN] = 0;
-    dprintf(idx, "Password cut to %i chars\n", PASSWORDLEN);
+  l = strlen(new);
+  if (l < 6) {
+    dprintf(idx, "Please use at least 6 characters.\n");
+    return;
+  }
+  if (l > PASSWORDLEN) {
+    dprintf(idx, "Please use at most %i characters.\n", PASSWORDLEN);
+    return;
   }
   set_user(&USERENTRY_PASS, u, new);
   putlog(LOG_CMDS, "*", "#%s# newpass...", dcc[idx].nick);
@@ -1026,7 +1032,7 @@ static void cmd_handle(struct userrec *u, int idx, char *par)
 static void cmd_chpass(struct userrec *u, int idx, char *par)
 {
   char *handle, *new;
-  int atr = u ? u->flags : 0;
+  int atr = u ? u->flags : 0, l;
 
   if (!par[0])
     dprintf(idx, "Usage: chpass <handle> [password]\n");
@@ -1051,9 +1057,14 @@ static void cmd_chpass(struct userrec *u, int idx, char *par)
       dprintf(idx, "Removed password.\n");
     } else {
       new = newsplit(&par);
-      if (strlen(new) > PASSWORDLEN) {
-        new[PASSWORDLEN] = 0;
-        dprintf(idx, "Password cut to %i chars\n", PASSWORDLEN);
+      l = strlen(new);
+      if (l < 6) {
+        dprintf(idx, "Please use at least 6 characters.\n");
+        return;
+      }
+      if (l > PASSWORDLEN) {
+        dprintf(idx, "Please use at most %i characters.\n", PASSWORDLEN);
+        return;
       }
       set_user(&USERENTRY_PASS, u, new);
       putlog(LOG_CMDS, "*", "#%s# chpass %s [something]", dcc[idx].nick,
