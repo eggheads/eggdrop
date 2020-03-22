@@ -44,16 +44,11 @@ static tcl_ints identints[] = {
 };
 
 static void ident_builtin_off();
-static void ident_oident_off();
+static void ident_001();
 
-static cmd_t ident_raw_builtin_off[] = {
-  {"001", "",   (IntFunc) ident_builtin_off, "ident:001"},
-  {NULL,  NULL, NULL,                        NULL       }
-};
-
-static cmd_t ident_raw_oident_off[] = {
-  {"001", "",   (IntFunc) ident_oident_off, "ident:001"},
-  {NULL,  NULL, NULL,                       NULL       }
+static cmd_t ident_raw_001[] = {
+  {"001", "",   (IntFunc) ident_001, "ident:001"},
+  {NULL,  NULL, NULL,                NULL}
 };
 
 char path[121]; /* oidentd.conf */
@@ -103,6 +98,21 @@ static struct dcc_table DCC_IDENTD = {
   NULL
 };
 
+static void ident_oident_off() {
+  debug1("Ident: Removing %s.", path);
+  if (unlink(path) < 0)
+    putlog(LOG_MISC, "*", "Ident error: %s", strerror(errno));
+}
+
+static void ident_001()
+{
+  if (ident_method == IDENT_METHOD_OIDENT)
+    ident_oident_off();
+  else // ident_method == IDENT_METHOD_BUILTIN
+    ident_builtin_off();
+  rem_builtins(H_raw, ident_raw_001);
+}
+
 static void ident_oidentd()
 {
   char *home = getenv("HOME");
@@ -132,7 +142,7 @@ static void ident_oidentd()
     return;
   }
   close(fd);
-  add_builtins(H_raw, ident_raw_oident_off);
+  add_builtins(H_raw, ident_raw_001);
 }
 
 static void ident_builtin_on()
@@ -161,11 +171,10 @@ static void ident_builtin_on()
   dcc[idx].sock = s;
   dcc[idx].port = ident_port;
   strcpy(dcc[idx].nick, "(ident)");
-  add_builtins(H_raw, ident_raw_builtin_off);
+  add_builtins(H_raw, ident_raw_001);
 }
 
-static void ident_builtin_off()
-{
+static void ident_builtin_off() {
   int idx;
 
   for (idx = 0; idx < dcc_total; idx++)
@@ -175,34 +184,25 @@ static void ident_builtin_off()
       lostdcc(idx);
       break;
     }
-  rem_builtins(H_raw, ident_raw_builtin_off);
-}
-
-static void ident_oident_off()
-{
-  debug1("Ident: Removing %s.", path);
-  if (unlink(path) < 0)
-    putlog(LOG_MISC, "*", "Ident error: %s", strerror(errno));
-  rem_builtins(H_raw, ident_raw_oident_off);
 }
 
 static void ident_ident()
 {
   if (ident_method == IDENT_METHOD_OIDENT)
     ident_oidentd();
-  else if (ident_method == IDENT_METHOD_BUILTIN)
+  else // ident_method == IDENT_METHOD_BUILTIN
     ident_builtin_on();
 }
 
-static cmd_t ident_event[] = {
+static cmd_t ident_event_ident[] = {
   {"ident", "",   (IntFunc) ident_ident, "ident:ident"},
-  {NULL,    NULL, NULL,                  NULL         }
+  {NULL,    NULL, NULL,                  NULL}
 };
 
 static char *ident_close()
 {
   ident_builtin_off();
-  rem_builtins(H_event, ident_event);
+  rem_builtins(H_event, ident_event_ident);
   rem_tcl_ints(identints);
   module_undepend(MODULE_NAME);
   return NULL;
@@ -232,7 +232,7 @@ char *ident_start(Function *global_funcs)
     return "This module requires server module 1.0 or later.";
   }
 
-  add_builtins(H_event, ident_event);
+  add_builtins(H_event, ident_event_ident);
   add_tcl_ints(identints);
 
   return NULL;
