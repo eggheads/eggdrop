@@ -76,7 +76,7 @@ Eggdrop can use TLS connections to protect botnet links if it is compiled with T
 |                              |                            | starttls Tcl/bot command      |
 +------------------------------+----------------------------+-------------------------------+
 | +port                        | listen +port               | connect with TLS              |
-+------------------------------|----------------------------|-------------------------------+
++------------------------------+----------------------------+-------------------------------+
 | port                         | listen +port               | fail as hub only wants TLS    |
 +------------------------------+----------------------------+-------------------------------+
 | +port                        | listen port                | fail as leaf only wants TLS   |

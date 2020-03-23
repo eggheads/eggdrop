@@ -164,9 +164,9 @@ cap <active/available/raw> [arg]
 
   Module: server
 
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+^^^^^^^^^^^^^^^^^^^^^^
 tagmsg <tags> <target>
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+^^^^^^^^^^^^^^^^^^^^^^
 
   Description: sends an IRCv3 TAGMSG command to the target. Only works if message-tags has been negotiated with the server via the cap command. tags is a Tcl dict (or space-separated string) of the tags you wish to send separated by commas (do not include the @prefix), and target is the nickname or channel you wish to send the tags to. To send a tag only (not a key/value pair), use a "" as the value for a key in a dict, or a "{}" if you are sending as a space-separated string.
 
@@ -178,9 +178,9 @@ tagmsg <tags> <target>
 
   Module: server
 
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 addserver <ip/host> [[+]port [password]]
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
   Description: adds a server to the list of servers Eggdrop will connect to. Prefix the port with '+' to indicate an SSL-protected port. A port value is required if password is to be specified. 
 
   Returns: nothing
@@ -2158,8 +2158,8 @@ maskhost <nick!user@host> [masktype]
   You can also specify types from 10 to 19 which correspond to types
   0 to 9, but instead of using a * wildcard to replace portions of the
   host, only numbers in hostnames are replaced with the '?' wildcard.
-  Same is valid for types 20-29, but instead of '?', the '*' wildcard
-  will be used. Types 30-39 set the host to '*'.
+  Same is valid for types 20-29, but instead of '?', the '\*' wildcard
+  will be used. Types 30-39 set the host to '\*'.
 
   Module: core
 
