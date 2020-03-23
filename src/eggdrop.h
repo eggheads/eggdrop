@@ -6,7 +6,7 @@
  */
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2019 Eggheads Development Team
+ * Copyright (C) 1999 - 2020 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -56,9 +56,10 @@
 
 
 /* Handy string lengths */
+#define HOSTMAX     63            /* DNS RFC 1035, IRC RFC 2812          */
 #define UHOSTMAX    291 + NICKMAX /* 32 (ident) + 3 (\0, !, @) + NICKMAX */
 #define DIRMAX      512           /* paranoia                            */
-#define LOGLINEMAX  767           /* for misc.c/putlog() <cybah>         */
+#define LOGLINEMAX  9000          /* for misc.c/putlog() <cybah>         */
 
 /* Invalid characters */
 #define BADNICKCHARS "-,+*=:!.@#;$%&"
@@ -559,9 +560,6 @@ struct dupwait_info {
 #define STAT_LINKING 0x00100    /* the bot is currently going through
                                  * the linking stage                     */
 #define STAT_AGGRESSIVE 0x00200 /* aggressively sharing with this bot    */
-#ifdef TLS
-#define STAT_STARTTLS   0x00400 /* have we sent a starttls request?      */
-#endif
 
 /* Flags for listening sockets */
 #define LSTN_PUBLIC  0x000001   /* No access restrictions               */
@@ -649,10 +647,6 @@ typedef struct {
 #define SOCK_VIRTUAL    0x0200  /* not-connected socket (dont read it!) */
 #define SOCK_BUFFER     0x0400  /* buffer data; don't notify dcc funcs  */
 #define SOCK_TCL        0x0800  /* tcl socket, don't do anything on it  */
-#ifdef TLS
-#  define SOCK_SENTTLS  0x1000  /* Socket that awaits a starttls in the
-                                 * next read                            */
-#endif
 
 /* Flags to sock_has_data
  */

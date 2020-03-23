@@ -1,10 +1,9 @@
 /*
- * cmdschan.c -- part of channels.mod
  *   commands from a user via dcc that cause server interaction
  */
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2019 Eggheads Development Team
+ * Copyright (C) 1999 - 2020 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -26,6 +25,20 @@
 static struct flag_record user = { FR_GLOBAL | FR_CHAN, 0, 0, 0, 0, 0 };
 static struct flag_record victim = { FR_GLOBAL | FR_CHAN, 0, 0, 0, 0, 0 };
 
+
+/* RFC 1035/2812- hostmasks can't be longer than 63 characters */
+void truncate_mask_hostname(char *s) {
+char *r = NULL;
+
+  if ( (r = strchr(s, '@')) ) {
+    r++;
+    if (strlen(r)  > HOSTMAX) {
+      r[62] = '*';
+      r[63] = 0;
+      putlog(LOG_MISC, "*", "Maximum hostlength exceeded, truncating");
+    }
+  }
+}
 
 static void cmd_pls_ban(struct userrec *u, int idx, char *par)
 {
@@ -129,48 +142,44 @@ static void cmd_pls_ban(struct userrec *u, int idx, char *par)
         return;
       }
     }
-      /* IRC can't understand bans longer than 70 characters */
-      if (strlen(s) > 70) {
-        s[69] = '*';
-        s[70] = 0;
-      }
-      if (chan) {
-        u_addban(chan, s, dcc[idx].nick, par,
-                 expire_time ? now + expire_time : 0, 0);
-        if (par[0] == '*') {
-          sticky = 1;
-          par++;
-          putlog(LOG_CMDS, "*", "#%s# (%s) +ban %s %s (%s) (sticky)",
-                 dcc[idx].nick, dcc[idx].u.chat->con_chan, s, chan->dname, par);
-          dprintf(idx, "New %s sticky ban: %s (%s)\n", chan->dname, s, par);
-        } else {
-          putlog(LOG_CMDS, "*", "#%s# (%s) +ban %s %s (%s)", dcc[idx].nick,
-                 dcc[idx].u.chat->con_chan, s, chan->dname, par);
-          dprintf(idx, "New %s ban: %s (%s)\n", chan->dname, s, par);
-        }
-        /* Avoid unnesessary modes if you got +dynamicbans, and there is
-         * no reason to set mode if irc.mod aint loaded. (dw 001120)
-         */
-        if ((me = module_find("irc", 0, 0)))
-          (me->funcs[IRC_CHECK_THIS_BAN]) (chan, s, sticky);
+    truncate_mask_hostname(s);
+    if (chan) {
+      u_addban(chan, s, dcc[idx].nick, par,
+               expire_time ? now + expire_time : 0, 0);
+      if (par[0] == '*') {
+        sticky = 1;
+        par++;
+        putlog(LOG_CMDS, "*", "#%s# (%s) +ban %s %s (%s) (sticky)",
+               dcc[idx].nick, dcc[idx].u.chat->con_chan, s, chan->dname, par);
+        dprintf(idx, "New %s sticky ban: %s (%s)\n", chan->dname, s, par);
       } else {
-        u_addban(NULL, s, dcc[idx].nick, par,
-                 expire_time ? now + expire_time : 0, 0);
-        if (par[0] == '*') {
-          sticky = 1;
-          par++;
-          putlog(LOG_CMDS, "*", "#%s# (GLOBAL) +ban %s (%s) (sticky)",
-                 dcc[idx].nick, s, par);
-          dprintf(idx, "New sticky ban: %s (%s)\n", s, par);
-        } else {
-          putlog(LOG_CMDS, "*", "#%s# (GLOBAL) +ban %s (%s)", dcc[idx].nick,
-                 s, par);
-          dprintf(idx, "New ban: %s (%s)\n", s, par);
-        }
-        if ((me = module_find("irc", 0, 0)))
-          for (chan = chanset; chan != NULL; chan = chan->next)
-            (me->funcs[IRC_CHECK_THIS_BAN]) (chan, s, sticky);
+        putlog(LOG_CMDS, "*", "#%s# (%s) +ban %s %s (%s)", dcc[idx].nick,
+               dcc[idx].u.chat->con_chan, s, chan->dname, par);
+        dprintf(idx, "New %s ban: %s (%s)\n", chan->dname, s, par);
       }
+      /* Avoid unnesessary modes if you got +dynamicbans, and there is
+       * no reason to set mode if irc.mod aint loaded. (dw 001120)
+       */
+      if ((me = module_find("irc", 0, 0)))
+        (me->funcs[IRC_CHECK_THIS_BAN]) (chan, s, sticky);
+    } else {
+      u_addban(NULL, s, dcc[idx].nick, par,
+               expire_time ? now + expire_time : 0, 0);
+      if (par[0] == '*') {
+        sticky = 1;
+        par++;
+        putlog(LOG_CMDS, "*", "#%s# (GLOBAL) +ban %s (%s) (sticky)",
+               dcc[idx].nick, s, par);
+        dprintf(idx, "New sticky ban: %s (%s)\n", s, par);
+      } else {
+        putlog(LOG_CMDS, "*", "#%s# (GLOBAL) +ban %s (%s)", dcc[idx].nick,
+               s, par);
+        dprintf(idx, "New ban: %s (%s)\n", s, par);
+      }
+      if ((me = module_find("irc", 0, 0)))
+        for (chan = chanset; chan != NULL; chan = chan->next)
+          (me->funcs[IRC_CHECK_THIS_BAN]) (chan, s, sticky);
+    }
   }
 }
 
@@ -263,11 +272,7 @@ static void cmd_pls_exempt(struct userrec *u, int idx, char *par)
     else
       strlcpy(s, who, sizeof s);
 
-    /* IRC can't understand exempts longer than 70 characters */
-    if (strlen(s) > 70) {
-      s[69] = '*';
-      s[70] = 0;
-    }
+    truncate_mask_hostname(s);
     if (chan) {
       u_addexempt(chan, s, dcc[idx].nick, par,
                   expire_time ? now + expire_time : 0, 0);
@@ -391,11 +396,7 @@ static void cmd_pls_invite(struct userrec *u, int idx, char *par)
     else
       strlcpy(s, who, sizeof s);
 
-    /* IRC can't understand invites longer than 70 characters */
-    if (strlen(s) > 70) {
-      s[69] = '*';
-      s[70] = 0;
-    }
+    truncate_mask_hostname(s);
     if (chan) {
       u_addinvite(chan, s, dcc[idx].nick, par,
                   expire_time ? now + expire_time : 0, 0);

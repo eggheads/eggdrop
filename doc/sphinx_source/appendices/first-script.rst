@@ -97,4 +97,4 @@ Try changing the names of some variables (uhost -> userhost maybe).
 
   # Here's the end of the script.
 
-Copyright (C) 2003 - 2019 Eggheads Development Team
+Copyright (C) 2003 - 2020 Eggheads Development Team
