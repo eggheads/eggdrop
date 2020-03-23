@@ -2190,13 +2190,13 @@ static int gotnick(char *from, char *msg)
       }
     }
   }
-  u = get_user_by_host(from);
   if (!found) {
+    u = get_user_by_host(from);
     s1[0] = '*';
     s1[1] = 0;
     check_tcl_nick(nick, uhost, u, s1, msg);
   }
-  check_tcl_nickonce(nick, uhost, u, msg);
+  check_tcl_nick(nick, uhost, u, "#\x01nickonce", msg);
   return 0;
 }
 

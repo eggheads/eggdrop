@@ -42,7 +42,6 @@ static void check_tcl_joinspltrejn(char *, char *, struct userrec *, char *,
 static void check_tcl_part(char *, char *, struct userrec *, char *, char *);
 static void check_tcl_signtopcnick(char *, char *, struct userrec *u, char *,
                                    char *, p_tcl_bind_list);
-static void check_tcl_nickonce(char *, char *, struct userrec *u, char *);
 static int check_tcl_pubm(char *, char *, char *, char *);
 static int check_tcl_pub(char *, char *, char *, char *);
 static int me_op(struct chanset_t *);
@@ -115,7 +114,6 @@ static int gotmode(char *, char *);
 #define me_voice ((int(*)(struct chanset_t *))irc_funcs[23])
 /* 24 - 27 */
 #define getchanmode ((char *(*)(struct chanset_t *))irc_funcs[24])
-#define H_nickonce (*(p_tcl_bind_list*)(irc_funcs[26]))
 
 #endif /* MAKING_IRC */
 

@@ -32,7 +32,7 @@
 #include <sys/utsname.h>
 
 static p_tcl_bind_list H_topc, H_splt, H_sign, H_rejn, H_part, H_pub, H_pubm;
-static p_tcl_bind_list H_nick, H_mode, H_kick, H_join, H_need, H_nickonce;
+static p_tcl_bind_list H_nick, H_mode, H_kick, H_join, H_need;
 
 static Function *global = NULL, *channels_funcs = NULL, *server_funcs = NULL;
 
@@ -802,20 +802,6 @@ static void check_tcl_signtopcnick(char *nick, char *uhost, struct userrec *u,
                  MATCH_MASK | BIND_USE_ATTR | BIND_STACKABLE);
 }
 
-static void check_tcl_nickonce(char *nick, char *uhost, struct userrec *u,
-                               char *msg)
-{
-  struct flag_record fr = { FR_GLOBAL, 0, 0, 0, 0, 0 };
-
-  get_user_flagrec(u, &fr, NULL);
-  Tcl_SetVar(interp, "_no1", nick, 0);
-  Tcl_SetVar(interp, "_no2", uhost, 0);
-  Tcl_SetVar(interp, "_no3", u ? u->handle : "*", 0);
-  Tcl_SetVar(interp, "_no4", msg, 0);
-  check_tcl_bind(H_nickonce, "", &fr, " $_no1 $_no2 $_no3 $_no4",
-                 MATCH_MASK | BIND_USE_ATTR | BIND_STACKABLE);
-}
-
 static void check_tcl_mode(char *nick, char *uhost, struct userrec *u,
                            char *chname, char *mode, char *target)
 {
@@ -1151,7 +1137,6 @@ static char *irc_close()
   del_bind_table(H_pubm);
   del_bind_table(H_pub);
   del_bind_table(H_need);
-  del_bind_table(H_nickonce);
   rem_tcl_strings(mystrings);
   rem_tcl_ints(myints);
   rem_builtins(H_dcc, irc_dcc);
@@ -1208,8 +1193,7 @@ static Function irc_table[] = {
   (Function) me_voice,
   /* 24 - 27 */
   (Function) getchanmode,
-  (Function) reset_chan_info,
-  (Function) & H_nickonce       /* p_tcl_bind_list              */
+  (Function) reset_chan_info
 };
 
 char *irc_start(Function *global_funcs)
@@ -1273,7 +1257,6 @@ char *irc_start(Function *global_funcs)
   H_pubm = add_bind_table("pubm", HT_STACKABLE, channels_5char);
   H_pub = add_bind_table("pub", 0, channels_5char);
   H_need = add_bind_table("need", HT_STACKABLE, channels_2char);
-  H_nickonce = add_bind_table("nickonce", HT_STACKABLE, channels_4char);
   do_nettype();
   return NULL;
 }
