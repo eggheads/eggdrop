@@ -4,7 +4,7 @@
  */
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2019 Eggheads Development Team
+ * Copyright (C) 1999 - 2020 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -319,7 +319,7 @@ static void zapf_assoc(char *botnick, char *code, char *par)
       linking = b_status(idx) & STAT_LINKING;
     s = newsplit(&par);
     chan = base64_to_int(s);
-    if ((chan > 0) || (chan < GLOBAL_CHANS)) {
+    if ((chan > 0) && (chan < GLOBAL_CHANS)) {
       nick = newsplit(&par);
       s1 = get_assoc_name(chan);
       if (linking && ((s1 == NULL) || (s1[0] == 0) ||
@@ -336,6 +336,8 @@ static void zapf_assoc(char *botnick, char *code, char *par)
         add_assoc(par, chan);
         chanout_but(-1, chan, ASSOC_CHNAME_NAMED2, botnick, nick, par);
       }
+    } else {
+      dprintf(LOG_DEBUG, "ASSOC: Channel number outside bounds\n");
     }
   }
 }

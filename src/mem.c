@@ -5,7 +5,7 @@
  */
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2019 Eggheads Development Team
+ * Copyright (C) 1999 - 2020 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -79,7 +79,7 @@ void init_mem()
   size_t size;
   int i;
 
-  size =  memtbl_size * sizeof(*memtbl);
+  size =  memtbl_size * sizeof *memtbl;
   if (!(memtbl = malloc(size))) {
     putlog(LOG_MISC, "*", "*** FAILED MALLOC mem.c (memtbl) (%i): %s", size,
            strerror(errno));
@@ -120,7 +120,7 @@ void tell_mem_status_dcc(int idx)
     dprintf(idx, "Memory fault: only accounting for %d/%ld (%.1f%%)\n",
             exp, memused, per);
   dprintf(idx, "Memory table itself occupies an additional %dk static\n",
-          (int) (sizeof(memtbl) / 1024));
+          (int) memtbl_size * sizeof *memtbl / 1024);
 #endif
 }
 
@@ -353,7 +353,7 @@ void *n_malloc(int size, const char *file, int line)
       putlog(LOG_MISC, "*", "*** MEMORY TABLE FULL: %s (%d)", file, line);
       fatal("Memory table full", 0);
     }
-    size2 = memtbl_size * sizeof(*memtbl);
+    size2 = memtbl_size * sizeof *memtbl;
     if (!(memtbl = realloc(memtbl, size2))) {
       putlog(LOG_MISC, "*", "*** FAILED REALLOC mem.c (memtbl) (%i): %s", size2,
              strerror(errno));

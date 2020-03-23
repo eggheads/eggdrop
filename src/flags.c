@@ -4,7 +4,7 @@
  */
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2019 Eggheads Development Team
+ * Copyright (C) 1999 - 2020 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -228,7 +228,7 @@ char *maskname(int x)
   if (x & LOG_FILES)
     i += my_strcpy(s + i, "files, "); /* 7 */
   if (x & LOG_SERV)
-    i += my_strcpy(s + i, "server, "); /* 8 */
+    i += my_strcpy(s + i, "server input, "); /* 8 */
   if (x & LOG_DEBUG)
     i += my_strcpy(s + i, "debug, "); /* 7 */
   if (x & LOG_WALL)

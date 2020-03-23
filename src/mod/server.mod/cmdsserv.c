@@ -4,7 +4,7 @@
  */
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2019 Eggheads Development Team
+ * Copyright (C) 1999 - 2020 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -28,7 +28,9 @@ static void cmd_servers(struct userrec *u, int idx, char *par)
   time_t t;
   struct tm *currtm;
   int i, len = 0;
-  char buf[16];
+#ifdef IPV6
+  char buf[sizeof(struct in6_addr)];
+#endif
   char s[1024];
   char setpass[11];
 

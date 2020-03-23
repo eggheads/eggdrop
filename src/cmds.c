@@ -5,7 +5,7 @@
  */
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2019 Eggheads Development Team
+ * Copyright (C) 1999 - 2020 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -32,7 +32,7 @@ extern struct dcc_t *dcc;
 extern struct userrec *userlist;
 extern tcl_timer_t *timer, *utimer;
 extern int dcc_total, remote_boots, backgrd, make_userfile, conmask, require_p,
-           must_be_owner, strict_host;
+           must_be_owner;
 extern volatile sig_atomic_t do_restart;
 extern unsigned long otraffic_irc, otraffic_irc_today, itraffic_irc,
                      itraffic_irc_today, otraffic_bn, otraffic_bn_today,
@@ -76,8 +76,7 @@ static int add_bot_hostmask(int idx, char *nick)
           return 0;
         }
         if (strchr("~^+=-", m->userhost[0]))
-          egg_snprintf(s, sizeof s, "*!%s%s", strict_host ? "?" : "",
-                       m->userhost + 1);
+          egg_snprintf(s, sizeof s, "*!?%s", m->userhost + 1);
         else
           egg_snprintf(s, sizeof s, "*!%s", m->userhost);
         dprintf(idx, "(Added hostmask for %s from %s)\n", nick, chan->dname);
@@ -3004,25 +3003,24 @@ static void cmd_traffic(struct userrec *u, int idx, char *par)
 static char traffictxt[20];
 static char *btos(unsigned long bytes)
 {
-  char unit[10];
+  const char *unit;
   float xbytes;
 
-  sprintf(unit, "Bytes");
   xbytes = bytes;
   if (xbytes > 1024.0) {
-    sprintf(unit, "KBytes");
+    unit = "KBytes";
     xbytes = xbytes / 1024.0;
   }
   if (xbytes > 1024.0) {
-    sprintf(unit, "MBytes");
+    unit = "MBytes";
     xbytes = xbytes / 1024.0;
   }
   if (xbytes > 1024.0) {
-    sprintf(unit, "GBytes");
+    unit = "GBytes";
     xbytes = xbytes / 1024.0;
   }
   if (xbytes > 1024.0) {
-    sprintf(unit, "TBytes");
+    unit = "TBytes";
     xbytes = xbytes / 1024.0;
   }
   if (bytes > 1024)

@@ -161,6 +161,23 @@ cap <active/available/raw> [arg]
 
   Module: server
 
+addserver <ip/host> [port [password]]
+
+  Description: adds a server to the list of servers Eggdrop will connect
+  to. A port value is required if password is to be specified.
+
+  Returns: nothing
+
+  Module: server
+
+delserver <ip/host> [[+]port]
+
+  Description: removes a server from the list of servers Eggdrop will
+  connect to. If no port is specified, Eggdrop will remove the first
+  server matching the ip or hostname provided. The SSL status (+) of the
+  provided port is matched against as well (ie, 7000 is not the same as
+  +7000).
+
 
 USER RECORD MANIPULATION COMMANDS
 
@@ -1201,9 +1218,10 @@ onchansplit <nick> [channel]
 
 chanlist <channel> [flags][<&|>chanflags]
 
-  Description: flags are any global flags; the '&' or '' returns users
-  having ANY of the chanflags (See matchattr above for additional
-  examples).
+  Description: flags are any global flags; the '&' or '|' denotes to
+  look for channel specific flags, where '&' will return users having
+  ALL chanflags and '|' returns users having ANY of the chanflags (See
+  matchattr above for additional examples).
 
   Returns: Searching for flags optionally preceded with a '+' will
   return a list of nicknames that have all the flags listed. Searching
@@ -1543,8 +1561,8 @@ dccused
 dcclist [type]
 
   Returns: a list of active connections, each item in the list is a
-  sublist containing six elements: {<idx> <handle> <hostname> <type>
-  {<other>} <timestamp>}.
+  sublist containing seven elements: {<idx> <handle> <hostname>
+  <[+]port> <type> {<other>} <timestamp>}.
 
   The types are: chat, bot, files, file_receiving, file_sending,
   file_send_pending, script, socket (these are connections that have not
@@ -2591,6 +2609,14 @@ configureargs
 
   Module: core
 
+language
+
+  Value: a string containing the language with the highest priority for
+  use by Eggdrop. This commonly reflects what is added with addlang in
+  the config file
+
+  Module: core
+
 
 BINDS
 
@@ -3364,6 +3390,22 @@ the Tcl proc, and an explanation.
 
   Module: core
 
+(51) INVT (stackable)
+
+  bind invt <flags> <mask> <proc>
+
+  procname <nick> <user@host> <channel> <invitee>
+
+  Description: triggered when eggdrop received an INVITE message. The
+  mask for the bind is in the format "#channel nickname", where nickname
+  (not a hostmask) is that of the invitee. For the proc, nick is the
+  nickname of the person sending the invite request, user@host is the
+  user@host of the person sending the invite, channel is the channel the
+  invitee is being invited to, and invitee is the target (nickname only)
+  of the invite. The invitee argument was added to support the IRCv3
+  invite-notify capability, where the eggdrop may be able to see invite
+  messages for other people that are not the eggdrop.
+
 Return Values
 
 Several bindings pay attention to the value you return from the
@@ -3540,4 +3582,4 @@ the four special characters:
   ~            matches 1 or more space characters (can be used for whitespace between words) (This char only works in binds, not in regular matching)
   ------------ ------------------------------------------------------------------------------------------------------------------------------------------------------
 
-  Copyright (C) 1999 - 2019 Eggheads Development Team
+  Copyright (C) 1999 - 2020 Eggheads Development Team

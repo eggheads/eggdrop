@@ -4,7 +4,7 @@
  */
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2019 Eggheads Development Team
+ * Copyright (C) 1999 - 2020 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -670,7 +670,7 @@ static int tcl_dcclist STDVAR
       }
       list[0] = idxstr;
       list[1] = dcc[i].nick;
-      list[2] = (dcc[i].host == NULL || dcc[i].host[0] == '\0') ?
+      list[2] = (dcc[i].host[0] == '\0') ?
                 iptostr(&dcc[i].sockname.addr.sa) : dcc[i].host;
 #ifdef TLS
       egg_snprintf(portstring, sizeof portstring, "%s%d", dcc[i].ssl ? "+" : "", dcc[i].port);

@@ -4,7 +4,7 @@
  */
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2019 Eggheads Development Team
+ * Copyright (C) 1999 - 2020 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -1040,12 +1040,7 @@ static void cmd_adduser(struct userrec *u, int idx, char *par)
     strlcpy(s1, s, sizeof s1);
     p1 = strchr(s1, '!');
     if (strchr("~^+=-", p1[1])) {
-      if (strict_host)
-        p1[1] = '?';
-      else {
-        p1[1] = '!';
-        p1++;
-      }
+      p1[1] = '?';
     }
     p1--;
     p1[0] = '*';

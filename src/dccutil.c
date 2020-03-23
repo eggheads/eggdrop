@@ -8,7 +8,7 @@
  */
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2019 Eggheads Development Team
+ * Copyright (C) 1999 - 2020 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -151,7 +151,7 @@ extern void (*qserver) (int, char *, int);
 
 void dprintf EGG_VARARGS_DEF(int, arg1)
 {
-  char buf[1024];
+  char buf[LOGLINEMAX];
   char *format;
   int idx, len;
   va_list va;
@@ -159,7 +159,7 @@ void dprintf EGG_VARARGS_DEF(int, arg1)
   idx = EGG_VARARGS_START(int, arg1, va);
   format = va_arg(va, char *);
 
-  egg_vsnprintf(buf, 1023, format, va);
+  egg_vsnprintf(buf, LOGLINEMAX-1, format, va);
   va_end(va);
   /* We can not use the return value vsnprintf() to determine where
    * to null terminate. The C99 standard specifies that vsnprintf()
@@ -202,10 +202,10 @@ void dprint(int idx, char *buf, int len)
     }
     return;
   } else {
-    if (len > 500) {            /* Truncate to fit */
-      buf[500] = 0;
-      strcat(buf, "\n");
-      len = 501;
+    if (len > LOGLINEMAX-11) {            /* Truncate to fit */
+      buf[LOGLINEMAX-11] = '\n';
+      buf[LOGLINEMAX-10] = 0;
+      len = LOGLINEMAX-10;
     }
     if (dcc[idx].type && ((long) (dcc[idx].type->output) == 1)) {
       char *p = add_cr(buf);
