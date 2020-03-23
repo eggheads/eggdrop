@@ -501,7 +501,7 @@
 #endif
 /* 304 - 307 */
 #define strncpyz ((size_t (*) (char *, const char *, size_t))global[304])
-
+#define get_expire_time ((time_t (*) (Tcl_Interp *, const char *))global[305])
 
 /* hostmasking */
 #define maskhost(a,b) maskaddr((a),(b),3)

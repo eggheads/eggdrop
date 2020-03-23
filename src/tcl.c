@@ -98,6 +98,7 @@ int utftot = 0;
 int clientdata_stuff = 0;
 
 extern Tcl_VarTraceProc traced_myiphostname;
+extern time_t now;
 
 int expmem_tcl()
 {
@@ -925,4 +926,16 @@ int fork_before_tcl()
   return tcl_threaded();
 #endif
   return 0;
+}
+
+time_t get_expire_time(Tcl_Interp * irp, const char *s) {
+  long expire_foo = atol(s);
+
+  if (expire_foo == 0)
+    return 0;
+  if (expire_foo > (60 * 24 * 2000)) {
+    Tcl_AppendResult(irp, "expire time must be equal to or less than 2000 days", NULL);
+    return -1;
+  }
+  return now + 60 * expire_foo;
 }

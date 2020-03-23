@@ -501,19 +501,6 @@ static int tcl_matchinvite STDVAR
   return TCL_OK;
 }
 
-/* Copy of tcluser.c:get_expire_time() */
-static time_t get_expire_time(Tcl_Interp * irp, const char *s) {
-  long expire_foo = atol(s);
-
-  if (expire_foo == 0)
-    return 0;
-  if (expire_foo > (60 * 24 * 2000)) {
-    Tcl_AppendResult(irp, "expire time must be equal to or less than 2000 days", NULL);
-    return -1;
-  }
-  return now + 60 * expire_foo;
-}
-
 static int tcl_newchanban STDVAR
 {
   time_t expire_time;

@@ -597,7 +597,8 @@ Function global_table[] = {
   (Function) 0,
 #endif
   /* 304 - 307 */
-  (Function) strncpyz
+  (Function) strncpyz,
+  (Function) get_expire_time
 };
 
 void init_modules(void)
