@@ -7,6 +7,7 @@ DCC commands for %B, %V:
       %bwhoami       echo         strip        su%b
       %btrace        fixcodes     bottree      vbottree%b
       %bbotinfo      relay        -host        fprint%b
+      %chfinger%b
 %{o|o}
    For ops:
       %baddlog       console      match        whois%b
@@ -215,6 +216,7 @@ ssl-verify-clients
       %bwhoami       echo         strip        su%b
       %btrace        fixcodes     bottree      vbottree%b
       %bbotinfo      relay        -host        fprint%b
+      %chfinger%b
 %{o|o}
    For ops:
       %baddlog       console      match        whois%b

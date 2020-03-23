@@ -4,7 +4,7 @@
  */
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2019 Eggheads Development Team
+ * Copyright (C) 1999 - 2020 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -732,10 +732,10 @@ static char *mktempfile(char *filename)
 
 static void filesys_dcc_send_hostresolved(int i)
 {
-  char *s1, *param, prt[100], *tempf;
+  char *s1, *param, prt[6], *tempf;
   int len = dcc[i].u.dns->ibuf, j;
 
-  sprintf(prt, "%d", dcc[i].port);
+  snprintf(prt, sizeof prt, "%d", dcc[i].port);
   if (!hostsanitycheck_dcc(dcc[i].nick, dcc[i].u.dns->host, &dcc[i].sockname,
                            dcc[i].u.dns->host, prt)) {
     lostdcc(i);
