@@ -57,8 +57,9 @@ static char *pbkdf2_close(void)
 
 static int pbkdf2_get_size(const char* digest_name, const EVP_MD *digest, int saltlen)
 {
-  /* PHC string format */
-  /* hash = "$pbkdf2-<digest>$rounds=<rounds>$<salt>$<hash>" */
+  /* PHC string format
+   * hash = "$pbkdf2-<digest>$rounds=<rounds>$<salt>$<hash>"
+   */
   return strlen("$pbkdf2-") + strlen(digest_name) + strlen("$rounds=2147483647$") + B64_NTOP_CALCULATE_SIZE(saltlen) + 1 + B64_NTOP_CALCULATE_SIZE(EVP_MD_size(digest));
 }
 
@@ -224,7 +225,7 @@ static int pbkdf2_verify_pass(const char *pass, const char *encrypted)
   }
   hashlen = pbkdf2_get_size(method, digest, PBKDF2_SALT_LEN);
   buf = nmalloc(hashlen + 1);
-  if (pbkdf2crypt_verify_pass(pass, method, salt, PBKDF2_SALT_LEN, rounds, buf, hashlen) != 0) {
+  if (pbkdf2crypt_verify_pass(pass, method, salt, PBKDF2_SALT_LEN, rounds, buf, hashlen)) {
     putlog(LOG_MISC, "*", "PBKDF2 error: pbkdf2crypt_verify_pass()");
     nfree(buf);
     return 1;
