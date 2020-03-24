@@ -259,6 +259,6 @@ Authenticating with NickServ
 
 Many IRC features require you to authenticate with NickServ to use them. You can do this from your config file by searhing for the line::
 
-    #  putserv "PRIVMSG NickServ :identify <password>
+    #  putserv "PRIVMSG NickServ :identify <password>"
 
 in your config file. Uncomment it by removing the '#' sign and then replace <password> with your password. Your bot will now authenticate with NickServ each time it joins a server.
