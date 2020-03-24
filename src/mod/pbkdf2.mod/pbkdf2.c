@@ -110,7 +110,6 @@ static int pbkdf2crypt_verify_pass(const char *pass, const char *digest_name, co
     putlog(LOG_MISC, "*", "PBKDF2 error: Rounds outside range");
     return 1;
   }
-
   bufcount(&out, &outlen, snprintf((char *) out, outlen, "$pbkdf2-%s$rounds=%i$", digest_name, (unsigned int) rounds));
   ret = b64_ntop_without_padding(salt, saltlen, out, outlen);
   if (ret < 0) {
@@ -138,6 +137,9 @@ static int pbkdf2crypt_verify_pass(const char *pass, const char *digest_name, co
            (double) (ru2.ru_utime.tv_sec  - ru1.ru_utime.tv_sec ) * 1000,
            (double) (ru2.ru_stime.tv_usec - ru1.ru_stime.tv_usec) / 1000 +
            (double) (ru2.ru_stime.tv_sec  - ru1.ru_stime.tv_sec ) * 1000);
+  }
+  else {
+    debug1("PBKDF2 error: getrusage(): %s", strerror(errno));
   }
   if (b64_ntop_without_padding(buf, digestlen, out, outlen) < 0) {
     putlog(LOG_MISC, "*", "PBKDF2 error: Outbuffer too small.");
