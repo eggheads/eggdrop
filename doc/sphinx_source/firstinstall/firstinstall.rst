@@ -253,3 +253,12 @@ By default, it should create an entry that looks similar to::
     0,10,20,30,40,50 * * * * /home/user/bot/scripts/YourEggdrop.botchk 2>&1
 
 This will run the generated botchk script every ten minutes and restart your Eggdrop if it is not running during the check. Also note that if you run autobotchk from the scripts directory, you'll have to manually specify your config file location with the -dir option. To remove a crontab entry, use ``crontab -e`` to open the crontab file in your system's default editor and remove the crontab line.
+
+Authenticating with NickServ
+----------------------------
+
+Many IRC features require you to authenticate with NickServ to use them. You can do this from your config file by searhing for the line::
+
+    #  putserv "PRIVMSG NickServ :identify <password>
+
+in your config file. Uncomment it by removing the '#' sign and then replace <password> with your password. Your bot will now authenticate with NickServ each time it joins a server.
