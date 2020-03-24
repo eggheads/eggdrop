@@ -82,8 +82,7 @@ int b64_ntop_without_padding(u_char const *src, size_t srclength, char *target, 
   return targsize;
 }
 
-/* Encrypt a password with flexible settings for verification.
- */
+/* Encrypt a password with flexible settings for verification. */
 static int pbkdf2crypt_verify_pass(const char *pass, const char *digest_name, const unsigned char *salt, int saltlen, int rounds, char *out, int outlen)
 {
   const EVP_MD *digest;
@@ -147,32 +146,23 @@ static int pbkdf2crypt_verify_pass(const char *pass, const char *digest_name, co
   return 0;
 }
 
-/* Encrypt a password with standard settings to store.
- * out = NULL returns necessary buffer size
- * Return values are the same as pbkdf2crypt_verify_pass
- */
-static int pbkdf2_pass(const char *pass, char *out, int outlen) /* TODO: only 1 caller -> inline ? */
-{
-  unsigned char salt[PBKDF2_SALT_LEN];
-  assert(out != 0);
-  if (RAND_bytes(salt, sizeof salt) != 1) {
-    /* TODO: Do we need ERR_load_crypto_strings(), SSL_load_error_strings() and ERR_free_strings(void) ? */
-    putlog(LOG_MISC, "*", "PBKDF2 error: %s", ERR_error_string(ERR_get_error(), NULL));
-    return 1;
-  }
-  return pbkdf2crypt_verify_pass(pass, pbkdf2_method, salt, sizeof salt, pbkdf2_rounds, out, outlen);
-}
-
 static char *pbkdf2_encrypt_pass(const char *pass)
 {
   static int hashlen; /* static object is initialized to zero (Standard C) */
   static char *buf;
+  unsigned char salt[PBKDF2_SALT_LEN];
 
   if (!hashlen) { /* TODO: hashlan may change if implemented */
     hashlen = pbkdf2_get_size(pbkdf2_method, EVP_get_digestbyname(pbkdf2_method), PBKDF2_SALT_LEN);
     buf = nmalloc(hashlen + 1);
   }
-  if (pbkdf2_pass(pass, buf, hashlen))
+  /* Encrypt a password with standard settings to store. */
+  if (RAND_bytes(salt, sizeof salt) != 1) {
+    /* TODO: Do we need ERR_load_crypto_strings(), SSL_load_error_strings() and ERR_free_strings(void) ? */
+    putlog(LOG_MISC, "*", "PBKDF2 error: %s", ERR_error_string(ERR_get_error(), NULL));
+    return NULL;
+  }
+  if (pbkdf2crypt_verify_pass(pass, pbkdf2_method, salt, sizeof salt, pbkdf2_rounds, buf, hashlen))
     return NULL;
   buf[hashlen] = '\0';
   return buf;
@@ -246,8 +236,7 @@ static Function pbkdf2_table[] = {
   (Function) pbkdf2_verify_pass
 };
 
-/* Initializes API with hash algorithm
- */
+/* Initializes API with hash algorithm */
 static int pbkdf2_init(void)
 {
   const EVP_MD *digest;
