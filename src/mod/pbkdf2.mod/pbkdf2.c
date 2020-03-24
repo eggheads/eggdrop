@@ -82,45 +82,14 @@ int b64_ntop_without_padding(u_char const *src, size_t srclength, char *target, 
   return targsize;
 }
 
-/* Write base64 PBKDF2 hash */
-static int pbkdf2_make_base64_hash(const EVP_MD *digest, const char *pass, int passlen, const unsigned char *salt, int saltlen, int rounds, char *out, int outlen) /* TODO: only 1 caller -> inline ? */
-{
-  static unsigned char *buf;
-  int digestlen, r;
-  struct rusage ru1, ru2;
-
-  digestlen = EVP_MD_size(digest);
-  if (!buf)
-    buf = nmalloc(digestlen);
-  if (outlen < B64_NTOP_CALCULATE_SIZE(digestlen)) {
-    putlog(LOG_MISC, "*", "PBKDF2 error: pbkdf2_make_base64_hash(): outlen < B64_NTOP_CALCULATE_SIZE(digestlen)");
-    return 1;
-  }
-  r = getrusage(RUSAGE_SELF, &ru1);
-  if (!PKCS5_PBKDF2_HMAC(pass, passlen, salt, saltlen, rounds, digest, digestlen, buf)) {
-    putlog(LOG_MISC, "*", "PBKDF2 error: pbkdf2_make_base64_hash(): PKCS5_PBKDF2_HMAC()");
-    return 1;
-  }
-  if (!r && !getrusage(RUSAGE_SELF, &ru2)) {
-    debug4("pbkdf2 method %s rounds %i, user %.3fms sys %.3fms", pbkdf2_method, pbkdf2_rounds,
-           (double) (ru2.ru_utime.tv_usec - ru1.ru_utime.tv_usec) / 1000 +
-           (double) (ru2.ru_utime.tv_sec  - ru1.ru_utime.tv_sec ) * 1000,
-           (double) (ru2.ru_stime.tv_usec - ru1.ru_stime.tv_usec) / 1000 +
-           (double) (ru2.ru_stime.tv_sec  - ru1.ru_stime.tv_sec ) * 1000);
-  }
-  if (b64_ntop_without_padding(buf, digestlen, out, outlen) < 0) {
-    putlog(LOG_MISC, "*", "PBKDF2 error: pbkdf2_make_base64_hash(): Outbuffer too small.");
-    return 1;
-  }
-  return 0;
-}
-
 /* Encrypt a password with flexible settings for verification.
  */
 static int pbkdf2crypt_verify_pass(const char *pass, const char *digest_name, const unsigned char *salt, int saltlen, int rounds, char *out, int outlen)
 {
-  int size, ret;
   const EVP_MD *digest;
+  int size, ret, digestlen;
+  static unsigned char *buf;
+  struct rusage ru1, ru2;
 
   digest = EVP_get_digestbyname(digest_name);
   if (!digest) {
@@ -151,8 +120,30 @@ static int pbkdf2crypt_verify_pass(const char *pass, const char *digest_name, co
   }
   bufcount(&out, &outlen, ret);
   bufcount(&out, &outlen, (out[0] = '$', 1));
-  if (pbkdf2_make_base64_hash(digest, pass, strlen(pass), salt, saltlen, rounds, out, outlen))
+  /* Write base64 PBKDF2 hash */
+  digestlen = EVP_MD_size(digest);
+  if (!buf)
+    buf = nmalloc(digestlen);
+  if (outlen < B64_NTOP_CALCULATE_SIZE(digestlen)) {
+    putlog(LOG_MISC, "*", "PBKDF2 error: outlen < B64_NTOP_CALCULATE_SIZE(digestlen)");
     return 1;
+  }
+  ret = getrusage(RUSAGE_SELF, &ru1);
+  if (!PKCS5_PBKDF2_HMAC(pass, strlen(pass), salt, saltlen, rounds, digest, digestlen, buf)) {
+    putlog(LOG_MISC, "*", "PBKDF2 error: PKCS5_PBKDF2_HMAC()");
+    return 1;
+  }
+  if (!ret && !getrusage(RUSAGE_SELF, &ru2)) {
+    debug4("pbkdf2 method %s rounds %i, user %.3fms sys %.3fms", pbkdf2_method, pbkdf2_rounds,
+           (double) (ru2.ru_utime.tv_usec - ru1.ru_utime.tv_usec) / 1000 +
+           (double) (ru2.ru_utime.tv_sec  - ru1.ru_utime.tv_sec ) * 1000,
+           (double) (ru2.ru_stime.tv_usec - ru1.ru_stime.tv_usec) / 1000 +
+           (double) (ru2.ru_stime.tv_sec  - ru1.ru_stime.tv_sec ) * 1000);
+  }
+  if (b64_ntop_without_padding(buf, digestlen, out, outlen) < 0) {
+    putlog(LOG_MISC, "*", "PBKDF2 error: Outbuffer too small.");
+    return 1;
+  }
   return 0;
 }
 
