@@ -353,7 +353,7 @@ int u_pass_match(struct userrec *u, char *pass)
     if (strlen(pass) > 30)
       pass[30] = 0;
     if (pass2) {
-      if (verify_pass2(pass, cmp) == 1)
+      if (!verify_pass2(pass, cmp))
         return 1;
     }
     else {

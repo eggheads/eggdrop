@@ -21,6 +21,7 @@
 
 #define MODULE_NAME "encryption2"
 
+#include <assert.h> /* TODO: remove before release */
 #include <resolv.h> /* base64 encode b64_ntop() and base64 decode b64_pton() */
 #include <sys/resource.h>
 #include <openssl/err.h>
@@ -81,7 +82,7 @@ int b64_ntop_without_padding(u_char const *src, size_t srclength, char *target, 
 }
 
 /* Write base64 PBKDF2 hash */
-static int pbkdf2_make_base64_hash(const EVP_MD *digest, const char *pass, int passlen, const unsigned char *salt, int saltlen, int rounds, char *out, int outlen)
+static int pbkdf2_make_base64_hash(const EVP_MD *digest, const char *pass, int passlen, const unsigned char *salt, int saltlen, int rounds, char *out, int outlen) /* TODO: only 1 caller -> inline ? */
 {
   static unsigned char *buf;
   int digestlen, r;
@@ -90,11 +91,15 @@ static int pbkdf2_make_base64_hash(const EVP_MD *digest, const char *pass, int p
   digestlen = EVP_MD_size(digest);
   if (!buf)
     buf = nmalloc(digestlen);
-  if (outlen < B64_NTOP_CALCULATE_SIZE(digestlen))
-    return -2;
+  if (outlen < B64_NTOP_CALCULATE_SIZE(digestlen)) {
+    putlog(LOG_MISC, "*", "PBKDF2 error: pbkdf2_make_base64_hash(): outlen < B64_NTOP_CALCULATE_SIZE(digestlen)");
+    return 1;
+  }
   r = getrusage(RUSAGE_SELF, &ru1);
-  if (!PKCS5_PBKDF2_HMAC(pass, passlen, salt, saltlen, rounds, digest, digestlen, buf))
-    return -5;
+  if (!PKCS5_PBKDF2_HMAC(pass, passlen, salt, saltlen, rounds, digest, digestlen, buf)) {
+    putlog(LOG_MISC, "*", "PBKDF2 error: pbkdf2_make_base64_hash(): PKCS5_PBKDF2_HMAC()");
+    return 1;
+  }
   if (!r && !getrusage(RUSAGE_SELF, &ru2)) {
     debug4("pbkdf2 method %s rounds %i, user %.3fms sys %.3fms", pbkdf2_method, pbkdf2_rounds,
            (double) (ru2.ru_utime.tv_usec - ru1.ru_utime.tv_usec) / 1000 +
@@ -102,13 +107,14 @@ static int pbkdf2_make_base64_hash(const EVP_MD *digest, const char *pass, int p
            (double) (ru2.ru_stime.tv_usec - ru1.ru_stime.tv_usec) / 1000 +
            (double) (ru2.ru_stime.tv_sec  - ru1.ru_stime.tv_sec ) * 1000);
   }
-  if (b64_ntop_without_padding(buf, digestlen, out, outlen) < 0) 
-    return -5;
+  if (b64_ntop_without_padding(buf, digestlen, out, outlen) < 0) {
+    putlog(LOG_MISC, "*", "PBKDF2 error: pbkdf2_make_base64_hash(): Outbuffer too small.");
+    return 1;
+  }
   return 0;
 }
 
 /* Encrypt a password with flexible settings for verification.
- * Returns 0 on success, -1 on digest not found, -2 on outbuffer too small, -3 on salt error, -4 on rounds outside range, -5 on pbkdf2 error
  */
 static int pbkdf2crypt_verify_pass(const char *pass, const char *digest_name, const unsigned char *salt, int saltlen, int rounds, char *out, int outlen)
 {
@@ -116,29 +122,36 @@ static int pbkdf2crypt_verify_pass(const char *pass, const char *digest_name, co
   const EVP_MD *digest;
 
   digest = EVP_get_digestbyname(digest_name);
-  if (!digest)
-    return -1;
+  if (!digest) {
+    putlog(LOG_MISC, "*", "PBKDF2 error: Unknown message digest %s.", digest_name);
+    return 1;
+  }
   size = pbkdf2_get_size(digest_name, digest, saltlen);
-  if (!out)
-    return size;
+  assert(out != 0);
   /* Sanity check */
-  if (outlen < size)
-    return -2;
-  if (saltlen <= 0)
-    return -3;
-  if (rounds <= 0)
-    return -4;
+  if (outlen < size) {
+    putlog(LOG_MISC, "*", "PBKDF2 error: Outbuffer too small.");
+    return 1;
+  }
+  if (saltlen <= 0) {
+    putlog(LOG_MISC, "*", "PBKDF2 error: Salt error.");
+    return 1;
+  }
+  if (rounds <= 0) {
+    putlog(LOG_MISC, "*", "PBKDF2 error: Rounds outside range");
+    return 1;
+  }
 
   bufcount(&out, &outlen, snprintf((char *) out, outlen, "$pbkdf2-%s$rounds=%i$", digest_name, (unsigned int) rounds));
   ret = b64_ntop_without_padding(salt, saltlen, out, outlen);
   if (ret < 0) {
-    return -2;
+    putlog(LOG_MISC, "*", "PBKDF2 error: Outbuffer too small.");
+    return 1;
   }
   bufcount(&out, &outlen, ret);
   bufcount(&out, &outlen, (out[0] = '$', 1));
-  ret = pbkdf2_make_base64_hash(digest, pass, strlen(pass), salt, saltlen, rounds, out, outlen);
-  if (ret != 0)
-    return ret;
+  if (pbkdf2_make_base64_hash(digest, pass, strlen(pass), salt, saltlen, rounds, out, outlen))
+    return 1;
   return 0;
 }
 
@@ -146,15 +159,14 @@ static int pbkdf2crypt_verify_pass(const char *pass, const char *digest_name, co
  * out = NULL returns necessary buffer size
  * Return values are the same as pbkdf2crypt_verify_pass
  */
-static int pbkdf2_pass(const char *pass, char *out, int outlen)
+static int pbkdf2_pass(const char *pass, char *out, int outlen) /* TODO: only 1 caller -> inline ? */
 {
   unsigned char salt[PBKDF2_SALT_LEN];
-  if (!out)
-    return pbkdf2_get_size(pbkdf2_method, EVP_get_digestbyname(pbkdf2_method), PBKDF2_SALT_LEN);
+  assert(out != 0);
   if (RAND_bytes(salt, sizeof salt) != 1) {
     /* TODO: Do we need ERR_load_crypto_strings(), SSL_load_error_strings() and ERR_free_strings(void) ? */
     putlog(LOG_MISC, "*", "PBKDF2 error: %s", ERR_error_string(ERR_get_error(), NULL));
-    return -3;
+    return 1;
   }
   return pbkdf2crypt_verify_pass(pass, pbkdf2_method, salt, sizeof salt, pbkdf2_rounds, out, outlen);
 }
@@ -174,12 +186,7 @@ static char *pbkdf2_encrypt_pass(const char *pass)
   return buf;
 }
 
-/* Return values:
- * -1 - cannot parse hash
- * 0 - no match
- * 1 - match
- * 2 - match, suggest re-hashing password (more rounds, new algorithm, ...)
- * PHC string format
+/* PHC string format
  * hash = "$pbkdf2-<digest>$rounds=<rounds>$<salt>$<hash>"
  */
 static int pbkdf2_verify_pass(const char *pass, const char *encrypted)
@@ -195,12 +202,12 @@ static int pbkdf2_verify_pass(const char *pass, const char *encrypted)
 
   if (!sscanf(encrypted, "$pbkdf2-%27[^$]$rounds=%u$%24[^$]$%344s", method, &rounds, b64salt, b64hash)) {
     putlog(LOG_MISC, "*", "PBKDF2 error: could not parse hashed password.");
-    return -1;
+    return 1;
   }
   digest = EVP_get_digestbyname(method);
   if (!digest) {
     putlog(LOG_MISC, "*", "PBKDF2 error: EVP_get_digestbyname(%s).", method);
-    return -1;
+    return 1;
   }
   if (b64salt[22] == 0) {
     b64salt[22] = '=';
@@ -213,14 +220,14 @@ static int pbkdf2_verify_pass(const char *pass, const char *encrypted)
   }
   if (b64_pton(b64salt, salt, sizeof salt) != PBKDF2_SALT_LEN) {
     putlog(LOG_MISC, "*", "PBKDF2 error: b64_pton(%s).", b64salt);
-    return -1;
+    return 1;
   }
   hashlen = pbkdf2_get_size(method, digest, PBKDF2_SALT_LEN);
   buf = nmalloc(hashlen + 1);
   if (pbkdf2crypt_verify_pass(pass, method, salt, PBKDF2_SALT_LEN, rounds, buf, hashlen) != 0) {
     putlog(LOG_MISC, "*", "PBKDF2 error: pbkdf2crypt_verify_pass()");
     nfree(buf);
-    return -1;
+    return 1;
   }
   if (strncmp(encrypted, buf, hashlen)) {
     putlog(LOG_MISC, "*", "PBKDF2 error: strncmp(hashlen):\n  %s\n  %s", encrypted, buf);
@@ -230,10 +237,10 @@ static int pbkdf2_verify_pass(const char *pass, const char *encrypted)
     if (strncmp(method, pbkdf2_method, sizeof pbkdf2_method) || rounds != pbkdf2_rounds)
     */
 
-    return 0;
+    return 1;
   }
   nfree(buf);
-  return 1;
+  return 0;
 }
 
 EXPORT_SCOPE char *pbkdf2_start();
@@ -248,8 +255,6 @@ static Function pbkdf2_table[] = {
 };
 
 /* Initializes API with hash algorithm
- * Returns -1 on digest not found, module should report and unload
- * Returns -2 on RAND_status() error
  */
 static int pbkdf2_init(void)
 {
@@ -258,11 +263,11 @@ static int pbkdf2_init(void)
   digest = EVP_get_digestbyname(pbkdf2_method);
   if (!digest) {
     putlog(LOG_MISC, "*", "PBKDF2 error: Failed to initialize digest '%s'.", pbkdf2_method);
-    return -1;
+    return 1;
   }
   if (!RAND_status()) {
     putlog(LOG_MISC, "*", "PBKDF2 error: random generator has not been seeded with enough data.");
-    return -2;
+    return 1;
   }
   return 0;
 }
@@ -283,7 +288,7 @@ char *pbkdf2_start(Function *global_funcs)
       module_undepend(MODULE_NAME);
       return "This module requires Eggdrop 1.9.0 or later.";
     }
-    if (pbkdf2_init() != 0) {
+    if (pbkdf2_init()) {
       module_undepend(MODULE_NAME);
       return "Initialization failure";
     }
