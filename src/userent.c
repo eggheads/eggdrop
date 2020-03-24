@@ -266,7 +266,7 @@ struct user_entry_type USERENTRY_PASS2 = {
 int pass_set(struct userrec *u, struct user_entry *e, void *buf)
 {
   char new[32];
-  char *new2;
+  char *new2 = 0;
   char *pass = buf;
 
   if (e->u.extra)
@@ -300,7 +300,7 @@ int pass_set(struct userrec *u, struct user_entry *e, void *buf)
     if (encrypt_pass2)
       set_user(&USERENTRY_PASS2, u, new2);
     explicit_bzero(new, sizeof new);
-    if (new2 != new)
+    if (new2 && new2 != new)
       explicit_bzero(new2, strlen(new2));
   }
   if (!noshare && !(u->flags & (USER_BOT | USER_UNSHARED)))
