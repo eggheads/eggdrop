@@ -198,7 +198,7 @@ static int pbkdf2_verify_pass(const char *pass, const char *encrypted)
   }
   if (!(buf = pbkdf2crypt_verify_pass(pass, method, salt, PBKDF2_SALT_LEN, rounds)))
     return 1;
-  if (strcmp(encrypted, (char *) buf)) {
+  if (strcmp(encrypted, buf)) {
     putlog(LOG_MISC, "*", "PBKDF2 error: strncmp(hashlen):\n  %s\n  %s", encrypted, buf);
     /* TODO: re-hashing password (new method, more rounds)
      * if (strncmp(method, pbkdf2_method, sizeof pbkdf2_method) || rounds != pbkdf2_rounds)
