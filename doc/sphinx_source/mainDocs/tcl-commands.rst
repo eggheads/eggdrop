@@ -2865,7 +2865,7 @@ The following is a list of bind types and how they work. Below each bind type is
   
   procname <nick> <user\@host> <handle> <channel> <reason>
 
-  Description: triggered by a signoff, or possibly by someone who got netsplit and never returned. The signoff message is the last argument to the proc. Wildcards can be used in the mask, which is matched against '#channel nick!user\@host'.
+  Description: triggered by a signoff, or possibly by someone who got netsplit and never returned. The signoff message is the last argument to the proc. Wildcards can be used in the mask, which is matched against '#channel nick!user\@host'. If a "*" is used for the channel in the mask, this bind is triggered once for every channel that the user is in the bot with; in other words if the bot is in two channels with the target user, the bind will be triggered twice. To trigger a proc only once per signoff, regardless of the number of channels the Eggdrop and user share, use the RAWT bind with SIGN as the keyword.
 
   Module: irc
 
@@ -2896,7 +2896,7 @@ The following is a list of bind types and how they work. Below each bind type is
   
   procname <nick> <user\@host> <handle> <channel> <newnick>
 
-  Description: triggered when someone changes nicknames. The mask is matched against '#channel newnick' and can contain wildcards. Channel is "*" if the user isn't on a channel (usually the bot not yet in a channel). This bind is triggered once for every channel that the user is in the bot with; in other words if the bot is in two channels with the target user, the bind will be called twice. To trigger a proc only once per nick change, regardless of the number of channels the Eggdrop and user share, use the RAWT bind with NICK as the keyword.
+  Description: triggered when someone changes nicknames. The mask is matched against '#channel newnick' and can contain wildcards. Channel is "*" if the user isn't on a channel (usually the bot not yet in a channel). If a "*" is used for the channel in the mask, this bind is triggered once for every channel that the user is in the bot with; in other words if the bot is in two channels with the target user, the bind will be triggered twice. To trigger a proc only once per nick change, regardless of the number of channels the Eggdrop and user share, use the RAWT bind with NICK as the keyword.
 
   Module: irc
 
@@ -3378,6 +3378,8 @@ Here's a list of the bindings that use the return value from procs they trigger:
 (17) EVNT  Return 1 to make Eggdrop not to take the default action for the event. Used for signal type events, ignored for others.
 
 (18) TLS   Return 1 to disable verbose ssl information for the handshake.
+
+(19) RAWT  Return 1 to ask the bot not to prcess the server text. This can affet the bot's performance by causing it to miss things that it would normally act on -- you have been warned. Again.
 
 Control Procedures
 ------------------
