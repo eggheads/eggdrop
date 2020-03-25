@@ -109,7 +109,7 @@ static char *pbkdf2crypt_verify_pass(const char *pass, const char *digest_name, 
   /* Write base64 PBKDF2 hash */
   digestlen = EVP_MD_size(digest);
   debug3("DEBUG: hashlen %i B64_NTOP_CALCULATE_SIZE(digestlen) %i digestlen %i", hashlen2, B64_NTOP_CALCULATE_SIZE(digestlen), digestlen);
-  if (hashlen2 < B64_NTOP_CALCULATE_SIZE(digestlen)) {
+  if (hashlen2 < B64_NTOP_CALCULATE_SIZE(digestlen)) { /* TODO: do we need this? sanity check always true? does this code even make sense / is it correct ? */
     explicit_bzero(out, strlen(out));
     putlog(LOG_MISC, "*", "PBKDF2 error: hashlen2 < B64_NTOP_CALCULATE_SIZE(digestlen)");
     return NULL;
