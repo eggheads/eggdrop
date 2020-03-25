@@ -65,7 +65,7 @@ static int b64_ntop_without_padding(u_char const *src, size_t srclength, char *t
 }
 
 /* Encrypt a password with flexible settings for verification. */
-static char *pbkdf2crypt_verify_pass(const char *pass, const char *digest_name, const unsigned char *salt, int saltlen, int rounds)
+static char *pbkdf2_hash(const char *pass, const char *digest_name, const unsigned char *salt, int saltlen, int rounds)
 {
   const EVP_MD *digest;
   static int hashlen;  /* static object is initialized to zero (Standard C) */
@@ -140,7 +140,7 @@ static char *pbkdf2crypt_verify_pass(const char *pass, const char *digest_name, 
   return out;
 }
 
-static char *pbkdf2_encrypt_pass(const char *pass)
+static char *pbkdf2_encrypt(const char *pass)
 {
   unsigned char salt[PBKDF2_SALT_LEN];
   static char *buf;
@@ -151,7 +151,7 @@ static char *pbkdf2_encrypt_pass(const char *pass)
     putlog(LOG_MISC, "*", "PBKDF2 error: %s.", ERR_error_string(ERR_get_error(), NULL));
     return NULL;
   }
-  if (!(buf = pbkdf2crypt_verify_pass(pass, pbkdf2_method, salt, sizeof salt, pbkdf2_rounds)))
+  if (!(buf = pbkdf2_hash(pass, pbkdf2_method, salt, sizeof salt, pbkdf2_rounds)))
     return NULL;
   return buf;
 }
@@ -159,7 +159,7 @@ static char *pbkdf2_encrypt_pass(const char *pass)
 /* PHC string format
  * hash = "$pbkdf2-<digest>$rounds=<rounds>$<salt>$<hash>"
  */
-static int pbkdf2_verify_pass(const char *pass, const char *encrypted)
+static int pbkdf2_verify(const char *pass, const char *encrypted)
 {
   char method[sizeof pbkdf2_method],
        b64salt[B64_NTOP_CALCULATE_SIZE(PBKDF2_SALT_LEN) + 1],
@@ -194,7 +194,7 @@ static int pbkdf2_verify_pass(const char *pass, const char *encrypted)
     putlog(LOG_MISC, "*", "PBKDF2 error: b64_pton(%s).", b64salt);
     return 1;
   }
-  if (!(buf = pbkdf2crypt_verify_pass(pass, method, salt, saltlen, rounds)))
+  if (!(buf = pbkdf2_hash(pass, method, salt, saltlen, rounds)))
     return 1;
   if (strcmp(encrypted, buf)) {
     putlog(LOG_MISC, "*", "PBKDF2 error: strncmp(hashlen):\n  %s\n  %s.", encrypted, buf);
@@ -215,8 +215,8 @@ static Function pbkdf2_table[] = {
   (Function) pbkdf2_close,
   NULL, /* expmem */
   NULL, /* report */
-  (Function) pbkdf2_encrypt_pass,
-  (Function) pbkdf2_verify_pass
+  (Function) pbkdf2_encrypt,
+  (Function) pbkdf2_verify
 };
 
 /* Initializes API with hash algorithm */
@@ -258,8 +258,8 @@ char *pbkdf2_start(Function *global_funcs)
       module_undepend(MODULE_NAME);
       return "Initialization failure";
     }
-    add_hook(HOOK_ENCRYPT_PASS2, (Function) pbkdf2_encrypt_pass);
-    add_hook(HOOK_VERIFY_PASS2, (Function) pbkdf2_verify_pass);
+    add_hook(HOOK_ENCRYPT_PASS2, (Function) pbkdf2_encrypt);
+    add_hook(HOOK_VERIFY_PASS2, (Function) pbkdf2_verify);
     add_tcl_ints(my_tcl_ints);
     add_tcl_strings(my_tcl_strings);
   }
