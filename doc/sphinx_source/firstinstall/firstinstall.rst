@@ -257,7 +257,7 @@ This will run the generated botchk script every ten minutes and restart your Egg
 Authenticating with NickServ
 ----------------------------
 
-Many IRC features require you to authenticate with NickServ to use them. You can do this from your config file by searhing for the line::
+Many IRC features require you to authenticate with NickServ to use them. You can do this from your config file by searching for the line::
 
     #  putserv "PRIVMSG NickServ :identify <password>"
 
