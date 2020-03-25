@@ -111,6 +111,7 @@ static char *pbkdf2crypt_verify_pass(const char *pass, const char *digest_name, 
   bufcount(&out2, &hashlen2, snprintf((char *) out2, hashlen2, "$pbkdf2-%s$rounds=%i$", digest_name, (unsigned int) rounds));
   ret = b64_ntop_without_padding(salt, saltlen, out2, hashlen2);
   if (ret < 0) {
+    explicit_bzero(out, strlen(out));
     putlog(LOG_MISC, "*", "PBKDF2 error: Outbuffer too small (2).");
     return NULL;
   }
@@ -120,6 +121,7 @@ static char *pbkdf2crypt_verify_pass(const char *pass, const char *digest_name, 
   digestlen = EVP_MD_size(digest);
   debug3("DEBUG: hashlen %i B64_NTOP_CALCULATE_SIZE(digestlen) %i digestlen %i", hashlen2, B64_NTOP_CALCULATE_SIZE(digestlen), digestlen);
   if (hashlen2 < B64_NTOP_CALCULATE_SIZE(digestlen)) {
+    explicit_bzero(out, strlen(out));
     putlog(LOG_MISC, "*", "PBKDF2 error: hashlen2 < B64_NTOP_CALCULATE_SIZE(digestlen)");
     return NULL;
   }
@@ -127,6 +129,7 @@ static char *pbkdf2crypt_verify_pass(const char *pass, const char *digest_name, 
     buf = nmalloc(digestlen); /* size ? */
   ret = getrusage(RUSAGE_SELF, &ru1);
   if (!PKCS5_PBKDF2_HMAC(pass, strlen(pass), salt, saltlen, rounds, digest, digestlen, buf)) {
+    explicit_bzero(out, strlen(out));
     putlog(LOG_MISC, "*", "PBKDF2 error: PKCS5_PBKDF2_HMAC()");
     return NULL;
   }
@@ -141,6 +144,7 @@ static char *pbkdf2crypt_verify_pass(const char *pass, const char *digest_name, 
     debug1("PBKDF2 error: getrusage(): %s", strerror(errno));
   }
   if (b64_ntop_without_padding(buf, digestlen, out2, hashlen2) < 0) {
+    explicit_bzero(out, strlen(out));
     putlog(LOG_MISC, "*", "PBKDF2 error: Outbuffer too small (3).");
     return NULL;
   }
@@ -205,8 +209,10 @@ static int pbkdf2_verify_pass(const char *pass, const char *encrypted)
     /* TODO: re-hashing password (new method, more rounds)
      * if (strncmp(method, pbkdf2_method, sizeof pbkdf2_method) || rounds != pbkdf2_rounds)
      */
+    explicit_bzero(buf, strlen(buf));
     return 1;
   }
+  explicit_bzero(buf, strlen(buf));
   return 0;
 }
 
