@@ -112,7 +112,7 @@ static char *pbkdf2crypt_verify_pass(const char *pass, const char *digest_name, 
   ret = b64_ntop_without_padding(salt, saltlen, out2, hashlen2);
   if (ret < 0) {
     explicit_bzero(out, strlen(out));
-    putlog(LOG_MISC, "*", "PBKDF2 error: Outbuffer too small (2).");
+    putlog(LOG_MISC, "*", "PBKDF2 error: Outbuffer too small (1).");
     return NULL;
   }
   bufcount(&out2, &hashlen2, ret);
@@ -145,7 +145,7 @@ static char *pbkdf2crypt_verify_pass(const char *pass, const char *digest_name, 
   }
   if (b64_ntop_without_padding(buf, digestlen, out2, hashlen2) < 0) {
     explicit_bzero(out, strlen(out));
-    putlog(LOG_MISC, "*", "PBKDF2 error: Outbuffer too small (3).");
+    putlog(LOG_MISC, "*", "PBKDF2 error: Outbuffer too small (2).");
     return NULL;
   }
   return out;
