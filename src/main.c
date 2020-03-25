@@ -1216,9 +1216,7 @@ int main(int arg_c, char **arg_v)
   use_stderr = 0;               /* Stop writing to stderr now */
   if (backgrd) {
     /* Ok, try to disassociate from controlling terminal (finger cross) */
-#ifdef HAVE_SETPGID
     setpgid(0, 0);
-#endif
     /* Tcl wants the stdin, stdout and stderr file handles kept open. */
     if (freopen("/dev/null", "r", stdin) == NULL) {
       putlog(LOG_MISC, "*", "Error renaming stdin file handle: %s", strerror(errno));
