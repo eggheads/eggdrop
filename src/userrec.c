@@ -324,7 +324,7 @@ struct userrec *get_user_by_host(char *host)
  */
 int u_pass_match(struct userrec *u, char *pass)
 {
-  char *cmp, new[32];
+  char *cmp = 0, new[32];
   int pass2;
 
   if (!u || !pass)

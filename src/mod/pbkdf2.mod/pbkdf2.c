@@ -19,13 +19,15 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
+#include "src/mod/module.h"
+
+#ifdef TLS
 #define MODULE_NAME "encryption2"
 
 #include <resolv.h> /* base64 encode b64_ntop() and base64 decode b64_pton() */
 #include <sys/resource.h>
 #include <openssl/err.h>
 #include <openssl/rand.h>
-#include "src/mod/module.h"
 
 /* Default number of rounds if not explicitly specified */
 #define PBKDF2_ROUNDS 5000
@@ -236,8 +238,10 @@ static int pbkdf2_init(void)
   return 0;
 }
 
+#endif
 char *pbkdf2_start(Function *global_funcs)
 {
+#ifdef TLS
   /* `global_funcs' is NULL if eggdrop is recovering from a restart.
    *
    * As the encryption module is never unloaded, only initialise stuff
@@ -262,4 +266,7 @@ char *pbkdf2_start(Function *global_funcs)
     add_tcl_strings(my_tcl_strings);
   }
   return NULL;
+#else
+  return "Initialization failure: configured with --disable-TLS or openssl not found";
+#endif
 }
