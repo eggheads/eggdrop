@@ -81,11 +81,11 @@ static char *pbkdf2crypt_verify_pass(const char *pass, const char *digest_name, 
   }
   /* Sanity check */
   if (saltlen <= 0) {
-    putlog(LOG_MISC, "*", "PBKDF2 error: Salt error.");
+    putlog(LOG_MISC, "*", "PBKDF2 error: saltlen %i <= 0.", saltlen);
     return NULL;
   }
   if (rounds <= 0) {
-    putlog(LOG_MISC, "*", "PBKDF2 error: Rounds outside range");
+    putlog(LOG_MISC, "*", "PBKDF2 error: rounds %i <= 0.", rounds);
     return NULL;
   }
   if (!hashlen) { /* TODO: hashlan may change if implemented */
@@ -111,7 +111,7 @@ static char *pbkdf2crypt_verify_pass(const char *pass, const char *digest_name, 
   debug3("DEBUG: hashlen %i B64_NTOP_CALCULATE_SIZE(digestlen) %i digestlen %i", hashlen2, B64_NTOP_CALCULATE_SIZE(digestlen), digestlen);
   if (hashlen2 < B64_NTOP_CALCULATE_SIZE(digestlen)) { /* TODO: do we need this? sanity check always true? does this code even make sense / is it correct ? */
     explicit_bzero(out, strlen(out));
-    putlog(LOG_MISC, "*", "PBKDF2 error: hashlen2 < B64_NTOP_CALCULATE_SIZE(digestlen)");
+    putlog(LOG_MISC, "*", "PBKDF2 error: hashlen2 < B64_NTOP_CALCULATE_SIZE(digestlen).");
     return NULL;
   }
   if (!buf) /* TODO ? */
@@ -119,7 +119,7 @@ static char *pbkdf2crypt_verify_pass(const char *pass, const char *digest_name, 
   ret = getrusage(RUSAGE_SELF, &ru1);
   if (!PKCS5_PBKDF2_HMAC(pass, strlen(pass), salt, saltlen, rounds, digest, digestlen, buf)) {
     explicit_bzero(out, strlen(out));
-    putlog(LOG_MISC, "*", "PBKDF2 error: PKCS5_PBKDF2_HMAC()");
+    putlog(LOG_MISC, "*", "PBKDF2 error: PKCS5_PBKDF2_HMAC().");
     return NULL;
   }
   if (!ret && !getrusage(RUSAGE_SELF, &ru2)) {
@@ -148,7 +148,7 @@ static char *pbkdf2_encrypt_pass(const char *pass)
   /* Encrypt a password with standard settings to store. */
   if (RAND_bytes(salt, sizeof salt) != 1) {
     /* TODO: Do we need ERR_load_crypto_strings(), SSL_load_error_strings() and ERR_free_strings(void) ? */
-    putlog(LOG_MISC, "*", "PBKDF2 error: %s", ERR_error_string(ERR_get_error(), NULL));
+    putlog(LOG_MISC, "*", "PBKDF2 error: %s.", ERR_error_string(ERR_get_error(), NULL));
     return NULL;
   }
   if (!(buf = pbkdf2crypt_verify_pass(pass, pbkdf2_method, salt, sizeof salt, pbkdf2_rounds)))
@@ -169,6 +169,7 @@ static int pbkdf2_verify_pass(const char *pass, const char *encrypted)
   unsigned char salt[PBKDF2_SALT_LEN + 1];
   static char *buf;
 
+  /* TODO: different salt lengths wont work yet i guess and overflow may still be possible */
   if (!sscanf(encrypted, "$pbkdf2-%27[^$]$rounds=%u$%24[^$]$%344s", method, &rounds, b64salt, b64hash)) {
     putlog(LOG_MISC, "*", "PBKDF2 error: could not parse hashed password.");
     return 1;
@@ -191,10 +192,10 @@ static int pbkdf2_verify_pass(const char *pass, const char *encrypted)
     putlog(LOG_MISC, "*", "PBKDF2 error: b64_pton(%s).", b64salt);
     return 1;
   }
-  if (!(buf = pbkdf2crypt_verify_pass(pass, method, salt, PBKDF2_SALT_LEN, rounds)))
+  if (!(buf = pbkdf2crypt_verify_pass(pass, method, salt, sizeof salt - 1, rounds)))
     return 1;
   if (strcmp(encrypted, buf)) {
-    putlog(LOG_MISC, "*", "PBKDF2 error: strncmp(hashlen):\n  %s\n  %s", encrypted, buf);
+    putlog(LOG_MISC, "*", "PBKDF2 error: strncmp(hashlen):\n  %s\n  %s.", encrypted, buf);
     /* TODO: re-hashing password (new method, more rounds)
      * if (strncmp(method, pbkdf2_method, sizeof pbkdf2_method) || rounds != pbkdf2_rounds)
      */
