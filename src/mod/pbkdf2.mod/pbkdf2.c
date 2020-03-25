@@ -50,7 +50,7 @@ static void bufcount(char **buf, int *buflen, int bytes)
   *buflen -= bytes;
 }
 
-int b64_ntop_without_padding(u_char const *src, size_t srclength, char *target, size_t targsize)
+static int b64_ntop_without_padding(u_char const *src, size_t srclength, char *target, size_t targsize)
 {
   char *c;
 
