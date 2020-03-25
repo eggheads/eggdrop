@@ -167,6 +167,7 @@ static int pbkdf2_verify_pass(const char *pass, const char *encrypted)
   unsigned int rounds;
   const EVP_MD *digest;
   unsigned char salt[PBKDF2_SALT_LEN + 1];
+  int saltlen;
   static char *buf;
 
   /* TODO: different salt lengths wont work yet i guess and overflow may still be possible */
@@ -188,11 +189,12 @@ static int pbkdf2_verify_pass(const char *pass, const char *encrypted)
     b64salt[23] = '=';
     b64salt[24] = 0;
   }
-  if (b64_pton(b64salt, salt, sizeof salt) != PBKDF2_SALT_LEN) {
+  saltlen = b64_pton(b64salt, salt, sizeof salt);
+  if (saltlen < 0) {
     putlog(LOG_MISC, "*", "PBKDF2 error: b64_pton(%s).", b64salt);
     return 1;
   }
-  if (!(buf = pbkdf2crypt_verify_pass(pass, method, salt, sizeof salt - 1, rounds)))
+  if (!(buf = pbkdf2crypt_verify_pass(pass, method, salt, saltlen, rounds)))
     return 1;
   if (strcmp(encrypted, buf)) {
     putlog(LOG_MISC, "*", "PBKDF2 error: strncmp(hashlen):\n  %s\n  %s.", encrypted, buf);
