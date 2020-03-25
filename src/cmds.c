@@ -411,6 +411,10 @@ static void cmd_newpass(struct userrec *u, int idx, char *par)
     dprintf(idx, "Please use at most %i characters.\n", (PASSWORDLEN - 1));
     return;
   }
+  if (new[0] == '+') {
+    dprintf(idx, "Please do not use + as first character.\n");
+    return;
+  }
   set_user(&USERENTRY_PASS, u, new);
   putlog(LOG_CMDS, "*", "#%s# newpass...", dcc[idx].nick);
   dprintf(idx, "Changed password to '%s'.\n", new);
@@ -1064,6 +1068,10 @@ static void cmd_chpass(struct userrec *u, int idx, char *par)
       }
       if (l > (PASSWORDLEN - 1)) {
         dprintf(idx, "Please use at most %i characters.\n", (PASSWORDLEN - 1));
+        return;
+      }
+      if (new[0] == '+') {
+        dprintf(idx, "Please do not use + as first character.\n");
         return;
       }
       set_user(&USERENTRY_PASS, u, new);
