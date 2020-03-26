@@ -145,6 +145,8 @@ static int msg_pass(char *nick, char *host, struct userrec *u, char *par)
   } else
     new = old;
   putlog(LOG_CMDS, "*", "(%s!%s) !%s! PASS...", nick, host, u->handle);
+
+  /* See also: cmds.c:newpass_chpass() */
   l = strlen(new);
   if (l < 6) {
     dprintf(DP_HELP, "NOTICE %s :%s\n", nick, IRC_PASSFORMAT);
@@ -154,7 +156,12 @@ static int msg_pass(char *nick, char *host, struct userrec *u, char *par)
     dprintf(DP_HELP, "NOTICE %s :Please use at most %i characters.\n", nick, (PASSWORDLEN - 1));
     return 1;
   }
+  if (new[0] == '+') { /* See also: userent.c:pass_set() */
+    dprintf(DP_HELP, "NOTICE %s :Please do not use + as first character.\n", nick);
+    return 1;
+  }
   set_user(&USERENTRY_PASS, u, new);
+
   dprintf(DP_HELP, "NOTICE %s :%s '%s'.\n", nick,
           new == old ? IRC_SETPASS : IRC_CHANGEPASS, new);
   return 0;
