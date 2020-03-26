@@ -149,23 +149,6 @@ Below are some of the common settings used for Eggdrop:
 Finally, be sure to remove the 'die' commands from the config (there are two of them 'hidden' in various places), or the bot won't start. Once you've finished editing the config file, make sure you rename it to something other than
 "eggdrop.conf" if you haven't already. Then, if you edited the config file locally, upload the config file to the directory you installed the bot.
 
-Auto-starting the Eggdrop
-~~~~~~~~~~~~~~~~~~~~~~~~~
-The botchk script and crontab are used to automatically restart the bot if the shell it's on reboots or if the bot process is killed for some other reason. Since version 1.3.24i, there is a script included in the scripts directory that automatically configures botchk and crontab for you. From the commandline, simply type ``chmod 700 scripts/autobotchk`` then ``./scripts/autobotchk <config> -dir /home/botdir -noemail``, where /home/botdir is the directory you installed the bot to and <config> is the name you chose for your config file. That's all you need to do!
-
-
-1. After running the autobotchk script, your crontab line should look like::
-
-    0,10,20,30,40,50 * * * * /home/botdir/scripts/botchk >/dev/null 2>&1
-
-  This will run the botchk script every 10 minutes, which checks that the bot is running and restarts it if it isn't. You just need to change the /home/botdir part to the correct path to the bot on your shell (type pwd to show this). Type the line in Notepad or some place where you can highlight and copy it from.
-
-2. To edit the crontab, type crontab -e. This should bring up the vi editor (it will appear as a bunch of lines starting with the ~ character), but may open up the pico editor instead.
-
-3. For vi, do the following - hit ctrl-L, hit i, paste the crontab line you created earlier, hit Esc, type :wq! then hit Enter (if you make a mistake doing this, just hit Esc and start over). For pico - paste the crontab line you created earlier, hit ctrl-X, hit Y when prompted to save, hit Enter when prompted for a filename.
-
-You can view your current crontab entries by typing crontab -l. To clear your crontab, use crontab -r (may be crontab -d on some shells).
-
 Starting the Eggdrop
 --------------------
 
@@ -184,11 +167,11 @@ Additionally, you can kill the bot via the command line (``kill pid``, the pid i
 
 If you're still unsure what the problem is, try asking in #eggdrop on Freenode, and be sure to include any relevant information from the logfile. Good luck!
 
-First steps
------------
+First steps with a running Eggdrop
+==================================
 
 Log on to the partyline
-~~~~~~~~~~~~~~~~~~~~~~~
+-----------------------
 Now that your bot is online, you'll want to join the partyline to further use the bot. First, read what it tells you when you started it up::
 
   STARTING BOT IN USERFILE CREATION MODE.
@@ -210,7 +193,7 @@ This tells you that the bot is listening on IP 2.4.6.9, port 3183. If you see 0.
 If you choose not to telnet to connect to the partyline, you can either ``/dcc chat BotNick`` or ``/ctcp BotNick chat``. If one of those methods does not work for you, try the other. Once you're on the bot for the first time, type ``.help`` for a short list of available commands, or ``.help all`` for a more thorough list.
 
 Common first steps
-~~~~~~~~~~~~~~~~~~
+------------------
 
 To learn more about any of these commands, type .help <command> on the partyline. It will provide you the syntax you need, as well as a short description of how to use the command.
 
@@ -247,3 +230,35 @@ Common uses involve setting channels modes. This can be done with the chanmode c
   .chanset #channel chanmode +snt
 
 which will enforce the s, n, and t flags on a channel.
+
+Automatically restarting an Eggdrop
+-----------------------------------
+
+A common question asked by users is, how can I configure Eggdrop to automatically restart should it die, such as after a reboot? To do that, we use the system's crontab daemon to run a script (called botchk) every ten minutes that checks if the eggdrop is running. If the eggdrop is not running, the script will restart the bot, with an optional email sent to the user informing them of the action. To make this process as simple as possible, we have included a script that can automatically configure your crontab and botchk scripts for you. To set up your crontab/botchk combo:
+
+1. Enter the directory you installed your Eggdrop to. Most commonly, this is ~/eggdrop (also known as /home/<username>/eggdrop).
+
+2. Just humor us- run ``./scripts/autobotchk`` without any arguments and read the options available to you. They're listed there for a reason!
+
+3. If you don't want to customize anything via the options listed in #2, you can start the script simply by running::
+
+    ./scripts/autobotchk yourEggdropConfigNameHere.conf
+
+4. Review the output of the script, and verify your new crontab entry by typing::
+
+    crontab -l
+
+By default, it should create an entry that looks similar to::
+
+    0,10,20,30,40,50 * * * * /home/user/bot/scripts/YourEggdrop.botchk 2>&1
+
+This will run the generated botchk script every ten minutes and restart your Eggdrop if it is not running during the check. Also note that if you run autobotchk from the scripts directory, you'll have to manually specify your config file location with the -dir option. To remove a crontab entry, use ``crontab -e`` to open the crontab file in your system's default editor and remove the crontab line.
+
+Authenticating with NickServ
+----------------------------
+
+Many IRC features require you to authenticate with NickServ to use them. You can do this from your config file by searhing for the line::
+
+    #  putserv "PRIVMSG NickServ :identify <password>"
+
+in your config file. Uncomment it by removing the '#' sign and then replace <password> with your password. Your bot will now authenticate with NickServ each time it joins a server.
