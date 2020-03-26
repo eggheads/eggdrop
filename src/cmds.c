@@ -411,7 +411,7 @@ static void cmd_newpass(struct userrec *u, int idx, char *par)
     dprintf(idx, "Please use at most %i characters.\n", (PASSWORDLEN - 1));
     return;
   }
-  if (new[0] == '+') {
+  if (new[0] == '+') { /* See also: userent.c:pass_set() */
     dprintf(idx, "Please do not use + as first character.\n");
     return;
   }
@@ -1070,7 +1070,7 @@ static void cmd_chpass(struct userrec *u, int idx, char *par)
         dprintf(idx, "Please use at most %i characters.\n", (PASSWORDLEN - 1));
         return;
       }
-      if (new[0] == '+') {
+      if (new[0] == '+') { /* See also: userent.c:pass_set() */
         dprintf(idx, "Please do not use + as first character.\n");
         return;
       }
