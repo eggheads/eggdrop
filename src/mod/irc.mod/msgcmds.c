@@ -144,13 +144,10 @@ static int msg_pass(char *nick, char *host, struct userrec *u, char *par)
   } else
     new = old;
   putlog(LOG_CMDS, "*", "(%s!%s) !%s! PASS...", nick, host, u->handle);
-
   if ((s = check_validpass(u, new))) {
     dprintf(DP_HELP, "NOTICE %s :%s\n", nick, s);
     return 1;
   }
-  set_user(&USERENTRY_PASS, u, new);
-
   dprintf(DP_HELP, "NOTICE %s :%s '%s'.\n", nick,
           new == old ? IRC_SETPASS : IRC_CHANGEPASS, new);
   return 0;
