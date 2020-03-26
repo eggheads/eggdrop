@@ -393,7 +393,7 @@ static void cmd_back(struct userrec *u, int idx, char *par)
 }
 
 /* Take a password provided by the user and check that it isn't too long,
- * too short, or start with a '+' (for encryption reaons)
+ * too short, or start with a '+' (for encryption reasons)
  */
 int check_validpass(struct userrec *u, char *new, char *s, size_t size) {
   int l;
