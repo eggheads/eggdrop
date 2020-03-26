@@ -392,30 +392,37 @@ static void cmd_back(struct userrec *u, int idx, char *par)
   not_away(idx);
 }
 
+static int newpass_chpass(struct userrec *u, int idx, char *new) {
+  int l;
+
+  l = strlen(new);
+  if (l < 6) {
+    dprintf(idx, "%s\n", IRC_PASSFORMAT);
+    return 1;
+  }
+  if (l > (PASSWORDLEN - 1)) {
+    dprintf(idx, "Please use at most %i characters.\n", (PASSWORDLEN - 1));
+    return 1;
+  }
+  if (new[0] == '+') { /* See also: userent.c:pass_set() */
+    dprintf(idx, "Please do not use + as first character.\n");
+    return 1;
+  }
+  set_user(&USERENTRY_PASS, u, new);
+  return 0;
+}
+
 static void cmd_newpass(struct userrec *u, int idx, char *par)
 {
   char *new;
-  int l;
 
   if (!par[0]) {
     dprintf(idx, "Usage: newpass <newpassword>\n");
     return;
   }
   new = newsplit(&par);
-  l = strlen(new);
-  if (l < 6) {
-    dprintf(idx, "%s\n", IRC_PASSFORMAT);
+  if (newpass_chpass(u, idx, new))
     return;
-  }
-  if (l > (PASSWORDLEN - 1)) {
-    dprintf(idx, "Please use at most %i characters.\n", (PASSWORDLEN - 1));
-    return;
-  }
-  if (new[0] == '+') { /* See also: userent.c:pass_set() */
-    dprintf(idx, "Please do not use + as first character.\n");
-    return;
-  }
-  set_user(&USERENTRY_PASS, u, new);
   putlog(LOG_CMDS, "*", "#%s# newpass...", dcc[idx].nick);
   dprintf(idx, "Changed password to '%s'.\n", new);
 }
@@ -1036,7 +1043,7 @@ static void cmd_handle(struct userrec *u, int idx, char *par)
 static void cmd_chpass(struct userrec *u, int idx, char *par)
 {
   char *handle, *new;
-  int atr = u ? u->flags : 0, l;
+  int atr = u ? u->flags : 0;
 
   if (!par[0])
     dprintf(idx, "Usage: chpass <handle> [password]\n");
@@ -1061,20 +1068,8 @@ static void cmd_chpass(struct userrec *u, int idx, char *par)
       dprintf(idx, "Removed password.\n");
     } else {
       new = newsplit(&par);
-      l = strlen(new);
-      if (l < 6) {
-        dprintf(idx, "%s\n", IRC_PASSFORMAT);
+      if (newpass_chpass(u, idx, new))
         return;
-      }
-      if (l > (PASSWORDLEN - 1)) {
-        dprintf(idx, "Please use at most %i characters.\n", (PASSWORDLEN - 1));
-        return;
-      }
-      if (new[0] == '+') { /* See also: userent.c:pass_set() */
-        dprintf(idx, "Please do not use + as first character.\n");
-        return;
-      }
-      set_user(&USERENTRY_PASS, u, new);
       putlog(LOG_CMDS, "*", "#%s# chpass %s [something]", dcc[idx].nick,
              handle);
       dprintf(idx, "Changed password.\n");
