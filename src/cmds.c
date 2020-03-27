@@ -405,7 +405,7 @@ char *check_validpass(struct userrec *u, char *new) {
   l = strlen(new);
   if (l < 6)
     return IRC_PASSFORMAT;
-  if (l > (PASSWORDLEN - 1))
+  if (l > PASSWORDMAX)
     return "Passwords cannot be longer than " STRINGIFY(PASSWORDMAX) " characters, please try again.";
   if (new[0] == '+') /* See also: userent.c:pass_set() */
     return "Password cannot start with '+', please try again.";
