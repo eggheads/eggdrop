@@ -628,7 +628,7 @@ void putlog EGG_VARARGS_DEF(int, arg1)
   }
   if (!backgrd && !con_chan && term_z < 0)
     dprintf(DP_STDOUT, "%s", out);
-  else if ((type & LOG_MISC) && use_stderr) {
+  else if ((type & (conmask | EGG_BG_CONMASK)) && use_stderr) {
     if (shtime)
       out += tsl;
     dprintf(DP_STDERR, "%s", out);
