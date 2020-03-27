@@ -101,7 +101,7 @@ extern sock_list *socklist;
 int cmd_die();
 int xtra_kill();
 int xtra_unpack();
-char *check_validpass();
+int check_validpass();
 static int module_rename(char *name, char *newname);
 
 #ifndef STATIC
