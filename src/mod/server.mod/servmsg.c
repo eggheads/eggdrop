@@ -1588,13 +1588,6 @@ static int gotcap(char *from, char *msg) {
 #ifndef HAVE_EVP_PKEY_GET1_EC_KEY
       if (sasl_mechanism != SASL_MECHANISM_ECDSA_NIST256P_CHALLENGE) {
 #endif
-        /*
-        TODO: the old sasl code, before cap pr, was doing cap request only
-        under certain conditions, see the if TLS statement
-        above.
-        putlog(LOG_SERV, "*", "CAP: put CAP REQ :sasl");
-        dprintf(DP_MODE, "CAP REQ :sasl\n");
-        */
         putlog(LOG_SERV, "*", "SASL: put AUTHENTICATE %s",
             SASL_MECHANISMS[sasl_mechanism]);
         dprintf(DP_MODE, "AUTHENTICATE %s\n", SASL_MECHANISMS[sasl_mechanism]);
@@ -1604,12 +1597,13 @@ static int gotcap(char *from, char *msg) {
 #ifdef TLS
         return sasl_error("TLS libs missing EC support, try PLAIN or EXTERNAL method, aborting authentication");
       }
-#else
-        if (sasl_mechanism != SASL_MECHANISM_PLAIN)
+#else /* TLS */
+        if (sasl_mechanism != SASL_MECHANISM_PLAIN) {
 	      return sasl_error("TLS libs not present, try PLAIN method, aborting authentication");
-#endif
+        }
       }
-#endif
+#endif /* TLS */
+#endif /* HAVE_EVP_PKEY */
     } else {
       dprintf(DP_MODE, "CAP END\n");
       return 0;
