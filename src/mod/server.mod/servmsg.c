@@ -1606,7 +1606,7 @@ static int gotcap(char *from, char *msg) {
       }
 #else
         if (sasl_mechanism != SASL_MECHANISM_PLAIN)
-	  return sasl_error("TLS libs not present, try PLAIN method, aborting authentication");
+	      return sasl_error("TLS libs not present, try PLAIN method, aborting authentication");
 #endif
       }
 #endif
