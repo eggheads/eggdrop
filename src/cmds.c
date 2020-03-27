@@ -26,6 +26,7 @@
 #include "tandem.h"
 #include "modules.h"
 #include <signal.h>
+#include <tcl.h> /* STRINGIFY for check_validpass() */
 
 extern struct chanset_t *chanset;
 extern struct dcc_t *dcc;
