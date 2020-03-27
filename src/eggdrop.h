@@ -774,4 +774,10 @@ enum {
 #define TLN_STATUS      5       /* STATUS (RFC 859)      */
 #define TLN_STATUS_C    "\005"
 
+/* From tcl.h */
+#ifndef STRINGIFY
+#  define STRINGIFY(x) STRINGIFY1(x)
+#  define STRINGIFY1(x) #x
+#endif
+
 #endif /* _EGG_EGGDROP_H */
