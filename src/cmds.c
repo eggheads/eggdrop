@@ -26,6 +26,7 @@
 #include "tandem.h"
 #include "modules.h"
 #include <signal.h>
+#include <tcl.h> /* STRINGIFY for check_validpass() */
 
 extern struct chanset_t *chanset;
 extern struct dcc_t *dcc;
@@ -401,17 +402,12 @@ static void cmd_back(struct userrec *u, int idx, char *par)
  */
 char *check_validpass(struct userrec *u, char *new) {
   int l;
-  static char s[72]; /* static object is initialized to zero (Standard C) */
 
   l = strlen(new);
   if (l < 6)
     return IRC_PASSFORMAT;
-  if (l > (PASSWORDLEN - 1)) {
-    if (!s[0])
-      snprintf(s, sizeof s, "Passwords cannot be longer than %i characters, "
-               "please try again.", PASSWORDLEN - 1);
-    return s;
-  }
+  if (l > (PASSWORDLEN - 1))
+    return "Passwords cannot be longer than " STRINGIFY(PASSWORDMAX) " characters, please try again.";
   if (new[0] == '+') /* See also: userent.c:pass_set() */
     return "Password cannot start with '+', please try again.";
   set_user(&USERENTRY_PASS, u, new);
