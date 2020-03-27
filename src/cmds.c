@@ -393,41 +393,37 @@ static void cmd_back(struct userrec *u, int idx, char *par)
 }
 
 /* Take a password provided by the user and check that it isn't too long,
- * too short, or start with a '+' (for encryption reasons)
+ * too short, or start with a '+' (for encryption reasons).
+ *
+ * If successful set it and return NULL.
+ *
+ * On failure return error message.
  */
-int check_validpass(struct userrec *u, char *new, char *s, size_t size) {
+char *check_validpass(struct userrec *u, char *new) {
   int l;
 
   l = strlen(new);
-  if (l < 6) {
-    egg_snprintf(s, size, "%s\n", IRC_PASSFORMAT);
-    return 1;
-  }
-  if (l > (PASSWORDLEN - 1)) {
-    egg_snprintf(s, size, "Passwords cannot be longer than %i characters, "
-                "please try again.\n", (PASSWORDLEN - 1));
-    return 1;
-  }
-  if (new[0] == '+') { /* See also: userent.c:pass_set() */
-    egg_snprintf(s, size, "Password cannot start with '+', "
-                "please try again.\n");
-    return 1;
-  }
+  if (l < 6)
+    return IRC_PASSFORMAT;
+  if (l > PASSWORDMAX)
+    return "Passwords cannot be longer than " STRINGIFY(PASSWORDMAX) " characters, please try again.";
+  if (new[0] == '+') /* See also: userent.c:pass_set() */
+    return "Password cannot start with '+', please try again.";
   set_user(&USERENTRY_PASS, u, new);
-  return 0;
+  return NULL;
 }
 
 static void cmd_newpass(struct userrec *u, int idx, char *par)
 {
-  char *new, s[128] = "";
+  char *new, *s;
 
   if (!par[0]) {
     dprintf(idx, "Usage: newpass <newpassword>\n");
     return;
   }
   new = newsplit(&par);
-  if (check_validpass(u, new, s, sizeof s)) {
-    dprintf(idx, "%s", s);
+  if ((s = check_validpass(u, new))) {
+    dprintf(idx, "%s\n", s);
     return;
   }
   putlog(LOG_CMDS, "*", "#%s# newpass...", dcc[idx].nick);
@@ -1049,7 +1045,7 @@ static void cmd_handle(struct userrec *u, int idx, char *par)
 
 static void cmd_chpass(struct userrec *u, int idx, char *par)
 {
-  char *handle, *new, s[128] = "";
+  char *handle, *new, *s;
   int atr = u ? u->flags : 0;
 
   if (!par[0])
@@ -1075,8 +1071,8 @@ static void cmd_chpass(struct userrec *u, int idx, char *par)
       dprintf(idx, "Removed password.\n");
     } else {
       new = newsplit(&par);
-      if (check_validpass(u, new, s, sizeof s)) {
-        dprintf(idx, "%s", s);
+      if ((s = check_validpass(u, new))) {
+        dprintf(idx, "%s\n", s);
         return;
       }
       putlog(LOG_CMDS, "*", "#%s# chpass %s [something]", dcc[idx].nick,

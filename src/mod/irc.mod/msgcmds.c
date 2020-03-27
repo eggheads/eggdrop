@@ -119,7 +119,7 @@ static int msg_hello(char *nick, char *h, struct userrec *u, char *p)
 
 static int msg_pass(char *nick, char *host, struct userrec *u, char *par)
 {
-  char *old, *new, s[128] = "";
+  char *old, *new, *s;
 
   if (!u || match_my_nick(nick) || (u->flags & (USER_BOT | USER_COMMON)))
     return 1;
@@ -144,13 +144,10 @@ static int msg_pass(char *nick, char *host, struct userrec *u, char *par)
   } else
     new = old;
   putlog(LOG_CMDS, "*", "(%s!%s) !%s! PASS...", nick, host, u->handle);
-
-  if (check_validpass(u, new, s, sizeof s)) {
-    dprintf(DP_HELP, "NOTICE %s :%s", nick, s);
+  if ((s = check_validpass(u, new))) {
+    dprintf(DP_HELP, "NOTICE %s :%s\n", nick, s);
     return 1;
   }
-  set_user(&USERENTRY_PASS, u, new);
-
   dprintf(DP_HELP, "NOTICE %s :%s '%s'.\n", nick,
           new == old ? IRC_SETPASS : IRC_CHANGEPASS, new);
   return 0;
