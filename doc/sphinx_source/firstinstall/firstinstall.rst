@@ -284,3 +284,12 @@ You will need to determine yoru public key fingerprint by using::
 Then, ensure you have those keys loaded in the ssl-privatekey and ssl-certificate settings in the config file. Finally, to add this certificate to your NickServ account, type::
 
     /msg NickServ cert add <fingerprint string from above goes here>
+
+Authenticating with NickServ
+----------------------------
+
+Many IRC features require you to authenticate with NickServ to use them. You can do this from your config file by searching for the line::
+
+    #  putserv "PRIVMSG NickServ :identify <password>"
+
+in your config file. Uncomment it by removing the '#' sign and then replace <password> with your password. Your bot will now authenticate with NickServ each time it joins a server.
