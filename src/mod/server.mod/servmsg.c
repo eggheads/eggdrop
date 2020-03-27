@@ -1602,8 +1602,8 @@ static int gotcap(char *from, char *msg) {
 #ifndef HAVE_EVP_PKEY_GET1_EC_KEY
       } else {
 #ifdef TLS
-        if (sasl_mechanism == SASL_MECHANISM_ECDSA_NIST256P_CHALLENGE)
-          return sasl_error("TLS libs missing EC support, try PLAIN or EXTERNAL method, aborting authentication");
+        return sasl_error("TLS libs missing EC support, try PLAIN or EXTERNAL method, aborting authentication");
+      }
 #else
         if (sasl_mechanism != SASL_MECHANISM_PLAIN)
 	  return sasl_error("TLS libs not present, try PLAIN method, aborting authentication");
