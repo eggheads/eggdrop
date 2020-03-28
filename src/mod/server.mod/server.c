@@ -2295,13 +2295,22 @@ char *server_start(Function *global_funcs)
   add_tcl_ints(my_tcl_ints);
 #ifdef TLS
 #ifndef HAVE_EVP_PKEY_GET1_EC_KEY
-if (sasl) {
-  if (sasl_mechanism == SASL_MECHANISM_ECDSA_NIST256P_CHALLENGE) {
-    fatal("ERROR: NIST256P functionality missing from OpenSSL libs, please "\
-        "choose a different SASL method", 0);
+  if (sasl) {
+    if (sasl_mechanism == SASL_MECHANISM_ECDSA_NIST256P_CHALLENGE) {
+      fatal("ERROR: NIST256 functionality missing from your TLS libs, please "
+          "choose a different SASL method", 0);
+    }
   }
-}
 #endif /* HAVE_EVP_PKEY_GET1_EC_KEY */
+#else  /* TLS */
+  if (sasl) {
+    if ((sasl_mechanism == SASL_MECHANISM_ECDSA_NIST256P_CHALLENGE) ||
+            (sasl_mechanism == SASL_MECHANISM_EXTERNAL)) {
+        fatal("ERROR: The selected SASL authentication method requires TLS "
+                "libraries which are not installed on this machine. Please "
+                "choose the PLAIN method in your config.");
+    }
+  }
 #endif /* TLS */
   add_tcl_commands(my_tcl_cmds);
   add_tcl_coups(my_tcl_coups);

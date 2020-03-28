@@ -1255,48 +1255,63 @@ static int tryauthenticate(char *from, char *msg)
       s += strlen(sasl_password);
       dst[0] = 0;
       if (b64_ntop((unsigned char *) src, s - src, (char *) dst, sizeof dst) == -1) {
-        putlog(LOG_SERV, "*", "SASL: AUTHENTICATE error: could not base64 encode");
+        putlog(LOG_SERV, "*", "SASL: AUTHENTICATE error: could not base64 "
+                    "encode");
         /* TODO: send cap end for all error cases in this function ? */
         return 1;
       }
       /* TODO: what about olen we used for mbedtls_base64_encode() ? */
     }
-#ifdef HAVE_EVP_PKEY_GET1_EC_KEY
     else if (sasl_mechanism == SASL_MECHANISM_ECDSA_NIST256P_CHALLENGE) {
+#ifdef HAVE_EVP_PKEY_GET1_EC_KEY
       strcpy(s, sasl_username);
       s += strlen(sasl_username) + 1;
       strcpy(s, sasl_username);
       s += strlen(sasl_username);
       if (b64_ntop((unsigned char *) src, s - src, (char *) dst, sizeof dst) == -1) {
-        putlog(LOG_SERV, "*", "SASL: AUTHENTICATE error: could not base64 encode");
+        putlog(LOG_SERV, "*", "SASL: AUTHENTICATE error: could not base64 "
+                "encode");
         return 1;
       }
     }
+#else
+      putlog(LOG_DEBUG, "*", "SASL: TLS libs missing EC support, try PLAIN or "
+                "EXTERNAL method");
+      return 1;
+    }
 #endif
-    else { /* sasl_mechanism == SASL_MECHANISM_EXTERNAL */
+    else {          /* sasl_mechanism == SASL_MECHANISM_EXTERNAL */
+#ifdef TLS          /* TLS required for EXTERNAL sasl */ 
       dst[0] = '+';
       dst[1] = 0;
     }
     putlog(LOG_SERV, "*", "SASL: put AUTHENTICATE %s", dst);
     dprintf(DP_MODE, "AUTHENTICATE %s\n", dst);
+#else
+    putlog(LOG_DEBUG, "*", "SASL: TLS libs required for EXTERNAL but are not "
+            "installed, try PLAIN method");
+    }
+#endif /* TLS */
+  } else {      /* Only EC-challenges get extra auth messages w/o a + */
 #ifdef TLS
 #ifdef HAVE_EVP_PKEY_GET1_EC_KEY
-  } else {
     putlog(LOG_SERV, "*", "SASL: got AUTHENTICATE Challenge");
     olen = b64_pton(msg, dst, sizeof dst);
     if (olen == -1) {
-      putlog(LOG_SERV, "*", "SASL: AUTHENTICATE error: could not base64 decode line from server");
+      putlog(LOG_SERV, "*", "SASL: AUTHENTICATE error: could not base64 decode "
+                "line from server");
       return 1;
     }
     fp = fopen(sasl_ecdsa_key, "r");
     if (!fp) {
-      putlog(LOG_SERV, "*", "SASL: AUTHENTICATE error: could not open file sasl_ecdsa_key %s: %s\n", sasl_ecdsa_key, strerror(errno));
+      putlog(LOG_SERV, "*", "SASL: AUTHENTICATE error: could not open file "
+                "sasl_ecdsa_key %s: %s\n", sasl_ecdsa_key, strerror(errno));
       return 1;
     }
     privateKey = PEM_read_PrivateKey(fp, NULL, 0, NULL);
     if (!privateKey) {
-      putlog(LOG_SERV, "*", "SASL: AUTHENTICATE: PEM_read_PrivateKey(): SSL error = %s\n",
-             ERR_error_string(ERR_get_error(), 0));
+      putlog(LOG_SERV, "*", "SASL: AUTHENTICATE: PEM_read_PrivateKey(): SSL "
+                "error = %s\n", ERR_error_string(ERR_get_error(), 0));
       fclose(fp);
       return 1;
     }
@@ -1324,12 +1339,10 @@ static int tryauthenticate(char *from, char *msg)
     nfree(dst2);
     putlog(LOG_SERV, "*", "SASL: put AUTHENTICATE Response %s", dst);
     dprintf(DP_MODE, "AUTHENTICATE %s\n", dst);
-#else /* HAVE_EVP_PKEY_GET1_EC_KEY */
-    putlog(LOG_DEBUG, "*", "SASL: TLS libs missing EC support, try PLAIN or EXTERNAL method");
-    return 1;
 #endif /* HAVE_EVP_PKEY_GET1_EC_KEY */
 #else /* TLS */
-    putlog(LOG_DEBUG, "*", "SASL: TLS libs not present, try PLAIN method");
+    dprintf(LOG_DEBUG, "*", "SASL: Received EC message, but no TLS EC libs "
+                "present. Try PLAIN method");
     return 1;
 #endif /* TLS */
   }
@@ -1572,25 +1585,25 @@ static int gotcap(char *from, char *msg) {
      * capabilities, right now SASL is the only one so we're OK.
      */
     if (strstr(cap.negotiated, "sasl")) {
-#ifndef TLS
+#ifndef HAVE_EVP_PKEY_GET1_EC_KEY
       if (sasl_mechanism != SASL_MECHANISM_ECDSA_NIST256P_CHALLENGE) {
 #endif
-        /*
-        TODO: the old sasl code, before cap pr, was doing cap request only
-        under certain conditions, see the if TLS statement
-        above.
-        putlog(LOG_SERV, "*", "CAP: put CAP REQ :sasl");
-        dprintf(DP_MODE, "CAP REQ :sasl\n");
-        */
         putlog(LOG_SERV, "*", "SASL: put AUTHENTICATE %s",
             SASL_MECHANISMS[sasl_mechanism]);
         dprintf(DP_MODE, "AUTHENTICATE %s\n", SASL_MECHANISMS[sasl_mechanism]);
         sasl_timeout_time = sasl_timeout;
-#ifndef TLS
+#ifndef HAVE_EVP_PKEY_GET1_EC_KEY
       } else {
-        return sasl_error("No TLS libs, aborting authentication");
+#ifdef TLS
+        return sasl_error("TLS libs missing EC support, try PLAIN or EXTERNAL method, aborting authentication");
       }
-#endif
+#else /* TLS */
+        if (sasl_mechanism != SASL_MECHANISM_PLAIN) {
+	      return sasl_error("TLS libs not present, try PLAIN method, aborting authentication");
+        }
+      }
+#endif /* TLS */
+#endif /* HAVE_EVP_PKEY */
     } else {
       dprintf(DP_MODE, "CAP END\n");
       return 0;
