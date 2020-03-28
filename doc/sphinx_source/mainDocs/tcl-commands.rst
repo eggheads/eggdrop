@@ -164,9 +164,9 @@ cap <active/available/raw> [arg]
 
   Module: server
 
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+^^^^^^^^^^^^^^^^^^^^^^
 tagmsg <tags> <target>
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+^^^^^^^^^^^^^^^^^^^^^^
 
   Description: sends an IRCv3 TAGMSG command to the target. Only works if message-tags has been negotiated with the server via the cap command. tags is a Tcl dict (or space-separated string) of the tags you wish to send separated by commas (do not include the @prefix), and target is the nickname or channel you wish to send the tags to. To send a tag only (not a key/value pair), use a "" as the value for a key in a dict, or a "{}" if you are sending as a space-separated string.
 
@@ -178,9 +178,9 @@ tagmsg <tags> <target>
 
   Module: server
 
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 addserver <ip/host> [[+]port [password]]
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
   Description: adds a server to the list of servers Eggdrop will connect to. Prefix the port with '+' to indicate an SSL-protected port. A port value is required if password is to be specified. 
 
   Returns: nothing
@@ -2158,8 +2158,8 @@ maskhost <nick!user@host> [masktype]
   You can also specify types from 10 to 19 which correspond to types
   0 to 9, but instead of using a * wildcard to replace portions of the
   host, only numbers in hostnames are replaced with the '?' wildcard.
-  Same is valid for types 20-29, but instead of '?', the '*' wildcard
-  will be used. Types 30-39 set the host to '*'.
+  Same is valid for types 20-29, but instead of '?', the '\*' wildcard
+  will be used. Types 30-39 set the host to '\*'.
 
   Module: core
 
@@ -2865,7 +2865,7 @@ The following is a list of bind types and how they work. Below each bind type is
   
   procname <nick> <user\@host> <handle> <channel> <reason>
 
-  Description: triggered by a signoff, or possibly by someone who got netsplit and never returned. The signoff message is the last argument to the proc. Wildcards can be used in the mask, which is matched against '#channel nick!user\@host'.
+  Description: triggered by a signoff, or possibly by someone who got netsplit and never returned. The signoff message is the last argument to the proc. Wildcards can be used in the mask, which is matched against '#channel nick!user\@host'. If a "*" is used for the channel in the mask, this bind is triggered once for every channel that the user is in the bot with; in other words if the bot is in two channels with the target user, the bind will be triggered twice. To trigger a proc only once per signoff, regardless of the number of channels the Eggdrop and user share, use the RAWT bind with SIGN as the keyword.
 
   Module: irc
 
@@ -2896,7 +2896,7 @@ The following is a list of bind types and how they work. Below each bind type is
   
   procname <nick> <user\@host> <handle> <channel> <newnick>
 
-  Description: triggered when someone changes nicknames. The mask is matched against '#channel newnick' and can contain wildcards. Channel is "*" if the user isn't on a channel (usually the bot not yet in a channel).
+  Description: triggered when someone changes nicknames. The mask is matched against '#channel newnick' and can contain wildcards. Channel is "*" if the user isn't on a channel (usually the bot not yet in a channel). If a "*" is used for the channel in the mask, this bind is triggered once for every channel that the user is in the bot with; in other words if the bot is in two channels with the target user, the bind will be triggered twice. To trigger a proc only once per nick change, regardless of the number of channels the Eggdrop and user share, use the RAWT bind with NICK as the keyword.
 
   Module: irc
 
@@ -3378,6 +3378,8 @@ Here's a list of the bindings that use the return value from procs they trigger:
 (17) EVNT  Return 1 to make Eggdrop not to take the default action for the event. Used for signal type events, ignored for others.
 
 (18) TLS   Return 1 to disable verbose ssl information for the handshake.
+
+(19) RAWT  Return 1 to ask the bot not to prcess the server text. This can affet the bot's performance by causing it to miss things that it would normally act on -- you have been warned. Again.
 
 Control Procedures
 ------------------

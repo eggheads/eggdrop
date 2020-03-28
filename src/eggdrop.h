@@ -81,7 +81,8 @@
 #define DIRLEN       DIRMAX + 1
 #define LOGLINELEN   LOGLINEMAX + 1
 #define NOTENAMELEN  ((HANDLEN * 2) + 1)
-#define PASSWORDLEN  16
+#define PASSWORDMAX  16
+#define PASSWORDLEN  PASSWORDMAX + 1
 
 
 /* We have to generate compiler errors in a weird way since not all compilers
@@ -772,5 +773,11 @@ enum {
 #define TLN_ECHO_C      "\001"
 #define TLN_STATUS      5       /* STATUS (RFC 859)      */
 #define TLN_STATUS_C    "\005"
+
+/* From tcl.h */
+#ifndef STRINGIFY
+#  define STRINGIFY(x) STRINGIFY1(x)
+#  define STRINGIFY1(x) #x
+#endif
 
 #endif /* _EGG_EGGDROP_H */

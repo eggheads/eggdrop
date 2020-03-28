@@ -505,6 +505,7 @@
 # define b64_ntop ((int (*) (u_char const *, size_t, char *, size_t))global[305])
 # define b64_pton ((int (*) (const char *, u_char *, size_t))global[306])
 #endif
+#define check_validpass ((char *(*) (struct userrec *, char *))global[307])
 
 
 /* hostmasking */

@@ -392,22 +392,40 @@ static void cmd_back(struct userrec *u, int idx, char *par)
   not_away(idx);
 }
 
+/* Take a password provided by the user and check that it isn't too long,
+ * too short, or start with a '+' (for encryption reasons).
+ *
+ * If successful set it and return NULL.
+ *
+ * On failure return error message.
+ */
+char *check_validpass(struct userrec *u, char *new) {
+  int l;
+
+  l = strlen(new);
+  if (l < 6)
+    return IRC_PASSFORMAT;
+  if (l > PASSWORDMAX)
+    return "Passwords cannot be longer than " STRINGIFY(PASSWORDMAX) " characters, please try again.";
+  if (new[0] == '+') /* See also: userent.c:pass_set() */
+    return "Password cannot start with '+', please try again.";
+  set_user(&USERENTRY_PASS, u, new);
+  return NULL;
+}
+
 static void cmd_newpass(struct userrec *u, int idx, char *par)
 {
-  char *new;
+  char *new, *s;
 
   if (!par[0]) {
     dprintf(idx, "Usage: newpass <newpassword>\n");
     return;
   }
   new = newsplit(&par);
-  if (strlen(new) > 16)
-    new[16] = 0;
-  if (strlen(new) < 6) {
-    dprintf(idx, "Please use at least 6 characters.\n");
+  if ((s = check_validpass(u, new))) {
+    dprintf(idx, "%s\n", s);
     return;
   }
-  set_user(&USERENTRY_PASS, u, new);
   putlog(LOG_CMDS, "*", "#%s# newpass...", dcc[idx].nick);
   dprintf(idx, "Changed password to '%s'.\n", new);
 }
@@ -1027,8 +1045,8 @@ static void cmd_handle(struct userrec *u, int idx, char *par)
 
 static void cmd_chpass(struct userrec *u, int idx, char *par)
 {
-  char *handle, *new;
-  int atr = u ? u->flags : 0, l;
+  char *handle, *new, *s;
+  int atr = u ? u->flags : 0;
 
   if (!par[0])
     dprintf(idx, "Usage: chpass <handle> [password]\n");
@@ -1052,17 +1070,14 @@ static void cmd_chpass(struct userrec *u, int idx, char *par)
       set_user(&USERENTRY_PASS, u, NULL);
       dprintf(idx, "Removed password.\n");
     } else {
-      l = strlen(new = newsplit(&par));
-      if (l > 16)
-        new[16] = 0;
-      if (l < 6)
-        dprintf(idx, "Please use at least 6 characters.\n");
-      else {
-        set_user(&USERENTRY_PASS, u, new);
-        putlog(LOG_CMDS, "*", "#%s# chpass %s [something]", dcc[idx].nick,
-               handle);
-        dprintf(idx, "Changed password.\n");
+      new = newsplit(&par);
+      if ((s = check_validpass(u, new))) {
+        dprintf(idx, "%s\n", s);
+        return;
       }
+      putlog(LOG_CMDS, "*", "#%s# chpass %s [something]", dcc[idx].nick,
+             handle);
+      dprintf(idx, "Changed password.\n");
     }
   }
 }
