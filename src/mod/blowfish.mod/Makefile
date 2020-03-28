@@ -36,6 +36,6 @@ distclean: clean
  ../../../src/compat/compat.h ../../../src/compat/base64.h \
  ../../../src/compat/inet_aton.h ../../../src/compat/snprintf.h \
  ../../../src/compat/inet_pton.h ../../../src/compat/gethostbyname2.h \
- ../../../src/compat/strlcpy.h ../../../src/mod/modvals.h \
- ../../../src/tandem.h .././blowfish.mod/blowfish.h \
- .././blowfish.mod/bf_tab.h
+ ../../../src/compat/explicit_bzero.h ../../../src/compat/strlcpy.h \
+ ../../../src/mod/modvals.h ../../../src/tandem.h \
+ .././blowfish.mod/blowfish.h .././blowfish.mod/bf_tab.h
