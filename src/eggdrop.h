@@ -81,7 +81,7 @@
 #define DIRLEN       DIRMAX + 1
 #define LOGLINELEN   LOGLINEMAX + 1
 #define NOTENAMELEN  ((HANDLEN * 2) + 1)
-#define PASSWORDMAX  15
+#define PASSWORDMAX  16
 #define PASSWORDLEN  PASSWORDMAX + 1
 
 
