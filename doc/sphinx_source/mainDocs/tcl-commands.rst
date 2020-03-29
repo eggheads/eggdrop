@@ -164,10 +164,24 @@ cap <active/available/raw> [arg]
 
   Module: server
 
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-addserver <ip/host> [port [password]]
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  Description: adds a server to the list of servers Eggdrop will connect to. A port value is required if password is to be specified. 
+^^^^^^^^^^^^^^^^^^^^^^
+tagmsg <tags> <target>
+^^^^^^^^^^^^^^^^^^^^^^
+
+  Description: sends an IRCv3 TAGMSG command to the target. Only works if message-tags has been negotiated with the server via the cap command. tags is a Tcl dict (or space-separated string) of the tags you wish to send separated by commas (do not include the @prefix), and target is the nickname or channel you wish to send the tags to. To send a tag only (not a key/value pair), use a "" as the value for a key in a dict, or a "{}" if you are sending as a space-separated string.
+
+  Examples:
+    set mytags [dict create +foo bar moo baa +last ""]; tagmsg $mytags #channel
+    tagmsg "+foo bar moo baa +last {}" #channel
+
+  Returns: nothing
+
+  Module: server
+
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+addserver <ip/host> [[+]port [password]]
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  Description: adds a server to the list of servers Eggdrop will connect to. Prefix the port with '+' to indicate an SSL-protected port. A port value is required if password is to be specified. 
 
   Returns: nothing
 
@@ -2144,8 +2158,8 @@ maskhost <nick!user@host> [masktype]
   You can also specify types from 10 to 19 which correspond to types
   0 to 9, but instead of using a * wildcard to replace portions of the
   host, only numbers in hostnames are replaced with the '?' wildcard.
-  Same is valid for types 20-29, but instead of '?', the '*' wildcard
-  will be used. Types 30-39 set the host to '*'.
+  Same is valid for types 20-29, but instead of '?', the '\*' wildcard
+  will be used. Types 30-39 set the host to '\*'.
 
   Module: core
 
@@ -2699,6 +2713,13 @@ configureargs
 
   Module: core
 
+^^^^^^^^
+language
+^^^^^^^^
+  Value: a string containing the language with the highest priority for use by Eggdrop. This commonly reflects what is added with addlang in the config file
+
+  Module: core
+
 Binds
 -----
 
@@ -2844,7 +2865,7 @@ The following is a list of bind types and how they work. Below each bind type is
   
   procname <nick> <user\@host> <handle> <channel> <reason>
 
-  Description: triggered by a signoff, or possibly by someone who got netsplit and never returned. The signoff message is the last argument to the proc. Wildcards can be used in the mask, which is matched against '#channel nick!user\@host'.
+  Description: triggered by a signoff, or possibly by someone who got netsplit and never returned. The signoff message is the last argument to the proc. Wildcards can be used in the mask, which is matched against '#channel nick!user\@host'. If a "*" is used for the channel in the mask, this bind is triggered once for every channel that the user is in the bot with; in other words if the bot is in two channels with the target user, the bind will be triggered twice. To trigger a proc only once per signoff, regardless of the number of channels the Eggdrop and user share, use the RAWT bind with SIGN as the keyword.
 
   Module: irc
 
@@ -2875,7 +2896,7 @@ The following is a list of bind types and how they work. Below each bind type is
   
   procname <nick> <user\@host> <handle> <channel> <newnick>
 
-  Description: triggered when someone changes nicknames. The mask is matched against '#channel newnick' and can contain wildcards. Channel is "*" if the user isn't on a channel (usually the bot not yet in a channel).
+  Description: triggered when someone changes nicknames. The mask is matched against '#channel newnick' and can contain wildcards. Channel is "*" if the user isn't on a channel (usually the bot not yet in a channel). If a "*" is used for the channel in the mask, this bind is triggered once for every channel that the user is in the bot with; in other words if the bot is in two channels with the target user, the bind will be triggered twice. To trigger a proc only once per nick change, regardless of the number of channels the Eggdrop and user share, use the RAWT bind with NICK as the keyword.
 
   Module: irc
 
@@ -2935,7 +2956,9 @@ The following is a list of bind types and how they work. Below each bind type is
 
   procname <from> <keyword> <text>
 
-  Description: previous versions of Eggdrop required a special compile option to enable this binding, but it's now standard. The keyword is either a numeric, like "368", or a keyword, such as "PRIVMSG". "from" will be the server name or the source user (depending on the keyword); flags are ignored. The order of the arguments is identical to the order that the IRC server sends to the bot. The pre-processing  only splits it apart enough to determine the keyword. If the proc returns 1, Eggdrop will not process the line any further (this could cause unexpected behavior in some cases).
+  IMPORTANT: While not necessarily deprecated, this bind has been supplanted by the RAWT bind as of 1.9.0. You probably want to be using RAWT, not RAW.
+
+  Description: previous versions of Eggdrop required a special compile option to enable this binding, but it's now standard. The keyword is either a numeric, like "368", or a keyword, such as "PRIVMSG". "from" will be the server name or the source user (depending on the keyword); flags are ignored. The order of the arguments is identical to the order that the IRC server sends to the bot. The pre-processing only splits it apart enough to determine the keyword. If the proc returns 1, Eggdrop will not process the line any further (this could cause unexpected behavior in some cases). The RAW bind does not support the IRCv3 message-tags capability, please see RAWT for more information.
 
   Module: server
 
@@ -3298,6 +3321,22 @@ The following is a list of bind types and how they work. Below each bind type is
 
   Module: server
 
+(51) INVT (stackable)
+
+  bind invt <flags> <mask> <proc>
+
+  procname <nick> <user@host> <channel> <invitee>
+
+  Description: triggered when eggdrop received an INVITE message. The mask for the bind is in the format "#channel nickname", where nickname (not a hostmask) is that of the invitee. For the proc, nick is the nickname of the person sending the invite request, user@host is the user@host of the person sending the invite, channel is the channel the invitee is being invited to, and invitee is the target (nickname only) of the invite. The invitee argument was added to support the IRCv3 invite-notify capability, where the eggdrop may be able to see invite messages for other people that are not the eggdrop.
+
+(52) RAWT (stackable)
+
+  bind rawt <flags> <keyword> <proc>
+
+  procname <from> <keyword> <text> <tag>
+
+  Description: similar to the RAW bind, but allows an extra field for the IRCv3 message-tags capability. The keyword is either a numeric, like "368", or a keyword, such as "PRIVMSG" or "TAGMSG". "from" will be the server name or the source user (depending on the keyword); flags are ignored. "tag" will be the contents, if any, of the entire tag message prefixed to the server message in a dict format, such as "msgid 890157217279768 aaa bbb". The order of the arguments is identical to the order that the IRC server sends to the bot. If the proc returns 1, Eggdrop will not process the line any further (this could cause unexpected behavior in some cases). As of 1.9.0, it is recommended to use the RAWT bind instead of the RAW bind.
+
 ^^^^^^^^^^^^^
 Return Values
 ^^^^^^^^^^^^^
@@ -3349,6 +3388,8 @@ Here's a list of the bindings that use the return value from procs they trigger:
 (17) EVNT  Return 1 to make Eggdrop not to take the default action for the event. Used for signal type events, ignored for others.
 
 (18) TLS   Return 1 to disable verbose ssl information for the handshake.
+
+(19) RAWT  Return 1 to ask the bot not to prcess the server text. This can affet the bot's performance by causing it to miss things that it would normally act on -- you have been warned. Again.
 
 Control Procedures
 ------------------
@@ -3463,4 +3504,4 @@ are the four special characters:
 |     | words) (This char only works in binds, not in regular matching)          |
 +-----+--------------------------------------------------------------------------+
 
-  Copyright (C) 1999 - 2019 Eggheads Development Team
+  Copyright (C) 1999 - 2020 Eggheads Development Team

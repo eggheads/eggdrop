@@ -4,7 +4,7 @@
  */
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2019 Eggheads Development Team
+ * Copyright (C) 1999 - 2020 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -32,13 +32,11 @@
 #include <sys/utsname.h>
 
 static p_tcl_bind_list H_topc, H_splt, H_sign, H_rejn, H_part, H_pub, H_pubm;
-static p_tcl_bind_list H_nick, H_mode, H_kick, H_join, H_need;
+static p_tcl_bind_list H_nick, H_mode, H_kick, H_join, H_need, H_invt;
 
 static Function *global = NULL, *channels_funcs = NULL, *server_funcs = NULL;
 
 static int ctcp_mode;
-static int net_type;
-static int strict_host;
 static int wait_split = 300;    /* Time to wait for user to return from net-split. */
 static int max_bans = 20;       /* Modified by net-type 1-4 */
 static int max_exempts = 20;    /* Modified by net-type 1-4 */
@@ -746,6 +744,18 @@ static int channels_2char STDVAR
   return TCL_OK;
 }
 
+static int invite_4char STDVAR
+{
+  Function F = (Function) cd;
+
+  BADARGS(5, 5, " nick uhost channel invitee");
+
+  CHECKVALIDITY(invite_4char);
+  F(argv[1], argv[2], argv[3], argv[4]);
+  return TCL_OK;
+}
+
+
 static void check_tcl_joinspltrejn(char *nick, char *uhost, struct userrec *u,
                                    char *chname, p_tcl_bind_list table)
 {
@@ -838,6 +848,19 @@ static void check_tcl_kick(char *nick, char *uhost, struct userrec *u,
   check_tcl_bind(H_kick, args, &fr,
                  " $_kick1 $_kick2 $_kick3 $_kick4 $_kick5 $_kick6",
                  MATCH_MASK | BIND_USE_ATTR | BIND_STACKABLE);
+}
+
+static void check_tcl_invite(char *nick, char *from, char *chan, char *invitee)
+{
+  char args[512];
+
+  Tcl_SetVar(interp, "_invite1", nick, 0);
+  Tcl_SetVar(interp, "_invite2", from, 0);
+  Tcl_SetVar(interp, "_invite3", chan, 0);
+  Tcl_SetVar(interp, "_invite4", invitee, 0);
+  simple_sprintf(args, "%s %s", chan, invitee);
+  check_tcl_bind(H_invt, args, 0, " $_invite1 $_invite2 $_invite3 $_invite4",
+                    MATCH_MASK | BIND_STACKABLE);
 }
 
 static int check_tcl_pub(char *nick, char *from, char *chname, char *msg)
@@ -933,8 +956,6 @@ static tcl_ints myints[] = {
   {"max-exempts",     &max_exempts,     0},
   {"max-invites",     &max_invites,     0},
   {"max-modes",       &max_modes,       0},
-  {"net-type",        &net_type,        0},
-  {"strict-host",     &strict_host,     0}, /* arthur2 */
   {"ctcp-mode",       &ctcp_mode,       0}, /* arthur2 */
   {"keep-nick",       &keepnick,        0}, /* guppy */
   {"prevent-mixing",  &prevent_mixing,  0},
@@ -1016,10 +1037,16 @@ static void irc_report(int idx, int details)
   }
 }
 
+/* Many networks either support max_bans/invite/exempts/ *or*
+ * they support max_modes. If they support max_modes, set each of
+ * other sub-max settings equal to max_modes
+ */
 static void do_nettype()
 {
-  switch (net_type) {
-  case 0: /* EFnet */
+  switch (net_type_int) {
+  case NETT_EFNET:
+  case NETT_HYBRID_EFNET:
+  case NETT_FREENODE:
     kick_method = 1;
     modesperline = 4;
     use_354 = 0;
@@ -1032,7 +1059,7 @@ static void do_nettype()
     rfc_compliant = 1;
     include_lk = 0;
     break;
-  case 1: /* IRCnet */
+  case NETT_IRCNET:
     kick_method = 4;
     modesperline = 3;
     use_354 = 0;
@@ -1045,42 +1072,55 @@ static void do_nettype()
     rfc_compliant = 1;
     include_lk = 1;
     break;
-  case 2: /* UnderNet */
+  case NETT_UNDERNET:
+    kick_method = 1;
+    modesperline = 6;
+    use_354 = 1;
+    use_exempts = 0;
+    use_invites = 0;
+    max_bans = 100;
+    max_exempts = 0;
+    max_invites = 0;
+    max_modes = 100;
+    rfc_compliant = 1;
+    include_lk = 1;
+    break;
+  case NETT_DALNET:
+    kick_method = 4;
+    modesperline = 6;
+    use_354 = 0;
+    use_exempts = 1;
+    use_invites = 1;
+    max_bans = 200;
+    max_exempts = 100;
+    max_invites = 100;
+    max_modes = 400;
+    rfc_compliant = 0;
+    include_lk = 1;
+    break;
+  case NETT_QUAKENET:
     kick_method = 1;
     modesperline = 6;
     use_354 = 1;
     use_exempts = 0;
     use_invites = 0;
     max_bans = 45;
-    max_exempts = 45;
-    max_invites = 45;
+    max_exempts = 0;
+    max_invites = 0;
     max_modes = 45;
     rfc_compliant = 1;
     include_lk = 1;
     break;
-  case 3: /* DALnet */
-    kick_method = 1;
-    modesperline = 6;
-    use_354 = 0;
-    use_exempts = 0;
-    use_invites = 0;
-    max_bans = 100;
-    max_exempts = 100;
-    max_invites = 100;
-    max_modes = 100;
-    rfc_compliant = 0;
-    include_lk = 1;
-    break;
-  case 4: /* Hybrid-6+ */
+  case NETT_RIZON:
     kick_method = 1;
     modesperline = 4;
     use_354 = 0;
     use_exempts = 1;
     use_invites = 1;
-    max_bans = 20;
-    max_exempts = 20;
-    max_invites = 20;
-    max_modes = 20;
+    max_bans = 250;
+    max_exempts = 250;
+    max_invites = 250;
+    max_modes = 250;
     rfc_compliant = 1;
     include_lk = 0;
     break;
@@ -1133,6 +1173,7 @@ static char *irc_close()
   del_bind_table(H_nick);
   del_bind_table(H_mode);
   del_bind_table(H_kick);
+  del_bind_table(H_invt);
   del_bind_table(H_join);
   del_bind_table(H_pubm);
   del_bind_table(H_pub);
@@ -1142,6 +1183,7 @@ static char *irc_close()
   rem_builtins(H_dcc, irc_dcc);
   rem_builtins(H_msg, C_msg);
   rem_builtins(H_raw, irc_raw);
+  rem_builtins(H_rawt, irc_rawt);
   rem_tcl_commands(tclchan_cmds);
   rem_help_reference("irc.help");
   del_hook(HOOK_MINUTELY, (Function) check_expired_chanstuff);
@@ -1193,7 +1235,8 @@ static Function irc_table[] = {
   (Function) me_voice,
   /* 24 - 27 */
   (Function) getchanmode,
-  (Function) reset_chan_info
+  (Function) reset_chan_info,
+  (Function) & H_invt           /* p_tcl_bind_list              */
 };
 
 char *irc_start(Function *global_funcs)
@@ -1207,9 +1250,9 @@ char *irc_start(Function *global_funcs)
     module_undepend(MODULE_NAME);
     return "This module requires Eggdrop 1.8.0 or later.";
   }
-  if (!(server_funcs = module_depend(MODULE_NAME, "server", 1, 0))) {
+  if (!(server_funcs = module_depend(MODULE_NAME, "server", 1, 5))) {
     module_undepend(MODULE_NAME);
-    return "This module requires server module 1.0 or later.";
+    return "This module requires server module 1.5 or later.";
   }
   if (!(channels_funcs = module_depend(MODULE_NAME, "channels", 1, 1))) {
     module_undepend(MODULE_NAME);
@@ -1243,6 +1286,7 @@ char *irc_start(Function *global_funcs)
   add_builtins(H_dcc, irc_dcc);
   add_builtins(H_msg, C_msg);
   add_builtins(H_raw, irc_raw);
+  add_builtins(H_rawt, irc_rawt);
   add_tcl_commands(tclchan_cmds);
   add_help_reference("irc.help");
   H_topc = add_bind_table("topc", HT_STACKABLE, channels_5char);
@@ -1253,6 +1297,7 @@ char *irc_start(Function *global_funcs)
   H_nick = add_bind_table("nick", HT_STACKABLE, channels_5char);
   H_mode = add_bind_table("mode", HT_STACKABLE, channels_6char);
   H_kick = add_bind_table("kick", HT_STACKABLE, channels_6char);
+  H_invt = add_bind_table("invt", HT_STACKABLE, invite_4char);
   H_join = add_bind_table("join", HT_STACKABLE, channels_4char);
   H_pubm = add_bind_table("pubm", HT_STACKABLE, channels_5char);
   H_pub = add_bind_table("pub", 0, channels_5char);

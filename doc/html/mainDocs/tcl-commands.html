@@ -2688,6 +2688,13 @@ will be used. Types 30-39 set the host to ‘*’.</p>
 <p>Module: core</p>
 </div></blockquote>
 </div>
+<div class="section" id="language">
+<h3>language<a class="headerlink" href="#language" title="Permalink to this headline">¶</a></h3>
+<blockquote>
+<div><p>Value: a string containing the language with the highest priority for use by Eggdrop. This commonly reflects what is added with addlang in the config file</p>
+<p>Module: core</p>
+</div></blockquote>
+</div>
 </div>
 <div class="section" id="binds">
 <h2>Binds<a class="headerlink" href="#binds" title="Permalink to this headline">¶</a></h2>
@@ -3218,6 +3225,14 @@ flags are ignored.</p>
 <p>Description: triggered when eggdrop is about to die. The mask is matched against the shutdown reason. The bind won’t be triggered if the bot crashes or is being terminated by SIGKILL.</p>
 <p>Module: core</p>
 </div></blockquote>
+<ol class="arabic simple" start="51">
+<li>INVT (stackable)</li>
+</ol>
+<blockquote>
+<div><p>bind invt &lt;flags&gt; &lt;mask&gt; &lt;proc&gt;</p>
+<p>procname &lt;nick&gt; &lt;<a class="reference external" href="mailto:user&#37;&#52;&#48;host">user<span>&#64;</span>host</a>&gt; &lt;channel&gt; &lt;invitee&gt;</p>
+<p>Description: triggered when eggdrop received an INVITE message. The mask for the bind is in the format “#channel nickname”, where nickname (not a hostmask) is that of the invitee. For the proc, nick is the nickname of the person sending the invite request, <a class="reference external" href="mailto:user&#37;&#52;&#48;host">user<span>&#64;</span>host</a> is the <a class="reference external" href="mailto:user&#37;&#52;&#48;host">user<span>&#64;</span>host</a> of the person sending the invite, channel is the channel the invitee is being invited to, and invitee is the target (nickname only) of the invite. The invitee argument was added to support the IRCv3 invite-notify capability, where the eggdrop may be able to see invite messages for other people that are not the eggdrop.</p>
+</div></blockquote>
 </div>
 <div class="section" id="return-values">
 <h3>Return Values<a class="headerlink" href="#return-values" title="Permalink to this headline">¶</a></h3>
@@ -3385,7 +3400,7 @@ words) (This char only works in binds, not in regular matching)</td>
 </tbody>
 </table>
 <blockquote>
-<div>Copyright (C) 1999 - 2019 Eggheads Development Team</div></blockquote>
+<div>Copyright (C) 1999 - 2020 Eggheads Development Team</div></blockquote>
 </div>
 </div>
 
@@ -3414,8 +3429,8 @@ words) (This char only works in binds, not in regular matching)</td>
         <div class="right">
           
     <div class="footer" role="contentinfo">
-        &#169; Copyright 2019, Eggheads.
-      Last updated on Oct 25, 2019.
+        &#169; Copyright 2020, Eggheads.
+      Last updated on Jan 20, 2020.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.5.
     </div>
         </div>
