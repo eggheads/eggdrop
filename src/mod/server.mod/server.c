@@ -2175,9 +2175,9 @@ static Function server_table[] = {
   (Function) & H_out,           /* p_tcl_bind_list                      */
   (Function) add_server,
   (Function) del_server,
-  (Function) & net_type_int     /* int                                  */
+  (Function) & net_type_int,    /* int                                  */
   /* 44 - 47 */
-  (Function) & H_awayv3,        /* p_tcl_bind_list                      */
+  (Function) & H_awayv3         /* p_tcl_bind_list                      */
 };
 
 char *server_start(Function *global_funcs)
