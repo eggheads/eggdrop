@@ -125,7 +125,7 @@ int ssl_init()
 #if OPENSSL_VERSION_NUMBER < 0x10100000L /* 1.1.0 */
   SSL_library_init();
   SSL_load_error_strings();
-  OpenSSL_add_all_algorithms
+  OpenSSL_add_all_algorithms();
 #endif
   if (ssl_seed()) {
     putlog(LOG_MISC, "*", "ERROR: TLS: unable to seed PRNG. Disabling SSL");
