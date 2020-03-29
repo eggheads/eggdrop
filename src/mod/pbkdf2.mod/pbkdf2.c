@@ -76,7 +76,7 @@ static char *pbkdf2_hash(const char *pass, const char *digest_name, const unsign
 
   digest = EVP_get_digestbyname(digest_name);
   if (!digest) {
-    putlog(LOG_MISC, "*", "PBKDF2 error: Unknown message digest %s.", digest_name);
+    putlog(LOG_MISC, "*", "PBKDF2 error: Unknown message digest '%s'.", digest_name);
     return NULL;
   }
   /* Sanity check */
@@ -119,7 +119,7 @@ static char *pbkdf2_hash(const char *pass, const char *digest_name, const unsign
   ret = getrusage(RUSAGE_SELF, &ru1);
   if (!PKCS5_PBKDF2_HMAC(pass, strlen(pass), salt, saltlen, rounds, digest, digestlen, buf)) {
     explicit_bzero(out, strlen(out));
-    putlog(LOG_MISC, "*", "PBKDF2 error: PKCS5_PBKDF2_HMAC().");
+    putlog(LOG_MISC, "*", "PBKDF2 error: PKCS5_PBKDF2_HMAC(): %s.", ERR_error_string(ERR_get_error(), NULL));
     return NULL;
   }
   if (!ret && !getrusage(RUSAGE_SELF, &ru2)) {
@@ -147,8 +147,7 @@ static char *pbkdf2_encrypt(const char *pass)
 
   /* Encrypt a password with standard settings to store. */
   if (RAND_bytes(salt, sizeof salt) != 1) {
-    /* TODO: Do we need ERR_load_crypto_strings(), SSL_load_error_strings() and ERR_free_strings(void) ? */
-    putlog(LOG_MISC, "*", "PBKDF2 error: %s.", ERR_error_string(ERR_get_error(), NULL));
+    putlog(LOG_MISC, "*", "PBKDF2 error: RAND_bytes(): %s.", ERR_error_string(ERR_get_error(), NULL));
     return NULL;
   }
   if (!(buf = pbkdf2_hash(pass, pbkdf2_method, salt, sizeof salt, pbkdf2_rounds)))
@@ -177,7 +176,7 @@ static int pbkdf2_verify(const char *pass, const char *encrypted)
   }
   digest = EVP_get_digestbyname(method);
   if (!digest) {
-    putlog(LOG_MISC, "*", "PBKDF2 error: EVP_get_digestbyname(%s).", method);
+    putlog(LOG_MISC, "*", "PBKDF2 error: Unknown message digest '%s'.", method);
     return 1;
   }
   if (b64salt[22] == 0) {
@@ -223,10 +222,16 @@ static Function pbkdf2_table[] = {
 static int pbkdf2_init(void)
 {
   const EVP_MD *digest;
-  OpenSSL_add_all_digests();
+  /* OpenSSL library initialization
+   * If you are using 1.1.0 or above then you don't need to take any further steps. */
+#if OPENSSL_VERSION_NUMBER < 0x10100000L /* 1.1.0 */
+  SSL_library_init();
+  SSL_load_error_strings();
+  OpenSSL_add_all_algorithms();
+#endif
   digest = EVP_get_digestbyname(pbkdf2_method);
   if (!digest) {
-    putlog(LOG_MISC, "*", "PBKDF2 error: Failed to initialize digest '%s'.", pbkdf2_method);
+    putlog(LOG_MISC, "*", "PBKDF2 error: Unknown message digest '%s'.", pbkdf2_method);
     return 1;
   }
   if (!RAND_status()) {
