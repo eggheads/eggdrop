@@ -3294,7 +3294,7 @@ The following is a list of bind types and how they work. Below each bind type is
 
   procname <from> <msg>
 
-  Description: triggered when a user enters or returns from an away status on the IRC server, ONLY when the away-notify IRCv3 capability is enabled via CAP. text is the reason that has been specified. To catch a user returning from an away status, use "" as the mask. flags is ignored. This bind will only work with IRC servers that support the IRCv3 away-notify capability and the away-notify capability must be enabled, otherwise it is ignored.
+  Description: triggered when Eggdrop recieves an IRCv3 AWAY message for a user from an IRC server, ONLY if the away-notify IRCv3 capability is enabled via CAP. "Normal" away messages (301 messages) will not trigger this bind, for those you should instead use a RAWT bind. mask is a nickname (* to catch all nicknames) and msg is the reason that has been specified. flags is ignored. This bind will only work with IRC servers that support the IRCv3 away-notify capability, and the away-notify capability must be enabled.
 
   Module: server
 
