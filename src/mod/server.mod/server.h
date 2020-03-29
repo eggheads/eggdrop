@@ -88,6 +88,7 @@
 /* Was (briefly!) addserver */
 /* Was (briefly!) delserver */
 #define net_type_int (*(int *)(server_funcs[43]))
+#define H_awayv3 (*(p_tcl_bind_list *)(server_funcs[44]))
 #endif /* MAKING_SERVER */
 
 struct server_list {

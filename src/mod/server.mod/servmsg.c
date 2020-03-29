@@ -264,6 +264,18 @@ static int check_tcl_wall(char *from, char *msg)
   return 1;
 }
 
+static int check_tcl_awayv3(char *from, char *msg)
+{
+  int x;
+
+  Tcl_SetVar(interp, "_awayv31", from, 0);
+  Tcl_SetVar(interp, "_awayv32", msg ? (char *) msg : "", 0);
+  x = check_tcl_bind(H_awayv3, from, 0, " $_awayv31, $_awayv32",
+                       MATCH_MASK | BIND_STACKABLE);
+
+  return (x == BIND_EXEC_LOG);
+}
+
 static int check_tcl_flud(char *nick, char *uhost, struct userrec *u,
                           char *ftype, char *chname)
 {
@@ -1360,6 +1372,7 @@ static int gotauthenticate(char *from, char *msg)
   return 0;
 }
 
+/* Got 900: RPL_SASLLOGGEDIN, user account name is set */
 static int got900(char *from, char *msg)
 {
   newsplit(&msg); /* nick */
@@ -1382,6 +1395,10 @@ static int sasl_error(char *msg)
   return 1;
 }
 
+/* Got 904: ERR_SASLFAIL, invalid credentials (or something not covered)
+   Got 905: ERR_SASLTOOLONG, AUTHENTICATE command was too long (>400 bytes)
+   Got 906: ERR_SASL_ABORTED, sent AUTHENTICATE command with * as parameter
+ */
 static int got904905and906(char *from, char *msg)
 {
   newsplit(&msg); /* nick */
@@ -1389,6 +1406,7 @@ static int got904905and906(char *from, char *msg)
   return sasl_error(msg);
 }
 
+/* Got 903: RPL_SASLSUCCESS, authentication successful */
 static int got903(char *from, char *msg)
 {
   newsplit(&msg); /* nick */
@@ -1399,6 +1417,7 @@ static int got903(char *from, char *msg)
   return 0;
 }
 
+/* Got 908: RPL_SASLMECHS, mechanisms supported by network */
 static int got908(char *from, char *msg)
 {
   newsplit(&msg); /* nick */
@@ -1410,6 +1429,19 @@ static int got908(char *from, char *msg)
 static int handle_sasl_timeout()
 {
   return sasl_error("timeout");
+}
+
+/* Got AWAY message; only valid for IRCv3 away-notify capability */
+static int gotawayv3(char *from, char *msg)
+{
+  if (strlen(msg)) {
+    fixcolon(msg);
+    putlog(LOG_SERV, "*", "%s is now away: %s", from, msg);
+  } else {
+    putlog(LOG_SERV, "*", "%s has returned from away status", from);
+  }
+  check_tcl_awayv3(from, msg);
+  return 0;
 }
 
 /*
@@ -1627,6 +1659,7 @@ static cmd_t my_raw_binds[] = {
   {"PING",         "",   (IntFunc) gotping,         NULL},
   {"PONG",         "",   (IntFunc) gotpong,         NULL},
   {"WALLOPS",      "",   (IntFunc) gotwall,         NULL},
+  {"AWAY",         "",   (IntFunc) gotawayv3,       NULL},
   {"001",          "",   (IntFunc) got001,          NULL},
   {"303",          "",   (IntFunc) got303,          NULL},
   {"311",          "",   (IntFunc) got311,          NULL},
