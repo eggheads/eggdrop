@@ -608,7 +608,9 @@ Function global_table[] = {
   (Function) 0,
   (Function) 0,
 #endif
-  (Function) check_validpass
+  (Function) check_validpass,
+  /* 304 - 307 */
+  (Function) & USERENTRY_PASS2    /* struct user_entry_type *            */
 };
 
 void init_modules(void)

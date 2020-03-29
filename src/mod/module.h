@@ -506,6 +506,8 @@
 # define b64_pton ((int (*) (const char *, u_char *, size_t))global[306])
 #endif
 #define check_validpass ((char *(*) (struct userrec *, char *))global[307])
+/* 308 - 311 */
+#define USERENTRY_PASS2 (*(struct user_entry_type *)(global[308]))
 
 
 /* hostmasking */

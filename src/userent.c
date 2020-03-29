@@ -238,11 +238,16 @@ struct user_entry_type USERENTRY_INFO = {
   def_tcl_append
 };
 
+#include <assert.h> /* TODO: pbkdf2 under construction, will be removed later */
 int pass2_set(struct userrec *u, struct user_entry *e, void *new)
 {
+  /* if (!pass || !pass[0] || (pass[0] == '-'))
+   *   e->u.extra = NULL;
+   */
+  assert(new);
   e->u.extra = user_malloc(strlen(new) + 1);
   strcpy(e->u.extra, new);
-  return 1;
+  return 0;
 }
 
 struct user_entry_type USERENTRY_PASS2 = {
@@ -272,7 +277,7 @@ int pass_set(struct userrec *u, struct user_entry *e, void *buf)
   if (e->u.extra)
     nfree(e->u.extra);
   if (!pass || !pass[0] || (pass[0] == '-'))
-    e->u.extra = NULL;
+    e->u.extra = NULL; /* TODO: pbkdf2 may need code for this case */
   else {
     unsigned char *p = (unsigned char *) pass;
 
@@ -283,9 +288,16 @@ int pass_set(struct userrec *u, struct user_entry *e, void *buf)
         *p = '?';
       p++;
     }
-    if ((u->flags & USER_BOT) || (pass[0] == '+')) {
+    if (u->flags & USER_BOT) {
       strlcpy(new, pass, sizeof new);
       new2 = new;
+    }
+    else if (pass[0] == '+') {
+      strlcpy(new, pass, sizeof new);
+      new2 = NULL; /* Due to module api encrypted pass2 cannot be available here
+                    * Caller must do set_user(&USERENTRY_PASS2, u, password);
+                    * Probably only share.c:dup_userlist()
+                    */
     }
     else {
       if (encrypt_pass)
@@ -297,7 +309,7 @@ int pass_set(struct userrec *u, struct user_entry *e, void *buf)
       e->u.extra = user_malloc(strlen(new) + 1);
       strcpy(e->u.extra, new);
     }
-    if (encrypt_pass2)
+    if (encrypt_pass2 && new2)
       set_user(&USERENTRY_PASS2, u, new2);
     explicit_bzero(new, sizeof new);
     if (new2 && new2 != new)
