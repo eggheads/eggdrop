@@ -364,8 +364,14 @@ void tell_verbose_status(int idx)
   if (tcl_threaded())
     dprintf(idx, "Tcl is threaded.\n");
 #ifdef TLS
-  dprintf(idx, "TLS support is enabled.\n");
-  dprintf(idx, "TLS library: %s\n", SSLeay_version(SSLEAY_VERSION));
+  dprintf(idx, "TLS support is enabled.\n"
+               "TLS library: %s\n", SSLeay_version(SSLEAY_VERSION));
+#ifndef HAVE_EVP_PKEY_GET1_EC_KEY
+  dprintf(idx, "TLS is without EC.\n");
+#endif
+#ifndef HAVE_OPENSSL_MD5
+  dprintf(idx, "TLS is without MD5.\n");
+#endif
 #else
   dprintf(idx, "TLS support is not available.\n");
 #endif
