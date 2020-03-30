@@ -850,7 +850,7 @@ static void got303(char *from, char *msg)
  */
 static int got432(char *from, char *msg)
 {
-  char *erroneous, nick[10]; /* NICKLEN 9 + \0 */
+  char *erroneous, nick[nick_len + 1];
 
   newsplit(&msg);
   erroneous = newsplit(&msg);
