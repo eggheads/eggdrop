@@ -875,9 +875,9 @@ static void cmd_channel(struct userrec *u, int idx, char *par)
         else
           strlcpy(s1, "   ", sizeof s1);
         if (chan_ircaway(m)) {
-          egg_snprintf(s1+strlen(s1), sizeof (s1-strlen(s1)), " (away)");
+          egg_snprintf(s1+strlen(s1), ((sizeof s1)-strlen(s1)), " (away)");
         } else {
-          egg_snprintf(s1+strlen(s1), sizeof (s1-strlen(s1)), "       ");
+          egg_snprintf(s1+strlen(s1), ((sizeof s1)-strlen(s1)), "       ");
         }
         egg_snprintf(format, sizeof format,
                      "%%c%%-%us %%-%us %%s %%c %%s  %%s\n", maxnicklen,
