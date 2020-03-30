@@ -434,6 +434,30 @@ static int tcl_ischaninvite STDVAR
   return TCL_OK;
 }
 
+/* Checks internal tracking of IRC server away status, as updated by IRC
+ * server 352 and AWAY messages. Meant mostly for use with the IRCv3 away-notify
+ * capability, it may not be accurate using only 352s.
+ */
+static int tcl_isaway STDVAR
+{
+  struct chanset_t *chan;
+  memberlist *m;
+
+  BADARGS(2, 2, " nick");
+
+  for (chan = chanset; chan; chan = chan->next) {
+    m = ismember(chan, argv[1]);     /* In my channel list copy? */
+    if (m) {
+        if chan_ircaway(m) {
+        Tcl_AppendResult(irp, "1", NULL);
+        return TCL_OK;
+      }
+    }
+  }
+  Tcl_AppendResult(irp, "0", NULL);
+  return TCL_OK;
+}
+
 static int tcl_getchanhost STDVAR
 {
   struct chanset_t *chan, *thechan = NULL;
@@ -1014,6 +1038,7 @@ static tcl_cmds tclchan_cmds[] = {
   {"onchansplit",    tcl_onchansplit},
   {"maskhost",       tcl_maskhost},
   {"getchanidle",    tcl_getchanidle},
+  {"isaway",         tcl_isaway},
   {"chanbans",       tcl_chanbans},
   {"chanexempts",    tcl_chanexempts},
   {"chaninvites",    tcl_chaninvites},

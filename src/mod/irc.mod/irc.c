@@ -32,7 +32,7 @@
 #include <sys/utsname.h>
 
 static p_tcl_bind_list H_topc, H_splt, H_sign, H_rejn, H_part, H_pub, H_pubm;
-static p_tcl_bind_list H_nick, H_mode, H_kick, H_join, H_need, H_invt;
+static p_tcl_bind_list H_nick, H_mode, H_kick, H_join, H_need, H_invt, H_awayv3;
 
 static Function *global = NULL, *channels_funcs = NULL, *server_funcs = NULL;
 
@@ -755,6 +755,17 @@ static int invite_4char STDVAR
   return TCL_OK;
 }
 
+static int check_tcl_awayv3(char *from, char *msg)
+{
+  int x;
+
+  Tcl_SetVar(interp, "_awayv31", from, 0);
+  Tcl_SetVar(interp, "_awayv32", msg ? (char *) msg : "", 0);
+  x = check_tcl_bind(H_awayv3, from, 0, " $_awayv31, $_awayv32",
+                       MATCH_MASK | BIND_STACKABLE);
+
+  return (x == BIND_EXEC_LOG);
+}
 
 static void check_tcl_joinspltrejn(char *nick, char *uhost, struct userrec *u,
                                    char *chname, p_tcl_bind_list table)
@@ -1178,6 +1189,7 @@ static char *irc_close()
   del_bind_table(H_pubm);
   del_bind_table(H_pub);
   del_bind_table(H_need);
+  del_bind_table(H_awayv3);
   rem_tcl_strings(mystrings);
   rem_tcl_ints(myints);
   rem_builtins(H_dcc, irc_dcc);
@@ -1236,7 +1248,8 @@ static Function irc_table[] = {
   /* 24 - 27 */
   (Function) getchanmode,
   (Function) reset_chan_info,
-  (Function) & H_invt           /* p_tcl_bind_list              */
+  (Function) & H_invt,          /* p_tcl_bind_list              */
+  (Function) & H_awayv3         /* p_tcl_bind_list              */
 };
 
 char *irc_start(Function *global_funcs)
@@ -1302,6 +1315,7 @@ char *irc_start(Function *global_funcs)
   H_pubm = add_bind_table("pubm", HT_STACKABLE, channels_5char);
   H_pub = add_bind_table("pub", 0, channels_5char);
   H_need = add_bind_table("need", HT_STACKABLE, channels_2char);
+  H_awayv3 = add_bind_table("awy3", HT_STACKABLE, channels_2char);
   do_nettype();
   return NULL;
 }

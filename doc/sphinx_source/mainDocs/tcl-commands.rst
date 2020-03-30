@@ -1068,6 +1068,14 @@ isvoice <nickname> [channel]
 
   Module: irc
 
+^^^^^^^^^^^^^^^^^
+isaway <nickname>
+^^^^^^^^^^^^^^^^^
+
+  Returns: 1 if Eggdrop is currently tracking someone by that nickname is marked 'away' by an IRC server; 0 otherwise. IMPORTANT: this command will function properly when used in conjunction with the IRCv3 away-notify capability, if away-notify is enabled on the IRC server (if you didn't add this to your config file, it isn't enabled). Without away-notify functionality, this command may not be accurate. For best results without away-notify enabled, use 'resetchan <channel> w' on a channel the user is on to refresh the channel list. This will obtain the current away status for the user.
+
+  Module: irc
+
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^
 onchan <nickname> [channel]
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^
