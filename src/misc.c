@@ -1445,7 +1445,7 @@ void make_rand_str_from_chars(char *s, const int len, char *chars)
  */
 void make_rand_str(char *s, const int len)
 {
-  make_rand_str_from_chars(s, len, "0123456789abcdefghijklmnopqrstuvwxyz");
+  make_rand_str_from_chars(s, len, CHARSET_ALPHANUM);
 }
 
 /* Convert an octal string into a decimal integer value.  If the string
