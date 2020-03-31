@@ -2,7 +2,7 @@
  * transfer.c -- part of transfer.mod
  *
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2019 Eggheads Development Team
+ * Copyright (C) 1999 - 2020 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -46,6 +46,7 @@ static p_tcl_bind_list H_rcvd, H_sent, H_lost, H_tout;
 static int wait_dcc_xfer = 300; /* Timeout time on DCC xfers */
 static int dcc_limit = 3;       /* Max simultaneous downloads allowed */
 static int dcc_block = 0;       /* Size of one dcc block */
+static int shunlink = 1;        /* Unlink bots when userfile sharing fails */
 static fileq_t *fileq = NULL;
 
 static struct dcc_table DCC_SEND, DCC_GET, DCC_GET_PENDING;
@@ -352,29 +353,32 @@ static void eof_dcc_send(int idx)
       if ((!strcasecmp(dcc[x].nick, dcc[idx].host)) &&
           (dcc[x].type->flags & DCT_BOT))
         y = x;
+    unlink(dcc[idx].u.xfer->filename);
     if (y) {
-      putlog(LOG_BOTS, "*", TRANSFER_USERFILE_LOST, dcc[y].nick);
-      unlink(dcc[idx].u.xfer->filename);
-      /* Drop that bot */
-      dprintf(y, "bye\n");
-      egg_snprintf(s, sizeof s, TRANSFER_USERFILE_DISCON, dcc[y].nick);
-      botnet_send_unlinked(y, dcc[y].nick, s);
-      putlog(LOG_BOTS, "*", "%s.", s);
-      if (y != idx) {
-        killsock(dcc[y].sock);
-        lostdcc(y);
+      if (shunlink) {
+        /* Drop that bot */
+        dprintf(y, "bye\n");
+        egg_snprintf(s, sizeof s, TRANSFER_USERFILE_DISCON, dcc[y].nick);
+        botnet_send_unlinked(y, dcc[y].nick, s);
+        putlog(LOG_BOTS, "*", "%s.", s);
+        if (y != idx) {
+          killsock(dcc[y].sock);
+          lostdcc(y);
+        }
+      } else {
+        putlog(LOG_BOTS, "*", TRANSFER_USERFILE_LOST, dcc[y].nick);
+        dcc[y].status &= ~(STAT_GETTING | STAT_SHARE);
       }
-      killsock(dcc[idx].sock);
-      lostdcc(idx);
-    }
+    } else
+      putlog(LOG_BOTS, "*", TRANSFER_ABORT_USERFILE);
   } else {
     putlog(LOG_FILES, "*", TRANSFER_LOST_DCCSEND, dcc[idx].u.xfer->origname,
            dcc[idx].nick, dcc[idx].host, dcc[idx].status,
            dcc[idx].u.xfer->length);
-    killsock(dcc[idx].sock);
-    lostdcc(idx);
   }
 
+  killsock(dcc[idx].sock);
+  lostdcc(idx);
 }
 
 /* Determine byte order. Used for resend DCC startup packets.
@@ -571,21 +575,25 @@ static void eof_dcc_get(int idx)
       if (!strcasecmp(dcc[x].nick, dcc[idx].host) &&
           (dcc[x].type->flags & DCT_BOT))
         y = x;
-    putlog(LOG_BOTS, "*", TRANSFER_ABORT_USERFILE);
     /* Note: no need to unlink the xfer file, as it's already unlinked. */
     xnick[0] = 0;
-    /* Drop that bot */
-    dprintf(-dcc[y].sock, "bye\n");
-    egg_snprintf(s, sizeof s, TRANSFER_USERFILE_DISCON, dcc[y].nick);
-    botnet_send_unlinked(y, dcc[y].nick, s);
-    putlog(LOG_BOTS, "*", "%s.", s);
-    if (y != idx) {
-      killsock(dcc[y].sock);
-      lostdcc(y);
-    }
-    killsock(dcc[idx].sock);
-    lostdcc(idx);
-    return;
+    if (y) {
+      if (shunlink) {
+        /* Drop that bot */
+        dprintf(-dcc[y].sock, "bye\n");
+        egg_snprintf(s, sizeof s, TRANSFER_USERFILE_DISCON, dcc[y].nick);
+        botnet_send_unlinked(y, dcc[y].nick, s);
+        putlog(LOG_BOTS, "*", "%s.", s);
+        if (y != idx) {
+          killsock(dcc[y].sock);
+          lostdcc(y);
+        }
+      } else {
+        putlog(LOG_BOTS, "*", TRANSFER_USERFILE_LOST, dcc[y].nick);
+        dcc[y].status &= ~(STAT_SENDING | STAT_SHARE);
+      }
+    } else
+      putlog(LOG_BOTS, "*", TRANSFER_ABORT_USERFILE);
   } else {
     struct userrec *u;
 
@@ -603,7 +611,7 @@ static void eof_dcc_get(int idx)
   killsock(dcc[idx].sock);
   lostdcc(idx);
   /* Send next queued file if there is one */
-  if (!at_limit(xnick))
+  if (xnick[0] && !at_limit(xnick))
     send_next_file(xnick);
 }
 
@@ -638,25 +646,24 @@ static void transfer_get_timeout(int i)
       if ((!strcasecmp(dcc[x].nick, dcc[i].host)) &&
           (dcc[x].type->flags & DCT_BOT))
         y = x;
-    if (y != 0) {
-      dcc[y].status &= ~STAT_SENDING;
-      dcc[y].status &= ~STAT_SHARE;
-    }
     unlink(dcc[i].u.xfer->filename);
-    putlog(LOG_BOTS, "*", TRANSFER_USERFILE_TIMEOUT);
-    dprintf(y, "bye\n");
-    egg_snprintf(xx, sizeof xx, TRANSFER_DICONNECT_TIMEOUT, dcc[y].nick);
-    botnet_send_unlinked(y, dcc[y].nick, xx);
-    putlog(LOG_BOTS, "*", "%s.", xx);
-    if (y < i) {
-      int t = y;
-
-      y = i;
-      i = t;
-    }
-    killsock(dcc[y].sock);
-    lostdcc(y);
     xx[0] = 0;
+    if (y) {
+      if (shunlink) {
+        dprintf(y, "bye\n");
+        egg_snprintf(xx, sizeof xx, TRANSFER_DICONNECT_TIMEOUT, dcc[y].nick);
+        botnet_send_unlinked(y, dcc[y].nick, xx);
+        putlog(LOG_BOTS, "*", "%s.", xx);
+        if (y != i) {
+          killsock(dcc[y].sock);
+          lostdcc(y);
+        }
+      } else {
+        putlog(LOG_BOTS, "*", TRANSFER_USERFILE_TIMEOUT);
+        dcc[y].status &= ~(STAT_SENDING | STAT_SHARE);
+      }
+    } else
+      putlog(LOG_BOTS, "*", TRANSFER_USERFILE_TIMEOUT);
   } else {
     char *p;
     struct userrec *u;
@@ -679,7 +686,7 @@ static void transfer_get_timeout(int i)
   }
   killsock(dcc[i].sock);
   lostdcc(i);
-  if (!at_limit(xx))
+  if (xx[0] && !at_limit(xx))
     send_next_file(xx);
 }
 
@@ -1098,6 +1105,7 @@ static tcl_ints myints[] = {
   {"max-dloads",       &dcc_limit},
   {"dcc-block",        &dcc_block},
   {"xfer-timeout", &wait_dcc_xfer},
+  {"sharefail-unlink",  &shunlink},
   {NULL,                     NULL}
 };
 

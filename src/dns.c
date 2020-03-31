@@ -7,7 +7,7 @@
 /*
  * Written by Fabian Knittel <fknittel@gmx.de>
  *
- * Copyright (C) 1999 - 2019 Eggheads Development Team
+ * Copyright (C) 1999 - 2020 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -464,35 +464,37 @@ void call_ipbyhost(char *hostn, sockname_t *ip, int ok)
  */
 void block_dns_hostbyip(sockname_t *addr)
 {
-  struct hostent *hp = 0;
-  static char s[UHOSTLEN];
+  char host[UHOSTLEN];
+  volatile int i = 1;
 
   if (addr->family == AF_INET) {
     if (!sigsetjmp(alarmret, 1)) {
       alarm(resolve_timeout);
-      hp = gethostbyaddr((const char *) &addr->addr.s4.sin_addr,
-                         sizeof (struct in_addr), AF_INET);
+      i = getnameinfo((const struct sockaddr *) &addr->addr.s4,
+                      sizeof (struct sockaddr_in), host, sizeof host, NULL, 0, 0);
       alarm(0);
+      if (i)
+        debug1("dns: getnameinfo(): error = %s", gai_strerror(i));
     }
-    if (!hp)
-     inet_ntop(AF_INET, &addr->addr.s4.sin_addr.s_addr, s, sizeof s);
+    if (i)
+      inet_ntop(AF_INET, &addr->addr.s4.sin_addr.s_addr, host, sizeof host);
 #ifdef IPV6
   } else {
     if (!sigsetjmp(alarmret, 1)) {
       alarm(resolve_timeout);
-      hp = gethostbyaddr((const char *) &addr->addr.s6.sin6_addr,
-                         sizeof (struct in6_addr), AF_INET6);
+      i = getnameinfo((const struct sockaddr *) &addr->addr.s6,
+                      sizeof (struct sockaddr_in6), host, sizeof host, NULL, 0, 0);
       alarm(0);
+      if (i)
+        debug1("dns: getnameinfo(): error = %s", gai_strerror(i));
     }
-    if (!hp)
-      inet_ntop(AF_INET6, &addr->addr.s6.sin6_addr, s, sizeof s);
+    if (i)
+      inet_ntop(AF_INET6, &addr->addr.s6.sin6_addr, host, sizeof host);
   }
 #else
   }
 #endif
-  if (hp)
-    strlcpy(s, hp->h_name, sizeof s);
-  call_hostbyip(addr, s, hp ? 1 : 0);
+  call_hostbyip(addr, host, !i);
 }
 
 void block_dns_ipbyhost(char *host)

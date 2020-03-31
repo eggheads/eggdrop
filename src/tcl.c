@@ -6,7 +6,7 @@
  */
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2019 Eggheads Development Team
+ * Copyright (C) 1999 - 2020 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -47,7 +47,7 @@ extern char origbotname[], botuser[], motdfile[], admin[], userfile[],
             firewall[], helpdir[], notify_new[], vhost[], moddir[], owner[],
             network[], botnetnick[], bannerfile[], egg_version[], natip[],
             configfile[], logfile_suffix[], log_ts[], textdir[], pid_file[],
-            listen_ip[], stealth_prompt[];
+            listen_ip[], stealth_prompt[], language[];
 
 
 extern int flood_telnet_thr, flood_telnet_time, shtime, share_greet,
@@ -57,8 +57,7 @@ extern int flood_telnet_thr, flood_telnet_time, shtime, share_greet,
            ignore_time, reserved_port_min, reserved_port_max, max_logs,
            max_logsize, dcc_total, raw_log, identtimeout, dcc_sanitycheck,
            dupwait_timeout, egg_numver, share_unlinks, protect_telnet,
-           strict_host, resolve_timeout, default_uflags, userfile_perm,
-           cidr_support;
+           resolve_timeout, default_uflags, userfile_perm, cidr_support;
 
 #ifdef IPV6
 extern char vhost6[];
@@ -68,7 +67,7 @@ extern int pref_af;
 #ifdef TLS
 extern int tls_maxdepth, tls_vfybots, tls_vfyclients, tls_vfydcc, tls_auth;
 extern char tls_capath[], tls_cafile[], tls_certfile[], tls_keyfile[],
-            tls_ciphers[];
+            tls_protocols[], tls_dhparam[], tls_ciphers[];
 #endif
 
 extern struct dcc_t *dcc;
@@ -370,7 +369,9 @@ static tcl_strings def_tcl_strings[] = {
 #ifdef TLS
   {"ssl-capath",      tls_capath,     120, STR_DIR | STR_PROTECT},
   {"ssl-cafile",      tls_cafile,     120,           STR_PROTECT},
-  {"ssl-ciphers",     tls_ciphers,    2048,          STR_PROTECT},
+  {"ssl-protocols",   tls_protocols,  60,            STR_PROTECT},
+  {"ssl-dhparam",     tls_dhparam,    120,           STR_PROTECT},
+  {"ssl-ciphers",     tls_ciphers,    2048,           STR_PROTECT},
   {"ssl-privatekey",  tls_keyfile,    120,           STR_PROTECT},
   {"ssl-certificate", tls_certfile,   120,           STR_PROTECT},
 #endif
@@ -397,6 +398,7 @@ static tcl_strings def_tcl_strings[] = {
   {"pidfile",         pid_file,       120,           STR_PROTECT},
   {"configureargs",   EGG_AC_ARGS,    0,             STR_PROTECT},
   {"stealth-prompt",  stealth_prompt, 80,                      0},
+  {"language",        language,       64,            STR_PROTECT},
   {NULL,              NULL,           0,                       0}
 };
 
@@ -444,7 +446,6 @@ static tcl_ints def_tcl_ints[] = {
   {"quiet-save",            &quiet_save,           0},
   {"force-expire",          &force_expire,         0},
   {"dupwait-timeout",       &dupwait_timeout,      0},
-  {"strict-host",           &strict_host,          0},
   {"userfile-perm",         &userfile_perm,        0},
   {"copy-to-tmp",           &copy_to_tmp,          0},
   {"quiet-reject",          &quiet_reject,         0},

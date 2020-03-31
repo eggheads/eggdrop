@@ -3,7 +3,7 @@
  */
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2019 Eggheads Development Team
+ * Copyright (C) 1999 - 2020 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -34,19 +34,6 @@ static char altnick_char = 0;
 struct cap_list cap = {"", "", ""};
 int ncapesc;
 Tcl_Obj **ncapesv, *ncapeslist;
-
-enum {
-  SASL_MECHANISM_PLAIN,
-  SASL_MECHANISM_ECDSA_NIST256P_CHALLENGE,
-  SASL_MECHANISM_EXTERNAL,
-  SASL_MECHANISM_NUM
-};
-
-char const *const SASL_MECHANISMS[SASL_MECHANISM_NUM] = {
-  [SASL_MECHANISM_PLAIN]                    = "PLAIN",
-  [SASL_MECHANISM_ECDSA_NIST256P_CHALLENGE] = "ECDSA-NIST256P-CHALLENGE",
-  [SASL_MECHANISM_EXTERNAL]                 = "EXTERNAL"
-};
 
 /* We try to change to a preferred unique nick here. We always first try the
  * specified alternate nick. If that fails, we repeatedly modify the nick
@@ -207,6 +194,33 @@ static int check_tcl_raw(char *from, char *code, char *msg)
   return (x == BIND_EXEC_LOG);
 }
 
+/* tagstr is a space-separated list of key/value pairs */
+static int check_tcl_rawt(char *from, char *code, char *msg, char *tagstr)
+{
+  int x;
+  char * ptr;
+  Tcl_DString tagdict;
+
+  Tcl_DStringInit(&tagdict);
+  Tcl_SetVar(interp, "_rawt1", from, 0);
+  Tcl_SetVar(interp, "_rawt2", code, 0);
+  Tcl_SetVar(interp, "_rawt3", msg, 0);
+  ptr = strtok(tagstr, " ");
+  if (!msgtag) {
+    Tcl_SetVar(interp, "_rawt4", NULL, 0);
+  } else {
+    while (ptr != NULL) {
+      Tcl_DStringAppendElement(&tagdict, ptr);
+      ptr = strtok(NULL, " ");
+    }
+  }
+  Tcl_SetVar(interp, "_rawt4", Tcl_DStringValue(&tagdict), 0);
+  x = check_tcl_bind(H_rawt, code, 0, " $_rawt1 $_rawt2 $_rawt3 $_rawt4",
+                    MATCH_EXACT | BIND_STACKABLE | BIND_WANTRET);
+  Tcl_DStringFree(&tagdict);
+  return (x == BIND_EXEC_LOG);
+}
+
 static int check_tcl_ctcpr(char *nick, char *uhost, struct userrec *u,
                            char *dest, char *keyword, char *args,
                            p_tcl_bind_list table)
@@ -248,6 +262,18 @@ static int check_tcl_wall(char *from, char *msg)
     return 2;
 
   return 1;
+}
+
+static int check_tcl_awayv3(char *from, char *msg)
+{
+  int x;
+
+  Tcl_SetVar(interp, "_awayv31", from, 0);
+  Tcl_SetVar(interp, "_awayv32", msg ? (char *) msg : "", 0);
+  x = check_tcl_bind(H_awayv3, from, 0, " $_awayv31, $_awayv32",
+                       MATCH_MASK | BIND_STACKABLE);
+
+  return (x == BIND_EXEC_LOG);
 }
 
 static int check_tcl_flud(char *nick, char *uhost, struct userrec *u,
@@ -495,7 +521,7 @@ static int detect_flood(char *floodnick, char *floodhost, char *from, int which)
 
 /* Got a private message.
  */
-static int gotmsg(char *from, char *msg)
+static int gotmsg(char *from, char *msg, char *tag)
 {
   char *to, buf[UHOSTLEN], *nick, ctcpbuf[512], *uhost = buf, *ctcp,
        *p, *p1, *code;
@@ -716,6 +742,18 @@ static int gotnotice(char *from, char *msg)
 
     if (!ignoring)
       putlog(LOG_MSGS, "*", "-%s (%s)- %s", nick, uhost, msg);
+  }
+  return 0;
+}
+
+static int gottagmsg(char *from, char *msg) {
+  char *nick;
+  fixcolon(msg);
+  if (strchr(from, '!')) {
+    nick = splitnick(&from);
+    putlog(LOG_SERV, "*", "[#]%s(%s)[#] %s", nick, from, msg);
+  } else {
+    putlog(LOG_SERV, "*", "[#]%s[#] %s");
   }
   return 0;
 }
@@ -1003,9 +1041,9 @@ static void disconnect_server(int idx)
 {
   if (server_online > 0)
     check_tcl_event("disconnect-server");
-  strcpy(cap.supported, "");
-  strcpy(cap.negotiated, "");
-  strcpy(cap.desired, "");
+  *cap.supported = 0;
+  *cap.negotiated = 0;
+  *cap.desired = 0;
   server_online = 0;
   if (realservername)
     nfree(realservername);
@@ -1069,9 +1107,12 @@ static struct dcc_table SERVER_SOCKET = {
   NULL
 };
 
-static void server_activity(int idx, char *msg, int len)
+static void server_activity(int idx, char *tagmsg, int len)
 {
-  char *from, *code;
+  char *from, *code, *s1, *s2, *saveptr1=NULL, *saveptr2=NULL, *tagstrptr=NULL;
+  char *token, *subtoken, tagstr[TOTALTAGMAX+1], tagdict[TOTALTAGMAX+1];
+  char *msgptr, rawmsg[RECVLINEMAX+7];
+  int taglen, i, found;
 
   if (trying_server) {
     strcpy(dcc[idx].nick, "(server)");
@@ -1080,23 +1121,60 @@ static void server_activity(int idx, char *msg, int len)
     SERVER_SOCKET.timeout_val = 0;
   }
   lastpingcheck = 0;
-  from = "";
-  if (msg[0] == ':') {
-    msg++;
-    from = newsplit(&msg);
+/* Check if IRCv3 message-tags are enabled and, if so, check/grab the tag */
+  msgptr = tagmsg;
+  strlcpy(rawmsg, tagmsg, TOTALTAGMAX+1);
+  if (msgtag) {
+    if (*tagmsg == '@') {
+      taglen = 0;
+      memset(tagdict, '\0', TOTALTAGMAX);
+      tagstrptr = newsplit(&msgptr);
+      strlcpy(tagstr, tagstrptr, TOTALTAGMAX+1);
+      tagstrptr++;     /* Remove @ */
+      /* Split each key/value pair apart, then split the key from the value */
+      for (i = 0, s1 = tagstrptr; ; i++, s1 = NULL){
+        token = strtok_r(s1, ";", &saveptr1);
+        if (token == NULL) {
+          break;
+        }
+        if (*token == '+') {
+          token++;
+        }
+        if (strchr(token, '=')) {
+          found = 0;
+          for (s2 = token; ; s2 = NULL) {
+            subtoken = strtok_r(s2, "=", &saveptr2);
+            if (subtoken == NULL) {
+              break;
+            }
+            taglen += egg_snprintf(tagdict + taglen, TOTALTAGMAX - taglen,
+                  "%s ", subtoken);
+            found++;
+          }
+          /* Account for tags (not key/value pairs), prep empty value for Tcl */
+          if (found < 2) {
+            taglen += egg_snprintf(tagdict + taglen, TOTALTAGMAX - taglen,
+                "{} ");
+          }
+        }
+      }
+      tagdict[taglen-1] = '\0';     /* Remove trailing space */
+    }
   }
-  code = newsplit(&msg);
+  from = "";
+  if (*msgptr == ':') {
+    msgptr++;
+    from = newsplit(&msgptr);
+  }
+  code = newsplit(&msgptr);
   if (raw_log && ((strcmp(code, "PRIVMSG") && strcmp(code, "NOTICE")) ||
       !match_ignore(from))) {
-    if (!strcmp(from, ""))
-      putlog(LOG_RAW, "*", "[@] %s %s", code, msg);
-    else
-      putlog(LOG_RAW, "*", "[@] %s %s %s", from, code, msg);
+    putlog(LOG_RAW, "*", "[@] %s", rawmsg);
   }
-  /* This has GOT to go into the raw binding table, * merely because this
-   * is less efficient.
-   */
-  check_tcl_raw(from, code, msg);
+  /* Check both raw and rawt, to allow backwards compatibility with older
+   * scripts */
+  check_tcl_rawt(from, code, msgptr, tagdict);
+  check_tcl_raw(from, code, msgptr);
 }
 
 static int gotping(char *from, char *msg)
@@ -1167,15 +1245,15 @@ static int tryauthenticate(char *from, char *msg)
     #define MAX(a,b) (((a)>(b))?(a):(b))
   #endif
   unsigned char dst[((MAX((sizeof src), 400) + 2) / 3) << 2] = "";
-#ifdef TLS
-  size_t olen;
-  unsigned char *dst2;
-  unsigned int olen2;
-  FILE *fp;
+#ifdef HAVE_EVP_PKEY_GET1_EC_KEY
   EC_KEY *eckey;
+  int ret;
+  size_t olen;
+  unsigned int olen2;
+  unsigned char *dst2;
+  FILE *fp;
   EVP_PKEY *privateKey;
-#endif
-
+#endif /* HAVE_EVP_PKEY_GET1_EC_KEY */
   putlog(LOG_SERV, "*", "SASL: got AUTHENTICATE %s", msg);
   if (msg[0] == '+') {
     s = src;
@@ -1189,57 +1267,78 @@ static int tryauthenticate(char *from, char *msg)
       s += strlen(sasl_password);
       dst[0] = 0;
       if (b64_ntop((unsigned char *) src, s - src, (char *) dst, sizeof dst) == -1) {
-        putlog(LOG_SERV, "*", "SASL: AUTHENTICATE error: could not base64 encode");
+        putlog(LOG_SERV, "*", "SASL: AUTHENTICATE error: could not base64 "
+                    "encode");
         /* TODO: send cap end for all error cases in this function ? */
         return 1;
       }
       /* TODO: what about olen we used for mbedtls_base64_encode() ? */
     }
     else if (sasl_mechanism == SASL_MECHANISM_ECDSA_NIST256P_CHALLENGE) {
+#ifdef HAVE_EVP_PKEY_GET1_EC_KEY
       strcpy(s, sasl_username);
       s += strlen(sasl_username) + 1;
       strcpy(s, sasl_username);
       s += strlen(sasl_username);
       if (b64_ntop((unsigned char *) src, s - src, (char *) dst, sizeof dst) == -1) {
-        putlog(LOG_SERV, "*", "SASL: AUTHENTICATE error: could not base64 encode");
+        putlog(LOG_SERV, "*", "SASL: AUTHENTICATE error: could not base64 "
+                "encode");
         return 1;
       }
     }
-    else { /* sasl_mechanism == SASL_MECHANISM_EXTERNAL */
+#else
+      putlog(LOG_DEBUG, "*", "SASL: TLS libs missing EC support, try PLAIN or "
+                "EXTERNAL method");
+      return 1;
+    }
+#endif
+    else {          /* sasl_mechanism == SASL_MECHANISM_EXTERNAL */
+#ifdef TLS          /* TLS required for EXTERNAL sasl */ 
       dst[0] = '+';
       dst[1] = 0;
     }
     putlog(LOG_SERV, "*", "SASL: put AUTHENTICATE %s", dst);
     dprintf(DP_MODE, "AUTHENTICATE %s\n", dst);
+#else
+    putlog(LOG_DEBUG, "*", "SASL: TLS libs required for EXTERNAL but are not "
+            "installed, try PLAIN method");
+    }
+#endif /* TLS */
+  } else {      /* Only EC-challenges get extra auth messages w/o a + */
 #ifdef TLS
-  } else {
-    putlog(LOG_SERV, "*", "SASL: got AUTHENTICATE Challange");
+#ifdef HAVE_EVP_PKEY_GET1_EC_KEY
+    putlog(LOG_SERV, "*", "SASL: got AUTHENTICATE Challenge");
     olen = b64_pton(msg, dst, sizeof dst);
     if (olen == -1) {
-      putlog(LOG_SERV, "*", "SASL: AUTHENTICATE error: could not base64 encode");
+      putlog(LOG_SERV, "*", "SASL: AUTHENTICATE error: could not base64 decode "
+                "line from server");
       return 1;
     }
     fp = fopen(sasl_ecdsa_key, "r");
     if (!fp) {
-      putlog(LOG_SERV, "*", "SASL: AUTHENTICATE error: could not open file sasl_ecdsa_key %s: %s\n", sasl_ecdsa_key, strerror(errno));
+      putlog(LOG_SERV, "*", "SASL: AUTHENTICATE error: could not open file "
+                "sasl_ecdsa_key %s: %s\n", sasl_ecdsa_key, strerror(errno));
       return 1;
     }
     privateKey = PEM_read_PrivateKey(fp, NULL, 0, NULL);
     if (!privateKey) {
-      putlog(LOG_SERV, "*", "SASL: AUTHENTICATE: PEM_read_PrivateKey(): SSL error = %s\n",
-             ERR_error_string(ERR_get_error(), 0));
+      putlog(LOG_SERV, "*", "SASL: AUTHENTICATE: PEM_read_PrivateKey(): SSL "
+                "error = %s\n", ERR_error_string(ERR_get_error(), 0));
       fclose(fp);
       return 1;
     }
     fclose(fp);
     eckey = EVP_PKEY_get1_EC_KEY(privateKey);
+    EVP_PKEY_free(privateKey);
     if (!eckey) {
       putlog(LOG_SERV, "*", "SASL: AUTHENTICATE: EVP_PKEY_get1_EC_KEY(): SSL error = %s\n",
              ERR_error_string(ERR_get_error(), 0));
       return 1;
     }
     dst2 = nmalloc(ECDSA_size(eckey));
-    if (ECDSA_sign(0, dst, olen, dst2, &olen2, eckey) == 0) {
+    ret = ECDSA_sign(0, dst, olen, dst2, &olen2, eckey);
+    EC_KEY_free(eckey);
+    if (!ret) {
       printf("SASL: AUTHENTICATE: ECDSA_sign() SSL error = %s\n",
              ERR_error_string(ERR_get_error(), 0));
       nfree(dst2);
@@ -1252,16 +1351,19 @@ static int tryauthenticate(char *from, char *msg)
     nfree(dst2);
     putlog(LOG_SERV, "*", "SASL: put AUTHENTICATE Response %s", dst);
     dprintf(DP_MODE, "AUTHENTICATE %s\n", dst);
-#else
-    putlog(LOG_DEBUG, "*", "SASL: TLS libs not present for authentication, try PLAIN method");
+#endif /* HAVE_EVP_PKEY_GET1_EC_KEY */
+#else /* TLS */
+    dprintf(LOG_DEBUG, "*", "SASL: Received EC message, but no TLS EC libs "
+                "present. Try PLAIN method");
     return 1;
-#endif
+#endif /* TLS */
   }
   return 0;
 }
 
 static int gotauthenticate(char *from, char *msg)
 {
+  fixcolon(msg); /* Because Inspircd does its own thing */
   if (tryauthenticate(from, msg) && !sasl_continue) {
     putlog(LOG_DEBUG, "*", "SASL: Aborting connection and retrying");
     nuke_server("Quitting...");
@@ -1270,6 +1372,7 @@ static int gotauthenticate(char *from, char *msg)
   return 0;
 }
 
+/* Got 900: RPL_SASLLOGGEDIN, user account name is set */
 static int got900(char *from, char *msg)
 {
   newsplit(&msg); /* nick */
@@ -1280,12 +1383,11 @@ static int got900(char *from, char *msg)
   return 0;
 }
 
-static int got904905and906(char *from, char *msg)
+static int sasl_error(char *msg)
 {
-  newsplit(&msg); /* nick */
-  fixcolon(msg);
   putlog(LOG_SERV, "*", "SASL: %s", msg);
   dprintf(DP_MODE, "CAP END\n");
+  sasl_timeout_time = 0;
   if (!sasl_continue) {
     putlog(LOG_DEBUG, "*", "SASL: Aborting connection and retrying");
     nuke_server("Quitting...");
@@ -1293,20 +1395,52 @@ static int got904905and906(char *from, char *msg)
   return 1;
 }
 
+/* Got 904: ERR_SASLFAIL, invalid credentials (or something not covered)
+   Got 905: ERR_SASLTOOLONG, AUTHENTICATE command was too long (>400 bytes)
+   Got 906: ERR_SASL_ABORTED, sent AUTHENTICATE command with * as parameter
+ */
+static int got904905and906(char *from, char *msg)
+{
+  newsplit(&msg); /* nick */
+  fixcolon(msg);
+  return sasl_error(msg);
+}
+
+/* Got 903: RPL_SASLSUCCESS, authentication successful */
 static int got903(char *from, char *msg)
 {
   newsplit(&msg); /* nick */
   fixcolon(msg);
   putlog(LOG_SERV, "*", "SASL: %s", msg);
   dprintf(DP_MODE, "CAP END\n");
+  sasl_timeout_time = 0;
   return 0;
 }
 
+/* Got 908: RPL_SASLMECHS, mechanisms supported by network */
 static int got908(char *from, char *msg)
 {
   newsplit(&msg); /* nick */
   fixcolon(msg);
   putlog(LOG_SERV, "*", "SASL: %s", msg);
+  return 0;
+}
+
+static int handle_sasl_timeout()
+{
+  return sasl_error("timeout");
+}
+
+/* Got AWAY message; only valid for IRCv3 away-notify capability */
+static int gotawayv3(char *from, char *msg)
+{
+  if (strlen(msg)) {
+    fixcolon(msg);
+    putlog(LOG_SERV, "*", "%s is now away: %s", from, msg);
+  } else {
+    putlog(LOG_SERV, "*", "%s has returned from away status", from);
+  }
+  check_tcl_awayv3(from, msg);
   return 0;
 }
 
@@ -1340,11 +1474,29 @@ static int got410(char *from, char *msg) {
   return 1;
 }
 
+/* got417: ERR_INPUTTOOLONG. Client sent a message longer than allowed limit */
+static int got417(char *from, char *msg) {
+  newsplit(&msg);
+  putlog (LOG_SERV, "*", "MESSAGE-TAG: %s reported error: %s", from, msg);
+
+  return 1;
+}
+
 static int got421(char *from, char *msg) {
   newsplit(&msg);
   putlog(LOG_SERV, "*", "%s reported an error: %s", from, msg);
 
   return 1;
+}
+
+void update_cap_negotiated() {
+  int i, len = 0;
+  Tcl_ListObjGetElements(interp, ncapeslist, &ncapesc, &ncapesv);
+  for (i = 0; i < ncapesc; i++) {
+    if (i)
+      cap.negotiated[len++] = ' ';
+    len += strlcpy(cap.negotiated + len, Tcl_GetString(ncapesv[i]), sizeof cap.negotiated - len);
+  }
 }
 
 /*
@@ -1353,51 +1505,49 @@ static int got421(char *from, char *msg) {
  * before adding to the desired list.
  */
 void add_cape(char *cape) {
-  int len = 0, i = 0;
   if (!strstr(cap.negotiated, cape)) {
     putlog(LOG_DEBUG, "*", "CAP: Adding cape %s to negotiated list", cape);
     Tcl_ListObjAppendElement(interp, ncapeslist, Tcl_NewStringObj(cape, -1));
+    if (!strcmp(cape, "message-tags") || !strcmp(cape, "twitch.tv/tags")) {
+      msgtag = 1;
+    }
   } else {
     putlog(LOG_DEBUG, "*", "CAP: %s is already added to negotiated list", cape);
   }
-  Tcl_ListObjGetElements(interp, ncapeslist, &ncapesc, &ncapesv);
-  for (i = 0; i < ncapesc; i++) {
-    len += snprintf(cap.negotiated+len, sizeof cap.negotiated - strlen(cap.negotiated) - 1,
-        "%s%s", (len == 0 ? "" : " "), Tcl_GetString(ncapesv[i]));
-  }
+  update_cap_negotiated();
 }
 
 /* Remove capability from internal CAP request list */
 void del_cape(char *cape) {
-  int len = 0, i = 0;
+  int i;
   if (strstr(cap.negotiated, cape)) {
     putlog(LOG_DEBUG, "*", "CAP: Removing %s from negotiated list", cape);
     Tcl_ListObjGetElements(interp, ncapeslist, &ncapesc, &ncapesv);
     for (i = 0; i < ncapesc; i++) {
       if (!strcmp(cape, Tcl_GetString(ncapesv[i]))) {
         Tcl_ListObjReplace(interp, ncapeslist, i, 1, 0, NULL);
+        if (!strcmp(cape, "message-tags")) {
+          msgtag = 0;
+        }
       }
     }
   } else {
     putlog(LOG_DEBUG, "*", "CAP: %s is not on negotiated list", cape);
   }
-  Tcl_ListObjGetElements(interp, ncapeslist, &ncapesc, &ncapesv);
-  for (i = 0; i < ncapesc; i++) {
-    len += snprintf(cap.negotiated+len, sizeof cap.negotiated - strlen(cap.negotiated) - 1,
-        "%s%s", (len == 0 ? "" : " "), Tcl_GetString(ncapesv[i]));
-  }
+  update_cap_negotiated();
 }
 
 /* Smash desired CAP capabilities into a single string */
 void add_req(char *cape) {
   int len = strlen(cap.desired);
-  len += snprintf(cap.desired+len, sizeof cap.desired - strlen(cap.desired) - 1,
-        "%s%s", (len == 0 ? "" : " "), cape);
+  if (len)
+    cap.desired[len++] = ' ';
+  strlcpy(cap.desired + len, cape, sizeof cap.desired - len);
 }
 
 static int gotcap(char *from, char *msg) {
   char *cmd, *splitstr;
-  int len = 0, i = 0;
+  char *cape, *p;
   int listlen = 0;
 
   newsplit(&msg);
@@ -1407,15 +1557,28 @@ static int gotcap(char *from, char *msg) {
   if (!strcmp(cmd, "LS")) {
     putlog(LOG_DEBUG, "*", "CAP: %s supports CAP sub-commands: %s", from, msg);
     strlcpy(cap.supported, msg, sizeof cap.supported);
+/* CAP is supported, yay! Lets load what we want to request */
     if (sasl) {
-      /* TODO: is this the right place to check for error in eggdrop conf setting ?
-       * (with error i mean, bot would crash, if the config setting is not validated) */
       if (sasl_mechanism < 0)
         putlog(LOG_SERV, "*", "SASL error: sasl-mechanism must be equal to or greater than 0");
       else if (sasl_mechanism >= SASL_MECHANISM_NUM)
         putlog(LOG_SERV, "*", "SASL error: sasl-mechanism must be less than %i", SASL_MECHANISM_NUM);
       else
         add_req("sasl");
+    }
+    if (away_notify)
+      add_req("away-notify");
+    if (invite_notify)
+      add_req("invite-notify");
+    if (message_tags)
+      add_req("message-tags");
+/* Add any custom capes the user listed */
+    cape = cap_request;
+    if ( (p = strtok(cape, " ")) ) {
+      while (p != NULL) {
+        add_req(p);
+        p = strtok(NULL, " ");
+      }
     }
     if (strlen(cap.desired) > 0) {
       putlog(LOG_DEBUG, "*", "CAP: Requesting %s capabilities from server", cap.desired);
@@ -1426,7 +1589,7 @@ static int gotcap(char *from, char *msg) {
   } else if (!strcmp(cmd, "LIST")) {
     putlog(LOG_SERV, "*", "CAP: Negotiated CAP capabilities: %s", msg);
     /* You're getting the current list, may as well the clear old stuff */
-    memset(cap.negotiated, 0, strlen(cap.negotiated));
+    *cap.negotiated = 0;
     Tcl_ListObjLength(interp, ncapeslist, &listlen);
     Tcl_ListObjReplace(interp, ncapeslist, 0, listlen, 0, NULL);
     splitstr = strtok(msg, " ");
@@ -1446,44 +1609,33 @@ static int gotcap(char *from, char *msg) {
       }
       splitstr = strtok(NULL, " ");
     }
-    len = 0;
-    Tcl_ListObjGetElements(interp, ncapeslist, &ncapesc, &ncapesv);
-    for (i = 0; i < ncapesc; i++) {
-      len += snprintf(cap.negotiated+len, sizeof cap.negotiated - strlen(cap.negotiated) - 1,
-          "%s%s", (len == 0 ? "" : " "), Tcl_GetString(ncapesv[i]));
-    }
-    putlog(LOG_SERV, "*", "CAP: Current negotiations on %s: %s",
-        from, cap.negotiated);
+    update_cap_negotiated(); /* TODO: do we really need this call here? */
+    putlog(LOG_SERV, "*", "CAP: Current Negotiations %s with %s", cap.negotiated, from);
     /* If a negotiated capability requires immediate action by Eggdrop, add it
      * here. However, that capability must take responsibility for sending an
      * END. Future eggheads: add support for more than 1 of these async
      * capabilities, right now SASL is the only one so we're OK.
      */
     if (strstr(cap.negotiated, "sasl")) {
-#ifndef TLS
+#ifndef HAVE_EVP_PKEY_GET1_EC_KEY
       if (sasl_mechanism != SASL_MECHANISM_ECDSA_NIST256P_CHALLENGE) {
 #endif
-        /*
-        TODO: the old sasl code, before cap pr, was doing cap request only
-        under certain conditions, see the if TLS statement
-        above.
-        putlog(LOG_SERV, "*", "CAP: put CAP REQ :sasl");
-        dprintf(DP_MODE, "CAP REQ :sasl\n");
-        */
         putlog(LOG_SERV, "*", "SASL: put AUTHENTICATE %s",
             SASL_MECHANISMS[sasl_mechanism]);
         dprintf(DP_MODE, "AUTHENTICATE %s\n", SASL_MECHANISMS[sasl_mechanism]);
-#ifndef TLS
+        sasl_timeout_time = sasl_timeout;
+#ifndef HAVE_EVP_PKEY_GET1_EC_KEY
       } else {
-        putlog(LOG_SERV, "*", "SASL: No TLS libs, aborting authentication");
-        dprintf(DP_MODE, "CAP END\n");
-        if (!sasl_continue) {
-          putlog(LOG_DEBUG, "*", "SASL: Aborting connection and retrying");
-          nuke_server("Quitting...");
-        }
-        return 1;
+#ifdef TLS
+        return sasl_error("TLS libs missing EC support, try PLAIN or EXTERNAL method, aborting authentication");
       }
-#endif
+#else /* TLS */
+        if (sasl_mechanism != SASL_MECHANISM_PLAIN) {
+	      return sasl_error("TLS libs not present, try PLAIN method, aborting authentication");
+        }
+      }
+#endif /* TLS */
+#endif /* HAVE_EVP_PKEY */
     } else {
       dprintf(DP_MODE, "CAP END\n");
       return 0;
@@ -1507,11 +1659,13 @@ static cmd_t my_raw_binds[] = {
   {"PING",         "",   (IntFunc) gotping,         NULL},
   {"PONG",         "",   (IntFunc) gotpong,         NULL},
   {"WALLOPS",      "",   (IntFunc) gotwall,         NULL},
+  {"AWAY",         "",   (IntFunc) gotawayv3,       NULL},
   {"001",          "",   (IntFunc) got001,          NULL},
   {"303",          "",   (IntFunc) got303,          NULL},
   {"311",          "",   (IntFunc) got311,          NULL},
   {"318",          "",   (IntFunc) whoispenalty,    NULL},
   {"410",          "",   (IntFunc) got410,          NULL},
+  {"417",          "",   (IntFunc) got417,          NULL},
   {"421",          "",   (IntFunc) got421,          NULL},
   {"432",          "",   (IntFunc) got432,          NULL},
   {"433",          "",   (IntFunc) got433,          NULL},
@@ -1536,6 +1690,11 @@ static cmd_t my_raw_binds[] = {
   {NULL,           NULL, NULL,                      NULL}
 };
 
+static cmd_t my_rawt_binds[] = {
+  {"TAGMSG",       "",   (IntFunc) gottagmsg,       NULL},
+  {NULL,           NULL, NULL,                      NULL}
+};
+
 static void server_resolve_success(int);
 static void server_resolve_failure(int);
 
@@ -1543,8 +1702,11 @@ static void server_resolve_failure(int);
  */
 static void connect_server(void)
 {
-  char pass[121], botserver[UHOSTLEN];
-  int servidx;
+  char pass[121], botserver[UHOSTLEN], s[1024];
+#ifdef IPV6
+  char buf[sizeof(struct in6_addr)];
+#endif
+  int servidx, len = 0;
   unsigned int botserverport = 0;
 
   lastpingcheck = 0;
@@ -1584,14 +1746,25 @@ static void connect_server(void)
       do_tcl("connect-server", connectserver);
     check_tcl_event("connect-server");
     next_server(&curserv, botserver, &botserverport, pass);
+
+#ifdef IPV6
+    if (inet_pton(AF_INET6, botserver, buf)) {
+      len += egg_snprintf(s, sizeof s, "%s [%s]", IRC_SERVERTRY, botserver);
+    } else {
+#endif
+     len += egg_snprintf(s, sizeof s, "%s %s", IRC_SERVERTRY, botserver);
+#ifdef IPV6
+    }
+#endif
+
 #ifdef TLS
-    putlog(LOG_SERV, "*", "%s [%s]:%s%d", IRC_SERVERTRY, botserver,
-           use_ssl ? "+" : "", botserverport);
+    len += egg_snprintf(s + len, sizeof s - len, ":%s%d",
+            use_ssl ? "+" : "", botserverport);
     dcc[servidx].ssl = use_ssl;
 #else
-    putlog(LOG_SERV, "*", "%s [%s]:%d", IRC_SERVERTRY, botserver,
-           botserverport);
+    len += egg_snprintf(s + len, sizeof s - len, ":%d", botserverport);
 #endif
+    putlog(LOG_SERV, "*", "%s", s);
     dcc[servidx].port = botserverport;
     strcpy(dcc[servidx].nick, "(server)");
     strlcpy(dcc[servidx].host, botserver, UHOSTLEN);

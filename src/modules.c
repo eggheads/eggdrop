@@ -6,7 +6,7 @@
  */
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2019 Eggheads Development Team
+ * Copyright (C) 1999 - 2020 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -101,6 +101,7 @@ extern sock_list *socklist;
 int cmd_die();
 int xtra_kill();
 int xtra_unpack();
+char *check_validpass();
 static int module_rename(char *name, char *newname);
 
 #ifndef STATIC
@@ -542,7 +543,7 @@ Function global_table[] = {
   (Function) str_unescape,
   (Function) egg_strcatn,
   (Function) clear_chanlist_member,
-  (Function) fixfrom,
+  (Function) 0,                   /* was fixfrom */
   /* 268 - 271 */
   (Function) & socklist,          /* sock_list *                         */
   (Function) sockoptions,
@@ -597,7 +598,15 @@ Function global_table[] = {
   (Function) 0,
 #endif
   /* 304 - 307 */
-  (Function) strncpyz
+  (Function) strncpyz,
+#ifndef HAVE_BASE64
+  (Function) b64_ntop,
+  (Function) b64_pton,
+#else
+  (Function) 0,
+  (Function) 0,
+#endif
+  (Function) check_validpass
 };
 
 void init_modules(void)

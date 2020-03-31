@@ -4,7 +4,7 @@
  */
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2019 Eggheads Development Team
+ * Copyright (C) 1999 - 2020 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -20,12 +20,19 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
+#include <time.h>
 
 static void cmd_servers(struct userrec *u, int idx, char *par)
 {
   struct server_list *x = serverlist;
-  int i;
+  time_t t;
+  struct tm *currtm;
+  int i, len = 0;
+#ifdef IPV6
+  char buf[sizeof(struct in6_addr)];
+#endif
   char s[1024];
+  char setpass[11];
 
   putlog(LOG_CMDS, "*", "#%s# servers", dcc[idx].nick);
   if (!x) {
@@ -34,23 +41,40 @@ static void cmd_servers(struct userrec *u, int idx, char *par)
     dprintf(idx, "Server list:\n");
     i = 0;
     for (; x; x = x->next) {
-      if ((i == curserv) && realservername)
-#ifdef TLS
-        egg_snprintf(s, sizeof s, "  [%s]:%s%d (%s) <- I am here", x->name,
-                     x->ssl ? "+" : "", x->port ? x->port : default_port,
-                     realservername);
-      else
-        egg_snprintf(s, sizeof s, "  [%s]:%s%d %s", x->name, x->ssl ? "+" : "",
-                     x->port ? x->port : default_port,
-                     (i == curserv) ? "<- I am here" : "");
-#else
-        egg_snprintf(s, sizeof s, "  [%s]:%d (%s) <- I am here", x->name,
-                     x->port ? x->port : default_port, realservername);
-      else
-        egg_snprintf(s, sizeof s, "  [%s]:%d %s", x->name,
-                     x->port ? x->port : default_port,
-                     (i == curserv) ? "<- I am here" : "");
+      len = 0;
+/* Build server display line, section by section */
+#ifdef IPV6
+      if (inet_pton(AF_INET6, x->name, buf) == 1) {
+        len += egg_snprintf(s, sizeof s, "  [%s]:", x->name);
+      } else {
 #endif
+        len += egg_snprintf(s, sizeof s, "  %s:", x->name);
+#ifdef IPV6
+      }
+#endif
+
+#ifdef TLS
+      len += egg_snprintf(s+len, sizeof s - len, "%s", x->ssl ? "+" : "");
+#endif
+      if (x->pass) {
+        t = time(NULL);
+        currtm = localtime(&t); /* ******* */
+        if ((currtm->tm_mon == 3) && (currtm->tm_mday == 1)) {
+          strlcpy(setpass, "(hunter2)", sizeof setpass);
+        } else {
+          strlcpy(setpass, "(password)", sizeof setpass);
+        }
+      } else {
+        strlcpy(setpass, "", sizeof setpass);
+      }
+      if ((i == curserv) && realservername) {
+        len += egg_snprintf(s+len, sizeof s - len, "%d (%s) <- I am here",
+                x->port ? x->port : default_port, setpass, realservername);
+      }  else {
+        len += egg_snprintf(s+len, sizeof s - len, "%d %s",
+                x->port ? x->port : default_port, setpass,
+                (i == curserv) ? "<- I am here" : "");
+      }
       dprintf(idx, "%s\n", s);
       i++;
     }

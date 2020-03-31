@@ -249,14 +249,6 @@
 ###  %bset share-unlinks%b 0/1
    This setting prohibits remote bots from telling your Eggdrop to
    unlink from share bots.
-%{help=set strict-host}%{+n}
-###  %bset strict-host%b <0/1>
-   Specifies whether the bot should leave leading ~+-^= in users'
-   hostnames. If this is on, the bot will differentiate between
-   valid-ident usernames and invalid ones. This setting is currently
-   kept for compatibility, but will be removed from the next release.
-   Please leave it set to 1 for now to avoid problems with your user
-   files in the future.
 %{help=set cidr-support}%{+n}
 ###  %bset cidr-support%b <0/1>
    Enables cidr support for b/e/I modes if set to 1. This means the
@@ -304,6 +296,16 @@ See also: ssl-cafile
    or ssl-capath, certificate verification will not work.
 
 See also: set ssl-capath
+%{help=set ssl-protocols}%{+n}
+###  %bset ssl-protocols%b <protocol list>
+   Specify the list of protocols allowed for use with ssl. The protocol list
+   is one or more protocol strings separated by spaces. Available protocols
+   are SSLv2, SSLv3, TLSv1, TLSv1.1, TLSv1.2, TLSv1.3. Default is
+   "TLSv1 TLSv1.1 TLSv1.2 TLSv1.3".
+%{help=set ssl-dhparam}%{+n}
+###  %bset ssl-dhparam%b <filename>
+   Specify dhparam filename. You can create it using the following command:
+   openssl dhparam -out dhparam.pem 4096
 %{help=set ssl-ciphers}%{+n}
 ###  %bset ssl-ciphers%b <cipher list>
    Specify the list of ciphers (in order of preference) allowed for
@@ -314,7 +316,8 @@ See also: set ssl-capath
    to the ciphers(1) manual.
    If you set this, the value replaces any ciphers OpenSSL might use
    by  default. To include the default ciphers, you can put DEFAULT
-   as a cipher string in the list.
+   as a cipher string in the list. This setting may not impact TLSv1.3
+   ciphersuites.
 %{help=set ssl-cert-auth}%{+n}
 ###  %bset ssl-cert-auth%b <0/1/2>
    Enable certificate authorization. Set to 1 to allow users and bots

@@ -7,7 +7,7 @@
  */
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2019 Eggheads Development Team
+ * Copyright (C) 1999 - 2020 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -88,7 +88,6 @@
 #endif
 
 extern char origbotname[], botnetnick[]; 
-extern char userfile[121];        /* 121 = sizeof userfile from users.c */
 extern int dcc_total, conmask, cache_hit, cache_miss, max_logs, quick_logs,
            quiet_save;
 extern struct dcc_t *dcc;
@@ -610,16 +609,6 @@ static void do_arg()
   }
 }
 
-void backup_userfile(void)
-{
-  char s[sizeof userfile + 4];
-
-  if (quiet_save < 2)
-    putlog(LOG_MISC, "*", USERF_BACKUP);
-  egg_snprintf(s, sizeof s, "%s~bak", userfile);
-  copyfile(userfile, s);
-}
-
 /* Timer info */
 static time_t lastmin;
 static time_t then;
@@ -814,7 +803,7 @@ int mainloop(int toplevel)
 {
   static int socket_cleanup = 0;
   int xx, i, eggbusy = 1, tclbusy = 0;
-  char buf[520];
+  char buf[8702];
 
   /* Lets move some of this here, reducing the number of actual
    * calls to periodic_timers
@@ -877,9 +866,8 @@ int mainloop(int toplevel)
           }
           dcc[idx].type->activity(idx, buf, i);
         } else
-          putlog(LOG_MISC, "*",
-                 "!!! untrapped dcc activity: type %s, sock %d",
-                 dcc[idx].type->name, dcc[idx].sock);
+          putlog(LOG_MISC, "*", "ERROR: untrapped dcc activity: type %s, sock %d",
+                 dcc[idx].type ? dcc[idx].type->name : "UNKNOWN", dcc[idx].sock);
         break;
       }
   } else if (xx == -1) {        /* EOF from someone */
@@ -1077,13 +1065,13 @@ int main(int arg_c, char **arg_v)
   egg_snprintf(egg_version, sizeof egg_version, "%s+%s %u", EGG_STRINGVER, EGG_PATCH, egg_numver);
   egg_snprintf(ver, sizeof ver, "eggdrop v%s+%s", EGG_STRINGVER, EGG_PATCH);
   egg_snprintf(version, sizeof version,
-               "Eggdrop v%s+%s (C) 1997 Robey Pointer (C) 2010-2018 Eggheads",
+               "Eggdrop v%s+%s (C) 1997 Robey Pointer (C) 2010-2020 Eggheads",
                 EGG_STRINGVER, EGG_PATCH);
 #else
   egg_snprintf(egg_version, sizeof egg_version, "%s %u", EGG_STRINGVER, egg_numver);
   egg_snprintf(ver, sizeof ver, "eggdrop v%s", EGG_STRINGVER);
   egg_snprintf(version, sizeof version,
-               "Eggdrop v%s (C) 1997 Robey Pointer (C) 2010-2019 Eggheads",
+               "Eggdrop v%s (C) 1997 Robey Pointer (C) 2010-2020 Eggheads",
                 EGG_STRINGVER);
 #endif
 

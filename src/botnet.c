@@ -9,7 +9,7 @@
  */
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2019 Eggheads Development Team
+ * Copyright (C) 1999 - 2020 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -37,7 +37,7 @@ extern Tcl_Interp *interp;
 
 tand_t *tandbot;                   /* Keep track of tandem bots on the botnet */
 party_t *party;                    /* Keep track of people on the botnet */
-static int maxparty = 50;          /* Maximum space for party line members */
+static int party_size = 0;
 int tands = 0;                     /* Number of bots on the botnet */
 int parties = 0;                   /* Number of people on the botnet */
 char botnetnick[HANDLEN + 1] = ""; /* Botnet nickname */
@@ -49,11 +49,9 @@ int tls_vfybots = 0;               /* Verify SSL certificates from bots? */
 int expmem_botnet()
 {
   int size = 0, i;
-  tand_t *bot;
 
-  for (bot = tandbot; bot; bot = bot->next)
-    size += sizeof(tand_t);
-  size += (maxparty * sizeof(party_t));
+  size = tands * sizeof(tand_t);
+  size += party_size * sizeof(party_t);
   for (i = 0; i < parties; i++) {
     if (party[i].away)
       size += strlen(party[i].away) + 1;
@@ -66,9 +64,6 @@ int expmem_botnet()
 void init_bots()
 {
   tandbot = NULL;
-  /* Grab space for 50 bots for now -- expand later as needed */
-  maxparty = 50;
-  party = nmalloc(maxparty * sizeof(*party));
 }
 
 tand_t *findbot(char *who)
@@ -169,9 +164,14 @@ int addparty(char *bot, char *nick, int chan, char flag, int sock,
     }
   }
   /* New member */
-  if (parties == maxparty) {
-    maxparty += 50;
-    party = (party_t *) nrealloc((void *) party, maxparty * sizeof(party_t));
+  if (!party_size) {
+      party_size = 1;
+      party = nmalloc(party_size * sizeof(party_t));
+  }
+  else if (parties == party_size) {
+    party_size <<= 1;
+    party = nrealloc(party, party_size * sizeof(party_t));
+    debug1("botnet: party size doubled to %i.", party_size);
   }
   strncpy(party[parties].nick, nick, HANDLEN);
   party[parties].nick[HANDLEN] = 0;

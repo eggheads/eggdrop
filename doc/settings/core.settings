@@ -240,7 +240,7 @@ set logfile-suffix ".%d%b%Y"
     logfiles. The default will result in a suffix like "04May2000".
     "%Y%m%d" will produce the often used yyyymmdd format. Read the
     strftime manpages for more options. NOTE: On systems which don't
-    support strftime, the default format will be used _always.
+    support strftime, the default format will always be used.
 
 
 CONSOLE SETTINGS
@@ -542,14 +542,6 @@ ADVANCED SETTINGS
       bot will wait dupwait-timeout seconds before it checks again and
       then finally reject the bot.
 
-  set strict-host 1
-
-      Set this to 0 if you want the bot to strip '~+-^=' characters from
-      user@hosts before matching them. This setting is currently kept
-      for compatibility, but will be removed from the next release.
-      Please leave it set to 1 for now to avoid problems with your user
-      files in the future.
-
   set cidr-support 0
 
       Enables cidr support for b/e/I modes if set to 1. This means the
@@ -724,4 +716,4 @@ point.
           source scripts/alltools.tcl
           source scripts/action.fix.tcl
 
-Copyright (C) 2000 - 2019 Eggheads Development Team
+Copyright (C) 2000 - 2020 Eggheads Development Team

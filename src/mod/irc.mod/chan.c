@@ -8,7 +8,7 @@
  */
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2019 Eggheads Development Team
+ * Copyright (C) 1999 - 2020 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -262,8 +262,7 @@ static int detect_chan_flood(char *floodnick, char *floodhost, char *from,
       return 0;
   }
   if (rfc_casecmp(chan->floodwho[which], p)) {  /* new */
-    strncpy(chan->floodwho[which], p, 80);
-    chan->floodwho[which][80] = 0;
+    strlcpy(chan->floodwho[which], p, sizeof chan->floodwho[which]);
     chan->floodtime[which] = now;
     chan->floodnum[which] = 1;
     return 0;
@@ -728,7 +727,7 @@ static void recheck_channel_modes(struct chanset_t *chan)
     else if ((mns & CHANQUIET) && (cur & CHANQUIET))
       add_mode(chan, '-', 'q', "");
     if ((chan->limit_prot != 0) && (chan->channel.maxmembers == 0)) {
-      char s[50];
+      char s[21];
 
       sprintf(s, "%d", chan->limit_prot);
       add_mode(chan, '+', 'l', s);
@@ -860,7 +859,7 @@ static void check_this_user(char *hand, int delete, char *host)
       sprintf(s, "%s!%s", m->nick, m->userhost);
       u = m->user ? m->user : get_user_by_host(s);
       if ((u && !strcasecmp(u->handle, hand) && delete < 2) ||
-          (!u && delete == 2 && match_addr(host, fixfrom(s)))) {
+          (!u && delete == 2 && match_addr(host, s))) {
         u = delete ? NULL : u;
         get_user_flagrec(u, &fr, chan->dname);
         check_this_member(chan, m->nick, &fr);
@@ -1100,7 +1099,7 @@ static int got352(char *from, char *msg)
   return 0;
 }
 
-/* got a 354: who info! - iru style
+/* got a 354: who info! - ircu style whox
  */
 static int got354(char *from, char *msg)
 {
@@ -1116,6 +1115,10 @@ static int got354(char *from, char *msg)
         user = newsplit(&msg);  /* Grab the user */
         host = newsplit(&msg);  /* Grab the host */
         nick = newsplit(&msg);  /* Grab the nick */
+        if (strchr(nick, '.') || strchr(nick, ':')) { /* FIXME: Use 005 WHOX instead */
+          host = nick;
+          nick = newsplit(&msg);
+        }
         flags = newsplit(&msg); /* Grab the flags */
         got352or4(chan, user, host, nick, flags);
       }
@@ -1503,16 +1506,25 @@ static int got475(char *from, char *msg)
   return 0;
 }
 
-/* got invitation
+/* got invitation. Updated 2019 to handle IRCv3 invite-notify capability
+ * where invites seen may not be for you, so we have to check the target and
+ * and ignore if it is not for us.
  */
 static int gotinvite(char *from, char *msg)
 {
-  char *nick, *key;
+  char *nick, *key, *invitee;
   struct chanset_t *chan;
 
-  newsplit(&msg);
+  invitee = newsplit(&msg);
   fixcolon(msg);
   nick = splitnick(&from);
+  check_tcl_invite(nick, from, msg, invitee);
+/* Because who needs RFCs? Freakin IRCv3... */
+  if (!match_my_nick(invitee)) {
+    putlog(LOG_DEBUG, "*", "Received invite notifiation for %s to %s by %s.",
+            invitee, msg, nick);
+    return 1;
+  }
   if (!rfc_casecmp(last_invchan, msg))
     if (now - last_invtime < 30)
       return 0; /* Two invites to the same channel in 30 seconds? */
@@ -2516,5 +2528,9 @@ static cmd_t irc_raw[] = {
   {"347",     "",   (IntFunc) got347,       "irc:347"},
   {"348",     "",   (IntFunc) got348,       "irc:348"},
   {"349",     "",   (IntFunc) got349,       "irc:349"},
+  {NULL,      NULL, NULL,                         NULL}
+};
+
+static cmd_t irc_rawt[] = {
   {NULL,      NULL, NULL,                         NULL}
 };
