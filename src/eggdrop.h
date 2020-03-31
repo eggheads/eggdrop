@@ -62,7 +62,6 @@
 #define LOGLINEMAX  9000          /* for misc.c/putlog() <cybah>         */
 
 /* Invalid characters */
-#define BADNICKCHARS "-,+*=:!.@#;$%&"
 #define BADHANDCHARS "-,+*=:!.@#;$%&"
 
 /* And now valid characters! */
