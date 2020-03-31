@@ -65,6 +65,10 @@
 #define BADNICKCHARS "-,+*=:!.@#;$%&"
 #define BADHANDCHARS "-,+*=:!.@#;$%&"
 
+/* And now valid characters! */
+#define CHARSET_ALPHA "abcdefghijklmnopqrstuvwxyz"
+#define CHARSET_ALPHANUM "0123456789abcdefghijklmnopqrstuvwxyz"
+
 
 /* Language stuff */
 #define LANGDIR  "./language" /* language file directory                   */

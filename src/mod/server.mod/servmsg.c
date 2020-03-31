@@ -850,19 +850,20 @@ static void got303(char *from, char *msg)
  */
 static int got432(char *from, char *msg)
 {
-  char *erroneous;
+  char *erroneous, nick[nick_len + 1];
 
   newsplit(&msg);
   erroneous = newsplit(&msg);
   if (server_online)
-    putlog(LOG_MISC, "*", "NICK IS INVALID: %s (keeping '%s').", erroneous,
+    putlog(LOG_MISC, "*", "NICK IS INVALID: '%s' (keeping '%s').", erroneous,
            botname);
   else {
     putlog(LOG_MISC, "*", IRC_BADBOTNICK);
     if (!keepnick) {
-      makepass(erroneous);
-      erroneous[NICKMAX] = 0;
-      dprintf(DP_MODE, "NICK %s\n", erroneous);
+      make_rand_str_from_chars(nick, sizeof nick - 1, CHARSET_ALPHA);
+      putlog(LOG_MISC, "*", "NICK IS INVALID: '%s' (using '%s' instead)",
+              erroneous, nick);
+      dprintf(DP_MODE, "NICK %s\n", nick);
     }
     return 0;
   }
