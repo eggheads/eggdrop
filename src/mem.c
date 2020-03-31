@@ -23,7 +23,7 @@
  */
 
 #define MEMTBLSIZE_START (1 << 12) /* 4096    */
-#define MEMTBLSIZE_MAX   (1 << 20) /* 1048576 */
+#define MEMTBLSIZE_MAX   1048576   /* (1 << 20), must be STRINGIFY()able */
 #define COMPILING_MEM
 
 #include "main.h"
@@ -97,9 +97,10 @@ void tell_mem_status(char *nick)
 #ifdef DEBUG_MEM
   float per;
 
-  per = ((lastused * 1.0) / (memtbl_size * 1.0)) * 100.0;
-  dprintf(DP_HELP, "NOTICE %s :Memory table usage: %d/%d (%.1f%% full)\n",
-          nick, lastused, memtbl_size, per);
+  per = 100.0 * (lastused * 1.0) / (MEMTBLSIZE_MAX * 1.0);
+  dprintf(DP_HELP, "NOTICE %s :Memory table usage: %d/%d (%.1f%% of max "
+          STRINGIFY(MEMTBLSIZE_MAX) " full)\n", nick, lastused, memtbl_size,
+          per);
 #endif
   dprintf(DP_HELP, "NOTICE %s :Think I'm using about %dk.\n", nick,
           (int) (expected_memory() / 1024));
@@ -112,9 +113,9 @@ void tell_mem_status_dcc(int idx)
   float per;
 
   exp = expected_memory();      /* in main.c ? */
-  per = ((lastused * 1.0) / (memtbl_size * 1.0)) * 100.0;
-  dprintf(idx, "Memory table: %d/%d (%.1f%% full)\n", lastused, memtbl_size,
-          per);
+  per = 100.0 * (lastused * 1.0) / (MEMTBLSIZE_MAX * 1.0);
+  dprintf(idx, "Memory table: %d/%d (%.1f%% of max " STRINGIFY(MEMTBLSIZE_MAX)
+          " full)\n", lastused, memtbl_size, per);
   per = ((exp * 1.0) / (memused * 1.0)) * 100.0;
   if (per != 100.0)
     dprintf(idx, "Memory fault: only accounting for %d/%ld (%.1f%%)\n",
