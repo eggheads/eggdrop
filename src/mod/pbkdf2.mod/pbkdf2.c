@@ -123,7 +123,7 @@ static char *pbkdf2_hash(const char *pass, const char *digest_name, const unsign
     return NULL;
   }
   if (!ret && !getrusage(RUSAGE_SELF, &ru2)) {
-    debug4("pbkdf2 method %s rounds %i, user %.3fms sys %.3fms", pbkdf2_method, pbkdf2_rounds,
+    debug4("pbkdf2 method %s rounds %i, user %.3fms sys %.3fms", digest_name, rounds,
            (double) (ru2.ru_utime.tv_usec - ru1.ru_utime.tv_usec) / 1000 +
            (double) (ru2.ru_utime.tv_sec  - ru1.ru_utime.tv_sec ) * 1000,
            (double) (ru2.ru_stime.tv_usec - ru1.ru_stime.tv_usec) / 1000 +
@@ -157,8 +157,13 @@ static char *pbkdf2_encrypt(const char *pass)
 
 /* PHC string format
  * hash = "$pbkdf2-<digest>$rounds=<rounds>$<salt>$<hash>"
+ *
+ * Return Value
+ *   old encrypted = verify successful
+ *   new encrypted = verify successful, reenrypted with new parameters
+ *   NULL          = verify failed
  */
-static int pbkdf2_verify(const char *pass, const char *encrypted)
+static char *pbkdf2_verify(const char *pass, const char *encrypted)
 {
   char method[sizeof pbkdf2_method],
        b64salt[B64_NTOP_CALCULATE_SIZE(PBKDF2_SALT_LEN) + 1],
@@ -172,12 +177,12 @@ static int pbkdf2_verify(const char *pass, const char *encrypted)
   /* TODO: different salt lengths wont work yet i guess and overflow may still be possible */
   if (!sscanf(encrypted, "$pbkdf2-%27[^$]$rounds=%u$%24[^$]$%344s", method, &rounds, b64salt, b64hash)) {
     putlog(LOG_MISC, "*", "PBKDF2 error: could not parse hashed password.");
-    return 1;
+    return NULL;
   }
   digest = EVP_get_digestbyname(method);
   if (!digest) {
     putlog(LOG_MISC, "*", "PBKDF2 error: Unknown message digest '%s'.", method);
-    return 1;
+    return NULL;
   }
   if (b64salt[22] == 0) {
     b64salt[22] = '=';
@@ -191,20 +196,20 @@ static int pbkdf2_verify(const char *pass, const char *encrypted)
   saltlen = b64_pton(b64salt, salt, sizeof salt);
   if (saltlen < 0) {
     putlog(LOG_MISC, "*", "PBKDF2 error: b64_pton(%s).", b64salt);
-    return 1;
+    return NULL;
   }
   if (!(buf = pbkdf2_hash(pass, method, salt, saltlen, rounds)))
-    return 1;
+    return NULL;
   if (strcmp(encrypted, buf)) {
-    putlog(LOG_MISC, "*", "PBKDF2 error: strncmp(hashlen):\n  %s\n  %s.", encrypted, buf);
-    /* TODO: re-hashing password (new method, more rounds)
-     * if (strncmp(method, pbkdf2_method, sizeof pbkdf2_method) || rounds != pbkdf2_rounds)
-     */
+    putlog(LOG_MISC, "*", "PBKDF2 error: str(n?)cmp(hashlen ?):\n  %s\n  %s.", encrypted, buf);
     explicit_bzero(buf, strlen(buf));
-    return 1;
+    return NULL;
   }
   explicit_bzero(buf, strlen(buf));
-  return 0;
+  /* TODO: eggdrop config setting for enable/disable password reencoding ? */
+  if (strcmp(method, pbkdf2_method) || (rounds != pbkdf2_rounds))
+    return pbkdf2_encrypt(pass);
+  return (char *) encrypted;
 }
 
 EXPORT_SCOPE char *pbkdf2_start();

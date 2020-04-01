@@ -45,7 +45,7 @@ struct tand_t_struct;
 #ifndef MAKING_MODS
 extern void (*encrypt_pass) (char *, char *);
 extern char *(*encrypt_pass2) (char *);
-extern int (*verify_pass2) (char *, char *);
+extern char *(*verify_pass2) (char *, char *);
 extern char *(*encrypt_string) (char *, char *);
 extern char *(*decrypt_string) (char *, char *);
 extern int (*rfc_casecmp) (const char *, const char *);

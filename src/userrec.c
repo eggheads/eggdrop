@@ -324,7 +324,7 @@ struct userrec *get_user_by_host(char *host)
  */
 int u_pass_match(struct userrec *u, char *pass)
 {
-  char *cmp = 0, new[32];
+  char *cmp = 0, *new, new2[32];
   int pass2;
 
   if (!u || !pass)
@@ -353,12 +353,17 @@ int u_pass_match(struct userrec *u, char *pass)
     if (strlen(pass) > 30)
       pass[30] = 0;
     if (pass2) {
-      if (!verify_pass2(pass, cmp))
+      new = verify_pass2(pass, cmp);
+      if (new) { /* verify successful */
+        if (new != cmp) /* reenrypted with new parameters,
+                           no need to strcmp() */
+          set_user(&USERENTRY_PASS2, u, new);
         return 1;
+      }
     }
     else {
-      encrypt_pass(pass, new);
-      if (!strcmp(cmp, new))
+      encrypt_pass(pass, new2);
+      if (!strcmp(cmp, new2))
         return 1;
     }
   }
