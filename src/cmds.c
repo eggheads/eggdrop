@@ -401,6 +401,7 @@ static void cmd_back(struct userrec *u, int idx, char *par)
  */
 char *check_validpass(struct userrec *u, char *new) {
   int l;
+  unsigned char *p = (unsigned char *) new;
 
   l = strlen(new);
   if (l < 6)
@@ -409,6 +410,11 @@ char *check_validpass(struct userrec *u, char *new) {
     return "Passwords cannot be longer than " STRINGIFY(PASSWORDMAX) " characters, please try again.";
   if (new[0] == '+') /* See also: userent.c:pass_set() */
     return "Password cannot start with '+', please try again.";
+  while (*p) {
+    if ((*p <= 32) || (*p == 127))
+      return "Password cannot use weird symbols, please try again.";
+    p++;
+  }
   set_user(&USERENTRY_PASS, u, new);
   return NULL;
 }
