@@ -594,7 +594,6 @@ static int dcc_bot_check_digest(int idx, char *remote_digest)
   ret = strcmp(digest_string, remote_digest);
   explicit_bzero(digest_string, sizeof digest_string);
   explicit_bzero(digest, sizeof digest);
-  explicit_bzero(password, strlen(password));
 
   if (!ret)
     return 1;
