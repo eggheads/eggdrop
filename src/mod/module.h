@@ -507,8 +507,8 @@
 #endif
 #define check_validpass ((char *(*) (struct userrec *, char *))global[307])
 /* 308 - 311 */
-#define USERENTRY_PASS2 (*(struct user_entry_type *)(global[308]))
-
+#define make_rand_str_from_chars ((void (*) (char *, int, char *))global[308])
+#define USERENTRY_PASS2 (*(struct user_entry_type *)(global[309]))
 
 /* hostmasking */
 #define maskhost(a,b) maskaddr((a),(b),3)

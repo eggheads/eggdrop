@@ -609,7 +609,8 @@ Function global_table[] = {
   (Function) 0,
 #endif
   (Function) check_validpass,
-  /* 304 - 307 */
+  /* 308 - 311 */
+  (Function) make_rand_str_from_chars,
   (Function) & USERENTRY_PASS2    /* struct user_entry_type *            */
 };
 

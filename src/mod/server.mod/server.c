@@ -106,7 +106,7 @@ static char sslserver = 0;
 #endif
 
 static p_tcl_bind_list H_wall, H_raw, H_notc, H_msgm, H_msg, H_flud, H_ctcr,
-                       H_ctcp, H_out, H_rawt;
+                       H_ctcp, H_out, H_rawt, H_awayv3;
 
 static void empty_msgq(void);
 static void next_server(int *, char *, unsigned int *, char *);
@@ -151,6 +151,13 @@ static int burst;
 
 #include "cmdsserv.c"
 #include "tclserv.c"
+
+/* Available sasl mechanisms. */
+char const *SASL_MECHANISMS[SASL_MECHANISM_NUM] = {
+  [SASL_MECHANISM_PLAIN]                    = "PLAIN",
+  [SASL_MECHANISM_ECDSA_NIST256P_CHALLENGE] = "ECDSA-NIST256P-CHALLENGE",
+  [SASL_MECHANISM_EXTERNAL]                 = "EXTERNAL"
+};
 
 static void write_to_server(char *s, unsigned int len) {
   char *s2 = nmalloc(len + 2);
@@ -2067,6 +2074,7 @@ static char *server_close()
   rem_builtins(H_ctcp, my_ctcps);
   /* Restore original commands. */
   del_bind_table(H_wall);
+  del_bind_table(H_awayv3);
   del_bind_table(H_raw);
   del_bind_table(H_rawt);
   del_bind_table(H_notc);
@@ -2174,7 +2182,9 @@ static Function server_table[] = {
   (Function) & H_out,           /* p_tcl_bind_list                      */
   (Function) add_server,
   (Function) del_server,
-  (Function) & net_type_int     /* int                                  */
+  (Function) & net_type_int,    /* int                                  */
+  /* 44 - 47 */
+  (Function) & H_awayv3         /* p_tcl_bind_list                      */
 };
 
 char *server_start(Function *global_funcs)
@@ -2276,6 +2286,7 @@ char *server_start(Function *global_funcs)
                traced_nicklen, NULL);
 
   H_wall = add_bind_table("wall", HT_STACKABLE, server_2char);
+  H_awayv3 = add_bind_table("awy3", HT_STACKABLE, server_2char);
   H_raw = add_bind_table("raw", HT_STACKABLE, server_raw);
   H_rawt = add_bind_table("rawt", HT_STACKABLE, server_tag);
   H_notc = add_bind_table("notc", HT_STACKABLE, server_5char);
