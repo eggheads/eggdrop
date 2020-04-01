@@ -648,8 +648,8 @@ static void core_secondly()
     if (con_chan && !backgrd) {
       dprintf(DP_STDOUT, "\033[2J\033[1;1H");
       if ((cliflags & CLI_N) && (cliflags & CLI_C)) {
-        printf("NOTE: It's the 21st century, you don't need to use the -n flag\n");
-        printf("      with the -t or -c flag anymore.\n");
+        printf("NOTE: You don't need to use the -n flag with the\n");
+        printf("       -t or -c flag anymore.\n");
       }
       tell_verbose_status(DP_STDOUT);
       do_module_report(DP_STDOUT, 0, "server");
