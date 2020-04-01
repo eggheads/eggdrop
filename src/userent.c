@@ -244,9 +244,12 @@ int pass2_set(struct userrec *u, struct user_entry *e, void *new)
   /* if (!pass || !pass[0] || (pass[0] == '-'))
    *   e->u.extra = NULL;
    */
-  assert(new);
-  e->u.extra = user_malloc(strlen(new) + 1);
-  strcpy(e->u.extra, new);
+  if (new) {
+    e->u.extra = user_malloc(strlen(new) + 1);
+    strcpy(e->u.extra, new);
+  }
+  else
+    e->u.extra = NULL; /* TODO user_malloc() without free ? */
   return 0;
 }
 
@@ -276,8 +279,10 @@ int pass_set(struct userrec *u, struct user_entry *e, void *buf)
 
   if (e->u.extra)
     nfree(e->u.extra);
-  if (!pass || !pass[0] || (pass[0] == '-'))
-    e->u.extra = NULL; /* TODO: pbkdf2 may need code for this case */
+  if (!pass || !pass[0] || (pass[0] == '-')) {
+    e->u.extra = NULL; /* TODO user_malloc() without free ? */
+    set_user(&USERENTRY_PASS2, u, NULL);
+  }
   else {
     unsigned char *p = (unsigned char *) pass;
 
