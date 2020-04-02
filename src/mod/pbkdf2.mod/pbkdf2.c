@@ -52,7 +52,8 @@ static void bufcount(char **buf, int *buflen, int bytes)
   *buflen -= bytes;
 }
 
-static int b64_ntop_without_padding(u_char const *src, size_t srclength, char *target, size_t targsize)
+static int b64_ntop_without_padding(u_char const *src, size_t srclength,
+                                    char *target, size_t targsize)
 {
   char *c;
 
@@ -67,10 +68,11 @@ static int b64_ntop_without_padding(u_char const *src, size_t srclength, char *t
 }
 
 /* Encrypt a password with flexible settings for verification. */
-static char *pbkdf2_hash(const char *pass, const char *digest_name, const unsigned char *salt, int saltlen, int rounds)
+static char *pbkdf2_hash(const char *pass, const char *digest_name,
+                         const unsigned char *salt, int saltlen, int rounds)
 {
   const EVP_MD *digest;
-  static int hashlen;  /* static object is initialized to zero (Standard C) */
+  static int hashlen; /* static object is initialized to zero (Standard C) */
   static char *out, *out2;
   int hashlen2, ret, digestlen;
   static unsigned char *buf;
@@ -78,7 +80,8 @@ static char *pbkdf2_hash(const char *pass, const char *digest_name, const unsign
 
   digest = EVP_get_digestbyname(digest_name);
   if (!digest) {
-    putlog(LOG_MISC, "*", "PBKDF2 error: Unknown message digest '%s'.", digest_name);
+    putlog(LOG_MISC, "*", "PBKDF2 error: Unknown message digest '%s'.",
+           digest_name);
     return NULL;
   }
   /* Sanity check */
@@ -119,7 +122,8 @@ static char *pbkdf2_hash(const char *pass, const char *digest_name, const unsign
   if (!buf) /* TODO ? */
     buf = nmalloc(digestlen); /* size ? */
   ret = getrusage(RUSAGE_SELF, &ru1);
-  if (!PKCS5_PBKDF2_HMAC(pass, strlen(pass), salt, saltlen, rounds, digest, digestlen, buf)) {
+  if (!PKCS5_PBKDF2_HMAC(pass, strlen(pass), salt, saltlen, rounds, digest,
+                         digestlen, buf)) {
     explicit_bzero(out, strlen(out));
     putlog(LOG_MISC, "*", "PBKDF2 error: PKCS5_PBKDF2_HMAC(): %s.", ERR_error_string(ERR_get_error(), NULL));
     return NULL;
@@ -152,7 +156,8 @@ static char *pbkdf2_encrypt(const char *pass)
     putlog(LOG_MISC, "*", "PBKDF2 error: RAND_bytes(): %s.", ERR_error_string(ERR_get_error(), NULL));
     return NULL;
   }
-  if (!(buf = pbkdf2_hash(pass, pbkdf2_method, salt, sizeof salt, pbkdf2_rounds)))
+  if (!(buf = pbkdf2_hash(pass, pbkdf2_method, salt, sizeof salt,
+                          pbkdf2_rounds)))
     return NULL;
   return buf;
 }
@@ -207,7 +212,8 @@ static char *pbkdf2_verify(const char *pass, const char *encrypted)
     return NULL;
   }
   explicit_bzero(buf, strlen(buf));
-  if (pbkdf2_re_encode && ((rounds != pbkdf2_rounds) || strcmp(method, pbkdf2_method)))
+  if (pbkdf2_re_encode &&
+      ((rounds != pbkdf2_rounds) || strcmp(method, pbkdf2_method)))
     return pbkdf2_encrypt(pass);
   return (char *) encrypted;
 }
@@ -228,7 +234,8 @@ static int pbkdf2_init(void)
 {
   const EVP_MD *digest;
   /* OpenSSL library initialization
-   * If you are using 1.1.0 or above then you don't need to take any further steps. */
+   * If you are using 1.1.0 or above then you don't need to take any further
+   * steps. */
 #if OPENSSL_VERSION_NUMBER < 0x10100000L /* 1.1.0 */
   SSL_library_init();
   SSL_load_error_strings();
