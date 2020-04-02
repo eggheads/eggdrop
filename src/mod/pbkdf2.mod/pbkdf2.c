@@ -203,7 +203,6 @@ static char *pbkdf2_verify(const char *pass, const char *encrypted)
   if (!(buf = pbkdf2_hash(pass, method, salt, saltlen, rounds)))
     return NULL;
   if (strcmp(encrypted, buf)) {
-    putlog(LOG_MISC, "*", "PBKDF2 error: str(n?)cmp(hashlen ?):\n  %s\n  %s.", encrypted, buf);
     explicit_bzero(buf, strlen(buf));
     return NULL;
   }
