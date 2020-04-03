@@ -318,6 +318,9 @@ struct userrec *get_user_by_host(char *host)
 /* Description: checks the password given against the user's password.
  * Check against the password "-" to find out if a user has no password set.
  *
+ * If encryption2 module is loaded and PASS2 is set PASS2 is compared; else
+ * PASS1.
+ *
  * Returns: 1 if the password matches for that user; 0 otherwise. Or if we are
  * checking against the password "-": 1 if the user has no password set; 0
  * otherwise.
