@@ -26,12 +26,10 @@ static Function *global = NULL;
 
 static char pbkdf2_method[28] = "SHA512";
 static int pbkdf2_re_encode = 0;
-static int pbkdf2_remove_old = 0; /* TODO: not implemented yet */
 static int pbkdf2_rounds = PBKDF2_ROUNDS;
 
 static tcl_ints my_tcl_ints[] = {
   {"pbkdf2-re-encode",  &pbkdf2_re_encode,  0},
-  {"pbkdf2-remove-old", &pbkdf2_remove_old, 0},
   {"pbkdf2-rounds",     &pbkdf2_rounds,     0},
   {NULL,                NULL,               0}
 };
