@@ -35,9 +35,9 @@ else
   cat >&2 <<EOF
 configure: warning:
 
-  Your system does not provide a working openssl library or the necessary openssl
-  functions EVP_sha256() and PKCS5_PBKDF2_HMAC(). The pbkdf2 module will therefore
-  be disabled.
+  Cannot find openssl library, its development files or the necessary openssl
+  functions EVP_sha256() and PKCS5_PBKDF2_HMAC(). The pbkdf2 module will
+  therefore be disabled.
 
 EOF
   EGG_REMOVE_MOD(pbkdf2)
