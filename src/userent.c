@@ -238,18 +238,16 @@ struct user_entry_type USERENTRY_INFO = {
   def_tcl_append
 };
 
-#include <assert.h> /* TODO: pbkdf2 under construction, will be removed later */
 int pass2_set(struct userrec *u, struct user_entry *e, void *new)
 {
-  /* if (!pass || !pass[0] || (pass[0] == '-'))
-   *   e->u.extra = NULL;
-   */
-  if (new) {
+  if (e->u.extra)
+    nfree(e->u.extra);
+  if (new) { /* set PASS2 */
     e->u.extra = user_malloc(strlen(new) + 1);
     strcpy(e->u.extra, new);
   }
-  else
-    e->u.extra = NULL; /* TODO user_malloc() without free ? */
+  else /* remove PASS2 */
+    e->u.extra = new;
   return 0;
 }
 
@@ -280,7 +278,7 @@ int pass_set(struct userrec *u, struct user_entry *e, void *buf)
   if (e->u.extra)
     nfree(e->u.extra);
   if (!pass || !pass[0] || (pass[0] == '-')) {
-    e->u.extra = NULL; /* TODO user_malloc() without free ? */
+    e->u.extra = NULL;
     set_user(&USERENTRY_PASS2, u, NULL);
   }
   else {
