@@ -325,15 +325,14 @@ struct userrec *get_user_by_host(char *host)
 int u_pass_match(struct userrec *u, char *pass)
 {
   char *cmp = 0, *new, new2[32];
-  int pass2;
+  int pass2 = 1;
 
   if (!u || !pass)
     return 0;
-  if (encrypt_pass2) {
+  if (encrypt_pass2)
     cmp = get_user(&USERENTRY_PASS2, u);
-    pass2 = 1;
-  }
-  if (!cmp && encrypt_pass) {
+  if (!cmp) { /* implicit && encrypt_pass, due to eggdrop has at least one
+                 encryption module loaded */
     cmp = get_user(&USERENTRY_PASS, u);
     pass2 = 0;
   }
