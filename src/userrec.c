@@ -331,8 +331,7 @@ int u_pass_match(struct userrec *u, char *pass)
     return 0;
   if (encrypt_pass2)
     cmp = get_user(&USERENTRY_PASS2, u);
-  if (!cmp) { /* implicit && encrypt_pass, due to eggdrop has at least one
-                 encryption module loaded */
+  if (!cmp && encrypt_pass) {
     cmp = get_user(&USERENTRY_PASS, u);
     pass2 = 0;
   }
