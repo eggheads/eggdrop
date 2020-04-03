@@ -275,11 +275,13 @@ int pass_set(struct userrec *u, struct user_entry *e, void *buf)
   char *new2 = 0;
   char *pass = buf;
 
-  if (e->u.extra)
+  if (encrypt_pass && e->u.extra)
     nfree(e->u.extra);
   if (!pass || !pass[0] || (pass[0] == '-')) {
-    e->u.extra = NULL;
-    set_user(&USERENTRY_PASS2, u, NULL);
+    if (encrypt_pass)
+      e->u.extra = NULL;
+    if (encrypt_pass2)
+      set_user(&USERENTRY_PASS2, u, NULL);
   }
   else {
     unsigned char *p = (unsigned char *) pass;
@@ -293,11 +295,12 @@ int pass_set(struct userrec *u, struct user_entry *e, void *buf)
     }
     if (u->flags & USER_BOT) {
       strlcpy(new, pass, sizeof new);
-      new2 = new;
+      if (encrypt_pass2)
+        new2 = new;
     }
     else if (pass[0] == '+') {
       strlcpy(new, pass, sizeof new);
-      new2 = NULL; /* Due to module api encrypted pass2 cannot be available here
+      new2 = NULL; /* due to module api encrypted pass2 cannot be available here
                     * Caller must do set_user(&USERENTRY_PASS2, u, password);
                     * Probably only share.c:dup_userlist()
                     */
@@ -312,7 +315,7 @@ int pass_set(struct userrec *u, struct user_entry *e, void *buf)
       e->u.extra = user_malloc(strlen(new) + 1);
       strcpy(e->u.extra, new);
     }
-    if (encrypt_pass2 && new2)
+    if (new2) /* implicit encrypt_pass2 && */
       set_user(&USERENTRY_PASS2, u, new2);
     explicit_bzero(new, sizeof new);
     if (new2 && new2 != new)
