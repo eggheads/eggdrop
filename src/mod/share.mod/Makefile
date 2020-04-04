@@ -36,8 +36,8 @@ distclean: clean
  ../../../src/compat/compat.h ../../../src/compat/base64.h \
  ../../../src/compat/inet_aton.h ../../../src/compat/snprintf.h \
  ../../../src/compat/inet_pton.h ../../../src/compat/gethostbyname2.h \
- ../../../src/compat/strlcpy.h ../../../src/mod/modvals.h \
- ../../../src/tandem.h ../../../src/chan.h ../../../src/users.h \
- ../../../src/mod/transfer.mod/transfer.h \
+ ../../../src/compat/explicit_bzero.h ../../../src/compat/strlcpy.h \
+ ../../../src/mod/modvals.h ../../../src/tandem.h ../../../src/chan.h \
+ ../../../src/users.h ../../../src/mod/transfer.mod/transfer.h \
  ../../../src/mod/channels.mod/channels.h .././share.mod/share.h \
  .././share.mod/uf_features.c
