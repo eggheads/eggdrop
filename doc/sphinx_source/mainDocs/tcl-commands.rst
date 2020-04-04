@@ -155,10 +155,10 @@ clearqueue <queue>
   Module: server
 
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-cap <active/available/raw> [arg]
+cap <ls/list/req/raw> [arg]
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-  Description: displays CAP status or sends a raw CAP command to the server. "available" will list the capabilities supported by the server, "active" will list the capabilities Eggdrop has negotiated with the server, and raw will send a raw CAP command to the server. If sending a raw command, it must be submitted in arg as a single string. For example, to request capabilities foo and bar, you would use [cap raw "REQ :foo bar"]. 
+  Description: displays CAP status or sends a raw CAP command to the server. "ls" will list the capabilities supported by the server, "list" will list the capabilities Eggdrop has negotiated with the server, "req" will request a capability from the server, and raw will send a raw CAP command to the server. If sending a raw command, it must be submitted in arg as a single string. For example, to request capabilities foo and bar, you would use [cap raw "REQ :foo bar"].
 
   Returns: nothing
 
@@ -1072,7 +1072,7 @@ isvoice <nickname> [channel]
 isaway <nickname>
 ^^^^^^^^^^^^^^^^^
 
-  Returns: 1 if Eggdrop is currently tracking someone by that nickname is marked 'away' by an IRC server; 0 otherwise. IMPORTANT: this command will function properly when used in conjunction with the IRCv3 away-notify capability, if away-notify is enabled on the IRC server (if you didn't add this to your config file, it isn't enabled). Without away-notify functionality, this command may not be accurate. For best results without away-notify enabled, use 'resetchan <channel> w' on a channel the user is on to refresh the channel list. This will obtain the current away status for the user.
+  Returns: 1 if Eggdrop is currently tracking someone by that nickname is marked 'away' by an IRC server; 0 otherwise. IMPORTANT: this command will function properly when used in conjunction with the IRCv3 away-notify capability, if away-notify is available and negotiated with the IRC server (if you didn't add this to your config file, it likely isn't enabled). Without the away-notify capability negotiated with the IRC server, this command may not be accurate. For best results without the away-notify capability enabled, use 'resetchan <channel> w' on a channel the user is on to refresh the channel list. This will obtain the current away status for the user.
 
   Module: irc
 
