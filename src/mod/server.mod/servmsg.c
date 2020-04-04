@@ -1249,7 +1249,7 @@ static int tryauthenticate(char *from, char *msg)
 #ifdef HAVE_EVP_PKEY_GET1_EC_KEY
   EC_KEY *eckey;
   int ret;
-  size_t olen;
+  int olen;
   unsigned int olen2;
   unsigned char *dst2;
   FILE *fp;
