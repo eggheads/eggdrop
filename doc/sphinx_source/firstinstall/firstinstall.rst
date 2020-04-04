@@ -254,26 +254,35 @@ By default, it should create an entry that looks similar to::
 
 This will run the generated botchk script every ten minutes and restart your Eggdrop if it is not running during the check. Also note that if you run autobotchk from the scripts directory, you'll have to manually specify your config file location with the -dir option. To remove a crontab entry, use ``crontab -e`` to open the crontab file in your system's default editor and remove the crontab line.
 
+Authenticating with NickServ
+----------------------------
+
+Many IRC features require you to authenticate with NickServ to use them. You can do this from your config file by searching for the line::
+
+    #  putserv "PRIVMSG NickServ :identify <password>"
+
+in your config file. Uncomment it by removing the '#' sign and then replace <password> with your password. Your bot will now authenticate with NickServ each time it joins a server.
+
 Setting up SASL authentication
 ------------------------------
 
 Simple Authentication and Security Layer (SASL) is becoming a prevelant method of authenticating with IRC services such as NickServ prior to your client finalizing a connection to the IRC server, eliminating the need to /msg NickServ to identify yourself. In other words, you can authenticate with NickServ and do things like receive a cloaked hostmask before your client ever appears on the IRC server. Eggdrop supports three methods of SASL authentication, set via the sasl-mechanism setting:
 
-* PLAIN: To use this method, set sasl-mechanism to 0. This method passes the username and password (set in the sasl-username and sasl-password config file settings) to the IRC server in plaintext. If you only connect to the IRC server using a connection protected by SSL/TLS this is a generally safe method of authentication; however you probably want to avoid this method if you connect to a server on a non-protected port as the exchange itself is not encrypted.
+* **PLAIN**: To use this method, set sasl-mechanism to 0. This method passes the username and password (set in the sasl-username and sasl-password config file settings) to the IRC server in plaintext. If you only connect to the IRC server using a connection protected by SSL/TLS this is a generally safe method of authentication; however you probably want to avoid this method if you connect to a server on a non-protected port as the exchange itself is not encrypted.
 
-* ECDSA-NIST256P-CHALLENGE: To use this method, set sasl-method to 1. This method uses a public/private keypair to authenticate, so no username/password is required. Not all servers support this method. If your server does support this, you you must generate a certificate pair using::
+* **ECDSA-NIST256P-CHALLENGE**: To use this method, set sasl-method to 1. This method uses a public/private keypair to authenticate, so no username/password is required. Not all servers support this method. If your server does support this, you you must generate a certificate pair using::
 
     openssl ecparam -genkey -name prime256v1 -out eggdrop-ecdsa.pem
 
-You will need to determine your public key fingerprint by using::
+  You will need to determine your public key fingerprint by using::
 
     openssl ec -noout -text -conv_form compressed -in eggdrop-ecdsa.pem | grep '^pub:' -A 3 | tail -n 3 | tr -d ' \n:' | xxd -r -p | base64
 
-Then, authenticate with your NickServ service and register your public certificate with NickServ. You can view your public key  On Freenode for example, it is done by::
+  Then, authenticate with your NickServ service and register your public certificate with NickServ. You can view your public key  On Freenode for example, it is done by::
 
     /msg NickServ set pubkey <fingerprint string from above goes here>
 
-* EXTERNAL: To use this method, set sasl-method to 2. This method allows you to use other TLS certificates to connect to the IRC server, if the IRC server supports it. An EXTERNAL authentication method usually requires you to connect to the IRC server using SSL/TLS. There are many ways to generate certificates; one such way is generating your own certificate using::
+* **EXTERNAL**: To use this method, set sasl-method to 2. This method allows you to use other TLS certificates to connect to the IRC server, if the IRC server supports it. An EXTERNAL authentication method usually requires you to connect to the IRC server using SSL/TLS. There are many ways to generate certificates; one such way is generating your own certificate using::
 
     openssl req -new -x509 -nodes -keyout eggdrop.key -out eggdrop.crt
 
@@ -285,11 +294,15 @@ Then, ensure you have those keys loaded in the ssl-privatekey and ssl-certificat
 
     /msg NickServ cert add <fingerprint string from above goes here>
 
-Authenticating with NickServ
-----------------------------
+Advanced Eggdrop Usage
+======================
 
-Many IRC features require you to authenticate with NickServ to use them. You can do this from your config file by searching for the line::
+UTF-8 Support
+-------------
+The encoding scheme used by Eggdrop's Tcl interface is set based on the locale settings of the host machine. You can check which locale your host machine is using by running the ``locale`` command. Eggdrop takes that locale setting of the host machine and compares it to the locales available within Tcl's installed libraries. If it finds one in Tcl that matches (or is close to matching), that is the encoding scheme that is used. If a matching encoding scheme is not found, only then does eggdrop default to ISO 8859-1 encoding.
 
-    #  putserv "PRIVMSG NickServ :identify <password>"
+If you want Eggdrop to use a specific encoding scheme that it is not currently using, you can view the availabe locales on your machine via the ``locale -a`` command, and then set the one you want to use for that user by running ``export LANG=en_US.UTF-8`` (or whichever scheme you want to use). You should not need to edit any source code, as has been a popular suggestion over the past few years.
 
-in your config file. Uncomment it by removing the '#' sign and then replace <password> with your password. Your bot will now authenticate with NickServ each time it joins a server.
+Unicode Emoji Support
+~~~~~~~~~~~~~~~~~~~~~
+Another issue encountered when using Eggdrop is that Unicode Emojis are not supported- this is not Eggdrop specific; rather it is a "feature" of Tcl. Unfortunately, the only solution at this time to enable Emojis (and other high-number characters) is to recompile with the TCL_UTF_MAX=6 compile flag. At the time of writing, we are unaware of a package-manager version of this that would remedy the problem. To understand more on the 'why' behind this, you can read this `Tcl Improvement Proposal <https://core.tcl-lang.org/tips/doc/trunk/tip/389.md>`_.
