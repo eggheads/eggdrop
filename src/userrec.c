@@ -365,8 +365,14 @@ int u_pass_match(struct userrec *u, char *pass)
     }
     else if (encrypt_pass) {
       encrypt_pass(pass, new2);
-      if (!strcmp(cmp, new2))
+      if (!strcmp(cmp, new2)) { /* verify successful */
+        if (encrypt_pass2) {
+          new = encrypt_pass2(pass);
+          if (new)
+            set_user(&USERENTRY_PASS2, u, new);
+        }
         return 1;
+      }
     }
   }
   return 0;
