@@ -121,8 +121,9 @@ static char *pbkdf2_hash(const char *pass, const char *digest_name,
     putlog(LOG_MISC, "*", "PBKDF2 error: hashlen2 < B64_NTOP_CALCULATE_SIZE(digestlen).");
     return NULL;
   }
-  if (!buf) /* TODO ? */
-    buf = nmalloc(digestlen); /* size ? */
+  if (buf)
+    nfree(buf);
+  buf = nmalloc(digestlen);
   ret = getrusage(RUSAGE_SELF, &ru1);
   if (!PKCS5_PBKDF2_HMAC(pass, strlen(pass), salt, saltlen, rounds, digest,
                          digestlen, buf)) {
