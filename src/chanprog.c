@@ -237,11 +237,7 @@ float getcputime()
   stime = ru.ru_stime.tv_sec + (ru.ru_stime.tv_usec / 1000000.00);
   return (utime + stime);
 #else
-#  ifdef HAVE_CLOCK
   return (clock() / (CLOCKS_PER_SEC * 1.00));
-#  else
-  return -1.00;
-#  endif
 #endif
 }
 
