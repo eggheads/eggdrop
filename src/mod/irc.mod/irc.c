@@ -416,7 +416,13 @@ void reset_chan_info(struct chanset_t *chan, int reset)
   if (channel_pending(chan))
     return;
 
-  clear_channel(chan, reset);
+  /* If we are only updateing away status, we want to keep the WHO info already
+   * stored in the channel list, particularly so we don't reset the idle time
+   * Eggdrop is already tracking. We're just updating the attached away status
+   * flag
+   */
+  if ((reset & CHAN_RESETALL) == CHAN_RESETAWAY)
+    clear_channel(chan, reset);
   if ((reset & CHAN_RESETBANS) && !(chan->status & CHAN_ASKEDBANS)) {
     chan->status |= CHAN_ASKEDBANS;
     dprintf(DP_MODE, "MODE %s +b\n", chan->name);
@@ -440,7 +446,7 @@ void reset_chan_info(struct chanset_t *chan, int reset)
     chan->status &= ~CHAN_ASKEDMODES;
     dprintf(DP_MODE, "MODE %s\n", chan->name);
   }
-  if (reset & CHAN_RESETWHO) {
+  if ((reset & CHAN_RESETWHO) || (reset & CHAN_RESETAWAY)) {
     chan->status |= CHAN_PEND;
     chan->status &= ~CHAN_ACTIVE;
     refresh_who_chan(chan->name);

@@ -448,7 +448,7 @@ static int tcl_isaway STDVAR
   for (chan = chanset; chan; chan = chan->next) {
     m = ismember(chan, argv[1]);     /* In my channel list copy? */
     if (m) {
-        if chan_ircaway(m) {
+        if (chan_ircaway(m)) {
         Tcl_AppendResult(irp, "1", NULL);
         return TCL_OK;
       }
@@ -863,6 +863,9 @@ static int tcl_resetchan STDVAR
       break;
     case 't':
       flags |= CHAN_RESETTOPIC;
+      break;
+    case 'a':
+      flags |= CHAN_RESETAWAY;
       break;
     default:
       Tcl_AppendResult(irp, "invalid reset flags: ", argv[2], NULL);

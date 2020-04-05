@@ -1072,7 +1072,7 @@ isvoice <nickname> [channel]
 isaway <nickname>
 ^^^^^^^^^^^^^^^^^
 
-  Returns: 1 if Eggdrop is currently tracking someone by that nickname is marked 'away' by an IRC server; 0 otherwise. IMPORTANT: this command will function properly when used in conjunction with the IRCv3 away-notify capability, if away-notify is available and negotiated with the IRC server (if you didn't add this to your config file, it likely isn't enabled). Without the away-notify capability negotiated with the IRC server, this command may not be accurate. For best results without the away-notify capability enabled, use 'resetchan <channel> w' on a channel the user is on to refresh the channel list. This will obtain the current away status for the user.
+  Returns: 1 if Eggdrop is currently tracking someone by that nickname is marked 'away' by an IRC server; 0 otherwise. IMPORTANT: this command is only reliable on its own when the IRCv3 away-notify capability is available and negotiated with the IRC server (if you didn't add this to your config file, it likely isn't enabled- you can confirm using the ``cap`` Tcl command). To use this command without the away-notify capability negotiated, use 'resetchan <channel> a' on a channel the user is on to refresh the channel list. This will refresh the current away status for the user stored by Eggdrop.
 
   Module: irc
 
@@ -1210,19 +1210,21 @@ resetchan <channel> [flags]
 
   Description: rereads in the channel info from the server. If flags are specified, only the required information will be reset, according to the given flags. Available flags:
 
-  +-----+---------------------------+
-  | b   | reset channel bans        |
-  +-----+---------------------------+
-  | e   | reset channel exempts     |
-  +-----+---------------------------+
-  | I   | reset channel invites     |
-  +-----+---------------------------+
-  | m   | refresh channel modes     |
-  +-----+---------------------------+
-  | t   | refresh channel topic     |
-  +-----+---------------------------+
-  | w   | refresh memberlist        |
-  +-----+---------------------------+
+  +-----+----------------------------+
+  | a   | refresh nick away status   |
+  +-----+----------------------------+
+  | b   | reset channel bans         |
+  +-----+----------------------------+
+  | e   | reset channel exempts      |
+  +-----+----------------------------+
+  | I   | reset channel invites      |
+  +-----+----------------------------+
+  | m   | refresh channel modes      |
+  +-----+----------------------------+
+  | t   | refresh channel topic      |
+  +-----+----------------------------+
+  | w   | refresh memberlist         |
+  +-----+----------------------------+
 
   Returns: nothing
 
