@@ -155,7 +155,6 @@ static char *pbkdf2_encrypt(const char *pass)
   unsigned char salt[PBKDF2_SALT_LEN];
   static char *buf;
 
-  /* Encrypt a password with standard settings to store. */
   if (RAND_bytes(salt, sizeof salt) != 1) {
     putlog(LOG_MISC, "*", "PBKDF2 error: RAND_bytes(): %s.", ERR_error_string(ERR_get_error(), NULL));
     return NULL;
