@@ -65,13 +65,17 @@ static int b64_ntop_without_padding(u_char const *src, size_t srclength,
   return targsize;
 }
 
-/* Encrypt a password with flexible settings for verification. */
+/* Return
+ *   hash = "$pbkdf2-<digest>$rounds=<rounds>$<salt>$<hash>" (PHC string format)
+ *     salt and hash = base64
+ *   NULL = error
+ */
 static char *pbkdf2_hash(const char *pass, const char *digest_name,
                          const unsigned char *salt, int saltlen, int rounds)
 {
   const EVP_MD *digest;
-  static int hashlen; /* static object is initialized to zero (Standard C) */
-  static char *out, *out2;
+  int hashlen;
+  static char *out, *out2; /* static object is initialized to zero (Standard C) */
   int hashlen2, ret, digestlen;
   static unsigned char *buf;
   struct rusage ru1, ru2;
@@ -91,13 +95,10 @@ static char *pbkdf2_hash(const char *pass, const char *digest_name,
     putlog(LOG_MISC, "*", "PBKDF2 error: rounds %i <= 0.", rounds);
     return NULL;
   }
-  if (!hashlen) { /* TODO: hashlan may change if implemented */
-    /* PHC string format
-     * hash = "$pbkdf2-<digest>$rounds=<rounds>$<salt>$<hash>"
-     */
-    hashlen = strlen("$pbkdf2-") + strlen(digest_name) + strlen("$rounds=2147483647$") + B64_NTOP_CALCULATE_SIZE(saltlen) + 1 + B64_NTOP_CALCULATE_SIZE(EVP_MD_size(digest));
-    out = nmalloc(hashlen + 1);
-  }
+  hashlen = strlen("$pbkdf2-") + strlen(digest_name) + strlen("$rounds=2147483647$") + B64_NTOP_CALCULATE_SIZE(saltlen) + 1 + B64_NTOP_CALCULATE_SIZE(EVP_MD_size(digest));
+  if (out)
+    nfree(out);
+  out = nmalloc(hashlen + 1);
   out2 = out;
   hashlen2 = hashlen;
   bufcount(&out2, &hashlen2, snprintf((char *) out2, hashlen2, "$pbkdf2-%s$rounds=%i$", digest_name, (unsigned int) rounds));
@@ -144,6 +145,11 @@ static char *pbkdf2_hash(const char *pass, const char *digest_name,
   return out;
 }
 
+/* Return
+ *   hash = "$pbkdf2-<digest>$rounds=<rounds>$<salt>$<hash>" (PHC string format)
+ *     salt and hash = base64
+ *   NULL = error
+ */
 static char *pbkdf2_encrypt(const char *pass)
 {
   unsigned char salt[PBKDF2_SALT_LEN];
@@ -160,13 +166,12 @@ static char *pbkdf2_encrypt(const char *pass)
   return buf;
 }
 
-/* PHC string format
- * hash = "$pbkdf2-<digest>$rounds=<rounds>$<salt>$<hash>"
- *
- * Return Value
- *   old encrypted = verify successful
- *   new encrypted = verify successful, reenrypted with new parameters
- *   NULL          = verify failed
+/* Return
+ *   hash = "$pbkdf2-<digest>$rounds=<rounds>$<salt>$<hash>" (PHC string format)
+ *     salt and hash = base64
+ *     old encrypted = verify successful
+ *     new encrypted = verify successful, reenrypted with new parameters
+ *   NULL = verify failed
  */
 static char *pbkdf2_verify(const char *pass, const char *encrypted)
 {
