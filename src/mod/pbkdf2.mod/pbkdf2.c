@@ -17,16 +17,19 @@
 #include <openssl/err.h>
 #include <openssl/rand.h>
 
-/* Default number of rounds if not explicitly specified */
-#define PBKDF2_ROUNDS 5000
 /* Salt string length */
 #define PBKDF2_SALT_LEN 16
 
 static Function *global = NULL;
 
+/* Cryptographic hash function used. openssl list -digest-algorithms */
 static char pbkdf2_method[28] = "SHA512";
+/* Enable re-encoding of password if pbkdf2-method and / or pbkdf2-rounds
+ * change.
+ */
 static int pbkdf2_re_encode = 0;
-static int pbkdf2_rounds = PBKDF2_ROUNDS;
+/* Number of rounds (iterations). Default is 5000 like in glibc. */
+static int pbkdf2_rounds = 5000;
 
 static tcl_ints my_tcl_ints[] = {
   {"pbkdf2-re-encode",  &pbkdf2_re_encode,  0},
