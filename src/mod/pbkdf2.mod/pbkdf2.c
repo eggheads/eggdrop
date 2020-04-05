@@ -188,7 +188,7 @@ static char *pbkdf2_verify(const char *pass, const char *encrypted)
   static char *buf;
 
   /* TODO: different salt lengths wont work yet i guess and overflow may still be possible */
-  if (!sscanf(encrypted, "$pbkdf2-%27[^$]$rounds=%u$%24[^$]$%344s", method, &rounds, b64salt, b64hash)) {
+  if (sscanf(encrypted, "$pbkdf2-%27[^$]$rounds=%u$%24[^$]$%344s", method, &rounds, b64salt, b64hash) != 4) {
     putlog(LOG_MISC, "*", "PBKDF2 error: could not parse hashed password.");
     return NULL;
   }
