@@ -70,9 +70,6 @@
 /* Define if b64_ntop exists. */
 #undef HAVE_BASE64
 
-/* Define to 1 if you have the `clock' function. */
-#undef HAVE_CLOCK
-
 /* Define to 1 if you have the declaration of `tzname', and to 0 if you don't.
    */
 #undef HAVE_DECL_TZNAME
@@ -134,9 +131,6 @@
 
 /* Define to 1 if you have the `inet_aton' function. */
 #undef HAVE_INET_ATON
-
-/* Define to 1 if you have the `inet_pton' function. */
-#undef HAVE_INET_PTON
 
 /* Define to 1 if the system has the type `intptr_t'. */
 #undef HAVE_INTPTR_T
@@ -233,9 +227,6 @@
 
 /* Define to 1 if you have the `rld_load' function. */
 #undef HAVE_RLD_LOAD
-
-/* Define to 1 if you have the `setpgid' function. */
-#undef HAVE_SETPGID
 
 /* Define to 1 if you have the `shl_load' function. */
 #undef HAVE_SHL_LOAD
