@@ -74,7 +74,8 @@ static int b64_ntop_without_padding(u_char const *src, size_t srclength,
  *   NULL = error
  */
 static char *pbkdf2_hash(const char *pass, const char *digest_name,
-                         const unsigned char *salt, int saltlen, int rounds)
+                         const unsigned char *salt, unsigned int saltlen,
+                         unsigned int rounds)
 {
   const EVP_MD *digest;
   int hashlen;
@@ -89,16 +90,7 @@ static char *pbkdf2_hash(const char *pass, const char *digest_name,
            digest_name);
     return NULL;
   }
-  /* Sanity check */
-  if (saltlen <= 0) {
-    putlog(LOG_MISC, "*", "PBKDF2 error: saltlen %i <= 0.", saltlen);
-    return NULL;
-  }
-  if (rounds <= 0) {
-    putlog(LOG_MISC, "*", "PBKDF2 error: rounds %i <= 0.", rounds);
-    return NULL;
-  }
-  hashlen = strlen("$pbkdf2-") + strlen(digest_name) + strlen("$rounds=2147483647$") + B64_NTOP_CALCULATE_SIZE(saltlen) + 1 + B64_NTOP_CALCULATE_SIZE(EVP_MD_size(digest));
+  hashlen = strlen("$pbkdf2-") + strlen(digest_name) + strlen("$rounds=4294967295$") + B64_NTOP_CALCULATE_SIZE(saltlen) + 1 + B64_NTOP_CALCULATE_SIZE(EVP_MD_size(digest));
   if (out)
     nfree(out);
   out = nmalloc(hashlen + 1);
