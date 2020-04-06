@@ -332,24 +332,6 @@ AC_DEFUN([EGG_FUNC_B64_NTOP],
 ])
 
 
-dnl EGG_FUNC_VPRINTF()
-dnl
-AC_DEFUN([EGG_FUNC_VPRINTF],
-[
-  AC_FUNC_VPRINTF
-  if test "$ac_cv_func_vprintf" = no; then
-    cat << 'EOF' >&2
-configure: error:
-
-  Your system does not have the vprintf/vsprintf/sprintf libraries.
-  These are required to compile almost anything. Sorry.
-
-EOF
-    exit 1
-  fi
-])
-
-
 dnl
 dnl Checks for programs.
 dnl
