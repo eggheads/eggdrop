@@ -240,8 +240,10 @@ struct user_entry_type USERENTRY_INFO = {
 
 int pass2_set(struct userrec *u, struct user_entry *e, void *new)
 {
-  if (e->u.extra)
+  if (e->u.extra) {
+    explicit_bzero(e->u.extra, strlen(e->u.extra));
     nfree(e->u.extra);
+  }
   if (new) { /* set PASS2 */
     e->u.extra = user_malloc(strlen(new) + 1);
     strcpy(e->u.extra, new);
@@ -271,11 +273,12 @@ struct user_entry_type USERENTRY_PASS2 = {
 
 int pass_set(struct userrec *u, struct user_entry *e, void *buf)
 {
-  char new[32];
+  char new[PASSWORDLEN];
   char *new2 = 0;
   char *pass = buf;
 
   if (encrypt_pass && e->u.extra)
+    explicit_bzero(e->u.extra, strlen(e->u.extra));
     nfree(e->u.extra);
   if (!pass || !pass[0] || (pass[0] == '-')) {
     if (encrypt_pass)
@@ -286,8 +289,8 @@ int pass_set(struct userrec *u, struct user_entry *e, void *buf)
   else {
     unsigned char *p = (unsigned char *) pass;
 
-    if (strlen(pass) > 30)
-      pass[30] = 0;
+    if (strlen(pass) > PASSWORDMAX)
+      pass[PASSWORDMAX] = 0;
     while (*p) {
       if ((*p <= 32) || (*p == 127))
         *p = '?';

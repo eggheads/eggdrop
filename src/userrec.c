@@ -352,8 +352,8 @@ int u_pass_match(struct userrec *u, char *pass)
     if (!strcmp(cmp, pass))
       return 1;
   } else {
-    if (strlen(pass) > 30)
-      pass[30] = 0;
+    if (strlen(pass) > PASSWORDMAX)
+      pass[PASSWORDMAX] = 0;
     if (pass2) {
       new = verify_pass2(pass, cmp);
       if (new) { /* verify successful */
