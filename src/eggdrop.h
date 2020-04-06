@@ -67,7 +67,7 @@
 /* And now valid characters! */
 #define CHARSET_LOWER_ALPHA     "abcdefghijklmnopqrstuvwxyz"
 #define CHARSET_LOWER_ALPHA_NUM "0123456789abcdefghijklmnopqrstuvwxyz"
-#define CHARSET_PASSWORD        "0123456789?ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz"
+#define CHARSET_PASSWORD        "0123456789?ABCDEFGHIJKLMNOPQRSTUVWXYZ_abcdefghijklmnopqrstuvwxyz"
 
 
 /* Language stuff */
