@@ -277,9 +277,10 @@ int pass_set(struct userrec *u, struct user_entry *e, void *buf)
   char *new2 = 0;
   char *pass = buf;
 
-  if (encrypt_pass && e->u.extra)
+  if (encrypt_pass && e->u.extra) {
     explicit_bzero(e->u.extra, strlen(e->u.extra));
     nfree(e->u.extra);
+  }
   if (!pass || !pass[0] || (pass[0] == '-')) {
     if (encrypt_pass)
       e->u.extra = NULL;
