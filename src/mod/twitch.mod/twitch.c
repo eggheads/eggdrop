@@ -1,12 +1,23 @@
 /*
- * woobie.c -- part of woobie.mod
- *   nonsensical command to exemplify module programming
+ * twitch.c -- part of twitch.mod
+ *   A module that allows Eggdrop to connect to the Twitch game streaming
+ *   service. Mostly.
+ *   
+ *   Twitch has an IRC interface, but it is only provided as a gateway and does
+ *   not follow RFC in 97% of what it does. This module is intended to add some
+ *   basic logging features, add some binds for twitch events, and track
+ *   rudimentary userstate and roomstate values for channels. Most of your
+ *   traditional Eggdrop functions are gone, and would not work with Twitch
+ *   anyway.
  *
- * Originally written by ButchBub         15 July     1997
- * Comments by Fabian Knittel             29 December 1999
+ *   You should also look at loading scripts/twitch.tcl, which adds the ability
+ *   to track users (and their statuses, like moderator) on a channel.
+ *
+ * Originally written by Geo              April 2020
  */
+
 /*
- * Copyright (C) 1999 - 2020 Eggheads Development Team
+ * Copyright (C) 2020 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -24,7 +35,7 @@
  */
 
 #define MODULE_NAME "twitch"
-#define MAKING_WOOBIE
+#define MAKING_TWITCH
 
 #include "src/mod/module.h"
 #include <stdlib.h>
@@ -65,7 +76,7 @@ static int cmd_woobie(struct userrec *u, int idx, char *par)
   return 0;
 }
 
-/* Takes a dict (really, a space-seperated string), makes a copy of the dict
+/* Takes a space-seperated string (key/value pair), makes a copy of the it
  * (since we're going to muck with it) and returns a pointer to the value
  * associated with the key provided.
  */
@@ -368,11 +379,11 @@ static int gotusernotice(char *from, char *msg, char *tags) {
 }
 
 static int tcl_userstate STDVAR {
-  BADARGS(2, 2, " chan");
-
   struct twitchchan_t *tchan;
   char s [3];
   Tcl_DString usdict;
+
+  BADARGS(2, 2, " chan");
 
   Tcl_DStringInit(&usdict);     /* Create a dict to capture userstate values */
   tchan = findtchan_by_dname(argv[1]);
@@ -398,11 +409,11 @@ static int tcl_userstate STDVAR {
 
 
 static int tcl_roomstate STDVAR {
-  BADARGS(2, 2, " chan");
-  
   char s[5];
   struct twitchchan_t *chan;
   Tcl_DString rsdict;
+
+  BADARGS(2, 2, " chan");
 
   Tcl_DStringInit(&rsdict);     /* Create a dict to capture roomstate values */
   chan = findtchan_by_dname(argv[1]);
@@ -427,35 +438,11 @@ static int tcl_roomstate STDVAR {
   return TCL_OK;
 }
 
-static int tcl_ban STDVAR {
+static int tcl_twcmd STDVAR {
 
-  BADARGS(3, 3, " nick chan");
+  BADARGS(3, 4, " cmd arg");
 
-  dprintf(DP_SERVER, "PRIVMSG %s :/ban %s", argv[2], argv[1]);
-  return 0;
-}
-
-static int tcl_unban STDVAR {
-
-  BADARGS(3, 3, " nick chan");
-
-  dprintf(DP_SERVER, "PRIVMSG %s :/unban %s", argv[2], argv[1]);
-  return 0;
-}
-
-static int tcl_block STDVAR {
-
-  BADARGS(3, 3, " nick chan");
-
-  dprintf(DP_SERVER, "PRIVMSG %s :/block %s", argv[2], argv[1]);
-  return 0;
-}
-
-static int tcl_unblock STDVAR {
-
-  BADARGS(3, 4, " nick chan");
-
-  dprintf(DP_SERVER, "PRIVMSG %s :/unblock %s", argv[2], argv[1]);
+  dprintf(DP_SERVER, "PRIVMSG %s :/%s %s", argv[2], argv[1]);
   return 0;
 }
 
@@ -494,10 +481,7 @@ static cmd_t mydcc[] = {
 };
 
 static tcl_cmds mytcl[] = {
-  {"ban",       tcl_ban},
-  {"unban",     tcl_unban},
-  {"block",     tcl_block},
-  {"unblock",   tcl_unblock},
+  {"twitchcmd", tcl_twitchcmd},
   {"roomstate", tcl_roomstate},
   {"userstate", tcl_userstate},
   {NULL,        NULL}

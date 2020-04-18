@@ -8,6 +8,8 @@ bind raw - 366 twitch:eonames
 
 bind rawt - PRIVMSG     twitch:privmsg
 
+set keep-nick 0
+
 proc twitch:getwebuser {chan endpoint} {
   set handle [::http::geturl http://tmi.twitch.tv/group/user/$chan/chatters]
   set body [::http::data $handle]
@@ -17,11 +19,7 @@ proc twitch:getwebuser {chan endpoint} {
 
 # testuser.tmi.twitch.tv 353 testuser = #testchannel :testuser2 testuser
 proc twitch:names {from key text} {
-   global tw_moderators
-   global tw_staff
-   global tw_admins
-   global tw_globalmods
-   global tw_viewers
+   global tw
    set nicks [lassign [split $text] botnick = chan]
    # get rid of the ":"
    set nicks [join $nicks]
@@ -31,11 +29,11 @@ proc twitch:names {from key text} {
    set nicks [split $nicks]
    set webchan [string trimleft $chan "#"]
    set reply [twitch:getwebuser $webchan "chatters"]
-   set tw_moderators [dict get [dict get $reply chatters] moderators]
-   set tw_staff [dict get [dict get $reply chatters] staff]
-   set tw_admins [dict get [dict get $reply chatters] admins]
-   set tw_globalmods [dict get [dict get $reply chatters] global_mods]
-   set tw_viewers [dict get [dict get $reply chatters] viewers]
+   set tw(moderators) [dict get $reply chatters moderators]
+   set tw(staff) [dict get $reply chatters staff]
+   set tw(admins) [dict get $reply chatters admins]
+   set tw(globalmods) [dict get $reply chatters global_mods]
+   set tw(viewers) [dict get $reply chatters viewers]
    putlog $reply
    foreach nick $nicks {
       # fake WHO reply:
@@ -78,15 +76,16 @@ proc twitch:privmsg {from key text tags} {
 # Returns 0 if nick is a mod on the channel, 1 if not.
 
 proc ismod {nick chan update} {
-  global tw_moderators
+  global tw
 
-  if (update) {
+  if {update} {
     set reply [twitch:getwebuser $webchan "chatters"]
     set webchan [string trimleft $chan "#"]
-    set tw_moderators [dict get [dict get $reply chatters] moderators]
+    set tw(moderators) [dict get $reply chatters moderators]
   } 
-  if {[lsearch $tw_moderators $nick] >= 0} {
+  if {$nick in tw(moderators)} {
     return 0
+  }
   return 1
 }
 
@@ -97,15 +96,16 @@ proc ismod {nick chan update} {
 # Returns 0 if nick is staff on the channel, 1 if not.
 
 proc isstaff {nick chan update} {
-  global tw_staff
+  global tw
 
   if (update) {
     set reply [twitch:getwebuser $webchan "chatters"]
     set webchan [string trimleft $chan "#"]
-    set tw_staff [dict get [dict get $reply chatters] staff]
+    set tw(staff) [dict get $reply chatters staff]
   }
-  if {[lsearch $tw_staff $nick] >= 0} {
+  if {$nick in $tw(staff)} {
     return 0
+  }
   return 1
 }
 
@@ -116,15 +116,16 @@ proc isstaff {nick chan update} {
 # Returns 0 if nick is an admin on the channel, 1 if not.
 
 proc isadmin {nick chan update} {
-  global tw_admins
+  global tw
 
   if (update) {
     set reply [twitch:getwebuser $webchan "chatters"]
     set webchan [string trimleft $chan "#"]
-    set tw_admins [dict get [dict get $reply chatters] admins]
+    set tw(admins) [dict get $reply chatters admins]
   }
-  if {[lsearch $tw_admins $nick] >= 0} {
+  if {$nick in $tw(admins)} {
     return 0
+  }
   return 1
 }
 
@@ -135,15 +136,16 @@ proc isadmin {nick chan update} {
 # Returns 0 if nick is a global mod on the channel, 1 if not.
 
 proc ismod {nick chan update} {
-  global tw_globalmods
+  global tw
 
   if (update) {
     set reply [twitch:getwebuser $webchan "chatters"]
     set webchan [string trimleft $chan "#"]
-    set tw_globalmods [dict get [dict get $reply chatters] global_mods]
+    set tw(globalmods) [dict get $reply chatters global_mods]
   }
-  if {[lsearch $tw_globalmods $nick] >= 0} {
+  if {$nick in $tw(globalmods)} {
     return 0
+  }
   return 1
 }
 
@@ -154,15 +156,16 @@ proc ismod {nick chan update} {
 # Returns 0 if nick is a viewer on the channel, 1 if not.
 
 proc isviewer {nick chan update} {
-  global tw_viewers
+  global tw
 
   if (update) {
     set reply [twitch:getwebuser $webchan "chatters"]
     set webchan [string trimleft $chan "#"]
-    set tw_viewers [dict get [dict get $reply chatters] viewers]
+    set tw(viewers) [dict get $reply chatters viewers]
   }
-  if {[lsearch $tw_viewers $nick] >= 0} {
+  if {$nick in $tw(viewers)} {
     return 0
+  }
   return 1
 }
 
