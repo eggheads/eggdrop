@@ -231,7 +231,7 @@ static int gotuserstate(char *from, char *chan, char *tags) {
   
   if (!(tchan = findtchan_by_dname(chan))) {    /* Find channel or, if it   */
     tchan = nmalloc(sizeof *tchan);             /* doesn't exist, create it */
-    egg_bzero(tchan, sizeof(struct twitchchan_t));
+    explicit_bzero(tchan, sizeof(struct twitchchan_t));
     strlcpy(tchan->dname, chan, sizeof tchan->dname);
     egg_list_append((struct list_type **) &twitchchan, (struct list_type *) tchan);
   }
@@ -279,7 +279,7 @@ static int gotroomstate(char *from, char *msg, char *tags) {
   channame = newsplit(&msg);
   if (!(chan = findtchan_by_dname(channame))) {  /* Find channel or, if it   */
     chan = nmalloc(sizeof *chan);                /* doesn't exist, create it */
-    egg_bzero(chan, sizeof(struct twitchchan_t));
+    explicit_bzero(chan, sizeof(struct twitchchan_t));
     strlcpy(chan->dname, channame, sizeof chan->dname);
     egg_list_append((struct list_type **) &twitchchan, (struct list_type *) chan);
   }
@@ -481,7 +481,7 @@ static cmd_t mydcc[] = {
 };
 
 static tcl_cmds mytcl[] = {
-  {"twitchcmd", tcl_twitchcmd},
+  {"twcmd", tcl_twcmd},
   {"roomstate", tcl_roomstate},
   {"userstate", tcl_userstate},
   {NULL,        NULL}
