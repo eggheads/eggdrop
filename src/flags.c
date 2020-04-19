@@ -854,5 +854,6 @@ struct user_entry_type USERENTRY_BOTFL = {
   botfl_tcl_set,
   botfl_expmem,
   botfl_display,
-  "BOTFL"
+  "BOTFL",
+  NULL
 };

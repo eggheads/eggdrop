@@ -112,7 +112,8 @@ static struct dcc_table DCC_FILES = {
   disp_dcc_files,
   expmem_dcc_files,
   kill_dcc_files,
-  out_dcc_files
+  out_dcc_files,
+  NULL
 };
 
 static struct user_entry_type USERENTRY_DCCDIR = {
@@ -600,7 +601,8 @@ static struct dcc_table DCC_FILES_PASS = {
   disp_dcc_files_pass,
   expmem_dcc_files,
   kill_dcc_files,
-  out_dcc_files
+  out_dcc_files,
+  NULL
 };
 
 

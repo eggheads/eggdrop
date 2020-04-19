@@ -802,7 +802,8 @@ static struct dcc_table DCC_SEND = {
   display_dcc_send,
   expmem_dcc_xfer,
   kill_dcc_xfer,
-  out_dcc_xfer
+  out_dcc_xfer,
+  NULL
 };
 
 /* Send TO the bot from outside of the transfer module - Wcc */
@@ -816,7 +817,8 @@ static struct dcc_table DCC_FORK_SEND = {
   display_dcc_fork_send,
   expmem_dcc_xfer,
   kill_dcc_xfer,
-  out_dcc_xfer
+  out_dcc_xfer,
+  NULL
 };
 
 /* Send FROM the bot, don't know why this isn't called DCC_SEND - Wcc */
@@ -845,7 +847,8 @@ static struct dcc_table DCC_GET_PENDING = {
   display_dcc_get_p,
   expmem_dcc_xfer,
   kill_dcc_xfer,
-  out_dcc_xfer
+  out_dcc_xfer,
+  NULL
 };
 
 static void dcc_fork_send(int idx, char *x, int y)

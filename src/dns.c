@@ -103,7 +103,8 @@ struct dcc_table DCC_DNSWAIT = {
   display_dcc_dnswait,
   expmem_dcc_dnswait,
   kill_dcc_dnswait,
-  0
+  0,
+  NULL
 };
 
 

@@ -1105,6 +1105,7 @@ static struct dcc_table SERVER_SOCKET = {
   display_server,
   NULL,
   kill_server,
+  NULL,
   NULL
 };
 
