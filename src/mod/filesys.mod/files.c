@@ -4,7 +4,7 @@
  */
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2019 Eggheads Development Team
+ * Copyright (C) 1999 - 2020 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -345,9 +345,8 @@ static void cmd_chdir(int idx, char *msg)
     my_free(s);
     return;
   }
-  strncpy(dcc[idx].u.file->dir, s, 160);
+  strlcpy(dcc[idx].u.file->dir, s, sizeof dcc[idx].u.file->dir);
   my_free(s);
-  dcc[idx].u.file->dir[160] = 0;
   set_user(&USERENTRY_DCCDIR, dcc[idx].user, dcc[idx].u.file->dir);
   putlog(LOG_FILES, "*", "files: #%s# cd /%s", dcc[idx].nick,
          dcc[idx].u.file->dir);
@@ -531,15 +530,16 @@ static void cmd_get(int idx, char *par)
 
 static void cmd_file_help(int idx, char *par)
 {
+  int l;
   char *s;
   struct flag_record fr = { FR_GLOBAL | FR_CHAN, 0, 0, 0, 0, 0 };
 
   get_user_flagrec(dcc[idx].user, &fr, dcc[idx].u.file->chat->con_chan);
   if (par[0]) {
     putlog(LOG_FILES, "*", "files: #%s# help %s", dcc[idx].nick, par);
-    s = nmalloc(strlen(par) + 9);
+    l = snprintf(NULL, 0, "filesys/%s", par);
+    s = nmalloc(l + 1);
     sprintf(s, "filesys/%s", par);
-    s[256] = 0;
     tellhelp(idx, s, &fr, 0);
     my_free(s);
   } else {

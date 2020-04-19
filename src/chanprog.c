@@ -9,7 +9,7 @@
  */
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2019 Eggheads Development Team
+ * Copyright (C) 1999 - 2020 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -237,11 +237,7 @@ float getcputime()
   stime = ru.ru_stime.tv_sec + (ru.ru_stime.tv_usec / 1000000.00);
   return (utime + stime);
 #else
-#  ifdef HAVE_CLOCK
   return (clock() / (CLOCKS_PER_SEC * 1.00));
-#  else
-  return -1.00;
-#  endif
 #endif
 }
 
