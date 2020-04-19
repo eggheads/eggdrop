@@ -1513,6 +1513,8 @@ static char *traced_nettype(ClientData cdata, Tcl_Interp *irp,
     net_type_int = NETT_RIZON;
   else if (!strcasecmp(net_type, "Undernet"))
     net_type_int = NETT_UNDERNET;
+  else if (!strcasecmp(net_type, "Twitch"))
+    net_type_int = NETT_TWITCH;
   else if (!strcasecmp(net_type, "Other"))
     net_type_int = NETT_OTHER;
   else if (!strcasecmp(net_type, "0")) { /* For backwards compatibility */

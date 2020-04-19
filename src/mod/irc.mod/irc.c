@@ -57,6 +57,7 @@ static int kick_method = 1;     /* How many kicks does the IRC network support
                                  * at once? Use 0 for as many as possible.
                                  * (Ernst 18/3/1998) */
 static int keepnick = 1;        /* Keep nick */
+static int twitch = 0;          /* Is this a Twitch server? */
 static int prevent_mixing = 1;  /* Prevent mixing old/new modes */
 static int rfc_compliant = 1;   /* Value depends on net-type. */
 static int include_lk = 1;      /* For correct calculation in real_add_mode. */
@@ -275,10 +276,12 @@ static int hand_on_chan(struct chanset_t *chan, struct userrec *u)
 
 static void refresh_who_chan(char *channame)
 {
-  if (use_354)
-    dprintf(DP_MODE, "WHO %s c%%chnuf\n", channame);
-  else
-    dprintf(DP_MODE, "WHO %s\n", channame);
+  if (!twitch) {    /* Twitch doesn't support WHOs */
+    if (use_354)
+      dprintf(DP_MODE, "WHO %s c%%chnuf\n", channame);
+    else
+      dprintf(DP_MODE, "WHO %s\n", channame);
+  }
   return;
 }
 
@@ -1124,6 +1127,21 @@ static void do_nettype()
     rfc_compliant = 1;
     include_lk = 0;
     break;
+  case NETT_TWITCH:
+    keepnick = 0;
+    twitch = 1;
+    kick_method = 1;
+    modesperline = 4;
+    use_354 = 0;
+    use_exempts = 1;
+    use_invites = 1;
+    max_bans = 100;
+    max_exempts = 100;
+    max_invites = 100;
+    max_modes = 100;
+    rfc_compliant = 1;
+    include_lk = 0;
+    break;
   default:
     break;
   }
@@ -1236,7 +1254,8 @@ static Function irc_table[] = {
   /* 24 - 27 */
   (Function) getchanmode,
   (Function) reset_chan_info,
-  (Function) & H_invt           /* p_tcl_bind_list              */
+  (Function) & H_invt,          /* p_tcl_bind_list              */
+  (Function) & twitch           /* int                          */
 };
 
 char *irc_start(Function *global_funcs)

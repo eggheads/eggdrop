@@ -121,6 +121,7 @@ enum {
   NETT_QUAKENET,     /* QuakeNet                          */
   NETT_RIZON,        /* Rizon                             */
   NETT_UNDERNET,     /* UnderNet                          */
+  NETT_TWITCH,       /* Twitch! *shudder*                 */
   NETT_OTHER         /* Others                            */
 };
 

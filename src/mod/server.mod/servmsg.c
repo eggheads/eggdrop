@@ -360,7 +360,8 @@ static int got001(char *from, char *msg)
   fixcolon(msg);
   strlcpy(botname, msg, NICKLEN);
   altnick_char = 0;
-  dprintf(DP_SERVER, "WHOIS %s\n", botname); /* get user@host */
+  if (net_type_int != NETT_TWITCH)      /* Twitch doesn't do WHOIS */
+    dprintf(DP_SERVER, "WHOIS %s\n", botname); /* get user@host */
   if (initserver[0])
     do_tcl("init-server", initserver); /* Call Tcl init-server */
   check_tcl_event("init-server");
@@ -1020,8 +1021,9 @@ static int gotmode(char *from, char *msg)
     if (match_my_nick(ch)) {
       fixcolon(msg);
       if ((msg[0] == '+') || (msg[0] == '-')) {
-        /* send a WHOIS in case our host was cloaked */
-        dprintf(DP_SERVER, "WHOIS %s\n", botname);
+        /* send a WHOIS in case our host was cloaked, but not on Twitch */
+        if (net_type_int != NETT_TWITCH)
+          dprintf(DP_SERVER, "WHOIS %s\n", botname);
       }
       if (check_mode_r) {
         /* umode +r? - D0H dalnet uses it to mean something different */
