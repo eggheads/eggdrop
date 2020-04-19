@@ -379,9 +379,9 @@ static uff_table_t compress_uff_table[] = {
  */
 
 static tcl_ints my_tcl_ints[] = {
-  {"share-compressed", (int *)&share_compressed},
-  {"compress-level",     (int *)&compress_level},
-  {NULL,                                   NULL}
+  {"share-compressed", (int *)&share_compressed, 0},
+  {"compress-level",     (int *)&compress_level, 0},
+  {NULL,                                   NULL, 0}
 };
 
 static int compress_expmem(void)

@@ -585,10 +585,10 @@ static tcl_strings mystrings[] = {
 };
 
 static tcl_ints myints[] = {
-  {"max-filesize",    &dcc_maxsize},
-  {"max-file-users",    &dcc_users},
-  {"upload-to-pwd",  &upload_to_cd},
-  {NULL,                      NULL}
+  {"max-filesize",    &dcc_maxsize, 0},
+  {"max-file-users",    &dcc_users, 0},
+  {"upload-to-pwd",  &upload_to_cd, 0},
+  {NULL,                      NULL, 0}
 };
 
 static struct dcc_table DCC_FILES_PASS = {

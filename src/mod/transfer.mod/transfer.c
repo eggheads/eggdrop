@@ -1105,11 +1105,11 @@ static int ctcp_DCC_RESUME(char *nick, char *from, char *handle,
 }
 
 static tcl_ints myints[] = {
-  {"max-dloads",       &dcc_limit},
-  {"dcc-block",        &dcc_block},
-  {"xfer-timeout", &wait_dcc_xfer},
-  {"sharefail-unlink",  &shunlink},
-  {NULL,                     NULL}
+  {"max-dloads",       &dcc_limit, 0},
+  {"dcc-block",        &dcc_block, 0},
+  {"xfer-timeout", &wait_dcc_xfer, 0},
+  {"sharefail-unlink",  &shunlink, 0},
+  {NULL,                     NULL, 0}
 };
 
 static cmd_t transfer_ctcps[] = {
