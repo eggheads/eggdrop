@@ -48,7 +48,7 @@ static Function *global = NULL, *server_funcs = NULL;
 
 static p_tcl_bind_list H_ccht, H_cmsg, H_htgt, H_wspr, H_rmst, H_usst;
 
-struct twitchchan_t *twitchchan = NULL;
+twitchchan_t *twitchchan = NULL;
 
 /* Calculate the memory we keep allocated.
  */
@@ -61,9 +61,9 @@ static int twitch_expmem()
 }
 
 /* Find a twitch channel by it's display name */
-struct twitchchan_t *findtchan_by_dname(char *name)
+twitchchan_t *findtchan_by_dname(char *name)
 {
-  struct twitchchan_t *chan;
+  twitchchan_t *chan;
 
   for (chan = twitchchan; chan; chan = chan->next)
     if (!rfc_casecmp(chan->dname, name))
@@ -72,7 +72,7 @@ struct twitchchan_t *findtchan_by_dname(char *name)
 }
 
 static int cmd_roomstate(struct userrec *u, int idx, char *par) {
-  struct twitchchan_t *tchan;
+  twitchchan_t *tchan;
 
   if (!(tchan = findtchan_by_dname(par))) { /* Search for channel */
     dprintf(idx, "No such channel.\n");
@@ -91,7 +91,7 @@ static int cmd_roomstate(struct userrec *u, int idx, char *par) {
 }
 
 static int cmd_userstate(struct userrec *u, int idx, char *par) {
-  struct twitchchan_t *tchan;
+  twitchchan_t *tchan;
 
   if (!(tchan = findtchan_by_dname(par))) { /* Search for channel */
     dprintf(idx, "No such channel.\n");
@@ -137,7 +137,7 @@ static int check_tcl_clearchat(char *chan, char *nick) {
   snprintf(mask, sizeof mask, "%s %s", chan, nick);
   Tcl_SetVar(interp, "_ccht1", chan, 0);
   Tcl_SetVar(interp, "_ccht2", nick ? (char *) nick : "", 0);
-  x = check_tcl_bind(H_ccht, mask, &fr, " $_ccht1, $_ccht2",
+  x = check_tcl_bind(H_ccht, mask, &fr, " $_ccht1 $_ccht2",
         MATCH_MASK | BIND_STACKABLE);
   return (x == BIND_EXEC_LOG);
 }
@@ -152,7 +152,7 @@ static int check_tcl_clearmsg(char *chan, char *nick, char *msgid, char *msg) {
   Tcl_SetVar(interp, "_cmsg2", nick, 0);
   Tcl_SetVar(interp, "_cmsg3", msgid, 0);
   Tcl_SetVar(interp, "_cmsg4", msg, 0);
-  x = check_tcl_bind(H_cmsg, mask, &fr, " $_cmsg1, $_cmsg2, $_cmsg3, $_cmsg4",
+  x = check_tcl_bind(H_cmsg, mask, &fr, " $_cmsg1 $_cmsg2 $_cmsg3 $_cmsg4",
         MATCH_MASK | BIND_STACKABLE);
   return (x == BIND_EXEC_LOG);
 }
@@ -166,7 +166,7 @@ static int check_tcl_hosttarget(char *chan, char *nick, char *viewers) {
   Tcl_SetVar(interp, "_htgt1", chan, 0);
   Tcl_SetVar(interp, "_htgt2", nick, 0);
   Tcl_SetVar(interp, "_htgt3", viewers, 0);
-  x = check_tcl_bind(H_htgt, mask, &fr, " $_htgt1, $_htgt2, $_htgt3",
+  x = check_tcl_bind(H_htgt, mask, &fr, " $_htgt1 $_htgt2 $_htgt3",
         MATCH_MASK | BIND_STACKABLE);
 
   return (x == BIND_EXEC_LOG);
@@ -186,7 +186,7 @@ static int check_tcl_whisper(char *from, char *msg) {
   Tcl_SetVar(interp, "_wspr2", uhost, 0);
   Tcl_SetVar(interp, "_wspr3", hand, 0);
   Tcl_SetVar(interp, "_wspr4", msg, 0);
-  x = check_tcl_bind(H_wspr, mask, &fr, " $_wspr1, $_wspr2, $_wspr3, $_wspr4",
+  x = check_tcl_bind(H_wspr, mask, &fr, " $_wspr1 $_wspr2 $_wspr3 $_wspr4",
         MATCH_MASK | BIND_STACKABLE);
   return (x == BIND_EXEC_LOG);
 }
@@ -196,7 +196,7 @@ static int check_tcl_roomstate(char *chan, char *tags) {
 
   Tcl_SetVar(interp, "_rmst1", chan, 0);
   Tcl_SetVar(interp, "_rmst2", tags, 0);
-  x = check_tcl_bind(H_rmst, 0, 0, " $_rmst1, $_rmst2",
+  x = check_tcl_bind(H_rmst, NULL, NULL, " $_rmst1 $_rmst2",
         MATCH_MASK | BIND_STACKABLE);
   return (x == BIND_EXEC_LOG);
 }
@@ -206,7 +206,7 @@ static int check_tcl_userstate(char *chan, char *tags) {
 
   Tcl_SetVar(interp, "_usst1", chan, 0);
   Tcl_SetVar(interp, "_usst2", tags, 0);
-  x = check_tcl_bind(H_usst, 0, 0, " $_usst1, $_usst2",
+  x = check_tcl_bind(H_usst, NULL, NULL, " $_usst1 $_usst2",
         MATCH_MASK | BIND_STACKABLE);
   return (x == BIND_EXEC_LOG);
 }
@@ -269,12 +269,12 @@ putlog(LOG_DEBUG, "*", "TWITCH: hosttarget from is %s msg is %s", msg);
 }
 
 static int gotuserstate(char *from, char *chan, char *tags) {
-  struct twitchchan_t *tchan;
+  twitchchan_t *tchan;
   char *ptr, s[TOTALTAGMAX];
   
   if (!(tchan = findtchan_by_dname(chan))) {    /* Find channel or, if it   */
     tchan = nmalloc(sizeof *tchan);             /* doesn't exist, create it */
-    explicit_bzero(tchan, sizeof(struct twitchchan_t));
+    explicit_bzero(tchan, sizeof(twitchchan_t));
     strlcpy(tchan->dname, chan, sizeof tchan->dname);
     egg_list_append((struct list_type **) &twitchchan, (struct list_type *) tchan);
   }
@@ -318,12 +318,12 @@ static int gotuserstate(char *from, char *chan, char *tags) {
 static int gotroomstate(char *from, char *msg, char *tags) {
   char *channame, *ptr;
   char s[TOTALTAGMAX];
-  struct twitchchan_t *chan;
+  twitchchan_t *chan;
 
   channame = newsplit(&msg);
   if (!(chan = findtchan_by_dname(channame))) {  /* Find channel or, if it   */
     chan = nmalloc(sizeof *chan);                /* doesn't exist, create it */
-    explicit_bzero(chan, sizeof(struct twitchchan_t));
+    explicit_bzero(chan, sizeof(twitchchan_t));
     strlcpy(chan->dname, channame, sizeof chan->dname);
     egg_list_append((struct list_type **) &twitchchan, (struct list_type *) chan);
   }
@@ -424,7 +424,7 @@ static int gotusernotice(char *from, char *msg, char *tags) {
 }
 
 static int tcl_userstate STDVAR {
-  struct twitchchan_t *tchan;
+  twitchchan_t *tchan;
   char s [3];
   Tcl_DString usdict;
 
@@ -458,7 +458,7 @@ static int tcl_userstate STDVAR {
 
 static int tcl_roomstate STDVAR {
   char s[5];
-  struct twitchchan_t *tchan;
+  twitchchan_t *tchan;
   Tcl_DString rsdict;
 
   BADARGS(2, 2, " chan");
