@@ -60,21 +60,56 @@ static int twitch_expmem()
   return size;
 }
 
-static int cmd_woobie(struct userrec *u, int idx, char *par)
+/* Find a twitch channel by it's display name */
+struct twitchchan_t *findtchan_by_dname(char *name)
 {
-  /* Define a context.
-   *
-   * If the bot crashes after the context, it will be  the last mentioned
-   * in the resulting DEBUG file. This helps you debugging.
-   */
-  Context;
+  struct twitchchan_t *chan;
 
-  /* Log the command as soon as you're sure all parameters are valid. */
-  putlog(LOG_CMDS, "*", "#%s# woobie", dcc[idx].nick);
+  for (chan = twitchchan; chan; chan = chan->next)
+    if (!rfc_casecmp(chan->dname, name))
+      return chan;
+  return NULL;
+}
 
-  dprintf(idx, "WOOBIE!\n");
+static int cmd_roomstate(struct userrec *u, int idx, char *par) {
+  struct twitchchan_t *tchan;
+
+  if (!(tchan = findtchan_by_dname(par))) { /* Search for channel */
+    dprintf(idx, "No such channel.\n");
+    return 1;
+  }
+  putlog(LOG_CMDS, "*", "#%s# roomstate", dcc[idx].nick);
+  dprintf(idx, "Roomstate for %s:\n", tchan->dname);
+  dprintf(idx, "-------------------------------------\n");
+  dprintf(idx, "Emote-only: %2d     Followers-only: %2d\n",
+        tchan->emote_only, tchan->followers_only);
+  dprintf(idx, "R9K:        %2d     Subs-only:      %2d\n",
+        tchan->r9k, tchan->subs_only);
+  dprintf(idx, "Slow:     %4d\n", tchan->slow);
+  dprintf(idx, "End of roomstate info.\n");
   return 0;
 }
+
+static int cmd_userstate(struct userrec *u, int idx, char *par) {
+  struct twitchchan_t *tchan;
+
+  if (!(tchan = findtchan_by_dname(par))) { /* Search for channel */
+    dprintf(idx, "No such channel.\n");
+    return 1;
+  }
+  putlog(LOG_CMDS, "*", "#%s# userstate", dcc[idx].nick);
+  dprintf(idx, "Userstate for %s:\n", tchan->dname);
+  dprintf(idx, "---------------------------------\n");
+  dprintf(idx, "Display Name: %s\n", tchan->userstate.display_name);
+  dprintf(idx, "Badges:       %s\n", tchan->userstate.badges);
+  dprintf(idx, "Badge Info:   %d\n", tchan->userstate.badge_info);
+  dprintf(idx, "Color:        %s\n", tchan->userstate.color);
+  dprintf(idx, "Emote-Sets:   %s\n", tchan->userstate.emote_sets);
+  dprintf(idx, "Moderator:    %d\n", tchan->userstate.mod);
+  dprintf(idx, "End of userstate info.\n");
+  return 0;
+}
+
 
 /* Takes a space-seperated string (key/value pair), makes a copy of the it
  * (since we're going to muck with it) and returns a pointer to the value
@@ -93,18 +128,6 @@ char *get_value(char *dict, char *key) {
     }
   return strtok(NULL, " ");              /* Return null-term'd value for key */
 }
-
-/* Find a twitch channel by it's display name */
-struct twitchchan_t *findtchan_by_dname(char *name)
-{
-  struct twitchchan_t *chan;
-
-  for (chan = twitchchan; chan; chan = chan->next)
-    if (!rfc_casecmp(chan->dname, name))
-      return chan;
-  return NULL;
-}
-
 
 static int check_tcl_clearchat(char *chan, char *nick) {
   int x;
@@ -408,7 +431,10 @@ static int tcl_userstate STDVAR {
   BADARGS(2, 2, " chan");
 
   Tcl_DStringInit(&usdict);     /* Create a dict to capture userstate values */
-  tchan = findtchan_by_dname(argv[1]);
+  if (!(tchan = findtchan_by_dname(argv[1]))) {
+    Tcl_AppendResult(irp, "No userstate found for channel", NULL);
+    return TCL_ERROR;
+  }
   Tcl_DStringAppendElement(&usdict, "badge-info");
   snprintf(s, sizeof s, "%d", tchan->userstate.badge_info);
   Tcl_DStringAppendElement(&usdict, s);
@@ -432,27 +458,30 @@ static int tcl_userstate STDVAR {
 
 static int tcl_roomstate STDVAR {
   char s[5];
-  struct twitchchan_t *chan;
+  struct twitchchan_t *tchan;
   Tcl_DString rsdict;
 
   BADARGS(2, 2, " chan");
 
   Tcl_DStringInit(&rsdict);     /* Create a dict to capture roomstate values */
-  chan = findtchan_by_dname(argv[1]);
+  if (!(tchan = findtchan_by_dname(argv[1]))) {
+    Tcl_AppendResult(irp, "No roomstate found for channel", NULL);
+    return TCL_ERROR;
+  }
   Tcl_DStringAppendElement(&rsdict, "emote-only");
-  snprintf(s, sizeof s, "%d", chan->emote_only);
+  snprintf(s, sizeof s, "%d", tchan->emote_only);
   Tcl_DStringAppendElement(&rsdict, s);
   Tcl_DStringAppendElement(&rsdict, "followers-only");
-  snprintf(s, sizeof s, "%d", chan->followers_only);
+  snprintf(s, sizeof s, "%d", tchan->followers_only);
   Tcl_DStringAppendElement(&rsdict, s);
   Tcl_DStringAppendElement(&rsdict, "r9k");
-  snprintf(s, sizeof s, "%d", chan->emote_only);
+  snprintf(s, sizeof s, "%d", tchan->emote_only);
   Tcl_DStringAppendElement(&rsdict, s);
   Tcl_DStringAppendElement(&rsdict, "slow");
-  snprintf(s, sizeof s, "%d", chan->slow);
+  snprintf(s, sizeof s, "%d", tchan->slow);
   Tcl_DStringAppendElement(&rsdict, s);
   Tcl_DStringAppendElement(&rsdict, "subs-only");
-  snprintf(s, sizeof s, "%d", chan->subs_only);
+  snprintf(s, sizeof s, "%d", tchan->subs_only);
   Tcl_DStringAppendElement(&rsdict, s);
 
   Tcl_AppendResult(irp, Tcl_DStringValue(&rsdict), NULL);
@@ -498,8 +527,9 @@ static void twitch_report(int idx, int details)
 
 static cmd_t mydcc[] = {
   /* command  flags  function     tcl-name */
-  {"woobie",  "",    cmd_woobie,  NULL},
-  {NULL,      NULL,  NULL,        NULL}  /* Mark end. */
+  {"roomstate", "",     cmd_roomstate,   NULL},
+  {"userstate", "",     cmd_userstate,   NULL},
+  {NULL,        NULL,   NULL,            NULL}  /* Mark end. */
 };
 
 static tcl_cmds mytcl[] = {
@@ -542,17 +572,8 @@ static char *twitch_close()
   return NULL;
 }
 
-/* Define the prototype here, to avoid warning messages in the
- * woobie_table.
- */
 EXPORT_SCOPE char *twitch_start();
 
-/* This function table is exported and may be used by other modules and
- * the core.
- *
- * The first four have to be defined (you may define them as NULL), as
- * they are checked by eggdrop core.
- */
 static Function twitch_table[] = {
   (Function) twitch_start,
   (Function) twitch_close,

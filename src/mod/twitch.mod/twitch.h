@@ -36,7 +36,7 @@ struct twitchchan_t {
   char dname[CHANNELLEN + 1]; /* display name (!foo) - THIS IS ALWAYS SET */
   char name[CHANNELLEN + 1];  /* actual name (!BARfoo) - THIS IS SET WHEN THE BOT
                                * ACTUALLY JOINS THE CHANNEL */
-  struct userstate_t userstate;;
+  struct userstate_t userstate;
   unsigned int emote_only:1;
   int followers_only;
   unsigned int r9k:1;
