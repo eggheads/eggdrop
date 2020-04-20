@@ -46,7 +46,7 @@
 #undef global
 static Function *global = NULL, *server_funcs = NULL;
 
-static p_tcl_bind_list H_ccht, H_cmsg, H_htgt, H_wspr;
+static p_tcl_bind_list H_ccht, H_cmsg, H_htgt, H_wspr, H_rmst, H_usst;
 
 struct twitchchan_t *twitchchan = NULL;
 
@@ -168,6 +168,26 @@ static int check_tcl_whisper(char *from, char *msg) {
   return (x == BIND_EXEC_LOG);
 }
 
+static int check_tcl_roomstate(char *chan, char *tags) {
+  int x;
+
+  Tcl_SetVar(interp, "_rmst1", chan, 0);
+  Tcl_SetVar(interp, "_rmst2", tags, 0);
+  x = check_tcl_bind(H_rmst, 0, 0, " $_rmst1, $_rmst2",
+        MATCH_MASK | BIND_STACKABLE);
+  return (x == BIND_EXEC_LOG);
+}
+
+static int check_tcl_userstate(char *chan, char *tags) {
+  int x;
+
+  Tcl_SetVar(interp, "_usst1", chan, 0);
+  Tcl_SetVar(interp, "_usst2", tags, 0);
+  x = check_tcl_bind(H_usst, 0, 0, " $_usst1, $_usst2",
+        MATCH_MASK | BIND_STACKABLE);
+  return (x == BIND_EXEC_LOG);
+}
+
 static int gotwhisper(char *from, char *msg, char *tags) {
   newsplit(&msg);    /* Get rid of my own nick */
   fixcolon(msg);
@@ -268,6 +288,7 @@ static int gotuserstate(char *from, char *chan, char *tags) {
     }
     ptr = strtok(NULL, " ");
   }
+  check_tcl_userstate(chan, tags);
   return 0;
 }
 
@@ -326,6 +347,7 @@ static int gotroomstate(char *from, char *msg, char *tags) {
         chan->slow = atol(ptr);
       }
     }
+    check_tcl_roomstate(channame, tags);
     ptr = strtok(NULL, " ");
   }
   return 0;
@@ -514,6 +536,8 @@ static char *twitch_close()
   del_bind_table(H_cmsg);
   del_bind_table(H_htgt);
   del_bind_table(H_wspr);
+  del_bind_table(H_rmst);
+  del_bind_table(H_usst);
   module_undepend(MODULE_NAME);
   return NULL;
 }
@@ -537,7 +561,9 @@ static Function twitch_table[] = {
   (Function) & H_ccht,
   (Function) & H_cmsg,
   (Function) & H_htgt,
-  (Function) & H_wspr
+  (Function) & H_wspr,
+  (Function) & H_rmst,
+  (Function) & H_usst
 };
 
 char *twitch_start(Function *global_funcs)
@@ -564,6 +590,8 @@ char *twitch_start(Function *global_funcs)
   H_cmsg = add_bind_table("cmsg", HT_STACKABLE, twitch_2char);
   H_htgt = add_bind_table("htgt", HT_STACKABLE, twitch_2char);
   H_wspr = add_bind_table("wspr", HT_STACKABLE, twitch_2char);
+  H_rmst = add_bind_table("rmst", HT_STACKABLE, twitch_2char);
+  H_usst = add_bind_table("usst", HT_STACKABLE, twitch_2char);
 
   /* Add command table to bind list */
   add_builtins(H_dcc, mydcc);

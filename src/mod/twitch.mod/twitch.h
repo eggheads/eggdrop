@@ -21,7 +21,6 @@
  */
 
 struct userstate_t {
-//  struct userrec *next
   char channel[CHANNELLEN + 1];
   char handle[HANDLEN + 1];
   int badge_info;
@@ -44,38 +43,3 @@ struct twitchchan_t {
   int slow;
   unsigned int subs_only:1;
 };
-
-/*
-struct chanuserrec {
-  struct chanuserrec *next;
-  char channel[CHANNELLEN + 1];
-  time_t laston;
-  unsigned long flags;
-  unsigned long flags_udef;
-  char *info;
-};
-
-/* New-style userlist
- *x/
-struct userrec {
-  struct userrec *next;
-  char handle[HANDLEN + 1];
-  unsigned long flags;
-  unsigned long flags_udef;
-  struct chanuserrec *chanrec;
-  struct user_entry *entries;
-};
-*/
-
-struct twitch_t {
-  memberlist *member;
-  masklist *ban;
-  masklist *exempt;
-  masklist *invite;
-  char *topic;
-  char *key;
-  unsigned int mode;
-  int maxmembers;
-  int members;
-};
-
