@@ -606,6 +606,7 @@ char *twitch_start(Function *global_funcs)
     module_undepend(MODULE_NAME);
     return "This module requires server module 1.5 or later.";
   }
+/*
   if (!(server_funcs = module_depend(MODULE_NAME, "irc", 1, 5))) {
     module_undepend(MODULE_NAME);
     return "This module requires irc module 1.5 or later.";
@@ -614,7 +615,7 @@ char *twitch_start(Function *global_funcs)
     module_undepend(MODULE_NAME);
     return "This module requires channels module 1.1 or later.";
   }
-
+*/
 
   H_ccht = add_bind_table("ccht", HT_STACKABLE, twitch_2char);
   H_cmsg = add_bind_table("cmsg", HT_STACKABLE, twitch_2char);
