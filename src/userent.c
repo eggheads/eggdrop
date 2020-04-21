@@ -297,11 +297,9 @@ int pass_set(struct userrec *u, struct user_entry *e, void *buf)
         *p = '?';
       p++;
     }
-    if (u->flags & USER_BOT) {
+    if (u->flags & USER_BOT)
       strlcpy(new, pass, sizeof new);
-      if (encrypt_pass2)
-        new2 = new;
-    }
+      /* We do not need PASS2 for bots */
     else if (pass[0] == '+') {
       strlcpy(new, pass, sizeof new);
       new2 = NULL; /* due to module api encrypted pass2 cannot be available here
