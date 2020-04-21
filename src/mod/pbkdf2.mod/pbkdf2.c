@@ -18,7 +18,7 @@
 #include <openssl/rand.h>
 
 /* Salt string length */
-#define PBKDF2_SALT_LEN 16
+#define PBKDF2_SALT_LEN 16 /* DO NOT TOUCH! */
 
 static Function *global = NULL;
 
@@ -173,14 +173,21 @@ static char *pbkdf2_verify(const char *pass, const char *encrypted)
   char method[sizeof pbkdf2_method],
        b64salt[B64_NTOP_CALCULATE_SIZE(PBKDF2_SALT_LEN) + 1],
        b64hash[B64_NTOP_CALCULATE_SIZE(256) + 1];
+  char format[40];
   unsigned int rounds;
   const EVP_MD *digest;
   unsigned char salt[PBKDF2_SALT_LEN + 1];
   int saltlen;
   static char *buf;
 
-  /* TODO: different salt lengths wont work yet i guess and overflow may still be possible */
-  if (sscanf(encrypted, "$pbkdf2-%27[^$]$rounds=%u$%24[^$]$%344s", method, &rounds, b64salt, b64hash) != 4) {
+  if (snprintf(format, sizeof format,
+               "$pbkdf2-%%%zu[^$]$rounds=%%u$%%%zu[^$]$%%%zus",
+               (sizeof method) - 1, (sizeof b64salt) - 1, (sizeof b64hash) - 1)
+      != (sizeof format) -1) {
+    putlog(LOG_MISC, "*", "PBKDF2 error: could not initialize parser for hashed password.");
+    return NULL;
+  }
+  if (sscanf(encrypted, format, method, &rounds, b64salt, b64hash) != 4) {
     putlog(LOG_MISC, "*", "PBKDF2 error: could not parse hashed password.");
     return NULL;
   }
