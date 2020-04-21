@@ -134,6 +134,7 @@ mv tmpdocs/text-sub.txt $BASEDIR/../doc/TEXT-SUBSTITUTIONS
 mv tmpdocs/tls.txt $BASEDIR/../doc/TLS
 mv tmpdocs/transfer.txt $BASEDIR/../doc/settings/mod.transfer
 mv tmpdocs/tricks.txt $BASEDIR/../doc/TRICKS
+mv tmpdocs/twitch.txt $BASEDIR/../doc/TWITCH
 mv tmpdocs/uptime.txt $BASEDIR/../doc/settings/mod.uptime
 mv tmpdocs/users.txt $BASEDIR/../doc/USERS
 mv tmpdocs/weird-msgs.txt $BASEDIR/../doc/WEIRD-MESSAGES

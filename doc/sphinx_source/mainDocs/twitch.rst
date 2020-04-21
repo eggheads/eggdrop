@@ -29,7 +29,7 @@ Editing the config file
 
 Make sure you leave the 'oauth:' there, including the ':'.
 
-#. Find ``set cap-request`` setting in the CAP section of the config file. We want to negotiate the ability to use Twitch-specific capabilities with the server, so edit that line so it looks like this::
+2. Find ``set cap-request`` setting in the CAP section of the config file. We want to negotiate the ability to use Twitch-specific capabilities with the server, so edit that line so it looks like this::
 
     set cap-request "twitch.tv/commands twitch.tv/membership twitch.tv/tags"
 
