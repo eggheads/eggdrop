@@ -263,7 +263,7 @@ struct user_entry_type USERENTRY_PASS2 = {
   def_kill,
   def_get,
   pass2_set,
-  def_tcl_get, /* TODO: check which functions can/must be 0 and */
+  def_tcl_get,
   0,
   def_expmem,
   0,
