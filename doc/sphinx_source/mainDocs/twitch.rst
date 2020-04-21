@@ -11,13 +11,13 @@ This module *attempts* to provide connectivity with the Twitch gaming platform. 
 **********
 Disclaimer
 **********
-We should also make clear that Eggdrop is in no way affiliated with Twitch in any way, and Twitch fully controls their own platform, to include the IRC gateway. This was just a fun project implemented at the request of some users to interact with Twitch as it stood at the time of this development. At anytime, Twitch could choose to alter or cease their IRC connectivity, thereby rendering this Eggdrop module useless. Eggdrop developers are also unable to offer technical support for Twitch-specific issues encountered while using this module.
+We should also make clear that Eggdrop is in no way affiliated with Twitch in any way, and Twitch fully controls their own platform, to include the IRC gateway. This was just a fun project implemented at the request of some users to interact with the Twitch IRC development gateway as it existed at the time of development. At any time, Twitch could choose to alter or discontinue their IRC connectivity, thereby rendering this Eggdrop module useless. Eggdrop developers are also unable to offer technical support for Twitch-specific issues encountered while using this module.
 
 ***********************
 Registering with Twitch
 ***********************
-#. Register an account with Twitch. At the time of writing, this is done by visiting _`Twitch`: http://twitch.tv/ and clicking on the Sign Up button.
-#. Generate a token to authenticate your bot with Twitch. At the time of writing, this is done by visiting the _twitch OAuth generator`: https://twitchapps.com/tmi/ while logged in to the account you just created. The token will be an alphanumeric string. Write it down!
+#. Register an account with Twitch. At the time of writing, this is done by visiting `Twitch <http://twitch.tv/>`_ and clicking on the Sign Up button.
+#. Generate a token to authenticate your bot with Twitch. At the time of writing, this is done by visiting the `Twitch OAuth generator <https://twitchapps.com/tmi/>`_ while logged in to the account you just created. The token will be an alphanumeric string. Write it down!
 
 ***********************
 Editing the config file
@@ -25,19 +25,19 @@ Editing the config file
 
 #. Find addserver options in the server section of the config file. Remove the sample servers listed, and add the following line in their place, replacing the alphanumeric string after 'oauth:' with the token you created when registering with Twitch in the previous section. It should look similar to this::
 
-  addserver irc.chat.twitch.tv 6667 oauth:j9irk4vs28bifh9easys4w2ystji3u
+    addserver irc.chat.twitch.tv 6667 oauth:j9irk4vs28bifh9easys4w2ystji3u
 
 Make sure you leave the 'oauth:' there, including the ':'.
 
-#. Find `set cap-request` setting in the CAP section of the config file. We want to negotiate the ability to use Twitch-specific capabilities with the server, so edit that line so it looks like this::
+#. Find ``set cap-request`` setting in the CAP section of the config file. We want to negotiate the ability to use Twitch-specific capabilities with the server, so edit that line so it looks like this::
 
-  set cap-request "twitch.tv/commands twitch.tv/membership twitch.tv/tags"
+    set cap-request "twitch.tv/commands twitch.tv/membership twitch.tv/tags"
 
 #. Find the keep-nick setting below the CAP section of the config file, and set it to 0.
 
 #. Find the Twitch section of the config file, and enable the loading of the twitch module by removing the '#' in front of the loadmodule command. It should look like this when you are done::
 
-  loadmodule twitch
+    loadmodule twitch
 
 #. Start your bot as usual, and good luck!
 
@@ -45,7 +45,7 @@ Make sure you leave the 'oauth:' there, including the ':'.
 Twitch web UI functions
 *************************
 
-Twitch is normally accessed via a web UI, and uses commands prefixed with a . or a / to interact with the channel. The Twitch module adds the Tcl command `twcmd` to replicate those Twitch-specific commands. For example, to grant VIP status to a user via Tcl, you would use the command `twcmd vip username`. or to restrict chat to subscibers, you would use `twcmd subscribers`. In other words, `twcmd` in Tcl is the interface to the standard Twitch set of commands available through the web UI.
+Twitch is normally accessed via a web UI, and uses commands prefixed with a . or a / to interact with the channel. The Twitch module adds the Tcl command ``twcmd`` to replicate those Twitch-specific commands. For example, to grant VIP status to a user via Tcl, you would use the command ``twcmd vip username``. or to restrict chat to subscibers, you would use ``twcmd subscribers``. In other words, ``twcmd`` in Tcl is the interface to the standard Twitch set of commands available through the web UI.
 
 **********************
 Twitch IRC limitations
