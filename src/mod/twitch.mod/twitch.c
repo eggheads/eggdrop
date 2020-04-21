@@ -598,14 +598,23 @@ char *twitch_start(Function *global_funcs)
   /* Register the module. */
   module_register(MODULE_NAME, twitch_table, 0, 1);
 
-  if (!module_depend(MODULE_NAME, "eggdrop", 108, 0)) {
+  if (!module_depend(MODULE_NAME, "eggdrop", 109, 0)) {
     module_undepend(MODULE_NAME);
-    return "This module requires Eggdrop 1.8.0 or later.";
+    return "This module requires Eggdrop 1.9.0 or later.";
   }
   if (!(server_funcs = module_depend(MODULE_NAME, "server", 1, 5))) {
     module_undepend(MODULE_NAME);
     return "This module requires server module 1.5 or later.";
   }
+  if (!(server_funcs = module_depend(MODULE_NAME, "irc", 1, 5))) {
+    module_undepend(MODULE_NAME);
+    return "This module requires irc module 1.5 or later.";
+  }
+  if (!(channels_funcs = module_depend(MODULE_NAME, "channels", 1, 1))) {
+    module_undepend(MODULE_NAME);
+    return "This module requires channels module 1.1 or later.";
+  }
+
 
   H_ccht = add_bind_table("ccht", HT_STACKABLE, twitch_2char);
   H_cmsg = add_bind_table("cmsg", HT_STACKABLE, twitch_2char);

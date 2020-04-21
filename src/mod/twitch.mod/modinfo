@@ -2,4 +2,4 @@ DESC:This module allows Eggdrop to connect to a Twitch server, and provides
 DESC:basic logging functionality, binds for twitch events, and access to
 DESC:tag-msgs used by Twitch
 DESC:
-DESC:It requires irc.mod.
+DEPENDS:server irc channels
