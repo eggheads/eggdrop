@@ -419,7 +419,11 @@ void reset_chan_info(struct chanset_t *chan, int reset)
   if (channel_pending(chan))
     return;
 
-  clear_channel(chan, reset);
+  if (net_type_int != NETT_TWITCH) { /* Twitch won't reset any of this */
+    clear_channel(chan, reset);
+  } else {
+    return;
+  }
   if ((reset & CHAN_RESETBANS) && !(chan->status & CHAN_ASKEDBANS)) {
     chan->status |= CHAN_ASKEDBANS;
     dprintf(DP_MODE, "MODE %s +b\n", chan->name);

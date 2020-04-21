@@ -1033,6 +1033,47 @@ static int got324(char *from, char *msg)
   return 0;
 }
 
+/* got 315: end of who
+ * <server> 315 <to> <chan> :End of /who
+ */
+static int got315(char *from, char *msg)
+{
+  char *chname, *key;
+  struct chanset_t *chan;
+
+  newsplit(&msg);
+  chname = newsplit(&msg);
+  chan = findchan(chname);
+  if (!chan || !channel_pending(chan)) /* Left channel before we got a 315? */
+    return 0;
+
+  sync_members(chan);
+  chan->status |= CHAN_ACTIVE;
+  chan->status &= ~CHAN_PEND;
+  if (!ismember(chan, botname)) {      /* Am I on the channel now?          */
+    putlog(LOG_MISC | LOG_JOIN, chan->dname, "Oops, I'm not really on %s.",
+           chan->dname);
+    if (net_type_int != NETT_TWITCH) {
+      clear_channel(chan, CHAN_RESETALL);
+      chan->status &= ~CHAN_ACTIVE;
+    }
+
+    key = chan->channel.key[0] ? chan->channel.key : chan->key_prot;
+    if (key[0])
+      dprintf(DP_SERVER, "JOIN %s %s\n",
+              chan->name[0] ? chan->name : chan->dname, key);
+    else {
+      dprintf(DP_SERVER, "JOIN %s\n",
+              chan->name[0] ? chan->name : chan->dname);
+    }
+  } else if (me_op(chan))
+    recheck_channel(chan, 1);
+  else if (chan->channel.members == 1)
+    chan->status |= CHAN_STOP_CYCLE;
+  return 0;                            /* Don't check for I-Lines here.     */
+}
+
+
 static int got352or4(struct chanset_t *chan, char *user, char *host,
                      char *nick, char *flags)
 {
@@ -1099,6 +1140,38 @@ static int got352(char *from, char *msg)
   return 0;
 }
 
+/* got a 366 from Twitch; this is a hack that should only be used for Twitch.
+ * We should be very clear on the intent of this function- it is not to handle
+ * 353 in a normal way, it is only used to fake a reply for Eggdrop so that it
+ * knows it is on the channel, since the usual WHO command does not exist here.
+ */
+static int gottwitch366(char *from, char *msg) {
+  char *nick, *chname;
+  struct chanset_t *chan;
+  char host[UHOSTLEN];
+  char fakemsg[NICKLEN + UHOSTLEN + 15];
+
+  if (net_type_int != NETT_TWITCH) {   /* Seriously- this is only for twitch */
+    return 0;
+  }
+
+  nick = newsplit(&msg);
+  chname = newsplit(&msg);
+  chan = findchan(chname);
+  if (chan) {
+  /* Skip the rest of the message, we only care about the bot itself, and
+   * 353s are unreliable on Twitch, so why bother. We'll get other users when
+   * TWITCH sends the mass JOIN message.
+   */
+    chan->status |= CHAN_PEND; /* Channel needs to be PENDING for 1st join */
+    snprintf(host, sizeof host, "%s.tmi.twitch.tv", nick); /* Create hostname */
+    snprintf(fakemsg, sizeof fakemsg, "%s %s :End of /who", nick, chan->dname);
+    got352or4(chan, nick, host, nick, "H"); /* Send fake 352 for bot*/
+    got315(from, fakemsg);  /* Send end of WHO, to get chan to ACTIVE state */
+  }
+  return 0;
+}
+
 /* got a 354: who info! - ircu style whox
  */
 static int got354(char *from, char *msg)
@@ -1127,43 +1200,6 @@ static int got354(char *from, char *msg)
   return 0;
 }
 
-
-/* got 315: end of who
- * <server> 315 <to> <chan> :End of /who
- */
-static int got315(char *from, char *msg)
-{
-  char *chname, *key;
-  struct chanset_t *chan;
-
-  newsplit(&msg);
-  chname = newsplit(&msg);
-  chan = findchan(chname);
-  if (!chan || !channel_pending(chan)) /* Left channel before we got a 315? */
-    return 0;
-
-  sync_members(chan);
-  chan->status |= CHAN_ACTIVE;
-  chan->status &= ~CHAN_PEND;
-  if (!ismember(chan, botname)) {      /* Am I on the channel now?          */
-    putlog(LOG_MISC | LOG_JOIN, chan->dname, "Oops, I'm not really on %s.",
-           chan->dname);
-    clear_channel(chan, CHAN_RESETALL);
-    chan->status &= ~CHAN_ACTIVE;
-
-    key = chan->channel.key[0] ? chan->channel.key : chan->key_prot;
-    if (key[0])
-      dprintf(DP_SERVER, "JOIN %s %s\n",
-              chan->name[0] ? chan->name : chan->dname, key);
-    else
-      dprintf(DP_SERVER, "JOIN %s\n",
-              chan->name[0] ? chan->name : chan->dname);
-  } else if (me_op(chan))
-    recheck_channel(chan, 1);
-  else if (chan->channel.members == 1)
-    chan->status |= CHAN_STOP_CYCLE;
-  return 0;                            /* Don't check for I-Lines here.     */
-}
 
 /* got 367: ban info
  * <server> 367 <to> <chan> <ban> [placed-by] [timestamp]
@@ -2502,6 +2538,7 @@ static int gotnotice(char *from, char *msg)
 static cmd_t irc_raw[] = {
   {"324",     "",   (IntFunc) got324,       "irc:324"},
   {"352",     "",   (IntFunc) got352,       "irc:352"},
+  {"366",     "",   (IntFunc) gottwitch366,"irc:t366"},
   {"354",     "",   (IntFunc) got354,       "irc:354"},
   {"315",     "",   (IntFunc) got315,       "irc:315"},
   {"367",     "",   (IntFunc) got367,       "irc:367"},
