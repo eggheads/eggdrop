@@ -347,7 +347,8 @@ struct user_entry_type USERENTRY_PASS = {
   def_kill,
   def_get,
   pass_set,
-  def_tcl_get,
+  def_tcl_get, /* TODO: maybe we need a special funktion instead, that takes
+                * care about giving back PASS2 vs. PASS */
   pass_tcl_set,
   def_expmem,
   0,
