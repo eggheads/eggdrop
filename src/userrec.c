@@ -342,37 +342,36 @@ int u_pass_match(struct userrec *u, char *pass)
   if (pass[0] == '-') {
     if (!cmp)
       return 1;
-    else
-      return 0;
+    return 0;
   }
   /* If password is not set in userrecord, or password is not sent */
   if (!cmp || !pass[0])
     return 0;
   if (u->flags & USER_BOT) {
-    if (!strcmp(cmp, pass))
+    if (!strcmp(cmp, pass)) /* verify successful */
       return 1;
-  } else {
-    if (strlen(pass) > PASSWORDMAX)
-      pass[PASSWORDMAX] = 0;
-    if (pass2) {
-      new = verify_pass2(pass, cmp);
-      if (new) { /* verify successful */
-        if (new != cmp) /* reenrypted with new parameters,
-                           no need to strcmp() */
-          set_user(&USERENTRY_PASS2, u, new);
-        return 1;
-      }
+    return 0;
+  }
+  if (strlen(pass) > PASSWORDMAX)
+    pass[PASSWORDMAX] = 0;
+  if (pass2) {
+    new = verify_pass2(pass, cmp);
+    if (new) { /* verify successful */
+      if (new != cmp) /* reenrypted with new parameters,
+                         no need to strcmp() */
+        set_user(&USERENTRY_PASS2, u, new);
+      return 1;
     }
-    else if (encrypt_pass) {
-      encrypt_pass(pass, new2);
-      if (!strcmp(cmp, new2)) { /* verify successful */
-        if (encrypt_pass2) {
-          new = encrypt_pass2(pass);
-          if (new)
-            set_user(&USERENTRY_PASS2, u, new);
-        }
-        return 1;
+  }
+  else if (encrypt_pass) {
+    encrypt_pass(pass, new2);
+    if (!strcmp(cmp, new2)) { /* verify successful */
+      if (encrypt_pass2) {
+        new = encrypt_pass2(pass);
+        if (new)
+          set_user(&USERENTRY_PASS2, u, new);
       }
+      return 1;
     }
   }
   return 0;
