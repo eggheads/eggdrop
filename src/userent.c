@@ -253,6 +253,13 @@ int pass2_set(struct userrec *u, struct user_entry *e, void *new)
   return 0;
 }
 
+static int def_tcl_null(Tcl_Interp * irp, struct userrec *u,
+                        struct user_entry *e, int argc, char **argv)
+{
+  Tcl_AppendResult(irp, "Please use PASS instead.", NULL);
+  return TCL_OK;
+}
+
 struct user_entry_type USERENTRY_PASS2 = {
   0,
   0,
@@ -263,8 +270,8 @@ struct user_entry_type USERENTRY_PASS2 = {
   def_kill,
   def_get,
   pass2_set,
-  def_tcl_get,
-  0,
+  def_tcl_null,
+  def_tcl_null,
   def_expmem,
   0,
   "PASS2",
@@ -328,6 +335,20 @@ int pass_set(struct userrec *u, struct user_entry *e, void *buf)
   return 1;
 }
 
+static int pass_tcl_get(Tcl_Interp * interp, struct userrec *u,
+                        struct user_entry *e, int argc, char **argv)
+{
+  char *pass = 0;
+
+  if (encrypt_pass2)
+    pass = get_user(&USERENTRY_PASS2, u);
+  if (!pass)
+    pass = e->u.string;
+  Tcl_AppendResult(interp, pass, NULL);
+
+  return TCL_OK;
+}
+
 static int pass_tcl_set(Tcl_Interp * irp, struct userrec *u,
                         struct user_entry *e, int argc, char **argv)
 {
@@ -347,8 +368,7 @@ struct user_entry_type USERENTRY_PASS = {
   def_kill,
   def_get,
   pass_set,
-  def_tcl_get, /* TODO: maybe we need a special funktion instead, that takes
-                * care about giving back PASS2 vs. PASS */
+  pass_tcl_get,
   pass_tcl_set,
   def_expmem,
   0,
