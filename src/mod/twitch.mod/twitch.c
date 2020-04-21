@@ -610,7 +610,7 @@ char *twitch_start(Function *global_funcs)
     module_undepend(MODULE_NAME);
     return "This module requires irc module 1.5 or later.";
   }
-  if (!(channels_funcs = module_depend(MODULE_NAME, "channels", 1, 1))) {
+  if (!(server_funcs = module_depend(MODULE_NAME, "channels", 1, 1))) {
     module_undepend(MODULE_NAME);
     return "This module requires channels module 1.1 or later.";
   }
