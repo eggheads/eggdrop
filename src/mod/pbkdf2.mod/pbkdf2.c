@@ -78,10 +78,11 @@ static char *pbkdf2_hash(const char *pass, const char *digest_name,
                          unsigned int rounds)
 {
   const EVP_MD *digest;
+  int digestlen, ret;
   int outlen, restlen;
-  static char *out, *out2; /* static object is initialized to zero (Standard C) */
-  int ret, digestlen;
-  static unsigned char *buf;
+  static char *out; /* static object is initialized to zero (Standard C) */
+  char *out2;
+  unsigned char *buf;
   struct rusage ru1, ru2;
 
   digest = EVP_get_digestbyname(digest_name);
@@ -91,13 +92,16 @@ static char *pbkdf2_hash(const char *pass, const char *digest_name,
     return NULL;
   }
   digestlen = EVP_MD_size(digest);
-  outlen = strlen("$pbkdf2-") + strlen(digest_name) + strlen("$rounds=4294967295$i") + B64_NTOP_CALCULATE_SIZE(saltlen) + 1 + B64_NTOP_CALCULATE_SIZE(digestlen);
+  outlen = strlen("$pbkdf2-") + strlen(digest_name) +
+           strlen("$rounds=4294967295$i") + B64_NTOP_CALCULATE_SIZE(saltlen) +
+           1 + B64_NTOP_CALCULATE_SIZE(digestlen);
   if (out)
     nfree(out);
   out = nmalloc(outlen + 1);
   out2 = out;
   restlen = outlen;
-  bufcount(&out2, &restlen, snprintf((char *) out2, restlen, "$pbkdf2-%s$rounds=%i$", digest_name, (unsigned int) rounds));
+  bufcount(&out2, &restlen, snprintf((char *) out2, restlen,
+           "$pbkdf2-%s$rounds=%i$", digest_name, (unsigned int) rounds));
   ret = b64_ntop_without_padding(salt, saltlen, out2, restlen);
   if (ret < 0) {
     explicit_bzero(out, outlen);
@@ -107,18 +111,20 @@ static char *pbkdf2_hash(const char *pass, const char *digest_name,
   bufcount(&out2, &restlen, ret);
   out2[0] = '$';
   bufcount(&out2, &restlen, 1);
-  if (buf)
-    nfree(buf);
   buf = nmalloc(digestlen);
   ret = getrusage(RUSAGE_SELF, &ru1);
   if (!PKCS5_PBKDF2_HMAC(pass, strlen(pass), salt, saltlen, rounds, digest,
                          digestlen, buf)) {
+    explicit_bzero(buf, digestlen);
     explicit_bzero(out, outlen);
-    putlog(LOG_MISC, "*", "PBKDF2 error: PKCS5_PBKDF2_HMAC(): %s.", ERR_error_string(ERR_get_error(), NULL));
+    putlog(LOG_MISC, "*", "PBKDF2 error: PKCS5_PBKDF2_HMAC(): %s.",
+           ERR_error_string(ERR_get_error(), NULL));
+    nfree(buf);
     return NULL;
   }
   if (!ret && !getrusage(RUSAGE_SELF, &ru2)) {
-    debug4("pbkdf2 method %s rounds %i, user %.3fms sys %.3fms", digest_name, rounds,
+    debug4("pbkdf2 method %s rounds %i, user %.3fms sys %.3fms", digest_name,
+           rounds,
            (double) (ru2.ru_utime.tv_usec - ru1.ru_utime.tv_usec) / 1000 +
            (double) (ru2.ru_utime.tv_sec  - ru1.ru_utime.tv_sec ) * 1000,
            (double) (ru2.ru_stime.tv_usec - ru1.ru_stime.tv_usec) / 1000 +
@@ -130,8 +136,10 @@ static char *pbkdf2_hash(const char *pass, const char *digest_name,
   if (b64_ntop_without_padding(buf, digestlen, out2, restlen) < 0) {
     explicit_bzero(out, outlen);
     putlog(LOG_MISC, "*", "PBKDF2 error: b64_ntop(hash).");
+    nfree(buf);
     return NULL;
   }
+  nfree(buf);
   return out;
 }
 
@@ -146,7 +154,8 @@ static char *pbkdf2_encrypt(const char *pass)
   static char *buf;
 
   if (RAND_bytes(salt, sizeof salt) != 1) {
-    putlog(LOG_MISC, "*", "PBKDF2 error: RAND_bytes(): %s.", ERR_error_string(ERR_get_error(), NULL));
+    putlog(LOG_MISC, "*", "PBKDF2 error: RAND_bytes(): %s.",
+           ERR_error_string(ERR_get_error(), NULL));
     return NULL;
   }
   if (!(buf = pbkdf2_hash(pass, pbkdf2_method, salt, sizeof salt,
@@ -242,7 +251,8 @@ static int pbkdf2_init(void)
 #endif
   digest = EVP_get_digestbyname(pbkdf2_method);
   if (!digest) {
-    putlog(LOG_MISC, "*", "PBKDF2 error: Unknown message digest '%s'.", pbkdf2_method);
+    putlog(LOG_MISC, "*", "PBKDF2 error: Unknown message digest '%s'.",
+           pbkdf2_method);
     return 1;
   }
   if (!RAND_status()) {
