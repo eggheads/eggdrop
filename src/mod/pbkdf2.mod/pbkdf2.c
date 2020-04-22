@@ -104,7 +104,8 @@ static char *pbkdf2_hash(const char *pass, const char *digest_name,
     return NULL;
   }
   bufcount(&out2, &hashlen2, ret);
-  bufcount(&out2, &hashlen2, (out2[0] = '$', 1));
+  out2[0] = '$';
+  bufcount(&out2, &hashlen2, 1);
   /* Write base64 PBKDF2 hash */
   digestlen = EVP_MD_size(digest);
   debug3("DEBUG: hashlen %i B64_NTOP_CALCULATE_SIZE(digestlen) %i digestlen %i", hashlen2, B64_NTOP_CALCULATE_SIZE(digestlen), digestlen);
