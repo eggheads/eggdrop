@@ -780,20 +780,10 @@ static int msg_invite(char *nick, char *host, struct userrec *u, char *par)
 
 static int msg_status(char *nick, char *host, struct userrec *u, char *par)
 {
-  char s[256], *vers_t, *uni_t, *pass;
+  char s[256], *pass, sysrel[256];
   int i;
   struct chanset_t *chan;
   time_t now2 = now - online_since, hr, min;
-
-  struct utsname un;
-
-  if (uname(&un) < 0) {
-    vers_t = " ";
-    uni_t  = "*unknown*";
-  } else {
-    vers_t = un.release;
-    uni_t  = un.sysname;
-  }
 
   if (match_my_nick(nick))
     return 1;
@@ -835,7 +825,8 @@ static int msg_status(char *nick, char *host, struct userrec *u, char *par)
 
   if (admin[0])
     dprintf(DP_HELP, "NOTICE %s :Admin: %s.\n", nick, admin);
-  dprintf(DP_HELP, "NOTICE %s :OS: %s %s.\n", nick, uni_t, vers_t);
+  egg_uname(sysrel, sizeof sysrel);
+  dprintf(DP_HELP, "NOTICE %s :OS: %s.\n", nick, sysrel);
   dprintf(DP_HELP, "NOTICE %s :Online as: %s!%s.\n", nick, botname, botuserhost);
 
   /* This shouldn't overflow anymore -Wcc */

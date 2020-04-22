@@ -57,8 +57,8 @@ log_t *logs = 0;                /* Logfiles */
 int max_logs = 5;               /* Max log files, mismatch config on purpose */
 int max_logsize = 0;            /* Maximum logfile size, 0 for no limit */
 int raw_log = 0;                /* Display output to server to LOG_SERVEROUT */
-
 int conmask = LOG_MODES | LOG_CMDS | LOG_MISC; /* Console mask */
+int stealth_uname = 0;
 
 struct help_list_t {
   struct help_list_t *next;
@@ -778,6 +778,17 @@ static void subst_addcol(char *s, char *newcol)
   }
 }
 
+void egg_uname(char *sysrel, size_t len)
+{
+  struct utsname u;
+  if (stealth_uname)
+    strlcpy(sysrel, "HAL 9000", len);
+  else if (uname(&u) < 0)
+    strlcpy(sysrel, "*unknown*", len);
+  else
+    snprintf(sysrel, len, "%s %s", u.sysname, u.release);
+}
+
 /* Substitute %x codes in help files
  *
  * %B = bot nickname
@@ -806,11 +817,10 @@ void help_subst(char *s, char *nick, struct flag_record *flags,
                 int isdcc, char *topic)
 {
   char xx[HELP_BUF_LEN + 1], sub[161], *current, *q, chr, *writeidx,
-       *readidx, *towrite;
+       *readidx, *towrite, sysrel[256];
   struct chanset_t *chan;
   int i, j, center = 0;
   static int help_flags;
-  struct utsname uname_info;
 
   if (s == NULL) {
     /* Used to reset substitutions */
@@ -900,12 +910,8 @@ void help_subst(char *s, char *nick, struct flag_record *flags,
       }
       break;
     case 'U':
-      if (uname(&uname_info) >= 0) {
-        egg_snprintf(sub, sizeof sub, "%s %s", uname_info.sysname,
-                     uname_info.release);
-        towrite = sub;
-      } else
-        towrite = "*UNKNOWN*";
+      egg_uname(sysrel, sizeof sysrel);
+      towrite = sysrel;
       break;
     case 'B':
       towrite = (isdcc ? botnetnick : botname);

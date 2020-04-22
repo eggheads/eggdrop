@@ -508,6 +508,7 @@
 #define check_validpass ((char *(*) (struct userrec *, char *))global[307])
 /* 308 - 311 */
 #define make_rand_str_from_chars ((void (*) (char *, int, char *))global[308])
+#define egg_uname ((void (*) (char *, int))global[309])
 
 
 /* hostmasking */
