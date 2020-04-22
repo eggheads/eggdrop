@@ -101,7 +101,7 @@ static char *pbkdf2_hash(const char *pass, const char *digest_name,
   out2 = out;
   restlen = outlen;
   bufcount(&out2, &restlen, snprintf((char *) out2, restlen,
-           "$pbkdf2-%s$rounds=%i$", digest_name, (unsigned int) rounds));
+           "$pbkdf2-%s$rounds=%u$", digest_name, rounds));
   ret = b64_ntop_without_padding(salt, saltlen, out2, restlen);
   if (ret < 0) {
     explicit_bzero(out, outlen);
