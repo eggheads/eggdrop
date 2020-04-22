@@ -105,7 +105,7 @@ static int cmd_userstate(struct userrec *u, int idx, char *par) {
   dprintf(idx, "Badge Info:   %d\n", tchan->userstate.badge_info);
   dprintf(idx, "Color:        %s\n", tchan->userstate.color);
   dprintf(idx, "Emote-Sets:   %s\n", tchan->userstate.emote_sets);
-  dprintf(idx, "Moderator:    %d\n", tchan->userstate.mod);
+  dprintf(idx, "Moderator:    %s\n", tchan->userstate.mod ? "yes" : "no");
   dprintf(idx, "End of userstate info.\n");
   return 0;
 }
@@ -491,10 +491,14 @@ static int tcl_roomstate STDVAR {
 
 static int tcl_twcmd STDVAR {
 
-  BADARGS(3, 4, " cmd arg");
+  BADARGS(3, 4, " chan cmd ?arg?");
 
-  dprintf(DP_SERVER, "PRIVMSG %s :/%s %s", argv[2], argv[1]);
-  return 0;
+  if (argv[1][0] != '#') {
+    Tcl_AppendResult(irp, "Invalid channel", NULL);
+    return TCL_ERROR;
+  }
+  dprintf(DP_SERVER, "PRIVMSG %s :/%s %s", argv[1], argv[2], argv[3] ? argv[3] : "");
+  return TCL_OK;
 }
 
 

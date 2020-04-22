@@ -30,6 +30,8 @@ static int count_ctcp = 0;
 static time_t last_invtime = (time_t) 0L;
 static char last_invchan[CHANNELLEN + 1] = "";
 
+static int got315(char *from, char *msg);
+
 /* ID length for !channels.
  */
 #define CHANNEL_ID_LEN 5
@@ -1033,46 +1035,6 @@ static int got324(char *from, char *msg)
   return 0;
 }
 
-/* got 315: end of who
- * <server> 315 <to> <chan> :End of /who
- */
-static int got315(char *from, char *msg)
-{
-  char *chname, *key;
-  struct chanset_t *chan;
-
-  newsplit(&msg);
-  chname = newsplit(&msg);
-  chan = findchan(chname);
-  if (!chan || !channel_pending(chan)) /* Left channel before we got a 315? */
-    return 0;
-
-  sync_members(chan);
-  chan->status |= CHAN_ACTIVE;
-  chan->status &= ~CHAN_PEND;
-  if (!ismember(chan, botname)) {      /* Am I on the channel now?          */
-    putlog(LOG_MISC | LOG_JOIN, chan->dname, "Oops, I'm not really on %s.",
-           chan->dname);
-    if (net_type_int != NETT_TWITCH) {
-      clear_channel(chan, CHAN_RESETALL);
-      chan->status &= ~CHAN_ACTIVE;
-    }
-
-    key = chan->channel.key[0] ? chan->channel.key : chan->key_prot;
-    if (key[0])
-      dprintf(DP_SERVER, "JOIN %s %s\n",
-              chan->name[0] ? chan->name : chan->dname, key);
-    else {
-      dprintf(DP_SERVER, "JOIN %s\n",
-              chan->name[0] ? chan->name : chan->dname);
-    }
-  } else if (me_op(chan))
-    recheck_channel(chan, 1);
-  else if (chan->channel.members == 1)
-    chan->status |= CHAN_STOP_CYCLE;
-  return 0;                            /* Don't check for I-Lines here.     */
-}
-
 
 static int got352or4(struct chanset_t *chan, char *user, char *host,
                      char *nick, char *flags)
@@ -1198,6 +1160,47 @@ static int got354(char *from, char *msg)
     }
   }
   return 0;
+}
+
+
+/* got 315: end of who
+ * <server> 315 <to> <chan> :End of /who
+ */
+static int got315(char *from, char *msg)
+{
+  char *chname, *key;
+  struct chanset_t *chan;
+
+  newsplit(&msg);
+  chname = newsplit(&msg);
+  chan = findchan(chname);
+  if (!chan || !channel_pending(chan)) /* Left channel before we got a 315? */
+    return 0;
+
+  sync_members(chan);
+  chan->status |= CHAN_ACTIVE;
+  chan->status &= ~CHAN_PEND;
+  if (!ismember(chan, botname)) {      /* Am I on the channel now?          */
+    putlog(LOG_MISC | LOG_JOIN, chan->dname, "Oops, I'm not really on %s.",
+           chan->dname);
+    if (net_type_int != NETT_TWITCH) {
+      clear_channel(chan, CHAN_RESETALL);
+      chan->status &= ~CHAN_ACTIVE;
+    }
+
+    key = chan->channel.key[0] ? chan->channel.key : chan->key_prot;
+    if (key[0])
+      dprintf(DP_SERVER, "JOIN %s %s\n",
+              chan->name[0] ? chan->name : chan->dname, key);
+    else {
+      dprintf(DP_SERVER, "JOIN %s\n",
+              chan->name[0] ? chan->name : chan->dname);
+    }
+  } else if (me_op(chan))
+    recheck_channel(chan, 1);
+  else if (chan->channel.members == 1)
+    chan->status |= CHAN_STOP_CYCLE;
+  return 0;                            /* Don't check for I-Lines here.     */
 }
 
 
