@@ -78,7 +78,7 @@ static char *pbkdf2_hash(const char *pass, const char *digest_name,
                          unsigned int rounds)
 {
   const EVP_MD *digest;
-  int hashlen;
+  int outlen, restlen;
   static char *out, *out2; /* static object is initialized to zero (Standard C) */
   int ret, digestlen;
   static unsigned char *buf;
@@ -91,28 +91,29 @@ static char *pbkdf2_hash(const char *pass, const char *digest_name,
     return NULL;
   }
   digestlen = EVP_MD_size(digest);
-  hashlen = strlen("$pbkdf2-") + strlen(digest_name) + strlen("$rounds=4294967295$i") + B64_NTOP_CALCULATE_SIZE(saltlen) + 1 + B64_NTOP_CALCULATE_SIZE(digestlen);
+  outlen = strlen("$pbkdf2-") + strlen(digest_name) + strlen("$rounds=4294967295$i") + B64_NTOP_CALCULATE_SIZE(saltlen) + 1 + B64_NTOP_CALCULATE_SIZE(digestlen);
   if (out)
     nfree(out);
-  out = nmalloc(hashlen + 1);
+  out = nmalloc(outlen + 1);
   out2 = out;
-  bufcount(&out2, &hashlen, snprintf((char *) out2, hashlen, "$pbkdf2-%s$rounds=%i$", digest_name, (unsigned int) rounds));
-  ret = b64_ntop_without_padding(salt, saltlen, out2, hashlen);
+  restlen = outlen;
+  bufcount(&out2, &restlen, snprintf((char *) out2, restlen, "$pbkdf2-%s$rounds=%i$", digest_name, (unsigned int) rounds));
+  ret = b64_ntop_without_padding(salt, saltlen, out2, restlen);
   if (ret < 0) {
-    explicit_bzero(out, strlen(out));
+    explicit_bzero(out, outlen);
     putlog(LOG_MISC, "*", "PBKDF2 error: b64_ntop(salt).");
     return NULL;
   }
-  bufcount(&out2, &hashlen, ret);
+  bufcount(&out2, &restlen, ret);
   out2[0] = '$';
-  bufcount(&out2, &hashlen, 1);
+  bufcount(&out2, &restlen, 1);
   if (buf)
     nfree(buf);
   buf = nmalloc(digestlen);
   ret = getrusage(RUSAGE_SELF, &ru1);
   if (!PKCS5_PBKDF2_HMAC(pass, strlen(pass), salt, saltlen, rounds, digest,
                          digestlen, buf)) {
-    explicit_bzero(out, strlen(out));
+    explicit_bzero(out, outlen);
     putlog(LOG_MISC, "*", "PBKDF2 error: PKCS5_PBKDF2_HMAC(): %s.", ERR_error_string(ERR_get_error(), NULL));
     return NULL;
   }
@@ -126,8 +127,8 @@ static char *pbkdf2_hash(const char *pass, const char *digest_name,
   else {
     debug1("PBKDF2 error: getrusage(): %s", strerror(errno));
   }
-  if (b64_ntop_without_padding(buf, digestlen, out2, hashlen) < 0) {
-    explicit_bzero(out, strlen(out));
+  if (b64_ntop_without_padding(buf, digestlen, out2, restlen) < 0) {
+    explicit_bzero(out, outlen);
     putlog(LOG_MISC, "*", "PBKDF2 error: b64_ntop(hash).");
     return NULL;
   }
