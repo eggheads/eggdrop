@@ -80,7 +80,7 @@ static char *pbkdf2_hash(const char *pass, const char *digest_name,
   const EVP_MD *digest;
   int hashlen;
   static char *out, *out2; /* static object is initialized to zero (Standard C) */
-  int hashlen2, ret, digestlen;
+  int ret, digestlen;
   static unsigned char *buf;
   struct rusage ru1, ru2;
 
@@ -90,30 +90,22 @@ static char *pbkdf2_hash(const char *pass, const char *digest_name,
            digest_name);
     return NULL;
   }
-  hashlen = strlen("$pbkdf2-") + strlen(digest_name) + strlen("$rounds=4294967295$") + B64_NTOP_CALCULATE_SIZE(saltlen) + 1 + B64_NTOP_CALCULATE_SIZE(EVP_MD_size(digest));
+  digestlen = EVP_MD_size(digest);
+  hashlen = strlen("$pbkdf2-") + strlen(digest_name) + strlen("$rounds=4294967295$i") + B64_NTOP_CALCULATE_SIZE(saltlen) + 1 + B64_NTOP_CALCULATE_SIZE(digestlen);
   if (out)
     nfree(out);
   out = nmalloc(hashlen + 1);
   out2 = out;
-  hashlen2 = hashlen;
-  bufcount(&out2, &hashlen2, snprintf((char *) out2, hashlen2, "$pbkdf2-%s$rounds=%i$", digest_name, (unsigned int) rounds));
-  ret = b64_ntop_without_padding(salt, saltlen, out2, hashlen2);
+  bufcount(&out2, &hashlen, snprintf((char *) out2, hashlen, "$pbkdf2-%s$rounds=%i$", digest_name, (unsigned int) rounds));
+  ret = b64_ntop_without_padding(salt, saltlen, out2, hashlen);
   if (ret < 0) {
     explicit_bzero(out, strlen(out));
-    putlog(LOG_MISC, "*", "PBKDF2 error: Outbuffer too small (1).");
+    putlog(LOG_MISC, "*", "PBKDF2 error: b64_ntop(salt).");
     return NULL;
   }
-  bufcount(&out2, &hashlen2, ret);
+  bufcount(&out2, &hashlen, ret);
   out2[0] = '$';
-  bufcount(&out2, &hashlen2, 1);
-  /* Write base64 PBKDF2 hash */
-  digestlen = EVP_MD_size(digest);
-  debug3("DEBUG: hashlen %i B64_NTOP_CALCULATE_SIZE(digestlen) %i digestlen %i", hashlen2, B64_NTOP_CALCULATE_SIZE(digestlen), digestlen);
-  if (hashlen2 < B64_NTOP_CALCULATE_SIZE(digestlen)) { /* TODO: do we need this? sanity check always true? does this code even make sense / is it correct ? */
-    explicit_bzero(out, strlen(out));
-    putlog(LOG_MISC, "*", "PBKDF2 error: hashlen2 < B64_NTOP_CALCULATE_SIZE(digestlen).");
-    return NULL;
-  }
+  bufcount(&out2, &hashlen, 1);
   if (buf)
     nfree(buf);
   buf = nmalloc(digestlen);
@@ -134,9 +126,9 @@ static char *pbkdf2_hash(const char *pass, const char *digest_name,
   else {
     debug1("PBKDF2 error: getrusage(): %s", strerror(errno));
   }
-  if (b64_ntop_without_padding(buf, digestlen, out2, hashlen2) < 0) {
+  if (b64_ntop_without_padding(buf, digestlen, out2, hashlen) < 0) {
     explicit_bzero(out, strlen(out));
-    putlog(LOG_MISC, "*", "PBKDF2 error: Outbuffer too small (2).");
+    putlog(LOG_MISC, "*", "PBKDF2 error: b64_ntop(hash).");
     return NULL;
   }
   return out;
