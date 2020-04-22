@@ -159,8 +159,11 @@ static char *pbkdf2_encrypt(const char *pass)
     return NULL;
   }
   if (!(buf = pbkdf2_hash(pass, pbkdf2_method, salt, sizeof salt,
-                          pbkdf2_rounds)))
+                          pbkdf2_rounds))) {
+    explicit_bzero(salt, sizeof salt);
     return NULL;
+  }
+  explicit_bzero(salt, sizeof salt);
   return buf;
 }
 
@@ -213,8 +216,11 @@ static char *pbkdf2_verify(const char *pass, const char *encrypted)
     putlog(LOG_MISC, "*", "PBKDF2 error: b64_pton(%s).", b64salt);
     return NULL;
   }
-  if (!(buf = pbkdf2_hash(pass, method, salt, saltlen, rounds)))
+  if (!(buf = pbkdf2_hash(pass, method, salt, saltlen, rounds))) {
+    explicit_bzero(salt, saltlen);
     return NULL;
+  }
+  explicit_bzero(salt, saltlen);
   if (strcmp(encrypted, buf)) {
     explicit_bzero(buf, strlen(buf));
     return NULL;
