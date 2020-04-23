@@ -1548,7 +1548,7 @@ void add_req(char *cape) {
 
 static int gotcap(char *from, char *msg) {
   char *cmd, *splitstr;
-  char *cape, *p;
+  char cape[CAPMAX], *p;
   int listlen = 0;
 
   newsplit(&msg);
@@ -1574,7 +1574,7 @@ static int gotcap(char *from, char *msg) {
     if (message_tags)
       add_req("message-tags");
 /* Add any custom capes the user listed */
-    cape = cap_request;
+    strncpy(cape, cap_request, sizeof cape);
     if ( (p = strtok(cape, " ")) ) {
       while (p != NULL) {
         add_req(p);
