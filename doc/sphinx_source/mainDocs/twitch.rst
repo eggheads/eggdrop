@@ -17,15 +17,15 @@ We should also make clear that Eggdrop is in no way affiliated with Twitch in an
 Registering with Twitch
 ***********************
 #. Register an account with Twitch. At the time of writing, this is done by visiting `Twitch <http://twitch.tv/>`_ and clicking on the Sign Up button.
-#. Generate a token to authenticate your bot with Twitch. At the time of writing, this is done by visiting the `Twitch OAuth generator <https://twitchapps.com/tmi/>`_ while logged in to the account you just created. The token will be an alphanumeric string. Write it down!
+#. Generate a token to authenticate your bot with Twitch. At the time of writing, this is done by visiting the `Twitch OAuth generator <https://twitchapps.com/tmi/>`_ while logged in to the account you just created. The token will be an alphanumeric string and should be trated like a password (...because it is). Make note of it, and keep it safe!
 
 ***********************
 Editing the config file
 ***********************
 
-#. Find addserver options in the server section of the config file. Remove the sample servers listed, and add the following line in their place, replacing the alphanumeric string after 'oauth:' with the token you created when registering with Twitch in the previous section. It should look similar to this::
+#. Find addserver options in the server section of the config file. Remove the sample servers listed and add the following line in their place, replacing the alphanumeric string after 'oauth:' with the token you created when registering with Twitch in the previous section. Pretending your Twitch token from the previous step is 'j9irk4vs28b0obz9easys4w2ystji3u', it should look like this::
 
-    addserver irc.chat.twitch.tv 6667 oauth:j9irk4vs28bifh9easys4w2ystji3u
+    addserver irc.chat.twitch.tv 6667 oauth:j9irk4vs28b0obz9easys4w2ystji3u
 
 Make sure you leave the 'oauth:' there, including the ':'.
 
@@ -46,6 +46,35 @@ Twitch web UI functions
 *************************
 
 Twitch is normally accessed via a web UI, and uses commands prefixed with a . or a / to interact with the channel. The Twitch module adds the Tcl command ``twcmd`` to replicate those Twitch-specific commands. For example, to grant VIP status to a user via Tcl, you would use the command ``twcmd vip username``. or to restrict chat to subscibers, you would use ``twcmd subscribers``. In other words, ``twcmd`` in Tcl is the interface to the standard Twitch set of commands available through the web UI.
+
+*****************************************
+Tracking users and status with twitch.tcl
+*****************************************
+IMPORTANT: To use this script, you need to install additional Tcl libraries. On a Debian/Ubuntu-based system, you can do this by running::
+
+    sudo apt-get install tcllib tcl-tls
+
+Then, configure the section below and load this script by adding::
+    source scripts/twitch.tcl
+
+at the bottom of your Eggdrop's config file.
+
+Finally, to enable this tracking for a channel, join the partyline of your eggdrop and enable the functionality with::
+
+    .chanset #examplechan +twitchusers
+ 
+As mentioned in the `Disclaimer`_, the API used for this is developed and maintained by Twitch (not Eggdrop!) but is undocumented and not official. As such, we want to be good stewards of this functionality and not be part of the reason it could be taken away, which hundreds of Eggdrops hammering it every minute could do. To that end, we built this script to require manual refreshes of the data as opposed to a scheduled polling of the API. Eggdrop will load this data once when it joins a channel (if you enabled the +twitchusers channel flag via ``.chanset`` on the partyline), and only again if you call ``twitch:updateusers`` or one of the is* commands with the update flag specified. In other words- this list of users is should only be considered current immediately after you call it yourself; it will not update on its own.
+
+To get create/update a list of users and their statuses on a channel, use the ``twitch:updateusers [#channel]`` command. This will load the ``$tw`` array with the values obtained from the web API in a dict format. To use these values in a script, use ``$tw(#channel)`` to view all the users and statuses, and the dict command to grab specific values. For example::
+
+    twitch:updateusers #examplechan
+    > Updating Twitch user statuses for #examplechan...
+    putlog $tw(#examplechan)
+    > _links {} chatter_count 2 chatters {broadcaster examplechan vips {} moderators {harry sally} staff {} admins {} global_mods {} viewers spot}
+    putlog [dict get $tw(#examplechan) chatters moderators]
+    > harry sally
+
+Note that the $tw array returns a nested dict, so you need multiple args to drill down to the value you want, in this case chatters then moderators.
 
 **********************
 Twitch IRC limitations

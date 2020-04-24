@@ -1,33 +1,26 @@
 # This script does... things TBD.
 #
+# For usage instructions, please read doc/TWITCH or
+# www.egghelp.org/mainDocs/twitch.html
+#
 # IMPORTANT: To use this script, you need to install additional Tcl libraries.
 # On a Debian/Ubuntu-based system, you can do this by running:
 # sudo apt-get install tcllib tcl-tls
 #
-# Then, configure the section below and load this script by adding:
-# source scripts/twitch.tcl
-# at the bottom of your Eggdrop's config file.
-#
 #####################################################################
 ###############    CONFIGURE THIS SECTION  ##########################
-
-# Set this variable to a string-separated list of channels you want
-# Eggdrop to check users statuses for at load. This can be written gooder.
-set track_chans {#eggdroptest}
 
 # Uncomment this line if you want ... something.
 # bind rawt - PRIVMSG     twitch:privmsg
 
 ###### DON'T EDIT DOWN HERE UNLESS YOU KNOW WHAT YOU'RE DOING! ######
 #####################################################################
+#
 package require eggdrop 1.9.0
 package require Tcl 8.5
 package require http
 package require json
 
-foreach c $track_chans {
-  twitch:updateusers $c
-}
 set keep-nick 0
 
 proc twitch:getwebuser {chan} {
@@ -37,29 +30,40 @@ proc twitch:getwebuser {chan} {
   return $reply
 }
 
-proc twitch:updateusers {chan} {
-   global tw
-   
-   putlog "Updating Twitch user statuses for $chan..."
-   set webchan [string trimleft $chan "#"]
-   set reply [twitch:getwebuser $webchan]
-   set tw(moderators) [dict get $reply chatters moderators]
-   set tw(staff) [dict get $reply chatters staff]
-   set tw(admins) [dict get $reply chatters admins]
-   set tw(globalmods) [dict get $reply chatters global_mods]
-   set tw(viewers) [dict get $reply chatters viewers]
-#   foreach nick $nicks {    
+proc twitch:updateusers {{chan "0"}} {
+  global tw
+
+  if {[string match $chan "0"]} {
+    foreach c [channels] {
+      putlog "Updating Twitch users for active channels ($c)..."
+      if {![channel get $c inactive] &&
+            [channel get $c twitchusers]} {
+        set webchan [string trimleft $chan "#"]
+        set tw($chan) [twitch:getwebuser $webchan]
+      }
+    }
+  } else {
+    putlog "Updating Twitch user statuses for $chan..."
+    set webchan [string trimleft $chan "#"]
+    set tw($chan) [twitch:getwebuser $webchan]
+  }
+#   set tw(moderators) [dict get $reply chatters moderators]
+#   set tw(staff) [dict get $reply chatters staff]
+#   set tw(admins) [dict get $reply chatters admins]
+#   set tw(globalmods) [dict get $reply chatters global_mods]
+#   set tw(viewers) [dict get $reply chatters viewers]
+#   foreach nick $nicks {
 #      # fake WHO reply:
 #      *raw:irc:352 $from 352 "$::botnick $chan $nick $nick.tmi.twitch.tv $::server $nick H :0 $chan"
 #   }
-   return 0
+  return 0
 }
 
 proc twitch:privmsg {from key text tags} {
 ### Still need to figure this part out ###
   set privtags [makedict $tags]
   putlog "==== $privtags"
-  if [dict exists privtags bits] {
+  if {[dict exists privtags bits]} {
     putlog "* [dict get $privtags login-name] cheered [dict get $privtags bits] bits"
   }
 }
@@ -74,8 +78,7 @@ proc ismod {nick chan {update "0"}} {
   global tw
 
   if {[string index $chan 0] ne "#"} {
-    putlog "Invalid channel"
-    return -1
+    error "Invalid channel"
   }
   if {$update} {
     set webchan [string trimleft $chan "#"]
@@ -166,4 +169,17 @@ proc isviewer {nick chan update} {
     return 0
   }
   return 1
+}
+
+# Init section
+
+if {[lsearch [getudefs flag] twitchusers] < 0} {
+  setudef flag twitchusers
+}
+
+foreach c [channels] {
+  if {![channel get $c inactive] &&
+        [channel get $c twitchusers]} {
+    twitch:updateusers $c
+  }
 }
