@@ -543,6 +543,11 @@ static tcl_cmds mytcl[] = {
   {NULL,        NULL}
 };
 
+/* For thommey ! */
+static tcl_ints my_tcl_ints[] = {
+  {"keep-nick",         &keepnick,                  0},
+  {NULL,                NULL,                       0}
+
 static cmd_t twitch_raw[] = {
   {"CLEARCHAT",     "",     (IntFunc) gotclearchat, "twitch:clearchat"},
   {"HOSTTARGET",    "",     (IntFunc) gothosttarget,"twitch:gothosttarget"},
@@ -566,6 +571,7 @@ static char *twitch_close()
   rem_builtins(H_raw, twitch_raw);
   rem_builtins(H_rawt, twitch_rawt);
   rem_tcl_commands(mytcl);
+  rem_tcl_ints(my_tcl_ints);
   del_bind_table(H_ccht);
   del_bind_table(H_cmsg);
   del_bind_table(H_htgt);
@@ -633,5 +639,6 @@ char *twitch_start(Function *global_funcs)
   add_builtins(H_raw, twitch_raw);
   add_builtins(H_rawt, twitch_rawt);
   add_tcl_commands(mytcl);
+  add_tcl_ints(my_tcl_ints);
   return NULL;
 }
