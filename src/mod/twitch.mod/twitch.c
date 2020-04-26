@@ -49,6 +49,7 @@ static Function *global = NULL, *server_funcs = NULL;
 static p_tcl_bind_list H_ccht, H_cmsg, H_htgt, H_wspr, H_rmst, H_usst;
 
 twitchchan_t *twitchchan = NULL;
+static int keepnick;
 
 /* Calculate the memory we keep allocated.
  */
@@ -543,9 +544,8 @@ static tcl_cmds mytcl[] = {
   {NULL,        NULL}
 };
 
-/* For thommey ! */
 static tcl_ints my_tcl_ints[] = {
-  {"keep-nick",         &keepnick,                  0},
+  {"keep-nick",         &keepnick,        STR_PROTECT},
   {NULL,                NULL,                       0}
 
 static cmd_t twitch_raw[] = {
@@ -604,6 +604,8 @@ char *twitch_start(Function *global_funcs)
    */
   global = global_funcs;
 
+  keepnick = 0;
+
   Context;
   /* Register the module. */
   module_register(MODULE_NAME, twitch_table, 0, 1);
@@ -634,6 +636,8 @@ char *twitch_start(Function *global_funcs)
   H_rmst = add_bind_table("rmst", HT_STACKABLE, twitch_2char);
   H_usst = add_bind_table("usst", HT_STACKABLE, twitch_2char);
 
+  Tcl_SetVar(interp, "keep-nick", "0", 0);  /* keep-nick causes ISONs to be
+                                             * sent, which are not supported */
   /* Add command table to bind list */
   add_builtins(H_dcc, mydcc);
   add_builtins(H_raw, twitch_raw);
