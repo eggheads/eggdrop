@@ -117,16 +117,16 @@ static int cmd_userstate(struct userrec *u, int idx, char *par) {
  * associated with the key provided.
  */
 char *get_value(char *dict, char *key) {
-  char *ptr, s[8092];
+  char *ptr, *ptr2, s[8092];
   strcpy(s, dict);
   ptr = strstr(s, key);                  /* Get ptr to key */
-    if (!ptr) {
-      return NULL;
-    }
-  strtok(ptr, " ");                      /* Move to value */
-    if (!ptr) {
-      return NULL;
-    }
+  if (!ptr) {
+    return NULL;
+  }
+  ptr2 = strtok(ptr, " ");                      /* Move to value */
+  if (!ptr2) {
+    return NULL;
+  }
   return strtok(NULL, " ");              /* Return null-term'd value for key */
 }
 
@@ -136,21 +136,21 @@ static int check_tcl_clearchat(char *chan, char *nick) {
   struct flag_record fr = { FR_GLOBAL | FR_CHAN, 0, 0, 0, 0, 0 };
 
   snprintf(mask, sizeof mask, "%s %s", chan, nick);
-  Tcl_SetVar(interp, "_ccht1", chan, 0);
-  Tcl_SetVar(interp, "_ccht2", nick ? (char *) nick : "", 0);
+  Tcl_SetVar(interp, "_ccht1", nick ? (char *) nick : "", 0);
+  Tcl_SetVar(interp, "_ccht2", chan, 0);
   x = check_tcl_bind(H_ccht, mask, &fr, " $_ccht1 $_ccht2",
         MATCH_MASK | BIND_STACKABLE);
   return (x == BIND_EXEC_LOG);
 }
 
-static int check_tcl_clearmsg(char *chan, char *nick, char *msgid, char *msg) {
+static int check_tcl_clearmsg(char *nick, char *chan, char *msgid, char *msg) {
   int x;
   char mask[1024];
   struct flag_record fr = { FR_GLOBAL | FR_CHAN, 0, 0, 0, 0, 0 };
 
   snprintf(mask, sizeof mask, "%s %s", chan, nick);
-  Tcl_SetVar(interp, "_cmsg1", chan, 0);
-  Tcl_SetVar(interp, "_cmsg2", nick, 0);
+  Tcl_SetVar(interp, "_cmsg1", nick, 0);
+  Tcl_SetVar(interp, "_cmsg2", chan, 0);
   Tcl_SetVar(interp, "_cmsg3", msgid, 0);
   Tcl_SetVar(interp, "_cmsg4", msg, 0);
   x = check_tcl_bind(H_cmsg, mask, &fr, " $_cmsg1 $_cmsg2 $_cmsg3 $_cmsg4",
@@ -164,8 +164,8 @@ static int check_tcl_hosttarget(char *chan, char *nick, char *viewers) {
   struct flag_record fr = { FR_GLOBAL | FR_CHAN, 0, 0, 0, 0, 0 };
 
   snprintf(mask, sizeof mask, "%s %s", chan, nick);
-  Tcl_SetVar(interp, "_htgt1", chan, 0);
-  Tcl_SetVar(interp, "_htgt2", nick, 0);
+  Tcl_SetVar(interp, "_htgt1", nick, 0);
+  Tcl_SetVar(interp, "_htgt2", chan, 0);
   Tcl_SetVar(interp, "_htgt3", viewers, 0);
   x = check_tcl_bind(H_htgt, mask, &fr, " $_htgt1 $_htgt2 $_htgt3",
         MATCH_MASK | BIND_STACKABLE);
@@ -174,15 +174,16 @@ static int check_tcl_hosttarget(char *chan, char *nick, char *viewers) {
 }
 
 static int check_tcl_whisper(char *from, char *msg) {
-  char buf[UHOSTMAX], *uhost=buf, *nick, mask[1024];
+  char buf[UHOSTMAX], *uhost=buf, *nick, *hand, mask[1024];
   struct flag_record fr = { FR_GLOBAL | FR_CHAN, 0, 0, 0, 0, 0 };
-  struct userrec *u;
+  struct userrec *u = NULL;
   int x;
 
-  strlcpy(uhost, from, sizeof uhost);
+  strlcpy(uhost, from, sizeof buf);
   nick = splitnick(&uhost);
+  get_user_flagrec(u, &fr, NULL);
   u = get_user_by_host(from);
-  char *hand = u ? u->handle : "*";
+  hand = (u ? u->handle : "*");
   Tcl_SetVar(interp, "_wspr1", nick, 0);
   Tcl_SetVar(interp, "_wspr2", uhost, 0);
   Tcl_SetVar(interp, "_wspr3", hand, 0);
@@ -221,14 +222,14 @@ static int gotwhisper(char *from, char *msg, char *tags) {
 }
 
 static int gotclearmsg(char *from, char *msg, char *tags) {
-  char *nick, *chan, *msgid;
+  char nick[NICKMAX], *chan, *msgid;
   
   chan = newsplit(&msg);
   fixcolon(msg);
-  nick = get_value(tags, "login");
+  strncpy(nick, get_value(tags, "login"), sizeof nick);
   msgid = get_value(tags, "target-msg-id");
   putlog(LOG_SERV, "*", "* TWITCH: Cleared message %s from %s", msgid, nick);
-  check_tcl_clearmsg(chan, nick, msgid, msg);
+  check_tcl_clearmsg(nick, chan, msgid, msg);
   return 0;
 }
 
@@ -330,7 +331,7 @@ static int gotroomstate(char *from, char *msg, char *tags) {
   }
   strcpy(s, tags);
   ptr = strtok(s, " ");
-  while (ptr != NULL) {                   /* Go through the tag-msg and upate */
+  while (ptr != NULL) {                   /* Go through the tag-msg and update*/
     if (!strcmp(ptr, "emote-only")) {     /* roomstate values present         */
       ptr = strtok(NULL, " ");
       if (chan->emote_only != atol(ptr)) {
@@ -371,8 +372,8 @@ static int gotroomstate(char *from, char *msg, char *tags) {
         chan->slow = atol(ptr);
       }
     }
-    check_tcl_roomstate(channame, tags);
-    ptr = strtok(NULL, " ");
+    check_tcl_roomstate(channame, tags); /* Inside; TODO check each value changed? */
+    ptr = strtok(NULL, " ");            /* Advance to the next tag found */
   }
   return 0;
 }
@@ -514,6 +515,18 @@ static int twitch_2char STDVAR
   return TCL_OK;
 }
 
+static int twitch_cmsg STDVAR
+{
+  Function F = (Function) cd;
+
+  BADARGS(5, 5, " nick chan msgid msg");
+
+  CHECKVALIDITY(twitch_cmsg);
+  F(argv[1], argv[2], argv[3], argv[4]);
+  return TCL_OK;
+}
+
+
 /* A report on the module status.
  *
  * details is either 0 or 1:
@@ -547,6 +560,7 @@ static tcl_cmds mytcl[] = {
 static tcl_ints my_tcl_ints[] = {
   {"keep-nick",         &keepnick,        STR_PROTECT},
   {NULL,                NULL,                       0}
+};
 
 static cmd_t twitch_raw[] = {
   {"CLEARCHAT",     "",     (IntFunc) gotclearchat, "twitch:clearchat"},
@@ -630,7 +644,7 @@ char *twitch_start(Function *global_funcs)
 */
 
   H_ccht = add_bind_table("ccht", HT_STACKABLE, twitch_2char);
-  H_cmsg = add_bind_table("cmsg", HT_STACKABLE, twitch_2char);
+  H_cmsg = add_bind_table("cmsg", HT_STACKABLE, twitch_cmsg);
   H_htgt = add_bind_table("htgt", HT_STACKABLE, twitch_2char);
   H_wspr = add_bind_table("wspr", HT_STACKABLE, twitch_2char);
   H_rmst = add_bind_table("rmst", HT_STACKABLE, twitch_2char);
