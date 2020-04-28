@@ -15,6 +15,24 @@ consequences.
 This list is accurate for Eggdrop v1.9.0, the minimum version for which Twitch
 functionality is possible.
 
+Commands
+--------
+
+^^^^^^^^^^^^^^^^^^^
+userstate <channel>
+^^^^^^^^^^^^^^^^^^^
+
+  Description: provides current userstate for the Eggdrop on the given channel.
+
+  Returns: a dict containing key/value pairs for userstate values.
+
+^^^^^^^^^^^^^^^^^^^
+roomstate <channel>
+^^^^^^^^^^^^^^^^^^^
+
+  Description: provides current roomstate of a channel Eggdrop is on.
+
+  Returns: a dict containing key/value pairs for roomstate values.
 
 Binds
 -----
