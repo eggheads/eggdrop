@@ -46,7 +46,7 @@
 #undef global
 static Function *global = NULL, *server_funcs = NULL;
 
-static p_tcl_bind_list H_ccht, H_cmsg, H_htgt, H_wspr, H_rmst, H_usst;
+static p_tcl_bind_list H_ccht, H_cmsg, H_htgt, H_wspr, H_wspm, H_rmst, H_usst;
 
 twitchchan_t *twitchchan = NULL;
 static int keepnick;
@@ -135,7 +135,8 @@ static int check_tcl_clearchat(char *chan, char *nick) {
   char mask[1024];
   struct flag_record fr = { FR_GLOBAL | FR_CHAN, 0, 0, 0, 0, 0 };
 
-  snprintf(mask, sizeof mask, "%s %s", chan, nick);
+  snprintf(mask, sizeof mask, "%s %s!%s@%s.tmi.twitch.tv",
+                                chan, nick, nick, nick);
   Tcl_SetVar(interp, "_ccht1", nick ? (char *) nick : "", 0);
   Tcl_SetVar(interp, "_ccht2", chan, 0);
   x = check_tcl_bind(H_ccht, mask, &fr, " $_ccht1 $_ccht2",
@@ -148,7 +149,8 @@ static int check_tcl_clearmsg(char *nick, char *chan, char *msgid, char *msg) {
   char mask[1024];
   struct flag_record fr = { FR_GLOBAL | FR_CHAN, 0, 0, 0, 0, 0 };
 
-  snprintf(mask, sizeof mask, "%s %s", chan, nick);
+  snprintf(mask, sizeof mask, "%s %s!%s@%s.tmi.twitch.tv",
+                                chan, nick, nick, nick);
   Tcl_SetVar(interp, "_cmsg1", nick, 0);
   Tcl_SetVar(interp, "_cmsg2", chan, 0);
   Tcl_SetVar(interp, "_cmsg3", msgid, 0);
@@ -173,8 +175,8 @@ static int check_tcl_hosttarget(char *chan, char *nick, char *viewers) {
   return (x == BIND_EXEC_LOG);
 }
 
-static int check_tcl_whisper(char *from, char *msg) {
-  char buf[UHOSTMAX], *uhost=buf, *nick, *hand, mask[1024];
+static int check_tcl_whisper(char *from, char *cmd, char *msg) {
+  char buf[UHOSTMAX], *uhost=buf, *nick, *hand;
   struct flag_record fr = { FR_GLOBAL | FR_CHAN, 0, 0, 0, 0, 0 };
   struct userrec *u = NULL;
   int x;
@@ -188,7 +190,31 @@ static int check_tcl_whisper(char *from, char *msg) {
   Tcl_SetVar(interp, "_wspr2", uhost, 0);
   Tcl_SetVar(interp, "_wspr3", hand, 0);
   Tcl_SetVar(interp, "_wspr4", msg, 0);
-  x = check_tcl_bind(H_wspr, mask, &fr, " $_wspr1 $_wspr2 $_wspr3 $_wspr4",
+  x = check_tcl_bind(H_wspr, cmd, &fr, " $_wspr1 $_wspr2 $_wspr3 $_wspr4",
+        MATCH_MASK | BIND_STACKABLE);
+  return (x == BIND_EXEC_LOG);
+}
+
+static int check_tcl_whisperm(char *from, char *cmd, char *msg) {
+  char buf[UHOSTMAX], args[MSGMAX], *uhost=buf, *nick, *hand;
+  struct flag_record fr = { FR_GLOBAL | FR_CHAN, 0, 0, 0, 0, 0 };
+  struct userrec *u = NULL;
+  int x;
+
+  strlcpy(uhost, from, sizeof buf);
+  nick = splitnick(&uhost);
+  if (msg[0])                       /* Re-attach the cmd to the msg */
+    simple_sprintf(args, "%s %s", cmd, msg);
+  else
+    strlcpy(args, cmd, sizeof args);
+  get_user_flagrec(u, &fr, NULL);
+  u = get_user_by_host(from);
+  hand = (u ? u->handle : "*");
+  Tcl_SetVar(interp, "_wspm1", nick, 0);
+  Tcl_SetVar(interp, "_wspm2", uhost, 0);
+  Tcl_SetVar(interp, "_wspm3", hand, 0);
+  Tcl_SetVar(interp, "_wspm4", args, 0);
+  x = check_tcl_bind(H_wspm, args, &fr, " $_wspm1 $_wspm2 $_wspm3 $_wspm4",
         MATCH_MASK | BIND_STACKABLE);
   return (x == BIND_EXEC_LOG);
 }
@@ -198,7 +224,7 @@ static int check_tcl_roomstate(char *chan, char *tags) {
 
   Tcl_SetVar(interp, "_rmst1", chan, 0);
   Tcl_SetVar(interp, "_rmst2", tags, 0);
-  x = check_tcl_bind(H_rmst, NULL, NULL, " $_rmst1 $_rmst2",
+  x = check_tcl_bind(H_rmst, chan, NULL, " $_rmst1 $_rmst2",
         MATCH_MASK | BIND_STACKABLE);
   return (x == BIND_EXEC_LOG);
 }
@@ -214,10 +240,19 @@ static int check_tcl_userstate(char *chan, char *tags) {
 }
 
 static int gotwhisper(char *from, char *msg, char *tags) {
+  int result = 0;
+  char *code;
+
   newsplit(&msg);    /* Get rid of my own nick */
   fixcolon(msg);
-  putlog(LOG_MSGS, "*", "[%s] %s", from, msg);
-  check_tcl_whisper(from, msg);
+  code = newsplit(&msg); /* In case whisperm bind */
+  rmspace(msg);
+
+  result = check_tcl_whisperm(from, code, msg);
+  if (!result) {
+    check_tcl_whisper(from, code, msg);
+  }
+  putlog(LOG_MSGS, "*", "[%s] %s %s", from, code, msg);
   return 0; 
 }
 
@@ -228,8 +263,8 @@ static int gotclearmsg(char *from, char *msg, char *tags) {
   fixcolon(msg);
   strncpy(nick, get_value(tags, "login"), sizeof nick);
   msgid = get_value(tags, "target-msg-id");
-  putlog(LOG_SERV, "*", "* TWITCH: Cleared message %s from %s", msgid, nick);
   check_tcl_clearmsg(nick, chan, msgid, msg);
+  putlog(LOG_SERV, "*", "* TWITCH: Cleared message %s from %s", msgid, nick);
   return 0;
 }
 
@@ -240,12 +275,12 @@ putlog(LOG_DEBUG, "*", "TWITCH: from is %s msg is %s", from, msg);
   chan = newsplit(&msg);
   fixcolon(msg);
   nick = newsplit(&msg);
+  check_tcl_clearchat(chan, nick);
   if (!strlen(nick)) {
     putlog(LOG_SERV, "*", "* TWITCH: Chat logs cleared on %s", chan);
   } else {
     putlog(LOG_SERV, "*", "* TWITCH: Chat logs cleared on %s for user %s", chan, nick);
   }
-  check_tcl_clearchat(chan, nick);
   return 0;
 }
 
@@ -260,13 +295,13 @@ putlog(LOG_DEBUG, "*", "TWITCH: hosttarget from is %s msg is %s", msg);
   if (viewers) {
     sprintf(s, " (Viewers: %s)", viewers);
   }
+  check_tcl_hosttarget(chan, nick, viewers);
   if (nick[0] == '-') {             /* Check if it is an unhost */
     putlog(LOG_SERV, "*", "* TWITCH: %s has stopped host mode.", chan);
   } else {   
     putlog(LOG_SERV, "*", "* TWITCH: %s has started hosting %s%s",
             chan, nick, (viewers) ? s : "");
   }
-  check_tcl_hosttarget(chan, nick, viewers);
   return 0;
 }
 
@@ -372,9 +407,9 @@ static int gotroomstate(char *from, char *msg, char *tags) {
         chan->slow = atol(ptr);
       }
     }
-    check_tcl_roomstate(channame, tags); /* Inside; TODO check each value changed? */
     ptr = strtok(NULL, " ");            /* Advance to the next tag found */
   }
+  check_tcl_roomstate(channame, tags);
   return 0;
 }
 
@@ -590,6 +625,7 @@ static char *twitch_close()
   del_bind_table(H_cmsg);
   del_bind_table(H_htgt);
   del_bind_table(H_wspr);
+  del_bind_table(H_wspm);
   del_bind_table(H_rmst);
   del_bind_table(H_usst);
   module_undepend(MODULE_NAME);
@@ -607,6 +643,7 @@ static Function twitch_table[] = {
   (Function) & H_cmsg,
   (Function) & H_htgt,
   (Function) & H_wspr,
+  (Function) & H_wspm,
   (Function) & H_rmst,
   (Function) & H_usst
 };
@@ -647,6 +684,7 @@ char *twitch_start(Function *global_funcs)
   H_cmsg = add_bind_table("cmsg", HT_STACKABLE, twitch_cmsg);
   H_htgt = add_bind_table("htgt", HT_STACKABLE, twitch_2char);
   H_wspr = add_bind_table("wspr", HT_STACKABLE, twitch_2char);
+  H_wspm = add_bind_table("wspm", HT_STACKABLE, twitch_2char);
   H_rmst = add_bind_table("rmst", HT_STACKABLE, twitch_2char);
   H_usst = add_bind_table("usst", HT_STACKABLE, twitch_2char);
 
