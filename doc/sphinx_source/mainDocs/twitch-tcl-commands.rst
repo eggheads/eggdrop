@@ -54,15 +54,15 @@ Flags
 Most of the following binds have "flags" listed as an argument for the bind. Flags represents a flagmask that the user, if found, must match in order for the bind to trigger. Example flag masks are:
 
 +-------+---------------------------------------------------------------------------------------+
-| -     | Matches any user existing in Eggdrop's internal user list (added to the bot)          |
+| \-    | Matches any user existing in Eggdrop's internal user list (added to the bot)          |
 +-------+---------------------------------------------------------------------------------------+
-| *     | Matches any user, doesn't need to be added to Eggdrop                                 |
+| \*    | Matches any user, doesn't need to be added to Eggdrop                                 |
 +-------+---------------------------------------------------------------------------------------+
 | +o    | Matches a user with the global 'o' flag added to their handle on the Eggdrop          |
 +-------+---------------------------------------------------------------------------------------+
 | \|+f  | Matches a user with the 'f' flag added on a channel to their handle on the Eggdrop    |
 +-------+---------------------------------------------------------------------------------------+
-| +m|+m | Matches a user with the 'f' flag added either globally or on a channel on the Eggdrop |
+| +m|+m | Matches a user with the 'm' flag added either globally or on a channel on the Eggdrop |
 +-------+---------------------------------------------------------------------------------------+
 
 ^^^^^^^^^^
