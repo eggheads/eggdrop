@@ -18,6 +18,17 @@ functionality is possible.
 Commands
 --------
 
+^^^^^^^^^^^
+twcmd <chan> <cmd> [arg]
+^^^^^^^^^^^
+
+  Description: sends cmd to the server, prefixed with a '/'. This is replicates
+  the web UI functionality of sending commands such as /vip or /subscribers. Do
+  not include a '/' in the cmd. arg, if required, is a single argument, so
+  enclose multiple strings in quotes. Example: twcmd timeout "badguy 100"
+
+  Returns: 0 if command is successfully sent to the Twitch server, 1 on failure
+
 ^^^^^^^^^^^^^^^^^^^
 userstate <channel>
 ^^^^^^^^^^^^^^^^^^^

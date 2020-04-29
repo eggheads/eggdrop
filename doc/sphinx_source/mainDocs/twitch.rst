@@ -17,7 +17,7 @@ We should also make clear that Eggdrop is in no way affiliated with Twitch in an
 Registering with Twitch
 ***********************
 #. Register an account with Twitch. At the time of writing, this is done by visiting `Twitch <http://twitch.tv/>`_ and clicking on the Sign Up button.
-#. Generate a token to authenticate your bot with Twitch. At the time of writing, this is done by visiting the `Twitch OAuth generator <https://twitchapps.com/tmi/>`_ while logged in to the account you just created. The token will be an alphanumeric string and should be trated like a password (...because it is). Make note of it, and keep it safe!
+#. Generate a token to authenticate your bot with Twitch. At the time of writing, this is done by visiting the `Twitch OAuth generator <https://twitchapps.com/tmi/>`_ while logged in to the account you just created. The token will be an alphanumeric string and should be treated like a password (...because it is). Make note of it, and keep it safe!
 
 ***********************
 Editing the config file
@@ -29,11 +29,7 @@ Editing the config file
 
 Make sure you leave the 'oauth:' there, including the ':'.
 
-2. Find ``set cap-request`` setting in the CAP section of the config file. We want to negotiate the ability to use Twitch-specific capabilities with the server, so edit that line so it looks like this::
-
-    set cap-request "twitch.tv/commands twitch.tv/membership twitch.tv/tags"
-
-#. Find the keep-nick setting below the CAP section of the config file, and set it to 0.
+#. Spoiler alert- this step tells you to do nothing, but we're including it for the sake of thoroughness. We know you are the ideal IRC user and have read all the docs for Twitch already, and noticed that Eggdrop has to request capabilities from the Twitch via a CAP request, something that is normally set in the config file. Good news! The Twitch module does this for you already, automatically. No need to edit the ``cap-request`` setting in the config. Moving on!
 
 #. Find the Twitch section of the config file, and enable the loading of the twitch module by removing the '#' in front of the loadmodule command. It should look like this when you are done::
 
