@@ -221,20 +221,24 @@ static int check_tcl_whisperm(char *from, char *cmd, char *msg) {
 
 static int check_tcl_roomstate(char *chan, char *tags) {
   int x;
+  char mask[TOTALTAGMAX + 200]; /* tags + channel */
 
+  snprintf(mask, sizeof mask, "%s %s", chan, tags);
   Tcl_SetVar(interp, "_rmst1", chan, 0);
   Tcl_SetVar(interp, "_rmst2", tags, 0);
-  x = check_tcl_bind(H_rmst, chan, NULL, " $_rmst1 $_rmst2",
+  x = check_tcl_bind(H_rmst, mask, NULL, " $_rmst1 $_rmst2",
         MATCH_MASK | BIND_STACKABLE);
   return (x == BIND_EXEC_LOG);
 }
 
 static int check_tcl_userstate(char *chan, char *tags) {
   int x;
+  char mask[TOTALTAGMAX + 200]; /* tags + channel */
 
+  snprintf(mask, sizeof mask, "%s %s", chan, tags);
   Tcl_SetVar(interp, "_usst1", chan, 0);
   Tcl_SetVar(interp, "_usst2", tags, 0);
-  x = check_tcl_bind(H_usst, NULL, NULL, " $_usst1 $_usst2",
+  x = check_tcl_bind(H_usst, mask, NULL, " $_usst1 $_usst2",
         MATCH_MASK | BIND_STACKABLE);
   return (x == BIND_EXEC_LOG);
 }

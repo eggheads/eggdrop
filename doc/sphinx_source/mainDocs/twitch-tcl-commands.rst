@@ -117,7 +117,7 @@ The following is a list of bind types and how they work. Below each bind type is
 
   procname <chan> <tags>
 
-  Description: Called when Eggdrop receives a ROOMSTATE message. ``mask`` is in the format of ``#channel`` and can be ``*``. ``chan`` is the channel Eggdrop received the ROOMSTATE message for, and ``tags`` is a list of key/value pairs provided by the ROOMSTATE message, suitable for use as a Tcl dict.
+  Description: Called when Eggdrop receives a ROOMSTATE message. ``mask`` is in the format of ``#channel keys`` and can use wildcards. For example, to trigger this bind on #eggdrop for any change, you would use ``#eggdroptest *`` as the mask, or to trigger on #eggdrop specifically for the emote-only setting, you would use ``"#eggdrop *emote-only*"`` as the mask. Due to the nature of multiple keys per roomstate and uncertainty of ordering, it is recommended to use multiple binds if you wish to specify multiple key values. ``chan`` is the channel Eggdrop received the ROOMSTATE message for, and ``tags`` is a list of key/value pairs provided by the ROOMSTATE message, suitable for use as a Tcl dict. ``flags`` is ignored.
 
 #. USST (USERSTATE)
 
@@ -125,4 +125,4 @@ The following is a list of bind types and how they work. Below each bind type is
 
   procname <chan> <tags>
 
-  Description: Called when Eggdrop receives a USERSTATE message. ``mask`` is in the format of ``#channel`` and can be ``*``. ``chan`` is the channel Eggdrop received the USERSTATE message for, and ``tags`` is a list of key/value pairs provided in the USERSTATE message, suitable for use as a Tcl dict.
+  Description: Called when Eggdrop receives a USERSTATE message. ``mask`` is in the format of ``#channel keys`` and can use wildcards (see the RMST bind for additional details on format). ``chan`` is the channel Eggdrop received the USERSTATE message for, and ``tags`` is a list of key/value pairs provided in the USERSTATE message, suitable for use as a Tcl dict. ``flags`` is ignored.
