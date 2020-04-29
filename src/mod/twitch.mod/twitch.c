@@ -550,6 +550,17 @@ static int twitch_2char STDVAR
   return TCL_OK;
 }
 
+static int twitch_3char STDVAR
+{
+  Function F = (Function) cd;
+
+  BADARGS(4, 4, " from msg tags");
+
+  CHECKVALIDITY(twitch_3char);
+  F(argv[1], argv[2], argv[3]);
+  return TCL_OK;
+}
+
 static int twitch_cmsg STDVAR
 {
   Function F = (Function) cd;
@@ -681,12 +692,12 @@ char *twitch_start(Function *global_funcs)
 */
 
   H_ccht = add_bind_table("ccht", HT_STACKABLE, twitch_2char);
-  H_cmsg = add_bind_table("cmsg", HT_STACKABLE, twitch_cmsg);
+  H_cmsg = add_bind_table("cmsg", HT_STACKABLE, twitch_3char);
   H_htgt = add_bind_table("htgt", HT_STACKABLE, twitch_2char);
-  H_wspr = add_bind_table("wspr", HT_STACKABLE, twitch_2char);
-  H_wspm = add_bind_table("wspm", HT_STACKABLE, twitch_2char);
-  H_rmst = add_bind_table("rmst", HT_STACKABLE, twitch_2char);
-  H_usst = add_bind_table("usst", HT_STACKABLE, twitch_2char);
+  H_wspr = add_bind_table("wspr", HT_STACKABLE, twitch_3char);
+  H_wspm = add_bind_table("wspm", HT_STACKABLE, twitch_3char);
+  H_rmst = add_bind_table("rmst", HT_STACKABLE, twitch_3char);
+  H_usst = add_bind_table("usst", HT_STACKABLE, twitch_3char);
 
   Tcl_SetVar(interp, "keep-nick", "0", 0);  /* keep-nick causes ISONs to be
                                              * sent, which are not supported */
