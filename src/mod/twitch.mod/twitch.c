@@ -700,6 +700,15 @@ char *twitch_start(Function *global_funcs)
   }
 */
 
+/* Yes, we could hard-code net-type as well, but let's make sure the user isn't
+ * loading the Twitch module by accident- it will really dork up a normal IRC
+ * server and would be difficult to troubleshoot with a user.
+ */
+  if (net_type_int != NETT_TWITCH) {
+    fatal("ERROR: ATTEMPTED TO LOAD TWITCH MODULE WITH INCORRECT NET-TYPE SET\n"
+          "  Please check net-type in config and try again", 0);
+  }
+
   H_ccht = add_bind_table("ccht", HT_STACKABLE, twitch_2char);
   H_cmsg = add_bind_table("cmsg", HT_STACKABLE, twitch_3char);
   H_htgt = add_bind_table("htgt", HT_STACKABLE, twitch_2char);
