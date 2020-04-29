@@ -50,6 +50,7 @@ static p_tcl_bind_list H_ccht, H_cmsg, H_htgt, H_wspr, H_wspm, H_rmst, H_usst;
 
 twitchchan_t *twitchchan = NULL;
 static int keepnick;
+static char cap_request[55];
 
 /* Calculate the memory we keep allocated.
  */
@@ -612,6 +613,11 @@ static tcl_ints my_tcl_ints[] = {
   {NULL,                NULL,                       0}
 };
 
+static tcl_strings my_tcl_strings[] = {
+  {"cap-request",   cap_request,    55,     STR_PROTECT},
+  {NULL,            NULL,           0,                0}
+};
+
 static cmd_t twitch_raw[] = {
   {"CLEARCHAT",     "",     (IntFunc) gotclearchat, "twitch:clearchat"},
   {"HOSTTARGET",    "",     (IntFunc) gothosttarget,"twitch:gothosttarget"},
@@ -669,7 +675,6 @@ char *twitch_start(Function *global_funcs)
    * functions defined in src/mod/modules.h
    */
   global = global_funcs;
-
   keepnick = 0;
 
   Context;
@@ -703,6 +708,9 @@ char *twitch_start(Function *global_funcs)
   H_rmst = add_bind_table("rmst", HT_STACKABLE, twitch_3char);
   H_usst = add_bind_table("usst", HT_STACKABLE, twitch_3char);
 
+/* Override config setting with these values; they are required for Twitch */
+  Tcl_SetVar(interp, "cap-request",
+        "twitch.tv/commands twitch.tv/membership twitch.tv/tags", 0);
   Tcl_SetVar(interp, "keep-nick", "0", 0);  /* keep-nick causes ISONs to be
                                              * sent, which are not supported */
   /* Add command table to bind list */
@@ -711,5 +719,6 @@ char *twitch_start(Function *global_funcs)
   add_builtins(H_rawt, twitch_rawt);
   add_tcl_commands(mytcl);
   add_tcl_ints(my_tcl_ints);
+  add_tcl_strings(my_tcl_strings);
   return NULL;
 }
