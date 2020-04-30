@@ -326,30 +326,27 @@ static int gotuserstate(char *from, char *chan, char *tags) {
     if (!strcmp(ptr, "badge-info")) {
       ptr = strtok(NULL, " ");
       tchan->userstate.badge_info = atol(ptr);
-    }
-    if (!strcmp(ptr, "badges")) {
+    } else if (!strcmp(ptr, "badges")) {
       ptr = strtok(NULL, " ");
       strlcpy(tchan->userstate.badges, ptr,
             sizeof tchan->userstate.badges);
-    }
-    if (!strcmp(ptr, "color")) {
+    } else if (!strcmp(ptr, "color")) {
       ptr = strtok(NULL, " ");
       strlcpy(tchan->userstate.color, ptr,
             sizeof tchan->userstate.display_name);
-    }
-    if (!strcmp(ptr, "display-name")) {
+    } else if (!strcmp(ptr, "display-name")) {
       ptr = strtok(NULL, " ");
       strlcpy(tchan->userstate.display_name, ptr,
             sizeof tchan->userstate.display_name);
-    }
-    if (!strcmp(ptr, "emote-sets")) {
+    } else if (!strcmp(ptr, "emote-sets")) {
       ptr = strtok(NULL, " ");
       strlcpy(tchan->userstate.emote_sets, ptr,
             sizeof tchan->userstate.emote_sets);
-    }
-    if (!strcmp(ptr, "mod")) {
+    } else if (!strcmp(ptr, "mod")) {
       ptr = strtok(NULL, " ");
       tchan->userstate.mod = atol(ptr);
+    } else {
+      ptr = strtok(NULL, " ");
     }
     ptr = strtok(NULL, " ");
   }
@@ -379,38 +376,36 @@ static int gotroomstate(char *from, char *msg, char *tags) {
             ptr);
         chan->emote_only = atol(ptr);
       }
-    }
-    if (!strcmp(ptr, "followers-only")) {
+    } else if (!strcmp(ptr, "followers-only")) {
       ptr = strtok(NULL, " ");
       if (chan->followers_only != atol(ptr)) {
         putlog(LOG_SERV, "*", "* TWITCH: Roomstate 'followers-only' changed to %s",
             ptr);
         chan->followers_only = atol(ptr);
       }
-    }
-    if (!strcmp(ptr, "r9k")) {
+    } else if (!strcmp(ptr, "r9k")) {
       ptr = strtok(NULL, " ");
       if (chan->r9k != atol(ptr)) {
         putlog(LOG_SERV, "*", "* TWITCH: Roomstate 'r9k' changed to %s",
             ptr);
         chan->r9k = atol(ptr);
       }
-    }
-    if (!strcmp(ptr, "subs-only")) {
+    } else if (!strcmp(ptr, "subs-only")) {
       ptr = strtok(NULL, " ");
       if (chan->subs_only != atol(ptr)) {
         putlog(LOG_SERV, "*", "* TWITCH: Roomstate 'subs-only' changed to %s",
             ptr);
         chan->subs_only = atol(ptr);
       }
-    }
-    if (!strcmp(ptr, "slow")) {
+    } else if (!strcmp(ptr, "slow")) {
       ptr = strtok(NULL, " ");
       if (chan->slow != atol(ptr)) {
         putlog(LOG_SERV, "*", "* TWITCH: Roomstate 'slow' changed to %s",
             ptr);
         chan->slow = atol(ptr);
       }
+    } else {
+      ptr = strtok(NULL, " ");
     }
     ptr = strtok(NULL, " ");            /* Advance to the next tag found */
   }
