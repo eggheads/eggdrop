@@ -21,8 +21,6 @@ package require Tcl 8.5
 package require http
 package require json
 
-set keep-nick 0
-
 proc twitch:getwebuser {chan} {
   set handle [::http::geturl http://tmi.twitch.tv/group/user/$chan/chatters]
   set body [::http::data $handle]
