@@ -1440,7 +1440,6 @@ static int handle_sasl_timeout()
 /* Got AWAY message; only valid for IRCv3 away-notify capability */
 static int gotawayv3(char *from, char *msg)
 {
-<<<<<<< HEAD
   struct userrec *u;
   struct chanset_t *chan;
   memberlist *m;
@@ -1458,18 +1457,12 @@ static int gotawayv3(char *from, char *msg)
       check_tcl_awayv3(nick, from, mask, u, chname, msg);
     }
   }
-=======
->>>>>>> develop
   if (strlen(msg)) {
     fixcolon(msg);
     putlog(LOG_SERV, "*", "%s is now away: %s", from, msg);
   } else {
     putlog(LOG_SERV, "*", "%s has returned from away status", from);
   }
-<<<<<<< HEAD
-=======
-  check_tcl_awayv3(from, msg);
->>>>>>> develop
   return 0;
 }
 
