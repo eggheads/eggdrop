@@ -2286,7 +2286,7 @@ char *server_start(Function *global_funcs)
                traced_nicklen, NULL);
 
   H_wall = add_bind_table("wall", HT_STACKABLE, server_2char);
-  H_awayv3 = add_bind_table("awy3", HT_STACKABLE, server_2char);
+  H_awayv3 = add_bind_table("awy3", HT_STACKABLE, server_5char);
   H_raw = add_bind_table("raw", HT_STACKABLE, server_raw);
   H_rawt = add_bind_table("rawt", HT_STACKABLE, server_tag);
   H_notc = add_bind_table("notc", HT_STACKABLE, server_5char);
