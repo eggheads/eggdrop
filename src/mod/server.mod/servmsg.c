@@ -855,19 +855,20 @@ static void got303(char *from, char *msg)
  */
 static int got432(char *from, char *msg)
 {
-  char *erroneous;
+  char *erroneous, nick[nick_len + 1];
 
   newsplit(&msg);
   erroneous = newsplit(&msg);
   if (server_online)
-    putlog(LOG_MISC, "*", "NICK IS INVALID: %s (keeping '%s').", erroneous,
+    putlog(LOG_MISC, "*", "NICK IS INVALID: '%s' (keeping '%s').", erroneous,
            botname);
   else {
     putlog(LOG_MISC, "*", IRC_BADBOTNICK);
     if (!keepnick) {
-      makepass(erroneous);
-      erroneous[NICKMAX] = 0;
-      dprintf(DP_MODE, "NICK %s\n", erroneous);
+      make_rand_str_from_chars(nick, sizeof nick - 1, CHARSET_ALPHA);
+      putlog(LOG_MISC, "*", "NICK IS INVALID: '%s' (using '%s' instead)",
+              erroneous, nick);
+      dprintf(DP_MODE, "NICK %s\n", nick);
     }
     return 0;
   }
@@ -1253,7 +1254,7 @@ static int tryauthenticate(char *from, char *msg)
 #ifdef HAVE_EVP_PKEY_GET1_EC_KEY
   EC_KEY *eckey;
   int ret;
-  size_t olen;
+  int olen;
   unsigned int olen2;
   unsigned char *dst2;
   FILE *fp;
@@ -1439,6 +1440,7 @@ static int handle_sasl_timeout()
 /* Got AWAY message; only valid for IRCv3 away-notify capability */
 static int gotawayv3(char *from, char *msg)
 {
+<<<<<<< HEAD
   struct userrec *u;
   struct chanset_t *chan;
   memberlist *m;
@@ -1456,12 +1458,18 @@ static int gotawayv3(char *from, char *msg)
       check_tcl_awayv3(nick, from, mask, u, chname, msg);
     }
   }
+=======
+>>>>>>> develop
   if (strlen(msg)) {
     fixcolon(msg);
     putlog(LOG_SERV, "*", "%s is now away: %s", from, msg);
   } else {
     putlog(LOG_SERV, "*", "%s has returned from away status", from);
   }
+<<<<<<< HEAD
+=======
+  check_tcl_awayv3(from, msg);
+>>>>>>> develop
   return 0;
 }
 
