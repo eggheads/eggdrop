@@ -1451,7 +1451,6 @@ static int gotawayv3(char *from, char *msg)
   /* Run the bind for each channel the user is on */
   for (chan = chanset; chan; chan = chan->next) {
     chname = chan->dname;
-    m = ismember(chan, nick);
     if ((m = ismember(chan, nick))) {
       snprintf(mask, sizeof mask, "%s %s", chname, from);
       check_tcl_awayv3(nick, from, mask, u, chname, msg);
