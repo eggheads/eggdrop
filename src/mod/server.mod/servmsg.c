@@ -264,15 +264,19 @@ static int check_tcl_wall(char *from, char *msg)
   return 1;
 }
 
-static int check_tcl_awayv3(char *from, char *msg)
+static int check_tcl_awayv3(char *nick, char *from, char *mask,
+            struct userrec *u, char *chan, char *msg)
 {
   int x;
+  char *hand = u ? u->handle : "*";
+  struct flag_record fr = { FR_GLOBAL | FR_CHAN | FR_ANYWH, 0, 0, 0, 0, 0 };
 
-  Tcl_SetVar(interp, "_awayv31", from, 0);
-  Tcl_SetVar(interp, "_awayv32", msg ? (char *) msg : "", 0);
-  x = check_tcl_bind(H_awayv3, from, 0, " $_awayv31, $_awayv32",
-                       MATCH_MASK | BIND_STACKABLE);
-
+  Tcl_SetVar(interp, "_awayv31", nick, 0);
+  Tcl_SetVar(interp, "_awayv32", from, 0);
+  Tcl_SetVar(interp, "_awayv33", hand, 0);
+  Tcl_SetVar(interp, "_awayv34", chan, 0);
+  Tcl_SetVar(interp, "_awayv35", msg ? msg : "", 0);
+  x = check_tcl_bind(H_awayv3, mask, &fr, " $_awayv31, $_awayv32 $_awayv33 $_awayv34 $_awayv35", MATCH_MASK | BIND_STACKABLE);
   return (x == BIND_EXEC_LOG);
 }
 
@@ -1434,13 +1438,29 @@ static int handle_sasl_timeout()
 /* Got AWAY message; only valid for IRCv3 away-notify capability */
 static int gotawayv3(char *from, char *msg)
 {
+  struct userrec *u;
+  struct chanset_t *chan;
+  memberlist *m;
+  char mask[1024], buf[MSGMAX], *nick, *s1 = buf, *chname;
+
+  strlcpy(s1, from, sizeof buf);
+  nick = splitnick(&s1);
+  u = get_user_by_host(from);
+  /* Run the bind for each channel the user is on */
+  for (chan = chanset; chan; chan = chan->next) {
+    chname = chan->dname;
+    m = ismember(chan, nick);
+    if ((m = ismember(chan, nick))) {
+      snprintf(mask, sizeof mask, "%s %s", chname, from);
+      check_tcl_awayv3(nick, from, mask, u, chname, msg);
+    }
+  }
   if (strlen(msg)) {
     fixcolon(msg);
     putlog(LOG_SERV, "*", "%s is now away: %s", from, msg);
   } else {
     putlog(LOG_SERV, "*", "%s has returned from away status", from);
   }
-  check_tcl_awayv3(from, msg);
   return 0;
 }
 
