@@ -1442,7 +1442,6 @@ static int gotawayv3(char *from, char *msg)
 {
   struct userrec *u;
   struct chanset_t *chan;
-  memberlist *m;
   char mask[1024], buf[MSGMAX], *nick, *s1 = buf, *chname;
 
   strlcpy(s1, from, sizeof buf);
@@ -1451,7 +1450,7 @@ static int gotawayv3(char *from, char *msg)
   /* Run the bind for each channel the user is on */
   for (chan = chanset; chan; chan = chan->next) {
     chname = chan->dname;
-    if ((m = ismember(chan, nick))) {
+    if (ismember(chan, nick)) {
       snprintf(mask, sizeof mask, "%s %s", chname, from);
       check_tcl_awayv3(nick, from, mask, u, chname, msg);
     }
