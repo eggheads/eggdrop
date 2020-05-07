@@ -276,7 +276,8 @@ static int check_tcl_awayv3(char *nick, char *from, char *mask,
   Tcl_SetVar(interp, "_awayv33", hand, 0);
   Tcl_SetVar(interp, "_awayv34", chan, 0);
   Tcl_SetVar(interp, "_awayv35", msg ? msg : "", 0);
-  x = check_tcl_bind(H_awayv3, mask, &fr, " $_awayv31, $_awayv32 $_awayv33 $_awayv34 $_awayv35", MATCH_MASK | BIND_STACKABLE);
+  x = check_tcl_bind(H_awayv3, mask, &fr, " $_awayv31, $_awayv32 $_awayv33 "
+                        "$_awayv34 $_awayv35", MATCH_MASK | BIND_STACKABLE);
   return (x == BIND_EXEC_LOG);
 }
 
