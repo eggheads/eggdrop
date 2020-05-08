@@ -73,6 +73,16 @@ twitchchan_t *findtchan_by_dname(char *name)
   return NULL;
 }
 
+/* Remove given characters from a string */
+void remove_chars(char* str, char c) {
+    char *pr = str, *pw = str;
+    while (*pr) {
+        *pw = *pr++;
+        pw += (*pw != c);
+    }
+    *pw = '\0';
+}
+
 static int cmd_roomstate(struct userrec *u, int idx, char *par) {
   twitchchan_t *tchan;
 
@@ -244,6 +254,49 @@ static int check_tcl_userstate(char *chan, char *tags) {
   return (x == BIND_EXEC_LOG);
 }
 
+/* Right now, we only use this to do some init stuff for a channel we join
+ * since (are you tired of hearing it yet?) Twitch doesn't do normal IRC stuff
+ */
+static int gotjoin (char *from, char *msg) {
+  char buf[UHOSTLEN], *uhost = buf, *chname, *nick;
+  chname = newsplit(&msg);
+  strlcpy(uhost, from, sizeof buf);
+  nick = splitnick(&uhost);
+  if (match_my_nick(nick)) {
+    /* It was me joining! Let's get a list of mods and vips for the room */
+    dprintf(DP_SERVER, "PRIVMSG %s :/mods", chname);
+    dprintf(DP_SERVER, "PRIVMSG %s :/vips", chname);
+  }
+  return 0;
+}
+
+
+/* We use this to catch lists of mods and vips for a room */
+static int gotnotice (char *from, char *msg, char *tags) {
+  twitchchan_t *tchan;
+  char *chan, *modptr, *vipptr;
+
+  chan = newsplit(&msg);
+  fixcolon(msg);
+  tchan = findtchan_by_dname(chan);
+  /* Check if this is a list of mods */
+  if (!strcmp(tags, "msg-id room_mods")) {
+    modptr = msg + 36; /* Remove "The moderators of this channel are: " */
+    remove_chars(modptr, ',');
+    remove_chars(modptr, '.');
+    strlcpy(tchan->mods, modptr, sizeof tchan->mods);
+putlog(LOG_DEBUG, "*", "The mod list is %s", modptr);
+  } else if (!strcmp(tags, "msg-id vips_success")) {
+    vipptr = msg + 30; /* Remove "The VIPs of this channel are: " from str */
+    remove_chars(vipptr, ',');
+    remove_chars(vipptr, '.');
+    strlcpy(tchan->vips, vipptr, sizeof tchan->vips);
+putlog(LOG_DEBUG, "*", "The mod list is %s", vipptr);
+  }
+  return 0;
+}
+
+
 static int gotwhisper(char *from, char *msg, char *tags) {
   int result = 0;
   char *code;
@@ -360,16 +413,18 @@ static int gotroomstate(char *from, char *msg, char *tags) {
   twitchchan_t *chan;
 
   channame = newsplit(&msg);
-  if (!(chan = findtchan_by_dname(channame))) {  /* Find channel or, if it   */
-    chan = nmalloc(sizeof *chan);                /* doesn't exist, create it */
+  /* Find channel or, if it doesn't exist, create it */
+  if (!(chan = findtchan_by_dname(channame))) {
+    chan = nmalloc(sizeof *chan);
     explicit_bzero(chan, sizeof(twitchchan_t));
     strlcpy(chan->dname, channame, sizeof chan->dname);
     egg_list_append((struct list_type **) &twitchchan, (struct list_type *) chan);
   }
   strcpy(s, tags);
   ptr = strtok(s, " ");
-  while (ptr != NULL) {                   /* Go through the tag-msg and update*/
-    if (!strcmp(ptr, "emote-only")) {     /* roomstate values present         */
+  /* Go through the tag-msg and update roomstate values present */
+  while (ptr != NULL) {
+    if (!strcmp(ptr, "emote-only")) {
       ptr = strtok(NULL, " ");
       if (chan->emote_only != atol(ptr)) {
         putlog(LOG_SERV, "*", "* TWITCH: Roomstate 'emote-only' changed to %s",
@@ -492,6 +547,93 @@ static int tcl_userstate STDVAR {
   return TCL_OK;
 }
 
+static int tcl_twitchmods STDVAR {
+  twitchchan_t *tchan;
+
+  BADARGS(2, 2, " chan");
+
+  if (!(tchan = findtchan_by_dname(argv[1]))) {
+    Tcl_AppendResult(irp, "No such channel", NULL);
+    return TCL_ERROR;
+  }
+  Tcl_AppendResult(irp, tchan->mods, NULL);
+  return TCL_OK;
+}
+
+static int tcl_twitchvips STDVAR {
+  twitchchan_t *tchan;
+
+  BADARGS(2, 2, " chan");
+
+  if (!(tchan = findtchan_by_dname(argv[1]))) {
+    Tcl_AppendResult(irp, "No such channel", NULL);
+    return TCL_ERROR;
+  }
+  Tcl_AppendResult(irp, tchan->vips, NULL);
+  return TCL_OK;
+}
+
+/* Checks if a user is a moderator or not. This differs from normal is* Tcl
+ * cmds, as it does NOT check if the user is on the channel or not, as that
+ * is unreliable on Twitch
+ */
+static int tcl_ismod STDVAR {
+  twitchchan_t *tchan, *thechan=NULL, *tchanset=NULL;
+
+  BADARGS(2, 3, " nick ?channel?");
+
+  if (argc > 2) {
+    tchan = findtchan_by_dname(argv[2]);
+    thechan = tchan;
+    if (!thechan) {
+      Tcl_AppendResult(irp, "illegal channel: ", argv[2], NULL);
+      return TCL_ERROR;
+    }
+  } else
+    tchan = tchanset;
+
+  while (tchan && (thechan == NULL || thechan == tchan)) {
+    if (strtok(argv[2], tchan->mods)) {
+      Tcl_AppendResult(irp, "1", NULL);
+      return TCL_OK;
+    }
+    tchan = tchan->next;
+  }
+  Tcl_AppendResult(irp, "0", NULL);
+  return TCL_OK;
+}
+
+
+/* Checks if a user is a VIP or not. This differs from normal is* Tcl
+ * cmds, as it does NOT check if the user is on the channel or not, as that
+ * is unreliable on Twitch
+ */
+static int tcl_isvip STDVAR {
+  twitchchan_t *tchan, *thechan = NULL, *tchanset = NULL;
+
+  BADARGS(2, 3, " nick ?channel?");
+
+  if (argc > 2) {
+    tchan = findtchan_by_dname(argv[2]);
+    thechan = tchan;
+    if (!thechan) {
+      Tcl_AppendResult(irp, "illegal channel: ", argv[2], NULL);
+      return TCL_ERROR;
+    }
+  } else
+    tchan = tchanset;
+
+  while (tchan && (thechan == NULL || thechan == tchan)) {
+    if (strtok(argv[3], tchan->vips)) {
+      Tcl_AppendResult(irp, "1", NULL);
+      return TCL_OK;
+    }
+    tchan = tchan->next;
+  }
+  Tcl_AppendResult(irp, "0", NULL);
+  return TCL_OK;
+}
+
 
 static int tcl_roomstate STDVAR {
   char s[5];
@@ -525,6 +667,7 @@ static int tcl_roomstate STDVAR {
   Tcl_DStringFree(&rsdict);
   return TCL_OK;
 }
+
 
 static int tcl_twcmd STDVAR {
 
@@ -597,10 +740,14 @@ static cmd_t mydcc[] = {
 };
 
 static tcl_cmds mytcl[] = {
-  {"twcmd", tcl_twcmd},
-  {"roomstate", tcl_roomstate},
-  {"userstate", tcl_userstate},
-  {NULL,        NULL}
+  {"twcmd",           tcl_twcmd},
+  {"roomstate",   tcl_roomstate},
+  {"userstate",   tcl_userstate},
+  {"twitchmods", tcl_twitchmods},
+  {"twitchvips", tcl_twitchvips},
+  {"ismod",           tcl_ismod},
+  {"isvip",           tcl_isvip},
+  {NULL,                   NULL}
 };
 
 static tcl_ints my_tcl_ints[] = {
@@ -614,18 +761,20 @@ static tcl_strings my_tcl_strings[] = {
 };
 
 static cmd_t twitch_raw[] = {
-  {"CLEARCHAT",     "",     (IntFunc) gotclearchat, "twitch:clearchat"},
-  {"HOSTTARGET",    "",     (IntFunc) gothosttarget,"twitch:gothosttarget"},
-  {NULL,            NULL,   NULL,                   NULL}
+  {"CLEARCHAT",     "",     (IntFunc) gotclearchat,      "twitch:clearchat"},
+  {"HOSTTARGET",    "",     (IntFunc) gothosttarget, "twitch:gothosttarget"},
+  {"JOIN",          "",     (IntFunc) gotjoin,             "twitch:gotjoin"},
+  {NULL,            NULL,   NULL,                                      NULL}
 };
 
 static cmd_t twitch_rawt[] = {
-  {"CLEARMSG",  "",     (IntFunc) gotclearmsg,  "twitch:clearmsg"},
-  {"ROOMSTATE", "",     (IntFunc) gotroomstate, "twitch:roomstate"},
-  {"WHISPER",   "",     (IntFunc) gotwhisper,   "twitch:whisper"},
-  {"USERSTATE", "",     (IntFunc) gotuserstate, "twitch:gotuserstate"},
-  {"USERNOTICE","",     (IntFunc) gotusernotice,"twitch:gotusernotice"},
-  {NULL,        NULL,   NULL,                   NULL}
+  {"CLEARMSG",   "",    (IntFunc) gotclearmsg,        "twitch:clearmsg"},
+  {"ROOMSTATE",  "",    (IntFunc) gotroomstate,      "twitch:roomstate"},
+  {"WHISPER",    "",    (IntFunc) gotwhisper,          "twitch:whisper"},
+  {"USERSTATE",  "",    (IntFunc) gotuserstate,   "twitch:gotuserstate"},
+  {"USERNOTICE", "",    (IntFunc) gotusernotice, "twitch:gotusernotice"},
+  {"NOTICE",     "",    (IntFunc) gotnotice,         "twitch:gotnotice"},
+  {NULL,         NULL,  NULL,                                      NULL}
 };
 
 

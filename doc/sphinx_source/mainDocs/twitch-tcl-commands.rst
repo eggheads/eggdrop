@@ -45,6 +45,40 @@ roomstate <channel>
 
   Returns: a dict containing key/value pairs for roomstate values.
 
+^^^^^^^^^^^^^^^^^^^^
+twitchmods <channel>
+^^^^^^^^^^^^^^^^^^^^
+
+  Description: maintains a list of usernames provided by Twitch as those that have moderator status on the provided channel. This list is refreshed upon join, or can manually be refreshed by using the Tcl ``twcmd`` to issue a /mods Twitch command. This list is a comprehensive list, the user does not need to be present on the channel to be included on this list.
+
+  Returns: A list of usernames designated as having moderator status by Twitch.
+
+^^^^^^^^^^^^^^^^^^^^
+twitchvips <channel>
+^^^^^^^^^^^^^^^^^^^^
+
+  Description: maintains a list of usernames provided by Twitch as those that have VIP status on the provided channel. This list is refreshed upon join, or can manually be refreshed by using the Tcl ``twcmd`` to issue a /vips Twitch command. This list is a comprehensive list, the user does not need to be present on the channel t
+o be included on this list.
+
+  Returns: A list of usernames designated as having VIP status by Twitch.
+
+^^^^^^^^^^^^^^^^^^^^^^
+ismod <nick> [channel]
+^^^^^^^^^^^^^^^^^^^^^^
+
+  Description: checks if a user is on the moderator list maintained by Twitch (the same list accessible by the /mods command entered via the Twith web GUI). This differs from the other "normal" is* Eggdrop Tcl cmds, as this does NOT check if the user is currently on the channel (that status is unreliable on Twitch IRC).
+
+  Returns: 1 if someone by the specified nickname is on the moderator list for the channel (or any channel if no channel name is specified); 0 otherwise.
+
+^^^^^^^^^^^^^^^^^^^^^^
+isvip <nick> [channel]
+^^^^^^^^^^^^^^^^^^^^^^
+  
+  Description: checks if a user is on the VIP list maintained by Twitch (the same list accessible by the /vips command entered via the Twith web GUI). This differs from the other "normal" is* Eggdrop Tcl cmds, as this does NOT check if the user is currently on the channel (that status is unreliable on Twitch IRC).
+
+  Returns: 1 if someone by the specified nickname is on the VIP list for the channel (or any channel if no channel name is specified); 0 otherwise.
+
+
 Binds
 -----
 

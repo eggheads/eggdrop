@@ -37,6 +37,8 @@ typedef struct twitchchan {
   char name[CHANNELLEN + 1];  /* actual name (!BARfoo) - THIS IS SET WHEN THE BOT
                                * ACTUALLY JOINS THE CHANNEL */
   userstate_t userstate;
+  char mods[8191];
+  char vips[8191];
   unsigned int emote_only:1;
   unsigned int subs_only:1;
   unsigned int r9k:1;
