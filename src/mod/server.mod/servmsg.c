@@ -1611,7 +1611,7 @@ static int gotcap(char *from, char *msg) {
       splitstr = strtok(NULL, " ");
     }
     update_cap_negotiated(); /* TODO: do we really need this call here? */
-    putlog(LOG_SERV, "*", "CAP: Current Negotiations %s with %s", cap.negotiated, from);
+    putlog(LOG_SERV, "*", "CAP: Current negotiations with %s: %s", from, cap.negotiated);
     /* If a negotiated capability requires immediate action by Eggdrop, add it
      * here. However, that capability must take responsibility for sending an
      * END. Future eggheads: add support for more than 1 of these async
