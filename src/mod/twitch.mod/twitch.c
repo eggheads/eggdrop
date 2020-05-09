@@ -84,7 +84,7 @@ void remove_chars(char* str, char c) {
 }
 
 static void cmd_twcmd(struct userrec *u, int idx, char *par) {
-  char *cmd, *chname;
+  char *chname;
 
   if (!par[0]) {
     dprintf(idx, "Usage: twcmd <channel> <cmd> [args]\n");
@@ -282,7 +282,15 @@ static int check_tcl_userstate(char *chan, char *tags) {
  */
 static int gotjoin (char *from, char *msg) {
   char buf[UHOSTLEN], *uhost = buf, *chname, *nick;
+  twitchchan_t *tchan;
+
   chname = newsplit(&msg);
+  if (!(tchan = findtchan_by_dname(chname))) {    /* Find channel or, if it   */
+    tchan = nmalloc(sizeof *tchan);             /* doesn't exist, create it */
+    explicit_bzero(tchan, sizeof(twitchchan_t));
+    strlcpy(tchan->dname, chname, sizeof tchan->dname);
+    egg_list_append((struct list_type **) &twitchchan, (struct list_type *) tchan);
+  }
   strlcpy(uhost, from, sizeof buf);
   nick = splitnick(&uhost);
   if (match_my_nick(nick)) {
@@ -601,7 +609,7 @@ static int tcl_twitchvips STDVAR {
  * is unreliable on Twitch
  */
 static int tcl_ismod STDVAR {
-  twitchchan_t *tchan, *thechan=NULL, *tchanset=NULL;
+  twitchchan_t *tchan, *thechan=NULL;
 
   BADARGS(2, 3, " nick ?channel?");
 
@@ -612,11 +620,16 @@ static int tcl_ismod STDVAR {
       Tcl_AppendResult(irp, "illegal channel: ", argv[2], NULL);
       return TCL_ERROR;
     }
-  } else
-    tchan = tchanset;
-
+  } else {
+    tchan = twitchchan;
+  }
+  /* If there's no mods, no reason to even check, eh? */
+  if (!tchan->mods) {
+    Tcl_AppendResult(irp, "0", NULL);
+    return TCL_OK;
+  }
   while (tchan && (thechan == NULL || thechan == tchan)) {
-    if (strtok(argv[2], tchan->mods)) {
+    if (strstr(argv[1], tchan->mods)) {
       Tcl_AppendResult(irp, "1", NULL);
       return TCL_OK;
     }
@@ -632,7 +645,7 @@ static int tcl_ismod STDVAR {
  * is unreliable on Twitch
  */
 static int tcl_isvip STDVAR {
-  twitchchan_t *tchan, *thechan = NULL, *tchanset = NULL;
+  twitchchan_t *tchan, *thechan = NULL;
 
   BADARGS(2, 3, " nick ?channel?");
 
@@ -643,11 +656,16 @@ static int tcl_isvip STDVAR {
       Tcl_AppendResult(irp, "illegal channel: ", argv[2], NULL);
       return TCL_ERROR;
     }
-  } else
-    tchan = tchanset;
-
+  } else {
+    tchan = twitchchan;
+  }
+  /* If there's no VIPs, no reason to even check, eh? */
+  if (tchan->vips) {
+    Tcl_AppendResult(irp, "0", NULL);
+    return TCL_OK;
+  }
   while (tchan && (thechan == NULL || thechan == tchan)) {
-    if (strtok(argv[3], tchan->vips)) {
+    if (strstr(argv[1], tchan->vips)) {
       Tcl_AppendResult(irp, "1", NULL);
       return TCL_OK;
     }

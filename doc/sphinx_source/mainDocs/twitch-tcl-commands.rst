@@ -148,7 +148,7 @@ The following is a list of bind types and how they work. Below each bind type is
 
   Description: Called when Eggdrop received a whisper from another Twitch user. The first word of the user's msg is matched against ``command``, and the remainder of the text is passed to ``msg``. ``nick`` is populated with the login name of the user messaging the Eggdrop, ``userhost`` contains nick's userhost in the format nick!nick@nick.tmi.twitch.tv. ``handle`` will match the user's handle on the bot if present, otherwise it will return a ``*``.
 
-#. WSPR (WHISPER)
+#. WSPM (WHISPER)
 
   bind wspr <flags> <mask> <proc>
 
