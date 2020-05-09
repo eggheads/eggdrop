@@ -429,10 +429,10 @@ static int gotuserstate(char *from, char *chan, char *tags) {
     } else if (!strcmp(ptr, "mod")) {
       ptr = strtok(NULL, " ");
       tchan->userstate.mod = atol(ptr);
-    } else {
-      ptr = strtok(NULL, " ");
+    } else {  /* This is a key we don't understand, so skip the value */
+      strtok(NULL, " ");
     }
-    ptr = strtok(NULL, " ");
+    ptr = strtok(NULL, " ");  /* Move to the next key */
   }
   check_tcl_userstate(chan, tags);
   return 0;
@@ -490,10 +490,10 @@ static int gotroomstate(char *from, char *msg, char *tags) {
             ptr);
         chan->slow = atol(ptr);
       }
-    } else {
-      ptr = strtok(NULL, " ");
+    } else {  /* This is a key we don't understand, so skip the value */
+      strtok(NULL, " ");
     }
-    ptr = strtok(NULL, " ");            /* Advance to the next tag found */
+    ptr = strtok(NULL, " ");            /* Advance to the next key */
   }
   check_tcl_roomstate(channame, tags);
   return 0;
