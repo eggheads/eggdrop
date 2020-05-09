@@ -83,12 +83,32 @@ void remove_chars(char* str, char c) {
     *pw = '\0';
 }
 
-static int cmd_roomstate(struct userrec *u, int idx, char *par) {
+static void cmd_twcmd(struct userrec *u, int idx, char *par) {
+  char *cmd, *chname;
+
+  if (!par[0]) {
+    dprintf(idx, "Usage: twcmd <channel> <cmd> [args]\n");
+    return;
+  }
+  chname = newsplit(&par);
+  if (!findtchan_by_dname(chname)) { /* Search for channel */
+    dprintf(idx, "No such channel.\n");
+    return;
+  }
+  dprintf(DP_SERVER, "PRIVMSG %s :/%s", chname, par);
+  return;
+}
+
+static void cmd_roomstate(struct userrec *u, int idx, char *par) {
   twitchchan_t *tchan;
 
+  if (!par[0]) {
+    dprintf(idx, "Usage: roomstate <channel>\n");
+    return;
+  }
   if (!(tchan = findtchan_by_dname(par))) { /* Search for channel */
     dprintf(idx, "No such channel.\n");
-    return 1;
+    return;
   }
   putlog(LOG_CMDS, "*", "#%s# roomstate", dcc[idx].nick);
   dprintf(idx, "Roomstate for %s:\n", tchan->dname);
@@ -99,15 +119,19 @@ static int cmd_roomstate(struct userrec *u, int idx, char *par) {
         tchan->r9k, tchan->subs_only);
   dprintf(idx, "Slow:     %4d\n", tchan->slow);
   dprintf(idx, "End of roomstate info.\n");
-  return 0;
+  return;
 }
 
-static int cmd_userstate(struct userrec *u, int idx, char *par) {
+static void cmd_userstate(struct userrec *u, int idx, char *par) {
   twitchchan_t *tchan;
 
+  if (!par[0]) {
+    dprintf(idx, "Usage: userstate <channel>\n");
+    return;
+  }
   if (!(tchan = findtchan_by_dname(par))) { /* Search for channel */
     dprintf(idx, "No such channel.\n");
-    return 1;
+    return;
   }
   putlog(LOG_CMDS, "*", "#%s# userstate", dcc[idx].nick);
   dprintf(idx, "Userstate for %s:\n", tchan->dname);
@@ -119,11 +143,10 @@ static int cmd_userstate(struct userrec *u, int idx, char *par) {
   dprintf(idx, "Emote-Sets:   %s\n", tchan->userstate.emote_sets);
   dprintf(idx, "Moderator:    %s\n", tchan->userstate.mod ? "yes" : "no");
   dprintf(idx, "End of userstate info.\n");
-  return 0;
+  return;
 }
 
-
-/* Takes a space-seperated string (key/value pair), makes a copy of the it
+/* Takes a space-seperated string (key/value pair), makes a copy of it,
  * (since we're going to muck with it) and returns a pointer to the value
  * associated with the key provided.
  */
@@ -734,9 +757,10 @@ static void twitch_report(int idx, int details)
 
 static cmd_t mydcc[] = {
   /* command  flags  function     tcl-name */
-  {"roomstate", "",     cmd_roomstate,   NULL},
-  {"userstate", "",     cmd_userstate,   NULL},
-  {NULL,        NULL,   NULL,            NULL}  /* Mark end. */
+  {"roomstate", "",     (IntFunc) cmd_roomstate,   NULL},
+  {"userstate", "",     (IntFunc) cmd_userstate,   NULL},
+  {"twcmd",     "o|o",  (IntFunc) cmd_twcmd,       NULL},
+  {NULL,        NULL,   NULL,                      NULL}  /* Mark end. */
 };
 
 static tcl_cmds mytcl[] = {
