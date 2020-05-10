@@ -275,21 +275,21 @@ char *ssl_fpconv(char *in, char *out)
 {
   long len;
   char *fp;
-  unsigned char *md5;
+  unsigned char *sha1;
 
   if (!in)
     return NULL;
 
-  if ((md5 = OPENSSL_hexstr2buf(in, &len))) {
-    fp = OPENSSL_buf2hexstr(md5, len);
+  if ((sha1 = OPENSSL_hexstr2buf(in, &len))) {
+    fp = OPENSSL_buf2hexstr(sha1, len);
     if (fp) {
       out = user_realloc(out, strlen(fp) + 1);
       strcpy(out, fp);
-      OPENSSL_free(md5);
+      OPENSSL_free(sha1);
       OPENSSL_free(fp);
       return out;
     }
-    OPENSSL_free(md5);
+    OPENSSL_free(sha1);
   }
   return NULL;
 }
