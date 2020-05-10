@@ -118,9 +118,7 @@ static void bg_do_detach(pid_t p)
   } else
     printf(EGG_NOWRITE, pid_file);
   printf("Launched into the background  (pid: %li)\n\n", (long) p);
-#ifdef HAVE_SETPGID
   setpgid(p, p);
-#endif
   exit(0);
 }
 

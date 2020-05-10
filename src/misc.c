@@ -1432,16 +1432,20 @@ void show_banner(int idx)
   fclose(vv);
 }
 
+void make_rand_str_from_chars(char *s, const int len, char *chars)
+{
+  int i;
+
+  for (i = 0; i < len; i++)
+    s[i] = chars[randint(strlen(chars))];
+  s[len] = 0;
+}
+
 /* Create a string with random lower case letters and digits
  */
 void make_rand_str(char *s, const int len)
 {
-  int i;
-  static const char chars[] = "0123456789abcdefghijklmnopqrstuvwxyz";
-
-  for (i = 0; i < len; i++)
-    s[i] = chars[randint((sizeof chars) - 1)];
-  s[len] = 0;
+  make_rand_str_from_chars(s, len, CHARSET_ALPHANUM);
 }
 
 /* Convert an octal string into a decimal integer value.  If the string

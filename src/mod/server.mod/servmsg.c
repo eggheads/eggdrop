@@ -838,19 +838,20 @@ static void got303(char *from, char *msg)
  */
 static int got432(char *from, char *msg)
 {
-  char *erroneous;
+  char *erroneous, nick[nick_len + 1];
 
   newsplit(&msg);
   erroneous = newsplit(&msg);
   if (server_online)
-    putlog(LOG_MISC, "*", "NICK IS INVALID: %s (keeping '%s').", erroneous,
+    putlog(LOG_MISC, "*", "NICK IS INVALID: '%s' (keeping '%s').", erroneous,
            botname);
   else {
     putlog(LOG_MISC, "*", IRC_BADBOTNICK);
     if (!keepnick) {
-      makepass(erroneous);
-      erroneous[NICKMAX] = 0;
-      dprintf(DP_MODE, "NICK %s\n", erroneous);
+      make_rand_str_from_chars(nick, sizeof nick - 1, CHARSET_ALPHA);
+      putlog(LOG_MISC, "*", "NICK IS INVALID: '%s' (using '%s' instead)",
+              erroneous, nick);
+      dprintf(DP_MODE, "NICK %s\n", nick);
     }
     return 0;
   }
@@ -1236,7 +1237,7 @@ static int tryauthenticate(char *from, char *msg)
 #ifdef HAVE_EVP_PKEY_GET1_EC_KEY
   EC_KEY *eckey;
   int ret;
-  size_t olen;
+  int olen;
   unsigned int olen2;
   unsigned char *dst2;
   FILE *fp;
@@ -1522,7 +1523,7 @@ void add_req(char *cape) {
 
 static int gotcap(char *from, char *msg) {
   char *cmd, *splitstr;
-  char *cape, *p;
+  char cape[CAPMAX], *p;
   int listlen = 0;
 
   newsplit(&msg);
@@ -1548,7 +1549,7 @@ static int gotcap(char *from, char *msg) {
     if (message_tags)
       add_req("message-tags");
 /* Add any custom capes the user listed */
-    cape = cap_request;
+    strncpy(cape, cap_request, sizeof cape);
     if ( (p = strtok(cape, " ")) ) {
       while (p != NULL) {
         add_req(p);
@@ -1585,7 +1586,7 @@ static int gotcap(char *from, char *msg) {
       splitstr = strtok(NULL, " ");
     }
     update_cap_negotiated(); /* TODO: do we really need this call here? */
-    putlog(LOG_SERV, "*", "CAP: Current Negotiations %s with %s", cap.negotiated, from);
+    putlog(LOG_SERV, "*", "CAP: Current negotiations with %s: %s", from, cap.negotiated);
     /* If a negotiated capability requires immediate action by Eggdrop, add it
      * here. However, that capability must take responsibility for sending an
      * END. Future eggheads: add support for more than 1 of these async

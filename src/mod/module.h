@@ -506,6 +506,8 @@
 # define b64_pton ((int (*) (const char *, u_char *, size_t))global[306])
 #endif
 #define check_validpass ((char *(*) (struct userrec *, char *))global[307])
+/* 308 - 311 */
+#define make_rand_str_from_chars ((void (*) (char *, int, char *))global[308])
 
 
 /* hostmasking */

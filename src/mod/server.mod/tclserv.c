@@ -207,12 +207,22 @@ static int tcl_cap STDVAR {
   char s[CAPMAX];
   BADARGS(2, 3, " sub-cmd ?arg?");
 
+  /* List capabilities available on server */
   if (!strcasecmp(argv[1], "ls")) {
     Tcl_AppendResult(irp, cap.supported, NULL);
-  } else if (!strcasecmp(argv[1], "list")) {
+  /* List capabilities Eggdrop is internally tracking as enabled with server */
+  } else if (!strcasecmp(argv[1], "enabled")) {
     Tcl_AppendResult(irp, cap.negotiated, NULL);
+  /* Send a request to negotiate a capability with server */
   } else if (!strcasecmp(argv[1], "req")) {
-    dprintf(DP_SERVER, "CAP REQ :%s", argv[2]);
+    if (argc != 3) {
+      Tcl_AppendResult(irp, "No CAP request provided", NULL);
+      return TCL_ERROR;
+    } else {
+      simple_sprintf(s, "CAP REQ :%s", argv[2]);
+      dprintf(DP_SERVER, "%s\n", s);
+    }
+  /* Send a raw CAP command to the server */
   } else if (!strcasecmp(argv[1], "raw")) {
     if (argc == 3) {
       simple_sprintf(s, "CAP %s", argv[2]);

@@ -152,6 +152,13 @@ static int burst;
 #include "cmdsserv.c"
 #include "tclserv.c"
 
+/* Available sasl mechanisms. */
+char const *SASL_MECHANISMS[SASL_MECHANISM_NUM] = {
+  [SASL_MECHANISM_PLAIN]                    = "PLAIN",
+  [SASL_MECHANISM_ECDSA_NIST256P_CHALLENGE] = "ECDSA-NIST256P-CHALLENGE",
+  [SASL_MECHANISM_EXTERNAL]                 = "EXTERNAL"
+};
+
 static void write_to_server(char *s, unsigned int len) {
   char *s2 = nmalloc(len + 2);
 

@@ -594,7 +594,6 @@ static int dcc_bot_check_digest(int idx, char *remote_digest)
   ret = strcmp(digest_string, remote_digest);
   explicit_bzero(digest_string, sizeof digest_string);
   explicit_bzero(digest, sizeof digest);
-  explicit_bzero(password, sizeof password);
 
   if (!ret)
     return 1;
@@ -1876,30 +1875,17 @@ static void dcc_telnet_new(int idx, char *buf, int x)
       add_note(buf, botnetnick, "Welcome to eggdrop! :)", -1, 0);
     }
     dprintf(idx, "\nOkay, now choose and enter a password:\n");
-    dprintf(idx, "(Only the first 15 letters are significant.)\n");
   }
 }
 
-static void dcc_telnet_pw(int idx, char *buf, int x)
+static void dcc_telnet_pw(int idx, char *new, int x)
 {
-  char *newpass;
-  int ok;
+  char *s;
 
   if (dcc[idx].status & STAT_TELNET)
-    strip_telnet(dcc[idx].sock, buf, &x);
-  buf[16] = 0;
-  ok = 1;
-  if (strlen(buf) < 4) {
-    dprintf(idx, "\nTry to use at least 4 characters in your password.\n");
-    dprintf(idx, "Choose and enter a password:\n");
-    return;
-  }
-  for (x = 0; x < strlen(buf); x++)
-    if ((buf[x] <= 32) || (buf[x] == 127))
-      ok = 0;
-  if (!ok) {
-    dprintf(idx, "\nYou can't use weird symbols in your password.\n");
-    dprintf(idx, "Try another one please:\n");
+    strip_telnet(dcc[idx].sock, new, &x);
+  if ((s = check_validpass(dcc[idx].user, new))) {
+    dprintf(idx, "%s\nChoose and enter a password:\n", s);
     return;
   }
   putlog(LOG_MISC, "*", DCC_NEWUSER, dcc[idx].nick, dcc[idx].host,
@@ -1918,10 +1904,8 @@ static void dcc_telnet_pw(int idx, char *buf, int x)
     rmspace(s1);
     add_note(s1, botnetnick, s, -1, 0);
   }
-  newpass = newsplit(&buf);
-  set_user(&USERENTRY_PASS, dcc[idx].user, newpass);
-  dprintf(idx, "\nRemember that!  You'll need it next time you log in.\n");
-  dprintf(idx, "You now have an account on %s...\n\n\n", botnetnick);
+  dprintf(idx, "\nRemember that!  You'll need it next time you log in.\n"
+               "You now have an account on %s...\n\n\n", botnetnick);
   dcc[idx].type = &DCC_CHAT;
   dcc[idx].u.chat->channel = -2;
   dcc_chatter(idx);
