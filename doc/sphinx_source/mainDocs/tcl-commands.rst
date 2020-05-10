@@ -158,7 +158,7 @@ clearqueue <queue>
 cap <ls/req/enabled/raw> [arg]
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-  Description: displays CAP status or sends a raw CAP command to the server. "ls" will list the capabilities supported by the server, "enabled" will list the capabilities Eggdrop is internally tracking as negotiated with the server, req will request the capabilities listed in arg, and raw will send a raw CAP command to the server. The arg field is a single argument, and should be submitted as a single string. For example, to request capabilities foo and bar, you would use [cap req "foo bar"], and to for example purposes, sending the same request as a raw command would be [cap raw "REQ :foo bar"].
+  Description: displays CAP status or sends a raw CAP command to the server. "ls" will list the capabilities supported by the server, "enabled" will list the capabilities Eggdrop is internally tracking as negotiated with the server, req will request the capabilities listed in arg, and raw will send a raw CAP command to the server. The arg field is a single argument, and should be submitted as a single string. For example, to request capabilities foo and bar, you would use [cap req "foo bar"], and for example purposes, sending the same request as a raw command would be [cap raw "REQ :foo bar"].
 
   Returns: nothing
 
