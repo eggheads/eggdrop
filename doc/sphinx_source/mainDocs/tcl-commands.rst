@@ -1068,11 +1068,13 @@ isvoice <nickname> [channel]
 
   Module: irc
 
-^^^^^^^^^^^^^^^^^
-isaway <nickname>
-^^^^^^^^^^^^^^^^^
+^^^^^^^^^^^^^^^^^^^^^^^^^^^
+isaway <nickname> [channel]
+^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-  Returns: 1 if Eggdrop is currently tracking someone by that nickname is marked 'away' by an IRC server; 0 otherwise. IMPORTANT: this command is only reliable on its own when the IRCv3 away-notify capability is available and negotiated with the IRC server (if you didn't add this to your config file, it likely isn't enabled- you can confirm using the ``cap`` Tcl command). To use this command without the away-notify capability negotiated, use 'resetchan <channel> a' on a channel the user is on to refresh the channel list. This will refresh the current away status for the user stored by Eggdrop.
+  Description: determine if a user is marked as 'away' on a server. IMPORTANT: this command is only reliable on its own when the IRCv3 away-notify capability is available and negotiated with the IRC server (if you didn't add this to your config file, it likely isn't enabled- you can confirm using the ``cap`` Tcl command). To use this command without the away-notify capability negotiated, use ``resetchan <channel> a`` on a channel the user is on to refresh the channel list. This will refresh the current away status for the user stored by Eggdrop.
+
+  Returns: 1 if Eggdrop is currently tracking someone by that nickname is marked 'away' (again, see disclaimer above) by an IRC server; 0 otherwise.
 
   Module: irc
 

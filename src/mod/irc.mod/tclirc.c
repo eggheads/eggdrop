@@ -440,19 +440,27 @@ static int tcl_ischaninvite STDVAR
  */
 static int tcl_isaway STDVAR
 {
-  struct chanset_t *chan;
+  struct chanset_t *chan, *thechan = NULL;
   memberlist *m;
 
-  BADARGS(2, 2, " nick");
+  BADARGS(2, 3, " nick ?channel?");
 
-  for (chan = chanset; chan; chan = chan->next) {
-    m = ismember(chan, argv[1]);     /* In my channel list copy? */
-    if (m) {
-        if (chan_ircaway(m)) {
-        Tcl_AppendResult(irp, "1", NULL);
-        return TCL_OK;
-      }
+  if (argc > 2) { /* If channel specified, does it exist? */
+    chan = findchan_by_dname(argv[2]);
+    thechan = chan;
+    if (!thechan) {
+      Tcl_AppendResult(irp, "illegal channel: ", argv[2], NULL);
+      return TCL_ERROR;
     }
+  } else {
+    chan = chanset;
+  }
+  while (chan && (thechan == NULL || thechan == chan)) {
+    if ((m = ismember(chan, argv[1])) && chan_ircaway(m)) {
+      Tcl_AppendResult(irp, "1", NULL);
+      return TCL_OK;
+    }
+    chan = chan->next;
   }
   Tcl_AppendResult(irp, "0", NULL);
   return TCL_OK;
