@@ -1130,7 +1130,7 @@ static void share_userfileq(int idx, char *par)
   int ok = 1, i, bfl = bot_flags(dcc[idx].user);
 
   flush_tbuf(dcc[idx].nick);
-  if (bfl & BOT_AGGRESSIVE)
+  if (bfl & (BOT_AGGRESSIVE|BOT_SHPERMS))
     dprintf(idx, "s un I have you marked for Aggressive sharing.\n");
   else if (!(bfl & BOT_PASSIVE))
     dprintf(idx, "s un You are not marked for sharing with me.\n");
@@ -1274,7 +1274,7 @@ static void share_version(int idx, char *par)
                        STAT_OFFERED | STAT_AGGRESSIVE);
   dcc[idx].u.bot->uff_flags = 0;
   if ((dcc[idx].u.bot->numver >= min_share) &&
-      (bot_flags(dcc[idx].user) & BOT_AGGRESSIVE)) {
+      (bot_flags(dcc[idx].user) & (BOT_AGGRESSIVE|BOT_SHPERMS))) {
     if (can_resync(dcc[idx].nick))
       dprintf(idx, "s r?\n");
     else
@@ -1328,40 +1328,40 @@ static void share_feats(int idx, char *par)
  */
 static botscmd_t C_share[] = {
   {"!",        "",  (IntFunc) share_endstartup},
-  {"+b",       "pb", (IntFunc) share_pls_ban},
-  {"+bc",      "pb", (IntFunc) share_pls_banchan},
-  {"+bh",      "pu", (IntFunc) share_pls_bothost},
-  {"+cr",      "pc", (IntFunc) share_pls_chrec},
-  {"+e",       "pe", (IntFunc) share_pls_exempt},
-  {"+ec",      "pe", (IntFunc) share_pls_exemptchan},
-  {"+h",       "pu", (IntFunc) share_pls_host},
-  {"+i",       "pn", (IntFunc) share_pls_ignore},
-  {"+inv",     "pj", (IntFunc) share_pls_invite},
-  {"+invc",    "pj", (IntFunc) share_pls_invitechan},
-  {"-b",       "pb", (IntFunc) share_mns_ban},
-  {"-bc",      "pb", (IntFunc) share_mns_banchan},
-  {"-cr",      "pc", (IntFunc) share_mns_chrec},
-  {"-e",       "pe", (IntFunc) share_mns_exempt},
-  {"-ec",      "pe", (IntFunc) share_mns_exemptchan},
-  {"-h",       "pu", (IntFunc) share_mns_host},
-  {"-i",       "pn", (IntFunc) share_mns_ignore},
-  {"-inv",     "pj", (IntFunc) share_mns_invite},
-  {"-invc",    "pj", (IntFunc) share_mns_invitechan},
-  {"a",        "pu", (IntFunc) share_chattr},
-  {"c",        "pu", (IntFunc) share_change},
-  {"chchinfo", "pu", (IntFunc) share_chchinfo},
+  {"+b",       "psb", (IntFunc) share_pls_ban},
+  {"+bc",      "psb", (IntFunc) share_pls_banchan},
+  {"+bh",      "psu", (IntFunc) share_pls_bothost},
+  {"+cr",      "psc", (IntFunc) share_pls_chrec},
+  {"+e",       "pse", (IntFunc) share_pls_exempt},
+  {"+ec",      "pse", (IntFunc) share_pls_exemptchan},
+  {"+h",       "psu", (IntFunc) share_pls_host},
+  {"+i",       "psn", (IntFunc) share_pls_ignore},
+  {"+inv",     "psj", (IntFunc) share_pls_invite},
+  {"+invc",    "psj", (IntFunc) share_pls_invitechan},
+  {"-b",       "psb", (IntFunc) share_mns_ban},
+  {"-bc",      "psb", (IntFunc) share_mns_banchan},
+  {"-cr",      "psc", (IntFunc) share_mns_chrec},
+  {"-e",       "pse", (IntFunc) share_mns_exempt},
+  {"-ec",      "pse", (IntFunc) share_mns_exemptchan},
+  {"-h",       "psu", (IntFunc) share_mns_host},
+  {"-i",       "psn", (IntFunc) share_mns_ignore},
+  {"-inv",     "psj", (IntFunc) share_mns_invite},
+  {"-invc",    "psj", (IntFunc) share_mns_invitechan},
+  {"a",        "psu", (IntFunc) share_chattr},
+  {"c",        "psu", (IntFunc) share_change},
+  {"chchinfo", "psu", (IntFunc) share_chchinfo},
   {"e",        "",  (IntFunc) share_end},
   {"feats",    "",  (IntFunc) share_feats},
-  {"h",        "pu", (IntFunc) share_chhand},
-  {"k",        "pu", (IntFunc) share_killuser},
-  {"n",        "pu", (IntFunc) share_newuser},
-  {"nc",       "pc", (IntFunc) share_newchan},
+  {"h",        "psu", (IntFunc) share_chhand},
+  {"k",        "psu", (IntFunc) share_killuser},
+  {"n",        "psu", (IntFunc) share_newuser},
+  {"nc",       "psc", (IntFunc) share_newchan},
   {"r!",       "",  (IntFunc) share_resync},
   {"r?",       "",  (IntFunc) share_resyncq},
   {"rn",       "",  (IntFunc) share_resync_no},
-  {"s",        "pb", (IntFunc) share_stick_ban},
-  {"se",       "pe", (IntFunc) share_stick_exempt},
-  {"sInv",     "pj", (IntFunc) share_stick_invite},
+  {"s",        "psb", (IntFunc) share_stick_ban},
+  {"se",       "pse", (IntFunc) share_stick_exempt},
+  {"sInv",     "psj", (IntFunc) share_stick_invite},
   {"u?",       "",  (IntFunc) share_userfileq},
   {"un",       "",  (IntFunc) share_ufno},
   {"us",       "",  (IntFunc) share_ufsend},
@@ -1540,13 +1540,13 @@ static void check_expired_tbufs()
     if (dcc[i].type->flags & DCT_BOT) {
       if (dcc[i].status & STAT_OFFERED) {
         if ((now - dcc[i].timeval > 120) && (dcc[i].user &&
-            (bot_flags(dcc[i].user) & BOT_AGGRESSIVE)))
+            (bot_flags(dcc[i].user) & (BOT_AGGRESSIVE|BOT_SHPERMS))))
           dprintf(i, "s u?\n");
           /* ^ send it again in case they missed it */
         /* If it's a share bot that hasnt been sharing, ask again */
       } else if (!(dcc[i].status & STAT_SHARE)) {
         /* Patched from original source by giusc@gbss.it <20040207> */
-        if (dcc[i].user && (bot_flags(dcc[i].user) & BOT_AGGRESSIVE))  {
+        if (dcc[i].user && (bot_flags(dcc[i].user) & (BOT_AGGRESSIVE|BOT_SHPERMS)))  {
           dprintf(i, "s u?\n");
           dcc[i].status |= STAT_OFFERED;
         }

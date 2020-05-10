@@ -784,6 +784,8 @@ static int botfl_set(struct userrec *u, struct user_entry *e, void *buf)
 
   if ((atr & BOT_HUB) && (atr & BOT_ALT))
     atr &= ~BOT_ALT;
+  if ((atr & BOT_AGGRESSIVE) && (atr & BOT_SHPERMS))
+    atr &= ~BOT_SHPERMS;
   if (atr & BOT_REJECT) {
     if (atr & BOT_SHARE)
       atr &= ~(BOT_SHARE | BOT_REJECT);
@@ -791,18 +793,6 @@ static int botfl_set(struct userrec *u, struct user_entry *e, void *buf)
       atr &= ~(BOT_HUB | BOT_REJECT);
     if (atr & BOT_ALT)
       atr &= ~(BOT_ALT | BOT_REJECT);
-    if (atr & BOT_SHBAN)
-      atr &= ~(BOT_SHBAN | BOT_REJECT);
-    if (atr & BOT_SHEXEMPT)
-      atr &= ~(BOT_SHEXEMPT | BOT_REJECT);
-    if (atr & BOT_SHIGN)
-      atr &= ~(BOT_SHIGN | BOT_REJECT);
-    if (atr & BOT_SHINV)
-      atr &= ~(BOT_SHINV | BOT_REJECT);
-    if (atr & BOT_SHCHAN)
-      atr &= ~(BOT_SHCHAN | BOT_REJECT);
-    if (atr & BOT_SHUSER)
-      atr &= ~(BOT_SHUSER | BOT_REJECT);
   }
   if (!(atr & BOT_SHARE))
     atr &= ~BOT_GLOBAL;

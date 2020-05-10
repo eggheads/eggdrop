@@ -120,8 +120,10 @@ struct flag_record {
 #define BOT_FLAG7      0x10000000 /* 7  user-defined flag #7            */
 #define BOT_FLAG8      0x20000000 /* 8  user-defined flag #8            */
 #define BOT_FLAG9      0x40000000 /* 9  user-defined flag #9            */
-#define BOT_SHARE      (BOT_AGGRESSIVE|BOT_PASSIVE)
-
+/* BOT_S still shares everything for backward compat, but if removed to share more precisely,
+   we need those detailed flags to still indicate the bot shares */
+#define BOT_SHPERMS    (BOT_SHBAN|BOT_SHCHAN|BOT_SHEXEMPT|BOT_SHIGN|BOT_SHINV|BOT_SHUSER)
+#define BOT_SHARE      (BOT_AGGRESSIVE|BOT_PASSIVE|BOT_SHPERMS)
 
 /* Flag checking macros */
 #define chan_op(x)              ((x).chan & USER_OP)

@@ -1999,7 +1999,7 @@ static void cmd_botattr(struct userrec *u, int idx, char *par)
     user.match = FR_BOT | (chan ? FR_CHAN : 0);
     get_user_flagrec(u2, &user, par);
     user.bot = (user.bot | pls.bot) & ~mns.bot;
-    if ((user.bot & BOT_SHARE) == BOT_SHARE)
+    if ((user.bot & BOT_PASSIVE) && (user.bot & (BOT_AGGRESSIVE|BOT_SHPERMS)))
       user.bot &= ~BOT_SHARE;
     if (chan)
       user.chan = (user.chan | pls.chan) & ~mns.chan;
