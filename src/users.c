@@ -973,7 +973,7 @@ int readuserfile(char *file, struct userrec **ret)
 }
 
 /* New methodology - cycle through list 3 times
- * 1st time scan for +(sbcejnu)h bots and link if none connected
+ * 1st time scan for +(sbcdejnu)h bots and link if none connected
  * 2nd time scan for +h bots
  * 3rd time scan for +a/+h bots */
 void autolink_cycle(char *start)

@@ -46,8 +46,8 @@ struct flag_record {
  *   unused letters: is
  *
  * botflags:
- *   abc?e?ghij?l?n?p?rs?u0123456789
- *   unused letters: dfkmoqt
+ *   abcde?ghij?l?n?p?rs?u0123456789
+ *   unused letters: fkmoqt
  *   unusable letters: vwxyz
  *
  * chanflags:
@@ -56,7 +56,7 @@ struct flag_record {
  */
 #define USER_VALID 0x003fbfeff   /* Sum of all valid USER_ flags */
 #define CHAN_VALID 0x003677c79   /* Sum of all valid CHAN_ flags */
-#define BOT_VALID  0x07ff6abd7   /* Sum of all valid BOT_  flags */
+#define BOT_VALID  0x07ff6abdf   /* Sum of all valid BOT_  flags */
 
 
 #define USER_AUTOOP        0x00000001 /* a  auto-op                               */
@@ -91,7 +91,7 @@ struct flag_record {
 #define BOT_ALT        0x00000001 /* a  auto-link here if all hubs fail */
 #define BOT_SHBAN      0x00000002 /* b  can share bans                  */
 #define BOT_SHCHAN     0x00000004 /* c  can share channel changes       */
-#define BOT_D          0x00000008 /* d  unused                          */
+#define BOT_SHLIMITED  0x00000008 /* d  shares userfiles but can't share anything */
 #define BOT_SHEXEMPT   0x00000010 /* e  can share exempts               */
 #define BOT_F          0x00000020 /* f  unused                          */
 #define BOT_GLOBAL     0x00000040 /* g  all channel are shared          */
@@ -106,7 +106,7 @@ struct flag_record {
 #define BOT_PASSIVE    0x00008000 /* p  share passively with this bot   */
 #define BOT_Q          0x00010000 /* q  unused                          */
 #define BOT_REJECT     0x00020000 /* r  automatically reject anywhere   */
-#define BOT_AGGRESSIVE 0x00040000 /* s  bot shares user files           */
+#define BOT_AGGRESSIVE 0x00040000 /* s  shares userfiles and can share all */
 #define BOT_T          0x00080000 /* t  unused                          */
 #define BOT_SHUSER     0x00100000 /* u  can share user changes          */
 /* BOT_V to BOT_Z not usable as they're bitflags 32-36 */
@@ -122,7 +122,7 @@ struct flag_record {
 #define BOT_FLAG9      0x40000000 /* 9  user-defined flag #9            */
 /* BOT_S still shares everything for backward compat, but if removed to share more precisely,
    we need those detailed flags to still indicate the bot shares */
-#define BOT_SHPERMS    (BOT_SHBAN|BOT_SHCHAN|BOT_SHEXEMPT|BOT_SHIGN|BOT_SHINV|BOT_SHUSER)
+#define BOT_SHPERMS    (BOT_SHBAN|BOT_SHCHAN|BOT_SHEXEMPT|BOT_SHIGN|BOT_SHINV|BOT_SHUSER|BOT_SHLIMITED)
 #define BOT_SHARE      (BOT_AGGRESSIVE|BOT_PASSIVE|BOT_SHPERMS)
 
 /* Flag checking macros */

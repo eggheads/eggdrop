@@ -125,6 +125,9 @@ The following is a list of valid bot flags:
   c       channel sharing (passive bot is allowed to share channel
           changes with aggressive bot)
 
+  d       share aggressively (SEND userfile to a passive bot),
+          limited sharing (passive bot is NOT allowed to share anything)
+
   e       exempt sharing (passive bot is allowed to share exempts with
           aggressive bot)
 
@@ -146,7 +149,8 @@ The following is a list of valid bot flags:
 
   r       reject (bot will not be allowed to link)
 
-  s       share aggressively (SEND userfile to a passive bot)
+  s       share aggressively (SEND userfile to a passive bot),
+          unlimited sharing (passive bot is allowed to share anything)
 
   u       user sharing (passive bot is allowed to share user changes
           with aggressive bot)
