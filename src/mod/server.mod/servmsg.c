@@ -1250,6 +1250,12 @@ static int got396orchghost(char *nick, char *user, char *uhost)
   return 0;
 }
 
+
+/* React to IRCv3 CHGHOST command. CHGHOST changes the hostname and/or
+ * ident of the user. Format:
+ * :geo!awesome@eggdrop.com CHGHOST tehgeo oragono.io
+ * changes user hostmask to tehgeo@oragono.io
+ */
 static int gotchghost(char *from, char *msg){
   char *nick, *user;
 
@@ -1259,6 +1265,10 @@ static int gotchghost(char *from, char *msg){
   return 0;
 }
 
+/* React to 396 numeric (HOSTHIDDEN), sent when user mode +x (hostmasking) was
+ * successfully set. Format:
+ * :barjavel.freenode.net 396 BeerBot unaffiliated/geo/bot/beerbot :is now your hidden host (set by services.)
+ */
 static int got396(char *from, char *msg)
 {
   char *nick, *uhost, *user, userbuf[UHOSTLEN];
