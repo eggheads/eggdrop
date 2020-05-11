@@ -1235,6 +1235,31 @@ static int got311(char *from, char *msg)
   return 0;
 }
 
+static int got396(char *from, char *msg)
+{
+  char *nick, *uhost, *user, s1[UHOSTLEN];
+  struct chanset_t *chan;
+  memberlist *m;
+
+  nick = newsplit(&msg);
+  if (match_my_nick(nick)) {  /* Double check this really is for me */
+    uhost = newsplit(&msg);
+    for (chan = chanset; chan; chan = chan->next) {
+      if (m) {  /* Just in case? */
+        m = ismember(chan, nick);
+putlog(LOG_DEBUG, "*", "old m.userhost is %s", m->userhost);
+        strncpy(s1, m->userhost, sizeof s1);
+        user = strtok(s1, "@");
+putlog(LOG_DEBUG, "*", "user is now %s", user);
+        snprintf(m->userhost, sizeof m->userhost, "%s@%s", user, uhost);
+putlog(LOG_DEBUG, "*", "m.userhost is now %s, manually its %s@%s", m->userhost, user, uhost);
+        strcpy(botuserhost, m->userhost);
+      }
+    }
+  }
+  return 0;
+}
+
 static int tryauthenticate(char *from, char *msg) 
 {
   char src[(sizeof sasl_username) + (sizeof sasl_username) +
@@ -1665,6 +1690,7 @@ static cmd_t my_raw_binds[] = {
   {"303",          "",   (IntFunc) got303,          NULL},
   {"311",          "",   (IntFunc) got311,          NULL},
   {"318",          "",   (IntFunc) whoispenalty,    NULL},
+  {"396",          "",   (IntFunc) got396,          NULL},
   {"410",          "",   (IntFunc) got410,          NULL},
   {"417",          "",   (IntFunc) got417,          NULL},
   {"421",          "",   (IntFunc) got421,          NULL},
