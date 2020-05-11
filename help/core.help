@@ -140,7 +140,7 @@ See also: +lang, -lang, +lsec, -lsec, lstat
    a value parameter, shows the current value of a setting. Any config file
    setting changed with this command will be reset when the config file is
    reloaded. Here are the variables that can be modified with this command
-   (note that other modules can add variables):
+   (note that additional variables may be available in other modules):
 %{cols=4}
 botnet-nick
 userfile
