@@ -192,19 +192,17 @@ ident-timeout
 allow-dk-cmds
 max-logs
 protect-telnet
-switch-logfiles-at
 share-unlinks
-ssl-privatekey
-ssl-certificate
+switch-logfiles-at
 ssl-privatekey
 ssl-certificate
 ssl-capath
-ssl-cafile
 ssl-verify-depth
+ssl-cafile
 ssl-cert-auth
 ssl-verify-bots
-ssl-verify-dcc
 ssl-verify-clients
+ssl-verify-dcc
 %{end}
    Use %b'.help set <variable>'%b for more info on each variable.
 %{help=all}%{-}
