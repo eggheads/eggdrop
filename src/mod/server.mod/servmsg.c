@@ -1253,7 +1253,6 @@ static int got396orchghost(char *nick, char *user, char *uhost)
 static int gotchghost(char *from, char *msg){
   char *nick, *user;
 
-putlog(LOG_DEBUG, "*", "from is %s |||  msg is %s", from, msg);
   nick = splitnick(&from); /* Get the nick */
   user = newsplit(&msg);  /* Get the user */
   got396orchghost(nick, user, msg);
@@ -1269,7 +1268,6 @@ static int got396(char *from, char *msg)
     uhost = newsplit(&msg);
     strncpy(userbuf, botuserhost, sizeof user);
     user = strtok(userbuf, "@");
-putlog(LOG_DEBUG, "*", "!!!!!    this is %s", user);
     got396orchghost(nick, user, uhost);
   }
   return 0;
