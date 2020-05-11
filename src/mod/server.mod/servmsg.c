@@ -1247,12 +1247,9 @@ static int got396(char *from, char *msg)
     for (chan = chanset; chan; chan = chan->next) {
       if (m) {  /* Just in case? */
         m = ismember(chan, nick);
-putlog(LOG_DEBUG, "*", "old m.userhost is %s", m->userhost);
         strncpy(s1, m->userhost, sizeof s1);
         user = strtok(s1, "@");
-putlog(LOG_DEBUG, "*", "user is now %s", user);
         snprintf(m->userhost, sizeof m->userhost, "%s@%s", user, uhost);
-putlog(LOG_DEBUG, "*", "m.userhost is now %s, manually its %s@%s", m->userhost, user, uhost);
         strcpy(botuserhost, m->userhost);
       }
     }
