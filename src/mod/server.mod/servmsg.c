@@ -1235,27 +1235,48 @@ static int got311(char *from, char *msg)
   return 0;
 }
 
-static int got396(char *from, char *msg)
+static int got396orchghost(char *nick, char *user, char *uhost)
 {
-  char *nick, *uhost, *user, s1[UHOSTLEN];
   struct chanset_t *chan;
   memberlist *m;
 
-  nick = newsplit(&msg);
-  if (match_my_nick(nick)) {  /* Double check this really is for me */
-    uhost = newsplit(&msg);
-    for (chan = chanset; chan; chan = chan->next) {
-      if (m) {  /* Just in case? */
-        m = ismember(chan, nick);
-        strncpy(s1, m->userhost, sizeof s1);
-        user = strtok(s1, "@");
-        snprintf(m->userhost, sizeof m->userhost, "%s@%s", user, uhost);
-        strcpy(botuserhost, m->userhost);
-      }
+  for (chan = chanset; chan; chan = chan->next) {
+    m = ismember(chan, nick);
+    if (m) {
+      snprintf(m->userhost, sizeof m->userhost, "%s@%s", user, uhost);
+      strcpy(botuserhost, m->userhost);
     }
   }
   return 0;
 }
+
+static int gotchghost(char *from, char *msg){
+  char *nick, *user;
+
+putlog(LOG_DEBUG, "*", "from is %s |||  msg is %s", from, msg);
+  nick = splitnick(&from); /* Get the nick */
+  user = newsplit(&msg);  /* Get the user */
+  got396orchghost(nick, user, msg);
+  return 0;
+}
+
+static int got396(char *from, char *msg)
+{
+  char *nick, *uhost, *user, userbuf[UHOSTLEN];
+
+  nick = newsplit(&msg);
+  if (match_my_nick(nick)) {  /* Double check this really is for me */
+    uhost = newsplit(&msg);
+    strncpy(userbuf, botuserhost, sizeof user);
+    user = strtok(userbuf, "@");
+putlog(LOG_DEBUG, "*", "!!!!!    this is %s", user);
+    got396orchghost(nick, user, uhost);
+  }
+  return 0;
+}
+
+//[@] :geo!vanosg@zt53d279eqs7u.oragono CHGHOST vanosg oragono.io
+//[@] :barjavel.freenode.net 396 _LeafBlower unaffiliated/geo/bot/beerbot :is now your hidden host (set by services.)
 
 static int tryauthenticate(char *from, char *msg) 
 {
@@ -1711,6 +1732,7 @@ static cmd_t my_raw_binds[] = {
   {"KICK",         "",   (IntFunc) gotkick,         NULL},
   {"CAP",          "",   (IntFunc) gotcap,          NULL},
   {"AUTHENTICATE", "",   (IntFunc) gotauthenticate, NULL},
+  {"CHGHOST",      "",   (IntFunc) gotchghost,      NULL},
   {NULL,           NULL, NULL,                      NULL}
 };
 
