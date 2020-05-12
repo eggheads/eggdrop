@@ -154,11 +154,11 @@ clearqueue <queue>
 
   Module: server
 
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-cap <active/available/raw> [arg]
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+cap <ls/req/enabled/raw> [arg]
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-  Description: displays CAP status or sends a raw CAP command to the server. "available" will list the capabilities supported by the server, "active" will list the capabilities Eggdrop has negotiated with the server, and raw will send a raw CAP command to the server. If sending a raw command, it must be submitted in arg as a single string. For example, to request capabilities foo and bar, you would use [cap raw "REQ :foo bar"]. 
+  Description: displays CAP status or sends a raw CAP command to the server. "ls" will list the capabilities Eggdrop is internally tracking as supported by the server, "enabled" will list the capabilities Eggdrop is internally tracking as negotiated with the server, "req" will request the capabilities listed in "arg" from the server, and raw will send a raw CAP command to the server. The arg field is a single argument, and should be submitted as a single string. For example, to request capabilities foo and bar, you would use [cap req "foo bar"], and for example purposes, sending the same request as a raw command would be [cap raw "REQ :foo bar"].
 
   Returns: nothing
 
@@ -1069,6 +1069,16 @@ isvoice <nickname> [channel]
   Module: irc
 
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+isaway <nickname> [channel]
+^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+  Description: determine if a user is marked as 'away' on a server. IMPORTANT: this command is only reliable on its own when the IRCv3 away-notify capability is available and negotiated with the IRC server (if you didn't add this to your config file, it likely isn't enabled- you can confirm using the ``cap`` Tcl command). To use this command without the away-notify capability negotiated, use ``resetchan <channel> a`` on a channel the user is on to refresh the channel list. This will refresh the current away status for the user stored by Eggdrop.
+
+  Returns: 1 if Eggdrop is currently tracking someone by that nickname is marked 'away' (again, see disclaimer above) by an IRC server; 0 otherwise.
+
+  Module: irc
+
+^^^^^^^^^^^^^^^^^^^^^^^^^^^
 onchan <nickname> [channel]
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^
   Returns: 1 if someone by that nickname is on the specified channel (or any channel if none is specified); 0 otherwise
@@ -1202,19 +1212,21 @@ resetchan <channel> [flags]
 
   Description: rereads in the channel info from the server. If flags are specified, only the required information will be reset, according to the given flags. Available flags:
 
-  +-----+---------------------------+
-  | b   | reset channel bans        |
-  +-----+---------------------------+
-  | e   | reset channel exempts     |
-  +-----+---------------------------+
-  | I   | reset channel invites     |
-  +-----+---------------------------+
-  | m   | refresh channel modes     |
-  +-----+---------------------------+
-  | t   | refresh channel topic     |
-  +-----+---------------------------+
-  | w   | refresh memberlist        |
-  +-----+---------------------------+
+  +-----+----------------------------+
+  | a   | refresh nick away status   |
+  +-----+----------------------------+
+  | b   | reset channel bans         |
+  +-----+----------------------------+
+  | e   | reset channel exempts      |
+  +-----+----------------------------+
+  | I   | reset channel invites      |
+  +-----+----------------------------+
+  | m   | refresh channel modes      |
+  +-----+----------------------------+
+  | t   | refresh channel topic      |
+  +-----+----------------------------+
+  | w   | refresh memberlist         |
+  +-----+----------------------------+
 
   Returns: nothing
 

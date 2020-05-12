@@ -106,7 +106,7 @@ static char sslserver = 0;
 #endif
 
 static p_tcl_bind_list H_wall, H_raw, H_notc, H_msgm, H_msg, H_flud, H_ctcr,
-                       H_ctcp, H_out, H_rawt, H_awayv3;
+                       H_ctcp, H_out, H_rawt;
 
 static void empty_msgq(void);
 static void next_server(int *, char *, unsigned int *, char *);
@@ -2074,7 +2074,6 @@ static char *server_close()
   rem_builtins(H_ctcp, my_ctcps);
   /* Restore original commands. */
   del_bind_table(H_wall);
-  del_bind_table(H_awayv3);
   del_bind_table(H_raw);
   del_bind_table(H_rawt);
   del_bind_table(H_notc);
@@ -2182,9 +2181,8 @@ static Function server_table[] = {
   (Function) & H_out,           /* p_tcl_bind_list                      */
   (Function) add_server,
   (Function) del_server,
-  (Function) & net_type_int,    /* int                                  */
+  (Function) & net_type_int     /* int                                  */
   /* 44 - 47 */
-  (Function) & H_awayv3         /* p_tcl_bind_list                      */
 };
 
 char *server_start(Function *global_funcs)

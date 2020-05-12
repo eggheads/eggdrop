@@ -1567,7 +1567,7 @@ void add_req(char *cape) {
 
 static int gotcap(char *from, char *msg) {
   char *cmd, *splitstr;
-  char *cape, *p;
+  char cape[CAPMAX], *p;
   int listlen = 0;
 
   newsplit(&msg);
@@ -1593,7 +1593,7 @@ static int gotcap(char *from, char *msg) {
     if (message_tags)
       add_req("message-tags");
 /* Add any custom capes the user listed */
-    cape = cap_request;
+    strncpy(cape, cap_request, sizeof cape);
     if ( (p = strtok(cape, " ")) ) {
       while (p != NULL) {
         add_req(p);
@@ -1630,7 +1630,7 @@ static int gotcap(char *from, char *msg) {
       splitstr = strtok(NULL, " ");
     }
     update_cap_negotiated(); /* TODO: do we really need this call here? */
-    putlog(LOG_SERV, "*", "CAP: Current Negotiations %s with %s", cap.negotiated, from);
+    putlog(LOG_SERV, "*", "CAP: Current negotiations with %s: %s", from, cap.negotiated);
     /* If a negotiated capability requires immediate action by Eggdrop, add it
      * here. However, that capability must take responsibility for sending an
      * END. Future eggheads: add support for more than 1 of these async
@@ -1679,7 +1679,6 @@ static cmd_t my_raw_binds[] = {
   {"PING",         "",   (IntFunc) gotping,         NULL},
   {"PONG",         "",   (IntFunc) gotpong,         NULL},
   {"WALLOPS",      "",   (IntFunc) gotwall,         NULL},
-  {"AWAY",         "",   (IntFunc) gotawayv3,       NULL},
   {"001",          "",   (IntFunc) got001,          NULL},
   {"303",          "",   (IntFunc) got303,          NULL},
   {"311",          "",   (IntFunc) got311,          NULL},

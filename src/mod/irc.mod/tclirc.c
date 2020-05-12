@@ -434,6 +434,38 @@ static int tcl_ischaninvite STDVAR
   return TCL_OK;
 }
 
+/* Checks internal tracking of IRC server away status, as updated by IRC
+ * server 352 and AWAY messages. Meant mostly for use with the IRCv3 away-notify
+ * capability, it may not be accurate using only 352s.
+ */
+static int tcl_isaway STDVAR
+{
+  struct chanset_t *chan, *thechan = NULL;
+  memberlist *m;
+
+  BADARGS(2, 3, " nick ?channel?");
+
+  if (argc > 2) { /* If channel specified, does it exist? */
+    chan = findchan_by_dname(argv[2]);
+    thechan = chan;
+    if (!thechan) {
+      Tcl_AppendResult(irp, "illegal channel: ", argv[2], NULL);
+      return TCL_ERROR;
+    }
+  } else {
+    chan = chanset;
+  }
+  while (chan && (thechan == NULL || thechan == chan)) {
+    if ((m = ismember(chan, argv[1])) && chan_ircaway(m)) {
+      Tcl_AppendResult(irp, "1", NULL);
+      return TCL_OK;
+    }
+    chan = chan->next;
+  }
+  Tcl_AppendResult(irp, "0", NULL);
+  return TCL_OK;
+}
+
 static int tcl_getchanhost STDVAR
 {
   struct chanset_t *chan, *thechan = NULL;
@@ -840,6 +872,9 @@ static int tcl_resetchan STDVAR
     case 't':
       flags |= CHAN_RESETTOPIC;
       break;
+    case 'a':
+      flags |= CHAN_RESETAWAY;
+      break;
     default:
       Tcl_AppendResult(irp, "invalid reset flags: ", argv[2], NULL);
       return TCL_ERROR;
@@ -1014,6 +1049,7 @@ static tcl_cmds tclchan_cmds[] = {
   {"onchansplit",    tcl_onchansplit},
   {"maskhost",       tcl_maskhost},
   {"getchanidle",    tcl_getchanidle},
+  {"isaway",         tcl_isaway},
   {"chanbans",       tcl_chanbans},
   {"chanexempts",    tcl_chanexempts},
   {"chaninvites",    tcl_chaninvites},

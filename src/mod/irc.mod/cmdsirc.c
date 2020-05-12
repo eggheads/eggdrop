@@ -758,7 +758,7 @@ static void cmd_channel(struct userrec *u, int idx, char *par)
       maxhandlen = 9;
 
     dprintf(idx, "(n = owner, m = master, o = op, d = deop, b = bot)\n");
-    egg_snprintf(format, sizeof format, " %%-%us %%-%us %%-6s %%-5s %%s\n",
+    egg_snprintf(format, sizeof format, " %%-%us %%-%us %%-6s %%-12s %%s\n",
                  maxnicklen, maxhandlen);
     dprintf(idx, format, "NICKNAME", "HANDLE", " JOIN", "IDLE", "USER@HOST");
     for (m = chan->channel.member; m && m->nick[0]; m = m->next) {
@@ -855,13 +855,13 @@ static void cmd_channel(struct userrec *u, int idx, char *par)
         chanflag = ' ';
       if (chan_issplit(m)) {
         egg_snprintf(format, sizeof format,
-                     "%%c%%-%us %%-%us %%s %%c     <- netsplit, %%lus\n",
+                     "%%c%%-%us %%-%us %%s %%c             <- netsplit, %%lus\n",
                      maxnicklen, maxhandlen);
         dprintf(idx, format, chanflag, m->nick, handle, s, atrflag,
                 now - (m->split));
       } else if (!rfc_casecmp(m->nick, botname)) {
         egg_snprintf(format, sizeof format,
-                     "%%c%%-%us %%-%us %%s %%c     <- it's me!\n",
+                     "%%c%%-%us %%-%us %%s %%c             <- it's me!\n",
                      maxnicklen, maxhandlen);
         dprintf(idx, format, chanflag, m->nick, handle, s, atrflag);
       } else {
@@ -874,6 +874,11 @@ static void cmd_channel(struct userrec *u, int idx, char *par)
           egg_snprintf(s1, sizeof s1, "%2lum", ((now - (m->last)) / 60));
         else
           strlcpy(s1, "   ", sizeof s1);
+        if (chan_ircaway(m)) {
+          egg_snprintf(s1+strlen(s1), ((sizeof s1)-strlen(s1)), " (away)");
+        } else {
+          egg_snprintf(s1+strlen(s1), ((sizeof s1)-strlen(s1)), "       ");
+        }
         egg_snprintf(format, sizeof format,
                      "%%c%%-%us %%-%us %%s %%c %%s  %%s\n", maxnicklen,
                      maxhandlen);
