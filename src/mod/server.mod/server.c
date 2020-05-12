@@ -106,7 +106,7 @@ static char sslserver = 0;
 #endif
 
 static p_tcl_bind_list H_wall, H_raw, H_notc, H_msgm, H_msg, H_flud, H_ctcr,
-                       H_ctcp, H_out, H_rawt, H_awayv3;
+                       H_ctcp, H_out, H_rawt, H_awayv3, H_acnt;
 
 static void empty_msgq(void);
 static void next_server(int *, char *, unsigned int *, char *);
@@ -1274,6 +1274,17 @@ static int server_msg STDVAR
   return TCL_OK;
 }
 
+static int server_acnt STDVAR
+{
+  Function F = (Function) cd;
+
+  BADARGS(5, 5, " nick uhost hand account");
+
+  CHECKVALIDITY(server_acnt);
+  F(argv[1], argv[2], get_user_by_handle(userlist, argv[3]), argv[4]);
+  return TCL_OK;
+}
+
 static int server_raw STDVAR
 {
   Function F = (Function) cd;
@@ -2075,6 +2086,7 @@ static char *server_close()
   /* Restore original commands. */
   del_bind_table(H_wall);
   del_bind_table(H_awayv3);
+  del_bind_table(H_acnt);
   del_bind_table(H_raw);
   del_bind_table(H_rawt);
   del_bind_table(H_notc);
@@ -2184,7 +2196,8 @@ static Function server_table[] = {
   (Function) del_server,
   (Function) & net_type_int,    /* int                                  */
   /* 44 - 47 */
-  (Function) & H_awayv3         /* p_tcl_bind_list                      */
+  (Function) & H_awayv3,        /* p_tcl_bind_list                      */
+  (Function) & H_acnt           /* p_tcl_bind)list                      */
 };
 
 char *server_start(Function *global_funcs)
@@ -2287,6 +2300,7 @@ char *server_start(Function *global_funcs)
 
   H_wall = add_bind_table("wall", HT_STACKABLE, server_2char);
   H_awayv3 = add_bind_table("awy3", HT_STACKABLE, server_2char);
+  H_acnt = add_bind_table("acnt", HT_STACKABLE, server_acnt);
   H_raw = add_bind_table("raw", HT_STACKABLE, server_raw);
   H_rawt = add_bind_table("rawt", HT_STACKABLE, server_tag);
   H_notc = add_bind_table("notc", HT_STACKABLE, server_5char);

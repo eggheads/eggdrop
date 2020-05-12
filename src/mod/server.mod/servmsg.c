@@ -264,13 +264,30 @@ static int check_tcl_wall(char *from, char *msg)
   return 1;
 }
 
+static int check_tcl_acnt(char *nick, char *uhost, struct userrec *u,
+                            char *account)
+{
+  char mask[UHOSTLEN];
+  struct flag_record fr = { FR_GLOBAL | FR_CHAN | FR_ANYWH, 0, 0, 0, 0, 0 };
+  int x;
+
+  snprintf(mask, sizeof mask, "%s %s", account, uhost);
+  Tcl_SetVar(interp, "_acnt1", nick, 0);
+  Tcl_SetVar(interp, "_acnt2", uhost, 0);
+  Tcl_SetVar(interp, "_acnt3", u ? u->handle : "*", 0);
+  Tcl_SetVar(interp, "_acnt4", account, 0);
+  x = check_tcl_bind(H_acnt, mask, &fr, " $_acnt1 $_acnt2 $_acnt3 $_acnt4",
+                        MATCH_MASK | BIND_STACKABLE);
+  return (x == BIND_EXEC_LOG);
+}
+
 static int check_tcl_awayv3(char *from, char *msg)
 {
   int x;
 
   Tcl_SetVar(interp, "_awayv31", from, 0);
   Tcl_SetVar(interp, "_awayv32", msg ? (char *) msg : "", 0);
-  x = check_tcl_bind(H_awayv3, from, 0, " $_awayv31, $_awayv32",
+  x = check_tcl_bind(H_awayv3, from, 0, " $_awayv31 $_awayv32",
                        MATCH_MASK | BIND_STACKABLE);
 
   return (x == BIND_EXEC_LOG);
@@ -1432,6 +1449,22 @@ static int handle_sasl_timeout()
   return sasl_error("timeout");
 }
 
+/* Got ACCOUNT message; only valid for IRCv3 account-notify capability */
+static int gotaccount(char *from, char *msg) {
+  struct userrec *u;
+  char *nick;
+
+  u = get_user_by_host(from);
+  nick = splitnick(&from);
+  if (!strcasecmp(msg, "*")) {
+    putlog(LOG_SERV, "*", "%s has logged out of their account", from);
+  } else {
+    putlog(LOG_SERV, "*", "%s has logged into account %s", from, msg);
+  }
+  check_tcl_acnt(nick, from, u, msg);
+  return 0;
+}
+
 /* Got AWAY message; only valid for IRCv3 away-notify capability */
 static int gotawayv3(char *from, char *msg)
 {
@@ -1688,6 +1721,7 @@ static cmd_t my_raw_binds[] = {
   {"KICK",         "",   (IntFunc) gotkick,         NULL},
   {"CAP",          "",   (IntFunc) gotcap,          NULL},
   {"AUTHENTICATE", "",   (IntFunc) gotauthenticate, NULL},
+  {"ACCOUNT",      "",   (IntFunc) gotaccount,      NULL},
   {NULL,           NULL, NULL,                      NULL}
 };
 
