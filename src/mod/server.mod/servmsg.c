@@ -1283,8 +1283,12 @@ static int got396(char *from, char *msg)
   return 0;
 }
 
-//[@] :geo!vanosg@zt53d279eqs7u.oragono CHGHOST vanosg oragono.io
-//[@] :barjavel.freenode.net 396 _LeafBlower unaffiliated/geo/bot/beerbot :is now your hidden host (set by services.)
+static int gotsetname(char *from, char *msg)
+{
+  fixcolon(msg);
+  strncpy(botrealname, msg, sizeof botrealname);
+  return 0;
+}
 
 static int tryauthenticate(char *from, char *msg) 
 {
@@ -1741,6 +1745,7 @@ static cmd_t my_raw_binds[] = {
   {"CAP",          "",   (IntFunc) gotcap,          NULL},
   {"AUTHENTICATE", "",   (IntFunc) gotauthenticate, NULL},
   {"CHGHOST",      "",   (IntFunc) gotchghost,      NULL},
+  {"SETNAME",      "",   (IntFunc) gotsetname,      NULL},
   {NULL,           NULL, NULL,                      NULL}
 };
 
