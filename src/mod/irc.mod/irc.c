@@ -761,15 +761,20 @@ static int invite_4char STDVAR
   return TCL_OK;
 }
 
-static int check_tcl_awayv3(char *from, char *msg)
+static int check_tcl_awayv3(char *nick, char *from, char *mask,
+            struct userrec *u, char *chan, char *msg)
 {
-  int x;
+int x;
+  char *hand = u ? u->handle : "*";
+  struct flag_record fr = { FR_GLOBAL | FR_CHAN | FR_ANYWH, 0, 0, 0, 0, 0 };
 
-  Tcl_SetVar(interp, "_awayv31", from, 0);
-  Tcl_SetVar(interp, "_awayv32", msg ? (char *) msg : "", 0);
-  x = check_tcl_bind(H_awayv3, from, 0, " $_awayv31, $_awayv32",
-                       MATCH_MASK | BIND_STACKABLE);
-
+  Tcl_SetVar(interp, "_awayv31", nick, 0);
+  Tcl_SetVar(interp, "_awayv32", from, 0);
+  Tcl_SetVar(interp, "_awayv33", hand, 0);
+  Tcl_SetVar(interp, "_awayv34", chan, 0);
+  Tcl_SetVar(interp, "_awayv35", msg ? msg : "", 0);
+  x = check_tcl_bind(H_awayv3, mask, &fr, " $_awayv31, $_awayv32 $_awayv33 "
+                        "$_awayv34 $_awayv35", MATCH_MASK | BIND_STACKABLE);
   return (x == BIND_EXEC_LOG);
 }
 
@@ -1321,7 +1326,7 @@ char *irc_start(Function *global_funcs)
   H_pubm = add_bind_table("pubm", HT_STACKABLE, channels_5char);
   H_pub = add_bind_table("pub", 0, channels_5char);
   H_need = add_bind_table("need", HT_STACKABLE, channels_2char);
-  H_awayv3 = add_bind_table("awy3", HT_STACKABLE, channels_2char);
+  H_awayv3 = add_bind_table("awy3", HT_STACKABLE, channels_5char);
   do_nettype();
   return NULL;
 }

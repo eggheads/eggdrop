@@ -1170,32 +1170,29 @@ static int got315(char *from, char *msg)
 }
 
 /* Got AWAY message; only valid for IRCv3 away-notify capability */
-static int gotawayv3(char *from, char *msg)
+static int gotaway(char *from, char *msg)
 {
-  memberlist *m;
+  struct userrec *u;
   struct chanset_t *chan;
-  char *nick;
+  char mask[1024], buf[MSGMAX], *nick, *s1 = buf, *chname;
 
-  nick = splitnick(&from);
-  /* Update away status for every channel user is in */
+  strlcpy(s1, from, sizeof buf);
+  nick = splitnick(&s1);
+  u = get_user_by_host(from);
+  /* Run the bind for each channel the user is on */
   for (chan = chanset; chan; chan = chan->next) {
-    m = ismember(chan, nick);     /* In my channel list copy? */
-    if (m) {
-      if (strlen(msg)) {    /* If away msg, user is leaving */
-        m->flags |= IRCAWAY;
-      } else {              /* If no away msg, user is returning */
-        m->flags &= ~IRCAWAY;
+    chname = chan->dname;
+    if (ismember(chan, nick)) {
+      snprintf(mask, sizeof mask, "%s %s", chname, from);
+      check_tcl_awayv3(nick, from, mask, u, chname, msg);
+      if (strlen(msg)) {
+        fixcolon(msg);
+        putlog(LOG_JOIN, chan->dname, "%s is now away: %s", from, msg);
+      } else {
+        putlog(LOG_JOIN, chan->dname, "%s has returned from away status", from);
       }
     }
   }
-
-  if (strlen(msg)) {
-    fixcolon(msg);
-    putlog(LOG_SERV, "*", "%s is now away: %s", from, msg);
-  } else {
-    putlog(LOG_SERV, "*", "%s has returned from away status", from);
-  }
-  check_tcl_awayv3(from, msg);
   return 0;
 }
 
@@ -2558,7 +2555,7 @@ static cmd_t irc_raw[] = {
   {"PRIVMSG", "",   (IntFunc) gotmsg,          "irc:msg"},
   {"NOTICE",  "",   (IntFunc) gotnotice,    "irc:notice"},
   {"MODE",    "",   (IntFunc) gotmode,        "irc:mode"},
-  {"AWAY",    "",   (IntFunc) gotawayv3, "irc:gotawayv3"},
+  {"AWAY",    "",   (IntFunc) gotaway,     "irc:gotaway"},
   {"346",     "",   (IntFunc) got346,          "irc:346"},
   {"347",     "",   (IntFunc) got347,          "irc:347"},
   {"348",     "",   (IntFunc) got348,          "irc:348"},
