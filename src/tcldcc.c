@@ -1019,7 +1019,7 @@ static int setlisten(Tcl_Interp *irp, char *ip, char *portp, char *type, char *m
     dcc[idx].timeval = now;
   }
 #ifdef TLS
-  if (port == '+')
+  if (portp[0] == '+')
     dcc[idx].ssl = 1;
   else
     dcc[idx].ssl = 0;
