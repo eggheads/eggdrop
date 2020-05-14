@@ -606,7 +606,9 @@ Function global_table[] = {
   (Function) 0,
   (Function) 0,
 #endif
-  (Function) check_validpass
+  (Function) check_validpass,
+  /* 308 - 311 */
+  (Function) make_rand_str_from_chars
 };
 
 void init_modules(void)

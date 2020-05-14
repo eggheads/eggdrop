@@ -401,6 +401,7 @@ static void cmd_back(struct userrec *u, int idx, char *par)
  */
 char *check_validpass(struct userrec *u, char *new) {
   int l;
+  unsigned char *p = (unsigned char *) new;
 
   l = strlen(new);
   if (l < 6)
@@ -409,6 +410,11 @@ char *check_validpass(struct userrec *u, char *new) {
     return "Passwords cannot be longer than " STRINGIFY(PASSWORDMAX) " characters, please try again.";
   if (new[0] == '+') /* See also: userent.c:pass_set() */
     return "Password cannot start with '+', please try again.";
+  while (*p) {
+    if ((*p <= 32) || (*p == 127))
+      return "Password cannot use weird symbols, please try again.";
+    p++;
+  }
   set_user(&USERENTRY_PASS, u, new);
   return NULL;
 }
@@ -2712,8 +2718,8 @@ static void cmd_pls_user(struct userrec *u, int idx, char *par)
     handle[HANDLEN] = 0;
   if (get_user_by_handle(userlist, handle))
     dprintf(idx, "Someone already exists by that name.\n");
-  else if (strchr(BADNICKCHARS, handle[0]) != NULL)
-    dprintf(idx, "You can't start a nick with '%c'.\n", handle[0]);
+  else if (strchr(BADHANDCHARS, handle[0]) != NULL)
+    dprintf(idx, "You can't start a handle with '%c'.\n", handle[0]);
   else if (!strcasecmp(handle, botnetnick))
     dprintf(idx, "Hey! That's MY name!\n");
   else {
