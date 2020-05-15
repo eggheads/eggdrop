@@ -1245,7 +1245,7 @@ refreshchan <channel> [flags]
   +-----+------------------------------+
   | t   | channel topic                |
   +-----+------------------------------+
-  | w   | memberlist (who & away info  |
+  | w   | memberlist (who & away info) |
   +-----+------------------------------+
 
   Returns: nothing
