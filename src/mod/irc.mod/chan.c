@@ -901,7 +901,7 @@ static void recheck_channel(struct chanset_t *chan, int dobans)
    * In case we got them on join, nothing will be done */
   if (chan->ircnet_status & (CHAN_ASKED_EXEMPTS | CHAN_ASKED_INVITED)) {
     chan->ircnet_status &= ~(CHAN_ASKED_EXEMPTS | CHAN_ASKED_INVITED);
-    reset_chan_info(chan, CHAN_RESETEXEMPTS | CHAN_RESETINVITED);
+    reset_chan_info(chan, CHAN_RESETEXEMPTS | CHAN_RESETINVITED, 1);
   }
   if (dobans) {
     if (channel_nouserbans(chan) && !stop_reset)
@@ -1800,7 +1800,7 @@ static int gotjoin(char *from, char *chname)
              chan->dname);
       chan->status |= CHAN_ACTIVE;
       chan->status &= ~CHAN_PEND;
-      reset_chan_info(chan, CHAN_RESETALL);
+      reset_chan_info(chan, CHAN_RESETALL, 1);
     } else {
       m = ismember(chan, nick);
       if (m && m->split && !strcasecmp(m->userhost, uhost)) {
@@ -1880,7 +1880,7 @@ static int gotjoin(char *from, char *chname)
           else
             putlog(LOG_JOIN | LOG_MISC, chan->dname, "%s joined %s.", nick,
                    chname);
-          reset_chan_info(chan, (CHAN_RESETALL & ~CHAN_RESETTOPIC));
+          reset_chan_info(chan, (CHAN_RESETALL & ~CHAN_RESETTOPIC), 1);
         } else {
           struct chanuserrec *cr;
 
@@ -2032,7 +2032,7 @@ static int gotpart(char *from, char *msg)
              chan->dname);
       chan->status |= CHAN_ACTIVE;
       chan->status &= ~CHAN_PEND;
-      reset_chan_info(chan, CHAN_RESETALL);
+      reset_chan_info(chan, CHAN_RESETALL, 1);
     }
     set_handle_laston(chan->dname, u, now);
     /* This must be directly above the killmember, in case we're doing anything

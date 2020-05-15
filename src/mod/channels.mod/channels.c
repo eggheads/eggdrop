@@ -296,7 +296,7 @@ static void remove_channel(struct chanset_t *chan)
   if ((me = module_find("irc", 1, 3)) != NULL)
     (me->funcs[IRC_DO_CHANNEL_PART]) (chan);
 
-  clear_channel(chan, 0);
+ clear_channel(chan, 0);
   noshare = 1;
   /* Remove channel-bans */
   while (chan->bans)

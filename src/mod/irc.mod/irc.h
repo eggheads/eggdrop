@@ -67,7 +67,7 @@ static void refresh_who_chan(char *);
 #define resetinvites(chan)  resetmasks((chan), (chan)->channel.invite,       \
                                        (chan)->invites, global_invites, 'I')
 
-void reset_chan_info(struct chanset_t *, int);
+void reset_chan_info(struct chanset_t *, int, int);
 static void recheck_channel(struct chanset_t *, int);
 static void set_key(struct chanset_t *, char *);
 static void maybe_revenge(struct chanset_t *, char *, char *, int);

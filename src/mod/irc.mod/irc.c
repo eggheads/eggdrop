@@ -404,7 +404,7 @@ static int any_ops(struct chanset_t *chan)
 
 /* Reset channel information.
  */
-void reset_chan_info(struct chanset_t *chan, int reset)
+void reset_chan_info(struct chanset_t *chan, int reset, int do_reset)
 {
   /* Leave the channel if we aren't supposed to be there */
   if (channel_inactive(chan)) {
@@ -416,13 +416,9 @@ void reset_chan_info(struct chanset_t *chan, int reset)
   if (channel_pending(chan))
     return;
 
-  /* If we are only updateing away status, we want to keep the WHO info already
-   * stored in the channel list, particularly so we don't reset the idle time
-   * Eggdrop is already tracking. We're just updating the attached away status
-   * flag
-   */
-  if ((reset & CHAN_RESETALL) == CHAN_RESETAWAY)
+  if (do_reset) {
     clear_channel(chan, reset);
+  }
   if ((reset & CHAN_RESETBANS) && !(chan->status & CHAN_ASKEDBANS)) {
     chan->status |= CHAN_ASKEDBANS;
     dprintf(DP_MODE, "MODE %s +b\n", chan->name);

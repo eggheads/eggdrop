@@ -1072,7 +1072,7 @@ isvoice <nickname> [channel]
 isaway <nickname> [channel]
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-  Description: determine if a user is marked as 'away' on a server. IMPORTANT: this command is only reliable on its own when the IRCv3 away-notify capability is available and negotiated with the IRC server (if you didn't add this to your config file, it likely isn't enabled- you can confirm using the ``cap`` Tcl command). To use this command without the away-notify capability negotiated, use ``resetchan <channel> a`` on a channel the user is on to refresh the channel list. This will refresh the current away status for the user stored by Eggdrop.
+  Description: determine if a user is marked as 'away' on a server. IMPORTANT: this command is only reliable on its own when the IRCv3 away-notify capability is available and negotiated with the IRC server (if you didn't add this to your config file, it likely isn't enabled- you can confirm using the ``cap`` Tcl command). To use this command without the away-notify capability negotiated, use ``refreshchan <channel> w`` on a channel the user is on to refresh the channel list. This will refresh the current away status for the user stored by Eggdrop.
 
   Returns: 1 if Eggdrop is currently tracking someone by that nickname is marked 'away' (again, see disclaimer above) by an IRC server; 0 otherwise.
 
@@ -1210,23 +1210,43 @@ resetchanjoin [nick] <channel>
 resetchan <channel> [flags]
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-  Description: rereads in the channel info from the server. If flags are specified, only the required information will be reset, according to the given flags. Available flags:
+  Description: clears the channel info Eggdrop is currently storing for a channel, then rereads the channel info from the server. Useful if Eggdrop gets into a bad state on a server with respect to a channel userlist, for example. If flags are specified, only the required information will be reset, according to the given flags. Available flags:
 
-  +-----+----------------------------+
-  | a   | refresh nick away status   |
-  +-----+----------------------------+
-  | b   | reset channel bans         |
-  +-----+----------------------------+
-  | e   | reset channel exempts      |
-  +-----+----------------------------+
-  | I   | reset channel invites      |
-  +-----+----------------------------+
-  | m   | refresh channel modes      |
-  +-----+----------------------------+
-  | t   | refresh channel topic      |
-  +-----+----------------------------+
-  | w   | refresh memberlist         |
-  +-----+----------------------------+
+  +-----+------------------------------+
+  | b   | channel bans                 |
+  +-----+------------------------------+
+  | e   | channel exempts              |
+  +-----+------------------------------+
+  | I   | channel invites              |
+  +-----+------------------------------+
+  | m   | channel modes                |
+  +-----+------------------------------+
+  | w   | memberlist (who & away info) |
+  +-----+------------------------------+
+
+  Returns: nothing
+
+  Module: irc
+
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+refreshchan <channel> [flags]
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+  Description: An alternative to resetchan, refresh rereads the channel info from the server without first clearing out the previously stored information. Useful for updateing a user's away status without resetting their idle time, for example. If flags are specified, only the required information will be refreshed, according to the given flags. Available flags:
+
+  +-----+------------------------------+
+  | b   | channel bans                 |
+  +-----+------------------------------+
+  | e   | channel exempts              |
+  +-----+------------------------------+
+  | I   | channel invites              |
+  +-----+------------------------------+
+  | m   | channel modes                |
+  +-----+------------------------------+
+  | t   | channel topic                |
+  +-----+------------------------------+
+  | w   | memberlist (who & away info  |
+  +-----+------------------------------+
 
   Returns: nothing
 
