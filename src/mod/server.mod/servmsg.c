@@ -264,19 +264,18 @@ static int check_tcl_wall(char *from, char *msg)
   return 1;
 }
 
-static int check_tcl_acnt(char *nick, char *uhost, struct userrec *u,
-                            char *account)
+static int check_tcl_acnt(char *nick, char *uhost, char *mask,
+                            struct userrec *u, char *chan,  char *account)
 {
-  char mask[UHOSTLEN];
   struct flag_record fr = { FR_GLOBAL | FR_CHAN | FR_ANYWH, 0, 0, 0, 0, 0 };
   int x;
 
-  snprintf(mask, sizeof mask, "%s %s", account, uhost);
   Tcl_SetVar(interp, "_acnt1", nick, 0);
   Tcl_SetVar(interp, "_acnt2", uhost, 0);
   Tcl_SetVar(interp, "_acnt3", u ? u->handle : "*", 0);
-  Tcl_SetVar(interp, "_acnt4", account, 0);
-  x = check_tcl_bind(H_acnt, mask, &fr, " $_acnt1 $_acnt2 $_acnt3 $_acnt4",
+  Tcl_SetVar(interp, "_acnt4", chan, 0);
+  Tcl_SetVar(interp, "_acnt5", account, 0);
+  x = check_tcl_bind(H_acnt, mask, &fr, " $_acnt1 $_acnt2 $_acnt3 $_acnt4 $_acnt5",
                         MATCH_MASK | BIND_STACKABLE);
   return (x == BIND_EXEC_LOG);
 }
@@ -1451,17 +1450,26 @@ static int handle_sasl_timeout()
 
 /* Got ACCOUNT message; only valid for IRCv3 account-notify capability */
 static int gotaccount(char *from, char *msg) {
+  struct chanset_t *chan;
   struct userrec *u;
-  char *nick;
+  memberlist *m;
+  char *nick, *chname, mask[UHOSTLEN];
 
   u = get_user_by_host(from);
   nick = splitnick(&from);
-  if (!strcasecmp(msg, "*")) {
-    putlog(LOG_SERV, "*", "%s has logged out of their account", from);
-  } else {
-    putlog(LOG_SERV, "*", "%s has logged into account %s", from, msg);
+  for (chan = chanset; chan; chan = chan->next) {
+    chname = chan->dname;
+    if ((m = ismember(chan, nick))) {
+      strncpy (m->account, msg, sizeof m->account);
+      snprintf(mask, sizeof mask, "%s %s", chname, from);
+      if (!strcasecmp(msg, "*")) {
+        putlog(LOG_SERV, "*", "%s!%s has logged out of their account", nick, from);
+      } else {
+        putlog(LOG_SERV, "*", "%s!%s has logged into account %s", nick, from, msg);
+      }
+      check_tcl_acnt(nick, from, mask, u, chname, msg);
+    }
   }
-  check_tcl_acnt(nick, from, u, msg);
   return 0;
 }
 
