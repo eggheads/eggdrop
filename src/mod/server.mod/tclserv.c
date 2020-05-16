@@ -162,6 +162,36 @@ static int tcl_puthelp STDVAR
   return TCL_OK;
 }
 
+/* Get the user's account name from Eggdrop's internal list if a) they are
+  * logged in and b) Eggdrop has seen it.
+  */
+static int tcl_getaccount STDVAR {
+  memberlist *m;
+  struct chanset_t *chan, *thechan = NULL;
+
+  BADARGS(2, 3, " nickname ?channel?");
+
+  if (argc > 2) {
+    chan = findchan_by_dname(argv[2]);
+    thechan = chan;
+    if (!thechan) {
+      Tcl_AppendResult(irp, "illegal channel: ", argv[2], NULL);
+      return TCL_ERROR;
+    }
+  } else {
+    chan = chanset;
+  }
+  while (chan && (thechan == NULL || thechan == chan)) {
+    if ((m = ismember(chan, argv[1]))) {
+      Tcl_AppendResult(irp, m->account, NULL);
+      return TCL_OK;
+    }
+    chan = chan->next;
+  }
+  Tcl_AppendResult(irp, "0", NULL);
+  return TCL_OK;
+}
+
 /* Send a msg to the server prefixed with an IRCv3 message-tag */
 static int tcl_tagmsg STDVAR {
   char tag[CLITAGMAX-9];    /* minus @, TAGMSG and two spaces */
@@ -451,5 +481,6 @@ static tcl_cmds my_tcl_cmds[] = {
   {"tagmsg",     tcl_tagmsg},
   {"addserver",  tcl_addserver},
   {"delserver",  tcl_delserver},
+  {"getaccount", tcl_getaccount},
   {NULL,         NULL}
 };
