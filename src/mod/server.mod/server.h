@@ -88,7 +88,9 @@
 /* Was (briefly!) addserver */
 /* Was (briefly!) delserver */
 #define net_type_int (*(int *)(server_funcs[43]))
+/* 44 - 47 */
 #define H_awayv3 (*(p_tcl_bind_list *)(server_funcs[44]))
+#define cap (*(cap_list *)(server_funcs[45]))
 #endif /* MAKING_SERVER */
 
 struct server_list {
@@ -107,9 +109,7 @@ typedef struct cap_list {
   char supported[CAPMAX];   /* Capes supported by IRCD                  */
   char negotiated[CAPMAX];  /* Common capes between IRCD and client     */
   char desired[CAPMAX];     /* Capes Eggdrop wants to request from IRCD */
-} cap_list;
-
-extern struct cap_list cap;
+} cap_list_t;
 
 /* Available net types. */
 enum {

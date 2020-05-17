@@ -2192,12 +2192,13 @@ static Function server_table[] = {
   (Function) & exclusive_binds, /* int                                  */
   /* 40 - 43 */
   (Function) & H_out,           /* p_tcl_bind_list                      */
-  (Function) add_server,
-  (Function) del_server,
+  (Function) NULL,
+  (Function) NULL,
   (Function) & net_type_int,    /* int                                  */
   /* 44 - 47 */
   (Function) & H_awayv3,        /* p_tcl_bind_list                      */
-  (Function) & H_acnt           /* p_tcl_bind)list                      */
+  (Function) & H_acnt,          /* p_tcl_bind)list                      */
+  (Function) & cap              /* cap_list                             */
 };
 
 char *server_start(Function *global_funcs)
