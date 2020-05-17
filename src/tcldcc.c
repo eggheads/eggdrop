@@ -958,18 +958,28 @@ static int setlisten(Tcl_Interp *irp, char *ip, char *portp, char *type, char *m
             "to remove this entry first", NULL);
       return TCL_ERROR;
     }
-    if (!strcasecmp(ip, "0.0.0.0") && strcasecmp(type, "off")) {
+    /* Block trying to listen on all IPv4 interfaces if there is already a
+     * specific IP listening on that port */
+    if (((!strcasecmp(ip, "0.0.0.0")) || (!strcmp(ip, "::"))) &&
+            strcasecmp(type, "off")) {
       Tcl_AppendResult(irp, "this port is already bound to a specific IP on "
-            "this machine, remove it before trying bind to 0.0.0.0", NULL);
+          "this machine, remove it before trying bind to all interfaces", NULL);
       return TCL_ERROR;
     }
-    if ((!strcasecmp(iptostr(&dcc[idx].sockname.addr.sa), "0.0.0.0")) &&
-            (dcc[i].port == port) && strcasecmp(type, "off")) {
-      Tcl_AppendResult(irp, "WARNING: port is already bound to 0.0.0.0; first "
-            "remove that entry with 'off' before adding the one just entered",
-            NULL);
+    /* Block trying to listen on a specific IP if the port is already bound to
+     * all interfaces. Check the IP for 0.0.0.0, :: and "" too, in case this is a
+     * rehash
+     */
+    if (((!strcmp(iptostr(&dcc[idx].sockname.addr.sa), "0.0.0.0")) ||
+            !strcmp(iptostr(&dcc[idx].sockname.addr.sa), "::")) &&
+            (dcc[i].port == port) && strcasecmp(type, "off") &&
+            (strcmp(ip, "0.0.0.0") && strcmp(ip, "::") && strcmp(ip, ""))) {
+      Tcl_AppendResult(irp, "WARNING: port is already bound to :: or 0.0.0.0, "
+            "first remove that entry with 'off' before adding the one just "
+            "entered", NULL);
       return TCL_ERROR;
     }
+    idx = -1; /* Reset; we may want to listen on this port on a different IP */
   }
   if (!strcasecmp(type, "off")) {
     if (pmap) {
