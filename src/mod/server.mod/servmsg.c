@@ -1497,7 +1497,9 @@ void add_cape(char *cape) {
     /* Update Tcl List object with new capability */
     Tcl_ListObjAppendElement(interp, ncapeslist, Tcl_NewStringObj(cape, -1));
     /* Update C variable with new capability */
-    strncat(cap.negotiated, " ", CAPMAX - strlen(cap.negotiated) - 1);
+    if (cap.negotiated) {
+      strncat(cap.negotiated, " ", CAPMAX - strlen(cap.negotiated) - 1);
+    }
     strncat(cap.negotiated, cape, CAPMAX - strlen(cap.negotiated) - 1);
     if (!strcasecmp(cape, "message-tags") || !strcasecmp(cape, "twitch.tv/tags")) {
       msgtag = 1;
@@ -1519,8 +1521,9 @@ void del_cape(char *cape) {
       if (!strcmp(cape, Tcl_GetString(ncapesv[i]))) {
         /* Remove deleted capability from Tcl List object */
         Tcl_ListObjReplace(interp, ncapeslist, i, 1, 0, NULL);
-        /* Remove deleted capability from C variable */
-        if (ncapesc==1) {   /* Because we deleted above, but didn't decrement */
+        /* Match C variable to Tcl List object (ie, delete the capability) */
+        Tcl_ListObjGetElements(interp, ncapeslist, &ncapesc, &ncapesv);
+        if (!ncapesc) {
           *cap.negotiated = 0;
         } else {
           for (j = 0; j < ncapesc; j++) {
@@ -1608,7 +1611,8 @@ static int gotcap(char *from, char *msg) {
      * END. Future eggheads: add support for more than 1 of these async
      * capabilities, right now SASL is the only one so we're OK.
      */
-    if (strstr(cap.negotiated, "sasl")) {
+    if (strstr(cap.negotiated, "sasl") && strstr(cap.desired, "sasl")) {
+      *cap.desired = 0;
 #ifndef HAVE_EVP_PKEY_GET1_EC_KEY
       if (sasl_mechanism != SASL_MECHANISM_ECDSA_NIST256P_CHALLENGE) {
 #endif
