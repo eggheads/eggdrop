@@ -32,7 +32,7 @@ static time_t last_ctcp = (time_t) 0L;
 static int count_ctcp = 0;
 static char altnick_char = 0;
 struct cap_list cap = {"", "", ""};
-int ncapesc;
+int ncapesc, extended_join= 0;
 Tcl_Obj **ncapesv, *ncapeslist;
 
 /* We try to change to a preferred unique nick here. We always first try the
@@ -1490,52 +1490,55 @@ static int got421(char *from, char *msg) {
   return 1;
 }
 
-void update_cap_negotiated() {
-  int i, len = 0;
-  Tcl_ListObjGetElements(interp, ncapeslist, &ncapesc, &ncapesv);
-  for (i = 0; i < ncapesc; i++) {
-    if (i)
-      cap.negotiated[len++] = ' ';
-    len += strlcpy(cap.negotiated + len, Tcl_GetString(ncapesv[i]), sizeof cap.negotiated - len);
-  }
-}
-
-/*
- * Add capability to Tcl List for easy addition/deletion. First
- * checks if requested cape is available on the list provided by the server
- * before adding to the desired list.
- */
+/* Add negotiated capability to Tcl List for easy addition/deletion */
 void add_cape(char *cape) {
   if (!strstr(cap.negotiated, cape)) {
     putlog(LOG_DEBUG, "*", "CAP: Adding cape %s to negotiated list", cape);
+    /* Update Tcl List object with new capability */
     Tcl_ListObjAppendElement(interp, ncapeslist, Tcl_NewStringObj(cape, -1));
-    if (!strcmp(cape, "message-tags") || !strcmp(cape, "twitch.tv/tags")) {
+    /* Update C variable with new capability */
+    strncat(cap.negotiated, " ", CAPMAX - strlen(cap.negotiated) - 1);
+    strncat(cap.negotiated, cape, CAPMAX - strlen(cap.negotiated) - 1);
+    if (!strcasecmp(cape, "message-tags") || !strcasecmp(cape, "twitch.tv/tags")) {
       msgtag = 1;
+    } else if (!strcasecmp(cape, "extended-join")) {
+      extended_join = 1;
     }
   } else {
     putlog(LOG_DEBUG, "*", "CAP: %s is already added to negotiated list", cape);
   }
-  update_cap_negotiated();
 }
 
 /* Remove capability from internal CAP request list */
 void del_cape(char *cape) {
-  int i;
+  int i, j, len = 0;
   if (strstr(cap.negotiated, cape)) {
     putlog(LOG_DEBUG, "*", "CAP: Removing %s from negotiated list", cape);
     Tcl_ListObjGetElements(interp, ncapeslist, &ncapesc, &ncapesv);
     for (i = 0; i < ncapesc; i++) {
       if (!strcmp(cape, Tcl_GetString(ncapesv[i]))) {
+        /* Remove deleted capability from Tcl List object */
         Tcl_ListObjReplace(interp, ncapeslist, i, 1, 0, NULL);
-        if (!strcmp(cape, "message-tags")) {
+        /* Remove deleted capability from C variable */
+        if (ncapesc==1) {   /* Because we deleted above, but didn't decrement */
+          *cap.negotiated = 0;
+        } else {
+          for (j = 0; j < ncapesc; j++) {
+            if (j)
+              cap.negotiated[len++] = ' ';
+            len += strlcpy(cap.negotiated + len, Tcl_GetString(ncapesv[j]), sizeof cap.negotiated - len);
+          }
+        }
+        if (!strcasecmp(cape, "message-tags") || !strcasecmp(cape, "twitch.tv/tags")) {
           msgtag = 0;
+        } else if (!strcasecmp(cape, "extended-join")) {
+          extended_join = 0;
         }
       }
     }
   } else {
     putlog(LOG_DEBUG, "*", "CAP: %s is not on negotiated list", cape);
   }
-  update_cap_negotiated();
 }
 
 /* Smash desired CAP capabilities into a single string */
@@ -1559,20 +1562,20 @@ static int gotcap(char *from, char *msg) {
     putlog(LOG_DEBUG, "*", "CAP: %s supports CAP sub-commands: %s", from, msg);
     strlcpy(cap.supported, msg, sizeof cap.supported);
 /* CAP is supported, yay! Lets load what we want to request */
-    if (sasl) {
-      if (sasl_mechanism < 0)
-        putlog(LOG_SERV, "*", "SASL error: sasl-mechanism must be equal to or greater than 0");
-      else if (sasl_mechanism >= SASL_MECHANISM_NUM)
-        putlog(LOG_SERV, "*", "SASL error: sasl-mechanism must be less than %i", SASL_MECHANISM_NUM);
-      else
-        add_req("sasl");
-    }
-    if (away_notify)
-      add_req("away-notify");
-    if (invite_notify)
-      add_req("invite-notify");
-    if (message_tags)
-      add_req("message-tags");
+//    if (sasl) {
+//      if (sasl_mechanism < 0)
+//        putlog(LOG_SERV, "*", "SASL error: sasl-mechanism must be equal to or greater than 0");
+//      else if (sasl_mechanism >= SASL_MECHANISM_NUM)
+//        putlog(LOG_SERV, "*", "SASL error: sasl-mechanism must be less than %i", SASL_MECHANISM_NUM);
+//      else
+//        add_req("sasl");
+//    }
+//    if (away_notify)
+//      add_req("away-notify");
+//    if (invite_notify)
+//      add_req("invite-notify");
+//    if (message_tags)
+//      add_req("message-tags");
 /* Add any custom capes the user listed */
     strncpy(cape, cap_request, sizeof cape);
     if ( (p = strtok(cape, " ")) ) {
@@ -1610,7 +1613,7 @@ static int gotcap(char *from, char *msg) {
       }
       splitstr = strtok(NULL, " ");
     }
-    update_cap_negotiated(); /* TODO: do we really need this call here? */
+//    update_cap_negotiated(); /* TODO: do we really need this call here? */
     putlog(LOG_SERV, "*", "CAP: Current negotiations with %s: %s", from, cap.negotiated);
     /* If a negotiated capability requires immediate action by Eggdrop, add it
      * here. However, that capability must take responsibility for sending an
@@ -1644,7 +1647,7 @@ static int gotcap(char *from, char *msg) {
   } else if (!strcmp(cmd, "NAK")) {
     putlog(LOG_SERV, "*", "CAP: Requested capability change %s rejected by %s",
         msg, from);
-    dprintf(DP_MODE, "CAP END\n");  /* TODO: Handle whatever caused it to reject? */
+    dprintf(DP_MODE, "CAP END\n");
   } else if (!strcmp(cmd, "NEW")) { /* TODO: CAP 302 stuff? */
     /* Do things */
   } else if (!strcmp(cmd, "DEL")) { /* TODO: CAP 302 stuff? */
