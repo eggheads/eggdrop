@@ -1562,20 +1562,9 @@ static int gotcap(char *from, char *msg) {
     putlog(LOG_DEBUG, "*", "CAP: %s supports CAP sub-commands: %s", from, msg);
     strlcpy(cap.supported, msg, sizeof cap.supported);
 /* CAP is supported, yay! Lets load what we want to request */
-//    if (sasl) {
-//      if (sasl_mechanism < 0)
-//        putlog(LOG_SERV, "*", "SASL error: sasl-mechanism must be equal to or greater than 0");
-//      else if (sasl_mechanism >= SASL_MECHANISM_NUM)
-//        putlog(LOG_SERV, "*", "SASL error: sasl-mechanism must be less than %i", SASL_MECHANISM_NUM);
-//      else
-//        add_req("sasl");
-//    }
-//    if (away_notify)
-//      add_req("away-notify");
-//    if (invite_notify)
-//      add_req("invite-notify");
-//    if (message_tags)
-//      add_req("message-tags");
+    if (sasl) {
+      add_req("sasl");
+    }
 /* Add any custom capes the user listed */
     strncpy(cape, cap_request, sizeof cape);
     if ( (p = strtok(cape, " ")) ) {
@@ -1613,7 +1602,6 @@ static int gotcap(char *from, char *msg) {
       }
       splitstr = strtok(NULL, " ");
     }
-//    update_cap_negotiated(); /* TODO: do we really need this call here? */
     putlog(LOG_SERV, "*", "CAP: Current negotiations with %s: %s", from, cap.negotiated);
     /* If a negotiated capability requires immediate action by Eggdrop, add it
      * here. However, that capability must take responsibility for sending an
