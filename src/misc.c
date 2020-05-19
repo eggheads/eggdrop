@@ -9,7 +9,7 @@
  */
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2019 Eggheads Development Team
+ * Copyright (C) 1999 - 2020 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -517,12 +517,12 @@ void putlog EGG_VARARGS_DEF(int, arg1)
 {
   static int inhere = 0;
   int i, type, tsl = 0;
-  char *format, *chname, s[LOGLINELEN], s1[256], *out, ct[81], *s2, stamp[34];
+  char *format, *chname, s[LOGLINELEN], s1[LOGLINELEN], *out, ct[81], *s2, stamp[34];
   va_list va;
   time_t now2 = time(NULL);
   static time_t now2_last = 0; /* cache expensive localtime() */
   static struct tm *t;
- 
+
   if (now2 != now2_last) {
     now2_last = now2;
     t = localtime(&now2);
@@ -1432,16 +1432,20 @@ void show_banner(int idx)
   fclose(vv);
 }
 
+void make_rand_str_from_chars(char *s, const int len, char *chars)
+{
+  int i;
+
+  for (i = 0; i < len; i++)
+    s[i] = chars[randint(strlen(chars))];
+  s[len] = 0;
+}
+
 /* Create a string with random lower case letters and digits
  */
 void make_rand_str(char *s, const int len)
 {
-  int i;
-  static const char chars[] = "0123456789abcdefghijklmnopqrstuvwxyz";
-
-  for (i = 0; i < len; i++)
-    s[i] = chars[randint((sizeof chars) - 1)];
-  s[len] = 0;
+  make_rand_str_from_chars(s, len, CHARSET_ALPHANUM);
 }
 
 /* Convert an octal string into a decimal integer value.  If the string

@@ -8,7 +8,7 @@
  */
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2019 Eggheads Development Team
+ * Copyright (C) 1999 - 2020 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -262,8 +262,7 @@ static int detect_chan_flood(char *floodnick, char *floodhost, char *from,
       return 0;
   }
   if (rfc_casecmp(chan->floodwho[which], p)) {  /* new */
-    strncpy(chan->floodwho[which], p, 80);
-    chan->floodwho[which][80] = 0;
+    strlcpy(chan->floodwho[which], p, sizeof chan->floodwho[which]);
     chan->floodtime[which] = now;
     chan->floodnum[which] = 1;
     return 0;
@@ -728,7 +727,7 @@ static void recheck_channel_modes(struct chanset_t *chan)
     else if ((mns & CHANQUIET) && (cur & CHANQUIET))
       add_mode(chan, '-', 'q', "");
     if ((chan->limit_prot != 0) && (chan->channel.maxmembers == 0)) {
-      char s[50];
+      char s[21];
 
       sprintf(s, "%d", chan->limit_prot);
       add_mode(chan, '+', 'l', s);
@@ -2529,5 +2528,9 @@ static cmd_t irc_raw[] = {
   {"347",     "",   (IntFunc) got347,       "irc:347"},
   {"348",     "",   (IntFunc) got348,       "irc:348"},
   {"349",     "",   (IntFunc) got349,       "irc:349"},
+  {NULL,      NULL, NULL,                         NULL}
+};
+
+static cmd_t irc_rawt[] = {
   {NULL,      NULL, NULL,                         NULL}
 };

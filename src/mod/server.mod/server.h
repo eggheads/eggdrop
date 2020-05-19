@@ -3,7 +3,7 @@
  */
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2019 Eggheads Development Team
+ * Copyright (C) 1999 - 2020 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -23,7 +23,12 @@
 #ifndef _EGG_MOD_SERVER_SERVER_H
 #define _EGG_MOD_SERVER_SERVER_H
 
-#define CAPMAX      499           /*  (512 - "CAP REQ :XXX\r\n")   */
+#define CAPMAX       499    /*  (512 - "CAP REQ :XXX\r\n")     */
+#define CLITAGMAX    4096   /* Max size for IRCv3 message-tags sent by client*/
+#define TOTALTAGMAX  8191   /* @ + Server tag len + ; + Client tag len + ' ' */
+#define MSGMAX       511    /* Max size of IRC message line    */
+#define SENDLINEMAX  CLITAGMAX + MSGMAX
+#define RECVLINEMAX  TOTALTAGMAX + MSGMAX
 
 #define check_tcl_ctcp(a,b,c,d,e,f) check_tcl_ctcpr(a,b,c,d,e,f,H_ctcp)
 #define check_tcl_ctcr(a,b,c,d,e,f) check_tcl_ctcpr(a,b,c,d,e,f,H_ctcr)
@@ -46,7 +51,7 @@
 /* 12 - 15 */
 #define match_my_nick ((int(*)(char *))server_funcs[12])
 #define check_tcl_flud ((int (*)(char *,char *,struct userrec *,char *,char *))server_funcs[13])
-/* Was fixfrom (moved to core) */
+#define msgtag (*(int *)(server_funcs[14]))
 #define answer_ctcp (*(int *)(server_funcs[15]))
 /* 16 - 19 */
 #define trigger_on_ignore (*(int *)(server_funcs[16]))
@@ -61,7 +66,7 @@
 /* 24 - 27 */
 #define default_port (*(int *)(server_funcs[24]))
 #define server_online (*(int *)(server_funcs[25]))
-/* Was min_servs */
+#define H_rawt (*(p_tcl_bind_list *)(server_funcs[26]))
 #define H_raw (*(p_tcl_bind_list *)(server_funcs[27]))
 /* 28 - 31 */
 #define H_wall (*(p_tcl_bind_list *)(server_funcs[28]))
@@ -80,9 +85,10 @@
 #define exclusive_binds (*(int *)(server_funcs[39]))
 /* 40 - 43 */
 #define H_out (*(p_tcl_bind_list *)(server_funcs[40]))
-#define addserver ((void(*)(char *))server_funcs[41])
-#define delserver ((void(*)(char *))server_funcs[42])
+/* Was (briefly!) addserver */
+/* Was (briefly!) delserver */
 #define net_type_int (*(int *)(server_funcs[43]))
+#define H_awayv3 (*(p_tcl_bind_list *)(server_funcs[44]))
 #endif /* MAKING_SERVER */
 
 struct server_list {
@@ -126,6 +132,7 @@ enum {
   SASL_MECHANISM_NUM
 };
 
+/* Must be extern to avoid odr-violation and allow make static */
 extern char const *SASL_MECHANISMS[];
 
 #endif /* _EGG_MOD_SERVER_SERVER_H */

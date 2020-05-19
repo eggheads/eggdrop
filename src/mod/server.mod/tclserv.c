@@ -2,7 +2,7 @@
  * tclserv.c -- part of server.mod
  *
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2019 Eggheads Development Team
+ * Copyright (C) 1999 - 2020 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -33,7 +33,7 @@ static int tcl_isbotnick STDVAR
 static int tcl_putnow STDVAR
 {
   int len;
-  char buf[512], *p, *q, *r;
+  char buf[MSGMAX], *p, *q, *r;
 
   BADARGS(2, 3, " text ?options?");
 
@@ -83,7 +83,7 @@ static int tcl_putnow STDVAR
 
 static int tcl_putquick STDVAR
 {
-  char s[511], *p;
+  char s[MSGMAX], *p;
 
   BADARGS(2, 3, " text ?options?");
 
@@ -110,7 +110,7 @@ static int tcl_putquick STDVAR
 
 static int tcl_putserv STDVAR
 {
-  char s[511], *p;
+  char s[MSGMAX], *p;
 
   BADARGS(2, 3, " text ?options?");
 
@@ -137,7 +137,7 @@ static int tcl_putserv STDVAR
 
 static int tcl_puthelp STDVAR
 {
-  char s[511], *p;
+  char s[MSGMAX], *p;
 
   BADARGS(2, 3, " text ?options?");
 
@@ -162,15 +162,67 @@ static int tcl_puthelp STDVAR
   return TCL_OK;
 }
 
+/* Send a msg to the server prefixed with an IRCv3 message-tag */
+static int tcl_tagmsg STDVAR {
+  char tag[CLITAGMAX-9];    /* minus @, TAGMSG and two spaces */
+  char tagdict[CLITAGMAX-9];
+  char target[MSGMAX];
+  char *p;
+  int taglen = 0, i = 1;
+  BADARGS(3, 3, " tag target");
+
+  if (!msgtag) {
+    Tcl_AppendResult(irp, "message-tags not enabled, cannot send tag", NULL);
+    return TCL_ERROR;
+  }
+  strlcpy(tagdict, argv[1], sizeof tag);
+  strlcpy(target, argv[2], sizeof target);
+  p = strtok(tagdict, " ");
+  while (p != NULL) {
+    if ((i % 2) != 0) {
+      taglen += egg_snprintf(tag + taglen, CLITAGMAX - 9 - taglen, "%s", p);
+    } else {
+      if (strcmp(p, "{}") != 0) {
+        taglen += egg_snprintf(tag + taglen, CLITAGMAX - 9 - taglen, "=%s;", p);
+      } else {
+        taglen += egg_snprintf(tag + taglen, CLITAGMAX - 9 - taglen, ";");
+      }
+    }
+    i++;
+    p = strtok(NULL, " ");
+  }
+  p = strchr(target, '\n');
+  if (p != NULL)
+    *p = 0;
+  p = strchr(target, '\r');
+  if (p != NULL)
+    *p = 0;
+  dprintf(DP_SERVER, "@%s TAGMSG %s\n", tag, target);
+  return TCL_OK;
+}
+
+
 /* Tcl interface to send CAP messages to server */
 static int tcl_cap STDVAR {
   char s[CAPMAX];
   BADARGS(2, 3, " sub-cmd ?arg?");
 
-  if (!strcasecmp(argv[1], "available")) {
+  /* List capabilities available on server */
+  if (!strcasecmp(argv[1], "ls")) {
     Tcl_AppendResult(irp, cap.supported, NULL);
-  } else if (!strcasecmp(argv[1], "active")) {
+  /* List capabilities Eggdrop is internally tracking as enabled with server */
+  } else if (!strcasecmp(argv[1], "enabled")) {
     Tcl_AppendResult(irp, cap.negotiated, NULL);
+  /* Send a request to negotiate a capability with server */
+  } else if (!strcasecmp(argv[1], "req")) {
+    if (argc != 3) {
+      Tcl_AppendResult(irp, "No CAP request provided", NULL);
+      return TCL_ERROR;
+    } else {
+      simple_sprintf(s, "CAP REQ :%s", argv[2]);
+      dprintf(DP_SERVER, "%s\n", s);
+    }
+  /* Send a raw CAP command to the server */
   } else if (!strcasecmp(argv[1], "raw")) {
     if (argc == 3) {
       simple_sprintf(s, "CAP %s", argv[2]);
@@ -396,6 +448,7 @@ static tcl_cmds my_tcl_cmds[] = {
   {"putserv",    tcl_putserv},
   {"putquick",   tcl_putquick},
   {"putnow",     tcl_putnow},
+  {"tagmsg",     tcl_tagmsg},
   {"addserver",  tcl_addserver},
   {"delserver",  tcl_delserver},
   {NULL,         NULL}

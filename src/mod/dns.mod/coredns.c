@@ -7,7 +7,7 @@
  * IPv6 support added by pseudo <pseudo@egg6.net>
  */
 /*
- * Portions Copyright (C) 1999 - 2019 Eggheads Development Team
+ * Portions Copyright (C) 1999 - 2020 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -889,7 +889,7 @@ void parserespacket(uint8_t *response, int len)
       ptrstring(&rp->sockname.addr.sa, stackstring, sizeof stackstring);
       break;
     case STATE_AREQ:
-      strncpy(stackstring, rp->hostn, 1024);
+      strlcpy(stackstring, rp->hostn, sizeof stackstring);
   }
   c = response + HFIXEDSZ;
   r = dn_expand(response, response + len, c, namestring, MAXDNAME);

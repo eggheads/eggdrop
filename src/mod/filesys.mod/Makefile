@@ -35,12 +35,12 @@ distclean: clean
  ../../../src/tclhash.h ../../../src/chan.h ../../../src/users.h \
  ../../../src/compat/compat.h ../../../src/compat/base64.h \
  ../../../src/compat/inet_aton.h ../../../src/compat/snprintf.h \
- ../../../src/compat/inet_pton.h ../../../src/compat/gethostbyname2.h \
- ../../../src/compat/strlcpy.h ../../../src/mod/modvals.h \
- ../../../src/tandem.h .././filesys.mod/filedb3.h \
- .././filesys.mod/filesys.h ../../../src/lang.h \
- ../../../src/mod/transfer.mod/transfer.h .././filesys.mod/files.h \
- .././filesys.mod/dbcompat.h .././filesys.mod/filelist.h \
- .././filesys.mod/files.c ../../../src/stat.h .././filesys.mod/filedb3.c \
- .././filesys.mod/tclfiles.c .././filesys.mod/dbcompat.c \
- .././filesys.mod/filelist.c
+ ../../../src/compat/gethostbyname2.h \
+ ../../../src/compat/explicit_bzero.h ../../../src/compat/strlcpy.h \
+ ../../../src/mod/modvals.h ../../../src/tandem.h \
+ .././filesys.mod/filedb3.h .././filesys.mod/filesys.h \
+ ../../../src/lang.h ../../../src/mod/transfer.mod/transfer.h \
+ .././filesys.mod/files.h .././filesys.mod/dbcompat.h \
+ .././filesys.mod/filelist.h .././filesys.mod/files.c ../../../src/stat.h \
+ .././filesys.mod/filedb3.c .././filesys.mod/tclfiles.c \
+ .././filesys.mod/dbcompat.c .././filesys.mod/filelist.c

@@ -67,19 +67,12 @@ There are four new IPv6 related config variables:
     when a connection can be established through both IPv4 and IPv6.
     You can set this to 1 to prefer IPv6 or to 0 to prefer IPv4.
 
-  listen-addr
-
-    the address to bind to for listening (telnet/bot ports, /ctcp chat,
-    file send, script listen, etc.). Can be either an IPv4/IPv6 IP or a
-    hostname. If a hostname resolves to both type of addresses,
-    prefer-ipv6 will determine which to be used. 
-
 Other affected variables:
 
   my-ip and my-hostname are removed now. Their function is split between
-  vhost4 and listen-addr.
+  vhost4 and the listen command.
 
   nat-ip works with IPv4 as it used to. It has no meaning for IPv6 and is
   not queried for IPv6 connections.
 
-Copyright (C) 2010 - 2019 Eggheads Development Team
+Copyright (C) 2010 - 2020 Eggheads Development Team

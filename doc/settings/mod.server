@@ -18,18 +18,13 @@ module:
 
 There are also some variables you can set in your config file:
 
-  set net-type 0
+  set net-type Efnet
 
-      What is your network?
-
-          ---------------- ----------------------------------------------------------------------------------------------------------------
-          0                EFnet
-          1                IRCnet
-          2                Undernet
-          3                DALnet
-          4                +e/+I/max-bans 20 Hybrid
-          5                Others
-          ---------------- ----------------------------------------------------------------------------------------------------------------
+      What is your network? Possible allowed values are Efnet, IRCnet,
+      Undernet, DALnet, freenode, Quakenet, Rizon, Other. If the network
+      you use is not listed, using "Other" is a good sane choice and can
+      be customized with settings both here and in the IRC module
+      sections of the config file.
 
   set nick "LamestBot"
 
@@ -219,7 +214,7 @@ There are also some variables you can set in your config file:
 
       Allow identical messages in the help queue?
 
-  set use-penalties 1 (default on net-type 1)
+  set use-penalties 1 (default on net-type IRCnet)
 
       This enables Eggdrop's penalty calculation. Every command Eggdrop
       sends to the IRC server raises its penalty points. If Eggdrop
@@ -242,11 +237,11 @@ There are also some variables you can set in your config file:
 
       ATTENTION: Setting 2 is very CPU intensive.
 
-There are additional settings for 'net-type' 5.
+There are additional settings for 'net-type' Efnet.
 
   _net-type 5 specific features:_
 
-  Attention: Use this settings _only_ if you set 'net-type' to 5!
+  Attention: Use this settings _only_ if you set 'net-type' to Efnet!
 
     set check-mode-r 1
 
@@ -255,7 +250,8 @@ There are additional settings for 'net-type' 5.
         this is your case, and you want your bot to leave restricted
         servers and jump to the next server on its list, then set it to
         1. Please note, this setting is automatically set to 0 for
-        net-type 0/2/3/4, and set to 1 for net-type 1.
+        net-type of Efnet, Undernet, and DALnet, and set to 1 for
+        net-type IRCNet.
 
     set nick-len 9
 
@@ -263,4 +259,4 @@ There are additional settings for 'net-type' 5.
         supported by your network. The default setting is 9. The maximum
         supported length by Eggdrop is 32.
 
-  Copyright (C) 2000 - 2019 Eggheads Development Team
+  Copyright (C) 2000 - 2020 Eggheads Development Team

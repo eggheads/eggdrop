@@ -155,19 +155,33 @@ clearqueue <queue>
   Module: server
 
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-cap <active/available/raw> [arg]
+cap <ls/req/enabled/raw> [arg]
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-  Description: displays CAP status or sends a raw CAP command to the server. "available" will list the capabilities supported by the server, "active" will list the capabilities Eggdrop has negotiated with the server, and raw will send a raw CAP command to the server. If sending a raw command, it must be submitted in arg as a single string. For example, to request capabilities foo and bar, you would use [cap raw "REQ :foo bar"]. 
+  Description: displays CAP status or sends a raw CAP command to the server. "ls" will list the capabilities Eggdrop is internally tracking as supported by the server, "enabled" will list the capabilities Eggdrop is internally tracking as negotiated with the server, "req" will request the capabilities listed in "arg" from the server, and raw will send a raw CAP command to the server. The arg field is a single argument, and should be submitted as a single string. For example, to request capabilities foo and bar, you would use [cap req "foo bar"], and for example purposes, sending the same request as a raw command would be [cap raw "REQ :foo bar"].
 
   Returns: nothing
 
   Module: server
 
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-addserver <ip/host> [port [password]]
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  Description: adds a server to the list of servers Eggdrop will connect to. A port value is required if password is to be specified. 
+^^^^^^^^^^^^^^^^^^^^^^
+tagmsg <tags> <target>
+^^^^^^^^^^^^^^^^^^^^^^
+
+  Description: sends an IRCv3 TAGMSG command to the target. Only works if message-tags has been negotiated with the server via the cap command. tags is a Tcl dict (or space-separated string) of the tags you wish to send separated by commas (do not include the @prefix), and target is the nickname or channel you wish to send the tags to. To send a tag only (not a key/value pair), use a "" as the value for a key in a dict, or a "{}" if you are sending as a space-separated string.
+
+  Examples:
+    set mytags [dict create +foo bar moo baa +last ""]; tagmsg $mytags #channel
+    tagmsg "+foo bar moo baa +last {}" #channel
+
+  Returns: nothing
+
+  Module: server
+
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+addserver <ip/host> [[+]port [password]]
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  Description: adds a server to the list of servers Eggdrop will connect to. Prefix the port with '+' to indicate an SSL-protected port. A port value is required if password is to be specified. 
 
   Returns: nothing
 
@@ -1641,37 +1655,37 @@ connect <host> <[+]port>
 
   Module: core
 
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-listen <port> <type> [options] [flag]
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+listen [ip] <port> <type> [options [flag]]
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-  Description: opens a listening port to accept incoming telnets; type must be one of "bots", "all", "users", "script", or "off". Prefixing the port with a plus sign will make eggdrop accept SSL connections on it.
+  Description: opens a listening port to accept incoming telnets; type must be one of "bots", "all", "users", "script", or "off". Prefixing the port with a plus sign will make eggdrop accept SSL connections on it. An IP may optionally be listed before the mandatory port argument. If no IP is specified, all available interfaces are used.
 
-    listen <port> bots [mask]
+    listen [ip] <port> bots [mask]
 
       Description: accepts connections from bots only; the optional mask is used to identify permitted bot names. If the mask begins with '@', it is interpreted to be a mask of permitted hosts to accept connections from.
 
-      Returns: port number
+      Returns: port number or error message
 
-    listen <port> users [mask]
+    listen [ip] <port> users [mask]
     
       Description: accepts connections from users only (no bots); the optional mask is used to identify permitted nicknames. If the mask begins with '@', it is interpreted to be a mask of permitted hosts to accept connections from.
 
-      Returns: port number
+      Returns: port number or error message
 
-    listen <port> all [mask]
+    listen [ip] <port> all [mask]
 
       Description: accepts connections from anyone; the optional mask is used to identify permitted nicknames/botnames. If the mask begins with '@', it is interpreted to be a mask of permitted hosts to accept connections from.
 
-      Returns: port number
+      Returns: port number or error message
 
-    listen <port> script <proc> [flag]
+    listen [ip] <port> script <proc> <flag>
 
-      Description: accepts connections which are immediately routed to a proc. The proc is called with one parameter: the idx of the new connection. Flag may currently only be 'pub', which makes the bot allow anyone to connect and not perform an ident lookup.
+      Description: accepts connections which are immediately routed to a proc. The proc is called with one parameter: the idx of the new connection. If the script type is used, flag must also be set. Flag may currently only be 'pub', which makes the bot allow anyone to connect and not perform an ident lookup.
 
-      Returns: port number
+      Returns: port number or error message
 
-    listen <port> off
+    listen [ip] <port> off
 
       Description: stop listening on a port
 
@@ -2144,8 +2158,8 @@ maskhost <nick!user@host> [masktype]
   You can also specify types from 10 to 19 which correspond to types
   0 to 9, but instead of using a * wildcard to replace portions of the
   host, only numbers in hostnames are replaced with the '?' wildcard.
-  Same is valid for types 20-29, but instead of '?', the '*' wildcard
-  will be used. Types 30-39 set the host to '*'.
+  Same is valid for types 20-29, but instead of '?', the '\*' wildcard
+  will be used. Types 30-39 set the host to '\*'.
 
   Module: core
 
@@ -2851,7 +2865,7 @@ The following is a list of bind types and how they work. Below each bind type is
   
   procname <nick> <user\@host> <handle> <channel> <reason>
 
-  Description: triggered by a signoff, or possibly by someone who got netsplit and never returned. The signoff message is the last argument to the proc. Wildcards can be used in the mask, which is matched against '#channel nick!user\@host'.
+  Description: triggered by a signoff, or possibly by someone who got netsplit and never returned. The signoff message is the last argument to the proc. Wildcards can be used in the mask, which is matched against '#channel nick!user\@host'. If a "*" is used for the channel in the mask, this bind is triggered once for every channel that the user is in the bot with; in other words if the bot is in two channels with the target user, the bind will be triggered twice. To trigger a proc only once per signoff, regardless of the number of channels the Eggdrop and user share, use the RAWT bind with SIGN as the keyword.
 
   Module: irc
 
@@ -2882,7 +2896,7 @@ The following is a list of bind types and how they work. Below each bind type is
   
   procname <nick> <user\@host> <handle> <channel> <newnick>
 
-  Description: triggered when someone changes nicknames. The mask is matched against '#channel newnick' and can contain wildcards. Channel is "*" if the user isn't on a channel (usually the bot not yet in a channel).
+  Description: triggered when someone changes nicknames. The mask is matched against '#channel newnick' and can contain wildcards. Channel is "*" if the user isn't on a channel (usually the bot not yet in a channel). If a "*" is used for the channel in the mask, this bind is triggered once for every channel that the user is in the bot with; in other words if the bot is in two channels with the target user, the bind will be triggered twice. To trigger a proc only once per nick change, regardless of the number of channels the Eggdrop and user share, use the RAWT bind with NICK as the keyword.
 
   Module: irc
 
@@ -2942,7 +2956,9 @@ The following is a list of bind types and how they work. Below each bind type is
 
   procname <from> <keyword> <text>
 
-  Description: previous versions of Eggdrop required a special compile option to enable this binding, but it's now standard. The keyword is either a numeric, like "368", or a keyword, such as "PRIVMSG". "from" will be the server name or the source user (depending on the keyword); flags are ignored. The order of the arguments is identical to the order that the IRC server sends to the bot. The pre-processing  only splits it apart enough to determine the keyword. If the proc returns 1, Eggdrop will not process the line any further (this could cause unexpected behavior in some cases).
+  IMPORTANT: While not necessarily deprecated, this bind has been supplanted by the RAWT bind as of 1.9.0. You probably want to be using RAWT, not RAW.
+
+  Description: previous versions of Eggdrop required a special compile option to enable this binding, but it's now standard. The keyword is either a numeric, like "368", or a keyword, such as "PRIVMSG". "from" will be the server name or the source user (depending on the keyword); flags are ignored. The order of the arguments is identical to the order that the IRC server sends to the bot. The pre-processing only splits it apart enough to determine the keyword. If the proc returns 1, Eggdrop will not process the line any further (this could cause unexpected behavior in some cases). The RAW bind does not support the IRCv3 message-tags capability, please see RAWT for more information.
 
   Module: server
 
@@ -3161,7 +3177,7 @@ The following is a list of bind types and how they work. Below each bind type is
 
   procname <botname> <idx> <text>
 
-  Description: triggers when a user goes away or comes back on the botnet. text is the reason than has been specified (text is "" when returning). mask is matched against the botnet-nick of the bot the user is connected to and supports wildcards. flags are ignored.
+  Description: triggers when a user goes away or comes back on the botnet. text is the reason that has been specified (text is "" when returning). mask is matched against the botnet-nick of the bot the user is connected to and supports wildcards. flags are ignored.
 
   Module: core
 
@@ -3295,6 +3311,16 @@ The following is a list of bind types and how they work. Below each bind type is
 
   Module: core
 
+(50) AWY3 (stackable)
+
+  bind awy3 <flags> <mask> <proc>
+
+  procname <from> <msg>
+
+  Description: triggered when Eggdrop recieves an IRCv3 AWAY message for a user from an IRC server, ONLY if the away-notify IRCv3 capability is enabled via CAP. "Normal" away messages (301 messages) will not trigger this bind, for those you should instead use a RAWT bind. mask is a nickname (* to catch all nicknames) and msg is the reason that has been specified. flags is ignored. This bind will only work with IRC servers that support the IRCv3 away-notify capability, and the away-notify capability must be enabled.
+
+  Module: server
+
 (51) INVT (stackable)
 
   bind invt <flags> <mask> <proc>
@@ -3302,6 +3328,14 @@ The following is a list of bind types and how they work. Below each bind type is
   procname <nick> <user@host> <channel> <invitee>
 
   Description: triggered when eggdrop received an INVITE message. The mask for the bind is in the format "#channel nickname", where nickname (not a hostmask) is that of the invitee. For the proc, nick is the nickname of the person sending the invite request, user@host is the user@host of the person sending the invite, channel is the channel the invitee is being invited to, and invitee is the target (nickname only) of the invite. The invitee argument was added to support the IRCv3 invite-notify capability, where the eggdrop may be able to see invite messages for other people that are not the eggdrop.
+
+(52) RAWT (stackable)
+
+  bind rawt <flags> <keyword> <proc>
+
+  procname <from> <keyword> <text> <tag>
+
+  Description: similar to the RAW bind, but allows an extra field for the IRCv3 message-tags capability. The keyword is either a numeric, like "368", or a keyword, such as "PRIVMSG" or "TAGMSG". "from" will be the server name or the source user (depending on the keyword); flags are ignored. "tag" will be the contents, if any, of the entire tag message prefixed to the server message in a dict format, such as "msgid 890157217279768 aaa bbb". The order of the arguments is identical to the order that the IRC server sends to the bot. If the proc returns 1, Eggdrop will not process the line any further (this could cause unexpected behavior in some cases). As of 1.9.0, it is recommended to use the RAWT bind instead of the RAW bind.
 
 ^^^^^^^^^^^^^
 Return Values
@@ -3354,6 +3388,8 @@ Here's a list of the bindings that use the return value from procs they trigger:
 (17) EVNT  Return 1 to make Eggdrop not to take the default action for the event. Used for signal type events, ignored for others.
 
 (18) TLS   Return 1 to disable verbose ssl information for the handshake.
+
+(19) RAWT  Return 1 to ask the bot not to prcess the server text. This can affet the bot's performance by causing it to miss things that it would normally act on -- you have been warned. Again.
 
 Control Procedures
 ------------------
@@ -3468,4 +3504,4 @@ are the four special characters:
 |     | words) (This char only works in binds, not in regular matching)          |
 +-----+--------------------------------------------------------------------------+
 
-  Copyright (C) 1999 - 2019 Eggheads Development Team
+  Copyright (C) 1999 - 2020 Eggheads Development Team
