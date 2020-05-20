@@ -61,7 +61,7 @@ You can change the basic Eggdrop appearance and behavior in this section.
   |   If you're using virtual hosting (your machine has more than 1 IP), you
       may want to specify the particular IP to bind to. You can specify either
       by hostname or by IP. Note that this is not used for listening. Use the
-      listen' command to specify the listening address.
+      'listen' command to specify the listening address.
 
   | set vhost6 "2001:db8:618:5c0:263::"
   | set vhost6 "my.ipv6.host.com"
