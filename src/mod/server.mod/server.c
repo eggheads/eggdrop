@@ -1646,6 +1646,8 @@ static tcl_ints my_tcl_ints[] = {
   {"away-notify",       &away_notify,               0},
   {"invite-notify",     &invite_notify,             0},
   {"message-tags",      &message_tags,              0},
+  {"extended-join",     &extended_join,             0},
+  {"account-notify",    &account_notify,            0},
   {NULL,                NULL,                       0}
 };
 
@@ -2198,7 +2200,10 @@ static Function server_table[] = {
   /* 44 - 47 */
   (Function) & H_awayv3,        /* p_tcl_bind_list                      */
   (Function) & H_acnt,          /* p_tcl_bind)list                      */
-  (Function) & cap              /* cap_list                             */
+  (Function) & cap,             /* cap_list                             */
+  (Function) & extended_join,   /* int                                  */
+  /* 48 - 51 */
+  (Function) & account_notify   /* int                                  */
 };
 
 char *server_start(Function *global_funcs)

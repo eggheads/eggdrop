@@ -91,6 +91,9 @@
 /* 44 - 47 */
 #define H_awayv3 (*(p_tcl_bind_list *)(server_funcs[44]))
 #define cap (*(cap_list_t *)(server_funcs[45]))
+#define H_acnt (*(p_tcl_bind_list *)(server_funcs[46]))
+#define extended_join (*(int *)(server_funcs[47]))
+#define account_notify (*(char *)(server_funcs[48]))
 #endif /* MAKING_SERVER */
 
 struct server_list {

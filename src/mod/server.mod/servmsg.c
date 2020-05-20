@@ -32,7 +32,7 @@ static time_t last_ctcp = (time_t) 0L;
 static int count_ctcp = 0;
 static char altnick_char = 0;
 struct cap_list cap = {"", "", ""};
-int ncapesc, extended_join= 0;
+int ncapesc, account_notify = 0, extended_join = 0;
 Tcl_Obj **ncapesv, *ncapeslist;
 
 /* We try to change to a preferred unique nick here. We always first try the
@@ -1549,6 +1549,8 @@ void add_cape(char *cape) {
       msgtag = 1;
     } else if (!strcasecmp(cape, "extended-join")) {
       extended_join = 1;
+    } else if (!strcasecmp(cape, "account-notify")) {
+      account_notify = 1;
     }
   } else {
     putlog(LOG_DEBUG, "*", "CAP: %s is already added to negotiated list", cape);
@@ -1580,6 +1582,8 @@ void del_cape(char *cape) {
           msgtag = 0;
         } else if (!strcasecmp(cape, "extended-join")) {
           extended_join = 0;
+        } else if (!strcasecmp(cape, "account-notify")) {
+          account_notify = 0;
         }
       }
       if (!strcasecmp(cape, "message-tags") || !strcasecmp(cape, "twitch.tv/tags")) {

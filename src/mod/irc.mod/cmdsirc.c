@@ -758,9 +758,16 @@ static void cmd_channel(struct userrec *u, int idx, char *par)
       maxhandlen = 9;
 
     dprintf(idx, "(n = owner, m = master, o = op, d = deop, b = bot)\n");
-    egg_snprintf(format, sizeof format, " %%-%us %%-%us %%-6s %%-5s %%s\n",
-                 maxnicklen, maxhandlen);
-    dprintf(idx, format, "NICKNAME", "HANDLE", " JOIN", "IDLE", "USER@HOST");
+    if (extended_join || account_notify) {
+      egg_snprintf(format, sizeof format, " %%-%us %%-%us %%-%us %%-6s"
+                " %%-5s %%s\n", maxnicklen, maxhandlen, maxnicklen);
+      dprintf(idx, format, "NICKNAME", "HANDLE", "ACCOUNT", " JOIN", "IDLE",
+                "USER@HOST");
+    } else {
+      egg_snprintf(format, sizeof format, " %%-%us %%-%us %%-6s %%-5s"
+                " %%s\n", maxnicklen, maxhandlen);
+      dprintf(idx, format, "NICKNAME", "HANDLE", " JOIN", "IDLE", "USER@HOST");
+    }
     for (m = chan->channel.member; m && m->nick[0]; m = m->next) {
       if (m->joined > 0) {
         if ((now - (m->joined)) > 86400)
@@ -854,16 +861,32 @@ static void cmd_channel(struct userrec *u, int idx, char *par)
       else
         chanflag = ' ';
       if (chan_issplit(m)) {
-        egg_snprintf(format, sizeof format,
+        if (extended_join || account_notify) {
+          egg_snprintf(format, sizeof format,
+                     "%%c%%-%us %%-%us %%-%us %%s %%c     <- netsplit, %%lus\n",
+                     maxnicklen, maxhandlen, maxnicklen);
+          dprintf(idx, format, chanflag, m->nick, handle, m->account, s, atrflag,
+                now - (m->split));
+        } else {
+          egg_snprintf(format, sizeof format,
                      "%%c%%-%us %%-%us %%s %%c     <- netsplit, %%lus\n",
                      maxnicklen, maxhandlen);
-        dprintf(idx, format, chanflag, m->nick, handle, s, atrflag,
+          dprintf(idx, format, chanflag, m->nick, handle, s, atrflag,
                 now - (m->split));
+        }
       } else if (!rfc_casecmp(m->nick, botname)) {
-        egg_snprintf(format, sizeof format,
+        if (extended_join || account_notify) {
+          egg_snprintf(format, sizeof format,
+                    "%%c%%-%us %%-%us %%-%us %%s %%c     <- it's me!\n",
+                    maxnicklen, maxnicklen, maxhandlen);
+          dprintf(idx, format, chanflag, m->nick, handle, m-> account, s,
+                    atrflag);
+        } else {
+          egg_snprintf(format, sizeof format,
                      "%%c%%-%us %%-%us %%s %%c     <- it's me!\n",
                      maxnicklen, maxhandlen);
-        dprintf(idx, format, chanflag, m->nick, handle, s, atrflag);
+          dprintf(idx, format, chanflag, m->nick, handle, s, atrflag);
+        }
       } else {
         /* Determine idle time */
         if (now - (m->last) > 86400)
@@ -874,11 +897,19 @@ static void cmd_channel(struct userrec *u, int idx, char *par)
           egg_snprintf(s1, sizeof s1, "%2lum", ((now - (m->last)) / 60));
         else
           strlcpy(s1, "   ", sizeof s1);
-        egg_snprintf(format, sizeof format,
+        if (extended_join || account_notify) {
+          egg_snprintf(format, sizeof format,
+                     "%%c%%-%us %%-%us %%-%us %%s %%c %%s  %%s\n", maxnicklen,
+                     maxnicklen, maxhandlen);
+          dprintf(idx, format, chanflag, m->nick, handle, m->account, s,
+                    atrflag, s1, m->userhost);
+        } else {
+          egg_snprintf(format, sizeof format,
                      "%%c%%-%us %%-%us %%s %%c %%s  %%s\n", maxnicklen,
                      maxhandlen);
-        dprintf(idx, format, chanflag, m->nick, handle, s, atrflag, s1,
+          dprintf(idx, format, chanflag, m->nick, handle, s, atrflag, s1,
                 m->userhost);
+        }
       }
       if (chan_fakeop(m))
         dprintf(idx, "    (%s)\n", IRC_FAKECHANOP);

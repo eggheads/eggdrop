@@ -1683,9 +1683,9 @@ static void set_delay(struct chanset_t *chan, char *nick)
 
 /* Got a join
  */
-static int gotjoin(char *from, char *chname)
+static int gotjoin(char *from, char *channame)
 {
-  char *nick, *p, buf[UHOSTLEN], *uhost = buf;
+  char *nick, *p, buf[UHOSTLEN], account[NICKMAX], *uhost = buf, *chname;
   char *ch_dname = NULL;
   struct chanset_t *chan;
   memberlist *m;
@@ -1693,8 +1693,10 @@ static int gotjoin(char *from, char *chname)
   struct userrec *u;
   struct flag_record fr = { FR_GLOBAL | FR_CHAN, 0, 0, 0, 0, 0 };
 
-  fixcolon(chname);
-  chan = findchan(chname);
+  strlcpy(uhost, from, sizeof buf);
+  nick = splitnick(&uhost);
+  chname = newsplit(&channame);
+  chan = findchan_by_dname(chname);
   if (!chan && chname[0] == '!') {
     /* As this is a !channel, we need to search for it by display (short)
      * name now. This will happen when we initially join the channel, as we
@@ -1736,16 +1738,12 @@ static int gotjoin(char *from, char *chname)
   }
 
   if (!chan || channel_inactive(chan)) {
-    strlcpy(uhost, from, sizeof buf);
-    nick = splitnick(&uhost);
     if (match_my_nick(nick)) {
       putlog(LOG_MISC, "*", "joined %s but didn't want to!", chname);
       dprintf(DP_MODE, "PART %s\n", chname);
     }
   } else if (!channel_pending(chan)) {
     chan->status &= ~CHAN_STOP_CYCLE;
-    strlcpy(uhost, from, sizeof buf);
-    nick = splitnick(&uhost);
     detect_chan_flood(nick, uhost, from, chan, FLOOD_JOIN, NULL);
 
     chan = findchan(chname);
@@ -1964,6 +1962,14 @@ static int gotjoin(char *from, char *chname)
 #ifdef NO_HALFOP_CHANMODES
         }
 #endif
+      }
+    }
+  }
+  if (extended_join) {
+    strncpy(account, newsplit(&channame), sizeof account);
+    if (strcmp(account, "*")) {
+      if ((m = ismember(chan, nick))) {
+        strncpy (m->account, account, sizeof m->account);
       }
     }
   }
