@@ -949,19 +949,19 @@ static int setlisten(Tcl_Interp *irp, char *ip, char *portp, char *type, char *m
   for (i = 0; i < dcc_total; i++) {
     if ((dcc[i].type == &DCC_TELNET) && (dcc[i].port == port)) {
       idx = i;
-    } else {
-      continue;
+      tryagain = 1; /* Reset; we may want to listen on this port on a different IP */
     }
-    /* This specific IP/port pair is already in use */
+    /* This specific IP/port pair is already in use, set tryagain to 0 so we don't
+     * try to listen again on this ip/port and cause a Tcl error
+     */
     if ((!strcasecmp(iptostr(&dcc[idx].sockname.addr.sa), ip)) && (dcc[i].port == port) &&
-            strcasecmp(type, "off")) {
-      Tcl_AppendResult(irp, "this ip/port is already in use; use 'off' as type "
-            "to remove this entry first", NULL);
-      return TCL_ERROR;
+           strcasecmp(type, "off")) {
+      tryagain = 0;
+      break;
     }
     /* Block trying to listen on all IPv4 interfaces if there is already a
      * specific IP listening on that port */
-    if (((!strcasecmp(ip, "0.0.0.0")) || (!strcmp(ip, "::"))) &&
+    if (((!strcasecmp(ip, "0.0.0.0")) || (IN6_IS_ADDR_UNSPECIFIED(ip))) &&
             strcasecmp(type, "off")) {
       Tcl_AppendResult(irp, "this port is already bound to a specific IP on "
           "this machine, remove it before trying bind to all interfaces", NULL);
@@ -972,15 +972,15 @@ static int setlisten(Tcl_Interp *irp, char *ip, char *portp, char *type, char *m
      * rehash
      */
     if (((!strcmp(iptostr(&dcc[idx].sockname.addr.sa), "0.0.0.0")) ||
-            !strcmp(iptostr(&dcc[idx].sockname.addr.sa), "::")) &&
+            IN6_IS_ADDR_UNSPECIFIED(&dcc[idx].sockname.addr.sa)) &&
             (dcc[i].port == port) && strcasecmp(type, "off") &&
-            (strcmp(ip, "0.0.0.0") && strcmp(ip, "::") && strcmp(ip, ""))) {
+            (strcmp(ip, "0.0.0.0") && !IN6_IS_ADDR_UNSPECIFIED(ip)
+            && strcmp(ip, ""))) {
       Tcl_AppendResult(irp, "WARNING: port is already bound to :: or 0.0.0.0, "
             "first remove that entry with 'off' before adding the one just "
             "entered", NULL);
       return TCL_ERROR;
     }
-    tryagain = 1; /* Reset; we may want to listen on this port on a different IP */
   }
   if (!strcasecmp(type, "off")) {
     if (pmap) {
