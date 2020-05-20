@@ -984,7 +984,7 @@ static int setlisten(Tcl_Interp *irp, char *ip, char *portp, char *type, char *m
             && !IN6_IS_ADDR_UNSPECIFIED(ip)
 #endif
             && strcmp(ip, ""))) {
-      Tcl_AppendResult(irp, "WARNING: port is already bound to :: or 0.0.0.0, "
+      Tcl_AppendResult(irp, "port is already bound to :: or 0.0.0.0, "
             "first remove that entry with 'off' before adding the one just "
             "entered", NULL);
       return TCL_ERROR;
