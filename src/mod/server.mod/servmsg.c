@@ -1501,6 +1501,9 @@ void add_cape(char *cape) {
       strncat(cap.negotiated, " ", CAPMAX - strlen(cap.negotiated) - 1);
     }
     strncat(cap.negotiated, cape, CAPMAX - strlen(cap.negotiated) - 1);
+    /* This section adds status variables used by other modules, if they need to
+     * know if a specific capability is active or not
+     */
     if (!strcasecmp(cape, "message-tags") || !strcasecmp(cape, "twitch.tv/tags")) {
       msgtag = 1;
     } else if (!strcasecmp(cape, "extended-join")) {
@@ -1537,6 +1540,11 @@ void del_cape(char *cape) {
         } else if (!strcasecmp(cape, "extended-join")) {
           extended_join = 0;
         }
+      }
+      if (!strcasecmp(cape, "message-tags") || !strcasecmp(cape, "twitch.tv/tags")) {
+        msgtag = 0;
+      } else if (!strcasecmp(cape, "extended-join")) {
+        extended_join = 0;
       }
     }
   } else {
