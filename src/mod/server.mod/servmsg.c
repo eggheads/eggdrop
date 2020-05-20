@@ -1497,7 +1497,7 @@ void add_cape(char *cape) {
     /* Update Tcl List object with new capability */
     Tcl_ListObjAppendElement(interp, ncapeslist, Tcl_NewStringObj(cape, -1));
     /* Update C variable with new capability */
-    if (cap.negotiated) {
+    if (*cap.negotiated) {
       strncat(cap.negotiated, " ", CAPMAX - strlen(cap.negotiated) - 1);
     }
     strncat(cap.negotiated, cape, CAPMAX - strlen(cap.negotiated) - 1);
