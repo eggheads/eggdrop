@@ -961,8 +961,11 @@ static int setlisten(Tcl_Interp *irp, char *ip, char *portp, char *type, char *m
     }
     /* Block trying to listen on all IPv4 interfaces if there is already a
      * specific IP listening on that port */
-    if (((!strcasecmp(ip, "0.0.0.0")) || (IN6_IS_ADDR_UNSPECIFIED(ip))) &&
-            strcasecmp(type, "off")) {
+    if (((!strcasecmp(ip, "0.0.0.0"))
+#ifdef IPV6
+        || (IN6_IS_ADDR_UNSPECIFIED(ip))
+#endif
+        ) && strcasecmp(type, "off")) {
       Tcl_AppendResult(irp, "this port is already bound to a specific IP on "
           "this machine, remove it before trying bind to all interfaces", NULL);
       return TCL_ERROR;
@@ -971,12 +974,17 @@ static int setlisten(Tcl_Interp *irp, char *ip, char *portp, char *type, char *m
      * all interfaces. Check the IP for 0.0.0.0, :: and "" too, in case this is a
      * rehash
      */
-    if (((!strcmp(iptostr(&dcc[idx].sockname.addr.sa), "0.0.0.0")) ||
-            IN6_IS_ADDR_UNSPECIFIED(&dcc[idx].sockname.addr.sa)) &&
-            (dcc[i].port == port) && strcasecmp(type, "off") &&
-            (strcmp(ip, "0.0.0.0") && !IN6_IS_ADDR_UNSPECIFIED(ip)
+    if (((!strcmp(iptostr(&dcc[idx].sockname.addr.sa), "0.0.0.0"))
+#ifdef IPV6
+            || IN6_IS_ADDR_UNSPECIFIED(&dcc[idx].sockname.addr.sa)
+#endif
+            ) && (dcc[i].port == port) && strcasecmp(type, "off") &&
+            (strcmp(ip, "0.0.0.0")
+#ifdef IPV6
+            && !IN6_IS_ADDR_UNSPECIFIED(ip)
+#endif
             && strcmp(ip, ""))) {
-      Tcl_AppendResult(irp, "WARNING: port is already bound to :: or 0.0.0.0, "
+      Tcl_AppendResult(irp, "port is already bound to :: or 0.0.0.0, "
             "first remove that entry with 'off' before adding the one just "
             "entered", NULL);
       return TCL_ERROR;
@@ -1014,8 +1022,11 @@ static int setlisten(Tcl_Interp *irp, char *ip, char *portp, char *type, char *m
     /* If we didn't find a listening ip/port, or we did but it isn't all
      * interfaces
      */
-    if ((!tryagain) || (strcmp(ip, "") && strcmp(ip, "::") &&
-            strcmp(ip, "0.0.0.0"))) {
+    if ((!tryagain) || (strcmp(ip, "") && strcmp(ip, "0.0.0.0")
+#ifdef IPV6
+            && !IN6_IS_ADDR_UNSPECIFIED(ip)
+#endif
+            )) {
       if (strlen(ip)) {
         setsockname(&name, ip, port, 1);
         i = open_address_listen(&name);
