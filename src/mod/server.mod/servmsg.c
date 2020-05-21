@@ -1453,7 +1453,7 @@ static int gotaccount(char *from, char *msg) {
   struct chanset_t *chan;
   struct userrec *u;
   memberlist *m;
-  char *nick, *chname, mask[UHOSTLEN];
+  char *nick, *chname, mask[CHANNELLEN+UHOSTLEN+NICKMAX+2];
 
   u = get_user_by_host(from);
   nick = splitnick(&from);
@@ -1461,7 +1461,7 @@ static int gotaccount(char *from, char *msg) {
     chname = chan->dname;
     if ((m = ismember(chan, nick))) {
       strncpy (m->account, msg, sizeof m->account);
-      snprintf(mask, sizeof mask, "%s %s", chname, from);
+      snprintf(mask, sizeof mask, "%s %s %s", chname, from, msg);
       if (!strcasecmp(msg, "*")) {
         putlog(LOG_SERV, "*", "%s!%s has logged out of their account", nick, from);
       } else {

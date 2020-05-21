@@ -1278,10 +1278,10 @@ static int server_acnt STDVAR
 {
   Function F = (Function) cd;
 
-  BADARGS(5, 5, " nick uhost hand account");
+  BADARGS(6, 6, " nick uhost hand chan account");
 
   CHECKVALIDITY(server_acnt);
-  F(argv[1], argv[2], get_user_by_handle(userlist, argv[3]), argv[4]);
+  F(argv[1], argv[2], get_user_by_handle(userlist, argv[3]), argv[4], argv[5]);
   return TCL_OK;
 }
 
@@ -2203,7 +2203,8 @@ static Function server_table[] = {
   (Function) & cap,             /* cap_list                             */
   (Function) & extended_join,   /* int                                  */
   /* 48 - 51 */
-  (Function) & account_notify   /* int                                  */
+  (Function) & account_notify,  /* int                                  */
+  (Function) check_tcl_acnt
 };
 
 char *server_start(Function *global_funcs)

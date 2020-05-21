@@ -1686,7 +1686,7 @@ static void set_delay(struct chanset_t *chan, char *nick)
 static int gotjoin(char *from, char *channame)
 {
   char *nick, *p, buf[UHOSTLEN], account[NICKMAX], *uhost = buf, *chname;
-  char *ch_dname = NULL;
+  char *ch_dname = NULL, mask[CHANNELLEN+UHOSTMAX+NICKMAX+3];
   struct chanset_t *chan;
   memberlist *m;
   masklist *b;
@@ -1972,6 +1972,8 @@ static int gotjoin(char *from, char *channame)
         strncpy (m->account, account, sizeof m->account);
       }
     }
+    snprintf(mask, sizeof mask, "%s %s!%s %s", chname, nick, uhost, account);
+    check_tcl_acnt(nick, uhost, mask, u, chname, account);
   }
 
 exit:
