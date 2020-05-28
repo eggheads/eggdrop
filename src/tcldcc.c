@@ -950,7 +950,7 @@ static int setlisten(Tcl_Interp *irp, char *ip, char *portp, char *type, char *m
   ret = getaddrinfo(ip, NULL, &hint, &ipaddr);
   if (!ret) {
     if (ipaddr->ai_family == AF_INET6) {
-      ret = inet_pton(AF_INET6, ip, &ipaddr2);
+      inet_pton(AF_INET6, ip, &ipaddr2);
     }
   }
 #endif
