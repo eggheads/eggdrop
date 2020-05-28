@@ -935,14 +935,14 @@ static int tcl_connect STDVAR
 }
 
 static int setlisten(Tcl_Interp *irp, char *ip, char *portp, char *type, char *maskproc, char *flag) {
-  int ret, i, idx = -1, port, realport, tryagain=0;
+  int i, idx = -1, port, realport, tryagain=0;
   char s[11], msg[256];
   struct portmap *pmap = NULL, *pold = NULL;
   sockname_t name;
-  struct addrinfo hint, *ipaddr = NULL;
 #ifdef IPV6
-  char ipaddr2[sizeof(struct in6_addr)];
-#endif
+  struct addrinfo hint, *ipaddr = NULL;
+  struct in6_addr ipaddr2;
+  int ret;
 
   memset(&hint, '\0', sizeof hint);
   hint.ai_family = PF_UNSPEC;
@@ -950,10 +950,10 @@ static int setlisten(Tcl_Interp *irp, char *ip, char *portp, char *type, char *m
   ret = getaddrinfo(ip, NULL, &hint, &ipaddr);
   if (!ret) {
     if (ipaddr->ai_family == AF_INET6) {
-      ret = inet_pton(AF_INET6, ip, ipaddr2);
+      ret = inet_pton(AF_INET6, ip, &ipaddr2);
     }
   }
-
+#endif
   port = realport = atoi(portp);
   for (pmap = root; pmap; pold = pmap, pmap = pmap->next)
     if (pmap->realport == port) {
@@ -969,12 +969,14 @@ static int setlisten(Tcl_Interp *irp, char *ip, char *portp, char *type, char *m
       if (((!strcmp(ip, "0.0.0.0")) && (strcasecmp(type, "off")) &&
             !((!strcmp(iptostr(&dcc[idx].sockname.addr.sa), "0.0.0.0"))
 #ifdef IPV6
-            || (IN6_IS_ADDR_UNSPECIFIED(&dcc[idx].sockname.addr.s6.sin6_addr))))
-            || ((IN6_IS_ADDR_UNSPECIFIED(ipaddr2)) && (strcasecmp(type, "off")) &&
+            || ((dcc[idx].sockname.addr.s6.sin6_family == AF_INET6) &&
+               IN6_IS_ADDR_UNSPECIFIED(&dcc[idx].sockname.addr.s6.sin6_addr))))
+            || ((IN6_IS_ADDR_UNSPECIFIED(&ipaddr2)) && (strcasecmp(type, "off")) &&
             !((!strcmp(iptostr(&dcc[idx].sockname.addr.sa), "0.0.0.0"))
-            || (IN6_IS_ADDR_UNSPECIFIED(&dcc[idx].sockname.addr.s6.sin6_addr))))
+            || ((dcc[idx].sockname.addr.s6.sin6_family == AF_INET6) &&
+               (IN6_IS_ADDR_UNSPECIFIED(&dcc[idx].sockname.addr.s6.sin6_addr)))))
 #else
-            )
+            ))
 #endif
             ) {
         Tcl_AppendResult(irp, "this port is already bound to a specific IP on "
@@ -989,12 +991,13 @@ static int setlisten(Tcl_Interp *irp, char *ip, char *portp, char *type, char *m
        */
       if (((!strcmp(iptostr(&dcc[idx].sockname.addr.sa), "0.0.0.0"))
 #ifdef IPV6
-            || IN6_IS_ADDR_UNSPECIFIED(&dcc[idx].sockname.addr.s6.sin6_addr)
+            || ((dcc[idx].sockname.addr.s6.sin6_family == AF_INET6) &&
+                IN6_IS_ADDR_UNSPECIFIED(&dcc[idx].sockname.addr.s6.sin6_addr))
 #endif
             ) && (dcc[i].port == port) && strcasecmp(type, "off") &&
             (strcmp(ip, "0.0.0.0")
 #ifdef IPV6
-            && !IN6_IS_ADDR_UNSPECIFIED(ipaddr2)
+            && !IN6_IS_ADDR_UNSPECIFIED(&ipaddr2)
 #endif
             && strcmp(ip, ""))) {
         Tcl_AppendResult(irp, "port is already bound to :: or 0.0.0.0, "
@@ -1047,7 +1050,7 @@ static int setlisten(Tcl_Interp *irp, char *ip, char *portp, char *type, char *m
      */
 #ifdef IPV6
     if (((strcmp(ip, "") || strcmp(ip, "0.0.0.0")) && strcmp("0.0.0.0", iptostr(&dcc[idx].sockname.addr.sa))) || 
-        (IN6_IS_ADDR_UNSPECIFIED(ipaddr2) && strcmp("::", iptostr(&dcc[idx].sockname.addr.sa))))  {
+        (IN6_IS_ADDR_UNSPECIFIED(&ipaddr2) && strcmp("::", iptostr(&dcc[idx].sockname.addr.sa))))  {
 #endif
       if (strlen(ip)) {
         setsockname(&name, ip, port, 1);
