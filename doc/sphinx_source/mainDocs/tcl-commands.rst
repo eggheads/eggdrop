@@ -1068,6 +1068,16 @@ isvoice <nickname> [channel]
 
   Module: irc
 
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+isloggedin <nickname> [channel]
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+  Returns: 1 if someone by the specified nickname is on the channel (or
+  any channel if no channel name is specified) and is logged in (ircu);
+  0 otherwise
+
+  Module: irc
+
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^
 onchan <nickname> [channel]
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^
