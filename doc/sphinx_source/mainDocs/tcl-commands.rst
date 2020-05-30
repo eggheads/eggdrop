@@ -1085,6 +1085,12 @@ onchan <nickname> [channel]
 
   Module: irc
 
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+getaccount <nickname> [channel]
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+  Returns: the services account name of the nickname if they are logged in, "" otherwise, and an error if the account-notify or extended-join capabilites are not enabled. WARNING: this account list may not be accurate depending on the server and configuration. This command will only work if the account-notify or extended-join capabilities are enabled. Additionally, this list is only accurate if a WHOX is used upon join (enable the use-354 setting in eggdrop.conf)
+
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 nick2hand <nickname> [channel]
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
