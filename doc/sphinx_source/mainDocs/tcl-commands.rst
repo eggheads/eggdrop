@@ -487,7 +487,7 @@ newchanban <channel> <ban> <creator> <comment> [lifetime] [options]
   Options:
       
   +-----------+-------------------------------------------------------------------------------------+
-  |sticky     | forces the ban to be always active on a channel, even with dynamicbans on           |
+  | sticky    | forces the ban to be always active on a channel, even with dynamicbans on           |
   +-----------+-------------------------------------------------------------------------------------+
 
 
@@ -504,7 +504,7 @@ newban <ban> <creator> <comment> [lifetime] [options]
   Options:
 
   +-----------+-------------------------------------------------------------------------------------+
-  |sticky     | forces the ban to be always active on a channel, even with dynamicbans on           |
+  | sticky    | forces the ban to be always active on a channel, even with dynamicbans on           |
   +-----------+-------------------------------------------------------------------------------------+
 
   Returns: nothing
@@ -520,7 +520,7 @@ newchanexempt <channel> <exempt> <creator> <comment> [lifetime] [options]
   Options:
 
   +-----------+-------------------------------------------------------------------------------------+
-  |sticky     | forces the exempt to be always active on a channel, even with dynamicexempts on     |
+  | sticky    | forces the exempt to be always active on a channel, even with dynamicexempts on     |
   +-----------+-------------------------------------------------------------------------------------+
 
   Returns: nothing
@@ -536,7 +536,7 @@ newexempt <exempt> <creator> <comment> [lifetime] [options]
   Options:
 
   +-----------+-------------------------------------------------------------------------------------+
-  |sticky     | forces the exempt to be always active on a channel, even with dynamicexempts on     |
+  | sticky    | forces the exempt to be always active on a channel, even with dynamicexempts on     |
   +-----------+-------------------------------------------------------------------------------------+
 
   Returns: nothing
@@ -552,7 +552,7 @@ newchaninvite <channel> <invite> <creator> <comment> [lifetime] [options]
   Options:
 
   +-----------+-------------------------------------------------------------------------------------+
-  |sticky     | forces the invite to be always active on a channel, even with dynamicinvites on     |
+  | sticky    | forces the invite to be always active on a channel, even with dynamicinvites on     |
   +-----------+-------------------------------------------------------------------------------------+
 
   Returns: nothing
@@ -568,7 +568,7 @@ newinvite <invite> <creator> <comment> [lifetime] [options]
   Options:
 
   +-----------+-------------------------------------------------------------------------------------+
-  |sticky     | forces the invite to be always active on a channel, even with dynamicinvites on     |
+  | sticky    | forces the invite to be always active on a channel, even with dynamicinvites on     |
   +-----------+-------------------------------------------------------------------------------------+
 
   Returns: nothing
