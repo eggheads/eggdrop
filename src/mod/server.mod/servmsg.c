@@ -1562,7 +1562,7 @@ void add_req(char *cape) {
 
 static int gotcap(char *from, char *msg) {
   char *cmd, *splitstr;
-  char cape[CAPMAX], *p;
+  char cape[CAPMAX+1], *p;
   int listlen = 0;
 
   newsplit(&msg);
@@ -1577,7 +1577,7 @@ static int gotcap(char *from, char *msg) {
       add_req("sasl");
     }
 /* Add any custom capes the user listed */
-    strncpy(cape, cap_request, sizeof cape);
+    strlcpy(cape, cap_request, sizeof cape);
     if ( (p = strtok(cape, " ")) ) {
       while (p != NULL) {
         add_req(p);
