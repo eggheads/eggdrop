@@ -171,11 +171,6 @@ static int tcl_getaccount STDVAR {
 
   BADARGS(2, 3, " nickname ?channel?");
 
-  if (!(extended_join || account_notify)) {
-    Tcl_AppendResult(irp, "The extended-join or account-notify capability must "
-        "be enabled with the server to use this command", NULL);
-    return TCL_ERROR;
-  }
   if (argc > 2) {
     chan = findchan_by_dname(argv[2]);
     thechan = chan;
@@ -202,12 +197,6 @@ static int tcl_isloggedin STDVAR {
   struct chanset_t *chan, *thechan = NULL;
 
   BADARGS(2, 3, " nickname ?channel?");
-
-  if (!(extended_join || account_notify)) {
-    Tcl_AppendResult(irp, "The extended-join or account-notify capability must "
-        "be enabled with the server to use this command", NULL);
-    return TCL_ERROR;
-  }
 
   if (argc > 2) {
     chan = findchan_by_dname(argv[2]);

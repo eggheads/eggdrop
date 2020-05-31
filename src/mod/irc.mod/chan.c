@@ -1034,7 +1034,7 @@ static int got324(char *from, char *msg)
 }
 
 static int got352or4(struct chanset_t *chan, char *user, char *host,
-                     char *nick, char *flags)
+                     char *nick, char *flags, char *account)
 {
   char userhost[UHOSTLEN];
   memberlist *m;
@@ -1075,6 +1075,12 @@ static int got352or4(struct chanset_t *chan, char *user, char *host,
       do_tcl("need-op", chan->need_op);
   }
   m->user = get_user_by_host(userhost);
+  if ((account) && strcmp(account, "0")) { /* Update accountname in the channel record */
+    m = ismember(chan, nick); /* In my channel list copy? */
+    if (m) {
+      strncpy(m->account, account, sizeof(m->account));
+    }
+  }
   return 0;
 }
 
@@ -1094,7 +1100,7 @@ static int got352(char *from, char *msg)
     newsplit(&msg);             /* Skip the server */
     nick = newsplit(&msg);      /* Grab the nick */
     flags = newsplit(&msg);     /* Grab the flags */
-    got352or4(chan, user, host, nick, flags);
+    got352or4(chan, user, host, nick, flags, NULL);
   }
   return 0;
 }
@@ -1103,7 +1109,8 @@ static int got352(char *from, char *msg)
  */
 static int got354(char *from, char *msg)
 {
-  char *nick, *user, *host, *chname, *flags;
+  char *nick, *user, *host, *chname, *flags, *account = NULL;
+  memberlist *m;
   struct chanset_t *chan;
 
   if (use_354) {
@@ -1119,8 +1126,9 @@ static int got354(char *from, char *msg)
           host = nick;
           nick = newsplit(&msg);
         }
-        flags = newsplit(&msg); /* Grab the flags */
-        got352or4(chan, user, host, nick, flags);
+        flags = newsplit(&msg);     /* Grab the flags */
+        account = newsplit(&msg);   /* Grab the account name */
+        got352or4(chan, user, host, nick, flags, account);
       }
     }
   }
