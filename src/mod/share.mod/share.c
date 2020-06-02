@@ -1389,6 +1389,8 @@ static void sharein_mod(int idx, char *msg)
       get_user_flagrec(dcc[idx].user, &fr, NULL);
       if (flagrec_eq(&req, &fr)) {
         (C_share[i].func) (idx, msg);
+      } else {
+        putlog(LOG_DEBUG, "*", "Userfile modification from %s rejected: incorrect bot flag permissions for \"%s %s\"", dcc[idx].nick, code, msg);
       }
     }
     if (y <= 0)
