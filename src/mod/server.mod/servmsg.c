@@ -1276,15 +1276,12 @@ static int got396(char *from, char *msg)
   nick = newsplit(&msg);
   if (match_my_nick(nick)) {  /* Double check this really is for me */
     uhost = newsplit(&msg);
-    strncpy(userbuf, botuserhost, sizeof user);
+    strlcpy(userbuf, botuserhost, sizeof userbuf);
     user = strtok(userbuf, "@");
     got396orchghost(nick, user, uhost);
   }
   return 0;
 }
-
-//[@] :geo!vanosg@zt53d279eqs7u.oragono CHGHOST vanosg oragono.io
-//[@] :barjavel.freenode.net 396 _LeafBlower unaffiliated/geo/bot/beerbot :is now your hidden host (set by services.)
 
 static int tryauthenticate(char *from, char *msg) 
 {
