@@ -1035,6 +1035,19 @@ static void irc_report(int idx, int details)
     q[k - 2] = 0;
     dprintf(idx, "    %s\n", q);
   }
+  /* List status of account tracking. For 100% accuracy, this requires
+   * WHOX ability (354 messages) and the IRCv3 extended-join and account_notify
+   * capabilities to be enabled.
+   */
+  if (use_354 && extended_join && account_notify) {
+    dprintf(idx, "    Acccount tracking: Enabled\n");
+  } else {
+    dprintf(idx, "    Account tracking: Disabled\n"
+                 "      (Missing capabilities:%s%s%s)\n",
+                      use_354 ? "" : " use-354",
+                      extended_join ? "" : " extended-join",
+                      account_notify ? "" : " account-notify");
+  }
 }
 
 /* Many networks either support max_bans/invite/exempts/ *or*

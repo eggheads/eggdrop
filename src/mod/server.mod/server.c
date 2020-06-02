@@ -2052,7 +2052,6 @@ static void server_report(int idx, int details)
             (int) ((float) (hq.tot * 100.0) / (float) maxqmsg), (int) hq.tot);
   dprintf(idx, "    Active CAP negotiations: %s\n", (strlen(cap.negotiated) > 0) ?
             cap.negotiated : "None" );
-
   if (details) {
     int size = server_expmem();
 

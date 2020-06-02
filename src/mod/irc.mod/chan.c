@@ -1110,7 +1110,6 @@ static int got352(char *from, char *msg)
 static int got354(char *from, char *msg)
 {
   char *nick, *user, *host, *chname, *flags, *account = NULL;
-  memberlist *m;
   struct chanset_t *chan;
 
   if (use_354) {

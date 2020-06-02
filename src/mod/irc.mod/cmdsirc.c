@@ -758,7 +758,7 @@ static void cmd_channel(struct userrec *u, int idx, char *par)
       maxhandlen = 9;
 
     dprintf(idx, "(n = owner, m = master, o = op, d = deop, b = bot)\n");
-    if (extended_join || account_notify) {
+    if (use_354 && extended_join && account_notify) {
       egg_snprintf(format, sizeof format, " %%-%us %%-%us %%-%us %%-6s"
                 " %%-5s %%s\n", maxnicklen, maxhandlen, maxnicklen);
       dprintf(idx, format, "NICKNAME", "HANDLE", "ACCOUNT", " JOIN", "IDLE",
@@ -861,7 +861,7 @@ static void cmd_channel(struct userrec *u, int idx, char *par)
       else
         chanflag = ' ';
       if (chan_issplit(m)) {
-        if (extended_join || account_notify) {
+        if (use_354 && extended_join && account_notify) {
           egg_snprintf(format, sizeof format,
                      "%%c%%-%us %%-%us %%-%us %%s %%c     <- netsplit, %%lus\n",
                      maxnicklen, maxhandlen, maxnicklen);
@@ -875,7 +875,7 @@ static void cmd_channel(struct userrec *u, int idx, char *par)
                 now - (m->split));
         }
       } else if (!rfc_casecmp(m->nick, botname)) {
-        if (extended_join || account_notify) {
+        if (use_354 && extended_join && account_notify) {
           egg_snprintf(format, sizeof format,
                     "%%c%%-%us %%-%us %%-%us %%s %%c     <- it's me!\n",
                     maxnicklen, maxnicklen, maxhandlen);
@@ -897,7 +897,7 @@ static void cmd_channel(struct userrec *u, int idx, char *par)
           egg_snprintf(s1, sizeof s1, "%2lum", ((now - (m->last)) / 60));
         else
           strlcpy(s1, "   ", sizeof s1);
-        if (extended_join || account_notify) {
+        if (use_354 && extended_join && account_notify) {
           egg_snprintf(format, sizeof format,
                      "%%c%%-%us %%-%us %%-%us %%s %%c %%s  %%s\n", maxnicklen,
                      maxnicklen, maxhandlen);
