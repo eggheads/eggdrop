@@ -1253,8 +1253,8 @@ static int got396orchghost(char *nick, char *user, char *uhost)
 
 /* React to IRCv3 CHGHOST command. CHGHOST changes the hostname and/or
  * ident of the user. Format:
- * :geo!awesome@eggdrop.com CHGHOST tehgeo oragono.io
- * changes user hostmask to tehgeo@oragono.io
+ * :geo!awesome@eggdrop.com CHGHOST tehgeo foo.io
+ * changes user hostmask to tehgeo@foo.io
  */
 static int gotchghost(char *from, char *msg){
   char *nick, *user;
