@@ -1283,6 +1283,13 @@ static int got396(char *from, char *msg)
   return 0;
 }
 
+static int gotsetname(char *from, char *msg)
+{
+  fixcolon(msg);
+  strncpy(botrealname, msg, sizeof botrealname);
+  return 0;
+}
+
 static int tryauthenticate(char *from, char *msg) 
 {
   char src[(sizeof sasl_username) + (sizeof sasl_username) +
@@ -1741,6 +1748,7 @@ static cmd_t my_raw_binds[] = {
   {"CAP",          "",   (IntFunc) gotcap,          NULL},
   {"AUTHENTICATE", "",   (IntFunc) gotauthenticate, NULL},
   {"CHGHOST",      "",   (IntFunc) gotchghost,      NULL},
+  {"SETNAME",      "",   (IntFunc) gotsetname,      NULL},
   {NULL,           NULL, NULL,                      NULL}
 };
 
