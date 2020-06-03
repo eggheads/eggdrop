@@ -1036,11 +1036,11 @@ static void irc_report(int idx, int details)
     dprintf(idx, "    %s\n", q);
   }
   /* List status of account tracking. For 100% accuracy, this requires
-   * WHOX ability (354 messages) and the IRCv3 extended-join and account_notify
+   * WHOX ability (354 messages) and the extended-join and account_notify
    * capabilities to be enabled.
    */
   if (use_354 && extended_join && account_notify) {
-    dprintf(idx, "    Acccount tracking: Enabled\n");
+    dprintf(idx, "    Account tracking: Enabled\n");
   } else {
     dprintf(idx, "    Account tracking: Disabled\n"
                  "      (Missing capabilities:%s%s%s)\n",

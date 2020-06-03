@@ -264,7 +264,7 @@ static int check_tcl_wall(char *from, char *msg)
   return 1;
 }
 
-static int check_tcl_acnt(char *nick, char *uhost, char *mask,
+static int check_tcl_account(char *nick, char *uhost, char *mask,
                             struct userrec *u, char *chan,  char *account)
 {
   struct flag_record fr = { FR_GLOBAL | FR_CHAN | FR_ANYWH, 0, 0, 0, 0, 0 };
@@ -275,8 +275,8 @@ static int check_tcl_acnt(char *nick, char *uhost, char *mask,
   Tcl_SetVar(interp, "_acnt3", u ? u->handle : "*", 0);
   Tcl_SetVar(interp, "_acnt4", chan, 0);
   Tcl_SetVar(interp, "_acnt5", account, 0);
-  x = check_tcl_bind(H_acnt, mask, &fr, " $_acnt1 $_acnt2 $_acnt3 $_acnt4 $_acnt5",
-                        MATCH_MASK | BIND_STACKABLE);
+  x = check_tcl_bind(H_account, mask, &fr,
+       " $_acnt1 $_acnt2 $_acnt3 $_acnt4 $_acnt5", MATCH_MASK | BIND_STACKABLE);
   return (x == BIND_EXEC_LOG);
 }
 
@@ -1138,7 +1138,7 @@ static void server_activity(int idx, char *tagmsg, int len)
     SERVER_SOCKET.timeout_val = 0;
   }
   lastpingcheck = 0;
-/* Check if IRCv3 message-tags are enabled and, if so, check/grab the tag */
+/* Check if message-tags are enabled and, if so, check/grab the tag */
   msgptr = tagmsg;
   strlcpy(rawmsg, tagmsg, TOTALTAGMAX+1);
   if (msgtag) {
@@ -1448,7 +1448,7 @@ static int handle_sasl_timeout()
   return sasl_error("timeout");
 }
 
-/* Got ACCOUNT message; only valid for IRCv3 account-notify capability */
+/* Got ACCOUNT message; only valid for account-notify capability */
 static int gotaccount(char *from, char *msg) {
   struct chanset_t *chan;
   struct userrec *u;
@@ -1463,17 +1463,18 @@ static int gotaccount(char *from, char *msg) {
       strncpy (m->account, msg, sizeof m->account);
       snprintf(mask, sizeof mask, "%s %s %s", chname, from, msg);
       if (!strcasecmp(msg, "*")) {
+        strcpy(msg, "0");
         putlog(LOG_SERV, "*", "%s!%s has logged out of their account", nick, from);
       } else {
         putlog(LOG_SERV, "*", "%s!%s has logged into account %s", nick, from, msg);
       }
-      check_tcl_acnt(nick, from, mask, u, chname, msg);
+      check_tcl_account(nick, from, mask, u, chname, msg);
     }
   }
   return 0;
 }
 
-/* Got AWAY message; only valid for IRCv3 away-notify capability */
+/* Got AWAY message; only valid for away-notify capability */
 static int gotawayv3(char *from, char *msg)
 {
   if (strlen(msg)) {

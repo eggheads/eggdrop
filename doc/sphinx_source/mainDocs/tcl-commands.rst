@@ -1073,8 +1073,7 @@ isloggedin <nickname> [channel]
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
   Returns: 1 if someone by the specified nickname is on the channel (or
-  any channel if no channel name is specified) and is logged in (ircu);
-  0 otherwise
+  any channel if no channel name is specified) and is logged in); 0 otherwise
 
   Module: irc
 
@@ -1089,7 +1088,7 @@ onchan <nickname> [channel]
 getaccount <nickname> [channel]
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-  Returns: the services account name of the nickname if they are logged in, "" otherwise, and an error if the account-notify or extended-join capabilites are not enabled. WARNING: this account list may not be accurate depending on the server and configuration. This command will only work if the account-notify or extended-join capabilities are enabled. Additionally, this list is only accurate if a WHOX is used upon join (enable the use-354 setting in eggdrop.conf)
+  Returns: the services account name of the nickname if they are logged in, "" otherwise, and an error if the account-notify or extended-join capabilites are not enabled. WARNING: this account list may not be accurate depending on the server and configuration. This command will only work if a server supports (and Eggdrop has enabled) the account-notify and extended-join capabilities, and the server understands WHOX requests (also known as raw 354 responses).
 
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 nick2hand <nickname> [channel]
@@ -3353,13 +3352,13 @@ The following is a list of bind types and how they work. Below each bind type is
 
   Description: similar to the RAW bind, but allows an extra field for the IRCv3 message-tags capability. The keyword is either a numeric, like "368", or a keyword, such as "PRIVMSG" or "TAGMSG". "from" will be the server name or the source user (depending on the keyword); flags are ignored. "tag" will be the contents, if any, of the entire tag message prefixed to the server message in a dict format, such as "msgid 890157217279768 aaa bbb". The order of the arguments is identical to the order that the IRC server sends to the bot. If the proc returns 1, Eggdrop will not process the line any further (this could cause unexpected behavior in some cases). As of 1.9.0, it is recommended to use the RAWT bind instead of the RAW bind.
 
-(53) ACNT (stackable)
+(53) ACCOUNT (stackable)
 
-  bind acnt <flags> <mask> <proc>
+  bind account <flags> <mask> <proc>
 
   procname <nick> <user> <hand> <account>
 
-  Description: triggered when Eggdrop receives an ACCOUNT message. The mask for the bind is in the format "#channel nick!user@hostname.com account" where channel is the channel the user was found on when the bind was triggered, the hostmask is the user's hostmask, and  account is the account name the user is logging in to, or '*' for logging out. To capture this specific case of logging out, you'll want to escape the * with a \. For example, using "#eggdrop * \*" as your mask will match every user (the * by itself is a wildcard) logging out of an account (the \* at the end is the literal '*' character) on #eggdrop. The mask argument can accept wildcards. For the proc, nick is the nickname of the user logging into/out of an account, user is the user@host.com hostmask, hand is the handle of the user (or * if none), and account is the name of the account the user logged in to (or * if the user logged out of an account).
+  Description: triggered when Eggdrop receives an ACCOUNT message. The mask for the bind is in the format "#channel nick!user@hostname.com account" where channel is the channel the user was found on when the bind was triggered, the hostmask is the user's hostmask, and account is the account name the user is logging in to, or 0 for logging out. The mask argument can accept wildcards. For the proc, nick is the nickname of the user logging into/out of an account, user is the user@host.com hostmask, hand is the handle of the user (or * if none), and account is the name of the account the user logged in to (or 0 if the user logged out of an account).
 
 
 ^^^^^^^^^^^^^

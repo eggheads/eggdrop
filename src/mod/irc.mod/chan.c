@@ -1075,10 +1075,14 @@ static int got352or4(struct chanset_t *chan, char *user, char *host,
       do_tcl("need-op", chan->need_op);
   }
   m->user = get_user_by_host(userhost);
-  if ((account) && strcmp(account, "0")) { /* Update accountname in the channel record */
-    m = ismember(chan, nick); /* In my channel list copy? */
+  /* Update accountname in the channel record */
+  if ((account) && strcmp(account, "0")) {
     if (m) {
       strncpy(m->account, account, sizeof(m->account));
+    }
+  } else {      /* Explicitly clear, in case someone deauthenticated? */
+    if (m) {
+      m->account[0] = 0;
     }
   }
   return 0;
@@ -1973,14 +1977,14 @@ static int gotjoin(char *from, char *channame)
     }
   }
   if (extended_join) {
-    strncpy(account, newsplit(&channame), sizeof account);
+    strlcpy(account, newsplit(&channame), sizeof account);
     if (strcmp(account, "*")) {
       if ((m = ismember(chan, nick))) {
         strncpy (m->account, account, sizeof m->account);
       }
+      snprintf(mask, sizeof mask, "%s %s!%s %s", chname, nick, uhost, account);
+      check_tcl_account(nick, uhost, mask, u, chname, account);
     }
-    snprintf(mask, sizeof mask, "%s %s!%s %s", chname, nick, uhost, account);
-    check_tcl_acnt(nick, uhost, mask, u, chname, account);
   }
 
 exit:

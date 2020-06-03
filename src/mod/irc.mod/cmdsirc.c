@@ -759,14 +759,18 @@ static void cmd_channel(struct userrec *u, int idx, char *par)
 
     dprintf(idx, "(n = owner, m = master, o = op, d = deop, b = bot)\n");
     if (use_354 && extended_join && account_notify) {
-      egg_snprintf(format, sizeof format, " %%-%us %%-%us %%-%us %%-6s"
-                " %%-5s %%s\n", maxnicklen, maxhandlen, maxnicklen);
-      dprintf(idx, format, "NICKNAME", "HANDLE", "ACCOUNT", " JOIN", "IDLE",
+      dprintf(idx, " %-*s %-*s %-*s %-6s %-5s %s\n", maxnicklen, "NICKNAME",
+                maxhandlen, "HANDLE", maxnicklen, "ACCOUNT", " JOIN", "IDLE",
                 "USER@HOST");
+
+//      egg_snprintf(format, sizeof format, " %%-%us %%-%us %%-%us %%-6s"
+//                " %%-5s %%s\n", maxnicklen, maxhandlen, maxnicklen);
+//      dprintf(idx, format, "NICKNAME", "HANDLE", "ACCOUNT", " JOIN", "IDLE",
+//                "USER@HOST");
+
     } else {
-      egg_snprintf(format, sizeof format, " %%-%us %%-%us %%-6s %%-5s"
-                " %%s\n", maxnicklen, maxhandlen);
-      dprintf(idx, format, "NICKNAME", "HANDLE", " JOIN", "IDLE", "USER@HOST");
+      dprintf(idx, " %-*s %-*s %-6s %-5s %s\n", maxnicklen, "NICKNAME",
+                maxhandlen, "HANDLE", " JOIN", "IDLE", "USER@HOST");
     }
     for (m = chan->channel.member; m && m->nick[0]; m = m->next) {
       if (m->joined > 0) {
