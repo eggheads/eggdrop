@@ -1256,7 +1256,7 @@ static int dns_hosts(char *hostn) {
         isspace(*(c - 1))) {
       /* search backwards, as long as no comment char # found */
       for (c2 = c - 2; (c2 >= addr) && (*c2 != '#'); c2--) {
-        if ((*c2 == '\n') || (*c2 == '\r')) { /* until begin of line */
+        if ((*c2 == '\n') || (*c2 == '\r') || (c2 == addr)) { /* until begin of line */
           while (isspace(*++c2)); /* skip space chars */
           for (i = 0; i < (sizeof ip); i++) { /* copy chars of ip */
             if (!isspace(c2[i]))
