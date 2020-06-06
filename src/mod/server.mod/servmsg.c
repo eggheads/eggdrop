@@ -1286,7 +1286,7 @@ static int got396(char *from, char *msg)
 static int gotsetname(char *from, char *msg)
 {
   fixcolon(msg);
-  strncpy(botrealname, msg, sizeof botrealname);
+  strlcpy(botrealname, msg, sizeof botrealname);
   return 0;
 }
 
