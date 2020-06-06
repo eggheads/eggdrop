@@ -1221,6 +1221,23 @@ static int dns_hosts(char *hostn) {
   char *addr, hostn_lower[256], hostn_upper[256], *c, *c2, ip[256];
   sockname_t name;
 
+  if (!*hostn) {
+    ddebug0(RES_MSG "bogus empty hostname input\n");
+    return 1;
+  }
+  len = strlen(hostn);
+  /* due to strncasecmp() and strncmp() being slow if used in loop, precalculate
+   * lower and upper string from hostn and compare with handcrafted code */
+  for (i = 0; i < len; i++) {
+      if isspace(hostn[i]) {
+        ddebug0(RES_MSG "bogus white-space hostname input\n");
+        return 1;
+      }
+      hostn_lower[i] = tolower(hostn[i]);
+      hostn_upper[i] = toupper(hostn[i]);
+  }
+  hostn_lower[i] = 0;
+  hostn_upper[i] = 0;
   fd = open(PATH, O_RDONLY);
   if (fd < 0) {
     ddebug1(RES_MSG "open(" PATH "): %s ", strerror(errno));
@@ -1237,15 +1254,6 @@ static int dns_hosts(char *hostn) {
     close(fd);
     return 0;
   }
-  len = strlen(hostn);
-  /* due to strncasecmp() and strncmp() being slow if used in loop, precalculate
-   * lower and upper string from hostn and compare with handcrafted code */
-  for (i = 0; i < len; i++) {
-      hostn_lower[i] = tolower(hostn[i]);
-      hostn_upper[i] = toupper(hostn[i]);
-  }
-  hostn_lower[i] = 0;
-  hostn_upper[i] = 0;
   /* case insensitive search for hostn, begin at addr + 4 to skip shortest ip
    * "::1 " */
   for (c = addr + 4; (c < (addr + sb.st_size - len)) && *c; c++) {
