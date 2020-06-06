@@ -1222,7 +1222,7 @@ static int dns_hosts(char *hostn) {
   sockname_t name;
 
   if (!*hostn) {
-    ddebug0(RES_MSG "bogus empty hostname input\n");
+    ddebug0(RES_MSG "bogus empty hostname input");
     return 1;
   }
   len = strlen(hostn);
@@ -1230,7 +1230,7 @@ static int dns_hosts(char *hostn) {
    * lower and upper string from hostn and compare with handcrafted code */
   for (i = 0; i < len; i++) {
       if isspace(hostn[i]) {
-        ddebug0(RES_MSG "bogus white-space hostname input\n");
+        ddebug0(RES_MSG "bogus white-space hostname input");
         return 1;
       }
       hostn_lower[i] = tolower(hostn[i]);
