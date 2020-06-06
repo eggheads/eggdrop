@@ -872,11 +872,14 @@ static void cmd_channel(struct userrec *u, int idx, char *par)
           dprintf(idx, format, chanflag, m->nick, handle, m->account, s, atrflag,
                 now - (m->split));
         } else {
-          egg_snprintf(format, sizeof format,
-                     "%%c%%-%us %%-%us %%s %%c     <- netsplit, %%lus\n",
-                     maxnicklen, maxhandlen);
-          dprintf(idx, format, chanflag, m->nick, handle, s, atrflag,
-                now - (m->split));
+          dprintf(idx, "%c%-*s %-*s %-6s %-5s %s\n", idx, chanflag, maxnicklen,
+                m->nick, maxhandlen, handle, s, atrflag, now- (m->split));
+
+//          egg_snprintf(format, sizeof format,
+//                     "%%c%%-%us %%-%us %%s %%c     <- netsplit, %%lus\n",
+//                     maxnicklen, maxhandlen);
+//          dprintf(idx, format, chanflag, m->nick, handle, s, atrflag,
+//                now - (m->split));
         }
       } else if (!rfc_casecmp(m->nick, botname)) {
         if (use_354 && extended_join && account_notify) {

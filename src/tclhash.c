@@ -273,7 +273,7 @@ tcl_bind_list_t *add_bind_table(const char *nme, int flg, IntFunc func)
 
   /* Do not allow coders to use bind table names longer than
    * 4 characters. */
-  Assert(strlen(nme) <= 4);
+  Assert(strlen(nme) <= 15);
 
   for (tl = bind_table_list, tl_prev = NULL; tl; tl_prev = tl, tl = tl->next) {
     if (tl->flags & HT_DELETED)
