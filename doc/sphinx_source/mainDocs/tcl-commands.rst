@@ -1090,11 +1090,27 @@ getaccount <nickname> [channel]
 
   Returns: the services account name of the nickname if they are logged in, "" otherwise, and an error if the account-notify or extended-join capabilites are not enabled. WARNING: this account list may not be accurate depending on the server and configuration. This command will only work if a server supports (and Eggdrop has enabled) the account-notify and extended-join capabilities, and the server understands WHOX requests (also known as raw 354 responses).
 
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+account2hand <account> [channel]
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+  Returns: the handle of an account on a channel. If a channel is not specified, the bot will check all of its channels. If the account is not found, "" is returned. If the account is found but does not have a handle, "*" is returned. This command will only work if a server supports (and Eggdrop has enabled) the account-notify and extended-join capabilities, and the server understands WHOX requests (also known as raw 354 responses). If no channel is specified, all channels are checked.
+
+  Module: irc
+
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 nick2hand <nickname> [channel]
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-  Returns: the handle of a nickname on a channel. If a channel is not specified, the bot will check all of its channels. If the nick is not found, "" is returned. If the nick is found but does not have a handle, "*" is returned.
+  Returns: the handle of a nickname on a channel. If a channel is not specified, the bot will check all of its channels. If the nick is not found, "" is returned. If the nick is found but does not have a handle, "*" is returned. If no channel is specified, all channels are checked.
+
+  Module: irc
+
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+account2nick <handle> [channel]
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+  Returns: the nickname of the first person on the specified channel (if one is specified) whose nickname matches the given account; "" is returned if no match is found. This command will only work if a server supports (and Eggdrop has enabled) the account-notify and extended-join capabilities, and the server understands WHOX requests (also known as raw 354 responses). If no channel is specified, all channels are checked.
 
   Module: irc
 
