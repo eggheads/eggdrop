@@ -867,7 +867,6 @@ static int tcl_topic STDVAR
 
 static int tcl_account2nicks STDVAR
 {
-  char nuh[1024];
   memberlist *m;
   struct chanset_t *chan, *thechan = NULL;
   Tcl_Obj *nicks = Tcl_NewListObj(0, NULL);
@@ -888,19 +887,15 @@ static int tcl_account2nicks STDVAR
 
   while (chan && (thechan == NULL || thechan == chan)) {
     for (m = chan->channel.member; m && m->nick[0]; m = m->next) {
-      if (!m->user && !m->tried_getuser) {
-        egg_snprintf(nuh, sizeof nuh, "%s!%s", m->nick, m->userhost);
-        m->tried_getuser = 1;
-        m->user = get_user_by_host(nuh);
-      }
       found = 0;
       /* Does this user have the account we're looking for? */
       if (!rfc_casecmp(m->account, argv[1])) {
         /* Is the nick of the user already in the list? */
         Tcl_ListObjGetElements(irp, nicks, &nicksc, &nicksv);
         for (i = 0; i < nicksc; i++) {
-          if (!strcasecmp(m->nick, Tcl_GetString(nicksv[i]))) {
+          if (!rfc_casecmp(m->nick, Tcl_GetString(nicksv[i]))) {
             found = 1;
+            break;
           }
         }
         if (!found) {
