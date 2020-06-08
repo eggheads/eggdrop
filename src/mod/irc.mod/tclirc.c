@@ -865,11 +865,14 @@ static int tcl_topic STDVAR
   return TCL_OK;
 }
 
-static int tcl_account2nick STDVAR
+static int tcl_account2nicks STDVAR
 {
   char nuh[1024];
   memberlist *m;
   struct chanset_t *chan, *thechan = NULL;
+  Tcl_Obj *nicks = Tcl_NewListObj(0, NULL);
+  Tcl_Obj **nicksv = NULL;
+  int nicksc = 0, i, found;
 
   BADARGS(2, 3, " account ?channel?");
 
@@ -890,13 +893,24 @@ static int tcl_account2nick STDVAR
         m->tried_getuser = 1;
         m->user = get_user_by_host(nuh);
       }
+      found = 0;
+      /* Does this user have the account we're looking for? */
       if (!rfc_casecmp(m->account, argv[1])) {
-        Tcl_AppendResult(irp, m->nick, NULL);
-        return TCL_OK;
+        /* Is the nick of the user already in the list? */
+        Tcl_ListObjGetElements(irp, nicks, &nicksc, &nicksv);
+        for (i = 0; i < nicksc; i++) {
+          if (!strcasecmp(m->nick, Tcl_GetString(nicksv[i]))) {
+            found = 1;
+          }
+        }
+        if (!found) {
+          Tcl_ListObjAppendElement(irp, nicks, Tcl_NewStringObj(m->nick, -1));
+        }
       }
     }
     chan = chan->next;
   }
+  Tcl_SetObjResult(irp, nicks);
   return TCL_OK;
 }
 
@@ -1088,7 +1102,7 @@ static tcl_cmds tclchan_cmds[] = {
   {"chanbans",       tcl_chanbans},
   {"chanexempts",    tcl_chanexempts},
   {"chaninvites",    tcl_chaninvites},
-  {"account2nick",   tcl_account2nick},
+  {"account2nicks",  tcl_account2nicks},
   {"hand2nick",      tcl_hand2nick},
   {"account2hand",   tcl_account2hand},
   {"nick2hand",      tcl_nick2hand},

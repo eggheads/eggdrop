@@ -188,11 +188,11 @@ static int tcl_getaccount STDVAR {
     }
     chan = chan->next;
   }
-  Tcl_AppendResult(irp, "0", NULL);
+  Tcl_AppendResult(irp, "", NULL);
   return TCL_OK;
 }
 
-static int tcl_isloggedin STDVAR {
+static int tcl_isidentified STDVAR {
   memberlist *m;
   struct chanset_t *chan, *thechan = NULL;
 
@@ -498,19 +498,19 @@ static int tcl_delserver STDVAR {
 }
 
 static tcl_cmds my_tcl_cmds[] = {
-  {"jump",       tcl_jump},
-  {"cap",        tcl_cap},
-  {"isbotnick",  tcl_isbotnick},
-  {"clearqueue", tcl_clearqueue},
-  {"queuesize",  tcl_queuesize},
-  {"puthelp",    tcl_puthelp},
-  {"putserv",    tcl_putserv},
-  {"putquick",   tcl_putquick},
-  {"putnow",     tcl_putnow},
-  {"tagmsg",     tcl_tagmsg},
-  {"addserver",  tcl_addserver},
-  {"delserver",  tcl_delserver},
-  {"getaccount", tcl_getaccount},
-  {"isloggedin", tcl_isloggedin},
+  {"jump",          tcl_jump},
+  {"cap",           tcl_cap},
+  {"isbotnick",     tcl_isbotnick},
+  {"clearqueue",    tcl_clearqueue},
+  {"queuesize",     tcl_queuesize},
+  {"puthelp",       tcl_puthelp},
+  {"putserv",       tcl_putserv},
+  {"putquick",      tcl_putquick},
+  {"putnow",        tcl_putnow},
+  {"tagmsg",        tcl_tagmsg},
+  {"addserver",     tcl_addserver},
+  {"delserver",     tcl_delserver},
+  {"getaccount",    tcl_getaccount},
+  {"isidentified",  tcl_isidentified},
   {NULL,         NULL}
 };

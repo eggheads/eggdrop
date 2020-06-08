@@ -1987,16 +1987,6 @@ static int gotjoin(char *from, char *channame)
       }
     }
   }
-  if (extended_join) {
-    strlcpy(account, newsplit(&channame), sizeof account);
-    if (strcmp(account, "*")) {
-      if ((m = ismember(chan, nick))) {
-        strncpy (m->account, account, sizeof m->account);
-      }
-      snprintf(mask, sizeof mask, "%s %s!%s %s", chname, nick, uhost, account);
-      check_tcl_account(nick, uhost, mask, u, chname, account);
-    }
-  }
 
 exit:
   if (ch_dname)
