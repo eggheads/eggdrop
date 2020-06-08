@@ -1068,9 +1068,9 @@ isvoice <nickname> [channel]
 
   Module: irc
 
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-isloggedin <nickname> [channel]
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+isidentified <nickname> [channel]
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
   Returns: 1 if someone by the specified nickname is on the channel (or
   any channel if no channel name is specified) and is logged in); 0 otherwise
@@ -1106,11 +1106,11 @@ nick2hand <nickname> [channel]
 
   Module: irc
 
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-account2nick <handle> [channel]
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+account2nicks <handle> [channel]
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-  Returns: the nickname of the first person on the specified channel (if one is specified) whose nickname matches the given account; "" is returned if no match is found. This command will only work if a server supports (and Eggdrop has enabled) the account-notify and extended-join capabilities, and the server understands WHOX requests (also known as raw 354 responses). If no channel is specified, all channels are checked.
+  Returns: a de-duplicated Tcl list of the nickname(s) on the specified channel (if one is specified) whose nickname matches the given account; "" is returned if no match is found. This command will only work if a server supports (and Eggdrop has enabled) the account-notify and extended-join capabilities, and the server understands WHOX requests (also known as raw 354 responses). If no channel is specified, all channels are checked.
 
   Module: irc
 
