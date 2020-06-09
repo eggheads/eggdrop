@@ -3343,13 +3343,13 @@ The following is a list of bind types and how they work. Below each bind type is
 
   Module: core
 
-(50) AWY3 (stackable)
+(50) IRCAWAY (stackable)
 
-  bind awy3 <flags> <mask> <proc>
+  bind ircaway <flags> <mask> <proc>
 
   procname <nick> <user> <hand> <channel> <msg>
  
-  Description: triggered when Eggdrop recieves an IRCv3 AWAY message for a user from an IRC server, ONLY if the away-notify IRCv3 capability is enabled via CAP (See the 'cap' Tcl command for more info). "Normal" away messages (301 messages) will not trigger this bind, for those you should instead use a RAWT bind. The mask for the bind is in the format "#channel nickname" (* to catch all nicknames). nick is the nickname of the user that triggered the bind, user is the nick!user@host of the user, handle is the handle of the user on the bot (- if the user is not added to the bot), channel is the channel the user was found on (read on for more info on this) and msg is the contents of the away message, if any. If a "*" is used for the channel in the mask, this bind is triggered once for every channel that the user is in the bot with; in other words if the bot is in two channels with the target user, the bind will be triggered twice. To trigger a proc only once per nick change, regardless of the number of channels the Eggdrop and user share, use the RAWT bind with NICK as the keyword. This bind will only work with IRC servers that support the away-notify capability, and the away-notify capability must be enabled.
+  Description: triggered when Eggdrop recieves an AWAY message for a user from an IRC server, ONLY if the away-notify capability is enabled via CAP (the server must supports this capability, see the 'cap' Tcl command for more info on requesting capabilites). "Normal" away messages (301 messages) will not trigger this bind, for those you should instead use a RAWT bind. The mask for the bind is in the format "#channel nickname" (* to catch all nicknames). nick is the nickname of the user that triggered the bind, user is the nick!user@host of the user, handle is the handle of the user on the bot (- if the user is not added to the bot), channel is the channel the user was found on (read on for more info on this) and msg is the contents of the away message, if any. If a "*" is used for the channel in the mask, this bind is triggered once for every channel that the user is in the bot with; in other words if the bot is in two channels with the target user, the bind will be triggered twice. To trigger a proc only once per nick change, regardless of the number of channels the Eggdrop and user share, use the RAWT bind with NICK as the keyword.
 
   Module: irc 
 
