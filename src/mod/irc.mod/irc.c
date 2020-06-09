@@ -32,7 +32,7 @@
 #include <sys/utsname.h>
 
 static p_tcl_bind_list H_topc, H_splt, H_sign, H_rejn, H_part, H_pub, H_pubm;
-static p_tcl_bind_list H_nick, H_mode, H_kick, H_join, H_need, H_invt, H_awayv3;
+static p_tcl_bind_list H_nick, H_mode, H_kick, H_join, H_need, H_invt, H_ircaway;
 
 static Function *global = NULL, *channels_funcs = NULL, *server_funcs = NULL;
 
@@ -757,20 +757,20 @@ static int invite_4char STDVAR
   return TCL_OK;
 }
 
-static int check_tcl_awayv3(char *nick, char *from, char *mask,
+static int check_tcl_ircaway(char *nick, char *from, char *mask,
             struct userrec *u, char *chan, char *msg)
 {
 int x;
   char *hand = u ? u->handle : "*";
   struct flag_record fr = { FR_GLOBAL | FR_CHAN | FR_ANYWH, 0, 0, 0, 0, 0 };
 
-  Tcl_SetVar(interp, "_awayv31", nick, 0);
-  Tcl_SetVar(interp, "_awayv32", from, 0);
-  Tcl_SetVar(interp, "_awayv33", hand, 0);
-  Tcl_SetVar(interp, "_awayv34", chan, 0);
-  Tcl_SetVar(interp, "_awayv35", msg ? msg : "", 0);
-  x = check_tcl_bind(H_awayv3, mask, &fr, " $_awayv31, $_awayv32 $_awayv33 "
-                        "$_awayv34 $_awayv35", MATCH_MASK | BIND_STACKABLE);
+  Tcl_SetVar(interp, "_ircaway1", nick, 0);
+  Tcl_SetVar(interp, "_ircaway2", from, 0);
+  Tcl_SetVar(interp, "_ircaway3", hand, 0);
+  Tcl_SetVar(interp, "_ircaway4", chan, 0);
+  Tcl_SetVar(interp, "_ircaway5", msg ? msg : "", 0);
+  x = check_tcl_bind(H_ircaway, mask, &fr, " $_ircaway1, $_ircaway2 $_ircaway3 "
+                        "$_ircaway4 $_ircaway5", MATCH_MASK | BIND_STACKABLE);
   return (x == BIND_EXEC_LOG);
 }
 
@@ -1208,7 +1208,7 @@ static char *irc_close()
   del_bind_table(H_pubm);
   del_bind_table(H_pub);
   del_bind_table(H_need);
-  del_bind_table(H_awayv3);
+  del_bind_table(H_ircaway);
   rem_tcl_strings(mystrings);
   rem_tcl_ints(myints);
   rem_builtins(H_dcc, irc_dcc);
@@ -1268,7 +1268,7 @@ static Function irc_table[] = {
   (Function) getchanmode,
   (Function) reset_chan_info,
   (Function) & H_invt,          /* p_tcl_bind_list              */
-  (Function) & H_awayv3         /* p_tcl_bind_list              */
+  (Function) & H_ircaway        /* p_tcl_bind_list              */
 };
 
 char *irc_start(Function *global_funcs)
@@ -1334,7 +1334,7 @@ char *irc_start(Function *global_funcs)
   H_pubm = add_bind_table("pubm", HT_STACKABLE, channels_5char);
   H_pub = add_bind_table("pub", 0, channels_5char);
   H_need = add_bind_table("need", HT_STACKABLE, channels_2char);
-  H_awayv3 = add_bind_table("awy3", HT_STACKABLE, channels_5char);
+  H_ircaway = add_bind_table("ircaway", HT_STACKABLE, channels_5char);
   do_nettype();
   return NULL;
 }

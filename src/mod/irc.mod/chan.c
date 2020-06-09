@@ -1184,7 +1184,7 @@ static int gotaway(char *from, char *msg)
     chname = chan->dname;
     if (ismember(chan, nick)) {
       snprintf(mask, sizeof mask, "%s %s", chname, from);
-      check_tcl_awayv3(nick, from, mask, u, chname, msg);
+      check_tcl_ircaway(nick, from, mask, u, chname, msg);
       if (strlen(msg)) {
         fixcolon(msg);
         putlog(LOG_JOIN, chan->dname, "%s is now away: %s", from, msg);

@@ -45,7 +45,7 @@ static void check_tcl_signtopcnick(char *, char *, struct userrec *u, char *,
                                    char *, p_tcl_bind_list);
 static int check_tcl_pubm(char *, char *, char *, char *);
 static int check_tcl_pub(char *, char *, char *, char *);
-static int check_tcl_awayv3(char *, char *, char *, struct userrec *, char *,
+static int check_tcl_ircaway(char *, char *, char *, struct userrec *, char *,
                                     char*);
 static int me_op(struct chanset_t *);
 static int me_halfop(struct chanset_t *);
