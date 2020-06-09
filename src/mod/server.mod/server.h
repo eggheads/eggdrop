@@ -89,7 +89,7 @@
 /* Was (briefly!) delserver */
 #define net_type_int (*(int *)(server_funcs[43]))
 /* 44 - 47 */
-#define H_ircaway (*(p_tcl_bind_list *)(server_funcs[44]))
+/* Available for use */
 #define cap (*(cap_list_t *)(server_funcs[45]))
 #endif /* MAKING_SERVER */
 
