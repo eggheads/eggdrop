@@ -32,7 +32,7 @@ static time_t last_ctcp = (time_t) 0L;
 static int count_ctcp = 0;
 static char altnick_char = 0;
 struct cap_list cap = {"", "", ""};
-int ncapesc;
+int ncapesc, extended_join= 0;
 Tcl_Obj **ncapesv, *ncapeslist;
 
 /* We try to change to a preferred unique nick here. We always first try the
@@ -1223,6 +1223,61 @@ static int got311(char *from, char *msg)
   return 0;
 }
 
+static int got396orchghost(char *nick, char *user, char *uhost)
+{
+  struct chanset_t *chan;
+  memberlist *m;
+
+  for (chan = chanset; chan; chan = chan->next) {
+    m = ismember(chan, nick);
+    if (m) {
+      snprintf(m->userhost, sizeof m->userhost, "%s@%s", user, uhost);
+      strcpy(botuserhost, m->userhost);
+    }
+  }
+  return 0;
+}
+
+
+/* React to IRCv3 CHGHOST command. CHGHOST changes the hostname and/or
+ * ident of the user. Format:
+ * :geo!awesome@eggdrop.com CHGHOST tehgeo foo.io
+ * changes user hostmask to tehgeo@foo.io
+ */
+static int gotchghost(char *from, char *msg){
+  char *nick, *user;
+
+  nick = splitnick(&from); /* Get the nick */
+  user = newsplit(&msg);  /* Get the user */
+  got396orchghost(nick, user, msg);
+  return 0;
+}
+
+/* React to 396 numeric (HOSTHIDDEN), sent when user mode +x (hostmasking) was
+ * successfully set. Format:
+ * :barjavel.freenode.net 396 BeerBot unaffiliated/geo/bot/beerbot :is now your hidden host (set by services.)
+ */
+static int got396(char *from, char *msg)
+{
+  char *nick, *uhost, *user, userbuf[UHOSTLEN];
+
+  nick = newsplit(&msg);
+  if (match_my_nick(nick)) {  /* Double check this really is for me */
+    uhost = newsplit(&msg);
+    strlcpy(userbuf, botuserhost, sizeof userbuf);
+    user = strtok(userbuf, "@");
+    got396orchghost(nick, user, uhost);
+  }
+  return 0;
+}
+
+static int gotsetname(char *from, char *msg)
+{
+  fixcolon(msg);
+  strlcpy(botrealname, msg, sizeof botrealname);
+  return 0;
+}
+
 static int tryauthenticate(char *from, char *msg) 
 {
   char src[(sizeof sasl_username) + (sizeof sasl_username) +
@@ -1465,52 +1520,66 @@ static int got421(char *from, char *msg) {
   return 1;
 }
 
-void update_cap_negotiated() {
-  int i, len = 0;
-  Tcl_ListObjGetElements(interp, ncapeslist, &ncapesc, &ncapesv);
-  for (i = 0; i < ncapesc; i++) {
-    if (i)
-      cap.negotiated[len++] = ' ';
-    len += strlcpy(cap.negotiated + len, Tcl_GetString(ncapesv[i]), sizeof cap.negotiated - len);
-  }
-}
-
-/*
- * Add capability to Tcl List for easy addition/deletion. First
- * checks if requested cape is available on the list provided by the server
- * before adding to the desired list.
- */
+/* Add negotiated capability to Tcl List for easy addition/deletion */
 void add_cape(char *cape) {
   if (!strstr(cap.negotiated, cape)) {
     putlog(LOG_DEBUG, "*", "CAP: Adding cape %s to negotiated list", cape);
+    /* Update Tcl List object with new capability */
     Tcl_ListObjAppendElement(interp, ncapeslist, Tcl_NewStringObj(cape, -1));
-    if (!strcmp(cape, "message-tags") || !strcmp(cape, "twitch.tv/tags")) {
+    /* Update C variable with new capability */
+    if (*cap.negotiated) {
+      strncat(cap.negotiated, " ", CAPMAX - strlen(cap.negotiated) - 1);
+    }
+    strncat(cap.negotiated, cape, CAPMAX - strlen(cap.negotiated) - 1);
+    /* This section adds status variables used by other modules, if they need to
+     * know if a specific capability is active or not
+     */
+    if (!strcasecmp(cape, "message-tags") || !strcasecmp(cape, "twitch.tv/tags")) {
       msgtag = 1;
+    } else if (!strcasecmp(cape, "extended-join")) {
+      extended_join = 1;
     }
   } else {
     putlog(LOG_DEBUG, "*", "CAP: %s is already added to negotiated list", cape);
   }
-  update_cap_negotiated();
 }
 
 /* Remove capability from internal CAP request list */
 void del_cape(char *cape) {
-  int i;
+  int i, j, len = 0;
   if (strstr(cap.negotiated, cape)) {
     putlog(LOG_DEBUG, "*", "CAP: Removing %s from negotiated list", cape);
     Tcl_ListObjGetElements(interp, ncapeslist, &ncapesc, &ncapesv);
     for (i = 0; i < ncapesc; i++) {
       if (!strcmp(cape, Tcl_GetString(ncapesv[i]))) {
+        /* Remove deleted capability from Tcl List object */
         Tcl_ListObjReplace(interp, ncapeslist, i, 1, 0, NULL);
-        if (!strcmp(cape, "message-tags")) {
-          msgtag = 0;
+        /* Match C variable to Tcl List object (ie, delete the capability) */
+        Tcl_ListObjGetElements(interp, ncapeslist, &ncapesc, &ncapesv);
+        if (!ncapesc) {
+          *cap.negotiated = 0;
+        } else {
+          for (j = 0; j < ncapesc; j++) {
+            if (j)
+              cap.negotiated[len++] = ' ';
+            len += strlcpy(cap.negotiated + len, Tcl_GetString(ncapesv[j]), sizeof cap.negotiated - len);
+          }
         }
+        if (!strcasecmp(cape, "message-tags") || !strcasecmp(cape, "twitch.tv/tags")) {
+          msgtag = 0;
+        } else if (!strcasecmp(cape, "extended-join")) {
+          extended_join = 0;
+        }
+      }
+      if (!strcasecmp(cape, "message-tags") || !strcasecmp(cape, "twitch.tv/tags")) {
+        msgtag = 0;
+      } else if (!strcasecmp(cape, "extended-join")) {
+        extended_join = 0;
       }
     }
   } else {
     putlog(LOG_DEBUG, "*", "CAP: %s is not on negotiated list", cape);
   }
-  update_cap_negotiated();
 }
 
 /* Smash desired CAP capabilities into a single string */
@@ -1523,7 +1592,7 @@ void add_req(char *cape) {
 
 static int gotcap(char *from, char *msg) {
   char *cmd, *splitstr;
-  char cape[CAPMAX], *p;
+  char cape[CAPMAX+1], *p;
   int listlen = 0;
 
   newsplit(&msg);
@@ -1535,21 +1604,10 @@ static int gotcap(char *from, char *msg) {
     strlcpy(cap.supported, msg, sizeof cap.supported);
 /* CAP is supported, yay! Lets load what we want to request */
     if (sasl) {
-      if (sasl_mechanism < 0)
-        putlog(LOG_SERV, "*", "SASL error: sasl-mechanism must be equal to or greater than 0");
-      else if (sasl_mechanism >= SASL_MECHANISM_NUM)
-        putlog(LOG_SERV, "*", "SASL error: sasl-mechanism must be less than %i", SASL_MECHANISM_NUM);
-      else
-        add_req("sasl");
+      add_req("sasl");
     }
-    if (away_notify)
-      add_req("away-notify");
-    if (invite_notify)
-      add_req("invite-notify");
-    if (message_tags)
-      add_req("message-tags");
 /* Add any custom capes the user listed */
-    strncpy(cape, cap_request, sizeof cape);
+    strlcpy(cape, cap_request, sizeof cape);
     if ( (p = strtok(cape, " ")) ) {
       while (p != NULL) {
         add_req(p);
@@ -1585,14 +1643,14 @@ static int gotcap(char *from, char *msg) {
       }
       splitstr = strtok(NULL, " ");
     }
-    update_cap_negotiated(); /* TODO: do we really need this call here? */
     putlog(LOG_SERV, "*", "CAP: Current negotiations with %s: %s", from, cap.negotiated);
     /* If a negotiated capability requires immediate action by Eggdrop, add it
      * here. However, that capability must take responsibility for sending an
      * END. Future eggheads: add support for more than 1 of these async
      * capabilities, right now SASL is the only one so we're OK.
      */
-    if (strstr(cap.negotiated, "sasl")) {
+    if (strstr(cap.negotiated, "sasl") && strstr(cap.desired, "sasl")) {
+      *cap.desired = 0;
 #ifndef HAVE_EVP_PKEY_GET1_EC_KEY
       if (sasl_mechanism != SASL_MECHANISM_ECDSA_NIST256P_CHALLENGE) {
 #endif
@@ -1619,7 +1677,7 @@ static int gotcap(char *from, char *msg) {
   } else if (!strcmp(cmd, "NAK")) {
     putlog(LOG_SERV, "*", "CAP: Requested capability change %s rejected by %s",
         msg, from);
-    dprintf(DP_MODE, "CAP END\n");  /* TODO: Handle whatever caused it to reject? */
+    dprintf(DP_MODE, "CAP END\n");
   } else if (!strcmp(cmd, "NEW")) { /* TODO: CAP 302 stuff? */
     /* Do things */
   } else if (!strcmp(cmd, "DEL")) { /* TODO: CAP 302 stuff? */
@@ -1639,6 +1697,7 @@ static cmd_t my_raw_binds[] = {
   {"303",          "",   (IntFunc) got303,          NULL},
   {"311",          "",   (IntFunc) got311,          NULL},
   {"318",          "",   (IntFunc) whoispenalty,    NULL},
+  {"396",          "",   (IntFunc) got396,          NULL},
   {"410",          "",   (IntFunc) got410,          NULL},
   {"417",          "",   (IntFunc) got417,          NULL},
   {"421",          "",   (IntFunc) got421,          NULL},
@@ -1662,6 +1721,8 @@ static cmd_t my_raw_binds[] = {
   {"KICK",         "",   (IntFunc) gotkick,         NULL},
   {"CAP",          "",   (IntFunc) gotcap,          NULL},
   {"AUTHENTICATE", "",   (IntFunc) gotauthenticate, NULL},
+  {"CHGHOST",      "",   (IntFunc) gotchghost,      NULL},
+  {"SETNAME",      "",   (IntFunc) gotsetname,      NULL},
   {NULL,           NULL, NULL,                      NULL}
 };
 

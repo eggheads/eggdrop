@@ -2301,25 +2301,27 @@ char *server_start(Function *global_funcs)
   my_tcl_strings[0].buf = botname;
   add_tcl_strings(my_tcl_strings);
   add_tcl_ints(my_tcl_ints);
+  if (sasl) {
+    if ((sasl_mechanism < 0) || (sasl_mechanism >= SASL_MECHANISM_NUM)) {
+      fatal("ERROR: sasl-mechanism is not set to an allowed value, please check"
+            " it and try again", 0);
+    }
 #ifdef TLS
 #ifndef HAVE_EVP_PKEY_GET1_EC_KEY
-  if (sasl) {
     if (sasl_mechanism == SASL_MECHANISM_ECDSA_NIST256P_CHALLENGE) {
       fatal("ERROR: NIST256 functionality missing from your TLS libs, please "
-          "choose a different SASL method", 0);
+            "choose a different SASL method", 0);
     }
-  }
 #endif /* HAVE_EVP_PKEY_GET1_EC_KEY */
 #else  /* TLS */
-  if (sasl) {
     if ((sasl_mechanism == SASL_MECHANISM_ECDSA_NIST256P_CHALLENGE) ||
             (sasl_mechanism == SASL_MECHANISM_EXTERNAL)) {
-        fatal("ERROR: The selected SASL authentication method requires TLS "
-                "libraries which are not installed on this machine. Please "
-                "choose the PLAIN method in your config.");
+      fatal("ERROR: The selected SASL authentication method requires TLS "
+            "libraries which are not installed on this machine. Please "
+            "choose the PLAIN method in your config.", 0);
     }
-  }
 #endif /* TLS */
+  }
   add_tcl_commands(my_tcl_cmds);
   add_tcl_coups(my_tcl_coups);
   add_hook(HOOK_SECONDLY, (Function) server_secondly);
