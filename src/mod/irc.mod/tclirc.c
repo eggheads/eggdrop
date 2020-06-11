@@ -869,7 +869,7 @@ static int tcl_account2nicks STDVAR
 {
   memberlist *m;
   struct chanset_t *chan, *thechan = NULL;
-  Tcl_Obj *nicks = Tcl_NewListObj(0, NULL);
+  Tcl_Obj *nicks;
   Tcl_Obj **nicksv = NULL;
   int nicksc = 0, i, found;
 
@@ -885,6 +885,7 @@ static int tcl_account2nicks STDVAR
   } else
     chan = chanset;
 
+  nicks = Tcl_NewListObj(0, NULL);
   while (chan && (thechan == NULL || thechan == chan)) {
     for (m = chan->channel.member; m && m->nick[0]; m = m->next) {
       found = 0;
@@ -941,42 +942,6 @@ static int tcl_hand2nick STDVAR
     }
     chan = chan->next;
   }
-  return TCL_OK;
-}
-
-static int tcl_account2hand STDVAR
-{
-  char nuh[1024];
-  memberlist *m;
-  struct chanset_t *chan, *thechan = NULL;
-
-  BADARGS(2, 3, " account ?channel?");
-
-  if (argc > 2) {
-    chan = findchan_by_dname(argv[2]);
-    thechan = chan;
-    if (chan == NULL) {
-      Tcl_AppendResult(irp, "invalid channel: ", argv[2], NULL);
-      return TCL_ERROR;
-    }
-  } else
-    chan = chanset;
-
-  while (chan && (thechan == NULL || thechan == chan)) {
-    for (m = chan->channel.member; m && m->nick[0]; m = m->next) {
-      if (!m->user && !m->tried_getuser) {
-        egg_snprintf(nuh, sizeof nuh, "%s!%s", m->nick, m->userhost);
-        m->tried_getuser = 1;
-        m->user = get_user_by_host(nuh);
-      }
-      if (m->user && !rfc_casecmp(m->account, argv[1])) {
-        Tcl_AppendResult(irp, m->user->handle, NULL);
-        return TCL_OK;
-      }
-    }
-    chan = chan->next;
-  }
-  Tcl_AppendResult(irp, "*", NULL);
   return TCL_OK;
 }
 
@@ -1099,7 +1064,6 @@ static tcl_cmds tclchan_cmds[] = {
   {"chaninvites",    tcl_chaninvites},
   {"account2nicks",  tcl_account2nicks},
   {"hand2nick",      tcl_hand2nick},
-  {"account2hand",   tcl_account2hand},
   {"nick2hand",      tcl_nick2hand},
   {"getchanmode",    tcl_getchanmode},
   {"getchanjoin",    tcl_getchanjoin},

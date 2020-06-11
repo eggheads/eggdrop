@@ -1463,10 +1463,12 @@ static int gotaccount(char *from, char *msg) {
       strncpy (m->account, msg, sizeof m->account);
       snprintf(mask, sizeof mask, "%s %s %s", chname, from, msg);
       if (!strcasecmp(msg, "*")) {
-        strcpy(msg, "0");
-        putlog(LOG_SERV, "*", "%s!%s has logged out of their account", nick, from);
+        msg[0] = '\0';
+        putlog(LOG_JOIN | LOG_MISC, chname, "%s!%s has logged out of their "
+                "account", nick, from);
       } else {
-        putlog(LOG_SERV, "*", "%s!%s has logged into account %s", nick, from, msg);
+        putlog(LOG_JOIN | LOG_MISC, chname, "%s!%s has logged into account %s",
+                nick, from, msg);
       }
       check_tcl_account(nick, from, mask, u, chname, msg);
     }

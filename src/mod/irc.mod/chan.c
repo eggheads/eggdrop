@@ -1078,7 +1078,7 @@ static int got352or4(struct chanset_t *chan, char *user, char *host,
   /* Update accountname in the channel record */
   if ((account) && strcmp(account, "0")) {
     if (m) {
-      strncpy(m->account, account, sizeof(m->account));
+      strlcpy(m->account, account, sizeof(m->account));
     }
   } else {      /* Explicitly clear, in case someone deauthenticated? */
     if (m) {
@@ -1118,6 +1118,9 @@ static int got354(char *from, char *msg)
 
   if (use_354) {
     newsplit(&msg);             /* Skip my nick - efficiently */
+    if (!strncmp(msg, "222", strlen("222"))) {
+      newsplit(&msg);           /* Skip our query-type magic number" */
+    }
     if (msg[0] && (strchr(CHANMETA, msg[0]) != NULL)) {
       chname = newsplit(&msg);  /* Grab the channel */
       chan = findchan(chname);  /* See if I'm on channel */
@@ -1184,7 +1187,7 @@ static int got367(char *from, char *origmsg)
   char *ban, *who, *chname, buf[511], *msg;
   struct chanset_t *chan;
 
-  strncpy(buf, origmsg, 510);
+  strlcpy(buf, origmsg, 510);
   buf[510] = 0;
   msg = buf;
   newsplit(&msg);
@@ -1824,10 +1827,9 @@ static int gotjoin(char *from, char *channame)
           strlcpy(account, newsplit(&channame), sizeof account);
           if (strcmp(account, "*")) {
             if ((m = ismember(chan, nick))) {
-              strncpy (m->account, account, sizeof m->account);
+              strlcpy (m->account, account, sizeof m->account);
             }
             snprintf(mask, sizeof mask, "%s %s!%s %s", chname, nick, uhost, account);
-            check_tcl_account(nick, uhost, mask, u, chname, account);
           }
         }
 

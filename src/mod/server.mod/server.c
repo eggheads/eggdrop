@@ -2202,8 +2202,7 @@ static Function server_table[] = {
   (Function) & cap,             /* cap_list                             */
   (Function) & extended_join,   /* int                                  */
   /* 48 - 51 */
-  (Function) & account_notify,  /* int                                  */
-  (Function) check_tcl_account
+  (Function) & account_notify   /* int                                  */
 };
 
 char *server_start(Function *global_funcs)

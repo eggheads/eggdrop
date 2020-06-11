@@ -1090,14 +1090,6 @@ getaccount <nickname> [channel]
 
   Returns: the services account name of the nickname if they are logged in, "" otherwise, and an error if the account-notify or extended-join capabilites are not enabled. WARNING: this account list may not be accurate depending on the server and configuration. This command will only work if a server supports (and Eggdrop has enabled) the account-notify and extended-join capabilities, and the server understands WHOX requests (also known as raw 354 responses).
 
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-account2hand <account> [channel]
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-  Returns: the handle of an account on a channel. If a channel is not specified, the bot will check all of its channels. If the account is not found, "" is returned. If the account is found but does not have a handle, "*" is returned. This command will only work if a server supports (and Eggdrop has enabled) the account-notify and extended-join capabilities, and the server understands WHOX requests (also known as raw 354 responses). If no channel is specified, all channels are checked.
-
-  Module: irc
-
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 nick2hand <nickname> [channel]
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -3374,7 +3366,7 @@ The following is a list of bind types and how they work. Below each bind type is
 
   procname <nick> <user> <hand> <account>
 
-  Description: triggered when Eggdrop receives an ACCOUNT message. The mask for the bind is in the format "#channel nick!user@hostname.com account" where channel is the channel the user was found on when the bind was triggered, the hostmask is the user's hostmask, and account is the account name the user is logging in to, or 0 for logging out. The mask argument can accept wildcards. For the proc, nick is the nickname of the user logging into/out of an account, user is the user@host.com hostmask, hand is the handle of the user (or * if none), and account is the name of the account the user logged in to (or 0 if the user logged out of an account).
+  Description: triggered when Eggdrop receives an ACCOUNT message. The mask for the bind is in the format "#channel nick!user@hostname.com account" where channel is the channel the user was found on when the bind was triggered, the hostmask is the user's hostmask, and account is the account name the user is logging in to, or "" for logging out. The mask argument can accept wildcards. For the proc, nick is the nickname of the user logging into/out of an account, user is the user@host.com hostmask, hand is the handle of the user (or * if none), and account is the name of the account the user logged in to (or "" if the user logged out of an account).
 
 
 ^^^^^^^^^^^^^

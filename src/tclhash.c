@@ -1339,7 +1339,7 @@ void tell_binds(int idx, char *par)
             ok = 1;
 
           if (ok) {
-            dprintf(idx, "  %+*s %-8s %-20s %4d %s\n", maxname, tl->name, flg,
+            dprintf(idx, "  %*s %-8s %-20s %4d %s\n", maxname, tl->name, flg,
                     tm->mask, tc->hits, tc->func_name);
             fnd = 1;
           }

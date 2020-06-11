@@ -276,7 +276,7 @@ static int hand_on_chan(struct chanset_t *chan, struct userrec *u)
 static void refresh_who_chan(char *channame)
 {
   if (use_354)
-    dprintf(DP_MODE, "WHO %s c%%chnufa\n", channame);
+    dprintf(DP_MODE, "WHO %s c%%chnufat,222\n", channame);
   else
     dprintf(DP_MODE, "WHO %s\n", channame);
   return;
