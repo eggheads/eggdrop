@@ -1700,7 +1700,7 @@ static void set_delay(struct chanset_t *chan, char *nick)
 static int gotjoin(char *from, char *channame)
 {
   char *nick, *p, buf[UHOSTLEN], account[NICKMAX], *uhost = buf, *chname;
-  char *ch_dname = NULL, mask[CHANNELLEN+UHOSTMAX+NICKMAX+3];
+  char *ch_dname = NULL;
   struct chanset_t *chan;
   memberlist *m;
   masklist *b;
@@ -1822,6 +1822,14 @@ static int gotjoin(char *from, char *channame)
         strlcpy(m->userhost, uhost, sizeof m->userhost);
         m->user = u;
         m->flags |= STOPWHO;
+        if (extended_join) {
+          strlcpy(account, newsplit(&channame), sizeof account);
+          if (strcmp(account, "*")) {
+            if ((m = ismember(chan, nick))) {
+              strlcpy (m->account, account, sizeof m->account);
+            }
+          }
+        }
         check_tcl_join(nick, uhost, u, chan->dname);
 
         /* The tcl binding might have deleted the current user and the

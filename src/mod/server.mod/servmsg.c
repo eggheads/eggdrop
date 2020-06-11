@@ -1516,7 +1516,7 @@ static int gotaccount(char *from, char *msg) {
     chname = chan->dname;
     if ((m = ismember(chan, nick))) {
       strlcpy (m->account, msg, sizeof m->account);
-      snprintf(mask, sizeof mask, "%s %s %s", chname, from, msg);
+      snprintf(mask, sizeof mask, "%s %s", chname, from);
       if (!strcasecmp(msg, "*")) {
         msg[0] = '\0';
         putlog(LOG_JOIN | LOG_MISC, chname, "%s!%s has logged out of their "
