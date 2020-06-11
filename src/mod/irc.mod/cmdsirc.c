@@ -886,6 +886,11 @@ static void cmd_channel(struct userrec *u, int idx, char *par)
           egg_snprintf(s1, sizeof s1, "%2lum", ((now - (m->last)) / 60));
         else
           strlcpy(s1, "   ", sizeof s1);
+        if (chan_ircaway(m)) {
+          egg_snprintf(s1+strlen(s1), ((sizeof s1)-strlen(s1)), " (away)");
+        } else {
+          egg_snprintf(s1+strlen(s1), ((sizeof s1)-strlen(s1)), "       ");
+        }
         if (use_354 && extended_join && account_notify) {
           dprintf(idx, "%c%-*s %-*s %-*s %-6s %c %s  %s\n", chanflag, maxnicklen,
                 m->nick, maxhandlen, handle, maxnicklen, m->account, s, atrflag,
@@ -1151,7 +1156,7 @@ static void cmd_reset(struct userrec *u, int idx, char *par)
       else {
         putlog(LOG_CMDS, "*", "#%s# reset %s", dcc[idx].nick, par);
         dprintf(idx, "Resetting channel info for %s...\n", chan->dname);
-        reset_chan_info(chan, CHAN_RESETALL);
+        reset_chan_info(chan, CHAN_RESETALL, 1);
       }
     }
   } else if (!(u->flags & USER_MASTER))
@@ -1161,7 +1166,7 @@ static void cmd_reset(struct userrec *u, int idx, char *par)
     dprintf(idx, "Resetting channel info for all channels...\n");
     for (chan = chanset; chan; chan = chan->next) {
       if (channel_active(chan))
-        reset_chan_info(chan, CHAN_RESETALL);
+        reset_chan_info(chan, CHAN_RESETALL, 1);
     }
   }
 }

@@ -1531,19 +1531,6 @@ static int gotaccount(char *from, char *msg) {
   return 0;
 }
 
-/* Got AWAY message; only valid for away-notify capability */
-static int gotawayv3(char *from, char *msg)
-{
-  if (strlen(msg)) {
-    fixcolon(msg);
-    putlog(LOG_SERV, "*", "%s is now away: %s", from, msg);
-  } else {
-    putlog(LOG_SERV, "*", "%s has returned from away status", from);
-  }
-  check_tcl_awayv3(from, msg);
-  return 0;
-}
-
 /*
  * 465     ERR_YOUREBANNEDCREEP :You are banned from this server
  */
@@ -1766,7 +1753,6 @@ static cmd_t my_raw_binds[] = {
   {"PING",         "",   (IntFunc) gotping,         NULL},
   {"PONG",         "",   (IntFunc) gotpong,         NULL},
   {"WALLOPS",      "",   (IntFunc) gotwall,         NULL},
-  {"AWAY",         "",   (IntFunc) gotawayv3,       NULL},
   {"001",          "",   (IntFunc) got001,          NULL},
   {"303",          "",   (IntFunc) got303,          NULL},
   {"311",          "",   (IntFunc) got311,          NULL},

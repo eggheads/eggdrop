@@ -901,7 +901,7 @@ static void recheck_channel(struct chanset_t *chan, int dobans)
    * In case we got them on join, nothing will be done */
   if (chan->ircnet_status & (CHAN_ASKED_EXEMPTS | CHAN_ASKED_INVITED)) {
     chan->ircnet_status &= ~(CHAN_ASKED_EXEMPTS | CHAN_ASKED_INVITED);
-    reset_chan_info(chan, CHAN_RESETEXEMPTS | CHAN_RESETINVITED);
+    reset_chan_info(chan, CHAN_RESETEXEMPTS | CHAN_RESETINVITED, 1);
   }
   if (dobans) {
     if (channel_nouserbans(chan) && !stop_reset)
@@ -1067,6 +1067,10 @@ static int got352or4(struct chanset_t *chan, char *user, char *host,
     m->flags |= CHANVOICE;
   else
     m->flags &= ~CHANVOICE;
+  if (strchr(flags, 'G') != NULL)
+    m->flags |= IRCAWAY;
+  else
+    m->flags &= ~IRCAWAY;
   if (!(m->flags & (CHANVOICE | CHANOP | CHANHALFOP)))
     m->flags |= STOPWHO;
   if (match_my_nick(nick) && any_ops(chan) && !me_op(chan)) {
@@ -1177,6 +1181,33 @@ static int got315(char *from, char *msg)
   else if (chan->channel.members == 1)
     chan->status |= CHAN_STOP_CYCLE;
   return 0;                            /* Don't check for I-Lines here.     */
+}
+
+/* Got AWAY message; only valid for IRCv3 away-notify capability */
+static int gotaway(char *from, char *msg)
+{
+  struct userrec *u;
+  struct chanset_t *chan;
+  char mask[1024], buf[MSGMAX], *nick, *s1 = buf, *chname;
+
+  strlcpy(s1, from, sizeof buf);
+  nick = splitnick(&s1);
+  u = get_user_by_host(from);
+  /* Run the bind for each channel the user is on */
+  for (chan = chanset; chan; chan = chan->next) {
+    chname = chan->dname;
+    if (ismember(chan, nick)) {
+      snprintf(mask, sizeof mask, "%s %s", chname, from);
+      check_tcl_ircaway(nick, from, mask, u, chname, msg);
+      if (strlen(msg)) {
+        fixcolon(msg);
+        putlog(LOG_JOIN, chan->dname, "%s is now away: %s", from, msg);
+      } else {
+        putlog(LOG_JOIN, chan->dname, "%s has returned from away status", from);
+      }
+    }
+  }
+  return 0;
 }
 
 /* got 367: ban info
@@ -1784,7 +1815,7 @@ static int gotjoin(char *from, char *channame)
              chan->dname);
       chan->status |= CHAN_ACTIVE;
       chan->status &= ~CHAN_PEND;
-      reset_chan_info(chan, CHAN_RESETALL);
+      reset_chan_info(chan, CHAN_RESETALL, 1);
     } else {
       m = ismember(chan, nick);
       if (m && m->split && !strcasecmp(m->userhost, uhost)) {
@@ -1871,7 +1902,7 @@ static int gotjoin(char *from, char *channame)
           else
             putlog(LOG_JOIN | LOG_MISC, chan->dname, "%s joined %s.", nick,
                    chname);
-          reset_chan_info(chan, (CHAN_RESETALL & ~CHAN_RESETTOPIC));
+          reset_chan_info(chan, (CHAN_RESETALL & ~CHAN_RESETTOPIC), 1);
         } else {
           struct chanuserrec *cr;
 
@@ -2023,7 +2054,7 @@ static int gotpart(char *from, char *msg)
              chan->dname);
       chan->status |= CHAN_ACTIVE;
       chan->status &= ~CHAN_PEND;
-      reset_chan_info(chan, CHAN_RESETALL);
+      reset_chan_info(chan, CHAN_RESETALL, 1);
     }
     set_handle_laston(chan->dname, u, now);
     /* This must be directly above the killmember, in case we're doing anything
@@ -2522,35 +2553,36 @@ static int gotnotice(char *from, char *msg)
 }
 
 static cmd_t irc_raw[] = {
-  {"324",     "",   (IntFunc) got324,       "irc:324"},
-  {"352",     "",   (IntFunc) got352,       "irc:352"},
-  {"354",     "",   (IntFunc) got354,       "irc:354"},
-  {"315",     "",   (IntFunc) got315,       "irc:315"},
-  {"367",     "",   (IntFunc) got367,       "irc:367"},
-  {"368",     "",   (IntFunc) got368,       "irc:368"},
-  {"403",     "",   (IntFunc) got403,       "irc:403"},
-  {"405",     "",   (IntFunc) got405,       "irc:405"},
-  {"471",     "",   (IntFunc) got471,       "irc:471"},
-  {"473",     "",   (IntFunc) got473,       "irc:473"},
-  {"474",     "",   (IntFunc) got474,       "irc:474"},
-  {"475",     "",   (IntFunc) got475,       "irc:475"},
-  {"INVITE",  "",   (IntFunc) gotinvite, "irc:invite"},
-  {"TOPIC",   "",   (IntFunc) gottopic,   "irc:topic"},
-  {"331",     "",   (IntFunc) got331,       "irc:331"},
-  {"332",     "",   (IntFunc) got332,       "irc:332"},
-  {"JOIN",    "",   (IntFunc) gotjoin,     "irc:join"},
-  {"PART",    "",   (IntFunc) gotpart,     "irc:part"},
-  {"KICK",    "",   (IntFunc) gotkick,     "irc:kick"},
-  {"NICK",    "",   (IntFunc) gotnick,     "irc:nick"},
-  {"QUIT",    "",   (IntFunc) gotquit,     "irc:quit"},
-  {"PRIVMSG", "",   (IntFunc) gotmsg,       "irc:msg"},
-  {"NOTICE",  "",   (IntFunc) gotnotice, "irc:notice"},
-  {"MODE",    "",   (IntFunc) gotmode,     "irc:mode"},
-  {"346",     "",   (IntFunc) got346,       "irc:346"},
-  {"347",     "",   (IntFunc) got347,       "irc:347"},
-  {"348",     "",   (IntFunc) got348,       "irc:348"},
-  {"349",     "",   (IntFunc) got349,       "irc:349"},
-  {NULL,      NULL, NULL,                         NULL}
+  {"324",     "",   (IntFunc) got324,          "irc:324"},
+  {"352",     "",   (IntFunc) got352,          "irc:352"},
+  {"354",     "",   (IntFunc) got354,          "irc:354"},
+  {"315",     "",   (IntFunc) got315,          "irc:315"},
+  {"367",     "",   (IntFunc) got367,          "irc:367"},
+  {"368",     "",   (IntFunc) got368,          "irc:368"},
+  {"403",     "",   (IntFunc) got403,          "irc:403"},
+  {"405",     "",   (IntFunc) got405,          "irc:405"},
+  {"471",     "",   (IntFunc) got471,          "irc:471"},
+  {"473",     "",   (IntFunc) got473,          "irc:473"},
+  {"474",     "",   (IntFunc) got474,          "irc:474"},
+  {"475",     "",   (IntFunc) got475,          "irc:475"},
+  {"INVITE",  "",   (IntFunc) gotinvite,    "irc:invite"},
+  {"TOPIC",   "",   (IntFunc) gottopic,      "irc:topic"},
+  {"331",     "",   (IntFunc) got331,          "irc:331"},
+  {"332",     "",   (IntFunc) got332,          "irc:332"},
+  {"JOIN",    "",   (IntFunc) gotjoin,        "irc:join"},
+  {"PART",    "",   (IntFunc) gotpart,        "irc:part"},
+  {"KICK",    "",   (IntFunc) gotkick,        "irc:kick"},
+  {"NICK",    "",   (IntFunc) gotnick,        "irc:nick"},
+  {"QUIT",    "",   (IntFunc) gotquit,        "irc:quit"},
+  {"PRIVMSG", "",   (IntFunc) gotmsg,          "irc:msg"},
+  {"NOTICE",  "",   (IntFunc) gotnotice,    "irc:notice"},
+  {"MODE",    "",   (IntFunc) gotmode,        "irc:mode"},
+  {"AWAY",    "",   (IntFunc) gotaway,     "irc:gotaway"},
+  {"346",     "",   (IntFunc) got346,          "irc:346"},
+  {"347",     "",   (IntFunc) got347,          "irc:347"},
+  {"348",     "",   (IntFunc) got348,          "irc:348"},
+  {"349",     "",   (IntFunc) got349,          "irc:349"},
+  {NULL,      NULL, NULL,                           NULL}
 };
 
 static cmd_t irc_rawt[] = {

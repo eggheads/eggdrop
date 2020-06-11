@@ -106,7 +106,7 @@ static char sslserver = 0;
 #endif
 
 static p_tcl_bind_list H_wall, H_raw, H_notc, H_msgm, H_msg, H_flud, H_ctcr,
-                       H_ctcp, H_out, H_rawt, H_awayv3, H_account;
+                       H_ctcp, H_out, H_rawt, H_account;
 
 static void empty_msgq(void);
 static void next_server(int *, char *, unsigned int *, char *);
@@ -2086,7 +2086,6 @@ static char *server_close()
   rem_builtins(H_ctcp, my_ctcps);
   /* Restore original commands. */
   del_bind_table(H_wall);
-  del_bind_table(H_awayv3);
   del_bind_table(H_account);
   del_bind_table(H_raw);
   del_bind_table(H_rawt);
@@ -2193,15 +2192,11 @@ static Function server_table[] = {
   (Function) & exclusive_binds, /* int                                  */
   /* 40 - 43 */
   (Function) & H_out,           /* p_tcl_bind_list                      */
-  (Function) NULL,
-  (Function) NULL,
-  (Function) & net_type_int,    /* int                                  */
-  /* 44 - 47 */
-  (Function) & H_awayv3,        /* p_tcl_bind_list                      */
+  (Function) & net_type_int,     /* int                                  */
   (Function) & H_account,       /* p_tcl_bind)list                      */
   (Function) & cap,             /* cap_list                             */
+  /* 44 - 47 */
   (Function) & extended_join,   /* int                                  */
-  /* 48 - 51 */
   (Function) & account_notify   /* int                                  */
 };
 
@@ -2304,7 +2299,6 @@ char *server_start(Function *global_funcs)
                traced_nicklen, NULL);
 
   H_wall = add_bind_table("wall", HT_STACKABLE, server_2char);
-  H_awayv3 = add_bind_table("awy3", HT_STACKABLE, server_2char);
   H_account = add_bind_table("account", HT_STACKABLE, server_account);
   H_raw = add_bind_table("raw", HT_STACKABLE, server_raw);
   H_rawt = add_bind_table("rawt", HT_STACKABLE, server_tag);

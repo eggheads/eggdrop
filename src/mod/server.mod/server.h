@@ -85,16 +85,12 @@
 #define exclusive_binds (*(int *)(server_funcs[39]))
 /* 40 - 43 */
 #define H_out (*(p_tcl_bind_list *)(server_funcs[40]))
-/* Was (briefly!) addserver */
-/* Was (briefly!) delserver */
-#define net_type_int (*(int *)(server_funcs[43]))
+#define net_type_int (*(int *)(server_funcs[41]))
+#define cap (*(cap_list_t *)(server_funcs[42]))
+#define H_account (*(p_tcl_bind_list *)(server_funcs[43]))
 /* 44 - 47 */
-#define H_awayv3 (*(p_tcl_bind_list *)(server_funcs[44]))
-#define cap (*(cap_list_t *)(server_funcs[45]))
-#define H_account (*(p_tcl_bind_list *)(server_funcs[46]))
-#define extended_join (*(int *)(server_funcs[47]))
-/* 48 - 51 */
-#define account_notify (*(int *)(server_funcs[48]))
+#define extended_join (*(int *)(server_funcs[44]))
+#define account_notify (*(int *)(server_funcs[45]))
 #endif /* MAKING_SERVER */
 
 struct server_list {
