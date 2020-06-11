@@ -117,6 +117,8 @@ static int gotmode(char *, char *);
 #define me_voice ((int(*)(struct chanset_t *))irc_funcs[23])
 /* 24 - 27 */
 #define getchanmode ((char *(*)(struct chanset_t *))irc_funcs[24])
+#define reset_chan_info (*(void *)(irc_funcs[25]))
+#define H_invt (*(p_tcl_bind_list *)(irc_funcs[26]))
 
 #endif /* MAKING_IRC */
 

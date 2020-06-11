@@ -276,7 +276,7 @@ static int hand_on_chan(struct chanset_t *chan, struct userrec *u)
 static void refresh_who_chan(char *channame)
 {
   if (use_354)
-    dprintf(DP_MODE, "WHO %s c%%chnuf\n", channame);
+    dprintf(DP_MODE, "WHO %s c%%chnufat,222\n", channame);
   else
     dprintf(DP_MODE, "WHO %s\n", channame);
   return;
@@ -1052,6 +1052,19 @@ static void irc_report(int idx, int details)
   if (k > 10) {
     q[k - 2] = 0;
     dprintf(idx, "    %s\n", q);
+  }
+  /* List status of account tracking. For 100% accuracy, this requires
+   * WHOX ability (354 messages) and the extended-join and account_notify
+   * capabilities to be enabled.
+   */
+  if (use_354 && extended_join && account_notify) {
+    dprintf(idx, "    Account tracking: Enabled\n");
+  } else {
+    dprintf(idx, "    Account tracking: Disabled\n"
+                 "      (Missing capabilities:%s%s%s)\n",
+                      use_354 ? "" : " use-354",
+                      extended_join ? "" : " extended-join",
+                      account_notify ? "" : " account-notify");
   }
 }
 

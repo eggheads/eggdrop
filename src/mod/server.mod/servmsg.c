@@ -32,7 +32,7 @@ static time_t last_ctcp = (time_t) 0L;
 static int count_ctcp = 0;
 static char altnick_char = 0;
 struct cap_list cap = {"", "", ""};
-int ncapesc, extended_join= 0;
+int ncapesc, account_notify = 0, extended_join = 0;
 Tcl_Obj **ncapesv, *ncapeslist;
 
 /* We try to change to a preferred unique nick here. We always first try the
@@ -262,6 +262,22 @@ static int check_tcl_wall(char *from, char *msg)
     return 2;
 
   return 1;
+}
+
+static int check_tcl_account(char *nick, char *uhost, char *mask,
+                            struct userrec *u, char *chan,  char *account)
+{
+  struct flag_record fr = { FR_GLOBAL | FR_CHAN | FR_ANYWH, 0, 0, 0, 0, 0 };
+  int x;
+
+  Tcl_SetVar(interp, "_acnt1", nick, 0);
+  Tcl_SetVar(interp, "_acnt2", uhost, 0);
+  Tcl_SetVar(interp, "_acnt3", u ? u->handle : "*", 0);
+  Tcl_SetVar(interp, "_acnt4", chan, 0);
+  Tcl_SetVar(interp, "_acnt5", account, 0);
+  x = check_tcl_bind(H_account, mask, &fr,
+       " $_acnt1 $_acnt2 $_acnt3 $_acnt4 $_acnt5", MATCH_MASK | BIND_STACKABLE);
+  return (x == BIND_EXEC_LOG);
 }
 
 static int check_tcl_flud(char *nick, char *uhost, struct userrec *u,
@@ -1110,7 +1126,7 @@ static void server_activity(int idx, char *tagmsg, int len)
     SERVER_SOCKET.timeout_val = 0;
   }
   lastpingcheck = 0;
-/* Check if IRCv3 message-tags are enabled and, if so, check/grab the tag */
+/* Check if message-tags are enabled and, if so, check/grab the tag */
   msgptr = tagmsg;
   strlcpy(rawmsg, tagmsg, TOTALTAGMAX+1);
   if (msgtag) {
@@ -1475,6 +1491,34 @@ static int handle_sasl_timeout()
   return sasl_error("timeout");
 }
 
+/* Got ACCOUNT message; only valid for account-notify capability */
+static int gotaccount(char *from, char *msg) {
+  struct chanset_t *chan;
+  struct userrec *u;
+  memberlist *m;
+  char *nick, *chname, mask[CHANNELLEN+UHOSTLEN+NICKMAX+2];
+
+  u = get_user_by_host(from);
+  nick = splitnick(&from);
+  for (chan = chanset; chan; chan = chan->next) {
+    chname = chan->dname;
+    if ((m = ismember(chan, nick))) {
+      strlcpy (m->account, msg, sizeof m->account);
+      snprintf(mask, sizeof mask, "%s %s", chname, from);
+      if (!strcasecmp(msg, "*")) {
+        msg[0] = '\0';
+        putlog(LOG_JOIN | LOG_MISC, chname, "%s!%s has logged out of their "
+                "account", nick, from);
+      } else {
+        putlog(LOG_JOIN | LOG_MISC, chname, "%s!%s has logged into account %s",
+                nick, from, msg);
+      }
+      check_tcl_account(nick, from, mask, u, chname, msg);
+    }
+  }
+  return 0;
+}
+
 /*
  * 465     ERR_YOUREBANNEDCREEP :You are banned from this server
  */
@@ -1538,6 +1582,8 @@ void add_cape(char *cape) {
       msgtag = 1;
     } else if (!strcasecmp(cape, "extended-join")) {
       extended_join = 1;
+    } else if (!strcasecmp(cape, "account-notify")) {
+      account_notify = 1;
     }
   } else {
     putlog(LOG_DEBUG, "*", "CAP: %s is already added to negotiated list", cape);
@@ -1569,6 +1615,8 @@ void del_cape(char *cape) {
           msgtag = 0;
         } else if (!strcasecmp(cape, "extended-join")) {
           extended_join = 0;
+        } else if (!strcasecmp(cape, "account-notify")) {
+          account_notify = 0;
         }
       }
       if (!strcasecmp(cape, "message-tags") || !strcasecmp(cape, "twitch.tv/tags")) {
@@ -1721,6 +1769,7 @@ static cmd_t my_raw_binds[] = {
   {"KICK",         "",   (IntFunc) gotkick,         NULL},
   {"CAP",          "",   (IntFunc) gotcap,          NULL},
   {"AUTHENTICATE", "",   (IntFunc) gotauthenticate, NULL},
+  {"ACCOUNT",      "",   (IntFunc) gotaccount,      NULL},
   {"CHGHOST",      "",   (IntFunc) gotchghost,      NULL},
   {"SETNAME",      "",   (IntFunc) gotsetname,      NULL},
   {NULL,           NULL, NULL,                      NULL}

@@ -487,7 +487,7 @@ newchanban <channel> <ban> <creator> <comment> [lifetime] [options]
   Options:
       
   +-----------+-------------------------------------------------------------------------------------+
-  |sticky     | forces the ban to be always active on a channel, even with dynamicbans on           |
+  | sticky    | forces the ban to be always active on a channel, even with dynamicbans on           |
   +-----------+-------------------------------------------------------------------------------------+
 
 
@@ -504,7 +504,7 @@ newban <ban> <creator> <comment> [lifetime] [options]
   Options:
 
   +-----------+-------------------------------------------------------------------------------------+
-  |sticky     | forces the ban to be always active on a channel, even with dynamicbans on           |
+  | sticky    | forces the ban to be always active on a channel, even with dynamicbans on           |
   +-----------+-------------------------------------------------------------------------------------+
 
   Returns: nothing
@@ -520,7 +520,7 @@ newchanexempt <channel> <exempt> <creator> <comment> [lifetime] [options]
   Options:
 
   +-----------+-------------------------------------------------------------------------------------+
-  |sticky     | forces the exempt to be always active on a channel, even with dynamicexempts on     |
+  | sticky    | forces the exempt to be always active on a channel, even with dynamicexempts on     |
   +-----------+-------------------------------------------------------------------------------------+
 
   Returns: nothing
@@ -536,7 +536,7 @@ newexempt <exempt> <creator> <comment> [lifetime] [options]
   Options:
 
   +-----------+-------------------------------------------------------------------------------------+
-  |sticky     | forces the exempt to be always active on a channel, even with dynamicexempts on     |
+  | sticky    | forces the exempt to be always active on a channel, even with dynamicexempts on     |
   +-----------+-------------------------------------------------------------------------------------+
 
   Returns: nothing
@@ -552,7 +552,7 @@ newchaninvite <channel> <invite> <creator> <comment> [lifetime] [options]
   Options:
 
   +-----------+-------------------------------------------------------------------------------------+
-  |sticky     | forces the invite to be always active on a channel, even with dynamicinvites on     |
+  | sticky    | forces the invite to be always active on a channel, even with dynamicinvites on     |
   +-----------+-------------------------------------------------------------------------------------+
 
   Returns: nothing
@@ -568,7 +568,7 @@ newinvite <invite> <creator> <comment> [lifetime] [options]
   Options:
 
   +-----------+-------------------------------------------------------------------------------------+
-  |sticky     | forces the invite to be always active on a channel, even with dynamicinvites on     |
+  | sticky    | forces the invite to be always active on a channel, even with dynamicinvites on     |
   +-----------+-------------------------------------------------------------------------------------+
 
   Returns: nothing
@@ -1068,6 +1068,15 @@ isvoice <nickname> [channel]
 
   Module: irc
 
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+isidentified <nickname> [channel]
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+  Returns: 1 if someone by the specified nickname is on the channel (or
+  any channel if no channel name is specified) and is logged in); 0 otherwise
+
+  Module: irc
+
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^
 isaway <nickname> [channel]
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -1085,11 +1094,25 @@ onchan <nickname> [channel]
 
   Module: irc
 
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+getaccount <nickname> [channel]
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+  Returns: the services account name of the nickname if they are logged in, "" otherwise, and an error if the account-notify or extended-join capabilites are not enabled. WARNING: this account list may not be accurate depending on the server and configuration. This command will only work if a server supports (and Eggdrop has enabled) the account-notify and extended-join capabilities, and the server understands WHOX requests (also known as raw 354 responses).
+
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 nick2hand <nickname> [channel]
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-  Returns: the handle of a nickname on a channel. If a channel is not specified, the bot will check all of its channels. If the nick is not found, "" is returned. If the nick is found but does not have a handle, "*" is returned.
+  Returns: the handle of a nickname on a channel. If a channel is not specified, the bot will check all of its channels. If the nick is not found, "" is returned. If the nick is found but does not have a handle, "*" is returned. If no channel is specified, all channels are checked.
+
+  Module: irc
+
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+account2nicks <handle> [channel]
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+  Returns: a de-duplicated Tcl list of the nickname(s) on the specified channel (if one is specified) whose nickname matches the given account; "" is returned if no match is found. This command will only work if a server supports (and Eggdrop has enabled) the account-notify and extended-join capabilities, and the server understands WHOX requests (also known as raw 354 responses). If no channel is specified, all channels are checked.
 
   Module: irc
 
@@ -3368,6 +3391,15 @@ The following is a list of bind types and how they work. Below each bind type is
   procname <from> <keyword> <text> <tag>
 
   Description: similar to the RAW bind, but allows an extra field for the IRCv3 message-tags capability. The keyword is either a numeric, like "368", or a keyword, such as "PRIVMSG" or "TAGMSG". "from" will be the server name or the source user (depending on the keyword); flags are ignored. "tag" will be the contents, if any, of the entire tag message prefixed to the server message in a dict format, such as "msgid 890157217279768 aaa bbb". The order of the arguments is identical to the order that the IRC server sends to the bot. If the proc returns 1, Eggdrop will not process the line any further (this could cause unexpected behavior in some cases). As of 1.9.0, it is recommended to use the RAWT bind instead of the RAW bind.
+
+(53) ACCOUNT (stackable)
+
+  bind account <flags> <mask> <proc>
+
+  procname <nick> <user> <hand> <account>
+
+  Description: triggered when Eggdrop receives an ACCOUNT message. The mask for the bind is in the format "#channel nick!user@hostname.com account" where channel is the channel the user was found on when the bind was triggered, the hostmask is the user's hostmask, and account is the account name the user is logging in to, or "" for logging out. The mask argument can accept wildcards. For the proc, nick is the nickname of the user logging into/out of an account, user is the user@host.com hostmask, hand is the handle of the user (or * if none), and account is the name of the account the user logged in to (or "" if the user logged out of an account).
+
 
 ^^^^^^^^^^^^^
 Return Values

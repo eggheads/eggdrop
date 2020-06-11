@@ -44,6 +44,7 @@
 typedef struct memstruct {
   char nick[NICKLEN];
   char userhost[UHOSTLEN];
+  char account[NICKLEN];
   time_t joined;
   unsigned long flags;
   time_t split; /* in case they were just netsplit */
