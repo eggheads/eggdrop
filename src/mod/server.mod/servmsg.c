@@ -280,18 +280,6 @@ static int check_tcl_account(char *nick, char *uhost, char *mask,
   return (x == BIND_EXEC_LOG);
 }
 
-static int check_tcl_awayv3(char *from, char *msg)
-{
-  int x;
-
-  Tcl_SetVar(interp, "_awayv31", from, 0);
-  Tcl_SetVar(interp, "_awayv32", msg ? (char *) msg : "", 0);
-  x = check_tcl_bind(H_awayv3, from, 0, " $_awayv31 $_awayv32",
-                       MATCH_MASK | BIND_STACKABLE);
-
-  return (x == BIND_EXEC_LOG);
-}
-
 static int check_tcl_flud(char *nick, char *uhost, struct userrec *u,
                           char *ftype, char *chname)
 {
