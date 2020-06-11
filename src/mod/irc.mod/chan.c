@@ -1710,7 +1710,9 @@ static int gotjoin(char *from, char *channame)
   strlcpy(uhost, from, sizeof buf);
   nick = splitnick(&uhost);
   chname = newsplit(&channame);
-  fixcolon(chname);
+  if (!extended_join) {
+    fixcolon(chname);
+  }
   chan = findchan_by_dname(chname);
   if (!chan && chname[0] == '!') {
     /* As this is a !channel, we need to search for it by display (short)
