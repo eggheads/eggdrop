@@ -434,6 +434,38 @@ static int tcl_ischaninvite STDVAR
   return TCL_OK;
 }
 
+/* Checks internal tracking of IRC server away status, as updated by IRC
+ * server 352 and AWAY messages. Meant mostly for use with the IRCv3 away-notify
+ * capability, it may not be accurate using only 352s.
+ */
+static int tcl_isaway STDVAR
+{
+  struct chanset_t *chan, *thechan = NULL;
+  memberlist *m;
+
+  BADARGS(2, 3, " nick ?channel?");
+
+  if (argc > 2) { /* If channel specified, does it exist? */
+    chan = findchan_by_dname(argv[2]);
+    thechan = chan;
+    if (!thechan) {
+      Tcl_AppendResult(irp, "illegal channel: ", argv[2], NULL);
+      return TCL_ERROR;
+    }
+  } else {
+    chan = chanset;
+  }
+  while (chan && (thechan == NULL || thechan == chan)) {
+    if ((m = ismember(chan, argv[1])) && chan_ircaway(m)) {
+      Tcl_AppendResult(irp, "1", NULL);
+      return TCL_OK;
+    }
+    chan = chan->next;
+  }
+  Tcl_AppendResult(irp, "0", NULL);
+  return TCL_OK;
+}
+
 static int tcl_getchanhost STDVAR
 {
   struct chanset_t *chan, *thechan = NULL;
@@ -802,9 +834,38 @@ static int tcl_resetchanjoin STDVAR
   return TCL_OK;
 }
 
-static int tcl_resetchan STDVAR
-{
+static int setflags(int *flags, char *argflags) {
   char *c;
+
+  for (c = argflags; *c; c++) {
+    switch(*c) {
+    case 'w':
+      *flags |= CHAN_RESETWHO;
+      break;
+    case 'm':
+      *flags |= CHAN_RESETMODES;
+      break;
+    case 'b':
+      *flags |= CHAN_RESETBANS;
+      break;
+    case 'e':
+      *flags |= CHAN_RESETEXEMPTS;
+      break;
+    case 'I':
+      *flags |= CHAN_RESETINVITED;
+      break;
+    case 't':
+      *flags |= CHAN_RESETTOPIC;
+      break;
+    default:
+      return 1; /* Found a flag we don't support, return an error */
+    }
+  }
+  return 0;
+}
+
+static int tcl_refreshchan STDVAR
+{
   int flags = 0;
   struct chanset_t *chan;
 
@@ -817,36 +878,41 @@ static int tcl_resetchan STDVAR
   }
 
   if (argc == 2) {
-    reset_chan_info(chan, CHAN_RESETALL);
+    reset_chan_info(chan, CHAN_RESETALL, 0);
     return TCL_OK;
   }
-  for (c = argv[2]; *c; c++) {
-    switch(*c) {
-    case 'w':
-      flags |= CHAN_RESETWHO;
-      break;
-    case 'm':
-      flags |= CHAN_RESETMODES;
-      break;
-    case 'b':
-      flags |= CHAN_RESETBANS;
-      break;
-    case 'e':
-      flags |= CHAN_RESETEXEMPTS;
-      break;
-    case 'I':
-      flags |= CHAN_RESETINVITED;
-      break;
-    case 't':
-      flags |= CHAN_RESETTOPIC;
-      break;
-    default:
+  if (setflags(&flags, argv[2])) {       /* Set flags to refresh */
+      Tcl_AppendResult(irp, "invalid refresh flags: ", argv[2], NULL);
+      return TCL_ERROR;
+  } else {
+    reset_chan_info(chan, flags, 0);
+  }
+  return TCL_OK;
+}
+
+static int tcl_resetchan STDVAR
+{
+  int flags = 0;
+  struct chanset_t *chan;
+
+  BADARGS(2, 3, " channel ?flags?");
+
+  chan = findchan_by_dname(argv[1]);
+  if (chan == NULL) {
+    Tcl_AppendResult(irp, "invalid channel ", argv[1], NULL);
+    return TCL_ERROR;
+  }
+
+  if (argc == 2) {
+    reset_chan_info(chan, CHAN_RESETALL, 1);
+    return TCL_OK;
+  }
+  if (setflags(&flags, argv[2])) {       /* Set flags to refresh */
       Tcl_AppendResult(irp, "invalid reset flags: ", argv[2], NULL);
       return TCL_ERROR;
-    }
+  } else {
+    reset_chan_info(chan, flags, 1);
   }
-  if (flags)
-    reset_chan_info(chan, flags);
   return TCL_OK;
 }
 
@@ -1014,6 +1080,7 @@ static tcl_cmds tclchan_cmds[] = {
   {"onchansplit",    tcl_onchansplit},
   {"maskhost",       tcl_maskhost},
   {"getchanidle",    tcl_getchanidle},
+  {"isaway",         tcl_isaway},
   {"chanbans",       tcl_chanbans},
   {"chanexempts",    tcl_chanexempts},
   {"chaninvites",    tcl_chaninvites},
@@ -1029,6 +1096,7 @@ static tcl_cmds tclchan_cmds[] = {
   {"resetchanidle",  tcl_resetchanidle},
   {"resetchanjoin",  tcl_resetchanjoin},
   {"resetchan",      tcl_resetchan},
+  {"refreshchan",    tcl_refreshchan},
   {"topic",          tcl_topic},
   {"botonchan",      tcl_botonchan},
   {"putkick",        tcl_putkick},

@@ -1069,6 +1069,16 @@ isvoice <nickname> [channel]
   Module: irc
 
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+isaway <nickname> [channel]
+^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+  Description: determine if a user is marked as 'away' on a server. IMPORTANT: this command is only "mostly" reliable on its own when the IRCv3 away-notify capability is available and negotiated with the IRC server (if you didn't add this to your config file, it likely isn't enabled- you can confirm using the ``cap`` Tcl command).  Additionally, there is no way for Eggdrop (or any client) to capture a user's away status when the user first joins a channel (they are assumed present by Eggdrop on join). To use this command without the away-notify capability negotiated, or to get a user's away status on join (via a JOIN bind), use ``refreshchan <channel> w`` on a channel the user is on, which will refresh the current away status stored by Eggdrop for all users on the channel.
+
+  Returns: 1 if Eggdrop is currently tracking someone by that nickname marked as 'away' (again, see disclaimer above) by an IRC server; 0 otherwise.
+
+  Module: irc
+
+^^^^^^^^^^^^^^^^^^^^^^^^^^^
 onchan <nickname> [channel]
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^
   Returns: 1 if someone by that nickname is on the specified channel (or any channel if none is specified); 0 otherwise
@@ -1200,21 +1210,43 @@ resetchanjoin [nick] <channel>
 resetchan <channel> [flags]
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-  Description: rereads in the channel info from the server. If flags are specified, only the required information will be reset, according to the given flags. Available flags:
+  Description: clears the channel info Eggdrop is currently storing for a channel, then rereads the channel info from the server. Useful if Eggdrop gets into a bad state on a server with respect to a channel userlist, for example. If flags are specified, only the required information will be reset, according to the given flags. Available flags:
 
-  +-----+---------------------------+
-  | b   | reset channel bans        |
-  +-----+---------------------------+
-  | e   | reset channel exempts     |
-  +-----+---------------------------+
-  | I   | reset channel invites     |
-  +-----+---------------------------+
-  | m   | refresh channel modes     |
-  +-----+---------------------------+
-  | t   | refresh channel topic     |
-  +-----+---------------------------+
-  | w   | refresh memberlist        |
-  +-----+---------------------------+
+  +-----+------------------------------+
+  | b   | channel bans                 |
+  +-----+------------------------------+
+  | e   | channel exempts              |
+  +-----+------------------------------+
+  | I   | channel invites              |
+  +-----+------------------------------+
+  | m   | channel modes                |
+  +-----+------------------------------+
+  | w   | memberlist (who & away info) |
+  +-----+------------------------------+
+
+  Returns: nothing
+
+  Module: irc
+
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+refreshchan <channel> [flags]
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+  Description: An alternative to resetchan, refresh rereads the channel info from the server without first clearing out the previously stored information. Useful for updateing a user's away status without resetting their idle time, for example. If flags are specified, only the required information will be refreshed, according to the given flags. Available flags:
+
+  +-----+------------------------------+
+  | b   | channel bans                 |
+  +-----+------------------------------+
+  | e   | channel exempts              |
+  +-----+------------------------------+
+  | I   | channel invites              |
+  +-----+------------------------------+
+  | m   | channel modes                |
+  +-----+------------------------------+
+  | t   | channel topic                |
+  +-----+------------------------------+
+  | w   | memberlist (who & away info) |
+  +-----+------------------------------+
 
   Returns: nothing
 
@@ -3311,15 +3343,15 @@ The following is a list of bind types and how they work. Below each bind type is
 
   Module: core
 
-(50) AWY3 (stackable)
+(50) IRCAWAY (stackable)
 
-  bind awy3 <flags> <mask> <proc>
+  bind ircaway <flags> <mask> <proc>
 
-  procname <from> <msg>
+  procname <nick> <user> <hand> <channel> <msg>
+ 
+  Description: triggered when Eggdrop recieves an AWAY message for a user from an IRC server, ONLY if the away-notify capability is enabled via CAP (the server must supports this capability, see the 'cap' Tcl command for more info on requesting capabilites). "Normal" away messages (301 messages) will not trigger this bind, for those you should instead use a RAWT bind. The mask for the bind is in the format "#channel nick!user@hostname" (* to catch all nicknames). nick is the nickname of the user that triggered the bind, user is the nick!user@host of the user, handle is the handle of the user on the bot (- if the user is not added to the bot), channel is the channel the user was found on (read on for more info on this) and msg is the contents of the away message, if any. If a "*" is used for the channel in the mask, this bind is triggered once for every channel that the user is in the bot with; in other words if the bot is in two channels with the target user, the bind will be triggered twice. To trigger a proc only once per nick change, regardless of the number of channels the Eggdrop and user share, use the RAWT bind with AWAY as the keyword.
 
-  Description: triggered when Eggdrop recieves an IRCv3 AWAY message for a user from an IRC server, ONLY if the away-notify IRCv3 capability is enabled via CAP. "Normal" away messages (301 messages) will not trigger this bind, for those you should instead use a RAWT bind. mask is a nickname (* to catch all nicknames) and msg is the reason that has been specified. flags is ignored. This bind will only work with IRC servers that support the IRCv3 away-notify capability, and the away-notify capability must be enabled.
-
-  Module: server
+  Module: irc 
 
 (51) INVT (stackable)
 

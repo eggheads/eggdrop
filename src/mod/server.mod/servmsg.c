@@ -264,18 +264,6 @@ static int check_tcl_wall(char *from, char *msg)
   return 1;
 }
 
-static int check_tcl_awayv3(char *from, char *msg)
-{
-  int x;
-
-  Tcl_SetVar(interp, "_awayv31", from, 0);
-  Tcl_SetVar(interp, "_awayv32", msg ? (char *) msg : "", 0);
-  x = check_tcl_bind(H_awayv3, from, 0, " $_awayv31, $_awayv32",
-                       MATCH_MASK | BIND_STACKABLE);
-
-  return (x == BIND_EXEC_LOG);
-}
-
 static int check_tcl_flud(char *nick, char *uhost, struct userrec *u,
                           char *ftype, char *chname)
 {
@@ -1487,19 +1475,6 @@ static int handle_sasl_timeout()
   return sasl_error("timeout");
 }
 
-/* Got AWAY message; only valid for IRCv3 away-notify capability */
-static int gotawayv3(char *from, char *msg)
-{
-  if (strlen(msg)) {
-    fixcolon(msg);
-    putlog(LOG_SERV, "*", "%s is now away: %s", from, msg);
-  } else {
-    putlog(LOG_SERV, "*", "%s has returned from away status", from);
-  }
-  check_tcl_awayv3(from, msg);
-  return 0;
-}
-
 /*
  * 465     ERR_YOUREBANNEDCREEP :You are banned from this server
  */
@@ -1718,7 +1693,6 @@ static cmd_t my_raw_binds[] = {
   {"PING",         "",   (IntFunc) gotping,         NULL},
   {"PONG",         "",   (IntFunc) gotpong,         NULL},
   {"WALLOPS",      "",   (IntFunc) gotwall,         NULL},
-  {"AWAY",         "",   (IntFunc) gotawayv3,       NULL},
   {"001",          "",   (IntFunc) got001,          NULL},
   {"303",          "",   (IntFunc) got303,          NULL},
   {"311",          "",   (IntFunc) got311,          NULL},
