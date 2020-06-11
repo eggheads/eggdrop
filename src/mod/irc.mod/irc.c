@@ -760,7 +760,7 @@ static int invite_4char STDVAR
 static int check_tcl_ircaway(char *nick, char *from, char *mask,
             struct userrec *u, char *chan, char *msg)
 {
-int x;
+  int x;
   char *hand = u ? u->handle : "*";
   struct flag_record fr = { FR_GLOBAL | FR_CHAN | FR_ANYWH, 0, 0, 0, 0, 0 };
 
