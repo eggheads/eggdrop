@@ -939,7 +939,21 @@ static int setlisten(Tcl_Interp *irp, char *ip, char *portp, char *type, char *m
   char s[11], msg[256];
   struct portmap *pmap = NULL, *pold = NULL;
   sockname_t name;
+#ifdef IPV6
+  struct addrinfo hint, *ipaddr = NULL;
+  struct in6_addr ipaddr2;
+  int ret;
 
+  memset(&hint, '\0', sizeof hint);
+  hint.ai_family = PF_UNSPEC;
+  hint.ai_flags = AI_NUMERICHOST;
+  ret = getaddrinfo(ip, NULL, &hint, &ipaddr);
+  if (!ret) {
+    if (ipaddr->ai_family == AF_INET6) {
+      inet_pton(AF_INET6, ip, &ipaddr2);
+    }
+  }
+#endif
   port = realport = atoi(portp);
   for (pmap = root; pmap; pold = pmap, pmap = pmap->next)
     if (pmap->realport == port) {
@@ -950,44 +964,56 @@ static int setlisten(Tcl_Interp *irp, char *ip, char *portp, char *type, char *m
     if ((dcc[i].type == &DCC_TELNET) && (dcc[i].port == port)) {
       idx = i;
       tryagain = 1; /* Reset; we may want to listen on this port on a different IP */
-    }
-    /* This specific IP/port pair is already in use, set tryagain to 0 so we don't
-     * try to listen again on this ip/port and cause a Tcl error
-     */
-    if ((!strcasecmp(iptostr(&dcc[idx].sockname.addr.sa), ip)) && (dcc[i].port == port) &&
-           strcasecmp(type, "off")) {
-      tryagain = 0;
-      break;
-    }
-    /* Block trying to listen on all IPv4 interfaces if there is already a
-     * specific IP listening on that port */
-    if (((!strcasecmp(ip, "0.0.0.0"))
+      /* Block trying to listen on all IPvX interfaces if there is already a
+       * specific IP listening on that port */
+      if (((!strcmp(ip, "0.0.0.0")) && (strcasecmp(type, "off")) &&
+            !((!strcmp(iptostr(&dcc[idx].sockname.addr.sa), "0.0.0.0"))
 #ifdef IPV6
-        || (IN6_IS_ADDR_UNSPECIFIED(ip))
+            || ((dcc[idx].sockname.addr.s6.sin6_family == AF_INET6) &&
+               IN6_IS_ADDR_UNSPECIFIED(&dcc[idx].sockname.addr.s6.sin6_addr))))
+            || ((IN6_IS_ADDR_UNSPECIFIED(&ipaddr2)) && (strcasecmp(type, "off")) &&
+            !((!strcmp(iptostr(&dcc[idx].sockname.addr.sa), "0.0.0.0"))
+            || ((dcc[idx].sockname.addr.s6.sin6_family == AF_INET6) &&
+               (IN6_IS_ADDR_UNSPECIFIED(&dcc[idx].sockname.addr.s6.sin6_addr)))))
+#else
+            ))
 #endif
-        ) && strcasecmp(type, "off")) {
-      Tcl_AppendResult(irp, "this port is already bound to a specific IP on "
-          "this machine, remove it before trying bind to all interfaces", NULL);
-      return TCL_ERROR;
-    }
-    /* Block trying to listen on a specific IP if the port is already bound to
-     * all interfaces. Check the IP for 0.0.0.0, :: and "" too, in case this is a
-     * rehash
-     */
-    if (((!strcmp(iptostr(&dcc[idx].sockname.addr.sa), "0.0.0.0"))
+            ) {
+        Tcl_AppendResult(irp, "this port is already bound to a specific IP on "
+                "this machine, remove it before trying bind to all interfaces",
+                NULL);
+        return TCL_ERROR;
+      }
+
+      /* Block trying to listen on a specific IP if the port is already bound to
+       * all interfaces. Check the IP for 0.0.0.0, :: and "" too, in case this is a
+       * rehash
+       */
+      if (((!strcmp(iptostr(&dcc[idx].sockname.addr.sa), "0.0.0.0"))
 #ifdef IPV6
-            || IN6_IS_ADDR_UNSPECIFIED(&dcc[idx].sockname.addr.sa)
+            || ((dcc[idx].sockname.addr.s6.sin6_family == AF_INET6) &&
+                IN6_IS_ADDR_UNSPECIFIED(&dcc[idx].sockname.addr.s6.sin6_addr))
 #endif
             ) && (dcc[i].port == port) && strcasecmp(type, "off") &&
             (strcmp(ip, "0.0.0.0")
 #ifdef IPV6
-            && !IN6_IS_ADDR_UNSPECIFIED(ip)
+            && !IN6_IS_ADDR_UNSPECIFIED(&ipaddr2)
 #endif
             && strcmp(ip, ""))) {
-      Tcl_AppendResult(irp, "port is already bound to :: or 0.0.0.0, "
+        Tcl_AppendResult(irp, "port is already bound to :: or 0.0.0.0, "
             "first remove that entry with 'off' before adding the one just "
             "entered", NULL);
-      return TCL_ERROR;
+        return TCL_ERROR;
+      }
+
+      /* This specific IP/port pair is already in use, set tryagain to 0 so we
+       * don't try to listen again on this ip/port and cause a Tcl error
+       */
+      if ((!strcmp(iptostr(&dcc[idx].sockname.addr.sa), ip)) &&
+            (dcc[i].port == port) && strcasecmp(type, "off")) {
+        tryagain = 0;
+        break;
+      }
     }
   }
   if (!strcasecmp(type, "off")) {
@@ -1022,11 +1048,10 @@ static int setlisten(Tcl_Interp *irp, char *ip, char *portp, char *type, char *m
     /* If we didn't find a listening ip/port, or we did but it isn't all
      * interfaces
      */
-    if ((!tryagain) || (strcmp(ip, "") && strcmp(ip, "0.0.0.0")
 #ifdef IPV6
-            && !IN6_IS_ADDR_UNSPECIFIED(ip)
+    if (((strcmp(ip, "") || strcmp(ip, "0.0.0.0")) && strcmp("0.0.0.0", iptostr(&dcc[idx].sockname.addr.sa))) || 
+        (IN6_IS_ADDR_UNSPECIFIED(&ipaddr2) && strcmp("::", iptostr(&dcc[idx].sockname.addr.sa))))  {
 #endif
-            )) {
       if (strlen(ip)) {
         setsockname(&name, ip, port, 1);
         i = open_address_listen(&name);
@@ -1047,7 +1072,9 @@ static int setlisten(Tcl_Interp *irp, char *ip, char *portp, char *type, char *m
       dcc[idx].port = port;
       dcc[idx].sock = i;
       dcc[idx].timeval = now;
+#ifdef IPV6
     }
+#endif
   }
 #ifdef TLS
   if (portp[0] == '+')
