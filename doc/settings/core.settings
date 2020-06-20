@@ -72,23 +72,14 @@ section.
     If you're using virtual hosting (your machine has more than 1 IP),
   you may want to specify the particular IP to bind to. You can specify
   either by hostname or by IP. Note that this is not used for listening.
-  Use the 'listen-addr' variable to specify the listening address.
+  Use the 'listen' command to specify the listening address.
 
   set vhost6 "2001:db8:618:5c0:263::"
   set vhost6 "my.ipv6.host.com"
     IPv6 vhost to bind to for outgoing IPv6 connections. You can set it
   to any valid IPv6 address or hostname, resolving to an IPv6 address.
-  Note that this is not used for listening. Use the 'listen-addr'
-  variable to specify the listening address.
-
-  set listen-addr "99.99.0.0"
-  set listen-addr "2001:db8:618:5c0:263::"
-  set listen-addr "virtual.host.com"
-    IPv4/IPv6 address (or hostname) to bind for listening. If you don't
-  set this variable, eggdrop will listen on all available IPv4 or IPv6
-  interfaces, depending on the 'prefer-ipv6' variable. Note that on most
-  platforms, IPv6 sockets are able to accept both IPv4 and IPv6
-  connections.
+  Note that this is not used for listening. Use the 'listen' command to
+  specify the listening address.
 
   set prefer-ipv6 "1"
 
@@ -458,8 +449,8 @@ ADVANCED SETTINGS
       for your box) or you have IP masquerading between you and the rest
       of the world, and /dcc chat, /ctcp chat or userfile sharing aren't
       working, enter your outside IP here. This IP is used for transfers
-      only, and has nothing to do with the vhost4/6 or listen-addr
-      settings. You may still need to set them.
+      only, and has nothing to do with the vhost4/6 or listen settings.
+      You may still need to set them.
 
   set reserved-portrange 2010:2020
 
