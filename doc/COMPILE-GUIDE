@@ -568,7 +568,8 @@ Last revised: June 9, 2020
     14. I get 'configure: error: C compiler cannot create executables
         (Alpine Linux)
 
-      apk add musl-dev
+      Install the musl c library implementation used by Alpine:
+        apk add musl-dev
     _____________________________________________________________________
 
    Copyright (C) 1997 Robey Pointer
