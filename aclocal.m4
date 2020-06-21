@@ -321,6 +321,24 @@ AC_DEFUN([EGG_FUNC_B64_NTOP],
     if test "x$found_b64_ntop" = xno; then
       LIBS="$OLD_LIBS"
       AC_MSG_RESULT(no)
+
+      AC_MSG_CHECKING(for b64_ntop with -lnetwork)
+      OLD_LIBS="$LIBS"
+      LIBS="-lnetwork"
+      AC_TRY_LINK(
+      [
+        #include <sys/types.h>
+        #include <netinet/in.h>
+        #include <resolv.h>
+        ],
+        [b64_ntop(NULL, 0, NULL, 0);],
+        found_b64_ntop=yes,
+        found_b64_ntop=no
+      )
+      if test "x$found_b64_ntop" = xno; then
+        LIBS="$OLD_LIBS"
+        AC_MSG_RESULT(no)
+      fi
     fi
   fi
   if test "x$found_b64_ntop" = xyes; then
