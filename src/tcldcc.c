@@ -943,21 +943,25 @@ static int setlisten(Tcl_Interp *irp, char *ip, char *portp, char *type, char *m
   struct portmap *pmap = NULL, *pold = NULL;
   sockname_t name;
   struct in_addr ipaddr4;
-#ifdef IPV6
   struct addrinfo hint, *ipaddr = NULL;
-  struct in6_addr ipaddr6;
   int ret;
+#ifdef IPV6
+  struct in6_addr ipaddr6;
 #endif
 
   memset(&hint, '\0', sizeof hint);
   hint.ai_family = PF_UNSPEC;
   hint.ai_flags = AI_NUMERICHOST;
   if (!strlen(ip)) {
+#ifdef IPV6
     if (pref_af) {
       strlcpy(newip, "::", sizeof newip);
     } else {
+#endif
       strlcpy(newip, "0.0.0.0", sizeof newip);
+#ifdef IPv6
     }
+#endif
   } else {
     strlcpy(newip, ip, sizeof newip);
   }
@@ -973,8 +977,8 @@ static int setlisten(Tcl_Interp *irp, char *ip, char *portp, char *type, char *m
         inet_pton(AF_INET6, newip, &ipaddr6);
       ipv4 = 0;
     }
-  }
 #endif
+  }
   port = realport = atoi(portp);
   for (pmap = root; pmap; pold = pmap, pmap = pmap->next) {
     if (pmap->realport == port) {
