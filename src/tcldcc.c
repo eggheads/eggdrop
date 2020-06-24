@@ -974,7 +974,7 @@ static int setlisten(Tcl_Interp *irp, char *ip, char *portp, char *type, char *m
     }
 #ifdef IPV6
     else if (ipaddr->ai_family == AF_INET6) {
-        inet_pton(AF_INET6, newip, &ipaddr6);
+      inet_pton(AF_INET6, newip, &ipaddr6);
       ipv4 = 0;
     }
 #endif
