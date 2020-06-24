@@ -33,6 +33,9 @@ extern struct dcc_t *dcc;
 extern char botnetnick[];
 extern int dcc_total, backgrd, parties, make_userfile, remote_boots, max_dcc,
            conmask;
+#ifdef IPV6
+extern int pref_af;
+#endif
 extern volatile sig_atomic_t do_restart;
 #ifdef TLS
 extern int tls_vfydcc;
@@ -935,85 +938,108 @@ static int tcl_connect STDVAR
 }
 
 static int setlisten(Tcl_Interp *irp, char *ip, char *portp, char *type, char *maskproc, char *flag) {
-  int i, idx = -1, port, realport, tryagain=0;
-  char s[11], msg[256];
+  int i, idx = -1, port, realport, found=0, ipv4=1;
+  char s[11], msg[256], newip[INET6_ADDRSTRLEN];
   struct portmap *pmap = NULL, *pold = NULL;
   sockname_t name;
+  struct in_addr ipaddr4;
 #ifdef IPV6
   struct addrinfo hint, *ipaddr = NULL;
-  struct in6_addr ipaddr2;
+  struct in6_addr ipaddr6;
   int ret;
+#endif
 
   memset(&hint, '\0', sizeof hint);
   hint.ai_family = PF_UNSPEC;
   hint.ai_flags = AI_NUMERICHOST;
-  ret = getaddrinfo(ip, NULL, &hint, &ipaddr);
+  if (!strlen(ip)) {
+    if (pref_af) {
+      strlcpy(newip, "::", sizeof newip);
+    } else {
+      strlcpy(newip, "0.0.0.0", sizeof newip);
+    }
+  } else {
+    strlcpy(newip, ip, sizeof newip);
+  }
+  /* Return addrinfo struct ipaddr containing family... */
+  ret = getaddrinfo(newip, NULL, &hint, &ipaddr);
   if (!ret) {
-    if (ipaddr->ai_family == AF_INET6) {
-      inet_pton(AF_INET6, ip, &ipaddr2);
+  /* Load network address to in(6)_addr struct for later byte comparisons */
+    if (ipaddr->ai_family == AF_INET) {
+      inet_pton(AF_INET, newip, &ipaddr4);
+    }
+#ifdef IPV6
+    else if (ipaddr->ai_family == AF_INET6) {
+        inet_pton(AF_INET6, newip, &ipaddr6);
+      ipv4 = 0;
     }
   }
 #endif
   port = realport = atoi(portp);
-  for (pmap = root; pmap; pold = pmap, pmap = pmap->next)
+  for (pmap = root; pmap; pold = pmap, pmap = pmap->next) {
     if (pmap->realport == port) {
       port = pmap->mappedto;
       break;
+    }
   }
   for (i = 0; i < dcc_total; i++) {
     if ((dcc[i].type == &DCC_TELNET) && (dcc[i].port == port)) {
       idx = i;
-      tryagain = 1; /* Reset; we may want to listen on this port on a different IP */
-      /* Block trying to listen on all IPvX interfaces if there is already a
-       * specific IP listening on that port */
-      if (((!strcmp(ip, "0.0.0.0")) && (strcasecmp(type, "off")) &&
-            !((!strcmp(iptostr(&dcc[idx].sockname.addr.sa), "0.0.0.0"))
-#ifdef IPV6
-            || ((dcc[idx].sockname.addr.s6.sin6_family == AF_INET6) &&
-               IN6_IS_ADDR_UNSPECIFIED(&dcc[idx].sockname.addr.s6.sin6_addr))))
-            || ((IN6_IS_ADDR_UNSPECIFIED(&ipaddr2)) && (strcasecmp(type, "off")) &&
-            !((!strcmp(iptostr(&dcc[idx].sockname.addr.sa), "0.0.0.0"))
-            || ((dcc[idx].sockname.addr.s6.sin6_family == AF_INET6) &&
-               (IN6_IS_ADDR_UNSPECIFIED(&dcc[idx].sockname.addr.s6.sin6_addr)))))
-#else
-            ))
-#endif
-            ) {
-        Tcl_AppendResult(irp, "this port is already bound to a specific IP on "
-                "this machine, remove it before trying bind to all interfaces",
-                NULL);
-        return TCL_ERROR;
-      }
+      found = 1;
 
-      /* Block trying to listen on a specific IP if the port is already bound to
-       * all interfaces. Check the IP for 0.0.0.0, :: and "" too, in case this is a
-       * rehash
-       */
-      if (((!strcmp(iptostr(&dcc[idx].sockname.addr.sa), "0.0.0.0"))
-#ifdef IPV6
-            || ((dcc[idx].sockname.addr.s6.sin6_family == AF_INET6) &&
-                IN6_IS_ADDR_UNSPECIFIED(&dcc[idx].sockname.addr.s6.sin6_addr))
-#endif
-            ) && (dcc[i].port == port) && strcasecmp(type, "off") &&
-            (strcmp(ip, "0.0.0.0")
-#ifdef IPV6
-            && !IN6_IS_ADDR_UNSPECIFIED(&ipaddr2)
-#endif
-            && strcmp(ip, ""))) {
-        Tcl_AppendResult(irp, "port is already bound to :: or 0.0.0.0, "
-            "first remove that entry with 'off' before adding the one just "
-            "entered", NULL);
-        return TCL_ERROR;
+      /* Check if this is an exact match and skip these checks (ie, rehash) */
+      if (ipv4) {
+        if (ipaddr4.s_addr == dcc[idx].sockname.addr.s4.sin_addr.s_addr) {
+          break;
+        }
       }
-
-      /* This specific IP/port pair is already in use, set tryagain to 0 so we
-       * don't try to listen again on this ip/port and cause a Tcl error
-       */
-      if ((!strcmp(iptostr(&dcc[idx].sockname.addr.sa), ip)) &&
-            (dcc[i].port == port) && strcasecmp(type, "off")) {
-        tryagain = 0;
+#ifdef IPV6
+      else if (ipaddr6.s6_addr == dcc[idx].sockname.addr.s6.sin6_addr.s6_addr) {
         break;
       }
+
+      /* Check if the bound IP is IPvX, and the new IP is IPvY */
+      if (ipaddr->ai_family != dcc[idx].sockname.addr.sa.sa_family) {
+        found = 0;
+        break;
+      }
+#endif
+
+      /* Check if IP is specific, but the already-bound IP is all-interfaces */
+      if (ipv4) {
+        if ((ipaddr4.s_addr != 0) && (dcc[idx].sockname.addr.s4.sin_addr.s_addr == 0)) {
+          Tcl_AppendResult(irp, "this port is already bound to 0.0.0.0 on this "
+                "machine, remove it before trying to bind to this IP", NULL);
+          return TCL_ERROR;
+        }
+      }
+#ifdef IPV6
+      else if ((!IN6_IS_ADDR_UNSPECIFIED(&ipaddr6.s6_addr)) &&
+                (IN6_IS_ADDR_UNSPECIFIED(&dcc[idx].sockname.addr.s6.sin6_addr))) {
+          Tcl_AppendResult(irp, "this port is already bound to :: on this "
+                "machine, remove it before trying to bind to this IP", NULL);
+          return TCL_ERROR;
+      }
+#endif
+
+      /* Check if IP is all-interfaces, but the already-bound IP is specific */
+      if (ipv4) {
+        if ((ipaddr4.s_addr == 0) && (dcc[idx].sockname.addr.s4.sin_addr.s_addr != 0)) {
+          Tcl_AppendResult(irp, "this port is already bound to a specific IP "
+                "on this machine, remove it before trying to bind to all "
+                "interfaces", NULL);
+          return TCL_ERROR;
+        }
+      }
+#ifdef IPV6
+      else if (IN6_IS_ADDR_UNSPECIFIED(&ipaddr6.s6_addr) &&
+                (!IN6_IS_ADDR_UNSPECIFIED(&dcc[idx].sockname.addr.s6.sin6_addr))) {
+          Tcl_AppendResult(irp, "this port is already bound to a specific IP "
+                "on this machine, remove it before trying to bind to this all "
+                "interfaces", NULL);
+          return TCL_ERROR;
+      }
+#endif
     }
   }
   if (!strcasecmp(type, "off")) {
@@ -1036,7 +1062,7 @@ static int setlisten(Tcl_Interp *irp, char *ip, char *portp, char *type, char *m
   /* If there isn't already something listening on that port, or there is but
    * it is something that may allow us to try a different IP for that port
    */
-  if ((idx < 0) || tryagain) {
+  if ((idx < 0) || (!found)) {
     /* Make new one */
     if (dcc_total >= max_dcc && increase_socks_max()) {
       Tcl_AppendResult(irp, "No more DCC slots available.", NULL);
@@ -1048,33 +1074,26 @@ static int setlisten(Tcl_Interp *irp, char *ip, char *portp, char *type, char *m
     /* If we didn't find a listening ip/port, or we did but it isn't all
      * interfaces
      */
-#ifdef IPV6
-    if (((strcmp(ip, "") || strcmp(ip, "0.0.0.0")) && strcmp("0.0.0.0", iptostr(&dcc[idx].sockname.addr.sa))) || 
-        (IN6_IS_ADDR_UNSPECIFIED(&ipaddr2) && strcmp("::", iptostr(&dcc[idx].sockname.addr.sa))))  {
-#endif
-      if (strlen(ip)) {
-        setsockname(&name, ip, port, 1);
-        i = open_address_listen(&name);
-      } else {
-        i = open_listen(&port);
-      }
-      if (i < 0) {
-        egg_snprintf(msg, sizeof msg, "Couldn't listen on port '%d' on the given "
-                     "address: %s. Please check that the port is not already in use",
-                      realport, strerror(errno));
-        Tcl_AppendResult(irp, msg, NULL);
-        return TCL_ERROR;
-      }
-      idx = new_dcc(&DCC_TELNET, 0);
-      dcc[idx].sockname.addrlen = sizeof(dcc[idx].sockname.addr);
-      getsockname(i, &dcc[idx].sockname.addr.sa, &dcc[idx].sockname.addrlen);
-      dcc[idx].sockname.family = dcc[idx].sockname.addr.sa.sa_family;
-      dcc[idx].port = port;
-      dcc[idx].sock = i;
-      dcc[idx].timeval = now;
-#ifdef IPV6
+    if (strlen(newip)) {
+      setsockname(&name, newip, port, 1);
+      i = open_address_listen(&name);
+    } else {
+      i = open_listen(&port);
     }
-#endif
+    if (i < 0) {
+      egg_snprintf(msg, sizeof msg, "Couldn't listen on port '%d' on the given "
+                 "address: %s. Please check that the port is not already in use",
+                  realport, strerror(errno));
+      Tcl_AppendResult(irp, msg, NULL);
+      return TCL_ERROR;
+    }
+    idx = new_dcc(&DCC_TELNET, 0);
+    dcc[idx].sockname.addrlen = sizeof(dcc[idx].sockname.addr);
+    getsockname(i, &dcc[idx].sockname.addr.sa, &dcc[idx].sockname.addrlen);
+    dcc[idx].sockname.family = dcc[idx].sockname.addr.sa.sa_family;
+    dcc[idx].port = port;
+    dcc[idx].sock = i;
+    dcc[idx].timeval = now;
   }
 #ifdef TLS
   if (portp[0] == '+')
