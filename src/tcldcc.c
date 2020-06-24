@@ -959,7 +959,7 @@ static int setlisten(Tcl_Interp *irp, char *ip, char *portp, char *type, char *m
     } else {
 #endif
       strlcpy(newip, "0.0.0.0", sizeof newip);
-#ifdef IPv6
+#ifdef IPV6
     }
 #endif
   } else {
@@ -979,6 +979,7 @@ static int setlisten(Tcl_Interp *irp, char *ip, char *portp, char *type, char *m
     }
 #endif
   }
+  freeaddrinfo(ipaddr);
   port = realport = atoi(portp);
   for (pmap = root; pmap; pold = pmap, pmap = pmap->next) {
     if (pmap->realport == port) {
