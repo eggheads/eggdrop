@@ -1124,6 +1124,14 @@ hand2nick <handle> [channel]
 
   Module: irc
 
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+hand2nicks <handle> [channel]
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+  Returns: a de-duplicated Tcl list of the nickname(s) on the specified channel (if one is specified) whose nick!user\@host matches the given handle; "" is returned if no match is found. If no channel is specified, all channels are checked.
+
+  Module: irc
+
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 handonchan <handle> [channel]
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
