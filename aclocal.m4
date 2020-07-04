@@ -1452,7 +1452,7 @@ dnl
 AC_DEFUN([EGG_IPV6_COMPAT],
 [
 if test "$enable_ipv6" = "yes"; then
-  AC_CHECK_FUNCS([inet_pton gethostbyname2])
+  AC_CHECK_FUNCS([gethostbyname2])
   AC_CHECK_TYPES([struct in6_addr], egg_cv_var_have_in6_addr="yes", egg_cv_var_have_in6_addr="no", [
     #include <sys/types.h>
     #include <netinet/in.h>

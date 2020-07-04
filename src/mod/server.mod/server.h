@@ -85,10 +85,12 @@
 #define exclusive_binds (*(int *)(server_funcs[39]))
 /* 40 - 43 */
 #define H_out (*(p_tcl_bind_list *)(server_funcs[40]))
-/* Was (briefly!) addserver */
-/* Was (briefly!) delserver */
-#define net_type_int (*(int *)(server_funcs[43]))
-#define H_awayv3 (*(p_tcl_bind_list *)(server_funcs[44]))
+#define net_type_int (*(int *)(server_funcs[41]))
+#define cap (*(cap_list_t *)(server_funcs[42]))
+#define H_account (*(p_tcl_bind_list *)(server_funcs[43]))
+/* 44 - 47 */
+#define extended_join (*(int *)(server_funcs[44]))
+#define account_notify (*(int *)(server_funcs[45]))
 #endif /* MAKING_SERVER */
 
 struct server_list {
@@ -104,12 +106,10 @@ struct server_list {
 };
 
 typedef struct cap_list {
-  char supported[CAPMAX];   /* Capes supported by IRCD                  */
-  char negotiated[CAPMAX];  /* Common capes between IRCD and client     */
-  char desired[CAPMAX];     /* Capes Eggdrop wants to request from IRCD */
-} cap_list;
-
-extern struct cap_list cap;
+  char supported[CAPMAX+1];   /* Capes supported by IRCD                  */
+  char negotiated[CAPMAX+1];  /* Common capes between IRCD and client     */
+  char desired[CAPMAX+1];     /* Capes Eggdrop wants to request from IRCD */
+} cap_list_t;
 
 /* Available net types. */
 enum {
@@ -132,12 +132,7 @@ enum {
   SASL_MECHANISM_NUM
 };
 
-/* Available sasl mechanisms. */
-char const *SASL_MECHANISMS[SASL_MECHANISM_NUM] = {
-  [SASL_MECHANISM_PLAIN]                    = "PLAIN",
-  [SASL_MECHANISM_ECDSA_NIST256P_CHALLENGE] = "ECDSA-NIST256P-CHALLENGE",
-  [SASL_MECHANISM_EXTERNAL]                 = "EXTERNAL"
-};
-
+/* Must be extern to avoid odr-violation and allow make static */
+extern char const *SASL_MECHANISMS[];
 
 #endif /* _EGG_MOD_SERVER_SERVER_H */
