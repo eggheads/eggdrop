@@ -361,15 +361,16 @@ void tell_verbose_status(int idx)
     dprintf(idx, "Tcl is threaded.\n");
 #ifdef TLS
   dprintf(idx, "TLS support is enabled.\n"
-#if defined HAVE_EVP_PKEY_GET1_EC_KEY && defined HAVE_OPENSSL_MD5
-               "TLS library: %s\n", SSLeay_version(SSLEAY_VERSION));
-#elif !defined HAVE_EVP_PKEY_GET1_EC_KEY && defined HAVE_OPENSSL_MD5
-               "TLS library: %s (without EC)\n", SSLeay_version(SSLEAY_VERSION));
-#elif defined HAVE_EVP_PKEY_GET1_EC_KEY && !defined HAVE_OPENSSL_MD5
-               "TLS library: %s (without MD5)\n", SSLeay_version(SSLEAY_VERSION));
-#elif !defined HAVE_EVP_PKEY_GET1_EC_KEY && !defined HAVE_OPENSSL_MD5
-               "TLS library: %s (without EC and MD5)\n", SSLeay_version(SSLEAY_VERSION));
-#endif
+  #if defined HAVE_EVP_PKEY_GET1_EC_KEY && defined HAVE_OPENSSL_MD5
+               "TLS library: %s\n",
+  #elif !defined HAVE_EVP_PKEY_GET1_EC_KEY && defined HAVE_OPENSSL_MD5
+               "TLS library: %s (without EC)\n",
+  #elif defined HAVE_EVP_PKEY_GET1_EC_KEY && !defined HAVE_OPENSSL_MD5
+               "TLS library: %s (without MD5)\n",
+  #elif !defined HAVE_EVP_PKEY_GET1_EC_KEY && !defined HAVE_OPENSSL_MD5
+               "TLS library: %s (without EC and MD5)\n",
+  #endif
+          SSLeay_version(SSLEAY_VERSION));
 #else
   dprintf(idx, "TLS support is not available.\n");
 #endif
