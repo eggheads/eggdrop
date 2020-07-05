@@ -191,7 +191,7 @@ static char *pbkdf2_verify(const char *pass, const char *encrypted)
   if (snprintf(format, sizeof format,
                "$pbkdf2-%%%zu[^$]$rounds=%%u$%%%zu[^$]$%%%zus",
                (sizeof method) - 1, (sizeof b64salt) - 1, (sizeof b64hash) - 1)
-      != (sizeof format) -1) {
+      != (sizeof format) - 1) {
     putlog(LOG_MISC, "*", "PBKDF2 error: could not initialize parser for hashed password.");
     return NULL;
   }
