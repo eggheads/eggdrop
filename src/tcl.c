@@ -6,7 +6,7 @@
  */
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2019 Eggheads Development Team
+ * Copyright (C) 1999 - 2020 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -47,7 +47,7 @@ extern char origbotname[], botuser[], motdfile[], admin[], userfile[],
             firewall[], helpdir[], notify_new[], vhost[], moddir[], owner[],
             network[], botnetnick[], bannerfile[], egg_version[], natip[],
             configfile[], logfile_suffix[], log_ts[], textdir[], pid_file[],
-            listen_ip[], stealth_prompt[];
+            listen_ip[], stealth_prompt[], language[];
 
 
 extern int flood_telnet_thr, flood_telnet_time, shtime, share_greet,
@@ -57,8 +57,7 @@ extern int flood_telnet_thr, flood_telnet_time, shtime, share_greet,
            ignore_time, reserved_port_min, reserved_port_max, max_logs,
            max_logsize, dcc_total, raw_log, identtimeout, dcc_sanitycheck,
            dupwait_timeout, egg_numver, share_unlinks, protect_telnet,
-           strict_host, resolve_timeout, default_uflags, userfile_perm,
-           cidr_support;
+           resolve_timeout, default_uflags, userfile_perm, cidr_support;
 
 #ifdef IPV6
 extern char vhost6[];
@@ -94,14 +93,12 @@ int par_telnet_flood = 1;
 int quiet_save = 0;
 int strtot = 0;
 int handlen = HANDLEN;
-int utftot = 0;
-int clientdata_stuff = 0;
 
 extern Tcl_VarTraceProc traced_myiphostname;
 
 int expmem_tcl()
 {
-  return strtot + utftot + clientdata_stuff;
+  return strtot;
 }
 
 static void botnet_change(char *new)
@@ -399,6 +396,7 @@ static tcl_strings def_tcl_strings[] = {
   {"pidfile",         pid_file,       120,           STR_PROTECT},
   {"configureargs",   EGG_AC_ARGS,    0,             STR_PROTECT},
   {"stealth-prompt",  stealth_prompt, 80,                      0},
+  {"language",        language,       64,            STR_PROTECT},
   {NULL,              NULL,           0,                       0}
 };
 
@@ -446,7 +444,6 @@ static tcl_ints def_tcl_ints[] = {
   {"quiet-save",            &quiet_save,           0},
   {"force-expire",          &force_expire,         0},
   {"dupwait-timeout",       &dupwait_timeout,      0},
-  {"strict-host",           &strict_host,          0},
   {"userfile-perm",         &userfile_perm,        0},
   {"copy-to-tmp",           &copy_to_tmp,          0},
   {"quiet-reject",          &quiet_reject,         0},

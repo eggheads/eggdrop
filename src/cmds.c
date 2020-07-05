@@ -5,7 +5,7 @@
  */
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2019 Eggheads Development Team
+ * Copyright (C) 1999 - 2020 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -32,7 +32,7 @@ extern struct dcc_t *dcc;
 extern struct userrec *userlist;
 extern tcl_timer_t *timer, *utimer;
 extern int dcc_total, remote_boots, backgrd, make_userfile, conmask, require_p,
-           must_be_owner, strict_host;
+           must_be_owner;
 extern volatile sig_atomic_t do_restart;
 extern unsigned long otraffic_irc, otraffic_irc_today, itraffic_irc,
                      itraffic_irc_today, otraffic_bn, otraffic_bn_today,
@@ -76,8 +76,7 @@ static int add_bot_hostmask(int idx, char *nick)
           return 0;
         }
         if (strchr("~^+=-", m->userhost[0]))
-          egg_snprintf(s, sizeof s, "*!%s%s", strict_host ? "?" : "",
-                       m->userhost + 1);
+          egg_snprintf(s, sizeof s, "*!?%s", m->userhost + 1);
         else
           egg_snprintf(s, sizeof s, "*!%s", m->userhost);
         dprintf(idx, "(Added hostmask for %s from %s)\n", nick, chan->dname);
@@ -393,22 +392,46 @@ static void cmd_back(struct userrec *u, int idx, char *par)
   not_away(idx);
 }
 
+/* Take a password provided by the user and check that it isn't too long,
+ * too short, or start with a '+' (for encryption reasons).
+ *
+ * If successful set it and return NULL.
+ *
+ * On failure return error message.
+ */
+char *check_validpass(struct userrec *u, char *new) {
+  int l;
+  unsigned char *p = (unsigned char *) new;
+
+  l = strlen(new);
+  if (l < 6)
+    return IRC_PASSFORMAT;
+  if (l > PASSWORDMAX)
+    return "Passwords cannot be longer than " STRINGIFY(PASSWORDMAX) " characters, please try again.";
+  if (new[0] == '+') /* See also: userent.c:pass_set() */
+    return "Password cannot start with '+', please try again.";
+  while (*p) {
+    if ((*p <= 32) || (*p == 127))
+      return "Password cannot use weird symbols, please try again.";
+    p++;
+  }
+  set_user(&USERENTRY_PASS, u, new);
+  return NULL;
+}
+
 static void cmd_newpass(struct userrec *u, int idx, char *par)
 {
-  char *new;
+  char *new, *s;
 
   if (!par[0]) {
     dprintf(idx, "Usage: newpass <newpassword>\n");
     return;
   }
   new = newsplit(&par);
-  if (strlen(new) > 16)
-    new[16] = 0;
-  if (strlen(new) < 6) {
-    dprintf(idx, "Please use at least 6 characters.\n");
+  if ((s = check_validpass(u, new))) {
+    dprintf(idx, "%s\n", s);
     return;
   }
-  set_user(&USERENTRY_PASS, u, new);
   putlog(LOG_CMDS, "*", "#%s# newpass...", dcc[idx].nick);
   dprintf(idx, "Changed password to '%s'.\n", new);
 }
@@ -1028,8 +1051,8 @@ static void cmd_handle(struct userrec *u, int idx, char *par)
 
 static void cmd_chpass(struct userrec *u, int idx, char *par)
 {
-  char *handle, *new;
-  int atr = u ? u->flags : 0, l;
+  char *handle, *new, *s;
+  int atr = u ? u->flags : 0;
 
   if (!par[0])
     dprintf(idx, "Usage: chpass <handle> [password]\n");
@@ -1053,17 +1076,14 @@ static void cmd_chpass(struct userrec *u, int idx, char *par)
       set_user(&USERENTRY_PASS, u, NULL);
       dprintf(idx, "Removed password.\n");
     } else {
-      l = strlen(new = newsplit(&par));
-      if (l > 16)
-        new[16] = 0;
-      if (l < 6)
-        dprintf(idx, "Please use at least 6 characters.\n");
-      else {
-        set_user(&USERENTRY_PASS, u, new);
-        putlog(LOG_CMDS, "*", "#%s# chpass %s [something]", dcc[idx].nick,
-               handle);
-        dprintf(idx, "Changed password.\n");
+      new = newsplit(&par);
+      if ((s = check_validpass(u, new))) {
+        dprintf(idx, "%s\n", s);
+        return;
       }
+      putlog(LOG_CMDS, "*", "#%s# chpass %s [something]", dcc[idx].nick,
+             handle);
+      dprintf(idx, "Changed password.\n");
     }
   }
 }
@@ -2508,14 +2528,13 @@ static void cmd_set(struct userrec *u, int idx, char *msg)
     return;
   }
   putlog(LOG_CMDS, "*", "#%s# set %s", dcc[idx].nick, msg);
-  strcpy(s, "set ");
   if (!msg[0]) {
-    strcpy(s, "info globals");
-    Tcl_Eval(interp, s);
+    Tcl_Eval(interp, "info globals");
     dumplots(idx, "Global vars: ", tcl_resultstring());
     return;
   }
-  strlcpy(s + 4, msg, sizeof s - 4);
+  strcpy(s, "set ");
+  strlcpy(s + 4, msg, (sizeof s) - 4);
   code = Tcl_Eval(interp, s);
 
   /* properly convert string to system encoding. */
@@ -2699,8 +2718,8 @@ static void cmd_pls_user(struct userrec *u, int idx, char *par)
     handle[HANDLEN] = 0;
   if (get_user_by_handle(userlist, handle))
     dprintf(idx, "Someone already exists by that name.\n");
-  else if (strchr(BADNICKCHARS, handle[0]) != NULL)
-    dprintf(idx, "You can't start a nick with '%c'.\n", handle[0]);
+  else if (strchr(BADHANDCHARS, handle[0]) != NULL)
+    dprintf(idx, "You can't start a handle with '%c'.\n", handle[0]);
   else if (!strcasecmp(handle, botnetnick))
     dprintf(idx, "Hey! That's MY name!\n");
   else {
@@ -3005,25 +3024,24 @@ static void cmd_traffic(struct userrec *u, int idx, char *par)
 static char traffictxt[20];
 static char *btos(unsigned long bytes)
 {
-  char unit[10];
+  const char *unit;
   float xbytes;
 
-  sprintf(unit, "Bytes");
   xbytes = bytes;
   if (xbytes > 1024.0) {
-    sprintf(unit, "KBytes");
+    unit = "KBytes";
     xbytes = xbytes / 1024.0;
   }
   if (xbytes > 1024.0) {
-    sprintf(unit, "MBytes");
+    unit = "MBytes";
     xbytes = xbytes / 1024.0;
   }
   if (xbytes > 1024.0) {
-    sprintf(unit, "GBytes");
+    unit = "GBytes";
     xbytes = xbytes / 1024.0;
   }
   if (xbytes > 1024.0) {
-    sprintf(unit, "TBytes");
+    unit = "TBytes";
     xbytes = xbytes / 1024.0;
   }
   if (bytes > 1024)

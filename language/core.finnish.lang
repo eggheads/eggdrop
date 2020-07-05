@@ -423,8 +423,9 @@ Telnettaa botille ja syötä 'UUSI' kuin sinun nickkisi.
 0xe2c,Tcl virhe [%s]: %s
 0xe2d,*** HUOMIO: KUOLLUT SOCKET (%d) TYYPISSÄ %s EI VANGITTU
 0xe2e,Kadotetaan yhteys silläaikaa kun identitettiin [%s/%d]
-0xe2f,Kadotettu/EOF ident yhteys
+0xe2f,EOF ident yhteys
 0xe30,Kadotettu ident odotus telnet socketti!!
 0xe31,Evätty telnet: %s, Ei pääsyä
 0xe32,Evätään telnet yhteys %s (yritä käyttää minun botnetnickkiäni)
 0xe33,Telnet yhteys hukattu %s silläaikaa kun tarkistettiin tuplausta
+0xe34,Kadotettu ident yhteys

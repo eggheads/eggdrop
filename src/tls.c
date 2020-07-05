@@ -7,7 +7,7 @@
 /*
  * Written by Rumen Stoyanov <pseudo@egg6.net>
  *
- * Copyright (C) 2010 - 2019 Eggheads Development Team
+ * Copyright (C) 2010 - 2020 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -79,15 +79,14 @@ static int ssl_seed(void)
   static char rand_file[120];
   FILE *fh;
 
-#ifdef HAVE_RAND_STATUS
   if (RAND_status())
     return 0;     /* Status OK */
-#endif
   /* If '/dev/urandom' is present, OpenSSL will use it by default.
    * Otherwise we'll have to generate pseudorandom data ourselves,
    * using system time, our process ID and some uninitialized static
    * storage.
    */
+  putlog(LOG_MISC, "*", "WARNING: TLS: PRNG has not been sufficiently seeded. Seeding now.");
   if ((fh = fopen("/dev/urandom", "r"))) {
     fclose(fh);
     return 0;
@@ -105,10 +104,8 @@ static int ssl_seed(void)
     RAND_seed(&c, sizeof(c));
     RAND_seed(stackdata, sizeof(stackdata));
   }
-#ifdef HAVE_RAND_STATUS
   if (!RAND_status())
     return 2; /* pseudo random data still not enough */
-#endif
   return 0;
 }
 
@@ -238,6 +235,7 @@ int ssl_init()
           putlog(LOG_MISC, "*", "ERROR: TLS: unable to set tmp dh %s: %s",
                  tls_dhparam, ERR_error_string(ERR_get_error(), NULL));
         }
+        DH_free(dh);
       }
       else {
         putlog(LOG_MISC, "*", "ERROR: TLS: unable to read DHparams %s: %s",
@@ -277,21 +275,21 @@ char *ssl_fpconv(char *in, char *out)
 {
   long len;
   char *fp;
-  unsigned char *md5;
+  unsigned char *sha1;
 
   if (!in)
     return NULL;
 
-  if ((md5 = OPENSSL_hexstr2buf(in, &len))) {
-    fp = OPENSSL_buf2hexstr(md5, len);
+  if ((sha1 = OPENSSL_hexstr2buf(in, &len))) {
+    fp = OPENSSL_buf2hexstr(sha1, len);
     if (fp) {
       out = user_realloc(out, strlen(fp) + 1);
       strcpy(out, fp);
-      OPENSSL_free(md5);
+      OPENSSL_free(sha1);
       OPENSSL_free(fp);
       return out;
     }
-    OPENSSL_free(md5);
+    OPENSSL_free(sha1);
   }
   return NULL;
 }
@@ -701,7 +699,7 @@ int ssl_verify(int ok, X509_STORE_CTX *ctx)
  * and to check when the handshake is finished, so we can display
  * some cipher and session information and process callbacks.
  */
-void ssl_info(SSL *ssl, int where, int ret)
+static void ssl_info(const SSL *ssl, int where, int ret)
 {
   int sock;
   X509 *cert;
@@ -852,7 +850,7 @@ int ssl_handshake(int sock, int flags, int verify, int loglevel, char *host,
   data->cb = cb;
   strlcpy(data->host, host ? host : "", sizeof(data->host));
   SSL_set_app_data(td->socklist[i].ssl, data);
-  SSL_set_info_callback(td->socklist[i].ssl, (void *) ssl_info);
+  SSL_set_info_callback(td->socklist[i].ssl, ssl_info);
   /* We set this +1 to be able to report extra long chains properly.
    * Otherwise, OpenSSL will break the verification reporting about
    * missing certificates instead. The rest of the fix is in
@@ -867,6 +865,15 @@ int ssl_handshake(int sock, int flags, int verify, int loglevel, char *host,
     SSL_set_verify(td->socklist[i].ssl, SSL_VERIFY_PEER, ssl_verify);
     /* Introduce 1ms lag so an unpatched hub has time to setup the ssl handshake */
     nanosleep(&req, NULL);
+#ifdef SSL_set_tlsext_host_name
+    if (!SSL_set_tlsext_host_name(td->socklist[i].ssl, data->host))
+       debug1("TLS: setting the server name indication (SNI) to %s failed", data->host);
+    else
+       debug1("TLS: setting the server name indication (SNI) to %s successful", data->host);
+#else
+    debug1("TLS: setting the server name indication (SNI) not supported by ssl "
+           "lib, probably < openssl 0.9.8f", data->host);
+#endif
     ret = SSL_connect(td->socklist[i].ssl);
     if (!ret)
       debug0("TLS: connect handshake failed.");

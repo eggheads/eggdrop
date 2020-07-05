@@ -7,7 +7,7 @@
  */
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2019 Eggheads Development Team
+ * Copyright (C) 1999 - 2020 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -88,7 +88,6 @@
 #endif
 
 extern char origbotname[], botnetnick[]; 
-extern char userfile[121];        /* 121 = sizeof userfile from users.c */
 extern int dcc_total, conmask, cache_hit, cache_miss, max_logs, quick_logs,
            quiet_save;
 extern struct dcc_t *dcc;
@@ -142,6 +141,10 @@ char ver[41];        /* Version info (short form) */
 volatile sig_atomic_t do_restart = 0; /* .restart has been called, restart ASAP */
 int resolve_timeout = RES_TIMEOUT;    /* Hostname/address lookup timeout        */
 char quit_msg[1024];                  /* Quit message                           */
+
+/* Moved here for n flag warning, put back in do_arg if removed */
+unsigned char cliflags = 0;
+
 
 /* Traffic stats */
 unsigned long otraffic_irc = 0;
@@ -536,8 +539,8 @@ static void show_help() {
   printf("Usage: %s [options] [config-file]\n\n"
          "Options:\n"
          "-n  Don't background; send all log entries to console.\n"
-         "-nc Don't background; display channel stats every 10 seconds.\n"
-         "-nt Don't background; use terminal to simulate DCC chat.\n"
+         "-c  Don't background; display channel stats every 10 seconds.\n"
+         "-t  Don't background; use terminal to simulate DCC chat.\n"
          "-m  Create userfile.\n"
          "-h  Show this help and exit.\n"
          "-v  Show version info and exit.\n\n", argv[0]);
@@ -547,7 +550,9 @@ static void show_help() {
 static void do_arg()
 {
   int option = 0;
+/* Put this back if removing n flag warning
   unsigned char cliflags = 0;
+*/
   #define CLI_V        1 << 0
   #define CLI_M        1 << 1
   #define CLI_T        1 << 2
@@ -566,11 +571,13 @@ static void do_arg()
         cliflags |= CLI_C;
         con_chan = 1;
         term_z = -1;
+        backgrd = 0;
         break;
       case 't':
         cliflags |= CLI_T;
         con_chan = 0;
         term_z = 0;
+        backgrd = 0;
         break;
       case 'm':
         cliflags |= CLI_M;
@@ -596,10 +603,6 @@ static void do_arg()
   } else if (cliflags & CLI_V) {
     show_ver();
     exit(0);
-  } else if (!(cliflags & CLI_N) && ((cliflags & CLI_C) || (cliflags & CLI_T))) {
-    printf("\n%s\n", version);
-    printf("ERROR: The -n flag is required when using the -c or -t flags. Exiting...\n\n");
-    exit(1);
   } else if (argc > (optind + 1)) {
     printf("\n");
     printf("WARNING: More than one config file value detected\n");
@@ -608,16 +611,6 @@ static void do_arg()
   if (argc > optind) {
     strlcpy(configfile, argv[optind], sizeof configfile);
   }
-}
-
-void backup_userfile(void)
-{
-  char s[sizeof userfile + 4];
-
-  if (quiet_save < 2)
-    putlog(LOG_MISC, "*", USERF_BACKUP);
-  egg_snprintf(s, sizeof s, "%s~bak", userfile);
-  copyfile(userfile, s);
 }
 
 /* Timer info */
@@ -643,6 +636,10 @@ static void core_secondly()
     check_expired_dcc();
     if (con_chan && !backgrd) {
       dprintf(DP_STDOUT, "\033[2J\033[1;1H");
+      if ((cliflags & CLI_N) && (cliflags & CLI_C)) {
+        printf("NOTE: You don't need to use the -n flag with the\n");
+        printf("       -t or -c flag anymore.\n");
+      }
       tell_verbose_status(DP_STDOUT);
       do_module_report(DP_STDOUT, 0, "server");
       do_module_report(DP_STDOUT, 0, "channels");
@@ -814,7 +811,7 @@ int mainloop(int toplevel)
 {
   static int socket_cleanup = 0;
   int xx, i, eggbusy = 1, tclbusy = 0;
-  char buf[520];
+  char buf[8702];
 
   /* Lets move some of this here, reducing the number of actual
    * calls to periodic_timers
@@ -877,9 +874,8 @@ int mainloop(int toplevel)
           }
           dcc[idx].type->activity(idx, buf, i);
         } else
-          putlog(LOG_MISC, "*",
-                 "!!! untrapped dcc activity: type %s, sock %d",
-                 dcc[idx].type->name, dcc[idx].sock);
+          putlog(LOG_MISC, "*", "ERROR: untrapped dcc activity: type %s, sock %d",
+                 dcc[idx].type ? dcc[idx].type->name : "UNKNOWN", dcc[idx].sock);
         break;
       }
   } else if (xx == -1) {        /* EOF from someone */
@@ -1077,13 +1073,13 @@ int main(int arg_c, char **arg_v)
   egg_snprintf(egg_version, sizeof egg_version, "%s+%s %u", EGG_STRINGVER, EGG_PATCH, egg_numver);
   egg_snprintf(ver, sizeof ver, "eggdrop v%s+%s", EGG_STRINGVER, EGG_PATCH);
   egg_snprintf(version, sizeof version,
-               "Eggdrop v%s+%s (C) 1997 Robey Pointer (C) 2010-2018 Eggheads",
+               "Eggdrop v%s+%s (C) 1997 Robey Pointer (C) 2010-2020 Eggheads",
                 EGG_STRINGVER, EGG_PATCH);
 #else
   egg_snprintf(egg_version, sizeof egg_version, "%s %u", EGG_STRINGVER, egg_numver);
   egg_snprintf(ver, sizeof ver, "eggdrop v%s", EGG_STRINGVER);
   egg_snprintf(version, sizeof version,
-               "Eggdrop v%s (C) 1997 Robey Pointer (C) 2010-2019 Eggheads",
+               "Eggdrop v%s (C) 1997 Robey Pointer (C) 2010-2020 Eggheads",
                 EGG_STRINGVER);
 #endif
 
@@ -1173,6 +1169,11 @@ int main(int arg_c, char **arg_v)
     i++;
   putlog(LOG_MISC, "*", "=== %s: %d channels, %d users.",
          botnetnick, i, count_users(userlist));
+  if ((cliflags & CLI_N) && (cliflags & CLI_T)) {
+    printf("\n");
+    printf("NOTE: It's the 21st century, you don't need to use the -n flag\n");
+    printf("      with the -t or -c flag anymore.\n");
+  }
 #ifdef TLS
   ssl_init();
 #endif
@@ -1228,9 +1229,7 @@ int main(int arg_c, char **arg_v)
   use_stderr = 0;               /* Stop writing to stderr now */
   if (backgrd) {
     /* Ok, try to disassociate from controlling terminal (finger cross) */
-#ifdef HAVE_SETPGID
     setpgid(0, 0);
-#endif
     /* Tcl wants the stdin, stdout and stderr file handles kept open. */
     if (freopen("/dev/null", "r", stdin) == NULL) {
       putlog(LOG_MISC, "*", "Error renaming stdin file handle: %s", strerror(errno));

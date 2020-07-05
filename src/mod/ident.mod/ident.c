@@ -3,7 +3,7 @@
  */
 /*
  * Copyright (c) 2018 - 2019 Michael Ortmann MIT License
- * Copyright (C) 2019 Eggheads Development Team
+ * Copyright (C) 2019 - 2020 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -53,7 +53,7 @@ static cmd_t ident_raw[] = {
 static void ident_activity(int idx, char *buf, int len)
 {
   int s;
-  char buf2[IDENT_SIZE + sizeof " : USERID : UNIX : \r\n" + NICKLEN + 1], *pos;
+  char buf2[IDENT_SIZE + sizeof " : USERID : UNIX : \r\n" + NICKLEN], *pos;
   ssize_t i;
 
   s = answer(dcc[idx].sock, &dcc[idx].sockname, 0, 0);

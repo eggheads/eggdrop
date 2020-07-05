@@ -63,7 +63,7 @@ Changes made to Eggdrop 1.8.x from Eggdrop1.6.x:
 
   BOTNET
 
-    Because 1.8 bots attempt to link with SSL if available everytime, make
+    Because 1.8 bots attempt to link with SSL if available every time, make
     sure you generate a certificate on your hub bot with "make sslcert" after
     "make install".
 
@@ -324,4 +324,4 @@ Changes made to Eggdrop 1.6.x from Eggdrop1.4.x:
 
 
 Copyright (C) 1997 Robey Pointer
-Copyright (C) 1999 - 2019 Eggheads Development Team
+Copyright (C) 1999 - 2020 Eggheads Development Team

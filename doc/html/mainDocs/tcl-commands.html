@@ -1,40 +1,31 @@
 
-
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <title>Eggdrop Tcl Commands &#8212; Eggdrop 1.9.0 documentation</title>
     <link rel="stylesheet" href="../_static/eggdrop.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-    <script type="text/javascript">
-      var DOCUMENTATION_OPTIONS = {
-        URL_ROOT:    '../',
-        VERSION:     '1.9.0',
-        COLLAPSE_INDEX: false,
-        FILE_SUFFIX: '.html',
-        HAS_SOURCE:  true,
-        SOURCELINK_SUFFIX: '.txt'
-      };
-    </script>
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/language_data.js"></script>
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="IPv6 support" href="ipv6.html" />
     <link rel="prev" title="Patch How-To" href="patch.html" /> 
-  </head>
-  <body>
-    <div class="header-wrapper">
+  </head><body>
+    <div class="header-wrapper" role="banner">
       <div class="header">
           <p class="logo"><a href="../index.html">
             <img class="logo" src="../_static/eggman.png.gif" alt="Logo"/>
           </a></p>
         <div class="headertitle"><a
           href="../index.html">Eggdrop 1.9.0 documentation</a></div>
-        <div class="rel">
+        <div class="rel" role="navigation" aria-label="related navigation">
           <a href="patch.html" title="Patch How-To"
              accesskey="P">previous</a> |
           <a href="ipv6.html" title="IPv6 support"
@@ -45,6 +36,64 @@
 
     <div class="content-wrapper">
       <div class="content">
+        <div class="sidebar">
+          
+          <h3>Table of Contents</h3>
+          <ul>
+<li class="toctree-l1"><a class="reference internal" href="../installAndSetup/readme.html">README</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../installAndSetup/install.html">Installing Eggdrop</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../installAndSetup/faq.html">Frequently Asked Questions</a></li>
+</ul>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="about.html">About Eggdrop</a></li>
+<li class="toctree-l1"><a class="reference internal" href="features.html">Eggdrop Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="users.html">Users and Flags</a></li>
+<li class="toctree-l1"><a class="reference internal" href="partyline.html">The Party Line</a></li>
+<li class="toctree-l1"><a class="reference internal" href="bans.html">Bans, Invites, and Exempts</a></li>
+<li class="toctree-l1"><a class="reference internal" href="botnet.html">Botnet Sharing and Linking</a></li>
+<li class="toctree-l1"><a class="reference internal" href="patch.html">Patch How-To</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Eggdrop Tcl Commands</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ipv6.html">IPv6 support</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tls.html">TLS support</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../coreDocs/core.html">Eggdrop Core Settings</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../coreDocs/modules.html">Eggdrop Module Information</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../coreDocs/assoc.html">Assoc Module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../coreDocs/blowfish.html">Blowfish Module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../coreDocs/channels.html">Channels Module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../coreDocs/compress.html">Compress Module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../coreDocs/console.html">Console Module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../coreDocs/ctcp.html">CTCP Module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../coreDocs/dns.html">DNS Module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../coreDocs/filesys.html">Filesys Module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../coreDocs/ident.html">Ident Module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../coreDocs/irc.html">IRC Module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../coreDocs/notes.html">Notes Module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../coreDocs/seen.html">Seen Module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../coreDocs/server.html">Server Module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../coreDocs/share.html">Share Module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../coreDocs/transfer.html">Transfer Module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../coreDocs/uptime.html">Uptime Module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../coreDocs/woobie.html">Woobie Module</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../appendices/known-probs.html">Known Problems</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../appendices/tricks.html">Eggdrop Tricks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../appendices/text-sub.html">Textfile Substitutions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../appendices/weird-msgs.html">Weird Messages That Get Logged</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../appendices/first-script.html">Your First Eggdrop Script</a></li>
+</ul>
+
+          <div role="search">
+            <h3 style="margin-top: 1.5em;">Search</h3>
+            <form class="search" action="../search.html" method="get">
+                <input type="text" name="q" />
+                <input type="submit" value="Go" />
+            </form>
+          </div>
+
+        </div>
         <div class="document">
             
       <div class="documentwrapper">
@@ -70,7 +119,7 @@ marked with vertical bars (|) on the left.</p>
 <div class="section" id="putserv-text-options">
 <h3>putserv &lt;text&gt; [options]<a class="headerlink" href="#putserv-text-options" title="Permalink to this headline">¶</a></h3>
 <blockquote>
-<div><p>Description: sends text to the server, like '.dump' (intended for direct server commands); output is queued so that the bot won't flood itself off the server.</p>
+<div><p>Description: sends text to the server, like ‘.dump’ (intended for direct server commands); output is queued so that the bot won’t flood itself off the server.</p>
 <p>Options:
 -next    push messages to the front of the queue
 -normal  no effect</p>
@@ -81,7 +130,7 @@ marked with vertical bars (|) on the left.</p>
 <div class="section" id="puthelp-text-options">
 <h3>puthelp &lt;text&gt; [options]<a class="headerlink" href="#puthelp-text-options" title="Permalink to this headline">¶</a></h3>
 <blockquote>
-<div><p>Description: sends text to the server, like 'putserv', but it uses a different queue intended for sending messages to channels or people.</p>
+<div><p>Description: sends text to the server, like ‘putserv’, but it uses a different queue intended for sending messages to channels or people.</p>
 <p>Options:
 -next    push messages to the front of the queue
 -normal  no effect</p>
@@ -92,7 +141,7 @@ marked with vertical bars (|) on the left.</p>
 <div class="section" id="putquick-text-options">
 <h3>putquick &lt;text&gt; [options]<a class="headerlink" href="#putquick-text-options" title="Permalink to this headline">¶</a></h3>
 <blockquote>
-<div><p>Description: sends text to the server, like 'putserv', but it uses a different (and faster) queue.</p>
+<div><p>Description: sends text to the server, like ‘putserv’, but it uses a different (and faster) queue.</p>
 <p>Options:
 -next    push messages to the front of the queue
 -normal  no effect</p>
@@ -111,7 +160,7 @@ marked with vertical bars (|) on the left.</p>
 </div></blockquote>
 </div>
 <div class="section" id="putkick-channel-nick-nick-reason">
-<h3>putkick &lt;channel&gt; &lt;nick,nick,...&gt; [reason]<a class="headerlink" href="#putkick-channel-nick-nick-reason" title="Permalink to this headline">¶</a></h3>
+<h3>putkick &lt;channel&gt; &lt;nick,nick,…&gt; [reason]<a class="headerlink" href="#putkick-channel-nick-nick-reason" title="Permalink to this headline">¶</a></h3>
 <blockquote>
 <div><p>Description: sends kicks to the server and tries to put as many nicks into one kick command as possible.</p>
 <p>Returns: nothing</p>
@@ -121,7 +170,7 @@ marked with vertical bars (|) on the left.</p>
 <div class="section" id="putlog-text">
 <h3>putlog &lt;text&gt;<a class="headerlink" href="#putlog-text" title="Permalink to this headline">¶</a></h3>
 <blockquote>
-<div><p>Description: logs &lt;text&gt; to the logfile and partyline if the 'misc' flag (o) is active via the 'logfile' config file setting and the '.console' partyline setting, respectively.</p>
+<div><p>Description: logs &lt;text&gt; to the logfile and partyline if the ‘misc’ flag (o) is active via the ‘logfile’ config file setting and the ‘.console’ partyline setting, respectively.</p>
 <p>Returns: nothing</p>
 <p>Module: core</p>
 </div></blockquote>
@@ -129,7 +178,7 @@ marked with vertical bars (|) on the left.</p>
 <div class="section" id="putcmdlog-text">
 <h3>putcmdlog &lt;text&gt;<a class="headerlink" href="#putcmdlog-text" title="Permalink to this headline">¶</a></h3>
 <blockquote>
-<div><p>Description: logs &lt;text&gt; to the logfile and partyline if the 'cmds' flag (c) is active via the 'logfile' config file setting and the '.console' partyline setting, respectively.</p>
+<div><p>Description: logs &lt;text&gt; to the logfile and partyline if the ‘cmds’ flag (c) is active via the ‘logfile’ config file setting and the ‘.console’ partyline setting, respectively.</p>
 <p>Returns: nothing</p>
 <p>Module: core</p>
 </div></blockquote>
@@ -137,7 +186,7 @@ marked with vertical bars (|) on the left.</p>
 <div class="section" id="putxferlog-text">
 <h3>putxferlog &lt;text&gt;<a class="headerlink" href="#putxferlog-text" title="Permalink to this headline">¶</a></h3>
 <blockquote>
-<div><p>Description: logs &lt;text&gt; to the logfile and partyline if the 'files' flag (x) is active via the 'logfile' config file setting and the '.console' partyline setting, respectively.</p>
+<div><p>Description: logs &lt;text&gt; to the logfile and partyline if the ‘files’ flag (x) is active via the ‘logfile’ config file setting and the ‘.console’ partyline setting, respectively.</p>
 <p>Returns: nothing</p>
 <p>Module: core</p>
 </div></blockquote>
@@ -145,7 +194,7 @@ marked with vertical bars (|) on the left.</p>
 <div class="section" id="putloglev-flag-s-channel-text">
 <h3>putloglev &lt;flag(s)&gt; &lt;channel&gt; &lt;text&gt;<a class="headerlink" href="#putloglev-flag-s-channel-text" title="Permalink to this headline">¶</a></h3>
 <blockquote>
-<div><p>Description: logs &lt;text&gt; to the logfile and partyline at the log level of the specified flag. Use &quot;*&quot; in lieu of a flag to indicate all log levels.</p>
+<div><p>Description: logs &lt;text&gt; to the logfile and partyline at the log level of the specified flag. Use “*” in lieu of a flag to indicate all log levels.</p>
 <p>Returns: nothing</p>
 <p>Module: core</p>
 </div></blockquote>
@@ -153,7 +202,7 @@ marked with vertical bars (|) on the left.</p>
 <div class="section" id="dumpfile-nick-filename">
 <h3>dumpfile &lt;nick&gt; &lt;filename&gt;<a class="headerlink" href="#dumpfile-nick-filename" title="Permalink to this headline">¶</a></h3>
 <blockquote>
-<div><p>Description: dumps file from the help/text directory to a user on IRC via msg (one line per msg). The user has no flags, so the flag bindings won't work within the file.</p>
+<div><p>Description: dumps file from the help/text directory to a user on IRC via msg (one line per msg). The user has no flags, so the flag bindings won’t work within the file.</p>
 <p>Returns: nothing</p>
 <p>Module: core</p>
 </div></blockquote>
@@ -173,13 +222,39 @@ marked with vertical bars (|) on the left.</p>
 <p>Module: server</p>
 </div></blockquote>
 </div>
-<div class="section" id="cap-active-available-raw-arg">
-<h3>cap &lt;active/available/raw&gt; [arg]<a class="headerlink" href="#cap-active-available-raw-arg" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="cap-ls-req-enabled-raw-arg">
+<h3>cap &lt;ls/req/enabled/raw&gt; [arg]<a class="headerlink" href="#cap-ls-req-enabled-raw-arg" title="Permalink to this headline">¶</a></h3>
 <blockquote>
-<div><p>Description: displays CAP status or sends a raw CAP command to the server. &quot;available&quot; will list the capabilities supported by the server, &quot;active&quot; will list the capabilities Eggdrop has negotiated with the server, and raw will send a raw CAP command to the server. If sending a raw command, it must be submitted in arg as a single string. For example, to request capabilities foo and bar, you would use [cap raw &quot;REQ :foo bar&quot;].</p>
+<div><p>Description: displays CAP status or sends a raw CAP command to the server. “ls” will list the capabilities Eggdrop is internally tracking as supported by the server, “enabled” will list the capabilities Eggdrop is internally tracking as negotiated with the server, “req” will request the capabilities listed in “arg” from the server, and raw will send a raw CAP command to the server. The arg field is a single argument, and should be submitted as a single string. For example, to request capabilities foo and bar, you would use [cap req “foo bar”], and for example purposes, sending the same request as a raw command would be [cap raw “REQ :foo bar”].</p>
 <p>Returns: nothing</p>
 <p>Module: server</p>
 </div></blockquote>
+</div>
+<div class="section" id="tagmsg-tags-target">
+<h3>tagmsg &lt;tags&gt; &lt;target&gt;<a class="headerlink" href="#tagmsg-tags-target" title="Permalink to this headline">¶</a></h3>
+<blockquote>
+<div><p>Description: sends an IRCv3 TAGMSG command to the target. Only works if message-tags has been negotiated with the server via the cap command. tags is a Tcl dict (or space-separated string) of the tags you wish to send separated by commas (do not include the &#64;prefix), and target is the nickname or channel you wish to send the tags to. To send a tag only (not a key/value pair), use a “” as the value for a key in a dict, or a “{}” if you are sending as a space-separated string.</p>
+<dl class="docutils">
+<dt>Examples:</dt>
+<dd>set mytags [dict create +foo bar moo baa +last “”]; tagmsg $mytags #channel
+tagmsg “+foo bar moo baa +last {}” #channel</dd>
+</dl>
+<p>Returns: nothing</p>
+<p>Module: server</p>
+</div></blockquote>
+</div>
+<div class="section" id="addserver-ip-host-port-password">
+<h3>addserver &lt;ip/host&gt; [[+]port [password]]<a class="headerlink" href="#addserver-ip-host-port-password" title="Permalink to this headline">¶</a></h3>
+<blockquote>
+<div><p>Description: adds a server to the list of servers Eggdrop will connect to. Prefix the port with ‘+’ to indicate an SSL-protected port. A port value is required if password is to be specified.</p>
+<p>Returns: nothing</p>
+<p>Module: server</p>
+</div></blockquote>
+</div>
+<div class="section" id="delserver-ip-host-port">
+<h3>delserver &lt;ip/host&gt; [[+]port]<a class="headerlink" href="#delserver-ip-host-port" title="Permalink to this headline">¶</a></h3>
+<blockquote>
+<div>Description: removes a server from the list of servers Eggdrop will connect to. If no port is specified, Eggdrop will remove the first server matching the ip or hostname provided. The SSL status (+) of the provided port is matched against as well (ie, 7000 is not the same as +7000).</div></blockquote>
 </div>
 </div>
 <div class="section" id="user-record-manipulation-commands">
@@ -187,7 +262,7 @@ marked with vertical bars (|) on the left.</p>
 <div class="section" id="countusers">
 <h3>countusers<a class="headerlink" href="#countusers" title="Permalink to this headline">¶</a></h3>
 <blockquote>
-<div><p>Returns: number of users in the bot's database</p>
+<div><p>Returns: number of users in the bot’s database</p>
 <p>Module: core</p>
 </div></blockquote>
 </div>
@@ -202,22 +277,22 @@ marked with vertical bars (|) on the left.</p>
 <h3>finduser &lt;<a class="reference external" href="mailto:nick!user&#37;&#52;&#48;host">nick!user<span>&#64;</span>host</a>&gt;<a class="headerlink" href="#finduser-nick-user-host" title="Permalink to this headline">¶</a></h3>
 <blockquote>
 <div><p>Description: finds the user record which most closely matches the given nick!user&#64;host</p>
-<p>Returns: the handle found, or &quot;*&quot; if none</p>
+<p>Returns: the handle found, or “*” if none</p>
 <p>Module: core</p>
 </div></blockquote>
 </div>
 <div class="section" id="userlist-flags">
 <h3>userlist [flags]<a class="headerlink" href="#userlist-flags" title="Permalink to this headline">¶</a></h3>
 <blockquote>
-<div><p>Returns: a list of users on the bot. You can use the flag matching system here ([global]{&amp;/|}[chan]{&amp;/|}[bot]). '&amp;' specifies &quot;and&quot;; '|' specifies &quot;or&quot;.</p>
+<div><p>Returns: a list of users on the bot. You can use the flag matching system here ([global]{&amp;/|}[chan]{&amp;/|}[bot]). ‘&amp;’ specifies “and”; ‘|’ specifies “or”.</p>
 <p>Module: core</p>
 </div></blockquote>
 </div>
 <div class="section" id="passwdok-handle-pass">
 <h3>passwdok &lt;handle&gt; &lt;pass&gt;<a class="headerlink" href="#passwdok-handle-pass" title="Permalink to this headline">¶</a></h3>
 <blockquote>
-<div><p>Description: checks the password given against the user's password. Check against the password &quot;-&quot; to find out if a user has no password set.</p>
-<p>Returns: 1 if the password matches for that user; 0 otherwise. Or if we are checking against the password &quot;-&quot;: 1 if the user has no password set; 0 otherwise.</p>
+<div><p>Description: checks the password given against the user’s password. Check against the password “-” to find out if a user has no password set.</p>
+<p>Returns: 1 if the password matches for that user; 0 otherwise. Or if we are checking against the password “-“: 1 if the user has no password set; 0 otherwise.</p>
 <p>Module: core</p>
 </div></blockquote>
 </div>
@@ -235,7 +310,7 @@ marked with vertical bars (|) on the left.</p>
 <td>returns the current bot-specific flags for the user (bot-only)</td>
 </tr>
 <tr class="row-even"><td>BOTADDR</td>
-<td>returns a list containing the bot's address, bot listen port, and user listen port</td>
+<td>returns a list containing the bot’s address, bot listen port, and user listen port</td>
 </tr>
 <tr class="row-odd"><td>HOSTS</td>
 <td>returns a list of hosts for the user</td>
@@ -246,23 +321,23 @@ LASTON #channel returns the time last seen time for the channel or 0 if no info
 exists.</td>
 </tr>
 <tr class="row-odd"><td>INFO</td>
-<td>returns the user's global info line</td>
+<td>returns the user’s global info line</td>
 </tr>
 <tr class="row-even"><td>XTRA</td>
-<td>returns the user's XTRA info</td>
+<td>returns the user’s XTRA info</td>
 </tr>
 <tr class="row-odd"><td>COMMENT</td>
 <td>returns the master-visible only comment for the user</td>
 </tr>
 <tr class="row-even"><td>HANDLE</td>
-<td>returns the user's handle as it is saved in the userfile</td>
+<td>returns the user’s handle as it is saved in the userfile</td>
 </tr>
 <tr class="row-odd"><td>PASS</td>
-<td>returns the user's encrypted password</td>
+<td>returns the user’s encrypted password</td>
 </tr>
 </tbody>
 </table>
-<p>For additional custom user fields, to include the deprecated &quot;EMAIL&quot; and &quot;URL&quot; fields, reference scripts/userinfo.tcl.</p>
+<p>For additional custom user fields, to include the deprecated “EMAIL” and “URL” fields, reference scripts/userinfo.tcl.</p>
 <p>Returns: info specific to each entry-type</p>
 <p>Module: core</p>
 </div></blockquote>
@@ -270,7 +345,7 @@ exists.</td>
 <div class="section" id="setuser-handle-entry-type-extra-info">
 <h3>setuser &lt;handle&gt; &lt;entry-type&gt; [extra info]<a class="headerlink" href="#setuser-handle-entry-type-extra-info" title="Permalink to this headline">¶</a></h3>
 <blockquote>
-<div><p>Description: this is the counterpart of getuser. It lets you set the various values. Other then the ones listed below, the entry-types are the same as getuser's.</p>
+<div><p>Description: this is the counterpart of getuser. It lets you set the various values. Other then the ones listed below, the entry-types are the same as getuser’s.</p>
 <table border="1" class="docutils">
 <colgroup>
 <col width="9%" />
@@ -316,7 +391,7 @@ anything.</dd>
 <dt>&lt;unixtime&gt;</dt>
 <dd>sets global LASTON time (leaving the place field empty)</dd>
 <dt>&lt;unixtime&gt; &lt;channel&gt;</dt>
-<dd>sets a user's LASTON time for a channel (if it is a valid channel)</dd>
+<dd>sets a user’s LASTON time for a channel (if it is a valid channel)</dd>
 </dl>
 </td>
 </tr>
@@ -329,8 +404,8 @@ anything.</dd>
 <div class="section" id="chhandle-old-handle-new-handle">
 <h3>chhandle &lt;old-handle&gt; &lt;new-handle&gt;<a class="headerlink" href="#chhandle-old-handle-new-handle" title="Permalink to this headline">¶</a></h3>
 <blockquote>
-<div><p>Description: changes a user's handle</p>
-<p>Returns: 1 on success; 0 if the new handle is invalid or already used, or if the user can't be found</p>
+<div><p>Description: changes a user’s handle</p>
+<p>Returns: 1 on success; 0 if the new handle is invalid or already used, or if the user can’t be found</p>
 <p>Module: core</p>
 </div></blockquote>
 </div>
@@ -338,8 +413,8 @@ anything.</dd>
 <h3>chattr &lt;handle&gt; [changes [channel]]<a class="headerlink" href="#chattr-handle-changes-channel" title="Permalink to this headline">¶</a></h3>
 <blockquote>
 <div><p>Description: changes the attributes for a user record, if you include any.
-Changes are of the form '+f', '-o', '+dk', '-o+d', etc. If changes are specified in the format of |&lt;changes&gt; &lt;channel&gt;, the channel-specific flags for that channel are altered. You can now use the +o|-o #channel format here too.</p>
-<p>Returns: new flags for the user (if you made no changes, the current flags are returned). If a channel was specified, the global AND the channel-specific flags for that channel are returned in the format of globalflags|channelflags. &quot;*&quot; is returned if the specified user does not exist.</p>
+Changes are of the form ‘+f’, ‘-o’, ‘+dk’, ‘-o+d’, etc. If changes are specified in the format of |&lt;changes&gt; &lt;channel&gt;, the channel-specific flags for that channel are altered. You can now use the +o|-o #channel format here too.</p>
+<p>Returns: new flags for the user (if you made no changes, the current flags are returned). If a channel was specified, the global AND the channel-specific flags for that channel are returned in the format of globalflags|channelflags. “*” is returned if the specified user does not exist.</p>
 <p>Module: core</p>
 </div></blockquote>
 </div>
@@ -347,7 +422,7 @@ Changes are of the form '+f', '-o', '+dk', '-o+d', etc. If changes are specified
 <h3>botattr &lt;handle&gt; [changes [channel]]<a class="headerlink" href="#botattr-handle-changes-channel" title="Permalink to this headline">¶</a></h3>
 <blockquote>
 <div><p>Description: similar to chattr except this modifies bot flags rather than normal user attributes.</p>
-<p>Returns: new flags for the bot (if you made no changes, the current flags are returned). If a channel was specified, the global AND the channel-specific flags for that channel are returned in the format of globalflags|channelflags. &quot;*&quot; is returned if the specified bot does not exist.</p>
+<p>Returns: new flags for the bot (if you made no changes, the current flags are returned). If a channel was specified, the global AND the channel-specific flags for that channel are returned in the format of globalflags|channelflags. “*” is returned if the specified bot does not exist.</p>
 <p>Module: core</p>
 </div></blockquote>
 </div>
@@ -450,8 +525,8 @@ NOTE 2: In the deprecated formats, an additional botport and/or userport given a
 <div class="section" id="delhost-handle-hostmask">
 <h3>delhost &lt;handle&gt; &lt;hostmask&gt;<a class="headerlink" href="#delhost-handle-hostmask" title="Permalink to this headline">¶</a></h3>
 <blockquote>
-<div><p>Description: deletes a hostmask from a user's host list</p>
-<p>Returns: 1 on success; 0 if the hostmask (or user) doesn't exist</p>
+<div><p>Description: deletes a hostmask from a user’s host list</p>
+<p>Returns: 1 on success; 0 if the hostmask (or user) doesn’t exist</p>
 <p>Module: core</p>
 </div></blockquote>
 </div>
@@ -481,14 +556,14 @@ NOTE 2: In the deprecated formats, an additional botport and/or userport given a
 <div class="section" id="getchaninfo-handle-channel">
 <h3>getchaninfo &lt;handle&gt; &lt;channel&gt;<a class="headerlink" href="#getchaninfo-handle-channel" title="Permalink to this headline">¶</a></h3>
 <blockquote>
-<div><p>Returns: info line for a specific channel (behaves just like 'getinfo')</p>
+<div><p>Returns: info line for a specific channel (behaves just like ‘getinfo’)</p>
 <p>Module: channels</p>
 </div></blockquote>
 </div>
 <div class="section" id="setchaninfo-handle-channel-info">
 <h3>setchaninfo &lt;handle&gt; &lt;channel&gt; &lt;info&gt;<a class="headerlink" href="#setchaninfo-handle-channel-info" title="Permalink to this headline">¶</a></h3>
 <blockquote>
-<div><p>Description: sets the info line on a specific channel for a user. If info is &quot;none&quot;, it will be removed.</p>
+<div><p>Description: sets the info line on a specific channel for a user. If info is “none”, it will be removed.</p>
 <p>Returns: nothing</p>
 <p>Module: channels</p>
 </div></blockquote>
@@ -719,77 +794,77 @@ NOTE 2: In the deprecated formats, an additional botport and/or userport given a
 <div class="section" id="isban-ban-channel">
 <h3>isban &lt;ban&gt; [channel]<a class="headerlink" href="#isban-ban-channel" title="Permalink to this headline">¶</a></h3>
 <blockquote>
-<div><p>Returns: 1 if the specified ban is in the global ban list; 0 otherwise. If a channel is specified, that channel's ban list is checked as well.</p>
+<div><p>Returns: 1 if the specified ban is in the global ban list; 0 otherwise. If a channel is specified, that channel’s ban list is checked as well.</p>
 <p>Module: channels</p>
 </div></blockquote>
 </div>
 <div class="section" id="ispermban-ban-channel">
 <h3>ispermban &lt;ban&gt; [channel]<a class="headerlink" href="#ispermban-ban-channel" title="Permalink to this headline">¶</a></h3>
 <blockquote>
-<div><p>Returns: 1 if the specified ban is in the global ban list AND is marked as permanent; 0 otherwise. If a channel is specified, that channel's ban list is checked as well.</p>
+<div><p>Returns: 1 if the specified ban is in the global ban list AND is marked as permanent; 0 otherwise. If a channel is specified, that channel’s ban list is checked as well.</p>
 <p>Module: channels</p>
 </div></blockquote>
 </div>
 <div class="section" id="isexempt-exempt-channel">
 <h3>isexempt &lt;exempt&gt; [channel]<a class="headerlink" href="#isexempt-exempt-channel" title="Permalink to this headline">¶</a></h3>
 <blockquote>
-<div><p>Returns: 1 if the specified exempt is in the global exempt list; 0 otherwise. If a channel is specified, that channel's exempt list is checked as well.</p>
+<div><p>Returns: 1 if the specified exempt is in the global exempt list; 0 otherwise. If a channel is specified, that channel’s exempt list is checked as well.</p>
 <p>Module: channels</p>
 </div></blockquote>
 </div>
 <div class="section" id="ispermexempt-exempt-channel">
 <h3>ispermexempt &lt;exempt&gt; [channel]<a class="headerlink" href="#ispermexempt-exempt-channel" title="Permalink to this headline">¶</a></h3>
 <blockquote>
-<div><p>Returns: 1 if the specified exempt is in the global exempt list AND is marked as permanent; 0 otherwise. If a channel is specified, that channel's exempt list is checked as well.</p>
+<div><p>Returns: 1 if the specified exempt is in the global exempt list AND is marked as permanent; 0 otherwise. If a channel is specified, that channel’s exempt list is checked as well.</p>
 <p>Module: channels</p>
 </div></blockquote>
 </div>
 <div class="section" id="isinvite-invite-channel">
 <h3>isinvite &lt;invite&gt; [channel]<a class="headerlink" href="#isinvite-invite-channel" title="Permalink to this headline">¶</a></h3>
 <blockquote>
-<div><p>Returns: 1 if the specified invite is in the global invite list; 0 otherwise. If a channel is specified, that channel's invite list is checked as well.</p>
+<div><p>Returns: 1 if the specified invite is in the global invite list; 0 otherwise. If a channel is specified, that channel’s invite list is checked as well.</p>
 <p>Module: channels</p>
 </div></blockquote>
 </div>
 <div class="section" id="isperminvite-invite-channel">
 <h3>isperminvite &lt;invite&gt; [channel]<a class="headerlink" href="#isperminvite-invite-channel" title="Permalink to this headline">¶</a></h3>
 <blockquote>
-<div><p>Returns: 1 if the specified invite is in the global invite list AND is marked as permanent; 0 otherwise. If a channel is specified, that channel's invite list is checked as well.</p>
+<div><p>Returns: 1 if the specified invite is in the global invite list AND is marked as permanent; 0 otherwise. If a channel is specified, that channel’s invite list is checked as well.</p>
 <p>Module: channels</p>
 </div></blockquote>
 </div>
 <div class="section" id="isbansticky-ban-channel">
 <h3>isbansticky &lt;ban&gt; [channel]<a class="headerlink" href="#isbansticky-ban-channel" title="Permalink to this headline">¶</a></h3>
 <blockquote>
-<div><p>Returns: 1 if the specified ban is marked as sticky in the global ban list; 0 otherwise. If a channel is specified, that channel's ban list is checked as well.</p>
+<div><p>Returns: 1 if the specified ban is marked as sticky in the global ban list; 0 otherwise. If a channel is specified, that channel’s ban list is checked as well.</p>
 <p>Module: channels</p>
 </div></blockquote>
 </div>
 <div class="section" id="isexemptsticky-exempt-channel">
 <h3>isexemptsticky &lt;exempt&gt; [channel]<a class="headerlink" href="#isexemptsticky-exempt-channel" title="Permalink to this headline">¶</a></h3>
 <blockquote>
-<div><p>Returns: 1 if the specified exempt is marked as sticky in the global exempt list; 0 otherwise. If a channel is specified, that channel's exempt list is checked as well.</p>
+<div><p>Returns: 1 if the specified exempt is marked as sticky in the global exempt list; 0 otherwise. If a channel is specified, that channel’s exempt list is checked as well.</p>
 <p>Module: channels</p>
 </div></blockquote>
 </div>
 <div class="section" id="isinvitesticky-invite-channel">
 <h3>isinvitesticky &lt;invite&gt; [channel]<a class="headerlink" href="#isinvitesticky-invite-channel" title="Permalink to this headline">¶</a></h3>
 <blockquote>
-<div><p>Returns: 1 if the specified invite is marked as sticky in the global invite list; 0 otherwise. If a channel is specified, that channel's invite list is checked as well.</p>
+<div><p>Returns: 1 if the specified invite is marked as sticky in the global invite list; 0 otherwise. If a channel is specified, that channel’s invite list is checked as well.</p>
 <p>Module: channels</p>
 </div></blockquote>
 </div>
 <div class="section" id="matchban-nick-user-host-channel">
 <h3>matchban &lt;<a class="reference external" href="mailto:nick!user&#37;&#52;&#48;host">nick!user<span>&#64;</span>host</a>&gt; [channel]<a class="headerlink" href="#matchban-nick-user-host-channel" title="Permalink to this headline">¶</a></h3>
 <blockquote>
-<div><p>Returns: 1 if the specified nick!user&#64;host matches a ban in the global ban list; 0 otherwise. If a channel is specified, that channel's ban list is checked as well.</p>
+<div><p>Returns: 1 if the specified nick!user&#64;host matches a ban in the global ban list; 0 otherwise. If a channel is specified, that channel’s ban list is checked as well.</p>
 <p>Module: channels</p>
 </div></blockquote>
 </div>
 <div class="section" id="matchexempt-nick-user-host-channel">
 <h3>matchexempt &lt;<a class="reference external" href="mailto:nick!user&#37;&#52;&#48;host">nick!user<span>&#64;</span>host</a>&gt; [channel]<a class="headerlink" href="#matchexempt-nick-user-host-channel" title="Permalink to this headline">¶</a></h3>
 <blockquote>
-<div><p>Returns: 1 if the specified nick!user&#64;host matches an exempt in the global exempt list; 0 otherwise. If a channel is specified, that channel's exempt list is checked as well.</p>
+<div><p>Returns: 1 if the specified nick!user&#64;host matches an exempt in the global exempt list; 0 otherwise. If a channel is specified, that channel’s exempt list is checked as well.</p>
 <p>Module: channels</p>
 </div></blockquote>
 </div>
@@ -797,7 +872,7 @@ NOTE 2: In the deprecated formats, an additional botport and/or userport given a
 <h3>matchinvite &lt;<a class="reference external" href="mailto:nick!user&#37;&#52;&#48;host">nick!user<span>&#64;</span>host</a>&gt; [channel]<a class="headerlink" href="#matchinvite-nick-user-host-channel" title="Permalink to this headline">¶</a></h3>
 <blockquote>
 <div><p>Returns: 1 if the specified nick!user&#64;host matches an invite in the global invite list; 0 otherwise. If a channel is specified, that
-channel's invite list is checked as well.</p>
+channel’s invite list is checked as well.</p>
 <p>Module: channels</p>
 </div></blockquote>
 </div>
@@ -871,7 +946,7 @@ channel's invite list is checked as well.</p>
 <div class="section" id="backup">
 <h3>backup<a class="headerlink" href="#backup" title="Permalink to this headline">¶</a></h3>
 <blockquote>
-<div><p>Description: makes a simple backup of the userfile that's on disk. If the channels module is loaded, this also makes a simple backup of the channel file.</p>
+<div><p>Description: makes a simple backup of the userfile that’s on disk. If the channels module is loaded, this also makes a simple backup of the channel file.</p>
 <p>Returns: nothing</p>
 <p>Module: core</p>
 </div></blockquote>
@@ -895,7 +970,7 @@ channel's invite list is checked as well.</p>
 </div></blockquote>
 </div>
 <div class="section" id="channel-set-name-options">
-<h3>channel set &lt;name&gt; &lt;options...&gt;<a class="headerlink" href="#channel-set-name-options" title="Permalink to this headline">¶</a></h3>
+<h3>channel set &lt;name&gt; &lt;options…&gt;<a class="headerlink" href="#channel-set-name-options" title="Permalink to this headline">¶</a></h3>
 <blockquote>
 <div><p>Description: sets options for the channel specified. The full list of possible options are given in doc/settings/mod.channels.</p>
 <p>Returns: nothing</p>
@@ -905,7 +980,7 @@ channel's invite list is checked as well.</p>
 <div class="section" id="channel-info-name">
 <h3>channel info &lt;name&gt;<a class="headerlink" href="#channel-info-name" title="Permalink to this headline">¶</a></h3>
 <blockquote>
-<div><p>Returns: a list of info about the specified channel's settings.</p>
+<div><p>Returns: a list of info about the specified channel’s settings.</p>
 <p>Module: channels</p>
 </div></blockquote>
 </div>
@@ -953,8 +1028,8 @@ channel's invite list is checked as well.</p>
 <div class="section" id="chandname2name-channel-dname">
 <h3>chandname2name &lt;channel-dname&gt;<a class="headerlink" href="#chandname2name-channel-dname" title="Permalink to this headline">¶</a></h3>
 <blockquote>
-<div><p>Description: these two functions are important to correctly support !channels. The bot differentiates between channel description names (chan dnames) and real channel names (chan names). The chan dnames are what you would normally call the channel, such as &quot;!channel&quot;. The chan names are what the IRC server uses to identify the channel. They consist of the chan dname prefixed with an ID; such as &quot;!ABCDEchannel&quot;.</p>
-<p>For bot functions like isop, isvoice, etc. you need to know the chan dnames. If you communicate with the server, you usually get the chan name, though. That's what you need the channame2dname function for.</p>
+<div><p>Description: these two functions are important to correctly support !channels. The bot differentiates between channel description names (chan dnames) and real channel names (chan names). The chan dnames are what you would normally call the channel, such as “!channel”. The chan names are what the IRC server uses to identify the channel. They consist of the chan dname prefixed with an ID; such as “!ABCDEchannel”.</p>
+<p>For bot functions like isop, isvoice, etc. you need to know the chan dnames. If you communicate with the server, you usually get the chan name, though. That’s what you need the channame2dname function for.</p>
 <p>If you only have the chan dname and want to directly send raw server commands, use the chandname2name command.</p>
 <p>NOTE: For non-!channels, chan dname and chan name are the same.</p>
 <p>Module: irc</p>
@@ -1030,6 +1105,22 @@ channel's invite list is checked as well.</p>
 <p>Module: irc</p>
 </div></blockquote>
 </div>
+<div class="section" id="isidentified-nickname-channel">
+<h3>isidentified &lt;nickname&gt; [channel]<a class="headerlink" href="#isidentified-nickname-channel" title="Permalink to this headline">¶</a></h3>
+<blockquote>
+<div><p>Returns: 1 if someone by the specified nickname is on the channel (or
+any channel if no channel name is specified) and is logged in); 0 otherwise</p>
+<p>Module: irc</p>
+</div></blockquote>
+</div>
+<div class="section" id="isaway-nickname-channel">
+<h3>isaway &lt;nickname&gt; [channel]<a class="headerlink" href="#isaway-nickname-channel" title="Permalink to this headline">¶</a></h3>
+<blockquote>
+<div><p>Description: determine if a user is marked as ‘away’ on a server. IMPORTANT: this command is only “mostly” reliable on its own when the IRCv3 away-notify capability is available and negotiated with the IRC server (if you didn’t add this to your config file, it likely isn’t enabled- you can confirm using the <code class="docutils literal notranslate"><span class="pre">cap</span></code> Tcl command).  Additionally, there is no way for Eggdrop (or any client) to capture a user’s away status when the user first joins a channel (they are assumed present by Eggdrop on join). To use this command without the away-notify capability negotiated, or to get a user’s away status on join (via a JOIN bind), use <code class="docutils literal notranslate"><span class="pre">refreshchan</span> <span class="pre">&lt;channel&gt;</span> <span class="pre">w</span></code> on a channel the user is on, which will refresh the current away status stored by Eggdrop for all users on the channel.</p>
+<p>Returns: 1 if Eggdrop is currently tracking someone by that nickname marked as ‘away’ (again, see disclaimer above) by an IRC server; 0 otherwise.</p>
+<p>Module: irc</p>
+</div></blockquote>
+</div>
 <div class="section" id="onchan-nickname-channel">
 <h3>onchan &lt;nickname&gt; [channel]<a class="headerlink" href="#onchan-nickname-channel" title="Permalink to this headline">¶</a></h3>
 <blockquote>
@@ -1037,17 +1128,29 @@ channel's invite list is checked as well.</p>
 <p>Module: irc</p>
 </div></blockquote>
 </div>
+<div class="section" id="getaccount-nickname-channel">
+<h3>getaccount &lt;nickname&gt; [channel]<a class="headerlink" href="#getaccount-nickname-channel" title="Permalink to this headline">¶</a></h3>
+<blockquote>
+<div>Returns: the services account name of the nickname if they are logged in, “” otherwise, and an error if the account-notify or extended-join capabilites are not enabled. WARNING: this account list may not be accurate depending on the server and configuration. This command will only work if a server supports (and Eggdrop has enabled) the account-notify and extended-join capabilities, and the server understands WHOX requests (also known as raw 354 responses).</div></blockquote>
+</div>
 <div class="section" id="nick2hand-nickname-channel">
 <h3>nick2hand &lt;nickname&gt; [channel]<a class="headerlink" href="#nick2hand-nickname-channel" title="Permalink to this headline">¶</a></h3>
 <blockquote>
-<div><p>Returns: the handle of a nickname on a channel. If a channel is not specified, the bot will check all of its channels. If the nick is not found, &quot;&quot; is returned. If the nick is found but does not have a handle, &quot;*&quot; is returned.</p>
+<div><p>Returns: the handle of a nickname on a channel. If a channel is not specified, the bot will check all of its channels. If the nick is not found, “” is returned. If the nick is found but does not have a handle, “*” is returned. If no channel is specified, all channels are checked.</p>
+<p>Module: irc</p>
+</div></blockquote>
+</div>
+<div class="section" id="account2nicks-handle-channel">
+<h3>account2nicks &lt;handle&gt; [channel]<a class="headerlink" href="#account2nicks-handle-channel" title="Permalink to this headline">¶</a></h3>
+<blockquote>
+<div><p>Returns: a de-duplicated Tcl list of the nickname(s) on the specified channel (if one is specified) whose nickname matches the given account; “” is returned if no match is found. This command will only work if a server supports (and Eggdrop has enabled) the account-notify and extended-join capabilities, and the server understands WHOX requests (also known as raw 354 responses). If no channel is specified, all channels are checked.</p>
 <p>Module: irc</p>
 </div></blockquote>
 </div>
 <div class="section" id="hand2nick-handle-channel">
 <h3>hand2nick &lt;handle&gt; [channel]<a class="headerlink" href="#hand2nick-handle-channel" title="Permalink to this headline">¶</a></h3>
 <blockquote>
-<div><p>Returns: nickname of the first person on the specified channel (if one is specified) whose nick!user&#64;host matches the given handle; &quot;&quot; is returned if no match is found. If no channel is specified, all channels are checked.</p>
+<div><p>Returns: nickname of the first person on the specified channel (if one is specified) whose nick!user&#64;host matches the given handle; “” is returned if no match is found. If no channel is specified, all channels are checked.</p>
 <p>Module: irc</p>
 </div></blockquote>
 </div>
@@ -1061,49 +1164,49 @@ channel's invite list is checked as well.</p>
 <div class="section" id="ischanban-ban-channel">
 <h3>ischanban &lt;ban&gt; &lt;channel&gt;<a class="headerlink" href="#ischanban-ban-channel" title="Permalink to this headline">¶</a></h3>
 <blockquote>
-<div><p>Returns: 1 if the specified ban is on the given channel's ban list (not the bot's banlist for the channel)</p>
+<div><p>Returns: 1 if the specified ban is on the given channel’s ban list (not the bot’s banlist for the channel)</p>
 <p>Module: irc</p>
 </div></blockquote>
 </div>
 <div class="section" id="ischanexempt-exempt-channel">
 <h3>ischanexempt &lt;exempt&gt; &lt;channel&gt;<a class="headerlink" href="#ischanexempt-exempt-channel" title="Permalink to this headline">¶</a></h3>
 <blockquote>
-<div><p>Returns: 1 if the specified exempt is on the given channel's exempt list (not the bot's exemptlist for the channel)</p>
+<div><p>Returns: 1 if the specified exempt is on the given channel’s exempt list (not the bot’s exemptlist for the channel)</p>
 <p>Module: irc</p>
 </div></blockquote>
 </div>
 <div class="section" id="ischaninvite-invite-channel">
 <h3>ischaninvite &lt;invite&gt; &lt;channel&gt;<a class="headerlink" href="#ischaninvite-invite-channel" title="Permalink to this headline">¶</a></h3>
 <blockquote>
-<div><p>Returns: 1 if the specified invite is on the given channel's invite list (not the bot's invitelist for the channel)</p>
+<div><p>Returns: 1 if the specified invite is on the given channel’s invite list (not the bot’s invitelist for the channel)</p>
 <p>Module: irc</p>
 </div></blockquote>
 </div>
 <div class="section" id="chanbans-channel">
 <h3>chanbans &lt;channel&gt;<a class="headerlink" href="#chanbans-channel" title="Permalink to this headline">¶</a></h3>
 <blockquote>
-<div><p>Returns: a list of the current bans on the channel. Each element is a sublist of the form {&lt;ban&gt; &lt;bywho&gt; &lt;age&gt;}. age is seconds from the bot's point of view</p>
+<div><p>Returns: a list of the current bans on the channel. Each element is a sublist of the form {&lt;ban&gt; &lt;bywho&gt; &lt;age&gt;}. age is seconds from the bot’s point of view</p>
 <p>Module: irc</p>
 </div></blockquote>
 </div>
 <div class="section" id="chanexempts-channel">
 <h3>chanexempts &lt;channel&gt;<a class="headerlink" href="#chanexempts-channel" title="Permalink to this headline">¶</a></h3>
 <blockquote>
-<div><p>Returns: a list of the current exempts on the channel. Each element is a sublist of the form {&lt;exempts&gt; &lt;bywho&gt; &lt;age&gt;}. age is seconds from the bot's point of view</p>
+<div><p>Returns: a list of the current exempts on the channel. Each element is a sublist of the form {&lt;exempts&gt; &lt;bywho&gt; &lt;age&gt;}. age is seconds from the bot’s point of view</p>
 <p>Module: irc</p>
 </div></blockquote>
 </div>
 <div class="section" id="chaninvites-channel">
 <h3>chaninvites &lt;channel&gt;<a class="headerlink" href="#chaninvites-channel" title="Permalink to this headline">¶</a></h3>
 <blockquote>
-<div><p>Returns: a list of the current invites on the channel. Each element is a sublist of the form {&lt;invites&gt; &lt;bywho&gt; &lt;age&gt;}. age is seconds from the bot's point of view</p>
+<div><p>Returns: a list of the current invites on the channel. Each element is a sublist of the form {&lt;invites&gt; &lt;bywho&gt; &lt;age&gt;}. age is seconds from the bot’s point of view</p>
 <p>Module: irc</p>
 </div></blockquote>
 </div>
 <div class="section" id="resetbans-channel">
 <h3>resetbans &lt;channel&gt;<a class="headerlink" href="#resetbans-channel" title="Permalink to this headline">¶</a></h3>
 <blockquote>
-<div><p>Description: removes all bans on the channel that aren't in the bot's ban list and refreshes any bans that should be on the channel but aren't</p>
+<div><p>Description: removes all bans on the channel that aren’t in the bot’s ban list and refreshes any bans that should be on the channel but aren’t</p>
 <p>Returns: nothing</p>
 <p>Module: irc</p>
 </div></blockquote>
@@ -1111,7 +1214,7 @@ channel's invite list is checked as well.</p>
 <div class="section" id="resetexempts-channel">
 <h3>resetexempts &lt;channel&gt;<a class="headerlink" href="#resetexempts-channel" title="Permalink to this headline">¶</a></h3>
 <blockquote>
-<div><p>Description: removes all exempt on the channel that aren't in the bot's exempt list and refreshes any exempts that should be on the channel but aren't</p>
+<div><p>Description: removes all exempt on the channel that aren’t in the bot’s exempt list and refreshes any exempts that should be on the channel but aren’t</p>
 <p>Returns: nothing</p>
 <p>Module: irc</p>
 </div></blockquote>
@@ -1119,7 +1222,7 @@ channel's invite list is checked as well.</p>
 <div class="section" id="resetinvites-channel">
 <h3>resetinvites &lt;channel&gt;<a class="headerlink" href="#resetinvites-channel" title="Permalink to this headline">¶</a></h3>
 <blockquote>
-<div><p>Description: removes all invites on the channel that aren't in the bot's invite list and refreshes any invites that should be on the channel but aren't</p>
+<div><p>Description: removes all invites on the channel that aren’t in the bot’s invite list and refreshes any invites that should be on the channel but aren’t</p>
 <p>Returns: nothing</p>
 <p>Module: irc</p>
 </div></blockquote>
@@ -1143,30 +1246,61 @@ channel's invite list is checked as well.</p>
 <div class="section" id="resetchan-channel-flags">
 <h3>resetchan &lt;channel&gt; [flags]<a class="headerlink" href="#resetchan-channel-flags" title="Permalink to this headline">¶</a></h3>
 <blockquote>
-<div><p>Description: rereads in the channel info from the server. If flags are specified, only the required information will be reset, according to the given flags. Available flags:</p>
+<div><p>Description: clears the channel info Eggdrop is currently storing for a channel, then rereads the channel info from the server. Useful if Eggdrop gets into a bad state on a server with respect to a channel userlist, for example. If flags are specified, only the required information will be reset, according to the given flags. Available flags:</p>
 <table border="1" class="docutils">
 <colgroup>
-<col width="16%" />
-<col width="84%" />
+<col width="14%" />
+<col width="86%" />
 </colgroup>
 <tbody valign="top">
 <tr class="row-odd"><td>b</td>
-<td>reset channel bans</td>
+<td>channel bans</td>
 </tr>
 <tr class="row-even"><td>e</td>
-<td>reset channel exempts</td>
+<td>channel exempts</td>
 </tr>
 <tr class="row-odd"><td>I</td>
-<td>reset channel invites</td>
+<td>channel invites</td>
 </tr>
 <tr class="row-even"><td>m</td>
-<td>refresh channel modes</td>
+<td>channel modes</td>
+</tr>
+<tr class="row-odd"><td>w</td>
+<td>memberlist (who &amp; away info)</td>
+</tr>
+</tbody>
+</table>
+<p>Returns: nothing</p>
+<p>Module: irc</p>
+</div></blockquote>
+</div>
+<div class="section" id="refreshchan-channel-flags">
+<h3>refreshchan &lt;channel&gt; [flags]<a class="headerlink" href="#refreshchan-channel-flags" title="Permalink to this headline">¶</a></h3>
+<blockquote>
+<div><p>Description: An alternative to resetchan, refresh rereads the channel info from the server without first clearing out the previously stored information. Useful for updateing a user’s away status without resetting their idle time, for example. If flags are specified, only the required information will be refreshed, according to the given flags. Available flags:</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="14%" />
+<col width="86%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td>b</td>
+<td>channel bans</td>
+</tr>
+<tr class="row-even"><td>e</td>
+<td>channel exempts</td>
+</tr>
+<tr class="row-odd"><td>I</td>
+<td>channel invites</td>
+</tr>
+<tr class="row-even"><td>m</td>
+<td>channel modes</td>
 </tr>
 <tr class="row-odd"><td>t</td>
-<td>refresh channel topic</td>
+<td>channel topic</td>
 </tr>
 <tr class="row-even"><td>w</td>
-<td>refresh memberlist</td>
+<td>memberlist (who &amp; away info)</td>
 </tr>
 </tbody>
 </table>
@@ -1177,7 +1311,7 @@ channel's invite list is checked as well.</p>
 <div class="section" id="getchanhost-nickname-channel">
 <h3>getchanhost &lt;nickname&gt; [channel]<a class="headerlink" href="#getchanhost-nickname-channel" title="Permalink to this headline">¶</a></h3>
 <blockquote>
-<div><p>Returns: user&#64;host of the specified nickname (the nickname is not included in the returned host). If a channel is not specified, bot will check all of its channels. If the nickname is not on the channel(s), &quot;&quot; is returned.</p>
+<div><p>Returns: user&#64;host of the specified nickname (the nickname is not included in the returned host). If a channel is not specified, bot will check all of its channels. If the nickname is not on the channel(s), “” is returned.</p>
 <p>Module: irc</p>
 </div></blockquote>
 </div>
@@ -1198,30 +1332,30 @@ channel's invite list is checked as well.</p>
 <div class="section" id="chanlist-channel-flags-chanflags">
 <h3>chanlist &lt;channel&gt; [flags][&lt;&amp;|&gt;chanflags]<a class="headerlink" href="#chanlist-channel-flags-chanflags" title="Permalink to this headline">¶</a></h3>
 <blockquote>
-<div><p>Description: flags are any global flags; the '&amp;' or '|' denotes to look for channel specific flags, where '&amp;' will return users having ALL chanflags and '|' returns users having ANY of the chanflags (See matchattr above for additional examples).</p>
-<p>Returns: Searching for flags optionally preceded with a '+' will return a list of nicknames that have all the flags listed. Searching for flags preceded with a '-' will return a list of nicknames that do not have have any of the flags (differently said, '-' will hide users that have all flags listed). If no flags are given, all of the nicknames on the channel are returned.</p>
-<p>Please note that if you're executing chanlist after a part or sign bind, the gone user will still be listed, so you can check for wasop, isop, etc.</p>
+<div><p>Description: flags are any global flags; the ‘&amp;’ or ‘|’ denotes to look for channel specific flags, where ‘&amp;’ will return users having ALL chanflags and ‘|’ returns users having ANY of the chanflags (See matchattr above for additional examples).</p>
+<p>Returns: Searching for flags optionally preceded with a ‘+’ will return a list of nicknames that have all the flags listed. Searching for flags preceded with a ‘-‘ will return a list of nicknames that do not have have any of the flags (differently said, ‘-‘ will hide users that have all flags listed). If no flags are given, all of the nicknames on the channel are returned.</p>
+<p>Please note that if you’re executing chanlist after a part or sign bind, the gone user will still be listed, so you can check for wasop, isop, etc.</p>
 <p>Module: irc</p>
 </div></blockquote>
 </div>
 <div class="section" id="getchanidle-nickname-channel">
 <h3>getchanidle &lt;nickname&gt; &lt;channel&gt;<a class="headerlink" href="#getchanidle-nickname-channel" title="Permalink to this headline">¶</a></h3>
 <blockquote>
-<div><p>Returns: number of minutes that person has been idle; -1 if the specified user isn't on the channel</p>
+<div><p>Returns: number of minutes that person has been idle; -1 if the specified user isn’t on the channel</p>
 <p>Module: irc</p>
 </div></blockquote>
 </div>
 <div class="section" id="getchanmode-channel">
 <h3>getchanmode &lt;channel&gt;<a class="headerlink" href="#getchanmode-channel" title="Permalink to this headline">¶</a></h3>
 <blockquote>
-<div><p>Returns: string of the type &quot;+ntik key&quot; for the channel specified</p>
+<div><p>Returns: string of the type “+ntik key” for the channel specified</p>
 <p>Module: irc</p>
 </div></blockquote>
 </div>
 <div class="section" id="jump-server-port-password">
 <h3>jump [server [[+]port [password]]]<a class="headerlink" href="#jump-server-port-password" title="Permalink to this headline">¶</a></h3>
 <blockquote>
-<div><p>Description: jumps to the server specified, or (if none is specified) the next server in the bot's serverlist. If you prefix the port with a plus sign (e.g. +6697), SSL connection will be attempted.</p>
+<div><p>Description: jumps to the server specified, or (if none is specified) the next server in the bot’s serverlist. If you prefix the port with a plus sign (e.g. +6697), SSL connection will be attempted.</p>
 <p>Returns: nothing</p>
 <p>Module: server</p>
 </div></blockquote>
@@ -1229,7 +1363,7 @@ channel's invite list is checked as well.</p>
 <div class="section" id="pushmode-channel-mode-arg">
 <h3>pushmode &lt;channel&gt; &lt;mode&gt; [arg]<a class="headerlink" href="#pushmode-channel-mode-arg" title="Permalink to this headline">¶</a></h3>
 <blockquote>
-<div><p>Description: sends out a channel mode change (ex: pushmode #lame +o goober) through the bot's queuing system. All the mode changes will be sent out at once (combined into one line as much as possible) after the script finishes, or when 'flushmode' is called.</p>
+<div><p>Description: sends out a channel mode change (ex: pushmode #lame +o goober) through the bot’s queuing system. All the mode changes will be sent out at once (combined into one line as much as possible) after the script finishes, or when ‘flushmode’ is called.</p>
 <p>Returns: nothing</p>
 <p>Module: irc</p>
 </div></blockquote>
@@ -1267,7 +1401,7 @@ channel's invite list is checked as well.</p>
 <div class="section" id="setudef-flag-int-str-name">
 <h3>setudef &lt;flag/int/str&gt; &lt;name&gt;<a class="headerlink" href="#setudef-flag-int-str-name" title="Permalink to this headline">¶</a></h3>
 <blockquote>
-<div><p>Description: initializes a user defined channel flag, string or integer setting. You can use it like any other flag/setting. IMPORTANT: Don't forget to reinitialize your flags/settings after a restart, or it'll be lost.</p>
+<div><p>Description: initializes a user defined channel flag, string or integer setting. You can use it like any other flag/setting. IMPORTANT: Don’t forget to reinitialize your flags/settings after a restart, or it’ll be lost.</p>
 <p>Returns: nothing</p>
 <p>Module: channels</p>
 </div></blockquote>
@@ -1316,7 +1450,7 @@ channel's invite list is checked as well.</p>
 <div class="section" id="dccbroadcast-message">
 <h3>dccbroadcast &lt;message&gt;<a class="headerlink" href="#dccbroadcast-message" title="Permalink to this headline">¶</a></h3>
 <blockquote>
-<div><p>Description: sends a message to everyone on the party line across the botnet, in the form of &quot;*** &lt;message&gt;&quot; for local users, &quot;*** (Bot) &lt;message&gt;&quot; for users on other bots with version below 1.8.4, and &quot;(Bot) &lt;message&gt;&quot; for users on other bots with version 1.8.4+ and console log mode 'l' enabled</p>
+<div><p>Description: sends a message to everyone on the party line across the botnet, in the form of “*** &lt;message&gt;” for local users, “*** (Bot) &lt;message&gt;” for users on other bots with version below 1.8.4, and “(Bot) &lt;message&gt;” for users on other bots with version 1.8.4+ and console log mode ‘l’ enabled</p>
 <p>Returns: nothing</p>
 <p>Module: core</p>
 </div></blockquote>
@@ -1340,7 +1474,7 @@ channel's invite list is checked as well.</p>
 <div class="section" id="dccsimul-idx-text">
 <h3>dccsimul &lt;idx&gt; &lt;text&gt;<a class="headerlink" href="#dccsimul-idx-text" title="Permalink to this headline">¶</a></h3>
 <blockquote>
-<div><p>Description: simulates text typed in by the dcc user specified. Note that in v0.9, this only simulated commands; now a command must be preceded by a '.' to be simulated.</p>
+<div><p>Description: simulates text typed in by the dcc user specified. Note that in v0.9, this only simulated commands; now a command must be preceded by a ‘.’ to be simulated.</p>
 <p>Returns: nothing</p>
 <p>Module: core</p>
 </div></blockquote>
@@ -1369,14 +1503,14 @@ channel's invite list is checked as well.</p>
 <div class="section" id="getchan-idx">
 <h3>getchan &lt;idx&gt;<a class="headerlink" href="#getchan-idx" title="Permalink to this headline">¶</a></h3>
 <blockquote>
-<div><p>Returns: the current party line channel for a user on the party line; &quot;0&quot; indicates he's on the group party line, &quot;-1&quot; means he has chat off, and a value from 1 to 99999 is a private channel</p>
+<div><p>Returns: the current party line channel for a user on the party line; “0” indicates he’s on the group party line, “-1” means he has chat off, and a value from 1 to 99999 is a private channel</p>
 <p>Module: core</p>
 </div></blockquote>
 </div>
 <div class="section" id="setchan-idx-channel">
 <h3>setchan &lt;idx&gt; &lt;channel&gt;<a class="headerlink" href="#setchan-idx-channel" title="Permalink to this headline">¶</a></h3>
 <blockquote>
-<div><p>Description: sets a party line user's channel. The party line user is not notified that she is now on a new channel. A channel name can be used (provided it exists).</p>
+<div><p>Description: sets a party line user’s channel. The party line user is not notified that she is now on a new channel. A channel name can be used (provided it exists).</p>
 <p>Returns: nothing</p>
 <p>Module: core</p>
 </div></blockquote>
@@ -1384,23 +1518,23 @@ channel's invite list is checked as well.</p>
 <div class="section" id="console-idx-channel-console-modes">
 <h3>console &lt;idx&gt; [channel] [console-modes]<a class="headerlink" href="#console-idx-channel-console-modes" title="Permalink to this headline">¶</a></h3>
 <blockquote>
-<div><p>Description: changes a dcc user's console mode, either to an absolute mode (like &quot;mpj&quot;) or just adding/removing flags (like &quot;+pj&quot; or &quot;-moc&quot; or &quot;+mp-c&quot;). The user's console channel view can be changed also (as long as the new channel is a valid channel).</p>
-<p>Returns: a list containing the user's (new) channel view and (new) console modes, or nothing if that user isn't currently on the partyline</p>
+<div><p>Description: changes a dcc user’s console mode, either to an absolute mode (like “mpj”) or just adding/removing flags (like “+pj” or “-moc” or “+mp-c”). The user’s console channel view can be changed also (as long as the new channel is a valid channel).</p>
+<p>Returns: a list containing the user’s (new) channel view and (new) console modes, or nothing if that user isn’t currently on the partyline</p>
 <p>Module: core</p>
 </div></blockquote>
 </div>
 <div class="section" id="resetconsole-idx">
 <h3>resetconsole &lt;idx&gt;<a class="headerlink" href="#resetconsole-idx" title="Permalink to this headline">¶</a></h3>
 <blockquote>
-<div><p>Description: changes a dcc user's console mode to the default setting in the configfile.</p>
-<p>Returns: a list containing the user's channel view and (new) console modes, or nothing if that user isn't currently on the partyline</p>
+<div><p>Description: changes a dcc user’s console mode to the default setting in the configfile.</p>
+<p>Returns: a list containing the user’s channel view and (new) console modes, or nothing if that user isn’t currently on the partyline</p>
 <p>Module: core</p>
 </div></blockquote>
 </div>
 <div class="section" id="echo-idx-status">
 <h3>echo &lt;idx&gt; [status]<a class="headerlink" href="#echo-idx-status" title="Permalink to this headline">¶</a></h3>
 <blockquote>
-<div><p>Description: turns a user's echo on or off; the status has to be a 1 or 0</p>
+<div><p>Description: turns a user’s echo on or off; the status has to be a 1 or 0</p>
 <p>Returns: new value of echo for that user (or the current value, if status was omitted)</p>
 <p>Module: core</p>
 </div></blockquote>
@@ -1490,16 +1624,16 @@ channel's invite list is checked as well.</p>
 </colgroup>
 <tbody valign="top">
 <tr class="row-odd"><td>bot</td>
-<td>the bot's botnetnick</td>
+<td>the bot’s botnetnick</td>
 </tr>
 <tr class="row-even"><td>uplink</td>
 <td>the bot the bot is connected to</td>
 </tr>
 <tr class="row-odd"><td>version</td>
-<td>it's current numeric version</td>
+<td>it’s current numeric version</td>
 </tr>
 <tr class="row-even"><td>sharing</td>
-<td>a &quot;+&quot; if the bot is a sharebot; &quot;-&quot; otherwise</td>
+<td>a “+” if the bot is a sharebot; “-” otherwise</td>
 </tr>
 </tbody>
 </table>
@@ -1523,16 +1657,16 @@ channel's invite list is checked as well.</p>
 <div class="section" id="dcclist-type">
 <h3>dcclist [type]<a class="headerlink" href="#dcclist-type" title="Permalink to this headline">¶</a></h3>
 <blockquote>
-<div><p>Returns: a list of active connections, each item in the list is a sublist containing six elements:
-{&lt;idx&gt; &lt;handle&gt; &lt;hostname&gt; &lt;type&gt; {&lt;other&gt;} &lt;timestamp&gt;}.</p>
-<p>The types are: chat, bot, files, file_receiving, file_sending, file_send_pending, script, socket (these are connections that have not yet been put under 'control'), telnet, and server. The timestamp is in unixtime format.</p>
+<div><p>Returns: a list of active connections, each item in the list is a sublist containing seven elements:
+{&lt;idx&gt; &lt;handle&gt; &lt;hostname&gt; &lt;[+]port&gt; &lt;type&gt; {&lt;other&gt;} &lt;timestamp&gt;}.</p>
+<p>The types are: chat, bot, files, file_receiving, file_sending, file_send_pending, script, socket (these are connections that have not yet been put under ‘control’), telnet, and server. The timestamp is in unixtime format.</p>
 <p>Module: core</p>
 </div></blockquote>
 </div>
 <div class="section" id="whom-chan">
 <h3>whom &lt;chan&gt;<a class="headerlink" href="#whom-chan" title="Permalink to this headline">¶</a></h3>
 <blockquote>
-<div><p>Returns: list of people on the botnet who are on that channel. 0 is the default party line. Each item in the list is a sublist with six elements: nickname, bot, hostname, access flag ('-', '&#64;', '+', or '*'), minutes idle, and away message (blank if the user is not away). If you specify * for channel, every user on the botnet is returned with an extra argument indicating the channel the user is on.</p>
+<div><p>Returns: list of people on the botnet who are on that channel. 0 is the default party line. Each item in the list is a sublist with six elements: nickname, bot, hostname, access flag (‘-‘, ‘&#64;’, ‘+’, or ‘*’), minutes idle, and away message (blank if the user is not away). If you specify * for channel, every user on the botnet is returned with an extra argument indicating the channel the user is on.</p>
 <p>Module: core</p>
 </div></blockquote>
 </div>
@@ -1546,14 +1680,14 @@ channel's invite list is checked as well.</p>
 <div class="section" id="getdccaway-idx">
 <h3>getdccaway &lt;idx&gt;<a class="headerlink" href="#getdccaway-idx" title="Permalink to this headline">¶</a></h3>
 <blockquote>
-<div><p>Returns: away message for a dcc chat user (or &quot;&quot; if the user is not set away)</p>
+<div><p>Returns: away message for a dcc chat user (or “” if the user is not set away)</p>
 <p>Module: core</p>
 </div></blockquote>
 </div>
 <div class="section" id="setdccaway-idx-message">
 <h3>setdccaway &lt;idx&gt; &lt;message&gt;<a class="headerlink" href="#setdccaway-idx-message" title="Permalink to this headline">¶</a></h3>
 <blockquote>
-<div><p>Description: sets a party line user's away message and marks them away. If set to &quot;&quot;, the user is marked as no longer away.</p>
+<div><p>Description: sets a party line user’s away message and marks them away. If set to “”, the user is marked as no longer away.</p>
 <p>Returns: nothing</p>
 <p>Module: core</p>
 </div></blockquote>
@@ -1561,37 +1695,37 @@ channel's invite list is checked as well.</p>
 <div class="section" id="connect-host-port">
 <h3>connect &lt;host&gt; &lt;[+]port&gt;<a class="headerlink" href="#connect-host-port" title="Permalink to this headline">¶</a></h3>
 <blockquote>
-<div><p>Description: makes an outgoing connection attempt and creates a dcc entry for it. A 'control' command should be used immediately after a successful 'connect' so no input is lost. If the port is prefixed with a plus sign, SSL encrypted connection will be attempted.</p>
+<div><p>Description: makes an outgoing connection attempt and creates a dcc entry for it. A ‘control’ command should be used immediately after a successful ‘connect’ so no input is lost. If the port is prefixed with a plus sign, SSL encrypted connection will be attempted.</p>
 <p>Returns: idx of the new connection</p>
 <p>Module: core</p>
 </div></blockquote>
 </div>
-<div class="section" id="listen-port-type-options-flag">
-<h3>listen &lt;port&gt; &lt;type&gt; [options] [flag]<a class="headerlink" href="#listen-port-type-options-flag" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="listen-ip-port-type-options-flag">
+<h3>listen [ip] &lt;port&gt; &lt;type&gt; [options [flag]]<a class="headerlink" href="#listen-ip-port-type-options-flag" title="Permalink to this headline">¶</a></h3>
 <blockquote>
-<div><p>Description: opens a listening port to accept incoming telnets; type must be one of &quot;bots&quot;, &quot;all&quot;, &quot;users&quot;, &quot;script&quot;, or &quot;off&quot;. Prefixing the port with a plus sign will make eggdrop accept SSL connections on it.</p>
+<div><p>Description: opens a listening port to accept incoming telnets; type must be one of “bots”, “all”, “users”, “script”, or “off”. Prefixing the port with a plus sign will make eggdrop accept SSL connections on it. An IP may optionally be listed before the mandatory port argument. If no IP is specified, all available interfaces are used.</p>
 <blockquote>
-<div><p>listen &lt;port&gt; bots [mask]</p>
+<div><p>listen [ip] &lt;port&gt; bots [mask]</p>
 <blockquote>
-<div><p>Description: accepts connections from bots only; the optional mask is used to identify permitted bot names. If the mask begins with '&#64;', it is interpreted to be a mask of permitted hosts to accept connections from.</p>
-<p>Returns: port number</p>
+<div><p>Description: accepts connections from bots only; the optional mask is used to identify permitted bot names. If the mask begins with ‘&#64;’, it is interpreted to be a mask of permitted hosts to accept connections from.</p>
+<p>Returns: port number or error message</p>
 </div></blockquote>
-<p>listen &lt;port&gt; users [mask]</p>
+<p>listen [ip] &lt;port&gt; users [mask]</p>
 <blockquote>
-<div><p>Description: accepts connections from users only (no bots); the optional mask is used to identify permitted nicknames. If the mask begins with '&#64;', it is interpreted to be a mask of permitted hosts to accept connections from.</p>
-<p>Returns: port number</p>
+<div><p>Description: accepts connections from users only (no bots); the optional mask is used to identify permitted nicknames. If the mask begins with ‘&#64;’, it is interpreted to be a mask of permitted hosts to accept connections from.</p>
+<p>Returns: port number or error message</p>
 </div></blockquote>
-<p>listen &lt;port&gt; all [mask]</p>
+<p>listen [ip] &lt;port&gt; all [mask]</p>
 <blockquote>
-<div><p>Description: accepts connections from anyone; the optional mask is used to identify permitted nicknames/botnames. If the mask begins with '&#64;', it is interpreted to be a mask of permitted hosts to accept connections from.</p>
-<p>Returns: port number</p>
+<div><p>Description: accepts connections from anyone; the optional mask is used to identify permitted nicknames/botnames. If the mask begins with ‘&#64;’, it is interpreted to be a mask of permitted hosts to accept connections from.</p>
+<p>Returns: port number or error message</p>
 </div></blockquote>
-<p>listen &lt;port&gt; script &lt;proc&gt; [flag]</p>
+<p>listen [ip] &lt;port&gt; script &lt;proc&gt; &lt;flag&gt;</p>
 <blockquote>
-<div><p>Description: accepts connections which are immediately routed to a proc. The proc is called with one parameter: the idx of the new connection. Flag may currently only be 'pub', which makes the bot allow anyone to connect and not perform an ident lookup.</p>
-<p>Returns: port number</p>
+<div><p>Description: accepts connections which are immediately routed to a proc. The proc is called with one parameter: the idx of the new connection. If the script type is used, flag must also be set. Flag may currently only be ‘pub’, which makes the bot allow anyone to connect and not perform an ident lookup.</p>
+<p>Returns: port number or error message</p>
 </div></blockquote>
-<p>listen &lt;port&gt; off</p>
+<p>listen [ip] &lt;port&gt; off</p>
 <blockquote>
 <div><p>Description: stop listening on a port</p>
 <p>Returns: nothing</p>
@@ -1603,7 +1737,7 @@ channel's invite list is checked as well.</p>
 <div class="section" id="dccdumpfile-idx-filename">
 <h3>dccdumpfile &lt;idx&gt; &lt;filename&gt;<a class="headerlink" href="#dccdumpfile-idx-filename" title="Permalink to this headline">¶</a></h3>
 <blockquote>
-<div><p>Description: dumps out a file from the text directory to a dcc chat user. The flag matching that's used everywhere else works here, too.</p>
+<div><p>Description: dumps out a file from the text directory to a dcc chat user. The flag matching that’s used everywhere else works here, too.</p>
 <p>Returns: nothing</p>
 <p>Module: core</p>
 </div></blockquote>
@@ -1615,7 +1749,7 @@ channel's invite list is checked as well.</p>
 <h3>notes &lt;user&gt; [numberlist]<a class="headerlink" href="#notes-user-numberlist" title="Permalink to this headline">¶</a></h3>
 <blockquote>
 <div><p>Returns: -1 if no such user, -2 if notefile failure. If a numberlist is not specified, the number of notes stored for the user is returned. Otherwise, a list of sublists containing information about notes stored for the user is returned. Each sublist is in the format of:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="p">{</span><span class="o">&lt;</span><span class="n">from</span><span class="o">&gt;</span> <span class="o">&lt;</span><span class="n">timestamp</span><span class="o">&gt;</span> <span class="o">&lt;</span><span class="n">note</span> <span class="n">text</span><span class="o">&gt;</span><span class="p">}</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">{</span><span class="o">&lt;</span><span class="n">from</span><span class="o">&gt;</span> <span class="o">&lt;</span><span class="n">timestamp</span><span class="o">&gt;</span> <span class="o">&lt;</span><span class="n">note</span> <span class="n">text</span><span class="o">&gt;</span><span class="p">}</span>
 </pre></div>
 </div>
 <p>Module: notes</p>
@@ -1624,7 +1758,7 @@ channel's invite list is checked as well.</p>
 <div class="section" id="erasenotes-user-numberlist">
 <h3>erasenotes &lt;user&gt; &lt;numberlist&gt;<a class="headerlink" href="#erasenotes-user-numberlist" title="Permalink to this headline">¶</a></h3>
 <blockquote>
-<div><p>Description: erases some or all stored notes for a user. Use '-' to erase all notes.</p>
+<div><p>Description: erases some or all stored notes for a user. Use ‘-‘ to erase all notes.</p>
 <p>Returns: -1 if no such user, -2 if notefile failure, 0 if no such note, or number of erased notes.</p>
 <p>Module: notes</p>
 </div></blockquote>
@@ -1632,7 +1766,7 @@ channel's invite list is checked as well.</p>
 <div class="section" id="listnotes-user-numberlist">
 <h3>listnotes &lt;user&gt; &lt;numberlist&gt;<a class="headerlink" href="#listnotes-user-numberlist" title="Permalink to this headline">¶</a></h3>
 <blockquote>
-<div><p>Description: lists existing notes according to the numberlist (ex: &quot;2-4;8;16-&quot;)</p>
+<div><p>Description: lists existing notes according to the numberlist (ex: “2-4;8;16-“)</p>
 <p>Returns: -1 if no such user, -2 if notefile failure, 0 if no such note, list of existing notes.</p>
 <p>Module: notes</p>
 </div></blockquote>
@@ -1659,7 +1793,7 @@ channel's invite list is checked as well.</p>
 <div class="section" id="killassoc-chan">
 <h3>killassoc &lt;chan&gt;<a class="headerlink" href="#killassoc-chan" title="Permalink to this headline">¶</a></h3>
 <blockquote>
-<div><p>Description: removes the name associated with a botnet channel, if any exists. Use 'killassoc &amp;' to kill all assocs.</p>
+<div><p>Description: removes the name associated with a botnet channel, if any exists. Use ‘killassoc &amp;’ to kill all assocs.</p>
 <p>Returns: nothing</p>
 <p>Module: assoc</p>
 </div></blockquote>
@@ -1675,7 +1809,7 @@ channel's invite list is checked as well.</p>
 <div class="section" id="uncompressfile-src-file-target-file">
 <h4>uncompressfile &lt;src-file&gt; [target-file]<a class="headerlink" href="#uncompressfile-src-file-target-file" title="Permalink to this headline">¶</a></h4>
 <blockquote>
-<div><p>Description: compresses or un-compresses files. The level option specifies the compression mode to use when compressing. Available modes are from 0 (minimum CPU usage, minimum compression) all the way up to 9 (maximum CPU usage, maximum compression). If you don't specify the target-file, the src-file will be overwritten.</p>
+<div><p>Description: compresses or un-compresses files. The level option specifies the compression mode to use when compressing. Available modes are from 0 (minimum CPU usage, minimum compression) all the way up to 9 (maximum CPU usage, maximum compression). If you don’t specify the target-file, the src-file will be overwritten.</p>
 <p>Returns: nothing</p>
 <p>Module: compress</p>
 </div></blockquote>
@@ -1685,7 +1819,7 @@ channel's invite list is checked as well.</p>
 <h3>iscompressed &lt;filename&gt;<a class="headerlink" href="#iscompressed-filename" title="Permalink to this headline">¶</a></h3>
 <blockquote>
 <div><p>Description: determines whether &lt;filename&gt; is gzip compressed.</p>
-<p>Returns: 1 if it is, 0 if it isn't, and 2 if some kind of error prevented the checks from succeeding.</p>
+<p>Returns: 1 if it is, 0 if it isn’t, and 2 if some kind of error prevented the checks from succeeding.</p>
 <p>Module: compress</p>
 </div></blockquote>
 </div>
@@ -1695,7 +1829,7 @@ channel's invite list is checked as well.</p>
 <div class="section" id="setpwd-idx-dir">
 <h3>setpwd &lt;idx&gt; &lt;dir&gt;<a class="headerlink" href="#setpwd-idx-dir" title="Permalink to this headline">¶</a></h3>
 <blockquote>
-<div><p>Description: changes the directory of a file system user, in exactly the same way as a 'cd' command would. The directory can be specified relative or absolute.</p>
+<div><p>Description: changes the directory of a file system user, in exactly the same way as a ‘cd’ command would. The directory can be specified relative or absolute.</p>
 <p>Returns: nothing</p>
 <p>Module: filesys</p>
 </div></blockquote>
@@ -1724,7 +1858,7 @@ channel's invite list is checked as well.</p>
 <div class="section" id="dccsend-filename-ircnick">
 <h3>dccsend &lt;filename&gt; &lt;ircnick&gt;<a class="headerlink" href="#dccsend-filename-ircnick" title="Permalink to this headline">¶</a></h3>
 <blockquote>
-<div><p>Description: attempts to start a dcc file transfer to the given nick; the filename must be specified either by full pathname or in relation to the bot's startup directory</p>
+<div><p>Description: attempts to start a dcc file transfer to the given nick; the filename must be specified either by full pathname or in relation to the bot’s startup directory</p>
 <p>Returns:</p>
 <table border="1" class="docutils">
 <colgroup>
@@ -1739,10 +1873,10 @@ channel's invite list is checked as well.</p>
 <td>the dcc table is full (too many connections)</td>
 </tr>
 <tr class="row-odd"><td>2</td>
-<td>can't open a socket for the transfer</td>
+<td>can’t open a socket for the transfer</td>
 </tr>
 <tr class="row-even"><td>3</td>
-<td>the file doesn't exist</td>
+<td>the file doesn’t exist</td>
 </tr>
 <tr class="row-odd"><td>4</td>
 <td>the file was queued for later transfer, which means that person has
@@ -1760,7 +1894,7 @@ directory</td>
 <div class="section" id="filesend-idx-filename-ircnick">
 <h3>filesend &lt;idx&gt; &lt;filename&gt; [ircnick]<a class="headerlink" href="#filesend-idx-filename-ircnick" title="Permalink to this headline">¶</a></h3>
 <blockquote>
-<div><p>Description: like dccsend, except it operates for a current filesystem user, and the filename is assumed to be a relative path from that user's current directory</p>
+<div><p>Description: like dccsend, except it operates for a current filesystem user, and the filename is assumed to be a relative path from that user’s current directory</p>
 <p>Returns: 0 on failure; 1 on success (either an immediate send or a queued send)</p>
 <p>Module: filesys</p>
 </div></blockquote>
@@ -1861,7 +1995,7 @@ directory</td>
 <td>success</td>
 </tr>
 <tr class="row-even"><td>1</td>
-<td>can't create directory</td>
+<td>can’t create directory</td>
 </tr>
 <tr class="row-odd"><td>2</td>
 <td>directory exists but is not a directory</td>
@@ -1959,7 +2093,7 @@ directory</td>
 <div class="section" id="bind-type-flags-keyword-mask-proc-name">
 <h3>bind &lt;type&gt; &lt;flags&gt; &lt;keyword/mask&gt; [proc-name]<a class="headerlink" href="#bind-type-flags-keyword-mask-proc-name" title="Permalink to this headline">¶</a></h3>
 <blockquote>
-<div><p>Description: You can use the 'bind' command to attach Tcl procedures to certain events. flags are the flags the user must have to trigger the event (if applicable). proc-name is the name of the Tcl procedure to call for this command (see below for the format of the procedure call). If the proc-name is omitted, no binding is added. Instead, the current binding is returned (if it's stackable, a list of the current bindings is returned).</p>
+<div><p>Description: You can use the ‘bind’ command to attach Tcl procedures to certain events. flags are the flags the user must have to trigger the event (if applicable). proc-name is the name of the Tcl procedure to call for this command (see below for the format of the procedure call). If the proc-name is omitted, no binding is added. Instead, the current binding is returned (if it’s stackable, a list of the current bindings is returned).</p>
 <p>Returns: name of the command that was added, or (if proc-name was omitted), a list of the current bindings for this command</p>
 <p>Module: core</p>
 </div></blockquote>
@@ -1985,7 +2119,7 @@ directory</td>
 <div class="section" id="logfile-modes-channel-filename">
 <h3>logfile [&lt;modes&gt; &lt;channel&gt; &lt;filename&gt;]<a class="headerlink" href="#logfile-modes-channel-filename" title="Permalink to this headline">¶</a></h3>
 <blockquote>
-<div><p>Description: creates a new logfile, which will log the modes given for the channel listed. If no logfile is specified, a list of existing logfiles will be returned. &quot;*&quot; indicates all channels. You can also change the modes and channel of an existing logfile with this command. Entering a blank mode and channel (&quot;&quot;) makes the bot stop logging there.</p>
+<div><p>Description: creates a new logfile, which will log the modes given for the channel listed. If no logfile is specified, a list of existing logfiles will be returned. “*” indicates all channels. You can also change the modes and channel of an existing logfile with this command. Entering a blank mode and channel (“”) makes the bot stop logging there.</p>
 <p>Logfile flags:</p>
 <table border="1" class="docutils">
 <colgroup>
@@ -2098,16 +2232,16 @@ directory</td>
 </table>
 <p>You can also specify types from 10 to 19 which correspond to types
 0 to 9, but instead of using a * wildcard to replace portions of the
-host, only numbers in hostnames are replaced with the '?' wildcard.
-Same is valid for types 20-29, but instead of '?', the '*' wildcard
-will be used. Types 30-39 set the host to '*'.</p>
+host, only numbers in hostnames are replaced with the ‘?’ wildcard.
+Same is valid for types 20-29, but instead of ‘?’, the ‘*’ wildcard
+will be used. Types 30-39 set the host to ‘*’.</p>
 <p>Module: core</p>
 </div></blockquote>
 </div>
 <div class="section" id="timer-minutes-tcl-command-count">
 <h3>timer &lt;minutes&gt; &lt;tcl-command&gt; [count]<a class="headerlink" href="#timer-minutes-tcl-command-count" title="Permalink to this headline">¶</a></h3>
 <blockquote>
-<div><p>Description: executes the given Tcl command after a certain number of minutes have passed, at the top of the minute (ie, if a timer is started at 10:03:34 with 1 minute specified, it will execute at 10:04:00. If a timer is started at 10:06:34 with 2 minutes specified, it will execute at 10:08:00). If count is specified, the command will be executed count times with the given interval in between. If you specify a count of 0, the timer will repeat until it's removed with killtimer or until the bot is restarted.</p>
+<div><p>Description: executes the given Tcl command after a certain number of minutes have passed, at the top of the minute (ie, if a timer is started at 10:03:34 with 1 minute specified, it will execute at 10:04:00. If a timer is started at 10:06:34 with 2 minutes specified, it will execute at 10:08:00). If count is specified, the command will be executed count times with the given interval in between. If you specify a count of 0, the timer will repeat until it’s removed with killtimer or until the bot is restarted.</p>
 <p>Returns: a timerID</p>
 <p>Module: core</p>
 </div></blockquote>
@@ -2115,7 +2249,7 @@ will be used. Types 30-39 set the host to '*'.</p>
 <div class="section" id="utimer-seconds-tcl-command-count">
 <h3>utimer &lt;seconds&gt; &lt;tcl-command&gt; [count]<a class="headerlink" href="#utimer-seconds-tcl-command-count" title="Permalink to this headline">¶</a></h3>
 <blockquote>
-<div><p>Description: executes the given Tcl command after a certain number of seconds have passed. If count is specified, the command will be executed count times with the given interval in between. If you specify a count of 0, the utimer will repeat until it's removed with killutimer or until the bot is restarted.</p>
+<div><p>Description: executes the given Tcl command after a certain number of seconds have passed. If count is specified, the command will be executed count times with the given interval in between. If you specify a count of 0, the utimer will repeat until it’s removed with killutimer or until the bot is restarted.</p>
 <p>Returns: a timerID</p>
 <p>Module: core</p>
 </div></blockquote>
@@ -2174,14 +2308,14 @@ will be used. Types 30-39 set the host to '*'.</p>
 <div class="section" id="ctime-unixtime">
 <h3>ctime &lt;unixtime&gt;<a class="headerlink" href="#ctime-unixtime" title="Permalink to this headline">¶</a></h3>
 <blockquote>
-<div><p>Returns: a formatted date/time string based on the current locale settings from the unixtime string given; for example &quot;Fri Aug 3 11:34:55 1973&quot;</p>
+<div><p>Returns: a formatted date/time string based on the current locale settings from the unixtime string given; for example “Fri Aug 3 11:34:55 1973”</p>
 <p>Module: core</p>
 </div></blockquote>
 </div>
 <div class="section" id="myip">
 <h3>myip<a class="headerlink" href="#myip" title="Permalink to this headline">¶</a></h3>
 <blockquote>
-<div><p>Returns: a long number representing the bot's IP address, as it might appear in (for example) a DCC request</p>
+<div><p>Returns: a long number representing the bot’s IP address, as it might appear in (for example) a DCC request</p>
 <p>Module: core</p>
 </div></blockquote>
 </div>
@@ -2195,7 +2329,7 @@ will be used. Types 30-39 set the host to '*'.</p>
 <div class="section" id="control-idx-command">
 <h3>control &lt;idx&gt; &lt;command&gt;<a class="headerlink" href="#control-idx-command" title="Permalink to this headline">¶</a></h3>
 <blockquote>
-<div><p>Description: removes an idx from the party line and sends all future input to the Tcl command given. The command will be called with two parameters: the idx and the input text. The command should return 0 to indicate success and 1 to indicate that it relinquishes control of the user back to the bot. If the input text is blank (&quot;&quot;), it indicates that the connection has been dropped. Also, if the input text is blank, never call killdcc on it, as it will fail with &quot;invalid idx&quot;.</p>
+<div><p>Description: removes an idx from the party line and sends all future input to the Tcl command given. The command will be called with two parameters: the idx and the input text. The command should return 0 to indicate success and 1 to indicate that it relinquishes control of the user back to the bot. If the input text is blank (“”), it indicates that the connection has been dropped. Also, if the input text is blank, never call killdcc on it, as it will fail with “invalid idx”.</p>
 <p>Returns: nothing</p>
 <p>Module: core</p>
 </div></blockquote>
@@ -2221,7 +2355,7 @@ will be used. Types 30-39 set the host to '*'.</p>
 <td>the note was stored locally</td>
 </tr>
 <tr class="row-even"><td>3</td>
-<td>the user's notebox is too full to store a note</td>
+<td>the user’s notebox is too full to store a note</td>
 </tr>
 <tr class="row-odd"><td>4</td>
 <td>a Tcl binding caught the note</td>
@@ -2253,14 +2387,14 @@ will be used. Types 30-39 set the host to '*'.</p>
 <div class="section" id="encrypt-key-string">
 <h3>encrypt &lt;key&gt; &lt;string&gt;<a class="headerlink" href="#encrypt-key-string" title="Permalink to this headline">¶</a></h3>
 <blockquote>
-<div><p>Returns: encrypted string (using the currently loaded encryption module), encoded into ASCII using base-64. As of v1.8.4, the default blowfish encryption module can use either the older ECB mode (currently used by default for compatibility reasons), or the more recent and more-secure CBC mode. You can explicitly request which encryption mode to use by prefixing the encryption key with either &quot;ecb:&quot; or &quot;cbc:&quot;, or by using the blowfish-use-mode setting in the config file. Note: the default encryption mode for this function is planned to transition from ECB to CBC in v1.9.0.</p>
+<div><p>Returns: encrypted string (using the currently loaded encryption module), encoded into ASCII using base-64. As of v1.8.4, the default blowfish encryption module can use either the older ECB mode (currently used by default for compatibility reasons), or the more recent and more-secure CBC mode. You can explicitly request which encryption mode to use by prefixing the encryption key with either “ecb:” or “cbc:”, or by using the blowfish-use-mode setting in the config file. Note: the default encryption mode for this function is planned to transition from ECB to CBC in v1.9.0.</p>
 <p>Module: encryption</p>
 </div></blockquote>
 </div>
 <div class="section" id="decrypt-key-encrypted-base64-string">
 <h3>decrypt &lt;key&gt; &lt;encrypted-base64-string&gt;<a class="headerlink" href="#decrypt-key-encrypted-base64-string" title="Permalink to this headline">¶</a></h3>
 <blockquote>
-<div><p>Returns: decrypted string (using the currently loaded encryption module). If the default blowfish encryption module is used, this automatically picks the right decryption mode. You may still prefix the key with &quot;ecb:&quot; or &quot;cbc:&quot; or use the blowfish-use-mode setting in the config file (see the encrypt command for more detailed information).</p>
+<div><p>Returns: decrypted string (using the currently loaded encryption module). If the default blowfish encryption module is used, this automatically picks the right decryption mode. You may still prefix the key with “ecb:” or “cbc:” or use the blowfish-use-mode setting in the config file (see the encrypt command for more detailed information).</p>
 <p>Module: encryption</p>
 </div></blockquote>
 </div>
@@ -2274,7 +2408,7 @@ will be used. Types 30-39 set the host to '*'.</p>
 <div class="section" id="die-reason">
 <h3>die [reason]<a class="headerlink" href="#die-reason" title="Permalink to this headline">¶</a></h3>
 <blockquote>
-<div><p>Description: causes the bot to log a fatal error and exit completely. If no reason is given, &quot;EXIT&quot; is used.</p>
+<div><p>Description: causes the bot to log a fatal error and exit completely. If no reason is given, “EXIT” is used.</p>
 <p>Returns: none</p>
 <p>Module: core</p>
 </div></blockquote>
@@ -2287,13 +2421,13 @@ will be used. Types 30-39 set the host to '*'.</p>
 </div></blockquote>
 </div>
 <div class="section" id="dnslookup-ip-address-hostname-proc-arg1-arg2-argn">
-<h3>dnslookup &lt;ip-address/hostname&gt; &lt;proc&gt; [[arg1] [arg2] ... [argN]]<a class="headerlink" href="#dnslookup-ip-address-hostname-proc-arg1-arg2-argn" title="Permalink to this headline">¶</a></h3>
+<h3>dnslookup &lt;ip-address/hostname&gt; &lt;proc&gt; [[arg1] [arg2] … [argN]]<a class="headerlink" href="#dnslookup-ip-address-hostname-proc-arg1-arg2-argn" title="Permalink to this headline">¶</a></h3>
 <blockquote>
 <div><p>Description: This issues an asynchronous dns lookup request. The command will block if dns module is not loaded; otherwise it will either return immediately or immediately call the specified proc (e.g. if the lookup is already cached).</p>
 <p>As soon as the request completes, the specified proc will be called as follows:</p>
 <blockquote>
-<div>&lt;proc&gt; &lt;ipaddress&gt; &lt;hostname&gt; &lt;status&gt; [[arg1] [arg2] ... [argN]]</div></blockquote>
-<p>status is 1 if the lookup was successful and 0 if it wasn't. All additional parameters (called arg1, arg2 and argN above) get appended to the proc's other parameters.</p>
+<div>&lt;proc&gt; &lt;ipaddress&gt; &lt;hostname&gt; &lt;status&gt; [[arg1] [arg2] … [argN]]</div></blockquote>
+<p>status is 1 if the lookup was successful and 0 if it wasn’t. All additional parameters (called arg1, arg2 and argN above) get appended to the proc’s other parameters.</p>
 <p>Returns: nothing</p>
 <p>Module: core</p>
 </div></blockquote>
@@ -2316,14 +2450,14 @@ will be used. Types 30-39 set the host to '*'.</p>
 <div class="section" id="traffic">
 <h3>traffic<a class="headerlink" href="#traffic" title="Permalink to this headline">¶</a></h3>
 <blockquote>
-<div><p>Returns: a list of sublists containing information about the bot's traffic usage in bytes. Each sublist contains five elements: type, in-traffic today, in-traffic total, out-traffic today, out-traffic total (in that order).</p>
+<div><p>Returns: a list of sublists containing information about the bot’s traffic usage in bytes. Each sublist contains five elements: type, in-traffic today, in-traffic total, out-traffic today, out-traffic total (in that order).</p>
 <p>Module: core</p>
 </div></blockquote>
 </div>
 <div class="section" id="modules">
 <h3>modules<a class="headerlink" href="#modules" title="Permalink to this headline">¶</a></h3>
 <blockquote>
-<div><p>Returns: a list of sublists containing information about the bot's currently loaded modules. Each sublist contains three elements: module, version, and dependencies. Each dependency is also a sublist containing the module name and version.</p>
+<div><p>Returns: a list of sublists containing information about the bot’s currently loaded modules. Each sublist contains three elements: module, version, and dependencies. Each dependency is also a sublist containing the module name and version.</p>
 <p>Module: core</p>
 </div></blockquote>
 </div>
@@ -2331,7 +2465,7 @@ will be used. Types 30-39 set the host to '*'.</p>
 <h3>loadmodule &lt;module&gt;<a class="headerlink" href="#loadmodule-module" title="Permalink to this headline">¶</a></h3>
 <blockquote>
 <div><p>Description: attempts to load the specified module.</p>
-<p>Returns: &quot;Already loaded.&quot; if the module is already loaded, &quot;&quot; if successful, or the reason the module couldn't be loaded.</p>
+<p>Returns: “Already loaded.” if the module is already loaded, “” if successful, or the reason the module couldn’t be loaded.</p>
 <p>Module: core</p>
 </div></blockquote>
 </div>
@@ -2339,7 +2473,7 @@ will be used. Types 30-39 set the host to '*'.</p>
 <h3>unloadmodule &lt;module&gt;<a class="headerlink" href="#unloadmodule-module" title="Permalink to this headline">¶</a></h3>
 <blockquote>
 <div><p>Description: attempts to unload the specified module.</p>
-<p>Returns: &quot;No such module&quot; if the module is not loaded, &quot;&quot; otherwise.</p>
+<p>Returns: “No such module” if the module is not loaded, “” otherwise.</p>
 <p>Module: core</p>
 </div></blockquote>
 </div>
@@ -2362,7 +2496,7 @@ will be used. Types 30-39 set the host to '*'.</p>
 <div class="section" id="reloadhelp">
 <h3>reloadhelp<a class="headerlink" href="#reloadhelp" title="Permalink to this headline">¶</a></h3>
 <blockquote>
-<div><p>Description: reloads the bot's help files.</p>
+<div><p>Description: reloads the bot’s help files.</p>
 <p>Returns: nothing</p>
 <p>Module: core</p>
 </div></blockquote>
@@ -2446,8 +2580,8 @@ will be used. Types 30-39 set the host to '*'.</p>
 <div class="section" id="matchstr-pattern-string">
 <h3>matchstr &lt;pattern&gt; &lt;string&gt;<a class="headerlink" href="#matchstr-pattern-string" title="Permalink to this headline">¶</a></h3>
 <blockquote>
-<div><p>Description: checks if pattern matches string. Only two wildcards are supported: '*' and '?'. Matching is case-insensitive. This command is intended as a simplified alternative to Tcl's string match.</p>
-<p>Returns: 1 if the pattern matches the string, 0 if it doesn't.</p>
+<div><p>Description: checks if pattern matches string. Only two wildcards are supported: ‘*’ and ‘?’. Matching is case-insensitive. This command is intended as a simplified alternative to Tcl’s string match.</p>
+<p>Returns: 1 if the pattern matches the string, 0 if it doesn’t.</p>
 <p>Module: core</p>
 </div></blockquote>
 </div>
@@ -2483,7 +2617,7 @@ will be used. Types 30-39 set the host to '*'.</p>
 </tr>
 </tbody>
 </table>
-<p>Returns: the requested information type or all information if type isn't specified. The format is a flat list of name-value pairs.</p>
+<p>Returns: the requested information type or all information if type isn’t specified. The format is a flat list of name-value pairs.</p>
 <p>Module: core</p>
 </div></blockquote>
 </div>
@@ -2491,7 +2625,7 @@ will be used. Types 30-39 set the host to '*'.</p>
 <h3>istls &lt;idx&gt;<a class="headerlink" href="#istls-idx" title="Permalink to this headline">¶</a></h3>
 <blockquote>
 <div><p>Description: checks if a connection is encrypted or cleartext. This command is available on TLS-enabled bots only.</p>
-<p>Returns: 1 if the idx is a TLS connection, 0 if it's plaintext.</p>
+<p>Returns: 1 if the idx is a TLS connection, 0 if it’s plaintext.</p>
 <p>Module: core</p>
 </div></blockquote>
 </div>
@@ -2518,42 +2652,42 @@ will be used. Types 30-39 set the host to '*'.</p>
 <div class="section" id="botnick">
 <h3>botnick<a class="headerlink" href="#botnick" title="Permalink to this headline">¶</a></h3>
 <blockquote>
-<div><p>Value: the current nickname the bot is using (for example: &quot;Valis&quot;, &quot;Valis0&quot;, etc.)</p>
+<div><p>Value: the current nickname the bot is using (for example: “Valis”, “Valis0”, etc.)</p>
 <p>Module: server</p>
 </div></blockquote>
 </div>
 <div class="section" id="botname">
 <h3>botname<a class="headerlink" href="#botname" title="Permalink to this headline">¶</a></h3>
 <blockquote>
-<div><p>Value: the current nick!user&#64;host that the server sees (for example: &quot;Valis!valis&#64;crappy.com&quot;)</p>
+<div><p>Value: the current nick!user&#64;host that the server sees (for example: “Valis!valis&#64;crappy.com”)</p>
 <p>Module: server</p>
 </div></blockquote>
 </div>
 <div class="section" id="server">
 <h3>server<a class="headerlink" href="#server" title="Permalink to this headline">¶</a></h3>
 <blockquote>
-<div><p>Value: the current server's real name (what server calls itself) and port bot is connected to (for example: &quot;irc.math.ufl.edu:6667&quot;) Note that this does not necessarily match the servers internet address.</p>
+<div><p>Value: the current server’s real name (what server calls itself) and port bot is connected to (for example: “irc.math.ufl.edu:6667”) Note that this does not necessarily match the servers internet address.</p>
 <p>Module: server</p>
 </div></blockquote>
 </div>
 <div class="section" id="serveraddress">
 <h3>serveraddress<a class="headerlink" href="#serveraddress" title="Permalink to this headline">¶</a></h3>
 <blockquote>
-<div><p>Value: the current server's internet address (hostname or IP) and port bot is connected to. This will correspond to the entry in server list (for example: &quot;eu.undernet.org:6667&quot;). Note that this does not necessarily match the name server calls itself.</p>
+<div><p>Value: the current server’s internet address (hostname or IP) and port bot is connected to. This will correspond to the entry in server list (for example: “eu.undernet.org:6667”). Note that this does not necessarily match the name server calls itself.</p>
 <p>Module: server</p>
 </div></blockquote>
 </div>
 <div class="section" id="version">
 <h3>version<a class="headerlink" href="#version" title="Permalink to this headline">¶</a></h3>
 <blockquote>
-<div><p>Value: current bot version &quot;1.1.2+pl1 1010201&quot;; first item is the text version, to include a patch string if present, and second item is a numerical version</p>
+<div><p>Value: current bot version “1.1.2+pl1 1010201”; first item is the text version, to include a patch string if present, and second item is a numerical version</p>
 <p>Module: core</p>
 </div></blockquote>
 </div>
 <div class="section" id="numversion">
 <h3>numversion*<a class="headerlink" href="#numversion" title="Permalink to this headline">¶</a></h3>
 <blockquote>
-<div><p>Value: the current numeric bot version (for example: &quot;1010201&quot;). Numerical version is in the format of &quot;MNNRRPP&quot;, where:</p>
+<div><p>Value: the current numeric bot version (for example: “1010201”). Numerical version is in the format of “MNNRRPP”, where:</p>
 <table border="1" class="docutils">
 <colgroup>
 <col width="13%" />
@@ -2601,7 +2735,7 @@ will be used. Types 30-39 set the host to '*'.</p>
 <div class="section" id="isjuped">
 <h3>isjuped<a class="headerlink" href="#isjuped" title="Permalink to this headline">¶</a></h3>
 <blockquote>
-<div><p>Value: 1 if bot's nick is juped(437); 0 otherwise</p>
+<div><p>Value: 1 if bot’s nick is juped(437); 0 otherwise</p>
 <p>Module: server</p>
 </div></blockquote>
 </div>
@@ -2626,23 +2760,30 @@ will be used. Types 30-39 set the host to '*'.</p>
 <p>Module: core</p>
 </div></blockquote>
 </div>
+<div class="section" id="language">
+<h3>language<a class="headerlink" href="#language" title="Permalink to this headline">¶</a></h3>
+<blockquote>
+<div><p>Value: a string containing the language with the highest priority for use by Eggdrop. This commonly reflects what is added with addlang in the config file</p>
+<p>Module: core</p>
+</div></blockquote>
+</div>
 </div>
 <div class="section" id="binds">
 <h2>Binds<a class="headerlink" href="#binds" title="Permalink to this headline">¶</a></h2>
-<p>You can use the 'bind' command to attach Tcl procedures to certain events.
+<p>You can use the ‘bind’ command to attach Tcl procedures to certain events.
 For example, you can write a Tcl procedure that gets called every time a
-user says &quot;danger&quot; on the channel.</p>
-<p>Some bind types are marked as &quot;stackable&quot;. That means that you can bind
+user says “danger” on the channel.</p>
+<p>Some bind types are marked as “stackable”. That means that you can bind
 multiple commands to the same trigger. Normally, for example, a bind such
-as 'bind msg - stop msg:stop' (which makes a msg-command &quot;stop&quot; call the
-Tcl proc &quot;msg:stop&quot;) will overwrite any previous binding you had for the
-msg command &quot;stop&quot;. With stackable bindings, like 'msgm' for example,
+as ‘bind msg - stop msg:stop’ (which makes a msg-command “stop” call the
+Tcl proc “msg:stop”) will overwrite any previous binding you had for the
+msg command “stop”. With stackable bindings, like ‘msgm’ for example,
 you can bind the same command to multiple procs. When the bind is triggered,
 ALL of the Tcl procs that are bound to it will be called. Raw binds are
 triggered before builtin binds, as a builtin bind has the potential to
 modify args.</p>
-<p>To remove a bind, use the 'unbind' command. For example, to remove the
-bind for the &quot;stop&quot; msg command, use 'unbind msg - stop msg:stop'.</p>
+<p>To remove a bind, use the ‘unbind’ command. For example, to remove the
+bind for the “stop” msg command, use ‘unbind msg - stop msg:stop’.</p>
 <div class="section" id="bind-types">
 <h3>Bind Types<a class="headerlink" href="#bind-types" title="Permalink to this headline">¶</a></h3>
 <p>The following is a list of bind types and how they work. Below each bind type is the format of the bind command, the list of arguments sent to the Tcl proc, and an explanation.</p>
@@ -2652,7 +2793,7 @@ bind for the &quot;stop&quot; msg command, use 'unbind msg - stop msg:stop'.</p>
 <blockquote>
 <div><p>bind msg &lt;flags&gt; &lt;command&gt; &lt;proc&gt;</p>
 <p>procname &lt;nick&gt; &lt;user&#64;host&gt; &lt;handle&gt; &lt;text&gt;</p>
-<p>Description: used for /msg commands. The first word of the user's msg is the command, and everything else becomes the text argument.</p>
+<p>Description: used for /msg commands. The first word of the user’s msg is the command, and everything else becomes the text argument.</p>
 <p>Module: server</p>
 </div></blockquote>
 <ol class="arabic simple" start="2">
@@ -2697,16 +2838,16 @@ bind for the &quot;stop&quot; msg command, use 'unbind msg - stop msg:stop'.</p>
 <blockquote>
 <div><p>bind pubm &lt;flags&gt; &lt;mask&gt; &lt;proc&gt;</p>
 <p>procname &lt;nick&gt; &lt;user&#64;host&gt; &lt;handle&gt; &lt;channel&gt; &lt;text&gt;</p>
-<p>Description: just like MSGM, except it's triggered by things said on a channel instead of things /msg'd to the bot. The mask is matched against the channel name followed by the text and can contain wildcards. If the proc returns 1, Eggdrop will not log the message that triggered this bind. PUBM binds are processed before PUB binds. If the exclusive-binds setting is enabled, PUB binds will not be triggered by text that a PUBM bind has already handled.</p>
+<p>Description: just like MSGM, except it’s triggered by things said on a channel instead of things /msg’d to the bot. The mask is matched against the channel name followed by the text and can contain wildcards. If the proc returns 1, Eggdrop will not log the message that triggered this bind. PUBM binds are processed before PUB binds. If the exclusive-binds setting is enabled, PUB binds will not be triggered by text that a PUBM bind has already handled.</p>
 <dl class="docutils">
 <dt>Examples:</dt>
 <dd><dl class="first last docutils">
-<dt>bind pubm * &quot;#eggdrop Hello*&quot; myProc</dt>
-<dd>Listens on #eggdrop for any line that begins with &quot;Hello&quot;</dd>
-<dt>bind pubm * &quot;% Hello*&quot; myProc</dt>
-<dd>Listens on any channel for any line that begins with &quot;Hello&quot;</dd>
-<dt>bind pubm * &quot;% !command&quot; myProc</dt>
-<dd>Listens on any channel for a line that ONLY contains &quot;!command&quot;</dd>
+<dt>bind pubm * “#eggdrop Hello*” myProc</dt>
+<dd>Listens on #eggdrop for any line that begins with “Hello”</dd>
+<dt>bind pubm * “% Hello*” myProc</dt>
+<dd>Listens on any channel for any line that begins with “Hello”</dd>
+<dt>bind pubm * “% !command” myProc</dt>
+<dd>Listens on any channel for a line that ONLY contains “!command”</dd>
 </dl>
 </dd>
 </dl>
@@ -2718,9 +2859,9 @@ bind for the &quot;stop&quot; msg command, use 'unbind msg - stop msg:stop'.</p>
 <blockquote>
 <div><p>bind notc &lt;flags&gt; &lt;mask&gt; &lt;proc&gt;</p>
 <p>procname &lt;nick&gt; &lt;user&#64;host&gt; &lt;handle&gt; &lt;text&gt; &lt;dest&gt;</p>
-<p>Description: dest will be a nickname (the bot's nickname, obviously) or a channel name. mask is matched against the entire text of the notice and can contain wildcards. It is considered a breach of protocol to respond to a /notice on IRC, so this is intended for internal use (logging, etc.) only. Note that server notices do not trigger the NOTC bind. If the proc returns 1, Eggdrop will not log the message that triggered this bind.</p>
+<p>Description: dest will be a nickname (the bot’s nickname, obviously) or a channel name. mask is matched against the entire text of the notice and can contain wildcards. It is considered a breach of protocol to respond to a /notice on IRC, so this is intended for internal use (logging, etc.) only. Note that server notices do not trigger the NOTC bind. If the proc returns 1, Eggdrop will not log the message that triggered this bind.</p>
 <p>New Tcl procs should be declared as:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span>proc notcproc {nick uhost hand text {dest &quot;&quot;}} {
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>proc notcproc {nick uhost hand text {dest &quot;&quot;}} {
   global botnick; if {$dest == &quot;&quot;} {set dest $botnick}
   ...
 }
@@ -2735,7 +2876,7 @@ bind for the &quot;stop&quot; msg command, use 'unbind msg - stop msg:stop'.</p>
 <blockquote>
 <div><p>bind join &lt;flags&gt; &lt;mask&gt; &lt;proc&gt;</p>
 <p>procname &lt;nick&gt; &lt;user&#64;host&gt; &lt;handle&gt; &lt;channel&gt;</p>
-<p>Description: triggered by someone joining the channel. The mask in the bind is matched against &quot;#channel nick!user&#64;host&quot; and can contain wildcards.</p>
+<p>Description: triggered by someone joining the channel. The mask in the bind is matched against “#channel nick!user&#64;host” and can contain wildcards.</p>
 <p>Module: irc</p>
 </div></blockquote>
 <ol class="arabic simple" start="9">
@@ -2744,9 +2885,9 @@ bind for the &quot;stop&quot; msg command, use 'unbind msg - stop msg:stop'.</p>
 <blockquote>
 <div><p>bind part &lt;flags&gt; &lt;mask&gt; &lt;proc&gt;</p>
 <p>procname &lt;nick&gt; &lt;user&#64;host&gt; &lt;handle&gt; &lt;channel&gt; &lt;msg&gt;</p>
-<p>Description: triggered by someone leaving the channel. The mask is matched against &quot;#channel nick!user&#64;host&quot; and can contain wildcards. If no part message is specified, msg will be set to &quot;&quot;.</p>
+<p>Description: triggered by someone leaving the channel. The mask is matched against “#channel nick!user&#64;host” and can contain wildcards. If no part message is specified, msg will be set to “”.</p>
 <p>New Tcl procs should be declared as:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">proc</span> <span class="n">partproc</span> <span class="p">{</span><span class="n">nick</span> <span class="n">uhost</span> <span class="n">hand</span> <span class="n">chan</span> <span class="p">{</span><span class="n">msg</span> <span class="s2">&quot;&quot;</span><span class="p">}}</span> <span class="p">{</span> <span class="o">...</span> <span class="p">}</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">proc</span> <span class="n">partproc</span> <span class="p">{</span><span class="n">nick</span> <span class="n">uhost</span> <span class="n">hand</span> <span class="n">chan</span> <span class="p">{</span><span class="n">msg</span> <span class="s2">&quot;&quot;</span><span class="p">}}</span> <span class="p">{</span> <span class="o">...</span> <span class="p">}</span>
 </pre></div>
 </div>
 <p>for compatibility.</p>
@@ -2758,7 +2899,7 @@ bind for the &quot;stop&quot; msg command, use 'unbind msg - stop msg:stop'.</p>
 <blockquote>
 <div><p>bind sign &lt;flags&gt; &lt;mask&gt; &lt;proc&gt;</p>
 <p>procname &lt;nick&gt; &lt;user&#64;host&gt; &lt;handle&gt; &lt;channel&gt; &lt;reason&gt;</p>
-<p>Description: triggered by a signoff, or possibly by someone who got netsplit and never returned. The signoff message is the last argument to the proc. Wildcards can be used in the mask, which is matched against '#channel nick!user&#64;host'.</p>
+<p>Description: triggered by a signoff, or possibly by someone who got netsplit and never returned. The signoff message is the last argument to the proc. Wildcards can be used in the mask, which is matched against ‘#channel nick!user&#64;host’. If a “*” is used for the channel in the mask, this bind is triggered once for every channel that the user is in the bot with; in other words if the bot is in two channels with the target user, the bind will be triggered twice. To trigger a proc only once per signoff, regardless of the number of channels the Eggdrop and user share, use the RAWT bind with SIGN as the keyword.</p>
 <p>Module: irc</p>
 </div></blockquote>
 <ol class="arabic simple" start="11">
@@ -2767,7 +2908,7 @@ bind for the &quot;stop&quot; msg command, use 'unbind msg - stop msg:stop'.</p>
 <blockquote>
 <div><p>bind topc &lt;flags&gt; &lt;mask&gt; &lt;proc&gt;</p>
 <p>procname &lt;nick&gt; &lt;user&#64;host&gt; &lt;handle&gt; &lt;channel&gt; &lt;topic&gt;</p>
-<p>Description: triggered by a topic change. mask can contain wildcards and is matched against '#channel &lt;new topic&gt;'.</p>
+<p>Description: triggered by a topic change. mask can contain wildcards and is matched against ‘#channel &lt;new topic&gt;’.</p>
 <p>Module: irc</p>
 </div></blockquote>
 <ol class="arabic simple" start="12">
@@ -2776,7 +2917,7 @@ bind for the &quot;stop&quot; msg command, use 'unbind msg - stop msg:stop'.</p>
 <blockquote>
 <div><p>bind kick &lt;flags&gt; &lt;mask&gt; &lt;proc&gt;</p>
 <p>procname &lt;nick&gt; &lt;user&#64;host&gt; &lt;handle&gt; &lt;channel&gt; &lt;target&gt; &lt;reason&gt;</p>
-<p>Description: triggered when someone is kicked off the channel. The mask is matched against '#channel target reason' where the target is the nickname of the person who got kicked (can contain wildcards). The proc is called with the nick, user&#64;host, and handle of the kicker, plus the channel, the nickname of the person who was kicked, and the reason.</p>
+<p>Description: triggered when someone is kicked off the channel. The mask is matched against ‘#channel target reason’ where the target is the nickname of the person who got kicked (can contain wildcards). The proc is called with the nick, user&#64;host, and handle of the kicker, plus the channel, the nickname of the person who was kicked, and the reason.</p>
 <p>Module: irc</p>
 </div></blockquote>
 <ol class="arabic simple" start="13">
@@ -2785,7 +2926,7 @@ bind for the &quot;stop&quot; msg command, use 'unbind msg - stop msg:stop'.</p>
 <blockquote>
 <div><p>bind nick &lt;flags&gt; &lt;mask&gt; &lt;proc&gt;</p>
 <p>procname &lt;nick&gt; &lt;user&#64;host&gt; &lt;handle&gt; &lt;channel&gt; &lt;newnick&gt;</p>
-<p>Description: triggered when someone changes nicknames. The mask is matched against '#channel newnick' and can contain wildcards. Channel is &quot;*&quot; if the user isn't on a channel (usually the bot not yet in a channel).</p>
+<p>Description: triggered when someone changes nicknames. The mask is matched against ‘#channel newnick’ and can contain wildcards. Channel is “*” if the user isn’t on a channel (usually the bot not yet in a channel). If a “*” is used for the channel in the mask, this bind is triggered once for every channel that the user is in the bot with; in other words if the bot is in two channels with the target user, the bind will be triggered twice. To trigger a proc only once per nick change, regardless of the number of channels the Eggdrop and user share, use the RAWT bind with NICK as the keyword.</p>
 <p>Module: irc</p>
 </div></blockquote>
 <ol class="arabic simple" start="14">
@@ -2794,17 +2935,17 @@ bind for the &quot;stop&quot; msg command, use 'unbind msg - stop msg:stop'.</p>
 <blockquote>
 <div><p>bind mode &lt;flags&gt; &lt;mask&gt; &lt;proc&gt;</p>
 <p>procname &lt;nick&gt; &lt;user&#64;host&gt; &lt;handle&gt; &lt;channel&gt; &lt;mode-change&gt; &lt;target&gt;</p>
-<p>Description: mode changes are broken down into their component parts before being sent here, so the &lt;mode-change&gt; will always be a single mode, such as &quot;+m&quot; or &quot;-o&quot;. target will show the argument of the mode change (for o/v/b/e/I) or &quot;&quot; if the set mode does not take an argument. The bot's automatic response to a mode change will happen AFTER all matching Tcl procs are called. The mask will be matched against '#channel +/-modes' and can contain wildcards.</p>
-<p>If it is a server mode, nick will be &quot;&quot;, user&#64;host is the server name, and handle is *.</p>
-<p>Note that &quot;target&quot; was added in 1.3.17 and that this will break Tcl scripts that were written for pre-1.3.17 Eggdrop that use the mode binding. Also, due to a typo, mode binds were broken completely in 1.3.17 but were fixed in 1.3.18. Mode bindings are not triggered at all in 1.3.17.</p>
-<p>One easy example (from guppy) of how to support the &quot;target&quot; parameter in 1.3.18 and later and still remain compatible with older Eggdrop versions is:</p>
+<p>Description: mode changes are broken down into their component parts before being sent here, so the &lt;mode-change&gt; will always be a single mode, such as “+m” or “-o”. target will show the argument of the mode change (for o/v/b/e/I) or “” if the set mode does not take an argument. The bot’s automatic response to a mode change will happen AFTER all matching Tcl procs are called. The mask will be matched against ‘#channel +/-modes’ and can contain wildcards.</p>
+<p>If it is a server mode, nick will be “”, user&#64;host is the server name, and handle is *.</p>
+<p>Note that “target” was added in 1.3.17 and that this will break Tcl scripts that were written for pre-1.3.17 Eggdrop that use the mode binding. Also, due to a typo, mode binds were broken completely in 1.3.17 but were fixed in 1.3.18. Mode bindings are not triggered at all in 1.3.17.</p>
+<p>One easy example (from guppy) of how to support the “target” parameter in 1.3.18 and later and still remain compatible with older Eggdrop versions is:</p>
 <p>Old script looks as follows:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">bind</span> <span class="n">mode</span> <span class="o">-</span> <span class="o">*</span> <span class="n">mode_proc</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">bind</span> <span class="n">mode</span> <span class="o">-</span> <span class="o">*</span> <span class="n">mode_proc</span>
 <span class="n">proc</span> <span class="n">mode_proc</span> <span class="p">{</span><span class="n">nick</span> <span class="n">uhost</span> <span class="n">hand</span> <span class="n">chan</span> <span class="n">mode</span><span class="p">}</span> <span class="p">{</span> <span class="o">...</span> <span class="p">}</span>
 </pre></div>
 </div>
 <p>To make it work with 1.3.18+ and stay compatible with older bots, do:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span>bind mode - * mode_proc_fix
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>bind mode - * mode_proc_fix
 proc mode_proc_fix {nick uhost hand chan mode {target &quot;&quot;}} {
   if {$target != &quot;&quot;} {append mode &quot; $target&quot;}
   mode_proc $nick $uhost $hand $chan $mode
@@ -2820,7 +2961,7 @@ proc mode_proc {nick uhost hand chan mode} { ... }
 <blockquote>
 <div><p>bind ctcp &lt;flags&gt; &lt;keyword&gt; &lt;proc&gt;</p>
 <p>procname &lt;nick&gt; &lt;user&#64;host&gt; &lt;handle&gt; &lt;dest&gt; &lt;keyword&gt; &lt;text&gt;</p>
-<p>Description: dest will be a nickname (the bot's nickname, obviously) or channel name. keyword is the ctcp command (which can contain wildcards), and text may be empty. If the proc returns 0, the bot will attempt its own processing of the ctcp command.</p>
+<p>Description: dest will be a nickname (the bot’s nickname, obviously) or channel name. keyword is the ctcp command (which can contain wildcards), and text may be empty. If the proc returns 0, the bot will attempt its own processing of the ctcp command.</p>
 <p>Module: server</p>
 </div></blockquote>
 <ol class="arabic simple" start="16">
@@ -2838,7 +2979,8 @@ proc mode_proc {nick uhost hand chan mode} { ... }
 <blockquote>
 <div><p>bind raw &lt;flags&gt; &lt;keyword&gt; &lt;proc&gt;</p>
 <p>procname &lt;from&gt; &lt;keyword&gt; &lt;text&gt;</p>
-<p>Description: previous versions of Eggdrop required a special compile option to enable this binding, but it's now standard. The keyword is either a numeric, like &quot;368&quot;, or a keyword, such as &quot;PRIVMSG&quot;. &quot;from&quot; will be the server name or the source user (depending on the keyword); flags are ignored. The order of the arguments is identical to the order that the IRC server sends to the bot. The pre-processing  only splits it apart enough to determine the keyword. If the proc returns 1, Eggdrop will not process the line any further (this could cause unexpected behavior in some cases).</p>
+<p>IMPORTANT: While not necessarily deprecated, this bind has been supplanted by the RAWT bind as of 1.9.0. You probably want to be using RAWT, not RAW.</p>
+<p>Description: previous versions of Eggdrop required a special compile option to enable this binding, but it’s now standard. The keyword is either a numeric, like “368”, or a keyword, such as “PRIVMSG”. “from” will be the server name or the source user (depending on the keyword); flags are ignored. The order of the arguments is identical to the order that the IRC server sends to the bot. The pre-processing only splits it apart enough to determine the keyword. If the proc returns 1, Eggdrop will not process the line any further (this could cause unexpected behavior in some cases). The RAW bind does not support the IRCv3 message-tags capability, please see RAWT for more information.</p>
 <p>Module: server</p>
 </div></blockquote>
 <ol class="arabic simple" start="18">
@@ -2856,7 +2998,7 @@ proc mode_proc {nick uhost hand chan mode} { ... }
 <blockquote>
 <div><p>bind chon &lt;flags&gt; &lt;mask&gt; &lt;proc&gt;</p>
 <p>procname &lt;handle&gt; &lt;idx&gt;</p>
-<p>Description: when someone first enters the party-line area of the bot via dcc chat or telnet, this is triggered before they are connected to a chat channel (so, yes, you can change the channel in a 'chon' proc). mask is matched against the handle and supports wildcards. This is NOT triggered when someone returns from the file area, etc.</p>
+<p>Description: when someone first enters the party-line area of the bot via dcc chat or telnet, this is triggered before they are connected to a chat channel (so, yes, you can change the channel in a ‘chon’ proc). mask is matched against the handle and supports wildcards. This is NOT triggered when someone returns from the file area, etc.</p>
 <p>Module: core</p>
 </div></blockquote>
 <ol class="arabic simple" start="20">
@@ -2865,7 +3007,7 @@ proc mode_proc {nick uhost hand chan mode} { ... }
 <blockquote>
 <div><p>bind chof &lt;flags&gt; &lt;mask&gt; &lt;proc&gt;</p>
 <p>procname &lt;handle&gt; &lt;idx&gt;</p>
-<p>Description: triggered when someone leaves the party line to disconnect from the bot. mask is matched against the handle and can contain wildcards. Note that the connection may have already been dropped by the user, so don't send output to the idx.</p>
+<p>Description: triggered when someone leaves the party line to disconnect from the bot. mask is matched against the handle and can contain wildcards. Note that the connection may have already been dropped by the user, so don’t send output to the idx.</p>
 <p>Module: core</p>
 </div></blockquote>
 <ol class="arabic simple" start="21">
@@ -2874,7 +3016,7 @@ proc mode_proc {nick uhost hand chan mode} { ... }
 <blockquote>
 <div><p>bind sent &lt;flags&gt; &lt;mask&gt; &lt;proc&gt;</p>
 <p>procname &lt;handle&gt; &lt;nick&gt; &lt;path/to/file&gt;</p>
-<p>Description: after a user has successfully downloaded a file from the bot, this binding is triggered. mask is matched against the handle of the user that initiated the transfer and supports wildcards. nick is the actual recipient (on IRC) of the file. The path is relative to the dcc directory (unless the file transfer was started by a script call to 'dccsend', in which case the path is the exact path given in the call to 'dccsend').</p>
+<p>Description: after a user has successfully downloaded a file from the bot, this binding is triggered. mask is matched against the handle of the user that initiated the transfer and supports wildcards. nick is the actual recipient (on IRC) of the file. The path is relative to the dcc directory (unless the file transfer was started by a script call to ‘dccsend’, in which case the path is the exact path given in the call to ‘dccsend’).</p>
 <p>Module: transfer</p>
 </div></blockquote>
 <ol class="arabic simple" start="22">
@@ -2883,7 +3025,7 @@ proc mode_proc {nick uhost hand chan mode} { ... }
 <blockquote>
 <div><p>bind rcvd &lt;flags&gt; &lt;mask&gt; &lt;proc&gt;</p>
 <p>procname &lt;handle&gt; &lt;nick&gt; &lt;path/to/file&gt;</p>
-<p>Description: triggered after a user uploads a file successfully. mask is matched against the user's handle. nick is the IRC nickname that the file transfer originated from. The path is where the file ended up, relative to the dcc directory (usually this is your incoming dir).</p>
+<p>Description: triggered after a user uploads a file successfully. mask is matched against the user’s handle. nick is the IRC nickname that the file transfer originated from. The path is where the file ended up, relative to the dcc directory (usually this is your incoming dir).</p>
 <p>Module: transfer</p>
 </div></blockquote>
 <ol class="arabic simple" start="23">
@@ -2892,7 +3034,7 @@ proc mode_proc {nick uhost hand chan mode} { ... }
 <blockquote>
 <div><p>bind chat &lt;flags&gt; &lt;mask&gt; &lt;proc&gt;</p>
 <p>procname &lt;handle&gt; &lt;channel#&gt; &lt;text&gt;</p>
-<p>Description: when a user says something on the botnet, it invokes this binding. Flags are ignored; handle could be a user on this bot (&quot;DronePup&quot;) or on another bot (&quot;Eden&#64;Wilde&quot;) and therefore you can't rely on a local user record. The mask is checked against the entire line of text and supports wildcards.</p>
+<p>Description: when a user says something on the botnet, it invokes this binding. Flags are ignored; handle could be a user on this bot (“DronePup”) or on another bot (“Eden&#64;Wilde”) and therefore you can’t rely on a local user record. The mask is checked against the entire line of text and supports wildcards.</p>
 <p>NOTE: If a BOT says something on the botnet, the BCST bind is invoked instead.</p>
 <p>Module: core</p>
 </div></blockquote>
@@ -2920,7 +3062,7 @@ proc mode_proc {nick uhost hand chan mode} { ... }
 <blockquote>
 <div><p>bind splt &lt;flags&gt; &lt;mask&gt; &lt;proc&gt;</p>
 <p>procname &lt;nick&gt; &lt;user&#64;host&gt; &lt;handle&gt; &lt;channel&gt;</p>
-<p>Description: triggered when someone gets netsplit on the channel. Be aware that this may be a false alarm (it's easy to fake a netsplit signoff message on some networks); mask may contain wildcards and is matched against '#channel nick!user&#64;host'. Anyone who is SPLT will trigger a REJN or SIGN within the next wait-split (defined in the config file) seconds.</p>
+<p>Description: triggered when someone gets netsplit on the channel. Be aware that this may be a false alarm (it’s easy to fake a netsplit signoff message on some networks); mask may contain wildcards and is matched against ‘#channel nick!user&#64;host’. Anyone who is SPLT will trigger a REJN or SIGN within the next wait-split (defined in the config file) seconds.</p>
 <p>Module: irc</p>
 </div></blockquote>
 <ol class="arabic simple" start="27">
@@ -2929,7 +3071,7 @@ proc mode_proc {nick uhost hand chan mode} { ... }
 <blockquote>
 <div><p>bind rejn &lt;flags&gt; &lt;mask&gt; &lt;proc&gt;</p>
 <p>procname &lt;nick&gt; &lt;user&#64;host&gt; &lt;handle&gt; &lt;channel&gt;</p>
-<p>Description: someone who was split has rejoined. mask can contain wildcards, and is matched against '#channel nick!user&#64;host'.</p>
+<p>Description: someone who was split has rejoined. mask can contain wildcards, and is matched against ‘#channel nick!user&#64;host’.</p>
 <p>Module: irc</p>
 </div></blockquote>
 <ol class="arabic simple" start="28">
@@ -2947,9 +3089,9 @@ proc mode_proc {nick uhost hand chan mode} { ... }
 <blockquote>
 <div><p>bind need &lt;flags&gt; &lt;mask&gt; &lt;proc&gt;</p>
 <p>procname &lt;channel&gt; &lt;type&gt;</p>
-<p>Description: this bind is triggered on certain events, like when the bot needs operator status or the key for a channel. The types are: op, unban, invite, limit, and key; the mask is matched against '#channel type' and can contain wildcards. flags are ignored.</p>
+<p>Description: this bind is triggered on certain events, like when the bot needs operator status or the key for a channel. The types are: op, unban, invite, limit, and key; the mask is matched against ‘#channel type’ and can contain wildcards. flags are ignored.</p>
 <p>Example:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">bind</span> <span class="n">need</span> <span class="o">-</span> <span class="s2">&quot;</span><span class="si">% o</span><span class="s2">p&quot;</span> <span class="n">needop</span> <span class="o">&lt;</span> <span class="n">handles</span> <span class="n">only</span> <span class="n">need</span> <span class="n">op</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">bind</span> <span class="n">need</span> <span class="o">-</span> <span class="s2">&quot;</span><span class="si">% o</span><span class="s2">p&quot;</span> <span class="n">needop</span> <span class="o">&lt;</span> <span class="n">handles</span> <span class="n">only</span> <span class="n">need</span> <span class="n">op</span>
 <span class="n">bind</span> <span class="n">need</span> <span class="o">-</span> <span class="s2">&quot;*&quot;</span> <span class="n">needall</span>   <span class="o">&lt;</span> <span class="n">handles</span> <span class="nb">all</span> <span class="n">needs</span>
 </pre></div>
 </div>
@@ -2961,7 +3103,7 @@ proc mode_proc {nick uhost hand chan mode} { ... }
 <blockquote>
 <div><p>bind flud &lt;flags&gt; &lt;type&gt; &lt;proc&gt;</p>
 <p>procname &lt;nick&gt; &lt;user&#64;host&gt; &lt;handle&gt; &lt;type&gt; &lt;channel&gt;</p>
-<p>Description: any floods detected through the flood control settings (like 'flood-ctcp') are sent here before processing. If the proc returns 1, no further action is taken on the flood; if the proc returns 0, the bot will do its normal &quot;punishment&quot; for the flood. The flood types are: pub, msg, join, or ctcp (and can be masked to &quot;*&quot; for the bind); flags are ignored.</p>
+<p>Description: any floods detected through the flood control settings (like ‘flood-ctcp’) are sent here before processing. If the proc returns 1, no further action is taken on the flood; if the proc returns 0, the bot will do its normal “punishment” for the flood. The flood types are: pub, msg, join, or ctcp (and can be masked to “*” for the bind); flags are ignored.</p>
 <p>Module: server</p>
 </div></blockquote>
 <ol class="arabic simple" start="31">
@@ -2997,8 +3139,8 @@ proc mode_proc {nick uhost hand chan mode} { ... }
 <blockquote>
 <div><p>bind bcst &lt;flags&gt; &lt;mask&gt; &lt;proc&gt;</p>
 <p>procname &lt;botname&gt; &lt;channel#&gt; &lt;text&gt;</p>
-<p>Description: when a bot broadcasts something on the botnet (see 'dccbroadcast' above), it invokes this binding. flags are ignored; the mask is matched against the message text and can contain wildcards. 'channel' argument will always be '-1' since broadcasts are not directed to any partyline channel.</p>
-<p>It is also invoked when a BOT (not a person, as with the CHAT bind) 'says' something on a channel. In this case, the 'channel' argument will be a valid channel, and not '-1'.</p>
+<p>Description: when a bot broadcasts something on the botnet (see ‘dccbroadcast’ above), it invokes this binding. flags are ignored; the mask is matched against the message text and can contain wildcards. ‘channel’ argument will always be ‘-1’ since broadcasts are not directed to any partyline channel.</p>
+<p>It is also invoked when a BOT (not a person, as with the CHAT bind) ‘says’ something on a channel. In this case, the ‘channel’ argument will be a valid channel, and not ‘-1’.</p>
 <p>Module: core</p>
 </div></blockquote>
 <ol class="arabic simple" start="35">
@@ -3025,7 +3167,7 @@ proc mode_proc {nick uhost hand chan mode} { ... }
 <blockquote>
 <div><p>bind time &lt;flags&gt; &lt;mask&gt; &lt;proc&gt;</p>
 <p>procname &lt;minute 00-59&gt; &lt;hour 00-23&gt; &lt;day 01-31&gt; &lt;month 00-11&gt; &lt;year 0000-9999&gt;</p>
-<p>Description: allows you to schedule procedure calls at certain times. mask matches 5 space separated integers of the form: &quot;minute hour day month year&quot;. The month var starts at 00 (Jan) and ends at 11 (Dec). Minute, hour, day, month have a zero padding so they are exactly two characters long; year is four characters. Flags are ignored.</p>
+<p>Description: allows you to schedule procedure calls at certain times. mask matches 5 space separated integers of the form: “minute hour day month year”. The month var starts at 00 (Jan) and ends at 11 (Dec). Minute, hour, day, month have a zero padding so they are exactly two characters long; year is four characters. Flags are ignored.</p>
 <p>Module: core</p>
 </div></blockquote>
 <ol class="arabic simple" start="38">
@@ -3034,7 +3176,7 @@ proc mode_proc {nick uhost hand chan mode} { ... }
 <blockquote>
 <div><p>bind away &lt;flags&gt; &lt;mask&gt; &lt;proc&gt;</p>
 <p>procname &lt;botname&gt; &lt;idx&gt; &lt;text&gt;</p>
-<p>Description: triggers when a user goes away or comes back on the botnet. text is the reason than has been specified (text is &quot;&quot; when returning). mask is matched against the botnet-nick of the bot the user is connected to and supports wildcards. flags are ignored.</p>
+<p>Description: triggers when a user goes away or comes back on the botnet. text is the reason that has been specified (text is “” when returning). mask is matched against the botnet-nick of the bot the user is connected to and supports wildcards. flags are ignored.</p>
 <p>Module: core</p>
 </div></blockquote>
 <ol class="arabic simple" start="39">
@@ -3062,7 +3204,7 @@ flags are ignored.</p>
 <blockquote>
 <div><p>bind nkch &lt;flags&gt; &lt;mask&gt; &lt;proc&gt;</p>
 <p>procname &lt;oldhandle&gt; &lt;newhandle&gt;</p>
-<p>Description: triggered whenever a local user's handle is changed (in the userfile). mask is matched against the user's old handle and can contain wildcards; flags are ignored.</p>
+<p>Description: triggered whenever a local user’s handle is changed (in the userfile). mask is matched against the user’s old handle and can contain wildcards; flags are ignored.</p>
 <p>Module: core</p>
 </div></blockquote>
 <ol class="arabic simple" start="42">
@@ -3072,7 +3214,7 @@ flags are ignored.</p>
 <div><p>bind evnt &lt;flags&gt; &lt;type&gt; &lt;proc&gt;</p>
 <p>procname &lt;type&gt;</p>
 <p>Description: triggered whenever one of these events happen. flags are ignored. Pre-defined events triggered by Eggdrop are:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">sighup</span>            <span class="o">-</span> <span class="n">called</span> <span class="n">on</span> <span class="n">a</span> <span class="n">kill</span> <span class="o">-</span><span class="n">HUP</span> <span class="o">&lt;</span><span class="n">pid</span><span class="o">&gt;</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sighup</span>            <span class="o">-</span> <span class="n">called</span> <span class="n">on</span> <span class="n">a</span> <span class="n">kill</span> <span class="o">-</span><span class="n">HUP</span> <span class="o">&lt;</span><span class="n">pid</span><span class="o">&gt;</span>
 <span class="n">sigterm</span>           <span class="o">-</span> <span class="n">called</span> <span class="n">on</span> <span class="n">a</span> <span class="n">kill</span> <span class="o">-</span><span class="n">TERM</span> <span class="o">&lt;</span><span class="n">pid</span><span class="o">&gt;</span>
 <span class="n">sigill</span>            <span class="o">-</span> <span class="n">called</span> <span class="n">on</span> <span class="n">a</span> <span class="n">kill</span> <span class="o">-</span><span class="n">ILL</span> <span class="o">&lt;</span><span class="n">pid</span><span class="o">&gt;</span>
 <span class="n">sigquit</span>           <span class="o">-</span> <span class="n">called</span> <span class="n">on</span> <span class="n">a</span> <span class="n">kill</span> <span class="o">-</span><span class="n">QUIT</span> <span class="o">&lt;</span><span class="n">pid</span><span class="o">&gt;</span>
@@ -3117,7 +3259,7 @@ flags are ignored.</p>
 <blockquote>
 <div><p>bind out &lt;flags&gt; &lt;mask&gt; &lt;proc&gt;</p>
 <p>procname &lt;queue&gt; &lt;message&gt; &lt;queued|sent&gt;</p>
-<p>Description: triggered whenever output is sent to the server. Normally the event will occur twice for each line sent: once before entering a server queue and once after the message is actually sent. This allows for more flexible logging of server output and introduces the ability to cancel the message. Mask is matched against &quot;queue status&quot;, where status is either 'queued' or 'sent'. Queues are: mode, server, help, noqueue. noqueue is only used by the putnow tcl command.</p>
+<p>Description: triggered whenever output is sent to the server. Normally the event will occur twice for each line sent: once before entering a server queue and once after the message is actually sent. This allows for more flexible logging of server output and introduces the ability to cancel the message. Mask is matched against “queue status”, where status is either ‘queued’ or ‘sent’. Queues are: mode, server, help, noqueue. noqueue is only used by the putnow tcl command.</p>
 <p>Module: server</p>
 </div></blockquote>
 <ol class="arabic simple" start="46">
@@ -3126,7 +3268,7 @@ flags are ignored.</p>
 <blockquote>
 <div><p>bind cron &lt;flags&gt; &lt;mask&gt; &lt;proc&gt;</p>
 <p>procname &lt;minute 0-59&gt; &lt;hour 0-23&gt; &lt;day 1-31&gt; &lt;month 1-12&gt; &lt;weekday 0-6&gt;</p>
-<p>Description: similar to bind TIME, but the mask is evaluated as a cron expression, e.g. &quot;16/2 */2 5-15 7,8,9 4&quot;. It can contain up to five fields: minute, hour, day, month, weekday; delimited by whitespace. Week days are represented as 0-6, where Sunday can be either 0 or 7. Symbolic names are not supported. The bind will be triggered if the mask matches all of the fields, except that if both day and weekday are not '*', only one of them is required to match. If any number of fields are omitted at the end, the match will proceed as if they were '*'. All cron operators are supported. Please refer to the crontab manual for their meanings. Flags are ignored.</p>
+<p>Description: similar to bind TIME, but the mask is evaluated as a cron expression, e.g. “16/2 */2 5-15 7,8,9 4”. It can contain up to five fields: minute, hour, day, month, weekday; delimited by whitespace. Week days are represented as 0-6, where Sunday can be either 0 or 7. Symbolic names are not supported. The bind will be triggered if the mask matches all of the fields, except that if both day and weekday are not ‘*’, only one of them is required to match. If any number of fields are omitted at the end, the match will proceed as if they were ‘*’. All cron operators are supported. Please refer to the crontab manual for their meanings. Flags are ignored.</p>
 <p>Module: core</p>
 </div></blockquote>
 <ol class="arabic simple" start="47">
@@ -3135,7 +3277,7 @@ flags are ignored.</p>
 <blockquote>
 <div><p>bind log &lt;flags&gt; &lt;mask&gt; &lt;proc&gt;</p>
 <p>procname &lt;level&gt; &lt;channel&gt; &lt;message&gt;</p>
-<p>Description: triggered whenever a message is sent to a log. The mask is matched against &quot;channel text&quot;. The level argument to the proc will contain the level(s) the message is sent to, or '*' if the message is sent to all log levels at once. If the message wasn't sent to a specific channel, channel will be set to '*'.</p>
+<p>Description: triggered whenever a message is sent to a log. The mask is matched against “channel text”. The level argument to the proc will contain the level(s) the message is sent to, or ‘*’ if the message is sent to all log levels at once. If the message wasn’t sent to a specific channel, channel will be set to ‘*’.</p>
 <p>Module: core</p>
 </div></blockquote>
 <ol class="arabic simple" start="48">
@@ -3153,42 +3295,75 @@ flags are ignored.</p>
 <blockquote>
 <div><p>bind die &lt;flags&gt; &lt;mask&gt; &lt;proc&gt;</p>
 <p>procname &lt;shutdownreason&gt;</p>
-<p>Description: triggered when eggdrop is about to die. The mask is matched against the shutdown reason. The bind won't be triggered if the bot crashes or is being terminated by SIGKILL.</p>
+<p>Description: triggered when eggdrop is about to die. The mask is matched against the shutdown reason. The bind won’t be triggered if the bot crashes or is being terminated by SIGKILL.</p>
 <p>Module: core</p>
+</div></blockquote>
+<ol class="arabic simple" start="50">
+<li>IRCAWAY (stackable)</li>
+</ol>
+<blockquote>
+<div><p>bind ircaway &lt;flags&gt; &lt;mask&gt; &lt;proc&gt;</p>
+<p>procname &lt;nick&gt; &lt;user&gt; &lt;hand&gt; &lt;channel&gt; &lt;msg&gt;</p>
+<p>Description: triggered when Eggdrop recieves an AWAY message for a user from an IRC server, ONLY if the away-notify capability is enabled via CAP (the server must supports this capability, see the ‘cap’ Tcl command for more info on requesting capabilites). “Normal” away messages (301 messages) will not trigger this bind, for those you should instead use a RAWT bind. The mask for the bind is in the format “#channel <a class="reference external" href="mailto:nick!user&#37;&#52;&#48;hostname">nick!user<span>&#64;</span>hostname</a>” (* to catch all nicknames). nick is the nickname of the user that triggered the bind, user is the <a class="reference external" href="mailto:nick!user&#37;&#52;&#48;host">nick!user<span>&#64;</span>host</a> of the user, handle is the handle of the user on the bot (- if the user is not added to the bot), channel is the channel the user was found on (read on for more info on this) and msg is the contents of the away message, if any. If a “*” is used for the channel in the mask, this bind is triggered once for every channel that the user is in the bot with; in other words if the bot is in two channels with the target user, the bind will be triggered twice. To trigger a proc only once per nick change, regardless of the number of channels the Eggdrop and user share, use the RAWT bind with AWAY as the keyword.</p>
+<p>Module: irc</p>
+</div></blockquote>
+<ol class="arabic simple" start="51">
+<li>INVT (stackable)</li>
+</ol>
+<blockquote>
+<div><p>bind invt &lt;flags&gt; &lt;mask&gt; &lt;proc&gt;</p>
+<p>procname &lt;nick&gt; &lt;<a class="reference external" href="mailto:user&#37;&#52;&#48;host">user<span>&#64;</span>host</a>&gt; &lt;channel&gt; &lt;invitee&gt;</p>
+<p>Description: triggered when eggdrop received an INVITE message. The mask for the bind is in the format “#channel nickname”, where nickname (not a hostmask) is that of the invitee. For the proc, nick is the nickname of the person sending the invite request, <a class="reference external" href="mailto:user&#37;&#52;&#48;host">user<span>&#64;</span>host</a> is the <a class="reference external" href="mailto:user&#37;&#52;&#48;host">user<span>&#64;</span>host</a> of the person sending the invite, channel is the channel the invitee is being invited to, and invitee is the target (nickname only) of the invite. The invitee argument was added to support the IRCv3 invite-notify capability, where the eggdrop may be able to see invite messages for other people that are not the eggdrop.</p>
+</div></blockquote>
+<ol class="arabic simple" start="52">
+<li>RAWT (stackable)</li>
+</ol>
+<blockquote>
+<div><p>bind rawt &lt;flags&gt; &lt;keyword&gt; &lt;proc&gt;</p>
+<p>procname &lt;from&gt; &lt;keyword&gt; &lt;text&gt; &lt;tag&gt;</p>
+<p>Description: similar to the RAW bind, but allows an extra field for the IRCv3 message-tags capability. The keyword is either a numeric, like “368”, or a keyword, such as “PRIVMSG” or “TAGMSG”. “from” will be the server name or the source user (depending on the keyword); flags are ignored. “tag” will be the contents, if any, of the entire tag message prefixed to the server message in a dict format, such as “msgid 890157217279768 aaa bbb”. The order of the arguments is identical to the order that the IRC server sends to the bot. If the proc returns 1, Eggdrop will not process the line any further (this could cause unexpected behavior in some cases). As of 1.9.0, it is recommended to use the RAWT bind instead of the RAW bind.</p>
+</div></blockquote>
+<ol class="arabic simple" start="53">
+<li>ACCOUNT (stackable)</li>
+</ol>
+<blockquote>
+<div><p>bind account &lt;flags&gt; &lt;mask&gt; &lt;proc&gt;</p>
+<p>procname &lt;nick&gt; &lt;user&gt; &lt;hand&gt; &lt;account&gt;</p>
+<p>Description: triggered when Eggdrop receives an ACCOUNT message. The mask for the bind is in the format “#channel <a class="reference external" href="mailto:nick!user&#37;&#52;&#48;hostname&#46;com">nick!user<span>&#64;</span>hostname<span>&#46;</span>com</a> account” where channel is the channel the user was found on when the bind was triggered, the hostmask is the user’s hostmask, and account is the account name the user is logging in to, or “” for logging out. The mask argument can accept wildcards. For the proc, nick is the nickname of the user logging into/out of an account, user is the <a class="reference external" href="mailto:user&#37;&#52;&#48;host&#46;com">user<span>&#64;</span>host<span>&#46;</span>com</a> hostmask, hand is the handle of the user (or * if none), and account is the name of the account the user logged in to (or “” if the user logged out of an account).</p>
 </div></blockquote>
 </div>
 <div class="section" id="return-values">
 <h3>Return Values<a class="headerlink" href="#return-values" title="Permalink to this headline">¶</a></h3>
-<p>Several bindings pay attention to the value you return from the proc(using 'return &lt;value&gt;'). Usually, they expect a 0 or 1, and returning an empty return is interpreted as a 0. Be aware if you omit the return statement, the result of the last Tcl command executed will be returned by the proc. This will not likely produce the results you intended (this is a &quot;feature&quot; of Tcl).</p>
-<p>Here's a list of the bindings that use the return value from procs they trigger:</p>
+<p>Several bindings pay attention to the value you return from the proc(using ‘return &lt;value&gt;’). Usually, they expect a 0 or 1, and returning an empty return is interpreted as a 0. Be aware if you omit the return statement, the result of the last Tcl command executed will be returned by the proc. This will not likely produce the results you intended (this is a “feature” of Tcl).</p>
+<p>Here’s a list of the bindings that use the return value from procs they trigger:</p>
 <ol class="arabic">
 <li><p class="first">MSG   Return 1 to make Eggdrop log the command as:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span>(nick!user@host) !handle! command
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>(nick!user@host) !handle! command
 </pre></div>
 </div>
 </li>
 <li><p class="first">DCC   Return 1 to make Eggdrop log the command as:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="c1">#handle# command</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1">#handle# command</span>
 </pre></div>
 </div>
 </li>
 <li><p class="first">FIL   Return 1 to make Eggdrop log the command as:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="c1">#handle# files: command</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1">#handle# files: command</span>
 </pre></div>
 </div>
 </li>
 <li><p class="first">PUB   Return 1 to make Eggdrop log the command as:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span>&lt;&lt;nick&gt;&gt; !handle! command
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>&lt;&lt;nick&gt;&gt; !handle! command
 </pre></div>
 </div>
 </li>
-<li><p class="first">CTCP  Return 1 to ask the bot not to process the CTCP command on its own. Otherwise, it would send its own response to the CTCP (possibly an error message if it doesn't know how to deal with it).</p>
+<li><p class="first">CTCP  Return 1 to ask the bot not to process the CTCP command on its own. Otherwise, it would send its own response to the CTCP (possibly an error message if it doesn’t know how to deal with it).</p>
 </li>
-<li><p class="first">FILT  Return &quot;&quot; to indicate the text has been processed, and the bot should just ignore it. Otherwise, it will treat the text like any other.</p>
+<li><p class="first">FILT  Return “” to indicate the text has been processed, and the bot should just ignore it. Otherwise, it will treat the text like any other.</p>
 </li>
 <li><p class="first">FLUD  Return 1 to ask the bot not to take action on the flood. Otherwise it will do its normal punishment.</p>
 </li>
-<li><p class="first">RAW   Return 1 to ask the bot not to process the server text. This can affect the bot's performance by causing it to miss things that it would normally act on -- you have been warned.</p>
+<li><p class="first">RAW   Return 1 to ask the bot not to process the server text. This can affect the bot’s performance by causing it to miss things that it would normally act on – you have been warned.</p>
 </li>
 <li><p class="first">CHON  Return 1 to ask the bot not to process the partyline join event.</p>
 </li>
@@ -3204,40 +3379,42 @@ flags are ignored.</p>
 </li>
 <li><p class="first">NOTC  Return 1 to make Eggdrop not log the message that triggered this bind.</p>
 </li>
-<li><p class="first">OUT   Return 1 to make Eggdrop drop the message instead of sending it. Only meaningful for messages with status &quot;queued&quot;.</p>
+<li><p class="first">OUT   Return 1 to make Eggdrop drop the message instead of sending it. Only meaningful for messages with status “queued”.</p>
 </li>
 <li><p class="first">EVNT  Return 1 to make Eggdrop not to take the default action for the event. Used for signal type events, ignored for others.</p>
 </li>
 <li><p class="first">TLS   Return 1 to disable verbose ssl information for the handshake.</p>
+</li>
+<li><p class="first">RAWT  Return 1 to ask the bot not to prcess the server text. This can affet the bot’s performance by causing it to miss things that it would normally act on – you have been warned. Again.</p>
 </li>
 </ol>
 </div>
 </div>
 <div class="section" id="control-procedures">
 <h2>Control Procedures<a class="headerlink" href="#control-procedures" title="Permalink to this headline">¶</a></h2>
-<p>Using the 'control' command, you can put a DCC connection (or outgoing
+<p>Using the ‘control’ command, you can put a DCC connection (or outgoing
 TCP connection) in control of a script. All text received from the
 connection is sent to the proc you specify. All outgoing text should
-be sent with 'putdcc'.</p>
+be sent with ‘putdcc’.</p>
 <p>The control procedure is called with these parameters:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">procname</span> <span class="o">&lt;</span><span class="n">idx</span><span class="o">&gt;</span> <span class="o">&lt;</span><span class="nb">input</span><span class="o">-</span><span class="n">text</span><span class="o">&gt;</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">procname</span> <span class="o">&lt;</span><span class="n">idx</span><span class="o">&gt;</span> <span class="o">&lt;</span><span class="nb">input</span><span class="o">-</span><span class="n">text</span><span class="o">&gt;</span>
 </pre></div>
 </div>
 <p>This allows you to use the same proc for several connections. The
 idx will stay the same until the connection is dropped. After that,
 it will probably get reused for a later connection.</p>
 <p>To indicate that the connection has closed, your control procedure
-will be called with blank text (the input-text will be &quot;&quot;). This
-is the only time it will ever be called with &quot;&quot; as the text, and it
-is the last time your proc will be called for that connection. Don't
+will be called with blank text (the input-text will be “”). This
+is the only time it will ever be called with “” as the text, and it
+is the last time your proc will be called for that connection. Don’t
 call killdcc on the idx when text is blank, it will always fail with
-&quot;invalid idx&quot;.</p>
+“invalid idx”.</p>
 <p>If you want to hand control of your connection back to Eggdrop, your
 proc should return 1. Otherwise, return 0 to retain control.</p>
 </div>
 <div class="section" id="tcp-connections">
 <h2>TCP Connections<a class="headerlink" href="#tcp-connections" title="Permalink to this headline">¶</a></h2>
-<p>Eggdrop allows you to make two types of TCP (&quot;telnet&quot;) connections:
+<p>Eggdrop allows you to make two types of TCP (“telnet”) connections:
 outgoing and incoming. For an outgoing connection, you specify the
 remote host and port to connect to. For an incoming connection, you
 specify a port to listen on.</p>
@@ -3246,12 +3423,12 @@ trigger your procs when something happens on the connection, and your
 proc is expected to return as soon as possible. Waiting in a proc for
 more input is a no-no.</p>
 <p>To initiate an outgoing connection, use:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="nb">set</span> <span class="n">idx</span> <span class="p">[</span><span class="n">connect</span> <span class="o">&lt;</span><span class="n">hostname</span><span class="o">&gt;</span> <span class="o">&lt;</span><span class="p">[</span><span class="o">+</span><span class="p">]</span><span class="n">port</span><span class="o">&gt;</span><span class="p">]</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="nb">set</span> <span class="n">idx</span> <span class="p">[</span><span class="n">connect</span> <span class="o">&lt;</span><span class="n">hostname</span><span class="o">&gt;</span> <span class="o">&lt;</span><span class="p">[</span><span class="o">+</span><span class="p">]</span><span class="n">port</span><span class="o">&gt;</span><span class="p">]</span>
 </pre></div>
 </div>
 <p>For SSL connections, prefix the port with a plus sign.</p>
 <p>$idx now contains a new DCC entry for the outgoing connection.</p>
-<p>All connections use non-blocking (commonly called &quot;asynchronous&quot;,
+<p>All connections use non-blocking (commonly called “asynchronous”,
 which is a misnomer) I/O. Without going into a big song and dance
 about asynchronous I/O, what this means to you is:</p>
 <blockquote>
@@ -3260,40 +3437,40 @@ about asynchronous I/O, what this means to you is:</p>
 <li>if the connection failed, an EOF will arrive for that idx</li>
 </ul>
 </div></blockquote>
-<p>The only time a 'connect' will return an error is if you give it a
-hostname that can't be resolved (this is considered a &quot;DNS error&quot;).
+<p>The only time a ‘connect’ will return an error is if you give it a
+hostname that can’t be resolved (this is considered a “DNS error”).
 Otherwise, it will appear to have succeeded. If the connection failed,
 you will immediately get an EOF.</p>
-<p>Right after doing a 'connect' call, you should set up a 'control' for
+<p>Right after doing a ‘connect’ call, you should set up a ‘control’ for
 the new idx (see the section above). From then on, the connection will
 act just like a normal DCC connection that has been put under the control
-of a script. If you ever return &quot;1&quot; from the control proc (indicating
+of a script. If you ever return “1” from the control proc (indicating
 that you want control to return to Eggdrop), the bot will just close the
 connection and dispose of it. Other commands that work on normal DCC
-connections, like 'killdcc' and 'putdcc', will work on this idx, too.
-The 'killdcc' command will fail with &quot;invalid idx&quot; if you attempt to use
+connections, like ‘killdcc’ and ‘putdcc’, will work on this idx, too.
+The ‘killdcc’ command will fail with “invalid idx” if you attempt to use
 it on a closed socket.</p>
 <p>To create a listen port, use:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">listen</span> <span class="o">&lt;</span><span class="p">[</span><span class="o">+</span><span class="p">]</span><span class="n">port</span><span class="o">&gt;</span> <span class="n">script</span> <span class="o">&lt;</span><span class="n">proc</span><span class="o">&gt;</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">listen</span> <span class="o">&lt;</span><span class="p">[</span><span class="o">+</span><span class="p">]</span><span class="n">port</span><span class="o">&gt;</span> <span class="n">script</span> <span class="o">&lt;</span><span class="n">proc</span><span class="o">&gt;</span>
 </pre></div>
 </div>
 <p>By default, a listen port will allow both plaintext and SSL connections.
 To restrict a port to allow only SSL connections, prefix the port with a
 plus sign.</p>
 <p>Procs should be declared as:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="o">&lt;</span><span class="n">procname</span><span class="o">&gt;</span> <span class="o">&lt;</span><span class="n">newidx</span><span class="o">&gt;</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">&lt;</span><span class="n">procname</span><span class="o">&gt;</span> <span class="o">&lt;</span><span class="n">newidx</span><span class="o">&gt;</span>
 </pre></div>
 </div>
 <p>For example:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span>listen 6687 script listen:grab
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>listen 6687 script listen:grab
 
 proc listen:grab {newidx} {
   control $newidx listen:control
 }
 </pre></div>
 </div>
-<p>When a new connection arrives in port 6687, Eggdrop will create a new idx for the connection. That idx is sent to 'listen:grab'. The proc immediately puts this idx under control. Once 'listen:grab' has been called, the idx behaves exactly like an outgoing connection would.</p>
-<p>Secure connection can be also established after a connection is active. You can connect/listen normally and switch later using the 'starttls' command. Your script should first inform the other side of the connection that it wants to switch to SSL. How to do this is application specific.</p>
+<p>When a new connection arrives in port 6687, Eggdrop will create a new idx for the connection. That idx is sent to ‘listen:grab’. The proc immediately puts this idx under control. Once ‘listen:grab’ has been called, the idx behaves exactly like an outgoing connection would.</p>
+<p>Secure connection can be also established after a connection is active. You can connect/listen normally and switch later using the ‘starttls’ command. Your script should first inform the other side of the connection that it wants to switch to SSL. How to do this is application specific.</p>
 <p>The best way to learn how to use these commands is to find a script that uses them and follow it carefully. However, hopefully this has given you a good start.</p>
 </div>
 <div class="section" id="match-characters">
@@ -3323,7 +3500,7 @@ words) (This char only works in binds, not in regular matching)</td>
 </tbody>
 </table>
 <blockquote>
-<div>Copyright (C) 1999 - 2019 Eggheads Development Team</div></blockquote>
+<div>Copyright (C) 1999 - 2020 Eggheads Development Team</div></blockquote>
 </div>
 </div>
 
@@ -3332,65 +3509,6 @@ words) (This char only works in binds, not in regular matching)</td>
         </div>
       </div>
         </div>
-        <div class="sidebar">
-          <h3>Table Of Contents</h3>
-          <ul>
-<li class="toctree-l1"><a class="reference internal" href="../installAndSetup/readme.html">README</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../installAndSetup/install.html">Installing Eggdrop</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../installAndSetup/faq.html">Frequently Asked Questions</a></li>
-</ul>
-<ul class="current">
-<li class="toctree-l1"><a class="reference internal" href="about.html">About Eggdrop</a></li>
-<li class="toctree-l1"><a class="reference internal" href="features.html">Eggdrop Features</a></li>
-<li class="toctree-l1"><a class="reference internal" href="users.html">Users and Flags</a></li>
-<li class="toctree-l1"><a class="reference internal" href="partyline.html">The Party Line</a></li>
-<li class="toctree-l1"><a class="reference internal" href="bans.html">Bans, Invites, and Exempts</a></li>
-<li class="toctree-l1"><a class="reference internal" href="botnet.html">Botnet Sharing and Linking</a></li>
-<li class="toctree-l1"><a class="reference internal" href="patch.html">Patch How-To</a></li>
-<li class="toctree-l1 current"><a class="current reference internal" href="#">Eggdrop Tcl Commands</a></li>
-<li class="toctree-l1"><a class="reference internal" href="ipv6.html">IPv6 support</a></li>
-<li class="toctree-l1"><a class="reference internal" href="tls.html">TLS support</a></li>
-</ul>
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="../coreDocs/core.html">Eggdrop Core Settings</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../coreDocs/modules.html">Eggdrop Module Information</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../coreDocs/assoc.html">Assoc Module</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../coreDocs/blowfish.html">Blowfish Module</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../coreDocs/channels.html">Channels Module</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../coreDocs/compress.html">Compress Module</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../coreDocs/console.html">Console Module</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../coreDocs/ctcp.html">CTCP Module</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../coreDocs/dns.html">DNS Module</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../coreDocs/filesys.html">Filesys Module</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../coreDocs/ident.html">Ident Module</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../coreDocs/irc.html">IRC Module</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../coreDocs/notes.html">Notes Module</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../coreDocs/seen.html">Seen Module</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../coreDocs/server.html">Server Module</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../coreDocs/share.html">Share Module</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../coreDocs/transfer.html">Transfer Module</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../coreDocs/uptime.html">Uptime Module</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../coreDocs/woobie.html">Woobie Module</a></li>
-</ul>
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="../appendices/known-probs.html">Known Problems</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../appendices/tricks.html">Eggdrop Tricks</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../appendices/text-sub.html">Textfile Substitutions</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../appendices/weird-msgs.html">Weird Messages That Get Logged</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../appendices/first-script.html">Your First Eggdrop Script</a></li>
-</ul>
-
-          <h3 style="margin-top: 1.5em;">Search</h3>
-          <form class="search" action="../search.html" method="get">
-            <input type="text" name="q" />
-            <input type="submit" value="Go" />
-            <input type="hidden" name="check_keywords" value="yes" />
-            <input type="hidden" name="area" value="default" />
-          </form>
-          <p class="searchtip" style="font-size: 90%">
-            Enter search terms or a module, class or function name.
-          </p>
-        </div>
         <div class="clearer"></div>
       </div>
     </div>
@@ -3398,18 +3516,22 @@ words) (This char only works in binds, not in regular matching)</td>
     <div class="footer-wrapper">
       <div class="footer">
         <div class="left">
-          <a href="patch.html" title="Patch How-To"
-             >previous</a> |
-          <a href="ipv6.html" title="IPv6 support"
-             >next</a>
+          <div role="navigation" aria-label="related navigaton">
+            <a href="patch.html" title="Patch How-To"
+              >previous</a> |
+            <a href="ipv6.html" title="IPv6 support"
+              >next</a>
+          </div>
+          <div role="note" aria-label="source link">
+          </div>
         </div>
 
         <div class="right">
           
     <div class="footer" role="contentinfo">
-        &#169; Copyright 2019, Eggheads.
-      Last updated on Jul 25, 2019.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.6.7.
+        &#169; Copyright 2020, Eggheads.
+      Last updated on Jun 19, 2020.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.5.
     </div>
         </div>
         <div class="clearer"></div>

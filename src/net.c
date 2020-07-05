@@ -8,7 +8,7 @@
  *
  * Changes after Feb 23, 1999 Copyright Eggheads Development Team
  *
- * Copyright (C) 1999 - 2019 Eggheads Development Team
+ * Copyright (C) 1999 - 2020 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -42,6 +42,7 @@
 #  include <unistd.h>
 #endif
 #include <setjmp.h>
+#include "mod/server.mod/server.h"
 
 #ifdef TLS
 #  include <openssl/err.h>
@@ -54,7 +55,7 @@ extern unsigned long otraffic_irc_today, otraffic_bn_today, otraffic_dcc_today,
                      otraffic_unknown_today;
 
 char natip[121] = "";         /* Public IPv4 to report for systems behind NAT */
-char listen_ip[121] = "";     /* IP (or hostname) for listening sockets       */
+char listen_ip[121] = ""; /* IP (or hostname) for listening sockets    */
 char vhost[121] = "";         /* IPv4 vhost for outgoing connections          */
 #ifdef IPV6
 char vhost6[121] = "";        /* IPv6 vhost for outgoing connections          */
@@ -62,9 +63,8 @@ int pref_af = 0;              /* Prefer IPv6 over IPv4?                       */
 #endif
 char firewall[121] = "";      /* Socks server for firewall.                   */
 int firewallport = 1080;      /* Default port of socks 4/5 firewalls.         */
-char botuser[USERLEN + 1] = "eggdrop"; /* Username of the user running the bot. */
+char botuser[USERLEN + 1] = "eggdrop"; /* Username of the user running the bot*/
 int dcc_sanitycheck = 0;      /* Do some sanity checking on dcc connections.  */
-
 sock_list *socklist = NULL;   /* Enough to be safe.                           */
 sigjmp_buf alarmret;          /* Env buffer for alarm() returns.              */
 
@@ -130,25 +130,47 @@ char *iptostr(struct sockaddr *sa)
  */
 int setsockname(sockname_t *addr, char *src, int port, int allowres)
 {
+  char *endptr;
+  long val;
+  IP ip;
   struct hostent *hp;
-  int af = AF_UNSPEC;
+  volatile int af = AF_UNSPEC;
 #ifdef IPV6
+  char ip2[INET6_ADDRSTRLEN];
+  char *src2 = src;
   int pref;
+#else
+  char ip2[INET_ADDRSTRLEN];
+  int i, count;
+#endif
 
+  /* DCC CHAT ip is expressed as integer but inet_pton() only accepts dotted
+   * addresses */
+  val = strtol(src, &endptr, 10);
+  if (val && !*endptr) {
+    ip = htonl(val);
+    if (inet_ntop(AF_INET, &ip, ip2, sizeof ip2)) {
+      debug2("net: setsockname(): ip %s -> %s", src, ip2);
+#ifdef IPV6
+      src2 = ip2;
+#endif
+    }
+  }
+#ifdef IPV6
   /* Clean start */
   egg_bzero(addr, sizeof(sockname_t));
   pref = pref_af ? AF_INET6 : AF_INET;
   if (pref == AF_INET) {
-    if (inet_pton(AF_INET, src, &addr->addr.s4.sin_addr) == 1)
+    if (inet_pton(AF_INET, src2, &addr->addr.s4.sin_addr) == 1)
       af = AF_INET;
-    else if (inet_pton(AF_INET6, src, &addr->addr.s6.sin6_addr) == 1)
+    else if (inet_pton(AF_INET6, src2, &addr->addr.s6.sin6_addr) == 1)
       af = AF_INET6;
     else
       af = AF_UNSPEC;
   } else {
-    if (inet_pton(AF_INET6, src, &addr->addr.s6.sin6_addr) == 1)
+    if (inet_pton(AF_INET6, src2, &addr->addr.s6.sin6_addr) == 1)
       af = AF_INET6;
-    else if (inet_pton(AF_INET, src, &addr->addr.s4.sin_addr) == 1)
+    else if (inet_pton(AF_INET, src2, &addr->addr.s4.sin_addr) == 1)
       af = AF_INET;
     else
       af = AF_UNSPEC;
@@ -185,8 +207,6 @@ int setsockname(sockname_t *addr, char *src, int port, int allowres)
     addr->addr.s4.sin_family = AF_INET;
   }
 #else
-  int i, count;
-
   egg_bzero(addr, sizeof(sockname_t));
 
 /* If it's not an IPv4 address, check if its IPv6 (so it can fail/error
@@ -932,12 +952,6 @@ int sockread(char *s, int *len, sock_list *slist, int slistmax, int tclonly)
                      ERR_error_string(ERR_get_error(), 0), err);
             x = -1;
           }
-        } else if (slist[i].flags & SOCK_SENTTLS) {
-          /* We are awaiting a reply on our "starttls", only read
-           * strlen("starttls -\n") bytes so we don't accidentally
-           * read the Client Hello from the ssl handshake */
-          x = read(slist[i].sock, s, strlen("starttls -\n"));
-          slist[i].flags &= ~SOCK_SENTTLS;
         } else
           x = read(slist[i].sock, s, grab);
       }
@@ -1030,7 +1044,7 @@ int sockread(char *s, int *len, sock_list *slist, int slistmax, int tclonly)
 
 int sockgets(char *s, int *len)
 {
-  char xx[514], *p, *px;
+  char xx[RECVLINEMAX], *p, *px;
   int ret, i, data = 0;
   size_t len2;
 
@@ -1047,7 +1061,7 @@ int sockgets(char *s, int *len)
           *p++ = 0;
           while (*p == '\n' || *p == '\r')
             p++;
-          strlcpy(s, socklist[i].handler.sock.inbuf, 511);
+          strlcpy(s, socklist[i].handler.sock.inbuf, RECVLINEMAX-1);
           if (*p) {
             len2 = strlen(p) + 1;
             px = nmalloc(len2);
@@ -1063,15 +1077,15 @@ int sockgets(char *s, int *len)
         }
       } else {
         /* Handling buffered binary data (must have been SOCK_BUFFER before). */
-        if (socklist[i].handler.sock.inbuflen <= 510) {
+        if (socklist[i].handler.sock.inbuflen <= RECVLINEMAX-2) {
           *len = socklist[i].handler.sock.inbuflen;
           memcpy(s, socklist[i].handler.sock.inbuf, socklist[i].handler.sock.inbuflen);
           nfree(socklist[i].handler.sock.inbuf);
           socklist[i].handler.sock.inbuf = NULL;
           socklist[i].handler.sock.inbuflen = 0;
         } else {
-          /* Split up into chunks of 510 bytes. */
-          *len = 510;
+          /* Split up into chunks of RECVLINEMAX-2 bytes. */
+          *len = RECVLINEMAX-2;
           memcpy(s, socklist[i].handler.sock.inbuf, *len);
           memcpy(socklist[i].handler.sock.inbuf, socklist[i].handler.sock.inbuf + *len, *len);
           socklist[i].handler.sock.inbuflen -= *len;
@@ -1136,17 +1150,17 @@ int sockgets(char *s, int *len)
     strcpy(socklist[ret].handler.sock.inbuf, p);
     strcat(socklist[ret].handler.sock.inbuf, xx);
     nfree(p);
-    if (strlen(socklist[ret].handler.sock.inbuf) < 512) {
+    if (strlen(socklist[ret].handler.sock.inbuf) < RECVLINEMAX) {
       strcpy(xx, socklist[ret].handler.sock.inbuf);
       nfree(socklist[ret].handler.sock.inbuf);
       socklist[ret].handler.sock.inbuf = NULL;
       socklist[ret].handler.sock.inbuflen = 0;
     } else {
       p = socklist[ret].handler.sock.inbuf;
-      socklist[ret].handler.sock.inbuflen = strlen(p) - 510;
+      socklist[ret].handler.sock.inbuflen = strlen(p) - RECVLINEMAX-2;
       socklist[ret].handler.sock.inbuf = nmalloc(socklist[ret].handler.sock.inbuflen + 1);
-      strcpy(socklist[ret].handler.sock.inbuf, p + 510);
-      *(p + 510) = 0;
+      strcpy(socklist[ret].handler.sock.inbuf, p + RECVLINEMAX-2);
+      *(p + RECVLINEMAX-2) = 0;
       strcpy(xx, p);
       nfree(p);
       /* (leave the rest to be post-pended later) */
@@ -1167,7 +1181,7 @@ int sockgets(char *s, int *len)
 /* if (!s[0]) strcpy(s," ");  */
   if (!data) { 
     s[0] = 0;
-    if (strlen(xx) >= 510) {
+    if (strlen(xx) >= RECVLINEMAX-2) {
       /* String is too long, so just insert fake \n */
       strcpy(s, xx);
       xx[0] = 0;

@@ -19,22 +19,12 @@ module::
 
 There are also some variables you can set in your config file:
 
-  set net-type 0
-    What is your network?
+  set net-type Efnet
+    What is your network? Possible allowed values are Efnet, IRCnet, Undernet,
+    DALnet, freenode, Quakenet, Rizon, Other. If the network you use is not
+    listed, using "Other" is a good sane choice and can be customized with
+    settings both here and in the IRC module sections of the config file.
 
-      +---+---------------------------+
-      | 0 | EFnet                     |
-      +---+---------------------------+
-      | 1 | IRCnet                    |
-      +---+---------------------------+
-      | 2 | Undernet                  |
-      +---+---------------------------+
-      | 3 | DALnet                    |
-      +---+---------------------------+
-      | 4 | +e/+I/max-bans 20 Hybrid  |
-      +---+---------------------------+
-      | 5 | Others                    |
-      +---+---------------------------+
 
   set nick "LamestBot"
     Set the nick the bot uses on IRC, and on the botnet unless you specify a
@@ -205,7 +195,7 @@ There are also some variables you can set in your config file:
   set double-help 0
     Allow identical messages in the help queue?
 
-  set use-penalties 1 (default on net-type 1)
+  set use-penalties 1 (default on net-type IRCnet)
     This enables Eggdrop's penalty calculation. Every command Eggdrop sends
     to the IRC server raises its penalty points. If Eggdrop reaches a server
     limit, it gets disconnected with "excess flood" message. Eggdrop is able
@@ -229,24 +219,24 @@ There are also some variables you can set in your config file:
 
     ATTENTION: Setting 2 is very CPU intensive.
 
-There are additional settings for 'net-type' 5.
+There are additional settings for 'net-type' Efnet.
 
   *net-type 5 specific features:*
 
-  Attention: Use this settings *only* if you set 'net-type' to 5!
+  Attention: Use this settings *only* if you set 'net-type' to Efnet!
 
     set check-mode-r 1
       This settings defines how umode +r is understood by Eggdrop. Some
       networks use +r to indicate a restricted connection. If this is your
       case, and you want your bot to leave restricted servers and jump to
       the next server on its list, then set it to 1.
-      Please note, this setting is automatically set to 0 for net-type 0/2/3/4,
-      and set to 1 for net-type 1.
+      Please note, this setting is automatically set to 0 for net-type of
+      Efnet, Undernet, and DALnet, and set to 1 for net-type IRCNet.
 
     set nick-len 9
       This setting allows you to specify the maximum nick-length supported by
       your network. The default setting is 9. The maximum supported length by
       Eggdrop is 32.
 
-  Copyright (C) 2000 - 2019 Eggheads Development Team
+  Copyright (C) 2000 - 2020 Eggheads Development Team
 

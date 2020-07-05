@@ -6,7 +6,7 @@
  */
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2019 Eggheads Development Team
+ * Copyright (C) 1999 - 2020 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -33,18 +33,18 @@
 extern struct dcc_t *dcc;
 extern struct chanset_t *chanset;
 extern int default_flags, default_uflags, quiet_save, dcc_total, share_greet;
-extern char userfile[], ver[], botnetnick[];
+extern char ver[], botnetnick[];
 extern time_t now;
 
-int noshare = 1;                   /* don't send out to sharebots   */
-struct userrec *userlist = NULL;   /* user records are stored here  */
-struct userrec *lastuser = NULL;   /* last accessed user record     */
+int noshare = 1;                   /* don't send out to sharebots       */
+struct userrec *userlist = NULL;   /* user records are stored here      */
+struct userrec *lastuser = NULL;   /* last accessed user record         */
 maskrec *global_bans = NULL, *global_exempts = NULL, *global_invites = NULL;
 struct igrec *global_ign = NULL;
-int cache_hit = 0, cache_miss = 0; /* temporary cache accounting    */
-int strict_host = 1;
-int userfile_perm = 0600;         /* Userfile permissions
-                                   * (default rw-------) */
+int cache_hit = 0, cache_miss = 0; /* temporary cache accounting        */
+int userfile_perm = 0600;          /* Userfile permissions
+                                    * (default rw-------)               */
+char userfile[121];                /* where the user records are stored */
 
 void *_user_malloc(int size, const char *file, int line)
 {
@@ -158,30 +158,6 @@ int count_users(struct userrec *bu)
   for (u = bu; u; u = u->next)
     tot++;
   return tot;
-}
-
-/* Removes a username prefix (~+-^=) from a userhost.
- * e.g, "nick!~user@host" -> "nick!user@host"
- */
-char *fixfrom(char *s)
-{
-  static char uhost[UHOSTLEN];
-  char *p = uhost;
-
-  if (!s || !*s || strict_host)
-    return s;
-
-  while (*s) {
-    *p++ = *s;
-    if (*s == '!' && strchr("~+-^=", s[1]) && s[2] != '@') {
-      strcpy(p, s + 2);
-      return uhost;
-    }
-    s++;
-  }
-
-  *p = 0;
-  return uhost;
 }
 
 struct userrec *check_dcclist_hand(char *handle)
@@ -322,7 +298,6 @@ struct userrec *get_user_by_host(char *host)
   }
   cache_miss++;
   strlcpy(host2, host, sizeof host2);
-  host = fixfrom(host);
   for (u = userlist; u; u = u->next) {
     q = get_user(&USERENTRY_HOSTS, u);
     for (; q; q = q->next) {
@@ -532,7 +507,7 @@ void sort_userlist()
 void write_userfile(int idx)
 {
   FILE *f;
-  char *new_userfile;
+  char new_userfile[(sizeof userfile) + 4]; /* 4 = strlen("~new") */
   char s1[81];
   time_t tt;
   struct userrec *u;
@@ -541,14 +516,12 @@ void write_userfile(int idx)
   if (userlist == NULL)
     return;                     /* No point in saving userfile */
 
-  new_userfile = nmalloc(strlen(userfile) + 5);
-  sprintf(new_userfile, "%s~new", userfile);
+  egg_snprintf(new_userfile, sizeof new_userfile, "%s~new", userfile);
 
   f = fopen(new_userfile, "w");
   chmod(new_userfile, userfile_perm);
   if (f == NULL) {
     putlog(LOG_MISC, "*", USERF_ERRWRITE);
-    nfree(new_userfile);
     return;
   }
   if (!quiet_save)
@@ -566,13 +539,21 @@ void write_userfile(int idx)
   if (!ok || !write_ignores(f, -1) || fflush(f)) {
     putlog(LOG_MISC, "*", "%s (%s)", USERF_ERRWRITE, strerror(ferror(f)));
     fclose(f);
-    nfree(new_userfile);
     return;
   }
   fclose(f);
   call_hook(HOOK_USERFILE);
   movefile(new_userfile, userfile);
-  nfree(new_userfile);
+}
+
+void backup_userfile(void)
+{
+  char s[(sizeof userfile) + 4]; /* 4 = strlen("~bak") */
+
+  if (quiet_save < 2)
+    putlog(LOG_MISC, "*", USERF_BACKUP);
+  egg_snprintf(s, sizeof s, "%s~bak", userfile);
+  copyfile(userfile, s);
 }
 
 int change_handle(struct userrec *u, char *newh)
@@ -648,13 +629,6 @@ struct userrec *adduser(struct userrec *bu, char *handle, char *host,
   /* Strip out commas -- they're illegal */
   if (host && host[0]) {
     char *p;
-
-    /* About this fixfrom():
-     *   We should use this fixfrom before every call of adduser()
-     *   but its much easier to use here...  (drummer)
-     *   Only use it if we have a host :) (dw)
-     */
-    host = fixfrom(host);
 
     p = strchr(host, ',');
     while (p != NULL) {
@@ -866,7 +840,7 @@ struct userrec *get_user_by_nick(char *nick)
 
         egg_snprintf(word, sizeof word, "%s!%s", m->nick, m->userhost);
         /* No need to check the return value ourself */
-        return get_user_by_host(word);;
+        return get_user_by_host(word);
       }
     }
   }
