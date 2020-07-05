@@ -154,7 +154,7 @@ only, but instead everywhere possible, then use this setting.</dd>
 <div class="line">If you’re using virtual hosting (your machine has more than 1 IP), you
 may want to specify the particular IP to bind to. You can specify either
 by hostname or by IP. Note that this is not used for listening. Use the
-‘listen-addr’ variable to specify the listening address.</div>
+‘listen’ command to specify the listening address.</div>
 </div>
 </div>
 <div class="line-block">
@@ -163,20 +163,8 @@ by hostname or by IP. Note that this is not used for listening. Use the
 <div class="line-block">
 <div class="line">IPv6 vhost to bind to for outgoing IPv6 connections. You can set it
 to any valid IPv6 address or hostname, resolving to an IPv6 address.
-Note that this is not used for listening. Use the ‘listen-addr’
-variable to specify the listening address.</div>
-</div>
-</div>
-<div class="line-block">
-<div class="line">set listen-addr “99.99.0.0”</div>
-<div class="line">set listen-addr “2001:db8:618:5c0:263::”</div>
-<div class="line">set listen-addr “virtual.host.com”</div>
-<div class="line-block">
-<div class="line">IPv4/IPv6 address (or hostname) to bind for listening.
-If you don’t set this variable, eggdrop will listen on all available
-IPv4 or IPv6 interfaces, depending on the ‘prefer-ipv6’ variable.
-Note that on most platforms, IPv6 sockets are able to accept both
-IPv4 and IPv6 connections.</div>
+Note that this is not used for listening. Use the ‘listen’ command
+to specify the listening address.</div>
 </div>
 </div>
 <dl class="docutils">
@@ -526,7 +514,7 @@ address to a unique address for your box) or you have IP masquerading
 between you and the rest of the world, and /dcc chat, /ctcp chat or
 userfile sharing aren’t working, enter your outside IP here. This IP
 is used for transfers only, and has nothing to do with the vhost4/6 or
-listen-addr settings. You may still need to set them.</dd>
+listen settings. You may still need to set them.</dd>
 <dt>set reserved-portrange 2010:2020</dt>
 <dd>If you want all dcc file transfers to use a particular portrange either
 because you’re behind a firewall, or for other security reasons, set it
@@ -793,7 +781,7 @@ path to them.</p>
           
     <div class="footer" role="contentinfo">
         &#169; Copyright 2020, Eggheads.
-      Last updated on Jan 20, 2020.
+      Last updated on Jun 19, 2020.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.5.
     </div>
         </div>

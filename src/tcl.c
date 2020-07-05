@@ -93,14 +93,12 @@ int par_telnet_flood = 1;
 int quiet_save = 0;
 int strtot = 0;
 int handlen = HANDLEN;
-int utftot = 0;
-int clientdata_stuff = 0;
 
 extern Tcl_VarTraceProc traced_myiphostname;
 
 int expmem_tcl()
 {
-  return strtot + utftot + clientdata_stuff;
+  return strtot;
 }
 
 static void botnet_change(char *new)

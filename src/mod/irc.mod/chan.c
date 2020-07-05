@@ -901,7 +901,7 @@ static void recheck_channel(struct chanset_t *chan, int dobans)
    * In case we got them on join, nothing will be done */
   if (chan->ircnet_status & (CHAN_ASKED_EXEMPTS | CHAN_ASKED_INVITED)) {
     chan->ircnet_status &= ~(CHAN_ASKED_EXEMPTS | CHAN_ASKED_INVITED);
-    reset_chan_info(chan, CHAN_RESETEXEMPTS | CHAN_RESETINVITED);
+    reset_chan_info(chan, CHAN_RESETEXEMPTS | CHAN_RESETINVITED, 1);
   }
   if (dobans) {
     if (channel_nouserbans(chan) && !stop_reset)
@@ -1034,7 +1034,7 @@ static int got324(char *from, char *msg)
 }
 
 static int got352or4(struct chanset_t *chan, char *user, char *host,
-                     char *nick, char *flags)
+                     char *nick, char *flags, char *account)
 {
   char userhost[UHOSTLEN];
   memberlist *m;
@@ -1067,6 +1067,10 @@ static int got352or4(struct chanset_t *chan, char *user, char *host,
     m->flags |= CHANVOICE;
   else
     m->flags &= ~CHANVOICE;
+  if (strchr(flags, 'G') != NULL)
+    m->flags |= IRCAWAY;
+  else
+    m->flags &= ~IRCAWAY;
   if (!(m->flags & (CHANVOICE | CHANOP | CHANHALFOP)))
     m->flags |= STOPWHO;
   if (match_my_nick(nick) && any_ops(chan) && !me_op(chan)) {
@@ -1075,6 +1079,16 @@ static int got352or4(struct chanset_t *chan, char *user, char *host,
       do_tcl("need-op", chan->need_op);
   }
   m->user = get_user_by_host(userhost);
+  /* Update accountname in the channel record */
+  if ((account) && strcmp(account, "0")) {
+    if (m) {
+      strlcpy(m->account, account, sizeof(m->account));
+    }
+  } else {      /* Explicitly clear, in case someone deauthenticated? */
+    if (m) {
+      m->account[0] = 0;
+    }
+  }
   return 0;
 }
 
@@ -1094,7 +1108,7 @@ static int got352(char *from, char *msg)
     newsplit(&msg);             /* Skip the server */
     nick = newsplit(&msg);      /* Grab the nick */
     flags = newsplit(&msg);     /* Grab the flags */
-    got352or4(chan, user, host, nick, flags);
+    got352or4(chan, user, host, nick, flags, NULL);
   }
   return 0;
 }
@@ -1103,11 +1117,14 @@ static int got352(char *from, char *msg)
  */
 static int got354(char *from, char *msg)
 {
-  char *nick, *user, *host, *chname, *flags;
+  char *nick, *user, *host, *chname, *flags, *account = NULL;
   struct chanset_t *chan;
 
   if (use_354) {
     newsplit(&msg);             /* Skip my nick - efficiently */
+    if (!strncmp(msg, "222", strlen("222"))) {
+      newsplit(&msg);           /* Skip our query-type magic number" */
+    }
     if (msg[0] && (strchr(CHANMETA, msg[0]) != NULL)) {
       chname = newsplit(&msg);  /* Grab the channel */
       chan = findchan(chname);  /* See if I'm on channel */
@@ -1119,8 +1136,9 @@ static int got354(char *from, char *msg)
           host = nick;
           nick = newsplit(&msg);
         }
-        flags = newsplit(&msg); /* Grab the flags */
-        got352or4(chan, user, host, nick, flags);
+        flags = newsplit(&msg);     /* Grab the flags */
+        account = newsplit(&msg);   /* Grab the account name */
+        got352or4(chan, user, host, nick, flags, account);
       }
     }
   }
@@ -1165,6 +1183,33 @@ static int got315(char *from, char *msg)
   return 0;                            /* Don't check for I-Lines here.     */
 }
 
+/* Got AWAY message; only valid for IRCv3 away-notify capability */
+static int gotaway(char *from, char *msg)
+{
+  struct userrec *u;
+  struct chanset_t *chan;
+  char mask[1024], buf[MSGMAX], *nick, *s1 = buf, *chname;
+
+  strlcpy(s1, from, sizeof buf);
+  nick = splitnick(&s1);
+  u = get_user_by_host(from);
+  /* Run the bind for each channel the user is on */
+  for (chan = chanset; chan; chan = chan->next) {
+    chname = chan->dname;
+    if (ismember(chan, nick)) {
+      snprintf(mask, sizeof mask, "%s %s", chname, from);
+      check_tcl_ircaway(nick, from, mask, u, chname, msg);
+      if (strlen(msg)) {
+        fixcolon(msg);
+        putlog(LOG_JOIN, chan->dname, "%s is now away: %s", from, msg);
+      } else {
+        putlog(LOG_JOIN, chan->dname, "%s has returned from away status", from);
+      }
+    }
+  }
+  return 0;
+}
+
 /* got 367: ban info
  * <server> 367 <to> <chan> <ban> [placed-by] [timestamp]
  */
@@ -1173,7 +1218,7 @@ static int got367(char *from, char *origmsg)
   char *ban, *who, *chname, buf[511], *msg;
   struct chanset_t *chan;
 
-  strncpy(buf, origmsg, 510);
+  strlcpy(buf, origmsg, 510);
   buf[510] = 0;
   msg = buf;
   newsplit(&msg);
@@ -1683,9 +1728,9 @@ static void set_delay(struct chanset_t *chan, char *nick)
 
 /* Got a join
  */
-static int gotjoin(char *from, char *chname)
+static int gotjoin(char *from, char *channame)
 {
-  char *nick, *p, buf[UHOSTLEN], *uhost = buf;
+  char *nick, *p, buf[UHOSTLEN], account[NICKMAX], *uhost = buf, *chname;
   char *ch_dname = NULL;
   struct chanset_t *chan;
   memberlist *m;
@@ -1693,8 +1738,13 @@ static int gotjoin(char *from, char *chname)
   struct userrec *u;
   struct flag_record fr = { FR_GLOBAL | FR_CHAN, 0, 0, 0, 0, 0 };
 
-  fixcolon(chname);
-  chan = findchan(chname);
+  strlcpy(uhost, from, sizeof buf);
+  nick = splitnick(&uhost);
+  chname = newsplit(&channame);
+  if (!extended_join) {
+    fixcolon(chname);
+  }
+  chan = findchan_by_dname(chname);
   if (!chan && chname[0] == '!') {
     /* As this is a !channel, we need to search for it by display (short)
      * name now. This will happen when we initially join the channel, as we
@@ -1736,16 +1786,12 @@ static int gotjoin(char *from, char *chname)
   }
 
   if (!chan || channel_inactive(chan)) {
-    strlcpy(uhost, from, sizeof buf);
-    nick = splitnick(&uhost);
     if (match_my_nick(nick)) {
       putlog(LOG_MISC, "*", "joined %s but didn't want to!", chname);
       dprintf(DP_MODE, "PART %s\n", chname);
     }
   } else if (!channel_pending(chan)) {
     chan->status &= ~CHAN_STOP_CYCLE;
-    strlcpy(uhost, from, sizeof buf);
-    nick = splitnick(&uhost);
     detect_chan_flood(nick, uhost, from, chan, FLOOD_JOIN, NULL);
 
     chan = findchan(chname);
@@ -1769,7 +1815,7 @@ static int gotjoin(char *from, char *chname)
              chan->dname);
       chan->status |= CHAN_ACTIVE;
       chan->status &= ~CHAN_PEND;
-      reset_chan_info(chan, CHAN_RESETALL);
+      reset_chan_info(chan, CHAN_RESETALL, 1);
     } else {
       m = ismember(chan, nick);
       if (m && m->split && !strcasecmp(m->userhost, uhost)) {
@@ -1810,7 +1856,14 @@ static int gotjoin(char *from, char *chname)
         strlcpy(m->userhost, uhost, sizeof m->userhost);
         m->user = u;
         m->flags |= STOPWHO;
-
+        if (extended_join) {
+          strlcpy(account, newsplit(&channame), sizeof account);
+          if (strcmp(account, "*")) {
+            if ((m = ismember(chan, nick))) {
+              strlcpy (m->account, account, sizeof m->account);
+            }
+          }
+        }
         check_tcl_join(nick, uhost, u, chan->dname);
 
         /* The tcl binding might have deleted the current user and the
@@ -1849,7 +1902,7 @@ static int gotjoin(char *from, char *chname)
           else
             putlog(LOG_JOIN | LOG_MISC, chan->dname, "%s joined %s.", nick,
                    chname);
-          reset_chan_info(chan, (CHAN_RESETALL & ~CHAN_RESETTOPIC));
+          reset_chan_info(chan, (CHAN_RESETALL & ~CHAN_RESETTOPIC), 1);
         } else {
           struct chanuserrec *cr;
 
@@ -2001,7 +2054,7 @@ static int gotpart(char *from, char *msg)
              chan->dname);
       chan->status |= CHAN_ACTIVE;
       chan->status &= ~CHAN_PEND;
-      reset_chan_info(chan, CHAN_RESETALL);
+      reset_chan_info(chan, CHAN_RESETALL, 1);
     }
     set_handle_laston(chan->dname, u, now);
     /* This must be directly above the killmember, in case we're doing anything
@@ -2500,35 +2553,36 @@ static int gotnotice(char *from, char *msg)
 }
 
 static cmd_t irc_raw[] = {
-  {"324",     "",   (IntFunc) got324,       "irc:324"},
-  {"352",     "",   (IntFunc) got352,       "irc:352"},
-  {"354",     "",   (IntFunc) got354,       "irc:354"},
-  {"315",     "",   (IntFunc) got315,       "irc:315"},
-  {"367",     "",   (IntFunc) got367,       "irc:367"},
-  {"368",     "",   (IntFunc) got368,       "irc:368"},
-  {"403",     "",   (IntFunc) got403,       "irc:403"},
-  {"405",     "",   (IntFunc) got405,       "irc:405"},
-  {"471",     "",   (IntFunc) got471,       "irc:471"},
-  {"473",     "",   (IntFunc) got473,       "irc:473"},
-  {"474",     "",   (IntFunc) got474,       "irc:474"},
-  {"475",     "",   (IntFunc) got475,       "irc:475"},
-  {"INVITE",  "",   (IntFunc) gotinvite, "irc:invite"},
-  {"TOPIC",   "",   (IntFunc) gottopic,   "irc:topic"},
-  {"331",     "",   (IntFunc) got331,       "irc:331"},
-  {"332",     "",   (IntFunc) got332,       "irc:332"},
-  {"JOIN",    "",   (IntFunc) gotjoin,     "irc:join"},
-  {"PART",    "",   (IntFunc) gotpart,     "irc:part"},
-  {"KICK",    "",   (IntFunc) gotkick,     "irc:kick"},
-  {"NICK",    "",   (IntFunc) gotnick,     "irc:nick"},
-  {"QUIT",    "",   (IntFunc) gotquit,     "irc:quit"},
-  {"PRIVMSG", "",   (IntFunc) gotmsg,       "irc:msg"},
-  {"NOTICE",  "",   (IntFunc) gotnotice, "irc:notice"},
-  {"MODE",    "",   (IntFunc) gotmode,     "irc:mode"},
-  {"346",     "",   (IntFunc) got346,       "irc:346"},
-  {"347",     "",   (IntFunc) got347,       "irc:347"},
-  {"348",     "",   (IntFunc) got348,       "irc:348"},
-  {"349",     "",   (IntFunc) got349,       "irc:349"},
-  {NULL,      NULL, NULL,                         NULL}
+  {"324",     "",   (IntFunc) got324,          "irc:324"},
+  {"352",     "",   (IntFunc) got352,          "irc:352"},
+  {"354",     "",   (IntFunc) got354,          "irc:354"},
+  {"315",     "",   (IntFunc) got315,          "irc:315"},
+  {"367",     "",   (IntFunc) got367,          "irc:367"},
+  {"368",     "",   (IntFunc) got368,          "irc:368"},
+  {"403",     "",   (IntFunc) got403,          "irc:403"},
+  {"405",     "",   (IntFunc) got405,          "irc:405"},
+  {"471",     "",   (IntFunc) got471,          "irc:471"},
+  {"473",     "",   (IntFunc) got473,          "irc:473"},
+  {"474",     "",   (IntFunc) got474,          "irc:474"},
+  {"475",     "",   (IntFunc) got475,          "irc:475"},
+  {"INVITE",  "",   (IntFunc) gotinvite,    "irc:invite"},
+  {"TOPIC",   "",   (IntFunc) gottopic,      "irc:topic"},
+  {"331",     "",   (IntFunc) got331,          "irc:331"},
+  {"332",     "",   (IntFunc) got332,          "irc:332"},
+  {"JOIN",    "",   (IntFunc) gotjoin,        "irc:join"},
+  {"PART",    "",   (IntFunc) gotpart,        "irc:part"},
+  {"KICK",    "",   (IntFunc) gotkick,        "irc:kick"},
+  {"NICK",    "",   (IntFunc) gotnick,        "irc:nick"},
+  {"QUIT",    "",   (IntFunc) gotquit,        "irc:quit"},
+  {"PRIVMSG", "",   (IntFunc) gotmsg,          "irc:msg"},
+  {"NOTICE",  "",   (IntFunc) gotnotice,    "irc:notice"},
+  {"MODE",    "",   (IntFunc) gotmode,        "irc:mode"},
+  {"AWAY",    "",   (IntFunc) gotaway,     "irc:gotaway"},
+  {"346",     "",   (IntFunc) got346,          "irc:346"},
+  {"347",     "",   (IntFunc) got347,          "irc:347"},
+  {"348",     "",   (IntFunc) got348,          "irc:348"},
+  {"349",     "",   (IntFunc) got349,          "irc:349"},
+  {NULL,      NULL, NULL,                           NULL}
 };
 
 static cmd_t irc_rawt[] = {

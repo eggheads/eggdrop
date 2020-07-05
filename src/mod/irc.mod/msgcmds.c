@@ -990,13 +990,13 @@ static int msg_reset(char *nick, char *host, struct userrec *u, char *par)
     }
     putlog(LOG_CMDS, "*", "(%s!%s) !%s! RESET %s", nick, host, u->handle, par);
     dprintf(DP_HELP, "NOTICE %s :%s: %s\n", nick, par, IRC_RESETCHAN);
-    reset_chan_info(chan, CHAN_RESETALL);
+    reset_chan_info(chan, CHAN_RESETALL, 1);
     return 1;
   }
   putlog(LOG_CMDS, "*", "(%s!%s) !%s! RESET ALL", nick, host, u->handle);
   dprintf(DP_HELP, "NOTICE %s :%s\n", nick, IRC_RESETCHAN);
   for (chan = chanset; chan; chan = chan->next)
-    reset_chan_info(chan, CHAN_RESETALL);
+    reset_chan_info(chan, CHAN_RESETALL, 1);
   return 1;
 }
 
