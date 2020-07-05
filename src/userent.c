@@ -257,7 +257,7 @@ static int def_tcl_null(Tcl_Interp * irp, struct userrec *u,
                         struct user_entry *e, int argc, char **argv)
 {
   Tcl_AppendResult(irp, "Please use PASS instead.", NULL);
-  return TCL_OK;
+  return TCL_ERROR;
 }
 
 struct user_entry_type USERENTRY_PASS2 = {
