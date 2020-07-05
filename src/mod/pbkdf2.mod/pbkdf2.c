@@ -80,7 +80,7 @@ static char *pbkdf2_hash(const char *pass, const char *digest_name,
   const EVP_MD *digest;
   int digestlen, ret;
   int outlen, restlen;
-  static char *out; /* static object is initialized to zero (Standard C) */
+  static char out[256]; /* static object is initialized to zero (Standard C) */
   char *out2;
   unsigned char *buf;
   struct rusage ru1, ru2;
@@ -95,9 +95,11 @@ static char *pbkdf2_hash(const char *pass, const char *digest_name,
   outlen = strlen("$pbkdf2-") + strlen(digest_name) +
            strlen("$rounds=4294967295$i") + B64_NTOP_CALCULATE_SIZE(saltlen) +
            1 + B64_NTOP_CALCULATE_SIZE(digestlen);
-  if (out)
-    nfree(out);
-  out = nmalloc(outlen + 1);
+  if (outlen > sizeof out) {
+    putlog(LOG_MISC, "*", "PBKDF2 error: outlen %i > sizeof out %i.", outlen,
+           sizeof out);
+    return NULL;
+  }
   out2 = out;
   restlen = outlen;
   bufcount(&out2, &restlen, snprintf((char *) out2, restlen,
