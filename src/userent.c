@@ -249,7 +249,7 @@ int pass2_set(struct userrec *u, struct user_entry *e, void *new)
     strcpy(e->u.extra, new);
   }
   else /* remove PASS2 */
-    e->u.extra = new;
+    e->u.extra = NULL;
   return 0;
 }
 
