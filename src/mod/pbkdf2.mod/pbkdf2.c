@@ -94,7 +94,7 @@ static char *pbkdf2_hash(const char *pass, const char *digest_name,
   digestlen = EVP_MD_size(digest);
   outlen = strlen("$pbkdf2-") + strlen(digest_name) +
            strlen("$rounds=4294967295$i") + B64_NTOP_CALCULATE_SIZE(saltlen) +
-           1 + B64_NTOP_CALCULATE_SIZE(digestlen);
+           1 + B64_NTOP_CALCULATE_SIZE(digestlen) + 1;
   if (outlen > sizeof out) {
     putlog(LOG_MISC, "*", "PBKDF2 error: outlen %i > sizeof out %i.", outlen,
            sizeof out);
