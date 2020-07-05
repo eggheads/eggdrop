@@ -13,9 +13,9 @@ AC_COPYRIGHT([Copyright (C) 1999 - 2020 Eggheads Development Team])
 AC_REVISION([m4_esyscmd([../../../misc/getcommit])])
 
 AX_CHECK_OPENSSL([
-  AC_MSG_CHECKING([whether openssl supports pbkdf2 and sha256])
+  AC_MSG_CHECKING([checking for PKCS5_PBKDF2_HMAC])
   AC_LINK_IFELSE(
-    [AC_LANG_PROGRAM([#include <openssl/evp.h>], [PKCS5_PBKDF2_HMAC(NULL, 0, NULL, 0, 0, EVP_sha256(), 0, NULL)])],
+    [AC_LANG_PROGRAM([#include <openssl/evp.h>], [PKCS5_PBKDF2_HMAC(NULL, 0, NULL, 0, 0, NULL, 0, NULL)])],
     [
       AC_MSG_RESULT([yes])
       have_openssl="yes"
