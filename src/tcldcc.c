@@ -1138,8 +1138,13 @@ static int setlisten(Tcl_Interp *irp, char *ip, char *portp, char *type, char *m
   pmap->realport = realport;
   pmap->mappedto = port;
 
+#ifdef TLS
+  putlog(LOG_MISC, "*", "Listening for telnet connections on %s port %s%d (%s).",
+        iptostr(&dcc[idx].sockname.addr.sa), dcc[idx].ssl ? "+" : "", port, type);
+#else
   putlog(LOG_MISC, "*", "Listening for telnet connections on %s port %d (%s).",
         iptostr(&dcc[idx].sockname.addr.sa), port, type);
+#endif
 
   return TCL_OK;
 }
