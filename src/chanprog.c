@@ -368,7 +368,7 @@ void tell_verbose_status(int idx)
   #elif defined HAVE_EVP_PKEY_GET1_EC_KEY && !defined HAVE_OPENSSL_MD5
                "TLS library: %s (no MD5 support)\n",
   #elif !defined HAVE_EVP_PKEY_GET1_EC_KEY && !defined HAVE_OPENSSL_MD5
-               "TLS library: %s (no elliptic curve, MD5 support)\n",
+               "TLS library: %s (no elliptic curve or MD5 support)\n",
   #endif
           SSLeay_version(SSLEAY_VERSION));
 #else
