@@ -1208,7 +1208,7 @@ static int dns_hosts(char *hostn) {
   #define PATH "/etc/hosts"
   int fd, len, i, found = 0;
   struct stat sb;
-  char *addr, hostn_lower[256], hostn_upper[256], *c, *c2, ip[256];
+  char *addr, hostn_lower[256], hostn_upper[256], *last_newline, *last_hash = NULL, *c, *c2, ip[256];
   sockname_t name;
 
   if (!*hostn) {
@@ -1244,33 +1244,41 @@ static int dns_hosts(char *hostn) {
     close(fd);
     return 0;
   }
-  /* case insensitive search for hostn, begin at addr + 4 to skip shortest ip
-   * "::1 " */
-  for (c = addr + 4; (c < (addr + sb.st_size - len)) && *c; c++) {
-    /* if (!strncasecmp(c, hostn, len)) { */
-    for (i = 0; (i < len) && (c[i] == hostn_lower[i] || (c[i] == hostn_upper[i])); i++);
-    if ((i == len) &&
-        ((c == (addr + sb.st_size - len - 1)) || isspace(*(c + len))) &&
-        isspace(*(c - 1))) {
-      /* search backwards, as long as no comment char # found */
-      for (c2 = c - 2; (c2 >= addr) && (*c2 != '#'); c2--) {
-        if ((*c2 == '\n') || (*c2 == '\r') || (c2 == addr)) { /* until begin of line */
-          while (isspace(*++c2)); /* skip space chars */
-          for (i = 0; i < (sizeof ip); i++) { /* copy chars of ip */
-            if (!isspace(c2[i]))
-              ip[i] = c2[i];
-            else { /* until space char */
-              ip[i] = 0;
-              if (setsockname(&name, ip, 0, 0) != AF_UNSPEC) {
-                call_ipbyhost(hostn, &name, 1);
-                ddebug2(RES_MSG "Used /etc/hosts: %s == %s", hostn, ip);
+  last_newline = addr - 1;
+  /* case insensitive search for hostn */
+  for (c = addr; (c < (addr + sb.st_size - len)) && *c; c++) {
+    switch(*c) {
+      case '\n':
+      case '\r':
+        last_newline = c;
+        break;
+      case '#':
+        last_hash = c;
+        break;
+      default:
+        /* if (!strncasecmp(c, hostn, len)) { */
+        for (i = 0; (i < len) && (c[i] == hostn_lower[i] || (c[i] == hostn_upper[i])); i++);
+        if ((i == len) &&
+            ((c == (addr + sb.st_size - len - 1)) || isspace(*(c + len))) &&
+            isspace(*(c - 1))) {
+          if (last_newline > last_hash) {
+            c2 = last_newline;
+            while (isspace(*++c2)); /* skip space chars */
+            for (i = 0; i < (sizeof ip); i++) { /* copy chars of ip */
+              if (!isspace(c2[i]))
+                ip[i] = c2[i];
+              else { /* until space char */
+                ip[i] = 0;
+                if (setsockname(&name, ip, 0, 0) != AF_UNSPEC) {
+                  call_ipbyhost(hostn, &name, 1);
+                  ddebug2(RES_MSG "Used /etc/hosts: %s == %s", hostn, ip);
+                }
+                found = 1;
+                goto exit;
               }
-              found = 1;
-              goto exit;
             }
           }
         }
-      }
     }
   }
 exit:
