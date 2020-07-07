@@ -1216,6 +1216,10 @@ static int dns_hosts(char *hostn) {
     return 1;
   }
   len = strlen(hostn);
+  if (len > 255) {
+    ddebug0(RES_MSG "bogus len of hostname > 255 input");
+    return 1;
+  }
   /* due to strncasecmp() and strncmp() being slow if used in loop, precalculate
    * lower and upper string from hostn and compare with handcrafted code */
   for (i = 0; i < len; i++) {
