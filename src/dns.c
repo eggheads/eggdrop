@@ -545,7 +545,7 @@ static int tcl_dnslookup STDVAR
     tcl_dnshostbyip(&addr, argv[2], Tcl_DStringValue(&paras));
   else {
     if (strlen(argv[1]) > 255) {
-      Tcl_AppendResult(irp, "hostname too long. max 255 chars.");
+      Tcl_AppendResult(irp, "hostname too long. max 255 chars.", NULL);
       return TCL_ERROR;
     }
     tcl_dnsipbyhost(argv[1], argv[2], Tcl_DStringValue(&paras));
