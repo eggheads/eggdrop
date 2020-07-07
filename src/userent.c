@@ -125,12 +125,10 @@ int def_set(struct userrec *u, struct user_entry *e, void *buf)
   if (!string && !e->u.string)
     return 1;
   if (string) {
-    int l = strlen(string);
     char *i;
 
-    e->u.string = user_realloc(e->u.string, l + 1);
-
-    strlcpy(e->u.string, string, l + 1);
+    e->u.string = user_realloc(e->u.string, strlen(string) + 1);
+    strcpy(e->u.string, string);
 
     for (i = e->u.string; *i; i++)
       /* Allow bold, inverse, underline, color text here...
