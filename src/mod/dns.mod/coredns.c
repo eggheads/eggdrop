@@ -1265,8 +1265,14 @@ static int dns_hosts(char *hostn) {
             c2 = last_newline;
             while (isspace(*++c2)); /* skip space chars */
             for (i = 0; i < (sizeof ip); i++) { /* copy chars of ip */
-              if (!isspace(c2[i]))
+              if (!isspace(c2[i])) {
+#ifndef IPV6
+                /* skip ipv6 */
+                if (c2[i] == ':')
+                  break;
+#endif
                 ip[i] = c2[i];
+              }
               else { /* until space char */
                 ip[i] = 0;
                 if (setsockname(&name, ip, 0, 0) != AF_UNSPEC) {
