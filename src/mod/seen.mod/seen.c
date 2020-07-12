@@ -367,7 +367,6 @@ targetcont:
         snprintf(word2, sizeof word2, "%s!%s", m->nick, m->userhost);
         urec = get_user_by_host(word2);
         if (urec && !strcasecmp(urec->handle, whotarget)) {
-          onchan = 1;
           strcat(whoredirect, whotarget);
           strcat(whoredirect, " is ");
           strcat(whoredirect, m->nick);
