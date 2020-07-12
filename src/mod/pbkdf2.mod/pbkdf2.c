@@ -31,17 +31,6 @@ static int pbkdf2_re_encode = 0;
 /* Number of rounds (iterations). Default is 5000 like in glibc. */
 static int pbkdf2_rounds = 5000;
 
-static tcl_ints my_tcl_ints[] = {
-  {"pbkdf2-re-encode",  &pbkdf2_re_encode,  0},
-  {"pbkdf2-rounds",     &pbkdf2_rounds,     0},
-  {NULL,                NULL,               0}
-};
-
-static tcl_strings my_tcl_strings[] = {
-  {"pbkdf2-method", pbkdf2_method, 27, 0},
-  {NULL,            NULL,          0,  0}
-};
-
 static char *pbkdf2_close(void)
 {
   return "You cannot unload the " MODULE_NAME " module.";
@@ -234,6 +223,32 @@ static char *pbkdf2_verify(const char *pass, const char *encrypted)
   return (char *) encrypted;
 }
 
+static int tcl_encpass2 STDVAR
+{
+  BADARGS(2, 2, " string");
+  if (strlen(argv[1]) > 0)
+    Tcl_AppendResult(irp, pbkdf2_encrypt(argv[1]), NULL);
+  else
+    Tcl_AppendResult(irp, "", NULL);
+  return TCL_OK;
+}
+
+static tcl_cmds my_tcl_cmds[] = {
+  {"encpass2", tcl_encpass2},
+  {NULL,       NULL}
+};
+
+static tcl_ints my_tcl_ints[] = {
+  {"pbkdf2-re-encode", &pbkdf2_re_encode, 0},
+  {"pbkdf2-rounds",    &pbkdf2_rounds,    0},
+  {NULL,               NULL,              0}
+};
+
+static tcl_strings my_tcl_strings[] = {
+  {"pbkdf2-method", pbkdf2_method, 27, 0},
+  {NULL,            NULL,          0,  0}
+};
+
 EXPORT_SCOPE char *pbkdf2_start();
 
 static Function pbkdf2_table[] = {
@@ -294,6 +309,7 @@ char *pbkdf2_start(Function *global_funcs)
     }
     add_hook(HOOK_ENCRYPT_PASS2, (Function) pbkdf2_encrypt);
     add_hook(HOOK_VERIFY_PASS2, (Function) pbkdf2_verify);
+    add_tcl_commands(my_tcl_cmds);
     add_tcl_ints(my_tcl_ints);
     add_tcl_strings(my_tcl_strings);
   }
