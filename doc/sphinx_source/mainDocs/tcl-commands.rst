@@ -354,7 +354,7 @@ matchattr <handle> <flags> [channel]
 
       [+/-]<global flags>[&/|<channel flags>[&/|<bot flags>]]
 
-  Either | or & can be used as a separator between global, channel, and bot flags, but only one separator can be used per flag section. A '+' is used to check if a user has the have the subsequent flags, and a '-' is used to check if a user does NOT have the subsequent flags.
+  Either | or & can be used as a separator between global, channel, and bot flags, but only one separator can be used per flag section. A '+' is used to check if a user has the subsequent flags, and a '-' is used to check if a user does NOT have the subsequent flags.
 
 +------------+-----------------------------------------------------------------+
 | Flag Mask  | Action                                                          |
@@ -1108,7 +1108,7 @@ onchan <nickname> [channel]
 getaccount <nickname> [channel]
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-  Returns: the services account name of the nickname if they are logged in, "" otherwise, and an error if the account-notify or extended-join capabilites are not enabled. WARNING: this account list may not be accurate depending on the server and configuration. This command will only work if a server supports (and Eggdrop has enabled) the account-notify and extended-join capabilities, and the server understands WHOX requests (also known as raw 354 responses).
+  Returns: the services account name of the nickname if they are logged in, "" otherwise, and an error if the account-notify or extended-join capabilities are not enabled. WARNING: this account list may not be accurate depending on the server and configuration. This command will only work if a server supports (and Eggdrop has enabled) the account-notify and extended-join capabilities, and the server understands WHOX requests (also known as raw 354 responses).
 
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 nick2hand <nickname> [channel]
@@ -1265,7 +1265,7 @@ resetchan <channel> [flags]
 refreshchan <channel> [flags]
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-  Description: An alternative to resetchan, refresh rereads the channel info from the server without first clearing out the previously stored information. Useful for updateing a user's away status without resetting their idle time, for example. If flags are specified, only the required information will be refreshed, according to the given flags. Available flags:
+  Description: An alternative to resetchan, refresh rereads the channel info from the server without first clearing out the previously stored information. Useful for updating a user's away status without resetting their idle time, for example. If flags are specified, only the required information will be refreshed, according to the given flags. Available flags:
 
   +-----+------------------------------+
   | b   | channel bans                 |
@@ -3382,7 +3382,7 @@ The following is a list of bind types and how they work. Below each bind type is
 
   procname <nick> <user> <hand> <channel> <msg>
  
-  Description: triggered when Eggdrop recieves an AWAY message for a user from an IRC server, ONLY if the away-notify capability is enabled via CAP (the server must supports this capability, see the 'cap' Tcl command for more info on requesting capabilites). "Normal" away messages (301 messages) will not trigger this bind, for those you should instead use a RAWT bind. The mask for the bind is in the format "#channel nick!user@hostname" (* to catch all nicknames). nick is the nickname of the user that triggered the bind, user is the nick!user@host of the user, handle is the handle of the user on the bot (- if the user is not added to the bot), channel is the channel the user was found on (read on for more info on this) and msg is the contents of the away message, if any. If a "*" is used for the channel in the mask, this bind is triggered once for every channel that the user is in the bot with; in other words if the bot is in two channels with the target user, the bind will be triggered twice. To trigger a proc only once per nick change, regardless of the number of channels the Eggdrop and user share, use the RAWT bind with AWAY as the keyword.
+  Description: triggered when Eggdrop receives an AWAY message for a user from an IRC server, ONLY if the away-notify capability is enabled via CAP (the server must supports this capability, see the 'cap' Tcl command for more info on requesting capabilities). "Normal" away messages (301 messages) will not trigger this bind, for those you should instead use a RAWT bind. The mask for the bind is in the format "#channel nick!user@hostname" (* to catch all nicknames). nick is the nickname of the user that triggered the bind, user is the nick!user@host of the user, handle is the handle of the user on the bot (- if the user is not added to the bot), channel is the channel the user was found on (read on for more info on this) and msg is the contents of the away message, if any. If a "*" is used for the channel in the mask, this bind is triggered once for every channel that the user is in the bot with; in other words if the bot is in two channels with the target user, the bind will be triggered twice. To trigger a proc only once per nick change, regardless of the number of channels the Eggdrop and user share, use the RAWT bind with AWAY as the keyword.
 
   Module: irc 
 
@@ -3463,7 +3463,7 @@ Here's a list of the bindings that use the return value from procs they trigger:
 
 (18) TLS   Return 1 to disable verbose ssl information for the handshake.
 
-(19) RAWT  Return 1 to ask the bot not to prcess the server text. This can affet the bot's performance by causing it to miss things that it would normally act on -- you have been warned. Again.
+(19) RAWT  Return 1 to ask the bot not to process the server text. This can affet the bot's performance by causing it to miss things that it would normally act on -- you have been warned. Again.
 
 Control Procedures
 ------------------
