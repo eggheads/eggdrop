@@ -348,35 +348,43 @@ botattr <handle> [changes [channel]]
 matchattr <handle> <flags> [channel]
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-  Description: checks if the flags of the specified user match the flags provided. Default matching pattern uses the | (OR) convention. For example, specifying +mn for flags will check if the user has the m OR n flag.
+  Description: checks if the flags of the specified user match the flags provided. "flags" is of the form::
+
+    [+/-]<global flags>[& or \|<channel flags>[& or \|<bot flags>]]
+
+Either | or & can be used as a separator between global, channel, and bot flags, but only one separator can be used per flag section (Add a '&' suffix if only A '+' is used to check if a user has the have the subsequent flags, and a '-' is used to check if a user does NOT have the subsequent flags.
 
 +------------+-----------------------------------------------------------------+
 | Flag Mask  | Action                                                          |
 +============+=================================================================+
 | +m         + Checks if the user has the m global flag                        |
 +------------+-----------------------------------------------------------------+
-| +mn        | Checks if the user has the m or n global flag                   |
+| +mn        | Checks if the user has the m OR n global flag                   |
 +------------+-----------------------------------------------------------------+
-| +mn&       | Checks if the user has the m and n global flag                  |
+| \|+mn      | Checks if the user has the m OR n global flag                   |
++------------+-----------------------------------------------------------------+
+| \|+mn #foo | Checks if the user has the m OR n channel flag for #foo         |
++------------+-----------------------------------------------------------------+
+| &+mn       | Checks if the user has the m AND n global flag                  |
++------------+-----------------------------------------------------------------+
+| &mn #foo   | Checks if the user has the m AND n channel flag for #foo        |
 +------------+-----------------------------------------------------------------+
 | \|+o #foo  | Checks if the user has the o channel flag for #foo              |
 +------------+-----------------------------------------------------------------+
-| &mn #foo   | Checks if the user has the m and n channel flag for #foo        |
+| +o|+n #foo | Checks if the user has the o global flag OR the n channel flag  |
+|            | for #foo                                                        |
 +------------+-----------------------------------------------------------------+
-| +o|+n #foo | Checks if the user has the o global flag, or the n channel      |
-|            | flag for #foo                                                   |
-+------------+-----------------------------------------------------------------+
-| +m&+v      | Checks if the user has the m global flag, and the v channel     |
-|            | flag for #foo                                                   |
+| +m&+v #foo | Checks if the user has the m global flag AND the v channel flag |
+|            | for #foo                                                        |
 +------------+-----------------------------------------------------------------+
 | -m         | Checks if the user does not have the m global flag              |
 +------------+-----------------------------------------------------------------+
 | \|-n #foo  | Checks if the user does not have the n channel flag for #foo    |
 +------------+-----------------------------------------------------------------+
-| +m|-n #foo | Checks if the user has the global m flag or does not have a     |
+| +m|-n #foo | Checks if the user has the global m flag OR does not have a     |
 |            | channel n flag for #foo                                         |
 +------------+-----------------------------------------------------------------+
-| -n&-m #foo | Searches if the user does not have the global n flag and does   |
+| -n&-m #foo | Searches if the user does not have the global n flag AND does   |
 |            | not have the channel m flag for #foo                            |
 +------------+-----------------------------------------------------------------+
 | ||+b       | Searches if the user has the bot flag b                         |

@@ -21,7 +21,7 @@ The super-short version
 
 You can read the `Installation`_ section for a more detailed explanation of these steps.
 
-1. Download the `latest stable Eggdrop release <https://ftp.eggheads.org/pub/eggdrop/source/eggdrop-1.8.4.tar.gz>`_ to your shell via FTP, or simply type ``wget geteggdrop.com -O eggdrop-1.8.4.tar.gz``
+1. Download the `latest stable Eggdrop release <https://ftp.eggheads.org/pub/eggdrop/source/stable/eggdrop-1.8.4.tar.gz>`_ to your shell via FTP, or simply type ``wget geteggdrop.com -O eggdrop-1.8.4.tar.gz``
 2. From the commadline of your shell, type ``tar zxvf eggdrop-1.8.4.tar.gz``
 3. Type ``cd eggdrop-1.8.4``
 4. Type ``./configure``
