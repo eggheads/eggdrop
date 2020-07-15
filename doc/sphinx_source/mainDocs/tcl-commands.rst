@@ -1,3 +1,5 @@
+.. highlight:: text
+
 Eggdrop Tcl Commands
 Last revised: December 14, 2017
 
@@ -350,9 +352,9 @@ matchattr <handle> <flags> [channel]
 
   Description: checks if the flags of the specified user match the flags provided. "flags" is of the form::
 
-    [+/-]<global flags>[& or \|<channel flags>[& or \|<bot flags>]]
+      [+/-]<global flags>[&/|<channel flags>[&/|<bot flags>]]
 
-Either | or & can be used as a separator between global, channel, and bot flags, but only one separator can be used per flag section (Add a '&' suffix if only A '+' is used to check if a user has the have the subsequent flags, and a '-' is used to check if a user does NOT have the subsequent flags.
+  Either | or & can be used as a separator between global, channel, and bot flags, but only one separator can be used per flag section. A '+' is used to check if a user has the have the subsequent flags, and a '-' is used to check if a user does NOT have the subsequent flags.
 
 +------------+-----------------------------------------------------------------+
 | Flag Mask  | Action                                                          |
@@ -384,10 +386,10 @@ Either | or & can be used as a separator between global, channel, and bot flags,
 | +m|-n #foo | Checks if the user has the global m flag OR does not have a     |
 |            | channel n flag for #foo                                         |
 +------------+-----------------------------------------------------------------+
-| -n&-m #foo | Searches if the user does not have the global n flag AND does   |
+| -n&-m #foo | Checks if the user does not have the global n flag AND does     |
 |            | not have the channel m flag for #foo                            |
 +------------+-----------------------------------------------------------------+
-| ||+b       | Searches if the user has the bot flag b                         |
+| ||+b       | Checks if the user has the bot flag b                           |
 +------------+-----------------------------------------------------------------+
 
   Returns: 1 if the specified user has the flags matching the provided mask; 0 otherwise
