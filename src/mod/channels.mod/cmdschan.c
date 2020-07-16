@@ -1509,8 +1509,7 @@ static void cmd_chanset(struct userrec *u, int idx, char *par)
         dprintf(idx, "Usage: chanset [%schannel] <settings>\n", CHANMETA);
         return;
       }
-      if (!chan &&
-          !(chan = findchan_by_dname(chname = dcc[idx].u.chat->con_chan))) {
+      if (!chan && !(chan = findchan_by_dname(dcc[idx].u.chat->con_chan))) {
         dprintf(idx, "Invalid console channel.\n");
         return;
       }
