@@ -237,24 +237,6 @@
 <p>Finally, be sure to remove the ‘die’ commands from the config (there are two of them ‘hidden’ in various places), or the bot won’t start. Once you’ve finished editing the config file, make sure you rename it to something other than
 “eggdrop.conf” if you haven’t already. Then, if you edited the config file locally, upload the config file to the directory you installed the bot.</p>
 </div>
-<div class="section" id="auto-starting-the-eggdrop">
-<h3>Auto-starting the Eggdrop<a class="headerlink" href="#auto-starting-the-eggdrop" title="Permalink to this headline">¶</a></h3>
-<p>The botchk script and crontab are used to automatically restart the bot if the shell it’s on reboots or if the bot process is killed for some other reason. Since version 1.3.24i, there is a script included in the scripts directory that automatically configures botchk and crontab for you. From the commandline, simply type <code class="docutils literal notranslate"><span class="pre">chmod</span> <span class="pre">700</span> <span class="pre">scripts/autobotchk</span></code> then <code class="docutils literal notranslate"><span class="pre">./scripts/autobotchk</span> <span class="pre">&lt;config&gt;</span> <span class="pre">-dir</span> <span class="pre">/home/botdir</span> <span class="pre">-noemail</span></code>, where /home/botdir is the directory you installed the bot to and &lt;config&gt; is the name you chose for your config file. That’s all you need to do!</p>
-<ol class="arabic">
-<li><p class="first">After running the autobotchk script, your crontab line should look like:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="mi">0</span><span class="p">,</span><span class="mi">10</span><span class="p">,</span><span class="mi">20</span><span class="p">,</span><span class="mi">30</span><span class="p">,</span><span class="mi">40</span><span class="p">,</span><span class="mi">50</span> <span class="o">*</span> <span class="o">*</span> <span class="o">*</span> <span class="o">*</span> <span class="o">/</span><span class="n">home</span><span class="o">/</span><span class="n">botdir</span><span class="o">/</span><span class="n">scripts</span><span class="o">/</span><span class="n">botchk</span> <span class="o">&gt;/</span><span class="n">dev</span><span class="o">/</span><span class="n">null</span> <span class="mi">2</span><span class="o">&gt;&amp;</span><span class="mi">1</span>
-</pre></div>
-</div>
-</li>
-</ol>
-<blockquote>
-<div>This will run the botchk script every 10 minutes, which checks that the bot is running and restarts it if it isn’t. You just need to change the /home/botdir part to the correct path to the bot on your shell (type pwd to show this). Type the line in Notepad or some place where you can highlight and copy it from.</div></blockquote>
-<ol class="arabic simple" start="2">
-<li>To edit the crontab, type crontab -e. This should bring up the vi editor (it will appear as a bunch of lines starting with the ~ character), but may open up the pico editor instead.</li>
-<li>For vi, do the following - hit ctrl-L, hit i, paste the crontab line you created earlier, hit Esc, type :wq! then hit Enter (if you make a mistake doing this, just hit Esc and start over). For pico - paste the crontab line you created earlier, hit ctrl-X, hit Y when prompted to save, hit Enter when prompted for a filename.</li>
-</ol>
-<p>You can view your current crontab entries by typing crontab -l. To clear your crontab, use crontab -r (may be crontab -d on some shells).</p>
-</div>
 </div>
 <div class="section" id="starting-the-eggdrop">
 <h2>Starting the Eggdrop<a class="headerlink" href="#starting-the-eggdrop" title="Permalink to this headline">¶</a></h2>
@@ -267,8 +249,12 @@
 <p>Additionally, you can kill the bot via the command line (<code class="docutils literal notranslate"><span class="pre">kill</span> <span class="pre">pid</span></code>, the pid is shown to you when you started the bot or can be viewed by running <code class="docutils literal notranslate"><span class="pre">ps</span> <span class="pre">x</span></code>) and then restart it with the -mnt flag, which will launch you directly into the partyline, to assist with troubleshooting. Note that if you use the -nt flag, the bot will not persist and you will kill it once you quit the partyline.</p>
 <p>If you’re still unsure what the problem is, try asking in #eggdrop on Freenode, and be sure to include any relevant information from the logfile. Good luck!</p>
 </div>
-<div class="section" id="first-steps-log-on-to-the-partyline">
-<h3>First steps- log on to the partyline<a class="headerlink" href="#first-steps-log-on-to-the-partyline" title="Permalink to this headline">¶</a></h3>
+</div>
+</div>
+<div class="section" id="first-steps-with-a-running-eggdrop">
+<h1>First steps with a running Eggdrop<a class="headerlink" href="#first-steps-with-a-running-eggdrop" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="log-on-to-the-partyline">
+<h2>Log on to the partyline<a class="headerlink" href="#log-on-to-the-partyline" title="Permalink to this headline">¶</a></h2>
 <p>Now that your bot is online, you’ll want to join the partyline to further use the bot. First, read what it tells you when you started it up:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">STARTING</span> <span class="n">BOT</span> <span class="n">IN</span> <span class="n">USERFILE</span> <span class="n">CREATION</span> <span class="n">MODE</span><span class="o">.</span>
 <span class="n">Telnet</span> <span class="n">to</span> <span class="n">the</span> <span class="n">bot</span> <span class="ow">and</span> <span class="n">enter</span> <span class="s1">&#39;NEW&#39;</span> <span class="k">as</span> <span class="n">your</span> <span class="n">nickname</span><span class="o">.</span>
@@ -276,7 +262,129 @@
 <span class="n">This</span> <span class="n">will</span> <span class="n">make</span> <span class="n">the</span> <span class="n">bot</span> <span class="n">recognize</span> <span class="n">you</span> <span class="k">as</span> <span class="n">the</span> <span class="n">master</span><span class="o">.</span>
 </pre></div>
 </div>
-<p>If you choose not to telnet to connect to the partyline, you can either <code class="docutils literal notranslate"><span class="pre">/dcc</span> <span class="pre">chat</span> <span class="pre">BotNick</span></code> or <code class="docutils literal notranslate"><span class="pre">/ctcp</span> <span class="pre">BotNick</span> <span class="pre">chat</span></code>. If one of those methods does not work for you, try the other. Once you’re on the bot for the first time, type <code class="docutils literal notranslate"><span class="pre">.help</span></code> for a short list of available commands, or <code class="docutils literal notranslate"><span class="pre">.help</span> <span class="pre">all</span></code> for a more thorough list. Common first commands you’ll want to review are <code class="docutils literal notranslate"><span class="pre">.help</span> <span class="pre">+chan</span></code> to tell the bot to join a channel, <code class="docutils literal notranslate"><span class="pre">.help</span> <span class="pre">+user</span></code> to add a user, <code class="docutils literal notranslate"><span class="pre">.help</span> <span class="pre">whois</span></code> for a list of flags you can add to that user, and <code class="docutils literal notranslate"><span class="pre">.help</span> <span class="pre">chattr</span></code> to add those flags to a user.</p>
+<p>You can either telnet to the bot, or connect to the bot using DCC Chat. To telnet, you’ll either need a program like Putty (Windows), or you can do it from the command line of your shell using the telnet command:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">telnet</span> <span class="o">&lt;</span><span class="n">IP</span> <span class="n">of</span> <span class="n">bot</span><span class="o">&gt;</span> <span class="o">&lt;</span><span class="n">listen</span> <span class="n">port</span><span class="o">&gt;</span>
+</pre></div>
+</div>
+<p>You can find the IP and port the bot is listening on by a) remembering what you set in the config file ;) or b) reading the display the bot presented when it started up. Look for a line that looks similar to this:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Listening</span> <span class="k">for</span> <span class="n">telnet</span> <span class="n">connections</span> <span class="n">on</span> <span class="mf">2.4</span><span class="o">.</span><span class="mf">6.9</span><span class="p">:</span><span class="mi">3183</span> <span class="p">(</span><span class="nb">all</span><span class="p">)</span><span class="o">.</span>
+</pre></div>
+</div>
+<p>This tells you that the bot is listening on IP 2.4.6.9, port 3183. If you see 0.0.0.0 listed, that means Eggdrop is listening on all available IPs on that particular host.</p>
+<p>If you choose not to telnet to connect to the partyline, you can either <code class="docutils literal notranslate"><span class="pre">/dcc</span> <span class="pre">chat</span> <span class="pre">BotNick</span></code> or <code class="docutils literal notranslate"><span class="pre">/ctcp</span> <span class="pre">BotNick</span> <span class="pre">chat</span></code>. If one of those methods does not work for you, try the other. Once you’re on the bot for the first time, type <code class="docutils literal notranslate"><span class="pre">.help</span></code> for a short list of available commands, or <code class="docutils literal notranslate"><span class="pre">.help</span> <span class="pre">all</span></code> for a more thorough list.</p>
+</div>
+<div class="section" id="common-first-steps">
+<h2>Common first steps<a class="headerlink" href="#common-first-steps" title="Permalink to this headline">¶</a></h2>
+<p>To learn more about any of these commands, type .help &lt;command&gt; on the partyline. It will provide you the syntax you need, as well as a short description of how to use the command.</p>
+<p>To tell the Eggdrop to join a channel, use:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">.+</span><span class="n">chan</span> <span class="c1">#channel</span>
+</pre></div>
+</div>
+<p>To register a user with the bot, use:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">.+</span><span class="n">user</span> <span class="o">&lt;</span><span class="n">handle</span><span class="o">&gt;</span>
+</pre></div>
+</div>
+<p>The handle is the name that the bot uses to track a user. No matter what nickname on IRC a user uses, a single handle is used to track the user by their hostmask. To add a hostmask of a user to a handle, use:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">.+</span><span class="n">host</span> <span class="o">&lt;</span><span class="n">handle</span><span class="o">&gt;</span> <span class="o">&lt;</span><span class="n">hostmask</span><span class="o">&gt;</span>
+</pre></div>
+</div>
+<p>where the hostmask is in the format of &lt;nick&gt;!&lt;ident&gt;&#64;hostname.com . Wildcards can be used; common formats are <a class="reference external" href="mailto:*!*&#37;&#52;&#48;hostname&#46;com">*!*<span>&#64;</span>hostname<span>&#46;</span>com</a> for static hosts, or <a class="reference external" href="mailto:*!ident&#37;&#52;&#48;*&#46;foo&#46;com">*!ident<span>&#64;</span>*<span>&#46;</span>foo<span>&#46;</span>com</a> for dynamic hostnames.</p>
+<p>To assign an access level to a user, first read <code class="docutils literal notranslate"><span class="pre">.help</span> <span class="pre">whois</span></code> for a listing of possible access levels and their corresponding flags. Then, assign the desired flag to the user with:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">.</span><span class="n">chattr</span> <span class="o">&lt;+</span><span class="n">flag</span><span class="o">&gt;</span> <span class="o">&lt;</span><span class="n">handle</span><span class="o">&gt;</span>
+</pre></div>
+</div>
+<p>So to grant a user the voice flag, you would do:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">.</span><span class="n">chattr</span> <span class="o">+</span><span class="n">v</span> <span class="n">handle</span>
+</pre></div>
+</div>
+<p>It is important to note that, when on the partyline, you want to use the handle of the user, not their current nickname.</p>
+<p>Finally, Eggdrop is often used to moderate and control channels. This is done via the <code class="docutils literal notranslate"><span class="pre">.chanset</span></code> command. To learn more about the (numerous!) settings that can be used to control a channel, read:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">.</span><span class="n">help</span> <span class="n">chaninfo</span>
+</pre></div>
+</div>
+<p>Common uses involve setting channels modes. This can be done with the chanmode channel setting:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">.</span><span class="n">chanset</span> <span class="c1">#channel chanmode +snt</span>
+</pre></div>
+</div>
+<p>which will enforce the s, n, and t flags on a channel.</p>
+</div>
+<div class="section" id="automatically-restarting-an-eggdrop">
+<h2>Automatically restarting an Eggdrop<a class="headerlink" href="#automatically-restarting-an-eggdrop" title="Permalink to this headline">¶</a></h2>
+<p>A common question asked by users is, how can I configure Eggdrop to automatically restart should it die, such as after a reboot? To do that, we use the system’s crontab daemon to run a script (called botchk) every ten minutes that checks if the eggdrop is running. If the eggdrop is not running, the script will restart the bot, with an optional email sent to the user informing them of the action. To make this process as simple as possible, we have included a script that can automatically configure your crontab and botchk scripts for you. To set up your crontab/botchk combo:</p>
+<ol class="arabic">
+<li><p class="first">Enter the directory you installed your Eggdrop to. Most commonly, this is ~/eggdrop (also known as /home/&lt;username&gt;/eggdrop).</p>
+</li>
+<li><p class="first">Just humor us- run <code class="docutils literal notranslate"><span class="pre">./scripts/autobotchk</span></code> without any arguments and read the options available to you. They’re listed there for a reason!</p>
+</li>
+<li><p class="first">If you don’t want to customize anything via the options listed in #2, you can start the script simply by running:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">./</span><span class="n">scripts</span><span class="o">/</span><span class="n">autobotchk</span> <span class="n">yourEggdropConfigNameHere</span><span class="o">.</span><span class="n">conf</span>
+</pre></div>
+</div>
+</li>
+<li><p class="first">Review the output of the script, and verify your new crontab entry by typing:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">crontab</span> <span class="o">-</span><span class="n">l</span>
+</pre></div>
+</div>
+</li>
+</ol>
+<p>By default, it should create an entry that looks similar to:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="mi">0</span><span class="p">,</span><span class="mi">10</span><span class="p">,</span><span class="mi">20</span><span class="p">,</span><span class="mi">30</span><span class="p">,</span><span class="mi">40</span><span class="p">,</span><span class="mi">50</span> <span class="o">*</span> <span class="o">*</span> <span class="o">*</span> <span class="o">*</span> <span class="o">/</span><span class="n">home</span><span class="o">/</span><span class="n">user</span><span class="o">/</span><span class="n">bot</span><span class="o">/</span><span class="n">scripts</span><span class="o">/</span><span class="n">YourEggdrop</span><span class="o">.</span><span class="n">botchk</span> <span class="mi">2</span><span class="o">&gt;&amp;</span><span class="mi">1</span>
+</pre></div>
+</div>
+<p>This will run the generated botchk script every ten minutes and restart your Eggdrop if it is not running during the check. Also note that if you run autobotchk from the scripts directory, you’ll have to manually specify your config file location with the -dir option. To remove a crontab entry, use <code class="docutils literal notranslate"><span class="pre">crontab</span> <span class="pre">-e</span></code> to open the crontab file in your system’s default editor and remove the crontab line.</p>
+</div>
+<div class="section" id="authenticating-with-nickserv">
+<h2>Authenticating with NickServ<a class="headerlink" href="#authenticating-with-nickserv" title="Permalink to this headline">¶</a></h2>
+<p>Many IRC features require you to authenticate with NickServ to use them. You can do this from your config file by searching for the line:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1">#  putserv &quot;PRIVMSG NickServ :identify &lt;password&gt;&quot;</span>
+</pre></div>
+</div>
+<p>in your config file. Uncomment it by removing the ‘#’ sign and then replace &lt;password&gt; with your password. Your bot will now authenticate with NickServ each time it joins a server.</p>
+</div>
+<div class="section" id="setting-up-sasl-authentication">
+<h2>Setting up SASL authentication<a class="headerlink" href="#setting-up-sasl-authentication" title="Permalink to this headline">¶</a></h2>
+<p>Simple Authentication and Security Layer (SASL) is becoming a prevelant method of authenticating with IRC services such as NickServ prior to your client finalizing a connection to the IRC server, eliminating the need to /msg NickServ to identify yourself. In other words, you can authenticate with NickServ and do things like receive a cloaked hostmask before your client ever appears on the IRC server. Eggdrop supports three methods of SASL authentication, set via the sasl-mechanism setting:</p>
+<ul>
+<li><p class="first"><strong>PLAIN</strong>: To use this method, set sasl-mechanism to 0. This method passes the username and password (set in the sasl-username and sasl-password config file settings) to the IRC server in plaintext. If you only connect to the IRC server using a connection protected by SSL/TLS this is a generally safe method of authentication; however you probably want to avoid this method if you connect to a server on a non-protected port as the exchange itself is not encrypted.</p>
+</li>
+<li><p class="first"><strong>ECDSA-NIST256P-CHALLENGE</strong>: To use this method, set sasl-method to 1. This method uses a public/private keypair to authenticate, so no username/password is required. Not all servers support this method. If your server does support this, you you must generate a certificate pair using:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">openssl</span> <span class="n">ecparam</span> <span class="o">-</span><span class="n">genkey</span> <span class="o">-</span><span class="n">name</span> <span class="n">prime256v1</span> <span class="o">-</span><span class="n">out</span> <span class="n">eggdrop</span><span class="o">-</span><span class="n">ecdsa</span><span class="o">.</span><span class="n">pem</span>
+</pre></div>
+</div>
+<p>You will need to determine your public key fingerprint by using:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">openssl</span> <span class="n">ec</span> <span class="o">-</span><span class="n">noout</span> <span class="o">-</span><span class="n">text</span> <span class="o">-</span><span class="n">conv_form</span> <span class="n">compressed</span> <span class="o">-</span><span class="ow">in</span> <span class="n">eggdrop</span><span class="o">-</span><span class="n">ecdsa</span><span class="o">.</span><span class="n">pem</span> <span class="o">|</span> <span class="n">grep</span> <span class="s1">&#39;^pub:&#39;</span> <span class="o">-</span><span class="n">A</span> <span class="mi">3</span> <span class="o">|</span> <span class="n">tail</span> <span class="o">-</span><span class="n">n</span> <span class="mi">3</span> <span class="o">|</span> <span class="n">tr</span> <span class="o">-</span><span class="n">d</span> <span class="s1">&#39; </span><span class="se">\n</span><span class="s1">:&#39;</span> <span class="o">|</span> <span class="n">xxd</span> <span class="o">-</span><span class="n">r</span> <span class="o">-</span><span class="n">p</span> <span class="o">|</span> <span class="n">base64</span>
+</pre></div>
+</div>
+<p>Then, authenticate with your NickServ service and register your public certificate with NickServ. You can view your public key  On Freenode for example, it is done by:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">/</span><span class="n">msg</span> <span class="n">NickServ</span> <span class="nb">set</span> <span class="n">pubkey</span> <span class="o">&lt;</span><span class="n">fingerprint</span> <span class="n">string</span> <span class="kn">from</span> <span class="nn">above</span> <span class="n">goes</span> <span class="n">here</span><span class="o">&gt;</span>
+</pre></div>
+</div>
+</li>
+<li><p class="first"><strong>EXTERNAL</strong>: To use this method, set sasl-method to 2. This method allows you to use other TLS certificates to connect to the IRC server, if the IRC server supports it. An EXTERNAL authentication method usually requires you to connect to the IRC server using SSL/TLS. There are many ways to generate certificates; one such way is generating your own certificate using:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">openssl</span> <span class="n">req</span> <span class="o">-</span><span class="n">new</span> <span class="o">-</span><span class="n">x509</span> <span class="o">-</span><span class="n">nodes</span> <span class="o">-</span><span class="n">keyout</span> <span class="n">eggdrop</span><span class="o">.</span><span class="n">key</span> <span class="o">-</span><span class="n">out</span> <span class="n">eggdrop</span><span class="o">.</span><span class="n">crt</span>
+</pre></div>
+</div>
+</li>
+</ul>
+<p>You will need to determine yoru public key fingerprint by using:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">openssl</span> <span class="n">x509</span> <span class="o">-</span><span class="ow">in</span> <span class="n">eggdrop</span><span class="o">.</span><span class="n">crt</span> <span class="o">-</span><span class="n">outform</span> <span class="n">der</span> <span class="o">|</span> <span class="n">sha1sum</span> <span class="o">-</span><span class="n">b</span> <span class="o">|</span> <span class="n">cut</span> <span class="o">-</span><span class="n">d</span><span class="s1">&#39; &#39;</span> <span class="o">-</span><span class="n">f1</span>
+</pre></div>
+</div>
+<p>Then, ensure you have those keys loaded in the ssl-privatekey and ssl-certificate settings in the config file. Finally, to add this certificate to your NickServ account, type:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">/</span><span class="n">msg</span> <span class="n">NickServ</span> <span class="n">cert</span> <span class="n">add</span> <span class="o">&lt;</span><span class="n">fingerprint</span> <span class="n">string</span> <span class="kn">from</span> <span class="nn">above</span> <span class="n">goes</span> <span class="n">here</span><span class="o">&gt;</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="advanced-eggdrop-usage">
+<h1>Advanced Eggdrop Usage<a class="headerlink" href="#advanced-eggdrop-usage" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="utf-8-support">
+<h2>UTF-8 Support<a class="headerlink" href="#utf-8-support" title="Permalink to this headline">¶</a></h2>
+<p>The encoding scheme used by Eggdrop’s Tcl interface is set based on the locale settings of the host machine. You can check which locale your host machine is using by running the <code class="docutils literal notranslate"><span class="pre">locale</span></code> command. Eggdrop takes that locale setting of the host machine and compares it to the locales available within Tcl’s installed libraries. If it finds one in Tcl that matches (or is close to matching), that is the encoding scheme that is used. If a matching encoding scheme is not found, only then does eggdrop default to ISO 8859-1 encoding.</p>
+<p>If you want Eggdrop to use a specific encoding scheme that it is not currently using, you can view the availabe locales on your machine via the <code class="docutils literal notranslate"><span class="pre">locale</span> <span class="pre">-a</span></code> command, and then set the one you want to use for that user by running <code class="docutils literal notranslate"><span class="pre">export</span> <span class="pre">LANG=en_US.UTF-8</span></code> (or whichever scheme you want to use). You should not need to edit any source code, as has been a popular suggestion over the past few years.</p>
+<div class="section" id="unicode-emoji-support">
+<h3>Unicode Emoji Support<a class="headerlink" href="#unicode-emoji-support" title="Permalink to this headline">¶</a></h3>
+<p>Another issue encountered when using Eggdrop is that Unicode Emojis are not supported- this is not Eggdrop specific; rather it is a “feature” of Tcl. Unfortunately, the only solution at this time to enable Emojis (and other high-number characters) is to recompile with the TCL_UTF_MAX=6 compile flag. At the time of writing, we are unaware of a package-manager version of this that would remedy the problem. To understand more on the ‘why’ behind this, you can read this <a class="reference external" href="https://core.tcl-lang.org/tips/doc/trunk/tip/389.md">Tcl Improvement Proposal</a>.</p>
 </div>
 </div>
 </div>
@@ -302,8 +410,8 @@
         <div class="right">
           
     <div class="footer" role="contentinfo">
-        &#169; Copyright 2019, Eggheads.
-      Last updated on Oct 25, 2019.
+        &#169; Copyright 2020, Eggheads.
+      Last updated on Jun 19, 2020.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.5.
     </div>
         </div>

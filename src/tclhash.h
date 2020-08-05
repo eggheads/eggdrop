@@ -3,7 +3,7 @@
  */
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2019 Eggheads Development Team
+ * Copyright (C) 1999 - 2020 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -59,13 +59,7 @@ typedef struct tcl_bind_mask_b {
 
 typedef struct tcl_bind_list_b {
   struct tcl_bind_list_b *next;
-//
-//
-//  tcl_bind_mask_t *first;       /* Pointer to registered binds for this list. */
-//  char name[20];                /* Name of the bind. */
-//  u_8bit_t flags;               /* Flags for this element. HT_* */
-//
-  char name[5];                 /* Name of the bind. */
+  char name[16];                /* Name of the bind. */
   uint8_t flags;                /* Flags for this element. HT_* */
   IntFunc func;                 /* Function used as the Tcl calling interface
                                  * for procs actually representing C functions. */

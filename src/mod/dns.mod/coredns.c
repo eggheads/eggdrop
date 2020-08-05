@@ -7,7 +7,7 @@
  * IPv6 support added by pseudo <pseudo@egg6.net>
  */
 /*
- * Portions Copyright (C) 1999 - 2019 Eggheads Development Team
+ * Portions Copyright (C) 1999 - 2020 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -889,7 +889,7 @@ void parserespacket(uint8_t *response, int len)
       ptrstring(&rp->sockname.addr.sa, stackstring, sizeof stackstring);
       break;
     case STATE_AREQ:
-      strncpy(stackstring, rp->hostn, 1024);
+      strlcpy(stackstring, rp->hostn, sizeof stackstring);
   }
   c = response + HFIXEDSZ;
   r = dn_expand(response, response + len, c, namestring, MAXDNAME);
@@ -1240,7 +1240,7 @@ static void dns_forward(char *hostn)
  */
 static int init_dns_network(void)
 {
-  int option;
+  int option = 1;
 
   resfd = socket(AF_INET, SOCK_DGRAM, 0);
   if (resfd == -1) {
@@ -1255,15 +1255,15 @@ static int init_dns_network(void)
     killsock(resfd);
     return 0;
   }
-  option = 1;
   if (setsockopt(resfd, SOL_SOCKET, SO_BROADCAST, &option, sizeof option)) {
-    putlog(LOG_MISC, "*",
-           "Unable to setsockopt() on nameserver communication socket: %s",
-           strerror(errno));
-    killsock(resfd);
-    return 0;
+    if (errno != ENOSYS) {
+      putlog(LOG_MISC, "*",
+             "Unable to setsockopt() on nameserver communication socket: %s",
+             strerror(errno));
+      killsock(resfd);
+      return 0;
+    }
   }
-
   localhost = htonl(INADDR_LOOPBACK);
   return 1;
 }

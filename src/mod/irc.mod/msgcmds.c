@@ -4,7 +4,7 @@
  */
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2019 Eggheads Development Team
+ * Copyright (C) 1999 - 2020 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -119,7 +119,7 @@ static int msg_hello(char *nick, char *h, struct userrec *u, char *p)
 
 static int msg_pass(char *nick, char *host, struct userrec *u, char *par)
 {
-  char *old, *new;
+  char *old, *new, *s;
 
   if (!u || match_my_nick(nick) || (u->flags & (USER_BOT | USER_COMMON)))
     return 1;
@@ -144,16 +144,13 @@ static int msg_pass(char *nick, char *host, struct userrec *u, char *par)
   } else
     new = old;
   putlog(LOG_CMDS, "*", "(%s!%s) !%s! PASS...", nick, host, u->handle);
-  if (strlen(new) > 15)
-    new[15] = 0;
-  if (strlen(new) < 6) {
-    dprintf(DP_HELP, "NOTICE %s :%s\n", nick, IRC_PASSFORMAT);
-    return 0;
+  if ((s = check_validpass(u, new))) {
+    dprintf(DP_HELP, "NOTICE %s :%s\n", nick, s);
+    return 1;
   }
-  set_user(&USERENTRY_PASS, u, new);
   dprintf(DP_HELP, "NOTICE %s :%s '%s'.\n", nick,
           new == old ? IRC_SETPASS : IRC_CHANGEPASS, new);
-  return 1;
+  return 0;
 }
 
 static int msg_ident(char *nick, char *host, struct userrec *u, char *par)
@@ -993,13 +990,13 @@ static int msg_reset(char *nick, char *host, struct userrec *u, char *par)
     }
     putlog(LOG_CMDS, "*", "(%s!%s) !%s! RESET %s", nick, host, u->handle, par);
     dprintf(DP_HELP, "NOTICE %s :%s: %s\n", nick, par, IRC_RESETCHAN);
-    reset_chan_info(chan, CHAN_RESETALL);
+    reset_chan_info(chan, CHAN_RESETALL, 1);
     return 1;
   }
   putlog(LOG_CMDS, "*", "(%s!%s) !%s! RESET ALL", nick, host, u->handle);
   dprintf(DP_HELP, "NOTICE %s :%s\n", nick, IRC_RESETCHAN);
   for (chan = chanset; chan; chan = chan->next)
-    reset_chan_info(chan, CHAN_RESETALL);
+    reset_chan_info(chan, CHAN_RESETALL, 1);
   return 1;
 }
 

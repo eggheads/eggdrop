@@ -3,7 +3,7 @@
  */
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2019 Eggheads Development Team
+ * Copyright (C) 1999 - 2020 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -32,7 +32,7 @@ static time_t last_ctcp = (time_t) 0L;
 static int count_ctcp = 0;
 static char altnick_char = 0;
 struct cap_list cap = {"", "", ""};
-int ncapesc;
+int ncapesc, account_notify = 0, extended_join = 0;
 Tcl_Obj **ncapesv, *ncapeslist;
 
 /* We try to change to a preferred unique nick here. We always first try the
@@ -194,6 +194,33 @@ static int check_tcl_raw(char *from, char *code, char *msg)
   return (x == BIND_EXEC_LOG);
 }
 
+/* tagstr is a space-separated list of key/value pairs */
+static int check_tcl_rawt(char *from, char *code, char *msg, char *tagstr)
+{
+  int x;
+  char * ptr;
+  Tcl_DString tagdict;
+
+  Tcl_DStringInit(&tagdict);
+  Tcl_SetVar(interp, "_rawt1", from, 0);
+  Tcl_SetVar(interp, "_rawt2", code, 0);
+  Tcl_SetVar(interp, "_rawt3", msg, 0);
+  ptr = strtok(tagstr, " ");
+  if (!msgtag) {
+    Tcl_SetVar(interp, "_rawt4", NULL, 0);
+  } else {
+    while (ptr != NULL) {
+      Tcl_DStringAppendElement(&tagdict, ptr);
+      ptr = strtok(NULL, " ");
+    }
+  }
+  Tcl_SetVar(interp, "_rawt4", Tcl_DStringValue(&tagdict), 0);
+  x = check_tcl_bind(H_rawt, code, 0, " $_rawt1 $_rawt2 $_rawt3 $_rawt4",
+                    MATCH_EXACT | BIND_STACKABLE | BIND_WANTRET);
+  Tcl_DStringFree(&tagdict);
+  return (x == BIND_EXEC_LOG);
+}
+
 static int check_tcl_ctcpr(char *nick, char *uhost, struct userrec *u,
                            char *dest, char *keyword, char *args,
                            p_tcl_bind_list table)
@@ -235,6 +262,22 @@ static int check_tcl_wall(char *from, char *msg)
     return 2;
 
   return 1;
+}
+
+static int check_tcl_account(char *nick, char *uhost, char *mask,
+                            struct userrec *u, char *chan,  char *account)
+{
+  struct flag_record fr = { FR_GLOBAL | FR_CHAN | FR_ANYWH, 0, 0, 0, 0, 0 };
+  int x;
+
+  Tcl_SetVar(interp, "_acnt1", nick, 0);
+  Tcl_SetVar(interp, "_acnt2", uhost, 0);
+  Tcl_SetVar(interp, "_acnt3", u ? u->handle : "*", 0);
+  Tcl_SetVar(interp, "_acnt4", chan, 0);
+  Tcl_SetVar(interp, "_acnt5", account, 0);
+  x = check_tcl_bind(H_account, mask, &fr,
+       " $_acnt1 $_acnt2 $_acnt3 $_acnt4 $_acnt5", MATCH_MASK | BIND_STACKABLE);
+  return (x == BIND_EXEC_LOG);
 }
 
 static int check_tcl_flud(char *nick, char *uhost, struct userrec *u,
@@ -491,7 +534,7 @@ static int detect_flood(char *floodnick, char *floodhost, char *from, int which)
 
 /* Got a private message.
  */
-static int gotmsg(char *from, char *msg)
+static int gotmsg(char *from, char *msg, char *tag)
 {
   char *to, buf[UHOSTLEN], *nick, ctcpbuf[512], *uhost = buf, *ctcp,
        *p, *p1, *code;
@@ -716,6 +759,18 @@ static int gotnotice(char *from, char *msg)
   return 0;
 }
 
+static int gottagmsg(char *from, char *msg) {
+  char *nick;
+  fixcolon(msg);
+  if (strchr(from, '!')) {
+    nick = splitnick(&from);
+    putlog(LOG_SERV, "*", "[#]%s(%s)[#] %s", nick, from, msg);
+  } else {
+    putlog(LOG_SERV, "*", "[#]%s[#] %s");
+  }
+  return 0;
+}
+
 /* WALLOPS: oper's nuisance
  */
 static int gotwall(char *from, char *msg)
@@ -808,19 +863,20 @@ static void got303(char *from, char *msg)
  */
 static int got432(char *from, char *msg)
 {
-  char *erroneous;
+  char *erroneous, nick[nick_len + 1];
 
   newsplit(&msg);
   erroneous = newsplit(&msg);
   if (server_online)
-    putlog(LOG_MISC, "*", "NICK IS INVALID: %s (keeping '%s').", erroneous,
+    putlog(LOG_MISC, "*", "NICK IS INVALID: '%s' (keeping '%s').", erroneous,
            botname);
   else {
     putlog(LOG_MISC, "*", IRC_BADBOTNICK);
     if (!keepnick) {
-      makepass(erroneous);
-      erroneous[NICKMAX] = 0;
-      dprintf(DP_MODE, "NICK %s\n", erroneous);
+      make_rand_str_from_chars(nick, sizeof nick - 1, CHARSET_ALPHA);
+      putlog(LOG_MISC, "*", "NICK IS INVALID: '%s' (using '%s' instead)",
+              erroneous, nick);
+      dprintf(DP_MODE, "NICK %s\n", nick);
     }
     return 0;
   }
@@ -1065,9 +1121,12 @@ static struct dcc_table SERVER_SOCKET = {
   NULL
 };
 
-static void server_activity(int idx, char *msg, int len)
+static void server_activity(int idx, char *tagmsg, int len)
 {
-  char *from, *code;
+  char *from, *code, *s1, *s2, *saveptr1=NULL, *saveptr2=NULL, *tagstrptr=NULL;
+  char *token, *subtoken, tagstr[TOTALTAGMAX+1], tagdict[TOTALTAGMAX+1];
+  char *msgptr, rawmsg[RECVLINEMAX+7];
+  int taglen, i, found;
 
   if (trying_server) {
     strcpy(dcc[idx].nick, "(server)");
@@ -1076,23 +1135,60 @@ static void server_activity(int idx, char *msg, int len)
     SERVER_SOCKET.timeout_val = 0;
   }
   lastpingcheck = 0;
-  from = "";
-  if (msg[0] == ':') {
-    msg++;
-    from = newsplit(&msg);
+/* Check if message-tags are enabled and, if so, check/grab the tag */
+  msgptr = tagmsg;
+  strlcpy(rawmsg, tagmsg, TOTALTAGMAX+1);
+  if (msgtag) {
+    if (*tagmsg == '@') {
+      taglen = 0;
+      memset(tagdict, '\0', TOTALTAGMAX);
+      tagstrptr = newsplit(&msgptr);
+      strlcpy(tagstr, tagstrptr, TOTALTAGMAX+1);
+      tagstrptr++;     /* Remove @ */
+      /* Split each key/value pair apart, then split the key from the value */
+      for (i = 0, s1 = tagstrptr; ; i++, s1 = NULL){
+        token = strtok_r(s1, ";", &saveptr1);
+        if (token == NULL) {
+          break;
+        }
+        if (*token == '+') {
+          token++;
+        }
+        if (strchr(token, '=')) {
+          found = 0;
+          for (s2 = token; ; s2 = NULL) {
+            subtoken = strtok_r(s2, "=", &saveptr2);
+            if (subtoken == NULL) {
+              break;
+            }
+            taglen += egg_snprintf(tagdict + taglen, TOTALTAGMAX - taglen,
+                  "%s ", subtoken);
+            found++;
+          }
+          /* Account for tags (not key/value pairs), prep empty value for Tcl */
+          if (found < 2) {
+            taglen += egg_snprintf(tagdict + taglen, TOTALTAGMAX - taglen,
+                "{} ");
+          }
+        }
+      }
+      tagdict[taglen-1] = '\0';     /* Remove trailing space */
+    }
   }
-  code = newsplit(&msg);
+  from = "";
+  if (*msgptr == ':') {
+    msgptr++;
+    from = newsplit(&msgptr);
+  }
+  code = newsplit(&msgptr);
   if (raw_log && ((strcmp(code, "PRIVMSG") && strcmp(code, "NOTICE")) ||
       !match_ignore(from))) {
-    if (!strcmp(from, ""))
-      putlog(LOG_RAW, "*", "[@] %s %s", code, msg);
-    else
-      putlog(LOG_RAW, "*", "[@] %s %s %s", from, code, msg);
+    putlog(LOG_RAW, "*", "[@] %s", rawmsg);
   }
-  /* This has GOT to go into the raw binding table, * merely because this
-   * is less efficient.
-   */
-  check_tcl_raw(from, code, msg);
+  /* Check both raw and rawt, to allow backwards compatibility with older
+   * scripts */
+  check_tcl_rawt(from, code, msgptr, tagdict);
+  check_tcl_raw(from, code, msgptr);
 }
 
 static int gotping(char *from, char *msg)
@@ -1152,6 +1248,61 @@ static int got311(char *from, char *msg)
   return 0;
 }
 
+static int got396orchghost(char *nick, char *user, char *uhost)
+{
+  struct chanset_t *chan;
+  memberlist *m;
+
+  for (chan = chanset; chan; chan = chan->next) {
+    m = ismember(chan, nick);
+    if (m) {
+      snprintf(m->userhost, sizeof m->userhost, "%s@%s", user, uhost);
+      strcpy(botuserhost, m->userhost);
+    }
+  }
+  return 0;
+}
+
+
+/* React to IRCv3 CHGHOST command. CHGHOST changes the hostname and/or
+ * ident of the user. Format:
+ * :geo!awesome@eggdrop.com CHGHOST tehgeo foo.io
+ * changes user hostmask to tehgeo@foo.io
+ */
+static int gotchghost(char *from, char *msg){
+  char *nick, *user;
+
+  nick = splitnick(&from); /* Get the nick */
+  user = newsplit(&msg);  /* Get the user */
+  got396orchghost(nick, user, msg);
+  return 0;
+}
+
+/* React to 396 numeric (HOSTHIDDEN), sent when user mode +x (hostmasking) was
+ * successfully set. Format:
+ * :barjavel.freenode.net 396 BeerBot unaffiliated/geo/bot/beerbot :is now your hidden host (set by services.)
+ */
+static int got396(char *from, char *msg)
+{
+  char *nick, *uhost, *user, userbuf[UHOSTLEN];
+
+  nick = newsplit(&msg);
+  if (match_my_nick(nick)) {  /* Double check this really is for me */
+    uhost = newsplit(&msg);
+    strlcpy(userbuf, botuserhost, sizeof userbuf);
+    user = strtok(userbuf, "@");
+    got396orchghost(nick, user, uhost);
+  }
+  return 0;
+}
+
+static int gotsetname(char *from, char *msg)
+{
+  fixcolon(msg);
+  strlcpy(botrealname, msg, sizeof botrealname);
+  return 0;
+}
+
 static int tryauthenticate(char *from, char *msg) 
 {
   char src[(sizeof sasl_username) + (sizeof sasl_username) +
@@ -1163,16 +1314,15 @@ static int tryauthenticate(char *from, char *msg)
     #define MAX(a,b) (((a)>(b))?(a):(b))
   #endif
   unsigned char dst[((MAX((sizeof src), 400) + 2) / 3) << 2] = "";
-#ifdef TLS
-  size_t olen;
-  unsigned char *dst2;
-  unsigned int olen2;
-  FILE *fp;
+#ifdef HAVE_EVP_PKEY_GET1_EC_KEY
   EC_KEY *eckey;
-  EVP_PKEY *privateKey;
   int ret;
-#endif
-
+  int olen;
+  unsigned int olen2;
+  unsigned char *dst2;
+  FILE *fp;
+  EVP_PKEY *privateKey;
+#endif /* HAVE_EVP_PKEY_GET1_EC_KEY */
   putlog(LOG_SERV, "*", "SASL: got AUTHENTICATE %s", msg);
   if (msg[0] == '+') {
     s = src;
@@ -1186,45 +1336,63 @@ static int tryauthenticate(char *from, char *msg)
       s += strlen(sasl_password);
       dst[0] = 0;
       if (b64_ntop((unsigned char *) src, s - src, (char *) dst, sizeof dst) == -1) {
-        putlog(LOG_SERV, "*", "SASL: AUTHENTICATE error: could not base64 encode");
+        putlog(LOG_SERV, "*", "SASL: AUTHENTICATE error: could not base64 "
+                    "encode");
         /* TODO: send cap end for all error cases in this function ? */
         return 1;
       }
       /* TODO: what about olen we used for mbedtls_base64_encode() ? */
     }
     else if (sasl_mechanism == SASL_MECHANISM_ECDSA_NIST256P_CHALLENGE) {
+#ifdef HAVE_EVP_PKEY_GET1_EC_KEY
       strcpy(s, sasl_username);
       s += strlen(sasl_username) + 1;
       strcpy(s, sasl_username);
       s += strlen(sasl_username);
       if (b64_ntop((unsigned char *) src, s - src, (char *) dst, sizeof dst) == -1) {
-        putlog(LOG_SERV, "*", "SASL: AUTHENTICATE error: could not base64 encode");
+        putlog(LOG_SERV, "*", "SASL: AUTHENTICATE error: could not base64 "
+                "encode");
         return 1;
       }
     }
-    else { /* sasl_mechanism == SASL_MECHANISM_EXTERNAL */
+#else
+      putlog(LOG_DEBUG, "*", "SASL: TLS libs missing EC support, try PLAIN or "
+                "EXTERNAL method");
+      return 1;
+    }
+#endif
+    else {          /* sasl_mechanism == SASL_MECHANISM_EXTERNAL */
+#ifdef TLS          /* TLS required for EXTERNAL sasl */ 
       dst[0] = '+';
       dst[1] = 0;
     }
     putlog(LOG_SERV, "*", "SASL: put AUTHENTICATE %s", dst);
     dprintf(DP_MODE, "AUTHENTICATE %s\n", dst);
+#else
+    putlog(LOG_DEBUG, "*", "SASL: TLS libs required for EXTERNAL but are not "
+            "installed, try PLAIN method");
+    }
+#endif /* TLS */
+  } else {      /* Only EC-challenges get extra auth messages w/o a + */
 #ifdef TLS
-  } else {
+#ifdef HAVE_EVP_PKEY_GET1_EC_KEY
     putlog(LOG_SERV, "*", "SASL: got AUTHENTICATE Challenge");
     olen = b64_pton(msg, dst, sizeof dst);
     if (olen == -1) {
-      putlog(LOG_SERV, "*", "SASL: AUTHENTICATE error: could not base64 decode line from server");
+      putlog(LOG_SERV, "*", "SASL: AUTHENTICATE error: could not base64 decode "
+                "line from server");
       return 1;
     }
     fp = fopen(sasl_ecdsa_key, "r");
     if (!fp) {
-      putlog(LOG_SERV, "*", "SASL: AUTHENTICATE error: could not open file sasl_ecdsa_key %s: %s\n", sasl_ecdsa_key, strerror(errno));
+      putlog(LOG_SERV, "*", "SASL: AUTHENTICATE error: could not open file "
+                "sasl_ecdsa_key %s: %s\n", sasl_ecdsa_key, strerror(errno));
       return 1;
     }
     privateKey = PEM_read_PrivateKey(fp, NULL, 0, NULL);
     if (!privateKey) {
-      putlog(LOG_SERV, "*", "SASL: AUTHENTICATE: PEM_read_PrivateKey(): SSL error = %s\n",
-             ERR_error_string(ERR_get_error(), 0));
+      putlog(LOG_SERV, "*", "SASL: AUTHENTICATE: PEM_read_PrivateKey(): SSL "
+                "error = %s\n", ERR_error_string(ERR_get_error(), 0));
       fclose(fp);
       return 1;
     }
@@ -1252,10 +1420,12 @@ static int tryauthenticate(char *from, char *msg)
     nfree(dst2);
     putlog(LOG_SERV, "*", "SASL: put AUTHENTICATE Response %s", dst);
     dprintf(DP_MODE, "AUTHENTICATE %s\n", dst);
-#else
-    putlog(LOG_DEBUG, "*", "SASL: TLS libs not present for authentication, try PLAIN method");
+#endif /* HAVE_EVP_PKEY_GET1_EC_KEY */
+#else /* TLS */
+    dprintf(LOG_DEBUG, "*", "SASL: Received EC message, but no TLS EC libs "
+                "present. Try PLAIN method");
     return 1;
-#endif
+#endif /* TLS */
   }
   return 0;
 }
@@ -1271,6 +1441,7 @@ static int gotauthenticate(char *from, char *msg)
   return 0;
 }
 
+/* Got 900: RPL_SASLLOGGEDIN, user account name is set */
 static int got900(char *from, char *msg)
 {
   newsplit(&msg); /* nick */
@@ -1293,6 +1464,10 @@ static int sasl_error(char *msg)
   return 1;
 }
 
+/* Got 904: ERR_SASLFAIL, invalid credentials (or something not covered)
+   Got 905: ERR_SASLTOOLONG, AUTHENTICATE command was too long (>400 bytes)
+   Got 906: ERR_SASL_ABORTED, sent AUTHENTICATE command with * as parameter
+ */
 static int got904905and906(char *from, char *msg)
 {
   newsplit(&msg); /* nick */
@@ -1300,6 +1475,7 @@ static int got904905and906(char *from, char *msg)
   return sasl_error(msg);
 }
 
+/* Got 903: RPL_SASLSUCCESS, authentication successful */
 static int got903(char *from, char *msg)
 {
   newsplit(&msg); /* nick */
@@ -1310,6 +1486,7 @@ static int got903(char *from, char *msg)
   return 0;
 }
 
+/* Got 908: RPL_SASLMECHS, mechanisms supported by network */
 static int got908(char *from, char *msg)
 {
   newsplit(&msg); /* nick */
@@ -1321,6 +1498,34 @@ static int got908(char *from, char *msg)
 static int handle_sasl_timeout()
 {
   return sasl_error("timeout");
+}
+
+/* Got ACCOUNT message; only valid for account-notify capability */
+static int gotaccount(char *from, char *msg) {
+  struct chanset_t *chan;
+  struct userrec *u;
+  memberlist *m;
+  char *nick, *chname, mask[CHANNELLEN+UHOSTLEN+NICKMAX+2];
+
+  u = get_user_by_host(from);
+  nick = splitnick(&from);
+  for (chan = chanset; chan; chan = chan->next) {
+    chname = chan->dname;
+    if ((m = ismember(chan, nick))) {
+      strlcpy (m->account, msg, sizeof m->account);
+      snprintf(mask, sizeof mask, "%s %s", chname, from);
+      if (!strcasecmp(msg, "*")) {
+        msg[0] = '\0';
+        putlog(LOG_JOIN | LOG_MISC, chname, "%s!%s has logged out of their "
+                "account", nick, from);
+      } else {
+        putlog(LOG_JOIN | LOG_MISC, chname, "%s!%s has logged into account %s",
+                nick, from, msg);
+      }
+      check_tcl_account(nick, from, mask, u, chname, msg);
+    }
+  }
+  return 0;
 }
 
 /*
@@ -1353,6 +1558,14 @@ static int got410(char *from, char *msg) {
   return 1;
 }
 
+/* got417: ERR_INPUTTOOLONG. Client sent a message longer than allowed limit */
+static int got417(char *from, char *msg) {
+  newsplit(&msg);
+  putlog (LOG_SERV, "*", "MESSAGE-TAG: %s reported error: %s", from, msg);
+
+  return 1;
+}
+
 static int got421(char *from, char *msg) {
   newsplit(&msg);
   putlog(LOG_SERV, "*", "%s reported an error: %s", from, msg);
@@ -1360,46 +1573,70 @@ static int got421(char *from, char *msg) {
   return 1;
 }
 
-void update_cap_negotiated() {
-  int i, len = 0;
-  Tcl_ListObjGetElements(interp, ncapeslist, &ncapesc, &ncapesv);
-  for (i = 0; i < ncapesc; i++) {
-    if (i)
-      cap.negotiated[len++] = ' ';
-    len += strlcpy(cap.negotiated + len, Tcl_GetString(ncapesv[i]), sizeof cap.negotiated - len);
-  }
-}
-
-/*
- * Add capability to Tcl List for easy addition/deletion. First
- * checks if requested cape is available on the list provided by the server
- * before adding to the desired list.
- */
+/* Add negotiated capability to Tcl List for easy addition/deletion */
 void add_cape(char *cape) {
   if (!strstr(cap.negotiated, cape)) {
     putlog(LOG_DEBUG, "*", "CAP: Adding cape %s to negotiated list", cape);
+    /* Update Tcl List object with new capability */
     Tcl_ListObjAppendElement(interp, ncapeslist, Tcl_NewStringObj(cape, -1));
+    /* Update C variable with new capability */
+    if (*cap.negotiated) {
+      strncat(cap.negotiated, " ", CAPMAX - strlen(cap.negotiated) - 1);
+    }
+    strncat(cap.negotiated, cape, CAPMAX - strlen(cap.negotiated) - 1);
+    /* This section adds status variables used by other modules, if they need to
+     * know if a specific capability is active or not
+     */
+    if (!strcasecmp(cape, "message-tags") || !strcasecmp(cape, "twitch.tv/tags")) {
+      msgtag = 1;
+    } else if (!strcasecmp(cape, "extended-join")) {
+      extended_join = 1;
+    } else if (!strcasecmp(cape, "account-notify")) {
+      account_notify = 1;
+    }
   } else {
     putlog(LOG_DEBUG, "*", "CAP: %s is already added to negotiated list", cape);
   }
-  update_cap_negotiated();
 }
 
 /* Remove capability from internal CAP request list */
 void del_cape(char *cape) {
-  int i;
+  int i, j, len = 0;
   if (strstr(cap.negotiated, cape)) {
     putlog(LOG_DEBUG, "*", "CAP: Removing %s from negotiated list", cape);
     Tcl_ListObjGetElements(interp, ncapeslist, &ncapesc, &ncapesv);
     for (i = 0; i < ncapesc; i++) {
       if (!strcmp(cape, Tcl_GetString(ncapesv[i]))) {
+        /* Remove deleted capability from Tcl List object */
         Tcl_ListObjReplace(interp, ncapeslist, i, 1, 0, NULL);
+        /* Match C variable to Tcl List object (ie, delete the capability) */
+        Tcl_ListObjGetElements(interp, ncapeslist, &ncapesc, &ncapesv);
+        if (!ncapesc) {
+          *cap.negotiated = 0;
+        } else {
+          for (j = 0; j < ncapesc; j++) {
+            if (j)
+              cap.negotiated[len++] = ' ';
+            len += strlcpy(cap.negotiated + len, Tcl_GetString(ncapesv[j]), sizeof cap.negotiated - len);
+          }
+        }
+        if (!strcasecmp(cape, "message-tags") || !strcasecmp(cape, "twitch.tv/tags")) {
+          msgtag = 0;
+        } else if (!strcasecmp(cape, "extended-join")) {
+          extended_join = 0;
+        } else if (!strcasecmp(cape, "account-notify")) {
+          account_notify = 0;
+        }
+      }
+      if (!strcasecmp(cape, "message-tags") || !strcasecmp(cape, "twitch.tv/tags")) {
+        msgtag = 0;
+      } else if (!strcasecmp(cape, "extended-join")) {
+        extended_join = 0;
       }
     }
   } else {
     putlog(LOG_DEBUG, "*", "CAP: %s is not on negotiated list", cape);
   }
-  update_cap_negotiated();
 }
 
 /* Smash desired CAP capabilities into a single string */
@@ -1412,7 +1649,7 @@ void add_req(char *cape) {
 
 static int gotcap(char *from, char *msg) {
   char *cmd, *splitstr;
-  char *cape, *p;
+  char cape[CAPMAX+1], *p;
   int listlen = 0;
 
   newsplit(&msg);
@@ -1424,21 +1661,10 @@ static int gotcap(char *from, char *msg) {
     strlcpy(cap.supported, msg, sizeof cap.supported);
 /* CAP is supported, yay! Lets load what we want to request */
     if (sasl) {
-      if (sasl_mechanism < 0)
-        putlog(LOG_SERV, "*", "SASL error: sasl-mechanism must be equal to or greater than 0");
-      else if (sasl_mechanism >= SASL_MECHANISM_NUM)
-        putlog(LOG_SERV, "*", "SASL error: sasl-mechanism must be less than %i", SASL_MECHANISM_NUM);
-      else
-        add_req("sasl");
+      add_req("sasl");
     }
-    if (away_notify)
-      add_req("away-notify");
-    if (invite_notify)
-      add_req("invite-notify");
-    if (message_tags)
-      add_req("message-tags");
 /* Add any custom capes the user listed */
-    cape = cap_request;
+    strlcpy(cape, cap_request, sizeof cape);
     if ( (p = strtok(cape, " ")) ) {
       while (p != NULL) {
         add_req(p);
@@ -1474,33 +1700,33 @@ static int gotcap(char *from, char *msg) {
       }
       splitstr = strtok(NULL, " ");
     }
-    update_cap_negotiated(); /* TODO: do we really need this call here? */
-    putlog(LOG_SERV, "*", "CAP: Current Negotiations %s with %s", cap.negotiated, from);
+    putlog(LOG_SERV, "*", "CAP: Current negotiations with %s: %s", from, cap.negotiated);
     /* If a negotiated capability requires immediate action by Eggdrop, add it
      * here. However, that capability must take responsibility for sending an
      * END. Future eggheads: add support for more than 1 of these async
      * capabilities, right now SASL is the only one so we're OK.
      */
-    if (strstr(cap.negotiated, "sasl")) {
-#ifndef TLS
+    if (strstr(cap.negotiated, "sasl") && strstr(cap.desired, "sasl")) {
+      *cap.desired = 0;
+#ifndef HAVE_EVP_PKEY_GET1_EC_KEY
       if (sasl_mechanism != SASL_MECHANISM_ECDSA_NIST256P_CHALLENGE) {
 #endif
-        /*
-        TODO: the old sasl code, before cap pr, was doing cap request only
-        under certain conditions, see the if TLS statement
-        above.
-        putlog(LOG_SERV, "*", "CAP: put CAP REQ :sasl");
-        dprintf(DP_MODE, "CAP REQ :sasl\n");
-        */
         putlog(LOG_SERV, "*", "SASL: put AUTHENTICATE %s",
             SASL_MECHANISMS[sasl_mechanism]);
         dprintf(DP_MODE, "AUTHENTICATE %s\n", SASL_MECHANISMS[sasl_mechanism]);
         sasl_timeout_time = sasl_timeout;
-#ifndef TLS
+#ifndef HAVE_EVP_PKEY_GET1_EC_KEY
       } else {
-        return sasl_error("No TLS libs, aborting authentication");
+#ifdef TLS
+        return sasl_error("TLS libs missing EC support, try PLAIN or EXTERNAL method, aborting authentication");
       }
-#endif
+#else /* TLS */
+        if (sasl_mechanism != SASL_MECHANISM_PLAIN) {
+	      return sasl_error("TLS libs not present, try PLAIN method, aborting authentication");
+        }
+      }
+#endif /* TLS */
+#endif /* HAVE_EVP_PKEY */
     } else {
       dprintf(DP_MODE, "CAP END\n");
       return 0;
@@ -1508,7 +1734,7 @@ static int gotcap(char *from, char *msg) {
   } else if (!strcmp(cmd, "NAK")) {
     putlog(LOG_SERV, "*", "CAP: Requested capability change %s rejected by %s",
         msg, from);
-    dprintf(DP_MODE, "CAP END\n");  /* TODO: Handle whatever caused it to reject? */
+    dprintf(DP_MODE, "CAP END\n");
   } else if (!strcmp(cmd, "NEW")) { /* TODO: CAP 302 stuff? */
     /* Do things */
   } else if (!strcmp(cmd, "DEL")) { /* TODO: CAP 302 stuff? */
@@ -1529,7 +1755,9 @@ static cmd_t my_raw_binds[] = {
   {"303",          "",   (IntFunc) got303,          NULL},
   {"311",          "",   (IntFunc) got311,          NULL},
   {"318",          "",   (IntFunc) whoispenalty,    NULL},
+  {"396",          "",   (IntFunc) got396,          NULL},
   {"410",          "",   (IntFunc) got410,          NULL},
+  {"417",          "",   (IntFunc) got417,          NULL},
   {"421",          "",   (IntFunc) got421,          NULL},
   {"432",          "",   (IntFunc) got432,          NULL},
   {"433",          "",   (IntFunc) got433,          NULL},
@@ -1551,6 +1779,14 @@ static cmd_t my_raw_binds[] = {
   {"KICK",         "",   (IntFunc) gotkick,         NULL},
   {"CAP",          "",   (IntFunc) gotcap,          NULL},
   {"AUTHENTICATE", "",   (IntFunc) gotauthenticate, NULL},
+  {"ACCOUNT",      "",   (IntFunc) gotaccount,      NULL},
+  {"CHGHOST",      "",   (IntFunc) gotchghost,      NULL},
+  {"SETNAME",      "",   (IntFunc) gotsetname,      NULL},
+  {NULL,           NULL, NULL,                      NULL}
+};
+
+static cmd_t my_rawt_binds[] = {
+  {"TAGMSG",       "",   (IntFunc) gottagmsg,       NULL},
   {NULL,           NULL, NULL,                      NULL}
 };
 

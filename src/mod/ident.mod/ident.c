@@ -3,7 +3,7 @@
  */
 /*
  * Copyright (c) 2018 - 2019 Michael Ortmann MIT License
- * Copyright (C) 2019 Eggheads Development Team
+ * Copyright (C) 2019 - 2020 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -54,6 +54,7 @@ static void ident_activity(int idx, char *buf, int len)
 {
   int s;
   char buf2[IDENT_SIZE + sizeof " : USERID : UNIX : \r\n" + NICKLEN], *pos;
+  size_t count;
   ssize_t i;
 
   s = answer(dcc[idx].sock, &dcc[idx].sockname, 0, 0);
@@ -69,8 +70,12 @@ static void ident_activity(int idx, char *buf, int len)
     return;
   } 
   snprintf(pos, (sizeof buf2) - (pos - buf2), " : USERID : UNIX : %s\r\n", botname);
-  if ((i = write(s, buf2, strlen(buf2) + 1)) < 0) {
-    putlog(LOG_MISC, "*", "Ident error: %s", strerror(errno));
+  count = strlen(buf2) + 1;
+  if ((i = write(s, buf2, count)) != count) {
+    if (i < 0)
+      putlog(LOG_MISC, "*", "Ident error: %s", strerror(errno));
+    else
+      putlog(LOG_MISC, "*", "Ident error: Wrote %i bytes instead of %i bytes.", i, count);
     return;
   }
   putlog(LOG_MISC, "*", "Ident: Responded.");

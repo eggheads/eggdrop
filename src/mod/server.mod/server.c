@@ -4,7 +4,7 @@
  */
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2019 Eggheads Development Team
+ * Copyright (C) 1999 - 2020 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -84,8 +84,8 @@ static int double_server;
 static int double_help;
 static int double_warned;
 static int lastpingtime;        /* IRCnet LAGmeter support -- drummer */
-static char stackablecmds[511];
-static char stackable2cmds[511];
+static char stackablecmds[MSGMAX];
+static char stackable2cmds[MSGMAX];
 static time_t last_time;
 static int use_penalties;
 static int use_fastdeq;
@@ -95,6 +95,7 @@ static int kick_method;
 static int optimize_kicks;
 static int msgrate;             /* Number of seconds between sending
                                  * queued lines to server. */
+static int msgtag;              /* Enable IRCv3 message-tags capability    */
 #ifdef TLS
 static int use_ssl;             /* Use SSL for the next server connection? */
 static int tls_vfyserver;       /* Certificate validation mode for servrs  */
@@ -105,7 +106,7 @@ static char sslserver = 0;
 #endif
 
 static p_tcl_bind_list H_wall, H_raw, H_notc, H_msgm, H_msg, H_flud, H_ctcr,
-                       H_ctcp, H_out;
+                       H_ctcp, H_out, H_rawt, H_account;
 
 static void empty_msgq(void);
 static void next_server(int *, char *, unsigned int *, char *);
@@ -159,7 +160,6 @@ char const *SASL_MECHANISMS[SASL_MECHANISM_NUM] = {
   [SASL_MECHANISM_ECDSA_NIST256P_CHALLENGE] = "ECDSA-NIST256P-CHALLENGE",
   [SASL_MECHANISM_EXTERNAL]                 = "EXTERNAL"
 };
-
 
 static void write_to_server(char *s, unsigned int len) {
   char *s2 = nmalloc(len + 2);
@@ -438,8 +438,9 @@ static int fast_deq(int which)
 {
   struct msgq_head *h;
   struct msgq *m, *nm;
-  char msgstr[511], nextmsgstr[511], tosend[511], victims[511], stackable[511],
-       *msg, *nextmsg, *cmd, *nextcmd, *to, *nextto, *stckbl;
+  char msgstr[SENDLINEMAX], nextmsgstr[SENDLINEMAX], tosend[SENDLINEMAX],
+       victims[SENDLINEMAX], stackable[SENDLINEMAX], *msg, *nextmsg, *cmd,
+       *nextcmd, *to, *nextto, *stckbl;
   int len, doit = 0, found = 0, cmd_count = 0, stack_method = 1;
 
   if (!use_fastdeq)
@@ -502,7 +503,7 @@ static int fast_deq(int which)
     nextto = newsplit(&nextmsg);
     if (strcmp(to, nextto) && !strcmp(cmd, nextcmd) && !strcmp(msg, nextmsg) &&
         ((strlen(cmd) + strlen(victims) + strlen(nextto) + strlen(msg) + 2) <
-        510) && (!stack_limit || cmd_count < stack_limit - 1)) {
+        SENDLINEMAX-2) && (!stack_limit || cmd_count < stack_limit - 1)) {
       cmd_count++;
       if (stack_method == 1)
         simple_sprintf(victims, "%s,%s", victims, nextto);
@@ -564,7 +565,7 @@ static void check_queues(char *oldnick, char *newnick)
 static void parse_q(struct msgq_head *q, char *oldnick, char *newnick)
 {
   struct msgq *m, *lm = NULL;
-  char buf[511], *msg, *nicks, *nick, *chan, newnicks[511], newmsg[511];
+  char buf[SENDLINEMAX], *msg, *nicks, *nick, *chan, newnicks[SENDLINEMAX], newmsg[SENDLINEMAX];
   int changed;
 
   for (m = q->head; m;) {
@@ -580,7 +581,7 @@ static void parse_q(struct msgq_head *q, char *oldnick, char *newnick)
         nick = splitnicks(&nicks);
         if (!strcasecmp(nick, oldnick) &&
             ((9 + strlen(chan) + strlen(newnicks) + strlen(newnick) +
-              strlen(nicks) + strlen(msg)) < 510)) {
+              strlen(nicks) + strlen(msg)) < SENDLINEMAX-1)) {
           if (newnick)
             egg_snprintf(newnicks, sizeof newnicks, "%s,%s", newnicks, newnick);
           changed = 1;
@@ -620,8 +621,8 @@ static void parse_q(struct msgq_head *q, char *oldnick, char *newnick)
 static void purge_kicks(struct msgq_head *q)
 {
   struct msgq *m, *lm = NULL;
-  char buf[511], *reason, *nicks, *nick, *chan, newnicks[511],
-       newmsg[511], chans[511], *chns, *ch;
+  char buf[MSGMAX], *reason, *nicks, *nick, *chan, newnicks[MSGMAX],
+       newmsg[MSGMAX], chans[MSGMAX], *chns, *ch;
   int changed, found;
   struct chanset_t *cs;
 
@@ -689,8 +690,8 @@ static int deq_kick(int which)
 {
   struct msgq_head *h;
   struct msgq *msg, *m, *lm;
-  char buf[511], buf2[511], *reason2, *nicks, *chan, *chan2, *reason, *nick,
-       newnicks[511], newnicks2[511], newmsg[511];
+  char buf[MSGMAX], buf2[MSGMAX], *reason2, *nicks, *chan, *chan2, *reason, *nick,
+       newnicks[MSGMAX], newnicks2[MSGMAX], newmsg[MSGMAX];
   int changed = 0, nr = 0;
 
   if (!optimize_kicks)
@@ -829,7 +830,7 @@ static void queue_server(int which, char *msg, int len)
   struct msgq_head *h = NULL, tempq;
   struct msgq *q, *tq, *tqq;
   int doublemsg = 0, qnext = 0;
-  char buf[511];
+  char buf[SENDLINEMAX];
 
   /* Don't even BOTHER if there's no server online. */
   if (serv < 0)
@@ -999,11 +1000,11 @@ static void queue_server(int which, char *msg, int len)
    removed from Eggdrop.
 */
 static void old_add_server(const char *ss) {
-  char name[121] = "";
+  char name[256] = "";
   char port[7] = "";
   char pass[121] = "";
-  if (!sscanf(ss, "[%255[0-9.A-F:a-f]]:%10[+0-9]:%120[^\r\n]", name, port, pass) &&
-      !sscanf(ss, "%255[^:]:%10[+0-9]:%120[^\r\n]", name, port, pass))
+  if (!sscanf(ss, "[%255[0-9.A-F:a-f]]:%6[+0-9]:%120[^\r\n]", name, port, pass) &&
+      !sscanf(ss, "%255[^:]:%6[+0-9]:%120[^\r\n]", name, port, pass))
     return;
   add_server(name, port, pass);
 }
@@ -1071,6 +1072,7 @@ static int del_server(const char *name, const char *port)
       return 1;
     }
   }
+/* Check if server to be deleted is first node in list */
   if (!strcasecmp(name, serverlist->name)) {
     z = serverlist;
     if (strlen(port)) {
@@ -1091,6 +1093,7 @@ static int del_server(const char *name, const char *port)
   }
   curr = serverlist->next;
   prev = serverlist;
+/* Check the remaining nodes in list */
   while (curr != NULL && prev != NULL) {
     if (!strcasecmp(name, curr->name)) {
       if (strlen(port)) {
@@ -1273,6 +1276,17 @@ static int server_msg STDVAR
   return TCL_OK;
 }
 
+static int server_account STDVAR
+{
+  Function F = (Function) cd;
+
+  BADARGS(6, 6, " nick uhost hand chan account");
+
+  CHECKVALIDITY(server_account);
+  F(argv[1], argv[2], get_user_by_handle(userlist, argv[3]), argv[4], argv[5]);
+  return TCL_OK;
+}
+
 static int server_raw STDVAR
 {
   Function F = (Function) cd;
@@ -1281,6 +1295,17 @@ static int server_raw STDVAR
 
   CHECKVALIDITY(server_raw);
   Tcl_AppendResult(irp, int_to_base10(F(argv[1], argv[3])), NULL);
+  return TCL_OK;
+}
+
+static int server_tag STDVAR
+{
+  Function F = (Function) cd;
+
+  BADARGS(5, 5, " from code args tag");
+
+  CHECKVALIDITY(server_tag);
+  Tcl_AppendResult(irp, int_to_base10(F(argv[1], argv[3], argv[4])), NULL);
   return TCL_OK;
 }
 
@@ -1623,6 +1648,8 @@ static tcl_ints my_tcl_ints[] = {
   {"away-notify",       &away_notify,               0},
   {"invite-notify",     &invite_notify,             0},
   {"message-tags",      &message_tags,              0},
+  {"extended-join",     &extended_join,             0},
+  {"account-notify",    &account_notify,            0},
   {NULL,                NULL,                       0}
 };
 
@@ -1889,7 +1916,15 @@ static void server_5minutely()
 
 static void server_prerehash()
 {
+  struct server_list *x;
+
   strlcpy(oldnick, botname, sizeof oldnick);
+/* Clear out servers, any addservers in config file are about to be re-run */
+  while (serverlist != NULL) {
+      x = serverlist;
+      serverlist = serverlist->next;
+      free_server(x);
+  }
 }
 
 static void server_postrehash()
@@ -2022,7 +2057,6 @@ static void server_report(int idx, int details)
             (int) ((float) (hq.tot * 100.0) / (float) maxqmsg), (int) hq.tot);
   dprintf(idx, "    Active CAP negotiations: %s\n", (strlen(cap.negotiated) > 0) ?
             cap.negotiated : "None" );
-
   if (details) {
     int size = server_expmem();
 
@@ -2054,10 +2088,13 @@ static char *server_close()
   clearq(serverlist);
   rem_builtins(H_dcc, C_dcc_serv);
   rem_builtins(H_raw, my_raw_binds);
+  rem_builtins(H_rawt, my_rawt_binds);
   rem_builtins(H_ctcp, my_ctcps);
   /* Restore original commands. */
   del_bind_table(H_wall);
+  del_bind_table(H_account);
   del_bind_table(H_raw);
+  del_bind_table(H_rawt);
   del_bind_table(H_notc);
   del_bind_table(H_msgm);
   del_bind_table(H_msg);
@@ -2085,7 +2122,7 @@ static char *server_close()
                  TCL_TRACE_READS | TCL_TRACE_WRITES | TCL_TRACE_UNSETS,
                  traced_serveraddress, NULL);
   Tcl_UntraceVar(interp, "net-type",
-                 TCL_TRACE_READS | TCL_TRACE_WRITES | TCL_TRACE_UNSETS,
+                 TCL_TRACE_WRITES | TCL_TRACE_UNSETS,
                  traced_nettype, NULL);
   Tcl_UntraceVar(interp, "nick-len",
                  TCL_TRACE_READS | TCL_TRACE_WRITES | TCL_TRACE_UNSETS,
@@ -2127,7 +2164,7 @@ static Function server_table[] = {
   /* 12 - 15 */
   (Function) match_my_nick,
   (Function) check_tcl_flud,
-  (Function) NULL,              /* fixfrom - moved to core (drummer)    */
+  (Function) & msgtag,          /* int                                  */
   (Function) & answer_ctcp,     /* int                                  */
   /* 16 - 19 */
   (Function) & trigger_on_ignore, /* int                                */
@@ -2142,7 +2179,7 @@ static Function server_table[] = {
   /* 24 - 27 */
   (Function) & default_port,    /* int                                  */
   (Function) & server_online,   /* int                                  */
-  (Function) NULL,              /* min_servs -- removed (guppy)         */
+  (Function) & H_rawt,           /* p_tcl_bind_list                      */
   (Function) & H_raw,           /* p_tcl_bind_list                      */
   /* 28 - 31 */
   (Function) & H_wall,          /* p_tcl_bind_list                      */
@@ -2161,10 +2198,12 @@ static Function server_table[] = {
   (Function) & exclusive_binds, /* int                                  */
   /* 40 - 43 */
   (Function) & H_out,           /* p_tcl_bind_list                      */
-  (Function) add_server,
-  (Function) del_server,
-  (Function) & net_type_int,    /* int                                  */
+  (Function) & net_type_int,     /* int                                  */
+  (Function) & H_account,       /* p_tcl_bind)list                      */
+  (Function) & cap,             /* cap_list                             */
   /* 44 - 47 */
+  (Function) & extended_join,   /* int                                  */
+  (Function) & account_notify,  /* int                                  */
   (Function) & H_isupport       /* p_tcl_bind_list                      */
 };
 
@@ -2260,13 +2299,15 @@ char *server_start(Function *global_funcs)
                TCL_TRACE_READS | TCL_TRACE_WRITES | TCL_TRACE_UNSETS,
                traced_serveraddress, NULL);
   Tcl_TraceVar(interp, "net-type",
-               TCL_TRACE_READS | TCL_TRACE_WRITES | TCL_TRACE_UNSETS,
+               TCL_TRACE_WRITES | TCL_TRACE_UNSETS,
                traced_nettype, NULL);
   Tcl_TraceVar(interp, "nick-len",
                TCL_TRACE_READS | TCL_TRACE_WRITES | TCL_TRACE_UNSETS,
                traced_nicklen, NULL);
   H_wall = add_bind_table("wall", HT_STACKABLE, server_2char);
+  H_account = add_bind_table("account", HT_STACKABLE, server_account);
   H_raw = add_bind_table("raw", HT_STACKABLE, server_raw);
+  H_rawt = add_bind_table("rawt", HT_STACKABLE, server_tag);
   H_notc = add_bind_table("notc", HT_STACKABLE, server_5char);
   H_msgm = add_bind_table("msgm", HT_STACKABLE, server_msg);
   H_msg = add_bind_table("msg", 0, server_msg);
@@ -2275,12 +2316,34 @@ char *server_start(Function *global_funcs)
   H_ctcp = add_bind_table("ctcp", HT_STACKABLE, server_6char);
   H_out = add_bind_table("out", HT_STACKABLE, server_out);
   add_builtins(H_raw, my_raw_binds);
+  add_builtins(H_rawt, my_rawt_binds);
   add_builtins(H_dcc, C_dcc_serv);
   add_builtins(H_ctcp, my_ctcps);
   add_help_reference("server.help");
   my_tcl_strings[0].buf = botname;
   add_tcl_strings(my_tcl_strings);
   add_tcl_ints(my_tcl_ints);
+  if (sasl) {
+    if ((sasl_mechanism < 0) || (sasl_mechanism >= SASL_MECHANISM_NUM)) {
+      fatal("ERROR: sasl-mechanism is not set to an allowed value, please check"
+            " it and try again", 0);
+    }
+#ifdef TLS
+#ifndef HAVE_EVP_PKEY_GET1_EC_KEY
+    if (sasl_mechanism == SASL_MECHANISM_ECDSA_NIST256P_CHALLENGE) {
+      fatal("ERROR: NIST256 functionality missing from your TLS libs, please "
+            "choose a different SASL method", 0);
+    }
+#endif /* HAVE_EVP_PKEY_GET1_EC_KEY */
+#else  /* TLS */
+    if ((sasl_mechanism == SASL_MECHANISM_ECDSA_NIST256P_CHALLENGE) ||
+            (sasl_mechanism == SASL_MECHANISM_EXTERNAL)) {
+      fatal("ERROR: The selected SASL authentication method requires TLS "
+            "libraries which are not installed on this machine. Please "
+            "choose the PLAIN method in your config.", 0);
+    }
+#endif /* TLS */
+  }
   add_tcl_commands(my_tcl_cmds);
   add_tcl_coups(my_tcl_coups);
   add_hook(HOOK_SECONDLY, (Function) server_secondly);

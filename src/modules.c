@@ -6,7 +6,7 @@
  */
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2019 Eggheads Development Team
+ * Copyright (C) 1999 - 2020 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -101,6 +101,7 @@ extern sock_list *socklist;
 int cmd_die();
 int xtra_kill();
 int xtra_unpack();
+char *check_validpass();
 static int module_rename(char *name, char *newname);
 
 #ifndef STATIC
@@ -605,6 +606,9 @@ Function global_table[] = {
   (Function) 0,
   (Function) 0,
 #endif
+  (Function) check_validpass,
+  /* 308 - 311 */
+  (Function) make_rand_str_from_chars,
   (Function) add_tcl_objcommands
 };
 

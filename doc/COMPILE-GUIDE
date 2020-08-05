@@ -1,5 +1,5 @@
 Eggdrop Compile Guide and FAQ
-Last revised: July 25, 2019
+Last revised: June 9, 2020
     _____________________________________________________________________
 
                         Eggdrop Compile Guide and FAQ
@@ -46,6 +46,8 @@ Last revised: July 25, 2019
      12. I get a 'gmake: readlink: Command not found' error when I type 'gmake
          install' (OpenIndiana)
      13. I get '/usr/bin/ld: cannot find -lpthread' (OpenWrt)
+     14. I get 'configure: error: C compiler cannot create executables
+         (Alpine Linux)
 
 
   Compile Guide
@@ -562,7 +564,13 @@ Last revised: July 25, 2019
       library search path. E.g.:
 
         ar -rc /usr/lib/libpthread.a
+
+    14. I get 'configure: error: C compiler cannot create executables
+        (Alpine Linux)
+
+      Install the musl c library implementation used by Alpine:
+        apk add musl-dev
     _____________________________________________________________________
 
    Copyright (C) 1997 Robey Pointer
-   Copyright (C) 1999 - 2019 Eggheads Development Team
+   Copyright (C) 1999 - 2020 Eggheads Development Team

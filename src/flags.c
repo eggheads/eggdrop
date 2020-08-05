@@ -4,7 +4,7 @@
  */
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2019 Eggheads Development Team
+ * Copyright (C) 1999 - 2020 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -403,7 +403,10 @@ void break_down_flags(const char *string, struct flag_record *plus,
       which = plus;
       mode++;
       if ((mode == 2) && !(flags & (FR_CHAN | FR_BOT)))
-        string = "";
+        goto breakout; /* string = ""; does not work here because we need to
+                          break out of while() / nested switch(), see
+                          "string++;" below and string = "\0"; is worse than
+                          goto */
       else if (mode == 3)
         mode = 1;
       break;
@@ -447,6 +450,7 @@ void break_down_flags(const char *string, struct flag_record *plus,
     }
     string++;
   }
+breakout:
   for (which = plus; which; which = (which == plus ? minus : 0)) {
     which->global &=USER_VALID;
 
