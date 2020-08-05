@@ -100,7 +100,6 @@
 #include "chan.h"
 #include "users.h"
 #include "compat/compat.h"
-#include "list.h"
 
 #ifndef MAKING_MODS
 extern struct dcc_table DCC_CHAT, DCC_BOT, DCC_LOST, DCC_SCRIPT, DCC_BOT_NEW,

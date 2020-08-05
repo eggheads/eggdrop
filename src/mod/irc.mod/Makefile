@@ -41,4 +41,4 @@ distclean: clean
  ../../../src/mod/server.mod/server.h \
  ../../../src/mod/channels.mod/channels.h .././irc.mod/chan.c \
  .././irc.mod/mode.c .././irc.mod/cmdsirc.c .././irc.mod/msgcmds.c \
- .././irc.mod/tclirc.c ../../../src/list.h
+ .././irc.mod/tclirc.c

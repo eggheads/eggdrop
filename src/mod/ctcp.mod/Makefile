@@ -38,4 +38,4 @@ distclean: clean
  ../../../src/compat/snprintf.h ../../../src/compat/gethostbyname2.h \
  ../../../src/compat/explicit_bzero.h ../../../src/compat/strlcpy.h \
  ../../../src/mod/modvals.h ../../../src/tandem.h \
- ../../../src/mod/server.mod/server.h ../../../src/list.h
+ ../../../src/mod/server.mod/server.h

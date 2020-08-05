@@ -40,4 +40,4 @@ distclean: clean
  ../../../src/mod/modvals.h ../../../src/tandem.h ../../../src/chan.h \
  ../../../src/users.h ../../../src/mod/transfer.mod/transfer.h \
  ../../../src/mod/channels.mod/channels.h .././share.mod/share.h \
- .././share.mod/uf_features.c ../../../src/list.h
+ .././share.mod/uf_features.c
