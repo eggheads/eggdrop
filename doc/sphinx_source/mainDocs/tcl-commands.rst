@@ -1485,7 +1485,7 @@ isupport unset <key>
 
   Description: Unsets an isupport setting. Throws an error if not set.
 
-  Returns: nothing
+  Returns: the default value that applies after unsetting it, or the empty string if that does not apply
 
   Module: server
 

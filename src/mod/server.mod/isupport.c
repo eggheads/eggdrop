@@ -167,6 +167,7 @@ const char *isupport_get(const char *key, size_t keylen)
 static void isupport_set_value(const char *key, size_t keylen, const char *value, size_t valuelen, int setdefault)
 {
   int ret = 0;
+  const char *old;
   char *new;
   struct isupport *data = get_record(key, keylen);
 
@@ -175,12 +176,16 @@ static void isupport_set_value(const char *key, size_t keylen, const char *value
   if (!setdefault && data->value && strlen(data->value) == valuelen && !strncmp(data->value, value, valuelen))
     return;
 
+  old = isupport_get_from_record(data);
   new = strrangedup(value, valuelen);
 
-  if (!setdefault) {
-    ret = check_tcl_isupport(data, data->key, isupport_get_from_record(data), new);
+  if (!old || strcmp(old, new)) {
+    ret = check_tcl_isupport(data, data->key, old, new);
   }
-  if (ret) {
+  if (!setdefault && ret) {
+    if (!data->defaultvalue && !data->value) {
+      del_record(data);
+    }
     nfree(new);
   } else {
     if (setdefault) {
@@ -204,7 +209,7 @@ void isupport_set(const char *key, size_t keylen, const char *value, size_t valu
 
 void isupport_setdefault(const char *key, size_t keylen, const char *value, size_t valuelen)
 {
-  isupport_set_value(key, keylen, value, valuelen, 0);
+  isupport_set_value(key, keylen, value, valuelen, 1);
 }
 
 void isupport_unset(const char *key, size_t keylen)
@@ -214,7 +219,18 @@ void isupport_unset(const char *key, size_t keylen)
   if (!data) {
     return;
   }
-  del_record(data);
+  /* does not unset default values */
+  if (data->value) {
+    int ret = check_tcl_isupport(data, data->key, isupport_get_from_record(data), NULL);
+    if (!ret) {
+      if (data->defaultvalue) {
+        nfree(data->value);
+        data->value = NULL;
+      } else {
+        del_record(data);
+      }
+    }
+  }
 }
 
 /*** isupport parse/setstr ***/
@@ -331,7 +347,7 @@ void isupport_clear(void) {
 void isupport_clear_values(int cleardefaultvalues) {
   struct isupport *next;
 
-  for (struct isupport *data = isupport_list; (next = data->next, data); data = next) {
+  for (struct isupport *data = isupport_list; (next = data ? data->next : NULL, data); data = next) {
     if ((cleardefaultvalues && data->defaultvalue) || (!cleardefaultvalues && data->value)) {
       if (cleardefaultvalues && data->value) {
         nfree(data->defaultvalue);

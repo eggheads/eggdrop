@@ -25,6 +25,7 @@
 
 int tcl_isupport STDOBJVAR;
 static int tcl_isupport_get STDOBJVAR;
+static int tcl_isupport_isset STDOBJVAR;
 static int tcl_isupport_set STDOBJVAR;
 static int tcl_isupport_unset STDOBJVAR;
 
@@ -33,6 +34,7 @@ static struct {
   Tcl_ObjCmdProc *proc;
 } subcmds[] = {
   {"get", tcl_isupport_get},
+  {"isset", tcl_isupport_isset},
   {"set", tcl_isupport_set},
   {"unset", tcl_isupport_unset},
 };
@@ -79,19 +81,31 @@ static int tcl_isupport_get STDOBJVAR
  
    for (struct isupport *data = isupport_list; data; data = data->next) {
       Tcl_ListObjAppendElement(irp, tclres, Tcl_NewStringObj(data->key, -1));
-      Tcl_ListObjAppendElement(irp, tclres, Tcl_NewStringObj(data->value, -1));
+      Tcl_ListObjAppendElement(irp, tclres, Tcl_NewStringObj(isupport_get_from_record(data), -1));
     }
     Tcl_SetObjResult(irp, tclres);
     return TCL_OK;
   }
 
   /* objc >= 3 */
-  key = Tcl_GetStringFromObj(objv[3], &keylen);
+  key = Tcl_GetStringFromObj(objv[2], &keylen);
   value = isupport_get(key, keylen);
   if (!value) {
-    TCL_ERR_NOTSET(irp, objv[3]);
+    TCL_ERR_NOTSET(irp, objv[2]);
   }
   Tcl_SetObjResult(irp, Tcl_NewStringObj(value, -1));
+  return TCL_OK;
+}
+
+static int tcl_isupport_isset STDOBJVAR
+{
+  int keylen;
+  const char *key, *value;
+
+  BADOBJARGS(3, 3, 2, "setting");
+  key = Tcl_GetStringFromObj(objv[2], &keylen);
+  value = isupport_get(key, keylen);
+  Tcl_SetResult(interp, value ? "1" : "0", NULL);
   return TCL_OK;
 }
 
@@ -119,14 +133,20 @@ static int tcl_isupport_unset STDOBJVAR
 
   BADOBJARGS(3, 3, 2, "setting");
 
-  key = Tcl_GetStringFromObj(objv[3], &keylen);
+  key = Tcl_GetStringFromObj(objv[2], &keylen);
   data = find_record(key, keylen);
 
   if (!data) {
-    TCL_ERR_NOTSET(irp, objv[3]);
+    TCL_ERR_NOTSET(irp, objv[2]);
   }
-  del_record(data);
-  Tcl_ResetResult(irp);
+  if (!data->value) {
+    Tcl_SetResult(interp, "no server value set, cannot unset default values, change 'set isupport-default' instead", NULL);
+    return TCL_ERROR;
+  }
+  isupport_unset(key, keylen);
+  /* data might be invalidated by isupport_unset */
+  data = find_record(key, keylen);
+  Tcl_SetObjResult(irp, Tcl_NewStringObj(data ? isupport_get_from_record(data) : "", -1));
   return TCL_OK;
 }
 
@@ -160,6 +180,7 @@ char *traced_isupport(ClientData cdata, Tcl_Interp *irp,
                    TCL_TRACE_UNSETS, traced_isupport, cdata);
   } else {
     EGG_CONST char *cval = Tcl_GetVar2(interp, name1, name2, TCL_GLOBAL_ONLY);
+    isupport_clear_values(1);
     isupport_parse(cval, isupport_setdefault);
   }
   return NULL;
@@ -168,9 +189,9 @@ char *traced_isupport(ClientData cdata, Tcl_Interp *irp,
 int isupport_bind STDVAR
 {
   Function F = (Function) cd;
-  BADARGS(4, 4, " key oldvalue newvalue");
+  BADARGS(6, 6, " key wasset oldvalue isset value");
   CHECKVALIDITY(isupport_bind);
-  F(argv[1], argv[2], argv[3]);
+  F(argv[1], argv[2], argv[3], argv[4], argv[5]);
   return TCL_OK;
 }
 
@@ -178,9 +199,11 @@ int isupport_bind STDVAR
 int check_tcl_isupport(struct isupport *data, const char *key, const char *oldvalue, const char *value)
 {
   Tcl_SetVar(interp, "_isupport1", key, 0);
-  Tcl_SetVar(interp, "_isupport2", oldvalue ? oldvalue : "", 0);
-  Tcl_SetVar(interp, "_isupport3", value ? value : "", 0);
-  check_tcl_bind(H_isupport, key, 0, " $_isupport1 $_isupport2 $_isupport3",
-      MATCH_MASK | BIND_STACKABLE);
-  return 0;
+  Tcl_SetVar(interp, "_isupport2", oldvalue ? "1" : "0", 0);
+  Tcl_SetVar(interp, "_isupport3", oldvalue ? oldvalue : "", 0);
+  Tcl_SetVar(interp, "_isupport4", value ? "1" : "0", 0);
+  Tcl_SetVar(interp, "_isupport5", value ? value : "", 0);
+
+  return BIND_EXEC_LOG == check_tcl_bind(H_isupport, key, 0, " $_isupport1 $_isupport2 $_isupport3 $_isupport4 $_isupport5",
+      MATCH_MASK | BIND_STACKABLE | BIND_WANTRET);
 }
