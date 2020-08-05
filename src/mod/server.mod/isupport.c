@@ -290,9 +290,9 @@ rollback:
         *bufptr++ = '\\';
       if (state > 1)
         *bufptr++ = 'x';
-      }
       state = 0;
       *bufptr++ = *ch;
+    }
   }
   *bufptr = '\0';
   return (size_t)(bufptr - buf);
