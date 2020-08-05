@@ -4,7 +4,7 @@
  */
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2017 Eggheads Development Team
+ * Copyright (C) 1999 - 2020 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -22,25 +22,19 @@
  */
 
 #include <ctype.h>
+#include <string.h>
+#include <strings.h>
+#include "src/mod/module.h"
+#include "server.h"
 
-#define ICLEAR(data, dst) isupport_real_clear((data), &(dst))
-#define ISET(data, dst, val) isupport_real_set((data), &(dst), (val), strlen((val)))
-#define ISETLEN(data, dst, val, len) isupport_real_set((data), &(dst), (val), (len))
+typedef struct isupport {
+  const char *key, *value, *defaultvalue;
+  struct isupport *prev, *next;
+} isupport_t;
 
-struct isupport {
-  size_t keylen;
-  const char *key;
-  const char *forced, *server, *def;
-  int ignored;
-};
-
-/* Instantiate list type for isupport data */
-CREATE_LIST_TYPE(isupportdata, isupportkeydata, struct isupport *);
-
-static struct isupportdata *isupportdata;
-static p_tcl_bind_list H_preisupport, H_postisupport;
-
-static char *isupport_default = "CASEMAPPING=rfc1459 CHANNELLEN=80 NICKLEN=9 CHANTYPES=#& PREFIX=(ov)@+";
+static isupport_t *isupport_list;
+static p_tcl_bind_list H_isupport;
+static const char isupport_default[4096] = "CASEMAPPING=rfc1459 CHANNELLEN=80 NICKLEN=9 CHANTYPES=#& PREFIX=(ov)@+";
 
 static int hexdigit2dec[128] = {
   -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, /*   0 -   9 */
@@ -60,12 +54,8 @@ static int hexdigit2dec[128] = {
 
 int tcl_isupport STDOBJVAR;
 int isupport_bind STDVAR;
-int preisupport_bind STDVAR;
-int postisupport_bind STDVAR;
 int check_tcl_isupport(struct isupport *data, const char *key, const char *oldvalue, const char *value);
-int check_tcl_postisupport(const char *key, const char *value);
-char *traced_isupport(ClientData cdata, Tcl_Interp *irp, EGG_CONST char *name1,
-    EGG_CONST char *name2, int flags);
+char *traced_isupport(ClientData cdata, Tcl_Interp *irp, EGG_CONST char *name1, EGG_CONST char *name2, int flags);
 
 static tcl_cmds my_tcl_objcmds[] = {
   {"isupport", tcl_isupport},
@@ -74,55 +64,85 @@ static tcl_cmds my_tcl_objcmds[] = {
 
 /*** Utility functions ***/
 
-static char *valuendup(const char *value, size_t len) {
+static char *strrangedup(const char *value, size_t len) {
   char *str = nmalloc(len + 1);
   memcpy(str, value, len);
   str[len] = '\0';
   return str;
-} 
-
-/* length has to be validated for equality before calling this. */
-static int keyupeq(const char *key, const char *upkey) {
-  int i;
-  for (i = 0; key[i] && upkey[i]; i++)
-    if (toupper((unsigned char)key[i]) != upkey[i])
-      return 0;
-  return 1;
 }
 
-static char *keyupndup(const char *key, size_t len) {
+static char *strrangedup_toupper(const char *value, size_t len) {
   int i;
-  char *up = nmalloc(len + 1);
-  for (i = 0; i < len; i++)
-    up[i] = toupper((unsigned char)key[i]);
-  up[i] = '\0';
-  return up;
+  char *str = nmalloc(len + 1);
+
+  for (i = 0; i < len; i++) {
+    str[i] = toupper((unsigned char)value[i]);
+  }
+  str[i] = '\0';
+  return str;
+}
+
+static int keycmp(const char *key1, const char *key2, size_t key2len) {
+  size_t key1len = strlen(key1);
+
+  if (key1len > key2len) {
+    return 1;
+  } else if (key1len < key2len) {
+    return -1;
+  } else {
+    return strncasecmp(key1, key2, key2len);
+  }
 }
 
 /*** isupport key record managing functions ***/
 
+static void isupport_free(struct isupport *data) {
+  nfree(data->key);
+  if (data->value)
+    nfree(data->value);
+  if (data->defaultvalue)
+    nfree(data->defaultvalue);
+  nfree(data);
+}
+
 static struct isupport *add_record(const char *key, size_t keylen) {
   struct isupport *data = nmalloc(sizeof *data);
 
-  data->key = keyupndup(key, keylen);
-  data->keylen = keylen;
-  data->ignored = 0;
-  data->forced = data->def = data->server = NULL;
-  isupportdata_append(isupportdata, data);
+  data->key = strrangedup_toupper(key, keylen);
+  data->defaultvalue = data->value = NULL;
+  data->prev = NULL;
+  data->next = isupport_list;
+
+  if (isupport_list) {
+    isupport_list->prev = data;
+  }
+  isupport_list = data;
   return data;
 }
 
-static struct isupport *find_record(const char *key, size_t keylen) {
-  struct isupportkeydata *i;
-  struct isupport *data;
+static void del_record(struct isupport *data) {
+  if (data->prev) {
+    data->prev->next = data->next;
+  } else {
+    isupport_list = data->next;
+  }
+  if (data->next) {
+    data->next->prev = data->prev;
+  }
+  isupport_free(data);
+}
 
-  LIST_FOREACH_DATA(isupportdata, i, data) {
-    if (keylen == data->keylen && keyupeq(key, data->key))
+/* find record in list for key, case insensitive, return NULL if it does not exist */
+static struct isupport *find_record(const char *key, size_t keylen) {
+  for (isupport_t *data = isupport_list; data; data = data->next) {
+    if (!keycmp(data->key, key, keylen)) {
       return data;
+    }
   }
   return NULL;
 }
 
+/* find record in list for key, case insensitive, create record if it does not exist */
 static struct isupport *get_record(const char *key, size_t keylen) {
   struct isupport *data = find_record(key, keylen);
 
@@ -132,174 +152,69 @@ static struct isupport *get_record(const char *key, size_t keylen) {
   return data;
 }
 
-/*** isupport get ***/
-
-const char *isupport_get_default_from(struct isupport *data) {
-  return data->def;
-}
-
-const char *isupport_get_current_from(struct isupport *data) {
-  if (data->ignored)
-    return NULL;
-  if (data->forced)
-    return data->forced;
-  if (data->server)
-    return data->server;
-  if (data->def)
-    return data->def;
-  return NULL;
-}
-
-const char *isupport_get_current(const char *key, size_t keylen) {
-  struct isupport *data = find_record(key, keylen);
-  return data ? isupport_get_current_from(data) : NULL;
-}
-
-const char *isupport_get_from(struct isupport *data, const char *type) {
-  if (!strcmp(type, "current"))
-    return isupport_get_current_from(data);
-  else if (!strcmp(type, "forced"))
-    return data->forced;
-  else if (!strcmp(type, "default"))
-    return data->def;
-  else if (!strcmp(type, "ignored"))
-    return (data->ignored ? "1" : NULL);
-  else if (!strcmp(type, "server"))
-    return data->server;
-  putlog(LOG_MISC, "*", "Unknown ISUPPORT get type: %s", type);
-  return NULL;
-}
-
-/*** bind triggering set procs ***/
-
-static void isupport_real_clear(struct isupport *data, const char **dst) {
-  const char *olddst = *dst, *old = isupport_get_current_from(data);
-
-  *dst = NULL;
-  if (old)
-    check_tcl_isupport(data, data->key, old, NULL);
-  if (olddst)
-    nfree(olddst);
-}
-
-static void isupport_real_set(struct isupport *data, const char **dst, const char *value, size_t len)
+const char *isupport_get_from_record(struct isupport *data)
 {
-  const char *olddst = *dst, *old = isupport_get_current_from(data);
+  return data->value ? data->value : data->defaultvalue;
+}
 
-  /* Identical in same field */
-  if (*dst && strlen(*dst) == len && (*dst == value || !strncmp(*dst, value, len)))
+const char *isupport_get(const char *key, size_t keylen)
+{
+  struct isupport *data = find_record(key, keylen);
+
+  return data ? isupport_get_from_record(data) : NULL;
+}
+
+static void isupport_set_value(const char *key, size_t keylen, const char *value, size_t valuelen, int setdefault)
+{
+  int ret = 0;
+  char *new;
+  struct isupport *data = get_record(key, keylen);
+
+  if (setdefault && data->defaultvalue && strlen(data->defaultvalue) == valuelen && !strncmp(data->defaultvalue, value, valuelen))
+    return;
+  if (!setdefault && data->value && strlen(data->value) == valuelen && !strncmp(data->value, value, valuelen))
     return;
 
-  *dst = valuendup(value, len);
-  if (!old || strcmp(old, *dst))
-    check_tcl_isupport(data, data->key, old, *dst);
-  if (olddst)
-    nfree(olddst);
+  new = strrangedup(value, valuelen);
+
+  if (!setdefault) {
+    ret = check_tcl_isupport(data, data->key, isupport_get_from_record(data), new);
+  }
+  if (ret) {
+    nfree(new);
+  } else {
+    if (setdefault) {
+      if (data->defaultvalue) {
+        nfree(data->defaultvalue);
+      }
+      data->defaultvalue = new;
+    } else {
+      if (data->value) {
+        nfree(data->value);
+      }
+      data->value = new;
+    }
+  }
 }
 
-/*** isupport set ***/
-
-static void isupport_set_ignored_into(struct isupport *data, int value)
+void isupport_set(const char *key, size_t keylen, const char *value, size_t valuelen)
 {
-  const char *old = isupport_get_current_from(data);
-
-  data->ignored = value;
-  if (!old == !value)
-    check_tcl_isupport(data, data->key, old, isupport_get_current_from(data));
+  isupport_set_value(key, keylen, value, valuelen, 0);
 }
 
-/* value is ignored */
-static void isupport_set_ignored(const char *key, size_t keylen,
-    const char *value, size_t len)
+void isupport_setdefault(const char *key, size_t keylen, const char *value, size_t valuelen)
 {
-  struct isupport *data = get_record(key, keylen);
-  isupport_set_ignored_into(data, 1);
+  isupport_set_value(key, keylen, value, valuelen, 0);
 }
 
-static void isupport_set_forced(const char *key, size_t keylen,
-    const char *value, size_t len)
+void isupport_unset(const char *key, size_t keylen)
 {
-  struct isupport *data = get_record(key, keylen);
-  ISETLEN(data, data->forced, value, len);
-}
-
-static void isupport_set_server(const char *key, size_t keylen,
-    const char *value, size_t len)
-{
-  struct isupport *data = get_record(key, keylen);
-  ISETLEN(data, data->server, value, len);
-}
-
-static void isupport_set_default(const char *key, size_t keylen,
-    const char *value, size_t len)
-{
-  struct isupport *data = get_record(key, keylen);
-  ISETLEN(data, data->def, value, len);
-}
-
-void isupport_set_into(struct isupport *data, const char *type, const char *value) {
-  if (!strcmp(type, "forced"))
-    ISET(data, data->forced, value);
-  else if (!strcmp(type, "default"))
-    ISET(data, data->def, value);
-  else if (!strcmp(type, "server"))
-    ISET(data, data->server, value);
-  else
-    putlog(LOG_MISC, "*", "Invalid ISUPPORT set type: %s", type);
-}
-
-/*** isupport unset ***/
-
-static void isupport_unset_server(const char *key, size_t keylen) {
   struct isupport *data = find_record(key, keylen);
 
   if (!data) {
-    putlog(LOG_MISC, "*", "isupport key %s not found, but tried to unset!", key);
     return;
   }
-  ICLEAR(data, data->server);
-}
-
-void isupport_unset_into(struct isupport *data, const char *type) {
-  if (!strcmp(type, "ignored"))
-    data->ignored = 0;
-  else if (!strcmp(type, "forced"))
-    ICLEAR(data, data->forced);
-  else if (!strcmp(type, "default"))
-    ICLEAR(data, data->def);
-  else if (!strcmp(type, "server"))
-    ICLEAR(data, data->server);
-  putlog(LOG_MISC, "*", "Unknown ISUPPORT unset type: %s", type);
-}
-
-/*** isupport clear ***/
-
-static void isupport_clear_ignored(void) {
-  struct isupportkeydata *i;
-  struct isupport *data;
-  LIST_FOREACH_DATA(isupportdata, i, data)
-    data->ignored = 0;
-}
-
-static void isupport_clear_forced(void) {
-  struct isupportkeydata *i;
-  struct isupport *data;
-  LIST_FOREACH_DATA(isupportdata, i, data)
-    ICLEAR(data, data->forced);
-}
-
-static void isupport_clear_server(void) {
-  struct isupportkeydata *i;
-  struct isupport *data;
-  LIST_FOREACH_DATA(isupportdata, i, data)
-    ICLEAR(data, data->server);
-}
-
-static void isupport_clear_default(void) {
-  struct isupportkeydata *i;
-  struct isupport *data;
-  LIST_FOREACH_DATA(isupportdata, i, data)
-    ICLEAR(data, data->def);
+  del_record(data);
 }
 
 /*** isupport parse/setstr ***/
@@ -368,8 +283,7 @@ rollback:
 }
 
 static void isupport_parse(const char *str,
-    void (*set_cb)(const char *key, size_t keylen, const char *v, size_t vlen),
-    void (*unset_cb)(const char *key, size_t keylen))
+    void (*set_cb)(const char *key, size_t keylen, const char *v, size_t vlen))
 {
   static char buf[512];
   size_t keylen, valuelen;
@@ -384,130 +298,87 @@ static void isupport_parse(const char *str,
     key = str;
     keylen = strcspn(key, "= ");
     if (key[0] == '-') {
-      if (key[keylen] == '=') {
-        putlog(LOG_MISC, "*", "isupport key %.*s is unset but has a value!", keylen, key);
-      }
-      unset_cb(key, keylen);
+      putlog(LOG_MISC, "*", "isupport unsetting with -KEY is not supported, please report this");
       str = key + keylen;
     } else {
       value = key + keylen + (key[keylen] == '=');
       valuelen = strcspn(value, " ");
       valuelen = isupport_decode(buf, sizeof buf, value, valuelen);
-      set_cb(key, keylen, buf, valuelen);
+      if (set_cb) {
+        set_cb(key, keylen, buf, valuelen);
+      }
       str = value + valuelen;
     }
   }
 }
 
 
-/*** isupport handlers for strings ***/
-
-void isupport_handle_ignored(const char *str)
-{
-  isupport_clear_ignored();
-  isupport_parse(str, isupport_set_ignored, NULL);
-}
-
-void isupport_handle_forced(const char *str)
-{
-  isupport_clear_forced();
-  isupport_parse(str, isupport_set_forced, NULL);
-}
-
-void isupport_handle_server(const char *str)
-{
-  /* intentionally no clear, we clear on disconnect, must handle multiple lines */
-  isupport_parse(str, isupport_set_server, isupport_unset_server);
-}
-
-void isupport_handle_default(const char *str)
-{
-  isupport_clear_default();
-  isupport_parse(str, isupport_set_default, NULL);
-}
-
-void isupport_handle(const char *str, const char *type)
-{
-  if (!strcmp(type, "default"))
-    isupport_handle_default(str);
-  else if (!strcmp(type, "forced"))
-    isupport_handle_forced(str);
-  else if (!strcmp(type, "ignored"))
-    isupport_handle_ignored(str);
-  else
-    putlog(LOG_MISC, "*", "Invalid ISUPPORT handle type: %s", type);
-}
-
 /*** Module utility functions ***/
 
-void isupport_reset(void)
-{
-  isupport_clear_server();
-}
 
-static void isupport_free(struct isupport *data) {
-  if (data->key)
-    nfree(data->key);
-  if (data->forced)
-    nfree(data->forced);
-  if (data->def)
-    nfree(data->def);
-  if (data->server)
-    nfree(data->server);
-  nfree(data);
-}
+void isupport_clear(void) {
+  struct isupport *data = isupport_list, *next;
 
-void isupport_cleanup(void) {
-  struct isupportkeydata *i, *next;
-  struct isupport *data;
-  LIST_FOREACH_SAFE(isupportdata, i, next) {
-    data = LIST_ELEM_DATA(i);
-    if (!data->ignored && !data->forced && !data->server && !data->def)
-      isupportdata_delete(isupportdata, i);
+  isupport_list = NULL;
+
+  while (data) {
+    next = data->next;
+    isupport_free(data);
+    data = next;
   }
 }
 
+void isupport_clear_values(int cleardefaultvalues) {
+  struct isupport *next;
+
+  for (struct isupport *data = isupport_list; (next = data->next, data); data = next) {
+    if ((cleardefaultvalues && data->defaultvalue) || (!cleardefaultvalues && data->value)) {
+      if (cleardefaultvalues && data->value) {
+        nfree(data->defaultvalue);
+      } else if (!cleardefaultvalues && data->defaultvalue) {
+        nfree(data->value);
+      } else {
+        /* entry will be empty, delete it */
+        del_record(data);
+      }
+    }
+  }
+}
 
 void isupport_init(void) {
   const char *def;
-  isupportdata = isupportdata_create(isupport_free);
   def = Tcl_GetVar(interp, "isupport-default", TCL_GLOBAL_ONLY);
   if (!def)
     def = isupport_default;
-  H_preisupport = add_bind_table("preisupport", HT_STACKABLE, preisupport_bind);
-  H_postisupport = add_bind_table("postisupport", HT_STACKABLE, postisupport_bind);
-  isupport_handle_default(def);
+  H_isupport = add_bind_table("isupport", HT_STACKABLE, isupport_bind);
+  isupport_parse(def, isupport_setdefault);
   /* Must be added after reading, if the variable was set before loading mod. */
   Tcl_TraceVar(interp, "isupport-default",
                TCL_TRACE_READS | TCL_TRACE_WRITES | TCL_TRACE_UNSETS,
                traced_isupport, NULL);
   add_tcl_objcommands(my_tcl_objcmds);
-  add_hook(HOOK_5MINUTELY, (Function) isupport_cleanup);
 }
 
 void isupport_fini(void) {
-  del_bind_table(H_preisupport);
-  del_bind_table(H_postisupport);
-  del_hook(HOOK_5MINUTELY, (Function) isupport_cleanup);
+  del_bind_table(H_isupport);
   Tcl_UntraceVar(interp, "isupport-default",
                  TCL_TRACE_READS | TCL_TRACE_WRITES | TCL_TRACE_UNSETS,
                  traced_isupport, NULL);
   rem_tcl_commands(my_tcl_objcmds);
-  isupportdata_destroy(isupportdata);
+  isupport_clear();
 }
 
 size_t isupport_expmem(void) {
-  size_t bytes = sizeof *isupportdata;
-  struct isupportkeydata *i;
-  struct isupport *data;
-  LIST_FOREACH_DATA(isupportdata, i, data) {
-    bytes += sizeof *i;
-    if (data->server)
-      bytes += strlen(data->server) + 1;
-    if (data->def)
-      bytes += strlen(data->def) + 1;
-    if (data->forced)
-      bytes += strlen(data->forced) + 1;
+  size_t bytes = 0;
+
+  for (struct isupport *data = isupport_list; data; data = data->next) {
+    bytes += sizeof *data;
+    if (data->value)
+      bytes += strlen(data->value) + 1;
+    if (data->defaultvalue)
+      bytes += strlen(data->defaultvalue) + 1;
+    if (data->key)
+      bytes += strlen(data->key) + 1;
   }
   return bytes;
 }
@@ -529,43 +400,36 @@ static void isupport_stringify(int idx, char *buf, size_t bufsize, size_t *len,
       return;
     }
   }
-  if (!value)
-    *len += sprintf(buf + *len, " -%s", key);
-  else if (!value[0])
+  if (!value[0])
     *len += sprintf(buf + *len, " %s", key);
   else
     *len += sprintf(buf + *len, " %s=%s", key, value);
 }
 
-static void isupport_report_type(int idx, const char *type)
+void isupport_report(int idx, int details)
 {
-  int forced;
   char buf[450];
-  const char *value;
   size_t prefixlen, len;
-  struct isupportkeydata *i;
-  struct isupport *data;
 
-  forced = !strcmp(type, "forced");
-  len = prefixlen = sprintf(buf, "    isupport (%s):", type);
-  LIST_FOREACH_DATA(isupportdata, i, data) {
-    value = isupport_get_from(data, type);
-    if (forced && isupport_get_from(data, "ignored"))
-      value = NULL;
-    else if (!value)
-      continue;
-    isupport_stringify(idx, buf, sizeof buf, &len, prefixlen, data->key, value);
+  if (!server_online)
+    return;
+
+  len = prefixlen = sprintf(buf, "%s", "    isupport:");
+  for (struct isupport *data = isupport_list; data; data = data->next) {
+    isupport_stringify(idx, buf, sizeof buf, &len, prefixlen, data->key, isupport_get_from_record(data));
   }
   if (len > prefixlen)
     dprintf(idx, "%s\n", buf);
+
+  if (details) {
+    len = prefixlen = sprintf(buf, "%s", "    isupport (default):");
+    for (struct isupport *data = isupport_list; data; data = data->next) {
+      if (data->defaultvalue) {
+        isupport_stringify(idx, buf, sizeof buf, &len, prefixlen, data->key, data->defaultvalue);
+      }
+    }
+    if (len > prefixlen)
+      dprintf(idx, "%s\n", buf);
+  }
 }
 
-void isupport_report(int idx, int details) {
-  if (details) {
-    isupport_report_type(idx, "forced");
-    isupport_report_type(idx, "server");
-    isupport_report_type(idx, "default");
-  }
-  if (server_online)
-    isupport_report_type(idx, "current");
-}

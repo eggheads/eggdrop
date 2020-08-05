@@ -84,7 +84,7 @@
 #define delserver ((void(*)(char *))server_funcs[42])
 #define net_type_int (*(int *)(server_funcs[43]))
 /* 44 - 47 */
-#define H_postisupport (*(p_tcl_bind_list *)(server_funcs[44]))
+#define H_isupport (*(p_tcl_bind_list *)(server_funcs[44]))
 #else /* MAKING_SERVER */
 
 /* Macros for commonly used commands. */

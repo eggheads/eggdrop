@@ -353,7 +353,7 @@ static int got001(char *from, char *msg)
 static int got005(char *from, char *msg)
 {
   newsplit(&msg); /* skip botnick */
-  isupport_handle_server(msg);
+  isupport_parse(msg, isupport_set);
   return 0;
 }
 
