@@ -26,8 +26,6 @@
 int tcl_isupport STDOBJVAR;
 static int tcl_isupport_get STDOBJVAR;
 static int tcl_isupport_isset STDOBJVAR;
-static int tcl_isupport_set STDOBJVAR;
-static int tcl_isupport_unset STDOBJVAR;
 
 static struct {
   const char *subcmd;

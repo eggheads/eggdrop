@@ -1055,7 +1055,6 @@ static void disconnect_server(int idx)
 {
   if (server_online > 0)
     check_tcl_event("disconnect-server");
-  isupport_clear_values(0);
   *cap.supported = 0;
   *cap.negotiated = 0;
   *cap.desired = 0;
@@ -1063,6 +1062,8 @@ static void disconnect_server(int idx)
   if (realservername)
     nfree(realservername);
   realservername = 0;
+  /* $::server should be empty for this, so isupport binds can ignore it */
+  isupport_clear_values(0);
   if (dcc[idx].sock >= 0)
     killsock(dcc[idx].sock);
   dcc[idx].sock = -1;

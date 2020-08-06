@@ -350,12 +350,20 @@ void isupport_clear_values(int cleardefaultvalues) {
   for (struct isupport *data = isupport_list; (next = data ? data->next : NULL, data); data = next) {
     if ((cleardefaultvalues && data->defaultvalue) || (!cleardefaultvalues && data->value)) {
       if (cleardefaultvalues && data->value) {
+        /* no bind trigger, value > defaultvalue, this does not change the effective value */
+        /* and the bind should never be allowed to prevent changing default values */
         nfree(data->defaultvalue);
+        data->defaultvalue = NULL;
       } else if (!cleardefaultvalues && data->defaultvalue) {
-        nfree(data->value);
+        if (!strcmp(data->value, data->defaultvalue) || !check_tcl_isupport(data, data->key, data->value, data->defaultvalue)) {
+          nfree(data->value);
+          data->value = NULL;
+        }
       } else {
-        /* entry will be empty, delete it */
-        del_record(data);
+        if (!check_tcl_isupport(data, data->key, isupport_get_from_record(data), NULL)) {
+          /* entry will be empty, delete it */
+          del_record(data);
+        }
       }
     }
   }

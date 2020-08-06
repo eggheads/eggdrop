@@ -3447,7 +3447,7 @@ The following is a list of bind types and how they work. Below each bind type is
 
   procname <key> <wasset> <oldvalue> <isset> <value>
  
-  Description: triggered when the value of an isupport key changes. The mask is matched against the isupport key. If the value was not set, wasset is 1 and oldvalue is the empty string. If the value is not set now, isset is 0 and the value is the empty string. Because the empty string is valid value, use wasset/isset to distinguish empty string values from a key being unset. A return value other than 0 makes Eggdrop ignore the change and revert to the old value.
+  Description: triggered when the value of an isupport key changes. The mask is matched against the isupport key. If the value was not set, wasset is 1 and oldvalue is the empty string. If the value is not set now, isset is 0 and the value is the empty string. Because the empty string is valid value, use wasset/isset to distinguish empty string values from a key being unset. A return value other than 0 makes Eggdrop ignore the change and revert to the old value. After a disconnect from the server, all isupport values are reset to default, but $::server will be empty, so that case can be caught and ignored.
 
   Module: server
 
