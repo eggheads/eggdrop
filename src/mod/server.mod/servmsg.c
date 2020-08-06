@@ -1132,7 +1132,6 @@ static void server_activity(int idx, char *tagmsg, int len)
   if (msgtag) {
     if (*tagmsg == '@') {
       taglen = 0;
-      memset(tagdict, '\0', TOTALTAGMAX);
       tagstrptr = newsplit(&msgptr);
       strlcpy(tagstr, tagstrptr, TOTALTAGMAX+1);
       tagstrptr++;     /* Remove @ */
@@ -1163,7 +1162,9 @@ static void server_activity(int idx, char *tagmsg, int len)
           }
         }
       }
-      tagdict[taglen-1] = '\0';     /* Remove trailing space */
+      if (taglen > 0) {
+        tagdict[taglen-1] = '\0';     /* Remove trailing space */
+      }
     }
   }
   from = "";
