@@ -1469,25 +1469,6 @@ isupport isset <type> <key>
 
   Module: server
 
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-isupport set <key> <value>
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-  Description: Sets the isupport key to value.
-
-  Returns: the value that was set
-
-  Module: server
-
-^^^^^^^^^^^^^^^^^^^^^^^^^^^
-isupport unset <key>
-^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-  Description: Unsets an isupport setting. Throws an error if not set.
-
-  Returns: the default value that applies after unsetting it, or the empty string if that does not apply
-
-  Module: server
 
 DCC Commands
 ------------

@@ -1055,6 +1055,7 @@ static void disconnect_server(int idx)
 {
   if (server_online > 0)
     check_tcl_event("disconnect-server");
+  isupport_clear_values(0);
   *cap.supported = 0;
   *cap.negotiated = 0;
   *cap.desired = 0;

@@ -35,8 +35,6 @@ static struct {
 } subcmds[] = {
   {"get", tcl_isupport_get},
   {"isset", tcl_isupport_isset},
-  {"set", tcl_isupport_set},
-  {"unset", tcl_isupport_unset},
 };
 
 #define TCL_ERR_NOTSET(irp, keyobj) do {                                 \
@@ -109,6 +107,8 @@ static int tcl_isupport_isset STDOBJVAR
   return TCL_OK;
 }
 
+#if 0
+/* not exposed for now */
 static int tcl_isupport_set STDOBJVAR
 {
   int keylen, valuelen;
@@ -149,6 +149,7 @@ static int tcl_isupport_unset STDOBJVAR
   Tcl_SetObjResult(irp, Tcl_NewStringObj(data ? isupport_get_from_record(data) : "", -1));
   return TCL_OK;
 }
+#endif
 
 char *traced_isupport(ClientData cdata, Tcl_Interp *irp,
                             EGG_CONST char *name1,
