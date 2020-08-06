@@ -2552,6 +2552,13 @@ static int gotnotice(char *from, char *msg)
   return 0;
 }
 
+static int isupport_whox(char *key, char *wasset, char *oldvalue, char *isset, char *value)
+{
+  putlog(LOG_MISC, "*", "USE354 %d -> %d", use_354, !strcmp(isset, "1"));
+  use_354 = !strcmp(isset, "1");
+  return 0;
+}
+
 static cmd_t irc_raw[] = {
   {"324",     "",   (IntFunc) got324,          "irc:324"},
   {"352",     "",   (IntFunc) got352,          "irc:352"},
@@ -2583,6 +2590,11 @@ static cmd_t irc_raw[] = {
   {"348",     "",   (IntFunc) got348,          "irc:348"},
   {"349",     "",   (IntFunc) got349,          "irc:349"},
   {NULL,      NULL, NULL,                           NULL}
+};
+
+static cmd_t irc_isupport[] = {
+  {"WHOX",    "",   (IntFunc) isupport_whox, "isupport:whox"},
+  {NULL,    NULL,   NULL,                               NULL}
 };
 
 static cmd_t irc_rawt[] = {
