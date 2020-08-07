@@ -54,7 +54,7 @@ static int hexdigit2dec[128] = {
 
 int tcl_isupport STDOBJVAR;
 int isupport_bind STDVAR;
-int check_tcl_isupport(struct isupport *data, const char *key, const char *oldvalue, const char *value);
+int check_tcl_isupport(struct isupport *data, const char *key, const char *value);
 char *traced_isupport(ClientData cdata, Tcl_Interp *irp, EGG_CONST char *name1, EGG_CONST char *name2, int flags);
 
 static tcl_cmds my_tcl_objcmds[] = {
@@ -180,7 +180,7 @@ static void isupport_set_value(const char *key, size_t keylen, const char *value
   new = strrangedup(value, valuelen);
 
   if (!old || strcmp(old, new)) {
-    ret = check_tcl_isupport(data, data->key, old, new);
+    ret = check_tcl_isupport(data, data->key, new);
   }
   if (!setdefault && ret) {
     if (!data->defaultvalue && !data->value) {
@@ -221,7 +221,7 @@ void isupport_unset(const char *key, size_t keylen)
   }
   /* does not unset default values */
   if (data->value) {
-    int ret = check_tcl_isupport(data, data->key, isupport_get_from_record(data), NULL);
+    int ret = check_tcl_isupport(data, data->key, NULL);
     if (!ret) {
       if (data->defaultvalue) {
         nfree(data->value);
@@ -355,12 +355,12 @@ void isupport_clear_values(int cleardefaultvalues) {
         nfree(data->defaultvalue);
         data->defaultvalue = NULL;
       } else if (!cleardefaultvalues && data->defaultvalue) {
-        if (!strcmp(data->value, data->defaultvalue) || !check_tcl_isupport(data, data->key, data->value, data->defaultvalue)) {
+        if (!strcmp(data->value, data->defaultvalue) || !check_tcl_isupport(data, data->key, data->defaultvalue)) {
           nfree(data->value);
           data->value = NULL;
         }
       } else {
-        if (!check_tcl_isupport(data, data->key, isupport_get_from_record(data), NULL)) {
+        if (!check_tcl_isupport(data, data->key, NULL)) {
           /* entry will be empty, delete it */
           del_record(data);
         }
