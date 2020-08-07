@@ -188,21 +188,19 @@ char *traced_isupport(ClientData cdata, Tcl_Interp *irp,
 int isupport_bind STDVAR
 {
   Function F = (Function) cd;
-  BADARGS(6, 6, " key wasset oldvalue isset value");
+  BADARGS(4, 4, " key isset value");
   CHECKVALIDITY(isupport_bind);
-  F(argv[1], argv[2], argv[3], argv[4], argv[5]);
+  F(argv[1], argv[2], argv[3]);
   return TCL_OK;
 }
 
 /* Bind before values are final, so they can be changed by scripts */
-int check_tcl_isupport(struct isupport *data, const char *key, const char *oldvalue, const char *value)
+int check_tcl_isupport(struct isupport *data, const char *key, const char *value)
 {
   Tcl_SetVar(interp, "_isupport1", key, 0);
-  Tcl_SetVar(interp, "_isupport2", oldvalue ? "1" : "0", 0);
-  Tcl_SetVar(interp, "_isupport3", oldvalue ? oldvalue : "", 0);
-  Tcl_SetVar(interp, "_isupport4", value ? "1" : "0", 0);
-  Tcl_SetVar(interp, "_isupport5", value ? value : "", 0);
+  Tcl_SetVar(interp, "_isupport2", value ? "1" : "0", 0);
+  Tcl_SetVar(interp, "_isupport3", value ? value : "", 0);
 
-  return BIND_EXEC_LOG == check_tcl_bind(H_isupport, key, 0, " $_isupport1 $_isupport2 $_isupport3 $_isupport4 $_isupport5",
+  return BIND_EXEC_LOG == check_tcl_bind(H_isupport, key, 0, " $_isupport1 $_isupport2 $_isupport3",
       MATCH_MASK | BIND_STACKABLE | BIND_WANTRET);
 }

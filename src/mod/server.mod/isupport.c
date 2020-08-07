@@ -430,7 +430,7 @@ static void isupport_stringify(int idx, char *buf, size_t bufsize, size_t *len,
     *len += sprintf(buf + *len, " %s=%s", key, value);
 }
 
-void isupport_report(int idx, int details)
+void isupport_report(int idx, const char *prefix, int details)
 {
   char buf[450];
   size_t prefixlen, len;
@@ -438,7 +438,7 @@ void isupport_report(int idx, int details)
   if (!server_online)
     return;
 
-  len = prefixlen = sprintf(buf, "%s", "    isupport:");
+  len = prefixlen = sprintf(buf, "%s%s", prefix, "isupport:");
   for (struct isupport *data = isupport_list; data; data = data->next) {
     isupport_stringify(idx, buf, sizeof buf, &len, prefixlen, data->key, isupport_get_from_record(data));
   }
@@ -446,7 +446,7 @@ void isupport_report(int idx, int details)
     dprintf(idx, "%s\n", buf);
 
   if (details) {
-    len = prefixlen = sprintf(buf, "%s", "    isupport (default):");
+    len = prefixlen = sprintf(buf, "%s%s", prefix, "isupport (default):");
     for (struct isupport *data = isupport_list; data; data = data->next) {
       if (data->defaultvalue) {
         isupport_stringify(idx, buf, sizeof buf, &len, prefixlen, data->key, data->defaultvalue);

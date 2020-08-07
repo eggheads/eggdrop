@@ -2552,7 +2552,7 @@ static int gotnotice(char *from, char *msg)
   return 0;
 }
 
-static int isupport_whox(char *key, char *wasset, char *oldvalue, char *isset, char *value)
+static int isupport_whox(char *key, char *isset, char *value)
 {
   putlog(LOG_MISC, "*", "USE354 %d -> %d", use_354, !strcmp(isset, "1"));
   use_354 = !strcmp(isset, "1");

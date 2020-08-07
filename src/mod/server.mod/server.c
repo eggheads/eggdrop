@@ -2043,8 +2043,6 @@ static void server_report(int idx, int details)
   } else
     dprintf(idx, "    %s\n", IRC_NOSERVER);
 
-  isupport_report(idx, details);
-
   if (modeq.tot)
     dprintf(idx, "    %s %d%% (%d msgs)\n", IRC_MODEQUEUE,
             (int) ((float) (modeq.tot * 100.0) / (float) maxqmsg),
@@ -2064,6 +2062,9 @@ static void server_report(int idx, int details)
       dprintf(idx, "    On connect, I do: %s\n", initserver);
     if (connectserver[0])
       dprintf(idx, "    Before connect, I do: %s\n", connectserver);
+
+    isupport_report(idx, "    ", details);
+
     dprintf(idx, "    Msg flood: %d msg%s/%d second%s\n", flud_thr,
             (flud_thr != 1) ? "s" : "", flud_time,
             (flud_time != 1) ? "s" : "");
