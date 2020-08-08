@@ -2032,6 +2032,11 @@ static void server_report(int idx, int details)
 
   if ((trying_server || server_online) &&
       ((servidx = findanyidx(serv)) != -1)) {
+        if (server_online) {
+          const char *networkname = isupport_get("NETWORK", strlen("NETWORK"));
+
+          dprintf(idx, "    Network %s\n", networkname ? networkname : "(unknown)");
+        }
 #ifdef TLS
     dprintf(idx, "    Server [%s]:%s%d %s\n", dcc[servidx].host,
             dcc[servidx].ssl ? "+" : "", dcc[servidx].port, trying_server ?
