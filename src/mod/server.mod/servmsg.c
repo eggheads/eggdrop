@@ -1745,6 +1745,16 @@ static int gotcap(char *from, char *msg) {
   return 1;
 }
 
+static int server_isupport(char *key, char *isset_str, char *value)
+{
+  int isset = !strcmp(isset_str, "1");
+
+  if (!strcmp(key, "NICKLEN")) {
+    isupport_parseint(key, isset ? value : NULL, 9, NICKMAX, 1, 9, &nick_len);
+  }
+  return 0;
+}
+
 static cmd_t my_raw_binds[] = {
   {"PRIVMSG",      "",   (IntFunc) gotmsg,          NULL},
   {"NOTICE",       "",   (IntFunc) gotnotice,       NULL},
@@ -1790,6 +1800,11 @@ static cmd_t my_raw_binds[] = {
 static cmd_t my_rawt_binds[] = {
   {"TAGMSG",       "",   (IntFunc) gottagmsg,       NULL},
   {NULL,           NULL, NULL,                      NULL}
+};
+
+static cmd_t my_isupport_binds[] = {
+  {"*",      "",   (IntFunc) server_isupport, "isupport"},
+  {NULL,   NULL,   NULL,                            NULL}
 };
 
 static void server_resolve_success(int);

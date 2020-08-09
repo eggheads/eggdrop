@@ -94,6 +94,38 @@ static int keycmp(const char *key1, const char *key2, size_t key2len) {
   }
 }
 
+int isupport_parseint(char *key, char *value, int min, int max, int truncate, int defaultvalue, int *dst)
+{
+  long result;
+  char *tmp;
+
+  if (!value) {
+    /* not set at all => default value, not an error, happens on disconnect */
+    *dst = defaultvalue;
+    return 0;
+  }
+  result = strtol(value, &tmp, 0);
+  if (*tmp != '\0') {
+    putlog(LOG_MISC, "*", "Error while parsing ISUPPORT intvalue for key '%s'='%s': Not an integer, using default value %d", key, value, defaultvalue);
+    *dst = defaultvalue;
+    return -1;
+  }
+  if ((result < min || result > max) && !truncate) {
+    putlog(LOG_MISC, "*", "Error while parsing ISUPPORT intvalue for key '%s'='%s': Out of range (violated constraint %d <= %ld <= %d), using default value %d", key, value, min, result, max, defaultvalue);
+    *dst = defaultvalue;
+    return -2;
+  }
+  if (result < min) {
+    putlog(LOG_MISC, "*", "Warning while parsing ISUPPORT intvalue for key '%s'='%s': Out of range, truncating %ld to minimum %d", key, value, result, min);
+    result = min;
+  } else if (result > max) {
+    putlog(LOG_MISC, "*", "Warning while parsing ISUPPORT intvalue for key '%s'='%s': Out of range, truncating %ld to maximum %d", key, value, result, max);
+    result = max;
+  }
+  *dst = (int)result;
+  return 0;
+}
+
 /*** isupport key record managing functions ***/
 
 static void isupport_free(struct isupport *data) {

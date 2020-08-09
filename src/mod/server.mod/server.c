@@ -2088,7 +2088,6 @@ static cmd_t my_ctcps[] = {
 
 static char *server_close()
 {
-  isupport_fini();
   cycle_time = 100;
   nuke_server("Connection reset by peer");
   clearq(serverlist);
@@ -2096,6 +2095,8 @@ static char *server_close()
   rem_builtins(H_raw, my_raw_binds);
   rem_builtins(H_rawt, my_rawt_binds);
   rem_builtins(H_ctcp, my_ctcps);
+  rem_builtins(H_isupport, my_isupport_binds);
+  isupport_fini();
   /* Restore original commands. */
   del_bind_table(H_wall);
   del_bind_table(H_account);
@@ -2185,7 +2186,7 @@ static Function server_table[] = {
   /* 24 - 27 */
   (Function) & default_port,    /* int                                  */
   (Function) & server_online,   /* int                                  */
-  (Function) & H_rawt,           /* p_tcl_bind_list                      */
+  (Function) & H_rawt,          /* p_tcl_bind_list                      */
   (Function) & H_raw,           /* p_tcl_bind_list                      */
   /* 28 - 31 */
   (Function) & H_wall,          /* p_tcl_bind_list                      */
@@ -2210,7 +2211,10 @@ static Function server_table[] = {
   /* 44 - 47 */
   (Function) & extended_join,   /* int                                  */
   (Function) & account_notify,  /* int                                  */
-  (Function) & H_isupport       /* p_tcl_bind_list                      */
+  (Function) & H_isupport,      /* p_tcl_bind_list                      */
+  (Function) & isupport_get,    /*                                      */
+  /* 48 - 52 */
+  (Function) & isupport_parseint /*                                     */
 };
 
 char *server_start(Function *global_funcs)
@@ -2321,10 +2325,12 @@ char *server_start(Function *global_funcs)
   H_ctcr = add_bind_table("ctcr", HT_STACKABLE, server_6char);
   H_ctcp = add_bind_table("ctcp", HT_STACKABLE, server_6char);
   H_out = add_bind_table("out", HT_STACKABLE, server_out);
+  isupport_init();
   add_builtins(H_raw, my_raw_binds);
   add_builtins(H_rawt, my_rawt_binds);
   add_builtins(H_dcc, C_dcc_serv);
   add_builtins(H_ctcp, my_ctcps);
+  add_builtins(H_isupport, my_isupport_binds);
   add_help_reference("server.help");
   my_tcl_strings[0].buf = botname;
   add_tcl_strings(my_tcl_strings);
@@ -2368,7 +2374,6 @@ char *server_start(Function *global_funcs)
   newserverport = 0;
   curserv = 999;
   /* Because this reads the interp variable, the read trace MUST be after */
-  isupport_init();
   do_nettype();
   return NULL;
 }

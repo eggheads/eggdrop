@@ -38,10 +38,10 @@ static Function *global = NULL, *channels_funcs = NULL, *server_funcs = NULL;
 
 static int ctcp_mode;
 static int wait_split = 300;    /* Time to wait for user to return from net-split. */
-static int max_bans = 20;       /* Modified by net-type 1-4 */
+static int max_bans = 30;       /* Modified by net-type 1-4 */
 static int max_exempts = 20;    /* Modified by net-type 1-4 */
 static int max_invites = 20;    /* Modified by net-type 1-4 */
-static int max_modes = 20;      /* Modified by net-type 1-4 */
+static int max_modes = 30;      /* Modified by net-type 1-4 */
 static int bounce_bans = 0;
 static int bounce_exempts = 0;
 static int bounce_invites = 0;
@@ -1228,7 +1228,7 @@ static char *irc_close()
   rem_builtins(H_msg, C_msg);
   rem_builtins(H_raw, irc_raw);
   rem_builtins(H_rawt, irc_rawt);
-  rem_builtins(H_isupport, irc_isupport);
+  rem_builtins(H_isupport, irc_isupport_binds);
   rem_tcl_commands(tclchan_cmds);
   rem_help_reference("irc.help");
   del_hook(HOOK_MINUTELY, (Function) check_expired_chanstuff);
@@ -1333,7 +1333,7 @@ char *irc_start(Function *global_funcs)
   add_builtins(H_msg, C_msg);
   add_builtins(H_raw, irc_raw);
   add_builtins(H_rawt, irc_rawt);
-  add_builtins(H_isupport, irc_isupport);
+  add_builtins(H_isupport, irc_isupport_binds);
   add_tcl_commands(tclchan_cmds);
   add_help_reference("irc.help");
   H_topc = add_bind_table("topc", HT_STACKABLE, channels_5char);
