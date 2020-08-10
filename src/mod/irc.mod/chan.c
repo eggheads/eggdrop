@@ -2554,7 +2554,7 @@ static int gotnotice(char *from, char *msg)
 
 static int parse_maxlist(const char *value)
 {
-  int tmpsum = 0, addtosum = 0;
+  int tmpsum = 0, addtosum;
   char *tmps;
   long tmpl;
   const char *modechar = value, *number;
