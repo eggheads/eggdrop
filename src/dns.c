@@ -25,6 +25,7 @@
  */
 
 #include "main.h"
+#include <errno.h>
 #include <netdb.h>
 #include <setjmp.h>
 #include <sys/socket.h>
@@ -35,12 +36,11 @@
 
 extern struct dcc_t *dcc;
 extern int dcc_total;
-extern int resolve_timeout;
 extern time_t now;
-extern sigjmp_buf alarmret;
 extern Tcl_Interp *interp;
 
 devent_t *dns_events = NULL;
+struct dns_thread_node *dns_thread_head;
 
 
 /*
@@ -458,53 +458,166 @@ void call_ipbyhost(char *hostn, sockname_t *ip, int ok)
   }
 }
 
-
-/*
- *    Async DNS emulation functions
- */
-void block_dns_hostbyip(sockname_t *addr)
+void *thread_dns_hostbyip(void *arg)
 {
-  char host[UHOSTLEN];
-  volatile int i = 1;
+  struct dns_thread_node *dtn = (struct dns_thread_node *) arg;
+  sockname_t *addr = &dtn->addr;
+  int i;
 
+  debug0("DEMO-DEBUG: thread_dns_hostbyip(): start");
   if (addr->family == AF_INET) {
-    if (!sigsetjmp(alarmret, 1)) {
-      alarm(resolve_timeout);
-      i = getnameinfo((const struct sockaddr *) &addr->addr.s4,
-                      sizeof (struct sockaddr_in), host, sizeof host, NULL, 0, 0);
-      alarm(0);
-      if (i)
-        debug1("dns: getnameinfo(): error = %s", gai_strerror(i));
+    debug0("DEMO-DEBUG: thread_dns_hostbyip(): AF_INET");
+    i = getnameinfo((const struct sockaddr *) &addr->addr.s4,
+                    sizeof (struct sockaddr_in), dtn->host, sizeof dtn->host, NULL, 0, 0);
+    if (i) {
+      debug1("DEMO-DEBUG: thread_dns_hostbyip(): getnameinfo(): error = %s", gai_strerror(i));
+      inet_ntop(AF_INET, &addr->addr.s4.sin_addr.s_addr, dtn->host, sizeof dtn->host);
     }
-    if (i)
-      inet_ntop(AF_INET, &addr->addr.s4.sin_addr.s_addr, host, sizeof host);
 #ifdef IPV6
   } else {
-    if (!sigsetjmp(alarmret, 1)) {
-      alarm(resolve_timeout);
-      i = getnameinfo((const struct sockaddr *) &addr->addr.s6,
-                      sizeof (struct sockaddr_in6), host, sizeof host, NULL, 0, 0);
-      alarm(0);
-      if (i)
-        debug1("dns: getnameinfo(): error = %s", gai_strerror(i));
+    debug0("DEMO-DEBUG: thread_dns_hostbyip(): IPV6");
+    i = getnameinfo((const struct sockaddr *) &addr->addr.s6,
+                    sizeof (struct sockaddr_in6), dtn->host, sizeof dtn->host, NULL, 0, 0);
+    if (i) {
+      debug1("DEMO-DEBUG: thread_dns_hostbyip(): getnameinfo(): error = %s", gai_strerror(i));
+      inet_ntop(AF_INET6, &addr->addr.s6.sin6_addr, dtn->host, sizeof dtn->host);
     }
-    if (i)
-      inet_ntop(AF_INET6, &addr->addr.s6.sin6_addr, host, sizeof host);
   }
 #else
   }
 #endif
-  call_hostbyip(addr, host, !i);
+  dtn->ok = !i;
+  debug2("DEMO-DEBUG: thread_dns_hostbyip(): getnameinfo() returned host = %s ok = %i", dtn->host, dtn->ok);
+   /* make select() in sockread() return with filedes[1] and do call_hostbyip()
+    * with data from dns_thread_node struct.
+    * WE CANT call_hostbyip(addr, dtn->host, dtn->ok) HERE
+    * and WE CANT use SIGNALS HERE
+    * so we do it with PIPING from this thread to the main thread where it is safe to do.
+    */
+  close(dtn->fildes[0]);
+  debug0("DEMO-DEBUG: thread_dns_hostbyip(): end");
+  return NULL;
 }
 
-void block_dns_ipbyhost(char *host)
+void *thread_dns_ipbyhost(void *arg)
 {
-  sockname_t name;
+  struct dns_thread_node *dtn = (struct dns_thread_node *) arg;
+  struct addrinfo *res, *res0;
+  int i;
+  sockname_t *addr = &dtn->addr;
+#ifdef IPV6
+  int found;
+#endif
 
-  if (setsockname(&name, host, 0, 1) == AF_UNSPEC)
-    call_ipbyhost(host, &name, 0);
-  else
-    call_ipbyhost(host, &name, 1);
+  debug0("DEMO-DEBUG: thread_dns_ipbyhost(): start");
+  i = getaddrinfo(dtn->host, NULL, NULL, &res0);
+  if (!i) {
+    memset(addr, 0, sizeof *addr);
+    found = 0;
+    for (res = res0; res; res = res->ai_next) {
+      if (res->ai_family == AF_INET) {
+        debug0("DEMO-DEBUG: thread_dns_ipbyhost(): AF_INET");
+        addr->family = res->ai_family;
+        addr->addrlen = res->ai_addrlen;
+        memcpy(&addr->addr.sa, res->ai_addr, res->ai_addrlen);
+#ifdef IPV6
+        found = 1;
+#endif
+        break;
+      }
+    }
+#ifdef IPV6
+    if (!found) {
+      for (res = res0; res; res = res->ai_next) {
+        if (res->ai_family == AF_INET6) {
+          debug0("DEMO-DEBUG: thread_dns_ipbyhost(): AF_INET6");
+          addr->family = res->ai_family;
+          addr->addrlen = res->ai_addrlen;
+          memcpy(&addr->addr.sa, res->ai_addr, res->ai_addrlen);
+          break;
+        }
+      }
+    }
+#endif
+    freeaddrinfo(res0);
+  }
+  else {
+    memset(addr, 0, sizeof *addr);
+    debug1("DEMO-DEBUG: thread_dns_ipbyhost(): getaddrinfo(): error = %s", gai_strerror(i));
+  }
+  dtn->ok = !i;
+  debug1("DEMO-DEBUG: thread_dns_ipbyhost(): getaddrinfo() returned ok = %i", dtn->ok);
+   /* make select() in sockread() return with filedes[1] and do call_ipbyhost()
+    * with data from dns_thread_node struct.
+    * WE CANT call_ipbyhost(dtn->host, addr, dtn->ok) HERE
+    * and WE CANT use SIGNALS HERE
+    * so we do it with PIPING from this thread to the main thread where it is safe to do.
+    */
+  close(dtn->fildes[0]);
+  debug0("DEMO-DEBUG: thread_dns_ipbyhost(): end");
+  return NULL;
+}
+
+void core_dns_hostbyip(sockname_t *addr)
+{
+  struct dns_thread_node *dtn = nmalloc(sizeof(struct dns_thread_node));
+  pthread_t thread; /* only used by pthread_create() */
+
+  if (pipe(dtn->fildes) < 0) {
+    putlog(LOG_MISC, "*", "core_dns_hostbyip(): pipe(): error: %s", strerror(errno));
+    call_hostbyip(addr, "", 0);
+    nfree(dtn);
+    return;
+  }
+  dtn->next = dns_thread_head->next;
+  dns_thread_head->next = dtn;
+  memcpy(&dtn->addr, addr, sizeof *addr);
+  if (pthread_create(&thread, NULL, thread_dns_hostbyip, (void *) dtn)) {
+    putlog(LOG_MISC, "*", "core_dns_hostbyip(): pthread_create(): error = %s", strerror(errno));
+    call_hostbyip(addr, "", 0);
+    close(dtn->fildes[0]);
+    close(dtn->fildes[1]);
+    dns_thread_head->next = dtn->next;
+    nfree(dtn);
+    return;
+  }
+  dtn->type = DTN_TYPE_HOSTBYIP;
+  for (dtn = dns_thread_head->next; dtn; dtn = dtn->next) 
+    debug3("DEMO-DEBUG: core_dns_hostbyip(): dns_threads: fildes[0] %i fildes[1] %i type %i", dtn->fildes[0], dtn->fildes[1], dtn->type);
+}
+
+void core_dns_ipbyhost(char *host)
+{
+  sockname_t addr;
+  struct dns_thread_node *dtn = nmalloc(sizeof(struct dns_thread_node));
+  pthread_t thread; /* only used by pthread_create() */
+
+  /* if addr is ip instead of host */
+  if (setsockname(&addr, host, 0, 0) != AF_UNSPEC) {
+    call_ipbyhost(host, &addr, 1);
+    return;
+  }
+  if (pipe(dtn->fildes) < 0) {
+    putlog(LOG_MISC, "*", "core_dns_ipbyhost(): pipe(): error: %s", strerror(errno));
+    call_ipbyhost(host, &addr, 0); /* TODO: test */
+    nfree(dtn);
+    return;
+  }
+  dtn->next = dns_thread_head->next;
+  dns_thread_head->next = dtn;
+  strlcpy(dtn->host, host, sizeof dtn->host);
+  if (pthread_create(&thread, NULL, thread_dns_ipbyhost, (void *) dtn)) {
+    putlog(LOG_MISC, "*", "core_dns_ipbyhost(): pthread_create(): error = %s", strerror(errno));
+    call_ipbyhost(host, &addr, 0); /* TODO: test */
+    close(dtn->fildes[0]);
+    close(dtn->fildes[1]);
+    dns_thread_head->next = dtn->next;
+    nfree(dtn);
+    return;
+  }
+  dtn->type = DTN_TYPE_IPBYHOST;
+  for (dtn = dns_thread_head->next; dtn; dtn = dtn->next) 
+    debug3("DEMO-DEBUG: core_dns_ipbyhost(): dns_threads: fildes[0] %i fildes[1] %i type %i", dtn->fildes[0], dtn->fildes[1], dtn->type);
 }
 
 /*

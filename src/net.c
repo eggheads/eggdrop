@@ -872,12 +872,21 @@ int sockread(char *s, int *len, sock_list *slist, int slistmax, int tclonly)
 {
   struct timeval t;
   fd_set fdr, fdw, fde;
-  int i, x, nfds_r, nfds_w, nfds_e;
+  int i, fd, x, nfds_r, nfds_w, nfds_e;
   int grab = 511, tclsock = -1, events = 0;
   struct threaddata *td = threaddata();
   int nfds;
+  struct dns_thread_node *dtn, *dtn_prev;
 
   nfds_r = preparefdset(&fdr, slist, slistmax, tclonly, TCL_READABLE);
+  /* TODO: make sure, last entry in dns_threads is 0 ! */
+  for (dtn = dns_thread_head->next; dtn; dtn = dtn->next) {
+    fd = dtn->fildes[1];
+    FD_SET(fd, &fdr);
+    debug1("DEMO-DEBUG: sockread(): FD_SET(pipe / thread fd = %i)", fd);
+    if (fd > nfds_r)
+      nfds_r = fd;
+  }
   nfds_w = preparefdset(&fdw, slist, slistmax, 1, TCL_WRITABLE);
   nfds_e = preparefdset(&fde, slist, slistmax, 1, TCL_EXCEPTION);
 
@@ -1015,6 +1024,29 @@ int sockread(char *s, int *len, sock_list *slist, int slistmax, int tclonly)
     (*slist[tclsock].handler.tclsock.proc)(slist[tclsock].handler.tclsock.cd,
                                            events);
     return -5;
+  }
+  dtn_prev = dns_thread_head;
+  for (dtn = dtn_prev->next; dtn; dtn = dtn->next) {
+    fd = dtn->fildes[1];
+    if FD_ISSET(fd, &fdr) {
+      debug1("DEMO-DEBUG: sockread(): select() returned fd = %i", fd);
+      if (dtn->type == DTN_TYPE_HOSTBYIP) {
+        debug2("DEMO-DEBUG: sockread(): call_hostbyip(host = %s, ok = %i)", dtn->host, dtn->ok);
+        call_hostbyip(&dtn->addr, dtn->host, dtn->ok);
+        debug0("DEMO-DEBUG: sockread(): call_hostbyip() returned");
+      }
+      else {
+        debug2("DEMO-DEBUG: sockread(): call_ipbyhost(host = %s, ok = %i)", dtn->host, dtn->ok);
+        call_ipbyhost(dtn->host, &dtn->addr, dtn->ok);
+        debug0("DEMO-DEBUG: sockread(): call_ipbyhost() returned");
+      }
+      close(dtn->fildes[1]);
+      dtn_prev->next = dtn->next;
+      nfree(dtn);
+      dtn = dtn_prev;
+      debug0("DEMO-DEBUG: sockread(): cleaned up pipe / thread");
+    }
+    dtn_prev = dtn;
   }
   return -3;
 }

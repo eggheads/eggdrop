@@ -1271,6 +1271,8 @@ int main(int arg_c, char **arg_v)
 
   then = now;
   online_since = now;
+  dns_thread_head = nmalloc(sizeof(struct dns_thread_node));
+  dns_thread_head->next = NULL;
   autolink_cycle(NULL);         /* Hurry and connect to tandem bots */
   add_help_reference("cmds1.help");
   add_help_reference("cmds2.help");

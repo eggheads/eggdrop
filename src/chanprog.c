@@ -286,6 +286,7 @@ void tell_verbose_status(int idx)
   time_t now2 = now - online_since, hr, min;
   double cputime, cache_total;
   struct utsname un;
+  struct rlimit rlp;
 
   if (uname(&un) < 0) {
     vers_t = " ";
@@ -380,6 +381,12 @@ void tell_verbose_status(int idx)
   dprintf(idx, "IPv6 support is not available.\n"
 #endif
                "Socket table: %d/%d\n", threaddata()->MAXSOCKS, max_socks);
+
+  if (!getrlimit(RLIMIT_NOFILE, &rlp)) /* TODO: should be posix 2001
+                                        * make sure this is as portable as expected
+                                        * and maybe also add reporting of
+                                        * current amount of open files */
+    dprintf(idx, "Maximum number of open files (sockets): cur %ju max %ju\n", rlp.rlim_cur, rlp.rlim_max);
 }
 
 /* Show all internal state variables

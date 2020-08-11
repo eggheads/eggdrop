@@ -783,4 +783,19 @@ enum {
 #  define STRINGIFY1(x) #x
 #endif
 
+#define DTN_TYPE_HOSTBYIP 0
+#define DTN_TYPE_IPBYHOST 1
+
+/* linked list instead of array because of multi threading */
+struct dns_thread_node {
+  int fildes[2];
+  int type;
+  sockname_t addr;
+  char host[256];
+  int ok;
+  struct dns_thread_node *next;
+};
+
+extern struct dns_thread_node *dns_thread_head;
+
 #endif /* _EGG_EGGDROP_H */
