@@ -462,7 +462,7 @@ void *thread_dns_hostbyip(void *arg)
 {
   struct dns_thread_node *dtn = (struct dns_thread_node *) arg;
   sockname_t *addr = &dtn->addr;
-  int i;
+  int i = 0; /* make codacy happy */
 
   if (addr->family == AF_INET) {
     i = getnameinfo((const struct sockaddr *) &addr->addr.s4,
