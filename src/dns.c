@@ -469,14 +469,13 @@ void *thread_dns_hostbyip(void *arg)
                     sizeof (struct sockaddr_in), dtn->host, sizeof dtn->host, NULL, 0, 0);
     if (i)
       inet_ntop(AF_INET, &addr->addr.s4.sin_addr.s_addr, dtn->host, sizeof dtn->host);
+  }
 #ifdef IPV6
-  } else {
+  else {
     i = getnameinfo((const struct sockaddr *) &addr->addr.s6,
                     sizeof (struct sockaddr_in6), dtn->host, sizeof dtn->host, NULL, 0, 0);
     if (i)
       inet_ntop(AF_INET6, &addr->addr.s6.sin6_addr, dtn->host, sizeof dtn->host);
-  }
-#else
   }
 #endif
   dtn->ok = !i;
