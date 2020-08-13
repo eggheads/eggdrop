@@ -879,7 +879,6 @@ int sockread(char *s, int *len, sock_list *slist, int slistmax, int tclonly)
   struct dns_thread_node *dtn, *dtn_prev;
 
   nfds_r = preparefdset(&fdr, slist, slistmax, tclonly, TCL_READABLE);
-  /* TODO: make sure, last entry in dns_threads is 0 ! */
   for (dtn = dns_thread_head->next; dtn; dtn = dtn->next) {
     fd = dtn->fildes[1];
     FD_SET(fd, &fdr);
