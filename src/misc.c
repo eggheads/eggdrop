@@ -536,13 +536,6 @@ void putlog EGG_VARARGS_DEF(int, arg1)
   if (shtime) {
     strftime(stamp, sizeof(stamp) - 2, log_ts, t);
     strcat(stamp, " ");
-
-    /* TODO: DEMO-DEBUG for logging micro seconds will be removed later */
-    struct timeval tp;
-    gettimeofday(&tp, NULL);
-    snprintf(s, sizeof s, "%ld ms ", tp.tv_usec);
-    strcat(stamp, s);
-
     tsl = strlen(stamp);
   }
   else

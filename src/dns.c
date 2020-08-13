@@ -464,30 +464,22 @@ void *thread_dns_hostbyip(void *arg)
   sockname_t *addr = &dtn->addr;
   int i;
 
-  debug0("DEMO-DEBUG: thread_dns_hostbyip(): start");
   if (addr->family == AF_INET) {
-    debug0("DEMO-DEBUG: thread_dns_hostbyip(): AF_INET");
     i = getnameinfo((const struct sockaddr *) &addr->addr.s4,
                     sizeof (struct sockaddr_in), dtn->host, sizeof dtn->host, NULL, 0, 0);
-    if (i) {
-      debug1("DEMO-DEBUG: thread_dns_hostbyip(): getnameinfo(): error = %s", gai_strerror(i));
+    if (i)
       inet_ntop(AF_INET, &addr->addr.s4.sin_addr.s_addr, dtn->host, sizeof dtn->host);
-    }
 #ifdef IPV6
   } else {
-    debug0("DEMO-DEBUG: thread_dns_hostbyip(): IPV6");
     i = getnameinfo((const struct sockaddr *) &addr->addr.s6,
                     sizeof (struct sockaddr_in6), dtn->host, sizeof dtn->host, NULL, 0, 0);
-    if (i) {
-      debug1("DEMO-DEBUG: thread_dns_hostbyip(): getnameinfo(): error = %s", gai_strerror(i));
+    if (i)
       inet_ntop(AF_INET6, &addr->addr.s6.sin6_addr, dtn->host, sizeof dtn->host);
-    }
   }
 #else
   }
 #endif
   dtn->ok = !i;
-  debug2("DEMO-DEBUG: thread_dns_hostbyip(): getnameinfo() returned host = %s ok = %i", dtn->host, dtn->ok);
    /* make select() in sockread() return with filedes[1] and do call_hostbyip()
     * with data from dns_thread_node struct.
     * WE CANT call_hostbyip(addr, dtn->host, dtn->ok) HERE
@@ -495,7 +487,6 @@ void *thread_dns_hostbyip(void *arg)
     * so we do it with PIPING from this thread to the main thread where it is safe to do.
     */
   close(dtn->fildes[0]);
-  debug0("DEMO-DEBUG: thread_dns_hostbyip(): end");
   return NULL;
 }
 
@@ -509,14 +500,12 @@ void *thread_dns_ipbyhost(void *arg)
   int found;
 #endif
 
-  debug0("DEMO-DEBUG: thread_dns_ipbyhost(): start");
   i = getaddrinfo(dtn->host, NULL, NULL, &res0);
   if (!i) {
     memset(addr, 0, sizeof *addr);
     found = 0;
     for (res = res0; res; res = res->ai_next) {
       if (res->ai_family == AF_INET) {
-        debug0("DEMO-DEBUG: thread_dns_ipbyhost(): AF_INET");
         addr->family = res->ai_family;
         addr->addrlen = res->ai_addrlen;
         memcpy(&addr->addr.sa, res->ai_addr, res->ai_addrlen);
@@ -530,7 +519,6 @@ void *thread_dns_ipbyhost(void *arg)
     if (!found) {
       for (res = res0; res; res = res->ai_next) {
         if (res->ai_family == AF_INET6) {
-          debug0("DEMO-DEBUG: thread_dns_ipbyhost(): AF_INET6");
           addr->family = res->ai_family;
           addr->addrlen = res->ai_addrlen;
           memcpy(&addr->addr.sa, res->ai_addr, res->ai_addrlen);
@@ -541,12 +529,9 @@ void *thread_dns_ipbyhost(void *arg)
 #endif
     freeaddrinfo(res0);
   }
-  else {
+  else
     memset(addr, 0, sizeof *addr);
-    debug1("DEMO-DEBUG: thread_dns_ipbyhost(): getaddrinfo(): error = %s", gai_strerror(i));
-  }
   dtn->ok = !i;
-  debug1("DEMO-DEBUG: thread_dns_ipbyhost(): getaddrinfo() returned ok = %i", dtn->ok);
    /* make select() in sockread() return with filedes[1] and do call_ipbyhost()
     * with data from dns_thread_node struct.
     * WE CANT call_ipbyhost(dtn->host, addr, dtn->ok) HERE
@@ -554,7 +539,6 @@ void *thread_dns_ipbyhost(void *arg)
     * so we do it with PIPING from this thread to the main thread where it is safe to do.
     */
   close(dtn->fildes[0]);
-  debug0("DEMO-DEBUG: thread_dns_ipbyhost(): end");
   return NULL;
 }
 
@@ -582,8 +566,6 @@ void core_dns_hostbyip(sockname_t *addr)
     return;
   }
   dtn->type = DTN_TYPE_HOSTBYIP;
-  for (dtn = dns_thread_head->next; dtn; dtn = dtn->next) 
-    debug3("DEMO-DEBUG: core_dns_hostbyip(): dns_threads: fildes[0] %i fildes[1] %i type %i", dtn->fildes[0], dtn->fildes[1], dtn->type);
 }
 
 void core_dns_ipbyhost(char *host)
@@ -616,8 +598,6 @@ void core_dns_ipbyhost(char *host)
     return;
   }
   dtn->type = DTN_TYPE_IPBYHOST;
-  for (dtn = dns_thread_head->next; dtn; dtn = dtn->next) 
-    debug3("DEMO-DEBUG: core_dns_ipbyhost(): dns_threads: fildes[0] %i fildes[1] %i type %i", dtn->fildes[0], dtn->fildes[1], dtn->type);
 }
 
 /*
