@@ -494,13 +494,12 @@ void *thread_dns_ipbyhost(void *arg)
   int i;
   sockname_t *addr = &dtn->addr;
 #ifdef IPV6
-  int found;
+  int found = 0;
 #endif
 
   i = getaddrinfo(dtn->host, NULL, NULL, &res0);
   if (!i) {
     memset(addr, 0, sizeof *addr);
-    found = 0;
     for (res = res0; res; res = res->ai_next) {
       if (res->ai_family == AF_INET) {
         addr->family = res->ai_family;
