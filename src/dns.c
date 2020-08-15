@@ -545,19 +545,18 @@ void core_dns_hostbyip(sockname_t *addr)
     nfree(dtn);
     return;
   }
-  dtn->next = dns_thread_head->next;
-  dns_thread_head->next = dtn;
   memcpy(&dtn->addr, addr, sizeof *addr);
   if (pthread_create(&thread, NULL, thread_dns_hostbyip, (void *) dtn)) {
     putlog(LOG_MISC, "*", "core_dns_hostbyip(): pthread_create(): error = %s", strerror(errno));
     call_hostbyip(addr, "", 0);
     close(dtn->fildes[0]);
     close(dtn->fildes[1]);
-    dns_thread_head->next = dtn->next;
     nfree(dtn);
     return;
   }
   dtn->type = DTN_TYPE_HOSTBYIP;
+  dtn->next = dns_thread_head->next;
+  dns_thread_head->next = dtn;
 }
 
 void core_dns_ipbyhost(char *host)
