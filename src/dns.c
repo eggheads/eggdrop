@@ -502,8 +502,8 @@ void *thread_dns_ipbyhost(void *arg)
 #endif
 
   i = getaddrinfo(dtn->host, NULL, NULL, &res0);
+  memset(addr, 0, sizeof *addr);
   if (!i) {
-    memset(addr, 0, sizeof *addr);
     for (res = res0; res; res = res->ai_next) {
       if (res->ai_family == AF_INET) {
         addr->family = res->ai_family;
@@ -529,8 +529,6 @@ void *thread_dns_ipbyhost(void *arg)
 #endif
     freeaddrinfo(res0);
   }
-  else
-    memset(addr, 0, sizeof *addr);
   dtn->ok = !i;
   close(dtn->fildes[0]);
   return NULL;
