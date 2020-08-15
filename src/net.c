@@ -1026,7 +1026,7 @@ int sockread(char *s, int *len, sock_list *slist, int slistmax, int tclonly)
   dtn_prev = dns_thread_head;
   for (dtn = dtn_prev->next; dtn; dtn = dtn->next) {
     fd = dtn->fildes[0];
-    if FD_ISSET(fd, &fdr) {
+    if (FD_ISSET(fd, &fdr)) {
       if (dtn->type == DTN_TYPE_HOSTBYIP)
         call_hostbyip(&dtn->addr, dtn->host, dtn->ok);
       else
