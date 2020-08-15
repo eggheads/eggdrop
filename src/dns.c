@@ -537,7 +537,7 @@ void *thread_dns_ipbyhost(void *arg)
 void core_dns_hostbyip(sockname_t *addr)
 {
   struct dns_thread_node *dtn = nmalloc(sizeof(struct dns_thread_node));
-  pthread_t thread; /* only used by pthread_create() */
+  pthread_t thread; /* only used by pthread_create(), no need to save */
 
   if (pipe(dtn->fildes) < 0) {
     putlog(LOG_MISC, "*", "core_dns_hostbyip(): pipe(): error: %s", strerror(errno));
@@ -564,7 +564,7 @@ void core_dns_ipbyhost(char *host)
 {
   sockname_t addr;
   struct dns_thread_node *dtn = nmalloc(sizeof(struct dns_thread_node));
-  pthread_t thread; /* only used by pthread_create() */
+  pthread_t thread; /* only used by pthread_create(), no need to save  */
 
   /* if addr is ip instead of host */
   if (setsockname(&addr, host, 0, 0) != AF_UNSPEC) {
