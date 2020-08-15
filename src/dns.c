@@ -488,7 +488,7 @@ void *thread_dns_hostbyip(void *arg)
   }
 #endif
   dtn->ok = !i;
-  close(dtn->fildes[0]);
+  close(dtn->fildes[1]);
   return NULL;
 }
 
@@ -531,7 +531,7 @@ void *thread_dns_ipbyhost(void *arg)
     freeaddrinfo(res0);
   }
   dtn->ok = !i;
-  close(dtn->fildes[0]);
+  close(dtn->fildes[1]);
   return NULL;
 }
 

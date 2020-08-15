@@ -880,7 +880,7 @@ int sockread(char *s, int *len, sock_list *slist, int slistmax, int tclonly)
 
   nfds_r = preparefdset(&fdr, slist, slistmax, tclonly, TCL_READABLE);
   for (dtn = dns_thread_head->next; dtn; dtn = dtn->next) {
-    fd = dtn->fildes[1];
+    fd = dtn->fildes[0];
     FD_SET(fd, &fdr);
     if (fd > nfds_r)
       nfds_r = fd;
@@ -1025,13 +1025,13 @@ int sockread(char *s, int *len, sock_list *slist, int slistmax, int tclonly)
   }
   dtn_prev = dns_thread_head;
   for (dtn = dtn_prev->next; dtn; dtn = dtn->next) {
-    fd = dtn->fildes[1];
+    fd = dtn->fildes[0];
     if FD_ISSET(fd, &fdr) {
       if (dtn->type == DTN_TYPE_HOSTBYIP)
         call_hostbyip(&dtn->addr, dtn->host, dtn->ok);
       else
         call_ipbyhost(dtn->host, &dtn->addr, dtn->ok);
-      close(dtn->fildes[1]);
+      close(dtn->fildes[0]);
       dtn_prev->next = dtn->next;
       nfree(dtn);
       dtn = dtn_prev;
