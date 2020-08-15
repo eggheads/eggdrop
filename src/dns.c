@@ -456,6 +456,16 @@ void call_ipbyhost(char *hostn, sockname_t *ip, int ok)
   }
 }
 
+/* The following 2 threads work like this: a libc resolver function is called,
+ * that blocks the thread and returns the result or after timeout. The default
+ * is RES_TIMEOUT, which is generally 5, the allowed maximum is RES_MAXRETRANS
+ * (see <resolv.h>). The result is written to the threads dns_thread_node. There
+ * is 1 node per thread in a linked list, which is MT-safe. One end of the pipe
+ * is closed and the thread is ended by return. The other end will make
+ * eggdrops mainloop select() return, read the result from the dns_thread_node
+ * and call call_hostbyip() or call_ipbyhost(). No signal or tcl thread problem.
+ */
+
 void *thread_dns_hostbyip(void *arg)
 {
   struct dns_thread_node *dtn = (struct dns_thread_node *) arg;
@@ -477,12 +487,6 @@ void *thread_dns_hostbyip(void *arg)
   }
 #endif
   dtn->ok = !i;
-   /* make select() in sockread() return with filedes[1] and do call_hostbyip()
-    * with data from dns_thread_node struct.
-    * WE CANT call_hostbyip(addr, dtn->host, dtn->ok) HERE
-    * and WE CANT use SIGNALS HERE
-    * so we do it with PIPING from this thread to the main thread where it is safe to do.
-    */
   close(dtn->fildes[0]);
   return NULL;
 }
@@ -528,12 +532,6 @@ void *thread_dns_ipbyhost(void *arg)
   else
     memset(addr, 0, sizeof *addr);
   dtn->ok = !i;
-   /* make select() in sockread() return with filedes[1] and do call_ipbyhost()
-    * with data from dns_thread_node struct.
-    * WE CANT call_ipbyhost(dtn->host, addr, dtn->ok) HERE
-    * and WE CANT use SIGNALS HERE
-    * so we do it with PIPING from this thread to the main thread where it is safe to do.
-    */
   close(dtn->fildes[0]);
   return NULL;
 }
