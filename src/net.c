@@ -271,7 +271,7 @@ void getvhost(sockname_t *addr, int af)
     h = vhost6;
 #endif
   if (setsockname(addr, (h ? h : ""), 0, 1) != af)
-    setsockname(addr, (af == AF_INET ? "0" : "::"), 0, 0);
+    setsockname(addr, (af == AF_INET ? "0.0.0.0" : "::"), 0, 0);
   /* Remember this 'self-lookup failed' thingie?
      I have good news - you won't see it again ;) */
 }
