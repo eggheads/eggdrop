@@ -40,6 +40,7 @@ extern Tcl_Interp *interp;
 
 devent_t *dns_events = NULL;
 struct dns_thread_node *dns_thread_head;
+extern int pref_af;
 
 
 /*
@@ -498,36 +499,19 @@ void *thread_dns_ipbyhost(void *arg)
   struct addrinfo *res, *res0;
   int i;
   sockname_t *addr = &dtn->addr;
-#ifdef IPV6
-  int found = 0;
-#endif
 
   i = getaddrinfo(dtn->host, NULL, NULL, &res0);
   memset(addr, 0, sizeof *addr);
   if (!i) {
     for (res = res0; res; res = res->ai_next) {
-      if (res->ai_family == AF_INET) {
+      if (res == res0 || res->ai_family == (pref_af ? AF_INET6 : AF_INET)) {
         addr->family = res->ai_family;
         addr->addrlen = res->ai_addrlen;
         memcpy(&addr->addr.sa, res->ai_addr, res->ai_addrlen);
-#ifdef IPV6
-        found = 1;
-#endif
-        break;
-      }
-    }
-#ifdef IPV6
-    if (!found) {
-      for (res = res0; res; res = res->ai_next) {
-        if (res->ai_family == AF_INET6) {
-          addr->family = res->ai_family;
-          addr->addrlen = res->ai_addrlen;
-          memcpy(&addr->addr.sa, res->ai_addr, res->ai_addrlen);
+        if (res->ai_family == (pref_af ? AF_INET6 : AF_INET))
           break;
-        }
       }
     }
-#endif
     freeaddrinfo(res0);
   }
   dtn->ok = !i;

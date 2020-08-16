@@ -305,11 +305,12 @@
 typedef uint32_t IP;
 
 /* Debug logging macros */
-#define debug0(x)             putlog(LOG_DEBUG,"*",x)
-#define debug1(x,a1)          putlog(LOG_DEBUG,"*",x,a1)
-#define debug2(x,a1,a2)       putlog(LOG_DEBUG,"*",x,a1,a2)
-#define debug3(x,a1,a2,a3)    putlog(LOG_DEBUG,"*",x,a1,a2,a3)
-#define debug4(x,a1,a2,a3,a4) putlog(LOG_DEBUG,"*",x,a1,a2,a3,a4)
+#define debug0(x)                putlog(LOG_DEBUG,"*",x)
+#define debug1(x,a1)             putlog(LOG_DEBUG,"*",x,a1)
+#define debug2(x,a1,a2)          putlog(LOG_DEBUG,"*",x,a1,a2)
+#define debug3(x,a1,a2,a3)       putlog(LOG_DEBUG,"*",x,a1,a2,a3)
+#define debug4(x,a1,a2,a3,a4)    putlog(LOG_DEBUG,"*",x,a1,a2,a3,a4)
+#define debug5(x,a1,a2,a3,a4,a5) putlog(LOG_DEBUG,"*",x,a1,a2,a3,a4,a5)
 
 /* These apparently are unsafe without recasting. */
 #define egg_isdigit(x)  isdigit((int)  (unsigned char) (x))
