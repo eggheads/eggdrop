@@ -474,20 +474,16 @@ void *thread_dns_hostbyip(void *arg)
   sockname_t *addr = &dtn->addr;
   int i = 0; /* make codacy happy */
 
-  if (addr->family == AF_INET) {
-    i = getnameinfo((const struct sockaddr *) &addr->addr.s4,
-                    sizeof (struct sockaddr_in), dtn->host, sizeof dtn->host, NULL, 0, 0);
-    if (i)
+  i = getnameinfo((const struct sockaddr *) &addr->addr.sa, addr->addrlen,
+                  dtn->host, sizeof dtn->host, NULL, 0, 0);
+  if (i) {
+    if (addr->family == AF_INET)
       inet_ntop(AF_INET, &addr->addr.s4.sin_addr.s_addr, dtn->host, sizeof dtn->host);
-  }
 #ifdef IPV6
-  else {
-    i = getnameinfo((const struct sockaddr *) &addr->addr.s6,
-                    sizeof (struct sockaddr_in6), dtn->host, sizeof dtn->host, NULL, 0, 0);
-    if (i)
+    else
       inet_ntop(AF_INET6, &addr->addr.s6.sin6_addr, dtn->host, sizeof dtn->host);
-  }
 #endif
+  }
   dtn->ok = !i;
   close(dtn->fildes[1]);
   return NULL;
