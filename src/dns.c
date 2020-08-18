@@ -499,6 +499,7 @@ void *thread_dns_ipbyhost(void *arg)
   i = getaddrinfo(dtn->host, NULL, NULL, &res0);
   memset(addr, 0, sizeof *addr);
   if (!i) {
+#ifdef IPV6
     for (res = res0; res; res = res->ai_next) {
       if (res == res0 || res->ai_family == (pref_af ? AF_INET6 : AF_INET)) {
         addr->family = res->ai_family;
@@ -508,6 +509,18 @@ void *thread_dns_ipbyhost(void *arg)
           break;
       }
     }
+#else
+    i = 1;
+    for (res = res0; res; res = res->ai_next) {
+      if (res->ai_family == AF_INET) {
+        addr->family = res->ai_family;
+        addr->addrlen = res->ai_addrlen;
+        memcpy(&addr->addr.sa, res->ai_addr, res->ai_addrlen);
+        i = 0;
+        break;
+      }
+    }
+#endif
     freeaddrinfo(res0);
   }
   dtn->ok = !i;
