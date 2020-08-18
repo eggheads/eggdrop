@@ -94,6 +94,15 @@ static int keycmp(const char *key1, const char *key2, size_t key2len) {
   }
 }
 
+/* Parse a 005 value that is expected to be an int.
+   Args are:
+    - key
+    - value (a string numeric)
+    - minimum expected value
+    - maximum expected value
+    - truncate into allowed range if outside allowed range?
+    - default value to use if outside allowed range
+ */
 int isupport_parseint(char *key, char *value, int min, int max, int truncate, int defaultvalue, int *dst)
 {
   long result;
