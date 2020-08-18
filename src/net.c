@@ -877,6 +877,7 @@ int sockread(char *s, int *len, sock_list *slist, int slistmax, int tclonly)
   struct threaddata *td = threaddata();
   int nfds;
   struct dns_thread_node *dtn, *dtn_prev;
+  sockname_t *addr;
 
   nfds_r = preparefdset(&fdr, slist, slistmax, tclonly, TCL_READABLE);
   for (dtn = dns_thread_head->next; dtn; dtn = dtn->next) {
@@ -1027,8 +1028,20 @@ int sockread(char *s, int *len, sock_list *slist, int slistmax, int tclonly)
   for (dtn = dtn_prev->next; dtn; dtn = dtn->next) {
     fd = dtn->fildes[0];
     if (FD_ISSET(fd, &fdr)) {
-      if (dtn->type == DTN_TYPE_HOSTBYIP)
+      if (dtn->type == DTN_TYPE_HOSTBYIP) {
+        if (dtn->ok == 2) {
+          addr = &dtn->addr;
+          debug2("net: dns spoof protect: host %s could not be resolved to ip %s", dtn->host, iptostr(&addr->addr.sa));
+#ifdef IPV6
+          if (addr->family == AF_INET6)
+            inet_ntop(AF_INET6, &addr->addr.s6.sin6_addr, dtn->host, sizeof dtn->host);
+          else
+#endif
+            inet_ntop(AF_INET, &addr->addr.s4.sin_addr.s_addr, dtn->host, sizeof dtn->host);
+          dtn->ok = 0;
+        }
         call_hostbyip(&dtn->addr, dtn->host, dtn->ok);
+      }
       else
         call_ipbyhost(dtn->host, &dtn->addr, dtn->ok);
       close(dtn->fildes[0]);

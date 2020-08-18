@@ -40,6 +40,7 @@ extern Tcl_Interp *interp;
 
 devent_t *dns_events = NULL;
 struct dns_thread_node *dns_thread_head;
+int dns_spoof_protect;
 extern int pref_af;
 
 
@@ -472,21 +473,42 @@ void *thread_dns_hostbyip(void *arg)
 {
   struct dns_thread_node *dtn = (struct dns_thread_node *) arg;
   sockname_t *addr = &dtn->addr;
-  int i = 0; /* make codacy happy */
+  struct addrinfo *res0, *res;
 
-  i = getnameinfo((const struct sockaddr *) &addr->addr.sa, addr->addrlen,
-                  dtn->host, sizeof dtn->host, NULL, 0, 0);
-  if (i) {
+  if (getnameinfo((const struct sockaddr *) &addr->addr.sa, addr->addrlen,
+                  dtn->host, sizeof dtn->host, NULL, 0, 0)) {
 #ifdef IPV6
     if (addr->family == AF_INET6)
       inet_ntop(AF_INET6, &addr->addr.s6.sin6_addr, dtn->host, sizeof dtn->host);
     else
 #endif
       inet_ntop(AF_INET, &addr->addr.s4.sin_addr.s_addr, dtn->host, sizeof dtn->host);
+    dtn->ok = 0;
+    close(dtn->fildes[1]);
+    return NULL;
   }
-  dtn->ok = !i;
-  close(dtn->fildes[1]);
-  return NULL;
+  if (!dns_spoof_protect) {
+    dtn->ok = 1;
+    close(dtn->fildes[1]);
+    return NULL;
+  }
+  else {
+    if (!getaddrinfo(dtn->host, NULL, NULL, &res0)) {
+      for (res = res0; res; res = res->ai_next) {
+        if ((addr->family == res->ai_family) &&
+            (!memcmp(&addr->addr.sa, res->ai_addr, res->ai_addrlen))) {
+          dtn->ok = 1;
+          close(dtn->fildes[1]);
+          freeaddrinfo(res0);
+          return NULL;
+        } 
+      }
+    }
+    dtn->ok = 2;
+    close(dtn->fildes[1]);
+    return NULL;
+  }
+
 }
 
 void *thread_dns_ipbyhost(void *arg)
