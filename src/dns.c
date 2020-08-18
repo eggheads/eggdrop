@@ -477,12 +477,12 @@ void *thread_dns_hostbyip(void *arg)
   i = getnameinfo((const struct sockaddr *) &addr->addr.sa, addr->addrlen,
                   dtn->host, sizeof dtn->host, NULL, 0, 0);
   if (i) {
-    if (addr->family == AF_INET)
-      inet_ntop(AF_INET, &addr->addr.s4.sin_addr.s_addr, dtn->host, sizeof dtn->host);
 #ifdef IPV6
-    else
+    if (addr->family == AF_INET6)
       inet_ntop(AF_INET6, &addr->addr.s6.sin6_addr, dtn->host, sizeof dtn->host);
+    else
 #endif
+      inet_ntop(AF_INET, &addr->addr.s4.sin_addr.s_addr, dtn->host, sizeof dtn->host);
   }
   dtn->ok = !i;
   close(dtn->fildes[1]);
@@ -492,7 +492,7 @@ void *thread_dns_hostbyip(void *arg)
 void *thread_dns_ipbyhost(void *arg)
 {
   struct dns_thread_node *dtn = (struct dns_thread_node *) arg;
-  struct addrinfo *res, *res0;
+  struct addrinfo *res0, *res;
   int i;
   sockname_t *addr = &dtn->addr;
 
