@@ -2672,8 +2672,8 @@ static cmd_t irc_raw[] = {
 };
 
 static cmd_t irc_isupport_binds[] = {
-  {"*",       "",   (IntFunc) irc_isupport,   "isupport"},
-  {NULL,    NULL,   NULL,                           NULL}
+  {"*",       "",   (IntFunc) irc_isupport, "irc:isupport"},
+  {NULL,    NULL,   NULL,                             NULL}
 };
 
 static cmd_t irc_rawt[] = {

@@ -1803,8 +1803,8 @@ static cmd_t my_rawt_binds[] = {
 };
 
 static cmd_t my_isupport_binds[] = {
-  {"*",      "",   (IntFunc) server_isupport, "isupport"},
-  {NULL,   NULL,   NULL,                            NULL}
+  {"*",      "",   (IntFunc) server_isupport, "server:isupport"},
+  {NULL,   NULL,   NULL,                                   NULL}
 };
 
 static void server_resolve_success(int);
