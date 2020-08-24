@@ -1749,7 +1749,7 @@ static int server_isupport(char *key, char *isset_str, char *value)
 {
   int isset = !strcmp(isset_str, "1");
 
-  if (!strcmp(key, "NICKLEN")) {
+  if ((!strcmp(key, "NICKLEN")) || (!strcmp(key, "MAXNICKLEN"))) {
     isupport_parseint(key, isset ? value : NULL, 9, NICKMAX, 1, 9, &nick_len);
   }
   return 0;
