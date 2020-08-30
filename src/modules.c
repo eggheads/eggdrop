@@ -608,8 +608,7 @@ Function global_table[] = {
 #endif
   (Function) check_validpass,
   /* 308 - 311 */
-  (Function) make_rand_str_from_chars,
-  (Function) add_tcl_objcommands
+  (Function) make_rand_str_from_chars
 };
 
 void init_modules(void)

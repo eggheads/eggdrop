@@ -508,7 +508,7 @@
 #define check_validpass ((char *(*) (struct userrec *, char *))global[307])
 /* 308 - 311 */
 #define make_rand_str_from_chars ((void (*) (char *, int, char *))global[308])
-#define add_tcl_objcommands ((void (*) (tcl_cmds *))global[309])
+
 
 /* hostmasking */
 #define maskhost(a,b) maskaddr((a),(b),3)
