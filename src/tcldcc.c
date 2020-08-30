@@ -1004,8 +1004,7 @@ static int setlisten(Tcl_Interp *irp, char *ip, char *portp, char *type, char *m
       }
 
       /* Check if the bound IP is IPvX, and the new IP is IPvY */
-      if (((ipv4) && (dcc[idx].sockname.addr.sa.sa_family != AF_INET)) ||
-         ((!ipv4) && (dcc[idx].sockname.addr.sa.sa_family != AF_INET6))) {
+      if (ipaddr->ai_family != dcc[idx].sockname.addr.sa.sa_family) {
         found = 0;
         break;
       }
