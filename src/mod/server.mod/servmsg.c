@@ -1854,6 +1854,7 @@ static void connect_server(void)
       return;
     }
 
+    isupport_preconnect();
     if (connectserver[0])       /* drummer */
       do_tcl("connect-server", connectserver);
     check_tcl_event("connect-server");

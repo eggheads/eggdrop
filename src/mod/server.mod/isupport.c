@@ -410,13 +410,24 @@ void isupport_clear_values(int cleardefaultvalues) {
   }
 }
 
-void isupport_init(void) {
-  const char *def;
-  def = Tcl_GetVar(interp, "isupport-default", TCL_GLOBAL_ONLY);
+/* moved out of isupport_init because the following problem:
+ * loadmodule irc (wants isupport binds)
+ * -> loadmodule server
+ * -> isupport_init (create H_isupport and do server.mod binds)
+ * -> parse defaults and call binds -- but irc binds cannot be added before H_isupport exists
+ * then irc.mod adds isupport binds, but those will not be called for the default values unless they change
+ * this is not necessary before each connect, just before the very first one to trigger default binds
+ */
+void isupport_preconnect(void) {
+  const char *def = Tcl_GetVar(interp, "isupport-default", TCL_GLOBAL_ONLY);
+
   if (!def)
     def = isupport_default;
-  H_isupport = add_bind_table("isupport", HT_STACKABLE, isupport_bind);
   isupport_parse(def, isupport_setdefault);
+}
+
+void isupport_init(void) {
+  H_isupport = add_bind_table("isupport", HT_STACKABLE, isupport_bind);
   /* Must be added after reading, if the variable was set before loading mod. */
   Tcl_TraceVar(interp, "isupport-default",
                TCL_TRACE_READS | TCL_TRACE_WRITES | TCL_TRACE_UNSETS,
