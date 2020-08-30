@@ -34,7 +34,7 @@ typedef struct isupport {
 
 static isupport_t *isupport_list;
 static p_tcl_bind_list H_isupport;
-static const char isupport_default[4096] = "CASEMAPPING=rfc1459 CHANNELLEN=80 NICKLEN=32 CHANTYPES=#& PREFIX=(ov)@+ CHANMODES=b,k,l,imnpst MODES=3 MAXCHANNELS=10 TOPICLEN=250 KICKLEN=250 STATUSMSG=@+";
+static const char isupport_default[4096] = "CASEMAPPING=rfc1459 CHANNELLEN=80 NICKLEN=9 CHANTYPES=#& PREFIX=(ov)@+ CHANMODES=b,k,l,imnpst MODES=3 MAXCHANNELS=10 TOPICLEN=250 KICKLEN=250 STATUSMSG=@+";
 
 static int hexdigit2dec[128] = {
   -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, /*   0 -   9 */
