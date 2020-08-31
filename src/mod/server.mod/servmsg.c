@@ -391,6 +391,15 @@ static int got001(char *from, char *msg)
   return 0;
 }
 
+/* Got 005: ISUPPORT network information
+ */
+static int got005(char *from, char *msg)
+{
+  newsplit(&msg); /* skip botnick */
+  isupport_parse(msg, isupport_set);
+  return 0;
+}
+
 /* Got 442: not on channel
  */
 static int got442(char *from, char *msg)
@@ -1053,6 +1062,8 @@ static void disconnect_server(int idx)
   if (realservername)
     nfree(realservername);
   realservername = 0;
+  /* $::server should be empty for this, so isupport binds can ignore it */
+  isupport_clear_values(0);
   if (dcc[idx].sock >= 0)
     killsock(dcc[idx].sock);
   dcc[idx].sock = -1;
@@ -1735,6 +1746,16 @@ static int gotcap(char *from, char *msg) {
   return 1;
 }
 
+static int server_isupport(char *key, char *isset_str, char *value)
+{
+  int isset = !strcmp(isset_str, "1");
+
+  if (!strcmp(key, "NICKLEN") || !strcmp(key, "MAXNICKLEN")) {
+    isupport_parseint(key, isset ? value : NULL, 9, NICKMAX, 1, 9, &nick_len);
+  }
+  return 0;
+}
+
 static cmd_t my_raw_binds[] = {
   {"PRIVMSG",      "",   (IntFunc) gotmsg,          NULL},
   {"NOTICE",       "",   (IntFunc) gotnotice,       NULL},
@@ -1743,6 +1764,7 @@ static cmd_t my_raw_binds[] = {
   {"PONG",         "",   (IntFunc) gotpong,         NULL},
   {"WALLOPS",      "",   (IntFunc) gotwall,         NULL},
   {"001",          "",   (IntFunc) got001,          NULL},
+  {"005",          "",   (IntFunc) got005,          NULL},
   {"303",          "",   (IntFunc) got303,          NULL},
   {"311",          "",   (IntFunc) got311,          NULL},
   {"318",          "",   (IntFunc) whoispenalty,    NULL},
@@ -1779,6 +1801,11 @@ static cmd_t my_raw_binds[] = {
 static cmd_t my_rawt_binds[] = {
   {"TAGMSG",       "",   (IntFunc) gottagmsg,       NULL},
   {NULL,           NULL, NULL,                      NULL}
+};
+
+static cmd_t my_isupport_binds[] = {
+  {"*",      "",   (IntFunc) server_isupport, "server:isupport"},
+  {NULL,   NULL,   NULL,                                   NULL}
 };
 
 static void server_resolve_success(int);
@@ -1828,6 +1855,7 @@ static void connect_server(void)
       return;
     }
 
+    isupport_preconnect();
     if (connectserver[0])       /* drummer */
       do_tcl("connect-server", connectserver);
     check_tcl_event("connect-server");
