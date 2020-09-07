@@ -1204,6 +1204,9 @@ static void dns_lookup(sockname_t *addr)
   sendrequest(rp, T_PTR);
 }
 
+/* Read /etc/hosts. mmap() is used instead of fgets() because /etc/hosts is read
+ * for every lookup and /etc/hosts can be big, for example if used for stoping
+ * ad banners */
 static int dns_hosts(char *hostn) {
   #define PATH "/etc/hosts"
   int fd, hostn_len, i, found = 0;
