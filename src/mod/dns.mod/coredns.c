@@ -1211,8 +1211,8 @@ static int dns_hosts(char *hostn) {
   #define PATH "/etc/hosts"
   int fd, hostn_len, i, found = 0;
   struct stat sb;
-  char *addr, hostn_lower[256], hostn_upper[256], *last_newline,
-       *last_hash = NULL, *c, *c2, ip[256];
+  char *addr, hostn_lower[256], hostn_upper[256], *last_newline, *last_hash, *c,
+       *c2, ip[256];
   sockname_t name;
 
   if (!*hostn) {
@@ -1252,16 +1252,16 @@ static int dns_hosts(char *hostn) {
     close(fd);
     return 0;
   }
-  last_newline = addr - 1;
+  last_newline = last_hash = addr;
   /* case insensitive search for hostn */
   for (c = addr; (c < (addr + sb.st_size - hostn_len)) && *c; c++) {
     switch(*c) {
       case '\n':
       case '\r':
-        last_newline = c;
+        last_newline = c + 1;
         break;
       case '#':
-        last_hash = c;
+        last_hash = c + 1;
         break;
       default:
         /* if (!strncasecmp(c, hostn, hostn_len)) { */
@@ -1271,7 +1271,7 @@ static int dns_hosts(char *hostn) {
             isspace(*(c - 1))) {
           if (last_newline > last_hash) {
             c2 = last_newline;
-            while (isspace(*++c2)); /* skip space chars */
+            for (c2 = last_newline; isspace(*c2); c2++); /* skip space chars */
             for (i = 0; i < (sizeof ip); i++) { /* copy chars of ip */
               if (!isspace(c2[i])) {
 #ifndef IPV6
