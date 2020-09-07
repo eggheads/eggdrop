@@ -1206,23 +1206,24 @@ static void dns_lookup(sockname_t *addr)
 
 static int dns_hosts(char *hostn) {
   #define PATH "/etc/hosts"
-  int fd, len, i, found = 0;
+  int fd, hostn_len, i, found = 0;
   struct stat sb;
-  char *addr, hostn_lower[256], hostn_upper[256], *last_newline, *last_hash = NULL, *c, *c2, ip[256];
+  char *addr, hostn_lower[256], hostn_upper[256], *last_newline,
+       *last_hash = NULL, *c, *c2, ip[256];
   sockname_t name;
 
   if (!*hostn) {
     ddebug0(RES_MSG "bogus empty hostname input");
     return 1;
   }
-  len = strlen(hostn);
-  if (len > 255) {
+  hostn_len = strlen(hostn);
+  if (hostn_len > 255) {
     ddebug0(RES_MSG "bogus len of hostname > 255 input");
     return 1;
   }
   /* due to strncasecmp() and strncmp() being slow if used in loop, precalculate
    * lower and upper string from hostn and compare with handcrafted code */
-  for (i = 0; i < len; i++) {
+  for (i = 0; i < hostn_len; i++) {
       if (isspace(hostn[i])) {
         ddebug0(RES_MSG "bogus white-space hostname input");
         return 1;
@@ -1250,7 +1251,7 @@ static int dns_hosts(char *hostn) {
   }
   last_newline = addr - 1;
   /* case insensitive search for hostn */
-  for (c = addr; (c < (addr + sb.st_size - len)) && *c; c++) {
+  for (c = addr; (c < (addr + sb.st_size - hostn_len)) && *c; c++) {
     switch(*c) {
       case '\n':
       case '\r':
@@ -1260,10 +1261,10 @@ static int dns_hosts(char *hostn) {
         last_hash = c;
         break;
       default:
-        /* if (!strncasecmp(c, hostn, len)) { */
-        for (i = 0; (i < len) && (c[i] == hostn_lower[i] || (c[i] == hostn_upper[i])); i++);
-        if ((i == len) &&
-            ((c == (addr + sb.st_size - len - 1)) || isspace(*(c + len))) &&
+        /* if (!strncasecmp(c, hostn, hostn_len)) { */
+        for (i = 0; (i < hostn_len) && (c[i] == hostn_lower[i] || (c[i] == hostn_upper[i])); i++);
+        if ((i == hostn_len) &&
+            ((c == (addr + sb.st_size - hostn_len - 1)) || isspace(*(c + hostn_len))) &&
             isspace(*(c - 1))) {
           if (last_newline > last_hash) {
             c2 = last_newline;
