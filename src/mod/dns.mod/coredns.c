@@ -1234,17 +1234,17 @@ static int dns_hosts(char *hostn) {
   hostn_upper[i] = 0;
   fd = open(PATH, O_RDONLY);
   if (fd < 0) {
-    ddebug1(RES_MSG "open(" PATH "): %s ", strerror(errno));
+    ddebug1(RES_MSG "open(" PATH "): %s", strerror(errno));
     return 0;
   }
   if (fstat(fd, &sb) < 0) {
-    ddebug1(RES_MSG "fstat(" PATH "): %s ", strerror(errno));
+    ddebug1(RES_MSG "fstat(" PATH "): %s", strerror(errno));
     close(fd);
     return 0;
   }
   addr = mmap(NULL, sb.st_size, PROT_READ, MAP_PRIVATE, fd, 0);
   if (addr == MAP_FAILED) {
-    ddebug1(RES_MSG "mmap(" PATH "): %s ", strerror(errno));
+    ddebug1(RES_MSG "mmap(" PATH "): %s", strerror(errno));
     close(fd);
     return 0;
   }
@@ -1293,7 +1293,7 @@ static int dns_hosts(char *hostn) {
   }
 exit:
   if (munmap(addr, sb.st_size) < 0) {
-    ddebug1(RES_MSG "munmap(" PATH "): %s ", strerror(errno));
+    ddebug1(RES_MSG "munmap(" PATH "): %s", strerror(errno));
     close(fd);
     return 0;
   }
