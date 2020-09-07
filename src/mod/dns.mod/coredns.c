@@ -1268,13 +1268,13 @@ static int dns_hosts(char *hostn) {
         /* if (!strncasecmp(c, hostn, hostn_len)) { */
         for (i = 0; (i < hostn_len) && (c[i] == hostn_lower[i] || (c[i] == hostn_upper[i])); i++);
         if ((i == hostn_len) &&
-            ((c == (addr + sb.st_size - hostn_len - 1)) || isspace(*(c + hostn_len))) &&
-            isspace(*(c - 1))) {
+            ((c == (addr + sb.st_size - hostn_len - 1)) || egg_isspace(*(c + hostn_len))) &&
+            egg_isspace(*(c - 1))) {
           if (last_newline > last_hash) {
             c2 = last_newline;
-            for (c2 = last_newline; isspace(*c2); c2++); /* skip space chars */
+            for (c2 = last_newline; egg_isspace(*c2); c2++); /* skip space chars */
             for (i = 0; i < (sizeof ip); i++) { /* copy chars of ip */
-              if (!isspace(c2[i])) {
+              if (!egg_isspace(c2[i])) {
 #ifndef IPV6
                 /* skip ipv6 */
                 if (c2[i] == ':')
