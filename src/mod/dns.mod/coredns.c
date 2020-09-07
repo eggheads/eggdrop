@@ -1227,8 +1227,9 @@ static int dns_hosts(char *hostn) {
   /* due to strncasecmp() and strncmp() being slow if used in loop, precalculate
    * lower and upper string from hostn and compare with handcrafted code */
   for (i = 0; i < hostn_len; i++) {
-      if (isspace(hostn[i])) {
-        ddebug0(RES_MSG "bogus white-space hostname input");
+      /* while at it, reject hostnames with bogus chars, see rfc 952, 1123 and 2181 */
+      if (!strchr("-.0123456789ABCDEFGHIJABCDEFGHIJKLMNOPQRSTUVWXYZ_abcdefghijklmnopqrstuvwxyz", hostn[i])) {
+        ddebug0(RES_MSG "bogus char in hostname input");
         return 1;
       }
       hostn_lower[i] = tolower((unsigned char) hostn[i]);
