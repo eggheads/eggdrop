@@ -20,6 +20,8 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
+#undef answer /* before resolv.h because it could collide with src/mod/module.h
+		 (dietlibc) */
 #include <resolv.h> /* base64 encode b64_ntop() and base64 decode b64_pton() */
 #ifdef TLS
   #include <openssl/err.h>

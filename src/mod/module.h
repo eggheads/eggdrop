@@ -502,8 +502,8 @@
 /* 304 - 307 */
 #define strncpyz ((size_t (*) (char *, const char *, size_t))global[304])
 #ifndef HAVE_BASE64
-# define b64_ntop ((int (*) (u_char const *, size_t, char *, size_t))global[305])
-# define b64_pton ((int (*) (const char *, u_char *, size_t))global[306])
+# define b64_ntop ((int (*) (uint8_t const *, size_t, char *, size_t))global[305])
+# define b64_pton ((int (*) (const char *, uint8_t *, size_t))global[306])
 #endif
 #define check_validpass ((char *(*) (struct userrec *, char *))global[307])
 /* 308 - 311 */
