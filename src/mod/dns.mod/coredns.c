@@ -1231,8 +1231,8 @@ static int dns_hosts(char *hostn) {
         ddebug0(RES_MSG "bogus white-space hostname input");
         return 1;
       }
-      hostn_lower[i] = tolower(hostn[i]);
-      hostn_upper[i] = toupper(hostn[i]);
+      hostn_lower[i] = tolower((unsigned char) hostn[i]);
+      hostn_upper[i] = toupper((unsigned char) hostn[i]);
   }
   hostn_lower[i] = 0;
   hostn_upper[i] = 0;
