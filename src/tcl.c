@@ -311,7 +311,7 @@ static void tcl_cleanup_stringinfo(ClientData cd)
 static int tcl_call_stringproc_cd(ClientData cd, Tcl_Interp *interp, int objc, Tcl_Obj *const objv[])
 {
   static int max;
-  static CONST84 char **argv;
+  static const char **argv;
   int i;
   struct tcl_call_stringinfo *info = cd;
   /* The string API guarantees argv[argc] == NULL, unlike the obj API */
