@@ -1209,10 +1209,11 @@ static void dns_lookup(sockname_t *addr)
  * ad banners */
 static int dns_hosts(char *hostn) {
   #define PATH "/etc/hosts"
+  #define hostn_isspace(x) strchr("\t\v\f ", (x))
   int fd, hostn_len, i, found = 0;
   struct stat sb;
-  char *addr, hostn_lower[256], hostn_upper[256], *last_newline, *last_hash, *c,
-       *c2, ip[256];
+  char *addr, hostn_lower[256], hostn_upper[256], *eof, *last_newline,
+       *last_space, *last_hash, *c, *c2, ip[256];
   sockname_t name;
 
   if (!*hostn) {
@@ -1253,13 +1254,21 @@ static int dns_hosts(char *hostn) {
     close(fd);
     return 0;
   }
-  last_newline = last_hash = addr;
+  eof = addr + sb.st_size - hostn_len;
+  last_newline = last_space = last_hash = addr;
   /* case insensitive search for hostn */
-  for (c = addr; (c < (addr + sb.st_size - hostn_len)) && *c; c++) {
+  for (c = addr; (c <= eof) && *c; c++) {
     switch(*c) {
       case '\n':
       case '\r':
         last_newline = c + 1;
+        /* fall-through */
+      /* The following 4 chars are space chars */
+      case '\t':
+      case '\v':
+      case '\f':
+      case ' ':
+        last_space = c + 1;
         break;
       case '#':
         last_hash = c + 1;
@@ -1268,28 +1277,28 @@ static int dns_hosts(char *hostn) {
         /* if (!strncasecmp(c, hostn, hostn_len)) { */
         for (i = 0; (i < hostn_len) && (c[i] == hostn_lower[i] || (c[i] == hostn_upper[i])); i++);
         if ((i == hostn_len) &&
-            ((c == (addr + sb.st_size - hostn_len - 1)) || egg_isspace(*(c + hostn_len))) &&
-            egg_isspace(*(c - 1))) {
-          if (last_newline > last_hash) {
+            ((c == eof) || egg_isspace(*(c + hostn_len))) &&
+            (c == last_space)) {
+          if (last_newline >= last_hash) {
             c2 = last_newline;
-            for (c2 = last_newline; egg_isspace(*c2); c2++); /* skip space chars */
+            for (c2 = last_newline; hostn_isspace(*c2); c2++); /* skip space chars */
+            /* TODO: parse both ipv4 and ipv6 and return the pref_af one if available */
             for (i = 0; i < (sizeof ip); i++) { /* copy chars of ip */
-              if (!egg_isspace(c2[i])) {
-#ifndef IPV6
-                /* skip ipv6 */
-                if (c2[i] == ':')
-                  break;
+#ifdef IPV6
+              if (strchr(".0123456789:abcdef", c2[i])) {
+#else
+              if (strchr(".0123456789", c2[i])) {
 #endif
                 ip[i] = c2[i];
               }
-              else { /* until space char */
+              else {
                 ip[i] = 0;
                 if (setsockname(&name, ip, 0, 0) != AF_UNSPEC) {
                   call_ipbyhost(hostn, &name, 1);
                   ddebug2(RES_MSG "Used /etc/hosts: %s == %s", hostn, ip);
+                  found = 1;
+                  goto exit;
                 }
-                found = 1;
-                goto exit;
               }
             }
           }
