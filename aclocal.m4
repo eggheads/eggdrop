@@ -742,6 +742,9 @@ AC_DEFUN([EGG_CHECK_OS],
     ;;
     Linux)
       LINUX="yes"
+      if test "$GCC" = yes; then
+        CFLAGS="-std=c99 -D_DEFAULT_SOURCE -D_BSD_SOURCE $CFLAGS"
+      fi
       MOD_LD="$CC"
       SHLIB_CC="$CC -fPIC"
       SHLIB_LD="$CC -shared -nostartfiles"
