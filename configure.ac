@@ -51,6 +51,7 @@ AC_MINIX
 
 # Check C compiler characteristics.
 EGG_CHECK_ICC
+EGG_CHECK_GCCC99
 EGG_CHECK_CCPIPE
 EGG_CHECK_CCWALL
 

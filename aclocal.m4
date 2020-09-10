@@ -233,6 +233,20 @@ dnl
 dnl This macro checks whether or not the compiler supports the `-pipe' flag,
 dnl which speeds up the compilation.
 dnl
+AC_DEFUN([EGG_CHECK_GCCC99],
+[
+  if test "$GCC" = yes; then
+    AC_MSG_NOTICE([GCC found, -std=c99 added])
+    CC="$CC -std=c99"
+  fi
+])
+
+
+dnl EGG_CHECK_CCPIPE()
+dnl
+dnl This macro checks whether or not the compiler supports the `-pipe' flag,
+dnl which speeds up the compilation.
+dnl
 AC_DEFUN([EGG_CHECK_CCPIPE],
 [
   if test "$GCC" = yes && test "$ICC" = no; then
@@ -743,7 +757,7 @@ AC_DEFUN([EGG_CHECK_OS],
     Linux)
       LINUX="yes"
       if test "$GCC" = yes; then
-        CFLAGS="-std=c99 -D_DEFAULT_SOURCE -D_BSD_SOURCE $CFLAGS"
+        CFLAGS="-D_DEFAULT_SOURCE -D_BSD_SOURCE $CFLAGS"
       fi
       MOD_LD="$CC"
       SHLIB_CC="$CC -fPIC"
