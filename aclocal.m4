@@ -184,6 +184,25 @@ EOF
 ])
 
 
+dnl EGG_CHECK_CC_C99()
+dnl
+dnl Check for a working C99 C compiler.
+dnl
+AC_DEFUN([EGG_CHECK_CC_C99],
+[
+  if test "$ac_cv_prog_cc_c99" = no; then
+    cat << 'EOF' >&2
+configure: error:
+
+  This C compiler does not appear to have a working C99 mode.
+  A working C99 C compiler is required to compile Eggdrop.
+
+EOF
+    exit 1
+  fi
+])
+
+
 dnl EGG_HEADER_STDC()
 dnl
 AC_DEFUN([EGG_HEADER_STDC],
@@ -224,20 +243,6 @@ AC_DEFUN([EGG_CHECK_ICC],[
     ICC="yes"
   else
     ICC="no"
-  fi
-])
-
-
-dnl EGG_CHECK_CCPIPE()
-dnl
-dnl This macro checks whether or not the compiler supports the `-pipe' flag,
-dnl which speeds up the compilation.
-dnl
-AC_DEFUN([EGG_CHECK_GCCC99],
-[
-  if test "$GCC" = yes; then
-    AC_MSG_NOTICE([GCC found, -std=c99 added])
-    CC="$CC -std=c99"
   fi
 ])
 
@@ -756,9 +761,6 @@ AC_DEFUN([EGG_CHECK_OS],
     ;;
     Linux)
       LINUX="yes"
-      if test "$GCC" = yes; then
-        CFLAGS="-D_DEFAULT_SOURCE -D_BSD_SOURCE $CFLAGS"
-      fi
       MOD_LD="$CC"
       SHLIB_CC="$CC -fPIC"
       SHLIB_LD="$CC -shared -nostartfiles"

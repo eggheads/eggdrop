@@ -43,6 +43,8 @@ EGG_SAVE_PARAMETERS
 # Check for a working C compiler
 AC_PROG_CC([gcc cc clang])
 EGG_CHECK_CC
+AC_PROG_CC_C99
+EGG_CHECK_CC_C99
 
 # These 3 need to be done before any AC_COMPILE_IFELSE()'s.
 AC_AIX
@@ -51,7 +53,6 @@ AC_MINIX
 
 # Check C compiler characteristics.
 EGG_CHECK_ICC
-EGG_CHECK_GCCC99
 EGG_CHECK_CCPIPE
 EGG_CHECK_CCWALL
 
