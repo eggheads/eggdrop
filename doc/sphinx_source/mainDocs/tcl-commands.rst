@@ -1,3 +1,5 @@
+.. highlight:: text
+
 Eggdrop Tcl Commands
 Last revised: December 14, 2017
 
@@ -155,10 +157,10 @@ clearqueue <queue>
   Module: server
 
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-cap <active/available/raw> [arg]
+cap <ls/req/enabled/raw> [arg]
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-  Description: displays CAP status or sends a raw CAP command to the server. "available" will list the capabilities supported by the server, "active" will list the capabilities Eggdrop has negotiated with the server, and raw will send a raw CAP command to the server. If sending a raw command, it must be submitted in arg as a single string. For example, to request capabilities foo and bar, you would use [cap raw "REQ :foo bar"]. 
+  Description: displays CAP status or sends a raw CAP command to the server. "ls" will list the capabilities Eggdrop is internally tracking as supported by the server, "enabled" will list the capabilities Eggdrop is internally tracking as negotiated with the server, "req" will request the capabilities listed in "arg" from the server, and raw will send a raw CAP command to the server. The arg field is a single argument, and should be submitted as a single string. For example, to request capabilities foo and bar, you would use [cap req "foo bar"], and for example purposes, sending the same request as a raw command would be [cap raw "REQ :foo bar"].
 
   Returns: nothing
 
@@ -348,38 +350,46 @@ botattr <handle> [changes [channel]]
 matchattr <handle> <flags> [channel]
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-  Description: checks if the flags of the specified user match the flags provided. Default matching pattern uses the | (OR) convention. For example, specifying +mn for flags will check if the user has the m OR n flag.
+  Description: checks if the flags of the specified user match the flags provided. "flags" is of the form::
+
+      [+/-]<global flags>[&/|<channel flags>[&/|<bot flags>]]
+
+  Either | or & can be used as a separator between global, channel, and bot flags, but only one separator can be used per flag section. A '+' is used to check if a user has the subsequent flags, and a '-' is used to check if a user does NOT have the subsequent flags.
 
 +------------+-----------------------------------------------------------------+
 | Flag Mask  | Action                                                          |
 +============+=================================================================+
 | +m         + Checks if the user has the m global flag                        |
 +------------+-----------------------------------------------------------------+
-| +mn        | Checks if the user has the m or n global flag                   |
+| +mn        | Checks if the user has the m OR n global flag                   |
 +------------+-----------------------------------------------------------------+
-| +mn&       | Checks if the user has the m and n global flag                  |
+| \|+mn      | Checks if the user has the m OR n global flag                   |
++------------+-----------------------------------------------------------------+
+| \|+mn #foo | Checks if the user has the m OR n channel flag for #foo         |
++------------+-----------------------------------------------------------------+
+| &+mn       | Checks if the user has the m AND n global flag                  |
++------------+-----------------------------------------------------------------+
+| &mn #foo   | Checks if the user has the m AND n channel flag for #foo        |
 +------------+-----------------------------------------------------------------+
 | \|+o #foo  | Checks if the user has the o channel flag for #foo              |
 +------------+-----------------------------------------------------------------+
-| &mn #foo   | Checks if the user has the m and n channel flag for #foo        |
+| +o|+n #foo | Checks if the user has the o global flag OR the n channel flag  |
+|            | for #foo                                                        |
 +------------+-----------------------------------------------------------------+
-| +o|+n #foo | Checks if the user has the o global flag, or the n channel      |
-|            | flag for #foo                                                   |
-+------------+-----------------------------------------------------------------+
-| +m&+v      | Checks if the user has the m global flag, and the v channel     |
-|            | flag for #foo                                                   |
+| +m&+v #foo | Checks if the user has the m global flag AND the v channel flag |
+|            | for #foo                                                        |
 +------------+-----------------------------------------------------------------+
 | -m         | Checks if the user does not have the m global flag              |
 +------------+-----------------------------------------------------------------+
 | \|-n #foo  | Checks if the user does not have the n channel flag for #foo    |
 +------------+-----------------------------------------------------------------+
-| +m|-n #foo | Checks if the user has the global m flag or does not have a     |
+| +m|-n #foo | Checks if the user has the global m flag OR does not have a     |
 |            | channel n flag for #foo                                         |
 +------------+-----------------------------------------------------------------+
-| -n&-m #foo | Searches if the user does not have the global n flag and does   |
+| -n&-m #foo | Checks if the user does not have the global n flag AND does     |
 |            | not have the channel m flag for #foo                            |
 +------------+-----------------------------------------------------------------+
-| ||+b       | Searches if the user has the bot flag b                         |
+| ||+b       | Checks if the user has the bot flag b                           |
 +------------+-----------------------------------------------------------------+
 
   Returns: 1 if the specified user has the flags matching the provided mask; 0 otherwise
@@ -485,9 +495,9 @@ newchanban <channel> <ban> <creator> <comment> [lifetime] [options]
   Description: adds a ban to the ban list of a channel; creator is given credit for the ban in the ban list. lifetime is specified in minutes. If lifetime is not specified, ban-time (usually 60) is used. Setting the lifetime to 0 makes it a permanent ban.
 
   Options:
-      
+
   +-----------+-------------------------------------------------------------------------------------+
-  |sticky     | forces the ban to be always active on a channel, even with dynamicbans on           |
+  | sticky    | forces the ban to be always active on a channel, even with dynamicbans on           |
   +-----------+-------------------------------------------------------------------------------------+
 
 
@@ -504,7 +514,7 @@ newban <ban> <creator> <comment> [lifetime] [options]
   Options:
 
   +-----------+-------------------------------------------------------------------------------------+
-  |sticky     | forces the ban to be always active on a channel, even with dynamicbans on           |
+  | sticky    | forces the ban to be always active on a channel, even with dynamicbans on           |
   +-----------+-------------------------------------------------------------------------------------+
 
   Returns: nothing
@@ -520,7 +530,7 @@ newchanexempt <channel> <exempt> <creator> <comment> [lifetime] [options]
   Options:
 
   +-----------+-------------------------------------------------------------------------------------+
-  |sticky     | forces the exempt to be always active on a channel, even with dynamicexempts on     |
+  | sticky    | forces the exempt to be always active on a channel, even with dynamicexempts on     |
   +-----------+-------------------------------------------------------------------------------------+
 
   Returns: nothing
@@ -536,7 +546,7 @@ newexempt <exempt> <creator> <comment> [lifetime] [options]
   Options:
 
   +-----------+-------------------------------------------------------------------------------------+
-  |sticky     | forces the exempt to be always active on a channel, even with dynamicexempts on     |
+  | sticky    | forces the exempt to be always active on a channel, even with dynamicexempts on     |
   +-----------+-------------------------------------------------------------------------------------+
 
   Returns: nothing
@@ -552,7 +562,7 @@ newchaninvite <channel> <invite> <creator> <comment> [lifetime] [options]
   Options:
 
   +-----------+-------------------------------------------------------------------------------------+
-  |sticky     | forces the invite to be always active on a channel, even with dynamicinvites on     |
+  | sticky    | forces the invite to be always active on a channel, even with dynamicinvites on     |
   +-----------+-------------------------------------------------------------------------------------+
 
   Returns: nothing
@@ -568,7 +578,7 @@ newinvite <invite> <creator> <comment> [lifetime] [options]
   Options:
 
   +-----------+-------------------------------------------------------------------------------------+
-  |sticky     | forces the invite to be always active on a channel, even with dynamicinvites on     |
+  | sticky    | forces the invite to be always active on a channel, even with dynamicinvites on     |
   +-----------+-------------------------------------------------------------------------------------+
 
   Returns: nothing
@@ -1068,6 +1078,25 @@ isvoice <nickname> [channel]
 
   Module: irc
 
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+isidentified <nickname> [channel]
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+  Returns: 1 if someone by the specified nickname is on the channel (or
+  any channel if no channel name is specified) and is logged in); 0 otherwise
+
+  Module: irc
+
+^^^^^^^^^^^^^^^^^^^^^^^^^^^
+isaway <nickname> [channel]
+^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+  Description: determine if a user is marked as 'away' on a server. IMPORTANT: this command is only "mostly" reliable on its own when the IRCv3 away-notify capability is available and negotiated with the IRC server (if you didn't add this to your config file, it likely isn't enabled- you can confirm using the ``cap`` Tcl command).  Additionally, there is no way for Eggdrop (or any client) to capture a user's away status when the user first joins a channel (they are assumed present by Eggdrop on join). To use this command without the away-notify capability negotiated, or to get a user's away status on join (via a JOIN bind), use ``refreshchan <channel> w`` on a channel the user is on, which will refresh the current away status stored by Eggdrop for all users on the channel.
+
+  Returns: 1 if Eggdrop is currently tracking someone by that nickname marked as 'away' (again, see disclaimer above) by an IRC server; 0 otherwise.
+
+  Module: irc
+
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^
 onchan <nickname> [channel]
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -1075,11 +1104,25 @@ onchan <nickname> [channel]
 
   Module: irc
 
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+getaccount <nickname> [channel]
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+  Returns: the services account name of the nickname if they are logged in, "" otherwise, and an error if the account-notify or extended-join capabilities are not enabled. WARNING: this account list may not be accurate depending on the server and configuration. This command will only work if a server supports (and Eggdrop has enabled) the account-notify and extended-join capabilities, and the server understands WHOX requests (also known as raw 354 responses).
+
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 nick2hand <nickname> [channel]
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-  Returns: the handle of a nickname on a channel. If a channel is not specified, the bot will check all of its channels. If the nick is not found, "" is returned. If the nick is found but does not have a handle, "*" is returned.
+  Returns: the handle of a nickname on a channel. If a channel is not specified, the bot will check all of its channels. If the nick is not found, "" is returned. If the nick is found but does not have a handle, "*" is returned. If no channel is specified, all channels are checked.
+
+  Module: irc
+
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+account2nicks <handle> [channel]
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+  Returns: a de-duplicated Tcl list of the nickname(s) on the specified channel (if one is specified) whose nickname matches the given account; "" is returned if no match is found. This command will only work if a server supports (and Eggdrop has enabled) the account-notify and extended-join capabilities, and the server understands WHOX requests (also known as raw 354 responses). If no channel is specified, all channels are checked.
 
   Module: irc
 
@@ -1088,6 +1131,14 @@ hand2nick <handle> [channel]
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
   Returns: nickname of the first person on the specified channel (if one is specified) whose nick!user\@host matches the given handle; "" is returned if no match is found. If no channel is specified, all channels are checked.
+
+  Module: irc
+
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+hand2nicks <handle> [channel]
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+  Returns: a de-duplicated Tcl list of the nickname(s) on the specified channel (if one is specified) whose nick!user\@host matches the given handle; "" is returned if no match is found. If no channel is specified, all channels are checked.
 
   Module: irc
 
@@ -1200,21 +1251,43 @@ resetchanjoin [nick] <channel>
 resetchan <channel> [flags]
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-  Description: rereads in the channel info from the server. If flags are specified, only the required information will be reset, according to the given flags. Available flags:
+  Description: clears the channel info Eggdrop is currently storing for a channel, then rereads the channel info from the server. Useful if Eggdrop gets into a bad state on a server with respect to a channel userlist, for example. If flags are specified, only the required information will be reset, according to the given flags. Available flags:
 
-  +-----+---------------------------+
-  | b   | reset channel bans        |
-  +-----+---------------------------+
-  | e   | reset channel exempts     |
-  +-----+---------------------------+
-  | I   | reset channel invites     |
-  +-----+---------------------------+
-  | m   | refresh channel modes     |
-  +-----+---------------------------+
-  | t   | refresh channel topic     |
-  +-----+---------------------------+
-  | w   | refresh memberlist        |
-  +-----+---------------------------+
+  +-----+------------------------------+
+  | b   | channel bans                 |
+  +-----+------------------------------+
+  | e   | channel exempts              |
+  +-----+------------------------------+
+  | I   | channel invites              |
+  +-----+------------------------------+
+  | m   | channel modes                |
+  +-----+------------------------------+
+  | w   | memberlist (who & away info) |
+  +-----+------------------------------+
+
+  Returns: nothing
+
+  Module: irc
+
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+refreshchan <channel> [flags]
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+  Description: An alternative to resetchan, refresh rereads the channel info from the server without first clearing out the previously stored information. Useful for updating a user's away status without resetting their idle time, for example. If flags are specified, only the required information will be refreshed, according to the given flags. Available flags:
+
+  +-----+------------------------------+
+  | b   | channel bans                 |
+  +-----+------------------------------+
+  | e   | channel exempts              |
+  +-----+------------------------------+
+  | I   | channel invites              |
+  +-----+------------------------------+
+  | m   | channel modes                |
+  +-----+------------------------------+
+  | t   | channel topic                |
+  +-----+------------------------------+
+  | w   | memberlist (who & away info) |
+  +-----+------------------------------+
 
   Returns: nothing
 
@@ -1373,6 +1446,29 @@ chansettype <setting>
   Returns: The type of the setting you specify. The possible types are flag, int, str, pair. A flag type references a channel flag setting that can be set to either + or -. An int type is a channel  setting that is set to a number, such as ban-time. A str type is a  channel setting that stores a string, such as need-op. A pair type is a setting that holds a value couple, such as the flood settings.
 
   Module: channels
+
+^^^^^^^^^^^^^^^^^^^^^^^^^
+isupport get [key]
+^^^^^^^^^^^^^^^^^^^^^^^^^
+
+  Description:
+  - isupport get: Returns a flat key/value list (dict) of settings.
+  - isupport get <key>: Returns the setting's value as a string. Throws an error if the key is not set.
+
+  Returns: string or dict, see description above
+
+  Module: server
+
+^^^^^^^^^^^^^^^^^^^^^^^^^^^
+isupport isset <key>
+^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+  Description: Returns 0/1 depending on whether the key has a value.
+
+  Returns: 0 or 1
+
+  Module: server
+
 
 DCC Commands
 ------------
@@ -1655,37 +1751,37 @@ connect <host> <[+]port>
 
   Module: core
 
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-listen <port> <type> [options] [flag]
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+listen [ip] <port> <type> [options [flag]]
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-  Description: opens a listening port to accept incoming telnets; type must be one of "bots", "all", "users", "script", or "off". Prefixing the port with a plus sign will make eggdrop accept SSL connections on it.
+  Description: opens a listening port to accept incoming telnets; type must be one of "bots", "all", "users", "script", or "off". Prefixing the port with a plus sign will make eggdrop accept SSL connections on it. An IP may optionally be listed before the mandatory port argument. If no IP is specified, all available interfaces are used.
 
-    listen <port> bots [mask]
+    listen [ip] <port> bots [mask]
 
       Description: accepts connections from bots only; the optional mask is used to identify permitted bot names. If the mask begins with '@', it is interpreted to be a mask of permitted hosts to accept connections from.
 
-      Returns: port number
+      Returns: port number or error message
 
-    listen <port> users [mask]
+    listen [ip] <port> users [mask]
     
       Description: accepts connections from users only (no bots); the optional mask is used to identify permitted nicknames. If the mask begins with '@', it is interpreted to be a mask of permitted hosts to accept connections from.
 
-      Returns: port number
+      Returns: port number or error message
 
-    listen <port> all [mask]
+    listen [ip] <port> all [mask]
 
       Description: accepts connections from anyone; the optional mask is used to identify permitted nicknames/botnames. If the mask begins with '@', it is interpreted to be a mask of permitted hosts to accept connections from.
 
-      Returns: port number
+      Returns: port number or error message
 
-    listen <port> script <proc> [flag]
+    listen [ip] <port> script <proc> <flag>
 
-      Description: accepts connections which are immediately routed to a proc. The proc is called with one parameter: the idx of the new connection. Flag may currently only be 'pub', which makes the bot allow anyone to connect and not perform an ident lookup.
+      Description: accepts connections which are immediately routed to a proc. The proc is called with one parameter: the idx of the new connection. If the script type is used, flag must also be set. Flag may currently only be 'pub', which makes the bot allow anyone to connect and not perform an ident lookup.
 
-      Returns: port number
+      Returns: port number or error message
 
-    listen <port> off
+    listen [ip] <port> off
 
       Description: stop listening on a port
 
@@ -3311,15 +3407,15 @@ The following is a list of bind types and how they work. Below each bind type is
 
   Module: core
 
-(50) AWY3 (stackable)
+(50) IRCAWAY (stackable)
 
-  bind awy3 <flags> <mask> <proc>
+  bind ircaway <flags> <mask> <proc>
 
-  procname <from> <msg>
+  procname <nick> <user> <hand> <channel> <msg>
+ 
+  Description: triggered when Eggdrop receives an AWAY message for a user from an IRC server, ONLY if the away-notify capability is enabled via CAP (the server must supports this capability, see the 'cap' Tcl command for more info on requesting capabilities). "Normal" away messages (301 messages) will not trigger this bind, for those you should instead use a RAWT bind. The mask for the bind is in the format "#channel nick!user@hostname" (* to catch all nicknames). nick is the nickname of the user that triggered the bind, user is the nick!user@host of the user, handle is the handle of the user on the bot (- if the user is not added to the bot), channel is the channel the user was found on (read on for more info on this) and msg is the contents of the away message, if any. If a "*" is used for the channel in the mask, this bind is triggered once for every channel that the user is in the bot with; in other words if the bot is in two channels with the target user, the bind will be triggered twice. To trigger a proc only once per nick change, regardless of the number of channels the Eggdrop and user share, use the RAWT bind with AWAY as the keyword.
 
-  Description: triggered when Eggdrop recieves an IRCv3 AWAY message for a user from an IRC server, ONLY if the away-notify IRCv3 capability is enabled via CAP. "Normal" away messages (301 messages) will not trigger this bind, for those you should instead use a RAWT bind. mask is a nickname (* to catch all nicknames) and msg is the reason that has been specified. flags is ignored. This bind will only work with IRC servers that support the IRCv3 away-notify capability, and the away-notify capability must be enabled.
-
-  Module: server
+  Module: irc 
 
 (51) INVT (stackable)
 
@@ -3336,6 +3432,25 @@ The following is a list of bind types and how they work. Below each bind type is
   procname <from> <keyword> <text> <tag>
 
   Description: similar to the RAW bind, but allows an extra field for the IRCv3 message-tags capability. The keyword is either a numeric, like "368", or a keyword, such as "PRIVMSG" or "TAGMSG". "from" will be the server name or the source user (depending on the keyword); flags are ignored. "tag" will be the contents, if any, of the entire tag message prefixed to the server message in a dict format, such as "msgid 890157217279768 aaa bbb". The order of the arguments is identical to the order that the IRC server sends to the bot. If the proc returns 1, Eggdrop will not process the line any further (this could cause unexpected behavior in some cases). As of 1.9.0, it is recommended to use the RAWT bind instead of the RAW bind.
+
+(53) ACCOUNT (stackable)
+
+  bind account <flags> <mask> <proc>
+
+  procname <nick> <user> <hand> <account>
+
+  Description: triggered when Eggdrop receives an ACCOUNT message. The mask for the bind is in the format "#channel nick!user@hostname.com account" where channel is the channel the user was found on when the bind was triggered, the hostmask is the user's hostmask, and account is the account name the user is logging in to, or "" for logging out. The mask argument can accept wildcards. For the proc, nick is the nickname of the user logging into/out of an account, user is the user@host.com hostmask, hand is the handle of the user (or * if none), and account is the name of the account the user logged in to (or "" if the user logged out of an account).
+
+(54) ISUPPORT (stackable)
+
+  bind isupport <flags> <mask> <proc>
+
+  procname <key> <isset> <value>
+ 
+  Description: triggered when the value of an isupport key changes. The mask is matched against the isupport key. If the value is not set, isset is 0 and the value is the empty string. Because the empty string is valid value, use isset to distinguish empty string values from a key being unset. The bind is called before the change is processed, so [isupport isset]/[isupport get] return the old value. A return value other than 0 makes Eggdrop ignore the change and revert to the old value. After a disconnect from the server, all isupport values are reset to default, but $::server will be empty, so that case can be caught and ignored.
+
+  Module: server
+
 
 ^^^^^^^^^^^^^
 Return Values
@@ -3389,7 +3504,7 @@ Here's a list of the bindings that use the return value from procs they trigger:
 
 (18) TLS   Return 1 to disable verbose ssl information for the handshake.
 
-(19) RAWT  Return 1 to ask the bot not to prcess the server text. This can affet the bot's performance by causing it to miss things that it would normally act on -- you have been warned. Again.
+(19) RAWT  Return 1 to ask the bot not to process the server text. This can affet the bot's performance by causing it to miss things that it would normally act on -- you have been warned. Again.
 
 Control Procedures
 ------------------

@@ -153,17 +153,11 @@ either an IPv6 address or a hostname.</div></blockquote>
 <blockquote>
 <div>when a connection can be established through both IPv4 and IPv6.
 You can set this to 1 to prefer IPv6 or to 0 to prefer IPv4.</div></blockquote>
-<p>listen-addr</p>
-<blockquote>
-<div>the address to bind to for listening (telnet/bot ports, /ctcp chat,
-file send, script listen, etc.). Can be either an IPv4/IPv6 IP or a
-hostname. If a hostname resolves to both type of addresses,
-prefer-ipv6 will determine which to be used.</div></blockquote>
 </div></blockquote>
 <p>Other affected variables:</p>
 <blockquote>
 <div><p>my-ip and my-hostname are removed now. Their function is split between
-vhost4 and listen-addr.</p>
+vhost4 and the listen command.</p>
 <p>nat-ip works with IPv4 as it used to. It has no meaning for IPv6 and is
 not queried for IPv6 connections.</p>
 </div></blockquote>
@@ -197,7 +191,7 @@ not queried for IPv6 connections.</p>
           
     <div class="footer" role="contentinfo">
         &#169; Copyright 2020, Eggheads.
-      Last updated on Jan 20, 2020.
+      Last updated on Jun 19, 2020.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.5.
     </div>
         </div>
