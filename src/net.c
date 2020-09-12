@@ -55,7 +55,7 @@ extern unsigned long otraffic_irc_today, otraffic_bn_today, otraffic_dcc_today,
                      otraffic_unknown_today;
 
 char natip[121] = "";         /* Public IPv4 to report for systems behind NAT */
-char listen_ip[121] = "";     /* IP (or hostname) for listening sockets       */
+char listen_ip[121] = ""; /* IP (or hostname) for listening sockets    */
 char vhost[121] = "";         /* IPv4 vhost for outgoing connections          */
 #ifdef IPV6
 char vhost6[121] = "";        /* IPv6 vhost for outgoing connections          */
@@ -63,9 +63,8 @@ int pref_af = 0;              /* Prefer IPv6 over IPv4?                       */
 #endif
 char firewall[121] = "";      /* Socks server for firewall.                   */
 int firewallport = 1080;      /* Default port of socks 4/5 firewalls.         */
-char botuser[USERLEN + 1] = "eggdrop"; /* Username of the user running the bot. */
+char botuser[USERLEN + 1] = "eggdrop"; /* Username of the user running the bot*/
 int dcc_sanitycheck = 0;      /* Do some sanity checking on dcc connections.  */
-
 sock_list *socklist = NULL;   /* Enough to be safe.                           */
 sigjmp_buf alarmret;          /* Env buffer for alarm() returns.              */
 
@@ -189,9 +188,9 @@ int setsockname(sockname_t *addr, char *src, int port, int allowres)
       hp = NULL;
     if (hp) {
       if (hp->h_addrtype == AF_INET)
-        memcpy(&addr->addr.s4.sin_addr, hp->h_addr, hp->h_length);
+        memcpy(&addr->addr.s4.sin_addr, hp->h_addr_list[0], hp->h_length);
       else
-        memcpy(&addr->addr.s6.sin6_addr, hp->h_addr, hp->h_length);
+        memcpy(&addr->addr.s6.sin6_addr, hp->h_addr_list[0], hp->h_length);
       af = hp->h_addrtype;
     }
   }
@@ -243,7 +242,7 @@ but this Eggdrop was not compiled with IPv6 support.");
       } else
         hp = NULL;
       if (hp) {
-        memcpy(&addr->addr.s4.sin_addr, hp->h_addr, hp->h_length);
+        memcpy(&addr->addr.s4.sin_addr, hp->h_addr_list[0], hp->h_length);
         af = hp->h_addrtype;
       }
     } else

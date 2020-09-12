@@ -45,6 +45,7 @@
 
 #include <stddef.h>
 #include <string.h>
+#include "main.h"
 
 /* LCOV_EXCL_START */
 #ifdef HAVE_WEAK_SYMBOLS
@@ -68,7 +69,7 @@ explicit_bzero(void *const pnt, const size_t len)
     SecureZeroMemory(pnt, len);
 #elif defined(HAVE_MEMSET_S)
     if (len > 0U && memset_s(pnt, (rsize_t) len, 0, (rsize_t) len) != 0) {
-        sodium_misuse(); /* LCOV_EXCL_LINE */
+        fatal("explicit_bzero misuse", 0); /* LCOV_EXCL_LINE */
     }
 #elif defined(HAVE_EXPLICIT_MEMSET)
     explicit_memset(pnt, 0, len);

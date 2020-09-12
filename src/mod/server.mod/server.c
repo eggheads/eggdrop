@@ -106,7 +106,7 @@ static char sslserver = 0;
 #endif
 
 static p_tcl_bind_list H_wall, H_raw, H_notc, H_msgm, H_msg, H_flud, H_ctcr,
-                       H_ctcp, H_out, H_rawt, H_awayv3;
+                       H_ctcp, H_out, H_rawt, H_account;
 
 static void empty_msgq(void);
 static void next_server(int *, char *, unsigned int *, char *);
@@ -140,6 +140,8 @@ static char sasl_ecdsa_key[121];
 static int sasl_timeout = 15;
 static int sasl_timeout_time = 0;
 
+#include "isupport.c"
+#include "tclisupport.c"
 #include "servmsg.c"
 
 #define MAXPENALTY 10
@@ -1274,6 +1276,17 @@ static int server_msg STDVAR
   return TCL_OK;
 }
 
+static int server_account STDVAR
+{
+  Function F = (Function) cd;
+
+  BADARGS(6, 6, " nick uhost hand chan account");
+
+  CHECKVALIDITY(server_account);
+  F(argv[1], argv[2], get_user_by_handle(userlist, argv[3]), argv[4], argv[5]);
+  return TCL_OK;
+}
+
 static int server_raw STDVAR
 {
   Function F = (Function) cd;
@@ -1635,6 +1648,8 @@ static tcl_ints my_tcl_ints[] = {
   {"away-notify",       &away_notify,               0},
   {"invite-notify",     &invite_notify,             0},
   {"message-tags",      &message_tags,              0},
+  {"extended-join",     &extended_join,             0},
+  {"account-notify",    &account_notify,            0},
   {NULL,                NULL,                       0}
 };
 
@@ -1989,6 +2004,7 @@ static int server_expmem()
     tot += strlen(realservername) + 1;
   tot += msgq_expmem(&mq) + msgq_expmem(&hq) + msgq_expmem(&modeq);
 
+  tot += isupport_expmem();
   return tot;
 }
 
@@ -2016,12 +2032,13 @@ static void server_report(int idx, int details)
 
   if ((trying_server || server_online) &&
       ((servidx = findanyidx(serv)) != -1)) {
+    const char *networkname = server_online ? isupport_get("NETWORK", strlen("NETWORK")) : "unknown network";
 #ifdef TLS
-    dprintf(idx, "    Server [%s]:%s%d %s\n", dcc[servidx].host,
+    dprintf(idx, "    Connected to %s [%s]:%s%d %s\n", networkname, dcc[servidx].host,
             dcc[servidx].ssl ? "+" : "", dcc[servidx].port, trying_server ?
             "(trying)" : s);
 #else
-    dprintf(idx, "    Server [%s]:%d %s\n", dcc[servidx].host,
+    dprintf(idx, "    Connected to %s [%s]:%d %s\n", networkname, dcc[servidx].host,
             dcc[servidx].port, trying_server ? "(trying)" : s);
 #endif
   } else
@@ -2039,7 +2056,6 @@ static void server_report(int idx, int details)
             (int) ((float) (hq.tot * 100.0) / (float) maxqmsg), (int) hq.tot);
   dprintf(idx, "    Active CAP negotiations: %s\n", (strlen(cap.negotiated) > 0) ?
             cap.negotiated : "None" );
-
   if (details) {
     int size = server_expmem();
 
@@ -2047,6 +2063,9 @@ static void server_report(int idx, int details)
       dprintf(idx, "    On connect, I do: %s\n", initserver);
     if (connectserver[0])
       dprintf(idx, "    Before connect, I do: %s\n", connectserver);
+
+    isupport_report(idx, "    ", details);
+
     dprintf(idx, "    Msg flood: %d msg%s/%d second%s\n", flud_thr,
             (flud_thr != 1) ? "s" : "", flud_time,
             (flud_time != 1) ? "s" : "");
@@ -2072,9 +2091,11 @@ static char *server_close()
   rem_builtins(H_raw, my_raw_binds);
   rem_builtins(H_rawt, my_rawt_binds);
   rem_builtins(H_ctcp, my_ctcps);
+  rem_builtins(H_isupport, my_isupport_binds);
+  isupport_fini();
   /* Restore original commands. */
   del_bind_table(H_wall);
-  del_bind_table(H_awayv3);
+  del_bind_table(H_account);
   del_bind_table(H_raw);
   del_bind_table(H_rawt);
   del_bind_table(H_notc);
@@ -2161,7 +2182,7 @@ static Function server_table[] = {
   /* 24 - 27 */
   (Function) & default_port,    /* int                                  */
   (Function) & server_online,   /* int                                  */
-  (Function) & H_rawt,           /* p_tcl_bind_list                      */
+  (Function) & H_rawt,          /* p_tcl_bind_list                      */
   (Function) & H_raw,           /* p_tcl_bind_list                      */
   /* 28 - 31 */
   (Function) & H_wall,          /* p_tcl_bind_list                      */
@@ -2180,11 +2201,16 @@ static Function server_table[] = {
   (Function) & exclusive_binds, /* int                                  */
   /* 40 - 43 */
   (Function) & H_out,           /* p_tcl_bind_list                      */
-  (Function) add_server,
-  (Function) del_server,
-  (Function) & net_type_int,    /* int                                  */
+  (Function) & net_type_int,     /* int                                  */
+  (Function) & H_account,       /* p_tcl_bind)list                      */
+  (Function) & cap,             /* cap_list                             */
   /* 44 - 47 */
-  (Function) & H_awayv3         /* p_tcl_bind_list                      */
+  (Function) & extended_join,   /* int                                  */
+  (Function) & account_notify,  /* int                                  */
+  (Function) & H_isupport,      /* p_tcl_bind_list                      */
+  (Function) & isupport_get,    /*                                      */
+  /* 48 - 52 */
+  (Function) & isupport_parseint /*                                     */
 };
 
 char *server_start(Function *global_funcs)
@@ -2284,9 +2310,8 @@ char *server_start(Function *global_funcs)
   Tcl_TraceVar(interp, "nick-len",
                TCL_TRACE_READS | TCL_TRACE_WRITES | TCL_TRACE_UNSETS,
                traced_nicklen, NULL);
-
   H_wall = add_bind_table("wall", HT_STACKABLE, server_2char);
-  H_awayv3 = add_bind_table("awy3", HT_STACKABLE, server_2char);
+  H_account = add_bind_table("account", HT_STACKABLE, server_account);
   H_raw = add_bind_table("raw", HT_STACKABLE, server_raw);
   H_rawt = add_bind_table("rawt", HT_STACKABLE, server_tag);
   H_notc = add_bind_table("notc", HT_STACKABLE, server_5char);
@@ -2296,33 +2321,37 @@ char *server_start(Function *global_funcs)
   H_ctcr = add_bind_table("ctcr", HT_STACKABLE, server_6char);
   H_ctcp = add_bind_table("ctcp", HT_STACKABLE, server_6char);
   H_out = add_bind_table("out", HT_STACKABLE, server_out);
+  isupport_init();
   add_builtins(H_raw, my_raw_binds);
   add_builtins(H_rawt, my_rawt_binds);
   add_builtins(H_dcc, C_dcc_serv);
   add_builtins(H_ctcp, my_ctcps);
+  add_builtins(H_isupport, my_isupport_binds);
   add_help_reference("server.help");
   my_tcl_strings[0].buf = botname;
   add_tcl_strings(my_tcl_strings);
   add_tcl_ints(my_tcl_ints);
+  if (sasl) {
+    if ((sasl_mechanism < 0) || (sasl_mechanism >= SASL_MECHANISM_NUM)) {
+      fatal("ERROR: sasl-mechanism is not set to an allowed value, please check"
+            " it and try again", 0);
+    }
 #ifdef TLS
 #ifndef HAVE_EVP_PKEY_GET1_EC_KEY
-  if (sasl) {
     if (sasl_mechanism == SASL_MECHANISM_ECDSA_NIST256P_CHALLENGE) {
       fatal("ERROR: NIST256 functionality missing from your TLS libs, please "
-          "choose a different SASL method", 0);
+            "choose a different SASL method", 0);
     }
-  }
 #endif /* HAVE_EVP_PKEY_GET1_EC_KEY */
 #else  /* TLS */
-  if (sasl) {
     if ((sasl_mechanism == SASL_MECHANISM_ECDSA_NIST256P_CHALLENGE) ||
             (sasl_mechanism == SASL_MECHANISM_EXTERNAL)) {
-        fatal("ERROR: The selected SASL authentication method requires TLS "
-                "libraries which are not installed on this machine. Please "
-                "choose the PLAIN method in your config.");
+      fatal("ERROR: The selected SASL authentication method requires TLS "
+            "libraries which are not installed on this machine. Please "
+            "choose the PLAIN method in your config.", 0);
     }
-  }
 #endif /* TLS */
+  }
   add_tcl_commands(my_tcl_cmds);
   add_tcl_coups(my_tcl_coups);
   add_hook(HOOK_SECONDLY, (Function) server_secondly);
@@ -2340,6 +2369,7 @@ char *server_start(Function *global_funcs)
   newserver[0] = 0;
   newserverport = 0;
   curserv = 999;
+  /* Because this reads the interp variable, the read trace MUST be after */
   do_nettype();
   return NULL;
 }
