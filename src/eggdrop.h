@@ -318,9 +318,11 @@ typedef uint32_t IP;
 #define egg_bzero(dest, len) memset(dest, 0, len)
 #define egg_memcpy memcpy
 #define egg_memset memset
+#define egg_snprintf snprintf
 #define egg_strcasecmp strcasecmp
 #define egg_strftime strftime
 #define egg_strncasecmp strncasecmp
+#define egg_vsnprintf vsnprintf
 #define my_memcpy memcpy
 
 /***********************************************************************/
