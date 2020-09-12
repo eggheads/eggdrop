@@ -504,12 +504,12 @@ static int proxy_connect(int sock, sockname_t *addr)
       if (!(socklist[i].flags & SOCK_UNUSED) && socklist[i].sock == sock)
         socklist[i].flags |= SOCK_PROXYWAIT;    /* drummer */
     memcpy(host, &addr->addr.s4.sin_addr.s_addr, 4);
-    egg_snprintf(s, sizeof s, "\004\001%c%c%c%c%c%c%s", port % 256,
+    snprintf(s, sizeof s, "\004\001%c%c%c%c%c%c%s", port % 256,
                  (port >> 8) % 256, host[0], host[1], host[2], host[3], botuser);
     tputs(sock, s, strlen(botuser) + 9);        /* drummer */
   } else if (proxy == PROXY_SUN) {
     inet_ntop(AF_INET, &addr->addr.s4.sin_addr, host, sizeof host);
-    egg_snprintf(s, sizeof s, "%s %d\n", host, port);
+    snprintf(s, sizeof s, "%s %d\n", host, port);
     tputs(sock, s, strlen(s));  /* drummer */
   }
   return sock;
@@ -791,13 +791,13 @@ int getdccfamilyaddr(sockname_t *addr, char *s, size_t l, int restrict_af)
     if (IN6_IS_ADDR_V4MAPPED(&r->addr.s6.sin6_addr) ||
         IN6_IS_ADDR_UNSPECIFIED(&r->addr.s6.sin6_addr)) {
       memcpy(&ip, r->addr.s6.sin6_addr.s6_addr + 12, sizeof ip);
-      egg_snprintf(s, l, "%lu", natip[0] ? iptolong(inet_addr(natip)) :
+      snprintf(s, l, "%lu", natip[0] ? iptolong(inet_addr(natip)) :
                ntohl(ip));
     } else
       inet_ntop(AF_INET6, &r->addr.s6.sin6_addr, s, l);
   } else
 #endif
-  egg_snprintf(s, l, "%lu", natip[0] ? iptolong(inet_addr(natip)) :
+  snprintf(s, l, "%lu", natip[0] ? iptolong(inet_addr(natip)) :
              ntohl(r->addr.s4.sin_addr.s_addr));
   return 1;
 }

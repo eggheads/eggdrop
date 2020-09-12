@@ -50,7 +50,7 @@ void tandout_but EGG_VARARGS_DEF(int, arg1)
   x = EGG_VARARGS_START(int, arg1, va);
   format = va_arg(va, char *);
 
-  len = egg_vsnprintf(s, sizeof s, format, va);
+  len = vsnprintf(s, sizeof s, format, va);
   va_end(va);
   if (len >= sizeof s) {
     len = sizeof s - 1;
@@ -302,7 +302,7 @@ void botnet_send_priv EGG_VARARGS_DEF(int, arg1)
   tobot = va_arg(va, char *);
   format = va_arg(va, char *);
 
-  egg_vsnprintf(tbuf, 450, format, va);
+  vsnprintf(tbuf, 450, format, va);
   va_end(va);
   tbuf[sizeof(tbuf) - 1] = 0;
 

@@ -478,11 +478,11 @@ void answer_local_whom(int idx, int chan)
   if (botnicklen < 9)
     botnicklen = 9;
 
-  egg_snprintf(format, sizeof format, "%%-%us   %%-%us  %%s\n",
+  snprintf(format, sizeof format, "%%-%us   %%-%us  %%s\n",
                nicklen, botnicklen);
   dprintf(idx, format, " Nick", " Bot", " Host");
   dprintf(idx, format, "----------", "---------", "--------------------");
-  egg_snprintf(format, sizeof format, "%%c%%-%us %%c %%-%us  %%s%%s\n",
+  snprintf(format, sizeof format, "%%c%%-%us %%c %%-%us  %%s%%s\n",
                nicklen, botnicklen);
   for (i = 0; i < dcc_total; i++)
     if (dcc[i].type == &DCC_CHAT) {

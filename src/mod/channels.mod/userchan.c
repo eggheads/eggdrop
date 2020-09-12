@@ -403,11 +403,11 @@ void fix_broken_mask(char *newmask, const char *oldmask, size_t len)
     strat = strchr(oldmask, '@');
     strbang = strchr(oldmask, '!');
     if (strbang == NULL && strat == NULL)
-      egg_snprintf(newmask, len, "%s!*@*", oldmask);
+      snprintf(newmask, len, "%s!*@*", oldmask);
     else if (strat == NULL)
-      egg_snprintf(newmask, len, "%s@*", oldmask);
+      snprintf(newmask, len, "%s@*", oldmask);
     else if (strbang == NULL)
-      egg_snprintf(newmask, len, "%.*s!*%s", (int)(strat - oldmask), oldmask, strat);
+      snprintf(newmask, len, "%.*s!*%s", (int)(strat - oldmask), oldmask, strat);
     else
       strlcpy(newmask, oldmask, len);
   }
@@ -630,7 +630,7 @@ static void display_ban(int idx, int number, maskrec *ban,
     if (ban->added < ban->lastactive) {
       int len = strlen(dates);
       daysago(now, ban->lastactive, s);
-      egg_snprintf(dates + len, (sizeof dates) - len, ", %s %s", MODES_LASTUSED, s); /* Concatenation */
+      snprintf(dates + len, (sizeof dates) - len, ", %s %s", MODES_LASTUSED, s); /* Concatenation */
     }
   } else
     dates[0] = 0;
@@ -674,7 +674,7 @@ static void display_exempt(int idx, int number, maskrec *exempt,
     if (exempt->added < exempt->lastactive) {
       int len = strlen(dates);
       daysago(now, exempt->lastactive, s);
-      egg_snprintf(dates + len, (sizeof dates) - len, ", %s %s", MODES_LASTUSED, s); /* Concatenation */
+      snprintf(dates + len, (sizeof dates) - len, ", %s %s", MODES_LASTUSED, s); /* Concatenation */
     }
   } else
     dates[0] = 0;
@@ -718,7 +718,7 @@ static void display_invite(int idx, int number, maskrec *invite,
     if (invite->added < invite->lastactive) {
       int len = strlen(dates);
       daysago(now, invite->lastactive, s);
-      egg_snprintf(dates + len, (sizeof dates) - len, ", %s %s", MODES_LASTUSED, s); /* Concatenation */
+      snprintf(dates + len, (sizeof dates) - len, ", %s %s", MODES_LASTUSED, s); /* Concatenation */
     }
   } else
     dates[0] = 0;

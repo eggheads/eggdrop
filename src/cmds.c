@@ -68,7 +68,7 @@ static int add_bot_hostmask(int idx, char *nick)
         char s[UHOSTLEN+NICKLEN+5];
         struct userrec *u;
 
-        egg_snprintf(s, sizeof s, "%s!%s", m->nick, m->userhost);
+        snprintf(s, sizeof s, "%s!%s", m->nick, m->userhost);
         u = get_user_by_host(s);
         if (u) {
           dprintf(idx, "(Can't add hostmask for %s because it matches %s)\n",
@@ -76,9 +76,9 @@ static int add_bot_hostmask(int idx, char *nick)
           return 0;
         }
         if (strchr("~^+=-", m->userhost[0]))
-          egg_snprintf(s, sizeof s, "*!?%s", m->userhost + 1);
+          snprintf(s, sizeof s, "*!?%s", m->userhost + 1);
         else
-          egg_snprintf(s, sizeof s, "*!%s", m->userhost);
+          snprintf(s, sizeof s, "*!%s", m->userhost);
         dprintf(idx, "(Added hostmask for %s from %s)\n", nick, chan->dname);
         addhost_by_handle(nick, s);
         return 1;
@@ -122,13 +122,13 @@ static void tell_who(struct userrec *u, int idx, int chan)
     if (dcc[i].type == &DCC_CHAT)
       if (dcc[i].u.chat->channel == chan) {
         if (atr & USER_OWNER) {
-          egg_snprintf(format, sizeof format, "  [%%.2lu]  %%c%%-%us %%s",
+          snprintf(format, sizeof format, "  [%%.2lu]  %%c%%-%us %%s",
                        nicklen);
           sprintf(s, format, dcc[i].sock,
                   (geticon(i) == '-' ? ' ' : geticon(i)), dcc[i].nick,
                   dcc[i].host);
         } else {
-          egg_snprintf(format, sizeof format, "  %%c%%-%us %%s", nicklen);
+          snprintf(format, sizeof format, "  %%c%%-%us %%s", nicklen);
           sprintf(s, format,
                   (geticon(i) == '-' ? ' ' : geticon(i)),
                   dcc[i].nick, dcc[i].host);
@@ -163,14 +163,14 @@ static void tell_who(struct userrec *u, int idx, int chan)
       }
       strftime(s, 14, "%d %b %H:%M", localtime(&dcc[i].timeval));
       if (atr & USER_OWNER) {
-        egg_snprintf(format, sizeof format,
+        snprintf(format, sizeof format,
                      "  [%%.2lu]  %%s%%c%%-%us (%%s) %%s\n", nicklen);
         dprintf(idx, format, dcc[i].sock,
                 dcc[i].status & STAT_CALLED ? "<-" : "->",
                 dcc[i].status & STAT_SHARE ? '+' : ' ', dcc[i].nick, s,
                 dcc[i].u.bot->version);
       } else {
-        egg_snprintf(format, sizeof format, "  %%s%%c%%-%us (%%s) %%s\n",
+        snprintf(format, sizeof format, "  %%s%%c%%-%us (%%s) %%s\n",
                      nicklen);
         dprintf(idx, format, dcc[i].status & STAT_CALLED ? "<-" : "->",
                 dcc[i].status & STAT_SHARE ? '+' : ' ', dcc[i].nick, s,
@@ -185,11 +185,11 @@ static void tell_who(struct userrec *u, int idx, int chan)
         dprintf(idx, "Other people on the bot:\n");
       }
       if (atr & USER_OWNER) {
-        egg_snprintf(format, sizeof format, "  [%%.2lu]  %%c%%-%us ", nicklen);
+        snprintf(format, sizeof format, "  [%%.2lu]  %%c%%-%us ", nicklen);
         sprintf(s, format, dcc[i].sock,
                 (geticon(i) == '-' ? ' ' : geticon(i)), dcc[i].nick);
       } else {
-        egg_snprintf(format, sizeof format, "  %%c%%-%us ", nicklen);
+        snprintf(format, sizeof format, "  %%c%%-%us ", nicklen);
         sprintf(s, format, (geticon(i) == '-' ? ' ' : geticon(i)), dcc[i].nick);
       }
       if (atr & USER_MASTER) {
@@ -224,13 +224,13 @@ static void tell_who(struct userrec *u, int idx, int chan)
         dprintf(idx, "Other people on the bot:\n");
       }
       if (atr & USER_OWNER) {
-        egg_snprintf(format, sizeof format, "  [%%.2lu]  %%c%%-%us (files) %%s",
+        snprintf(format, sizeof format, "  [%%.2lu]  %%c%%-%us (files) %%s",
                      nicklen);
         sprintf(s, format,
                 dcc[i].sock, dcc[i].status & STAT_CHAT ? '+' : ' ',
                 dcc[i].nick, dcc[i].host);
       } else {
-        egg_snprintf(format, sizeof format, "  %%c%%-%us (files) %%s", nicklen);
+        snprintf(format, sizeof format, "  %%c%%-%us (files) %%s", nicklen);
         sprintf(s, format,
                 dcc[i].status & STAT_CHAT ? '+' : ' ',
                 dcc[i].nick, dcc[i].host);
@@ -1370,14 +1370,14 @@ void cmd_die(struct userrec *u, int idx, char *par)
 
   putlog(LOG_CMDS, "*", "#%s# die %s", dcc[idx].nick, par);
   if (par[0]) {
-    egg_snprintf(s1, sizeof s1, "BOT SHUTDOWN (%s: %s)", dcc[idx].nick, par);
-    egg_snprintf(s2, sizeof s2, "DIE BY %s!%s (%s)", dcc[idx].nick,
+    snprintf(s1, sizeof s1, "BOT SHUTDOWN (%s: %s)", dcc[idx].nick, par);
+    snprintf(s2, sizeof s2, "DIE BY %s!%s (%s)", dcc[idx].nick,
                  dcc[idx].host, par);
     strlcpy(quit_msg, par, 1024);
   } else {
-    egg_snprintf(s1, sizeof s1, "BOT SHUTDOWN (Authorized by %s)",
+    snprintf(s1, sizeof s1, "BOT SHUTDOWN (Authorized by %s)",
                  dcc[idx].nick);
-    egg_snprintf(s2, sizeof s2, "DIE BY %s!%s (request)", dcc[idx].nick,
+    snprintf(s2, sizeof s2, "DIE BY %s!%s (request)", dcc[idx].nick,
                  dcc[idx].host);
     strlcpy(quit_msg, dcc[idx].nick, 1024);
   }

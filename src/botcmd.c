@@ -123,7 +123,7 @@ static void bot_chan2(int idx, char *msg)
     *p = 0;
   p = strchr(from, '@');
   if (p) {
-    egg_snprintf(TBUF, sizeof(TBUF), "<%s> %s", from, msg);
+    snprintf(TBUF, sizeof(TBUF), "<%s> %s", from, msg);
     *p = 0;
     if (!partyidle(p + 1, from)) {
       *p = '@';

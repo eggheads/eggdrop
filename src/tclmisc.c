@@ -81,7 +81,7 @@ static int tcl_logfile STDVAR
     /* They just want a list of the logfiles and modes */
     for (i = 0; i < max_logs; i++)
       if (logs[i].filename != NULL) {
-        egg_snprintf(s, sizeof s, "%s %s %s", masktype(logs[i].mask),
+        snprintf(s, sizeof s, "%s %s %s", masktype(logs[i].mask),
                  logs[i].chname, logs[i].filename);
         Tcl_AppendElement(interp, s);
       }
@@ -231,7 +231,7 @@ static int tcl_binds STDVAR
             !wild_match_per(argv[1], tc->func_name))
           continue;
         build_flags(flg, &(tc->flags), NULL);
-        egg_snprintf(hits, sizeof hits, "%i", (int) tc->hits);
+        snprintf(hits, sizeof hits, "%i", (int) tc->hits);
         list[0] = tl->name;
         list[1] = flg;
         list[2] = tm->mask;
@@ -264,7 +264,7 @@ static int tcl_timer STDVAR
   if (argv[2][0] != '#') {
     x = add_timer(&timer, atoi(argv[1]), (argc == 4 ? atoi(argv[3]) : 1),
                   argv[2], 0L);
-    egg_snprintf(s, sizeof s, "timer%lu", x);
+    snprintf(s, sizeof s, "timer%lu", x);
     Tcl_AppendResult(irp, s, NULL);
   }
   return TCL_OK;
@@ -288,7 +288,7 @@ static int tcl_utimer STDVAR
   if (argv[2][0] != '#') {
     x = add_timer(&utimer, atoi(argv[1]), (argc == 4 ? atoi(argv[3]) : 1),
                   argv[2], 0L);
-    egg_snprintf(s, sizeof s, "timer%lu", x);
+    snprintf(s, sizeof s, "timer%lu", x);
     Tcl_AppendResult(irp, s, NULL);
   }
   return TCL_OK;
@@ -394,7 +394,7 @@ static int tcl_unixtime STDVAR
 
   BADARGS(1, 1, "");
 
-  egg_snprintf(s, sizeof s, "%li", (long) now2);
+  snprintf(s, sizeof s, "%li", (long) now2);
   Tcl_AppendResult(irp, s, NULL);
   return TCL_OK;
 }
@@ -470,7 +470,7 @@ static int tcl_rand STDVAR
 
   x = randint(i);
 
-  egg_snprintf(s, sizeof s, "%lu", x);
+  snprintf(s, sizeof s, "%lu", x);
 
   Tcl_AppendResult(irp, s, NULL);
   return TCL_OK;
@@ -485,7 +485,7 @@ static int tcl_sendnote STDVAR
   strlcpy(from, argv[1], sizeof from);
   strlcpy(to, argv[2], sizeof to);
   strlcpy(msg, argv[3], sizeof msg);
-  egg_snprintf(s, sizeof s, "%d", add_note(to, from, msg, -1, 0));
+  snprintf(s, sizeof s, "%d", add_note(to, from, msg, -1, 0));
   Tcl_AppendResult(irp, s, NULL);
   return TCL_OK;
 }
@@ -537,7 +537,7 @@ static int tcl_die STDVAR
   BADARGS(1, 2, " ?reason?");
 
   if (argc == 2) {
-    egg_snprintf(s, sizeof s, "BOT SHUTDOWN (%s)", argv[1]);
+    snprintf(s, sizeof s, "BOT SHUTDOWN (%s)", argv[1]);
     strlcpy(quit_msg, argv[1], 1024);
   } else {
     strlcpy(s, "BOT SHUTDOWN (No reason)", sizeof s);
@@ -596,13 +596,13 @@ static int tcl_modules STDVAR
 
   for (current = module_list; current; current = current->next) {
     list[0] = current->name;
-    egg_snprintf(s, sizeof s, "%d.%d", current->major, current->minor);
+    snprintf(s, sizeof s, "%d.%d", current->major, current->minor);
     list[1] = s;
     i = 2;
     for (dep = dependancy_list; dep && (i < 100); dep = dep->next) {
       if (dep->needing == current) {
         list2[0] = dep->needed->name;
-        egg_snprintf(s2, sizeof s2, "%d.%d", dep->major, dep->minor);
+        snprintf(s2, sizeof s2, "%d.%d", dep->major, dep->minor);
         list2[1] = s2;
         list[i] = Tcl_Merge(2, list2);
         i++;
@@ -771,12 +771,12 @@ static int tcl_status STDVAR
 
   if ((argc < 2) || !strcmp(argv[1], "cpu")) {
     Tcl_AppendElement(irp, "cputime");
-    egg_snprintf(s, sizeof s, "%f", getcputime());
+    snprintf(s, sizeof s, "%f", getcputime());
     Tcl_AppendElement(irp, s);
   }
   if ((argc < 2) || !strcmp(argv[1], "mem")) {
     Tcl_AppendElement(irp, "expmem");
-    egg_snprintf(s, sizeof s, "%d", expected_memory());
+    snprintf(s, sizeof s, "%d", expected_memory());
     Tcl_AppendElement(irp, s);
   }
   if ((argc < 2) || !strcmp(argv[1], "ipv6")) {
@@ -797,7 +797,7 @@ static int tcl_status STDVAR
   }
   if ((argc < 2) || !strcmp(argv[1], "cache")) {
     Tcl_AppendElement(irp, "usercache");
-    egg_snprintf(s, sizeof s, "%4.1f", 100.0 *
+    snprintf(s, sizeof s, "%4.1f", 100.0 *
              ((float) cache_hit) / ((float) (cache_hit + cache_miss)));
     Tcl_AppendElement(irp, s);
   }

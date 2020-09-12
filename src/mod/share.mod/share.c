@@ -1171,7 +1171,7 @@ static void share_ufsend(int idx, char *par)
   int i, sock;
   FILE *f;
 
-  egg_snprintf(s, sizeof s, ".share.%s.%li.users", botnetnick, now);
+  snprintf(s, sizeof s, ".share.%s.%li.users", botnetnick, now);
   if (!(b_status(idx) & STAT_SHARE)) {
     dprintf(idx, "s e You didn't ask; you just started sending.\n");
     dprintf(idx, "s e Ask before sending the userfile.\n");
@@ -1399,7 +1399,7 @@ static void shareout_mod EGG_VARARGS_DEF(struct chanset_t *, arg1)
     format = va_arg(va, char *);
 
     strcpy(s, "s ");
-    if ((l = egg_vsnprintf(s + 2, 509, format, va)) < 0)
+    if ((l = vsnprintf(s + 2, 509, format, va)) < 0)
       s[2 + (l = 509)] = 0;
     for (i = 0; i < dcc_total; i++)
       if ((dcc[i].type->flags & DCT_BOT) &&
@@ -1432,7 +1432,7 @@ static void shareout_but EGG_VARARGS_DEF(struct chanset_t *, arg1)
   format = va_arg(va, char *);
 
   strcpy(s, "s ");
-  if ((l = egg_vsnprintf(s + 2, 509, format, va)) < 0)
+  if ((l = vsnprintf(s + 2, 509, format, va)) < 0)
     s[2 + (l = 509)] = 0;
   for (i = 0; i < dcc_total; i++)
     if ((dcc[i].type->flags & DCT_BOT) && (i != x) &&
@@ -1968,7 +1968,7 @@ static void start_sending_users(int idx)
   char s[INET_ADDRSTRLEN];
 #endif
 
-  egg_snprintf(share_file, sizeof share_file, ".share.%s.%lu", dcc[idx].nick,
+  snprintf(share_file, sizeof share_file, ".share.%s.%lu", dcc[idx].nick,
                now);
   if (dcc[idx].u.bot->uff_flags & UFF_OVERRIDE) {
     debug1("NOTE: Sharing aggressively with %s, overriding its local bots.",
@@ -2025,18 +2025,18 @@ static void start_sending_users(int idx)
 
           /* Send hostmasks */
           for (t = get_user(&USERENTRY_HOSTS, u); t; t = t->next) {
-            egg_snprintf(s2, sizeof s2, "s +bh %s %s\n", u->handle, t->extra);
+            snprintf(s2, sizeof s2, "s +bh %s %s\n", u->handle, t->extra);
             q_tbuf(dcc[idx].nick, s2, NULL);
           }
           /* Send address */
           if (bi) {
 #ifdef TLS
-            egg_snprintf(s2, sizeof s2, "s c BOTADDR %s %s %s%d %s%d\n",
+            snprintf(s2, sizeof s2, "s c BOTADDR %s %s %s%d %s%d\n",
                          u->handle, bi->address, (bi->ssl & TLS_BOT) ? "+" : "",
                          bi->telnet_port, (bi->ssl & TLS_RELAY) ? "+" : "",
                          bi->relay_port);
 #else
-            egg_snprintf(s2, sizeof s2, "s c BOTADDR %s %s %d %d\n", u->handle,
+            snprintf(s2, sizeof s2, "s c BOTADDR %s %s %d %d\n", u->handle,
                          bi->address, bi->telnet_port, bi->relay_port);
 #endif
             q_tbuf(dcc[idx].nick, s2, NULL);
@@ -2046,7 +2046,7 @@ static void start_sending_users(int idx)
 
           fr.udef_global = u->flags_udef;
           build_flags(s1, &fr, NULL);
-          egg_snprintf(s2, sizeof s2, "s a %s %s\n", u->handle, s1);
+          snprintf(s2, sizeof s2, "s a %s %s\n", u->handle, s1);
           q_tbuf(dcc[idx].nick, s2, NULL);
           for (ch = u->chanrec; ch; ch = ch->next) {
             if ((ch->flags & ~BOT_SHARE) &&
@@ -2059,7 +2059,7 @@ static void start_sending_users(int idx)
                 fr.chan = ch->flags & ~BOT_SHARE;
                 fr.udef_chan = ch->flags_udef;
                 build_flags(s1, &fr, NULL);
-                egg_snprintf(s2, sizeof s2, "s a %s %s %s\n", u->handle, s1,
+                snprintf(s2, sizeof s2, "s a %s %s %s\n", u->handle, s1,
                              ch->channel);
                 q_tbuf(dcc[idx].nick, s2, cst);
               }

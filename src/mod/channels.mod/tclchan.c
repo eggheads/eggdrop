@@ -908,12 +908,12 @@ static int tcl_channel_info(Tcl_Interp *irp, struct chanset_t *chan)
     } else if (ul->type == UDEF_INT) {
       char *x;
 
-      egg_snprintf(a, sizeof a, "%s", ul->name);
-      egg_snprintf(b, sizeof b, "%d", getudef(ul->values, chan->dname));
+      snprintf(a, sizeof a, "%s", ul->name);
+      snprintf(b, sizeof b, "%d", getudef(ul->values, chan->dname));
       args[0] = a;
       args[1] = b;
       x = Tcl_Merge(2, args);
-      egg_snprintf(s, sizeof s, "%s", x);
+      snprintf(s, sizeof s, "%s", x);
       Tcl_Free((char *) x);
       Tcl_AppendElement(irp, s);
     } else if (ul->type == UDEF_STR) {

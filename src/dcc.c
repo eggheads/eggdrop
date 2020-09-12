@@ -246,7 +246,7 @@ static void bot_version(int idx, char *par)
   dcc[idx].type = &DCC_BOT;
   addbot(dcc[idx].nick, dcc[idx].nick, botnetnick, '-', dcc[idx].u.bot->numver);
   check_tcl_link(dcc[idx].nick, botnetnick);
-  egg_snprintf(x, sizeof x, "v %d", dcc[idx].u.bot->numver);
+  snprintf(x, sizeof x, "v %d", dcc[idx].u.bot->numver);
   bot_share(idx, x);
   dprintf(idx, "el\n");
 }
@@ -256,7 +256,7 @@ void failed_link(int idx)
   char s[NICKLEN + 18], s1[512];
 
   if (dcc[idx].u.bot->linker[0]) {
-    egg_snprintf(s, sizeof s, "Couldn't link to %s.", dcc[idx].nick);
+    snprintf(s, sizeof s, "Couldn't link to %s.", dcc[idx].nick);
     strcpy(s1, dcc[idx].u.bot->linker);
     add_note(s1, botnetnick, s, -2, 0);
   }
@@ -294,7 +294,7 @@ static void cont_link(int idx, char *buf, int i)
       if (i > 0) {
         bots = bots_in_subtree(findbot(dcc[idx].nick));
         users = users_in_subtree(findbot(dcc[idx].nick));
-        egg_snprintf(x, sizeof x,
+        snprintf(x, sizeof x,
                      "Unlinked %s (restructure) (lost %d bot%s and %d user%s)",
                      dcc[i].nick, bots, (bots != 1) ? "s" : "",
                      users, (users != 1) ? "s" : "");
@@ -500,7 +500,7 @@ static void eof_dcc_bot(int idx)
 
   bots = bots_in_subtree(findbot(dcc[idx].nick));
   users = users_in_subtree(findbot(dcc[idx].nick));
-  egg_snprintf(x, sizeof x,
+  snprintf(x, sizeof x,
                "Lost bot: %s (lost %d bot%s and %d user%s)",
                dcc[idx].nick, bots, (bots != 1) ? "s" : "", users,
                (users != 1) ? "s" : "");
@@ -578,7 +578,7 @@ static int dcc_bot_check_digest(int idx, char *remote_digest)
 
   MD5_Init(&md5context);
 
-  egg_snprintf(digest_string, 33, "<%lx%x@", (long) getpid(),
+  snprintf(digest_string, 33, "<%lx%x@", (long) getpid(),
                (unsigned int) dcc[idx].timeval);
   MD5_Update(&md5context, (unsigned char *) digest_string,
              strlen(digest_string));
@@ -1436,7 +1436,7 @@ static void timeout_dupwait(int idx)
 
   /* Still duplicate? */
   if (in_chain(dcc[idx].nick)) {
-    egg_snprintf(x, sizeof x, "%s!%s", dcc[idx].nick, dcc[idx].host);
+    snprintf(x, sizeof x, "%s!%s", dcc[idx].nick, dcc[idx].host);
     dprintf(idx, "error Already connected.\n");
     putlog(LOG_BOTS, "*", DCC_DUPLICATE, x);
     killsock(dcc[idx].sock);
@@ -1768,7 +1768,7 @@ static void dcc_telnet_pass(int idx, int atr)
     /* Turn off remote telnet echo (send IAC WILL ECHO). */
     if (dcc[idx].status & STAT_TELNET) {
       char buf[1030];
-      egg_snprintf(buf, sizeof buf, "\n%s%s\r\n", escape_telnet(DCC_ENTERPASS),
+      snprintf(buf, sizeof buf, "\n%s%s\r\n", escape_telnet(DCC_ENTERPASS),
                TLN_IAC_C TLN_WILL_C TLN_ECHO_C);
       tputs(dcc[idx].sock, buf, strlen(buf));
     } else
@@ -2294,7 +2294,7 @@ static void dcc_telnet_got_ident(int i, char *host)
     return;
   }
   strlcpy(dcc[i].host, host, UHOSTLEN);
-  egg_snprintf(x, sizeof x, "-telnet!%s", dcc[i].host);
+  snprintf(x, sizeof x, "-telnet!%s", dcc[i].host);
   if (protect_telnet && !make_userfile) {
     struct userrec *u;
     int ok = 1;

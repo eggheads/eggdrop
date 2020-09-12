@@ -319,7 +319,7 @@ static int check_tcl_out(int which, char *msg, int sent)
   default:
     queue = "noqueue";
   }
-  egg_snprintf(args, sizeof args, "%s %s", queue, sent ? "sent" : "queued");
+  snprintf(args, sizeof args, "%s %s", queue, sent ? "sent" : "queued");
   Tcl_SetVar(interp, "_out1", queue, 0);
   Tcl_SetVar(interp, "_out2", msg, 0);
   Tcl_SetVar(interp, "_out3", sent ? "sent" : "queued", 0);
@@ -1164,13 +1164,13 @@ static void server_activity(int idx, char *tagmsg, int len)
             if (subtoken == NULL) {
               break;
             }
-            taglen += egg_snprintf(tagdict + taglen, TOTALTAGMAX - taglen,
+            taglen += snprintf(tagdict + taglen, TOTALTAGMAX - taglen,
                   "%s ", subtoken);
             found++;
           }
           /* Account for tags (not key/value pairs), prep empty value for Tcl */
           if (found < 2) {
-            taglen += egg_snprintf(tagdict + taglen, TOTALTAGMAX - taglen,
+            taglen += snprintf(tagdict + taglen, TOTALTAGMAX - taglen,
                 "{} ");
           }
         }
@@ -1248,7 +1248,7 @@ static int got311(char *from, char *msg)
     return 0;
 
   if (match_my_nick(n2))
-    egg_snprintf(botuserhost, sizeof botuserhost, "%s@%s", u, h);
+    snprintf(botuserhost, sizeof botuserhost, "%s@%s", u, h);
 
   return 0;
 }
@@ -1865,20 +1865,20 @@ static void connect_server(void)
 
 #ifdef IPV6
     if (inet_pton(AF_INET6, botserver, buf)) {
-      len += egg_snprintf(s, sizeof s, "%s [%s]", IRC_SERVERTRY, botserver);
+      len += snprintf(s, sizeof s, "%s [%s]", IRC_SERVERTRY, botserver);
     } else {
 #endif
-     len += egg_snprintf(s, sizeof s, "%s %s", IRC_SERVERTRY, botserver);
+     len += snprintf(s, sizeof s, "%s %s", IRC_SERVERTRY, botserver);
 #ifdef IPV6
     }
 #endif
 
 #ifdef TLS
-    len += egg_snprintf(s + len, sizeof s - len, ":%s%d",
+    len += snprintf(s + len, sizeof s - len, ":%s%d",
             use_ssl ? "+" : "", botserverport);
     dcc[servidx].ssl = use_ssl;
 #else
-    len += egg_snprintf(s + len, sizeof s - len, ":%d", botserverport);
+    len += snprintf(s + len, sizeof s - len, ":%d", botserverport);
 #endif
     putlog(LOG_SERV, "*", "%s", s);
     dcc[servidx].port = botserverport;

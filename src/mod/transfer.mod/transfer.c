@@ -190,9 +190,9 @@ static void check_tcl_toutlost(struct userrec *u, char *nick, char *path,
   Tcl_SetVar(interp, "_sr1", hand, 0);
   Tcl_SetVar(interp, "_sr2", nick, 0);
   Tcl_SetVar(interp, "_sr3", path, 0);
-  egg_snprintf(s, sizeof s, "%lu", acked);
+  snprintf(s, sizeof s, "%lu", acked);
   Tcl_SetVar(interp, "_sr4", s, 0);
-  egg_snprintf(s, sizeof s, "%lu", length);
+  snprintf(s, sizeof s, "%lu", length);
   Tcl_SetVar(interp, "_sr5", s, 0);
   check_tcl_bind(h, hand, &fr, " $_sr1 $_sr2 $_sr3 $_sr4 $_sr5",
                  MATCH_MASK | BIND_USE_ATTR | BIND_STACKABLE);
@@ -298,7 +298,7 @@ static void eof_dcc_send(int idx)
     fclose(dcc[idx].u.xfer->f);
 
     /* lookup handle */
-    egg_snprintf(s, sizeof s, "%s!%s", dcc[idx].nick, dcc[idx].host);
+    snprintf(s, sizeof s, "%s!%s", dcc[idx].nick, dcc[idx].host);
     u = get_user_by_host(s);
     hand = u ? u->handle : "*";
 
@@ -358,7 +358,7 @@ static void eof_dcc_send(int idx)
       if (shunlink) {
         /* Drop that bot */
         dprintf(y, "bye\n");
-        egg_snprintf(s, sizeof s, TRANSFER_USERFILE_DISCON, dcc[y].nick);
+        snprintf(s, sizeof s, TRANSFER_USERFILE_DISCON, dcc[y].nick);
         botnet_send_unlinked(y, dcc[y].nick, s);
         putlog(LOG_BOTS, "*", "%s.", s);
         if (y != idx) {
@@ -581,7 +581,7 @@ static void eof_dcc_get(int idx)
       if (shunlink) {
         /* Drop that bot */
         dprintf(-dcc[y].sock, "bye\n");
-        egg_snprintf(s, sizeof s, TRANSFER_USERFILE_DISCON, dcc[y].nick);
+        snprintf(s, sizeof s, TRANSFER_USERFILE_DISCON, dcc[y].nick);
         botnet_send_unlinked(y, dcc[y].nick, s);
         putlog(LOG_BOTS, "*", "%s.", s);
         if (y != idx) {
@@ -599,7 +599,7 @@ static void eof_dcc_get(int idx)
 
     /* Call `lost' DCC trigger now.
      */
-    egg_snprintf(s, sizeof s, "%s!%s", dcc[idx].nick, dcc[idx].host);
+    snprintf(s, sizeof s, "%s!%s", dcc[idx].nick, dcc[idx].host);
     u = get_user_by_host(s);
     check_tcl_toutlost(u, dcc[idx].nick, dcc[idx].u.xfer->dir,
                        dcc[idx].u.xfer->acked, dcc[idx].u.xfer->length, H_lost);
@@ -651,7 +651,7 @@ static void transfer_get_timeout(int i)
     if (y) {
       if (shunlink) {
         dprintf(y, "bye\n");
-        egg_snprintf(xx, sizeof xx, TRANSFER_DICONNECT_TIMEOUT, dcc[y].nick);
+        snprintf(xx, sizeof xx, TRANSFER_DICONNECT_TIMEOUT, dcc[y].nick);
         botnet_send_unlinked(y, dcc[y].nick, xx);
         putlog(LOG_BOTS, "*", "%s.", xx);
         if (y != i) {
@@ -674,7 +674,7 @@ static void transfer_get_timeout(int i)
 
     /* Call DCC `timeout' trigger now.
      */
-    egg_snprintf(xx, sizeof xx, "%s!%s", dcc[i].nick, dcc[i].host);
+    snprintf(xx, sizeof xx, "%s!%s", dcc[i].nick, dcc[i].host);
     u = get_user_by_host(xx);
     check_tcl_toutlost(u, dcc[i].nick, dcc[i].u.xfer->dir,
                        dcc[i].u.xfer->acked, dcc[i].u.xfer->length, H_tout);
@@ -859,7 +859,7 @@ static void dcc_fork_send(int idx, char *x, int y)
   dcc[idx].u.xfer->start_time = now;
 
   if (strcmp(dcc[idx].nick, "*users")) {
-    egg_snprintf(s1, sizeof s1, "%s!%s", dcc[idx].nick, dcc[idx].host);
+    snprintf(s1, sizeof s1, "%s!%s", dcc[idx].nick, dcc[idx].host);
     putlog(LOG_MISC, "*", TRANSFER_DCC_CONN, dcc[idx].u.xfer->origname, s1);
   }
   if (dcc[idx].type->activity && y) {

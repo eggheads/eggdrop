@@ -464,7 +464,7 @@ void eggContext(const char *file, int line, const char *module)
   if (!module) {
     strlcpy(x, p ? p + 1 : file, sizeof x);
   } else
-    egg_snprintf(x, 31, "%s:%s", module, p ? p + 1 : file);
+    snprintf(x, 31, "%s:%s", module, p ? p + 1 : file);
   cx_ptr = ((cx_ptr + 1) & 15);
   strcpy(cx_file[cx_ptr], x);
   cx_line[cx_ptr] = line;
@@ -482,7 +482,7 @@ void eggContextNote(const char *file, int line, const char *module,
   if (!module)
     strlcpy(x, p ? p + 1 : file, sizeof x);
   else
-    egg_snprintf(x, 31, "%s:%s", module, p ? p + 1 : file);
+    snprintf(x, 31, "%s:%s", module, p ? p + 1 : file);
   cx_ptr = ((cx_ptr + 1) & 15);
   strcpy(cx_file[cx_ptr], x);
   cx_line[cx_ptr] = line;
@@ -708,7 +708,7 @@ static void core_secondly()
               fclose(logs[i].f);
               logs[i].f = NULL;
             }
-            egg_snprintf(s, sizeof s, "%s.yesterday", logs[i].filename);
+            snprintf(s, sizeof s, "%s.yesterday", logs[i].filename);
             unlink(s);
             movefile(logs[i].filename, s);
           }
@@ -1070,15 +1070,15 @@ int main(int arg_c, char **arg_v)
 
   /* Version info! */
 #ifdef EGG_PATCH
-  egg_snprintf(egg_version, sizeof egg_version, "%s+%s %u", EGG_STRINGVER, EGG_PATCH, egg_numver);
-  egg_snprintf(ver, sizeof ver, "eggdrop v%s+%s", EGG_STRINGVER, EGG_PATCH);
-  egg_snprintf(version, sizeof version,
+  snprintf(egg_version, sizeof egg_version, "%s+%s %u", EGG_STRINGVER, EGG_PATCH, egg_numver);
+  snprintf(ver, sizeof ver, "eggdrop v%s+%s", EGG_STRINGVER, EGG_PATCH);
+  snprintf(version, sizeof version,
                "Eggdrop v%s+%s (C) 1997 Robey Pointer (C) 2010-2020 Eggheads",
                 EGG_STRINGVER, EGG_PATCH);
 #else
-  egg_snprintf(egg_version, sizeof egg_version, "%s %u", EGG_STRINGVER, egg_numver);
-  egg_snprintf(ver, sizeof ver, "eggdrop v%s", EGG_STRINGVER);
-  egg_snprintf(version, sizeof version,
+  snprintf(egg_version, sizeof egg_version, "%s %u", EGG_STRINGVER, egg_numver);
+  snprintf(ver, sizeof ver, "eggdrop v%s", EGG_STRINGVER);
+  snprintf(version, sizeof version,
                "Eggdrop v%s (C) 1997 Robey Pointer (C) 2010-2020 Eggheads",
                 EGG_STRINGVER);
 #endif
@@ -1180,7 +1180,7 @@ int main(int arg_c, char **arg_v)
   cache_miss = 0;
   cache_hit = 0;
   if (!pid_file[0])
-    egg_snprintf(pid_file, sizeof pid_file, "pid.%s", botnetnick);
+    snprintf(pid_file, sizeof pid_file, "pid.%s", botnetnick);
 
   /* Check for pre-existing eggdrop! */
   f = fopen(pid_file, "r");
