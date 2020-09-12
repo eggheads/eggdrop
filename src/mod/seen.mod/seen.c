@@ -471,17 +471,17 @@ targetcont:
   work = now - laston;
   if (work >= 86400) {
     tv = work / 86400;
-    snprintf(word2, sizeof word2, "%lu day%s, ", tv, (tv == 1) ? "" : "s");
+    snprintf(word2, sizeof word2, "%li day%s, ", tv, (tv == 1) ? "" : "s");
     work = work % 86400;
   }
   if (work >= 3600) {
     tv = work / 3600;
-    snprintf(word2 + strlen(word2), (sizeof word2) - strlen(word2), "%lu hour%s, ", tv, (tv == 1) ? "" : "s");
+    snprintf(word2 + strlen(word2), (sizeof word2) - strlen(word2), "%li hour%s, ", tv, (tv == 1) ? "" : "s");
     work = work % 3600;
   }
   if (work >= 60) {
     tv = work / 60;
-    snprintf(word2 + strlen(word2), (sizeof word2) - strlen(word2), "%lu minute%s, ", tv,
+    snprintf(word2 + strlen(word2), (sizeof word2) - strlen(word2), "%li minute%s, ", tv,
             (tv == 1) ? "" : "s");
   }
   if (!word2[0] && (work < 60)) {
