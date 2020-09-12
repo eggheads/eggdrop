@@ -20,6 +20,8 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
+#undef answer /* before resolv.h because it could collide with src/mod/module.h
+		 (dietlibc) */
 #include <resolv.h> /* base64 encode b64_ntop() and base64 decode b64_pton() */
 #ifdef TLS
   #include <openssl/err.h>
@@ -388,6 +390,15 @@ static int got001(char *from, char *msg)
     }
   }
 
+  return 0;
+}
+
+/* Got 005: ISUPPORT network information
+ */
+static int got005(char *from, char *msg)
+{
+  newsplit(&msg); /* skip botnick */
+  isupport_parse(msg, isupport_set);
   return 0;
 }
 
@@ -1053,6 +1064,8 @@ static void disconnect_server(int idx)
   if (realservername)
     nfree(realservername);
   realservername = 0;
+  /* $::server should be empty for this, so isupport binds can ignore it */
+  isupport_clear_values(0);
   if (dcc[idx].sock >= 0)
     killsock(dcc[idx].sock);
   dcc[idx].sock = -1;
@@ -1115,7 +1128,7 @@ static struct dcc_table SERVER_SOCKET = {
 static void server_activity(int idx, char *tagmsg, int len)
 {
   char *from, *code, *s1, *s2, *saveptr1=NULL, *saveptr2=NULL, *tagstrptr=NULL;
-  char *token, *subtoken, tagstr[TOTALTAGMAX+1], tagdict[TOTALTAGMAX+1];
+  char *token, *subtoken, tagstr[TOTALTAGMAX+1], tagdict[TOTALTAGMAX+1] = "";
   char *msgptr, rawmsg[RECVLINEMAX+7];
   int taglen, i, found;
 
@@ -1132,7 +1145,6 @@ static void server_activity(int idx, char *tagmsg, int len)
   if (msgtag) {
     if (*tagmsg == '@') {
       taglen = 0;
-      memset(tagdict, '\0', TOTALTAGMAX);
       tagstrptr = newsplit(&msgptr);
       strlcpy(tagstr, tagstrptr, TOTALTAGMAX+1);
       tagstrptr++;     /* Remove @ */
@@ -1163,7 +1175,9 @@ static void server_activity(int idx, char *tagmsg, int len)
           }
         }
       }
-      tagdict[taglen-1] = '\0';     /* Remove trailing space */
+      if (taglen > 0) {
+        tagdict[taglen-1] = '\0';     /* Remove trailing space */
+      }
     }
   }
   from = "";
@@ -1734,6 +1748,16 @@ static int gotcap(char *from, char *msg) {
   return 1;
 }
 
+static int server_isupport(char *key, char *isset_str, char *value)
+{
+  int isset = !strcmp(isset_str, "1");
+
+  if (!strcmp(key, "NICKLEN") || !strcmp(key, "MAXNICKLEN")) {
+    isupport_parseint(key, isset ? value : NULL, 9, NICKMAX, 1, 9, &nick_len);
+  }
+  return 0;
+}
+
 static cmd_t my_raw_binds[] = {
   {"PRIVMSG",      "",   (IntFunc) gotmsg,          NULL},
   {"NOTICE",       "",   (IntFunc) gotnotice,       NULL},
@@ -1742,6 +1766,7 @@ static cmd_t my_raw_binds[] = {
   {"PONG",         "",   (IntFunc) gotpong,         NULL},
   {"WALLOPS",      "",   (IntFunc) gotwall,         NULL},
   {"001",          "",   (IntFunc) got001,          NULL},
+  {"005",          "",   (IntFunc) got005,          NULL},
   {"303",          "",   (IntFunc) got303,          NULL},
   {"311",          "",   (IntFunc) got311,          NULL},
   {"318",          "",   (IntFunc) whoispenalty,    NULL},
@@ -1778,6 +1803,11 @@ static cmd_t my_raw_binds[] = {
 static cmd_t my_rawt_binds[] = {
   {"TAGMSG",       "",   (IntFunc) gottagmsg,       NULL},
   {NULL,           NULL, NULL,                      NULL}
+};
+
+static cmd_t my_isupport_binds[] = {
+  {"*",      "",   (IntFunc) server_isupport, "server:isupport"},
+  {NULL,   NULL,   NULL,                                   NULL}
 };
 
 static void server_resolve_success(int);
@@ -1827,6 +1857,7 @@ static void connect_server(void)
       return;
     }
 
+    isupport_preconnect();
     if (connectserver[0])       /* drummer */
       do_tcl("connect-server", connectserver);
     check_tcl_event("connect-server");

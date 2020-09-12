@@ -188,9 +188,9 @@ int setsockname(sockname_t *addr, char *src, int port, int allowres)
       hp = NULL;
     if (hp) {
       if (hp->h_addrtype == AF_INET)
-        memcpy(&addr->addr.s4.sin_addr, hp->h_addr, hp->h_length);
+        memcpy(&addr->addr.s4.sin_addr, hp->h_addr_list[0], hp->h_length);
       else
-        memcpy(&addr->addr.s6.sin6_addr, hp->h_addr, hp->h_length);
+        memcpy(&addr->addr.s6.sin6_addr, hp->h_addr_list[0], hp->h_length);
       af = hp->h_addrtype;
     }
   }
@@ -242,7 +242,7 @@ but this Eggdrop was not compiled with IPv6 support.");
       } else
         hp = NULL;
       if (hp) {
-        memcpy(&addr->addr.s4.sin_addr, hp->h_addr, hp->h_length);
+        memcpy(&addr->addr.s4.sin_addr, hp->h_addr_list[0], hp->h_length);
         af = hp->h_addrtype;
       }
     } else

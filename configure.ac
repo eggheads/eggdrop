@@ -114,7 +114,6 @@ AX_CREATE_STDINT_H([eggint.h])
 AC_CHECK_FUNCS([dprintf explicit_bzero explicit_memset getrandom getrusage inet_aton isascii memset_s random rand lrand48 snprintf strlcpy vsnprintf])
 AC_FUNC_SELECT_ARGTYPES
 EGG_FUNC_B64_NTOP
-EGG_FUNC_VPRINTF
 AC_FUNC_MMAP
 
 

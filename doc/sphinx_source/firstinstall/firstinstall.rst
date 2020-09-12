@@ -21,7 +21,7 @@ The super-short version
 
 You can read the `Installation`_ section for a more detailed explanation of these steps.
 
-1. Download the `latest stable Eggdrop release <https://ftp.eggheads.org/pub/eggdrop/source/eggdrop-1.8.4.tar.gz>`_ to your shell via FTP, or simply type ``wget geteggdrop.com -O eggdrop-1.8.4.tar.gz``
+1. Download the `latest stable Eggdrop release <https://ftp.eggheads.org/pub/eggdrop/source/stable/eggdrop-1.8.4.tar.gz>`_ to your shell via FTP, or simply type ``wget geteggdrop.com -O eggdrop-1.8.4.tar.gz``
 2. From the commadline of your shell, type ``tar zxvf eggdrop-1.8.4.tar.gz``
 3. Type ``cd eggdrop-1.8.4``
 4. Type ``./configure``
@@ -266,7 +266,7 @@ in your config file. Uncomment it by removing the '#' sign and then replace <pas
 Setting up SASL authentication
 ------------------------------
 
-Simple Authentication and Security Layer (SASL) is becoming a prevelant method of authenticating with IRC services such as NickServ prior to your client finalizing a connection to the IRC server, eliminating the need to /msg NickServ to identify yourself. In other words, you can authenticate with NickServ and do things like receive a cloaked hostmask before your client ever appears on the IRC server. Eggdrop supports three methods of SASL authentication, set via the sasl-mechanism setting:
+Simple Authentication and Security Layer (SASL) is becoming a prevalant method of authenticating with IRC services such as NickServ prior to your client finalizing a connection to the IRC server, eliminating the need to /msg NickServ to identify yourself. In other words, you can authenticate with NickServ and do things like receive a cloaked hostmask before your client ever appears on the IRC server. Eggdrop supports three methods of SASL authentication, set via the sasl-mechanism setting:
 
 * **PLAIN**: To use this method, set sasl-mechanism to 0. This method passes the username and password (set in the sasl-username and sasl-password config file settings) to the IRC server in plaintext. If you only connect to the IRC server using a connection protected by SSL/TLS this is a generally safe method of authentication; however you probably want to avoid this method if you connect to a server on a non-protected port as the exchange itself is not encrypted.
 
@@ -301,7 +301,7 @@ UTF-8 Support
 -------------
 The encoding scheme used by Eggdrop's Tcl interface is set based on the locale settings of the host machine. You can check which locale your host machine is using by running the ``locale`` command. Eggdrop takes that locale setting of the host machine and compares it to the locales available within Tcl's installed libraries. If it finds one in Tcl that matches (or is close to matching), that is the encoding scheme that is used. If a matching encoding scheme is not found, only then does eggdrop default to ISO 8859-1 encoding.
 
-If you want Eggdrop to use a specific encoding scheme that it is not currently using, you can view the availabe locales on your machine via the ``locale -a`` command, and then set the one you want to use for that user by running ``export LANG=en_US.UTF-8`` (or whichever scheme you want to use). You should not need to edit any source code, as has been a popular suggestion over the past few years.
+If you want Eggdrop to use a specific encoding scheme that it is not currently using, you can view the available locales on your machine via the ``locale -a`` command, and then set the one you want to use for that user by running ``export LANG=en_US.UTF-8`` (or whichever scheme you want to use). You should not need to edit any source code, as has been a popular suggestion over the past few years.
 
 Unicode Emoji Support
 ~~~~~~~~~~~~~~~~~~~~~

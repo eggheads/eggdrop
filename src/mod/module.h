@@ -502,13 +502,14 @@
 /* 304 - 307 */
 #define strncpyz ((size_t (*) (char *, const char *, size_t))global[304])
 #ifndef HAVE_BASE64
-# define b64_ntop ((int (*) (u_char const *, size_t, char *, size_t))global[305])
-# define b64_pton ((int (*) (const char *, u_char *, size_t))global[306])
+# define b64_ntop ((int (*) (uint8_t const *, size_t, char *, size_t))global[305])
+# define b64_pton ((int (*) (const char *, uint8_t *, size_t))global[306])
 #endif
 #define check_validpass ((char *(*) (struct userrec *, char *))global[307])
 /* 308 - 311 */
 #define make_rand_str_from_chars ((void (*) (char *, int, char *))global[308])
-#define USERENTRY_PASS2 (*(struct user_entry_type *)(global[309]))
+#define add_tcl_objcommands ((void (*) (tcl_cmds *))global[309])
+#define USERENTRY_PASS2 (*(struct user_entry_type *)(global[310]))
 
 /* hostmasking */
 #define maskhost(a,b) maskaddr((a),(b),3)

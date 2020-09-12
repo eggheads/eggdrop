@@ -464,7 +464,7 @@ void call_ipbyhost(char *hostn, sockname_t *ip, int ok)
  */
 void block_dns_hostbyip(sockname_t *addr)
 {
-  char host[UHOSTLEN];
+  char host[256] = "";
   volatile int i = 1;
 
   if (addr->family == AF_INET) {

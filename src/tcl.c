@@ -297,6 +297,41 @@ static char *tcl_eggstr(ClientData cdata, Tcl_Interp *irp,
   }
 }
 
+struct tcl_call_stringinfo {
+  Tcl_CmdProc *proc;
+  ClientData cd;
+};
+
+static void tcl_cleanup_stringinfo(ClientData cd)
+{
+  nfree(cd);
+}
+
+/* Compatibility wrapper that calls Tcl functions with String API */
+static int tcl_call_stringproc_cd(ClientData cd, Tcl_Interp *interp, int objc, Tcl_Obj *const objv[])
+{
+  static int max;
+  static const char **argv;
+  int i;
+  struct tcl_call_stringinfo *info = cd;
+  /* The string API guarantees argv[argc] == NULL, unlike the obj API */
+  if (objc + 1 > max)
+    argv = nrealloc(argv, (objc + 1) * sizeof *argv);
+  for (i = 0; i < objc; i++)
+    argv[i] = Tcl_GetString(objv[i]);
+  argv[objc] = NULL;
+  return (info->proc)(info->cd, interp, objc, argv);
+}
+
+/* The standard case of no actual cd */
+static int tcl_call_stringproc(ClientData cd, Tcl_Interp *interp, int objc, Tcl_Obj *const objv[])
+{
+  struct tcl_call_stringinfo info;
+  info.proc = cd;
+  info.cd = NULL;
+  return tcl_call_stringproc_cd(&info, interp, objc, objv);
+}
+
 /* Add/remove tcl commands
  */
 
@@ -305,14 +340,21 @@ void add_tcl_commands(tcl_cmds *table)
   int i;
 
   for (i = 0; table[i].name; i++)
-    Tcl_CreateCommand(interp, table[i].name, table[i].func, NULL, NULL);
+    Tcl_CreateObjCommand(interp, table[i].name, tcl_call_stringproc, table[i].func, NULL);
 }
 
 void add_cd_tcl_cmds(cd_tcl_cmd *table)
 {
+  struct tcl_call_stringinfo *info;
   while (table->name) {
-    Tcl_CreateCommand(interp, table->name, table->callback,
-                      (ClientData) table->cdata, NULL);
+    if (table->cdata) {
+      info = nmalloc(sizeof *info);
+      info->proc = table->callback;
+      info->cd = table->cdata;
+      Tcl_CreateObjCommand(interp, table->name, tcl_call_stringproc_cd, info, tcl_cleanup_stringinfo);
+    } else {
+      Tcl_CreateObjCommand(interp, table->name, tcl_call_stringproc, table->callback, NULL);
+    }
     table++;
   }
 }
