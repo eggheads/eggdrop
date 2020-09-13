@@ -5,6 +5,7 @@
  *
  * Modified/written by Fabian Knittel <fknittel@gmx.de>
  * IPv6 support added by pseudo <pseudo@egg6.net>
+ * /etc/hosts support added by Michael Ortmann
  */
 /*
  * Portions Copyright (C) 1999 - 2020 Eggheads Development Team
@@ -42,9 +43,6 @@
 		 (dietlibc) */
 #include <resolv.h>
 #include <errno.h>
-#include <fcntl.h>
-#include <sys/mman.h>
-#include <sys/stat.h>
 
 /* OpenBSD */
 #ifndef NS_GET16
@@ -1204,17 +1202,21 @@ static void dns_lookup(sockname_t *addr)
   sendrequest(rp, T_PTR);
 }
 
-/* Read /etc/hosts. mmap() is used instead of fgets() because /etc/hosts is read
- * for every lookup and /etc/hosts can be big, for example if used for stopping
- * ad banners */
+/* Read /etc/hosts. fgets() is used instead of mmap() because we prefer
+ * maintainability over optimized code, even though we read /etc/hosts for every
+ * lookup and /etc/hosts can be big, for example if used for stopping banner
+ * ads */
 static int dns_hosts(char *hostn) {
   #define PATH "/etc/hosts"
-  #define hostn_isspace(x) strchr("\t\v\f ", (x))
-  int fd, hostn_len, i, found = 0;
-  struct stat sb;
-  char *addr, hostn_lower[256], hostn_upper[256], *eof, *last_newline,
-       *last_space, *last_hash, *c, *c2, ip[256];
+  size_t hostn_len;
+  int i;
+  char hostn_lower[256], hostn_upper[256], line[1024], *p1, *p2, *p3, *p4;
+  FILE *hostf;
   sockname_t name;
+#ifdef IPV6
+  int af, fallback_set = 0;
+  char fallback_ip[sizeof line];
+#endif
 
   if (!*hostn) {
     ddebug0(RES_MSG "bogus empty hostname input");
@@ -1225,8 +1227,8 @@ static int dns_hosts(char *hostn) {
     ddebug0(RES_MSG "bogus len of hostname > 255 input");
     return 1;
   }
-  /* due to strncasecmp() and strncmp() being slow if used in loop, precalculate
-   * lower and upper string from hostn and compare with handcrafted code */
+  /* precalculate lower and upper string from hostn and compare with handcrafted
+   * code, due to strncasecmp() and strncmp() being slow if used in loop */
   for (i = 0; i < hostn_len; i++) {
       /* while at it, reject hostnames with bogus chars, see rfc 952, 1123 and 2181 */
       if (!strchr("-.0123456789ABCDEFGHIJABCDEFGHIJKLMNOPQRSTUVWXYZ_abcdefghijklmnopqrstuvwxyz", hostn[i])) {
@@ -1238,81 +1240,69 @@ static int dns_hosts(char *hostn) {
   }
   hostn_lower[i] = 0;
   hostn_upper[i] = 0;
-  fd = open(PATH, O_RDONLY);
-  if (fd < 0) {
-    ddebug1(RES_MSG "open(" PATH "): %s", strerror(errno));
+  if (!(hostf = fopen(PATH, "r"))) {
+    ddebug1(RES_MSG "fopen(" PATH "): %s", strerror(errno));
     return 0;
   }
-  if (fstat(fd, &sb) < 0) {
-    ddebug1(RES_MSG "fstat(" PATH "): %s", strerror(errno));
-    close(fd);
-    return 0;
-  }
-  addr = mmap(NULL, sb.st_size, PROT_READ, MAP_PRIVATE, fd, 0);
-  if (addr == MAP_FAILED) {
-    ddebug1(RES_MSG "mmap(" PATH "): %s", strerror(errno));
-    close(fd);
-    return 0;
-  }
-  eof = addr + sb.st_size - hostn_len;
-  last_newline = last_space = last_hash = addr;
-  /* case insensitive search for hostn */
-  for (c = addr; (c <= eof) && *c; c++) {
-    switch(*c) {
-      case '\n':
-      case '\r':
-        last_newline = c + 1;
-        /* fall-through */
-      /* The following 4 chars are space chars */
-      case '\t':
-      case '\v':
-      case '\f':
-      case ' ':
-        last_space = c + 1;
-        break;
-      case '#':
-        last_hash = c + 1;
-        break;
-      default:
+  /* p1 is used for finding ip
+   * p2 is used for finding hostname
+   * p3 and p4 are used to compare against hostn_lower and hostn_upper
+   */
+  while ((p1 = fgets(line, sizeof line, hostf))) {
+    /* postel's law */
+    while ((*p1 == ' ') || (*p1 == '\t'))
+      p1++;
+    p2 = p1;
+    while ((*p2 != '\n') && (*p2 != '#') && (*p2 != '\0')) {
+      if ((*p2 == ' ') || (*p2 == '\t')) {
+        *p2++ = '\0'; /* null-terminate ip */
+        /* skip tab and space */
+        while ((*p2 == ' ') || (*p2 == '\t'))
+          p2++;
         /* if (!strncasecmp(c, hostn, hostn_len)) { */
-        for (i = 0; (i < hostn_len) && (c[i] == hostn_lower[i] || (c[i] == hostn_upper[i])); i++);
-        if ((i == hostn_len) &&
-            ((c == eof) || egg_isspace(*(c + hostn_len))) &&
-            (c == last_space)) {
-          if (last_newline >= last_hash) {
-            c2 = last_newline;
-            for (c2 = last_newline; hostn_isspace(*c2); c2++); /* skip space chars */
-            /* TODO: parse both ipv4 and ipv6 and return the pref_af one if available */
-            for (i = 0; i < (sizeof ip); i++) { /* copy chars of ip */
+        p3 = hostn_lower;
+        p4 = hostn_upper;
+        while ((*p2 == *p3) || (*p2 == *p4) ||
+               ((*p3 == '\0') && ((*p2 == '\n') || (*p2 == ' ') || (*p2 == '\t') || (*p2 == '#')))) {
+          if (*p3 == '\0') {
+            /* string compare was successful, found hostname */
 #ifdef IPV6
-              if (strchr(".0123456789:abcdef", c2[i])) {
+            if ((af = setsockname(&name, p1, 0, 0)) == (pref_af ? AF_INET6 : AF_INET)) {
 #else
-              if (strchr(".0123456789", c2[i])) {
+            if ((strchr(p1, '.')) && (setsockname(&name, p1, 0, 0) != AF_UNSPEC)) {
 #endif
-                ip[i] = c2[i];
-              }
-              else {
-                ip[i] = 0;
-                if (setsockname(&name, ip, 0, 0) != AF_UNSPEC) {
-                  call_ipbyhost(hostn, &name, 1);
-                  ddebug2(RES_MSG "Used /etc/hosts: %s == %s", hostn, ip);
-                  found = 1;
-                  goto exit;
-                }
-              }
+              call_ipbyhost(hostn, &name, 1);
+              ddebug2(RES_MSG "Used /etc/hosts: %s == %s", hostn, p1);
+              fclose(hostf);
+              return 1;
             }
+#ifdef IPV6
+            else if ((af != AF_UNSPEC) && !fallback_set) {
+              fallback_set = 1;
+              strlcpy(fallback_ip, line, sizeof fallback_ip);
+            }
+#endif
+            p2++;
+            break;
           }
+          p2++;
+          p3++;
+          p4++;
         }
+      }
+      p2++;
     }
   }
-exit:
-  if (munmap(addr, sb.st_size) < 0) {
-    ddebug1(RES_MSG "munmap(" PATH "): %s", strerror(errno));
-    close(fd);
-    return 0;
+#ifdef IPV6
+  if (fallback_set) {
+    call_ipbyhost(hostn, &name, 1);
+    ddebug2(RES_MSG "Used /etc/hosts: %s == %s", hostn, fallback_ip);
+    fclose(hostf);
+    return 1;
   }
-  close(fd);
-  return found;
+#endif
+  fclose(hostf);
+  return 0;
 }
 
 /* Start searching for an ip-address, using it's host-name.
