@@ -19,9 +19,8 @@
 #                                            lastbind is fixed in eggdrop1.4.3
 # v1.07      TaKeDa       20 August    2001 -now script works also on bots,
 #                                            which didn't have server module loaded
-#                                           -added new fields PHONE & ICQ
-# v1.08      mortmann     16 July      2020 -removed field ICQ
-#                                           -added new fields YOUTUBE and TWITCH
+#                                           -added new fields PHONE and ICQ
+# v1.08      mortmann     16 July      2020 -added new fields YOUTUBE and TWITCH
 #
 # TO USE:  o    Set the desired userinfo field keywords to the
 #               `userinfo-fields' line below where indicated.
@@ -63,6 +62,7 @@
 #   DOB     Birthday (Date Of Birth)
 #   EMAIL   Email address
 #   PHONE   Phone number
+#   ICQ     ICQ number
 #   YOUTUBE YouTube channel
 #   TWITCH  Twitch channel
 
@@ -71,7 +71,7 @@
 # Set your desired fields here #
 ################################
 
-set userinfo-fields "URL BF GF IRL EMAIL DOB PHONE YOUTUBE TWITCH"
+set userinfo-fields "URL BF GF IRL EMAIL DOB PHONE ICQ YOUTUBE TWITCH"
 
 # This script's identification
 
