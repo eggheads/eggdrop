@@ -184,6 +184,25 @@ EOF
 ])
 
 
+dnl EGG_CHECK_CC_C99()
+dnl
+dnl Check for a working C99 C compiler.
+dnl
+AC_DEFUN([EGG_CHECK_CC_C99],
+[
+  if test "$ac_cv_prog_cc_c99" = no; then
+    cat << 'EOF' >&2
+configure: error:
+
+  This C compiler does not appear to have a working C99 mode.
+  A working C99 C compiler is required to compile Eggdrop.
+
+EOF
+    exit 1
+  fi
+])
+
+
 dnl EGG_HEADER_STDC()
 dnl
 AC_DEFUN([EGG_HEADER_STDC],
