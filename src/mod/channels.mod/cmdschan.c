@@ -1425,7 +1425,7 @@ static void cmd_chaninfo(struct userrec *u, int idx, char *par)
           dprintf(idx, "User defined channel settings:\n");
           tmp = 1;
         }
-        egg_snprintf(work + work_len, sizeof(work) - work_len, "%s: %d   ",
+        egg_snprintf(work + work_len, sizeof(work) - work_len, "%s: %" PRIdPTR "   ",
                      ul->name, getudef(ul->values, chan->dname));
         ii++;
         if (ii > 4) {
