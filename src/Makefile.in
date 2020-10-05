@@ -16,6 +16,7 @@ LD = @CC@
 STRIP = @STRIP@
 CFLAGS = @CFLAGS@ -I.. -I$(top_srcdir) @SSL_INCLUDES@ @DEFS@ $(CFLGS)
 CPPFLAGS = @CPPFLAGS@
+LDFLAGS = @LDFLAGS@
 
 eggdrop_objs = bg.o botcmd.o botmsg.o botnet.o chanprog.o cmds.o dcc.o \
 dccutil.o dns.o flags.o language.o match.o main.o mem.o misc.o misc_file.o \
@@ -41,7 +42,7 @@ linkstart:
 	touch mod/mod.xlibs
 
 link:
-	$(LD) $(CFLAGS) -o ../$(EGGEXEC) $(eggdrop_objs) $(MODOBJS) $(XLIBS) md5/md5c.o compat/*.o `cat mod/mod.xlibs`
+	$(LD) $(CFLAGS) $(LDFLAGS) -o ../$(EGGEXEC) $(eggdrop_objs) $(MODOBJS) $(XLIBS) md5/md5c.o compat/*.o `cat mod/mod.xlibs`
 
 linkfinish:
 	@$(STRIP) ../$(EGGEXEC) && \
@@ -63,7 +64,7 @@ clean:
 main.o:
 	$(CC) $(CFLAGS) $(CPPFLAGS) \
 	'-DCCFLAGS="$(CC) $(CFLAGS) $(CPPFLAGS)"' \
-	'-DLDFLAGS="$(LD)"' \
+	'-DLDFLAGS="$(LD) $(LDFLAGS)"' \
 	'-DSTRIPFLAGS="$(STRIP)"' -c $(srcdir)/main.c
 
 compatibility:
