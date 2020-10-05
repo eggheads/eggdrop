@@ -72,7 +72,7 @@ static void cmd_servers(struct userrec *u, int idx, char *par)
                         x->port ? x->port : default_port, setpass,
                         realservername);
       } else {
-        len += snprintf(s+len, sizeof s - len, "%d%s%s",
+        snprintf(s+len, sizeof s - len, "%d%s%s",
                         x->port ? x->port : default_port, setpass,
                         (i == curserv) ? " <- I am here" : "");
       }
