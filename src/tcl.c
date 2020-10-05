@@ -968,8 +968,17 @@ int fork_before_tcl()
 }
 
 time_t get_expire_time(Tcl_Interp * irp, const char *s) {
-  long expire_foo = strtol(s, NULL, 10);
+  char *endptr;
+  long expire_foo = strtol(s, &endptr, 10);
 
+  if (*endptr) {
+    Tcl_AppendResult(irp, "bogus expire time", NULL);
+    return -1;
+  }
+  if (expire_foo < 0) {
+    Tcl_AppendResult(irp, "expire time must be 0 (perm) or greater than 0 days", NULL);
+    return -1;
+  }
   if (expire_foo == 0)
     return 0;
   if (expire_foo > (60 * 24 * 2000)) {
