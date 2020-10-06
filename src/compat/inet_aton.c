@@ -102,8 +102,7 @@ static const char rcsid[] = "$Id: inet_addr.c,v 1.5 2005/04/27 04:56:19 sra Exp 
  * This replaces inet_addr, the return value from which
  * cannot distinguish between failure and a local broadcast address.
  */
-int
-egg_inet_aton(const char *cp, struct in_addr *addr) {
+int egg_inet_aton(const char *cp, struct in_addr *addr) {
   u_long val;
   int base, n;
   char c;
