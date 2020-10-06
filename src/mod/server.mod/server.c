@@ -1231,14 +1231,14 @@ static void next_server(int *ptr, char *serv, unsigned int *port, char *pass)
 
 static int server_6char STDVAR
 {
-  Function F = (Function) cd;
+  IntFunc F = (IntFunc) cd;
   char x[20];
 
   BADARGS(7, 7, " nick user@host handle dest/chan keyword text");
 
   CHECKVALIDITY(server_6char);
-  egg_snprintf(x, sizeof x, "%d",
-               F(argv[1], argv[2], argv[3], argv[4], argv[5], argv[6]));
+  snprintf(x, sizeof x, "%d",
+           F(argv[1], argv[2], argv[3], argv[4], argv[5], argv[6]));
   Tcl_AppendResult(irp, x, NULL);
   return TCL_OK;
 }
