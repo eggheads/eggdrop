@@ -68,13 +68,13 @@ static void cmd_servers(struct userrec *u, int idx, char *par)
         strlcpy(setpass, "", sizeof setpass);
       }
       if ((i == curserv) && realservername) {
-        len += snprintf(s+len, sizeof s - len, "%d%s (%s) <- I am here",
-                        x->port ? x->port : default_port, setpass,
-                        realservername);
+        snprintf(s+len, sizeof s - len, "%d%s (%s) <- I am here",
+                 x->port ? x->port : default_port, setpass,
+                 realservername);
       } else {
         snprintf(s+len, sizeof s - len, "%d%s%s",
-                        x->port ? x->port : default_port, setpass,
-                        (i == curserv) ? " <- I am here" : "");
+                 x->port ? x->port : default_port, setpass,
+                 (i == curserv) ? " <- I am here" : "");
       }
       dprintf(idx, "%s\n", s);
       i++;
