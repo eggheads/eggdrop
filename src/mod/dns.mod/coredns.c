@@ -670,7 +670,7 @@ static struct resolve *findip(IP ip)
   return rp;                    /* NULL */
 }
 
-void ptrstring4(IP *ip, char *buf, size_t sz)
+static void ptrstring4(IP *ip, char *buf, size_t sz)
 {
   egg_snprintf(buf, sz, "%u.%u.%u.%u.in-addr.arpa",
            ((uint8_t *) ip)[3],
@@ -680,7 +680,7 @@ void ptrstring4(IP *ip, char *buf, size_t sz)
 }
 
 #ifdef IPV6
-void ptrstring6(struct in6_addr *ip6, char *buf, size_t sz)
+static void ptrstring6(struct in6_addr *ip6, char *buf, size_t sz)
 {
   int i;
   char *p, *q;
@@ -698,7 +698,7 @@ void ptrstring6(struct in6_addr *ip6, char *buf, size_t sz)
 }
 #endif
 
-void ptrstring(struct sockaddr *addr, char *buf, size_t sz)
+static void ptrstring(struct sockaddr *addr, char *buf, size_t sz)
 {
   if (addr->sa_family == AF_INET)
     ptrstring4((IP *) &((struct sockaddr_in *)addr)->sin_addr.s_addr,
@@ -824,7 +824,7 @@ static void passrp(struct resolve *rp, long ttl, int type)
 
 /* Parses the response packets received.
  */
-void parserespacket(uint8_t *response, int len)
+static void parserespacket(uint8_t *response, int len)
 {
 #ifdef IPV6
   int ready = 0;
