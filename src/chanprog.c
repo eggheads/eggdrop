@@ -28,13 +28,7 @@
 
 #include "main.h"
 
-#ifdef HAVE_GETRUSAGE
-#  include <sys/resource.h>
-#  ifdef HAVE_SYS_RUSAGE_H
-#    include <sys/rusage.h>
-#  endif
-#endif
-
+#include <sys/resource.h>
 #include <sys/utsname.h>
 
 #include "modules.h"
@@ -228,7 +222,6 @@ int expmem_chanprog()
 
 float getcputime()
 {
-#ifdef HAVE_GETRUSAGE
   float stime, utime;
   struct rusage ru;
 
@@ -236,9 +229,6 @@ float getcputime()
   utime = ru.ru_utime.tv_sec + (ru.ru_utime.tv_usec / 1000000.00);
   stime = ru.ru_stime.tv_sec + (ru.ru_stime.tv_usec / 1000000.00);
   return (utime + stime);
-#else
-  return (clock() / (CLOCKS_PER_SEC * 1.00));
-#endif
 }
 
 /* Dump uptime info out to dcc (guppy 9Jan99)
