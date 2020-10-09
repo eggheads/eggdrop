@@ -103,10 +103,14 @@ static struct dcc_table DCC_IDENTD = {
 static void ident_oidentd()
 {
   char *home = getenv("HOME");
-  char path[121], buf[(sizeof "global { reply \"\" }") + USERLEN];
-  int nbytes;
-  int fd;
+  FILE *fd;
+  long filesize;
+  char *data = NULL;
+  extern char pid_file[];
+  char path[121], line[256], buf[256], identstr[256];
+  int prevtime;
 
+  snprintf(identstr, sizeof identstr, "### eggdrop_%s", pid_file);
   if (!home) {
     putlog(LOG_MISC, "*",
            "Ident error: variable HOME is not in the current environment.");
@@ -116,14 +120,55 @@ static void ident_oidentd()
     putlog(LOG_MISC, "*", "Ident error: path too long.");
     return;
   }
-  if ((fd = open(path, O_WRONLY | O_CREAT | O_TRUNC, S_IRUSR | S_IWUSR | S_IROTH)) < 0) {
-    putlog(LOG_MISC, "*", "Ident error: %s", strerror(errno));
-    return;
+  fd = fopen(path, "r");
+  if (fd != NULL) {
+    /* Calculate file size for buffer */
+    if (fseek(fd, 0, SEEK_END) == 0) {
+      filesize = ftell(fd);
+      if (filesize == -1) {
+        putlog(LOG_MISC, "*", "IDENT: Error reading oident.conf");
+      }
+      data = nmalloc(sizeof(char) * (filesize + 256)); /* Room for Eggdrop adds */
+
+      /* Read the file into buffer */
+      if (fseek(fd, 0, SEEK_SET) != 0) {
+        putlog(LOG_MISC, "*", "IDENT: Error setting oident.conf file pointer");
+      }
+      while(fgets(line, 255, fd)) {
+        /* If it is not an Eggdrop entry, don't mess with it */
+        if (!strstr(line, "### eggdrop_")) {
+          strncat(data, line, ((filesize + 256) - strlen(data)));
+        } else {
+          /* If it is Eggdrop but not me, check for expiration and remove */
+          if (!strstr(line, identstr)) {
+            strncpy(buf, line, sizeof buf);
+            strtok(buf, "!");
+            prevtime = atoi(strtok(NULL, "!"));
+            if ((time(NULL) - prevtime) > 300) {
+              putlog(LOG_DEBUG, "*", "IDENT: Removing expired oident.conf entry: \"%s\"", buf);
+            } else {
+              strncat(data, line, ((filesize + 256) - strlen(data)));
+            }
+          }
+        }
+      }
+    }
+    fclose(fd);
+  } else {
+    putlog(LOG_MISC, "*", "IDENT: Error opening oident.conf for reading");
   }
-  nbytes = snprintf(buf, sizeof buf, "global { reply \"%s\" }", botuser);
-  if (write(fd, buf, nbytes) < 0)
-    putlog(LOG_MISC, "*", "Ident error: %s", strerror(errno));
-  close(fd);
+  fd = fopen(path, "w");
+  if (fd != NULL) {
+    fprintf(fd, "%s", data);
+    fprintf(fd, "to irc.com lport 5555 from myhost fport 6667 { reply \"%s\" } \
+                ### eggdrop_%s !%ld", botuser, pid_file, time(NULL));
+    fclose(fd);
+  } else {
+    putlog(LOG_MISC, "*", "IDENT: Error opening oident.conf for writing");
+  }
+  if (data) {
+    nfree(data);
+  }
 }
 
 static void ident_builtin_on()
