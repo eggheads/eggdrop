@@ -609,7 +609,12 @@ Function global_table[] = {
   (Function) check_validpass,
   /* 308 - 311 */
   (Function) make_rand_str_from_chars,
-  (Function) add_tcl_objcommands
+  (Function) add_tcl_objcommands,
+#ifndef HAVE_EXPLICIT_BZERO
+  (Function) explicit_bzero
+#else
+  (Function) 0
+#endif
 };
 
 void init_modules(void)
