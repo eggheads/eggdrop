@@ -25,6 +25,7 @@
 #include <errno.h>
 #include <fcntl.h>
 #include <sys/stat.h>
+#include <time.h>
 #include "src/mod/module.h"
 #include "server.mod/server.h"
 
@@ -106,11 +107,12 @@ static void ident_oidentd()
   FILE *fd;
   long filesize;
   char *data = NULL;
-  extern char pid_file[];
-  char path[121], line[256], buf[256], identstr[256];
-  int prevtime;
+  char path[121], line[256], buf[256], identstr[256], s[INET_ADDRSTRLEN];
+  int prevtime, servidx;
+  sockname_t addr;
 
   snprintf(identstr, sizeof identstr, "### eggdrop_%s", pid_file);
+
   if (!home) {
     putlog(LOG_MISC, "*",
            "Ident error: variable HOME is not in the current environment.");
@@ -157,11 +159,19 @@ static void ident_oidentd()
   } else {
     putlog(LOG_MISC, "*", "IDENT: Error opening oident.conf for reading");
   }
+  servidx = findanyidx(serv);
+  addr.addrlen = sizeof addr.addr.sa;
+  int ret = getsockname(dcc[servidx].sock, &addr.addr.sa, &addr.addrlen);
+  if (ret) {
+    putlog(LOG_DEBUG, "*", "IDENT: Error getting socket info for writing");
+  }
   fd = fopen(path, "w");
   if (fd != NULL) {
     fprintf(fd, "%s", data);
-    fprintf(fd, "to irc.com lport 5555 from myhost fport 6667 { reply \"%s\" } \
-                ### eggdrop_%s !%ld", botuser, pid_file, time(NULL));
+    fprintf(fd, "lport %i from %s { reply \"%s\" } "
+                "### eggdrop_%s !%ld\n", ntohs(addr.addr.s4.sin_port),
+                inet_ntop(AF_INET, &(addr.addr.s4.sin_addr), s, INET_ADDRSTRLEN),
+                botuser, pid_file, time(NULL));
     fclose(fd);
   } else {
     putlog(LOG_MISC, "*", "IDENT: Error opening oident.conf for writing");

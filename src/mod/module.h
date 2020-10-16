@@ -511,6 +511,7 @@
 #define add_tcl_objcommands ((void (*) (tcl_cmds *))global[309])
 #define pid_file ((char *)(global[310]))
 
+
 /* hostmasking */
 #define maskhost(a,b) maskaddr((a),(b),3)
 #define maskban(a,b) maskaddr((a),(b),3)

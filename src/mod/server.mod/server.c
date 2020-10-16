@@ -2201,7 +2201,7 @@ static Function server_table[] = {
   (Function) & exclusive_binds, /* int                                  */
   /* 40 - 43 */
   (Function) & H_out,           /* p_tcl_bind_list                      */
-  (Function) & net_type_int,     /* int                                  */
+  (Function) & net_type_int,    /* int                                  */
   (Function) & H_account,       /* p_tcl_bind)list                      */
   (Function) & cap,             /* cap_list                             */
   /* 44 - 47 */
@@ -2210,7 +2210,7 @@ static Function server_table[] = {
   (Function) & H_isupport,      /* p_tcl_bind_list                      */
   (Function) & isupport_get,    /*                                      */
   /* 48 - 52 */
-  (Function) & isupport_parseint /*                                     */
+  (Function) & isupport_parseint/*                                      */
 };
 
 char *server_start(Function *global_funcs)
