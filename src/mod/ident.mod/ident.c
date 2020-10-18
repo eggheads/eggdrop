@@ -171,14 +171,14 @@ static void ident_oidentd()
 putlog(LOG_MISC, "*", "family is %d\n", addr.addr.sa.sa_family);
     if (addr.addr.sa.sa_family == AF_INET) {
       fprintf(fd, "lport %i from %s { reply \"%s\" } "
-                "### eggdrop_%s !%ld\n", ntohs(addr.addr.s4.sin_port),
-                inet_ntop(AF_INET, &(addr.addr.s4.sin_addr), s, INET_ADDRSTRLEN),
-                botuser, pid_file, time(NULL));
+            "### eggdrop_%s !%ld\n", ntohs(addr.addr.s4.sin_port),
+            inet_ntop(AF_INET, &(addr.addr.s4.sin_addr), s, INET_ADDRSTRLEN),
+            botuser, pid_file, time(NULL));
     } else if (addr.addr.sa.sa_family == AF_INET6) {
       fprintf(fd, "lport %i from %s { reply \"%s\" } "
-                "### eggdrop_%s !%ld\n", ntohs(addr.addr.s6.sin6_port),
-                inet_ntop(AF_INET6, &(addr.addr.s6.sin6_addr), s, INET_ADDRSTRLEN),
-                botuser, pid_file, time(NULL));
+            "### eggdrop_%s !%ld\n", ntohs(addr.addr.s6.sin6_port),
+            inet_ntop(AF_INET6, &(addr.addr.s6.sin6_addr), s, INET6_ADDRSTRLEN),
+            botuser, pid_file, time(NULL));
     } else {
       putlog(LOG_DEBUG, "*", "IDENT: Error writing oident.conf line");
     }
