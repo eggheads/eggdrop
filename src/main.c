@@ -1269,7 +1269,13 @@ int main(int arg_c, char **arg_v)
     dcc_chatter(term_z);
   }
 
-  then = now;
+  /* -1 to make mainloop() call
+   * call_hook(HOOK_SECONDLY)->server_secondly()->connect_server() before first
+   * sockgets()->sockread()->select() to avoid an unnecessary select timeout of
+   * up to 1 sec while starting up
+   */
+  then = now - 1;
+
   online_since = now;
   autolink_cycle(NULL);         /* Hurry and connect to tandem bots */
   add_help_reference("cmds1.help");
