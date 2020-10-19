@@ -132,21 +132,6 @@ int findanyidx(int z)
   return -1;
 }
 
-/* Replace \n with \r\n */
-char *add_cr(char *buf)
-{
-  static char WBUF[1024];
-  char *p, *q;
-
-  for (p = buf, q = WBUF; *p; p++, q++) {
-    if (*p == '\n')
-      *q++ = '\r';
-    *q = *p;
-  }
-  *q = *p;
-  return WBUF;
-}
-
 extern void (*qserver) (int, char *, int);
 
 void dprintf EGG_VARARGS_DEF(int, arg1)
@@ -208,7 +193,7 @@ void dprint(int idx, char *buf, int len)
       len = LOGLINEMAX-10;
     }
     if (dcc[idx].type && ((long) (dcc[idx].type->output) == 1)) {
-      char *p = add_cr(buf);
+      char *p = add_cr(buf, 0);
 
       tputs(dcc[idx].sock, p, strlen(p));
     } else if (dcc[idx].type && dcc[idx].type->output)

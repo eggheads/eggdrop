@@ -137,7 +137,6 @@ int dcc_fingerprint(int);
 int increase_socks_max();
 int findidx(int);
 int findanyidx(int);
-char *add_cr(char *);
 void dprint(int, char *, int);
 void dprintf EGG_VARARGS(int, arg1);
 void chatout EGG_VARARGS(char *, arg1);
@@ -261,6 +260,7 @@ char *strchr_unescape(char *, const char, const char);
 void str_unescape(char *, const char);
 int str_isdigit(const char *);
 void kill_bot(char *, char *);
+char *add_cr(const char *, const int);
 
 void maskaddr(const char *, char *, int);
 #define maskhost(a,b) maskaddr((a),(b),3)

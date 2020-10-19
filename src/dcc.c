@@ -90,22 +90,6 @@ static int detect_telnet(unsigned char *buf)
   return 0;
 }
 
-/* Escape telnet IAC and prepend CR to LF */
-static char *escape_telnet(char *s)
-{
-  static char buf[1024];
-  char *p;
-
-  for (p = buf; *s && (p < (buf + sizeof(buf) - 2)); *p++ = *s++)
-    if ((unsigned char) *s == TLN_IAC)
-      *p++ = *s;
-    else if (*s == '\n')
-      *p++ = '\r';
-  *p = 0;
-
-  return buf;
-}
-
 static void strip_telnet(int sock, char *buf, int *len)
 {
   unsigned char *p = (unsigned char *) buf, *o = (unsigned char *) buf;
@@ -929,7 +913,7 @@ static void out_dcc_general(int idx, char *buf, void *x)
 
   strip_mirc_codes(p->strip_flags, buf);
   if (dcc[idx].status & STAT_TELNET)
-    y = escape_telnet(buf);
+    y = add_cr(buf, 1);
   if (dcc[idx].status & STAT_PAGE)
     append_line(idx, y);
   else
@@ -1768,7 +1752,7 @@ static void dcc_telnet_pass(int idx, int atr)
     /* Turn off remote telnet echo (send IAC WILL ECHO). */
     if (dcc[idx].status & STAT_TELNET) {
       char buf[1030];
-      egg_snprintf(buf, sizeof buf, "\n%s%s\r\n", escape_telnet(DCC_ENTERPASS),
+      egg_snprintf(buf, sizeof buf, "\n%s%s\r\n", add_cr(DCC_ENTERPASS, 1),
                TLN_IAC_C TLN_WILL_C TLN_ECHO_C);
       tputs(dcc[idx].sock, buf, strlen(buf));
     } else
