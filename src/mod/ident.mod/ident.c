@@ -103,7 +103,7 @@ static struct dcc_table DCC_IDENTD = {
 static void ident_oidentd()
 {
   char *home = getenv("HOME");
-  char path[121], buf[(sizeof "global{reply \"\"}") + USERLEN];
+  char path[121], buf[(sizeof "global { reply \"\" }") + USERLEN];
   int nbytes;
   int fd;
 
@@ -120,7 +120,7 @@ static void ident_oidentd()
     putlog(LOG_MISC, "*", "Ident error: %s", strerror(errno));
     return;
   }
-  nbytes = snprintf(buf, sizeof buf, "global{reply \"%s\"}", botuser);
+  nbytes = snprintf(buf, sizeof buf, "global { reply \"%s\" }", botuser);
   if (write(fd, buf, nbytes) < 0)
     putlog(LOG_MISC, "*", "Ident error: %s", strerror(errno));
   close(fd);

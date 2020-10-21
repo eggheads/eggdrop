@@ -495,7 +495,7 @@ newchanban <channel> <ban> <creator> <comment> [lifetime] [options]
   Description: adds a ban to the ban list of a channel; creator is given credit for the ban in the ban list. lifetime is specified in minutes. If lifetime is not specified, ban-time (usually 60) is used. Setting the lifetime to 0 makes it a permanent ban.
 
   Options:
-      
+
   +-----------+-------------------------------------------------------------------------------------+
   | sticky    | forces the ban to be always active on a channel, even with dynamicbans on           |
   +-----------+-------------------------------------------------------------------------------------+
@@ -1446,6 +1446,29 @@ chansettype <setting>
   Returns: The type of the setting you specify. The possible types are flag, int, str, pair. A flag type references a channel flag setting that can be set to either + or -. An int type is a channel  setting that is set to a number, such as ban-time. A str type is a  channel setting that stores a string, such as need-op. A pair type is a setting that holds a value couple, such as the flood settings.
 
   Module: channels
+
+^^^^^^^^^^^^^^^^^^^^^^^^^
+isupport get [key]
+^^^^^^^^^^^^^^^^^^^^^^^^^
+
+  Description:
+  - isupport get: Returns a flat key/value list (dict) of settings.
+  - isupport get <key>: Returns the setting's value as a string. Throws an error if the key is not set.
+
+  Returns: string or dict, see description above
+
+  Module: server
+
+^^^^^^^^^^^^^^^^^^^^^^^^^^^
+isupport isset <key>
+^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+  Description: Returns 0/1 depending on whether the key has a value.
+
+  Returns: 0 or 1
+
+  Module: server
+
 
 DCC Commands
 ------------
@@ -3417,6 +3440,16 @@ The following is a list of bind types and how they work. Below each bind type is
   procname <nick> <user> <hand> <account>
 
   Description: triggered when Eggdrop receives an ACCOUNT message. The mask for the bind is in the format "#channel nick!user@hostname.com account" where channel is the channel the user was found on when the bind was triggered, the hostmask is the user's hostmask, and account is the account name the user is logging in to, or "" for logging out. The mask argument can accept wildcards. For the proc, nick is the nickname of the user logging into/out of an account, user is the user@host.com hostmask, hand is the handle of the user (or * if none), and account is the name of the account the user logged in to (or "" if the user logged out of an account).
+
+(54) ISUPPORT (stackable)
+
+  bind isupport <flags> <mask> <proc>
+
+  procname <key> <isset> <value>
+ 
+  Description: triggered when the value of an isupport key changes. The mask is matched against the isupport key. If the value is not set, isset is 0 and the value is the empty string. Because the empty string is valid value, use isset to distinguish empty string values from a key being unset. The bind is called before the change is processed, so [isupport isset]/[isupport get] return the old value. A return value other than 0 makes Eggdrop ignore the change and revert to the old value. After a disconnect from the server, all isupport values are reset to default, but $::server will be empty, so that case can be caught and ignored.
+
+  Module: server
 
 
 ^^^^^^^^^^^^^

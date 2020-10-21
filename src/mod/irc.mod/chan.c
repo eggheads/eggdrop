@@ -2552,6 +2552,92 @@ static int gotnotice(char *from, char *msg)
   return 0;
 }
 
+static int parse_maxlist(const char *value)
+{
+  int tmpsum = 0, addtosum;
+  char *tmps;
+  long tmpl;
+  const char *modechar = value, *number;
+
+  max_exempts = 20;
+  max_invites = 20;
+  max_bans = 30;
+  max_modes = 30;
+
+  if (!value || *value == ':') {
+    return 0;
+  }
+  /* e.g. value="be:100,I:50" */
+  do {
+    number = strchr(modechar, ':');
+    if (!number) {
+      putlog(LOG_MISC, "*", "Error while parsing ISUPPORT value for MAXLIST: number not found in '%s'", value);
+      return -1;
+    }
+    number++;
+    tmpl = strtol(number, &tmps, 10);
+    if (*tmps != '\0' && *tmps != ',') {
+      putlog(LOG_MISC, "*", "Error while parsing ISUPPORT value for MAXLIST: invalid number in '%s'", value);
+      return -2;
+    }
+    if (tmpl < 10) {
+      putlog(LOG_MISC, "*", "Warning while parsing ISUPPORT value for MAXLIST: number too small, setting to 10 in '%s'", value);
+      tmpl = 10;
+    } else if (tmpl > 100000) {
+      putlog(LOG_MISC, "*", "Warning while parsing ISUPPORT value for MAXLIST: number too big, setting to 100000 in '%s'", value);
+      tmpl = 100000;
+    }
+    addtosum = 0;
+    do {
+      if (*modechar == 'b') {
+        max_bans = (int)tmpl;
+        addtosum = 1;
+      } else if (*modechar == 'e') {
+        max_exempts = (int)tmpl;
+        addtosum = 1;
+      } else if (*modechar == 'I') {
+        max_invites = (int)tmpl;
+        addtosum = 1;
+      } else {
+        continue;
+      }
+    } while (*modechar++ != ':');
+    /* Build maxmodes from all sections that interest us for now (beI),
+     * e.g. be:100,I:100 means maxmodes=200 (limit for bans + excepts + invites) */
+    if (addtosum) {
+      tmpsum += (int)tmpl;
+    }
+    modechar = tmps;
+  } while (*modechar++ == ',');
+
+  max_modes = tmpsum;
+  return 0;
+}
+
+static int irc_isupport(char *key, char *isset_str, char *value)
+{
+  int isset = !strcmp(isset_str, "1");
+
+  if (!strcmp(key, "WHOX")) {
+    use_354 = isset;
+  } else if (!strcmp(key, "MODES")) {
+    isupport_parseint(key, isset ? value : NULL, 3, 64, 1, 3, &modesperline);
+  } else if (!strcmp(key, "MAXLIST")) {
+    parse_maxlist(isset ? value : NULL);
+  } else if (!strcmp(key, "MAXEXCEPTS")) {
+    isupport_parseint(key, isset ? value : NULL, 10, 100000, 1, 20, &max_exempts);
+    if (max_exempts > max_modes) {
+      max_modes = max_exempts;
+    }
+  } else if (!strcmp(key, "MAXBANS")) {
+    isupport_parseint(key, isset ? value : NULL, 10, 100000, 1, 30, &max_bans);
+    if (max_bans > max_modes) {
+      max_modes = max_bans;
+    }
+  }
+  return 0;
+}
+
 static cmd_t irc_raw[] = {
   {"324",     "",   (IntFunc) got324,          "irc:324"},
   {"352",     "",   (IntFunc) got352,          "irc:352"},
@@ -2583,6 +2669,11 @@ static cmd_t irc_raw[] = {
   {"348",     "",   (IntFunc) got348,          "irc:348"},
   {"349",     "",   (IntFunc) got349,          "irc:349"},
   {NULL,      NULL, NULL,                           NULL}
+};
+
+static cmd_t irc_isupport_binds[] = {
+  {"*",       "",   (IntFunc) irc_isupport, "irc:isupport"},
+  {NULL,    NULL,   NULL,                             NULL}
 };
 
 static cmd_t irc_rawt[] = {
