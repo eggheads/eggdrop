@@ -110,6 +110,7 @@ static void ident_oidentd()
   char path[121], line[256], buf[256], identstr[256], s[INET_ADDRSTRLEN];
   int prevtime, servidx;
   sockname_t addr;
+  struct sockaddr_storage ss;
 
   snprintf(identstr, sizeof identstr, "### eggdrop_%s", pid_file);
 
@@ -135,21 +136,22 @@ static void ident_oidentd()
       /* Read the file into buffer */
       if (fseek(fd, 0, SEEK_SET) != 0) {
         putlog(LOG_MISC, "*", "IDENT: Error setting oident.conf file pointer");
-      }
-      while(fgets(line, 255, fd)) {
-        /* If it is not an Eggdrop entry, don't mess with it */
-        if (!strstr(line, "### eggdrop_")) {
-          strncat(data, line, ((filesize + 256) - strlen(data)));
-        } else {
-          /* If it is Eggdrop but not me, check for expiration and remove */
-          if (!strstr(line, identstr)) {
-            strncpy(buf, line, sizeof buf);
-            strtok(buf, "!");
-            prevtime = atoi(strtok(NULL, "!"));
-            if ((time(NULL) - prevtime) > 300) {
-              putlog(LOG_DEBUG, "*", "IDENT: Removing expired oident.conf entry: \"%s\"", buf);
-            } else {
-              strncat(data, line, ((filesize + 256) - strlen(data)));
+      } else {
+        while(fgets(line, 255, fd)) {
+          /* If it is not an Eggdrop entry, don't mess with it */
+          if (!strstr(line, "### eggdrop_")) {
+            strncat(data, line, ((filesize + 256) - strlen(data)));
+          } else {
+            /* If it is Eggdrop but not me, check for expiration and remove */
+            if (!strstr(line, identstr)) {
+              strncpy(buf, line, sizeof buf);
+              strtok(buf, "!");
+              prevtime = atoi(strtok(NULL, "!"));
+              if ((time(NULL) - prevtime) > 300) {
+                putlog(LOG_DEBUG, "*", "IDENT: Removing expired oident.conf entry: \"%s\"", buf);
+              } else {
+                strncat(data, line, ((filesize + 256) - strlen(data)));
+              }
             }
           }
         }
@@ -160,25 +162,27 @@ static void ident_oidentd()
     putlog(LOG_MISC, "*", "IDENT: Error opening oident.conf for reading");
   }
   servidx = findanyidx(serv);
-  addr.addrlen = sizeof addr.addr.sa;
-  int ret = getsockname(dcc[servidx].sock, &addr.addr.sa, &addr.addrlen);
+  unsigned int foo = sizeof ss;
+  int ret = getsockname(dcc[servidx].sock, (struct sockaddr *) &ss, &foo);
   if (ret) {
     putlog(LOG_DEBUG, "*", "IDENT: Error getting socket info for writing");
   }
   fd = fopen(path, "w");
   if (fd != NULL) {
     fprintf(fd, "%s", data);
-putlog(LOG_MISC, "*", "family is %d\n", addr.addr.sa.sa_family);
-    if (addr.addr.sa.sa_family == AF_INET) {
+putlog(LOG_MISC, "*", "family is %d\n", ss.ss_family);
+    if (ss.ss_family == AF_INET) {
+      struct sockaddr_in *saddr = (struct sockaddr_in *)&ss;
       fprintf(fd, "lport %i from %s { reply \"%s\" } "
-            "### eggdrop_%s !%ld\n", ntohs(addr.addr.s4.sin_port),
-            inet_ntop(AF_INET, &(addr.addr.s4.sin_addr), s, INET_ADDRSTRLEN),
-            botuser, pid_file, time(NULL));
-    } else if (addr.addr.sa.sa_family == AF_INET6) {
+                "### eggdrop_%s !%ld\n", ntohs(saddr->sin_port),
+                inet_ntop(AF_INET, &(saddr->sin_addr), s, INET_ADDRSTRLEN),
+                botuser, pid_file, time(NULL));
+    } else if (ss.ss_family == AF_INET6) {
+      struct sockaddr_in6 *saddr = (struct sockaddr_in6 *)&ss;
       fprintf(fd, "lport %i from %s { reply \"%s\" } "
-            "### eggdrop_%s !%ld\n", ntohs(addr.addr.s6.sin6_port),
-            inet_ntop(AF_INET6, &(addr.addr.s6.sin6_addr), s, INET6_ADDRSTRLEN),
-            botuser, pid_file, time(NULL));
+                "### eggdrop_%s !%ld\n", ntohs(saddr->sin6_port),
+                inet_ntop(AF_INET6, &(saddr->sin6_addr), s, INET6_ADDRSTRLEN),
+                botuser, pid_file, time(NULL));
     } else {
       putlog(LOG_DEBUG, "*", "IDENT: Error writing oident.conf line");
     }
