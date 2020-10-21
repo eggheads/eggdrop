@@ -128,7 +128,7 @@ static int convert_old_files(char *path, char *newfiledb)
     filedb_addfile(fdb, fdbe);
     free_fdbe(&fdbe);
   }
-  fseek(fdb, 0L, SEEK_END);
+  fseeko(fdb, 0, SEEK_END);
   unlockfile(f);
   unlockfile(fdb);
   fclose(fdb);
