@@ -167,8 +167,8 @@ static void ident_oidentd()
     putlog(LOG_MISC, "*", "IDENT: Error opening oident.conf for reading");
   }
   servidx = findanyidx(serv);
-  unsigned int foo = sizeof ss;
-  int ret = getsockname(dcc[servidx].sock, (struct sockaddr *) &ss, &foo);
+  unsigned int size = sizeof ss;
+  int ret = getsockname(dcc[servidx].sock, (struct sockaddr *) &ss, &size);
   if (ret) {
     putlog(LOG_DEBUG, "*", "IDENT: Error getting socket info for writing");
   }
