@@ -107,9 +107,13 @@ static void ident_oidentd()
   FILE *fd;
   long filesize;
   char *data = NULL;
-  char path[121], line[256], buf[256], identstr[256], s[INET_ADDRSTRLEN];
+  char path[121], line[256], buf[256], identstr[256];
+#ifdef IPV6
+  char s[INET6_ADDRSTRLEN];
+#else
+  char s[INET_ADDRSTRLEN];
+#endif
   int prevtime, servidx;
-  sockname_t addr;
   struct sockaddr_storage ss;
 
   snprintf(identstr, sizeof identstr, "### eggdrop_%s", pid_file);
@@ -132,6 +136,7 @@ static void ident_oidentd()
         putlog(LOG_MISC, "*", "IDENT: Error reading oident.conf");
       }
       data = nmalloc(sizeof(char) * (filesize + 256)); /* Room for Eggdrop adds */
+      data[0] = '\0';
 
       /* Read the file into buffer */
       if (fseek(fd, 0, SEEK_SET) != 0) {
@@ -170,19 +175,20 @@ static void ident_oidentd()
   fd = fopen(path, "w");
   if (fd != NULL) {
     fprintf(fd, "%s", data);
-putlog(LOG_MISC, "*", "family is %d\n", ss.ss_family);
     if (ss.ss_family == AF_INET) {
       struct sockaddr_in *saddr = (struct sockaddr_in *)&ss;
       fprintf(fd, "lport %i from %s { reply \"%s\" } "
                 "### eggdrop_%s !%ld\n", ntohs(saddr->sin_port),
                 inet_ntop(AF_INET, &(saddr->sin_addr), s, INET_ADDRSTRLEN),
                 botuser, pid_file, time(NULL));
+#ifdef IPV6
     } else if (ss.ss_family == AF_INET6) {
       struct sockaddr_in6 *saddr = (struct sockaddr_in6 *)&ss;
       fprintf(fd, "lport %i from %s { reply \"%s\" } "
                 "### eggdrop_%s !%ld\n", ntohs(saddr->sin6_port),
                 inet_ntop(AF_INET6, &(saddr->sin6_addr), s, INET6_ADDRSTRLEN),
                 botuser, pid_file, time(NULL));
+#endif
     } else {
       putlog(LOG_DEBUG, "*", "IDENT: Error writing oident.conf line");
     }
