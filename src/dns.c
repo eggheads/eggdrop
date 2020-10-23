@@ -567,7 +567,7 @@ void core_dns_ipbyhost(char *host)
   dtn = nmalloc(sizeof(struct dns_thread_node));
   if (pipe(dtn->fildes) < 0) {
     putlog(LOG_MISC, "*", "core_dns_ipbyhost(): pipe(): error: %s", strerror(errno));
-    call_ipbyhost(host, &addr, 0); /* TODO: test */
+    call_ipbyhost(host, &addr, 0);
     nfree(dtn);
     return;
   }
@@ -576,7 +576,7 @@ void core_dns_ipbyhost(char *host)
   strlcpy(dtn->host, host, sizeof dtn->host);
   if (pthread_create(&thread, NULL, thread_dns_ipbyhost, (void *) dtn)) {
     putlog(LOG_MISC, "*", "core_dns_ipbyhost(): pthread_create(): error = %s", strerror(errno));
-    call_ipbyhost(host, &addr, 0); /* TODO: test */
+    call_ipbyhost(host, &addr, 0);
     close(dtn->fildes[0]);
     close(dtn->fildes[1]);
     dns_thread_head->next = dtn->next;
