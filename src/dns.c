@@ -535,14 +535,14 @@ void core_dns_hostbyip(sockname_t *addr)
 
   if (pipe(dtn->fildes) < 0) {
     putlog(LOG_MISC, "*", "core_dns_hostbyip(): pipe(): error: %s", strerror(errno));
-    call_hostbyip(addr, "", 0);
+    call_hostbyip(addr, iptostr(&addr->addr.sa), 0);
     nfree(dtn);
     return;
   }
   memcpy(&dtn->addr, addr, sizeof *addr);
   if (pthread_create(&thread, NULL, thread_dns_hostbyip, (void *) dtn)) {
     putlog(LOG_MISC, "*", "core_dns_hostbyip(): pthread_create(): error = %s", strerror(errno));
-    call_hostbyip(addr, "", 0);
+    call_hostbyip(addr, iptostr(&addr->addr.sa), 0);
     close(dtn->fildes[0]);
     close(dtn->fildes[1]);
     nfree(dtn);
