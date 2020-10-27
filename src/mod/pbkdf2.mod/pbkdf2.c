@@ -23,7 +23,7 @@
 static Function *global = NULL;
 
 /* Cryptographic hash function used. openssl list -digest-algorithms */
-static char pbkdf2_method[28] = "SHA512";
+static char pbkdf2_method[28] = "SHA256";
 /* Enable re-encoding of password if pbkdf2-method and / or pbkdf2-rounds
  * change.
  */
