@@ -113,7 +113,8 @@ static void ident_oidentd()
 #else
   char s[INET_ADDRSTRLEN];
 #endif
-  int prevtime, servidx;
+  int ret, prevtime, servidx;
+  unsigned int size;
   struct sockaddr_storage ss;
 
   snprintf(identstr, sizeof identstr, "### eggdrop_%s", pid_file);
@@ -135,14 +136,14 @@ static void ident_oidentd()
       if (filesize == -1) {
         putlog(LOG_MISC, "*", "IDENT: Error reading oident.conf");
       }
-      data = nmalloc(sizeof(char) * (filesize + 256)); /* Room for Eggdrop adds */
+      data = nmalloc(filesize + 256); /* Room for Eggdrop adds */
       data[0] = '\0';
 
       /* Read the file into buffer */
       if (fseek(fd, 0, SEEK_SET) != 0) {
         putlog(LOG_MISC, "*", "IDENT: Error setting oident.conf file pointer");
       } else {
-        while(fgets(line, 255, fd)) {
+        while (fgets(line, 255, fd)) {
           /* If it is not an Eggdrop entry, don't mess with it */
           if (!strstr(line, "### eggdrop_")) {
             strncat(data, line, ((filesize + 256) - strlen(data)));
@@ -167,8 +168,8 @@ static void ident_oidentd()
     putlog(LOG_MISC, "*", "IDENT: Error opening oident.conf for reading");
   }
   servidx = findanyidx(serv);
-  unsigned int size = sizeof ss;
-  int ret = getsockname(dcc[servidx].sock, (struct sockaddr *) &ss, &size);
+  size = sizeof ss;
+  ret = getsockname(dcc[servidx].sock, (struct sockaddr *) &ss, &size);
   if (ret) {
     putlog(LOG_DEBUG, "*", "IDENT: Error getting socket info for writing");
   }
@@ -190,7 +191,7 @@ static void ident_oidentd()
                 botuser, pid_file, time(NULL));
 #endif
     } else {
-      putlog(LOG_DEBUG, "*", "IDENT: Error writing oident.conf line");
+      putlog(LOG_MISC, "*", "IDENT: Error writing oident.conf line");
     }
     fclose(fd);
   } else {
