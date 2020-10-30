@@ -613,7 +613,7 @@ Function global_table[] = {
   /* 308 - 311 */
   (Function) make_rand_str_from_chars,
   (Function) add_tcl_objcommands,
-  (Function) & USERENTRY_PASS2    /* struct user_entry_type *            */
+  (Function) & USERENTRY_PASS2,   /* struct user_entry_type *            */
   (Function) pid_file             /* char                                */
   /* 312 - 315 */
 };
