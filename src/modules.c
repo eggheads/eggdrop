@@ -158,6 +158,8 @@ static void null_share(int idx, char *x)
 }
 
 void (*encrypt_pass) (char *, char *) = 0;
+char *(*encrypt_pass2) (char *) = 0;
+char *(*verify_pass2) (char *, char *) = 0;
 char *(*encrypt_string) (char *, char *) = 0;
 char *(*decrypt_string) (char *, char *) = 0;
 void (*shareout) () = null_func;
@@ -611,7 +613,9 @@ Function global_table[] = {
   /* 308 - 311 */
   (Function) make_rand_str_from_chars,
   (Function) add_tcl_objcommands,
+  (Function) & USERENTRY_PASS2    /* struct user_entry_type *            */
   (Function) pid_file             /* char                                */
+  /* 312 - 315 */
 };
 
 void init_modules(void)
@@ -1036,6 +1040,12 @@ void add_hook(int hook_num, Function func)
     case HOOK_ENCRYPT_PASS:
       encrypt_pass = (void (*)(char *, char *)) func;
       break;
+    case HOOK_ENCRYPT_PASS2:
+      encrypt_pass2 = (char *(*)(char *)) func;
+      break;
+    case HOOK_VERIFY_PASS2:
+      verify_pass2 = (char *(*)(char *, char*)) func;
+      break;
     case HOOK_ENCRYPT_STRING:
       encrypt_string = (char *(*)(char *, char *)) func;
       break;
@@ -1108,6 +1118,14 @@ void del_hook(int hook_num, Function func)
     case HOOK_ENCRYPT_PASS:
       if (encrypt_pass == (void (*)(char *, char *)) func)
         encrypt_pass = (void (*)(char *, char *)) null_func;
+      break;
+    case HOOK_ENCRYPT_PASS2:
+      if (encrypt_pass2 == (char *(*)(char *)) func)
+        encrypt_pass2 = (char *(*)(char *)) null_func;
+      break;
+    case HOOK_VERIFY_PASS2:
+      if (verify_pass2 == (char *(*)(char *, char *)) func)
+        verify_pass2 = (char *(*)(char *, char *)) null_func;
       break;
     case HOOK_ENCRYPT_STRING:
       if (encrypt_string == (char *(*)(char *, char *)) func)

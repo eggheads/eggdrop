@@ -636,6 +636,7 @@ static void dcc_chat_pass(int idx, char *buf, int atr)
 #else
       dprintf(idx, "handshake %s\n", pass);
 #endif
+      explicit_bzero(pass, sizeof pass);
       return;
     }
   }

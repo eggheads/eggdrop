@@ -318,35 +318,61 @@ struct userrec *get_user_by_host(char *host)
 /* Description: checks the password given against the user's password.
  * Check against the password "-" to find out if a user has no password set.
  *
+ * If encryption2 module is loaded and PASS2 is set PASS2 is compared; else
+ * PASS.
+ *
  * Returns: 1 if the password matches for that user; 0 otherwise. Or if we are
  * checking against the password "-": 1 if the user has no password set; 0
  * otherwise.
  */
 int u_pass_match(struct userrec *u, char *pass)
 {
-  char *cmp, new[32];
+  char *cmp = 0, *new, new2[32];
+  int pass2 = 1;
 
   if (!u || !pass)
     return 0;
-  cmp = get_user(&USERENTRY_PASS, u);
+  if (encrypt_pass2)
+    cmp = get_user(&USERENTRY_PASS2, u);
+  if (!cmp) { /* implicit && encrypt_pass, due to eggdrop has at least one
+                 encryption module loaded */
+    cmp = get_user(&USERENTRY_PASS, u);
+    pass2 = 0;
+  }
   if (pass[0] == '-') {
     if (!cmp)
       return 1;
-    else
-      return 0;
+    return 0;
   }
   /* If password is not set in userrecord, or password is not sent */
   if (!cmp || !pass[0])
     return 0;
   if (u->flags & USER_BOT) {
-    if (!strcmp(cmp, pass))
+    if (!strcmp(cmp, pass)) /* verify successful */
       return 1;
-  } else {
-    if (strlen(pass) > 30)
-      pass[30] = 0;
-    encrypt_pass(pass, new);
-    if (!strcmp(cmp, new))
+    return 0;
+  }
+  if (strlen(pass) > PASSWORDMAX)
+    pass[PASSWORDMAX] = 0;
+  if (pass2) {
+    new = verify_pass2(pass, cmp);
+    if (new) { /* verify successful */
+      if (new != cmp) /* reenrypted with new parameters,
+                         no need to strcmp() */
+        set_user(&USERENTRY_PASS2, u, new);
       return 1;
+    }
+  }
+  else if (encrypt_pass) {
+    encrypt_pass(pass, new2);
+    if (!strcmp(cmp, new2)) { /* verify successful */
+      if (encrypt_pass2) {
+        new = encrypt_pass2(pass);
+        if (new)
+          set_user(&USERENTRY_PASS2, u, new);
+      }
+      return 1;
+    }
   }
   return 0;
 }
