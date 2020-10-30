@@ -132,7 +132,7 @@ void add_lang(char *lang)
   if (langpriority)
     lp->next = langpriority;
   langpriority = lp;
-  debug1("LANG: Language loaded: %s", lang);
+  debug1("LANG: Language added to list: %s", lang);
 }
 
 /* Remove a language from the list of preferred languages.
