@@ -1936,10 +1936,6 @@ static void server_resolve_success(int servidx)
   changeover_dcc(servidx, &SERVER_SOCKET, 0);
   dcc[servidx].sock = getsock(dcc[servidx].sockname.family, 0);
   setsnport(dcc[servidx].sockname, dcc[servidx].port);
-  /* Setup ident right before opening the socket to the IRC server to minimize
-   * race.
-   */
-  check_tcl_event("ident");
   serv = open_telnet_raw(dcc[servidx].sock, &dcc[servidx].sockname);
   if (serv < 0) {
     char *errstr = NULL;
@@ -1956,6 +1952,8 @@ static void server_resolve_success(int servidx)
     lostdcc(servidx);
     return;
   }
+  /* Setup ident with server values populated */
+  check_tcl_event("ident");
 #ifdef TLS
   if (dcc[servidx].ssl && ssl_handshake(serv, TLS_CONNECT, tls_vfyserver,
                                         LOG_SERV, dcc[servidx].host, NULL)) {
