@@ -412,7 +412,7 @@ static int tcl_erasenotes STDVAR
   while (!feof(f) && fgets(s, sizeof s, f) != NULL) {
     if (s[strlen(s) - 1] == '\n')
       s[strlen(s) - 1] = 0;
-      rmspace(s);
+    rmspace(s);
     if ((s[0]) && (s[0] != '#') && (s[0] != ';')) {   /* Not comment */
       s1 = s;
       to = newsplit(&s1);

@@ -23,14 +23,13 @@
 static Function *global = NULL;
 
 /* Cryptographic hash function used. openssl list -digest-algorithms */
-static char pbkdf2_method[28] = "SHA512";
+static char pbkdf2_method[28] = "SHA256";
 /* Enable re-encoding of password if pbkdf2-method and / or pbkdf2-rounds
- * change. Secret undocumented feature! Maps to pbkdf2-re-reencode if you
- * want to disable for some reason
+ * change.
  */
-static int pbkdf2_re_encode = 1;
-/* Number of rounds (iterations). */
-static int pbkdf2_rounds = 16000;
+static int pbkdf2_re_encode = 0;
+/* Number of rounds (iterations). Default is 5000 like in glibc. */
+static int pbkdf2_rounds = 5000;
 
 static char *pbkdf2_close(void)
 {

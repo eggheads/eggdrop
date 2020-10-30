@@ -464,7 +464,7 @@ void call_ipbyhost(char *hostn, sockname_t *ip, int ok)
  */
 void block_dns_hostbyip(sockname_t *addr)
 {
-  char host[UHOSTLEN];
+  char host[256] = "";
   volatile int i = 1;
 
   if (addr->family == AF_INET) {
@@ -543,8 +543,13 @@ static int tcl_dnslookup STDVAR
 
   if (setsockname(&addr, argv[1], 0, 0) != AF_UNSPEC)
     tcl_dnshostbyip(&addr, argv[2], Tcl_DStringValue(&paras));
-  else
+  else {
+    if (strlen(argv[1]) > 255) {
+      Tcl_AppendResult(irp, "hostname too long. max 255 chars.", NULL);
+      return TCL_ERROR;
+    }
     tcl_dnsipbyhost(argv[1], argv[2], Tcl_DStringValue(&paras));
+  }
 
   Tcl_DStringFree(&paras);
   return TCL_OK;

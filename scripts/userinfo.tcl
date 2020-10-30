@@ -1,4 +1,4 @@
-# userinfo.tcl v1.06 for Eggdrop 1.4.3 and higher
+# userinfo.tcl v1.08 for Eggdrop 1.4.3 and higher
 #           Scott G. Taylor -- ButchBub!staylor@mrynet.com
 #
 # v1.00      ButchBub     14 July      1997 -Original release.  Based on
@@ -19,11 +19,12 @@
 #                                            lastbind is fixed in eggdrop1.4.3
 # v1.07      TaKeDa       20 August    2001 -now script works also on bots,
 #                                            which didn't have server module loaded
-#                                           -added new fields PHONE & ICQ
+#                                           -added new fields PHONE and ICQ
+# v1.08      mortmann     16 July      2020 -added new fields YOUTUBE and TWITCH
 #
 # TO USE:  o    Set the desired userinfo field keywords to the
 #               `userinfo-fields' line below where indicated.
-#          o    Load this script on a 1.1.6 or later Eggdrop bot.
+#          o    Load this script on a 1.4.3 or later Eggdrop bot.
 #          o    Begin having users save the desired information.  If you
 #               choose to add the default "IRL" field, they just use
 #               the IRC command: /MSG <botnick> irl Joe Blow.
@@ -62,17 +63,19 @@
 #   EMAIL   Email address
 #   PHONE   Phone number
 #   ICQ     ICQ number
+#   YOUTUBE YouTube channel
+#   TWITCH  Twitch channel
 
 
 ################################
 # Set your desired fields here #
 ################################
 
-set userinfo-fields "URL BF GF IRL EMAIL DOB PHONE ICQ"
+set userinfo-fields "URL BF GF IRL EMAIL DOB PHONE ICQ YOUTUBE TWITCH"
 
 # This script's identification
 
-set userinfover "Userinfo TCL v1.07"
+set userinfover "Userinfo TCL v1.08"
 
 # This script is NOT for pre-1.4.3 versions.
 
