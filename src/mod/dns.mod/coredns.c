@@ -1202,12 +1202,12 @@ static void dns_lookup(sockname_t *addr)
   sendrequest(rp, T_PTR);
 }
 
-/* Read /etc/hosts 	*/
+/* Read /etc/hosts */
 static int dns_hosts(char *hostn) {
   #define PATH "/etc/hosts"
   size_t hostn_len;
   int i;
-  char hostn_lower[256], hostn_upper[256], line[1024], *p1, *p2, *p3, *p4;
+  char hostn_lower[256], hostn_upper[256], line[8 * 1024], *p1, *p2, *p3, *p4;
   FILE *hostf;
   sockname_t name;
 #ifdef IPV6
@@ -1289,6 +1289,10 @@ static int dns_hosts(char *hostn) {
       }
       p2++;
     }
+  }
+  if (ferror(hostf)) {
+    ddebug0(RES_MSG "fgets(" PATH ")");
+    return 0;
   }
 #ifdef IPV6
   if (fallback_set) {
