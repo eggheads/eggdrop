@@ -816,7 +816,7 @@ void egg_uname(char *sysrel, size_t len)
 void help_subst(char *s, char *nick, struct flag_record *flags,
                 int isdcc, char *topic)
 {
-  char xx[HELP_BUF_LEN + 1], sub[161], *current, *q, chr, *writeidx,
+  char xx[HELP_BUF_LEN + 1], sub[514], *current, *q, chr, *writeidx,
        *readidx, *towrite, sysrel[256];
   struct chanset_t *chan;
   int i, j, center = 0;

@@ -25,6 +25,7 @@
 #include <errno.h>
 #include <fcntl.h>
 #include <sys/stat.h>
+#include <time.h>
 #include "src/mod/module.h"
 #include "server.mod/server.h"
 
@@ -103,9 +104,20 @@ static struct dcc_table DCC_IDENTD = {
 static void ident_oidentd()
 {
   char *home = getenv("HOME");
-  char path[121], buf[(sizeof "global{reply \"\"}") + USERLEN];
-  int nbytes;
-  int fd;
+  FILE *fd;
+  long filesize;
+  char *data = NULL;
+  char path[121], line[256], buf[256], identstr[256];
+#ifdef IPV6
+  char s[INET6_ADDRSTRLEN];
+#else
+  char s[INET_ADDRSTRLEN];
+#endif
+  int ret, prevtime, servidx;
+  unsigned int size;
+  struct sockaddr_storage ss;
+
+  snprintf(identstr, sizeof identstr, "### eggdrop_%s", pid_file);
 
   if (!home) {
     putlog(LOG_MISC, "*",
@@ -116,14 +128,78 @@ static void ident_oidentd()
     putlog(LOG_MISC, "*", "Ident error: path too long.");
     return;
   }
-  if ((fd = open(path, O_WRONLY | O_CREAT | O_TRUNC, S_IRUSR | S_IWUSR | S_IROTH)) < 0) {
-    putlog(LOG_MISC, "*", "Ident error: %s", strerror(errno));
-    return;
+  fd = fopen(path, "r");
+  if (fd != NULL) {
+    /* Calculate file size for buffer */
+    if (fseek(fd, 0, SEEK_END) == 0) {
+      filesize = ftell(fd);
+      if (filesize == -1) {
+        putlog(LOG_MISC, "*", "IDENT: Error reading oident.conf");
+      }
+      data = nmalloc(filesize + 256); /* Room for Eggdrop adds */
+      data[0] = '\0';
+
+      /* Read the file into buffer */
+      if (fseek(fd, 0, SEEK_SET) != 0) {
+        putlog(LOG_MISC, "*", "IDENT: Error setting oident.conf file pointer");
+      } else {
+        while (fgets(line, 255, fd)) {
+          /* If it is not an Eggdrop entry, don't mess with it */
+          if (!strstr(line, "### eggdrop_")) {
+            strncat(data, line, ((filesize + 256) - strlen(data)));
+          } else {
+            /* If it is Eggdrop but not me, check for expiration and remove */
+            if (!strstr(line, identstr)) {
+              strncpy(buf, line, sizeof buf);
+              strtok(buf, "!");
+              prevtime = atoi(strtok(NULL, "!"));
+              if ((time(NULL) - prevtime) > 300) {
+                putlog(LOG_DEBUG, "*", "IDENT: Removing expired oident.conf entry: \"%s\"", buf);
+              } else {
+                strncat(data, line, ((filesize + 256) - strlen(data)));
+              }
+            }
+          }
+        }
+      }
+    }
+    fclose(fd);
+  } else {
+    putlog(LOG_MISC, "*", "IDENT: Error opening oident.conf for reading");
   }
-  nbytes = snprintf(buf, sizeof buf, "global{reply \"%s\"}", botuser);
-  if (write(fd, buf, nbytes) < 0)
-    putlog(LOG_MISC, "*", "Ident error: %s", strerror(errno));
-  close(fd);
+  servidx = findanyidx(serv);
+  size = sizeof ss;
+  ret = getsockname(dcc[servidx].sock, (struct sockaddr *) &ss, &size);
+  if (ret) {
+    putlog(LOG_DEBUG, "*", "IDENT: Error getting socket info for writing");
+  }
+  fd = fopen(path, "w");
+  if (fd != NULL) {
+    fprintf(fd, "%s", data);
+    if (ss.ss_family == AF_INET) {
+      struct sockaddr_in *saddr = (struct sockaddr_in *)&ss;
+      fprintf(fd, "lport %i from %s { reply \"%s\" } "
+                "### eggdrop_%s !%ld\n", ntohs(saddr->sin_port),
+                inet_ntop(AF_INET, &(saddr->sin_addr), s, INET_ADDRSTRLEN),
+                botuser, pid_file, time(NULL));
+#ifdef IPV6
+    } else if (ss.ss_family == AF_INET6) {
+      struct sockaddr_in6 *saddr = (struct sockaddr_in6 *)&ss;
+      fprintf(fd, "lport %i from %s { reply \"%s\" } "
+                "### eggdrop_%s !%ld\n", ntohs(saddr->sin6_port),
+                inet_ntop(AF_INET6, &(saddr->sin6_addr), s, INET6_ADDRSTRLEN),
+                botuser, pid_file, time(NULL));
+#endif
+    } else {
+      putlog(LOG_MISC, "*", "IDENT: Error writing oident.conf line");
+    }
+    fclose(fd);
+  } else {
+    putlog(LOG_MISC, "*", "IDENT: Error opening oident.conf for writing");
+  }
+  if (data) {
+    nfree(data);
+  }
 }
 
 static void ident_builtin_on()
