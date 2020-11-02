@@ -210,10 +210,18 @@ Last revised: June 9, 2020
       If you notice a module that requires these changes, it would probably be
       a good idea to let the module's developer know, so it can be fixed.
 
-
       Note that on Mac OS X, the DYLD_LIBRARY_PATH environment variable should
       be used instead of LD_LIBRARY_PATH.
 
+      Install OpenSSL using homebrew:
+
+        Install homebrew from https://brew.sh/
+        brew update
+        brew install openssl
+
+      Tell configure where to find tcl and openssl:
+
+        ./configure --with-tcl=/Library/Developer/CommandLineTools/SDKs/MacOSX10.15.sdk/System/Library/Frameworks/Tcl.framework/tclConfig.sh --with-sslinc=/usr/local/opt/openssl/include --with-ssllib=/usr/local/opt/openssl/lib
 
     E. AIX
       Follow the standard compile process in Section A. To compile dynamically

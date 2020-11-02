@@ -509,7 +509,9 @@
 /* 308 - 311 */
 #define make_rand_str_from_chars ((void (*) (char *, int, char *))global[308])
 #define add_tcl_objcommands ((void (*) (tcl_cmds *))global[309])
-#define get_expire_time ((time_t (*) (Tcl_Interp *, const char *))global[310])
+#define pid_file ((char *)(global[310]))
+#define get_expire_time ((time_t (*) (Tcl_Interp *, const char *))global[311])
+
 
 /* hostmasking */
 #define maskhost(a,b) maskaddr((a),(b),3)

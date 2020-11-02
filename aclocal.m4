@@ -184,6 +184,25 @@ EOF
 ])
 
 
+dnl EGG_CHECK_CC_C99()
+dnl
+dnl Check for a working C99 C compiler.
+dnl
+AC_DEFUN([EGG_CHECK_CC_C99],
+[
+  if test "$ac_cv_prog_cc_c99" = no; then
+    cat << 'EOF' >&2
+configure: error:
+
+  This C compiler does not appear to have a working C99 mode.
+  A working C99 C compiler is required to compile Eggdrop.
+
+EOF
+    exit 1
+  fi
+])
+
+
 dnl EGG_HEADER_STDC()
 dnl
 AC_DEFUN([EGG_HEADER_STDC],
@@ -784,12 +803,9 @@ AC_DEFUN([EGG_CHECK_OS],
         SHLIB_LD="$CC -G -z text"
       fi
     ;;
-    FreeBSD|OpenBSD|NetBSD)
+    FreeBSD|DragonFly|OpenBSD|NetBSD)
       SHLIB_CC="$CC -fPIC"
       SHLIB_LD="$CC -shared"
-    ;;
-    DragonFly)
-      SHLIB_CC="$CC -fPIC"
     ;;
     Darwin)
       # Mac OS X
@@ -910,7 +926,7 @@ dnl EGG_TCL_ARG_WITH()
 dnl
 AC_DEFUN([EGG_TCL_ARG_WITH],
 [
-  AC_ARG_WITH(tcllib, [  --with-tcllib=PATH      full path to Tcl library (e.g. /usr/lib/libtcl8.5.so)], [tcllibname="$withval"])
+  AC_ARG_WITH(tcllib, [  --with-tcllib=PATH      full path to Tcl library (e.g. /usr/lib/libtcl8.6.so)], [tcllibname="$withval"])
   AC_ARG_WITH(tclinc, [  --with-tclinc=PATH      full path to Tcl header (e.g. /usr/include/tcl.h)],  [tclincname="$withval"])
 
   WARN=0
@@ -976,7 +992,7 @@ EOF
 configure: WARNING:
 
   The file '$tcllibname' given to option --with-tcllib is not valid.
-  Specify the full path including the file name (e.g. /usr/lib/libtcl8.5.so)
+  Specify the full path including the file name (e.g. /usr/lib/libtcl8.6.so)
 
   configure will now attempt to autodetect both the Tcl library and header.
 
@@ -1641,10 +1657,6 @@ AC_DEFUN([EGG_TLS_DETECT],
     if test -z "$SSL_LIBS"; then
       AC_CHECK_LIB(crypto, X509_digest, , [havessllib="no"], [-lssl])
       AC_CHECK_LIB(ssl, SSL_accept, , [havessllib="no"], [-lcrypto])
-      AC_CHECK_FUNCS([EVP_md5 EVP_sha1 a2i_IPADDRESS], , [[
-        havessllib="no"
-        break
-      ]])
     fi
     AC_CHECK_FUNC(OPENSSL_buf2hexstr, ,
       AC_CHECK_FUNC(hex_to_string,

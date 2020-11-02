@@ -125,9 +125,14 @@ static void dns_dcchostbyip(sockname_t *ip, char *hostn, int ok, void *other)
         (ip->family == AF_INET6 &&
           IN6_ARE_ADDR_EQUAL(&dcc[idx].u.dns->ip->addr.s6.sin6_addr,
                              &ip->addr.s6.sin6_addr)) ||
+        (ip->family == AF_INET &&
 #endif
           (dcc[idx].u.dns->ip->addr.s4.sin_addr.s_addr ==
-                              ip->addr.s4.sin_addr.s_addr))) {
+                              ip->addr.s4.sin_addr.s_addr)))
+#ifdef IPV6
+       )
+#endif
+    {
       if (dcc[idx].u.dns->host)
         nfree(dcc[idx].u.dns->host);
       dcc[idx].u.dns->host = get_data_ptr(strlen(hostn) + 1);
@@ -403,9 +408,14 @@ void call_hostbyip(sockname_t *ip, char *hostn, int ok)
         (ip->family == AF_INET6 &&
           IN6_ARE_ADDR_EQUAL(&de->res_data.ip_addr->addr.s6.sin6_addr,
                              &ip->addr.s6.sin6_addr)) ||
+        (ip->family == AF_INET &&
 #endif
           (de->res_data.ip_addr->addr.s4.sin_addr.s_addr ==
-                              ip->addr.s4.sin_addr.s_addr))) {
+                              ip->addr.s4.sin_addr.s_addr)))
+#ifdef IPV6
+        )
+#endif
+    {
         /* A memcmp() could have perfectly done it .. */
       /* Remove the event from the list here, to avoid conflicts if one of
        * the event handlers re-adds another event. */
@@ -543,8 +553,13 @@ static int tcl_dnslookup STDVAR
 
   if (setsockname(&addr, argv[1], 0, 0) != AF_UNSPEC)
     tcl_dnshostbyip(&addr, argv[2], Tcl_DStringValue(&paras));
-  else
+  else {
+    if (strlen(argv[1]) > 255) {
+      Tcl_AppendResult(irp, "hostname too long. max 255 chars.", NULL);
+      return TCL_ERROR;
+    }
     tcl_dnsipbyhost(argv[1], argv[2], Tcl_DStringValue(&paras));
+  }
 
   Tcl_DStringFree(&paras);
   return TCL_OK;

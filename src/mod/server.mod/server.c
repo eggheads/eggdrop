@@ -1231,14 +1231,14 @@ static void next_server(int *ptr, char *serv, unsigned int *port, char *pass)
 
 static int server_6char STDVAR
 {
-  Function F = (Function) cd;
+  IntFunc F = (IntFunc) cd;
   char x[20];
 
   BADARGS(7, 7, " nick user@host handle dest/chan keyword text");
 
   CHECKVALIDITY(server_6char);
-  egg_snprintf(x, sizeof x, "%d",
-               F(argv[1], argv[2], argv[3], argv[4], argv[5], argv[6]));
+  snprintf(x, sizeof x, "%d",
+           F(argv[1], argv[2], argv[3], argv[4], argv[5], argv[6]));
   Tcl_AppendResult(irp, x, NULL);
   return TCL_OK;
 }
@@ -2201,7 +2201,7 @@ static Function server_table[] = {
   (Function) & exclusive_binds, /* int                                  */
   /* 40 - 43 */
   (Function) & H_out,           /* p_tcl_bind_list                      */
-  (Function) & net_type_int,     /* int                                  */
+  (Function) & net_type_int,    /* int                                  */
   (Function) & H_account,       /* p_tcl_bind)list                      */
   (Function) & cap,             /* cap_list                             */
   /* 44 - 47 */
@@ -2210,7 +2210,7 @@ static Function server_table[] = {
   (Function) & H_isupport,      /* p_tcl_bind_list                      */
   (Function) & isupport_get,    /*                                      */
   /* 48 - 52 */
-  (Function) & isupport_parseint /*                                     */
+  (Function) & isupport_parseint/*                                      */
 };
 
 char *server_start(Function *global_funcs)
