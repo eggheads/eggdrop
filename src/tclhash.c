@@ -978,7 +978,7 @@ int check_tcl_dcc(const char *cmd, int idx, const char *args)
   char s[11];
 
   get_user_flagrec(dcc[idx].user, &fr, dcc[idx].u.chat->con_chan);
-  egg_snprintf(s, sizeof s, "%ld", dcc[idx].sock);
+  snprintf(s, sizeof s, "%ld", dcc[idx].sock);
   Tcl_SetVar(interp, "_dcc1", (char *) dcc[idx].nick, 0);
   Tcl_SetVar(interp, "_dcc2", (char *) s, 0);
   Tcl_SetVar(interp, "_dcc3", (char *) args, 0);
@@ -1020,7 +1020,7 @@ void check_tcl_chonof(char *hand, int sock, tcl_bind_list_t *tl)
   touch_laston(u, "partyline", now);
   get_user_flagrec(u, &fr, NULL);
   Tcl_SetVar(interp, "_chonof1", (char *) hand, 0);
-  egg_snprintf(s, sizeof s, "%d", sock);
+  snprintf(s, sizeof s, "%d", sock);
   Tcl_SetVar(interp, "_chonof2", (char *) s, 0);
   check_tcl_bind(tl, hand, &fr, " $_chonof1 $_chonof2", MATCH_MASK |
                  BIND_USE_ATTR | BIND_STACKABLE | BIND_WANTRET);
@@ -1031,7 +1031,7 @@ void check_tcl_chatactbcst(const char *from, int chan, const char *text,
 {
   char s[11];
 
-  egg_snprintf(s, sizeof s, "%d", chan);
+  snprintf(s, sizeof s, "%d", chan);
   Tcl_SetVar(interp, "_cab1", (char *) from, 0);
   Tcl_SetVar(interp, "_cab2", (char *) s, 0);
   Tcl_SetVar(interp, "_cab3", (char *) text, 0);
@@ -1073,7 +1073,7 @@ const char *check_tcl_filt(int idx, const char *text)
   int x;
   struct flag_record fr = { FR_GLOBAL | FR_CHAN, 0, 0, 0, 0, 0 };
 
-  egg_snprintf(s, sizeof s, "%ld", dcc[idx].sock);
+  snprintf(s, sizeof s, "%ld", dcc[idx].sock);
   get_user_flagrec(dcc[idx].user, &fr, dcc[idx].u.chat->con_chan);
   Tcl_SetVar(interp, "_filt1", (char *) s, 0);
   Tcl_SetVar(interp, "_filt2", (char *) text, 0);
@@ -1108,7 +1108,7 @@ void check_tcl_listen(const char *cmd, int idx)
   char s[11];
   int x;
 
-  egg_snprintf(s, sizeof s, "%d", idx);
+  snprintf(s, sizeof s, "%d", idx);
   Tcl_SetVar(interp, "_n", (char *) s, 0);
   x = Tcl_VarEval(interp, cmd, " $_n", NULL);
   if (x == TCL_ERROR)
@@ -1143,8 +1143,8 @@ void check_tcl_chjn(const char *bot, const char *nick, int chan,
   case '%':
     fr.global = USER_BOTMAST;
   }
-  egg_snprintf(s, sizeof s, "%d", chan);
-  egg_snprintf(u, sizeof u, "%d", sock);
+  snprintf(s, sizeof s, "%d", chan);
+  snprintf(u, sizeof u, "%d", sock);
   Tcl_SetVar(interp, "_chjn1", (char *) bot, 0);
   Tcl_SetVar(interp, "_chjn2", (char *) nick, 0);
   Tcl_SetVar(interp, "_chjn3", (char *) s, 0);
@@ -1160,8 +1160,8 @@ void check_tcl_chpt(const char *bot, const char *hand, int sock, int chan)
 {
   char u[11], v[11];
 
-  egg_snprintf(u, sizeof u, "%d", sock);
-  egg_snprintf(v, sizeof v, "%d", chan);
+  snprintf(u, sizeof u, "%d", sock);
+  snprintf(v, sizeof v, "%d", chan);
   Tcl_SetVar(interp, "_chpt1", (char *) bot, 0);
   Tcl_SetVar(interp, "_chpt2", (char *) hand, 0);
   Tcl_SetVar(interp, "_chpt3", (char *) u, 0);
@@ -1174,7 +1174,7 @@ void check_tcl_away(const char *bot, int idx, const char *msg)
 {
   char u[11];
 
-  egg_snprintf(u, sizeof u, "%d", idx);
+  snprintf(u, sizeof u, "%d", idx);
   Tcl_SetVar(interp, "_away1", (char *) bot, 0);
   Tcl_SetVar(interp, "_away2", (char *) u, 0);
   Tcl_SetVar(interp, "_away3", msg ? (char *) msg : "", 0);
@@ -1188,30 +1188,30 @@ void check_tcl_time_and_cron(struct tm *tm)
    * time oversized to silence a gcc format-truncation warning */
   char y[24];
 
-  egg_snprintf(y, sizeof y, "%02d", tm->tm_min);
+  snprintf(y, sizeof y, "%02d", tm->tm_min);
   Tcl_SetVar(interp, "_time1", (char *) y, 0);
   Tcl_SetVar(interp, "_cron1", (char *) y, 0);
-  egg_snprintf(y, sizeof y, "%02d", tm->tm_hour);
+  snprintf(y, sizeof y, "%02d", tm->tm_hour);
   Tcl_SetVar(interp, "_time2", (char *) y, 0);
   Tcl_SetVar(interp, "_cron2", (char *) y, 0);
-  egg_snprintf(y, sizeof y, "%02d", tm->tm_mday);
+  snprintf(y, sizeof y, "%02d", tm->tm_mday);
   Tcl_SetVar(interp, "_time3", (char *) y, 0);
   Tcl_SetVar(interp, "_cron3", (char *) y, 0);
-  egg_snprintf(y, sizeof y, "%02d", tm->tm_mon);
+  snprintf(y, sizeof y, "%02d", tm->tm_mon);
   Tcl_SetVar(interp, "_time4", (char *) y, 0);
-  egg_snprintf(y, sizeof y, "%04d", tm->tm_year + 1900);
+  snprintf(y, sizeof y, "%04d", tm->tm_year + 1900);
   Tcl_SetVar(interp, "_time5", (char *) y, 0);
-  egg_snprintf(y, sizeof y, "%02d %02d %02d %02d %04d", tm->tm_min, tm->tm_hour,
+  snprintf(y, sizeof y, "%02d %02d %02d %02d %04d", tm->tm_min, tm->tm_hour,
                tm->tm_mday, tm->tm_mon, tm->tm_year + 1900);
   check_tcl_bind(H_time, y, 0,
                  " $_time1 $_time2 $_time3 $_time4 $_time5",
                  MATCH_MASK | BIND_STACKABLE);
 
-  egg_snprintf(y, sizeof y, "%02d", tm->tm_mon + 1);
+  snprintf(y, sizeof y, "%02d", tm->tm_mon + 1);
   Tcl_SetVar(interp, "_cron4", (char *) y, 0);
-  egg_snprintf(y, sizeof y, "%02d", tm->tm_wday);
+  snprintf(y, sizeof y, "%02d", tm->tm_wday);
   Tcl_SetVar(interp, "_cron5", (char *) y, 0);
-  egg_snprintf(y, sizeof y, "%02d %02d %02d %02d %02d", tm->tm_min, tm->tm_hour,
+  snprintf(y, sizeof y, "%02d %02d %02d %02d %02d", tm->tm_min, tm->tm_hour,
                tm->tm_mday, tm->tm_mon + 1, tm->tm_wday);
   check_tcl_bind(H_cron, y, 0,
                  " $_cron1 $_cron2 $_cron3 $_cron4 $_cron5",
@@ -1245,7 +1245,7 @@ void check_tcl_log(int lv, char *chan, char *msg)
 {
   char mask[512];
 
-  egg_snprintf(mask, sizeof mask, "%s %s", chan, msg);
+  snprintf(mask, sizeof mask, "%s %s", chan, msg);
   Tcl_SetVar(interp, "_log1", masktype(lv), TCL_GLOBAL_ONLY);
   Tcl_SetVar(interp, "_log2", chan, TCL_GLOBAL_ONLY);
   Tcl_SetVar(interp, "_log3", msg, TCL_GLOBAL_ONLY);
@@ -1259,7 +1259,7 @@ int check_tcl_tls(int sock)
   int x;
   char s[11];
 
-  egg_snprintf(s, sizeof s, "%d", sock);
+  snprintf(s, sizeof s, "%d", sock);
   Tcl_SetVar(interp, "_tls", s, 0);
   x = check_tcl_bind(H_tls, s, 0, " $_tls", MATCH_MASK | BIND_STACKABLE |
                      BIND_WANTRET);
@@ -1368,7 +1368,7 @@ void add_builtins(tcl_bind_list_t *tl, cmd_t *cc)
   table[0].callback = tl->func;
   table[1].name = NULL;
   for (i = 0; cc[i].name; i++) {
-    egg_snprintf(p, sizeof p, "*%s:%s", tl->name,
+    snprintf(p, sizeof p, "*%s:%s", tl->name,
                  cc[i].funcname ? cc[i].funcname : cc[i].name);
     l = nmalloc(Tcl_ScanElement(p, &k) + 1);
     Tcl_ConvertElement(p, l, k | TCL_DONT_USE_BRACES);
@@ -1386,7 +1386,7 @@ void rem_builtins(tcl_bind_list_t *table, cmd_t *cc)
   char p[1024], *l;
 
   for (i = 0; cc[i].name; i++) {
-    egg_snprintf(p, sizeof p, "*%s:%s", table->name,
+    snprintf(p, sizeof p, "*%s:%s", table->name,
                  cc[i].funcname ? cc[i].funcname : cc[i].name);
     l = nmalloc(Tcl_ScanElement(p, &k) + 1);
     Tcl_ConvertElement(p, l, k | TCL_DONT_USE_BRACES);

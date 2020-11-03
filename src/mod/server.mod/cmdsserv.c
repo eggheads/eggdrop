@@ -45,16 +45,16 @@ static void cmd_servers(struct userrec *u, int idx, char *par)
 /* Build server display line, section by section */
 #ifdef IPV6
       if (inet_pton(AF_INET6, x->name, buf) == 1) {
-        len += egg_snprintf(s, sizeof s, "  [%s]:", x->name);
+        len += snprintf(s, sizeof s, "  [%s]:", x->name);
       } else {
 #endif
-        len += egg_snprintf(s, sizeof s, "  %s:", x->name);
+        len += snprintf(s, sizeof s, "  %s:", x->name);
 #ifdef IPV6
       }
 #endif
 
 #ifdef TLS
-      len += egg_snprintf(s+len, sizeof s - len, "%s", x->ssl ? "+" : "");
+      len += snprintf(s+len, sizeof s - len, "%s", x->ssl ? "+" : "");
 #endif
       if (x->pass) {
         t = time(NULL);

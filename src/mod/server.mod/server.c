@@ -583,12 +583,12 @@ static void parse_q(struct msgq_head *q, char *oldnick, char *newnick)
             ((9 + strlen(chan) + strlen(newnicks) + strlen(newnick) +
               strlen(nicks) + strlen(msg)) < SENDLINEMAX-1)) {
           if (newnick)
-            egg_snprintf(newnicks, sizeof newnicks, "%s,%s", newnicks, newnick);
+            snprintf(newnicks, sizeof newnicks, "%s,%s", newnicks, newnick);
           changed = 1;
         } else
-          egg_snprintf(newnicks, sizeof newnicks, ",%s", nick);
+          snprintf(newnicks, sizeof newnicks, ",%s", nick);
       }
-      egg_snprintf(newmsg, sizeof newmsg, "KICK %s %s %s", chan,
+      snprintf(newmsg, sizeof newmsg, "KICK %s %s %s", chan,
                    newnicks + 1, msg);
     }
     if (changed) {
@@ -649,7 +649,7 @@ static void purge_kicks(struct msgq_head *q)
             found = 1;
         }
         if (found)
-          egg_snprintf(newnicks, sizeof newnicks, "%s,%s", newnicks, nick);
+          snprintf(newnicks, sizeof newnicks, "%s,%s", newnicks, nick);
         else {
           putlog(LOG_SRVOUT, "*", "%s isn't on any target channel; removing "
                  "kick.", nick);
@@ -670,7 +670,7 @@ static void purge_kicks(struct msgq_head *q)
             q->last = 0;
         } else {
           nfree(m->msg);
-          egg_snprintf(newmsg, sizeof newmsg, "KICK %s %s %s", chan,
+          snprintf(newmsg, sizeof newmsg, "KICK %s %s %s", chan,
                        newnicks + 1, reason);
           m->msg = nmalloc(strlen(newmsg) + 1);
           m->len = strlen(newmsg);
@@ -731,7 +731,7 @@ static int deq_kick(int which)
   chan = newsplit(&reason);
   nicks = newsplit(&reason);
   while (strlen(nicks) > 0) {
-    egg_snprintf(newnicks, sizeof newnicks, "%s,%s", newnicks,
+    snprintf(newnicks, sizeof newnicks, "%s,%s", newnicks,
                  newsplit(&nicks));
     nr++;
   }
@@ -749,11 +749,11 @@ static int deq_kick(int which)
           nick = splitnicks(&nicks);
           if ((nr < kick_method) && ((9 + strlen(chan) + strlen(newnicks) +
               strlen(nick) + strlen(reason)) < 510)) {
-            egg_snprintf(newnicks, sizeof newnicks, "%s,%s", newnicks, nick);
+            snprintf(newnicks, sizeof newnicks, "%s,%s", newnicks, nick);
             nr++;
             changed = 1;
           } else
-            egg_snprintf(newnicks2, sizeof newnicks2, "%s,%s", newnicks2, nick);
+            snprintf(newnicks2, sizeof newnicks2, "%s,%s", newnicks2, nick);
         }
       }
       if (changed) {
@@ -770,7 +770,7 @@ static int deq_kick(int which)
             h->last = 0;
         } else {
           nfree(m->msg);
-          egg_snprintf(newmsg, sizeof newmsg, "KICK %s %s %s", chan2,
+          snprintf(newmsg, sizeof newmsg, "KICK %s %s %s", chan2,
                        newnicks2 + 1, reason);
           m->msg = nmalloc(strlen(newmsg) + 1);
           m->len = strlen(newmsg);
@@ -784,7 +784,7 @@ static int deq_kick(int which)
     else
       m = h->head->next;
   }
-  egg_snprintf(newmsg, sizeof newmsg, "KICK %s %s %s", chan, newnicks + 1,
+  snprintf(newmsg, sizeof newmsg, "KICK %s %s %s", chan, newnicks + 1,
                reason);
   check_tcl_out(which, newmsg, 1);
   write_to_server(newmsg, strlen(newmsg));
@@ -1572,7 +1572,7 @@ static char *traced_nicklen(ClientData cdata, Tcl_Interp *irp,
   if (flags & (TCL_TRACE_READS | TCL_TRACE_UNSETS)) {
     char s[40];
 
-    egg_snprintf(s, sizeof s, "%d", nick_len);
+    snprintf(s, sizeof s, "%d", nick_len);
     Tcl_SetVar2(interp, name1, name2, s, TCL_GLOBAL_ONLY);
     if (flags & TCL_TRACE_UNSETS)
       Tcl_TraceVar(irp, name1, TCL_TRACE_READS | TCL_TRACE_WRITES |
@@ -1676,13 +1676,13 @@ static char *tcl_eggserver(ClientData cdata, Tcl_Interp *irp,
     Tcl_DStringInit(&ds);
     for (q = serverlist; q; q = q->next) {
 #ifdef TLS
-      egg_snprintf(x, sizeof x, "%s%s%s:%s%d%s%s %s", strchr(q->name, ':') ?
+      snprintf(x, sizeof x, "%s%s%s:%s%d%s%s %s", strchr(q->name, ':') ?
                    "[" : "", q->name, strchr(q->name, ':') ? "]" : "",
                    q->ssl ? "+" : "", q->port ? q->port : default_port,
                    q->pass ? ":" : "", q->pass ? q->pass : "",
                    q->realname ? q->realname : "");
 #else
-      egg_snprintf(x, sizeof x, "%s%s%s:%d%s%s %s", strchr(q->name, ':') ?
+      snprintf(x, sizeof x, "%s%s%s:%d%s%s %s", strchr(q->name, ':') ?
                    "[" : "", q->name, strchr(q->name, ':') ? "]" : "",
                    q->port ? q->port : default_port, q->pass ? ":" : "",
                    q->pass ? q->pass : "", q->realname ? q->realname : "");
@@ -1833,7 +1833,7 @@ static void dcc_chat_hostresolved(int i)
   char buf[512];
   struct flag_record fr = { FR_GLOBAL | FR_CHAN | FR_ANYWH, 0, 0, 0, 0, 0 };
 
-  egg_snprintf(buf, sizeof buf, "%d", dcc[i].port);
+  snprintf(buf, sizeof buf, "%d", dcc[i].port);
   if (!hostsanitycheck_dcc(dcc[i].nick, dcc[i].host, &dcc[i].sockname,
       dcc[i].u.dns->host, buf)) {
     lostdcc(i);
@@ -1842,11 +1842,11 @@ static void dcc_chat_hostresolved(int i)
   buf[0] = 0;
   dcc[i].sock = getsock(dcc[i].sockname.family, 0);
   if (dcc[i].sock < 0 || open_telnet_raw(dcc[i].sock, &dcc[i].sockname) < 0)
-    egg_snprintf(buf, sizeof buf, "%s", strerror(errno));
+    snprintf(buf, sizeof buf, "%s", strerror(errno));
 #ifdef TLS
   else if (dcc[i].ssl && ssl_handshake(dcc[i].sock, TLS_CONNECT, tls_vfydcc,
                                        LOG_MISC, dcc[i].host, &dcc_chat_sslcb))
-    egg_snprintf(buf, sizeof buf, "TLS negotiation error");
+    snprintf(buf, sizeof buf, "TLS negotiation error");
 #endif
   if (buf[0]) {
     if (!quiet_reject)
@@ -2020,12 +2020,12 @@ static void server_report(int idx, int details)
       dprintf(idx, "    NICK IS JUPED: %s%s\n", origbotname,
               keepnick ? " (trying)" : "");
     daysdur(now, server_online, s1);
-    egg_snprintf(s, sizeof s, "(connected %s)", s1);
+    snprintf(s, sizeof s, "(connected %s)", s1);
     if (server_lag && !lastpingcheck) {
       if (server_lag == -1)
-        egg_snprintf(s1, sizeof s1, " (bad pong replies)");
+        snprintf(s1, sizeof s1, " (bad pong replies)");
       else
-        egg_snprintf(s1, sizeof s1, " (lag: %ds)", server_lag);
+        snprintf(s1, sizeof s1, " (lag: %ds)", server_lag);
       strcat(s, s1);
     }
   }

@@ -229,7 +229,7 @@ static int compress_to_file(char *f_src, char *f_target, int mode_num)
   int len;
 
   adjust_mode_num(&mode_num);
-  egg_snprintf(mode, sizeof mode, "wb%d", mode_num);
+  snprintf(mode, sizeof mode, "wb%d", mode_num);
 
   if (!is_file(f_src)) {
     putlog(LOG_MISC, "*", "Failed to compress file `%s': not a file.", f_src);

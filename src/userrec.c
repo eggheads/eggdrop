@@ -516,7 +516,7 @@ void write_userfile(int idx)
   if (userlist == NULL)
     return;                     /* No point in saving userfile */
 
-  egg_snprintf(new_userfile, sizeof new_userfile, "%s~new", userfile);
+  snprintf(new_userfile, sizeof new_userfile, "%s~new", userfile);
 
   f = fopen(new_userfile, "w");
   chmod(new_userfile, userfile_perm);
@@ -552,7 +552,7 @@ void backup_userfile(void)
 
   if (quiet_save < 2)
     putlog(LOG_MISC, "*", USERF_BACKUP);
-  egg_snprintf(s, sizeof s, "%s~bak", userfile);
+  snprintf(s, sizeof s, "%s~bak", userfile);
   copyfile(userfile, s);
 }
 
@@ -838,7 +838,7 @@ struct userrec *get_user_by_nick(char *nick)
       if (!rfc_casecmp(nick, m->nick)) {
         char word[512];
 
-        egg_snprintf(word, sizeof word, "%s!%s", m->nick, m->userhost);
+        snprintf(word, sizeof word, "%s!%s", m->nick, m->userhost);
         /* No need to check the return value ourself */
         return get_user_by_host(word);
       }

@@ -63,12 +63,6 @@
 #ifdef egg_inet_aton
 #  undef egg_inet_aton
 #endif
-#ifdef egg_vsnprintf
-#  undef egg_vsnprintf
-#endif
-#ifdef egg_snprintf
-#  undef egg_snprintf
-#endif
 
 #if defined (__CYGWIN__) && !defined(STATIC)
 #  define EXPORT_SCOPE  __declspec(dllexport)
@@ -427,8 +421,8 @@
 #define users_in_subtree ((int (*)(tand_t *))global[250])
 #define egg_inet_aton ((int (*)(const char *cp, struct in_addr *addr))global[251])
 /* 252 - 255 */
-#define egg_snprintf (global[252])
-#define egg_vsnprintf ((int (*)(char *, size_t, const char *, va_list))global[253])
+/* was egg_snprintf -- use snprintf() instead */
+/* was egg_vsnprintf -- use vsnprintf() instead */
 /* was egg_memset -- use memset() instead */
 /* was egg_strcasecmp -- use strcasecmp instead */
 /* 256 - 259 */

@@ -480,7 +480,7 @@ static void tell_user(int idx, struct userrec *u)
     else
       strftime(s1, 6, "%H:%M", localtime(&li->laston));
   }
-  egg_snprintf(format, sizeof format, "%%-%us %%-5s%%5d %%-15s %%s (%%s)\n",
+  snprintf(format, sizeof format, "%%-%us %%-5s%%5d %%-15s %%s (%%s)\n",
                HANDLEN);
   dprintf(idx, format, u->handle,
           get_user(&USERENTRY_PASS, u) ? "yes" : "no", n, s, s1,
@@ -503,7 +503,7 @@ static void tell_user(int idx, struct userrec *u)
       fr.chan = ch->flags;
       fr.udef_chan = ch->flags_udef;
       build_flags(s, &fr, NULL);
-      egg_snprintf(format, sizeof format, "%%%us  %%-18s %%-15s %%s\n",
+      snprintf(format, sizeof format, "%%%us  %%-18s %%-15s %%s\n",
                    HANDLEN - 9);
       dprintf(idx, format, " ", ch->channel, s, s1);
       if (ch->info != NULL)
@@ -529,7 +529,7 @@ void tell_user_ident(int idx, char *id)
     dprintf(idx, "%s.\n", USERF_NOMATCH);
     return;
   }
-  egg_snprintf(format, sizeof format,
+  snprintf(format, sizeof format,
                "%%-%us PASS NOTES FLAGS           LAST\n", HANDLEN);
   dprintf(idx, format, "HANDLE");
   tell_user(idx, u);
@@ -548,7 +548,7 @@ void tell_users_match(int idx, char *mtch, int start, int limit, char *chname)
 
   dprintf(idx, "*** %s '%s':\n", MISC_MATCHING, mtch);
   cnt = 0;
-  egg_snprintf(format, sizeof format,
+  snprintf(format, sizeof format,
                "%%-%us PASS NOTES FLAGS           LAST\n", HANDLEN);
   dprintf(idx, format, "HANDLE");
   if (start > 1)

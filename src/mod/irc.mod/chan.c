@@ -326,7 +326,7 @@ static int detect_chan_flood(char *floodnick, char *floodhost, char *from,
         char s[NICKLEN + UHOSTLEN];
 
         for (m = chan->channel.member; m && m->nick[0]; m = m->next) {
-          egg_snprintf(s, sizeof s, "%s!%s", m->nick, m->userhost);
+          snprintf(s, sizeof s, "%s!%s", m->nick, m->userhost);
           if (wild_match(h, s) && (m->joined >= chan->floodtime[which]) &&
               !chan_sentkick(m) && !match_my_nick(m->nick) && (me_op(chan) ||
               (me_halfop(chan) && !chan_hasop(m)))) {
@@ -453,7 +453,7 @@ static void refresh_ban_kick(struct chanset_t *chan, char *user, char *nick)
           do_mask(chan, chan->channel.ban, b->mask, 'b');
           b->lastactive = now;
           if (b->desc && b->desc[0] != '@')
-            egg_snprintf(c, sizeof c, "%s %s", IRC_PREBANNED, b->desc);
+            snprintf(c, sizeof c, "%s %s", IRC_PREBANNED, b->desc);
           else
             c[0] = 0;
           kick_all(chan, b->mask, c[0] ? c : IRC_YOUREBANNED, 0);
@@ -1755,7 +1755,7 @@ static int gotjoin(char *from, char *channame)
     if (l_chname > (CHANNEL_ID_LEN + 1)) {
       ch_dname = nmalloc(l_chname + 1);
       if (ch_dname) {
-        egg_snprintf(ch_dname, l_chname + 2, "!%s",
+        snprintf(ch_dname, l_chname + 2, "!%s",
                      chname + (CHANNEL_ID_LEN + 1));
         chan = findchan_by_dname(ch_dname);
         if (!chan) {

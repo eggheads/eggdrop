@@ -500,7 +500,7 @@ void chanprog()
     if (!make_userfile) {
       char tmp[178];
 
-      egg_snprintf(tmp, sizeof tmp, MISC_NOUSERFILE, configfile);
+      snprintf(tmp, sizeof tmp, MISC_NOUSERFILE, configfile);
       fatal(tmp, 0);
     }
     printf("\n\n%s\n", MISC_NOUSERFILE2);
@@ -617,7 +617,7 @@ void do_check_timers(tcl_timer_t ** stack)
     old = mark;
     mark = mark->next;
     if (!old->mins) {
-      egg_snprintf(x, sizeof x, "timer%lu", old->id);
+      snprintf(x, sizeof x, "timer%lu", old->id);
       do_tcl(x, old->cmd);
       if (old->count == 1) {
         nfree(old->cmd);
@@ -658,9 +658,9 @@ void list_timers(Tcl_Interp *irp, tcl_timer_t *stack)
   tcl_timer_t *mark;
 
   for (mark = stack; mark; mark = mark->next) {
-    egg_snprintf(mins, sizeof mins, "%u", mark->mins);
-    egg_snprintf(id, sizeof id, "timer%lu", mark->id);
-    egg_snprintf(count, sizeof count, "%u", mark->count);
+    snprintf(mins, sizeof mins, "%u", mark->mins);
+    snprintf(id, sizeof id, "timer%lu", mark->id);
+    snprintf(count, sizeof count, "%u", mark->count);
     argv[0] = mins;
     argv[1] = mark->cmd;
     argv[2] = id;

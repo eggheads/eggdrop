@@ -760,8 +760,8 @@ static void got_ban(struct chanset_t *chan, char *nick, char *from, char *who,
   memberlist *m;
   struct userrec *targ;
 
-  egg_snprintf(me, sizeof me, "%s!%s", botname, botuserhost);
-  egg_snprintf(s, sizeof s, "%s!%s", nick, from);
+  snprintf(me, sizeof me, "%s!%s", botname, botuserhost);
+  snprintf(s, sizeof s, "%s!%s", nick, from);
   newban(chan, who, s);
   check_tcl_mode(nick, from, u, chan->dname, "+b", who);
   if (!(chan = modebind_refresh(ch, from, &user, NULL, NULL)))
@@ -782,7 +782,7 @@ static void got_ban(struct chanset_t *chan, char *nick, char *from, char *who,
       return;
     }
     for (m = chan->channel.member; m && m->nick[0]; m = m->next) {
-      egg_snprintf(s1, sizeof s1, "%s!%s", m->nick, m->userhost);
+      snprintf(s1, sizeof s1, "%s!%s", m->nick, m->userhost);
       if (match_addr(who, s1)) {
         targ = get_user_by_host(s1);
         if (targ) {
@@ -807,7 +807,7 @@ static void got_ban(struct chanset_t *chan, char *nick, char *from, char *who,
       for (b = cycle ? chan->bans : global_bans; b; b = b->next) {
         if (match_addr(b->mask, who)) {
           if (b->desc && b->desc[0] != '@')
-            egg_snprintf(resn, sizeof resn, "%s %s", IRC_PREBANNED, b->desc);
+            snprintf(resn, sizeof resn, "%s %s", IRC_PREBANNED, b->desc);
           else
             resn[0] = 0;
         }

@@ -239,12 +239,12 @@ static int tcl_tagmsg STDVAR {
   p = strtok(tagdict, " ");
   while (p != NULL) {
     if ((i % 2) != 0) {
-      taglen += egg_snprintf(tag + taglen, CLITAGMAX - 9 - taglen, "%s", p);
+      taglen += snprintf(tag + taglen, CLITAGMAX - 9 - taglen, "%s", p);
     } else {
       if (strcmp(p, "{}") != 0) {
-        taglen += egg_snprintf(tag + taglen, CLITAGMAX - 9 - taglen, "=%s;", p);
+        taglen += snprintf(tag + taglen, CLITAGMAX - 9 - taglen, "=%s;", p);
       } else {
-        taglen += egg_snprintf(tag + taglen, CLITAGMAX - 9 - taglen, ";");
+        taglen += snprintf(tag + taglen, CLITAGMAX - 9 - taglen, ";");
       }
     }
     i++;
