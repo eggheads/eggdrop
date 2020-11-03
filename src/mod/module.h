@@ -509,6 +509,8 @@
 /* 308 - 311 */
 #define make_rand_str_from_chars ((void (*) (char *, int, char *))global[308])
 #define add_tcl_objcommands ((void (*) (tcl_cmds *))global[309])
+#define pid_file ((char *)(global[310]))
+
 
 /* hostmasking */
 #define maskhost(a,b) maskaddr((a),(b),3)
