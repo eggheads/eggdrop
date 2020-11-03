@@ -670,7 +670,7 @@ static struct resolve *findip(IP ip)
   return rp;                    /* NULL */
 }
 
-void ptrstring4(IP *ip, char *buf, size_t sz)
+static void ptrstring4(IP *ip, char *buf, size_t sz)
 {
   egg_snprintf(buf, sz, "%u.%u.%u.%u.in-addr.arpa",
            ((uint8_t *) ip)[3],
@@ -680,7 +680,7 @@ void ptrstring4(IP *ip, char *buf, size_t sz)
 }
 
 #ifdef IPV6
-void ptrstring6(struct in6_addr *ip6, char *buf, size_t sz)
+static void ptrstring6(struct in6_addr *ip6, char *buf, size_t sz)
 {
   int i;
   char *p, *q;
@@ -698,7 +698,7 @@ void ptrstring6(struct in6_addr *ip6, char *buf, size_t sz)
 }
 #endif
 
-void ptrstring(struct sockaddr *addr, char *buf, size_t sz)
+static void ptrstring(struct sockaddr *addr, char *buf, size_t sz)
 {
   if (addr->sa_family == AF_INET)
     ptrstring4((IP *) &((struct sockaddr_in *)addr)->sin_addr.s_addr,
@@ -824,7 +824,7 @@ static void passrp(struct resolve *rp, long ttl, int type)
 
 /* Parses the response packets received.
  */
-void parserespacket(uint8_t *response, int len)
+static void parserespacket(uint8_t *response, int len)
 {
 #ifdef IPV6
   int ready = 0;
@@ -1202,12 +1202,12 @@ static void dns_lookup(sockname_t *addr)
   sendrequest(rp, T_PTR);
 }
 
-/* Read /etc/hosts 	*/
+/* Read /etc/hosts */
 static int dns_hosts(char *hostn) {
   #define PATH "/etc/hosts"
   size_t hostn_len;
   int i;
-  char hostn_lower[256], hostn_upper[256], line[1024], *p1, *p2, *p3, *p4;
+  char hostn_lower[256], hostn_upper[256], line[8 * 1024], *p1, *p2, *p3, *p4;
   FILE *hostf;
   sockname_t name;
 #ifdef IPV6
@@ -1289,6 +1289,10 @@ static int dns_hosts(char *hostn) {
       }
       p2++;
     }
+  }
+  if (ferror(hostf)) {
+    ddebug0(RES_MSG "fgets(" PATH ")");
+    return 0;
   }
 #ifdef IPV6
   if (fallback_set) {

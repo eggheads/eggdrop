@@ -805,7 +805,7 @@ static void subst_addcol(char *s, char *newcol)
 void help_subst(char *s, char *nick, struct flag_record *flags,
                 int isdcc, char *topic)
 {
-  char xx[HELP_BUF_LEN + 1], sub[161], *current, *q, chr, *writeidx,
+  char xx[HELP_BUF_LEN + 1], sub[512], *current, *q, chr, *writeidx,
        *readidx, *towrite;
   struct chanset_t *chan;
   int i, j, center = 0;
