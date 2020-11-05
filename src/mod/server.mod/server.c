@@ -591,7 +591,7 @@ static void parse_q(struct msgq_head *q, char *oldnick, char *newnick)
           }
           changed = 1;
         } else
-          egg_snprintf(newnicks, sizeof newnicks, ",%s", nick);
+          strlcpy(newnicks, nick, sizeof newnicks);
       }
       egg_snprintf(newmsg, sizeof newmsg, "KICK %s %s %s", chan,
                    newnicks, msg);
