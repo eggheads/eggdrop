@@ -140,7 +140,9 @@ static char *tcl_eggcouplet(ClientData cdata, Tcl_Interp *irp,
                             EGG_CONST char *name1,
                             EGG_CONST char *name2, int flags)
 {
-  char *s, s1[41];
+  char s1[41];
+  const char *s;
+
   coupletinfo *cp = (coupletinfo *) cdata;
 
   if (flags & (TCL_TRACE_READS | TCL_TRACE_UNSETS)) {
@@ -151,15 +153,11 @@ static char *tcl_eggcouplet(ClientData cdata, Tcl_Interp *irp,
                    TCL_TRACE_READS | TCL_TRACE_WRITES | TCL_TRACE_UNSETS,
                    tcl_eggcouplet, cdata);
   } else {                        /* writes */
-    s = (char *) Tcl_GetVar2(interp, name1, name2, 0);
+    s = Tcl_GetVar2(interp, name1, name2, 0);
     if (s != NULL) {
       int nr1, nr2;
 
       nr1 = nr2 = 0;
-
-      if (strlen(s) > 40)
-        s[40] = 0;
-
       sscanf(s, "%d%*c%d", &nr1, &nr2);
       *(cp->left) = nr1;
       *(cp->right) = nr2;
