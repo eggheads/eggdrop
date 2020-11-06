@@ -319,7 +319,7 @@ int pass_set(struct userrec *u, struct user_entry *e, void *buf)
       if (encrypt_pass2)
         new2 = encrypt_pass2(pass);
     }
-    if (encrypt_pass && (!encrypt_pass2 || enable_pass)) {
+    if ((u->flags & USER_BOT) || (encrypt_pass && (!encrypt_pass2 || enable_pass))) {
       e->u.extra = user_malloc(strlen(new) + 1);
       strcpy(e->u.extra, new);
     }
