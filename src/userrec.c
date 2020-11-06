@@ -380,11 +380,6 @@ int u_pass_match(struct userrec *u, char *pass)
             egg_list_delete((struct list_type **) &(u->entries), (struct list_type *) e);
             nfree(e);
           }
-          /* TODO: share bots could be triggered to also check and delete PASS
-           * but remember, shared passwords are cleartext
-           * if (!noshare && !(u->flags & (USER_BOT | USER_UNSHARED)))
-           *   shareout(NULL, "c PASS %s %s\n", u->handle, pass ? pass : "");
-           */
         }
       }
       return 1;

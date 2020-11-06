@@ -285,9 +285,6 @@ int pass_set(struct userrec *u, struct user_entry *e, void *buf)
   char *new2 = 0;
   char *pass = buf;
 
-  /* TODO: should we remove PASS and PASS2 regardless of which encryption
-   * modules are loaded?
-   */
   if (encrypt_pass && e->u.extra) {
     explicit_bzero(e->u.extra, strlen(e->u.extra));
     nfree(e->u.extra);
@@ -308,29 +305,27 @@ int pass_set(struct userrec *u, struct user_entry *e, void *buf)
         *p = '?';
       p++;
     }
-    if (u->flags & USER_BOT)
+    if ((u->flags & USER_BOT) || pass[0] == '+') {
       strlcpy(new, pass, sizeof new);
-      /* We do not need PASS2 for bots */
-    else if (pass[0] == '+') {
-      strlcpy(new, pass, sizeof new);
-      new2 = NULL; /* due to module api encrypted pass2 cannot be available here
-                    * Caller must do set_user(&USERENTRY_PASS2, u, password);
-                    * Probably only share.c:dup_userlist()
-                    */
+      /* USER_BOT: we do not need PASS2 for bots
+       * '+': due to module api encrypted pass2 cannot be available here
+       * caller must do set_user(&USERENTRY_PASS2, u, password);
+       * probably only share.c:dup_userlist()
+       */
     }
     else {
-      if (encrypt_pass && enable_pass)
-        encrypt_pass(pass, new);
+      if (encrypt_pass && (!encrypt_pass2 || enable_pass))
+          encrypt_pass(pass, new);
       if (encrypt_pass2)
         new2 = encrypt_pass2(pass);
     }
-    if (encrypt_pass && enable_pass) {
+    if (encrypt_pass && (!encrypt_pass2 || enable_pass)) {
       e->u.extra = user_malloc(strlen(new) + 1);
       strcpy(e->u.extra, new);
     }
     if (new2) { /* implicit encrypt_pass2 && */
       set_user(&USERENTRY_PASS2, u, new2);
-      if (!enable_pass && e->u.extra) {
+      if (encrypt_pass && !enable_pass && e->u.extra) {
         if (!encrypt_pass) { /* else it would have been freed already */
           explicit_bzero(e->u.extra, strlen(e->u.extra));
           nfree(e->u.extra);
