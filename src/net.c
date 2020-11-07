@@ -144,8 +144,14 @@ int setsockname(sockname_t *addr, char *src, int port, int allowres)
   int i, count;
 #endif
 
-  /* DCC CHAT ip is expressed as integer but inet_pton() only accepts dotted
-   * addresses */
+  /* DCC CHAT <host>, for legacy reasons, uses a ‘fun’ mixture of
+   * representations. For IPv4 hosts, this parameter is the string
+   * representation of the positive integer that is the IP address in network
+   * byte order (e.g. 127.0.0.1 is represented as 2130706433 in this param). For
+   * IPv6 hosts, clients instead support the standard, widely-implemented IPv6
+   * hex representation separated by colons (e.g. ::1).
+   * inet_pton() only accepts dotted addresses
+   */
   val = strtol(src, &endptr, 10);
   if (val && !*endptr) {
     ip = htonl(val);
