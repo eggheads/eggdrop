@@ -621,7 +621,7 @@ static void cleanup_pass(void) {
   struct userrec *u;
   struct user_entry *e, *p, *p2;
 
-  if (encrypt_pass && encrypt_pass2 && !enable_pass) {
+  if (encrypt_pass && encrypt_pass2) {
     for (u = userlist; u; u = u->next) {
       if (!(u->flags & USER_BOT)) {
         p = NULL;
@@ -999,7 +999,8 @@ int readuserfile(char *file, struct userrec **ret)
   }
   noshare = noxtra = 0;
   /* process the user data *now* */
-  cleanup_pass();
+  if (!enable_pass)
+    cleanup_pass();
   return 1;
 }
 
@@ -1118,4 +1119,16 @@ void autolink_cycle(char *start)
     autc = NULL;
   if (autc)
     botlink("", -3, autc->handle);      /* try autoconnect */
+}
+
+char *traced_enable_pass(ClientData cd, Tcl_Interp *irp, EGG_CONST char *name1, EGG_CONST char *name2, int flags)
+{
+  const char *value;
+
+  value = Tcl_GetVar2(irp, name1, name2, TCL_GLOBAL_ONLY);
+  if (value[0] == '0' && value[1] == '\0') {
+    cleanup_pass();
+    Tcl_UntraceVar(interp, "enable-pass", TCL_GLOBAL_ONLY|TCL_TRACE_WRITES, traced_enable_pass, NULL);
+  }
+  return NULL;
 }
