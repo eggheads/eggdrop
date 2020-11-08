@@ -875,7 +875,7 @@ int users_in_subtree(tand_t *bot)
  */
 int botunlink(int idx, char *nick, char *reason, char *from)
 {
-  char s[20];
+  char s[1024];
   int i;
   int bots, users;
   tand_t *bot;
@@ -904,8 +904,6 @@ int botunlink(int idx, char *nick, char *reason, char *from)
         if (nick[0] != '*')
           return 1;
       } else if (dcc[i].type == &DCC_BOT) {
-        char s[1024];
-
         if (idx >= 0)
           dprintf(idx, "%s %s.\n", BOT_BREAKLINK, dcc[i].nick);
         else if ((idx == -3) && (b_status(i) & STAT_SHARE) && !share_unlinks)
@@ -914,16 +912,16 @@ int botunlink(int idx, char *nick, char *reason, char *from)
         bots = bots_in_subtree(bot);
         users = users_in_subtree(bot);
         if (reason && reason[0]) {
-          simple_sprintf(s, "%s %s (%s (%s)) (lost %d bot%s and %d user%s)",
-                         BOT_UNLINKEDFROM, dcc[i].nick, reason, from, bots,
-                         (bots != 1) ? "s" : "", users, (users != 1) ?
-                         "s" : "");
+          snprintf(s, sizeof s, "%s %s (%s (%s)) (lost %d bot%s and %d user%s)",
+                   BOT_UNLINKEDFROM, dcc[i].nick, reason, from, bots,
+                   (bots != 1) ? "s" : "", users, (users != 1) ?
+                   "s" : "");
           dprintf(i, "bye %s\n", reason);
         } else {
-          simple_sprintf(s, "%s %s (%s) (lost %d bot%s and %d user%s)",
-                         BOT_UNLINKEDFROM, dcc[i].nick, from, bots,
-                         (bots != 1) ? "s" : "", users,
-                         (users != 1) ? "s" : "");
+          snprintf(s, sizeof s, "%s %s (%s) (lost %d bot%s and %d user%s)",
+                   BOT_UNLINKEDFROM, dcc[i].nick, from, bots,
+                   (bots != 1) ? "s" : "", users,
+                   (users != 1) ? "s" : "");
           dprintf(i, "bye No reason\n");
         }
         putlog(LOG_BOTS, "*", "%s.", s);
@@ -970,8 +968,7 @@ int botunlink(int idx, char *nick, char *reason, char *from)
         check_tcl_chpt(party[i].bot, party[i].nick, party[i].sock,
                        party[i].chan);
     }
-    strcpy(s, "killassoc &");
-    Tcl_Eval(interp, s);
+    Tcl_Eval(interp, "killassoc &");
   }
   return 0;
 }
