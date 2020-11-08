@@ -75,7 +75,8 @@ extern struct userrec *userlist, *lastuser;
 extern struct chanset_t *chanset;
 
 extern char botnetnick[], botname[], origbotname[], botuser[], ver[], log_ts[],
-            admin[], userfile[], notify_new[], helpdir[], version[], quit_msg[];
+            admin[], userfile[], notify_new[], helpdir[], version[], quit_msg[],
+            pid_file[];
 
 extern int parties, noshare, dcc_total, egg_numver, userfile_perm, ignore_time,
            must_be_owner, raw_log, max_dcc, make_userfile, default_flags,
@@ -608,7 +609,9 @@ Function global_table[] = {
 #endif
   (Function) check_validpass,
   /* 308 - 311 */
-  (Function) make_rand_str_from_chars
+  (Function) make_rand_str_from_chars,
+  (Function) add_tcl_objcommands,
+  (Function) pid_file             /* char                                */
 };
 
 void init_modules(void)

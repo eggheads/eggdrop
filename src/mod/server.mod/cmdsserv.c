@@ -60,20 +60,21 @@ static void cmd_servers(struct userrec *u, int idx, char *par)
         t = time(NULL);
         currtm = localtime(&t); /* ******* */
         if ((currtm->tm_mon == 3) && (currtm->tm_mday == 1)) {
-          strlcpy(setpass, "(hunter2)", sizeof setpass);
+          strlcpy(setpass, " (hunter2)", sizeof setpass);
         } else {
-          strlcpy(setpass, "(password)", sizeof setpass);
+          strlcpy(setpass, " (password)", sizeof setpass);
         }
       } else {
         strlcpy(setpass, "", sizeof setpass);
       }
       if ((i == curserv) && realservername) {
-        len += egg_snprintf(s+len, sizeof s - len, "%d (%s) <- I am here",
-                x->port ? x->port : default_port, setpass, realservername);
-      }  else {
-        len += egg_snprintf(s+len, sizeof s - len, "%d %s",
-                x->port ? x->port : default_port, setpass,
-                (i == curserv) ? "<- I am here" : "");
+        snprintf(s+len, sizeof s - len, "%d%s (%s) <- I am here",
+                 x->port ? x->port : default_port, setpass,
+                 realservername);
+      } else {
+        snprintf(s+len, sizeof s - len, "%d%s%s",
+                 x->port ? x->port : default_port, setpass,
+                 (i == curserv) ? " <- I am here" : "");
       }
       dprintf(idx, "%s\n", s);
       i++;

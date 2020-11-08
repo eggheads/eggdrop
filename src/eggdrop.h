@@ -94,10 +94,6 @@
 #  include "Error: Your system must have standard ANSI C headers."
 #endif
 
-#ifndef HAVE_VPRINTF
-#  include "Error: You need vsprintf to compile eggdrop."
-#endif
-
 #ifdef HAVE_UNISTD_H
 #  include <unistd.h>
 #endif
