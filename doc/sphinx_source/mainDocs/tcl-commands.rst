@@ -1707,6 +1707,14 @@ dcclist [type]
 
   Module: core
 
+^^^^^^^^^^^^^^^
+socklist [type]
+^^^^^^^^^^^^^^^
+
+  Returns: a list of active connections, each item in the list is a sublist containing eight elements (in dict-readable format):
+  {<idx> <handle> <hostname> <ip> <[+]port> <type> {<other>} <timestamp>}.
+
+
 ^^^^^^^^^^^
 whom <chan>
 ^^^^^^^^^^^
