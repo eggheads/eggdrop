@@ -35,7 +35,6 @@
  */
 #include <config.h>
 #ifdef CYGWIN_HACKS
-#  include <windows.h>
 #  undef X509_NAME
 #  undef X509_EXTENSIONS
 #  undef X509_CERT_PAIR
@@ -1240,9 +1239,6 @@ int main(int arg_c, char **arg_v)
     if (freopen("/dev/null", "w", stderr) == NULL) {
       putlog(LOG_MISC, "*", "Error renaming stderr file handle: %s", strerror(errno));
     }
-#ifdef CYGWIN_HACKS
-    FreeConsole();
-#endif
   }
 
   /* Terminal emulating dcc chat */
