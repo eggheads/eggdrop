@@ -667,12 +667,15 @@ static void build_dcc_list(Tcl_Interp *irp, char *idxstr, char *nick, char *host
 
 /* Build and return a list of lists of all sockets, in dict-readable format */
 static void build_sock_list(Tcl_Interp *irp, Tcl_Obj *masterlist, char *idxstr,
-            char *nick, char *host, char *ip, char *port, char *type,
-            char *other, char *timestamp) {
-  EGG_CONST char *val[] = {"idx", "handle", "host", "ip", "port", "type",
-                           "info", "time"};
+            char *nick, char *host, char *ip, int port, int secure,
+            char *type, char *other, char *timestamp) {
+  EGG_CONST char *val[] = {"idx", "handle", "host", "ip", "port", "secure",
+                           "type", "info", "time"};
   Tcl_Obj *thelist;
+  char securestr[2], portstr[6];
 
+  egg_snprintf(securestr, sizeof securestr, "%d", secure);
+  egg_snprintf(portstr, sizeof portstr, "%d", port);
   thelist = Tcl_NewListObj(0, NULL);
   Tcl_ListObjAppendElement(irp, thelist, Tcl_NewStringObj(val[0], -1));
   Tcl_ListObjAppendElement(irp, thelist, Tcl_NewStringObj(idxstr, -1));
@@ -683,12 +686,14 @@ static void build_sock_list(Tcl_Interp *irp, Tcl_Obj *masterlist, char *idxstr,
   Tcl_ListObjAppendElement(irp, thelist, Tcl_NewStringObj(val[3], -1));
   Tcl_ListObjAppendElement(irp, thelist, Tcl_NewStringObj(ip, -1));
   Tcl_ListObjAppendElement(irp, thelist, Tcl_NewStringObj(val[4], -1));
-  Tcl_ListObjAppendElement(irp, thelist, Tcl_NewStringObj(port, -1));
+  Tcl_ListObjAppendElement(irp, thelist, Tcl_NewStringObj(portstr, -1));
   Tcl_ListObjAppendElement(irp, thelist, Tcl_NewStringObj(val[5], -1));
-  Tcl_ListObjAppendElement(irp, thelist, Tcl_NewStringObj(type, -1));
+  Tcl_ListObjAppendElement(irp, thelist, Tcl_NewStringObj(securestr, -1));
   Tcl_ListObjAppendElement(irp, thelist, Tcl_NewStringObj(val[6], -1));
-  Tcl_ListObjAppendElement(irp, thelist, Tcl_NewStringObj(other, -1));
+  Tcl_ListObjAppendElement(irp, thelist, Tcl_NewStringObj(type, -1));
   Tcl_ListObjAppendElement(irp, thelist, Tcl_NewStringObj(val[7], -1));
+  Tcl_ListObjAppendElement(irp, thelist, Tcl_NewStringObj(other, -1));
+  Tcl_ListObjAppendElement(irp, thelist, Tcl_NewStringObj(val[8], -1));
   Tcl_ListObjAppendElement(irp, thelist, Tcl_NewStringObj(timestamp, -1));
   Tcl_ListObjAppendElement(irp, masterlist, thelist);
   Tcl_SetObjResult(irp, masterlist);
@@ -752,7 +757,7 @@ static void dccsocklist(Tcl_Interp *irp, int argc, char *type, int src) {
         }
         build_sock_list(irp, masterlist, idxstr, dcc[i].nick,
             (dcc[i].host[0] == '\0') ? iptostr(&dcc[i].sockname.addr.sa) : dcc[i].host,
-            s, portstring, dcc[i].type ? dcc[i].type->name : "*UNKNOWN*", other,
+            s, dcc[i].port, dcc[i].ssl, dcc[i].type ? dcc[i].type->name : "*UNKNOWN*", other,
             timestamp);
       }
     }

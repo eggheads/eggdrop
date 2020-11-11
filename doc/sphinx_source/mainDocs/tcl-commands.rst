@@ -1711,9 +1711,34 @@ dcclist [type]
 socklist [type]
 ^^^^^^^^^^^^^^^
 
-  Returns: a list of active connections, each item in the list is a sublist containing eight elements (in dict-readable format):
-  {<idx> <handle> <hostname> <ip> <[+]port> <type> {<other>} <timestamp>}.
+  Returns: a list of active connections, each item in the list is a sublist containing eight elements (in dict-readable format). The order of items returned should not be considered static or permanent, so it is recommended to access the items as key/value pairs with the dict command, as opposed to something like lindex, to extract values. The possible keys returned are:
 
+  +----------+--------------------------------------------------------+
+  | idx      | integer value assigned to Eggdrop connections          |
+  +----------+--------------------------------------------------------+
+  | handle   | possible values are (telnet), (bots), (users),         |
+  |          | (script) for a listening socket, or the handle of the  |
+  |          | connected user for an established connection           |
+  +----------+--------------------------------------------------------+
+  | host     | the hostname of the connection, if it is known;        |
+  |          | otherwise a *                                          |
+  +----------+--------------------------------------------------------+
+  | ip       | the ip of the connection                               |
+  +----------+--------------------------------------------------------+
+  | port     | the port number associated with the connection (local  |
+  |          | port for listening connections, remote port for server |
+  |          | connections.                                           |
+  +----------+--------------------------------------------------------+
+  | secure   | 1 if SSL/TLS is used for the connect; 0 otherwise      |
+  +----------+--------------------------------------------------------+
+  | type     | the type of connection (TELNET, CHAT, SERVER, etc)     |
+  +----------+--------------------------------------------------------+
+  | info     | extra information associated with the connection       |
+  +----------+--------------------------------------------------------+
+  | time     | timestamp of when the socket was established           |
+  +----------+--------------------------------------------------------+
+
+ Module: core
 
 ^^^^^^^^^^^
 whom <chan>
