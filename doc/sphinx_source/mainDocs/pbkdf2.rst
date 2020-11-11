@@ -8,11 +8,11 @@ PBKDF2 Hashing
 
 Background
 ==========
-    Prior to Eggdrop 1.9.0, the blowfish module was included with Eggdrop to protect sensitve data such as passwords stored in the userfile. While there are no known practical attacks against blowfish at the time of this writing, it was decided that a more modern crypto solution was desirable to be included with Eggdrop. The PBKDF2 (Password-based Key Derivation Function 2) uses a password and salt value to create a password hash (the salt value ensures that the hashes of two identical passwords are different). This process is one-way, which means the hashes cannot be cryptographically reversed and thus are safe for storing in a file.
+    Prior to Eggdrop 1.9.0, the blowfish module was included with Eggdrop to protect sensitive data such as passwords stored in the userfile. While there are no known practical attacks against blowfish at the time of this writing, it was decided that a more modern crypto solution was desirable to be included with Eggdrop. The PBKDF2 (Password-based Key Derivation Function 2) uses a password and salt value to create a password hash (the salt value ensures that the hashes of two identical passwords are different). This process is one-way, which means the hashes cannot be cryptographically reversed and thus are safe for storing in a file.
 
     The default configuration of Eggdrop 1.9.0 has both the blowfish and pbkdf2 modules enabled (see `Hybrid Configuration`_ below). This will allow users upgrading a seamless transition to the PBKDF2 module. For users starting an Eggdrop for the first time, it is recommended to comment out the 'loadmodule blowfish' line, in order to implement the `Solo Configuration`_.
 
-    Also of note, the maximum password length is increased to 30 with PBKDF2, up from 15 with Blowfish. The automatically-generated botnet passwords are now 30 characters instead of the maximum-allowed 16 used with blowfish the blowfish module, and pull from a larger character set than what was used with the blowfish module. Finally, if you are linking bots, you'll need to ensure the same module is loaded on both bots (ie, if the hub bot is using the pbkdf2 module, the leaf bots must have pbkdf2 loaded as well in order to enable authentication checks).
+    Also of note, the maximum password length is increased to 30 with PBKDF2, up from 15 with Blowfish. The automatically-generated botnet passwords are now 30 characters instead of the maximum-allowed 16 used with the blowfish module, and pull from a larger character set than what was used with the blowfish module. Finally, if you are linking bots, you'll need to ensure the same module is loaded on both bots (ie, if the hub bot is using the pbkdf2 module, the leaf bots must have pbkdf2 loaded as well in order to enable authentication checks).
 
 Usage
 =====
@@ -56,7 +56,7 @@ Solo configuration
 
     With a solo configuration, Eggdrop will only run the pbkdf2 module. Eggdrop will not be able to authenticate against passwords in an already-existing userfile and thus will require every user to set a password again, as if they were just added to Eggdrop. This can be done via the PASS msg command (/msg bot PASS <password>) or by having a user with appropriate permissions (and an already-set password) log into the partyline and use the '.chpass' command.
 
-    SECURITY CONSIDERATION: This configuraion is not ideal for transitioning an existing userfile to PBKDF2. Without the blowfish module loaded, every user in the userfile essentially has no password set. This means any other user that matches a hostmask applied to a handle (*!*@*.aol.com, I'm looking at you) could set the password and gain access to that user's Eggdrop account.
+    SECURITY CONSIDERATION: This configuration is not ideal for transitioning an existing userfile to PBKDF2. Without the blowfish module loaded, every user in the userfile essentially has no password set. This means any other user that matches a hostmask applied to a handle (*!*@*.aol.com, I'm looking at you) could set the password and gain access to that user's Eggdrop account.
 
 Enabling solo configuration
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^
