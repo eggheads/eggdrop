@@ -33,7 +33,7 @@ extern char whois_fields[];
 
 
 int share_greet = 0; /* Share greeting info                      */
-int enable_pass = 1; /* create and keep encryption mod passwords */
+int remove_pass = 0; /* create and keep encryption mod passwords */
 struct user_entry_type *entry_type_list;
 
 
@@ -314,18 +314,19 @@ int pass_set(struct userrec *u, struct user_entry *e, void *buf)
        */
     }
     else {
-      if (encrypt_pass && (!encrypt_pass2 || enable_pass))
+      if (encrypt_pass && (!encrypt_pass2 || !remove_pass))
           encrypt_pass(pass, new);
       if (encrypt_pass2)
         new2 = encrypt_pass2(pass);
     }
-    if ((u->flags & USER_BOT) || (encrypt_pass && (!encrypt_pass2 || enable_pass))) {
+    if ((u->flags & USER_BOT) || (encrypt_pass &&
+            (!encrypt_pass2 || !remove_pass))) {
       e->u.extra = user_malloc(strlen(new) + 1);
       strcpy(e->u.extra, new);
     }
     if (new2) { /* implicit encrypt_pass2 && */
       set_user(&USERENTRY_PASS2, u, new2);
-      if (encrypt_pass && !enable_pass && e->u.extra) {
+      if (encrypt_pass && remove_pass && e->u.extra) {
         if (!encrypt_pass) { /* else it would have been freed already */
           explicit_bzero(e->u.extra, strlen(e->u.extra));
           nfree(e->u.extra);

@@ -41,7 +41,7 @@
 extern struct dcc_t *dcc;
 extern struct userrec *userlist, *lastuser;
 extern struct chanset_t *chanset;
-extern int dcc_total, noshare, enable_pass;
+extern int dcc_total, noshare, remove_pass;
 extern char botnetnick[];
 extern Tcl_Interp *interp;
 extern time_t now;
@@ -999,7 +999,7 @@ int readuserfile(char *file, struct userrec **ret)
   }
   noshare = noxtra = 0;
   /* process the user data *now* */
-  if (!enable_pass)
+  if (remove_pass)
     cleanup_pass();
   return 1;
 }
