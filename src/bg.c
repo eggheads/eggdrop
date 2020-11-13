@@ -160,7 +160,6 @@ void bg_prepare_split(void)
       break;
     case BG_COMM_ABORT:
       exit(1);
-      break;
     case BG_COMM_TRANSFERPF:
       /* Now transferring file from split process.
        */
@@ -168,13 +167,12 @@ void bg_prepare_split(void)
         message.comm_data.transferpf.len = 40 - 1;
       /* Next message contains data. */
       if (read(bg.comm_recv, pid_file, message.comm_data.transferpf.len) <= 0)
-        goto error;
+        break;
       pid_file[message.comm_data.transferpf.len] = 0;
       break;
     }
   }
 
-error:
   /* We only reach this point in case of an error.
    */
   fatal("COMMUNICATION THROUGH PIPE BROKE.", 0);
