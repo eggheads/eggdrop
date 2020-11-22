@@ -510,6 +510,9 @@
 #define make_rand_str_from_chars ((void (*) (char *, int, char *))global[308])
 #define add_tcl_objcommands ((void (*) (tcl_cmds *))global[309])
 #define pid_file ((char *)(global[310]))
+#ifndef HAVE_EXPLICIT_BZERO
+# define explicit_bzero ((void (*) (void *const, const size_t))global[311])
+#endif
 
 
 /* hostmasking */
