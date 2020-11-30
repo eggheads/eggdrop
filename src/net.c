@@ -55,7 +55,7 @@ extern unsigned long otraffic_irc_today, otraffic_bn_today, otraffic_dcc_today,
                      otraffic_unknown_today;
 
 char natip[121] = "";         /* Public IPv4 to report for systems behind NAT */
-char listen_ip[121] = ""; /* IP (or hostname) for listening sockets    */
+char listen_ip[121] = "";     /* IP (or hostname) for listening sockets       */
 char vhost[121] = "";         /* IPv4 vhost for outgoing connections          */
 #ifdef IPV6
 char vhost6[121] = "";        /* IPv6 vhost for outgoing connections          */
@@ -270,7 +270,7 @@ void getvhost(sockname_t *addr, int af)
   else
     h = vhost6;
 #endif
-  if (setsockname(addr, (h ? h : ""), 0, 1) != af)
+  if (!vhost[0] || setsockname(addr, (h ? h : ""), 0, 1) != af)
     setsockname(addr, (af == AF_INET ? "0.0.0.0" : "::"), 0, 0);
   /* Remember this 'self-lookup failed' thingie?
      I have good news - you won't see it again ;) */
@@ -520,7 +520,7 @@ static int get_port_from_addr(const sockname_t *addr)
 #ifdef IPV6
   return ntohs((addr->family == AF_INET) ? addr->addr.s4.sin_port : addr->addr.s6.sin6_port);
 #else
-  return addr->addr.s4.sin_port;
+  return ntohs(addr->addr.s4.sin_port);
 #endif
 }
 
