@@ -978,7 +978,8 @@ static void parserespacket(uint8_t *response, int len)
               classtypes[qclass] : classtypes[CLASSTYPES_COUNT]);
       return;
     }
-    if ((c + datalength) > (response + len)) {
+    c += datalength;
+    if (c > response + len) {
       ddebug0(RES_ERR "Specified rdata length exceeds packet size.");
       return;
     }
