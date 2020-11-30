@@ -40,7 +40,7 @@
 #include <arpa/inet.h>
 #include <arpa/nameser.h>
 #undef answer /* before resolv.h because it could collide with src/mod/module.h
-		 (dietlibc) */
+                 (dietlibc) */
 #include <resolv.h>
 #include <errno.h>
 
