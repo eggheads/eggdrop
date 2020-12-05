@@ -305,22 +305,26 @@ int pass_set(struct userrec *u, struct user_entry *e, void *buf)
         *p = '?';
       p++;
     }
-    if ((u->flags & USER_BOT) || pass[0] == '+') {
+    if (u->flags & USER_BOT) {
+      /* USER_BOT: PASS2 == PASS */
       strlcpy(new, pass, sizeof new);
-      /* USER_BOT: we do not need PASS2 for bots
-       * '+': due to module api encrypted pass2 cannot be available here
+      if (encrypt_pass2)
+        new2 = new;
+    }
+    else if ((u->flags & USER_BOT) || pass[0] == '+') {
+      strlcpy(new, pass, sizeof new);
+      /* '+': due to module api encrypted pass2 cannot be available here
        * caller must do set_user(&USERENTRY_PASS2, u, password);
        * probably only share.c:dup_userlist()
        */
     }
     else {
       if (encrypt_pass && (!encrypt_pass2 || !remove_pass))
-          encrypt_pass(pass, new);
+        encrypt_pass(pass, new);
       if (encrypt_pass2)
         new2 = encrypt_pass2(pass);
     }
-    if ((u->flags & USER_BOT) || (encrypt_pass &&
-            (!encrypt_pass2 || !remove_pass))) {
+    if (encrypt_pass && (!encrypt_pass2 || !remove_pass)) {
       e->u.extra = user_malloc(strlen(new) + 1);
       strcpy(e->u.extra, new);
     }
