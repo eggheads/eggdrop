@@ -614,7 +614,7 @@ void tell_users_match(int idx, char *mtch, int start, int limit, char *chname)
   dprintf(idx, MISC_FOUNDMATCH, cnt, cnt == 1 ? "" : MISC_MATCH_PLURAL);
 }
 
-/* if encryption mod and encryption2 mod is loaded and enable-pass is 0 delete
+/* if encryption mod and encryption2 mod is loaded and remove-pass is 1 delete
  * PASS for each user that is not a bot and has PASS2 set
  */
 static void cleanup_pass(void) {
