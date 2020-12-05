@@ -95,7 +95,7 @@ int quiet_save = 0;
 int strtot = 0;
 int handlen = HANDLEN;
 
-extern Tcl_VarTraceProc traced_myiphostname, traced_enable_pass;
+extern Tcl_VarTraceProc traced_myiphostname, traced_remove_pass;
 
 int expmem_tcl()
 {
@@ -514,7 +514,7 @@ static void init_traces()
   add_tcl_ints(def_tcl_ints);
   Tcl_TraceVar(interp, "my-ip", TCL_GLOBAL_ONLY|TCL_TRACE_WRITES|TCL_TRACE_UNSETS, traced_myiphostname, NULL);
   Tcl_TraceVar(interp, "my-hostname", TCL_GLOBAL_ONLY|TCL_TRACE_WRITES|TCL_TRACE_UNSETS, traced_myiphostname, NULL);
-  Tcl_TraceVar(interp, "remove-pass", TCL_GLOBAL_ONLY|TCL_TRACE_WRITES, traced_enable_pass, NULL);
+  Tcl_TraceVar(interp, "remove-pass", TCL_GLOBAL_ONLY|TCL_TRACE_WRITES, traced_remove_pass, NULL);
 }
 
 void kill_tcl()
@@ -524,7 +524,7 @@ void kill_tcl()
   rem_tcl_ints(def_tcl_ints);
   Tcl_UntraceVar(interp, "my-ip", TCL_GLOBAL_ONLY|TCL_TRACE_WRITES|TCL_TRACE_UNSETS, traced_myiphostname, NULL);
   Tcl_UntraceVar(interp, "my-hostname", TCL_GLOBAL_ONLY|TCL_TRACE_WRITES|TCL_TRACE_UNSETS, traced_myiphostname, NULL);
-  Tcl_UntraceVar(interp, "remove-pass", TCL_GLOBAL_ONLY|TCL_TRACE_WRITES, traced_enable_pass, NULL);
+  Tcl_UntraceVar(interp, "remove-pass", TCL_GLOBAL_ONLY|TCL_TRACE_WRITES, traced_remove_pass, NULL);
   kill_bind();
   Tcl_DeleteInterp(interp);
 }

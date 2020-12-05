@@ -1119,14 +1119,14 @@ void autolink_cycle(char *start)
     botlink("", -3, autc->handle);      /* try autoconnect */
 }
 
-char *traced_enable_pass(ClientData cd, Tcl_Interp *irp, EGG_CONST char *name1, EGG_CONST char *name2, int flags)
+char *traced_remove_pass(ClientData cd, Tcl_Interp *irp, EGG_CONST char *name1, EGG_CONST char *name2, int flags)
 {
   const char *value;
 
   value = Tcl_GetVar2(irp, name1, name2, TCL_GLOBAL_ONLY);
-  if (value[0] == '0' && value[1] == '\0') {
+  if (value[0] == '1' && value[1] == '\0') {
     cleanup_pass();
-    Tcl_UntraceVar(interp, "enable-pass", TCL_GLOBAL_ONLY|TCL_TRACE_WRITES, traced_enable_pass, NULL);
+    Tcl_UntraceVar(interp, "remove-pass", TCL_GLOBAL_ONLY|TCL_TRACE_WRITES, traced_remove_pass, NULL);
   }
   return NULL;
 }
