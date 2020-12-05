@@ -615,7 +615,7 @@ void tell_users_match(int idx, char *mtch, int start, int limit, char *chname)
 }
 
 /* if encryption mod and encryption2 mod is loaded and remove-pass is 1 delete
- * PASS for each user that is not a bot and has PASS2 set
+ * PASS for each user (and bot) that has PASS2 set
  */
 static void cleanup_pass(void) {
   struct userrec *u;
@@ -623,22 +623,20 @@ static void cleanup_pass(void) {
 
   if (encrypt_pass && encrypt_pass2) {
     for (u = userlist; u; u = u->next) {
-      if (!(u->flags & USER_BOT)) {
-        p = NULL;
-        p2 = NULL;
-        for (e = u->entries; e; e = e->next) {
-          if (!strcasecmp(e->type->name, "PASS"))
-            p = e;
-          else if (!strcasecmp(e->type->name, "PASS2"))
-            p2 = e;
-        }
-        if (p && p2) {
-          explicit_bzero(p->u.extra, strlen(p->u.extra));
-          nfree(p->u.extra);
-          p->u.extra = NULL;
-          egg_list_delete((struct list_type **) &(u->entries), (struct list_type *) p);
-          nfree(p);
-        }
+      p = NULL;
+      p2 = NULL;
+      for (e = u->entries; e; e = e->next) {
+        if (!strcasecmp(e->type->name, "PASS"))
+          p = e;
+        else if (!strcasecmp(e->type->name, "PASS2"))
+          p2 = e;
+      }
+      if (p && p2) {
+        explicit_bzero(p->u.extra, strlen(p->u.extra));
+        nfree(p->u.extra);
+        p->u.extra = NULL;
+        egg_list_delete((struct list_type **) &(u->entries), (struct list_type *) p);
+        nfree(p);
       }
     }
   }
