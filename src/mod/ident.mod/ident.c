@@ -25,7 +25,6 @@
 #include <errno.h>
 #include <fcntl.h>
 #include <sys/stat.h>
-#include <time.h>
 #include "src/mod/module.h"
 #include "server.mod/server.h"
 
@@ -153,7 +152,7 @@ static void ident_oidentd()
               strncpy(buf, line, sizeof buf);
               strtok(buf, "!");
               prevtime = atoi(strtok(NULL, "!"));
-              if ((time(NULL) - prevtime) > 300) {
+              if ((now - prevtime) > 300) {
                 putlog(LOG_DEBUG, "*", "IDENT: Removing expired oident.conf entry: \"%s\"", buf);
               } else {
                 strncat(data, line, ((filesize + 256) - strlen(data)));
@@ -179,16 +178,16 @@ static void ident_oidentd()
     if (ss.ss_family == AF_INET) {
       struct sockaddr_in *saddr = (struct sockaddr_in *)&ss;
       fprintf(fd, "lport %i from %s { reply \"%s\" } "
-                "### eggdrop_%s !%ld\n", ntohs(saddr->sin_port),
+                "### eggdrop_%s !%" PRId64 "\n", ntohs(saddr->sin_port),
                 inet_ntop(AF_INET, &(saddr->sin_addr), s, INET_ADDRSTRLEN),
-                botuser, pid_file, time(NULL));
+                botuser, pid_file, (int64_t) now);
 #ifdef IPV6
     } else if (ss.ss_family == AF_INET6) {
       struct sockaddr_in6 *saddr = (struct sockaddr_in6 *)&ss;
       fprintf(fd, "lport %i from %s { reply \"%s\" } "
-                "### eggdrop_%s !%ld\n", ntohs(saddr->sin6_port),
+                "### eggdrop_%s !%" PRId64 "\n", ntohs(saddr->sin6_port),
                 inet_ntop(AF_INET6, &(saddr->sin6_addr), s, INET6_ADDRSTRLEN),
-                botuser, pid_file, time(NULL));
+                botuser, pid_file, (int64_t) now);
 #endif
     } else {
       putlog(LOG_MISC, "*", "IDENT: Error writing oident.conf line");
