@@ -375,8 +375,7 @@ static int laston_tcl_get(Tcl_Interp * irp, struct userrec *u,
                           struct user_entry *e, int argc, char **argv)
 {
   struct laston_info *li = (struct laston_info *) e->u.extra;
-  char number[20];
-  long tv;
+  char number[22];
   struct chanuserrec *cr;
 
   BADARGS(3, 4, " handle LASTON ?channel?");
@@ -391,8 +390,7 @@ static int laston_tcl_get(Tcl_Interp * irp, struct userrec *u,
     if (!cr)
       Tcl_AppendResult(irp, "0", NULL);
   } else {
-    tv = li->laston;
-    sprintf(number, "%lu ", tv);
+    snprintf(number, sizeof number, "%lu ", li->laston);
     Tcl_AppendResult(irp, number, li->lastonplace, NULL);
   }
   return TCL_OK;
