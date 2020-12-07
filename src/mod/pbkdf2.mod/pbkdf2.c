@@ -27,8 +27,9 @@ static char pbkdf2_method[28] = "SHA256";
 /* Enable re-encoding of password if pbkdf2-method and / or pbkdf2-rounds
  * change.
  */
-static int pbkdf2_re_encode = 0;
-/* Number of rounds (iterations) */
+
+static int pbkdf2_re_encode = 1;
+/* Number of rounds (iterations). Default is 5000 like in glibc. */
 static int pbkdf2_rounds = 16000;
 
 static char *pbkdf2_close(void)
