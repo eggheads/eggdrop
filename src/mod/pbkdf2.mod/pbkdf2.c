@@ -9,7 +9,7 @@
 
 #include "src/mod/module.h"
 
-#ifdef TLS
+#if OPENSSL_VERSION_NUMBER >= 0x1000000fL /* 1.0.0 */
 #define MODULE_NAME "encryption2"
 
 #include <resolv.h> /* base64 encode b64_ntop() and base64 decode b64_pton() */
@@ -27,7 +27,6 @@ static char pbkdf2_method[28] = "SHA256";
 /* Enable re-encoding of password if pbkdf2-method and / or pbkdf2-rounds
  * change.
  */
-
 static int pbkdf2_re_encode = 1;
 /* Number of rounds (iterations). Default is 5000 like in glibc. */
 static int pbkdf2_rounds = 16000;
@@ -289,7 +288,8 @@ static int pbkdf2_init(void)
 #endif
 char *pbkdf2_start(Function *global_funcs)
 {
-#ifdef TLS
+#if OPENSSL_VERSION_NUMBER >= 0x1000000fL /* 1.0.0 */
+
   /* `global_funcs' is NULL if eggdrop is recovering from a restart.
    *
    * As the encryption module is never unloaded, only initialise stuff
@@ -316,6 +316,10 @@ char *pbkdf2_start(Function *global_funcs)
   }
   return NULL;
 #else
-  return "Initialization failure: configured with --disable-TLS or openssl not found";
+  #ifdef TLS
+    return "Initialization failure: compiled with openssl version < 1.0.0";
+  #else
+    return "Initialization failure: configured with --disable-TLS or openssl not found";
+  #endif
 #endif
 }
