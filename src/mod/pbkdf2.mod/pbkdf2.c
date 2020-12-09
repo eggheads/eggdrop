@@ -28,7 +28,8 @@ static char pbkdf2_method[28] = "SHA256";
  * change.
  */
 static int pbkdf2_re_encode = 1;
-/* Number of rounds (iterations). Default is 5000 like in glibc. */
+/* Number of rounds (iterations). Eggdrop default is 16000. glibc default is
+ * 5000 */
 static int pbkdf2_rounds = 16000;
 
 static char *pbkdf2_close(void)
