@@ -279,7 +279,7 @@ static int pbkdf2_init(void)
     return 1;
   }
   if (!RAND_status()) {
-    putlog(LOG_MISC, "*", "PBKDF2 error: random generator has not been seeded with enough data.");
+    putlog(LOG_MISC, "*", "PBKDF2 error: openssl random generator has not been seeded with enough data.");
     return 1;
   }
   return 0;
