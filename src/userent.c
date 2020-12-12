@@ -285,6 +285,9 @@ int pass_set(struct userrec *u, struct user_entry *e, void *buf)
   char *new2 = 0;
   char *pass = buf;
 
+  /* encrypt_pass means encryption module is loaded
+   * encrypt_pass2 means encryption2 module is loaded
+   */
   if (encrypt_pass && e->u.extra) {
     explicit_bzero(e->u.extra, strlen(e->u.extra));
     nfree(e->u.extra);
