@@ -347,13 +347,8 @@ int pass_set(struct userrec *u, struct user_entry *e, void *buf)
     if (new2) { /* implicit encrypt_pass2 && */
       /* set PASS2 */
       set_user(&USERENTRY_PASS2, u, new2);
-      if (encrypt_pass && remove_pass && e->u.extra) {
-        if (!encrypt_pass) { /* else it would have been freed already */
-          explicit_bzero(e->u.extra, strlen(e->u.extra));
-          nfree(e->u.extra);
-        }
-        e->u.extra = NULL;
-      }
+      if (encrypt_pass && remove_pass && e->u.extra)
+        e->u.extra = NULL; /* already freed */
     }
     explicit_bzero(new, sizeof new);
     if (new2 && new2 != new)
