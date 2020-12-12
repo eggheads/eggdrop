@@ -344,7 +344,7 @@ int pass_set(struct userrec *u, struct user_entry *e, void *buf)
       e->u.extra = user_malloc(strlen(new) + 1);
       strcpy(e->u.extra, new);
     }
-    if (encrypt_pass2) {
+    if (new2) { /* implicit encrypt_pass2 && */
       /* set PASS2 */
       set_user(&USERENTRY_PASS2, u, new2);
       if (encrypt_pass && remove_pass && e->u.extra) {
