@@ -310,14 +310,15 @@ int pass_set(struct userrec *u, struct user_entry *e, void *buf)
       p++;
     }
     if (u->flags & USER_BOT) {
-      /* USER_BOT: PASS2 == PASS */
+      /* set PASS and PASS2 cleartext password */
       strlcpy(new, pass, sizeof new);
       if (encrypt_pass2)
         new2 = new;
     }
     else if (pass[0] == '+') {
+      /* '+' means pass is already encrypted, set PASS = pass */
       strlcpy(new, pass, sizeof new);
-      /* '+': due to module api encrypted pass2 cannot be available here
+      /* due to module api encrypted pass2 cannot be available here
        * caller must do set_user(&USERENTRY_PASS2, u, password);
        * probably only share.c:dup_userlist()
        */
