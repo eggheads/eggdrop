@@ -315,7 +315,7 @@ int pass_set(struct userrec *u, struct user_entry *e, void *buf)
       if (encrypt_pass2)
         new2 = new;
     }
-    else if ((u->flags & USER_BOT) || pass[0] == '+') {
+    else if (pass[0] == '+') {
       strlcpy(new, pass, sizeof new);
       /* '+': due to module api encrypted pass2 cannot be available here
        * caller must do set_user(&USERENTRY_PASS2, u, password);
