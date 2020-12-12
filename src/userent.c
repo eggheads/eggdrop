@@ -324,6 +324,9 @@ int pass_set(struct userrec *u, struct user_entry *e, void *buf)
        */
     }
     else {
+      /* encrypt password into new and/or new2 depending on the encryption
+       * modules loaded and the value of remove-pass
+       */
       if (encrypt_pass && (!encrypt_pass2 || !remove_pass))
         encrypt_pass(pass, new);
       if (encrypt_pass2)
