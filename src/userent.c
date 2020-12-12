@@ -294,6 +294,7 @@ int pass_set(struct userrec *u, struct user_entry *e, void *buf)
     nfree(e->u.extra);
   }
   if (!pass || !pass[0] || (pass[0] == '-')) {
+    /* empty string or '-' means remove passwords */
     if (encrypt_pass) /* remove PASS */
       e->u.extra = NULL;
     if (encrypt_pass2) /* remove PASS2 */
@@ -309,6 +310,9 @@ int pass_set(struct userrec *u, struct user_entry *e, void *buf)
         *p = '?';
       p++;
     }
+    /* load new with new PASS
+     * load new2 with new PASS2
+     */
     if (u->flags & USER_BOT) {
       /* set PASS and PASS2 cleartext password */
       strlcpy(new, pass, sizeof new);
@@ -332,11 +336,16 @@ int pass_set(struct userrec *u, struct user_entry *e, void *buf)
       if (encrypt_pass2)
         new2 = encrypt_pass2(pass);
     }
+    /* set PASS to new and PASS2 to new2 depending on the encryption modules
+     * loaded and the value of remove-pass
+     */
     if (encrypt_pass && (!encrypt_pass2 || !remove_pass)) {
+      /* set PASS */
       e->u.extra = user_malloc(strlen(new) + 1);
       strcpy(e->u.extra, new);
     }
-    if (new2) { /* implicit encrypt_pass2 && */
+    if (encrypt_pass2) {
+      /* set PASS2 */
       set_user(&USERENTRY_PASS2, u, new2);
       if (encrypt_pass && remove_pass && e->u.extra) {
         if (!encrypt_pass) { /* else it would have been freed already */
