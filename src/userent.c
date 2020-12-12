@@ -294,13 +294,13 @@ int pass_set(struct userrec *u, struct user_entry *e, void *buf)
     nfree(e->u.extra);
   }
   if (!pass || !pass[0] || (pass[0] == '-')) {
-    if (encrypt_pass)
+    if (encrypt_pass) /* remove PASS */
       e->u.extra = NULL;
-    if (encrypt_pass2)
+    if (encrypt_pass2) /* remove PASS2 */
       set_user(&USERENTRY_PASS2, u, NULL);
   }
   else {
-    /* sanitize pass */
+    /* sanitize password */
     if (strlen(pass) > PASSWORDMAX)
       pass[PASSWORDMAX] = 0;
     p = (unsigned char *) pass;
