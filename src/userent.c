@@ -281,9 +281,10 @@ struct user_entry_type USERENTRY_PASS2 = {
 
 int pass_set(struct userrec *u, struct user_entry *e, void *buf)
 {
+  char *pass = buf;
+  unsigned char *p;
   char new[PASSWORDLEN];
   char *new2 = 0;
-  char *pass = buf;
 
   /* encrypt_pass means encryption module is loaded
    * encrypt_pass2 means encryption2 module is loaded
@@ -299,10 +300,10 @@ int pass_set(struct userrec *u, struct user_entry *e, void *buf)
       set_user(&USERENTRY_PASS2, u, NULL);
   }
   else {
-    unsigned char *p = (unsigned char *) pass;
-
+    /* sanitize pass */
     if (strlen(pass) > PASSWORDMAX)
       pass[PASSWORDMAX] = 0;
+    p = (unsigned char *) pass;
     while (*p) {
       if ((*p <= 32) || (*p == 127))
         *p = '?';
