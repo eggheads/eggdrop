@@ -805,12 +805,12 @@ static void subst_addcol(char *s, char *newcol)
 void help_subst(char *s, char *nick, struct flag_record *flags,
                 int isdcc, char *topic)
 {
-  char xx[HELP_BUF_LEN + 1], sub[514], *current, *q, chr, *writeidx,
-       *readidx, *towrite;
   struct chanset_t *chan;
   int i, j, center = 0;
   static int help_flags;
   struct utsname uname_info;
+  char xx[HELP_BUF_LEN + 1], *current, *q, chr, *writeidx, *readidx, *towrite,
+       sub[(sizeof uname_info.sysname) + (sizeof uname_info.release)];
 
   if (s == NULL) {
     /* Used to reset substitutions */
