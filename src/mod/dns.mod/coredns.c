@@ -832,7 +832,7 @@ static void parserespacket(uint8_t *response, int len)
   int r, rcount;
   packetheader *hdr;
   struct resolve *rp;
-  uint8_t rc, *c = response;
+  uint8_t rc, *c = response, *data;
   uint16_t qdatatype, qclass, datatype, class, datalength;
   uint32_t ttl;
 
@@ -968,8 +968,6 @@ static void parserespacket(uint8_t *response, int len)
     }
     NS_GET16(datatype, c);
     NS_GET16(class, c);
-    NS_GET32(ttl, c);
-    NS_GET16(datalength, c);
     if (class != qclass) {
       ddebug2(RES_ERR "Answered class (%s) does not match queried class (%s).",
               (class < CLASSTYPES_COUNT) ?
@@ -978,8 +976,11 @@ static void parserespacket(uint8_t *response, int len)
               classtypes[qclass] : classtypes[CLASSTYPES_COUNT]);
       return;
     }
+    NS_GET32(ttl, c);
+    NS_GET16(datalength, c);
+    data = c;
     c += datalength;
-    if (c > response + len) {
+    if (c > (response + len)) {
       ddebug0(RES_ERR "Specified rdata length exceeds packet size.");
       return;
     }
@@ -1005,7 +1006,7 @@ static void parserespacket(uint8_t *response, int len)
         rp->ttl = ttl;
         rp->sockname.addrlen = sizeof(struct sockaddr_in);
         rp->sockname.addr.sa.sa_family = AF_INET;
-        memcpy(&rp->sockname.addr.s4.sin_addr, c, 4);
+        memcpy(&rp->sockname.addr.s4.sin_addr, data, 4);
 #ifndef IPV6
         passrp(rp, ttl, T_A);
         return;
@@ -1024,7 +1025,7 @@ static void parserespacket(uint8_t *response, int len)
         rp->ttl = ttl;
         rp->sockname.addrlen = sizeof(struct sockaddr_in6);
         rp->sockname.addr.sa.sa_family = AF_INET6;
-        memcpy(&rp->sockname.addr.s6.sin6_addr, c, 16);
+        memcpy(&rp->sockname.addr.s6.sin6_addr, data, 16);
         if (ready || pref_af) {
           passrp(rp, ttl, T_A);
           return;
@@ -1032,7 +1033,7 @@ static void parserespacket(uint8_t *response, int len)
         break;
 #endif
       case T_PTR:
-        r = dn_expand(response, response + len, c, namestring, MAXDNAME);
+        r = dn_expand(response, response + len, data, namestring, MAXDNAME);
         if (r == -1) {
           ddebug0(RES_ERR "dn_expand() failed while expanding domain in "
                   "rdata.");
@@ -1053,7 +1054,7 @@ static void parserespacket(uint8_t *response, int len)
         }
         break;
       case T_CNAME:
-        r = dn_expand(response, response + len, c, namestring, MAXDNAME);
+        r = dn_expand(response, response + len, data, namestring, MAXDNAME);
         if (r == -1) {
           ddebug0(RES_ERR "dn_expand() failed while expanding domain in "
                   "rdata.");
