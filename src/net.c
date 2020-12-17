@@ -1042,10 +1042,11 @@ int sockread(char *s, int *len, sock_list *slist, int slistmax, int tclonly)
 int sockgets(char *s, int *len)
 {
   char xx[RECVLINEMAX], *p, *px;
-  int ret, i, data = 0;
+  int ret, i, data = 0, rn; /* rn is used to not remove empty lines */
   size_t len2;
 
   for (i = 0; i < threaddata()->MAXSOCKS; i++) {
+    rn = 1;
     /* Check for stored-up data waiting to be processed */
     if (!(socklist[i].flags & (SOCK_UNUSED | SOCK_TCL | SOCK_BUFFER)) &&
         (socklist[i].handler.sock.inbuf != NULL)) {
@@ -1056,8 +1057,16 @@ int sockgets(char *s, int *len)
         p = strpbrk(socklist[i].handler.sock.inbuf, "\r\n");
         if (p != NULL) {
           *p++ = 0;
-          while (*p == '\n' || *p == '\r')
-            p++;
+          while (1) {
+            if ((*p == '\n') && rn) {
+              p++;
+              rn = 0;
+            }
+            else if (*p == '\r')
+              p++;
+            else
+              break;
+          }
           strlcpy(s, socklist[i].handler.sock.inbuf, RECVLINEMAX-1);
           if (*p) {
             len2 = strlen(p) + 1;
