@@ -212,7 +212,7 @@ static char *pbkdf2_verify(const char *pass, const char *encrypted)
     return NULL;
   }
   explicit_bzero(salt, saltlen);
-  if (strcmp(encrypted, buf)) {
+  if (crypto_verify(encrypted, buf)) {
     explicit_bzero(buf, strlen(buf));
     return NULL;
   }

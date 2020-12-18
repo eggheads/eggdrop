@@ -350,7 +350,7 @@ int u_pass_match(struct userrec *u, char *pass)
   if (!cmp || !pass[0])
     return 0;
   if (u->flags & USER_BOT) {
-    if (!strcmp(cmp, pass)) /* verify successful */
+    if (!crypto_verify(cmp, pass)) /* verify successful */
       return 1;
     return 0;
   }
@@ -367,7 +367,7 @@ int u_pass_match(struct userrec *u, char *pass)
   }
   else if (encrypt_pass) {
     encrypt_pass(pass, new2);
-    if (!strcmp(cmp, new2)) { /* verify successful */
+    if (!crypto_verify(cmp, new2)) { /* verify successful */
       if (encrypt_pass2) {
         new = encrypt_pass2(pass);
         if (new) {
