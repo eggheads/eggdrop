@@ -615,9 +615,9 @@ Function global_table[] = {
   (Function) add_tcl_objcommands,
   (Function) pid_file,            /* char                                */
 #ifndef HAVE_EXPLICIT_BZERO
-  (Function) explicit_bzero
+  (Function) explicit_bzero,
 #else
-  (Function) 0
+  (Function) 0,
 #endif
 /* 312 - 315 */    
   (Function) & USERENTRY_PASS2,   /* struct user_entry_type *            */
