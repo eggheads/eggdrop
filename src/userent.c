@@ -32,7 +32,8 @@ extern Tcl_Interp *interp;
 extern char whois_fields[];
 
 
-int share_greet = 0;            /* Share greeting info                  */
+int share_greet = 0; /* Share greeting info                      */
+int remove_pass = 0; /* create and keep encryption mod passwords */
 struct user_entry_type *entry_type_list;
 
 
@@ -280,52 +281,75 @@ struct user_entry_type USERENTRY_PASS2 = {
 
 int pass_set(struct userrec *u, struct user_entry *e, void *buf)
 {
+  char *pass = buf;
+  unsigned char *p;
   char new[PASSWORDLEN];
   char *new2 = 0;
-  char *pass = buf;
 
+  /* encrypt_pass means encryption module is loaded
+   * encrypt_pass2 means encryption2 module is loaded
+   */
   if (encrypt_pass && e->u.extra) {
     explicit_bzero(e->u.extra, strlen(e->u.extra));
     nfree(e->u.extra);
   }
   if (!pass || !pass[0] || (pass[0] == '-')) {
-    if (encrypt_pass)
+    /* empty string or '-' means remove passwords */
+    if (encrypt_pass) /* remove PASS */
       e->u.extra = NULL;
-    if (encrypt_pass2)
+    if (encrypt_pass2) /* remove PASS2 */
       set_user(&USERENTRY_PASS2, u, NULL);
   }
   else {
-    unsigned char *p = (unsigned char *) pass;
-
+    /* sanitize password */
     if (strlen(pass) > PASSWORDMAX)
       pass[PASSWORDMAX] = 0;
+    p = (unsigned char *) pass;
     while (*p) {
       if ((*p <= 32) || (*p == 127))
         *p = '?';
       p++;
     }
-    if (u->flags & USER_BOT)
+    /* load new with new PASS
+     * load new2 with new PASS2
+     */
+    if (u->flags & USER_BOT) {
+      /* set PASS and PASS2 cleartext password */
       strlcpy(new, pass, sizeof new);
-      /* We do not need PASS2 for bots */
+      if (encrypt_pass2)
+        new2 = new;
+    }
     else if (pass[0] == '+') {
+      /* '+' means pass is already encrypted, set PASS = pass */
       strlcpy(new, pass, sizeof new);
-      new2 = NULL; /* due to module api encrypted pass2 cannot be available here
-                    * Caller must do set_user(&USERENTRY_PASS2, u, password);
-                    * Probably only share.c:dup_userlist()
-                    */
+      /* due to module api encrypted pass2 cannot be available here
+       * caller must do set_user(&USERENTRY_PASS2, u, password);
+       * probably only share.c:dup_userlist()
+       */
     }
     else {
-      if (encrypt_pass)
+      /* encrypt password into new and/or new2 depending on the encryption
+       * modules loaded and the value of remove-pass
+       */
+      if (encrypt_pass && (!encrypt_pass2 || !remove_pass))
         encrypt_pass(pass, new);
       if (encrypt_pass2)
         new2 = encrypt_pass2(pass);
     }
-    if (encrypt_pass) {
+    /* set PASS to new and PASS2 to new2 depending on the encryption modules
+     * loaded and the value of remove-pass
+     */
+    if (encrypt_pass && (!encrypt_pass2 || !remove_pass)) {
+      /* set PASS */
       e->u.extra = user_malloc(strlen(new) + 1);
       strcpy(e->u.extra, new);
     }
-    if (new2) /* implicit encrypt_pass2 && */
+    if (new2) { /* implicit encrypt_pass2 && */
+      /* set PASS2 */
       set_user(&USERENTRY_PASS2, u, new2);
+      if (encrypt_pass && remove_pass && e->u.extra)
+        e->u.extra = NULL; /* remove PASS, e->u.extra already freed */
+    }
     explicit_bzero(new, sizeof new);
     if (new2 && new2 != new)
       explicit_bzero(new2, strlen(new2));

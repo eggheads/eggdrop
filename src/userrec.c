@@ -32,7 +32,8 @@
 
 extern struct dcc_t *dcc;
 extern struct chanset_t *chanset;
-extern int default_flags, default_uflags, quiet_save, dcc_total, share_greet;
+extern int default_flags, default_uflags, quiet_save, dcc_total, share_greet,
+           remove_pass;
 extern char ver[], botnetnick[];
 extern time_t now;
 
@@ -329,6 +330,7 @@ int u_pass_match(struct userrec *u, char *pass)
 {
   char *cmp = 0, *new, new2[32];
   int pass2 = 1;
+  struct user_entry *e;
 
   if (!u || !pass)
     return 0;
@@ -348,7 +350,7 @@ int u_pass_match(struct userrec *u, char *pass)
   if (!cmp || !pass[0])
     return 0;
   if (u->flags & USER_BOT) {
-    if (!strcmp(cmp, pass)) /* verify successful */
+    if (!crypto_verify(cmp, pass)) /* verify successful */
       return 1;
     return 0;
   }
@@ -365,11 +367,20 @@ int u_pass_match(struct userrec *u, char *pass)
   }
   else if (encrypt_pass) {
     encrypt_pass(pass, new2);
-    if (!strcmp(cmp, new2)) { /* verify successful */
+    if (!crypto_verify(cmp, new2)) { /* verify successful */
       if (encrypt_pass2) {
         new = encrypt_pass2(pass);
-        if (new)
+        if (new) {
           set_user(&USERENTRY_PASS2, u, new);
+          if (remove_pass) { /* implicit e->u.extra != NULL */
+            e = find_user_entry(&USERENTRY_PASS, u);
+            explicit_bzero(e->u.extra, strlen(e->u.extra));
+            nfree(e->u.extra);
+            e->u.extra = NULL;
+            egg_list_delete((struct list_type **) &(u->entries), (struct list_type *) e);
+            nfree(e);
+          }
+        }
       }
       return 1;
     }

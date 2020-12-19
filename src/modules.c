@@ -613,9 +613,10 @@ Function global_table[] = {
   /* 308 - 311 */
   (Function) make_rand_str_from_chars,
   (Function) add_tcl_objcommands,
+  (Function) pid_file,            /* char                                */
   (Function) & USERENTRY_PASS2,   /* struct user_entry_type *            */
-  (Function) pid_file             /* char                                */
   /* 312 - 315 */
+  (Function) crypto_verify
 };
 
 void init_modules(void)

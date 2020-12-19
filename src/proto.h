@@ -263,10 +263,10 @@ char *strchr_unescape(char *, const char, const char);
 void str_unescape(char *, const char);
 int str_isdigit(const char *);
 void kill_bot(char *, char *);
-
 void maskaddr(const char *, char *, int);
 #define maskhost(a,b) maskaddr((a),(b),3)
 #define maskban(a,b)  maskaddr((a),(b),3)
+int crypto_verify(const char *, const char *);
 
 /* net.c */
 IP my_atoul(char *);

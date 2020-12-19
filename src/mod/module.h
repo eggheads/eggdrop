@@ -509,9 +509,10 @@
 /* 308 - 311 */
 #define make_rand_str_from_chars ((void (*) (char *, int, char *))global[308])
 #define add_tcl_objcommands ((void (*) (tcl_cmds *))global[309])
-#define USERENTRY_PASS2 (*(struct user_entry_type *)(global[310]))
-#define pid_file ((char *)(global[311]))
+#define pid_file ((char *)global[310])
+#define USERENTRY_PASS2 (*(struct user_entry_type *)global[311])
 /* 312 - 315 */
+#define crypto_verify ((int ( *) (const char *, const char *))global[312])
 
 /* hostmasking */
 #define maskhost(a,b) maskaddr((a),(b),3)
