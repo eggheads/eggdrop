@@ -782,7 +782,7 @@ void egg_uname(char *sysrel, size_t len)
 {
   struct utsname u;
   if (stealth_uname)
-    strlcpy(sysrel, "HAL 9000", len);
+    strlcpy(sysrel, "HAL-9000", len);
   else if (uname(&u) < 0)
     strlcpy(sysrel, "*unknown*", len);
   else
