@@ -390,7 +390,7 @@ static int laston_tcl_get(Tcl_Interp * irp, struct userrec *u,
     if (!cr)
       Tcl_AppendResult(irp, "0", NULL);
   } else {
-    snprintf(number, sizeof number, "%" PRId64 " ", li->laston);
+    snprintf(number, sizeof number, "%" PRId64 " ", (int64_t) li->laston);
     Tcl_AppendResult(irp, number, li->lastonplace, NULL);
   }
   return TCL_OK;
