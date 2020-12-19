@@ -1445,7 +1445,7 @@ void make_rand_str_from_chars(char *s, const int len, char *chars)
  */
 void make_rand_str(char *s, const int len)
 {
-  make_rand_str_from_chars(s, len, CHARSET_ALPHANUM);
+  make_rand_str_from_chars(s, len, CHARSET_LOWER_ALPHA_NUM);
 }
 
 /* Convert an octal string into a decimal integer value.  If the string
@@ -1574,4 +1574,46 @@ void kill_bot(char *s1, char *s2)
   botnet_send_bye();
   write_userfile(-1);
   fatal(s2, 2);
+}
+
+/* Compares two strings with constant-time algorithm to avoid timing attack and
+ * returns 0, if strings match, similar to strcmp().
+ */
+/* https://github.com/jedisct1/libsodium/blob/451bafc0d3d95d18f916dd7051687d343597228c/src/libsodium/crypto_verify/sodium/verify.c */
+/*
+ * ISC License
+ *
+ * Copyright (c) 2013-2020
+ * Frank Denis <j at pureftpd dot org>
+ *
+ * Permission to use, copy, modify, and/or distribute this software for any
+ * purpose with or without fee is hereby granted, provided that the above
+ * copyright notice and this permission notice appear in all copies.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
+ * WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
+ * MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
+ * ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
+ * WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
+ * ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
+ * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+ */
+int crypto_verify(const char *x_, const char *y_)
+{
+  const volatile unsigned char *volatile x =
+    (const volatile unsigned char *volatile) x_;
+  const volatile unsigned char *volatile y =
+    (const volatile unsigned char *volatile) y_;
+  volatile uint_fast16_t d = 0U;
+  int n, i;
+
+  /* Could leak string length */
+  n = strlen(x_);
+  if (n != strlen(y_))
+    return 1;
+
+  for (i = 0; i < n; i++) {
+    d |= x[i] ^ y[i];
+  }
+  return (1 & ((d - 1) >> 8)) - 1;
 }

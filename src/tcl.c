@@ -57,7 +57,8 @@ extern int flood_telnet_thr, flood_telnet_time, shtime, share_greet,
            ignore_time, reserved_port_min, reserved_port_max, max_logs,
            max_logsize, dcc_total, raw_log, identtimeout, dcc_sanitycheck,
            dupwait_timeout, egg_numver, share_unlinks, protect_telnet,
-           resolve_timeout, default_uflags, userfile_perm, cidr_support;
+           resolve_timeout, default_uflags, userfile_perm, cidr_support,
+           remove_pass;
 
 #ifdef IPV6
 extern char vhost6[];
@@ -94,7 +95,7 @@ int quiet_save = 0;
 int strtot = 0;
 int handlen = HANDLEN;
 
-extern Tcl_VarTraceProc traced_myiphostname;
+extern Tcl_VarTraceProc traced_myiphostname, traced_remove_pass;
 
 int expmem_tcl()
 {
@@ -490,6 +491,7 @@ static tcl_ints def_tcl_ints[] = {
   {"copy-to-tmp",           &copy_to_tmp,          0},
   {"quiet-reject",          &quiet_reject,         0},
   {"cidr-support",          &cidr_support,         0},
+  {"remove-pass",           &remove_pass,          0},
 #ifdef IPV6
   {"prefer-ipv6",           &pref_af,              0},
 #endif
@@ -512,6 +514,7 @@ static void init_traces()
   add_tcl_ints(def_tcl_ints);
   Tcl_TraceVar(interp, "my-ip", TCL_GLOBAL_ONLY|TCL_TRACE_WRITES|TCL_TRACE_UNSETS, traced_myiphostname, NULL);
   Tcl_TraceVar(interp, "my-hostname", TCL_GLOBAL_ONLY|TCL_TRACE_WRITES|TCL_TRACE_UNSETS, traced_myiphostname, NULL);
+  Tcl_TraceVar(interp, "remove-pass", TCL_GLOBAL_ONLY|TCL_TRACE_WRITES, traced_remove_pass, NULL);
 }
 
 void kill_tcl()
@@ -521,6 +524,7 @@ void kill_tcl()
   rem_tcl_ints(def_tcl_ints);
   Tcl_UntraceVar(interp, "my-ip", TCL_GLOBAL_ONLY|TCL_TRACE_WRITES|TCL_TRACE_UNSETS, traced_myiphostname, NULL);
   Tcl_UntraceVar(interp, "my-hostname", TCL_GLOBAL_ONLY|TCL_TRACE_WRITES|TCL_TRACE_UNSETS, traced_myiphostname, NULL);
+  Tcl_UntraceVar(interp, "remove-pass", TCL_GLOBAL_ONLY|TCL_TRACE_WRITES, traced_remove_pass, NULL);
   kill_bind();
   Tcl_DeleteInterp(interp);
 }
