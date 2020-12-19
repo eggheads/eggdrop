@@ -648,19 +648,78 @@ static int tcl_botlist STDVAR
   return TCL_OK;
 }
 
-static int tcl_dcclist STDVAR
-{
-  int i;
-  char *p, idxstr[10], timestamp[11], other[160];
-  char portstring[7]; /* ssl + portmax + NULL */
-  long tv;
+static void build_dcc_list(Tcl_Interp *irp, char *idxstr, char *nick, char *host,
+            char *portstring, char *type, char *other, char *timestamp) {
+  char *p;
   EGG_CONST char *list[7];
 
-  BADARGS(1, 2, " ?type?");
+  list[0] = idxstr;
+  list[1] = nick;
+  list[2] = host;
+  list[3] = portstring;
+  list[4] = type;
+  list[5] = other;
+  list[6] = timestamp;
+  p = Tcl_Merge(7, list);
+  Tcl_AppendElement(irp, p);
+  Tcl_Free((char *) p);
+}
 
+/* Build and return a list of lists of all sockets, in dict-readable format */
+static void build_sock_list(Tcl_Interp *irp, Tcl_Obj *masterlist, char *idxstr,
+            char *nick, char *host, char *ip, int port, int secure,
+            char *type, char *other, char *timestamp) {
+  EGG_CONST char *val[] = {"idx", "handle", "host", "ip", "port", "secure",
+                           "type", "info", "time"};
+  Tcl_Obj *thelist;
+  char securestr[2], portstr[6];
+
+  egg_snprintf(securestr, sizeof securestr, "%d", secure);
+  egg_snprintf(portstr, sizeof portstr, "%d", port);
+  thelist = Tcl_NewListObj(0, NULL);
+  Tcl_ListObjAppendElement(irp, thelist, Tcl_NewStringObj(val[0], -1));
+  Tcl_ListObjAppendElement(irp, thelist, Tcl_NewStringObj(idxstr, -1));
+  Tcl_ListObjAppendElement(irp, thelist, Tcl_NewStringObj(val[1], -1));
+  Tcl_ListObjAppendElement(irp, thelist, Tcl_NewStringObj(nick, -1));
+  Tcl_ListObjAppendElement(irp, thelist, Tcl_NewStringObj(val[2], -1));
+  Tcl_ListObjAppendElement(irp, thelist, Tcl_NewStringObj(host, -1));
+  Tcl_ListObjAppendElement(irp, thelist, Tcl_NewStringObj(val[3], -1));
+  Tcl_ListObjAppendElement(irp, thelist, Tcl_NewStringObj(ip, -1));
+  Tcl_ListObjAppendElement(irp, thelist, Tcl_NewStringObj(val[4], -1));
+  Tcl_ListObjAppendElement(irp, thelist, Tcl_NewStringObj(portstr, -1));
+  Tcl_ListObjAppendElement(irp, thelist, Tcl_NewStringObj(val[5], -1));
+  Tcl_ListObjAppendElement(irp, thelist, Tcl_NewStringObj(securestr, -1));
+  Tcl_ListObjAppendElement(irp, thelist, Tcl_NewStringObj(val[6], -1));
+  Tcl_ListObjAppendElement(irp, thelist, Tcl_NewStringObj(type, -1));
+  Tcl_ListObjAppendElement(irp, thelist, Tcl_NewStringObj(val[7], -1));
+  Tcl_ListObjAppendElement(irp, thelist, Tcl_NewStringObj(other, -1));
+  Tcl_ListObjAppendElement(irp, thelist, Tcl_NewStringObj(val[8], -1));
+  Tcl_ListObjAppendElement(irp, thelist, Tcl_NewStringObj(timestamp, -1));
+  Tcl_ListObjAppendElement(irp, masterlist, thelist);
+  Tcl_SetObjResult(irp, masterlist);
+}
+
+/* Gather information for dcclist or socklist */
+static void dccsocklist(Tcl_Interp *irp, int argc, char *type, int src) {
+  int i;
+  char idxstr[10], timestamp[11], other[160];
+  char portstring[7]; /* ssl + portmax + NULL */
+  long tv;
+#ifdef IPV6
+  char s[INET6_ADDRSTRLEN];
+#else
+  char s[INET_ADDRSTRLEN];
+#endif
+  unsigned int size;
+  struct sockaddr_storage ss;
+  Tcl_Obj *masterlist;
+ 
+  if (src) {
+    masterlist = Tcl_NewListObj(0, NULL);
+  }
   for (i = 0; i < dcc_total; i++) {
     if (argc == 1 || ((argc == 2) && (dcc[i].type &&
-        !strcasecmp(dcc[i].type->name, argv[1])))) {
+        !strcasecmp(dcc[i].type->name, type)))) {
       egg_snprintf(idxstr, sizeof idxstr, "%ld", dcc[i].sock);
       tv = dcc[i].timeval;
       egg_snprintf(timestamp, sizeof timestamp, "%ld", tv);
@@ -671,24 +730,52 @@ static int tcl_dcclist STDVAR
                      (long) dcc[i].type);
         break;
       }
-      list[0] = idxstr;
-      list[1] = dcc[i].nick;
-      list[2] = (dcc[i].host[0] == '\0') ?
-                iptostr(&dcc[i].sockname.addr.sa) : dcc[i].host;
 #ifdef TLS
       egg_snprintf(portstring, sizeof portstring, "%s%d", dcc[i].ssl ? "+" : "", dcc[i].port);
 #else
       egg_snprintf(portstring, sizeof portstring, "%d", dcc[i].port);
 #endif
-      list[3] = portstring;
-      list[4] = dcc[i].type ? dcc[i].type->name : "*UNKNOWN*";
-      list[5] = other;
-      list[6] = timestamp;
-      p = Tcl_Merge(7, list);
-      Tcl_AppendElement(irp, p);
-      Tcl_Free((char *) p);
+      /* If this came from dcclist... */
+      if (!src) {
+        build_dcc_list(irp, idxstr, dcc[i].nick,
+            (dcc[i].host[0] == '\0') ? iptostr(&dcc[i].sockname.addr.sa) : dcc[i].host,
+            portstring, dcc[i].type ? dcc[i].type->name : "*UNKNOWN*", other,
+            timestamp);
+      /* If this came from socklist... */
+      } else {
+        /* Update dcc table socket information, needed for getting local IP */
+        size = sizeof ss;
+        getsockname(dcc[i].sock, (struct sockaddr *) &ss, &size);
+        if (ss.ss_family == AF_INET) {
+          struct sockaddr_in *saddr = (struct sockaddr_in *)&ss;
+          inet_ntop(AF_INET, &(saddr->sin_addr), s, INET_ADDRSTRLEN);
+#ifdef IPV6
+        } else if (ss.ss_family == AF_INET6) {
+          struct sockaddr_in6 *saddr = (struct sockaddr_in6 *)&ss;
+            inet_ntop(AF_INET6, &(saddr->sin6_addr), s, INET6_ADDRSTRLEN);
+#endif
+        }
+        build_sock_list(irp, masterlist, idxstr, dcc[i].nick,
+            (dcc[i].host[0] == '\0') ? iptostr(&dcc[i].sockname.addr.sa) : dcc[i].host,
+            s, dcc[i].port, dcc[i].ssl, dcc[i].type ? dcc[i].type->name : "*UNKNOWN*", other,
+            timestamp);
+      }
     }
   }
+}
+
+static int tcl_socklist STDVAR
+{
+
+  BADARGS(1, 2, " ?type?");
+  dccsocklist(irp, argc, (argc == 2) ? argv[1] : NULL, 1);
+  return TCL_OK;
+}
+
+static int tcl_dcclist STDVAR
+{
+  BADARGS(1, 2, " ?type?");
+  dccsocklist(irp, argc, (argc == 2) ? argv[1] : NULL, 0);
   return TCL_OK;
 }
 
@@ -1375,6 +1462,7 @@ tcl_cmds tcldcc_cmds[] = {
   {"bots",                 tcl_bots},
   {"botlist",           tcl_botlist},
   {"dcclist",           tcl_dcclist},
+  {"socklist",         tcl_socklist},
   {"whom",                 tcl_whom},
   {"dccused",           tcl_dccused},
   {"getdccidle",     tcl_getdccidle},

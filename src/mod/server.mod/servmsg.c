@@ -699,7 +699,7 @@ static int gotnotice(char *from, char *msg)
     if (*p == 1) {
       *p = 0;
       ctcp = strcpy(ctcpbuf, p1);
-      strcpy(p1 - 1, p + 1);
+      memmove(p1 - 1, p + 1, strlen(p + 1) + 1);
       if (!ignoring)
         detect_flood(nick, uhost, from, FLOOD_CTCP);
       p = strchr(msg, 1);

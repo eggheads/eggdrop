@@ -249,7 +249,7 @@ static int tcl_binds STDVAR
 static int tcl_timer STDVAR
 {
   unsigned long x;
-  char s[16];
+  char s[26];
 
   BADARGS(3, 4, " minutes command ?count?");
 
@@ -264,7 +264,7 @@ static int tcl_timer STDVAR
   if (argv[2][0] != '#') {
     x = add_timer(&timer, atoi(argv[1]), (argc == 4 ? atoi(argv[3]) : 1),
                   argv[2], 0L);
-    egg_snprintf(s, sizeof s, "timer%lu", x);
+    snprintf(s, sizeof s, "timer%lu", x);
     Tcl_AppendResult(irp, s, NULL);
   }
   return TCL_OK;
@@ -273,7 +273,7 @@ static int tcl_timer STDVAR
 static int tcl_utimer STDVAR
 {
   unsigned long x;
-  char s[16];
+  char s[26];
 
   BADARGS(3, 4, " seconds command ?count?");
 
@@ -288,7 +288,7 @@ static int tcl_utimer STDVAR
   if (argv[2][0] != '#') {
     x = add_timer(&utimer, atoi(argv[1]), (argc == 4 ? atoi(argv[3]) : 1),
                   argv[2], 0L);
-    egg_snprintf(s, sizeof s, "timer%lu", x);
+    snprintf(s, sizeof s, "timer%lu", x);
     Tcl_AppendResult(irp, s, NULL);
   }
   return TCL_OK;

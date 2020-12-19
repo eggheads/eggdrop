@@ -870,13 +870,13 @@ static void check_tcl_kick(char *nick, char *uhost, struct userrec *u,
 
 static void check_tcl_invite(char *nick, char *from, char *chan, char *invitee)
 {
-  char args[512];
+  char args[1024];
 
   Tcl_SetVar(interp, "_invite1", nick, 0);
   Tcl_SetVar(interp, "_invite2", from, 0);
   Tcl_SetVar(interp, "_invite3", chan, 0);
   Tcl_SetVar(interp, "_invite4", invitee, 0);
-  simple_sprintf(args, "%s %s", chan, invitee);
+  snprintf(args, sizeof args, "%s %s", chan, invitee);
   check_tcl_bind(H_invt, args, 0, " $_invite1 $_invite2 $_invite3 $_invite4",
                     MATCH_MASK | BIND_STACKABLE);
 }
