@@ -351,7 +351,7 @@ static int msg_who(char *nick, char *host, struct userrec *u, char *par)
   struct chanset_t *chan;
   struct flag_record fr = { FR_GLOBAL | FR_CHAN, 0, 0, 0, 0, 0 };
   memberlist *m;
-  char s[UHOSTLEN], also[512], *info;
+  char s[NICKLEN + UHOSTLEN], also[512], *info;
   int i;
 
   if (!use_info || match_my_nick(nick))
@@ -431,7 +431,7 @@ static int msg_who(char *nick, char *host, struct userrec *u, char *par)
 
 static int msg_whois(char *nick, char *host, struct userrec *u, char *par)
 {
-  char s[UHOSTLEN], s1[81], *s2;
+  char s[UHOSTLEN + 1], s1[143], *s2, stime[14];
   int ok;
   struct chanset_t *chan;
   memberlist *m;
@@ -498,10 +498,10 @@ static int msg_whois(char *nick, char *host, struct userrec *u, char *par)
           hand_on_chan(chan, u) || (glob_op(fr) && !chan_deop(fr)) ||
           glob_friend(fr) || chan_op(fr) || chan_friend(fr))) {
         tt = cr->laston;
-        strftime(s, 14, "%b %d %H:%M", localtime(&tt));
+        strftime(stime, sizeof stime, "%b %d %H:%M", localtime(&tt));
         ok = 1;
         egg_snprintf(s1, sizeof s1, "NOTICE %s :[%s] %s %s on %s", nick,
-                     u2->handle, IRC_LASTSEENAT, s, chan->dname);
+                     u2->handle, IRC_LASTSEENAT, stime, chan->dname);
       }
     }
   }
