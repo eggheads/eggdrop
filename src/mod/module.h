@@ -516,6 +516,7 @@
 /* 312 - 315 */
 #define USERENTRY_PASS2 (*(struct user_entry_type *)global[312])
 #define crypto_verify ((int ( *) (const char *, const char *))global[313])
+#define egg_uname ((char *(*) ())global[314])
 
 /* hostmasking */
 #define maskhost(a,b) maskaddr((a),(b),3)

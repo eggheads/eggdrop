@@ -57,8 +57,8 @@ log_t *logs = 0;                /* Logfiles */
 int max_logs = 5;               /* Max log files, mismatch config on purpose */
 int max_logsize = 0;            /* Maximum logfile size, 0 for no limit */
 int raw_log = 0;                /* Display output to server to LOG_SERVEROUT */
-
 int conmask = LOG_MODES | LOG_CMDS | LOG_MISC; /* Console mask */
+int show_uname = 1;
 
 struct help_list_t {
   struct help_list_t *next;
@@ -778,6 +778,23 @@ static void subst_addcol(char *s, char *newcol)
   }
 }
 
+char *egg_uname()
+{
+  struct utsname u;
+  static char sysrel[(sizeof u.sysname) + (sizeof u.release)];
+
+  if (show_uname) {
+    if (uname(&u) < 0)
+      return "*unknown*";
+    else {
+      snprintf(sysrel, sizeof sysrel, "%s %s", u.sysname, u.release);
+      return sysrel;
+    }
+  }
+  else
+    return "";
+}
+
 /* Substitute %x codes in help files
  *
  * %B = bot nickname
@@ -808,9 +825,8 @@ void help_subst(char *s, char *nick, struct flag_record *flags,
   struct chanset_t *chan;
   int i, j, center = 0;
   static int help_flags;
-  struct utsname uname_info;
   char xx[HELP_BUF_LEN + 1], *current, *q, chr, *writeidx, *readidx, *towrite,
-       sub[(sizeof uname_info.sysname) + (sizeof uname_info.release)];
+       sub[512];
 
   if (s == NULL) {
     /* Used to reset substitutions */
@@ -900,12 +916,7 @@ void help_subst(char *s, char *nick, struct flag_record *flags,
       }
       break;
     case 'U':
-      if (uname(&uname_info) >= 0) {
-        snprintf(sub, sizeof sub, "%s %s", uname_info.sysname,
-                 uname_info.release);
-        towrite = sub;
-      } else
-        towrite = "*UNKNOWN*";
+      towrite = egg_uname();
       break;
     case 'B':
       towrite = (isdcc ? botnetnick : botname);
@@ -923,7 +934,7 @@ void help_subst(char *s, char *nick, struct flag_record *flags,
       towrite = network;
       break;
     case 'T':
-      strftime(sub, 6, "%H:%M", localtime(&now));
+      strftime(sub, sizeof sub, "%H:%M", localtime(&now));
       towrite = sub;
       break;
     case 'N':

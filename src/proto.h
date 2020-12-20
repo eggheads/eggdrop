@@ -240,6 +240,7 @@ void dumplots(int, const char *, const char *);
 void daysago(time_t, time_t, char *);
 void days(time_t, time_t, char *);
 void daysdur(time_t, time_t, char *);
+char *egg_uname();
 void help_subst(char *, char *, struct flag_record *, int, char *);
 void sub_lang(int, char *);
 void show_motd(int);

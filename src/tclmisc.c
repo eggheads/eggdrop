@@ -570,17 +570,7 @@ static int tcl_unloadmodule STDVAR
 
 static int tcl_unames STDVAR
 {
-  char *unix_n, *vers_n;
-  struct utsname un;
-
-  if (uname(&un) < 0) {
-    unix_n = "*unknown*";
-    vers_n = "";
-  } else {
-    unix_n = un.sysname;
-    vers_n = un.release;
-  }
-  Tcl_AppendResult(irp, unix_n, " ", vers_n, NULL);
+  Tcl_AppendResult(irp, egg_uname(), NULL);
   return TCL_OK;
 }
 
