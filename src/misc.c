@@ -58,7 +58,7 @@ int max_logs = 5;               /* Max log files, mismatch config on purpose */
 int max_logsize = 0;            /* Maximum logfile size, 0 for no limit */
 int raw_log = 0;                /* Display output to server to LOG_SERVEROUT */
 int conmask = LOG_MODES | LOG_CMDS | LOG_MISC; /* Console mask */
-int stealth_uname = 0;
+int show_uname = 1;
 
 struct help_list_t {
   struct help_list_t *next;
@@ -778,15 +778,21 @@ static void subst_addcol(char *s, char *newcol)
   }
 }
 
-void egg_uname(char *sysrel, size_t len)
+char *egg_uname()
 {
   struct utsname u;
-  if (stealth_uname)
-    strlcpy(sysrel, "HAL-9000", len);
-  else if (uname(&u) < 0)
-    strlcpy(sysrel, "*unknown*", len);
+  static char sysrel[(sizeof u.sysname) + (sizeof u.release)];
+
+  if (show_uname) {
+    if (uname(&u) < 0)
+      return "*unknown*";
+    else {
+      snprintf(sysrel, sizeof sysrel, "%s %s", u.sysname, u.release);
+      return sysrel;
+    }
+  }
   else
-    snprintf(sysrel, len, "%s %s", u.sysname, u.release);
+    return "";
 }
 
 /* Substitute %x codes in help files
@@ -816,11 +822,11 @@ void egg_uname(char *sysrel, size_t len)
 void help_subst(char *s, char *nick, struct flag_record *flags,
                 int isdcc, char *topic)
 {
-  char xx[HELP_BUF_LEN + 1], sub[514], *current, *q, chr, *writeidx,
-       *readidx, *towrite, sysrel[256];
   struct chanset_t *chan;
   int i, j, center = 0;
   static int help_flags;
+  char xx[HELP_BUF_LEN + 1], *current, *q, chr, *writeidx, *readidx, *towrite,
+       sub[512], *sysrel;
 
   if (s == NULL) {
     /* Used to reset substitutions */
@@ -910,8 +916,10 @@ void help_subst(char *s, char *nick, struct flag_record *flags,
       }
       break;
     case 'U':
-      egg_uname(sysrel, sizeof sysrel);
-      towrite = sysrel;
+      sysrel = egg_uname();
+      if (!*sysrel)
+        putlog(LOG_MISC, "*", "WARNING: please put your msg here, geo");
+      towrite = egg_uname();
       break;
     case 'B':
       towrite = (isdcc ? botnetnick : botname);
@@ -929,7 +937,7 @@ void help_subst(char *s, char *nick, struct flag_record *flags,
       towrite = network;
       break;
     case 'T':
-      strftime(sub, 6, "%H:%M", localtime(&now));
+      strftime(sub, sizeof sub, "%H:%M", localtime(&now));
       towrite = sub;
       break;
     case 'N':
@@ -1451,7 +1459,7 @@ void make_rand_str_from_chars(char *s, const int len, char *chars)
  */
 void make_rand_str(char *s, const int len)
 {
-  make_rand_str_from_chars(s, len, CHARSET_ALPHANUM);
+  make_rand_str_from_chars(s, len, CHARSET_LOWER_ALPHA_NUM);
 }
 
 /* Convert an octal string into a decimal integer value.  If the string
@@ -1580,4 +1588,46 @@ void kill_bot(char *s1, char *s2)
   botnet_send_bye();
   write_userfile(-1);
   fatal(s2, 2);
+}
+
+/* Compares two strings with constant-time algorithm to avoid timing attack and
+ * returns 0, if strings match, similar to strcmp().
+ */
+/* https://github.com/jedisct1/libsodium/blob/451bafc0d3d95d18f916dd7051687d343597228c/src/libsodium/crypto_verify/sodium/verify.c */
+/*
+ * ISC License
+ *
+ * Copyright (c) 2013-2020
+ * Frank Denis <j at pureftpd dot org>
+ *
+ * Permission to use, copy, modify, and/or distribute this software for any
+ * purpose with or without fee is hereby granted, provided that the above
+ * copyright notice and this permission notice appear in all copies.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
+ * WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
+ * MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
+ * ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
+ * WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
+ * ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
+ * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+ */
+int crypto_verify(const char *x_, const char *y_)
+{
+  const volatile unsigned char *volatile x =
+    (const volatile unsigned char *volatile) x_;
+  const volatile unsigned char *volatile y =
+    (const volatile unsigned char *volatile) y_;
+  volatile uint_fast16_t d = 0U;
+  int n, i;
+
+  /* Could leak string length */
+  n = strlen(x_);
+  if (n != strlen(y_))
+    return 1;
+
+  for (i = 0; i < n; i++) {
+    d |= x[i] ^ y[i];
+  }
+  return (1 & ((d - 1) >> 8)) - 1;
 }
