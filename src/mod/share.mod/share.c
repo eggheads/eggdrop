@@ -1731,6 +1731,9 @@ static struct userrec *dup_userlist(int t)
         ((t == 1) && (u->flags & (USER_BOT | USER_UNSHARED))) || (t == 2)) {
       p = get_user(&USERENTRY_PASS, u);
       u1 = adduser(NULL, u->handle, 0, p, u->flags);
+      p = get_user(&USERENTRY_PASS2, u);
+      if (p)
+        set_user(&USERENTRY_PASS2, u1, p);
       u1->flags_udef = u->flags_udef;
       if (!nu)
         nu = retu = u1;

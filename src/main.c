@@ -1156,10 +1156,10 @@ int main(int arg_c, char **arg_v)
   link_statics();
 #endif
   strlcpy(s, ctime(&now), sizeof s);
-  memmove(&s[11], &s[20], strlen(&s[20])+1);
+  memmove(&s[11], &s[20], strlen(&s[20]) + 1);
   putlog(LOG_ALL, "*", "--- Loading %s (%s)", ver, s);
   chanprog();
-  if (!encrypt_pass) {
+  if (!encrypt_pass2 && !encrypt_pass) {
     printf("%s", MOD_NOCRYPT);
     bg_send_quit(BG_ABORT);
     exit(1);
@@ -1269,7 +1269,13 @@ int main(int arg_c, char **arg_v)
     dcc_chatter(term_z);
   }
 
-  then = now;
+  /* -1 to make mainloop() call
+   * call_hook(HOOK_SECONDLY)->server_secondly()->connect_server() before first
+   * sockgets()->sockread()->select() to avoid an unnecessary select timeout of
+   * up to 1 sec while starting up
+   */
+  then = now - 1;
+
   online_since = now;
   dns_thread_head = nmalloc(sizeof(struct dns_thread_node));
   dns_thread_head->next = NULL;

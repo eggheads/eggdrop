@@ -699,7 +699,7 @@ static int gotnotice(char *from, char *msg)
     if (*p == 1) {
       *p = 0;
       ctcp = strcpy(ctcpbuf, p1);
-      strcpy(p1 - 1, p + 1);
+      memmove(p1 - 1, p + 1, strlen(p + 1) + 1);
       if (!ignoring)
         detect_flood(nick, uhost, from, FLOOD_CTCP);
       p = strchr(msg, 1);
@@ -875,7 +875,7 @@ static int got432(char *from, char *msg)
   else {
     putlog(LOG_MISC, "*", IRC_BADBOTNICK);
     if (!keepnick) {
-      make_rand_str_from_chars(nick, sizeof nick - 1, CHARSET_ALPHA);
+      make_rand_str_from_chars(nick, sizeof nick - 1, CHARSET_LOWER_ALPHA);
       putlog(LOG_MISC, "*", "NICK IS INVALID: '%s' (using '%s' instead)",
               erroneous, nick);
       dprintf(DP_MODE, "NICK %s\n", nick);
@@ -1936,10 +1936,6 @@ static void server_resolve_success(int servidx)
   changeover_dcc(servidx, &SERVER_SOCKET, 0);
   dcc[servidx].sock = getsock(dcc[servidx].sockname.family, 0);
   setsnport(dcc[servidx].sockname, dcc[servidx].port);
-  /* Setup ident right before opening the socket to the IRC server to minimize
-   * race.
-   */
-  check_tcl_event("ident");
   serv = open_telnet_raw(dcc[servidx].sock, &dcc[servidx].sockname);
   if (serv < 0) {
     char *errstr = NULL;
@@ -1956,6 +1952,8 @@ static void server_resolve_success(int servidx)
     lostdcc(servidx);
     return;
   }
+  /* Setup ident with server values populated */
+  check_tcl_event("ident");
 #ifdef TLS
   if (dcc[servidx].ssl && ssl_handshake(serv, TLS_CONNECT, tls_vfyserver,
                                         LOG_SERV, dcc[servidx].host, NULL)) {

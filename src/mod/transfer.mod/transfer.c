@@ -953,15 +953,15 @@ static int raw_dcc_resend_send(char *filename, char *nick, char *from,
 {
   int zz, port, i;
   char *nfn, *buf = NULL;
-  long dccfilesize;
+  off_t dccfilesize;
   FILE *f;
 
   zz = -1;
   f = fopen(filename, "r");
   if (!f)
     return DCCSEND_BADFN;
-  fseek(f, 0, SEEK_END);
-  dccfilesize = ftell(f);
+  fseeko(f, 0, SEEK_END);
+  dccfilesize = ftello(f);
   fclose(f);
 
   if (dccfilesize == 0)

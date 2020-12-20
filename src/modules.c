@@ -75,7 +75,8 @@ extern struct userrec *userlist, *lastuser;
 extern struct chanset_t *chanset;
 
 extern char botnetnick[], botname[], origbotname[], botuser[], ver[], log_ts[],
-            admin[], userfile[], notify_new[], helpdir[], version[], quit_msg[];
+            admin[], userfile[], notify_new[], helpdir[], version[], quit_msg[],
+            pid_file[];
 
 extern int parties, noshare, dcc_total, egg_numver, userfile_perm, ignore_time,
            must_be_owner, raw_log, max_dcc, make_userfile, default_flags,
@@ -157,6 +158,8 @@ static void null_share(int idx, char *x)
 }
 
 void (*encrypt_pass) (char *, char *) = 0;
+char *(*encrypt_pass2) (char *) = 0;
+char *(*verify_pass2) (char *, char *) = 0;
 char *(*encrypt_string) (char *, char *) = 0;
 char *(*decrypt_string) (char *, char *) = 0;
 void (*shareout) () = null_func;
@@ -609,7 +612,17 @@ Function global_table[] = {
   (Function) check_validpass,
   /* 308 - 311 */
   (Function) make_rand_str_from_chars,
-  (Function) add_tcl_objcommands
+  (Function) add_tcl_objcommands,
+  (Function) pid_file,            /* char                                */
+#ifndef HAVE_EXPLICIT_BZERO
+  (Function) explicit_bzero,
+#else
+  (Function) 0,
+#endif
+/* 312 - 315 */    
+  (Function) & USERENTRY_PASS2,   /* struct user_entry_type *            */
+  (Function) crypto_verify,
+  (Function) egg_uname
 };
 
 void init_modules(void)
@@ -1034,6 +1047,12 @@ void add_hook(int hook_num, Function func)
     case HOOK_ENCRYPT_PASS:
       encrypt_pass = (void (*)(char *, char *)) func;
       break;
+    case HOOK_ENCRYPT_PASS2:
+      encrypt_pass2 = (char *(*)(char *)) func;
+      break;
+    case HOOK_VERIFY_PASS2:
+      verify_pass2 = (char *(*)(char *, char*)) func;
+      break;
     case HOOK_ENCRYPT_STRING:
       encrypt_string = (char *(*)(char *, char *)) func;
       break;
@@ -1106,6 +1125,14 @@ void del_hook(int hook_num, Function func)
     case HOOK_ENCRYPT_PASS:
       if (encrypt_pass == (void (*)(char *, char *)) func)
         encrypt_pass = (void (*)(char *, char *)) null_func;
+      break;
+    case HOOK_ENCRYPT_PASS2:
+      if (encrypt_pass2 == (char *(*)(char *)) func)
+        encrypt_pass2 = (char *(*)(char *)) null_func;
+      break;
+    case HOOK_VERIFY_PASS2:
+      if (verify_pass2 == (char *(*)(char *, char *)) func)
+        verify_pass2 = (char *(*)(char *, char *)) null_func;
       break;
     case HOOK_ENCRYPT_STRING:
       if (encrypt_string == (char *(*)(char *, char *)) func)
