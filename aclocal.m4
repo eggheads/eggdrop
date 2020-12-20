@@ -72,6 +72,7 @@ AC_DEFUN([EGG_MSG_SUMMARY],
     fi
   fi
   AC_MSG_RESULT([SSL/TLS Support: $tls_enabled$ADD])
+  AC_MSG_RESULT([Threaded DNS core (experimental): $tdns_enabled])
   AC_MSG_RESULT
 ])
 
@@ -1706,6 +1707,24 @@ AC_DEFUN([EGG_TLS_DETECT],
       EGG_MD5_COMPAT
     fi
   fi
+])
+
+
+dnl EGG_TDNS_ENABLE
+dnl
+AC_DEFUN([EGG_TDNS_ENABLE],
+[
+  AC_MSG_CHECKING(for threaded dns core (experimental))
+  AC_ARG_ENABLE([tdns], [  --enable-tdns           enable threaded DNS core (experimental)],
+    [
+      tdns_enabled="yes"
+      AC_DEFINE([EGG_TDNS], [1], [Define this to enable threaded DNS core.])
+      AC_MSG_RESULT(yes)
+    ],
+    [
+      tdns_enabled="no"
+      AC_MSG_RESULT(no)
+    ])
 ])
 
 
