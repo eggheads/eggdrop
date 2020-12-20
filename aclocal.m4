@@ -1717,13 +1717,14 @@ AC_DEFUN([EGG_TDNS_ENABLE],
   AC_MSG_CHECKING(for threaded dns core (experimental))
   AC_ARG_ENABLE([tdns], [  --enable-tdns           enable threaded DNS core (experimental)],
     [
-      tdns_enabled="yes"
-      AC_DEFINE([EGG_TDNS], [1], [Define this to enable threaded DNS core.])
       AC_MSG_RESULT(yes)
+      AC_DEFINE([EGG_TDNS], [1], [Define this to enable threaded DNS core.])
+      LDFLAGS="${LDFLAGS} -lpthread"
+      tdns_enabled="yes"
     ],
     [
-      tdns_enabled="no"
       AC_MSG_RESULT(no)
+      tdns_enabled="no"
     ])
 ])
 
