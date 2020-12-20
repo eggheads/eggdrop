@@ -916,9 +916,6 @@ void help_subst(char *s, char *nick, struct flag_record *flags,
       }
       break;
     case 'U':
-      sysrel = egg_uname();
-      if (!*sysrel)
-        putlog(LOG_MISC, "*", "WARNING: please put your msg here, geo");
       towrite = egg_uname();
       break;
     case 'B':
