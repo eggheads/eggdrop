@@ -826,7 +826,7 @@ void help_subst(char *s, char *nick, struct flag_record *flags,
   int i, j, center = 0;
   static int help_flags;
   char xx[HELP_BUF_LEN + 1], *current, *q, chr, *writeidx, *readidx, *towrite,
-       sub[512], *sysrel;
+       sub[512];
 
   if (s == NULL) {
     /* Used to reset substitutions */
@@ -916,10 +916,9 @@ void help_subst(char *s, char *nick, struct flag_record *flags,
       }
       break;
     case 'U':
-      sysrel = egg_uname();
-      if (!*sysrel)
+      towrite = egg_uname();
+      if (!*towrite)
         putlog(LOG_MISC, "*", "WARNING: please put your msg here, geo");
-      towrite = sysrel;
       break;
     case 'B':
       towrite = (isdcc ? botnetnick : botname);
