@@ -917,8 +917,6 @@ void help_subst(char *s, char *nick, struct flag_record *flags,
       break;
     case 'U':
       towrite = egg_uname();
-      if (!*towrite)
-        putlog(LOG_MISC, "*", "WARNING: please put your msg here, geo");
       break;
     case 'B':
       towrite = (isdcc ? botnetnick : botname);
