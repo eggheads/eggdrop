@@ -1172,7 +1172,7 @@ int main(int arg_c, char **arg_v)
   if ((cliflags & CLI_N) && (cliflags & CLI_T)) {
     printf("\n");
     printf("NOTE: The -n flag is no longer used, it is as effective as Han\n");
-    printf("      without Chewie\n"
+    printf("      without Chewie\n");
   }
 #ifdef TLS
   ssl_init();
