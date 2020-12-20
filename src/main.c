@@ -333,13 +333,16 @@ static void write_debug()
 #else
     dprintf(-x, "Compiled without IPv6 support\n");
 #endif
-
 #ifdef TLS
     dprintf(-x, "Compiled with TLS support\n");
 #else
     dprintf(-x, "Compiled without TLS support\n");
 #endif
-
+#ifdef EGG_TDNS
+    dprintf(-x, "Compiled with experimental threaded DNS core\n");
+#else
+    dprintf(-x, "Compiled without experimental threaded DNS core\n");
+#endif
     if (!strcmp(EGG_AC_ARGS, "")) {
       dprintf(-x, "Configure flags: none\n");
     } else {
@@ -525,6 +528,9 @@ static void show_ver() {
 #endif
 #ifdef TLS
   printf("TLS, ");
+#endif
+#ifdef EGG_TDNS
+  printf("experimental threaded DNS core, ");
 #endif
   printf("handlen=%d\n", HANDLEN);
   bg_send_quit(BG_ABORT);
