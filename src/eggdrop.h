@@ -781,6 +781,7 @@ enum {
 #  define STRINGIFY1(x) #x
 #endif
 
+#ifdef EGG_TDNS
 #define DTN_TYPE_HOSTBYIP 0
 #define DTN_TYPE_IPBYHOST 1
 
@@ -793,6 +794,7 @@ struct dns_thread_node {
   int ok;
   struct dns_thread_node *next;
 };
+#endif
 
 extern struct dns_thread_node *dns_thread_head;
 

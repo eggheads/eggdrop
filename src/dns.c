@@ -25,22 +25,31 @@
  */
 
 #include "main.h"
-#include <errno.h>
 #include <netdb.h>
-#include <pthread.h>
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <arpa/inet.h>
 #include "dns.h"
+#ifdef EGG_TDNS
+  #include <errno.h>
+  #include <pthread.h>
+#else
+  #include <setjmp.h>
+#endif
 
 extern struct dcc_t *dcc;
 extern int dcc_total;
 extern time_t now;
 extern Tcl_Interp *interp;
+#ifdef EGG_TDNS
+  struct dns_thread_node *dns_thread_head;
+  extern int pref_af;
+#else
+  extern int resolve_timeout;
+  extern sigjmp_buf alarmret;
+#endif
 
 devent_t *dns_events = NULL;
-struct dns_thread_node *dns_thread_head;
-extern int pref_af;
 
 
 /*
@@ -468,6 +477,7 @@ void call_ipbyhost(char *hostn, sockname_t *ip, int ok)
   }
 }
 
+#ifdef EGG_TDNS
 /* The following 2 threads work like this: a libc resolver function is called,
  * that blocks the thread and returns the result or after timeout. The default
  * is RES_TIMEOUT, which is generally 5, the allowed maximum is RES_MAXRETRANS
@@ -595,6 +605,55 @@ void core_dns_ipbyhost(char *host)
   }
   dtn->type = DTN_TYPE_IPBYHOST;
 }
+#else /* EGG_TDNS */
+/*
+ *    Async DNS emulation functions
+ */
+void core_dns_hostbyip(sockname_t *addr)
+{
+  char host[256] = "";
+  volatile int i = 1;
+
+  if (addr->family == AF_INET) {
+    if (!sigsetjmp(alarmret, 1)) {
+      alarm(resolve_timeout);
+      i = getnameinfo((const struct sockaddr *) &addr->addr.s4,
+                      sizeof (struct sockaddr_in), host, sizeof host, NULL, 0, 0);
+      alarm(0);
+      if (i)
+        debug1("dns: getnameinfo(): error = %s", gai_strerror(i));
+    }
+    if (i)
+      inet_ntop(AF_INET, &addr->addr.s4.sin_addr.s_addr, host, sizeof host);
+#ifdef IPV6
+  } else {
+    if (!sigsetjmp(alarmret, 1)) {
+      alarm(resolve_timeout);
+      i = getnameinfo((const struct sockaddr *) &addr->addr.s6,
+                      sizeof (struct sockaddr_in6), host, sizeof host, NULL, 0, 0);
+      alarm(0);
+      if (i)
+        debug1("dns: getnameinfo(): error = %s", gai_strerror(i));
+    }
+    if (i)
+      inet_ntop(AF_INET6, &addr->addr.s6.sin6_addr, host, sizeof host);
+  }
+#else
+  }
+#endif
+  call_hostbyip(addr, host, !i);
+}
+
+void core_dns_ipbyhost(char *host)
+{
+  sockname_t name;
+
+  if (setsockname(&name, host, 0, 1) == AF_UNSPEC)
+    call_ipbyhost(host, &name, 0);
+  else
+    call_ipbyhost(host, &name, 1);
+}
+#endif
 
 /*
  *   Misc functions

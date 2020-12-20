@@ -869,19 +869,24 @@ int sockread(char *s, int *len, sock_list *slist, int slistmax, int tclonly)
 {
   struct timeval t;
   fd_set fdr, fdw, fde;
-  int i, fd, x, nfds_r, nfds_w, nfds_e;
+  int i, x, nfds_r, nfds_w, nfds_e;
   int grab = 511, tclsock = -1, events = 0;
   struct threaddata *td = threaddata();
   int nfds;
+#ifdef EGG_TDNS
+  int fd;
   struct dns_thread_node *dtn, *dtn_prev;
+#endif
 
   nfds_r = preparefdset(&fdr, slist, slistmax, tclonly, TCL_READABLE);
+#ifdef EGG_TDNS
   for (dtn = dns_thread_head->next; dtn; dtn = dtn->next) {
     fd = dtn->fildes[0];
     FD_SET(fd, &fdr);
     if (fd > nfds_r)
       nfds_r = fd;
   }
+#endif
   nfds_w = preparefdset(&fdw, slist, slistmax, 1, TCL_WRITABLE);
   nfds_e = preparefdset(&fde, slist, slistmax, 1, TCL_EXCEPTION);
 
@@ -1020,6 +1025,7 @@ int sockread(char *s, int *len, sock_list *slist, int slistmax, int tclonly)
                                            events);
     return -5;
   }
+#ifdef EGG_TDNS
   dtn_prev = dns_thread_head;
   for (dtn = dtn_prev->next; dtn; dtn = dtn->next) {
     fd = dtn->fildes[0];
@@ -1035,6 +1041,7 @@ int sockread(char *s, int *len, sock_list *slist, int slistmax, int tclonly)
     }
     dtn_prev = dtn;
   }
+#endif
   return -3;
 }
 
