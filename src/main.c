@@ -1177,8 +1177,8 @@ int main(int arg_c, char **arg_v)
          botnetnick, i, count_users(userlist));
   if ((cliflags & CLI_N) && (cliflags & CLI_T)) {
     printf("\n");
-    printf("NOTE: It's the 21st century, you don't need to use the -n flag\n");
-    printf("      with the -t or -c flag anymore.\n");
+    printf("NOTE: The -n flag is no longer used, it is as effective as Han\n");
+    printf("      without Chewie\n");
   }
 #ifdef TLS
   ssl_init();
