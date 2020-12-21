@@ -653,7 +653,7 @@ void core_dns_ipbyhost(char *host)
   else
     call_ipbyhost(host, &name, 1);
 }
-#endif
+#endif /* EGG_TDNS */
 
 /*
  *   Misc functions
