@@ -794,8 +794,8 @@ struct dns_thread_node {
   int ok;
   struct dns_thread_node *next;
 };
-#endif
 
 extern struct dns_thread_node *dns_thread_head;
+#endif
 
 #endif /* _EGG_EGGDROP_H */
