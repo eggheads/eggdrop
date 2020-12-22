@@ -65,8 +65,9 @@
 #define BADHANDCHARS "-,+*=:!.@#;$%&"
 
 /* And now valid characters! */
-#define CHARSET_ALPHA "abcdefghijklmnopqrstuvwxyz"
-#define CHARSET_ALPHANUM "0123456789abcdefghijklmnopqrstuvwxyz"
+#define CHARSET_LOWER_ALPHA     "abcdefghijklmnopqrstuvwxyz"
+#define CHARSET_LOWER_ALPHA_NUM "0123456789abcdefghijklmnopqrstuvwxyz"
+#define CHARSET_PASSWORD        "0123456789?ABCDEFGHIJKLMNOPQRSTUVWXYZ_abcdefghijklmnopqrstuvwxyz"
 
 
 /* Language stuff */
@@ -79,23 +80,19 @@
 /* The 'configure' script should make this next part automatic, so you
  * shouldn't need to adjust anything below.
  */
-#define NICKLEN      NICKMAX + 1
-#define UHOSTLEN     UHOSTMAX + 1
-#define DIRLEN       DIRMAX + 1
-#define LOGLINELEN   LOGLINEMAX + 1
-#define NOTENAMELEN  ((HANDLEN * 2) + 1)
-#define PASSWORDMAX  16
-#define PASSWORDLEN  PASSWORDMAX + 1
+#define NICKLEN     NICKMAX + 1
+#define UHOSTLEN    UHOSTMAX + 1
+#define DIRLEN      DIRMAX + 1
+#define LOGLINELEN  LOGLINEMAX + 1
+#define NOTENAMELEN ((HANDLEN * 2) + 1)
+#define PASSWORDMAX 30 /* highest value compatible to older eggdrop */
+#define PASSWORDLEN PASSWORDMAX + 1
 
 
 /* We have to generate compiler errors in a weird way since not all compilers
  * support the #error preprocessor directive. */
 #ifndef STDC_HEADERS
 #  include "Error: Your system must have standard ANSI C headers."
-#endif
-
-#ifndef HAVE_VPRINTF
-#  include "Error: You need vsprintf to compile eggdrop."
 #endif
 
 #ifdef HAVE_UNISTD_H

@@ -5,6 +5,7 @@
  *
  * Modified/written by Fabian Knittel <fknittel@gmx.de>
  * IPv6 support added by pseudo <pseudo@egg6.net>
+ * /etc/hosts support added by Michael Ortmann
  */
 /*
  * Portions Copyright (C) 1999 - 2020 Eggheads Development Team
@@ -39,7 +40,7 @@
 #include <arpa/inet.h>
 #include <arpa/nameser.h>
 #undef answer /* before resolv.h because it could collide with src/mod/module.h
-		 (dietlibc) */
+                 (dietlibc) */
 #include <resolv.h>
 #include <errno.h>
 
@@ -669,7 +670,7 @@ static struct resolve *findip(IP ip)
   return rp;                    /* NULL */
 }
 
-void ptrstring4(IP *ip, char *buf, size_t sz)
+static void ptrstring4(IP *ip, char *buf, size_t sz)
 {
   egg_snprintf(buf, sz, "%u.%u.%u.%u.in-addr.arpa",
            ((uint8_t *) ip)[3],
@@ -679,7 +680,7 @@ void ptrstring4(IP *ip, char *buf, size_t sz)
 }
 
 #ifdef IPV6
-void ptrstring6(struct in6_addr *ip6, char *buf, size_t sz)
+static void ptrstring6(struct in6_addr *ip6, char *buf, size_t sz)
 {
   int i;
   char *p, *q;
@@ -697,7 +698,7 @@ void ptrstring6(struct in6_addr *ip6, char *buf, size_t sz)
 }
 #endif
 
-void ptrstring(struct sockaddr *addr, char *buf, size_t sz)
+static void ptrstring(struct sockaddr *addr, char *buf, size_t sz)
 {
   if (addr->sa_family == AF_INET)
     ptrstring4((IP *) &((struct sockaddr_in *)addr)->sin_addr.s_addr,
@@ -823,7 +824,7 @@ static void passrp(struct resolve *rp, long ttl, int type)
 
 /* Parses the response packets received.
  */
-void parserespacket(uint8_t *response, int len)
+static void parserespacket(uint8_t *response, int len)
 {
 #ifdef IPV6
   int ready = 0;
@@ -831,7 +832,7 @@ void parserespacket(uint8_t *response, int len)
   int r, rcount;
   packetheader *hdr;
   struct resolve *rp;
-  uint8_t rc, *c = response;
+  uint8_t rc, *c = response, *data;
   uint16_t qdatatype, qclass, datatype, class, datalength;
   uint32_t ttl;
 
@@ -967,8 +968,6 @@ void parserespacket(uint8_t *response, int len)
     }
     NS_GET16(datatype, c);
     NS_GET16(class, c);
-    NS_GET32(ttl, c);
-    NS_GET16(datalength, c);
     if (class != qclass) {
       ddebug2(RES_ERR "Answered class (%s) does not match queried class (%s).",
               (class < CLASSTYPES_COUNT) ?
@@ -977,7 +976,11 @@ void parserespacket(uint8_t *response, int len)
               classtypes[qclass] : classtypes[CLASSTYPES_COUNT]);
       return;
     }
-    if ((c + datalength) > (response + len)) {
+    NS_GET32(ttl, c);
+    NS_GET16(datalength, c);
+    data = c;
+    c += datalength;
+    if (c > (response + len)) {
       ddebug0(RES_ERR "Specified rdata length exceeds packet size.");
       return;
     }
@@ -1003,7 +1006,7 @@ void parserespacket(uint8_t *response, int len)
         rp->ttl = ttl;
         rp->sockname.addrlen = sizeof(struct sockaddr_in);
         rp->sockname.addr.sa.sa_family = AF_INET;
-        memcpy(&rp->sockname.addr.s4.sin_addr, c, 4);
+        memcpy(&rp->sockname.addr.s4.sin_addr, data, 4);
 #ifndef IPV6
         passrp(rp, ttl, T_A);
         return;
@@ -1022,7 +1025,7 @@ void parserespacket(uint8_t *response, int len)
         rp->ttl = ttl;
         rp->sockname.addrlen = sizeof(struct sockaddr_in6);
         rp->sockname.addr.sa.sa_family = AF_INET6;
-        memcpy(&rp->sockname.addr.s6.sin6_addr, c, 16);
+        memcpy(&rp->sockname.addr.s6.sin6_addr, data, 16);
         if (ready || pref_af) {
           passrp(rp, ttl, T_A);
           return;
@@ -1030,7 +1033,7 @@ void parserespacket(uint8_t *response, int len)
         break;
 #endif
       case T_PTR:
-        r = dn_expand(response, response + len, c, namestring, MAXDNAME);
+        r = dn_expand(response, response + len, data, namestring, MAXDNAME);
         if (r == -1) {
           ddebug0(RES_ERR "dn_expand() failed while expanding domain in "
                   "rdata.");
@@ -1051,7 +1054,7 @@ void parserespacket(uint8_t *response, int len)
         }
         break;
       case T_CNAME:
-        r = dn_expand(response, response + len, c, namestring, MAXDNAME);
+        r = dn_expand(response, response + len, data, namestring, MAXDNAME);
         if (r == -1) {
           ddebug0(RES_ERR "dn_expand() failed while expanding domain in "
                   "rdata.");
@@ -1201,6 +1204,110 @@ static void dns_lookup(sockname_t *addr)
   sendrequest(rp, T_PTR);
 }
 
+/* Read /etc/hosts */
+static int dns_hosts(char *hostn) {
+  #define PATH "/etc/hosts"
+  size_t hostn_len;
+  int i;
+  char hostn_lower[256], hostn_upper[256], line[8 * 1024], *p1, *p2, *p3, *p4;
+  FILE *hostf;
+  sockname_t name;
+#ifdef IPV6
+  int af, fallback_set = 0;
+  char fallback_ip[sizeof line];
+#endif
+
+  if (!*hostn) {
+    ddebug0(RES_MSG "bogus empty hostname input");
+    return 1;
+  }
+  hostn_len = strlen(hostn);
+  if (hostn_len > 255) {
+    ddebug0(RES_MSG "bogus len of hostname > 255 input");
+    return 1;
+  }
+  /* precalculate lower and upper string from hostn and compare with handcrafted
+   * code, due to strncasecmp() and strncmp() being slow if used in loop */
+  for (i = 0; i < hostn_len; i++) {
+      /* while at it, reject hostnames with bogus chars, see rfc 952, 1123 and 2181 */
+      if (!strchr("-.0123456789ABCDEFGHIJABCDEFGHIJKLMNOPQRSTUVWXYZ_abcdefghijklmnopqrstuvwxyz", hostn[i])) {
+        ddebug0(RES_MSG "bogus char in hostname input");
+        return 1;
+      }
+      hostn_lower[i] = tolower((unsigned char) hostn[i]);
+      hostn_upper[i] = toupper((unsigned char) hostn[i]);
+  }
+  hostn_lower[i] = 0;
+  hostn_upper[i] = 0;
+  if (!(hostf = fopen(PATH, "r"))) {
+    ddebug1(RES_MSG "fopen(" PATH "): %s", strerror(errno));
+    return 0;
+  }
+  /* p1 is used for finding ip
+   * p2 is used for finding hostname
+   * p3 and p4 are used to compare against hostn_lower and hostn_upper
+   */
+  while ((p1 = fgets(line, sizeof line, hostf))) {
+    /* postel's law */
+    while ((*p1 == ' ') || (*p1 == '\t'))
+      p1++;
+    p2 = p1;
+    while ((*p2 != '\n') && (*p2 != '#') && (*p2 != '\0')) {
+      if ((*p2 == ' ') || (*p2 == '\t')) {
+        *p2++ = '\0'; /* null-terminate ip */
+        /* skip tab and space */
+        while ((*p2 == ' ') || (*p2 == '\t'))
+          p2++;
+        /* if (!strncasecmp(c, hostn, hostn_len)) { */
+        p3 = hostn_lower;
+        p4 = hostn_upper;
+        while ((*p2 == *p3) || (*p2 == *p4) ||
+               ((*p3 == '\0') && ((*p2 == '\n') || (*p2 == ' ') || (*p2 == '\t') || (*p2 == '#')))) {
+          if (*p3 == '\0') {
+            /* string compare was successful, found hostname */
+#ifdef IPV6
+            if ((af = setsockname(&name, p1, 0, 0)) == (pref_af ? AF_INET6 : AF_INET)) {
+#else
+            if ((strchr(p1, '.')) && (setsockname(&name, p1, 0, 0) != AF_UNSPEC)) {
+#endif
+              call_ipbyhost(hostn, &name, 1);
+              ddebug2(RES_MSG "Used /etc/hosts: %s == %s", hostn, p1);
+              fclose(hostf);
+              return 1;
+            }
+#ifdef IPV6
+            else if ((af != AF_UNSPEC) && !fallback_set) {
+              fallback_set = 1;
+              strlcpy(fallback_ip, line, sizeof fallback_ip);
+            }
+#endif
+            p2++;
+            break;
+          }
+          p2++;
+          p3++;
+          p4++;
+        }
+      }
+      p2++;
+    }
+  }
+  if (ferror(hostf)) {
+    ddebug0(RES_MSG "fgets(" PATH ")");
+    return 0;
+  }
+#ifdef IPV6
+  if (fallback_set) {
+    call_ipbyhost(hostn, &name, 1);
+    ddebug2(RES_MSG "Used /etc/hosts: %s == %s", hostn, fallback_ip);
+    fclose(hostf);
+    return 1;
+  }
+#endif
+  fclose(hostf);
+  return 0;
+}
+
 /* Start searching for an ip-address, using it's host-name.
  */
 static void dns_forward(char *hostn)
@@ -1225,6 +1332,8 @@ static void dns_forward(char *hostn)
     }
     return;
   }
+  if (dns_hosts(hostn))
+    return;
   ddebug0(RES_MSG "Creating new record");
   rp = allocresolve();
   rp->state = STATE_AREQ;
@@ -1240,7 +1349,7 @@ static void dns_forward(char *hostn)
  */
 static int init_dns_network(void)
 {
-  int option;
+  int option = 1;
 
   resfd = socket(AF_INET, SOCK_DGRAM, 0);
   if (resfd == -1) {
@@ -1255,15 +1364,15 @@ static int init_dns_network(void)
     killsock(resfd);
     return 0;
   }
-  option = 1;
   if (setsockopt(resfd, SOL_SOCKET, SO_BROADCAST, &option, sizeof option)) {
-    putlog(LOG_MISC, "*",
-           "Unable to setsockopt() on nameserver communication socket: %s",
-           strerror(errno));
-    killsock(resfd);
-    return 0;
+    if (errno != ENOSYS) {
+      putlog(LOG_MISC, "*",
+             "Unable to setsockopt() on nameserver communication socket: %s",
+             strerror(errno));
+      killsock(resfd);
+      return 0;
+    }
   }
-
   localhost = htonl(INADDR_LOOPBACK);
   return 1;
 }

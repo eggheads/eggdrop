@@ -184,7 +184,7 @@ static void do_seen(int idx, char *prefix, char *nick, char *hand,
       !oix[2]) || (!oix[1] && (oix[-1] == 's' || oix[-1] == 'z' ||
       oix[-1] == 'x' || oix[-1] == 'S' || oix[-1] == 'Z' ||
       oix[-1] == 'X')))) {
-    strncpy(object, word1, oix - word1);
+    strlcpy(object, word1, sizeof object);
     object[oix - word1] = 0;
     wordshift(word1, text);
     if (!word1[0]) {
@@ -367,7 +367,6 @@ targetcont:
         snprintf(word2, sizeof word2, "%s!%s", m->nick, m->userhost);
         urec = get_user_by_host(word2);
         if (urec && !strcasecmp(urec->handle, whotarget)) {
-          onchan = 1;
           strcat(whoredirect, whotarget);
           strcat(whoredirect, " is ");
           strcat(whoredirect, m->nick);
@@ -472,23 +471,23 @@ targetcont:
   work = now - laston;
   if (work >= 86400) {
     tv = work / 86400;
-    snprintf(word2, sizeof word2, "%lu day%s, ", tv, (tv == 1) ? "" : "s");
+    snprintf(word2, sizeof word2, "%li day%s, ", tv, (tv == 1) ? "" : "s");
     work = work % 86400;
   }
   if (work >= 3600) {
     tv = work / 3600;
-    sprintf(word2 + strlen(word2), "%lu hour%s, ", tv, (tv == 1) ? "" : "s");
+    snprintf(word2 + strlen(word2), (sizeof word2) - strlen(word2), "%li hour%s, ", tv, (tv == 1) ? "" : "s");
     work = work % 3600;
   }
   if (work >= 60) {
     tv = work / 60;
-    sprintf(word2 + strlen(word2), "%lu minute%s, ", tv,
+    snprintf(word2 + strlen(word2), (sizeof word2) - strlen(word2), "%li minute%s, ", tv,
             (tv == 1) ? "" : "s");
   }
   if (!word2[0] && (work < 60)) {
     strlcpy(word2, "just moments ago!!", sizeof word2);
   } else {
-    strcpy(word2 + strlen(word2) - 2, " ago.");
+    strlcpy(word2 + strlen(word2) - 2, " ago.", (sizeof word2) - strlen(word2) + 2);
   }
   if (lastonplace[0] && (strchr(CHANMETA, lastonplace[0]) != NULL))
     snprintf(word1, sizeof word1, "on IRC channel %s", lastonplace);

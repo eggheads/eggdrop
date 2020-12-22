@@ -275,21 +275,21 @@ char *ssl_fpconv(char *in, char *out)
 {
   long len;
   char *fp;
-  unsigned char *md5;
+  unsigned char *sha1;
 
   if (!in)
     return NULL;
 
-  if ((md5 = OPENSSL_hexstr2buf(in, &len))) {
-    fp = OPENSSL_buf2hexstr(md5, len);
+  if ((sha1 = OPENSSL_hexstr2buf(in, &len))) {
+    fp = OPENSSL_buf2hexstr(sha1, len);
     if (fp) {
       out = user_realloc(out, strlen(fp) + 1);
       strcpy(out, fp);
-      OPENSSL_free(md5);
+      OPENSSL_free(sha1);
       OPENSSL_free(fp);
       return out;
     }
-    OPENSSL_free(md5);
+    OPENSSL_free(sha1);
   }
   return NULL;
 }
@@ -866,13 +866,16 @@ int ssl_handshake(int sock, int flags, int verify, int loglevel, char *host,
     /* Introduce 1ms lag so an unpatched hub has time to setup the ssl handshake */
     nanosleep(&req, NULL);
 #ifdef SSL_set_tlsext_host_name
-    if (!SSL_set_tlsext_host_name(td->socklist[i].ssl, data->host))
-       debug1("TLS: setting the server name indication (SNI) to %s failed", data->host);
+    if (*data->host)
+      if (!SSL_set_tlsext_host_name(td->socklist[i].ssl, data->host))
+        debug1("TLS: setting the server name indication (SNI) to %s failed", data->host);
+      else
+        debug1("TLS: setting the server name indication (SNI) to %s successful", data->host);
     else
-       debug1("TLS: setting the server name indication (SNI) to %s successful", data->host);
+      debug0("TLS: not setting the server name indication (SNI) because host is an empty string");
 #else
-    debug1("TLS: setting the server name indication (SNI) not supported by ssl "
-           "lib, probably < openssl 0.9.8f", data->host);
+    debug0("TLS: setting the server name indication (SNI) not supported by ssl "
+           "lib, probably < openssl 0.9.8f");
 #endif
     ret = SSL_connect(td->socklist[i].ssl);
     if (!ret)

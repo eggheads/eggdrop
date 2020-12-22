@@ -45,6 +45,8 @@ static void check_tcl_signtopcnick(char *, char *, struct userrec *u, char *,
                                    char *, p_tcl_bind_list);
 static int check_tcl_pubm(char *, char *, char *, char *);
 static int check_tcl_pub(char *, char *, char *, char *);
+static int check_tcl_ircaway(char *, char *, char *, struct userrec *, char *,
+                                    char*);
 static int me_op(struct chanset_t *);
 static int me_halfop(struct chanset_t *);
 static int me_voice(struct chanset_t *);
@@ -65,7 +67,7 @@ static void refresh_who_chan(char *);
 #define resetinvites(chan)  resetmasks((chan), (chan)->channel.invite,       \
                                        (chan)->invites, global_invites, 'I')
 
-void reset_chan_info(struct chanset_t *, int);
+void reset_chan_info(struct chanset_t *, int, int);
 static void recheck_channel(struct chanset_t *, int);
 static void set_key(struct chanset_t *, char *);
 static void maybe_revenge(struct chanset_t *, char *, char *, int);
@@ -115,6 +117,8 @@ static int gotmode(char *, char *);
 #define me_voice ((int(*)(struct chanset_t *))irc_funcs[23])
 /* 24 - 27 */
 #define getchanmode ((char *(*)(struct chanset_t *))irc_funcs[24])
+#define reset_chan_info (*(void *)(irc_funcs[25]))
+#define H_invt (*(p_tcl_bind_list *)(irc_funcs[26]))
 
 #endif /* MAKING_IRC */
 
