@@ -757,7 +757,13 @@ static void dccsocklist(Tcl_Interp *irp, int argc, char *type, int src) {
         }
         build_sock_list(irp, masterlist, idxstr, dcc[i].nick,
             (dcc[i].host[0] == '\0') ? iptostr(&dcc[i].sockname.addr.sa) : dcc[i].host,
-            s, dcc[i].port, dcc[i].ssl, dcc[i].type ? dcc[i].type->name : "*UNKNOWN*", other,
+            s, dcc[i].port,
+#ifdef TLS
+            dcc[i].ssl,
+#else
+            '0',
+#endif
+            dcc[i].type ? dcc[i].type->name : "*UNKNOWN*", other,
             timestamp);
       }
     }
