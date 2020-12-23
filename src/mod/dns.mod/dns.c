@@ -298,7 +298,7 @@ static Function dns_table[] = {
 char *dns_start(Function *global_funcs)
 {
 #ifdef EGG_TDNS
-  return "This module does not load in favor of enabled experimental threaded DNS core.";
+  return "Eggdrop was compiled with threaded DNS core; this module will not run with it. Not loading...";
 #else
   int idx;
 
