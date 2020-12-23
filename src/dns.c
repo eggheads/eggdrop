@@ -6,6 +6,7 @@
  */
 /*
  * Written by Fabian Knittel <fknittel@gmx.de>
+ * Threaded DNS written by Michael Ortmann
  *
  * Copyright (C) 1999 - 2020 Eggheads Development Team
  *
