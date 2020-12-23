@@ -372,9 +372,9 @@ void tell_verbose_status(int idx)
   dprintf(idx, "IPv6 support is not available.\n"
 #endif
 #ifdef EGG_TDNS
-               "Experimental threaded DNS core is enabled.\n"
+               "Threaded DNS core (beta) is enabled.\n"
 #else
-               "Experimental threaded DNS core is disabled.\n"
+               "Threaded DNS core (beta) is disabled.\n"
 #endif
                "Socket table: %d/%d\n", threaddata()->MAXSOCKS, max_socks);
 }
