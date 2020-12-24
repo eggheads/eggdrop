@@ -1142,7 +1142,7 @@ static int gottwitch366(char *from, char *msg) {
     chan->status |= CHAN_PEND; /* Channel needs to be PENDING for 1st join */
     snprintf(host, sizeof host, "%s.tmi.twitch.tv", nick); /* Create hostname */
     snprintf(fakemsg, sizeof fakemsg, "%s %s :End of /who", nick, chan->dname);
-    got352or4(chan, nick, host, nick, "H"); /* Send fake 352 for bot*/
+    got352or4(chan, nick, host, nick, "H", NULL); /* Send fake 352 for bot*/
     got315(from, fakemsg);  /* Send end of WHO, to get chan to ACTIVE state */
   }
   return 0;
