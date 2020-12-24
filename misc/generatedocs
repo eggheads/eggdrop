@@ -125,6 +125,7 @@ mv tmpdocs/modules.txt $BASEDIR/../doc/MODULES
 mv tmpdocs/notes.txt $BASEDIR/../doc/settings/mod.notes
 mv tmpdocs/partyline.txt $BASEDIR/../doc/PARTYLINE
 mv tmpdocs/patch.txt $BASEDIR/../doc/PATCH-HOWTO
+mv tmpdocs/pbkdf2.txt $BASEDIR/../doc/PBKDF2
 mv tmpdocs/readme.txt $BASEDIR/../README
 mv tmpdocs/seen.txt $BASEDIR/../doc/settings/mod.seen
 mv tmpdocs/server.txt $BASEDIR/../doc/settings/mod.server
