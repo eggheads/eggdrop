@@ -1305,6 +1305,7 @@ static Function irc_table[] = {
   (Function) reset_chan_info,
   (Function) & H_invt,          /* p_tcl_bind_list              */
   (Function) & twitch,          /* int                          */
+  /* 28 - 31 */
   (Function) & H_ircaway        /* p_tcl_bind_list              */
 };
 

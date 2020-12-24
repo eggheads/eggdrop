@@ -119,7 +119,9 @@ static int gotmode(char *, char *);
 #define getchanmode ((char *(*)(struct chanset_t *))irc_funcs[24])
 #define reset_chan_info (*(void *)(irc_funcs[25]))
 #define H_invt (*(p_tcl_bind_list *)(irc_funcs[26])
-#define H_ircaway(*(p_tcl_bind_list *)(irc_funcs[27]))
+#define twitch (*(int *)(irc_funcs[27]))
+/* 28 - 31 */
+#define H_ircaway (*(p_tcl_bind_list *)(irc_funcs[28])
 
 #endif /* MAKING_IRC */
 
