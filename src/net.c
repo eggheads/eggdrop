@@ -543,11 +543,11 @@ int open_telnet_raw(int sock, sockname_t *addr)
   for (i = 0; i < dcc_total; i++)
     if (dcc[i].sock == sock) { /* Got idx from sock ? */
 #ifdef TLS
-      debug4("net: open_telnet_raw(): idx %i host %s port %i ssl %i",
-             i, dcc[i].host, dcc[i].port, dcc[i].ssl);
+      debug5("net: open_telnet_raw(): idx %i host %s ip %s port %i ssl %i",
+             i, dcc[i].host, iptostr(&addr->addr.sa), dcc[i].port, dcc[i].ssl);
 #else
-      debug3("net: open_telnet_raw(): idx %i host %s port %i",
-             i, dcc[i].host, dcc[i].port);
+      debug4("net: open_telnet_raw(): idx %i host %s ip %s port %i",
+             i, dcc[i].host, iptostr(&addr->addr.sa), dcc[i].port);
 #endif
       break;
     }
@@ -873,8 +873,20 @@ int sockread(char *s, int *len, sock_list *slist, int slistmax, int tclonly)
   int grab = 511, tclsock = -1, events = 0;
   struct threaddata *td = threaddata();
   int nfds;
+#ifdef EGG_TDNS
+  int fd;
+  struct dns_thread_node *dtn, *dtn_prev;
+#endif
 
   nfds_r = preparefdset(&fdr, slist, slistmax, tclonly, TCL_READABLE);
+#ifdef EGG_TDNS
+  for (dtn = dns_thread_head->next; dtn; dtn = dtn->next) {
+    fd = dtn->fildes[0];
+    FD_SET(fd, &fdr);
+    if (fd > nfds_r)
+      nfds_r = fd;
+  }
+#endif
   nfds_w = preparefdset(&fdw, slist, slistmax, 1, TCL_WRITABLE);
   nfds_e = preparefdset(&fde, slist, slistmax, 1, TCL_EXCEPTION);
 
@@ -1013,6 +1025,23 @@ int sockread(char *s, int *len, sock_list *slist, int slistmax, int tclonly)
                                            events);
     return -5;
   }
+#ifdef EGG_TDNS
+  dtn_prev = dns_thread_head;
+  for (dtn = dtn_prev->next; dtn; dtn = dtn->next) {
+    fd = dtn->fildes[0];
+    if (FD_ISSET(fd, &fdr)) {
+      if (dtn->type == DTN_TYPE_HOSTBYIP)
+        call_hostbyip(&dtn->addr, dtn->host, dtn->ok);
+      else
+        call_ipbyhost(dtn->host, &dtn->addr, dtn->ok);
+      close(dtn->fildes[0]);
+      dtn_prev->next = dtn->next;
+      nfree(dtn);
+      dtn = dtn_prev;
+    }
+    dtn_prev = dtn;
+  }
+#endif
   return -3;
 }
 

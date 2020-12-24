@@ -333,13 +333,11 @@ static void write_debug()
 #else
     dprintf(-x, "Compiled without IPv6 support\n");
 #endif
-
 #ifdef TLS
     dprintf(-x, "Compiled with TLS support\n");
 #else
     dprintf(-x, "Compiled without TLS support\n");
 #endif
-
     if (!strcmp(EGG_AC_ARGS, "")) {
       dprintf(-x, "Configure flags: none\n");
     } else {
@@ -525,6 +523,9 @@ static void show_ver() {
 #endif
 #ifdef TLS
   printf("TLS, ");
+#endif
+#ifdef EGG_TDNS
+  printf("Threaded DNS core (beta), ");
 #endif
   printf("handlen=%d\n", HANDLEN);
   bg_send_quit(BG_ABORT);
@@ -1277,6 +1278,10 @@ int main(int arg_c, char **arg_v)
   then = now - 1;
 
   online_since = now;
+#ifdef EGG_TDNS
+  dns_thread_head = nmalloc(sizeof(struct dns_thread_node));
+  dns_thread_head->next = NULL;
+#endif
   autolink_cycle(NULL);         /* Hurry and connect to tandem bots */
   add_help_reference("cmds1.help");
   add_help_reference("cmds2.help");

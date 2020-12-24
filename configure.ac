@@ -162,6 +162,9 @@ EGG_TLS_ENABLE
 EGG_TLS_WITHSSL
 EGG_TLS_DETECT
 
+# Threaded DNS core
+EGG_TDNS_ENABLE
+
 
 # Substitute Makefile variables.
 EGG_SUBST_EGGVERSION

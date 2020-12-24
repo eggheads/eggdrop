@@ -168,12 +168,12 @@ void changeover_dcc(int, struct dcc_table *, int);
 
 /* dns.c */
 extern void (*dns_hostbyip) (sockname_t *);
-void block_dns_hostbyip(sockname_t *);
+void core_dns_hostbyip(sockname_t *);
 void call_hostbyip(sockname_t *, char *, int);
 void call_ipbyhost(char *, sockname_t *, int);
 void dcc_dnshostbyip(sockname_t *);
 extern void (*dns_ipbyhost) (char *);
-void block_dns_ipbyhost(char *);
+void core_dns_ipbyhost(char *);
 void dcc_dnsipbyhost(char *);
 
 /* language.c */

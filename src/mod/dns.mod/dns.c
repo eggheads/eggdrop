@@ -22,9 +22,11 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
+#include "src/mod/module.h"
+
+#ifndef EGG_TDNS
 #define MODULE_NAME "dns"
 
-#include "src/mod/module.h"
 #include "dns.h"
 
 static void dns_event_success(struct resolve *rp, int type);
@@ -291,9 +293,13 @@ static Function dns_table[] = {
   (Function) dns_report,
   /* 4 - 7 */
 };
+#endif /* EGG_TDNS */
 
 char *dns_start(Function *global_funcs)
 {
+#ifdef EGG_TDNS
+  return "Eggdrop was compiled with threaded DNS core; this module will not run with it. Not loading...";
+#else
   int idx;
 
   global = global_funcs;
@@ -328,4 +334,5 @@ char *dns_start(Function *global_funcs)
   add_tcl_ints(dnsints);
   add_tcl_strings(dnsstrings);
   return NULL;
+#endif /* EGG_TDNS */
 }
