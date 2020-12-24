@@ -419,7 +419,6 @@ void reset_chan_info(struct chanset_t *chan, int reset, int do_reset)
   if (channel_pending(chan))
     return;
 
-<<<<<<< HEAD
   if (net_type_int != NETT_TWITCH) { /* Twitch won't reset any of this */
     if (do_reset) {
       clear_channel(chan, reset);
