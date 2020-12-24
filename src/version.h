@@ -27,5 +27,5 @@
  */
 
 #define EGG_STRINGVER "1.9.0"
-#define EGG_NUMVER 1090004
-#define EGG_PATCH "msgtags"
+#define EGG_NUMVER 1090006
+#define EGG_PATCH "etchost"

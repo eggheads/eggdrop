@@ -55,7 +55,7 @@ extern unsigned long otraffic_irc_today, otraffic_bn_today, otraffic_dcc_today,
                      otraffic_unknown_today;
 
 char natip[121] = "";         /* Public IPv4 to report for systems behind NAT */
-char listen_ip[121] = "";     /* IP (or hostname) for listening sockets       */
+char listen_ip[121] = ""; /* IP (or hostname) for listening sockets    */
 char vhost[121] = "";         /* IPv4 vhost for outgoing connections          */
 #ifdef IPV6
 char vhost6[121] = "";        /* IPv6 vhost for outgoing connections          */
@@ -63,9 +63,8 @@ int pref_af = 0;              /* Prefer IPv6 over IPv4?                       */
 #endif
 char firewall[121] = "";      /* Socks server for firewall.                   */
 int firewallport = 1080;      /* Default port of socks 4/5 firewalls.         */
-char botuser[USERLEN + 1] = "eggdrop"; /* Username of the user running the bot. */
+char botuser[USERLEN + 1] = "eggdrop"; /* Username of the user running the bot*/
 int dcc_sanitycheck = 0;      /* Do some sanity checking on dcc connections.  */
-
 sock_list *socklist = NULL;   /* Enough to be safe.                           */
 sigjmp_buf alarmret;          /* Env buffer for alarm() returns.              */
 
@@ -189,9 +188,9 @@ int setsockname(sockname_t *addr, char *src, int port, int allowres)
       hp = NULL;
     if (hp) {
       if (hp->h_addrtype == AF_INET)
-        memcpy(&addr->addr.s4.sin_addr, hp->h_addr, hp->h_length);
+        memcpy(&addr->addr.s4.sin_addr, hp->h_addr_list[0], hp->h_length);
       else
-        memcpy(&addr->addr.s6.sin6_addr, hp->h_addr, hp->h_length);
+        memcpy(&addr->addr.s6.sin6_addr, hp->h_addr_list[0], hp->h_length);
       af = hp->h_addrtype;
     }
   }
@@ -243,7 +242,7 @@ but this Eggdrop was not compiled with IPv6 support.");
       } else
         hp = NULL;
       if (hp) {
-        memcpy(&addr->addr.s4.sin_addr, hp->h_addr, hp->h_length);
+        memcpy(&addr->addr.s4.sin_addr, hp->h_addr_list[0], hp->h_length);
         af = hp->h_addrtype;
       }
     } else
@@ -272,7 +271,7 @@ void getvhost(sockname_t *addr, int af)
     h = vhost6;
 #endif
   if (setsockname(addr, (h ? h : ""), 0, 1) != af)
-    setsockname(addr, (af == AF_INET ? "0" : "::"), 0, 0);
+    setsockname(addr, (af == AF_INET ? "0.0.0.0" : "::"), 0, 0);
   /* Remember this 'self-lookup failed' thingie?
      I have good news - you won't see it again ;) */
 }
@@ -370,30 +369,27 @@ int alloctclsock(int sock, int mask, Tcl_FileProc *proc, ClientData cd)
  */
 void setsock(int sock, int options)
 {
-  int i = allocsock(sock, options), parm;
+  int i = allocsock(sock, options), parm = 1;
   struct threaddata *td = threaddata();
-  int res;
+  struct linger linger = {0};
 
   if (i == -1) {
     putlog(LOG_MISC, "*", "Sockettable full.");
     return;
   }
   if (((sock != STDOUT) || backgrd) && !(td->socklist[i].flags & SOCK_NONSOCK)) {
-    parm = 1;
-    setsockopt(sock, SOL_SOCKET, SO_KEEPALIVE, (void *) &parm, sizeof(int));
-
-    parm = 0;
-    setsockopt(sock, SOL_SOCKET, SO_LINGER, (void *) &parm, sizeof(int));
-
+    if (setsockopt(sock, SOL_SOCKET, SO_KEEPALIVE, &parm, sizeof parm))
+      debug2("net: setsock(): setsockopt() s %i level SOL_SOCKET optname SO_KEEPALIVE error %s", sock, strerror(errno));
+    if (setsockopt(sock, SOL_SOCKET, SO_LINGER, &linger, sizeof(struct linger)))
+      debug2("net: setsock(): setsockopt() s %i level SOL_SOCKET optname SO_LINGER error %s", sock, strerror(errno));
     /* Turn off Nagle's algorithm, see man tcp */
-    parm = 1;
-    if ((res = setsockopt(sock, IPPROTO_TCP, TCP_NODELAY, &parm, sizeof parm)))
-      debug2("net: setsock(): setsockopt() s %i level IPPROTO_TCP optname TCP_NODELAY error %i", sock, res);
+    if (setsockopt(sock, IPPROTO_TCP, TCP_NODELAY, &parm, sizeof parm))
+      debug2("net: setsock(): setsockopt() s %i level IPPROTO_TCP optname TCP_NODELAY error %s", sock, strerror(errno));
   }
   if (options & SOCK_LISTEN) {
     /* Tris says this lets us grab the same port again next time */
-    parm = 1;
-    setsockopt(sock, SOL_SOCKET, SO_REUSEADDR, (void *) &parm, sizeof(int));
+    if (setsockopt(sock, SOL_SOCKET, SO_REUSEADDR, &parm, sizeof parm))
+      debug2("net: setsock(): setsockopt() s %i level SOL_SOCKET optname SO_REUSEADDR error %s", sock, strerror(errno));
   }
   /* Yay async i/o ! */
   if ((sock != STDOUT) || backgrd)
@@ -547,11 +543,11 @@ int open_telnet_raw(int sock, sockname_t *addr)
   for (i = 0; i < dcc_total; i++)
     if (dcc[i].sock == sock) { /* Got idx from sock ? */
 #ifdef TLS
-      debug4("net: open_telnet_raw(): idx %i host %s port %i ssl %i",
-             i, dcc[i].host, dcc[i].port, dcc[i].ssl);
+      debug5("net: open_telnet_raw(): idx %i host %s ip %s port %i ssl %i",
+             i, dcc[i].host, iptostr(&addr->addr.sa), dcc[i].port, dcc[i].ssl);
 #else
-      debug3("net: open_telnet_raw(): idx %i host %s port %i",
-             i, dcc[i].host, dcc[i].port);
+      debug4("net: open_telnet_raw(): idx %i host %s ip %s port %i",
+             i, dcc[i].host, iptostr(&addr->addr.sa), dcc[i].port);
 #endif
       break;
     }
@@ -877,8 +873,20 @@ int sockread(char *s, int *len, sock_list *slist, int slistmax, int tclonly)
   int grab = 511, tclsock = -1, events = 0;
   struct threaddata *td = threaddata();
   int nfds;
+#ifdef EGG_TDNS
+  int fd;
+  struct dns_thread_node *dtn, *dtn_prev;
+#endif
 
   nfds_r = preparefdset(&fdr, slist, slistmax, tclonly, TCL_READABLE);
+#ifdef EGG_TDNS
+  for (dtn = dns_thread_head->next; dtn; dtn = dtn->next) {
+    fd = dtn->fildes[0];
+    FD_SET(fd, &fdr);
+    if (fd > nfds_r)
+      nfds_r = fd;
+  }
+#endif
   nfds_w = preparefdset(&fdw, slist, slistmax, 1, TCL_WRITABLE);
   nfds_e = preparefdset(&fde, slist, slistmax, 1, TCL_EXCEPTION);
 
@@ -1017,6 +1025,23 @@ int sockread(char *s, int *len, sock_list *slist, int slistmax, int tclonly)
                                            events);
     return -5;
   }
+#ifdef EGG_TDNS
+  dtn_prev = dns_thread_head;
+  for (dtn = dtn_prev->next; dtn; dtn = dtn->next) {
+    fd = dtn->fildes[0];
+    if (FD_ISSET(fd, &fdr)) {
+      if (dtn->type == DTN_TYPE_HOSTBYIP)
+        call_hostbyip(&dtn->addr, dtn->host, dtn->ok);
+      else
+        call_ipbyhost(dtn->host, &dtn->addr, dtn->ok);
+      close(dtn->fildes[0]);
+      dtn_prev->next = dtn->next;
+      nfree(dtn);
+      dtn = dtn_prev;
+    }
+    dtn_prev = dtn;
+  }
+#endif
   return -3;
 }
 

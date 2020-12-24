@@ -72,6 +72,7 @@ AC_DEFUN([EGG_MSG_SUMMARY],
     fi
   fi
   AC_MSG_RESULT([SSL/TLS Support: $tls_enabled$ADD])
+  AC_MSG_RESULT([Threaded DNS core (beta): $tdns_enabled])
   AC_MSG_RESULT
 ])
 
@@ -177,6 +178,25 @@ configure: error:
 
   This system does not appear to have a working C compiler.
   A working C compiler is required to compile Eggdrop.
+
+EOF
+    exit 1
+  fi
+])
+
+
+dnl EGG_CHECK_CC_C99()
+dnl
+dnl Check for a working C99 C compiler.
+dnl
+AC_DEFUN([EGG_CHECK_CC_C99],
+[
+  if test "$ac_cv_prog_cc_c99" = no; then
+    cat << 'EOF' >&2
+configure: error:
+
+  This C compiler does not appear to have a working C99 mode.
+  A working C99 C compiler is required to compile Eggdrop.
 
 EOF
     exit 1
@@ -321,6 +341,24 @@ AC_DEFUN([EGG_FUNC_B64_NTOP],
     if test "x$found_b64_ntop" = xno; then
       LIBS="$OLD_LIBS"
       AC_MSG_RESULT(no)
+
+      AC_MSG_CHECKING(for b64_ntop with -lnetwork)
+      OLD_LIBS="$LIBS"
+      LIBS="-lnetwork"
+      AC_TRY_LINK(
+      [
+        #include <sys/types.h>
+        #include <netinet/in.h>
+        #include <resolv.h>
+        ],
+        [b64_ntop(NULL, 0, NULL, 0);],
+        found_b64_ntop=yes,
+        found_b64_ntop=no
+      )
+      if test "x$found_b64_ntop" = xno; then
+        LIBS="$OLD_LIBS"
+        AC_MSG_RESULT(no)
+      fi
     fi
   fi
   if test "x$found_b64_ntop" = xyes; then
@@ -328,24 +366,6 @@ AC_DEFUN([EGG_FUNC_B64_NTOP],
     AC_MSG_RESULT(yes)
   else
     AC_LIBOBJ(base64)
-  fi
-])
-
-
-dnl EGG_FUNC_VPRINTF()
-dnl
-AC_DEFUN([EGG_FUNC_VPRINTF],
-[
-  AC_FUNC_VPRINTF
-  if test "$ac_cv_func_vprintf" = no; then
-    cat << 'EOF' >&2
-configure: error:
-
-  Your system does not have the vprintf/vsprintf/sprintf libraries.
-  These are required to compile almost anything. Sorry.
-
-EOF
-    exit 1
   fi
 ])
 
@@ -784,12 +804,9 @@ AC_DEFUN([EGG_CHECK_OS],
         SHLIB_LD="$CC -G -z text"
       fi
     ;;
-    FreeBSD|OpenBSD|NetBSD)
+    FreeBSD|DragonFly|OpenBSD|NetBSD)
       SHLIB_CC="$CC -fPIC"
       SHLIB_LD="$CC -shared"
-    ;;
-    DragonFly)
-      SHLIB_CC="$CC -fPIC"
     ;;
     Darwin)
       # Mac OS X
@@ -910,7 +927,7 @@ dnl EGG_TCL_ARG_WITH()
 dnl
 AC_DEFUN([EGG_TCL_ARG_WITH],
 [
-  AC_ARG_WITH(tcllib, [  --with-tcllib=PATH      full path to Tcl library (e.g. /usr/lib/libtcl8.5.so)], [tcllibname="$withval"])
+  AC_ARG_WITH(tcllib, [  --with-tcllib=PATH      full path to Tcl library (e.g. /usr/lib/libtcl8.6.so)], [tcllibname="$withval"])
   AC_ARG_WITH(tclinc, [  --with-tclinc=PATH      full path to Tcl header (e.g. /usr/include/tcl.h)],  [tclincname="$withval"])
 
   WARN=0
@@ -976,7 +993,7 @@ EOF
 configure: WARNING:
 
   The file '$tcllibname' given to option --with-tcllib is not valid.
-  Specify the full path including the file name (e.g. /usr/lib/libtcl8.5.so)
+  Specify the full path including the file name (e.g. /usr/lib/libtcl8.6.so)
 
   configure will now attempt to autodetect both the Tcl library and header.
 
@@ -1641,10 +1658,6 @@ AC_DEFUN([EGG_TLS_DETECT],
     if test -z "$SSL_LIBS"; then
       AC_CHECK_LIB(crypto, X509_digest, , [havessllib="no"], [-lssl])
       AC_CHECK_LIB(ssl, SSL_accept, , [havessllib="no"], [-lcrypto])
-      AC_CHECK_FUNCS([EVP_md5 EVP_sha1 a2i_IPADDRESS], , [[
-        havessllib="no"
-        break
-      ]])
     fi
     AC_CHECK_FUNC(OPENSSL_buf2hexstr, ,
       AC_CHECK_FUNC(hex_to_string,
@@ -1694,6 +1707,25 @@ AC_DEFUN([EGG_TLS_DETECT],
       EGG_MD5_COMPAT
     fi
   fi
+])
+
+
+dnl EGG_TDNS_ENABLE
+dnl
+AC_DEFUN([EGG_TDNS_ENABLE],
+[
+  AC_MSG_CHECKING(for threaded dns core (beta))
+  AC_ARG_ENABLE([tdns], [  --enable-tdns           enable threaded DNS core (beta)],
+    [
+      AC_MSG_RESULT(yes)
+      AC_DEFINE([EGG_TDNS], [1], [Define this to enable threaded DNS core.])
+      LDFLAGS="${LDFLAGS} -lpthread"
+      tdns_enabled="yes"
+    ],
+    [
+      AC_MSG_RESULT(no)
+      tdns_enabled="no"
+    ])
 ])
 
 

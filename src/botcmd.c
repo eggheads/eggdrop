@@ -342,7 +342,11 @@ static void remote_tell_who(int idx, char *nick, int chan)
       i += l;
       strncat(s, c->dname, ssize);
 
-      /* check if we need to trunc, normally only for first chans on the line */
+      /* check if we need to trunc, normally only for first chans on the line.
+       * CHANNELLEN is 80, so we likely won't ever hit this *now*, but if we
+       * ever change that for some reason (twitch? ircv3 stuff?) this is still
+       * a good check to have, 'just in case'
+       */
       if (i > ssize) {
         unsigned int trunc = 4;
         if (c->next) {

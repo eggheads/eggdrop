@@ -249,8 +249,8 @@ static filedb_entry *filedb_findempty(FILE *fdb, int tot)
 
   /* No existing entries, so create new entry at end of DB instead. */
   fdbe = malloc_fdbe();
-  fseek(fdb, 0L, SEEK_END);
-  fdbe->pos = ftell(fdb);
+  fseeko(fdb, 0, SEEK_END);
+  fdbe->pos = ftello(fdb);
   return fdbe;
 }
 
@@ -840,7 +840,7 @@ static FILE *filedb_open(char *path, int sort)
 static void filedb_close(FILE *fdb)
 {
   filedb_timestamp(fdb);
-  fseek(fdb, 0L, SEEK_END);
+  fseeko(fdb, 0, SEEK_END);
   count--;
   unlockfile(fdb);
   fclose(fdb);

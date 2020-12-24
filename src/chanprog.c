@@ -280,20 +280,10 @@ void tell_verbose_uptime(int idx)
  */
 void tell_verbose_status(int idx)
 {
-  char s[256], s1[121], s2[81];
-  char *vers_t, *uni_t;
+  char s[256], s1[121], s2[81], *sysrel;
   int i;
   time_t now2 = now - online_since, hr, min;
   double cputime, cache_total;
-  struct utsname un;
-
-  if (uname(&un) < 0) {
-    vers_t = " ";
-    uni_t  = "*unknown*";
-  } else {
-    vers_t = un.release;
-    uni_t  = un.sysname;
-  }
 
   i = count_users(userlist);
   dprintf(idx, "I am %s, running %s: %d user%s (mem: %uk).\n",
@@ -343,7 +333,9 @@ void tell_verbose_status(int idx)
     dprintf(idx, "Admin: %s\n", admin);
 
   dprintf(idx, "Config file: %s\n", configfile);
-  dprintf(idx, "OS: %s %s\n", uni_t, vers_t);
+  sysrel = egg_uname();
+  if (*sysrel)
+    dprintf(idx, "OS: %s\n", sysrel);
   dprintf(idx, "Process ID: %d (parent %d)\n", getpid(), getppid());
 
   /* info library */
@@ -360,17 +352,31 @@ void tell_verbose_status(int idx)
   if (tcl_threaded())
     dprintf(idx, "Tcl is threaded.\n");
 #ifdef TLS
-  dprintf(idx, "TLS support is enabled.\n");
-  dprintf(idx, "TLS library: %s\n", SSLeay_version(SSLEAY_VERSION));
+  dprintf(idx, "TLS support is enabled.\n"
+  #if defined HAVE_EVP_PKEY_GET1_EC_KEY && defined HAVE_OPENSSL_MD5
+               "TLS library: %s\n",
+  #elif !defined HAVE_EVP_PKEY_GET1_EC_KEY && defined HAVE_OPENSSL_MD5
+               "TLS library: %s\n             (no elliptic curve support)\n",
+  #elif defined HAVE_EVP_PKEY_GET1_EC_KEY && !defined HAVE_OPENSSL_MD5
+               "TLS library: %s\n             (no MD5 support)\n",
+  #elif !defined HAVE_EVP_PKEY_GET1_EC_KEY && !defined HAVE_OPENSSL_MD5
+               "TLS library: %s\n             (no elliptic curve or MD5 support)\n",
+  #endif
+          SSLeay_version(SSLEAY_VERSION));
 #else
   dprintf(idx, "TLS support is not available.\n");
 #endif
 #ifdef IPV6
-  dprintf(idx, "IPv6 support is enabled.\n");
+  dprintf(idx, "IPv6 support is enabled.\n"
 #else
-  dprintf(idx, "IPv6 support is not available.\n");
+  dprintf(idx, "IPv6 support is not available.\n"
 #endif
-  dprintf(idx, "Socket table: %d/%d\n", threaddata()->MAXSOCKS, max_socks);
+#ifdef EGG_TDNS
+               "Threaded DNS core (beta) is enabled.\n"
+#else
+               "Threaded DNS core (beta) is disabled.\n"
+#endif
+               "Socket table: %d/%d\n", threaddata()->MAXSOCKS, max_socks);
 }
 
 /* Show all internal state variables
@@ -595,7 +601,7 @@ int remove_timer(tcl_timer_t ** stack, unsigned long id)
 void do_check_timers(tcl_timer_t ** stack)
 {
   tcl_timer_t *mark = *stack, *old = NULL;
-  char x[16];
+  char x[26];
 
   /* New timers could be added by a Tcl script inside a current timer
    * so i'll just clear out the timer list completely, and add any
@@ -608,7 +614,7 @@ void do_check_timers(tcl_timer_t ** stack)
     old = mark;
     mark = mark->next;
     if (!old->mins) {
-      egg_snprintf(x, sizeof x, "timer%lu", old->id);
+      snprintf(x, sizeof x, "timer%lu", old->id);
       do_tcl(x, old->cmd);
       if (old->count == 1) {
         nfree(old->cmd);
@@ -644,13 +650,13 @@ void wipe_timers(Tcl_Interp *irp, tcl_timer_t **stack)
  */
 void list_timers(Tcl_Interp *irp, tcl_timer_t *stack)
 {
-  char mins[10], count[10], id[16], *x;
+  char mins[10], count[10], id[26], *x;
   EGG_CONST char *argv[4];
   tcl_timer_t *mark;
 
   for (mark = stack; mark; mark = mark->next) {
     egg_snprintf(mins, sizeof mins, "%u", mark->mins);
-    egg_snprintf(id, sizeof id, "timer%lu", mark->id);
+    snprintf(id, sizeof id, "timer%lu", mark->id);
     egg_snprintf(count, sizeof count, "%u", mark->count);
     argv[0] = mins;
     argv[1] = mark->cmd;

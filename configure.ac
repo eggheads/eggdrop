@@ -43,6 +43,8 @@ EGG_SAVE_PARAMETERS
 # Check for a working C compiler
 AC_PROG_CC([gcc cc clang])
 EGG_CHECK_CC
+AC_PROG_CC_C99
+EGG_CHECK_CC_C99
 
 # These 3 need to be done before any AC_COMPILE_IFELSE()'s.
 AC_AIX
@@ -114,7 +116,6 @@ AX_CREATE_STDINT_H([eggint.h])
 AC_CHECK_FUNCS([dprintf explicit_bzero explicit_memset getrandom getrusage inet_aton isascii memset_s random rand lrand48 snprintf strlcpy vsnprintf])
 AC_FUNC_SELECT_ARGTYPES
 EGG_FUNC_B64_NTOP
-EGG_FUNC_VPRINTF
 AC_FUNC_MMAP
 
 
@@ -160,6 +161,9 @@ EGG_IPV6_COMPAT
 EGG_TLS_ENABLE
 EGG_TLS_WITHSSL
 EGG_TLS_DETECT
+
+# Threaded DNS core
+EGG_TDNS_ENABLE
 
 
 # Substitute Makefile variables.
