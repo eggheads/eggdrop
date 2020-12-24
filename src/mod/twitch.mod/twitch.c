@@ -10,8 +10,9 @@
  *   traditional Eggdrop functions are gone, and would not work with Twitch
  *   anyway.
  *
- *   You should also look at loading scripts/twitch.tcl, which adds the ability
- *   to track users (and their statuses, like moderator) on a channel.
+ *   Twitch has threatened to remove IRC support for some time now; that is
+ *   obviously outside our control and if they do, again obviously this module
+ *   will cease to work. Buyer beware.
  *
  * Originally written by Geo              April 2020
  */
