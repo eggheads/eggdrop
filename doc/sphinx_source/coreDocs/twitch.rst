@@ -45,8 +45,6 @@ That last section was a little bit of a downer, but don't worry, we added a TON 
 * ROOMSTATE
 * USERSTATE
 
-Additionally, we included twitch.tcl with Eggdrop, which provides additional functionality to track users and their status (mod, vip, etc on a channel via a web API call to an undocumented function. This means that the functionality of this capability is outside the control of Eggdrop developers and could break at any time, but the current usefulness has been judged worth the uncertainty. See the comments of twitch.tcl for additional info on how to use this functionality.
-
 ------------------
 Partyline commands
 ------------------
