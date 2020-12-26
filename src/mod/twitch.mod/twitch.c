@@ -347,11 +347,11 @@ static int gotwhisper(char *from, char *msg, char *tags) {
 }
 
 static int gotclearmsg(char *from, char *msg, char *tags) {
-  char nick[NICKMAX], *chan, *msgid;
+  char nick[NICKLEN], *chan, *msgid;
   
   chan = newsplit(&msg);
   fixcolon(msg);
-  strncpy(nick, get_value(tags, "login"), sizeof nick);
+  strlcpy(nick, get_value(tags, "login"), sizeof nick);
   msgid = get_value(tags, "target-msg-id");
   check_tcl_clearmsg(nick, chan, msgid, msg);
   putlog(LOG_SERV, "*", "* TWITCH: Cleared message %s from %s", msgid, nick);
