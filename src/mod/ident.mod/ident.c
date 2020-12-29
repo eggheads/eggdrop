@@ -153,7 +153,8 @@ static void ident_oidentd()
               strtok(buf, "!");
               prevtime = atoi(strtok(NULL, "!"));
               if ((now - prevtime) > 300) {
-                putlog(LOG_DEBUG, "*", "IDENT: Removing expired oident.conf entry: \"%s\"", buf);
+                putlog(LOG_DEBUG, "*", "IDENT: Removing expired oident.conf "
+                    "entry: \"%s\"", buf);
               } else {
                 strncat(data, line, ((filesize + 256) - strlen(data)));
               }
@@ -164,7 +165,8 @@ static void ident_oidentd()
     }
     fclose(fd);
   } else {
-    putlog(LOG_MISC, "*", "IDENT: Error opening oident.conf for reading");
+    putlog(LOG_MISC, "*", "IDENT: oident.conf missing, or error opening "
+            "for reading");
   }
   servidx = findanyidx(serv);
   size = sizeof ss;
@@ -174,7 +176,9 @@ static void ident_oidentd()
   }
   fd = fopen(path, "w");
   if (fd != NULL) {
-    fprintf(fd, "%s", data);
+    if (data) {
+      fprintf(fd, "%s", data);
+    }
     if (ss.ss_family == AF_INET) {
       struct sockaddr_in *saddr = (struct sockaddr_in *)&ss;
       fprintf(fd, "lport %i from %s { reply \"%s\" } "
