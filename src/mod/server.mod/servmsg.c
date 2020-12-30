@@ -366,7 +366,8 @@ static int got001(char *from, char *msg)
   fixcolon(msg);
   strlcpy(botname, msg, NICKLEN);
   altnick_char = 0;
-  dprintf(DP_SERVER, "WHOIS %s\n", botname); /* get user@host */
+  if (net_type_int != NETT_TWITCH)      /* Twitch doesn't do WHOIS */
+    dprintf(DP_SERVER, "WHOIS %s\n", botname); /* get user@host */
   if (initserver[0])
     do_tcl("init-server", initserver); /* Call Tcl init-server */
   check_tcl_event("init-server");
@@ -699,7 +700,7 @@ static int gotnotice(char *from, char *msg)
     if (*p == 1) {
       *p = 0;
       ctcp = strcpy(ctcpbuf, p1);
-      strcpy(p1 - 1, p + 1);
+      memmove(p1 - 1, p + 1, strlen(p + 1) + 1);
       if (!ignoring)
         detect_flood(nick, uhost, from, FLOOD_CTCP);
       p = strchr(msg, 1);
@@ -875,7 +876,7 @@ static int got432(char *from, char *msg)
   else {
     putlog(LOG_MISC, "*", IRC_BADBOTNICK);
     if (!keepnick) {
-      make_rand_str_from_chars(nick, sizeof nick - 1, CHARSET_ALPHA);
+      make_rand_str_from_chars(nick, sizeof nick - 1, CHARSET_LOWER_ALPHA);
       putlog(LOG_MISC, "*", "NICK IS INVALID: '%s' (using '%s' instead)",
               erroneous, nick);
       dprintf(DP_MODE, "NICK %s\n", nick);
@@ -1035,8 +1036,9 @@ static int gotmode(char *from, char *msg)
     if (match_my_nick(ch)) {
       fixcolon(msg);
       if ((msg[0] == '+') || (msg[0] == '-')) {
-        /* send a WHOIS in case our host was cloaked */
-        dprintf(DP_SERVER, "WHOIS %s\n", botname);
+        /* send a WHOIS in case our host was cloaked, but not on Twitch */
+        if (net_type_int != NETT_TWITCH)
+          dprintf(DP_SERVER, "WHOIS %s\n", botname);
       }
       if (check_mode_r) {
         /* umode +r? - D0H dalnet uses it to mean something different */

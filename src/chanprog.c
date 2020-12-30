@@ -280,20 +280,10 @@ void tell_verbose_uptime(int idx)
  */
 void tell_verbose_status(int idx)
 {
-  char s[256], s1[121], s2[81];
-  char *vers_t, *uni_t;
+  char s[256], s1[121], s2[81], *sysrel;
   int i;
   time_t now2 = now - online_since, hr, min;
   double cputime, cache_total;
-  struct utsname un;
-
-  if (uname(&un) < 0) {
-    vers_t = " ";
-    uni_t  = "*unknown*";
-  } else {
-    vers_t = un.release;
-    uni_t  = un.sysname;
-  }
 
   i = count_users(userlist);
   dprintf(idx, "I am %s, running %s: %d user%s (mem: %uk).\n",
@@ -343,7 +333,9 @@ void tell_verbose_status(int idx)
     dprintf(idx, "Admin: %s\n", admin);
 
   dprintf(idx, "Config file: %s\n", configfile);
-  dprintf(idx, "OS: %s %s\n", uni_t, vers_t);
+  sysrel = egg_uname();
+  if (*sysrel)
+    dprintf(idx, "OS: %s\n", sysrel);
   dprintf(idx, "Process ID: %d (parent %d)\n", getpid(), getppid());
 
   /* info library */
@@ -378,6 +370,11 @@ void tell_verbose_status(int idx)
   dprintf(idx, "IPv6 support is enabled.\n"
 #else
   dprintf(idx, "IPv6 support is not available.\n"
+#endif
+#ifdef EGG_TDNS
+               "Threaded DNS core (beta) is enabled.\n"
+#else
+               "Threaded DNS core (beta) is disabled.\n"
 #endif
                "Socket table: %d/%d\n", threaddata()->MAXSOCKS, max_socks);
 }

@@ -49,6 +49,9 @@
 /* Defines the extension of Eggdrop modules. */
 #undef EGG_MOD_EXT
 
+/* Define this to enable threaded DNS core. */
+#undef EGG_TDNS
+
 /* Defines the current Eggdrop version. */
 #undef EGG_VERSION
 

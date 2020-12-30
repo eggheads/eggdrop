@@ -57,6 +57,7 @@ static int kick_method = 1;     /* How many kicks does the IRC network support
                                  * at once? Use 0 for as many as possible.
                                  * (Ernst 18/3/1998) */
 static int keepnick = 1;        /* Keep nick */
+static int twitch = 0;          /* Is this a Twitch server? */
 static int prevent_mixing = 1;  /* Prevent mixing old/new modes */
 static int rfc_compliant = 1;   /* Value depends on net-type. */
 static int include_lk = 1;      /* For correct calculation in real_add_mode. */
@@ -275,10 +276,12 @@ static int hand_on_chan(struct chanset_t *chan, struct userrec *u)
 
 static void refresh_who_chan(char *channame)
 {
-  if (use_354)
-    dprintf(DP_MODE, "WHO %s c%%chnufat,222\n", channame);
-  else
-    dprintf(DP_MODE, "WHO %s\n", channame);
+  if (!twitch) {    /* Twitch doesn't support WHOs */
+    if (use_354)
+      dprintf(DP_MODE, "WHO %s c%%chnufat,222\n", channame);
+    else
+      dprintf(DP_MODE, "WHO %s\n", channame);
+  }
   return;
 }
 
@@ -416,8 +419,12 @@ void reset_chan_info(struct chanset_t *chan, int reset, int do_reset)
   if (channel_pending(chan))
     return;
 
-  if (do_reset) {
-    clear_channel(chan, reset);
+  if (net_type_int != NETT_TWITCH) { /* Twitch won't reset any of this */
+    if (do_reset) {
+      clear_channel(chan, reset);
+    }
+  } else {
+    return;
   }
   if ((reset & CHAN_RESETBANS) && !(chan->status & CHAN_ASKEDBANS)) {
     chan->status |= CHAN_ASKEDBANS;
@@ -870,13 +877,13 @@ static void check_tcl_kick(char *nick, char *uhost, struct userrec *u,
 
 static void check_tcl_invite(char *nick, char *from, char *chan, char *invitee)
 {
-  char args[512];
+  char args[1024];
 
   Tcl_SetVar(interp, "_invite1", nick, 0);
   Tcl_SetVar(interp, "_invite2", from, 0);
   Tcl_SetVar(interp, "_invite3", chan, 0);
   Tcl_SetVar(interp, "_invite4", invitee, 0);
-  simple_sprintf(args, "%s %s", chan, invitee);
+  snprintf(args, sizeof args, "%s %s", chan, invitee);
   check_tcl_bind(H_invt, args, 0, " $_invite1 $_invite2 $_invite3 $_invite4",
                     MATCH_MASK | BIND_STACKABLE);
 }
@@ -1167,6 +1174,21 @@ static void do_nettype()
     rfc_compliant = 1;
     include_lk = 0;
     break;
+  case NETT_TWITCH:
+    keepnick = 0;
+    twitch = 1;
+    kick_method = 1;
+    modesperline = 4;
+    use_354 = 0;
+    use_exempts = 1;
+    use_invites = 1;
+    max_bans = 100;
+    max_exempts = 100;
+    max_invites = 100;
+    max_modes = 100;
+    rfc_compliant = 1;
+    include_lk = 0;
+    break;
   default:
     break;
   }
@@ -1282,6 +1304,8 @@ static Function irc_table[] = {
   (Function) getchanmode,
   (Function) reset_chan_info,
   (Function) & H_invt,          /* p_tcl_bind_list              */
+  (Function) & twitch,          /* int                          */
+  /* 28 - 31 */
   (Function) & H_ircaway        /* p_tcl_bind_list              */
 };
 

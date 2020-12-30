@@ -44,6 +44,8 @@ struct tand_t_struct;
 
 #ifndef MAKING_MODS
 extern void (*encrypt_pass) (char *, char *);
+extern char *(*encrypt_pass2) (char *);
+extern char *(*verify_pass2) (char *, char *);
 extern char *(*encrypt_string) (char *, char *);
 extern char *(*decrypt_string) (char *, char *);
 extern int (*rfc_casecmp) (const char *, const char *);
@@ -166,12 +168,12 @@ void changeover_dcc(int, struct dcc_table *, int);
 
 /* dns.c */
 extern void (*dns_hostbyip) (sockname_t *);
-void block_dns_hostbyip(sockname_t *);
+void core_dns_hostbyip(sockname_t *);
 void call_hostbyip(sockname_t *, char *, int);
 void call_ipbyhost(char *, sockname_t *, int);
 void dcc_dnshostbyip(sockname_t *);
 extern void (*dns_ipbyhost) (char *);
-void block_dns_ipbyhost(char *);
+void core_dns_ipbyhost(char *);
 void dcc_dnsipbyhost(char *);
 
 /* language.c */
@@ -238,6 +240,7 @@ void dumplots(int, const char *, const char *);
 void daysago(time_t, time_t, char *);
 void days(time_t, time_t, char *);
 void daysdur(time_t, time_t, char *);
+char *egg_uname();
 void help_subst(char *, char *, struct flag_record *, int, char *);
 void sub_lang(int, char *);
 void show_motd(int);
@@ -261,10 +264,10 @@ char *strchr_unescape(char *, const char, const char);
 void str_unescape(char *, const char);
 int str_isdigit(const char *);
 void kill_bot(char *, char *);
-
 void maskaddr(const char *, char *, int);
 #define maskhost(a,b) maskaddr((a),(b),3)
 #define maskban(a,b)  maskaddr((a),(b),3)
+int crypto_verify(const char *, const char *);
 
 /* net.c */
 IP my_atoul(char *);

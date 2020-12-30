@@ -125,6 +125,7 @@ mv tmpdocs/modules.txt $BASEDIR/../doc/MODULES
 mv tmpdocs/notes.txt $BASEDIR/../doc/settings/mod.notes
 mv tmpdocs/partyline.txt $BASEDIR/../doc/PARTYLINE
 mv tmpdocs/patch.txt $BASEDIR/../doc/PATCH-HOWTO
+mv tmpdocs/pbkdf2.txt $BASEDIR/../doc/PBKDF2
 mv tmpdocs/readme.txt $BASEDIR/../README
 mv tmpdocs/seen.txt $BASEDIR/../doc/settings/mod.seen
 mv tmpdocs/server.txt $BASEDIR/../doc/settings/mod.server
@@ -134,6 +135,7 @@ mv tmpdocs/text-sub.txt $BASEDIR/../doc/TEXT-SUBSTITUTIONS
 mv tmpdocs/tls.txt $BASEDIR/../doc/TLS
 mv tmpdocs/transfer.txt $BASEDIR/../doc/settings/mod.transfer
 mv tmpdocs/tricks.txt $BASEDIR/../doc/TRICKS
+mv tmpdocs/twitch.txt $BASEDIR/../doc/TWITCH
 mv tmpdocs/uptime.txt $BASEDIR/../doc/settings/mod.uptime
 mv tmpdocs/users.txt $BASEDIR/../doc/USERS
 mv tmpdocs/weird-msgs.txt $BASEDIR/../doc/WEIRD-MESSAGES

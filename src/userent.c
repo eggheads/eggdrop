@@ -32,7 +32,8 @@ extern Tcl_Interp *interp;
 extern char whois_fields[];
 
 
-int share_greet = 0;            /* Share greeting info                  */
+int share_greet = 0; /* Share greeting info                      */
+int remove_pass = 0; /* create and keep encryption mod passwords */
 struct user_entry_type *entry_type_list;
 
 
@@ -45,6 +46,7 @@ void init_userent()
   add_entry_type(&USERENTRY_LASTON);
   add_entry_type(&USERENTRY_BOTADDR);
   add_entry_type(&USERENTRY_PASS);
+  add_entry_type(&USERENTRY_PASS2);
   add_entry_type(&USERENTRY_HOSTS);
   add_entry_type(&USERENTRY_BOTFL);
 #ifdef TLS
@@ -237,36 +239,138 @@ struct user_entry_type USERENTRY_INFO = {
   def_tcl_append
 };
 
+int pass2_set(struct userrec *u, struct user_entry *e, void *new)
+{
+  if (e->u.extra) {
+    explicit_bzero(e->u.extra, strlen(e->u.extra));
+    nfree(e->u.extra);
+  }
+  if (new) { /* set PASS2 */
+    e->u.extra = user_malloc(strlen(new) + 1);
+    strcpy(e->u.extra, new);
+  }
+  else /* remove PASS2 */
+    e->u.extra = NULL;
+  return 0;
+}
+
+static int def_tcl_null(Tcl_Interp * irp, struct userrec *u,
+                        struct user_entry *e, int argc, char **argv)
+{
+  Tcl_AppendResult(irp, "Please use PASS instead.", NULL);
+  return TCL_ERROR;
+}
+
+struct user_entry_type USERENTRY_PASS2 = {
+  0,
+  0,
+  0,
+  def_unpack,
+  def_pack,
+  def_write_userfile,
+  def_kill,
+  def_get,
+  pass2_set,
+  def_tcl_null,
+  def_tcl_null,
+  def_expmem,
+  0,
+  "PASS2",
+  def_tcl_append
+};
+
 int pass_set(struct userrec *u, struct user_entry *e, void *buf)
 {
-  char new[32];
   char *pass = buf;
+  unsigned char *p;
+  char new[PASSWORDLEN];
+  char *new2 = 0;
 
-  if (e->u.extra)
+  /* encrypt_pass means encryption module is loaded
+   * encrypt_pass2 means encryption2 module is loaded
+   */
+  if (encrypt_pass && e->u.extra) {
+    explicit_bzero(e->u.extra, strlen(e->u.extra));
     nfree(e->u.extra);
-  if (!pass || !pass[0] || (pass[0] == '-'))
-    e->u.extra = NULL;
+  }
+  if (!pass || !pass[0] || (pass[0] == '-')) {
+    /* empty string or '-' means remove passwords */
+    if (encrypt_pass) /* remove PASS */
+      e->u.extra = NULL;
+    if (encrypt_pass2) /* remove PASS2 */
+      set_user(&USERENTRY_PASS2, u, NULL);
+  }
   else {
-    unsigned char *p = (unsigned char *) pass;
-
-    if (strlen(pass) > 30)
-      pass[30] = 0;
+    /* sanitize password */
+    if (strlen(pass) > PASSWORDMAX)
+      pass[PASSWORDMAX] = 0;
+    p = (unsigned char *) pass;
     while (*p) {
       if ((*p <= 32) || (*p == 127))
         *p = '?';
       p++;
     }
-    if ((u->flags & USER_BOT) || (pass[0] == '+'))
-      strcpy(new, pass);
-    else
-      encrypt_pass(pass, new);
-    e->u.extra = user_malloc(strlen(new) + 1);
-    strcpy(e->u.extra, new);
+    /* load new with new PASS
+     * load new2 with new PASS2
+     */
+    if (u->flags & USER_BOT) {
+      /* set PASS and PASS2 cleartext password */
+      strlcpy(new, pass, sizeof new);
+      if (encrypt_pass2)
+        new2 = new;
+    }
+    else if (pass[0] == '+') {
+      /* '+' means pass is already encrypted, set PASS = pass */
+      strlcpy(new, pass, sizeof new);
+      /* due to module api encrypted pass2 cannot be available here
+       * caller must do set_user(&USERENTRY_PASS2, u, password);
+       * probably only share.c:dup_userlist()
+       */
+    }
+    else {
+      /* encrypt password into new and/or new2 depending on the encryption
+       * modules loaded and the value of remove-pass
+       */
+      if (encrypt_pass && (!encrypt_pass2 || !remove_pass))
+        encrypt_pass(pass, new);
+      if (encrypt_pass2)
+        new2 = encrypt_pass2(pass);
+    }
+    /* set PASS to new and PASS2 to new2 depending on the encryption modules
+     * loaded and the value of remove-pass
+     */
+    if (encrypt_pass && (!encrypt_pass2 || !remove_pass)) {
+      /* set PASS */
+      e->u.extra = user_malloc(strlen(new) + 1);
+      strcpy(e->u.extra, new);
+    }
+    if (new2) { /* implicit encrypt_pass2 && */
+      /* set PASS2 */
+      set_user(&USERENTRY_PASS2, u, new2);
+      if (encrypt_pass && remove_pass && e->u.extra)
+        e->u.extra = NULL; /* remove PASS, e->u.extra already freed */
+    }
     explicit_bzero(new, sizeof new);
+    if (new2 && new2 != new)
+      explicit_bzero(new2, strlen(new2));
   }
   if (!noshare && !(u->flags & (USER_BOT | USER_UNSHARED)))
     shareout(NULL, "c PASS %s %s\n", u->handle, pass ? pass : "");
   return 1;
+}
+
+static int pass_tcl_get(Tcl_Interp * interp, struct userrec *u,
+                        struct user_entry *e, int argc, char **argv)
+{
+  char *pass = 0;
+
+  if (encrypt_pass2)
+    pass = get_user(&USERENTRY_PASS2, u);
+  if (!pass)
+    pass = e->u.string;
+  Tcl_AppendResult(interp, pass, NULL);
+
+  return TCL_OK;
 }
 
 static int pass_tcl_set(Tcl_Interp * irp, struct userrec *u,
@@ -288,7 +392,7 @@ struct user_entry_type USERENTRY_PASS = {
   def_kill,
   def_get,
   pass_set,
-  def_tcl_get,
+  pass_tcl_get,
   pass_tcl_set,
   def_expmem,
   0,
@@ -390,7 +494,7 @@ static int laston_tcl_get(Tcl_Interp * irp, struct userrec *u,
     if (!cr)
       Tcl_AppendResult(irp, "0", NULL);
   } else {
-    snprintf(number, sizeof number, "%" PRId64 " ", li->laston);
+    snprintf(number, sizeof number, "%" PRId64 " ", (int64_t) li->laston);
     Tcl_AppendResult(irp, number, li->lastonplace, NULL);
   }
   return TCL_OK;

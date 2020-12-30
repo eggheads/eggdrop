@@ -41,7 +41,7 @@
 extern struct dcc_t *dcc;
 extern struct userrec *userlist, *lastuser;
 extern struct chanset_t *chanset;
-extern int dcc_total, noshare;
+extern int dcc_total, noshare, remove_pass;
 extern char botnetnick[];
 extern Tcl_Interp *interp;
 extern time_t now;
@@ -614,6 +614,34 @@ void tell_users_match(int idx, char *mtch, int start, int limit, char *chname)
   dprintf(idx, MISC_FOUNDMATCH, cnt, cnt == 1 ? "" : MISC_MATCH_PLURAL);
 }
 
+/* if encryption mod and encryption2 mod is loaded and remove-pass is 1 delete
+ * PASS for each user (and bot) that has PASS2 set
+ */
+static void cleanup_pass(void) {
+  struct userrec *u;
+  struct user_entry *e, *p, *p2;
+
+  if (encrypt_pass && encrypt_pass2) {
+    for (u = userlist; u; u = u->next) {
+      p = NULL;
+      p2 = NULL;
+      for (e = u->entries; e; e = e->next) {
+        if (!strcasecmp(e->type->name, "PASS"))
+          p = e;
+        else if (!strcasecmp(e->type->name, "PASS2"))
+          p2 = e;
+      }
+      if (p && p2) {
+        explicit_bzero(p->u.extra, strlen(p->u.extra));
+        nfree(p->u.extra);
+        p->u.extra = NULL;
+        egg_list_delete((struct list_type **) &(u->entries), (struct list_type *) p);
+        nfree(p);
+      }
+    }
+  }
+}
+
 /*
  * tagged lines in the user file:
  * * OLD:
@@ -969,6 +997,8 @@ int readuserfile(char *file, struct userrec **ret)
   }
   noshare = noxtra = 0;
   /* process the user data *now* */
+  if (remove_pass)
+    cleanup_pass();
   return 1;
 }
 
@@ -1087,4 +1117,16 @@ void autolink_cycle(char *start)
     autc = NULL;
   if (autc)
     botlink("", -3, autc->handle);      /* try autoconnect */
+}
+
+char *traced_remove_pass(ClientData cd, Tcl_Interp *irp, EGG_CONST char *name1, EGG_CONST char *name2, int flags)
+{
+  const char *value;
+
+  value = Tcl_GetVar2(irp, name1, name2, TCL_GLOBAL_ONLY);
+  if (value[0] == '1' && value[1] == '\0') {
+    cleanup_pass();
+    Tcl_UntraceVar(interp, "remove-pass", TCL_GLOBAL_ONLY|TCL_TRACE_WRITES, traced_remove_pass, NULL);
+  }
+  return NULL;
 }
