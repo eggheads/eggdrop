@@ -1711,6 +1711,57 @@ int check_dcc_chanattrs(struct userrec *u, char *chname, int chflags,
   return chflags;
 }
 
+/* helper function to inform the user of conflicts with botattr/chattr */
+static void attr_inform(const int idx, const int msgids)
+{
+  if (msgids & BOT_SANE_ALTOWNSHUB)
+    dprintf(idx, "Info: your request of +a removes the current +h.\n");
+  else if (msgids & BOT_SANE_HUBOWNSALT)
+    dprintf(idx, "Info: your request of +h removes the current +a.\n");
+  else if (msgids & BOT_SANE_OWNSALTHUB)
+    dprintf(idx, "Info: your request of +ah is ignored, please choose either one of them.\n");
+  else if (msgids & BOT_SANE_SHPOWNSAGGR)
+    dprintf(idx, "Info: your request of +(bcejnud) removes the current +s.\n");
+  else if (msgids & BOT_SANE_AGGROWNSSHP)
+    dprintf(idx, "Info: your request of +s removes the current +(bcejnud).\n");
+  else if (msgids & BOT_SANE_OWNSSHPAGGR)
+    dprintf(idx, "Info: your request of +(bcejnud)s is ignored, please choose either one of them.\n");
+  else if (msgids & BOT_SANE_SHPOWNSPASS)
+    dprintf(idx, "Info: your request of +(bcejnud) removes the current +p.\n");
+  else if (msgids & BOT_SANE_PASSOWNSSHP)
+    dprintf(idx, "Info: your request of +p removes the current +(bcejnud).\n");
+  else if (msgids & BOT_SANE_OWNSSHPPASS)
+    dprintf(idx, "Info: your request of +(bcejnud)p is ignored, please choose either one of them.\n");
+  else if (msgids & BOT_SANE_SHAREOWNSREJ)
+    dprintf(idx, "Info: your request of +(bcejnudps) removes the current +r.\n");
+  else if (msgids & BOT_SANE_REJOWNSSHARE)
+    dprintf(idx, "Info: your request of +r removes the current +(bcejnudps).\n");
+  else if (msgids & BOT_SANE_OWNSSHAREREJ)
+    dprintf(idx, "Info: your request of +(bcejnudps)r is ignored, please choose either one of them.\n");
+  else if (msgids & BOT_SANE_HUBOWNSREJ)
+    dprintf(idx, "Info: your request of +h removes the current +r.\n");
+  else if (msgids & BOT_SANE_REJOWNSHUB)
+    dprintf(idx, "Info: your request of +r removes the current +h.\n");
+  else if (msgids & BOT_SANE_OWNSHUBREJ)
+    dprintf(idx, "Info: your request of +hr is ignored, please choose either one of them.\n");
+  else if (msgids & BOT_SANE_ALTOWNSREJ)
+    dprintf(idx, "Info: your request of +a removes the current +r.\n");
+  else if (msgids & BOT_SANE_REJOWNSALT)
+    dprintf(idx, "Info: your request of +r removes the current +a.\n");
+  else if (msgids & BOT_SANE_OWNSALTREJ)
+    dprintf(idx, "Info: your request of +ar is ignored, please choose either one of them.\n");
+  else if (msgids & BOT_SANE_AGGROWNSPASS)
+    dprintf(idx, "Info: your request of +s removes the current +p.\n");
+  else if (msgids & BOT_SANE_PASSOWNSAGGR)
+    dprintf(idx, "Info: your request of +p removes the current +s.\n");
+  else if (msgids & BOT_SANE_OWNSAGGRPASS)
+    dprintf(idx, "Info: your request of +ps is ignored, please choose either one of them.\n");
+  else if (msgids & BOT_SANE_NOSHAREOWNSGLOB)
+    dprintf(idx, "Info: your request of -(bcejnudps) removes the current +g.\n");
+  else if (msgids & BOT_SANE_OWNSGLOB)
+    dprintf(idx, "Info: your request of +g is only possible with either one of +(bcejnudps).\n");
+}
+
 static void cmd_chattr(struct userrec *u, int idx, char *par)
 {
   char *hand, *arg = NULL, *tmpchg = NULL, *chg = NULL, work[1024];
@@ -1896,6 +1947,7 @@ static void cmd_chattr(struct userrec *u, int idx, char *par)
 static void cmd_botattr(struct userrec *u, int idx, char *par)
 {
   char *hand, *chg = NULL, *arg = NULL, *tmpchg = NULL, work[1024];
+  int msgids = 0;
   struct chanset_t *chan = NULL;
   struct userrec *u2;
   struct flag_record  pls = { 0, 0, 0, 0, 0, 0 },
@@ -1986,8 +2038,8 @@ static void cmd_botattr(struct userrec *u, int idx, char *par)
     break_down_flags(chg, &pls, &mns);
     /* No-one can change these flags on-the-fly */
     if (chan && glob_owner(user)) {
-      pls.chan &= BOT_SHARE;
-      mns.chan &= BOT_SHARE;
+      pls.chan &= BOT_AGGRESSIVE;
+      mns.chan &= BOT_AGGRESSIVE;
     } else {
       pls.chan = 0;
       mns.chan = 0;
@@ -1998,9 +2050,8 @@ static void cmd_botattr(struct userrec *u, int idx, char *par)
     }
     user.match = FR_BOT | (chan ? FR_CHAN : 0);
     get_user_flagrec(u2, &user, par);
-    user.bot = (user.bot | pls.bot) & ~mns.bot;
-    if ((user.bot & BOT_PASSIVE) && (user.bot & (BOT_AGGRESSIVE|BOT_SHPERMS)))
-      user.bot &= ~BOT_SHARE;
+    msgids = bot_sanity_check(user.bot, pls.bot, mns.bot);
+    attr_inform(idx, msgids);
     if (chan)
       user.chan = (user.chan | pls.chan) & ~mns.chan;
     set_user_flagrec(u2, &user, par);

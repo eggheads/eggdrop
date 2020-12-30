@@ -334,6 +334,190 @@ int chan_sanity_check(int chatr, int atr)
   return chatr;
 }
 
+
+/* Sanity check on bot attributes
+ * Wanted attributes (pls_atr) take precedence over existing (atr) attributes
+ * which can cause conflict.
+ * Arguments are: old attr modified by this function to save,
+ *		  attr to add, attr to remove
+ * Returns: int with number corresponding to zero or more messages
+ */
+int bot_sanity_check(intptr_t atr, intptr_t pls_atr, intptr_t min_atr)
+{
+  /* bitwise sum of msg id's defined in flags.h */
+  int msgids = 0;
+  /* save prior state to have a history */
+  intptr_t old_atr = atr;
+  intptr_t chg = (pls_atr & ~min_atr);
+  /* apply changes */
+  atr = (atr | pls_atr) & ~min_atr;
+
+  /* +h (hub) and +a (alt hub) */
+  if (atr & (BOT_HUB | BOT_ALT)) {
+    if (chg & (BOT_HUB | BOT_ALT)) {
+      /* +ah wanted */
+      atr &= ~(BOT_ALT | BOT_HUB);
+      msgids |= BOT_SANE_OWNSALTHUB;
+    } else if (old_atr & BOT_HUB) {
+      /* +a wanted */
+      atr &= ~BOT_HUB;
+      msgids |= BOT_SANE_ALTOWNSHUB;
+    } else if (old_atr & BOT_ALT) {
+      /* +h wanted */
+      atr &= ~BOT_ALT;
+      msgids |= BOT_SANE_HUBOWNSALT;
+    } else {
+      /* +ah wanted */
+      atr &= ~(BOT_ALT | BOT_HUB);
+      msgids |= BOT_SANE_OWNSALTHUB;
+    }
+  }
+
+  /* +b|c|e|j|n|u|d (granular sharing) and ... */
+  if (atr & BOT_SHPERMS) {
+    /* ... +s (aggressive sharing) */
+    if (atr & BOT_AGGRESSIVE) {
+      if (chg & (BOT_AGGRESSIVE | BOT_SHPERMS)) {
+        /* +(b|c|e|j|n|u)s wanted */
+        atr &= ~(BOT_SHPERMS | BOT_AGGRESSIVE);
+        msgids |= BOT_SANE_OWNSSHPAGGR;
+      } else if (old_atr & BOT_AGGRESSIVE) {
+        /* +b|c|e|j|n|u|d wanted */
+        atr &= ~BOT_AGGRESSIVE;
+        msgids |= BOT_SANE_SHPOWNSAGGR;
+      } else if (old_atr & BOT_SHPERMS) {
+        /* +s wanted */
+        atr &= ~BOT_SHPERMS;
+        msgids |= BOT_SANE_AGGROWNSSHP;
+      } else {
+        /* +(b|c|e|j|n|u)s wanted */
+        atr &= ~(BOT_SHPERMS | BOT_AGGRESSIVE);
+        msgids |= BOT_SANE_OWNSSHPAGGR;
+      }
+    }
+    /* ... +p (passive sharing) */
+    if (atr & BOT_PASSIVE) {
+      if (chg & (BOT_PASSIVE | BOT_SHPERMS)) {
+        /* +(b|c|e|j|n|u)p wanted */
+        atr &= ~(BOT_SHPERMS | BOT_PASSIVE);
+        msgids |= BOT_SANE_OWNSSHPPASS;
+      } else if (old_atr & BOT_PASSIVE) {
+        /* +b|c|e|j|n|u|d wanted */
+        atr &= ~BOT_PASSIVE;
+        msgids |= BOT_SANE_SHPOWNSPASS;
+      } else if (old_atr & BOT_SHPERMS) {
+        /* +s wanted */
+        atr &= ~BOT_SHPERMS;
+        msgids |= BOT_SANE_PASSOWNSSHP;
+      } else {
+        /* +(b|c|e|j|n|u)p wanted */
+        atr &= ~(BOT_SHPERMS | BOT_PASSIVE);
+        msgids |= BOT_SANE_OWNSSHPPASS;
+      }
+    }
+  }
+
+  /* +r (reject) and ... */
+  if (atr & BOT_REJECT) {
+    /* ... +p|s|b|c|e|j|n|u|d (sharing) */
+    if (atr & BOT_SHARE) {
+      if (chg & (BOT_SHARE | BOT_REJECT)) {
+        /* +(p|s|b|c|e|j|n|u|d)r wanted */
+        atr &= ~(BOT_SHARE | BOT_REJECT);
+        msgids |= BOT_SANE_OWNSSHAREREJ;
+      } else if (old_atr & BOT_REJECT) {
+        /* +p|s|b|c|e|j|n|u|d wanted */
+        atr &= ~BOT_REJECT;
+        msgids |= BOT_SANE_SHAREOWNSREJ;
+      } else if (old_atr & BOT_SHARE) {
+        /* +r wanted */
+        atr &= ~BOT_SHARE;
+        msgids |= BOT_SANE_REJOWNSSHARE;
+      } else {
+        /* +(p|s|b|c|e|j|n|u|d)r wanted */
+        atr &= ~(BOT_SHARE | BOT_REJECT);
+        msgids |= BOT_SANE_OWNSSHAREREJ;
+      }
+    }
+    /* ... +h (hub) */
+    if (atr & BOT_HUB) {
+      if (chg & (BOT_HUB | BOT_REJECT)) {
+        /* +hr wanted */
+        atr &= ~(BOT_HUB | BOT_REJECT);
+        msgids |= BOT_SANE_OWNSHUBREJ;
+      } else if (old_atr & BOT_REJECT) {
+        /* +h wanted */
+        atr &= ~BOT_REJECT;
+        msgids |= BOT_SANE_HUBOWNSREJ;
+      } else if (old_atr & BOT_HUB) {
+        /* +r wanted */
+        atr &= ~BOT_HUB;
+        msgids |= BOT_SANE_REJOWNSHUB;
+      } else {
+        /* +hr wanted */
+        atr &= ~(BOT_HUB | BOT_REJECT);
+        msgids |= BOT_SANE_OWNSHUBREJ;
+      }
+    }
+    /* ... +a (alt hub) */
+    if (atr & BOT_ALT) {
+      if (chg & (BOT_ALT | BOT_REJECT)) {
+        /* +ar wanted */
+        atr &= ~(BOT_ALT | BOT_REJECT);
+        msgids |= BOT_SANE_OWNSALTREJ;
+      } else if (old_atr & BOT_REJECT) {
+        /* +a wanted */
+        atr &= ~BOT_REJECT;
+        msgids |= BOT_SANE_ALTOWNSREJ;
+      } else if (old_atr & BOT_ALT) {
+        /* +r wanted */
+        atr &= ~BOT_ALT;
+        msgids |= BOT_SANE_REJOWNSALT;
+      } else {
+        /* +ar wanted */
+        atr &= ~(BOT_ALT | BOT_REJECT);
+        msgids |= BOT_SANE_OWNSALTREJ;
+      }
+    }
+  }
+
+  /* +p (passive) and +s (aggressive) */
+  if (atr & (BOT_PASSIVE | BOT_AGGRESSIVE)) {
+    if (chg & (BOT_PASSIVE | BOT_AGGRESSIVE)) {
+      /* +ps wanted */
+      atr &= ~(BOT_AGGRESSIVE | BOT_PASSIVE);
+      msgids |= BOT_SANE_OWNSAGGRPASS;
+    } else if (old_atr & BOT_PASSIVE) {
+      /* +s wanted */
+      atr &= ~BOT_PASSIVE;
+      msgids |= BOT_SANE_AGGROWNSPASS;
+    } else if (old_atr & BOT_AGGRESSIVE) {
+      /* +p wanted */
+      atr &= ~BOT_AGGRESSIVE;
+      msgids |= BOT_SANE_PASSOWNSAGGR;
+    } else {
+      /* +ps wanted */
+      atr &= ~(BOT_AGGRESSIVE | BOT_PASSIVE);
+      msgids |= BOT_SANE_OWNSAGGRPASS;
+    }
+  }
+
+  /* no +p|s|b|c|e|j|n|u|d (sharing) and +g (allchanshared) */
+  if (!(atr & BOT_SHARE) && (atr & BOT_GLOBAL)) {
+    if (old_atr & BOT_GLOBAL) {
+      /* no +p|s|b|c|e|j|n|u|d anymore */
+      atr &= ~BOT_GLOBAL;
+      msgids |= BOT_SANE_NOSHAREOWNSGLOB;
+    } else if (!(old_atr & BOT_SHARE)) {
+      /* +g wanted */
+      atr &= ~BOT_GLOBAL;
+      msgids |= BOT_SANE_OWNSGLOB;
+    }
+  }
+
+  return msgids;
+}
+
 /* Get icon symbol for a user (depending on access level)
  *
  * (*) owner on any channel
@@ -786,20 +970,6 @@ static int botfl_set(struct userrec *u, struct user_entry *e, void *buf)
     return 1;                   /* Don't even bother trying to set the
                                  * flags for a non-bot */
 
-  if ((atr & BOT_HUB) && (atr & BOT_ALT))
-    atr &= ~BOT_ALT;
-  if ((atr & BOT_AGGRESSIVE) && (atr & BOT_SHPERMS))
-    atr &= ~BOT_SHPERMS;
-  if (atr & BOT_REJECT) {
-    if (atr & BOT_SHARE)
-      atr &= ~(BOT_SHARE | BOT_REJECT);
-    if (atr & BOT_HUB)
-      atr &= ~(BOT_HUB | BOT_REJECT);
-    if (atr & BOT_ALT)
-      atr &= ~(BOT_ALT | BOT_REJECT);
-  }
-  if (!(atr & BOT_SHARE))
-    atr &= ~BOT_GLOBAL;
   e->u.ulong = atr;
   return 1;
 }

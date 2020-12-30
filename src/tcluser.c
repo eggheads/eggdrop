@@ -219,10 +219,12 @@ static int tcl_botattr STDVAR
     break_down_flags(chg, &pls, &mns);
     /* No-one can change these flags on-the-fly */
     if (chan) {
-      pls.chan &= BOT_SHARE;
-      mns.chan &= BOT_SHARE;
+      pls.chan &= BOT_AGGRESSIVE;
+      mns.chan &= BOT_AGGRESSIVE;
     }
-    user.bot = sanity_check((user.bot | pls.bot) & ~mns.bot);
+    /* this merges user.bot with pls.bot and mns.bot in user.bot
+     * squelch the msgids as this is the tcl version of botattr */
+    bot_sanity_check(user.bot, pls.bot, mns.bot);
     if (chan) {
       user.chan = (user.chan | pls.chan) & ~mns.chan;
       user.udef_chan = (user.udef_chan | pls.udef_chan) & ~mns.udef_chan;
@@ -230,8 +232,8 @@ static int tcl_botattr STDVAR
     set_user_flagrec(u, &user, chan);
   }
   /* Only user flags can be set per channel, not bot ones,
-     so BOT_SHARE is a hack to allow botattr |+s */
-  user.chan &= BOT_SHARE;
+     so BOT_AGGRESSIVE is a hack to allow botattr |+s */
+  user.chan &= BOT_AGGRESSIVE;
   user.udef_chan = 0; /* User definable bot flags are global only,
                          anything here is a regular flag, so hide it. */
   /* Build flag string */

@@ -125,6 +125,32 @@ struct flag_record {
 #define BOT_SHPERMS    (BOT_SHBAN|BOT_SHCHAN|BOT_SHEXEMPT|BOT_SHIGN|BOT_SHINV|BOT_SHUSER|BOT_SHLIMITED)
 #define BOT_SHARE      (BOT_AGGRESSIVE|BOT_PASSIVE|BOT_SHPERMS)
 
+/* Bot flag checking message ID's */
+/* When adding more here, also add messages in cmds.c attr_inform */
+#define BOT_SANE_ALTOWNSHUB		0x00000001
+#define BOT_SANE_HUBOWNSALT		0x00000002
+#define BOT_SANE_OWNSALTHUB		0x00000004
+#define BOT_SANE_SHPOWNSAGGR		0x00000008
+#define BOT_SANE_AGGROWNSSHP		0x00000010
+#define BOT_SANE_OWNSSHPAGGR		0x00000020
+#define BOT_SANE_SHPOWNSPASS		0x00000040
+#define BOT_SANE_PASSOWNSSHP		0x00000080
+#define BOT_SANE_OWNSSHPPASS		0x00000100
+#define BOT_SANE_SHAREOWNSREJ		0x00000200
+#define BOT_SANE_REJOWNSSHARE		0x00000400
+#define BOT_SANE_OWNSSHAREREJ		0x00000800
+#define BOT_SANE_HUBOWNSREJ		0x00001000
+#define BOT_SANE_REJOWNSHUB		0x00002000
+#define BOT_SANE_OWNSHUBREJ		0x00004000
+#define BOT_SANE_ALTOWNSREJ		0x00008000
+#define BOT_SANE_REJOWNSALT		0x00010000
+#define BOT_SANE_OWNSALTREJ		0x00020000
+#define BOT_SANE_AGGROWNSPASS		0x0004000
+#define BOT_SANE_PASSOWNSAGGR		0x00080000
+#define BOT_SANE_OWNSAGGRPASS		0x00100000
+#define BOT_SANE_NOSHAREOWNSGLOB	0x00200000
+#define BOT_SANE_OWNSGLOB		0x00400000
+
 /* Flag checking macros */
 #define chan_op(x)              ((x).chan & USER_OP)
 #define glob_op(x)              ((x).global & USER_OP)
@@ -178,6 +204,7 @@ int build_flags(char *, struct flag_record *, struct flag_record *);
 int flagrec_eq(struct flag_record *, struct flag_record *);
 int flagrec_ok(struct flag_record *, struct flag_record *);
 int sanity_check(int);
+int bot_sanity_check(intptr_t, intptr_t, intptr_t);
 int chan_sanity_check(int, int);
 char geticon(int);
 
