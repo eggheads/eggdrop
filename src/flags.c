@@ -353,8 +353,8 @@ int bot_sanity_check(intptr_t atr, intptr_t pls_atr, intptr_t min_atr)
   atr = (atr | pls_atr) & ~min_atr;
 
   /* +h (hub) and +a (alt hub) */
-  if (atr & (BOT_HUB | BOT_ALT)) {
-    if (chg & (BOT_HUB | BOT_ALT)) {
+  if ((atr & BOT_HUB) && (atr & BOT_ALT)) {
+    if ((chg & BOT_HUB) && (chg & BOT_ALT)) {
       /* +ah wanted */
       atr &= ~(BOT_ALT | BOT_HUB);
       msgids |= BOT_SANE_OWNSALTHUB;
@@ -377,7 +377,7 @@ int bot_sanity_check(intptr_t atr, intptr_t pls_atr, intptr_t min_atr)
   if (atr & BOT_SHPERMS) {
     /* ... +s (aggressive sharing) */
     if (atr & BOT_AGGRESSIVE) {
-      if (chg & (BOT_AGGRESSIVE | BOT_SHPERMS)) {
+      if ((chg & BOT_AGGRESSIVE) && (chg & BOT_SHPERMS)) {
         /* +(b|c|e|j|n|u)s wanted */
         atr &= ~(BOT_SHPERMS | BOT_AGGRESSIVE);
         msgids |= BOT_SANE_OWNSSHPAGGR;
@@ -397,7 +397,7 @@ int bot_sanity_check(intptr_t atr, intptr_t pls_atr, intptr_t min_atr)
     }
     /* ... +p (passive sharing) */
     if (atr & BOT_PASSIVE) {
-      if (chg & (BOT_PASSIVE | BOT_SHPERMS)) {
+      if ((chg & BOT_PASSIVE) && (chg & BOT_SHPERMS)) {
         /* +(b|c|e|j|n|u)p wanted */
         atr &= ~(BOT_SHPERMS | BOT_PASSIVE);
         msgids |= BOT_SANE_OWNSSHPPASS;
@@ -421,7 +421,7 @@ int bot_sanity_check(intptr_t atr, intptr_t pls_atr, intptr_t min_atr)
   if (atr & BOT_REJECT) {
     /* ... +p|s|b|c|e|j|n|u|d (sharing) */
     if (atr & BOT_SHARE) {
-      if (chg & (BOT_SHARE | BOT_REJECT)) {
+      if ((chg & BOT_SHARE) && (chg & BOT_REJECT)) {
         /* +(p|s|b|c|e|j|n|u|d)r wanted */
         atr &= ~(BOT_SHARE | BOT_REJECT);
         msgids |= BOT_SANE_OWNSSHAREREJ;
@@ -441,7 +441,7 @@ int bot_sanity_check(intptr_t atr, intptr_t pls_atr, intptr_t min_atr)
     }
     /* ... +h (hub) */
     if (atr & BOT_HUB) {
-      if (chg & (BOT_HUB | BOT_REJECT)) {
+      if ((chg & BOT_HUB) && (chg & BOT_REJECT)) {
         /* +hr wanted */
         atr &= ~(BOT_HUB | BOT_REJECT);
         msgids |= BOT_SANE_OWNSHUBREJ;
@@ -461,7 +461,7 @@ int bot_sanity_check(intptr_t atr, intptr_t pls_atr, intptr_t min_atr)
     }
     /* ... +a (alt hub) */
     if (atr & BOT_ALT) {
-      if (chg & (BOT_ALT | BOT_REJECT)) {
+      if ((chg & BOT_ALT) && (chg & BOT_REJECT)) {
         /* +ar wanted */
         atr &= ~(BOT_ALT | BOT_REJECT);
         msgids |= BOT_SANE_OWNSALTREJ;
@@ -482,8 +482,8 @@ int bot_sanity_check(intptr_t atr, intptr_t pls_atr, intptr_t min_atr)
   }
 
   /* +p (passive) and +s (aggressive) */
-  if (atr & (BOT_PASSIVE | BOT_AGGRESSIVE)) {
-    if (chg & (BOT_PASSIVE | BOT_AGGRESSIVE)) {
+  if ((atr & BOT_PASSIVE) && (atr & BOT_AGGRESSIVE)) {
+    if ((chg & BOT_PASSIVE) && (chg & BOT_AGGRESSIVE)) {
       /* +ps wanted */
       atr &= ~(BOT_AGGRESSIVE | BOT_PASSIVE);
       msgids |= BOT_SANE_OWNSAGGRPASS;
