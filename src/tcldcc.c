@@ -172,7 +172,7 @@ static int tcl_hand2idx STDVAR
   int i;
   char s[11];
 
-  BADARGS(2, 2, " nickname");
+  BADARGS(2, 2, " handle");
 
   for (i = 0; i < dcc_total; i++)
     if ((dcc[i].type->flags & (DCT_SIMUL | DCT_BOT)) &&
