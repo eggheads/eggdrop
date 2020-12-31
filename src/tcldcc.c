@@ -1295,7 +1295,8 @@ static int tcl_listen STDVAR
   }
   strlcpy(type, argv[i], sizeof(type));
 /* Check if mask or proc exists */
-  if (((argc>3) && !strlen(ip)) || ((argc >4) && strlen(ip))) {
+  if ((((argc>3) && !strlen(ip)) || ((argc >4) && strlen(ip))) &&
+        (argv[i+1][0] != '#')) { /* Ignore config comments! */
     i++;
     strlcpy(maskproc, argv[i], sizeof(maskproc));
   }
