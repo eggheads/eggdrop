@@ -454,7 +454,7 @@ static void restore_ignore(char *host)
 static void tell_user(int idx, struct userrec *u)
 {
   char s[81], s1[81], format[81];
-  int n = 0;
+  int n = 0, p = 0;
   time_t now2;
   struct chanuserrec *ch;
   struct user_entry *ue;
@@ -482,8 +482,10 @@ static void tell_user(int idx, struct userrec *u)
   }
   egg_snprintf(format, sizeof format, "%%-%us %%-5s%%5d %%-15s %%s (%%s)\n",
                HANDLEN);
-  dprintf(idx, format, u->handle,
-          get_user(&USERENTRY_PASS, u) ? "yes" : "no", n, s, s1,
+  if ((get_user(&USERENTRY_PASS, u)) || (get_user(&USERENTRY_PASS2, u))) {
+    p = 1;
+  }
+  dprintf(idx, format, u->handle, p ? "yes" : "no", n, s, s1,
           (li && li->lastonplace) ? li->lastonplace : "nowhere");
   /* channel flags? */
   for (ch = u->chanrec; ch; ch = ch->next) {
