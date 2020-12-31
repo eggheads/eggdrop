@@ -1255,7 +1255,20 @@ static int tcl_listen STDVAR
   unsigned char buf[sizeof(struct in6_addr)];
   int i = 1;
 
-  BADARGS(3, 6, " ip port type ?mask?/?proc flag?");
+/* People like to add comments to this commnd for some reason, and it can cause
+ * errors that are difficult to figure out. Let's instead throw a more helpful
+ * error for this case to get around BADARGS, and handle other cases further
+ * down in the code
+ *
+ * Check if extra args are config comments 
+ */
+  if (argc > 6) {
+    if (argv[6][0] == '#') {
+      fatal(DCC_BADLISTEN, 0);
+    }
+  }
+
+  BADARGS(3, 6, " ?ip? port type ?mask?/?proc flag?");
 
 /* Check if IP exists, set to NULL if not */
   strtol(argv[1], &endptr, 10);
@@ -1295,7 +1308,8 @@ static int tcl_listen STDVAR
   }
   strlcpy(type, argv[i], sizeof(type));
 /* Check if mask or proc exists */
-  if (((argc>3) && !strlen(ip)) || ((argc >4) && strlen(ip))) {
+  if ((((argc>3) && !strlen(ip)) || ((argc >4) && strlen(ip))) &&
+        (argv[i+1][0] != '#')) { /* Ignore config comments! */
     i++;
     strlcpy(maskproc, argv[i], sizeof(maskproc));
   }
