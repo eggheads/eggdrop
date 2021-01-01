@@ -224,7 +224,7 @@ static int tcl_botattr STDVAR
     }
     /* this merges user.bot with pls.bot and mns.bot in user.bot
      * squelch the msgids as this is the tcl version of botattr */
-    bot_sanity_check(user.bot, pls.bot, mns.bot);
+    bot_sanity_check(&(user.bot), pls.bot, mns.bot);
     if (chan) {
       user.chan = (user.chan | pls.chan) & ~mns.chan;
       user.udef_chan = (user.udef_chan | pls.udef_chan) & ~mns.udef_chan;

@@ -1716,49 +1716,49 @@ static void attr_inform(const int idx, const int msgids)
 {
   if (msgids & BOT_SANE_ALTOWNSHUB)
     dprintf(idx, "Info: your request of +a removes the current +h.\n");
-  else if (msgids & BOT_SANE_HUBOWNSALT)
+  if (msgids & BOT_SANE_HUBOWNSALT)
     dprintf(idx, "Info: your request of +h removes the current +a.\n");
-  else if (msgids & BOT_SANE_OWNSALTHUB)
+  if (msgids & BOT_SANE_OWNSALTHUB)
     dprintf(idx, "Info: your request of +ah is ignored, please choose either one of them.\n");
-  else if (msgids & BOT_SANE_SHPOWNSAGGR)
+  if (msgids & BOT_SANE_SHPOWNSAGGR)
     dprintf(idx, "Info: your request of +(bcejnud) removes the current +s.\n");
-  else if (msgids & BOT_SANE_AGGROWNSSHP)
+  if (msgids & BOT_SANE_AGGROWNSSHP)
     dprintf(idx, "Info: your request of +s removes the current +(bcejnud).\n");
-  else if (msgids & BOT_SANE_OWNSSHPAGGR)
+  if (msgids & BOT_SANE_OWNSSHPAGGR)
     dprintf(idx, "Info: your request of +(bcejnud)s is ignored, please choose either one of them.\n");
-  else if (msgids & BOT_SANE_SHPOWNSPASS)
+  if (msgids & BOT_SANE_SHPOWNSPASS)
     dprintf(idx, "Info: your request of +(bcejnud) removes the current +p.\n");
-  else if (msgids & BOT_SANE_PASSOWNSSHP)
+  if (msgids & BOT_SANE_PASSOWNSSHP)
     dprintf(idx, "Info: your request of +p removes the current +(bcejnud).\n");
-  else if (msgids & BOT_SANE_OWNSSHPPASS)
+  if (msgids & BOT_SANE_OWNSSHPPASS)
     dprintf(idx, "Info: your request of +(bcejnud)p is ignored, please choose either one of them.\n");
-  else if (msgids & BOT_SANE_SHAREOWNSREJ)
+  if (msgids & BOT_SANE_SHAREOWNSREJ)
     dprintf(idx, "Info: your request of +(bcejnudps) removes the current +r.\n");
-  else if (msgids & BOT_SANE_REJOWNSSHARE)
+  if (msgids & BOT_SANE_REJOWNSSHARE)
     dprintf(idx, "Info: your request of +r removes the current +(bcejnudps).\n");
-  else if (msgids & BOT_SANE_OWNSSHAREREJ)
+  if (msgids & BOT_SANE_OWNSSHAREREJ)
     dprintf(idx, "Info: your request of +(bcejnudps)r is ignored, please choose either one of them.\n");
-  else if (msgids & BOT_SANE_HUBOWNSREJ)
+  if (msgids & BOT_SANE_HUBOWNSREJ)
     dprintf(idx, "Info: your request of +h removes the current +r.\n");
-  else if (msgids & BOT_SANE_REJOWNSHUB)
+  if (msgids & BOT_SANE_REJOWNSHUB)
     dprintf(idx, "Info: your request of +r removes the current +h.\n");
-  else if (msgids & BOT_SANE_OWNSHUBREJ)
+  if (msgids & BOT_SANE_OWNSHUBREJ)
     dprintf(idx, "Info: your request of +hr is ignored, please choose either one of them.\n");
-  else if (msgids & BOT_SANE_ALTOWNSREJ)
+  if (msgids & BOT_SANE_ALTOWNSREJ)
     dprintf(idx, "Info: your request of +a removes the current +r.\n");
-  else if (msgids & BOT_SANE_REJOWNSALT)
+  if (msgids & BOT_SANE_REJOWNSALT)
     dprintf(idx, "Info: your request of +r removes the current +a.\n");
-  else if (msgids & BOT_SANE_OWNSALTREJ)
+  if (msgids & BOT_SANE_OWNSALTREJ)
     dprintf(idx, "Info: your request of +ar is ignored, please choose either one of them.\n");
-  else if (msgids & BOT_SANE_AGGROWNSPASS)
+  if (msgids & BOT_SANE_AGGROWNSPASS)
     dprintf(idx, "Info: your request of +s removes the current +p.\n");
-  else if (msgids & BOT_SANE_PASSOWNSAGGR)
+  if (msgids & BOT_SANE_PASSOWNSAGGR)
     dprintf(idx, "Info: your request of +p removes the current +s.\n");
-  else if (msgids & BOT_SANE_OWNSAGGRPASS)
+  if (msgids & BOT_SANE_OWNSAGGRPASS)
     dprintf(idx, "Info: your request of +ps is ignored, please choose either one of them.\n");
-  else if (msgids & BOT_SANE_NOSHAREOWNSGLOB)
+  if (msgids & BOT_SANE_NOSHAREOWNSGLOB)
     dprintf(idx, "Info: your request of -(bcejnudps) removes the current +g.\n");
-  else if (msgids & BOT_SANE_OWNSGLOB)
+  if (msgids & BOT_SANE_OWNSGLOB)
     dprintf(idx, "Info: your request of +g is only possible with either one of +(bcejnudps).\n");
 }
 
@@ -2050,8 +2050,7 @@ static void cmd_botattr(struct userrec *u, int idx, char *par)
     }
     user.match = FR_BOT | (chan ? FR_CHAN : 0);
     get_user_flagrec(u2, &user, par);
-    msgids = bot_sanity_check(user.bot, pls.bot, mns.bot);
-    attr_inform(idx, msgids);
+    msgids = bot_sanity_check(&(user.bot), pls.bot, mns.bot);
     if (chan)
       user.chan = (user.chan | pls.chan) & ~mns.chan;
     set_user_flagrec(u2, &user, par);
@@ -2062,6 +2061,9 @@ static void cmd_botattr(struct userrec *u, int idx, char *par)
   else
     putlog(LOG_CMDS, "*", "#%s# botattr %s %s", dcc[idx].nick, hand,
            chg ? chg : "");
+  /* Display any remarks */
+  if (msgids)
+    attr_inform(idx, msgids);
   /* get current flags and display them */
   if (!chan || pls.bot || mns.bot) {
     user.match = FR_BOT;

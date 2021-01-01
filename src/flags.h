@@ -145,7 +145,7 @@ struct flag_record {
 #define BOT_SANE_ALTOWNSREJ		0x00008000
 #define BOT_SANE_REJOWNSALT		0x00010000
 #define BOT_SANE_OWNSALTREJ		0x00020000
-#define BOT_SANE_AGGROWNSPASS		0x0004000
+#define BOT_SANE_AGGROWNSPASS		0x00040000
 #define BOT_SANE_PASSOWNSAGGR		0x00080000
 #define BOT_SANE_OWNSAGGRPASS		0x00100000
 #define BOT_SANE_NOSHAREOWNSGLOB	0x00200000
@@ -204,7 +204,7 @@ int build_flags(char *, struct flag_record *, struct flag_record *);
 int flagrec_eq(struct flag_record *, struct flag_record *);
 int flagrec_ok(struct flag_record *, struct flag_record *);
 int sanity_check(int);
-int bot_sanity_check(intptr_t, intptr_t, intptr_t);
+int bot_sanity_check(intptr_t *, intptr_t, intptr_t);
 int chan_sanity_check(int, int);
 char geticon(int);
 
