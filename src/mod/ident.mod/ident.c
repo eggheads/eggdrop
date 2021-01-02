@@ -179,6 +179,8 @@ static void ident_oidentd()
     }
   if (servidx < 0 ) {
     putlog(LOG_MISC, "*", "IDENT: Error could not find server socket");
+    if (data)
+      nfree(data);
     return;
   }
   size = sizeof ss;
