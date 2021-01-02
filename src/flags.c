@@ -788,6 +788,8 @@ static int botfl_set(struct userrec *u, struct user_entry *e, void *buf)
 
   if ((atr & BOT_HUB) && (atr & BOT_ALT))
     atr &= ~BOT_ALT;
+  if ((atr & BOT_AGGRESSIVE) && (atr & BOT_SHPERMS))
+    atr &= ~BOT_SHPERMS;
   if (atr & BOT_REJECT) {
     if (atr & BOT_SHARE)
       atr &= ~(BOT_SHARE | BOT_REJECT);
