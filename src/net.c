@@ -571,8 +571,10 @@ int open_telnet_raw(int sock, sockname_t *addr)
     if (errno == EINPROGRESS) {
       /* Async connection... don't return socket descriptor
        * until after we confirm if it was successful or not */
-      tv.tv_sec = 1;
-      tv.tv_usec = 0;
+      /* FIXME: The timeout is an arbitrary value, but i dont have the courage
+       * to make it (near) zero. */
+      tv.tv_sec = 0;
+      tv.tv_usec = 100000;
       FD_ZERO(&sockset);
       FD_SET(sock, &sockset);
       select(sock + 1, &sockset, NULL, NULL, &tv);
