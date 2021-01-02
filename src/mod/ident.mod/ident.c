@@ -173,8 +173,14 @@ static void ident_oidentd()
    */
   servidx = -1;
   for (i = 0; i < dcc_total; i++)
-    if (!strcmp(dcc[i].nick, "(pserver)"))
+    if (!strcmp(dcc[i].nick, "(pserver)")) {
       servidx = i;
+      break;
+    }
+  if (servidx < 0 ) {
+    putlog(LOG_MISC, "*", "IDENT: Error could not find server socket");
+    return;
+  }
   size = sizeof ss;
   ret = getsockname(dcc[servidx].sock, (struct sockaddr *) &ss, &size);
   if (ret) {
