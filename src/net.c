@@ -538,7 +538,7 @@ int open_telnet_raw(int sock, sockname_t *addr)
   socklen_t res_len;
   fd_set sockset;
   struct timeval tv;
-  int i, rc, res;
+  int i, j, rc, res;
 
   for (i = 0; i < dcc_total; i++)
     if (dcc[i].sock == sock) { /* Got idx from sock ? */
@@ -555,13 +555,18 @@ int open_telnet_raw(int sock, sockname_t *addr)
   if (bind(sock, &name.addr.sa, name.addrlen) < 0) {
     return -1;
   }
-  for (i = 0; i < threaddata()->MAXSOCKS; i++) {
-    if (!(socklist[i].flags & SOCK_UNUSED) && (socklist[i].sock == sock))
-      socklist[i].flags = (socklist[i].flags & ~SOCK_VIRTUAL) | SOCK_CONNECT;
+  for (j = 0; j < threaddata()->MAXSOCKS; j++) {
+    if (!(socklist[j].flags & SOCK_UNUSED) && (socklist[j].sock == sock))
+      socklist[j].flags = (socklist[j].flags & ~SOCK_VIRTUAL) | SOCK_CONNECT;
   }
   if (addr->family == AF_INET && firewall[0])
     return proxy_connect(sock, addr);
   rc = connect(sock, &addr->addr.sa, addr->addrlen);
+  /* To minimize race call ident right here,
+   * esp. if rc < 0 and errno == EINPROGRESS
+   */
+  if (!strcmp(dcc[i].nick, "(pserver)"))
+    check_tcl_event("ident");
   if (rc < 0) {
     if (errno == EINPROGRESS) {
       /* Async connection... don't return socket descriptor
