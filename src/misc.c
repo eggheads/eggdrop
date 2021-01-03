@@ -517,11 +517,13 @@ void putlog EGG_VARARGS_DEF(int, arg1)
 {
   static int inhere = 0;
   int i, type, tsl = 0;
-  char *format, *chname, s[LOGLINELEN], s1[LOGLINELEN], *out, ct[81], *s2, stamp[34];
+  char *format, *chname, s[LOGLINELEN], s1[LOGLINELEN], *out, ct[81], *s2,
+       stamp[34], *f, c;
   va_list va;
   time_t now2 = time(NULL);
   static time_t now2_last = 0; /* cache expensive localtime() */
   static struct tm *t;
+  struct timeval tv;
 
   if (now2 != now2_last) {
     now2_last = now2;
@@ -535,6 +537,16 @@ void putlog EGG_VARARGS_DEF(int, arg1)
   /* Create the timestamp */
   if (shtime) {
     strftime(stamp, sizeof(stamp) - 2, log_ts, t);
+    if ((f = strstr(stamp, "%f"))) { /* handle millisecond specifier %f */
+      memmove(f + 3, f + 2, strlen(f + 2) + 1);
+      c = f[3]; /* save the char the following snprintf() will overwrite with
+                 * null terminator
+                 */
+      gettimeofday(&tv, NULL);
+      snprintf(f, sizeof stamp - (f - stamp), "%03i", (int) tv.tv_usec / 1000);
+      f[3] = c;
+
+    }
     strcat(stamp, " ");
     tsl = strlen(stamp);
   }
