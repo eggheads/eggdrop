@@ -746,18 +746,6 @@ static int twitch_3char STDVAR
   return TCL_OK;
 }
 
-static int twitch_cmsg STDVAR
-{
-  Function F = (Function) cd;
-
-  BADARGS(5, 5, " nick chan msgid msg");
-
-  CHECKVALIDITY(twitch_cmsg);
-  F(argv[1], argv[2], argv[3], argv[4]);
-  return TCL_OK;
-}
-
-
 /* A report on the module status.
  *
  * details is either 0 or 1:
