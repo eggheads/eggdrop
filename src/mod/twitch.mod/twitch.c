@@ -152,8 +152,8 @@ static void cmd_userstate(struct userrec *u, int idx, char *par) {
  * associated with the key provided.
  */
 char *get_value(char *dict, char *key) {
-  char *ptr, *ptr2, s[8092];
-  strcpy(s, dict);
+  char *ptr, *ptr2, s[TOTALTAGMAX];
+  strncpy(s, dict, sizeof s);
   ptr = strstr(s, key);                  /* Get ptr to key */
   if (!ptr) {
     return NULL;
@@ -345,12 +345,12 @@ static int gotwhisper(char *from, char *msg, char *tags) {
 }
 
 static int gotclearmsg(char *from, char *msg, char *tags) {
-  char nick[NICKLEN], *chan, *msgid;
+  char nick[NICKLEN], *chan, msgid[TOTALTAGMAX];
   
   chan = newsplit(&msg);
   fixcolon(msg);
   strlcpy(nick, get_value(tags, "login"), sizeof nick);
-  msgid = get_value(tags, "target-msg-id");
+  strlcpy(msgid, get_value(tags, "target-msg-id"), sizeof msgid);
   check_tcl_clearmsg(nick, chan, msgid, msg);
   putlog(LOG_SERV, "*", "* TWITCH: Cleared message %s from %s", msgid, nick);
   return 0;
@@ -455,36 +455,36 @@ static int gotroomstate(char *from, char *msg, char *tags) {
     if (!strcmp(ptr, "emote-only")) {
       ptr = strtok(NULL, " ");
       if (chan->emote_only != atol(ptr)) {
-        putlog(LOG_SERV, "*", "* TWITCH: Roomstate 'emote-only' changed to %s",
-            ptr);
+        putlog(LOG_SERV, "*", "* TWITCH: Roomstate 'emote-only' for %s changed to %s",
+            channame, ptr);
         chan->emote_only = atol(ptr);
       }
     } else if (!strcmp(ptr, "followers-only")) {
       ptr = strtok(NULL, " ");
       if (chan->followers_only != atol(ptr)) {
-        putlog(LOG_SERV, "*", "* TWITCH: Roomstate 'followers-only' changed to %s",
-            ptr);
+        putlog(LOG_SERV, "*", "* TWITCH: Roomstate 'followers-only' for %s changed to %s",
+            channame, ptr);
         chan->followers_only = atol(ptr);
       }
     } else if (!strcmp(ptr, "r9k")) {
       ptr = strtok(NULL, " ");
       if (chan->r9k != atol(ptr)) {
-        putlog(LOG_SERV, "*", "* TWITCH: Roomstate 'r9k' changed to %s",
-            ptr);
+        putlog(LOG_SERV, "*", "* TWITCH: Roomstate 'r9k' for %s changed to %s",
+            channame, ptr);
         chan->r9k = atol(ptr);
       }
     } else if (!strcmp(ptr, "subs-only")) {
       ptr = strtok(NULL, " ");
       if (chan->subs_only != atol(ptr)) {
-        putlog(LOG_SERV, "*", "* TWITCH: Roomstate 'subs-only' changed to %s",
-            ptr);
+        putlog(LOG_SERV, "*", "* TWITCH: Roomstate 'subs-only' for %s changed to %s",
+            channame, ptr);
         chan->subs_only = atol(ptr);
       }
     } else if (!strcmp(ptr, "slow")) {
       ptr = strtok(NULL, " ");
       if (chan->slow != atol(ptr)) {
-        putlog(LOG_SERV, "*", "* TWITCH: Roomstate 'slow' changed to %s",
-            ptr);
+        putlog(LOG_SERV, "*", "* TWITCH: Roomstate 'slow' for %s changed to %s",
+            channame, ptr);
         chan->slow = atol(ptr);
       }
     } else {  /* This is a key we don't understand, so skip the value */
@@ -497,12 +497,12 @@ static int gotroomstate(char *from, char *msg, char *tags) {
 }
 
 static int gotusernotice(char *from, char *msg, char *tags) {
-  char *chan, *login, *msgid;
+  char *chan, login[NICKLEN], msgid[TOTALTAGMAX];
 
   chan = newsplit(&msg);
   fixcolon(msg);
-  login = get_value(tags, "login");
-  msgid = get_value(tags, "msg-id");
+  strlcpy(login, get_value(tags, "login"), sizeof login);
+  strlcpy(msgid, get_value(tags, "msg-id"), sizeof msgid);
   if (!strcmp(msgid, "sub")) {
     putlog(LOG_SERV, "*", "* TWITCH: %s subscribed to the %s plan", login,
         get_value(tags, "msg-param-sub-plan"));
