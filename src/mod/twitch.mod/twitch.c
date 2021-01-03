@@ -317,13 +317,11 @@ static int gotnotice (char *from, char *msg, char *tags) {
     remove_chars(modptr, ',');
     remove_chars(modptr, '.');
     strlcpy(tchan->mods, modptr, sizeof tchan->mods);
-putlog(LOG_DEBUG, "*", "The mod list is %s", modptr);
   } else if (!strcmp(tags, "msg-id vips_success")) {
     vipptr = msg + 30; /* Remove "The VIPs of this channel are: " from str */
     remove_chars(vipptr, ',');
     remove_chars(vipptr, '.');
     strlcpy(tchan->vips, vipptr, sizeof tchan->vips);
-putlog(LOG_DEBUG, "*", "The mod list is %s", vipptr);
   }
   return 0;
 }
@@ -361,7 +359,6 @@ static int gotclearmsg(char *from, char *msg, char *tags) {
 static int gotclearchat(char *from, char *msg) {
   char *nick=NULL, *chan=NULL;
 
-putlog(LOG_DEBUG, "*", "TWITCH: from is %s msg is %s", from, msg);
   chan = newsplit(&msg);
   fixcolon(msg);
   nick = newsplit(&msg);
@@ -377,7 +374,6 @@ putlog(LOG_DEBUG, "*", "TWITCH: from is %s msg is %s", from, msg);
 static int gothosttarget(char *from, char *msg) {
   char s[30], *nick, *chan, *viewers;
 
-putlog(LOG_DEBUG, "*", "TWITCH: hosttarget from is %s msg is %s", msg);
   chan = newsplit(&msg);
   fixcolon(msg);
   nick = newsplit(&msg);
@@ -625,7 +621,7 @@ static int tcl_ismod STDVAR {
     tchan = twitchchan;
   }
   /* If there's no mods, no reason to even check, eh? */
-  if (!tchan->mods) {
+  if (!strlen(tchan->mods)) {
     Tcl_AppendResult(irp, "0", NULL);
     return TCL_OK;
   }
@@ -661,7 +657,7 @@ static int tcl_isvip STDVAR {
     tchan = twitchchan;
   }
   /* If there's no VIPs, no reason to even check, eh? */
-  if (tchan->vips) {
+  if (!strlen(tchan->vips)) {
     Tcl_AppendResult(irp, "0", NULL);
     return TCL_OK;
   }
