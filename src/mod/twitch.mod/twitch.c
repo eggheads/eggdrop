@@ -153,7 +153,7 @@ static void cmd_userstate(struct userrec *u, int idx, char *par) {
  */
 char *get_value(char *dict, char *key) {
   char *ptr, *ptr2, s[TOTALTAGMAX];
-  strncpy(s, dict, sizeof s);
+  strlcpy(s, dict, sizeof s);
   ptr = strstr(s, key);                  /* Get ptr to key */
   if (!ptr) {
     return NULL;
