@@ -151,9 +151,10 @@ static void cmd_userstate(struct userrec *u, int idx, char *par) {
  * (since we're going to muck with it) and returns a pointer to the value
  * associated with the key provided.
  */
-char *get_value(char *dict, char *key) {
+const char *get_value(char *dict, char *key) {
   char *ptr, *ptr2, s[TOTALTAGMAX];
-  strncpy(s, dict, sizeof s);
+  static char s2[TOTALTAGMAX];
+  strlcpy(s, dict, sizeof s);
   ptr = strstr(s, key);                  /* Get ptr to key */
   if (!ptr) {
     return NULL;
@@ -162,7 +163,8 @@ char *get_value(char *dict, char *key) {
   if (!ptr2) {
     return NULL;
   }
-  return strtok(NULL, " ");              /* Return null-term'd value for key */
+  strlcpy(s2, strtok(NULL, " "), sizeof s2);
+  return s2;              /* Return null-term'd value for key */
 }
 
 static int check_tcl_clearchat(char *chan, char *nick) {
@@ -518,8 +520,7 @@ static int gotusernotice(char *from, char *msg, char *tags) {
         "%s plan", get_value(tags, "msg-param-recipient-user-name"),
         get_value(tags, "msg-param-sub-plan"));
   } else if (!strcmp(msgid, "submysterygift")) {
-    putlog(LOG_SERV, "*", "* TWITCH: %s sent a mystery gift %s", login,
-        get_value(tags, "msg-param-recipient-user-name"));
+    putlog(LOG_SERV, "*", "* TWITCH: %s sent a mystery gift", login);
   } else if (!strcmp(msgid, "giftpaidupgrade")) {
     putlog(LOG_SERV, "*", "* TWITCH: %s gifted a subsription upgrade to %s",
         login, get_value(tags, "msg-param-recipient-user-name"));
@@ -626,7 +627,7 @@ static int tcl_ismod STDVAR {
     return TCL_OK;
   }
   while (tchan && (thechan == NULL || thechan == tchan)) {
-    if (strstr(argv[1], tchan->mods)) {
+    if (strstr(tchan->mods, argv[1])) {
       Tcl_AppendResult(irp, "1", NULL);
       return TCL_OK;
     }
@@ -662,7 +663,7 @@ static int tcl_isvip STDVAR {
     return TCL_OK;
   }
   while (tchan && (thechan == NULL || thechan == tchan)) {
-    if (strstr(argv[1], tchan->vips)) {
+    if (strstr(tchan->vips, argv[1])) {
       Tcl_AppendResult(irp, "1", NULL);
       return TCL_OK;
     }
