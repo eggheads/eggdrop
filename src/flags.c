@@ -303,37 +303,437 @@ int sanity_check(int atr)
   return atr;
 }
 
-/* Sanity check on channel attributes
+/* Sanity check on user attributes
+ * Wanted attributes (pls_atr) take precedence over existing (atr) attributes
+ * which can cause conflict.
+ * Arguments are: pointer to old attr (to modify attr to save),
+ *		  attr to add, attr to remove
+ * Returns: int with number corresponding to zero or more messages
  */
-int chan_sanity_check(int chatr, int atr)
+int user_sanity_check(int * const atr, int const pls_atr, int const min_atr)
 {
-  if ((chatr & USER_OP) && (chatr & USER_DEOP))
-    chatr &= ~(USER_OP | USER_DEOP);
-  if ((chatr & USER_HALFOP) && (chatr & USER_DEHALFOP))
-    chatr &= ~(USER_HALFOP | USER_DEHALFOP);
-  if ((chatr & USER_AUTOOP) && (chatr & USER_DEOP))
-    chatr &= ~(USER_AUTOOP | USER_DEOP);
-  if ((chatr & USER_AUTOHALFOP) && (chatr & USER_DEHALFOP))
-    chatr &= ~(USER_AUTOHALFOP | USER_DEHALFOP);
-  if ((chatr & USER_VOICE) && (chatr & USER_QUIET))
-    chatr &= ~(USER_VOICE | USER_QUIET);
-  if ((chatr & USER_GVOICE) && (chatr & USER_QUIET))
-    chatr &= ~(USER_GVOICE | USER_QUIET);
+  /* bitwise sum of msg id's defined in flags.h */
+  int msgids = 0;
+  /* save prior state to have a history */
+  int old_atr = *atr;
+  int chg = (pls_atr & ~min_atr);
+  /* apply changes */
+  *atr = (*atr | pls_atr) & ~min_atr;
+
+  /* +b (bot) and ... */
+  if ((*atr & USER_BOT)) {
+    /* ... +p (partyline) */
+    if (*atr & USER_PARTY) {
+      *atr &= ~USER_PARTY;
+      msgids |= UC_SANE_BOTOWNSPARTY;
+    }
+    /* ... +m (master) */
+    if (*atr & USER_MASTER) {
+      *atr &= ~USER_MASTER;
+      msgids |= UC_SANE_BOTOWNSMASTER;
+    }
+    /* ... +c (common) */
+    if (*atr & USER_COMMON) {
+      *atr &= ~USER_COMMON;
+      msgids |= UC_SANE_BOTOWNSCOMMON;
+    }
+    /* ... +n (owner) */
+    if (*atr & USER_OWNER) {
+      *atr &= ~USER_OWNER;
+      msgids |= UC_SANE_BOTOWNSOWNER;
+    }
+  }
+
+  /* +o (op) and +d (deop) */
+  if ((*atr & USER_OP) && (*atr & USER_DEOP)) {
+    if ((chg & USER_OP) && (chg & USER_DEOP)) {
+      /* +do wanted */
+      *atr &= ~(USER_DEOP | USER_OP);
+      if (old_atr & USER_DEOP)
+        *atr |= USER_DEOP;
+      else if (old_atr & USER_OP)
+        *atr |= USER_OP;
+      msgids |= UC_SANE_OWNSDEOPOP;
+    } else if (old_atr & USER_OP) {
+      /* +d wanted */
+      *atr &= ~USER_OP;
+      msgids |= UC_SANE_DEOPOWNSOP;
+    } else if (old_atr & USER_DEOP) {
+      /* +o wanted */
+      *atr &= ~USER_DEOP;
+      msgids |= UC_SANE_OPOWNSDEOP;
+    } else {
+      /* +do wanted */
+      *atr &= ~(USER_DEOP | USER_OP);
+      msgids |= UC_SANE_OWNSDEOPOP;
+    }
+  }
+
+  /* +l (halfop) and +r (dehalfop) */
+  if ((*atr & USER_HALFOP) && (*atr & USER_DEHALFOP)) {
+    if ((chg & USER_HALFOP) && (chg & USER_DEHALFOP)) {
+      /* +rl wanted */
+      *atr &= ~(USER_DEHALFOP | USER_HALFOP);
+      if (old_atr & USER_DEHALFOP)
+        *atr |= USER_DEHALFOP;
+      else if (old_atr & USER_HALFOP)
+        *atr |= USER_HALFOP;
+      msgids |= UC_SANE_OWNSDEHALFOPHALFOP;
+    } else if (old_atr & USER_HALFOP) {
+      /* +r wanted */
+      *atr &= ~USER_HALFOP;
+      msgids |= UC_SANE_DEHALFOPOWNSHALFOP;
+    } else if (old_atr & USER_DEHALFOP) {
+      /* +l wanted */
+      *atr &= ~USER_DEHALFOP;
+      msgids |= UC_SANE_HALFOPOWNSDEHALFOP;
+    } else {
+      /* +rl wanted */
+      *atr &= ~(USER_DEHALFOP | USER_HALFOP);
+      msgids |= UC_SANE_OWNSDEHALFOPHALFOP;
+    }
+  }
+
+  /* +a (autop) and +d (deop) */
+  if ((*atr & USER_AUTOOP) && (*atr & USER_DEOP)) {
+    if ((chg & USER_AUTOOP) && (chg & USER_DEOP)) {
+      /* +da wanted */
+      *atr &= ~(USER_DEOP | USER_AUTOOP);
+      if (old_atr & USER_DEOP)
+        *atr |= USER_DEOP;
+      else if (old_atr & USER_AUTOOP)
+        *atr |= USER_AUTOOP;
+      msgids |= UC_SANE_OWNSDEOPAUTOOP;
+    } else if (old_atr & USER_AUTOOP) {
+      /* +d wanted */
+      *atr &= ~USER_AUTOOP;
+      msgids |= UC_SANE_DEOPOWNSAUTOOP;
+    } else if (old_atr & USER_DEOP) {
+      /* +a wanted */
+      *atr &= ~USER_DEOP;
+      msgids |= UC_SANE_AUTOOPOWNSDEOP;
+    } else {
+      /* +da wanted */
+      *atr &= ~(USER_DEOP | USER_AUTOOP);
+      msgids |= UC_SANE_OWNSDEOPAUTOOP;
+    }
+  }
+
+  /* +y (autohalfop) and +r (dehalfop) */
+  if ((*atr & USER_AUTOHALFOP) && (*atr & USER_DEHALFOP)) {
+    if ((chg & USER_AUTOHALFOP) && (chg & USER_DEHALFOP)) {
+      /* +ry wanted */
+      *atr &= ~(USER_DEHALFOP | USER_AUTOHALFOP);
+      if (old_atr & USER_DEHALFOP)
+        *atr |= USER_DEHALFOP;
+      else if (old_atr & USER_AUTOHALFOP)
+        *atr |= USER_AUTOHALFOP;
+      msgids |= UC_SANE_OWNSDEHALFOPAHALFOP;
+    } else if (old_atr & USER_AUTOHALFOP) {
+      /* +r wanted */
+      *atr &= ~USER_AUTOHALFOP;
+      msgids |= UC_SANE_DEHALFOPOWNSAHALFOP;
+    } else if (old_atr & USER_DEHALFOP) {
+      /* +y wanted */
+      *atr &= ~USER_DEHALFOP;
+      msgids |= UC_SANE_AHALFOPOWNSDEHALFOP;
+    } else {
+      /* +ry wanted */
+      *atr &= ~(USER_DEHALFOP | USER_AUTOHALFOP);
+      msgids |= UC_SANE_OWNSDEHALFOPAHALFOP;
+    }
+  }
+
+  /* +v (voice) and +q (quiet) */
+  if ((*atr & USER_VOICE) && (*atr & USER_QUIET)) {
+    if ((chg & USER_VOICE) && (chg & USER_QUIET)) {
+      /* +qv wanted */
+      *atr &= ~(USER_QUIET | USER_VOICE);
+      if (old_atr & USER_QUIET)
+        *atr |= USER_QUIET;
+      else if (old_atr & USER_VOICE)
+        *atr |= USER_VOICE;
+      msgids |= UC_SANE_OWNSQUIETVOICE;
+    } else if (old_atr & USER_VOICE) {
+      /* +q wanted */
+      *atr &= ~USER_VOICE;
+      msgids |= UC_SANE_QUIETOWNSVOICE;
+    } else if (old_atr & USER_QUIET) {
+      /* +v wanted */
+      *atr &= ~USER_QUIET;
+      msgids |= UC_SANE_VOICEOWNSQUIET;
+    } else {
+      /* +qv wanted */
+      *atr &= ~(USER_QUIET | USER_VOICE);
+      msgids |= UC_SANE_OWNSQUIETVOICE;
+    }
+  }
+
+  /* +g (autovoice) and +q (quiet) */
+  if ((*atr & USER_GVOICE) && (*atr & USER_QUIET)) {
+    if ((chg & USER_GVOICE) && (chg & USER_QUIET)) {
+      /* +qg wanted */
+      *atr &= ~(USER_QUIET | USER_GVOICE);
+      if (old_atr & USER_QUIET)
+        *atr |= USER_QUIET;
+      else if (old_atr & USER_GVOICE)
+        *atr |= USER_GVOICE;
+      msgids |= UC_SANE_OWNSQUIETGVOICE;
+    } else if (old_atr & USER_GVOICE) {
+      /* +q wanted */
+      *atr &= ~USER_GVOICE;
+      msgids |= UC_SANE_QUIETOWNSGVOICE;
+    } else if (old_atr & USER_QUIET) {
+      /* +g wanted */
+      *atr &= ~USER_QUIET;
+      msgids |= UC_SANE_GVOICEOWNSQUIET;
+    } else {
+      /* +qg wanted */
+      *atr &= ~(USER_QUIET | USER_GVOICE);
+      msgids |= UC_SANE_OWNSQUIETGVOICE;
+    }
+  }
+
+  /* Don't change the order, first owner, then master, then botmaster,
+   * then janitor, then op */
+
+  /* +n (owner) and +m (master) */
   /* Can't be channel owner without also being channel master */
-  if (chatr & USER_OWNER)
-    chatr |= USER_MASTER;
-  /* Master implies op */
-  if (chatr & USER_MASTER)
-    chatr |= USER_OP;
+  if ((*atr & USER_OWNER) && !(*atr & USER_MASTER)) {
+    *atr |= USER_MASTER;
+    msgids |= UC_SANE_OWNERADDSMASTER;
+  }
+
+  /* +m (master) and +t (botmaster), +o (op), +j (janitor) */
+  /* Master implies botmaster, op and janitor */
+  if ((*atr & USER_MASTER) && !(*atr & (USER_BOTMAST | USER_OP | USER_JANITOR))) {
+    *atr |= USER_BOTMAST | USER_OP | USER_JANITOR;
+    msgids |= UC_SANE_MASTERADDSBOTMOPJAN;
+  }
+
+  /* +t (botmaster) and +p (partyline) */
+  /* Can't be botnet master without party-line access */
+  if ((*atr & USER_BOTMAST) && !(*atr & USER_PARTY)) {
+    *atr |= USER_PARTY;
+    msgids |= UC_SANE_BOTMASTADDSPARTY;
+  }
+
+  /* +j (janitor) and +x (xfer) */
+  /* Janitors can use the file area */
+  if ((*atr & USER_JANITOR) && !(*atr & USER_XFER)) {
+    *atr |= USER_XFER;
+    msgids |= UC_SANE_JANADDSXFER;
+  }
+
+  /* +o (op) and +l (halfop) */
   /* Op implies halfop */
-  if (chatr & USER_OP)
-    chatr |= USER_HALFOP;
-  /* Can't be +s on chan unless you're a bot */
-  if (!(atr & USER_BOT))
-    chatr &= ~BOT_SHARE;
-  return chatr;
+  if ((*atr & USER_OP) && !(*atr & USER_HALFOP)) {
+    *atr |= USER_HALFOP;
+    msgids |= UC_SANE_OPADDSHALFOP;
+  }
+
+  return msgids;
 }
 
+/* Sanity check on channel attributes
+ * Wanted attributes (pls_atr) take precedence over existing (atr) attributes
+ * which can cause conflict.
+ * Arguments are: pointer to old attr (to modify attr to save),
+ *		  attr to add, attr to remove, user attr
+ * Returns: int with number corresponding to zero or more messages
+ */
+int chan_sanity_check(int * const atr, int const pls_atr, int const min_atr, int const usr_atr)
+{
+  /* bitwise sum of msg id's defined in flags.h */
+  int msgids = 0;
+  /* save prior state to have a history */
+  int old_atr = *atr;
+  int chg = (pls_atr & ~min_atr);
+  /* apply changes */
+  *atr = (*atr | pls_atr) & ~min_atr;
+
+  /* +o (op) and +d (deop) */
+  if ((*atr & USER_OP) && (*atr & USER_DEOP)) {
+    if ((chg & USER_OP) && (chg & USER_DEOP)) {
+      /* +do wanted */
+      *atr &= ~(USER_DEOP | USER_OP);
+      if (old_atr & USER_DEOP)
+        *atr |= USER_DEOP;
+      else if (old_atr & USER_OP)
+        *atr |= USER_OP;
+      msgids |= UC_SANE_OWNSDEOPOP;
+    } else if (old_atr & USER_OP) {
+      /* +d wanted */
+      *atr &= ~USER_OP;
+      msgids |= UC_SANE_DEOPOWNSOP;
+    } else if (old_atr & USER_DEOP) {
+      /* +o wanted */
+      *atr &= ~USER_DEOP;
+      msgids |= UC_SANE_OPOWNSDEOP;
+    } else {
+      /* +do wanted */
+      *atr &= ~(USER_DEOP | USER_OP);
+      msgids |= UC_SANE_OWNSDEOPOP;
+    }
+  }
+
+  /* +l (halfop) and +r (dehalfop) */
+  if ((*atr & USER_HALFOP) && (*atr & USER_DEHALFOP)) {
+    if ((chg & USER_HALFOP) && (chg & USER_DEHALFOP)) {
+      /* +rl wanted */
+      *atr &= ~(USER_DEHALFOP | USER_HALFOP);
+      if (old_atr & USER_DEHALFOP)
+        *atr |= USER_DEHALFOP;
+      else if (old_atr & USER_HALFOP)
+        *atr |= USER_HALFOP;
+      msgids |= UC_SANE_OWNSDEHALFOPHALFOP;
+    } else if (old_atr & USER_HALFOP) {
+      /* +r wanted */
+      *atr &= ~USER_HALFOP;
+      msgids |= UC_SANE_DEHALFOPOWNSHALFOP;
+    } else if (old_atr & USER_DEHALFOP) {
+      /* +l wanted */
+      *atr &= ~USER_DEHALFOP;
+      msgids |= UC_SANE_HALFOPOWNSDEHALFOP;
+    } else {
+      /* +rl wanted */
+      *atr &= ~(USER_DEHALFOP | USER_HALFOP);
+      msgids |= UC_SANE_OWNSDEHALFOPHALFOP;
+    }
+  }
+
+  /* +a (autop) and +d (deop) */
+  if ((*atr & USER_AUTOOP) && (*atr & USER_DEOP)) {
+    if ((chg & USER_AUTOOP) && (chg & USER_DEOP)) {
+      /* +da wanted */
+      *atr &= ~(USER_DEOP | USER_AUTOOP);
+      if (old_atr & USER_DEOP)
+        *atr |= USER_DEOP;
+      else if (old_atr & USER_AUTOOP)
+        *atr |= USER_AUTOOP;
+      msgids |= UC_SANE_OWNSDEOPAUTOOP;
+    } else if (old_atr & USER_AUTOOP) {
+      /* +d wanted */
+      *atr &= ~USER_AUTOOP;
+      msgids |= UC_SANE_DEOPOWNSAUTOOP;
+    } else if (old_atr & USER_DEOP) {
+      /* +a wanted */
+      *atr &= ~USER_DEOP;
+      msgids |= UC_SANE_AUTOOPOWNSDEOP;
+    } else {
+      /* +da wanted */
+      *atr &= ~(USER_DEOP | USER_AUTOOP);
+      msgids |= UC_SANE_OWNSDEOPAUTOOP;
+    }
+  }
+
+  /* +y (autohalfop) and +r (dehalfop) */
+  if ((*atr & USER_AUTOHALFOP) && (*atr & USER_DEHALFOP)) {
+    if ((chg & USER_AUTOHALFOP) && (chg & USER_DEHALFOP)) {
+      /* +ry wanted */
+      *atr &= ~(USER_DEHALFOP | USER_AUTOHALFOP);
+      if (old_atr & USER_DEHALFOP)
+        *atr |= USER_DEHALFOP;
+      else if (old_atr & USER_AUTOHALFOP)
+        *atr |= USER_AUTOHALFOP;
+      msgids |= UC_SANE_OWNSDEHALFOPAHALFOP;
+    } else if (old_atr & USER_AUTOHALFOP) {
+      /* +r wanted */
+      *atr &= ~USER_AUTOHALFOP;
+      msgids |= UC_SANE_DEHALFOPOWNSAHALFOP;
+    } else if (old_atr & USER_DEHALFOP) {
+      /* +y wanted */
+      *atr &= ~USER_DEHALFOP;
+      msgids |= UC_SANE_AHALFOPOWNSDEHALFOP;
+    } else {
+      /* +ry wanted */
+      *atr &= ~(USER_DEHALFOP | USER_AUTOHALFOP);
+      msgids |= UC_SANE_OWNSDEHALFOPAHALFOP;
+    }
+  }
+
+  /* +v (voice) and +q (quiet) */
+  if ((*atr & USER_VOICE) && (*atr & USER_QUIET)) {
+    if ((chg & USER_VOICE) && (chg & USER_QUIET)) {
+      /* +qv wanted */
+      *atr &= ~(USER_QUIET | USER_VOICE);
+      if (old_atr & USER_QUIET)
+        *atr |= USER_QUIET;
+      else if (old_atr & USER_VOICE)
+        *atr |= USER_VOICE;
+      msgids |= UC_SANE_OWNSQUIETVOICE;
+    } else if (old_atr & USER_VOICE) {
+      /* +q wanted */
+      *atr &= ~USER_VOICE;
+      msgids |= UC_SANE_QUIETOWNSVOICE;
+    } else if (old_atr & USER_QUIET) {
+      /* +v wanted */
+      *atr &= ~USER_QUIET;
+      msgids |= UC_SANE_VOICEOWNSQUIET;
+    } else {
+      /* +qv wanted */
+      *atr &= ~(USER_QUIET | USER_VOICE);
+      msgids |= UC_SANE_OWNSQUIETVOICE;
+    }
+  }
+
+  /* +g (autovoice) and +q (quiet) */
+  if ((*atr & USER_GVOICE) && (*atr & USER_QUIET)) {
+    if ((chg & USER_GVOICE) && (chg & USER_QUIET)) {
+      /* +qg wanted */
+      *atr &= ~(USER_QUIET | USER_GVOICE);
+      if (old_atr & USER_QUIET)
+        *atr |= USER_QUIET;
+      else if (old_atr & USER_GVOICE)
+        *atr |= USER_GVOICE;
+      msgids |= UC_SANE_OWNSQUIETGVOICE;
+    } else if (old_atr & USER_GVOICE) {
+      /* +q wanted */
+      *atr &= ~USER_GVOICE;
+      msgids |= UC_SANE_QUIETOWNSGVOICE;
+    } else if (old_atr & USER_QUIET) {
+      /* +g wanted */
+      *atr &= ~USER_QUIET;
+      msgids |= UC_SANE_GVOICEOWNSQUIET;
+    } else {
+      /* +qg wanted */
+      *atr &= ~(USER_QUIET | USER_GVOICE);
+      msgids |= UC_SANE_OWNSQUIETGVOICE;
+    }
+  }
+
+  /* Don't change the order, first owner, then master, then op */
+
+  /* +n (owner) and +m (master) */
+  /* Can't be channel owner without also being channel master */
+  if ((*atr & USER_OWNER) && !(*atr & USER_MASTER)) {
+    *atr |= USER_MASTER;
+    msgids |= UC_SANE_OWNERADDSMASTER;
+  }
+
+  /* +m (master) and +o (op) */
+  /* Master implies op */
+  if ((*atr & USER_MASTER) && !(*atr & USER_OP)) {
+    *atr |= USER_OP;
+    msgids |= UC_SANE_MASTERADDSOP;
+  }
+
+  /* +o (op) and +l (halfop) */
+  /* Op implies halfop */
+  if ((*atr & USER_OP) && !(*atr & USER_HALFOP)) {
+    *atr |= USER_HALFOP;
+    msgids |= UC_SANE_OPADDSHALFOP;
+  }
+
+  /* +b user (bot) and +s (bot aggressive share) */
+  /* Can't be +s on chan unless you're a bot */
+  if (!(usr_atr & USER_BOT) && (*atr & BOT_AGGRESSIVE)) {
+    *atr &= ~BOT_AGGRESSIVE;
+    msgids |= UC_SANE_NOBOTOWNSAGGR;
+  }
+
+  return msgids;
+}
 
 /* Sanity check on bot attributes
  * Wanted attributes (pls_atr) take precedence over existing (atr) attributes
@@ -342,7 +742,7 @@ int chan_sanity_check(int chatr, int atr)
  *		  attr to add, attr to remove
  * Returns: int with number corresponding to zero or more messages
  */
-int bot_sanity_check(intptr_t *atr, intptr_t pls_atr, intptr_t min_atr)
+int bot_sanity_check(intptr_t * const atr, intptr_t const pls_atr, intptr_t const min_atr)
 {
   /* bitwise sum of msg id's defined in flags.h */
   int msgids = 0;

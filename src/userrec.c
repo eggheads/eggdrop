@@ -410,8 +410,8 @@ int write_user(struct userrec *u, FILE *f, int idx)
         fr.match = (FR_CHAN | FR_BOT);
         get_user_flagrec(dcc[idx].user, &fr, ch->channel);
       } else
-        fr.chan = BOT_SHARE;
-      if ((fr.chan & BOT_SHARE) || (fr.bot & BOT_GLOBAL)) {
+        fr.chan = BOT_AGGRESSIVE;
+      if ((fr.chan & BOT_AGGRESSIVE) || (fr.bot & BOT_GLOBAL)) {
         fr.match = FR_CHAN;
         fr.chan = ch->flags;
         fr.udef_chan = ch->flags_udef;

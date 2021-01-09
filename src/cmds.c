@@ -1711,8 +1711,8 @@ int check_dcc_chanattrs(struct userrec *u, char *chname, int chflags,
   return chflags;
 }
 
-/* helper function to inform the user of conflicts with botattr/chattr */
-static void attr_inform(const int idx, const int msgids)
+/* helper function to inform the user of conflicts with botattr */
+static void bot_attr_inform(const int idx, const int msgids)
 {
   if (msgids & BOT_SANE_ALTOWNSHUB)
     dprintf(idx, "INFO: adding +a removes the existing +h flag.\n");
@@ -1773,6 +1773,75 @@ static void attr_inform(const int idx, const int msgids)
         " +(bcejnudps) flags.\n");
 }
 
+/* helper function to inform the user of conflicts with chattr */
+static void uc_attr_inform(const int idx, const int msgids)
+{
+  if (msgids & UC_SANE_DEOPOWNSOP)
+    dprintf(idx, "INFO: adding +d removes the existing +o flag.\n");
+  if (msgids & UC_SANE_OPOWNSDEOP)
+    dprintf(idx, "INFO: adding +o removes the existing +d flag.\n");
+  if (msgids & UC_SANE_OWNSDEOPOP)
+    dprintf(idx, "INFO: adding +do is not possible, please choose only one of"
+        " them.\n");
+  if (msgids & UC_SANE_DEHALFOPOWNSHALFOP)
+    dprintf(idx, "INFO: adding +r removes the existing +l flag.\n");
+  if (msgids & UC_SANE_HALFOPOWNSDEHALFOP)
+    dprintf(idx, "INFO: adding +l removes the existing +r flag.\n");
+  if (msgids & UC_SANE_OWNSDEHALFOPHALFOP)
+    dprintf(idx, "INFO: adding +rl is not possible, please choose only one of"
+        " them.\n");
+  if (msgids & UC_SANE_DEOPOWNSAUTOOP)
+    dprintf(idx, "INFO: adding +d removes the existing +a flag.\n");
+  if (msgids & UC_SANE_AUTOOPOWNSDEOP)
+    dprintf(idx, "INFO: adding +a removes the existing +d flag.\n");
+  if (msgids & UC_SANE_OWNSDEOPAUTOOP)
+    dprintf(idx, "INFO: adding +da is not possible, please choose only one of"
+        " them.\n");
+  if (msgids & UC_SANE_DEHALFOPOWNSAHALFOP)
+    dprintf(idx, "INFO: adding +r removes the existing +y flag.\n");
+  if (msgids & UC_SANE_AHALFOPOWNSDEHALFOP)
+    dprintf(idx, "INFO: adding +y removes the existing +r flag.\n");
+  if (msgids & UC_SANE_OWNSDEHALFOPAHALFOP)
+    dprintf(idx, "INFO: adding +ry is not possible, please choose only one of"
+        " them.\n");
+  if (msgids & UC_SANE_QUIETOWNSVOICE)
+    dprintf(idx, "INFO: adding +q removes the existing +v flag.\n");
+  if (msgids & UC_SANE_VOICEOWNSQUIET)
+    dprintf(idx, "INFO: adding +v removes the existing +q flag.\n");
+  if (msgids & UC_SANE_OWNSQUIETVOICE)
+    dprintf(idx, "INFO: adding +qv is not possible, please choose only one of"
+        " them.\n");
+  if (msgids & UC_SANE_QUIETOWNSGVOICE)
+    dprintf(idx, "INFO: adding +q removes the existing +g flag.\n");
+  if (msgids & UC_SANE_GVOICEOWNSQUIET)
+    dprintf(idx, "INFO: adding +g removes the existing +q flag.\n");
+  if (msgids & UC_SANE_OWNSQUIETGVOICE)
+    dprintf(idx, "INFO: adding +qg is not possible, please choose only one of"
+        " them.\n");
+  if (msgids & UC_SANE_OWNERADDSMASTER)
+    dprintf(idx, "INFO: adding +n implies adding the +m flag.\n");
+  if (msgids & UC_SANE_MASTERADDSOP)
+    dprintf(idx, "INFO: adding +m implies adding the +o flag.\n");
+  if (msgids & UC_SANE_MASTERADDSBOTMOPJAN)
+    dprintf(idx, "INFO: adding +m implies adding the +toj flags.\n");
+  if (msgids & UC_SANE_BOTMASTADDSPARTY)
+    dprintf(idx, "INFO: adding +t implies adding the +p flag.\n");
+  if (msgids & UC_SANE_JANADDSXFER)
+    dprintf(idx, "INFO: adding +j implies adding the +x flag.\n");
+  if (msgids & UC_SANE_OPADDSHALFOP)
+    dprintf(idx, "INFO: adding +o implies adding the +l flag.\n");
+  if (msgids & UC_SANE_NOBOTOWNSAGGR)
+    dprintf(idx, "INFO: the +s flag can only be added to bots.\n");
+  if (msgids & UC_SANE_BOTOWNSPARTY)
+    dprintf(idx, "INFO: a bot can't have the +p flag.\n");
+  if (msgids & UC_SANE_BOTOWNSMASTER)
+    dprintf(idx, "INFO: a bot can't have the +m flag.\n");
+  if (msgids & UC_SANE_BOTOWNSCOMMON)
+    dprintf(idx, "INFO: a bot can't have the +c flag.\n");
+  if (msgids & UC_SANE_BOTOWNSOWNER)
+    dprintf(idx, "INFO: a bot can't have the +n flag.\n");
+}
+
 static void cmd_chattr(struct userrec *u, int idx, char *par)
 {
   char *hand, *arg = NULL, *tmpchg = NULL, *chg = NULL, work[1024];
@@ -1782,7 +1851,7 @@ static void cmd_chattr(struct userrec *u, int idx, char *par)
                      mns = { 0, 0, 0, 0, 0, 0 },
                      user = { 0, 0, 0, 0, 0, 0 };
   module_entry *me;
-  int fl = -1, of = 0, ocf = 0;
+  int fl = -1, of = 0, ocf = 0, msgidsu = 0, msgidsc = 0;
 
   if (!par[0]) {
     dprintf(idx, "Usage: chattr <handle> [changes] [channel]\n");
@@ -1870,8 +1939,8 @@ static void cmd_chattr(struct userrec *u, int idx, char *par)
     mns.global &=~(USER_BOT);
 
     if (chan) {
-      pls.chan &= ~(BOT_SHARE);
-      mns.chan &= ~(BOT_SHARE);
+      pls.chan &= ~(BOT_AGGRESSIVE);
+      mns.chan &= ~(BOT_AGGRESSIVE);
     }
     if (!glob_owner(user)) {
       pls.global &=~(USER_OWNER | USER_MASTER | USER_BOTMAST | USER_UNSHARED);
@@ -1902,15 +1971,14 @@ static void cmd_chattr(struct userrec *u, int idx, char *par)
     get_user_flagrec(u2, &user, par);
     if (user.match & FR_GLOBAL) {
       of = user.global;
-      user.global = sanity_check((user.global |pls.global) &~mns.global);
+      msgidsu = user_sanity_check(&(user.global), pls.global, mns.global);
 
       user.udef_global = (user.udef_global | pls.udef_global)
                          & ~mns.udef_global;
     }
     if (chan) {
       ocf = user.chan;
-      user.chan = chan_sanity_check((user.chan | pls.chan) & ~mns.chan,
-                                    user.global);
+      msgidsc = chan_sanity_check(&(user.chan), pls.chan, mns.chan, user.global);
 
       user.udef_chan = (user.udef_chan | pls.udef_chan) & ~mns.udef_chan;
     }
@@ -1929,6 +1997,9 @@ static void cmd_chattr(struct userrec *u, int idx, char *par)
       check_dcc_attrs(u2, of);
     get_user_flagrec(u2, &user, NULL);
     build_flags(work, &user, NULL);
+    /* Display any remarks */
+    if (msgidsu)
+      uc_attr_inform(idx, msgidsu);
     if (work[0] != '-')
       dprintf(idx, "Global flags for %s are now +%s.\n", hand, work);
     else
@@ -1937,10 +2008,13 @@ static void cmd_chattr(struct userrec *u, int idx, char *par)
   if (chan) {
     user.match = FR_CHAN;
     get_user_flagrec(u2, &user, par);
-    user.chan &= ~BOT_SHARE;
+    user.chan &= ~BOT_AGGRESSIVE;
     if (chg)
       check_dcc_chanattrs(u2, chan->dname, user.chan, ocf);
     build_flags(work, &user, NULL);
+    /* Display any remarks */
+    if (msgidsc)
+      uc_attr_inform(idx, msgidsc);
     if (work[0] != '-')
       dprintf(idx, "Channel flags for %s on %s are now +%s.\n", hand,
               chan->dname, work);
@@ -2074,7 +2148,7 @@ static void cmd_botattr(struct userrec *u, int idx, char *par)
            chg ? chg : "");
   /* Display any remarks */
   if (msgids)
-    attr_inform(idx, msgids);
+    bot_attr_inform(idx, msgids);
   /* get current flags and display them */
   if (!chan || pls.bot || mns.bot) {
     user.match = FR_BOT;
@@ -2088,7 +2162,7 @@ static void cmd_botattr(struct userrec *u, int idx, char *par)
   if (chan) {
     user.match = FR_CHAN;
     get_user_flagrec(u2, &user, par);
-    user.chan &= BOT_SHARE;
+    user.chan &= BOT_AGGRESSIVE;
     user.udef_chan = 0; /* udef chan flags are user only */
     build_flags(work, &user, NULL);
     if (work[0] != '-')

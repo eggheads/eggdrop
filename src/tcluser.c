@@ -133,17 +133,16 @@ static int tcl_chattr STDVAR
     mns.global &=~(USER_BOT);
 
     if (chan) {
-      pls.chan &= ~(BOT_SHARE);
-      mns.chan &= ~(BOT_SHARE);
+      pls.chan &= ~(BOT_AGGRESSIVE);
+      mns.chan &= ~(BOT_AGGRESSIVE);
     }
-    user.global = sanity_check((user.global |pls.global) &~mns.global);
+    user_sanity_check(&(user.global), pls.global, mns.global);
 
     user.udef_global = (user.udef_global | pls.udef_global)
                        & ~mns.udef_global;
     if (chan) {
       ocf = user.chan;
-      user.chan = chan_sanity_check((user.chan | pls.chan) & ~mns.chan,
-                                    user.global);
+      chan_sanity_check(&(user.chan), pls.chan, mns.chan, user.global);
       user.udef_chan = (user.udef_chan | pls.udef_chan) & ~mns.udef_chan;
 
     }
@@ -152,7 +151,7 @@ static int tcl_chattr STDVAR
     if (chan)
       check_dcc_chanattrs(u, chan, user.chan, ocf);
   }
-  user.chan &= ~BOT_SHARE; /* actually not a user flag, hide it */
+  user.chan &= ~BOT_AGGRESSIVE; /* actually not a user flag, hide it */
   /* Build flag string */
   build_flags(work, &user, NULL);
   Tcl_AppendResult(irp, work, NULL);
