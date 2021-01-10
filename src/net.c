@@ -562,11 +562,12 @@ int open_telnet_raw(int sock, sockname_t *addr)
   if (addr->family == AF_INET && firewall[0])
     return proxy_connect(sock, addr);
   rc = connect(sock, &addr->addr.sa, addr->addrlen);
-  /* To minimize race call ident right here,
-   * esp. if rc < 0 and errno == EINPROGRESS
+  /* To minimize a proven race condition, call ident here (especially when
+   * rc < 0 and errno == EINPROGRESS)
    */
-  if (!strcmp(dcc[i].nick, "(pserver)"))
+  if (dcc[i].status & STAT_SERV) {
     check_tcl_event("ident");
+  }
   if (rc < 0) {
     if (errno == EINPROGRESS) {
       /* Async connection... don't return socket descriptor

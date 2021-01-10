@@ -1903,6 +1903,7 @@ static void connect_server(void)
     dcc[servidx].u.dns->dns_failure = server_resolve_failure;
     dcc[servidx].u.dns->dns_type = RES_IPBYHOST;
     dcc[servidx].u.dns->type = &SERVER_SOCKET;
+    dcc[servidx].status |= STAT_SERV;
 
     if (server_cycle_wait)
       /* Back to 1st server & set wait time.
@@ -1939,10 +1940,8 @@ static void server_resolve_success(int servidx)
   dcc[servidx].sock = getsock(dcc[servidx].sockname.family, 0);
   setsnport(dcc[servidx].sockname, dcc[servidx].port);
   /* To minimize race, call check_tcl_event("ident") asap. Instead of waiting
-   * for open_telnet_raw() to return, call it inside open_telnet_raw(). Set
-   * nick = (pserver) here to pick it up inside open_telnet_raw().
+   * for open_telnet_raw() to return, call it inside open_telnet_raw()
    */
-  strlcpy(dcc[servidx].nick, "(pserver)", sizeof dcc[servidx].nick);
   serv = open_telnet_raw(dcc[servidx].sock, &dcc[servidx].sockname);
   if (serv < 0) {
     char *errstr = NULL;
