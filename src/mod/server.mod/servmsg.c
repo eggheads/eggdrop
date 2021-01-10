@@ -1939,9 +1939,6 @@ static void server_resolve_success(int servidx)
   changeover_dcc(servidx, &SERVER_SOCKET, 0);
   dcc[servidx].sock = getsock(dcc[servidx].sockname.family, 0);
   setsnport(dcc[servidx].sockname, dcc[servidx].port);
-  /* To minimize race, call check_tcl_event("ident") asap. Instead of waiting
-   * for open_telnet_raw() to return, call it inside open_telnet_raw()
-   */
   serv = open_telnet_raw(dcc[servidx].sock, &dcc[servidx].sockname);
   if (serv < 0) {
     char *errstr = NULL;
