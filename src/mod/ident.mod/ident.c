@@ -168,12 +168,10 @@ static void ident_oidentd()
     putlog(LOG_MISC, "*", "IDENT: oident.conf missing, or error opening "
             "for reading");
   }
-  /* To minimize race, this code is called before serv is set. Instead of
-   * servidx = findanyidx(serv), find nick = (pserver).
-   */
+  /* To minimize a known race condition, this code is called now */
   servidx = -1;
   for (i = 0; i < dcc_total; i++)
-    if (!strcmp(dcc[i].nick, "(pserver)")) {
+    if (dcc[i].status & STAT_SERV) {
       servidx = i;
       break;
     }
