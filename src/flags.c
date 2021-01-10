@@ -494,6 +494,24 @@ int user_sanity_check(int * const atr, int const pls_atr, int const min_atr)
     }
   }
 
+  /* +a (autoop) adds +o (op), but +o can be removed */
+  if ((*atr & USER_AUTOOP) && (chg & USER_AUTOOP) && !(old_atr & USER_OP)) {
+    *atr |= USER_OP;
+    msgids |= UC_SANE_AUTOOPADDSOP;
+  }
+
+  /* +y (autohalfop) adds +l (halfop), but +l can be removed */
+  if ((*atr & USER_AUTOHALFOP) && (chg & USER_AUTOHALFOP) && !(old_atr & USER_HALFOP)) {
+    *atr |= USER_HALFOP;
+    msgids |= UC_SANE_AUTOHALFOPADDSHALFOP;
+  }
+
+  /* +g (autovoice) adds +v (voice), but +v can be removed */
+  if ((*atr & USER_GVOICE) && (chg & USER_GVOICE) && !(old_atr & USER_VOICE)) {
+    *atr |= USER_VOICE;
+    msgids |= UC_SANE_GVOICEADDSVOICE;
+  }
+
   /* Don't change the order, first owner, then master, then botmaster,
    * then janitor, then op */
 
@@ -700,6 +718,24 @@ int chan_sanity_check(int * const atr, int const pls_atr, int const min_atr, int
       *atr &= ~(USER_QUIET | USER_GVOICE);
       msgids |= UC_SANE_OWNSQUIETGVOICE;
     }
+  }
+
+  /* +a (autoop) adds +o (op), but +o can be removed */
+  if ((*atr & USER_AUTOOP) && (chg & USER_AUTOOP) && !(old_atr & USER_OP)) {
+    *atr |= USER_OP;
+    msgids |= UC_SANE_AUTOOPADDSOP;
+  }
+
+  /* +y (autohalfop) adds +l (halfop), but +l can be removed */
+  if ((*atr & USER_AUTOHALFOP) && (chg & USER_AUTOHALFOP) && !(old_atr & USER_HALFOP)) {
+    *atr |= USER_HALFOP;
+    msgids |= UC_SANE_AUTOHALFOPADDSHALFOP;
+  }
+
+  /* +g (autovoice) adds +v (voice), but +v can be removed */
+  if ((*atr & USER_GVOICE) && (chg & USER_GVOICE) && !(old_atr & USER_VOICE)) {
+    *atr |= USER_VOICE;
+    msgids |= UC_SANE_GVOICEADDSVOICE;
   }
 
   /* Don't change the order, first owner, then master, then op */

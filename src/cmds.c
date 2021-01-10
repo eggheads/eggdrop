@@ -1840,6 +1840,12 @@ static void uc_attr_inform(const int idx, const int msgids)
     dprintf(idx, "INFO: a bot can't have the +c flag.\n");
   if (msgids & UC_SANE_BOTOWNSOWNER)
     dprintf(idx, "INFO: a bot can't have the +n flag.\n");
+  if (msgids & UC_SANE_AUTOOPADDSOP)
+    dprintf(idx, "INFO: adding +a also adds +o for your convenience, if unwanted one can revert with -o.\n");
+  if (msgids & UC_SANE_AUTOHALFOPADDSHALFOP)
+    dprintf(idx, "INFO: adding +y also adds +l for your convenience, if unwanted one can revert with -l.\n");
+  if (msgids & UC_SANE_GVOICEADDSVOICE)
+    dprintf(idx, "INFO: adding +g also adds +v for your convenience, if unwanted one can revert with -v.\n");
 }
 
 static void cmd_chattr(struct userrec *u, int idx, char *par)
