@@ -325,7 +325,7 @@ static int calc_penalty(char *msg)
     i = 0;
     par1 = newsplit(&msg);      /* channel */
     par2 = newsplit(&msg);      /* mode(s) */
-    if (!strlen(par2))
+    if (!*par2)
       i++;
     while (strlen(par2) > 0) {
       if (strchr("ntimps", par2[0]))
@@ -1075,7 +1075,7 @@ static int del_server(const char *name, const char *port)
 /* Check if server to be deleted is first node in list */
   if (!strcasecmp(name, serverlist->name)) {
     z = serverlist;
-    if (strlen(port)) {
+    if (*port) {
       if ((atoi(port) != serverlist->port)
 #ifdef TLS
           || ((port[0] != '+') && serverlist->ssl )) {
@@ -1096,7 +1096,7 @@ static int del_server(const char *name, const char *port)
 /* Check the remaining nodes in list */
   while (curr != NULL && prev != NULL) {
     if (!strcasecmp(name, curr->name)) {
-      if (strlen(port)) {
+      if (*port) {
         if ((atoi(port) != curr->port)
 #ifdef TLS
             || ((port[0] != '+') && curr->ssl )) {

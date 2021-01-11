@@ -365,7 +365,7 @@ static int gotclearchat(char *from, char *msg) {
   fixcolon(msg);
   nick = newsplit(&msg);
   check_tcl_clearchat(chan, nick);
-  if (!strlen(nick)) {
+  if (!*nick) {
     putlog(LOG_SERV, "*", "* TWITCH: Chat logs cleared on %s", chan);
   } else {
     putlog(LOG_SERV, "*", "* TWITCH: Chat logs cleared on %s for user %s", chan, nick);

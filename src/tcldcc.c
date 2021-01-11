@@ -1045,7 +1045,7 @@ static int setlisten(Tcl_Interp *irp, char *ip, char *portp, char *type, char *m
   memset(&hint, '\0', sizeof hint);
   hint.ai_family = PF_UNSPEC;
   hint.ai_flags = AI_NUMERICHOST;
-  if (!strlen(ip)) {
+  if (!*ip) {
 #ifdef IPV6
     if (pref_af) {
       strlcpy(newip, "::", sizeof newip);
@@ -1173,7 +1173,7 @@ static int setlisten(Tcl_Interp *irp, char *ip, char *portp, char *type, char *m
     /* If we didn't find a listening ip/port, or we did but it isn't all
      * interfaces
      */
-    if (strlen(newip)) {
+    if (newip[0]) {
       setsockname(&name, newip, port, 1);
       i = open_address_listen(&name);
     } else {
@@ -1218,7 +1218,7 @@ static int setlisten(Tcl_Interp *irp, char *ip, char *portp, char *type, char *m
     strcpy(dcc[idx].nick, "(users)");
   else if (!strcmp(type, "all"))
     strcpy(dcc[idx].nick, "(telnet)");
-  if (strlen(maskproc))
+  if (*maskproc)
     strlcpy(dcc[idx].host, maskproc, UHOSTMAX);
   else
     strcpy(dcc[idx].host, "*");
@@ -1301,7 +1301,7 @@ static int tcl_listen STDVAR
   }
 /* If script, check for proc and flag */
   if (!strcmp(type, "script")) {
-    if (!strlen(maskproc)) {
+    if (!maskproc[0]) {
       Tcl_AppendResult(irp, "a proc name must be specified for a script listen", NULL);
       return TCL_ERROR;
     }
