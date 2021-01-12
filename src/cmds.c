@@ -1715,51 +1715,62 @@ int check_dcc_chanattrs(struct userrec *u, char *chname, int chflags,
 static void attr_inform(const int idx, const int msgids)
 {
   if (msgids & BOT_SANE_ALTOWNSHUB)
-    dprintf(idx, "Info: your request of +a removes the current +h.\n");
+    dprintf(idx, "INFO: adding +a removes the existing +h flag.\n");
   if (msgids & BOT_SANE_HUBOWNSALT)
-    dprintf(idx, "Info: your request of +h removes the current +a.\n");
+    dprintf(idx, "INFO: adding +h removes the existing +a flag.\n");
   if (msgids & BOT_SANE_OWNSALTHUB)
-    dprintf(idx, "Info: your request of +ah is ignored, please choose either one of them.\n");
+    dprintf(idx, "INFO: adding +ah is not possible, please choose only one.\n");
   if (msgids & BOT_SANE_SHPOWNSAGGR)
-    dprintf(idx, "Info: your request of +(bcejnud) removes the current +s.\n");
+    dprintf(idx, "INFO: adding any of the +(bcejnud) flags removes the existing"
+        " +s flag.\n");
   if (msgids & BOT_SANE_AGGROWNSSHP)
-    dprintf(idx, "Info: your request of +s removes the current +(bcejnud).\n");
+    dprintf(idx, "INFO: adding +s removes any existing +(bcejnud) flags.\n");
   if (msgids & BOT_SANE_OWNSSHPAGGR)
-    dprintf(idx, "Info: your request of +(bcejnud)s is ignored, please choose either one of them.\n");
+    dprintf(idx, "INFO: adding +s with any of the +(bcejnud) flags is not"
+        " possible, please choose only one.\n");
   if (msgids & BOT_SANE_SHPOWNSPASS)
-    dprintf(idx, "Info: your request of +(bcejnud) removes the current +p.\n");
+    dprintf(idx, "INFO: adding any of the +(bcejnud) flags removes the existing"
+         " +p flag.\n");
   if (msgids & BOT_SANE_PASSOWNSSHP)
-    dprintf(idx, "Info: your request of +p removes the current +(bcejnud).\n");
+    dprintf(idx, "INFO: adding +p removes any existing +(bcejnud) flags.\n");
   if (msgids & BOT_SANE_OWNSSHPPASS)
-    dprintf(idx, "Info: your request of +(bcejnud)p is ignored, please choose either one of them.\n");
+    dprintf(idx, "INFO: adding +p with any of the +(bcejnud) flags is not"
+        " possible, please choose only one.\n");
   if (msgids & BOT_SANE_SHAREOWNSREJ)
-    dprintf(idx, "Info: your request of +(bcejnudps) removes the current +r.\n");
+    dprintf(idx, "INFO: adding any of the +(bcejnudps) flags removes the"
+        " existing +r flag.\n");
   if (msgids & BOT_SANE_REJOWNSSHARE)
-    dprintf(idx, "Info: your request of +r removes the current +(bcejnudps).\n");
+    dprintf(idx, "INFO: adding +r removes any existing +(bcejnudps) flags.\n");
   if (msgids & BOT_SANE_OWNSSHAREREJ)
-    dprintf(idx, "Info: your request of +(bcejnudps)r is ignored, please choose either one of them.\n");
+    dprintf(idx, "INFO: adding +r with any of the +(bcejnudps) flags is not"
+        " possible, please choose only one.\n");
   if (msgids & BOT_SANE_HUBOWNSREJ)
-    dprintf(idx, "Info: your request of +h removes the current +r.\n");
+    dprintf(idx, "INFO: adding +h removes the existing +r flag.\n");
   if (msgids & BOT_SANE_REJOWNSHUB)
-    dprintf(idx, "Info: your request of +r removes the current +h.\n");
+    dprintf(idx, "INFO: adding +r removes the existing +h flag.\n");
   if (msgids & BOT_SANE_OWNSHUBREJ)
-    dprintf(idx, "Info: your request of +hr is ignored, please choose either one of them.\n");
+    dprintf(idx, "INFO: adding +hr is not possible, please choose only one of"
+        " them.\n");
   if (msgids & BOT_SANE_ALTOWNSREJ)
-    dprintf(idx, "Info: your request of +a removes the current +r.\n");
+    dprintf(idx, "INFO: adding +a removes the existing +r flag.\n");
   if (msgids & BOT_SANE_REJOWNSALT)
-    dprintf(idx, "Info: your request of +r removes the current +a.\n");
+    dprintf(idx, "INFO: adding +r removes the existing +a flag.\n");
   if (msgids & BOT_SANE_OWNSALTREJ)
-    dprintf(idx, "Info: your request of +ar is ignored, please choose either one of them.\n");
+    dprintf(idx, "INFO: adding +ar is not possible, please choose only one of"
+        " them.\n");
   if (msgids & BOT_SANE_AGGROWNSPASS)
-    dprintf(idx, "Info: your request of +s removes the current +p.\n");
+    dprintf(idx, "INFO: adding +s removes the existing +p flag.\n");
   if (msgids & BOT_SANE_PASSOWNSAGGR)
-    dprintf(idx, "Info: your request of +p removes the current +s.\n");
+    dprintf(idx, "INFO: adding +p removes the existing +s flag.\n");
   if (msgids & BOT_SANE_OWNSAGGRPASS)
-    dprintf(idx, "Info: your request of +ps is ignored, please choose either one of them.\n");
+    dprintf(idx, "INFO: adding +ps is not possible, please choose only one of"
+        " them.\n");
   if (msgids & BOT_SANE_NOSHAREOWNSGLOB)
-    dprintf(idx, "Info: your request of -(bcejnudps) removes the current +g.\n");
+    dprintf(idx, "INFO: removing the -(bcejnudps) flags will also remove the"
+        " current +g flag.\n");
   if (msgids & BOT_SANE_OWNSGLOB)
-    dprintf(idx, "Info: your request of +g is only possible with either one of +(bcejnudps).\n");
+    dprintf(idx, "INFO: adding +g is only possible with one of the"
+        " +(bcejnudps) flags.\n");
 }
 
 static void cmd_chattr(struct userrec *u, int idx, char *par)
