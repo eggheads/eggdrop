@@ -18,9 +18,9 @@ functionality is possible.
 Commands
 --------
 
-^^^^^^^^^^^
+^^^^^^^^^^^^^^^^^^^^^^^^
 twcmd <chan> <cmd> [arg]
-^^^^^^^^^^^
+^^^^^^^^^^^^^^^^^^^^^^^^
 
   Description: sends cmd to the server, prefixed with a '/'. This is replicates
   the web UI functionality of sending commands such as /vip or /subscribers. Do
