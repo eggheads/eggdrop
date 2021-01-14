@@ -414,14 +414,21 @@ See also: whom
 
    For bots, there are additional flags seen under the "BOTATTR:" section.
    Valid botflags include:
-      %bs%b - share aggressively (SEND userfile to a passive bot)
-      %bp%b - share passively (ACCEPT userfile from an aggressive bot)
+      %ba%b - alternate (bot is autolinked if no hub bots can be linked)
+      %bb%b - ban sharing (pasv bot can share bans with aggr bot)
+      %bc%b - channel sharing (pasv bot can share chan changes with aggr bot)
+      %bd%b - share aggressively (SEND userfile to a passive bot), none sharing (pasv bot to aggr bot)
+      %be%b - exempt sharing (pasv bot can share exempts with aggr bot)
       %bg%b - global share (bot is sharing all channels)
       %bh%b - hub (bot is autolinked at highest priority)
-      %ba%b - alternate (bot is autolinked if no hub bots can be linked)
-      %bl%b - leaf (bot is not allowed to link other bots onto the botnet)
-      %br%b - reject (bot will not be allowed to link to the botnet)
       %bi%b - isolate (isolate the party line across a botlink)
+      %bj%b - invite sharing (pasv bot can share invites with aggr bot)
+      %bl%b - leaf (bot is not allowed to link other bots onto the botnet)
+      %bn%b - ignore sharing (pasv bot can share ignores with aggr bot)
+      %bp%b - share passively (ACCEPT userfile from an aggressive bot)
+      %br%b - reject (bot will not be allowed to link to the botnet)
+      %bs%b - share aggressively (SEND userfile to a passive bot), all sharing (pasv bot to aggr bot)
+      %bu%b - user sharing (pasv bot can share user changes with aggr bot)
 
       There are also 10 user-defined bot flags (0-9). Bots may also have +s
       (share) settings for individual channels.

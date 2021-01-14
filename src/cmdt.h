@@ -36,4 +36,10 @@ typedef struct {
   IntFunc func;
 } botcmd_t;
 
+typedef struct {
+  char *name;
+  char *flags;
+  IntFunc func;
+} botscmd_t;
+
 #endif /* _EGG_CMDT_H */
