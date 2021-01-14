@@ -429,4 +429,4 @@ Telnet to the bot and enter 'NEW' as your handle.
 0xe32,Refused telnet connection from %s (tried using my botnetnick)
 0xe33,Lost telnet connection from %s while checking for duplicate
 0xe34,TIMEOUT ident connection
-0xe36,Please remove the #comment from your listen setting and try again
+0xe35,Please remove the #comment from your listen setting and try again
