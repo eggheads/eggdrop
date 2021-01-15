@@ -36,4 +36,4 @@ prefixed with an apostrophe is sent to all users on the local bot only.
 You can change channels with the ".chat" command or even leave all
 channels with ".chat off".
 
-Copyright (C) 2002 - 2020 Eggheads Development Team
+Copyright (C) 2002 - 2021 Eggheads Development Team

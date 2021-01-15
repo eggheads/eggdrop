@@ -57,14 +57,6 @@ the following Twitch events:
 -   ROOMSTATE
 -   USERSTATE
 
-Additionally, we included twitch.tcl with Eggdrop, which provides
-additional functionality to track users and their status (mod, vip, etc
-on a channel via a web API call to an undocumented function. This means
-that the functionality of this capability is outside the control of
-Eggdrop developers and could break at any time, but the current
-usefulness has been judged worth the uncertainty. See the comments of
-twitch.tcl for additional info on how to use this functionality.
-
 
 PARTYLINE COMMANDS
 
@@ -73,4 +65,4 @@ Lists current userstate on a channel * roomsstate - Lists current
 roomstate for a channel * twcmd - Issues a traditional Twitch web
 interface command to the Twitch server (/ban, /block, /host, etc)
 
-  Copyright (C) 2020 Eggheads Development Team
+  Copyright (C) 2020 - 2021 Eggheads Development Team

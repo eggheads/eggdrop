@@ -11,7 +11,7 @@
  * 1.2a    1997-08-24      Minor fixes. [BB]
  */
 /*
- * Copyright (C) 1999 - 2020 Eggheads Development Team
+ * Copyright (C) 1999 - 2021 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License

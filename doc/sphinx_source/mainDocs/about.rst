@@ -61,4 +61,4 @@ About Eggdrop
   use Eggdrop for destructive purposes, go ahead and erase this directory now.
   It's almost impossible to do what you want with this bot.
 
-  Copyright (C) 1999 - 2020 Eggheads Development Team
+  Copyright (C) 1999 - 2021 Eggheads Development Team

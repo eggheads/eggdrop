@@ -91,4 +91,4 @@ The PBKDF2 module adds the 'encpass2' command to the Tcl library. This command t
 where 'PBK method' is the method specified in the configuration file, 'rounds' is the number of rounds specified in the configuration file, 'salt' is the value used for the salt, and 'password hash' is the output of the hashing algorithm.
 
 
-Copyright (C) 2000 - 2020 Eggheads Development Team
+Copyright (C) 2000 - 2021 Eggheads Development Team

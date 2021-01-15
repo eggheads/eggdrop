@@ -3652,4 +3652,4 @@ are the four special characters:
 |     | words) (This char only works in binds, not in regular matching)          |
 +-----+--------------------------------------------------------------------------+
 
-  Copyright (C) 1999 - 2020 Eggheads Development Team
+  Copyright (C) 1999 - 2021 Eggheads Development Team
