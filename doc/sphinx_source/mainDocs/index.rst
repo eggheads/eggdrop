@@ -15,6 +15,9 @@ Contents:
    bans
    botnet
    patch
+   pbkdf2
    tcl-commands
+   twitch
+   twitch-tcl-commands
    ipv6
    tls
