@@ -1051,8 +1051,8 @@ static int write_bans(FILE *f, int idx)
       if (idx >= 0)
         get_user_flagrec(dcc[idx].user, &fr, chan->dname);
       else
-        fr.chan = BOT_SHARE;
-      if ((fr.chan & BOT_SHARE) || (fr.bot & BOT_GLOBAL)) {
+        fr.chan = BOT_AGGRESSIVE;
+      if ((fr.chan & BOT_AGGRESSIVE) || (fr.bot & BOT_GLOBAL)) {
         if (fprintf(f, "::%s bans\n", chan->dname) == EOF)
           return 0;
         for (b = chan->bans; b; b = b->next) {
@@ -1111,8 +1111,8 @@ static int write_exempts(FILE *f, int idx)
       if (idx >= 0)
         get_user_flagrec(dcc[idx].user, &fr, chan->dname);
       else
-        fr.chan = BOT_SHARE;
-      if ((fr.chan & BOT_SHARE) || (fr.bot & BOT_GLOBAL)) {
+        fr.chan = BOT_AGGRESSIVE;
+      if ((fr.chan & BOT_AGGRESSIVE) || (fr.bot & BOT_GLOBAL)) {
         if (fprintf(f, "&&%s exempts\n", chan->dname) == EOF)
           return 0;
         for (e = chan->exempts; e; e = e->next) {
@@ -1171,8 +1171,8 @@ static int write_invites(FILE *f, int idx)
       if (idx >= 0)
         get_user_flagrec(dcc[idx].user, &fr, chan->dname);
       else
-        fr.chan = BOT_SHARE;
-      if ((fr.chan & BOT_SHARE) || (fr.bot & BOT_GLOBAL)) {
+        fr.chan = BOT_AGGRESSIVE;
+      if ((fr.chan & BOT_AGGRESSIVE) || (fr.bot & BOT_GLOBAL)) {
         if (fprintf(f, "$$%s invites\n", chan->dname) == EOF)
           return 0;
         for (ir = chan->invites; ir; ir = ir->next) {

@@ -2065,14 +2065,14 @@ static void start_sending_users(int idx)
           egg_snprintf(s2, sizeof s2, "s a %s %s\n", u->handle, s1);
           q_tbuf(dcc[idx].nick, s2, NULL);
           for (ch = u->chanrec; ch; ch = ch->next) {
-            if ((ch->flags & ~BOT_SHARE) &&
+            if ((ch->flags & ~BOT_AGGRESSIVE) &&
                 ((cst = findchan_by_dname(ch->channel)) &&
                  channel_shared(cst))) {
               fr.match = (FR_CHAN | FR_BOT);
               get_user_flagrec(dcc[idx].user, &fr, ch->channel);
               if (bot_chan(fr) || bot_global(fr)) {
                 fr.match = FR_CHAN;
-                fr.chan = ch->flags & ~BOT_SHARE;
+                fr.chan = ch->flags & ~BOT_AGGRESSIVE;
                 fr.udef_chan = ch->flags_udef;
                 build_flags(s1, &fr, NULL);
                 egg_snprintf(s2, sizeof s2, "s a %s %s %s\n", u->handle, s1,
