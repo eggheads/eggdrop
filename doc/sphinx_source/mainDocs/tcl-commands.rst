@@ -712,75 +712,75 @@ ischanjuped <channel>
 
   Module: channels
 
-^^^^^^^^^^^^^^^^^^^^^
-isban <ban> [channel]
-^^^^^^^^^^^^^^^^^^^^^
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+isban <ban> [channel [-channel]]
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-  Returns: 1 if the specified ban is in the global ban list; 0 otherwise. If a channel is specified, that channel's ban list is checked as well.
-
-  Module: channels
-
-^^^^^^^^^^^^^^^^^^^^^^^^^
-ispermban <ban> [channel]
-^^^^^^^^^^^^^^^^^^^^^^^^^
-
-  Returns: 1 if the specified ban is in the global ban list AND is marked as permanent; 0 otherwise. If a channel is specified, that channel's ban list is checked as well.
+  Returns: 1 if the specified ban is in the global ban list; 0 otherwise. If a channel is specified, that channel's ban list is checked as well. If the -channel flag is used at the end of the command, \*only\* the channel bans are checked.
 
   Module: channels
 
-^^^^^^^^^^^^^^^^^^^^^^^^^^^
-isexempt <exempt> [channel]
-^^^^^^^^^^^^^^^^^^^^^^^^^^^
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ispermban <ban> [channel [-channel]]
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-  Returns: 1 if the specified exempt is in the global exempt list; 0 otherwise. If a channel is specified, that channel's exempt list is checked as well.
-
-  Module: channels
-
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-ispermexempt <exempt> [channel]
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-  Returns: 1 if the specified exempt is in the global exempt list AND is marked as permanent; 0 otherwise. If a channel is specified, that channel's exempt list is checked as well.
+  Returns: 1 if the specified ban is in the global ban list AND is marked as permanent; 0 otherwise. If a channel is specified, that channel's ban list is checked as well. If the -channel flag is used at the end of the command, \*only\* the channel bans are checked.
 
   Module: channels
 
-^^^^^^^^^^^^^^^^^^^^^^^^^^^
-isinvite <invite> [channel]
-^^^^^^^^^^^^^^^^^^^^^^^^^^^
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+isexempt <exempt> [channel [-channel]]
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-  Returns: 1 if the specified invite is in the global invite list; 0 otherwise. If a channel is specified, that channel's invite list is checked as well.
-
-  Module: channels
-
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-isperminvite <invite> [channel]
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-  Returns: 1 if the specified invite is in the global invite list AND is marked as permanent; 0 otherwise. If a channel is specified, that channel's invite list is checked as well.
+  Returns: 1 if the specified exempt is in the global exempt list; 0 otherwise. If a channel is specified, that channel's exempt list is checked as well. If the -channel flag is used at the end of the command, \*only\* the channel exempts are checked.
 
   Module: channels
 
-^^^^^^^^^^^^^^^^^^^^^^^^^^^
-isbansticky <ban> [channel]
-^^^^^^^^^^^^^^^^^^^^^^^^^^^
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ispermexempt <exempt> [channel [-channel]]
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-  Returns: 1 if the specified ban is marked as sticky in the global ban list; 0 otherwise. If a channel is specified, that channel's ban list is checked as well.
-
-  Module: channels
-
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-isexemptsticky <exempt> [channel]
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-  Returns: 1 if the specified exempt is marked as sticky in the global exempt list; 0 otherwise. If a channel is specified, that channel's exempt list is checked as well.
+  Returns: 1 if the specified exempt is in the global exempt list AND is marked as permanent; 0 otherwise. If a channel is specified, that channel's exempt list is checked as well. If the -channel flag is used at the end of the command, \*only\* the channel exempts are checked.
 
   Module: channels
 
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-isinvitesticky <invite> [channel]
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+isinvite <invite> [channel [-channel]]
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-  Returns: 1 if the specified invite is marked as sticky in the global invite list; 0 otherwise. If a channel is specified, that channel's invite list is checked as well.
+  Returns: 1 if the specified invite is in the global invite list; 0 otherwise. If a channel is specified, that channel's invite list is checked as well. If the -channel flag is used at the end of the command, \*only\* the channel invites are checked.
+
+  Module: channels
+
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+isperminvite <invite> [channel [-channel]]
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+  Returns: 1 if the specified invite is in the global invite list AND is marked as permanent; 0 otherwise. If a channel is specified, that channel's invite list is checked as well. If the -channel flag is used at the end of the command, \*only\* the channel invites are checked.
+
+  Module: channels
+
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+isbansticky <ban> [channel [-channel]]
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+  Returns: 1 if the specified ban is marked as sticky in the global ban list; 0 otherwise. If a channel is specified, that channel's ban list is checked as well. If the -channel flag is used at the end of the command, \*only\* the channel bans are checked.
+
+  Module: channels
+
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+isexemptsticky <exempt> [channel [-channel]]
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+  Returns: 1 if the specified exempt is marked as sticky in the global exempt list; 0 otherwise. If a channel is specified, that channel's exempt list is checked as well. If the -channel flag is used at the end of the command, \*only\* the channel exempts are checked.
+
+  Module: channels
+
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+isinvitesticky <invite> [channel [-channel]]
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+  Returns: 1 if the specified invite is marked as sticky in the global invite list; 0 otherwise. If a channel is specified, that channel's invite list is checked as well. If the -channel flag is used at the end of the command, \*only\* the channel invites are checked.
 
   Module: channels
 
