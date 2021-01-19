@@ -18,7 +18,7 @@
  */
 
 /*
- * Copyright (C) 2020 Eggheads Development Team
+ * Copyright (C) 2020 - 2021 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -151,9 +151,10 @@ static void cmd_userstate(struct userrec *u, int idx, char *par) {
  * (since we're going to muck with it) and returns a pointer to the value
  * associated with the key provided.
  */
-char *get_value(char *dict, char *key) {
-  char *ptr, *ptr2, s[8092];
-  strcpy(s, dict);
+const char *get_value(char *dict, char *key) {
+  char *ptr, *ptr2, s[TOTALTAGMAX];
+  static char s2[TOTALTAGMAX];
+  strlcpy(s, dict, sizeof s);
   ptr = strstr(s, key);                  /* Get ptr to key */
   if (!ptr) {
     return NULL;
@@ -162,7 +163,8 @@ char *get_value(char *dict, char *key) {
   if (!ptr2) {
     return NULL;
   }
-  return strtok(NULL, " ");              /* Return null-term'd value for key */
+  strlcpy(s2, strtok(NULL, " "), sizeof s2);
+  return s2;              /* Return null-term'd value for key */
 }
 
 static int check_tcl_clearchat(char *chan, char *nick) {
@@ -317,13 +319,11 @@ static int gotnotice (char *from, char *msg, char *tags) {
     remove_chars(modptr, ',');
     remove_chars(modptr, '.');
     strlcpy(tchan->mods, modptr, sizeof tchan->mods);
-putlog(LOG_DEBUG, "*", "The mod list is %s", modptr);
   } else if (!strcmp(tags, "msg-id vips_success")) {
     vipptr = msg + 30; /* Remove "The VIPs of this channel are: " from str */
     remove_chars(vipptr, ',');
     remove_chars(vipptr, '.');
     strlcpy(tchan->vips, vipptr, sizeof tchan->vips);
-putlog(LOG_DEBUG, "*", "The mod list is %s", vipptr);
   }
   return 0;
 }
@@ -347,12 +347,12 @@ static int gotwhisper(char *from, char *msg, char *tags) {
 }
 
 static int gotclearmsg(char *from, char *msg, char *tags) {
-  char nick[NICKMAX], *chan, *msgid;
+  char nick[NICKLEN], *chan, msgid[TOTALTAGMAX];
   
   chan = newsplit(&msg);
   fixcolon(msg);
-  strncpy(nick, get_value(tags, "login"), sizeof nick);
-  msgid = get_value(tags, "target-msg-id");
+  strlcpy(nick, get_value(tags, "login"), sizeof nick);
+  strlcpy(msgid, get_value(tags, "target-msg-id"), sizeof msgid);
   check_tcl_clearmsg(nick, chan, msgid, msg);
   putlog(LOG_SERV, "*", "* TWITCH: Cleared message %s from %s", msgid, nick);
   return 0;
@@ -361,7 +361,6 @@ static int gotclearmsg(char *from, char *msg, char *tags) {
 static int gotclearchat(char *from, char *msg) {
   char *nick=NULL, *chan=NULL;
 
-putlog(LOG_DEBUG, "*", "TWITCH: from is %s msg is %s", from, msg);
   chan = newsplit(&msg);
   fixcolon(msg);
   nick = newsplit(&msg);
@@ -377,7 +376,6 @@ putlog(LOG_DEBUG, "*", "TWITCH: from is %s msg is %s", from, msg);
 static int gothosttarget(char *from, char *msg) {
   char s[30], *nick, *chan, *viewers;
 
-putlog(LOG_DEBUG, "*", "TWITCH: hosttarget from is %s msg is %s", msg);
   chan = newsplit(&msg);
   fixcolon(msg);
   nick = newsplit(&msg);
@@ -459,36 +457,36 @@ static int gotroomstate(char *from, char *msg, char *tags) {
     if (!strcmp(ptr, "emote-only")) {
       ptr = strtok(NULL, " ");
       if (chan->emote_only != atol(ptr)) {
-        putlog(LOG_SERV, "*", "* TWITCH: Roomstate 'emote-only' changed to %s",
-            ptr);
+        putlog(LOG_SERV, "*", "* TWITCH: Roomstate 'emote-only' for %s changed to %s",
+            channame, ptr);
         chan->emote_only = atol(ptr);
       }
     } else if (!strcmp(ptr, "followers-only")) {
       ptr = strtok(NULL, " ");
       if (chan->followers_only != atol(ptr)) {
-        putlog(LOG_SERV, "*", "* TWITCH: Roomstate 'followers-only' changed to %s",
-            ptr);
+        putlog(LOG_SERV, "*", "* TWITCH: Roomstate 'followers-only' for %s changed to %s",
+            channame, ptr);
         chan->followers_only = atol(ptr);
       }
     } else if (!strcmp(ptr, "r9k")) {
       ptr = strtok(NULL, " ");
       if (chan->r9k != atol(ptr)) {
-        putlog(LOG_SERV, "*", "* TWITCH: Roomstate 'r9k' changed to %s",
-            ptr);
+        putlog(LOG_SERV, "*", "* TWITCH: Roomstate 'r9k' for %s changed to %s",
+            channame, ptr);
         chan->r9k = atol(ptr);
       }
     } else if (!strcmp(ptr, "subs-only")) {
       ptr = strtok(NULL, " ");
       if (chan->subs_only != atol(ptr)) {
-        putlog(LOG_SERV, "*", "* TWITCH: Roomstate 'subs-only' changed to %s",
-            ptr);
+        putlog(LOG_SERV, "*", "* TWITCH: Roomstate 'subs-only' for %s changed to %s",
+            channame, ptr);
         chan->subs_only = atol(ptr);
       }
     } else if (!strcmp(ptr, "slow")) {
       ptr = strtok(NULL, " ");
       if (chan->slow != atol(ptr)) {
-        putlog(LOG_SERV, "*", "* TWITCH: Roomstate 'slow' changed to %s",
-            ptr);
+        putlog(LOG_SERV, "*", "* TWITCH: Roomstate 'slow' for %s changed to %s",
+            channame, ptr);
         chan->slow = atol(ptr);
       }
     } else {  /* This is a key we don't understand, so skip the value */
@@ -501,12 +499,12 @@ static int gotroomstate(char *from, char *msg, char *tags) {
 }
 
 static int gotusernotice(char *from, char *msg, char *tags) {
-  char *chan, *login, *msgid;
+  char *chan, login[NICKLEN], msgid[TOTALTAGMAX];
 
   chan = newsplit(&msg);
   fixcolon(msg);
-  login = get_value(tags, "login");
-  msgid = get_value(tags, "msg-id");
+  strlcpy(login, get_value(tags, "login"), sizeof login);
+  strlcpy(msgid, get_value(tags, "msg-id"), sizeof msgid);
   if (!strcmp(msgid, "sub")) {
     putlog(LOG_SERV, "*", "* TWITCH: %s subscribed to the %s plan", login,
         get_value(tags, "msg-param-sub-plan"));
@@ -522,8 +520,7 @@ static int gotusernotice(char *from, char *msg, char *tags) {
         "%s plan", get_value(tags, "msg-param-recipient-user-name"),
         get_value(tags, "msg-param-sub-plan"));
   } else if (!strcmp(msgid, "submysterygift")) {
-    putlog(LOG_SERV, "*", "* TWITCH: %s sent a mystery gift %s", login,
-        get_value(tags, "msg-param-recipient-user-name"));
+    putlog(LOG_SERV, "*", "* TWITCH: %s sent a mystery gift", login);
   } else if (!strcmp(msgid, "giftpaidupgrade")) {
     putlog(LOG_SERV, "*", "* TWITCH: %s gifted a subsription upgrade to %s",
         login, get_value(tags, "msg-param-recipient-user-name"));
@@ -625,12 +622,12 @@ static int tcl_ismod STDVAR {
     tchan = twitchchan;
   }
   /* If there's no mods, no reason to even check, eh? */
-  if (!tchan->mods) {
+  if (!strlen(tchan->mods)) {
     Tcl_AppendResult(irp, "0", NULL);
     return TCL_OK;
   }
   while (tchan && (thechan == NULL || thechan == tchan)) {
-    if (strstr(argv[1], tchan->mods)) {
+    if (strstr(tchan->mods, argv[1])) {
       Tcl_AppendResult(irp, "1", NULL);
       return TCL_OK;
     }
@@ -661,12 +658,12 @@ static int tcl_isvip STDVAR {
     tchan = twitchchan;
   }
   /* If there's no VIPs, no reason to even check, eh? */
-  if (tchan->vips) {
+  if (!strlen(tchan->vips)) {
     Tcl_AppendResult(irp, "0", NULL);
     return TCL_OK;
   }
   while (tchan && (thechan == NULL || thechan == tchan)) {
-    if (strstr(argv[1], tchan->vips)) {
+    if (strstr(tchan->vips, argv[1])) {
       Tcl_AppendResult(irp, "1", NULL);
       return TCL_OK;
     }
@@ -745,18 +742,6 @@ static int twitch_3char STDVAR
   F(argv[1], argv[2], argv[3]);
   return TCL_OK;
 }
-
-static int twitch_cmsg STDVAR
-{
-  Function F = (Function) cd;
-
-  BADARGS(5, 5, " nick chan msgid msg");
-
-  CHECKVALIDITY(twitch_cmsg);
-  F(argv[1], argv[2], argv[3], argv[4]);
-  return TCL_OK;
-}
-
 
 /* A report on the module status.
  *

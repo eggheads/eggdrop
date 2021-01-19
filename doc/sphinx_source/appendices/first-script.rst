@@ -146,4 +146,4 @@ If you want to try these out, join #eggdrop on Freenode and check your answers (
 
     <br>
 
-Copyright (C) 2003 - 2020 Eggheads Development Team
+Copyright (C) 2003 - 2021 Eggheads Development Team

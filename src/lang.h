@@ -4,7 +4,7 @@
  */
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2020 Eggheads Development Team
+ * Copyright (C) 1999 - 2021 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -489,5 +489,6 @@
 #define DCC_MYBOTNETNICK        get_language(0xe32)
 #define DCC_LOSTDUP             get_language(0xe33)
 #define DCC_TIMEOUTIDENT        get_language(0xe34)
+#define DCC_BADLISTEN           get_language(0xe35)
 
 #endif /* _EGG_LANG_H */

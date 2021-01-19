@@ -5,7 +5,7 @@
 #
 # Copyright (c) 1999-2000 Ajuba Solutions.
 # Copyright (c) 2002-2005 ActiveState Corporation.
-# Copyright (c) 2017 - 2020 Eggheads Development Team
+# Copyright (c) 2017 - 2021 Eggheads Development Team
 #
 # Original Tcl/TEA license.terms information for this file:
 # This software is copyrighted by the Regents of the University of

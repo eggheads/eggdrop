@@ -8,7 +8,7 @@
  * /etc/hosts support added by Michael Ortmann
  */
 /*
- * Portions Copyright (C) 1999 - 2020 Eggheads Development Team
+ * Portions Copyright (C) 1999 - 2021 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
