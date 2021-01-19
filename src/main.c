@@ -172,7 +172,7 @@ unsigned long itraffic_unknown_today = 0;
 
 #ifdef DEBUG_CONTEXT
 /* Context storage for fatal crashes */
-char cx_file[16][30];
+char cx_file[16][32];
 char cx_note[16][256];
 int cx_line[16];
 int cx_ptr = 0;
@@ -456,15 +456,14 @@ static void got_ill(int z)
  */
 void eggContext(const char *file, int line, const char *module)
 {
-  char x[31], *p;
+  char *p;
 
   p = strrchr(file, '/');
-  if (!module) {
-    strlcpy(x, p ? p + 1 : file, sizeof x);
-  } else
-    egg_snprintf(x, 31, "%s:%s", module, p ? p + 1 : file);
   cx_ptr = ((cx_ptr + 1) & 15);
-  strcpy(cx_file[cx_ptr], x);
+  if (!module) {
+    strlcpy(cx_file[cx_ptr], p ? p + 1 : file, sizeof cx_file[cx_ptr]);
+  } else
+    snprintf(cx_file[cx_ptr], sizeof cx_file[cx_ptr], "%s:%s", module, p ? p + 1 : file);
   cx_line[cx_ptr] = line;
   cx_note[cx_ptr][0] = 0;
 }
