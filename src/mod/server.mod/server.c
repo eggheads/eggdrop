@@ -4,7 +4,7 @@
  */
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2020 Eggheads Development Team
+ * Copyright (C) 1999 - 2021 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -1526,6 +1526,8 @@ static char *traced_nettype(ClientData cdata, Tcl_Interp *irp,
     net_type_int = NETT_RIZON;
   else if (!strcasecmp(net_type, "Undernet"))
     net_type_int = NETT_UNDERNET;
+  else if (!strcasecmp(net_type, "Twitch"))
+    net_type_int = NETT_TWITCH;
   else if (!strcasecmp(net_type, "Other"))
     net_type_int = NETT_OTHER;
   else if (!strcasecmp(net_type, "0")) { /* For backwards compatibility */

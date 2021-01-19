@@ -3,7 +3,7 @@
  *
  */
 /*
- * Copyright (C) 2000 - 2020 Eggheads Development Team
+ * Copyright (C) 2000 - 2021 Eggheads Development Team
  * Written by Fabian Knittel <fknittel@gmx.de>
  *
  * This program is free software; you can redistribute it and/or

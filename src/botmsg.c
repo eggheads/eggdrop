@@ -7,7 +7,7 @@
  */
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2020 Eggheads Development Team
+ * Copyright (C) 1999 - 2021 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -916,7 +916,7 @@ int add_note(char *to, char *from, char *msg, int idx, int echo)
     return NOTE_OK; /* Error msg from a tandembot: don't store. */
 
   /* Call 'storenote' Tcl command. */
-  simple_sprintf(ss, "%d", (idx >= 0) ? dcc[idx].sock : -1);
+  snprintf(ss, sizeof ss, "%ld", (idx >= 0) ? dcc[idx].sock : -1);
   Tcl_SetVar(interp, "_from", from, 0);
   Tcl_SetVar(interp, "_to",   to,   0);
   Tcl_SetVar(interp, "_data", msg,  0);

@@ -3,7 +3,7 @@
  *   prototypes for base64.c
  */
 /*
- * Copyright (C) 2010 - 2020 Eggheads Development Team
+ * Copyright (C) 2010 - 2021 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -22,6 +22,9 @@
 
 #ifndef _EGG_COMPAT_BASE64_H_
 #define _EGG_COMPAT_BASE64_H_
+
+#define B64_NTOP_CALCULATE_SIZE(x) ((x + 2) / 3 * 4)
+#define B64_PTON_CALCULATE_SIZE(x) (x * 3 / 4)
 
 #ifndef HAVE_BASE64
 int b64_ntop(uint8_t const *, size_t, char *, size_t);

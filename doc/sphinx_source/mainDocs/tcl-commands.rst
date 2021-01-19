@@ -712,75 +712,75 @@ ischanjuped <channel>
 
   Module: channels
 
-^^^^^^^^^^^^^^^^^^^^^
-isban <ban> [channel]
-^^^^^^^^^^^^^^^^^^^^^
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+isban <ban> [channel [-channel]]
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-  Returns: 1 if the specified ban is in the global ban list; 0 otherwise. If a channel is specified, that channel's ban list is checked as well.
-
-  Module: channels
-
-^^^^^^^^^^^^^^^^^^^^^^^^^
-ispermban <ban> [channel]
-^^^^^^^^^^^^^^^^^^^^^^^^^
-
-  Returns: 1 if the specified ban is in the global ban list AND is marked as permanent; 0 otherwise. If a channel is specified, that channel's ban list is checked as well.
+  Returns: 1 if the specified ban is in the global ban list; 0 otherwise. If a channel is specified, that channel's ban list is checked as well. If the -channel flag is used at the end of the command, \*only\* the channel bans are checked.
 
   Module: channels
 
-^^^^^^^^^^^^^^^^^^^^^^^^^^^
-isexempt <exempt> [channel]
-^^^^^^^^^^^^^^^^^^^^^^^^^^^
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ispermban <ban> [channel [-channel]]
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-  Returns: 1 if the specified exempt is in the global exempt list; 0 otherwise. If a channel is specified, that channel's exempt list is checked as well.
-
-  Module: channels
-
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-ispermexempt <exempt> [channel]
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-  Returns: 1 if the specified exempt is in the global exempt list AND is marked as permanent; 0 otherwise. If a channel is specified, that channel's exempt list is checked as well.
+  Returns: 1 if the specified ban is in the global ban list AND is marked as permanent; 0 otherwise. If a channel is specified, that channel's ban list is checked as well. If the -channel flag is used at the end of the command, \*only\* the channel bans are checked.
 
   Module: channels
 
-^^^^^^^^^^^^^^^^^^^^^^^^^^^
-isinvite <invite> [channel]
-^^^^^^^^^^^^^^^^^^^^^^^^^^^
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+isexempt <exempt> [channel [-channel]]
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-  Returns: 1 if the specified invite is in the global invite list; 0 otherwise. If a channel is specified, that channel's invite list is checked as well.
-
-  Module: channels
-
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-isperminvite <invite> [channel]
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-  Returns: 1 if the specified invite is in the global invite list AND is marked as permanent; 0 otherwise. If a channel is specified, that channel's invite list is checked as well.
+  Returns: 1 if the specified exempt is in the global exempt list; 0 otherwise. If a channel is specified, that channel's exempt list is checked as well. If the -channel flag is used at the end of the command, \*only\* the channel exempts are checked.
 
   Module: channels
 
-^^^^^^^^^^^^^^^^^^^^^^^^^^^
-isbansticky <ban> [channel]
-^^^^^^^^^^^^^^^^^^^^^^^^^^^
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ispermexempt <exempt> [channel [-channel]]
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-  Returns: 1 if the specified ban is marked as sticky in the global ban list; 0 otherwise. If a channel is specified, that channel's ban list is checked as well.
-
-  Module: channels
-
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-isexemptsticky <exempt> [channel]
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-  Returns: 1 if the specified exempt is marked as sticky in the global exempt list; 0 otherwise. If a channel is specified, that channel's exempt list is checked as well.
+  Returns: 1 if the specified exempt is in the global exempt list AND is marked as permanent; 0 otherwise. If a channel is specified, that channel's exempt list is checked as well. If the -channel flag is used at the end of the command, \*only\* the channel exempts are checked.
 
   Module: channels
 
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-isinvitesticky <invite> [channel]
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+isinvite <invite> [channel [-channel]]
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-  Returns: 1 if the specified invite is marked as sticky in the global invite list; 0 otherwise. If a channel is specified, that channel's invite list is checked as well.
+  Returns: 1 if the specified invite is in the global invite list; 0 otherwise. If a channel is specified, that channel's invite list is checked as well. If the -channel flag is used at the end of the command, \*only\* the channel invites are checked.
+
+  Module: channels
+
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+isperminvite <invite> [channel [-channel]]
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+  Returns: 1 if the specified invite is in the global invite list AND is marked as permanent; 0 otherwise. If a channel is specified, that channel's invite list is checked as well. If the -channel flag is used at the end of the command, \*only\* the channel invites are checked.
+
+  Module: channels
+
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+isbansticky <ban> [channel [-channel]]
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+  Returns: 1 if the specified ban is marked as sticky in the global ban list; 0 otherwise. If a channel is specified, that channel's ban list is checked as well. If the -channel flag is used at the end of the command, \*only\* the channel bans are checked.
+
+  Module: channels
+
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+isexemptsticky <exempt> [channel [-channel]]
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+  Returns: 1 if the specified exempt is marked as sticky in the global exempt list; 0 otherwise. If a channel is specified, that channel's exempt list is checked as well. If the -channel flag is used at the end of the command, \*only\* the channel exempts are checked.
+
+  Module: channels
+
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+isinvitesticky <invite> [channel [-channel]]
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+  Returns: 1 if the specified invite is marked as sticky in the global invite list; 0 otherwise. If a channel is specified, that channel's invite list is checked as well. If the -channel flag is used at the end of the command, \*only\* the channel invites are checked.
 
   Module: channels
 
@@ -1134,9 +1134,9 @@ hand2nick <handle> [channel]
 
   Module: irc
 
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 hand2nicks <handle> [channel]
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
   Returns: a de-duplicated Tcl list of the nickname(s) on the specified channel (if one is specified) whose nick!user\@host matches the given handle; "" is returned if no match is found. If no channel is specified, all channels are checked.
 
@@ -1706,6 +1706,39 @@ dcclist [type]
   The types are: chat, bot, files, file_receiving, file_sending, file_send_pending, script, socket (these are connections that have not yet been put under 'control'), telnet, and server. The timestamp is in unixtime format.
 
   Module: core
+
+^^^^^^^^^^^^^^^
+socklist [type]
+^^^^^^^^^^^^^^^
+
+  Returns: a list of active connections, each item in the list is a sublist containing eight elements (in dict-readable format). The order of items returned should not be considered static or permanent, so it is recommended to access the items as key/value pairs with the dict command, as opposed to something like lindex, to extract values. The possible keys returned are:
+
+  +----------+--------------------------------------------------------+
+  | idx      | integer value assigned to Eggdrop connections          |
+  +----------+--------------------------------------------------------+
+  | handle   | possible values are (telnet), (bots), (users),         |
+  |          | (script) for a listening socket, or the handle of the  |
+  |          | connected user for an established connection           |
+  +----------+--------------------------------------------------------+
+  | host     | the hostname of the connection, if it is known;        |
+  |          | otherwise a *                                          |
+  +----------+--------------------------------------------------------+
+  | ip       | the ip of the connection                               |
+  +----------+--------------------------------------------------------+
+  | port     | the port number associated with the connection (local  |
+  |          | port for listening connections, remote port for server |
+  |          | connections.                                           |
+  +----------+--------------------------------------------------------+
+  | secure   | 1 if SSL/TLS is used for the connect; 0 otherwise      |
+  +----------+--------------------------------------------------------+
+  | type     | the type of connection (TELNET, CHAT, SERVER, etc)     |
+  +----------+--------------------------------------------------------+
+  | info     | extra information associated with the connection       |
+  +----------+--------------------------------------------------------+
+  | time     | timestamp of when the socket was established           |
+  +----------+--------------------------------------------------------+
+
+ Module: core
 
 ^^^^^^^^^^^
 whom <chan>
@@ -3619,4 +3652,4 @@ are the four special characters:
 |     | words) (This char only works in binds, not in regular matching)          |
 +-----+--------------------------------------------------------------------------+
 
-  Copyright (C) 1999 - 2020 Eggheads Development Team
+  Copyright (C) 1999 - 2021 Eggheads Development Team

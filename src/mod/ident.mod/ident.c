@@ -3,7 +3,7 @@
  */
 /*
  * Copyright (c) 2018 - 2019 Michael Ortmann MIT License
- * Copyright (C) 2019 - 2020 Eggheads Development Team
+ * Copyright (C) 2019 - 2021 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -25,7 +25,6 @@
 #include <errno.h>
 #include <fcntl.h>
 #include <sys/stat.h>
-#include <time.h>
 #include "src/mod/module.h"
 #include "server.mod/server.h"
 
@@ -153,8 +152,9 @@ static void ident_oidentd()
               strncpy(buf, line, sizeof buf);
               strtok(buf, "!");
               prevtime = atoi(strtok(NULL, "!"));
-              if ((time(NULL) - prevtime) > 300) {
-                putlog(LOG_DEBUG, "*", "IDENT: Removing expired oident.conf entry: \"%s\"", buf);
+              if ((now - prevtime) > 300) {
+                putlog(LOG_DEBUG, "*", "IDENT: Removing expired oident.conf "
+                    "entry: \"%s\"", buf);
               } else {
                 strncat(data, line, ((filesize + 256) - strlen(data)));
               }
@@ -165,7 +165,8 @@ static void ident_oidentd()
     }
     fclose(fd);
   } else {
-    putlog(LOG_MISC, "*", "IDENT: Error opening oident.conf for reading");
+    putlog(LOG_MISC, "*", "IDENT: oident.conf missing, or error opening "
+            "for reading");
   }
   servidx = findanyidx(serv);
   size = sizeof ss;
@@ -175,20 +176,22 @@ static void ident_oidentd()
   }
   fd = fopen(path, "w");
   if (fd != NULL) {
-    fprintf(fd, "%s", data);
+    if (data) {
+      fprintf(fd, "%s", data);
+    }
     if (ss.ss_family == AF_INET) {
       struct sockaddr_in *saddr = (struct sockaddr_in *)&ss;
       fprintf(fd, "lport %i from %s { reply \"%s\" } "
-                "### eggdrop_%s !%ld\n", ntohs(saddr->sin_port),
+                "### eggdrop_%s !%" PRId64 "\n", ntohs(saddr->sin_port),
                 inet_ntop(AF_INET, &(saddr->sin_addr), s, INET_ADDRSTRLEN),
-                botuser, pid_file, time(NULL));
+                botuser, pid_file, (int64_t) now);
 #ifdef IPV6
     } else if (ss.ss_family == AF_INET6) {
       struct sockaddr_in6 *saddr = (struct sockaddr_in6 *)&ss;
       fprintf(fd, "lport %i from %s { reply \"%s\" } "
-                "### eggdrop_%s !%ld\n", ntohs(saddr->sin6_port),
+                "### eggdrop_%s !%" PRId64 "\n", ntohs(saddr->sin6_port),
                 inet_ntop(AF_INET6, &(saddr->sin6_addr), s, INET6_ADDRSTRLEN),
-                botuser, pid_file, time(NULL));
+                botuser, pid_file, (int64_t) now);
 #endif
     } else {
       putlog(LOG_MISC, "*", "IDENT: Error writing oident.conf line");

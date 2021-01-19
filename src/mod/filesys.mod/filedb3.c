@@ -6,7 +6,7 @@
  */
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2020 Eggheads Development Team
+ * Copyright (C) 1999 - 2021 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -249,8 +249,8 @@ static filedb_entry *filedb_findempty(FILE *fdb, int tot)
 
   /* No existing entries, so create new entry at end of DB instead. */
   fdbe = malloc_fdbe();
-  fseek(fdb, 0L, SEEK_END);
-  fdbe->pos = ftell(fdb);
+  fseeko(fdb, 0, SEEK_END);
+  fdbe->pos = ftello(fdb);
   return fdbe;
 }
 
@@ -840,7 +840,7 @@ static FILE *filedb_open(char *path, int sort)
 static void filedb_close(FILE *fdb)
 {
   filedb_timestamp(fdb);
-  fseek(fdb, 0L, SEEK_END);
+  fseeko(fdb, 0, SEEK_END);
   count--;
   unlockfile(fdb);
   fclose(fdb);

@@ -1,6 +1,6 @@
 dnl aclocal.m4: macros autoconf uses when building configure from configure.ac
 dnl
-dnl Copyright (C) 1999 - 2020 Eggheads Development Team
+dnl Copyright (C) 1999 - 2021 Eggheads Development Team
 dnl
 dnl This program is free software; you can redistribute it and/or
 dnl modify it under the terms of the GNU General Public License
@@ -72,6 +72,7 @@ AC_DEFUN([EGG_MSG_SUMMARY],
     fi
   fi
   AC_MSG_RESULT([SSL/TLS Support: $tls_enabled$ADD])
+  AC_MSG_RESULT([Threaded DNS core (beta): $tdns_enabled])
   AC_MSG_RESULT
 ])
 
@@ -1706,6 +1707,25 @@ AC_DEFUN([EGG_TLS_DETECT],
       EGG_MD5_COMPAT
     fi
   fi
+])
+
+
+dnl EGG_TDNS_ENABLE
+dnl
+AC_DEFUN([EGG_TDNS_ENABLE],
+[
+  AC_MSG_CHECKING(for threaded dns core (beta))
+  AC_ARG_ENABLE([tdns], [  --enable-tdns           enable threaded DNS core (beta)],
+    [
+      AC_MSG_RESULT(yes)
+      AC_DEFINE([EGG_TDNS], [1], [Define this to enable threaded DNS core.])
+      LDFLAGS="${LDFLAGS} -lpthread"
+      tdns_enabled="yes"
+    ],
+    [
+      AC_MSG_RESULT(no)
+      tdns_enabled="no"
+    ])
 ])
 
 

@@ -12,7 +12,7 @@
  */
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2020 Eggheads Development Team
+ * Copyright (C) 1999 - 2021 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -41,7 +41,7 @@
 extern struct dcc_t *dcc;
 extern struct userrec *userlist, *lastuser;
 extern struct chanset_t *chanset;
-extern int dcc_total, noshare;
+extern int dcc_total, noshare, remove_pass;
 extern char botnetnick[];
 extern Tcl_Interp *interp;
 extern time_t now;
@@ -454,7 +454,7 @@ static void restore_ignore(char *host)
 static void tell_user(int idx, struct userrec *u)
 {
   char s[81], s1[81], format[81];
-  int n = 0;
+  int n = 0, p = 0;
   time_t now2;
   struct chanuserrec *ch;
   struct user_entry *ue;
@@ -482,8 +482,10 @@ static void tell_user(int idx, struct userrec *u)
   }
   egg_snprintf(format, sizeof format, "%%-%us %%-5s%%5d %%-15s %%s (%%s)\n",
                HANDLEN);
-  dprintf(idx, format, u->handle,
-          get_user(&USERENTRY_PASS, u) ? "yes" : "no", n, s, s1,
+  if ((get_user(&USERENTRY_PASS, u)) || (get_user(&USERENTRY_PASS2, u))) {
+    p = 1;
+  }
+  dprintf(idx, format, u->handle, p ? "yes" : "no", n, s, s1,
           (li && li->lastonplace) ? li->lastonplace : "nowhere");
   /* channel flags? */
   for (ch = u->chanrec; ch; ch = ch->next) {
@@ -612,6 +614,34 @@ void tell_users_match(int idx, char *mtch, int start, int limit, char *chname)
   }
 
   dprintf(idx, MISC_FOUNDMATCH, cnt, cnt == 1 ? "" : MISC_MATCH_PLURAL);
+}
+
+/* if encryption mod and encryption2 mod is loaded and remove-pass is 1 delete
+ * PASS for each user (and bot) that has PASS2 set
+ */
+static void cleanup_pass(void) {
+  struct userrec *u;
+  struct user_entry *e, *p, *p2;
+
+  if (encrypt_pass && encrypt_pass2) {
+    for (u = userlist; u; u = u->next) {
+      p = NULL;
+      p2 = NULL;
+      for (e = u->entries; e; e = e->next) {
+        if (!strcasecmp(e->type->name, "PASS"))
+          p = e;
+        else if (!strcasecmp(e->type->name, "PASS2"))
+          p2 = e;
+      }
+      if (p && p2) {
+        explicit_bzero(p->u.extra, strlen(p->u.extra));
+        nfree(p->u.extra);
+        p->u.extra = NULL;
+        egg_list_delete((struct list_type **) &(u->entries), (struct list_type *) p);
+        nfree(p);
+      }
+    }
+  }
 }
 
 /*
@@ -969,11 +999,13 @@ int readuserfile(char *file, struct userrec **ret)
   }
   noshare = noxtra = 0;
   /* process the user data *now* */
+  if (remove_pass)
+    cleanup_pass();
   return 1;
 }
 
 /* New methodology - cycle through list 3 times
- * 1st time scan for +sh bots and link if none connected
+ * 1st time scan for +(sbcdejnu)h bots and link if none connected
  * 2nd time scan for +h bots
  * 3rd time scan for +a/+h bots */
 void autolink_cycle(char *start)
@@ -1087,4 +1119,16 @@ void autolink_cycle(char *start)
     autc = NULL;
   if (autc)
     botlink("", -3, autc->handle);      /* try autoconnect */
+}
+
+char *traced_remove_pass(ClientData cd, Tcl_Interp *irp, EGG_CONST char *name1, EGG_CONST char *name2, int flags)
+{
+  const char *value;
+
+  value = Tcl_GetVar2(irp, name1, name2, TCL_GLOBAL_ONLY);
+  if (value[0] == '1' && value[1] == '\0') {
+    cleanup_pass();
+    Tcl_UntraceVar(interp, "remove-pass", TCL_GLOBAL_ONLY|TCL_TRACE_WRITES, traced_remove_pass, NULL);
+  }
+  return NULL;
 }

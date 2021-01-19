@@ -3,7 +3,7 @@
  */
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2020 Eggheads Development Team
+ * Copyright (C) 1999 - 2021 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -118,7 +118,10 @@ static int gotmode(char *, char *);
 /* 24 - 27 */
 #define getchanmode ((char *(*)(struct chanset_t *))irc_funcs[24])
 #define reset_chan_info (*(void *)(irc_funcs[25]))
-#define H_invt (*(p_tcl_bind_list *)(irc_funcs[26]))
+#define H_invt (*(p_tcl_bind_list *)(irc_funcs[26])
+#define twitch (*(int *)(irc_funcs[27]))
+/* 28 - 31 */
+#define H_ircaway (*(p_tcl_bind_list *)(irc_funcs[28])
 
 #endif /* MAKING_IRC */
 

@@ -3,7 +3,7 @@
  */
 /*
  * Copyright (C) 1990 Jarkko Oikarinen
- * Copyright (C) 1999 - 2020 Eggheads Development Team
+ * Copyright (C) 1999 - 2021 Eggheads Development Team
  *
  * This code was more or less cloned from the ircd-hybrid 5.3 source.
  * The original code was written by Otto Harkoonen and even though it

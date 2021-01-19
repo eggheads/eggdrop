@@ -87,4 +87,4 @@ global flag applies to all channels. The standard global flags are:
   flags. These are used by scripts, and their uses very depending on the
   script that uses them.
 
-Copyright (C) 2002 - 2020 Eggheads Development Team
+Copyright (C) 2002 - 2021 Eggheads Development Team

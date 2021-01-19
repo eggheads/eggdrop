@@ -3,7 +3,7 @@
  */
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2020 Eggheads Development Team
+ * Copyright (C) 1999 - 2021 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -510,8 +510,14 @@
 #define make_rand_str_from_chars ((void (*) (char *, int, char *))global[308])
 #define add_tcl_objcommands ((void (*) (tcl_cmds *))global[309])
 #define pid_file ((char *)(global[310]))
-#define get_expire_time ((time_t (*) (Tcl_Interp *, const char *))global[311])
-
+#ifndef HAVE_EXPLICIT_BZERO
+# define explicit_bzero ((void (*) (void *const, const size_t))global[311])
+#endif
+/* 312 - 315 */
+#define USERENTRY_PASS2 (*(struct user_entry_type *)global[312])
+#define crypto_verify ((int ( *) (const char *, const char *))global[313])
+#define egg_uname ((char *(*) ())global[314])
+#define get_expire_time ((time_t (*) (Tcl_Interp *, const char *))global[315])
 
 /* hostmasking */
 #define maskhost(a,b) maskaddr((a),(b),3)

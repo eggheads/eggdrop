@@ -44,4 +44,4 @@ There are also some variables you can set in your config file:
     linked if the userfile transfer fails and retry every minute (both bots must
     be v1.9.0 or higher).
 
-Copyright (C) 2000 - 2020 Eggheads Development Team
+Copyright (C) 2000 - 2021 Eggheads Development Team

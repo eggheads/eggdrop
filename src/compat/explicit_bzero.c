@@ -2,7 +2,7 @@
  * explicit_bzero.c -- provides explicit_bzero() if necessary
  */
 /*
- * Copyright (C) 2010 - 2018 Eggheads Development Team
+ * Copyright (C) 2010 - 2021 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
