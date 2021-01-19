@@ -456,16 +456,7 @@ static void got_ill(int z)
  */
 void eggContext(const char *file, int line, const char *module)
 {
-  char *p;
-
-  p = strrchr(file, '/');
-  cx_ptr = ((cx_ptr + 1) & 15);
-  if (!module) {
-    strlcpy(cx_file[cx_ptr], p ? p + 1 : file, sizeof cx_file[cx_ptr]);
-  } else
-    snprintf(cx_file[cx_ptr], sizeof cx_file[cx_ptr], "%s:%s", module, p ? p + 1 : file);
-  cx_line[cx_ptr] = line;
-  cx_note[cx_ptr][0] = 0;
+  eggContextNote(file, line, module, 0);
 }
 
 /* Called from the ContextNote macro.
@@ -473,17 +464,19 @@ void eggContext(const char *file, int line, const char *module)
 void eggContextNote(const char *file, int line, const char *module,
                     const char *note)
 {
-  char x[31], *p;
+  char *p;
 
   p = strrchr(file, '/');
-  if (!module)
-    strlcpy(x, p ? p + 1 : file, sizeof x);
-  else
-    egg_snprintf(x, 31, "%s:%s", module, p ? p + 1 : file);
   cx_ptr = ((cx_ptr + 1) & 15);
-  strcpy(cx_file[cx_ptr], x);
+  if (!module)
+    strlcpy(cx_file[cx_ptr], p ? p + 1 : file, sizeof cx_file[cx_ptr]);
+  else
+    snprintf(cx_file[cx_ptr], sizeof cx_file[cx_ptr], "%s:%s", module, p ? p + 1 : file);
   cx_line[cx_ptr] = line;
-  strlcpy(cx_note[cx_ptr], note, sizeof cx_note[cx_ptr]);
+  if (!note)
+    cx_note[cx_ptr][0] = 0;
+  else
+    strlcpy(cx_note[cx_ptr], note, sizeof cx_note[cx_ptr]);
 }
 #endif /* DEBUG_CONTEXT */
 
