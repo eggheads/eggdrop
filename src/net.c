@@ -1087,14 +1087,12 @@ int sockgets(char *s, int *len)
 
           /* this function is used not only for irc connections. dont remove
            * empty lines for they could be important like for example for http
-           * header termination. remove any \r and \n until second \n.
+           * header termination.
            */
           p2 = p;
-          while (*p == '\r')
+          if (*p == '\r')
             p++;
           if (*p == '\n')
-            p++;
-          while ((*p == '\r') && (*p != '\n'))
             p++;
           *p2 = 0;
 
