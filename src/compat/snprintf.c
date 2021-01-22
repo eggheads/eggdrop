@@ -2,7 +2,7 @@
  * snprintf.c - a portable implementation of snprintf and vsnprintf
  */
 /*
- * Portions Copyright (C) 2000 - 2020 Eggheads Development Team
+ * Portions Copyright (C) 2000 - 2021 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License

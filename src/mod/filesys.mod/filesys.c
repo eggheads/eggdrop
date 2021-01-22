@@ -4,7 +4,7 @@
  */
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2020 Eggheads Development Team
+ * Copyright (C) 1999 - 2021 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -145,11 +145,11 @@ static struct user_entry_type USERENTRY_DCCDIR = {
 static int check_tcl_fil(char *cmd, int idx, char *args)
 {
   int x;
-  char s[5];
+  char s[21];
   struct flag_record fr = { FR_GLOBAL | FR_CHAN, 0, 0, 0, 0, 0 };
 
   get_user_flagrec(dcc[idx].user, &fr, dcc[idx].u.file->chat->con_chan);
-  sprintf(s, "%ld", dcc[idx].sock);
+  snprintf(s, sizeof s, "%ld", dcc[idx].sock);
   Tcl_SetVar(interp, "_fil1", dcc[idx].nick, 0);
   Tcl_SetVar(interp, "_fil2", s, 0);
   Tcl_SetVar(interp, "_fil3", args, 0);

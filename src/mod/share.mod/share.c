@@ -4,7 +4,7 @@
  */
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2020 Eggheads Development Team
+ * Copyright (C) 1999 - 2021 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -1130,7 +1130,7 @@ static void share_userfileq(int idx, char *par)
   int ok = 1, i, bfl = bot_flags(dcc[idx].user);
 
   flush_tbuf(dcc[idx].nick);
-  if (bfl & BOT_AGGRESSIVE)
+  if (bfl & (BOT_AGGRESSIVE|BOT_SHPERMS))
     dprintf(idx, "s un I have you marked for Aggressive sharing.\n");
   else if (!(bfl & BOT_PASSIVE))
     dprintf(idx, "s un You are not marked for sharing with me.\n");
@@ -1274,7 +1274,7 @@ static void share_version(int idx, char *par)
                        STAT_OFFERED | STAT_AGGRESSIVE);
   dcc[idx].u.bot->uff_flags = 0;
   if ((dcc[idx].u.bot->numver >= min_share) &&
-      (bot_flags(dcc[idx].user) & BOT_AGGRESSIVE)) {
+      (bot_flags(dcc[idx].user) & (BOT_AGGRESSIVE|BOT_SHPERMS))) {
     if (can_resync(dcc[idx].nick))
       dprintf(idx, "s r?\n");
     else
@@ -1322,49 +1322,52 @@ static void share_feats(int idx, char *par)
 }
 
 
-/* Note: these MUST be sorted. */
-static botcmd_t C_share[] = {
-  {"!",        (IntFunc) share_endstartup},
-  {"+b",       (IntFunc) share_pls_ban},
-  {"+bc",      (IntFunc) share_pls_banchan},
-  {"+bh",      (IntFunc) share_pls_bothost},
-  {"+cr",      (IntFunc) share_pls_chrec},
-  {"+e",       (IntFunc) share_pls_exempt},
-  {"+ec",      (IntFunc) share_pls_exemptchan},
-  {"+h",       (IntFunc) share_pls_host},
-  {"+i",       (IntFunc) share_pls_ignore},
-  {"+inv",     (IntFunc) share_pls_invite},
-  {"+invc",    (IntFunc) share_pls_invitechan},
-  {"-b",       (IntFunc) share_mns_ban},
-  {"-bc",      (IntFunc) share_mns_banchan},
-  {"-cr",      (IntFunc) share_mns_chrec},
-  {"-e",       (IntFunc) share_mns_exempt},
-  {"-ec",      (IntFunc) share_mns_exemptchan},
-  {"-h",       (IntFunc) share_mns_host},
-  {"-i",       (IntFunc) share_mns_ignore},
-  {"-inv",     (IntFunc) share_mns_invite},
-  {"-invc",    (IntFunc) share_mns_invitechan},
-  {"a",        (IntFunc) share_chattr},
-  {"c",        (IntFunc) share_change},
-  {"chchinfo", (IntFunc) share_chchinfo},
-  {"e",        (IntFunc) share_end},
-  {"feats",    (IntFunc) share_feats},
-  {"h",        (IntFunc) share_chhand},
-  {"k",        (IntFunc) share_killuser},
-  {"n",        (IntFunc) share_newuser},
-  {"nc",       (IntFunc) share_newchan},
-  {"r!",       (IntFunc) share_resync},
-  {"r?",       (IntFunc) share_resyncq},
-  {"rn",       (IntFunc) share_resync_no},
-  {"s",        (IntFunc) share_stick_ban},
-  {"se",       (IntFunc) share_stick_exempt},
-  {"sInv",     (IntFunc) share_stick_invite},
-  {"u?",       (IntFunc) share_userfileq},
-  {"un",       (IntFunc) share_ufno},
-  {"us",       (IntFunc) share_ufsend},
-  {"uy",       (IntFunc) share_ufyes},
-  {"v",        (IntFunc) share_version},
-  {NULL,       NULL}
+/* Note: these MUST be sorted.
+ * Flags (second arg) are compared with OR,
+ * here in particular this means +p can execute all
+ */
+static botscmd_t C_share[] = {
+  {"!",        "",  (IntFunc) share_endstartup},
+  {"+b",       "psb", (IntFunc) share_pls_ban},
+  {"+bc",      "psb", (IntFunc) share_pls_banchan},
+  {"+bh",      "psu", (IntFunc) share_pls_bothost},
+  {"+cr",      "psc", (IntFunc) share_pls_chrec},
+  {"+e",       "pse", (IntFunc) share_pls_exempt},
+  {"+ec",      "pse", (IntFunc) share_pls_exemptchan},
+  {"+h",       "psu", (IntFunc) share_pls_host},
+  {"+i",       "psn", (IntFunc) share_pls_ignore},
+  {"+inv",     "psj", (IntFunc) share_pls_invite},
+  {"+invc",    "psj", (IntFunc) share_pls_invitechan},
+  {"-b",       "psb", (IntFunc) share_mns_ban},
+  {"-bc",      "psb", (IntFunc) share_mns_banchan},
+  {"-cr",      "psc", (IntFunc) share_mns_chrec},
+  {"-e",       "pse", (IntFunc) share_mns_exempt},
+  {"-ec",      "pse", (IntFunc) share_mns_exemptchan},
+  {"-h",       "psu", (IntFunc) share_mns_host},
+  {"-i",       "psn", (IntFunc) share_mns_ignore},
+  {"-inv",     "psj", (IntFunc) share_mns_invite},
+  {"-invc",    "psj", (IntFunc) share_mns_invitechan},
+  {"a",        "psu", (IntFunc) share_chattr},
+  {"c",        "psu", (IntFunc) share_change},
+  {"chchinfo", "psu", (IntFunc) share_chchinfo},
+  {"e",        "",  (IntFunc) share_end},
+  {"feats",    "",  (IntFunc) share_feats},
+  {"h",        "psu", (IntFunc) share_chhand},
+  {"k",        "psu", (IntFunc) share_killuser},
+  {"n",        "psu", (IntFunc) share_newuser},
+  {"nc",       "psc", (IntFunc) share_newchan},
+  {"r!",       "",  (IntFunc) share_resync},
+  {"r?",       "",  (IntFunc) share_resyncq},
+  {"rn",       "",  (IntFunc) share_resync_no},
+  {"s",        "psb", (IntFunc) share_stick_ban},
+  {"se",       "pse", (IntFunc) share_stick_exempt},
+  {"sInv",     "psj", (IntFunc) share_stick_invite},
+  {"u?",       "",  (IntFunc) share_userfileq},
+  {"un",       "",  (IntFunc) share_ufno},
+  {"us",       "",  (IntFunc) share_ufsend},
+  {"uy",       "",  (IntFunc) share_ufyes},
+  {"v",        "",  (IntFunc) share_version},
+  {NULL,       NULL, NULL}
 };
 
 
@@ -1377,9 +1380,19 @@ static void sharein_mod(int idx, char *msg)
   for (f = 0, i = 0; C_share[i].name && !f; i++) {
     int y = strcasecmp(code, C_share[i].name);
 
-    if (!y)
+    if (!y) {
       /* Found a match */
-      (C_share[i].func) (idx, msg);
+      struct flag_record fr = { FR_BOT , 0, 0, 0, 0, 0 };
+      struct flag_record req = { FR_BOT | FR_OR, 0, 0, 0, 0, 0 };
+
+      break_down_flags(C_share[i].flags, &req, NULL);
+      get_user_flagrec(dcc[idx].user, &fr, NULL);
+      if (flagrec_eq(&req, &fr)) {
+        (C_share[i].func) (idx, msg);
+      } else {
+        putlog(LOG_DEBUG, "*", "Userfile modification from %s rejected: incorrect bot flag permissions for \"%s %s\"", dcc[idx].nick, code, msg);
+      }
+    }
     if (y <= 0)
       f = 1;
   }
@@ -1529,13 +1542,13 @@ static void check_expired_tbufs()
     if (dcc[i].type->flags & DCT_BOT) {
       if (dcc[i].status & STAT_OFFERED) {
         if ((now - dcc[i].timeval > 120) && (dcc[i].user &&
-            (bot_flags(dcc[i].user) & BOT_AGGRESSIVE)))
+            (bot_flags(dcc[i].user) & (BOT_AGGRESSIVE|BOT_SHPERMS))))
           dprintf(i, "s u?\n");
           /* ^ send it again in case they missed it */
         /* If it's a share bot that hasnt been sharing, ask again */
       } else if (!(dcc[i].status & STAT_SHARE)) {
         /* Patched from original source by giusc@gbss.it <20040207> */
-        if (dcc[i].user && (bot_flags(dcc[i].user) & BOT_AGGRESSIVE))  {
+        if (dcc[i].user && (bot_flags(dcc[i].user) & (BOT_AGGRESSIVE|BOT_SHPERMS)))  {
           dprintf(i, "s u?\n");
           dcc[i].status |= STAT_OFFERED;
         }
@@ -2052,14 +2065,14 @@ static void start_sending_users(int idx)
           egg_snprintf(s2, sizeof s2, "s a %s %s\n", u->handle, s1);
           q_tbuf(dcc[idx].nick, s2, NULL);
           for (ch = u->chanrec; ch; ch = ch->next) {
-            if ((ch->flags & ~BOT_SHARE) &&
+            if ((ch->flags & ~BOT_AGGRESSIVE) &&
                 ((cst = findchan_by_dname(ch->channel)) &&
                  channel_shared(cst))) {
               fr.match = (FR_CHAN | FR_BOT);
               get_user_flagrec(dcc[idx].user, &fr, ch->channel);
               if (bot_chan(fr) || bot_global(fr)) {
                 fr.match = FR_CHAN;
-                fr.chan = ch->flags & ~BOT_SHARE;
+                fr.chan = ch->flags & ~BOT_AGGRESSIVE;
                 fr.udef_chan = ch->flags_udef;
                 build_flags(s1, &fr, NULL);
                 egg_snprintf(s2, sizeof s2, "s a %s %s %s\n", u->handle, s1,

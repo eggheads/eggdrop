@@ -3,7 +3,7 @@
  */
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2020 Eggheads Development Team
+ * Copyright (C) 1999 - 2021 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -46,17 +46,17 @@ struct flag_record {
  *   unused letters: is
  *
  * botflags:
- *   a?????ghi??l???p?rs??0123456789
- *   unused letters: bcdefjkmnoqtu
+ *   abcde?ghij?l?n?p?rs?u0123456789
+ *   unused letters: fkmoqt
  *   unusable letters: vwxyz
  *
  * chanflags:
  *   a??defg???klmno?qrs??vw?yz + user defined A-Z
- *   unused letters: bchijptuw (s from bot flags)
+ *   unused letters: bchijptux (s from bot flags)
  */
 #define USER_VALID 0x003fbfeff   /* Sum of all valid USER_ flags */
 #define CHAN_VALID 0x003677c79   /* Sum of all valid CHAN_ flags */
-#define BOT_VALID  0x07fe689c1   /* Sum of all valid BOT_  flags */
+#define BOT_VALID  0x07ff6abdf   /* Sum of all valid BOT_  flags */
 
 
 #define USER_AUTOOP        0x00000001 /* a  auto-op                               */
@@ -89,26 +89,26 @@ struct flag_record {
 
 /* Flags specifically for bots */
 #define BOT_ALT        0x00000001 /* a  auto-link here if all hubs fail */
-#define BOT_B          0x00000002 /* b  unused                          */
-#define BOT_C          0x00000004 /* c  unused                          */
-#define BOT_D          0x00000008 /* d  unused                          */
-#define BOT_E          0x00000010 /* e  unused                          */
+#define BOT_SHBAN      0x00000002 /* b  can share bans                  */
+#define BOT_SHCHAN     0x00000004 /* c  can share channel changes       */
+#define BOT_SHLIMITED  0x00000008 /* d  shares userfiles but can't share anything */
+#define BOT_SHEXEMPT   0x00000010 /* e  can share exempts               */
 #define BOT_F          0x00000020 /* f  unused                          */
 #define BOT_GLOBAL     0x00000040 /* g  all channel are shared          */
 #define BOT_HUB        0x00000080 /* h  auto-link to ONE of these bots  */
 #define BOT_ISOLATE    0x00000100 /* i  isolate party line from botnet  */
-#define BOT_J          0x00000200 /* j  unused                          */
+#define BOT_SHINV      0x00000200 /* j  can share invites               */
 #define BOT_K          0x00000400 /* k  unused                          */
 #define BOT_LEAF       0x00000800 /* l  may not link other bots         */
 #define BOT_M          0x00001000 /* m  unused                          */
-#define BOT_N          0x00002000 /* n  unused                          */
+#define BOT_SHIGN      0x00002000 /* n  can share ignores               */
 #define BOT_O          0x00004000 /* o  unused                          */
 #define BOT_PASSIVE    0x00008000 /* p  share passively with this bot   */
 #define BOT_Q          0x00010000 /* q  unused                          */
 #define BOT_REJECT     0x00020000 /* r  automatically reject anywhere   */
-#define BOT_AGGRESSIVE 0x00040000 /* s  bot shares user files           */
+#define BOT_AGGRESSIVE 0x00040000 /* s  shares userfiles and can share all */
 #define BOT_T          0x00080000 /* t  unused                          */
-#define BOT_U          0x00100000 /* u  unused                          */
+#define BOT_SHUSER     0x00100000 /* u  can share user changes          */
 /* BOT_V to BOT_Z not usable as they're bitflags 32-36 */
 #define BOT_FLAG0      0x00200000 /* 0  user-defined flag #0            */
 #define BOT_FLAG1      0x00400000 /* 1  user-defined flag #1            */
@@ -120,8 +120,69 @@ struct flag_record {
 #define BOT_FLAG7      0x10000000 /* 7  user-defined flag #7            */
 #define BOT_FLAG8      0x20000000 /* 8  user-defined flag #8            */
 #define BOT_FLAG9      0x40000000 /* 9  user-defined flag #9            */
-#define BOT_SHARE      (BOT_AGGRESSIVE|BOT_PASSIVE)
+/* BOT_S still shares everything for backward compat, but if removed to share more precisely,
+   we need those detailed flags to still indicate the bot shares */
+#define BOT_SHPERMS    (BOT_SHBAN|BOT_SHCHAN|BOT_SHEXEMPT|BOT_SHIGN|BOT_SHINV|BOT_SHUSER|BOT_SHLIMITED)
+#define BOT_SHARE      (BOT_AGGRESSIVE|BOT_PASSIVE|BOT_SHPERMS)
 
+/* When adding more here, also add messages in cmds.c attr_inform */
+/* Bot flag checking message ID's */
+#define BOT_SANE_ALTOWNSHUB		0x00000001
+#define BOT_SANE_HUBOWNSALT		0x00000002
+#define BOT_SANE_OWNSALTHUB		0x00000004
+#define BOT_SANE_SHPOWNSAGGR		0x00000008
+#define BOT_SANE_AGGROWNSSHP		0x00000010
+#define BOT_SANE_OWNSSHPAGGR		0x00000020
+#define BOT_SANE_SHPOWNSPASS		0x00000040
+#define BOT_SANE_PASSOWNSSHP		0x00000080
+#define BOT_SANE_OWNSSHPPASS		0x00000100
+#define BOT_SANE_SHAREOWNSREJ		0x00000200
+#define BOT_SANE_REJOWNSSHARE		0x00000400
+#define BOT_SANE_OWNSSHAREREJ		0x00000800
+#define BOT_SANE_HUBOWNSREJ		0x00001000
+#define BOT_SANE_REJOWNSHUB		0x00002000
+#define BOT_SANE_OWNSHUBREJ		0x00004000
+#define BOT_SANE_ALTOWNSREJ		0x00008000
+#define BOT_SANE_REJOWNSALT		0x00010000
+#define BOT_SANE_OWNSALTREJ		0x00020000
+#define BOT_SANE_AGGROWNSPASS		0x00040000
+#define BOT_SANE_PASSOWNSAGGR		0x00080000
+#define BOT_SANE_OWNSAGGRPASS		0x00100000
+#define BOT_SANE_NOSHAREOWNSGLOB	0x00200000
+#define BOT_SANE_OWNSGLOB		0x00400000
+/* User/Chan flag checking message ID's */
+#define UC_SANE_DEOPOWNSOP		0x00000001
+#define UC_SANE_OPOWNSDEOP		0x00000002
+#define UC_SANE_OWNSDEOPOP		0x00000004
+#define UC_SANE_DEHALFOPOWNSHALFOP	0x00000008
+#define UC_SANE_HALFOPOWNSDEHALFOP	0x00000010
+#define UC_SANE_OWNSDEHALFOPHALFOP	0x00000020
+#define UC_SANE_DEOPOWNSAUTOOP		0x00000040
+#define UC_SANE_AUTOOPOWNSDEOP		0x00000080
+#define UC_SANE_OWNSDEOPAUTOOP		0x00000100
+#define UC_SANE_DEHALFOPOWNSAHALFOP	0x00000200
+#define UC_SANE_AHALFOPOWNSDEHALFOP	0x00000400
+#define UC_SANE_OWNSDEHALFOPAHALFOP	0x00000800
+#define UC_SANE_QUIETOWNSVOICE		0x00001000
+#define UC_SANE_VOICEOWNSQUIET		0x00002000
+#define UC_SANE_OWNSQUIETVOICE		0x00004000
+#define UC_SANE_QUIETOWNSGVOICE		0x00008000
+#define UC_SANE_GVOICEOWNSQUIET		0x00010000
+#define UC_SANE_OWNSQUIETGVOICE		0x00020000
+#define UC_SANE_OWNERADDSMASTER		0x00040000
+#define UC_SANE_MASTERADDSOP		0x00080000
+#define UC_SANE_OPADDSHALFOP		0x00100000
+#define UC_SANE_NOBOTOWNSAGGR		0x00200000
+#define UC_SANE_BOTOWNSPARTY		0x00400000
+#define UC_SANE_BOTOWNSMASTER		0x00800000
+#define UC_SANE_BOTOWNSCOMMON		0x01000000
+#define UC_SANE_BOTOWNSOWNER		0x02000000
+#define UC_SANE_MASTERADDSBOTMOPJAN	0x04000000
+#define UC_SANE_BOTMASTADDSPARTY	0x08000000
+#define UC_SANE_JANADDSXFER		0x10000000
+#define UC_SANE_AUTOOPADDSOP		0x20000000
+#define UC_SANE_AUTOHALFOPADDSHALFOP	0x40000000
+#define UC_SANE_GVOICEADDSVOICE		0x80000000
 
 /* Flag checking macros */
 #define chan_op(x)              ((x).chan & USER_OP)
@@ -176,7 +237,9 @@ int build_flags(char *, struct flag_record *, struct flag_record *);
 int flagrec_eq(struct flag_record *, struct flag_record *);
 int flagrec_ok(struct flag_record *, struct flag_record *);
 int sanity_check(int);
-int chan_sanity_check(int, int);
+int user_sanity_check(int * const, int const, int const);
+int bot_sanity_check(intptr_t * const, intptr_t const, intptr_t const);
+int chan_sanity_check(int * const, int const, int const, int const);
 char geticon(int);
 
 #endif /* MAKING_MODS */

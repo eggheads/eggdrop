@@ -4,7 +4,7 @@
  */
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2020 Eggheads Development Team
+ * Copyright (C) 1999 - 2021 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -74,12 +74,12 @@ static int tcl_setowner STDVAR
 static int tcl_getgots STDVAR
 {
   int i;
-  char s[10];
+  char s[12];
 
   BADARGS(3, 3, " dir file");
 
   i = filedb_getgots(argv[1], argv[2]);
-  sprintf(s, "%d", i);
+  snprintf(s, sizeof s, "%d", i);
   Tcl_AppendResult(irp, s, NULL);
   return TCL_OK;
 }

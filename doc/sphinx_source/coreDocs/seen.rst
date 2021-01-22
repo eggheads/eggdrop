@@ -18,4 +18,4 @@ Put this line into your Eggdrop configuration file to load the seen module::
   loadmodule seen
 
 
-Copyright (C) 2000 - 2020 Eggheads Development Team
+Copyright (C) 2000 - 2021 Eggheads Development Team

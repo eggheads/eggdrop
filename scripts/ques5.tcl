@@ -2,7 +2,7 @@
 # ques5.tcl
 #
 # Copyright (C) 1995 - 1997 Robey Pointer
-# Copyright (C) 1999 - 2020 Eggheads Development Team
+# Copyright (C) 1999 - 2021 Eggheads Development Team
 #
 # v1 -- 20aug95
 # v2 -- 2oct95   [improved it]

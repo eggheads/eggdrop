@@ -4,7 +4,7 @@
  */
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2020 Eggheads Development Team
+ * Copyright (C) 1999 - 2021 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -172,7 +172,7 @@ static int tcl_hand2idx STDVAR
   int i;
   char s[11];
 
-  BADARGS(2, 2, " nickname");
+  BADARGS(2, 2, " handle");
 
   for (i = 0; i < dcc_total; i++)
     if ((dcc[i].type->flags & (DCT_SIMUL | DCT_BOT)) &&
@@ -1045,7 +1045,7 @@ static int setlisten(Tcl_Interp *irp, char *ip, char *portp, char *type, char *m
   memset(&hint, '\0', sizeof hint);
   hint.ai_family = PF_UNSPEC;
   hint.ai_flags = AI_NUMERICHOST;
-  if (!strlen(ip)) {
+  if (!ip[0]) {
 #ifdef IPV6
     if (pref_af) {
       strlcpy(newip, "::", sizeof newip);
@@ -1218,7 +1218,7 @@ static int setlisten(Tcl_Interp *irp, char *ip, char *portp, char *type, char *m
     strcpy(dcc[idx].nick, "(users)");
   else if (!strcmp(type, "all"))
     strcpy(dcc[idx].nick, "(telnet)");
-  if (strlen(maskproc))
+  if (maskproc[0])
     strlcpy(dcc[idx].host, maskproc, UHOSTMAX);
   else
     strcpy(dcc[idx].host, "*");
@@ -1251,11 +1251,25 @@ static int setlisten(Tcl_Interp *irp, char *ip, char *portp, char *type, char *m
  */
 static int tcl_listen STDVAR
 {
-  char ip[121], port[7], type[7], maskproc[UHOSTMAX] = "", flag[4], *endptr;
+  char ip[121] = "", maskproc[UHOSTMAX] = "";
+  char port[7], type[7], flag[4], *endptr;
   unsigned char buf[sizeof(struct in6_addr)];
   int i = 1;
 
-  BADARGS(3, 6, " ip port type ?mask?/?proc flag?");
+/* People like to add comments to this commnd for some reason, and it can cause
+ * errors that are difficult to figure out. Let's instead throw a more helpful
+ * error for this case to get around BADARGS, and handle other cases further
+ * down in the code
+ *
+ * Check if extra args are config comments 
+ */
+  if (argc > 6) {
+    if (argv[6][0] == '#') {
+      fatal(DCC_BADLISTEN, 0);
+    }
+  }
+
+  BADARGS(3, 6, " ?ip? port type ?mask?/?proc flag?");
 
 /* Check if IP exists, set to NULL if not */
   strtol(argv[1], &endptr, 10);
@@ -1271,8 +1285,6 @@ static int tcl_listen STDVAR
       Tcl_AppendResult(irp, "invalid ip address", NULL);
       return TCL_ERROR;
     }
-  } else {
-    strcpy(ip, "");
   }
 /* Check for port */
   if ((atoi(argv[i]) > 65535) || (atoi(argv[i]) < 1)) {
@@ -1295,21 +1307,22 @@ static int tcl_listen STDVAR
   }
   strlcpy(type, argv[i], sizeof(type));
 /* Check if mask or proc exists */
-  if (((argc>3) && !strlen(ip)) || ((argc >4) && strlen(ip))) {
+  if ((((argc>3) && !ip[0]) || ((argc >4) && ip[0])) &&
+        (argv[i+1][0] != '#')) { /* Ignore config comments! */
     i++;
     strlcpy(maskproc, argv[i], sizeof(maskproc));
   }
 /* If script, check for proc and flag */
   if (!strcmp(type, "script")) {
-    if (!strlen(maskproc)) {
+    if (!maskproc[0]) {
       Tcl_AppendResult(irp, "a proc name must be specified for a script listen", NULL);
       return TCL_ERROR;
     }
-    if ((!strlen(ip) && (argc==4)) || (strlen(ip) && argc==5)) {
+    if ((!ip[0] && (argc==4)) || (ip[0] && argc==5)) {
       Tcl_AppendResult(irp, "missing flag. allowed flags: pub", NULL);
       return TCL_ERROR;
     }
-    if ((!strlen(ip) && (argc==5)) || (argc == 6)) {
+    if ((!ip[0] && (argc==5)) || (argc == 6)) {
       i++;
       if (strcmp(argv[i], "pub")) {
         Tcl_AppendResult(irp, "unknown flag: ", flag, ". allowed flags: pub",

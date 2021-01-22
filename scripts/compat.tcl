@@ -2,7 +2,7 @@
 #   This script just quickly maps old Tcl commands to the new ones.
 #   Use this if you are too lazy to get off your butt and update your scripts :D
 #
-# Copyright (C) 2002 - 2020 Eggheads Development Team
+# Copyright (C) 2002 - 2021 Eggheads Development Team
 #
 # Wiktor    31Mar2000: added binds and chnick proc
 # Tothwolf  25May1999: cleanup

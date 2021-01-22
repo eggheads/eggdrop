@@ -4,7 +4,7 @@
  */
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2020 Eggheads Development Team
+ * Copyright (C) 1999 - 2021 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -133,17 +133,16 @@ static int tcl_chattr STDVAR
     mns.global &=~(USER_BOT);
 
     if (chan) {
-      pls.chan &= ~(BOT_SHARE);
-      mns.chan &= ~(BOT_SHARE);
+      pls.chan &= ~(BOT_AGGRESSIVE);
+      mns.chan &= ~(BOT_AGGRESSIVE);
     }
-    user.global = sanity_check((user.global |pls.global) &~mns.global);
+    user_sanity_check(&(user.global), pls.global, mns.global);
 
     user.udef_global = (user.udef_global | pls.udef_global)
                        & ~mns.udef_global;
     if (chan) {
       ocf = user.chan;
-      user.chan = chan_sanity_check((user.chan | pls.chan) & ~mns.chan,
-                                    user.global);
+      chan_sanity_check(&(user.chan), pls.chan, mns.chan, user.global);
       user.udef_chan = (user.udef_chan | pls.udef_chan) & ~mns.udef_chan;
 
     }
@@ -152,7 +151,7 @@ static int tcl_chattr STDVAR
     if (chan)
       check_dcc_chanattrs(u, chan, user.chan, ocf);
   }
-  user.chan &= ~BOT_SHARE; /* actually not a user flag, hide it */
+  user.chan &= ~BOT_AGGRESSIVE; /* actually not a user flag, hide it */
   /* Build flag string */
   build_flags(work, &user, NULL);
   Tcl_AppendResult(irp, work, NULL);
@@ -219,10 +218,12 @@ static int tcl_botattr STDVAR
     break_down_flags(chg, &pls, &mns);
     /* No-one can change these flags on-the-fly */
     if (chan) {
-      pls.chan &= BOT_SHARE;
-      mns.chan &= BOT_SHARE;
+      pls.chan &= BOT_AGGRESSIVE;
+      mns.chan &= BOT_AGGRESSIVE;
     }
-    user.bot = sanity_check((user.bot | pls.bot) & ~mns.bot);
+    /* this merges user.bot with pls.bot and mns.bot in user.bot
+     * squelch the msgids as this is the tcl version of botattr */
+    bot_sanity_check(&(user.bot), pls.bot, mns.bot);
     if (chan) {
       user.chan = (user.chan | pls.chan) & ~mns.chan;
       user.udef_chan = (user.udef_chan | pls.udef_chan) & ~mns.udef_chan;
@@ -230,8 +231,8 @@ static int tcl_botattr STDVAR
     set_user_flagrec(u, &user, chan);
   }
   /* Only user flags can be set per channel, not bot ones,
-     so BOT_SHARE is a hack to allow botattr |+s */
-  user.chan &= BOT_SHARE;
+     so BOT_AGGRESSIVE is a hack to allow botattr |+s */
+  user.chan &= BOT_AGGRESSIVE;
   user.udef_chan = 0; /* User definable bot flags are global only,
                          anything here is a regular flag, so hide it. */
   /* Build flag string */
@@ -580,15 +581,10 @@ static int tcl_newignore STDVAR
   strlcpy(ign, argv[1], sizeof ign);
   strlcpy(from, argv[2], sizeof from);
   strlcpy(cmt, argv[3], sizeof cmt);
-
   if (argc == 4)
-    expire_time = now + (60 * ignore_time);
-  else {
-    if (argc == 5 && atol(argv[4]) == 0)
-      expire_time = 0L;
-    else
-      expire_time = now + (60 * atol(argv[4])); /* This is a potential crash. FIXME  -poptix */
-  }
+    expire_time = now + 60 * ignore_time;
+  else if ((expire_time = get_expire_time(irp, argv[4])) == -1)
+    return TCL_ERROR;
   addignore(ign, from, cmt, expire_time);
   return TCL_OK;
 }

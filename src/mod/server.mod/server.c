@@ -4,7 +4,7 @@
  */
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2020 Eggheads Development Team
+ * Copyright (C) 1999 - 2021 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -1757,18 +1757,17 @@ static int ctcp_DCC_CHAT(char *nick, char *from, char *handle,
   param = newsplit(&msg);
   ip = newsplit(&msg);
   prt = newsplit(&msg);
-#ifdef TLS
-  if (strcasecmp(action, "CHAT") || strcasecmp(object, botname) || !u)
+  if (strcasecmp(action, "CHAT"))
   {
+#ifdef TLS
     if (!strcasecmp(action, "SCHAT"))
       ssl = 1;
     else
+#endif
       return 0;
   }
-#else
-  if (strcasecmp(action, "CHAT") || strcasecmp(object, botname) || !u)
+  if (strcasecmp(object, botname) || !u)
     return 0;
-#endif
   get_user_flagrec(u, &fr, 0);
   if (dcc_total == max_dcc && increase_socks_max()) {
     if (!quiet_reject)
