@@ -456,7 +456,7 @@ static void got_ill(int z)
  */
 void eggContext(const char *file, int line, const char *module)
 {
-  eggContextNote(file, line, module, 0);
+  eggContextNote(file, line, module, NULL);
 }
 
 /* Called from the ContextNote macro.
