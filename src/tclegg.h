@@ -186,6 +186,7 @@ int tcl_resultint();
 int tcl_resultempty();
 int tcl_threaded();
 int fork_before_tcl();
+time_t get_expire_time(Tcl_Interp *, const char *);
 
 /* From Tcl's tclUnixInit.c */
 /* The following table is used to map from Unix locale strings to

@@ -627,15 +627,11 @@ static int tcl_newchanban STDVAR
   strlcpy(cmt, argv[4], sizeof cmt);
   if (argc == 5) {
     if (chan->ban_time == 0)
-      expire_time = 0L;
+      expire_time = 0;
     else
-      expire_time = now + (60 * chan->ban_time);
-  } else {
-    if (atoi(argv[5]) == 0)
-      expire_time = 0L;
-    else
-      expire_time = now + (atoi(argv[5]) * 60);
-  }
+      expire_time = now + 60 * chan->ban_time;
+  } else if ((expire_time = get_expire_time(irp, argv[5])) == -1)
+    return TCL_ERROR;
   if (u_addban(chan, ban, from, cmt, expire_time, sticky))
     if ((me = module_find("irc", 0, 0)))
       (me->funcs[IRC_CHECK_THIS_BAN]) (chan, ban, sticky);
@@ -667,15 +663,11 @@ static int tcl_newban STDVAR
   strlcpy(cmt, argv[3], sizeof cmt);
   if (argc == 4) {
     if (global_ban_time == 0)
-      expire_time = 0L;
+      expire_time = 0;
     else
-      expire_time = now + (60 * global_ban_time);
-  } else {
-    if (atoi(argv[4]) == 0)
-      expire_time = 0L;
-    else
-      expire_time = now + (atoi(argv[4]) * 60);
-  }
+      expire_time = now + 60 * global_ban_time;
+  } else if ((expire_time = get_expire_time(irp, argv[4])) == -1)
+    return TCL_ERROR;
   if (u_addban(NULL, ban, from, cmt, expire_time, sticky))
     if ((me = module_find("irc", 0, 0)))
       for (chan = chanset; chan != NULL; chan = chan->next)
@@ -712,15 +704,11 @@ static int tcl_newchanexempt STDVAR
   strlcpy(cmt, argv[4], sizeof cmt);
   if (argc == 5) {
     if (chan->exempt_time == 0)
-      expire_time = 0L;
+      expire_time = 0;
     else
-      expire_time = now + (60 * chan->exempt_time);
-  } else {
-    if (atoi(argv[5]) == 0)
-      expire_time = 0L;
-    else
-      expire_time = now + (atoi(argv[5]) * 60);
-  }
+      expire_time = now + 60 * chan->exempt_time;
+  } else if ((expire_time = get_expire_time(irp, argv[5])) == -1)
+    return TCL_ERROR;
   if (u_addexempt(chan, exempt, from, cmt, expire_time, sticky))
     add_mode(chan, '+', 'e', exempt);
   return TCL_OK;
@@ -750,15 +738,11 @@ static int tcl_newexempt STDVAR
   strlcpy(cmt, argv[3], sizeof cmt);
   if (argc == 4) {
     if (global_exempt_time == 0)
-      expire_time = 0L;
+      expire_time = 0;
     else
-      expire_time = now + (60 * global_exempt_time);
-  } else {
-    if (atoi(argv[4]) == 0)
-      expire_time = 0L;
-    else
-      expire_time = now + (atoi(argv[4]) * 60);
-  }
+      expire_time = now + 60 * global_exempt_time;
+  } else if ((expire_time = get_expire_time(irp, argv[4])) == -1)
+    return TCL_ERROR;
   u_addexempt(NULL, exempt, from, cmt, expire_time, sticky);
   for (chan = chanset; chan; chan = chan->next)
     add_mode(chan, '+', 'e', exempt);
@@ -794,15 +778,11 @@ static int tcl_newchaninvite STDVAR
   strlcpy(cmt, argv[4], sizeof cmt);
   if (argc == 5) {
     if (chan->invite_time == 0)
-      expire_time = 0L;
+      expire_time = 0;
     else
-      expire_time = now + (60 * chan->invite_time);
-  } else {
-    if (atoi(argv[5]) == 0)
-      expire_time = 0L;
-    else
-      expire_time = now + (atoi(argv[5]) * 60);
-  }
+      expire_time = now + 60 * chan->invite_time;
+  } else if ((expire_time = get_expire_time(irp, argv[5])) == -1)
+    return TCL_ERROR;
   if (u_addinvite(chan, invite, from, cmt, expire_time, sticky))
     add_mode(chan, '+', 'I', invite);
   return TCL_OK;
@@ -832,15 +812,11 @@ static int tcl_newinvite STDVAR
   strlcpy(cmt, argv[3], sizeof cmt);
   if (argc == 4) {
     if (global_invite_time == 0)
-      expire_time = 0L;
+      expire_time = 0;
     else
-      expire_time = now + (60 * global_invite_time);
-  } else {
-    if (atoi(argv[4]) == 0)
-      expire_time = 0L;
-    else
-      expire_time = now + (atoi(argv[4]) * 60);
-  }
+      expire_time = now + 60 * global_invite_time;
+  } else if ((expire_time = get_expire_time(irp, argv[4])) == -1)
+    return TCL_ERROR;
   u_addinvite(NULL, invite, from, cmt, expire_time, sticky);
   for (chan = chanset; chan; chan = chan->next)
     add_mode(chan, '+', 'I', invite);

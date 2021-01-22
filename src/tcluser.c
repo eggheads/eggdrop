@@ -581,15 +581,10 @@ static int tcl_newignore STDVAR
   strlcpy(ign, argv[1], sizeof ign);
   strlcpy(from, argv[2], sizeof from);
   strlcpy(cmt, argv[3], sizeof cmt);
-
   if (argc == 4)
-    expire_time = now + (60 * ignore_time);
-  else {
-    if (argc == 5 && atol(argv[4]) == 0)
-      expire_time = 0L;
-    else
-      expire_time = now + (60 * atol(argv[4])); /* This is a potential crash. FIXME  -poptix */
-  }
+    expire_time = now + 60 * ignore_time;
+  else if ((expire_time = get_expire_time(irp, argv[4])) == -1)
+    return TCL_ERROR;
   addignore(ign, from, cmt, expire_time);
   return TCL_OK;
 }

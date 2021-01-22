@@ -622,7 +622,8 @@ Function global_table[] = {
 /* 312 - 315 */    
   (Function) & USERENTRY_PASS2,   /* struct user_entry_type *            */
   (Function) crypto_verify,
-  (Function) egg_uname
+  (Function) egg_uname,
+  (Function) get_expire_time
 };
 
 void init_modules(void)
