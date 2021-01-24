@@ -1011,7 +1011,7 @@ int botlink(char *linker, int idx, char *nick)
       }
     /* Address to connect to is in 'info' */
     bi = (struct bot_addr *) get_user(&USERENTRY_BOTADDR, u);
-    if (!bi || !strlen(bi->address) || !bi->telnet_port ||
+    if (!bi || !*(bi->address) || !bi->telnet_port ||
         (bi->telnet_port <= 0)) {
       if (idx >= 0) {
         dprintf(idx, "%s '%s'.\n", BOT_NOTELNETADDY, nick);

@@ -622,7 +622,7 @@ static int tcl_ismod STDVAR {
     tchan = twitchchan;
   }
   /* If there's no mods, no reason to even check, eh? */
-  if (!strlen(tchan->mods)) {
+  if (!tchan->mods[0]) {
     Tcl_AppendResult(irp, "0", NULL);
     return TCL_OK;
   }
@@ -658,7 +658,7 @@ static int tcl_isvip STDVAR {
     tchan = twitchchan;
   }
   /* If there's no VIPs, no reason to even check, eh? */
-  if (!strlen(tchan->vips)) {
+  if (!tchan->vips[0]) {
     Tcl_AppendResult(irp, "0", NULL);
     return TCL_OK;
   }

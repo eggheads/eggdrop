@@ -385,7 +385,7 @@ static void got_key(struct chanset_t *chan, char *nick, char *from, char *key)
   if (!(glob_master(user) || glob_bot(user) || chan_master(user)) &&
       !match_my_nick(nick)) {
     if ((reversing && !chan->key_prot[0]) || (chan->mode_mns_prot & CHANKEY)) {
-      if (strlen(key) != 0)
+      if (*key)
         add_mode(chan, '-', 'k', key);
       else
         add_mode(chan, '-', 'k', "");

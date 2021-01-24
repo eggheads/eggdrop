@@ -1295,7 +1295,7 @@ static int tcl_listen STDVAR
   }
   strlcpy(type, argv[i], sizeof(type));
 /* Check if mask or proc exists */
-  if (((argc>3) && !strlen(ip)) || ((argc >4) && strlen(ip))) {
+  if (((argc>3) && !ip[0]) || ((argc >4) && ip[0])) {
     i++;
     strlcpy(maskproc, argv[i], sizeof(maskproc));
   }
@@ -1305,11 +1305,11 @@ static int tcl_listen STDVAR
       Tcl_AppendResult(irp, "a proc name must be specified for a script listen", NULL);
       return TCL_ERROR;
     }
-    if ((!strlen(ip) && (argc==4)) || (strlen(ip) && argc==5)) {
+    if ((!ip[0] && (argc==4)) || (ip[0] && argc==5)) {
       Tcl_AppendResult(irp, "missing flag. allowed flags: pub", NULL);
       return TCL_ERROR;
     }
-    if ((!strlen(ip) && (argc==5)) || (argc == 6)) {
+    if ((!ip[0] && (argc==5)) || (argc == 6)) {
       i++;
       if (strcmp(argv[i], "pub")) {
         Tcl_AppendResult(irp, "unknown flag: ", flag, ". allowed flags: pub",
