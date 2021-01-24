@@ -54,7 +54,7 @@ regenerate_changelog() {
 	MAJOR=$(echo ${EGGVERSION}| rev| cut -d "." -f2- |rev)
 	MAJOR=${MAJOR%rc*}
 	MINOR=0
-	while [ $MINOR -le $MAX ]; do
+	while [ $MINOR -lt $MAX ]; do
 	  INCLUDE="${INCLUDE} -i v${MAJOR}.${MINOR}"
 	  MINOR=$(expr $MINOR + 1)
 	done
@@ -63,8 +63,8 @@ regenerate_changelog() {
 	fi
 	git fetch origin
 	git fetch -t origin
-        echo "misc/genchanges -l $INCLUDE -r origin full > ChangeLog"
-	misc/genchanges -l $INCLUDE -r origin full > ChangeLog
+        echo "misc/genchanges -l $INCLUDE -i develop -r origin full > ChangeLog"
+	misc/genchanges -l $INCLUDE -i develop -r origin full > ChangeLog
 	gzip -f ChangeLog
 	echo " done."
 
@@ -72,15 +72,15 @@ regenerate_changelog() {
 	echo "Now just the doc/ChangesX.Y file..."
 	MINOR=1
 	INCLUDE=""
-	while [ $MINOR -le $MAX ]; do
+	while [ $MINOR -lt $MAX ]; do
 	  INCLUDE="${INCLUDE} -i v${MAJOR}.${MINOR}"
 	  MINOR=$(expr $MINOR + 1)
 	done
 	if git rev-parse -q --verify release/${TRIMVERSION} > /dev/null; then
 	  INCLUDE="${INCLUDE} -i ./release/${TRIMVERSION}"
 	fi
-        echo "misc/genchanges -l -e v1.8.4 -i develop -v ${EGGVERSION}${EGG_RC} -r origin short > Changes1.9"
-    misc/genchanges -l -e v1.8.4 -i develop -v ${EGGVERSION}${EGG_RC} -r origin short > Changes1.9
+        echo "misc/genchanges -l -e v1.8.4 $INCLUDE -i develop -v ${EGGVERSION}${EGG_RC} -r origin short > doc/Changes1.9"
+	misc/genchanges -l -e v1.8.4 $INCLUDE -i develop -v ${EGGVERSION}${EGG_RC} -r origin short > doc/Changes1.9
 	git commit -m "Generate ChangeLog/Changes files for ${EGGVERSION}" > /dev/null
 
 	if test -f ChangeLog.gz; then
