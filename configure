@@ -5261,7 +5261,7 @@ $as_echo "$egg_cv_var_system_release" >&6; }
 
   MODULES_OK="yes"
   MOD_EXT="so"
-  DEFAULT_MAKE="debug"
+  DEFAULT_MAKE="eggdrop"
   LOAD_METHOD="dl"
   WEIRD_OS="yes"
   UNKNOWN_OS="no"

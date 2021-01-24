@@ -27,4 +27,5 @@
  */
 
 #define EGG_STRINGVER "1.9.0"
-#define EGG_NUMVER 1090006
+#define EGG_NUMVER 1090007
+#define EGG_PATCH "RC1"
