@@ -807,66 +807,66 @@ NOTE 2: In the deprecated formats, an additional botport and/or userport given a
 <p>Module: channels</p>
 </div></blockquote>
 </div>
-<div class="section" id="isban-ban-channel">
-<h3>isban &lt;ban&gt; [channel]<a class="headerlink" href="#isban-ban-channel" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="isban-ban-channel-channel">
+<h3>isban &lt;ban&gt; [channel [-channel]]<a class="headerlink" href="#isban-ban-channel-channel" title="Permalink to this headline">¶</a></h3>
 <blockquote>
-<div><p>Returns: 1 if the specified ban is in the global ban list; 0 otherwise. If a channel is specified, that channel’s ban list is checked as well.</p>
+<div><p>Returns: 1 if the specified ban is in the global ban list; 0 otherwise. If a channel is specified, that channel’s ban list is checked as well. If the -channel flag is used at the end of the command, *only* the channel bans are checked.</p>
 <p>Module: channels</p>
 </div></blockquote>
 </div>
-<div class="section" id="ispermban-ban-channel">
-<h3>ispermban &lt;ban&gt; [channel]<a class="headerlink" href="#ispermban-ban-channel" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="ispermban-ban-channel-channel">
+<h3>ispermban &lt;ban&gt; [channel [-channel]]<a class="headerlink" href="#ispermban-ban-channel-channel" title="Permalink to this headline">¶</a></h3>
 <blockquote>
-<div><p>Returns: 1 if the specified ban is in the global ban list AND is marked as permanent; 0 otherwise. If a channel is specified, that channel’s ban list is checked as well.</p>
+<div><p>Returns: 1 if the specified ban is in the global ban list AND is marked as permanent; 0 otherwise. If a channel is specified, that channel’s ban list is checked as well. If the -channel flag is used at the end of the command, *only* the channel bans are checked.</p>
 <p>Module: channels</p>
 </div></blockquote>
 </div>
-<div class="section" id="isexempt-exempt-channel">
-<h3>isexempt &lt;exempt&gt; [channel]<a class="headerlink" href="#isexempt-exempt-channel" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="isexempt-exempt-channel-channel">
+<h3>isexempt &lt;exempt&gt; [channel [-channel]]<a class="headerlink" href="#isexempt-exempt-channel-channel" title="Permalink to this headline">¶</a></h3>
 <blockquote>
-<div><p>Returns: 1 if the specified exempt is in the global exempt list; 0 otherwise. If a channel is specified, that channel’s exempt list is checked as well.</p>
+<div><p>Returns: 1 if the specified exempt is in the global exempt list; 0 otherwise. If a channel is specified, that channel’s exempt list is checked as well. If the -channel flag is used at the end of the command, *only* the channel exempts are checked.</p>
 <p>Module: channels</p>
 </div></blockquote>
 </div>
-<div class="section" id="ispermexempt-exempt-channel">
-<h3>ispermexempt &lt;exempt&gt; [channel]<a class="headerlink" href="#ispermexempt-exempt-channel" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="ispermexempt-exempt-channel-channel">
+<h3>ispermexempt &lt;exempt&gt; [channel [-channel]]<a class="headerlink" href="#ispermexempt-exempt-channel-channel" title="Permalink to this headline">¶</a></h3>
 <blockquote>
-<div><p>Returns: 1 if the specified exempt is in the global exempt list AND is marked as permanent; 0 otherwise. If a channel is specified, that channel’s exempt list is checked as well.</p>
+<div><p>Returns: 1 if the specified exempt is in the global exempt list AND is marked as permanent; 0 otherwise. If a channel is specified, that channel’s exempt list is checked as well. If the -channel flag is used at the end of the command, *only* the channel exempts are checked.</p>
 <p>Module: channels</p>
 </div></blockquote>
 </div>
-<div class="section" id="isinvite-invite-channel">
-<h3>isinvite &lt;invite&gt; [channel]<a class="headerlink" href="#isinvite-invite-channel" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="isinvite-invite-channel-channel">
+<h3>isinvite &lt;invite&gt; [channel [-channel]]<a class="headerlink" href="#isinvite-invite-channel-channel" title="Permalink to this headline">¶</a></h3>
 <blockquote>
-<div><p>Returns: 1 if the specified invite is in the global invite list; 0 otherwise. If a channel is specified, that channel’s invite list is checked as well.</p>
+<div><p>Returns: 1 if the specified invite is in the global invite list; 0 otherwise. If a channel is specified, that channel’s invite list is checked as well. If the -channel flag is used at the end of the command, *only* the channel invites are checked.</p>
 <p>Module: channels</p>
 </div></blockquote>
 </div>
-<div class="section" id="isperminvite-invite-channel">
-<h3>isperminvite &lt;invite&gt; [channel]<a class="headerlink" href="#isperminvite-invite-channel" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="isperminvite-invite-channel-channel">
+<h3>isperminvite &lt;invite&gt; [channel [-channel]]<a class="headerlink" href="#isperminvite-invite-channel-channel" title="Permalink to this headline">¶</a></h3>
 <blockquote>
-<div><p>Returns: 1 if the specified invite is in the global invite list AND is marked as permanent; 0 otherwise. If a channel is specified, that channel’s invite list is checked as well.</p>
+<div><p>Returns: 1 if the specified invite is in the global invite list AND is marked as permanent; 0 otherwise. If a channel is specified, that channel’s invite list is checked as well. If the -channel flag is used at the end of the command, *only* the channel invites are checked.</p>
 <p>Module: channels</p>
 </div></blockquote>
 </div>
-<div class="section" id="isbansticky-ban-channel">
-<h3>isbansticky &lt;ban&gt; [channel]<a class="headerlink" href="#isbansticky-ban-channel" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="isbansticky-ban-channel-channel">
+<h3>isbansticky &lt;ban&gt; [channel [-channel]]<a class="headerlink" href="#isbansticky-ban-channel-channel" title="Permalink to this headline">¶</a></h3>
 <blockquote>
-<div><p>Returns: 1 if the specified ban is marked as sticky in the global ban list; 0 otherwise. If a channel is specified, that channel’s ban list is checked as well.</p>
+<div><p>Returns: 1 if the specified ban is marked as sticky in the global ban list; 0 otherwise. If a channel is specified, that channel’s ban list is checked as well. If the -channel flag is used at the end of the command, *only* the channel bans are checked.</p>
 <p>Module: channels</p>
 </div></blockquote>
 </div>
-<div class="section" id="isexemptsticky-exempt-channel">
-<h3>isexemptsticky &lt;exempt&gt; [channel]<a class="headerlink" href="#isexemptsticky-exempt-channel" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="isexemptsticky-exempt-channel-channel">
+<h3>isexemptsticky &lt;exempt&gt; [channel [-channel]]<a class="headerlink" href="#isexemptsticky-exempt-channel-channel" title="Permalink to this headline">¶</a></h3>
 <blockquote>
-<div><p>Returns: 1 if the specified exempt is marked as sticky in the global exempt list; 0 otherwise. If a channel is specified, that channel’s exempt list is checked as well.</p>
+<div><p>Returns: 1 if the specified exempt is marked as sticky in the global exempt list; 0 otherwise. If a channel is specified, that channel’s exempt list is checked as well. If the -channel flag is used at the end of the command, *only* the channel exempts are checked.</p>
 <p>Module: channels</p>
 </div></blockquote>
 </div>
-<div class="section" id="isinvitesticky-invite-channel">
-<h3>isinvitesticky &lt;invite&gt; [channel]<a class="headerlink" href="#isinvitesticky-invite-channel" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="isinvitesticky-invite-channel-channel">
+<h3>isinvitesticky &lt;invite&gt; [channel [-channel]]<a class="headerlink" href="#isinvitesticky-invite-channel-channel" title="Permalink to this headline">¶</a></h3>
 <blockquote>
-<div><p>Returns: 1 if the specified invite is marked as sticky in the global invite list; 0 otherwise. If a channel is specified, that channel’s invite list is checked as well.</p>
+<div><p>Returns: 1 if the specified invite is marked as sticky in the global invite list; 0 otherwise. If a channel is specified, that channel’s invite list is checked as well. If the -channel flag is used at the end of the command, *only* the channel invites are checked.</p>
 <p>Module: channels</p>
 </div></blockquote>
 </div>
@@ -3629,7 +3629,7 @@ words) (This char only works in binds, not in regular matching)</td>
           
     <div class="footer" role="contentinfo">
         &#169; Copyright 2021, Eggheads.
-      Last updated on Jan 14, 2021.
+      Last updated on Jan 24, 2021.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.5.
     </div>
         </div>
