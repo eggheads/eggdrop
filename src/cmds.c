@@ -1504,7 +1504,7 @@ static void cmd_backup(struct userrec *u, int idx, char *par)
 static void cmd_trace(struct userrec *u, int idx, char *par)
 {
   int i;
-  char x[NOTENAMELEN + 11], y[12];
+  char x[NOTENAMELEN + 11], y[22];
 
   if (!par[0]) {
     dprintf(idx, "Usage: trace <botname>\n");
@@ -1521,7 +1521,7 @@ static void cmd_trace(struct userrec *u, int idx, char *par)
   }
   putlog(LOG_CMDS, "*", "#%s# trace %s", dcc[idx].nick, par);
   simple_sprintf(x, "%d:%s@%s", dcc[idx].sock, dcc[idx].nick, botnetnick);
-  simple_sprintf(y, ":%d", now);
+  snprintf(y, sizeof y, ":%" PRId64, (int64_t) now);
   botnet_send_trace(i, x, par, y);
 }
 
