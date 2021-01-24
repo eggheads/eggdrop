@@ -1,7 +1,7 @@
 .. highlight:: text
 
 Eggdrop Tcl Commands
-Last revised: December 14, 2017
+Last revised: January 24, 2021
 
 ====================
 Eggdrop Tcl Commands
