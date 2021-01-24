@@ -4,7 +4,7 @@
  */
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2020 Eggheads Development Team
+ * Copyright (C) 1999 - 2021 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -172,7 +172,7 @@ static void set_mode_protect(struct chanset_t *chan, char *set)
 
 static void get_mode_protect(struct chanset_t *chan, char *s)
 {
-  char *p = s, s1[121];
+  char *p = s, s1[122];
   int i, tst;
 
   s1[0] = 0;
@@ -183,11 +183,11 @@ static void get_mode_protect(struct chanset_t *chan, char *s)
         *p++ = '+';
       if (chan->limit_prot != 0) {
         *p++ = 'l';
-        sprintf(&s1[strlen(s1)], "%d ", chan->limit_prot);
+        snprintf(s1 + strlen(s1), (sizeof s1) - strlen(s1), "%d ", chan->limit_prot);
       }
       if (chan->key_prot[0]) {
         *p++ = 'k';
-        sprintf(&s1[strlen(s1)], "%s ", chan->key_prot);
+        snprintf(s1 + strlen(s1), (sizeof s1) - strlen(s1), "%s ", chan->key_prot);
       }
     } else {
       tst = chan->mode_mns_prot;

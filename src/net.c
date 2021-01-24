@@ -8,7 +8,7 @@
  *
  * Changes after Feb 23, 1999 Copyright Eggheads Development Team
  *
- * Copyright (C) 1999 - 2020 Eggheads Development Team
+ * Copyright (C) 1999 - 2021 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -1070,7 +1070,7 @@ int sockread(char *s, int *len, sock_list *slist, int slistmax, int tclonly)
 
 int sockgets(char *s, int *len)
 {
-  char xx[RECVLINEMAX], *p, *px;
+  char xx[RECVLINEMAX], *p, *px, *p2;
   int ret, i, data = 0;
   size_t len2;
 
@@ -1084,9 +1084,18 @@ int sockgets(char *s, int *len)
          */
         p = strpbrk(socklist[i].handler.sock.inbuf, "\r\n");
         if (p != NULL) {
-          *p++ = 0;
-          while (*p == '\n' || *p == '\r')
+
+          /* this function is used not only for irc connections. dont remove
+           * empty lines for they could be important like for example for http
+           * header termination.
+           */
+          p2 = p;
+          if (*p == '\r')
             p++;
+          if (*p == '\n')
+            p++;
+          *p2 = 0;
+
           strlcpy(s, socklist[i].handler.sock.inbuf, RECVLINEMAX-1);
           if (*p) {
             len2 = strlen(p) + 1;

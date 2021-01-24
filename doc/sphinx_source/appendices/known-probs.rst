@@ -22,4 +22,4 @@ Known Problems
       If those characters are handled in a script as text, you run into errors.
       Eggdrop can't handle these errors at the moment.
 
-  Copyright (C) 2003 - 2020 Eggheads Development Team
+  Copyright (C) 2003 - 2021 Eggheads Development Team

@@ -35,4 +35,4 @@ There are also some variables you can set in your config file:
 
   This module requires: none
 
-  Copyright (C) 2000 - 2020 Eggheads Development Team
+  Copyright (C) 2000 - 2021 Eggheads Development Team

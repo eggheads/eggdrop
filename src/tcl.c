@@ -6,7 +6,7 @@
  */
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2020 Eggheads Development Team
+ * Copyright (C) 1999 - 2021 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -96,6 +96,7 @@ int strtot = 0;
 int handlen = HANDLEN;
 
 extern Tcl_VarTraceProc traced_myiphostname, traced_remove_pass;
+extern time_t now;
 
 int expmem_tcl()
 {
@@ -969,4 +970,25 @@ int fork_before_tcl()
   return tcl_threaded();
 #endif
   return 0;
+}
+
+time_t get_expire_time(Tcl_Interp * irp, const char *s) {
+  char *endptr;
+  long expire_foo = strtol(s, &endptr, 10);
+
+  if (*endptr) {
+    Tcl_AppendResult(irp, "bogus expire time", NULL);
+    return -1;
+  }
+  if (expire_foo < 0) {
+    Tcl_AppendResult(irp, "expire time must be 0 (perm) or greater than 0 days", NULL);
+    return -1;
+  }
+  if (expire_foo == 0)
+    return 0;
+  if (expire_foo > (60 * 24 * 2000)) {
+    Tcl_AppendResult(irp, "expire time must be equal to or less than 2000 days", NULL);
+    return -1;
+  }
+  return now + 60 * expire_foo;
 }

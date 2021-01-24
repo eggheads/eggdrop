@@ -3,7 +3,7 @@
  */
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2020 Eggheads Development Team
+ * Copyright (C) 1999 - 2021 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -1322,13 +1322,18 @@ static int tryauthenticate(char *from, char *msg)
   #endif
   unsigned char dst[((MAX((sizeof src), 400) + 2) / 3) << 2] = "";
 #ifdef HAVE_EVP_PKEY_GET1_EC_KEY
+  int olen;
+  FILE *fp;
+  EVP_PKEY *pkey;
+  unsigned char *sig;
+#if OPENSSL_VERSION_NUMBER >= 0x10000000L /* 1.0.0 */
+  EVP_PKEY_CTX *ctx;
+  size_t siglen;
+#else
   EC_KEY *eckey;
   int ret;
-  int olen;
-  unsigned int olen2;
-  unsigned char *dst2;
-  FILE *fp;
-  EVP_PKEY *privateKey;
+  unsigned int siglen;
+#endif /* OPENSSL_VERSION_NUMBER >= 0x10000000L */
 #endif /* HAVE_EVP_PKEY_GET1_EC_KEY */
   putlog(LOG_SERV, "*", "SASL: got AUTHENTICATE %s", msg);
   if (msg[0] == '+') {
@@ -1396,35 +1401,80 @@ static int tryauthenticate(char *from, char *msg)
                 "sasl_ecdsa_key %s: %s\n", sasl_ecdsa_key, strerror(errno));
       return 1;
     }
-    privateKey = PEM_read_PrivateKey(fp, NULL, 0, NULL);
-    if (!privateKey) {
+    pkey = PEM_read_PrivateKey(fp, NULL, 0, NULL);
+    if (!pkey) {
       putlog(LOG_SERV, "*", "SASL: AUTHENTICATE: PEM_read_PrivateKey(): SSL "
                 "error = %s\n", ERR_error_string(ERR_get_error(), 0));
       fclose(fp);
       return 1;
     }
     fclose(fp);
-    eckey = EVP_PKEY_get1_EC_KEY(privateKey);
-    EVP_PKEY_free(privateKey);
+#if OPENSSL_VERSION_NUMBER >= 0x10000000L /* 1.0.0 */
+    /* The EVP interface to digital signatures should almost always be used in
+     * preference to the low level interfaces. */
+    if (!(ctx = EVP_PKEY_CTX_new(pkey, NULL))) {
+      putlog(LOG_SERV, "*", "SASL: AUTHENTICATE: EVP_PKEY_CTX_new(): SSL error = %s\n",
+             ERR_error_string(ERR_get_error(), 0));
+      return 1;
+    }
+    EVP_PKEY_free(pkey);
+    if (EVP_PKEY_sign_init(ctx) <= 0) {
+      putlog(LOG_SERV, "*", "SASL: AUTHENTICATE: EVP_PKEY_sign_init(): SSL error = %s\n",
+             ERR_error_string(ERR_get_error(), 0));
+      EVP_PKEY_CTX_free(ctx);
+      return 1;
+    
+    }
+    if (EVP_PKEY_CTX_set_signature_md(ctx, EVP_sha256()) <= 0) {
+      putlog(LOG_SERV, "*", "SASL: AUTHENTICATE: EVP_PKEY_CTX_set_signature_md(): SSL error = %s\n",
+             ERR_error_string(ERR_get_error(), 0));
+      EVP_PKEY_CTX_free(ctx);
+      return 1;
+    }
+    /* EVP_PKEY_sign() must be used instead of EVP_DigestSign*() and EVP_Sign*(),
+     * because EVP_PKEY_sign() does not hash the data to be signed.
+     * EVP_PKEY_sign() is for signing digests, EVP_DigestSign*() and EVP_Sign*()
+     * are for signing messages.
+     */
+    if (EVP_PKEY_sign(ctx, NULL, &siglen, dst, olen) <= 0) {
+      putlog(LOG_SERV, "*", "SASL: AUTHENTICATE: EVP_PKEY_sign(): SSL error = %s\n",
+             ERR_error_string(ERR_get_error(), 0));
+      EVP_PKEY_CTX_free(ctx);
+      return 1;
+    }
+    sig = nmalloc(siglen);
+    if (EVP_PKEY_sign(ctx, sig, &siglen, dst, olen) <= 0) {
+      putlog(LOG_SERV, "*", "SASL: AUTHENTICATE: EVP_PKEY_sign(): SSL error = %s\n",
+             ERR_error_string(ERR_get_error(), 0));
+      nfree(sig);
+      EVP_PKEY_CTX_free(ctx); 
+      return 1;
+    }
+    EVP_PKEY_CTX_free(ctx);
+#else
+    eckey = EVP_PKEY_get1_EC_KEY(pkey);
+    EVP_PKEY_free(pkey);
     if (!eckey) {
       putlog(LOG_SERV, "*", "SASL: AUTHENTICATE: EVP_PKEY_get1_EC_KEY(): SSL error = %s\n",
              ERR_error_string(ERR_get_error(), 0));
       return 1;
     }
-    dst2 = nmalloc(ECDSA_size(eckey));
-    ret = ECDSA_sign(0, dst, olen, dst2, &olen2, eckey);
+    sig = nmalloc(ECDSA_size(eckey));
+    ret = ECDSA_sign(0, dst, olen, sig, &siglen, eckey);
     EC_KEY_free(eckey);
     if (!ret) {
       printf("SASL: AUTHENTICATE: ECDSA_sign() SSL error = %s\n",
              ERR_error_string(ERR_get_error(), 0));
-      nfree(dst2);
+      nfree(sig);
       return 1;
     } 
-    if (b64_ntop(dst2, olen2, (char *) dst, sizeof dst) == -1) {
+#endif /* OPENSSL_VERSION_NUMBER >= 0x10000000L */
+    if (b64_ntop(sig, siglen, (char *) dst, sizeof dst) == -1) {
       putlog(LOG_SERV, "*", "SASL: AUTHENTICATE error: could not base64 encode");
+      nfree(sig);
       return 1;
     }
-    nfree(dst2);
+    nfree(sig);
     putlog(LOG_SERV, "*", "SASL: put AUTHENTICATE Response %s", dst);
     dprintf(DP_MODE, "AUTHENTICATE %s\n", dst);
 #endif /* HAVE_EVP_PKEY_GET1_EC_KEY */

@@ -3,7 +3,7 @@
  */
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2020 Eggheads Development Team
+ * Copyright (C) 1999 - 2021 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -125,6 +125,65 @@ struct flag_record {
 #define BOT_SHPERMS    (BOT_SHBAN|BOT_SHCHAN|BOT_SHEXEMPT|BOT_SHIGN|BOT_SHINV|BOT_SHUSER|BOT_SHLIMITED)
 #define BOT_SHARE      (BOT_AGGRESSIVE|BOT_PASSIVE|BOT_SHPERMS)
 
+/* When adding more here, also add messages in cmds.c attr_inform */
+/* Bot flag checking message ID's */
+#define BOT_SANE_ALTOWNSHUB		0x00000001
+#define BOT_SANE_HUBOWNSALT		0x00000002
+#define BOT_SANE_OWNSALTHUB		0x00000004
+#define BOT_SANE_SHPOWNSAGGR		0x00000008
+#define BOT_SANE_AGGROWNSSHP		0x00000010
+#define BOT_SANE_OWNSSHPAGGR		0x00000020
+#define BOT_SANE_SHPOWNSPASS		0x00000040
+#define BOT_SANE_PASSOWNSSHP		0x00000080
+#define BOT_SANE_OWNSSHPPASS		0x00000100
+#define BOT_SANE_SHAREOWNSREJ		0x00000200
+#define BOT_SANE_REJOWNSSHARE		0x00000400
+#define BOT_SANE_OWNSSHAREREJ		0x00000800
+#define BOT_SANE_HUBOWNSREJ		0x00001000
+#define BOT_SANE_REJOWNSHUB		0x00002000
+#define BOT_SANE_OWNSHUBREJ		0x00004000
+#define BOT_SANE_ALTOWNSREJ		0x00008000
+#define BOT_SANE_REJOWNSALT		0x00010000
+#define BOT_SANE_OWNSALTREJ		0x00020000
+#define BOT_SANE_AGGROWNSPASS		0x00040000
+#define BOT_SANE_PASSOWNSAGGR		0x00080000
+#define BOT_SANE_OWNSAGGRPASS		0x00100000
+#define BOT_SANE_NOSHAREOWNSGLOB	0x00200000
+#define BOT_SANE_OWNSGLOB		0x00400000
+/* User/Chan flag checking message ID's */
+#define UC_SANE_DEOPOWNSOP		0x00000001
+#define UC_SANE_OPOWNSDEOP		0x00000002
+#define UC_SANE_OWNSDEOPOP		0x00000004
+#define UC_SANE_DEHALFOPOWNSHALFOP	0x00000008
+#define UC_SANE_HALFOPOWNSDEHALFOP	0x00000010
+#define UC_SANE_OWNSDEHALFOPHALFOP	0x00000020
+#define UC_SANE_DEOPOWNSAUTOOP		0x00000040
+#define UC_SANE_AUTOOPOWNSDEOP		0x00000080
+#define UC_SANE_OWNSDEOPAUTOOP		0x00000100
+#define UC_SANE_DEHALFOPOWNSAHALFOP	0x00000200
+#define UC_SANE_AHALFOPOWNSDEHALFOP	0x00000400
+#define UC_SANE_OWNSDEHALFOPAHALFOP	0x00000800
+#define UC_SANE_QUIETOWNSVOICE		0x00001000
+#define UC_SANE_VOICEOWNSQUIET		0x00002000
+#define UC_SANE_OWNSQUIETVOICE		0x00004000
+#define UC_SANE_QUIETOWNSGVOICE		0x00008000
+#define UC_SANE_GVOICEOWNSQUIET		0x00010000
+#define UC_SANE_OWNSQUIETGVOICE		0x00020000
+#define UC_SANE_OWNERADDSMASTER		0x00040000
+#define UC_SANE_MASTERADDSOP		0x00080000
+#define UC_SANE_OPADDSHALFOP		0x00100000
+#define UC_SANE_NOBOTOWNSAGGR		0x00200000
+#define UC_SANE_BOTOWNSPARTY		0x00400000
+#define UC_SANE_BOTOWNSMASTER		0x00800000
+#define UC_SANE_BOTOWNSCOMMON		0x01000000
+#define UC_SANE_BOTOWNSOWNER		0x02000000
+#define UC_SANE_MASTERADDSBOTMOPJAN	0x04000000
+#define UC_SANE_BOTMASTADDSPARTY	0x08000000
+#define UC_SANE_JANADDSXFER		0x10000000
+#define UC_SANE_AUTOOPADDSOP		0x20000000
+#define UC_SANE_AUTOHALFOPADDSHALFOP	0x40000000
+#define UC_SANE_GVOICEADDSVOICE		0x80000000
+
 /* Flag checking macros */
 #define chan_op(x)              ((x).chan & USER_OP)
 #define glob_op(x)              ((x).global & USER_OP)
@@ -178,7 +237,9 @@ int build_flags(char *, struct flag_record *, struct flag_record *);
 int flagrec_eq(struct flag_record *, struct flag_record *);
 int flagrec_ok(struct flag_record *, struct flag_record *);
 int sanity_check(int);
-int chan_sanity_check(int, int);
+int user_sanity_check(int * const, int const, int const);
+int bot_sanity_check(intptr_t * const, intptr_t const, intptr_t const);
+int chan_sanity_check(int * const, int const, int const, int const);
 char geticon(int);
 
 #endif /* MAKING_MODS */
