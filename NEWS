@@ -1,5 +1,5 @@
 News
-Last revised: Jun 25, 2019
+Last revised: Jan 24, 2021
      _________________________________________________________________
 
                                 What's new?
@@ -30,7 +30,7 @@ Eggdrop v1.9.0:
     - Added Twitch support
     - Added support for users that change hosts mid-session, usually associated
       with authenticating with services (396 raw code and CHGHOST capability).
-    - Added support for the users that change their realname value mis-session
+    - Added support for the users that change their realname value mid-session
       (SETNAME capability)
     - Added the ability for Eggdrop to internally track the away status of an
       individual, with some limitations.
