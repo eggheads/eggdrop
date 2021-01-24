@@ -54,7 +54,7 @@ regenerate_changelog() {
 	MAJOR=$(echo ${EGGVERSION}| rev| cut -d "." -f2- |rev)
 	MAJOR=${MAJOR%rc*}
 	MINOR=0
-	while [ $MINOR -lt $MAX ]; do
+	while [ $MINOR -le $MAX ]; do
 	  INCLUDE="${INCLUDE} -i v${MAJOR}.${MINOR}"
 	  MINOR=$(expr $MINOR + 1)
 	done
@@ -72,7 +72,7 @@ regenerate_changelog() {
 	echo "Now just the doc/ChangesX.Y file..."
 	MINOR=1
 	INCLUDE=""
-	while [ $MINOR -lt $MAX ]; do
+	while [ $MINOR -le $MAX ]; do
 	  INCLUDE="${INCLUDE} -i v${MAJOR}.${MINOR}"
 	  MINOR=$(expr $MINOR + 1)
 	done
