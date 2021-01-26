@@ -113,7 +113,7 @@ static void ident_oidentd()
   char s[INET_ADDRSTRLEN];
 #endif
   int ret, prevtime, servidx;
-  unsigned int size;
+  socklen_t namelen;
   struct sockaddr_storage ss;
 
   snprintf(identstr, sizeof identstr, "### eggdrop_%s", pid_file);
@@ -169,8 +169,8 @@ static void ident_oidentd()
             "for reading");
   }
   servidx = findanyidx(serv);
-  size = sizeof ss;
-  ret = getsockname(dcc[servidx].sock, (struct sockaddr *) &ss, &size);
+  namelen = sizeof ss;
+  ret = getsockname(dcc[servidx].sock, (struct sockaddr *) &ss, &namelen);
   if (ret) {
     putlog(LOG_DEBUG, "*", "IDENT: Error getting socket info for writing");
   }
