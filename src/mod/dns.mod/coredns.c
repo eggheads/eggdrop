@@ -1231,7 +1231,7 @@ static int dns_hosts(char *hostn) {
   for (i = 0; i < hostn_len; i++) {
       /* while at it, reject hostnames with bogus chars, see rfc 952, 1123 and 2181 */
       if (!strchr("-.0123456789ABCDEFGHIJABCDEFGHIJKLMNOPQRSTUVWXYZ_abcdefghijklmnopqrstuvwxyz", hostn[i])) {
-        ddebug0(RES_MSG "bogus char in hostname input");
+        ddebug2(RES_MSG "bogus char in hostname input: 0x%02x at %i", hostn[i], i + 1);
         return 1;
       }
       hostn_lower[i] = tolower((unsigned char) hostn[i]);
@@ -1333,7 +1333,7 @@ static void dns_forward(char *hostn)
     return;
   }
   if (dns_hosts(hostn))
-    return;
+    ddebug0(RES_MSG "Couldnt lookup /etc/hosts");
   ddebug0(RES_MSG "Creating new record");
   rp = allocresolve();
   rp->state = STATE_AREQ;
