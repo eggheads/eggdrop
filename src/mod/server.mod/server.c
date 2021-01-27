@@ -1953,10 +1953,8 @@ static void server_postrehash()
 static void server_die()
 {
   cycle_time = 100;
-  if (server_online) {
+  if (server_online)
     dprintf(-serv, "QUIT :%s\n", quit_msg[0] ? quit_msg : "");
-    sleep(3);                   /* Give the server time to understand */
-  }
   nuke_server(NULL);
 }
 
