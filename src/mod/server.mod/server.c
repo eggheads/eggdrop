@@ -1010,6 +1010,7 @@ static void old_add_server(const char *ss) {
 }
 
 /* Add a new server to the server_list.
+ * Don't return '3' from here, that is used by del_server() for tcl_server()
  */
 static int add_server(const char *name, const char *port, const char *pass)
 {
