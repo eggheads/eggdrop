@@ -32,7 +32,7 @@ static void cmd_servers(struct userrec *u, int idx, char *par)
   char buf[sizeof(struct in6_addr)];
 #endif
   char s[1024];
-  char setpass[11];
+  char setpass[12];
 
   putlog(LOG_CMDS, "*", "#%s# servers", dcc[idx].nick);
   if (!x) {
