@@ -592,7 +592,6 @@ void tickle_AlertNotifier(ClientData cd)
 {
   if (cd)
     putlog(LOG_MISC, "*", "stub tickle_AlertNotifier");
-  return;
 }
 
 int tclthreadmainloop(int zero)
