@@ -1294,6 +1294,7 @@ static int dns_hosts(char *hostn) {
   }
   if (ferror(hostf)) {
     ddebug0(RES_MSG "fgets(" PATH ")");
+    fclose(hostf);
     return 0;
   }
 #ifdef IPV6
