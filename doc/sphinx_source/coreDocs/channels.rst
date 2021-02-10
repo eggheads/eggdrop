@@ -19,7 +19,7 @@ module::
 
 There are also some variables you can set in your config file:
 
-    set chanfile "LamestBot.chan"
+    set chanfile "data/LamestBot.chan"
       Enter here the filename where dynamic channel settings are stored.
 
 

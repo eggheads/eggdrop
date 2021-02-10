@@ -233,11 +233,11 @@ Console Settings
 File and Directory Settings
 ---------------------------
 
-  set userfile "LamestBot.user"
+  set userfile "data/LamestBot.user"
     Specify here the filename your userfile should be saved as.
 
 
-  set pidfile "pid.LamestBot"
+  set pidfile "data/pid.LamestBot"
     Specify here the filename Eggdrop will save its pid to. If no pidfile is
     specified, pid.(botnet-nick) will be used.
 
@@ -487,11 +487,11 @@ SSL Settings
 Settings in this section take effect when eggdrop is compiled with TLS
 support.
 
-  set ssl-privatekey "eggdrop.key"
+  set ssl-privatekey "data/eggdrop.key"
     File containing your private key, needed for the SSL certificate
     (see below). You can create one issuing the following command::
 
-      openssl genrsa -out eggdrop.key 4096
+      openssl genrsa -out data/eggdrop.key 4096
 
     It will create a 4096 bit RSA key, strong enough for eggdrop.
     This is required for SSL hubs/listen ports, secure file transfer and
@@ -499,14 +499,14 @@ support.
     For your convenience, you can type 'make sslcert' after 'make install'
     and you'll get a key and a certificate in your DEST directory.
 
-  set ssl-certificate "eggdrop.crt"
+  set ssl-certificate "data/eggdrop.crt"
     Specify the filename where your SSL certificate is located. If you
     don't set this, eggdrop will not be able to act as a server in SSL
     connections, as with most ciphers a certificate and a private key
     are required on the server side. Must be in PEM format.
     If you don't have one, you can create it using the following command::
 
-      openssl req -new -key eggdrop.key -x509 -out eggdrop.crt -days 365
+      openssl req -new -key data/eggdrop.key -x509 -out data/eggdrop.crt -days 365
 
     This is required for SSL hubs/listen ports, secure file transfer and
     /ctcp botnick schat

@@ -120,7 +120,7 @@ only contains eggdrop-specific information on the subject.
 The easy way to create a key and a certificate is to type 'make sslcert'
 after compiling your bot (If you installed eggdrop to a non-standard
 location, use make sslcert DEST=/path/to/eggdrop). This will generate a
-4096-bit private key (eggdrop.key) and a certificate (eggdrop.crt) after
+4096-bit private key (data/eggdrop.key) and a certificate (data/eggdrop.crt) after
 you fill in the required fields. Alternatively, you can use 'make sslsilent'
 to generate a key and certificate non-interactively, using pre-set values.
 This is useful when installing Eggdrop via a scripted process.
@@ -199,6 +199,6 @@ verification and authorization.
     control ssl certificate verification. A value of 0 disables
     verification completely. A value of 1 enables full verification.
     Higher values enable specific exceptions like allowing self-signed
-    or expired certificates. Details are documented in eggdrop.conf.
+    or expired certificates. Details are documented in conf/example.conf.
 	
 Copyright (C) 2010 - 2021 Eggheads Development Team

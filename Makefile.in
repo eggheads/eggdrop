@@ -293,7 +293,7 @@ install-end =	echo "" && echo "Installation completed." && echo "" && \
 		echo "during the make install process, use the same DEST= option here." && \
 		echo "" && \
 		echo "You MUST ensure that you edit/verify your configuration file." && \
-		echo "An example configuration file, eggdrop.conf, is distributed with Eggdrop." && \
+		echo "An example configuration file, conf/example.conf, is distributed with Eggdrop." && \
 		echo "" && \
 		echo "Remember to change directory to $(DEST) before you proceed." && \
 		echo ""
@@ -305,18 +305,18 @@ sslstart:
 		echo "If you have already run \"make install\" and used the DEST= option, please use it again here";\
 		exit 1;\
 	fi && \
-	if test -f $(DEST)/eggdrop.key; then \
-		cp $(DEST)/eggdrop.key $(DEST)/eggdrop.key~old; \
+	if test -f $(DEST)/data/eggdrop.key; then \
+		cp $(DEST)/data/eggdrop.key $(DEST)/data/eggdrop.key~old; \
 	fi && \
-	if test -f $(DEST)/eggdrop.crt; then \
-		cp $(DEST)/eggdrop.crt $(DEST)/eggdrop.crt~old; \
+	if test -f $(DEST)/data/eggdrop.crt; then \
+		cp $(DEST)/data/eggdrop.crt $(DEST)/data/eggdrop.crt~old; \
 	fi
 
 sslcert: sslstart
-	openssl req -new -x509 -nodes -days 365 -keyout $(DEST)/eggdrop.key -out $(DEST)/eggdrop.crt -config ssl.conf
+	openssl req -new -x509 -nodes -days 365 -keyout $(DEST)/data/eggdrop.key -out $(DEST)/data/eggdrop.crt -config ssl.conf
 
 sslsilent: sslstart
-	openssl req -new -x509 -nodes -days 365 -keyout $(DEST)/eggdrop.key -out $(DEST)/eggdrop.crt -config ssl.conf \
+	openssl req -new -x509 -nodes -days 365 -keyout $(DEST)/data/eggdrop.key -out $(DEST)/data/eggdrop.crt -config ssl.conf \
 	    -subj "/O=Eggheads/OU=Eggdrop/CN=Self-generated Eggdrop Certificate"
 
 install: ainstall
@@ -409,11 +409,19 @@ install-modules: install-start
 	fi
 
 install-data: install-start
-	@if test ! -f $(DEST)/eggdrop.conf; then \
-		$(INSTALL_DATA) $(srcdir)/eggdrop.conf $(DEST)/; \
+	@if test ! -d $(DEST)/data; then \
+		echo "Creating 'data' subdirectory."; \
+		$(top_srcdir)/misc/mkinstalldirs $(DEST)/data >/dev/null; \
 	fi
-	@if test ! -f $(DEST)/eggdrop-basic.conf; then \
-		$(INSTALL_DATA) $(srcdir)/eggdrop-basic.conf $(DEST)/; \
+	@if test ! -d $(DEST)/conf; then \
+		echo "Creating 'conf' subdirectory."; \
+		$(top_srcdir)/misc/mkinstalldirs $(DEST)/conf >/dev/null; \
+	fi
+	@if test ! -f "$(DEST)/conf/example.conf"; then \
+		$(INSTALL_DATA) "$(srcdir)/conf/example.conf" $(DEST)/conf; \
+	fi
+	@if test ! -f "$(DEST)/conf/example.basic.conf"; then \
+		$(INSTALL_DATA) "$(srcdir)/conf/example.basic.conf" $(DEST)/conf; \
 	fi
 	@if test ! -d $(DEST)/logs; then \
 		echo "Creating 'logs' subdirectory."; \

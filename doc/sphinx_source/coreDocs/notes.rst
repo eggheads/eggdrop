@@ -19,7 +19,7 @@ module::
 
 There are also some variables you can set in your config file:
 
-  set notefile "LamestBot.notes"
+  set notefile "data/LamestBot.notes"
     Set here the filename where private notes between users are stored.
 
   set max-notes 50

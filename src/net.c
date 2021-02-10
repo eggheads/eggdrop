@@ -1675,6 +1675,6 @@ char *traced_myiphostname(ClientData cd, Tcl_Interp *irp, EGG_CONST char *name1,
   putlog(LOG_MISC, "*", "WARNING: You are using the DEPRECATED variable '%s' in your config file.\n", name1);
   putlog(LOG_MISC, "*", "    To prevent future incompatibility, please use the vhost4/listen-addr variables instead.\n");
   putlog(LOG_MISC, "*", "    More information on this subject can be found in the eggdrop/doc/IPV6 file, or\n");
-  putlog(LOG_MISC, "*", "    in the comments above those settings in the example eggdrop.conf that is included with Eggdrop.\n");
+  putlog(LOG_MISC, "*", "    in the comments above those settings in the example conf/example.conf that is included with Eggdrop.\n");
   return NULL;
 }
