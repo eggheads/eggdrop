@@ -29,7 +29,7 @@ botname="LamestBot"
 userfile="data/LamestBot.user"
 
 # change this to the name of your bot's pidfile (capitalization COUNTS):
-pidfile="pid.LamestBot"
+pidfile="data/pid.LamestBot"
 
 ########## you probably don't need to change anything below here ##########
 

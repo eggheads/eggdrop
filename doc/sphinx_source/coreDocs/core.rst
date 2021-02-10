@@ -237,7 +237,7 @@ File and Directory Settings
     Specify here the filename your userfile should be saved as.
 
 
-  set pidfile "pid.LamestBot"
+  set pidfile "data/pid.LamestBot"
     Specify here the filename Eggdrop will save its pid to. If no pidfile is
     specified, pid.(botnet-nick) will be used.
 
