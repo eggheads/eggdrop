@@ -99,7 +99,7 @@ Eggdrop uses the GNU autoconfigure scripts to make things easier.
 
 7. Start the bot with the "-m" option to create a user file, i.e. ::
 
-       ./eggdrop -m LamestBot.conf
+       ./eggdrop -m conf/LamestBot.conf
 
 8. When starting the bot in the future, drop the "-m". If you have edited
      your config file correctly, you can type::
@@ -108,10 +108,10 @@ Eggdrop uses the GNU autoconfigure scripts to make things easier.
 
      For example::
 
-       chmod u+x LamestBot.conf
+       chmod u+x conf/LamestBot.conf
 
      From then on, you will be able to use your config file as a shell
-     script. You can just type "./LamestBot.conf" from your shell prompt
+     script. You can just type "./conf/LamestBot.conf" from your shell prompt
      to start up your bot. For this to work, the top line of your script
      MUST contain the correct path to the Eggdrop executable.
 
