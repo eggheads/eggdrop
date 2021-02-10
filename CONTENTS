@@ -50,11 +50,11 @@ Last revised: September 21, 2018
   disabled_modules
     Any module listed in this file will not be compiled by default.
 
-  eggdrop-basic.conf
+  conf/example.basic.conf
     This is a minimal sample configuration file for your bot. To unlock the 
-    full potential of your eggdrop, please use eggdrop.conf.
+    full potential of your eggdrop, please use conf/example.conf.
   
-  eggdrop.conf
+  conf/example.conf
     This is a full configuration file for your bot.
 
   FEATURES

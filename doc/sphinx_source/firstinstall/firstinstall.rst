@@ -29,7 +29,7 @@ You can read the `Installation`_ section for a more detailed explanation of thes
 6. Type ``make``
 7. Type ``make install``
 8. Type ``cd ~/eggdrop``
-9. For a quick start, edit the eggdrop-basic.conf file. To take advantage of all Eggdrop's features, we recommend using eggdrop.conf instead. It is also a good idea to rename the file to something easy to remember and specific to your bot, like botnick.conf.
+9. For a quick start, edit the eggdrop-basic.conf file. To take advantage of all Eggdrop's features, we recommend using conf/example.conf instead. It is also a good idea to rename the file to something easy to remember and specific to your bot, like botnick.conf.
 10. Type ./eggdrop -m <config file>
 
 Getting the source
@@ -83,14 +83,14 @@ That's it! Eggdrop is now installed into its own directory on the shell. It's ti
 Configuration
 -------------
 
-You will need to edit the configuration file before you can start up your Eggdrop. You can find the example configuration file in the directory you extracted the Eggdrop source to, under the name 'eggdrop.conf'. If you downloaded Eggdrop to your system, you can unzip the tarball (.tar.gz) file to its own directory using 7-Zip or a similar program, and view the example config file, botchk file, and all the documentation files locally. You can use Notepad to edit these files, although it's sometimes desirable to use an editor that supports the Unix file format such as EditPlus. To edit the file once it is on your shell, a program such as 'nano' or 'vim' is recommended.
+You will need to edit the configuration file before you can start up your Eggdrop. You can find the example configuration file in the directory you extracted the Eggdrop source to, under the name 'conf/example.conf'. If you downloaded Eggdrop to your system, you can unzip the tarball (.tar.gz) file to its own directory using 7-Zip or a similar program, and view the example config file, botchk file, and all the documentation files locally. You can use Notepad to edit these files, although it's sometimes desirable to use an editor that supports the Unix file format such as EditPlus. To edit the file once it is on your shell, a program such as 'nano' or 'vim' is recommended.
 
 Editing the config file
 ~~~~~~~~~~~~~~~~~~~~~~~
 
-Eggdrop comes with two versions of the configuration file- eggdrop.conf and eggdrop-basic.conf. While it is recommended that users edit a copy of eggdrop.conf to take advantage of all the features Eggdrop has to offer, using eggdrop-basic.conf to start will be a quicker path for some. Still, it is recommended that you come back to the full config file at some point to see what you are missing.
+Eggdrop comes with two versions of the configuration file- conf/example.conf and eggdrop-basic.conf. While it is recommended that users edit a copy of conf/example.conf to take advantage of all the features Eggdrop has to offer, using eggdrop-basic.conf to start will be a quicker path for some. Still, it is recommended that you come back to the full config file at some point to see what you are missing.
 
-It is first recommended to rename the sample config to something other than "eggdrop.conf". Giving it the name of the bot's nick (e.g. NiceBot.conf) is quite common. In the config file, you set up the IRC servers you want the bot to use and set Eggdrop's options to suit your needs. Eggdrop has many options to configure, and editing the configuration file can take some time. I recommend you go over the entire config file to ensure the bot will be configured properly for your needs. All of the options in the config file have written explanations - be sure to read them carefully. Some of them can be a little bit vague, though.
+It is first recommended to rename the sample config to something other than "conf/example.conf". Giving it the name of the bot's nick (e.g. NiceBot.conf) is quite common. In the config file, you set up the IRC servers you want the bot to use and set Eggdrop's options to suit your needs. Eggdrop has many options to configure, and editing the configuration file can take some time. I recommend you go over the entire config file to ensure the bot will be configured properly for your needs. All of the options in the config file have written explanations - be sure to read them carefully. Some of them can be a little bit vague, though.
 
 To comment out a line (prevent the bot from reading that line), you can add a '#' in front of a line. When you come to a line that you need to edit, one popular option is to comment out the original and add your new line right below it. This preserves the original line as an example. For example::
 
@@ -147,7 +147,7 @@ Below are some of the common settings used for Eggdrop:
 :set dcc-block: although the example config file recommends you set this to 0 (turbo-dcc), this may cause DCC transfers to abort prematurely. If you'll be using DCC transfers a lot, set this to 1024.
 
 Finally, be sure to remove the 'die' commands from the config (there are two of them 'hidden' in various places), or the bot won't start. Once you've finished editing the config file, make sure you rename it to something other than
-"eggdrop.conf" if you haven't already. Then, if you edited the config file locally, upload the config file to the directory you installed the bot.
+"conf/example.conf" if you haven't already. Then, if you edited the config file locally, upload the config file to the directory you installed the bot.
 
 Starting the Eggdrop
 --------------------

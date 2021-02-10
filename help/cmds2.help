@@ -446,7 +446,7 @@ See also: match, who, whom%{+m|m}, chattr%{+t}, botattr
       I am Anakha, running eggdrop v1.8.3:  171 users (mem: 315k)
       Online for 14 days, 02:50  (background)  CPU 71:29  cache hit 40.3%
       Admin: Wcc
-      Config file: eggdrop.conf
+      Config file: conf/example.conf
       OS: FreeBSD 4.8-RELEASE-p1
       Process ID: 5109 (parent 3489)
       Tcl library: /usr/local/lib/tcl8.4

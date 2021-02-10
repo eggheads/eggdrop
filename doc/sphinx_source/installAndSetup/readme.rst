@@ -158,7 +158,7 @@ Upgrading
     to delete the old Eggdrop executable and modules as well, especially if
     you have limited disk space.
 
-    You should read through the new eggdrop.conf file for all of the new
+    You should read through the new conf/example.conf file for all of the new
     options in Eggdrop 1.8.x. You can copy and paste any of these settings
     into you current conf file if you do not want to use the default settings.
 

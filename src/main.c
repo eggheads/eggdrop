@@ -120,7 +120,7 @@ int con_chan = 0;   /* Foreground: constantly display channel stats? */
 int term_z = -1;    /* Foreground: use the terminal as a partyline?  */
 int use_stderr = 1; /* Send stuff to stderr instead of logfiles?     */
 
-char configfile[121] = "eggdrop.conf";  /* Default config file name */
+char configfile[121] = "conf/example.conf";  /* Default config file name */
 char pid_file[121];                     /* Name of the pid file     */
 char helpdir[121] = "help/";            /* Directory of help files  */
 char textdir[121] = "text/";            /* Directory for text files */

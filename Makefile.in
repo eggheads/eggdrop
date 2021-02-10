@@ -293,7 +293,7 @@ install-end =	echo "" && echo "Installation completed." && echo "" && \
 		echo "during the make install process, use the same DEST= option here." && \
 		echo "" && \
 		echo "You MUST ensure that you edit/verify your configuration file." && \
-		echo "An example configuration file, eggdrop.conf, is distributed with Eggdrop." && \
+		echo "An example configuration file, conf/example.conf, is distributed with Eggdrop." && \
 		echo "" && \
 		echo "Remember to change directory to $(DEST) before you proceed." && \
 		echo ""
@@ -409,11 +409,15 @@ install-modules: install-start
 	fi
 
 install-data: install-start
-	@if test ! -f $(DEST)/eggdrop.conf; then \
-		$(INSTALL_DATA) $(srcdir)/eggdrop.conf $(DEST)/; \
+	@if test ! -d $(DEST)/conf; then \
+		echo "Creating 'conf' subdirectory."; \
+		$(top_srcdir)/misc/mkinstalldirs $(DEST)/conf >/dev/null; \
 	fi
-	@if test ! -f $(DEST)/eggdrop-basic.conf; then \
-		$(INSTALL_DATA) $(srcdir)/eggdrop-basic.conf $(DEST)/; \
+	@if test ! -f "$(DEST)/conf/example.conf"; then \
+		$(INSTALL_DATA) "$(srcdir)/conf/example.conf" $(DEST)/conf; \
+	fi
+	@if test ! -f "$(DEST)/conf/example.basic.conf"; then \
+		$(INSTALL_DATA) "$(srcdir)/conf/example.basic.conf" $(DEST)/conf; \
 	fi
 	@if test ! -d $(DEST)/logs; then \
 		echo "Creating 'logs' subdirectory."; \

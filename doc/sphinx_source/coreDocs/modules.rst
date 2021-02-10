@@ -45,8 +45,8 @@ the module you wish to install.
   6. Copy the compiled module file (modulename.so) into your bot's
      modules folder.
 
-  7. Add 'loadmodule modulename' to your eggdrop.conf file (do not
-     add the .so suffix).
+  7. Add 'loadmodule modulename' to your conf/example.conf file
+     (do not add the .so suffix).
 
   8. Rehash or restart your bot.
 

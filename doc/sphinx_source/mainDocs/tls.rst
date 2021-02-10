@@ -199,6 +199,6 @@ verification and authorization.
     control ssl certificate verification. A value of 0 disables
     verification completely. A value of 1 enables full verification.
     Higher values enable specific exceptions like allowing self-signed
-    or expired certificates. Details are documented in eggdrop.conf.
+    or expired certificates. Details are documented in conf/example.conf.
 	
 Copyright (C) 2010 - 2021 Eggheads Development Team
