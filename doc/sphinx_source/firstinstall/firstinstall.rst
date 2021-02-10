@@ -284,11 +284,11 @@ Simple Authentication and Security Layer (SASL) is becoming a prevalant method o
 
 * **EXTERNAL**: To use this method, set sasl-method to 2. This method allows you to use other TLS certificates to connect to the IRC server, if the IRC server supports it. An EXTERNAL authentication method usually requires you to connect to the IRC server using SSL/TLS. There are many ways to generate certificates; one such way is generating your own certificate using::
 
-    openssl req -new -x509 -nodes -keyout eggdrop.key -out eggdrop.crt
+    openssl req -new -x509 -nodes -keyout data/eggdrop.key -out data/eggdrop.crt
 
 You will need to determine yoru public key fingerprint by using::
 
-    openssl x509 -in eggdrop.crt -outform der | sha1sum -b | cut -d' ' -f1
+    openssl x509 -in data/eggdrop.crt -outform der | sha1sum -b | cut -d' ' -f1
 
 Then, ensure you have those keys loaded in the ssl-privatekey and ssl-certificate settings in the config file. Finally, to add this certificate to your NickServ account, type::
 

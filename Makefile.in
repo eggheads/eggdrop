@@ -305,18 +305,18 @@ sslstart:
 		echo "If you have already run \"make install\" and used the DEST= option, please use it again here";\
 		exit 1;\
 	fi && \
-	if test -f $(DEST)/eggdrop.key; then \
-		cp $(DEST)/eggdrop.key $(DEST)/eggdrop.key~old; \
+	if test -f $(DEST)/data/eggdrop.key; then \
+		cp $(DEST)/data/eggdrop.key $(DEST)/data/eggdrop.key~old; \
 	fi && \
-	if test -f $(DEST)/eggdrop.crt; then \
-		cp $(DEST)/eggdrop.crt $(DEST)/eggdrop.crt~old; \
+	if test -f $(DEST)/data/eggdrop.crt; then \
+		cp $(DEST)/data/eggdrop.crt $(DEST)/data/eggdrop.crt~old; \
 	fi
 
 sslcert: sslstart
-	openssl req -new -x509 -nodes -days 365 -keyout $(DEST)/eggdrop.key -out $(DEST)/eggdrop.crt -config ssl.conf
+	openssl req -new -x509 -nodes -days 365 -keyout $(DEST)/data/eggdrop.key -out $(DEST)/data/eggdrop.crt -config ssl.conf
 
 sslsilent: sslstart
-	openssl req -new -x509 -nodes -days 365 -keyout $(DEST)/eggdrop.key -out $(DEST)/eggdrop.crt -config ssl.conf \
+	openssl req -new -x509 -nodes -days 365 -keyout $(DEST)/data/eggdrop.key -out $(DEST)/data/eggdrop.crt -config ssl.conf \
 	    -subj "/O=Eggheads/OU=Eggdrop/CN=Self-generated Eggdrop Certificate"
 
 install: ainstall
