@@ -41,7 +41,7 @@ Make sure you leave the 'oauth:' there, including the ':'.
 Twitch web UI functions
 *************************
 
-Twitch is normally accessed via a web UI, and uses commands prefixed with a . or a / to interact with the channel. The Twitch module adds the partyline command ``twcmd`` to replicate those Twitch-specific commands. For example, to grant VIP status to a user via Tcl, you would use the command ``.twcmd vip username``. or to restrict chat to subscibers, you would use ``.twcmd subscribers`` (Note: no . or / is needed as a prefix to the Twitch command). In other words, ``.twcmd`` in Tcl is the interface to the standard Twitch set of commands available through the web UI (Also available as a Tcl command).
+Twitch is normally accessed via a web UI, and uses commands prefixed with a . or a / to interact with the channel. The Twitch module adds the partyline command ``twcmd`` to replicate those Twitch-specific commands. For example, to grant VIP status to a user via Tcl, you would use the command ``.twcmd vip username``. or to restrict chat to subscribers, you would use ``.twcmd subscribers`` (Note: no . or / is needed as a prefix to the Twitch command). In other words, ``.twcmd`` in Tcl is the interface to the standard Twitch set of commands available through the web UI (Also available as a Tcl command).
 
 **********************
 Twitch IRC limitations
