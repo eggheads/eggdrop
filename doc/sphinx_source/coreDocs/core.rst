@@ -233,7 +233,7 @@ Console Settings
 File and Directory Settings
 ---------------------------
 
-  set userfile "LamestBot.user"
+  set userfile "data/LamestBot.user"
     Specify here the filename your userfile should be saved as.
 
 
