@@ -409,6 +409,10 @@ install-modules: install-start
 	fi
 
 install-data: install-start
+	@if test ! -d $(DEST)/data; then \
+		echo "Creating 'data' subdirectory."; \
+		$(top_srcdir)/misc/mkinstalldirs $(DEST)/data >/dev/null; \
+	fi
 	@if test ! -d $(DEST)/conf; then \
 		echo "Creating 'conf' subdirectory."; \
 		$(top_srcdir)/misc/mkinstalldirs $(DEST)/conf >/dev/null; \
