@@ -1256,7 +1256,7 @@ static int tcl_listen STDVAR
   unsigned char buf[sizeof(struct in6_addr)];
   int i = 1;
 
-/* People like to add comments to this commnd for some reason, and it can cause
+/* People like to add comments to this command for some reason, and it can cause
  * errors that are difficult to figure out. Let's instead throw a more helpful
  * error for this case to get around BADARGS, and handle other cases further
  * down in the code
