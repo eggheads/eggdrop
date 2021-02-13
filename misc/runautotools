@@ -40,7 +40,7 @@ if test "x${1}" = "x-h" || test "x${1}" = "x--help"; then
 fi
 
 echo "Running autotools in root directory..."
-# Necessary to regenerate misc/getcommit revsion info
+# Necessary to regenerate misc/getcommit revision info
 touch -c configure.ac
 autoconf
 autoheader

@@ -416,7 +416,7 @@ static int gotuserstate(char *from, char *chan, char *tags) {
     } else if (!strcmp(ptr, "color")) {
       ptr = strtok(NULL, " ");
       strlcpy(tchan->userstate.color, ptr,
-            sizeof tchan->userstate.display_name);
+            sizeof tchan->userstate.color);
     } else if (!strcmp(ptr, "display-name")) {
       ptr = strtok(NULL, " ");
       strlcpy(tchan->userstate.display_name, ptr,
