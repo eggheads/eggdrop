@@ -710,7 +710,7 @@ static void dccsocklist(Tcl_Interp *irp, int argc, char *type, int src) {
 #else
   char s[INET_ADDRSTRLEN];
 #endif
-  unsigned int size;
+  socklen_t namelen;
   struct sockaddr_storage ss;
   Tcl_Obj *masterlist;
  
@@ -744,8 +744,8 @@ static void dccsocklist(Tcl_Interp *irp, int argc, char *type, int src) {
       /* If this came from socklist... */
       } else {
         /* Update dcc table socket information, needed for getting local IP */
-        size = sizeof ss;
-        getsockname(dcc[i].sock, (struct sockaddr *) &ss, &size);
+        namelen = sizeof ss;
+        getsockname(dcc[i].sock, (struct sockaddr *) &ss, &namelen);
         if (ss.ss_family == AF_INET) {
           struct sockaddr_in *saddr = (struct sockaddr_in *)&ss;
           inet_ntop(AF_INET, &(saddr->sin_addr), s, INET_ADDRSTRLEN);
