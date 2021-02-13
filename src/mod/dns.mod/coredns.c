@@ -1218,12 +1218,12 @@ static int dns_hosts(char *hostn) {
 #endif
 
   if (!*hostn) {
-    ddebug0(RES_MSG "Error: Bogus empty hostname input");
+    ddebug0(RES_MSG "ERROR: Bogus empty hostname input");
     return 1;
   }
   hostn_len = strlen(hostn);
   if (hostn_len > 255) {
-    ddebug0(RES_MSG "Error: Bogus len of hostname > 255 input");
+    ddebug0(RES_MSG "ERROR: Bogus len of hostname > 255 input");
     return 1;
   }
   /* precalculate lower and upper string from hostn and compare with handcrafted
@@ -1231,7 +1231,7 @@ static int dns_hosts(char *hostn) {
   for (i = 0; i < hostn_len; i++) {
       /* while at it, reject hostnames with bogus chars, see rfc 952, 1123 and 2181 */
       if (!strchr("-.0123456789ABCDEFGHIJABCDEFGHIJKLMNOPQRSTUVWXYZ_abcdefghijklmnopqrstuvwxyz", hostn[i])) {
-        ddebug0(RES_MSG "Error: Bogus char in hostname input");
+        ddebug0(RES_MSG "ERROR: Bogus char in hostname input");
         return 1;
       }
       hostn_lower[i] = tolower((unsigned char) hostn[i]);
@@ -1240,7 +1240,7 @@ static int dns_hosts(char *hostn) {
   hostn_lower[i] = 0;
   hostn_upper[i] = 0;
   if (!(hostf = fopen(PATH, "r"))) {
-    ddebug1(RES_MSG "Warning: fopen(" PATH "): %s", strerror(errno));
+    ddebug1(RES_MSG "WARNING: fopen(" PATH "): %s", strerror(errno));
     return 0;
   }
   /* p1 is used for finding ip
@@ -1293,7 +1293,7 @@ static int dns_hosts(char *hostn) {
     }
   }
   if (ferror(hostf)) {
-    ddebug0(RES_MSG "Error: fgets(" PATH ")");
+    ddebug0(RES_MSG "ERROR: fgets(" PATH ")");
     fclose(hostf);
     return 0;
   }
