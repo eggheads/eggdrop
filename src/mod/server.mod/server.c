@@ -1064,6 +1064,7 @@ static int del_server(const char *name, const char *port)
 {
   struct server_list *z, *curr, *prev;
   char *ret;
+  int found = 0;
 
   if (!serverlist) {
     return 2;
@@ -1073,7 +1074,6 @@ static int del_server(const char *name, const char *port)
       return 1;
     }
   }
-  ret = 0;
 /* Check if server to be deleted is first node in list */
   if (!strcasecmp(name, serverlist->name)) {
     z = serverlist;
@@ -1091,15 +1091,14 @@ static int del_server(const char *name, const char *port)
       serverlist = serverlist->next;
       free_server(z);
     }
-      ret = 1;
-//    return 0;
+    found = 1;
   }
   curr = serverlist->next;
   prev = serverlist;
 /* Check the remaining nodes in list */
   while (curr != NULL && prev != NULL) {
     if (!strcasecmp(name, curr->name)) {
-      if (strlen(port)) {
+      if (port[0] != '\0') {
         if ((atoi(port) != curr->port)
 #ifdef TLS
             || ((port[0] != '+') && curr->ssl )) {
@@ -1113,15 +1112,15 @@ static int del_server(const char *name, const char *port)
       }
       z = curr;
       prev->next = curr->next;
+      curr = curr->next;
       free_server(z);
-        ret = 1;
-//      return 0;
+      found = 1;
+    } else {
+      prev = curr;
+      curr = curr->next;
     }
-    prev = curr;
-    curr = curr->next;
   }
-    ret ? return 0 : return 3;
-//  return 3;
+  return found ? 0 : 3; 
 }
 
 /* Free a single removed server from server link list */
