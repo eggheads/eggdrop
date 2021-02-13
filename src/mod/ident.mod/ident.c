@@ -149,7 +149,7 @@ static void ident_oidentd()
           } else {
             /* If it is Eggdrop but not me, check for expiration and remove */
             if (!strstr(line, identstr)) {
-              strncpy(buf, line, sizeof buf);
+              strlcpy(buf, line, sizeof buf);
               strtok(buf, "!");
               prevtime = atoi(strtok(NULL, "!"));
               if ((now - prevtime) > 300) {

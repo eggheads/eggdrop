@@ -368,8 +368,7 @@ void *n_malloc(int size, const char *file, int line)
   memtbl[i].line = line;
   memtbl[i].size = size;
   p = strrchr(file, '/');
-  strncpy(memtbl[i].file, p ? p + 1 : file, 19);
-  memtbl[i].file[19] = 0;
+  strlcpy(memtbl[i].file, p ? p + 1 : file, sizeof memtbl[i].file);
   memused += size;
   lastused++;
 #endif
@@ -405,8 +404,7 @@ void *n_realloc(void *ptr, int size, const char *file, int line)
   memtbl[i].line = line;
   memtbl[i].size = size;
   p = strrchr(file, '/');
-  strncpy(memtbl[i].file, p ? p + 1 : file, 19);
-  memtbl[i].file[19] = 0;
+  strlcpy(memtbl[i].file, p ? p + 1 : file, sizeof memtbl[i].file);
   memused += size;
 #endif
   return x;
