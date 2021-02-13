@@ -444,55 +444,31 @@ static int tcl_queuesize STDVAR
   return TCL_ERROR;
 }
 
-static int tcl_addserver STDVAR {
-  char name[256] = "";
-  char port[7] = "";
-  char pass[121] = "";
-  char ret = 0;
+static int tcl_server STDVAR {
+  int ret;
 
-  BADARGS(2, 4, " server ?port? ?pass?");
-  strlcpy(name, argv[1], sizeof name);
-  if (argc >= 3) {
-      strlcpy(port, argv[2], sizeof port);
+  BADARGS(2, 5, " subcommand host ?port ?password??");
+  if (!strcmp(argv[1], "add")) {
+    ret = add_server(argv[2], argv[3] ? argv[3] : "", argv[4] ? argv[4] : "");
+  } else if (!strcmp(argv[1], "remove")) {
+    ret = del_server(argv[2], argv[3] ? argv[3] : "");
+  } else {
+    Tcl_AppendResult(irp, "Invalid subcommand: ", argv[1],
+        ". Should be \"add\" or \"remove\"", NULL);
+    return TCL_ERROR;
   }
-  if (argc == 4) {
-    strlcpy(pass, argv[3], sizeof pass);
-  }
-  ret = add_server(name, port, pass);
   if (ret == 0) {
     return TCL_OK;
-  } else if (ret == 1) {
-    Tcl_AppendResult(irp, "A ':' was detected in the non-IPv6 address ", name,
-                " Make sure the port is separated by a space, not a ':'. "
-                "Skipping...", NULL);
+  }
+  if (ret == 1) {
+    Tcl_AppendResult(irp, "A ':' was detected in the non-IPv6 address ", argv[2],
+            " Make sure the port is separated by a space, not a ':'. ", NULL);
   } else if (ret == 2) {
     Tcl_AppendResult(irp, "Attempted to add SSL-enabled server, but Eggdrop "
-                "was not compiled with SSL libraries. Skipping...", NULL);
-  }
-  return TCL_ERROR;
-}
-
-static int tcl_delserver STDVAR {
-  char name[256] = "";
-  char port[7] = "";
-  char ret = 0;
-
-  BADARGS(2, 3, " server, ?port?");
-  strlcpy(name, argv[1], sizeof name);
-  if (argc == 3) {
-    strlcpy(port, argv[2], sizeof port);
-  }
-  ret = del_server(name, port);
-  if (!ret) {
-    return TCL_OK;
-  } else if (ret == 1) {
-    Tcl_AppendResult(irp, "A ':' was detected in the non-IPv6 address ", name,
-                " Make sure the port is separated by a space, not a ':'. "
-                "Skipping...", NULL);
-  } else if (ret == 2) {
-    Tcl_AppendResult(irp, "Server list is empty", NULL);
-  } else if (ret == 3) {
-    Tcl_AppendResult(irp, "Server ", name, strlen(port) ? ":" : "", strlen(port) ? port : ""," not found.", NULL);
+            "was not compiled with SSL libraries.", NULL);
+  } else if (ret == 3) {    /* del_server only */
+    Tcl_AppendResult(irp, "Server ", argv[2], argv[3] ? ":" : "",
+            argv[3] ? argv[3] : ""," not found.", NULL);
   }
   return TCL_ERROR;
 }
@@ -508,10 +484,8 @@ static tcl_cmds my_tcl_cmds[] = {
   {"putquick",      tcl_putquick},
   {"putnow",        tcl_putnow},
   {"tagmsg",        tcl_tagmsg},
-  {"addserver",     tcl_addserver},
-  {"delserver",     tcl_delserver},
+  {"server",        tcl_server},
   {"getaccount",    tcl_getaccount},
   {"isidentified",  tcl_isidentified},
   {NULL,         NULL}
 };
-

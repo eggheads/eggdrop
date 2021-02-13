@@ -1010,6 +1010,7 @@ static void old_add_server(const char *ss) {
 }
 
 /* Add a new server to the server_list.
+ * Don't return '3' from here, that is used by del_server() for tcl_server()
  */
 static int add_server(const char *name, const char *port, const char *pass)
 {
@@ -1063,6 +1064,7 @@ static int del_server(const char *name, const char *port)
 {
   struct server_list *z, *curr, *prev;
   char *ret;
+  int found = 0;
 
   if (!serverlist) {
     return 2;
@@ -1089,14 +1091,14 @@ static int del_server(const char *name, const char *port)
       serverlist = serverlist->next;
       free_server(z);
     }
-    return 0;
+    found = 1;
   }
   curr = serverlist->next;
   prev = serverlist;
 /* Check the remaining nodes in list */
   while (curr != NULL && prev != NULL) {
     if (!strcasecmp(name, curr->name)) {
-      if (strlen(port)) {
+      if (port[0] != '\0') {
         if ((atoi(port) != curr->port)
 #ifdef TLS
             || ((port[0] != '+') && curr->ssl )) {
@@ -1110,13 +1112,15 @@ static int del_server(const char *name, const char *port)
       }
       z = curr;
       prev->next = curr->next;
+      curr = curr->next;
       free_server(z);
-      return 0;
+      found = 1;
+    } else {
+      prev = curr;
+      curr = curr->next;
     }
-    prev = curr;
-    curr = curr->next;
   }
-  return 3;
+  return found ? 0 : 3; 
 }
 
 /* Free a single removed server from server link list */
