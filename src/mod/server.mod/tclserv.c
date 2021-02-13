@@ -447,13 +447,13 @@ static int tcl_queuesize STDVAR
 static int tcl_server STDVAR {
   int ret;
 
-  BADARGS(2, 5, " command, host, port, ?password?");
+  BADARGS(2, 5, " subcommand, host port ?password?");
   if (!strcmp(argv[1], "add")) {
     ret = add_server(argv[2], argv[3] ? argv[3] : "", argv[4] ? argv[4] : "");
   } else if (!strcmp(argv[1], "remove")) {
     ret = del_server(argv[2], argv[3] ? argv[3] : "");
   } else {
-    Tcl_AppendResult(irp, "Invalid command: ", argv[1],
+    Tcl_AppendResult(irp, "Invalid subcommand: ", argv[1],
         ". Should be \"add\" or \"remove\"", NULL);
     return TCL_ERROR;
   }

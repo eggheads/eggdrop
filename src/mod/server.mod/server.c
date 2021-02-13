@@ -1073,6 +1073,7 @@ static int del_server(const char *name, const char *port)
       return 1;
     }
   }
+  ret = 0;
 /* Check if server to be deleted is first node in list */
   if (!strcasecmp(name, serverlist->name)) {
     z = serverlist;
@@ -1090,7 +1091,8 @@ static int del_server(const char *name, const char *port)
       serverlist = serverlist->next;
       free_server(z);
     }
-    return 0;
+      ret = 1;
+//    return 0;
   }
   curr = serverlist->next;
   prev = serverlist;
@@ -1112,12 +1114,14 @@ static int del_server(const char *name, const char *port)
       z = curr;
       prev->next = curr->next;
       free_server(z);
-      return 0;
+        ret = 1;
+//      return 0;
     }
     prev = curr;
     curr = curr->next;
   }
-  return 3;
+    ret ? return 0 : return 3;
+//  return 3;
 }
 
 /* Free a single removed server from server link list */

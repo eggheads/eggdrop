@@ -180,11 +180,21 @@ tagmsg <tags> <target>
 
   Module: server
 
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-server <command> <ip/host> [[+]port [password]]
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+server add <ip/host> [[+]port [password]]
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-  Description: adds or removes a server to the list of servers Eggdrop will connect to. Valid commands are "add" and "remove". Prefix the port with '+' to indicate an SSL-protected port. A port value is required if password is to be specified. The remove command Eggdrop will remove only the first server matching the ip or hostname provided. The SSL status (+) of the provided port is matched against as well (ie, 7000 is not the same as +7000). The remove command will ignore a password if one is provided.
+  Description: adds a server to the list of servers Eggdrop will connect to. Prefix the port with '+' to indicate an SSL-protected port. A port value is required if password is to be specified. The SSL status (+) of the provided port is matched against as well (ie, 7000 is not the same as +7000).
+
+  Returns: nothing
+
+  Module: server
+
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+server del <ip/host> [[+] port]
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+  Description: Removes a server from the list of servers Eggdrop will connect to. The remove command will remove only the first server matching the ip or hostname provided. The SSL status (+) of the provided port is matched against as well (ie, 7000 is not the same as +7000).
 
   Returns: nothing
 
