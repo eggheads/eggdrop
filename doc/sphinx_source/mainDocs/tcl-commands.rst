@@ -194,7 +194,7 @@ server add <ip/host> [[+]port [password]]
 server del <ip/host> [[+] port]
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-  Description: Removes a server from the list of servers Eggdrop will connect to. If no port is provided, all servers matching the ip or hostname provided will be removed, otherwise only the ip/host with the corresponding port will be removed. The SSL status (+) of the provided port is matched against as well (ie, 7000 is not the same as +7000).
+  Description: removes a server from the list of servers Eggdrop will connect to. If no port is provided, all servers matching the ip or hostname provided will be removed, otherwise only the ip/host with the corresponding port will be removed. The SSL status (+) of the provided port is matched against as well (ie, 7000 is not the same as +7000).
 
   Returns: nothing
 
