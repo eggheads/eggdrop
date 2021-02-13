@@ -141,7 +141,7 @@ The following is a list of bind types and how they work. Below each bind type is
 
 #. WSPR (WHISPER)
 
-  bind wspr <flags> <commmand> <proc>
+  bind wspr <flags> <command> <proc>
 
   procname <nick> <userhost> <handle> <msg>
 
