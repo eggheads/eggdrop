@@ -1335,7 +1335,7 @@ static int tryauthenticate(char *from, char *msg)
   unsigned int siglen;
 #endif /* OPENSSL_VERSION_NUMBER >= 0x10000000L */
 #endif /* HAVE_EVP_PKEY_GET1_EC_KEY */
-  putlog(LOG_SERV, "*", "SASL: got AUTHENTICATE %s", msg);
+  putlog(LOG_DEBUG, "*", "SASL: got AUTHENTICATE %s", msg);
   if (msg[0] == '+') {
     s = src;
     /* Don't use snprintf due to \0 inside */
@@ -1378,7 +1378,7 @@ static int tryauthenticate(char *from, char *msg)
       dst[0] = '+';
       dst[1] = 0;
     }
-    putlog(LOG_SERV, "*", "SASL: put AUTHENTICATE %s", dst);
+    putlog(LOG_DEBUG, "*", "SASL: put AUTHENTICATE %s", dst);
     dprintf(DP_MODE, "AUTHENTICATE %s\n", dst);
 #else
     putlog(LOG_DEBUG, "*", "SASL: TLS libs required for EXTERNAL but are not "
@@ -1388,7 +1388,7 @@ static int tryauthenticate(char *from, char *msg)
   } else {      /* Only EC-challenges get extra auth messages w/o a + */
 #ifdef TLS
 #ifdef HAVE_EVP_PKEY_GET1_EC_KEY
-    putlog(LOG_SERV, "*", "SASL: got AUTHENTICATE Challenge");
+    putlog(LOG_DEBUG, "*", "SASL: got AUTHENTICATE Challenge");
     olen = b64_pton(msg, dst, sizeof dst);
     if (olen == -1) {
       putlog(LOG_SERV, "*", "SASL: AUTHENTICATE error: could not base64 decode "
@@ -1475,7 +1475,7 @@ static int tryauthenticate(char *from, char *msg)
       return 1;
     }
     nfree(sig);
-    putlog(LOG_SERV, "*", "SASL: put AUTHENTICATE Response %s", dst);
+    putlog(LOG_DEBUG, "*", "SASL: put AUTHENTICATE Response %s", dst);
     dprintf(DP_MODE, "AUTHENTICATE %s\n", dst);
 #endif /* HAVE_EVP_PKEY_GET1_EC_KEY */
 #else /* TLS */
@@ -1491,7 +1491,7 @@ static int gotauthenticate(char *from, char *msg)
 {
   fixcolon(msg); /* Because Inspircd does its own thing */
   if (tryauthenticate(from, msg) && !sasl_continue) {
-    putlog(LOG_DEBUG, "*", "SASL: Aborting connection and retrying");
+    putlog(LOG_SERV, "*", "SASL: Aborting connection and retrying");
     nuke_server("Quitting...");
     return 1;
   }
@@ -1768,7 +1768,7 @@ static int gotcap(char *from, char *msg) {
 #ifndef HAVE_EVP_PKEY_GET1_EC_KEY
       if (sasl_mechanism != SASL_MECHANISM_ECDSA_NIST256P_CHALLENGE) {
 #endif
-        putlog(LOG_SERV, "*", "SASL: put AUTHENTICATE %s",
+        putlog(LOG_DEBUG, "*", "SASL: put AUTHENTICATE %s",
             SASL_MECHANISMS[sasl_mechanism]);
         dprintf(DP_MODE, "AUTHENTICATE %s\n", SASL_MECHANISMS[sasl_mechanism]);
         sasl_timeout_time = sasl_timeout;
