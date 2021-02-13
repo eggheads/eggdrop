@@ -180,20 +180,26 @@ tagmsg <tags> <target>
 
   Module: server
 
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-addserver <ip/host> [[+]port [password]]
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  Description: adds a server to the list of servers Eggdrop will connect to. Prefix the port with '+' to indicate an SSL-protected port. A port value is required if password is to be specified. 
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+server add <ip/host> [[+]port [password]]
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+  Description: adds a server to the list of servers Eggdrop will connect to. Prefix the port with '+' to indicate an SSL-protected port. A port value is required if password is to be specified. The SSL status (+) of the provided port is matched against as well (ie, 7000 is not the same as +7000).
 
   Returns: nothing
 
   Module: server
 
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-delserver <ip/host> [[+]port]
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+server del <ip/host> [[+]port]
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-  Description: removes a server from the list of servers Eggdrop will connect to. If no port is specified, Eggdrop will remove the first server matching the ip or hostname provided. The SSL status (+) of the provided port is matched against as well (ie, 7000 is not the same as +7000).
+  Description: removes a server from the list of servers Eggdrop will connect to. If no port is provided, all servers matching the ip or hostname provided will be removed, otherwise only the ip/host with the corresponding port will be removed. The SSL status (+) of the provided port is matched against as well (ie, 7000 is not the same as +7000).
+
+  Returns: nothing
+
+  Module: server
+
 
 User Record Manipulation Commands
 ---------------------------------
