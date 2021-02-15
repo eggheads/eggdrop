@@ -248,18 +248,21 @@ tagmsg “+foo bar moo baa +last {}” #channel</dd>
 <p>Module: server</p>
 </div></blockquote>
 </div>
-<div class="section" id="addserver-ip-host-port-password">
-<h3>addserver &lt;ip/host&gt; [[+]port [password]]<a class="headerlink" href="#addserver-ip-host-port-password" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="server-add-ip-host-port-password">
+<h3>server add &lt;ip/host&gt; [[+]port [password]]<a class="headerlink" href="#server-add-ip-host-port-password" title="Permalink to this headline">¶</a></h3>
 <blockquote>
-<div><p>Description: adds a server to the list of servers Eggdrop will connect to. Prefix the port with ‘+’ to indicate an SSL-protected port. A port value is required if password is to be specified.</p>
+<div><p>Description: adds a server to the list of servers Eggdrop will connect to. Prefix the port with ‘+’ to indicate an SSL-protected port. A port value is required if password is to be specified. The SSL status (+) of the provided port is matched against as well (ie, 7000 is not the same as +7000).</p>
 <p>Returns: nothing</p>
 <p>Module: server</p>
 </div></blockquote>
 </div>
-<div class="section" id="delserver-ip-host-port">
-<h3>delserver &lt;ip/host&gt; [[+]port]<a class="headerlink" href="#delserver-ip-host-port" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="server-del-ip-host-port">
+<h3>server del &lt;ip/host&gt; [[+]port]<a class="headerlink" href="#server-del-ip-host-port" title="Permalink to this headline">¶</a></h3>
 <blockquote>
-<div>Description: removes a server from the list of servers Eggdrop will connect to. If no port is specified, Eggdrop will remove the first server matching the ip or hostname provided. The SSL status (+) of the provided port is matched against as well (ie, 7000 is not the same as +7000).</div></blockquote>
+<div><p>Description: removes a server from the list of servers Eggdrop will connect to. If no port is provided, all servers matching the ip or hostname provided will be removed, otherwise only the ip/host with the corresponding port will be removed. The SSL status (+) of the provided port is matched against as well (ie, 7000 is not the same as +7000).</p>
+<p>Returns: nothing</p>
+<p>Module: server</p>
+</div></blockquote>
 </div>
 </div>
 <div class="section" id="user-record-manipulation-commands">
@@ -3629,7 +3632,7 @@ words) (This char only works in binds, not in regular matching)</td>
           
     <div class="footer" role="contentinfo">
         &#169; Copyright 2021, Eggheads.
-      Last updated on Jan 24, 2021.
+      Last updated on Feb 14, 2021.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.5.
     </div>
         </div>

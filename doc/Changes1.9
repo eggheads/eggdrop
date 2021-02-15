@@ -1,8 +1,93 @@
 
-Eggdrop Changes (Last Updated 2021-01-24):
+Eggdrop Changes (Last Updated 2021-02-15):
 __________________________________________
 
-Eggdrop v1.9.0rc1:
+Eggdrop v1.9.0rc2:
+
+  2021-02-14 * Revert "Remove unnecessary openssl checks" (#1124)
+             * undef set_key
+                 [Found by: mortmann]
+             * Fix vhost6 being ignored if vhost4 was empty, regardless of address family actually used.
+                 [Found by: Harekiet / Patch by: thommey]
+             * Update net-type warning
+  2021-02-13 * Remove self-refrence in .conf
+             * Move some SASL log messages to debug
+             * Fix typos
+                 [Patch by: mortmann]
+             * Fix twitch parameter
+                 [Patch by: mortmann]
+             * Change add/delserver to server add/remove (#1114)
+                 [Found by: Malagam / Patch by: Geo]
+             * Update THANKS
+             * Fix file leak (#1118)
+                 [Found by: michaelortmann / Patch by: michaelortmann]
+             * Fix file leak
+                 [Found by: michaelortmann / Patch by: michaelortmann]
+             * Fix dns resolving hang
+                 [Found by: michaelortmann / Patch by: michaelortmann]
+             * Update strncpys
+             * Fix type warning in Cygwin
+                 [Found by: michaelortmann / Patch by: michaelortmann]
+             * Update THANKS
+             * Update THANKS
+  2021-02-02 * Update field length
+  2021-01-30 * Fix add/delserver syntax typo
+                 [Found by: ZarTek]
+  2021-01-25 * Fix eggdrop.conf CAP comment
+                 [Found by: jack3]
+  2021-01-24 * Update AUTHORS
+             * typo
+             * Fix copyright
+  2021-02-15 * Update AUTHORS
+             * typo
+             * Fix copyright
+             * Fix eggdrop.conf CAP comment
+                 [Found by: jack3]
+             * Fix add/delserver syntax typo
+                 [Found by: ZarTek]
+             * Update field length
+             * Remove self-refrence in .conf
+             * Move some SASL log messages to debug
+             * Fix typos
+                 [Patch by: mortmann]
+             * Fix twitch parameter
+                 [Patch by: mortmann]
+             * Change add/delserver to server add/remove (#1114)
+                 [Found by: Malagam / Patch by: Geo]
+             * Update THANKS
+             * Fix file leak (#1118)
+                 [Found by: michaelortmann / Patch by: michaelortmann]
+             * Fix file leak
+                 [Found by: michaelortmann / Patch by: michaelortmann]
+             * Fix dns resolving hang
+                 [Found by: michaelortmann / Patch by: michaelortmann]
+             * Update strncpys
+             * Fix type warning in Cygwin
+                 [Found by: michaelortmann / Patch by: michaelortmann]
+             * Update THANKS
+             * Update THANKS
+             * Revert "Remove unnecessary openssl checks" (#1124)
+             * undef set_key
+                 [Found by: mortmann]
+             * Fix vhost6 being ignored if vhost4 was empty, regardless of address family actually used.
+                 [Found by: Harekiet / Patch by: thommey]
+             * Update net-type warning
+             * Update network format/note
+             * fix typo
+             * Try to avoid ident race condition
+                 [Found by: PeGaSuS / Patch by: michaelortmann]
+             * Update releaseprep for python3
+             * Revert "Update releaseprep for python3"
+             * Run autotools
+             * Update network format/note
+             * fix typo
+             * Try to avoid ident race condition
+                 [Found by: PeGaSuS / Patch by: michaelortmann]
+             * Update releaseprep for python3
+             * Revert "Update releaseprep for python3"
+             * Run autotools
+
+Eggdrop v1.9.0rc1 (2021-01-24):
 
   2021-01-24 * Fix OBOE
                  [Found by: michaelortmann / Patch by: michaelortmann]
@@ -16,6 +101,7 @@ Eggdrop v1.9.0rc1:
              * update Change doc gen
              * update releaseprep
              * Fix releaseprep for 1.9.x
+             * Eggdrop v1.9.0 Release Candidate 1
   2021-01-22 * Change buffer size
              * Fix format strings
              * Fix OBOE
