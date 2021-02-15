@@ -674,7 +674,7 @@ static void build_sock_list(Tcl_Interp *irp, Tcl_Obj *masterlist, char *idxstr,
   Tcl_Obj *thelist;
   char securestr[2], portstr[6];
 
-  egg_snprintf(securestr, sizeof securestr, "%d", secure);
+  snprintf(securestr, sizeof securestr, "%d", secure);
   egg_snprintf(portstr, sizeof portstr, "%d", port);
   thelist = Tcl_NewListObj(0, NULL);
   Tcl_ListObjAppendElement(irp, thelist, Tcl_NewStringObj(val[0], -1));
@@ -761,7 +761,7 @@ static void dccsocklist(Tcl_Interp *irp, int argc, char *type, int src) {
 #ifdef TLS
             dcc[i].ssl,
 #else
-            '0',
+            0,
 #endif
             dcc[i].type ? dcc[i].type->name : "*UNKNOWN*", other,
             timestamp);
