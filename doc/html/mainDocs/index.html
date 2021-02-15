@@ -52,7 +52,10 @@
 <li class="toctree-l1"><a class="reference internal" href="bans.html">Bans, Invites, and Exempts</a></li>
 <li class="toctree-l1"><a class="reference internal" href="botnet.html">Botnet Sharing and Linking</a></li>
 <li class="toctree-l1"><a class="reference internal" href="patch.html">Patch How-To</a></li>
+<li class="toctree-l1"><a class="reference internal" href="pbkdf2.html">PBKDF2 Hashing</a></li>
 <li class="toctree-l1"><a class="reference internal" href="tcl-commands.html">Eggdrop Tcl Commands</a></li>
+<li class="toctree-l1"><a class="reference internal" href="twitch.html">Twitch</a></li>
+<li class="toctree-l1"><a class="reference internal" href="twitch-tcl-commands.html">Eggdrop Twitch Tcl Commands</a></li>
 <li class="toctree-l1"><a class="reference internal" href="ipv6.html">IPv6 support</a></li>
 <li class="toctree-l1"><a class="reference internal" href="tls.html">TLS support</a></li>
 </ul>
@@ -70,10 +73,12 @@
 <li class="toctree-l1"><a class="reference internal" href="../coreDocs/ident.html">Ident Module</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../coreDocs/irc.html">IRC Module</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../coreDocs/notes.html">Notes Module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../coreDocs/pbkdf2.html">PBKDF2 Module</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../coreDocs/seen.html">Seen Module</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../coreDocs/server.html">Server Module</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../coreDocs/share.html">Share Module</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../coreDocs/transfer.html">Transfer Module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../coreDocs/twitch.html">Twitch Module</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../coreDocs/uptime.html">Uptime Module</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../coreDocs/woobie.html">Woobie Module</a></li>
 </ul>
@@ -124,6 +129,12 @@
 <li class="toctree-l2"><a class="reference internal" href="patch.html#creating-and-submitting-a-patch-via-diff-old-school">Creating and submitting a patch (via diff - old school!)</a></li>
 </ul>
 </li>
+<li class="toctree-l1"><a class="reference internal" href="pbkdf2.html">PBKDF2 Hashing</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="pbkdf2.html#background">Background</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pbkdf2.html#usage">Usage</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pbkdf2.html#tcl-interface">Tcl Interface</a></li>
+</ul>
+</li>
 <li class="toctree-l1"><a class="reference internal" href="tcl-commands.html">Eggdrop Tcl Commands</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="tcl-commands.html#output-commands">Output Commands</a></li>
 <li class="toctree-l2"><a class="reference internal" href="tcl-commands.html#user-record-manipulation-commands">User Record Manipulation Commands</a></li>
@@ -139,6 +150,19 @@
 <li class="toctree-l2"><a class="reference internal" href="tcl-commands.html#control-procedures">Control Procedures</a></li>
 <li class="toctree-l2"><a class="reference internal" href="tcl-commands.html#tcp-connections">TCP Connections</a></li>
 <li class="toctree-l2"><a class="reference internal" href="tcl-commands.html#match-characters">Match Characters</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="twitch.html">Twitch</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="twitch.html#disclaimer">Disclaimer</a></li>
+<li class="toctree-l2"><a class="reference internal" href="twitch.html#registering-with-twitch">Registering with Twitch</a></li>
+<li class="toctree-l2"><a class="reference internal" href="twitch.html#editing-the-config-file">Editing the config file</a></li>
+<li class="toctree-l2"><a class="reference internal" href="twitch.html#twitch-web-ui-functions">Twitch web UI functions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="twitch.html#twitch-irc-limitations">Twitch IRC limitations</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="twitch-tcl-commands.html">Eggdrop Twitch Tcl Commands</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="twitch-tcl-commands.html#commands">Commands</a></li>
+<li class="toctree-l2"><a class="reference internal" href="twitch-tcl-commands.html#binds">Binds</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="ipv6.html">IPv6 support</a><ul>
@@ -184,8 +208,8 @@
         <div class="right">
           
     <div class="footer" role="contentinfo">
-        &#169; Copyright 2020, Eggheads.
-      Last updated on Jun 19, 2020.
+        &#169; Copyright 2021, Eggheads.
+      Last updated on Jan 24, 2021.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.5.
     </div>
         </div>

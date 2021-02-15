@@ -467,4 +467,4 @@ What to do with a module?
    directory on ftp.eggheads.org. Don't forget to mention in your text file
    which version Eggdrop the module is written for.
 
-Copyright (C) 1999 - 2020 Eggheads Development Team
+Copyright (C) 1999 - 2021 Eggheads Development Team

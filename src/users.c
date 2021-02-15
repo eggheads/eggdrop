@@ -12,7 +12,7 @@
  */
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2020 Eggheads Development Team
+ * Copyright (C) 1999 - 2021 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -1005,7 +1005,7 @@ int readuserfile(char *file, struct userrec **ret)
 }
 
 /* New methodology - cycle through list 3 times
- * 1st time scan for +sh bots and link if none connected
+ * 1st time scan for +(sbcdejnu)h bots and link if none connected
  * 2nd time scan for +h bots
  * 3rd time scan for +a/+h bots */
 void autolink_cycle(char *start)

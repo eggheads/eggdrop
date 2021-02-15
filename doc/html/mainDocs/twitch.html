@@ -14,7 +14,9 @@
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
     <script type="text/javascript" src="../_static/language_data.js"></script>
-    <link rel="search" title="Search" href="../search.html" /> 
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Eggdrop Twitch Tcl Commands" href="twitch-tcl-commands.html" />
+    <link rel="prev" title="Eggdrop Tcl Commands" href="tcl-commands.html" /> 
   </head><body>
     <div class="header-wrapper" role="banner">
       <div class="header">
@@ -24,6 +26,10 @@
         <div class="headertitle"><a
           href="../index.html">Eggdrop 1.9.0 documentation</a></div>
         <div class="rel" role="navigation" aria-label="related navigation">
+          <a href="tcl-commands.html" title="Eggdrop Tcl Commands"
+             accesskey="P">previous</a> |
+          <a href="twitch-tcl-commands.html" title="Eggdrop Twitch Tcl Commands"
+             accesskey="N">next</a>
         </div>
        </div>
     </div>
@@ -38,7 +44,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../installAndSetup/install.html">Installing Eggdrop</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../installAndSetup/faq.html">Frequently Asked Questions</a></li>
 </ul>
-<ul>
+<ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="about.html">About Eggdrop</a></li>
 <li class="toctree-l1"><a class="reference internal" href="features.html">Eggdrop Features</a></li>
 <li class="toctree-l1"><a class="reference internal" href="users.html">Users and Flags</a></li>
@@ -46,7 +52,10 @@
 <li class="toctree-l1"><a class="reference internal" href="bans.html">Bans, Invites, and Exempts</a></li>
 <li class="toctree-l1"><a class="reference internal" href="botnet.html">Botnet Sharing and Linking</a></li>
 <li class="toctree-l1"><a class="reference internal" href="patch.html">Patch How-To</a></li>
+<li class="toctree-l1"><a class="reference internal" href="pbkdf2.html">PBKDF2 Hashing</a></li>
 <li class="toctree-l1"><a class="reference internal" href="tcl-commands.html">Eggdrop Tcl Commands</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Twitch</a></li>
+<li class="toctree-l1"><a class="reference internal" href="twitch-tcl-commands.html">Eggdrop Twitch Tcl Commands</a></li>
 <li class="toctree-l1"><a class="reference internal" href="ipv6.html">IPv6 support</a></li>
 <li class="toctree-l1"><a class="reference internal" href="tls.html">TLS support</a></li>
 </ul>
@@ -64,10 +73,12 @@
 <li class="toctree-l1"><a class="reference internal" href="../coreDocs/ident.html">Ident Module</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../coreDocs/irc.html">IRC Module</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../coreDocs/notes.html">Notes Module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../coreDocs/pbkdf2.html">PBKDF2 Module</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../coreDocs/seen.html">Seen Module</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../coreDocs/server.html">Server Module</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../coreDocs/share.html">Share Module</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../coreDocs/transfer.html">Transfer Module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../coreDocs/twitch.html">Twitch Module</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../coreDocs/uptime.html">Uptime Module</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../coreDocs/woobie.html">Woobie Module</a></li>
 </ul>
@@ -110,7 +121,7 @@
 <h2>Registering with Twitch<a class="headerlink" href="#registering-with-twitch" title="Permalink to this headline">¶</a></h2>
 <ol class="arabic simple">
 <li>Register an account with Twitch. At the time of writing, this is done by visiting <a class="reference external" href="http://twitch.tv/">Twitch</a> and clicking on the Sign Up button.</li>
-<li>Generate a token to authenticate your bot with Twitch. At the time of writing, this is done by visiting the <a class="reference external" href="https://twitchapps.com/tmi/">Twitch OAuth generator</a> while logged in to the account you just created. The token will be an alphanumeric string and should be trated like a password (…because it is). Make note of it, and keep it safe!</li>
+<li>Generate a token to authenticate your bot with Twitch. At the time of writing, this is done by visiting the <a class="reference external" href="https://twitchapps.com/tmi/">Twitch OAuth generator</a> while logged in to the account you just created. The token will be an alphanumeric string and should be treated like a password (…because it is). Make note of it, and keep it safe!</li>
 </ol>
 </div>
 <div class="section" id="editing-the-config-file">
@@ -123,13 +134,8 @@
 </li>
 </ol>
 <p>Make sure you leave the ‘oauth:’ there, including the ‘:’.</p>
-<ol class="arabic" start="2">
-<li><p class="first">Find <code class="docutils literal notranslate"><span class="pre">set</span> <span class="pre">cap-request</span></code> setting in the CAP section of the config file. We want to negotiate the ability to use Twitch-specific capabilities with the server, so edit that line so it looks like this:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="nb">set</span> <span class="n">cap</span><span class="o">-</span><span class="n">request</span> <span class="s2">&quot;twitch.tv/commands twitch.tv/membership twitch.tv/tags&quot;</span>
-</pre></div>
-</div>
-</li>
-<li><p class="first">Find the keep-nick setting below the CAP section of the config file, and set it to 0.</p>
+<ol class="arabic">
+<li><p class="first">Spoiler alert- this step tells you to do nothing, but we’re including it for the sake of thoroughness. We know you are the ideal IRC user and have read all the docs for Twitch already, and noticed that Eggdrop has to request capabilities from the Twitch via a CAP request, something that is normally set in the config file. Good news! The Twitch module does this for you already, automatically. No need to edit the <code class="docutils literal notranslate"><span class="pre">cap-request</span></code> setting in the config. Moving on!</p>
 </li>
 <li><p class="first">Find the Twitch section of the config file, and enable the loading of the twitch module by removing the ‘#’ in front of the loadmodule command. It should look like this when you are done:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">loadmodule</span> <span class="n">twitch</span>
@@ -142,34 +148,7 @@
 </div>
 <div class="section" id="twitch-web-ui-functions">
 <h2>Twitch web UI functions<a class="headerlink" href="#twitch-web-ui-functions" title="Permalink to this headline">¶</a></h2>
-<p>Twitch is normally accessed via a web UI, and uses commands prefixed with a . or a / to interact with the channel. The Twitch module adds the Tcl command <code class="docutils literal notranslate"><span class="pre">twcmd</span></code> to replicate those Twitch-specific commands. For example, to grant VIP status to a user via Tcl, you would use the command <code class="docutils literal notranslate"><span class="pre">twcmd</span> <span class="pre">vip</span> <span class="pre">username</span></code>. or to restrict chat to subscibers, you would use <code class="docutils literal notranslate"><span class="pre">twcmd</span> <span class="pre">subscribers</span></code>. In other words, <code class="docutils literal notranslate"><span class="pre">twcmd</span></code> in Tcl is the interface to the standard Twitch set of commands available through the web UI.</p>
-</div>
-<div class="section" id="tracking-users-and-status-with-twitch-tcl">
-<h2>Tracking users and status with twitch.tcl<a class="headerlink" href="#tracking-users-and-status-with-twitch-tcl" title="Permalink to this headline">¶</a></h2>
-<p>IMPORTANT: To use this script, you need to install additional Tcl libraries. On a Debian/Ubuntu-based system, you can do this by running:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sudo</span> <span class="n">apt</span><span class="o">-</span><span class="n">get</span> <span class="n">install</span> <span class="n">tcllib</span> <span class="n">tcl</span><span class="o">-</span><span class="n">tls</span>
-</pre></div>
-</div>
-<dl class="docutils">
-<dt>Then, configure the section below and load this script by adding::</dt>
-<dd>source scripts/twitch.tcl</dd>
-</dl>
-<p>at the bottom of your Eggdrop’s config file.</p>
-<p>Finally, to enable this tracking for a channel, join the partyline of your eggdrop and enable the functionality with:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">.</span><span class="n">chanset</span> <span class="c1">#examplechan +twitchusers</span>
-</pre></div>
-</div>
-<p>As mentioned in the <a class="reference internal" href="#disclaimer">Disclaimer</a>, the API used for this is developed and maintained by Twitch (not Eggdrop!) but is undocumented and not official. As such, we want to be good stewards of this functionality and not be part of the reason it could be taken away, which hundreds of Eggdrops hammering it every minute could do. To that end, we built this script to require manual refreshes of the data as opposed to a scheduled polling of the API. Eggdrop will load this data once when it joins a channel (if you enabled the +twitchusers channel flag via <code class="docutils literal notranslate"><span class="pre">.chanset</span></code> on the partyline), and only again if you call <code class="docutils literal notranslate"><span class="pre">twitch:updateusers</span></code> or one of the is* commands with the update flag specified. In other words- this list of users is should only be considered current immediately after you call it yourself; it will not update on its own.</p>
-<p>To get create/update a list of users and their statuses on a channel, use the <code class="docutils literal notranslate"><span class="pre">twitch:updateusers</span> <span class="pre">[#channel]</span></code> command. This will load the <code class="docutils literal notranslate"><span class="pre">$tw</span></code> array with the values obtained from the web API in a dict format. To use these values in a script, use <code class="docutils literal notranslate"><span class="pre">$tw(#channel)</span></code> to view all the users and statuses, and the dict command to grab specific values. For example:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>twitch:updateusers #examplechan
-&gt; Updating Twitch user statuses for #examplechan...
-putlog $tw(#examplechan)
-&gt; _links {} chatter_count 2 chatters {broadcaster examplechan vips {} moderators {harry sally} staff {} admins {} global_mods {} viewers spot}
-putlog [dict get $tw(#examplechan) chatters moderators]
-&gt; harry sally
-</pre></div>
-</div>
-<p>Note that the $tw array returns a nested dict, so you need multiple args to drill down to the value you want, in this case chatters then moderators.</p>
+<p>Twitch is normally accessed via a web UI, and uses commands prefixed with a . or a / to interact with the channel. The Twitch module adds the partyline command <code class="docutils literal notranslate"><span class="pre">twcmd</span></code> to replicate those Twitch-specific commands. For example, to grant VIP status to a user via Tcl, you would use the command <code class="docutils literal notranslate"><span class="pre">.twcmd</span> <span class="pre">vip</span> <span class="pre">username</span></code>. or to restrict chat to subscibers, you would use <code class="docutils literal notranslate"><span class="pre">.twcmd</span> <span class="pre">subscribers</span></code> (Note: no . or / is needed as a prefix to the Twitch command). In other words, <code class="docutils literal notranslate"><span class="pre">.twcmd</span></code> in Tcl is the interface to the standard Twitch set of commands available through the web UI (Also available as a Tcl command).</p>
 </div>
 <div class="section" id="twitch-irc-limitations">
 <h2>Twitch IRC limitations<a class="headerlink" href="#twitch-irc-limitations" title="Permalink to this headline">¶</a></h2>
@@ -197,6 +176,10 @@ putlog [dict get $tw(#examplechan) chatters moderators]
       <div class="footer">
         <div class="left">
           <div role="navigation" aria-label="related navigaton">
+            <a href="tcl-commands.html" title="Eggdrop Tcl Commands"
+              >previous</a> |
+            <a href="twitch-tcl-commands.html" title="Eggdrop Twitch Tcl Commands"
+              >next</a>
           </div>
           <div role="note" aria-label="source link">
           </div>
@@ -205,8 +188,8 @@ putlog [dict get $tw(#examplechan) chatters moderators]
         <div class="right">
           
     <div class="footer" role="contentinfo">
-        &#169; Copyright 2020, Eggheads.
-      Last updated on Apr 28, 2020.
+        &#169; Copyright 2021, Eggheads.
+      Last updated on Jan 24, 2021.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.5.
     </div>
         </div>

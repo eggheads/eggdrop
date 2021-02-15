@@ -76,4 +76,4 @@ Other variables:
 | %{center}   |  center the following text (70 columns)                 |
 +-------------+---------------------------------------------------------+
 
-  Copyright (C) 1999 - 2020 Eggheads Development Team
+  Copyright (C) 1999 - 2021 Eggheads Development Team

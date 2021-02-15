@@ -9,7 +9,7 @@
  */
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2020 Eggheads Development Team
+ * Copyright (C) 1999 - 2021 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -650,14 +650,14 @@ void wipe_timers(Tcl_Interp *irp, tcl_timer_t **stack)
  */
 void list_timers(Tcl_Interp *irp, tcl_timer_t *stack)
 {
-  char mins[10], count[10], id[26], *x;
+  char mins[11], count[11], id[26], *x;
   EGG_CONST char *argv[4];
   tcl_timer_t *mark;
 
   for (mark = stack; mark; mark = mark->next) {
-    egg_snprintf(mins, sizeof mins, "%u", mark->mins);
+    snprintf(mins, sizeof mins, "%u", mark->mins);
     snprintf(id, sizeof id, "timer%lu", mark->id);
-    egg_snprintf(count, sizeof count, "%u", mark->count);
+    snprintf(count, sizeof count, "%u", mark->count);
     argv[0] = mins;
     argv[1] = mark->cmd;
     argv[2] = id;

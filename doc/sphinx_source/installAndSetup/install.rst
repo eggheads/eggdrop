@@ -181,4 +181,4 @@ the README file. If not, then READ IT!&@#%@!
 Have fun with Eggdrop!
 
   Copyright (C) 1997 Robey Pointer
-  Copyright (C) 1999 - 2020 Eggheads Development Team
+  Copyright (C) 1999 - 2021 Eggheads Development Team

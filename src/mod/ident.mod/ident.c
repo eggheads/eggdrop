@@ -3,7 +3,7 @@
  */
 /*
  * Copyright (c) 2018 - 2019 Michael Ortmann MIT License
- * Copyright (C) 2019 - 2020 Eggheads Development Team
+ * Copyright (C) 2019 - 2021 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -113,7 +113,7 @@ static void ident_oidentd()
   char s[INET_ADDRSTRLEN];
 #endif
   int ret, prevtime, servidx, i;
-  unsigned int size;
+  socklen_t namelen;
   struct sockaddr_storage ss;
 
   snprintf(identstr, sizeof identstr, "### eggdrop_%s", pid_file);
@@ -149,7 +149,7 @@ static void ident_oidentd()
           } else {
             /* If it is Eggdrop but not me, check for expiration and remove */
             if (!strstr(line, identstr)) {
-              strncpy(buf, line, sizeof buf);
+              strlcpy(buf, line, sizeof buf);
               strtok(buf, "!");
               prevtime = atoi(strtok(NULL, "!"));
               if ((now - prevtime) > 300) {
@@ -181,8 +181,8 @@ static void ident_oidentd()
       nfree(data);
     return;
   }
-  size = sizeof ss;
-  ret = getsockname(dcc[servidx].sock, (struct sockaddr *) &ss, &size);
+  namelen = sizeof ss;
+  ret = getsockname(dcc[servidx].sock, (struct sockaddr *) &ss, &namelen);
   if (ret) {
     putlog(LOG_DEBUG, "*", "IDENT: Error getting socket info for writing");
   }

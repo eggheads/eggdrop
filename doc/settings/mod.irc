@@ -172,4 +172,4 @@ Use the following settings only if you set 'net-type' to IRCnet!
       If your network doesn't use rfc 1459 compliant string matching
       routines, set this to 0.
 
-Copyright (C) 2000 - 2020 Eggheads Development Team
+Copyright (C) 2000 - 2021 Eggheads Development Team

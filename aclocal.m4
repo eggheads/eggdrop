@@ -1,6 +1,6 @@
 dnl aclocal.m4: macros autoconf uses when building configure from configure.ac
 dnl
-dnl Copyright (C) 1999 - 2020 Eggheads Development Team
+dnl Copyright (C) 1999 - 2021 Eggheads Development Team
 dnl
 dnl This program is free software; you can redistribute it and/or
 dnl modify it under the terms of the GNU General Public License
@@ -1658,6 +1658,10 @@ AC_DEFUN([EGG_TLS_DETECT],
     if test -z "$SSL_LIBS"; then
       AC_CHECK_LIB(crypto, X509_digest, , [havessllib="no"], [-lssl])
       AC_CHECK_LIB(ssl, SSL_accept, , [havessllib="no"], [-lcrypto])
+      AC_CHECK_FUNCS([EVP_md5 EVP_sha1 a2i_IPADDRESS], , [[
+        havessllib="no"
+        break
+      ]])
     fi
     AC_CHECK_FUNC(OPENSSL_buf2hexstr, ,
       AC_CHECK_FUNC(hex_to_string,

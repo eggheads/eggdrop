@@ -2,7 +2,7 @@
 #
 # releaseprep - prepares the tree for release
 #
-# Copyright (C) 2004 - 2020 Eggheads Development Team
+# Copyright (C) 2004 - 2021 Eggheads Development Team
 #
 # This file is free software; you can redistribute it and/or modify it
 # under the terms of the GNU General Public License as published by
@@ -63,8 +63,8 @@ regenerate_changelog() {
 	fi
 	git fetch origin
 	git fetch -t origin
-        echo "misc/genchanges -l $INCLUDE -r origin full > ChangeLog"
-	misc/genchanges -l $INCLUDE -r origin full > ChangeLog
+        echo "misc/genchanges -l $INCLUDE -i develop -r origin full > ChangeLog"
+	misc/genchanges -l $INCLUDE -i develop -r origin full > ChangeLog
 	gzip -f ChangeLog
 	echo " done."
 
@@ -79,8 +79,8 @@ regenerate_changelog() {
 	if git rev-parse -q --verify release/${TRIMVERSION} > /dev/null; then
 	  INCLUDE="${INCLUDE} -i ./release/${TRIMVERSION}"
 	fi
-        echo "misc/genchanges -l -e v1.6.21 -e v1.8.0 $INCLUDE -v ${EGGVERSION}${EGG_RC} -r origin short > doc/Changes1.8"
-	misc/genchanges -l -e v1.6.21 -e v1.8.0 $INCLUDE -i develop -v ${EGGVERSION}${EGG_RC} -r origin short > doc/Changes1.8
+        echo "misc/genchanges -l -e v1.8.4 $INCLUDE -i develop -v ${EGGVERSION}${EGG_RC} -r origin short > doc/Changes1.9"
+	misc/genchanges -l -e v1.8.4 $INCLUDE -i develop -v ${EGGVERSION}${EGG_RC} -r origin short > doc/Changes1.9
 	git commit -m "Generate ChangeLog/Changes files for ${EGGVERSION}" > /dev/null
 
 	if test -f ChangeLog.gz; then

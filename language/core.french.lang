@@ -430,3 +430,4 @@ Faites un Telnet sur le bot et entrez 'NEW' comme surnom.
 0xe32,Refus de la connexion telnet de %s (essai avec mon surnom botnet)
 0xe33,Connexion telnet de %s perdue pendant la vérification des doublons
 0xe34,Timeout ident connection
+0xe35,Please remove the #comment from your listen setting and try again

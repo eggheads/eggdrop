@@ -1,7 +1,7 @@
 .. highlight:: text
 
 Eggdrop Tcl Commands
-Last revised: December 14, 2017
+Last revised: January 24, 2021
 
 ====================
 Eggdrop Tcl Commands
@@ -180,20 +180,26 @@ tagmsg <tags> <target>
 
   Module: server
 
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-addserver <ip/host> [[+]port [password]]
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  Description: adds a server to the list of servers Eggdrop will connect to. Prefix the port with '+' to indicate an SSL-protected port. A port value is required if password is to be specified. 
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+server add <ip/host> [[+]port [password]]
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+  Description: adds a server to the list of servers Eggdrop will connect to. Prefix the port with '+' to indicate an SSL-protected port. A port value is required if password is to be specified. The SSL status (+) of the provided port is matched against as well (ie, 7000 is not the same as +7000).
 
   Returns: nothing
 
   Module: server
 
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-delserver <ip/host> [[+]port]
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+server del <ip/host> [[+]port]
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-  Description: removes a server from the list of servers Eggdrop will connect to. If no port is specified, Eggdrop will remove the first server matching the ip or hostname provided. The SSL status (+) of the provided port is matched against as well (ie, 7000 is not the same as +7000).
+  Description: removes a server from the list of servers Eggdrop will connect to. If no port is provided, all servers matching the ip or hostname provided will be removed, otherwise only the ip/host with the corresponding port will be removed. The SSL status (+) of the provided port is matched against as well (ie, 7000 is not the same as +7000).
+
+  Returns: nothing
+
+  Module: server
+
 
 User Record Manipulation Commands
 ---------------------------------
@@ -712,75 +718,75 @@ ischanjuped <channel>
 
   Module: channels
 
-^^^^^^^^^^^^^^^^^^^^^
-isban <ban> [channel]
-^^^^^^^^^^^^^^^^^^^^^
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+isban <ban> [channel [-channel]]
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-  Returns: 1 if the specified ban is in the global ban list; 0 otherwise. If a channel is specified, that channel's ban list is checked as well.
-
-  Module: channels
-
-^^^^^^^^^^^^^^^^^^^^^^^^^
-ispermban <ban> [channel]
-^^^^^^^^^^^^^^^^^^^^^^^^^
-
-  Returns: 1 if the specified ban is in the global ban list AND is marked as permanent; 0 otherwise. If a channel is specified, that channel's ban list is checked as well.
+  Returns: 1 if the specified ban is in the global ban list; 0 otherwise. If a channel is specified, that channel's ban list is checked as well. If the -channel flag is used at the end of the command, \*only\* the channel bans are checked.
 
   Module: channels
 
-^^^^^^^^^^^^^^^^^^^^^^^^^^^
-isexempt <exempt> [channel]
-^^^^^^^^^^^^^^^^^^^^^^^^^^^
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ispermban <ban> [channel [-channel]]
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-  Returns: 1 if the specified exempt is in the global exempt list; 0 otherwise. If a channel is specified, that channel's exempt list is checked as well.
-
-  Module: channels
-
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-ispermexempt <exempt> [channel]
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-  Returns: 1 if the specified exempt is in the global exempt list AND is marked as permanent; 0 otherwise. If a channel is specified, that channel's exempt list is checked as well.
+  Returns: 1 if the specified ban is in the global ban list AND is marked as permanent; 0 otherwise. If a channel is specified, that channel's ban list is checked as well. If the -channel flag is used at the end of the command, \*only\* the channel bans are checked.
 
   Module: channels
 
-^^^^^^^^^^^^^^^^^^^^^^^^^^^
-isinvite <invite> [channel]
-^^^^^^^^^^^^^^^^^^^^^^^^^^^
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+isexempt <exempt> [channel [-channel]]
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-  Returns: 1 if the specified invite is in the global invite list; 0 otherwise. If a channel is specified, that channel's invite list is checked as well.
-
-  Module: channels
-
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-isperminvite <invite> [channel]
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-  Returns: 1 if the specified invite is in the global invite list AND is marked as permanent; 0 otherwise. If a channel is specified, that channel's invite list is checked as well.
+  Returns: 1 if the specified exempt is in the global exempt list; 0 otherwise. If a channel is specified, that channel's exempt list is checked as well. If the -channel flag is used at the end of the command, \*only\* the channel exempts are checked.
 
   Module: channels
 
-^^^^^^^^^^^^^^^^^^^^^^^^^^^
-isbansticky <ban> [channel]
-^^^^^^^^^^^^^^^^^^^^^^^^^^^
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ispermexempt <exempt> [channel [-channel]]
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-  Returns: 1 if the specified ban is marked as sticky in the global ban list; 0 otherwise. If a channel is specified, that channel's ban list is checked as well.
-
-  Module: channels
-
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-isexemptsticky <exempt> [channel]
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-  Returns: 1 if the specified exempt is marked as sticky in the global exempt list; 0 otherwise. If a channel is specified, that channel's exempt list is checked as well.
+  Returns: 1 if the specified exempt is in the global exempt list AND is marked as permanent; 0 otherwise. If a channel is specified, that channel's exempt list is checked as well. If the -channel flag is used at the end of the command, \*only\* the channel exempts are checked.
 
   Module: channels
 
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-isinvitesticky <invite> [channel]
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+isinvite <invite> [channel [-channel]]
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-  Returns: 1 if the specified invite is marked as sticky in the global invite list; 0 otherwise. If a channel is specified, that channel's invite list is checked as well.
+  Returns: 1 if the specified invite is in the global invite list; 0 otherwise. If a channel is specified, that channel's invite list is checked as well. If the -channel flag is used at the end of the command, \*only\* the channel invites are checked.
+
+  Module: channels
+
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+isperminvite <invite> [channel [-channel]]
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+  Returns: 1 if the specified invite is in the global invite list AND is marked as permanent; 0 otherwise. If a channel is specified, that channel's invite list is checked as well. If the -channel flag is used at the end of the command, \*only\* the channel invites are checked.
+
+  Module: channels
+
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+isbansticky <ban> [channel [-channel]]
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+  Returns: 1 if the specified ban is marked as sticky in the global ban list; 0 otherwise. If a channel is specified, that channel's ban list is checked as well. If the -channel flag is used at the end of the command, \*only\* the channel bans are checked.
+
+  Module: channels
+
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+isexemptsticky <exempt> [channel [-channel]]
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+  Returns: 1 if the specified exempt is marked as sticky in the global exempt list; 0 otherwise. If a channel is specified, that channel's exempt list is checked as well. If the -channel flag is used at the end of the command, \*only\* the channel exempts are checked.
+
+  Module: channels
+
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+isinvitesticky <invite> [channel [-channel]]
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+  Returns: 1 if the specified invite is marked as sticky in the global invite list; 0 otherwise. If a channel is specified, that channel's invite list is checked as well. If the -channel flag is used at the end of the command, \*only\* the channel invites are checked.
 
   Module: channels
 
@@ -1134,9 +1140,9 @@ hand2nick <handle> [channel]
 
   Module: irc
 
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 hand2nicks <handle> [channel]
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
   Returns: a de-duplicated Tcl list of the nickname(s) on the specified channel (if one is specified) whose nick!user\@host matches the given handle; "" is returned if no match is found. If no channel is specified, all channels are checked.
 
@@ -3652,4 +3658,4 @@ are the four special characters:
 |     | words) (This char only works in binds, not in regular matching)          |
 +-----+--------------------------------------------------------------------------+
 
-  Copyright (C) 1999 - 2020 Eggheads Development Team
+  Copyright (C) 1999 - 2021 Eggheads Development Team

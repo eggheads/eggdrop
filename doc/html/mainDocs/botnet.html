@@ -52,7 +52,10 @@
 <li class="toctree-l1"><a class="reference internal" href="bans.html">Bans, Invites, and Exempts</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Botnet Sharing and Linking</a></li>
 <li class="toctree-l1"><a class="reference internal" href="patch.html">Patch How-To</a></li>
+<li class="toctree-l1"><a class="reference internal" href="pbkdf2.html">PBKDF2 Hashing</a></li>
 <li class="toctree-l1"><a class="reference internal" href="tcl-commands.html">Eggdrop Tcl Commands</a></li>
+<li class="toctree-l1"><a class="reference internal" href="twitch.html">Twitch</a></li>
+<li class="toctree-l1"><a class="reference internal" href="twitch-tcl-commands.html">Eggdrop Twitch Tcl Commands</a></li>
 <li class="toctree-l1"><a class="reference internal" href="ipv6.html">IPv6 support</a></li>
 <li class="toctree-l1"><a class="reference internal" href="tls.html">TLS support</a></li>
 </ul>
@@ -70,10 +73,12 @@
 <li class="toctree-l1"><a class="reference internal" href="../coreDocs/ident.html">Ident Module</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../coreDocs/irc.html">IRC Module</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../coreDocs/notes.html">Notes Module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../coreDocs/pbkdf2.html">PBKDF2 Module</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../coreDocs/seen.html">Seen Module</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../coreDocs/server.html">Server Module</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../coreDocs/share.html">Share Module</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../coreDocs/transfer.html">Transfer Module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../coreDocs/twitch.html">Twitch Module</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../coreDocs/uptime.html">Uptime Module</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../coreDocs/woobie.html">Woobie Module</a></li>
 </ul>
@@ -174,32 +179,61 @@ Flags can be either global (such as +s) or channel specific (such as
 <col width="91%" />
 </colgroup>
 <tbody valign="top">
-<tr class="row-odd"><td>s</td>
-<td>share aggressively (SEND userfile to a passive bot)</td>
-</tr>
-<tr class="row-even"><td>p</td>
-<td>share passively (ACCEPT userfile from an aggressive bot)</td>
-</tr>
-<tr class="row-odd"><td>g</td>
-<td>global share (share all channels)</td>
-</tr>
-<tr class="row-even"><td>h</td>
-<td>hub (automatically link to this bot)</td>
-</tr>
 <tr class="row-odd"><td>a</td>
 <td>alternate (automatically link to this bot if the hub bot can’t
 be linked)</td>
 </tr>
-<tr class="row-even"><td>l</td>
-<td>leaf (bot is not allowed to link in other bots)</td>
+<tr class="row-even"><td>b</td>
+<td>ban sharing (passive bot is allowed to share bans with
+aggressive bot)</td>
 </tr>
-<tr class="row-odd"><td>r</td>
-<td>reject (bot will not be allowed to link)</td>
+<tr class="row-odd"><td>c</td>
+<td>channel sharing (passive bot is allowed to share channel
+changes with aggressive bot)</td>
+</tr>
+<tr class="row-even"><td>d</td>
+<td>share aggressively (SEND userfile to a passive bot),
+limited sharing (passive bot is NOT allowed to share anything)</td>
+</tr>
+<tr class="row-odd"><td>e</td>
+<td>exempt sharing (passive bot is allowed to share exempts with
+aggressive bot)</td>
+</tr>
+<tr class="row-even"><td>g</td>
+<td>global share (share all channels)</td>
+</tr>
+<tr class="row-odd"><td>h</td>
+<td>hub (automatically link to this bot)</td>
 </tr>
 <tr class="row-even"><td>i</td>
 <td>isolate (isolate the party line across a bot link)</td>
 </tr>
-<tr class="row-odd"><td>0-9</td>
+<tr class="row-odd"><td>j</td>
+<td>invite sharing (passive bot is allowed to share invites with
+aggressive bot)</td>
+</tr>
+<tr class="row-even"><td>l</td>
+<td>leaf (bot is not allowed to link in other bots)</td>
+</tr>
+<tr class="row-odd"><td>n</td>
+<td>ignore sharing (passive bot is allowed to share ignores with
+aggressive bot)</td>
+</tr>
+<tr class="row-even"><td>p</td>
+<td>share passively (ACCEPT userfile from an aggressive bot)</td>
+</tr>
+<tr class="row-odd"><td>r</td>
+<td>reject (bot will not be allowed to link)</td>
+</tr>
+<tr class="row-even"><td>s</td>
+<td>share aggressively (SEND userfile to a passive bot),
+unlimited sharing (passive bot is allowed to share anything)</td>
+</tr>
+<tr class="row-odd"><td>u</td>
+<td>user sharing (passive bot is allowed to share user changes
+with aggressive bot)</td>
+</tr>
+<tr class="row-even"><td>0-9</td>
 <td>user defined flags</td>
 </tr>
 </tbody>
@@ -362,7 +396,7 @@ them, but you would not do it on the hub or beldin.</p>
 </pre></div>
 </div>
 </div></blockquote>
-<p>Copyright (C) 1999 - 2020 Eggheads Development Team</p>
+<p>Copyright (C) 1999 - 2021 Eggheads Development Team</p>
 </div>
 </div>
 
@@ -391,8 +425,8 @@ them, but you would not do it on the hub or beldin.</p>
         <div class="right">
           
     <div class="footer" role="contentinfo">
-        &#169; Copyright 2020, Eggheads.
-      Last updated on Jun 19, 2020.
+        &#169; Copyright 2021, Eggheads.
+      Last updated on Jan 24, 2021.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.5.
     </div>
         </div>

@@ -14,7 +14,9 @@
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
     <script type="text/javascript" src="../_static/language_data.js"></script>
-    <link rel="search" title="Search" href="../search.html" /> 
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Uptime Module" href="uptime.html" />
+    <link rel="prev" title="Transfer Module" href="transfer.html" /> 
   </head><body>
     <div class="header-wrapper" role="banner">
       <div class="header">
@@ -24,6 +26,10 @@
         <div class="headertitle"><a
           href="../index.html">Eggdrop 1.9.0 documentation</a></div>
         <div class="rel" role="navigation" aria-label="related navigation">
+          <a href="transfer.html" title="Transfer Module"
+             accesskey="P">previous</a> |
+          <a href="uptime.html" title="Uptime Module"
+             accesskey="N">next</a>
         </div>
        </div>
     </div>
@@ -46,11 +52,14 @@
 <li class="toctree-l1"><a class="reference internal" href="../mainDocs/bans.html">Bans, Invites, and Exempts</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../mainDocs/botnet.html">Botnet Sharing and Linking</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../mainDocs/patch.html">Patch How-To</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../mainDocs/pbkdf2.html">PBKDF2 Hashing</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../mainDocs/tcl-commands.html">Eggdrop Tcl Commands</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../mainDocs/twitch.html">Twitch</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../mainDocs/twitch-tcl-commands.html">Eggdrop Twitch Tcl Commands</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../mainDocs/ipv6.html">IPv6 support</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../mainDocs/tls.html">TLS support</a></li>
 </ul>
-<ul>
+<ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="core.html">Eggdrop Core Settings</a></li>
 <li class="toctree-l1"><a class="reference internal" href="modules.html">Eggdrop Module Information</a></li>
 <li class="toctree-l1"><a class="reference internal" href="assoc.html">Assoc Module</a></li>
@@ -64,10 +73,12 @@
 <li class="toctree-l1"><a class="reference internal" href="ident.html">Ident Module</a></li>
 <li class="toctree-l1"><a class="reference internal" href="irc.html">IRC Module</a></li>
 <li class="toctree-l1"><a class="reference internal" href="notes.html">Notes Module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="pbkdf2.html">PBKDF2 Module</a></li>
 <li class="toctree-l1"><a class="reference internal" href="seen.html">Seen Module</a></li>
 <li class="toctree-l1"><a class="reference internal" href="server.html">Server Module</a></li>
 <li class="toctree-l1"><a class="reference internal" href="share.html">Share Module</a></li>
 <li class="toctree-l1"><a class="reference internal" href="transfer.html">Transfer Module</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Twitch Module</a></li>
 <li class="toctree-l1"><a class="reference internal" href="uptime.html">Uptime Module</a></li>
 <li class="toctree-l1"><a class="reference internal" href="woobie.html">Woobie Module</a></li>
 </ul>
@@ -129,7 +140,6 @@
 <li>ROOMSTATE</li>
 <li>USERSTATE</li>
 </ul>
-<p>Additionally, we included twitch.tcl with Eggdrop, which provides additional functionality to track users and their status (mod, vip, etc on a channel via a web API call to an undocumented function. This means that the functionality of this capability is outside the control of Eggdrop developers and could break at any time, but the current usefulness has been judged worth the uncertainty. See the comments of twitch.tcl for additional info on how to use this functionality.</p>
 </div>
 <div class="section" id="partyline-commands">
 <h2>Partyline commands<a class="headerlink" href="#partyline-commands" title="Permalink to this headline">¶</a></h2>
@@ -138,7 +148,7 @@
 * roomsstate - Lists current roomstate for a channel
 * twcmd - Issues a traditional Twitch web interface command to the Twitch server (/ban, /block, /host, etc)</p>
 <blockquote>
-<div>Copyright (C) 2020 Eggheads Development Team</div></blockquote>
+<div>Copyright (C) 2020 - 2021 Eggheads Development Team</div></blockquote>
 </div>
 </div>
 
@@ -155,6 +165,10 @@
       <div class="footer">
         <div class="left">
           <div role="navigation" aria-label="related navigaton">
+            <a href="transfer.html" title="Transfer Module"
+              >previous</a> |
+            <a href="uptime.html" title="Uptime Module"
+              >next</a>
           </div>
           <div role="note" aria-label="source link">
           </div>
@@ -163,8 +177,8 @@
         <div class="right">
           
     <div class="footer" role="contentinfo">
-        &#169; Copyright 2020, Eggheads.
-      Last updated on Apr 28, 2020.
+        &#169; Copyright 2021, Eggheads.
+      Last updated on Jan 24, 2021.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.5.
     </div>
         </div>

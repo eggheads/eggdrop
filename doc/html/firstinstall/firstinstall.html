@@ -46,7 +46,10 @@
 <li class="toctree-l1"><a class="reference internal" href="../mainDocs/bans.html">Bans, Invites, and Exempts</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../mainDocs/botnet.html">Botnet Sharing and Linking</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../mainDocs/patch.html">Patch How-To</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../mainDocs/pbkdf2.html">PBKDF2 Hashing</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../mainDocs/tcl-commands.html">Eggdrop Tcl Commands</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../mainDocs/twitch.html">Twitch</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../mainDocs/twitch-tcl-commands.html">Eggdrop Twitch Tcl Commands</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../mainDocs/ipv6.html">IPv6 support</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../mainDocs/tls.html">TLS support</a></li>
 </ul>
@@ -64,10 +67,12 @@
 <li class="toctree-l1"><a class="reference internal" href="../coreDocs/ident.html">Ident Module</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../coreDocs/irc.html">IRC Module</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../coreDocs/notes.html">Notes Module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../coreDocs/pbkdf2.html">PBKDF2 Module</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../coreDocs/seen.html">Seen Module</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../coreDocs/server.html">Server Module</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../coreDocs/share.html">Share Module</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../coreDocs/transfer.html">Transfer Module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../coreDocs/twitch.html">Twitch Module</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../coreDocs/uptime.html">Uptime Module</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../coreDocs/woobie.html">Woobie Module</a></li>
 </ul>
@@ -112,7 +117,7 @@
 <h2>The super-short version<a class="headerlink" href="#the-super-short-version" title="Permalink to this headline">¶</a></h2>
 <p>You can read the <a class="reference internal" href="#installation">Installation</a> section for a more detailed explanation of these steps.</p>
 <ol class="arabic simple">
-<li>Download the <a class="reference external" href="https://ftp.eggheads.org/pub/eggdrop/source/eggdrop-1.8.4.tar.gz">latest stable Eggdrop release</a> to your shell via FTP, or simply type <code class="docutils literal notranslate"><span class="pre">wget</span> <span class="pre">geteggdrop.com</span> <span class="pre">-O</span> <span class="pre">eggdrop-1.8.4.tar.gz</span></code></li>
+<li>Download the <a class="reference external" href="https://ftp.eggheads.org/pub/eggdrop/source/stable/eggdrop-1.8.4.tar.gz">latest stable Eggdrop release</a> to your shell via FTP, or simply type <code class="docutils literal notranslate"><span class="pre">wget</span> <span class="pre">geteggdrop.com</span> <span class="pre">-O</span> <span class="pre">eggdrop-1.8.4.tar.gz</span></code></li>
 <li>From the commadline of your shell, type <code class="docutils literal notranslate"><span class="pre">tar</span> <span class="pre">zxvf</span> <span class="pre">eggdrop-1.8.4.tar.gz</span></code></li>
 <li>Type <code class="docutils literal notranslate"><span class="pre">cd</span> <span class="pre">eggdrop-1.8.4</span></code></li>
 <li>Type <code class="docutils literal notranslate"><span class="pre">./configure</span></code></li>
@@ -343,7 +348,7 @@
 </div>
 <div class="section" id="setting-up-sasl-authentication">
 <h2>Setting up SASL authentication<a class="headerlink" href="#setting-up-sasl-authentication" title="Permalink to this headline">¶</a></h2>
-<p>Simple Authentication and Security Layer (SASL) is becoming a prevelant method of authenticating with IRC services such as NickServ prior to your client finalizing a connection to the IRC server, eliminating the need to /msg NickServ to identify yourself. In other words, you can authenticate with NickServ and do things like receive a cloaked hostmask before your client ever appears on the IRC server. Eggdrop supports three methods of SASL authentication, set via the sasl-mechanism setting:</p>
+<p>Simple Authentication and Security Layer (SASL) is becoming a prevalant method of authenticating with IRC services such as NickServ prior to your client finalizing a connection to the IRC server, eliminating the need to /msg NickServ to identify yourself. In other words, you can authenticate with NickServ and do things like receive a cloaked hostmask before your client ever appears on the IRC server. Eggdrop supports three methods of SASL authentication, set via the sasl-mechanism setting:</p>
 <ul>
 <li><p class="first"><strong>PLAIN</strong>: To use this method, set sasl-mechanism to 0. This method passes the username and password (set in the sasl-username and sasl-password config file settings) to the IRC server in plaintext. If you only connect to the IRC server using a connection protected by SSL/TLS this is a generally safe method of authentication; however you probably want to avoid this method if you connect to a server on a non-protected port as the exchange itself is not encrypted.</p>
 </li>
@@ -381,7 +386,7 @@
 <div class="section" id="utf-8-support">
 <h2>UTF-8 Support<a class="headerlink" href="#utf-8-support" title="Permalink to this headline">¶</a></h2>
 <p>The encoding scheme used by Eggdrop’s Tcl interface is set based on the locale settings of the host machine. You can check which locale your host machine is using by running the <code class="docutils literal notranslate"><span class="pre">locale</span></code> command. Eggdrop takes that locale setting of the host machine and compares it to the locales available within Tcl’s installed libraries. If it finds one in Tcl that matches (or is close to matching), that is the encoding scheme that is used. If a matching encoding scheme is not found, only then does eggdrop default to ISO 8859-1 encoding.</p>
-<p>If you want Eggdrop to use a specific encoding scheme that it is not currently using, you can view the availabe locales on your machine via the <code class="docutils literal notranslate"><span class="pre">locale</span> <span class="pre">-a</span></code> command, and then set the one you want to use for that user by running <code class="docutils literal notranslate"><span class="pre">export</span> <span class="pre">LANG=en_US.UTF-8</span></code> (or whichever scheme you want to use). You should not need to edit any source code, as has been a popular suggestion over the past few years.</p>
+<p>If you want Eggdrop to use a specific encoding scheme that it is not currently using, you can view the available locales on your machine via the <code class="docutils literal notranslate"><span class="pre">locale</span> <span class="pre">-a</span></code> command, and then set the one you want to use for that user by running <code class="docutils literal notranslate"><span class="pre">export</span> <span class="pre">LANG=en_US.UTF-8</span></code> (or whichever scheme you want to use). You should not need to edit any source code, as has been a popular suggestion over the past few years.</p>
 <div class="section" id="unicode-emoji-support">
 <h3>Unicode Emoji Support<a class="headerlink" href="#unicode-emoji-support" title="Permalink to this headline">¶</a></h3>
 <p>Another issue encountered when using Eggdrop is that Unicode Emojis are not supported- this is not Eggdrop specific; rather it is a “feature” of Tcl. Unfortunately, the only solution at this time to enable Emojis (and other high-number characters) is to recompile with the TCL_UTF_MAX=6 compile flag. At the time of writing, we are unaware of a package-manager version of this that would remedy the problem. To understand more on the ‘why’ behind this, you can read this <a class="reference external" href="https://core.tcl-lang.org/tips/doc/trunk/tip/389.md">Tcl Improvement Proposal</a>.</p>
@@ -410,8 +415,8 @@
         <div class="right">
           
     <div class="footer" role="contentinfo">
-        &#169; Copyright 2020, Eggheads.
-      Last updated on Jun 19, 2020.
+        &#169; Copyright 2021, Eggheads.
+      Last updated on Jan 24, 2021.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.5.
     </div>
         </div>

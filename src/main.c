@@ -7,7 +7,7 @@
  */
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2020 Eggheads Development Team
+ * Copyright (C) 1999 - 2021 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -172,7 +172,7 @@ unsigned long itraffic_unknown_today = 0;
 
 #ifdef DEBUG_CONTEXT
 /* Context storage for fatal crashes */
-char cx_file[16][30];
+char cx_file[16][32];
 char cx_note[16][256];
 int cx_line[16];
 int cx_ptr = 0;
@@ -456,17 +456,7 @@ static void got_ill(int z)
  */
 void eggContext(const char *file, int line, const char *module)
 {
-  char x[31], *p;
-
-  p = strrchr(file, '/');
-  if (!module) {
-    strlcpy(x, p ? p + 1 : file, sizeof x);
-  } else
-    egg_snprintf(x, 31, "%s:%s", module, p ? p + 1 : file);
-  cx_ptr = ((cx_ptr + 1) & 15);
-  strcpy(cx_file[cx_ptr], x);
-  cx_line[cx_ptr] = line;
-  cx_note[cx_ptr][0] = 0;
+  eggContextNote(file, line, module, NULL);
 }
 
 /* Called from the ContextNote macro.
@@ -474,17 +464,19 @@ void eggContext(const char *file, int line, const char *module)
 void eggContextNote(const char *file, int line, const char *module,
                     const char *note)
 {
-  char x[31], *p;
+  char *p;
 
   p = strrchr(file, '/');
-  if (!module)
-    strlcpy(x, p ? p + 1 : file, sizeof x);
-  else
-    egg_snprintf(x, 31, "%s:%s", module, p ? p + 1 : file);
   cx_ptr = ((cx_ptr + 1) & 15);
-  strcpy(cx_file[cx_ptr], x);
+  if (!module)
+    strlcpy(cx_file[cx_ptr], p ? p + 1 : file, sizeof cx_file[cx_ptr]);
+  else
+    snprintf(cx_file[cx_ptr], sizeof cx_file[cx_ptr], "%s:%s", module, p ? p + 1 : file);
   cx_line[cx_ptr] = line;
-  strlcpy(cx_note[cx_ptr], note, sizeof cx_note[cx_ptr]);
+  if (!note)
+    cx_note[cx_ptr][0] = 0;
+  else
+    strlcpy(cx_note[cx_ptr], note, sizeof cx_note[cx_ptr]);
 }
 #endif /* DEBUG_CONTEXT */
 
@@ -1074,13 +1066,13 @@ int main(int arg_c, char **arg_v)
   egg_snprintf(egg_version, sizeof egg_version, "%s+%s %u", EGG_STRINGVER, EGG_PATCH, egg_numver);
   egg_snprintf(ver, sizeof ver, "eggdrop v%s+%s", EGG_STRINGVER, EGG_PATCH);
   egg_snprintf(version, sizeof version,
-               "Eggdrop v%s+%s (C) 1997 Robey Pointer (C) 2010-2020 Eggheads",
+               "Eggdrop v%s+%s (C) 1997 Robey Pointer (C) 1999-2021 Eggheads",
                 EGG_STRINGVER, EGG_PATCH);
 #else
   egg_snprintf(egg_version, sizeof egg_version, "%s %u", EGG_STRINGVER, egg_numver);
   egg_snprintf(ver, sizeof ver, "eggdrop v%s", EGG_STRINGVER);
   egg_snprintf(version, sizeof version,
-               "Eggdrop v%s (C) 1997 Robey Pointer (C) 2010-2020 Eggheads",
+               "Eggdrop v%s (C) 1997 Robey Pointer (C) 1999-2021 Eggheads",
                 EGG_STRINGVER);
 #endif
 

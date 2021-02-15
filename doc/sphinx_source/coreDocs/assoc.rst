@@ -15,4 +15,4 @@ module::
 
     loadmodule assoc
 
-Copyright (C) 2000 - 2020 Eggheads Development Team
+Copyright (C) 2000 - 2021 Eggheads Development Team

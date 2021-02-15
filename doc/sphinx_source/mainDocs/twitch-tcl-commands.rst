@@ -18,9 +18,9 @@ functionality is possible.
 Commands
 --------
 
-^^^^^^^^^^^
+^^^^^^^^^^^^^^^^^^^^^^^^
 twcmd <chan> <cmd> [arg]
-^^^^^^^^^^^
+^^^^^^^^^^^^^^^^^^^^^^^^
 
   Description: sends cmd to the server, prefixed with a '/'. This is replicates
   the web UI functionality of sending commands such as /vip or /subscribers. Do
@@ -57,8 +57,7 @@ twitchmods <channel>
 twitchvips <channel>
 ^^^^^^^^^^^^^^^^^^^^
 
-  Description: maintains a list of usernames provided by Twitch as those that have VIP status on the provided channel. This list is refreshed upon join, or can manually be refreshed by using the Tcl ``twcmd`` to issue a /vips Twitch command. This list is a comprehensive list, the user does not need to be present on the channel t
-o be included on this list.
+  Description: maintains a list of usernames provided by Twitch as those that have VIP status on the provided channel. This list is refreshed upon join, or can manually be refreshed by using the Tcl ``twcmd`` to issue a /vips Twitch command. This list is a comprehensive list, the user does not need to be present on the channel to be included on this list.
 
   Returns: A list of usernames designated as having VIP status by Twitch.
 
@@ -142,7 +141,7 @@ The following is a list of bind types and how they work. Below each bind type is
 
 #. WSPR (WHISPER)
 
-  bind wspr <flags> <commmand> <proc>
+  bind wspr <flags> <command> <proc>
 
   procname <nick> <userhost> <handle> <msg>
 

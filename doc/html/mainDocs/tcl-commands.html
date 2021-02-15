@@ -15,8 +15,8 @@
     <script type="text/javascript" src="../_static/doctools.js"></script>
     <script type="text/javascript" src="../_static/language_data.js"></script>
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="IPv6 support" href="ipv6.html" />
-    <link rel="prev" title="Patch How-To" href="patch.html" /> 
+    <link rel="next" title="Twitch" href="twitch.html" />
+    <link rel="prev" title="PBKDF2 Hashing" href="pbkdf2.html" /> 
   </head><body>
     <div class="header-wrapper" role="banner">
       <div class="header">
@@ -26,9 +26,9 @@
         <div class="headertitle"><a
           href="../index.html">Eggdrop 1.9.0 documentation</a></div>
         <div class="rel" role="navigation" aria-label="related navigation">
-          <a href="patch.html" title="Patch How-To"
+          <a href="pbkdf2.html" title="PBKDF2 Hashing"
              accesskey="P">previous</a> |
-          <a href="ipv6.html" title="IPv6 support"
+          <a href="twitch.html" title="Twitch"
              accesskey="N">next</a>
         </div>
        </div>
@@ -52,7 +52,10 @@
 <li class="toctree-l1"><a class="reference internal" href="bans.html">Bans, Invites, and Exempts</a></li>
 <li class="toctree-l1"><a class="reference internal" href="botnet.html">Botnet Sharing and Linking</a></li>
 <li class="toctree-l1"><a class="reference internal" href="patch.html">Patch How-To</a></li>
+<li class="toctree-l1"><a class="reference internal" href="pbkdf2.html">PBKDF2 Hashing</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Eggdrop Tcl Commands</a></li>
+<li class="toctree-l1"><a class="reference internal" href="twitch.html">Twitch</a></li>
+<li class="toctree-l1"><a class="reference internal" href="twitch-tcl-commands.html">Eggdrop Twitch Tcl Commands</a></li>
 <li class="toctree-l1"><a class="reference internal" href="ipv6.html">IPv6 support</a></li>
 <li class="toctree-l1"><a class="reference internal" href="tls.html">TLS support</a></li>
 </ul>
@@ -70,10 +73,12 @@
 <li class="toctree-l1"><a class="reference internal" href="../coreDocs/ident.html">Ident Module</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../coreDocs/irc.html">IRC Module</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../coreDocs/notes.html">Notes Module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../coreDocs/pbkdf2.html">PBKDF2 Module</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../coreDocs/seen.html">Seen Module</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../coreDocs/server.html">Server Module</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../coreDocs/share.html">Share Module</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../coreDocs/transfer.html">Transfer Module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../coreDocs/twitch.html">Twitch Module</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../coreDocs/uptime.html">Uptime Module</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../coreDocs/woobie.html">Woobie Module</a></li>
 </ul>
@@ -101,7 +106,7 @@
           <div class="body" role="main">
             
   <p>Eggdrop Tcl Commands
-Last revised: December 14, 2017</p>
+Last revised: January 24, 2021</p>
 <div class="section" id="eggdrop-tcl-commands">
 <h1>Eggdrop Tcl Commands<a class="headerlink" href="#eggdrop-tcl-commands" title="Permalink to this headline">¶</a></h1>
 <p>This is an exhaustive list of all the Tcl commands added to Eggdrop. All
@@ -429,7 +434,12 @@ Changes are of the form ‘+f’, ‘-o’, ‘+dk’, ‘-o+d’, etc. If chang
 <div class="section" id="matchattr-handle-flags-channel">
 <h3>matchattr &lt;handle&gt; &lt;flags&gt; [channel]<a class="headerlink" href="#matchattr-handle-flags-channel" title="Permalink to this headline">¶</a></h3>
 <blockquote>
-<div>Description: checks if the flags of the specified user match the flags provided. Default matching pattern uses the | (OR) convention. For example, specifying +mn for flags will check if the user has the m OR n flag.</div></blockquote>
+<div><p>Description: checks if the flags of the specified user match the flags provided. “flags” is of the form:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>[+/-]&lt;global flags&gt;[&amp;/|&lt;channel flags&gt;[&amp;/|&lt;bot flags&gt;]]
+</pre></div>
+</div>
+<p>Either | or &amp; can be used as a separator between global, channel, and bot flags, but only one separator can be used per flag section. A ‘+’ is used to check if a user has the subsequent flags, and a ‘-‘ is used to check if a user does NOT have the subsequent flags.</p>
+</div></blockquote>
 <table border="1" class="docutils">
 <colgroup>
 <col width="16%" />
@@ -446,24 +456,30 @@ Changes are of the form ‘+f’, ‘-o’, ‘+dk’, ‘-o+d’, etc. If chang
 </tr>
 <tr class="row-odd"></tr>
 <tr class="row-even"><td>+mn</td>
-<td>Checks if the user has the m or n global flag</td>
+<td>Checks if the user has the m OR n global flag</td>
 </tr>
-<tr class="row-odd"><td>+mn&amp;</td>
-<td>Checks if the user has the m and n global flag</td>
+<tr class="row-odd"><td>|+mn</td>
+<td>Checks if the user has the m OR n global flag</td>
 </tr>
-<tr class="row-even"><td>|+o #foo</td>
+<tr class="row-even"><td>|+mn #foo</td>
+<td>Checks if the user has the m OR n channel flag for #foo</td>
+</tr>
+<tr class="row-odd"><td>&amp;+mn</td>
+<td>Checks if the user has the m AND n global flag</td>
+</tr>
+<tr class="row-even"><td>&amp;mn #foo</td>
+<td>Checks if the user has the m AND n channel flag for #foo</td>
+</tr>
+<tr class="row-odd"><td>|+o #foo</td>
 <td>Checks if the user has the o channel flag for #foo</td>
 </tr>
-<tr class="row-odd"><td>&amp;mn #foo</td>
-<td>Checks if the user has the m and n channel flag for #foo</td>
-</tr>
 <tr class="row-even"><td>+o|+n #foo</td>
-<td>Checks if the user has the o global flag, or the n channel
-flag for #foo</td>
+<td>Checks if the user has the o global flag OR the n channel flag
+for #foo</td>
 </tr>
-<tr class="row-odd"><td>+m&amp;+v</td>
-<td>Checks if the user has the m global flag, and the v channel
-flag for #foo</td>
+<tr class="row-odd"><td>+m&amp;+v #foo</td>
+<td>Checks if the user has the m global flag AND the v channel flag
+for #foo</td>
 </tr>
 <tr class="row-even"><td>-m</td>
 <td>Checks if the user does not have the m global flag</td>
@@ -472,15 +488,15 @@ flag for #foo</td>
 <td>Checks if the user does not have the n channel flag for #foo</td>
 </tr>
 <tr class="row-even"><td>+m|-n #foo</td>
-<td>Checks if the user has the global m flag or does not have a
+<td>Checks if the user has the global m flag OR does not have a
 channel n flag for #foo</td>
 </tr>
 <tr class="row-odd"><td>-n&amp;-m #foo</td>
-<td>Searches if the user does not have the global n flag and does
+<td>Checks if the user does not have the global n flag AND does
 not have the channel m flag for #foo</td>
 </tr>
 <tr class="row-even"><td>||+b</td>
-<td>Searches if the user has the bot flag b</td>
+<td>Checks if the user has the bot flag b</td>
 </tr>
 </tbody>
 </table>
@@ -791,66 +807,66 @@ NOTE 2: In the deprecated formats, an additional botport and/or userport given a
 <p>Module: channels</p>
 </div></blockquote>
 </div>
-<div class="section" id="isban-ban-channel">
-<h3>isban &lt;ban&gt; [channel]<a class="headerlink" href="#isban-ban-channel" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="isban-ban-channel-channel">
+<h3>isban &lt;ban&gt; [channel [-channel]]<a class="headerlink" href="#isban-ban-channel-channel" title="Permalink to this headline">¶</a></h3>
 <blockquote>
-<div><p>Returns: 1 if the specified ban is in the global ban list; 0 otherwise. If a channel is specified, that channel’s ban list is checked as well.</p>
+<div><p>Returns: 1 if the specified ban is in the global ban list; 0 otherwise. If a channel is specified, that channel’s ban list is checked as well. If the -channel flag is used at the end of the command, *only* the channel bans are checked.</p>
 <p>Module: channels</p>
 </div></blockquote>
 </div>
-<div class="section" id="ispermban-ban-channel">
-<h3>ispermban &lt;ban&gt; [channel]<a class="headerlink" href="#ispermban-ban-channel" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="ispermban-ban-channel-channel">
+<h3>ispermban &lt;ban&gt; [channel [-channel]]<a class="headerlink" href="#ispermban-ban-channel-channel" title="Permalink to this headline">¶</a></h3>
 <blockquote>
-<div><p>Returns: 1 if the specified ban is in the global ban list AND is marked as permanent; 0 otherwise. If a channel is specified, that channel’s ban list is checked as well.</p>
+<div><p>Returns: 1 if the specified ban is in the global ban list AND is marked as permanent; 0 otherwise. If a channel is specified, that channel’s ban list is checked as well. If the -channel flag is used at the end of the command, *only* the channel bans are checked.</p>
 <p>Module: channels</p>
 </div></blockquote>
 </div>
-<div class="section" id="isexempt-exempt-channel">
-<h3>isexempt &lt;exempt&gt; [channel]<a class="headerlink" href="#isexempt-exempt-channel" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="isexempt-exempt-channel-channel">
+<h3>isexempt &lt;exempt&gt; [channel [-channel]]<a class="headerlink" href="#isexempt-exempt-channel-channel" title="Permalink to this headline">¶</a></h3>
 <blockquote>
-<div><p>Returns: 1 if the specified exempt is in the global exempt list; 0 otherwise. If a channel is specified, that channel’s exempt list is checked as well.</p>
+<div><p>Returns: 1 if the specified exempt is in the global exempt list; 0 otherwise. If a channel is specified, that channel’s exempt list is checked as well. If the -channel flag is used at the end of the command, *only* the channel exempts are checked.</p>
 <p>Module: channels</p>
 </div></blockquote>
 </div>
-<div class="section" id="ispermexempt-exempt-channel">
-<h3>ispermexempt &lt;exempt&gt; [channel]<a class="headerlink" href="#ispermexempt-exempt-channel" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="ispermexempt-exempt-channel-channel">
+<h3>ispermexempt &lt;exempt&gt; [channel [-channel]]<a class="headerlink" href="#ispermexempt-exempt-channel-channel" title="Permalink to this headline">¶</a></h3>
 <blockquote>
-<div><p>Returns: 1 if the specified exempt is in the global exempt list AND is marked as permanent; 0 otherwise. If a channel is specified, that channel’s exempt list is checked as well.</p>
+<div><p>Returns: 1 if the specified exempt is in the global exempt list AND is marked as permanent; 0 otherwise. If a channel is specified, that channel’s exempt list is checked as well. If the -channel flag is used at the end of the command, *only* the channel exempts are checked.</p>
 <p>Module: channels</p>
 </div></blockquote>
 </div>
-<div class="section" id="isinvite-invite-channel">
-<h3>isinvite &lt;invite&gt; [channel]<a class="headerlink" href="#isinvite-invite-channel" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="isinvite-invite-channel-channel">
+<h3>isinvite &lt;invite&gt; [channel [-channel]]<a class="headerlink" href="#isinvite-invite-channel-channel" title="Permalink to this headline">¶</a></h3>
 <blockquote>
-<div><p>Returns: 1 if the specified invite is in the global invite list; 0 otherwise. If a channel is specified, that channel’s invite list is checked as well.</p>
+<div><p>Returns: 1 if the specified invite is in the global invite list; 0 otherwise. If a channel is specified, that channel’s invite list is checked as well. If the -channel flag is used at the end of the command, *only* the channel invites are checked.</p>
 <p>Module: channels</p>
 </div></blockquote>
 </div>
-<div class="section" id="isperminvite-invite-channel">
-<h3>isperminvite &lt;invite&gt; [channel]<a class="headerlink" href="#isperminvite-invite-channel" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="isperminvite-invite-channel-channel">
+<h3>isperminvite &lt;invite&gt; [channel [-channel]]<a class="headerlink" href="#isperminvite-invite-channel-channel" title="Permalink to this headline">¶</a></h3>
 <blockquote>
-<div><p>Returns: 1 if the specified invite is in the global invite list AND is marked as permanent; 0 otherwise. If a channel is specified, that channel’s invite list is checked as well.</p>
+<div><p>Returns: 1 if the specified invite is in the global invite list AND is marked as permanent; 0 otherwise. If a channel is specified, that channel’s invite list is checked as well. If the -channel flag is used at the end of the command, *only* the channel invites are checked.</p>
 <p>Module: channels</p>
 </div></blockquote>
 </div>
-<div class="section" id="isbansticky-ban-channel">
-<h3>isbansticky &lt;ban&gt; [channel]<a class="headerlink" href="#isbansticky-ban-channel" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="isbansticky-ban-channel-channel">
+<h3>isbansticky &lt;ban&gt; [channel [-channel]]<a class="headerlink" href="#isbansticky-ban-channel-channel" title="Permalink to this headline">¶</a></h3>
 <blockquote>
-<div><p>Returns: 1 if the specified ban is marked as sticky in the global ban list; 0 otherwise. If a channel is specified, that channel’s ban list is checked as well.</p>
+<div><p>Returns: 1 if the specified ban is marked as sticky in the global ban list; 0 otherwise. If a channel is specified, that channel’s ban list is checked as well. If the -channel flag is used at the end of the command, *only* the channel bans are checked.</p>
 <p>Module: channels</p>
 </div></blockquote>
 </div>
-<div class="section" id="isexemptsticky-exempt-channel">
-<h3>isexemptsticky &lt;exempt&gt; [channel]<a class="headerlink" href="#isexemptsticky-exempt-channel" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="isexemptsticky-exempt-channel-channel">
+<h3>isexemptsticky &lt;exempt&gt; [channel [-channel]]<a class="headerlink" href="#isexemptsticky-exempt-channel-channel" title="Permalink to this headline">¶</a></h3>
 <blockquote>
-<div><p>Returns: 1 if the specified exempt is marked as sticky in the global exempt list; 0 otherwise. If a channel is specified, that channel’s exempt list is checked as well.</p>
+<div><p>Returns: 1 if the specified exempt is marked as sticky in the global exempt list; 0 otherwise. If a channel is specified, that channel’s exempt list is checked as well. If the -channel flag is used at the end of the command, *only* the channel exempts are checked.</p>
 <p>Module: channels</p>
 </div></blockquote>
 </div>
-<div class="section" id="isinvitesticky-invite-channel">
-<h3>isinvitesticky &lt;invite&gt; [channel]<a class="headerlink" href="#isinvitesticky-invite-channel" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="isinvitesticky-invite-channel-channel">
+<h3>isinvitesticky &lt;invite&gt; [channel [-channel]]<a class="headerlink" href="#isinvitesticky-invite-channel-channel" title="Permalink to this headline">¶</a></h3>
 <blockquote>
-<div><p>Returns: 1 if the specified invite is marked as sticky in the global invite list; 0 otherwise. If a channel is specified, that channel’s invite list is checked as well.</p>
+<div><p>Returns: 1 if the specified invite is marked as sticky in the global invite list; 0 otherwise. If a channel is specified, that channel’s invite list is checked as well. If the -channel flag is used at the end of the command, *only* the channel invites are checked.</p>
 <p>Module: channels</p>
 </div></blockquote>
 </div>
@@ -1131,7 +1147,7 @@ any channel if no channel name is specified) and is logged in); 0 otherwise</p>
 <div class="section" id="getaccount-nickname-channel">
 <h3>getaccount &lt;nickname&gt; [channel]<a class="headerlink" href="#getaccount-nickname-channel" title="Permalink to this headline">¶</a></h3>
 <blockquote>
-<div>Returns: the services account name of the nickname if they are logged in, “” otherwise, and an error if the account-notify or extended-join capabilites are not enabled. WARNING: this account list may not be accurate depending on the server and configuration. This command will only work if a server supports (and Eggdrop has enabled) the account-notify and extended-join capabilities, and the server understands WHOX requests (also known as raw 354 responses).</div></blockquote>
+<div>Returns: the services account name of the nickname if they are logged in, “” otherwise, and an error if the account-notify or extended-join capabilities are not enabled. WARNING: this account list may not be accurate depending on the server and configuration. This command will only work if a server supports (and Eggdrop has enabled) the account-notify and extended-join capabilities, and the server understands WHOX requests (also known as raw 354 responses).</div></blockquote>
 </div>
 <div class="section" id="nick2hand-nickname-channel">
 <h3>nick2hand &lt;nickname&gt; [channel]<a class="headerlink" href="#nick2hand-nickname-channel" title="Permalink to this headline">¶</a></h3>
@@ -1151,6 +1167,13 @@ any channel if no channel name is specified) and is logged in); 0 otherwise</p>
 <h3>hand2nick &lt;handle&gt; [channel]<a class="headerlink" href="#hand2nick-handle-channel" title="Permalink to this headline">¶</a></h3>
 <blockquote>
 <div><p>Returns: nickname of the first person on the specified channel (if one is specified) whose nick!user&#64;host matches the given handle; “” is returned if no match is found. If no channel is specified, all channels are checked.</p>
+<p>Module: irc</p>
+</div></blockquote>
+</div>
+<div class="section" id="hand2nicks-handle-channel">
+<h3>hand2nicks &lt;handle&gt; [channel]<a class="headerlink" href="#hand2nicks-handle-channel" title="Permalink to this headline">¶</a></h3>
+<blockquote>
+<div><p>Returns: a de-duplicated Tcl list of the nickname(s) on the specified channel (if one is specified) whose nick!user&#64;host matches the given handle; “” is returned if no match is found. If no channel is specified, all channels are checked.</p>
 <p>Module: irc</p>
 </div></blockquote>
 </div>
@@ -1277,7 +1300,7 @@ any channel if no channel name is specified) and is logged in); 0 otherwise</p>
 <div class="section" id="refreshchan-channel-flags">
 <h3>refreshchan &lt;channel&gt; [flags]<a class="headerlink" href="#refreshchan-channel-flags" title="Permalink to this headline">¶</a></h3>
 <blockquote>
-<div><p>Description: An alternative to resetchan, refresh rereads the channel info from the server without first clearing out the previously stored information. Useful for updateing a user’s away status without resetting their idle time, for example. If flags are specified, only the required information will be refreshed, according to the given flags. Available flags:</p>
+<div><p>Description: An alternative to resetchan, refresh rereads the channel info from the server without first clearing out the previously stored information. Useful for updating a user’s away status without resetting their idle time, for example. If flags are specified, only the required information will be refreshed, according to the given flags. Available flags:</p>
 <table border="1" class="docutils">
 <colgroup>
 <col width="14%" />
@@ -1434,6 +1457,24 @@ any channel if no channel name is specified) and is logged in); 0 otherwise</p>
 <blockquote>
 <div><p>Returns: The type of the setting you specify. The possible types are flag, int, str, pair. A flag type references a channel flag setting that can be set to either + or -. An int type is a channel  setting that is set to a number, such as ban-time. A str type is a  channel setting that stores a string, such as need-op. A pair type is a setting that holds a value couple, such as the flood settings.</p>
 <p>Module: channels</p>
+</div></blockquote>
+</div>
+<div class="section" id="isupport-get-key">
+<h3>isupport get [key]<a class="headerlink" href="#isupport-get-key" title="Permalink to this headline">¶</a></h3>
+<blockquote>
+<div><p>Description:
+- isupport get: Returns a flat key/value list (dict) of settings.
+- isupport get &lt;key&gt;: Returns the setting’s value as a string. Throws an error if the key is not set.</p>
+<p>Returns: string or dict, see description above</p>
+<p>Module: server</p>
+</div></blockquote>
+</div>
+<div class="section" id="isupport-isset-key">
+<h3>isupport isset &lt;key&gt;<a class="headerlink" href="#isupport-isset-key" title="Permalink to this headline">¶</a></h3>
+<blockquote>
+<div><p>Description: Returns 0/1 depending on whether the key has a value.</p>
+<p>Returns: 0 or 1</p>
+<p>Module: server</p>
 </div></blockquote>
 </div>
 </div>
@@ -1663,6 +1704,55 @@ any channel if no channel name is specified) and is logged in); 0 otherwise</p>
 <p>Module: core</p>
 </div></blockquote>
 </div>
+<div class="section" id="socklist-type">
+<h3>socklist [type]<a class="headerlink" href="#socklist-type" title="Permalink to this headline">¶</a></h3>
+<blockquote>
+<div><blockquote>
+<div><p>Returns: a list of active connections, each item in the list is a sublist containing eight elements (in dict-readable format). The order of items returned should not be considered static or permanent, so it is recommended to access the items as key/value pairs with the dict command, as opposed to something like lindex, to extract values. The possible keys returned are:</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="15%" />
+<col width="85%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td>idx</td>
+<td>integer value assigned to Eggdrop connections</td>
+</tr>
+<tr class="row-even"><td>handle</td>
+<td>possible values are (telnet), (bots), (users),
+(script) for a listening socket, or the handle of the
+connected user for an established connection</td>
+</tr>
+<tr class="row-odd"><td>host</td>
+<td>the hostname of the connection, if it is known;
+otherwise a *</td>
+</tr>
+<tr class="row-even"><td>ip</td>
+<td>the ip of the connection</td>
+</tr>
+<tr class="row-odd"><td>port</td>
+<td>the port number associated with the connection (local
+port for listening connections, remote port for server
+connections.</td>
+</tr>
+<tr class="row-even"><td>secure</td>
+<td>1 if SSL/TLS is used for the connect; 0 otherwise</td>
+</tr>
+<tr class="row-odd"><td>type</td>
+<td>the type of connection (TELNET, CHAT, SERVER, etc)</td>
+</tr>
+<tr class="row-even"><td>info</td>
+<td>extra information associated with the connection</td>
+</tr>
+<tr class="row-odd"><td>time</td>
+<td>timestamp of when the socket was established</td>
+</tr>
+</tbody>
+</table>
+</div></blockquote>
+<p>Module: core</p>
+</div></blockquote>
+</div>
 <div class="section" id="whom-chan">
 <h3>whom &lt;chan&gt;<a class="headerlink" href="#whom-chan" title="Permalink to this headline">¶</a></h3>
 <blockquote>
@@ -1749,7 +1839,7 @@ any channel if no channel name is specified) and is logged in); 0 otherwise</p>
 <h3>notes &lt;user&gt; [numberlist]<a class="headerlink" href="#notes-user-numberlist" title="Permalink to this headline">¶</a></h3>
 <blockquote>
 <div><p>Returns: -1 if no such user, -2 if notefile failure. If a numberlist is not specified, the number of notes stored for the user is returned. Otherwise, a list of sublists containing information about notes stored for the user is returned. Each sublist is in the format of:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">{</span><span class="o">&lt;</span><span class="n">from</span><span class="o">&gt;</span> <span class="o">&lt;</span><span class="n">timestamp</span><span class="o">&gt;</span> <span class="o">&lt;</span><span class="n">note</span> <span class="n">text</span><span class="o">&gt;</span><span class="p">}</span>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>{&lt;from&gt; &lt;timestamp&gt; &lt;note text&gt;}
 </pre></div>
 </div>
 <p>Module: notes</p>
@@ -2861,7 +2951,7 @@ bind for the “stop” msg command, use ‘unbind msg - stop msg:stop’.</p>
 <p>procname &lt;nick&gt; &lt;user&#64;host&gt; &lt;handle&gt; &lt;text&gt; &lt;dest&gt;</p>
 <p>Description: dest will be a nickname (the bot’s nickname, obviously) or a channel name. mask is matched against the entire text of the notice and can contain wildcards. It is considered a breach of protocol to respond to a /notice on IRC, so this is intended for internal use (logging, etc.) only. Note that server notices do not trigger the NOTC bind. If the proc returns 1, Eggdrop will not log the message that triggered this bind.</p>
 <p>New Tcl procs should be declared as:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>proc notcproc {nick uhost hand text {dest &quot;&quot;}} {
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>proc notcproc {nick uhost hand text {dest &quot;&quot;}} {
   global botnick; if {$dest == &quot;&quot;} {set dest $botnick}
   ...
 }
@@ -2887,7 +2977,7 @@ bind for the “stop” msg command, use ‘unbind msg - stop msg:stop’.</p>
 <p>procname &lt;nick&gt; &lt;user&#64;host&gt; &lt;handle&gt; &lt;channel&gt; &lt;msg&gt;</p>
 <p>Description: triggered by someone leaving the channel. The mask is matched against “#channel nick!user&#64;host” and can contain wildcards. If no part message is specified, msg will be set to “”.</p>
 <p>New Tcl procs should be declared as:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">proc</span> <span class="n">partproc</span> <span class="p">{</span><span class="n">nick</span> <span class="n">uhost</span> <span class="n">hand</span> <span class="n">chan</span> <span class="p">{</span><span class="n">msg</span> <span class="s2">&quot;&quot;</span><span class="p">}}</span> <span class="p">{</span> <span class="o">...</span> <span class="p">}</span>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>proc partproc {nick uhost hand chan {msg &quot;&quot;}} { ... }
 </pre></div>
 </div>
 <p>for compatibility.</p>
@@ -2940,12 +3030,12 @@ bind for the “stop” msg command, use ‘unbind msg - stop msg:stop’.</p>
 <p>Note that “target” was added in 1.3.17 and that this will break Tcl scripts that were written for pre-1.3.17 Eggdrop that use the mode binding. Also, due to a typo, mode binds were broken completely in 1.3.17 but were fixed in 1.3.18. Mode bindings are not triggered at all in 1.3.17.</p>
 <p>One easy example (from guppy) of how to support the “target” parameter in 1.3.18 and later and still remain compatible with older Eggdrop versions is:</p>
 <p>Old script looks as follows:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">bind</span> <span class="n">mode</span> <span class="o">-</span> <span class="o">*</span> <span class="n">mode_proc</span>
-<span class="n">proc</span> <span class="n">mode_proc</span> <span class="p">{</span><span class="n">nick</span> <span class="n">uhost</span> <span class="n">hand</span> <span class="n">chan</span> <span class="n">mode</span><span class="p">}</span> <span class="p">{</span> <span class="o">...</span> <span class="p">}</span>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>bind mode - * mode_proc
+proc mode_proc {nick uhost hand chan mode} { ... }
 </pre></div>
 </div>
 <p>To make it work with 1.3.18+ and stay compatible with older bots, do:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>bind mode - * mode_proc_fix
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>bind mode - * mode_proc_fix
 proc mode_proc_fix {nick uhost hand chan mode {target &quot;&quot;}} {
   if {$target != &quot;&quot;} {append mode &quot; $target&quot;}
   mode_proc $nick $uhost $hand $chan $mode
@@ -3091,8 +3181,8 @@ proc mode_proc {nick uhost hand chan mode} { ... }
 <p>procname &lt;channel&gt; &lt;type&gt;</p>
 <p>Description: this bind is triggered on certain events, like when the bot needs operator status or the key for a channel. The types are: op, unban, invite, limit, and key; the mask is matched against ‘#channel type’ and can contain wildcards. flags are ignored.</p>
 <p>Example:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">bind</span> <span class="n">need</span> <span class="o">-</span> <span class="s2">&quot;</span><span class="si">% o</span><span class="s2">p&quot;</span> <span class="n">needop</span> <span class="o">&lt;</span> <span class="n">handles</span> <span class="n">only</span> <span class="n">need</span> <span class="n">op</span>
-<span class="n">bind</span> <span class="n">need</span> <span class="o">-</span> <span class="s2">&quot;*&quot;</span> <span class="n">needall</span>   <span class="o">&lt;</span> <span class="n">handles</span> <span class="nb">all</span> <span class="n">needs</span>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>bind need - &quot;% op&quot; needop &lt; handles only need op
+bind need - &quot;*&quot; needall   &lt; handles all needs
 </pre></div>
 </div>
 <p>Module: irc</p>
@@ -3214,22 +3304,22 @@ flags are ignored.</p>
 <div><p>bind evnt &lt;flags&gt; &lt;type&gt; &lt;proc&gt;</p>
 <p>procname &lt;type&gt;</p>
 <p>Description: triggered whenever one of these events happen. flags are ignored. Pre-defined events triggered by Eggdrop are:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sighup</span>            <span class="o">-</span> <span class="n">called</span> <span class="n">on</span> <span class="n">a</span> <span class="n">kill</span> <span class="o">-</span><span class="n">HUP</span> <span class="o">&lt;</span><span class="n">pid</span><span class="o">&gt;</span>
-<span class="n">sigterm</span>           <span class="o">-</span> <span class="n">called</span> <span class="n">on</span> <span class="n">a</span> <span class="n">kill</span> <span class="o">-</span><span class="n">TERM</span> <span class="o">&lt;</span><span class="n">pid</span><span class="o">&gt;</span>
-<span class="n">sigill</span>            <span class="o">-</span> <span class="n">called</span> <span class="n">on</span> <span class="n">a</span> <span class="n">kill</span> <span class="o">-</span><span class="n">ILL</span> <span class="o">&lt;</span><span class="n">pid</span><span class="o">&gt;</span>
-<span class="n">sigquit</span>           <span class="o">-</span> <span class="n">called</span> <span class="n">on</span> <span class="n">a</span> <span class="n">kill</span> <span class="o">-</span><span class="n">QUIT</span> <span class="o">&lt;</span><span class="n">pid</span><span class="o">&gt;</span>
-<span class="n">save</span>              <span class="o">-</span> <span class="n">called</span> <span class="n">when</span> <span class="n">the</span> <span class="n">userfile</span> <span class="ow">is</span> <span class="n">saved</span>
-<span class="n">rehash</span>            <span class="o">-</span> <span class="n">called</span> <span class="n">just</span> <span class="n">after</span> <span class="n">a</span> <span class="n">rehash</span>
-<span class="n">prerehash</span>         <span class="o">-</span> <span class="n">called</span> <span class="n">just</span> <span class="n">before</span> <span class="n">a</span> <span class="n">rehash</span>
-<span class="n">prerestart</span>        <span class="o">-</span> <span class="n">called</span> <span class="n">just</span> <span class="n">before</span> <span class="n">a</span> <span class="n">restart</span>
-<span class="n">logfile</span>           <span class="o">-</span> <span class="n">called</span> <span class="n">when</span> <span class="n">the</span> <span class="n">logs</span> <span class="n">are</span> <span class="n">switched</span> <span class="n">daily</span>
-<span class="n">loaded</span>            <span class="o">-</span> <span class="n">called</span> <span class="n">when</span> <span class="n">the</span> <span class="n">bot</span> <span class="ow">is</span> <span class="n">done</span> <span class="n">loading</span>
-<span class="n">userfile</span><span class="o">-</span><span class="n">loaded</span>   <span class="o">-</span> <span class="n">called</span> <span class="n">after</span> <span class="n">userfile</span> <span class="n">has</span> <span class="n">been</span> <span class="n">loaded</span>
-<span class="n">connect</span><span class="o">-</span><span class="n">server</span>    <span class="o">-</span> <span class="n">called</span> <span class="n">just</span> <span class="n">before</span> <span class="n">we</span> <span class="n">connect</span> <span class="n">to</span> <span class="n">an</span> <span class="n">IRC</span> <span class="n">server</span>
-<span class="n">preinit</span><span class="o">-</span><span class="n">server</span>    <span class="o">-</span> <span class="n">called</span> <span class="n">immediately</span> <span class="n">when</span> <span class="n">we</span> <span class="n">connect</span> <span class="n">to</span> <span class="n">the</span> <span class="n">server</span>
-<span class="n">init</span><span class="o">-</span><span class="n">server</span>       <span class="o">-</span> <span class="n">called</span> <span class="n">when</span> <span class="n">we</span> <span class="n">actually</span> <span class="n">get</span> <span class="n">on</span> <span class="n">our</span> <span class="n">IRC</span> <span class="n">server</span>
-<span class="n">disconnect</span><span class="o">-</span><span class="n">server</span> <span class="o">-</span> <span class="n">called</span> <span class="n">when</span> <span class="n">we</span> <span class="n">disconnect</span> <span class="kn">from</span> <span class="nn">our</span> <span class="n">IRC</span> <span class="n">server</span>
-<span class="n">fail</span><span class="o">-</span><span class="n">server</span>       <span class="o">-</span> <span class="n">called</span> <span class="n">when</span> <span class="n">an</span> <span class="n">IRC</span> <span class="n">server</span> <span class="n">fails</span> <span class="n">to</span> <span class="n">respond</span>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>sighup            - called on a kill -HUP &lt;pid&gt;
+sigterm           - called on a kill -TERM &lt;pid&gt;
+sigill            - called on a kill -ILL &lt;pid&gt;
+sigquit           - called on a kill -QUIT &lt;pid&gt;
+save              - called when the userfile is saved
+rehash            - called just after a rehash
+prerehash         - called just before a rehash
+prerestart        - called just before a restart
+logfile           - called when the logs are switched daily
+loaded            - called when the bot is done loading
+userfile-loaded   - called after userfile has been loaded
+connect-server    - called just before we connect to an IRC server
+preinit-server    - called immediately when we connect to the server
+init-server       - called when we actually get on our IRC server
+disconnect-server - called when we disconnect from our IRC server
+fail-server       - called when an IRC server fails to respond
 </pre></div>
 </div>
 <p>Note that Tcl scripts can trigger arbitrary events, including ones that are not pre-defined or used by Eggdrop.</p>
@@ -3304,7 +3394,7 @@ flags are ignored.</p>
 <blockquote>
 <div><p>bind ircaway &lt;flags&gt; &lt;mask&gt; &lt;proc&gt;</p>
 <p>procname &lt;nick&gt; &lt;user&gt; &lt;hand&gt; &lt;channel&gt; &lt;msg&gt;</p>
-<p>Description: triggered when Eggdrop recieves an AWAY message for a user from an IRC server, ONLY if the away-notify capability is enabled via CAP (the server must supports this capability, see the ‘cap’ Tcl command for more info on requesting capabilites). “Normal” away messages (301 messages) will not trigger this bind, for those you should instead use a RAWT bind. The mask for the bind is in the format “#channel <a class="reference external" href="mailto:nick!user&#37;&#52;&#48;hostname">nick!user<span>&#64;</span>hostname</a>” (* to catch all nicknames). nick is the nickname of the user that triggered the bind, user is the <a class="reference external" href="mailto:nick!user&#37;&#52;&#48;host">nick!user<span>&#64;</span>host</a> of the user, handle is the handle of the user on the bot (- if the user is not added to the bot), channel is the channel the user was found on (read on for more info on this) and msg is the contents of the away message, if any. If a “*” is used for the channel in the mask, this bind is triggered once for every channel that the user is in the bot with; in other words if the bot is in two channels with the target user, the bind will be triggered twice. To trigger a proc only once per nick change, regardless of the number of channels the Eggdrop and user share, use the RAWT bind with AWAY as the keyword.</p>
+<p>Description: triggered when Eggdrop receives an AWAY message for a user from an IRC server, ONLY if the away-notify capability is enabled via CAP (the server must supports this capability, see the ‘cap’ Tcl command for more info on requesting capabilities). “Normal” away messages (301 messages) will not trigger this bind, for those you should instead use a RAWT bind. The mask for the bind is in the format “#channel <a class="reference external" href="mailto:nick!user&#37;&#52;&#48;hostname">nick!user<span>&#64;</span>hostname</a>” (* to catch all nicknames). nick is the nickname of the user that triggered the bind, user is the <a class="reference external" href="mailto:nick!user&#37;&#52;&#48;host">nick!user<span>&#64;</span>host</a> of the user, handle is the handle of the user on the bot (- if the user is not added to the bot), channel is the channel the user was found on (read on for more info on this) and msg is the contents of the away message, if any. If a “*” is used for the channel in the mask, this bind is triggered once for every channel that the user is in the bot with; in other words if the bot is in two channels with the target user, the bind will be triggered twice. To trigger a proc only once per nick change, regardless of the number of channels the Eggdrop and user share, use the RAWT bind with AWAY as the keyword.</p>
 <p>Module: irc</p>
 </div></blockquote>
 <ol class="arabic simple" start="51">
@@ -3331,6 +3421,15 @@ flags are ignored.</p>
 <p>procname &lt;nick&gt; &lt;user&gt; &lt;hand&gt; &lt;account&gt;</p>
 <p>Description: triggered when Eggdrop receives an ACCOUNT message. The mask for the bind is in the format “#channel <a class="reference external" href="mailto:nick!user&#37;&#52;&#48;hostname&#46;com">nick!user<span>&#64;</span>hostname<span>&#46;</span>com</a> account” where channel is the channel the user was found on when the bind was triggered, the hostmask is the user’s hostmask, and account is the account name the user is logging in to, or “” for logging out. The mask argument can accept wildcards. For the proc, nick is the nickname of the user logging into/out of an account, user is the <a class="reference external" href="mailto:user&#37;&#52;&#48;host&#46;com">user<span>&#64;</span>host<span>&#46;</span>com</a> hostmask, hand is the handle of the user (or * if none), and account is the name of the account the user logged in to (or “” if the user logged out of an account).</p>
 </div></blockquote>
+<ol class="arabic simple" start="54">
+<li>ISUPPORT (stackable)</li>
+</ol>
+<blockquote>
+<div><p>bind isupport &lt;flags&gt; &lt;mask&gt; &lt;proc&gt;</p>
+<p>procname &lt;key&gt; &lt;isset&gt; &lt;value&gt;</p>
+<p>Description: triggered when the value of an isupport key changes. The mask is matched against the isupport key. If the value is not set, isset is 0 and the value is the empty string. Because the empty string is valid value, use isset to distinguish empty string values from a key being unset. The bind is called before the change is processed, so [isupport isset]/[isupport get] return the old value. A return value other than 0 makes Eggdrop ignore the change and revert to the old value. After a disconnect from the server, all isupport values are reset to default, but $::server will be empty, so that case can be caught and ignored.</p>
+<p>Module: server</p>
+</div></blockquote>
 </div>
 <div class="section" id="return-values">
 <h3>Return Values<a class="headerlink" href="#return-values" title="Permalink to this headline">¶</a></h3>
@@ -3338,22 +3437,22 @@ flags are ignored.</p>
 <p>Here’s a list of the bindings that use the return value from procs they trigger:</p>
 <ol class="arabic">
 <li><p class="first">MSG   Return 1 to make Eggdrop log the command as:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>(nick!user@host) !handle! command
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>(nick!user@host) !handle! command
 </pre></div>
 </div>
 </li>
 <li><p class="first">DCC   Return 1 to make Eggdrop log the command as:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1">#handle# command</span>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>#handle# command
 </pre></div>
 </div>
 </li>
 <li><p class="first">FIL   Return 1 to make Eggdrop log the command as:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1">#handle# files: command</span>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>#handle# files: command
 </pre></div>
 </div>
 </li>
 <li><p class="first">PUB   Return 1 to make Eggdrop log the command as:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>&lt;&lt;nick&gt;&gt; !handle! command
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>&lt;&lt;nick&gt;&gt; !handle! command
 </pre></div>
 </div>
 </li>
@@ -3385,7 +3484,7 @@ flags are ignored.</p>
 </li>
 <li><p class="first">TLS   Return 1 to disable verbose ssl information for the handshake.</p>
 </li>
-<li><p class="first">RAWT  Return 1 to ask the bot not to prcess the server text. This can affet the bot’s performance by causing it to miss things that it would normally act on – you have been warned. Again.</p>
+<li><p class="first">RAWT  Return 1 to ask the bot not to process the server text. This can affet the bot’s performance by causing it to miss things that it would normally act on – you have been warned. Again.</p>
 </li>
 </ol>
 </div>
@@ -3397,7 +3496,7 @@ TCP connection) in control of a script. All text received from the
 connection is sent to the proc you specify. All outgoing text should
 be sent with ‘putdcc’.</p>
 <p>The control procedure is called with these parameters:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">procname</span> <span class="o">&lt;</span><span class="n">idx</span><span class="o">&gt;</span> <span class="o">&lt;</span><span class="nb">input</span><span class="o">-</span><span class="n">text</span><span class="o">&gt;</span>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>procname &lt;idx&gt; &lt;input-text&gt;
 </pre></div>
 </div>
 <p>This allows you to use the same proc for several connections. The
@@ -3423,7 +3522,7 @@ trigger your procs when something happens on the connection, and your
 proc is expected to return as soon as possible. Waiting in a proc for
 more input is a no-no.</p>
 <p>To initiate an outgoing connection, use:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="nb">set</span> <span class="n">idx</span> <span class="p">[</span><span class="n">connect</span> <span class="o">&lt;</span><span class="n">hostname</span><span class="o">&gt;</span> <span class="o">&lt;</span><span class="p">[</span><span class="o">+</span><span class="p">]</span><span class="n">port</span><span class="o">&gt;</span><span class="p">]</span>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>set idx [connect &lt;hostname&gt; &lt;[+]port&gt;]
 </pre></div>
 </div>
 <p>For SSL connections, prefix the port with a plus sign.</p>
@@ -3451,18 +3550,18 @@ connections, like ‘killdcc’ and ‘putdcc’, will work on this idx, too.
 The ‘killdcc’ command will fail with “invalid idx” if you attempt to use
 it on a closed socket.</p>
 <p>To create a listen port, use:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">listen</span> <span class="o">&lt;</span><span class="p">[</span><span class="o">+</span><span class="p">]</span><span class="n">port</span><span class="o">&gt;</span> <span class="n">script</span> <span class="o">&lt;</span><span class="n">proc</span><span class="o">&gt;</span>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>listen &lt;[+]port&gt; script &lt;proc&gt;
 </pre></div>
 </div>
 <p>By default, a listen port will allow both plaintext and SSL connections.
 To restrict a port to allow only SSL connections, prefix the port with a
 plus sign.</p>
 <p>Procs should be declared as:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">&lt;</span><span class="n">procname</span><span class="o">&gt;</span> <span class="o">&lt;</span><span class="n">newidx</span><span class="o">&gt;</span>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>&lt;procname&gt; &lt;newidx&gt;
 </pre></div>
 </div>
 <p>For example:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>listen 6687 script listen:grab
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>listen 6687 script listen:grab
 
 proc listen:grab {newidx} {
   control $newidx listen:control
@@ -3500,7 +3599,7 @@ words) (This char only works in binds, not in regular matching)</td>
 </tbody>
 </table>
 <blockquote>
-<div>Copyright (C) 1999 - 2020 Eggheads Development Team</div></blockquote>
+<div>Copyright (C) 1999 - 2021 Eggheads Development Team</div></blockquote>
 </div>
 </div>
 
@@ -3517,9 +3616,9 @@ words) (This char only works in binds, not in regular matching)</td>
       <div class="footer">
         <div class="left">
           <div role="navigation" aria-label="related navigaton">
-            <a href="patch.html" title="Patch How-To"
+            <a href="pbkdf2.html" title="PBKDF2 Hashing"
               >previous</a> |
-            <a href="ipv6.html" title="IPv6 support"
+            <a href="twitch.html" title="Twitch"
               >next</a>
           </div>
           <div role="note" aria-label="source link">
@@ -3529,8 +3628,8 @@ words) (This char only works in binds, not in regular matching)</td>
         <div class="right">
           
     <div class="footer" role="contentinfo">
-        &#169; Copyright 2020, Eggheads.
-      Last updated on Jun 19, 2020.
+        &#169; Copyright 2021, Eggheads.
+      Last updated on Jan 24, 2021.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.5.
     </div>
         </div>

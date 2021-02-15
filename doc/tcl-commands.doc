@@ -1,4 +1,4 @@
-Eggdrop Tcl Commands Last revised: December 14, 2017
+Eggdrop Tcl Commands Last revised: January 24, 2021
 
 
 
@@ -370,40 +370,49 @@ botattr <handle> [changes [channel]]
 matchattr <handle> <flags> [channel]
 
   Description: checks if the flags of the specified user match the flags
-  provided. Default matching pattern uses the | (OR) convention. For
-  example, specifying +mn for flags will check if the user has the m OR
-  n flag.
+  provided. "flags" is of the form:
+
+      [+/-]<global flags>[&/|<channel flags>[&/|<bot flags>]]
+
+  Either | or & can be used as a separator between global, channel, and
+  bot flags, but only one separator can be used per flag section. A '+'
+  is used to check if a user has the subsequent flags, and a '-' is used
+  to check if a user does NOT have the subsequent flags.
 
   ------------------------------------------------------------------------
   Flag Mask   Action
   ----------- ------------------------------------------------------------
   +m +        Checks if the user has the m global flag
 
-  +mn         Checks if the user has the m or n global flag
+  +mn         Checks if the user has the m OR n global flag
 
-  +mn&        Checks if the user has the m and n global flag
+  |+mn        Checks if the user has the m OR n global flag
+
+  |+mn #foo   Checks if the user has the m OR n channel flag for #foo
+
+  &+mn        Checks if the user has the m AND n global flag
+
+  &mn #foo    Checks if the user has the m AND n channel flag for #foo
 
   |+o #foo    Checks if the user has the o channel flag for #foo
 
-  &mn #foo    Checks if the user has the m and n channel flag for #foo
-
-  +o|+n #foo  Checks if the user has the o global flag, or the n channel
+  +o|+n #foo  Checks if the user has the o global flag OR the n channel
               flag for #foo
 
-  +m&+v       Checks if the user has the m global flag, and the v channel
+  +m&+v #foo  Checks if the user has the m global flag AND the v channel
               flag for #foo
 
   -m          Checks if the user does not have the m global flag
 
   |-n #foo    Checks if the user does not have the n channel flag for #foo
 
-  +m|-n #foo  Checks if the user has the global m flag or does not have a
+  +m|-n #foo  Checks if the user has the global m flag OR does not have a
               channel n flag for #foo
 
-  -n&-m #foo  Searches if the user does not have the global n flag and
-              does not have the channel m flag for #foo
+  -n&-m #foo  Checks if the user does not have the global n flag AND does
+              not have the channel m flag for #foo
 
-  ||+b        Searches if the user has the bot flag b
+  ||+b        Checks if the user has the bot flag b
   ------------------------------------------------------------------------
 
   Returns: 1 if the specified user has the flags matching the provided
@@ -716,75 +725,84 @@ ischanjuped <channel>
 
   Module: channels
 
-isban <ban> [channel]
+isban <ban> [channel [-channel]]
 
   Returns: 1 if the specified ban is in the global ban list; 0
   otherwise. If a channel is specified, that channel's ban list is
-  checked as well.
+  checked as well. If the -channel flag is used at the end of the
+  command, *only* the channel bans are checked.
 
   Module: channels
 
-ispermban <ban> [channel]
+ispermban <ban> [channel [-channel]]
 
   Returns: 1 if the specified ban is in the global ban list AND is
   marked as permanent; 0 otherwise. If a channel is specified, that
-  channel's ban list is checked as well.
+  channel's ban list is checked as well. If the -channel flag is used at
+  the end of the command, *only* the channel bans are checked.
 
   Module: channels
 
-isexempt <exempt> [channel]
+isexempt <exempt> [channel [-channel]]
 
   Returns: 1 if the specified exempt is in the global exempt list; 0
   otherwise. If a channel is specified, that channel's exempt list is
-  checked as well.
+  checked as well. If the -channel flag is used at the end of the
+  command, *only* the channel exempts are checked.
 
   Module: channels
 
-ispermexempt <exempt> [channel]
+ispermexempt <exempt> [channel [-channel]]
 
   Returns: 1 if the specified exempt is in the global exempt list AND is
   marked as permanent; 0 otherwise. If a channel is specified, that
-  channel's exempt list is checked as well.
+  channel's exempt list is checked as well. If the -channel flag is used
+  at the end of the command, *only* the channel exempts are checked.
 
   Module: channels
 
-isinvite <invite> [channel]
+isinvite <invite> [channel [-channel]]
 
   Returns: 1 if the specified invite is in the global invite list; 0
   otherwise. If a channel is specified, that channel's invite list is
-  checked as well.
+  checked as well. If the -channel flag is used at the end of the
+  command, *only* the channel invites are checked.
 
   Module: channels
 
-isperminvite <invite> [channel]
+isperminvite <invite> [channel [-channel]]
 
   Returns: 1 if the specified invite is in the global invite list AND is
   marked as permanent; 0 otherwise. If a channel is specified, that
-  channel's invite list is checked as well.
+  channel's invite list is checked as well. If the -channel flag is used
+  at the end of the command, *only* the channel invites are checked.
 
   Module: channels
 
-isbansticky <ban> [channel]
+isbansticky <ban> [channel [-channel]]
 
   Returns: 1 if the specified ban is marked as sticky in the global ban
   list; 0 otherwise. If a channel is specified, that channel's ban list
-  is checked as well.
+  is checked as well. If the -channel flag is used at the end of the
+  command, *only* the channel bans are checked.
 
   Module: channels
 
-isexemptsticky <exempt> [channel]
+isexemptsticky <exempt> [channel [-channel]]
 
   Returns: 1 if the specified exempt is marked as sticky in the global
   exempt list; 0 otherwise. If a channel is specified, that channel's
-  exempt list is checked as well.
+  exempt list is checked as well. If the -channel flag is used at the
+  end of the command, *only* the channel exempts are checked.
 
   Module: channels
 
-isinvitesticky <invite> [channel]
+isinvitesticky <invite> [channel [-channel]]
 
   Returns: 1 if the specified invite is marked as sticky in the global
   invite list; 0 otherwise. If a channel is specified, that channel's
-  invite list is checked as well.
+  invite list is checked as well. If the -channel flag is used at the
+  end of the command, *only* the channel invites are checked.
 
   Module: channels
 
@@ -1110,7 +1128,7 @@ getaccount <nickname> [channel]
 
   Returns: the services account name of the nickname if they are logged
   in, "" otherwise, and an error if the account-notify or extended-join
-  capabilites are not enabled. WARNING: this account list may not be
+  capabilities are not enabled. WARNING: this account list may not be
   accurate depending on the server and configuration. This command will
   only work if a server supports (and Eggdrop has enabled) the
   account-notify and extended-join capabilities, and the server
@@ -1144,6 +1162,15 @@ hand2nick <handle> [channel]
   is specified) whose nick!user@host matches the given handle; "" is
   returned if no match is found. If no channel is specified, all
   channels are checked.
+
+  Module: irc
+
+hand2nicks <handle> [channel]
+
+  Returns: a de-duplicated Tcl list of the nickname(s) on the specified
+  channel (if one is specified) whose nick!user@host matches the given
+  handle; "" is returned if no match is found. If no channel is
+  specified, all channels are checked.
 
   Module: irc
 
@@ -1273,7 +1300,7 @@ refreshchan <channel> [flags]
 
   Description: An alternative to resetchan, refresh rereads the channel
   info from the server without first clearing out the previously stored
-  information. Useful for updateing a user's away status without
+  information. Useful for updating a user's away status without
   resetting their idle time, for example. If flags are specified, only
   the required information will be refreshed, according to the given
   flags. Available flags:
@@ -1448,6 +1475,24 @@ chansettype <setting>
   setting that holds a value couple, such as the flood settings.
 
   Module: channels
+
+isupport get [key]
+
+  Description: - isupport get: Returns a flat key/value list (dict) of
+  settings. - isupport get <key>: Returns the setting's value as a
+  string. Throws an error if the key is not set.
+
+  Returns: string or dict, see description above
+
+  Module: server
+
+isupport isset <key>
+
+  Description: Returns 0/1 depending on whether the key has a value.
+
+  Returns: 0 or 1
+
+  Module: server
 
 
 DCC COMMANDS
@@ -1668,6 +1713,40 @@ dcclist [type]
   file_send_pending, script, socket (these are connections that have not
   yet been put under 'control'), telnet, and server. The timestamp is in
   unixtime format.
+
+  Module: core
+
+socklist [type]
+
+  Returns: a list of active connections, each item in the list is a
+  sublist containing eight elements (in dict-readable format). The order
+  of items returned should not be considered static or permanent, so it
+  is recommended to access the items as key/value pairs with the dict
+  command, as opposed to something like lindex, to extract values. The
+  possible keys returned are:
+
+    -------------- ------------------------------------------------------------------------
+    idx            integer value assigned to Eggdrop connections
+
+    handle         possible values are (telnet), (bots), (users), (script) for a listening
+                   socket, or the handle of the connected user for an established
+                   connection
+
+    host           the hostname of the connection, if it is known; otherwise a *
+
+    ip             the ip of the connection
+
+    port           the port number associated with the connection (local port for listening
+                   connections, remote port for server connections.
+
+    secure         1 if SSL/TLS is used for the connect; 0 otherwise
+
+    type           the type of connection (TELNET, CHAT, SERVER, etc)
+
+    info           extra information associated with the connection
+
+    time           timestamp of when the socket was established
+    -------------- ------------------------------------------------------------------------
 
   Module: core
 
@@ -3513,10 +3592,10 @@ the Tcl proc, and an explanation.
 
   procname <nick> <user> <hand> <channel> <msg>
 
-  Description: triggered when Eggdrop recieves an AWAY message for a
+  Description: triggered when Eggdrop receives an AWAY message for a
   user from an IRC server, ONLY if the away-notify capability is enabled
   via CAP (the server must supports this capability, see the 'cap' Tcl
-  command for more info on requesting capabilites). "Normal" away
+  command for more info on requesting capabilities). "Normal" away
   messages (301 messages) will not trigger this bind, for those you
   should instead use a RAWT bind. The mask for the bind is in the format
   "#channel nick!user@hostname" (* to catch all nicknames). nick is the
@@ -3585,6 +3664,25 @@ the Tcl proc, and an explanation.
   and account is the name of the account the user logged in to (or "" if
   the user logged out of an account).
 
+(54) ISUPPORT (stackable)
+
+  bind isupport <flags> <mask> <proc>
+
+  procname <key> <isset> <value>
+
+  Description: triggered when the value of an isupport key changes. The
+  mask is matched against the isupport key. If the value is not set,
+  isset is 0 and the value is the empty string. Because the empty string
+  is valid value, use isset to distinguish empty string values from a
+  key being unset. The bind is called before the change is processed, so
+  [isupport isset]/[isupport get] return the old value. A return value
+  other than 0 makes Eggdrop ignore the change and revert to the old
+  value. After a disconnect from the server, all isupport values are
+  reset to default, but $::server will be empty, so that case can be
+  caught and ignored.
+
+  Module: server
+
 Return Values
 
 Several bindings pay attention to the value you return from the
@@ -3644,7 +3742,7 @@ trigger:
 (17) EVNT Return 1 to make Eggdrop not to take the default action for
     the event. Used for signal type events, ignored for others.
 (18) TLS Return 1 to disable verbose ssl information for the handshake.
-(19) RAWT Return 1 to ask the bot not to prcess the server text. This
+(19) RAWT Return 1 to ask the bot not to process the server text. This
     can affet the bot's performance by causing it to miss things that it
     would normally act on -- you have been warned. Again.
 
@@ -3764,4 +3862,4 @@ the four special characters:
   ~            matches 1 or more space characters (can be used for whitespace between words) (This char only works in binds, not in regular matching)
   ------------ ------------------------------------------------------------------------------------------------------------------------------------------------------
 
-  Copyright (C) 1999 - 2020 Eggheads Development Team
+  Copyright (C) 1999 - 2021 Eggheads Development Team
