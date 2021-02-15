@@ -55,11 +55,11 @@ else
 fi
 
 echo "*** Searching for panflute..."
-PANDOC="$(pip show panflute)"
+PANDOC="$(pip3 show panflute)"
 if [ $? -eq 0 ]; then
   echo "Found."
 else
-  echo "Not found. Panflute can be installed via pip install panflute. Exiting..."
+  echo "Not found. Panflute can be installed via pip3 install panflute. Exiting..."
   exit 1
 fi
 
@@ -69,7 +69,7 @@ SPHINX="$(which sphinx-build)"
 if [ $? -eq 0 ]; then
   echo "Found."
 else
-  echo "Not found. Sphinx can be found at http://www.sphinx-doc.org or via apt-get install python-sphinx. Exiting..."
+  echo "Not found. Sphinx can be found at http://www.sphinx-doc.org or via apt-get install python3-sphinx. Exiting..."
   exit 1
 fi
 
