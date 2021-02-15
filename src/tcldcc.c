@@ -761,7 +761,7 @@ static void dccsocklist(Tcl_Interp *irp, int argc, char *type, int src) {
 #ifdef TLS
             dcc[i].ssl,
 #else
-            '0',
+            0,
 #endif
             dcc[i].type ? dcc[i].type->name : "*UNKNOWN*", other,
             timestamp);
