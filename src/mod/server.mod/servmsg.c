@@ -1953,6 +1953,7 @@ static void connect_server(void)
     dcc[servidx].u.dns->dns_failure = server_resolve_failure;
     dcc[servidx].u.dns->dns_type = RES_IPBYHOST;
     dcc[servidx].u.dns->type = &SERVER_SOCKET;
+    dcc[servidx].status |= STAT_SERV;
 
     if (server_cycle_wait)
       /* Back to 1st server & set wait time.
@@ -2004,8 +2005,6 @@ static void server_resolve_success(int servidx)
     lostdcc(servidx);
     return;
   }
-  /* Setup ident with server values populated */
-  check_tcl_event("ident");
 #ifdef TLS
   if (dcc[servidx].ssl && ssl_handshake(serv, TLS_CONNECT, tls_vfyserver,
                                         LOG_SERV, dcc[servidx].host, NULL)) {

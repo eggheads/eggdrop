@@ -112,7 +112,7 @@ static void ident_oidentd()
 #else
   char s[INET_ADDRSTRLEN];
 #endif
-  int ret, prevtime, servidx;
+  int ret, prevtime, servidx, i;
   socklen_t namelen;
   struct sockaddr_storage ss;
 
@@ -168,7 +168,19 @@ static void ident_oidentd()
     putlog(LOG_MISC, "*", "IDENT: oident.conf missing, or error opening "
             "for reading");
   }
-  servidx = findanyidx(serv);
+  /* To minimize a known race condition, this code is called now */
+  servidx = -1;
+  for (i = 0; i < dcc_total; i++)
+    if (dcc[i].status & STAT_SERV) {
+      servidx = i;
+      break;
+    }
+  if (servidx < 0 ) {
+    putlog(LOG_MISC, "*", "IDENT: Error could not find server socket");
+    if (data)
+      nfree(data);
+    return;
+  }
   namelen = sizeof ss;
   ret = getsockname(dcc[servidx].sock, (struct sockaddr *) &ss, &namelen);
   if (ret) {
