@@ -538,6 +538,7 @@ struct dupwait_info {
 #define STAT_BOTONLY 0x00020    /* telnet on bots-only connect          */
 #define STAT_USRONLY 0x00040    /* telnet on users-only connect         */
 #define STAT_PAGE    0x00080    /* page output to the user              */
+#define STAT_SERV    0x00100    /* this is a server connection          */
 
 /* For stripping out mIRC codes. */
 #define STRIP_COLOR     0x00001    /* remove mIRC color codes            */
