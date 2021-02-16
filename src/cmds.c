@@ -806,7 +806,7 @@ int check_int_range(char *value, int min, int max) {
 
 static void cmd_pls_bot(struct userrec *u, int idx, char *par)
 {
-  char *handle, *addr, *port, *port2, *relay, *host;
+  char *handle, *addr, *port, *port2, *relay, *host, *p;
   struct userrec *u1;
   struct bot_addr *bi;
   int i, found = 0;
@@ -842,6 +842,13 @@ static void cmd_pls_bot(struct userrec *u, int idx, char *par)
     dprintf(idx, "You can't start a botnick with '%c'.\n", handle[0]);
     return;
   }
+
+/* Check for bad characters throughout the handle */
+  for (p = handle; *p; p++)
+    if ((unsigned char) *p <= 32 || *p == '@') {
+      dprintf(idx, "Invalid character '%c' in handle, try again\n", p[0]);
+      return;
+    }
 
   if (addr[0]) {
 #ifndef IPV6
