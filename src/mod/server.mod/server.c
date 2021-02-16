@@ -421,7 +421,7 @@ static char *splitnicks(char **rest)
   char *o, *r;
 
   if (!rest)
-    return *rest = "";
+    return "";
   o = *rest;
   while (*o == ' ')
     o++;
