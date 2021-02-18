@@ -447,7 +447,7 @@ static int tcl_queuesize STDVAR
 static int tcl_server STDVAR {
   int ret;
 
-  BADARGS(2, 5, " subcommand host ?port ?password??");
+  BADARGS(3, 5, " subcommand host ?port ?password??");
   if (!strcmp(argv[1], "add")) {
     ret = add_server(argv[2], argv[3] ? argv[3] : "", argv[4] ? argv[4] : "");
   } else if (!strcmp(argv[1], "remove")) {
