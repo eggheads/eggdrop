@@ -38,7 +38,7 @@
 #undef global
 static Function *global = NULL, *irc_funcs = NULL;
 
-extern p_tcl_bind_list H_pubm;
+//extern p_tcl_bind_list H_pubm;
 
 int runPython();
 
@@ -56,14 +56,18 @@ static int python_expmem()
 int py_pubm (char *nick, char *hand, char *host, char *chan, char *text) {
   char arg[2048];
 
-  strlcpy(arg, "binds", sizeof arg);
-  strncat(arg, "on_pub", sizeof arg);
-  strncat(arg, nick, sizeof arg);
-  strncat(arg, hand, sizeof arg);
-  strncat(arg, host, sizeof arg);
-  strncat(arg, chan, sizeof arg);
-  strncat(arg, text, sizeof arg);
-  runPython(5, arg);
+  strlcpy(arg, "binds ", sizeof arg);
+  strncat(arg, "on_pub ", sizeof arg - strlen(arg));
+  strncat(arg, nick, sizeof arg - strlen(arg));
+  strncat(arg, " ", sizeof arg - strlen(arg));
+  strncat(arg, host, sizeof arg - strlen(arg));
+  strncat(arg, " ", sizeof arg - strlen(arg));
+  strncat(arg, hand, sizeof arg - strlen(arg));
+  strncat(arg, " ", sizeof arg - strlen(arg));
+  strncat(arg, chan, sizeof arg - strlen(arg));
+  strncat(arg, " ", sizeof arg - strlen(arg));
+  strncat(arg, text, sizeof arg - strlen(arg));
+  runPython(7, arg);
 /* call "on_pub" in python */;
   return 0;
 }
@@ -167,17 +171,19 @@ int runPython(int pyc, char *args)
     tok = strtok(NULL, " ");    
     strlcpy(method, tok, sizeof method);
     while (tok !=NULL) {
-        pyv[i++] = tok;
+        pyv[i] = tok;
         tok = strtok(NULL, " ");
+fprintf(stderr, "pyv[%d] is %s\n", i, pyv[i]);
+        i++;
     }
-//    PySys_SetArgv(pyc, pyv);
     if (pModule != NULL) {
         pFunc = PyObject_GetAttrString(pModule, method);
         /* pFunc is a new reference */
         if (pFunc && PyCallable_Check(pFunc)) {
-            pArgs = PyTuple_New(pyc);
-            for (i = 2; i < pyc; ++i) {
-                pValue = PyLong_FromLong(atoi(pyv[i]));
+            pArgs = PyTuple_New(pyc-2);
+            for (i = 0; i < pyc-2; ++i) {
+                pValue = Py_BuildValue("s", pyv[i+1]);
+fprintf(stderr, "i is %d, Adding %s\n", i, pyv[i+1]);
                 if (!pValue) {
                     Py_DECREF(pArgs);
                     Py_DECREF(pModule);
@@ -204,14 +210,14 @@ int runPython(int pyc, char *args)
         else {
             if (PyErr_Occurred())
                 PyErr_Print();
-            fprintf(stderr, "Cannot find function \"%s\"\n", pyv[2]);
+            fprintf(stderr, "Cannot find function \"%s\"\n", method);
         }
         Py_XDECREF(pFunc);
         Py_DECREF(pModule);
     }
     else {
         PyErr_Print();
-        fprintf(stderr, "Failed to load \"%s\"\n", "pyv[1]");
+        fprintf(stderr, "Failed to load \"%s\"\n", pyv[0]);
         return 1;
     }
     if (Py_FinalizeEx() < 0) {
@@ -348,7 +354,7 @@ char *python_start(Function *global_funcs)
 
   /* Add command table to bind list */
   add_builtins(H_pubm, mypy);
-//  add_builtins(H_dcc, mydcc);
+  add_builtins(H_dcc, mydcc);
 //  add_tcl_commands(mytcl);
 //  add_tcl_ints(my_tcl_ints);
 //  add_tcl_strings(my_tcl_strings);
