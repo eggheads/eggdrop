@@ -60,11 +60,13 @@ regenerate_changelog() {
 	done
 	if git rev-parse -q --verify release/${TRIMVERSION} > /dev/null; then
 	  INCLUDE="${INCLUDE} -i ./release/${TRIMVERSION}"
+        else
+          INCLUDE="${INCLUDE} -i develop"
 	fi
 	git fetch origin
 	git fetch -t origin
-        echo "misc/genchanges -l $INCLUDE -i develop -r origin full > ChangeLog"
-	misc/genchanges -l $INCLUDE -i develop -r origin full > ChangeLog
+        echo "misc/genchanges -l $INCLUDE -r origin full > ChangeLog"
+	misc/genchanges -l $INCLUDE -r origin full > ChangeLog
 	gzip -f ChangeLog
 	echo " done."
 

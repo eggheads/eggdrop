@@ -710,7 +710,7 @@ static void dccsocklist(Tcl_Interp *irp, int argc, char *type, int src) {
 #else
   char s[INET_ADDRSTRLEN];
 #endif
-  unsigned int size;
+  socklen_t namelen;
   struct sockaddr_storage ss;
   Tcl_Obj *masterlist;
  
@@ -744,8 +744,8 @@ static void dccsocklist(Tcl_Interp *irp, int argc, char *type, int src) {
       /* If this came from socklist... */
       } else {
         /* Update dcc table socket information, needed for getting local IP */
-        size = sizeof ss;
-        getsockname(dcc[i].sock, (struct sockaddr *) &ss, &size);
+        namelen = sizeof ss;
+        getsockname(dcc[i].sock, (struct sockaddr *) &ss, &namelen);
         if (ss.ss_family == AF_INET) {
           struct sockaddr_in *saddr = (struct sockaddr_in *)&ss;
           inet_ntop(AF_INET, &(saddr->sin_addr), s, INET_ADDRSTRLEN);
@@ -761,7 +761,7 @@ static void dccsocklist(Tcl_Interp *irp, int argc, char *type, int src) {
 #ifdef TLS
             dcc[i].ssl,
 #else
-            '0',
+            0,
 #endif
             dcc[i].type ? dcc[i].type->name : "*UNKNOWN*", other,
             timestamp);
@@ -1256,7 +1256,7 @@ static int tcl_listen STDVAR
   unsigned char buf[sizeof(struct in6_addr)];
   int i = 1;
 
-/* People like to add comments to this commnd for some reason, and it can cause
+/* People like to add comments to this command for some reason, and it can cause
  * errors that are difficult to figure out. Let's instead throw a more helpful
  * error for this case to get around BADARGS, and handle other cases further
  * down in the code
