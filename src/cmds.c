@@ -2136,8 +2136,14 @@ static void cmd_botattr(struct userrec *u, int idx, char *par)
       mns.chan = 0;
     }
     if (!glob_owner(user)) {
-      pls.bot &= ~(BOT_SHARE | BOT_GLOBAL);
-      mns.bot &= ~(BOT_SHARE | BOT_GLOBAL);
+      if (pls.bot & (BOT_SHARE | BOT_GLOBAL)) {
+        pls.bot &= ~(BOT_SHARE | BOT_GLOBAL);
+        dprintf(idx, "You do not have Global Owner privileges, so you cant change share attributes\n");
+      }
+      if (mns.bot & (BOT_SHARE | BOT_GLOBAL)) {
+        mns.bot &= ~(BOT_SHARE | BOT_GLOBAL);
+        dprintf(idx, "You do not have Global Owner privileges, so you cant change share attributes\n");
+      }
     }
     user.match = FR_BOT | (chan ? FR_CHAN : 0);
     get_user_flagrec(u2, &user, par);
