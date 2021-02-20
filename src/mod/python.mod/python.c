@@ -57,7 +57,8 @@ int py_pubm (char *nick, char *hand, char *host, char *chan, char *text) {
   char arg[2048];
 
   strlcpy(arg, "binds ", sizeof arg);
-  strncat(arg, "on_pub ", sizeof arg - strlen(arg));
+  strncat(arg, "on_event ", sizeof arg - strlen(arg));
+  strncat(arg, "pubm ", sizeof arg - strlen(arg));
   strncat(arg, nick, sizeof arg - strlen(arg));
   strncat(arg, " ", sizeof arg - strlen(arg));
   strncat(arg, host, sizeof arg - strlen(arg));
@@ -67,10 +68,27 @@ int py_pubm (char *nick, char *hand, char *host, char *chan, char *text) {
   strncat(arg, chan, sizeof arg - strlen(arg));
   strncat(arg, " ", sizeof arg - strlen(arg));
   strncat(arg, text, sizeof arg - strlen(arg));
-  runPython(7, arg);
-/* call "on_pub" in python */;
+  runPython(8, arg);
   return 0;
 }
+
+int py_msgm (char *nick, char *hand, char *host, char *text) {
+  char arg[2048];
+
+  strlcpy(arg, "binds ", sizeof arg);
+  strncat(arg, "on_event ", sizeof arg - strlen(arg));
+  strncat(arg, "msgm ", sizeof arg - strlen(arg));
+  strncat(arg, nick, sizeof arg - strlen(arg));
+  strncat(arg, " ", sizeof arg - strlen(arg));
+  strncat(arg, host, sizeof arg - strlen(arg));
+  strncat(arg, " ", sizeof arg - strlen(arg));
+  strncat(arg, hand, sizeof arg - strlen(arg));
+  strncat(arg, " ", sizeof arg - strlen(arg));
+  strncat(arg, text, sizeof arg - strlen(arg));
+  runPython(7, arg);
+  return 0;
+}
+
 
 static PyObject* py_numargs(PyObject *self, PyObject *args) {
   int numargs = 2;
@@ -275,8 +293,8 @@ static cmd_t mydcc[] = {
   {NULL,        NULL,   NULL,                   NULL}  /* Mark end. */
 };
 
-static cmd_t mypy[] = {
-    {"*",   "",     py_pubm,  "python:pubm"},
+static cmd_t mypy_pubm[] = {
+    {"*",   "",     py_pubm, "python:pubm"},
     {NULL,  NULL,   NULL,     NULL}
 };
 
@@ -308,7 +326,7 @@ static char *python_close()
   Context;
   kill_python();
   rem_builtins(H_dcc, mydcc);
-  rem_builtins(H_pubm, mypy);
+  rem_builtins(H_pubm, mypy_pubm);
 //  rem_tcl_commands(mytcl);
 //  rem_tcl_ints(my_tcl_ints);
   module_undepend(MODULE_NAME);
@@ -353,7 +371,7 @@ char *python_start(Function *global_funcs)
   init_python();
 
   /* Add command table to bind list */
-  add_builtins(H_pubm, mypy);
+  add_builtins(H_pubm, mypy_pubm);
   add_builtins(H_dcc, mydcc);
 //  add_tcl_commands(mytcl);
 //  add_tcl_ints(my_tcl_ints);
