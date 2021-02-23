@@ -24,7 +24,9 @@
  */
 
 #define MODULE_NAME "python"
-#define MAKING_TWITCH
+#define MAKING_PYTHON
+
+#define ARRAYCOUNT(x) (sizeof (x) / sizeof *(x))
 
 #include "src/mod/module.h"
 #undef interp
@@ -38,9 +40,12 @@
 #undef global
 static Function *global = NULL, *irc_funcs = NULL;
 
+static PyObject *pymodobj;
+static PyObject *pirp, *pglobals;
+
 //extern p_tcl_bind_list H_pubm;
 
-int runPython();
+int runPythonArgs(const char *script, const char *method, int argc, char **argv);
 
 
 /* Calculate the memory we keep allocated.
@@ -54,38 +59,18 @@ static int python_expmem()
 }
 
 int py_pubm (char *nick, char *hand, char *host, char *chan, char *text) {
-  char arg[2048];
+  struct flag_record fr = { FR_CHAN | FR_ANYWH | FR_GLOBAL, 0, 0, 0, 0, 0 };
+  char *argv[] = {"pubm", nick, host, hand, chan, text};
 
-  strlcpy(arg, "binds ", sizeof arg);
-  strncat(arg, "on_event ", sizeof arg - strlen(arg));
-  strncat(arg, "pubm ", sizeof arg - strlen(arg));
-  strncat(arg, nick, sizeof arg - strlen(arg));
-  strncat(arg, " ", sizeof arg - strlen(arg));
-  strncat(arg, host, sizeof arg - strlen(arg));
-  strncat(arg, " ", sizeof arg - strlen(arg));
-  strncat(arg, hand, sizeof arg - strlen(arg));
-  strncat(arg, " ", sizeof arg - strlen(arg));
-  strncat(arg, chan, sizeof arg - strlen(arg));
-  strncat(arg, " ", sizeof arg - strlen(arg));
-  strncat(arg, text, sizeof arg - strlen(arg));
-  runPython(8, arg);
+  runPythonArgs("binds", "on_event", ARRAYCOUNT(argv), argv);
   return 0;
 }
 
 int py_msgm (char *nick, char *hand, char *host, char *text) {
-  char arg[2048];
+  struct flag_record fr = { FR_CHAN | FR_ANYWH | FR_GLOBAL, 0, 0, 0, 0, 0 };
+  char *argv[] = {"msgm", nick, host, hand, text};
 
-  strlcpy(arg, "binds ", sizeof arg);
-  strncat(arg, "on_event ", sizeof arg - strlen(arg));
-  strncat(arg, "msgm ", sizeof arg - strlen(arg));
-  strncat(arg, nick, sizeof arg - strlen(arg));
-  strncat(arg, " ", sizeof arg - strlen(arg));
-  strncat(arg, host, sizeof arg - strlen(arg));
-  strncat(arg, " ", sizeof arg - strlen(arg));
-  strncat(arg, hand, sizeof arg - strlen(arg));
-  strncat(arg, " ", sizeof arg - strlen(arg));
-  strncat(arg, text, sizeof arg - strlen(arg));
-  runPython(7, arg);
+  runPythonArgs("binds", "on_event", ARRAYCOUNT(argv), argv);
   return 0;
 }
 
@@ -129,18 +114,45 @@ static PyObject* py_putserv(PyObject *self, PyObject *args) {
 
 
 static PyMethodDef PyMethods[] = {
-    {"numargs", py_numargs, METH_VARARGS, "Return the number of arguments received by the process."},
-    {"putserv", py_putserv, METH_VARARGS, "text ?options"},
-    {NULL, NULL, 0, NULL}
+  {"numargs", py_numargs, METH_VARARGS, "Return the number of arguments received by the process."},
+  {"putserv", py_putserv, METH_VARARGS, "text ?options"},
+  {NULL, NULL, 0, NULL}
 };
 
 static PyModuleDef PyModule = {
-    PyModuleDef_HEAD_INIT, "py", NULL, -1, PyMethods,
-    NULL, NULL, NULL, NULL
+  PyModuleDef_HEAD_INIT, "eggdrop", NULL, -1, PyMethods,
+  NULL, NULL, NULL, NULL
 };
 
 static PyObject* PyInit_py(void) {
-    return PyModule_Create(&PyModule);
+  pymodobj = PyModule_Create(&PyModule);
+
+  PyModule_AddIntConstant(pymodobj, "USER_AUTOOP", 0x00000001);
+  PyModule_AddIntConstant(pymodobj, "USER_BOT", 0x00000002);
+  PyModule_AddIntConstant(pymodobj, "USER_COMMON", 0x00000004);
+  PyModule_AddIntConstant(pymodobj, "USER_DEOP", 0x00000008);
+  PyModule_AddIntConstant(pymodobj, "USER_EXEMPT", 0x00000010);
+  PyModule_AddIntConstant(pymodobj, "USER_FRIEND", 0x00000020);
+  PyModule_AddIntConstant(pymodobj, "USER_GVOICE", 0x00000040);
+  PyModule_AddIntConstant(pymodobj, "USER_HIGHLITE", 0x00000080);
+  PyModule_AddIntConstant(pymodobj, "USER_JANITOR", 0x00000200);
+  PyModule_AddIntConstant(pymodobj, "USER_KICK", 0x00000400);
+  PyModule_AddIntConstant(pymodobj, "USER_HALFOP", 0x00000800);
+  PyModule_AddIntConstant(pymodobj, "USER_MASTER", 0x00001000);
+  PyModule_AddIntConstant(pymodobj, "USER_OWNER", 0x00002000);
+  PyModule_AddIntConstant(pymodobj, "USER_OP", 0x00004000);
+  PyModule_AddIntConstant(pymodobj, "USER_PARTY", 0x00008000);
+  PyModule_AddIntConstant(pymodobj, "USER_QUIET", 0x00010000);
+  PyModule_AddIntConstant(pymodobj, "USER_DEHALFOP", 0x00020000);
+  PyModule_AddIntConstant(pymodobj, "USER_BOTMAST", 0x00080000);
+  PyModule_AddIntConstant(pymodobj, "USER_UNSHARED", 0x00100000);
+  PyModule_AddIntConstant(pymodobj, "USER_VOICE", 0x00200000);
+  PyModule_AddIntConstant(pymodobj, "USER_WASOPTEST", 0x00400000);
+  PyModule_AddIntConstant(pymodobj, "USER_XFER", 0x00800000);
+  PyModule_AddIntConstant(pymodobj, "USER_AUTOHALFOP", 0x01000000);
+  PyModule_AddIntConstant(pymodobj, "USER_WASHALFOPTEST", 0x02000000);
+
+  return pymodobj;
 }
 
 
@@ -152,8 +164,12 @@ static void init_python() {
     fatal(1);
   }
   Py_SetProgramName(program);  /* optional but recommended */
-  PyImport_AppendInittab("py", &PyInit_py);
+  PyImport_AppendInittab("eggdrop", &PyInit_py);
   Py_Initialize();
+
+  pirp = PyImport_AddModule("__main__");
+  pglobals = PyModule_GetDict(pirp);
+
   PyRun_SimpleString("import sys");
   PyRun_SimpleString("sys.path.append(\".\")");
 
@@ -161,7 +177,6 @@ static void init_python() {
 }
 
 static void kill_python() {
-
   if (Py_FinalizeEx() < 0) {
     exit(120);
   }
@@ -169,103 +184,139 @@ static void kill_python() {
   return;
 }
 
-int runPython(int pyc, char *args)
+int runPythonArgs(const char *script, const char *method, int argc, char **argv)
 {
-    PyObject *pName, *pModule, *pFunc;
-    PyObject *pArgs, *pValue;
-    int i=0;
-    char *tok;
-    char script[256];
-    char method[256];
-    char *pyv[pyc];
+  PyObject *pName, *pModule, *pFunc;
+  PyObject *pArgs, *pValue;
+  char *pyv[argc];
 
-    tok = strtok(args, " ");
-    strlcpy(script, tok, sizeof script);
-    pName = PyUnicode_DecodeFSDefault(script);
-    /* Error checking of pName left out */
-    pModule = PyImport_Import(pName);
-    Py_DECREF(pName);
+  pName = PyUnicode_DecodeFSDefault(script);
+  /* Error checking of pName left out */
+  pModule = PyImport_Import(pName);
+  Py_DECREF(pName);
 
-    tok = strtok(NULL, " ");    
-    strlcpy(method, tok, sizeof method);
-    while (tok !=NULL) {
-        pyv[i] = tok;
-        tok = strtok(NULL, " ");
-fprintf(stderr, "pyv[%d] is %s\n", i, pyv[i]);
-        i++;
-    }
-    if (pModule != NULL) {
-        pFunc = PyObject_GetAttrString(pModule, method);
-        /* pFunc is a new reference */
-        if (pFunc && PyCallable_Check(pFunc)) {
-            pArgs = PyTuple_New(pyc-2);
-            for (i = 0; i < pyc-2; ++i) {
-                pValue = Py_BuildValue("s", pyv[i+1]);
-fprintf(stderr, "i is %d, Adding %s\n", i, pyv[i+1]);
-                if (!pValue) {
-                    Py_DECREF(pArgs);
-                    Py_DECREF(pModule);
-                    fprintf(stderr, "Cannot convert argument\n");
-                    return 1;
-                }
-                /* pValue reference stolen here: */
-                PyTuple_SetItem(pArgs, i, pValue);
-            }
-            pValue = PyObject_CallObject(pFunc, pArgs);
+  for (int i = 0; i < argc; i++) {
+    fprintf(stderr, "pyv[%d] is %s\n", i, argv[i]);
+  }
+  if (pModule != NULL) {
+    pFunc = PyObject_GetAttrString(pModule, method);
+    /* pFunc is a new reference */
+    if (pFunc && PyCallable_Check(pFunc)) {
+      pArgs = PyTuple_New(argc);
+      for (int i = 0; i < argc; i++) {
+          pValue = Py_BuildValue("s", argv[i]);
+          if (!pValue) {
             Py_DECREF(pArgs);
-            if (pValue != NULL) {
-                printf("Result of call: %ld\n", PyLong_AsLong(pValue));
-                Py_DECREF(pValue);
-            }
-            else {
-                Py_DECREF(pFunc);
-                Py_DECREF(pModule);
-                PyErr_Print();
-                fprintf(stderr,"Call failed\n");
-                return 1;
-            }
-        }
-        else {
-            if (PyErr_Occurred())
-                PyErr_Print();
-            fprintf(stderr, "Cannot find function \"%s\"\n", method);
-        }
-        Py_XDECREF(pFunc);
+            Py_DECREF(pModule);
+            fprintf(stderr, "Cannot convert argument at position %d: '%s'\n", i, argv[i]);
+            return 1;
+          }
+          /* pValue reference stolen here: */
+          PyTuple_SetItem(pArgs, i, pValue);
+      }
+      pValue = PyObject_CallObject(pFunc, pArgs);
+      Py_DECREF(pArgs);
+      if (pValue != NULL) {
+        printf("Result of call: %ld\n", PyLong_AsLong(pValue));
+        Py_DECREF(pValue);
+      }
+      else {
+        Py_DECREF(pFunc);
         Py_DECREF(pModule);
+        PyErr_Print();
+        fprintf(stderr,"Call failed\n");
+        return 1;
+      }
     }
     else {
+      if (PyErr_Occurred())
         PyErr_Print();
-        fprintf(stderr, "Failed to load \"%s\"\n", pyv[0]);
-        return 1;
+      fprintf(stderr, "Cannot find function \"%s\"\n", method);
     }
-    if (Py_FinalizeEx() < 0) {
-        return 120;
-    }
-    return 0;
+    Py_XDECREF(pFunc);
+    Py_DECREF(pModule);
+  }
+  else {
+    PyErr_Print();
+    fprintf(stderr, "Failed to load \"%s\"\n", pyv[0]);
+    return 1;
+  }
+  if (Py_FinalizeEx() < 0) {
+    return 120;
+  }
+  return 0;
 }
 
+static void runPython(char *par) {
+  int maxargc = 16;
+  char **argv = NULL;
+  char *script = NULL, *method = NULL;
+  int argvidx = -2;
+  char *word;
+
+  if (!argv) {
+    argv = nmalloc(maxargc * sizeof *argv);
+  }
+  for (word = strtok(par, " "); word; word = strtok(NULL, " ")) {
+    if (argvidx == -2) {
+      script = word;
+    } else if (argvidx == -1) {
+      method = word;
+    } else {
+      if (argvidx >= maxargc) {
+        maxargc += 16;
+        argv = nrealloc(argv, maxargc * sizeof *argv);
+      }
+      argv[argvidx] = word;
+    }
+    argvidx++;
+  }
+  if (argvidx < 0) {
+    fprintf(stderr, "Missing script/method for runPython\n");
+    return;
+  }
+  runPythonArgs(script, method, argvidx, argv);
+}
 
 static void cmd_python(struct userrec *u, int idx, char *par) {
-  PyRun_SimpleString("import sys");
-  PyRun_SimpleString("sys.path.append(\".\")");
-  PyRun_SimpleString(par);
+  char *result;
+  PyObject *pobj, *pstr;
+
+  PyErr_Clear();
+
+  pobj = PyRun_String(par, Py_file_input, pglobals, pglobals);
+
+  if (PyErr_Occurred()) {
+    PyErr_Print();
+  }
+  return;
+}
+
+static void cmd_pyexpr(struct userrec *u, int idx, char *par) {
+  char *result;
+  PyObject *pobj, *pstr;
+
+  PyErr_Clear();
+
+  pobj = PyRun_String(par, Py_eval_input, pglobals, pglobals);
+  if (pobj) {
+    pstr = PyObject_Str(pobj);
+
+    dprintf(idx, "%s\n", PyUnicode_AsUTF8(pstr));
+    Py_DECREF(pstr);
+    Py_DECREF(pobj);
+  } else if (PyErr_Occurred()) {
+    PyErr_Print();
+  }
   return;
 }
 
 static void cmd_pysource(struct userrec *u, int idx, char *par) {
-int i, pyc=-1;
-
   if (!par[0]) {
     dprintf(idx, "Usage: pysource <file> <method> [args]\n");
     return;
   }
-  for (i = 0; par[i] != '\0'; i++) {
-    if (par[i] == ' ') {
-      pyc++;
-    }
-  }
-  
-  runPython(pyc, par);
+  runPython(par);
 
   return;
 }
@@ -290,6 +341,7 @@ static cmd_t mydcc[] = {
   /* command  flags  function     tcl-name */
   {"pysource",  "",     (IntFunc) cmd_pysource, NULL},
   {"python",    "",     (IntFunc) cmd_python,   NULL},
+  {"pyexpr",    "",     (IntFunc) cmd_pyexpr,   NULL},
   {NULL,        NULL,   NULL,                   NULL}  /* Mark end. */
 };
 

@@ -1,6 +1,46 @@
 #import py
 import re
+from enum import IntFlag
+import eggdrop
 
+class UserFlags(IntFlag):
+  autoop = eggdrop.USER_AUTOOP
+  bot = eggdrop.USER_BOT
+  common = eggdrop.USER_COMMON
+  deop = eggdrop.USER_DEOP
+  exempt = eggdrop.USER_EXEMPT
+  friend = eggdrop.USER_FRIEND
+  autovoice = eggdrop.USER_GVOICE
+  highlight = eggdrop.USER_HIGHLITE
+  janitor = eggdrop.USER_JANITOR
+  autokick = eggdrop.USER_KICK
+  halfop = eggdrop.USER_HALFOP
+  master = eggdrop.USER_MASTER
+  owner = eggdrop.USER_OWNER
+  op = eggdrop.USER_OP
+  partyline = eggdrop.USER_PARTY
+  devoice = eggdrop.USER_QUIET
+  dehalfop = eggdrop.USER_DEHALFOP
+  botnetmaster = eggdrop.USER_BOTMAST
+  unshared = eggdrop.USER_UNSHARED
+  voice = eggdrop.USER_VOICE
+  wasoptest = eggdrop.USER_WASOPTEST
+  xfer = eggdrop.USER_XFER
+  autohalfop = eggdrop.USER_AUTOHALFOP
+  washalfoptest = eggdrop.USER_WASHALFOPTEST
+
+class FlagMatcher(Object):
+  def __init__(self, globalflags=None, chanflags=None, requireall=False):
+    self.globalflags = globalflags
+    self.chanflags = chanflags
+    self.requireall = requireall
+  
+  def match(self, globalflags, chanflags):
+    if self.globalflags is not None:
+      mg = self.globalflags & globalflags
+    if self.chanflags is not None:
+      mc = self.chanflags & chanflags
+    
 
 class Eggdrop:
   def __init__(self, binds):
