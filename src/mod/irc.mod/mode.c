@@ -997,19 +997,16 @@ static void got_uninvite(struct chanset_t *chan, char *nick, char *from,
     add_mode(chan, '+', 'I', who);
 }
 
-static int gotmode(char *from, char *origmsg)
+static int gotmode(char *from, char *msg)
 {
-  char *nick, *ch, *op, *chg, *msg;
-  char s[UHOSTLEN], buf[511];
+  char *nick, *ch, *op, *chg;
+  char s[UHOSTLEN];
   char ms2[3];
   int z;
   struct userrec *u;
   memberlist *m;
   struct chanset_t *chan;
 
-  strncpy(buf, origmsg, 510);
-  buf[510] = 0;
-  msg = buf;
   /* Usermode changes? */
   if (msg[0] && (strchr(CHANMETA, msg[0]) != NULL)) {
     ch = newsplit(&msg);
