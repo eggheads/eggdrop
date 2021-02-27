@@ -1232,7 +1232,7 @@ static int dns_hosts(char *hostn) {
       /* while at it, reject hostnames with bogus chars, see rfc 952, 1123 and 2181 */
       if (!strchr("-.0123456789ABCDEFGHIJABCDEFGHIJKLMNOPQRSTUVWXYZ_abcdefghijklmnopqrstuvwxyz", hostn[i])) {
 
-        ddebug2(RES_MSG "ERRPR: Bogus char in hostname input: 0x%02x at %i", hostn[i], i + 1);
+        ddebug2(RES_MSG "ERROR: Bogus char in hostname input: 0x%02x at %i", hostn[i], i + 1);
         return 1;
       }
       hostn_lower[i] = tolower((unsigned char) hostn[i]);
