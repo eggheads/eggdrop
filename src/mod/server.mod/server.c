@@ -1563,9 +1563,9 @@ static char *traced_nettype(ClientData cdata, Tcl_Interp *irp,
   }
   if (warn) {
     putlog(LOG_MISC, "*",
-        "WARNING: The config setting for \"net-type\" has transitioned from a \n"
-        "number to a text string. Please update your choice to one of the allowed \n"
-        "values listed in the current configuration file from the source directory\n");
+        "INFO: The config setting for \"net-type\" has transitioned from a number\n"
+        "to a text string. Please update your choice to one of the allowed values\n"
+        "listed in the current configuration file from the source directory\n");
   }
   do_nettype();
   return NULL;
