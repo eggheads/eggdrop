@@ -44,7 +44,9 @@
 */
 
 #include <stddef.h>
-#define __STDC_WANT_LIB_EXT1__ 1 /* SunOS */
+#ifndef __STDC_WANT_LIB_EXT1__ /* SunOS */
+# define __STDC_WANT_LIB_EXT1__ 1
+#endif
 #include <string.h>
 #include "main.h"
 
