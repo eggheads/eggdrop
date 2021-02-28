@@ -30,7 +30,7 @@
 extern Tcl_Interp *interp;
 extern tcl_timer_t *timer, *utimer;
 extern struct dcc_t *dcc;
-extern char botnetnick[];
+extern char botnetnick[], listen_ip[];
 extern int dcc_total, backgrd, parties, make_userfile, remote_boots, max_dcc,
            conmask;
 #ifdef IPV6
@@ -1251,7 +1251,7 @@ static int setlisten(Tcl_Interp *irp, char *ip, char *portp, char *type, char *m
  */
 static int tcl_listen STDVAR
 {
-  char ip[121] = "", maskproc[UHOSTMAX] = "";
+  char ip[121], maskproc[UHOSTMAX] = "";
   char port[7], type[7], flag[4], *endptr;
   unsigned char buf[sizeof(struct in6_addr)];
   int i = 1;
@@ -1270,6 +1270,9 @@ static int tcl_listen STDVAR
   }
 
   BADARGS(3, 6, " ?ip? port type ?mask?/?proc flag?");
+
+/* default listen-addr if not specified */
+  strlcpy(ip, listen_ip, sizeof(ip));
 
 /* Check if IP exists, set to NULL if not */
   strtol(argv[1], &endptr, 10);
