@@ -549,15 +549,11 @@ This will only be shown if the user has one of these extra fields.
 You might prefer to comment this out and use the userinfo1.0.tcl script
 which provides commands for changing all of these.</dd>
 </dl>
-<div class="line-block">
-<div class="line">unbind dcc n tcl *dcc:tcl</div>
-<div class="line">unbind dcc n set *dcc:set</div>
-<div class="line-block">
-<div class="line">Comment these two lines if you wish to enable the .tcl and .set commands.
-If you select your owners wisely, you should be okay enabling these.</div>
-</div>
-</div>
+<p>#unbind dcc n tcl *dcc:tcl</p>
 <dl class="docutils">
+<dt>#unbind dcc n set *dcc:set</dt>
+<dd>Uncomment these two lines if you wish to disable the .tcl and .set commands.
+If you select your owners wisely, you should be okay leaving these enabled.</dd>
 <dt>set must-be-owner 1</dt>
 <dd>If you enable this setting, only permanent owners (owner setting) will
 be able to use .tcl and .set. Moreover, if you want to only let permanent
@@ -786,7 +782,7 @@ path to them.</p>
           
     <div class="footer" role="contentinfo">
         &#169; Copyright 2021, Eggheads.
-      Last updated on Feb 14, 2021.
+      Last updated on Mar 01, 2021.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.5.
     </div>
         </div>
