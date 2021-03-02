@@ -409,11 +409,80 @@ install-modules: install-start
 	fi
 
 install-data: install-start
-	@if test ! -f $(DEST)/eggdrop.conf; then \
-		$(INSTALL_DATA) $(srcdir)/eggdrop.conf $(DEST)/; \
+	@if test ! -d $(DEST)/conf; then \
+		echo "Creating 'conf' subdirectory."; \
+		$(top_srcdir)/misc/mkinstalldirs $(DEST)/conf >/dev/null; \
 	fi
-	@if test ! -f $(DEST)/eggdrop-basic.conf; then \
-		$(INSTALL_DATA) $(srcdir)/eggdrop-basic.conf $(DEST)/; \
+	@if test ! -d $(DEST)/conf/defaults; then \
+		echo "Creating 'conf/defaults' subdirectory."; \
+		$(top_srcdir)/misc/mkinstalldirs $(DEST)/conf/defaults >/dev/null; \
+	fi
+	@if test ! -f $(DEST)/conf/defaults/example.conf; then \
+		$(INSTALL_DATA) $(srcdir)/conf/defaults/example.conf $(DEST)/conf/defaults/; \
+	fi
+	@if test ! -f $(DEST)/conf/defaults/example-basic.conf; then \
+		$(INSTALL_DATA) $(srcdir)/conf/defaults/example-basic.conf $(DEST)/conf/defaults/; \
+	fi
+	@if test ! -d $(DEST)/conf/defaults/modules; then \
+		echo "Creating 'conf/defaults/modules' subdirectory."; \
+		$(top_srcdir)/misc/mkinstalldirs $(DEST)/conf/defaults/modules >/dev/null; \
+	fi
+	@if test ! -f $(DEST)/conf/defaults/modules/blowfish.conf; then \
+		$(INSTALL_DATA) $(srcdir)/conf/defaults/modules/blowfish.conf $(DEST)/conf/defaults/modules/; \
+	fi
+	@if test ! -f $(DEST)/conf/defaults/modules/woobie.conf; then \
+		$(INSTALL_DATA) $(srcdir)/conf/defaults/modules/woobie.conf $(DEST)/conf/defaults/modules/; \
+	fi
+	@if test ! -f $(DEST)/conf/defaults/modules/assoc.conf; then \
+		$(INSTALL_DATA) $(srcdir)/conf/defaults/modules/assoc.conf $(DEST)/conf/defaults/modules/; \
+	fi
+	@if test ! -f $(DEST)/conf/defaults/modules/channels.conf; then \
+		$(INSTALL_DATA) $(srcdir)/conf/defaults/modules/channels.conf $(DEST)/conf/defaults/modules/; \
+	fi
+	@if test ! -f $(DEST)/conf/defaults/modules/console.conf; then \
+		$(INSTALL_DATA) $(srcdir)/conf/defaults/modules/console.conf $(DEST)/conf/defaults/modules/; \
+	fi
+	@if test ! -f $(DEST)/conf/defaults/modules/dns.conf; then \
+		$(INSTALL_DATA) $(srcdir)/conf/defaults/modules/dns.conf $(DEST)/conf/defaults/modules/; \
+	fi
+	@if test ! -f $(DEST)/conf/defaults/modules/ident.conf; then \
+		$(INSTALL_DATA) $(srcdir)/conf/defaults/modules/ident.conf $(DEST)/conf/defaults/modules/; \
+	fi
+	@if test ! -f $(DEST)/conf/defaults/modules/notes.conf; then \
+		$(INSTALL_DATA) $(srcdir)/conf/defaults/modules/notes.conf $(DEST)/conf/defaults/modules/; \
+	fi
+	@if test ! -f $(DEST)/conf/defaults/modules/seen.conf; then \
+		$(INSTALL_DATA) $(srcdir)/conf/defaults/modules/seen.conf $(DEST)/conf/defaults/modules/; \
+	fi
+	@if test ! -f $(DEST)/conf/defaults/modules/share.conf; then \
+		$(INSTALL_DATA) $(srcdir)/conf/defaults/modules/share.conf $(DEST)/conf/defaults/modules/; \
+	fi
+	@if test ! -f $(DEST)/conf/defaults/modules/twitch.conf; then \
+		$(INSTALL_DATA) $(srcdir)/conf/defaults/modules/twitch.conf $(DEST)/conf/defaults/modules/; \
+	fi
+	@if test ! -f $(DEST)/conf/defaults/modules/compress.conf; then \
+		$(INSTALL_DATA) $(srcdir)/conf/defaults/modules/compress.conf $(DEST)/conf/defaults/modules/; \
+	fi
+	@if test ! -f $(DEST)/conf/defaults/modules/ctcp.conf; then \
+		$(INSTALL_DATA) $(srcdir)/conf/defaults/modules/ctcp.conf $(DEST)/conf/defaults/modules/; \
+	fi
+	@if test ! -f $(DEST)/conf/defaults/modules/filesys.conf; then \
+		$(INSTALL_DATA) $(srcdir)/conf/defaults/modules/filesys.conf $(DEST)/conf/defaults/modules/; \
+	fi
+	@if test ! -f $(DEST)/conf/defaults/modules/irc.conf; then \
+		$(INSTALL_DATA) $(srcdir)/conf/defaults/modules/irc.conf $(DEST)/conf/defaults/modules/; \
+	fi
+	@if test ! -f $(DEST)/conf/defaults/modules/pbkdf2.conf; then \
+		$(INSTALL_DATA) $(srcdir)/conf/defaults/modules/pbkdf2.conf $(DEST)/conf/defaults/modules/; \
+	fi
+	@if test ! -f $(DEST)/conf/defaults/modules/server.conf; then \
+		$(INSTALL_DATA) $(srcdir)/conf/defaults/modules/server.conf $(DEST)/conf/defaults/modules/; \
+	fi
+	@if test ! -f $(DEST)/conf/defaults/modules/transfer.conf; then \
+		$(INSTALL_DATA) $(srcdir)/conf/defaults/modules/transfer.conf $(DEST)/conf/defaults/modules/; \
+	fi
+	@if test ! -f $(DEST)/conf/defaults/modules/uptime.conf; then \
+		$(INSTALL_DATA) $(srcdir)/conf/defaults/modules/uptime.conf $(DEST)/conf/defaults/modules/; \
 	fi
 	@if test ! -d $(DEST)/logs; then \
 		echo "Creating 'logs' subdirectory."; \
