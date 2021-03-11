@@ -58,7 +58,7 @@ extern int flood_telnet_thr, flood_telnet_time, shtime, share_greet,
            max_logsize, dcc_total, raw_log, identtimeout, dcc_sanitycheck,
            dupwait_timeout, egg_numver, share_unlinks, protect_telnet,
            resolve_timeout, default_uflags, userfile_perm, cidr_support,
-           remove_pass, show_uname;
+           remove_pass, show_uname, bind_timeout;
 
 #ifdef IPV6
 extern char vhost6[];
@@ -497,6 +497,7 @@ static tcl_ints def_tcl_ints[] = {
   {"prefer-ipv6",           &pref_af,              0},
 #endif
   {"show-uname",            &show_uname,           0},
+  {"bind-timeout",          &bind_timeout,         0},
   {NULL,                    NULL,                  0}
 };
 

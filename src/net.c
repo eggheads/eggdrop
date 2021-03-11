@@ -65,6 +65,7 @@ char firewall[121] = "";      /* Socks server for firewall.                   */
 int firewallport = 1080;      /* Default port of socks 4/5 firewalls.         */
 char botuser[USERLEN + 1] = "eggdrop"; /* Username of the user running the bot*/
 int dcc_sanitycheck = 0;      /* Do some sanity checking on dcc connections.  */
+int bind_timeout= 0;
 sock_list *socklist = NULL;   /* Enough to be safe.                           */
 sigjmp_buf alarmret;          /* Env buffer for alarm() returns.              */
 
@@ -633,7 +634,9 @@ int open_telnet(int idx, char *server, int port)
  */
 int open_address_listen(sockname_t *addr)
 {
-  int sock = 0;
+  int sock = 0, r;
+  float timeout;
+  struct timespec rqtp = {0, 500000000L};
 
   sock = getsock(addr->family, SOCK_LISTEN);
   if (sock < 0)
@@ -644,9 +647,19 @@ int open_address_listen(sockname_t *addr)
     setsockopt(sock, IPPROTO_IPV6, IPV6_V6ONLY, (char *) &on, sizeof(on));
   }
 #endif
-  if (bind(sock, &addr->addr.sa, addr->addrlen) < 0) {
-    killsock(sock);
-    return -2;
+  timeout = bind_timeout;
+  while ((r = bind(sock, &addr->addr.sa, addr->addrlen)) < 0) {
+    if ((errno == EADDRINUSE) && timeout) {
+      if (timeout == bind_timeout)
+        putlog(LOG_MISC, "*", "The specified address is already in use. Attempting to bind for %i seconds.", bind_timeout);
+      nanosleep(&rqtp, NULL);
+      sleep(.5);
+      timeout -= .5;
+    }
+    else  {
+      killsock(sock);
+      return -2;
+    }
   }
 
   if (getsockname(sock, &addr->addr.sa, &addr->addrlen) < 0) {
