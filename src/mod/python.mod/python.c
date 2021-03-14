@@ -46,6 +46,7 @@ static PyObject *pirp, *pglobals;
 //extern p_tcl_bind_list H_pubm;
 
 int runPythonArgs(const char *script, const char *method, int argc, char **argv);
+int runPythonPyArgs(const char *script, const char *method, PyObject *pArgs);
 
 
 /* Calculate the memory we keep allocated.
@@ -58,19 +59,33 @@ static int python_expmem()
   return size;
 }
 
-int py_pubm (char *nick, char *hand, char *host, char *chan, char *text) {
-  struct flag_record fr = { FR_CHAN | FR_ANYWH | FR_GLOBAL, 0, 0, 0, 0, 0 };
-  char *argv[] = {"pubm", nick, host, hand, chan, text};
+int py_pubm (char *nick, char *host, char *hand, char *chan, char *text) {
+  PyObject *pArgs;
+  char buf[UHOSTLEN];
+  struct chanset_t *ch;
+  struct userrec *u;
+  struct flag_record fr = { FR_CHAN | FR_ANYWH | FR_GLOBAL | FR_BOT, 0, 0, 0, 0, 0 };
 
-  runPythonArgs("binds", "on_event", ARRAYCOUNT(argv), argv);
-  return 0;
+  if (!(ch = findchan(chan))) {
+    putlog(LOG_MISC, "*", "Python: Cannot find pubm channel %s", chan);
+    return 1;
+  }
+  snprintf(buf, sizeof buf, "%s!%s", nick, host);
+  if ((u = get_user_by_host(buf))) {
+    get_user_flagrec(u, &fr, chan);
+  }
+  if (!(pArgs = Py_BuildValue("(skkksssss)", "pubm", (unsigned long)fr.global, (unsigned long)fr.chan, (unsigned long)fr.bot, nick, host, hand, chan, text))) {
+    putlog(LOG_MISC, "*", "Python: Cannot convert pubm arguments");
+    return 1;
+  }
+  return runPythonPyArgs("eggdroppy.binds.binds", "on_event", pArgs);
 }
 
 int py_msgm (char *nick, char *hand, char *host, char *text) {
-  struct flag_record fr = { FR_CHAN | FR_ANYWH | FR_GLOBAL, 0, 0, 0, 0, 0 };
+  struct flag_record fr = { FR_CHAN | FR_ANYWH | FR_GLOBAL | FR_BOT, 0, 0, 0, 0, 0 };
   char *argv[] = {"msgm", nick, host, hand, text};
 
-  runPythonArgs("binds", "on_event", ARRAYCOUNT(argv), argv);
+  runPythonArgs("eggdroppy.binds.binds", "on_event", ARRAYCOUNT(argv), argv);
   return 0;
 }
 
@@ -184,36 +199,19 @@ static void kill_python() {
   return;
 }
 
-int runPythonArgs(const char *script, const char *method, int argc, char **argv)
+int runPythonPyArgs(const char *script, const char *method, PyObject *pArgs)
 {
-  PyObject *pName, *pModule, *pFunc;
-  PyObject *pArgs, *pValue;
-  char *pyv[argc];
+  PyObject *pName, *pModule, *pFunc, *pValue;
 
   pName = PyUnicode_DecodeFSDefault(script);
   /* Error checking of pName left out */
   pModule = PyImport_Import(pName);
   Py_DECREF(pName);
 
-  for (int i = 0; i < argc; i++) {
-    fprintf(stderr, "pyv[%d] is %s\n", i, argv[i]);
-  }
   if (pModule != NULL) {
     pFunc = PyObject_GetAttrString(pModule, method);
     /* pFunc is a new reference */
     if (pFunc && PyCallable_Check(pFunc)) {
-      pArgs = PyTuple_New(argc);
-      for (int i = 0; i < argc; i++) {
-          pValue = Py_BuildValue("s", argv[i]);
-          if (!pValue) {
-            Py_DECREF(pArgs);
-            Py_DECREF(pModule);
-            fprintf(stderr, "Cannot convert argument at position %d: '%s'\n", i, argv[i]);
-            return 1;
-          }
-          /* pValue reference stolen here: */
-          PyTuple_SetItem(pArgs, i, pValue);
-      }
       pValue = PyObject_CallObject(pFunc, pArgs);
       Py_DECREF(pArgs);
       if (pValue != NULL) {
@@ -238,13 +236,31 @@ int runPythonArgs(const char *script, const char *method, int argc, char **argv)
   }
   else {
     PyErr_Print();
-    fprintf(stderr, "Failed to load \"%s\"\n", pyv[0]);
+    fprintf(stderr, "Failed to load \"%s\"\n", script);
     return 1;
   }
   if (Py_FinalizeEx() < 0) {
     return 120;
   }
   return 0;
+}
+
+int runPythonArgs(const char *script, const char *method, int argc, char **argv)
+{
+  PyObject *pArgs, *pValue;
+
+  pArgs = PyTuple_New(argc);
+  for (int i = 0; i < argc; i++) {
+    pValue = Py_BuildValue("s", argv[i]);
+    if (!pValue) {
+      Py_DECREF(pArgs);
+      fprintf(stderr, "Cannot convert argument at position %d: '%s'\n", i, argv[i]);
+      return 1;
+    }
+    /* pValue reference stolen here: */
+    PyTuple_SetItem(pArgs, i, pValue);
+  }
+  return runPythonPyArgs(script, method, pArgs);
 }
 
 static void runPython(char *par) {
