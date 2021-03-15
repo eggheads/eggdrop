@@ -3,10 +3,20 @@ versions of Eggdrop and notes forks, bug fix patches and maintenance
 patches. Some of the older versions are missing from the current archive and
 their exact release dates are unknown. If you happen to have a copy of an
 old version not in the archive available on ftp://ftp.eggheads.org please
-get in contact via the email lists at http://www.eggheads.org so it can be
-added.
+get in contact via #eggdrop on Freenode so it can be added.
 
 Version    Release date
+
+1.9.0      Mar , 2021
+
+1.8.4      Dec 27, 2018
+1.8.3      Feb 04, 2018
+1.8.2      Aug 13, 2017
+1.8.1      Mar 26, 2017
+1.8.0      Dec 04, 2016  SSL, IPv6
+
+  The 1.7 test versions never really materialized as Eggheads instead switched
+  to a 'rolling' development snapshot that contained the most current patches.
 
 1.6.21     Oct 25, 2011
 1.6.20     Jul 23, 2010  New Tcl notifier, new Tcl commands and binds
