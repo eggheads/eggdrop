@@ -2446,11 +2446,11 @@ link [via-bot] <bot>
 
   Module: core
 
-^^^^^^^^^^^^
-unlink <bot>
-^^^^^^^^^^^^
+^^^^^^^^^^^^^^^^^^^^^^
+unlink <bot> [comment]
+^^^^^^^^^^^^^^^^^^^^^^
 
-  Description: attempts to unlink a bot from the botnet
+  Description: attempts to unlink a bot from the botnet. If you specify a comment, it will appear with the unlink message on the botnet.
 
   Returns: 1 on success; 0 otherwise
 
