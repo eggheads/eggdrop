@@ -266,10 +266,9 @@ void failed_link(int idx)
   strcpy(s, dcc[idx].nick);
   lostdcc(idx);
   autolink_cycle(s);          /* Check for more auto-connections */
-  return;
-
   killsock(dcc[idx].sock);
   dcc[idx].timeval = now;
+  return;
 }
 
 static void cont_link(int idx, char *buf, int i)
