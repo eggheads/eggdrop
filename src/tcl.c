@@ -968,8 +968,9 @@ int fork_before_tcl()
 {
 #ifndef REPLACE_NOTIFIER
   return tcl_threaded();
-#endif
+#else
   return 0;
+#endif
 }
 
 time_t get_expire_time(Tcl_Interp * irp, const char *s) {
