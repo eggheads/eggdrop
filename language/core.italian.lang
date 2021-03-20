@@ -1,0 +1,436 @@
+# core.italian.lang
+#   core language messages for eggdrop
+
+# General stuff
+0x001,Utilizzo
+0x002,Fallito.\n
+
+# MODES_
+0x130,Creato
+0x131,usato l'ultima volta
+0x132,inattivo
+0x133,messo da
+0x135,non attivo su
+0x137,non attivo
+0x138,non messo dal bot
+
+# BANS_
+0x104,Ban globali
+0x106,Ban di canale per
+0x109,Usa '.bans all' per vedere la lista completa
+0x10a,Annullamento del ban
+
+# EXEMPTS_
+0x114,Esenzioni al ban globali
+0x116,Esenzioni al ban di canale per
+0x119,Usa '.exempts all' per vedere la lista completa
+0x11a,Annullamento dell'esenzione al ban
+
+# INVITES_
+0x124,Inviti globali
+0x126,Inviti di canale per
+0x129,Usa '.invites all' per vedere la lista completa
+0x12a,Annullamento dell'invito
+
+# MOD_
+0x200,Già caricato.
+0x201,Non posso determinare la cartella attuale.
+0x202,Nessuna funzione di avvio definita.
+0x204,Necessario da un altro modulo
+0x205,Nessuna funzione di chiusura
+0x206,Modulo scaricato:
+0x207,Nessun modulo di questo tipo
+0x209,Errore nel caricamento modulo:
+0x20a,Errore nello scaricamento modulo:
+0x20b,Non posso caricare i moduli
+0x20c,Moduli stagnanti; ci sarà perdita di memoria!
+0x20d,Hai installato moduli ma non hai selezionato un modulo di\n\
+crittografia, consultare il file di configurazione predefinito per informazioni.\n
+0x20e,Modulo Filesys non caricato.
+0x20f,Modulo caricato: %-16s (con supporto lingua)
+0x210,Modulo caricato: %-16s
+
+# USERF_
+0x400,Trasferimento lista utenti completo; scambiato
+0x402,NON POSSO LEGGERE LA NUOVA LISTA UTENTI
+0x403,Non ti posso inviare l'elenco utenti (errore interno)
+0x404,Non trovo nessuno corrispondente a quello
+0x405,Vecchia lista utenti, usa 'tclsh scripts/weed <lista-utenti> c' per convertirla
+0x406,Formato della lista utenti non valido.
+0x407,Registrazione utente corrotta
+0x408,Registrazione utente duplicata
+0x409,Ripristino della password danneggiata per
+0x40a,Ban ignorato per i(l) canale(i):
+0x40b,Scrivo la lista utenti...
+0x40c,ERRORE durante la scrittura della lista utenti.
+0x40d,ERRORE durante la scrittura della lista utenti da trasferire.
+0x40e,Creazione lista utenti non necessaria--la salto
+0x40f,Rileggo la configurazione...
+0x410,Non conosco nessuno con quel nome.\n
+0x411,Nessuna registrazione di tale utente.
+0x412,Faccio una copia della lista utenti...
+0x413,Connessione fallita; trasferimento lista utenti interrotto.
+0x414,Richiesta di condivisione vecchio stile da
+0x415,Richiesta di condivisione antiquata
+0x416,Lista utenti rifiutata da
+
+# MISC_
+0x500,scaduto
+0x501,Totale
+0x502,Cancellato
+0x504,su
+0x505,Ricerco
+0x506,salto prima
+0x507,(oltre %d risultati; lista troncata)\n
+0x508,--- Trovato %d risultati%s.\n
+0x509,Comando ambiguo.\n
+0x50a,Cosa?  Hai bisogno '.help'\n
+0x50b,Collegamenti di comando:\n
+0x50c,Riavvio...
+0x50d,es
+0x50e,Scambio dei file di log...
+0x512,inattivo
+0x513,ASSENTE
+0x516,Disconnesso
+0x517,bot non valido
+0x518,Rilevato ciclo continuo: esistono due bot chiamati
+0x51a,da
+0x51b,scaduto
+0x51c,respinto
+0x51d,impostore
+0x51e,provo
+0x51f,file MOTD:
+0x520,Nessun file MOTD.
+0x521,Usa:
+0x522,<indirizzo> <porta>[/<porta-relay>]
+0x526,in attesa
+0x527,non sono op
+0x529,sfondo
+0x52a,modo terminale
+0x52b,modo status
+0x52c,modo log
+0x52d,Online da
+0x52e,Cache hit
+0x52f,Tcl library:
+0x530,I nuovi utenti hanno le flag
+0x531,notificare
+0x532,Padrone(i) permanente(i)
+0x534,FILE DI CONFIGURAZIONE NON CARICATO (NON TROVATO, O ERRORE)
+0x535,LISTA UTENTI NON TROVATA!  (prova './eggdrop -m %s' per crearne una)\n
+0x536,AVVIAMENTO DEL BOT IN MODALITÀ CREAZIONE LISTA UTENTI.\n\
+Connetti in telnet il bot e  scrivi 'NEW' come tuo soprannome.
+0x537,Oppure vai su IRC e digita:  /msg %s hello\n
+0x538,Il bot ti riconoscerà come master.
+0x539,LA LISTA UTENTI GIÀ ESISTE (elimina il '-m')
+# 0x53a - unused
+0x53b,Non posso ricaricare la lista utenti!
+0x53c,La lista utenti è inesistente!
+0x53e,%B  (%E)\n\nScrivi il tuo soprannome.\n
+0x53f,Rotazione del file log %s, dimensione massima superata (%d)
+# 0x540 - unused
+0x541,Ultimo messaggio ripetuto %d volte.\n
+0x542,bloccato
+0x543,Nessuna presa libera disponibile.
+0x544,Versione tcl:
+0x545,Versione header
+
+# IRC_
+0x600,Bannato
+0x601,Sei bannato
+0x602,Tentativo di ban su me stesso--evitato.
+0x603,è stato divertente, facciamolo di nuovo!
+0x604,Salve
+0x605,Arrivederci
+0x606,Sei bannato, goober.
+0x607,NOTICE %s :Il tuo nick è troppo lungo quindi lo accorcio a '%s'.\n
+0x608,Presentato a
+0x609,sito pubblico
+0x60a,NOTICE %s :Salve %s!  Sono %s, un bot eggdrop.\n
+0x60b,NOTICE %s :Ti riconosco con la hostmask '%s' da adesso.\n
+0x60c,Dal momento che vieni da un sito irc pubblico, dovresti
+0x60d,usa sempre questo soprannome quando mi parli.
+0x60e,SEI IL PADRONE DI QUESTO BOT ADESSO
+0x60f,Installazione del bot completa, il primo master è %s
+0x610,Benvenuto nell'Eggdrop! =]
+0x611,presentato a %s da %s
+0x612,Hai una password impostata.
+0x613,Non hai una password impostata.
+0x615,Hai già una password impostata.
+0x616,Per favore, utilizza almeno 6 caratteri.
+0x617,Password impostata a:
+0x618,Password errata.
+0x619,Password cambiata in:
+0x61a,Sei in un sito pubblico; non puoi usare IDENT.
+0x61b,NOTICE %s :Tu non sei %s, tu sei %s.\n
+0x61c,Accesso negato.
+0x61d,Ti riconosco lì.
+0x61e,Aggiunta hostmask
+0x620,Attualmente:
+0x621,Adesso:
+0x622,Per rimuovere:
+0x624,La tua linea di informazioni è bloccata
+0x625,Ho rimosso la tua linea di informazioni su
+0x626,Ho rimosso la tua linea di informazioni.
+0x627,Non hai nessuna informazione impostata su
+0x628,Non hai nessuna informazione impostata.
+0x629,Non controllo quel canale.
+0x62a,Ripristino delle informazioni di canale.
+0x62b,Salto su un altro server...
+0x62c,Il canale è attualmente nascosto
+0x62d,Adesso nel canale
+0x62e,Mai visto nel canale.
+0x62f,Visto l'ultima volta a
+0x630,Non ti conosco, sei pregato di presentarti prima
+0x631,Nessun aiuto.
+0x632,Nessun aiuto disponiible per quello.
+# 0x633 - unused
+0x634,Non sono in quel canale adesso
+0x635,Torno al nick %s
+0x636,Il server dice che il mio nick non è valido.
+0x637,NICK IN USO: Provo '%s'
+0x638,Non posso cambiare nick su %s.  Il mio nick è bannato?
+0x639,Il nick è saltato
+0x63a,Il canale %s è saltato. :(
+0x63b,%s dice che io non sono registrato, provo il prossimo.
+0x63c,Il server dice che non siamo ancora registrati.
+0x63d,Flood da @%s!  Adesso lo ignoro!
+0x63f,JOIN flood da @%s!  Banno.
+0x640,Flood di canale da %s -- lo caccio
+0x641,Provo server
+0x642,DNS lookup fallito
+0x643,Connessione fallita a
+0x644,Il server è sballato; salto...
+0x645,Disconnesso da
+0x646,Nessun server attualmente.
+0x647,La coda di attesa di modo è a
+0x648,La coda di attesa del server è a
+0x649,La coda di attesa di aiuto è a
+0x64a,Il vhost impostato nel file di configurazione non può essere usato per connettere questo indirizzo
+0x64b,Il vhost impostato nel file di configurazione non è disponibile su questa macchina
+0x64c,Elaboro canale
+0x64d,Canale
+0x64e,Canale desiderato
+0x64f,Argomento del canale
+0x650,+o in sospeso -- Sono laggato
+0x651,-o in sospeso -- Sono laggato
+0x652,kick in sospeso
+0x653,FALSO CHANOP DATO DAL SERVER
+0x654,Fine delle informazioni sul canale.
+0x655,kick di massa, vai a sederti in un angolo
+0x656,Rimosso ban
+0x657,Hmm, informazioni sui modi di un canale in cui non sono
+0x658,...e grazie per avere cantato.
+0x659,Salto tra i server (ho bisogno di %d server, ho solo %d)
+0x65a,cambio server
+0x65b,Sono in troppi canali--non posso entrare in: %s
+0x65c,Canale pieno--non posso entrare in: %s
+0x65d,Canale solo a inviti--non posso entrare in: %s
+0x65e,Bannato dal canale--non posso entrare in: %s
+0x65f,Il server dice che non sono nel canale: %s
+0x660,Chiave sbagliata--non posso entrare in: %s
+0x661,NOTICE %s :Tutti i comandi sono fatti tramite /MSG. Per la lista completa, /MSG %s help   Cya!\n
+0x662,NOTICE %s :Non ti riconosco con questo host.\n
+0x663,NOTICE %s :O stai usando il nick di un altra persona oppure devi digitare: /MSG %s IDENT (password)\n
+0x664,NOTICE %s :Come master devi impostare una password: con /MSG %s pass <la-pass-che-hai-scelto>.\n
+0x665,NOTICE %s :Tutti i principali comandi sono usati dalla DCC chat. Da adesso, non hai bisogno di usare l'opzione -m quando avvii il bot.  Enjoy !!!\n
+0x666,Questa è l'interfaccia telnet di %s, un bot eggdrop.\nNon abusarne, e potranno usarla anche gli altri tuoi amici.\n
+0x667,Ora puoi scegliere il soprannome da usare sul bot,\ne una password in modo che nessuno possa fingere di essere te.\nRicordali entrambi!
+0x668,Da adesso, non hai bisogno di usare l'opzione -m per fare partire il bot.\nEnjoy !!
+0x669,Telnet connection flood da %s!  Ora lo ignoro!
+0x66a,Bannato:
+0x66b,join flood
+0x66c,non cacciare il mio amico, fra
+0x66d,...e non tornare.
+0x66e,Torno al nick alternativo %s
+0x66f,non deoppare il mio amico, fra
+0x670,Rimosso esenzione al ban
+0x671,Rimosso invito
+0x672,NICK flood da @%s!  lo banno.
+0x673,nick flood
+
+# EGG_
+#0x700 - non usato
+0x701,Rilevo che %s è in esecuzione da questa directory\.
+0x702,Se non è così, cancella %s\.
+0x703,* Attenzione! Non posso scrivere il file %s !\.
+
+# USER_
+0x800,  (è un op globale)
+0x801,  (è un bot)
+0x802,  (è un master)
+
+# CHAN_
+0x900,Nessun canale definito
+0x902,* Cambio di modi su %s da un non esistente %s !
+0x903,Deop di massa su %s da %s
+0x904,Deop di massa.  Vai a sederti in un angolo.
+0x907,Oops.   Qualcuno mi ha fatto entrare in %s... esco...
+0x908,Modo cambiato da un falso op su %s!  Rimetto come era...
+0x909,Abuso di op guadagnato col server
+0x90a,Modo cambiato da un non op di canale su %s!  Rimetto come era...
+0x90b,Abuso di desincronizzazione
+0x90c,flood
+0x911,Scrivo il file dei canali...
+0x915,Faccio una copia del file dei canali...
+
+0xa00,Nessuno è ignorato
+0xa01,Al momento ignoro
+0xa02,Non ignoro più
+
+0xb00,Quel bot non è qui.\n
+0xb01,Quello è un bot. Non puoi lasciare note a un bot.\n
+0xb02,è assente
+0xb07,Una nota è arrivata per te
+0xb08,Messaggio registrato
+0xb18,Spegnimento del bot iniziato...
+0xb19,Nessun utente con quel nome
+0xb1a,nessun canale
+0xb1b,Membri della party line:
+0xb1c,Bot connessi
+0xb1d,Altre persone nel bot
+0xb1f,Tentativo di collegamento a
+0xb20,Non online, nota registrata
+0xb21,La casella messaggi è piena, mi spiace
+0xb22,è assente, nota registrata
+0xb23,Nota inviata a
+0xb24,Disconnesso da:
+0xb25,Persone in canale
+0xb26,Non posso collegare lì
+0xb27,Non posso scollegare
+0xb28,Rilevato ciclo continuo
+0xb29,Notizia di finto collegamento da
+0xb2b,Rimane disconnesso
+0xb2c,Collegato a
+0xb2d,Collegamento illegale da leaf
+0xb2e,Dovresti essere un leaf!
+0xb2f,Bot respinto
+0xb30,Rilevato vecchio bot (non supportato)
+0xb31,Risultato del trace
+0xb32,non esiste
+0xb33,Non sono permessi bot remoti.
+0xb34,Non posso espellere il proprietario del bot
+0xb35,TRASFERIMENTO FILE RIFIUTATO
+0xb37,Utenti attraverso la botnet
+0xb38,Party line
+0xb39,Canale locale
+0xb3a,Utenti nel canale
+0xb3b,Non ho bot collegati.
+0xb3c,Nessuna informazioni di trace
+0xb3d,Albero troppo complicato!
+0xb3e,Scollego tutti i bot...
+0xb3f,Finito tentativo di collegamento a
+0xb40,Non tento più a collegarmi con:
+0xb41,Interrompo collegamento con
+0xb42,Scollegato da:
+0xb43,Non collegato a quel bot.
+0xb44,Drenaggio bot di tabelle e assocs...
+0xb45,non è un bot conosciuto.
+0xb46,Collegarmi a me stesso? eh amico mio , è un gran giorno per Freud
+0xb47,Quel bot è già collegato.
+0xb48,Indirizzo di telnet non valido: porta registrata per
+0xb49,Collegamento a
+0xb4a,Impossibile trovare utente per inoltro!
+0xb4b,Non può collegarsi a
+0xb4c,Inoltro a me stesso? Quale sarebbe il punto?!
+0xb4d,Connetto a
+0xb4e,(Digita *BYE*  su una linea da solo per fallire.)
+0xb4f,Tentativo fallito di inoltro a
+0xb50,Adesso sei tornato
+0xb51,Inoltro fallito:
+0xb52,*** %s è entrato in party line.\n
+0xb53,Persa connessione Dcc a
+0xb54,Cancello tentativo di inoltro a
+0xb55,Successo!\n\nADESSO SEI CONNESSO COL BOT
+0xb56,(Puoi digitare *BYE* per la chiusura prematura della connessione.)
+0xb57,Connessione inoltrata:
+0xb58,ha lasciato la party line.
+0xb59,Connessione inoltrata finita
+0xb5a,CONNESSIONE INOLTRATA CANCELLATA.\nOra sei tornato su
+0xb5b,rientrato in party line.
+0xb5c,Cancello il collegamento inoltro a
+0xb5d,Interrompo la connessione a
+0xb5e,Inoltro interrotto
+0xb5f,Ping timeout
+0xb60,Comportamento distruttivo
+0xb61,Bot caduto
+0xb62,Già collegato a quel bot.
+0xb63,*** %s ha lasciato la party line.\n
+
+0xc00,Non accetto DCC chat da estranei.
+0xc01,Rifiutata DCC chat (no access)
+0xc02,Nessun accesso
+0xc03,Devi avere una password impostata.
+0xc04,Rifiutata DCC chat (no password)
+0xc05,Rifiutata DCC chat (+x ma nessuna area dati)
+0xc07,Troppe persone sono nell'area dei file in questo momento.
+0xc0c,Mi spiace, troppe connessioni DCC.
+0xc0d,Connessione DCC piena: %s %s (%s!%s)
+0xc19,Connessione fallita
+0xc1a,Connessione DCC fallita
+0xc1c,Inserisci la tua password.
+0xc1d,%s è stato rimosso di forza per flood.\n
+0xc1e,-=- poof -=-\n
+0xc1f,Sei stato espulso dal bot %s da %s%s%s\n
+0xc20,%s ha espulso %s dalla party line%s%s
+0xc21,Rifiutata DCC chat (porta non valida)
+0xc22,DCC porta non valida
+
+0xd00,Fluttuo nel limbo (nessuna interazione IRC)
+
+# BOTNET
+0xe00,Messaggio falso respinto
+0xe01,Collegato a
+0xe02,Bot sbagliato--voleva %s, e ha avuto %s
+0xe03,ha lasciato la
+0xe04,è entrato in
+0xe05,adesso è assente
+0xe06,non è più assente
+0xe07,Cambio nick:
+
+# dcc.c Messages
+0xe08,Respinto collegamento da %s
+0xe09,Collegato a %s.
+0xe0a,Collegamento fallito a %s.
+0xe0b,Password errata nel tentativo di collegarsi a %s.
+0xe0c,Password richiesta per la connessione a %s.
+0xe0d,ERRORE connettendo %s: %s
+0xe0e,Perso Bot: %s
+0xe0f,Timeout: collegamento bot %s a %s:%d
+0xe10,Loggato in: %s (%s/%d)
+0xe11,Password Errata: [%s]%s/%d
+0xe12,Esito negativo, Ti saluto!\n
+0xe13,*** %s è entrato in party line.\n
+0xe14,Connessione Dcc a %s (%s/%d) persa
+0xe15,Password fuori tempo in dcc chat: [%s]%s
+0xe16,Connessione DCC chiusa (%s!%s)
+0xe17,Tentativo impossibile di telnet in corso (%s)
+0xe18,Rifiutato %s/%d (porta src sbagliata)
+0xe19,*** %s è ritornato.\n
+0xe1a,Rifiutato %s (hostname sbagliato)
+0xe1b,Connessione telnet: %s/%d
+0xe1c,Fallito ident per %s: %s
+0xe1d,(!) Porta d'ascolto %d è morta bruscamente.
+0xe1e,Rifiutato %s (nick sbagliato)
+0xe1f,Rifiutato %s (non è un bot)
+0xe20,Rifiutato %s (non è un utente)
+0xe21,Rifiutato %s (soprannome non valido)
+0xe22,Connessione telnet rifiutata da %s (duplicato)
+0xe23,Rifiutato [%s]%s (nessuna password)
+0xe24,Persa connessione telnet a %s/%d
+0xe25,Ident fuori tempo in telnet: %s
+0xe26,Installazione bot completa. Il primo master è
+0xe27,Nuovo utente via telnet: [%s]%s/%d
+0xe28,Nuovo utente telnet perso (%s/%d)
+0xe29,Nuovo utente telnet perso %s (%s/%d)
+0xe2a,Nuovo utente telnet fuori tempo: %s/%d
+0xe2b,Nuovo utente telnet fuori tempo: [%s]%s/%d
+0xe2c,Errore tcl [%s]: %s
+0xe2d,*** ATTENZIONE: PRESA MORTA (%d) DI TIPO %s NON BLOCCATA
+0xe2e,Connessione persa durante l'identificazione [%s/%d]
+0xe2f,EOF connessione ident
+0xe30,Presa telnet in attesa di ident perso
+0xe31,Telnet negato: %s, nessun accesso
+0xe32,Connessione telnet rifiutata da %s (ha provato usando il mio soprannome di botnet)
+0xe33,Connessione telnet persa da %s mentre controllo se è un duplicato
+0xe34,Connessione ident fuori tempo
+0xe35,Per favore togli il #commento dalle tue impostazione di ascolto e riprova

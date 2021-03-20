@@ -1,0 +1,56 @@
+# filesys.italian.lang
+#   language messages for filesys module
+
+0x300,Converto l'immagine del filesystem in %s ...
+0x301,filedb-update: non posso aprire la directory!
+0x302,(!) Conversione rovinata di filedb in %s
+0x303,Nome file                    Dimens.  Inviato per/Date     # Prende\n
+0x304,---------------------------  -------  -------------------  --------\n
+0x305,Nessun file in questa directory.\n
+0x306,Nessun file corrisponde.\n
+0x307,La directory non esiste
+0x308,Il file non esiste
+0x309,Il file non è condiviso
+0x30a,(remoto)
+0x30b,Errore nel tentativo di invio file
+0x30c,(invio)
+0x30d,Richiesta remota per /%s%s%s (invio)
+0x30e,\nIl filesystem sembra essere rotto in questo momento.\n
+0x30f,(Il files-path è impostato in una directory sbagliata.)\n
+0x310,Directory attuale
+0x311,Nuova directory attuale
+0x312,Nessuna directory di questo tipo.\n
+0x313,Directory sbagliata.\n
+0x314,Essere ragionevole.\n
+0x315,%s non è diponibile adesso.\n
+0x316,Richiesto %s da %s ...\n
+0x317,%s è già un file normale.\n
+0x318,Collegamente a %s cambiato\n
+0x319,Non hai caricato %s\n
+0x31a,Directory creata
+0x31b,Richiede %s per accedere\n
+0x31c,Cambiato %s/ a richiesto +%s per accedere\n
+0x31d,Cambiato %s/ a nessuna flag richiesta per accedere\n
+0x31e,Directory cancellata
+0x31f,Directory sorgente sbagliata.\n
+0x320,Directory di destinazione sbagliata.\n
+0x321,Non puoi %s sopra se stessi.\n
+0x322,Esiste come una directory -- salto
+0x323,Su se stesso? Oh no.
+0x324,Destinazione
+0x325,copiare
+0x326,Copiato
+0x327,spostare
+0x328,Spostato
+0x329,Non può scrivere
+0x32a,richiede
+0x32b,Nascosto
+0x32c,Visibile
+0x32d,Condiviso
+0x32e,Non condiviso
+0x32f,Collegamento aggiunto
+0x330,Cambiato
+0x331,Oscurato
+0x332,Cancellato
+0x33a,Benvenuto al %B server file\n
+0x33b,Tutti i trasferimenti file verranno inviati in modo predefinito a '%N'.\n(Puoi specificare un nick alternativo col comando 'get'.)\nDigita 'help' per l'aiuto.\n

@@ -1,0 +1,22 @@
+Collegato a %B, eseguendo un %V
+        ____                __
+       / __/___ _ ___ _ ___/ /____ ___   ___
+      / _/ / _ `// _ `// _  // __// _ \ / _ \
+     /___/ \_, / \_, / \_,_//_/   \___// .__/
+          /___/ /___/                 /_/
+-------------------------------------------------
+{ www.eggheads.org | chat.freenode.net/#eggdrop }
+
+Hey %b%N!%b  Il mio nome è %b%B%b e sono un %b%V%b, su %b%U%b.
+
+Orario locale %b%T%b
+%{+n}
+Tu sei un padrone di questo bot. Solo gli utenti +n possono vedere questo!
+%{-}
+Usa %b.help%b per gli aiuti di base.
+Usa %b.help <comando>%b per l'aiuto su un comando specifico.
+Usa %b.help all%b per avere l'elenco completo dei comandi.
+Usa %b.help *stringa*%b per avere la lista degli aiuti il cui testo contiene "stringa".
+
+I comandi iniziano con '.' (esempio : '.quit' o '.help')
+Tutto il resto sarà scritto/letto nella chat interna.
