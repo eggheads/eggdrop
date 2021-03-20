@@ -239,9 +239,6 @@ int runPythonPyArgs(const char *script, const char *method, PyObject *pArgs)
     fprintf(stderr, "Failed to load \"%s\"\n", script);
     return 1;
   }
-  if (Py_FinalizeEx() < 0) {
-    return 120;
-  }
   return 0;
 }
 
