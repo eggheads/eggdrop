@@ -4,7 +4,7 @@
    This guards the bot from blocking several seconds while
    resolving IP addresses or hostnames.
 
-   Config file variables for configuring the server module:
+   Config file variables for configuring the dns module:
      %bdns-retrydelay%b    %bdns-maxsends%b    %bdns-servers%b
      %bdns-negcache%b      %bdns-cache%b
 
