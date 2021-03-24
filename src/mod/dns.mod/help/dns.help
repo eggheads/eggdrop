@@ -1,4 +1,4 @@
-%{help=server module}%{+n}
+%{help=dns module}%{+n}
 ###  %bdns module%b
    This module provides support for asynchronous DNS queries.
    This guards the bot from blocking several seconds while
