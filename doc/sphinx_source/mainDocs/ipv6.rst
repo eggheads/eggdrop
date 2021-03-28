@@ -47,10 +47,10 @@ are documented in the help files and the html documentation, so you can
 consult them when in doubt.
 
 ---------------
-CTCP CHAT/CHAT6
+CTCP CHAT/CHAT4/CHAT6
 ---------------
 
-When a user sends a CTCP chat request, the request is passed to the bot via the IRC server, hiding the user's IP. Since Eggdrop is unable to 'see' the type IP of the user is using (IPv4 or IPv6), it is thus unable to determine whether it should send back an IPv4 or an IPv6 address for the user to connect to. To work around this problem, the CHAT6 command was added to Eggdrop to force it to present an IPv6 address for use with a DCC connection. Otherwise, the traditional CHAT command will result in the Eggdrop presenting an IPv4 address to the user. So in short, if you're on an IPv6 address and want to use CTCP CHAT to initiate a DCC session for the partyline, use CHAT6, not CHAT as the CTCP argument.
+When a user sends a CTCP chat request, the request is passed to the bot via the IRC server, hiding the user's IP. Since Eggdrop is unable to 'see' the type IP of the user is using (IPv4 or IPv6), it is thus unable to determine whether it should send back an IPv4 or an IPv6 address for the user to connect to. To work around this problem, the CHAT4 and CHAT6 commands were added to Eggdrop to force it to present an IPv4 or IPv6 address for use with a DCC connection, respectively. Otherwise, the traditional CHAT command will likely result in the Eggdrop presenting an IPv4 address to the user. So in short, if you're on an IPv6 address and want to use CTCP CHAT to initiate a DCC session for the partyline, use CHAT6, not CHAT as the CTCP argument.
 
 --------
 Settings
