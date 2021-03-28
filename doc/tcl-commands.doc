@@ -196,7 +196,7 @@ server add <ip/host> [[+]port [password]]
 
   Module: server
 
-server del <ip/host> [[+]port]
+server remove <ip/host> [[+]port]
 
   Description: removes a server from the list of servers Eggdrop will
   connect to. If no port is provided, all servers matching the ip or
