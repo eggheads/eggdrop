@@ -21,10 +21,10 @@ Eggdrop v1.9.0:
     - Added CAP support, allowing Eggdrop to extend IRC server capabilities
     - Added support for SASL authentication
     - Added a BETA threaded DNS capability, enabled with the --enable-tdns
-      configure flag. This allows asynchronus DNS requests similar to the what
-      the current DNS module offers, but using host system capability instead
-      of rewriting it from scratch. Using this means you no longer have to use
-      the DNS module.
+      configure flag. This allows asynchronus DNS requests similar to what the
+      current DNS module offers, but using host system capability instead of
+      rewriting it from scratch. Using this means you no longer have to use the
+      DNS module.
     - Eggdrop can listen on multiple IPs (and ports) now by using multiple
       instances of the 'listen' command
     - Added Twitch support
