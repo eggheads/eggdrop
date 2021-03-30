@@ -1329,7 +1329,7 @@ static void cmd_restart(struct userrec *u, int idx, char *par)
 {
   putlog(LOG_CMDS, "*", "#%s# restart", dcc[idx].nick);
   if (!backgrd) {
-    dprintf(idx, "You cannot .restart a bot when running -n (due to Tcl).\n");
+    dprintf(idx, "You cannot .restart a bot when running -n/-t (due to Tcl).\n");
     return;
   }
   dprintf(idx, "Restarting.\n");
