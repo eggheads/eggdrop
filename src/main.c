@@ -959,6 +959,7 @@ int mainloop(int toplevel)
         if (strcmp(p->name, "eggdrop") && strcmp(p->name, "encryption") &&
             strcmp(p->name, "uptime")) {
           f++;
+          debug1("stagnant module %s", p->name);
         }
       }
       if (f != 0) {
