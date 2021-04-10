@@ -36,11 +36,11 @@
 #include "src/mod/server.mod/server.h"
 #include "src/mod/python.mod/python.h"
 
-
 #undef global
 static Function *global = NULL, *irc_funcs = NULL;
+#include "src/mod/python.mod/pycmds.c"
 
-static PyObject *pymodobj;
+//static PyObject *pymodobj;
 static PyObject *pirp, *pglobals;
 
 //extern p_tcl_bind_list H_pubm;
@@ -82,7 +82,7 @@ int py_pubm (char *nick, char *host, char *hand, char *chan, char *text) {
 }
 
 int py_msgm (char *nick, char *hand, char *host, char *text) {
-  struct flag_record fr = { FR_CHAN | FR_ANYWH | FR_GLOBAL | FR_BOT, 0, 0, 0, 0, 0 };
+//  struct flag_record fr = { FR_CHAN | FR_ANYWH | FR_GLOBAL | FR_BOT, 0, 0, 0, 0, 0 };
   char *argv[] = {"msgm", nick, host, hand, text};
 
   runPythonArgs("eggdroppy.binds.binds", "on_event", ARRAYCOUNT(argv), argv);
@@ -98,6 +98,7 @@ static PyObject* py_numargs(PyObject *self, PyObject *args) {
   return PyLong_FromLong(numargs);
 }
 
+/*
 static PyObject* py_putserv(PyObject *self, PyObject *args) {
   char *s = 0, *t = 0, *p;
 
@@ -126,9 +127,9 @@ static PyObject* py_putserv(PyObject *self, PyObject *args) {
     dprintf(DP_SERVER, "%s\n", s);
   return Py_None;
 }
+*/
 
-
-static PyMethodDef PyMethods[] = {
+/*static PyMethodDef PyMethods[] = {
   {"numargs", py_numargs, METH_VARARGS, "Return the number of arguments received by the process."},
   {"putserv", py_putserv, METH_VARARGS, "text ?options"},
   {NULL, NULL, 0, NULL}
@@ -169,9 +170,10 @@ static PyObject* PyInit_py(void) {
 
   return pymodobj;
 }
-
+*/
 
 static void init_python() {
+  PyObject *pmodule;
   wchar_t *program = Py_DecodeLocale("eggdrop", NULL);
 
   if (program == NULL) {
@@ -179,8 +181,16 @@ static void init_python() {
     fatal(1);
   }
   Py_SetProgramName(program);  /* optional but recommended */
-  PyImport_AppendInittab("eggdrop", &PyInit_py);
+  if (PyImport_AppendInittab("eggdrop", PyInit_eggdrop) == -1) {
+    fprintf(stderr, "Error: could not extend in-built modules table\n");
+    exit(1);
+  }
   Py_Initialize();
+  pmodule = PyImport_ImportModule("eggdrop");
+  if (!pmodule) {
+    PyErr_Print();
+    fprintf(stderr, "Error: could not import module 'spam'\n");
+  }
 
   pirp = PyImport_AddModule("__main__");
   pglobals = PyModule_GetDict(pirp);
@@ -195,7 +205,7 @@ static void kill_python() {
   if (Py_FinalizeEx() < 0) {
     exit(120);
   }
-  PyMem_RawFree("eggdrop");
+  PyMem_RawFree(Py_DecodeLocale("eggdrop", NULL));
   return;
 }
 
@@ -292,8 +302,8 @@ static void runPython(char *par) {
 }
 
 static void cmd_python(struct userrec *u, int idx, char *par) {
-  char *result;
-  PyObject *pobj, *pstr;
+//  char *result;
+  PyObject *pobj;
 
   PyErr_Clear();
 
@@ -306,7 +316,7 @@ static void cmd_python(struct userrec *u, int idx, char *par) {
 }
 
 static void cmd_pyexpr(struct userrec *u, int idx, char *par) {
-  char *result;
+//  char *result;
   PyObject *pobj, *pstr;
 
   PyErr_Clear();
