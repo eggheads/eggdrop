@@ -716,7 +716,8 @@ static int tcl_twcmd STDVAR {
     Tcl_AppendResult(irp, "Invalid channel", NULL);
     return TCL_ERROR;
   }
-  dprintf(DP_SERVER, "PRIVMSG %s :/%s %s", argv[1], argv[2], argv[3] ? argv[3] : "");
+  dprintf(DP_SERVER, "PRIVMSG %s :/%s %s", argv[1], argv[2],
+      argc >= 4 && argv[3] ? argv[3] : "");
   return TCL_OK;
 }
 

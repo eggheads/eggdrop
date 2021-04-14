@@ -449,9 +449,9 @@ static int tcl_server STDVAR {
 
   BADARGS(3, 5, " subcommand host ?port ?password??");
   if (!strcmp(argv[1], "add")) {
-    ret = add_server(argv[2], argv[3] ? argv[3] : "", argv[4] ? argv[4] : "");
+    ret = add_server(argv[2], argc >= 4 && argv[3] ? argv[3] : "", argc >= 5 && argv[4] ? argv[4] : "");
   } else if (!strcmp(argv[1], "remove")) {
-    ret = del_server(argv[2], argv[3] ? argv[3] : "");
+    ret = del_server(argv[2], argc >= 4 && argv[3] ? argv[3] : "");
   } else {
     Tcl_AppendResult(irp, "Invalid subcommand: ", argv[1],
         ". Should be \"add\" or \"remove\"", NULL);
@@ -467,8 +467,8 @@ static int tcl_server STDVAR {
     Tcl_AppendResult(irp, "Attempted to add SSL-enabled server, but Eggdrop "
             "was not compiled with SSL libraries.", NULL);
   } else if (ret == 3) {    /* del_server only */
-    Tcl_AppendResult(irp, "Server ", argv[2], argv[3] ? ":" : "",
-            argv[3] ? argv[3] : ""," not found.", NULL);
+    Tcl_AppendResult(irp, "Server ", argv[2], argc >= 4 && argv[3] ? ":" : "",
+            argc >= 4 && argv[3] ? argv[3] : ""," not found.", NULL);
   }
   return TCL_ERROR;
 }
