@@ -2421,7 +2421,7 @@ static int gotmsg(char *from, char *msg)
       *p = 0;
       ctcp = buf2;
       strlcpy(buf2, p1, sizeof buf2);
-      memmove(p1 - 1, p + 1, strlen(p + 1) + 1);
+      memmove(p1 - 1, p + 1, strlen(p));
       detect_chan_flood(nick, uhost, from, chan, strncmp(ctcp, "ACTION ", 7) ?
                         FLOOD_CTCP : FLOOD_PRIVMSG, NULL);
 
@@ -2540,7 +2540,7 @@ static int gotnotice(char *from, char *msg)
       *p = 0;
       ctcp = buf2;
       strcpy(ctcp, p1);
-      memmove(p1 - 1, p + 1, strlen(p + 1) + 1);
+      memmove(p1 - 1, p + 1, strlen(p));
       p = strchr(msg, 1);
       detect_chan_flood(nick, uhost, from, chan,
                         strncmp(ctcp, "ACTION ", 7) ?
