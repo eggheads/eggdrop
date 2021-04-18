@@ -191,7 +191,7 @@ static void dcc_files_pass(int idx, char *buf, int x)
     }
     dcc[idx].type = &DCC_FILES;
     if (dcc[idx].status & STAT_TELNET)
-      dprintf(idx, "\377\374\001\n");   /* turn echo back on */
+      dprintf(idx, TLN_IAC_C TLN_WONT_C TLN_ECHO_C "\n");   /* turn echo back on */
     putlog(LOG_FILES, "*", "File system: [%s]%s/%d", dcc[idx].nick,
            dcc[idx].host, dcc[idx].port);
     if (!welcome_to_files(idx)) {
