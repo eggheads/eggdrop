@@ -227,7 +227,7 @@ static int detect_chan_flood(char *floodnick, char *floodhost, char *from,
   case FLOOD_CTCP:
     thr = chan->flood_ctcp_thr;
     lapse = chan->flood_ctcp_time;
-    strcpy(ftype, "pub");
+    strcpy(ftype, "ctcp");
     break;
   case FLOOD_NICK:
     thr = chan->flood_nick_thr;
