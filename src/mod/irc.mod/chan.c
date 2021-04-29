@@ -1226,6 +1226,7 @@ static int gotaway(char *from, char *msg)
 {
   struct userrec *u;
   struct chanset_t *chan;
+  memberlist *m;
   char mask[1024], buf[MSGMAX], *nick, *s1 = buf, *chname;
 
   strlcpy(s1, from, sizeof buf);
@@ -1234,13 +1235,16 @@ static int gotaway(char *from, char *msg)
   /* Run the bind for each channel the user is on */
   for (chan = chanset; chan; chan = chan->next) {
     chname = chan->dname;
-    if (ismember(chan, nick)) {
+    m = ismember(chan, nick);
+    if (m) {
       snprintf(mask, sizeof mask, "%s %s", chname, from);
       check_tcl_ircaway(nick, from, mask, u, chname, msg);
       if (strlen(msg)) {
+        m->flags |= IRCAWAY;
         fixcolon(msg);
         putlog(LOG_JOIN, chan->dname, "%s is now away: %s", from, msg);
       } else {
+        m->flags &= ~IRCAWAY;
         putlog(LOG_JOIN, chan->dname, "%s has returned from away status", from);
       }
     }
