@@ -1,4 +1,4 @@
-Compilation and Installation of Eggdrop Last revised: April 4, 2021
+Compilation and Installation of Eggdrop Last revised: July 24, 2004
 
 
 
@@ -94,9 +94,9 @@ Eggdrop uses the GNU autoconfigure scripts to make things easier.
 
 5.  
 
-    By default, version 1.9 uses SSL to protect botnet links. If you intend
+    By default, version 1.8 uses SSL to protect botnet links. If you intend
 
-        on linking 1.9 bots together, you must run:
+        on linking 1.8 bots together, you must run:
 
             make sslcert
 
@@ -196,5 +196,5 @@ the README file. If not, then READ IT!&@#%@!
 
 Have fun with Eggdrop!
 
-  Copyright (C) 1997 Robey Pointer Copyright (C) 1999 - 2021 Eggheads
+  Copyright (C) 1997 Robey Pointer Copyright (C) 1999 - 2019 Eggheads
   Development Team
