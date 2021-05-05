@@ -1,4 +1,4 @@
-Last revised: Jul 2, 2016
+Last revised: May 5, 2021
 
 ======
 README
@@ -48,7 +48,7 @@ What is Eggdrop?
     Eggdrop is always being improved and adjusted because there are bugs to
     be fixed and features to be added (if the users demand them and they make
     actually sense). In fact, it existed for several years as v0.7 - v0.9
-    before finally going 1.0. This version of Eggdrop is part of the 1.8 tree.
+    before finally going 1.0. This version of Eggdrop is part of the 1.9 tree.
     A valiant effort has been made to chase down and destroy bugs.
 
     This README file contains information about how to get Eggdrop, command
@@ -73,7 +73,7 @@ HOW TO GET EGGDROP
     make sure to install the development library as well, usually called
     something similar to 'tcl-dev'.
 
-    Currently, the 1.8 tree of Eggdrop is developed at eggheads.org. You can
+    Currently, the 1.9 tree of Eggdrop is developed at eggheads.org. You can
     get the latest STABLE version of Eggdrop from the following url:
 
       https://geteggdrop.com/
@@ -116,7 +116,7 @@ Upgrading
 ---------
 
 
-**UPGRADING FROM A PRE-1.3 TO A 1.8 VERSION**
+**UPGRADING FROM A PRE-1.3 TO A 1.9 VERSION**
 
     First of all, why are you still running pre-1.3?!
 
@@ -136,22 +136,22 @@ Upgrading
     but will not get or send a userfile. MAKE A NEW CONFIG FILE from the
     example; there are some radical changes.
 
-    If you are upgrading from 0.9/1.0 to 1.8, just redo the whole thing.
+    If you are upgrading from 0.9/1.0 to 1.9, just redo the whole thing.
     Absolutely everything has changed, including the userfile and config file
     formats.
 
-    If you are upgrading from 1.1/1.2 to 1.8, you will likely want to redo
+    If you are upgrading from 1.1/1.2 to 1.9, you will likely want to redo
     the config file, as much has changed. BACK UP! You will need to run 'tclsh
     scripts/weed/<userfile> c' to convert your userfile from v3 (1.1/1.2) to
-    v4 (1.3/1.4/1.5/1.6/1.8).
+    v4 (1.3/1.4/1.5/1.6/1.8/1.9).
 
 
-**UPGRADING FROM AN OLDER 1.3/1.4/1.5/1.6 TO A 1.8 VERSION**
+**UPGRADING FROM AN OLDER 1.3/1.4/1.5/1.6/1.8 TO A 1.9 VERSION**
 
     If you followed the INSTALL file and did a 'make install' (or 'make
     install DEST="path"') after 'make', this will be pretty easy. Just upload
-    the new eggdrop1.8.x.tar.gz file to your home dir on your shell, gunzip
-    and untar it, and type 'cd ~/eggdrop1.8.x'. Next, type './configure',
+    the new eggdrop-1.9.x.tar.gz file to your home dir on your shell, gunzip
+    and untar it, and type 'cd ~/eggdrop-1.9.x'. Next, type './configure',
     'make config' or 'make iconfig', then 'make'. Then, kill the bot ('.die'
     on the partyline) and 'make install' to the same directory your bot
     is currently in. After that, you can just restart your bot. You may wish
@@ -159,7 +159,7 @@ Upgrading
     you have limited disk space.
 
     You should read through the new eggdrop.conf file for all of the new
-    options in Eggdrop 1.8.x. You can copy and paste any of these settings
+    options in Eggdrop 1.9.x. You can copy and paste any of these settings
     into you current conf file if you do not want to use the default settings.
 
 ------------
