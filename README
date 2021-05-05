@@ -1,4 +1,4 @@
-Last revised: Apr 2, 2021
+Last revised: Jul 2, 2016
 
 
 
@@ -49,7 +49,7 @@ WHAT IS EGGDROP?
   to be fixed and features to be added (if the users demand them and
   they make actually sense). In fact, it existed for several years as
   v0.7 - v0.9 before finally going 1.0. This version of Eggdrop is part
-  of the 1.9 tree. A valiant effort has been made to chase down and
+  of the 1.8 tree. A valiant effort has been made to chase down and
   destroy bugs.
 
   This README file contains information about how to get Eggdrop,
@@ -74,7 +74,7 @@ HOW TO GET EGGDROP
   via an OS package manager, make sure to install the development
   library as well, usually called something similar to 'tcl-dev'.
 
-  Currently, the 1.9 tree of Eggdrop is developed at eggheads.org. You
+  Currently, the 1.8 tree of Eggdrop is developed at eggheads.org. You
   can get the latest STABLE version of Eggdrop from the following url:
 
     https://geteggdrop.com/
@@ -114,7 +114,7 @@ QUICK STARTUP
 
 UPGRADING
 
-UPGRADING FROM A PRE-1.3 TO A 1.9 VERSION
+UPGRADING FROM A PRE-1.3 TO A 1.8 VERSION
 
   First of all, why are you still running pre-1.3?!
 
@@ -125,7 +125,7 @@ UPGRADING FROM A PRE-1.3 TO A 1.9 VERSION
   up your userfile or you will lose it. v1.3 of Eggdrop radically
   changed a lot of things.
 
-  There are many major changes between v0.9, v1.0, v1.1 and v1.9, so PAY
+  There are many major changes between v0.9, v1.0, v1.1 and v1.8, so PAY
   ATTENTION to this part if you have a v0.9, 1.0 or 1.1 bot currently.
   If you're just starting out, you can skip this section.
 
@@ -134,21 +134,21 @@ UPGRADING FROM A PRE-1.3 TO A 1.9 VERSION
   link in, but will not get or send a userfile. MAKE A NEW CONFIG FILE
   from the example; there are some radical changes.
 
-  If you are upgrading from 0.9/1.0 to 1.9, just redo the whole thing.
+  If you are upgrading from 0.9/1.0 to 1.8, just redo the whole thing.
   Absolutely everything has changed, including the userfile and config
   file formats.
 
-  If you are upgrading from 1.1/1.2 to 1.9, you will likely want to redo
+  If you are upgrading from 1.1/1.2 to 1.8, you will likely want to redo
   the config file, as much has changed. BACK UP! You will need to run
   'tclsh scripts/weed/<userfile> c' to convert your userfile from v3
   (1.1/1.2) to v4 (1.3/1.4/1.5/1.6/1.8).
 
-UPGRADING FROM AN OLDER 1.3/1.4/1.5/1.6 TO A 1.9 VERSION
+UPGRADING FROM AN OLDER 1.3/1.4/1.5/1.6 TO A 1.8 VERSION
 
   If you followed the INSTALL file and did a 'make install' (or 'make
   install DEST="path"') after 'make', this will be pretty easy. Just
-  upload the new eggdrop-1.9.x.tar.gz file to your home dir on your
-  shell, gunzip and untar it, and type 'cd ~/eggdrop-1.9.x'. Next, type
+  upload the new eggdrop1.8.x.tar.gz file to your home dir on your
+  shell, gunzip and untar it, and type 'cd ~/eggdrop1.8.x'. Next, type
   './configure', 'make config' or 'make iconfig', then 'make'. Then,
   kill the bot ('.die' on the partyline) and 'make install' to the same
   directory your bot is currently in. After that, you can just restart
@@ -156,7 +156,7 @@ UPGRADING FROM AN OLDER 1.3/1.4/1.5/1.6 TO A 1.9 VERSION
   modules as well, especially if you have limited disk space.
 
   You should read through the new eggdrop.conf file for all of the new
-  options in Eggdrop 1.9.x. You can copy and paste any of these settings
+  options in Eggdrop 1.8.x. You can copy and paste any of these settings
   into you current conf file if you do not want to use the default
   settings.
 
@@ -377,5 +377,5 @@ OBTAINING HELP
   If there are any other serious Eggdrop related channels that should be
   added to the above list, please let us know.
 
-Copyright (C) 1997 Robey Pointer Copyright (C) 1999 - 2021 Eggheads
+Copyright (C) 1997 Robey Pointer Copyright (C) 1999 - 2019 Eggheads
 Development Team
