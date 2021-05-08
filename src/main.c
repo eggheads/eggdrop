@@ -1018,7 +1018,7 @@ static void init_random(void) {
 #endif
       struct timeval tp;
       gettimeofday(&tp, NULL);
-      seed = (tp.tv_sec * tp.tv_usec) ^ getpid();
+      seed = (((int64_t) tp.tv_sec * tp.tv_usec)) ^ getpid();
 #ifdef HAVE_GETRANDOM
     }
   }
