@@ -953,12 +953,13 @@ int mainloop(int toplevel)
       }
 
       /* Make sure we don't have any modules left hanging around other than
-       * "eggdrop" and the two that are supposed to be.
+       * "eggdrop" and the 3 that are supposed to be.
        */
       for (f = 0, p = module_list; p; p = p->next) {
         if (strcmp(p->name, "eggdrop") && strcmp(p->name, "encryption") &&
-            strcmp(p->name, "uptime")) {
+            strcmp(p->name, "encryption2") && strcmp(p->name, "uptime")) {
           f++;
+          debug1("stagnant module %s", p->name);
         }
       }
       if (f != 0) {
