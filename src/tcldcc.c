@@ -1359,14 +1359,14 @@ static int tcl_boot STDVAR
       if (i < 0)
         return TCL_OK;
       botnet_send_reject(i, botnetnick, NULL, whonick, who,
-                         argv[2] ? argv[2] : "");
+                         argc >= 3 && argv[2] ? argv[2] : "");
     } else
       return TCL_OK;
   }
   for (i = 0; i < dcc_total; i++)
     if (!ok && (dcc[i].type->flags & DCT_CANBOOT) &&
         !strcasecmp(dcc[i].nick, who)) {
-      do_boot(i, botnetnick, argv[2] ? argv[2] : "");
+      do_boot(i, botnetnick, argc >= 3 && argv[2] ? argv[2] : "");
       ok = 1;
     }
   return TCL_OK;
