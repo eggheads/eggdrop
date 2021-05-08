@@ -41,10 +41,10 @@ fi
 umask 022
 
 OLD_EGGVERSION=$(grep AC_INIT configure.ac | sed -e 's/AC_INIT(\[Eggdrop\],\[//g' -e 's/\],\[bugs@eggheads.org\])//g')
-#NEW_EGGVERSION=$(echo $OLD_EGGVERSION | cut -d. -f1-2).$(($(echo $OLD_EGGVERSION | cut -d. -f3) + 1))
-NEW_EGGVERSION="1.9.0"
-#NEW_NUMVERSION=$(($(grep '^#define EGG_NUMVER.*' src/version.h |cut -d " " -f 3|sed -e 's/..$/00/') + 100))
-NEW_NUMVERSION="1090000"
+NEW_EGGVERSION=$(echo $OLD_EGGVERSION | cut -d. -f1-2).$(($(echo $OLD_EGGVERSION | cut -d. -f3) + 1))
+#NEW_EGGVERSION="1.9.0"
+NEW_NUMVERSION=$(($(grep '^#define EGG_NUMVER.*' src/version.h |cut -d " " -f 3|sed -e 's/..$/00/') + 100))
+#NEW_NUMVERSION="1090000"
 
 #Remove existing staged files
 git reset HEAD -- .
@@ -81,14 +81,14 @@ done
 #git commit -m "Generate ChangeLog/Changes files for ${NEW_EGGVERSION}" > /dev/null
 
 # Remove patchlevel.
-#echo -n "Setting alpha patchlevel for a stable release..."
-#misc/setpatch alpha >/dev/null
-#echo " done."
+echo -n "Setting alpha patchlevel for a stable release..."
+misc/setpatch alpha >/dev/null
+echo " done."
 
 # Fix version.h.
-#echo -n "Updating src/version.h..."
-#fix_version_h
-#echo " done."
+echo -n "Updating src/version.h..."
+fix_version_h
+echo " done."
 
 # Fix configure.ac's.
 echo -n "Fixing configure.ac files..."
