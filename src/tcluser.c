@@ -311,8 +311,10 @@ static int tcl_addbot STDVAR
   strlcpy(addr, argv[2], sizeof addr);
 
   for (p = hand; *p; p++)
-    if ((unsigned char) *p <= 32 || *p == '@')
-      *p = '?';
+    if ((unsigned char) *p <= 32 || *p == '@') {
+      Tcl_AppendResult(irp, "Invalid character in handle", NULL);
+      return TCL_ERROR;
+    }
 
   if ((argv[1][0] == '*') || strchr(BADHANDCHARS, argv[1][0]) ||
       get_user_by_handle(userlist, hand))
