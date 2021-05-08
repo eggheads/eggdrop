@@ -1,8 +1,140 @@
 
-Eggdrop Changes (Last Updated 2021-01-24):
+Eggdrop Changes (Last Updated 2021-05-08):
 __________________________________________
 
-Eggdrop v1.9.0rc1:
+Eggdrop v1.9.1rc1:
+
+  2021-05-08 * Fix stagnant module warning
+                 [Patch by: michaelortmann]
+             * Reject invalid chars in +bot
+                 [Found by: MalaGaM / Patch by: Geo]
+             * Correctly track away status on away
+                 [Found by: DasBrain / Patch by: DasBrain]
+             * Fix crash when adding server wo port
+                 [Found by: bdrewery / Patch by: bdrewery]
+             * Don't overwrite socket IP on CTCP
+                 [Found by: [TriiiX] / Patch by: Geo]
+             * Fix socket connection error msgs
+                 [Found by: michaelortmann / Patch by: michaelortmann]
+             * Make the compiler use 64bit ari
+                 [Found by: michaelortmann / Patch by: michaelortmann]
+             * Fix OpenBSD compiler warning
+                 [Found by: michaelortmann / Patch by: michaelortmann]
+             * Update NEWS THANKS
+             * Fix genereatedocs pip
+             * remove temp version hardcode
+             * Update version strings to 1.9.1
+             * Generate docs with 1.9.1 version
+             * FIX: Exclude cherry-picked commits from changelogs, experimental
+             * misc/genchanges: Add comment how cherry-pick diff works
+             * tweak releaseprep one more time
+  2021-05-05 * fix typos
+                 [Patch by: michaelortmann]
+             * Remove -n CLI flag reference
+                 [Patch by: michaelortmann]
+             * Update docs, lang file
+                 [Patch by: crazycatdevs]
+             * Use correct type for CTCP flood
+                 [Patch by: DasBrain]
+  2021-04-10 * Update install docs with 1.9 refs
+
+Eggdrop v1.9.0 (2021-03-28):
+
+  2021-03-28 * Fix DNS module help
+                 [Found by: Carlin0]
+             * Fix DNS module help
+                 [Found by: Carlin0]
+             * Add CHAT6 to IPv6 docs
+             * Remove quotepass from install
+                 [Found by: arduent]
+             * remove quotepass ref from CONTENTS
+             * Fix /dcc chat <bot> for eggdrop compiled with --disable-ipv6 (#1146)
+                 [Found by: michaelortmann / Patch by: michaelortmann]
+             * Update docs
+             * Fix formatting
+             * Eggdrop v1.9.0
+             * docs typo
+             * Generate doc after typo
+  2021-03-21 * config typo
+             * Add unlink comment doc
+                 [Found by: Malagam]
+             * Update Versions file
+             * fix #ifdef compiler warning
+                 [Found by: michaelortmann / Patch by: michaelortmann]
+             * config typo
+             * misplaced return
+                 [Found by: mortmann]
+             * Add Italian language files
+                 [Patch by: Carlin0]
+             * Update THANKS
+
+Eggdrop v1.9.0rc3 (2021-03-02):
+
+  2021-03-02 * Fix releaseprep Changelog
+             * Update THANKS
+             * Eggdrop v1.9.0 Release Candidate 3
+  2021-03-01 * Fix releaseprep script for versions higher than .0rc1
+             * Fix socklist for bots without tls support
+                 [Patch by: mortmann]
+             * Update set/tcl unbind docs
+                 [Found by: Dooms40]
+             * server args OBOE
+             * Fix typo
+             * Remove listen-addr refs from basic config
+             * Remove quotepass.tcl
+             * Restore listen-addr being used as default if not specified in listen command
+                 [Found by: style / Patch by: thommey]
+             * update config words
+             * Fix SunOS bzero compile error
+             * better-fix SunOS bzero compile error
+             * Doc formatting
+
+Eggdrop v1.9.0rc2 (2021-02-15):
+
+  2021-02-15 * Update AUTHORS
+             * typo
+             * Fix copyright
+             * Fix eggdrop.conf CAP comment
+                 [Found by: jack3]
+             * Fix add/delserver syntax typo
+                 [Found by: ZarTek]
+             * Update field length
+             * Remove self-refrence in .conf
+             * Move some SASL log messages to debug
+             * Fix typos
+                 [Patch by: mortmann]
+             * Fix twitch parameter
+                 [Patch by: mortmann]
+             * Change add/delserver to server add/remove (#1114)
+                 [Found by: Malagam / Patch by: Geo]
+             * Update THANKS
+             * Fix file leak (#1118)
+                 [Found by: michaelortmann / Patch by: michaelortmann]
+             * Fix file leak
+                 [Found by: michaelortmann / Patch by: michaelortmann]
+             * Fix dns resolving hang
+                 [Found by: michaelortmann / Patch by: michaelortmann]
+             * Update strncpys
+             * Fix type warning in Cygwin
+                 [Found by: michaelortmann / Patch by: michaelortmann]
+             * Update THANKS
+             * Update THANKS
+             * Revert "Remove unnecessary openssl checks" (#1124)
+             * undef set_key
+                 [Found by: mortmann]
+             * Fix vhost6 being ignored if vhost4 was empty, regardless of address family actually used.
+                 [Found by: Harekiet / Patch by: thommey]
+             * Update net-type warning
+             * Update network format/note
+             * fix typo
+             * Try to avoid ident race condition
+                 [Found by: PeGaSuS / Patch by: michaelortmann]
+             * Update releaseprep for python3
+             * Revert "Update releaseprep for python3"
+             * Run autotools
+             * Eggdrop v1.9.0 Release Candidate 2
+
+Eggdrop v1.9.0rc1 (2021-01-24):
 
   2021-01-24 * Fix OBOE
                  [Found by: michaelortmann / Patch by: michaelortmann]
@@ -16,6 +148,7 @@ Eggdrop v1.9.0rc1:
              * update Change doc gen
              * update releaseprep
              * Fix releaseprep for 1.9.x
+             * Eggdrop v1.9.0 Release Candidate 1
   2021-01-22 * Change buffer size
              * Fix format strings
              * Fix OBOE
