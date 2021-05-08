@@ -273,6 +273,8 @@ proc commitlist {{full 0}} {
 		}
 	}
 	# exclude cherry-picked commits, assumes correct order, WIP, assumes chronic order of -i
+	# --cherry-pick is only relevant when using symmetric difference which is A...B
+	# the above method of gather commits by manually grabbing all EXCLUDE..INCLUDE does not use it
 	for {set i 0} {$i < [llength $includes] - 1} {incr i} {
 		for {set j [expr {1+$i}]} {$j < [llength $includes]} {incr j} {
 			set i1 [lindex $includes $i]
