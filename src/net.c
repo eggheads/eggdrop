@@ -581,6 +581,7 @@ int open_telnet_raw(int sock, sockname_t *addr)
       if (res == ECONNREFUSED) { /* Connection refused */
         debug2("net: attempted socket connection refused: %s:%i",
                iptostr(&addr->addr.sa), get_port_from_addr(addr));
+        errno = res;
         return -4;
       }
       if (res != 0) {
