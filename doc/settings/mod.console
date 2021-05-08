@@ -1,9 +1,6 @@
 Last revised: January 1, 2002
 
-
-
-CONSOLE MODULE
-
+Console Module
 
 This module provides storage of console settings when you exit the bot
 or type .store on the partyline.

@@ -1,14 +1,10 @@
 Last revised: October 25, 2010
 
-
-
-EGGDROP CORE SETTINGS
-
+Eggdrop Core Settings
 
 This file describes the syntax and all the settings of your Eggdrop
 configuration file. Please note that you don't need to set all of these
 variables to make your bot work properly.
-
 
 EXECUTABLE PATH
 
@@ -20,7 +16,6 @@ script.
 Example:
 
     #! /path/to/eggdrop
-
 
 BASIC SETTINGS
 
@@ -97,7 +92,6 @@ section.
       Languages included with Eggdrop: Danish, English, French, Finnish,
       German.
 
-
 LOG FILES
 
 Eggdrop is capable of logging various things, from channel chatter to
@@ -151,26 +145,43 @@ logfile <logflags> <channel> "logs/logfile"
 
     Logfile flags:
 
-        ------------- ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-        b             information about bot linking and userfile sharing
-        c             commands
-        d             misc debug information
-        g             raw outgoing share traffic
-        h             raw incoming share traffic
-        j             joins, parts, quits, and netsplits on the channel
-        k             kicks, bans, and mode changes on the channel
-        l             linked bot messages
-        m             private msgs, notices and ctcps to the bot
-        o             misc info, errors, etc (IMPORTANT STUFF)
-        p             public text on the channel
-        r             raw incoming server traffic
-        s             server connects, disconnects, and notices
-        t             raw incoming botnet traffic
-        u             raw outgoing botnet traffic
-        v             raw outgoing server traffic
-        w             wallops (make sure the bot sets +w in init-server)
-        x             file transfers and file-area commands
-        ------------- ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+        --- ------------------------------------------------------
+        b   information about bot linking and userfile sharing
+
+        c   commands
+
+        d   misc debug information
+
+        g   raw outgoing share traffic
+
+        h   raw incoming share traffic
+
+        j   joins, parts, quits, and netsplits on the channel
+
+        k   kicks, bans, and mode changes on the channel
+
+        l   linked bot messages
+
+        m   private msgs, notices and ctcps to the bot
+
+        o   misc info, errors, etc (IMPORTANT STUFF)
+
+        p   public text on the channel
+
+        r   raw incoming server traffic
+
+        s   server connects, disconnects, and notices
+
+        t   raw incoming botnet traffic
+
+        u   raw outgoing botnet traffic
+
+        v   raw outgoing server traffic
+
+        w   wallops (make sure the bot sets +w in init-server)
+
+        x   file transfers and file-area commands
+        --- ------------------------------------------------------
 
     Note that modes d, h, r, t, and v can fill disk quotas quickly.
     There are also eight user-defined levels (1-8) which can be used by
@@ -192,47 +203,37 @@ logfile <logflags> <channel> "logs/logfile"
     In 'lamest.log', log all joins, parts, kicks, bans, public chatter,
     and mode changes from #lamest.
 
-set log-time 1
+    set log-time 1 Use this feature to timestamp entries in the log
+    file.
 
-    Use this feature to timestamp entries in the log file.
+    set timestamp-format "[%H:%M:%S]" Set the following to the timestamp
+    for the logfile entries. Popular times might be "[%H:%M]" (hour,
+    min), or "[%H:%M:%S]" (hour, min, sec). Read 'man strftime' for more
+    formatting options. Keep it below 32 chars.
 
-set timestamp-format "[%H:%M:%S]"
+    set keep-all-logs 0 If you want to keep your logfiles forever, turn
+    this setting on. All logfiles will get the suffix ".[day, 2
+    digits][month, 3 letters][year, 4 digits]". Note that your
+    quota/hard-disk might be filled by this, so check your logfiles
+    often and download them.
 
-    Set the following to the timestamp for the logfile entries. Popular
-    times might be "[%H:%M]" (hour, min), or "[%H:%M:%S]" (hour, min,
-    sec). Read 'man strftime' for more formatting options. Keep it below
-    32 chars.
+    set switch-logfiles-at 300 You can specify when Eggdrop should
+    switch logfiles and start fresh. use military time for this setting.
+    300 is the default, and describes 03:00 (AM).
 
-set keep-all-logs 0
+    set quiet-save 0 "Writing user file..." and "Writing channel
+    file..." messages won't be logged anymore if this option is enabled.
+    If you set it to 2, the "Backing up user file..." and "Backing up
+    channel file..." messages will also not be logged. In addition to
+    this, you can disable the "Switching logfiles..." and the new date
+    message at midnight, by setting this to 3.
 
-    If you want to keep your logfiles forever, turn this setting on. All
-    logfiles will get the suffix ".[day, 2 digits][month, 3
-    letters][year, 4 digits]". Note that your quota/hard-disk might be
-    filled by this, so check your logfiles often and download them.
-
-set switch-logfiles-at 300
-
-    You can specify when Eggdrop should switch logfiles and start fresh.
-    use military time for this setting. 300 is the default, and
-    describes 03:00 (AM).
-
-set quiet-save 0
-
-    "Writing user file..." and "Writing channel file..." messages won't
-    be logged anymore if this option is enabled. If you set it to 2, the
-    "Backing up user file..." and "Backing up channel file..." messages
-    will also not be logged. In addition to this, you can disable the
-    "Switching logfiles..." and the new date message at midnight, by
-    setting this to 3.
-
-set logfile-suffix ".%d%b%Y"
-
-    If keep-all-logs is 1, this setting will define the suffix of the
-    logfiles. The default will result in a suffix like "04May2000".
-    "%Y%m%d" will produce the often used yyyymmdd format. Read the
-    strftime manpages for more options. NOTE: On systems which don't
-    support strftime, the default format will always be used.
-
+    set logfile-suffix ".%d%b%Y" If keep-all-logs is 1, this setting
+    will define the suffix of the logfiles. The default will result in a
+    suffix like "04May2000". "%Y%m%d" will produce the often used
+    yyyymmdd format. Read the strftime manpages for more options. NOTE:
+    On systems which don't support strftime, the default format will
+    always be used.
 
 CONSOLE SETTINGS
 
@@ -243,7 +244,6 @@ CONSOLE SETTINGS
       "primary" channel, which is set in the modules section of the
       config file. Masters can change their console channel and modes
       with the '.console' command.
-
 
 FILE AND DIRECTORY SETTINGS
 
@@ -301,7 +301,6 @@ FILE AND DIRECTORY SETTINGS
       good kiddies do ;), this is a fine default. Otherwise, use your
       head :).
 
-
 BOTNET/DCC/TELNET SETTINGS
 
 Settings in this section should be unimportant for you until you deal
@@ -350,11 +349,13 @@ efficiency). You should read doc/BOTNET before modifying these settings.
       This setting defines whether or not people can boot users on the
       Eggdrop from other bots in your botnet. Valid settings are:
 
-        ----------- -------------------------------------------------------------------------------
-        0           allow _no_ outside boots
-        1           allow boots from sharebots
-        2           allow any boots
-        ----------- -------------------------------------------------------------------------------
+        --- ----------------------------
+        0   allow no outside boots
+
+        1   allow boots from sharebots
+
+        2   allow any boots
+        --- ----------------------------
 
   set share-unlinks 1
 
@@ -431,7 +432,6 @@ efficiency). You should read doc/BOTNET before modifying these settings.
       hostname/address lookup (you might want to increase this if you
       are on a slow network).
 
-
 ADVANCED SETTINGS
 
   set firewall "!sun-barr.ebay:3666"
@@ -497,11 +497,13 @@ ADVANCED SETTINGS
       userinfo1.0.tcl script which provides commands for changing all of
       these.
 
-  unbind dcc n tcl *dcc:tcl
-  unbind dcc n set *dcc:set
-    Comment these two lines if you wish to enable the .tcl and .set
-  commands. If you select your owners wisely, you should be okay
-  enabling these.
+  #unbind dcc n tcl *dcc:tcl
+
+  #unbind dcc n set *dcc:set
+
+      Uncomment these two lines if you wish to disable the .tcl and .set
+      commands. If you select your owners wisely, you should be okay
+      leaving these enabled.
 
   set must-be-owner 1
 
@@ -540,7 +542,6 @@ ADVANCED SETTINGS
       able to put and enforce such bans or unban itself, if banned with
       a cidr mask. Do NOT set this, if your network/server does not
       support cidr!
-
 
 SSL SETTINGS
 
@@ -628,15 +629,21 @@ support.
 
   The options are the following:
 
-      ------------- ----------------------------------------------------------------------------------------------------------------------------------------------------------------
-      0             disable verification
-      1             enable certificate verification
-      2             allow self-signed certificates
-      4             don't check peer common or alt names
-      8             allow expired certificates
-      16            allow certificates which are not valid yet
-      32            allow revoked certificates
-      ------------- ----------------------------------------------------------------------------------------------------------------------------------------------------------------
+      ---- ---------------------------------------------
+      0    disable verification
+
+      1    enable certificate verification
+
+      2    allow self-signed certificates
+
+      4    don't check peer common or alt names
+
+      8    allow expired certificates
+
+      16   allow certificates which are not valid yet
+
+      32   allow revoked certificates
+      ---- ---------------------------------------------
 
   set ssl-verify-dcc 0
 
@@ -652,7 +659,6 @@ support.
       Control cerfificate verification for SSL listening ports. This
       includes leaf bots connecting, users telneting in and /ctcp bot
       chat.
-
 
 MODULES
 
@@ -685,7 +691,6 @@ needed. Four examples:
       A limbo bot (serves as a botnet hub outside IRC) just needs the
       channels, console, dns, and maybe notes or share modules loaded.
       Of course, blowfish needs to be loaded here, too.
-
 
 SCRIPTS
 

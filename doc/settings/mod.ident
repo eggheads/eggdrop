@@ -1,9 +1,6 @@
 Last revised: June 27, 2019
 
-
-
-IDENT MODULE
-
+Ident Module
 
 This module adds Eggdrop support for the externally-provided oident
 service, or alternatively the ability for Eggdrop to act as its own
@@ -28,9 +25,9 @@ this option, a user must either:
 
         sudo setcap "cap_net_bind_service=+ep" /path/to/eggdrop
 
-    Warning: this will allow Eggdrop to _any_ port below 1024,
-    potentially allowing a user to impersonate a standard system service
-    with Eggdrop
+    Warning: this will allow Eggdrop to any port below 1024, potentially
+    allowing a user to impersonate a standard system service with
+    Eggdrop
 
 -   Use iptables to re-route ident queries destined for port 113 to
     a >1024 port that Eggdrop can bind to, for example by running:

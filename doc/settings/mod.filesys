@@ -1,15 +1,11 @@
 Last revised: Dec 30, 2017
 
-
-
-FILESYS MODULE
-
+Filesys Module
 
 This module provides an area within the bot where users can store and
 manage files. With this module, the bot is usable as a file server.
 
 This module requires: transfer
-
 
 CONFIG FILE SETUP
 
@@ -53,7 +49,6 @@ There are also some variables you can set in your config file:
 
       Set here the maximum allowable file size that will be received (in
       KB). Setting this to 0 makes it effectively infinite.
-
 
 PARTYLINE USAGE
 

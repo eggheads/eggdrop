@@ -1,9 +1,6 @@
 Last revised: September 26, 2010
 
-
-
-DNS MODULE
-
+DNS Module
 
 This module provides asynchronous dns support. This will avoid long
 periods where the bot just hangs there, waiting for a hostname to

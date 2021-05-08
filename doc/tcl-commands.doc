@@ -1,23 +1,19 @@
 Eggdrop Tcl Commands Last revised: January 24, 2021
 
-
-
-EGGDROP TCL COMMANDS
-
+Eggdrop Tcl Commands
 
 This is an exhaustive list of all the Tcl commands added to Eggdrop. All
 of the normal Tcl built-in commands are still there, of course, but you
 can also use these to manipulate features of the bot. They are listed
 according to category.
 
-This list is accurate for Eggdrop v1.9.0. Scripts written for v1.3,
+This list is accurate for Eggdrop v1.9.1. Scripts written for v1.3,
 v1.4, 1.6 and 1.8 series of Eggdrop should probably work with a few
 minor modifications depending on the script. Scripts which were written
 for v0.9, v1.0, v1.1 or v1.2 will probably not work without
 modification. Commands which have been changed in this version of
 Eggdrop (or are just new commands) are marked with vertical bars (|) on
 the left.
-
 
 OUTPUT COMMANDS
 
@@ -184,24 +180,29 @@ tagmsg <tags> <target>
 
   Module: server
 
-addserver <ip/host> [[+]port [password]]
+server add <ip/host> [[+]port [password]]
 
   Description: adds a server to the list of servers Eggdrop will connect
   to. Prefix the port with '+' to indicate an SSL-protected port. A port
-  value is required if password is to be specified.
+  value is required if password is to be specified. The SSL status (+)
+  of the provided port is matched against as well (ie, 7000 is not the
+  same as +7000).
 
   Returns: nothing
 
   Module: server
 
-delserver <ip/host> [[+]port]
+server remove <ip/host> [[+]port]
 
   Description: removes a server from the list of servers Eggdrop will
-  connect to. If no port is specified, Eggdrop will remove the first
-  server matching the ip or hostname provided. The SSL status (+) of the
-  provided port is matched against as well (ie, 7000 is not the same as
-  +7000).
+  connect to. If no port is provided, all servers matching the ip or
+  hostname provided will be removed, otherwise only the ip/host with the
+  corresponding port will be removed. The SSL status (+) of the provided
+  port is matched against as well (ie, 7000 is not the same as +7000).
 
+  Returns: nothing
+
+  Module: server
 
 USER RECORD MANIPULATION COMMANDS
 
@@ -252,26 +253,28 @@ getuser <handle> [entry-type] [extra info]
   an entry-type, it returns a flat key/value list (dict) of all set
   entries. Valid entry types are:
 
-    ---------------- -----------------------------------------------------------------------------------------------------------------------------
-    BOTFL            returns the current bot-specific flags for the user (bot-only)
+    --------- --------------------------------------------------------------
+    BOTFL     returns the current bot-specific flags for the user (bot-only)
 
-    BOTADDR          returns a list containing the bot's address, bot listen port, and user listen port
+    BOTADDR   returns a list containing the bot's address, bot listen port,
+              and user listen port
 
-    HOSTS            returns a list of hosts for the user
+    HOSTS     returns a list of hosts for the user
 
-    LASTON           returns a list containing the unixtime last seen and the last seen place. LASTON #channel returns the time last seen time for
-                     the channel or 0 if no info exists.
+    LASTON    returns a list containing the unixtime last seen and the last
+              seen place. LASTON #channel returns the time last seen time
+              for the channel or 0 if no info exists.
 
-    INFO             returns the user's global info line
+    INFO      returns the user's global info line
 
-    XTRA             returns the user's XTRA info
+    XTRA      returns the user's XTRA info
 
-    COMMENT          returns the master-visible only comment for the user
+    COMMENT   returns the master-visible only comment for the user
 
-    HANDLE           returns the user's handle as it is saved in the userfile
+    HANDLE    returns the user's handle as it is saved in the userfile
 
-    PASS             returns the user's encrypted password
-    ---------------- -----------------------------------------------------------------------------------------------------------------------------
+    PASS      returns the user's encrypted password
+    --------- --------------------------------------------------------------
 
   For additional custom user fields, to include the deprecated "EMAIL"
   and "URL" fields, reference scripts/userinfo.tcl.
@@ -293,21 +296,21 @@ setuser <handle> <entry-type> [extra info]
   |      |                                                               |
   |      |     Password string (Empty value will clear the password)     |
   +------+---------------------------------------------------------------+
-  | BOTA | <address> [bot listen port] [user listen port]                |
-  | DDR  |                                                               |
+  | BOT  | <address> [bot listen port] [user listen port]                |
+  | ADDR |                                                               |
   |      |     Sets address, bot listen port and user listen port. If no |
   |      |     listen ports are specified, only the bot address is       |
   |      |     updated. If only the bot listen port is specified, both   |
   |      |     the bot and user listen ports are set to the bot listen   |
   |      |     port.                                                     |
   +------+---------------------------------------------------------------+
-  | HOST | [hostmask]                                                    |
-  | S    |                                                               |
+  | H    | [hostmask]                                                    |
+  | OSTS |                                                               |
   |      |     If no value is specified, all hosts for the user will be  |
-  |      |     cleared. Otherwise, only _1_ hostmask is added :P         |
+  |      |     cleared. Otherwise, only 1 hostmask is added :P           |
   +------+---------------------------------------------------------------+
-  | LAST | This setting has 3 forms.                                     |
-  | ON   |                                                               |
+  | LA   | This setting has 3 forms.                                     |
+  | STON |                                                               |
   |      | <unixtime> <place>                                            |
   |      |                                                               |
   |      |     sets global LASTON time. Standard values used by Eggdrop  |
@@ -379,9 +382,9 @@ matchattr <handle> <flags> [channel]
   is used to check if a user has the subsequent flags, and a '-' is used
   to check if a user does NOT have the subsequent flags.
 
-  ------------------------------------------------------------------------
+  -----------------------------------------------------------------------
   Flag Mask   Action
-  ----------- ------------------------------------------------------------
+  ----------- -----------------------------------------------------------
   +m +        Checks if the user has the m global flag
 
   +mn         Checks if the user has the m OR n global flag
@@ -404,7 +407,8 @@ matchattr <handle> <flags> [channel]
 
   -m          Checks if the user does not have the m global flag
 
-  |-n #foo    Checks if the user does not have the n channel flag for #foo
+  |-n #foo    Checks if the user does not have the n channel flag for
+              #foo
 
   +m|-n #foo  Checks if the user has the global m flag OR does not have a
               channel n flag for #foo
@@ -413,7 +417,7 @@ matchattr <handle> <flags> [channel]
               not have the channel m flag for #foo
 
   ||+b        Checks if the user has the bot flag b
-  ------------------------------------------------------------------------
+  -----------------------------------------------------------------------
 
   Returns: 1 if the specified user has the flags matching the provided
   mask; 0 otherwise
@@ -513,9 +517,11 @@ newchanban <channel> <ban> <creator> <comment> [lifetime] [options]
 
   Options:
 
-    ------------- ---------------------------------------------------------------------------------------------
-    sticky        forces the ban to be always active on a channel, even with dynamicbans on
-    ------------- ---------------------------------------------------------------------------------------------
+    -------- --------------------------------------------------------------
+    sticky   forces the ban to be always active on a channel, even with
+             dynamicbans on
+
+    -------- --------------------------------------------------------------
 
   Returns: nothing
 
@@ -531,9 +537,11 @@ newban <ban> <creator> <comment> [lifetime] [options]
 
   Options:
 
-    ------------- ---------------------------------------------------------------------------------------------
-    sticky        forces the ban to be always active on a channel, even with dynamicbans on
-    ------------- ---------------------------------------------------------------------------------------------
+    -------- --------------------------------------------------------------
+    sticky   forces the ban to be always active on a channel, even with
+             dynamicbans on
+
+    -------- --------------------------------------------------------------
 
   Returns: nothing
 
@@ -552,9 +560,11 @@ newchanexempt <channel> <exempt> <creator> <comment> [lifetime] [options]
 
   Options:
 
-    ---------------- ------------------------------------------------------------------------------------------------------------------
-    sticky           forces the exempt to be always active on a channel, even with dynamicexempts on
-    ---------------- ------------------------------------------------------------------------------------------------------------------
+    -------- --------------------------------------------------------------
+    sticky   forces the exempt to be always active on a channel, even with
+             dynamicexempts on
+
+    -------- --------------------------------------------------------------
 
   Returns: nothing
 
@@ -571,9 +581,11 @@ newexempt <exempt> <creator> <comment> [lifetime] [options]
 
   Options:
 
-    ---------------- ------------------------------------------------------------------------------------------------------------------
-    sticky           forces the exempt to be always active on a channel, even with dynamicexempts on
-    ---------------- ------------------------------------------------------------------------------------------------------------------
+    -------- --------------------------------------------------------------
+    sticky   forces the exempt to be always active on a channel, even with
+             dynamicexempts on
+
+    -------- --------------------------------------------------------------
 
   Returns: nothing
 
@@ -589,9 +601,11 @@ newchaninvite <channel> <invite> <creator> <comment> [lifetime] [options]
 
   Options:
 
-    ---------------- ------------------------------------------------------------------------------------------------------------------
-    sticky           forces the invite to be always active on a channel, even with dynamicinvites on
-    ---------------- ------------------------------------------------------------------------------------------------------------------
+    -------- --------------------------------------------------------------
+    sticky   forces the invite to be always active on a channel, even with
+             dynamicinvites on
+
+    -------- --------------------------------------------------------------
 
   Returns: nothing
 
@@ -608,9 +622,11 @@ newinvite <invite> <creator> <comment> [lifetime] [options]
 
   Options:
 
-    ---------------- ------------------------------------------------------------------------------------------------------------------
-    sticky           forces the invite to be always active on a channel, even with dynamicinvites on
-    ---------------- ------------------------------------------------------------------------------------------------------------------
+    -------- --------------------------------------------------------------
+    sticky   forces the invite to be always active on a channel, even with
+             dynamicinvites on
+
+    -------- --------------------------------------------------------------
 
   Returns: nothing
 
@@ -924,7 +940,6 @@ getting-users
   if not
 
   Module: core
-
 
 CHANNEL COMMANDS
 
@@ -1284,13 +1299,17 @@ resetchan <channel> [flags]
   information will be reset, according to the given flags. Available
   flags:
 
-    ------------ --------------------------------------------------------------
-    b            channel bans
-    e            channel exempts
-    I            channel invites
-    m            channel modes
-    w            memberlist (who & away info)
-    ------------ --------------------------------------------------------------
+    ----- ------------------------------
+    b     channel bans
+
+    e     channel exempts
+
+    I     channel invites
+
+    m     channel modes
+
+    w     memberlist (who & away info)
+    ----- ------------------------------
 
   Returns: nothing
 
@@ -1305,14 +1324,19 @@ refreshchan <channel> [flags]
   the required information will be refreshed, according to the given
   flags. Available flags:
 
-    ------------ --------------------------------------------------------------
-    b            channel bans
-    e            channel exempts
-    I            channel invites
-    m            channel modes
-    t            channel topic
-    w            memberlist (who & away info)
-    ------------ --------------------------------------------------------------
+    ----- ------------------------------
+    b     channel bans
+
+    e     channel exempts
+
+    I     channel invites
+
+    m     channel modes
+
+    t     channel topic
+
+    w     memberlist (who & away info)
+    ----- ------------------------------
 
   Returns: nothing
 
@@ -1494,7 +1518,6 @@ isupport isset <key>
 
   Module: server
 
-
 DCC COMMANDS
 
 putdcc <idx> <text> [-raw]
@@ -1625,17 +1648,25 @@ strip <idx> [+/-strip-flags]
   Description: modifies the strip-flags for a user. The supported
   strip-flags are:
 
-    ---------------- ---------------------------------------------------------------------------------------------------------------------------------------------
-    c                remove all color codes
-    b                remove all boldface codes
-    r                remove all reverse video codes
-    u                remove all underline codes
-    a                remove all ANSI codes
-    g                remove all ctrl-g (bell) codes
-    o                remove all ordinary codes (ctrl+o, terminates bold/color/..)
-    i                remove all italics codes
-    *                remove all of the above
-    ---------------- ---------------------------------------------------------------------------------------------------------------------------------------------
+    ------ -------------------------------------------------------------
+    c      remove all color codes
+
+    b      remove all boldface codes
+
+    r      remove all reverse video codes
+
+    u      remove all underline codes
+
+    a      remove all ANSI codes
+
+    g      remove all ctrl-g (bell) codes
+
+    o      remove all ordinary codes (ctrl+o, terminates bold/color/..)
+
+    i      remove all italics codes
+
+    *      remove all of the above
+    ------ -------------------------------------------------------------
 
   Returns: new strip-flags for the specified user (or the current flags,
   if strip-flags was omitted)
@@ -1682,12 +1713,15 @@ botlist
   is a sublist with four elements: bot, uplink, version, and sharing
   status:
 
-    ------------ ----------------------------------------------------
-    bot          the bot's botnetnick
-    uplink       the bot the bot is connected to
-    version      it's current numeric version
-    sharing      a "+" if the bot is a sharebot; "-" otherwise
-    ------------ ----------------------------------------------------
+    ---------- -----------------------------------------------
+    bot        the bot's botnetnick
+
+    uplink     the bot the bot is connected to
+
+    version    it's current numeric version
+
+    sharing    a "+" if the bot is a sharebot; "-" otherwise
+    ---------- -----------------------------------------------
 
   Module: core
 
@@ -1725,28 +1759,30 @@ socklist [type]
   command, as opposed to something like lindex, to extract values. The
   possible keys returned are:
 
-    -------------- ------------------------------------------------------------------------
-    idx            integer value assigned to Eggdrop connections
+    ---------- --------------------------------------------------------
+    idx        integer value assigned to Eggdrop connections
 
-    handle         possible values are (telnet), (bots), (users), (script) for a listening
-                   socket, or the handle of the connected user for an established
-                   connection
+    handle     possible values are (telnet), (bots), (users), (script)
+               for a listening socket, or the handle of the connected
+               user for an established connection
 
-    host           the hostname of the connection, if it is known; otherwise a *
+    host       the hostname of the connection, if it is known;
+               otherwise a *
 
-    ip             the ip of the connection
+    ip         the ip of the connection
 
-    port           the port number associated with the connection (local port for listening
-                   connections, remote port for server connections.
+    port       the port number associated with the connection (local
+               port for listening connections, remote port for server
+               connections.
 
-    secure         1 if SSL/TLS is used for the connect; 0 otherwise
+    secure     1 if SSL/TLS is used for the connect; 0 otherwise
 
-    type           the type of connection (TELNET, CHAT, SERVER, etc)
+    type       the type of connection (TELNET, CHAT, SERVER, etc)
 
-    info           extra information associated with the connection
+    info       extra information associated with the connection
 
-    time           timestamp of when the socket was established
-    -------------- ------------------------------------------------------------------------
+    time       timestamp of when the socket was established
+    ---------- --------------------------------------------------------
 
   Module: core
 
@@ -1754,10 +1790,10 @@ whom <chan>
 
   Returns: list of people on the botnet who are on that channel. 0 is
   the default party line. Each item in the list is a sublist with six
-  elements: nickname, bot, hostname, access flag ('-', '@', '+', or
-  '_'), minutes idle, and away message (blank if the user is not away).
-  If you specify_ for channel, every user on the botnet is returned with
-  an extra argument indicating the channel the user is on.
+  elements: nickname, bot, hostname, access flag ('-', '@', '+', or ''),
+  minutes idle, and away message (blank if the user is not away). If you
+  specify for channel, every user on the botnet is returned with an
+  extra argument indicating the channel the user is on.
 
   Module: core
 
@@ -1857,7 +1893,6 @@ dccdumpfile <idx> <filename>
 
   Module: core
 
-
 NOTES MODULE
 
 notes <user> [numberlist]
@@ -1900,7 +1935,6 @@ storenote <from> <to> <msg> <idx>
 
   Module: notes
 
-
 ASSOC MODULE
 
 assoc <chan> [name]
@@ -1920,7 +1954,6 @@ killassoc <chan>
   Returns: nothing
 
   Module: assoc
-
 
 COMPRESS MODULE
 
@@ -1948,7 +1981,6 @@ iscompressed <filename>
   prevented the checks from succeeding.
 
   Module: compress
-
 
 FILESYS MODULE
 
@@ -1990,14 +2022,21 @@ dccsend <filename> <ircnick>
 
   Returns:
 
-    -------------- --------------------------------------------------------------------------------------------------------------------------
-    0              success
-    1              the dcc table is full (too many connections)
-    2              can't open a socket for the transfer
-    3              the file doesn't exist
-    4              the file was queued for later transfer, which means that person has too many file transfers going right now
-    5              copy-to-tmp is enabled and the file already exists in the temp directory
-    -------------- --------------------------------------------------------------------------------------------------------------------------
+    ------- ---------------------------------------------------------------
+    0       success
+
+    1       the dcc table is full (too many connections)
+
+    2       can't open a socket for the transfer
+
+    3       the file doesn't exist
+
+    4       the file was queued for later transfer, which means that person
+            has too many file transfers going right now
+
+    5       copy-to-tmp is enabled and the file already exists in the temp
+            directory
+    ------- ---------------------------------------------------------------
 
   Module: transfer
 
@@ -2082,10 +2121,11 @@ getfilesendtime <idx>
   Returns: the unixtime value from when a file transfer started, or a
   negative number:
 
-    ----------- ----------------------------------------------------------------------------------------------------
-    -1          no matching transfer with the specified idx was found
-    -2          the idx matches an entry which is not a file transfer
-    ----------- ----------------------------------------------------------------------------------------------------
+    ----- ------------------------------------------------------
+    -1    no matching transfer with the specified idx was found
+
+    -2    the idx matches an entry which is not a file transfer
+    ----- ------------------------------------------------------
 
   Module: transfer
 
@@ -2096,12 +2136,15 @@ mkdir <directory> [<required-flags> [channel]]
 
   Returns:
 
-    ----------- ----------------------------------------------------------------------------------------------------
-    0           success
-    1           can't create directory
-    2           directory exists but is not a directory
-    -3          could not open filedb
-    ----------- ----------------------------------------------------------------------------------------------------
+    ----- ------------------------------------------------------
+    0     success
+
+    1     can't create directory
+
+    2     directory exists but is not a directory
+
+    -3    could not open filedb
+    ----- ------------------------------------------------------
 
   Module: filesys
 
@@ -2122,12 +2165,15 @@ mv <file> <destination>
   Returns: If the command was successful, the number of files moved will
   be returned. Otherwise, a negative number will be returned:
 
-    ------------- -----------------------------------------------------------------------------------------------------------------------
-    -1            invalid source file
-    -2            invalid destination
-    -3            destination file exists
-    -4            no matches found
-    ------------- -----------------------------------------------------------------------------------------------------------------------
+    ----- ------------------------------------------------------
+    -1    invalid source file
+
+    -2    invalid destination
+
+    -3    destination file exists
+
+    -4    no matches found
+    ----- ------------------------------------------------------
 
   Module: filesys
 
@@ -2140,12 +2186,15 @@ cp <file> <destination>
   Returns: If the command was successful, the number of files copied
   will be returned. Otherwise, a negative number will be returned:
 
-    ------------- -----------------------------------------------------------------------------------------------------------------------
-    -1            invalid source file
-    -2            invalid destination
-    -3            destination file exists
-    -4            no matches found
-    ------------- -----------------------------------------------------------------------------------------------------------------------
+    ----- ------------------------------------------------------
+    -1    invalid source file
+
+    -2    invalid destination
+
+    -3    destination file exists
+
+    -4    no matches found
+    ----- ------------------------------------------------------
 
   Module: filesys
 
@@ -2162,7 +2211,6 @@ setflags <dir> [<flags> [channel]]
   Returns: 0 on success; -1 or -3 on failure
 
   Module: filesys
-
 
 MISCELLANEOUS COMMANDS
 
@@ -2208,26 +2256,43 @@ logfile [<modes> <channel> <filename>]
 
   Logfile flags:
 
-    -------------- -------------------------------------------------------------------------------------------------------------------------------------------------------------------
-    b              information about bot linking and userfile sharing
-    c              commands
-    d              misc debug information
-    g              raw outgoing share traffic
-    h              raw incoming share traffic
-    j              joins, parts, quits, topic changes, and netsplits on the channel
-    k              kicks, bans, and mode changes on the channel
-    l              linked bot messages
-    m              private msgs, notices and ctcps to the bot
-    o              misc info, errors, etc (IMPORTANT STUFF)
-    p              public text on the channel
-    r              raw incoming server traffic
-    s              server connects, disconnects, and notices
-    t              raw incoming botnet traffic
-    u              raw outgoing botnet traffic
-    v              raw outgoing server traffic
-    w              wallops (make sure the bot sets +w in init-server)
-    x              file transfers and file-area commands
-    -------------- -------------------------------------------------------------------------------------------------------------------------------------------------------------------
+    ----- -----------------------------------------------------------------
+    b     information about bot linking and userfile sharing
+
+    c     commands
+
+    d     misc debug information
+
+    g     raw outgoing share traffic
+
+    h     raw incoming share traffic
+
+    j     joins, parts, quits, topic changes, and netsplits on the channel
+
+    k     kicks, bans, and mode changes on the channel
+
+    l     linked bot messages
+
+    m     private msgs, notices and ctcps to the bot
+
+    o     misc info, errors, etc (IMPORTANT STUFF)
+
+    p     public text on the channel
+
+    r     raw incoming server traffic
+
+    s     server connects, disconnects, and notices
+
+    t     raw incoming botnet traffic
+
+    u     raw outgoing botnet traffic
+
+    v     raw outgoing server traffic
+
+    w     wallops (make sure the bot sets +w in init-server)
+
+    x     file transfers and file-area commands
+    ----- -----------------------------------------------------------------
 
   Returns: filename of logfile created, or, if no logfile is specified,
   a list of logfiles such as: {mco * eggdrop.log} {jp #lame lame.log}
@@ -2241,18 +2306,27 @@ maskhost <nick!user@host> [masktype]
 
   Available types are:
 
-    ------------------- ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-    0                   *!user@host
-    1                   *!*user@host
-    2                   *!*@host
-    3                   *!*user@*.host
-    4                   *!*@*.host
-    5                   nick!user@host
-    6                   nick!*user@host
-    7                   nick!*@host
-    8                   nick!*user@*.host
-    9                   nick!*@*.host
-    ------------------- ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+    ----- ------------------------------------------------------
+    0     *!user@host
+
+    1     *!*user@host
+
+    2     *!*@host
+
+    3     *!*user@*.host
+
+    4     *!*@*.host
+
+    5     nick!user@host
+
+    6     nick!*user@host
+
+    7     nick!*@host
+
+    8     nick!*user@*.host
+
+    9     nick!*@*.host
+    ----- ------------------------------------------------------
 
   You can also specify types from 10 to 19 which correspond to types 0
   to 9, but instead of using a * wildcard to replace portions of the
@@ -2391,14 +2465,19 @@ sendnote <from> <to[@bot]> <message>
 
   Returns:
 
-    ----------- ------------------------------------------------------------------------------------------------------------
-    0           the send failed
-    1           the note was delivered locally or sent to another bot
-    2           the note was stored locally
-    3           the user's notebox is too full to store a note
-    4           a Tcl binding caught the note
-    5           the note was stored because the user is away
-    ----------- ------------------------------------------------------------------------------------------------------------
+    ----- ----------------------------------------------------------
+    0     the send failed
+
+    1     the note was delivered locally or sent to another bot
+
+    2     the note was stored locally
+
+    3     the user's notebox is too full to store a note
+
+    4     a Tcl binding caught the note
+
+    5     the note was stored because the user is away
+    ----- ----------------------------------------------------------
 
   Module: core
 
@@ -2411,9 +2490,10 @@ link [via-bot] <bot>
 
   Module: core
 
-unlink <bot>
+unlink <bot> [comment]
 
-  Description: attempts to unlink a bot from the botnet
+  Description: attempts to unlink a bot from the botnet. If you specify
+  a comment, it will appear with the unlink message on the botnet.
 
   Returns: 1 on success; 0 otherwise
 
@@ -2429,7 +2509,7 @@ encrypt <key> <string>
   encryption mode to use by prefixing the encryption key with either
   "ecb:" or "cbc:", or by using the blowfish-use-mode setting in the
   config file. Note: the default encryption mode for this function is
-  planned to transition from ECB to CBC in v1.9.0.
+  planned to transition from ECB to CBC in v1.9.1.
 
   Module: encryption
 
@@ -2584,17 +2664,25 @@ stripcodes <strip-flags> <string>
   Description: strips specified control characters from the string
   given. strip-flags can be any combination of the following:
 
-    ---------------- ---------------------------------------------------------------------------------------------------------------------------------------------------------------------
-    c                remove all color codes
-    b                remove all boldface codes
-    r                remove all reverse video codes
-    u                remove all underline codes
-    a                remove all ANSI codes
-    g                remove all ctrl-g (bell) codes
-    o                remove all ordinary codes (ctrl+o, terminates bold/color/..)
-    i                remove all italics codes
-    *                remove all of the above
-    ---------------- ---------------------------------------------------------------------------------------------------------------------------------------------------------------------
+    ----- -------------------------------------------------------------
+    c     remove all color codes
+
+    b     remove all boldface codes
+
+    r     remove all reverse video codes
+
+    u     remove all underline codes
+
+    a     remove all ANSI codes
+
+    g     remove all ctrl-g (bell) codes
+
+    o     remove all ordinary codes (ctrl+o, terminates bold/color/..)
+
+    i     remove all italics codes
+
+    *     remove all of the above
+    ----- -------------------------------------------------------------
 
   Returns: the stripped string.
 
@@ -2645,12 +2733,15 @@ status [type]
   Description: provides eggdrop status information similar to the
   .status command in partyline. The available types of information are:
 
-    ------------- ----------------------------------------------------------------------------------------------------------------------------------
-    cpu           total cpu time spent by eggdrop
-    mem           dynamically allocated memory excluding the Tcl interpreter
-    cache         user entries cache hits (in %)
-    ipv6          shows whether IPv6 support was compiled in
-    ------------- ----------------------------------------------------------------------------------------------------------------------------------
+    ------- ----------------------------------------------------------------
+    cpu     total cpu time spent by eggdrop
+
+    mem     dynamically allocated memory excluding the Tcl interpreter
+
+    cache   user entries cache hits (in %)
+
+    ipv6    shows whether IPv6 support was compiled in
+    ------- ----------------------------------------------------------------
 
   Returns: the requested information type or all information if type
   isn't specified. The format is a flat list of name-value pairs.
@@ -2686,7 +2777,6 @@ tlsstatus <idx>
   Returns: a flat list of name-value pairs
 
   Module: core
-
 
 GLOBAL VARIABLES
 
@@ -2736,12 +2826,15 @@ numversion*
   Value: the current numeric bot version (for example: "1010201").
   Numerical version is in the format of "MNNRRPP", where:
 
-    ------------- --------------------------------------------------------------------------
-    M             major release number
-    NN            minor release number
-    RR            sub-release number
-    PP            patch level for that sub-release
-    ------------- --------------------------------------------------------------------------
+    ------ ---------------------------------------
+    M      major release number
+
+    NN     minor release number
+
+    RR     sub-release number
+
+    PP     patch level for that sub-release
+    ------ ---------------------------------------
 
   Module: core
 
@@ -2797,7 +2890,6 @@ language
   the config file
 
   Module: core
-
 
 BINDS
 
@@ -3025,8 +3117,8 @@ the Tcl proc, and an explanation.
 
   Description: triggered when someone changes nicknames. The mask is
   matched against '#channel newnick' and can contain wildcards. Channel
-  is "_" if the user isn't on a channel (usually the bot not yet in a
-  channel). If a "_" is used for the channel in the mask, this bind is
+  is "" if the user isn't on a channel (usually the bot not yet in a
+  channel). If a "" is used for the channel in the mask, this bind is
   triggered once for every channel that the user is in the bot with; in
   other words if the bot is in two channels with the target user, the
   bind will be triggered twice. To trigger a proc only once per nick
@@ -3109,7 +3201,7 @@ the Tcl proc, and an explanation.
   procname <from> <keyword> <text>
 
   IMPORTANT: While not necessarily deprecated, this bind has been
-  supplanted by the RAWT bind as of 1.9.0. You probably want to be using
+  supplanted by the RAWT bind as of 1.9.1. You probably want to be using
   RAWT, not RAW.
 
   Description: previous versions of Eggdrop required a special compile
@@ -3644,7 +3736,7 @@ the Tcl proc, and an explanation.
   "msgid 890157217279768 aaa bbb". The order of the arguments is
   identical to the order that the IRC server sends to the bot. If the
   proc returns 1, Eggdrop will not process the line any further (this
-  could cause unexpected behavior in some cases). As of 1.9.0, it is
+  could cause unexpected behavior in some cases). As of 1.9.1, it is
   recommended to use the RAWT bind instead of the RAW bind.
 
 (53) ACCOUNT (stackable)
@@ -3714,38 +3806,51 @@ trigger:
 (5) CTCP Return 1 to ask the bot not to process the CTCP command on its
     own. Otherwise, it would send its own response to the CTCP (possibly
     an error message if it doesn't know how to deal with it).
+
 (6) FILT Return "" to indicate the text has been processed, and the bot
     should just ignore it. Otherwise, it will treat the text like any
     other.
+
 (7) FLUD Return 1 to ask the bot not to take action on the flood.
     Otherwise it will do its normal punishment.
+
 (8) RAW Return 1 to ask the bot not to process the server text. This can
     affect the bot's performance by causing it to miss things that it
     would normally act on -- you have been warned.
+
 (9) CHON Return 1 to ask the bot not to process the partyline join
     event.
-(10) CHOF Return 1 to ask the bot not to process the partyline part
-    event.
-(11) WALL Return 1 to make Eggdrop not log the message that triggered
-    this bind.
-(12) NOTE Return 1 to make Eggdrop not process the note any further.
-    This includes stacked note bindings that would be processed after
-    this one, as well as the built-in eggdrop note handling routines.
-(13) MSGM Return 1 to make Eggdrop not log the message that triggered
-    this bind.
-(14) PUBM Return 1 to make Eggdrop not log the message that triggered
-    this bind.
-(15) NOTC Return 1 to make Eggdrop not log the message that triggered
-    this bind.
-(16) OUT Return 1 to make Eggdrop drop the message instead of sending
-    it. Only meaningful for messages with status "queued".
-(17) EVNT Return 1 to make Eggdrop not to take the default action for
-    the event. Used for signal type events, ignored for others.
-(18) TLS Return 1 to disable verbose ssl information for the handshake.
-(19) RAWT Return 1 to ask the bot not to process the server text. This
-    can affet the bot's performance by causing it to miss things that it
-    would normally act on -- you have been warned. Again.
 
+(10) CHOF Return 1 to ask the bot not to process the partyline part
+     event.
+
+(11) WALL Return 1 to make Eggdrop not log the message that triggered
+     this bind.
+
+(12) NOTE Return 1 to make Eggdrop not process the note any further.
+     This includes stacked note bindings that would be processed after
+     this one, as well as the built-in eggdrop note handling routines.
+
+(13) MSGM Return 1 to make Eggdrop not log the message that triggered
+     this bind.
+
+(14) PUBM Return 1 to make Eggdrop not log the message that triggered
+     this bind.
+
+(15) NOTC Return 1 to make Eggdrop not log the message that triggered
+     this bind.
+
+(16) OUT Return 1 to make Eggdrop drop the message instead of sending
+     it. Only meaningful for messages with status "queued".
+
+(17) EVNT Return 1 to make Eggdrop not to take the default action for
+     the event. Used for signal type events, ignored for others.
+
+(18) TLS Return 1 to disable verbose ssl information for the handshake.
+
+(19) RAWT Return 1 to ask the bot not to process the server text. This
+     can affet the bot's performance by causing it to miss things that
+     it would normally act on -- you have been warned. Again.
 
 CONTROL PROCEDURES
 
@@ -3771,7 +3876,6 @@ idx when text is blank, it will always fail with "invalid idx".
 If you want to hand control of your connection back to Eggdrop, your
 proc should return 1. Otherwise, return 0 to retain control.
 
-
 TCP CONNECTIONS
 
 Eggdrop allows you to make two types of TCP ("telnet") connections:
@@ -3779,7 +3883,7 @@ outgoing and incoming. For an outgoing connection, you specify the
 remote host and port to connect to. For an incoming connection, you
 specify a port to listen on.
 
-All of the connections are _event driven_. This means that the bot will
+All of the connections are event driven. This means that the bot will
 trigger your procs when something happens on the connection, and your
 proc is expected to return as soon as possible. Waiting in a proc for
 more input is a no-no.
@@ -3849,17 +3953,23 @@ The best way to learn how to use these commands is to find a script that
 uses them and follow it carefully. However, hopefully this has given you
 a good start.
 
-
 MATCH CHARACTERS
 
 Many of the bindings allow match characters in the arguments. Here are
 the four special characters:
 
-  ------------ ------------------------------------------------------------------------------------------------------------------------------------------------------
-  ?            matches any single character
-  *            matches 0 or more characters of any type
-  %            matches 0 or more non-space characters (can be used to match a single word) (This character only works in binds, not in regular matching)
-  ~            matches 1 or more space characters (can be used for whitespace between words) (This char only works in binds, not in regular matching)
-  ------------ ------------------------------------------------------------------------------------------------------------------------------------------------------
+  ----- -----------------------------------------------------------------
+  ?     matches any single character
+
+  *     matches 0 or more characters of any type
+
+  %     matches 0 or more non-space characters (can be used to match a
+        single word) (This character only works in binds, not in regular
+        matching)
+
+  ~     matches 1 or more space characters (can be used for whitespace
+        between words) (This char only works in binds, not in regular
+        matching)
+  ----- -----------------------------------------------------------------
 
   Copyright (C) 1999 - 2021 Eggheads Development Team

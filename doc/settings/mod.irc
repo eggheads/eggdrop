@@ -1,9 +1,6 @@
 Last revised: August 21, 2004
 
-
-
-IRC MODULE
-
+IRC Module
 
 This module controls the bots interaction on IRC. It allows the bot to
 join channels, etc. You have to load this if you want your bot to come
@@ -121,9 +118,9 @@ There are also some variables you can set in your config file:
 
       If you are so lame you want the bot to display peoples info lines,
       even when you are too lazy to add their chanrecs to a channel, set
-      this to 1. _NOTE_ This means _every_ user with an info line will
-      have their info line displayed on EVERY channel they join
-      (provided they have been gone longer than wait-info).
+      this to 1. NOTE This means every user with an info line will have
+      their info line displayed on EVERY channel they join (provided
+      they have been gone longer than wait-info).
 
 These were the core irc module settings. There are more settings for
 'net-type' IRCnet and Efnet. net-type has to be set in the server module

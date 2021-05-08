@@ -1,13 +1,9 @@
 Eggdrop Module Information Last revised: Jul 25, 2016
 
-
-
-EGGDROP MODULE INFORMATION
-
+Eggdrop Module Information
 
 The purpose of this document is to show you how to download, install,
 create, and submit modules.
-
 
 WHAT ARE MODULES?
 
@@ -15,13 +11,11 @@ Modules are portions of code which are loaded separately to the bot
 itself and provide extra services. For example, the filesys module
 provides the entire file system.
 
-
 WHY USE MODULES?
 
 Modules allow C coders to add their own enhancements to the bot while
 keeping them optional and without increasing the size of the Eggdrop
 core.
-
 
 HOW TO INSTALL A MODULE
 
@@ -42,7 +36,6 @@ the module you wish to install.
   8.  Rehash or restart your bot.
 
 To view your currently loaded modules, type '.module'.
-
 
 MODULES INCLUDED WITH EGGDROP
 
@@ -144,7 +137,6 @@ MODULES INCLUDED WITH EGGDROP
       This is for demonstrative purposes only. If you are looking for
       starting point in writing modules, woobie is the right thing.
 
-
 PROGRAMMING MODULES
 
 WARNING: This section is very likely to be out of date.
@@ -154,11 +146,14 @@ multiple source file module, you shouldn't need to read this anyway.
 
   1.  Create a src/mod/MODULE.mod directory in your Eggdrop directory
       (where MODULE is the module name) and cd to it.
+
   2.  Copy the file 'Makefile' from src/mod/woobie.mod and replace all
       occurrences of 'woobie' with your module name. This should ensure
       that your module gets compiled.
+
   3.  Next, you want to create a file called MODULE.c (MODULE is the
       module name again).
+
   4.  You MUST include the following in your source code:
 
           #define MODULE_NAME "module-name"
@@ -186,7 +181,6 @@ multiple source file module, you shouldn't need to read this anyway.
     This variable provides access to all the Eggdrop functions; without
     it, you can't call any Eggdrop functions (the module won't even
     load).
-
 
 MODULE REQUIREMENTS
 
@@ -414,7 +408,6 @@ Additional functions
       Adds text to a logfile (determined by logmode and channel). This text
       will also output to any users' consoles if they have the specified
       console mode enabled.
-
 
 WHAT TO DO WITH A MODULE?
 

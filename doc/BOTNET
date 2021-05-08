@@ -1,13 +1,9 @@
 Botnet Sharing and Linking Last revised: Nov 09, 2017
 
-
-
-BOTNET SHARING AND LINKING
-
+Botnet Sharing and Linking
 
   The purpose of this document is to show you what a botnet is and how
   it could be useful to you. It also covers botflags userfile sharing.
-
 
 WHAT IS A BOTNET?
 
@@ -16,70 +12,69 @@ WHAT IS A BOTNET?
   user lists, ban lists, exempt/invite lists, and ignore lists (if
   sharing is enabled).
 
-
 TERMS
 
 The following are some common terms used in this document:
 
-BOTNET
+Botnet
 
     A botnet consists of one or more bots connected together.
 
-LINK
+Link
 
     Link is the term used to describe a bot connecting to another bot.
 
-HUB
+Hub
 
     A bot is described as a hub-bot if one or more bots are linked to
     it.
 
-LEAF
+Leaf
 
     A leaf is a non-hub bot connecting to a hub-bot. A leaf has only one
     other bot connected to it, its hub. Leaf bots can be assigned the
     "l" botflag to prevent other bots from linking to them.
 
-LINK BOT
+Link Bot
 
     A link-bot is a bot that is linked to another bot. It may or may not
     be a hub-bot.
 
-SHARE
+Share
 
     Share is the term used to describe the sharing of user records.
 
-SHARE BOT
+Share Bot
 
     A share-bot is a bot which shares user records with one or more
     linked bots.
 
-AGGRESSIVE SHARE
+Aggressive Share
 
     Aggressive share is a term used to describe the direction of sharing
     user-files. Aggressive share bots will SEND userfiles to another
     passive bot.
 
-PASSIVE SHARE
+Passive Share
 
     Passive share is a term used to describe the direction of sharing
     user-files. Passive share bots will accept userfiles from an
     aggressive share bot.
 
-ADDRESS
+Address
 
     The physical address, containing the address and port of the bot.
     For example: lame.org:3333. You can change a bot's address with:
 
         .chaddr <botname> <address> <port#>[/<relay-port#>]
 
-RELAY PORT
+Relay Port
 
     The relay port number of the bot is defined in the config file. Note
     that you can define one port for bots and another for user
     connections.
 
-RELAY
+Relay
 
     A relay connection is used to relay (jump) to another bot via telnet
     or DCC chat. You can relay to another bot even if the remote bot is
@@ -89,12 +84,11 @@ RELAY
 
     to relay to another bot.
 
-PORT
+Port
 
     The telnet port is used by the bot to communicate with other bots
     and/or users. Note that you can define separate ports for user and
     bot connections.
-
 
 EXAMPLE BOTTREE
 
@@ -106,7 +100,6 @@ BotB is linked to a master sharebot, BotA, and a slave sharebot, BotC.
 BotB shares passively with [receives from] BotA and shares aggressively
 with [sends to] BotC.
 
-
 BOT FLAGS
 
 Flags are attributes that determine what a bot can or is allowed to do.
@@ -115,25 +108,48 @@ Flags can be either global (such as +s) or channel specific (such as |+s
 
 The following is a list of valid bot flags:
 
-  ---------------- --------------------------------------------------------------------------------------------------------------------------------------------------
-  a                alternate (automatically link to this bot if the hub bot can't be linked)
-  b                ban sharing (passive bot is allowed to share bans with aggressive bot)
-  c                channel sharing (passive bot is allowed to share channel changes with aggressive bot)
-  d                share aggressively (SEND userfile to a passive bot), limited sharing (passive bot is NOT allowed to share anything)
-  e                exempt sharing (passive bot is allowed to share exempts with aggressive bot)
-  g                global share (share all channels)
-  h                hub (automatically link to this bot)
-  i                isolate (isolate the party line across a bot link)
-  j                invite sharing (passive bot is allowed to share invites with aggressive bot)
-  l                leaf (bot is not allowed to link in other bots)
-  n                ignore sharing (passive bot is allowed to share ignores with aggressive bot)
-  p                share passively (ACCEPT userfile from an aggressive bot)
-  r                reject (bot will not be allowed to link)
-  s                share aggressively (SEND userfile to a passive bot), unlimited sharing (passive bot is allowed to share anything)
-  u                user sharing (passive bot is allowed to share user changes with aggressive bot)
-  0-9              user defined flags
-  ---------------- --------------------------------------------------------------------------------------------------------------------------------------------------
+  ------ ---------------------------------------------------------------
+  a      alternate (automatically link to this bot if the hub bot can't
+         be linked)
 
+  b      ban sharing (passive bot is allowed to share bans with
+         aggressive bot)
+
+  c      channel sharing (passive bot is allowed to share channel
+         changes with aggressive bot)
+
+  d      share aggressively (SEND userfile to a passive bot), limited
+         sharing (passive bot is NOT allowed to share anything)
+
+  e      exempt sharing (passive bot is allowed to share exempts with
+         aggressive bot)
+
+  g      global share (share all channels)
+
+  h      hub (automatically link to this bot)
+
+  i      isolate (isolate the party line across a bot link)
+
+  j      invite sharing (passive bot is allowed to share invites with
+         aggressive bot)
+
+  l      leaf (bot is not allowed to link in other bots)
+
+  n      ignore sharing (passive bot is allowed to share ignores with
+         aggressive bot)
+
+  p      share passively (ACCEPT userfile from an aggressive bot)
+
+  r      reject (bot will not be allowed to link)
+
+  s      share aggressively (SEND userfile to a passive bot), unlimited
+         sharing (passive bot is allowed to share anything)
+
+  u      user sharing (passive bot is allowed to share user changes with
+         aggressive bot)
+
+  0-9    user defined flags
+  ------ ---------------------------------------------------------------
 
 ADDING AND LINKING BOTS
 
@@ -152,9 +168,8 @@ Here is an example scenario:
 
 At this point, you can link the two bots by typing '.link BotA' on BotB
 (or '.link BotB' on BotA). The bots will now give themselves random
-passwords which are _not_ stored encrypted in the userfile. Note that
-you can link as many bots as you wish to your botnet.
-
+passwords which are not stored encrypted in the userfile. Note that you
+can link as many bots as you wish to your botnet.
 
 USING BOTFLAGS
 
@@ -217,7 +232,6 @@ functions:
   "0-9" (user-defined)
 
       These 10 flags are user-defined can be used by scripters.
-
 
 MAKING BOTS SHARE USER RECORDS
 

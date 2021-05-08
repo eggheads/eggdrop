@@ -1,9 +1,6 @@
 Last revised: January 1, 2002
 
-
-
-SEEN MODULE
-
+Seen Module
 
 This module provides very basic seen commands via msg, on channel or via
 dcc. This module works only for users in the bot's userlist. If you are

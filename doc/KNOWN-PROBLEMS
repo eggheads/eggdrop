@@ -1,9 +1,6 @@
 Known Problems Last revised: April 16, 2003
 
-
-
-KNOWN PROBLEMS
-
+Known Problems
 
   Things that are broken, but aren't getting fixed anytime soon:
 
@@ -17,6 +14,7 @@ KNOWN PROBLEMS
         is a fault of the Tcl interpreter, and not Eggdrop. The Tcl
         interpreter filters the characters when it reads a file for
         interpreting. Update your Tcl to version 8.1 or higher.
+
     -   Version 8.1 of Tcl doesn't support unicode characters. If those
         characters are handled in a script as text, you run into errors.
         Eggdrop can't handle these errors at the moment.
