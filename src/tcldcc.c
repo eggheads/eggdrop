@@ -712,7 +712,8 @@ static void dccsocklist(Tcl_Interp *irp, int argc, char *type, int src) {
 #endif
   socklen_t namelen;
   struct sockaddr_storage ss;
-  Tcl_Obj *masterlist;
+  Tcl_Obj *masterlist = NULL; /* initialize to NULL to make old gcc versions
+                               * happy */
  
   if (src) {
     masterlist = Tcl_NewListObj(0, NULL);
