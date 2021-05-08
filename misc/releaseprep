@@ -72,7 +72,7 @@ regenerate_changelog() {
 
 	#Generate doc/ChangesX.Y file
 	echo "Now just the doc/ChangesX.Y file..."
-	MINOR=1
+	MINOR=0
 	INCLUDE=""
 	while [ $MINOR -lt $MAX ]; do
 	  INCLUDE="${INCLUDE} -i v${MAJOR}.${MINOR}"
