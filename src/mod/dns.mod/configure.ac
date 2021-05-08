@@ -4,7 +4,7 @@ AC_PREREQ(2.60)
 
 sinclude(../eggmod.m4)
 
-AC_INIT([Eggdrop DNS Module],[1.9.0],[bugs@eggheads.org])
+AC_INIT([Eggdrop DNS Module],[1.9.1],[bugs@eggheads.org])
 
 AC_CONFIG_SRCDIR(coredns.c)
 AC_CONFIG_AUX_DIR(../../../misc)
