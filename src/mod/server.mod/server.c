@@ -1520,6 +1520,8 @@ static char *traced_nettype(ClientData cdata, Tcl_Interp *irp,
     net_type_int = NETT_DALNET;
   else if (!strcasecmp(net_type, "EFnet"))
     net_type_int = NETT_EFNET;
+  else if (!strcasecmp(net_type, "Libera.Chat"))
+    net_type_int = NETT_FREENODE;
   else if (!strcasecmp(net_type, "freenode"))
     net_type_int = NETT_FREENODE;
   else if (!strcasecmp(net_type, "IRCnet"))
@@ -1558,8 +1560,9 @@ static char *traced_nettype(ClientData cdata, Tcl_Interp *irp,
     net_type_int = NETT_OTHER; 
     warn = 1;
   } else {
-    fatal("ERROR: NET-TYPE NOT SET.\n Must be one of DALNet, EFnet, freenode, "
-          "IRCnet, Quakenet, Rizon, Undernet, Other.", 0);
+    fatal("ERROR: NET-TYPE NOT SET.\n Must be one of DALNet, EFnet, "
+          "Libera.Chat, freenode, IRCnet, Quakenet, Rizon, Undernet, Other.",
+          0);
   }
   if (warn) {
     putlog(LOG_MISC, "*",

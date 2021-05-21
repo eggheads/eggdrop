@@ -119,7 +119,7 @@ typedef struct cap_list {
 enum {
   NETT_DALNET,       /* DALnet                            */
   NETT_EFNET,        /* EFnet                             */
-  NETT_FREENODE,     /* freenode                          */
+  NETT_FREENODE,     /* Libera.Chat/freenode              */
   NETT_HYBRID_EFNET, /* Hybrid-6+ EFnet +e/+I/max-bans 20 */
   NETT_IRCNET,       /* IRCnet                            */
   NETT_QUAKENET,     /* QuakeNet                          */
