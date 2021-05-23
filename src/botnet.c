@@ -78,7 +78,7 @@ tand_t *findbot(char *who)
 
 /* Add a tandem bot to our chain list
  */
-void addbot(char *who, char *from, char *next, char flag, int vernum)
+void addbot(char *who, char *from, char *next, char flag, int vernum, int ssl)
 {
   tand_t **ptr = &tandbot, *ptr2;
 
@@ -93,6 +93,7 @@ void addbot(char *who, char *from, char *next, char flag, int vernum)
   ptr2->share = flag;
   ptr2->ver = vernum;
   ptr2->next = *ptr;
+  ptr2->ssl = ssl;
   *ptr = ptr2;
   /* May be via itself */
   ptr2->via = findbot(from);
@@ -646,10 +647,11 @@ void tell_bottree(int idx, int showver)
           if (bot->ver) {
             i = sprintf(s, "%c%s", bot->share, bot->bot);
             if (showver)
-              sprintf(s + i, " (%d.%d.%d.%d)",
+              sprintf(s + i, " (%d.%d.%d.%d%s)",
                       bot->ver / 1000000,
                       bot->ver % 1000000 / 10000,
-                      bot->ver % 10000 / 100, bot->ver % 100);
+                      bot->ver % 10000 / 100, bot->ver % 100,
+                      bot->ssl ? " ssl" : "");
           } else
             sprintf(s, "-%s", bot->bot);
         } else
@@ -684,10 +686,11 @@ void tell_bottree(int idx, int showver)
                 if (bot->ver) {
                   i = sprintf(s, "%c%s", bot->share, bot->bot);
                   if (showver)
-                    sprintf(s + i, " (%d.%d.%d.%d)",
+                    sprintf(s + i, " (%d.%d.%d.%d%s)",
                             bot->ver / 1000000,
                             bot->ver % 1000000 / 10000,
-                            bot->ver % 10000 / 100, bot->ver % 100);
+                            bot->ver % 10000 / 100, bot->ver % 100,
+                            bot->ssl ? " ssl" : "");
                 } else
                   sprintf(s, "-%s", bot->bot);
               }
