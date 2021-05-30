@@ -122,6 +122,7 @@ enum {
   NETT_FREENODE,     /* freenode                          */
   NETT_HYBRID_EFNET, /* Hybrid-6+ EFnet +e/+I/max-bans 20 */
   NETT_IRCNET,       /* IRCnet                            */
+  NETT_LIBERA,       /* Libera Chat                       */
   NETT_QUAKENET,     /* QuakeNet                          */
   NETT_RIZON,        /* Rizon                             */
   NETT_UNDERNET,     /* UnderNet                          */
