@@ -165,7 +165,7 @@ If your bot didn't appear on IRC, you should log in to the shell and view the bo
 
 Additionally, you can kill the bot via the command line (``kill pid``, the pid is shown to you when you started the bot or can be viewed by running ``ps x``) and then restart it with the -mnt flag, which will launch you directly into the partyline, to assist with troubleshooting. Note that if you use the -nt flag, the bot will not persist and you will kill it once you quit the partyline.
 
-If you're still unsure what the problem is, try asking in #eggdrop on Freenode, and be sure to include any relevant information from the logfile. Good luck!
+If you're still unsure what the problem is, try asking in #eggdrop on Libera, and be sure to include any relevant information from the logfile. Good luck!
 
 First steps with a running Eggdrop
 ==================================
@@ -278,7 +278,7 @@ Simple Authentication and Security Layer (SASL) is becoming a prevalant method o
 
     openssl ec -noout -text -conv_form compressed -in eggdrop-ecdsa.pem | grep '^pub:' -A 3 | tail -n 3 | tr -d ' \n:' | xxd -r -p | base64
 
-  Then, authenticate with your NickServ service and register your public certificate with NickServ. You can view your public key  On Freenode for example, it is done by::
+  Then, authenticate with your NickServ service and register your public certificate with NickServ. You can view your public key  On Libera for example, it is done by::
 
     /msg NickServ set pubkey <fingerprint string from above goes here>
 

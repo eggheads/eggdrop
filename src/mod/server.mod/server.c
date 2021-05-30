@@ -1495,6 +1495,11 @@ static void do_nettype(void)
   case NETT_FREENODE:
     nick_len = 16;
     break;
+  case NETT_LIBERA:
+    check_mode_r = 0;
+    nick_len = 16;
+    kick_method = 1;
+    break;
   case NETT_QUAKENET:
     check_mode_r = 0;
     use_fastdeq = 2;
@@ -1524,6 +1529,8 @@ static char *traced_nettype(ClientData cdata, Tcl_Interp *irp,
     net_type_int = NETT_FREENODE;
   else if (!strcasecmp(net_type, "IRCnet"))
     net_type_int = NETT_IRCNET;
+  else if (!strcasecmp(net_type, "Libera"))
+    net_type_int = NETT_LIBERA;
   else if (!strcasecmp(net_type, "QuakeNet"))
     net_type_int = NETT_QUAKENET;
   else if (!strcasecmp(net_type, "Rizon"))
@@ -1559,7 +1566,7 @@ static char *traced_nettype(ClientData cdata, Tcl_Interp *irp,
     warn = 1;
   } else {
     fatal("ERROR: NET-TYPE NOT SET.\n Must be one of DALNet, EFnet, freenode, "
-          "IRCnet, Quakenet, Rizon, Undernet, Other.", 0);
+          "Libera, IRCnet, Quakenet, Rizon, Undernet, Other.", 0);
   }
   if (warn) {
     putlog(LOG_MISC, "*",
