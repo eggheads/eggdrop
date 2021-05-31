@@ -1,5 +1,5 @@
 News
-Last revised: May 08, 2021
+Last revised: May 31, 2021
      _________________________________________________________________
 
                                 What's new?
@@ -14,6 +14,32 @@ Last revised: May 08, 2021
   In general, always make a BACKUP of your config and user/chanfile.
 
      _________________________________________________________________
+
+Eggdrop v1.9.1:
+
+  General changes:
+    - Fixed an issue where an IP address was incorrectly overwritten after a
+      CTCP chat was received
+    - Fixed an issue where Eggdrop would occassionally crash if no port was
+      provided when the server was added
+    - Error, instead of silently change, when adding a bot with invalid ascii
+      characters in the handle (.+bot)
+    - Removed an incorrect error message after restarting the bot with the
+      PBKDF2 module loaded
+    - Further improved error reporting for socket connections
+
+  Botnet changes:
+    - None
+
+  Tcl API changes:
+    - Fixed the isaway command to properly track AWAY server messages
+
+  Module changes:
+    - None
+
+  Eggdrop config file changes:
+    - Added Libera Chat to the accepted server types
+_________________________________________________________________
 
 Eggdrop v1.9.0:
 
