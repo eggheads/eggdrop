@@ -1096,6 +1096,19 @@ static void do_nettype()
     rfc_compliant = 1;
     include_lk = 0;
     break;
+  case NETT_LIBERA:
+    kick_method = 1;
+    modespresline = 4;
+    use_354 = 1;
+    use_exmpts = 1;
+    use_invites = 1;
+    max_exempts = 100;
+    max_invites = 100;
+    max_invites = 100;
+    max_modes = 100;
+    rfc_compliant = 1;
+    include_lk = 0;
+    break;
   case NETT_FREENODE:
     kick_method = 1;
     modesperline = 4;
