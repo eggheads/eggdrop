@@ -1100,7 +1100,7 @@ static void do_nettype()
     kick_method = 1;
     modespresline = 4;
     use_354 = 1;
-    use_exmpts = 1;
+    use_exempts = 1;
     use_invites = 1;
     max_exempts = 100;
     max_invites = 100;
