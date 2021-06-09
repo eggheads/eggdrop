@@ -27,8 +27,12 @@
 
 static time_t last_ctcp = (time_t) 0L;
 static int count_ctcp = 0;
+static int monitor005 = 0;
+static int max_monitor = 0;
+static int monitor732 = 0;
 static time_t last_invtime = (time_t) 0L;
 static char last_invchan[CHANNELLEN + 1] = "";
+static struct monitor_list *monitor = NULL;
 
 static int got315(char *from, char *msg);
 
@@ -71,6 +75,109 @@ static void sync_members(struct chanset_t *chan)
     } else
       prev = m;
   }
+}
+
+/* Add nickname to monitor list */
+static int monitor_add(char * nick, int send) {
+  struct monitor_list *entry = nmalloc(sizeof(struct monitor_list));
+  struct monitor_list *current = monitor;
+
+  memset(entry, 0, sizeof *entry);
+
+  /* Check for duplicates before adding */
+  while(current != NULL) {
+    if (!strcasecmp(current->nick, nick)) {
+      putlog(LOG_MISC, "*", "%s is already on the monitor list", nick);
+      return 0;
+    }
+    current=current->next;
+  }
+
+  strlcpy (entry->nick, nick, NICKLEN);
+  entry->next = monitor;
+  monitor = entry;
+  if (send) {
+    dprintf(DP_SERVER, "MONITOR + %s\n", nick);
+  }
+  putlog(LOG_MISC, "*", "Added %s to monitor list", nick);
+
+  return 1;
+}
+
+/* Remove nickname from monitor list */
+static int monitor_del (char *nick) {
+  struct monitor_list *current = monitor;
+  struct monitor_list *previous = NULL;
+
+  if(monitor == NULL) {
+    putlog(LOG_MISC, "*", "%s not found.", nick);
+    return 0;
+  }
+  while(strcmp(current->nick, nick)) {
+    if(current->next == NULL) {
+      return 0;
+    } else {
+      previous = current;
+      current = current->next;
+    }
+  }
+  if (current == monitor) {
+    monitor = monitor->next;
+  } else {
+    previous->next = current->next;
+  }
+  dprintf(DP_SERVER, "MONITOR - %s\n", nick);
+  putlog(LOG_MISC, "*", "Removed %s from monitor list.", nick);
+  return 1;
+}
+
+/* Show nicknames being monitored with MONITOR.
+ * Mode can be 0 (all nicks), 1 (online nicks), 2 (offline nicks)
+ */
+static void monitor_show(char *buf, int len, int mode) {
+  struct monitor_list *current = monitor;
+
+  if(current == NULL) {
+     return;
+  }
+
+  while(current != NULL) {
+    if (!mode) {
+      strncat(buf, current->nick, (len - strlen(buf)));
+      strncat(buf, " ", (len - strlen(buf)));
+    }
+    if (mode == 1) {
+      if (current->online) {
+        strncat(buf, current->nick, (len - strlen(buf)));
+        strncat(buf, " ", (len - strlen(buf)));
+      }
+    }
+    if (mode == 2) {
+      if (!current->online) {
+        strncat(buf, current->nick, (len - strlen(buf)));
+        strncat(buf, " ", (len - strlen(buf)));
+      }
+    }
+    current = current->next;
+  }
+  return;
+}
+
+static void monitor_clear()
+{
+  struct monitor_list *current = monitor;
+  struct monitor_list *next = NULL;
+
+  dprintf(DP_SERVER, "MONITOR C");
+  /* Clear local linked list */
+  while (current != NULL) {
+    next = current->next;
+    nfree(current);
+    current = next;
+  }
+  monitor = NULL;
+
+  return;
 }
 
 /* Always pass the channel dname (display name) to this function <cybah>
@@ -1249,6 +1356,117 @@ static int gotaway(char *from, char *msg)
       }
     }
   }
+  return 0;
+}
+
+/* Got 730/RPL_MONONLINE
+ * :<server> 730 <nick> :target[!user@host][,target[!user@host]]*
+ */
+static int got730or1(char *from, char *msg, int code)
+{
+  char *nick, *tok;
+  struct monitor_list *current = monitor;
+
+  newsplit(&msg);               /* Get rid of nick */
+  fixcolon(msg);                /* Get rid of :    */
+
+  for (tok = strtok(msg, ","); tok && *tok; tok = strtok(NULL, " ")) {
+    if (strchr(tok, '!')) {
+      nick = splitnick(&tok);
+    } else {
+      nick = tok;
+    }
+    while(current != NULL) {
+      if (!rfc_casecmp(current->nick, nick)) {
+        if (code == 1) {
+          current->online = 1;
+          check_tcl_monitor(nick, 1);
+          putlog(LOG_SERV, "*", "%s is now online", nick);
+        } else if (code == 0) {
+          current->online = 0;
+          check_tcl_monitor(nick, 0);
+          putlog(LOG_SERV, "*", "%s is now offline", nick);
+        }
+      }
+      current = current->next;
+    }
+  }
+  return 0;
+}
+
+/* Got 730/RPL_MONONLINE
+ * :<server> 730 <nick> :target[!user@host][,target[!user@host]]*
+ */
+static int got730(char *from, char *msg)
+{
+  got730or1(from, msg, 1);
+  return 0;
+}
+
+/* Got 731/RPL_MONOFFLINE
+ * :<server> 731 <nick> :target[,target2]*
+ */
+static int got731(char *from, char *msg)
+{
+  got730or1(from, msg, 0);
+  return 0;
+}
+
+/* Got 732/RPL_MONLIST
+ * :<server> 732 <nick> :target[,target2]*
+ *
+ * Clear the existing list, replace it with what the server sends us, as
+ * that is what is 100% accurate
+ */
+static int got732(char *from, char *msg)
+{
+  char *tok, *nick;
+  struct monitor_list *current = monitor;
+  struct monitor_list *next = NULL;
+
+/* Did we already get a 732? If no, clear the existing list, otherwise leave
+ * it for appending
+ */
+  if (!monitor732) {
+    while (current != NULL) {
+      next = current->next;
+      nfree(current);
+      current = next;
+    }
+    monitor = NULL;
+  }
+
+  newsplit(&msg);               /* Get rid of nick */
+  fixcolon(msg);                /* Get rid of :    */
+
+  for (tok = strtok(msg, ","); tok && *tok; tok = strtok(NULL, ",")) {
+    /* returned target could be in nick!u@host format */
+    if (strchr(tok, '!')) {
+      nick = splitnick(&tok);
+    } else {
+      nick = tok;
+    }
+    monitor_add(nick, 0);
+  }
+  monitor732 = 1;
+  return 0;
+}
+
+/* Got 733/RPL_ENDOFMONLISt
+ * :<server> 733 <nick> :End of MONITOR list
+ */
+static int got733(char *from, char *msg)
+{
+  monitor732 = 0;
+  return 0;
+}
+
+/* Got 734/RPL_MONLISTFULL
+ * :<server> 734 <nick> <limit> <targets> :Monitor list is full.
+ */
+static int got734(char *from, char *msg)
+{
+  putlog(LOG_SERV, "*", "Server monitor list is full, nickname not added");
   return 0;
 }
 
@@ -2676,6 +2894,9 @@ static int irc_isupport(char *key, char *isset_str, char *value)
     if (max_bans > max_modes) {
       max_modes = max_bans;
     }
+  } else if (!strcmp(key, "MONITOR")) {
+    monitor005 = isset;
+    isupport_parseint(key, isset ? value : NULL, 1, 100, 1, 0, &max_monitor);
   }
   return 0;
 }
@@ -2694,6 +2915,11 @@ static cmd_t irc_raw[] = {
   {"473",     "",   (IntFunc) got473,          "irc:473"},
   {"474",     "",   (IntFunc) got474,          "irc:474"},
   {"475",     "",   (IntFunc) got475,          "irc:475"},
+  {"730",     "",   (IntFunc) got730,          "irc:730"},
+  {"731",     "",   (IntFunc) got731,          "irc:731"},
+  {"732",     "",   (IntFunc) got732,          "irc:732"},
+  {"733",     "",   (IntFunc) got733,          "irc:733"},
+  {"734",     "",   (IntFunc) got734,          "irc:734"},
   {"INVITE",  "",   (IntFunc) gotinvite,    "irc:invite"},
   {"TOPIC",   "",   (IntFunc) gottopic,      "irc:topic"},
   {"331",     "",   (IntFunc) got331,          "irc:331"},

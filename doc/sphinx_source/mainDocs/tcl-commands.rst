@@ -3490,6 +3490,16 @@ The following is a list of bind types and how they work. Below each bind type is
 
   Module: server
 
+(55) MONITOR (stackable)
+
+  bind monitor <flags> <nick> <proc>
+
+  procname <nick> <online>
+
+  Description: triggered when a server sends a MONITOR status change of a target either coming online or disconnecting (not all servers support MONITOR). flags are ignored, nick is the nickname of the intended MONITOR target and can be used with wildcards. For the proc, nick is the nickname connecting or disconnecting, and online is '0' if the nickname disconnected, or '1' if the nickname connected.
+
+  Module: irc
+
 
 ^^^^^^^^^^^^^
 Return Values
