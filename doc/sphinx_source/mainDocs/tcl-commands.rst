@@ -1110,6 +1110,11 @@ onchan <nickname> [channel]
 
   Module: irc
 
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+monitor <command> [nickname]
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  Description: interacts with the list of nicknames Eggdrop has asked the IRC server to track. valid commands are add, delete, list, online, offline, and clear. 'add' sends a nickname to the server to track; 'delete' removes a nickname from being tracked by the server; 'list' returns a list of all nicknames the IRC server is tracking on behalf of Eggdrop; 'online' returns a string of tracked nicknames that are currently online; 'offline' returns a list of tracked nicknames that are currently offline.
+
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 getaccount <nickname> [channel]
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
