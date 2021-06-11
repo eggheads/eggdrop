@@ -71,8 +71,10 @@ static int tcl_chanlist STDVAR
 
 static int tcl_monitor STDVAR
 {
+  Tcl_Obj *monitorlist;
   BADARGS(2, 3, " command ?nick?");
 
+  monitorlist = Tcl_NewListObj(0, NULL);
   if (!strcmp(argv[1], "add")) {
     if (argc == 3) {
       monitor_add(argv[2], 1);
@@ -92,26 +94,27 @@ static int tcl_monitor STDVAR
       return TCL_ERROR;
     }
   } else if (!strcmp(argv[1], "list")) {
-    char monitorlist[NICKLEN*100] = "";  //TODO: import monitor_max
-    monitor_show(monitorlist, sizeof monitorlist, 0);
-    Tcl_AppendResult(irp, monitorlist, NULL);
+    monitor_show(monitorlist, 0, NULL);
+    Tcl_AppendResult(irp, Tcl_GetString(monitorlist), NULL);
     return TCL_OK;
   } else if (!strcmp(argv[1], "online")) {
-    char monitorlist[NICKLEN*100] = "";  //TODO: import monitor_max
-    monitor_show(monitorlist, sizeof monitorlist, 1);
-    Tcl_AppendResult(irp, monitorlist, NULL);
+    monitor_show(monitorlist, 1, NULL);
+    Tcl_AppendResult(irp, Tcl_GetString(monitorlist), NULL);
     return TCL_OK;
   } else if (!strcmp(argv[1], "offline")) {
-    char monitorlist[NICKLEN*100] = "";  //TODO: import monitor_max
-    monitor_show(monitorlist, sizeof monitorlist, 2);
-    Tcl_AppendResult(irp, monitorlist, NULL);
+    monitor_show(monitorlist, 2, NULL);
+    Tcl_AppendResult(irp, Tcl_GetString(monitorlist), NULL);
+    return TCL_OK;
+  } else if (!strcmp(argv[1], "status")) {
+    monitor_show(monitorlist, 3, argv[2]);
+    Tcl_AppendResult(irp, Tcl_GetString(monitorlist), NULL);
     return TCL_OK;
   } else if (!strcasecmp(argv[1], "clear")) {
     monitor_clear();
     Tcl_AppendResult(irp, "MONITOR list cleared.", NULL);
     return TCL_OK;
   } else {
-    Tcl_AppendResult(irp, "command must be add, delete, list, clear, online, offline", NULL);
+    Tcl_AppendResult(irp, "command must be add, delete, list, clear, online, offline, status", NULL);
     return TCL_ERROR;
   }
 }

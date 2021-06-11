@@ -25,6 +25,9 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
+#include "irc.h"
+
+
 static time_t last_ctcp = (time_t) 0L;
 static int count_ctcp = 0;
 static int monitor005 = 0;
@@ -133,32 +136,42 @@ static int monitor_del (char *nick) {
 
 /* Show nicknames being monitored with MONITOR.
  * Mode can be 0 (all nicks), 1 (online nicks), 2 (offline nicks)
+ * 3 (check status of nick)
  */
-static void monitor_show(char *buf, int len, int mode) {
+static void monitor_show(Tcl_Obj *mlist, int mode, char *nick) {
   struct monitor_list *current = monitor;
+  int found = 0;
 
   if(current == NULL) {
-     return;
+    Tcl_ListObjAppendElement(interp, mlist, Tcl_NewStringObj("-1", -1));
+    return;
   }
 
   while(current != NULL) {
     if (!mode) {
-      strncat(buf, current->nick, (len - strlen(buf)));
-      strncat(buf, " ", (len - strlen(buf)));
-    }
-    if (mode == 1) {
+      Tcl_ListObjAppendElement(interp, mlist, Tcl_NewStringObj(current->nick, -1));
+    } else if (mode == 1) {
       if (current->online) {
-        strncat(buf, current->nick, (len - strlen(buf)));
-        strncat(buf, " ", (len - strlen(buf)));
+        Tcl_ListObjAppendElement(interp, mlist, Tcl_NewStringObj(current->nick, -1));
       }
-    }
-    if (mode == 2) {
+    } else if (mode == 2) {
       if (!current->online) {
-        strncat(buf, current->nick, (len - strlen(buf)));
-        strncat(buf, " ", (len - strlen(buf)));
+        Tcl_ListObjAppendElement(interp, mlist, Tcl_NewStringObj(current->nick, -1));
+      }
+    } else if (mode == 3) {
+      if(!strcmp(current->nick, nick)) {
+        found = 1;
+        if (current->online) {
+          Tcl_ListObjAppendElement(interp, mlist, Tcl_NewStringObj("1", 1));
+        } else {
+          Tcl_ListObjAppendElement(interp, mlist, Tcl_NewStringObj("0", 1));
+        }
       }
     }
     current = current->next;
+  }
+  if ((!found) && (mode == 3)) {
+    Tcl_ListObjAppendElement(interp, mlist, Tcl_NewStringObj("-1", -1));
   }
   return;
 }
