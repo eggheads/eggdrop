@@ -449,8 +449,7 @@ void reset_chan_info(struct chanset_t *chan, int reset, int do_reset)
     chan->status &= ~CHAN_ASKEDMODES;
     dprintf(DP_MODE, "MODE %s\n", chan->name);
   }
-  if ((reset & CHAN_RESETWHO) || (reset & CHAN_RESETAWAY) ||
-        (reset & CHAN_RESETIRCBOT)) {
+  if ((reset & CHAN_RESETWHO) || (reset & CHAN_RESETAWAY)) {
     chan->status |= CHAN_PEND;
     chan->status &= ~CHAN_ACTIVE;
     refresh_who_chan(chan->name);

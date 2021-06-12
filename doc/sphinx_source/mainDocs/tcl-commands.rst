@@ -1103,6 +1103,14 @@ isaway <nickname> [channel]
 
   Module: irc
 
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+isircbot <nickname> [channel]
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+  Description: determine if a user has denoted themselves as a bot via an ircd-defined user flag (declared via BOT in a server's 005/ISUPPORT line). Due to server implementations, accurately monitoring this is incredibly fragile, as the flag can be added and removed by a user without any notification to other users. To ensure this status is current for use, it is recommended to use ``refreshchan <channel> w`` on a channel the user is on, which will refresh if the user is a bot or not for all users on the channel. If a server does not advertise BOT in its ISUPPORT line but still supports it (currently the case for unrealircd), you can manually set it by adding "BOT=B" (or whatever flag is used) to the isupport-default setting in your eggdrop.conf file.
+
+  Returns: 1 if Eggdrop is currently tracking someone by that nickname marked as a bot by an IRC server; 0 otherwise.
+
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^
 onchan <nickname> [channel]
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^
