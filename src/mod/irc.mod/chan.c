@@ -29,7 +29,7 @@ static time_t last_ctcp = (time_t) 0L;
 static int count_ctcp = 0;
 static time_t last_invtime = (time_t) 0L;
 static char last_invchan[CHANNELLEN + 1] = "";
-static char botflag005 = '\0';
+static char botflag005;
 
 static int got315(char *from, char *msg);
 
