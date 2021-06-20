@@ -21,3 +21,4 @@ Contents:
    twitch-tcl-commands
    ipv6
    tls
+   ircv3

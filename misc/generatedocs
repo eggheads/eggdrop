@@ -118,6 +118,7 @@ mv tmpdocs/filesys.txt $BASEDIR/../doc/settings/mod.filesys
 mv tmpdocs/first-script.txt $BASEDIR/../doc/FIRST-SCRIPT
 mv tmpdocs/ident.txt $BASEDIR/../doc/settings/mod.ident
 mv tmpdocs/install.txt $BASEDIR/../INSTALL
+mv tmpdocs/ircv3.txt $BASEDIR/../doc/IRCv3
 mv tmpdocs/ipv6.txt $BASEDIR/../doc/IPV6
 mv tmpdocs/irc.txt $BASEDIR/../doc/settings/mod.irc
 mv tmpdocs/known-probs.txt $BASEDIR/../doc/KNOWN-PROBLEMS
