@@ -7,7 +7,7 @@
  */
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2019 Eggheads Development Team
+ * Copyright (C) 1999 - 2021 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -412,7 +412,7 @@ static int tcl_erasenotes STDVAR
   while (!feof(f) && fgets(s, sizeof s, f) != NULL) {
     if (s[strlen(s) - 1] == '\n')
       s[strlen(s) - 1] = 0;
-      rmspace(s);
+    rmspace(s);
     if ((s[0]) && (s[0] != '#') && (s[0] != ';')) {   /* Not comment */
       s1 = s;
       to = newsplit(&s1);

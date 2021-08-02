@@ -1,9 +1,9 @@
 /*
- * inet_pton.h
- *   prototypes for inet_pton.c
+ * explicit_bzero.h
+ *   prototypes for explicit_bzero.c
  */
 /*
- * Copyright (C) 2010 - 2019 Eggheads Development Team
+ * Copyright (C) 2010 - 2021 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -20,18 +20,11 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
-#ifndef _EGG_COMPAT_INET_PTON_H
-#define _EGG_COMPAT_INET_PTON_H
+#ifndef _EGG_COMPAT_EXPLICIT_BZERO_H_
+#define _EGG_COMPAT_EXPLICIT_BZERO_H_
 
-# include "src/main.h"
+#ifndef HAVE_EXPLICIT_BZERO
+void explicit_bzero(void *const, const size_t);
+#endif /* HAVE_EXPLICIT_BZERO */
 
-#ifdef HAVE_SYS_SOCKET_H
-#  include <sys/socket.h>
-#endif
-#include <netinet/in.h>
-#include <arpa/inet.h>
-
-#ifndef HAVE_INET_PTON
-int inet_pton(int af, const char *src, void *dst);
-#endif
-#endif /* _EGG_COMPAT_INET_PTON_H */
+#endif /* _EGG_COMPAT_EXPLICIT_BZERO_H_ */

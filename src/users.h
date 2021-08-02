@@ -4,7 +4,7 @@
  */
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2019 Eggheads Development Team
+ * Copyright (C) 1999 - 2021 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -67,7 +67,7 @@ struct user_entry_type {
 #ifndef MAKING_MODS
 extern struct user_entry_type USERENTRY_COMMENT, USERENTRY_LASTON,
   USERENTRY_XTRA, USERENTRY_INFO, USERENTRY_BOTADDR, USERENTRY_HOSTS,
-  USERENTRY_PASS, USERENTRY_BOTFL;
+  USERENTRY_PASS, USERENTRY_PASS2, USERENTRY_BOTFL;
 #ifdef TLS
 extern struct user_entry_type USERENTRY_FPRINT;
 #endif

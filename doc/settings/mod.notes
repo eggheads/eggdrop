@@ -1,9 +1,6 @@
 Last revised: January 1, 2002
 
-
-
-NOTES MODULE
-
+Notes Module
 
 This module provides support for storing of notes for users from each
 other. Note sending between currently online users is supported in the
@@ -47,4 +44,4 @@ There are also some variables you can set in your config file:
       Set this to 1 if you want the bot to let people know on join if
       they have any notes.
 
-Copyright (C) 2000 - 2019 Eggheads Development Team
+Copyright (C) 2000 - 2021 Eggheads Development Team

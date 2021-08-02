@@ -249,14 +249,6 @@
 ###  %bset share-unlinks%b 0/1
    This setting prohibits remote bots from telling your Eggdrop to
    unlink from share bots.
-%{help=set strict-host}%{+n}
-###  %bset strict-host%b <0/1>
-   Specifies whether the bot should leave leading ~+-^= in users'
-   hostnames. If this is on, the bot will differentiate between
-   valid-ident usernames and invalid ones. This setting is currently
-   kept for compatibility, but will be removed from the next release.
-   Please leave it set to 1 for now to avoid problems with your user
-   files in the future.
 %{help=set cidr-support}%{+n}
 ###  %bset cidr-support%b <0/1>
    Enables cidr support for b/e/I modes if set to 1. This means the

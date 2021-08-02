@@ -1,9 +1,6 @@
 Last revised: September 26, 2010
 
-
-
-DNS MODULE
-
+DNS Module
 
 This module provides asynchronous dns support. This will avoid long
 periods where the bot just hangs there, waiting for a hostname to
@@ -47,4 +44,4 @@ There are also some variables you can set in your config file:
       Specify how long should the DNS module wait for a reply before
       resending the query. The value must be in seconds.
 
-Copyright (C) 2000 - 2019 Eggheads Development Team
+Copyright (C) 2000 - 2021 Eggheads Development Team

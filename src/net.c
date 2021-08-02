@@ -8,7 +8,7 @@
  *
  * Changes after Feb 23, 1999 Copyright Eggheads Development Team
  *
- * Copyright (C) 1999 - 2019 Eggheads Development Team
+ * Copyright (C) 1999 - 2021 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -42,6 +42,7 @@
 #  include <unistd.h>
 #endif
 #include <setjmp.h>
+#include "mod/server.mod/server.h"
 
 #ifdef TLS
 #  include <openssl/err.h>
@@ -62,9 +63,8 @@ int pref_af = 0;              /* Prefer IPv6 over IPv4?                       */
 #endif
 char firewall[121] = "";      /* Socks server for firewall.                   */
 int firewallport = 1080;      /* Default port of socks 4/5 firewalls.         */
-char botuser[USERLEN + 1] = "eggdrop"; /* Username of the user running the bot. */
+char botuser[USERLEN + 1] = "eggdrop"; /* Username of the user running the bot*/
 int dcc_sanitycheck = 0;      /* Do some sanity checking on dcc connections.  */
-
 sock_list *socklist = NULL;   /* Enough to be safe.                           */
 sigjmp_buf alarmret;          /* Env buffer for alarm() returns.              */
 
@@ -130,14 +130,13 @@ char *iptostr(struct sockaddr *sa)
  */
 int setsockname(sockname_t *addr, char *src, int port, int allowres)
 {
-  char *endptr;
+  char *endptr, *src2 = src;;
   long val;
   IP ip;
   struct hostent *hp;
-  int af = AF_UNSPEC;
+  volatile int af = AF_UNSPEC;
 #ifdef IPV6
   char ip2[INET6_ADDRSTRLEN];
-  char *src2 = src;
   int pref;
 #else
   char ip2[INET_ADDRSTRLEN];
@@ -151,9 +150,7 @@ int setsockname(sockname_t *addr, char *src, int port, int allowres)
     ip = htonl(val);
     if (inet_ntop(AF_INET, &ip, ip2, sizeof ip2)) {
       debug2("net: setsockname(): ip %s -> %s", src, ip2);
-#ifdef IPV6
       src2 = ip2;
-#endif
     }
   }
 #ifdef IPV6
@@ -188,9 +185,9 @@ int setsockname(sockname_t *addr, char *src, int port, int allowres)
       hp = NULL;
     if (hp) {
       if (hp->h_addrtype == AF_INET)
-        memcpy(&addr->addr.s4.sin_addr, hp->h_addr, hp->h_length);
+        memcpy(&addr->addr.s4.sin_addr, hp->h_addr_list[0], hp->h_length);
       else
-        memcpy(&addr->addr.s6.sin6_addr, hp->h_addr, hp->h_length);
+        memcpy(&addr->addr.s6.sin6_addr, hp->h_addr_list[0], hp->h_length);
       af = hp->h_addrtype;
     }
   }
@@ -218,7 +215,7 @@ int setsockname(sockname_t *addr, char *src, int port, int allowres)
  * have to resort to hackishly counting :s to see if its IPv6 or not.
  * Go internet.
  */
-  if (!inet_pton(AF_INET, src, &addr->addr.s4.sin_addr)) {
+  if (!inet_pton(AF_INET, src2, &addr->addr.s4.sin_addr)) {
     /* Boring way to count :s */
     count = 0;
     for (i = 0; src[i]; i++) {
@@ -242,7 +239,7 @@ but this Eggdrop was not compiled with IPv6 support.");
       } else
         hp = NULL;
       if (hp) {
-        memcpy(&addr->addr.s4.sin_addr, hp->h_addr, hp->h_length);
+        memcpy(&addr->addr.s4.sin_addr, hp->h_addr_list[0], hp->h_length);
         af = hp->h_addrtype;
       }
     } else
@@ -270,8 +267,8 @@ void getvhost(sockname_t *addr, int af)
   else
     h = vhost6;
 #endif
-  if (setsockname(addr, (h ? h : ""), 0, 1) != af)
-    setsockname(addr, (af == AF_INET ? "0" : "::"), 0, 0);
+  if (!h || !h[0] || setsockname(addr, (h ? h : ""), 0, 1) != af)
+    setsockname(addr, (af == AF_INET ? "0.0.0.0" : "::"), 0, 0);
   /* Remember this 'self-lookup failed' thingie?
      I have good news - you won't see it again ;) */
 }
@@ -369,30 +366,27 @@ int alloctclsock(int sock, int mask, Tcl_FileProc *proc, ClientData cd)
  */
 void setsock(int sock, int options)
 {
-  int i = allocsock(sock, options), parm;
+  int i = allocsock(sock, options), parm = 1;
   struct threaddata *td = threaddata();
-  int res;
+  struct linger linger = {0};
 
   if (i == -1) {
     putlog(LOG_MISC, "*", "Sockettable full.");
     return;
   }
   if (((sock != STDOUT) || backgrd) && !(td->socklist[i].flags & SOCK_NONSOCK)) {
-    parm = 1;
-    setsockopt(sock, SOL_SOCKET, SO_KEEPALIVE, (void *) &parm, sizeof(int));
-
-    parm = 0;
-    setsockopt(sock, SOL_SOCKET, SO_LINGER, (void *) &parm, sizeof(int));
-
+    if (setsockopt(sock, SOL_SOCKET, SO_KEEPALIVE, &parm, sizeof parm))
+      debug2("net: setsock(): setsockopt() s %i level SOL_SOCKET optname SO_KEEPALIVE error %s", sock, strerror(errno));
+    if (setsockopt(sock, SOL_SOCKET, SO_LINGER, &linger, sizeof(struct linger)))
+      debug2("net: setsock(): setsockopt() s %i level SOL_SOCKET optname SO_LINGER error %s", sock, strerror(errno));
     /* Turn off Nagle's algorithm, see man tcp */
-    parm = 1;
-    if ((res = setsockopt(sock, IPPROTO_TCP, TCP_NODELAY, &parm, sizeof parm)))
-      debug2("net: setsock(): setsockopt() s %i level IPPROTO_TCP optname TCP_NODELAY error %i", sock, res);
+    if (setsockopt(sock, IPPROTO_TCP, TCP_NODELAY, &parm, sizeof parm))
+      debug2("net: setsock(): setsockopt() s %i level IPPROTO_TCP optname TCP_NODELAY error %s", sock, strerror(errno));
   }
   if (options & SOCK_LISTEN) {
     /* Tris says this lets us grab the same port again next time */
-    parm = 1;
-    setsockopt(sock, SOL_SOCKET, SO_REUSEADDR, (void *) &parm, sizeof(int));
+    if (setsockopt(sock, SOL_SOCKET, SO_REUSEADDR, &parm, sizeof parm))
+      debug2("net: setsock(): setsockopt() s %i level SOL_SOCKET optname SO_REUSEADDR error %s", sock, strerror(errno));
   }
   /* Yay async i/o ! */
   if ((sock != STDOUT) || backgrd)
@@ -523,7 +517,7 @@ static int get_port_from_addr(const sockname_t *addr)
 #ifdef IPV6
   return ntohs((addr->family == AF_INET) ? addr->addr.s4.sin_port : addr->addr.s6.sin6_port);
 #else
-  return addr->addr.s4.sin_port;
+  return ntohs(addr->addr.s4.sin_port);
 #endif
 }
 
@@ -541,16 +535,16 @@ int open_telnet_raw(int sock, sockname_t *addr)
   socklen_t res_len;
   fd_set sockset;
   struct timeval tv;
-  int i, rc, res;
+  int i, j, rc, res;
 
   for (i = 0; i < dcc_total; i++)
     if (dcc[i].sock == sock) { /* Got idx from sock ? */
 #ifdef TLS
-      debug4("net: open_telnet_raw(): idx %i host %s port %i ssl %i",
-             i, dcc[i].host, dcc[i].port, dcc[i].ssl);
+      debug5("net: open_telnet_raw(): idx %i host %s ip %s port %i ssl %i",
+             i, dcc[i].host, iptostr(&addr->addr.sa), dcc[i].port, dcc[i].ssl);
 #else
-      debug3("net: open_telnet_raw(): idx %i host %s port %i",
-             i, dcc[i].host, dcc[i].port);
+      debug4("net: open_telnet_raw(): idx %i host %s ip %s port %i",
+             i, dcc[i].host, iptostr(&addr->addr.sa), dcc[i].port);
 #endif
       break;
     }
@@ -558,13 +552,19 @@ int open_telnet_raw(int sock, sockname_t *addr)
   if (bind(sock, &name.addr.sa, name.addrlen) < 0) {
     return -1;
   }
-  for (i = 0; i < threaddata()->MAXSOCKS; i++) {
-    if (!(socklist[i].flags & SOCK_UNUSED) && (socklist[i].sock == sock))
-      socklist[i].flags = (socklist[i].flags & ~SOCK_VIRTUAL) | SOCK_CONNECT;
+  for (j = 0; j < threaddata()->MAXSOCKS; j++) {
+    if (!(socklist[j].flags & SOCK_UNUSED) && (socklist[j].sock == sock))
+      socklist[j].flags = (socklist[j].flags & ~SOCK_VIRTUAL) | SOCK_CONNECT;
   }
   if (addr->family == AF_INET && firewall[0])
     return proxy_connect(sock, addr);
   rc = connect(sock, &addr->addr.sa, addr->addrlen);
+  /* To minimize a proven race condition, call ident here (especially when
+   * rc < 0 and errno == EINPROGRESS)
+   */
+  if (dcc[i].status & STAT_SERV) {
+    check_tcl_event("ident");
+  }
   if (rc < 0) {
     if (errno == EINPROGRESS) {
       /* Async connection... don't return socket descriptor
@@ -581,6 +581,7 @@ int open_telnet_raw(int sock, sockname_t *addr)
       if (res == ECONNREFUSED) { /* Connection refused */
         debug2("net: attempted socket connection refused: %s:%i",
                iptostr(&addr->addr.sa), get_port_from_addr(addr));
+        errno = res;
         return -4;
       }
       if (res != 0) {
@@ -876,8 +877,20 @@ int sockread(char *s, int *len, sock_list *slist, int slistmax, int tclonly)
   int grab = 511, tclsock = -1, events = 0;
   struct threaddata *td = threaddata();
   int nfds;
+#ifdef EGG_TDNS
+  int fd;
+  struct dns_thread_node *dtn, *dtn_prev;
+#endif
 
   nfds_r = preparefdset(&fdr, slist, slistmax, tclonly, TCL_READABLE);
+#ifdef EGG_TDNS
+  for (dtn = dns_thread_head->next; dtn; dtn = dtn->next) {
+    fd = dtn->fildes[0];
+    FD_SET(fd, &fdr);
+    if (fd > nfds_r)
+      nfds_r = fd;
+  }
+#endif
   nfds_w = preparefdset(&fdw, slist, slistmax, 1, TCL_WRITABLE);
   nfds_e = preparefdset(&fde, slist, slistmax, 1, TCL_EXCEPTION);
 
@@ -952,12 +965,6 @@ int sockread(char *s, int *len, sock_list *slist, int slistmax, int tclonly)
                      ERR_error_string(ERR_get_error(), 0), err);
             x = -1;
           }
-        } else if (slist[i].flags & SOCK_SENTTLS) {
-          /* We are awaiting a reply on our "starttls", only read
-           * strlen("starttls -\n") bytes so we don't accidentally
-           * read the Client Hello from the ssl handshake */
-          x = read(slist[i].sock, s, strlen("starttls -\n"));
-          slist[i].flags &= ~SOCK_SENTTLS;
         } else
           x = read(slist[i].sock, s, grab);
       }
@@ -1022,6 +1029,23 @@ int sockread(char *s, int *len, sock_list *slist, int slistmax, int tclonly)
                                            events);
     return -5;
   }
+#ifdef EGG_TDNS
+  dtn_prev = dns_thread_head;
+  for (dtn = dtn_prev->next; dtn; dtn = dtn->next) {
+    fd = dtn->fildes[0];
+    if (FD_ISSET(fd, &fdr)) {
+      if (dtn->type == DTN_TYPE_HOSTBYIP)
+        call_hostbyip(&dtn->addr, dtn->host, dtn->ok);
+      else
+        call_ipbyhost(dtn->host, &dtn->addr, dtn->ok);
+      close(dtn->fildes[0]);
+      dtn_prev->next = dtn->next;
+      nfree(dtn);
+      dtn = dtn_prev;
+    }
+    dtn_prev = dtn;
+  }
+#endif
   return -3;
 }
 
@@ -1050,7 +1074,7 @@ int sockread(char *s, int *len, sock_list *slist, int slistmax, int tclonly)
 
 int sockgets(char *s, int *len)
 {
-  char xx[514], *p, *px;
+  char xx[RECVLINEMAX], *p, *px, *p2;
   int ret, i, data = 0;
   size_t len2;
 
@@ -1064,10 +1088,19 @@ int sockgets(char *s, int *len)
          */
         p = strpbrk(socklist[i].handler.sock.inbuf, "\r\n");
         if (p != NULL) {
-          *p++ = 0;
-          while (*p == '\n' || *p == '\r')
+
+          /* this function is used not only for irc connections. dont remove
+           * empty lines for they could be important like for example for http
+           * header termination.
+           */
+          p2 = p;
+          if (*p == '\r')
             p++;
-          strlcpy(s, socklist[i].handler.sock.inbuf, 511);
+          if (*p == '\n')
+            p++;
+          *p2 = 0;
+
+          strlcpy(s, socklist[i].handler.sock.inbuf, RECVLINEMAX-1);
           if (*p) {
             len2 = strlen(p) + 1;
             px = nmalloc(len2);
@@ -1083,15 +1116,15 @@ int sockgets(char *s, int *len)
         }
       } else {
         /* Handling buffered binary data (must have been SOCK_BUFFER before). */
-        if (socklist[i].handler.sock.inbuflen <= 510) {
+        if (socklist[i].handler.sock.inbuflen <= RECVLINEMAX-2) {
           *len = socklist[i].handler.sock.inbuflen;
           memcpy(s, socklist[i].handler.sock.inbuf, socklist[i].handler.sock.inbuflen);
           nfree(socklist[i].handler.sock.inbuf);
           socklist[i].handler.sock.inbuf = NULL;
           socklist[i].handler.sock.inbuflen = 0;
         } else {
-          /* Split up into chunks of 510 bytes. */
-          *len = 510;
+          /* Split up into chunks of RECVLINEMAX-2 bytes. */
+          *len = RECVLINEMAX-2;
           memcpy(s, socklist[i].handler.sock.inbuf, *len);
           memcpy(socklist[i].handler.sock.inbuf, socklist[i].handler.sock.inbuf + *len, *len);
           socklist[i].handler.sock.inbuflen -= *len;
@@ -1156,17 +1189,17 @@ int sockgets(char *s, int *len)
     strcpy(socklist[ret].handler.sock.inbuf, p);
     strcat(socklist[ret].handler.sock.inbuf, xx);
     nfree(p);
-    if (strlen(socklist[ret].handler.sock.inbuf) < 512) {
+    if (strlen(socklist[ret].handler.sock.inbuf) < RECVLINEMAX) {
       strcpy(xx, socklist[ret].handler.sock.inbuf);
       nfree(socklist[ret].handler.sock.inbuf);
       socklist[ret].handler.sock.inbuf = NULL;
       socklist[ret].handler.sock.inbuflen = 0;
     } else {
       p = socklist[ret].handler.sock.inbuf;
-      socklist[ret].handler.sock.inbuflen = strlen(p) - 510;
+      socklist[ret].handler.sock.inbuflen = strlen(p) - RECVLINEMAX-2;
       socklist[ret].handler.sock.inbuf = nmalloc(socklist[ret].handler.sock.inbuflen + 1);
-      strcpy(socklist[ret].handler.sock.inbuf, p + 510);
-      *(p + 510) = 0;
+      strcpy(socklist[ret].handler.sock.inbuf, p + RECVLINEMAX-2);
+      *(p + RECVLINEMAX-2) = 0;
       strcpy(xx, p);
       nfree(p);
       /* (leave the rest to be post-pended later) */
@@ -1187,7 +1220,7 @@ int sockgets(char *s, int *len)
 /* if (!s[0]) strcpy(s," ");  */
   if (!data) { 
     s[0] = 0;
-    if (strlen(xx) >= 510) {
+    if (strlen(xx) >= RECVLINEMAX-2) {
       /* String is too long, so just insert fake \n */
       strcpy(s, xx);
       xx[0] = 0;

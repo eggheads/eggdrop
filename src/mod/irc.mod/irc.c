@@ -4,7 +4,7 @@
  */
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2019 Eggheads Development Team
+ * Copyright (C) 1999 - 2021 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -32,17 +32,16 @@
 #include <sys/utsname.h>
 
 static p_tcl_bind_list H_topc, H_splt, H_sign, H_rejn, H_part, H_pub, H_pubm;
-static p_tcl_bind_list H_nick, H_mode, H_kick, H_join, H_need;
+static p_tcl_bind_list H_nick, H_mode, H_kick, H_join, H_need, H_invt, H_ircaway;
 
 static Function *global = NULL, *channels_funcs = NULL, *server_funcs = NULL;
 
 static int ctcp_mode;
-static int strict_host;
 static int wait_split = 300;    /* Time to wait for user to return from net-split. */
-static int max_bans = 20;       /* Modified by net-type 1-4 */
+static int max_bans = 30;       /* Modified by net-type 1-4 */
 static int max_exempts = 20;    /* Modified by net-type 1-4 */
 static int max_invites = 20;    /* Modified by net-type 1-4 */
-static int max_modes = 20;      /* Modified by net-type 1-4 */
+static int max_modes = 30;      /* Modified by net-type 1-4 */
 static int bounce_bans = 0;
 static int bounce_exempts = 0;
 static int bounce_invites = 0;
@@ -58,6 +57,7 @@ static int kick_method = 1;     /* How many kicks does the IRC network support
                                  * at once? Use 0 for as many as possible.
                                  * (Ernst 18/3/1998) */
 static int keepnick = 1;        /* Keep nick */
+static int twitch = 0;          /* Is this a Twitch server? */
 static int prevent_mixing = 1;  /* Prevent mixing old/new modes */
 static int rfc_compliant = 1;   /* Value depends on net-type. */
 static int include_lk = 1;      /* For correct calculation in real_add_mode. */
@@ -276,10 +276,12 @@ static int hand_on_chan(struct chanset_t *chan, struct userrec *u)
 
 static void refresh_who_chan(char *channame)
 {
-  if (use_354)
-    dprintf(DP_MODE, "WHO %s c%%chnuf\n", channame);
-  else
-    dprintf(DP_MODE, "WHO %s\n", channame);
+  if (!twitch) {    /* Twitch doesn't support WHOs */
+    if (use_354)
+      dprintf(DP_MODE, "WHO %s c%%chnufat,222\n", channame);
+    else
+      dprintf(DP_MODE, "WHO %s\n", channame);
+  }
   return;
 }
 
@@ -405,7 +407,7 @@ static int any_ops(struct chanset_t *chan)
 
 /* Reset channel information.
  */
-void reset_chan_info(struct chanset_t *chan, int reset)
+void reset_chan_info(struct chanset_t *chan, int reset, int do_reset)
 {
   /* Leave the channel if we aren't supposed to be there */
   if (channel_inactive(chan)) {
@@ -417,7 +419,13 @@ void reset_chan_info(struct chanset_t *chan, int reset)
   if (channel_pending(chan))
     return;
 
-  clear_channel(chan, reset);
+  if (net_type_int != NETT_TWITCH) { /* Twitch won't reset any of this */
+    if (do_reset) {
+      clear_channel(chan, reset);
+    }
+  } else {
+    return;
+  }
   if ((reset & CHAN_RESETBANS) && !(chan->status & CHAN_ASKEDBANS)) {
     chan->status |= CHAN_ASKEDBANS;
     dprintf(DP_MODE, "MODE %s +b\n", chan->name);
@@ -441,7 +449,7 @@ void reset_chan_info(struct chanset_t *chan, int reset)
     chan->status &= ~CHAN_ASKEDMODES;
     dprintf(DP_MODE, "MODE %s\n", chan->name);
   }
-  if (reset & CHAN_RESETWHO) {
+  if ((reset & CHAN_RESETWHO) || (reset & CHAN_RESETAWAY)) {
     chan->status |= CHAN_PEND;
     chan->status &= ~CHAN_ACTIVE;
     refresh_who_chan(chan->name);
@@ -745,6 +753,34 @@ static int channels_2char STDVAR
   return TCL_OK;
 }
 
+static int invite_4char STDVAR
+{
+  Function F = (Function) cd;
+
+  BADARGS(5, 5, " nick uhost channel invitee");
+
+  CHECKVALIDITY(invite_4char);
+  F(argv[1], argv[2], argv[3], argv[4]);
+  return TCL_OK;
+}
+
+static int check_tcl_ircaway(char *nick, char *from, char *mask,
+            struct userrec *u, char *chan, char *msg)
+{
+  int x;
+  char *hand = u ? u->handle : "*";
+  struct flag_record fr = { FR_GLOBAL | FR_CHAN | FR_ANYWH, 0, 0, 0, 0, 0 };
+
+  Tcl_SetVar(interp, "_ircaway1", nick, 0);
+  Tcl_SetVar(interp, "_ircaway2", from, 0);
+  Tcl_SetVar(interp, "_ircaway3", hand, 0);
+  Tcl_SetVar(interp, "_ircaway4", chan, 0);
+  Tcl_SetVar(interp, "_ircaway5", msg ? msg : "", 0);
+  x = check_tcl_bind(H_ircaway, mask, &fr, " $_ircaway1, $_ircaway2 $_ircaway3 "
+                        "$_ircaway4 $_ircaway5", MATCH_MASK | BIND_STACKABLE);
+  return (x == BIND_EXEC_LOG);
+}
+
 static void check_tcl_joinspltrejn(char *nick, char *uhost, struct userrec *u,
                                    char *chname, p_tcl_bind_list table)
 {
@@ -837,6 +873,19 @@ static void check_tcl_kick(char *nick, char *uhost, struct userrec *u,
   check_tcl_bind(H_kick, args, &fr,
                  " $_kick1 $_kick2 $_kick3 $_kick4 $_kick5 $_kick6",
                  MATCH_MASK | BIND_USE_ATTR | BIND_STACKABLE);
+}
+
+static void check_tcl_invite(char *nick, char *from, char *chan, char *invitee)
+{
+  char args[1024];
+
+  Tcl_SetVar(interp, "_invite1", nick, 0);
+  Tcl_SetVar(interp, "_invite2", from, 0);
+  Tcl_SetVar(interp, "_invite3", chan, 0);
+  Tcl_SetVar(interp, "_invite4", invitee, 0);
+  snprintf(args, sizeof args, "%s %s", chan, invitee);
+  check_tcl_bind(H_invt, args, 0, " $_invite1 $_invite2 $_invite3 $_invite4",
+                    MATCH_MASK | BIND_STACKABLE);
 }
 
 static int check_tcl_pub(char *nick, char *from, char *chname, char *msg)
@@ -932,7 +981,6 @@ static tcl_ints myints[] = {
   {"max-exempts",     &max_exempts,     0},
   {"max-invites",     &max_invites,     0},
   {"max-modes",       &max_modes,       0},
-  {"strict-host",     &strict_host,     0}, /* arthur2 */
   {"ctcp-mode",       &ctcp_mode,       0}, /* arthur2 */
   {"keep-nick",       &keepnick,        0}, /* guppy */
   {"prevent-mixing",  &prevent_mixing,  0},
@@ -1012,6 +1060,19 @@ static void irc_report(int idx, int details)
     q[k - 2] = 0;
     dprintf(idx, "    %s\n", q);
   }
+  /* List status of account tracking. For 100% accuracy, this requires
+   * WHOX ability (354 messages) and the extended-join and account_notify
+   * capabilities to be enabled.
+   */
+  if (use_354 && extended_join && account_notify) {
+    dprintf(idx, "    Account tracking: Enabled\n");
+  } else {
+    dprintf(idx, "    Account tracking: Disabled\n"
+                 "      (Missing capabilities:%s%s%s)\n",
+                      use_354 ? "" : " use-354",
+                      extended_join ? "" : " extended-join",
+                      account_notify ? "" : " account-notify");
+  }
 }
 
 /* Many networks either support max_bans/invite/exempts/ *or*
@@ -1023,10 +1084,22 @@ static void do_nettype()
   switch (net_type_int) {
   case NETT_EFNET:
   case NETT_HYBRID_EFNET:
-  case NETT_FREENODE:
     kick_method = 1;
     modesperline = 4;
     use_354 = 0;
+    use_exempts = 1;
+    use_invites = 1;
+    max_bans = 100;
+    max_exempts = 100;
+    max_invites = 100;
+    max_modes = 100;
+    rfc_compliant = 1;
+    include_lk = 0;
+    break;
+  case NETT_FREENODE:
+    kick_method = 1;
+    modesperline = 4;
+    use_354 = 1;
     use_exempts = 1;
     use_invites = 1;
     max_bans = 100;
@@ -1101,6 +1174,21 @@ static void do_nettype()
     rfc_compliant = 1;
     include_lk = 0;
     break;
+  case NETT_TWITCH:
+    keepnick = 0;
+    twitch = 1;
+    kick_method = 1;
+    modesperline = 4;
+    use_354 = 0;
+    use_exempts = 1;
+    use_invites = 1;
+    max_bans = 100;
+    max_exempts = 100;
+    max_invites = 100;
+    max_modes = 100;
+    rfc_compliant = 1;
+    include_lk = 0;
+    break;
   default:
     break;
   }
@@ -1150,15 +1238,19 @@ static char *irc_close()
   del_bind_table(H_nick);
   del_bind_table(H_mode);
   del_bind_table(H_kick);
+  del_bind_table(H_invt);
   del_bind_table(H_join);
   del_bind_table(H_pubm);
   del_bind_table(H_pub);
   del_bind_table(H_need);
+  del_bind_table(H_ircaway);
   rem_tcl_strings(mystrings);
   rem_tcl_ints(myints);
   rem_builtins(H_dcc, irc_dcc);
   rem_builtins(H_msg, C_msg);
   rem_builtins(H_raw, irc_raw);
+  rem_builtins(H_rawt, irc_rawt);
+  rem_builtins(H_isupport, irc_isupport_binds);
   rem_tcl_commands(tclchan_cmds);
   rem_help_reference("irc.help");
   del_hook(HOOK_MINUTELY, (Function) check_expired_chanstuff);
@@ -1210,7 +1302,11 @@ static Function irc_table[] = {
   (Function) me_voice,
   /* 24 - 27 */
   (Function) getchanmode,
-  (Function) reset_chan_info
+  (Function) reset_chan_info,
+  (Function) & H_invt,          /* p_tcl_bind_list              */
+  (Function) & twitch,          /* int                          */
+  /* 28 - 31 */
+  (Function) & H_ircaway        /* p_tcl_bind_list              */
 };
 
 char *irc_start(Function *global_funcs)
@@ -1260,6 +1356,8 @@ char *irc_start(Function *global_funcs)
   add_builtins(H_dcc, irc_dcc);
   add_builtins(H_msg, C_msg);
   add_builtins(H_raw, irc_raw);
+  add_builtins(H_rawt, irc_rawt);
+  add_builtins(H_isupport, irc_isupport_binds);
   add_tcl_commands(tclchan_cmds);
   add_help_reference("irc.help");
   H_topc = add_bind_table("topc", HT_STACKABLE, channels_5char);
@@ -1270,10 +1368,12 @@ char *irc_start(Function *global_funcs)
   H_nick = add_bind_table("nick", HT_STACKABLE, channels_5char);
   H_mode = add_bind_table("mode", HT_STACKABLE, channels_6char);
   H_kick = add_bind_table("kick", HT_STACKABLE, channels_6char);
+  H_invt = add_bind_table("invt", HT_STACKABLE, invite_4char);
   H_join = add_bind_table("join", HT_STACKABLE, channels_4char);
   H_pubm = add_bind_table("pubm", HT_STACKABLE, channels_5char);
   H_pub = add_bind_table("pub", 0, channels_5char);
   H_need = add_bind_table("need", HT_STACKABLE, channels_2char);
+  H_ircaway = add_bind_table("ircaway", HT_STACKABLE, channels_5char);
   do_nettype();
   return NULL;
 }

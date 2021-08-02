@@ -4,7 +4,7 @@
  */
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2019 Eggheads Development Team
+ * Copyright (C) 1999 - 2021 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -65,7 +65,6 @@
 
 extern struct dcc_t *dcc;
 
-
 typedef struct lang_st {
   struct lang_st *next;
   char *lang;
@@ -98,6 +97,7 @@ static char *get_specific_langfile(char *, lang_sec *);
 static char *get_langfile(lang_sec *);
 static int split_lang(char *, char **, char **);
 int cmd_loadlanguage(struct userrec *, int, char *);
+char language[64];
 
 
 /* Add a new preferred language to the list of languages. Newly added
@@ -132,7 +132,7 @@ void add_lang(char *lang)
   if (langpriority)
     lp->next = langpriority;
   langpriority = lp;
-  debug1("LANG: Language loaded: %s", lang);
+  debug1("LANG: Language added to list: %s", lang);
 }
 
 /* Remove a language from the list of preferred languages.
@@ -665,6 +665,7 @@ static int tcl_plslang STDVAR
 {
   BADARGS(2, 2, " language");
 
+  strlcpy(language, argv[1], sizeof language);
   add_lang(argv[1]);
   recheck_lang_sections();
 

@@ -5,7 +5,7 @@
  */
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2019 Eggheads Development Team
+ * Copyright (C) 1999 - 2021 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -118,9 +118,7 @@ static void bg_do_detach(pid_t p)
   } else
     printf(EGG_NOWRITE, pid_file);
   printf("Launched into the background  (pid: %li)\n\n", (long) p);
-#ifdef HAVE_SETPGID
   setpgid(p, p);
-#endif
   exit(0);
 }
 

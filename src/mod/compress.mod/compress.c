@@ -7,7 +7,7 @@
  * by Jean-loup Gailly and Miguel Albrecht.
  */
 /*
- * Copyright (C) 2000 - 2019 Eggheads Development Team
+ * Copyright (C) 2000 - 2021 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -152,6 +152,7 @@ static int uncompress_to_file(char *f_src, char *f_target)
     if (len < 0) {
       putlog(LOG_MISC, "*", "Failed to uncompress file `%s': gzread failed.",
              f_src);
+      fclose(fout);
       return COMPF_ERROR;
     }
     if (!len)
@@ -159,6 +160,7 @@ static int uncompress_to_file(char *f_src, char *f_target)
     if ((int) fwrite(buf, 1, (unsigned int) len, fout) != len) {
       putlog(LOG_MISC, "*", "Failed to uncompress file `%s': fwrite "
              "failed: %s.", f_src, strerror(errno));
+      fclose(fout);
       return COMPF_ERROR;
     }
   }

@@ -234,7 +234,7 @@ See also: chhandle
    channel-specific commands (like 'say' and 'op') take affect on.
 
    Valid flags are:
-     %bj%b  joins, parts, quits, and netsplits on the channel
+     %bj%b  joins, parts, quits, aways, and netsplits on the channel
      %bk%b  kicks, bans, and mode changes on the channel
      %bm%b  private msgs, notices and ctcps to the bot
      %bp%b  public text on the channel

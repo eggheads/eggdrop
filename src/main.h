@@ -4,7 +4,7 @@
  */
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2019 Eggheads Development Team
+ * Copyright (C) 1999 - 2021 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -143,5 +143,7 @@ extern struct dcc_table DCC_CHAT, DCC_BOT, DCC_LOST, DCC_SCRIPT, DCC_BOT_NEW,
 #define EGG_STR(x) #x
 
 #define EGG_AC_ARGS EGG_MACRO_STR(EGG_AC_ARGS_RAW)
+
+#define ARRAY_SIZE(x) (sizeof (x) / sizeof *(x))
 
 #endif /* _EGG_MAIN_H */
