@@ -5,7 +5,7 @@
 # moretools was originally authored by David Sesno <walker@shell.pcrealm.net>
 # modified for 1.3.0 bots by TG
 #
-# Copyright (C) 1999, 2003 - 2010 Eggheads Development Team
+# Copyright (C) 1999, 2003 - 2021 Eggheads Development Team
 #
 # Tothwolf  02May1999: rewritten and updated
 # guppy     02May1999: updated even more
@@ -23,6 +23,7 @@
 # Souperman 05Nov2002: added ordnumber
 # Tothwolf  27Dec2003: added matchbotattrany, optimized ordnumber,
 #                      more minor changes
+# CrazyCat	02Aug2021: added ucfirst, ucwords, uclwords
 #
 ########################################
 #
@@ -149,6 +150,16 @@
 #   "ordinal" version of that number, i.e. 1 -> "1st",
 #   2 -> "2nd", 3 -> "3rd", 4 -> "4th", etc.
 #   else return <string>
+#
+# ucfirst <string>
+#   Make a string's first character uppercase
+#
+# ucwords <string>
+#   Uppercase the first character of each word in a string
+#
+# uclwords <string>
+#   Uppercase the first character of each word in a string,
+#   lowercase others
 #
 ########################################
 
@@ -436,4 +447,25 @@ proc ordnumber {string} {
     return ${string}th
   }
   return $string
+}
+
+proc ucfirst {string} {
+	set string [join $string]
+	set f [string toupper [string index $string 0]]
+	set string [string replace $string 0 0 $f]
+	return $string
+}
+
+proc ucwords {string} {
+	list asent
+	foreach word [split [join $string]] {
+		lappend asent [::string::ucfirst $word]
+	}
+	set string [join $asent]
+	return $string
+}
+
+proc uclwords {string} {
+	set string [::string::ucwords [string tolower [join $string]]]
+	return $string
 }
