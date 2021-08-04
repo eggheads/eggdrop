@@ -1150,7 +1150,7 @@ int main(int arg_c, char **arg_v)
   link_statics();
 #endif
 #ifdef EGG_TDNS
-  /* initialize dns_thread_head before userfile loading */
+  /* initialize dns_thread_head before chanprog() */
   dns_thread_head = nmalloc(sizeof(struct dns_thread_node));
   dns_thread_head->next = NULL;
 #endif
