@@ -1814,9 +1814,9 @@ listen [ip] <port> <type> [options [flag]]
 
       Returns: port number or error message
 
-    listen [ip] <port> script <proc> <flag>
+    listen [ip] <port> script <proc> [flag]
 
-      Description: accepts connections which are immediately routed to a proc. The proc is called with one parameter: the idx of the new connection. If the script type is used, flag must also be set. Flag may currently only be 'pub', which makes the bot allow anyone to connect and not perform an ident lookup.
+      Description: accepts connections which are immediately routed to a proc. The proc is called with one parameter: the idx of the new connection. The optional flag parameter currently only accepts 'pub' as a value. By specifying 'pub' as a flag, Eggdrop will skip the ident check for the user regardless of settings in the config file. This will allow any user to attempt a connection, and result in Eggdrop using "-telnet!telnet@host" instead of "-telnet!<ident>@host" as a hostmask to match against the user.
 
       Returns: port number or error message
 

@@ -1322,14 +1322,10 @@ static int tcl_listen STDVAR
       Tcl_AppendResult(irp, "a proc name must be specified for a script listen", NULL);
       return TCL_ERROR;
     }
-    if ((!ip[0] && (argc==4)) || (ip[0] && argc==5)) {
-      Tcl_AppendResult(irp, "missing flag. allowed flags: pub", NULL);
-      return TCL_ERROR;
-    }
     if ((!ip[0] && (argc==5)) || (argc == 6)) {
       i++;
       if (strcmp(argv[i], "pub")) {
-        Tcl_AppendResult(irp, "unknown flag: ", flag, ". allowed flags: pub",
+        Tcl_AppendResult(irp, "unknown flag: ", argv[i], ". allowed flags: pub",
               NULL);
         return TCL_ERROR;
       }
