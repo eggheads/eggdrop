@@ -2460,7 +2460,7 @@ unlink <bot> [comment]
 encrypt <key> <string>
 ^^^^^^^^^^^^^^^^^^^^^^
 
-  Returns: encrypted string (using the currently loaded encryption module), encoded into ASCII using base-64. As of v1.8.4, the default blowfish encryption module can use either the older ECB mode (currently used by default for compatibility reasons), or the more recent and more-secure CBC mode. You can explicitly request which encryption mode to use by prefixing the encryption key with either "ecb:" or "cbc:", or by using the blowfish-use-mode setting in the config file. Note: the default encryption mode for this function is planned to transition from ECB to CBC in v1.9.1.
+  Returns: encrypted string (using the currently loaded encryption module), encoded into ASCII using base-64. As of v1.8.4, the default blowfish encryption module can use either the older ECB mode (currently used by default for compatibility reasons), or the more recent and more-secure CBC mode. You can explicitly request which encryption mode to use by prefixing the encryption key with either "ecb:" or "cbc:", or by using the blowfish-use-mode setting in the config file. Note: the default encryption mode for this function is planned to transition from ECB to CBC in v1.9.0.
 
   Module: encryption
 
@@ -3091,7 +3091,7 @@ The following is a list of bind types and how they work. Below each bind type is
 
   procname <from> <keyword> <text>
 
-  IMPORTANT: While not necessarily deprecated, this bind has been supplanted by the RAWT bind as of 1.9.1. You probably want to be using RAWT, not RAW.
+  IMPORTANT: While not necessarily deprecated, this bind has been supplanted by the RAWT bind as of 1.9.0. You probably want to be using RAWT, not RAW.
 
   Description: previous versions of Eggdrop required a special compile option to enable this binding, but it's now standard. The keyword is either a numeric, like "368", or a keyword, such as "PRIVMSG". "from" will be the server name or the source user (depending on the keyword); flags are ignored. The order of the arguments is identical to the order that the IRC server sends to the bot. The pre-processing only splits it apart enough to determine the keyword. If the proc returns 1, Eggdrop will not process the line any further (this could cause unexpected behavior in some cases). The RAW bind does not support the IRCv3 message-tags capability, please see RAWT for more information.
 
@@ -3470,7 +3470,7 @@ The following is a list of bind types and how they work. Below each bind type is
 
   procname <from> <keyword> <text> <tag>
 
-  Description: similar to the RAW bind, but allows an extra field for the IRCv3 message-tags capability. The keyword is either a numeric, like "368", or a keyword, such as "PRIVMSG" or "TAGMSG". "from" will be the server name or the source user (depending on the keyword); flags are ignored. "tag" will be the contents, if any, of the entire tag message prefixed to the server message in a dict format, such as "msgid 890157217279768 aaa bbb". The order of the arguments is identical to the order that the IRC server sends to the bot. If the proc returns 1, Eggdrop will not process the line any further (this could cause unexpected behavior in some cases). As of 1.9.1, it is recommended to use the RAWT bind instead of the RAW bind.
+  Description: similar to the RAW bind, but allows an extra field for the IRCv3 message-tags capability. The keyword is either a numeric, like "368", or a keyword, such as "PRIVMSG" or "TAGMSG". "from" will be the server name or the source user (depending on the keyword); flags are ignored. "tag" will be the contents, if any, of the entire tag message prefixed to the server message in a dict format, such as "msgid 890157217279768 aaa bbb". The order of the arguments is identical to the order that the IRC server sends to the bot. If the proc returns 1, Eggdrop will not process the line any further (this could cause unexpected behavior in some cases). As of 1.9.0, it is recommended to use the RAWT bind instead of the RAW bind.
 
 (53) ACCOUNT (stackable)
 
