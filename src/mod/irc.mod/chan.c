@@ -1226,6 +1226,24 @@ static int got315(char *from, char *msg)
   return 0;                            /* Don't check for I-Lines here.     */
 }
 
+/* Got 335 (user is a bot) */
+static int got335(char *from, char *msg)
+{
+  struct chanset_t *chan;
+  memberlist *m;
+  char *nick;
+
+  nick = strtok(msg, " ");
+  /* Run for each channel the user is on */
+  for (chan = chanset; chan; chan = chan->next) {
+    m = ismember(chan, nick);
+    if (m) {
+      m->flags |= IRCBOT;
+    }
+  }
+  return 0;
+}
+
 /* Got AWAY message; only valid for IRCv3 away-notify capability */
 static int gotaway(char *from, char *msg)
 {
@@ -2714,6 +2732,7 @@ static cmd_t irc_raw[] = {
   {"NOTICE",  "",   (IntFunc) gotnotice,    "irc:notice"},
   {"MODE",    "",   (IntFunc) gotmode,        "irc:mode"},
   {"AWAY",    "",   (IntFunc) gotaway,     "irc:gotaway"},
+  {"335",     "",   (IntFunc) got335,          "irc:335"},
   {"346",     "",   (IntFunc) got346,          "irc:346"},
   {"347",     "",   (IntFunc) got347,          "irc:347"},
   {"348",     "",   (IntFunc) got348,          "irc:348"},
