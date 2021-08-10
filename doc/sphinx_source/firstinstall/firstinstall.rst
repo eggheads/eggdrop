@@ -49,7 +49,7 @@ The 1.9 Eggdrop tree is currently under active development and the most recent c
 Download locations
 ~~~~~~~~~~~~~~~~~~
 
-The developers distribute Eggdrop via two main methods: FTP, and GitHub. For FTP, it is packaged in tarball format (with the .tar.gz filename extension), with the version number in the filename. The Eggdrop 1.9.0 source, for example, would be named eggdrop-1.9.0.tar.gz.
+The developers distribute Eggdrop via two main methods: FTP, and GitHub. For FTP, it is packaged in tarball format (with the .tar.gz filename extension), with the version number in the filename. The Eggdrop 1.9.1 source, for example, would be named eggdrop-1.9.1.tar.gz.
 
 `The Eggheads FTP <https://ftp.eggheads.org/pub/eggdrop/>`_ is a repository for the `current <https://ftp.eggheads.org/pub/eggdrop/source/1.9/eggdrop1.9.1.tar.gz>`_ version of Eggdrop, as well as the most current development snapshot and previous stable releases.
 
@@ -131,16 +131,14 @@ Below are some of the common settings used for Eggdrop:
 
 :set altnick: if you want to use [ ] { } \ characters in the bot's alternate nick, follow the backslash rule described previously.
 
-:set servers: you should specify multiple servers in this list, in case the bot is unable to connect to the first server. The format for this list is shown below: 
+:server add: you should specify multiple servers in this list, in case the bot is unable to connect to the first server. The format for this list is shown below: 
 
 .. code-block:: tcl
 
-  set servers {
-      you.need.to.change.this:6667
-      another.example.com:7000:password
-      [2001:db8:618:5c0:263::]:6669:password
-      ssl.example.net:+6697
-  }
+  server add you.need.to.change.this:6667
+  server add another.example.com:7000:password
+  server add [2001:db8:618:5c0:263::]:6669:password
+  server add ssl.example.net:+6697
 
 :set learn-users: this is an important setting that determines how users will be added to your Eggdrop. If set to 1, people can add themselves to the bot by sending 'hello' to it (the user will be added with the flags set in default-flags). If set to 0, users cannot add themselves - a master or owner must add them using the .adduser command.
 
