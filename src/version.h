@@ -27,5 +27,5 @@
  */
 
 #define EGG_STRINGVER "1.9.1"
-#define EGG_NUMVER 1090102
-#define EGG_PATCH "stable"
+#define EGG_NUMVER 1090103
+#define EGG_PATCH "bot005"
