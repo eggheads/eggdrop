@@ -516,6 +516,38 @@ static int tcl_isaway STDVAR
   return TCL_OK;
 }
 
+/* Checks if user is registered with the server as a bot. This requires the
+ * server to have the 005 BOT feature advertised, and the user to have set
+ * the corresponding usermode.
+ */
+static int tcl_isircbot STDVAR
+{
+  struct chanset_t *chan, *thechan = NULL;
+  memberlist *m;
+
+  BADARGS(2, 3, " nick ?channel?");
+
+  if (argc > 2) { /* If channel specified, does it exist? */
+    chan = findchan_by_dname(argv[2]);
+    thechan = chan;
+    if (!thechan) {
+      Tcl_AppendResult(irp, "illegal channel: ", argv[2], NULL);
+      return TCL_ERROR;
+    }
+  } else {
+    chan = chanset;
+  }
+  while (chan && (thechan == NULL || thechan == chan)) {
+    if ((m = ismember(chan, argv[1])) && chan_ircbot(m)) {
+      Tcl_AppendResult(irp, "1", NULL);
+      return TCL_OK;
+    }
+    chan = chan->next;
+  }
+  Tcl_AppendResult(irp, "0", NULL);
+  return TCL_OK;
+}
+
 static int tcl_getchanhost STDVAR
 {
   struct chanset_t *chan, *thechan = NULL;
@@ -1227,6 +1259,7 @@ static tcl_cmds tclchan_cmds[] = {
   {"maskhost",       tcl_maskhost},
   {"getchanidle",    tcl_getchanidle},
   {"isaway",         tcl_isaway},
+  {"isircbot",       tcl_isircbot},
   {"chanbans",       tcl_chanbans},
   {"chanexempts",    tcl_chanexempts},
   {"chaninvites",    tcl_chaninvites},

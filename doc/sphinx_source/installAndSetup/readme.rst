@@ -54,8 +54,7 @@ What is Eggdrop?
     This README file contains information about how to get Eggdrop, command
     line options for Eggdrop, what you may need to do when upgrading from
     older versions, a list of frequently asked questions, how to set up a
-    crontab, some boring legal stuff, info about the mailing list (a great
-    place to ask questions and a good place to report bugs), some basics
+    crontab, some boring legal stuff, some basics
     about git usage and some channels where you might get help with Eggdrop.
 
 ------------------
@@ -76,9 +75,9 @@ HOW TO GET EGGDROP
     Currently, the 1.9 tree of Eggdrop is developed at eggheads.org. You can
     get the latest STABLE version of Eggdrop from the following url:
 
-      https://geteggdrop.com/
+      `<https://geteggdrop.com/>`_
 
-    You might try www.eggheads.org for help and information.
+    You might try `<www.eggheads.org>`_ for help and information.
 
 ---------
 Git Usage
@@ -103,7 +102,7 @@ Git Usage
     Otherwise, you can download the development snapshot as a tar archive 
     from:
 
-      https://github.com/eggheads/eggdrop/archive/develop.tar.gz
+      `<https://github.com/eggheads/eggdrop/archive/develop.tar.gz>`_
 
 -------------
 Quick Startup
@@ -114,37 +113,6 @@ Quick Startup
 ---------
 Upgrading
 ---------
-
-
-**UPGRADING FROM A PRE-1.3 TO A 1.9 VERSION**
-
-    First of all, why are you still running pre-1.3?!
-
-    MAKE SURE YOU BACK UP YOUR USERFILE AND CHANFILE!
-
-    We can't stress this enough. If you are upgrading and you have even a
-    slight possibility of downgrading again later, you will HAVE to back up
-    your userfile or you will lose it. v1.3 of Eggdrop radically changed a
-    lot of things.
-
-    There are many major changes between v0.9, v1.0, v1.1 and v1.8, so PAY
-    ATTENTION to this part if you have a v0.9, 1.0 or 1.1 bot currently. If
-    you're just starting out, you can skip this section.
-
-    If you run share bots, you will need to upgrade them all at the same time
-    because of the new userfile format. Older bots will be able to link in,
-    but will not get or send a userfile. MAKE A NEW CONFIG FILE from the
-    example; there are some radical changes.
-
-    If you are upgrading from 0.9/1.0 to 1.9, just redo the whole thing.
-    Absolutely everything has changed, including the userfile and config file
-    formats.
-
-    If you are upgrading from 1.1/1.2 to 1.9, you will likely want to redo
-    the config file, as much has changed. BACK UP! You will need to run 'tclsh
-    scripts/weed/<userfile> c' to convert your userfile from v3 (1.1/1.2) to
-    v4 (1.3/1.4/1.5/1.6/1.8/1.9).
-
 
 **UPGRADING FROM AN OLDER 1.3/1.4/1.5/1.6/1.8 TO A 1.9 VERSION**
 
@@ -175,18 +143,11 @@ Command Line
 
     The options available are:
 
-      -n: Don't background. Normally, Eggdrop will move itself into the
-          background when you start it up, meaning you'll get another shell
-          prompt and you can do other things while the bot is running. With
-          -n, you won't return to the shell prompt until the bot exits (which
-          won't normally happen until it's killed). By default, -n will send
-          all log entries to the console.
-
-      -nt: Don't background, use terminal. This is just like -n, except that
+      -t: Don't background, use terminal. This is just like -n, except that
            instead of seeing log entries, your console will simulate a DCC
            chat with the bot.
 
-      -nc: Don't background, show channel info. This is just like -n, except
+      -c: Don't background, show channel info. This is just like -n, except
            that instead of seeing log entries, every 10 seconds your screen
            will clear and you will see the current channel status, sort of
            like "top".
@@ -304,14 +265,15 @@ Mailing List
 ------------
 
     There are currently a couple of mailing lists about Eggdrop.
-    eggheads@eggheads.org is the one relevant for posts about Eggdrop 1.8 and
+    eggheads@eggheads.org is the one relevant for posts about Eggdrop 1.9 and
     up (suggestions, help, etc).
 
     To subscribe to the eggheads mailing list, send email to
     eggheads-request@eggheads.org. In the body of the message, put "subscribe
-    eggheads". You can also go to the following url:
+    eggheads". We commonly use this list to announce new releases.You can also
+    go to the following url:
 
-      http://lists.eggheads.org/mailman/listinfo/eggheads
+      `<http://lists.eggheads.org/mailman/listinfo/eggheads>`_
 
     DO NOT SEND ROBEY EMAIL ABOUT EGGDROP!
 
@@ -339,12 +301,11 @@ Mailing List
     added to Eggdrop, things that should be removed or fixed, amazing problems
     that even stump the gurus, etc. are what we want to see here.
 
-    Bug reports should be sent to bugs@eggheads.org. Please read and fill out
-    the doc/BUG-REPORT file.
+    Bug reports should be generated in the issue section of
+    `<https://www.github.com/eggheads/eggdrop>`_
 
     DO NOT SEND HTML EMAILS TO ANY OF THE EGGHEADS.ORG MAILING LISTS. ANYONE
-    CAUGHT SENDING HTML EMAILS TO ONE OF THESE LISTS WILL BE REMOVED
-    IMMEDIATELY!
+    SENDING HTML EMAILS TO ONE OF THESE LISTS WILL BE REMOVED IMMEDIATELY!
 
 -------------
 Documentation
@@ -352,7 +313,8 @@ Documentation
 
     We're trying to keep the documentation up to date. If you feel that
     anything is missing here or that anything should be added, etc, please
-    email bugs@eggheads.org about it. Thank you!
+    create an issue, or better yet a pull request, at 
+    `<https://www.github.com/eggheads/eggdrop>`_ Thank you!
 
 --------------
 Obtaining Help
@@ -360,7 +322,7 @@ Obtaining Help
 
     You can obtain help with Eggdrop in the following IRC channels:
 
-      * FreeNode - #eggdrop (official channel), #eggheads (development discussion), #egghelp
+      * Libera Chat - #eggdrop (official channel), #eggheads (development discussion)
       * DALnet - #eggdrop
       * EFnet - #egghelp
       * IRCnet - #eggdrop
@@ -373,11 +335,8 @@ Obtaining Help
       * Don't type using CAPITAL letters, colors or bold.
       * Don't use  "!" and "?" excessively.
       * Don't /msg people without their permission.
-      * Don't repeat or paste large amounts of text to the channel.
-
-    If there are any other serious Eggdrop related channels that should be
-    added to the above list, please let us know.
-
+      * Don't repeat or paste more than 4 lines of text to the channel.
+      * Don't ask to ask- just state your question, along with any relevant details and error messages
 
 Copyright (C) 1997 Robey Pointer
 Copyright (C) 1999 - 2021 Eggheads Development Team

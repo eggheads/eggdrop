@@ -74,6 +74,7 @@ typedef struct memstruct {
 #define WASHALFOP    0x10000 /* was a halfop before a split                  */
 #define WHO_SYNCED   0x20000 /* who reply received for this member           */
 #define IRCAWAY      0x40000 /* is marked as away on IRC server              */
+#define IRCBOT       0x80000 /* is marked as a bot, per 005/IRCv3 standard   */
 
 #define chan_hasvoice(x)     (x->flags & CHANVOICE)
 #define chan_hasop(x)        (x->flags & CHANOP)
@@ -92,7 +93,8 @@ typedef struct memstruct {
 #define chan_washalfop(x)    (x->flags & WASHALFOP)
 #define chan_stopcheck(x)    (x->flags & STOPCHECK)
 #define chan_whosynced(x)    (x->flags & WHO_SYNCED)
-#define chan_ircaway(x)       (x->flags & IRCAWAY)
+#define chan_ircaway(x)      (x->flags & IRCAWAY)
+#define chan_ircbot(x)       (x->flags & IRCBOT)
 
 /* Why duplicate this struct for exempts and invites only under another
  * name? <cybah>

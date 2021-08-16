@@ -36,6 +36,7 @@ static int monitor732 = 0;
 static time_t last_invtime = (time_t) 0L;
 static char last_invchan[CHANNELLEN + 1] = "";
 static struct monitor_list *monitor = NULL;
+static char botflag005;
 
 static int got315(char *from, char *msg);
 
@@ -1194,6 +1195,10 @@ static int got352or4(struct chanset_t *chan, char *user, char *host,
     m->flags |= IRCAWAY;
   else
     m->flags &= ~IRCAWAY;
+  if (strchr(flags, botflag005) != NULL)
+    m->flags |= IRCBOT;
+  else
+    m->flags &= ~IRCBOT;
   if (!(m->flags & (CHANVOICE | CHANOP | CHANHALFOP)))
     m->flags |= STOPWHO;
   if (match_my_nick(nick) && any_ops(chan) && !me_op(chan)) {
@@ -1339,6 +1344,24 @@ static int got315(char *from, char *msg)
   else if (chan->channel.members == 1)
     chan->status |= CHAN_STOP_CYCLE;
   return 0;                            /* Don't check for I-Lines here.     */
+}
+
+/* Got 335 (user is a bot) */
+static int got335(char *from, char *msg)
+{
+  struct chanset_t *chan;
+  memberlist *m;
+  char *nick;
+
+  nick = strtok(msg, " ");
+  /* Run for each channel the user is on */
+  for (chan = chanset; chan; chan = chan->next) {
+    m = ismember(chan, nick);
+    if (m) {
+      m->flags |= IRCBOT;
+    }
+  }
+  return 0;
 }
 
 /* Got AWAY message; only valid for IRCv3 away-notify capability */
@@ -2910,6 +2933,8 @@ static int irc_isupport(char *key, char *isset_str, char *value)
   } else if (!strcmp(key, "MONITOR")) {
     monitor005 = isset;
     isupport_parseint(key, isset ? value : NULL, 1, 100, 1, 0, &max_monitor);
+  } else if (!strcmp(key, "BOT")) {
+    botflag005 = value[0];
   }
   return 0;
 }
@@ -2946,6 +2971,7 @@ static cmd_t irc_raw[] = {
   {"NOTICE",  "",   (IntFunc) gotnotice,    "irc:notice"},
   {"MODE",    "",   (IntFunc) gotmode,        "irc:mode"},
   {"AWAY",    "",   (IntFunc) gotaway,     "irc:gotaway"},
+  {"335",     "",   (IntFunc) got335,          "irc:335"},
   {"346",     "",   (IntFunc) got346,          "irc:346"},
   {"347",     "",   (IntFunc) got347,          "irc:347"},
   {"348",     "",   (IntFunc) got348,          "irc:348"},
