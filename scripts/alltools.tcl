@@ -23,7 +23,8 @@
 # Souperman 05Nov2002: added ordnumber
 # Tothwolf  27Dec2003: added matchbotattrany, optimized ordnumber,
 #                      more minor changes
-# CrazyCat	02Aug2021: added ucfirst, ucwords, uclwords
+# CrazyCat  02Aug2021: added ucfirst, ucwords, uclwords
+# CrazyCat  02Aug2021: added decround, decfloor, decceil
 #
 ########################################
 #
@@ -161,6 +162,16 @@
 #   Uppercase the first character of each word in a string,
 #   lowercase others
 #
+# decround <number> <dec>
+#   rounds a <number> with <dec> decimals
+#
+# decfloor<number> <dec>
+#   floors a <number> with <dec> decimals
+#
+# decceil <number> <dec>
+#   ceils a <number> with <dec> decimals
+#
+
 ########################################
 
 # So scripts can see if allt is loaded.
@@ -449,23 +460,42 @@ proc ordnumber {string} {
   return $string
 }
 
+proc decround {number {dec 2}} {
+   return [format "%.${dec}f" $number]
+}
+
+# internal usage for decfloor and decceil
+proc ceilfloor {number dec {mode "ceil"}} {
+   set number [expr $number * pow(10, $dec)]
+   set number [expr ${mode}($number)]
+   return [expr $number / pow(10, $dec)]
+}
+	
+proc decfloor {number {dec 2}} {
+   return [::conv::ceilfloor $number $dec floor]
+}
+	
+proc decceil {number {dec 2}} {
+   return [::conv::ceilfloor $number $dec]
+}
+
 proc ucfirst {string} {
-	set string [join $string]
-	set f [string toupper [string index $string 0]]
-	set string [string replace $string 0 0 $f]
-	return $string
+   set string [join $string]
+   set f [string toupper [string index $string 0]]
+   set string [string replace $string 0 0 $f]
+   return $string
 }
 
 proc ucwords {string} {
-	list asent
-	foreach word [split [join $string]] {
-		lappend asent [::string::ucfirst $word]
-	}
-	set string [join $asent]
-	return $string
+   list asent
+   foreach word [split [join $string]] {
+      lappend asent [::string::ucfirst $word]
+   }
+   set string [join $asent]
+   return $string
 }
 
 proc uclwords {string} {
-	set string [::string::ucwords [string tolower [join $string]]]
-	return $string
+   set string [::string::ucwords [string tolower [join $string]]]
+   return $string
 }
