@@ -24,7 +24,7 @@
 # Tothwolf  27Dec2003: added matchbotattrany, optimized ordnumber,
 #                      more minor changes
 # CrazyCat  02Aug2021: added ucfirst, ucwords, uclwords
-# CrazyCat  02Aug2021: added decround, decfloor, decceil
+# CrazyCat  19Aug2021: added decround, decfloor, decceil
 #
 ########################################
 #
