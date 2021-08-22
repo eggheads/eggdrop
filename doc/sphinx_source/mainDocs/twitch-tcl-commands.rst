@@ -15,6 +15,13 @@ consequences.
 This list is accurate for Eggdrop v1.9.0, the minimum version for which Twitch
 functionality is possible.
 
+It should also be noted that if you are debugging scripts via the partyline,
+the Eggdrop partyline output has not been updated to handle the potentially
+LONG tag message lines that are sent by a server. This means if you view a
+variable that has stored all the tag messages sent by the server, it may
+appear truncated. Rest assured, the variable does contain the full set of tags,
+they just aren't being displayed.
+
 Commands
 --------
 
@@ -170,3 +177,11 @@ The following is a list of bind types and how they work. Below each bind type is
   procname <chan> <tags>
 
   Description: Called when Eggdrop receives a USERSTATE message. ``mask`` is in the format of ``#channel keys`` and can use wildcards (see the RMST bind for additional details on format). ``chan`` is the channel Eggdrop received the USERSTATE message for, and ``tags`` is a list of key/value pairs provided in the USERSTATE message, suitable for use as a Tcl dict. ``flags`` is ignored.
+
+#. UNTC (USERNOTICE)
+
+  bind untc <flags> <mask> <proc>
+
+  procname <chan> <tags>
+
+  Description: Called when Eggdrop received a USERNOTICE message. `mask`` is in the format of ``#channel keys`` and can use wildcards (see the RMST bind for additional details on format). ``chan`` is the channel Eggdrop received the USERNOTICE message for, and ``tags`` is a list of key/value pairs provided in the USERNOTICE message, suitable for use as a Tcl dict. ``flags`` is ignored.
