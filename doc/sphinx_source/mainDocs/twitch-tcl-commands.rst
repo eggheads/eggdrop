@@ -152,15 +152,15 @@ The following is a list of bind types and how they work. Below each bind type is
 
   procname <nick> <userhost> <handle> <msg>
 
-  Description: Called when Eggdrop received a whisper from another Twitch user. The first word of the user's msg is matched against ``command``, and the remainder of the text is passed to ``msg``. ``nick`` is populated with the login name of the user messaging the Eggdrop, ``userhost`` contains nick's userhost in the format nick!nick@nick.tmi.twitch.tv. ``handle`` will match the user's handle on the bot if present, otherwise it will return a ``*``.
+  Description: Checks the first word of a whisper Eggdrop receives from another Twitch user. The first word of the whisper is matched against ``command``, and the remainder of the text is passed to ``msg``. ``nick`` is populated with the login name of the user messaging the Eggdrop, ``userhost`` contains nick's userhost in the format nick!nick@nick.tmi.twitch.tv. ``handle`` will match the user's handle on the bot if present, otherwise it will return a ``*``.
 
 5. WSPM (WHISPER)
 
-  bind wspr <flags> <mask> <proc>
+  bind wspm <flags> <mask> <proc>
 
   procname <nick> <userhost> <handle> <msg>
 
-  Description: Called when Eggdrop received a whisper from another Twitch user. The msg is matched against ``mask``, which can contain wildcards. ``nick`` is populated with the login name of the user messaging the Eggdrop, ``userhost`` contains nick's userhost in the format nick!nick@nick.tmi.twitch.tv. ``handle`` will match the user's handle on the bot if present, otherwise it will return a ``*``. The full text of the whisper is stored in ``msg``.
+  Description: Checks the entire contents of a whisper Eggdrop receives from another Twitch user. The contents of the whisper are matched against ``mask``, which can contain wildcards. ``nick`` is populated with the login name of the user messaging the Eggdrop, ``userhost`` contains nick's userhost in the format nick!nick@nick.tmi.twitch.tv. ``handle`` will match the user's handle on the bot if present, otherwise it will return a ``*``. The full text of the whisper is stored in ``msg``.
 
 6. RMST (ROOMSTATE)
 
@@ -178,9 +178,9 @@ The following is a list of bind types and how they work. Below each bind type is
 
   Description: Called when Eggdrop receives a USERSTATE message. ``mask`` is in the format of ``#channel keys`` and can use wildcards (see the RMST bind for additional details on format). ``chan`` is the channel Eggdrop received the USERSTATE message for, and ``tags`` is a list of key/value pairs provided in the USERSTATE message, suitable for use as a Tcl dict. ``flags`` is ignored.
 
-8. UNTC (USERNOTICE)
+8. USRNTC (USERNOTICE)
 
-  bind untc <flags> <mask> <proc>
+  bind usrntc <flags> <mask> <proc>
 
   procname <chan> <tags>
 

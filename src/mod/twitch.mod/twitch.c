@@ -47,7 +47,7 @@
 #undef global
 static Function *global = NULL, *server_funcs = NULL;
 
-static p_tcl_bind_list H_ccht, H_cmsg, H_htgt, H_wspr, H_wspm, H_rmst, H_usst, H_untc;
+static p_tcl_bind_list H_ccht, H_cmsg, H_htgt, H_wspr, H_wspm, H_rmst, H_usst, H_usrntc;
 
 twitchchan_t *twitchchan = NULL;
 static int keepnick;
@@ -285,9 +285,9 @@ static int check_tcl_usernotice(char *chan, char *tags) {
   char mask[TOTALTAGMAX + 200]; /* tags + channel */
 
   snprintf(mask, sizeof mask, "%s %s", chan, tags);
-  Tcl_SetVar(interp, "_untc1", chan, 0);
-  Tcl_SetVar(interp, "_untc2", tags, 0);
-  x = check_tcl_bind(H_untc, mask, NULL, " $_untc1 $_untc2",
+  Tcl_SetVar(interp, "_usrntc1", chan, 0);
+  Tcl_SetVar(interp, "_usrntc2", tags, 0);
+  x = check_tcl_bind(H_usrntc, mask, NULL, " $_usrntc1 $_usrntc2",
         MATCH_MASK | BIND_STACKABLE);
   return (x == BIND_EXEC_LOG);
 }
@@ -835,7 +835,7 @@ static char *twitch_close()
   del_bind_table(H_wspm);
   del_bind_table(H_rmst);
   del_bind_table(H_usst);
-  del_bind_table(H_untc);
+  del_bind_table(H_usrntc);
   module_undepend(MODULE_NAME);
   return NULL;
 }
@@ -854,7 +854,7 @@ static Function twitch_table[] = {
   (Function) & H_wspm,
   (Function) & H_rmst,
   (Function) & H_usst,
-  (Function) & H_untc
+  (Function) & H_usrntc
 };
 
 char *twitch_start(Function *global_funcs)
@@ -904,7 +904,7 @@ char *twitch_start(Function *global_funcs)
   H_wspm = add_bind_table("wspm", HT_STACKABLE, twitch_3char);
   H_rmst = add_bind_table("rmst", HT_STACKABLE, twitch_3char);
   H_usst = add_bind_table("usst", HT_STACKABLE, twitch_3char);
-  H_untc = add_bind_table("untc", HT_STACKABLE, twitch_3char);
+  H_usrntc = add_bind_table("usrntc", HT_STACKABLE, twitch_3char);
 
 /* Override config setting with these values; they are required for Twitch */
   Tcl_SetVar(interp, "cap-request",
