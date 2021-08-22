@@ -1149,6 +1149,11 @@ int main(int arg_c, char **arg_v)
 #ifdef STATIC
   link_statics();
 #endif
+#ifdef EGG_TDNS
+  /* initialize dns_thread_head before chanprog() */
+  dns_thread_head = nmalloc(sizeof(struct dns_thread_node));
+  dns_thread_head->next = NULL;
+#endif
   strlcpy(s, ctime(&now), sizeof s);
   memmove(&s[11], &s[20], strlen(&s[20]) + 1);
   putlog(LOG_ALL, "*", "--- Loading %s (%s)", ver, s);
@@ -1271,10 +1276,6 @@ int main(int arg_c, char **arg_v)
   then = now - 1;
 
   online_since = now;
-#ifdef EGG_TDNS
-  dns_thread_head = nmalloc(sizeof(struct dns_thread_node));
-  dns_thread_head->next = NULL;
-#endif
   autolink_cycle(NULL);         /* Hurry and connect to tandem bots */
   add_help_reference("cmds1.help");
   add_help_reference("cmds2.help");
