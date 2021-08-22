@@ -463,7 +463,7 @@ int write_ignores(FILE *f, int idx)
   return 1;
 }
 
-int sort_compare(struct userrec *a, struct userrec *b)
+static int sort_compare(struct userrec *a, struct userrec *b)
 {
   /* Order by flags, then alphabetically
    * first bots: +h / +a / +l / other bots
@@ -508,7 +508,7 @@ int sort_compare(struct userrec *a, struct userrec *b)
   return (strcasecmp(a->handle, b->handle) > 0);
 }
 
-void sort_userlist()
+static void sort_userlist()
 {
   int again;
   struct userrec *last, *p, *c, *n;
