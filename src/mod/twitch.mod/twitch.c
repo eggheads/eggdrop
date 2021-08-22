@@ -47,7 +47,7 @@
 #undef global
 static Function *global = NULL, *server_funcs = NULL;
 
-static p_tcl_bind_list H_ccht, H_cmsg, H_htgt, H_wspr, H_wspm, H_rmst, H_usst;
+static p_tcl_bind_list H_ccht, H_cmsg, H_htgt, H_wspr, H_wspm, H_rmst, H_usst, H_untc;
 
 twitchchan_t *twitchchan = NULL;
 static int keepnick;
@@ -276,6 +276,18 @@ static int check_tcl_userstate(char *chan, char *tags) {
   Tcl_SetVar(interp, "_usst1", chan, 0);
   Tcl_SetVar(interp, "_usst2", tags, 0);
   x = check_tcl_bind(H_usst, mask, NULL, " $_usst1 $_usst2",
+        MATCH_MASK | BIND_STACKABLE);
+  return (x == BIND_EXEC_LOG);
+}
+
+static int check_tcl_usernotice(char *chan, char *tags) {
+  int x;
+  char mask[TOTALTAGMAX + 200]; /* tags + channel */
+
+  snprintf(mask, sizeof mask, "%s %s", chan, tags);
+  Tcl_SetVar(interp, "_untc1", chan, 0);
+  Tcl_SetVar(interp, "_untc2", tags, 0);
+  x = check_tcl_bind(H_untc, mask, NULL, " $_untc1 $_untc2",
         MATCH_MASK | BIND_STACKABLE);
   return (x == BIND_EXEC_LOG);
 }
@@ -541,6 +553,7 @@ static int gotusernotice(char *from, char *msg, char *tags) {
     putlog(LOG_SERV, "*", "* TWITCH: %s earned a %s bits badge", login,
         get_value(tags, "msg-param-threshold"));
   }
+  check_tcl_usernotice(chan, tags);
   return 0;
 }
 
@@ -822,6 +835,7 @@ static char *twitch_close()
   del_bind_table(H_wspm);
   del_bind_table(H_rmst);
   del_bind_table(H_usst);
+  del_bind_table(H_untc);
   module_undepend(MODULE_NAME);
   return NULL;
 }
@@ -839,7 +853,8 @@ static Function twitch_table[] = {
   (Function) & H_wspr,
   (Function) & H_wspm,
   (Function) & H_rmst,
-  (Function) & H_usst
+  (Function) & H_usst,
+  (Function) & H_untc
 };
 
 char *twitch_start(Function *global_funcs)
@@ -889,6 +904,7 @@ char *twitch_start(Function *global_funcs)
   H_wspm = add_bind_table("wspm", HT_STACKABLE, twitch_3char);
   H_rmst = add_bind_table("rmst", HT_STACKABLE, twitch_3char);
   H_usst = add_bind_table("usst", HT_STACKABLE, twitch_3char);
+  H_untc = add_bind_table("untc", HT_STACKABLE, twitch_3char);
 
 /* Override config setting with these values; they are required for Twitch */
   Tcl_SetVar(interp, "cap-request",
