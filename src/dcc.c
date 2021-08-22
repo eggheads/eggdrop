@@ -429,8 +429,8 @@ static void out_dcc_bot(int idx, char *buf, void *x)
 
     if (len && buf[len - 1] == '\n') {
       /* Make a copy as buf could be const */
-      fnd = nmalloc(len);
-      strlcpy(fnd, buf, len);
+      fnd = nmalloc(len + 1);
+      strcpy(fnd, buf);
       p = fnd;
     }
 
