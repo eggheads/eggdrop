@@ -636,10 +636,19 @@ void tell_bottree(int idx, int showver)
           strcpy(work + imark, "     ");
         imark += 5;
       }
-      if (cnt > 1)
-        strcpy(work + imark, "  |-");
-      else
-        strcpy(work + imark, "  `-");
+      if (cnt > 1) {
+        if (bot->ssl) {
+          strcpy(work + imark, "  |=");
+        } else {
+          strcpy(work + imark, "  |-");
+        }
+      } else {
+        if (bot->ssl) {
+          strcpy(work + imark, "  `=");
+        } else {
+          strcpy(work + imark, "  `-");
+        }
+      }
       s[0] = 0;
       bot = tandbot;
       while (!s[0]) {
@@ -647,11 +656,10 @@ void tell_bottree(int idx, int showver)
           if (bot->ver) {
             i = sprintf(s, "%c%s", bot->share, bot->bot);
             if (showver)
-              sprintf(s + i, " (%d.%d.%d.%d%s)",
+              sprintf(s + i, " (%d.%d.%d.%d)",
                       bot->ver / 1000000,
                       bot->ver % 1000000 / 10000,
-                      bot->ver % 10000 / 100, bot->ver % 100,
-                      bot->ssl ? " ssl" : "");
+                      bot->ver % 10000 / 100, bot->ver % 100);
           } else
             sprintf(s, "-%s", bot->bot);
         } else
@@ -686,11 +694,10 @@ void tell_bottree(int idx, int showver)
                 if (bot->ver) {
                   i = sprintf(s, "%c%s", bot->share, bot->bot);
                   if (showver)
-                    sprintf(s + i, " (%d.%d.%d.%d%s)",
+                    sprintf(s + i, " (%d.%d.%d.%d)",
                             bot->ver / 1000000,
                             bot->ver % 1000000 / 10000,
-                            bot->ver % 10000 / 100, bot->ver % 100,
-                            bot->ssl ? " ssl" : "");
+                            bot->ver % 10000 / 100, bot->ver % 100);
                 } else
                   sprintf(s, "-%s", bot->bot);
               }
@@ -708,9 +715,9 @@ void tell_bottree(int idx, int showver)
           }
           more = 1;
           if (cnt > 1)
-            dprintf(idx, "%s  |-%s\n", work, s);
+            dprintf(idx, "%s  |%s%s\n", work, bot->ssl ? "=" : "-", s);
           else
-            dprintf(idx, "%s  `-%s\n", work, s);
+            dprintf(idx, "%s  `%s%s\n", work, bot->ssl ? "=" : "-", s);
           this = bot2;
           work[0] = 0;
           if (cnt > 1)
