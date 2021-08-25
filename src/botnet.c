@@ -735,6 +735,7 @@ void tell_bottree(int idx, int showver)
             this = last[lev];
           }
         }
+        dprintf(idx, "Key: - link    = encrypted link    + userfile sharing");
       }
     }
   }
