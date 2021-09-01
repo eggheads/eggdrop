@@ -31,6 +31,7 @@ typedef struct tand_t_struct {
   struct tand_t_struct *next;
   int ver;
   char share;
+  int ssl;
 } tand_t;
 
 /* Keep track of party-line members */

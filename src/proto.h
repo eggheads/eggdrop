@@ -70,7 +70,7 @@ void tell_bottree(int, int);
 int botlink(char *, int, char *);
 int botunlink(int, char *, char *, char *);
 void dump_links(int);
-void addbot(char *, char *, char *, char, int);
+void addbot(char *, char *, char *, char, int, int);
 void updatebot(int, char *, char, int);
 void rembot(char *);
 struct tand_t_struct *findbot(char *);
