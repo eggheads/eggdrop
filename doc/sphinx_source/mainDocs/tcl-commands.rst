@@ -200,6 +200,15 @@ server remove <ip/host> [[+]port]
 
   Module: server
 
+^^^^^^^^^^^
+server list
+^^^^^^^^^^^
+
+  Description: lists all servers currently added to the bots internal server list
+
+  Returns: A list of lists in the format {{hostname} {port} {password}}
+
+  Module: server
 
 User Record Manipulation Commands
 ---------------------------------

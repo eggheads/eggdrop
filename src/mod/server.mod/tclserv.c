@@ -446,12 +446,31 @@ static int tcl_queuesize STDVAR
 
 static int tcl_server STDVAR {
   int ret;
+  char s[7];
+  struct server_list *z;
 
-  BADARGS(3, 5, " subcommand host ?port ?password??");
+
+  BADARGS(2, 5, " subcommand host ?port ?password??");
   if (!strcmp(argv[1], "add")) {
     ret = add_server(argv[2], argc >= 4 && argv[3] ? argv[3] : "", argc >= 5 && argv[4] ? argv[4] : "");
   } else if (!strcmp(argv[1], "remove")) {
     ret = del_server(argv[2], argc >= 4 && argv[3] ? argv[3] : "");
+  } else if (!strcmp(argv[1], "list")) {
+    Tcl_Obj *server;
+    Tcl_Obj *servers = Tcl_NewListObj(0, NULL);
+    z = serverlist;
+    while(z != NULL) {
+      server = Tcl_NewListObj(0, NULL);
+      snprintf(s, sizeof s, "%s%d", z->ssl ? "+" : "", z->port);
+      Tcl_ListObjAppendElement(irp, server, Tcl_NewStringObj(z->name, -1));
+      Tcl_ListObjAppendElement(irp, server, Tcl_NewStringObj(s, -1));
+      Tcl_ListObjAppendElement(irp, server, Tcl_NewStringObj(z->pass, -1));
+      Tcl_SetObjResult(irp, server);
+      Tcl_ListObjAppendElement(irp, servers, server);
+      z = z->next;
+    }
+    Tcl_SetObjResult(irp, servers);
+    return TCL_OK;
   } else {
     Tcl_AppendResult(irp, "Invalid subcommand: ", argv[1],
         ". Should be \"add\" or \"remove\"", NULL);
