@@ -1088,8 +1088,9 @@ isvoice <nickname> [channel]
 isidentified <nickname> [channel]
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-  Returns: 1 if someone by the specified nickname is on the channel (or
-  any channel if no channel name is specified) and is logged in); 0 otherwise
+  Description: determine if a user is identified to irc services. WARNING: this may not be accurate depending on the server and configuration. For accurate results, the server must support (and Eggdrop must have enabled via CAP) the account-notify and extended-join capabilities, and the server must understand WHOX requests (also known as raw 354 responses)
+
+  Returns: 1 if someone by the specified nickname is on the channel (or any channel if no channel name is specified) and is logged in); 0 otherwise.
 
   Module: irc
 

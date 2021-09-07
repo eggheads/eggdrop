@@ -1650,6 +1650,8 @@ void add_cape(char *cape) {
       extended_join = 1;
     } else if (!strcasecmp(cape, "account-notify")) {
       account_notify = 1;
+    } else if (!strcasecmp(cape, "invite-notify")) {
+      invite_notify = 1;
     }
   } else {
     putlog(LOG_DEBUG, "*", "CAP: %s is already added to negotiated list", cape);
@@ -1705,7 +1707,7 @@ void add_req(char *cape) {
 }
 
 static int gotcap(char *from, char *msg) {
-  char *cmd, *splitstr;
+  char *cmd, *splitstr, *ptr;
   char cape[CAPMAX+1], *p;
   int listlen = 0;
 
@@ -1720,6 +1722,18 @@ static int gotcap(char *from, char *msg) {
     if (sasl) {
       add_req("sasl");
     }
+    if (account_notify) {
+      add_req("account-notify");
+    }
+    if (extended_join) {
+      add_req("extended-join");
+    }
+    if (invite_notify) {
+      add_req("invite-notify");
+    }
+    if (message_tags) {
+      add_req("message-tags");
+    }
 /* Add any custom capes the user listed */
     strlcpy(cape, cap_request, sizeof cape);
     if ( (p = strtok(cape, " ")) ) {
@@ -1730,7 +1744,12 @@ static int gotcap(char *from, char *msg) {
     }
     if (strlen(cap.desired) > 0) {
       putlog(LOG_DEBUG, "*", "CAP: Requesting %s capabilities from server", cap.desired);
-      dprintf(DP_MODE, "CAP REQ :%s\n", cap.desired);
+      strlcpy(cape, cap.desired, sizeof cape);
+      ptr = strtok(cape, " ");
+      while (ptr != NULL) {
+        dprintf(DP_MODE, "CAP REQ :%s\n", ptr);
+        ptr = strtok(NULL, " ");
+      }
     } else {
       dprintf(DP_MODE, "CAP END\n");
     }
@@ -1741,6 +1760,11 @@ static int gotcap(char *from, char *msg) {
     Tcl_ListObjLength(interp, ncapeslist, &listlen);
     Tcl_ListObjReplace(interp, ncapeslist, 0, listlen, 0, NULL);
     splitstr = strtok(msg, " ");
+    account_notify = 0;
+    invite_notify = 0;
+    message_tags = 0;
+    extended_join = 0;
+    sasl = 0;
     while (splitstr != NULL) {
       add_cape(splitstr);
       splitstr = strtok(NULL, " ");
