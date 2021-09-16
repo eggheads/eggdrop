@@ -115,6 +115,22 @@ typedef struct cap_list {
   char desired[CAPMAX+1];     /* Capes Eggdrop wants to request from IRCD */
 } cap_list_t;
 
+/* struct to store values associated with a capability, such as "PLAIN" and
+ * "EXTERNAL" for SASL
+ */
+typedef struct cap_values {
+  struct cap_values *next;
+  char name[CAPMAX];
+} cap_values_t;
+
+typedef struct capability {
+  struct capability *next;
+  char name[CAPMAX+1];  /* Name of capability, +1 bc CAPMAX is for REQ not LS */
+  struct cap_values *value; /* List of values associated with the capability  */
+  int enabled;      /* Is the capability currently negotiated with the server */
+  int requested;    /* Does Eggdrop  want this capability, if available?      */
+} capability_t;
+
 /* Available net types. */
 enum {
   NETT_DALNET,       /* DALnet                            */

@@ -264,14 +264,28 @@ static int tcl_tagmsg STDVAR {
 /* Tcl interface to send CAP messages to server */
 static int tcl_cap STDVAR {
   char s[CAPMAX];
+  struct capability *current;
+  Tcl_Obj *capes;
   BADARGS(2, 3, " sub-cmd ?arg?");
 
+  capes = Tcl_NewListObj(0, NULL);
+  current = cap2;
   /* List capabilities available on server */
   if (!strcasecmp(argv[1], "ls")) {
-    Tcl_AppendResult(irp, cap.supported, NULL);
+    while (current != NULL) {
+      Tcl_ListObjAppendElement(irp, capes, Tcl_NewStringObj(current->name, -1));
+      current = current->next;
+    }
+    Tcl_SetObjResult(irp, capes);
   /* List capabilities Eggdrop is internally tracking as enabled with server */
   } else if (!strcasecmp(argv[1], "enabled")) {
-    Tcl_AppendResult(irp, cap.negotiated, NULL);
+    while (current != NULL) {
+      if (current->enabled) {
+        Tcl_ListObjAppendElement(irp, capes, Tcl_NewStringObj(current->name, -1));
+      }
+      current = current->next;
+    }
+    Tcl_SetObjResult(irp, capes);
   /* Send a request to negotiate a capability with server */
   } else if (!strcasecmp(argv[1], "req")) {
     if (argc != 3) {
