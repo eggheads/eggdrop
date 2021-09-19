@@ -1729,10 +1729,13 @@ void add_req(char *cape) {
 
 /* Helper function to free a removed capability from linked list */
 static void free_capability(struct capability *z) {
-  if (z->name)
-    nfree(z->name);
-  if (z->value)
+  struct cap_values *v;
+
+  while (z->value) {
+    v = z->value->next;
     nfree(z->value);
+    z->value = v;
+  }
   nfree(z);
   return;
 }
@@ -1742,11 +1745,17 @@ static void free_capability(struct capability *z) {
  */
 static int del_capabilities(char *msg) {
   struct capability *z, *curr, *prev;
-  int found = 0;
+  int found;
   char *capptr;
 
   capptr = strtok(msg, " ");
+
   while (capptr != NULL) {
+    found = 0;
+    if (!cap2) {
+      putlog("LOG_SERV", "*", "CAP: %s not found in empty list, can't remove", capptr);
+      continue;
+    }
 /* Check if capability to be deleted is first node in list */
     if (!strcasecmp(capptr, cap2->name)) {
       z = cap2;
@@ -1758,7 +1767,7 @@ static int del_capabilities(char *msg) {
     prev = cap2;
 /* Check the remaining nodes in list */
     while (curr != NULL && prev != NULL) {
-      if (!strcasecmp(capptr, curr->name)) {
+      if (strcasecmp(capptr, curr->name)) {
         prev = curr;
         curr = curr->next;
         continue;
