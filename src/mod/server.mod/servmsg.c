@@ -31,6 +31,7 @@
 #include "server.h"
 
 static int del_capabilities(char *);
+static int del_capability(char *name);
 static time_t last_ctcp = (time_t) 0L;
 static int multistatus = 0, count_ctcp = 0;
 static char altnick_char = 0;
@@ -1063,7 +1064,7 @@ static void disconnect_server(int idx)
     check_tcl_event("disconnect-server");
   }
   while (cap2 != NULL) {
-    del_capabilities(cap2->name);
+    del_capability(cap2->name);
   }
   server_online = 0;
   if (realservername)
@@ -1740,49 +1741,35 @@ static void free_capability(struct capability *z) {
   return;
 }
 
+static int del_capability(char *name) {
+  struct capability *curr, *prev;
+
+  for (prev = NULL, curr = cap2; curr; curr = prev ? prev->next : cap2) {
+    if (!strcasecmp(name, curr->name)) {
+      if (prev) {
+        prev->next = curr->next;
+      } else {
+        cap2 = curr->next;
+      }
+      free_capability(curr);
+      return 0;
+    } else {
+      prev = curr;
+    }
+  }
+  putlog(LOG_SERV, "*", "CAP: %s not found, can't remove", name);
+  return -1;
+}
+  
+
 /* Remove a capability entry from the linked list
  * msg is in format "multi-prefix sasl=PLAIN,EXTERNAL server-time"
  */
 static int del_capabilities(char *msg) {
-  struct capability *z, *curr, *prev;
-  int found;
   char *capptr;
 
-  capptr = strtok(msg, " ");
-
-  while (capptr != NULL) {
-    found = 0;
-    if (!cap2) {
-      putlog("LOG_SERV", "*", "CAP: %s not found in empty list, can't remove", capptr);
-      continue;
-    }
-/* Check if capability to be deleted is first node in list */
-    if (!strcasecmp(capptr, cap2->name)) {
-      z = cap2;
-      cap2 = cap2->next;
-      free_capability(z);
-      found = 1;
-    }
-    curr = cap2->next;
-    prev = cap2;
-/* Check the remaining nodes in list */
-    while (curr != NULL && prev != NULL) {
-      if (strcasecmp(capptr, curr->name)) {
-        prev = curr;
-        curr = curr->next;
-        continue;
-      }
-      z = curr;
-      prev->next = curr->next;
-      curr = curr->next;
-      free_capability(z);
-      found = 1;
-    }
-    if (!found) {
-      putlog("LOG_SERV", "*", "CAP: %s not found, can't remove", capptr);
-    }
-    found = 0;
-    capptr = strtok(NULL, " ");
+  for (capptr = strtok(msg, " "); capptr; capptr = strtok(NULL, " ")) {
+    del_capability(capptr);
   }
   return 0;
 }
