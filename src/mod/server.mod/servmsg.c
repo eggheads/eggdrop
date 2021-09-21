@@ -1874,6 +1874,30 @@ static int gotcap(char *from, char *msg) {
            strncat(buf, current->name, (sizeof buf - strlen(buf)));
            strncat(buf, " ", (sizeof buf - strlen(buf)));
           }
+
+          if ((sasl) && (!strcmp(current->name, "sasl")) && (current->enabled)) {
+              putlog(LOG_SERV, "*", "DOING THINGS FOR SASL!");
+#ifndef HAVE_EVP_PKEY_GET1_EC_KEY
+            if (sasl_mechanism != SASL_MECHANISM_ECDSA_NIST256P_CHALLENGE) {
+#endif
+              putlog(LOG_DEBUG, "*", "SASL: put AUTHENTICATE %s",
+                  SASL_MECHANISMS[sasl_mechanism]);
+              dprintf(DP_MODE, "AUTHENTICATE %s\n", SASL_MECHANISMS[sasl_mechanism]);
+              sasl_timeout_time = sasl_timeout;
+#ifndef HAVE_EVP_PKEY_GET1_EC_KEY
+            } else {
+#ifdef TLS
+              return sasl_error("TLS libs missing EC support, try PLAIN or EXTERNAL method, aborting authentication");
+            }
+#else /* TLS */
+              if (sasl_mechanism != SASL_MECHANISM_PLAIN) {
+                return sasl_error("TLS libs not present, try PLAIN method, aborting authentication");
+              }
+            }
+#endif /* TLS */
+#endif /* HAVE_EVP_PKEY */
+          }
+          dprintf(DP_MODE, "CAP END\n");
         }
         current = current->next;
       }
@@ -1881,37 +1905,6 @@ static int gotcap(char *from, char *msg) {
       splitstr = strtok(NULL, " ");
     }
     putlog(LOG_SERV, "*", "CAP: Current negotiations with %s: %s", from, buf);
-    /* If a negotiated capability requires immediate action by Eggdrop, add it
-     * here. However, that capability must take responsibility for sending an
-     * END. Future eggheads: add support for more than 1 of these async
-     * capabilities, right now SASL is the only one so we're OK.
-     */
-    current = find_capability("sasl");
-    if ((sasl) && (current) && (current->enabled)) {
-        putlog(LOG_SERV, "*", "DOING THINGS FOR SASL!");
-#ifndef HAVE_EVP_PKEY_GET1_EC_KEY
-      if (sasl_mechanism != SASL_MECHANISM_ECDSA_NIST256P_CHALLENGE) {
-#endif
-        putlog(LOG_DEBUG, "*", "SASL: put AUTHENTICATE %s",
-            SASL_MECHANISMS[sasl_mechanism]);
-        dprintf(DP_MODE, "AUTHENTICATE %s\n", SASL_MECHANISMS[sasl_mechanism]);
-        sasl_timeout_time = sasl_timeout;
-#ifndef HAVE_EVP_PKEY_GET1_EC_KEY
-      } else {
-#ifdef TLS
-        return sasl_error("TLS libs missing EC support, try PLAIN or EXTERNAL method, aborting authentication");
-      }
-#else /* TLS */
-        if (sasl_mechanism != SASL_MECHANISM_PLAIN) {
-	      return sasl_error("TLS libs not present, try PLAIN method, aborting authentication");
-        }
-      }
-#endif /* TLS */
-#endif /* HAVE_EVP_PKEY */
-    } else {
-      dprintf(DP_MODE, "CAP END\n");
-      return 0;
-    }
   } else if (!strcmp(cmd, "NAK")) {
     putlog(LOG_SERV, "*", "CAP: Requested capability change %s rejected by %s",
         msg, from);
