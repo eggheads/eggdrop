@@ -1634,74 +1634,6 @@ static int got421(char *from, char *msg) {
   return 1;
 }
 
-/* Add negotiated capability to Tcl List for easy addition/deletion */
-//void add_cape(char *cape) {
-//  if (!strstr(cap.negotiated, cape)) {
-//    putlog(LOG_DEBUG, "*", "CAP: Adding cape %s to negotiated list", cape);
-//    /* Update Tcl List object with new capability */
-//    Tcl_ListObjAppendElement(interp, ncapeslist, Tcl_NewStringObj(cape, -1));
-//    /* Update C variable with new capability */
-//    if (*cap.negotiated) {
-//      strncat(cap.negotiated, " ", CAPMAX - strlen(cap.negotiated) - 1);
-//    }
-//    strncat(cap.negotiated, cape, CAPMAX - strlen(cap.negotiated) - 1);
-//    /* This section adds status variables used by other modules, if they need to
-//     * know if a specific capability is active or not
-//     */
-//    if (!strcasecmp(cape, "message-tags") || !strcasecmp(cape, "twitch.tv/tags")) {
-//      msgtag = 1;
-//    } else if (!strcasecmp(cape, "extended-join")) {
-//      extended_join = 1;
-//    } else if (!strcasecmp(cape, "account-notify")) {
-//      account_notify = 1;
-//    } else if (!strcasecmp(cape, "invite-notify")) {
-//      invite_notify = 1;
-//    }
-//  } else {
-//    putlog(LOG_DEBUG, "*", "CAP: %s is already added to negotiated list", cape);
-//  }
-//}
-
-/* Remove capability from internal CAP request list */
-//void del_cape(char *cape) {
-//  int i, j, len = 0;
-//  if (strstr(cap.negotiated, cape)) {
-//    putlog(LOG_DEBUG, "*", "CAP: Removing %s from negotiated list", cape);
-//    Tcl_ListObjGetElements(interp, ncapeslist, &ncapesc, &ncapesv);
-//    for (i = 0; i < ncapesc; i++) {
-//      if (!strcmp(cape, Tcl_GetString(ncapesv[i]))) {
-//        /* Remove deleted capability from Tcl List object */
-//        Tcl_ListObjReplace(interp, ncapeslist, i, 1, 0, NULL);
-//        /* Match C variable to Tcl List object (ie, delete the capability) */
-//        Tcl_ListObjGetElements(interp, ncapeslist, &ncapesc, &ncapesv);
-//        if (!ncapesc) {
-//          *cap.negotiated = 0;
-//        } else {
-//          for (j = 0; j < ncapesc; j++) {
-//            if (j)
-//              cap.negotiated[len++] = ' ';
-//            len += strlcpy(cap.negotiated + len, Tcl_GetString(ncapesv[j]), sizeof cap.negotiated - len);
-//          }
-//        }
-//        if (!strcasecmp(cape, "message-tags") || !strcasecmp(cape, "twitch.tv/tags")) {
-//          msgtag = 0;
-//        } else if (!strcasecmp(cape, "extended-join")) {
-//          extended_join = 0;
-//        } else if (!strcasecmp(cape, "account-notify")) {
-//          account_notify = 0;
-//        }
-//      }
-//      if (!strcasecmp(cape, "message-tags") || !strcasecmp(cape, "twitch.tv/tags")) {
-//        msgtag = 0;
-//      } else if (!strcasecmp(cape, "extended-join")) {
-//        extended_join = 0;
-//      }
-//    }
-//  } else {
-//    putlog(LOG_DEBUG, "*", "CAP: %s is not on negotiated list", cape);
-//  }
-//}
-
 /* Helper function to quickly find a capability record */
 struct capability *find_capability(char *capname) {
   struct capability *current = cap2;
@@ -1763,7 +1695,7 @@ static int del_capability(char *name) {
   
 
 /* Remove a capability entry from the linked list
- * msg is in format "multi-prefix sasl=PLAIN,EXTERNAL server-time"
+ * msg is in format "multi-prefix sasl server-time"
  */
 static int del_capabilities(char *msg) {
   char *capptr;
@@ -1881,13 +1813,18 @@ static int gotcap(char *from, char *msg) {
     add_req("cap-notify");
     current = cap2;
     /* Request the desired capabilities from server */
+    cape[0] = 0;
     while (current != NULL) {
       if (current->requested) {
         putlog(LOG_DEBUG, "*", "CAP: Requesting %s capability from server", current->name);
-        dprintf(DP_MODE, "CAP REQ :%s\n", current->name);
+        if (strlen(cape)) {
+          strncat(cape, " ", (sizeof cape - strlen(cape)));
+        }
+        strncat(cape, current->name, (sizeof cape - strlen(cape)));
       }
       current = current->next;
     }
+    dprintf(DP_MODE, "CAP REQ :%s\n", cape);
     dprintf(DP_MODE, "CAP END\n");
   } else if (!strcmp(cmd, "LIST")) {
     putlog(LOG_SERV, "*", "CAP: Negotiated CAP capabilities: %s", msg);
@@ -1917,7 +1854,6 @@ static int gotcap(char *from, char *msg) {
       splitstr = strtok(NULL, " ");
     }
   } else if (!strcmp(cmd, "ACK")) {
-
     buf[0] = 0;
     splitstr = strtok(msg, " ");
     while (splitstr != NULL) {
@@ -1934,10 +1870,10 @@ static int gotcap(char *from, char *msg) {
           } else {
             current->enabled = 1;
           }
-        }
-        if (current->enabled) {
-         strncat(buf, current->name, (sizeof buf - strlen(buf)));
-         strncat(buf, " ", (sizeof buf - strlen(buf)));
+          if (current->enabled) {
+           strncat(buf, current->name, (sizeof buf - strlen(buf)));
+           strncat(buf, " ", (sizeof buf - strlen(buf)));
+          }
         }
         current = current->next;
       }
