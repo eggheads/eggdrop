@@ -306,7 +306,8 @@ static int tcl_cap STDVAR {
       return TCL_ERROR;
     }
   } else {
-      Tcl_AppendResult(irp, "Invalid cap command", NULL);
+      Tcl_AppendResult(irp, "Invalid cap command, must be ls, enabled, req, or raw", NULL);
+      return TCL_ERROR;
   }
   return TCL_OK;
 }
