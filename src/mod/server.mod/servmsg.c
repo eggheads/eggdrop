@@ -1675,7 +1675,7 @@ static void free_capability(struct capability *z) {
 static int del_capability(char *name) {
   struct capability *curr, *prev;
 
-  for (prev = NULL, curr = cap; curr; curr = prev ? prev->next : cap2) {
+  for (prev = NULL, curr = cap; curr; curr = prev ? prev->next : cap) {
     if (!strcasecmp(name, curr->name)) {
       if (prev) {
         prev->next = curr->next;

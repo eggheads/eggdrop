@@ -269,7 +269,7 @@ static int tcl_cap STDVAR {
   BADARGS(2, 3, " sub-cmd ?arg?");
 
   capes = Tcl_NewListObj(0, NULL);
-  current = cap2;
+  current = cap;
   /* List capabilities available on server */
   if (!strcasecmp(argv[1], "ls")) {
     while (current != NULL) {

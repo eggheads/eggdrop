@@ -2022,7 +2022,8 @@ static int server_expmem()
 
 static void server_report(int idx, int details)
 {
-  char s1[64], s[128];
+  char s1[64], s[128], buf[128];
+  struct capability *current;
   int servidx;
 
   if (server_online) {
@@ -2066,8 +2067,17 @@ static void server_report(int idx, int details)
   if (hq.tot)
     dprintf(idx, "    %s %d%% (%d msgs)\n", IRC_HELPQUEUE,
             (int) ((float) (hq.tot * 100.0) / (float) maxqmsg), (int) hq.tot);
-  dprintf(idx, "    Active CAP negotiations: %s\n", (strlen(cap.negotiated) > 0) ?
-            cap.negotiated : "None" );
+    current = cap;
+    buf[0] = 0;
+    while (current != NULL) {
+      if (current->enabled) {
+        strncat(buf, current->name, (sizeof buf - strlen(buf)));
+        strncat(buf, " ", (sizeof buf - strlen(buf)));
+      }
+      current = current->next;
+    }
+  dprintf(idx, "    Active CAP negotiations: %s\n", (strlen(buf) > 0) ?
+            buf : "None" );
   if (details) {
     int size = server_expmem();
 
