@@ -86,7 +86,7 @@
 /* 40 - 43 */
 #define H_out (*(p_tcl_bind_list *)(server_funcs[40]))
 #define net_type_int (*(int *)(server_funcs[41]))
-#define cap (*(cap_list_t *)(server_funcs[42]))
+#define cap (*(capability_t *)(server_funcs[42]))
 #define H_account (*(p_tcl_bind_list *)(server_funcs[43]))
 /* 44 - 47 */
 #define extended_join (*(int *)(server_funcs[44]))
@@ -108,12 +108,6 @@ struct server_list {
   char *pass;
   char *realname;
 };
-
-typedef struct cap_list {
-  char supported[CAPMAX+1];   /* Capes supported by IRCD                  */
-  char negotiated[CAPMAX+1];  /* Common capes between IRCD and client     */
-  char desired[CAPMAX+1];     /* Capes Eggdrop wants to request from IRCD */
-} cap_list_t;
 
 /* struct to store values associated with a capability, such as "PLAIN" and
  * "EXTERNAL" for SASL

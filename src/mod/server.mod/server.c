@@ -2225,7 +2225,7 @@ static Function server_table[] = {
   (Function) & H_out,           /* p_tcl_bind_list                      */
   (Function) & net_type_int,    /* int                                  */
   (Function) & H_account,       /* p_tcl_bind)list                      */
-  (Function) & cap,             /* cap_list                             */
+  (Function) & cap,             /* capability_t                         */
   /* 44 - 47 */
   (Function) & extended_join,   /* int                                  */
   (Function) & account_notify,  /* int                                  */
