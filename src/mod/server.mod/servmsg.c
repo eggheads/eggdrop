@@ -35,8 +35,7 @@ static int del_capability(char *name);
 static time_t last_ctcp = (time_t) 0L;
 static int multistatus = 0, count_ctcp = 0;
 static char altnick_char = 0;
-struct cap_list cap = {"", "", ""};
-struct capability *cap2;
+struct capability *cap;
 int ncapesc, account_notify = 0, extended_join = 0;
 Tcl_Obj **ncapesv, *ncapeslist;
 
@@ -1063,8 +1062,8 @@ static void disconnect_server(int idx)
   if (server_online > 0) {
     check_tcl_event("disconnect-server");
   }
-  while (cap2 != NULL) {
-    del_capability(cap2->name);
+  while (cap != NULL) {
+    del_capability(cap->name);
   }
   server_online = 0;
   if (realservername)
@@ -1636,7 +1635,7 @@ static int got421(char *from, char *msg) {
 
 /* Helper function to quickly find a capability record */
 struct capability *find_capability(char *capname) {
-  struct capability *current = cap2;
+  struct capability *current = cap;
 
   while (current != NULL) {
     if (!strcmp(capname, current->name)) {
@@ -1676,12 +1675,12 @@ static void free_capability(struct capability *z) {
 static int del_capability(char *name) {
   struct capability *curr, *prev;
 
-  for (prev = NULL, curr = cap2; curr; curr = prev ? prev->next : cap2) {
+  for (prev = NULL, curr = cap; curr; curr = prev ? prev->next : cap2) {
     if (!strcasecmp(name, curr->name)) {
       if (prev) {
         prev->next = curr->next;
       } else {
-        cap2 = curr->next;
+        cap = curr->next;
       }
       free_capability(curr);
       return 0;
@@ -1717,8 +1716,8 @@ static int add_capabilities(char *msg) {
 
   capptr = strtok_r(msg, " ", &saveptr1);
   while(capptr != NULL) {
-    for (z = cap2; z && z->next; z = z->next);
-    putlog(LOG_DEBUG, "*", "XXXX adding %s capability", capptr);
+    for (z = cap; z && z->next; z = z->next);
+    putlog(LOG_DEBUG, "*", "CAP: adding capability record: %s", capptr);
     newcap = nmalloc(sizeof(struct capability));
     newcap->next = 0;
     newcap->value = 0;
@@ -1732,7 +1731,7 @@ static int add_capabilities(char *msg) {
       t = strtok_r(NULL, "=", &saveptr2);
       valptr = strtok_r(t, ",", &saveptr3);
       while (valptr != NULL) {
-        putlog(LOG_DEBUG, "*", "XXX Adding value %s to capability %s", valptr, newcap->name);
+        putlog(LOG_DEBUG, "*", "CAP: Adding value %s to capability %s", valptr, newcap->name);
         for (y = newcap->value; y && y->next; y = y->next);
         newvalue = nmalloc(sizeof(struct cap_values));
         if (y)
@@ -1751,7 +1750,7 @@ static int add_capabilities(char *msg) {
     if (z)
       z->next = newcap;
     else
-      cap2 = newcap;
+      cap = newcap;
     capptr = strtok_r(NULL, " ", &saveptr1);
     newcap = NULL;
   }
@@ -1783,7 +1782,7 @@ static int gotcap(char *from, char *msg) {
     if (multiline) {
       return 0;
     }
-    current = cap2; 
+    current = cap; 
 /* CAP is supported, yay! If it is supported, lets load what we want to request */
     while (current != NULL) {
       if (!strcmp(current->name, "sasl") && (sasl)) {
@@ -1811,7 +1810,7 @@ static int gotcap(char *from, char *msg) {
     }
     /* Per the CAP 302 spec, we must request cap-notify */
     add_req("cap-notify");
-    current = cap2;
+    current = cap;
     /* Request the desired capabilities from server */
     cape[0] = 0;
     while (current != NULL) {
@@ -1831,7 +1830,7 @@ static int gotcap(char *from, char *msg) {
     /* You're getting the current enabled list, may as well the clear old stuff */
     if (!multistatus) {
       multistatus = 1;
-      current = cap2;
+      current = cap;
       while (current != NULL) {
         current->enabled = 0;
         current=current->next;
@@ -1857,7 +1856,7 @@ static int gotcap(char *from, char *msg) {
     buf[0] = 0;
     splitstr = strtok(msg, " ");
     while (splitstr != NULL) {
-      current = cap2;
+      current = cap;
       while (current != NULL) {
         /* Remove a - if it exists and track for later */
         if (splitstr[0] == '-') {
