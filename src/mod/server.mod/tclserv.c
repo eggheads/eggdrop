@@ -473,7 +473,7 @@ static int tcl_server STDVAR {
     return TCL_OK;
   } else {
     Tcl_AppendResult(irp, "Invalid subcommand: ", argv[1],
-        ". Should be \"add\" or \"remove\"", NULL);
+        ". Should be \"add\", \"remove\", or \"list\"", NULL);
     return TCL_ERROR;
   }
   if (ret == 0) {
