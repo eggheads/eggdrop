@@ -462,7 +462,7 @@ static int tcl_server STDVAR {
         Tcl_ListObjAppendElement(irp, server, Tcl_NewStringObj("", -1));
       }
       if ((argc >= 5) && argv[4]) {
-        Tcl_ListObjAppendElement(irp, server, Tcl_NewStringObj(argv[3], -1));
+        Tcl_ListObjAppendElement(irp, server, Tcl_NewStringObj(argv[4], -1));
       } else {
         Tcl_ListObjAppendElement(irp, server, Tcl_NewStringObj("", -1));
       }
