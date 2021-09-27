@@ -448,15 +448,29 @@ static int tcl_server STDVAR {
   int ret;
   char s[7];
   struct server_list *z;
-
+  Tcl_Obj *server;
 
   BADARGS(2, 5, " subcommand host ?port ?password??");
   if (!strcmp(argv[1], "add")) {
     ret = add_server(argv[2], argc >= 4 && argv[3] ? argv[3] : "", argc >= 5 && argv[4] ? argv[4] : "");
+    if (!ret) {
+      server = Tcl_NewListObj(0, NULL);
+      Tcl_ListObjAppendElement(irp, server, Tcl_NewStringObj(argv[2], -1));
+      if ((argc >= 4) && argv[3]) {
+        Tcl_ListObjAppendElement(irp, server, Tcl_NewStringObj(argv[3], -1));
+      } else {
+        Tcl_ListObjAppendElement(irp, server, Tcl_NewStringObj("", -1));
+      }
+      if ((argc >= 5) && argv[4]) {
+        Tcl_ListObjAppendElement(irp, server, Tcl_NewStringObj(argv[3], -1));
+      } else {
+        Tcl_ListObjAppendElement(irp, server, Tcl_NewStringObj("", -1));
+      }
+      Tcl_SetObjResult(irp, server);
+    }
   } else if (!strcmp(argv[1], "remove")) {
     ret = del_server(argv[2], argc >= 4 && argv[3] ? argv[3] : "");
   } else if (!strcmp(argv[1], "list")) {
-    Tcl_Obj *server;
     Tcl_Obj *servers = Tcl_NewListObj(0, NULL);
     z = serverlist;
     while(z != NULL) {
