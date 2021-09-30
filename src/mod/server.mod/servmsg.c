@@ -1774,8 +1774,8 @@ static int add_capabilities(char *msg) {
 }
 
 /* Helper function to see if given value exists for a capability */
-static int checkvalue(struct cap_values *list, const char *name) {
-  struct cap_values *current = list;
+static int checkvalue(struct cap_values *caplist, const char *name) {
+  struct cap_values *current = caplist;
 
   while (current != NULL) {
     if (!strcmp(name, current->name)) {
@@ -1791,6 +1791,7 @@ static int gotcap(char *from, char *msg) {
   char *cmd, *splitstr;
   char cape[CAPMAX+1], buf[CAPMAX+1], *p;
   int remove = 0, multiline = 0;
+  size_t written = 0;
   struct capability *current;
 
   newsplit(&msg);
@@ -1846,14 +1847,14 @@ static int gotcap(char *from, char *msg) {
       if (current->requested) {
         putlog(LOG_DEBUG, "*", "CAP: Requesting %s capability from server", current->name);
         if (strlen(cape)) {
-          strncat(cape, " ", (sizeof cape - strlen(cape)));
+          written += snprintf(cape + written, sizeof cape - written, " %s", current->name);
+        } else {
+          strlcpy(cape, current->name, (sizeof cape - strlen(cape)));
         }
-        strncat(cape, current->name, (sizeof cape - strlen(cape)));
       }
       current = current->next;
     }
     dprintf(DP_MODE, "CAP REQ :%s\n", cape);
-    dprintf(DP_MODE, "CAP END\n");
   } else if (!strcmp(cmd, "LIST")) {
     putlog(LOG_SERV, "*", "CAP: Negotiated CAP capabilities: %s", msg);
     /* You're getting the current enabled list, may as well the clear old stuff */
@@ -1931,13 +1932,13 @@ static int gotcap(char *from, char *msg) {
 #endif /* TLS */
 #endif /* HAVE_EVP_PKEY */
           }
-          dprintf(DP_MODE, "CAP END\n");
         }
         current = current->next;
       }
       remove = 0;
       splitstr = strtok(NULL, " ");
     }
+    dprintf(DP_MODE, "CAP END\n");
     putlog(LOG_SERV, "*", "CAP: Current negotiations with %s: %s", from, buf);
   } else if (!strcmp(cmd, "NAK")) {
     putlog(LOG_SERV, "*", "CAP: Requested capability change %s rejected by %s",
