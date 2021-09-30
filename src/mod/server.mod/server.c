@@ -2067,15 +2067,15 @@ static void server_report(int idx, int details)
   if (hq.tot)
     dprintf(idx, "    %s %d%% (%d msgs)\n", IRC_HELPQUEUE,
             (int) ((float) (hq.tot * 100.0) / (float) maxqmsg), (int) hq.tot);
-    current = cap;
-    buf[0] = 0;
-    while (current != NULL) {
-      if (current->enabled) {
-        strncat(buf, current->name, (sizeof buf - strlen(buf)));
-        strncat(buf, " ", (sizeof buf - strlen(buf)));
-      }
-      current = current->next;
+  current = cap;
+  buf[0] = 0;
+  while (current != NULL) {
+    if (current->enabled) {
+      strncat(buf, current->name, (sizeof buf - strlen(buf)));
+      strncat(buf, " ", (sizeof buf - strlen(buf)));
     }
+    current = current->next;
+  }
   dprintf(idx, "    Active CAP negotiations: %s\n", (strlen(buf) > 0) ?
             buf : "None" );
   if (details) {

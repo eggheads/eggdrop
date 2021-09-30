@@ -1512,6 +1512,13 @@ static int got900(char *from, char *msg)
   return 0;
 }
 
+/* Got 901: RPL_LOGGEDOUT, user account is logged out */
+static int got901(char *from, char *msg)
+{
+  putlog(LOG_SERV, "*", "SASL: Account has been logged out");
+  return 0;
+}
+
 static int sasl_error(char *msg)
 {
   putlog(LOG_SERV, "*", "SASL: %s", msg);
@@ -1524,11 +1531,13 @@ static int sasl_error(char *msg)
   return 1;
 }
 
-/* Got 904: ERR_SASLFAIL, invalid credentials (or something not covered)
-   Got 905: ERR_SASLTOOLONG, AUTHENTICATE command was too long (>400 bytes)
-   Got 906: ERR_SASL_ABORTED, sent AUTHENTICATE command with * as parameter
+/* Got 902: ERR_NICKLOCKED, authentication fails b/c nick is unavailable
+ * Got 904: ERR_SASLFAIL, invalid credentials (or something not covered)
+ * Got 905: ERR_SASLTOOLONG, AUTHENTICATE command was too long (>400 bytes)
+ * Got 906: ERR_SASL_ABORTED, sent AUTHENTICATE command with * as parameter
+ * For easy grepping, this covers got902 got904 got905 got906
  */
-static int got904905and906(char *from, char *msg)
+static int gotsasl90X(char *from, char *msg)
 {
   newsplit(&msg); /* nick */
   fixcolon(msg);
@@ -1543,6 +1552,13 @@ static int got903(char *from, char *msg)
   putlog(LOG_SERV, "*", "SASL: %s", msg);
   dprintf(DP_MODE, "CAP END\n");
   sasl_timeout_time = 0;
+  return 0;
+}
+
+/* Got 907: ERR_SASLALREADY, already authenticated */
+static int got907(char *from, char *msg)
+{
+  putlog(LOG_SERV, "*", "SASL: Already authenticated");
   return 0;
 }
 
@@ -1738,7 +1754,7 @@ static int add_capabilities(char *msg) {
           y->next = newvalue;
         else
           newcap->value = newvalue;
-        newcap->value->next = 0;
+        newvalue->next = 0;
         strlcpy(newvalue->name, valptr, sizeof(newvalue->name));
         valptr = strtok_r(NULL, ",", &saveptr3);
       }
@@ -1757,11 +1773,25 @@ static int add_capabilities(char *msg) {
   return 0;
 }
 
+/* Helper function to see if given value exists for a capability */
+static int checkvalue(struct cap_values *caplist, const char *name) {
+  struct cap_values *current = caplist;
+
+  while (current != NULL) {
+    if (!strcmp(name, current->name)) {
+      return 1;
+    }
+    current = current->next;
+  }
+  return 0;
+}
+
 /* Got CAP message */
 static int gotcap(char *from, char *msg) {
   char *cmd, *splitstr;
   char cape[CAPMAX+1], buf[CAPMAX+1], *p;
   int remove = 0, multiline = 0;
+  size_t written = 0;
   struct capability *current;
 
   newsplit(&msg);
@@ -1817,14 +1847,14 @@ static int gotcap(char *from, char *msg) {
       if (current->requested) {
         putlog(LOG_DEBUG, "*", "CAP: Requesting %s capability from server", current->name);
         if (strlen(cape)) {
-          strncat(cape, " ", (sizeof cape - strlen(cape)));
+          written += snprintf(cape + written, sizeof cape - written, " %s", current->name);
+        } else {
+          strlcpy(cape, current->name, (sizeof cape - strlen(cape)));
         }
-        strncat(cape, current->name, (sizeof cape - strlen(cape)));
       }
       current = current->next;
     }
     dprintf(DP_MODE, "CAP REQ :%s\n", cape);
-    dprintf(DP_MODE, "CAP END\n");
   } else if (!strcmp(cmd, "LIST")) {
     putlog(LOG_SERV, "*", "CAP: Negotiated CAP capabilities: %s", msg);
     /* You're getting the current enabled list, may as well the clear old stuff */
@@ -1875,11 +1905,17 @@ static int gotcap(char *from, char *msg) {
           }
 
           if ((sasl) && (!strcmp(current->name, "sasl")) && (current->enabled)) {
-              putlog(LOG_SERV, "*", "DOING THINGS FOR SASL!");
+            putlog(LOG_DEBUG, "*", "SASL: Starting authentication process");
+            if (!checkvalue(current->value, SASL_MECHANISMS[sasl_mechanism])) {
+              snprintf(buf, sizeof buf,
+                  "%s authentication method not supported",
+                  SASL_MECHANISMS[sasl_mechanism]);
+              return sasl_error(buf);
+            }
 #ifndef HAVE_EVP_PKEY_GET1_EC_KEY
             if (sasl_mechanism != SASL_MECHANISM_ECDSA_NIST256P_CHALLENGE) {
 #endif
-              putlog(LOG_DEBUG, "*", "SASL: put AUTHENTICATE %s",
+              putlog(LOG_DEBUG, "*", "SASL: AUTHENTICATE %s",
                   SASL_MECHANISMS[sasl_mechanism]);
               dprintf(DP_MODE, "AUTHENTICATE %s\n", SASL_MECHANISMS[sasl_mechanism]);
               sasl_timeout_time = sasl_timeout;
@@ -1896,13 +1932,13 @@ static int gotcap(char *from, char *msg) {
 #endif /* TLS */
 #endif /* HAVE_EVP_PKEY */
           }
-          dprintf(DP_MODE, "CAP END\n");
         }
         current = current->next;
       }
       remove = 0;
       splitstr = strtok(NULL, " ");
     }
+    dprintf(DP_MODE, "CAP END\n");
     putlog(LOG_SERV, "*", "CAP: Current negotiations with %s: %s", from, buf);
   } else if (!strcmp(cmd, "NAK")) {
     putlog(LOG_SERV, "*", "CAP: Requested capability change %s rejected by %s",
@@ -1952,10 +1988,13 @@ static cmd_t my_raw_binds[] = {
   {"442",          "",   (IntFunc) got442,          NULL},
   {"465",          "",   (IntFunc) got465,          NULL},
   {"900",          "",   (IntFunc) got900,          NULL},
+  {"901",          "",   (IntFunc) got901,          NULL},
+  {"902",          "",   (IntFunc) gotsasl90X,      NULL},
   {"903",          "",   (IntFunc) got903,          NULL},
-  {"904",          "",   (IntFunc) got904905and906, NULL},
-  {"905",          "",   (IntFunc) got904905and906, NULL},
-  {"906",          "",   (IntFunc) got904905and906, NULL},
+  {"904",          "",   (IntFunc) gotsasl90X,      NULL},
+  {"905",          "",   (IntFunc) gotsasl90X,      NULL},
+  {"906",          "",   (IntFunc) gotsasl90X,      NULL},
+  {"907",          "",   (IntFunc) got907,          NULL},
   {"908",          "",   (IntFunc) got908,          NULL},
   {"NICK",         "",   (IntFunc) gotnick,         NULL},
   {"ERROR",        "",   (IntFunc) goterror,        NULL},
