@@ -1830,26 +1830,26 @@ static int gotcap(char *from, char *msg) {
     current = cap; 
 /* CAP is supported, yay! If it is supported, lets load what we want to request */
     while (current != NULL) {
-      if (!strcmp(current->name, "sasl") && (sasl) && !(current->requested)) {
+      if (!strcmp(current->name, "sasl") && (sasl) && !(current->enabled)) {
         add_req(current->name);
       } else if (!strcmp(current->name, "account-notify") && (account_notify)
-                && (!current->requested)) {
+                && (!current->enabled)) {
         add_req(current->name);
       } else if (!strcmp(current->name, "extended-join") && (extended_join) 
-                && (!current->requested)) {
+                && (!current->enabled)) {
         add_req(current->name);
       } else if (!strcmp(current->name, "invite-notify") && (invite_notify)
-                && (!current->requested)) {
+                && (!current->enabled)) {
         add_req(current->name);
       } else if (!strcmp(current->name, "message-tags") && (message_tags)
-                && (!current->requested)) {
+                && (!current->enabled)) {
         add_req(current->name);
       }
       /* Add any custom capes the user listed */
       strlcpy(cape, cap_request, sizeof cape);
       if ( (p = strtok(cape, " ")) ) {
         while (p != NULL) {
-          if (!strcmp(current->name, p) && (!current->requested)) {
+          if (!strcmp(current->name, p) && (!current->enabled)) {
             add_req(p);
           }
           p = strtok(NULL, " ");
