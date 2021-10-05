@@ -89,21 +89,19 @@ static int monitor_add(char * nick, int send) {
   memset(entry, 0, sizeof *entry);
 
   /* Check for duplicates before adding */
-  while(current != NULL) {
+  while (current != NULL) {
     if (!strcasecmp(current->nick, nick)) {
-      putlog(LOG_MISC, "*", "%s is already on the monitor list", nick);
       return 0;
     }
     current=current->next;
   }
 
-  strlcpy (entry->nick, nick, NICKLEN);
+  strlcpy(entry->nick, nick, NICKLEN);
   entry->next = monitor;
   monitor = entry;
   if (send) {
     dprintf(DP_SERVER, "MONITOR + %s\n", nick);
   }
-  putlog(LOG_MISC, "*", "Added %s to monitor list", nick);
 
   return 1;
 }
@@ -113,12 +111,12 @@ static int monitor_del (char *nick) {
   struct monitor_list *current = monitor;
   struct monitor_list *previous = NULL;
 
-  if(monitor == NULL) {
+  if (monitor == NULL) {
     putlog(LOG_MISC, "*", "%s not found.", nick);
     return 0;
   }
-  while(strcmp(current->nick, nick)) {
-    if(current->next == NULL) {
+  while (strcmp(current->nick, nick)) {
+    if (current->next == NULL) {
       return 0;
     } else {
       previous = current;
@@ -131,7 +129,6 @@ static int monitor_del (char *nick) {
     previous->next = current->next;
   }
   dprintf(DP_SERVER, "MONITOR - %s\n", nick);
-  putlog(LOG_MISC, "*", "Removed %s from monitor list.", nick);
   return 1;
 }
 
@@ -143,12 +140,11 @@ static void monitor_show(Tcl_Obj *mlist, int mode, char *nick) {
   struct monitor_list *current = monitor;
   int found = 0;
 
-  if(current == NULL) {
-    Tcl_ListObjAppendElement(interp, mlist, Tcl_NewStringObj("-1", -1));
+  if (current == NULL) {
     return;
   }
 
-  while(current != NULL) {
+  while (current != NULL) {
     if (!mode) {
       Tcl_ListObjAppendElement(interp, mlist, Tcl_NewStringObj(current->nick, -1));
     } else if (mode == 1) {
@@ -160,7 +156,7 @@ static void monitor_show(Tcl_Obj *mlist, int mode, char *nick) {
         Tcl_ListObjAppendElement(interp, mlist, Tcl_NewStringObj(current->nick, -1));
       }
     } else if (mode == 3) {
-      if(!strcmp(current->nick, nick)) {
+      if(!rfc_casecmp(current->nick, nick)) {
         found = 1;
         if (current->online) {
           Tcl_ListObjAppendElement(interp, mlist, Tcl_NewStringObj("1", 1));
@@ -182,6 +178,7 @@ static void monitor_clear()
   struct monitor_list *current = monitor;
   struct monitor_list *next = NULL;
 
+  monitor = NULL;
   dprintf(DP_SERVER, "MONITOR C");
   /* Clear local linked list */
   while (current != NULL) {
@@ -189,7 +186,6 @@ static void monitor_clear()
     nfree(current);
     current = next;
   }
-  monitor = NULL;
 
   return;
 }
@@ -1412,7 +1408,7 @@ static int got730or1(char *from, char *msg, int code)
     } else {
       nick = tok;
     }
-    while(current != NULL) {
+    while (current != NULL) {
       if (!rfc_casecmp(current->nick, nick)) {
         if (code == 1) {
           current->online = 1;
