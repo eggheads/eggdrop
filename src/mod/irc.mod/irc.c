@@ -776,7 +776,7 @@ static int check_tcl_ircaway(char *nick, char *from, char *mask,
   Tcl_SetVar(interp, "_ircaway3", hand, 0);
   Tcl_SetVar(interp, "_ircaway4", chan, 0);
   Tcl_SetVar(interp, "_ircaway5", msg ? msg : "", 0);
-  x = check_tcl_bind(H_ircaway, mask, &fr, " $_ircaway1, $_ircaway2 $_ircaway3 "
+  x = check_tcl_bind(H_ircaway, mask, &fr, " $_ircaway1 $_ircaway2 $_ircaway3 "
                         "$_ircaway4 $_ircaway5", MATCH_MASK | BIND_STACKABLE);
   return (x == BIND_EXEC_LOG);
 }
