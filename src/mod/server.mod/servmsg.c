@@ -1688,6 +1688,7 @@ static void free_capability(struct capability *z) {
   return;
 }
 
+/* Remove a single capability from the linked list */
 static int del_capability(char *name) {
   struct capability *curr, *prev;
 
@@ -1709,7 +1710,7 @@ static int del_capability(char *name) {
 }
   
 
-/* Remove a capability entry from the linked list
+/* Remove multiple capabilities from the linked list
  * msg is in format "multi-prefix sasl server-time"
  */
 static int del_capabilities(char *msg) {
@@ -1922,10 +1923,6 @@ static int gotcap(char *from, char *msg) {
           } else {
             current->enabled = 1;
           }
-          if (current->enabled) {
-           strncat(buf, current->name, (sizeof buf - strlen(buf)));
-           strncat(buf, " ", (sizeof buf - strlen(buf)));
-          }
 
           if ((sasl) && (!strcmp(current->name, "sasl")) && (current->enabled)) {
             putlog(LOG_DEBUG, "*", "SASL: Starting authentication process");
@@ -1962,7 +1959,14 @@ static int gotcap(char *from, char *msg) {
       splitstr = strtok(NULL, " ");
     }
     dprintf(DP_MODE, "CAP END\n");
-    putlog(LOG_SERV, "*", "CAP: Current negotiations with %s: %s", from, buf);
+    current = cap;
+    while (current != NULL) {
+      if (current->enabled) {
+        written += snprintf(buf + written, sizeof buf - written, " %s", current->name);
+      }
+      current = current->next;
+    }
+    putlog(LOG_SERV, "*", "CAP: Current negotiations with %s:%s", from, buf);
   } else if (!strcmp(cmd, "NAK")) {
     putlog(LOG_SERV, "*", "CAP: Requested capability change %s rejected by %s",
         msg, from);
