@@ -1727,7 +1727,7 @@ static int del_capabilities(char *msg) {
  * msg is in format "multi-prefix sasl=PLAIN,EXTERNAL server-time"
  */
 static int add_capabilities(char *msg) {
-  char *capptr, *valptr, *val, *saveptr1, *saveptr2;
+  char *capptr, *valptr, *val, *saveptr1 = NULL, *saveptr2 = NULL;
   struct capability *newcap, **capdstptr, *z;
   struct cap_values *newvalue, **nextvaldstptr;
   int found;
