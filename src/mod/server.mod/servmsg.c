@@ -23,6 +23,7 @@
 #undef answer /* before resolv.h because it could collide with src/mod/module.h
 		 (dietlibc) */
 #include <resolv.h> /* base64 encode b64_ntop() and base64 decode b64_pton() */
+#include <string.h>
 #ifdef TLS
   #include <openssl/err.h>
 #endif
@@ -1726,65 +1727,46 @@ static int del_capabilities(char *msg) {
  * msg is in format "multi-prefix sasl=PLAIN,EXTERNAL server-time"
  */
 static int add_capabilities(char *msg) {
-  char buf [CAPMAX+1];
-  char *capptr, *valptr, *t, *saveptr1, *saveptr2, *saveptr3;
-  struct capability *newcap, *z;
-  struct cap_values *newvalue, *y;
-  int found = 0;
+  char *capptr, *valptr, *val, *saveptr1, *saveptr2;
+  struct capability *newcap, **capdstptr, *z;
+  struct cap_values *newvalue, **nextvaldstptr;
+  int found;
 
-  capptr = strtok_r(msg, " ", &saveptr1);
-  while(capptr != NULL) {
-    z = cap;
-    while(z != NULL) {
-      strlcpy(buf, capptr, sizeof buf);
-      if (!strcmp(z->name, strtok(buf, "="))) {
+  for (capptr = strtok_r(msg, " ", &saveptr1); capptr; capptr = strtok_r(NULL, " ", &saveptr1)) {
+    valptr = strchr(capptr, '=');
+    if (valptr) {
+      *valptr++ = '\0';
+    }
+    found = 0;
+    capdstptr = &cap;
+    for (z = cap; z; z = z->next) {
+      if (!strcasecmp(capptr, z->name)) {
         found = 1;
+        break;
       }
-      z = z->next;
+      capdstptr = &z->next;
     }
     if (found) {
-      putlog(LOG_DEBUG, "*", "CAP: %s capability record already exists, skipping...", buf);
-      found = 0;
-      capptr = strtok_r(NULL, " ", &saveptr1);
+      putlog(LOG_MISC, "*", "CAP: %s capability record already exists, skipping...", capptr);
       continue;
     }
     putlog(LOG_DEBUG, "*", "CAP: adding capability record: %s", capptr);
-    newcap = nmalloc(sizeof(struct capability));
-    newcap->next = 0;
-    newcap->value = 0;
+    newcap = nmalloc(sizeof *newcap);
+    memset(newcap, 0, sizeof *newcap);
     strlcpy(newcap->name, capptr, sizeof newcap->name);
-    if (strchr(capptr, '=')) {
-      strlcpy(buf, capptr, sizeof buf);
-      /* Assign pre-= to name */
-      t = strtok_r(buf, "=", &saveptr2);
-      strlcpy(newcap->name, t, sizeof newcap->name);
-      /* Get the values */
-      t = strtok_r(NULL, "=", &saveptr2);
-      valptr = strtok_r(t, ",", &saveptr3);
-      while (valptr != NULL) {
-        putlog(LOG_DEBUG, "*", "CAP: Adding value %s to capability %s", valptr, newcap->name);
-        for (y = newcap->value; y && y->next; y = y->next);
-        newvalue = nmalloc(sizeof(struct cap_values));
-        if (y)
-          y->next = newvalue;
-        else
-          newcap->value = newvalue;
-        newvalue->next = 0;
-        strlcpy(newvalue->name, valptr, sizeof(newvalue->name));
-        valptr = strtok_r(NULL, ",", &saveptr3);
+    *capdstptr = newcap;
+
+    if (valptr) {
+      nextvaldstptr = &newcap->value;
+      for (val = strtok_r(valptr, ",", &saveptr2); val; val = strtok_r(NULL, ",", &saveptr2)) {
+        newvalue = nmalloc(sizeof *newvalue);
+        memset(newvalue, 0, sizeof *newvalue);
+        strlcpy(newvalue->name, val, sizeof newvalue->name);
+        putlog(LOG_DEBUG, "*", "CAP: Adding value %s to capability %s", val, newcap->name);
+        *nextvaldstptr = newvalue;
+        nextvaldstptr = &newvalue->next;
       }
-    } else {
-      strlcpy(newcap->name, capptr, sizeof newcap->name);
     }
-    newcap->enabled = 0;
-    newcap->requested = 0;
-    for (z = cap; z && z->next; z = z->next);
-    if (z)
-      z->next = newcap;
-    else
-      cap = newcap;
-    capptr = strtok_r(NULL, " ", &saveptr1);
-    newcap = NULL;
   }
   return 0;
 }
