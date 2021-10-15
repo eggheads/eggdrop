@@ -1940,7 +1940,11 @@ static int gotcap(char *from, char *msg) {
       remove = 0;
       splitstr = strtok(NULL, " ");
     }
-    dprintf(DP_MODE, "CAP END\n");
+    current = find_capability("sasl");
+    /* Let SASL code send END if SASL is enabled, to avoid race condition */
+    if (!current->enabled) {
+      dprintf(DP_MODE, "CAP END\n");
+    }
     current = cap;
     while (current != NULL) {
       if (current->enabled) {
