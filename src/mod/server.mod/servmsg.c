@@ -23,6 +23,7 @@
 #undef answer /* before resolv.h because it could collide with src/mod/module.h
 		 (dietlibc) */
 #include <resolv.h> /* base64 encode b64_ntop() and base64 decode b64_pton() */
+#include <string.h>
 #ifdef TLS
   #include <openssl/err.h>
 #endif
@@ -1688,6 +1689,7 @@ static void free_capability(struct capability *z) {
   return;
 }
 
+/* Remove a single capability from the linked list */
 static int del_capability(char *name) {
   struct capability *curr, *prev;
 
@@ -1709,7 +1711,7 @@ static int del_capability(char *name) {
 }
   
 
-/* Remove a capability entry from the linked list
+/* Remove multiple capabilities from the linked list
  * msg is in format "multi-prefix sasl server-time"
  */
 static int del_capabilities(char *msg) {
@@ -1725,50 +1727,46 @@ static int del_capabilities(char *msg) {
  * msg is in format "multi-prefix sasl=PLAIN,EXTERNAL server-time"
  */
 static int add_capabilities(char *msg) {
-  char buf [CAPMAX+1];
-  char *capptr, *valptr, *t, *saveptr1, *saveptr2, *saveptr3;
-  struct capability *newcap, *z;
-  struct cap_values *newvalue, *y;
+  char *capptr, *valptr, *val, *saveptr1 = NULL, *saveptr2 = NULL;
+  struct capability *newcap, **capdstptr, *z;
+  struct cap_values *newvalue, **nextvaldstptr;
+  int found;
 
-  capptr = strtok_r(msg, " ", &saveptr1);
-  while(capptr != NULL) {
-    for (z = cap; z && z->next; z = z->next);
-    putlog(LOG_DEBUG, "*", "CAP: adding capability record: %s", capptr);
-    newcap = nmalloc(sizeof(struct capability));
-    newcap->next = 0;
-    newcap->value = 0;
-    strlcpy(newcap->name, capptr, sizeof newcap->name);
-    if (strchr(capptr, '=')) {
-      strlcpy(buf, capptr, sizeof buf);
-      /* Assign pre-= to name */
-      t = strtok_r(buf, "=", &saveptr2);
-      strlcpy(newcap->name, t, sizeof newcap->name);
-      /* Get the values */
-      t = strtok_r(NULL, "=", &saveptr2);
-      valptr = strtok_r(t, ",", &saveptr3);
-      while (valptr != NULL) {
-        putlog(LOG_DEBUG, "*", "CAP: Adding value %s to capability %s", valptr, newcap->name);
-        for (y = newcap->value; y && y->next; y = y->next);
-        newvalue = nmalloc(sizeof(struct cap_values));
-        if (y)
-          y->next = newvalue;
-        else
-          newcap->value = newvalue;
-        newvalue->next = 0;
-        strlcpy(newvalue->name, valptr, sizeof(newvalue->name));
-        valptr = strtok_r(NULL, ",", &saveptr3);
-      }
-    } else {
-      strlcpy(newcap->name, capptr, sizeof newcap->name);
+  for (capptr = strtok_r(msg, " ", &saveptr1); capptr; capptr = strtok_r(NULL, " ", &saveptr1)) {
+    valptr = strchr(capptr, '=');
+    if (valptr) {
+      *valptr++ = '\0';
     }
-    newcap->enabled = 0;
-    newcap->requested = 0;
-    if (z)
-      z->next = newcap;
-    else
-      cap = newcap;
-    capptr = strtok_r(NULL, " ", &saveptr1);
-    newcap = NULL;
+    found = 0;
+    capdstptr = &cap;
+    for (z = cap; z; z = z->next) {
+      if (!strcasecmp(capptr, z->name)) {
+        found = 1;
+        break;
+      }
+      capdstptr = &z->next;
+    }
+    if (found) {
+      putlog(LOG_MISC, "*", "CAP: %s capability record already exists, skipping...", capptr);
+      continue;
+    }
+    putlog(LOG_DEBUG, "*", "CAP: adding capability record: %s", capptr);
+    newcap = nmalloc(sizeof *newcap);
+    memset(newcap, 0, sizeof *newcap);
+    strlcpy(newcap->name, capptr, sizeof newcap->name);
+    *capdstptr = newcap;
+
+    if (valptr) {
+      nextvaldstptr = &newcap->value;
+      for (val = strtok_r(valptr, ",", &saveptr2); val; val = strtok_r(NULL, ",", &saveptr2)) {
+        newvalue = nmalloc(sizeof *newvalue);
+        memset(newvalue, 0, sizeof *newvalue);
+        strlcpy(newvalue->name, val, sizeof newvalue->name);
+        putlog(LOG_DEBUG, "*", "CAP: Adding value %s to capability %s", val, newcap->name);
+        *nextvaldstptr = newvalue;
+        nextvaldstptr = &newvalue->next;
+      }
+    }
   }
   return 0;
 }
@@ -1815,22 +1813,26 @@ static int gotcap(char *from, char *msg) {
     current = cap; 
 /* CAP is supported, yay! If it is supported, lets load what we want to request */
     while (current != NULL) {
-      if (!strcmp(current->name, "sasl") && (sasl)) {
+      if (!strcmp(current->name, "sasl") && (sasl) && !(current->enabled)) {
         add_req(current->name);
-      } else if (!strcmp(current->name, "account-notify") && (account_notify)) {
+      } else if (!strcmp(current->name, "account-notify") && (account_notify)
+                && (!current->enabled)) {
         add_req(current->name);
-      } else if (!strcmp(current->name, "extended-join") && (extended_join)) {
+      } else if (!strcmp(current->name, "extended-join") && (extended_join) 
+                && (!current->enabled)) {
         add_req(current->name);
-      } else if (!strcmp(current->name, "invite-notify") && (invite_notify)) {
+      } else if (!strcmp(current->name, "invite-notify") && (invite_notify)
+                && (!current->enabled)) {
         add_req(current->name);
-      } else if (!strcmp(current->name, "message-tags") && (message_tags)) {
+      } else if (!strcmp(current->name, "message-tags") && (message_tags)
+                && (!current->enabled)) {
         add_req(current->name);
       }
       /* Add any custom capes the user listed */
       strlcpy(cape, cap_request, sizeof cape);
       if ( (p = strtok(cape, " ")) ) {
         while (p != NULL) {
-          if (!strcmp(current->name, p)) {
+          if (!strcmp(current->name, p) && (!current->enabled)) {
             add_req(p);
           }
           p = strtok(NULL, " ");
@@ -1838,23 +1840,21 @@ static int gotcap(char *from, char *msg) {
       }
       current=current->next;
     }
-    /* Per the CAP 302 spec, we must request cap-notify */
-    add_req("cap-notify");
     current = cap;
     /* Request the desired capabilities from server */
     cape[0] = 0;
     while (current != NULL) {
-      if (current->requested) {
+      if (current->requested && (!current->enabled)) {
         putlog(LOG_DEBUG, "*", "CAP: Requesting %s capability from server", current->name);
-        if (strlen(cape)) {
-          written += snprintf(cape + written, sizeof cape - written, " %s", current->name);
-        } else {
-          strlcpy(cape, current->name, (sizeof cape - strlen(cape)));
-        }
+        written += snprintf(cape + written, sizeof cape - written, " %s", current->name);
       }
       current = current->next;
     }
-    dprintf(DP_MODE, "CAP REQ :%s\n", cape);
+    if (strlen(cape)) {
+      dprintf(DP_MODE, "CAP REQ :%s\n", cape);
+    } else {
+      dprintf(DP_MODE, "CAP END\n");
+    }
   } else if (!strcmp(cmd, "LIST")) {
     putlog(LOG_SERV, "*", "CAP: Negotiated CAP capabilities: %s", msg);
     /* You're getting the current enabled list, may as well the clear old stuff */
@@ -1879,6 +1879,12 @@ static int gotcap(char *from, char *msg) {
     splitstr = strtok(msg, " ");
     while (splitstr != NULL) {
       current = find_capability(msg);
+      if (!current) {
+        putlog(LOG_DEBUG, "*", "CAP: %s tried to tell me we negotiated %s, \
+                but I have no record of it. Skipping...", from, msg);
+        splitstr = strtok(NULL, " ");
+        continue;
+      }
       current->enabled = 1;
       splitstr = strtok(NULL, " ");
     }
@@ -1898,10 +1904,6 @@ static int gotcap(char *from, char *msg) {
             current->enabled = 0;
           } else {
             current->enabled = 1;
-          }
-          if (current->enabled) {
-           strncat(buf, current->name, (sizeof buf - strlen(buf)));
-           strncat(buf, " ", (sizeof buf - strlen(buf)));
           }
 
           if ((sasl) && (!strcmp(current->name, "sasl")) && (current->enabled)) {
@@ -1938,8 +1940,19 @@ static int gotcap(char *from, char *msg) {
       remove = 0;
       splitstr = strtok(NULL, " ");
     }
-    dprintf(DP_MODE, "CAP END\n");
-    putlog(LOG_SERV, "*", "CAP: Current negotiations with %s: %s", from, buf);
+    current = find_capability("sasl");
+    /* Let SASL code send END if SASL is enabled, to avoid race condition */
+    if (!current->enabled) {
+      dprintf(DP_MODE, "CAP END\n");
+    }
+    current = cap;
+    while (current != NULL) {
+      if (current->enabled) {
+        written += snprintf(buf + written, sizeof buf - written, " %s", current->name);
+      }
+      current = current->next;
+    }
+    putlog(LOG_SERV, "*", "CAP: Current negotiations with %s:%s", from, buf);
   } else if (!strcmp(cmd, "NAK")) {
     putlog(LOG_SERV, "*", "CAP: Requested capability change %s rejected by %s",
         msg, from);
