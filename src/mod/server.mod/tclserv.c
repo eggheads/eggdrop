@@ -264,8 +264,10 @@ static int tcl_tagmsg STDVAR {
 /* Tcl interface to send CAP messages to server */
 static int tcl_cap STDVAR {
   char s[CAPMAX];
+  int found = 0;
   struct capability *current;
-  Tcl_Obj *capes;
+  struct cap_values *currentvalue;
+  Tcl_Obj *capes, *values;
   BADARGS(2, 3, " sub-cmd ?arg?");
 
   capes = Tcl_NewListObj(0, NULL);
@@ -284,6 +286,41 @@ static int tcl_cap STDVAR {
         Tcl_ListObjAppendElement(irp, capes, Tcl_NewStringObj(current->name, -1));
       }
       current = current->next;
+    }
+    Tcl_SetObjResult(irp, capes);
+  } else if (!strcasecmp(argv[1], "values")) {
+    capes = Tcl_NewListObj(0, NULL);
+    values = Tcl_NewListObj(0, NULL);
+    current = cap;
+    while (current != NULL) {
+      currentvalue = current->value;
+      while (currentvalue != NULL) {
+        if (argc == 3) {
+          if (!strcasecmp(argv[2], current->name)) {
+            /* Don't get confused, we use the capes var but its really values */
+            Tcl_ListObjAppendElement(irp, capes,
+                    Tcl_NewStringObj(currentvalue->name, -1));
+            found = 1;
+          }
+        } else {
+          Tcl_ListObjAppendElement(irp, values,
+                    Tcl_NewStringObj(currentvalue->name, -1));
+        }
+        currentvalue = currentvalue->next;
+      }
+      if (argc != 3) {
+        Tcl_ListObjAppendElement(irp, capes,
+                Tcl_NewStringObj(current->name, -1));
+        Tcl_ListObjAppendElement(irp, capes, values);
+      }
+      /* Clear out the list so it isn't repeatedly added */
+      values = Tcl_NewListObj(0, NULL);
+      current = current->next;
+    }
+    if ((argc == 3) && (!found)) {
+      simple_sprintf(s, "Capability \"%s\" is not enabled", argv[2]);
+      Tcl_AppendResult(irp, s, NULL);
+      return TCL_ERROR;
     }
     Tcl_SetObjResult(irp, capes);
   /* Send a request to negotiate a capability with server */
