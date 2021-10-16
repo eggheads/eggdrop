@@ -293,6 +293,9 @@ static int tcl_cap STDVAR {
     values = Tcl_NewListObj(0, NULL);
     current = cap;
     while (current != NULL) {
+      if ((argc == 3) &&(!strcasecmp(argv[2], current->name))) {
+        found = 1;
+      }
       currentvalue = current->value;
       while (currentvalue != NULL) {
         if (argc == 3) {
@@ -300,7 +303,6 @@ static int tcl_cap STDVAR {
             /* Don't get confused, we use the capes var but its really values */
             Tcl_ListObjAppendElement(irp, capes,
                     Tcl_NewStringObj(currentvalue->name, -1));
-            found = 1;
           }
         } else {
           Tcl_ListObjAppendElement(irp, values,
