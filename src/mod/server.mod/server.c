@@ -2071,8 +2071,8 @@ static void server_report(int idx, int details)
   buf[0] = 0;
   while (current != NULL) {
     if (current->enabled) {
-      strncat(buf, current->name, (sizeof buf - strlen(buf)));
-      strncat(buf, " ", (sizeof buf - strlen(buf)));
+      strncat(buf, current->name, (sizeof buf - strlen(buf) - 1));
+      strncat(buf, " ", (sizeof buf - strlen(buf) - 1));
     }
     current = current->next;
   }
