@@ -112,12 +112,11 @@ static int monitor_del (char *nick) {
   struct monitor_list *previous = NULL;
 
   if (monitor == NULL) {
-    putlog(LOG_MISC, "*", "%s not found.", nick);
-    return 0;
+    return 1;
   }
   while (strcmp(current->nick, nick)) {
     if (current->next == NULL) {
-      return 0;
+      return 1;
     } else {
       previous = current;
       current = current->next;
@@ -129,7 +128,7 @@ static int monitor_del (char *nick) {
     previous->next = current->next;
   }
   dprintf(DP_SERVER, "MONITOR - %s\n", nick);
-  return 1;
+  return 0;
 }
 
 /* Show nicknames being monitored with MONITOR.

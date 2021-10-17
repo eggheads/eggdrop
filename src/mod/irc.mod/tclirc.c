@@ -87,9 +87,14 @@ static int tcl_monitor STDVAR
     }
   } else if (!strcmp(argv[1], "delete")) {
     if (argc == 3) {
-      monitor_del(argv[2]);
-      Tcl_AppendResult(irp, "1", NULL);
-      return TCL_OK;
+      ret = monitor_del(argv[2]);
+      if (ret) {
+        Tcl_AppendResult(irp, "nickname not found", NULL);
+        return TCL_ERROR;
+      } else {
+        Tcl_AppendResult(irp, "1", NULL);
+        return TCL_OK;
+      }
     } else {
       Tcl_AppendResult(irp, "nickname required", NULL);
       return TCL_ERROR;
