@@ -90,7 +90,7 @@ static int monitor_add(char * nick, int send) {
 
   /* Check for duplicates before adding */
   while (current != NULL) {
-    if (!strcasecmp(current->nick, nick)) {
+    if (!rfc_casecmp(current->nick, nick)) {
       return 0;
     }
     current=current->next;
@@ -114,7 +114,7 @@ static int monitor_del (char *nick) {
   if (monitor == NULL) {
     return 1;
   }
-  while (strcmp(current->nick, nick)) {
+  while (rfc_casecmp(current->nick, nick)) {
     if (current->next == NULL) {
       return 1;
     } else {
