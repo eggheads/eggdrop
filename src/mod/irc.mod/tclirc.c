@@ -72,6 +72,7 @@ static int tcl_chanlist STDVAR
 static int tcl_monitor STDVAR
 {
   Tcl_Obj *monitorlist;
+  int ret;
   BADARGS(2, 3, " command ?nick?");
 
   monitorlist = Tcl_NewListObj(0, NULL);
@@ -106,9 +107,18 @@ static int tcl_monitor STDVAR
     Tcl_AppendResult(irp, Tcl_GetString(monitorlist), NULL);
     return TCL_OK;
   } else if (!strcmp(argv[1], "status")) {
-    monitor_show(monitorlist, 3, argv[2]);
-    Tcl_AppendResult(irp, Tcl_GetString(monitorlist), NULL);
-    return TCL_OK;
+    if (argc < 3) {
+      Tcl_AppendResult(irp, "nickname required", NULL);
+      return TCL_OK;
+    }
+    ret = monitor_show(monitorlist, 3, argv[2]);
+    if (!ret) {
+      Tcl_AppendResult(irp, Tcl_GetString(monitorlist), NULL);
+      return TCL_OK;
+    } else {
+      Tcl_AppendResult(irp, "nickname not found", NULL);
+      return TCL_ERROR;
+    }
   } else if (!strcasecmp(argv[1], "clear")) {
     monitor_clear();
     Tcl_AppendResult(irp, "MONITOR list cleared.", NULL);

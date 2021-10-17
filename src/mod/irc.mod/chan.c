@@ -136,12 +136,12 @@ static int monitor_del (char *nick) {
  * Mode can be 0 (all nicks), 1 (online nicks), 2 (offline nicks)
  * 3 (check status of nick)
  */
-static void monitor_show(Tcl_Obj *mlist, int mode, char *nick) {
+static int monitor_show(Tcl_Obj *mlist, int mode, char *nick) {
   struct monitor_list *current = monitor;
   int found = 0;
 
   if (current == NULL) {
-    return;
+    return 0;
   }
 
   while (current != NULL) {
@@ -168,9 +168,9 @@ static void monitor_show(Tcl_Obj *mlist, int mode, char *nick) {
     current = current->next;
   }
   if ((!found) && (mode == 3)) {
-    Tcl_ListObjAppendElement(interp, mlist, Tcl_NewStringObj("-1", -1));
+    return 1;
   }
-  return;
+  return 0;
 }
 
 static void monitor_clear()
