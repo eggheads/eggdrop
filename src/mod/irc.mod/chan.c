@@ -1401,7 +1401,7 @@ static int got730or1(char *from, char *msg, int code)
   newsplit(&msg);               /* Get rid of nick */
   fixcolon(msg);                /* Get rid of :    */
 
-  for (tok = strtok(msg, ","); tok && *tok; tok = strtok(NULL, " ")) {
+  for (tok = strtok(msg, ","); tok; tok = strtok(NULL, " ")) {
     if (strchr(tok, '!')) {
       nick = splitnick(&tok);
     } else {
