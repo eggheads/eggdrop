@@ -78,9 +78,19 @@ static int tcl_monitor STDVAR
   monitorlist = Tcl_NewListObj(0, NULL);
   if (!strcmp(argv[1], "add")) {
     if (argc == 3) {
-      monitor_add(argv[2], 1);
-      Tcl_AppendResult(irp, "1", NULL);
-      return TCL_OK;
+      ret = monitor_add(argv[2], 1);
+      if (!ret) {
+        Tcl_AppendResult(irp, "1", NULL);
+        return TCL_OK;
+      } else if (ret == 1) {
+        Tcl_AppendResult(irp, "nickname already present in monitor list", NULL);
+        return TCL_ERROR;
+        /* ret = 2 */
+      } else {
+        Tcl_AppendResult(irp,
+                "maximum number of nicknames allowed by server reached", NULL);
+        return TCL_ERROR;
+      }
     } else {
       Tcl_AppendResult(irp, "nickname required", NULL);
       return TCL_ERROR;

@@ -81,21 +81,29 @@ static void sync_members(struct chanset_t *chan)
   }
 }
 
-/* Add nickname to monitor list */
+/* Add nickname to monitor list *
+ * Returns 0 on success
+ * Returns 1 if duplicate nick found
+ * Returns 2 if maximum number of nicks to be monitored reached
+ */
 static int monitor_add(char * nick, int send) {
   struct monitor_list *entry = nmalloc(sizeof(struct monitor_list));
   struct monitor_list *current = monitor;
+  int count = 0;
 
   memset(entry, 0, sizeof *entry);
 
   /* Check for duplicates before adding */
   while (current != NULL) {
+    count++;
     if (!rfc_casecmp(current->nick, nick)) {
-      return 0;
+      return 1;
     }
     current=current->next;
   }
-
+  if (count >= max_monitor) {
+    return 2;
+  }
   strlcpy(entry->nick, nick, NICKLEN);
   entry->next = monitor;
   monitor = entry;
@@ -103,7 +111,7 @@ static int monitor_add(char * nick, int send) {
     dprintf(DP_SERVER, "MONITOR + %s\n", nick);
   }
 
-  return 1;
+  return 0;
 }
 
 /* Remove nickname from monitor list */
@@ -2927,7 +2935,7 @@ static int irc_isupport(char *key, char *isset_str, char *value)
     }
   } else if (!strcmp(key, "MONITOR")) {
     monitor005 = isset;
-    isupport_parseint(key, isset ? value : NULL, 1, 100, 1, 0, &max_monitor);
+    isupport_parseint(key, isset ? value : NULL, 1, 500, 1, 0, &max_monitor);
   } else if (!strcmp(key, "BOT")) {
     botflag005 = value[0];
   }
