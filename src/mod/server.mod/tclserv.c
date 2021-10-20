@@ -226,11 +226,13 @@ static int tcl_tagmsg STDVAR {
   char tag[CLITAGMAX-9];    /* minus @, TAGMSG and two spaces */
   char tagdict[CLITAGMAX-9];
   char target[MSGMAX];
+  struct capability *current = 0;
   char *p;
   int taglen = 0, i = 1;
   BADARGS(3, 3, " tag target");
 
-  if (!msgtag) {
+  current = find_capability("message-tags");
+  if ((!current) || (!(current->enabled))) {
     Tcl_AppendResult(irp, "message-tags not enabled, cannot send tag", NULL);
     return TCL_ERROR;
   }

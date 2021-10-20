@@ -211,12 +211,11 @@ static int check_tcl_rawt(char *from, char *code, char *msg, char *tagstr)
   Tcl_SetVar(interp, "_rawt2", code, 0);
   Tcl_SetVar(interp, "_rawt3", msg, 0);
   ptr = strtok(tagstr, " ");
-  if (!msgtag) {
-    Tcl_SetVar(interp, "_rawt4", NULL, 0);
-  } else {
-    while (ptr != NULL) {
+  Tcl_DStringAppendElement(&tagdict, ptr);
+  while (ptr != NULL) {
+    ptr = strtok(NULL, " ");
+    if (ptr) {
       Tcl_DStringAppendElement(&tagdict, ptr);
-      ptr = strtok(NULL, " ");
     }
   }
   Tcl_SetVar(interp, "_rawt4", Tcl_DStringValue(&tagdict), 0);
@@ -1148,42 +1147,40 @@ static void server_activity(int idx, char *tagmsg, int len)
 /* Check if message-tags are enabled and, if so, check/grab the tag */
   msgptr = tagmsg;
   strlcpy(rawmsg, tagmsg, TOTALTAGMAX+1);
-  if (msgtag) {
-    if (*tagmsg == '@') {
-      taglen = 0;
-      tagstrptr = newsplit(&msgptr);
-      strlcpy(tagstr, tagstrptr, TOTALTAGMAX+1);
-      tagstrptr++;     /* Remove @ */
-      /* Split each key/value pair apart, then split the key from the value */
-      for (i = 0, s1 = tagstrptr; ; i++, s1 = NULL){
-        token = strtok_r(s1, ";", &saveptr1);
-        if (token == NULL) {
-          break;
-        }
-        if (*token == '+') {
-          token++;
-        }
-        if (strchr(token, '=')) {
-          found = 0;
-          for (s2 = token; ; s2 = NULL) {
-            subtoken = strtok_r(s2, "=", &saveptr2);
-            if (subtoken == NULL) {
-              break;
-            }
-            taglen += egg_snprintf(tagdict + taglen, TOTALTAGMAX - taglen,
-                  "%s ", subtoken);
-            found++;
+  if (*tagmsg == '@') {
+    taglen = 0;
+    tagstrptr = newsplit(&msgptr);
+    strlcpy(tagstr, tagstrptr, TOTALTAGMAX+1);
+    tagstrptr++;     /* Remove @ */
+    /* Split each key/value pair apart, then split the key from the value */
+    for (i = 0, s1 = tagstrptr; ; i++, s1 = NULL){
+      token = strtok_r(s1, ";", &saveptr1);
+      if (token == NULL) {
+        break;
+      }
+      if (*token == '+') {
+        token++;
+      }
+      if (strchr(token, '=')) {
+        found = 0;
+        for (s2 = token; ; s2 = NULL) {
+          subtoken = strtok_r(s2, "=", &saveptr2);
+          if (subtoken == NULL) {
+            break;
           }
-          /* Account for tags (not key/value pairs), prep empty value for Tcl */
-          if (found < 2) {
-            taglen += egg_snprintf(tagdict + taglen, TOTALTAGMAX - taglen,
-                "{} ");
-          }
+          taglen += egg_snprintf(tagdict + taglen, TOTALTAGMAX - taglen,
+                "%s ", subtoken);
+          found++;
+        }
+        /* Account for tags (not key/value pairs), prep empty value for Tcl */
+        if (found < 2) {
+          taglen += egg_snprintf(tagdict + taglen, TOTALTAGMAX - taglen,
+              "{} ");
         }
       }
-      if (taglen > 0) {
-        tagdict[taglen-1] = '\0';     /* Remove trailing space */
-      }
+    }
+    if (taglen > 0) {
+      tagdict[taglen-1] = '\0';     /* Remove trailing space */
     }
   }
   from = "";
