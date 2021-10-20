@@ -69,6 +69,81 @@ static int tcl_chanlist STDVAR
   return TCL_OK;
 }
 
+static int tcl_monitor STDVAR
+{
+  Tcl_Obj *monitorlist;
+  int ret;
+  BADARGS(2, 3, " command ?nick?");
+
+  monitorlist = Tcl_NewListObj(0, NULL);
+  if (!strcmp(argv[1], "add")) {
+    if (argc == 3) {
+      ret = monitor_add(argv[2], 1);
+      if (!ret) {
+        Tcl_AppendResult(irp, "1", NULL);
+        return TCL_OK;
+      } else if (ret == 1) {
+        Tcl_AppendResult(irp, "nickname already present in monitor list", NULL);
+        return TCL_ERROR;
+        /* ret = 2 */
+      } else {
+        Tcl_AppendResult(irp,
+                "maximum number of nicknames allowed by server reached", NULL);
+        return TCL_ERROR;
+      }
+    } else {
+      Tcl_AppendResult(irp, "nickname required", NULL);
+      return TCL_ERROR;
+    }
+  } else if (!strcmp(argv[1], "delete")) {
+    if (argc == 3) {
+      ret = monitor_del(argv[2]);
+      if (ret) {
+        Tcl_AppendResult(irp, "nickname not found", NULL);
+        return TCL_ERROR;
+      } else {
+        Tcl_AppendResult(irp, "1", NULL);
+        return TCL_OK;
+      }
+    } else {
+      Tcl_AppendResult(irp, "nickname required", NULL);
+      return TCL_ERROR;
+    }
+  } else if (!strcmp(argv[1], "list")) {
+    monitor_show(monitorlist, 0, NULL);
+    Tcl_AppendResult(irp, Tcl_GetString(monitorlist), NULL);
+    return TCL_OK;
+  } else if (!strcmp(argv[1], "online")) {
+    monitor_show(monitorlist, 1, NULL);
+    Tcl_AppendResult(irp, Tcl_GetString(monitorlist), NULL);
+    return TCL_OK;
+  } else if (!strcmp(argv[1], "offline")) {
+    monitor_show(monitorlist, 2, NULL);
+    Tcl_AppendResult(irp, Tcl_GetString(monitorlist), NULL);
+    return TCL_OK;
+  } else if (!strcmp(argv[1], "status")) {
+    if (argc < 3) {
+      Tcl_AppendResult(irp, "nickname required", NULL);
+      return TCL_OK;
+    }
+    ret = monitor_show(monitorlist, 3, argv[2]);
+    if (!ret) {
+      Tcl_AppendResult(irp, Tcl_GetString(monitorlist), NULL);
+      return TCL_OK;
+    } else {
+      Tcl_AppendResult(irp, "nickname not found", NULL);
+      return TCL_ERROR;
+    }
+  } else if (!strcasecmp(argv[1], "clear")) {
+    monitor_clear();
+    Tcl_AppendResult(irp, "MONITOR list cleared.", NULL);
+    return TCL_OK;
+  } else {
+    Tcl_AppendResult(irp, "command must be add, delete, list, clear, online, offline, status", NULL);
+    return TCL_ERROR;
+  }
+}
+
 static int tcl_botisop STDVAR
 {
   struct chanset_t *chan, *thechan = NULL;
@@ -1233,5 +1308,6 @@ static tcl_cmds tclchan_cmds[] = {
   {"putkick",        tcl_putkick},
   {"channame2dname", tcl_channame2dname},
   {"chandname2name", tcl_chandname2name},
+  {"monitor",        tcl_monitor},
   {NULL,             NULL}
 };

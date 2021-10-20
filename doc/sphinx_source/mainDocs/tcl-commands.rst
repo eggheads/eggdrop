@@ -1119,6 +1119,13 @@ onchan <nickname> [channel]
 
   Module: irc
 
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+monitor <command> [nickname]
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  Description: interacts with the list of nicknames Eggdrop has asked the IRC server to track. valid commands are add, delete, list, online, offline, status, and clear. The 'add' command sends 'nickname' to the server to track. The 'delete' command removes 'nickname' from being tracked by the server (or returns an error if the nickname is not present). The 'list' command returns a list of all nicknames the IRC server is tracking on behalf of Eggdrop. The 'online' command returns a string of tracked nicknames that are currently online. The 'offline' command returns a list of tracked nicknames that are currently offline. The 'status' command returns a '1' if 'nickname' is online or a 0 if 'nickname' is offline. The 'clear' command removes all nicknames from the list the server is monitoring.
+
+  Module: irc
+
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 getaccount <nickname> [channel]
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -3498,6 +3505,16 @@ The following is a list of bind types and how they work. Below each bind type is
   Description: triggered when the value of an isupport key changes. The mask is matched against the isupport key. If the value is not set, isset is 0 and the value is the empty string. Because the empty string is valid value, use isset to distinguish empty string values from a key being unset. The bind is called before the change is processed, so [isupport isset]/[isupport get] return the old value. A return value other than 0 makes Eggdrop ignore the change and revert to the old value. After a disconnect from the server, all isupport values are reset to default, but $::server will be empty, so that case can be caught and ignored.
 
   Module: server
+
+(55) MONITOR (stackable)
+
+  bind monitor <flags> <nick> <proc>
+
+  procname <nick> <online>
+
+  Description: triggered when a server sends a MONITOR status change of a target either coming online or disconnecting (not all servers support MONITOR). flags are ignored, nick is the nickname of the intended MONITOR target and can be used with wildcards. For the proc, nick is the nickname connecting or disconnecting, and online is '0' if the nickname disconnected, or '1' if the nickname connected.
+
+  Module: irc
 
 
 ^^^^^^^^^^^^^
