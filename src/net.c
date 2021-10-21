@@ -137,7 +137,7 @@ int setsockname(sockname_t *addr, char *src, int port, int allowres)
   volatile int af = AF_UNSPEC;
 #ifdef IPV6
   char ip2[INET6_ADDRSTRLEN];
-  int pref;
+  volatile int pref;
 #else
   char ip2[INET_ADDRSTRLEN];
   int i, count;
