@@ -1652,7 +1652,7 @@ struct capability *find_capability(char *capname) {
   struct capability *current = cap;
 
   while (current != NULL) {
-    if (!strcmp(capname, current->name)) {
+    if (!strcasecmp(capname, current->name)) {
       return current;
     }
     current = current->next;
@@ -1896,16 +1896,16 @@ static int gotcap(char *from, char *msg) {
           remove = 1;
           splitstr++;
         }
-        if (!strcmp(splitstr, current->name)) {
+        if (!strcasecmp(splitstr, current->name)) {
           if (remove) {
             current->enabled = 0;
           } else {
             current->enabled = 1;
           }
 
-          if ((sasl) && (!strcmp(current->name, "sasl")) && (current->enabled)) {
+          if ((sasl) && (!strcasecmp(current->name, "sasl")) && (current->enabled)) {
             putlog(LOG_DEBUG, "*", "SASL: Starting authentication process");
-            if (!checkvalue(current->value, SASL_MECHANISMS[sasl_mechanism])) {
+            if (current->value && !checkvalue(current->value, SASL_MECHANISMS[sasl_mechanism])) {
               snprintf(buf, sizeof buf,
                   "%s authentication method not supported",
                   SASL_MECHANISMS[sasl_mechanism]);
@@ -1939,7 +1939,7 @@ static int gotcap(char *from, char *msg) {
     }
     current = find_capability("sasl");
     /* Let SASL code send END if SASL is enabled, to avoid race condition */
-    if (!current->enabled) {
+    if (!current || !current->enabled) {
       dprintf(DP_MODE, "CAP END\n");
     }
     current = cap;
