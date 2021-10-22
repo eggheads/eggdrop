@@ -211,12 +211,11 @@ static int check_tcl_rawt(char *from, char *code, char *msg, char *tagstr)
   Tcl_SetVar(interp, "_rawt2", code, 0);
   Tcl_SetVar(interp, "_rawt3", msg, 0);
   ptr = strtok(tagstr, " ");
-  if (!msgtag) {
-    Tcl_SetVar(interp, "_rawt4", NULL, 0);
-  } else {
-    while (ptr != NULL) {
+  Tcl_DStringAppendElement(&tagdict, ptr);
+  while (ptr != NULL) {
+    ptr = strtok(NULL, " ");
+    if (ptr) {
       Tcl_DStringAppendElement(&tagdict, ptr);
-      ptr = strtok(NULL, " ");
     }
   }
   Tcl_SetVar(interp, "_rawt4", Tcl_DStringValue(&tagdict), 0);
@@ -1148,42 +1147,40 @@ static void server_activity(int idx, char *tagmsg, int len)
 /* Check if message-tags are enabled and, if so, check/grab the tag */
   msgptr = tagmsg;
   strlcpy(rawmsg, tagmsg, TOTALTAGMAX+1);
-  if (msgtag) {
-    if (*tagmsg == '@') {
-      taglen = 0;
-      tagstrptr = newsplit(&msgptr);
-      strlcpy(tagstr, tagstrptr, TOTALTAGMAX+1);
-      tagstrptr++;     /* Remove @ */
-      /* Split each key/value pair apart, then split the key from the value */
-      for (i = 0, s1 = tagstrptr; ; i++, s1 = NULL){
-        token = strtok_r(s1, ";", &saveptr1);
-        if (token == NULL) {
-          break;
-        }
-        if (*token == '+') {
-          token++;
-        }
-        if (strchr(token, '=')) {
-          found = 0;
-          for (s2 = token; ; s2 = NULL) {
-            subtoken = strtok_r(s2, "=", &saveptr2);
-            if (subtoken == NULL) {
-              break;
-            }
-            taglen += egg_snprintf(tagdict + taglen, TOTALTAGMAX - taglen,
-                  "%s ", subtoken);
-            found++;
+  if (*tagmsg == '@') {
+    taglen = 0;
+    tagstrptr = newsplit(&msgptr);
+    strlcpy(tagstr, tagstrptr, TOTALTAGMAX+1);
+    tagstrptr++;     /* Remove @ */
+    /* Split each key/value pair apart, then split the key from the value */
+    for (i = 0, s1 = tagstrptr; ; i++, s1 = NULL){
+      token = strtok_r(s1, ";", &saveptr1);
+      if (token == NULL) {
+        break;
+      }
+      if (*token == '+') {
+        token++;
+      }
+      if (strchr(token, '=')) {
+        found = 0;
+        for (s2 = token; ; s2 = NULL) {
+          subtoken = strtok_r(s2, "=", &saveptr2);
+          if (subtoken == NULL) {
+            break;
           }
-          /* Account for tags (not key/value pairs), prep empty value for Tcl */
-          if (found < 2) {
-            taglen += egg_snprintf(tagdict + taglen, TOTALTAGMAX - taglen,
-                "{} ");
-          }
+          taglen += egg_snprintf(tagdict + taglen, TOTALTAGMAX - taglen,
+                "%s ", subtoken);
+          found++;
+        }
+        /* Account for tags (not key/value pairs), prep empty value for Tcl */
+        if (found < 2) {
+          taglen += egg_snprintf(tagdict + taglen, TOTALTAGMAX - taglen,
+              "{} ");
         }
       }
-      if (taglen > 0) {
-        tagdict[taglen-1] = '\0';     /* Remove trailing space */
-      }
+    }
+    if (taglen > 0) {
+      tagdict[taglen-1] = '\0';     /* Remove trailing space */
     }
   }
   from = "";
@@ -1655,7 +1652,7 @@ struct capability *find_capability(char *capname) {
   struct capability *current = cap;
 
   while (current != NULL) {
-    if (!strcmp(capname, current->name)) {
+    if (!strcasecmp(capname, current->name)) {
       return current;
     }
     current = current->next;
@@ -1899,16 +1896,16 @@ static int gotcap(char *from, char *msg) {
           remove = 1;
           splitstr++;
         }
-        if (!strcmp(splitstr, current->name)) {
+        if (!strcasecmp(splitstr, current->name)) {
           if (remove) {
             current->enabled = 0;
           } else {
             current->enabled = 1;
           }
 
-          if ((sasl) && (!strcmp(current->name, "sasl")) && (current->enabled)) {
+          if ((sasl) && (!strcasecmp(current->name, "sasl")) && (current->enabled)) {
             putlog(LOG_DEBUG, "*", "SASL: Starting authentication process");
-            if (!checkvalue(current->value, SASL_MECHANISMS[sasl_mechanism])) {
+            if (current->value && !checkvalue(current->value, SASL_MECHANISMS[sasl_mechanism])) {
               snprintf(buf, sizeof buf,
                   "%s authentication method not supported",
                   SASL_MECHANISMS[sasl_mechanism]);
@@ -1942,7 +1939,7 @@ static int gotcap(char *from, char *msg) {
     }
     current = find_capability("sasl");
     /* Let SASL code send END if SASL is enabled, to avoid race condition */
-    if (!current->enabled) {
+    if (!current || !current->enabled) {
       dprintf(DP_MODE, "CAP END\n");
     }
     current = cap;
