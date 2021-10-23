@@ -53,8 +53,10 @@ extern int backgrd, use_stderr, resolve_timeout, dcc_total;
 extern unsigned long otraffic_irc_today, otraffic_bn_today, otraffic_dcc_today,
                      otraffic_filesys_today, otraffic_trans_today,
                      otraffic_unknown_today;
+extern time_t online_since;
 
-char natip[121] = "";         /* Public IPv4 to report for systems behind NAT */
+char nat_ip[INET_ADDRSTRLEN] = ""; /* Public IPv4 to report for systems behind NAT */
+char nat_ip_string[11];
 char listen_ip[121] = "";     /* IP (or hostname) for listening sockets       */
 char vhost[121] = "";         /* IPv4 vhost for outgoing connections          */
 #ifdef IPV6
@@ -713,7 +715,7 @@ int getdccaddr(sockname_t *addr, char *s, size_t l)
 /* Get DCC compatible address for a client to connect (e.g. 1660944385)
  * If addr is not NULL, it should point to the listening socket's address.
  * Otherwise, this function will try to figure out the public address of the
- * machine, using listen_ip and natip. If restrict_af is set, it will limit
+ * machine, using listen_ip and nat_ip. If restrict_af is set, it will limit
  * the possible IPs to the specified family. The result is a string usable
  * for DCC requests
  */
@@ -784,7 +786,7 @@ int getdccfamilyaddr(sockname_t *addr, char *s, size_t l, int restrict_af)
       ((r->family == AF_INET6) && (restrict_af == AF_INET)) ||
       ((r->family == AF_INET) && (restrict_af == AF_INET6)) ||
 #endif
-      (!natip[0] && (r->family == AF_INET) && !r->addr.s4.sin_addr.s_addr))
+      (!nat_ip_string[0] && (r->family == AF_INET) && !r->addr.s4.sin_addr.s_addr))
     return 0;
 
 #ifdef IPV6
@@ -792,14 +794,20 @@ int getdccfamilyaddr(sockname_t *addr, char *s, size_t l, int restrict_af)
     if (IN6_IS_ADDR_V4MAPPED(&r->addr.s6.sin6_addr) ||
         IN6_IS_ADDR_UNSPECIFIED(&r->addr.s6.sin6_addr)) {
       memcpy(&ip, r->addr.s6.sin6_addr.s6_addr + 12, sizeof ip);
-      egg_snprintf(s, l, "%lu", natip[0] ? iptolong(inet_addr(natip)) :
-               ntohl(ip));
+      if (*nat_ip_string)
+        strlcpy(s, nat_ip_string, l);
+      else
+        egg_snprintf(s, l, "%u", ntohl(ip));
     } else
       inet_ntop(AF_INET6, &r->addr.s6.sin6_addr, s, l);
   } else
 #endif
-  egg_snprintf(s, l, "%lu", natip[0] ? iptolong(inet_addr(natip)) :
-             ntohl(r->addr.s4.sin_addr.s_addr));
+  {
+    if (*nat_ip_string)
+      strlcpy(s, nat_ip_string, l);
+    else
+      snprintf(s, l, "%u", ntohl(r->addr.s4.sin_addr.s_addr));
+  }
   return 1;
 }
 
@@ -1680,5 +1688,38 @@ char *traced_myiphostname(ClientData cd, Tcl_Interp *irp, EGG_CONST char *name1,
   putlog(LOG_MISC, "*", "    To prevent future incompatibility, please use the vhost4/listen-addr variables instead.\n");
   putlog(LOG_MISC, "*", "    More information on this subject can be found in the eggdrop/doc/IPV6 file, or\n");
   putlog(LOG_MISC, "*", "    in the comments above those settings in the example eggdrop.conf that is included with Eggdrop.\n");
+  return NULL;
+}
+
+char *traced_natip(ClientData cd, Tcl_Interp *irp, EGG_CONST char *name1,
+                   EGG_CONST char *name2, int flags)
+{
+  const char *value;
+  int r;
+  struct in_addr ia;
+
+  value = Tcl_GetVar2(irp, name1, name2, TCL_GLOBAL_ONLY);
+  strlcpy(nat_ip, value, sizeof nat_ip);
+  if (*nat_ip) {
+    r = inet_pton(AF_INET, nat_ip, &ia);
+    if (!r) {
+      putlog(LOG_MISC, "*",
+        "ERROR: nat-ip %s: address was not parseable in AF_INET", nat_ip);
+      *nat_ip_string = '\0';
+      if (!online_since)
+        fatal("bogus nat-ip", 0);
+      return NULL;
+    }
+    if (r < 0) {
+      putlog(LOG_MISC, "*", "ERROR: nat-ip %s: %s", nat_ip, strerror(errno));
+      *nat_ip_string = '\0';
+      if (!online_since)
+        fatal("bogus nat-ip", 0);
+      return NULL;
+    }
+    snprintf(nat_ip_string, sizeof nat_ip_string, "%u", ntohl(ia.s_addr));
+  }
+  else
+    *nat_ip_string = '\0';
   return NULL;
 }
