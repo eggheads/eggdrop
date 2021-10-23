@@ -61,23 +61,14 @@ You can change the basic Eggdrop appearance and behavior in this section.
   |   If you're using virtual hosting (your machine has more than 1 IP), you
       may want to specify the particular IP to bind to. You can specify either
       by hostname or by IP. Note that this is not used for listening. Use the
-      'listen-addr' variable to specify the listening address.
+      'listen' command to specify the listening address.
 
   | set vhost6 "2001:db8:618:5c0:263::"
   | set vhost6 "my.ipv6.host.com"
   |   IPv6 vhost to bind to for outgoing IPv6 connections. You can set it
       to any valid IPv6 address or hostname, resolving to an IPv6 address.
-      Note that this is not used for listening. Use the 'listen-addr'
-      variable to specify the listening address.
-
-  | set listen-addr "99.99.0.0"
-  | set listen-addr "2001:db8:618:5c0:263::"
-  | set listen-addr "virtual.host.com"
-  |   IPv4/IPv6 address (or hostname) to bind for listening.
-      If you don't set this variable, eggdrop will listen on all available
-      IPv4 or IPv6 interfaces, depending on the 'prefer-ipv6' variable.
-      Note that on most platforms, IPv6 sockets are able to accept both
-      IPv4 and IPv6 connections.
+      Note that this is not used for listening. Use the 'listen' command
+      to specify the listening address.
 
   set prefer-ipv6 "1"
     Prefer IPv6 over IPv4 for connections and dns resolution.
@@ -417,7 +408,7 @@ Advanced Settings
     between you and the rest of the world, and /dcc chat, /ctcp chat or
     userfile sharing aren't working, enter your outside IP here. This IP
     is used for transfers only, and has nothing to do with the vhost4/6 or
-    listen-addr settings. You may still need to set them.
+    listen settings. You may still need to set them.
 
   set reserved-portrange 2010:2020
     If you want all dcc file transfers to use a particular portrange either
@@ -454,10 +445,11 @@ Advanced Settings
     You might prefer to comment this out and use the userinfo1.0.tcl script
     which provides commands for changing all of these.
 
-  | unbind dcc n tcl \*dcc:tcl
-  | unbind dcc n set \*dcc:set
-  |   Comment these two lines if you wish to enable the .tcl and .set commands.
-      If you select your owners wisely, you should be okay enabling these.
+  #unbind dcc n tcl \*dcc:tcl
+
+  #unbind dcc n set \*dcc:set
+    Uncomment these two lines if you wish to disable the .tcl and .set commands.
+    If you select your owners wisely, you should be okay leaving these enabled.
 
   set must-be-owner 1
     If you enable this setting, only permanent owners (owner setting) will
@@ -483,12 +475,6 @@ Advanced Settings
     over the botnet due to lag, use this setting. The bot will wait
     dupwait-timeout seconds before it checks again and then finally
     reject the bot.
-
-  set strict-host 1
-    Set this to 0 if you want the bot to strip '~+-^=' characters from
-    user@hosts before matching them. This setting is currently kept for
-    compatibility, but will be removed from the next release. Please leave
-    it set to 1 for now to avoid problems with your user files in the future.
 
   set cidr-support 0
     Enables cidr support for b/e/I modes if set to 1. This means the bot
@@ -653,4 +639,4 @@ modules should be loaded and their variables should be set at this point.
       source scripts/alltools.tcl
       source scripts/action.fix.tcl
 
-Copyright (C) 2000 - 2019 Eggheads Development Team
+Copyright (C) 2000 - 2021 Eggheads Development Team

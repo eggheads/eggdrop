@@ -1,0 +1,19 @@
+# assoc.italian.lang
+#   language messages for the assoc module
+
+0xb000,Nessun nome di canale
+0xb001,Canale
+0xb002,Nome
+0xb003,Numero del canale fuori dai limiti, deve essere compreso tra *0-*99999
+0xb004,Numero del canale fuori dai limiti, deve essere compreso tra 1-99999
+0xb005,Non puoi dare un nome alla chat interna ; è la chat interna
+0xb006,Il canale %s%d non ha un nome.\n
+0xb007,Ok, il nome del canale %s%d è stato tolto.\n
+0xb008,--- %s ha rimosso il nome di questo canale.\n
+0xb009,Ok, il canale %s%d adesso è '%s' .\n
+0xb00a,--- %s ha nominato questo canale '%s' .\n
+0xb00b,--- (%s) ha nominato questo canale '%s' .\n
+0xb00c,--- (%s) %s ha nominato questo canale '%s' .\n
+0xb00d,--- (%s) %s ha rimosso il nome di questo canale.\n
+0xb00e,Il nome del canale non può essere così lungo (20 caratteri max).
+0xb00f,Il primo carattere del nome del canale non può essere un numero.

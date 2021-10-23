@@ -1,9 +1,6 @@
 Last revised: May 27, 2004
 
-
-
-COMPRESS MODULE
-
+Compress Module
 
 This module provides support for file compression. It can be used to
 compress files via Tcl or to transfer the userfile compressed during the
@@ -28,4 +25,4 @@ There are also some variables you can set in your config file:
       This is the default compression level used. These levels are the
       same as those used by GNU gzip.
 
-Copyright (C) 2000 - 2019 Eggheads Development Team
+Copyright (C) 2000 - 2021 Eggheads Development Team

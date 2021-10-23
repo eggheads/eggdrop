@@ -4,7 +4,7 @@
  */
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2019 Eggheads Development Team
+ * Copyright (C) 1999 - 2021 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -249,7 +249,7 @@ static int tcl_binds STDVAR
 static int tcl_timer STDVAR
 {
   unsigned long x;
-  char s[16];
+  char s[26];
 
   BADARGS(3, 4, " minutes command ?count?");
 
@@ -264,7 +264,7 @@ static int tcl_timer STDVAR
   if (argv[2][0] != '#') {
     x = add_timer(&timer, atoi(argv[1]), (argc == 4 ? atoi(argv[3]) : 1),
                   argv[2], 0L);
-    egg_snprintf(s, sizeof s, "timer%lu", x);
+    snprintf(s, sizeof s, "timer%lu", x);
     Tcl_AppendResult(irp, s, NULL);
   }
   return TCL_OK;
@@ -273,7 +273,7 @@ static int tcl_timer STDVAR
 static int tcl_utimer STDVAR
 {
   unsigned long x;
-  char s[16];
+  char s[26];
 
   BADARGS(3, 4, " seconds command ?count?");
 
@@ -288,7 +288,7 @@ static int tcl_utimer STDVAR
   if (argv[2][0] != '#') {
     x = add_timer(&utimer, atoi(argv[1]), (argc == 4 ? atoi(argv[3]) : 1),
                   argv[2], 0L);
-    egg_snprintf(s, sizeof s, "timer%lu", x);
+    snprintf(s, sizeof s, "timer%lu", x);
     Tcl_AppendResult(irp, s, NULL);
   }
   return TCL_OK;
@@ -570,17 +570,7 @@ static int tcl_unloadmodule STDVAR
 
 static int tcl_unames STDVAR
 {
-  char *unix_n, *vers_n;
-  struct utsname un;
-
-  if (uname(&un) < 0) {
-    unix_n = "*unknown*";
-    vers_n = "";
-  } else {
-    unix_n = un.sysname;
-    vers_n = un.release;
-  }
-  Tcl_AppendResult(irp, unix_n, " ", vers_n, NULL);
+  Tcl_AppendResult(irp, egg_uname(), NULL);
   return TCL_OK;
 }
 

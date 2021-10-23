@@ -4,12 +4,12 @@ AC_PREREQ(2.58)
 
 sinclude(../eggmod.m4)
 
-AC_INIT([Eggdrop Compress Module],[1.9.0],[bugs@eggheads.org])
+AC_INIT([Eggdrop Compress Module],[1.9.1],[bugs@eggheads.org])
 
 AC_CONFIG_SRCDIR(compress.c)
 AC_CONFIG_AUX_DIR(../../../misc)
 
-AC_COPYRIGHT([Copyright (C) 1999 - 2019 Eggheads Development Team])
+AC_COPYRIGHT([Copyright (C) 1999 - 2021 Eggheads Development Team])
 AC_REVISION([m4_esyscmd([../../../misc/getcommit])])
 
 AC_PROG_CC([gcc cc clang])

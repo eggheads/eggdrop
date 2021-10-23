@@ -19,7 +19,7 @@ UPGRADING Eggdrop 1.6.x -> v1.8.x:
   Eggdrop in version 1.8.x. All files, with the exception of Changes1.8, are
   also available in html format in doc/html/.
 
-  For support, feel free to visit us on Freenode #eggdrop.
+  For support, feel free to visit us on Libera #eggdrop.
 
   If you are upgrading from a pre-1.6 version of Eggdrop:
 
@@ -324,4 +324,4 @@ Changes made to Eggdrop 1.6.x from Eggdrop1.4.x:
 
 
 Copyright (C) 1997 Robey Pointer
-Copyright (C) 1999 - 2019 Eggheads Development Team
+Copyright (C) 1999 - 2021 Eggheads Development Team

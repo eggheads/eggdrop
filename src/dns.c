@@ -7,7 +7,7 @@
 /*
  * Written by Fabian Knittel <fknittel@gmx.de>
  *
- * Copyright (C) 1999 - 2019 Eggheads Development Team
+ * Copyright (C) 1999 - 2021 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -26,19 +26,28 @@
 
 #include "main.h"
 #include <netdb.h>
-#include <setjmp.h>
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <arpa/inet.h>
-
 #include "dns.h"
+#ifdef EGG_TDNS
+  #include <errno.h>
+  #include <pthread.h>
+#else
+  #include <setjmp.h>
+#endif
 
 extern struct dcc_t *dcc;
 extern int dcc_total;
-extern int resolve_timeout;
 extern time_t now;
-extern sigjmp_buf alarmret;
 extern Tcl_Interp *interp;
+#ifdef EGG_TDNS
+  struct dns_thread_node *dns_thread_head;
+  extern int pref_af;
+#else
+  extern int resolve_timeout;
+  extern sigjmp_buf alarmret;
+#endif
 
 devent_t *dns_events = NULL;
 
@@ -125,9 +134,14 @@ static void dns_dcchostbyip(sockname_t *ip, char *hostn, int ok, void *other)
         (ip->family == AF_INET6 &&
           IN6_ARE_ADDR_EQUAL(&dcc[idx].u.dns->ip->addr.s6.sin6_addr,
                              &ip->addr.s6.sin6_addr)) ||
+        (ip->family == AF_INET &&
 #endif
           (dcc[idx].u.dns->ip->addr.s4.sin_addr.s_addr ==
-                              ip->addr.s4.sin_addr.s_addr))) {
+                              ip->addr.s4.sin_addr.s_addr)))
+#ifdef IPV6
+       )
+#endif
+    {
       if (dcc[idx].u.dns->host)
         nfree(dcc[idx].u.dns->host);
       dcc[idx].u.dns->host = get_data_ptr(strlen(hostn) + 1);
@@ -403,9 +417,14 @@ void call_hostbyip(sockname_t *ip, char *hostn, int ok)
         (ip->family == AF_INET6 &&
           IN6_ARE_ADDR_EQUAL(&de->res_data.ip_addr->addr.s6.sin6_addr,
                              &ip->addr.s6.sin6_addr)) ||
+        (ip->family == AF_INET &&
 #endif
           (de->res_data.ip_addr->addr.s4.sin_addr.s_addr ==
-                              ip->addr.s4.sin_addr.s_addr))) {
+                              ip->addr.s4.sin_addr.s_addr)))
+#ifdef IPV6
+        )
+#endif
+    {
         /* A memcmp() could have perfectly done it .. */
       /* Remove the event from the list here, to avoid conflicts if one of
        * the event handlers re-adds another event. */
@@ -458,13 +477,141 @@ void call_ipbyhost(char *hostn, sockname_t *ip, int ok)
   }
 }
 
+#ifdef EGG_TDNS
+/* The following 2 threads work like this: a libc resolver function is called,
+ * that blocks the thread and returns the result or after timeout. The default
+ * is RES_TIMEOUT, which is generally 5, the allowed maximum is RES_MAXRETRANS
+ * (see <resolv.h>). The result is written to the threads dns_thread_node. There
+ * is 1 node per thread in a linked list, which is MT-safe. One end of the pipe
+ * is closed and the thread is ended by return. The other end will make
+ * eggdrops mainloop select() return, read the result from the dns_thread_node
+ * and call call_hostbyip() or call_ipbyhost(). No signal or tcl thread problem.
+ */
 
+void *thread_dns_hostbyip(void *arg)
+{
+  struct dns_thread_node *dtn = (struct dns_thread_node *) arg;
+  sockname_t *addr = &dtn->addr;
+  int i = 0; /* make codacy happy */
+
+  i = getnameinfo((const struct sockaddr *) &addr->addr.sa, addr->addrlen,
+                  dtn->host, sizeof dtn->host, NULL, 0, 0);
+  if (i) {
+#ifdef IPV6
+    if (addr->family == AF_INET6)
+      inet_ntop(AF_INET6, &addr->addr.s6.sin6_addr, dtn->host, sizeof dtn->host);
+    else
+#endif
+      inet_ntop(AF_INET, &addr->addr.s4.sin_addr.s_addr, dtn->host, sizeof dtn->host);
+  }
+  dtn->ok = !i;
+  close(dtn->fildes[1]);
+  return NULL;
+}
+
+void *thread_dns_ipbyhost(void *arg)
+{
+  struct dns_thread_node *dtn = (struct dns_thread_node *) arg;
+  struct addrinfo *res0, *res;
+  int i;
+  sockname_t *addr = &dtn->addr;
+
+  i = getaddrinfo(dtn->host, NULL, NULL, &res0);
+  memset(addr, 0, sizeof *addr);
+  if (!i) {
+#ifdef IPV6
+    for (res = res0; res; res = res->ai_next) {
+      if (res == res0 || res->ai_family == (pref_af ? AF_INET6 : AF_INET)) {
+        addr->family = res->ai_family;
+        addr->addrlen = res->ai_addrlen;
+        memcpy(&addr->addr.sa, res->ai_addr, res->ai_addrlen);
+        if (res->ai_family == (pref_af ? AF_INET6 : AF_INET))
+          break;
+      }
+    }
+#else
+    i = 1;
+    for (res = res0; res; res = res->ai_next) {
+      if (res->ai_family == AF_INET) {
+        addr->family = res->ai_family;
+        addr->addrlen = res->ai_addrlen;
+        memcpy(&addr->addr.sa, res->ai_addr, res->ai_addrlen);
+        i = 0;
+        break;
+      }
+    }
+#endif
+    freeaddrinfo(res0);
+  }
+  dtn->ok = !i;
+  close(dtn->fildes[1]);
+  return NULL;
+}
+
+void core_dns_hostbyip(sockname_t *addr)
+{
+  struct dns_thread_node *dtn = nmalloc(sizeof(struct dns_thread_node));
+  pthread_t thread; /* only used by pthread_create(), no need to save */
+
+  if (pipe(dtn->fildes) < 0) {
+    putlog(LOG_MISC, "*", "core_dns_hostbyip(): pipe(): error: %s", strerror(errno));
+    call_hostbyip(addr, iptostr(&addr->addr.sa), 0);
+    nfree(dtn);
+    return;
+  }
+  memcpy(&dtn->addr, addr, sizeof *addr);
+  if (pthread_create(&thread, NULL, thread_dns_hostbyip, (void *) dtn)) {
+    putlog(LOG_MISC, "*", "core_dns_hostbyip(): pthread_create(): error = %s", strerror(errno));
+    call_hostbyip(addr, iptostr(&addr->addr.sa), 0);
+    close(dtn->fildes[0]);
+    close(dtn->fildes[1]);
+    nfree(dtn);
+    return;
+  }
+  dtn->type = DTN_TYPE_HOSTBYIP;
+  dtn->next = dns_thread_head->next;
+  dns_thread_head->next = dtn;
+}
+
+void core_dns_ipbyhost(char *host)
+{
+  sockname_t addr;
+  struct dns_thread_node *dtn;
+  pthread_t thread; /* only used by pthread_create(), no need to save  */
+
+  /* if addr is ip instead of host */
+  if (setsockname(&addr, host, 0, 0) != AF_UNSPEC) {
+    call_ipbyhost(host, &addr, 1);
+    return;
+  }
+  dtn = nmalloc(sizeof(struct dns_thread_node));
+  if (pipe(dtn->fildes) < 0) {
+    putlog(LOG_MISC, "*", "core_dns_ipbyhost(): pipe(): error: %s", strerror(errno));
+    call_ipbyhost(host, &addr, 0);
+    nfree(dtn);
+    return;
+  }
+  dtn->next = dns_thread_head->next;
+  dns_thread_head->next = dtn;
+  strlcpy(dtn->host, host, sizeof dtn->host);
+  if (pthread_create(&thread, NULL, thread_dns_ipbyhost, (void *) dtn)) {
+    putlog(LOG_MISC, "*", "core_dns_ipbyhost(): pthread_create(): error = %s", strerror(errno));
+    call_ipbyhost(host, &addr, 0);
+    close(dtn->fildes[0]);
+    close(dtn->fildes[1]);
+    dns_thread_head->next = dtn->next;
+    nfree(dtn);
+    return;
+  }
+  dtn->type = DTN_TYPE_IPBYHOST;
+}
+#else /* EGG_TDNS */
 /*
  *    Async DNS emulation functions
  */
-void block_dns_hostbyip(sockname_t *addr)
+void core_dns_hostbyip(sockname_t *addr)
 {
-  char host[UHOSTLEN];
+  char host[256] = "";
   volatile int i = 1;
 
   if (addr->family == AF_INET) {
@@ -497,7 +644,7 @@ void block_dns_hostbyip(sockname_t *addr)
   call_hostbyip(addr, host, !i);
 }
 
-void block_dns_ipbyhost(char *host)
+void core_dns_ipbyhost(char *host)
 {
   sockname_t name;
 
@@ -506,6 +653,7 @@ void block_dns_ipbyhost(char *host)
   else
     call_ipbyhost(host, &name, 1);
 }
+#endif /* EGG_TDNS */
 
 /*
  *   Misc functions
@@ -543,8 +691,13 @@ static int tcl_dnslookup STDVAR
 
   if (setsockname(&addr, argv[1], 0, 0) != AF_UNSPEC)
     tcl_dnshostbyip(&addr, argv[2], Tcl_DStringValue(&paras));
-  else
+  else {
+    if (strlen(argv[1]) > 255) {
+      Tcl_AppendResult(irp, "hostname too long. max 255 chars.", NULL);
+      return TCL_ERROR;
+    }
     tcl_dnsipbyhost(argv[1], argv[2], Tcl_DStringValue(&paras));
+  }
 
   Tcl_DStringFree(&paras);
   return TCL_OK;

@@ -8,6 +8,8 @@ Eggdrop Features
   development since December 1993, and unlike most other bots, it is still
   regularly updated. Some of its features include:
 
+    * Capability (CAP) support used to enable IRCv3 features. Eggdrop currently supports the following IRCv3 capability sets: acconut-notify, account-tag, away-notify, chghost, echo-message, extended-join, invite-notify, message-tags, server-time, setname, and +typing.
+
     * Support for SSL-enabled IRC servers
 
     * Support for IPv6 users
@@ -56,4 +58,4 @@ Eggdrop Features
 
 Copyright (C) 1997 Robey Pointer
 
-Copyright (C) 2000 - 2019 Eggheads Development Team
+Copyright (C) 2000 - 2021 Eggheads Development Team

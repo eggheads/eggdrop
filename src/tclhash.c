@@ -9,7 +9,7 @@
  */
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2019 Eggheads Development Team
+ * Copyright (C) 1999 - 2021 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -272,8 +272,8 @@ tcl_bind_list_t *add_bind_table(const char *nme, int flg, IntFunc func)
   int v;
 
   /* Do not allow coders to use bind table names longer than
-   * 4 characters. */
-  Assert(strlen(nme) <= 4);
+   * 15 characters. */
+  Assert(strlen(nme) <= 15);
 
   for (tl = bind_table_list, tl_prev = NULL; tl; tl_prev = tl, tl = tl->next) {
     if (tl->flags & HT_DELETED)
@@ -1271,7 +1271,7 @@ void tell_binds(int idx, char *par)
 {
   tcl_bind_list_t *tl, *tl_kind;
   tcl_bind_mask_t *tm;
-  int fnd = 0, showall = 0, patmatc = 0;
+  int fnd = 0, showall = 0, patmatc = 0, maxname = 0;
   tcl_cmd_t *tc;
   char *name, *proc, *s, flg[100];
 
@@ -1295,8 +1295,25 @@ void tell_binds(int idx, char *par)
   if (tl_kind == NULL && name && name[0] && strcasecmp(name, "all"))
     patmatc = 1;
 
+  for (tl = tl_kind ? tl_kind : bind_table_list; tl;
+       tl = tl_kind ? 0 : tl->next) {
+    if (tl->flags & HT_DELETED)
+      continue;
+    for (tm = tl->first; tm; tm = tm->next) {
+      if (tm->flags & TBM_DELETED)
+        continue;
+      for (tc = tm->first; tc; tc = tc->next) {
+        if (tc->attributes & TC_DELETED)
+          continue;
+        if (strlen(tl->name) > maxname) {
+          maxname = strlen(tl->name);
+        }
+      }
+    }
+  }
   dprintf(idx, MISC_CMDBINDS);
-  dprintf(idx, "  TYPE FLAGS    COMMAND              HITS BINDING (TCL)\n");
+  dprintf(idx, "  %+*s FLAGS    COMMAND              HITS BINDING (TCL)\n",
+        maxname, "TYPE");
 
   for (tl = tl_kind ? tl_kind : bind_table_list; tl;
        tl = tl_kind ? 0 : tl->next) {
@@ -1322,8 +1339,8 @@ void tell_binds(int idx, char *par)
             ok = 1;
 
           if (ok) {
-            dprintf(idx, "  %-4s %-8s %-20s %4d %s\n", tl->name, flg, tm->mask,
-                    tc->hits, tc->func_name);
+            dprintf(idx, "  %*s %-8s %-20s %4d %s\n", maxname, tl->name, flg,
+                    tm->mask, tc->hits, tc->func_name);
             fnd = 1;
           }
         }

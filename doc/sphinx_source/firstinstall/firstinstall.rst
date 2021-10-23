@@ -21,9 +21,9 @@ The super-short version
 
 You can read the `Installation`_ section for a more detailed explanation of these steps.
 
-1. Download the `latest stable Eggdrop release <https://ftp.eggheads.org/pub/eggdrop/source/eggdrop-1.8.4.tar.gz>`_ to your shell via FTP, or simply type ``wget geteggdrop.com -O eggdrop-1.8.4.tar.gz``
-2. From the commadline of your shell, type ``tar zxvf eggdrop-1.8.4.tar.gz``
-3. Type ``cd eggdrop-1.8.4``
+1. Download the `latest stable Eggdrop release <https://ftp.eggheads.org/pub/eggdrop/source/stable/eggdrop-1.9.1.tar.gz>`_ to your shell via FTP, or simply type ``wget geteggdrop.com -O eggdrop-1.9.1.tar.gz``
+2. From the commadline of your shell, type ``tar zxvf eggdrop-1.9.1.tar.gz``
+3. Type ``cd eggdrop-1.9.1``
 4. Type ``./configure``
 5. Type ``make config``
 6. Type ``make``
@@ -38,35 +38,35 @@ Getting the source
 History
 ~~~~~~~
 
-There are two major versions of Eggdrop currently in use- 1.6.x and 1.8.x, although the 1.6 series is no longer supported by the developers.
+There are two major versions of Eggdrop currently in use- 1.9.x and 1.8.x. The 1.6 series, while still popular, is no longer supported by the developers.
 
-1.6.21, which is now over 10 years old, was the last release of the 1.6 series and is still used by users who have become comfortable with that version and may have spent much time applying their own modifications to make it work the way they want, and therefore don't wish to move to a newer version. The majority of Tcl scripts out there were written for 1.6 bots, but those scripts usually work on 1.8 bots as well.
+The most current version of Eggdrop, and the one appropriate for most users, is the current 1.9 series. It added many features such as SASL support, multi-ip listening, and a new password hashing module. It is the most complete, feature-rich, and functional version of Eggdrop. If you're just starting out with Eggdrop, you should use 1.9.1
 
-The most current version of Eggdrop, and the one appropriate for most users, is the current 1.8 series. The 1.8 series added several major features, to include IPv6 support and SSL/TLS connections. It is the most complete, feature-rich, and functional version of Eggdrop. If you're just starting out with Eggdrop, you should use 1.8.4
+Prior to that, the 1.8 series added several major features, to include IPv6 support and SSL/TLS connections. 1.6.21, which is now over 10 years old, was the last release of the 1.6 series and is still used by users who have become comfortable with that version and may have spent much time applying their own modifications to make it work the way they want, and therefore don't wish to move to a newer version. The majority of Tcl scripts out there were written for 1.6 bots, but those scripts usually work on 1.8 and 1.9 bots as well.
 
-Eggdrop version 1.9 is currently under development and is available for users to download for testing. While this version will contain the most current, up-to-date features of Eggdrop (such as SASL and oidentd support), it is not yet considered stable and users stand a higher chance of encountering bugs during use. If you do use it and find a bug, it is highly encouraged to report it via the `Eggheads GitHub issues page. <https://github.com/issues>`_
+The 1.9 Eggdrop tree is currently under active development and the most recent changes are available in daily snapshots for users to download for testing. While the development snapshot will contain the most current, up-to-date features of Eggdrop, it is not yet considered stable and users stand a higher chance of encountering bugs during use. If you do use it and find a bug, it is highly encouraged to report it via the `Eggheads GitHub issues page. <https://github.com/issues>`_
 
 Download locations
 ~~~~~~~~~~~~~~~~~~
 
-The developers distribute Eggdrop via two main methods: FTP, and GitHub. For FTP, it is packaged in tarball format (with the .tar.gz filename extension), with the version number in the filename. The Eggdrop 1.8.4 source, for example, would be named eggdrop-1.8.4.tar.gz.
+The developers distribute Eggdrop via two main methods: FTP, and GitHub. For FTP, it is packaged in tarball format (with the .tar.gz filename extension), with the version number in the filename. The Eggdrop 1.9.1 source, for example, would be named eggdrop-1.9.1.tar.gz.
 
-`The Eggheads FTP <https://ftp.eggheads.org/pub/eggdrop/>`_ is a repository for the `current <https://ftp.eggheads.org/pub/eggdrop/source/eggdrop1.8.4.tar.gz>`_ version of Eggdrop, as well as the most current development snapshot and previous stable releases.
+`The Eggheads FTP <https://ftp.eggheads.org/pub/eggdrop/>`_ is a repository for the `current <https://ftp.eggheads.org/pub/eggdrop/source/1.9/eggdrop1.9.1.tar.gz>`_ version of Eggdrop, as well as the most current development snapshot and previous stable releases.
 
-Eggdrop also maintains a `GitHub page <https://github.com/eggheads/eggdrop>`_ where you can download the development snapshot or a stable version, via either git commandline or by downloading a tarball. To download via git, type ``git clone https://github.com/eggheads/eggdrop.git``, then ``cd eggdrop``. This gives you the development version. To switch to the most recent stable version, type ``git checkout stable/1.8``. You can then skip to step 4 in the Installation section below.
+Eggdrop also maintains a `GitHub page <https://github.com/eggheads/eggdrop>`_ where you can download the development snapshot or a stable version, via either git commandline or by downloading a tarball. To download via git, type ``git clone https://github.com/eggheads/eggdrop.git``, then ``cd eggdrop``. This gives you the development version. To switch to the most recent stable version, type ``git checkout stable/1.9``. You can then skip to step 4 in the Installation section below.
 
 Installation
 ------------
 
 Installing Eggdrop is a relatively simple process provided your shell has the required tools for successful compilation. On most commercial shell accounts which allow Eggdrop bots you won't have any problems with installation, but on some private boxes or a shell on your ISP you may experience errors during compilation.
 
-Below is a step by step guide to the installation process. These instructions apply to 1.8 bots. It assumes you will be installing eggdrop-1.8.4.tar.gz, so just change the numbers if you are installing another version.
+Below is a step by step guide to the installation process. These instructions apply to 1.8 bots. It assumes you will be installing eggdrop-1.9.1.tar.gz, so just change the numbers if you are installing another version.
 
-1. Put the Eggdrop source on your shell using one of the specified download locations, either by downloading the `eggdrop-1.8.4.tar.gz <https://ftp.eggheads.org/pub/eggdrop/source/1.8/eggdrop-1.8.4.tar.gz>`_ file to your system then uploading it to the shell via FTP, or downloading it directly to the shell via the shell's FTP client, git, wget, or curl. You don't need to put the .tar.gz file in its own directory (it'll be done automatically in the next step).
+1. Put the Eggdrop source on your shell using one of the specified download locations, either by downloading the `eggdrop-1.9.1.tar.gz <https://ftp.eggheads.org/pub/eggdrop/source/1.9/eggdrop-1.9.1.tar.gz>`_ file to your system then uploading it to the shell via FTP, or downloading it directly to the shell via the shell's FTP client, git, wget, or curl. You don't need to put the .tar.gz file in its own directory (it'll be done automatically in the next step).
 
-2. SSH to the shell (if you haven't already), and type ``tar zxvf eggdrop-1.8.4.tar.gz`` (if this doesn't work, try ``gunzip eggdrop-1.8.4.tar.gz`` then ``tar xvf eggdrop-1.8.4.tar``). This will extract the Eggdrop source into its installation directory, named 'eggdrop-1.8.4'.
+2. SSH to the shell (if you haven't already), and type ``tar zxvf eggdrop-1.9.1.tar.gz`` (if this doesn't work, try ``gunzip eggdrop-1.9.1.tar.gz`` then ``tar xvf eggdrop-1.9.1.tar``). This will extract the Eggdrop source into its installation directory, named 'eggdrop-1.9.1'.
 
-3. Type cd eggdrop-1.8.4 to switch to the directory the Eggdrop source was extracted to.
+3. Type cd eggdrop-1.9.1 to switch to the directory the Eggdrop source was extracted to.
 
 4. Type ``./configure`` (that's a period followed by a slash followed by the word 'configure').  This makes sure the shell has all the right tools for compiling Eggdrop, and helps Eggdrop figure out how to compile on the shell.
 
@@ -76,7 +76,7 @@ Below is a step by step guide to the installation process. These instructions ap
 
 7. Type ``make install DEST=~/botdir``. This will install Eggdrop into a directory named 'botdir' in your home directory. You can change 'botdir' to anything you like. Note that in some cases you may need to specify the full path, e.g. ``make install DEST=/home/cooldude/botdir``, using the ~ character in make install won't always work. You can get the full path by typing ``pwd``.
 
-8. You can safely delete the installation directory named 'eggdrop-1.8.4' (to do this, type ``cd ~`` then ``rm -rf eggdrop-1.8.4``) that was created previously, although some people may find it handy to keep that directory for performing additional or future installations of the same version without recompiling.
+8. You can safely delete the installation directory named 'eggdrop-1.9.1' (to do this, type ``cd ~`` then ``rm -rf eggdrop-1.9.1``) that was created previously, although some people may find it handy to keep that directory for performing additional or future installations of the same version without recompiling.
 
 That's it! Eggdrop is now installed into its own directory on the shell. It's time to edit the configuration files to make Eggdrop work the way you want it to.
 
@@ -131,16 +131,14 @@ Below are some of the common settings used for Eggdrop:
 
 :set altnick: if you want to use [ ] { } \ characters in the bot's alternate nick, follow the backslash rule described previously.
 
-:set servers: you should specify multiple servers in this list, in case the bot is unable to connect to the first server. The format for this list is shown below: 
+:server add: you should specify multiple servers in this list, in case the bot is unable to connect to the first server. The format for this list is shown below: 
 
 .. code-block:: tcl
 
-  set servers {
-      you.need.to.change.this:6667
-      another.example.com:7000:password
-      [2001:db8:618:5c0:263::]:6669:password
-      ssl.example.net:+6697
-  }
+  server add you.need.to.change.this:6667
+  server add another.example.com:7000:password
+  server add [2001:db8:618:5c0:263::]:6669:password
+  server add ssl.example.net:+6697
 
 :set learn-users: this is an important setting that determines how users will be added to your Eggdrop. If set to 1, people can add themselves to the bot by sending 'hello' to it (the user will be added with the flags set in default-flags). If set to 0, users cannot add themselves - a master or owner must add them using the .adduser command.
 
@@ -148,23 +146,6 @@ Below are some of the common settings used for Eggdrop:
 
 Finally, be sure to remove the 'die' commands from the config (there are two of them 'hidden' in various places), or the bot won't start. Once you've finished editing the config file, make sure you rename it to something other than
 "eggdrop.conf" if you haven't already. Then, if you edited the config file locally, upload the config file to the directory you installed the bot.
-
-Auto-starting the Eggdrop
-~~~~~~~~~~~~~~~~~~~~~~~~~
-The botchk script and crontab are used to automatically restart the bot if the shell it's on reboots or if the bot process is killed for some other reason. Since version 1.3.24i, there is a script included in the scripts directory that automatically configures botchk and crontab for you. From the commandline, simply type ``chmod 700 scripts/autobotchk`` then ``./scripts/autobotchk <config> -dir /home/botdir -noemail``, where /home/botdir is the directory you installed the bot to and <config> is the name you chose for your config file. That's all you need to do!
-
-
-1. After running the autobotchk script, your crontab line should look like::
-
-    0,10,20,30,40,50 * * * * /home/botdir/scripts/botchk >/dev/null 2>&1
-
-  This will run the botchk script every 10 minutes, which checks that the bot is running and restarts it if it isn't. You just need to change the /home/botdir part to the correct path to the bot on your shell (type pwd to show this). Type the line in Notepad or some place where you can highlight and copy it from.
-
-2. To edit the crontab, type crontab -e. This should bring up the vi editor (it will appear as a bunch of lines starting with the ~ character), but may open up the pico editor instead.
-
-3. For vi, do the following - hit ctrl-L, hit i, paste the crontab line you created earlier, hit Esc, type :wq! then hit Enter (if you make a mistake doing this, just hit Esc and start over). For pico - paste the crontab line you created earlier, hit ctrl-X, hit Y when prompted to save, hit Enter when prompted for a filename.
-
-You can view your current crontab entries by typing crontab -l. To clear your crontab, use crontab -r (may be crontab -d on some shells).
 
 Starting the Eggdrop
 --------------------
@@ -182,13 +163,13 @@ If your bot didn't appear on IRC, you should log in to the shell and view the bo
 
 Additionally, you can kill the bot via the command line (``kill pid``, the pid is shown to you when you started the bot or can be viewed by running ``ps x``) and then restart it with the -mnt flag, which will launch you directly into the partyline, to assist with troubleshooting. Note that if you use the -nt flag, the bot will not persist and you will kill it once you quit the partyline.
 
-If you're still unsure what the problem is, try asking in #eggdrop on Freenode, and be sure to include any relevant information from the logfile. Good luck!
+If you're still unsure what the problem is, try asking in #eggdrop on Libera, and be sure to include any relevant information from the logfile. Good luck!
 
-First steps
------------
+First steps with a running Eggdrop
+==================================
 
 Log on to the partyline
-~~~~~~~~~~~~~~~~~~~~~~~
+-----------------------
 Now that your bot is online, you'll want to join the partyline to further use the bot. First, read what it tells you when you started it up::
 
   STARTING BOT IN USERFILE CREATION MODE.
@@ -210,7 +191,7 @@ This tells you that the bot is listening on IP 2.4.6.9, port 3183. If you see 0.
 If you choose not to telnet to connect to the partyline, you can either ``/dcc chat BotNick`` or ``/ctcp BotNick chat``. If one of those methods does not work for you, try the other. Once you're on the bot for the first time, type ``.help`` for a short list of available commands, or ``.help all`` for a more thorough list.
 
 Common first steps
-~~~~~~~~~~~~~~~~~~
+------------------
 
 To learn more about any of these commands, type .help <command> on the partyline. It will provide you the syntax you need, as well as a short description of how to use the command.
 
@@ -247,3 +228,79 @@ Common uses involve setting channels modes. This can be done with the chanmode c
   .chanset #channel chanmode +snt
 
 which will enforce the s, n, and t flags on a channel.
+
+Automatically restarting an Eggdrop
+-----------------------------------
+
+A common question asked by users is, how can I configure Eggdrop to automatically restart should it die, such as after a reboot? To do that, we use the system's crontab daemon to run a script (called botchk) every ten minutes that checks if the eggdrop is running. If the eggdrop is not running, the script will restart the bot, with an optional email sent to the user informing them of the action. To make this process as simple as possible, we have included a script that can automatically configure your crontab and botchk scripts for you. To set up your crontab/botchk combo:
+
+1. Enter the directory you installed your Eggdrop to. Most commonly, this is ~/eggdrop (also known as /home/<username>/eggdrop).
+
+2. Just humor us- run ``./scripts/autobotchk`` without any arguments and read the options available to you. They're listed there for a reason!
+
+3. If you don't want to customize anything via the options listed in #2, you can start the script simply by running::
+
+    ./scripts/autobotchk yourEggdropConfigNameHere.conf
+
+4. Review the output of the script, and verify your new crontab entry by typing::
+
+    crontab -l
+
+By default, it should create an entry that looks similar to::
+
+    0,10,20,30,40,50 * * * * /home/user/bot/scripts/YourEggdrop.botchk 2>&1
+
+This will run the generated botchk script every ten minutes and restart your Eggdrop if it is not running during the check. Also note that if you run autobotchk from the scripts directory, you'll have to manually specify your config file location with the -dir option. To remove a crontab entry, use ``crontab -e`` to open the crontab file in your system's default editor and remove the crontab line.
+
+Authenticating with NickServ
+----------------------------
+
+Many IRC features require you to authenticate with NickServ to use them. You can do this from your config file by searching for the line::
+
+    #  putserv "PRIVMSG NickServ :identify <password>"
+
+in your config file. Uncomment it by removing the '#' sign and then replace <password> with your password. Your bot will now authenticate with NickServ each time it joins a server.
+
+Setting up SASL authentication
+------------------------------
+
+Simple Authentication and Security Layer (SASL) is becoming a prevalant method of authenticating with IRC services such as NickServ prior to your client finalizing a connection to the IRC server, eliminating the need to /msg NickServ to identify yourself. In other words, you can authenticate with NickServ and do things like receive a cloaked hostmask before your client ever appears on the IRC server. Eggdrop supports three methods of SASL authentication, set via the sasl-mechanism setting:
+
+* **PLAIN**: To use this method, set sasl-mechanism to 0. This method passes the username and password (set in the sasl-username and sasl-password config file settings) to the IRC server in plaintext. If you only connect to the IRC server using a connection protected by SSL/TLS this is a generally safe method of authentication; however you probably want to avoid this method if you connect to a server on a non-protected port as the exchange itself is not encrypted.
+
+* **ECDSA-NIST256P-CHALLENGE**: To use this method, set sasl-method to 1. This method uses a public/private keypair to authenticate, so no username/password is required. Not all servers support this method. If your server does support this, you you must generate a certificate pair using::
+
+    openssl ecparam -genkey -name prime256v1 -out eggdrop-ecdsa.pem
+
+  You will need to determine your public key fingerprint by using::
+
+    openssl ec -noout -text -conv_form compressed -in eggdrop-ecdsa.pem | grep '^pub:' -A 3 | tail -n 3 | tr -d ' \n:' | xxd -r -p | base64
+
+  Then, authenticate with your NickServ service and register your public certificate with NickServ. You can view your public key  On Libera for example, it is done by::
+
+    /msg NickServ set pubkey <fingerprint string from above goes here>
+
+* **EXTERNAL**: To use this method, set sasl-method to 2. This method allows you to use other TLS certificates to connect to the IRC server, if the IRC server supports it. An EXTERNAL authentication method usually requires you to connect to the IRC server using SSL/TLS. There are many ways to generate certificates; one such way is generating your own certificate using::
+
+    openssl req -new -x509 -nodes -keyout eggdrop.key -out eggdrop.crt
+
+You will need to determine yoru public key fingerprint by using::
+
+    openssl x509 -in eggdrop.crt -outform der | sha1sum -b | cut -d' ' -f1
+
+Then, ensure you have those keys loaded in the ssl-privatekey and ssl-certificate settings in the config file. Finally, to add this certificate to your NickServ account, type::
+
+    /msg NickServ cert add <fingerprint string from above goes here>
+
+Advanced Eggdrop Usage
+======================
+
+UTF-8 Support
+-------------
+The encoding scheme used by Eggdrop's Tcl interface is set based on the locale settings of the host machine. You can check which locale your host machine is using by running the ``locale`` command. Eggdrop takes that locale setting of the host machine and compares it to the locales available within Tcl's installed libraries. If it finds one in Tcl that matches (or is close to matching), that is the encoding scheme that is used. If a matching encoding scheme is not found, only then does eggdrop default to ISO 8859-1 encoding.
+
+If you want Eggdrop to use a specific encoding scheme that it is not currently using, you can view the available locales on your machine via the ``locale -a`` command, and then set the one you want to use for that user by running ``export LANG=en_US.UTF-8`` (or whichever scheme you want to use). You should not need to edit any source code, as has been a popular suggestion over the past few years.
+
+Unicode Emoji Support
+~~~~~~~~~~~~~~~~~~~~~
+Another issue encountered when using Eggdrop is that Unicode Emojis are not supported- this is not Eggdrop specific; rather it is a "feature" of Tcl. Unfortunately, the only solution at this time to enable Emojis (and other high-number characters) is to recompile with the TCL_UTF_MAX=6 compile flag. At the time of writing, we are unaware of a package-manager version of this that would remedy the problem. To understand more on the 'why' behind this, you can read this `Tcl Improvement Proposal <https://core.tcl-lang.org/tips/doc/trunk/tip/389.md>`_.

@@ -7,7 +7,7 @@
  */
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2019 Eggheads Development Team
+ * Copyright (C) 1999 - 2021 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -142,6 +142,10 @@ volatile sig_atomic_t do_restart = 0; /* .restart has been called, restart ASAP 
 int resolve_timeout = RES_TIMEOUT;    /* Hostname/address lookup timeout        */
 char quit_msg[1024];                  /* Quit message                           */
 
+/* Moved here for n flag warning, put back in do_arg if removed */
+unsigned char cliflags = 0;
+
+
 /* Traffic stats */
 unsigned long otraffic_irc = 0;
 unsigned long otraffic_irc_today = 0;
@@ -168,7 +172,7 @@ unsigned long itraffic_unknown_today = 0;
 
 #ifdef DEBUG_CONTEXT
 /* Context storage for fatal crashes */
-char cx_file[16][30];
+char cx_file[16][32];
 char cx_note[16][256];
 int cx_line[16];
 int cx_ptr = 0;
@@ -329,13 +333,11 @@ static void write_debug()
 #else
     dprintf(-x, "Compiled without IPv6 support\n");
 #endif
-
 #ifdef TLS
     dprintf(-x, "Compiled with TLS support\n");
 #else
     dprintf(-x, "Compiled without TLS support\n");
 #endif
-
     if (!strcmp(EGG_AC_ARGS, "")) {
       dprintf(-x, "Configure flags: none\n");
     } else {
@@ -454,17 +456,7 @@ static void got_ill(int z)
  */
 void eggContext(const char *file, int line, const char *module)
 {
-  char x[31], *p;
-
-  p = strrchr(file, '/');
-  if (!module) {
-    strlcpy(x, p ? p + 1 : file, sizeof x);
-  } else
-    egg_snprintf(x, 31, "%s:%s", module, p ? p + 1 : file);
-  cx_ptr = ((cx_ptr + 1) & 15);
-  strcpy(cx_file[cx_ptr], x);
-  cx_line[cx_ptr] = line;
-  cx_note[cx_ptr][0] = 0;
+  eggContextNote(file, line, module, NULL);
 }
 
 /* Called from the ContextNote macro.
@@ -472,17 +464,19 @@ void eggContext(const char *file, int line, const char *module)
 void eggContextNote(const char *file, int line, const char *module,
                     const char *note)
 {
-  char x[31], *p;
+  char *p;
 
   p = strrchr(file, '/');
-  if (!module)
-    strlcpy(x, p ? p + 1 : file, sizeof x);
-  else
-    egg_snprintf(x, 31, "%s:%s", module, p ? p + 1 : file);
   cx_ptr = ((cx_ptr + 1) & 15);
-  strcpy(cx_file[cx_ptr], x);
+  if (!module)
+    strlcpy(cx_file[cx_ptr], p ? p + 1 : file, sizeof cx_file[cx_ptr]);
+  else
+    snprintf(cx_file[cx_ptr], sizeof cx_file[cx_ptr], "%s:%s", module, p ? p + 1 : file);
   cx_line[cx_ptr] = line;
-  strlcpy(cx_note[cx_ptr], note, sizeof cx_note[cx_ptr]);
+  if (!note)
+    cx_note[cx_ptr][0] = 0;
+  else
+    strlcpy(cx_note[cx_ptr], note, sizeof cx_note[cx_ptr]);
 }
 #endif /* DEBUG_CONTEXT */
 
@@ -522,6 +516,9 @@ static void show_ver() {
 #ifdef TLS
   printf("TLS, ");
 #endif
+#ifdef EGG_TDNS
+  printf("Threaded DNS core (beta), ");
+#endif
   printf("handlen=%d\n", HANDLEN);
   bg_send_quit(BG_ABORT);
 }
@@ -535,8 +532,8 @@ static void show_help() {
   printf("Usage: %s [options] [config-file]\n\n"
          "Options:\n"
          "-n  Don't background; send all log entries to console.\n"
-         "-nc Don't background; display channel stats every 10 seconds.\n"
-         "-nt Don't background; use terminal to simulate DCC chat.\n"
+         "-c  Don't background; display channel stats every 10 seconds.\n"
+         "-t  Don't background; use terminal to simulate DCC chat.\n"
          "-m  Create userfile.\n"
          "-h  Show this help and exit.\n"
          "-v  Show version info and exit.\n\n", argv[0]);
@@ -546,7 +543,9 @@ static void show_help() {
 static void do_arg()
 {
   int option = 0;
+/* Put this back if removing n flag warning
   unsigned char cliflags = 0;
+*/
   #define CLI_V        1 << 0
   #define CLI_M        1 << 1
   #define CLI_T        1 << 2
@@ -565,11 +564,13 @@ static void do_arg()
         cliflags |= CLI_C;
         con_chan = 1;
         term_z = -1;
+        backgrd = 0;
         break;
       case 't':
         cliflags |= CLI_T;
         con_chan = 0;
         term_z = 0;
+        backgrd = 0;
         break;
       case 'm':
         cliflags |= CLI_M;
@@ -595,10 +596,6 @@ static void do_arg()
   } else if (cliflags & CLI_V) {
     show_ver();
     exit(0);
-  } else if (!(cliflags & CLI_N) && ((cliflags & CLI_C) || (cliflags & CLI_T))) {
-    printf("\n%s\n", version);
-    printf("ERROR: The -n flag is required when using the -c or -t flags. Exiting...\n\n");
-    exit(1);
   } else if (argc > (optind + 1)) {
     printf("\n");
     printf("WARNING: More than one config file value detected\n");
@@ -632,6 +629,10 @@ static void core_secondly()
     check_expired_dcc();
     if (con_chan && !backgrd) {
       dprintf(DP_STDOUT, "\033[2J\033[1;1H");
+      if ((cliflags & CLI_N) && (cliflags & CLI_C)) {
+        printf("NOTE: You don't need to use the -n flag with the\n");
+        printf("       -t or -c flag anymore.\n");
+      }
       tell_verbose_status(DP_STDOUT);
       do_module_report(DP_STDOUT, 0, "server");
       do_module_report(DP_STDOUT, 0, "channels");
@@ -803,7 +804,7 @@ int mainloop(int toplevel)
 {
   static int socket_cleanup = 0;
   int xx, i, eggbusy = 1, tclbusy = 0;
-  char buf[520];
+  char buf[8702];
 
   /* Lets move some of this here, reducing the number of actual
    * calls to periodic_timers
@@ -866,9 +867,8 @@ int mainloop(int toplevel)
           }
           dcc[idx].type->activity(idx, buf, i);
         } else
-          putlog(LOG_MISC, "*",
-                 "!!! untrapped dcc activity: type %s, sock %d",
-                 dcc[idx].type->name, dcc[idx].sock);
+          putlog(LOG_MISC, "*", "ERROR: untrapped dcc activity: type %s, sock %d",
+                 dcc[idx].type ? dcc[idx].type->name : "UNKNOWN", dcc[idx].sock);
         break;
       }
   } else if (xx == -1) {        /* EOF from someone */
@@ -953,12 +953,13 @@ int mainloop(int toplevel)
       }
 
       /* Make sure we don't have any modules left hanging around other than
-       * "eggdrop" and the two that are supposed to be.
+       * "eggdrop" and the 3 that are supposed to be.
        */
       for (f = 0, p = module_list; p; p = p->next) {
         if (strcmp(p->name, "eggdrop") && strcmp(p->name, "encryption") &&
-            strcmp(p->name, "uptime")) {
+            strcmp(p->name, "encryption2") && strcmp(p->name, "uptime")) {
           f++;
+          debug1("stagnant module %s", p->name);
         }
       }
       if (f != 0) {
@@ -1017,7 +1018,7 @@ static void init_random(void) {
 #endif
       struct timeval tp;
       gettimeofday(&tp, NULL);
-      seed = (tp.tv_sec * tp.tv_usec) ^ getpid();
+      seed = (((int64_t) tp.tv_sec * tp.tv_usec)) ^ getpid();
 #ifdef HAVE_GETRANDOM
     }
   }
@@ -1066,13 +1067,13 @@ int main(int arg_c, char **arg_v)
   egg_snprintf(egg_version, sizeof egg_version, "%s+%s %u", EGG_STRINGVER, EGG_PATCH, egg_numver);
   egg_snprintf(ver, sizeof ver, "eggdrop v%s+%s", EGG_STRINGVER, EGG_PATCH);
   egg_snprintf(version, sizeof version,
-               "Eggdrop v%s+%s (C) 1997 Robey Pointer (C) 2010-2018 Eggheads",
+               "Eggdrop v%s+%s (C) 1997 Robey Pointer (C) 1999-2021 Eggheads",
                 EGG_STRINGVER, EGG_PATCH);
 #else
   egg_snprintf(egg_version, sizeof egg_version, "%s %u", EGG_STRINGVER, egg_numver);
   egg_snprintf(ver, sizeof ver, "eggdrop v%s", EGG_STRINGVER);
   egg_snprintf(version, sizeof version,
-               "Eggdrop v%s (C) 1997 Robey Pointer (C) 2010-2019 Eggheads",
+               "Eggdrop v%s (C) 1997 Robey Pointer (C) 1999-2021 Eggheads",
                 EGG_STRINGVER);
 #endif
 
@@ -1148,11 +1149,16 @@ int main(int arg_c, char **arg_v)
 #ifdef STATIC
   link_statics();
 #endif
+#ifdef EGG_TDNS
+  /* initialize dns_thread_head before chanprog() */
+  dns_thread_head = nmalloc(sizeof(struct dns_thread_node));
+  dns_thread_head->next = NULL;
+#endif
   strlcpy(s, ctime(&now), sizeof s);
-  memmove(&s[11], &s[20], strlen(&s[20])+1);
+  memmove(&s[11], &s[20], strlen(&s[20]) + 1);
   putlog(LOG_ALL, "*", "--- Loading %s (%s)", ver, s);
   chanprog();
-  if (!encrypt_pass) {
+  if (!encrypt_pass2 && !encrypt_pass) {
     printf("%s", MOD_NOCRYPT);
     bg_send_quit(BG_ABORT);
     exit(1);
@@ -1162,6 +1168,11 @@ int main(int arg_c, char **arg_v)
     i++;
   putlog(LOG_MISC, "*", "=== %s: %d channels, %d users.",
          botnetnick, i, count_users(userlist));
+  if ((cliflags & CLI_N) && (cliflags & CLI_T)) {
+    printf("\n");
+    printf("NOTE: The -n flag is no longer used, it is as effective as Han\n");
+    printf("      without Chewie\n");
+  }
 #ifdef TLS
   ssl_init();
 #endif
@@ -1217,9 +1228,7 @@ int main(int arg_c, char **arg_v)
   use_stderr = 0;               /* Stop writing to stderr now */
   if (backgrd) {
     /* Ok, try to disassociate from controlling terminal (finger cross) */
-#ifdef HAVE_SETPGID
     setpgid(0, 0);
-#endif
     /* Tcl wants the stdin, stdout and stderr file handles kept open. */
     if (freopen("/dev/null", "r", stdin) == NULL) {
       putlog(LOG_MISC, "*", "Error renaming stdin file handle: %s", strerror(errno));
@@ -1259,7 +1268,13 @@ int main(int arg_c, char **arg_v)
     dcc_chatter(term_z);
   }
 
-  then = now;
+  /* -1 to make mainloop() call
+   * call_hook(HOOK_SECONDLY)->server_secondly()->connect_server() before first
+   * sockgets()->sockread()->select() to avoid an unnecessary select timeout of
+   * up to 1 sec while starting up
+   */
+  then = now - 1;
+
   online_since = now;
   autolink_cycle(NULL);         /* Hurry and connect to tandem bots */
   add_help_reference("cmds1.help");

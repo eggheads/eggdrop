@@ -5,7 +5,7 @@
  */
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2019 Eggheads Development Team
+ * Copyright (C) 1999 - 2021 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -32,7 +32,7 @@ extern struct dcc_t *dcc;
 extern struct userrec *userlist;
 extern tcl_timer_t *timer, *utimer;
 extern int dcc_total, remote_boots, backgrd, make_userfile, conmask, require_p,
-           must_be_owner, strict_host;
+           must_be_owner;
 extern volatile sig_atomic_t do_restart;
 extern unsigned long otraffic_irc, otraffic_irc_today, itraffic_irc,
                      itraffic_irc_today, otraffic_bn, otraffic_bn_today,
@@ -76,8 +76,7 @@ static int add_bot_hostmask(int idx, char *nick)
           return 0;
         }
         if (strchr("~^+=-", m->userhost[0]))
-          egg_snprintf(s, sizeof s, "*!%s%s", strict_host ? "?" : "",
-                       m->userhost + 1);
+          egg_snprintf(s, sizeof s, "*!?%s", m->userhost + 1);
         else
           egg_snprintf(s, sizeof s, "*!%s", m->userhost);
         dprintf(idx, "(Added hostmask for %s from %s)\n", nick, chan->dname);
@@ -393,22 +392,46 @@ static void cmd_back(struct userrec *u, int idx, char *par)
   not_away(idx);
 }
 
+/* Take a password provided by the user and check that it isn't too long,
+ * too short, or start with a '+' (for encryption reasons).
+ *
+ * If successful set it and return NULL.
+ *
+ * On failure return error message.
+ */
+char *check_validpass(struct userrec *u, char *new) {
+  int l;
+  unsigned char *p = (unsigned char *) new;
+
+  l = strlen(new);
+  if (l < 6)
+    return IRC_PASSFORMAT;
+  if (l > PASSWORDMAX)
+    return "Passwords cannot be longer than " STRINGIFY(PASSWORDMAX) " characters, please try again.";
+  if (new[0] == '+') /* See also: userent.c:pass_set() */
+    return "Password cannot start with '+', please try again.";
+  while (*p) {
+    if ((*p <= 32) || (*p == 127))
+      return "Password cannot use weird symbols, please try again.";
+    p++;
+  }
+  set_user(&USERENTRY_PASS, u, new);
+  return NULL;
+}
+
 static void cmd_newpass(struct userrec *u, int idx, char *par)
 {
-  char *new;
+  char *new, *s;
 
   if (!par[0]) {
     dprintf(idx, "Usage: newpass <newpassword>\n");
     return;
   }
   new = newsplit(&par);
-  if (strlen(new) > 16)
-    new[16] = 0;
-  if (strlen(new) < 6) {
-    dprintf(idx, "Please use at least 6 characters.\n");
+  if ((s = check_validpass(u, new))) {
+    dprintf(idx, "%s\n", s);
     return;
   }
-  set_user(&USERENTRY_PASS, u, new);
   putlog(LOG_CMDS, "*", "#%s# newpass...", dcc[idx].nick);
   dprintf(idx, "Changed password to '%s'.\n", new);
 }
@@ -783,7 +806,7 @@ int check_int_range(char *value, int min, int max) {
 
 static void cmd_pls_bot(struct userrec *u, int idx, char *par)
 {
-  char *handle, *addr, *port, *port2, *relay, *host;
+  char *handle, *addr, *port, *port2, *relay, *host, *p;
   struct userrec *u1;
   struct bot_addr *bi;
   int i, found = 0;
@@ -819,6 +842,13 @@ static void cmd_pls_bot(struct userrec *u, int idx, char *par)
     dprintf(idx, "You can't start a botnick with '%c'.\n", handle[0]);
     return;
   }
+
+/* Check for bad characters throughout the handle */
+  for (p = handle; *p; p++)
+    if ((unsigned char) *p <= 32 || *p == '@') {
+      dprintf(idx, "Invalid character '%c' in handle, try again\n", p[0]);
+      return;
+    }
 
   if (addr[0]) {
 #ifndef IPV6
@@ -1028,8 +1058,8 @@ static void cmd_handle(struct userrec *u, int idx, char *par)
 
 static void cmd_chpass(struct userrec *u, int idx, char *par)
 {
-  char *handle, *new;
-  int atr = u ? u->flags : 0, l;
+  char *handle, *new, *s;
+  int atr = u ? u->flags : 0;
 
   if (!par[0])
     dprintf(idx, "Usage: chpass <handle> [password]\n");
@@ -1053,17 +1083,14 @@ static void cmd_chpass(struct userrec *u, int idx, char *par)
       set_user(&USERENTRY_PASS, u, NULL);
       dprintf(idx, "Removed password.\n");
     } else {
-      l = strlen(new = newsplit(&par));
-      if (l > 16)
-        new[16] = 0;
-      if (l < 6)
-        dprintf(idx, "Please use at least 6 characters.\n");
-      else {
-        set_user(&USERENTRY_PASS, u, new);
-        putlog(LOG_CMDS, "*", "#%s# chpass %s [something]", dcc[idx].nick,
-               handle);
-        dprintf(idx, "Changed password.\n");
+      new = newsplit(&par);
+      if ((s = check_validpass(u, new))) {
+        dprintf(idx, "%s\n", s);
+        return;
       }
+      putlog(LOG_CMDS, "*", "#%s# chpass %s [something]", dcc[idx].nick,
+             handle);
+      dprintf(idx, "Changed password.\n");
     }
   }
 }
@@ -1309,7 +1336,7 @@ static void cmd_restart(struct userrec *u, int idx, char *par)
 {
   putlog(LOG_CMDS, "*", "#%s# restart", dcc[idx].nick);
   if (!backgrd) {
-    dprintf(idx, "You cannot .restart a bot when running -n (due to Tcl).\n");
+    dprintf(idx, "You cannot .restart a bot when running -n/-t (due to Tcl).\n");
     return;
   }
   dprintf(idx, "Restarting.\n");
@@ -1484,7 +1511,7 @@ static void cmd_backup(struct userrec *u, int idx, char *par)
 static void cmd_trace(struct userrec *u, int idx, char *par)
 {
   int i;
-  char x[NOTENAMELEN + 11], y[12];
+  char x[NOTENAMELEN + 11], y[22];
 
   if (!par[0]) {
     dprintf(idx, "Usage: trace <botname>\n");
@@ -1501,7 +1528,7 @@ static void cmd_trace(struct userrec *u, int idx, char *par)
   }
   putlog(LOG_CMDS, "*", "#%s# trace %s", dcc[idx].nick, par);
   simple_sprintf(x, "%d:%s@%s", dcc[idx].sock, dcc[idx].nick, botnetnick);
-  simple_sprintf(y, ":%d", now);
+  snprintf(y, sizeof y, ":%" PRId64, (int64_t) now);
   botnet_send_trace(i, x, par, y);
 }
 
@@ -1691,6 +1718,143 @@ int check_dcc_chanattrs(struct userrec *u, char *chname, int chflags,
   return chflags;
 }
 
+/* helper function to inform the user of conflicts with botattr */
+static void bot_attr_inform(const int idx, const int msgids)
+{
+  if (msgids & BOT_SANE_ALTOWNSHUB)
+    dprintf(idx, "INFO: adding +a removes the existing +h flag.\n");
+  if (msgids & BOT_SANE_HUBOWNSALT)
+    dprintf(idx, "INFO: adding +h removes the existing +a flag.\n");
+  if (msgids & BOT_SANE_OWNSALTHUB)
+    dprintf(idx, "INFO: adding +ah is not possible, please choose only one.\n");
+  if (msgids & BOT_SANE_SHPOWNSAGGR)
+    dprintf(idx, "INFO: adding any of the +(bcejnud) flags removes the existing"
+        " +s flag.\n");
+  if (msgids & BOT_SANE_AGGROWNSSHP)
+    dprintf(idx, "INFO: adding +s removes any existing +(bcejnud) flags.\n");
+  if (msgids & BOT_SANE_OWNSSHPAGGR)
+    dprintf(idx, "INFO: adding +s with any of the +(bcejnud) flags is not"
+        " possible, please choose only one.\n");
+  if (msgids & BOT_SANE_SHPOWNSPASS)
+    dprintf(idx, "INFO: adding any of the +(bcejnud) flags removes the existing"
+         " +p flag.\n");
+  if (msgids & BOT_SANE_PASSOWNSSHP)
+    dprintf(idx, "INFO: adding +p removes any existing +(bcejnud) flags.\n");
+  if (msgids & BOT_SANE_OWNSSHPPASS)
+    dprintf(idx, "INFO: adding +p with any of the +(bcejnud) flags is not"
+        " possible, please choose only one.\n");
+  if (msgids & BOT_SANE_SHAREOWNSREJ)
+    dprintf(idx, "INFO: adding any of the +(bcejnudps) flags removes the"
+        " existing +r flag.\n");
+  if (msgids & BOT_SANE_REJOWNSSHARE)
+    dprintf(idx, "INFO: adding +r removes any existing +(bcejnudps) flags.\n");
+  if (msgids & BOT_SANE_OWNSSHAREREJ)
+    dprintf(idx, "INFO: adding +r with any of the +(bcejnudps) flags is not"
+        " possible, please choose only one.\n");
+  if (msgids & BOT_SANE_HUBOWNSREJ)
+    dprintf(idx, "INFO: adding +h removes the existing +r flag.\n");
+  if (msgids & BOT_SANE_REJOWNSHUB)
+    dprintf(idx, "INFO: adding +r removes the existing +h flag.\n");
+  if (msgids & BOT_SANE_OWNSHUBREJ)
+    dprintf(idx, "INFO: adding +hr is not possible, please choose only one of"
+        " them.\n");
+  if (msgids & BOT_SANE_ALTOWNSREJ)
+    dprintf(idx, "INFO: adding +a removes the existing +r flag.\n");
+  if (msgids & BOT_SANE_REJOWNSALT)
+    dprintf(idx, "INFO: adding +r removes the existing +a flag.\n");
+  if (msgids & BOT_SANE_OWNSALTREJ)
+    dprintf(idx, "INFO: adding +ar is not possible, please choose only one of"
+        " them.\n");
+  if (msgids & BOT_SANE_AGGROWNSPASS)
+    dprintf(idx, "INFO: adding +s removes the existing +p flag.\n");
+  if (msgids & BOT_SANE_PASSOWNSAGGR)
+    dprintf(idx, "INFO: adding +p removes the existing +s flag.\n");
+  if (msgids & BOT_SANE_OWNSAGGRPASS)
+    dprintf(idx, "INFO: adding +ps is not possible, please choose only one of"
+        " them.\n");
+  if (msgids & BOT_SANE_NOSHAREOWNSGLOB)
+    dprintf(idx, "INFO: removing the -(bcejnudps) flags will also remove the"
+        " current +g flag.\n");
+  if (msgids & BOT_SANE_OWNSGLOB)
+    dprintf(idx, "INFO: adding +g is only possible with one of the"
+        " +(bcejnudps) flags.\n");
+}
+
+/* helper function to inform the user of conflicts with chattr */
+static void uc_attr_inform(const int idx, const int msgids)
+{
+  if (msgids & UC_SANE_DEOPOWNSOP)
+    dprintf(idx, "INFO: adding +d removes the existing +o flag.\n");
+  if (msgids & UC_SANE_OPOWNSDEOP)
+    dprintf(idx, "INFO: adding +o removes the existing +d flag.\n");
+  if (msgids & UC_SANE_OWNSDEOPOP)
+    dprintf(idx, "INFO: adding +do is not possible, please choose only one of"
+        " them.\n");
+  if (msgids & UC_SANE_DEHALFOPOWNSHALFOP)
+    dprintf(idx, "INFO: adding +r removes the existing +l flag.\n");
+  if (msgids & UC_SANE_HALFOPOWNSDEHALFOP)
+    dprintf(idx, "INFO: adding +l removes the existing +r flag.\n");
+  if (msgids & UC_SANE_OWNSDEHALFOPHALFOP)
+    dprintf(idx, "INFO: adding +rl is not possible, please choose only one of"
+        " them.\n");
+  if (msgids & UC_SANE_DEOPOWNSAUTOOP)
+    dprintf(idx, "INFO: adding +d removes the existing +a flag.\n");
+  if (msgids & UC_SANE_AUTOOPOWNSDEOP)
+    dprintf(idx, "INFO: adding +a removes the existing +d flag.\n");
+  if (msgids & UC_SANE_OWNSDEOPAUTOOP)
+    dprintf(idx, "INFO: adding +da is not possible, please choose only one of"
+        " them.\n");
+  if (msgids & UC_SANE_DEHALFOPOWNSAHALFOP)
+    dprintf(idx, "INFO: adding +r removes the existing +y flag.\n");
+  if (msgids & UC_SANE_AHALFOPOWNSDEHALFOP)
+    dprintf(idx, "INFO: adding +y removes the existing +r flag.\n");
+  if (msgids & UC_SANE_OWNSDEHALFOPAHALFOP)
+    dprintf(idx, "INFO: adding +ry is not possible, please choose only one of"
+        " them.\n");
+  if (msgids & UC_SANE_QUIETOWNSVOICE)
+    dprintf(idx, "INFO: adding +q removes the existing +v flag.\n");
+  if (msgids & UC_SANE_VOICEOWNSQUIET)
+    dprintf(idx, "INFO: adding +v removes the existing +q flag.\n");
+  if (msgids & UC_SANE_OWNSQUIETVOICE)
+    dprintf(idx, "INFO: adding +qv is not possible, please choose only one of"
+        " them.\n");
+  if (msgids & UC_SANE_QUIETOWNSGVOICE)
+    dprintf(idx, "INFO: adding +q removes the existing +g flag.\n");
+  if (msgids & UC_SANE_GVOICEOWNSQUIET)
+    dprintf(idx, "INFO: adding +g removes the existing +q flag.\n");
+  if (msgids & UC_SANE_OWNSQUIETGVOICE)
+    dprintf(idx, "INFO: adding +qg is not possible, please choose only one of"
+        " them.\n");
+  if (msgids & UC_SANE_OWNERADDSMASTER)
+    dprintf(idx, "INFO: adding +n implies adding the +m flag.\n");
+  if (msgids & UC_SANE_MASTERADDSOP)
+    dprintf(idx, "INFO: adding +m implies adding the +o flag.\n");
+  if (msgids & UC_SANE_MASTERADDSBOTMOPJAN)
+    dprintf(idx, "INFO: adding +m implies adding the +toj flags.\n");
+  if (msgids & UC_SANE_BOTMASTADDSPARTY)
+    dprintf(idx, "INFO: adding +t implies adding the +p flag.\n");
+  if (msgids & UC_SANE_JANADDSXFER)
+    dprintf(idx, "INFO: adding +j implies adding the +x flag.\n");
+  if (msgids & UC_SANE_OPADDSHALFOP)
+    dprintf(idx, "INFO: adding +o implies adding the +l flag.\n");
+  if (msgids & UC_SANE_NOBOTOWNSAGGR)
+    dprintf(idx, "INFO: the +s flag can only be added to bots.\n");
+  if (msgids & UC_SANE_BOTOWNSPARTY)
+    dprintf(idx, "INFO: a bot can't have the +p flag.\n");
+  if (msgids & UC_SANE_BOTOWNSMASTER)
+    dprintf(idx, "INFO: a bot can't have the +m flag.\n");
+  if (msgids & UC_SANE_BOTOWNSCOMMON)
+    dprintf(idx, "INFO: a bot can't have the +c flag.\n");
+  if (msgids & UC_SANE_BOTOWNSOWNER)
+    dprintf(idx, "INFO: a bot can't have the +n flag.\n");
+  if (msgids & UC_SANE_AUTOOPADDSOP)
+    dprintf(idx, "INFO: adding +a also adds +o for your convenience, if unwanted one can revert with -o.\n");
+  if (msgids & UC_SANE_AUTOHALFOPADDSHALFOP)
+    dprintf(idx, "INFO: adding +y also adds +l for your convenience, if unwanted one can revert with -l.\n");
+  if (msgids & UC_SANE_GVOICEADDSVOICE)
+    dprintf(idx, "INFO: adding +g also adds +v for your convenience, if unwanted one can revert with -v.\n");
+}
+
 static void cmd_chattr(struct userrec *u, int idx, char *par)
 {
   char *hand, *arg = NULL, *tmpchg = NULL, *chg = NULL, work[1024];
@@ -1700,7 +1864,7 @@ static void cmd_chattr(struct userrec *u, int idx, char *par)
                      mns = { 0, 0, 0, 0, 0, 0 },
                      user = { 0, 0, 0, 0, 0, 0 };
   module_entry *me;
-  int fl = -1, of = 0, ocf = 0;
+  int fl = -1, of = 0, ocf = 0, msgidsu = 0, msgidsc = 0;
 
   if (!par[0]) {
     dprintf(idx, "Usage: chattr <handle> [changes] [channel]\n");
@@ -1788,8 +1952,8 @@ static void cmd_chattr(struct userrec *u, int idx, char *par)
     mns.global &=~(USER_BOT);
 
     if (chan) {
-      pls.chan &= ~(BOT_SHARE);
-      mns.chan &= ~(BOT_SHARE);
+      pls.chan &= ~(BOT_AGGRESSIVE);
+      mns.chan &= ~(BOT_AGGRESSIVE);
     }
     if (!glob_owner(user)) {
       pls.global &=~(USER_OWNER | USER_MASTER | USER_BOTMAST | USER_UNSHARED);
@@ -1820,15 +1984,14 @@ static void cmd_chattr(struct userrec *u, int idx, char *par)
     get_user_flagrec(u2, &user, par);
     if (user.match & FR_GLOBAL) {
       of = user.global;
-      user.global = sanity_check((user.global |pls.global) &~mns.global);
+      msgidsu = user_sanity_check(&(user.global), pls.global, mns.global);
 
       user.udef_global = (user.udef_global | pls.udef_global)
                          & ~mns.udef_global;
     }
     if (chan) {
       ocf = user.chan;
-      user.chan = chan_sanity_check((user.chan | pls.chan) & ~mns.chan,
-                                    user.global);
+      msgidsc = chan_sanity_check(&(user.chan), pls.chan, mns.chan, user.global);
 
       user.udef_chan = (user.udef_chan | pls.udef_chan) & ~mns.udef_chan;
     }
@@ -1847,6 +2010,9 @@ static void cmd_chattr(struct userrec *u, int idx, char *par)
       check_dcc_attrs(u2, of);
     get_user_flagrec(u2, &user, NULL);
     build_flags(work, &user, NULL);
+    /* Display any remarks */
+    if (msgidsu)
+      uc_attr_inform(idx, msgidsu);
     if (work[0] != '-')
       dprintf(idx, "Global flags for %s are now +%s.\n", hand, work);
     else
@@ -1855,10 +2021,13 @@ static void cmd_chattr(struct userrec *u, int idx, char *par)
   if (chan) {
     user.match = FR_CHAN;
     get_user_flagrec(u2, &user, par);
-    user.chan &= ~BOT_SHARE;
+    user.chan &= ~BOT_AGGRESSIVE;
     if (chg)
       check_dcc_chanattrs(u2, chan->dname, user.chan, ocf);
     build_flags(work, &user, NULL);
+    /* Display any remarks */
+    if (msgidsc)
+      uc_attr_inform(idx, msgidsc);
     if (work[0] != '-')
       dprintf(idx, "Channel flags for %s on %s are now +%s.\n", hand,
               chan->dname, work);
@@ -1876,6 +2045,7 @@ static void cmd_chattr(struct userrec *u, int idx, char *par)
 static void cmd_botattr(struct userrec *u, int idx, char *par)
 {
   char *hand, *chg = NULL, *arg = NULL, *tmpchg = NULL, work[1024];
+  int msgids = 0;
   struct chanset_t *chan = NULL;
   struct userrec *u2;
   struct flag_record  pls = { 0, 0, 0, 0, 0, 0 },
@@ -1966,8 +2136,8 @@ static void cmd_botattr(struct userrec *u, int idx, char *par)
     break_down_flags(chg, &pls, &mns);
     /* No-one can change these flags on-the-fly */
     if (chan && glob_owner(user)) {
-      pls.chan &= BOT_SHARE;
-      mns.chan &= BOT_SHARE;
+      pls.chan &= BOT_AGGRESSIVE;
+      mns.chan &= BOT_AGGRESSIVE;
     } else {
       pls.chan = 0;
       mns.chan = 0;
@@ -1978,9 +2148,7 @@ static void cmd_botattr(struct userrec *u, int idx, char *par)
     }
     user.match = FR_BOT | (chan ? FR_CHAN : 0);
     get_user_flagrec(u2, &user, par);
-    user.bot = (user.bot | pls.bot) & ~mns.bot;
-    if ((user.bot & BOT_SHARE) == BOT_SHARE)
-      user.bot &= ~BOT_SHARE;
+    msgids = bot_sanity_check(&(user.bot), pls.bot, mns.bot);
     if (chan)
       user.chan = (user.chan | pls.chan) & ~mns.chan;
     set_user_flagrec(u2, &user, par);
@@ -1991,6 +2159,9 @@ static void cmd_botattr(struct userrec *u, int idx, char *par)
   else
     putlog(LOG_CMDS, "*", "#%s# botattr %s %s", dcc[idx].nick, hand,
            chg ? chg : "");
+  /* Display any remarks */
+  if (msgids)
+    bot_attr_inform(idx, msgids);
   /* get current flags and display them */
   if (!chan || pls.bot || mns.bot) {
     user.match = FR_BOT;
@@ -2004,7 +2175,7 @@ static void cmd_botattr(struct userrec *u, int idx, char *par)
   if (chan) {
     user.match = FR_CHAN;
     get_user_flagrec(u2, &user, par);
-    user.chan &= BOT_SHARE;
+    user.chan &= BOT_AGGRESSIVE;
     user.udef_chan = 0; /* udef chan flags are user only */
     build_flags(work, &user, NULL);
     if (work[0] != '-')
@@ -2698,8 +2869,8 @@ static void cmd_pls_user(struct userrec *u, int idx, char *par)
     handle[HANDLEN] = 0;
   if (get_user_by_handle(userlist, handle))
     dprintf(idx, "Someone already exists by that name.\n");
-  else if (strchr(BADNICKCHARS, handle[0]) != NULL)
-    dprintf(idx, "You can't start a nick with '%c'.\n", handle[0]);
+  else if (strchr(BADHANDCHARS, handle[0]) != NULL)
+    dprintf(idx, "You can't start a handle with '%c'.\n", handle[0]);
   else if (!strcasecmp(handle, botnetnick))
     dprintf(idx, "Hey! That's MY name!\n");
   else {

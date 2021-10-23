@@ -5,7 +5,7 @@
  */
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2019 Eggheads Development Team
+ * Copyright (C) 1999 - 2021 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -342,7 +342,11 @@ static void remote_tell_who(int idx, char *nick, int chan)
       i += l;
       strncat(s, c->dname, ssize);
 
-      /* check if we need to trunc, normally only for first chans on the line */
+      /* check if we need to trunc, normally only for first chans on the line.
+       * CHANNELLEN is 80, so we likely won't ever hit this *now*, but if we
+       * ever change that for some reason (twitch? ircv3 stuff?) this is still
+       * a good check to have, 'just in case'
+       */
       if (i > ssize) {
         unsigned int trunc = 4;
         if (c->next) {
@@ -719,7 +723,7 @@ static void bot_nlinked(int idx, char *par)
     putlog(LOG_BOTMSG, "*", "(%s) %s %s.", next, NET_LINKEDTO, newbot);
     x = '-';
   }
-  addbot(newbot, dcc[idx].nick, next, x, i);
+  addbot(newbot, dcc[idx].nick, next, x, i, dcc[idx].ssl);
   check_tcl_link(newbot, next);
   u = get_user_by_handle(userlist, newbot);
   if (bot_flags(u) & BOT_REJECT) {

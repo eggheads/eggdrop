@@ -4,7 +4,7 @@
  */
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2019 Eggheads Development Team
+ * Copyright (C) 1999 - 2021 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -108,16 +108,21 @@ typedef struct timer_str {
 
 
 /* Used for Tcl stub functions */
-#define STDVAR (cd, irp, argc, argv)                                    \
-        ClientData cd;                                                  \
-        Tcl_Interp *irp;                                                \
-        int argc;                                                       \
-        char *argv[];
+#define STDVAR (ClientData cd, Tcl_Interp *irp, int argc, char *argv[])
+
+#define STDOBJVAR (ClientData cd, Tcl_Interp *irp, int objc, Tcl_Obj *const objv[])
 
 #define BADARGS(nl, nh, example) do {                                   \
         if ((argc < (nl)) || ((argc > (nh)) && ((nh) != -1))) {         \
                 Tcl_AppendResult(irp, "wrong # args: should be \"",     \
                                  argv[0], (example), "\"", NULL);       \
+                return TCL_ERROR;                                       \
+        }                                                               \
+} while (0)
+
+#define BADOBJARGS(nl, nh, prefix, example) do {                        \
+        if ((objc < (nl)) || ((objc > (nh)) && ((nh) != -1))) {         \
+                Tcl_WrongNumArgs(irp, prefix, objv, example);           \
                 return TCL_ERROR;                                       \
         }                                                               \
 } while (0)
@@ -167,6 +172,7 @@ typedef struct _cd_tcl_cmd {
 } cd_tcl_cmd;
 
 void add_tcl_commands(tcl_cmds *);
+void add_tcl_objcommands(tcl_cmds *);
 void add_cd_tcl_cmds(cd_tcl_cmd *);
 void rem_tcl_commands(tcl_cmds *);
 void add_tcl_strings(tcl_strings *);
@@ -180,6 +186,7 @@ int tcl_resultint();
 int tcl_resultempty();
 int tcl_threaded();
 int fork_before_tcl();
+time_t get_expire_time(Tcl_Interp *, const char *);
 
 /* From Tcl's tclUnixInit.c */
 /* The following table is used to map from Unix locale strings to

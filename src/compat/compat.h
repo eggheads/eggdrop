@@ -3,7 +3,7 @@
  *   wrap-around header for all compatibility functions.
  */
 /*
- * Copyright (C) 2000 - 2019 Eggheads Development Team
+ * Copyright (C) 2000 - 2021 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -26,9 +26,8 @@
 #include "base64.h"
 #include "inet_aton.h"
 #include "snprintf.h"
-#include "inet_ntop.h"
-#include "inet_pton.h"
 #include "gethostbyname2.h"
+#include "explicit_bzero.h"
 #include "strlcpy.h"
 
 #endif /* !__EGG_COMPAT_COMPAT_H */

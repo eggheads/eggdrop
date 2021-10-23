@@ -4,7 +4,7 @@
  */
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2019 Eggheads Development Team
+ * Copyright (C) 1999 - 2021 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -145,11 +145,11 @@ static struct user_entry_type USERENTRY_DCCDIR = {
 static int check_tcl_fil(char *cmd, int idx, char *args)
 {
   int x;
-  char s[5];
+  char s[21];
   struct flag_record fr = { FR_GLOBAL | FR_CHAN, 0, 0, 0, 0, 0 };
 
   get_user_flagrec(dcc[idx].user, &fr, dcc[idx].u.file->chat->con_chan);
-  sprintf(s, "%ld", dcc[idx].sock);
+  snprintf(s, sizeof s, "%ld", dcc[idx].sock);
   Tcl_SetVar(interp, "_fil1", dcc[idx].nick, 0);
   Tcl_SetVar(interp, "_fil2", s, 0);
   Tcl_SetVar(interp, "_fil3", args, 0);
@@ -191,7 +191,7 @@ static void dcc_files_pass(int idx, char *buf, int x)
     }
     dcc[idx].type = &DCC_FILES;
     if (dcc[idx].status & STAT_TELNET)
-      dprintf(idx, "\377\374\001\n");   /* turn echo back on */
+      dprintf(idx, TLN_IAC_C TLN_WONT_C TLN_ECHO_C "\n");   /* turn echo back on */
     putlog(LOG_FILES, "*", "File system: [%s]%s/%d", dcc[idx].nick,
            dcc[idx].host, dcc[idx].port);
     if (!welcome_to_files(idx)) {
@@ -732,10 +732,10 @@ static char *mktempfile(char *filename)
 
 static void filesys_dcc_send_hostresolved(int i)
 {
-  char *s1, *param, prt[100], *tempf;
+  char *s1, *param, prt[6], *tempf;
   int len = dcc[i].u.dns->ibuf, j;
 
-  sprintf(prt, "%d", dcc[i].port);
+  snprintf(prt, sizeof prt, "%d", dcc[i].port);
   if (!hostsanitycheck_dcc(dcc[i].nick, dcc[i].u.dns->host, &dcc[i].sockname,
                            dcc[i].u.dns->host, prt)) {
     lostdcc(i);
