@@ -1718,8 +1718,7 @@ char *traced_natip(ClientData cd, Tcl_Interp *irp, EGG_CONST char *name1,
       return NULL;
     }
     snprintf(nat_ip_string, sizeof nat_ip_string, "%u", ntohl(ia.s_addr));
-  }
-  else
+  } else
     *nat_ip_string = '\0';
   return NULL;
 }
