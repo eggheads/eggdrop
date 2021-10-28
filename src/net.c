@@ -1707,14 +1707,14 @@ char *traced_natip(ClientData cd, Tcl_Interp *irp, EGG_CONST char *name1,
         "ERROR: nat-ip %s: address was not parseable in AF_INET", nat_ip);
       *nat_ip_string = '\0';
       if (!online_since)
-        fatal("bogus nat-ip", 0);
+        fatal("ERROR: config file", 0);
       return NULL;
     }
     if (r < 0) {
       putlog(LOG_MISC, "*", "ERROR: nat-ip %s: %s", nat_ip, strerror(errno));
-      *nat_ip_string = '\0';
       if (!online_since)
-        fatal("bogus nat-ip", 0);
+        fatal("ERROR: config file", 0);
+      *nat_ip_string = '\0';
       return NULL;
     }
     snprintf(nat_ip_string, sizeof nat_ip_string, "%u", ntohl(ia.s_addr));
