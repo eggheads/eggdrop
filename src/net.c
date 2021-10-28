@@ -1705,9 +1705,9 @@ char *traced_natip(ClientData cd, Tcl_Interp *irp, EGG_CONST char *name1,
     if (!r) {
       putlog(LOG_MISC, "*",
         "ERROR: nat-ip %s: address was not parseable in AF_INET", nat_ip);
-      *nat_ip_string = '\0';
       if (!online_since)
         fatal("ERROR: config file", 0);
+      *nat_ip_string = '\0';
       return NULL;
     }
     if (r < 0) {
