@@ -1699,26 +1699,23 @@ char *traced_natip(ClientData cd, Tcl_Interp *irp, EGG_CONST char *name1,
   struct in_addr ia;
 
   value = Tcl_GetVar2(irp, name1, name2, TCL_GLOBAL_ONLY);
-  strlcpy(nat_ip, value, sizeof nat_ip);
-  if (*nat_ip) {
-    r = inet_pton(AF_INET, nat_ip, &ia);
+
+  if (*value) {
+    r = inet_pton(AF_INET, value, &ia);
     if (!r) {
-      putlog(LOG_MISC, "*",
-        "ERROR: nat-ip %s: address was not parseable in AF_INET", nat_ip);
       if (!online_since)
-        fatal("ERROR: config file", 0);
-      *nat_ip_string = '\0';
-      return NULL;
+        fatal("ERROR: config file: nat-ip address was not parseable in AF_INET", 0);
+      return "address was not parseable in AF_INET";
     }
     if (r < 0) {
-      putlog(LOG_MISC, "*", "ERROR: nat-ip %s: %s", nat_ip, strerror(errno));
       if (!online_since)
-        fatal("ERROR: config file", 0);
-      *nat_ip_string = '\0';
-      return NULL;
+        fatal("ERROR: inet_pton(): nat-ip", 0);
+      putlog(LOG_MISC, "*", "ERROR: inet_pton(): nat-ip", value);
+      return strerror(errno);
     }
     snprintf(nat_ip_string, sizeof nat_ip_string, "%u", ntohl(ia.s_addr));
   } else
     *nat_ip_string = '\0';
+  strlcpy(nat_ip, value, sizeof nat_ip);
   return NULL;
 }
