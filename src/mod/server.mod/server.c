@@ -2166,8 +2166,7 @@ static Function server_table[] = {
   (Function) & isupport_get,    /*                                      */
   /* 48 - 51 */
   (Function) & isupport_parseint,
-  (Function) do_nettype_server,
-  (Function) & net_type         /* int                                  */
+  (Function) do_nettype_server
 };
 
 char *server_start(Function *global_funcs)

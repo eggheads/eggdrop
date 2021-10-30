@@ -96,7 +96,6 @@
 /* 48 - 51 */
 #define isupport_parseint ((int (*)(const char *, const char *, int, int, int, int, int *))(server_funcs[48]))
 #define do_nettype_server ((void (*) (void))server_funcs[49])
-#define net_type ((char *)(server_funcs[50]))
 #endif /* MAKING_SERVER */
 
 struct server_list {
