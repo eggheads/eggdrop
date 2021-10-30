@@ -1291,7 +1291,6 @@ static char *traced_nettype(ClientData cdata, Tcl_Interp *irp,
         "to a text string. Please update your choice to one of the allowed values\n"
         "listed in the current configuration file from the source directory\n");
   }
-  strlcpy(net_type, value, sizeof net_type);
   do_nettype_irc();
   return NULL;
 }
