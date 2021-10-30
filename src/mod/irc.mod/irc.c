@@ -1102,7 +1102,7 @@ static void irc_report(int idx, int details)
  * they support max_modes. If they support max_modes, set each of
  * other sub-max settings equal to max_modes
  */
-static void do_nettype()
+static void do_nettype_irc()
 {
   switch (net_type_int) {
   case NETT_EFNET:
@@ -1230,13 +1230,70 @@ static void do_nettype()
   }
   /* Update all rfc_ function pointers */
   add_hook(HOOK_RFC_CASECMP, (Function) (intptr_t) rfc_compliant);
+  do_nettype_server();
 }
 
 static char *traced_nettype(ClientData cdata, Tcl_Interp *irp,
                             EGG_CONST char *name1,
                             EGG_CONST char *name2, int flags)
 {
-  do_nettype();
+  const char *value;
+  int warn = 0;
+
+  value = Tcl_GetVar2(irp, name1, name2, TCL_GLOBAL_ONLY);
+  if (!strcasecmp(value, "DALnet"))
+    net_type_int = NETT_DALNET;
+  else if (!strcasecmp(value, "EFnet"))
+    net_type_int = NETT_EFNET;
+  else if (!strcasecmp(value, "freenode"))
+    net_type_int = NETT_FREENODE;
+  else if (!strcasecmp(value, "IRCnet"))
+    net_type_int = NETT_IRCNET;
+  else if (!strcasecmp(value, "Libera"))
+    net_type_int = NETT_LIBERA;
+  else if (!strcasecmp(value, "QuakeNet"))
+    net_type_int = NETT_QUAKENET;
+  else if (!strcasecmp(value, "Rizon"))
+    net_type_int = NETT_RIZON;
+  else if (!strcasecmp(value, "Undernet"))
+    net_type_int = NETT_UNDERNET;
+  else if (!strcasecmp(value, "Twitch"))
+    net_type_int = NETT_TWITCH;
+  else if (!strcasecmp(value, "Other"))
+    net_type_int = NETT_OTHER;
+  else if (!strcasecmp(value, "0")) { /* For backwards compatibility */
+    net_type_int = NETT_EFNET;
+    warn = 1;
+  } else if (!strcasecmp(value, "1")) { /* For backwards compatibility */
+    net_type_int = NETT_IRCNET;
+    warn = 1;
+  } else if (!strcasecmp(value, "2")) { /* For backwards compatibility */
+    net_type_int = NETT_UNDERNET;
+    warn = 1;
+  } else if (!strcasecmp(value, "3")) { /* For backwards compatibility */
+    net_type_int = NETT_DALNET;
+    warn = 1;
+  } else if (!strcasecmp(value, "4")) { /* For backwards compatibility */
+    net_type_int = NETT_HYBRID_EFNET;
+    warn = 1;
+  } else if (!strcasecmp(value, "5")) { /* For backwards compatibility */
+    net_type_int = NETT_OTHER; 
+    warn = 1;
+  } else if (!online_since) {
+    fatal("ERROR: NET-TYPE NOT SET.\n Must be one of DALNet, EFnet, freenode, "
+          "Libera, IRCnet, Quakenet, Rizon, Undernet, Other.", 0);
+  } else
+    putlog(LOG_MISC, "*", "ERROR: NET-TYPE NOT SET.\n Must be one of DALNet, "
+           "EFnet, freenode, Libera, IRCnet, Quakenet, Rizon, Undernet, Other.",
+           0);
+  if (warn) {
+    putlog(LOG_MISC, "*",
+        "INFO: The config setting for \"net-type\" has transitioned from a number\n"
+        "to a text string. Please update your choice to one of the allowed values\n"
+        "listed in the current configuration file from the source directory\n");
+  }
+  strlcpy(net_type, value, sizeof net_type);
+  do_nettype_irc();
   return NULL;
 }
 
@@ -1298,7 +1355,7 @@ static char *irc_close()
                  TCL_TRACE_READS | TCL_TRACE_WRITES | TCL_TRACE_UNSETS,
                  traced_rfccompliant, NULL);
   Tcl_UntraceVar(interp, "net-type",
-                 TCL_TRACE_READS | TCL_TRACE_WRITES | TCL_TRACE_UNSETS,
+                 TCL_TRACE_WRITES | TCL_TRACE_UNSETS,
                  traced_nettype, NULL);
   module_undepend(MODULE_NAME);
   return NULL;
@@ -1383,7 +1440,7 @@ char *irc_start(Function *global_funcs)
   add_hook(HOOK_ADD_MODE, (Function) real_add_mode);
   add_hook(HOOK_IDLE, (Function) flush_modes);
   Tcl_TraceVar(interp, "net-type",
-               TCL_TRACE_READS | TCL_TRACE_WRITES | TCL_TRACE_UNSETS,
+               TCL_TRACE_WRITES | TCL_TRACE_UNSETS,
                traced_nettype, NULL);
   Tcl_TraceVar(interp, "rfc-compliant",
                TCL_TRACE_READS | TCL_TRACE_WRITES | TCL_TRACE_UNSETS,
@@ -1413,6 +1470,6 @@ char *irc_start(Function *global_funcs)
   H_need = add_bind_table("need", HT_STACKABLE, channels_2char);
   H_ircaway = add_bind_table("ircaway", HT_STACKABLE, channels_5char);
   H_monitor = add_bind_table("monitor", HT_STACKABLE, monitor_2char);
-  do_nettype();
+  do_nettype_irc();
   return NULL;
 }
