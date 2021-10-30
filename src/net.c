@@ -1715,6 +1715,5 @@ char *traced_natip(ClientData cd, Tcl_Interp *irp, EGG_CONST char *name1,
     snprintf(nat_ip_string, sizeof nat_ip_string, "%u", ntohl(ia.s_addr));
   } else
     *nat_ip_string = '\0';
-  strlcpy(nat_ip, value, sizeof nat_ip);
   return NULL;
 }
