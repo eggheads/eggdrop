@@ -1699,7 +1699,6 @@ char *traced_natip(ClientData cd, Tcl_Interp *irp, EGG_CONST char *name1,
   struct in_addr ia;
 
   value = Tcl_GetVar2(irp, name1, name2, TCL_GLOBAL_ONLY);
-
   if (*value) {
     r = inet_pton(AF_INET, value, &ia);
     if (!r) {
@@ -1710,7 +1709,7 @@ char *traced_natip(ClientData cd, Tcl_Interp *irp, EGG_CONST char *name1,
     if (r < 0) {
       if (!online_since)
         fatal("ERROR: inet_pton(): nat-ip", 0);
-      putlog(LOG_MISC, "*", "ERROR: inet_pton(): nat-ip", value);
+      putlog(LOG_MISC, "*", "ERROR: inet_pton(): nat-ip %s", value);
       return strerror(errno);
     }
     snprintf(nat_ip_string, sizeof nat_ip_string, "%u", ntohl(ia.s_addr));
