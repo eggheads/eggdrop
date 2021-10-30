@@ -1283,9 +1283,8 @@ static char *traced_nettype(ClientData cdata, Tcl_Interp *irp,
     fatal("ERROR: NET-TYPE NOT SET.\n Must be one of DALNet, EFnet, freenode, "
           "Libera, IRCnet, Quakenet, Rizon, Undernet, Other.", 0);
   } else
-    putlog(LOG_MISC, "*", "ERROR: NET-TYPE NOT SET.\n Must be one of DALNet, "
-           "EFnet, freenode, Libera, IRCnet, Quakenet, Rizon, Undernet, Other.",
-           0);
+    return("Must be one of DALNet, EFnet, freenode, Libera, IRCnet, Quakenet, "
+           "Rizon, Undernet, Other.");
   if (warn) {
     putlog(LOG_MISC, "*",
         "INFO: The config setting for \"net-type\" has transitioned from a number\n"
