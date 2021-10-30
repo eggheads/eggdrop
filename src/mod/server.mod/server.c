@@ -74,8 +74,8 @@ static int exclusive_binds;     /* configures PUBM and MSGM binds to be
 static int answer_ctcp;         /* answer how many stacked ctcp's ? */
 static int lowercase_ctcp;      /* answer lowercase CTCP's (non-standard) */
 static int check_mode_r;        /* check for IRCnet +r modes */
-static char net_type[9];
-static int net_type_int;
+static char net_type[9] = "EFnet";
+static int net_type_int = NETT_EFNET;
 static char connectserver[121]; /* what, if anything, to do before connect
                                  * to the server */
 static int resolvserv;          /* in the process of resolving a server host */
@@ -2212,7 +2212,6 @@ char *server_start(Function *global_funcs)
   check_mode_r = 0;
   maxqmsg = 300;
   burst = 0;
-  strlcpy(net_type, "EFnet", sizeof net_type);
   double_mode = 0;
   double_server = 0;
   double_help = 0;
@@ -2322,5 +2321,6 @@ char *server_start(Function *global_funcs)
   newserver[0] = 0;
   newserverport = 0;
   curserv = 999;
+  do_nettype_server();
   return NULL;
 }

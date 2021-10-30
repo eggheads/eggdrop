@@ -1230,7 +1230,6 @@ static void do_nettype_irc()
   }
   /* Update all rfc_ function pointers */
   add_hook(HOOK_RFC_CASECMP, (Function) (intptr_t) rfc_compliant);
-  do_nettype_server();
 }
 
 static char *traced_nettype(ClientData cdata, Tcl_Interp *irp,
@@ -1292,6 +1291,7 @@ static char *traced_nettype(ClientData cdata, Tcl_Interp *irp,
         "listed in the current configuration file from the source directory\n");
   }
   do_nettype_irc();
+  do_nettype_server();
   return NULL;
 }
 
