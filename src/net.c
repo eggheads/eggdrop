@@ -793,11 +793,12 @@ int getdccfamilyaddr(sockname_t *addr, char *s, size_t l, int restrict_af)
   if (r->family == AF_INET6) {
     if (IN6_IS_ADDR_V4MAPPED(&r->addr.s6.sin6_addr) ||
         IN6_IS_ADDR_UNSPECIFIED(&r->addr.s6.sin6_addr)) {
-      memcpy(&ip, r->addr.s6.sin6_addr.s6_addr + 12, sizeof ip);
       if (*nat_ip_string)
         strlcpy(s, nat_ip_string, l);
-      else
+      else {
+        memcpy(&ip, r->addr.s6.sin6_addr.s6_addr + 12, sizeof ip);
         egg_snprintf(s, l, "%u", ntohl(ip));
+      }
     } else
       inet_ntop(AF_INET6, &r->addr.s6.sin6_addr, s, l);
   } else
