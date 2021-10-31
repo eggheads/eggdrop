@@ -721,7 +721,7 @@ int getdccaddr(sockname_t *addr, char *s, size_t l)
  */
 int getdccfamilyaddr(sockname_t *addr, char *s, size_t l, int restrict_af)
 {
-  char h[121];
+  char h[256];
   sockname_t name, *r = &name;
   int af = AF_UNSPEC;
 #ifdef IPV6
