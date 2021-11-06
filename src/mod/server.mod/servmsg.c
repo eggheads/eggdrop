@@ -1135,7 +1135,7 @@ static void server_activity(int idx, char *tagmsg, int len)
   char *from, *code, *s1, *s2, *saveptr1=NULL, *saveptr2=NULL, *tagstrptr=NULL;
   char *token, *subtoken, tagstr[TOTALTAGMAX+1], tagdict[TOTALTAGMAX+1] = "";
   char *msgptr, rawmsg[RECVLINEMAX+7];
-  int taglen, i, found;
+  int taglen, i, found, ret;
 
   if (trying_server) {
     strcpy(dcc[idx].nick, "(server)");
@@ -1194,9 +1194,11 @@ static void server_activity(int idx, char *tagmsg, int len)
     putlog(LOG_RAW, "*", "[@] %s", rawmsg);
   }
   /* Check both raw and rawt, to allow backwards compatibility with older
-   * scripts */
-  check_tcl_rawt(from, code, msgptr, tagdict);
-  check_tcl_raw(from, code, msgptr);
+   * scripts. If rawt returns 1 (blocking), don't process raw binds.*/
+  ret = check_tcl_rawt(from, code, msgptr, tagdict);
+  if (!ret) {
+    check_tcl_raw(from, code, msgptr);
+  }
 }
 
 static int gotping(char *from, char *msg)
