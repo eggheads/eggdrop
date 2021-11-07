@@ -42,16 +42,9 @@ DO NOT SEND HTML E-MAIL TO THE LISTS.
 2) INFORMATION ABOUT TCL
 
 2.1) Tcl library version:
-     ( ) 8.6
-     ( ) 8.5
-     ( ) 8.4
-     ( ) Other - Which? ____
+     8.6._
 
-2.2) Tcl library patchlevel: ___
-  eg; p1, p2, etc for Tcl versions up to 8.0p2
-      or the 3rd part of the version number for 8.0.3 and newer
-
-2.3) Tcl scripts used:
+2.2) Tcl scripts used:
      [ ] alltools
      [ ] sentinel
      [ ] getops
