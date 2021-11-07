@@ -108,14 +108,12 @@ int expmem_net()
  */
 char *iptostr(struct sockaddr *sa)
 {
+  static char s[EGG_INET_ADDRSTRLEN] = "";
 #ifdef IPV6
-  static char s[INET6_ADDRSTRLEN] = "";
   if (sa->sa_family == AF_INET6)
     inet_ntop(AF_INET6, &((struct sockaddr_in6 *)sa)->sin6_addr,
               s, sizeof s);
   else
-#else
-  static char s[INET_ADDRSTRLEN] = "";
 #endif
     inet_ntop(AF_INET, &((struct sockaddr_in *)sa)->sin_addr.s_addr, s,
               sizeof s);
@@ -135,11 +133,10 @@ int setsockname(sockname_t *addr, char *src, int port, int allowres)
   IP ip;
   struct hostent *hp;
   volatile int af = AF_UNSPEC;
+  char ip2[EGG_INET_ADDRSTRLEN];
 #ifdef IPV6
-  char ip2[INET6_ADDRSTRLEN];
   int pref;
 #else
-  char ip2[INET_ADDRSTRLEN];
   int i, count;
 #endif
 
@@ -1506,12 +1503,11 @@ int sanitycheck_dcc(char *nick, char *from, char *ipaddy, char *port)
    * DNS names that are up to 255 characters long.  This is not broken.
    */
 
+  char badaddress[INET_ADDRSTRLEN];
 #ifdef IPV6
-  char badaddress[INET6_ADDRSTRLEN];
   sockname_t name;
   IP ip = 0;
 #else
-  char badaddress[INET_ADDRSTRLEN];
   IP ip = my_atoul(ipaddy);
 #endif
   int prt = atoi(port);
@@ -1550,7 +1546,7 @@ int sanitycheck_dcc(char *nick, char *from, char *ipaddy, char *port)
 int hostsanitycheck_dcc(char *nick, char *from, sockname_t *ip, char *dnsname,
                         char *prt)
 {
-  char badaddress[INET6_ADDRSTRLEN];
+  char badaddress[EGG_INET_ADDRSTRLEN];
 
   /* According to the latest RFC, the clients SHOULD be able to handle
    * DNS names that are up to 255 characters long.  This is not broken.
@@ -1560,11 +1556,7 @@ int hostsanitycheck_dcc(char *nick, char *from, sockname_t *ip, char *dnsname,
   /* It is disabled HERE so we only have to check in *one* spot! */
   if (!dcc_sanitycheck)
     return 1;
-  strcpy(badaddress, iptostr(&ip->addr.sa));
-  /* These should pad like crazy with zeros, since 120 bytes or so is
-   * where the routines providing our data currently lose interest. I'm
-   * using the n-variant in case someone changes that...
-   */
+  strlcpy(badaddress, iptostr(&ip->addr.sa), sizeof badaddress);
   strlcpy(hostn, extracthostname(from), sizeof hostn);
   if (!strcasecmp(hostn, dnsname)) {
     putlog(LOG_DEBUG, "*", "DNS information for submitted IP checks out.");

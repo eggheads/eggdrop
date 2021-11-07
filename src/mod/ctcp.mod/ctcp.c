@@ -143,7 +143,7 @@ static int ctcp_CHAT(char *nick, char *uhost, char *handle, char *object,
   struct userrec *u = get_user_by_handle(userlist, handle);
   int atr = u ? u->flags : 0, i;
   int chatv = AF_UNSPEC;
-  char s[INET6_ADDRSTRLEN];
+  char s[EGG_INET_ADDRSTRLEN];
 #ifdef TLS
   int ssl = 0;
 #endif

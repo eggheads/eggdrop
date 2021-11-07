@@ -332,7 +332,10 @@ typedef intptr_t (*Function) ();
 typedef int (*IntFunc) ();
 
 #ifdef IPV6
-#include "compat/in6.h"
+  #include "compat/in6.h"
+  #define EGG_INET_ADDRSTRLEN INET6_ADDRSTRLEN
+#else
+  #define EGG_INET_ADDRSTRLEN INET_ADDRSTRLEN
 #endif
 
 #include <sys/socket.h>
