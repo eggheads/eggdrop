@@ -237,7 +237,7 @@ static void bot_version(int idx, char *par)
 #ifndef NO_OLD_BOTNET
   }
 #endif
-  strlcpy(dcc[idx].u.bot->version, par, 120);
+  strlcpy(dcc[idx].u.bot->version, par, sizeof dcc[idx].u.bot->version);
   putlog(LOG_BOTS, "*", DCC_LINKED, dcc[idx].nick);
   botnet_send_nlinked(idx, dcc[idx].nick, botnetnick, '!',
                       dcc[idx].u.bot->numver);
