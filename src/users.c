@@ -35,7 +35,6 @@
 #include "modules.h"
 #include "tandem.h"
 
-#include <netinet/in.h>
 #include <arpa/inet.h>
 
 extern struct dcc_t *dcc;

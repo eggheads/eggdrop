@@ -26,7 +26,6 @@
 #include "src/main.h"
 
 #include <netdb.h>
-#include <netinet/in.h>
 
 #if defined IPV6 && !defined HAVE_GETHOSTBYNAME2
 struct hostent *gethostbyname2(const char *name, int af);

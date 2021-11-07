@@ -24,7 +24,6 @@
 #define _EGG_COMPAT_INET_ATON_H
 
 #include "src/main.h"
-#include <netinet/in.h>
 #include <arpa/inet.h>
 
 #ifndef HAVE_INET_ATON

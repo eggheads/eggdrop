@@ -26,7 +26,6 @@
 
 #include "src/mod/module.h"
 
-#include <netinet/in.h>
 #include <arpa/inet.h>
 #include <sys/stat.h>
 
