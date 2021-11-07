@@ -30,7 +30,6 @@
 #include <limits.h>
 #include <string.h>
 #include <netdb.h>
-#include <sys/socket.h>
 #if HAVE_SYS_SELECT_H
 #  include <sys/select.h>
 #endif

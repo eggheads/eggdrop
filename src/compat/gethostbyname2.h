@@ -26,9 +26,6 @@
 #include "src/main.h"
 
 #include <netdb.h>
-#ifdef HAVE_SYS_SOCKET_H
-#  include <sys/socket.h>
-#endif
 #include <netinet/in.h>
 
 #if defined IPV6 && !defined HAVE_GETHOSTBYNAME2
