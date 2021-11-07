@@ -106,6 +106,7 @@ DO NOT SEND HTML E-MAIL TO THE LISTS.
      (systemd users could try coredumpctl)
      and then enter 'bt' on gdb's command line:
          (gdb) bt
+     (even more information could be obtained with 'bt full')
      Keep your core file for at least one week, so that the dev team
      can ask for further information if needed. However, don't send
      us the core file unless we ask for it.
