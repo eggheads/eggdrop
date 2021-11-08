@@ -797,7 +797,7 @@ int getdccfamilyaddr(sockname_t *addr, char *s, size_t l, int restrict_af)
         strlcpy(s, nat_ip_string, l);
       else {
         memcpy(&ip, r->addr.s6.sin6_addr.s6_addr + 12, sizeof ip);
-        egg_snprintf(s, l, "%u", ntohl(ip));
+        snprintf(s, l, "%u", ntohl(ip));
       }
     } else
       inet_ntop(AF_INET6, &r->addr.s6.sin6_addr, s, l);
