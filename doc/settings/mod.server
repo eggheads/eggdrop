@@ -1,9 +1,6 @@
 Last revised: October 25, 2010
 
-
-
-SERVER MODULE
-
+Server Module
 
 This module provides the core server support. You have to load this if
 you want your bot to come on IRC. Not loading this is equivalent to the
@@ -21,10 +18,10 @@ There are also some variables you can set in your config file:
   set net-type Efnet
 
       What is your network? Possible allowed values are Efnet, IRCnet,
-      Undernet, DALnet, freenode, Quakenet, Rizon, Other. If the network
-      you use is not listed, using "Other" is a good sane choice and can
-      be customized with settings both here and in the IRC module
-      sections of the config file.
+      Undernet, DALnet, Libera, freenode, Quakenet, Rizon, Other. If the
+      network you use is not listed, using "Other" is a good sane choice
+      and can be customized with settings both here and in the IRC
+      module sections of the config file.
 
   set nick "LamestBot"
 
@@ -46,7 +43,6 @@ There are also some variables you can set in your config file:
 
       Set here what to display in the real-name field for the bot.
 
-  &nbsp;
       bind evnt - init-server evnt:init_server
       proc evnt:init_server {type} {
         global botnick
@@ -118,15 +114,21 @@ There are also some variables you can set in your config file:
 
       The numbers are the following:
 
-          ------------- ----------------------------------------------------------------------------------------------------------------------------------------------------------------
-          0             disable verification
-          1             enable certificate verification
-          2             allow self-signed certificates
-          4             don't check peer common or alt names
-          8             allow expired certificates
-          16            allow certificates which are not valid yet
-          32            allow revoked certificates
-          ------------- ----------------------------------------------------------------------------------------------------------------------------------------------------------------
+          ---- ---------------------------------------------
+          0    disable verification
+
+          1    enable certificate verification
+
+          2    allow self-signed certificates
+
+          4    don't check peer common or alt names
+
+          8    allow expired certificates
+
+          16   allow certificates which are not valid yet
+
+          32   allow revoked certificates
+          ---- ---------------------------------------------
 
   set server-cycle-wait 60
 
@@ -197,7 +199,7 @@ There are also some variables you can set in your config file:
   set exclusive-binds 0
 
       This setting configures PUBM and MSGM binds to be exclusive of PUB
-      and MSG binds. This means if a MSGM bind with the mask "_help_"
+      and MSG binds. This means if a MSGM bind with the mask "help"
       exists and is triggered, any MSG bindings with "help" in their
       mask will not be triggered. Don't enable this unless you know what
       you are doing!
@@ -229,19 +231,23 @@ There are also some variables you can set in your config file:
       parts in the channel and changes the kick queue accordingly. There
       are three different options for this setting:
 
-          ------------- ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-          0             Turn it off.
-          1             Optimize the kick queue by summarizing kicks.
-          2             Trace nick changes and parts on the channel and change the queue accordingly. For example, bot will not try to kick users who have already parted the channel.
-          ------------- ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+          --- ------------------------------------------------------------------
+          0   Turn it off.
+
+          1   Optimize the kick queue by summarizing kicks.
+
+          2   Trace nick changes and parts on the channel and change the queue
+              accordingly. For example, bot will not try to kick users who have
+              already parted the channel.
+          --- ------------------------------------------------------------------
 
       ATTENTION: Setting 2 is very CPU intensive.
 
 There are additional settings for 'net-type' Efnet.
 
-  _net-type 5 specific features:_
+  net-type 5 specific features:
 
-  Attention: Use this settings _only_ if you set 'net-type' to Efnet!
+  Attention: Use this settings only if you set 'net-type' to Efnet!
 
     set check-mode-r 1
 

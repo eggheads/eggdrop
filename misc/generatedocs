@@ -55,11 +55,11 @@ else
 fi
 
 echo "*** Searching for panflute..."
-PANDOC="$(pip show panflute)"
+PANDOC="$(pip3 show panflute)"
 if [ $? -eq 0 ]; then
   echo "Found."
 else
-  echo "Not found. Panflute can be installed via pip install panflute. Exiting..."
+  echo "Not found. Panflute can be installed via pip3 install panflute. Exiting..."
   exit 1
 fi
 
@@ -118,6 +118,7 @@ mv tmpdocs/filesys.txt $BASEDIR/../doc/settings/mod.filesys
 mv tmpdocs/first-script.txt $BASEDIR/../doc/FIRST-SCRIPT
 mv tmpdocs/ident.txt $BASEDIR/../doc/settings/mod.ident
 mv tmpdocs/install.txt $BASEDIR/../INSTALL
+mv tmpdocs/ircv3.txt $BASEDIR/../doc/IRCv3
 mv tmpdocs/ipv6.txt $BASEDIR/../doc/IPV6
 mv tmpdocs/irc.txt $BASEDIR/../doc/settings/mod.irc
 mv tmpdocs/known-probs.txt $BASEDIR/../doc/KNOWN-PROBLEMS

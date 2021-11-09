@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>IPv6 support &#8212; Eggdrop 1.9.0 documentation</title>
+    <title>IPv6 support &#8212; Eggdrop 1.9.1 documentation</title>
     <link rel="stylesheet" href="../_static/eggdrop.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
@@ -24,7 +24,7 @@
             <img class="logo" src="../_static/eggman.png.gif" alt="Logo"/>
           </a></p>
         <div class="headertitle"><a
-          href="../index.html">Eggdrop 1.9.0 documentation</a></div>
+          href="../index.html">Eggdrop 1.9.1 documentation</a></div>
         <div class="rel" role="navigation" aria-label="related navigation">
           <a href="twitch-tcl-commands.html" title="Eggdrop Twitch Tcl Commands"
              accesskey="P">previous</a> |
@@ -106,7 +106,7 @@
           <div class="body" role="main">
             
   <p>IPv6 support
-Last revised: Jul 29, 2010</p>
+Last revised: Mar 24, 2021</p>
 <div class="section" id="ipv6-support">
 <h1>IPv6 support<a class="headerlink" href="#ipv6-support" title="Permalink to this headline">¶</a></h1>
 <p>This document provides information about IPv6 support which is a new
@@ -141,6 +141,10 @@ commands, you can enclose IPv6 addresses in square brackets to prevent
 the colon character (:) from being interpreted as a port separator. These
 are documented in the help files and the html documentation, so you can
 consult them when in doubt.</p>
+</div>
+<div class="section" id="ctcp-chat-chat4-chat6">
+<h2>CTCP CHAT/CHAT4/CHAT6<a class="headerlink" href="#ctcp-chat-chat4-chat6" title="Permalink to this headline">¶</a></h2>
+<p>When a user sends a CTCP chat request, the request is passed to the bot via the IRC server, hiding the user’s IP. Since Eggdrop is unable to ‘see’ the type IP of the user is using (IPv4 or IPv6), it is thus unable to determine whether it should send back an IPv4 or an IPv6 address for the user to connect to. To work around this problem, the CHAT4 and CHAT6 commands were added to Eggdrop to force it to present an IPv4 or IPv6 address for use with a DCC connection, respectively. Otherwise, the traditional CHAT command will likely result in the Eggdrop presenting an IPv4 address to the user. So in short, if you’re on an IPv6 address and want to use CTCP CHAT to initiate a DCC session for the partyline, use CHAT6, not CHAT as the CTCP argument.</p>
 </div>
 <div class="section" id="settings">
 <h2>Settings<a class="headerlink" href="#settings" title="Permalink to this headline">¶</a></h2>
@@ -196,7 +200,7 @@ not queried for IPv6 connections.</p>
           
     <div class="footer" role="contentinfo">
         &#169; Copyright 2021, Eggheads.
-      Last updated on Jan 24, 2021.
+      Last updated on May 31, 2021.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.5.
     </div>
         </div>

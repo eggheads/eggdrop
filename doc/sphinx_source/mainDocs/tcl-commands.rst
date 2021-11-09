@@ -13,7 +13,7 @@ of the normal Tcl built-in commands are still there, of course, but you
 can also use these to manipulate features of the bot. They are listed
 according to category.
 
-This list is accurate for Eggdrop v1.9.0. Scripts written for v1.3, v1.4,
+This list is accurate for Eggdrop v1.9.1. Scripts written for v1.3, v1.4,
 1.6 and 1.8 series of Eggdrop should probably work with a few minor modifications
 depending on the script. Scripts which were written for v0.9, v1.0, v1.1
 or v1.2 will probably not work without modification. Commands which have
@@ -162,7 +162,7 @@ cap <ls/req/enabled/raw> [arg]
 
   Description: displays CAP status or sends a raw CAP command to the server. "ls" will list the capabilities Eggdrop is internally tracking as supported by the server, "enabled" will list the capabilities Eggdrop is internally tracking as negotiated with the server, "req" will request the capabilities listed in "arg" from the server, and raw will send a raw CAP command to the server. The arg field is a single argument, and should be submitted as a single string. For example, to request capabilities foo and bar, you would use [cap req "foo bar"], and for example purposes, sending the same request as a raw command would be [cap raw "REQ :foo bar"].
 
-  Returns: nothing
+  Returns: a list of CAP capabilities for the "enabled" and "ls" sub-commands; otherwise nothing.
 
   Module: server
 
@@ -190,9 +190,9 @@ server add <ip/host> [[+]port [password]]
 
   Module: server
 
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-server del <ip/host> [[+]port]
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+server remove <ip/host> [[+]port]
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
   Description: removes a server from the list of servers Eggdrop will connect to. If no port is provided, all servers matching the ip or hostname provided will be removed, otherwise only the ip/host with the corresponding port will be removed. The SSL status (+) of the provided port is matched against as well (ie, 7000 is not the same as +7000).
 
@@ -1088,8 +1088,9 @@ isvoice <nickname> [channel]
 isidentified <nickname> [channel]
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-  Returns: 1 if someone by the specified nickname is on the channel (or
-  any channel if no channel name is specified) and is logged in); 0 otherwise
+  Description: determine if a user is identified to irc services. WARNING: this may not be accurate depending on the server and configuration. For accurate results, the server must support (and Eggdrop must have enabled via CAP) the account-notify and extended-join capabilities, and the server must understand WHOX requests (also known as raw 354 responses)
+
+  Returns: 1 if someone by the specified nickname is on the channel (or any channel if no channel name is specified) and is logged in); 0 otherwise.
 
   Module: irc
 
@@ -1103,10 +1104,25 @@ isaway <nickname> [channel]
 
   Module: irc
 
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+isircbot <nickname> [channel]
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+  Description: determine if a user has denoted themselves as a bot via an ircd-defined user flag (declared via BOT in a server's 005/ISUPPORT line). Due to server implementations, accurately monitoring this is incredibly fragile, as the flag can be added and removed by a user without any notification to other users. To ensure this status is current for use, it is recommended to use ``refreshchan <channel> w`` on a channel the user is on, which will refresh if the user is a bot or not for all users on the channel. If a server does not advertise BOT in its ISUPPORT line but still supports it (currently the case for unrealircd), you can manually set it by adding "BOT=B" (or whatever flag is used) to the isupport-default setting in your eggdrop.conf file.
+
+  Returns: 1 if Eggdrop is currently tracking someone by that nickname marked as a bot by an IRC server; 0 otherwise.
+
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^
 onchan <nickname> [channel]
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^
   Returns: 1 if someone by that nickname is on the specified channel (or any channel if none is specified); 0 otherwise
+
+  Module: irc
+
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+monitor <command> [nickname]
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  Description: interacts with the list of nicknames Eggdrop has asked the IRC server to track. valid commands are add, delete, list, online, offline, status, and clear. The 'add' command sends 'nickname' to the server to track. The 'delete' command removes 'nickname' from being tracked by the server (or returns an error if the nickname is not present). The 'list' command returns a list of all nicknames the IRC server is tracking on behalf of Eggdrop. The 'online' command returns a string of tracked nicknames that are currently online. The 'offline' command returns a list of tracked nicknames that are currently offline. The 'status' command returns a '1' if 'nickname' is online or a 0 if 'nickname' is offline. The 'clear' command removes all nicknames from the list the server is monitoring.
 
   Module: irc
 
@@ -1814,9 +1830,9 @@ listen [ip] <port> <type> [options [flag]]
 
       Returns: port number or error message
 
-    listen [ip] <port> script <proc> <flag>
+    listen [ip] <port> script <proc> [flag]
 
-      Description: accepts connections which are immediately routed to a proc. The proc is called with one parameter: the idx of the new connection. If the script type is used, flag must also be set. Flag may currently only be 'pub', which makes the bot allow anyone to connect and not perform an ident lookup.
+      Description: accepts connections which are immediately routed to a proc. The proc is called with one parameter: the idx of the new connection. The optional flag parameter currently only accepts 'pub' as a value. By specifying 'pub' as a flag, Eggdrop will skip the ident check for the user regardless of settings in the config file. This will allow any user to attempt a connection, and result in Eggdrop using "-telnet!telnet@host" instead of "-telnet!<ident>@host" as a hostmask to match against the user.
 
       Returns: port number or error message
 
@@ -2446,11 +2462,11 @@ link [via-bot] <bot>
 
   Module: core
 
-^^^^^^^^^^^^
-unlink <bot>
-^^^^^^^^^^^^
+^^^^^^^^^^^^^^^^^^^^^^
+unlink <bot> [comment]
+^^^^^^^^^^^^^^^^^^^^^^
 
-  Description: attempts to unlink a bot from the botnet
+  Description: attempts to unlink a bot from the botnet. If you specify a comment, it will appear with the unlink message on the botnet.
 
   Returns: 1 on success; 0 otherwise
 
@@ -3093,7 +3109,7 @@ The following is a list of bind types and how they work. Below each bind type is
 
   IMPORTANT: While not necessarily deprecated, this bind has been supplanted by the RAWT bind as of 1.9.0. You probably want to be using RAWT, not RAW.
 
-  Description: previous versions of Eggdrop required a special compile option to enable this binding, but it's now standard. The keyword is either a numeric, like "368", or a keyword, such as "PRIVMSG". "from" will be the server name or the source user (depending on the keyword); flags are ignored. The order of the arguments is identical to the order that the IRC server sends to the bot. The pre-processing only splits it apart enough to determine the keyword. If the proc returns 1, Eggdrop will not process the line any further (this could cause unexpected behavior in some cases). The RAW bind does not support the IRCv3 message-tags capability, please see RAWT for more information.
+  Description: previous versions of Eggdrop required a special compile option to enable this binding, but it's now standard. The keyword is either a numeric, like "368", or a keyword, such as "PRIVMSG". "from" will be the server name or the source user (depending on the keyword); flags are ignored. The order of the arguments is identical to the order that the IRC server sends to the bot. The pre-processing only splits it apart enough to determine the keyword. If the proc returns 1, Eggdrop will not process the line any further (this could cause unexpected behavior in some cases), although RAWT binds are processed before RAW binds (and thus, a RAW bind cannot block a RAWT bind). The RAW bind does not support the IRCv3 message-tags capability, please see RAWT for more information.
 
   Module: server
 
@@ -3470,13 +3486,13 @@ The following is a list of bind types and how they work. Below each bind type is
 
   procname <from> <keyword> <text> <tag>
 
-  Description: similar to the RAW bind, but allows an extra field for the IRCv3 message-tags capability. The keyword is either a numeric, like "368", or a keyword, such as "PRIVMSG" or "TAGMSG". "from" will be the server name or the source user (depending on the keyword); flags are ignored. "tag" will be the contents, if any, of the entire tag message prefixed to the server message in a dict format, such as "msgid 890157217279768 aaa bbb". The order of the arguments is identical to the order that the IRC server sends to the bot. If the proc returns 1, Eggdrop will not process the line any further (this could cause unexpected behavior in some cases). As of 1.9.0, it is recommended to use the RAWT bind instead of the RAW bind.
+  Description: similar to the RAW bind, but allows an extra field for the IRCv3 message-tags capability. The keyword is either a numeric, like "368", or a keyword, such as "PRIVMSG" or "TAGMSG". "from" will be the server name or the source user (depending on the keyword); flags are ignored. "tag" will be the contents, if any, of the entire tag message prefixed to the server message in a dict format, such as "msgid 890157217279768 aaa bbb". The order of the arguments is identical to the order that the IRC server sends to the bot. If the proc returns 1, Eggdrop will not process the line any further, to include not being processed by a RAW bind (this could cause unexpected behavior in some cases). As of 1.9.0, it is recommended to use the RAWT bind instead of the RAW bind.
 
 (53) ACCOUNT (stackable)
 
   bind account <flags> <mask> <proc>
 
-  procname <nick> <user> <hand> <account>
+  procname <nick> <user> <hand> <chan> <account>
 
   Description: triggered when Eggdrop receives an ACCOUNT message. The mask for the bind is in the format "#channel nick!user@hostname.com account" where channel is the channel the user was found on when the bind was triggered, the hostmask is the user's hostmask, and account is the account name the user is logging in to, or "" for logging out. The mask argument can accept wildcards. For the proc, nick is the nickname of the user logging into/out of an account, user is the user@host.com hostmask, hand is the handle of the user (or * if none), and account is the name of the account the user logged in to (or "" if the user logged out of an account).
 
@@ -3489,6 +3505,16 @@ The following is a list of bind types and how they work. Below each bind type is
   Description: triggered when the value of an isupport key changes. The mask is matched against the isupport key. If the value is not set, isset is 0 and the value is the empty string. Because the empty string is valid value, use isset to distinguish empty string values from a key being unset. The bind is called before the change is processed, so [isupport isset]/[isupport get] return the old value. A return value other than 0 makes Eggdrop ignore the change and revert to the old value. After a disconnect from the server, all isupport values are reset to default, but $::server will be empty, so that case can be caught and ignored.
 
   Module: server
+
+(55) MONITOR (stackable)
+
+  bind monitor <flags> <nick> <proc>
+
+  procname <nick> <online>
+
+  Description: triggered when a server sends a MONITOR status change of a target either coming online or disconnecting (not all servers support MONITOR). flags are ignored, nick is the nickname of the intended MONITOR target and can be used with wildcards. For the proc, nick is the nickname connecting or disconnecting, and online is '0' if the nickname disconnected, or '1' if the nickname connected.
+
+  Module: irc
 
 
 ^^^^^^^^^^^^^

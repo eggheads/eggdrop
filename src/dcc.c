@@ -244,7 +244,7 @@ static void bot_version(int idx, char *par)
   touch_laston(dcc[idx].user, "linked", now);
   dump_links(idx);
   dcc[idx].type = &DCC_BOT;
-  addbot(dcc[idx].nick, dcc[idx].nick, botnetnick, '-', dcc[idx].u.bot->numver);
+  addbot(dcc[idx].nick, dcc[idx].nick, botnetnick, '-', dcc[idx].u.bot->numver, dcc[idx].ssl);
   check_tcl_link(dcc[idx].nick, botnetnick);
   egg_snprintf(x, sizeof x, "v %d", dcc[idx].u.bot->numver);
   bot_share(idx, x);
@@ -266,10 +266,9 @@ void failed_link(int idx)
   strcpy(s, dcc[idx].nick);
   lostdcc(idx);
   autolink_cycle(s);          /* Check for more auto-connections */
-  return;
-
   killsock(dcc[idx].sock);
   dcc[idx].timeval = now;
+  return;
 }
 
 static void cont_link(int idx, char *buf, int i)
@@ -430,8 +429,8 @@ static void out_dcc_bot(int idx, char *buf, void *x)
 
     if (len && buf[len - 1] == '\n') {
       /* Make a copy as buf could be const */
-      fnd = nmalloc(len);
-      strlcpy(fnd, buf, len);
+      fnd = nmalloc(len + 1);
+      strcpy(fnd, buf);
       p = fnd;
     }
 

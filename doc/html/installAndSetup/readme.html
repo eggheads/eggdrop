@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>README &#8212; Eggdrop 1.9.0 documentation</title>
+    <title>README &#8212; Eggdrop 1.9.1 documentation</title>
     <link rel="stylesheet" href="../_static/eggdrop.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
@@ -24,7 +24,7 @@
             <img class="logo" src="../_static/eggman.png.gif" alt="Logo"/>
           </a></p>
         <div class="headertitle"><a
-          href="../index.html">Eggdrop 1.9.0 documentation</a></div>
+          href="../index.html">Eggdrop 1.9.1 documentation</a></div>
         <div class="rel" role="navigation" aria-label="related navigation">
           <a href="index.html" title="&lt;no title&gt;"
              accesskey="P">previous</a> |
@@ -105,7 +105,7 @@
         <div class="bodywrapper">
           <div class="body" role="main">
             
-  <p>Last revised: Jul 2, 2016</p>
+  <p>Last revised: May 5, 2021</p>
 <div class="section" id="readme">
 <h1>README<a class="headerlink" href="#readme" title="Permalink to this headline">¶</a></h1>
 <blockquote>
@@ -146,7 +146,7 @@ for information on setting up a botnet.</p>
 <p>Eggdrop is always being improved and adjusted because there are bugs to
 be fixed and features to be added (if the users demand them and they make
 actually sense). In fact, it existed for several years as v0.7 - v0.9
-before finally going 1.0. This version of Eggdrop is part of the 1.8 tree.
+before finally going 1.0. This version of Eggdrop is part of the 1.9 tree.
 A valiant effort has been made to chase down and destroy bugs.</p>
 <p>This README file contains information about how to get Eggdrop, command
 line options for Eggdrop, what you may need to do when upgrading from
@@ -169,7 +169,7 @@ system, and you will need to install it. The website to download Tcl is
 a binary installation available. If installing via an OS package manager,
 make sure to install the development library as well, usually called
 something similar to ‘tcl-dev’.</p>
-<p>Currently, the 1.8 tree of Eggdrop is developed at eggheads.org. You can
+<p>Currently, the 1.9 tree of Eggdrop is developed at eggheads.org. You can
 get the latest STABLE version of Eggdrop from the following url:</p>
 <blockquote>
 <div><a class="reference external" href="https://geteggdrop.com/">https://geteggdrop.com/</a></div></blockquote>
@@ -206,7 +206,7 @@ from:</p>
 </div>
 <div class="section" id="upgrading">
 <h2>Upgrading<a class="headerlink" href="#upgrading" title="Permalink to this headline">¶</a></h2>
-<p><strong>UPGRADING FROM A PRE-1.3 TO A 1.8 VERSION</strong></p>
+<p><strong>UPGRADING FROM A PRE-1.3 TO A 1.9 VERSION</strong></p>
 <blockquote>
 <div><p>First of all, why are you still running pre-1.3?!</p>
 <p>MAKE SURE YOU BACK UP YOUR USERFILE AND CHANFILE!</p>
@@ -221,27 +221,27 @@ you’re just starting out, you can skip this section.</p>
 because of the new userfile format. Older bots will be able to link in,
 but will not get or send a userfile. MAKE A NEW CONFIG FILE from the
 example; there are some radical changes.</p>
-<p>If you are upgrading from 0.9/1.0 to 1.8, just redo the whole thing.
+<p>If you are upgrading from 0.9/1.0 to 1.9, just redo the whole thing.
 Absolutely everything has changed, including the userfile and config file
 formats.</p>
-<p>If you are upgrading from 1.1/1.2 to 1.8, you will likely want to redo
+<p>If you are upgrading from 1.1/1.2 to 1.9, you will likely want to redo
 the config file, as much has changed. BACK UP! You will need to run ‘tclsh
 scripts/weed/&lt;userfile&gt; c’ to convert your userfile from v3 (1.1/1.2) to
-v4 (1.3/1.4/1.5/1.6/1.8).</p>
+v4 (1.3/1.4/1.5/1.6/1.8/1.9).</p>
 </div></blockquote>
-<p><strong>UPGRADING FROM AN OLDER 1.3/1.4/1.5/1.6 TO A 1.8 VERSION</strong></p>
+<p><strong>UPGRADING FROM AN OLDER 1.3/1.4/1.5/1.6/1.8 TO A 1.9 VERSION</strong></p>
 <blockquote>
 <div><p>If you followed the INSTALL file and did a ‘make install’ (or ‘make
 install DEST=”path”’) after ‘make’, this will be pretty easy. Just upload
-the new eggdrop1.8.x.tar.gz file to your home dir on your shell, gunzip
-and untar it, and type ‘cd ~/eggdrop1.8.x’. Next, type ‘./configure’,
+the new eggdrop-1.9.x.tar.gz file to your home dir on your shell, gunzip
+and untar it, and type ‘cd ~/eggdrop-1.9.x’. Next, type ‘./configure’,
 ‘make config’ or ‘make iconfig’, then ‘make’. Then, kill the bot (‘.die’
 on the partyline) and ‘make install’ to the same directory your bot
 is currently in. After that, you can just restart your bot. You may wish
 to delete the old Eggdrop executable and modules as well, especially if
 you have limited disk space.</p>
 <p>You should read through the new eggdrop.conf file for all of the new
-options in Eggdrop 1.8.x. You can copy and paste any of these settings
+options in Eggdrop 1.9.x. You can copy and paste any of these settings
 into you current conf file if you do not want to use the default settings.</p>
 </div></blockquote>
 </div>
@@ -480,7 +480,7 @@ Copyright (C) 1999 - 2021 Eggheads Development Team</p>
           
     <div class="footer" role="contentinfo">
         &#169; Copyright 2021, Eggheads.
-      Last updated on Jan 24, 2021.
+      Last updated on May 31, 2021.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.5.
     </div>
         </div>

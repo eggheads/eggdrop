@@ -72,7 +72,7 @@ regenerate_changelog() {
 
 	#Generate doc/ChangesX.Y file
 	echo "Now just the doc/ChangesX.Y file..."
-	MINOR=1
+	MINOR=0
 	INCLUDE=""
 	while [ $MINOR -lt $MAX ]; do
 	  INCLUDE="${INCLUDE} -i v${MAJOR}.${MINOR}"
@@ -81,8 +81,8 @@ regenerate_changelog() {
 	if git rev-parse -q --verify release/${TRIMVERSION} > /dev/null; then
 	  INCLUDE="${INCLUDE} -i ./release/${TRIMVERSION}"
 	fi
-        echo "misc/genchanges -l -e v1.8.4 $INCLUDE -i develop -v ${EGGVERSION}${EGG_RC} -r origin short > doc/Changes1.9"
-	misc/genchanges -l -e v1.8.4 $INCLUDE -i develop -v ${EGGVERSION}${EGG_RC} -r origin short > doc/Changes1.9
+        echo "misc/genchanges -l -e v1.8.4 $INCLUDE -v ${EGGVERSION}${EGG_RC} -r origin short > doc/Changes1.9"
+	misc/genchanges -l -e v1.8.4 $INCLUDE -v ${EGGVERSION}${EGG_RC} -r origin short > doc/Changes1.9
 	git commit -m "Generate ChangeLog/Changes files for ${EGGVERSION}" > /dev/null
 
 	if test -f ChangeLog.gz; then

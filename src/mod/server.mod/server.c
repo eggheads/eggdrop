@@ -95,7 +95,6 @@ static int kick_method;
 static int optimize_kicks;
 static int msgrate;             /* Number of seconds between sending
                                  * queued lines to server. */
-static int msgtag;              /* Enable IRCv3 message-tags capability    */
 #ifdef TLS
 static int use_ssl;             /* Use SSL for the next server connection? */
 static int tls_vfyserver;       /* Certificate validation mode for servrs  */
@@ -421,7 +420,7 @@ static char *splitnicks(char **rest)
   char *o, *r;
 
   if (!rest)
-    return *rest = "";
+    return "";
   o = *rest;
   while (*o == ' ')
     o++;
@@ -1495,6 +1494,11 @@ static void do_nettype(void)
   case NETT_FREENODE:
     nick_len = 16;
     break;
+  case NETT_LIBERA:
+    check_mode_r = 0;
+    nick_len = 16;
+    kick_method = 1;
+    break;
   case NETT_QUAKENET:
     check_mode_r = 0;
     use_fastdeq = 2;
@@ -1524,6 +1528,8 @@ static char *traced_nettype(ClientData cdata, Tcl_Interp *irp,
     net_type_int = NETT_FREENODE;
   else if (!strcasecmp(net_type, "IRCnet"))
     net_type_int = NETT_IRCNET;
+  else if (!strcasecmp(net_type, "Libera"))
+    net_type_int = NETT_LIBERA;
   else if (!strcasecmp(net_type, "QuakeNet"))
     net_type_int = NETT_QUAKENET;
   else if (!strcasecmp(net_type, "Rizon"))
@@ -1559,13 +1565,13 @@ static char *traced_nettype(ClientData cdata, Tcl_Interp *irp,
     warn = 1;
   } else {
     fatal("ERROR: NET-TYPE NOT SET.\n Must be one of DALNet, EFnet, freenode, "
-          "IRCnet, Quakenet, Rizon, Undernet, Other.", 0);
+          "Libera, IRCnet, Quakenet, Rizon, Undernet, Other.", 0);
   }
   if (warn) {
     putlog(LOG_MISC, "*",
-        "WARNING: The config setting for \"net-type\" has transitioned from a \n"
-        "number to a text string. Please update your choice to one of the allowed \n"
-        "values listed in the current configuration file from the source directory\n");
+        "INFO: The config setting for \"net-type\" has transitioned from a number\n"
+        "to a text string. Please update your choice to one of the allowed values\n"
+        "listed in the current configuration file from the source directory\n");
   }
   do_nettype();
   return NULL;
@@ -2015,7 +2021,8 @@ static int server_expmem()
 
 static void server_report(int idx, int details)
 {
-  char s1[64], s[128];
+  char s1[64], s[128], buf[128];
+  struct capability *current;
   int servidx;
 
   if (server_online) {
@@ -2059,8 +2066,17 @@ static void server_report(int idx, int details)
   if (hq.tot)
     dprintf(idx, "    %s %d%% (%d msgs)\n", IRC_HELPQUEUE,
             (int) ((float) (hq.tot * 100.0) / (float) maxqmsg), (int) hq.tot);
-  dprintf(idx, "    Active CAP negotiations: %s\n", (strlen(cap.negotiated) > 0) ?
-            cap.negotiated : "None" );
+  current = cap;
+  buf[0] = 0;
+  while (current != NULL) {
+    if (current->enabled) {
+      strncat(buf, current->name, (sizeof buf - strlen(buf) - 1));
+      strncat(buf, " ", (sizeof buf - strlen(buf) - 1));
+    }
+    current = current->next;
+  }
+  dprintf(idx, "    Active CAP negotiations: %s\n", (strlen(buf) > 0) ?
+            buf : "None" );
   if (details) {
     int size = server_expmem();
 
@@ -2172,7 +2188,7 @@ static Function server_table[] = {
   /* 12 - 15 */
   (Function) match_my_nick,
   (Function) check_tcl_flud,
-  (Function) & msgtag,          /* int                                  */
+  (Function) NULL,              /* was msgtag in 1.9.0, 1.9.1           */
   (Function) & answer_ctcp,     /* int                                  */
   /* 16 - 19 */
   (Function) & trigger_on_ignore, /* int                                */
@@ -2208,7 +2224,7 @@ static Function server_table[] = {
   (Function) & H_out,           /* p_tcl_bind_list                      */
   (Function) & net_type_int,    /* int                                  */
   (Function) & H_account,       /* p_tcl_bind)list                      */
-  (Function) & cap,             /* cap_list                             */
+  (Function) & cap,             /* capability_t                         */
   /* 44 - 47 */
   (Function) & extended_join,   /* int                                  */
   (Function) & account_notify,  /* int                                  */

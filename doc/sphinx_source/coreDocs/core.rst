@@ -446,6 +446,7 @@ Advanced Settings
     which provides commands for changing all of these.
 
   #unbind dcc n tcl \*dcc:tcl
+
   #unbind dcc n set \*dcc:set
     Uncomment these two lines if you wish to disable the .tcl and .set commands.
     If you select your owners wisely, you should be okay leaving these enabled.

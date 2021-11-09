@@ -33,6 +33,7 @@
 
 static p_tcl_bind_list H_topc, H_splt, H_sign, H_rejn, H_part, H_pub, H_pubm;
 static p_tcl_bind_list H_nick, H_mode, H_kick, H_join, H_need, H_invt, H_ircaway;
+static p_tcl_bind_list H_monitor;
 
 static Function *global = NULL, *channels_funcs = NULL, *server_funcs = NULL;
 
@@ -742,6 +743,17 @@ static int channels_4char STDVAR
   return TCL_OK;
 }
 
+static int monitor_2char STDVAR
+{
+  Function F = (Function) cd;
+
+  BADARGS(3, 3, "nick online");
+
+  CHECKVALIDITY(monitor_2char);
+  F(argv[1], argv[2]);
+  return TCL_OK; 
+}
+
 static int channels_2char STDVAR
 {
   Function F = (Function) cd;
@@ -776,8 +788,19 @@ static int check_tcl_ircaway(char *nick, char *from, char *mask,
   Tcl_SetVar(interp, "_ircaway3", hand, 0);
   Tcl_SetVar(interp, "_ircaway4", chan, 0);
   Tcl_SetVar(interp, "_ircaway5", msg ? msg : "", 0);
-  x = check_tcl_bind(H_ircaway, mask, &fr, " $_ircaway1, $_ircaway2 $_ircaway3 "
+  x = check_tcl_bind(H_ircaway, mask, &fr, " $_ircaway1 $_ircaway2 $_ircaway3 "
                         "$_ircaway4 $_ircaway5", MATCH_MASK | BIND_STACKABLE);
+  return (x == BIND_EXEC_LOG);
+}
+
+static int check_tcl_monitor(char *nick, int online)
+{
+  int x;
+
+  Tcl_SetVar(interp, "_monitor1", nick, 0);
+  Tcl_SetVar(interp, "_monitor2", online ? "1" : "0", 0);
+  x = check_tcl_bind(H_monitor, nick, 0, " $_monitor1 $_monitor2", BIND_STACKABLE);
+
   return (x == BIND_EXEC_LOG);
 }
 
@@ -1096,6 +1119,19 @@ static void do_nettype()
     rfc_compliant = 1;
     include_lk = 0;
     break;
+  case NETT_LIBERA:
+    kick_method = 1;
+    modesperline = 4;
+    use_354 = 1;
+    use_exempts = 1;
+    use_invites = 1;
+    max_exempts = 100;
+    max_invites = 100;
+    max_bans = 100;
+    max_modes = 100;
+    rfc_compliant = 1;
+    include_lk = 0;
+    break;
   case NETT_FREENODE:
     kick_method = 1;
     modesperline = 4;
@@ -1244,6 +1280,7 @@ static char *irc_close()
   del_bind_table(H_pub);
   del_bind_table(H_need);
   del_bind_table(H_ircaway);
+  del_bind_table(H_monitor);
   rem_tcl_strings(mystrings);
   rem_tcl_ints(myints);
   rem_builtins(H_dcc, irc_dcc);
@@ -1306,7 +1343,8 @@ static Function irc_table[] = {
   (Function) & H_invt,          /* p_tcl_bind_list              */
   (Function) & twitch,          /* int                          */
   /* 28 - 31 */
-  (Function) & H_ircaway        /* p_tcl_bind_list              */
+  (Function) & H_ircaway,       /* p_tcl_bind_list              */
+  (Function) & H_monitor        /* p_tcl_bind_list              */
 };
 
 char *irc_start(Function *global_funcs)
@@ -1374,6 +1412,7 @@ char *irc_start(Function *global_funcs)
   H_pub = add_bind_table("pub", 0, channels_5char);
   H_need = add_bind_table("need", HT_STACKABLE, channels_2char);
   H_ircaway = add_bind_table("ircaway", HT_STACKABLE, channels_5char);
+  H_monitor = add_bind_table("monitor", HT_STACKABLE, monitor_2char);
   do_nettype();
   return NULL;
 }

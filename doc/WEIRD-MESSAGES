@@ -1,9 +1,6 @@
 Weird Messages That Get Logged Last revised: March 10, 2003
 
-
-
-WEIRD MESSAGES THAT GET LOGGED
-
+Weird Messages That Get Logged
 
   Shown below are some messages that Eggdrop might log from time to time
   that may seem a bit strange and have meanings which may not be
@@ -24,7 +21,7 @@ WEIRD MESSAGES THAT GET LOGGED
           the channel very well when it gets swapped out for minutes at
           a time.
       -   On some systems (at least Linux), if the DNS your bot is using
-          to lookup hostnames is broken and _very_ slow in responding
+          to lookup hostnames is broken and very slow in responding
           (this can occur if the DNS server's uplink doesn't exist),
           then you will get 4-5 minute timer drifts continuously. This
           can be fixed by loading the dns module.

@@ -1,9 +1,6 @@
 Last revised: July 10, 2016
 
-
-
-PATCH HOW-TO
-
+Patch How-To
 
 The purpose of this document is to show you what a patch is and how you
 can create, apply, download, and submit a patch.
@@ -12,13 +9,12 @@ A patch is an update to the source code of a program (here Eggdrop). Be
 careful, every patch is designed for a special Eggdrop version and
 cannot be applied on every bot!
 
-
 APPLYING A PATCH
 
   To apply a patch to an Eggdrop, you have to first obtain the Eggdrop
   source code. You should always keep a tar.gz archive with the source
   of your current Eggdrop on your shell. In the next step, you have to
-  change to your source directory (i.e.: /home/user/eggdrop-1.9.0/) and
+  change to your source directory (i.e.: /home/user/eggdrop-1.9.1/) and
   type the following command:
 
       patch -p1 < ../path.to.the/patch
@@ -51,7 +47,6 @@ APPLYING A PATCH
   If the patch applied properly, the only thing left to do is to
   recompile your Eggdrop and install the new modules and binaries.
 
-
 CREATING AND SUBMITTING A PATCH (VIA GITHUB - PREFERRED!)
 
 If you fixed a bug and/or changed something in Eggdrop's source code, it
@@ -63,11 +58,13 @@ To create a patch via github:
   1.  Fork the eggdrop git repo by logging in to your GitHub account and
       clicking the fork button at the top of the screen. Follow the
       directions it provides to configure your local repo.
+
   2.  Enter the local directory and create a new branch for your patch:
 
           git checkout -b <DescriptiveBranchName>
 
   3.  Make your changes
+
   4.  Once you confirm your patch works, push the changes back to your
       GitHub repo - this is usually done by something similar to:
 
@@ -76,10 +73,11 @@ To create a patch via github:
   5.  Create a pull request by clicking on the "Pull Request" button on
       your GitHub page. Select the appropriate branches (usually
       eggheads/eggdrop/develop and yourUserName/eggdrop/YourBranchName)
+
   6.  Fill in the Pull Request template and submit
+
   7.  Pour yourself a cold one and bask in the warm feeling of
       contributing to the open source community! Karma++!
-
 
 CREATING AND SUBMITTING A PATCH (VIA DIFF - OLD SCHOOL!)
 
@@ -87,6 +85,7 @@ To create a patch using the diff tool:
 
   1.  Create a directory with original source tree and one with modified
       source tree.
+
   2.  Run the following:
 
           diff -urN eggdrop1.8.original eggdrop1.8.modified > patchname.patch

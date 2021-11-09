@@ -185,7 +185,7 @@ static int ctcp_CHAT(char *nick, char *uhost, char *handle, char *object,
 #endif
           (!strcmp(dcc[i].nick, "(telnet)") ||
            !strcmp(dcc[i].nick, "(users)")) &&
-          getdccfamilyaddr(&dcc[i].sockname, s, sizeof s, chatv)) {
+          getdccfamilyaddr(NULL, s, sizeof s, chatv)) {
         /* Do me a favour and don't change this back to a CTCP reply,
          * CTCP replies are NOTICE's this has to be a PRIVMSG
          * -poptix 5/1/1997 */

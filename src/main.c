@@ -953,12 +953,13 @@ int mainloop(int toplevel)
       }
 
       /* Make sure we don't have any modules left hanging around other than
-       * "eggdrop" and the two that are supposed to be.
+       * "eggdrop" and the 3 that are supposed to be.
        */
       for (f = 0, p = module_list; p; p = p->next) {
         if (strcmp(p->name, "eggdrop") && strcmp(p->name, "encryption") &&
-            strcmp(p->name, "uptime")) {
+            strcmp(p->name, "encryption2") && strcmp(p->name, "uptime")) {
           f++;
+          debug1("stagnant module %s", p->name);
         }
       }
       if (f != 0) {
@@ -1017,7 +1018,7 @@ static void init_random(void) {
 #endif
       struct timeval tp;
       gettimeofday(&tp, NULL);
-      seed = (tp.tv_sec * tp.tv_usec) ^ getpid();
+      seed = (((int64_t) tp.tv_sec * tp.tv_usec)) ^ getpid();
 #ifdef HAVE_GETRANDOM
     }
   }
@@ -1148,6 +1149,11 @@ int main(int arg_c, char **arg_v)
 #ifdef STATIC
   link_statics();
 #endif
+#ifdef EGG_TDNS
+  /* initialize dns_thread_head before chanprog() */
+  dns_thread_head = nmalloc(sizeof(struct dns_thread_node));
+  dns_thread_head->next = NULL;
+#endif
   strlcpy(s, ctime(&now), sizeof s);
   memmove(&s[11], &s[20], strlen(&s[20]) + 1);
   putlog(LOG_ALL, "*", "--- Loading %s (%s)", ver, s);
@@ -1270,10 +1276,6 @@ int main(int arg_c, char **arg_v)
   then = now - 1;
 
   online_since = now;
-#ifdef EGG_TDNS
-  dns_thread_head = nmalloc(sizeof(struct dns_thread_node));
-  dns_thread_head->next = NULL;
-#endif
   autolink_cycle(NULL);         /* Hurry and connect to tandem bots */
   add_help_reference("cmds1.help");
   add_help_reference("cmds2.help");

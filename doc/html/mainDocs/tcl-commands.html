@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>Eggdrop Tcl Commands &#8212; Eggdrop 1.9.0 documentation</title>
+    <title>Eggdrop Tcl Commands &#8212; Eggdrop 1.9.1 documentation</title>
     <link rel="stylesheet" href="../_static/eggdrop.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
@@ -24,7 +24,7 @@
             <img class="logo" src="../_static/eggman.png.gif" alt="Logo"/>
           </a></p>
         <div class="headertitle"><a
-          href="../index.html">Eggdrop 1.9.0 documentation</a></div>
+          href="../index.html">Eggdrop 1.9.1 documentation</a></div>
         <div class="rel" role="navigation" aria-label="related navigation">
           <a href="pbkdf2.html" title="PBKDF2 Hashing"
              accesskey="P">previous</a> |
@@ -113,7 +113,7 @@ Last revised: January 24, 2021</p>
 of the normal Tcl built-in commands are still there, of course, but you
 can also use these to manipulate features of the bot. They are listed
 according to category.</p>
-<p>This list is accurate for Eggdrop v1.9.0. Scripts written for v1.3, v1.4,
+<p>This list is accurate for Eggdrop v1.9.1. Scripts written for v1.3, v1.4,
 1.6 and 1.8 series of Eggdrop should probably work with a few minor modifications
 depending on the script. Scripts which were written for v0.9, v1.0, v1.1
 or v1.2 will probably not work without modification. Commands which have
@@ -248,18 +248,21 @@ tagmsg “+foo bar moo baa +last {}” #channel</dd>
 <p>Module: server</p>
 </div></blockquote>
 </div>
-<div class="section" id="addserver-ip-host-port-password">
-<h3>addserver &lt;ip/host&gt; [[+]port [password]]<a class="headerlink" href="#addserver-ip-host-port-password" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="server-add-ip-host-port-password">
+<h3>server add &lt;ip/host&gt; [[+]port [password]]<a class="headerlink" href="#server-add-ip-host-port-password" title="Permalink to this headline">¶</a></h3>
 <blockquote>
-<div><p>Description: adds a server to the list of servers Eggdrop will connect to. Prefix the port with ‘+’ to indicate an SSL-protected port. A port value is required if password is to be specified.</p>
+<div><p>Description: adds a server to the list of servers Eggdrop will connect to. Prefix the port with ‘+’ to indicate an SSL-protected port. A port value is required if password is to be specified. The SSL status (+) of the provided port is matched against as well (ie, 7000 is not the same as +7000).</p>
 <p>Returns: nothing</p>
 <p>Module: server</p>
 </div></blockquote>
 </div>
-<div class="section" id="delserver-ip-host-port">
-<h3>delserver &lt;ip/host&gt; [[+]port]<a class="headerlink" href="#delserver-ip-host-port" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="server-remove-ip-host-port">
+<h3>server remove &lt;ip/host&gt; [[+]port]<a class="headerlink" href="#server-remove-ip-host-port" title="Permalink to this headline">¶</a></h3>
 <blockquote>
-<div>Description: removes a server from the list of servers Eggdrop will connect to. If no port is specified, Eggdrop will remove the first server matching the ip or hostname provided. The SSL status (+) of the provided port is matched against as well (ie, 7000 is not the same as +7000).</div></blockquote>
+<div><p>Description: removes a server from the list of servers Eggdrop will connect to. If no port is provided, all servers matching the ip or hostname provided will be removed, otherwise only the ip/host with the corresponding port will be removed. The SSL status (+) of the provided port is matched against as well (ie, 7000 is not the same as +7000).</p>
+<p>Returns: nothing</p>
+<p>Module: server</p>
+</div></blockquote>
 </div>
 </div>
 <div class="section" id="user-record-manipulation-commands">
@@ -2466,10 +2469,10 @@ will be used. Types 30-39 set the host to ‘*’.</p>
 <p>Module: core</p>
 </div></blockquote>
 </div>
-<div class="section" id="unlink-bot">
-<h3>unlink &lt;bot&gt;<a class="headerlink" href="#unlink-bot" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="unlink-bot-comment">
+<h3>unlink &lt;bot&gt; [comment]<a class="headerlink" href="#unlink-bot-comment" title="Permalink to this headline">¶</a></h3>
 <blockquote>
-<div><p>Description: attempts to unlink a bot from the botnet</p>
+<div><p>Description: attempts to unlink a bot from the botnet. If you specify a comment, it will appear with the unlink message on the botnet.</p>
 <p>Returns: 1 on success; 0 otherwise</p>
 <p>Module: core</p>
 </div></blockquote>
@@ -2477,7 +2480,7 @@ will be used. Types 30-39 set the host to ‘*’.</p>
 <div class="section" id="encrypt-key-string">
 <h3>encrypt &lt;key&gt; &lt;string&gt;<a class="headerlink" href="#encrypt-key-string" title="Permalink to this headline">¶</a></h3>
 <blockquote>
-<div><p>Returns: encrypted string (using the currently loaded encryption module), encoded into ASCII using base-64. As of v1.8.4, the default blowfish encryption module can use either the older ECB mode (currently used by default for compatibility reasons), or the more recent and more-secure CBC mode. You can explicitly request which encryption mode to use by prefixing the encryption key with either “ecb:” or “cbc:”, or by using the blowfish-use-mode setting in the config file. Note: the default encryption mode for this function is planned to transition from ECB to CBC in v1.9.0.</p>
+<div><p>Returns: encrypted string (using the currently loaded encryption module), encoded into ASCII using base-64. As of v1.8.4, the default blowfish encryption module can use either the older ECB mode (currently used by default for compatibility reasons), or the more recent and more-secure CBC mode. You can explicitly request which encryption mode to use by prefixing the encryption key with either “ecb:” or “cbc:”, or by using the blowfish-use-mode setting in the config file. Note: the default encryption mode for this function is planned to transition from ECB to CBC in v1.9.1.</p>
 <p>Module: encryption</p>
 </div></blockquote>
 </div>
@@ -3069,7 +3072,7 @@ proc mode_proc {nick uhost hand chan mode} { ... }
 <blockquote>
 <div><p>bind raw &lt;flags&gt; &lt;keyword&gt; &lt;proc&gt;</p>
 <p>procname &lt;from&gt; &lt;keyword&gt; &lt;text&gt;</p>
-<p>IMPORTANT: While not necessarily deprecated, this bind has been supplanted by the RAWT bind as of 1.9.0. You probably want to be using RAWT, not RAW.</p>
+<p>IMPORTANT: While not necessarily deprecated, this bind has been supplanted by the RAWT bind as of 1.9.1. You probably want to be using RAWT, not RAW.</p>
 <p>Description: previous versions of Eggdrop required a special compile option to enable this binding, but it’s now standard. The keyword is either a numeric, like “368”, or a keyword, such as “PRIVMSG”. “from” will be the server name or the source user (depending on the keyword); flags are ignored. The order of the arguments is identical to the order that the IRC server sends to the bot. The pre-processing only splits it apart enough to determine the keyword. If the proc returns 1, Eggdrop will not process the line any further (this could cause unexpected behavior in some cases). The RAW bind does not support the IRCv3 message-tags capability, please see RAWT for more information.</p>
 <p>Module: server</p>
 </div></blockquote>
@@ -3411,7 +3414,7 @@ fail-server       - called when an IRC server fails to respond
 <blockquote>
 <div><p>bind rawt &lt;flags&gt; &lt;keyword&gt; &lt;proc&gt;</p>
 <p>procname &lt;from&gt; &lt;keyword&gt; &lt;text&gt; &lt;tag&gt;</p>
-<p>Description: similar to the RAW bind, but allows an extra field for the IRCv3 message-tags capability. The keyword is either a numeric, like “368”, or a keyword, such as “PRIVMSG” or “TAGMSG”. “from” will be the server name or the source user (depending on the keyword); flags are ignored. “tag” will be the contents, if any, of the entire tag message prefixed to the server message in a dict format, such as “msgid 890157217279768 aaa bbb”. The order of the arguments is identical to the order that the IRC server sends to the bot. If the proc returns 1, Eggdrop will not process the line any further (this could cause unexpected behavior in some cases). As of 1.9.0, it is recommended to use the RAWT bind instead of the RAW bind.</p>
+<p>Description: similar to the RAW bind, but allows an extra field for the IRCv3 message-tags capability. The keyword is either a numeric, like “368”, or a keyword, such as “PRIVMSG” or “TAGMSG”. “from” will be the server name or the source user (depending on the keyword); flags are ignored. “tag” will be the contents, if any, of the entire tag message prefixed to the server message in a dict format, such as “msgid 890157217279768 aaa bbb”. The order of the arguments is identical to the order that the IRC server sends to the bot. If the proc returns 1, Eggdrop will not process the line any further (this could cause unexpected behavior in some cases). As of 1.9.1, it is recommended to use the RAWT bind instead of the RAW bind.</p>
 </div></blockquote>
 <ol class="arabic simple" start="53">
 <li>ACCOUNT (stackable)</li>
@@ -3629,7 +3632,7 @@ words) (This char only works in binds, not in regular matching)</td>
           
     <div class="footer" role="contentinfo">
         &#169; Copyright 2021, Eggheads.
-      Last updated on Jan 24, 2021.
+      Last updated on May 31, 2021.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.5.
     </div>
         </div>

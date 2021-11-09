@@ -1,13 +1,9 @@
 TLS support Last revised: Jan 26, 2020
 
-
-
-TLS SUPPORT
-
+TLS support
 
 This document provides information about TLS support which is a new
 eggdrop feature since version 1.8.0.
-
 
 ABOUT
 
@@ -15,7 +11,6 @@ Eggdrop can be optionally compiled with TLS support. This requires
 OpenSSL 0.9.8 or more recent installed on your system. TLS support
 includes encryption for IRC, DCC, botnet, telnet and scripted
 connections as well as certificate authentication for users and bots.
-
 
 INSTALLATION
 
@@ -29,7 +24,6 @@ home directory, you'll need to specify the paths to header and library
 files with the --with-sslinc and --with-ssllib options. You can also use
 these if you want to override the default OpenSSL installation with a
 custom one, as they take precedence over any system-wide paths.
-
 
 USAGE
 
@@ -68,23 +62,23 @@ port, and will only accept TLS connections (no plain text connections
 will be allowed). With two TLS-enabled Eggdrops, it graphically looks
 like this:
 
-  ------------------------ ---------------------- -------------------------
-  Leaf bot sets hub port   and Hub bot config     the connection will...
-  as...                    uses...                
+  ----------------------- ---------------------- ------------------------
+  Leaf bot sets hub port  and Hub bot config     the connection will...
+  as...                   uses...                
 
-  port                     listen port            be plain, but can be
-                                                  upgraded to TLS manually
-                                                  with the starttls Tcl/bot
-                                                  command
+  port                    listen port            be plain, but can be
+                                                 upgraded to TLS manually
+                                                 with the starttls
+                                                 Tcl/bot command
 
-  +port                    listen +port           connect with TLS
+  +port                   listen +port           connect with TLS
 
-  port                     listen +port           fail as hub only wants
-                                                  TLS
+  port                    listen +port           fail as hub only wants
+                                                 TLS
 
-  +port                    listen port            fail as leaf only wants
-                                                  TLS
-  ------------------------ ---------------------- -------------------------
+  +port                   listen port            fail as leaf only wants
+                                                 TLS
+  ----------------------- ---------------------- ------------------------
 
 In short, a bot added to your Eggdrop with a +port in the address can
 only connect to a bot listening with a +port in the config. Conversely,
@@ -119,7 +113,6 @@ established as plaintext and later switched on with the starttls Tcl
 command. (Note that the other side should also switch to TLS at the same
 time - the synchronization is the script's job, not eggdrop's.)
 
-
 KEYS, CERTIFICATES AND AUTHENTICATION
 
 You need a private key and a digital certificate whenever your bot will
@@ -150,7 +143,6 @@ connect to your bot from the command line, you can use the OpenSSL ssl
 client:
 
     openssl s_client -cert my.crt -key my.key -connect host:sslport 
-
 
 SSL/TLS SETTINGS
 

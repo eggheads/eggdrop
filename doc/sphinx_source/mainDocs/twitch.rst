@@ -23,9 +23,9 @@ Registering with Twitch
 Editing the config file
 ***********************
 
-#. Find addserver options in the server section of the config file. Remove the sample servers listed and add the following line in their place, replacing the alphanumeric string after 'oauth:' with the token you created when registering with Twitch in the previous section. Pretending your Twitch token from the previous step is 'j9irk4vs28b0obz9easys4w2ystji3u', it should look like this::
+#. Find the options to add a server in the server section of the config file. Remove the sample servers listed and add the following line in their place, replacing the alphanumeric string after 'oauth:' with the token you created when registering with Twitch in the previous section. Pretending your Twitch token from the previous step is 'j9irk4vs28b0obz9easys4w2ystji3u', it should look like this::
 
-    addserver irc.chat.twitch.tv 6667 oauth:j9irk4vs28b0obz9easys4w2ystji3u
+    server add irc.chat.twitch.tv 6667 oauth:j9irk4vs28b0obz9easys4w2ystji3u
 
 Make sure you leave the 'oauth:' there, including the ':'.
 

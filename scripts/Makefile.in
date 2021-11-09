@@ -14,7 +14,7 @@ DOCS = CONTENTS
 
 SCRIPTS = action.fix.tcl alltools.tcl compat.tcl dccwhois.tcl getops.tcl \
 klined.tcl notes2.tcl ques5.tcl sentinel.tcl userinfo.tcl cmd_resolve.tcl \
-quotepass.tcl quotepong.tcl
+quotepong.tcl
 
 EXESCRIPTS = autobotchk botchk weed
 

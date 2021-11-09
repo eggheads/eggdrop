@@ -1,13 +1,10 @@
 Your First Eggdrop Script Last revised: May 10, 2020
 
-
-
-YOUR FIRST EGGDROP SCRIPT
-
+Your First Eggdrop Script
 
 So you want to write an Eggdrop script, but you don't really know where
 to begin. This file will give you a very basic idea about what Eggdrop
-scripting is like, using a _very_ simple script that may help you get
+scripting is like, using a very simple script that may help you get
 started with your own scripts.
 
 This guide assumes you know a bit about Eggdrops and IRC. You should
@@ -69,7 +66,7 @@ script:
 
     # GreetScript.tcl
     # Version: 1.0
-    # Author: Geo <geo@eggheads.org> or #eggdrop on Freenode
+    # Author: Geo <geo@eggheads.org> or #eggdrop on Libera
     #
     # Description:
     # A simple script that greets users as they join a channel
@@ -115,17 +112,20 @@ place all binds towards the top of the script so that they are together
 and easy to find. Now, let's look at documentation of the bind join
 together.
 
-  ------------------------------------------------------------------------
+  -----------------------------------------------------------------------
   bind JOIN
-  ------------------------------------------------------------------------
-  bind join <flags> <mask> <proc>
 
-  procname <nick> <user@host> <handle> <channel>
+  -----------------------------------------------------------------------
 
-  Description: triggered by someone joining the channel. The mask in the
-  bind is matched against "#channel nick!user@host" and can contain
-  wildcards.
-  ------------------------------------------------------------------------
++============================+=============================================================================================================================+
+| bind join <flags> <mask> <proc> |
++----------------------------------------------------------------------------------------------------------------------------------------------------------+
+| procname <nick> <user@host> <handle> <channel> |
++----------------------------------------------------------------------------------------------------------------------------------------------------------+
+| Description: triggered by someone joining the channel. The mask in the
+bind is matched against "#channel nick!user@host" and can contain
+wildcards. |
++----------------------------------------------------------------------------------------------------------------------------------------------------------+
 
 So here, we can start to match the bind listed in the code to how it is
 described in the documentation. The first term after the bind command is
@@ -134,12 +134,12 @@ here will take place each time a user joins a channel. The next term is
 'mask', and it says it is in the form "#channel nick!user@host". This is
 where we can start to refine exactly when this bind is triggered. If we
 want it to work for every person joining every channel Eggdrop is on,
-then a simple '_' will suffice here- that will match everything. If we
+then a simple '' will suffice here- that will match everything. If we
 wanted this bind to only work in #foo, then the mask would be "#foo *".
 If we wanted to greet users on every channel, but only those who are on
-AOL, the mask would be "_ *!*@*.aol.com". Finally the 'proc' argument is
+AOL, the mask would be " *!*@*.aol.com". Finally the 'proc' argument is
 the name of the Tcl proc we want to call, where the code that actually
-_does stuff_ is located.
+does stuff is located.
 
 So to sum up this line from the example script: When a user joins on any
 channel and with any hostmask, run the code located in proc 'greet'.
@@ -165,10 +165,10 @@ So let's say someone with the nickname Geo with a hostmask of
 awesome@aol.com joined #sexystuff and that person is not added to the
 bot as a user. Eggdrop will pass 4 values to the variables you set up in
 that proc: The first variable will get the value "Geo", the second
-"awesome@aol.com", the third "_", and the fourth "#sexystuff". (That
+"awesome@aol.com", the third "", and the fourth "#sexystuff". (That
 third value was a trick, we didn't talk about that- if the user is not
-added to the bot, handle will get a "_" as a value). Now, let's use
-those variables!:
+added to the bot, handle will get a "" as a value). Now, let's use those
+variables!:
 
     global pmsg
     global greetmsg
@@ -220,9 +220,11 @@ experiment. A few challenges for you:
 -   How can you add the person joining the channel's nickname to the
     greet message? (You can put variables inside variables...)
 
-If you want to try these out, join #eggdrop on Freenode and check your
+If you want to try these out, join #eggdrop on Libera and check your
 answers (and remember, there are dozens of ways to do this, so a) don't
 be defensive of your choices, and b) take others' answers with a grain
 of salt!)
+
+  <br>
 
 Copyright (C) 2003 - 2021 Eggheads Development Team

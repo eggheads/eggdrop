@@ -1,9 +1,6 @@
-Compilation and Installation of Eggdrop Last revised: July 24, 2004
+Compilation and Installation of Eggdrop Last revised: May 5, 2021
 
-
-
-INSTALLING EGGDROP
-
+Installing Eggdrop
 
 This is the quick install guide; if you have had little or no experience
 with UNIX or Eggdrop, READ THE README FILE NOW! This file is only for
@@ -12,7 +9,6 @@ experienced users.
 For more information on compiling Eggdrop, see the Compile Guide in
 doc/COMPILE-GUIDE (and of course, the README FILE).
 
-
 OVERVIEW
 
 1.  What is Eggdrop?
@@ -20,7 +16,6 @@ OVERVIEW
 3.  Cygwin Requirements (Windows)
 4.  Modules
 5.  Frequently Asked Questions
-
 
 WHAT IS EGGDROP?
 
@@ -31,7 +26,6 @@ bot! Before asking ANY questions, READ THE README FILE OR YOU WILL BE
 BURNED TO A HORRIBLE DEATH! IF YOU DO NOT READ THAT FILE I WILL
 PERSONALLY WALK TO YOUR TERMINAL AND BEAT IT WITH A SMELLY SNEAKER! By
 the way, read the README file.
-
 
 QUICK STARTUP
 
@@ -94,9 +88,9 @@ Eggdrop uses the GNU autoconfigure scripts to make things easier.
 
 5.  
 
-    By default, version 1.8 uses SSL to protect botnet links. If you intend
+    By default, version 1.9 uses SSL to protect botnet links. If you intend
 
-        on linking 1.8 bots together, you must run:
+        on linking 1.9 bots together, you must run:
 
             make sslcert
 
@@ -105,15 +99,15 @@ Eggdrop uses the GNU autoconfigure scripts to make things easier.
 
           make sslcert DEST=<directory>
 
-    For those using scripts to install Eggdrop, you can non-interactively
-
-        generate a key and certificate by running:
+        For those using scripts to install Eggdrop, you can
+        non-interactively generate a key and certificate by running:
 
           make sslsilent
 
-          Read docs/TLS for more info on this process.
+        Read docs/TLS for more info on this process.
 
 6.  Edit your config file completely.
+
 7.  Start the bot with the "-m" option to create a user file, i.e. :
 
         ./eggdrop -m LamestBot.conf
@@ -147,7 +141,6 @@ Eggdrop uses the GNU autoconfigure scripts to make things easier.
 10. Smile, and if you haven't already read the README file in its
     entirety, go take a long walk off a short pier.
 
-
 CYGWIN REQUIREMENTS (WINDOWS)
 
 Eggdrop requires the following packages to be added from the Cygwin
@@ -157,7 +150,6 @@ installation tool prior to compiling:
     Net:          openssl-devel
     Devel:        autoconf, gcc-core, git, make
     Utils:        diffutils
-
 
 MODULES
 
@@ -175,7 +167,6 @@ If you wish to add a module at a later time, follow the same steps in
 paragraph 2. After you have moved the appropriate files, you will only
 need to type 'make modules' to compile only the modules portion of the
 bot.
-
 
 FREQUENTLY ASKED QUESTIONS
 

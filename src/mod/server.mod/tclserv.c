@@ -226,11 +226,13 @@ static int tcl_tagmsg STDVAR {
   char tag[CLITAGMAX-9];    /* minus @, TAGMSG and two spaces */
   char tagdict[CLITAGMAX-9];
   char target[MSGMAX];
+  struct capability *current = 0;
   char *p;
   int taglen = 0, i = 1;
   BADARGS(3, 3, " tag target");
 
-  if (!msgtag) {
+  current = find_capability("message-tags");
+  if ((!current) || (!(current->enabled))) {
     Tcl_AppendResult(irp, "message-tags not enabled, cannot send tag", NULL);
     return TCL_ERROR;
   }
@@ -264,14 +266,28 @@ static int tcl_tagmsg STDVAR {
 /* Tcl interface to send CAP messages to server */
 static int tcl_cap STDVAR {
   char s[CAPMAX];
+  struct capability *current;
+  Tcl_Obj *capes;
   BADARGS(2, 3, " sub-cmd ?arg?");
 
+  capes = Tcl_NewListObj(0, NULL);
+  current = cap;
   /* List capabilities available on server */
   if (!strcasecmp(argv[1], "ls")) {
-    Tcl_AppendResult(irp, cap.supported, NULL);
+    while (current != NULL) {
+      Tcl_ListObjAppendElement(irp, capes, Tcl_NewStringObj(current->name, -1));
+      current = current->next;
+    }
+    Tcl_SetObjResult(irp, capes);
   /* List capabilities Eggdrop is internally tracking as enabled with server */
   } else if (!strcasecmp(argv[1], "enabled")) {
-    Tcl_AppendResult(irp, cap.negotiated, NULL);
+    while (current != NULL) {
+      if (current->enabled) {
+        Tcl_ListObjAppendElement(irp, capes, Tcl_NewStringObj(current->name, -1));
+      }
+      current = current->next;
+    }
+    Tcl_SetObjResult(irp, capes);
   /* Send a request to negotiate a capability with server */
   } else if (!strcasecmp(argv[1], "req")) {
     if (argc != 3) {
@@ -292,7 +308,8 @@ static int tcl_cap STDVAR {
       return TCL_ERROR;
     }
   } else {
-      Tcl_AppendResult(irp, "Invalid cap command", NULL);
+      Tcl_AppendResult(irp, "Invalid cap command, must be ls, enabled, req, or raw", NULL);
+      return TCL_ERROR;
   }
   return TCL_OK;
 }
@@ -449,9 +466,9 @@ static int tcl_server STDVAR {
 
   BADARGS(3, 5, " subcommand host ?port ?password??");
   if (!strcmp(argv[1], "add")) {
-    ret = add_server(argv[2], argv[3] ? argv[3] : "", argv[4] ? argv[4] : "");
+    ret = add_server(argv[2], argc >= 4 && argv[3] ? argv[3] : "", argc >= 5 && argv[4] ? argv[4] : "");
   } else if (!strcmp(argv[1], "remove")) {
-    ret = del_server(argv[2], argv[3] ? argv[3] : "");
+    ret = del_server(argv[2], argc >= 4 && argv[3] ? argv[3] : "");
   } else {
     Tcl_AppendResult(irp, "Invalid subcommand: ", argv[1],
         ". Should be \"add\" or \"remove\"", NULL);
@@ -467,8 +484,8 @@ static int tcl_server STDVAR {
     Tcl_AppendResult(irp, "Attempted to add SSL-enabled server, but Eggdrop "
             "was not compiled with SSL libraries.", NULL);
   } else if (ret == 3) {    /* del_server only */
-    Tcl_AppendResult(irp, "Server ", argv[2], argv[3] ? ":" : "",
-            argv[3] ? argv[3] : ""," not found.", NULL);
+    Tcl_AppendResult(irp, "Server ", argv[2], argc >= 4 && argv[3] ? ":" : "",
+            argc >= 4 && argv[3] ? argv[3] : ""," not found.", NULL);
   }
   return TCL_ERROR;
 }

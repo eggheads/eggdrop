@@ -1,9 +1,6 @@
 Last revised: January 1, 2002
 
-
-
-NOTES MODULE
-
+Notes Module
 
 This module provides support for storing of notes for users from each
 other. Note sending between currently online users is supported in the

@@ -62,7 +62,7 @@ Whew! There's a lot going on here. You'll generally see scripts broken into a fe
 
   # GreetScript.tcl
   # Version: 1.0
-  # Author: Geo <geo@eggheads.org> or #eggdrop on Freenode
+  # Author: Geo <geo@eggheads.org> or #eggdrop on Libera
   #
   # Description:
   # A simple script that greets users as they join a channel
@@ -140,7 +140,7 @@ And there you have it- your first script! Take this, modify it and experiment. A
 * How can you get the bot to not greet itself when it joins the channel? (Eggdrop stores its own nickname in a variable called $botnick)
 * How can you add the person joining the channel's nickname to the greet message? (You can put variables inside variables...)
 
-If you want to try these out, join #eggdrop on Freenode and check your answers (and remember, there are dozens of ways to do this, so a) don't be defensive of your choices, and b) take others' answers with a grain of salt!)
+If you want to try these out, join #eggdrop on Libera and check your answers (and remember, there are dozens of ways to do this, so a) don't be defensive of your choices, and b) take others' answers with a grain of salt!)
 
 .. |br| raw:: html
 

@@ -269,12 +269,26 @@ proc commitlist {{full 0}} {
 		set cmd [list git rev-list --reverse --date-order {*}[revlist [expr {($i == 0 && $full) ? "" : $excludes}] [lrange $includes $i $i]]]
 		set mycommits [mustexec $cmd "Failed to get revlist"]
 		foreach commit $mycommits {
-			if {$commit ni $commits} {
-				lappend commits $commit
+			dict set commits $commit 1
+		}
+	}
+	# exclude cherry-picked commits, assumes correct order, WIP, assumes chronic order of -i
+	# --cherry-pick is only relevant when using symmetric difference which is A...B
+	# the above method of gather commits by manually grabbing all EXCLUDE..INCLUDE does not use it
+	for {set i 0} {$i < [llength $includes] - 1} {incr i} {
+		for {set j [expr {1+$i}]} {$j < [llength $includes]} {incr j} {
+			set i1 [lindex $includes $i]
+			set i2 [lindex $includes $j]
+			set cmd [list git rev-list --cherry-mark --no-merges --right-only --reverse --date-order $i1...$i2]
+			set mycommits [mustexec $cmd "Failed to get revlist"]
+			foreach commit $mycommits {
+				if {[string index $commit 0] eq "=" && [dict exists $commits [string range $commit 1 end]]} {
+					dict unset commits [string range $commit 1 end]
+				}
 			}
 		}
 	}
-	return [lreverse $commits]
+	return [lreverse [dict keys $commits]]
 }
 
 proc cmd:release {} {

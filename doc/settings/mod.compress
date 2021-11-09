@@ -1,9 +1,6 @@
 Last revised: May 27, 2004
 
-
-
-COMPRESS MODULE
-
+Compress Module
 
 This module provides support for file compression. It can be used to
 compress files via Tcl or to transfer the userfile compressed during the

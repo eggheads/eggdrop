@@ -47,6 +47,7 @@ static int check_tcl_pubm(char *, char *, char *, char *);
 static int check_tcl_pub(char *, char *, char *, char *);
 static int check_tcl_ircaway(char *, char *, char *, struct userrec *, char *,
                                     char*);
+static int check_tcl_monitor(char *, int);
 static int me_op(struct chanset_t *);
 static int me_halfop(struct chanset_t *);
 static int me_voice(struct chanset_t *);
@@ -84,6 +85,12 @@ static void got_halfop(struct chanset_t *chan, char *nick, char *from,
 static int killmember(struct chanset_t *chan, char *nick);
 static void check_lonely_channel(struct chanset_t *chan);
 static int gotmode(char *, char *);
+
+typedef struct monitor_list {
+  char nick[NICKLEN];         /* List of nicks to monitor,                */
+  int online;                 /* Flag if nickname is currently online     */
+  struct monitor_list *next;  /* Linked list y'all                        */
+} monitor_list_t;
 
 #define newban(chan, mask, who)         newmask((chan)->channel.ban, mask, who)
 #define newexempt(chan, mask, who)      newmask((chan)->channel.exempt, mask, \
@@ -123,6 +130,7 @@ static int gotmode(char *, char *);
 #define twitch (*(int *)(irc_funcs[27]))
 /* 28 - 31 */
 #define H_ircaway (*(p_tcl_bind_list *)(irc_funcs[28])
+#define H_monitor (*(p_tcl_bind_list *)(irc_funcs[29])
 
 #endif /* MAKING_IRC */
 

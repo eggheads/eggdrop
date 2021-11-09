@@ -1,9 +1,6 @@
 Last revised: January 1, 2002
 
-
-
-TRANSFER MODULE
-
+Transfer Module
 
 The transfer module provides DCC SEND/GET support and userfile transfer
 support for userfile sharing.

@@ -588,6 +588,12 @@ ClientData tickle_InitNotifier()
   return NULL;
 }
 
+void tickle_AlertNotifier(ClientData cd)
+{
+  if (cd)
+    putlog(LOG_MISC, "*", "stub tickle_AlertNotifier");
+}
+
 int tclthreadmainloop(int zero)
 {
   int i;
@@ -654,6 +660,7 @@ void init_tcl(int argc, char **argv)
   notifierprocs.setTimerProc = tickle_SetTimer;
   notifierprocs.waitForEventProc = tickle_WaitForEvent;
   notifierprocs.finalizeNotifierProc = tickle_FinalizeNotifier;
+  notifierprocs.alertNotifierProc = tickle_AlertNotifier;
 
   Tcl_SetNotifier(&notifierprocs);
 #endif /* REPLACE_NOTIFIER */
@@ -968,8 +975,9 @@ int fork_before_tcl()
 {
 #ifndef REPLACE_NOTIFIER
   return tcl_threaded();
-#endif
+#else
   return 0;
+#endif
 }
 
 time_t get_expire_time(Tcl_Interp * irp, const char *s) {

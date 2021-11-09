@@ -1,9 +1,6 @@
 Last revised: October 25, 2010
 
-
-
-CHANNELS MODULE
-
+Channels Module
 
 This module provides channel related support for the bot. Without it,
 you won't be able to make the bot join a channel or save channel
@@ -79,19 +76,25 @@ There are also some variables you can set in your config file:
             +---+--------------------------------------------------------+
             | 5 |   If the channel is -bitch, see stopnethack-mode 3     |
             |   |                                                        |
-            |   | ------------------------------------------------------ |
-            |   | --+                                                    |
+            |   | ---                                                    |
+            |   | -----------------------------------------------------+ |
             |   |                                                        |
             |   |     If the channel is +bitch, see stopnethack-mode 1   |
-            | + |                                                        |
+            | - |                                                        |
+            |   |                                                        |
+            |   |                                                        |
+            |   |                                                        |
             +---+--------------------------------------------------------+
             | 6 |   If the channel is -bitch, see stopnethack-mode 2     |
             |   |                                                        |
-            |   | ------------------------------------------------------ |
-            |   | --+                                                    |
+            |   | ---                                                    |
+            |   | -----------------------------------------------------+ |
             |   |                                                        |
             |   |     If the channel is +bitch, see stopnethack-mode 4   |
-            | + |                                                        |
+            | - |                                                        |
+            |   |                                                        |
+            |   |                                                        |
+            |   |                                                        |
             +---+--------------------------------------------------------+
 
       revenge-mode 0
@@ -99,36 +102,50 @@ There are also some variables you can set in your config file:
           This settings defines how the bot should punish bad users when
           revenging. There are four possible settings:
 
-              ---------- -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-              0          Deop the user.
-              1          Deop the user and give them the +d flag for the channel.
-              2          Deop the user, give them the +d flag for the channel, and kick them.
-              3          Deop the user, give them the +d flag for the channel, kick, and ban them.
-              ---------- -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+              --- -------------------------------------------------------------------
+              0   Deop the user.
+
+              1   Deop the user and give them the +d flag for the channel.
+
+              2   Deop the user, give them the +d flag for the channel, and kick
+                  them.
+
+              3   Deop the user, give them the +d flag for the channel, kick, and ban
+                  them.
+              --- -------------------------------------------------------------------
 
       ban-type 3
 
   This setting defines what type of bans should eggdrop place for +k
   users or when revenge-mode is 3. Available types are:
 
-      ------------------ ----------------------------------------------------------------------------------------------------------------
-      0                  *!user@host
-      1                  *!*user@host
-      2                  *!*@host
-      3                  *!*user@*.host
-      4                  _!*@_.host
-      5 n                ick!user@host
-      6 n                ick!*user@host
-      7 n                ick!*@host
-      8 n                ick!*user@*.host
-      9 n                ick!*@*.host
-      ------------------ ----------------------------------------------------------------------------------------------------------------
+      --- ------------------------
+      0   *!user@host
+
+      1   *!*user@host
+
+      2   *!*@host
+
+      3   *!*user@*.host
+
+      4   !*@.host
+
+      5 n ick!user@host
+
+      6 n ick!*user@host
+
+      7 n ick!*@host
+
+      8 n ick!*user@*.host
+
+      9 n ick!*@*.host
+      --- ------------------------
 
   You can also specify types from 10 to 19 which correspond to types 0
   to 9, but instead of using a * wildcard to replace portions of the
   host, only numbers in hostnames are replaced with the '?' wildcard.
-  Same is valid for types 20-29, but instead of '?', the '_' wildcard
-  will be used. Types 30-39 set the host to '_'.
+  Same is valid for types 20-29, but instead of '?', the '' wildcard
+  will be used. Types 30-39 set the host to ''.
 
     ban-time 120
 
@@ -160,84 +177,94 @@ There are also some variables you can set in your config file:
         voice joins a channel while another op or voice is pending, the
         bot will attempt to put both modes on one line.
 
-            --------------- ------------------------------------------
-            aop-delay 0     No delay is used.
-            aop-delay X     An X second delay is used.
-            aop-delay X:Y   A random delay between X and Y is used.
-            --------------- ------------------------------------------
+            -------------- -----------------------------------------
+            aop-delay 0    No delay is used.
 
-    need-op { putserv "PRIVMSG #lamest :op me cos i'm lame!" }
+            aop-delay X    An X second delay is used.
 
-        This setting will make the bot run the script enclosed in braces
-        if it does not have ops. This must be shorter than 120
-        characters. If you use scripts like getops.tcl or botnetop.tcl,
-        you don't need to set this setting.
+            aop-delay X:Y  A random delay between X and Y is used.
+            -------------- -----------------------------------------
 
-    need-invite { putserv "PRIVMSG #lamest :let me in!" }
+        need-op { putserv "PRIVMSG #lamest :op me cos i'm lame!" }
 
-        This setting will make the bot run the script enclosed in braces
-        if it needs an invite to the channel. This must be shorter than
-        120 characters. If you use scripts like getops.tcl or
-        botnetop.tcl, you don't need to set this setting.
+            This setting will make the bot run the script enclosed in
+            braces if it does not have ops. This must be shorter than
+            120 characters. If you use scripts like getops.tcl or
+            botnetop.tcl, you don't need to set this setting.
 
-    need-key { putserv "PRIVMSG #lamest :let me in!" }
+        need-invite { putserv "PRIVMSG #lamest :let me in!" }
 
-        This setting will make the bot run the script enclosed in braces
-        if it needs the key to the channel. This must be shorter than
-        120 characters. If you use scripts like getops.tcl or
-        botnetop.tcl, you don't need to set this setting.
+            This setting will make the bot run the script enclosed in
+            braces if it needs an invite to the channel. This must be
+            shorter than 120 characters. If you use scripts like
+            getops.tcl or botnetop.tcl, you don't need to set this
+            setting.
 
-    need-unban { putserv "PRIVMSG #lamest :let me in!" }
+        need-key { putserv "PRIVMSG #lamest :let me in!" }
 
-        This setting will make the bot run the script enclosed in braces
-        if it needs to be unbanned on the channel. This must be shorter
-        than 120 characters. If you use scripts like getops.tcl or
-        botnetop.tcl, you don't need to set this setting.
+            This setting will make the bot run the script enclosed in
+            braces if it needs the key to the channel. This must be
+            shorter than 120 characters. If you use scripts like
+            getops.tcl or botnetop.tcl, you don't need to set this
+            setting.
 
-    need-limit { putserv "PRIVMSG #lamest :let me in!" }
+        need-unban { putserv "PRIVMSG #lamest :let me in!" }
 
-        This setting will make the bot run the script enclosed in braces
-        if it needs the limit to be raised on the channel. This must be
-        shorter than 120 characters. If you use scripts like getops.tcl
-        or botnetop.tcl, you don't need to set this setting.
+            This setting will make the bot run the script enclosed in
+            braces if it needs to be unbanned on the channel. This must
+            be shorter than 120 characters. If you use scripts like
+            getops.tcl or botnetop.tcl, you don't need to set this
+            setting.
 
-    flood-chan 15:60
+        need-limit { putserv "PRIVMSG #lamest :let me in!" }
 
-        Set here how many channel messages in how many seconds from one
-        host constitutes a flood. Setting this to 0, 0:X or X:0 disables
-        text flood protection for the channel, where X is an
-        integer >= 0.
+            This setting will make the bot run the script enclosed in
+            braces if it needs the limit to be raised on the channel.
+            This must be shorter than 120 characters. If you use scripts
+            like getops.tcl or botnetop.tcl, you don't need to set this
+            setting.
 
-    flood-deop 3:10
+        flood-chan 15:60
 
-        Set here how many deops in how many seconds from one host
-        constitutes a flood. Setting this to 0, 0:X or X:0 disables deop
-        flood protection for the channel, where X is an integer >= 0.
+            Set here how many channel messages in how many seconds from
+            one host constitutes a flood. Setting this to 0, 0:X or X:0
+            disables text flood protection for the channel, where X is
+            an integer >= 0.
 
-    flood-kick 3:10
+        flood-deop 3:10
 
-        Set here how many kicks in how many seconds from one host
-        constitutes a flood. Setting this to 0, 0:X or X:0 disables kick
-        flood protection for the channel, where X is an integer >= 0.
+            Set here how many deops in how many seconds from one host
+            constitutes a flood. Setting this to 0, 0:X or X:0 disables
+            deop flood protection for the channel, where X is an
+            integer >= 0.
 
-    flood-join 5:60
+        flood-kick 3:10
 
-        Set here how many joins in how many seconds from one host
-        constitutes a flood. Setting this to 0, 0:X or X:0 disables join
-        flood protection for the channel, where X is an integer >= 0.
+            Set here how many kicks in how many seconds from one host
+            constitutes a flood. Setting this to 0, 0:X or X:0 disables
+            kick flood protection for the channel, where X is an
+            integer >= 0.
 
-    flood-ctcp 3:60
+        flood-join 5:60
 
-        Set here how many channel ctcps in how many seconds from one
-        host constitutes a flood. Setting this to 0, 0:X or X:0 disables
-        ctcp flood protection for the channel, where X is an
-        integer >= 0.
+            Set here how many joins in how many seconds from one host
+            constitutes a flood. Setting this to 0, 0:X or X:0 disables
+            join flood protection for the channel, where X is an
+            integer >= 0.
 
-    flood-nick 5:60
+        flood-ctcp 3:60
 
-        Set here how many nick changes in how many seconds from one host
-        constitutes a flood. Setting this to 0, 0:X or X:0 disables nick
-        flood protection for the channel, where X is an integer >= 0.
+            Set here how many channel ctcps in how many seconds from one
+            host constitutes a flood. Setting this to 0, 0:X or X:0
+            disables ctcp flood protection for the channel, where X is
+            an integer >= 0.
+
+        flood-nick 5:60
+
+            Set here how many nick changes in how many seconds from one
+            host constitutes a flood. Setting this to 0, 0:X or X:0
+            disables nick flood protection for the channel, where X is
+            an integer >= 0.
 
   channel set <chan> +/-<setting>
 
