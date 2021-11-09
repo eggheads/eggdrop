@@ -788,6 +788,7 @@ enum {
 
 /* linked list instead of array because of multi threading */
 struct dns_thread_node {
+  pthread_mutex_t mutex;
   int fildes[2];
   int type;
   sockname_t addr;
