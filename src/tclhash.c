@@ -708,7 +708,8 @@ static int builtin_idx STDVAR
 }
 #endif
 
-/* Trigger (execute) a Tcl proc */
+/* Trigger (execute) a Tcl proc
+ */
 static int trigger_bind(const char *proc, const char *param, char *mask)
 {
   int x;
@@ -803,7 +804,8 @@ static int check_bind_match(const char *match, char *mask, int match_type)
 }
 
 
-/* Check if the provided flags suffice for this command/trigger. */
+/* Check if the provided flags suffice for this command/trigger.
+ */
 static int check_bind_flags(struct flag_record *flags, struct flag_record *atr,
                             int match_type)
 {
