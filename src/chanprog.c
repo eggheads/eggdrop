@@ -316,7 +316,7 @@ void tell_verbose_status(int idx)
   }
   cputime = getcputime();
   if (cputime < 0)
-    sprintf(s2, "CPU: unknown");
+    strlcpy(s2, "CPU: unknown", sizeof s2);
   else {
     hr = cputime / 60;
     cputime -= hr * 60;
