@@ -59,7 +59,6 @@ static int twitch_expmem()
 {
   int size = 0;
 
-  Context;
   return size;
 }
 
@@ -822,7 +821,6 @@ static cmd_t twitch_rawt[] = {
 
 static char *twitch_close()
 {
-  Context;
   rem_builtins(H_dcc, mydcc);
   rem_builtins(H_raw, twitch_raw);
   rem_builtins(H_rawt, twitch_rawt);
@@ -865,7 +863,6 @@ char *twitch_start(Function *global_funcs)
   global = global_funcs;
   keepnick = 0;
 
-  Context;
   /* Register the module. */
   module_register(MODULE_NAME, twitch_table, 0, 1);
 
