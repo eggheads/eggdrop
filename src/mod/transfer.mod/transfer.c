@@ -850,7 +850,7 @@ static struct dcc_table DCC_GET_PENDING = {
 
 static void dcc_fork_send(int idx, char *x, int y)
 {
-  char s1[121];
+  char s[NICKMAX + 1 + UHOSTMAX + 1];
 
   if (dcc[idx].type != &DCC_FORK_SEND)
     return;
@@ -859,8 +859,8 @@ static void dcc_fork_send(int idx, char *x, int y)
   dcc[idx].u.xfer->start_time = now;
 
   if (strcmp(dcc[idx].nick, "*users")) {
-    egg_snprintf(s1, sizeof s1, "%s!%s", dcc[idx].nick, dcc[idx].host);
-    putlog(LOG_MISC, "*", TRANSFER_DCC_CONN, dcc[idx].u.xfer->origname, s1);
+    snprintf(s, sizeof s, "%s!%s", dcc[idx].nick, dcc[idx].host);
+    putlog(LOG_MISC, "*", TRANSFER_DCC_CONN, dcc[idx].u.xfer->origname, s);
   }
   if (dcc[idx].type->activity && y) {
     /* Could already have data! */
