@@ -208,7 +208,7 @@ struct chanset_t {
     char *op;
     int type;
   } cmode[MODES_PER_LINE_MAX];
-  char floodwho[FLOOD_CHAN_MAX][81];
+  char floodwho[FLOOD_CHAN_MAX][NICKLEN];
   time_t floodtime[FLOOD_CHAN_MAX];
   int floodnum[FLOOD_CHAN_MAX];
   char deopd[NICKLEN];   /* last user deopped                 */
