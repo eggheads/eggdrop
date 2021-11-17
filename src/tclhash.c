@@ -26,11 +26,8 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
-#include <sys/time.h>
 #include <sys/resource.h>
 #include "main.h"
-#include "chan.h"
-#include "users.h"
 
 extern Tcl_Interp *interp;
 extern struct dcc_t *dcc;
