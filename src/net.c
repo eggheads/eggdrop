@@ -1034,10 +1034,16 @@ int sockread(char *s, int *len, sock_list *slist, int slistmax, int tclonly)
   for (dtn = dtn_prev->next; dtn; dtn = dtn->next) {
     fd = dtn->fildes[0];
     if (FD_ISSET(fd, &fdr)) {
-      if (dtn->type == DTN_TYPE_HOSTBYIP)
+      if (dtn->type == DTN_TYPE_HOSTBYIP) {
+        pthread_mutex_lock(&dtn->mutex);
         call_hostbyip(&dtn->addr, dtn->host, dtn->ok);
-      else
+        pthread_mutex_unlock(&dtn->mutex);
+      }
+      else {
+        pthread_mutex_lock(&dtn->mutex);
         call_ipbyhost(dtn->host, &dtn->addr, dtn->ok);
+        pthread_mutex_unlock(&dtn->mutex);
+      }
       close(dtn->fildes[0]);
       dtn_prev->next = dtn->next;
       nfree(dtn);

@@ -543,8 +543,10 @@ void *thread_dns_ipbyhost(void *arg)
 #endif
     freeaddrinfo(res0);
   }
+  pthread_mutex_lock(&dtn->mutex);
   dtn->ok = !i;
   close(dtn->fildes[1]);
+  pthread_mutex_unlock(&dtn->mutex);
   return NULL;
 }
 
