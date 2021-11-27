@@ -44,12 +44,6 @@
 <li class="toctree-l1"><a class="reference internal" href="../installAndSetup/install.html">Installing Eggdrop</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../installAndSetup/faq.html">Frequently Asked Questions</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../installAndSetup/upgrading.html">Upgrading</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../installAndSetup/upgrading.html#config">Config</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../installAndSetup/upgrading.html#modules">Modules</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../installAndSetup/upgrading.html#scripts">Scripts</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../installAndSetup/upgrading.html#botnet">Botnet</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../installAndSetup/upgrading.html#documentation">Documentation</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../installAndSetup/upgrading.html#tcl-commands">Tcl Commands</a></li>
 </ul>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="about.html">About Eggdrop</a></li>
@@ -114,7 +108,7 @@
           <div class="body" role="main">
             
   <p>IRCv3 support
-Last revised: Jun 20, 2021</p>
+Last revised: November 27, 2021</p>
 <div class="section" id="ircv3-support">
 <h1>IRCv3 support<a class="headerlink" href="#ircv3-support" title="Permalink to this headline">¶</a></h1>
 <p>This document provides information about IRCv3 capabilities, as defined via specifications documented by the IRCv3 working group (<a class="reference external" href="https://ircv3.net/">https://ircv3.net/</a>). Support for some of these specifications was added starting with version 1.9.0, and more capabilites are added as possible with new versions.</p>
@@ -131,16 +125,19 @@ Last revised: Jun 20, 2021</p>
 <p>The following capabilites are supported by Eggdrop:</p>
 <blockquote>
 <div><ul class="simple">
-<li>CAP requests</li>
-<li>SASL 3.1</li>
+<li>CAP/CAP 302 requests</li>
+<li>SASL 3.2</li>
 <li>account-notify</li>
 <li>account-tag</li>
 <li>away-notify</li>
+<li>BOT 005 mode</li>
+<li>cap-notify</li>
 <li>chghost</li>
 <li>echo-message</li>
 <li>extended-join</li>
 <li>invite-notify</li>
 <li>message-tags</li>
+<li>Monitor</li>
 <li>server-time</li>
 <li>setname</li>
 <li>+typing</li>

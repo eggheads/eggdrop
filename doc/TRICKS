@@ -1,4 +1,4 @@
-Eggdrop Tricks Last revised: December 08, 2003
+Eggdrop Tricks Last revised: Jun 02, 2021
 
 Eggdrop Tricks
 
@@ -19,6 +19,13 @@ Eggdrop Tricks
       'keep-all-logs' to 0 and 'switch-logfiles-at' to 2500 in your
       bot's config file to make it keeping one logfile all the time.
       This is not recommended on high traffic channels.
+
+  -   Because of how traditional IRC works, Eggdrop doesn't capture
+      outgoing messages to its logfile. However, if the server you are
+      on supports the IRCv3 capability "echo-message", you can request
+      this capability to be enabled by the server in your config file.
+      This will cause the server to send Eggdrop'd public messages back,
+      thereby allowing those messages to be logged.
 
   -   You can modify Eggdrop's output in the partyline, kick messages,
       and other texts by editing core.english.lang in the language

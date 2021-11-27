@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>Eggdrop Tcl Commands &#8212; Eggdrop 1.9.1 documentation</title>
+    <title>Eggdrop Tcl Commands &#8212; Eggdrop 1.9.2 documentation</title>
     <link rel="stylesheet" href="../_static/eggdrop.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
@@ -24,7 +24,7 @@
             <img class="logo" src="../_static/eggman.png.gif" alt="Logo"/>
           </a></p>
         <div class="headertitle"><a
-          href="../index.html">Eggdrop 1.9.1 documentation</a></div>
+          href="../index.html">Eggdrop 1.9.2 documentation</a></div>
         <div class="rel" role="navigation" aria-label="related navigation">
           <a href="pbkdf2.html" title="PBKDF2 Hashing"
              accesskey="P">previous</a> |
@@ -43,6 +43,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../installAndSetup/readme.html">README</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../installAndSetup/install.html">Installing Eggdrop</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../installAndSetup/faq.html">Frequently Asked Questions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../installAndSetup/upgrading.html">Upgrading</a></li>
 </ul>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="about.html">About Eggdrop</a></li>
@@ -58,6 +59,7 @@
 <li class="toctree-l1"><a class="reference internal" href="twitch-tcl-commands.html">Eggdrop Twitch Tcl Commands</a></li>
 <li class="toctree-l1"><a class="reference internal" href="ipv6.html">IPv6 support</a></li>
 <li class="toctree-l1"><a class="reference internal" href="tls.html">TLS support</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ircv3.html">IRCv3 support</a></li>
 </ul>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../coreDocs/core.html">Eggdrop Core Settings</a></li>
@@ -227,11 +229,11 @@ marked with vertical bars (|) on the left.</p>
 <p>Module: server</p>
 </div></blockquote>
 </div>
-<div class="section" id="cap-ls-req-enabled-raw-arg">
-<h3>cap &lt;ls/req/enabled/raw&gt; [arg]<a class="headerlink" href="#cap-ls-req-enabled-raw-arg" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="cap-ls-values-req-enabled-raw-arg">
+<h3>cap &lt;ls/values/req/enabled/raw&gt; [arg]<a class="headerlink" href="#cap-ls-values-req-enabled-raw-arg" title="Permalink to this headline">¶</a></h3>
 <blockquote>
-<div><p>Description: displays CAP status or sends a raw CAP command to the server. “ls” will list the capabilities Eggdrop is internally tracking as supported by the server, “enabled” will list the capabilities Eggdrop is internally tracking as negotiated with the server, “req” will request the capabilities listed in “arg” from the server, and raw will send a raw CAP command to the server. The arg field is a single argument, and should be submitted as a single string. For example, to request capabilities foo and bar, you would use [cap req “foo bar”], and for example purposes, sending the same request as a raw command would be [cap raw “REQ :foo bar”].</p>
-<p>Returns: nothing</p>
+<div><p>Description: displays CAP status or sends a raw CAP command to the server. “ls” will list the capabilities Eggdrop is internally tracking as supported by the server. “values” will list all capabilities and their associated CAP 302 values (if any) as a key/value pair, and “values” with a capability name as arg will list the values associated for the capability. “enabled” will list the capabilities Eggdrop is internally tracking as negotiated with the server. “req” will request the capabilities listed in “arg” from the server. “raw” will send a raw CAP command to the server. The arg field is a single argument, and should be submitted as a single string. For example, to request capabilities foo and bar, you would use [cap req “foo bar”], and for example purposes, sending the same request as a raw command would be [cap raw “REQ :foo bar”].</p>
+<p>Returns: a list of CAP capabilities for the “enabled” and “ls” sub-commands; a dict of capability/value pairs for the “values” command or a list if “values” if followed by an argument; otherwise nothing.</p>
 <p>Module: server</p>
 </div></blockquote>
 </div>
@@ -261,6 +263,14 @@ tagmsg “+foo bar moo baa +last {}” #channel</dd>
 <blockquote>
 <div><p>Description: removes a server from the list of servers Eggdrop will connect to. If no port is provided, all servers matching the ip or hostname provided will be removed, otherwise only the ip/host with the corresponding port will be removed. The SSL status (+) of the provided port is matched against as well (ie, 7000 is not the same as +7000).</p>
 <p>Returns: nothing</p>
+<p>Module: server</p>
+</div></blockquote>
+</div>
+<div class="section" id="server-list">
+<h3>server list<a class="headerlink" href="#server-list" title="Permalink to this headline">¶</a></h3>
+<blockquote>
+<div><p>Description: lists all servers currently added to the bots internal server list</p>
+<p>Returns: A list of lists in the format {{hostname} {port} {password}}</p>
 <p>Module: server</p>
 </div></blockquote>
 </div>
@@ -1127,8 +1137,8 @@ channel’s invite list is checked as well.</p>
 <div class="section" id="isidentified-nickname-channel">
 <h3>isidentified &lt;nickname&gt; [channel]<a class="headerlink" href="#isidentified-nickname-channel" title="Permalink to this headline">¶</a></h3>
 <blockquote>
-<div><p>Returns: 1 if someone by the specified nickname is on the channel (or
-any channel if no channel name is specified) and is logged in); 0 otherwise</p>
+<div><p>Description: determine if a user is identified to irc services. WARNING: this may not be accurate depending on the server and configuration. For accurate results, the server must support (and Eggdrop must have enabled via CAP) the account-notify and extended-join capabilities, and the server must understand WHOX requests (also known as raw 354 responses)</p>
+<p>Returns: 1 if someone by the specified nickname is on the channel (or any channel if no channel name is specified) and is logged in); 0 otherwise.</p>
 <p>Module: irc</p>
 </div></blockquote>
 </div>
@@ -1140,10 +1150,24 @@ any channel if no channel name is specified) and is logged in); 0 otherwise</p>
 <p>Module: irc</p>
 </div></blockquote>
 </div>
+<div class="section" id="isircbot-nickname-channel">
+<h3>isircbot &lt;nickname&gt; [channel]<a class="headerlink" href="#isircbot-nickname-channel" title="Permalink to this headline">¶</a></h3>
+<blockquote>
+<div><p>Description: determine if a user has denoted themselves as a bot via an ircd-defined user flag (declared via BOT in a server’s 005/ISUPPORT line). Due to server implementations, accurately monitoring this is incredibly fragile, as the flag can be added and removed by a user without any notification to other users. To ensure this status is current for use, it is recommended to use <code class="docutils literal notranslate"><span class="pre">refreshchan</span> <span class="pre">&lt;channel&gt;</span> <span class="pre">w</span></code> on a channel the user is on, which will refresh if the user is a bot or not for all users on the channel. If a server does not advertise BOT in its ISUPPORT line but still supports it (currently the case for unrealircd), you can manually set it by adding “BOT=B” (or whatever flag is used) to the isupport-default setting in your eggdrop.conf file.</p>
+<p>Returns: 1 if Eggdrop is currently tracking someone by that nickname marked as a bot by an IRC server; 0 otherwise.</p>
+</div></blockquote>
+</div>
 <div class="section" id="onchan-nickname-channel">
 <h3>onchan &lt;nickname&gt; [channel]<a class="headerlink" href="#onchan-nickname-channel" title="Permalink to this headline">¶</a></h3>
 <blockquote>
 <div><p>Returns: 1 if someone by that nickname is on the specified channel (or any channel if none is specified); 0 otherwise</p>
+<p>Module: irc</p>
+</div></blockquote>
+</div>
+<div class="section" id="monitor-command-nickname">
+<h3>monitor &lt;command&gt; [nickname]<a class="headerlink" href="#monitor-command-nickname" title="Permalink to this headline">¶</a></h3>
+<blockquote>
+<div><p>Description: interacts with the list of nicknames Eggdrop has asked the IRC server to track. valid commands are add, delete, list, online, offline, status, and clear. The ‘add’ command sends ‘nickname’ to the server to track. The ‘delete’ command removes ‘nickname’ from being tracked by the server (or returns an error if the nickname is not present). The ‘list’ command returns a list of all nicknames the IRC server is tracking on behalf of Eggdrop. The ‘online’ command returns a string of tracked nicknames that are currently online. The ‘offline’ command returns a list of tracked nicknames that are currently offline. The ‘status’ command returns a ‘1’ if ‘nickname’ is online or a 0 if ‘nickname’ is offline. The ‘clear’ command removes all nicknames from the list the server is monitoring.</p>
 <p>Module: irc</p>
 </div></blockquote>
 </div>
@@ -1813,9 +1837,9 @@ connections.</td>
 <div><p>Description: accepts connections from anyone; the optional mask is used to identify permitted nicknames/botnames. If the mask begins with ‘&#64;’, it is interpreted to be a mask of permitted hosts to accept connections from.</p>
 <p>Returns: port number or error message</p>
 </div></blockquote>
-<p>listen [ip] &lt;port&gt; script &lt;proc&gt; &lt;flag&gt;</p>
+<p>listen [ip] &lt;port&gt; script &lt;proc&gt; [flag]</p>
 <blockquote>
-<div><p>Description: accepts connections which are immediately routed to a proc. The proc is called with one parameter: the idx of the new connection. If the script type is used, flag must also be set. Flag may currently only be ‘pub’, which makes the bot allow anyone to connect and not perform an ident lookup.</p>
+<div><p>Description: accepts connections which are immediately routed to a proc. The proc is called with one parameter: the idx of the new connection. The optional flag parameter currently only accepts ‘pub’ as a value. By specifying ‘pub’ as a flag, Eggdrop will skip the ident check for the user regardless of settings in the config file. This will allow any user to attempt a connection, and result in Eggdrop using “<a class="reference external" href="mailto:-telnet!telnet&#37;&#52;&#48;host">-telnet!telnet<span>&#64;</span>host</a>” instead of “-telnet!&lt;ident&gt;&#64;host” as a hostmask to match against the user.</p>
 <p>Returns: port number or error message</p>
 </div></blockquote>
 <p>listen [ip] &lt;port&gt; off</p>
@@ -2480,7 +2504,7 @@ will be used. Types 30-39 set the host to ‘*’.</p>
 <div class="section" id="encrypt-key-string">
 <h3>encrypt &lt;key&gt; &lt;string&gt;<a class="headerlink" href="#encrypt-key-string" title="Permalink to this headline">¶</a></h3>
 <blockquote>
-<div><p>Returns: encrypted string (using the currently loaded encryption module), encoded into ASCII using base-64. As of v1.8.4, the default blowfish encryption module can use either the older ECB mode (currently used by default for compatibility reasons), or the more recent and more-secure CBC mode. You can explicitly request which encryption mode to use by prefixing the encryption key with either “ecb:” or “cbc:”, or by using the blowfish-use-mode setting in the config file. Note: the default encryption mode for this function is planned to transition from ECB to CBC in v1.9.1.</p>
+<div><p>Returns: encrypted string (using the currently loaded encryption module), encoded into ASCII using base-64. As of v1.8.4, the default blowfish encryption module can use either the older ECB mode (currently used by default for compatibility reasons), or the more recent and more-secure CBC mode. You can explicitly request which encryption mode to use by prefixing the encryption key with either “ecb:” or “cbc:”, or by using the blowfish-use-mode setting in the config file. Note: the default encryption mode for this function is planned to transition from ECB to CBC in v1.9.0.</p>
 <p>Module: encryption</p>
 </div></blockquote>
 </div>
@@ -3072,8 +3096,8 @@ proc mode_proc {nick uhost hand chan mode} { ... }
 <blockquote>
 <div><p>bind raw &lt;flags&gt; &lt;keyword&gt; &lt;proc&gt;</p>
 <p>procname &lt;from&gt; &lt;keyword&gt; &lt;text&gt;</p>
-<p>IMPORTANT: While not necessarily deprecated, this bind has been supplanted by the RAWT bind as of 1.9.1. You probably want to be using RAWT, not RAW.</p>
-<p>Description: previous versions of Eggdrop required a special compile option to enable this binding, but it’s now standard. The keyword is either a numeric, like “368”, or a keyword, such as “PRIVMSG”. “from” will be the server name or the source user (depending on the keyword); flags are ignored. The order of the arguments is identical to the order that the IRC server sends to the bot. The pre-processing only splits it apart enough to determine the keyword. If the proc returns 1, Eggdrop will not process the line any further (this could cause unexpected behavior in some cases). The RAW bind does not support the IRCv3 message-tags capability, please see RAWT for more information.</p>
+<p>IMPORTANT: While not necessarily deprecated, this bind has been supplanted by the RAWT bind as of 1.9.0. You probably want to be using RAWT, not RAW.</p>
+<p>Description: previous versions of Eggdrop required a special compile option to enable this binding, but it’s now standard. The keyword is either a numeric, like “368”, or a keyword, such as “PRIVMSG”. “from” will be the server name or the source user (depending on the keyword); flags are ignored. The order of the arguments is identical to the order that the IRC server sends to the bot. The pre-processing only splits it apart enough to determine the keyword. If the proc returns 1, Eggdrop will not process the line any further (this could cause unexpected behavior in some cases), although RAWT binds are processed before RAW binds (and thus, a RAW bind cannot block a RAWT bind). The RAW bind does not support the IRCv3 message-tags capability, please see RAWT for more information.</p>
 <p>Module: server</p>
 </div></blockquote>
 <ol class="arabic simple" start="18">
@@ -3414,14 +3438,14 @@ fail-server       - called when an IRC server fails to respond
 <blockquote>
 <div><p>bind rawt &lt;flags&gt; &lt;keyword&gt; &lt;proc&gt;</p>
 <p>procname &lt;from&gt; &lt;keyword&gt; &lt;text&gt; &lt;tag&gt;</p>
-<p>Description: similar to the RAW bind, but allows an extra field for the IRCv3 message-tags capability. The keyword is either a numeric, like “368”, or a keyword, such as “PRIVMSG” or “TAGMSG”. “from” will be the server name or the source user (depending on the keyword); flags are ignored. “tag” will be the contents, if any, of the entire tag message prefixed to the server message in a dict format, such as “msgid 890157217279768 aaa bbb”. The order of the arguments is identical to the order that the IRC server sends to the bot. If the proc returns 1, Eggdrop will not process the line any further (this could cause unexpected behavior in some cases). As of 1.9.1, it is recommended to use the RAWT bind instead of the RAW bind.</p>
+<p>Description: similar to the RAW bind, but allows an extra field for the IRCv3 message-tags capability. The keyword is either a numeric, like “368”, or a keyword, such as “PRIVMSG” or “TAGMSG”. “from” will be the server name or the source user (depending on the keyword); flags are ignored. “tag” will be the contents, if any, of the entire tag message prefixed to the server message in a dict format, such as “msgid 890157217279768 aaa bbb”. The order of the arguments is identical to the order that the IRC server sends to the bot. If the proc returns 1, Eggdrop will not process the line any further, to include not being processed by a RAW bind (this could cause unexpected behavior in some cases). As of 1.9.0, it is recommended to use the RAWT bind instead of the RAW bind.</p>
 </div></blockquote>
 <ol class="arabic simple" start="53">
 <li>ACCOUNT (stackable)</li>
 </ol>
 <blockquote>
 <div><p>bind account &lt;flags&gt; &lt;mask&gt; &lt;proc&gt;</p>
-<p>procname &lt;nick&gt; &lt;user&gt; &lt;hand&gt; &lt;account&gt;</p>
+<p>procname &lt;nick&gt; &lt;user&gt; &lt;hand&gt; &lt;chan&gt; &lt;account&gt;</p>
 <p>Description: triggered when Eggdrop receives an ACCOUNT message. The mask for the bind is in the format “#channel <a class="reference external" href="mailto:nick!user&#37;&#52;&#48;hostname&#46;com">nick!user<span>&#64;</span>hostname<span>&#46;</span>com</a> account” where channel is the channel the user was found on when the bind was triggered, the hostmask is the user’s hostmask, and account is the account name the user is logging in to, or “” for logging out. The mask argument can accept wildcards. For the proc, nick is the nickname of the user logging into/out of an account, user is the <a class="reference external" href="mailto:user&#37;&#52;&#48;host&#46;com">user<span>&#64;</span>host<span>&#46;</span>com</a> hostmask, hand is the handle of the user (or * if none), and account is the name of the account the user logged in to (or “” if the user logged out of an account).</p>
 </div></blockquote>
 <ol class="arabic simple" start="54">
@@ -3432,6 +3456,15 @@ fail-server       - called when an IRC server fails to respond
 <p>procname &lt;key&gt; &lt;isset&gt; &lt;value&gt;</p>
 <p>Description: triggered when the value of an isupport key changes. The mask is matched against the isupport key. If the value is not set, isset is 0 and the value is the empty string. Because the empty string is valid value, use isset to distinguish empty string values from a key being unset. The bind is called before the change is processed, so [isupport isset]/[isupport get] return the old value. A return value other than 0 makes Eggdrop ignore the change and revert to the old value. After a disconnect from the server, all isupport values are reset to default, but $::server will be empty, so that case can be caught and ignored.</p>
 <p>Module: server</p>
+</div></blockquote>
+<ol class="arabic simple" start="55">
+<li>MONITOR (stackable)</li>
+</ol>
+<blockquote>
+<div><p>bind monitor &lt;flags&gt; &lt;nick&gt; &lt;proc&gt;</p>
+<p>procname &lt;nick&gt; &lt;online&gt;</p>
+<p>Description: triggered when a server sends a MONITOR status change of a target either coming online or disconnecting (not all servers support MONITOR). flags are ignored, nick is the nickname of the intended MONITOR target and can be used with wildcards. For the proc, nick is the nickname connecting or disconnecting, and online is ‘0’ if the nickname disconnected, or ‘1’ if the nickname connected.</p>
+<p>Module: irc</p>
 </div></blockquote>
 </div>
 <div class="section" id="return-values">
@@ -3632,7 +3665,7 @@ words) (This char only works in binds, not in regular matching)</td>
           
     <div class="footer" role="contentinfo">
         &#169; Copyright 2021, Eggheads.
-      Last updated on May 31, 2021.
+      Last updated on Nov 27, 2021.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.5.
     </div>
         </div>
