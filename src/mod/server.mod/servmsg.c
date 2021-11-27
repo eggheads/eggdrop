@@ -878,7 +878,7 @@ static int got432(char *from, char *msg)
   else {
     putlog(LOG_MISC, "*", IRC_BADBOTNICK);
     if (!strcmp(erroneous, origbotname)) {
-      strlcpy(nick, altnick, sizeof nick);
+      strlcpy(nick, get_altbotnick(), sizeof nick);
     } else {
       make_rand_str_from_chars(nick, sizeof nick - 1, CHARSET_LOWER_ALPHA);
     }
