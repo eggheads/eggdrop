@@ -1,5 +1,5 @@
 IRCv3 support
-Last revised: Jun 20, 2021
+Last revised: November 27, 2021
 
 =============
 IRCv3 support
@@ -26,16 +26,19 @@ Supported CAP capabilities
 
 The following capabilites are supported by Eggdrop:
 
- * CAP requests
- * SASL 3.1
+ * CAP/CAP 302 requests
+ * SASL 3.2
  * account-notify
  * account-tag
  * away-notify
+ * BOT 005 mode
+ * cap-notify
  * chghost
  * echo-message
  * extended-join
  * invite-notify
  * message-tags
+ * Monitor
  * server-time
  * setname
  * +typing
