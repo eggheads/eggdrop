@@ -1704,8 +1704,8 @@ char *traced_natip(ClientData cd, Tcl_Interp *irp, EGG_CONST char *name1,
     r = inet_pton(AF_INET, value, &ia);
     if (!r) {
       if (!online_since)
-        fatal("ERROR: nat-ip was not a valid IPv4 address", 0);
-      return "nat-ip was not a valid IPv4 address";
+        fatal("ERROR: nat-ip is not a valid IPv4 address", 0);
+      return "nat-ip is not a valid IPv4 address";
     }
     if (r < 0) {
       if (!online_since)
