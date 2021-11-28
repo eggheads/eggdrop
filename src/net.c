@@ -797,7 +797,7 @@ int getdccfamilyaddr(sockname_t *addr, char *s, size_t l, int restrict_af)
         strlcpy(s, nat_ip_string, l);
       else {
         memcpy(&ip, r->addr.s6.sin6_addr.s6_addr + 12, sizeof ip);
-        snprintf(s, l, "%u", ntohl(ip));
+        snprintf(s, l, "%" PRIu32, ntohl(ip));
       }
     } else
       inet_ntop(AF_INET6, &r->addr.s6.sin6_addr, s, l);
@@ -807,7 +807,7 @@ int getdccfamilyaddr(sockname_t *addr, char *s, size_t l, int restrict_af)
     if (*nat_ip_string)
       strlcpy(s, nat_ip_string, l);
     else
-      snprintf(s, l, "%u", ntohl(r->addr.s4.sin_addr.s_addr));
+      snprintf(s, l, "%" PRIu32, ntohl(r->addr.s4.sin_addr.s_addr));
   }
   return 1;
 }
@@ -1713,7 +1713,7 @@ char *traced_natip(ClientData cd, Tcl_Interp *irp, EGG_CONST char *name1,
       putlog(LOG_MISC, "*", "ERROR: inet_pton(): nat-ip %s", value);
       return strerror(errno);
     }
-    snprintf(nat_ip_string, sizeof nat_ip_string, "%u", ntohl(ia.s_addr));
+    snprintf(nat_ip_string, sizeof nat_ip_string, "%" PRIu32, ntohl(ia.s_addr));
   } else
     *nat_ip_string = '\0';
   return NULL;
