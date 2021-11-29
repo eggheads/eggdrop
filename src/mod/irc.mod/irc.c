@@ -1049,8 +1049,9 @@ static void irc_report(int idx, int details)
 {
   struct flag_record fr = { FR_GLOBAL | FR_CHAN, 0, 0, 0, 0, 0 };
   char ch[1024], q[256], *p;
-  int k, l;
+  int k, l, extjoin, acctnotify;
   struct chanset_t *chan;
+  struct capability *current;
 
   strcpy(q, "Channels: ");
   k = 10;
@@ -1084,17 +1085,29 @@ static void irc_report(int idx, int details)
     dprintf(idx, "    %s\n", q);
   }
   /* List status of account tracking. For 100% accuracy, this requires
-   * WHOX ability (354 messages) and the extended-join and account_notify
+   * WHOX ability (354 messages) and the extended-join and account-notify
    * capabilities to be enabled.
    */
-  if (use_354 && extended_join && account_notify) {
+  /* Check if CAPs are enabled */
+  current = cap;
+  while (current != NULL) {
+    if (!strcasecmp("extended-join", current->name)) {
+      extjoin = current->enabled ? 1 : 0;
+    }
+    if (!strcasecmp("account-notify", current->name)) {
+      acctnotify = current->enabled ? 1 : 0;
+    }
+    current = current->next;
+  }
+
+  if (use_354 && extjoin && acctnotify) {
     dprintf(idx, "    Account tracking: Enabled\n");
   } else {
     dprintf(idx, "    Account tracking: Disabled\n"
                  "      (Missing capabilities:%s%s%s)\n",
                       use_354 ? "" : " use-354",
-                      extended_join ? "" : " extended-join",
-                      account_notify ? "" : " account-notify");
+                      extjoin ? "" : " extended-join",
+                      acctnotify ? "" : " account-notify");
   }
 }
 

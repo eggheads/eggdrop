@@ -37,8 +37,8 @@ static time_t last_ctcp = (time_t) 0L;
 static int multistatus = 0, count_ctcp = 0;
 static char altnick_char = 0;
 struct capability *cap;
-int ncapesc, account_notify = 0, extended_join = 0;
-Tcl_Obj **ncapesv, *ncapeslist;
+int account_notify, extended_join;
+Tcl_Obj *ncapeslist;
 
 /* We try to change to a preferred unique nick here. We always first try the
  * specified alternate nick. If that fails, we repeatedly modify the nick

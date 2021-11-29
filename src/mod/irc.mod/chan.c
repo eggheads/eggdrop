@@ -2031,16 +2031,26 @@ static int gotjoin(char *from, char *channame)
 {
   char *nick, *p, buf[UHOSTLEN], account[NICKMAX], *uhost = buf, *chname;
   char *ch_dname = NULL;
+  int extjoin = 0;
   struct chanset_t *chan;
   memberlist *m;
   masklist *b;
+  struct capability *current;
   struct userrec *u;
   struct flag_record fr = { FR_GLOBAL | FR_CHAN, 0, 0, 0, 0, 0 };
 
+  /* Check if extended-join CAP is enabled */
+      current = cap;
+      while (current != NULL) {
+        if (!strcasecmp("extended-join", current->name)) {
+          extjoin = current->enabled ? 1 : 0;
+        }
+        current = current->next;
+      }
   strlcpy(uhost, from, sizeof buf);
   nick = splitnick(&uhost);
   chname = newsplit(&channame);
-  if (!extended_join) {
+  if (!extjoin) {
     fixcolon(chname);
   }
   chan = findchan_by_dname(chname);
@@ -2155,7 +2165,7 @@ static int gotjoin(char *from, char *channame)
         strlcpy(m->userhost, uhost, sizeof m->userhost);
         m->user = u;
         m->flags |= STOPWHO;
-        if (extended_join) {
+        if (extjoin) {
           strlcpy(account, newsplit(&channame), sizeof account);
           if (strcmp(account, "*")) {
             if ((m = ismember(chan, nick))) {
