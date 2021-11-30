@@ -109,8 +109,6 @@ extern struct dcc_table DCC_CHAT, DCC_BOT, DCC_LOST, DCC_SCRIPT, DCC_BOT_NEW,
                         DCC_IDENTWAIT, DCC_DNSWAIT;
 #endif
 
-#define iptolong(a) (0xffffffff & (long) (htonl((unsigned long) a)))
-
 #ifdef IPV6
 # define setsnport(s, p) do {                                           \
   if ((s).family == AF_INET6)                                           \

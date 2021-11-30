@@ -345,7 +345,7 @@ Function global_table[] = {
   (Function) & tls_vfyclients,    /* int                                 */
   (Function) & tls_vfydcc,        /* int                                 */
 #else
-  (Function) 0,                   /* was natip -- use getmyip() instead  */
+  (Function) 0,                   /* was natip                           */
   (Function) 0,                   /* was myip -- use getvhost() instead  */
 #endif
   (Function) origbotname,         /* char *                              */

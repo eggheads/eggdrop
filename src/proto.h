@@ -271,7 +271,6 @@ int crypto_verify(const char *, const char *);
 
 /* net.c */
 IP my_atoul(char *);
-unsigned long iptolong(IP);
 void setsock(int, int);
 int allocsock(int, int);
 int alloctclsock(int, int, Tcl_FileProc *, ClientData);
