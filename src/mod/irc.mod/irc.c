@@ -1090,12 +1090,14 @@ static void irc_report(int idx, int details)
    */
   /* Check if CAPs are enabled */
   current = cap;
+  extjoin = 0;
+  acctnotify = 0;
   while (current != NULL) {
     if (!strcasecmp("extended-join", current->name)) {
-      extjoin = current->enabled ? 1 : 0;
+      extjoin = 1;
     }
     if (!strcasecmp("account-notify", current->name)) {
-      acctnotify = current->enabled ? 1 : 0;
+      acctnotify = 1;
     }
     current = current->next;
   }
