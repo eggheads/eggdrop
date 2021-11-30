@@ -724,8 +724,21 @@ static void cmd_channel(struct userrec *u, int idx, char *par)
 {
   char handle[HANDLEN + 1], s[UHOSTLEN], s1[UHOSTLEN], atrflag, chanflag;
   struct chanset_t *chan;
+  struct capability *current;
   memberlist *m;
-  int maxnicklen, maxhandlen;
+  int maxnicklen, maxhandlen, extjoin, acctnotify;
+
+  /* Check if CAPs are enabled */
+  current = cap;
+  while (current != NULL) {
+    if (!strcasecmp("extended-join", current->name)) {
+      extjoin = current->enabled ? 1 : 0;
+    }
+    if (!strcasecmp("account-notify", current->name)) {
+      acctnotify = current->enabled ? 1 : 0;
+    }
+    current = current->next;
+  }
 
   chan = get_channel(idx, par);
   if (!chan || !has_oporhalfop(idx, chan))
@@ -757,7 +770,7 @@ static void cmd_channel(struct userrec *u, int idx, char *par)
       maxhandlen = 9;
 
     dprintf(idx, "(n = owner, m = master, o = op, d = deop, b = bot)\n");
-    if (use_354 && extended_join && account_notify) {
+    if (use_354 && extjoin && acctnotify) {
       dprintf(idx, " %-*s %-*s %-*s  %-6s %-5s %s\n", maxnicklen, "NICKNAME",
                 maxhandlen, "HANDLE", maxnicklen, "ACCOUNT", "JOIN", "IDLE",
                 "USER@HOST");
@@ -858,7 +871,7 @@ static void cmd_channel(struct userrec *u, int idx, char *par)
       else
         chanflag = ' ';
       if (chan_issplit(m)) {
-        if (use_354 && extended_join && account_notify) {
+        if (use_354 && extjoin && acctnotify) {
           dprintf(idx, "%c%-*s %-*s %-*s %-6s %-5s <- netsplit, %lus\n",
                 chanflag, maxnicklen, m->nick, maxhandlen, handle, maxnicklen,
                 m->account, s, atrflag, now- (m->split));
@@ -868,7 +881,7 @@ static void cmd_channel(struct userrec *u, int idx, char *par)
                 now- (m->split));
         }
       } else if (!rfc_casecmp(m->nick, botname)) {
-        if (use_354 && extended_join && account_notify) {
+        if (use_354 && extjoin && acctnotify) {
           dprintf(idx, "%c%-*s %-*s %-*s %-6s %c     <- it's me!\n", chanflag,
                 maxnicklen, m->nick, maxhandlen, handle, maxnicklen, m->account,
                 s, atrflag);
@@ -891,7 +904,7 @@ static void cmd_channel(struct userrec *u, int idx, char *par)
         } else {
           egg_snprintf(s1+strlen(s1), ((sizeof s1)-strlen(s1)), "       ");
         }
-        if (use_354 && extended_join && account_notify) {
+        if (use_354 && extjoin && acctnotify) {
           dprintf(idx, "%c%-*s %-*s %-*s %-6s %c %s  %s\n", chanflag, maxnicklen,
                 m->nick, maxhandlen, handle, maxnicklen, m->account, s, atrflag,
                 s1, m->userhost);
