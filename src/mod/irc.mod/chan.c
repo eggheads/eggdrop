@@ -2040,13 +2040,13 @@ static int gotjoin(char *from, char *channame)
   struct flag_record fr = { FR_GLOBAL | FR_CHAN, 0, 0, 0, 0, 0 };
 
   /* Check if extended-join CAP is enabled */
-      current = cap;
-      while (current != NULL) {
-        if (!strcasecmp("extended-join", current->name)) {
-          extjoin = current->enabled ? 1 : 0;
-        }
-        current = current->next;
-      }
+  current = cap;
+  while (current != NULL) {
+    if (!strcasecmp("extended-join", current->name)) {
+      extjoin = current->enabled ? 1 : 0;
+    }
+    current = current->next;
+  }
   strlcpy(uhost, from, sizeof buf);
   nick = splitnick(&uhost);
   chname = newsplit(&channame);
