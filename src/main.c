@@ -517,7 +517,7 @@ static void show_ver() {
   printf("TLS, ");
 #endif
 #ifdef EGG_TDNS
-  printf("Threaded DNS core (beta), ");
+  printf("Threaded DNS core, ");
 #endif
   printf("handlen=%d\n", HANDLEN);
   bg_send_quit(BG_ABORT);
