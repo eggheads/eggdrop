@@ -343,7 +343,7 @@ static void dcc_bot_digest(int idx, char *challenge, char *password)
 static void dcc_bot_new(int idx, char *buf, int x)
 {
   struct userrec *u = get_user_by_handle(userlist, dcc[idx].nick);
-  char *code;
+  char *code, *pass = NULL;
 
   if (raw_log) {
     if (!strncmp(buf, "s ", 2))
@@ -361,8 +361,10 @@ static void dcc_bot_new(int idx, char *buf, int x)
     /* We entered the wrong password */
     putlog(LOG_BOTS, "*", DCC_BADPASS, dcc[idx].nick);
   else if (!strcasecmp(code, "passreq")) {
-    char *pass = get_user(&USERENTRY_PASS, u);
-
+    if (encrypt_pass2)
+      pass = get_user(&USERENTRY_PASS2, u);
+    if (!pass && encrypt_pass)
+      pass = get_user(&USERENTRY_PASS, u);
     if (!pass || !strcmp(pass, "-")) {
       putlog(LOG_BOTS, "*", DCC_PASSREQ, dcc[idx].nick);
       dprintf(idx, "-\n");
