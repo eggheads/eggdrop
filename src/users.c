@@ -482,9 +482,8 @@ static void tell_user(int idx, struct userrec *u)
   }
   egg_snprintf(format, sizeof format, "%%-%us %%-5s%%5d %%-15s %%s (%%s)\n",
                HANDLEN);
-  if ((get_user(&USERENTRY_PASS, u)) || (get_user(&USERENTRY_PASS2, u))) {
+  if ((encrypt_pass2 && get_user(&USERENTRY_PASS2, u)) || (encrypt_pass && get_user(&USERENTRY_PASS, u)))
     p = 1;
-  }
   dprintf(idx, format, u->handle, p ? "yes" : "no", n, s, s1,
           (li && li->lastonplace) ? li->lastonplace : "nowhere");
   /* channel flags? */
