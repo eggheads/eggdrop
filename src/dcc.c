@@ -368,7 +368,8 @@ static void dcc_bot_new(int idx, char *buf, int x)
         pass = pass2;
         if (encrypt_pass)
           set_user(&USERENTRY_PASS, u, pass);
-      }
+      } else if (strcmp(pass2, pass) && encrypt_pass2)
+        pass = pass2;
     } else if (pass && encrypt_pass2)
         set_user(&USERENTRY_PASS2, u, pass);
     if (!pass || !strcmp(pass, "-")) {
