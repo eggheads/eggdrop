@@ -74,7 +74,7 @@ In Eggdrop v1.8, Eggdrop bots would automatically attempt to upgrade any botnet 
 Tcl Commands
 ************
 
-A lot of additions and changes have been made to Tcl commands. Please look at doc/tcl-commands.doc to see them.
+A lot of backwards-compatible additions and changes have been made to Tcl commands. Please look at doc/tcl-commands.doc to see them.
 
 Documentation
 *************

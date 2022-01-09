@@ -52,6 +52,8 @@ Eggdrop v1.9.2:
       CAP 302 values, if any, associated with each capability
 
   Module changes:
+    - Fixed bug in PBKDF2 that caused PBKDF2-only environments to not store
+      hashes properly, resulting in 'bad password' errors after relinking
     - Deprecated the DNS module (functionality has been moved core Eggdrop
       code). Eggdrop now natively handles asynchronous DNS (which was the
       purpose of the DNS module), so the DNS module is no longer needed
