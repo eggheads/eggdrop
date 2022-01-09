@@ -726,7 +726,7 @@ static void cmd_channel(struct userrec *u, int idx, char *par)
   struct chanset_t *chan;
   struct capability *current;
   memberlist *m;
-  int maxnicklen, maxhandlen, extjoin, acctnotify;
+  int maxnicklen, maxhandlen, extjoin = 0, acctnotify = 0;
 
   /* Check if CAPs are enabled */
   current = cap;
