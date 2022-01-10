@@ -1356,8 +1356,11 @@ static void dcc_telnet_hostresolved(int i)
     if (dcc[j].sock >= 0) {
       sockname_t name;
       name.addrlen = sizeof(name.addr);
-      getsockname(dcc[i].sock, &name.addr.sa, &name.addrlen);
-      bind(dcc[j].sock, &name.addr.sa, name.addrlen);
+      if (getsockname(dcc[i].sock, &name.addr.sa, &name.addrlen) < 0)
+        debug2("dcc: dcc_telnet_hostresolved(): getsockname() socket %i error %s", dcc[i].sock, strerror(errno));
+      setsnport(name, 0);
+      if (bind(dcc[j].sock, &name.addr.sa, name.addrlen) < 0)
+        debug2("dcc: dcc_telnet_hostresolved(): bind() socket %i error %s", dcc[j].sock, strerror(errno));
       setsnport(dcc[j].sockname, 113);
       if (connect(dcc[j].sock, &dcc[j].sockname.addr.sa,
           dcc[j].sockname.addrlen) < 0 && (errno != EINPROGRESS)) {
