@@ -131,6 +131,8 @@ COMMAND LINE
 
   The options available are:
 
+    -n: Don't background, send all log entries to console.
+    
     -t: Don't background, use terminal. This is just like -n, except that
 
         instead of seeing log entries, your console will simulate a DCC
