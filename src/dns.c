@@ -504,8 +504,10 @@ void *thread_dns_hostbyip(void *arg)
 #endif
       inet_ntop(AF_INET, &addr->addr.s4.sin_addr.s_addr, dtn->host, sizeof dtn->host);
   }
+  pthread_mutex_lock(&dtn->mutex);
   dtn->ok = !i;
   close(dtn->fildes[1]);
+  pthread_mutex_unlock(&dtn->mutex);
   return NULL;
 }
 
