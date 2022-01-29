@@ -143,12 +143,11 @@ Command Line
 
     The options available are:
 
-      -t: Don't background, use terminal. This is just like -n, except that
-           instead of seeing log entries, your console will simulate a DCC
-           chat with the bot.
+      -t: Don't background, use terminal. Your console will dropp into an
+           interactive partyline session, simialar to a DCC chat with the bot.
+           This is useful for troubleshooting connection issues with the bot.
 
-      -c: Don't background, show channel info. This is just like -n, except
-           that instead of seeing log entries, every 10 seconds your screen
+      -c: Don't background, show channel info. Every 10 seconds your screen
            will clear and you will see the current channel status, sort of
            like "top".
 
