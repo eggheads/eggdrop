@@ -289,7 +289,6 @@ void tell_verbose_status(int idx)
   dprintf(idx, "I am %s, running %s: %d user%s (mem: %uk).\n",
           botnetnick, ver, i, i == 1 ? "" : "s",
           (int) (expected_memory() / 1024));
-
   s[0] = 0;
   if (now2 > 86400) {
     /* days */
@@ -324,14 +323,13 @@ void tell_verbose_status(int idx)
   }
   if (cache_hit + cache_miss) {      /* 2019, still can't divide by zero */
     cache_total = 100.0 * (cache_hit) / (cache_hit + cache_miss);
-  } else cache_total = 0;
-    dprintf(idx, "%s %s (%s) - %s - %s: %4.1f%%\n", MISC_ONLINEFOR,
-            s, s1, s2, MISC_CACHEHIT, cache_total);
-
+  } else
+    cache_total = 0;
+  dprintf(idx, "%s %s (%s) - %s - %s: %4.1f%%\n", MISC_ONLINEFOR, s, s1, s2,
+          MISC_CACHEHIT, cache_total);
   dprintf(idx, "Configured with: " EGG_AC_ARGS "\n");
   if (admin[0])
     dprintf(idx, "Admin: %s\n", admin);
-
   dprintf(idx, "Config file: %s\n", configfile);
   sysrel = egg_uname();
   if (*sysrel)
