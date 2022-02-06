@@ -86,8 +86,8 @@
 /* 40 - 43 */
 #define H_out (*(p_tcl_bind_list *)(server_funcs[40]))
 #define net_type_int (*(int *)(server_funcs[41]))
-#define cap (*(capability_t **)(server_funcs[42]))
-#define H_account (*(p_tcl_bind_list *)(server_funcs[43]))
+#define H_account (*(p_tcl_bind_list *)(server_funcs[42]))
+#define cap (*(capability_t **)(server_funcs[43]))
 /* 44 - 47 */
 #define extended_join (*(int *)(server_funcs[44]))
 #define account_notify (*(int *)(server_funcs[45]))
