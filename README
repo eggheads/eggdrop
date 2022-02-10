@@ -131,7 +131,7 @@ COMMAND LINE
 
   The options available are:
 
-    -t: Don't background, use terminal. Your console will dropp into an
+    -t: Don't background, use terminal. Your console will drop into an
 
         interactive partyline session, simialar to a DCC chat with the
         bot. This is useful for troubleshooting connection issues with
