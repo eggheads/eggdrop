@@ -38,7 +38,7 @@ Getting the source
 History
 ~~~~~~~
 
-There are two major versions of Eggdrop currently in use- 1.9.x and 1.8.x. The 1.6 series, while still popular, is no longer supported by the developers.
+The current supported version of Eggdrop is the 1.9.x tree. The 1.8 and 1.6 series, while still popular, are no longer supported by the developers.
 
 The most current version of Eggdrop, and the one appropriate for most users, is the current 1.9 series. It added many features such as SASL support, multi-ip listening, and a new password hashing module. It is the most complete, feature-rich, and functional version of Eggdrop. If you're just starting out with Eggdrop, you should use 1.9.1
 
@@ -60,7 +60,7 @@ Installation
 
 Installing Eggdrop is a relatively simple process provided your shell has the required tools for successful compilation. On most commercial shell accounts which allow Eggdrop bots you won't have any problems with installation, but on some private boxes or a shell on your ISP you may experience errors during compilation.
 
-Below is a step by step guide to the installation process. These instructions apply to 1.8 bots. It assumes you will be installing eggdrop-1.9.1.tar.gz, so just change the numbers if you are installing another version.
+Below is a step by step guide to the installation process. These instructions apply to 1.9 bots. It assumes you will be installing eggdrop-1.9.1.tar.gz, so just change the numbers if you are installing another version.
 
 1. Put the Eggdrop source on your shell using one of the specified download locations, either by downloading the `eggdrop-1.9.1.tar.gz <https://ftp.eggheads.org/pub/eggdrop/source/1.9/eggdrop-1.9.1.tar.gz>`_ file to your system then uploading it to the shell via FTP, or downloading it directly to the shell via the shell's FTP client, git, wget, or curl. You don't need to put the .tar.gz file in its own directory (it'll be done automatically in the next step).
 
