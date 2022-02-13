@@ -58,4 +58,4 @@ Eggdrop Features
 
 Copyright (C) 1997 Robey Pointer
 
-Copyright (C) 2000 - 2021 Eggheads Development Team
+Copyright (C) 2000 - 2022 Eggheads Development Team

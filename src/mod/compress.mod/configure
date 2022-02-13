@@ -12,7 +12,7 @@
 # This configure script is free software; the Free Software Foundation
 # gives unlimited permission to copy, distribute and modify it.
 #
-# Copyright (C) 1999 - 2021 Eggheads Development Team
+# Copyright (C) 1999 - 2022 Eggheads Development Team
 ## -------------------- ##
 ## M4sh Initialization. ##
 ## -------------------- ##
@@ -1390,7 +1390,7 @@ Copyright (C) 2012 Free Software Foundation, Inc.
 This configure script is free software; the Free Software Foundation
 gives unlimited permission to copy, distribute and modify it.
 
-Copyright (C) 1999 - 2021 Eggheads Development Team
+Copyright (C) 1999 - 2022 Eggheads Development Team
 _ACEOF
   exit
 fi
