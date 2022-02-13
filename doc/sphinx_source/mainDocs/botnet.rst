@@ -315,4 +315,4 @@ Making bots share user records
       |-+beldin
       `-+Lameshare
 
-Copyright (C) 1999 - 2021 Eggheads Development Team
+Copyright (C) 1999 - 2022 Eggheads Development Team

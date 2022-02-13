@@ -18,7 +18,7 @@
  */
 
 /*
- * Copyright (C) 2020 - 2021 Eggheads Development Team
+ * Copyright (C) 2020 - 2022 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License

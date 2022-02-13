@@ -465,4 +465,4 @@ What to do with a module?
    have a nice descriptive text (modulename.desc) to describe it, and make sure
    to mention in your text file which version Eggdrop the module is written for.
 
-Copyright (C) 1999 - 2021 Eggheads Development Team
+Copyright (C) 1999 - 2022 Eggheads Development Team
