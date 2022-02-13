@@ -41,7 +41,7 @@ About Eggdrop
   be fixed and features to be added (if the users demand  them, and they
   make actually sense). In fact, it existed for several years as v0.7 -
   v0.9 before finally going 1.0. This version of Eggdrop is part of the
-  1.8 tree. A valiant effort has been made to chase down and destroy bugs.
+  1.9 tree. A valiant effort has been made to chase down and destroy bugs.
 
   To use Eggdrop, you need:
 
@@ -54,11 +54,5 @@ About Eggdrop
       unpacked.
 
     * Tcl -- Eggdrop cannot compile without Tcl installed on your shell.
-
-  Before starting, ask yourself if you really need a bot. Most IRC servers
-  allow only a handful of bots, and some forbid them outright. The reason? Too
-  many people run bots as "toys" or as a means of destruction. If you want to
-  use Eggdrop for destructive purposes, go ahead and erase this directory now.
-  It's almost impossible to do what you want with this bot.
 
   Copyright (C) 1999 - 2021 Eggheads Development Team
