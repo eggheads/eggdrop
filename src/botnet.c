@@ -586,7 +586,7 @@ void tell_bottree(int idx, int showver)
 {
   char s[161];
   char c = '-';
-  tand_t *last[20], *this, *bot, *bot2 = NULL;
+  tand_t *last[20], *this, *bot, *bot2 = NULL, *lastbot = NULL;
   int lev = 0, more = 1, mark[20], ok, cnt, i, imark;
   char work[1024];
   int tothops = 0;
@@ -718,6 +718,7 @@ void tell_bottree(int idx, int showver)
               }
             }
           }
+          lastbot = bot;
         }
         if (cnt) {
           imark = 0;
@@ -730,9 +731,9 @@ void tell_bottree(int idx, int showver)
           }
           more = 1;
           if (cnt > 1)
-            dprintf(idx, "%s  |%s%s\n", work, bot->ssl ? "=" : "-", s);
+            dprintf(idx, "%s  |%s%s\n", work, lastbot->ssl ? "=" : "-", s);
           else
-            dprintf(idx, "%s  `%s%s\n", work, bot->ssl ? "=" : "-", s);
+            dprintf(idx, "%s  `%s%s\n", work, lastbot->ssl ? "=" : "-", s);
           this = bot2;
           work[0] = 0;
           if (cnt > 1)
