@@ -750,8 +750,8 @@ void tell_bottree(int idx, int showver)
             more = 1;
             this = last[lev];
           }
+          dprintf(idx, "------------------------------------------------\n");
         }
-        dprintf(idx, "------------------------------------------------\n");
       }
     }
   }
