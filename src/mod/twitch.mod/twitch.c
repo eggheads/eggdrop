@@ -828,6 +828,7 @@ static char *twitch_close()
   rem_builtins(H_rawt, twitch_rawt);
   rem_tcl_commands(mytcl);
   rem_tcl_ints(my_tcl_ints);
+  rem_tcl_strings(my_tcl_strings);
   del_bind_table(H_ccht);
   del_bind_table(H_cmsg);
   del_bind_table(H_htgt);
