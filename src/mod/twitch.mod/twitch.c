@@ -877,6 +877,8 @@ static Function twitch_table[] = {
 
 char *twitch_start(Function *global_funcs)
 {
+  const char *value;
+
   /* Assign the core function table. After this point you use all normal
    * functions defined in src/mod/modules.h
    */
@@ -911,7 +913,7 @@ char *twitch_start(Function *global_funcs)
  */
   if (net_type_int != NETT_TWITCH) {
     fatal("ERROR: ATTEMPTED TO LOAD TWITCH MODULE WITH INCORRECT NET-TYPE SET\n"
-          "  Please check net-type in config and try again", 0);
+          "  Please check that net-type is set to twitch in config before loadmodule twitch and try again", 0);
   }
 
   H_ccht = add_bind_table("ccht", HT_STACKABLE, twitch_2char);
@@ -927,6 +929,9 @@ char *twitch_start(Function *global_funcs)
   Tcl_SetVar(interp, "cap-request",
         "twitch.tv/commands twitch.tv/membership twitch.tv/tags", 0);
   /* keep-nick causes ISONs to be sent, which are not supported */
+  if ((value = Tcl_GetVar2(interp, "keep-nick", NULL, TCL_GLOBAL_ONLY)) && strcmp(value, "0")) {
+    putlog(LOG_MISC, "*", "Twitch: keep-nick is forced to be 0 when twitch.mod is loaded");
+  }
   Tcl_SetVar2(interp, "keep-nick", NULL, "0", TCL_GLOBAL_ONLY);
   Tcl_TraceVar(interp, "keep-nick", TCL_GLOBAL_ONLY|TCL_TRACE_WRITES|TCL_TRACE_UNSETS, traced_keepnick, NULL);
 
