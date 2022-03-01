@@ -2021,7 +2021,7 @@ static int server_expmem()
 
 static void server_report(int idx, int details)
 {
-  char s1[64], s[128], buf[128];
+  char s1[64], s[128], buf[CAPMAX+2];
   struct capability *current;
   int servidx;
 
