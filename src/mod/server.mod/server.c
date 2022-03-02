@@ -2021,11 +2021,9 @@ static int server_expmem()
 
 static void server_report(int idx, int details)
 {
-  char s1[64], s[128], capbuf[256];
-  size_t written;
+  char s1[64], s[128], buf[CAPMAX+2];
   struct capability *current;
   int servidx;
-  int havecap;
 
   if (server_online) {
     dprintf(idx, "    Online as: %s%s%s (%s)\n", botname, botuserhost[0] ?
@@ -2068,21 +2066,17 @@ static void server_report(int idx, int details)
   if (hq.tot)
     dprintf(idx, "    %s %d%% (%d msgs)\n", IRC_HELPQUEUE,
             (int) ((float) (hq.tot * 100.0) / (float) maxqmsg), (int) hq.tot);
-  for (havecap = 0, written = 0, current = cap; current; current = current->next) {
+  current = cap;
+  buf[0] = 0;
+  while (current != NULL) {
     if (current->enabled) {
-      havecap = 1;
-      if (sizeof capbuf - written + strlen(current->name) + 1 > sizeof capbuf) {
-        dprintf(idx, "    Active CAP negotiations:%s\n", capbuf);
-        written = 0;
-      }
-      written += snprintf(capbuf + written, sizeof capbuf - written, " %s", current->name);
+      strncat(buf, current->name, (sizeof buf - strlen(buf) - 1));
+      strncat(buf, " ", (sizeof buf - strlen(buf) - 1));
     }
+    current = current->next;
   }
-  if (written) {
-    dprintf(idx, "    Active CAP negotiations:%s\n", capbuf);
-  } else if (!havecap) {
-    dprintf(idx, "    Active CAP negotiations: (none)\n");
-  }
+  dprintf(idx, "    Active CAP negotiations: %s\n", (strlen(buf) > 0) ?
+            buf : "None" );
   if (details) {
     int size = server_expmem();
 
