@@ -2083,10 +2083,10 @@ static void server_report(int idx, int details)
       }
       endptr[0] = 0;
       dprintf(idx, "    Active CAP negotiations: %s\n", bufptr);
-      strlcpy(buf, endptr+1, sizeof buf);
+      memmove(buf, endptr + 1, strlen(endptr + 1) + 1);
     }
     dprintf(idx, "    Active CAP negotiations: %s\n", buf);
-  } else if (!written) {
+  } else {
     dprintf(idx, "    Active CAP negotiations: (none)\n");
   }
 
