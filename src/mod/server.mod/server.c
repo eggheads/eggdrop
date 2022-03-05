@@ -2021,7 +2021,8 @@ static int server_expmem()
 
 static void server_report(int idx, int details)
 {
-  char s1[64], s[128], buf[CAPMAX+2];
+  char s1[64], s[128], capbuf[1024], buf[1024], *bufptr, *endptr;
+  size_t written = 0;
   struct capability *current;
   int servidx;
 
@@ -2066,18 +2067,30 @@ static void server_report(int idx, int details)
   if (hq.tot)
     dprintf(idx, "    %s %d%% (%d msgs)\n", IRC_HELPQUEUE,
             (int) ((float) (hq.tot * 100.0) / (float) maxqmsg), (int) hq.tot);
-  current = cap;
-  buf[0] = 0;
-  while (current != NULL) {
+
+  for (current = cap; current; current = current->next) {
     if (current->enabled) {
-      strncat(buf, current->name, (sizeof buf - strlen(buf) - 1));
-      strncat(buf, " ", (sizeof buf - strlen(buf) - 1));
+      written += snprintf(capbuf + written, sizeof capbuf - written, "%s ", current->name);
     }
-    current = current->next;
   }
-  dprintf(idx, "    Active CAP negotiations: %s\n", (strlen(buf) > 0) ?
-            buf : "None" );
-  if (details) {
+  if (written) {
+    strlcpy(buf, capbuf, sizeof buf);
+    bufptr = buf;
+    endptr = buf + 80;
+    while (strlen(buf) > 80) {
+      while (endptr[0] != ' ') {
+        endptr--;
+      }
+      endptr[0] = 0;
+      dprintf(idx, "    Active CAP negotiations: %s\n", bufptr);
+      memmove(buf, endptr + 1, strlen(endptr + 1) + 1);
+    }
+    dprintf(idx, "    Active CAP negotiations: %s\n", buf);
+  } else {
+    dprintf(idx, "    Active CAP negotiations: (none)\n");
+  }
+
+if (details) {
     int size = server_expmem();
 
     if (initserver[0])
