@@ -135,7 +135,7 @@
 <h2>Getting the source<a class="headerlink" href="#getting-the-source" title="Permalink to this headline">¶</a></h2>
 <div class="section" id="history">
 <h3>History<a class="headerlink" href="#history" title="Permalink to this headline">¶</a></h3>
-<p>There are two major versions of Eggdrop currently in use- 1.9.x and 1.8.x. The 1.6 series, while still popular, is no longer supported by the developers.</p>
+<p>The current supported version of Eggdrop is the 1.9.x tree. The 1.8 and 1.6 series, while still popular, are no longer supported by the developers.</p>
 <p>The most current version of Eggdrop, and the one appropriate for most users, is the current 1.9 series. It added many features such as SASL support, multi-ip listening, and a new password hashing module. It is the most complete, feature-rich, and functional version of Eggdrop. If you’re just starting out with Eggdrop, you should use 1.9.1</p>
 <p>Prior to that, the 1.8 series added several major features, to include IPv6 support and SSL/TLS connections. 1.6.21, which is now over 10 years old, was the last release of the 1.6 series and is still used by users who have become comfortable with that version and may have spent much time applying their own modifications to make it work the way they want, and therefore don’t wish to move to a newer version. The majority of Tcl scripts out there were written for 1.6 bots, but those scripts usually work on 1.8 and 1.9 bots as well.</p>
 <p>The 1.9 Eggdrop tree is currently under active development and the most recent changes are available in daily snapshots for users to download for testing. While the development snapshot will contain the most current, up-to-date features of Eggdrop, it is not yet considered stable and users stand a higher chance of encountering bugs during use. If you do use it and find a bug, it is highly encouraged to report it via the <a class="reference external" href="https://github.com/issues">Eggheads GitHub issues page.</a></p>
@@ -150,7 +150,7 @@
 <div class="section" id="installation">
 <h2>Installation<a class="headerlink" href="#installation" title="Permalink to this headline">¶</a></h2>
 <p>Installing Eggdrop is a relatively simple process provided your shell has the required tools for successful compilation. On most commercial shell accounts which allow Eggdrop bots you won’t have any problems with installation, but on some private boxes or a shell on your ISP you may experience errors during compilation.</p>
-<p>Below is a step by step guide to the installation process. These instructions apply to 1.8 bots. It assumes you will be installing eggdrop-1.9.1.tar.gz, so just change the numbers if you are installing another version.</p>
+<p>Below is a step by step guide to the installation process. These instructions apply to 1.9 bots. It assumes you will be installing eggdrop-1.9.1.tar.gz, so just change the numbers if you are installing another version.</p>
 <ol class="arabic simple">
 <li>Put the Eggdrop source on your shell using one of the specified download locations, either by downloading the <a class="reference external" href="https://ftp.eggheads.org/pub/eggdrop/source/1.9/eggdrop-1.9.1.tar.gz">eggdrop-1.9.1.tar.gz</a> file to your system then uploading it to the shell via FTP, or downloading it directly to the shell via the shell’s FTP client, git, wget, or curl. You don’t need to put the .tar.gz file in its own directory (it’ll be done automatically in the next step).</li>
 <li>SSH to the shell (if you haven’t already), and type <code class="docutils literal notranslate"><span class="pre">tar</span> <span class="pre">zxvf</span> <span class="pre">eggdrop-1.9.1.tar.gz</span></code> (if this doesn’t work, try <code class="docutils literal notranslate"><span class="pre">gunzip</span> <span class="pre">eggdrop-1.9.1.tar.gz</span></code> then <code class="docutils literal notranslate"><span class="pre">tar</span> <span class="pre">xvf</span> <span class="pre">eggdrop-1.9.1.tar</span></code>). This will extract the Eggdrop source into its installation directory, named ‘eggdrop-1.9.1’.</li>
@@ -415,8 +415,8 @@
         <div class="right">
           
     <div class="footer" role="contentinfo">
-        &#169; Copyright 2021, Eggheads.
-      Last updated on Feb 06, 2022.
+        &#169; Copyright 2022, Eggheads.
+      Last updated on Mar 05, 2022.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.5.
     </div>
         </div>

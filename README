@@ -131,7 +131,7 @@ COMMAND LINE
 
   The options available are:
 
-    -t: Don't background, use terminal. Your console will drop into an
+    -t: Don't background, use terminal. Your console will dropp into an
 
         interactive partyline session, simialar to a DCC chat with the
         bot. This is useful for troubleshooting connection issues with
@@ -323,5 +323,5 @@ OBTAINING HELP
     -   Don't ask to ask- just state your question, along with any
         relevant details and error messages
 
-Copyright (C) 1997 Robey Pointer Copyright (C) 1999 - 2021 Eggheads
+Copyright (C) 1997 Robey Pointer Copyright (C) 1999 - 2022 Eggheads
 Development Team
