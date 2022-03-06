@@ -783,6 +783,7 @@ enum {
 #endif
 
 #ifdef EGG_TDNS
+#include <pthread.h>
 #define DTN_TYPE_HOSTBYIP 0
 #define DTN_TYPE_IPBYHOST 1
 
