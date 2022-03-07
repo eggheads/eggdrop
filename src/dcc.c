@@ -244,7 +244,11 @@ static void bot_version(int idx, char *par)
   touch_laston(dcc[idx].user, "linked", now);
   dump_links(idx);
   dcc[idx].type = &DCC_BOT;
+#ifdef TLS
   addbot(dcc[idx].nick, dcc[idx].nick, botnetnick, '-', dcc[idx].u.bot->numver, dcc[idx].ssl);
+#else
+  addbot(dcc[idx].nick, dcc[idx].nick, botnetnick, '-', dcc[idx].u.bot->numver, 0);
+#endif
   check_tcl_link(dcc[idx].nick, botnetnick);
   egg_snprintf(x, sizeof x, "v %d", dcc[idx].u.bot->numver);
   bot_share(idx, x);
