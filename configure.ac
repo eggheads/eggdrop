@@ -93,7 +93,7 @@ EGG_CHECK_OS
 EGG_HEADER_STDC
 AC_HEADER_DIRENT
 AC_HEADER_TIME
-AC_CHECK_HEADERS([arpa/inet.h fcntl.h limits.h locale.h netdb.h netinet/in.h stdio.h stdarg.h stddef.h sys/file.h sys/param.h sys/rusage.h sys/select.h sys/socket.h sys/time.h unistd.h wchar.h])
+AC_CHECK_HEADERS([arpa/inet.h fcntl.h limits.h locale.h netdb.h netinet/in.h pthread.h stdio.h stdarg.h stddef.h sys/file.h sys/param.h sys/rusage.h sys/select.h sys/socket.h sys/time.h unistd.h wchar.h])
 
 
 # Checks for typedefs, structures, and compiler characteristics.

@@ -1723,9 +1723,13 @@ AC_DEFUN([EGG_TDNS_ENABLE],
       [disable threaded DNS core])],
     [tdns_enabled="$enableval"],
     [tdns_enabled="yes"])
-  if test "$tdns_enabled" = "yes"; then
-    AC_DEFINE([EGG_TDNS], [1], [Define this to enable threaded DNS core.])
-    LDFLAGS="${LDFLAGS} -lpthread"
+  if test "$ac_cv_header_pthread_h" = no; then
+    tdns_enabled="no (pthread.h not found)"
+  else
+    if test "$tdns_enabled" = "yes"; then
+      AC_DEFINE([EGG_TDNS], [1], [Define this to enable threaded DNS core.])
+      LDFLAGS="${LDFLAGS} -lpthread"
+    fi
   fi
 ])
 
