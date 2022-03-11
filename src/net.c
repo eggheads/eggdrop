@@ -920,6 +920,8 @@ int sockread(char *s, int *len, sock_list *slist, int slistmax, int tclonly)
              SELECT_TYPE_ARG5 &t);
   if (x == -1)
     return -2;                  /* socket error */
+  if (x == 0)
+    return -3;                  /* idle */
 
   for (i = 0; i < slistmax; i++) {
     if (!tclonly && ((!(slist[i].flags & (SOCK_UNUSED | SOCK_TCL))) &&
@@ -1389,12 +1391,15 @@ void dequeue_sockets()
   if (!z)
     return;                     /* nothing to write */
 
-  select((SELECT_TYPE_ARG1) nfds + 1, SELECT_TYPE_ARG234 NULL,
+  x = select((SELECT_TYPE_ARG1) nfds + 1, SELECT_TYPE_ARG234 NULL,
          SELECT_TYPE_ARG234 &wfds, SELECT_TYPE_ARG234 NULL,
          SELECT_TYPE_ARG5 &tv);
 
 /* end poptix */
 
+  if (x <= 0) {
+    return;
+  }
   for (i = 0; i < threaddata()->MAXSOCKS; i++) {
     if (!(socklist[i].flags & (SOCK_UNUSED | SOCK_TCL)) &&
         (socklist[i].handler.sock.outbuf != NULL) && (FD_ISSET(socklist[i].sock, &wfds))) {
