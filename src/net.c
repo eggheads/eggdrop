@@ -818,7 +818,7 @@ int getdccfamilyaddr(sockname_t *addr, char *s, size_t l, int restrict_af)
  */
 static int preparefdset(fd_set *fds, sock_list *slist, int slistmax, int tclonly, int tclmask)
 {
-  int fd, i, nfds = 0;
+  int fd, i, maxfd = -1;
 
   FD_ZERO(fds);
   for (i = 0; i < slistmax; i++) {
@@ -841,12 +841,12 @@ static int preparefdset(fd_set *fds, sock_list *slist, int slistmax, int tclonly
           continue;
       } else if (tclonly)
         continue;
-      if (fd > nfds)
-        nfds = fd;
+      if (fd > maxfd)
+        maxfd = fd;
       FD_SET(fd, fds);
     }
   }
-  return nfds;
+  return maxfd;
 }
 
 /* A safer version of write() that deals with partial writes. */
@@ -882,44 +882,46 @@ int sockread(char *s, int *len, sock_list *slist, int slistmax, int tclonly)
 {
   struct timeval t;
   fd_set fdr, fdw, fde;
-  int i, x, nfds_r, nfds_w, nfds_e;
+  int i, x, maxfd_r, maxfd_w, maxfd_e;
   int grab = 511, tclsock = -1, events = 0;
   struct threaddata *td = threaddata();
-  int nfds;
+  int maxfd;
 #ifdef EGG_TDNS
   int fd;
   struct dns_thread_node *dtn, *dtn_prev;
 #endif
 
-  nfds_r = preparefdset(&fdr, slist, slistmax, tclonly, TCL_READABLE);
+  maxfd_r = preparefdset(&fdr, slist, slistmax, tclonly, TCL_READABLE);
 #ifdef EGG_TDNS
   for (dtn = dns_thread_head->next; dtn; dtn = dtn->next) {
     fd = dtn->fildes[0];
     FD_SET(fd, &fdr);
-    if (fd > nfds_r)
-      nfds_r = fd;
+    if (fd > maxfd_r)
+      maxfd_r = fd;
   }
 #endif
-  nfds_w = preparefdset(&fdw, slist, slistmax, 1, TCL_WRITABLE);
-  nfds_e = preparefdset(&fde, slist, slistmax, 1, TCL_EXCEPTION);
+  maxfd_w = preparefdset(&fdw, slist, slistmax, 1, TCL_WRITABLE);
+  maxfd_e = preparefdset(&fde, slist, slistmax, 1, TCL_EXCEPTION);
 
-  nfds = nfds_r;
-  if (nfds_w > nfds)
-    nfds = nfds_w;
-  if (nfds_e > nfds)
-    nfds = nfds_e;
+  maxfd = maxfd_r;
+  if (maxfd_w > maxfd)
+    maxfd = maxfd_w;
+  if (maxfd_e > maxfd)
+    maxfd = maxfd_e;
 
   /* select() may modify the timeval argument - copy it */
   t.tv_sec = td->blocktime.tv_sec;
   t.tv_usec = td->blocktime.tv_usec;
 
-  x = select((SELECT_TYPE_ARG1) nfds + 1,
-             SELECT_TYPE_ARG234 (nfds_r ? &fdr : NULL),
-             SELECT_TYPE_ARG234 (nfds_w ? &fdw : NULL),
-             SELECT_TYPE_ARG234 (nfds_e ? &fde : NULL),
+  x = select((SELECT_TYPE_ARG1) maxfd + 1,
+             SELECT_TYPE_ARG234 (maxfd_r >= 0 ? &fdr : NULL),
+             SELECT_TYPE_ARG234 (maxfd_w >= 0 ? &fdw : NULL),
+             SELECT_TYPE_ARG234 (maxfd_e >= 0 ? &fde : NULL),
              SELECT_TYPE_ARG5 &t);
   if (x == -1)
     return -2;                  /* socket error */
+  if (x == 0)
+    return -3;                  /* idle */
 
   for (i = 0; i < slistmax; i++) {
     if (!tclonly && ((!(slist[i].flags & (SOCK_UNUSED | SOCK_TCL))) &&
@@ -1368,10 +1370,9 @@ void tputs(int z, char *s, unsigned int len)
 void dequeue_sockets()
 {
   int i, x;
-  int z = 0;
   fd_set wfds;
   struct timeval tv;
-  int nfds = 0;
+  int maxfd = -1;
 
 /* ^-- start poptix test code, this should avoid writes to sockets not ready to be written to. */
 
@@ -1381,19 +1382,21 @@ void dequeue_sockets()
   for (i = 0; i < threaddata()->MAXSOCKS; i++)
     if (!(socklist[i].flags & (SOCK_UNUSED | SOCK_TCL)) &&
         (socklist[i].handler.sock.outbuf != NULL)) {
-      if (socklist[i].sock > nfds)
-        nfds = socklist[i].sock;
+      if (socklist[i].sock > maxfd)
+        maxfd = socklist[i].sock;
       FD_SET(socklist[i].sock, &wfds);
-      z = 1;
     }
-  if (!z)
+  if (maxfd < 0)
     return;                     /* nothing to write */
 
-  select((SELECT_TYPE_ARG1) nfds + 1, SELECT_TYPE_ARG234 NULL,
+  x = select((SELECT_TYPE_ARG1) maxfd + 1, SELECT_TYPE_ARG234 NULL,
          SELECT_TYPE_ARG234 &wfds, SELECT_TYPE_ARG234 NULL,
          SELECT_TYPE_ARG5 &tv);
 
 /* end poptix */
+
+  if (x <= 0)
+    return;
 
   for (i = 0; i < threaddata()->MAXSOCKS; i++) {
     if (!(socklist[i].flags & (SOCK_UNUSED | SOCK_TCL)) &&
