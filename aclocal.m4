@@ -23,6 +23,7 @@ builtin(include,m4/tcl.m4)
 dnl Load gnu autoconf archive macros
 builtin(include,m4/ax_create_stdint_h.m4)
 builtin(include,m4/ax_lib_socket_nsl.m4)
+builtin(include,m4/ax_pthread.m4)
 builtin(include,m4/ax_type_socklen_t.m4)
 
 
@@ -851,32 +852,9 @@ AC_DEFUN([EGG_CHECK_LIBS],
     AC_MSG_WARN([Skipping library tests because they CONFUSE IRIX.])
   else
     AX_LIB_SOCKET_NSL
+    AX_PTHREAD(LDFLAGS="$LDFLAGS $PTHREAD_LIBS")
     AC_SEARCH_LIBS([dlopen], [dl])
     AC_CHECK_LIB(m, tan, EGG_MATH_LIB="-lm")
-
-    # This is needed for Tcl libraries compiled with thread support
-    AC_CHECK_LIB(pthread, pthread_mutex_init, [
-      ac_cv_lib_pthread_pthread_mutex_init="yes"
-      ac_cv_lib_pthread="-lpthread"
-    ], [
-      AC_CHECK_LIB(pthread, __pthread_mutex_init, [
-        ac_cv_lib_pthread_pthread_mutex_init="yes"
-        ac_cv_lib_pthread="-lpthread"
-      ], [
-        AC_CHECK_LIB(pthreads, pthread_mutex_init, [
-          ac_cv_lib_pthread_pthread_mutex_init="yes"
-          ac_cv_lib_pthread="-lpthreads"
-        ], [
-          AC_CHECK_FUNC(pthread_mutex_init, [
-            ac_cv_lib_pthread_pthread_mutex_init="yes"
-            ac_cv_lib_pthread=""
-          ], [
-            ac_cv_lib_pthread_pthread_mutex_init="no"
-          ]
-        )]
-      )]
-    )])
-
     if test "$HPUX" = yes; then
       AC_CHECK_LIB(dld, shl_load)
     fi
@@ -1054,12 +1032,6 @@ AC_DEFUN([EGG_TCL_TCLCONFIG],
     # Also, use the Tcl linker idea to be compatible with their ldflags
     if test -r ${TCL_BIN_DIR}/tclConfig.sh; then
       . ${TCL_BIN_DIR}/tclConfig.sh
-      # OpenBSD uses -pthread, but tclConfig.sh provides that flag in EXTRA_CFLAGS
-      if test "$(echo $TCL_EXTRA_CFLAGS | grep -- -pthread)"; then
-        TCL_PTHREAD_LDFLAG="-pthread"
-      else
-        TCL_PTHREAD_LDFLAG=""
-      fi
       AC_SUBST(SHLIB_LD, $TCL_SHLIB_LD)
       AC_MSG_CHECKING([for Tcl linker])
       AC_MSG_RESULT([$SHLIB_LD])
@@ -1067,27 +1039,18 @@ AC_DEFUN([EGG_TCL_TCLCONFIG],
       TCL_LIBS="${EGG_MATH_LIB}"
     fi
     TCL_PATCHLEVEL="${TCL_MAJOR_VERSION}.${TCL_MINOR_VERSION}${TCL_PATCH_LEVEL}"
-    TCL_LIB_SPEC="${TCL_PTHREAD_LDFLAG} ${TCL_LIB_SPEC} ${TCL_LIBS}"
+    TCL_LIB_SPEC="${TCL_LIB_SPEC} ${TCL_LIBS}"
   else
     egg_tcl_changed="yes"
     if test -r ${TCLLIB}/tclConfig.sh; then
       . ${TCLLIB}/tclConfig.sh
-      # OpenBSD uses -pthread, but tclConfig.sh provides that flag in EXTRA_CFLAGS
-      if test "$(echo $TCL_EXTRA_CFLAGS | grep -- -pthread)"; then
-        TCL_PTHREAD_LDFLAG="-pthread"
-      else
-        TCL_PTHREAD_LDFLAG=""
-      fi
       AC_SUBST(SHLIB_LD, $TCL_SHLIB_LD)
       AC_MSG_CHECKING([for Tcl linker])
       AC_MSG_RESULT([$SHLIB_LD])
       TCL_PATCHLEVEL="${TCL_MAJOR_VERSION}.${TCL_MINOR_VERSION}${TCL_PATCH_LEVEL}"
-      TCL_LIB_SPEC="${TCL_PTHREAD_LDFLAG} ${TCL_LIB_SPEC} ${TCL_LIBS}"
+      TCL_LIB_SPEC="${TCL_LIB_SPEC} ${TCL_LIBS}"
     else
       TCL_LIB_SPEC="-L$TCLLIB -l$TCLLIBFNS ${EGG_MATH_LIB}"
-      if test "x$ac_cv_lib_pthread" != x; then
-        TCL_LIB_SPEC="$TCL_LIB_SPEC $ac_cv_lib_pthread"
-      fi
       TCL_INCLUDE_SPEC=""
       TCL_VERSION=`grep TCL_VERSION $TCLINC/$TCLINCFN | $HEAD_1 | $AWK '{gsub(/"/, "", [$]3); print [$]3}'`
       TCL_PATCHLEVEL=`grep TCL_PATCH_LEVEL $TCLINC/$TCLINCFN | $HEAD_1 | $AWK '{gsub(/"/, "", [$]3); print [$]3}'`
@@ -1723,12 +1686,11 @@ AC_DEFUN([EGG_TDNS_ENABLE],
       [disable threaded DNS core])],
     [tdns_enabled="$enableval"],
     [tdns_enabled="yes"])
-  if test "$ac_cv_header_pthread_h" = no; then
+  if test "x$ax_pthread_ok" = "xno"; then
     tdns_enabled="no (pthread.h not found)"
   else
     if test "$tdns_enabled" = "yes"; then
       AC_DEFINE([EGG_TDNS], [1], [Define this to enable threaded DNS core.])
-      LDFLAGS="${LDFLAGS} -lpthread"
     fi
   fi
 ])
