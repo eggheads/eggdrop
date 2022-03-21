@@ -2035,7 +2035,7 @@ static int gotjoin(char *from, char *channame)
   int extjoin = 0;
   struct chanset_t *chan;
   struct chanset_t *extchan;
-  memberlist *m;
+  memberlist *m, *n;
   masklist *b;
   struct capability *current;
   struct userrec *u;
@@ -2172,8 +2172,8 @@ static int gotjoin(char *from, char *channame)
           strlcpy(account, newsplit(&channame), sizeof account);
           if (strcmp(account, "*")) {
             for (extchan = chanset; extchan; extchan = extchan->next) {
-              if ((m = ismember(extchan, nick))) {
-                strlcpy (m->account, account, sizeof m->account);
+              if ((n = ismember(extchan, nick))) {
+                strlcpy (n->account, account, sizeof n->account);
               }
             }
           }
