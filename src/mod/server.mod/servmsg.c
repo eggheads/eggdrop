@@ -200,24 +200,17 @@ static int check_tcl_raw(char *from, char *code, char *msg)
   return (x == BIND_EXEC_LOG);
 }
 
-/* tagstr is a space-separated list of key/value pairs */
-static int check_tcl_rawt(char *from, char *code, char *msg, char *tagstr)
+/* tagstr is the string value of a Tcl dictionary (flat key/value list) */
+static int check_tcl_rawt(char *from, char *code, char *msg, char *tagdict)
 {
   int x;
-  char * ptr;
-  Tcl_DString tagdict;
 
-  Tcl_DStringInit(&tagdict);
   Tcl_SetVar(interp, "_rawt1", from, 0);
   Tcl_SetVar(interp, "_rawt2", code, 0);
   Tcl_SetVar(interp, "_rawt3", msg, 0);
-  for (ptr = strtok(tagstr, " "); ptr; ptr = strtok(NULL, " ")) {
-    Tcl_DStringAppendElement(&tagdict, ptr);
-  }
-  Tcl_SetVar(interp, "_rawt4", Tcl_DStringValue(&tagdict), 0);
+  Tcl_SetVar(interp, "_rawt4", tagdict, 0);
   x = check_tcl_bind(H_rawt, code, 0, " $_rawt1 $_rawt2 $_rawt3 $_rawt4",
                     MATCH_EXACT | BIND_STACKABLE | BIND_WANTRET);
-  Tcl_DStringFree(&tagdict);
   return (x == BIND_EXEC_LOG);
 }
 
@@ -1134,12 +1127,47 @@ static struct dcc_table SERVER_SOCKET = {
   NULL
 };
 
+static char *decode_msgtag_value(char *value, char **endptr)
+{
+  static char valuebuf[TOTALTAGMAX+1];
+  char *tmp, *decoded = valuebuf;
+  int escaped = 0;
+
+  for (tmp = value; *tmp && *tmp != ';' && *tmp != ' '; tmp++) {
+    if (!escaped && *tmp == '\\') {
+      escaped = 1;
+      continue;
+    }
+    if (escaped) {
+      if (*tmp == ':') {
+        *decoded++ = ';';
+      } else if (*tmp == 'n') {
+        *decoded++ = '\n';
+      } else if (*tmp == 'r') {
+        *decoded++ = '\r';
+      } else if (*tmp == 's') {
+        *decoded++ = ' ';
+      } else {
+        *decoded++ = *tmp;
+      }
+      escaped = 0;
+    } else {
+      *decoded++ = *tmp;
+    }
+  }
+  /* either points to \0 or ; */
+  *endptr = tmp;
+
+  *decoded = '\0';
+  return valuebuf;
+}
+
 static void server_activity(int idx, char *tagmsg, int len)
 {
-  char *from, *code, *s1, *s2, *saveptr1=NULL, *saveptr2=NULL, *tagstrptr=NULL;
-  char *token, *subtoken, tagstr[TOTALTAGMAX+1], tagdict[TOTALTAGMAX+1] = "";
-  char *msgptr, rawmsg[RECVLINEMAX+7];
-  int taglen, i, found, ret;
+  char *from, *code, *msgptr;
+  char rawmsg[RECVLINEMAX+7];
+  int ret;
+  Tcl_Obj *tagdict = Tcl_NewDictObj();
 
   if (trying_server) {
     strcpy(dcc[idx].nick, "(server)");
@@ -1148,44 +1176,24 @@ static void server_activity(int idx, char *tagmsg, int len)
     SERVER_SOCKET.timeout_val = 0;
   }
   lastpingcheck = 0;
-/* Check if message-tags are enabled and, if so, check/grab the tag */
+  /* Parse optional message-tags, regardless of whether they are enabled on our side */
   msgptr = tagmsg;
   strlcpy(rawmsg, tagmsg, TOTALTAGMAX+1);
   if (*tagmsg == '@') {
-    taglen = 0;
-    tagstrptr = newsplit(&msgptr);
-    strlcpy(tagstr, tagstrptr, TOTALTAGMAX+1);
-    tagstrptr++;     /* Remove @ */
-    /* Split each key/value pair apart, then split the key from the value */
-    for (i = 0, s1 = tagstrptr; ; i++, s1 = NULL){
-      token = strtok_r(s1, ";", &saveptr1);
-      if (token == NULL) {
-        break;
-      }
-      if (*token == '+') {
-        token++;
-      }
-      if (strchr(token, '=')) {
-        found = 0;
-        for (s2 = token; ; s2 = NULL) {
-          subtoken = strtok_r(s2, "=", &saveptr2);
-          if (subtoken == NULL) {
-            break;
-          }
-          taglen += egg_snprintf(tagdict + taglen, TOTALTAGMAX - taglen,
-                "%s ", subtoken);
-          found++;
-        }
-        /* Account for tags (not key/value pairs), prep empty value for Tcl */
-        if (found < 2) {
-          taglen += egg_snprintf(tagdict + taglen, TOTALTAGMAX - taglen,
-              "{} ");
-        }
+    char *key, *value, *lastendptr = tagmsg;
+
+    while (lastendptr[0] && lastendptr[0] != ' ') {
+      key = lastendptr + 1;
+      value = key + strcspn(key, "=; ");
+
+      if (*value == '=') {
+        Tcl_DictObjPut(interp, tagdict, Tcl_NewStringObj(key, value - key), Tcl_NewStringObj(decode_msgtag_value(value + 1, &lastendptr), -1));
+      } else {
+        Tcl_DictObjPut(interp, tagdict, Tcl_NewStringObj(key, value - key), Tcl_NewStringObj("", -1));
+        lastendptr = value;
       }
     }
-    if (taglen > 0) {
-      tagdict[taglen-1] = '\0';     /* Remove trailing space */
-    }
+    msgptr = lastendptr + (lastendptr[0] != '\0');
   }
   from = "";
   if (*msgptr == ':') {
@@ -1199,7 +1207,11 @@ static void server_activity(int idx, char *tagmsg, int len)
   }
   /* Check both raw and rawt, to allow backwards compatibility with older
    * scripts. If rawt returns 1 (blocking), don't process raw binds.*/
-  ret = check_tcl_rawt(from, code, msgptr, tagdict);
+  /* Tcl_GetString() must not be modified, so we have to copy because string C API is not const char* */
+  //Tcl_IncrRef(tagdict);
+  strlcpy(rawmsg, Tcl_GetString(tagdict), sizeof rawmsg);
+  ret = check_tcl_rawt(from, code, msgptr, rawmsg);
+  //Tcl_DecrRef(tagdict);
   if (!ret) {
     check_tcl_raw(from, code, msgptr);
   }
