@@ -2025,6 +2025,7 @@ static void set_delay(struct chanset_t *chan, char *nick)
   m->delay = a_delay;
 }
 
+
 /* Got a join
  */
 static int gotjoin(char *from, char *channame)
@@ -2033,7 +2034,8 @@ static int gotjoin(char *from, char *channame)
   char *ch_dname = NULL;
   int extjoin = 0;
   struct chanset_t *chan;
-  memberlist *m;
+  struct chanset_t *extchan;
+  memberlist *m, *n;
   masklist *b;
   struct capability *current;
   struct userrec *u;
@@ -2166,10 +2168,13 @@ static int gotjoin(char *from, char *channame)
         m->user = u;
         m->flags |= STOPWHO;
         if (extjoin) {
+          /* Update account for all channels the nick is on, not just this one */
           strlcpy(account, newsplit(&channame), sizeof account);
           if (strcmp(account, "*")) {
-            if ((m = ismember(chan, nick))) {
-              strlcpy (m->account, account, sizeof m->account);
+            for (extchan = chanset; extchan; extchan = extchan->next) {
+              if ((n = ismember(extchan, nick))) {
+                strlcpy (n->account, account, sizeof n->account);
+              }
             }
           }
         }
