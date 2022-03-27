@@ -1133,7 +1133,7 @@ static char *decode_msgtag_value(char *value, char **endptr)
   char *tmp, *decoded = valuebuf;
   int escaped = 0;
 
-  for (tmp = value; *tmp && *tmp != ';' && *tmp != ' '; tmp++) {
+  for (tmp = value; *tmp && *tmp != ';' && *tmp != ' ' && decoded - valuebuf < TOTALTAGMAX; tmp++) {
     if (!escaped && *tmp == '\\') {
       escaped = 1;
       continue;
