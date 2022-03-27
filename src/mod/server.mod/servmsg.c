@@ -1182,7 +1182,7 @@ static void server_activity(int idx, char *tagmsg, int len)
   if (*tagmsg == '@') {
     char *key, *value, *lastendptr = tagmsg;
 
-    while (lastendptr[0] && lastendptr[0] != ' ') {
+    do {
       key = lastendptr + 1;
       value = key + strcspn(key, "=; ");
 
@@ -1192,8 +1192,9 @@ static void server_activity(int idx, char *tagmsg, int len)
         Tcl_DictObjPut(interp, tagdict, Tcl_NewStringObj(key, value - key), Tcl_NewStringObj("", -1));
         lastendptr = value;
       }
-    }
-    msgptr = lastendptr + (lastendptr[0] != '\0');
+    } while (*lastendptr && *lastendptr != ' ');
+
+    msgptr = lastendptr + (*lastendptr != '\0');
   }
   from = "";
   if (*msgptr == ':') {
