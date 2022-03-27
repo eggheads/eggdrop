@@ -49,6 +49,7 @@ void init_userent()
   add_entry_type(&USERENTRY_PASS2);
   add_entry_type(&USERENTRY_HOSTS);
   add_entry_type(&USERENTRY_BOTFL);
+  add_entry_type(&USERENTRY_ACCOUNT);
 #ifdef TLS
   add_entry_type(&USERENTRY_FPRINT);
 #endif
@@ -1435,6 +1436,30 @@ struct user_entry_type USERENTRY_FPRINT = {
   def_tcl_append
 };
 #endif /* TLS */
+
+static void account_display(int idx, struct user_entry *e)
+{
+  dprintf(idx, "  ACCOUNT: %s\n", e->u.string);
+}
+
+struct user_entry_type USERENTRY_ACCOUNT = {
+  0,
+  def_gotshare,
+  def_dupuser,
+  0,
+  def_pack,
+  def_write_userfile,
+  def_kill,
+  def_get,
+  def_set,
+  def_tcl_get,
+  def_tcl_set,
+  def_expmem,
+  account_display,
+  "ACCOUNT",
+  def_tcl_append
+};
+
 
 int egg_list_append(struct list_type **h, struct list_type *i)
 {

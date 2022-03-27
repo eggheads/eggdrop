@@ -37,6 +37,7 @@ static time_t last_ctcp = (time_t) 0L;
 static int multistatus = 0, count_ctcp = 0;
 static char altnick_char = 0;
 struct capability *cap;
+struct capability *find_capability(char *capname);
 int account_notify, extended_join;
 Tcl_Obj *ncapeslist;
 
@@ -210,13 +211,8 @@ static int check_tcl_rawt(char *from, char *code, char *msg, char *tagstr)
   Tcl_SetVar(interp, "_rawt1", from, 0);
   Tcl_SetVar(interp, "_rawt2", code, 0);
   Tcl_SetVar(interp, "_rawt3", msg, 0);
-  ptr = strtok(tagstr, " ");
-  Tcl_DStringAppendElement(&tagdict, ptr);
-  while (ptr != NULL) {
-    ptr = strtok(NULL, " ");
-    if (ptr) {
-      Tcl_DStringAppendElement(&tagdict, ptr);
-    }
+  for (ptr = strtok(tagstr, " "); ptr; ptr = strtok(NULL, " ")) {
+    Tcl_DStringAppendElement(&tagdict, ptr);
   }
   Tcl_SetVar(interp, "_rawt4", Tcl_DStringValue(&tagdict), 0);
   x = check_tcl_bind(H_rawt, code, 0, " $_rawt1 $_rawt2 $_rawt3 $_rawt4",
@@ -537,6 +533,7 @@ static int detect_flood(char *floodnick, char *floodhost, char *from, int which)
   return 0;
 }
 
+
 /* Got a private message.
  */
 static int gotmsg(char *from, char *msg, char *tag)
@@ -642,8 +639,13 @@ static int gotmsg(char *from, char *msg, char *tag)
       last_ctcp = now;
     }
   }
+putlog(LOG_PUBLIC, "*", "IS THIS SERVER????");
+
   if (msg[0]) {
     int result = 0;
+
+putlog(LOG_PUBLIC, "*", "the tag is %s", tag);
+
 
     /* Msg from oper, don't interpret */
     if ((to[0] == '$') || (strchr(to, '.') != NULL)) {
@@ -1979,7 +1981,6 @@ static int server_isupport(char *key, char *isset_str, char *value)
 }
 
 static cmd_t my_raw_binds[] = {
-  {"PRIVMSG",      "",   (IntFunc) gotmsg,          NULL},
   {"NOTICE",       "",   (IntFunc) gotnotice,       NULL},
   {"MODE",         "",   (IntFunc) gotmode,         NULL},
   {"PING",         "",   (IntFunc) gotping,         NULL},
@@ -2025,6 +2026,7 @@ static cmd_t my_raw_binds[] = {
 
 static cmd_t my_rawt_binds[] = {
   {"TAGMSG",       "",   (IntFunc) gottagmsg,       NULL},
+  {"PRIVMSG",      "",   (IntFunc) gotmsg,          NULL},
   {NULL,           NULL, NULL,                      NULL}
 };
 

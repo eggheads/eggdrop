@@ -518,6 +518,9 @@
 #define crypto_verify ((int ( *) (const char *, const char *))global[313])
 #define egg_uname ((char *(*) ())global[314])
 #define get_expire_time ((time_t (*) (Tcl_Interp *, const char *))global[315])
+/* 316 - 319 */
+#define USERENTRY_ACCOUNT (*(struct user_entry_type *)(global[316]))
+
 
 /* hostmasking */
 #define maskhost(a,b) maskaddr((a),(b),3)

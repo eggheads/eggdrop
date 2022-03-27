@@ -1855,6 +1855,25 @@ static void uc_attr_inform(const int idx, const int msgids)
     dprintf(idx, "INFO: adding +g also adds +v for your convenience, if unwanted one can revert with -v.\n");
 }
 
+static void cmd_account(struct userrec *u, int idx, char *par)
+{
+  struct userrec *u2;
+  char *hand;
+
+  hand = newsplit(&par);
+  u2 = get_user_by_handle(userlist, hand);
+  if (!u2) {
+    dprintf(idx, "No such user!\n");
+    return;
+  }
+
+  dprintf(idx, "XXXXX: trying to add %s to %s", par, hand);
+  set_user(&USERENTRY_ACCOUNT, u2, par);
+
+  return;
+}
+
+
 static void cmd_chattr(struct userrec *u, int idx, char *par)
 {
   char *hand, *arg = NULL, *tmpchg = NULL, *chg = NULL, work[1024];
@@ -3291,5 +3310,6 @@ cmd_t C_dcc[] = {
   {"whom",      "",     (IntFunc) cmd_whom,       NULL},
   {"traffic",   "m|m",  (IntFunc) cmd_traffic,    NULL},
   {"whoami",    "",     (IntFunc) cmd_whoami,     NULL},
+  {"account",   "",     (IntFunc) cmd_account,    NULL},
   {NULL,        NULL,   NULL,                      NULL}
 };
