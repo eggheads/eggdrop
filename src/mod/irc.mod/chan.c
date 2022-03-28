@@ -1220,11 +1220,15 @@ static int got352or4(struct chanset_t *chan, char *user, char *host,
         if (strcmp(account, "0")) {
           strlcpy(m->account, account, sizeof(m->account));
           snprintf(mask, sizeof mask, "%s %s", acctchan->dname, userhost);
-          check_tcl_account(nick, userhost, mask, m->user, acctchan->dname, account);
+          if (strcasecmp(chan->dname, acctchan->dname)) {
+            check_tcl_account(nick, userhost, mask, m->user, acctchan->dname, account);
+          }
         } else {      /* Explicitly clear, in case someone deauthenticated? */
           m->account[0] = 0;
           snprintf(mask, sizeof mask, "%s %s", acctchan->dname, userhost);
-          check_tcl_account(nick, userhost, mask, m->user, acctchan->dname, "");
+          if (strcasecmp(chan->dname, acctchan->dname)) {
+            check_tcl_account(nick, userhost, mask, m->user, acctchan->dname, "");
+          }
         }
       }
     }
