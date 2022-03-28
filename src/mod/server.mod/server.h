@@ -95,6 +95,7 @@
 #define isupport_get ((struct isupport *(*)(const char *, size_t))(server_funcs[47]))
 /* 48 - 52 */
 #define isupport_parseint ((int (*)(const char *, const char *, int, int, int, int, int *))(server_funcs[48]))
+#define check_tcl_account ((int (*)(char *,char *,char *,struct userrec *,char *,char *))server_funcs[49])
 #endif /* MAKING_SERVER */
 
 struct server_list {

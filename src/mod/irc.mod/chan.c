@@ -1163,7 +1163,8 @@ static int got324(char *from, char *msg)
 static int got352or4(struct chanset_t *chan, char *user, char *host,
                      char *nick, char *flags, char *account)
 {
-  char userhost[UHOSTLEN];
+  char userhost[UHOSTLEN], mask[CHANNELLEN+UHOSTLEN+NICKMAX+2];
+  struct chanset_t *acctchan;
   memberlist *m;
 
   m = ismember(chan, nick);     /* In my channel list copy? */
@@ -1210,14 +1211,22 @@ static int got352or4(struct chanset_t *chan, char *user, char *host,
       do_tcl("need-op", chan->need_op);
   }
   m->user = get_user_by_host(userhost);
-  /* Update accountname in the channel record */
-  if ((account) && strcmp(account, "0")) {
-    if (m) {
-      strlcpy(m->account, account, sizeof(m->account));
-    }
-  } else {      /* Explicitly clear, in case someone deauthenticated? */
-    if (m) {
-      m->account[0] = 0;
+
+  /* Update accountname in channel records, 0 means logged out */
+  if ((m) && (account) && (strcmp(account, m->account)) &&
+            !((!strcmp(account, "0")) && (!strcmp(m->account, ""))) ) { /* If the account has changed */
+    for (acctchan = chanset; acctchan; acctchan = chan->next) {
+      if ((m = ismember(chan, nick))) {
+        if (strcmp(account, "0")) {
+          strlcpy(m->account, account, sizeof(m->account));
+          snprintf(mask, sizeof mask, "%s %s", acctchan->dname, userhost);
+          check_tcl_account(nick, userhost, mask, m->user, acctchan->dname, account);
+        } else {      /* Explicitly clear, in case someone deauthenticated? */
+          m->account[0] = 0;
+          snprintf(mask, sizeof mask, "%s %s", acctchan->dname, userhost);
+          check_tcl_account(nick, userhost, mask, m->user, acctchan->dname, "");
+        }
+      }
     }
   }
   return 0;
@@ -2031,7 +2040,7 @@ static void set_delay(struct chanset_t *chan, char *nick)
 static int gotjoin(char *from, char *channame)
 {
   char *nick, *p, buf[UHOSTLEN], account[NICKMAX], *uhost = buf, *chname;
-  char *ch_dname = NULL;
+  char *ch_dname = NULL, mask[CHANNELLEN+UHOSTLEN+NICKMAX+2];
   int extjoin = 0;
   struct chanset_t *chan;
   struct chanset_t *extchan;
@@ -2174,6 +2183,13 @@ static int gotjoin(char *from, char *channame)
             for (extchan = chanset; extchan; extchan = extchan->next) {
               if ((n = ismember(extchan, nick))) {
                 strlcpy (n->account, account, sizeof n->account);
+                /* Don't trigger for the channel the user joined, but do trigger
+                 * for other channels the user is already in
+                 */
+                if (strcasecmp(chname, extchan->dname)) {
+                  snprintf(mask, sizeof mask, "%s %s", chname, from);
+                  check_tcl_account(nick, from, mask, u, chname, account);
+                }
               }
             }
           }
@@ -2665,10 +2681,9 @@ static int gotmsg(char *from, char *msg, char *tags)
 {
   char *to, *realto, buf[UHOSTLEN], *nick, buf2[512], *uhost = buf, *p, *p1,
        *code, *ctcp;
-  int ctcp_count = 0, ignoring, accttag;
+  int ctcp_count = 0, ignoring;
   memberlist *m;
   struct chanset_t *chan, *extchan;
-  struct capability *current;
   struct userrec *u;
   Tcl_Obj *tagobj, *accountobj;
 

@@ -1615,7 +1615,7 @@ static int gotaccount(char *from, char *msg) {
         putlog(LOG_JOIN | LOG_MISC, chname, "%s!%s has logged into account %s",
                 nick, from, msg);
       }
-      check_tcl_account(nick, from, mask, u, chname, msg);
+      check_tcl_account(nick, from, mask, u, chname, msg = '*' ? "" : msg);
     }
   }
   return 0;

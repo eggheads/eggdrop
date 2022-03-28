@@ -3503,7 +3503,7 @@ The following is a list of bind types and how they work. Below each bind type is
 
   procname <nick> <user> <hand> <chan> <account>
 
-  Description: triggered when Eggdrop receives an ACCOUNT message. The mask for the bind is in the format "#channel nick!user@hostname.com account" where channel is the channel the user was found on when the bind was triggered, the hostmask is the user's hostmask, and account is the account name the user is logging in to, or "" for logging out. The mask argument can accept wildcards. For the proc, nick is the nickname of the user logging into/out of an account, user is the user@host.com hostmask, hand is the handle of the user (or * if none), and account is the name of the account the user logged in to (or "" if the user logged out of an account).
+  Description: triggered when Eggdrop detects a change in a service account status. The change could be initiated by receving an IRCv3 ACCOUNT message, receiving IRCv3 extended-join information when a user on an existing channel joins a new channel, or detecting an IRCv3 account-tag in a PRIVMSG. The mask for the bind is in the format "#channel nick!user@hostname.com account" where channel is the channel the user was found on when the bind was triggered, the hostmask is the user's hostmask, and account is the account name the user is logging in to, or "" for logging out. The mask argument can accept wildcards. For the proc, nick is the nickname of the user logging into/out of an account, user is the user@host.com hostmask, hand is the handle of the user (or * if none), and account is the name of the account the user logged in to (or "" if the user logged out of an account).
 
 (54) ISUPPORT (stackable)
 
