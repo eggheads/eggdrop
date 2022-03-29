@@ -1166,6 +1166,7 @@ static int got352or4(struct chanset_t *chan, char *user, char *host,
   char userhost[UHOSTLEN], mask[CHANNELLEN+UHOSTLEN+NICKMAX+2];
   struct chanset_t *acctchan;
   memberlist *m;
+  int empty_accounts;
 
   m = ismember(chan, nick);     /* In my channel list copy? */
   if (!m) {                     /* Nope, so update */
@@ -1213,9 +1214,11 @@ static int got352or4(struct chanset_t *chan, char *user, char *host,
   m->user = get_user_by_host(userhost);
 
   /* Update accountname in channel records, 0 means logged out */
-  if ((m) && (account) && (strcmp(account, m->account)) &&
-            !((!strcmp(account, "0")) && (!strcmp(m->account, ""))) ) { /* If the account has changed */
-    for (acctchan = chanset; acctchan; acctchan = chan->next) {
+  /* A 0 is not a change from "" */
+  empty_accounts = (!strcmp(account, "0") && (!strcmp(m->account, "")));
+  /* If the account has changed... */
+  if ((account) && (strcmp(account, m->account)) && !empty_accounts) {
+    for (acctchan = chanset; acctchan; acctchan = acctchan->next) {
       if ((m = ismember(chan, nick))) {
         if (strcmp(account, "0")) {
           strlcpy(m->account, account, sizeof(m->account));
@@ -2731,7 +2734,7 @@ putlog(LOG_MISC, "*", "TAGS: '%s'", tags);
   if (accountobj) {
     for (extchan = chanset; extchan; extchan = extchan->next) {
       if ((m = ismember(extchan, nick))) {      /* If member is on the channel */
-        if (strcmp(nick, m->account)) {         /* If stored account and seen account don't match */
+        if (strcmp(Tcl_GetString(accountobj), m->account)) {         /* If stored account and seen account don't match */
 putlog(LOG_MISC, "*", "Accounts don't match, updating %s with account %s", nick, Tcl_GetString(accountobj));
           strlcpy (m->account, Tcl_GetString(accountobj), sizeof m->account);
         }

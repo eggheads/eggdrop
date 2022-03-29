@@ -1609,13 +1609,13 @@ static int gotaccount(char *from, char *msg) {
       snprintf(mask, sizeof mask, "%s %s", chname, from);
       if (!strcasecmp(msg, "*")) {
         msg[0] = '\0';
-        putlog(LOG_JOIN | LOG_MISC, chname, "%s!%s has logged out of their "
+        putlog(LOG_JOIN, chname, "%s!%s has logged out of their "
                 "account", nick, from);
       } else {
-        putlog(LOG_JOIN | LOG_MISC, chname, "%s!%s has logged into account %s",
+        putlog(LOG_JOIN, chname, "%s!%s has logged into account %s",
                 nick, from, msg);
       }
-      check_tcl_account(nick, from, mask, u, chname, msg = '*' ? "" : msg);
+      check_tcl_account(nick, from, mask, u, chname, msg[0] == '*' ? "" : msg);
     }
   }
   return 0;
