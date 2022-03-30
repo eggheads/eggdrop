@@ -1605,7 +1605,7 @@ static int gotaccount(char *from, char *msg) {
   for (chan = chanset; chan; chan = chan->next) {
     chname = chan->dname;
     if ((m = ismember(chan, nick))) {
-      strlcpy (m->account, msg, sizeof m->account);
+      strlcpy (m->account, msg[0] == '*' ? "" : msg, sizeof m->account);
       snprintf(mask, sizeof mask, "%s %s", chname, from);
       if (!strcasecmp(msg, "*")) {
         msg[0] = '\0';
