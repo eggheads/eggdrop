@@ -770,7 +770,7 @@ static void cmd_channel(struct userrec *u, int idx, char *par)
       maxhandlen = 9;
 
     dprintf(idx, "(n = owner, m = master, o = op, d = deop, b = bot)\n");
-    dprintf(idx, " %-*s %-*s %-*s  %-6s %-5s %s\n", maxnicklen, "NICKNAME",
+    dprintf(idx, " %-*s %-*s %-*s  %-6s %-5s        %s\n", maxnicklen, "NICKNAME",
               maxhandlen, "HANDLE", maxnicklen, "ACCOUNT", "JOIN", "IDLE",
               "USER@HOST");
     for (m = chan->channel.member; m && m->nick[0]; m = m->next) {
@@ -870,7 +870,7 @@ static void cmd_channel(struct userrec *u, int idx, char *par)
               chanflag, maxnicklen, m->nick, maxhandlen, handle, maxnicklen,
               m->account, s, atrflag, now- (m->split));
       } else if (!rfc_casecmp(m->nick, botname)) {
-        dprintf(idx, "%c%-*s %-*s %-*s %-6s %c     <- it's me!\n", chanflag,
+        dprintf(idx, "%c%-*s %-*s %-*s %-6s %c          <- it's me!\n", chanflag,
               maxnicklen, m->nick, maxhandlen, handle, maxnicklen, m->account,
               s, atrflag);
       } else {
