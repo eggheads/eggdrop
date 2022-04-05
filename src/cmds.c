@@ -1866,8 +1866,6 @@ static void cmd_account(struct userrec *u, int idx, char *par)
     dprintf(idx, "No such user!\n");
     return;
   }
-
-  dprintf(idx, "XXXXX: trying to add %s to %s", par, hand);
   set_user(&USERENTRY_ACCOUNT, u2, par);
 
   return;
