@@ -1855,12 +1855,19 @@ static void uc_attr_inform(const int idx, const int msgids)
     dprintf(idx, "INFO: adding +g also adds +v for your convenience, if unwanted one can revert with -v.\n");
 }
 
+/* Add or remove a services account name to a handle */
 static void cmd_account(struct userrec *u, int idx, char *par)
 {
   struct userrec *u2;
   char *hand;
 
   hand = newsplit(&par);
+  for (u2 = userlist; u2; u2 = u2->next) {
+    if (!strcmp(par, u2->handle)) {
+      dprintf(idx, "Account already exists for user %s", u2->handle);
+      return;
+    }
+  }
   u2 = get_user_by_handle(userlist, hand);
   if (!u2) {
     dprintf(idx, "No such user!\n");
@@ -1870,7 +1877,6 @@ static void cmd_account(struct userrec *u, int idx, char *par)
 
   return;
 }
-
 
 static void cmd_chattr(struct userrec *u, int idx, char *par)
 {

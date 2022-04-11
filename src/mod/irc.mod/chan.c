@@ -2186,17 +2186,19 @@ static int gotjoin(char *from, char *channame)
         if (extjoin) {
           /* Update account for all channels the nick is on, not just this one */
           strlcpy(account, newsplit(&channame), sizeof account);
-          if (strcmp(account, "*")) {
-            for (extchan = chanset; extchan; extchan = extchan->next) {
-              if ((n = ismember(extchan, nick))) {
+          for (extchan = chanset; extchan; extchan = extchan->next) {
+            if ((n = ismember(extchan, nick))) {
+              if (strcmp(account, "*")) {
                 strlcpy (n->account, account, sizeof n->account);
-                /* Don't trigger for the channel the user joined, but do trigger
-                 * for other channels the user is already in
-                 */
-                if (strcasecmp(chname, extchan->dname)) {
-                  snprintf(mask, sizeof mask, "%s %s", chname, from);
-                  check_tcl_account(nick, from, mask, u, chname, account);
-                }
+              } else {
+                n->account[0] = 0;
+              }
+              /* Don't trigger for the channel the user joined, but do trigger
+               * for other channels the user is already in
+               */
+              if (strcasecmp(chname, extchan->dname)) {
+                snprintf(mask, sizeof mask, "%s %s", chname, from);
+                check_tcl_account(nick, from, mask, u, chname, account);
               }
             }
           }

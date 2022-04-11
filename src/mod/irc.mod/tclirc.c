@@ -1038,8 +1038,10 @@ static int tcl_topic STDVAR
   return TCL_OK;
 }
 
-/* Take a provded nickname and return a stored account name. Returns after
-   first hit as accounts are unique in a userfile
+/* Takes a provided nickname, looks up the account associated with that nick in
+ * the channel record, then finds the handle associated with that same account.
+ * Returns the first handle found associated with the account, as accounts are
+ * unique in a userfile.
  */
 static int tcl_account2hand STDVAR
 {
