@@ -1874,7 +1874,12 @@ static void cmd_account(struct userrec *u, int idx, char *par)
     return;
   }
   set_user(&USERENTRY_ACCOUNT, u2, par);
-
+  putlog(LOG_CMDS, "*", "#%s# account %s %s", dcc[idx].nick, u2->handle, par);
+  if (strcmp(par, "")) {
+    dprintf(idx, "Added account %s to %s\n", par, u2->handle);
+  } else {
+    dprintf(idx, "Removed account from %s\n", u2->handle);
+  }
   return;
 }
 

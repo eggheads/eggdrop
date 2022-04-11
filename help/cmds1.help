@@ -44,6 +44,11 @@ See also: +bot, +user, -user
 %{-}
 
 See also: +host
+%{help=account}%{+m}
+###  %baccount%b <handle> [account name]
+   Associates the provided services account name to a handle. If no account name
+   is provided, this will remove an already-associated account name from a
+   handle.
 %{help=-ignore}%{+m}
 ###  %b-ignore%b <hostmask/number>
    Removes the specified ignore from the list of ignores stored on the bot. You

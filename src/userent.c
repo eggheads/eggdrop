@@ -1446,7 +1446,7 @@ struct user_entry_type USERENTRY_ACCOUNT = {
   0,
   def_gotshare,
   def_dupuser,
-  0,
+  def_unpack,
   def_pack,
   def_write_userfile,
   def_kill,
