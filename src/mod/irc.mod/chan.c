@@ -2198,7 +2198,8 @@ static int gotjoin(char *from, char *channame)
                */
               if (strcasecmp(chname, extchan->dname)) {
                 snprintf(mask, sizeof mask, "%s %s", chname, from);
-                check_tcl_account(nick, from, mask, u, chname, account);
+                check_tcl_account(nick, from, mask, u, extchan->dname, account);
+
               }
             }
           }
