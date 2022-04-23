@@ -1224,13 +1224,13 @@ static int got352or4(struct chanset_t *chan, char *user, char *host,
           strlcpy(m->account, account, sizeof(m->account));
           snprintf(mask, sizeof mask, "%s %s", acctchan->dname, userhost);
           if (strcasecmp(chan->dname, acctchan->dname)) {
-            check_tcl_account(nick, userhost, mask, m->user, acctchan->dname, account);
+            //check_tcl_account(nick, userhost, mask, m->user, acctchan->dname, account);
           }
         } else {      /* Explicitly clear, in case someone deauthenticated? */
           m->account[0] = 0;
           snprintf(mask, sizeof mask, "%s %s", acctchan->dname, userhost);
           if (strcasecmp(chan->dname, acctchan->dname)) {
-            check_tcl_account(nick, userhost, mask, m->user, acctchan->dname, "");
+            //check_tcl_account(nick, userhost, mask, m->user, acctchan->dname, "");
           }
         }
       }
@@ -2198,8 +2198,7 @@ static int gotjoin(char *from, char *channame)
                */
               if (strcasecmp(chname, extchan->dname)) {
                 snprintf(mask, sizeof mask, "%s %s", chname, from);
-                check_tcl_account(nick, from, mask, u, extchan->dname, account);
-
+                //check_tcl_account(nick, from, mask, u, extchan->dname, account);
               }
             }
           }
