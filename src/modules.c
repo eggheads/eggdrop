@@ -625,7 +625,8 @@ Function global_table[] = {
   (Function) egg_uname,
   (Function) get_expire_time,
 /* 316 - 319 */
-  (Function) & USERENTRY_ACCOUNT  /* struct user_entry_type *            */
+  (Function) & USERENTRY_ACCOUNT, /* struct user_entry_type *            */
+  (Function) get_user_by_account
 };
 
 void init_modules(void)

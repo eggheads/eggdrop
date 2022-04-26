@@ -1046,6 +1046,7 @@ static int tcl_topic STDVAR
 static int tcl_account2hand STDVAR
 {
   memberlist *m;
+  struct userrec *u;
   struct chanset_t *chan, *thechan = NULL;
 
   BADARGS(2, 3, " nick ?channel?");
@@ -1064,8 +1065,9 @@ static int tcl_account2hand STDVAR
         m = ismember(chan, argv[1]);
     if (m) {                            /* If we find the nickname on a channel */
       if (m->account) {                 /* And they have an account */
-        Tcl_AppendResult(irp, m->user ? m->user->handle : "", NULL);
-      return TCL_OK;                    /* Return the handle */
+        u = get_user_by_account(m->account);
+        Tcl_AppendResult(irp, u ? u->handle : "", NULL);
+        return TCL_OK;                  /* Return the handle */
       }
     }
     chan = chan->next;

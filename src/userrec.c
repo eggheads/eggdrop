@@ -171,6 +171,28 @@ struct userrec *check_dcclist_hand(char *handle)
   return NULL;
 }
 
+/* Search userlist for a provided account name
+ * Returns: userrecord for user containing the account
+ */
+struct userrec *get_user_by_account(char *acct)
+{
+  struct userrec *u;
+  struct list_type *q;
+
+  if (acct == NULL)
+    return NULL;
+  for (u = userlist; u; u = u->next) {
+    q = get_user(&USERENTRY_ACCOUNT, u);
+    for (; q; q = q->next) {
+      if(q && !strcasecmp(q->extra, acct)) {
+        return u;
+      }
+    }
+  }
+  return NULL;
+}
+
+
 struct userrec *get_user_by_handle(struct userrec *bu, char *handle)
 {
   struct userrec *u, *ret;
@@ -820,19 +842,37 @@ int delhost_by_handle(char *handle, char *host)
   return i;
 }
 
-void addhost_by_handle(char *handle, char *host)
+void add_host_or_account(char *handle, char *arg, int type)
 {
   struct userrec *u = get_user_by_handle(userlist, handle);
 
-  set_user(&USERENTRY_HOSTS, u, host);
-  /* u will be cached, so really no overhead, even tho this looks dumb: */
+  if (type) {
+    set_user(&USERENTRY_ACCOUNT, u, arg);
+  } else {
+    set_user(&USERENTRY_HOSTS, u, arg);
+  }
   if ((!noshare) && !(u->flags & USER_UNSHARED)) {
-    if (u->flags & USER_BOT)
-      shareout(NULL, "+bh %s %s\n", handle, host);
-    else
-      shareout(NULL, "+h %s %s\n", handle, host);
+    if (type) {
+///////XXXXXXX DO THINGS XXXXXXXXX//////////
+    } else {
+      if (u->flags & USER_BOT) {
+        shareout(NULL, "+bh %s %s\n", handle, arg);
+      } else {
+        shareout(NULL, "+h %s %s\n", handle, arg);
+      }
+    }
   }
   clear_chanlist();
+}
+
+void addhost_by_handle(char *handle, char *host)
+{
+  add_host_or_account(handle, host, 0);
+}
+
+void addaccount_by_handle(char *handle, char *acct)
+{
+  add_host_or_account(handle, acct, 1);
 }
 
 void touch_laston(struct userrec *u, char *where, time_t timeval)

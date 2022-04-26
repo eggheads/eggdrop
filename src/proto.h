@@ -324,6 +324,7 @@ int xtra_set();
 /* userrec.c */
 struct userrec *adduser(struct userrec *, char *, char *, char *, int);
 void addhost_by_handle(char *, char *);
+void addaccount_by_handle(char *, char *);
 void clear_masks(struct maskrec *);
 void clear_userlist(struct userrec *);
 int u_pass_match(struct userrec *, char *);

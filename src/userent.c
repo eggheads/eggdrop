@@ -1439,25 +1439,105 @@ struct user_entry_type USERENTRY_FPRINT = {
 
 static void account_display(int idx, struct user_entry *e)
 {
-  dprintf(idx, "  ACCOUNT: %s\n", e->u.string);
+  char s[1024];
+  struct list_type *q;
+
+  s[0] = 0;
+  strcpy(s, "  ACCOUNTS: ");
+  for (q = e->u.list; q; q = q->next) {
+    if (s[0] && !s[12])
+      strncat(s, q->extra, (sizeof s - strlen(s) -1));
+    else if (!s[0])
+      sprintf(s, "         %s", q->extra);
+    else {
+      if (strlen(s) + strlen(q->extra) + 2 > 65) {
+        dprintf(idx, "%s\n", s);
+        sprintf(s, "         %s", q->extra);
+      } else {
+        strcat(s, ", ");
+        strcat(s, q->extra);
+      }
+    }
+  }
+  if (s[0])
+    dprintf(idx, "%s\n", s);
+}
+
+static int account_set(struct userrec *u, struct user_entry *e, void *buf)
+{
+  if (!buf || !strcasecmp(buf, "none")) {
+    /* When the bot crashes, it's in this part, not in the 'else' part */
+    list_type_kill(e->u.list);
+    e->u.list = NULL;
+  } else {
+    char *acct = buf, *p = strchr(acct, ',');
+    struct list_type **t;
+
+    /* Can't have ,'s in accts */
+    while (p) {
+      *p = '?';
+      p = strchr(acct, ',');
+    }
+    /* check for redundant accts */
+    t = &(e->u.list);
+    while (*t) {
+      if (!strcasecmp(acct, (*t)->extra)) {
+        struct list_type *u;
+
+        u = *t;
+        *t = (*t)->next;
+        if (u->extra)
+          nfree(u->extra);
+        nfree(u);
+      } else
+        t = &((*t)->next);
+    }
+    *t = user_malloc(sizeof(struct list_type));
+
+    (*t)->next = NULL;
+    (*t)->extra = user_malloc(strlen(acct) + 1);
+    strcpy((*t)->extra, acct);
+  }
+  return 1;
+}
+
+static int account_write_userfile(FILE *f, struct userrec *u,
+                                struct user_entry *e)
+{
+  struct list_type *h;
+
+  for (h = e->u.extra; h; h = h->next)
+    if (fprintf(f, "--ACCOUNT %s\n", h->extra) == EOF)
+      return 0;
+  return 1;
+}
+
+static int account_dupuser(struct userrec *new, struct userrec *old,
+                         struct user_entry *e)
+{
+  struct list_type *h;
+
+  for (h = e->u.extra; h; h = h->next)
+    set_user(&USERENTRY_ACCOUNT, new, h->extra);
+  return 1;
 }
 
 struct user_entry_type USERENTRY_ACCOUNT = {
   0,
   def_gotshare,
-  def_dupuser,
-  def_unpack,
-  def_pack,
-  def_write_userfile,
-  def_kill,
+  account_dupuser,
+  hosts_null,
+  hosts_null,
+  account_write_userfile,
+  hosts_kill,
   def_get,
-  def_set,
+  account_set,
   def_tcl_get,
   def_tcl_set,
-  def_expmem,
+  hosts_expmem,
   account_display,
   "ACCOUNT",
-  def_tcl_append
+  hosts_tcl_append
 };
 
 
