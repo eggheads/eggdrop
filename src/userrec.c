@@ -794,7 +794,7 @@ int deluser(char *handle)
   return 1;
 }
 
-int delhost_by_handle(char *handle, char *host)
+int del_host_or_account(char *handle, char *host, int type)
 {
   struct userrec *u;
   struct list_type *q, *qnext, *qprev;
@@ -804,11 +804,19 @@ int delhost_by_handle(char *handle, char *host)
   u = get_user_by_handle(userlist, handle);
   if (!u)
     return 0;
-  q = get_user(&USERENTRY_HOSTS, u);
+  if (type) {
+    q = get_user(&USERENTRY_ACCOUNT, u);
+  } else {
+    q = get_user(&USERENTRY_HOSTS, u);
+  }
   qprev = q;
   if (q) {
     if (!rfc_casecmp(q->extra, host)) {
-      e = find_user_entry(&USERENTRY_HOSTS, u);
+      if (type) {
+        e = find_user_entry(&USERENTRY_ACCOUNT, u);
+      } else {
+        e = find_user_entry(&USERENTRY_HOSTS, u);
+      }
       e->u.extra = q->next;
       nfree(q->extra);
       nfree(q);
@@ -834,13 +842,30 @@ int delhost_by_handle(char *handle, char *host)
       q = qnext;
     }
   }
-  if (!qprev)
-    set_user(&USERENTRY_HOSTS, u, "none");
+  if (!qprev) {
+    if (type) {
+      set_user(&USERENTRY_ACCOUNT, u, "none");
+    } else {
+      set_user(&USERENTRY_HOSTS, u, "none");
+    }
+  }
   if (!noshare && i && !(u->flags & USER_UNSHARED))
     shareout(NULL, "-h %s %s\n", handle, host);
+///////XXXXXXXXXXXXX DO STUFF HERE XXXXXXXXXX///////////////
   clear_chanlist();
   return i;
 }
+
+int delhost_by_handle(char *handle, char *host)
+{
+  return del_host_or_account(handle, host, 0);
+}
+
+int delaccount_by_handle(char *handle, char *acct)
+{
+  return del_host_or_account(handle, acct, 1);
+}
+
 
 void add_host_or_account(char *handle, char *arg, int type)
 {

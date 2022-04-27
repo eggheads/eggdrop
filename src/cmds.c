@@ -1938,6 +1938,82 @@ static void add_to_handle(struct userrec *u, int idx, char *handle, char *host, 
   }
 }
 
+static void remove_from_handle(struct userrec *u, int idx, char *handle, char *host, int type)
+{
+  module_entry *me;
+  struct userrec *u2;
+  struct flag_record fr2 = { FR_GLOBAL | FR_CHAN | FR_ANYWH, 0, 0, 0, 0, 0 },
+                      fr = { FR_GLOBAL | FR_CHAN | FR_ANYWH, 0, 0, 0, 0, 0 };
+
+  if (host) {
+    u2 = get_user_by_handle(userlist, handle);
+  } else {
+    u2 = u;
+  }
+  if (!u2 || !u) {
+    dprintf(idx, "No such user.\n");
+    return;
+  }
+
+  get_user_flagrec(u, &fr, NULL);
+  get_user_flagrec(u2, &fr2, NULL);
+  /* check to see if user is +d or +k and don't let them remove hosts */
+  if (((glob_deop(fr) || glob_kick(fr)) && !glob_master(fr)) ||
+      ((chan_deop(fr) || chan_kick(fr)) && !chan_master(fr))) {
+    dprintf(idx, "You can't remove %s while having the +d or +k "
+            "flag.\n", type ? "accounts" : "hostmasks");
+    return;
+  }
+
+  if (strcasecmp(handle, dcc[idx].nick)) {
+    if (!glob_master(fr) && !glob_bot(fr2) && !chan_master(fr)) {
+      dprintf(idx, "You can't remove %s from non-bots.\n",
+            type ? "accounts" : "hostmasks");
+      return;
+    }
+    if (glob_bot(fr2) && (bot_flags(u2) & BOT_SHARE) && !glob_owner(fr)) {
+      dprintf(idx, "You can't remove %s from a share bot.\n",
+            type ? "accounts" : "hostmasks");
+      return;
+    }
+    if ((glob_owner(fr2) || glob_master(fr2)) && !glob_owner(fr)) {
+      dprintf(idx, "You can't remove %s from a bot owner/master.\n",
+            type ? "accounts" : "hostmasks");
+      return;
+    }
+    if ((chan_owner(fr2) || chan_master(fr2)) && !glob_master(fr) &&
+        !glob_owner(fr) && !chan_owner(fr)) {
+      dprintf(idx, "You can't remove %s from a channel owner/master.\n",
+            type ? "accounts" : "hostmasks");
+      return;
+    }
+    if (!glob_botmast(fr) && !glob_master(fr) && !chan_master(fr)) {
+      dprintf(idx, "Permission denied.\n");
+      return;
+    }
+  }
+  if (type) {
+    if (delaccount_by_handle(handle, host)) {
+      putlog(LOG_CMDS, "*", "#%s# -account %s %s", dcc[idx].nick, handle, host);
+      dprintf(idx, "Removed '%s' from %s.\n", host, handle);
+    } else {
+      dprintf(idx, "Failed.\n");
+    }
+  } else {
+    if (delhost_by_handle(handle, host)) {
+      putlog(LOG_CMDS, "*", "#%s# -host %s %s", dcc[idx].nick, handle, host);
+      dprintf(idx, "Removed '%s' from %s.\n", host, handle);
+      if ((me = module_find("irc", 0, 0))) {
+        Function *func = me->funcs;
+
+        (func[IRC_CHECK_THIS_USER]) (handle, 2, host);
+      }
+    } else {
+      dprintf(idx, "Failed.\n");
+    }
+  }
+}
+
 /* Add a services account name to a handle */
 static void cmd_pls_account(struct userrec *u, int idx, char *par)
 {
@@ -1956,37 +2032,30 @@ static void cmd_pls_account(struct userrec *u, int idx, char *par)
     handle = dcc[idx].nick;
   }
   add_to_handle(u, idx, handle, acct, 1);
-  putlog(LOG_CMDS, "*", "#%s# account %s %s", dcc[idx].nick, handle, acct);
+/////XXXXXX error check this
+  putlog(LOG_CMDS, "*", "#%s# +account %s %s", dcc[idx].nick, handle, acct);
   dprintf(idx, "Added account %s to %s\n", acct, handle);
   return;
 }
 
 
 /* Remove a services account name from a handle */
-static void cmd_del_account(struct userrec *u, int idx, char *par)
+static void cmd_mns_account(struct userrec *u, int idx, char *par)
 {
-  struct userrec *u2;
-  char *hand;
+  char *handle, *acct;
 
-  hand = newsplit(&par);
-  for (u2 = userlist; u2; u2 = u2->next) {
-    if (!strcmp(par, u2->handle)) {
-      dprintf(idx, "Account already exists for user %s", u2->handle);
-      return;
-    }
-  }
-  u2 = get_user_by_handle(userlist, hand);
-  if (!u2) {
-    dprintf(idx, "No such user!\n");
+  if (!par[0]) {
+    dprintf(idx, "Usage: -account [handle] <account>\n");
     return;
   }
-  set_user(&USERENTRY_ACCOUNT, u2, par);
-  putlog(LOG_CMDS, "*", "#%s# account %s %s", dcc[idx].nick, u2->handle, par);
-  if (strcmp(par, "")) {
-    dprintf(idx, "Added account %s to %s\n", par, u2->handle);
+  handle = newsplit(&par);
+  if (par[0]) {
+    acct = newsplit(&par);
   } else {
-    dprintf(idx, "Removed account from %s\n", u2->handle);
+    acct = handle;
+    handle = dcc[idx].nick;
   }
+  remove_from_handle(u, idx, handle, acct, 1);
   return;
 }
 
@@ -3109,10 +3178,6 @@ static void cmd_pls_host(struct userrec *u, int idx, char *par)
 static void cmd_mns_host(struct userrec *u, int idx, char *par)
 {
   char *handle, *host;
-  struct userrec *u2;
-  struct flag_record fr2 = { FR_GLOBAL | FR_CHAN | FR_ANYWH, 0, 0, 0, 0, 0 },
-                      fr = { FR_GLOBAL | FR_CHAN | FR_ANYWH, 0, 0, 0, 0, 0 };
-  module_entry *me;
 
   if (!par[0]) {
     dprintf(idx, "Usage: -host [handle] <hostmask>\n");
@@ -3121,60 +3186,11 @@ static void cmd_mns_host(struct userrec *u, int idx, char *par)
   handle = newsplit(&par);
   if (par[0]) {
     host = newsplit(&par);
-    u2 = get_user_by_handle(userlist, handle);
   } else {
     host = handle;
     handle = dcc[idx].nick;
-    u2 = u;
   }
-  if (!u2 || !u) {
-    dprintf(idx, "No such user.\n");
-    return;
-  }
-
-  get_user_flagrec(u, &fr, NULL);
-  get_user_flagrec(u2, &fr2, NULL);
-  /* check to see if user is +d or +k and don't let them remove hosts */
-  if (((glob_deop(fr) || glob_kick(fr)) && !glob_master(fr)) ||
-      ((chan_deop(fr) || chan_kick(fr)) && !chan_master(fr))) {
-    dprintf(idx, "You can't remove hostmasks while having the +d or +k "
-            "flag.\n");
-    return;
-  }
-
-  if (strcasecmp(handle, dcc[idx].nick)) {
-    if (!glob_master(fr) && !glob_bot(fr2) && !chan_master(fr)) {
-      dprintf(idx, "You can't remove hostmasks from non-bots.\n");
-      return;
-    }
-    if (glob_bot(fr2) && (bot_flags(u2) & BOT_SHARE) && !glob_owner(fr)) {
-      dprintf(idx, "You can't remove hostmasks from a share bot.\n");
-      return;
-    }
-    if ((glob_owner(fr2) || glob_master(fr2)) && !glob_owner(fr)) {
-      dprintf(idx, "You can't remove hostmasks from a bot owner/master.\n");
-      return;
-    }
-    if ((chan_owner(fr2) || chan_master(fr2)) && !glob_master(fr) &&
-        !glob_owner(fr) && !chan_owner(fr)) {
-      dprintf(idx, "You can't remove hostmasks from a channel owner/master.\n");
-      return;
-    }
-    if (!glob_botmast(fr) && !glob_master(fr) && !chan_master(fr)) {
-      dprintf(idx, "Permission denied.\n");
-      return;
-    }
-  }
-  if (delhost_by_handle(handle, host)) {
-    putlog(LOG_CMDS, "*", "#%s# -host %s %s", dcc[idx].nick, handle, host);
-    dprintf(idx, "Removed '%s' from %s.\n", host, handle);
-    if ((me = module_find("irc", 0, 0))) {
-      Function *func = me->funcs;
-
-      (func[IRC_CHECK_THIS_USER]) (handle, 2, host);
-    }
-  } else
-    dprintf(idx, "Failed.\n");
+  remove_from_handle(u, idx, handle, host, 0);
 }
 
 static void cmd_modules(struct userrec *u, int idx, char *par)
@@ -3313,6 +3329,7 @@ cmd_t C_dcc[] = {
   {"+host",     "t|m",  (IntFunc) cmd_pls_host,   NULL},
   {"+ignore",   "m",    (IntFunc) cmd_pls_ignore, NULL},
   {"+user",     "m",    (IntFunc) cmd_pls_user,   NULL},
+  {"-account",  "t|m",  (IntFunc) cmd_mns_account,NULL},
   {"-bot",      "t",    (IntFunc) cmd_mns_user,   NULL},
   {"-host",     "",     (IntFunc) cmd_mns_host,   NULL},
   {"-ignore",   "m",    (IntFunc) cmd_mns_ignore, NULL},
