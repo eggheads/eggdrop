@@ -1860,7 +1860,7 @@ static void uc_attr_inform(const int idx, const int msgids)
     0 = hostmask
     1 = account
  */
-static void add_to_handle(struct userrec *u, int idx, char *handle, char *host, int type)
+static int add_to_handle(struct userrec *u, int idx, char *handle, char *host, int type)
 {
   struct flag_record fr2 = { FR_GLOBAL | FR_CHAN | FR_ANYWH, 0, 0, 0, 0, 0 },
                       fr = { FR_GLOBAL | FR_CHAN | FR_ANYWH, 0, 0, 0, 0, 0 };
@@ -1874,7 +1874,7 @@ static void add_to_handle(struct userrec *u, int idx, char *handle, char *host, 
   }
   if (!u2 || !u) {
     dprintf(idx, "No such user.\n");
-    return;
+    return 1;
   }
 
   get_user_flagrec(u, &fr, NULL);
@@ -1883,59 +1883,52 @@ static void add_to_handle(struct userrec *u, int idx, char *handle, char *host, 
     if (!glob_master(fr) && !glob_bot(fr2) && !chan_master(fr)) {
       dprintf(idx, "You can't add %s to non-bots.\n",
             type ? "accounts" : "hostmasks");
-      return;
+      return 1;
     }
     if (!(glob_owner(fr) || glob_botmast(fr)) && glob_bot(fr2) && (bot_flags(u2) & BOT_SHARE)) {
       dprintf(idx, "You can't add %s to share bots.\n",
             type ? "accounts" : "hostmasks");
-      return;
+      return 1;
     }
     if ((glob_owner(fr2) || glob_master(fr2)) && !glob_owner(fr)) {
       dprintf(idx, "You can't add %s to a bot owner/master.\n",
             type ? "accounts" : "hostmasks");
-      return;
+      return 1;
     }
     if ((chan_owner(fr2) || chan_master(fr2)) && !glob_master(fr) &&
         !glob_owner(fr) && !chan_owner(fr)) {
       dprintf(idx, "You can't add %s to a channel owner/master.\n",
             type ? "accounts" : "hostmasks");
-      return;
+      return 1;
     }
     if (!glob_botmast(fr) && !glob_master(fr) && !chan_master(fr)) {
       dprintf(idx, "Permission denied.\n");
-      return;
+      return 1;
     }
   }
   if ( !type && !glob_botmast(fr) && !chan_master(fr) && get_user_by_host(host)) {
     dprintf(idx, "You cannot add %s matching another user!\n",
             type ? "an account" : "a host");
-    return;
+    return 1;
   }
   if (type) {
-    for (q = get_user(&USERENTRY_ACCOUNT, u); q; q = q->next) {
-      if (!strcasecmp(q->extra, host)) {
-        dprintf(idx, "That account is already added.\n");
-        return;
-      }
+    u2 = get_user_by_account(host);
+    if (u2) {
+      dprintf(idx, "That account already exists for user %s\n", u2->handle);
+      return 1;
     }
-//    for (u2 = userlist; u2; u2 = u2->next) {
-////////// foo = get_user(&USERENTRY_ACCOUNT), for (i=foo, i, foo->next); {
-//      if (!strcasecmp(host, u2->account)) {
-//        dprintf(idx, "Account already exists for user %s", u2->handle);
-//        return;
-//      }
-//    }
     addaccount_by_handle(handle, host);
   } else {
     for (q = get_user(&USERENTRY_HOSTS, u); q; q = q->next) {
       if (!strcasecmp(q->extra, host)) {
         dprintf(idx, "That %s is already there.\n",
               type ? "account" : "hostmask");
-        return;
+        return 1;
       }
     }
     addhost_by_handle(handle, host);
   }
+  return 0;
 }
 
 static void remove_from_handle(struct userrec *u, int idx, char *handle, char *host, int type)
@@ -2018,6 +2011,7 @@ static void remove_from_handle(struct userrec *u, int idx, char *handle, char *h
 static void cmd_pls_account(struct userrec *u, int idx, char *par)
 {
   char *handle, *acct;
+  int ret;
 
   if (!par[0]) {
     dprintf(idx, "Usage: +account [handle] <account>\n");
@@ -2031,10 +2025,12 @@ static void cmd_pls_account(struct userrec *u, int idx, char *par)
     acct = handle;
     handle = dcc[idx].nick;
   }
-  add_to_handle(u, idx, handle, acct, 1);
+  ret = add_to_handle(u, idx, handle, acct, 1);
 /////XXXXXX error check this
-  putlog(LOG_CMDS, "*", "#%s# +account %s %s", dcc[idx].nick, handle, acct);
-  dprintf(idx, "Added account %s to %s\n", acct, handle);
+  if (!ret) {
+    putlog(LOG_CMDS, "*", "#%s# +account %s %s", dcc[idx].nick, handle, acct);
+    dprintf(idx, "Added account %s to %s\n", acct, handle);
+  }
   return;
 }
 
