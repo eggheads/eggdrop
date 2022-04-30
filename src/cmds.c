@@ -2026,7 +2026,6 @@ static void cmd_pls_account(struct userrec *u, int idx, char *par)
     handle = dcc[idx].nick;
   }
   ret = add_to_handle(u, idx, handle, acct, 1);
-/////XXXXXX error check this
   if (!ret) {
     putlog(LOG_CMDS, "*", "#%s# +account %s %s", dcc[idx].nick, handle, acct);
     dprintf(idx, "Added account %s to %s\n", acct, handle);
