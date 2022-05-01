@@ -850,8 +850,7 @@ int del_host_or_account(char *handle, char *host, int type)
     }
   }
   if (!noshare && i && !(u->flags & USER_UNSHARED))
-    shareout(NULL, "-h %s %s\n", handle, host);
-///////XXXXXXXXXXXXX DO STUFF HERE XXXXXXXXXX///////////////
+    shareout(NULL, "-%s %s %s\n", type ? "a" : "h", handle, host);
   clear_chanlist();
   return i;
 }
@@ -877,14 +876,10 @@ void add_host_or_account(char *handle, char *arg, int type)
     set_user(&USERENTRY_HOSTS, u, arg);
   }
   if ((!noshare) && !(u->flags & USER_UNSHARED)) {
-    if (type) {
-///////XXXXXXX DO THINGS XXXXXXXXX//////////
+    if (u->flags & USER_BOT) {
+      shareout(NULL, "+b%s %s %s\n", type ? "a" : "h", handle, arg);
     } else {
-      if (u->flags & USER_BOT) {
-        shareout(NULL, "+bh %s %s\n", handle, arg);
-      } else {
-        shareout(NULL, "+h %s %s\n", handle, arg);
-      }
+      shareout(NULL, "+%s %s %s\n", type ? "a" : "h", handle, arg);
     }
   }
   clear_chanlist();

@@ -626,7 +626,8 @@ Function global_table[] = {
   (Function) get_expire_time,
 /* 316 - 319 */
   (Function) & USERENTRY_ACCOUNT, /* struct user_entry_type *            */
-  (Function) get_user_by_account
+  (Function) get_user_by_account,
+  (Function) delhost_by_handle
 };
 
 void init_modules(void)

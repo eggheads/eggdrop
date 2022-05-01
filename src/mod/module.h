@@ -521,6 +521,7 @@
 /* 316 - 319 */
 #define USERENTRY_ACCOUNT (*(struct user_entry_type *)(global[316]))
 #define get_user_by_account ((struct userrec * (*)(char *))global[317])
+#define delaccount_by_handle ((int(*)(char *,char *))global[318])
 
 
 
