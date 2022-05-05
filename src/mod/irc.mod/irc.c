@@ -1094,10 +1094,10 @@ static void irc_report(int idx, int details)
   acctnotify = 0;
   while (current != NULL) {
     if (!strcasecmp("extended-join", current->name)) {
-      extjoin = 1;
+      extjoin = current->enabled ? 1 : 0;
     }
     if (!strcasecmp("account-notify", current->name)) {
-      acctnotify = 1;
+      acctnotify = current->enabled ? 1 : 0;
     }
     current = current->next;
   }

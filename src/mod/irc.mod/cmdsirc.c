@@ -724,21 +724,8 @@ static void cmd_channel(struct userrec *u, int idx, char *par)
 {
   char handle[HANDLEN + 1], s[UHOSTLEN], s1[UHOSTLEN], atrflag, chanflag;
   struct chanset_t *chan;
-  struct capability *current;
   memberlist *m;
-  int maxnicklen, maxhandlen, extjoin = 0, acctnotify = 0;
-
-  /* Check if CAPs are enabled */
-  current = cap;
-  while (current != NULL) {
-    if (!strcasecmp("extended-join", current->name)) {
-      extjoin = current->enabled ? 1 : 0;
-    }
-    if (!strcasecmp("account-notify", current->name)) {
-      acctnotify = current->enabled ? 1 : 0;
-    }
-    current = current->next;
-  }
+  int maxnicklen, maxhandlen;
 
   chan = get_channel(idx, par);
   if (!chan || !has_oporhalfop(idx, chan))
