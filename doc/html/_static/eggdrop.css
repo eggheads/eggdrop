@@ -8,6 +8,14 @@ div.header .headertitle a {
   color: #2F2F2F;
 }
 
+div.document {
+  width: 85em;
+}
+
+div.content {
+  width: 110em;
+}
+
 div.sidebar .caption {
   font-weight: bold;
   color: #3465a4;

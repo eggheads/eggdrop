@@ -129,19 +129,30 @@
 <div class="section" id="id1">
 <h2>Common first steps<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h2>
 <p>To learn more about any of these commands, type .help &lt;command&gt; on the partyline. It will provide you the syntax you need, as well as a short description of how to use the command.</p>
+<div class="section" id="join-a-channel">
+<h3>Join a Channel<a class="headerlink" href="#join-a-channel" title="Permalink to this headline">¶</a></h3>
 <p>To tell the Eggdrop to join a channel, use:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">.+</span><span class="n">chan</span> <span class="c1">#channel</span>
 </pre></div>
 </div>
+</div>
+<div class="section" id="add-a-user">
+<h3>Add a User<a class="headerlink" href="#add-a-user" title="Permalink to this headline">¶</a></h3>
 <p>To add a user to the bot, use:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">.+</span><span class="n">user</span> <span class="o">&lt;</span><span class="n">handle</span><span class="o">&gt;</span>
 </pre></div>
 </div>
+</div>
+<div class="section" id="add-a-host-to-a-user">
+<h3>Add a Host to a User<a class="headerlink" href="#add-a-host-to-a-user" title="Permalink to this headline">¶</a></h3>
 <p>The handle is the name that the bot uses to track a user. No matter what nickname on IRC a user uses, a single handle is used to track the user by their hostmask. To add a hostmask of a user to a handle, use:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">.+</span><span class="n">host</span> <span class="o">&lt;</span><span class="n">handle</span><span class="o">&gt;</span> <span class="o">&lt;</span><span class="n">hostmask</span><span class="o">&gt;</span>
 </pre></div>
 </div>
 <p>where the hostmask is in the format of &lt;nick&gt;!&lt;ident&gt;&#64;hostname.com . Wildcards can be used; common formats are <a class="reference external" href="mailto:*!*&#37;&#52;&#48;hostname&#46;com">*!*<span>&#64;</span>hostname<span>&#46;</span>com</a> for static hosts, or <a class="reference external" href="mailto:*!ident&#37;&#52;&#48;*&#46;foo&#46;com">*!ident<span>&#64;</span>*<span>&#46;</span>foo<span>&#46;</span>com</a> for dynamic hostnames.</p>
+</div>
+<div class="section" id="assign-permission-flags">
+<h3>Assign Permission Flags<a class="headerlink" href="#assign-permission-flags" title="Permalink to this headline">¶</a></h3>
 <p>To assign an access level to a user, first read <code class="docutils literal notranslate"><span class="pre">.help</span> <span class="pre">whois</span></code> for a listing of possible access levels and their corresponding flags. Then, assign the desired flag to the user with:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">.</span><span class="n">chattr</span> <span class="o">&lt;+</span><span class="n">flag</span><span class="o">&gt;</span> <span class="o">&lt;</span><span class="n">handle</span><span class="o">&gt;</span>
 </pre></div>
@@ -151,6 +162,9 @@
 </pre></div>
 </div>
 <p>It is important to note that, when on the partyline, you want to use the handle of the user, not their current nickname.</p>
+</div>
+<div class="section" id="configure-channel-settings">
+<h3>Configure Channel Settings<a class="headerlink" href="#configure-channel-settings" title="Permalink to this headline">¶</a></h3>
 <p>Finally, Eggdrop is often used to moderate and control channels. This is done via the <code class="docutils literal notranslate"><span class="pre">.chanset</span></code> command. To learn more about the (numerous!) settings that can be used to control a channel, read:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">.</span><span class="n">help</span> <span class="n">chaninfo</span>
 </pre></div>
@@ -160,6 +174,7 @@
 </pre></div>
 </div>
 <p>which will enforce the s, n, and t flags on a channel.</p>
+</div>
 </div>
 <div class="section" id="automatically-restarting-an-eggdrop">
 <h2>Automatically restarting an Eggdrop<a class="headerlink" href="#automatically-restarting-an-eggdrop" title="Permalink to this headline">¶</a></h2>

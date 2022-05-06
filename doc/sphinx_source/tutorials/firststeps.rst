@@ -28,19 +28,31 @@ Common first steps
 
 To learn more about any of these commands, type .help <command> on the partyline. It will provide you the syntax you need, as well as a short description of how to use the command.
 
+Join a Channel
+^^^^^^^^^^^^^^
+
 To tell the Eggdrop to join a channel, use::
 
   .+chan #channel
 
+Add a User
+^^^^^^^^^^
+
 To add a user to the bot, use::
 
   .+user <handle> 
+
+Add a Host to a User
+^^^^^^^^^^^^^^^^^^^^
 
 The handle is the name that the bot uses to track a user. No matter what nickname on IRC a user uses, a single handle is used to track the user by their hostmask. To add a hostmask of a user to a handle, use::
 
   .+host <handle> <hostmask>
 
 where the hostmask is in the format of <nick>!<ident>@hostname.com . Wildcards can be used; common formats are \*!\*@hostname.com for static hosts, or \*!ident@*.foo.com for dynamic hostnames.
+
+Assign Permission Flags
+^^^^^^^^^^^^^^^^^^^^^^^
 
 To assign an access level to a user, first read ``.help whois`` for a listing of possible access levels and their corresponding flags. Then, assign the desired flag to the user with::
 
@@ -51,6 +63,9 @@ So to grant a user the voice flag, you would do::
   .chattr +v handle
 
 It is important to note that, when on the partyline, you want to use the handle of the user, not their current nickname.
+
+Configure Channel Settings
+^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 Finally, Eggdrop is often used to moderate and control channels. This is done via the ``.chanset`` command. To learn more about the (numerous!) settings that can be used to control a channel, read::
 
