@@ -2,9 +2,8 @@ Last revised: December 31, 2001
 
 .. _woobie:
 
-=============
 Woobie Module
-=============
+-------------
 
 This is for demonstrative purposes only. If you are looking for starting
 point in writing modules, woobie is the right thing.
