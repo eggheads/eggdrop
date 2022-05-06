@@ -14,7 +14,7 @@ div.sidebar .caption {
 }
 
 div.body .toctree-wrapper {
-  visibility: hidden;
+  display: none;
   font-size: 1px;
 }
 

@@ -70,25 +70,8 @@
 <p class="caption"><span class="caption-text">Eggdrop Modules</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="modules/index.html">Eggdrop Module Information</a></li>
-<li class="toctree-l1"><a class="reference internal" href="modules/assoc.html">Assoc Module</a></li>
-<li class="toctree-l1"><a class="reference internal" href="modules/blowfish.html">Blowfish Module</a></li>
-<li class="toctree-l1"><a class="reference internal" href="modules/channels.html">Channels Module</a></li>
-<li class="toctree-l1"><a class="reference internal" href="modules/compress.html">Compress Module</a></li>
-<li class="toctree-l1"><a class="reference internal" href="modules/console.html">Console Module</a></li>
-<li class="toctree-l1"><a class="reference internal" href="modules/ctcp.html">CTCP Module</a></li>
-<li class="toctree-l1"><a class="reference internal" href="modules/dns.html">DNS Module</a></li>
-<li class="toctree-l1"><a class="reference internal" href="modules/filesys.html">Filesys Module</a></li>
-<li class="toctree-l1"><a class="reference internal" href="modules/ident.html">Ident Module</a></li>
-<li class="toctree-l1"><a class="reference internal" href="modules/irc.html">IRC Module</a></li>
-<li class="toctree-l1"><a class="reference internal" href="modules/notes.html">Notes Module</a></li>
-<li class="toctree-l1"><a class="reference internal" href="modules/pbkdf2.html">PBKDF2 Module</a></li>
-<li class="toctree-l1"><a class="reference internal" href="modules/seen.html">Seen Module</a></li>
-<li class="toctree-l1"><a class="reference internal" href="modules/server.html">Server Module</a></li>
-<li class="toctree-l1"><a class="reference internal" href="modules/share.html">Share Module</a></li>
-<li class="toctree-l1"><a class="reference internal" href="modules/transfer.html">Transfer Module</a></li>
-<li class="toctree-l1"><a class="reference internal" href="modules/twitch.html">Twitch Module</a></li>
-<li class="toctree-l1"><a class="reference internal" href="modules/uptime.html">Uptime Module</a></li>
-<li class="toctree-l1"><a class="reference internal" href="modules/woobie.html">Woobie Module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="modules/included.html">Modules included with Eggdrop</a></li>
+<li class="toctree-l1"><a class="reference internal" href="modules/writing.html">Writing an Eggdrop Module</a></li>
 </ul>
 <p class="caption"><span class="caption-text">About Eggdrop</span></p>
 <ul>
@@ -309,41 +292,36 @@
 <li class="toctree-l2"><a class="reference internal" href="modules/index.html#what-are-modules">What are modules?</a></li>
 <li class="toctree-l2"><a class="reference internal" href="modules/index.html#why-use-modules">Why use modules?</a></li>
 <li class="toctree-l2"><a class="reference internal" href="modules/index.html#how-to-install-a-module">How to install a module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="modules/index.html#modules-included-with-eggdrop">Modules included with Eggdrop</a></li>
 <li class="toctree-l2"><a class="reference internal" href="modules/index.html#can-i-compile-eggdrop-without-dynamic-modules-static-compile">Can I compile Eggdrop without dynamic modules? (Static compile)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="modules/index.html#writing-your-own-modules">Writing your own modules</a></li>
-<li class="toctree-l2"><a class="reference internal" href="modules/index.html#module-requirements">Module requirements</a></li>
-<li class="toctree-l2"><a class="reference internal" href="modules/index.html#what-to-do-with-a-module">What to do with a module?</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="modules/assoc.html">Assoc Module</a></li>
-<li class="toctree-l1"><a class="reference internal" href="modules/blowfish.html">Blowfish Module</a></li>
-<li class="toctree-l1"><a class="reference internal" href="modules/channels.html">Channels Module</a></li>
-<li class="toctree-l1"><a class="reference internal" href="modules/compress.html">Compress Module</a></li>
-<li class="toctree-l1"><a class="reference internal" href="modules/console.html">Console Module</a></li>
-<li class="toctree-l1"><a class="reference internal" href="modules/ctcp.html">CTCP Module</a></li>
-<li class="toctree-l1"><a class="reference internal" href="modules/dns.html">DNS Module</a></li>
-<li class="toctree-l1"><a class="reference internal" href="modules/filesys.html">Filesys Module</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="modules/filesys.html#config-file-setup">Config file setup</a></li>
-<li class="toctree-l2"><a class="reference internal" href="modules/filesys.html#partyline-usage">Partyline usage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="modules/included.html">Modules included with Eggdrop</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="modules/mod/assoc.html">Assoc Module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="modules/mod/blowfish.html">Blowfish Module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="modules/mod/channels.html">Channels Module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="modules/mod/compress.html">Compress Module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="modules/mod/console.html">Console Module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="modules/mod/ctcp.html">CTCP Module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="modules/mod/dns.html">DNS Module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="modules/mod/filesys.html">Filesys Module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="modules/mod/ident.html">Ident Module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="modules/mod/irc.html">IRC Module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="modules/mod/notes.html">Notes Module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="modules/mod/pbkdf2.html">PBKDF2 Module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="modules/mod/seen.html">Seen Module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="modules/mod/server.html">Server Module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="modules/mod/share.html">Share Module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="modules/mod/transfer.html">Transfer Module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="modules/mod/twitch.html">Twitch Module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="modules/mod/woobie.html">Woobie Module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="modules/mod/uptime.html">Uptime Module</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="modules/ident.html">Ident Module</a></li>
-<li class="toctree-l1"><a class="reference internal" href="modules/irc.html">IRC Module</a></li>
-<li class="toctree-l1"><a class="reference internal" href="modules/notes.html">Notes Module</a></li>
-<li class="toctree-l1"><a class="reference internal" href="modules/pbkdf2.html">PBKDF2 Module</a></li>
-<li class="toctree-l1"><a class="reference internal" href="modules/seen.html">Seen Module</a></li>
-<li class="toctree-l1"><a class="reference internal" href="modules/server.html">Server Module</a></li>
-<li class="toctree-l1"><a class="reference internal" href="modules/share.html">Share Module</a></li>
-<li class="toctree-l1"><a class="reference internal" href="modules/transfer.html">Transfer Module</a></li>
-<li class="toctree-l1"><a class="reference internal" href="modules/twitch.html">Twitch Module</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="modules/twitch.html#limitations">Limitations</a></li>
-<li class="toctree-l2"><a class="reference internal" href="modules/twitch.html#tcl-api">Tcl API</a></li>
-<li class="toctree-l2"><a class="reference internal" href="modules/twitch.html#partyline-commands">Partyline commands</a></li>
+<li class="toctree-l1"><a class="reference internal" href="modules/writing.html">Writing an Eggdrop Module</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="modules/writing.html#module-requirements">Module requirements</a></li>
+<li class="toctree-l2"><a class="reference internal" href="modules/writing.html#what-to-do-with-a-module">What to do with a module?</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="modules/uptime.html">Uptime Module</a></li>
-<li class="toctree-l1"><a class="reference internal" href="modules/woobie.html">Woobie Module</a></li>
 </ul>
 </div>
 <div class="toctree-wrapper compound">
@@ -380,7 +358,7 @@
           
     <div class="footer" role="contentinfo">
         &#169; Copyright 2022, Eggheads.
-      Last updated on May 05, 2022.
+      Last updated on May 06, 2022.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.5.
     </div>
         </div>
