@@ -121,8 +121,7 @@ mv tmpdocs/install.txt $BASEDIR/../INSTALL
 mv tmpdocs/ircv3.txt $BASEDIR/../doc/IRCv3
 mv tmpdocs/ipv6.txt $BASEDIR/../doc/IPV6
 mv tmpdocs/irc.txt $BASEDIR/../doc/settings/mod.irc
-mv tmpdocs/known-probs.txt $BASEDIR/../doc/KNOWN-PROBLEMS
-mv tmpdocs/modules.txt $BASEDIR/../doc/MODULES
+#mv tmpdocs/modules.txt $BASEDIR/../doc/MODULES
 mv tmpdocs/notes.txt $BASEDIR/../doc/settings/mod.notes
 mv tmpdocs/partyline.txt $BASEDIR/../doc/PARTYLINE
 mv tmpdocs/patch.txt $BASEDIR/../doc/PATCH-HOWTO
@@ -132,14 +131,12 @@ mv tmpdocs/seen.txt $BASEDIR/../doc/settings/mod.seen
 mv tmpdocs/server.txt $BASEDIR/../doc/settings/mod.server
 mv tmpdocs/share.txt $BASEDIR/../doc/settings/mod.share
 mv tmpdocs/tcl-commands.txt $BASEDIR/../doc/tcl-commands.doc
-mv tmpdocs/text-sub.txt $BASEDIR/../doc/TEXT-SUBSTITUTIONS
 mv tmpdocs/tls.txt $BASEDIR/../doc/TLS
 mv tmpdocs/transfer.txt $BASEDIR/../doc/settings/mod.transfer
 mv tmpdocs/tricks.txt $BASEDIR/../doc/TRICKS
 mv tmpdocs/twitch.txt $BASEDIR/../doc/TWITCH
 mv tmpdocs/uptime.txt $BASEDIR/../doc/settings/mod.uptime
 mv tmpdocs/users.txt $BASEDIR/../doc/USERS
-mv tmpdocs/weird-msgs.txt $BASEDIR/../doc/WEIRD-MESSAGES
 mv tmpdocs/woobie.txt $BASEDIR/../doc/settings/mod.woobie
 mv tmpdocs/upgrading.txt $BASEDIR/../UPGRADING
 rm -rf tmpdocs
