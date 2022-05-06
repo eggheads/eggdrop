@@ -4,28 +4,15 @@ Last revised: Jul 25, 2016
 Eggdrop Module Information
 ==========================
 
-The purpose of this document is to show you how to download, install, create,
-and submit modules.
-
 What are modules?
 -----------------
 
-Modules are portions of code which are loaded separately to the bot itself
-and provide extra services. For example, the filesys module provides the
-entire file system.
-
-Why use modules?
-----------------
-
-Modules allow C coders to add their own enhancements to the bot while
-keeping them optional and without increasing the size of the Eggdrop core.
+Modules are independent portions of code that are loaded separately from the main core code of Eggdrop. This allows users to only implement the features they desire without adding the extra overhead or "bloat" of those they don't, or even write their own module to add an enhancement not currently implemented by the Eggdrop development team. For example, the transfer module provides the ability to transfer files to and from the Eggdrop, and the ident module provides the ability to run an ident server to answer ident requests.
 
 How to install a module
 -----------------------
 
-Please note that these are only basic instructions for compiling and
-installing a module. Please read any and all directions included with
-the module you wish to install.
+Please note that these are only basic instructions for compiling and installing a module. Please read any and all directions included with the module you wish to install.
 
   1. Download and un-tar the Eggdrop source code.
 
