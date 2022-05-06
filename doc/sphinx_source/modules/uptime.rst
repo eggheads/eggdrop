@@ -2,9 +2,9 @@ Last revised: January 1, 2002
 
 .. _uptime:
 
-=============
+-------------
 Uptime Module
-=============
+-------------
 
 This module reports uptime statistics to http://uptime.eggheads.org. Go look
 and see what your uptime is! It takes about 9 hours to show up, so if your

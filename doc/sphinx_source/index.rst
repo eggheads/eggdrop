@@ -53,6 +53,7 @@ The Eggheads development team can be found lurking on #eggdrop on the Libera net
     :maxdepth: 2
 
     using/features
+    using/core
     using/partyline
     using/users
     using/bans
@@ -80,7 +81,26 @@ The Eggheads development team can be found lurking on #eggdrop on the Libera net
     :caption: Eggdrop Modules
     :maxdepth: 2
 
-    coreDocs/index
+    modules/index
+    modules/assoc
+    modules/blowfish
+    modules/channels
+    modules/compress
+    modules/console
+    modules/ctcp
+    modules/dns
+    modules/filesys
+    modules/ident
+    modules/irc
+    modules/notes
+    modules/pbkdf2
+    modules/seen
+    modules/server
+    modules/share
+    modules/transfer
+    modules/twitch
+    modules/uptime
+    modules/woobie
 
 .. toctree::
     :caption: About Eggdrop

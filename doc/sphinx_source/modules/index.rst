@@ -1,14 +1,12 @@
 Eggdrop Module Information
 Last revised: Jul 25, 2016
 
-==========================
 Eggdrop Module Information
 ==========================
 
 The purpose of this document is to show you how to download, install, create,
 and submit modules.
 
------------------
 What are modules?
 -----------------
 
@@ -16,14 +14,12 @@ Modules are portions of code which are loaded separately to the bot itself
 and provide extra services. For example, the filesys module provides the
 entire file system.
 
-----------------
 Why use modules?
 ----------------
 
 Modules allow C coders to add their own enhancements to the bot while
 keeping them optional and without increasing the size of the Eggdrop core.
 
------------------------
 How to install a module
 -----------------------
 
@@ -52,7 +48,6 @@ the module you wish to install.
 
 To view your currently loaded modules, type '.module'.
 
------------------------------
 Modules included with Eggdrop
 -----------------------------
 
@@ -138,14 +133,19 @@ Modules included with Eggdrop
     This is for demonstrative purposes only. If you are looking for
     starting point in writing modules, woobie is the right thing.
 
--------------------
-Programming modules
--------------------
+Can I compile Eggdrop without dynamic modules? (Static compile)
+---------------------------------------------------------------
+Yes, you can. If the configure script detects that your system CAN'T run modules, it will setup 'make' to link the modules in statically for you. You can choose this option yourself by using 'make static'. You can also try to compile dynamic modules on a static-only system by using 'make eggdrop'.
 
-WARNING: This section is very likely to be out of date.
+Do I still need to 'loadmodule' modules?
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Note: This is for a simple module of 1 source file. If you're doing a
-multiple source file module, you shouldn't need to read this anyway.
+YES, when you compile statically, all the modules are linked into the main executable. HOWEVER, they are not enabled until you use loadmodule to enable them, hence you get nearly the same functionality with static modules as with dynamic modules.
+
+Writing your own modules
+------------------------
+
+Note: This is for a simple module of 1 source file.
 
   1. Create a src/mod/MODULE.mod directory in your Eggdrop directory (where
      MODULE is the module name) and cd to it.
@@ -190,7 +190,6 @@ multiple source file module, you shouldn't need to read this anyway.
     This variable provides access to all the Eggdrop functions; without it,
     you can't call any Eggdrop functions (the module won't even load).
 
--------------------
 Module requirements
 -------------------
 
@@ -201,7 +200,6 @@ decent systems.
 Throughout this step, MODULE refers to the module name. Note that
   "MODULE_NAME" should literally be "MODULE_NAME".
 
-^^^^^^^^^^^^
 MODULE_start
 ^^^^^^^^^^^^
 ::
@@ -244,7 +242,6 @@ module loaded successfully. Returning a non-NULL STRING is an error
 message. The module (and any other dependent modules) will stop
 loading and an error will be returned.
 
-^^^^^^^^^^^^
 MODULE_table
 ^^^^^^^^^^^^
 
@@ -263,7 +260,6 @@ MODULE_table
   first 4 functions are FIXED. You MUST have them; they provide important
   module information.
 
-^^^^^^^^^^^^^^^
 MODULE_close ()
 ^^^^^^^^^^^^^^^
 ::
@@ -285,7 +281,6 @@ MODULE_close ()
   that the module cannot be unloaded for some reason, and hence the
   bot should not unload it (see the blowfish module for an example).
 
-^^^^^^^^^^^^^
 MODULE_expmem
 ^^^^^^^^^^^^^
 
@@ -297,7 +292,6 @@ MODULE_expmem
   (using nmalloc, nfree, etc) in bytes. It's used by memory debugging to
   track memory faults, and it is used by .status to total up memory usage.
 
-^^^^^^^^^^^^^
 MODULE_report
 ^^^^^^^^^^^^^
 
@@ -311,7 +305,6 @@ MODULE_report
 These functions are available to modules. MANY more available functions
 can be found in src/mod/module.h.
 
-^^^^^^^^^^^^^^^^^^^^
 Additional functions
 ^^^^^^^^^^^^^^^^^^^^
 
@@ -456,7 +449,6 @@ Additional functions
     will also output to any users' consoles if they have the specified
     console mode enabled.
 
--------------------------
 What to do with a module?
 -------------------------
 
