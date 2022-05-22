@@ -74,7 +74,6 @@
 <ul class="current">
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Eggdrop Module Information</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#what-are-modules">What are modules?</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#why-use-modules">Why use modules?</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#how-to-install-a-module">How to install a module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#can-i-compile-eggdrop-without-dynamic-modules-static-compile">Can I compile Eggdrop without dynamic modules? (Static compile)</a></li>
 </ul>
@@ -107,24 +106,13 @@
 Last revised: Jul 25, 2016</p>
 <div class="section" id="eggdrop-module-information">
 <h1>Eggdrop Module Information<a class="headerlink" href="#eggdrop-module-information" title="Permalink to this headline">¶</a></h1>
-<p>The purpose of this document is to show you how to download, install, create,
-and submit modules.</p>
 <div class="section" id="what-are-modules">
 <h2>What are modules?<a class="headerlink" href="#what-are-modules" title="Permalink to this headline">¶</a></h2>
-<p>Modules are portions of code which are loaded separately to the bot itself
-and provide extra services. For example, the filesys module provides the
-entire file system.</p>
-</div>
-<div class="section" id="why-use-modules">
-<h2>Why use modules?<a class="headerlink" href="#why-use-modules" title="Permalink to this headline">¶</a></h2>
-<p>Modules allow C coders to add their own enhancements to the bot while
-keeping them optional and without increasing the size of the Eggdrop core.</p>
+<p>Modules are independent portions of code that are loaded separately from the main core code of Eggdrop. This allows users to only implement the features they desire without adding the extra overhead or “bloat” of those they don’t, or even write their own module to add an enhancement not currently implemented by the Eggdrop development team. For example, the transfer module provides the ability to transfer files to and from the Eggdrop, and the ident module provides the ability to run an ident server to answer ident requests.</p>
 </div>
 <div class="section" id="how-to-install-a-module">
 <h2>How to install a module<a class="headerlink" href="#how-to-install-a-module" title="Permalink to this headline">¶</a></h2>
-<p>Please note that these are only basic instructions for compiling and
-installing a module. Please read any and all directions included with
-the module you wish to install.</p>
+<p>Please note that these are only basic instructions for compiling and installing a module. Please read any and all directions included with the module you wish to install.</p>
 <blockquote>
 <div><ol class="arabic simple">
 <li>Download and un-tar the Eggdrop source code.</li>
@@ -179,7 +167,7 @@ add the .so suffix).</li>
           
     <div class="footer" role="contentinfo">
         &#169; Copyright 2022, Eggheads.
-      Last updated on May 06, 2022.
+      Last updated on May 07, 2022.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.5.
     </div>
         </div>
