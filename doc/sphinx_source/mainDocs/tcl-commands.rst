@@ -302,6 +302,10 @@ setuser <handle> <entry-type> [extra info]
   +---------+---------------------------------------------------------------------------------------+
   | Type    | Extra Info                                                                            |
   +=========+=======================================================================================+
+  | ACCOUNT | [account]                                                                             |
+  |         | If no value is specified, all accounts for the user will be cleared. Otherwise, only  |
+  |         | a single account will be added to the account list                                    |
+  +---------+---------------------------------------------------------------------------------------+
   | PASS    | <password>                                                                            |
   |         |   Password string (Empty value will clear the password)                               |
   +---------+---------------------------------------------------------------------------------------+

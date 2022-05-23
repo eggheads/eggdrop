@@ -1522,6 +1522,35 @@ static int account_dupuser(struct userrec *new, struct userrec *old,
   return 1;
 }
 
+static int account_tcl_get(Tcl_Interp * irp, struct userrec *u,
+                         struct user_entry *e, int argc, char **argv)
+{
+  struct list_type *x;
+
+  BADARGS(3, 3, " handle ACCOUNT");
+
+  for (x = e->u.list; x; x = x->next)
+    Tcl_AppendElement(irp, x->extra);
+  return TCL_OK;
+}
+
+static int account_tcl_set(Tcl_Interp * irp, struct userrec *u,
+                         struct user_entry *e, int argc, char **argv)
+{
+  BADARGS(3, 4, " handle ACCOUNT ?account?");
+
+  if (argc == 4)
+    if (!strcmp(argv[3], "")) {
+      Tcl_AppendResult(irp, "Invalid account name", NULL);
+      return TCL_OK;
+    } else {
+      addaccount_by_handle(u->handle, argv[3]);
+    }
+  else
+    addaccount_by_handle(u->handle, "none");       /* drummer */
+  return TCL_OK;
+}
+
 struct user_entry_type USERENTRY_ACCOUNT = {
   0,
   def_gotshare,
@@ -1532,8 +1561,8 @@ struct user_entry_type USERENTRY_ACCOUNT = {
   hosts_kill,
   def_get,
   account_set,
-  hosts_tcl_get,
-  def_tcl_set,
+  account_tcl_get,
+  account_tcl_set,
   hosts_expmem,
   account_display,
   "ACCOUNT",
