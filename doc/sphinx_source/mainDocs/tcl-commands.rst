@@ -1141,7 +1141,7 @@ monitor <command> [nickname]
 getaccount <nickname> [channel]
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-  Returns: the services account name of the nickname if they are logged in, "" otherwise, and an error if the account-notify or extended-join capabilities are not enabled. WARNING: this account list may not be accurate depending on the server and configuration. This command will only work if a server supports (and Eggdrop has enabled) the account-notify and extended-join capabilities, and the server understands WHOX requests (also known as raw 354 responses).
+  Returns: the services account name associated with nickname (if Eggdrop is configured to track account status), and  "" if they are not logged in or Eggdrop is not able to determine the account status. WARNING: this account list may not be accurate depending on the server and configuration. This command is only accurate if a server supports (and Eggdrop has enabled) the account-notify and extended-join capabilities, and the server understands WHOX requests (also known as raw 354 responses).
 
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 nick2hand <nickname> [channel]
