@@ -1532,7 +1532,7 @@ struct user_entry_type USERENTRY_ACCOUNT = {
   hosts_kill,
   def_get,
   account_set,
-  def_tcl_get,
+  hosts_tcl_get,
   def_tcl_set,
   hosts_expmem,
   account_display,
