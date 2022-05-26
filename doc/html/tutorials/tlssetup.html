@@ -1,0 +1,209 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Enabling TLS Security on Eggdrop &#8212; Eggdrop 1.9.2 documentation</title>
+    <link rel="stylesheet" href="../_static/eggdrop.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/language_data.js"></script>
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Writing an Eggdrop Script" href="firstscript.html" />
+    <link rel="prev" title="Common First Steps" href="firststeps.html" /> 
+  </head><body>
+    <div class="header-wrapper" role="banner">
+      <div class="header">
+          <p class="logo"><a href="../index.html">
+            <img class="logo" src="../_static/eggman.png.gif" alt="Logo"/>
+          </a></p>
+        <div class="headertitle"><a
+          href="../index.html">Eggdrop 1.9.2 documentation</a></div>
+        <div class="rel" role="navigation" aria-label="related navigation">
+          <a href="firststeps.html" title="Common First Steps"
+             accesskey="P">previous</a> |
+          <a href="firstscript.html" title="Writing an Eggdrop Script"
+             accesskey="N">next</a>
+        </div>
+       </div>
+    </div>
+
+    <div class="content-wrapper">
+      <div class="content">
+        <div class="sidebar">
+          
+          <h3>Table of Contents</h3>
+          <p class="caption"><span class="caption-text">Installing Eggdrop</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../install/readme.html">README</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../install/install.html">Installing Eggdrop</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../install/upgrading.html">Upgrading Eggdrop</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Using Eggdrop</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../using/features.html">Eggdrop Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../using/core.html">Eggdrop Core Settings</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../using/partyline.html">The Party Line</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../using/users.html">Users and Flags</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../using/bans.html">Bans, Invites, and Exempts</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../using/botnet.html">Botnet Sharing and Linking</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../using/ipv6.html">IPv6 support</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../using/tls.html">TLS support</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../using/ircv3.html">IRCv3 support</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../using/pbkdf2.html">Encryption/Hashing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../using/twitch.html">Twitch</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../using/tricks.html">Advanced Tips</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../using/text-sub.html">Textfile Substitutions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../using/tcl-commands.html">Eggdrop Tcl Commands</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../using/twitch-tcl-commands.html">Eggdrop Twitch Tcl Commands</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../using/patch.html">Patching Eggdrop</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Tutorials</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="setup.html">Setting Up Eggdrop</a></li>
+<li class="toctree-l1"><a class="reference internal" href="firststeps.html">Common First Steps</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Enabling TLS Security on Eggdrop</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#pre-requisites">Pre-requisites</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#connecting-to-a-tls-enabled-irc-server">Connecting to a TLS-enabled IRC server</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#protecting-botnet-communications">Protecting Botnet Communications</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#additional-information">Additional Information</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="firstscript.html">Writing an Eggdrop Script</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Eggdrop Modules</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../modules/index.html">Eggdrop Module Information</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../modules/included.html">Modules included with Eggdrop</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../modules/writing.html">Writing an Eggdrop Module</a></li>
+</ul>
+<p class="caption"><span class="caption-text">About Eggdrop</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../about/about.html">About Eggdrop</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../about/legal.html">Boring legal stuff</a></li>
+</ul>
+
+          <div role="search">
+            <h3 style="margin-top: 1.5em;">Search</h3>
+            <form class="search" action="../search.html" method="get">
+                <input type="text" name="q" />
+                <input type="submit" value="Go" />
+            </form>
+          </div>
+
+        </div>
+        <div class="document">
+            
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="enabling-tls-security-on-eggdrop">
+<h1>Enabling TLS Security on Eggdrop<a class="headerlink" href="#enabling-tls-security-on-eggdrop" title="Permalink to this headline">¶</a></h1>
+<p>There are several ways TLS encryption can protect communication between your Eggdrop and the world. This guide will walk you through a few common scenarios and how to properly set up TLS protection.</p>
+<p>Sidenote: Despite SSL (Secure Socket Layer) encryption being deprecated and no longer secure, the term “SSL” is a bit of an anachronism and still commonly used interchangably with TLS (Transport Layer Security). If you see the term “SSL” used to describe a secure connection method, to include with within Eggdrop’s own documentation and configuration files, it is probably safe to assume it is acutally referring to the secure TLS protocol. If you talk to someone and they use the term “SSL” be sure to correct them, we’re sure they will <em>definitely</em> appreciate it :)</p>
+<div class="section" id="pre-requisites">
+<h2>Pre-requisites<a class="headerlink" href="#pre-requisites" title="Permalink to this headline">¶</a></h2>
+<p>Your server must have OpenSSL (or an equivilent fork) installed. Most commonly this is done through your OS’s package manager. Both the main package as well as the development headers must be installed. On a Debian/Ubuntu distro, this can be done by running:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">apt</span><span class="o">-</span><span class="n">get</span> <span class="n">install</span> <span class="n">openssl</span> <span class="n">libssl</span><span class="o">-</span><span class="n">dev</span>
+</pre></div>
+</div>
+<p>where openssl is the main package binaries, and libssl-dev are the development headers. Without these packages, TLS protection is not possible.</p>
+<p>You can check if your Eggdrop properly detected the installation of OpenSSL by either reviewing the ./configure output for the following line:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">checking</span> <span class="k">for</span> <span class="n">openssl</span><span class="o">/</span><span class="n">ssl</span><span class="o">.</span><span class="n">h</span><span class="o">...</span> <span class="n">yes</span>
+</pre></div>
+</div>
+<p>Or, for an Eggdrop that is already running, you can join the partyline and type:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">.</span><span class="n">status</span>
+</pre></div>
+</div>
+<p>and look for:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">TLS</span> <span class="n">support</span> <span class="ow">is</span> <span class="n">enabled</span><span class="o">.</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="connecting-to-a-tls-enabled-irc-server">
+<h2>Connecting to a TLS-enabled IRC server<a class="headerlink" href="#connecting-to-a-tls-enabled-irc-server" title="Permalink to this headline">¶</a></h2>
+<p>Many, if not most, IRC servers offer connection ports that add TLS protection around the data. Eggdrop uses a ‘+’ symbol in front of the port to denote a port as a TLS-enabled port. To add a server in the config file that supports TLS, add it as normal but simply prefix the port with a ‘+’. For example, if irc.pretendNet.org says it offers TLS on port 7000, you would add it to your configuration file as:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">server</span> <span class="n">add</span> <span class="n">irc</span><span class="o">.</span><span class="n">pretendNet</span><span class="o">.</span><span class="n">org</span> <span class="o">+</span><span class="mi">7000</span>
+</pre></div>
+</div>
+<p>No other action is necessary.</p>
+</div>
+<div class="section" id="protecting-botnet-communications">
+<h2>Protecting Botnet Communications<a class="headerlink" href="#protecting-botnet-communications" title="Permalink to this headline">¶</a></h2>
+<p>Eggdrop has the ability to protect botnet (direct bot to bot) communications wth TLS.</p>
+<div class="section" id="configuration-file-preparation-generating-keys">
+<h3>Configuration File Preparation - Generating Keys<a class="headerlink" href="#configuration-file-preparation-generating-keys" title="Permalink to this headline">¶</a></h3>
+<p>If an Eggdrop is going to listen/accept connections on a TLS port (more on that in a moment), it must have a public/private certificate pair generated and configured. For most users, a self-signed certificate is sufficient for encryption (a certificate signed by a certificate authority would be more secure, but obtaining one is outside the scope of this tutorial. However, the implementatino of a signed keypair is no different than a self-signed pair). To generate a self-signed key pair, enter the Eggdrop source directory (the directory you first compiled Eggdrop from, usually named eggdrop-X.Y.Z) and type:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">make</span> <span class="n">sslcert</span>
+</pre></div>
+</div>
+<p>The wizard will walk you through generating a keypair and will, by default, install to ~/eggdrop (the install location can be changed by “make sslcert DEST=/path/to/eggdrop/install”</p>
+<p>In your config file, uncomment the “ssl-privatekey” and “ssl-certificate” settings. Eggdrop will look in the directory it is running from (~/eggdrop by default) for the files listed; add an absolute path if you installed them outside of Eggdrop’d directory.</p>
+</div>
+<div class="section" id="configuration-file-preparation-listening-with-tls">
+<h3>Configuration File Preparation - Listening with TLS<a class="headerlink" href="#configuration-file-preparation-listening-with-tls" title="Permalink to this headline">¶</a></h3>
+<p>Now you need to tell Eggdrop to accept TLS connections. As an example, to listen with TLS on port 5555 on all available IPs, add to the config file:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">listen</span> <span class="o">+</span><span class="mi">5555</span> <span class="nb">all</span>
+</pre></div>
+</div>
+<p>(There are numerous ways to format the listen command; read the config file and documentation for other alternatives)</p>
+</div>
+<div class="section" id="connecting-to-an-eggdrop-listening-with-tls">
+<h3>Connecting to an Eggdrop listening with TLS<a class="headerlink" href="#connecting-to-an-eggdrop-listening-with-tls" title="Permalink to this headline">¶</a></h3>
+<p>To connect to a bot listening with TLS, prefix the port number with a ‘+’. For example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">.+</span><span class="n">bot</span> <span class="n">HubBot</span> <span class="mf">1.2</span><span class="o">.</span><span class="mf">3.4</span> <span class="o">+</span><span class="mi">5555</span>
+</pre></div>
+</div>
+<p>will use TLS to connect to 1.2.3.4 on port 5555 the next time a connetion is attempted to HubBot.</p>
+</div>
+</div>
+<div class="section" id="additional-information">
+<h2>Additional Information<a class="headerlink" href="#additional-information" title="Permalink to this headline">¶</a></h2>
+<p>For additional information and a more thorough explanation of Eggdrop’s TLS implementation, please read the <a class="reference external" href="https://docs.egheads.org/using/tls.html">TLS docs</a></p>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+        </div>
+        <div class="clearer"></div>
+      </div>
+    </div>
+
+    <div class="footer-wrapper">
+      <div class="footer">
+        <div class="left">
+          <div role="navigation" aria-label="related navigaton">
+            <a href="firststeps.html" title="Common First Steps"
+              >previous</a> |
+            <a href="firstscript.html" title="Writing an Eggdrop Script"
+              >next</a>
+          </div>
+          <div role="note" aria-label="source link">
+          </div>
+        </div>
+
+        <div class="right">
+          
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2022, Eggheads.
+      Last updated on May 24, 2022.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.5.
+    </div>
+        </div>
+        <div class="clearer"></div>
+      </div>
+    </div>
+
+  </body>
+</html>

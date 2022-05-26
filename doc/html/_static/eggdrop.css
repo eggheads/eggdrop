@@ -12,8 +12,12 @@ div.document {
   width: 85em;
 }
 
+div.header, div.content, div.footer {
+  width: 97vw;     /* unset to override agogo.css settings */
+}
+
 div.content {
-  width: 110em;
+  display: flex;
 }
 
 div.sidebar .caption {
