@@ -93,6 +93,9 @@ Modules included with Eggdrop
     The transfer module provides DCC SEND/GET support and userfile
     transfer support for userfile sharing.
 
+:ref:`twitch`
+    The Twitch module modifies Eggdrop to interact with the Twitch service. Twitch uses a modified implementation of IRC so not all functionality will be present. Please read doc/TWITCH for specifics on how to best use the Tiwtch module.
+
 :ref:`uptime`
     This module reports uptime statistics to the uptime contest
     web site at http://uptime.eggheads.org. Go look and see what
