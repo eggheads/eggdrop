@@ -101,13 +101,14 @@ echo "*** Generating HTML files..."
 ( cd $BASEDIR/../doc/sphinx_source/ && make -B html )
 
 echo "*** Stupid housecleaning..."
+echo $(ls tmpdocs)
 mv tmpdocs/about.txt $BASEDIR/../doc/ABOUT
 mv tmpdocs/legal.txt $BASEDIR/../doc/LEGAL
 mv tmpdocs/install.txt $BASEDIR/../INSTALL
 mv tmpdocs/readme.txt $BASEDIR/../README
 mv tmpdocs/upgrading.txt $BASEDIR/../UPGRADING
 mv tmpdocs/included.txt $BASEDIR/../doc/modules/MODULES
-mv tmpdocs/writing.txt $BASEDIR/../modules/writing-modules
+mv tmpdocs/writing.txt $BASEDIR/../doc/modules/writing-modules
 mv tmpdocs/assoc.txt $BASEDIR/../doc/modules/mod.assoc
 mv tmpdocs/blowfish.txt $BASEDIR/../doc/modules/mod.blowfish
 mv tmpdocs/channels.txt $BASEDIR/../doc/modules/mod.channels
@@ -136,7 +137,7 @@ mv tmpdocs/ipv6.txt $BASEDIR/../doc/IPV6
 mv tmpdocs/ircv3.txt $BASEDIR/../doc/IRCv3
 mv tmpdocs/partyline.txt $BASEDIR/../doc/PARTYLINE
 mv tmpdocs/patch.txt $BASEDIR/../doc/PATCH-HOWTO
-mv tmpdocs/pbkdf2.txt $BASEDIR/../doc/PBKDF2
+mv tmpdocs/pbkdf2info.txt $BASEDIR/../doc/PBKDF2
 mv tmpdocs/tcl-commands.txt $BASEDIR/../doc/tcl-commands.doc
 mv tmpdocs/twitch-tcl-commands.txt $BASEDIR/../doc/twitch-tcl-commands.doc
 mv tmpdocs/tls.txt $BASEDIR/../doc/TLS
