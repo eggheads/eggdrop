@@ -60,7 +60,7 @@ There are two official methods to download Eggdrop source code. Alternately, Egg
 FTP
 ^^^
 
-  The latest Eggdrop stable source code is always located at `<https://geteggdrop.com>`_. You can also download the current stable, previous stable, and devleopment snapshot via FTP at `<ftp.eggheads.org/pub/Eggdrop/source>`_
+  The latest Eggdrop stable source code is always located at `<https://geteggdrop.com>`_. You can also download the current stable, previous stable, and development snapshot via FTP at `<ftp.eggheads.org/pub/Eggdrop/source>`_
 
 Git Development Snapshot
 ^^^^^^^^^^^^^^^^^^^^^^^^
@@ -98,7 +98,7 @@ System Pre-Requisites
 
   Before you can compile Eggdrop, Tcl must be installed on your system. Many systems have Tcl installed on them by default (you can check by trying the command "tclsh"; if you are given a '%' for a prompt, it is, and you can type 'exit' to exit the Tcl shell. However, Eggdrop also requires the Tcl development header files to be installed. They can often be installed via an OS package manager, usually called something similar to 'tcl-dev' for the package name. You can also download Tcl source from `<https://www.tcl.tk/software/tcltk/download.html>`_. 
 
-  It is also strongly recommended to install openssl (and its development headers) in order to enable SSL/TLS protection of network data. The header files are often called something similar to 'libssl'dev'. 
+  It is also strongly recommended to install openssl (and its development headers) in order to enable SSL/TLS protection of network data. The header files are often called something similar to 'libssl-dev'. 
 
 Quick Startup
 -------------
@@ -122,8 +122,8 @@ Command Line
 
     The options available are:
 
-      -t: Don't background, use terminal. Your console will dropp into an
-           interactive partyline session, simialar to a DCC chat with the bot.
+      -t: Don't background, use terminal. Your console will drop into an
+           interactive partyline session, similar to a DCC chat with the bot.
            This is useful for troubleshooting connection issues with the bot.
 
       -c: Don't background, show channel info. Every 10 seconds your screen
@@ -145,21 +145,18 @@ Command Line
 Setting up a Crontab
 --------------------
 
-Systems go down from time to time, taking your Eggdrop along with it. You may not be not around to restart it manually, so you can instead use your host's crontab system to automatically restart Eggdrop should it quit for any reason. Eggdrop comes with an autobotchk shell script creates that both checks if your Eggdrop is still running, and a crotab entry to run the botchk script every 10 minutes.
+Systems go down from time to time, taking your Eggdrop along with it. You may not be not around to restart it manually, so you can instead use your host's crontab system to automatically restart Eggdrop should it quit for any reason. Eggdrop comes with an autobotchk shell script creates that both checks if your Eggdrop is still running, and a crontab entry to run the botchk script every 10 minutes.
 
-    Using autobotchk is probably the fastest way of creating your botchk and adding a crontab entry. Simply run::
+    Using autobotchk is probably the fastest way of creating your botchk and adding a crontab entry. From the install directory, simply run::
 
       ./scripts/autobotchk <Eggdrop config file>
 
 
-    This will crontab your bot using the default setup. If you want
-    a list of autobotchk options, type './autobotchk'. An example with options
-    would be::
+    This will crontab your bot using the default setup. If you want a list of autobotchk options, type './autobotchk'. An example with options would be::
 
-      ./autobotchk <Eggdrop config file> -noemail -5
+      ./scripts/autobotchk <Eggdrop config file> -noemail -5
 
-    This would setup crontab to run the botchk every 5 minutes and also to
-    not send you email saying that it restarted your bot.
+    This would setup crontab to run the botchk every 5 minutes and also to not send you email saying that it restarted your bot.
 
 Documentation
 -------------
