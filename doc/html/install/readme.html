@@ -68,8 +68,8 @@
 <li class="toctree-l1"><a class="reference internal" href="../using/ipv6.html">IPv6 support</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../using/tls.html">TLS support</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../using/ircv3.html">IRCv3 support</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../using/pbkdf2.html">Encryption/Hashing</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../using/twitch.html">Twitch</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../using/pbkdf2info.html">Encryption/Hashing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../using/twitchinfo.html">Twitch</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../using/tricks.html">Advanced Tips</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../using/text-sub.html">Textfile Substitutions</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../using/tcl-commands.html">Eggdrop Tcl Commands</a></li>
@@ -80,6 +80,7 @@
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../tutorials/setup.html">Setting Up Eggdrop</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../tutorials/firststeps.html">Common First Steps</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorials/tlssetup.html">Enabling TLS Security on Eggdrop</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../tutorials/firstscript.html">Writing an Eggdrop Script</a></li>
 </ul>
 <p class="caption"><span class="caption-text">Eggdrop Modules</span></p>
@@ -164,7 +165,7 @@ about git usage and some channels where you might get help with Eggdrop.</p>
 <div class="section" id="ftp">
 <h3>FTP<a class="headerlink" href="#ftp" title="Permalink to this headline">¶</a></h3>
 <blockquote>
-<div>The latest Eggdrop stable source code is always located at <a class="reference external" href="https://geteggdrop.com">https://geteggdrop.com</a>. You can also download the current stable, previous stable, and devleopment snapshot via FTP at <a class="reference external" href="ftp.eggheads.org/pub/Eggdrop/source">ftp.eggheads.org/pub/Eggdrop/source</a></div></blockquote>
+<div>The latest Eggdrop stable source code is always located at <a class="reference external" href="https://geteggdrop.com">https://geteggdrop.com</a>. You can also download the current stable, previous stable, and development snapshot via FTP at <a class="reference external" href="ftp.eggheads.org/pub/Eggdrop/source">ftp.eggheads.org/pub/Eggdrop/source</a></div></blockquote>
 </div>
 <div class="section" id="git-development-snapshot">
 <h3>Git Development Snapshot<a class="headerlink" href="#git-development-snapshot" title="Permalink to this headline">¶</a></h3>
@@ -201,7 +202,7 @@ from:</p>
 <h2>System Pre-Requisites<a class="headerlink" href="#system-pre-requisites" title="Permalink to this headline">¶</a></h2>
 <blockquote>
 <div><p>Before you can compile Eggdrop, Tcl must be installed on your system. Many systems have Tcl installed on them by default (you can check by trying the command “tclsh”; if you are given a ‘%’ for a prompt, it is, and you can type ‘exit’ to exit the Tcl shell. However, Eggdrop also requires the Tcl development header files to be installed. They can often be installed via an OS package manager, usually called something similar to ‘tcl-dev’ for the package name. You can also download Tcl source from <a class="reference external" href="https://www.tcl.tk/software/tcltk/download.html">https://www.tcl.tk/software/tcltk/download.html</a>.</p>
-<p>It is also strongly recommended to install openssl (and its development headers) in order to enable SSL/TLS protection of network data. The header files are often called something similar to ‘libssl’dev’.</p>
+<p>It is also strongly recommended to install openssl (and its development headers) in order to enable SSL/TLS protection of network data. The header files are often called something similar to ‘libssl-dev’.</p>
 </div></blockquote>
 </div>
 <div class="section" id="quick-startup">
@@ -227,8 +228,8 @@ options let you do that. Basically, the command line for Eggdrop is:</p>
 <p>The options available are:</p>
 <blockquote>
 <div><dl class="docutils">
-<dt>-t: Don’t background, use terminal. Your console will dropp into an</dt>
-<dd>interactive partyline session, simialar to a DCC chat with the bot.
+<dt>-t: Don’t background, use terminal. Your console will drop into an</dt>
+<dd>interactive partyline session, similar to a DCC chat with the bot.
 This is useful for troubleshooting connection issues with the bot.</dd>
 <dt>-c: Don’t background, show channel info. Every 10 seconds your screen</dt>
 <dd>will clear and you will see the current channel status, sort of
@@ -247,20 +248,17 @@ need to use that once.</p>
 </div>
 <div class="section" id="setting-up-a-crontab">
 <h2>Setting up a Crontab<a class="headerlink" href="#setting-up-a-crontab" title="Permalink to this headline">¶</a></h2>
-<p>Systems go down from time to time, taking your Eggdrop along with it. You may not be not around to restart it manually, so you can instead use your host’s crontab system to automatically restart Eggdrop should it quit for any reason. Eggdrop comes with an autobotchk shell script creates that both checks if your Eggdrop is still running, and a crotab entry to run the botchk script every 10 minutes.</p>
+<p>Systems go down from time to time, taking your Eggdrop along with it. You may not be not around to restart it manually, so you can instead use your host’s crontab system to automatically restart Eggdrop should it quit for any reason. Eggdrop comes with an autobotchk shell script creates that both checks if your Eggdrop is still running, and a crontab entry to run the botchk script every 10 minutes.</p>
 <blockquote>
-<div><p>Using autobotchk is probably the fastest way of creating your botchk and adding a crontab entry. Simply run:</p>
+<div><p>Using autobotchk is probably the fastest way of creating your botchk and adding a crontab entry. From the install directory, simply run:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">./</span><span class="n">scripts</span><span class="o">/</span><span class="n">autobotchk</span> <span class="o">&lt;</span><span class="n">Eggdrop</span> <span class="n">config</span> <span class="n">file</span><span class="o">&gt;</span>
 </pre></div>
 </div>
-<p>This will crontab your bot using the default setup. If you want
-a list of autobotchk options, type ‘./autobotchk’. An example with options
-would be:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">./</span><span class="n">autobotchk</span> <span class="o">&lt;</span><span class="n">Eggdrop</span> <span class="n">config</span> <span class="n">file</span><span class="o">&gt;</span> <span class="o">-</span><span class="n">noemail</span> <span class="o">-</span><span class="mi">5</span>
+<p>This will crontab your bot using the default setup. If you want a list of autobotchk options, type ‘./autobotchk’. An example with options would be:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">./</span><span class="n">scripts</span><span class="o">/</span><span class="n">autobotchk</span> <span class="o">&lt;</span><span class="n">Eggdrop</span> <span class="n">config</span> <span class="n">file</span><span class="o">&gt;</span> <span class="o">-</span><span class="n">noemail</span> <span class="o">-</span><span class="mi">5</span>
 </pre></div>
 </div>
-<p>This would setup crontab to run the botchk every 5 minutes and also to
-not send you email saying that it restarted your bot.</p>
+<p>This would setup crontab to run the botchk every 5 minutes and also to not send you email saying that it restarted your bot.</p>
 </div></blockquote>
 </div>
 <div class="section" id="documentation">
@@ -328,7 +326,7 @@ Copyright (C) 1999 - 2022 Eggheads Development Team</p>
           
     <div class="footer" role="contentinfo">
         &#169; Copyright 2022, Eggheads.
-      Last updated on May 24, 2022.
+      Last updated on May 26, 2022.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.5.
     </div>
         </div>

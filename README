@@ -60,7 +60,7 @@ FTP
 
   The latest Eggdrop stable source code is always located at
   https://geteggdrop.com. You can also download the current stable,
-  previous stable, and devleopment snapshot via FTP at
+  previous stable, and development snapshot via FTP at
   ftp.eggheads.org/pub/Eggdrop/source
 
 Git Development Snapshot
@@ -108,7 +108,7 @@ SYSTEM PRE-REQUISITES
   It is also strongly recommended to install openssl (and its
   development headers) in order to enable SSL/TLS protection of network
   data. The header files are often called something similar to
-  'libssl'dev'.
+  'libssl-dev'.
 
 QUICK STARTUP
 
@@ -132,9 +132,9 @@ COMMAND LINE
 
   The options available are:
 
-    -t: Don't background, use terminal. Your console will dropp into an
+    -t: Don't background, use terminal. Your console will drop into an
 
-        interactive partyline session, simialar to a DCC chat with the
+        interactive partyline session, similar to a DCC chat with the
         bot. This is useful for troubleshooting connection issues with
         the bot.
 
@@ -162,11 +162,11 @@ Systems go down from time to time, taking your Eggdrop along with it.
 You may not be not around to restart it manually, so you can instead use
 your host's crontab system to automatically restart Eggdrop should it
 quit for any reason. Eggdrop comes with an autobotchk shell script
-creates that both checks if your Eggdrop is still running, and a crotab
+creates that both checks if your Eggdrop is still running, and a crontab
 entry to run the botchk script every 10 minutes.
 
   Using autobotchk is probably the fastest way of creating your botchk
-  and adding a crontab entry. Simply run:
+  and adding a crontab entry. From the install directory, simply run:
 
       ./scripts/autobotchk <Eggdrop config file>
 
@@ -174,7 +174,7 @@ entry to run the botchk script every 10 minutes.
   of autobotchk options, type './autobotchk'. An example with options
   would be:
 
-      ./autobotchk <Eggdrop config file> -noemail -5
+      ./scripts/autobotchk <Eggdrop config file> -noemail -5
 
   This would setup crontab to run the botchk every 5 minutes and also to
   not send you email saying that it restarted your bot.
