@@ -101,7 +101,6 @@ echo "*** Generating HTML files..."
 ( cd $BASEDIR/../doc/sphinx_source/ && make -B html )
 
 echo "*** Stupid housecleaning..."
-echo $(ls tmpdocs)
 mv tmpdocs/about.txt $BASEDIR/../doc/ABOUT
 mv tmpdocs/legal.txt $BASEDIR/../doc/LEGAL
 mv tmpdocs/install.txt $BASEDIR/../INSTALL
