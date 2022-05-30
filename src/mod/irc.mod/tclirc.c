@@ -573,6 +573,23 @@ static int tcl_isircbot STDVAR
   return TCL_OK;
 }
 
+static int tcl_accounttracking STDVAR
+{
+  struct capability *current =0;
+  int extjoin = 0, acctnotify = 0;
+
+  current = find_capability("extended-join");
+  if (current->enabled) {
+    extjoin = 1;
+  }
+  current = find_capability("account-notify");
+  if (current->enabled) {
+    acctnotify = 1;
+  }
+  Tcl_SetResult(irp, use_354 && extjoin && acctnotify ? "1" : "0", NULL);
+ return TCL_OK;
+}
+
 static int tcl_getchanhost STDVAR
 {
   struct chanset_t *chan, *thechan = NULL;
@@ -1348,5 +1365,6 @@ static tcl_cmds tclchan_cmds[] = {
   {"channame2dname", tcl_channame2dname},
   {"chandname2name", tcl_chandname2name},
   {"monitor",        tcl_monitor},
+  {"accounttracking",tcl_accounttracking},
   {NULL,             NULL}
 };
