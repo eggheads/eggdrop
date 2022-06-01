@@ -262,14 +262,16 @@ static int tcl_timer STDVAR
     return TCL_ERROR;
   }
   if (argv[2][0] != '#') {
-    if ((argc == 5) && find_timer(timer, argv[4])) {
-      x = add_timer(&timer, atoi(argv[1]), (argc >= 4 ? atoi(argv[3]) : 1),
+    if (argc == 5) {
+      if (find_timer(timer, argv[4])) {
+        x = add_timer(&timer, atoi(argv[1]), (argc >= 4 ? atoi(argv[3]) : 1),
                   argv[2], (argc == 5 ? argv[4] : '\0'), 0L);
-      snprintf(s, sizeof s, "timer%lu", x);
-      Tcl_AppendResult(irp, s, NULL);
-    } else {
-      Tcl_AppendResult(irp, "timer already exists by that name", NULL);
-      return TCL_ERROR;
+        snprintf(s, sizeof s, "timer%lu", x);
+        Tcl_AppendResult(irp, s, NULL);
+      } else {
+        Tcl_AppendResult(irp, "timer already exists by that name", NULL);
+        return TCL_ERROR;
+      }
     }
   }
   return TCL_OK;
