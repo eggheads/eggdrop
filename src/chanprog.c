@@ -554,7 +554,7 @@ void rehash()
 /* Add a timer
  */
 unsigned long add_timer(tcl_timer_t ** stack, int elapse, int count,
-                        char *cmd, unsigned long prev_id)
+                        char *cmd, char *name, unsigned long prev_id)
 {
   tcl_timer_t *old = (*stack);
 
@@ -571,25 +571,57 @@ unsigned long add_timer(tcl_timer_t ** stack, int elapse, int count,
     (*stack)->id = prev_id;
   else
     (*stack)->id = timer_id++;
+  if (name) {
+    (*stack)->name = nmalloc(strlen(name) + 1);
+    strcpy((*stack)->name, name);
+  } else {
+    (*stack)->name = NULL;
+  }
   return (*stack)->id;
+}
+
+/* Remove timer from linked list */
+void remove_timer_from_list(tcl_timer_t ** stack)
+{
+  tcl_timer_t *old;
+
+  old = *stack;
+  *stack = ((*stack)->next);
+  nfree(old->cmd);
+  if (old->name)
+    nfree(old->name);
+  nfree(old);
 }
 
 /* Remove a timer, by id
  */
 int remove_timer(tcl_timer_t ** stack, unsigned long id)
 {
-  tcl_timer_t *old;
   int ok = 0;
 
   while (*stack) {
     if ((*stack)->id == id) {
       ok++;
-      old = *stack;
-      *stack = ((*stack)->next);
-      nfree(old->cmd);
-      nfree(old);
+      remove_timer_from_list(stack);
     } else
       stack = &((*stack)->next);
+  }
+  return ok;
+}
+
+/* Remove a timer, by name
+ */
+int remove_timer_name(tcl_timer_t **stack, char *name)
+{
+  int ok = 0;
+
+  while (*stack) {
+    if (!strcasecmp((*stack)->name, name)) {
+      ok++;
+      remove_timer_from_list(stack);
+    } else {
+      stack = &((*stack)->next);
+    }
   }
   return ok;
 }
@@ -616,6 +648,8 @@ void do_check_timers(tcl_timer_t ** stack)
       do_tcl(x, old->cmd);
       if (old->count == 1) {
         nfree(old->cmd);
+        if (old->name)
+          nfree(old->name);
         nfree(old);
         continue;
       } else {
@@ -639,6 +673,8 @@ void wipe_timers(Tcl_Interp *irp, tcl_timer_t **stack)
     old = mark;
     mark = mark->next;
     nfree(old->cmd);
+    if (old->name)
+      nfree(old->name);
     nfree(old);
   }
   *stack = NULL;
@@ -646,10 +682,10 @@ void wipe_timers(Tcl_Interp *irp, tcl_timer_t **stack)
 
 /* Return list of timers
  */
-void list_timers(Tcl_Interp *irp, tcl_timer_t *stack)
+void list_timers(Tcl_Interp *irp, tcl_timer_t *stack, int names)
 {
   char mins[11], count[11], id[26], *x;
-  EGG_CONST char *argv[4];
+  EGG_CONST char *argv[5];
   tcl_timer_t *mark;
 
   for (mark = stack; mark; mark = mark->next) {
@@ -660,10 +696,35 @@ void list_timers(Tcl_Interp *irp, tcl_timer_t *stack)
     argv[1] = mark->cmd;
     argv[2] = id;
     argv[3] = count;
-    x = Tcl_Merge(sizeof(argv)/sizeof(*argv), argv);
+    if (names) {
+      argv[4] = mark->name;
+    } else {
+      argv[4] = 0;
+    }
+    if (names) {    /* Don't return a blank name value if not requested */
+      x = Tcl_Merge(sizeof(argv)/sizeof(*argv), argv);
+    } else {
+      x = Tcl_Merge((sizeof(argv)/sizeof(*argv)) - 1, argv);
+    }
     Tcl_AppendElement(irp, x);
     Tcl_Free((char *) x);
   }
+}
+
+/* Find a timer by name
+ */
+int find_timer(tcl_timer_t *stack, char *name)
+{
+  tcl_timer_t *mark;
+
+  for (mark = stack; mark; mark = mark->next) {
+    if (mark->name) {
+      if (!strcasecmp(mark->name, name)) {
+        return 0;
+      }
+    }
+  }
+  return 1;
 }
 
 int isowner(char *name) {

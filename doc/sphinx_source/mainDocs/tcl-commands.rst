@@ -2343,11 +2343,13 @@ utimer <seconds> <tcl-command> [count]
 
   Module: core
 
-^^^^^^
-timers
-^^^^^^
+^^^^^^^^^^^^^^^
+timers [-names]
+^^^^^^^^^^^^^^^
 
-  Returns: a list of active minutely timers. Each entry in the list contains the number of minutes left till activation, the command that will be executed, the timerID, and the remaining number of repeats.
+  Description: lists all active minutely timers.
+
+  Returns: a list of active minutely timers, with each timer sub-list containing the number of minutes left until activation, the command that will be executed, the timerID, and the remaining numbere of repeats. Additionally, if the -names argument is specified, an additional field displaying the user-provided name for the timer will be shown (or empty if no name was provided).
 
   Module: core
 
@@ -2355,7 +2357,9 @@ timers
 utimers
 ^^^^^^^
 
-  Returns: a list of active secondly timers. Each entry in the list contains the number of minutes left till activation, the command that will be executed, the timerID, and the remaining number of repeats.
+  Description: lists all active secondly timers.
+
+  Returns: a list of active secondly timers, with each timer sub-list containing the number of minutes left until activation, the command that will be executed, the timerID, and the remaining number of repeats. Additionally, if the -names argument is specified, an additional field displaying the user-provided name for the timer will be shown (or empty if no name was provided).
 
   Module: core
 
@@ -2363,7 +2367,17 @@ utimers
 killtimer <timerID>
 ^^^^^^^^^^^^^^^^^^^
 
-  Description: removes a minutely timer from the list
+  Description: removes the timerID minutely timer from the timer list.
+
+  Returns: nothing
+
+  Module: core
+
+^^^^^^^^^^^^^^^^^^^^^^^^^
+killtimername <timerName>
+^^^^^^^^^^^^^^^^^^^^^^^^^
+
+  Description: if the timer was added with a name, removes the timerName minutely timer from the timer list.
 
   Returns: nothing
 
@@ -2373,7 +2387,17 @@ killtimer <timerID>
 killutimer <timerID>
 ^^^^^^^^^^^^^^^^^^^^
 
-  Description: removes a secondly timer from the list
+  Description: removes the timerName secondly timer from the timer list.
+
+  Returns: nothing
+
+  Module: core
+
+^^^^^^^^^^^^^^^^^^^^^^^^^^
+killutimername <timerName>
+^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+  Description: if the timer was added with a name, removes the timerName secondly timer from the timer list.
 
   Returns: nothing
 

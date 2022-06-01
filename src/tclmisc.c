@@ -251,21 +251,26 @@ static int tcl_timer STDVAR
   unsigned long x;
   char s[26];
 
-  BADARGS(3, 4, " minutes command ?count?");
+  BADARGS(3, 5, " minutes command ?count ?name??");
 
   if (atoi(argv[1]) < 0) {
     Tcl_AppendResult(irp, "time value must be positive", NULL);
     return TCL_ERROR;
   }
-  if (argc == 4 && atoi(argv[3]) < 0) {
+  if (argc >= 4 && atoi(argv[3]) < 0) {
     Tcl_AppendResult(irp, "count value must be >= 0", NULL);
     return TCL_ERROR;
   }
   if (argv[2][0] != '#') {
-    x = add_timer(&timer, atoi(argv[1]), (argc == 4 ? atoi(argv[3]) : 1),
-                  argv[2], 0L);
-    snprintf(s, sizeof s, "timer%lu", x);
-    Tcl_AppendResult(irp, s, NULL);
+    if ((argc == 5) && find_timer(timer, argv[4])) {
+      x = add_timer(&timer, atoi(argv[1]), (argc >= 4 ? atoi(argv[3]) : 1),
+                  argv[2], (argc == 5 ? argv[4] : '\0'), 0L);
+      snprintf(s, sizeof s, "timer%lu", x);
+      Tcl_AppendResult(irp, s, NULL);
+    } else {
+      Tcl_AppendResult(irp, "timer already exists by that name", NULL);
+      return TCL_ERROR;
+    }
   }
   return TCL_OK;
 }
@@ -275,21 +280,26 @@ static int tcl_utimer STDVAR
   unsigned long x;
   char s[26];
 
-  BADARGS(3, 4, " seconds command ?count?");
+  BADARGS(3, 5, " seconds command ?count ?name??");
 
   if (atoi(argv[1]) < 0) {
     Tcl_AppendResult(irp, "time value must be positive", NULL);
     return TCL_ERROR;
   }
-  if (argc == 4 && atoi(argv[3]) < 0) {
+  if (argc >= 4 && atoi(argv[3]) < 0) {
     Tcl_AppendResult(irp, "count value must be >= 0", NULL);
     return TCL_ERROR;
   }
   if (argv[2][0] != '#') {
-    x = add_timer(&utimer, atoi(argv[1]), (argc == 4 ? atoi(argv[3]) : 1),
-                  argv[2], 0L);
-    snprintf(s, sizeof s, "timer%lu", x);
-    Tcl_AppendResult(irp, s, NULL);
+    if ((argc == 5) && find_timer(utimer, argv[4])) {
+      x = add_timer(&utimer, atoi(argv[1]), (argc == 4 ? atoi(argv[3]) : 1),
+                  argv[2], (argc == 5 ? argv[4] : '\0'), 0L);
+      snprintf(s, sizeof s, "timer%lu", x);
+      Tcl_AppendResult(irp, s, NULL);
+    } else {
+      Tcl_AppendResult(irp, "timer already exists by that name", NULL);
+      return TCL_ERROR;
+    }
   }
   return TCL_OK;
 }
@@ -308,6 +318,17 @@ static int tcl_killtimer STDVAR
   return TCL_ERROR;
 }
 
+static int tcl_killtimername STDVAR
+{
+  BADARGS(2, 2, " timerName");
+
+  if (remove_timer_name(&timer, argv[1])) {
+    return TCL_OK;
+  }
+  Tcl_AppendResult(irp, "invalid timer name", NULL);
+  return TCL_ERROR;
+}
+
 static int tcl_killutimer STDVAR
 {
   BADARGS(2, 2, " timerID");
@@ -322,19 +343,38 @@ static int tcl_killutimer STDVAR
   return TCL_ERROR;
 }
 
+static int tcl_killutimername STDVAR
+{
+  BADARGS(2, 2, " timerName");
+
+  if (remove_timer_name(&utimer, argv[1])) {
+    return TCL_OK;
+  }
+  Tcl_AppendResult(irp, "invalid timer name", NULL);
+  return TCL_ERROR;
+}
+
 static int tcl_timers STDVAR
 {
-  BADARGS(1, 1, "");
+  BADARGS(1, 2, "");
 
-  list_timers(irp, timer);
+  if ((argc == 2) && (!strcasecmp(argv[1], "-names"))) {
+    list_timers(irp, timer, 1);
+  } else {
+    list_timers(irp, timer, 0);
+  }
   return TCL_OK;
 }
 
 static int tcl_utimers STDVAR
 {
-  BADARGS(1, 1, "");
+  BADARGS(1, 2, "");
 
-  list_timers(irp, utimer);
+  if ((argc == 2) && (!strcasecmp(argv[1], "-names"))) {
+    list_timers(irp, utimer, 1);
+  } else {
+    list_timers(irp, utimer, 0);
+  }
   return TCL_OK;
 }
 
@@ -813,7 +853,9 @@ tcl_cmds tclmisc_cmds[] = {
   {"timer",               tcl_timer},
   {"utimer",             tcl_utimer},
   {"killtimer",       tcl_killtimer},
+  {"killtimername",  tcl_killtimername},
   {"killutimer",     tcl_killutimer},
+  {"killutimername", tcl_killutimername},
   {"timers",             tcl_timers},
   {"utimers",           tcl_utimers},
   {"unixtime",         tcl_unixtime},
