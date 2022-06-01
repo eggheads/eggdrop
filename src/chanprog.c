@@ -616,7 +616,7 @@ int remove_timer_name(tcl_timer_t **stack, char *name)
   int ok = 0;
 
   while (*stack) {
-    if (!strcasecmp((*stack)->name, name)) {
+    if (((*stack)->name) && (!strcasecmp((*stack)->name, name))) {
       ok++;
       remove_timer_from_list(stack);
     } else {
@@ -711,7 +711,7 @@ void list_timers(Tcl_Interp *irp, tcl_timer_t *stack, int names)
   }
 }
 
-/* Find a timer by name
+/* Find a timer by name. Returns 1 if found, 0 if not
  */
 int find_timer(tcl_timer_t *stack, char *name)
 {
@@ -720,11 +720,11 @@ int find_timer(tcl_timer_t *stack, char *name)
   for (mark = stack; mark; mark = mark->next) {
     if (mark->name) {
       if (!strcasecmp(mark->name, name)) {
-        return 0;
+        return 1;
       }
     }
   }
-  return 1;
+  return 0;
 }
 
 int isowner(char *name) {
