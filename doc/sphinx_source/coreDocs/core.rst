@@ -589,7 +589,7 @@ support.
     Control certificate verification for linking to hubs
 
   set ssl-verify-clients 0
-    Control cerfificate verification for SSL listening ports. This includes
+    Control certificate verification for SSL listening ports. This includes
     leaf bots connecting, users telneting in and /ctcp bot chat.
 
 Modules
