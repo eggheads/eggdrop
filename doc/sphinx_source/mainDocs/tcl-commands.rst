@@ -2834,7 +2834,7 @@ uptime
 ^^^^^^^^^^^^^
 server-online
 ^^^^^^^^^^^^^
-  Value: the unixtime value when the bot connected to its current server, or '0' if the bot is currently disconnected from the server.
+  Value: the unixtime value when the bot connected to its current server, or '0' if the bot is currently disconnected from a server.
 
   Module: server
 
