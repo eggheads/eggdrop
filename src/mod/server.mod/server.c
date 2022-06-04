@@ -97,7 +97,7 @@ static int msgrate;             /* Number of seconds between sending
                                  * queued lines to server. */
 #ifdef TLS
 static int use_ssl;             /* Use SSL for the next server connection? */
-static int tls_vfyserver;       /* Certificate validation mode for servrs  */
+static int tls_vfyserver;       /* Certificate validation mode for servers */
 #endif
 
 #ifndef TLS
