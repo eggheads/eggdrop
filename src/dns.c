@@ -32,7 +32,6 @@
 #include "dns.h"
 #ifdef EGG_TDNS
   #include <errno.h>
-  #include <pthread.h>
 #else
   #include <setjmp.h>
 #endif
