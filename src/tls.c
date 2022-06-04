@@ -330,12 +330,17 @@ char *ssl_getfp(int sock)
 
   if (!(cert = ssl_getcert(sock)))
     return NULL;
-  if (!X509_digest(cert, EVP_sha1(), md, &i))
+  if (!X509_digest(cert, EVP_sha1(), md, &i)) {
+    X509_free(cert);
     return NULL;
-  if (!(p = OPENSSL_buf2hexstr(md, i)))
+  }
+  if (!(p = OPENSSL_buf2hexstr(md, i))) {
+    X509_free(cert);
     return NULL;
+  }
   strlcpy(fp, p, sizeof fp);
   OPENSSL_free(p);
+  X509_free(cert);
   return fp;
 }
 
@@ -1025,6 +1030,7 @@ static int tcl_tlsstatus STDVAR
     Tcl_DStringAppendElement(&ds, "serial");
     Tcl_DStringAppendElement(&ds, p);
     nfree(p);
+    X509_free(cert);
   }
   /* We should always have a cipher, but who knows? */
   cipher = SSL_get_current_cipher(td->socklist[j].ssl);
