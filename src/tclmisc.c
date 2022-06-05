@@ -248,8 +248,7 @@ static int tcl_binds STDVAR
 
 static int tcl_timer STDVAR
 {
-  unsigned long x;
-  char s[26];
+  char *x;
 
   BADARGS(3, 5, " minutes command ?count ?name??");
 
@@ -262,22 +261,32 @@ static int tcl_timer STDVAR
     return TCL_ERROR;
   }
   if (argv[2][0] != '#') {
-    if ((argc == 5) && (find_timer(timer, argv[4]))) {
-      Tcl_AppendResult(irp, "timer already exists by that name", NULL);
-      return TCL_ERROR;
+    if (argc == 5) {
+      /* Prevent collisions with unnamed timers */
+      if (strncmp(argv[4], "timer", 5) == 0) {
+        Tcl_AppendResult(irp, "timer name may not begin with \"timer\"", NULL);
+        return TCL_ERROR;
+      }
+      /* Check for existing timers by same name */
+      if (find_timer(timer, argv[4])) {
+        Tcl_AppendResult(irp, "timer already exists by that name", NULL);
+        return TCL_ERROR;
+      }
     }
     x = add_timer(&timer, atoi(argv[1]), (argc >= 4 ? atoi(argv[3]) : 1),
                   argv[2], (argc == 5 ? argv[4] : '\0'), 0L);
-    snprintf(s, sizeof s, "timer%lu", x);
-    Tcl_AppendResult(irp, s, NULL);
+    if (!x) {
+      Tcl_AppendResult(irp, "Too many timers (wow, impressive). Timer not added", NULL);
+      return TCL_ERROR;
+    }
+    Tcl_AppendResult(irp, x, NULL);
   }
   return TCL_OK;
 }
 
 static int tcl_utimer STDVAR
 {
-  unsigned long x;
-  char s[26];
+  char *x;
 
   BADARGS(3, 5, " seconds command ?count ?name??");
 
@@ -290,14 +299,21 @@ static int tcl_utimer STDVAR
     return TCL_ERROR;
   }
   if (argv[2][0] != '#') {
-    if ((argc == 5) && find_timer(utimer, argv[4])) {
+    if (argc == 5) {
+      /* Precent collisions with unnamed timers */
+      if (strncmp(argv[4], "timer", 5) == 0) {
+        Tcl_AppendResult(irp, "timer name may not begin with \"timer\"", NULL);
+        return TCL_ERROR;
+      }
+     /* Check for existing timers by same name */
+     if (find_timer(utimer, argv[4])) {
       Tcl_AppendResult(irp, "timer already exists by that name", NULL);
       return TCL_ERROR;
+      }
     }
     x = add_timer(&utimer, atoi(argv[1]), (argc == 4 ? atoi(argv[3]) : 1),
                   argv[2], (argc == 5 ? argv[4] : '\0'), 0L);
-    snprintf(s, sizeof s, "timer%lu", x);
-    Tcl_AppendResult(irp, s, NULL);
+    Tcl_AppendResult(irp, x, NULL);
   }
   return TCL_OK;
 }
@@ -306,55 +322,26 @@ static int tcl_killtimer STDVAR
 {
   BADARGS(2, 2, " timerID");
 
-  if (strncmp(argv[1], "timer", 5)) {
-    Tcl_AppendResult(irp, "argument is not a timerID", NULL);
-    return TCL_ERROR;
-  }
-  if (remove_timer(&timer, atol(&argv[1][5])))
+  if (remove_timer(&timer, argv[1]))
     return TCL_OK;
-  Tcl_AppendResult(irp, "invalid timerID", NULL);
-  return TCL_ERROR;
-}
-
-static int tcl_killtimername STDVAR
-{
-  BADARGS(2, 2, " timerName");
-
-  if (remove_timer_name(&timer, argv[1])) {
-    return TCL_OK;
-  }
   Tcl_AppendResult(irp, "invalid timer name", NULL);
   return TCL_ERROR;
 }
 
 static int tcl_killutimer STDVAR
 {
-  BADARGS(2, 2, " timerID");
-
-  if (strncmp(argv[1], "timer", 5)) {
-    Tcl_AppendResult(irp, "argument is not a timerID", NULL);
-    return TCL_ERROR;
-  }
-  if (remove_timer(&utimer, atol(&argv[1][5])))
-    return TCL_OK;
-  Tcl_AppendResult(irp, "invalid timerID", NULL);
-  return TCL_ERROR;
-}
-
-static int tcl_killutimername STDVAR
-{
   BADARGS(2, 2, " timerName");
 
-  if (remove_timer_name(&utimer, argv[1])) {
+  if (remove_timer(&utimer, argv[1])) {
     return TCL_OK;
   }
-  Tcl_AppendResult(irp, "invalid timer name", NULL);
+  Tcl_AppendResult(irp, "invalid utimer name", NULL);
   return TCL_ERROR;
 }
 
 static int tcl_timers STDVAR
 {
-  BADARGS(1, 2, "");
+  BADARGS(1, 1, "");
 
   if ((argc == 2) && (!strcasecmp(argv[1], "-names"))) {
     list_timers(irp, timer, 1);
@@ -366,7 +353,7 @@ static int tcl_timers STDVAR
 
 static int tcl_utimers STDVAR
 {
-  BADARGS(1, 2, "");
+  BADARGS(1, 1, "");
 
   if ((argc == 2) && (!strcasecmp(argv[1], "-names"))) {
     list_timers(irp, utimer, 1);
@@ -851,9 +838,7 @@ tcl_cmds tclmisc_cmds[] = {
   {"timer",               tcl_timer},
   {"utimer",             tcl_utimer},
   {"killtimer",       tcl_killtimer},
-  {"killtimername",  tcl_killtimername},
   {"killutimer",     tcl_killutimer},
-  {"killutimername", tcl_killutimername},
   {"timers",             tcl_timers},
   {"utimers",           tcl_utimers},
   {"unixtime",         tcl_unixtime},

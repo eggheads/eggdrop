@@ -62,6 +62,7 @@ char admin[121] = "";              /* Admin info                   */
 char origbotname[NICKLEN];
 char botname[NICKLEN];             /* Primary botname              */
 char owner[121] = "";              /* Permanent botowner(s)        */
+void remove_timer_from_list(tcl_timer_t ** stack);
 
 
 /* Remove leading and trailing whitespaces.
@@ -553,10 +554,12 @@ void rehash()
 
 /* Add a timer
  */
-unsigned long add_timer(tcl_timer_t ** stack, int elapse, int count,
+char * add_timer(tcl_timer_t ** stack, int elapse, int count,
                         char *cmd, char *name, unsigned long prev_id)
 {
   tcl_timer_t *old = (*stack);
+  char stringid[8];
+  unsigned int ret = 0;
 
   *stack = nmalloc(sizeof **stack);
   (*stack)->next = old;
@@ -576,8 +579,15 @@ unsigned long add_timer(tcl_timer_t ** stack, int elapse, int count,
     strcpy((*stack)->name, name);
   } else {
     (*stack)->name = NULL;
+    ret = snprintf(stringid, sizeof stringid, "%lu", (*stack)->id);
+    if (ret >= (sizeof stringid)) {
+      remove_timer_from_list(stack);
+      return NULL;
+    }
+    (*stack)->name = nmalloc(strlen(stringid) + 6); /* 6 = strlen of "timer" + null */
+    snprintf((*stack)->name, (strlen(stringid) + 6), "timer%s", stringid);
   }
-  return (*stack)->id;
+  return (*stack)->name;
 }
 
 /* Remove timer from linked list */
@@ -593,25 +603,9 @@ void remove_timer_from_list(tcl_timer_t ** stack)
   nfree(old);
 }
 
-/* Remove a timer, by id
+/* Remove a timer (via name, not ID)
  */
-int remove_timer(tcl_timer_t ** stack, unsigned long id)
-{
-  int ok = 0;
-
-  while (*stack) {
-    if ((*stack)->id == id) {
-      ok++;
-      remove_timer_from_list(stack);
-    } else
-      stack = &((*stack)->next);
-  }
-  return ok;
-}
-
-/* Remove a timer, by name
- */
-int remove_timer_name(tcl_timer_t **stack, char *name)
+int remove_timer(tcl_timer_t **stack, char *name)
 {
   int ok = 0;
 
@@ -694,18 +688,9 @@ void list_timers(Tcl_Interp *irp, tcl_timer_t *stack, int names)
     snprintf(count, sizeof count, "%u", mark->count);
     argv[0] = mins;
     argv[1] = mark->cmd;
-    argv[2] = id;
+    argv[2] = mark->name;
     argv[3] = count;
-    if (names) {
-      argv[4] = mark->name;
-    } else {
-      argv[4] = 0;
-    }
-    if (names) {    /* Don't return a blank name value if not requested */
-      x = Tcl_Merge(sizeof(argv)/sizeof(*argv), argv);
-    } else {
-      x = Tcl_Merge((sizeof(argv)/sizeof(*argv)) - 1, argv);
-    }
+    x = Tcl_Merge(sizeof(argv)/sizeof(*argv), argv);
     Tcl_AppendElement(irp, x);
     Tcl_Free((char *) x);
   }
