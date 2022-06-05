@@ -274,7 +274,7 @@ static int tcl_timer STDVAR
       }
     }
     x = add_timer(&timer, atoi(argv[1]), (argc >= 4 ? atoi(argv[3]) : 1),
-                  argv[2], (argc == 5 ? argv[4] : '\0'), 0L);
+                  argv[2], (argc == 5 ? argv[4] : NULL), 0L);
     if (!x) {
       Tcl_AppendResult(irp, "Too many timers (wow, impressive). Timer not added", NULL);
       return TCL_ERROR;

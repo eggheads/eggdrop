@@ -610,7 +610,7 @@ int remove_timer(tcl_timer_t **stack, char *name)
   int ok = 0;
 
   while (*stack) {
-    if (((*stack)->name) && (!strcasecmp((*stack)->name, name))) {
+    if ((*stack)->name && !strcasecmp((*stack)->name, name)) {
       ok++;
       remove_timer_from_list(stack);
     } else {
