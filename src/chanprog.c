@@ -559,7 +559,7 @@ char * add_timer(tcl_timer_t ** stack, int elapse, int count,
 {
   tcl_timer_t *old = (*stack);
   char stringid[8];
-  unsigned int ret = 0;
+  unsigned int ret;
 
   *stack = nmalloc(sizeof **stack);
   (*stack)->next = old;
