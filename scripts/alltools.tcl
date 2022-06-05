@@ -23,7 +23,7 @@
 # Souperman 05Nov2002: added ordnumber
 # Tothwolf  27Dec2003: added matchbotattrany, optimized ordnumber,
 #                      more minor changes
-# CrazyCat	02Aug2021: added ucfirst, ucwords, uclwords
+# CrazyCat	02Aug2021: added ucwords, uclwords
 #
 ########################################
 #
@@ -150,9 +150,6 @@
 #   "ordinal" version of that number, i.e. 1 -> "1st",
 #   2 -> "2nd", 3 -> "3rd", 4 -> "4th", etc.
 #   else return <string>
-#
-# ucfirst <string>
-#   Make a string's first character uppercase
 #
 # ucwords <string>
 #   Uppercase the first character of each word in a string
@@ -447,13 +444,6 @@ proc ordnumber {string} {
     return ${string}th
   }
   return $string
-}
-
-proc ucfirst {string} {
-	set string [join $string]
-	set f [string toupper [string index $string 0]]
-	set string [string replace $string 0 0 $f]
-	return $string
 }
 
 proc ucwords {string} {
