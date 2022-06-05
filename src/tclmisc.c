@@ -343,11 +343,7 @@ static int tcl_timers STDVAR
 {
   BADARGS(1, 1, "");
 
-  if ((argc == 2) && (!strcasecmp(argv[1], "-names"))) {
-    list_timers(irp, timer, 1);
-  } else {
-    list_timers(irp, timer, 0);
-  }
+  list_timers(irp, timer);
   return TCL_OK;
 }
 
@@ -355,11 +351,7 @@ static int tcl_utimers STDVAR
 {
   BADARGS(1, 1, "");
 
-  if ((argc == 2) && (!strcasecmp(argv[1], "-names"))) {
-    list_timers(irp, utimer, 1);
-  } else {
-    list_timers(irp, utimer, 0);
-  }
+  list_timers(irp, utimer);
   return TCL_OK;
 }
 

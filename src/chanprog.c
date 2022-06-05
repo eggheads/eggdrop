@@ -676,7 +676,7 @@ void wipe_timers(Tcl_Interp *irp, tcl_timer_t **stack)
 
 /* Return list of timers
  */
-void list_timers(Tcl_Interp *irp, tcl_timer_t *stack, int names)
+void list_timers(Tcl_Interp *irp, tcl_timer_t *stack)
 {
   char mins[11], count[11], id[26], *x;
   EGG_CONST char *argv[5];

@@ -139,7 +139,7 @@ typedef struct timer_str {
 char * add_timer(tcl_timer_t **, int, int, char *, char *, unsigned long);
 int find_timer(tcl_timer_t *, char *);
 int remove_timer(tcl_timer_t **, char *);
-void list_timers(Tcl_Interp *, tcl_timer_t *, int names);
+void list_timers(Tcl_Interp *, tcl_timer_t *);
 void wipe_timers(Tcl_Interp *, tcl_timer_t **);
 void do_check_timers(tcl_timer_t **);
 
