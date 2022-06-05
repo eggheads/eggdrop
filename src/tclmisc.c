@@ -300,7 +300,7 @@ static int tcl_utimer STDVAR
   }
   if (argv[2][0] != '#') {
     if (argc == 5) {
-      /* Precent collisions with unnamed timers */
+      /* Prevent collisions with unnamed timers */
       if (strncmp(argv[4], "timer", 5) == 0) {
         Tcl_AppendResult(irp, "timer name may not begin with \"timer\"", NULL);
         return TCL_ERROR;
