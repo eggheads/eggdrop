@@ -190,7 +190,6 @@ void eggContext(const char *, int, const char *);
 void eggContextNote(const char *, int, const char *, const char *);
 void eggAssert(const char *, int, const char *);
 void backup_userfile(void);
-int mainloop(int);
 
 /* match.c */
 int casecharcmp(unsigned char, unsigned char);
