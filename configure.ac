@@ -93,7 +93,7 @@ EGG_CHECK_OS
 EGG_HEADER_STDC
 AC_HEADER_DIRENT
 AC_HEADER_TIME
-AC_CHECK_HEADERS([arpa/inet.h fcntl.h limits.h locale.h netdb.h netinet/in.h stdio.h stdarg.h stddef.h sys/file.h sys/param.h sys/rusage.h sys/select.h sys/socket.h sys/time.h unistd.h wchar.h])
+AC_CHECK_HEADERS([arpa/inet.h fcntl.h limits.h locale.h netdb.h netinet/in.h stdio.h stdarg.h stddef.h sys/file.h sys/param.h sys/select.h sys/socket.h sys/time.h unistd.h wchar.h])
 
 
 # Checks for typedefs, structures, and compiler characteristics.
@@ -113,7 +113,7 @@ AX_TYPE_SOCKLEN_T
 AX_CREATE_STDINT_H([eggint.h])
 
 # Checks for functions and their arguments.
-AC_CHECK_FUNCS([dprintf explicit_bzero explicit_memset getrandom getrusage inet_aton isascii memset_s random rand lrand48 snprintf strlcpy vsnprintf])
+AC_CHECK_FUNCS([dprintf explicit_bzero explicit_memset getrandom inet_aton isascii memset_s random rand lrand48 snprintf strlcpy vsnprintf])
 AC_FUNC_SELECT_ARGTYPES
 EGG_FUNC_B64_NTOP
 AC_FUNC_MMAP
