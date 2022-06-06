@@ -574,7 +574,7 @@ static int gotmsg(char *from, char *msg, char *tag)
       ctcp = ctcpbuf;
 
       /* remove the ctcp in msg */
-      memmove(p1 - 1, p + 1, strlen(p + 1) + 1);
+      memmove(p1 - 1, p + 1, strlen(p));
 
       if (!ignoring)
         detect_flood(nick, uhost, from,
