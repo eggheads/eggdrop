@@ -97,6 +97,7 @@ static struct dcc_table DCC_IDENTD = {
   ident_display,
   NULL,
   NULL,
+  NULL,
   NULL
 };
 

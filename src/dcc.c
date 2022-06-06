@@ -470,7 +470,8 @@ struct dcc_table DCC_BOT_NEW = {
   display_dcc_bot_new,
   expmem_dcc_bot_,
   free_dcc_bot_,
-  out_dcc_bot
+  out_dcc_bot,
+  NULL
 };
 
 /* Hash function for tandem bot commands */
@@ -554,7 +555,8 @@ struct dcc_table DCC_BOT = {
   display_dcc_bot,
   expmem_dcc_bot_,
   free_dcc_bot_,
-  out_dcc_bot
+  out_dcc_bot,
+  NULL
 };
 
 struct dcc_table DCC_FORK_BOT = {
@@ -567,7 +569,8 @@ struct dcc_table DCC_FORK_BOT = {
   display_dcc_fork_bot,
   expmem_dcc_bot_,
   free_dcc_bot_,
-  out_dcc_bot
+  out_dcc_bot,
+  NULL
 };
 
 /* This function generates a digest by combining a challenge consisting
@@ -959,7 +962,8 @@ struct dcc_table DCC_CHAT_PASS = {
   display_dcc_chat_pass,
   expmem_dcc_general,
   kill_dcc_general,
-  out_dcc_general
+  out_dcc_general,
+  NULL
 };
 
 /* Make sure ANSI code is just for color-changing */
@@ -1180,7 +1184,8 @@ struct dcc_table DCC_CHAT = {
   display_dcc_chat,
   expmem_dcc_general,
   kill_dcc_general,
-  out_dcc_general
+  out_dcc_general,
+  NULL
 };
 
 static int lasttelnets;
@@ -1427,6 +1432,7 @@ struct dcc_table DCC_TELNET = {
   display_telnet,
   NULL,
   NULL,
+  NULL,
   NULL
 };
 
@@ -1499,7 +1505,8 @@ struct dcc_table DCC_DUPWAIT = {
   display_dupwait,
   expmem_dupwait,
   kill_dupwait,
-  out_dcc_bot
+  out_dcc_bot,
+  NULL
 };
 
 /* This function is called if a bot gets removed from the list. It checks
@@ -1825,7 +1832,8 @@ struct dcc_table DCC_TELNET_ID = {
   display_dcc_telnet_id,
   expmem_dcc_general,
   kill_dcc_general,
-  out_dcc_general
+  out_dcc_general,
+  NULL
 };
 
 static void dcc_telnet_new(int idx, char *buf, int x)
@@ -1986,7 +1994,8 @@ struct dcc_table DCC_TELNET_NEW = {
   display_dcc_telnet_new,
   expmem_dcc_general,
   kill_dcc_general,
-  out_dcc_general
+  out_dcc_general,
+  NULL
 };
 
 struct dcc_table DCC_TELNET_PW = {
@@ -1999,7 +2008,8 @@ struct dcc_table DCC_TELNET_PW = {
   display_dcc_telnet_pw,
   expmem_dcc_general,
   kill_dcc_general,
-  out_dcc_general
+  out_dcc_general,
+  NULL
 };
 
 static int call_tcl_func(char *name, int idx, char *args)
@@ -2130,7 +2140,8 @@ struct dcc_table DCC_SCRIPT = {
   display_dcc_script,
   expmem_dcc_script,
   kill_dcc_script,
-  out_dcc_script
+  out_dcc_script,
+  NULL
 };
 
 static void dcc_socket(int idx, char *buf, int len)
@@ -2158,6 +2169,7 @@ struct dcc_table DCC_SOCKET = {
   display_dcc_socket,
   NULL,
   NULL,
+  NULL,
   NULL
 };
 
@@ -2174,6 +2186,7 @@ struct dcc_table DCC_LOST = {
   NULL,
   NULL,
   display_dcc_lost,
+  NULL,
   NULL,
   NULL,
   NULL
@@ -2218,6 +2231,7 @@ struct dcc_table DCC_IDENTWAIT = {
   NULL,
   NULL,
   display_dcc_identwait,
+  NULL,
   NULL,
   NULL,
   NULL
@@ -2288,6 +2302,7 @@ struct dcc_table DCC_IDENT = {
   &identtimeout,
   timeout_dcc_ident,
   display_dcc_ident,
+  NULL,
   NULL,
   NULL,
   NULL

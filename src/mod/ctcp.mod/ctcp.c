@@ -241,8 +241,8 @@ static tcl_strings mystrings[] = {
 };
 
 static tcl_ints myints[] = {
-  {"ctcp-mode", &ctcp_mode},
-  {NULL,              NULL}
+  {"ctcp-mode", &ctcp_mode, 0},
+  {NULL,              NULL, 0}
 };
 
 static char *ctcp_close()

@@ -2142,12 +2142,12 @@ static void cancel_user_xfer(int idx, void *x)
 }
 
 static tcl_ints my_ints[] = {
-  {"allow-resync",      &allow_resync},
-  {"resync-time",        &resync_time},
-  {"private-global",  &private_global},
-  {"private-user",      &private_user},
-  {"override-bots", &overr_local_bots},
-  {NULL,                         NULL}
+  {"allow-resync",      &allow_resync, 0},
+  {"resync-time",        &resync_time, 0},
+  {"private-global",  &private_global, 0},
+  {"private-user",      &private_user, 0},
+  {"override-bots", &overr_local_bots, 0},
+  {NULL,                         NULL, 0}
 };
 
 static tcl_strings my_strings[] = {
