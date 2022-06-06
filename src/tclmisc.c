@@ -246,41 +246,53 @@ static int tcl_binds STDVAR
   return TCL_OK;
 }
 
-static int tcl_timer STDVAR
-{
-  char *x;
-
-  BADARGS(3, 5, " minutes command ?count ?name??");
+int check_timer_syntax(Tcl_Interp *irp, int argc, char *argv[]) {
+  char *endptr;
 
   if (atoi(argv[1]) < 0) {
     Tcl_AppendResult(irp, "time value must be positive", NULL);
-    return TCL_ERROR;
+    return 1;
   }
-  if (argc >= 4 && atoi(argv[3]) < 0) {
-    Tcl_AppendResult(irp, "count value must be >= 0", NULL);
-    return TCL_ERROR;
+  if (argc >=4) {
+    strtol(argv[3], &endptr, 0);
+    if (*endptr != '\0') {
+      Tcl_AppendResult(irp, "count value must be >=0", NULL);
+      return 1;
+    }
   }
   if (argv[2][0] != '#') {
     if (argc == 5) {
       /* Prevent collisions with unnamed timers */
       if (strncmp(argv[4], "timer", 5) == 0) {
         Tcl_AppendResult(irp, "timer name may not begin with \"timer\"", NULL);
-        return TCL_ERROR;
+        return 1;
       }
       /* Check for existing timers by same name */
       if (find_timer(timer, argv[4])) {
         Tcl_AppendResult(irp, "timer already exists by that name", NULL);
-        return TCL_ERROR;
+        return 1;
       }
     }
-    x = add_timer(&timer, atoi(argv[1]), (argc >= 4 ? atoi(argv[3]) : 1),
-                  argv[2], (argc == 5 ? argv[4] : NULL), 0L);
-    if (!x) {
-      Tcl_AppendResult(irp, "Too many timers (wow, impressive). Timer not added", NULL);
-      return TCL_ERROR;
-    }
-    Tcl_AppendResult(irp, x, NULL);
   }
+  return 0;
+}
+
+static int tcl_timer STDVAR
+{
+  char *x;
+
+  BADARGS(3, 5, " minutes command ?count ?name??");
+
+  if (check_timer_syntax(irp, argc, argv)) {
+    return TCL_ERROR;
+  }
+  x = add_timer(&timer, atoi(argv[1]), (argc >= 4 ? atoi(argv[3]) : 1),
+                  argv[2], (argc == 5 ? argv[4] : NULL), 0L);
+  if (!x) {
+    Tcl_AppendResult(irp, "Too many timers (wow, impressive). Timer not added", NULL);
+    return TCL_ERROR;
+  }
+  Tcl_AppendResult(irp, x, NULL);
   return TCL_OK;
 }
 
@@ -290,31 +302,16 @@ static int tcl_utimer STDVAR
 
   BADARGS(3, 5, " seconds command ?count ?name??");
 
-  if (atoi(argv[1]) < 0) {
-    Tcl_AppendResult(irp, "time value must be positive", NULL);
+  if (check_timer_syntax(irp, argc, argv)) {
     return TCL_ERROR;
   }
-  if (argc >= 4 && atoi(argv[3]) < 0) {
-    Tcl_AppendResult(irp, "count value must be >= 0", NULL);
-    return TCL_ERROR;
-  }
-  if (argv[2][0] != '#') {
-    if (argc == 5) {
-      /* Prevent collisions with unnamed timers */
-      if (strncmp(argv[4], "timer", 5) == 0) {
-        Tcl_AppendResult(irp, "timer name may not begin with \"timer\"", NULL);
-        return TCL_ERROR;
-      }
-     /* Check for existing timers by same name */
-     if (find_timer(utimer, argv[4])) {
-      Tcl_AppendResult(irp, "timer already exists by that name", NULL);
-      return TCL_ERROR;
-      }
-    }
-    x = add_timer(&utimer, atoi(argv[1]), (argc == 4 ? atoi(argv[3]) : 1),
+  x = add_timer(&utimer, atoi(argv[1]), (argc == 4 ? atoi(argv[3]) : 1),
                   argv[2], (argc == 5 ? argv[4] : '\0'), 0L);
-    Tcl_AppendResult(irp, x, NULL);
+  if (!x) {
+    Tcl_AppendResult(irp, "Too many timers (wow, impressive). Timer not added", NULL);
+    return TCL_ERROR;
   }
+  Tcl_AppendResult(irp, x, NULL);
   return TCL_OK;
 }
 
