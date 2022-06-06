@@ -2117,10 +2117,7 @@ static int tcl_channel_add(Tcl_Interp *irp, char *newname, char *options)
   }
 
   convert_element(glob_chanmode, buf2);
-  simple_sprintf(buf, "chanmode %s ", buf2);
-  strncat(buf, glob_chanset, 2047 - strlen(buf));
-  strncat(buf, options, 2047 - strlen(buf));
-  buf[2047] = 0;
+  snprintf(buf, sizeof buf, "chanmode %s %s%s", buf2, glob_chanset, options);
 
   if (Tcl_SplitList(NULL, buf, &items, &item) != TCL_OK)
     return TCL_ERROR;
@@ -2133,8 +2130,6 @@ static int tcl_channel_add(Tcl_Interp *irp, char *newname, char *options)
     /* Hells bells, why set *every* variable to 0 when we have bzero? */
     egg_bzero(chan, sizeof(struct chanset_t));
 
-    chan->limit_prot = 0;
-    chan->limit = 0;
     chan->flood_pub_thr = gfld_chan_thr;
     chan->flood_pub_time = gfld_chan_time;
     chan->flood_ctcp_thr = gfld_ctcp_thr;
