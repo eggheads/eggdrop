@@ -27,5 +27,5 @@
  */
 
 #define EGG_STRINGVER "1.9.2"
-#define EGG_NUMVER 1090204
-#define EGG_PATCH "stdin"
+#define EGG_NUMVER 1090205
+#define EGG_PATCH "compilefixes"
