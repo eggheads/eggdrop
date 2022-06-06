@@ -524,7 +524,7 @@ static void eof_dcc_bot(int idx)
 
 static void display_dcc_bot(int idx, char *buf)
 {
-  int i = simple_sprintf(buf, "bot   flags: ");
+  int i = sprintf(buf, "bot   flags: ");
 
   buf[i++] = b_status(idx) & STAT_PINGED ? 'P' : 'p';
   buf[i++] = b_status(idx) & STAT_SHARE ? 'U' : 'u';
@@ -1159,7 +1159,7 @@ static void dcc_chat(int idx, char *buf, int i)
 
 static void display_dcc_chat(int idx, char *buf)
 {
-  int i = simple_sprintf(buf, "chat  flags: ");
+  int i = sprintf(buf, "chat  flags: ");
 
   buf[i++] = dcc[idx].status & STAT_CHAT ? 'C' : 'c';
   buf[i++] = dcc[idx].status & STAT_PARTY ? 'P' : 'p';
@@ -2225,7 +2225,7 @@ struct dcc_table DCC_IDENTWAIT = {
 
 void dcc_ident(int idx, char *buf, int len)
 {
-  char response[512], uid[512], buf1[UHOSTLEN];
+  char response[512], uid[512], buf1[UHOSTLEN + 21];
   int i;
 
   *response = *uid = '\0';
@@ -2240,7 +2240,7 @@ void dcc_ident(int idx, char *buf, int len)
   for (i = 0; i < dcc_total; i++)
     if ((dcc[i].type == &DCC_IDENTWAIT) &&
         (dcc[i].sock == dcc[idx].u.ident_sock)) {
-      simple_sprintf(buf1, "%s@%s", uid, dcc[idx].host);
+      snprintf(buf1, sizeof buf1, "%s@%s", uid, dcc[idx].host);
       dcc_telnet_got_ident(i, buf1);
     }
   dcc[idx].u.other = 0;
@@ -2250,14 +2250,14 @@ void dcc_ident(int idx, char *buf, int len)
 
 void eof_timeout_dcc_ident(int idx, const char *s)
 {
-  char buf[UHOSTLEN];
+  char buf[7 + UHOSTLEN];
   int i;
 
   for (i = 0; i < dcc_total; i++)
     if ((dcc[i].type == &DCC_IDENTWAIT) &&
         (dcc[i].sock == dcc[idx].u.ident_sock)) {
       putlog(LOG_MISC, "*", s);
-      simple_sprintf(buf, "telnet@%s", dcc[idx].host);
+      snprintf(buf, sizeof buf, "telnet@%s", dcc[idx].host);
       dcc_telnet_got_ident(i, buf);
     }
   killsock(dcc[idx].sock);
