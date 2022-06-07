@@ -248,14 +248,15 @@ static int tcl_binds STDVAR
 
 int check_timer_syntax(Tcl_Interp *irp, int argc, char *argv[]) {
   char *endptr;
+  long val;
 
   if (atoi(argv[1]) < 0) {
     Tcl_AppendResult(irp, "time value must be positive", NULL);
     return 1;
   }
   if (argc >=4) {
-    strtol(argv[3], &endptr, 0);
-    if (*endptr != '\0') {
+    val = strtol(argv[3], &endptr, 0);
+    if ((*endptr != '\0') || (val < 0)) {
       Tcl_AppendResult(irp, "count value must be >=0", NULL);
       return 1;
     }
