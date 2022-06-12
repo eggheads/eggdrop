@@ -2239,7 +2239,7 @@ struct dcc_table DCC_IDENTWAIT = {
 
 void dcc_ident(int idx, char *buf, int len)
 {
-  char response[512], uid[512], buf1[UHOSTLEN + 21];
+  char response[512], uid[512], buf1[836];
   int i;
 
   *response = *uid = '\0';
@@ -2250,7 +2250,7 @@ void dcc_ident(int idx, char *buf, int len)
     return;
   }
   rmspace(uid);
-  uid[20] = 0;                  /* 20 character ident max */
+  uid[IDENTMAX] = 0;                  /* 20 character ident max */
   for (i = 0; i < dcc_total; i++)
     if ((dcc[i].type == &DCC_IDENTWAIT) &&
         (dcc[i].sock == dcc[idx].u.ident_sock)) {
