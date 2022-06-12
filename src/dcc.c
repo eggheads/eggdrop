@@ -69,7 +69,7 @@ char bannerfile[121] = "text/banner";  /* File displayed on telnet login      */
 char stealth_prompt[81] = "\n\nNickname.\n"; /* stealth_telnet prompt string  */
 
 static void dcc_telnet_hostresolved(int);
-static void dcc_telnet_got_ident(int, char *);
+static void dcc_telnet_got_ident(int, const char *);
 static void dcc_telnet_pass(int, int);
 
 
@@ -2239,25 +2239,27 @@ struct dcc_table DCC_IDENTWAIT = {
 
 void dcc_ident(int idx, char *buf, int len)
 {
-  char response[512], uid[512], *c, buf1[836];
+  char response[512], buf1[512], *c = buf1;
   int i;
 
-  *response = *uid = '\0';
-  sscanf(buf, "%*[^:]:%[^:]:%*[^:]:%[^\n]\n", response, uid);
+  *response = *buf1 = '\0';
+  sscanf(buf, "%*[^:]:%[^:]:%*[^:]:%[^\n]\n", response, buf1);
   rmspace(response);
   if (response[0] != 'U') {
     dcc[idx].timeval = now;
     return;
   }
-  rmspace(uid);
-  if ((c = strchr(uid, '@')))
-    *c = 0;
-  else
-    uid[(sizeof uid) - 1] = 0; /* 512 character ident max */
+  rmspace(buf1);
+  buf1[(sizeof buf1) - 1] = 0;
+  while (*c && (*c != '@'))
+    c++;
+  if (!*c)
+    *c = '@';
+  c++;
   for (i = 0; i < dcc_total; i++)
     if ((dcc[i].type == &DCC_IDENTWAIT) &&
         (dcc[i].sock == dcc[idx].u.ident_sock)) {
-      snprintf(buf1, sizeof buf1, "%s@%s", uid, dcc[idx].host);
+      strlcpy(c, dcc[idx].host, (sizeof buf1) - (c - buf1));
       dcc_telnet_got_ident(i, buf1);
     }
   dcc[idx].u.other = 0;
@@ -2311,7 +2313,7 @@ struct dcc_table DCC_IDENT = {
   NULL
 };
 
-static void dcc_telnet_got_ident(int i, char *host)
+static void dcc_telnet_got_ident(int i, const char *host)
 {
   int idx;
   char x[1024];
