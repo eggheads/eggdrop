@@ -8,3 +8,21 @@
 # Woobie only serves as an example for module programming. No need to
 # compile it for normal bots ...
 woobie
+transfer
+share
+compress
+filesys
+seen
+assoc
+ident
+twitch
+#pbkdf2
+#blowfish
+#dns
+#channels
+#server
+#ctcp
+#irc
+#notes
+#console
+#uptime
