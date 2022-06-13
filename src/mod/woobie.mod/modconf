@@ -1,0 +1,6 @@
+#### WOOBIE MODULE ####
+
+# This is for demonstrative purposes only. If you are looking for starting
+# point in writing modules, woobie is the right thing.
+loadmodule woobie
+

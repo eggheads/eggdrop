@@ -1,0 +1,17 @@
+#### COMPRESS MODULE ####
+
+# This module provides support for file compression. This allows the
+# bot to transfer compressed user files and therefore save a significant amount
+# of bandwidth. The share module must be loaded to load this module. Un-comment
+# the following line to the compress module.
+loadmodule compress
+
+# Allow compressed sending of user files? The user files are compressed with
+# the compression level defined in `compress-level'.
+set share-compressed 1
+
+# This is the default compression level used. These levels are the same as
+# those used by GNU gzip.
+#set compress-level 9
+
+

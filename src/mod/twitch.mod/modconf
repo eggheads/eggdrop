@@ -1,0 +1,12 @@
+#### TWITCH MODULE ####
+
+# This module attempts to provide connectivity with the Twitch gaming platform.
+# While Twitch provides an IRC gateway to connect with it's streaming service,
+# it does not claim to (and certainly does not) follow the IRC RFC in any
+# meaningful way. The intent of this module is not to provide the full spectrum
+# of management functions typically associated with Eggdrop; please see the docs
+# for additional information. Only load this if you are connecting to Twitch!
+# Please see doc/TWITCH for Twitch-specific setup information, like how to
+# configure the required CAP settings in the IRC section above.
+loadmodule twitch
+
