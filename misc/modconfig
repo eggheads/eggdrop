@@ -108,6 +108,9 @@ mc_fknownmods=${mc_bindir}/.known_modules
 #  List of modules disabled by default
 mc_fdisabledmods=${mc_top_srcdir}/disabled_modules
 
+mc_fconfbase=${mc_top_srcdir}/eggdrop-basic.conf
+mc_fconffull=${mc_top_srcdir}/eggdrop.conf
+
 mc_mod_dir=${mc_srcdir}/mod
 
 mc_mod_bin_dir=${mc_bindir}/src/mod
@@ -169,6 +172,9 @@ Commands:
     static.h             Create \`src/mod/static.h'.
     Makefile             Create \`src/mod/Makefile'.
     configure            Interactively select modules.
+    enable               Enable or disable an module.
+    is-disable		     Exits 0/1 depending on the module is
+                           disabled or not.
     is-configured        Exits 0/1 depending on whether modules where
                            configured or not.
     update-depends       Check all module dependencies and add modules missing.
@@ -196,6 +202,50 @@ xis-configured)
 		exit 0
 	else
 		exit 1
+	fi
+;;
+xenable)
+#
+#  Enable or disable an module.
+## Update disabled_modules and config files
+	if test "x${mc_paras}" = x; then
+		echo "${mc_pn}: error: no modules specified." 2>&1
+		exit 1
+	fi
+
+	module_name=$1
+	module_state=$2
+	if (test "${module_state}" = d); then
+		module_state=false;
+	fi
+	if (test "${module_state}" = e); then
+		module_state=true;
+	fi
+	if $module_state ; then
+    	sed -i "s@^${module_name}@#${module_name}@g" ${mc_fdisabledmods}
+    	sed -i "s@^#loadmodule ${module_name}@loadmodule ${module_name}@g" ${mc_fconfbase}
+    	sed -i "s@^#loadmodule ${module_name}@loadmodule ${module_name}@g" ${mc_fconffull}
+	else
+		sed -i "s@^#${module_name}@${module_name}@g" ${mc_fdisabledmods}
+		sed -i "s@^loadmodule ${module_name}@#loadmodule ${module_name}@g" ${mc_fconfbase}
+		sed -i "s@^loadmodule ${module_name}@#loadmodule ${module_name}@g" ${mc_fconffull}
+	fi
+;;
+xis-disable)
+#
+#  Determine if the module is already disabled.
+#
+	if test "x${mc_paras}" = x; then
+		echo "${mc_pn}: error: no modules specified." 2>&1
+		exit 1
+	fi
+
+	if (grep "^${mc_paras}\$" ${mc_fdisabledmods} 1>&7 2>&1); then
+		exit 1
+	elif (grep "^#${mc_paras}\$" ${mc_fdisabledmods} 1>&7 2>&1); then
+		exit 0
+	else
+		exit 2
 	fi
 ;;
 xmodules-still-exist)
@@ -405,6 +455,14 @@ xdel)
 		mc_mod=`echo ${mc_mod} | sed -e 's/.*\///'`
 		echo "${mc_pn}: disabling eggdrop module: ${mc_mod}" 1>&6
 
+		# Add module if no exists in disabled_modules to enable
+		if (${mc_self_call} -q is-disable ${mc_mod} == 3); then
+			echo "#${mc_mod}" >> ${mc_fdisabledmods}
+		elif !(${mc_self_call} -q is-disable ${mc_mod}); then 
+			# or enable this
+			${mc_self_call} -q enable ${mc_mod} false
+		fi
+
 		#  Add module to the list of known modules.
 		if grep "^${mc_mod}\.mod$" ${mc_fknownmods} 1>&7 2>&7; then
 			if test ! -d ${mc_mod_dir}/${mc_mod}.mod; then
@@ -453,6 +511,13 @@ xadd)
 		#  Remove any path information
 		mc_mod=`echo ${mc_mod} | sed -e 's/.*\///'`
 
+		# Add module if no exists in disabled_modules to enable
+		if (${mc_self_call} -q is-disable ${mc_mod} == 3); then
+			echo "#${mc_mod}" >> ${mc_fdisabledmods}
+		elif (${mc_self_call} -q is-disable ${mc_mod}); then 
+			# or enable this
+			${mc_self_call} -q enable ${mc_mod} true
+		fi
 		#  Add module to the list of known modules.
 		if grep "^${mc_mod}\.mod$" ${mc_fknownmods} 1>&7 2>&7; then
 			if test ! -d ${mc_mod_dir}/${mc_mod}.mod; then
@@ -662,6 +727,7 @@ EOF
 				mc_ask_response=e;
 			fi
 
+			${mc_self_call} -q enable ${mc_modname} ${mc_ask_response}
 			#  If the user just presses [return] or
 			#  if the selected state matches the old state,
 			#  then we change nothing.
@@ -709,3 +775,5 @@ EOF
 esac
 
 exit 0
+
+
