@@ -39,3 +39,5 @@ config.cache
 eggdrop
 EGGMOD.stamp
 mod.xlibs
+# vscode container
+.devcontainer/*
