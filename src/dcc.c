@@ -2239,7 +2239,8 @@ struct dcc_table DCC_IDENTWAIT = {
 
 void dcc_ident(int idx, char *buf, int len)
 {
-  char response[512], buf1[512], *c = buf1;
+  char response[512], buf1[512], *c;
+  size_t l;
   int i;
 
   *response = *buf1 = '\0';
@@ -2251,17 +2252,17 @@ void dcc_ident(int idx, char *buf, int len)
   }
   rmspace(buf1);
   buf1[(sizeof buf1) - 1] = 0;
-  while (*c && (*c != '@'))
-    c++;
-  if (!*c)
-    *c = '@';
-  c++;
-  for (i = 0; i < dcc_total; i++)
-    if ((dcc[i].type == &DCC_IDENTWAIT) &&
-        (dcc[i].sock == dcc[idx].u.ident_sock)) {
-      strlcpy(c, dcc[idx].host, (sizeof buf1) - (c - buf1));
-      dcc_telnet_got_ident(i, buf1);
-    }
+  if (!strchr(buf1, '@')) {
+    c = buf1 + strlen(buf1);
+    *c++ = '@';
+    l = (sizeof buf1) - (c - buf1);
+    for (i = 0; i < dcc_total; i++)
+      if ((dcc[i].type == &DCC_IDENTWAIT) &&
+          (dcc[i].sock == dcc[idx].u.ident_sock)) {
+        strlcpy(c, dcc[idx].host, l);
+        dcc_telnet_got_ident(i, buf1);
+      }
+  }
   dcc[idx].u.other = 0;
   killsock(dcc[idx].sock);
   lostdcc(idx);
