@@ -1,0 +1,27 @@
+#### IDENT MODULE ####
+
+# This module adds Eggdrop support for the externally-provided oident
+# service, or alternatively the ability for Eggdrop to act as its own ident
+# daemon. Please read the docs at doc/settings/mod.ident for additional
+# information on correctly configuring this section. If you don't know
+# what ident or oident are, it is safe to leave this section commented.
+loadmodule ident
+
+# Set the ident method you wish to use. Each of these methods requires
+# some form of external configuration in order to function. See
+# doc/settings/mod.ident for additional information.
+# Options are:
+#   0 = oidentd
+#         Your bot will overwrite $HOME/.oidentd.conf right before opening the
+#         socket to the IRC server with the global reply.
+#         NOTE: requires the oidentd service to be running on the host machine
+#   1 = Builtin
+#         Your bot will automatically turn its builtin identd on and off when
+#         needed so it shouldn't conflict with other identds that do the same.
+#         NOTE: Eggdrop must be granted permissions on the host system to bind
+#         to port 113. 
+#set ident-method 0
+
+# Set the ident port to use for ident-method 1.
+#set ident-port 113
+

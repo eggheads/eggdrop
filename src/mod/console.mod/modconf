@@ -1,0 +1,18 @@
+#### CONSOLE MODULE ####
+
+# This module provides storage of console settings when you exit the
+# bot or type .store on the partyline.
+loadmodule console
+
+# Save users console settings automatically? Otherwise, they have
+# to use the .store command.
+set console-autosave 1
+
+# If a user doesn't have any console settings saved, which channel
+# do you want them automatically put on?
+set force-channel 0
+
+# Enable this setting if a user's global info line should be displayed
+# when they join a botnet channel.
+set info-party 0
+

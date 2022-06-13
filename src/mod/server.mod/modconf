@@ -1,0 +1,263 @@
+#### SERVER MODULE ####
+
+# This module provides the core server support. You have to load this
+# if you want your bot to come on IRC. Not loading this is equivalent
+# to the old NO_IRC define.
+loadmodule server
+
+# Control certificate verification for irc servers. For a description of the
+# possible values, look at the SSL SETTINGS section above.
+#set ssl-verify-server 0
+
+## What is your network?
+## Options are:
+##   EFnet
+##   IRCnet
+##   Undernet
+##   DALnet
+##   Libera
+##   freenode
+##   QuakeNet
+##   Rizon
+##   Twitch (This requires twitch.mod to be loaded as well)
+##   Other  (This is a good, sane default option to use if your network/ircd is
+##          not listed here. Additional configuration options for this setting
+##          can be found further down in the IRC MODULE section)
+set net-type "EFnet"
+
+# Set the nick the bot uses on IRC, and on the botnet unless you specify a
+# separate botnet-nick, here.
+set nick "Lamestbot"
+
+# Set the alternative nick which the bot uses on IRC if the nick specified
+# by 'set nick' is unavailable. All '?' characters will be replaced by random
+# numbers.
+set altnick "Llamab?t"
+
+# Set what should be displayed in the real-name field for the bot on IRC.
+# This can not be blank, it has to contain something.
+set realname "/msg LamestBot hello"
+
+# This is a Tcl script to be run immediately after connecting to a server. If
+# you want to authenticate Eggdrop with NickServ, uncomment and edit the middle
+# line below.
+bind evnt - init-server evnt:init_server
+
+proc evnt:init_server {type} {
+  global botnick
+  putquick "MODE $botnick +i-ws"
+#  putserv "PRIVMSG NickServ :identify <password>"
+}
+
+# Set the default port which should be used if none is specified with
+# '.jump' or in 'set servers'.
+set default-port 6667
+
+# This is the bot's server list. The bot will start at the first server listed,
+# and cycle through them whenever it gets disconnected. You need to change these
+# servers to YOUR network's servers.
+#
+# The format is:
+#   server add <server> [port [password]]
+# Prefix the port with a plus sign to attempt a SSL connection:
+#   server add <server> +port [password]
+#
+# Both the port and password fields are optional. If a port isn't specified,
+# the default-port setting will be used. If you want to set a password or use
+# SSL, you must specify a port.
+#
+# This format is new as of version 1.9.0. The previous method using
+# set servers {} will still work for now, but is deprecated and will be removed
+# in a future release.
+server add you.need.to.change.this 6667
+server add another.example.com 6669 password
+server add 2001:db8:618:5c0:263:: 6669 password
+server add ssl.example.net +7000
+
+#### CAP Features ####
+# This section controls IRCv3 capabilities supported natively by Eggdrop. You
+# can enable individual settings here to be requested as part of the
+# registration process with the IRC server. Not all servers support all CAP
+# features. https://ircv3.net/support/networks.html maintains a list of some
+# popular servers, and you can also use '.tcl cap ls' from the partyline
+# to list capabilities available on that server.
+#
+# The capabilities currently known to be supported by Eggdrop are as follows:
+#
+#  account-notify, account-tag, away-notify, chghost, echo-message,
+#  extended-join, invite-notify, message-tags, server-time, sasl, setname,
+#  +typing
+#
+
+# SASL is a method that allows Eggdrop to authenticate with a NickServ service
+# as part of the connection process to a server, eliminating the need to later
+# authenticate via a /msg command.
+#
+# To request SASL authentication via CAP, set this to 1
+#set sasl 0
+
+# Set SASL mechanism to authenticate with.
+# Options are:
+#   0 = PLAIN                       (normal user/pass exchange, only encrypted
+#                                    if connected to the IRC server with a
+#                                    SSL/TLS connection)
+#
+#   1 = ECDSA-NIST256P-CHALLENGE    (Uses a certificate; usually requires a
+#                                    public key to be registered with NickServ
+#                                    or other similar service. Set certificate
+#                                    to use in sasl-ecdsa-key setting below)
+#
+#   2 = EXTERNAL                    (Some other method you set up. Certificates
+#                                    used are defined in ssl-certificate and
+#                                    ssl-privatekey settings in SSL section)
+#
+#set sasl-mechanism 0
+
+# Set username to authenticate to IRC NickServ with
+#set sasl-username "llamabot"
+
+# Set password to authenticate to IRC NickServ with
+#set sasl-password "password"
+
+# Specify the location of certificate to use for the SASL
+# ecdsa-nist256p-challenge. An ECDSA certificate can be generated with the
+# command:
+#   openssl ecparam -genkey -name prime256v1 -out eggdrop-ecdsa.pem
+#set sasl-ecdsa-key "eggdrop-ecdsa.pem"
+
+# Set SASL failure action
+# If SASL authentication fails, do you want to connect to the server anyway?
+# Set this to 0 to disconnect and retry until success, or 1 to continue
+# connecting to the server without SASL authentication.
+#set sasl-continue 1
+#
+# Timeout (in seconds) before giving up SASL authentication
+#set sasl-timeout 15
+
+# To request the account-notify feature via CAP, set this to 1
+#set account-notify 0
+
+# To request the account-notify feature via CAP, set this to 1
+#set extended-join 0
+
+# To request the invite-notify feature via CAP, set this to 1
+#set invite-notify 0
+
+# To request the message-tags feature via CAP, set this to 1. NOTE: Enabling
+# this feature may interfere with RAW binds in scripts.
+#set message-tags 0
+
+# If you have any additional CAP features you would like to request at
+# registration but are not listed above, set them here as space separated
+# strings. Setting features here does not guarantee Eggdrop's ability to support
+# them.
+#set cap-request "feature1 feature2 feature3"
+
+#### End of CAP features ####
+
+# Number of seconds to wait between transmitting queued lines to the server.
+# Lower this value at your own risk.  ircd is known to start flood control
+# at 512 bytes/2 seconds.
+set msg-rate 2
+
+# This setting makes the bot try to get his original nickname back if its
+# primary nickname is already in use.
+set keep-nick 1
+
+# This setting makes the bot squelch the error message when rejecting a DCC
+# CHAT, SEND or message command. Normally, Eggdrop notifies the user that the
+# command has been rejected because they don't have access. Note that sometimes
+# IRC server operators detect bots that way.
+set quiet-reject 1
+
+# If you want your bot to answer lower case ctcp requests (non rfc-
+# compliant), set this setting to 1. mIRC will do this, most other
+# clients will not.
+set lowercase-ctcp 0
+
+# Set how many ctcps should be answered at once.
+set answer-ctcp 3
+
+# Set here how many msgs in how many seconds from one host constitutes
+# a flood. If you set this to 0:0, msg flood protection will be disabled.
+set flood-msg 5:60
+
+# Set here how many ctcps in how many seconds from one host constitutes
+# a flood. If you set this to 0:0, ctcp flood protection will be disabled.
+set flood-ctcp 3:60
+
+# This setting defines how long Eggdrop should wait before moving from one
+# server to another on disconnect. If you set 0 here, Eggdrop will not wait
+# at all and will connect instantly. Setting this too low could result in
+# your bot being K:Lined.
+set server-cycle-wait 60
+
+# Set here how long Eggdrop should wait for a response when connecting to a
+# server before giving up and moving on to next server.
+set server-timeout 60
+
+# Set this to 1 if Eggdrop should check for stoned servers? (where the
+# server connection has died, but Eggdrop hasn't been notified yet).
+set check-stoned 1
+
+# If you want your bot to exit the server if it receives an ERROR message,
+# set this to 1.
+set serverror-quit 1
+
+# Set here the maximum number of lines to queue to the server. If you're
+# going to dump large chunks of text to people over IRC, you will probably
+# want to raise this. 300 is fine for most people though.
+set max-queue-msg 300
+
+# If you want Eggdrop to trigger binds for ignored users, set this to 1.
+set trigger-on-ignore 0
+
+# This setting configures PUBM and MSGM binds to be exclusive of PUB and MSG
+# binds. This means if a MSGM bind with the mask "*help*" exists and is
+# triggered, any MSG bindings with "help" in their mask will not be
+# triggered. Don't enable this unless you know what you are doing!
+set exclusive-binds 0
+
+# Allow identical messages in the mode queue?
+set double-mode 1
+
+# Allow identical messages in the server queue?
+set double-server 1
+
+# Allow identical messages in the help queue?
+set double-help 1
+
+# This optimizes the kick queue. It also traces nick changes and parts in
+# the channel and changes the kick queue accordingly.
+# Options are:
+#   0 = Turn it off.
+#   1 = Optimize the kick queue by summarizing kicks.
+#   2 = Trace nick changes and parts on the channel and change the queue
+#       accordingly. For example, bot will not try to kick users who have
+#       already parted the channel.
+# ATTENTION: Setting 2 is very CPU intensive.
+set optimize-kicks 1
+
+# If your network supports more recipients per command then 1, you can
+# change this behavior here. Set this to the number of recipients per
+# command, or set this to 0 for unlimited.
+set stack-limit 4
+
+# Sets the default RPL_ISUPPORT (raw 005) information to use as a fallback.
+# These MUST be compatible to all IRCds you might want to connect to.
+# The actual server settings overwrite these, so you shouldn't need to modify.
+#set isupport-default "CASEMAPPING=rfc1459 CHANNELLEN=80 NICKLEN=9 CHANTYPES=#& PREFIX=(ov)@+ CHANMODES=b,k,l,imnpst MODES=3 MAXCHANNELS=10 TOPICLEN=250 KICKLEN=250 STATUSMSG=@+"
+
+### SERVER MODULE - OTHER NETWORKS (net-type "Other") ###
+
+# This settings defines how umode +r is understood by Eggdrop. Some networks
+# use +r to indicate a restricted connection. If this is your case, and you
+# want your bot to leave restricted servers and jump to the next server on its
+# list, then set it to 1. The default setting is 0.
+#set check-mode-r 0
+
+# This setting allows you to specify the maximum nick-length supported by your
+# network. The default setting is 9. The maximum supported length by Eggdrop
+# is 32.
+#set nick-len 9
+

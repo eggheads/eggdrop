@@ -108,8 +108,8 @@ mc_fknownmods=${mc_bindir}/.known_modules
 #  List of modules disabled by default
 mc_fdisabledmods=${mc_top_srcdir}/disabled_modules
 
-mc_fconfbase=${mc_top_srcdir}/eggdrop-basic.conf
-mc_fconffull=${mc_top_srcdir}/eggdrop.conf
+mc_fconf_base=${mc_top_srcdir}/eggdrop-basic.conf
+mc_fconf_full=${mc_top_srcdir}/eggdrop.conf
 
 mc_mod_dir=${mc_srcdir}/mod
 
@@ -222,13 +222,19 @@ xenable)
 		module_state=true;
 	fi
 	if $module_state ; then
+		# enable
     	sed -i "s@^${module_name}@#${module_name}@g" ${mc_fdisabledmods}
-    	sed -i "s@^#loadmodule ${module_name}@loadmodule ${module_name}@g" ${mc_fconfbase}
-    	sed -i "s@^#loadmodule ${module_name}@loadmodule ${module_name}@g" ${mc_fconffull}
+    	sed -i "s@^#loadmodule ${module_name}@loadmodule ${module_name}@g" ${mc_fconf_base}
+    	sed -i "s@^#loadmodule ${module_name}@loadmodule ${module_name}@g" ${mc_fconf_full}
+		#  Get and put modconf value 
+		if test -r ${mc_mod_dir}/${module_name}.mod/modconf; then
+			sed -i "/^set mod-path .*/r ${mc_mod_dir}/${module_name}.mod/modconf" ${mc_fconf_full}
+		fi
 	else
+		# disable
 		sed -i "s@^#${module_name}@${module_name}@g" ${mc_fdisabledmods}
-		sed -i "s@^loadmodule ${module_name}@#loadmodule ${module_name}@g" ${mc_fconfbase}
-		sed -i "s@^loadmodule ${module_name}@#loadmodule ${module_name}@g" ${mc_fconffull}
+		sed -i "s@^loadmodule ${module_name}@#loadmodule ${module_name}@g" ${mc_fconf_base}
+		sed -i "s@^loadmodule ${module_name}@#loadmodule ${module_name}@g" ${mc_fconf_full}
 	fi
 ;;
 xis-disable)

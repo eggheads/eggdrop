@@ -1,0 +1,6 @@
+DESC:This module adds Eggdrop support for the externally-provided oident
+DESC:service, or alternatively the ability for Eggdrop to act as its own ident
+DESC:daemon.
+DESC:files.
+DESC:
+DESC:Normally you will want to DISABLE this module.
