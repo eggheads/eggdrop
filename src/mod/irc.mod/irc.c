@@ -230,16 +230,32 @@ static void maybe_revenge(struct chanset_t *chan, char *whobad,
   char *badnick, *victim;
   int mevictim;
   struct userrec *u, *u2;
+  struct capability *current;
 
   if (!chan || (type < 0))
     return;
 
+//  current = find_capability("extended-join");
+
   /* Get info about offender */
-  u = get_user_by_host(whobad);
+//XXXXX don't have account here
+//  if (current->enabled) {
+//    u = get_user_by_account(m->account);
+//  }
+//  if (!u) {
+    u = get_user_by_host(whobad);
+//  }
   badnick = splitnick(&whobad);
 
   /* Get info about victim */
-  u2 = get_user_by_host(whovictim);
+//XXXXX don't have account here
+//  if (current->enabled) {
+//    u2 = get_user_by_account(m->account);
+//  }
+//  if (!u) {
+    u2 = get_user_by_host(whovictim);
+//  }
+
   victim = splitnick(&whovictim);
   mevictim = match_my_nick(victim);
 
@@ -265,10 +281,12 @@ static void set_key(struct chanset_t *chan, char *k)
 static int hand_on_chan(struct chanset_t *chan, struct userrec *u)
 {
   char s[NICKMAX+UHOSTLEN+1];
+  struct capability *current;
   memberlist *m;
 
   for (m = chan->channel.member; m && m->nick[0]; m = m->next) {
     sprintf(s, "%s!%s", m->nick, m->userhost);
+//XXXXXX Doable but how
     if (u == get_user_by_host(s))
       return 1;
   }
@@ -531,6 +549,7 @@ static void status_log()
 static void check_lonely_channel(struct chanset_t *chan)
 {
   memberlist *m;
+  struct capability *current;
   char s[NICKMAX+UHOSTLEN+1];
   int i = 0;
 
@@ -575,9 +594,15 @@ static void check_lonely_channel(struct chanset_t *chan)
         putlog(LOG_MISC, "*", "%s is active but has no ops :(", chan->dname);
       chan->status |= CHAN_WHINED;
     }
+    current = find_capability("extended-join");
     for (m = chan->channel.member; m && m->nick[0]; m = m->next) {
-      sprintf(s, "%s!%s", m->nick, m->userhost);
-      u = get_user_by_host(s);
+      if (current->enabled) {
+        u = get_user_by_account(m->account);
+      }
+      if (!u) {
+        sprintf(s, "%s!%s", m->nick, m->userhost);
+        u = get_user_by_host(s);
+      }
       if (!match_my_nick(m->nick) && (!u || !(u->flags & USER_BOT))) {
         ok = 0;
         break;
@@ -671,6 +696,7 @@ static void check_expired_chanstuff()
             if (now - m->last >= chan->idle_kick * 60 &&
                 !match_my_nick(m->nick) && !chan_issplit(m)) {
               sprintf(s, "%s!%s", m->nick, m->userhost);
+//XXXXXXX I think we skip this
               get_user_flagrec(m->user ? m->user : get_user_by_host(s),
                                &fr, chan->dname);
               if ((!(glob_bot(fr) || glob_friend(fr) || (glob_op(fr) &&
@@ -687,6 +713,7 @@ static void check_expired_chanstuff()
         if (m->split && now - m->split > wait_split) {
           sprintf(s, "%s!%s", m->nick, m->userhost);
           check_tcl_sign(m->nick, m->userhost,
+//XXXXXX I think skip this
                          m->user ? m->user : get_user_by_host(s),
                          chan->dname, "lost in the netsplit");
           putlog(LOG_JOIN, chan->dname,
@@ -921,6 +948,7 @@ static int check_tcl_pub(char *nick, char *from, char *chname, char *msg)
   strlcpy(buf, msg, sizeof buf);
   cmd = newsplit(&args);
   simple_sprintf(host, "%s!%s", nick, from);
+//XXXXXX skip this
   u = get_user_by_host(host);
   hand = u ? u->handle : "*";
   get_user_flagrec(u, &fr, chname);
@@ -947,6 +975,7 @@ static int check_tcl_pubm(char *nick, char *from, char *chname, char *msg)
 
   simple_sprintf(buf, "%s %s", chname, msg);
   simple_sprintf(host, "%s!%s", nick, from);
+//XXXXXXXXXXXX Skip this
   u = get_user_by_host(host);
   get_user_flagrec(u, &fr, chname);
   Tcl_SetVar(interp, "_pubm1", nick, 0);

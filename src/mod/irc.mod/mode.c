@@ -52,10 +52,12 @@ struct chanset_t *modebind_refresh(char *chname,
   if (!chname || !(chan = findchan(chname)))
     return NULL;
   if (usrhost) {
+//XXXXXX probably not here
     u = get_user_by_host(usrhost);
     get_user_flagrec(u, usr, chan->dname);
   }
   if (vcrhost) {
+//XXXXX probably not here
     u = get_user_by_host(vcrhost);
     get_user_flagrec(u, vcr, chan->dname);
   }
@@ -404,6 +406,7 @@ static void got_op(struct chanset_t *chan, char *nick, char *from,
   char ch[sizeof chan->name];
   char s[UHOSTLEN];
   struct userrec *u;
+  struct capability *current;
   int check_chan = 0, snm = chan->stopnethack_mode;
 
   m = ismember(chan, who);
@@ -422,11 +425,17 @@ static void got_op(struct chanset_t *chan, char *nick, char *from,
 
   strcpy(ch, chan->name);
   simple_sprintf(s, "%s!%s", m->nick, m->userhost);
-  if (!m->user)
-    u = get_user_by_host(s);
-  else
+  if (!m->user) {
+    current = find_capability("extended-join");
+    if (current->enabled) {
+      u = get_user_by_account(m->account);
+    }
+    if (!u) {
+      u = get_user_by_host(s);
+    }
+  } else {
     u = m->user;
-
+  } 
   get_user_flagrec(u, &victim, chan->dname);
   /* Flags need to be set correctly right from the beginning now, so that
    * add_mode() doesn't get irritated.
@@ -501,6 +510,7 @@ static void got_halfop(struct chanset_t *chan, char *nick, char *from,
   char s[UHOSTLEN];
   char ch[sizeof chan->name];
   struct userrec *u;
+  struct capability *current;
   int check_chan = 0;
   int snm = chan->stopnethack_mode;
 
@@ -520,11 +530,17 @@ static void got_halfop(struct chanset_t *chan, char *nick, char *from,
 
   strcpy(ch, chan->name);
   simple_sprintf(s, "%s!%s", m->nick, m->userhost);
-  if (!m->user)
-    u = get_user_by_host(s);
-  else
+  if (!m->user) {
+    current = find_capability("extended-join");
+    if (current->enabled) {
+      u = get_user_by_account(m->account);
+    }
+    if (!u) {
+      u = get_user_by_host(s);
+    }
+  } else {
     u = m->user;
-
+  }
   get_user_flagrec(u, &victim, chan->dname);
   /* Flags need to be set correctly right from the beginning now, so that
    * add_mode() doesn't get irritated.
@@ -597,6 +613,7 @@ static void got_deop(struct chanset_t *chan, char *nick, char *from,
   char ch[sizeof chan->name];
   char s[UHOSTLEN], s1[UHOSTLEN];
   struct userrec *u;
+  struct capability *current;
   int had_halfop;
 
   m = ismember(chan, who);
@@ -612,7 +629,13 @@ static void got_deop(struct chanset_t *chan, char *nick, char *from,
   strcpy(ch, chan->name);
   simple_sprintf(s, "%s!%s", m->nick, m->userhost);
   simple_sprintf(s1, "%s!%s", nick, from);
-  u = get_user_by_host(s);
+  current = find_capability("extended-join");
+  if (current->enabled) {
+    u = get_user_by_account(m->account);
+  }
+  if (!u) {
+    u = get_user_by_host(s);
+  }
   get_user_flagrec(u, &victim, chan->dname);
 
   had_halfop = chan_hasop(m);
@@ -690,6 +713,7 @@ static void got_dehalfop(struct chanset_t *chan, char *nick, char *from,
   char ch[sizeof chan->name];
   char s[UHOSTLEN], s1[UHOSTLEN];
   struct userrec *u;
+  struct capability *current;
   int had_halfop;
 
   m = ismember(chan, who);
@@ -705,7 +729,13 @@ static void got_dehalfop(struct chanset_t *chan, char *nick, char *from,
   strcpy(ch, chan->name);
   simple_sprintf(s, "%s!%s", m->nick, m->userhost);
   simple_sprintf(s1, "%s!%s", nick, from);
-  u = get_user_by_host(s);
+  current = find_capability("extended-join");
+  if (current->enabled) {
+    u = get_user_by_account(m->account);
+  }
+  if (!u) {
+    u = get_user_by_host(s);
+  }
   get_user_flagrec(u, &victim, chan->dname);
 
   had_halfop = chan_hasop(m);
@@ -784,6 +814,7 @@ static void got_ban(struct chanset_t *chan, char *nick, char *from, char *who,
     for (m = chan->channel.member; m && m->nick[0]; m = m->next) {
       egg_snprintf(s1, sizeof s1, "%s!%s", m->nick, m->userhost);
       if (match_addr(who, s1)) {
+//XXXXXX we dont do bans yet
         targ = get_user_by_host(s1);
         if (targ) {
           get_user_flagrec(targ, &victim, chan->dname);
@@ -1006,6 +1037,7 @@ static int gotmode(char *from, char *origmsg)
   struct userrec *u;
   memberlist *m;
   struct chanset_t *chan;
+  struct capability *current;
 
   strncpy(buf, origmsg, 510);
   buf[510] = 0;
@@ -1025,10 +1057,16 @@ static int gotmode(char *from, char *origmsg)
         msg[z] = 0;
       putlog(LOG_MODES, chan->dname, "%s: mode change '%s %s' by %s", ch, chg,
              msg, from);
-      u = get_user_by_host(from);
-      get_user_flagrec(u, &user, ch);
       nick = splitnick(&from);
       m = ismember(chan, nick);
+      current = find_capability("extended-join");
+      if (current->enabled) {
+        u = get_user_by_account(m->account);
+      }
+      if (!u) {
+        u = get_user_by_host(from);
+      }
+      get_user_flagrec(u, &user, ch);
       if (m)
         m->last = now;
       if (m && channel_active(chan) && (me_op(chan) || (me_halfop(chan) &&
@@ -1249,7 +1287,13 @@ static int gotmode(char *from, char *origmsg)
             refresh_who_chan(chan->name);
           } else {
             simple_sprintf(s, "%s!%s", m->nick, m->userhost);
-            get_user_flagrec(m->user ? m->user : get_user_by_host(s),
+            if (current->enabled) {
+              u = get_user_by_account(m->account);
+            }
+            if (!u) {
+              u = get_user_by_host(from);
+            }
+            get_user_flagrec(m->user ? m->user : u,
                              &victim, chan->dname);
             if (ms2[0] == '+') {
               m->flags &= ~SENTVOICE;

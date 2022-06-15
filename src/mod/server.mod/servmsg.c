@@ -468,6 +468,17 @@ static int detect_flood(char *floodnick, char *floodhost, char *from, int which)
   if (!strcasecmp(floodhost, botuserhost))
     return 0;
 
+/*
+    current = find_capability("extended-join");
+    if (current->enabled) {
+      u = get_user_by_account(m->account);
+    }
+    if (!u) {
+      u = get_user_by_host(buf);
+    }
+XXXXXX Don't have the account to use
+*/
+
   u = get_user_by_host(from);
   atr = u ? u->flags : 0;
   if (atr & (USER_BOT | USER_FRIEND))
@@ -514,6 +525,7 @@ static int detect_flood(char *floodnick, char *floodhost, char *from, int which)
     lastmsgs[which] = 0;
     lastmsgtime[which] = 0;
     lastmsghost[which][0] = 0;
+//XXXXXXXX don't have account available
     u = get_user_by_host(from);
     if (check_tcl_flud(floodnick, floodhost, u, ftype, "*"))
       return 0;
@@ -582,6 +594,7 @@ static int gotmsg(char *from, char *msg, char *tag)
               putlog(LOG_PUBLIC, to, "CTCP %s: %s from %s (%s) to %s",
                      code, ctcp, nick, uhost, to);
           } else {
+//XXXXXXX Don't have account available
             u = get_user_by_host(from);
             if (!ignoring || trigger_on_ignore) {
               if (!check_tcl_ctcp(nick, uhost, u, to, code, ctcp) && !ignoring) {
@@ -632,14 +645,8 @@ static int gotmsg(char *from, char *msg, char *tag)
       last_ctcp = now;
     }
   }
-putlog(LOG_PUBLIC, "*", "IS THIS SERVER????");
-
   if (msg[0]) {
     int result = 0;
-
-putlog(LOG_PUBLIC, "*", "the tag is %s", tag);
-
-
     /* Msg from oper, don't interpret */
     if ((to[0] == '$') || (strchr(to, '.') != NULL)) {
       if (!ignoring) {
@@ -651,6 +658,7 @@ putlog(LOG_PUBLIC, "*", "the tag is %s", tag);
     }
 
     detect_flood(nick, uhost, from, FLOOD_PRIVMSG);
+//XXXXXXXX Don't have account
     u = get_user_by_host(from);
     code = newsplit(&msg);
     rmspace(msg);
@@ -711,6 +719,7 @@ static int gotnotice(char *from, char *msg)
                    "CTCP reply %s: %s from %s (%s) to %s", code, ctcp,
                    nick, uhost, to);
         } else {
+//XXXXXXX Don't have account
           u = get_user_by_host(from);
           if (!ignoring || trigger_on_ignore) {
             check_tcl_ctcr(nick, uhost, u, to, code, ctcp);
@@ -747,6 +756,7 @@ static int gotnotice(char *from, char *msg)
     }
 
     detect_flood(nick, uhost, from, FLOOD_NOTICE);
+//XXXXXXX Don't have account
     u = get_user_by_host(from);
 
     if (!ignoring || trigger_on_ignore)
@@ -1597,10 +1607,17 @@ static int handle_sasl_timeout()
 static int gotaccount(char *from, char *msg) {
   struct chanset_t *chan;
   struct userrec *u;
+  struct capability *current;
   memberlist *m;
   char *nick, *chname, mask[CHANNELLEN+UHOSTLEN+NICKMAX+2];
 
-  u = get_user_by_host(from);
+  current = find_capability("extended-join");
+  if (current->enabled) {
+    u = get_user_by_account(msg);
+  }
+  if (!u) {
+    u = get_user_by_host(from);
+  }
   nick = splitnick(&from);
   for (chan = chanset; chan; chan = chan->next) {
     chname = chan->dname;

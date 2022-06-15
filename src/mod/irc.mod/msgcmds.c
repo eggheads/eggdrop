@@ -234,6 +234,7 @@ static int msg_addhost(char *nick, char *host, struct userrec *u, char *par)
     } else if (!u_pass_match(u, pass)) {
       if (!quiet_reject)
         dprintf(DP_HELP, "NOTICE %s :%s\n", nick, IRC_DENYACCESS);
+//XXXXXXX not this one
     } else if (get_user_by_host(par)) {
       if (!quiet_reject)
         dprintf(DP_HELP, "NOTICE %s :That hostmask clashes with another "
@@ -349,6 +350,7 @@ static int msg_info(char *nick, char *host, struct userrec *u, char *par)
 static int msg_who(char *nick, char *host, struct userrec *u, char *par)
 {
   struct chanset_t *chan;
+  struct capability *current;
   struct flag_record fr = { FR_GLOBAL | FR_CHAN, 0, 0, 0, 0, 0 };
   memberlist *m;
   char s[NICKLEN + UHOSTLEN], also[512], *info;
@@ -379,11 +381,17 @@ static int msg_who(char *nick, char *host, struct userrec *u, char *par)
   putlog(LOG_CMDS, "*", "(%s!%s) !%s! WHO", nick, host, u->handle);
   also[0] = 0;
   i = 0;
+  current = find_capability("extended-join");
   for (m = chan->channel.member; m && m->nick[0]; m = m->next) {
     struct userrec *u;
 
     egg_snprintf(s, sizeof s, "%s!%s", m->nick, m->userhost);
-    u = get_user_by_host(s);
+    if (current->enabled) {
+      u = get_user_by_account(m->account);
+    }
+    if (!u) {
+      u = get_user_by_host(s);
+    }
     info = get_user(&USERENTRY_INFO, u);
     if (u && (u->flags & USER_BOT))
       info = 0;
@@ -437,6 +445,7 @@ static int msg_whois(char *nick, char *host, struct userrec *u, char *par)
   memberlist *m;
   struct chanuserrec *cr;
   struct userrec *u2;
+  struct capability *current;
   struct flag_record fr = { FR_GLOBAL | FR_CHAN, 0, 0, 0, 0, 0 };
   struct xtra_key *xk;
   time_t tt = 0;
@@ -459,11 +468,17 @@ static int msg_whois(char *nick, char *host, struct userrec *u, char *par)
   if (!u2) {
     /* No such handle -- maybe it's a nickname of someone on a chan? */
     ok = 0;
+    current = find_capability("extended-join");
     for (chan = chanset; chan && !ok; chan = chan->next) {
       m = ismember(chan, par);
       if (m) {
-        egg_snprintf(s, sizeof s, "%s!%s", par, m->userhost);
-        u2 = get_user_by_host(s);
+        if (current->enabled) {
+          u2 = get_user_by_account(m->account);
+        }
+        if (!u) {
+          egg_snprintf(s, sizeof s, "%s!%s", par, m->userhost);
+          u2 = get_user_by_host(s);
+        }
         if (u2) {
           ok = 1;
           dprintf(DP_HELP, "NOTICE %s :[%s] AKA '%s':\n", nick,

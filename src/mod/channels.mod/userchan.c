@@ -19,6 +19,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
+struct capability *find_capability(char *capname);
 
 struct chanuserrec *get_chanrec(struct userrec *u, char *chname)
 {
@@ -1230,6 +1231,7 @@ static int expired_mask(struct chanset_t *chan, char *who)
   memberlist *m, *m2;
   char buf[UHOSTLEN], *snick, *sfrom;
   struct userrec *u;
+  struct capability *current;
 
   /* Always expire masks, regardless of who set it? */
   if (force_expire)
@@ -1256,12 +1258,18 @@ static int expired_mask(struct chanset_t *chan, char *who)
   /* At this point we know the person/bot who set the mask is currently
    * present in the channel and has op.
    */
-
   if (m->user)
     u = m->user;
   else {
-    simple_sprintf(buf, "%s!%s", m->nick, m->userhost);
-    u = get_user_by_host(buf);
+//    current = find_capability("extended-join");
+//    if (current->enabled) {
+//      u = get_user_by_account(m->account);
+//    }
+//    if (!u) {
+// XXXXXXX struct capability isn't imported, among other issues
+      simple_sprintf(buf, "%s!%s", m->nick, m->userhost);
+      u = get_user_by_host(buf);
+//    }
   }
   /* Do not expire masks set by bots. */
   if (u && u->flags & USER_BOT)
