@@ -1215,22 +1215,22 @@ static int got352or4(struct chanset_t *chan, char *user, char *host,
 
   /* Update accountname in channel records, 0 means logged out */
   /* A 0 is not a change from "" */
-  empty_accounts = (!strcmp(account, "0") && (!strcmp(m->account, "")));
-  /* If the account has changed... */
-  if ((account) && (strcmp(account, m->account)) && !empty_accounts) {
-    for (acctchan = chanset; acctchan; acctchan = acctchan->next) {
-      if ((m = ismember(chan, nick))) {
-        if (strcmp(account, "0")) {
-          strlcpy(m->account, account, sizeof(m->account));
-          snprintf(mask, sizeof mask, "%s %s", acctchan->dname, userhost);
-          if (strcasecmp(chan->dname, acctchan->dname)) {
-            //check_tcl_account(nick, userhost, mask, m->user, acctchan->dname, account);
-          }
-        } else {      /* Explicitly clear, in case someone deauthenticated? */
-          m->account[0] = 0;
-          snprintf(mask, sizeof mask, "%s %s", acctchan->dname, userhost);
-          if (strcasecmp(chan->dname, acctchan->dname)) {
-            //check_tcl_account(nick, userhost, mask, m->user, acctchan->dname, "");
+  if (account) {
+    empty_accounts = (!strcmp(account, "0") && (!strcmp(m->account, "")));
+    /* If the account has changed... */
+    if (strcmp(account, m->account) && !empty_accounts) {
+      for (acctchan = chanset; acctchan; acctchan = acctchan->next) {
+        if ((m = ismember(chan, nick))) {
+          if (strcmp(account, "0")) {
+            strlcpy(m->account, account, sizeof(m->account));
+            snprintf(mask, sizeof mask, "%s %s", acctchan->dname, userhost);
+            if (strcasecmp(chan->dname, acctchan->dname)) {
+            }
+          } else {      /* Explicitly clear, in case someone deauthenticated? */
+            m->account[0] = 0;
+            snprintf(mask, sizeof mask, "%s %s", acctchan->dname, userhost);
+            if (strcasecmp(chan->dname, acctchan->dname)) {
+            }
           }
         }
       }
