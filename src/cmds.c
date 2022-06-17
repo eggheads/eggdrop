@@ -3017,11 +3017,11 @@ static void cmd_pls_ignore(struct userrec *u, int idx, char *par)
   /* Fix missing ! or @ BEFORE continuing */
   if (!strchr(who, '!')) {
     if (!strchr(who, '@'))
-      simple_sprintf(s, "%s!*@*", who);
+      snprintf(s, sizeof s, "%s!*@*", who);
     else
-      simple_sprintf(s, "*!%s", who);
+      snprintf(s, sizeof s, "*!%s", who);
   } else if (!strchr(who, '@'))
-    simple_sprintf(s, "%s@*", who);
+    snprintf(s, sizeof s, "%s@*", who);
   else
     strcpy(s, who);
 

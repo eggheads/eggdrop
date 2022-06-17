@@ -1212,7 +1212,7 @@ FILE *resolve_help(int dcc, char *file)
     return NULL;
   }
   /* Since we're not dealing with help files, we should just prepend the filename with textdir */
-  simple_sprintf(s, "%s%s", textdir, file);
+  snprintf(s, sizeof s, "%s%s", textdir, file);
   if (is_file(s))
     return fopen(s, "r");
   else

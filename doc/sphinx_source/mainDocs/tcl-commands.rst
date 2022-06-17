@@ -2341,23 +2341,24 @@ maskhost <nick!user@host> [masktype]
 
   Module: core
 
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-timer <minutes> <tcl-command> [count]
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+timer <minutes> <tcl-command> [count [timerName]]
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-  Description: executes the given Tcl command after a certain number of minutes have passed, at the top of the minute (ie, if a timer is started at 10:03:34 with 1 minute specified, it will execute at 10:04:00. If a timer is started at 10:06:34 with 2 minutes specified, it will execute at 10:08:00). If count is specified, the command will be executed count times with the given interval in between. If you specify a count of 0, the timer will repeat until it's removed with killtimer or until the bot is restarted.
+  Description: executes the given Tcl command after a certain number of minutes have passed, at the top of the minute (ie, if a timer is started at 10:03:34 with 1 minute specified, it will execute at 10:04:00. If a timer is started at 10:06:34 with 2 minutes specified, it will execute at 10:08:00). If count is specified, the command will be executed count times with the given interval in between. If you specify a count of 0, the timer will repeat until it's removed with killtimer or until the bot is restarted. If timerName is specified, it will become the unique identifier for the timer. If no timerName is specified, Eggdrop will assign a timerName in the format of "timer<integer>".
 
-  Returns: a timerID
+  Returns: a timerName
 
   Module: core
 
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-utimer <seconds> <tcl-command> [count]
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+utimer <seconds> <tcl-command> [count [timerName]]
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-  Description: executes the given Tcl command after a certain number of seconds have passed. If count is specified, the command will be executed count times with the given interval in between. If you specify a count of 0, the utimer will repeat until it's removed with killutimer or until the bot is restarted.
+  Description: executes the given Tcl command after a certain number of seconds have passed. If count is specified, the command will be executed count times with the given interval in between. If you specify a count of 0, the utimer will repeat until it's removed with killutimer or until the bot is restarted. If timerName is specified, it will become the unique identifier for the timer. If no timer
+Name is specified, Eggdrop will assign a timerName in the format of "timer<integer>".
 
-  Returns: a timerID
+  Returns: a timerName
 
   Module: core
 
@@ -2365,7 +2366,9 @@ utimer <seconds> <tcl-command> [count]
 timers
 ^^^^^^
 
-  Returns: a list of active minutely timers. Each entry in the list contains the number of minutes left till activation, the command that will be executed, the timerID, and the remaining number of repeats.
+  Description: lists all active minutely timers.
+
+  Returns: a list of active minutely timers, with each timer sub-list containing the number of minutes left until activation, the command that will be executed, the timerName, and the remaining number of repeats.
 
   Module: core
 
@@ -2373,25 +2376,27 @@ timers
 utimers
 ^^^^^^^
 
-  Returns: a list of active secondly timers. Each entry in the list contains the number of minutes left till activation, the command that will be executed, the timerID, and the remaining number of repeats.
+  Description: lists all active secondly timers.
+
+  Returns: a list of active secondly timers, with each timer sub-list containing the number of minutes left until activation, the command that will be executed, the timerName, and the remaining number of repeats.
 
   Module: core
 
 ^^^^^^^^^^^^^^^^^^^
-killtimer <timerID>
+killtimer <timerName>
 ^^^^^^^^^^^^^^^^^^^
 
-  Description: removes a minutely timer from the list
+  Description: removes the timerName minutely timer from the timer list.
 
   Returns: nothing
 
   Module: core
 
 ^^^^^^^^^^^^^^^^^^^^
-killutimer <timerID>
+killutimer <timerName>
 ^^^^^^^^^^^^^^^^^^^^
 
-  Description: removes a secondly timer from the list
+  Description: removes the timerName secondly timer from the timer list.
 
   Returns: nothing
 
@@ -2852,7 +2857,7 @@ uptime
 ^^^^^^^^^^^^^
 server-online
 ^^^^^^^^^^^^^
-  Value: the unixtime value for when the bot connected to its current server
+  Value: the unixtime value when the bot connected to its current server, or '0' if the bot is currently disconnected from a server.
 
   Module: server
 
