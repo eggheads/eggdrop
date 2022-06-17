@@ -2711,15 +2711,9 @@ static int gotmsg(char *from, char *msg, char *tags)
   strlcpy(uhost, from, sizeof buf);
   nick = splitnick(&uhost);
   ignoring = match_ignore(from);
-
-putlog(LOG_MISC, "*", "TAGS: '%s'", tags);
   tagobj = Tcl_NewStringObj(tags, -1);
   if (Tcl_DictObjGet(interp, tagobj, Tcl_NewStringObj("account", -1), &accountobj) != TCL_OK) {
     putlog(LOG_MISC, "*", "BUG! irc.mod/gotmsg() received an invalid Tcl dict for the message tags: '%s'. Please report this.", Tcl_GetString(tagobj));
-  } else if (!accountobj) {
-    putlog(LOG_DEBUG, "*", "DEBUG: Message without account tag: %s", msg);
-  } else {
-    putlog(LOG_DEBUG, "*", "DEBUG: Message with account tag, account '%s': %s", Tcl_GetString(accountobj), msg);
   }
 
   /* Check for updated account names if account-tag capability is enabeld */

@@ -632,14 +632,8 @@ static int gotmsg(char *from, char *msg, char *tag)
       last_ctcp = now;
     }
   }
-putlog(LOG_PUBLIC, "*", "IS THIS SERVER????");
-
   if (msg[0]) {
     int result = 0;
-
-putlog(LOG_PUBLIC, "*", "the tag is %s", tag);
-
-
     /* Msg from oper, don't interpret */
     if ((to[0] == '$') || (strchr(to, '.') != NULL)) {
       if (!ignoring) {
