@@ -568,6 +568,22 @@ static void share_newchan(int idx, char *par)
   }
 }
 
+static void share_pls_account(int idx, char *par)
+{
+  char *hand;
+  struct userrec *u;
+
+  if ((dcc[idx].status & STAT_SHARE) && !private_user) {
+    hand = newsplit(&par);
+    if ((u = get_user_by_handle(userlist, hand)) &&
+        !(u->flags & USER_UNSHARED)) {
+      shareout_but(NULL, idx, "+a %s %s\n", hand, par);
+      set_user(&USERENTRY_ACCOUNT, u, par);
+      putlog(LOG_CMDS, "*", "%s: +account %s %s", dcc[idx].nick, hand, par);
+    }
+  }
+}
+
 static void share_pls_host(int idx, char *par)
 {
   char *hand;
@@ -580,6 +596,33 @@ static void share_pls_host(int idx, char *par)
       shareout_but(NULL, idx, "+h %s %s\n", hand, par);
       set_user(&USERENTRY_HOSTS, u, par);
       putlog(LOG_CMDS, "*", "%s: +host %s %s", dcc[idx].nick, hand, par);
+    }
+  }
+}
+
+static void share_pls_botaccount(int idx, char *par)
+{
+  char *hand, pass[PASSWORDLEN];
+  struct userrec *u;
+
+  if ((dcc[idx].status & STAT_SHARE) && !private_user) {
+    hand = newsplit(&par);
+    if (!(u = get_user_by_handle(userlist, hand)) ||
+        !(u->flags & USER_UNSHARED)) {
+      if (!(dcc[idx].status & STAT_GETTING))
+        shareout_but(NULL, idx, "+ba %s %s\n", hand, par);
+      /* Add bot to userlist if not there */
+      if (u) {
+        if (!(u->flags & USER_BOT))
+          return;               /* ignore */
+        set_user(&USERENTRY_ACCOUNT, u, par);
+      } else {
+        makepass(pass);
+        userlist = adduser(userlist, hand, par, pass, USER_BOT);
+        explicit_bzero(pass, sizeof pass);
+      }
+      if (!(dcc[idx].status & STAT_GETTING))
+        putlog(LOG_CMDS, "*", "%s: +account %s %s", dcc[idx].nick, hand, par);
     }
   }
 }
@@ -607,6 +650,24 @@ static void share_pls_bothost(int idx, char *par)
       }
       if (!(dcc[idx].status & STAT_GETTING))
         putlog(LOG_CMDS, "*", "%s: +host %s %s", dcc[idx].nick, hand, par);
+    }
+  }
+}
+
+static void share_mns_account(int idx, char *par)
+{
+  char *hand;
+  struct userrec *u;
+
+  if ((dcc[idx].status & STAT_SHARE) && !private_user) {
+    hand = newsplit(&par);
+    if ((u = get_user_by_handle(userlist, hand)) &&
+        !(u->flags & USER_UNSHARED)) {
+      shareout_but(NULL, idx, "-a %s %s\n", hand, par);
+      noshare = 1;
+      delaccount_by_handle(hand, par);
+      noshare = 0;
+      putlog(LOG_CMDS, "*", "%s: -account %s %s", dcc[idx].nick, hand, par);
     }
   }
 }
@@ -1328,7 +1389,9 @@ static void share_feats(int idx, char *par)
  */
 static botscmd_t C_share[] = {
   {"!",        "",  (IntFunc) share_endstartup},
+  {"+a",       "psu", (IntFunc) share_pls_account},
   {"+b",       "psb", (IntFunc) share_pls_ban},
+  {"+ba",      "psb", (IntFunc) share_pls_botaccount},
   {"+bc",      "psb", (IntFunc) share_pls_banchan},
   {"+bh",      "psu", (IntFunc) share_pls_bothost},
   {"+cr",      "psc", (IntFunc) share_pls_chrec},
@@ -1338,6 +1401,7 @@ static botscmd_t C_share[] = {
   {"+i",       "psn", (IntFunc) share_pls_ignore},
   {"+inv",     "psj", (IntFunc) share_pls_invite},
   {"+invc",    "psj", (IntFunc) share_pls_invitechan},
+  {"-a",       "psu", (IntFunc) share_mns_account},
   {"-b",       "psb", (IntFunc) share_mns_ban},
   {"-bc",      "psb", (IntFunc) share_mns_banchan},
   {"-cr",      "psc", (IntFunc) share_mns_chrec},

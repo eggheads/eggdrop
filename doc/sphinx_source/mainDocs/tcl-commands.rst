@@ -264,6 +264,8 @@ getuser <handle> [entry-type] [extra info]
   Description: an interface to the new generic userfile support. Without an entry-type, it returns a flat key/value list (dict) of all set entries. Valid entry types are:
 
   +----------+-------------------------------------------------------------------------------------+
+  | ACCOUNT  | returns thee a list of servivce accounts associated with the user                   |
+  +----------+-------------------------------------------------------------------------------------+
   | BOTFL    | returns the current bot-specific flags for the user (bot-only)                      |
   +----------+-------------------------------------------------------------------------------------+
   | BOTADDR  | returns a list containing the bot's address, bot listen port, and user listen port  |
@@ -300,6 +302,10 @@ setuser <handle> <entry-type> [extra info]
   +---------+---------------------------------------------------------------------------------------+
   | Type    | Extra Info                                                                            |
   +=========+=======================================================================================+
+  | ACCOUNT | [account]                                                                             |
+  |         | If no value is specified, all accounts for the user will be cleared. Otherwise, only  |
+  |         | a single account will be added to the account list                                    |
+  +---------+---------------------------------------------------------------------------------------+
   | PASS    | <password>                                                                            |
   |         |   Password string (Empty value will clear the password)                               |
   +---------+---------------------------------------------------------------------------------------+
@@ -1131,7 +1137,19 @@ onchan <nickname> [channel]
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 monitor <command> [nickname]
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  Description: interacts with the list of nicknames Eggdrop has asked the IRC server to track. valid commands are add, delete, list, online, offline, status, and clear. The 'add' command sends 'nickname' to the server to track. The 'delete' command removes 'nickname' from being tracked by the server (or returns an error if the nickname is not present). The 'list' command returns a list of all nicknames the IRC server is tracking on behalf of Eggdrop. The 'online' command returns a string of tracked nicknames that are currently online. The 'offline' command returns a list of tracked nicknames that are currently offline. The 'status' command returns a '1' if 'nickname' is online or a 0 if 'nickname' is offline. The 'clear' command removes all nicknames from the list the server is monitoring.
+  Description: interacts with the list of nicknames Eggdrop has asked the IRC server to track. valid commands are add, delete, list, online, offline, status, and clear. The 'add' command sends 'nickname' to the server to track. The 'delete' command removes 'nickname' from being tracked by the server (or returns an error if the nickname is not present). The 'list' command returns a list of all nicknames the IRC server is tracking on behalf of Eggdrop. The 'online' command returns a string of tracked nicknames that are currently online. The 'offline' command returns a list of tracked nicknames that are currently offline.
+
+  Returns: The 'status' command returns a '1' if 'nickname' is online or a 0 if 'nickname' is offline. The 'clear' command removes all nicknames from the list the server is monitoring.
+
+  Module: irc
+
+^^^^^^^^^^^^^^^
+accounttracking
+^^^^^^^^^^^^^^^
+
+  Description: checks to see if the three required functionalities to enable proper account tracking are avaialble (and enabled) to Eggdrop. This checks if the extended-join and account-notify IRCv3 capabilities are currently enabled, and checks if the server supports WHOX (based on the type of server selected in the config file, or the use-354 variable being set to 1 when seleceting an "Other" server).
+
+  Returns: a '1' if all three functionalities are present, a '0' if one or more are missing.
 
   Module: irc
 
@@ -1139,7 +1157,7 @@ monitor <command> [nickname]
 getaccount <nickname> [channel]
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-  Returns: the services account name of the nickname if they are logged in, "" otherwise, and an error if the account-notify or extended-join capabilities are not enabled. WARNING: this account list may not be accurate depending on the server and configuration. This command will only work if a server supports (and Eggdrop has enabled) the account-notify and extended-join capabilities, and the server understands WHOX requests (also known as raw 354 responses).
+  Returns: the services account name associated with nickname (if Eggdrop is configured to track account status), and  "" if they are not logged in or Eggdrop is not able to determine the account status. WARNING: this account list may not be accurate depending on the server and configuration. This command is only accurate if a server supports (and Eggdrop has enabled) the account-notify and extended-join capabilities, and the server understands WHOX requests (also known as raw 354 responses).
 
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 nick2hand <nickname> [channel]
