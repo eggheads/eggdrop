@@ -333,13 +333,13 @@ static int tcl_cap STDVAR {
       Tcl_AppendResult(irp, "No CAP request provided", NULL);
       return TCL_ERROR;
     } else {
-      simple_sprintf(s, "CAP REQ :%s", argv[2]);
+      snprintf(s, sizeof s, "CAP REQ :%s", argv[2]);
       dprintf(DP_SERVER, "%s\n", s);
     }
   /* Send a raw CAP command to the server */
   } else if (!strcasecmp(argv[1], "raw")) {
     if (argc == 3) {
-      simple_sprintf(s, "CAP %s", argv[2]);
+      snprintf(s, sizeof s, "CAP %s", argv[2]);
       dprintf(DP_SERVER, "%s\n", s);
     } else {
       Tcl_AppendResult(irp, "Raw requires a CAP sub-command to be provided",

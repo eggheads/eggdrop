@@ -121,6 +121,7 @@ static struct dcc_table DCC_DNS = {
   display_dns_socket,
   NULL,
   NULL,
+  NULL,
   NULL
 };
 
