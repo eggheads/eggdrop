@@ -97,7 +97,7 @@ static int msgrate;             /* Number of seconds between sending
                                  * queued lines to server. */
 #ifdef TLS
 static int use_ssl;             /* Use SSL for the next server connection? */
-static int tls_vfyserver;       /* Certificate validation mode for servrs  */
+static int tls_vfyserver;       /* Certificate validation mode for servers */
 #endif
 
 #ifndef TLS
@@ -1857,7 +1857,7 @@ static void dcc_chat_hostresolved(int i)
 #ifdef TLS
   else if (dcc[i].ssl && ssl_handshake(dcc[i].sock, TLS_CONNECT, tls_vfydcc,
                                        LOG_MISC, dcc[i].host, &dcc_chat_sslcb))
-    egg_snprintf(buf, sizeof buf, "TLS negotiation error");
+    strlcpy(buf, "TLS negotiation error", sizeof buf);
 #endif
   if (buf[0]) {
     if (!quiet_reject)
@@ -2036,7 +2036,7 @@ static void server_report(int idx, int details)
     egg_snprintf(s, sizeof s, "(connected %s)", s1);
     if (server_lag && !lastpingcheck) {
       if (server_lag == -1)
-        egg_snprintf(s1, sizeof s1, " (bad pong replies)");
+        strlcpy(s1, " (bad pong replies)", sizeof s1);
       else
         egg_snprintf(s1, sizeof s1, " (lag: %ds)", server_lag);
       strcat(s, s1);
@@ -2244,7 +2244,9 @@ static Function server_table[] = {
   (Function) & H_isupport,      /* p_tcl_bind_list                      */
   (Function) & isupport_get,    /*                                      */
   /* 48 - 52 */
-  (Function) & isupport_parseint/*                                      */
+  (Function) & isupport_parseint,/*                                     */
+  (Function) check_tcl_account,
+  (Function) & find_capability
 };
 
 char *server_start(Function *global_funcs)

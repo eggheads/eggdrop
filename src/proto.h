@@ -190,7 +190,6 @@ void eggContext(const char *, int, const char *);
 void eggContextNote(const char *, int, const char *, const char *);
 void eggAssert(const char *, int, const char *);
 void backup_userfile(void);
-int mainloop(int);
 
 /* match.c */
 int casecharcmp(unsigned char, unsigned char);
@@ -324,10 +323,12 @@ int xtra_set();
 /* userrec.c */
 struct userrec *adduser(struct userrec *, char *, char *, char *, int);
 void addhost_by_handle(char *, char *);
+void addaccount_by_handle(char *, char *);
 void clear_masks(struct maskrec *);
 void clear_userlist(struct userrec *);
 int u_pass_match(struct userrec *, char *);
 int delhost_by_handle(char *, char *);
+int delaccount_by_handle(char *, char *);
 int ishost_for_handle(char *, char *);
 int count_users(struct userrec *);
 int deluser(char *);

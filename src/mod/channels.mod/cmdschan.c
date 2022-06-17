@@ -1401,7 +1401,7 @@ static void cmd_chaninfo(struct userrec *u, int idx, char *par)
           tmp = 1;
         }
         if (ii == 1)
-          egg_snprintf(work, sizeof work, "    ");
+          strlcpy(work, "    ", sizeof work);
         work_len = strlen(work);
         egg_snprintf(work + work_len, sizeof(work) - work_len, " %c%s",
                      getudef(ul->values, chan->dname) ? '+' : '-', ul->name);

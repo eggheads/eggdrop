@@ -789,20 +789,10 @@ int init_language(int);
 int ssl_init();
 #endif
 
-static void garbage_collect(void)
+static void mainloop(int toplevel)
 {
-  static uint8_t run_cnt = 0;
-
-  if (run_cnt == 3)
-    garbage_collect_tclhash();
-  else
-    run_cnt++;
-}
-
-int mainloop(int toplevel)
-{
-  static int socket_cleanup = 0;
-  int xx, i, eggbusy = 1, tclbusy = 0;
+  static int cleanup = 5;
+  int xx, i, eggbusy = 1;
   char buf[8702];
 
   /* Lets move some of this here, reducing the number of actual
@@ -815,7 +805,7 @@ int mainloop(int toplevel)
    * This is done by returning -1 in tickle_WaitForEvent.
    */
   if (do_restart && do_restart != -2 && !toplevel)
-    return -1;
+    return;
 
   /* Once a second */
   if (now != then) {
@@ -824,19 +814,19 @@ int mainloop(int toplevel)
   }
 
   /* Only do this every so often. */
-  if (!socket_cleanup) {
-    socket_cleanup = 5;
+  if (!cleanup) {
+    cleanup = 5;
 
     /* Remove dead dcc entries. */
     dcc_remove_lost();
 
     /* Check for server or dcc activity. */
     dequeue_sockets();
-  } else
-    socket_cleanup--;
 
-  /* Free unused structures. */
-  garbage_collect();
+    /* Free unused structures. */
+    garbage_collect_tclhash();
+  } else
+    cleanup--;
 
   xx = sockgets(buf, &i);
   if (xx >= 0) {              /* Non-error */
@@ -908,18 +898,16 @@ int mainloop(int toplevel)
     }
   } else if (xx == -3) {
     call_hook(HOOK_IDLE);
-    socket_cleanup = 0;       /* If we've been idle, cleanup & flush */
+    cleanup = 0; /* If we've been idle, cleanup & flush */
     eggbusy = 0;
-  } else if (xx == -5) {
+  } else if (xx == -5)
     eggbusy = 0;
-    tclbusy = 1;
-  }
 
   if (do_restart) {
     if (do_restart == -2)
       rehash();
     else if (!toplevel)
-      return -1; /* Unwind to toplevel before restarting */
+      return; /* Unwind to toplevel before restarting */
     else {
       /* Unload as many modules as possible */
       int f = 1;
@@ -993,15 +981,11 @@ int mainloop(int toplevel)
   if (!eggbusy) {
 /* Process all pending tcl events */
 #  ifdef REPLACE_NOTIFIER
-    if (Tcl_ServiceAll())
-      tclbusy = 1;
+    Tcl_ServiceAll();
 #  else
-    while (Tcl_DoOneEvent(TCL_DONT_WAIT | TCL_ALL_EVENTS))
-      tclbusy = 1;
+    while (Tcl_DoOneEvent(TCL_DONT_WAIT | TCL_ALL_EVENTS));
 #  endif /* REPLACE_NOTIFIER */
   }
-
-  return (eggbusy || tclbusy);
 }
 
 static void init_random(void) {

@@ -26,11 +26,8 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
-#include <sys/time.h>
 #include <sys/resource.h>
 #include "main.h"
-#include "chan.h"
-#include "users.h"
 
 extern Tcl_Interp *interp;
 extern struct dcc_t *dcc;
@@ -709,11 +706,8 @@ static int builtin_idx STDVAR
 #endif
 
 /* Trigger (execute) a Tcl proc
- *
- * Note: This is INLINE code for check_tcl_bind().
  */
-static int trigger_bind(const char *proc, const char *param,
-                               char *mask)
+static int trigger_bind(const char *proc, const char *param, char *mask)
 {
   int x;
   struct rusage ru1, ru2;
@@ -777,11 +771,8 @@ static int trigger_bind(const char *proc, const char *param,
 
 /* Find out whether this bind matches the mask or provides the
  * requested attributes, depending on the specified requirements.
- *
- * Note: This is INLINE code for check_tcl_bind().
  */
-static int check_bind_match(const char *match, char *mask,
-                                   int match_type)
+static int check_bind_match(const char *match, char *mask, int match_type)
 {
   switch (match_type & 0x07) {
   case MATCH_PARTIAL:
@@ -811,11 +802,9 @@ static int check_bind_match(const char *match, char *mask,
 
 
 /* Check if the provided flags suffice for this command/trigger.
- *
- * Note: This is INLINE code for check_tcl_bind().
  */
-static int check_bind_flags(struct flag_record *flags,
-                                   struct flag_record *atr, int match_type)
+static int check_bind_flags(struct flag_record *flags, struct flag_record *atr,
+                            int match_type)
 {
   if (match_type & BIND_USE_ATTR) {
     if (match_type & BIND_HAS_BUILTINS)

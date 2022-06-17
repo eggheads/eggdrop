@@ -264,6 +264,8 @@ getuser <handle> [entry-type] [extra info]
   Description: an interface to the new generic userfile support. Without an entry-type, it returns a flat key/value list (dict) of all set entries. Valid entry types are:
 
   +----------+-------------------------------------------------------------------------------------+
+  | ACCOUNT  | returns thee a list of servivce accounts associated with the user                   |
+  +----------+-------------------------------------------------------------------------------------+
   | BOTFL    | returns the current bot-specific flags for the user (bot-only)                      |
   +----------+-------------------------------------------------------------------------------------+
   | BOTADDR  | returns a list containing the bot's address, bot listen port, and user listen port  |
@@ -300,6 +302,10 @@ setuser <handle> <entry-type> [extra info]
   +---------+---------------------------------------------------------------------------------------+
   | Type    | Extra Info                                                                            |
   +=========+=======================================================================================+
+  | ACCOUNT | [account]                                                                             |
+  |         | If no value is specified, all accounts for the user will be cleared. Otherwise, only  |
+  |         | a single account will be added to the account list                                    |
+  +---------+---------------------------------------------------------------------------------------+
   | PASS    | <password>                                                                            |
   |         |   Password string (Empty value will clear the password)                               |
   +---------+---------------------------------------------------------------------------------------+
@@ -1131,7 +1137,19 @@ onchan <nickname> [channel]
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 monitor <command> [nickname]
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  Description: interacts with the list of nicknames Eggdrop has asked the IRC server to track. valid commands are add, delete, list, online, offline, status, and clear. The 'add' command sends 'nickname' to the server to track. The 'delete' command removes 'nickname' from being tracked by the server (or returns an error if the nickname is not present). The 'list' command returns a list of all nicknames the IRC server is tracking on behalf of Eggdrop. The 'online' command returns a string of tracked nicknames that are currently online. The 'offline' command returns a list of tracked nicknames that are currently offline. The 'status' command returns a '1' if 'nickname' is online or a 0 if 'nickname' is offline. The 'clear' command removes all nicknames from the list the server is monitoring.
+  Description: interacts with the list of nicknames Eggdrop has asked the IRC server to track. valid commands are add, delete, list, online, offline, status, and clear. The 'add' command sends 'nickname' to the server to track. The 'delete' command removes 'nickname' from being tracked by the server (or returns an error if the nickname is not present). The 'list' command returns a list of all nicknames the IRC server is tracking on behalf of Eggdrop. The 'online' command returns a string of tracked nicknames that are currently online. The 'offline' command returns a list of tracked nicknames that are currently offline.
+
+  Returns: The 'status' command returns a '1' if 'nickname' is online or a 0 if 'nickname' is offline. The 'clear' command removes all nicknames from the list the server is monitoring.
+
+  Module: irc
+
+^^^^^^^^^^^^^^^
+accounttracking
+^^^^^^^^^^^^^^^
+
+  Description: checks to see if the three required functionalities to enable proper account tracking are avaialble (and enabled) to Eggdrop. This checks if the extended-join and account-notify IRCv3 capabilities are currently enabled, and checks if the server supports WHOX (based on the type of server selected in the config file, or the use-354 variable being set to 1 when seleceting an "Other" server).
+
+  Returns: a '1' if all three functionalities are present, a '0' if one or more are missing.
 
   Module: irc
 
@@ -1139,7 +1157,7 @@ monitor <command> [nickname]
 getaccount <nickname> [channel]
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-  Returns: the services account name of the nickname if they are logged in, "" otherwise, and an error if the account-notify or extended-join capabilities are not enabled. WARNING: this account list may not be accurate depending on the server and configuration. This command will only work if a server supports (and Eggdrop has enabled) the account-notify and extended-join capabilities, and the server understands WHOX requests (also known as raw 354 responses).
+  Returns: the services account name associated with nickname (if Eggdrop is configured to track account status), and  "" if they are not logged in or Eggdrop is not able to determine the account status. WARNING: this account list may not be accurate depending on the server and configuration. This command is only accurate if a server supports (and Eggdrop has enabled) the account-notify and extended-join capabilities, and the server understands WHOX requests (also known as raw 354 responses).
 
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 nick2hand <nickname> [channel]
@@ -2323,23 +2341,24 @@ maskhost <nick!user@host> [masktype]
 
   Module: core
 
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-timer <minutes> <tcl-command> [count]
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+timer <minutes> <tcl-command> [count [timerName]]
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-  Description: executes the given Tcl command after a certain number of minutes have passed, at the top of the minute (ie, if a timer is started at 10:03:34 with 1 minute specified, it will execute at 10:04:00. If a timer is started at 10:06:34 with 2 minutes specified, it will execute at 10:08:00). If count is specified, the command will be executed count times with the given interval in between. If you specify a count of 0, the timer will repeat until it's removed with killtimer or until the bot is restarted.
+  Description: executes the given Tcl command after a certain number of minutes have passed, at the top of the minute (ie, if a timer is started at 10:03:34 with 1 minute specified, it will execute at 10:04:00. If a timer is started at 10:06:34 with 2 minutes specified, it will execute at 10:08:00). If count is specified, the command will be executed count times with the given interval in between. If you specify a count of 0, the timer will repeat until it's removed with killtimer or until the bot is restarted. If timerName is specified, it will become the unique identifier for the timer. If no timerName is specified, Eggdrop will assign a timerName in the format of "timer<integer>".
 
-  Returns: a timerID
+  Returns: a timerName
 
   Module: core
 
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-utimer <seconds> <tcl-command> [count]
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+utimer <seconds> <tcl-command> [count [timerName]]
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-  Description: executes the given Tcl command after a certain number of seconds have passed. If count is specified, the command will be executed count times with the given interval in between. If you specify a count of 0, the utimer will repeat until it's removed with killutimer or until the bot is restarted.
+  Description: executes the given Tcl command after a certain number of seconds have passed. If count is specified, the command will be executed count times with the given interval in between. If you specify a count of 0, the utimer will repeat until it's removed with killutimer or until the bot is restarted. If timerName is specified, it will become the unique identifier for the timer. If no timer
+Name is specified, Eggdrop will assign a timerName in the format of "timer<integer>".
 
-  Returns: a timerID
+  Returns: a timerName
 
   Module: core
 
@@ -2347,7 +2366,9 @@ utimer <seconds> <tcl-command> [count]
 timers
 ^^^^^^
 
-  Returns: a list of active minutely timers. Each entry in the list contains the number of minutes left till activation, the command that will be executed, the timerID, and the remaining number of repeats.
+  Description: lists all active minutely timers.
+
+  Returns: a list of active minutely timers, with each timer sub-list containing the number of minutes left until activation, the command that will be executed, the timerName, and the remaining number of repeats.
 
   Module: core
 
@@ -2355,25 +2376,27 @@ timers
 utimers
 ^^^^^^^
 
-  Returns: a list of active secondly timers. Each entry in the list contains the number of minutes left till activation, the command that will be executed, the timerID, and the remaining number of repeats.
+  Description: lists all active secondly timers.
+
+  Returns: a list of active secondly timers, with each timer sub-list containing the number of minutes left until activation, the command that will be executed, the timerName, and the remaining number of repeats.
 
   Module: core
 
 ^^^^^^^^^^^^^^^^^^^
-killtimer <timerID>
+killtimer <timerName>
 ^^^^^^^^^^^^^^^^^^^
 
-  Description: removes a minutely timer from the list
+  Description: removes the timerName minutely timer from the timer list.
 
   Returns: nothing
 
   Module: core
 
 ^^^^^^^^^^^^^^^^^^^^
-killutimer <timerID>
+killutimer <timerName>
 ^^^^^^^^^^^^^^^^^^^^
 
-  Description: removes a secondly timer from the list
+  Description: removes the timerName secondly timer from the timer list.
 
   Returns: nothing
 
@@ -2834,7 +2857,7 @@ uptime
 ^^^^^^^^^^^^^
 server-online
 ^^^^^^^^^^^^^
-  Value: the unixtime value for when the bot connected to its current server
+  Value: the unixtime value when the bot connected to its current server, or '0' if the bot is currently disconnected from a server.
 
   Module: server
 

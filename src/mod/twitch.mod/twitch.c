@@ -256,7 +256,7 @@ static int check_tcl_whisperm(char *from, char *cmd, char *msg) {
   strlcpy(uhost, from, sizeof buf);
   nick = splitnick(&uhost);
   if (msg[0])                       /* Re-attach the cmd to the msg */
-    simple_sprintf(args, "%s %s", cmd, msg);
+    snprintf(args, sizeof args, "%s %s", cmd, msg);
   else
     strlcpy(args, cmd, sizeof args);
   get_user_flagrec(u, &fr, NULL);

@@ -573,6 +573,23 @@ static int tcl_isircbot STDVAR
   return TCL_OK;
 }
 
+static int tcl_accounttracking STDVAR
+{
+  struct capability *current =0;
+  int extjoin = 0, acctnotify = 0;
+
+  current = find_capability("extended-join");
+  if (current->enabled) {
+    extjoin = 1;
+  }
+  current = find_capability("account-notify");
+  if (current->enabled) {
+    acctnotify = 1;
+  }
+  Tcl_SetResult(irp, use_354 && extjoin && acctnotify ? "1" : "0", NULL);
+ return TCL_OK;
+}
+
 static int tcl_getchanhost STDVAR
 {
   struct chanset_t *chan, *thechan = NULL;
@@ -1038,6 +1055,44 @@ static int tcl_topic STDVAR
   return TCL_OK;
 }
 
+/* Takes a provided nickname, looks up the account associated with that nick in
+ * the channel record, then finds the handle associated with that same account.
+ * Returns the first handle found associated with the account, as accounts are
+ * unique in a userfile.
+ */
+static int tcl_account2hand STDVAR
+{
+  memberlist *m;
+  struct userrec *u;
+  struct chanset_t *chan, *thechan = NULL;
+
+  BADARGS(2, 3, " nick ?channel?");
+
+  if (argc > 2) {
+    chan = findchan_by_dname(argv[2]);
+    thechan = chan;
+    if (chan == NULL) {
+      Tcl_AppendResult(irp, "invalid channel: ", argv[2], NULL);
+      return TCL_ERROR;
+    }
+  } else
+    chan = chanset;
+
+  while (chan && (thechan == NULL || thechan == chan)) {
+        m = ismember(chan, argv[1]);
+    if (m) {                            /* If we find the nickname on a channel */
+      if (m->account) {                 /* And they have an account */
+        u = get_user_by_account(m->account);
+        Tcl_AppendResult(irp, u ? u->handle : "", NULL);
+        return TCL_OK;                  /* Return the handle */
+      }
+    }
+    chan = chan->next;
+  }
+  return TCL_OK;
+}
+
+
 static int tcl_account2nicks STDVAR
 {
   memberlist *m;
@@ -1292,6 +1347,7 @@ static tcl_cmds tclchan_cmds[] = {
   {"hand2nicks",     tcl_hand2nicks},
   {"hand2nick",      tcl_hand2nick},
   {"nick2hand",      tcl_nick2hand},
+  {"account2hand",   tcl_account2hand},
   {"getchanmode",    tcl_getchanmode},
   {"getchanjoin",    tcl_getchanjoin},
   {"flushmode",      tcl_flushmode},
@@ -1309,5 +1365,6 @@ static tcl_cmds tclchan_cmds[] = {
   {"channame2dname", tcl_channame2dname},
   {"chandname2name", tcl_chandname2name},
   {"monitor",        tcl_monitor},
+  {"accounttracking",tcl_accounttracking},
   {NULL,             NULL}
 };
