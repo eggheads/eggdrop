@@ -486,6 +486,7 @@ install-filesys: install-start
 
 install-doc: install-start
 	+@$(INSTALL_DATA) $(srcdir)/README $(DEST) && \
+	$(INSTALL_DATA) $(srcdir)/FEATURES $(DEST) && \
 	cd doc/ && $(MAKE_INSTALL) install
 
 install-scripts: install-start
