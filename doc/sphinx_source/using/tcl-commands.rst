@@ -1147,7 +1147,7 @@ monitor <command> [nickname]
 accounttracking
 ^^^^^^^^^^^^^^^
 
-  Description: checks to see if the three required functionalities to enable proper account tracking are avaialble (and enabled) to Eggdrop. This checks if the extended-join and account-notify IRCv3 capabilities are currently enabled, and checks if the server supports WHOX (based on the type of server selected in the config file, or the use-354 variable being set to 1 when seleceting an "Other" server).
+  Description: checks to see if the three required functionalities to enable proper account tracking are available (and enabled) to Eggdrop. This checks if the extended-join and account-notify IRCv3 capabilities are currently enabled, and checks if the server supports WHOX (based on the type of server selected in the config file, or the use-354 variable being set to 1 when seleceting an "Other" server).
 
   Returns: a '1' if all three functionalities are present, a '0' if one or more are missing.
 
