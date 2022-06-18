@@ -4,7 +4,7 @@
 # reStructuredText format files. -Geo
 #
 #
-# Copyright (C) 2004 - 2021 Eggheads Development Team
+# Copyright (C) 2004 - 2022 Eggheads Development Team
 #
 # This file is free software; you can redistribute it and/or modify it
 # under the terms of the GNU General Public License as published by
@@ -141,6 +141,7 @@ mv tmpdocs/uptime.txt $BASEDIR/../doc/settings/mod.uptime
 mv tmpdocs/users.txt $BASEDIR/../doc/USERS
 mv tmpdocs/weird-msgs.txt $BASEDIR/../doc/WEIRD-MESSAGES
 mv tmpdocs/woobie.txt $BASEDIR/../doc/settings/mod.woobie
+mv tmpdocs/upgrading.txt $BASEDIR/../UPGRADING
 rm -rf tmpdocs
 rm -rf $BASEDIR/../doc/html/_sources
 rm -rf $BASEDIR/../doc/doctrees/

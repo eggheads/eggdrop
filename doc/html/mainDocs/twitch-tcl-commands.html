@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>Eggdrop Twitch Tcl Commands &#8212; Eggdrop 1.9.1 documentation</title>
+    <title>Eggdrop Twitch Tcl Commands &#8212; Eggdrop 1.9.2 documentation</title>
     <link rel="stylesheet" href="../_static/eggdrop.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
@@ -24,7 +24,7 @@
             <img class="logo" src="../_static/eggman.png.gif" alt="Logo"/>
           </a></p>
         <div class="headertitle"><a
-          href="../index.html">Eggdrop 1.9.1 documentation</a></div>
+          href="../index.html">Eggdrop 1.9.2 documentation</a></div>
         <div class="rel" role="navigation" aria-label="related navigation">
           <a href="twitch.html" title="Twitch"
              accesskey="P">previous</a> |
@@ -43,6 +43,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../installAndSetup/readme.html">README</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../installAndSetup/install.html">Installing Eggdrop</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../installAndSetup/faq.html">Frequently Asked Questions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../installAndSetup/upgrading.html">Upgrading</a></li>
 </ul>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="about.html">About Eggdrop</a></li>
@@ -58,6 +59,7 @@
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Eggdrop Twitch Tcl Commands</a></li>
 <li class="toctree-l1"><a class="reference internal" href="ipv6.html">IPv6 support</a></li>
 <li class="toctree-l1"><a class="reference internal" href="tls.html">TLS support</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ircv3.html">IRCv3 support</a></li>
 </ul>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../coreDocs/core.html">Eggdrop Core Settings</a></li>
@@ -117,6 +119,12 @@ normal IRC server they will, at best, not work and possibly have unintended
 consequences.</p>
 <p>This list is accurate for Eggdrop v1.9.0, the minimum version for which Twitch
 functionality is possible.</p>
+<p>It should also be noted that if you are debugging scripts via the partyline,
+the Eggdrop partyline output has not been updated to handle the potentially
+LONG tag message lines that are sent by a server. This means if you view a
+variable that has stored all the tag messages sent by the server, it may
+appear truncated. Rest assured, the variable does contain the full set of tags,
+they just aren’t being displayed.</p>
 <div class="section" id="commands">
 <h2>Commands<a class="headerlink" href="#commands" title="Permalink to this headline">¶</a></h2>
 <div class="section" id="twcmd-chan-cmd-arg">
@@ -220,7 +228,7 @@ bind for the “stop” msg command, use ‘unbind msg - stop msg:stop’.</p>
 <p>procname &lt;nick&gt; &lt;chan&gt;</p>
 <p>Description: Called when the chat history for the channel or a user on the channel is cleared. The value of <code class="docutils literal notranslate"><span class="pre">mask</span></code> specified in the bind is matched against <code class="docutils literal notranslate"><span class="pre">#channel</span> <span class="pre">nick!nick&#64;nick.tmi.twitch.tv</span></code> and can use wildcards. If a user is found that matches <code class="docutils literal notranslate"><span class="pre">mask</span></code>, they must also match the <code class="docutils literal notranslate"><span class="pre">flags</span></code> mask. If the CLEARCHAT is only targeted at a specific user and not the channel, that user’s nickname will appear in <code class="docutils literal notranslate"><span class="pre">nick</span></code>, otherwise <code class="docutils literal notranslate"><span class="pre">nick</span></code> is empty. <code class="docutils literal notranslate"><span class="pre">chan</span></code> will contain the channel the CLEARCHAT was used on.</p>
 </div></blockquote>
-<ol class="arabic simple">
+<ol class="arabic simple" start="2">
 <li>CMSG (CLEARMSG)</li>
 </ol>
 <blockquote>
@@ -228,7 +236,7 @@ bind for the “stop” msg command, use ‘unbind msg - stop msg:stop’.</p>
 <p>procname &lt;nick&gt; &lt;chan&gt; &lt;msgid&gt; &lt;msg&gt;</p>
 <p>Description: Called when a specific message on the channel is cleared. The value of <code class="docutils literal notranslate"><span class="pre">mask</span></code> specified in the bind is matched against <code class="docutils literal notranslate"><span class="pre">#channel</span> <span class="pre">nick!nick&#64;nick.tmi.twitch.tv</span></code> and can use wildcards. If a user is found that matches <code class="docutils literal notranslate"><span class="pre">mask</span></code>, they must also match the <code class="docutils literal notranslate"><span class="pre">flags</span></code> mask. <code class="docutils literal notranslate"><span class="pre">nick</span></code> contains the user’s nickname, and <code class="docutils literal notranslate"><span class="pre">chan</span></code> will contain the channel the CLEARMSG was used on.</p>
 </div></blockquote>
-<ol class="arabic simple">
+<ol class="arabic simple" start="3">
 <li>HTGT (HOSTTARGET)</li>
 </ol>
 <blockquote>
@@ -236,23 +244,23 @@ bind for the “stop” msg command, use ‘unbind msg - stop msg:stop’.</p>
 <p>procname &lt;target&gt; &lt;chan&gt; &lt;viewers&gt;</p>
 <p>Description: Called when a broadcaster starts or stops hosting another Twitch channel. <code class="docutils literal notranslate"><span class="pre">mask</span></code> is in the format “#channel target”, where #channel is the hosting channel and target is the name of the broadcaster being hosted by #channel. Similarly for the proc, <code class="docutils literal notranslate"><span class="pre">target</span></code> is the name of the Twitch channel being hosted by <code class="docutils literal notranslate"><span class="pre">chan</span></code>. A value of <code class="docutils literal notranslate"><span class="pre">-</span></code> in <code class="docutils literal notranslate"><span class="pre">target</span></code> indicates that the broadcaster has stopped hosting another channel. <code class="docutils literal notranslate"><span class="pre">viewers</span></code> contains the number of viewers in <code class="docutils literal notranslate"><span class="pre">chan</span></code> that are now watching <code class="docutils literal notranslate"><span class="pre">target</span></code> when hosting starts, but has been found to not be reliably provided by Twitch (often arbitrarily set to 0).</p>
 </div></blockquote>
-<ol class="arabic simple">
+<ol class="arabic simple" start="4">
 <li>WSPR (WHISPER)</li>
 </ol>
 <blockquote>
 <div><p>bind wspr &lt;flags&gt; &lt;command&gt; &lt;proc&gt;</p>
 <p>procname &lt;nick&gt; &lt;userhost&gt; &lt;handle&gt; &lt;msg&gt;</p>
-<p>Description: Called when Eggdrop received a whisper from another Twitch user. The first word of the user’s msg is matched against <code class="docutils literal notranslate"><span class="pre">command</span></code>, and the remainder of the text is passed to <code class="docutils literal notranslate"><span class="pre">msg</span></code>. <code class="docutils literal notranslate"><span class="pre">nick</span></code> is populated with the login name of the user messaging the Eggdrop, <code class="docutils literal notranslate"><span class="pre">userhost</span></code> contains nick’s userhost in the format <a class="reference external" href="mailto:nick!nick&#37;&#52;&#48;nick&#46;tmi&#46;twitch&#46;tv">nick!nick<span>&#64;</span>nick<span>&#46;</span>tmi<span>&#46;</span>twitch<span>&#46;</span>tv</a>. <code class="docutils literal notranslate"><span class="pre">handle</span></code> will match the user’s handle on the bot if present, otherwise it will return a <code class="docutils literal notranslate"><span class="pre">*</span></code>.</p>
+<p>Description: Checks the first word of a whisper Eggdrop receives from another Twitch user. The first word of the whisper is matched against <code class="docutils literal notranslate"><span class="pre">command</span></code>, and the remainder of the text is passed to <code class="docutils literal notranslate"><span class="pre">msg</span></code>. <code class="docutils literal notranslate"><span class="pre">nick</span></code> is populated with the login name of the user messaging the Eggdrop, <code class="docutils literal notranslate"><span class="pre">userhost</span></code> contains nick’s userhost in the format <a class="reference external" href="mailto:nick!nick&#37;&#52;&#48;nick&#46;tmi&#46;twitch&#46;tv">nick!nick<span>&#64;</span>nick<span>&#46;</span>tmi<span>&#46;</span>twitch<span>&#46;</span>tv</a>. <code class="docutils literal notranslate"><span class="pre">handle</span></code> will match the user’s handle on the bot if present, otherwise it will return a <code class="docutils literal notranslate"><span class="pre">*</span></code>.</p>
 </div></blockquote>
-<ol class="arabic simple">
+<ol class="arabic simple" start="5">
 <li>WSPM (WHISPER)</li>
 </ol>
 <blockquote>
-<div><p>bind wspr &lt;flags&gt; &lt;mask&gt; &lt;proc&gt;</p>
+<div><p>bind wspm &lt;flags&gt; &lt;mask&gt; &lt;proc&gt;</p>
 <p>procname &lt;nick&gt; &lt;userhost&gt; &lt;handle&gt; &lt;msg&gt;</p>
-<p>Description: Called when Eggdrop received a whisper from another Twitch user. The msg is matched against <code class="docutils literal notranslate"><span class="pre">mask</span></code>, which can contain wildcards. <code class="docutils literal notranslate"><span class="pre">nick</span></code> is populated with the login name of the user messaging the Eggdrop, <code class="docutils literal notranslate"><span class="pre">userhost</span></code> contains nick’s userhost in the format <a class="reference external" href="mailto:nick!nick&#37;&#52;&#48;nick&#46;tmi&#46;twitch&#46;tv">nick!nick<span>&#64;</span>nick<span>&#46;</span>tmi<span>&#46;</span>twitch<span>&#46;</span>tv</a>. <code class="docutils literal notranslate"><span class="pre">handle</span></code> will match the user’s handle on the bot if present, otherwise it will return a <code class="docutils literal notranslate"><span class="pre">*</span></code>. The full text of the whisper is stored in <code class="docutils literal notranslate"><span class="pre">msg</span></code>.</p>
+<p>Description: Checks the entire contents of a whisper Eggdrop receives from another Twitch user. The contents of the whisper are matched against <code class="docutils literal notranslate"><span class="pre">mask</span></code>, which can contain wildcards. <code class="docutils literal notranslate"><span class="pre">nick</span></code> is populated with the login name of the user messaging the Eggdrop, <code class="docutils literal notranslate"><span class="pre">userhost</span></code> contains nick’s userhost in the format <a class="reference external" href="mailto:nick!nick&#37;&#52;&#48;nick&#46;tmi&#46;twitch&#46;tv">nick!nick<span>&#64;</span>nick<span>&#46;</span>tmi<span>&#46;</span>twitch<span>&#46;</span>tv</a>. <code class="docutils literal notranslate"><span class="pre">handle</span></code> will match the user’s handle on the bot if present, otherwise it will return a <code class="docutils literal notranslate"><span class="pre">*</span></code>. The full text of the whisper is stored in <code class="docutils literal notranslate"><span class="pre">msg</span></code>.</p>
 </div></blockquote>
-<ol class="arabic simple">
+<ol class="arabic simple" start="6">
 <li>RMST (ROOMSTATE)</li>
 </ol>
 <blockquote>
@@ -260,13 +268,21 @@ bind for the “stop” msg command, use ‘unbind msg - stop msg:stop’.</p>
 <p>procname &lt;chan&gt; &lt;tags&gt;</p>
 <p>Description: Called when Eggdrop receives a ROOMSTATE message. <code class="docutils literal notranslate"><span class="pre">mask</span></code> is in the format of <code class="docutils literal notranslate"><span class="pre">#channel</span> <span class="pre">keys</span></code> and can use wildcards. For example, to trigger this bind on #eggdrop for any change, you would use <code class="docutils literal notranslate"><span class="pre">#eggdroptest</span> <span class="pre">*</span></code> as the mask, or to trigger on #eggdrop specifically for the emote-only setting, you would use <code class="docutils literal notranslate"><span class="pre">&quot;#eggdrop</span> <span class="pre">*emote-only*&quot;</span></code> as the mask. Due to the nature of multiple keys per roomstate and uncertainty of ordering, it is recommended to use multiple binds if you wish to specify multiple key values. <code class="docutils literal notranslate"><span class="pre">chan</span></code> is the channel Eggdrop received the ROOMSTATE message for, and <code class="docutils literal notranslate"><span class="pre">tags</span></code> is a list of key/value pairs provided by the ROOMSTATE message, suitable for use as a Tcl dict. <code class="docutils literal notranslate"><span class="pre">flags</span></code> is ignored.</p>
 </div></blockquote>
-<ol class="arabic simple">
+<ol class="arabic simple" start="7">
 <li>USST (USERSTATE)</li>
 </ol>
 <blockquote>
 <div><p>bind usst &lt;flags&gt; &lt;mask&gt; &lt;proc&gt;</p>
 <p>procname &lt;chan&gt; &lt;tags&gt;</p>
 <p>Description: Called when Eggdrop receives a USERSTATE message. <code class="docutils literal notranslate"><span class="pre">mask</span></code> is in the format of <code class="docutils literal notranslate"><span class="pre">#channel</span> <span class="pre">keys</span></code> and can use wildcards (see the RMST bind for additional details on format). <code class="docutils literal notranslate"><span class="pre">chan</span></code> is the channel Eggdrop received the USERSTATE message for, and <code class="docutils literal notranslate"><span class="pre">tags</span></code> is a list of key/value pairs provided in the USERSTATE message, suitable for use as a Tcl dict. <code class="docutils literal notranslate"><span class="pre">flags</span></code> is ignored.</p>
+</div></blockquote>
+<ol class="arabic simple" start="8">
+<li>USRNTC (USERNOTICE)</li>
+</ol>
+<blockquote>
+<div><p>bind usrntc &lt;flags&gt; &lt;mask&gt; &lt;proc&gt;</p>
+<p>procname &lt;chan&gt; &lt;tags&gt;</p>
+<p>Description: Called when Eggdrop received a USERNOTICE message. <cite>mask`</cite> is in the format of <code class="docutils literal notranslate"><span class="pre">#channel</span> <span class="pre">keys</span></code> and can use wildcards (see the RMST bind for additional details on format). <code class="docutils literal notranslate"><span class="pre">chan</span></code> is the channel Eggdrop received the USERNOTICE message for, and <code class="docutils literal notranslate"><span class="pre">tags</span></code> is a list of key/value pairs provided in the USERNOTICE message, suitable for use as a Tcl dict. <code class="docutils literal notranslate"><span class="pre">flags</span></code> is ignored.</p>
 </div></blockquote>
 </div>
 </div>
@@ -298,7 +314,7 @@ bind for the “stop” msg command, use ‘unbind msg - stop msg:stop’.</p>
           
     <div class="footer" role="contentinfo">
         &#169; Copyright 2021, Eggheads.
-      Last updated on May 31, 2021.
+      Last updated on Feb 06, 2022.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.5.
     </div>
         </div>

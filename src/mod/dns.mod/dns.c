@@ -5,7 +5,7 @@
  * Written by Fabian Knittel <fknittel@gmx.de>
  */
 /*
- * Copyright (C) 1999 - 2021 Eggheads Development Team
+ * Copyright (C) 1999 - 2022 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -119,6 +119,7 @@ static struct dcc_table DCC_DNS = {
   NULL,
   NULL,
   display_dns_socket,
+  NULL,
   NULL,
   NULL,
   NULL

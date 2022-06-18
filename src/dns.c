@@ -7,7 +7,7 @@
 /*
  * Written by Fabian Knittel <fknittel@gmx.de>
  *
- * Copyright (C) 1999 - 2021 Eggheads Development Team
+ * Copyright (C) 1999 - 2022 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -32,7 +32,6 @@
 #include "dns.h"
 #ifdef EGG_TDNS
   #include <errno.h>
-  #include <pthread.h>
 #else
   #include <setjmp.h>
 #endif
@@ -112,7 +111,8 @@ struct dcc_table DCC_DNSWAIT = {
   display_dcc_dnswait,
   expmem_dcc_dnswait,
   kill_dcc_dnswait,
-  0
+  0,
+  NULL
 };
 
 
@@ -504,8 +504,10 @@ void *thread_dns_hostbyip(void *arg)
 #endif
       inet_ntop(AF_INET, &addr->addr.s4.sin_addr.s_addr, dtn->host, sizeof dtn->host);
   }
+  pthread_mutex_lock(&dtn->mutex);
   dtn->ok = !i;
   close(dtn->fildes[1]);
+  pthread_mutex_unlock(&dtn->mutex);
   return NULL;
 }
 
@@ -543,8 +545,10 @@ void *thread_dns_ipbyhost(void *arg)
 #endif
     freeaddrinfo(res0);
   }
+  pthread_mutex_lock(&dtn->mutex);
   dtn->ok = !i;
   close(dtn->fildes[1]);
+  pthread_mutex_unlock(&dtn->mutex);
   return NULL;
 }
 
@@ -553,6 +557,8 @@ void core_dns_hostbyip(sockname_t *addr)
   struct dns_thread_node *dtn = nmalloc(sizeof(struct dns_thread_node));
   pthread_t thread; /* only used by pthread_create(), no need to save */
 
+  if (pthread_mutex_init(&dtn->mutex, NULL))
+    fatal("ERROR: core_dns_hostbyip(): pthread_mutex_init() failed", 0);
   if (pipe(dtn->fildes) < 0) {
     putlog(LOG_MISC, "*", "core_dns_hostbyip(): pipe(): error: %s", strerror(errno));
     call_hostbyip(addr, iptostr(&addr->addr.sa), 0);
@@ -585,6 +591,8 @@ void core_dns_ipbyhost(char *host)
     return;
   }
   dtn = nmalloc(sizeof(struct dns_thread_node));
+  if (pthread_mutex_init(&dtn->mutex, NULL))
+    fatal("ERROR: core_dns_ipbyhost(): pthread_mutex_init() failed", 0);
   if (pipe(dtn->fildes) < 0) {
     putlog(LOG_MISC, "*", "core_dns_ipbyhost(): pipe(): error: %s", strerror(errno));
     call_ipbyhost(host, &addr, 0);

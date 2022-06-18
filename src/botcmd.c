@@ -5,7 +5,7 @@
  */
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2021 Eggheads Development Team
+ * Copyright (C) 1999 - 2022 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -723,7 +723,11 @@ static void bot_nlinked(int idx, char *par)
     putlog(LOG_BOTMSG, "*", "(%s) %s %s.", next, NET_LINKEDTO, newbot);
     x = '-';
   }
+#ifdef TLS
   addbot(newbot, dcc[idx].nick, next, x, i, dcc[idx].ssl);
+#else
+  addbot(newbot, dcc[idx].nick, next, x, i, 0);
+#endif
   check_tcl_link(newbot, next);
   u = get_user_by_handle(userlist, newbot);
   if (bot_flags(u) & BOT_REJECT) {
