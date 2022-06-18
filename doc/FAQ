@@ -1,7 +1,4 @@
-
-
-FREQUENTLY ASKED QUESTIONS
-
+Frequently Asked Questions
 
 (a.k.a. Why doesn't this thing work?!")
 
@@ -90,9 +87,9 @@ WHEN I 'tclsh scripts/weed <userfile> c' IT BARFS CHUNKS AT ME AND DIES.
   with '.' generally) and accept the loss of that data.
 
 I GET "ld-elf.so.1: Shared object "libtcl80.so.1" not found" or
-"eggdrop: error in loading shared libraries libtcl8.1.so:
-cannot open shared object file: No such file or directory" WHEN I TRY TO
-START MY BOT.
+"eggdrop: error in loading shared libraries libtcl8.1.so: cannot open
+shared object file: No such file or directory" WHEN I TRY TO START MY
+BOT.
 
   './configure' is looking in the wrong place for Tcl; it looks like it
   compiled with one version of Tcl and tries to load another. Maybe your
@@ -143,4 +140,3 @@ OTHER SYMBOL) WHEN I TRY TO LOAD A MODULES.
       3.  If you are of a more aggressive sense of mind, go beat the
           stuffing out of your admin for having lame static libraries.
           :)
-

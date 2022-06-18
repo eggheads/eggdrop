@@ -4,7 +4,7 @@
  */
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2020 Eggheads Development Team
+ * Copyright (C) 1999 - 2022 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -132,7 +132,7 @@ void add_lang(char *lang)
   if (langpriority)
     lp->next = langpriority;
   langpriority = lp;
-  debug1("LANG: Language loaded: %s", lang);
+  debug1("LANG: Language added to list: %s", lang);
 }
 
 /* Remove a language from the list of preferred languages.

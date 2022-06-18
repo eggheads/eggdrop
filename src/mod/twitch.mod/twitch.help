@@ -1,0 +1,33 @@
+%{help=roomstate}%{-}
+###  %broomstate%b <channel>
+   Displays roomstate values for provided Twitch channel.
+
+See also: userstate
+%{help=userstate}%{-}
+### %buserstate%b <channel>
+   Displays userstate values for Eggdrop on the provided Twitch channel.
+
+See also: roomstate
+%{help=twcmd}%{+o|o}
+### %btwcmd%b <channel> <cmd> [args]
+   Sends a command normally sent via the web UI to the Twitch server (ie,
+   /clear, /host, /mods, etc). Do not prefix cmd with a '/' character.
+%{help=twitch module}%{+n}
+###  %btwitch module%b
+   This module provides basic connectivity and functionality for the Twitch
+   streaming service.
+
+   The following commands are provided by the twitch module:
+
+   For all users:
+      %buserstate     roomstate%b
+%{+o|o}
+   For channel ops:
+      %btwcmd%b
+%{help=all}%{-}
+###  %btwitch module%b commands
+   For all users:
+      %buserstate     roomstate%b
+%{+o|o}
+   For channel ops:
+      %btwcmd%b

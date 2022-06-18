@@ -7,7 +7,7 @@ DCC commands for %B, %V:
       %bwhoami       echo         strip        su%b
       %btrace        fixcodes     bottree      vbottree%b
       %bbotinfo      relay        -host        fprint%b
-      %chfinger%b
+      %bchfinger%b
 %{o|o}
    For ops:
       %baddlog       console      match        whois%b
@@ -140,7 +140,7 @@ See also: +lang, -lang, +lsec, -lsec, lstat
    a value parameter, shows the current value of a setting. Any config file
    setting changed with this command will be reset when the config file is
    reloaded. Here are the variables that can be modified with this command
-   (note that other modules can add variables):
+   (note that additional variables may be available in other modules):
 %{cols=4}
 botnet-nick
 userfile
@@ -192,19 +192,17 @@ ident-timeout
 allow-dk-cmds
 max-logs
 protect-telnet
-switch-logfiles-at
 share-unlinks
-ssl-privatekey
-ssl-certificate
+switch-logfiles-at
 ssl-privatekey
 ssl-certificate
 ssl-capath
-ssl-cafile
 ssl-verify-depth
+ssl-cafile
 ssl-cert-auth
 ssl-verify-bots
-ssl-verify-dcc
 ssl-verify-clients
+ssl-verify-dcc
 %{end}
    Use %b'.help set <variable>'%b for more info on each variable.
 %{help=all}%{-}
@@ -216,7 +214,7 @@ ssl-verify-clients
       %bwhoami       echo         strip        su%b
       %btrace        fixcodes     bottree      vbottree%b
       %bbotinfo      relay        -host        fprint%b
-      %chfinger%b
+      %bchfinger%b
 %{o|o}
    For ops:
       %baddlog       console      match        whois%b

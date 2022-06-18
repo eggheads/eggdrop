@@ -2,7 +2,7 @@
  * transfer.c -- part of transfer.mod
  *
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2020 Eggheads Development Team
+ * Copyright (C) 1999 - 2022 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -802,7 +802,8 @@ static struct dcc_table DCC_SEND = {
   display_dcc_send,
   expmem_dcc_xfer,
   kill_dcc_xfer,
-  out_dcc_xfer
+  out_dcc_xfer,
+  NULL
 };
 
 /* Send TO the bot from outside of the transfer module - Wcc */
@@ -816,7 +817,8 @@ static struct dcc_table DCC_FORK_SEND = {
   display_dcc_fork_send,
   expmem_dcc_xfer,
   kill_dcc_xfer,
-  out_dcc_xfer
+  out_dcc_xfer,
+  NULL
 };
 
 /* Send FROM the bot, don't know why this isn't called DCC_SEND - Wcc */
@@ -845,12 +847,13 @@ static struct dcc_table DCC_GET_PENDING = {
   display_dcc_get_p,
   expmem_dcc_xfer,
   kill_dcc_xfer,
-  out_dcc_xfer
+  out_dcc_xfer,
+  NULL
 };
 
 static void dcc_fork_send(int idx, char *x, int y)
 {
-  char s1[121];
+  char s[NICKMAX + 1 + UHOSTMAX + 1];
 
   if (dcc[idx].type != &DCC_FORK_SEND)
     return;
@@ -859,8 +862,8 @@ static void dcc_fork_send(int idx, char *x, int y)
   dcc[idx].u.xfer->start_time = now;
 
   if (strcmp(dcc[idx].nick, "*users")) {
-    egg_snprintf(s1, sizeof s1, "%s!%s", dcc[idx].nick, dcc[idx].host);
-    putlog(LOG_MISC, "*", TRANSFER_DCC_CONN, dcc[idx].u.xfer->origname, s1);
+    snprintf(s, sizeof s, "%s!%s", dcc[idx].nick, dcc[idx].host);
+    putlog(LOG_MISC, "*", TRANSFER_DCC_CONN, dcc[idx].u.xfer->origname, s);
   }
   if (dcc[idx].type->activity && y) {
     /* Could already have data! */
@@ -953,15 +956,15 @@ static int raw_dcc_resend_send(char *filename, char *nick, char *from,
 {
   int zz, port, i;
   char *nfn, *buf = NULL;
-  long dccfilesize;
+  off_t dccfilesize;
   FILE *f;
 
   zz = -1;
   f = fopen(filename, "r");
   if (!f)
     return DCCSEND_BADFN;
-  fseek(f, 0, SEEK_END);
-  dccfilesize = ftell(f);
+  fseeko(f, 0, SEEK_END);
+  dccfilesize = ftello(f);
   fclose(f);
 
   if (dccfilesize == 0)
@@ -1102,11 +1105,11 @@ static int ctcp_DCC_RESUME(char *nick, char *from, char *handle,
 }
 
 static tcl_ints myints[] = {
-  {"max-dloads",       &dcc_limit},
-  {"dcc-block",        &dcc_block},
-  {"xfer-timeout", &wait_dcc_xfer},
-  {"sharefail-unlink",  &shunlink},
-  {NULL,                     NULL}
+  {"max-dloads",       &dcc_limit, 0},
+  {"dcc-block",        &dcc_block, 0},
+  {"xfer-timeout", &wait_dcc_xfer, 0},
+  {"sharefail-unlink",  &shunlink, 0},
+  {NULL,                     NULL, 0}
 };
 
 static cmd_t transfer_ctcps[] = {

@@ -21,9 +21,11 @@ Contents:
    ident
    irc
    notes
+   pbkdf2
    seen
    server
    share
    transfer
+   twitch
    uptime
    woobie

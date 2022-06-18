@@ -3,7 +3,7 @@
  */
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2020 Eggheads Development Team
+ * Copyright (C) 1999 - 2022 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -502,12 +502,27 @@
 /* 304 - 307 */
 #define strncpyz ((size_t (*) (char *, const char *, size_t))global[304])
 #ifndef HAVE_BASE64
-# define b64_ntop ((int (*) (u_char const *, size_t, char *, size_t))global[305])
-# define b64_pton ((int (*) (const char *, u_char *, size_t))global[306])
+# define b64_ntop ((int (*) (uint8_t const *, size_t, char *, size_t))global[305])
+# define b64_pton ((int (*) (const char *, uint8_t *, size_t))global[306])
 #endif
 #define check_validpass ((char *(*) (struct userrec *, char *))global[307])
 /* 308 - 311 */
 #define make_rand_str_from_chars ((void (*) (char *, int, char *))global[308])
+#define add_tcl_objcommands ((void (*) (tcl_cmds *))global[309])
+#define pid_file ((char *)(global[310]))
+#ifndef HAVE_EXPLICIT_BZERO
+# define explicit_bzero ((void (*) (void *const, const size_t))global[311])
+#endif
+/* 312 - 315 */
+#define USERENTRY_PASS2 (*(struct user_entry_type *)global[312])
+#define crypto_verify ((int ( *) (const char *, const char *))global[313])
+#define egg_uname ((char *(*) ())global[314])
+#define get_expire_time ((time_t (*) (Tcl_Interp *, const char *))global[315])
+/* 316 - 319 */
+#define USERENTRY_ACCOUNT (*(struct user_entry_type *)(global[316]))
+#define get_user_by_account ((struct userrec * (*)(char *))global[317])
+#define delaccount_by_handle ((int(*)(char *,char *))global[318])
+
 
 
 /* hostmasking */

@@ -7,7 +7,7 @@
 /*
  * Written by Rumen Stoyanov <pseudo@egg6.net>
  *
- * Copyright (C) 2010 - 2020 Eggheads Development Team
+ * Copyright (C) 2010 - 2022 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -120,10 +120,13 @@ static int ssl_seed(void)
  */
 int ssl_init()
 {
-  /* Load SSL and crypto error strings; register SSL algorithms */
-  SSL_load_error_strings();
+  /* OpenSSL library initialization
+   * If you are using 1.1.0 or above then you don't need to take any further steps. */
+#if OPENSSL_VERSION_NUMBER < 0x10100000L /* 1.1.0 */
   SSL_library_init();
-
+  SSL_load_error_strings();
+  OpenSSL_add_all_algorithms();
+#endif
   if (ssl_seed()) {
     putlog(LOG_MISC, "*", "ERROR: TLS: unable to seed PRNG. Disabling SSL");
     ERR_free_strings();
@@ -275,21 +278,21 @@ char *ssl_fpconv(char *in, char *out)
 {
   long len;
   char *fp;
-  unsigned char *md5;
+  unsigned char *sha1;
 
   if (!in)
     return NULL;
 
-  if ((md5 = OPENSSL_hexstr2buf(in, &len))) {
-    fp = OPENSSL_buf2hexstr(md5, len);
+  if ((sha1 = OPENSSL_hexstr2buf(in, &len))) {
+    fp = OPENSSL_buf2hexstr(sha1, len);
     if (fp) {
       out = user_realloc(out, strlen(fp) + 1);
       strcpy(out, fp);
-      OPENSSL_free(md5);
+      OPENSSL_free(sha1);
       OPENSSL_free(fp);
       return out;
     }
-    OPENSSL_free(md5);
+    OPENSSL_free(sha1);
   }
   return NULL;
 }
@@ -327,12 +330,17 @@ char *ssl_getfp(int sock)
 
   if (!(cert = ssl_getcert(sock)))
     return NULL;
-  if (!X509_digest(cert, EVP_sha1(), md, &i))
+  if (!X509_digest(cert, EVP_sha1(), md, &i)) {
+    X509_free(cert);
     return NULL;
-  if (!(p = OPENSSL_buf2hexstr(md, i)))
+  }
+  if (!(p = OPENSSL_buf2hexstr(md, i))) {
+    X509_free(cert);
     return NULL;
+  }
   strlcpy(fp, p, sizeof fp);
   OPENSSL_free(p);
+  X509_free(cert);
   return fp;
 }
 
@@ -866,13 +874,16 @@ int ssl_handshake(int sock, int flags, int verify, int loglevel, char *host,
     /* Introduce 1ms lag so an unpatched hub has time to setup the ssl handshake */
     nanosleep(&req, NULL);
 #ifdef SSL_set_tlsext_host_name
-    if (!SSL_set_tlsext_host_name(td->socklist[i].ssl, data->host))
-       debug1("TLS: setting the server name indication (SNI) to %s failed", data->host);
+    if (*data->host)
+      if (!SSL_set_tlsext_host_name(td->socklist[i].ssl, data->host))
+        debug1("TLS: setting the server name indication (SNI) to %s failed", data->host);
+      else
+        debug1("TLS: setting the server name indication (SNI) to %s successful", data->host);
     else
-       debug1("TLS: setting the server name indication (SNI) to %s successful", data->host);
+      debug0("TLS: not setting the server name indication (SNI) because host is an empty string");
 #else
-    debug1("TLS: setting the server name indication (SNI) not supported by ssl "
-           "lib, probably < openssl 0.9.8f", data->host);
+    debug0("TLS: setting the server name indication (SNI) not supported by ssl "
+           "lib, probably < openssl 0.9.8f");
 #endif
     ret = SSL_connect(td->socklist[i].ssl);
     if (!ret)
@@ -1019,6 +1030,7 @@ static int tcl_tlsstatus STDVAR
     Tcl_DStringAppendElement(&ds, "serial");
     Tcl_DStringAppendElement(&ds, p);
     nfree(p);
+    X509_free(cert);
   }
   /* We should always have a cipher, but who knows? */
   cipher = SSL_get_current_cipher(td->socklist[j].ssl);

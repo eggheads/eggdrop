@@ -3,7 +3,7 @@
  */
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2020 Eggheads Development Team
+ * Copyright (C) 1999 - 2022 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -51,6 +51,8 @@
 #define HOOK_DNS_IPBYHOST       113
 #define HOOK_ENCRYPT_STRING     114
 #define HOOK_DECRYPT_STRING     115
+#define HOOK_ENCRYPT_PASS2      116
+#define HOOK_VERIFY_PASS2       117
 
 /* These are FIXED once they are in a release they STAY */
 #define MODCALL_START             0

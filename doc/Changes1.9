@@ -1,0 +1,497 @@
+
+Eggdrop Changes (Last Updated 2021-01-24):
+__________________________________________
+
+Eggdrop v1.9.0rc1:
+
+  2021-01-24 * Fix OBOE
+                 [Found by: michaelortmann / Patch by: michaelortmann]
+             * Fix time_t handling
+             * Fix stringop truncation
+             * Update pbkdf2 config comment
+             * Update NEWS
+             * Generate docs with 1.9.0 version
+             * Update Tcl doc date
+             * Trim manual old 1.8.0 changelog from Changes1.8
+             * update Change doc gen
+             * update releaseprep
+             * Fix releaseprep for 1.9.x
+  2021-01-22 * Change buffer size
+             * Fix format strings
+             * Fix OBOE
+                 [Found by: michaelortmann / Patch by: michaelortmann]
+             * Limit Tcl expire times
+  2021-01-21 * Don't remove sockgets empty lines
+                 [Found by: michaelortmann / Patch by: michaelortmann]
+             * Modernize OpenSSL lib initialization
+             * Update OpenSSL API usage
+             * Fix handling of null-argument
+                 [Found by: michaelortmann / Patch by: michaelortmann]
+  2021-01-17 * Check for exclusive botattr/chattr flags
+                 [Found by: Geo / Patch by: Cizzle]
+             * Add -channel flag to is* cmds
+                 [Found by: maimizuno / Patch by: Geo]
+  2021-01-15 * update TOCs
+             * Update copyright/docs
+  2021-01-14 * Ignore config comments in listen cmd
+                 [Found by: Lord255 / Patch by: Geo]
+             * Update sphinx formatting
+  2021-01-05 * refactor get_value fix strstrs adjust mystery gift log message
+  2021-01-03 * twitch strncpy->strlcpy
+             * remove unused twitch validation func
+             * Remove twitch debug statements
+             * Fix get_value call And add channel to log messages
+  2021-01-02 * Add granular userfile sharing flags
+                 [Patch by: Cizzle]
+  2020-12-31 * Ignore config comments in listen cmd
+                 [Found by: Lord255 / Patch by: Geo]
+             * Check PASS2 status for .whois
+                 [Found by: Lord255 / Patch by: Geo]
+             * Revert "Ignore config comments in listen cmd"
+             * nickname->handle
+  2020-12-29 * fix crash on missing .conf (#1083)
+                 [Found by: Pegasus]
+  2020-12-25 * Fix --disable-ipv6 display
+                 [Patch by: michaelortmann]
+             * Remove twitch.tcl from doc
+  2020-12-24 * Make core dns async
+                 [Found by: michaelortmann / Patch by: michaelortmann]
+             * Run autotools
+             * Update header comments
+             * fixup
+             * fixup
+             * fixup
+  2020-12-23 * ifdef socklist tls
+  2020-12-20 * Add show-uname config setting
+                 [Found by: michaelortmann / Patch by: michaelortmann]
+             * Change -n message
+             * Change -n message
+  2020-12-19 * Fix time_t cast
+             * Change format specifier
+             * Change strcpy param
+                 [Found by: michaelortmann / Patch by: michaelortmann]
+             * Change buffer size
+                 [Found by: michaelortmann / Patch by: michaelortmann]
+             * Change format specifier
+                 [Found by: michaelortmann / Patch by: michaelortmann]
+             * Fix buffer sizes (#1034)
+             * fseek -> fseeko, ftell -> ftello
+                 [Patch by: michaelortmann]
+             * Feat/pbkdf2 (#1055)
+                 [Found by: Various / Patch by: thommey, and, michaelortmann]
+  2020-12-14 * Change one more time_t to PRId64
+  2020-12-11 * Yet another followup fix for #759
+  2020-12-06 * Fix format truncation
+                 [Found by: michaelortmann / Patch by: michaelortmann]
+             * Don't set SNI to empty host
+                 [Found by: michaelortmann / Patch by: michaelortmann]
+             * Cleanup: delete include of time.h
+  2020-12-01 * Fix misaligned address followup (#1071)
+                 [Found by: OUTsider / Patch by: michaelortmann]
+  2020-11-22 * Make compat explicit_bzero() available for modules
+  2020-11-20 * run autotools
+  2020-11-11 * add tls status field
+  2020-11-09 * Add socklist Tcl command
+  2020-11-03 * Fix time_t type
+  2020-11-01 * Upsize fgets buffer, add error check
+             * Fix function / snprintf cast
+             * Add more help for macos
+             * Add static functions
+             * Fix format truncation
+             * Remove unnecessary openssl checks
+                 [Found by: michaelortmann / Patch by: michaelortmann]
+             * Fix setsockname family name error
+                 [Found by: michaelortmann / Patch by: michaelortmann]
+             * Fix setsockopt(SO_LINGER)
+             * Remove select() startup timeout
+                 [Patch by: michaelortmann]
+             * Guard IPv6 resolving
+                 [Found by: michaelortmann / Patch by: michaelortmann]
+  2020-10-30 * Change language log msg
+                 [Found by: mortmann / Patch by: Geo]
+             * Fix misleading indentation
+  2020-10-29 * Parse/modify oident.conf file
+                 [Found by: Pegasus / Patch by: Geo]
+  2020-10-07 * Fix .servers display
+                 [Found by: michaelortmann / Patch by: michaelortmann]
+  2020-10-06 * Adjust oidentd string
+                 [Found by: PeGaSuS / Patch by: PeGaSuS]
+  2020-10-05 * Code cleanup
+             * Respect LDFLAGS
+                 [Found by: Agostino, Sarubbo / Patch by: michaelortmann]
+             * (Fix #457) dns mod: add /etc/hosts lookup before resolving PLUS fix user input validation for .tcl
+               dnslookup (#701)
+                 [Found by: Geo / Patch by: michaelortmann]
+  2020-10-04 * Fix format specifier for intptr_t with c99 PRIdPTR
+             * Default to gcc -std=c99
+             * Update aclocal.m4
+  2020-09-13 * Add YouTube and Twitch to userinfo.tcl
+                 [Patch by: michaelortmann]
+  2020-09-08 * Remove CONST84
+                 [Found by: mortmann]
+  2020-09-07 * u_char is not POSIX
+             * Run autotools
+  2020-09-06 * Fix explicit_bzero.c
+             * h_addr is not posix.2001
+             * Remove vprintf check
+             * Add -lnetwork if needed for b64
+                 [Patch by: michaelortmann]
+  2020-08-31 * RPL_ISUPPORT parsing, Tcl API and using trivial values (#438)
+                 [Patch by: thommey]
+  2020-08-29 * Fix quit on rehash
+                 [Found by: tabb / Patch by: Geo]
+  2020-08-26 * Update config files
+                 [Found by: mortman, tabb]
+  2020-08-14 * Resize host buffer
+                 [Found by: michaelortmann / Patch by: michaelortmann]
+  2020-08-06 * Fix uninitialized value access
+             * Fix parsing msgtags if not conforming to standard
+                 [Found by: mortmann / Patch by: thommey]
+  2020-07-17 * Add comments to bot who
+  2020-07-16 * Fix dead nested assignment
+             * add write() return check for errors
+  2020-07-15 * Update matchattr docs. Fixes #815
+                 [Found by: wilkowy / Patch by: Geo]
+             * Add hand2nicks Tcl command. Closes #990
+                 [Found by: thommey / Patch by: Geo]
+  2020-07-06 * Add SSL indication to startup listen text
+             * Make .status more verbose about TLS
+                 [Found by: michaelortmann / Patch by: michaelortmann]
+  2020-07-01 * fix multi-listen again
+  2020-06-20 * Add Alpine note to compile guide
+             * fix multi-listen
+             * Generate docs
+  2020-06-11 * Add Tcl isaway, refreshchan commands
+             * Add account-notify & extended-join capabilities, Tcl support
+  2020-06-09 * Fix dns mod setsockopt() SO_BROADCAST for minix 3.3.0
+                 [Found by: michaelortmann / Patch by: michaelortmann]
+  2020-06-06 * Correctly set use-354 (WHOX) to 1 for net-type Freenode
+                 [Found by: Geo / Patch by: thommey]
+             * Change strncpy to strlcpy, fixes truncation
+                 [Found by: grumpy-creator / Patch by: thommey]
+  2020-06-03 * Remove dead code
+  2020-06-02 *
+                 [Found by: Geo / Patch by: thommey]
+             * Adjust commit message template.
+             * Handle 396 and CHGHOST
+                 [Found by: maimizuno / Patch by: Geo]
+             * Add setname capability
+  2020-05-31 * fix cape length
+  2020-05-20 * Re-re-refix multi-listen
+             * ifdef IPv6-specific code
+             * Refactor CAP code
+  2020-05-17 * Prevent crash on multi-listen rehash
+                 [Found by: PeGaSuS / Patch by: Geo]
+             * Re-fix multi-IP listening
+  2020-05-14 * Fix listen SSL check Fix for #935
+  2020-05-12 * Typo fix
+  2020-05-11 * Re-arrange set help text
+                 [Found by: michaelmortman]
+             * clarify additional help vars Closes: #744
+  2020-05-10 * Update cap cmds
+             * Fix Array bounds error
+                 [Found by: michaelortmann / Patch by: michaelortmann]
+             * Name sha1 variable correctly
+             * Listen for connections on multiple IPs
+             * Update first-script
+  2020-05-09 * Add twcmd partyline command
+             * Update twitch.rst
+             * fix global ismod/vip usage
+             * Revert installing twitch.tcl ...cuz its gone now
+             * add partyline help
+             * Tidy up strtoks
+  2020-05-08 * Don't mutilate cap-request (#976)
+             * Add twitchmods, twitchvips, ismod, and isvip Tcl commands
+  2020-05-01 * Copy twitch.tcl with make
+             * Remove unneeded var set
+  2020-04-30 * Only check keys, not values
+  2020-04-29 * Update bind table var checks
+             * Change rmst/usst masks to check keys
+             * Force twitch cap request
+             * Check net-type
+             * Moar better docs
+  2020-04-28 * Fix binds, add Tcl doc to match
+             * Add tcl commands to doc
+             * Doc formatting fixs
+  2020-04-27 * Add start of Tcl docs ...and make commands actually match them.
+  2020-04-26 * try 2 at keep-nick
+  2020-04-24 * Add udef flag, add chan-specific user statuses
+             * Start keep-nick fun
+  2020-04-22 * Clean out twitch.tcl Move got315 back so thommey can read it nicely Fix Tcl twcmd to send to chan-
+               nel, not nick (duh)
+  2020-04-21 * Add fake WHO replies This is required to properly set the status of channels (pending/active) and
+               make sure eggdrop knows it is actually on the channel
+             * mention CAP in twitch module section
+             * Add twitch setup walkthrough
+             * Fix doc formatting
+             * Update dependencies
+             * Update doc paths
+             * Fix wrong module depend
+             * temp revert
+  2020-04-20 * Add roomstate, userstate binds
+             * Add twitch.mod doc
+             * Add roomstate, userstate cmds Add error checking to roomstate, userstate Tcl commands
+             * Redo struct definitions
+             * Add config settings, Makefile
+  2020-04-19 * fixup
+             * Add twitch net-type Don't send WHO/WHOIS for twitch net-type
+  2020-04-18 * Switch to module format Use Tcl for handling web requests, maybe userlist stuff in general. Intent
+               is to be 'optional' on top of the module.
+             * fixups
+  2020-04-05 * Fix explicit_bzero use
+             * inet_pton() is POSIX.1-2001
+             * Run autotools/makedepend
+  2020-04-04 * Add UTF8 doc
+             * Update strlcpy from openbsd upstream
+             * setpgid() is POSIX.1-2001
+             * Fix type definition
+             * clock() is POSIX.1-2001
+  2020-04-01 * Standardize dcc_telnet_pw() to use check_validpass()
+                 [Patch by: michaelortmann]
+             * Stop requiring -n with -t,c (#847)
+                 [Patch by: Geo]
+  2020-03-31 * Re-fix sasl-mechanism location
+             * Fix got432() string generation
+                 [Found by: michaelortmann / Patch by: michaelortmann]
+             * fix sizeof -> strlen
+             * Merge BAD{HAND/NICK}CHARS
+                 [Patch by: michaelortmann]
+  2020-03-30 * Update features document
+  2020-03-29 * Add IRCv3 away-notify capability
+                 [Patch by: Geo]
+  2020-03-28 * Fix incorrect missing-EC logic branches
+                 [Found by: PeGaSuS / Patch by: michaelortmann, Geo]
+             * Add password check/log/reject
+                 [Found by: wilkowy / Patch by: Everyone, and, their, mother]
+             * Run autotools
+  2020-03-25 * typo fix
+  2020-03-24 * Update SIGN bind docs
+             * Add NickServ authentication config option
+             * update config files ...and here's the rest of that last commit
+  2020-03-23 * Fix rst doc typos
+                 [Found by: Robby, Geo]
+             * Update NICK bind docs
+  2020-03-14 * Separate EOF, TIMEOUT on telnet ident connect
+                 [Patch by: michaelortmann]
+             * Fix "openssl without EC" make error
+                 [Patch by: michaelortmann, Geo]
+             * Clear memory with explicit_bzero()
+                 [Patch by: michaelortmann]
+             * Remove TCL_TRACE_READS for Tcl_TraceVar(net-type)
+                 [Patch by: michaelortmann]
+             * Restrict b/e/I to <63 char hostmask
+                 [Found by: @michaelortmann / Patch by: Geo]
+  2020-03-12 * Remove botchk docs, add autobotchk docs
+  2020-03-09 * Fix f5828f0b45 missing ,
+  2020-03-07 * initialize saveptrs to null
+             * Fix volatile int
+             * Fix definition of userfile
+             * Fix possible null
+                 [Found by: michaelortmann / Patch by: michaelortmann]
+             * More strncpy() -> strlcpy()
+             * sprintf() -> snprintf()
+  2020-03-03 * Shrink chanlimit buffer size
+  2020-03-02 * Remove deprecated RAND_status() check
+                 [Found by: michaelortmann / Patch by: michaelortmann]
+  2020-03-01 * Properly clear serverlist on rehash
+             * Clarify default-flags description
+                 [Found by: jack3]
+             * Add chfinger command to help
+                 [Found by: zbe]
+             * Update addserver docs
+  2020-02-28 * Terminate rawt function table
+             * Clear serverlist prior to rehash
+                 [Found by: tabb]
+  2020-02-18 * Moar features
+  2020-02-14 * log privmsg tags
+             * Properly pass tag keys w/o values
+             * More logging
+  2020-02-12 * Starting to log twitch features
+             * remove log_raw tag double-print
+             * Remove unneeded rawlog code
+  2020-02-08 * Remove automatic STARTTLS upgrade
+             * Fix disable-ipv6
+             * First stab at message-tags
+             * Add handler for TAGMSG
+             * Add tagmsg Tcl command
+             * Remove magic numbers
+             * Fix misaligned address
+             * Cleanup btos()
+                 [Found by: michaelortmann / Patch by: michaelortmann]
+             * Remove wrong Makefile
+             * Convert net-type to string
+                 [Patch by: michaelortmann, Geo]
+             * Update net-type docs
+             * Request CAP features during registration
+             * stop msg-tag from breaking normal binds
+             * Split tags into key/value pairs
+             * Add tag-related definitions
+             * Implement dict-based msg-tags
+             * Update buffer sizes to accomodate larger msgtag strings
+             * Prevent double-tapping internal binds
+             * Update tagmsg to accept dicts
+  2020-01-29 * Fix eggdrop.conf typos
+                 [Found by: Ami]
+  2020-01-28 * Create main.yml
+  2020-01-20 * Update copyright Catch missing copyright date in main.c
+  2020-01-05 * Remove extra semicolon
+  2019-12-30 * Handle IRCv3 invite-notify, add invite bind
+  2019-12-28 * 1st Twitch support hack Original script by thommey; modified by Geo
+  2019-12-16 * Fix server/port len
+                 [Found by: michaelortmann / Patch by: michaelortmann]
+             * maybe sudo will work here...
+  2019-12-13 * Create ccpp.yml
+             * Update ccpp.yml
+             * Fix channel name off-by-one
+                 [Found by: michaelortmann / Patch by: michaelortmann]
+  2019-12-11 * Limit dns-servers to 3 entries
+                 [Found by: weweilep / Patch by: michaelortmann]
+             * Fix missing space
+  2019-11-27 * Fix filesys bug
+                 [Found by: michaelortmann / Patch by: michaelortmann]
+             * Posix compatibility enhancement
+             * Remove inet_ntop() compat code
+             * Run autotools/makedepend
+             * Remove strict-host option
+             * Fix faulty assoc if test
+                 [Found by: dcb314 / Patch by: Geo]
+  2019-11-26 * Strip random colon from SASL auth string
+             * Remove eggdrop port+1,2,3 linking
+                 [Patch by: Geo]
+             * Expose language as a global Tcl variable
+                 [Found by: CrazyCat / Patch by: Geo]
+  2019-11-25 * Update SASL log message
+  2019-11-17 * Typo fixes
+             * Update server string Closes #892
+  2019-11-14 * Fix french lang typos
+                 [Found by: CrazyCat / Patch by: CrazyCat]
+  2019-11-06 * Add additional usage info
+  2019-11-04 * Request CAP features during registration
+  2019-11-03 * Remove wrong Makefile
+             * Convert net-type to string
+                 [Patch by: michaelortmann, Geo]
+             * Update net-type docs
+  2019-11-02 * Fix misaligned address
+             * Cleanup btos()
+                 [Found by: michaelortmann / Patch by: michaelortmann]
+  2019-10-25 * Because tabs
+             * Update docs
+  2019-10-24 * Update sphinx agogo theme
+             * Add firstinstall to docs
+  2019-10-23 * Fix disable-ipv6
+  2019-10-22 * ifdef ipv6 variable
+  2019-10-06 * Fix b64 fallback
+             * Fix SSL server connections
+             * Fix compiler warning
+                 [Found by: michaelortmann / Patch by: michaelortmann]
+             * Fix compiler warning
+                 [Found by: michaelortmann / Patch by: michaelortmann]
+  2019-10-05 * Switch blowfish crypt mode to cbc
+  2019-10-04 * Cleanup
+             * Pointless fixes
+             * Performance enhancement
+             * Fix memory leak
+  2019-09-26 * Fix memory table status report
+                 [Patch by: michaelortmann]
+  2019-09-17 * Cleanup
+             * Add include
+             * cleanup
+             * Fix inet_pton error
+                 [Found by: tabb / Patch by: michaelortmann]
+             * Fix oversize buffer
+                 [Patch by: michaelortmann]
+             * Fix for gawk 5
+                 [Patch by: michaelortmann]
+             * Fix pointer
+  2019-09-13 * Code cleanup
+  2019-09-11 * Check for :s, better IPv6 check
+             * Fix pton in servmsg Also, this commit was done at a bar. So. Yeah. Mmmmm.....
+  2019-09-09 * Add delserver Tcl command
+             * Add Tcl docs
+             * Fix first LL comparison
+             * Add error checking, proper logging
+  2019-09-08 * Add sasl timeout
+                 [Patch by: michaelortmann]
+             * Move userfile sizeof
+                 [Patch by: michaelortmann]
+  2019-09-07 * Add SNI support
+                 [Patch by: michaelortmann]
+  2019-08-29 * Initial addserver commit
+             * Remove []s from ipv4
+  2019-08-28 * Code cleanup for CAP and SASL
+             * Code cleanup for CAP and SASL
+             * Allow bots to remain linked when userfile sharing fails
+                 [Patch by: Cizzle]
+  2019-08-27 * Add base64 fallback functions for SASL
+             * Run autoconf, depends
+  2019-08-25 * Add port and TLS info as a separate list item for tcl dcclist
+                 [Patch by: Cizzle]
+             * Enhance botnet memory management
+                 [Patch by: michaelortmann]
+  2019-08-20 * Fix static build
+             * Add additional SSL/TLS config granularity. Closes #185
+                 [Found by: Robby- / Patch by: michaelortmann]
+  2019-08-18 * Fix 354 whox with workaround until 005 support. Fixes #739
+                 [Found by: key2peace / Patch by: michaelortmann]
+             * Modernize gethostbyaddr() -> getnameinfo()
+                 [Found by: michaelortmann / Patch by: michaelortmann]
+             * Fix name collision 'answer' eggdrop:module.h vs. dietlibc:resolv.h. Fixes #667
+                 [Found by: michaelortmann / Patch by: michaelortmann]
+             * egg_inet_aton() -> inet_pton()
+                 [Found by: michaelortmann / Patch by: michaelortmann]
+  2019-08-06 * Fix memory leak in SASL
+                 [Patch by: michaelortmann]
+  2019-08-05 * Swap to TLS ifdefs
+  2019-08-04 * Add initial SASL functionality. Closes #395
+  2019-07-26 * Fix indentation
+             * Fix memleak
+                 [Found by: michaelortmann / Patch by: michaelortmann]
+             * Apostrophes matter
+             * Update pandoc, docs, autoconf with 1.9 strings
+  2019-07-23 * Enhance mtmtbl with dynamic size
+                 [Patch by: michaelortmann]
+  2019-07-21 * Refactor CAP code, add Tcl list to deal with negotiated capes
+  2019-07-19 * fix compilation error
+  2019-07-17 * Use IP if no hostname is present in dcclist, add + for SSL
+                 [Found by: Cizzle / Patch by: Cizzle, Geo]
+             * Fix version handling / gcc 8 compiler warning
+                 [Patch by: michaelortmann]
+  2019-07-14 * Add CAP support. Closes #423
+  2019-07-11 * Typo fixes
+                 [Patch by: michaelortmann]
+  2019-07-04 * Fix ident module include
+  2019-07-03 * Replace egg_str[n]casecmp with str[c]cmp
+             * Run autotools
+             * Add oident and builtin ident support as module
+                 [Patch by: michaelortmann]
+             * Run makedepend
+  2019-06-29 * Fix SunOS 5 gcc and remove SunOS 4 workarounds
+                 [Found by: michaelortmann / Patch by: michaelortmann]
+             * Cleanup: sigaction() and sigemptyset() are POSIX.1-2001
+                 [Patch by: michaelortmann]
+             * Cleanup: fsync(), rename() and uname() are POSIX.1-2001
+  2019-06-28 * Replace compat egg_strftime() with strftime()
+                 [Patch by: michaelortmann]
+  2019-06-26 * Enhance makepass() and make_rand_str()
+                 [Found by: michaelortmann / Patch by: michaelortmann]
+             * Update -nc console flag output. Fixes #787
+                 [Found by: mortmann / Patch by: Geo]
+  2019-06-25 * Modify module version check to not prevent newer versions from running
+             * Create sslsilent Makefile option (#817)
+             * Update doc/ABOUT
+                 [Found by: michaelortmann / Patch by: michaelortmann]
+             * Fix 669 - use thread-safe res_n* functions over res_* functions. Fixes #174. Fixes #668.
+                 [Found by: fhorst / Patch by: michaelortmann]
+             * Update timer tcl command doc. Closes #808
+  2019-06-19 * Remove unneeded 1.8-specific language in Makefile
+  2018-12-31 * Better args for releaseprep
+             * Update developer names
+             * Update copyright. Happy 2019!
+  2018-12-28 * Correct version file
+  2018-12-27 * Advance version level
+  2018-12-21 * Update THANKS file
+             * fix TLS doc formatting
+             * Update THANKS
+  2018-12-20 * add ifdef to ssl variable
+  2018-12-13 * Fix getrandom() syscall not existing while function exists in header
+                 [Found by: jack3 / Patch by: Cizzle]

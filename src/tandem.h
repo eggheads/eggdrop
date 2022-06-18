@@ -3,7 +3,7 @@
  */
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2020 Eggheads Development Team
+ * Copyright (C) 1999 - 2022 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -31,6 +31,7 @@ typedef struct tand_t_struct {
   struct tand_t_struct *next;
   int ver;
   char share;
+  int ssl;
 } tand_t;
 
 /* Keep track of party-line members */

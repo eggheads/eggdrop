@@ -84,7 +84,7 @@ global flag applies to all channels. The standard global flags are:
     chattr <nickname> [attributes] [channel]
 
   There are also 26 global user-defined flags and 26 channel user-defined
-  flags. These are used by scripts, and their uses very depending on the
+  flags. These are used by scripts, and their uses vary depending on the
   script that uses them.
 
-Copyright (C) 2002 - 2020 Eggheads Development Team
+Copyright (C) 2002 - 2022 Eggheads Development Team

@@ -21,10 +21,9 @@ There are also some variables you can set in your config file:
 
   set net-type Efnet
     What is your network? Possible allowed values are Efnet, IRCnet, Undernet,
-    DALnet, freenode, Quakenet, Rizon, Other. If the network you use is not
-    listed, using "Other" is a good sane choice and can be customized with
+    DALnet, Libera, freenode, Quakenet, Rizon, Other. If the network you use is
+    not listed, using "Other" is a good sane choice and can be customized with
     settings both here and in the IRC module sections of the config file.
-
 
   set nick "LamestBot"
     Set the nick the bot uses on IRC, and on the botnet unless you specify a
@@ -238,5 +237,5 @@ There are additional settings for 'net-type' Efnet.
       your network. The default setting is 9. The maximum supported length by
       Eggdrop is 32.
 
-  Copyright (C) 2000 - 2020 Eggheads Development Team
+  Copyright (C) 2000 - 2022 Eggheads Development Team
 

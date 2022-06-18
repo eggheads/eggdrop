@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>Share Module &#8212; Eggdrop 1.9.0 documentation</title>
+    <title>Share Module &#8212; Eggdrop 1.9.2 documentation</title>
     <link rel="stylesheet" href="../_static/eggdrop.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
@@ -24,7 +24,7 @@
             <img class="logo" src="../_static/eggman.png.gif" alt="Logo"/>
           </a></p>
         <div class="headertitle"><a
-          href="../index.html">Eggdrop 1.9.0 documentation</a></div>
+          href="../index.html">Eggdrop 1.9.2 documentation</a></div>
         <div class="rel" role="navigation" aria-label="related navigation">
           <a href="server.html" title="Server Module"
              accesskey="P">previous</a> |
@@ -43,6 +43,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../installAndSetup/readme.html">README</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../installAndSetup/install.html">Installing Eggdrop</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../installAndSetup/faq.html">Frequently Asked Questions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../installAndSetup/upgrading.html">Upgrading</a></li>
 </ul>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../mainDocs/about.html">About Eggdrop</a></li>
@@ -52,9 +53,13 @@
 <li class="toctree-l1"><a class="reference internal" href="../mainDocs/bans.html">Bans, Invites, and Exempts</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../mainDocs/botnet.html">Botnet Sharing and Linking</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../mainDocs/patch.html">Patch How-To</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../mainDocs/pbkdf2.html">PBKDF2 Hashing</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../mainDocs/tcl-commands.html">Eggdrop Tcl Commands</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../mainDocs/twitch.html">Twitch</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../mainDocs/twitch-tcl-commands.html">Eggdrop Twitch Tcl Commands</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../mainDocs/ipv6.html">IPv6 support</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../mainDocs/tls.html">TLS support</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../mainDocs/ircv3.html">IRCv3 support</a></li>
 </ul>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="core.html">Eggdrop Core Settings</a></li>
@@ -70,10 +75,12 @@
 <li class="toctree-l1"><a class="reference internal" href="ident.html">Ident Module</a></li>
 <li class="toctree-l1"><a class="reference internal" href="irc.html">IRC Module</a></li>
 <li class="toctree-l1"><a class="reference internal" href="notes.html">Notes Module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="pbkdf2.html">PBKDF2 Module</a></li>
 <li class="toctree-l1"><a class="reference internal" href="seen.html">Seen Module</a></li>
 <li class="toctree-l1"><a class="reference internal" href="server.html">Server Module</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Share Module</a></li>
 <li class="toctree-l1"><a class="reference internal" href="transfer.html">Transfer Module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="twitch.html">Twitch Module</a></li>
 <li class="toctree-l1"><a class="reference internal" href="uptime.html">Uptime Module</a></li>
 <li class="toctree-l1"><a class="reference internal" href="woobie.html">Woobie Module</a></li>
 </ul>
@@ -142,7 +149,7 @@ address are added to sharing procedure. This only works with hubs that
 are v1.5.1 or higher.</dd>
 </dl>
 </div></blockquote>
-<p>Copyright (C) 2000 - 2020 Eggheads Development Team</p>
+<p>Copyright (C) 2000 - 2021 Eggheads Development Team</p>
 </div>
 
 
@@ -170,8 +177,8 @@ are v1.5.1 or higher.</dd>
         <div class="right">
           
     <div class="footer" role="contentinfo">
-        &#169; Copyright 2020, Eggheads.
-      Last updated on Jan 20, 2020.
+        &#169; Copyright 2021, Eggheads.
+      Last updated on Feb 06, 2022.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.5.
     </div>
         </div>

@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>&lt;no title&gt; &#8212; Eggdrop 1.9.0 documentation</title>
+    <title>&lt;no title&gt; &#8212; Eggdrop 1.9.2 documentation</title>
     <link rel="stylesheet" href="../_static/eggdrop.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
@@ -16,7 +16,7 @@
     <script type="text/javascript" src="../_static/language_data.js"></script>
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="About Eggdrop" href="about.html" />
-    <link rel="prev" title="Frequently Asked Questions" href="../installAndSetup/faq.html" /> 
+    <link rel="prev" title="Upgrading" href="../installAndSetup/upgrading.html" /> 
   </head><body>
     <div class="header-wrapper" role="banner">
       <div class="header">
@@ -24,9 +24,9 @@
             <img class="logo" src="../_static/eggman.png.gif" alt="Logo"/>
           </a></p>
         <div class="headertitle"><a
-          href="../index.html">Eggdrop 1.9.0 documentation</a></div>
+          href="../index.html">Eggdrop 1.9.2 documentation</a></div>
         <div class="rel" role="navigation" aria-label="related navigation">
-          <a href="../installAndSetup/faq.html" title="Frequently Asked Questions"
+          <a href="../installAndSetup/upgrading.html" title="Upgrading"
              accesskey="P">previous</a> |
           <a href="about.html" title="About Eggdrop"
              accesskey="N">next</a>
@@ -43,6 +43,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../installAndSetup/readme.html">README</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../installAndSetup/install.html">Installing Eggdrop</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../installAndSetup/faq.html">Frequently Asked Questions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../installAndSetup/upgrading.html">Upgrading</a></li>
 </ul>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="about.html">About Eggdrop</a></li>
@@ -52,9 +53,13 @@
 <li class="toctree-l1"><a class="reference internal" href="bans.html">Bans, Invites, and Exempts</a></li>
 <li class="toctree-l1"><a class="reference internal" href="botnet.html">Botnet Sharing and Linking</a></li>
 <li class="toctree-l1"><a class="reference internal" href="patch.html">Patch How-To</a></li>
+<li class="toctree-l1"><a class="reference internal" href="pbkdf2.html">PBKDF2 Hashing</a></li>
 <li class="toctree-l1"><a class="reference internal" href="tcl-commands.html">Eggdrop Tcl Commands</a></li>
+<li class="toctree-l1"><a class="reference internal" href="twitch.html">Twitch</a></li>
+<li class="toctree-l1"><a class="reference internal" href="twitch-tcl-commands.html">Eggdrop Twitch Tcl Commands</a></li>
 <li class="toctree-l1"><a class="reference internal" href="ipv6.html">IPv6 support</a></li>
 <li class="toctree-l1"><a class="reference internal" href="tls.html">TLS support</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ircv3.html">IRCv3 support</a></li>
 </ul>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../coreDocs/core.html">Eggdrop Core Settings</a></li>
@@ -70,10 +75,12 @@
 <li class="toctree-l1"><a class="reference internal" href="../coreDocs/ident.html">Ident Module</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../coreDocs/irc.html">IRC Module</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../coreDocs/notes.html">Notes Module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../coreDocs/pbkdf2.html">PBKDF2 Module</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../coreDocs/seen.html">Seen Module</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../coreDocs/server.html">Server Module</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../coreDocs/share.html">Share Module</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../coreDocs/transfer.html">Transfer Module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../coreDocs/twitch.html">Twitch Module</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../coreDocs/uptime.html">Uptime Module</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../coreDocs/woobie.html">Woobie Module</a></li>
 </ul>
@@ -124,6 +131,12 @@
 <li class="toctree-l2"><a class="reference internal" href="patch.html#creating-and-submitting-a-patch-via-diff-old-school">Creating and submitting a patch (via diff - old school!)</a></li>
 </ul>
 </li>
+<li class="toctree-l1"><a class="reference internal" href="pbkdf2.html">PBKDF2 Hashing</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="pbkdf2.html#background">Background</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pbkdf2.html#usage">Usage</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pbkdf2.html#tcl-interface">Tcl Interface</a></li>
+</ul>
+</li>
 <li class="toctree-l1"><a class="reference internal" href="tcl-commands.html">Eggdrop Tcl Commands</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="tcl-commands.html#output-commands">Output Commands</a></li>
 <li class="toctree-l2"><a class="reference internal" href="tcl-commands.html#user-record-manipulation-commands">User Record Manipulation Commands</a></li>
@@ -141,10 +154,24 @@
 <li class="toctree-l2"><a class="reference internal" href="tcl-commands.html#match-characters">Match Characters</a></li>
 </ul>
 </li>
+<li class="toctree-l1"><a class="reference internal" href="twitch.html">Twitch</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="twitch.html#disclaimer">Disclaimer</a></li>
+<li class="toctree-l2"><a class="reference internal" href="twitch.html#registering-with-twitch">Registering with Twitch</a></li>
+<li class="toctree-l2"><a class="reference internal" href="twitch.html#editing-the-config-file">Editing the config file</a></li>
+<li class="toctree-l2"><a class="reference internal" href="twitch.html#twitch-web-ui-functions">Twitch web UI functions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="twitch.html#twitch-irc-limitations">Twitch IRC limitations</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="twitch-tcl-commands.html">Eggdrop Twitch Tcl Commands</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="twitch-tcl-commands.html#commands">Commands</a></li>
+<li class="toctree-l2"><a class="reference internal" href="twitch-tcl-commands.html#binds">Binds</a></li>
+</ul>
+</li>
 <li class="toctree-l1"><a class="reference internal" href="ipv6.html">IPv6 support</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="ipv6.html#about">About</a></li>
 <li class="toctree-l2"><a class="reference internal" href="ipv6.html#installation">Installation</a></li>
 <li class="toctree-l2"><a class="reference internal" href="ipv6.html#usage">Usage</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ipv6.html#ctcp-chat-chat4-chat6">CTCP CHAT/CHAT4/CHAT6</a></li>
 <li class="toctree-l2"><a class="reference internal" href="ipv6.html#settings">Settings</a></li>
 </ul>
 </li>
@@ -154,6 +181,12 @@
 <li class="toctree-l2"><a class="reference internal" href="tls.html#usage">Usage</a></li>
 <li class="toctree-l2"><a class="reference internal" href="tls.html#keys-certificates-and-authentication">Keys, certificates and authentication</a></li>
 <li class="toctree-l2"><a class="reference internal" href="tls.html#ssl-tls-settings">SSL/TLS Settings</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="ircv3.html">IRCv3 support</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="ircv3.html#about">About</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ircv3.html#usage">Usage</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ircv3.html#supported-cap-capabilities">Supported CAP capabilities</a></li>
 </ul>
 </li>
 </ul>
@@ -172,7 +205,7 @@
       <div class="footer">
         <div class="left">
           <div role="navigation" aria-label="related navigaton">
-            <a href="../installAndSetup/faq.html" title="Frequently Asked Questions"
+            <a href="../installAndSetup/upgrading.html" title="Upgrading"
               >previous</a> |
             <a href="about.html" title="About Eggdrop"
               >next</a>
@@ -184,8 +217,8 @@
         <div class="right">
           
     <div class="footer" role="contentinfo">
-        &#169; Copyright 2020, Eggheads.
-      Last updated on Jan 20, 2020.
+        &#169; Copyright 2021, Eggheads.
+      Last updated on Feb 06, 2022.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.5.
     </div>
         </div>

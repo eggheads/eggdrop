@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>Eggdrop Core Settings &#8212; Eggdrop 1.9.0 documentation</title>
+    <title>Eggdrop Core Settings &#8212; Eggdrop 1.9.2 documentation</title>
     <link rel="stylesheet" href="../_static/eggdrop.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
@@ -24,7 +24,7 @@
             <img class="logo" src="../_static/eggman.png.gif" alt="Logo"/>
           </a></p>
         <div class="headertitle"><a
-          href="../index.html">Eggdrop 1.9.0 documentation</a></div>
+          href="../index.html">Eggdrop 1.9.2 documentation</a></div>
         <div class="rel" role="navigation" aria-label="related navigation">
           <a href="index.html" title="&lt;no title&gt;"
              accesskey="P">previous</a> |
@@ -43,6 +43,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../installAndSetup/readme.html">README</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../installAndSetup/install.html">Installing Eggdrop</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../installAndSetup/faq.html">Frequently Asked Questions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../installAndSetup/upgrading.html">Upgrading</a></li>
 </ul>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../mainDocs/about.html">About Eggdrop</a></li>
@@ -52,9 +53,13 @@
 <li class="toctree-l1"><a class="reference internal" href="../mainDocs/bans.html">Bans, Invites, and Exempts</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../mainDocs/botnet.html">Botnet Sharing and Linking</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../mainDocs/patch.html">Patch How-To</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../mainDocs/pbkdf2.html">PBKDF2 Hashing</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../mainDocs/tcl-commands.html">Eggdrop Tcl Commands</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../mainDocs/twitch.html">Twitch</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../mainDocs/twitch-tcl-commands.html">Eggdrop Twitch Tcl Commands</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../mainDocs/ipv6.html">IPv6 support</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../mainDocs/tls.html">TLS support</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../mainDocs/ircv3.html">IRCv3 support</a></li>
 </ul>
 <ul class="current">
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Eggdrop Core Settings</a></li>
@@ -70,10 +75,12 @@
 <li class="toctree-l1"><a class="reference internal" href="ident.html">Ident Module</a></li>
 <li class="toctree-l1"><a class="reference internal" href="irc.html">IRC Module</a></li>
 <li class="toctree-l1"><a class="reference internal" href="notes.html">Notes Module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="pbkdf2.html">PBKDF2 Module</a></li>
 <li class="toctree-l1"><a class="reference internal" href="seen.html">Seen Module</a></li>
 <li class="toctree-l1"><a class="reference internal" href="server.html">Server Module</a></li>
 <li class="toctree-l1"><a class="reference internal" href="share.html">Share Module</a></li>
 <li class="toctree-l1"><a class="reference internal" href="transfer.html">Transfer Module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="twitch.html">Twitch Module</a></li>
 <li class="toctree-l1"><a class="reference internal" href="uptime.html">Uptime Module</a></li>
 <li class="toctree-l1"><a class="reference internal" href="woobie.html">Woobie Module</a></li>
 </ul>
@@ -154,7 +161,7 @@ only, but instead everywhere possible, then use this setting.</dd>
 <div class="line">If you’re using virtual hosting (your machine has more than 1 IP), you
 may want to specify the particular IP to bind to. You can specify either
 by hostname or by IP. Note that this is not used for listening. Use the
-‘listen-addr’ variable to specify the listening address.</div>
+‘listen’ command to specify the listening address.</div>
 </div>
 </div>
 <div class="line-block">
@@ -163,20 +170,8 @@ by hostname or by IP. Note that this is not used for listening. Use the
 <div class="line-block">
 <div class="line">IPv6 vhost to bind to for outgoing IPv6 connections. You can set it
 to any valid IPv6 address or hostname, resolving to an IPv6 address.
-Note that this is not used for listening. Use the ‘listen-addr’
-variable to specify the listening address.</div>
-</div>
-</div>
-<div class="line-block">
-<div class="line">set listen-addr “99.99.0.0”</div>
-<div class="line">set listen-addr “2001:db8:618:5c0:263::”</div>
-<div class="line">set listen-addr “virtual.host.com”</div>
-<div class="line-block">
-<div class="line">IPv4/IPv6 address (or hostname) to bind for listening.
-If you don’t set this variable, eggdrop will listen on all available
-IPv4 or IPv6 interfaces, depending on the ‘prefer-ipv6’ variable.
-Note that on most platforms, IPv6 sockets are able to accept both
-IPv4 and IPv6 connections.</div>
+Note that this is not used for listening. Use the ‘listen’ command
+to specify the listening address.</div>
 </div>
 </div>
 <dl class="docutils">
@@ -526,7 +521,7 @@ address to a unique address for your box) or you have IP masquerading
 between you and the rest of the world, and /dcc chat, /ctcp chat or
 userfile sharing aren’t working, enter your outside IP here. This IP
 is used for transfers only, and has nothing to do with the vhost4/6 or
-listen-addr settings. You may still need to set them.</dd>
+listen settings. You may still need to set them.</dd>
 <dt>set reserved-portrange 2010:2020</dt>
 <dd>If you want all dcc file transfers to use a particular portrange either
 because you’re behind a firewall, or for other security reasons, set it
@@ -556,15 +551,11 @@ This will only be shown if the user has one of these extra fields.
 You might prefer to comment this out and use the userinfo1.0.tcl script
 which provides commands for changing all of these.</dd>
 </dl>
-<div class="line-block">
-<div class="line">unbind dcc n tcl *dcc:tcl</div>
-<div class="line">unbind dcc n set *dcc:set</div>
-<div class="line-block">
-<div class="line">Comment these two lines if you wish to enable the .tcl and .set commands.
-If you select your owners wisely, you should be okay enabling these.</div>
-</div>
-</div>
+<p>#unbind dcc n tcl *dcc:tcl</p>
 <dl class="docutils">
+<dt>#unbind dcc n set *dcc:set</dt>
+<dd>Uncomment these two lines if you wish to disable the .tcl and .set commands.
+If you select your owners wisely, you should be okay leaving these enabled.</dd>
 <dt>set must-be-owner 1</dt>
 <dd>If you enable this setting, only permanent owners (owner setting) will
 be able to use .tcl and .set. Moreover, if you want to only let permanent
@@ -712,7 +703,7 @@ is disabled and all certificates are assumed to be valid.</p>
 <dt>set ssl-verify-bots 0</dt>
 <dd>Control certificate verification for linking to hubs</dd>
 <dt>set ssl-verify-clients 0</dt>
-<dd>Control cerfificate verification for SSL listening ports. This includes
+<dd>Control certificate verification for SSL listening ports. This includes
 leaf bots connecting, users telneting in and /ctcp bot chat.</dd>
 </dl>
 </div></blockquote>
@@ -763,7 +754,7 @@ path to them.</p>
 </dd>
 </dl>
 </div></blockquote>
-<p>Copyright (C) 2000 - 2020 Eggheads Development Team</p>
+<p>Copyright (C) 2000 - 2021 Eggheads Development Team</p>
 </div>
 </div>
 
@@ -792,8 +783,8 @@ path to them.</p>
         <div class="right">
           
     <div class="footer" role="contentinfo">
-        &#169; Copyright 2020, Eggheads.
-      Last updated on Jan 20, 2020.
+        &#169; Copyright 2021, Eggheads.
+      Last updated on Feb 06, 2022.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.5.
     </div>
         </div>

@@ -11,3 +11,4 @@ Contents:
    readme.rst
    install.rst
    faq.rst
+   upgrading.rst

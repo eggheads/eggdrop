@@ -8,7 +8,7 @@
  *
  * Changes after Feb 23, 1999 Copyright Eggheads Development Team
  *
- * Copyright (C) 1999 - 2020 Eggheads Development Team
+ * Copyright (C) 1999 - 2022 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -53,8 +53,10 @@ extern int backgrd, use_stderr, resolve_timeout, dcc_total;
 extern unsigned long otraffic_irc_today, otraffic_bn_today, otraffic_dcc_today,
                      otraffic_filesys_today, otraffic_trans_today,
                      otraffic_unknown_today;
+extern time_t online_since;
 
-char natip[121] = "";         /* Public IPv4 to report for systems behind NAT */
+char nat_ip[INET_ADDRSTRLEN] = ""; /* Public IPv4 to report for systems behind NAT */
+char nat_ip_string[11];
 char listen_ip[121] = "";     /* IP (or hostname) for listening sockets       */
 char vhost[121] = "";         /* IPv4 vhost for outgoing connections          */
 #ifdef IPV6
@@ -63,9 +65,8 @@ int pref_af = 0;              /* Prefer IPv6 over IPv4?                       */
 #endif
 char firewall[121] = "";      /* Socks server for firewall.                   */
 int firewallport = 1080;      /* Default port of socks 4/5 firewalls.         */
-char botuser[USERLEN + 1] = "eggdrop"; /* Username of the user running the bot. */
+char botuser[USERLEN + 1] = "eggdrop"; /* Username of the user running the bot*/
 int dcc_sanitycheck = 0;      /* Do some sanity checking on dcc connections.  */
-
 sock_list *socklist = NULL;   /* Enough to be safe.                           */
 sigjmp_buf alarmret;          /* Env buffer for alarm() returns.              */
 
@@ -131,14 +132,13 @@ char *iptostr(struct sockaddr *sa)
  */
 int setsockname(sockname_t *addr, char *src, int port, int allowres)
 {
-  char *endptr;
+  char *endptr, *src2 = src;;
   long val;
   IP ip;
   struct hostent *hp;
   volatile int af = AF_UNSPEC;
 #ifdef IPV6
   char ip2[INET6_ADDRSTRLEN];
-  char *src2 = src;
   int pref;
 #else
   char ip2[INET_ADDRSTRLEN];
@@ -152,9 +152,7 @@ int setsockname(sockname_t *addr, char *src, int port, int allowres)
     ip = htonl(val);
     if (inet_ntop(AF_INET, &ip, ip2, sizeof ip2)) {
       debug2("net: setsockname(): ip %s -> %s", src, ip2);
-#ifdef IPV6
       src2 = ip2;
-#endif
     }
   }
 #ifdef IPV6
@@ -189,9 +187,9 @@ int setsockname(sockname_t *addr, char *src, int port, int allowres)
       hp = NULL;
     if (hp) {
       if (hp->h_addrtype == AF_INET)
-        memcpy(&addr->addr.s4.sin_addr, hp->h_addr, hp->h_length);
+        memcpy(&addr->addr.s4.sin_addr, hp->h_addr_list[0], hp->h_length);
       else
-        memcpy(&addr->addr.s6.sin6_addr, hp->h_addr, hp->h_length);
+        memcpy(&addr->addr.s6.sin6_addr, hp->h_addr_list[0], hp->h_length);
       af = hp->h_addrtype;
     }
   }
@@ -219,7 +217,7 @@ int setsockname(sockname_t *addr, char *src, int port, int allowres)
  * have to resort to hackishly counting :s to see if its IPv6 or not.
  * Go internet.
  */
-  if (!inet_pton(AF_INET, src, &addr->addr.s4.sin_addr)) {
+  if (!inet_pton(AF_INET, src2, &addr->addr.s4.sin_addr)) {
     /* Boring way to count :s */
     count = 0;
     for (i = 0; src[i]; i++) {
@@ -243,7 +241,7 @@ but this Eggdrop was not compiled with IPv6 support.");
       } else
         hp = NULL;
       if (hp) {
-        memcpy(&addr->addr.s4.sin_addr, hp->h_addr, hp->h_length);
+        memcpy(&addr->addr.s4.sin_addr, hp->h_addr_list[0], hp->h_length);
         af = hp->h_addrtype;
       }
     } else
@@ -271,8 +269,8 @@ void getvhost(sockname_t *addr, int af)
   else
     h = vhost6;
 #endif
-  if (setsockname(addr, (h ? h : ""), 0, 1) != af)
-    setsockname(addr, (af == AF_INET ? "0" : "::"), 0, 0);
+  if (!h || !h[0] || setsockname(addr, (h ? h : ""), 0, 1) != af)
+    setsockname(addr, (af == AF_INET ? "0.0.0.0" : "::"), 0, 0);
   /* Remember this 'self-lookup failed' thingie?
      I have good news - you won't see it again ;) */
 }
@@ -370,30 +368,27 @@ int alloctclsock(int sock, int mask, Tcl_FileProc *proc, ClientData cd)
  */
 void setsock(int sock, int options)
 {
-  int i = allocsock(sock, options), parm;
+  int i = allocsock(sock, options), parm = 1;
   struct threaddata *td = threaddata();
-  int res;
+  struct linger linger = {0};
 
   if (i == -1) {
     putlog(LOG_MISC, "*", "Sockettable full.");
     return;
   }
   if (((sock != STDOUT) || backgrd) && !(td->socklist[i].flags & SOCK_NONSOCK)) {
-    parm = 1;
-    setsockopt(sock, SOL_SOCKET, SO_KEEPALIVE, (void *) &parm, sizeof(int));
-
-    parm = 0;
-    setsockopt(sock, SOL_SOCKET, SO_LINGER, (void *) &parm, sizeof(int));
-
+    if (setsockopt(sock, SOL_SOCKET, SO_KEEPALIVE, &parm, sizeof parm))
+      debug2("net: setsock(): setsockopt() s %i level SOL_SOCKET optname SO_KEEPALIVE error %s", sock, strerror(errno));
+    if (setsockopt(sock, SOL_SOCKET, SO_LINGER, &linger, sizeof(struct linger)))
+      debug2("net: setsock(): setsockopt() s %i level SOL_SOCKET optname SO_LINGER error %s", sock, strerror(errno));
     /* Turn off Nagle's algorithm, see man tcp */
-    parm = 1;
-    if ((res = setsockopt(sock, IPPROTO_TCP, TCP_NODELAY, &parm, sizeof parm)))
-      debug2("net: setsock(): setsockopt() s %i level IPPROTO_TCP optname TCP_NODELAY error %i", sock, res);
+    if (setsockopt(sock, IPPROTO_TCP, TCP_NODELAY, &parm, sizeof parm))
+      debug2("net: setsock(): setsockopt() s %i level IPPROTO_TCP optname TCP_NODELAY error %s", sock, strerror(errno));
   }
   if (options & SOCK_LISTEN) {
     /* Tris says this lets us grab the same port again next time */
-    parm = 1;
-    setsockopt(sock, SOL_SOCKET, SO_REUSEADDR, (void *) &parm, sizeof(int));
+    if (setsockopt(sock, SOL_SOCKET, SO_REUSEADDR, &parm, sizeof parm))
+      debug2("net: setsock(): setsockopt() s %i level SOL_SOCKET optname SO_REUSEADDR error %s", sock, strerror(errno));
   }
   /* Yay async i/o ! */
   if ((sock != STDOUT) || backgrd)
@@ -524,7 +519,7 @@ static int get_port_from_addr(const sockname_t *addr)
 #ifdef IPV6
   return ntohs((addr->family == AF_INET) ? addr->addr.s4.sin_port : addr->addr.s6.sin6_port);
 #else
-  return addr->addr.s4.sin_port;
+  return ntohs(addr->addr.s4.sin_port);
 #endif
 }
 
@@ -542,16 +537,16 @@ int open_telnet_raw(int sock, sockname_t *addr)
   socklen_t res_len;
   fd_set sockset;
   struct timeval tv;
-  int i, rc, res;
+  int i, j, rc, res;
 
   for (i = 0; i < dcc_total; i++)
     if (dcc[i].sock == sock) { /* Got idx from sock ? */
 #ifdef TLS
-      debug4("net: open_telnet_raw(): idx %i host %s port %i ssl %i",
-             i, dcc[i].host, dcc[i].port, dcc[i].ssl);
+      debug5("net: open_telnet_raw(): idx %i host %s ip %s port %i ssl %i",
+             i, dcc[i].host, iptostr(&addr->addr.sa), dcc[i].port, dcc[i].ssl);
 #else
-      debug3("net: open_telnet_raw(): idx %i host %s port %i",
-             i, dcc[i].host, dcc[i].port);
+      debug4("net: open_telnet_raw(): idx %i host %s ip %s port %i",
+             i, dcc[i].host, iptostr(&addr->addr.sa), dcc[i].port);
 #endif
       break;
     }
@@ -559,13 +554,19 @@ int open_telnet_raw(int sock, sockname_t *addr)
   if (bind(sock, &name.addr.sa, name.addrlen) < 0) {
     return -1;
   }
-  for (i = 0; i < threaddata()->MAXSOCKS; i++) {
-    if (!(socklist[i].flags & SOCK_UNUSED) && (socklist[i].sock == sock))
-      socklist[i].flags = (socklist[i].flags & ~SOCK_VIRTUAL) | SOCK_CONNECT;
+  for (j = 0; j < threaddata()->MAXSOCKS; j++) {
+    if (!(socklist[j].flags & SOCK_UNUSED) && (socklist[j].sock == sock))
+      socklist[j].flags = (socklist[j].flags & ~SOCK_VIRTUAL) | SOCK_CONNECT;
   }
   if (addr->family == AF_INET && firewall[0])
     return proxy_connect(sock, addr);
   rc = connect(sock, &addr->addr.sa, addr->addrlen);
+  /* To minimize a proven race condition, call ident here (especially when
+   * rc < 0 and errno == EINPROGRESS)
+   */
+  if (dcc[i].status & STAT_SERV) {
+    check_tcl_event("ident");
+  }
   if (rc < 0) {
     if (errno == EINPROGRESS) {
       /* Async connection... don't return socket descriptor
@@ -582,6 +583,7 @@ int open_telnet_raw(int sock, sockname_t *addr)
       if (res == ECONNREFUSED) { /* Connection refused */
         debug2("net: attempted socket connection refused: %s:%i",
                iptostr(&addr->addr.sa), get_port_from_addr(addr));
+        errno = res;
         return -4;
       }
       if (res != 0) {
@@ -713,13 +715,13 @@ int getdccaddr(sockname_t *addr, char *s, size_t l)
 /* Get DCC compatible address for a client to connect (e.g. 1660944385)
  * If addr is not NULL, it should point to the listening socket's address.
  * Otherwise, this function will try to figure out the public address of the
- * machine, using listen_ip and natip. If restrict_af is set, it will limit
+ * machine, using listen_ip and nat_ip. If restrict_af is set, it will limit
  * the possible IPs to the specified family. The result is a string usable
  * for DCC requests
  */
 int getdccfamilyaddr(sockname_t *addr, char *s, size_t l, int restrict_af)
 {
-  char h[121];
+  char h[256];
   sockname_t name, *r = &name;
   int af = AF_UNSPEC;
 #ifdef IPV6
@@ -784,22 +786,29 @@ int getdccfamilyaddr(sockname_t *addr, char *s, size_t l, int restrict_af)
       ((r->family == AF_INET6) && (restrict_af == AF_INET)) ||
       ((r->family == AF_INET) && (restrict_af == AF_INET6)) ||
 #endif
-      (!natip[0] && (r->family == AF_INET) && !r->addr.s4.sin_addr.s_addr))
+      (!nat_ip_string[0] && (r->family == AF_INET) && !r->addr.s4.sin_addr.s_addr))
     return 0;
 
 #ifdef IPV6
   if (r->family == AF_INET6) {
     if (IN6_IS_ADDR_V4MAPPED(&r->addr.s6.sin6_addr) ||
         IN6_IS_ADDR_UNSPECIFIED(&r->addr.s6.sin6_addr)) {
-      memcpy(&ip, r->addr.s6.sin6_addr.s6_addr + 12, sizeof ip);
-      egg_snprintf(s, l, "%lu", natip[0] ? iptolong(inet_addr(natip)) :
-               ntohl(ip));
+      if (*nat_ip_string)
+        strlcpy(s, nat_ip_string, l);
+      else {
+        memcpy(&ip, r->addr.s6.sin6_addr.s6_addr + 12, sizeof ip);
+        snprintf(s, l, "%" PRIu32, ntohl(ip));
+      }
     } else
       inet_ntop(AF_INET6, &r->addr.s6.sin6_addr, s, l);
   } else
 #endif
-  egg_snprintf(s, l, "%lu", natip[0] ? iptolong(inet_addr(natip)) :
-             ntohl(r->addr.s4.sin_addr.s_addr));
+  {
+    if (*nat_ip_string)
+      strlcpy(s, nat_ip_string, l);
+    else
+      snprintf(s, l, "%" PRIu32, ntohl(r->addr.s4.sin_addr.s_addr));
+  }
   return 1;
 }
 
@@ -809,7 +818,7 @@ int getdccfamilyaddr(sockname_t *addr, char *s, size_t l, int restrict_af)
  */
 static int preparefdset(fd_set *fds, sock_list *slist, int slistmax, int tclonly, int tclmask)
 {
-  int fd, i, nfds = 0;
+  int fd, i, maxfd = -1;
 
   FD_ZERO(fds);
   for (i = 0; i < slistmax; i++) {
@@ -832,12 +841,12 @@ static int preparefdset(fd_set *fds, sock_list *slist, int slistmax, int tclonly
           continue;
       } else if (tclonly)
         continue;
-      if (fd > nfds)
-        nfds = fd;
+      if (fd > maxfd)
+        maxfd = fd;
       FD_SET(fd, fds);
     }
   }
-  return nfds;
+  return maxfd;
 }
 
 /* A safer version of write() that deals with partial writes. */
@@ -873,32 +882,46 @@ int sockread(char *s, int *len, sock_list *slist, int slistmax, int tclonly)
 {
   struct timeval t;
   fd_set fdr, fdw, fde;
-  int i, x, nfds_r, nfds_w, nfds_e;
+  int i, x, maxfd_r, maxfd_w, maxfd_e;
   int grab = 511, tclsock = -1, events = 0;
   struct threaddata *td = threaddata();
-  int nfds;
+  int maxfd;
+#ifdef EGG_TDNS
+  int fd;
+  struct dns_thread_node *dtn, *dtn_prev;
+#endif
 
-  nfds_r = preparefdset(&fdr, slist, slistmax, tclonly, TCL_READABLE);
-  nfds_w = preparefdset(&fdw, slist, slistmax, 1, TCL_WRITABLE);
-  nfds_e = preparefdset(&fde, slist, slistmax, 1, TCL_EXCEPTION);
+  maxfd_r = preparefdset(&fdr, slist, slistmax, tclonly, TCL_READABLE);
+#ifdef EGG_TDNS
+  for (dtn = dns_thread_head->next; dtn; dtn = dtn->next) {
+    fd = dtn->fildes[0];
+    FD_SET(fd, &fdr);
+    if (fd > maxfd_r)
+      maxfd_r = fd;
+  }
+#endif
+  maxfd_w = preparefdset(&fdw, slist, slistmax, 1, TCL_WRITABLE);
+  maxfd_e = preparefdset(&fde, slist, slistmax, 1, TCL_EXCEPTION);
 
-  nfds = nfds_r;
-  if (nfds_w > nfds)
-    nfds = nfds_w;
-  if (nfds_e > nfds)
-    nfds = nfds_e;
+  maxfd = maxfd_r;
+  if (maxfd_w > maxfd)
+    maxfd = maxfd_w;
+  if (maxfd_e > maxfd)
+    maxfd = maxfd_e;
 
   /* select() may modify the timeval argument - copy it */
   t.tv_sec = td->blocktime.tv_sec;
   t.tv_usec = td->blocktime.tv_usec;
 
-  x = select((SELECT_TYPE_ARG1) nfds + 1,
-             SELECT_TYPE_ARG234 (nfds_r ? &fdr : NULL),
-             SELECT_TYPE_ARG234 (nfds_w ? &fdw : NULL),
-             SELECT_TYPE_ARG234 (nfds_e ? &fde : NULL),
+  x = select((SELECT_TYPE_ARG1) maxfd + 1,
+             SELECT_TYPE_ARG234 (maxfd_r >= 0 ? &fdr : NULL),
+             SELECT_TYPE_ARG234 (maxfd_w >= 0 ? &fdw : NULL),
+             SELECT_TYPE_ARG234 (maxfd_e >= 0 ? &fde : NULL),
              SELECT_TYPE_ARG5 &t);
   if (x == -1)
     return -2;                  /* socket error */
+  if (x == 0)
+    return -3;                  /* idle */
 
   for (i = 0; i < slistmax; i++) {
     if (!tclonly && ((!(slist[i].flags & (SOCK_UNUSED | SOCK_TCL))) &&
@@ -1017,6 +1040,29 @@ int sockread(char *s, int *len, sock_list *slist, int slistmax, int tclonly)
                                            events);
     return -5;
   }
+#ifdef EGG_TDNS
+  dtn_prev = dns_thread_head;
+  for (dtn = dtn_prev->next; dtn; dtn = dtn->next) {
+    fd = dtn->fildes[0];
+    if (FD_ISSET(fd, &fdr)) {
+      if (dtn->type == DTN_TYPE_HOSTBYIP) {
+        pthread_mutex_lock(&dtn->mutex);
+        call_hostbyip(&dtn->addr, dtn->host, dtn->ok);
+        pthread_mutex_unlock(&dtn->mutex);
+      }
+      else {
+        pthread_mutex_lock(&dtn->mutex);
+        call_ipbyhost(dtn->host, &dtn->addr, dtn->ok);
+        pthread_mutex_unlock(&dtn->mutex);
+      }
+      close(dtn->fildes[0]);
+      dtn_prev->next = dtn->next;
+      nfree(dtn);
+      dtn = dtn_prev;
+    }
+    dtn_prev = dtn;
+  }
+#endif
   return -3;
 }
 
@@ -1045,7 +1091,7 @@ int sockread(char *s, int *len, sock_list *slist, int slistmax, int tclonly)
 
 int sockgets(char *s, int *len)
 {
-  char xx[RECVLINEMAX], *p, *px;
+  char xx[RECVLINEMAX], *p, *px, *p2;
   int ret, i, data = 0;
   size_t len2;
 
@@ -1059,9 +1105,18 @@ int sockgets(char *s, int *len)
          */
         p = strpbrk(socklist[i].handler.sock.inbuf, "\r\n");
         if (p != NULL) {
-          *p++ = 0;
-          while (*p == '\n' || *p == '\r')
+
+          /* this function is used not only for irc connections. dont remove
+           * empty lines for they could be important like for example for http
+           * header termination.
+           */
+          p2 = p;
+          if (*p == '\r')
             p++;
+          if (*p == '\n')
+            p++;
+          *p2 = 0;
+
           strlcpy(s, socklist[i].handler.sock.inbuf, RECVLINEMAX-1);
           if (*p) {
             len2 = strlen(p) + 1;
@@ -1315,10 +1370,9 @@ void tputs(int z, char *s, unsigned int len)
 void dequeue_sockets()
 {
   int i, x;
-  int z = 0;
   fd_set wfds;
   struct timeval tv;
-  int nfds = 0;
+  int maxfd = -1;
 
 /* ^-- start poptix test code, this should avoid writes to sockets not ready to be written to. */
 
@@ -1328,19 +1382,21 @@ void dequeue_sockets()
   for (i = 0; i < threaddata()->MAXSOCKS; i++)
     if (!(socklist[i].flags & (SOCK_UNUSED | SOCK_TCL)) &&
         (socklist[i].handler.sock.outbuf != NULL)) {
-      if (socklist[i].sock > nfds)
-        nfds = socklist[i].sock;
+      if (socklist[i].sock > maxfd)
+        maxfd = socklist[i].sock;
       FD_SET(socklist[i].sock, &wfds);
-      z = 1;
     }
-  if (!z)
+  if (maxfd < 0)
     return;                     /* nothing to write */
 
-  select((SELECT_TYPE_ARG1) nfds + 1, SELECT_TYPE_ARG234 NULL,
+  x = select((SELECT_TYPE_ARG1) maxfd + 1, SELECT_TYPE_ARG234 NULL,
          SELECT_TYPE_ARG234 &wfds, SELECT_TYPE_ARG234 NULL,
          SELECT_TYPE_ARG5 &tv);
 
 /* end poptix */
+
+  if (x <= 0)
+    return;
 
   for (i = 0; i < threaddata()->MAXSOCKS; i++) {
     if (!(socklist[i].flags & (SOCK_UNUSED | SOCK_TCL)) &&
@@ -1642,5 +1698,32 @@ char *traced_myiphostname(ClientData cd, Tcl_Interp *irp, EGG_CONST char *name1,
   putlog(LOG_MISC, "*", "    To prevent future incompatibility, please use the vhost4/listen-addr variables instead.\n");
   putlog(LOG_MISC, "*", "    More information on this subject can be found in the eggdrop/doc/IPV6 file, or\n");
   putlog(LOG_MISC, "*", "    in the comments above those settings in the example eggdrop.conf that is included with Eggdrop.\n");
+  return NULL;
+}
+
+char *traced_natip(ClientData cd, Tcl_Interp *irp, EGG_CONST char *name1,
+                   EGG_CONST char *name2, int flags)
+{
+  const char *value;
+  int r;
+  struct in_addr ia;
+
+  value = Tcl_GetVar2(irp, name1, name2, TCL_GLOBAL_ONLY);
+  if (*value) {
+    r = inet_pton(AF_INET, value, &ia);
+    if (!r) {
+      if (!online_since)
+        fatal("ERROR: nat-ip is not a valid IPv4 address", 0);
+      return "nat-ip is not a valid IPv4 address";
+    }
+    if (r < 0) {
+      if (!online_since)
+        fatal("ERROR: inet_pton(): nat-ip", 0);
+      putlog(LOG_MISC, "*", "ERROR: inet_pton(): nat-ip %s", value);
+      return strerror(errno);
+    }
+    snprintf(nat_ip_string, sizeof nat_ip_string, "%" PRIu32, ntohl(ia.s_addr));
+  } else
+    *nat_ip_string = '\0';
   return NULL;
 }

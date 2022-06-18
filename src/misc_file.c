@@ -3,7 +3,7 @@
  *   copyfile() movefile() file_readable()
  */
 /*
- * Copyright (C) 1999 - 2020 Eggheads Development Team
+ * Copyright (C) 1999 - 2022 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -90,7 +90,7 @@ int copyfilef(char *oldpath, FILE *newfile)
   int fi, x;
   char buf[512];
   struct stat st;
-  long oripos;
+  off_t oripos;
 
 #ifndef CYGWIN_HACKS
   fi = open(oldpath, O_RDONLY, 0);
@@ -105,7 +105,7 @@ int copyfilef(char *oldpath, FILE *newfile)
     return 3;
   }
 
-  oripos = ftell(newfile);
+  oripos = ftello(newfile);
   rewind(newfile);
 
   for (x = 1; x > 0;) {
@@ -113,7 +113,7 @@ int copyfilef(char *oldpath, FILE *newfile)
     if (x > 0) {
       if (fwrite(buf, 1, x, newfile) < x) {      /* Couldn't write */
         close(fi);
-        fseek(newfile, oripos, SEEK_SET);
+        fseeko(newfile, oripos, SEEK_SET);
         return 4;
       }
     }
@@ -122,7 +122,7 @@ int copyfilef(char *oldpath, FILE *newfile)
   fsync(fileno(newfile));
   close(fi);
 
-  fseek(newfile, oripos, SEEK_SET);
+  fseeko(newfile, oripos, SEEK_SET);
 
   return 0;
 }
@@ -142,7 +142,7 @@ int fcopyfile(FILE *oldfile, char *newpath)
   size_t x;
   char buf[512];
   struct stat st;
-  long oripos;
+  off_t oripos;
 
   if (fstat(fileno(oldfile), &st) || !(st.st_mode & S_IFREG)) {
     return 3;
@@ -152,7 +152,7 @@ int fcopyfile(FILE *oldfile, char *newpath)
     return 2;
   }
 
-  oripos = ftell(oldfile);
+  oripos = ftello(oldfile);
   rewind(oldfile);
 
   for (x = 1; x > 0;) {
@@ -161,7 +161,7 @@ int fcopyfile(FILE *oldfile, char *newpath)
       if (write(fo, buf, x) < x) {      /* Couldn't write */
         close(fo);
         unlink(newpath);
-        fseek(oldfile, oripos, SEEK_SET);
+        fseeko(oldfile, oripos, SEEK_SET);
         return 4;
       }
     }
@@ -170,7 +170,7 @@ int fcopyfile(FILE *oldfile, char *newpath)
   fsync(fo);
   close(fo);
 
-  fseek(oldfile, oripos, SEEK_SET);
+  fseeko(oldfile, oripos, SEEK_SET);
 
   return 0;
 }

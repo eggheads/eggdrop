@@ -118,14 +118,14 @@ module, please consult the default config file for info.\n
 0x534,CONFIG FILE NOT LOADED (NOT FOUND, OR ERROR)
 0x535,USER FILE NOT FOUND!  (try './eggdrop -m %s' to make one)\n
 0x536,STARTING BOT IN USERFILE CREATION MODE.\n\
-Telnet to the bot and enter 'NEW' as your nickname.
+Telnet to the bot and enter 'NEW' as your handle.
 0x537,OR go to IRC and type:  /msg %s hello\n
 0x538,This will make the bot recognize you as the master.
 0x539,USERFILE ALREADY EXISTS (drop the '-m')
 # 0x53a - unused
 0x53b,Can't reload user file!
 0x53c,User file is missing!
-0x53e,%B  (%E)\n\nPlease enter your nickname.\n
+0x53e,%B  (%E)\n\nPlease enter your handle.\n
 0x53f,Cycling logfile %s, over max-logsize (%d)
 # 0x540 - unused
 0x541,Last message repeated %d time(s).\n
@@ -148,7 +148,7 @@ Telnet to the bot and enter 'NEW' as your nickname.
 0x60a,NOTICE %s :Hi %s!  I'm %s, an eggdrop bot.\n
 0x60b,NOTICE %s :I'll recognize you by hostmask '%s' from now on.\n
 0x60c,Since you come from a common irc site, this means you should
-0x60d,always use this nickname when talking to me.
+0x60d,always use this handle when talking to me.
 0x60e,YOU ARE THE OWNER ON THIS BOT NOW
 0x60f,Bot installation complete, first master is %s
 0x610,Welcome to Eggdrop! =]
@@ -429,3 +429,4 @@ Telnet to the bot and enter 'NEW' as your nickname.
 0xe32,Refused telnet connection from %s (tried using my botnetnick)
 0xe33,Lost telnet connection from %s while checking for duplicate
 0xe34,TIMEOUT ident connection
+0xe35,Please remove the #comment from your listen setting and try again

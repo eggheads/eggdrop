@@ -1,5 +1,5 @@
 Eggdrop Tricks
-Last revised: December 08, 2003
+Last revised: Jun 02, 2021
 
 ==============
 Eggdrop Tricks
@@ -24,6 +24,12 @@ Eggdrop Tricks
     keeping one logfile all the time. This is not recommended on high traffic
     channels.
 
+  - Because of how traditional IRC works, Eggdrop doesn't capture outgoing messages
+    to its logfile. However, if the server you are on supports the IRCv3 capability
+    "echo-message", you can request this capability to be enabled by the server
+    in your config file. This will cause the server to send Eggdrop'd public
+    messages back, thereby allowing those messages to be logged.
+
   - You can modify Eggdrop's output in the partyline, kick messages, and other
     texts by editing core.english.lang in the language directory.
 
@@ -43,5 +49,5 @@ Eggdrop Tricks
       set userfile "$myvar.user"
       set chanfile "$myvar.chan"
 
-  Copyright (C) 1999 - 2020 Eggheads Development Team
+  Copyright (C) 1999 - 2022 Eggheads Development Team
 

@@ -36,7 +36,7 @@ the module you wish to install.
   2. Place the new module in its own directory (in the format of
      (modulename).mod) in src/mod.
 
-  3. Run ./configure (from eggdrop1.8.x/).
+  3. Run ./configure (from eggdrop1.9.x/).
 
   4. Type 'make config' or 'make iconfig'.
 
@@ -461,10 +461,8 @@ What to do with a module?
 -------------------------
 
    If you have written a module and feel that you wish to share it with the
-   rest of the Eggdrop community, upload it to the incoming directory on
-   incoming.eggheads.org (/incoming/modules/1.8). Place a nice descriptive
-   text (modulename.desc) with it, and it'll make its way to the modules
-   directory on ftp.eggheads.org. Don't forget to mention in your text file
-   which version Eggdrop the module is written for.
+   rest of the Eggdrop community, find us in #eggdrop on Libera. Make sure you
+   have a nice descriptive text (modulename.desc) to describe it, and make sure
+   to mention in your text file which version Eggdrop the module is written for.
 
-Copyright (C) 1999 - 2020 Eggheads Development Team
+Copyright (C) 1999 - 2022 Eggheads Development Team

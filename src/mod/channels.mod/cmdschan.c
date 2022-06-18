@@ -3,7 +3,7 @@
  */
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2020 Eggheads Development Team
+ * Copyright (C) 1999 - 2022 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -1401,7 +1401,7 @@ static void cmd_chaninfo(struct userrec *u, int idx, char *par)
           tmp = 1;
         }
         if (ii == 1)
-          egg_snprintf(work, sizeof work, "    ");
+          strlcpy(work, "    ", sizeof work);
         work_len = strlen(work);
         egg_snprintf(work + work_len, sizeof(work) - work_len, " %c%s",
                      getudef(ul->values, chan->dname) ? '+' : '-', ul->name);
@@ -1425,7 +1425,7 @@ static void cmd_chaninfo(struct userrec *u, int idx, char *par)
           dprintf(idx, "User defined channel settings:\n");
           tmp = 1;
         }
-        egg_snprintf(work + work_len, sizeof(work) - work_len, "%s: %d   ",
+        egg_snprintf(work + work_len, sizeof(work) - work_len, "%s: %" PRIdPTR "   ",
                      ul->name, getudef(ul->values, chan->dname));
         ii++;
         if (ii > 4) {
@@ -1509,8 +1509,7 @@ static void cmd_chanset(struct userrec *u, int idx, char *par)
         dprintf(idx, "Usage: chanset [%schannel] <settings>\n", CHANMETA);
         return;
       }
-      if (!chan &&
-          !(chan = findchan_by_dname(chname = dcc[idx].u.chat->con_chan))) {
+      if (!chan && !(chan = findchan_by_dname(dcc[idx].u.chat->con_chan))) {
         dprintf(idx, "Invalid console channel.\n");
         return;
       }

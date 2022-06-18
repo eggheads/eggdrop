@@ -28,6 +28,11 @@ See also: -ignore, ignores
    have no flags, an optional hostmask, and no password.
 
 See also: -user, +host, -host
+%{help=+account}%{+m}
+###  %baccount%b [handle] <account name>
+   Adds the provided services account name to a handle. If a handle name
+
+See also: -account
 %{help=-bot}%{+t}
 ###  %b-bot%b <bot>
    This is exactly the same as %b'.-user'%b (it removes a user record). It is
@@ -55,6 +60,12 @@ See also: +ignore, ignores
    Removes the specified handle's user record.
 
 See also: +user, +bot, -bot
+%{help=-account}%{-}
+### %b-account%b <handle> <account>
+   Removes an account from your handle.
+%{+m|m}
+
+See also: +account
 %{help=addlog}%{+to|o}
 ###  %baddlog%b <text>
    Adds your comment to the bot's logfile. Bot masters can go back later and
@@ -234,7 +245,7 @@ See also: chhandle
    channel-specific commands (like 'say' and 'op') take affect on.
 
    Valid flags are:
-     %bj%b  joins, parts, quits, and netsplits on the channel
+     %bj%b  joins, parts, quits, aways, and netsplits on the channel
      %bk%b  kicks, bans, and mode changes on the channel
      %bm%b  private msgs, notices and ctcps to the bot
      %bp%b  public text on the channel

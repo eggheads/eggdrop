@@ -96,9 +96,12 @@ versions 1.3.24i-1.3.28, 1.4.x, 1.5.x, 1.6.x and 1.8.x.
 1.8:
   Cizzle, Geo, mortmann, pseudo, simple, thommey
 
+1.9:
+  Cizzle, Geo, mortmann, thommey
+
 See also: THANKS, doc/Versions, doc/Changes
 
 ------------------------------------------------------------------------------
 
 Copyright (C) 1997 Robey Pointer
-Copyright (C) 1999 - 2020 Eggheads Development Team
+Copyright (C) 1999 - 2021 Eggheads Development Team

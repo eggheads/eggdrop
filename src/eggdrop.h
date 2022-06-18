@@ -6,7 +6,7 @@
  */
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2020 Eggheads Development Team
+ * Copyright (C) 1999 - 2022 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -65,8 +65,9 @@
 #define BADHANDCHARS "-,+*=:!.@#;$%&"
 
 /* And now valid characters! */
-#define CHARSET_ALPHA "abcdefghijklmnopqrstuvwxyz"
-#define CHARSET_ALPHANUM "0123456789abcdefghijklmnopqrstuvwxyz"
+#define CHARSET_LOWER_ALPHA     "abcdefghijklmnopqrstuvwxyz"
+#define CHARSET_LOWER_ALPHA_NUM "0123456789abcdefghijklmnopqrstuvwxyz"
+#define CHARSET_PASSWORD        "0123456789?ABCDEFGHIJKLMNOPQRSTUVWXYZ_abcdefghijklmnopqrstuvwxyz"
 
 
 /* Language stuff */
@@ -79,23 +80,19 @@
 /* The 'configure' script should make this next part automatic, so you
  * shouldn't need to adjust anything below.
  */
-#define NICKLEN      NICKMAX + 1
-#define UHOSTLEN     UHOSTMAX + 1
-#define DIRLEN       DIRMAX + 1
-#define LOGLINELEN   LOGLINEMAX + 1
-#define NOTENAMELEN  ((HANDLEN * 2) + 1)
-#define PASSWORDMAX  16
-#define PASSWORDLEN  PASSWORDMAX + 1
+#define NICKLEN     NICKMAX + 1
+#define UHOSTLEN    UHOSTMAX + 1
+#define DIRLEN      DIRMAX + 1
+#define LOGLINELEN  LOGLINEMAX + 1
+#define NOTENAMELEN ((HANDLEN * 2) + 1)
+#define PASSWORDMAX 30 /* highest value compatible to older eggdrop */
+#define PASSWORDLEN PASSWORDMAX + 1
 
 
 /* We have to generate compiler errors in a weird way since not all compilers
  * support the #error preprocessor directive. */
 #ifndef STDC_HEADERS
 #  include "Error: Your system must have standard ANSI C headers."
-#endif
-
-#ifndef HAVE_VPRINTF
-#  include "Error: You need vsprintf to compile eggdrop."
 #endif
 
 #ifdef HAVE_UNISTD_H
@@ -305,11 +302,12 @@
 typedef uint32_t IP;
 
 /* Debug logging macros */
-#define debug0(x)             putlog(LOG_DEBUG,"*",x)
-#define debug1(x,a1)          putlog(LOG_DEBUG,"*",x,a1)
-#define debug2(x,a1,a2)       putlog(LOG_DEBUG,"*",x,a1,a2)
-#define debug3(x,a1,a2,a3)    putlog(LOG_DEBUG,"*",x,a1,a2,a3)
-#define debug4(x,a1,a2,a3,a4) putlog(LOG_DEBUG,"*",x,a1,a2,a3,a4)
+#define debug0(x)                putlog(LOG_DEBUG,"*",x)
+#define debug1(x,a1)             putlog(LOG_DEBUG,"*",x,a1)
+#define debug2(x,a1,a2)          putlog(LOG_DEBUG,"*",x,a1,a2)
+#define debug3(x,a1,a2,a3)       putlog(LOG_DEBUG,"*",x,a1,a2,a3)
+#define debug4(x,a1,a2,a3,a4)    putlog(LOG_DEBUG,"*",x,a1,a2,a3,a4)
+#define debug5(x,a1,a2,a3,a4,a5) putlog(LOG_DEBUG,"*",x,a1,a2,a3,a4,a5)
 
 /* These apparently are unsafe without recasting. */
 #define egg_isdigit(x)  isdigit((int)  (unsigned char) (x))
@@ -540,6 +538,7 @@ struct dupwait_info {
 #define STAT_BOTONLY 0x00020    /* telnet on bots-only connect          */
 #define STAT_USRONLY 0x00040    /* telnet on users-only connect         */
 #define STAT_PAGE    0x00080    /* page output to the user              */
+#define STAT_SERV    0x00100    /* this is a server connection          */
 
 /* For stripping out mIRC codes. */
 #define STRIP_COLOR     0x00001    /* remove mIRC color codes            */
@@ -781,6 +780,25 @@ enum {
 #ifndef STRINGIFY
 #  define STRINGIFY(x) STRINGIFY1(x)
 #  define STRINGIFY1(x) #x
+#endif
+
+#ifdef EGG_TDNS
+#include <pthread.h>
+#define DTN_TYPE_HOSTBYIP 0
+#define DTN_TYPE_IPBYHOST 1
+
+/* linked list instead of array because of multi threading */
+struct dns_thread_node {
+  pthread_mutex_t mutex;
+  int fildes[2];
+  int type;
+  sockname_t addr;
+  char host[256];
+  int ok;
+  struct dns_thread_node *next;
+};
+
+extern struct dns_thread_node *dns_thread_head;
 #endif
 
 #endif /* _EGG_EGGDROP_H */
