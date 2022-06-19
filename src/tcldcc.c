@@ -4,7 +4,7 @@
  */
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2021 Eggheads Development Team
+ * Copyright (C) 1999 - 2022 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -504,7 +504,7 @@ static int tcl_control STDVAR
   /* Do not buffer data anymore. All received and stored data is passed
    * over to the dcc functions from now on.  */
   sockoptions(dcc[idx].sock, EGG_OPTION_UNSET, SOCK_BUFFER);
-  strlcpy(dcc[idx].u.script->command, argv[2], 120);
+  strlcpy(dcc[idx].u.script->command, argv[2], sizeof dcc[idx].u.script->command);
   return TCL_OK;
 }
 

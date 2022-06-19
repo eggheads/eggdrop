@@ -12,17 +12,17 @@ INSTALL_DATA = @INSTALL_DATA@
 INSTALL_SCRIPT = @INSTALL_SCRIPT@
 
 DOCS = ABOUT BANS BOTNET BUG-REPORT COMPILE-GUIDE CONTENTS \
-Changes1.8 FIRST-SCRIPT IPV6 KNOWN-PROBLEMS MODULES PARTYLINE PATCH-HOWTO \
-TEXT-SUBSTITUTIONS TLS TRICKS USERS Versions WEIRD-MESSAGES tcl-commands.doc \
-FAQ
+Changes1.9 FIRST-SCRIPT IPV6 IRCv3 LEGAL PARTYLINE PATCH-HOWTO \
+PBKDF2 TLS TRICKS USERS Versions tcl-commands.doc twitch-tcl-commands.doc
 
 MAN1 = man1/eggdrop.1
 
 WEB_ROOT = $(srcdir)/html/*.html
-WEB_APPND = $(srcdir)/html/appendices/*.html
-WEB_CORE = $(srcdir)/html/coreDocs/*.html
-WEB_INST = $(srcdir)/html/installAndSetup/*.html
-WEB_MAIN = $(srcdir)/html/mainDocs/*.html
+WEB_ABOUT = $(srcdir)/html/about/*.html
+WEB_INSTALL = $(srcdir)/html/install/*.html
+WEB_MOD = $(srcdir)/html/modules/*.html
+WEB_TUT = $(srcdir)/html/tutorials/*.html
+WEB_USE = $(srcdir)/html/using/*.html
 WEB_STAT = $(srcdir)/html/_static/*
 
 SETTING_DOCS = core.settings CONTENTS
@@ -52,21 +52,25 @@ install:
 		echo "Creating 'doc/html' subdirectory."; \
 		$(top_srcdir)/misc/mkinstalldirs $(DEST)/doc/html >/dev/null; \
 	fi
-	@if test ! -d $(DEST)/doc/html/appendices; then \
-		echo "Creating 'doc/html/appendices' subdirectory."; \
-		$(top_srcdir)/misc/mkinstalldirs $(DEST)/doc/html/appendices >/dev/null; \
+	@if test ! -d $(DEST)/doc/html/about; then \
+		echo "Creating 'doc/html/about' subdirectory."; \
+		$(top_srcdir)/misc/mkinstalldirs $(DEST)/doc/html/about >/dev/null; \
 	fi
-	@if test ! -d $(DEST)/doc/html/coreDocs; then \
-                echo "Creating 'doc/html/coreDocs' subdirectory."; \
-                $(top_srcdir)/misc/mkinstalldirs $(DEST)/doc/html/coreDocs >/dev/null; \
+	@if test ! -d $(DEST)/doc/html/install; then \
+                echo "Creating 'doc/html/install' subdirectory."; \
+                $(top_srcdir)/misc/mkinstalldirs $(DEST)/doc/html/install >/dev/null; \
         fi
-	@if test ! -d $(DEST)/doc/html/installAndSetup; then \
-                echo "Creating 'doc/html/installAndSetup' subdirectory."; \
-                $(top_srcdir)/misc/mkinstalldirs $(DEST)/doc/html/installAndSetup >/dev/null; \
+	@if test ! -d $(DEST)/doc/html/modules; then \
+                echo "Creating 'doc/html/modules' subdirectory."; \
+                $(top_srcdir)/misc/mkinstalldirs $(DEST)/doc/html/modules >/dev/null; \
         fi
-	@if test ! -d $(DEST)/doc/html/mainDocs; then \
-                echo "Creating 'doc/html/mainDocs' subdirectory."; \
-                $(top_srcdir)/misc/mkinstalldirs $(DEST)/doc/html/mainDocs >/dev/null; \
+	@if test ! -d $(DEST)/doc/html/tutorials; then \
+                echo "Creating 'doc/html/tutorials' subdirectory."; \
+                $(top_srcdir)/misc/mkinstalldirs $(DEST)/doc/html/tutorials >/dev/null; \
+        fi
+	@if test ! -d $(DEST)/doc/html/using; then \
+                echo "Creating 'doc/html/using' subdirectory."; \
+                $(top_srcdir)/misc/mkinstalldirs $(DEST)/doc/html/using >/dev/null; \
         fi
 	@if test ! -d $(DEST)/doc/html/_static; then \
                 echo "Creating 'doc/html/_static' subdirectory."; \
@@ -96,24 +100,29 @@ install:
 			$(INSTALL_DATA) $$i $(DEST)/doc/html/; \
 		done; \
 	fi
-	@if test "x`echo $(WEB_APPND)`" != "x$(WEB_APPND)"; then \
-		for i in `echo $(WEB_APPND)`; do \
+	@if test "x`echo $(WEB_ABOUT)`" != "x$(WEB_ABOUT)"; then \
+		for i in `echo $(WEB_ABOUT)`; do \
 			$(INSTALL_DATA) $$i $(DEST)/doc/html/appendices; \
 		done; \
 	fi
-	@if test "x`echo $(WEB_CORE)`" != "x$(WEB_CORE)"; then \
-                for i in `echo $(WEB_CORE)`; do \
-                        $(INSTALL_DATA) $$i $(DEST)/doc/html/coreDocs; \
+	@if test "x`echo $(WEB_INSTALL)`" != "x$(WEB_INSTALL)"; then \
+                for i in `echo $(WEB_INSTALL)`; do \
+                        $(INSTALL_DATA) $$i $(DEST)/doc/html/install; \
                 done; \
         fi
-	@if test "x`echo $(WEB_INST)`" != "x$(WEB_INST)"; then \
-                for i in `echo $(WEB_INST)`; do \
-                        $(INSTALL_DATA) $$i $(DEST)/doc/html/installAndSetup; \
+	@if test "x`echo $(WEB_MOD)`" != "x$(WEB_MOD)"; then \
+                for i in `echo $(WEB_MOD)`; do \
+                        $(INSTALL_DATA) $$i $(DEST)/doc/html/modules; \
                 done; \
         fi
-	@if test "x`echo $(WEB_MAIN)`" != "x$(WEB_MAIN)"; then \
-                for i in `echo $(WEB_MAIN)`; do \
-                        $(INSTALL_DATA) $$i $(DEST)/doc/html/mainDocs; \
+	@if test "x`echo $(WEB_TUT)`" != "x$(WEB_TUT)"; then \
+                for i in `echo $(WEB_TUT)`; do \
+                        $(INSTALL_DATA) $$i $(DEST)/doc/html/tutorials; \
+                done; \
+        fi
+	@if test "x`echo $(WEB_USE)`" != "x$(WEB_USE)"; then \
+                for i in `echo $(WEB_USE)`; do \
+                        $(INSTALL_DATA) $$i $(DEST)/doc/html/using; \
                 done; \
         fi
 	@if test "x`echo $(WEB_STAT)`" != "x$(WEB_STAT)"; then \

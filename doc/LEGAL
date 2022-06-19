@@ -1,0 +1,29 @@
+Boring legal stuff
+
+The Eggdrop bot is Copyright (C) by Robey Pointer. As of January 1997,
+Eggdrop is distributed according to the GNU General Public License.
+There should be a copy of this license in the COPYING file. If not,
+write to the Free Software Foundation, Inc., 51 Franklin Street, Fifth
+Floor, Boston, MA 02110-1301, USA. As of Eggdrop 1.3.28, all changes
+made by the Eggheads Development Team to the Eggdrop source code and any
+related files are Copyright (C) by Eggheads Development Team. The source
+code will still be distributed according to the GNU General Public
+License as Robey Pointer did in the past. Releases previous to 1.0m were
+made using a different licensing scheme. You may, at your option, use
+the GNU General Public License on those versions (instead of the license
+packaged with them) with Robey's blessing. For any versions bearing a
+copyright date of 1997 or later, you have no choice - you must use the
+GNU General Public License.
+
+The files match.c, net.c and blowfish.c are exempt from the above
+restrictions. match.c is original code by Chris Fuller and has been
+placed by him into the public domain. net.c is by Robey has placed it in
+the public domain. blowfish.c is by various sources and is in the public
+domain as well. All 3 files contain useful functions that could easily
+be ported to other applications.
+
+Tcl is by John Ousterhout and is in no way affiliated with Eggdrop. It
+likely has its own set of copyrights and what-nots.
+
+There is no warranty, implied or whatever. You use this software at your
+own risk, no matter what purpose you put it to.

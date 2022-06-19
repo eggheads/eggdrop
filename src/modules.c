@@ -6,7 +6,7 @@
  */
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2021 Eggheads Development Team
+ * Copyright (C) 1999 - 2022 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -345,7 +345,7 @@ Function global_table[] = {
   (Function) & tls_vfyclients,    /* int                                 */
   (Function) & tls_vfydcc,        /* int                                 */
 #else
-  (Function) 0,                   /* was natip -- use getmyip() instead  */
+  (Function) 0,                   /* was natip                           */
   (Function) 0,                   /* was myip -- use getvhost() instead  */
 #endif
   (Function) origbotname,         /* char *                              */
@@ -623,7 +623,11 @@ Function global_table[] = {
   (Function) & USERENTRY_PASS2,   /* struct user_entry_type *            */
   (Function) crypto_verify,
   (Function) egg_uname,
-  (Function) get_expire_time
+  (Function) get_expire_time,
+/* 316 - 319 */
+  (Function) & USERENTRY_ACCOUNT, /* struct user_entry_type *            */
+  (Function) get_user_by_account,
+  (Function) delhost_by_handle
 };
 
 void init_modules(void)

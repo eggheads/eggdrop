@@ -18,7 +18,7 @@
  */
 
 /*
- * Copyright (C) 2020 - 2021 Eggheads Development Team
+ * Copyright (C) 2020 - 2022 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -50,7 +50,6 @@ static Function *global = NULL, *server_funcs = NULL;
 static p_tcl_bind_list H_ccht, H_cmsg, H_htgt, H_wspr, H_wspm, H_rmst, H_usst, H_usrntc;
 
 twitchchan_t *twitchchan = NULL;
-static int keepnick;
 static char cap_request[55];
 
 /* Calculate the memory we keep allocated.
@@ -59,7 +58,6 @@ static int twitch_expmem()
 {
   int size = 0;
 
-  Context;
   return size;
 }
 
@@ -82,6 +80,22 @@ void remove_chars(char* str, char c) {
         pw += (*pw != c);
     }
     *pw = '\0';
+}
+
+char *traced_keepnick(ClientData cd, Tcl_Interp *irp, EGG_CONST char *name1,
+                   EGG_CONST char *name2, int flags)
+{
+  const char *value;
+
+  if (flags & TCL_TRACE_DESTROYED) {
+    Tcl_TraceVar(interp, "keep-nick", TCL_GLOBAL_ONLY|TCL_TRACE_WRITES|TCL_TRACE_UNSETS, traced_keepnick, NULL);
+  }
+  value = Tcl_GetVar2(irp, name1, name2, TCL_GLOBAL_ONLY);
+  if (value && strcmp(value, "0")) {
+    putlog(LOG_MISC, "*", "Twitch: keep-nick is forced to be 0 when twitch.mod is loaded");
+    Tcl_SetVar2(irp, name1, name2, "0", TCL_GLOBAL_ONLY);
+  }
+  return NULL;
 }
 
 static void cmd_twcmd(struct userrec *u, int idx, char *par) {
@@ -241,7 +255,7 @@ static int check_tcl_whisperm(char *from, char *cmd, char *msg) {
   strlcpy(uhost, from, sizeof buf);
   nick = splitnick(&uhost);
   if (msg[0])                       /* Re-attach the cmd to the msg */
-    simple_sprintf(args, "%s %s", cmd, msg);
+    snprintf(args, sizeof args, "%s %s", cmd, msg);
   else
     strlcpy(args, cmd, sizeof args);
   get_user_flagrec(u, &fr, NULL);
@@ -792,10 +806,11 @@ static tcl_cmds mytcl[] = {
   {NULL,                   NULL}
 };
 
+/*
 static tcl_ints my_tcl_ints[] = {
-  {"keep-nick",         &keepnick,        STR_PROTECT},
   {NULL,                NULL,                       0}
 };
+*/
 
 static tcl_strings my_tcl_strings[] = {
   {"cap-request",   cap_request,    55,     STR_PROTECT},
@@ -822,12 +837,12 @@ static cmd_t twitch_rawt[] = {
 
 static char *twitch_close()
 {
-  Context;
   rem_builtins(H_dcc, mydcc);
   rem_builtins(H_raw, twitch_raw);
   rem_builtins(H_rawt, twitch_rawt);
   rem_tcl_commands(mytcl);
-  rem_tcl_ints(my_tcl_ints);
+  // rem_tcl_ints(my_tcl_ints);
+  rem_tcl_strings(my_tcl_strings);
   del_bind_table(H_ccht);
   del_bind_table(H_cmsg);
   del_bind_table(H_htgt);
@@ -859,13 +874,13 @@ static Function twitch_table[] = {
 
 char *twitch_start(Function *global_funcs)
 {
+  const char *value;
+
   /* Assign the core function table. After this point you use all normal
    * functions defined in src/mod/modules.h
    */
   global = global_funcs;
-  keepnick = 0;
 
-  Context;
   /* Register the module. */
   module_register(MODULE_NAME, twitch_table, 0, 1);
 
@@ -894,7 +909,7 @@ char *twitch_start(Function *global_funcs)
  */
   if (net_type_int != NETT_TWITCH) {
     fatal("ERROR: ATTEMPTED TO LOAD TWITCH MODULE WITH INCORRECT NET-TYPE SET\n"
-          "  Please check net-type in config and try again", 0);
+          "  Please check that net-type is set to twitch in config before loadmodule twitch and try again", 0);
   }
 
   H_ccht = add_bind_table("ccht", HT_STACKABLE, twitch_2char);
@@ -906,17 +921,22 @@ char *twitch_start(Function *global_funcs)
   H_usst = add_bind_table("usst", HT_STACKABLE, twitch_3char);
   H_usrntc = add_bind_table("usrntc", HT_STACKABLE, twitch_3char);
 
-/* Override config setting with these values; they are required for Twitch */
+  /* Override config setting with these values; they are required for Twitch */
   Tcl_SetVar(interp, "cap-request",
         "twitch.tv/commands twitch.tv/membership twitch.tv/tags", 0);
-  Tcl_SetVar(interp, "keep-nick", "0", 0);  /* keep-nick causes ISONs to be
-                                             * sent, which are not supported */
+  /* keep-nick causes ISONs to be sent, which are not supported */
+  if ((value = Tcl_GetVar2(interp, "keep-nick", NULL, TCL_GLOBAL_ONLY)) && strcmp(value, "0")) {
+    putlog(LOG_MISC, "*", "Twitch: keep-nick is forced to be 0 when twitch.mod is loaded");
+  }
+  Tcl_SetVar2(interp, "keep-nick", NULL, "0", TCL_GLOBAL_ONLY);
+  Tcl_TraceVar(interp, "keep-nick", TCL_GLOBAL_ONLY|TCL_TRACE_WRITES|TCL_TRACE_UNSETS, traced_keepnick, NULL);
+
   /* Add command table to bind list */
   add_builtins(H_dcc, mydcc);
   add_builtins(H_raw, twitch_raw);
   add_builtins(H_rawt, twitch_rawt);
   add_tcl_commands(mytcl);
-  add_tcl_ints(my_tcl_ints);
+  // add_tcl_ints(my_tcl_ints);
   add_tcl_strings(my_tcl_strings);
   return NULL;
 }

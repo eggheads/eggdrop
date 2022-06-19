@@ -12,7 +12,7 @@
  */
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2021 Eggheads Development Team
+ * Copyright (C) 1999 - 2022 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -482,9 +482,8 @@ static void tell_user(int idx, struct userrec *u)
   }
   egg_snprintf(format, sizeof format, "%%-%us %%-5s%%5d %%-15s %%s (%%s)\n",
                HANDLEN);
-  if ((get_user(&USERENTRY_PASS, u)) || (get_user(&USERENTRY_PASS2, u))) {
+  if (!u_pass_match(u, "-"))
     p = 1;
-  }
   dprintf(idx, format, u->handle, p ? "yes" : "no", n, s, s1,
           (li && li->lastonplace) ? li->lastonplace : "nowhere");
   /* channel flags? */
