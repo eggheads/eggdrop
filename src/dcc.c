@@ -2374,9 +2374,10 @@ static void dcc_telnet_got_ident(int i, char *host)
   /* Note: we don't really care about telnet status here. We use the
    * STATUS option as a hopefully harmless way to detect if the other
    * side is a telnet client or not. */
+#ifdef TLS
   if (!dcc[i].ssl)
     dprintf(i, TLN_IAC_C TLN_WILL_C TLN_STATUS_C);
-
+#endif
   /* Copy acceptable-nick/host mask */
   dcc[i].status = STAT_TELNET | STAT_ECHO;
   if (!strcmp(dcc[idx].nick, "(bots)"))
