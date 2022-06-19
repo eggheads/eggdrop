@@ -531,7 +531,11 @@ static int tcl_server STDVAR {
     z = serverlist;
     while(z != NULL) {
       server = Tcl_NewListObj(0, NULL);
+#ifdef TLS
       snprintf(s, sizeof s, "%s%d", z->ssl ? "+" : "", z->port);
+#else
+      snprintf(s, sizeof s, "%d", z->port);
+#endif
       Tcl_ListObjAppendElement(irp, server, Tcl_NewStringObj(z->name, -1));
       Tcl_ListObjAppendElement(irp, server, Tcl_NewStringObj(s, -1));
       Tcl_ListObjAppendElement(irp, server, Tcl_NewStringObj(z->pass, -1));
