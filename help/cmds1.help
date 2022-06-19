@@ -30,7 +30,7 @@ See also: -ignore, ignores
 See also: -user, +host, -host
 %{help=+account}%{+m}
 ###  %baccount%b [handle] <account name>
-   Adds the provided services account name to a handle. If a handle name
+   Adds the provided services account name to a handle.
 
 See also: -account
 %{help=-bot}%{+t}

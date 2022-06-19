@@ -1,0 +1,86 @@
+Last revised: June 27, 2019
+
+Ident Module
+
+This module adds Eggdrop support for the externally-provided oident
+service, or alternatively the ability for Eggdrop to act as its own
+ident daemon.
+
+Traditionally, an IRC server queries port 113 on an irc client's host to
+determine the ident for the client. The client's host normally replies
+with the username of the account. If the host machine is running oident
+as its ident service, Eggdrop can now interact with oident to instead
+reply with a custom ident specified by Eggdrop (oidentd is an external
+service not specific to Eggdrop nor maintained by Eggheads developers,
+thus no support for it can be given).
+
+Alternatively, this module can also allow Eggdrop to act as its own
+ident daemon, answering queries from the IRC server directly. While this
+option may be of use to a very specific group of people, it requires
+additional external configuration via root access. Because most modern
+OSs do not allow user-level programs to bind to port 113, required by
+this option, a user must either:
+
+-   Allow Eggdrop to bind to ports <1024 via the command:
+
+        sudo setcap "cap_net_bind_service=+ep" /path/to/eggdrop
+
+    Warning: this will allow Eggdrop to any port below 1024, potentially
+    allowing a user to impersonate a standard system service with
+    Eggdrop
+
+-   Use iptables to re-route ident queries destined for port 113 to
+    a >1024 port that Eggdrop can bind to, for example by running:
+
+        sudo iptables -t nat -A PREROUTING -i eth0 -p tcp --dport \
+        113 -j REDIRECT --to-port <ident port in config>'
+
+Additionally, using Eggdrop as a built-in ident daemon can cause issues
+when running multiple bots from the same account. The ident server is
+only activated and bound to the configured ident port while Eggdrop is
+connecting to an IRC server, but only one Eggdrop can bind to port 113
+at a time. If multiple bots were to start at the same time, such as
+after a netsplit or host reboot, only one bot can bind to port 113 at a
+time, creating ident conflicts. Thus, this option is best suited for
+single-bot environments.
+
+This module requires:
+
+    -   oident to be running on your shell host, configured to allow
+        user spoofing, for the oidentd method.
+
+Put this line into your Eggdrop configuration file to load the ident
+module:
+
+    loadmodule ident
+
+There are also some variables you can set in your config file:
+
+  set ident-method 0
+
+      
+
+      This sets which ident method you wish to use:
+
+          
+
+          0 = oidentd / Your bot will overwrite $HOME/.oidentd.conf right before
+
+              opening the socket to the IRC server with the global
+              reply.
+
+          1 = Builtin / Your bot will automatically turn its builtin identd on and
+
+              off when needed so it shouldn't conflict with other
+              identds that do the same. Ident port 113 is normally
+              restricted to privileged processes on UNIX systems.
+
+  set ident-port 113
+
+      This sets the port which port Eggdrop will attempt to bind to for
+      option 1 of ident-method. Most OSs do not allow non-privileged
+      programs such as Eggdrop to bind to ports <1024; please read the
+      beginning of this document for potential ways to implement this
+      setting.
+
+Copyright (C) 2019 - 2022 Eggheads Development Team
