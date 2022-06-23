@@ -723,7 +723,11 @@ static void bot_nlinked(int idx, char *par)
     putlog(LOG_BOTMSG, "*", "(%s) %s %s.", next, NET_LINKEDTO, newbot);
     x = '-';
   }
+#ifdef TLS
   addbot(newbot, dcc[idx].nick, next, x, i, dcc[idx].ssl);
+#else
+  addbot(newbot, dcc[idx].nick, next, x, i, 0);
+#endif
   check_tcl_link(newbot, next);
   u = get_user_by_handle(userlist, newbot);
   if (bot_flags(u) & BOT_REJECT) {

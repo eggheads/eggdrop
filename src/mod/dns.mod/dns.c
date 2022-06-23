@@ -121,6 +121,7 @@ static struct dcc_table DCC_DNS = {
   display_dns_socket,
   NULL,
   NULL,
+  NULL,
   NULL
 };
 
@@ -167,8 +168,9 @@ static char *dns_change(ClientData cdata, Tcl_Interp *irp,
     myres.nscount = 0;
     for (i = 0; i < lc; i++) {
       if (myres.nscount >= MAXNS) {
-        putlog(LOG_MISC, "*", "WARNING: %i dns-servers configured but kernel-defined "
-               "limit is %i, ignoring extra servers\n", lc, MAXNS);
+        putlog(LOG_MISC, "*", "DNS: WARNING: %i dns-servers configured but "
+               "kernel-defined limit is %i, ignoring extra servers\n", lc,
+               MAXNS);
         break;
       }
       if ((p = strchr(list[i], ':'))) {
@@ -182,9 +184,10 @@ static char *dns_change(ClientData cdata, Tcl_Interp *irp,
         myres.nsaddr_list[myres.nscount].sin_port = htons(port);
         myres.nsaddr_list[myres.nscount].sin_family = AF_INET;
         myres.nscount++;
+        debug1("DNS: Valid dns-server %s", list[i]);
       }
       else
-        putlog(LOG_MISC, "*", "WARNING: Invalid dns-server %s", list[i]);
+        putlog(LOG_MISC, "*", "DNS: WARNING: Invalid dns-server %s", list[i]);
     }
     Tcl_Free((char *) list);
   }

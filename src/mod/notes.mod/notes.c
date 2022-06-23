@@ -1121,12 +1121,12 @@ static cmd_t notes_msgs[] = {
 };
 
 static tcl_ints notes_ints[] = {
-  {"note-life",         &note_life},
-  {"max-notes",          &maxnotes},
-  {"allow-fwd",         &allow_fwd},
-  {"notify-users",   &notify_users},
-  {"notify-onjoin", &notify_onjoin},
-  {NULL,                      NULL}
+  {"note-life",         &note_life, 0},
+  {"max-notes",          &maxnotes, 0},
+  {"allow-fwd",         &allow_fwd, 0},
+  {"notify-users",   &notify_users, 0},
+  {"notify-onjoin", &notify_onjoin, 0},
+  {NULL,                      NULL, 0}
 };
 
 static tcl_strings notes_strings[] = {

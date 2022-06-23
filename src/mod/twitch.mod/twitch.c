@@ -58,7 +58,6 @@ static int twitch_expmem()
 {
   int size = 0;
 
-  Context;
   return size;
 }
 
@@ -256,7 +255,7 @@ static int check_tcl_whisperm(char *from, char *cmd, char *msg) {
   strlcpy(uhost, from, sizeof buf);
   nick = splitnick(&uhost);
   if (msg[0])                       /* Re-attach the cmd to the msg */
-    simple_sprintf(args, "%s %s", cmd, msg);
+    snprintf(args, sizeof args, "%s %s", cmd, msg);
   else
     strlcpy(args, cmd, sizeof args);
   get_user_flagrec(u, &fr, NULL);
@@ -838,8 +837,6 @@ static cmd_t twitch_rawt[] = {
 
 static char *twitch_close()
 {
-  Context;
-  Tcl_UntraceVar(interp, "keep-nick", TCL_GLOBAL_ONLY|TCL_TRACE_WRITES|TCL_TRACE_UNSETS, traced_keepnick, NULL);
   rem_builtins(H_dcc, mydcc);
   rem_builtins(H_raw, twitch_raw);
   rem_builtins(H_rawt, twitch_rawt);
@@ -884,7 +881,6 @@ char *twitch_start(Function *global_funcs)
    */
   global = global_funcs;
 
-  Context;
   /* Register the module. */
   module_register(MODULE_NAME, twitch_table, 0, 1);
 

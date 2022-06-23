@@ -1088,7 +1088,7 @@ static int tcl_account2hand STDVAR
   while (chan && (thechan == NULL || thechan == chan)) {
         m = ismember(chan, argv[1]);
     if (m) {                            /* If we find the nickname on a channel */
-      if (m->account) {                 /* And they have an account */
+      if (m->account[0]) {                 /* And they have an account */
         u = get_user_by_account(m->account);
         Tcl_AppendResult(irp, u ? u->handle : "", NULL);
         return TCL_OK;                  /* Return the handle */

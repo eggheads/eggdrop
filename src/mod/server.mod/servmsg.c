@@ -134,7 +134,7 @@ static int check_tcl_msgm(char *cmd, char *nick, char *uhost,
   char args[1024];
 
   if (arg[0])
-    simple_sprintf(args, "%s %s", cmd, arg);
+    snprintf(args, sizeof args, "%s %s", cmd, arg);
   else
     strlcpy(args, cmd, sizeof args);
   get_user_flagrec(u, &fr, NULL);
@@ -530,7 +530,7 @@ XXXXXX Don't have the account to use
     if (check_tcl_flud(floodnick, floodhost, u, ftype, "*"))
       return 0;
     /* Private msg */
-    simple_sprintf(h, "*!*@%s", p);
+    snprintf(h, sizeof h, "*!*@%s", p);
     putlog(LOG_MISC, "*", IRC_FLOODIGNORE1, p);
     addignore(h, botnetnick, (which == FLOOD_CTCP) ? "CTCP flood" :
               "MSG/NOTICE flood", now + (60 * ignore_time));
@@ -576,7 +576,7 @@ static int gotmsg(char *from, char *msg, char *tag)
       ctcp = ctcpbuf;
 
       /* remove the ctcp in msg */
-      memmove(p1 - 1, p + 1, strlen(p + 1) + 1);
+      memmove(p1 - 1, p + 1, strlen(p));
 
       if (!ignoring)
         detect_flood(nick, uhost, from,
@@ -1134,6 +1134,7 @@ static struct dcc_table SERVER_SOCKET = {
   display_server,
   NULL,
   kill_server,
+  NULL,
   NULL
 };
 

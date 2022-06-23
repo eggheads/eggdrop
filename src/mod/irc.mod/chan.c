@@ -1255,25 +1255,24 @@ static int got352or4(struct chanset_t *chan, char *user, char *host,
     u = get_user_by_host(userhost);
   }
   m->user = u;
-
   /* Update accountname in channel records, 0 means logged out */
   /* A 0 is not a change from "" */
-  empty_accounts = (!strcmp(account, "0") && (!strcmp(m->account, "")));
-  /* If the account has changed... */
-  if ((account) && (strcmp(account, m->account)) && !empty_accounts) {
-    for (acctchan = chanset; acctchan; acctchan = acctchan->next) {
-      if ((m = ismember(chan, nick))) {
-        if (strcmp(account, "0")) {
-          strlcpy(m->account, account, sizeof(m->account));
-          snprintf(mask, sizeof mask, "%s %s", acctchan->dname, userhost);
-          if (strcasecmp(chan->dname, acctchan->dname)) {
-            //check_tcl_account(nick, userhost, mask, m->user, acctchan->dname, account);
-          }
-        } else {      /* Explicitly clear, in case someone deauthenticated? */
-          m->account[0] = 0;
-          snprintf(mask, sizeof mask, "%s %s", acctchan->dname, userhost);
-          if (strcasecmp(chan->dname, acctchan->dname)) {
-            //check_tcl_account(nick, userhost, mask, m->user, acctchan->dname, "");
+  if (account) {
+    empty_accounts = (!strcmp(account, "0") && (!strcmp(m->account, "")));
+    /* If the account has changed... */
+    if (strcmp(account, m->account) && !empty_accounts) {
+      for (acctchan = chanset; acctchan; acctchan = acctchan->next) {
+        if ((m = ismember(chan, nick))) {
+          if (strcmp(account, "0")) {
+            strlcpy(m->account, account, sizeof(m->account));
+            snprintf(mask, sizeof mask, "%s %s", acctchan->dname, userhost);
+            if (strcasecmp(chan->dname, acctchan->dname)) {
+            }
+          } else {      /* Explicitly clear, in case someone deauthenticated? */
+            m->account[0] = 0;
+            snprintf(mask, sizeof mask, "%s %s", acctchan->dname, userhost);
+            if (strcasecmp(chan->dname, acctchan->dname)) {
+            }
           }
         }
       }
@@ -2260,6 +2259,10 @@ static int gotjoin(char *from, char *channame)
         m->flags |= STOPWHO;
         if (extjoin) {
           /* Update account for all channels the nick is on, not just this one */
+<<<<<<< HEAD
+=======
+          strlcpy(account, newsplit(&channame), sizeof account);
+>>>>>>> develop
           for (extchan = chanset; extchan; extchan = extchan->next) {
             if ((n = ismember(extchan, nick))) {
               if (strcmp(account, "*")) {
@@ -2785,6 +2788,32 @@ static int gotmsg(char *from, char *msg, char *tags)
   strlcpy(uhost, from, sizeof buf);
   nick = splitnick(&uhost);
   ignoring = match_ignore(from);
+  tagobj = Tcl_NewStringObj(tags, -1);
+  if (Tcl_DictObjGet(interp, tagobj, Tcl_NewStringObj("account", -1), &accountobj) != TCL_OK) {
+    putlog(LOG_MISC, "*", "BUG! irc.mod/gotmsg() received an invalid Tcl dict for the message tags: '%s'. Please report this.", Tcl_GetString(tagobj));
+  }
+
+  /* Check for updated account names if account-tag capability is enabeld */
+/* Do we even need to do this? If we see it, lets just assume its wanted and use it, no?
+  current = cap;
+  while (current != NULL) {
+    if (!strcasecmp("account-tag", current->name)) {
+      accttag = current->enabled ? 1 : 0;
+      break;
+    }
+    current = current->next;
+  }
+*/
+  if (accountobj) {
+    for (extchan = chanset; extchan; extchan = extchan->next) {
+      if ((m = ismember(extchan, nick))) {      /* If member is on the channel */
+        if (strcmp(Tcl_GetString(accountobj), m->account)) {         /* If stored account and seen account don't match */
+putlog(LOG_MISC, "*", "Accounts don't match, updating %s with account %s", nick, Tcl_GetString(accountobj));
+          strlcpy (m->account, Tcl_GetString(accountobj), sizeof m->account);
+        }
+      }
+    }
+  }
 
 putlog(LOG_MISC, "*", "TAGS: '%s'", tags);
   tagobj = Tcl_NewStringObj(tags, -1);
@@ -2830,7 +2859,7 @@ putlog(LOG_MISC, "*", "Accounts don't match, updating %s with account %s", nick,
       *p = 0;
       ctcp = buf2;
       strlcpy(buf2, p1, sizeof buf2);
-      memmove(p1 - 1, p + 1, strlen(p + 1) + 1);
+      memmove(p1 - 1, p + 1, strlen(p));
       detect_chan_flood(nick, uhost, from, chan, strncmp(ctcp, "ACTION ", 7) ?
                         FLOOD_CTCP : FLOOD_PRIVMSG, NULL);
 
@@ -2949,7 +2978,7 @@ static int gotnotice(char *from, char *msg)
       *p = 0;
       ctcp = buf2;
       strcpy(ctcp, p1);
-      memmove(p1 - 1, p + 1, strlen(p + 1) + 1);
+      memmove(p1 - 1, p + 1, strlen(p));
       p = strchr(msg, 1);
       detect_chan_flood(nick, uhost, from, chan,
                         strncmp(ctcp, "ACTION ", 7) ?

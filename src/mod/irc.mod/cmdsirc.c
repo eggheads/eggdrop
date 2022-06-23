@@ -776,7 +776,6 @@ static void cmd_channel(struct userrec *u, int idx, char *par)
 {
   char handle[HANDLEN + 1], s[UHOSTLEN], s1[UHOSTLEN], atrflag, chanflag;
   struct chanset_t *chan;
-  struct capability *current;
   memberlist *m;
   int maxnicklen, maxhandlen;
 
@@ -930,9 +929,9 @@ static void cmd_channel(struct userrec *u, int idx, char *par)
         else
           strlcpy(s1, "   ", sizeof s1);
         if (chan_ircaway(m)) {
-          egg_snprintf(s1+strlen(s1), ((sizeof s1)-strlen(s1)), " (away)");
+          strlcpy(s1+strlen(s1), " (away)", ((sizeof s1)-strlen(s1)));
         } else {
-          egg_snprintf(s1+strlen(s1), ((sizeof s1)-strlen(s1)), "       ");
+          strlcpy(s1+strlen(s1), "       ", ((sizeof s1)-strlen(s1)));
         }
         dprintf(idx, "%c%-*s %-*s %-*s %-6s %c %s  %s\n", chanflag, maxnicklen,
               m->nick, maxhandlen, handle, maxnicklen, m->account, s, atrflag,
