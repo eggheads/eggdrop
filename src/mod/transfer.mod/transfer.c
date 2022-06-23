@@ -271,6 +271,7 @@ static void eof_dcc_send(int idx)
   int ok, j;
   char *nfn, s[1024], *hand;
   struct userrec *u;
+  struct capability *current;
 
   /* Success */
   if (dcc[idx].u.xfer->length == dcc[idx].status) {
@@ -298,8 +299,14 @@ static void eof_dcc_send(int idx)
     fclose(dcc[idx].u.xfer->f);
 
     /* lookup handle */
-    egg_snprintf(s, sizeof s, "%s!%s", dcc[idx].nick, dcc[idx].host);
-    u = get_user_by_host(s);
+//XXXXXXXXXXXXXXXXXX
+//    if (current->enabled) {
+//      u = get_user_by_account(m->account);
+//    }
+//    if (!u) {
+      egg_snprintf(s, sizeof s, "%s!%s", dcc[idx].nick, dcc[idx].host);
+      u = get_user_by_host(s);
+//    }
     hand = u ? u->handle : "*";
 
     /* Add to file database if not tmpfile or if copyfile succeeded */
@@ -599,8 +606,14 @@ static void eof_dcc_get(int idx)
 
     /* Call `lost' DCC trigger now.
      */
-    egg_snprintf(s, sizeof s, "%s!%s", dcc[idx].nick, dcc[idx].host);
-    u = get_user_by_host(s);
+//XXXXXXXXXXXXX
+//    if (current->enabled) {
+//      u = get_user_by_account(m->account);
+//    }
+//    if (!u) {
+      egg_snprintf(s, sizeof s, "%s!%s", dcc[idx].nick, dcc[idx].host);
+      u = get_user_by_host(s);
+//    }
     check_tcl_toutlost(u, dcc[idx].nick, dcc[idx].u.xfer->dir,
                        dcc[idx].u.xfer->acked, dcc[idx].u.xfer->length, H_lost);
 
@@ -674,8 +687,14 @@ static void transfer_get_timeout(int i)
 
     /* Call DCC `timeout' trigger now.
      */
-    egg_snprintf(xx, sizeof xx, "%s!%s", dcc[i].nick, dcc[i].host);
-    u = get_user_by_host(xx);
+//XXXXXXXXXXXXXXX
+//    if (current->enabled) {
+//      u = get_user_by_account(m->account);
+//    }
+//    if (!u) {
+      egg_snprintf(xx, sizeof xx, "%s!%s", dcc[i].nick, dcc[i].host);
+      u = get_user_by_host(xx);
+//    }
     check_tcl_toutlost(u, dcc[i].nick, dcc[i].u.xfer->dir,
                        dcc[i].u.xfer->acked, dcc[i].u.xfer->length, H_tout);
 

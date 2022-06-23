@@ -199,6 +199,7 @@ static void do_seen(int idx, char *prefix, char *nick, char *hand,
         m = ismember(chan, object);
         if (m) {
           onchan = 1;
+// XXXXXXX Skip, can't depend on server.mod for current varibale.
           snprintf(stuff, sizeof stuff, "%s!%s", object, m->userhost);
           urec = get_user_by_host(stuff);
           if (!urec || !strcasecmp(object, urec->handle))
@@ -346,6 +347,7 @@ targetcont:
     m = ismember(chan, whotarget);
     if (m) {
       onchan = 1;
+//XXXXXXXXXX Skip
       snprintf(word1, sizeof word1, "%s!%s", whotarget, m->userhost);
       urec = get_user_by_host(word1);
       if (!urec || !strcasecmp(whotarget, urec->handle))
@@ -364,6 +366,7 @@ targetcont:
     while (chan) {
       m = chan->channel.member;
       while (m && m->nick[0]) {
+//XXXXXXXXXX Skip
         snprintf(word2, sizeof word2, "%s!%s", m->nick, m->userhost);
         urec = get_user_by_host(word2);
         if (urec && !strcasecmp(urec->handle, whotarget)) {

@@ -74,6 +74,7 @@ static char *getnick(char *handle, struct chanset_t *chan)
 
   for (m = chan->channel.member; m && m->nick[0]; m = m->next) {
     egg_snprintf(s, sizeof s, "%s!%s", m->nick, m->userhost);
+//XXXXXXXX Skip
     if ((u = get_user_by_host(s)) && !strcasecmp(u->handle, handle))
       return m->nick;
   }
@@ -161,6 +162,7 @@ static void cmd_say(struct userrec *u, int idx, char *par)
 static void cmd_kickban(struct userrec *u, int idx, char *par)
 {
   struct chanset_t *chan;
+  struct capability *current;
   char *chname, *nick, *s1;
   memberlist *m;
   char s[UHOSTLEN];
@@ -208,7 +210,14 @@ static void cmd_kickban(struct userrec *u, int idx, char *par)
     return;
   }
   egg_snprintf(s, sizeof s, "%s!%s", m->nick, m->userhost);
-  u = get_user_by_host(s);
+//XXXXXXXXX 
+  if (current->enabled) {
+    u = get_user_by_account(m->account);
+  }
+  if (!u) {
+    sprintf(s, "%s!%s", m->nick, m->userhost);
+    u = get_user_by_host(s);
+  }
   get_user_flagrec(u, &victim, chan->dname);
   if ((chan_op(victim) || (glob_op(victim) && !chan_deop(victim))) &&
       !(chan_master(user) || glob_master(user))) {
@@ -263,6 +272,7 @@ static void cmd_kickban(struct userrec *u, int idx, char *par)
 static void cmd_op(struct userrec *u, int idx, char *par)
 {
   struct chanset_t *chan;
+  struct capability *current;
   char *nick;
   memberlist *m;
   char s[UHOSTLEN];
@@ -295,7 +305,14 @@ static void cmd_op(struct userrec *u, int idx, char *par)
     return;
   }
   egg_snprintf(s, sizeof s, "%s!%s", m->nick, m->userhost);
-  u = get_user_by_host(s);
+//XXXXXXXXXXX
+  if (current->enabled) {
+    u = get_user_by_account(m->account);
+  }
+  if (!u) {
+    sprintf(s, "%s!%s", m->nick, m->userhost);
+    u = get_user_by_host(s);
+  }
   get_user_flagrec(u, &victim, chan->dname);
   if (chan_deop(victim) || (glob_deop(victim) && !glob_op(victim))) {
     dprintf(idx, "%s is currently being auto-deopped.\n", m->nick);
@@ -313,6 +330,7 @@ static void cmd_op(struct userrec *u, int idx, char *par)
 static void cmd_deop(struct userrec *u, int idx, char *par)
 {
   struct chanset_t *chan;
+  struct capability *current;
   char *nick;
   memberlist *m;
   char s[UHOSTLEN];
@@ -349,7 +367,14 @@ static void cmd_deop(struct userrec *u, int idx, char *par)
     return;
   }
   egg_snprintf(s, sizeof s, "%s!%s", m->nick, m->userhost);
-  u = get_user_by_host(s);
+//XXXXXXXXXXXXX
+  if (current->enabled) {
+    u = get_user_by_account(m->account);
+  }
+  if (!u) {
+    sprintf(s, "%s!%s", m->nick, m->userhost);
+    u = get_user_by_host(s);
+  }
   get_user_flagrec(u, &victim, chan->dname);
   if ((chan_master(victim) || glob_master(victim)) &&
       !(chan_owner(user) || glob_owner(user))) {
@@ -369,6 +394,7 @@ static void cmd_halfop(struct userrec *u, int idx, char *par)
 {
   struct chanset_t *chan;
   struct userrec *u2;
+  struct capability *current;
   char *nick;
   memberlist *m;
   char s[UHOSTLEN];
@@ -387,6 +413,7 @@ static void cmd_halfop(struct userrec *u, int idx, char *par)
   m = ismember(chan, nick);
   if (m && !chan_op(user) && (!glob_op(user) || chan_deop(user))) {
     egg_snprintf(s, sizeof s, "%s!%s", m->nick, m->userhost);
+//XXXXXXXXX Skip?
     u2 = m->user ? m->user : get_user_by_host(s);
 
     if (!u2 || strcmp(u2->handle, dcc[idx].nick) || (!chan_halfop(user) &&
@@ -415,7 +442,13 @@ static void cmd_halfop(struct userrec *u, int idx, char *par)
     return;
   }
   egg_snprintf(s, sizeof s, "%s!%s", m->nick, m->userhost);
-  u = get_user_by_host(s);
+  if (current->enabled) {
+    u = get_user_by_account(m->account);
+  }
+  if (!u) {
+    sprintf(s, "%s!%s", m->nick, m->userhost);
+    u = get_user_by_host(s);
+  }
   get_user_flagrec(u, &victim, chan->dname);
   if (chan_dehalfop(victim) || (glob_dehalfop(victim) && !glob_halfop(victim))) {
     dprintf(idx, "%s is currently being auto-dehalfopped.\n", m->nick);
@@ -434,6 +467,7 @@ static void cmd_halfop(struct userrec *u, int idx, char *par)
 static void cmd_dehalfop(struct userrec *u, int idx, char *par)
 {
   struct chanset_t *chan;
+  struct capability *current;
   struct userrec *u2;
   char *nick;
   memberlist *m;
@@ -453,6 +487,7 @@ static void cmd_dehalfop(struct userrec *u, int idx, char *par)
   m = ismember(chan, nick);
   if (m && !chan_op(user) && (!glob_op(user) || chan_deop(user))) {
     egg_snprintf(s, sizeof s, "%s!%s", m->nick, m->userhost);
+//XXXXXXX Skip?
     u2 = m->user ? m->user : get_user_by_host(s);
 
     if (!u2 || strcmp(u2->handle, dcc[idx].nick) || (!chan_halfop(user) &&
@@ -485,7 +520,14 @@ static void cmd_dehalfop(struct userrec *u, int idx, char *par)
     return;
   }
   egg_snprintf(s, sizeof s, "%s!%s", m->nick, m->userhost);
-  u = get_user_by_host(s);
+//XXXXXXXX
+  if (current->enabled) {
+    u = get_user_by_account(m->account);
+  }
+  if (!u) {
+    sprintf(s, "%s!%s", m->nick, m->userhost);
+    u = get_user_by_host(s);
+  }
   get_user_flagrec(u, &victim, chan->dname);
   if ((chan_master(victim) || glob_master(victim)) &&
       !(chan_owner(user) || glob_owner(user))) {
@@ -534,6 +576,7 @@ static void cmd_voice(struct userrec *u, int idx, char *par)
   if (m && !(chan_op(user) || chan_halfop(user) || (glob_op(user) &&
       !chan_deop(user)) || (glob_halfop(user) && !chan_dehalfop(user)))) {
     egg_snprintf(s, sizeof s, "%s!%s", m->nick, m->userhost);
+//XXXXXXXXX Skip?
     u2 = m->user ? m->user : get_user_by_host(s);
 
     if (!u2 || strcmp(u2->handle, dcc[idx].nick) || (!chan_voice(user) &&
@@ -587,6 +630,7 @@ static void cmd_devoice(struct userrec *u, int idx, char *par)
   if (m && !(chan_op(user) || chan_halfop(user) || (glob_op(user) &&
       !chan_deop(user)) || (glob_halfop(user) && !chan_dehalfop(user)))) {
     egg_snprintf(s, sizeof s, "%s!%s", m->nick, m->userhost);
+//XXXXXXXXXX Skip?
     u2 = m->user ? m->user : get_user_by_host(s);
 
     if (!u2 || strcmp(u2->handle, dcc[idx].nick) || (!chan_voice(user) &&
@@ -621,6 +665,7 @@ static void cmd_devoice(struct userrec *u, int idx, char *par)
 static void cmd_kick(struct userrec *u, int idx, char *par)
 {
   struct chanset_t *chan;
+  struct capability *current;
   char *chname, *nick;
   memberlist *m;
   char s[UHOSTLEN];
@@ -664,7 +709,14 @@ static void cmd_kick(struct userrec *u, int idx, char *par)
     return;
   }
   egg_snprintf(s, sizeof s, "%s!%s", m->nick, m->userhost);
-  u = get_user_by_host(s);
+//XXXXXXXXXXXX Skip
+  if (current->enabled) {
+    u = get_user_by_account(m->account);
+  }
+  if (!u) {
+    sprintf(s, "%s!%s", m->nick, m->userhost);
+    u = get_user_by_host(s);
+  }
   get_user_flagrec(u, &victim, chan->dname);
   if ((chan_op(victim) || (glob_op(victim) && !chan_deop(victim))) &&
       !(chan_master(user) || glob_master(user))) {
@@ -724,6 +776,7 @@ static void cmd_channel(struct userrec *u, int idx, char *par)
 {
   char handle[HANDLEN + 1], s[UHOSTLEN], s1[UHOSTLEN], atrflag, chanflag;
   struct chanset_t *chan;
+  struct capability *current;
   memberlist *m;
   int maxnicklen, maxhandlen;
 
@@ -769,8 +822,14 @@ static void cmd_channel(struct userrec *u, int idx, char *par)
       } else
         strlcpy(s, " --- ", sizeof s);
       if (m->user == NULL) {
-        egg_snprintf(s1, sizeof s1, "%s!%s", m->nick, m->userhost);
-        m->user = get_user_by_host(s1);
+//XXXXXXXXXXXX
+        if (current->enabled) {
+          u = get_user_by_account(m->account);
+        }
+        if (!u) {
+          egg_snprintf(s1, sizeof s1, "%s!%s", m->nick, m->userhost);
+          u = get_user_by_host(s1);
+        }
       }
       if (m->user == NULL)
         strlcpy(handle, "*", sizeof handle);
@@ -973,6 +1032,7 @@ static void cmd_adduser(struct userrec *u, int idx, char *par)
 {
   char *nick, *hand;
   struct chanset_t *chan;
+  struct capability *current;
   memberlist *m = NULL;
   char s[UHOSTLEN], s1[UHOSTLEN];
   int atr = u ? u->flags : 0;
@@ -1021,8 +1081,14 @@ static void cmd_adduser(struct userrec *u, int idx, char *par)
   }
   if (strlen(hand) > HANDLEN)
     hand[HANDLEN] = 0;
-  egg_snprintf(s, sizeof s, "%s!%s", m->nick, m->userhost);
-  u = get_user_by_host(s);
+//XXXXXXXXXXXXXXXXXXX
+  if (current->enabled) {
+    u = get_user_by_account(m->account);
+  }
+  if (!u) {
+    egg_snprintf(s, sizeof s, "%s!%s", m->nick, m->userhost);
+    u = get_user_by_host(s);
+  }
   if (u) {
     dprintf(idx, "%s is already known as %s.\n", nick, u->handle);
     return;
@@ -1061,6 +1127,7 @@ static void cmd_deluser(struct userrec *u, int idx, char *par)
 {
   char *nick, s[UHOSTLEN];
   struct chanset_t *chan;
+  struct capability *current;
   memberlist *m = NULL;
   struct flag_record victim = { FR_GLOBAL | FR_CHAN | FR_ANYWH, 0, 0, 0, 0, 0 };
 
@@ -1080,8 +1147,14 @@ static void cmd_deluser(struct userrec *u, int idx, char *par)
     return;
   }
   get_user_flagrec(u, &user, chan->dname);
-  egg_snprintf(s, sizeof s, "%s!%s", m->nick, m->userhost);
-  u = get_user_by_host(s);
+//XXXXXXXXXXXXXXXXX
+  if (current->enabled) {
+    u = get_user_by_account(m->account);
+  }
+  if (!u) {
+    egg_snprintf(s, sizeof s, "%s!%s", m->nick, m->userhost);
+    u = get_user_by_host(s);
+  }
   if (!u) {
     dprintf(idx, "%s is not a valid user.\n", nick);
     return;

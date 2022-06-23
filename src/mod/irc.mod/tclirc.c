@@ -57,6 +57,7 @@ static int tcl_chanlist STDVAR
   for (m = chan->channel.member; m && m->nick[0]; m = m->next) {
     if (!m->user) {
       egg_snprintf(nuh, sizeof nuh, "%s!%s", m->nick, m->userhost);
+//XXXXXXXXXXX Skip
       m->user = get_user_by_host(nuh);
     }
     get_user_flagrec(m->user, &user, argv[1]);
@@ -440,11 +441,17 @@ static int tcl_handonchan STDVAR
 
   while (chan && (thechan == NULL || thechan == chan)) {
     for (m = chan->channel.member; m && m->nick[0]; m = m->next) {
+      if (m->account && !rfc_casecmp(m->account, argv[1])) {
+        Tcl_AppendResult(irp, "1", NULL);
+        return TCL_OK;
+      }
       if (!m->user) {
         egg_snprintf(nuh, sizeof nuh, "%s!%s", m->nick, m->userhost);
         m->user = get_user_by_host(nuh);
       }
-      if (m->user && !rfc_casecmp(m->user->handle, argv[1])) {
+//XXXXXXXXXXXXXXXXXXXXXXXX
+      if ((m->user && !rfc_casecmp(m->user->handle, argv[1]))
+                || !rfc_casecmp(m->account, argv[1])) {
         Tcl_AppendResult(irp, "1", NULL);
         return TCL_OK;
       }
@@ -1169,7 +1176,9 @@ static int tcl_hand2nicks STDVAR
         m->tried_getuser = 1;
         m->user = get_user_by_host(nuh);
       }
-      if (m->user && !rfc_casecmp(m->user->handle, argv[1])) {
+//XXXXXXXXXXXXXXXXXx
+      if ((m->user && !rfc_casecmp(m->user->handle, argv[1]))
+                || !rfc_casecmp(m->account, argv[1])) {
         /* Is the nick of the user already in the list? */
         Tcl_ListObjGetElements(irp, nicks, &nicksc, &nicksv);
         for (i = 0; i < nicksc; i++) {
@@ -1214,7 +1223,9 @@ static int tcl_hand2nick STDVAR
         m->tried_getuser = 1;
         m->user = get_user_by_host(nuh);
       }
-      if (m->user && !rfc_casecmp(m->user->handle, argv[1])) {
+//XXXXXXXXXXXXXXXXXX
+      if (((m->user && !rfc_casecmp(m->user->handle, argv[1]))
+                || !rfc_casecmp(m->account, argv[1]))) {
         Tcl_AppendResult(irp, m->nick, NULL);
         return TCL_OK;
       }
@@ -1247,6 +1258,7 @@ static int tcl_nick2hand STDVAR
     if (m) {
       if (!m->user) {
         egg_snprintf(nuh, sizeof nuh, "%s!%s", m->nick, m->userhost);
+//XXXXXXXXXXXXXXXXXXX Skip
         m->user = get_user_by_host(nuh);
       }
       Tcl_AppendResult(irp, m->user ? m->user->handle : "*", NULL);
