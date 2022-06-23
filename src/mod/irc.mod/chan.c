@@ -2259,10 +2259,7 @@ static int gotjoin(char *from, char *channame)
         m->flags |= STOPWHO;
         if (extjoin) {
           /* Update account for all channels the nick is on, not just this one */
-<<<<<<< HEAD
-=======
           strlcpy(account, newsplit(&channame), sizeof account);
->>>>>>> develop
           for (extchan = chanset; extchan; extchan = extchan->next) {
             if ((n = ismember(extchan, nick))) {
               if (strcmp(account, "*")) {

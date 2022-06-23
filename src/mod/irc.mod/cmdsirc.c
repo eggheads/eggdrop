@@ -776,6 +776,7 @@ static void cmd_channel(struct userrec *u, int idx, char *par)
 {
   char handle[HANDLEN + 1], s[UHOSTLEN], s1[UHOSTLEN], atrflag, chanflag;
   struct chanset_t *chan;
+  struct capability *current;
   memberlist *m;
   int maxnicklen, maxhandlen;
 
