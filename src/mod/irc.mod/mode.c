@@ -1060,7 +1060,7 @@ static int gotmode(char *from, char *origmsg)
       nick = splitnick(&from);
       m = ismember(chan, nick);
       current = find_capability("extended-join");
-      if (current->enabled) {
+      if (m && current->enabled) {
         u = get_user_by_account(m->account);
       }
       if (!u) {

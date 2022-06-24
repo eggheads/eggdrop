@@ -386,7 +386,7 @@ static int msg_who(char *nick, char *host, struct userrec *u, char *par)
     struct userrec *u;
 
     egg_snprintf(s, sizeof s, "%s!%s", m->nick, m->userhost);
-    if (current->enabled) {
+    if (m && current->enabled) {
       u = get_user_by_account(m->account);
     }
     if (!u) {

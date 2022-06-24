@@ -332,7 +332,7 @@ static int detect_chan_flood(char *floodnick, char *floodhost, char *from,
     return 0;
 
   current = find_capability("extended-join");
-  if (current->enabled) {
+  if (m && current->enabled) {
     u = get_user_by_account(m->account);
   }
   if (!u) {
@@ -423,7 +423,7 @@ static int detect_chan_flood(char *floodnick, char *floodhost, char *from,
     chan->floodwho[which][0] = 0;
     if (which == FLOOD_DEOP)
       chan->deopd[0] = 0;
-    if (current->enabled) { /* set at start of function */
+    if (m && current->enabled) { /* set at start of function */
       u = get_user_by_account(m->account);
     }
     if (!u) {
@@ -1248,7 +1248,7 @@ static int got352or4(struct chanset_t *chan, char *user, char *host,
       do_tcl("need-op", chan->need_op);
   }
   current = find_capability("extended-join");
-  if (current->enabled) {
+  if (m && current->enabled) {
     u = get_user_by_account(m->account);
   }
   if (!u) {
@@ -2265,7 +2265,7 @@ static int gotjoin(char *from, char *channame)
               if (strcmp(account, "*")) {
                 strlcpy (n->account, account, sizeof n->account);
               } else {
-                n->account[0] = 0;
+                n->account[0] = '\0';
               }
               /* Don't trigger for the channel the user joined, but do trigger
                * for other channels the user is already in
@@ -2806,7 +2806,7 @@ static int gotmsg(char *from, char *msg, char *tags)
       if ((m = ismember(extchan, nick))) {      /* If member is on the channel */
         if (strcmp(Tcl_GetString(accountobj), m->account)) {         /* If stored account and seen account don't match */
 putlog(LOG_MISC, "*", "Accounts don't match, updating %s with account %s", nick, Tcl_GetString(accountobj));
-          strlcpy (m->account, Tcl_GetString(accountobj), sizeof m->account);
+          strlcpy(m->account, Tcl_GetString(accountobj), sizeof m->account);
         }
       }
     }
