@@ -584,7 +584,7 @@ static void check_lonely_channel(struct chanset_t *chan)
      * them LEAVE!
      */
     int ok = 1;
-    struct userrec *u;
+    struct userrec *u = 0;
 
     if (!channel_whined(chan)) {
       /* + is opless. Complaining about no ops when without special

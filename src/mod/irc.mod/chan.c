@@ -306,7 +306,7 @@ static int detect_chan_flood(char *floodnick, char *floodhost, char *from,
                              struct chanset_t *chan, int which, char *victim)
 {
   char h[NICKMAX+UHOSTLEN+1], ftype[12], *p;
-  struct userrec *u;
+  struct userrec *u = 0;
   struct capability *current;
   memberlist *m;
   int thr = 0, lapse = 0;
@@ -992,7 +992,7 @@ static void check_this_user(char *hand, int delete, char *host)
 {
   char s[NICKMAX+UHOSTLEN+1];
   memberlist *m;
-  struct userrec *u;
+  struct userrec *u = 0;
   struct chanset_t *chan;
   struct capability *current;
   struct flag_record fr = { FR_GLOBAL | FR_CHAN, 0, 0, 0, 0, 0 };
@@ -1025,7 +1025,7 @@ static void recheck_channel(struct chanset_t *chan, int dobans)
   memberlist *m;
   char s[NICKMAX+UHOSTLEN+1];
   struct capability *current;
-  struct userrec *u;
+  struct userrec *u = 0;
   struct flag_record fr = { FR_GLOBAL | FR_CHAN, 0, 0, 0, 0, 0 };
   static int stacking = 0;
   int stop_reset = 0;
@@ -1200,7 +1200,7 @@ static int got352or4(struct chanset_t *chan, char *user, char *host,
   char userhost[UHOSTLEN], mask[CHANNELLEN+UHOSTLEN+NICKMAX+2];
   struct chanset_t *acctchan;
   struct capability *current;
-  struct userrec *u;
+  struct userrec *u = 0;
   memberlist *m;
   int empty_accounts;
 

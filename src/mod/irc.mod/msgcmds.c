@@ -383,7 +383,7 @@ static int msg_who(char *nick, char *host, struct userrec *u, char *par)
   i = 0;
   current = find_capability("extended-join");
   for (m = chan->channel.member; m && m->nick[0]; m = m->next) {
-    struct userrec *u;
+    struct userrec *u = 0;
 
     egg_snprintf(s, sizeof s, "%s!%s", m->nick, m->userhost);
     if (m && current->enabled) {
@@ -444,7 +444,7 @@ static int msg_whois(char *nick, char *host, struct userrec *u, char *par)
   struct chanset_t *chan;
   memberlist *m;
   struct chanuserrec *cr;
-  struct userrec *u2;
+  struct userrec *u2 = 0;
   struct capability *current;
   struct flag_record fr = { FR_GLOBAL | FR_CHAN, 0, 0, 0, 0, 0 };
   struct xtra_key *xk;
@@ -475,7 +475,7 @@ static int msg_whois(char *nick, char *host, struct userrec *u, char *par)
         if (current->enabled) {
           u2 = get_user_by_account(m->account);
         }
-        if (!u) {
+        if (!u2) {
           egg_snprintf(s, sizeof s, "%s!%s", par, m->userhost);
           u2 = get_user_by_host(s);
         }

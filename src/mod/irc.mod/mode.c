@@ -405,7 +405,7 @@ static void got_op(struct chanset_t *chan, char *nick, char *from,
   memberlist *m;
   char ch[sizeof chan->name];
   char s[UHOSTLEN];
-  struct userrec *u;
+  struct userrec *u = 0;
   struct capability *current;
   int check_chan = 0, snm = chan->stopnethack_mode;
 
@@ -509,7 +509,7 @@ static void got_halfop(struct chanset_t *chan, char *nick, char *from,
   memberlist *m;
   char s[UHOSTLEN];
   char ch[sizeof chan->name];
-  struct userrec *u;
+  struct userrec *u = 0;
   struct capability *current;
   int check_chan = 0;
   int snm = chan->stopnethack_mode;
@@ -612,7 +612,7 @@ static void got_deop(struct chanset_t *chan, char *nick, char *from,
   memberlist *m;
   char ch[sizeof chan->name];
   char s[UHOSTLEN], s1[UHOSTLEN];
-  struct userrec *u;
+  struct userrec *u = 0;
   struct capability *current;
   int had_halfop;
 
@@ -712,7 +712,7 @@ static void got_dehalfop(struct chanset_t *chan, char *nick, char *from,
   memberlist *m;
   char ch[sizeof chan->name];
   char s[UHOSTLEN], s1[UHOSTLEN];
-  struct userrec *u;
+  struct userrec *u = 0;
   struct capability *current;
   int had_halfop;
 
@@ -1034,7 +1034,7 @@ static int gotmode(char *from, char *origmsg)
   char s[UHOSTLEN], buf[511];
   char ms2[3];
   int z;
-  struct userrec *u;
+  struct userrec *u = 0;
   memberlist *m;
   struct chanset_t *chan;
   struct capability *current;
@@ -1057,6 +1057,7 @@ static int gotmode(char *from, char *origmsg)
         msg[z] = 0;
       putlog(LOG_MODES, chan->dname, "%s: mode change '%s %s' by %s", ch, chg,
              msg, from);
+      strlcpy(buf, from, sizeof buf);
       nick = splitnick(&from);
       m = ismember(chan, nick);
       current = find_capability("extended-join");
@@ -1064,7 +1065,7 @@ static int gotmode(char *from, char *origmsg)
         u = get_user_by_account(m->account);
       }
       if (!u) {
-        u = get_user_by_host(from);
+        u = get_user_by_host(buf);
       }
       get_user_flagrec(u, &user, ch);
       if (m)
