@@ -1231,7 +1231,7 @@ static int expired_mask(struct chanset_t *chan, char *who)
   memberlist *m, *m2;
   char buf[UHOSTLEN], *snick, *sfrom;
   struct userrec *u;
-  struct capability *current;
+//  struct capability *current;
 
   /* Always expire masks, regardless of who set it? */
   if (force_expire)

@@ -230,7 +230,7 @@ static void maybe_revenge(struct chanset_t *chan, char *whobad,
   char *badnick, *victim;
   int mevictim;
   struct userrec *u, *u2;
-  struct capability *current;
+//  struct capability *current;
 
   if (!chan || (type < 0))
     return;
@@ -281,7 +281,7 @@ static void set_key(struct chanset_t *chan, char *k)
 static int hand_on_chan(struct chanset_t *chan, struct userrec *u)
 {
   char s[NICKMAX+UHOSTLEN+1];
-  struct capability *current;
+//  struct capability *current;
   memberlist *m;
 
   for (m = chan->channel.member; m && m->nick[0]; m = m->next) {

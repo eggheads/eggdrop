@@ -209,13 +209,13 @@ static void cmd_kickban(struct userrec *u, int idx, char *par)
     dprintf(idx, "I can't help you now because halfops cannot kick ops.\n");
     return;
   }
-  egg_snprintf(s, sizeof s, "%s!%s", m->nick, m->userhost);
 //XXXXXXXXX 
+  current = find_capability("account-notify");
   if (current->enabled) {
     u = get_user_by_account(m->account);
   }
   if (!u) {
-    sprintf(s, "%s!%s", m->nick, m->userhost);
+    egg_snprintf(s, sizeof s, "%s!%s", m->nick, m->userhost);
     u = get_user_by_host(s);
   }
   get_user_flagrec(u, &victim, chan->dname);
@@ -304,13 +304,13 @@ static void cmd_op(struct userrec *u, int idx, char *par)
     dprintf(idx, "%s is not on %s.\n", nick, chan->dname);
     return;
   }
-  egg_snprintf(s, sizeof s, "%s!%s", m->nick, m->userhost);
 //XXXXXXXXXXX
+  current = find_capability("account-notify");
   if (current->enabled) {
     u = get_user_by_account(m->account);
   }
   if (!u) {
-    sprintf(s, "%s!%s", m->nick, m->userhost);
+    egg_snprintf(s, sizeof s, "%s!%s", m->nick, m->userhost);
     u = get_user_by_host(s);
   }
   get_user_flagrec(u, &victim, chan->dname);
@@ -366,13 +366,13 @@ static void cmd_deop(struct userrec *u, int idx, char *par)
     dprintf(idx, "I'm not going to deop myself.\n");
     return;
   }
-  egg_snprintf(s, sizeof s, "%s!%s", m->nick, m->userhost);
 //XXXXXXXXXXXXX
+  current = find_capability("account-notify");
   if (current->enabled) {
     u = get_user_by_account(m->account);
   }
   if (!u) {
-    sprintf(s, "%s!%s", m->nick, m->userhost);
+    egg_snprintf(s, sizeof s, "%s!%s", m->nick, m->userhost);
     u = get_user_by_host(s);
   }
   get_user_flagrec(u, &victim, chan->dname);
@@ -441,12 +441,12 @@ static void cmd_halfop(struct userrec *u, int idx, char *par)
     dprintf(idx, "%s is not on %s.\n", nick, chan->dname);
     return;
   }
-  egg_snprintf(s, sizeof s, "%s!%s", m->nick, m->userhost);
+  current = find_capability("account-notify");
   if (current->enabled) {
     u = get_user_by_account(m->account);
   }
   if (!u) {
-    sprintf(s, "%s!%s", m->nick, m->userhost);
+    egg_snprintf(s, sizeof s, "%s!%s", m->nick, m->userhost);
     u = get_user_by_host(s);
   }
   get_user_flagrec(u, &victim, chan->dname);
@@ -519,13 +519,13 @@ static void cmd_dehalfop(struct userrec *u, int idx, char *par)
     dprintf(idx, "I'm not going to dehalfop myself.\n");
     return;
   }
-  egg_snprintf(s, sizeof s, "%s!%s", m->nick, m->userhost);
 //XXXXXXXX
+  current = find_capability("account-notify");
   if (current->enabled) {
     u = get_user_by_account(m->account);
   }
   if (!u) {
-    sprintf(s, "%s!%s", m->nick, m->userhost);
+    egg_snprintf(s, sizeof s, "%s!%s", m->nick, m->userhost);
     u = get_user_by_host(s);
   }
   get_user_flagrec(u, &victim, chan->dname);
@@ -708,13 +708,13 @@ static void cmd_kick(struct userrec *u, int idx, char *par)
             chan->dname);
     return;
   }
-  egg_snprintf(s, sizeof s, "%s!%s", m->nick, m->userhost);
 //XXXXXXXXXXXX Skip
+  current = find_capability("account-notify");
   if (current->enabled) {
     u = get_user_by_account(m->account);
   }
   if (!u) {
-    sprintf(s, "%s!%s", m->nick, m->userhost);
+    egg_snprintf(s, sizeof s, "%s!%s", m->nick, m->userhost);
     u = get_user_by_host(s);
   }
   get_user_flagrec(u, &victim, chan->dname);
@@ -823,6 +823,7 @@ static void cmd_channel(struct userrec *u, int idx, char *par)
         strlcpy(s, " --- ", sizeof s);
       if (m->user == NULL) {
 //XXXXXXXXXXXX
+        current = find_capability("extended-join");
         if (current->enabled) {
           u = get_user_by_account(m->account);
         }
@@ -1082,6 +1083,7 @@ static void cmd_adduser(struct userrec *u, int idx, char *par)
   if (strlen(hand) > HANDLEN)
     hand[HANDLEN] = 0;
 //XXXXXXXXXXXXXXXXXXX
+  current = find_capability("extended-join");
   if (current->enabled) {
     u = get_user_by_account(m->account);
   }
@@ -1148,6 +1150,7 @@ static void cmd_deluser(struct userrec *u, int idx, char *par)
   }
   get_user_flagrec(u, &user, chan->dname);
 //XXXXXXXXXXXXXXXXX
+  current = find_capability("extended-join");
   if (current->enabled) {
     u = get_user_by_account(m->account);
   }

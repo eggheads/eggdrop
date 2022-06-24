@@ -179,7 +179,7 @@ struct userrec *get_user_by_account(char *acct)
   struct userrec *u;
   struct list_type *q;
 
-  if (acct == NULL)
+  if (acct == "")
     return NULL;
   for (u = userlist; u; u = u->next) {
     q = get_user(&USERENTRY_ACCOUNT, u);
