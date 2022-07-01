@@ -2239,33 +2239,40 @@ struct dcc_table DCC_IDENTWAIT = {
 
 void dcc_ident(int idx, char *buf, int len)
 {
-  char response[512], buf1[512], *c;
+  unsigned int port_on_server = 0, port_on_client = 0;
+  char resp_type[512], add_info[512], user_id[512], *s;
   size_t l;
   int i;
 
-  *response = *buf1 = '\0';
-  sscanf(buf, "%*[^:]:%[^:]:%*[^:]:%[^\n]\n", response, buf1);
-  rmspace(response);
-  if (response[0] != 'U') {
-    dcc[idx].timeval = now;
-    return;
-  }
-  rmspace(buf1);
-  buf1[(sizeof buf1) - 1] = 0;
-  if (!strchr(buf1, '@')) {
-    c = buf1 + strlen(buf1);
-    *c++ = '@';
-    l = (sizeof buf1) - (c - buf1);
+  *resp_type = *add_info = *user_id = '\0'; 
+  if ((sscanf(buf, "%u ,%u : %511[^ :] : %511[^ :] :%511s", &port_on_server,
+              &port_on_client, resp_type, add_info, user_id) == 5) &&
+      (*resp_type == 'U') &&
+      (!strchr(user_id, '@'))) {
     for (i = 0; i < dcc_total; i++)
       if ((dcc[i].type == &DCC_IDENTWAIT) &&
           (dcc[i].sock == dcc[idx].u.ident_sock)) {
-        strlcpy(c, dcc[idx].host, l);
-        dcc_telnet_got_ident(i, buf1);
+        if (port_on_server != dcc[i].port) {
+          debug3("dcc: dcc_ident(): ident response port_on_server %u doesnt match dcc[%i].port %u",
+                 port_on_server, i, dcc[i].port);
+          dcc[idx].timeval = now;
+          return;
+        }
+        s = user_id + strlen(user_id);
+        *s++ = '@';
+        l = (sizeof user_id) - (s - user_id);
+        strlcpy(s, dcc[idx].host, l);
+        dcc_telnet_got_ident(i, user_id);
+        break;
       }
+    dcc[idx].u.other = 0;
+    killsock(dcc[idx].sock);
+    lostdcc(idx);
+    return;
   }
-  dcc[idx].u.other = 0;
-  killsock(dcc[idx].sock);
-  lostdcc(idx);
+
+  debug1("dcc: dcc_ident(): bogus ident response: %s", buf);
+  dcc[idx].timeval = now;
 }
 
 void eof_timeout_dcc_ident(int idx, const char *s)
