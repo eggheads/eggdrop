@@ -69,7 +69,7 @@ char bannerfile[121] = "text/banner";  /* File displayed on telnet login      */
 char stealth_prompt[81] = "\n\nNickname.\n"; /* stealth_telnet prompt string  */
 
 static void dcc_telnet_hostresolved(int);
-static void dcc_telnet_got_ident(int, const char *);
+static void dcc_telnet_got_ident(int, char *);
 static void dcc_telnet_pass(int, int);
 
 
@@ -2239,40 +2239,28 @@ struct dcc_table DCC_IDENTWAIT = {
 
 void dcc_ident(int idx, char *buf, int len)
 {
-  unsigned int port_on_server = 0, port_on_client = 0;
-  char resp_type[512], add_info[512], user_id[512], *s;
-  size_t l;
+  char response[513], uid[513], buf1[sizeof uid + UHOSTLEN];
   int i;
 
-  *resp_type = *add_info = *user_id = '\0'; 
-  if ((sscanf(buf, "%u ,%u : %511[^ :] : %511[^ :] :%511s", &port_on_server,
-              &port_on_client, resp_type, add_info, user_id) == 5) &&
-      (*resp_type == 'U') &&
-      (!strchr(user_id, '@'))) {
-    for (i = 0; i < dcc_total; i++)
-      if ((dcc[i].type == &DCC_IDENTWAIT) &&
-          (dcc[i].sock == dcc[idx].u.ident_sock)) {
-        if (port_on_server != dcc[i].port) {
-          debug3("dcc: dcc_ident(): ident response port_on_server %u doesnt match dcc[%i].port %u",
-                 port_on_server, i, dcc[i].port);
-          dcc[idx].timeval = now;
-          return;
-        }
-        s = user_id + strlen(user_id);
-        *s++ = '@';
-        l = (sizeof user_id) - (s - user_id);
-        strlcpy(s, dcc[idx].host, l);
-        dcc_telnet_got_ident(i, user_id);
-        break;
-      }
-    dcc[idx].u.other = 0;
-    killsock(dcc[idx].sock);
-    lostdcc(idx);
+  *response = *uid = '\0';
+  sscanf(buf, "%*[^:]:%512[^:]:%*[^:]:%512[^\n]\n", response, uid);
+  rmspace(response);
+  if (response[0] != 'U') {
+    debug0("dcc: dcc_ident(): resp_type != USERID");
+    dcc[idx].timeval = now;
     return;
   }
-
-  debug1("dcc: dcc_ident(): bogus ident response: %s", buf);
-  dcc[idx].timeval = now;
+  rmspace(uid);
+  uid[sizeof uid - 1] = '\0';
+  for (i = 0; i < dcc_total; i++)
+    if ((dcc[i].type == &DCC_IDENTWAIT) &&
+        (dcc[i].sock == dcc[idx].u.ident_sock)) {
+      snprintf(buf1, sizeof buf1, "%s@%s", uid, dcc[idx].host);
+      dcc_telnet_got_ident(i, buf1);
+    }
+  dcc[idx].u.other = 0;
+  killsock(dcc[idx].sock);
+  lostdcc(idx);
 }
 
 void eof_timeout_dcc_ident(int idx, const char *s)
@@ -2321,7 +2309,7 @@ struct dcc_table DCC_IDENT = {
   NULL
 };
 
-static void dcc_telnet_got_ident(int i, const char *host)
+static void dcc_telnet_got_ident(int i, char *host)
 {
   int idx;
   char x[1024];
