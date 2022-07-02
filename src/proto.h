@@ -9,7 +9,7 @@
  */
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2021 Eggheads Development Team
+ * Copyright (C) 1999 - 2022 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -190,7 +190,6 @@ void eggContext(const char *, int, const char *);
 void eggContextNote(const char *, int, const char *, const char *);
 void eggAssert(const char *, int, const char *);
 void backup_userfile(void);
-int mainloop(int);
 
 /* match.c */
 int casecharcmp(unsigned char, unsigned char);
@@ -271,7 +270,6 @@ int crypto_verify(const char *, const char *);
 
 /* net.c */
 IP my_atoul(char *);
-unsigned long iptolong(IP);
 void setsock(int, int);
 int allocsock(int, int);
 int alloctclsock(int, int, Tcl_FileProc *, ClientData);
@@ -325,10 +323,12 @@ int xtra_set();
 /* userrec.c */
 struct userrec *adduser(struct userrec *, char *, char *, char *, int);
 void addhost_by_handle(char *, char *);
+void addaccount_by_handle(char *, char *);
 void clear_masks(struct maskrec *);
 void clear_userlist(struct userrec *);
 int u_pass_match(struct userrec *, char *);
 int delhost_by_handle(char *, char *);
+int delaccount_by_handle(char *, char *);
 int ishost_for_handle(char *, char *);
 int count_users(struct userrec *);
 int deluser(char *);

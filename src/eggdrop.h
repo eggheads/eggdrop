@@ -6,7 +6,7 @@
  */
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2021 Eggheads Development Team
+ * Copyright (C) 1999 - 2022 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -786,11 +786,13 @@ enum {
 #endif
 
 #ifdef EGG_TDNS
+#include <pthread.h>
 #define DTN_TYPE_HOSTBYIP 0
 #define DTN_TYPE_IPBYHOST 1
 
 /* linked list instead of array because of multi threading */
 struct dns_thread_node {
+  pthread_mutex_t mutex;
   int fildes[2];
   int type;
   sockname_t addr;

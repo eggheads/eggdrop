@@ -1,11 +1,11 @@
-Last revised: October 28, 2020
+Encryption/Hashing
 
-PBKDF2 Hashing
-
-  With the release of Eggdrop 1.9.0, the development team is releasing
-  an updated crytopgraphy module, PBKDF2, for use with Eggdrop. PBKDF2
-  is a one-way hashing algorithm used to protect the contents of the
-  password file, as well as for use via the Tcl interface.
+  With the release of Eggdrop 1.9.0, an updated crytopgraphy module
+  (PBKDF2) was released for use with Eggdrop. PBKDF2 is a one-way
+  hashing algorithm used to protect the contents of the password file,
+  as well as for use via the Tcl interface. Prior to this, blowfish was
+  used for cryptographic requirements, such as hashing passwords for
+  storage in the userfile.
 
 BACKGROUND
 
@@ -140,4 +140,4 @@ where 'PBK method' is the method specified in the configuration file,
 'salt' is the value used for the salt, and 'password hash' is the output
 of the hashing algorithm.
 
-Copyright (C) 2000 - 2021 Eggheads Development Team
+Copyright (C) 2000 - 2022 Eggheads Development Team

@@ -4,7 +4,7 @@
  */
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2021 Eggheads Development Team
+ * Copyright (C) 1999 - 2022 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -112,7 +112,8 @@ static struct dcc_table DCC_FILES = {
   disp_dcc_files,
   expmem_dcc_files,
   kill_dcc_files,
-  out_dcc_files
+  out_dcc_files,
+  NULL
 };
 
 static struct user_entry_type USERENTRY_DCCDIR = {
@@ -584,10 +585,10 @@ static tcl_strings mystrings[] = {
 };
 
 static tcl_ints myints[] = {
-  {"max-filesize",    &dcc_maxsize},
-  {"max-file-users",    &dcc_users},
-  {"upload-to-pwd",  &upload_to_cd},
-  {NULL,                      NULL}
+  {"max-filesize",    &dcc_maxsize, 0},
+  {"max-file-users",    &dcc_users, 0},
+  {"upload-to-pwd",  &upload_to_cd, 0},
+  {NULL,                      NULL, 0}
 };
 
 static struct dcc_table DCC_FILES_PASS = {
@@ -600,7 +601,8 @@ static struct dcc_table DCC_FILES_PASS = {
   disp_dcc_files_pass,
   expmem_dcc_files,
   kill_dcc_files,
-  out_dcc_files
+  out_dcc_files,
+  NULL
 };
 
 

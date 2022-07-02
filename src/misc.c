@@ -9,7 +9,7 @@
  */
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2021 Eggheads Development Team
+ * Copyright (C) 1999 - 2022 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -1212,7 +1212,7 @@ FILE *resolve_help(int dcc, char *file)
     return NULL;
   }
   /* Since we're not dealing with help files, we should just prepend the filename with textdir */
-  simple_sprintf(s, "%s%s", textdir, file);
+  snprintf(s, sizeof s, "%s%s", textdir, file);
   if (is_file(s))
     return fopen(s, "r");
   else

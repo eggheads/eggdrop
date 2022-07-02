@@ -7,7 +7,7 @@ of the normal Tcl built-in commands are still there, of course, but you
 can also use these to manipulate features of the bot. They are listed
 according to category.
 
-This list is accurate for Eggdrop v1.9.1. Scripts written for v1.3,
+This list is accurate for Eggdrop v1.9.2. Scripts written for v1.3,
 v1.4, 1.6 and 1.8 series of Eggdrop should probably work with a few
 minor modifications depending on the script. Scripts which were written
 for v0.9, v1.0, v1.1 or v1.2 will probably not work without
@@ -143,20 +143,26 @@ clearqueue <queue>
 
   Module: server
 
-cap <ls/req/enabled/raw> [arg]
+cap <ls/values/req/enabled/raw> [arg]
 
   Description: displays CAP status or sends a raw CAP command to the
   server. "ls" will list the capabilities Eggdrop is internally tracking
-  as supported by the server, "enabled" will list the capabilities
-  Eggdrop is internally tracking as negotiated with the server, "req"
-  will request the capabilities listed in "arg" from the server, and raw
-  will send a raw CAP command to the server. The arg field is a single
-  argument, and should be submitted as a single string. For example, to
-  request capabilities foo and bar, you would use [cap req "foo bar"],
-  and for example purposes, sending the same request as a raw command
-  would be [cap raw "REQ :foo bar"].
+  as supported by the server. "values" will list all capabilities and
+  their associated CAP 302 values (if any) as a key/value pair, and
+  "values" with a capability name as arg will list the values associated
+  for the capability. "enabled" will list the capabilities Eggdrop is
+  internally tracking as negotiated with the server. "req" will request
+  the capabilities listed in "arg" from the server. "raw" will send a
+  raw CAP command to the server. The arg field is a single argument, and
+  should be submitted as a single string. For example, to request
+  capabilities foo and bar, you would use [cap req "foo bar"], and for
+  example purposes, sending the same request as a raw command would be
+  [cap raw "REQ :foo bar"].
 
-  Returns: nothing
+  Returns: a list of CAP capabilities for the "enabled" and "ls"
+  sub-commands; a dict of capability/value pairs for the "values"
+  command or a list if "values" if followed by an argument; otherwise
+  nothing.
 
   Module: server
 
@@ -201,6 +207,15 @@ server remove <ip/host> [[+]port]
   port is matched against as well (ie, 7000 is not the same as +7000).
 
   Returns: nothing
+
+  Module: server
+
+server list
+
+  Description: lists all servers currently added to the bots internal
+  server list
+
+  Returns: A list of lists in the format {{hostname} {port} {password}}
 
   Module: server
 
@@ -1105,9 +1120,16 @@ isvoice <nickname> [channel]
 
 isidentified <nickname> [channel]
 
+  Description: determine if a user is identified to irc services.
+  WARNING: this may not be accurate depending on the server and
+  configuration. For accurate results, the server must support (and
+  Eggdrop must have enabled via CAP) the account-notify and
+  extended-join capabilities, and the server must understand WHOX
+  requests (also known as raw 354 responses)
+
   Returns: 1 if someone by the specified nickname is on the channel (or
   any channel if no channel name is specified) and is logged in); 0
-  otherwise
+  otherwise.
 
   Module: irc
 
@@ -1132,10 +1154,45 @@ isaway <nickname> [channel]
 
   Module: irc
 
+isircbot <nickname> [channel]
+
+  Description: determine if a user has denoted themselves as a bot via
+  an ircd-defined user flag (declared via BOT in a server's 005/ISUPPORT
+  line). Due to server implementations, accurately monitoring this is
+  incredibly fragile, as the flag can be added and removed by a user
+  without any notification to other users. To ensure this status is
+  current for use, it is recommended to use refreshchan <channel> w on a
+  channel the user is on, which will refresh if the user is a bot or not
+  for all users on the channel. If a server does not advertise BOT in
+  its ISUPPORT line but still supports it (currently the case for
+  unrealircd), you can manually set it by adding "BOT=B" (or whatever
+  flag is used) to the isupport-default setting in your eggdrop.conf
+  file.
+
+  Returns: 1 if Eggdrop is currently tracking someone by that nickname
+  marked as a bot by an IRC server; 0 otherwise.
+
 onchan <nickname> [channel]
 
   Returns: 1 if someone by that nickname is on the specified channel (or
   any channel if none is specified); 0 otherwise
+
+  Module: irc
+
+monitor <command> [nickname]
+
+  Description: interacts with the list of nicknames Eggdrop has asked
+  the IRC server to track. valid commands are add, delete, list, online,
+  offline, status, and clear. The 'add' command sends 'nickname' to the
+  server to track. The 'delete' command removes 'nickname' from being
+  tracked by the server (or returns an error if the nickname is not
+  present). The 'list' command returns a list of all nicknames the IRC
+  server is tracking on behalf of Eggdrop. The 'online' command returns
+  a string of tracked nicknames that are currently online. The 'offline'
+  command returns a list of tracked nicknames that are currently
+  offline. The 'status' command returns a '1' if 'nickname' is online or
+  a 0 if 'nickname' is offline. The 'clear' command removes all
+  nicknames from the list the server is monitoring.
 
   Module: irc
 
@@ -1866,13 +1923,16 @@ listen [ip] <port> <type> [options [flag]]
 
       Returns: port number or error message
 
-    listen [ip] <port> script <proc> <flag>
+    listen [ip] <port> script <proc> [flag]
 
       Description: accepts connections which are immediately routed to a
       proc. The proc is called with one parameter: the idx of the new
-      connection. If the script type is used, flag must also be set.
-      Flag may currently only be 'pub', which makes the bot allow anyone
-      to connect and not perform an ident lookup.
+      connection. The optional flag parameter currently only accepts
+      'pub' as a value. By specifying 'pub' as a flag, Eggdrop will skip
+      the ident check for the user regardless of settings in the config
+      file. This will allow any user to attempt a connection, and result
+      in Eggdrop using "-telnet!telnet@host" instead of
+      "-telnet!<ident>@host" as a hostmask to match against the user.
 
       Returns: port number or error message
 
@@ -2509,7 +2569,7 @@ encrypt <key> <string>
   encryption mode to use by prefixing the encryption key with either
   "ecb:" or "cbc:", or by using the blowfish-use-mode setting in the
   config file. Note: the default encryption mode for this function is
-  planned to transition from ECB to CBC in v1.9.1.
+  planned to transition from ECB to CBC in v1.9.0.
 
   Module: encryption
 
@@ -3201,7 +3261,7 @@ the Tcl proc, and an explanation.
   procname <from> <keyword> <text>
 
   IMPORTANT: While not necessarily deprecated, this bind has been
-  supplanted by the RAWT bind as of 1.9.1. You probably want to be using
+  supplanted by the RAWT bind as of 1.9.0. You probably want to be using
   RAWT, not RAW.
 
   Description: previous versions of Eggdrop required a special compile
@@ -3212,8 +3272,10 @@ the Tcl proc, and an explanation.
   order that the IRC server sends to the bot. The pre-processing only
   splits it apart enough to determine the keyword. If the proc returns
   1, Eggdrop will not process the line any further (this could cause
-  unexpected behavior in some cases). The RAW bind does not support the
-  IRCv3 message-tags capability, please see RAWT for more information.
+  unexpected behavior in some cases), although RAWT binds are processed
+  before RAW binds (and thus, a RAW bind cannot block a RAWT bind). The
+  RAW bind does not support the IRCv3 message-tags capability, please
+  see RAWT for more information.
 
   Module: server
 
@@ -3735,26 +3797,30 @@ the Tcl proc, and an explanation.
   tag message prefixed to the server message in a dict format, such as
   "msgid 890157217279768 aaa bbb". The order of the arguments is
   identical to the order that the IRC server sends to the bot. If the
-  proc returns 1, Eggdrop will not process the line any further (this
-  could cause unexpected behavior in some cases). As of 1.9.1, it is
-  recommended to use the RAWT bind instead of the RAW bind.
+  proc returns 1, Eggdrop will not process the line any further, to
+  include not being processed by a RAW bind (this could cause unexpected
+  behavior in some cases). As of 1.9.0, it is recommended to use the
+  RAWT bind instead of the RAW bind.
 
 (53) ACCOUNT (stackable)
 
   bind account <flags> <mask> <proc>
 
-  procname <nick> <user> <hand> <account>
+  procname <nick> <user> <hand> <chan> <account>
 
-  Description: triggered when Eggdrop receives an ACCOUNT message. The
-  mask for the bind is in the format "#channel nick!user@hostname.com
-  account" where channel is the channel the user was found on when the
-  bind was triggered, the hostmask is the user's hostmask, and account
-  is the account name the user is logging in to, or "" for logging out.
-  The mask argument can accept wildcards. For the proc, nick is the
-  nickname of the user logging into/out of an account, user is the
-  user@host.com hostmask, hand is the handle of the user (or * if none),
-  and account is the name of the account the user logged in to (or "" if
-  the user logged out of an account).
+  Description: triggered when Eggdrop detects a change in a service
+  account status. The change could be initiated by receving an IRCv3
+  ACCOUNT message, receiving IRCv3 extended-join information when a user
+  on an existing channel joins a new channel, or detecting an IRCv3
+  account-tag in a PRIVMSG. The mask for the bind is in the format
+  "#channel nick!user@hostname.com account" where channel is the channel
+  the user was found on when the bind was triggered, the hostmask is the
+  user's hostmask, and account is the account name the user is logging
+  in to, or "" for logging out. The mask argument can accept wildcards.
+  For the proc, nick is the nickname of the user logging into/out of an
+  account, user is the user@host.com hostmask, hand is the handle of the
+  user (or * if none), and account is the name of the account the user
+  logged in to (or "" if the user logged out of an account).
 
 (54) ISUPPORT (stackable)
 
@@ -3774,6 +3840,21 @@ the Tcl proc, and an explanation.
   caught and ignored.
 
   Module: server
+
+(55) MONITOR (stackable)
+
+  bind monitor <flags> <nick> <proc>
+
+  procname <nick> <online>
+
+  Description: triggered when a server sends a MONITOR status change of
+  a target either coming online or disconnecting (not all servers
+  support MONITOR). flags are ignored, nick is the nickname of the
+  intended MONITOR target and can be used with wildcards. For the proc,
+  nick is the nickname connecting or disconnecting, and online is '0' if
+  the nickname disconnected, or '1' if the nickname connected.
+
+  Module: irc
 
 Return Values
 
@@ -3972,4 +4053,4 @@ the four special characters:
         matching)
   ----- -----------------------------------------------------------------
 
-  Copyright (C) 1999 - 2021 Eggheads Development Team
+  Copyright (C) 1999 - 2022 Eggheads Development Team
