@@ -955,7 +955,7 @@ static int raw_dcc_resend_send(char *filename, char *nick, char *from,
                                int resend)
 {
   int zz, port, i;
-  char *nfn, *buf = NULL;
+  char *nfn, *buf = NULL, s[EGG_INET_ADDRSTRLEN];
   off_t dccfilesize;
   FILE *f;
 
@@ -1029,11 +1029,6 @@ static int raw_dcc_resend_send(char *filename, char *nick, char *from,
   dcc[i].u.xfer->type = resend ? XFER_RESEND_PEND : XFER_SEND;
 
   if (nick[0] != '*') {
-#ifdef IPV6
-    char s[INET6_ADDRSTRLEN];
-#else
-    char s[INET_ADDRSTRLEN];
-#endif
     if (getdccaddr(&dcc[i].sockname, s, sizeof s)) {
       dprintf(DP_SERVER, "PRIVMSG %s :\001DCC %sSEND %s %s %d %lu\001\n", nick,
               resend ? "RE" : "", nfn, s, port, dccfilesize);

@@ -1025,8 +1025,8 @@ static void filedb_ls(FILE *fdb, int idx, char *mask, int showall)
 
 static void remote_filereq(int idx, char *from, char *file)
 {
-  char *p = NULL, *what = NULL, *dir = NULL,
-    *s1 = NULL, *reject = NULL, *s = NULL;
+  char *p = NULL, *what = NULL, *dir = NULL, *reject = NULL, *s1 = NULL,
+       s[EGG_INET_ADDRSTRLEN], s2[128];
   FILE *fdb = NULL;
   int i = 0;
   filedb_entry *fdbe = NULL;
@@ -1076,18 +1076,11 @@ static void remote_filereq(int idx, char *from, char *file)
   }
   /* Grab info from dcc struct and bounce real request across net */
   i = dcc_total - 1;
-#ifdef IPV6
-  s = nmalloc(INET6_ADDRSTRLEN);
-  getdccaddr(&dcc[i].sockname, s, INET6_ADDRSTRLEN);
-#else
-  s = nmalloc(INET_ADDRSTRLEN);
-  getdccaddr(&dcc[i].sockname, s, INET_ADDRSTRLEN);
-#endif
-  simple_sprintf(s, "%s %u %d", s, dcc[i].port, dcc[i].u.xfer->length);
-  botnet_send_filesend(idx, s1, from, s);
+  getdccaddr(&dcc[i].sockname, s, sizeof s);
+  snprintf(s2, sizeof s2, "%s %u %lu", s, dcc[i].port, dcc[i].u.xfer->length);
+  botnet_send_filesend(idx, s1, from, s2);
   putlog(LOG_FILES, "*", FILES_REMOTEREQ, dir, dir[0] ? "/" : "", what);
   my_free(s1);
-  my_free(s);
   my_free(what);
   my_free(dir);
 }

@@ -108,11 +108,7 @@ static void ident_oidentd()
   long filesize;
   char *data = NULL;
   char path[121], line[256], buf[256], identstr[256];
-#ifdef IPV6
-  char s[INET6_ADDRSTRLEN];
-#else
-  char s[INET_ADDRSTRLEN];
-#endif
+  char s[EGG_INET_ADDRSTRLEN];
   int ret, prevtime, servidx, i;
   socklen_t namelen;
   struct sockaddr_storage ss;
@@ -196,14 +192,14 @@ static void ident_oidentd()
       struct sockaddr_in *saddr = (struct sockaddr_in *)&ss;
       fprintf(fd, "lport %" PRIu16 " from %s { reply \"%s\" } "
                 "### eggdrop_%s !%" PRId64 "\n", ntohs(saddr->sin_port),
-                inet_ntop(AF_INET, &(saddr->sin_addr), s, INET_ADDRSTRLEN),
+                inet_ntop(AF_INET, &(saddr->sin_addr), s, sizeof s),
                 botuser, pid_file, (int64_t) now);
 #ifdef IPV6
     } else if (ss.ss_family == AF_INET6) {
       struct sockaddr_in6 *saddr = (struct sockaddr_in6 *)&ss;
       fprintf(fd, "lport %" PRIu16 " from %s { reply \"%s\" } "
                 "### eggdrop_%s !%" PRId64 "\n", ntohs(saddr->sin6_port),
-                inet_ntop(AF_INET6, &(saddr->sin6_addr), s, INET6_ADDRSTRLEN),
+                inet_ntop(AF_INET6, &(saddr->sin6_addr), s, sizeof s),
                 botuser, pid_file, (int64_t) now);
 #endif
     } else {

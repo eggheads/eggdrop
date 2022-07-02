@@ -450,12 +450,7 @@ static int tcl_strftime STDVAR
 
 static int tcl_myip STDVAR
 {
-#ifdef IPV6
-  char s[INET6_ADDRSTRLEN];
-#else
-  char s[INET_ADDRSTRLEN];
-#endif
-
+  char s[EGG_INET_ADDRSTRLEN];
 
   BADARGS(1, 1, "");
 

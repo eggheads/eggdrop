@@ -2042,11 +2042,7 @@ static void start_sending_users(int idx)
   int i = 1;
   struct chanuserrec *ch;
   struct chanset_t *cst;
-#ifdef IPV6
-  char s[INET6_ADDRSTRLEN];
-#else
-  char s[INET_ADDRSTRLEN];
-#endif
+  char s[EGG_INET_ADDRSTRLEN];
 
   egg_snprintf(share_file, sizeof share_file, ".share.%s.%lu", dcc[idx].nick,
                now);

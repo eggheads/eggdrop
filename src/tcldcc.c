@@ -705,11 +705,7 @@ static void dccsocklist(Tcl_Interp *irp, int argc, char *type, int src) {
   char idxstr[10], timestamp[11], other[160];
   char portstring[7]; /* ssl + portmax + NULL */
   long tv;
-#ifdef IPV6
-  char s[INET6_ADDRSTRLEN];
-#else
-  char s[INET_ADDRSTRLEN];
-#endif
+  char s[EGG_INET_ADDRSTRLEN];
   socklen_t namelen;
   struct sockaddr_storage ss;
   Tcl_Obj *masterlist = NULL; /* initialize to NULL to make old gcc versions
@@ -749,11 +745,11 @@ static void dccsocklist(Tcl_Interp *irp, int argc, char *type, int src) {
         getsockname(dcc[i].sock, (struct sockaddr *) &ss, &namelen);
         if (ss.ss_family == AF_INET) {
           struct sockaddr_in *saddr = (struct sockaddr_in *)&ss;
-          inet_ntop(AF_INET, &(saddr->sin_addr), s, INET_ADDRSTRLEN);
+          inet_ntop(AF_INET, &(saddr->sin_addr), s, sizeof s);
 #ifdef IPV6
         } else if (ss.ss_family == AF_INET6) {
           struct sockaddr_in6 *saddr = (struct sockaddr_in6 *)&ss;
-            inet_ntop(AF_INET6, &(saddr->sin6_addr), s, INET6_ADDRSTRLEN);
+            inet_ntop(AF_INET6, &(saddr->sin6_addr), s, sizeof s);
 #endif
         }
         build_sock_list(irp, masterlist, idxstr, dcc[i].nick,
@@ -1033,7 +1029,7 @@ static int tcl_connect STDVAR
 
 static int setlisten(Tcl_Interp *irp, char *ip, char *portp, char *type, char *maskproc, char *flag) {
   int i, idx = -1, port, realport, found=0, ipv4=1;
-  char s[11], msg[256], newip[INET6_ADDRSTRLEN];
+  char s[11], msg[256], newip[EGG_INET_ADDRSTRLEN];
   struct portmap *pmap = NULL, *pold = NULL;
   sockname_t name;
   struct in_addr ipaddr4;
