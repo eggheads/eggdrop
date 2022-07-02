@@ -2239,18 +2239,19 @@ struct dcc_table DCC_IDENTWAIT = {
 
 void dcc_ident(int idx, char *buf, int len)
 {
-  char response[512], uid[512], buf1[UHOSTLEN + 21];
+  char response[513], uid[513], buf1[sizeof uid + UHOSTLEN];
   int i;
 
   *response = *uid = '\0';
-  sscanf(buf, "%*[^:]:%[^:]:%*[^:]:%[^\n]\n", response, uid);
+  sscanf(buf, "%*[^:]:%512[^:]:%*[^:]:%512[^\n]\n", response, uid);
   rmspace(response);
-  if (response[0] != 'U') {
+  rmspace(uid);
+  uid[sizeof uid - 1] = '\0';
+  if (strncasecmp(response, "USERID", 6) || strchr(uid, '@')) {
+    debug0("dcc: invalid ident string received, ignoring...");
     dcc[idx].timeval = now;
     return;
   }
-  rmspace(uid);
-  uid[20] = 0;                  /* 20 character ident max */
   for (i = 0; i < dcc_total; i++)
     if ((dcc[i].type == &DCC_IDENTWAIT) &&
         (dcc[i].sock == dcc[idx].u.ident_sock)) {
