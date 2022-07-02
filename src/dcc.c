@@ -2250,7 +2250,7 @@ void dcc_ident(int idx, char *buf, int len)
   if (!strncasecmp(response, "USERID", 6) || strchr(uid, '@')) {
     debug0("dcc: invalid ident string received, ignoring...");
     dcc[idx].timeval = now;
-  return;
+    return;
   }
   for (i = 0; i < dcc_total; i++)
     if ((dcc[i].type == &DCC_IDENTWAIT) &&
