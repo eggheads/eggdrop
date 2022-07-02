@@ -2245,13 +2245,13 @@ void dcc_ident(int idx, char *buf, int len)
   *response = *uid = '\0';
   sscanf(buf, "%*[^:]:%512[^:]:%*[^:]:%512[^\n]\n", response, uid);
   rmspace(response);
-  if (response[0] != 'U') {
-    debug0("dcc: dcc_ident(): resp_type != USERID");
-    dcc[idx].timeval = now;
-    return;
-  }
   rmspace(uid);
   uid[sizeof uid - 1] = '\0';
+  if (!strncasecmp(response, "USERID", 6) || strchr(uid, '@')) {
+    debug0("dcc: invalid ident string received, ignoring...");
+    dcc[idx].timeval = now;
+  return;
+  }
   for (i = 0; i < dcc_total; i++)
     if ((dcc[i].type == &DCC_IDENTWAIT) &&
         (dcc[i].sock == dcc[idx].u.ident_sock)) {
