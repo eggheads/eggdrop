@@ -2247,7 +2247,7 @@ void dcc_ident(int idx, char *buf, int len)
   rmspace(response);
   rmspace(uid);
   uid[sizeof uid - 1] = '\0';
-  if (!strncasecmp(response, "USERID", 6) || strchr(uid, '@')) {
+  if (strncasecmp(response, "USERID", 6) || strchr(uid, '@')) {
     debug0("dcc: invalid ident string received, ignoring...");
     dcc[idx].timeval = now;
     return;
