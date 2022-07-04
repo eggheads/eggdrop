@@ -556,7 +556,20 @@ void core_dns_hostbyip(sockname_t *addr)
 {
   struct dns_thread_node *dtn = nmalloc(sizeof(struct dns_thread_node));
   pthread_t thread; /* only used by pthread_create(), no need to save */
+  pthread_attr_t attr;
 
+  if (pthread_attr_init(&attr)) {
+    putlog(LOG_MISC, "*", "core_dns_hostbyip(): pthread_attr_init(): error = %s", strerror(errno));
+    call_hostbyip(addr, iptostr(&addr->addr.sa), 0);
+    nfree(dtn);
+    return;
+  }
+  if (pthread_attr_setdetachstate(&attr, PTHREAD_CREATE_DETACHED)) {
+    putlog(LOG_MISC, "*", "core_dns_hostbyip(): pthread_attr_setdetachstate(): error = %s", strerror(errno));
+    call_hostbyip(addr, iptostr(&addr->addr.sa), 0);
+    nfree(dtn);
+    return;
+  }
   if (pthread_mutex_init(&dtn->mutex, NULL))
     fatal("ERROR: core_dns_hostbyip(): pthread_mutex_init() failed", 0);
   if (pipe(dtn->fildes) < 0) {
@@ -566,7 +579,7 @@ void core_dns_hostbyip(sockname_t *addr)
     return;
   }
   memcpy(&dtn->addr, addr, sizeof *addr);
-  if (pthread_create(&thread, NULL, thread_dns_hostbyip, (void *) dtn)) {
+  if (pthread_create(&thread, &attr, thread_dns_hostbyip, (void *) dtn)) {
     putlog(LOG_MISC, "*", "core_dns_hostbyip(): pthread_create(): error = %s", strerror(errno));
     call_hostbyip(addr, iptostr(&addr->addr.sa), 0);
     close(dtn->fildes[0]);
@@ -584,6 +597,7 @@ void core_dns_ipbyhost(char *host)
   sockname_t addr;
   struct dns_thread_node *dtn;
   pthread_t thread; /* only used by pthread_create(), no need to save  */
+  pthread_attr_t attr;
 
   /* if addr is ip instead of host */
   if (setsockname(&addr, host, 0, 0) != AF_UNSPEC) {
@@ -591,6 +605,18 @@ void core_dns_ipbyhost(char *host)
     return;
   }
   dtn = nmalloc(sizeof(struct dns_thread_node));
+  if (pthread_attr_init(&attr)) {
+    putlog(LOG_MISC, "*", "core_dns_ipbyhost(): pthread_attr_init(): error = %s", strerror(errno));
+    call_ipbyhost(host, &addr, 0);
+    nfree(dtn);
+    return;
+  }
+  if (pthread_attr_setdetachstate(&attr, PTHREAD_CREATE_DETACHED)) {
+    putlog(LOG_MISC, "*", "core_dns_ipbyhost(): pthread_attr_setdetachstate(): error = %s", strerror(errno));
+    call_ipbyhost(host, &addr, 0);
+    nfree(dtn);
+    return;
+  }
   if (pthread_mutex_init(&dtn->mutex, NULL))
     fatal("ERROR: core_dns_ipbyhost(): pthread_mutex_init() failed", 0);
   if (pipe(dtn->fildes) < 0) {
@@ -602,7 +628,7 @@ void core_dns_ipbyhost(char *host)
   dtn->next = dns_thread_head->next;
   dns_thread_head->next = dtn;
   strlcpy(dtn->host, host, sizeof dtn->host);
-  if (pthread_create(&thread, NULL, thread_dns_ipbyhost, (void *) dtn)) {
+  if (pthread_create(&thread, &attr, thread_dns_ipbyhost, (void *) dtn)) {
     putlog(LOG_MISC, "*", "core_dns_ipbyhost(): pthread_create(): error = %s", strerror(errno));
     call_ipbyhost(host, &addr, 0);
     close(dtn->fildes[0]);
