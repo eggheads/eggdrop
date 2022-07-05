@@ -739,7 +739,7 @@ static void ssl_info(const SSL *ssl, int where, int ret)
            "established.");
 
     if ((cert = SSL_get_peer_certificate(ssl))) {
-      ssl_showcert(cert, data->loglevel);
+      ssl_showcert(cert, LOG_DEBUG);
       X509_free(cert);
     }
     else
