@@ -3,11 +3,11 @@ Enabling TLS Security on Eggdrop
 
 There are several ways TLS encryption can protect communication between your Eggdrop and the world. This guide will walk you through a few common scenarios and how to properly set up TLS protection.
 
-Sidenote: Despite SSL (Secure Socket Layer) encryption being deprecated and no longer secure, the term "SSL" is a bit of an anachronism and still commonly used interchangably with TLS (Transport Layer Security). If you see the term "SSL" used to describe a secure connection method, to include with within Eggdrop's own documentation and configuration files, it is probably safe to assume it is acutally referring to the secure TLS protocol. If you talk to someone and they use the term "SSL" be sure to correct them, we're sure they will *definitely* appreciate it :)
+Sidenote: Despite SSL (Secure Socket Layer) encryption being deprecated and no longer secure, the term "SSL" is a bit of an anachronism and still commonly used interchangeably with TLS (Transport Layer Security). If you see the term "SSL" used to describe a secure connection method, to include with within Eggdrop's own documentation and configuration files, it is probably safe to assume it is actually referring to the secure TLS protocol. If you talk to someone and they use the term "SSL" be sure to correct them, we're sure they will *definitely* appreciate it :)
 
 Pre-requisites
 --------------
-Your server must have OpenSSL (or an equivilent fork) installed. Most commonly this is done through your OS's package manager. Both the main package as well as the development headers must be installed. On a Debian/Ubuntu distro, this can be done by running::
+Your server must have OpenSSL (or an equivalent fork) installed. Most commonly this is done through your OS's package manager. Both the main package as well as the development headers must be installed. On a Debian/Ubuntu distro, this can be done by running::
 
   apt-get install openssl libssl-dev
 
@@ -35,7 +35,7 @@ No other action is necessary.
 
 Protecting Botnet Communications
 --------------------------------
-Eggdrop has the ability to protect botnet (direct bot to bot) communications wth TLS.
+Eggdrop has the ability to protect botnet (direct bot to bot) communications with TLS.
 
 Configuration File Preparation - Generating Keys
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -61,7 +61,7 @@ To connect to a bot listening with TLS, prefix the port number with a '+'. For e
 
   .+bot HubBot 1.2.3.4 +5555
 
-will use TLS to connect to 1.2.3.4 on port 5555 the next time a connetion is attempted to HubBot.
+will use TLS to connect to 1.2.3.4 on port 5555 the next time a connection is attempted to HubBot.
 
 Additional Information
 ----------------------
