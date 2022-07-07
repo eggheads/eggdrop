@@ -739,7 +739,7 @@ static void ssl_info(const SSL *ssl, int where, int ret)
            "established.");
 
     if ((cert = SSL_get_peer_certificate(ssl))) {
-      ssl_showcert(cert, data->loglevel);
+      ssl_showcert(cert, LOG_DEBUG);
       X509_free(cert);
     }
     else
@@ -748,7 +748,7 @@ static void ssl_info(const SSL *ssl, int where, int ret)
     /* Display cipher information */
     cipher = SSL_get_current_cipher(ssl);
     processed = SSL_CIPHER_get_bits(cipher, &secret);
-    putlog(data->loglevel, "*", "TLS: cipher used: %s %s; %d bits (%d secret)",
+    putlog(LOG_DEBUG, "*", "TLS: cipher used: %s %s; %d bits (%d secret)",
            SSL_CIPHER_get_name(cipher), SSL_get_version(ssl),
            processed, secret);
     /* secret are the actually secret bits. If processed and secret differ,
