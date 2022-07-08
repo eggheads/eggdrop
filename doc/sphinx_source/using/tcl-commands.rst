@@ -1167,6 +1167,12 @@ nick2hand <nickname> [channel]
 
   Module: irc
 
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+account2hand <nickname> [channel]
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+  Returns: the handle associated with the internally-tracked services account of the provided nickname, or "" if no match is found. This command will only work if a server supports (and Eggdrop has enabled) the account-notify and extended-join capabilities, and the server understands WHOX requests (also known as raw 354 responses). If no channel is specified, all channels are checked.
+
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 account2nicks <handle> [channel]
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
