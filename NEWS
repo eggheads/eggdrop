@@ -15,6 +15,49 @@ Last revised: December 4, 2021
 
      _________________________________________________________________
 
+Eggdrop v1.9.3:
+
+ General changes:
+    - Added the ability to track services account names for users in a channel
+      and those added to an Eggdrop. To work properly, this feature requires a
+      server that supports WHOX requests and can negotiate the extended-join
+      and account-notify capabilities
+    - Added the +account and -account partyline commands to add or remove a
+      services account name to a handle
+    - Updated .channel output to display services account names associated with
+      channel users
+    - Added the ability to create a timer with a custom name instead of the
+      default "timerXX" format
+    - Fixed a compile error if TLS libraraies weren't detected on the host OS
+    - Fixed a compile error for pthreads found mainly on BSD systems
+    - Fixed a bug with threaded DNS queries where threads were not terminated
+      properly, potentially resulting in an out-of-memory error
+    - Updated information obtained via extended-join to all channels the user is
+      on, not just the channel they joined
+    - Force ident requests to originate from the specified vhost/listen IP
+    - Reorganized the documentation structure
+
+ Botnet changes:
+    - None
+
+ Tcl API changes:
+    - Added the 'account2hand' command, which looks up the account name
+      assciated with the provided nickname and then returns the handle of the
+      user with that account added to it
+    - Updated the getuser and setuser commands to accept the "ACCOUNT" entry
+    - Added the 'accounttracking' variable, which returns a '1' if all three
+      requirements (WHOX, extended-join, and account-notify) are available and
+      active for the current server connection
+    - Added an optional timer name field to the timer and utimer commands
+    - Updated docs to reflect a value of '0' for the server-online value when
+      Eggdrop is disconnected
+
+ Module changes:
+    - None
+
+ Eggdrop config changes:
+    - None
+
 Eggdrop v1.9.2:
 
  General changes:
