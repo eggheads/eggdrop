@@ -229,11 +229,11 @@ validuser <handle>
 
   Module: core
 
-^^^^^^^^^^^^^^^^^^^^^^^^^
-finduser <nick!user@host>
-^^^^^^^^^^^^^^^^^^^^^^^^^
+^^^^^^^^^^^^^^^^^^^^^^^^^^^
+finduser [-account] <value>
+^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-  Description: finds the user record which most closely matches the given nick!user\@host
+  Description: finds the internal user record which most closely matches the given value. When used with the -account flag, value is a services account name, otherwise by default value is a string in the hostmask format of nick!user\@host.
 
   Returns: the handle found, or "*" if none
 
@@ -1166,12 +1166,6 @@ nick2hand <nickname> [channel]
   Returns: the handle of a nickname on a channel. If a channel is not specified, the bot will check all of its channels. If the nick is not found, "" is returned. If the nick is found but does not have a handle, "*" is returned. If no channel is specified, all channels are checked.
 
   Module: irc
-
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-account2hand <nickname> [channel]
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-  Returns: the handle associated with the internally-tracked services account of the provided nickname, or "" if no match is found. This command will only work if a server supports (and Eggdrop has enabled) the account-notify and extended-join capabilities, and the server understands WHOX requests (also known as raw 354 responses). If no channel is specified, all channels are checked.
 
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 account2nicks <handle> [channel]
