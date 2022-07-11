@@ -59,8 +59,13 @@ static int tcl_finduser STDVAR
 
   BADARGS(2, 3, " ?-account? searchString");
 
-  if (!strcasecmp(argv[1], "-account")) {
-    u = get_user_by_account(argv[2]);
+  if (argc == 3) {
+    if (!strcasecmp(argv[1], "-account")) {
+      u = get_user_by_account(argv[2]);
+    } else {
+      Tcl_AppendResult(irp, "invalid option, must be -account", NULL);
+      return TCL_ERROR;
+    }
   } else {
     u = get_user_by_host(argv[1]);
   }
