@@ -57,9 +57,13 @@ static int tcl_finduser STDVAR
 {
   struct userrec *u;
 
-  BADARGS(2, 2, " nick!user@host");
+  BADARGS(2, 3, " ?-account? searchString");
 
-  u = get_user_by_host(argv[1]);
+  if (!strcasecmp(argv[1], "-account")) {
+    u = get_user_by_account(argv[2]);
+  } else {
+    u = get_user_by_host(argv[1]);
+  }
   Tcl_AppendResult(irp, u ? u->handle : "*", NULL);
   return TCL_OK;
 }
