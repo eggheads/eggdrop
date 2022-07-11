@@ -41,9 +41,9 @@ Eggdrop v1.9.3:
     - None
 
  Tcl API changes:
-    - Added the 'account2hand' command, which looks up the account name
-      assciated with the provided nickname and then returns the handle of the
-      user with that account added to it
+    - Updated the 'finduser' command to accept the -account flag. Using this
+      flag will search the userfile and return the handle that contains the
+      provided account name
     - Updated the getuser and setuser commands to accept the "ACCOUNT" entry
     - Added the 'accounttracking' variable, which returns a '1' if all three
       requirements (WHOX, extended-join, and account-notify) are available and
@@ -57,6 +57,8 @@ Eggdrop v1.9.3:
 
  Eggdrop config changes:
     - None
+
+     _________________________________________________________________
 
 Eggdrop v1.9.2:
 
@@ -138,7 +140,8 @@ Eggdrop v1.9.1:
 
   Eggdrop config file changes:
     - Added Libera Chat to the accepted server types
-_________________________________________________________________
+
+     _________________________________________________________________
 
 Eggdrop v1.9.0:
 
