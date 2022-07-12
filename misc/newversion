@@ -24,9 +24,8 @@
 # the same distribution terms that you use for the rest of that program.
 
 MOD_CONFIGURE_ACS="src/mod/compress.mod/configure.ac src/mod/dns.mod/configure.ac"
-DOCS="doc/COMPILE-GUIDE doc/sphinx_source/mainDocs/patch.rst \
-      doc/sphinx_source/mainDocs/tcl-commands.rst \
-      doc/sphinx_source/appendices/text-sub.rst"
+DOCS="doc/sphinx_source/using/tcl-commands.rst \
+      doc/sphinx_source/using/text-sub.rst"
 
 fix_version_h() {
 	sed -ie 's:^#define EGG_NUMVER.*$:#define EGG_NUMVER '${NEW_NUMVERSION}':' src/version.h
