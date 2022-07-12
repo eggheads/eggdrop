@@ -2478,7 +2478,7 @@ utimers
 
   Module: core
 
-^^^^^^^^^^^^^^^^^^^ killtimer <timerName> ^^^^^^^^^^^^^^^^^^^
+killtimer <timerName>
 
   Description: removes the timerName minutely timer from the timer list.
 
@@ -2486,7 +2486,7 @@ utimers
 
   Module: core
 
-^^^^^^^^^^^^^^^^^^^^ killutimer <timerName> ^^^^^^^^^^^^^^^^^^^^
+killutimer <timerName>
 
   Description: removes the timerName secondly timer from the timer list.
 
