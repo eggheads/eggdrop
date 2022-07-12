@@ -1,7 +1,7 @@
 Upgrading Eggdrop
 
   It is easy to upgrade Eggdrop to a new version! To have a full picture
-  of the changes made since your last upgrade, we recommed reading the
+  of the changes made since your last upgrade, we recommend reading the
   NEWS file. Upgrades from the 1.6 and 1.8 lines of Eggdrop should take
   place with little to no issues. The config file, user files, and
   channel files can all be reused.

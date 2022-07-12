@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>Eggdrop Tcl Commands &#8212; Eggdrop 1.9.2 documentation</title>
+    <title>Eggdrop Tcl Commands &#8212; Eggdrop 1.9.3 documentation</title>
     <link rel="stylesheet" href="../_static/eggdrop.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
@@ -24,7 +24,7 @@
             <img class="logo" src="../_static/eggman.png.gif" alt="Logo"/>
           </a></p>
         <div class="headertitle"><a
-          href="../index.html">Eggdrop 1.9.2 documentation</a></div>
+          href="../index.html">Eggdrop 1.9.3 documentation</a></div>
         <div class="rel" role="navigation" aria-label="related navigation">
           <a href="text-sub.html" title="Textfile Substitutions"
              accesskey="P">previous</a> |
@@ -122,7 +122,7 @@ Last revised: January 24, 2021</p>
 of the normal Tcl built-in commands are still there, of course, but you
 can also use these to manipulate features of the bot. They are listed
 according to category.</p>
-<p>This list is accurate for Eggdrop v1.9.2. Scripts written for v1.3, v1.4,
+<p>This list is accurate for Eggdrop v1.9.3. Scripts written for v1.3, v1.4,
 1.6 and 1.8 series of Eggdrop should probably work with a few minor modifications
 depending on the script. Scripts which were written for v0.9, v1.0, v1.1
 or v1.2 will probably not work without modification. Commands which have
@@ -298,10 +298,10 @@ tagmsg “+foo bar moo baa +last {}” #channel</dd>
 <p>Module: core</p>
 </div></blockquote>
 </div>
-<div class="section" id="finduser-nick-user-host">
-<h3>finduser &lt;<a class="reference external" href="mailto:nick!user&#37;&#52;&#48;host">nick!user<span>&#64;</span>host</a>&gt;<a class="headerlink" href="#finduser-nick-user-host" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="finduser-account-value">
+<h3>finduser [-account] &lt;value&gt;<a class="headerlink" href="#finduser-account-value" title="Permalink to this headline">¶</a></h3>
 <blockquote>
-<div><p>Description: finds the user record which most closely matches the given nick!user&#64;host</p>
+<div><p>Description: finds the internal user record which most closely matches the given value. When used with the -account flag, value is a services account name, otherwise by default value is a string in the hostmask format of nick!user&#64;host.</p>
 <p>Returns: the handle found, or “*” if none</p>
 <p>Module: core</p>
 </div></blockquote>
@@ -331,33 +331,36 @@ tagmsg “+foo bar moo baa +last {}” #channel</dd>
 <col width="89%" />
 </colgroup>
 <tbody valign="top">
-<tr class="row-odd"><td>BOTFL</td>
+<tr class="row-odd"><td>ACCOUNT</td>
+<td>returns thee a list of servivce accounts associated with the user</td>
+</tr>
+<tr class="row-even"><td>BOTFL</td>
 <td>returns the current bot-specific flags for the user (bot-only)</td>
 </tr>
-<tr class="row-even"><td>BOTADDR</td>
+<tr class="row-odd"><td>BOTADDR</td>
 <td>returns a list containing the bot’s address, bot listen port, and user listen port</td>
 </tr>
-<tr class="row-odd"><td>HOSTS</td>
+<tr class="row-even"><td>HOSTS</td>
 <td>returns a list of hosts for the user</td>
 </tr>
-<tr class="row-even"><td>LASTON</td>
+<tr class="row-odd"><td>LASTON</td>
 <td>returns a list containing the unixtime last seen and the last seen place.
 LASTON #channel returns the time last seen time for the channel or 0 if no info
 exists.</td>
 </tr>
-<tr class="row-odd"><td>INFO</td>
+<tr class="row-even"><td>INFO</td>
 <td>returns the user’s global info line</td>
 </tr>
-<tr class="row-even"><td>XTRA</td>
+<tr class="row-odd"><td>XTRA</td>
 <td>returns the user’s XTRA info</td>
 </tr>
-<tr class="row-odd"><td>COMMENT</td>
+<tr class="row-even"><td>COMMENT</td>
 <td>returns the master-visible only comment for the user</td>
 </tr>
-<tr class="row-even"><td>HANDLE</td>
+<tr class="row-odd"><td>HANDLE</td>
 <td>returns the user’s handle as it is saved in the userfile</td>
 </tr>
-<tr class="row-odd"><td>PASS</td>
+<tr class="row-even"><td>PASS</td>
 <td>returns the user’s encrypted password</td>
 </tr>
 </tbody>
@@ -382,14 +385,19 @@ exists.</td>
 </tr>
 </thead>
 <tbody valign="top">
-<tr class="row-even"><td>PASS</td>
+<tr class="row-even"><td>ACCOUNT</td>
+<td>[account]
+If no value is specified, all accounts for the user will be cleared. Otherwise, only
+a single account will be added to the account list</td>
+</tr>
+<tr class="row-odd"><td>PASS</td>
 <td><dl class="first last docutils">
 <dt>&lt;password&gt;</dt>
 <dd>Password string (Empty value will clear the password)</dd>
 </dl>
 </td>
 </tr>
-<tr class="row-odd"><td>BOTADDR</td>
+<tr class="row-even"><td>BOTADDR</td>
 <td><dl class="first last docutils">
 <dt>&lt;address&gt; [bot listen port] [user listen port]</dt>
 <dd>Sets address, bot listen port and user listen port. If no listen ports are
@@ -398,7 +406,7 @@ specified, both the bot and user listen ports are set to the bot listen port.</d
 </dl>
 </td>
 </tr>
-<tr class="row-even"><td>HOSTS</td>
+<tr class="row-odd"><td>HOSTS</td>
 <td><dl class="first last docutils">
 <dt>[hostmask]</dt>
 <dd>If no value is specified, all hosts for the user will be cleared. Otherwise, only
@@ -406,7 +414,7 @@ specified, both the bot and user listen ports are set to the bot listen port.</d
 </dl>
 </td>
 </tr>
-<tr class="row-odd"><td>LASTON</td>
+<tr class="row-even"><td>LASTON</td>
 <td><p class="first">This setting has 3 forms.</p>
 <dl class="last docutils">
 <dt>&lt;unixtime&gt; &lt;place&gt;</dt>
@@ -1174,14 +1182,23 @@ channel’s invite list is checked as well.</p>
 <div class="section" id="monitor-command-nickname">
 <h3>monitor &lt;command&gt; [nickname]<a class="headerlink" href="#monitor-command-nickname" title="Permalink to this headline">¶</a></h3>
 <blockquote>
-<div><p>Description: interacts with the list of nicknames Eggdrop has asked the IRC server to track. valid commands are add, delete, list, online, offline, status, and clear. The ‘add’ command sends ‘nickname’ to the server to track. The ‘delete’ command removes ‘nickname’ from being tracked by the server (or returns an error if the nickname is not present). The ‘list’ command returns a list of all nicknames the IRC server is tracking on behalf of Eggdrop. The ‘online’ command returns a string of tracked nicknames that are currently online. The ‘offline’ command returns a list of tracked nicknames that are currently offline. The ‘status’ command returns a ‘1’ if ‘nickname’ is online or a 0 if ‘nickname’ is offline. The ‘clear’ command removes all nicknames from the list the server is monitoring.</p>
+<div><p>Description: interacts with the list of nicknames Eggdrop has asked the IRC server to track. valid commands are add, delete, list, online, offline, status, and clear. The ‘add’ command sends ‘nickname’ to the server to track. The ‘delete’ command removes ‘nickname’ from being tracked by the server (or returns an error if the nickname is not present). The ‘list’ command returns a list of all nicknames the IRC server is tracking on behalf of Eggdrop. The ‘online’ command returns a string of tracked nicknames that are currently online. The ‘offline’ command returns a list of tracked nicknames that are currently offline.</p>
+<p>Returns: The ‘status’ command returns a ‘1’ if ‘nickname’ is online or a 0 if ‘nickname’ is offline. The ‘clear’ command removes all nicknames from the list the server is monitoring.</p>
+<p>Module: irc</p>
+</div></blockquote>
+</div>
+<div class="section" id="accounttracking">
+<h3>accounttracking<a class="headerlink" href="#accounttracking" title="Permalink to this headline">¶</a></h3>
+<blockquote>
+<div><p>Description: checks to see if the three required functionalities to enable proper account tracking are available (and enabled) to Eggdrop. This checks if the extended-join and account-notify IRCv3 capabilities are currently enabled, and checks if the server supports WHOX (based on the type of server selected in the config file, or the use-354 variable being set to 1 when seleceting an “Other” server).</p>
+<p>Returns: a ‘1’ if all three functionalities are present, a ‘0’ if one or more are missing.</p>
 <p>Module: irc</p>
 </div></blockquote>
 </div>
 <div class="section" id="getaccount-nickname-channel">
 <h3>getaccount &lt;nickname&gt; [channel]<a class="headerlink" href="#getaccount-nickname-channel" title="Permalink to this headline">¶</a></h3>
 <blockquote>
-<div>Returns: the services account name of the nickname if they are logged in, “” otherwise, and an error if the account-notify or extended-join capabilities are not enabled. WARNING: this account list may not be accurate depending on the server and configuration. This command will only work if a server supports (and Eggdrop has enabled) the account-notify and extended-join capabilities, and the server understands WHOX requests (also known as raw 354 responses).</div></blockquote>
+<div>Returns: the services account name associated with nickname (if Eggdrop is configured to track account status), and  “” if they are not logged in or Eggdrop is not able to determine the account status. WARNING: this account list may not be accurate depending on the server and configuration. This command is only accurate if a server supports (and Eggdrop has enabled) the account-notify and extended-join capabilities, and the server understands WHOX requests (also known as raw 354 responses).</div></blockquote>
 </div>
 <div class="section" id="nick2hand-nickname-channel">
 <h3>nick2hand &lt;nickname&gt; [channel]<a class="headerlink" href="#nick2hand-nickname-channel" title="Permalink to this headline">¶</a></h3>
@@ -2362,48 +2379,52 @@ will be used. Types 30-39 set the host to ‘*’.</p>
 <p>Module: core</p>
 </div></blockquote>
 </div>
-<div class="section" id="timer-minutes-tcl-command-count">
-<h3>timer &lt;minutes&gt; &lt;tcl-command&gt; [count]<a class="headerlink" href="#timer-minutes-tcl-command-count" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="timer-minutes-tcl-command-count-timername">
+<h3>timer &lt;minutes&gt; &lt;tcl-command&gt; [count [timerName]]<a class="headerlink" href="#timer-minutes-tcl-command-count-timername" title="Permalink to this headline">¶</a></h3>
 <blockquote>
-<div><p>Description: executes the given Tcl command after a certain number of minutes have passed, at the top of the minute (ie, if a timer is started at 10:03:34 with 1 minute specified, it will execute at 10:04:00. If a timer is started at 10:06:34 with 2 minutes specified, it will execute at 10:08:00). If count is specified, the command will be executed count times with the given interval in between. If you specify a count of 0, the timer will repeat until it’s removed with killtimer or until the bot is restarted.</p>
-<p>Returns: a timerID</p>
+<div><p>Description: executes the given Tcl command after a certain number of minutes have passed, at the top of the minute (ie, if a timer is started at 10:03:34 with 1 minute specified, it will execute at 10:04:00. If a timer is started at 10:06:34 with 2 minutes specified, it will execute at 10:08:00). If count is specified, the command will be executed count times with the given interval in between. If you specify a count of 0, the timer will repeat until it’s removed with killtimer or until the bot is restarted. If timerName is specified, it will become the unique identifier for the timer. If no timerName is specified, Eggdrop will assign a timerName in the format of “timer&lt;integer&gt;”.</p>
+<p>Returns: a timerName</p>
 <p>Module: core</p>
 </div></blockquote>
 </div>
-<div class="section" id="utimer-seconds-tcl-command-count">
-<h3>utimer &lt;seconds&gt; &lt;tcl-command&gt; [count]<a class="headerlink" href="#utimer-seconds-tcl-command-count" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="utimer-seconds-tcl-command-count-timername">
+<h3>utimer &lt;seconds&gt; &lt;tcl-command&gt; [count [timerName]]<a class="headerlink" href="#utimer-seconds-tcl-command-count-timername" title="Permalink to this headline">¶</a></h3>
 <blockquote>
-<div><p>Description: executes the given Tcl command after a certain number of seconds have passed. If count is specified, the command will be executed count times with the given interval in between. If you specify a count of 0, the utimer will repeat until it’s removed with killutimer or until the bot is restarted.</p>
-<p>Returns: a timerID</p>
+<div>Description: executes the given Tcl command after a certain number of seconds have passed. If count is specified, the command will be executed count times with the given interval in between. If you specify a count of 0, the utimer will repeat until it’s removed with killutimer or until the bot is restarted. If timerName is specified, it will become the unique identifier for the timer. If no timer</div></blockquote>
+<p>Name is specified, Eggdrop will assign a timerName in the format of “timer&lt;integer&gt;”.</p>
+<blockquote>
+<div><p>Returns: a timerName</p>
 <p>Module: core</p>
 </div></blockquote>
 </div>
 <div class="section" id="timers">
 <h3>timers<a class="headerlink" href="#timers" title="Permalink to this headline">¶</a></h3>
 <blockquote>
-<div><p>Returns: a list of active minutely timers. Each entry in the list contains the number of minutes left till activation, the command that will be executed, the timerID, and the remaining number of repeats.</p>
+<div><p>Description: lists all active minutely timers.</p>
+<p>Returns: a list of active minutely timers, with each timer sub-list containing the number of minutes left until activation, the command that will be executed, the timerName, and the remaining number of repeats.</p>
 <p>Module: core</p>
 </div></blockquote>
 </div>
 <div class="section" id="utimers">
 <h3>utimers<a class="headerlink" href="#utimers" title="Permalink to this headline">¶</a></h3>
 <blockquote>
-<div><p>Returns: a list of active secondly timers. Each entry in the list contains the number of minutes left till activation, the command that will be executed, the timerID, and the remaining number of repeats.</p>
+<div><p>Description: lists all active secondly timers.</p>
+<p>Returns: a list of active secondly timers, with each timer sub-list containing the number of minutes left until activation, the command that will be executed, the timerName, and the remaining number of repeats.</p>
 <p>Module: core</p>
 </div></blockquote>
 </div>
-<div class="section" id="killtimer-timerid">
-<h3>killtimer &lt;timerID&gt;<a class="headerlink" href="#killtimer-timerid" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="killtimer-timername">
+<h3>killtimer &lt;timerName&gt;<a class="headerlink" href="#killtimer-timername" title="Permalink to this headline">¶</a></h3>
 <blockquote>
-<div><p>Description: removes a minutely timer from the list</p>
+<div><p>Description: removes the timerName minutely timer from the timer list.</p>
 <p>Returns: nothing</p>
 <p>Module: core</p>
 </div></blockquote>
 </div>
-<div class="section" id="killutimer-timerid">
-<h3>killutimer &lt;timerID&gt;<a class="headerlink" href="#killutimer-timerid" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="killutimer-timername">
+<h3>killutimer &lt;timerName&gt;<a class="headerlink" href="#killutimer-timername" title="Permalink to this headline">¶</a></h3>
 <blockquote>
-<div><p>Description: removes a secondly timer from the list</p>
+<div><p>Description: removes the timerName secondly timer from the timer list.</p>
 <p>Returns: nothing</p>
 <p>Module: core</p>
 </div></blockquote>
@@ -2845,7 +2866,7 @@ will be used. Types 30-39 set the host to ‘*’.</p>
 <div class="section" id="server-online">
 <h3>server-online<a class="headerlink" href="#server-online" title="Permalink to this headline">¶</a></h3>
 <blockquote>
-<div><p>Value: the unixtime value for when the bot connected to its current server</p>
+<div><p>Value: the unixtime value when the bot connected to its current server, or ‘0’ if the bot is currently disconnected from a server.</p>
 <p>Module: server</p>
 </div></blockquote>
 </div>
@@ -3453,7 +3474,7 @@ fail-server       - called when an IRC server fails to respond
 <blockquote>
 <div><p>bind account &lt;flags&gt; &lt;mask&gt; &lt;proc&gt;</p>
 <p>procname &lt;nick&gt; &lt;user&gt; &lt;hand&gt; &lt;chan&gt; &lt;account&gt;</p>
-<p>Description: triggered when Eggdrop detects a change in a service account status. The change could be initiated by receving an IRCv3 ACCOUNT message, receiving IRCv3 extended-join information when a user on an existing channel joins a new channel, or detecting an IRCv3 account-tag in a PRIVMSG. The mask for the bind is in the format “#channel <a class="reference external" href="mailto:nick!user&#37;&#52;&#48;hostname&#46;com">nick!user<span>&#64;</span>hostname<span>&#46;</span>com</a> account” where channel is the channel the user was found on when the bind was triggered, the hostmask is the user’s hostmask, and account is the account name the user is logging in to, or “” for logging out. The mask argument can accept wildcards. For the proc, nick is the nickname of the user logging into/out of an account, user is the <a class="reference external" href="mailto:user&#37;&#52;&#48;host&#46;com">user<span>&#64;</span>host<span>&#46;</span>com</a> hostmask, hand is the handle of the user (or * if none), and account is the name of the account the user logged in to (or “” if the user logged out of an account).</p>
+<p>Description: triggered when Eggdrop detects a change in a service account status. The change could be initiated by receiving an IRCv3 ACCOUNT message, receiving IRCv3 extended-join information when a user on an existing channel joins a new channel, or detecting an IRCv3 account-tag in a PRIVMSG. The mask for the bind is in the format “#channel <a class="reference external" href="mailto:nick!user&#37;&#52;&#48;hostname&#46;com">nick!user<span>&#64;</span>hostname<span>&#46;</span>com</a> account” where channel is the channel the user was found on when the bind was triggered, the hostmask is the user’s hostmask, and account is the account name the user is logging in to, or “” for logging out. The mask argument can accept wildcards. For the proc, nick is the nickname of the user logging into/out of an account, user is the <a class="reference external" href="mailto:user&#37;&#52;&#48;host&#46;com">user<span>&#64;</span>host<span>&#46;</span>com</a> hostmask, hand is the handle of the user (or * if none), and account is the name of the account the user logged in to (or “” if the user logged out of an account).</p>
 </div></blockquote>
 <ol class="arabic simple" start="54">
 <li>ISUPPORT (stackable)</li>
@@ -3672,7 +3693,7 @@ words) (This char only works in binds, not in regular matching)</td>
           
     <div class="footer" role="contentinfo">
         &#169; Copyright 2022, Eggheads.
-      Last updated on May 26, 2022.
+      Last updated on Jul 12, 2022.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.5.
     </div>
         </div>
