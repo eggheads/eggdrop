@@ -84,21 +84,18 @@ class FlagMatcher:
      })
     
 
-class Eggdrop:
-  def __init__(self, binds):
-    self.binds = binds
-
 class Binds:
   def __init__(self):
     self.bindlist = {"msgm": {}, "pubm": {}}
 
   def list(self, mask=None):
     if not mask:
-      print(self.bindlist)
+      result = self.bindlist
     else:
+      result = []
       for i in self.bindlist[mask]:
-        print(self.bindlist[mask][i])
-    return
+        result += self.bindlist[mask][i]
+    return result
 
   def add(self, bindtype, cmd, flags, mask, callback):
     self.bindlist[bindtype][cmd]={}
@@ -106,9 +103,6 @@ class Binds:
     self.bindlist[bindtype][cmd]["mask"] = mask
     self.bindlist[bindtype][cmd]["flags"] = flags
     return
-
-my_binds = Binds()
-eggdrop = Eggdrop(binds=my_binds)
 
 import re
  
@@ -128,27 +122,23 @@ def bindmask2re(mask):
   return re.compile('^' + r + '$')
 
 
-def myfunc(nick, user, hand, chan, text):
-  print("Holy shit this worked- "+nick+" on "+chan+" said "+text)
-  return
-
 def on_pubm(flags, nick, user, hand, chan, text):
   pprint(flags)
   print("pubm bind triggered with "+nick+" "+user+" "+hand+" "+chan+" "+text)
-  for i in eggdrop.binds.bindlist["pubm"]:
-    print("mask is "+eggdrop.binds.bindlist["pubm"][i]["mask"])
-    if eggdrop.binds.bindlist["pubm"][i]["flags"].match(flags):
-      print("flagmatcher {} matches flag record {}".format(repr(eggdrop.binds.bindlist["pubm"][i]["flags"]), repr(flags)))
-      eggdrop.binds.bindlist["pubm"][i]["callback"](nick, user, hand, chan, text)
+  for i in __allbinds.bindlist["pubm"]:
+    print("mask is "+__allbinds.bindlist["pubm"][i]["mask"])
+    if __allbinds.bindlist["pubm"][i]["flags"].match(flags):
+      print("flagmatcher {} matches flag record {}".format(repr(__allbinds.bindlist["pubm"][i]["flags"]), repr(flags)))
+      __allbinds.bindlist["pubm"][i]["callback"](nick, user, hand, chan, text)
     else:
-      print("flagmatcher {} does not match flag record {}".format(repr(eggdrop.binds.bindlist["pubm"][i]["flags"]), repr(flags)))
+      print("flagmatcher {} does not match flag record {}".format(repr(__allbinds.bindlist["pubm"][i]["flags"]), repr(flags)))
   return
 
 def on_msgm(nick, user, hand, text):
   print("msgm bind triggered with "+" ".join([nick, user, hand, text]))
-  for i in eggdrop.binds.bindlist["pubm"]:
-    print("mask is "+eggdrop.binds.bindlist["msgm"][i]["mask"])
-    eggdrop.binds.bindlist["msgm"][i]["callback"](nick, user, hand, text)
+  for i in __allbinds.bindlist["pubm"]:
+    print("mask is "+__allbinds.bindlist["msgm"][i]["mask"])
+    __allbinds.bindlist["msgm"][i]["callback"](nick, user, hand, text)
   return
 
 def on_event(bindtype, globalflags, chanflags, botflags, *args):
@@ -162,4 +152,8 @@ def on_event(bindtype, globalflags, chanflags, botflags, *args):
 #  py.putserv("PRIVMSG :"+chan+" you are "+nick+" and you said "+text)
   return 0
 
-eggdrop.binds.add("pubm", "!hi", FlagMatcher(globalflags=UserFlags.op, chanflags=UserFlags.op, requireall=False), "*!*@*", myfunc)
+__allbinds = Binds()
+def add(bindtype, cmd, flags, mask, callback):
+    __allbinds.add(bindtype, cmd, flags, mask, callback)
+def list(mask=None):
+    return __allbinds.list(mask)
