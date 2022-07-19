@@ -8,6 +8,31 @@ div.header .headertitle a {
   color: #2F2F2F;
 }
 
+div.document {
+  width: 85em;
+}
+
+div.header, div.content, div.footer {
+  width: 97vw;     /* unset to override agogo.css settings */
+}
+
+div.content {
+  display: flex;
+}
+
+div.sidebar .caption {
+  font-weight: bold;
+  color: #3465a4;
+}
+
+div.body .toctree-wrapper {
+  display: none;
+  font-size: 1px;
+}
+
+div.sidebar li.toctree-l1 a {
+  background-color: initial;
+}
 
 div.footer, div.footer a {
   color: #034f84;
@@ -38,3 +63,4 @@ div.document ul {
   list-style-type: circle;
 }
 
+div.cap

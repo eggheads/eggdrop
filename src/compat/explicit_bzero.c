@@ -2,7 +2,7 @@
  * explicit_bzero.c -- provides explicit_bzero() if necessary
  */
 /*
- * Copyright (C) 2010 - 2021 Eggheads Development Team
+ * Copyright (C) 2010 - 2022 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -44,6 +44,9 @@
 */
 
 #include <stddef.h>
+#ifndef __STDC_WANT_LIB_EXT1__ /* SunOS */
+# define __STDC_WANT_LIB_EXT1__ 1
+#endif
 #include <string.h>
 #include "main.h"
 

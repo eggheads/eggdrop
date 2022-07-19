@@ -7,7 +7,7 @@
  */
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2021 Eggheads Development Team
+ * Copyright (C) 1999 - 2022 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -517,7 +517,7 @@ static void show_ver() {
   printf("TLS, ");
 #endif
 #ifdef EGG_TDNS
-  printf("Threaded DNS core (beta), ");
+  printf("Threaded DNS core, ");
 #endif
   printf("handlen=%d\n", HANDLEN);
   bg_send_quit(BG_ABORT);
@@ -531,7 +531,6 @@ static void show_help() {
   printf("\n%s\n\n", version);
   printf("Usage: %s [options] [config-file]\n\n"
          "Options:\n"
-         "-n  Don't background; send all log entries to console.\n"
          "-c  Don't background; display channel stats every 10 seconds.\n"
          "-t  Don't background; use terminal to simulate DCC chat.\n"
          "-m  Create userfile.\n"
@@ -790,20 +789,10 @@ int init_language(int);
 int ssl_init();
 #endif
 
-static void garbage_collect(void)
+static void mainloop(int toplevel)
 {
-  static uint8_t run_cnt = 0;
-
-  if (run_cnt == 3)
-    garbage_collect_tclhash();
-  else
-    run_cnt++;
-}
-
-int mainloop(int toplevel)
-{
-  static int socket_cleanup = 0;
-  int xx, i, eggbusy = 1, tclbusy = 0;
+  static int cleanup = 5;
+  int xx, i, eggbusy = 1;
   char buf[8702];
 
   /* Lets move some of this here, reducing the number of actual
@@ -816,7 +805,7 @@ int mainloop(int toplevel)
    * This is done by returning -1 in tickle_WaitForEvent.
    */
   if (do_restart && do_restart != -2 && !toplevel)
-    return -1;
+    return;
 
   /* Once a second */
   if (now != then) {
@@ -825,19 +814,19 @@ int mainloop(int toplevel)
   }
 
   /* Only do this every so often. */
-  if (!socket_cleanup) {
-    socket_cleanup = 5;
+  if (!cleanup) {
+    cleanup = 5;
 
     /* Remove dead dcc entries. */
     dcc_remove_lost();
 
     /* Check for server or dcc activity. */
     dequeue_sockets();
-  } else
-    socket_cleanup--;
 
-  /* Free unused structures. */
-  garbage_collect();
+    /* Free unused structures. */
+    garbage_collect_tclhash();
+  } else
+    cleanup--;
 
   xx = sockgets(buf, &i);
   if (xx >= 0) {              /* Non-error */
@@ -909,18 +898,16 @@ int mainloop(int toplevel)
     }
   } else if (xx == -3) {
     call_hook(HOOK_IDLE);
-    socket_cleanup = 0;       /* If we've been idle, cleanup & flush */
+    cleanup = 0; /* If we've been idle, cleanup & flush */
     eggbusy = 0;
-  } else if (xx == -5) {
+  } else if (xx == -5)
     eggbusy = 0;
-    tclbusy = 1;
-  }
 
   if (do_restart) {
     if (do_restart == -2)
       rehash();
     else if (!toplevel)
-      return -1; /* Unwind to toplevel before restarting */
+      return; /* Unwind to toplevel before restarting */
     else {
       /* Unload as many modules as possible */
       int f = 1;
@@ -953,12 +940,13 @@ int mainloop(int toplevel)
       }
 
       /* Make sure we don't have any modules left hanging around other than
-       * "eggdrop" and the two that are supposed to be.
+       * "eggdrop" and the 3 that are supposed to be.
        */
       for (f = 0, p = module_list; p; p = p->next) {
         if (strcmp(p->name, "eggdrop") && strcmp(p->name, "encryption") &&
-            strcmp(p->name, "uptime")) {
+            strcmp(p->name, "encryption2") && strcmp(p->name, "uptime")) {
           f++;
+          debug1("stagnant module %s", p->name);
         }
       }
       if (f != 0) {
@@ -993,15 +981,11 @@ int mainloop(int toplevel)
   if (!eggbusy) {
 /* Process all pending tcl events */
 #  ifdef REPLACE_NOTIFIER
-    if (Tcl_ServiceAll())
-      tclbusy = 1;
+    Tcl_ServiceAll();
 #  else
-    while (Tcl_DoOneEvent(TCL_DONT_WAIT | TCL_ALL_EVENTS))
-      tclbusy = 1;
+    while (Tcl_DoOneEvent(TCL_DONT_WAIT | TCL_ALL_EVENTS));
 #  endif /* REPLACE_NOTIFIER */
   }
-
-  return (eggbusy || tclbusy);
 }
 
 static void init_random(void) {
@@ -1017,7 +1001,7 @@ static void init_random(void) {
 #endif
       struct timeval tp;
       gettimeofday(&tp, NULL);
-      seed = (tp.tv_sec * tp.tv_usec) ^ getpid();
+      seed = (((int64_t) tp.tv_sec * tp.tv_usec)) ^ getpid();
 #ifdef HAVE_GETRANDOM
     }
   }
@@ -1066,13 +1050,13 @@ int main(int arg_c, char **arg_v)
   egg_snprintf(egg_version, sizeof egg_version, "%s+%s %u", EGG_STRINGVER, EGG_PATCH, egg_numver);
   egg_snprintf(ver, sizeof ver, "eggdrop v%s+%s", EGG_STRINGVER, EGG_PATCH);
   egg_snprintf(version, sizeof version,
-               "Eggdrop v%s+%s (C) 1997 Robey Pointer (C) 1999-2021 Eggheads",
+               "Eggdrop v%s+%s (C) 1997 Robey Pointer (C) 2010-2022 Eggheads",
                 EGG_STRINGVER, EGG_PATCH);
 #else
   egg_snprintf(egg_version, sizeof egg_version, "%s %u", EGG_STRINGVER, egg_numver);
   egg_snprintf(ver, sizeof ver, "eggdrop v%s", EGG_STRINGVER);
   egg_snprintf(version, sizeof version,
-               "Eggdrop v%s (C) 1997 Robey Pointer (C) 1999-2021 Eggheads",
+               "Eggdrop v%s (C) 1997 Robey Pointer (C) 2010-2022 Eggheads",
                 EGG_STRINGVER);
 #endif
 
@@ -1147,6 +1131,11 @@ int main(int arg_c, char **arg_v)
   init_language(0);
 #ifdef STATIC
   link_statics();
+#endif
+#ifdef EGG_TDNS
+  /* initialize dns_thread_head before chanprog() */
+  dns_thread_head = nmalloc(sizeof(struct dns_thread_node));
+  dns_thread_head->next = NULL;
 #endif
   strlcpy(s, ctime(&now), sizeof s);
   memmove(&s[11], &s[20], strlen(&s[20]) + 1);
@@ -1270,10 +1259,6 @@ int main(int arg_c, char **arg_v)
   then = now - 1;
 
   online_since = now;
-#ifdef EGG_TDNS
-  dns_thread_head = nmalloc(sizeof(struct dns_thread_node));
-  dns_thread_head->next = NULL;
-#endif
   autolink_cycle(NULL);         /* Hurry and connect to tandem bots */
   add_help_reference("cmds1.help");
   add_help_reference("cmds2.help");

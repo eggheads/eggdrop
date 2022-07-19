@@ -4,7 +4,7 @@
  */
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2021 Eggheads Development Team
+ * Copyright (C) 1999 - 2022 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -57,9 +57,18 @@ static int tcl_finduser STDVAR
 {
   struct userrec *u;
 
-  BADARGS(2, 2, " nick!user@host");
+  BADARGS(2, 3, " ?-account? searchString");
 
-  u = get_user_by_host(argv[1]);
+  if (argc == 3) {
+    if (!strcasecmp(argv[1], "-account")) {
+      u = get_user_by_account(argv[2]);
+    } else {
+      Tcl_AppendResult(irp, "invalid option, must be -account", NULL);
+      return TCL_ERROR;
+    }
+  } else {
+    u = get_user_by_host(argv[1]);
+  }
   Tcl_AppendResult(irp, u ? u->handle : "*", NULL);
   return TCL_OK;
 }
@@ -311,8 +320,10 @@ static int tcl_addbot STDVAR
   strlcpy(addr, argv[2], sizeof addr);
 
   for (p = hand; *p; p++)
-    if ((unsigned char) *p <= 32 || *p == '@')
-      *p = '?';
+    if ((unsigned char) *p <= 32 || *p == '@') {
+      Tcl_AppendResult(irp, "Invalid character in handle", NULL);
+      return TCL_ERROR;
+    }
 
   if ((argv[1][0] == '*') || strchr(BADHANDCHARS, argv[1][0]) ||
       get_user_by_handle(userlist, hand))

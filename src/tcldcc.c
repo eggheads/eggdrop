@@ -4,7 +4,7 @@
  */
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2021 Eggheads Development Team
+ * Copyright (C) 1999 - 2022 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -30,7 +30,7 @@
 extern Tcl_Interp *interp;
 extern tcl_timer_t *timer, *utimer;
 extern struct dcc_t *dcc;
-extern char botnetnick[];
+extern char botnetnick[], listen_ip[];
 extern int dcc_total, backgrd, parties, make_userfile, remote_boots, max_dcc,
            conmask;
 #ifdef IPV6
@@ -504,7 +504,7 @@ static int tcl_control STDVAR
   /* Do not buffer data anymore. All received and stored data is passed
    * over to the dcc functions from now on.  */
   sockoptions(dcc[idx].sock, EGG_OPTION_UNSET, SOCK_BUFFER);
-  strlcpy(dcc[idx].u.script->command, argv[2], 120);
+  strlcpy(dcc[idx].u.script->command, argv[2], sizeof dcc[idx].u.script->command);
   return TCL_OK;
 }
 
@@ -705,14 +705,11 @@ static void dccsocklist(Tcl_Interp *irp, int argc, char *type, int src) {
   char idxstr[10], timestamp[11], other[160];
   char portstring[7]; /* ssl + portmax + NULL */
   long tv;
-#ifdef IPV6
-  char s[INET6_ADDRSTRLEN];
-#else
-  char s[INET_ADDRSTRLEN];
-#endif
+  char s[EGG_INET_ADDRSTRLEN];
   socklen_t namelen;
   struct sockaddr_storage ss;
-  Tcl_Obj *masterlist;
+  Tcl_Obj *masterlist = NULL; /* initialize to NULL to make old gcc versions
+                               * happy */
  
   if (src) {
     masterlist = Tcl_NewListObj(0, NULL);
@@ -748,11 +745,11 @@ static void dccsocklist(Tcl_Interp *irp, int argc, char *type, int src) {
         getsockname(dcc[i].sock, (struct sockaddr *) &ss, &namelen);
         if (ss.ss_family == AF_INET) {
           struct sockaddr_in *saddr = (struct sockaddr_in *)&ss;
-          inet_ntop(AF_INET, &(saddr->sin_addr), s, INET_ADDRSTRLEN);
+          inet_ntop(AF_INET, &(saddr->sin_addr), s, sizeof s);
 #ifdef IPV6
         } else if (ss.ss_family == AF_INET6) {
           struct sockaddr_in6 *saddr = (struct sockaddr_in6 *)&ss;
-            inet_ntop(AF_INET6, &(saddr->sin6_addr), s, INET6_ADDRSTRLEN);
+            inet_ntop(AF_INET6, &(saddr->sin6_addr), s, sizeof s);
 #endif
         }
         build_sock_list(irp, masterlist, idxstr, dcc[i].nick,
@@ -1032,7 +1029,7 @@ static int tcl_connect STDVAR
 
 static int setlisten(Tcl_Interp *irp, char *ip, char *portp, char *type, char *maskproc, char *flag) {
   int i, idx = -1, port, realport, found=0, ipv4=1;
-  char s[11], msg[256], newip[INET6_ADDRSTRLEN];
+  char s[11], msg[256], newip[EGG_INET_ADDRSTRLEN];
   struct portmap *pmap = NULL, *pold = NULL;
   sockname_t name;
   struct in_addr ipaddr4;
@@ -1251,7 +1248,7 @@ static int setlisten(Tcl_Interp *irp, char *ip, char *portp, char *type, char *m
  */
 static int tcl_listen STDVAR
 {
-  char ip[121] = "", maskproc[UHOSTMAX] = "";
+  char ip[121], maskproc[UHOSTMAX] = "";
   char port[7], type[7], flag[4], *endptr;
   unsigned char buf[sizeof(struct in6_addr)];
   int i = 1;
@@ -1270,6 +1267,9 @@ static int tcl_listen STDVAR
   }
 
   BADARGS(3, 6, " ?ip? port type ?mask?/?proc flag?");
+
+/* default listen-addr if not specified */
+  strlcpy(ip, listen_ip, sizeof(ip));
 
 /* Check if IP exists, set to NULL if not */
   strtol(argv[1], &endptr, 10);
@@ -1318,14 +1318,10 @@ static int tcl_listen STDVAR
       Tcl_AppendResult(irp, "a proc name must be specified for a script listen", NULL);
       return TCL_ERROR;
     }
-    if ((!ip[0] && (argc==4)) || (ip[0] && argc==5)) {
-      Tcl_AppendResult(irp, "missing flag. allowed flags: pub", NULL);
-      return TCL_ERROR;
-    }
     if ((!ip[0] && (argc==5)) || (argc == 6)) {
       i++;
       if (strcmp(argv[i], "pub")) {
-        Tcl_AppendResult(irp, "unknown flag: ", flag, ". allowed flags: pub",
+        Tcl_AppendResult(irp, "unknown flag: ", argv[i], ". allowed flags: pub",
               NULL);
         return TCL_ERROR;
       }
@@ -1356,14 +1352,14 @@ static int tcl_boot STDVAR
       if (i < 0)
         return TCL_OK;
       botnet_send_reject(i, botnetnick, NULL, whonick, who,
-                         argv[2] ? argv[2] : "");
+                         argc >= 3 && argv[2] ? argv[2] : "");
     } else
       return TCL_OK;
   }
   for (i = 0; i < dcc_total; i++)
     if (!ok && (dcc[i].type->flags & DCT_CANBOOT) &&
         !strcasecmp(dcc[i].nick, who)) {
-      do_boot(i, botnetnick, argv[2] ? argv[2] : "");
+      do_boot(i, botnetnick, argc >= 3 && argv[2] ? argv[2] : "");
       ok = 1;
     }
   return TCL_OK;

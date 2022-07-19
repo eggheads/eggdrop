@@ -1,0 +1,45 @@
+# notes.italian.lang
+#   language messages for the notes module
+
+0xc000,  Inoltrare le note a: %.70s\n
+0xc001,Scambiate %d note%s da %s a %s.
+0xc002,Scadute %d note%s
+0xc003,Non online; inoltrata a %s.\n
+0xc004,Questo bot non supporta le note
+0xc005,Mi spiace, questo utente ha già troppe note
+0xc006,Non posso creare il file delle note. Mi spiace.
+0xc007,File delle note illeggibile!
+0xc008,Messaggio registrato
+0xc009,Non hai messaggi
+0xc00a, -- SCADE OGGI
+0xc00b, -- SCADE IN %d GIORNI%s
+0xc00c,Hai la(e) seguente(i) nota(e) in attesa
+0xc00d,Non hai molti messaggi
+0xc00e,Usa '.notes read' per leggerli.
+0xc00f,Non posso modificare il file delle note
+0xc010,Cancellate tutte le note
+0xc011,Cancellata
+0xc012,Lasciato
+0xc013,#' possono essere numeri e/o intervalli separati da ';'.
+0xc014,Questo è un bot. Non puoi lasciare note per un bot.
+0xc015,Nota esterna
+0xc016,Nota consegnata
+0xc017,Per un elenco:
+0xc019,### Hai %d note%s in attesa.\n
+0xc01b,Le note saranno registrate.
+0xc01c,Non sei autorizzato a cambiare ignore note per %s\n
+0xc01d,L'utente %s non esiste.\n
+0xc01e,Adesso ignoro le note da %s\n
+0xc01f,Ignoro già %s\n
+0xc020,Non ignoro più le note da %s\n
+0xc021,Note ignore %s non trovato in lista.\n
+0xc022,Nessun note ignore presente.\n
+0xc023,Note ignore per %s:\n
+0xc024,Utente sconosciuto.
+0xc025,Non posso cambiare l'inoltro note del padrone del bot.\n
+0xc026,Inoltro note cancellato per %s\n
+0xc027,Devi fornire un nome del bot a cui inoltrare.
+0xc028,Inoltro note cambiato per %s a: %s\n
+0xc029,Deve essere una funzione tra INDEX, READ, o ERASE.
+0xc02a,Usa '.notes read' per leggerla.
+0xc02b,NOTICE %s :Hai %d note%s in attesa.\n
