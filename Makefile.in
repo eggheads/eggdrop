@@ -313,10 +313,10 @@ sslstart:
 	fi
 
 sslcert: sslstart
-	openssl req -new -x509 -nodes -days 365 -keyout $(DEST)/eggdrop.key -out $(DEST)/eggdrop.crt -config ssl.conf
+	openssl req -new -x509 -nodes -days 3650 -keyout $(DEST)/eggdrop.key -out $(DEST)/eggdrop.crt -config ssl.conf
 
 sslsilent: sslstart
-	openssl req -new -x509 -nodes -days 365 -keyout $(DEST)/eggdrop.key -out $(DEST)/eggdrop.crt -config ssl.conf \
+	openssl req -new -x509 -nodes -days 3650 -keyout $(DEST)/eggdrop.key -out $(DEST)/eggdrop.crt -config ssl.conf \
 	    -subj "/O=Eggheads/OU=Eggdrop/CN=Self-generated Eggdrop Certificate"
 
 install: ainstall
