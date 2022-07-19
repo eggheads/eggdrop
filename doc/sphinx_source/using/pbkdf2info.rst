@@ -38,6 +38,7 @@ is added to the config file and not commented out (it should already be there).
 #. Ensure
 
 ::
+
     loadmodule pbkdf2
 
 is uncommented in the config file (or added, if this is a config file from 1.8)
