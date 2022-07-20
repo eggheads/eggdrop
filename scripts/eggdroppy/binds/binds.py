@@ -86,7 +86,7 @@ class FlagMatcher:
 
 class Binds:
   def __init__(self):
-    self.bindlist = {"msgm": {}, "pubm": {}}
+    self.bindlist = {"msgm": [], "pubm": []}
   def list(self, mask=None):
     if not mask:
       result = self.bindlist
@@ -96,10 +96,7 @@ class Binds:
         result += self.bindlist[mask][i]
     return result
   def add(self, bindtype, cmd, flags, mask, callback):
-    self.bindlist[bindtype][cmd]={}
-    self.bindlist[bindtype][cmd]["callback"] = callback
-    self.bindlist[bindtype][cmd]["mask"] = mask
-    self.bindlist[bindtype][cmd]["flags"] = flags
+    self.bindlist[bindtype].append({"cmd" : cmd, "callback" : callback, "mask" : mask, "flags" : flags})
     return
 
 import re
@@ -124,12 +121,12 @@ def on_pubm(flags, nick, user, hand, chan, text):
   pprint(flags)
   print("pubm bind triggered with "+nick+" "+user+" "+hand+" "+chan+" "+text)
   for i in __allbinds.bindlist["pubm"]:
-    print("mask is "+__allbinds.bindlist["pubm"][i]["mask"])
-    if __allbinds.bindlist["pubm"][i]["flags"].match(flags) and bindmask2re(i).match(text):
-      print("flagmatcher {} matches flag record {}".format(repr(__allbinds.bindlist["pubm"][i]["flags"]), repr(flags)))
-      __allbinds.bindlist["pubm"][i]["callback"](nick, user, hand, chan, text)
+    print("mask is "+i["mask"])
+    if i["flags"].match(flags) and bindmask2re(i["cmd"]).match(text):
+      print("flagmatcher {} matches flag record {}".format(repr(i["flags"]), repr(flags)))
+      i["callback"](nick, user, hand, chan, text)
     else:
-      print("flagmatcher {} does not match flag record {}".format(repr(__allbinds.bindlist["pubm"][i]["flags"]), repr(flags)))
+      print("flagmatcher {} does not match flag record {}".format(repr(i["flags"]), repr(flags)))
   return
 
 def on_msgm(nick, user, hand, text):

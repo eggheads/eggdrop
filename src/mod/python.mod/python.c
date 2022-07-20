@@ -197,6 +197,7 @@ static void init_python() {
 
   PyRun_SimpleString("import sys");
   PyRun_SimpleString("sys.path.append(\".\")");
+  PyRun_SimpleString("from eggdroppy import binds");
 
   return;
 }
@@ -344,6 +345,11 @@ static void cmd_pysource(struct userrec *u, int idx, char *par) {
   return;
 }
 
+static void cmd_pybinds(struct userrec *u, int idx, char *par) {
+  cmd_pyexpr(u, idx, "binds.list()");
+  return;
+}
+
 /* A report on the module status.
  *
  * details is either 0 or 1:
@@ -365,6 +371,7 @@ static cmd_t mydcc[] = {
   {"pysource",  "",     (IntFunc) cmd_pysource, NULL},
   {"python",    "",     (IntFunc) cmd_python,   NULL},
   {"pyexpr",    "",     (IntFunc) cmd_pyexpr,   NULL},
+  {"pybinds",   "",     (IntFunc) cmd_pybinds,  NULL},
   {NULL,        NULL,   NULL,                   NULL}  /* Mark end. */
 };
 
