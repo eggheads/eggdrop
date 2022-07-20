@@ -127,7 +127,7 @@ def on_pubm(flags, nick, user, hand, chan, text):
   print("pubm bind triggered with "+nick+" "+user+" "+hand+" "+chan+" "+text)
   for i in __allbinds.bindlist["pubm"]:
     print("mask is "+__allbinds.bindlist["pubm"][i]["mask"])
-    if __allbinds.bindlist["pubm"][i]["flags"].match(flags):
+    if __allbinds.bindlist["pubm"][i]["flags"].match(flags) and bindmask2re(__allbinds.bindlist["pubm"][i]["mask"]).match(text):
       print("flagmatcher {} matches flag record {}".format(repr(__allbinds.bindlist["pubm"][i]["flags"]), repr(flags)))
       __allbinds.bindlist["pubm"][i]["callback"](nick, user, hand, chan, text)
     else:
