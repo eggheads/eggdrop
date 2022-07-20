@@ -107,6 +107,8 @@ run_config   =  $(modconf) modules-still-exist && \
 
 egg_install_msg =  echo "" && \
 		   echo "Now run \"make install\" to install your bot." && \
+		   echo "If you want to install in a custom path use DEST=" && \
+		   echo "make install DEST=\"${HOME}/mybot\"" && \
 		   echo ""
 
 ls_exe =  echo "" && \
