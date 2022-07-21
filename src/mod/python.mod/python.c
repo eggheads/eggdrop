@@ -173,7 +173,7 @@ static PyObject* PyInit_py(void) {
 */
 
 static void init_python() {
-  PyObject *pmodule;
+  PyObject *pmodule, *emodule, *bmodule, *maindict, *mainmod;
   wchar_t *program = Py_DecodeLocale("eggdrop", NULL);
 
   if (program == NULL) {
@@ -197,8 +197,15 @@ static void init_python() {
 
   PyRun_SimpleString("import sys");
   PyRun_SimpleString("sys.path.append(\".\")");
-  PyRun_SimpleString("from eggdroppy import binds");
-
+  bmodule = PyImport_ImportModule("eggdroppy");
+  Py_INCREF(bmodule);
+  PyModule_AddObject(pirp, "eggdroppy", bmodule);
+  emodule = PyImport_AddModule("eggdroppy");
+  PyModule_AddObject(pirp, "binds", emodule);
+  if (!bmodule) {
+    PyErr_Print();
+    fprintf(stderr, "Error: could not import module 'eggdroppy'\n");
+  }
   return;
 }
 
