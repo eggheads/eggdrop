@@ -69,7 +69,7 @@ SPHINX="$(which sphinx-build)"
 if [ $? -eq 0 ]; then
   echo "Found."
 else
-  echo "Not found. Sphinx can be found at http://www.sphinx-doc.org or via apt-get install python-sphinx. Exiting..."
+  echo "Not found. Sphinx can be found at http://www.sphinx-doc.org or via apt-get install sphinx-common. Exiting..."
   exit 1
 fi
 
