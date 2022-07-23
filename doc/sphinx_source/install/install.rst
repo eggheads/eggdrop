@@ -56,8 +56,6 @@ Eggdrop uses the GNU autoconfigure scripts to make things easier.
      Note that you must use full path for every file to be correctly
      installed.
 
-     [The following is performed from the directory installed above.]
-
 5. Since version 1.8, Eggdrop can use SSL to protect botnet links. If you intend on protecting botnet traffic between Eggdrops, you must generate SSL certificates by running::
 
         make sslcert
@@ -73,6 +71,8 @@ Eggdrop uses the GNU autoconfigure scripts to make things easier.
        make sslsilent
 
      Read docs/TLS for more info on this process.
+
+     [The following is performed from the directory installed above.]
 
 6. Edit your config file completely.
 
