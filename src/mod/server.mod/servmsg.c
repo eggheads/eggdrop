@@ -1383,8 +1383,8 @@ static int tryauthenticate(char *from, char *msg)
       }
     }
 #else
-      putlog(LOG_DEBUG, "*", "SASL: TLS libs missing EC support, try PLAIN or "
-                "EXTERNAL method");
+      putlog(LOG_DEBUG, "*", "SASL: TLS libs not present or missing EC support."
+                " Try the PLAIN or EXTERNAL method instead");
       return 1;
     }
 #endif
