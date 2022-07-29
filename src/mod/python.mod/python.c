@@ -59,6 +59,30 @@ static int python_expmem()
   return size;
 }
 
+int py_pub (char *nick, char *host, char *hand, char *chan, char *text) {
+  PyObject *pArgs;
+  char buf[UHOSTLEN];
+  struct chanset_t *ch;
+  struct userrec *u;
+  struct flag_record fr = { FR_CHAN | FR_ANYWH | FR_GLOBAL | FR_BOT, 0, 0, 0, 0, 0 };
+
+
+  if (!(ch = findchan(chan))) {
+    putlog(LOG_MISC, "*", "Python: Cannot find pub channel %s", chan);
+    return 1;
+  }
+
+  snprintf(buf, sizeof buf, "%s!%s", nick, host);
+  if ((u = get_user_by_host(buf))) {
+    get_user_flagrec(u, &fr, chan);
+  }
+  if (!(pArgs = Py_BuildValue("(skkksssss)", "pub", (unsigned long)fr.global, (unsigned long)fr.chan, (unsigned long)fr.bot, nick, host, hand, chan, text))) {
+    putlog(LOG_MISC, "*", "Python: Cannot convert pub arguments");
+    return 1;
+  }
+  return runPythonPyArgs("eggdroppy.binds.binds", "on_event", pArgs);
+}
+
 int py_pubm (char *nick, char *host, char *hand, char *chan, char *text) {
   PyObject *pArgs;
   char buf[UHOSTLEN];
@@ -89,89 +113,6 @@ int py_msgm (char *nick, char *hand, char *host, char *text) {
   return 0;
 }
 
-
-static PyObject* py_numargs(PyObject *self, PyObject *args) {
-  int numargs = 2;
-
-  if(!PyArg_ParseTuple(args, "i:numargs", &numargs))
-    return NULL;
-  return PyLong_FromLong(numargs);
-}
-
-/*
-static PyObject* py_putserv(PyObject *self, PyObject *args) {
-  char *s = 0, *t = 0, *p;
-
-  if(!PyArg_ParseTuple(args, "s|s", &s, &t)) {
-    return NULL;
-  }
-
-//  BADARGS(2, 3, " text ?options?");
-
-//  if ((argc == 3) && strcasecmp(argv[2], "-next") &&
-//      strcasecmp(argv[2], "-normal")) {
-//    Tcl_AppendResult(irp, "unknown putserv option: should be one of: ",
-//                     "-normal -next", NULL);
-//    return TCL_ERROR;
-//  }
-
-  p = strchr(s, '\n');
-  if (p != NULL)
-    *p = 0;
-  p = strchr(s, '\r');
-  if (p != NULL)
-    *p = 0;
-//  if (!strcasecmp(t, "-next"))
-//    dprintf(DP_SERVER_NEXT, "%s\n", s);
-//  else
-    dprintf(DP_SERVER, "%s\n", s);
-  return Py_None;
-}
-*/
-
-/*static PyMethodDef PyMethods[] = {
-  {"numargs", py_numargs, METH_VARARGS, "Return the number of arguments received by the process."},
-  {"putserv", py_putserv, METH_VARARGS, "text ?options"},
-  {NULL, NULL, 0, NULL}
-};
-
-static PyModuleDef PyModule = {
-  PyModuleDef_HEAD_INIT, "eggdrop", NULL, -1, PyMethods,
-  NULL, NULL, NULL, NULL
-};
-
-static PyObject* PyInit_py(void) {
-  pymodobj = PyModule_Create(&PyModule);
-
-  PyModule_AddIntConstant(pymodobj, "USER_AUTOOP", 0x00000001);
-  PyModule_AddIntConstant(pymodobj, "USER_BOT", 0x00000002);
-  PyModule_AddIntConstant(pymodobj, "USER_COMMON", 0x00000004);
-  PyModule_AddIntConstant(pymodobj, "USER_DEOP", 0x00000008);
-  PyModule_AddIntConstant(pymodobj, "USER_EXEMPT", 0x00000010);
-  PyModule_AddIntConstant(pymodobj, "USER_FRIEND", 0x00000020);
-  PyModule_AddIntConstant(pymodobj, "USER_GVOICE", 0x00000040);
-  PyModule_AddIntConstant(pymodobj, "USER_HIGHLITE", 0x00000080);
-  PyModule_AddIntConstant(pymodobj, "USER_JANITOR", 0x00000200);
-  PyModule_AddIntConstant(pymodobj, "USER_KICK", 0x00000400);
-  PyModule_AddIntConstant(pymodobj, "USER_HALFOP", 0x00000800);
-  PyModule_AddIntConstant(pymodobj, "USER_MASTER", 0x00001000);
-  PyModule_AddIntConstant(pymodobj, "USER_OWNER", 0x00002000);
-  PyModule_AddIntConstant(pymodobj, "USER_OP", 0x00004000);
-  PyModule_AddIntConstant(pymodobj, "USER_PARTY", 0x00008000);
-  PyModule_AddIntConstant(pymodobj, "USER_QUIET", 0x00010000);
-  PyModule_AddIntConstant(pymodobj, "USER_DEHALFOP", 0x00020000);
-  PyModule_AddIntConstant(pymodobj, "USER_BOTMAST", 0x00080000);
-  PyModule_AddIntConstant(pymodobj, "USER_UNSHARED", 0x00100000);
-  PyModule_AddIntConstant(pymodobj, "USER_VOICE", 0x00200000);
-  PyModule_AddIntConstant(pymodobj, "USER_WASOPTEST", 0x00400000);
-  PyModule_AddIntConstant(pymodobj, "USER_XFER", 0x00800000);
-  PyModule_AddIntConstant(pymodobj, "USER_AUTOHALFOP", 0x01000000);
-  PyModule_AddIntConstant(pymodobj, "USER_WASHALFOPTEST", 0x02000000);
-
-  return pymodobj;
-}
-*/
-
 static void init_python() {
   PyObject *pmodule, *emodule, *bmodule, *maindict, *mainmod;
   wchar_t *program = Py_DecodeLocale("eggdrop", NULL);
@@ -181,7 +122,7 @@ static void init_python() {
     fatal(1);
   }
   Py_SetProgramName(program);  /* optional but recommended */
-  if (PyImport_AppendInittab("eggdrop", PyInit_eggdrop) == -1) {
+  if (PyImport_AppendInittab("eggdrop", &PyInit_eggdrop) == -1) {
     fprintf(stderr, "Error: could not extend in-built modules table\n");
     exit(1);
   }
@@ -197,15 +138,7 @@ static void init_python() {
 
   PyRun_SimpleString("import sys");
   PyRun_SimpleString("sys.path.append(\".\")");
-  bmodule = PyImport_ImportModule("eggdroppy");
-  Py_INCREF(bmodule);
-  PyModule_AddObject(pirp, "eggdroppy", bmodule);
-  emodule = PyImport_AddModule("eggdroppy");
-  PyModule_AddObject(pirp, "binds", emodule);
-  if (!bmodule) {
-    PyErr_Print();
-    fprintf(stderr, "Error: could not import module 'eggdroppy'\n");
-  }
+
   return;
 }
 
@@ -382,6 +315,11 @@ static cmd_t mydcc[] = {
   {NULL,        NULL,   NULL,                   NULL}  /* Mark end. */
 };
 
+static cmd_t mypy_pub[] = {
+    {"*",   "",     py_pub, "python:pub"},
+    {NULL,  NULL,   NULL,     NULL}
+};
+
 static cmd_t mypy_pubm[] = {
     {"*",   "",     py_pubm, "python:pubm"},
     {NULL,  NULL,   NULL,     NULL}
@@ -415,6 +353,7 @@ static char *python_close()
   Context;
   kill_python();
   rem_builtins(H_dcc, mydcc);
+  rem_builtins(H_pub, mypy_pub);
   rem_builtins(H_pubm, mypy_pubm);
 //  rem_tcl_commands(mytcl);
 //  rem_tcl_ints(my_tcl_ints);
@@ -460,6 +399,7 @@ char *python_start(Function *global_funcs)
   init_python();
 
   /* Add command table to bind list */
+  add_builtins(H_pub, mypy_pub);
   add_builtins(H_pubm, mypy_pubm);
   add_builtins(H_dcc, mydcc);
 //  add_tcl_commands(mytcl);

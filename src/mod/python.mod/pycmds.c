@@ -8,7 +8,7 @@ static PyObject *testcmd(PyObject *self, PyObject *args) {
 //PyDict_Type
   PyObject *testdict = PyDict_New();
 //  dprintf(LOG_SERV, "this is a thing");
-//  fatal("eggdroppy");
+//  fatal("eggdrop");
 
   PyDict_SetItemString(testdict, "return", PyUnicode_FromString("this is the return"));
 //  PyDict_SetItemString(testdict, "code", 0);
@@ -16,10 +16,10 @@ static PyObject *testcmd(PyObject *self, PyObject *args) {
   return testdict;
 }
 
-static PyObject* py_putserv(PyObject *self, PyObject *args) {
-  char *s = 0, *t = 0, *p;
+static PyObject *py_putmsg(PyObject *self, PyObject *args) {
+  char *chan = 0, *msg = 0, *p;
 
-  if(!PyArg_ParseTuple(args, "s|s", &s, &t)) {
+  if(!PyArg_ParseTuple(args, "ss", &chan, &msg)) {
 //    PyErr_SetString(PyExc_SyntaxError, "wrong number of args");
     PyErr_SetString(EggdropError, "wrong number of args");
     return NULL;
@@ -34,27 +34,27 @@ static PyObject* py_putserv(PyObject *self, PyObject *args) {
 //    return TCL_ERROR;
 //  }
 
-  p = strchr(s, '\n');
+  p = strchr(chan, '\n');
   if (p != NULL)
     *p = 0;
-  p = strchr(s, '\r');
+  p = strchr(chan, '\r');
   if (p != NULL)
     *p = 0;
 //  if (!strcasecmp(t, "-next"))
 //    dprintf(DP_SERVER_NEXT, "%s\n", s);
 //  else
-    dprintf(DP_SERVER, "%s\n", s);
-  return NULL;
+    dprintf(DP_SERVER, "PRIVMSG %s :%s\n", chan, msg);
+  Py_RETURN_NONE;
 }
 
 
 static PyMethodDef MyPyMethods[] = {
     {"testcmd", testcmd, METH_VARARGS, "A test dict"},
-    {"putserv", py_putserv, METH_VARARGS, "Send message to server"},
+    {"putmsg", py_putmsg, METH_VARARGS, "Send message to server"},
     {NULL, NULL, 0, NULL}        /* Sentinel */
 };
 
-static struct PyModuleDef eggdroppy = {
+static struct PyModuleDef eggdrop = {
     PyModuleDef_HEAD_INIT,
     "eggdrop",   /* name of module */
     0,              /* module documentation, may be NULL */
@@ -66,7 +66,7 @@ static struct PyModuleDef eggdroppy = {
 PyMODINIT_FUNC PyInit_eggdrop(void) {
   PyObject *pymodobj;
 
-  pymodobj = PyModule_Create(&eggdroppy);
+  pymodobj = PyModule_Create(&eggdrop);
   if (pymodobj == NULL)
     return NULL;
 
