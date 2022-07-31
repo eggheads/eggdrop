@@ -1,7 +1,8 @@
 import re
 import uuid
 import sys
-from pprint import pprint
+from pprint import pprint, pformat
+from eggdroppy import FlagRecord
 
 class BindType:
 #  def __init__(self):
@@ -10,10 +11,13 @@ class BindType:
     self.__binds = {}
 
   def add(self, callback, flags, mask):
-    self.__binds.update({uuid.uuid4().hex[:8]:{"callback":callback, "flags":flags, "mask":mask}})
+    self.__binds.update({uuid.uuid4().hex[:8]:{"callback":callback, "flags":flags, "mask":mask, "hits":0}})
 
   def list(self):
     return self.__binds
+
+  def all(self):
+    return self.list()
 
   def __repr__(self):
     return f"Bindtype {self.__bindtype}: {repr(self.__binds)}"
@@ -51,38 +55,47 @@ def bindmask2re(mask):
       r += re.escape(c)
   return re.compile('^' + r + '$')
 
-def on_pub(flags, nick, user, hand, chan, text):
-  print("pub bind triggered with "+nick+" "+user+" "+hand+" "+chan+" "+text)
-  print(repr(__allbinds.pub.all()))
-  for i in __allbinds.pub:
-    if i["flags"].match(flags) and (i["cmd"] == text.split()[0]):
-      print("flagmatcher {} matches flag record {}".format(repr(i["flags"]), repr(flags)))
-      i["callback"](nick, user, hand, chan, text.split(" ", 1)[1])
-    else:
-      print("flagmatcher {} does not match flag record {}".format(repr(i["flags"]), repr(flags)))
+def flags_ok(bind, realflags):
+  return bind["flags"].match(realflags)
+
+def on_pub(flags, nick, uhost, hand, chan, text):
+  print(f"on_pub({pformat(flags)}, {nick}, {uhost}, {hand}, {chan}, {text.split()[0]}, {text.split(' ', 1)[1]})")
+  for b in __allbinds.pub.list().values():
+    match_flags = flags_ok(b, flags)
+    match_mask = (b["cmd"] == text.split()[0])
+    call_bind = True if match_flags and match_mask else False
+    print(f"  checking against {repr(b)}: Flags={match_flags} Mask={match_mask}: {'Trigger' if call_bind else 'Skip'}")
+    if call_bind:
+      b["hits"] += 1
+      b["callback"](nick, uhost, hand, chan, text.split(" ", 1)[1])
   return
 
-def on_pubm(flags, nick, user, hand, chan, text):
-  pprint(flags)
-  print("pubm bind triggered with "+nick+" "+user+" "+hand+" "+chan+" "+text)
-  for i in __allbinds.pubm:
-    print("mask is "+i["mask"])
-    if i["flags"].match(flags) and bindmask2re(i["mask"]).match(text):
-      print("flagmatcher {} matches flag record {}".format(repr(i["flags"]), repr(flags)))
-      i["callback"](nick, user, hand, chan, text)
-    else:
-      print("flagmatcher {} does not match flag record {}".format(repr(i["flags"]), repr(flags)))
-  on_pub(flags, nick, user, hand, chan, text)
+def on_pubm(flags, nick, uhost, hand, chan, text):
+  print(f"on_pubm({pformat(flags)}, {nick}, {uhost}, {hand}, {chan}, {text})")
+  for b in __allbinds.pubm.list().values():
+    match_flags = flags_ok(b, flags)
+    match_mask = bool(bindmask2re(b["mask"]).match(text))
+    call_bind = True if match_flags and match_mask else False
+    print(f"  checking against {repr(b)}: Flags={match_flags} Mask={match_mask}: {'Trigger' if call_bind else 'Skip'}")
+    if call_bind:
+      b["hits"] += 1
+      b["callback"](nick, uhost, hand, chan, text)
+  on_pub(flags, nick, uhost, hand, chan, text)
   return
 
-def on_msgm(nick, user, hand, text):
-  print("msgm bind triggered with "+" ".join([nick, user, hand, text]))
-  for i in __allbinds.pubm:
-    print("mask is "+__allbinds.msgm[i]["mask"])
-    __allbinds.msgm[i]["callback"](nick, user, hand, text)
+def on_msgm(nick, uhost, hand, text):
+  print(f"on_pubm({pformat(flags)}, {nick}, {uhost}, {hand}, {text})")
+  for b in __allbinds.msgm.list().values():
+    match_flags = flags_ok(b, flags)
+    match_mask = bool(bindmask2re(b["mask"]).match(text))
+    call_bind = True if match_flags and match_mask else False
+    print(f"  checking against {repr(b)}: Flags={match_flags} Mask={match_mask}: {'Trigger' if call_bind else 'Skip'}")
+    if call_bind:
+      b["hits"] += 1
+      b["callback"](nick, uhost, hand, text)
   return
 
-def on_join(flags, nick, user, hand, chan):
+def on_join(flags, nick, uhost, hand, chan):
   """This method searches for binds to be triggered when a user joins a channel.
 
         :param mask: a user hostmask, wildcards supported
@@ -90,27 +103,25 @@ def on_join(flags, nick, user, hand, chan):
 
         :returns: nick hostmask handle channel
   """ 
-  print("-={ join bind triggered")
-  for i in __allbinds.join:
-    if i["flags"].match(flags) and bindmask2re(i["mask"]).match(text):
-      print("flagmatcher {} matches flag record {}".format(repr(i["flags"]), repr(flags)))
-      i["callback"](nick, user, hand, chan, text)
-    else:
-      print("flagmatcher {} does not match flag record {}".format(repr(i["flags"]), repr(flags)))
-  on_pub(flags, nick, user, hand, chan, text)
-
+  print(f"on_join({pformat(flags)}, {nick}, {uhost}, {hand}, {chan})")
+  for b in __allbinds.join.list().values():
+    match_flags = flags_ok(b, flags)
+    match_mask = bool(bindmask2re(b["mask"]).match(f"{nick}!{uhost}"))
+    call_bind = True if match_flags and match_mask else False
+    print(f"  checking against {repr(b)}: Flags={match_flags} Mask={match_mask}: {'Trigger' if call_bind else 'Skip'}")
+    if call_bind:
+      b["hits"] += 1
+      b["callback"](nick, uhost, hand, chan)
 
 def on_event(bindtype, globalflags, chanflags, botflags, *args):
   flags = FlagRecord(globalflags, chanflags, botflags)
-  for arg in args:
-    print(arg)
-  if bindtype == "pub":
-    on_pub(flags, *args);
+  print(f"on_event({bindtype}, {repr(globalflags)}, {repr(chanflags)}, {repr(botflags)}, {pformat(args)}")
   if bindtype == "pubm":
     on_pubm(flags, *args)
   elif bindtype == "msgm":
     on_msgm(flags, *args)
-#  py.putserv("PRIVMSG :"+chan+" you are "+nick+" and you said "+text)
+  elif bindtype == "join":
+    on_join(flags, *args)
   return 0
 
 __allbinds = Binds()

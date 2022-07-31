@@ -66,7 +66,7 @@ int py_pubm (char *nick, char *host, char *hand, char *chan, char *text) {
   struct userrec *u;
   struct flag_record fr = { FR_CHAN | FR_ANYWH | FR_GLOBAL | FR_BOT, 0, 0, 0, 0, 0 };
 
-  if (!(ch = findchan(chan))) {
+  if (!(ch = findchan_by_dname(chan))) {
     putlog(LOG_MISC, "*", "Python: Cannot find pubm channel %s", chan);
     return 1;
   }
@@ -78,7 +78,7 @@ int py_pubm (char *nick, char *host, char *hand, char *chan, char *text) {
     putlog(LOG_MISC, "*", "Python: Cannot convert pubm arguments");
     return 1;
   }
-  return runPythonPyArgs("eggdroppy.binds.binds", "on_event", pArgs);
+  return runPythonPyArgs("eggdroppy.binds", "on_event", pArgs);
 }
 
 int py_join (char *nick, char *host, char *hand, char *chan) {
@@ -88,7 +88,7 @@ int py_join (char *nick, char *host, char *hand, char *chan) {
   struct userrec *u;
   struct flag_record fr = { FR_CHAN | FR_ANYWH | FR_GLOBAL | FR_BOT, 0, 0, 0, 0, 0 };
 
-  if (!(ch = findchan(chan))) {
+  if (!(ch = findchan_by_dname(chan))) {
     putlog(LOG_MISC, "*", "Python: Cannot find pubm channel %s", chan);
     return 1;
   }
@@ -100,14 +100,14 @@ int py_join (char *nick, char *host, char *hand, char *chan) {
     putlog(LOG_MISC, "*", "Python: Cannot convert join arguments");
     return 1;
   }
-  return runPythonPyArgs("eggdroppy.binds.binds", "on_event", pArgs);
+  return runPythonPyArgs("eggdroppy.binds", "on_event", pArgs);
 }
 
 int py_msgm (char *nick, char *hand, char *host, char *text) {
 //  struct flag_record fr = { FR_CHAN | FR_ANYWH | FR_GLOBAL | FR_BOT, 0, 0, 0, 0, 0 };
   char *argv[] = {"msgm", nick, host, hand, text};
 
-  runPythonArgs("eggdroppy.binds.binds", "on_event", ARRAYCOUNT(argv), argv);
+  runPythonArgs("eggdroppy.binds", "on_event", ARRAYCOUNT(argv), argv);
   return 0;
 }
 
