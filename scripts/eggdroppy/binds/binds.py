@@ -1,4 +1,5 @@
 import re
+import uuid
 from enum import IntFlag
 import eggdrop
 from pprint import pprint
@@ -82,28 +83,46 @@ class FlagMatcher:
       'botnegmatch': repr(self.botnegflags),
       'requireall': repr(self.requireall)
      })
-    
+
+class BindType(dict):
+#  def __init__(self):
+  def add(self, callback, flags, mask):
+    self.update({uuid.uuid4().hex[:8]:{"callback":callback, "flags":flags, "mask":mask}})
+  def list(self):
+    for i in self:
+      print(self[i]) 
 
 class Binds:
   def __init__(self):
-    self.bindlist = {"pub": [], "msgm": [], "pubm": []}
-  def list(self, mask=None):
-    if not mask:
-      result = self.bindlist
-    else:
-      result = []
-      for i in self.bindlist[mask]:
-        result += self.bindlist[mask][i]
-    return result
-  def prettylist(self, mask=None):
-    if not mask:
-      for bindtype in self.bindlist:
-        for bindentry in self.bindlist[bindtype]:
-          print("      "+bindtype+" "+str(bindentry['flags'])+"     "+bindentry['cmd'])
-    return
-  def add(self, bindtype, cmd, flags, mask, callback):
-    self.bindlist[bindtype].append({"cmd" : cmd, "callback" : callback, "mask" : mask, "flags" : flags})
-    return
+    pubm = BindType()
+    join = BindType()
+  def list(self):
+    for i in vars(self):
+      ret = getattr(self, i).list()
+      if ret:
+        print(ret)
+
+
+#class Binds:
+#  def __init__(self):
+#    self.bindlist = {"pub": [], "msgm": [], "pubm": [], "join": []}
+#  def list(self, mask=None):
+#    if not mask:
+#      result = self.bindlist
+#    else:
+#      result = []
+#      for i in self.bindlist[mask]:
+#        result += self.bindlist[mask][i]
+#    return result
+    #  def prettylist(self, mask=None):
+#    if not mask:
+#      for bindtype in self.bindlist:
+#        for bindentry in self.bindlist[bindtype]:
+#          print("      "+bindtype+" "+str(bindentry['flags'])+"     "+bindentry['cmd'])
+#    return
+#  def add(self, bindtype, cmd, flags, mask, callback):
+#    self.bindlist[bindtype].append({"cmd" : cmd, "callback" : callback, "mask" : mask, "flags" : flags})
+#    return
 
 import re
  
@@ -124,11 +143,11 @@ def bindmask2re(mask):
 
 def on_pub(flags, nick, user, hand, chan, text):
   print("pub bind triggered with "+nick+" "+user+" "+hand+" "+chan+" "+text)
+  print(__allbinds.bindlist["pub"])
   for i in __allbinds.bindlist["pub"]:
-    print("command is "+i[mask])
     if i["flags"].match(flags) and (i["cmd"] == text.split()[0]):
       print("flagmatcher {} matches flag record {}".format(repr(i["flags"]), repr(flags)))
-      i["callback"](nick, user, hand, chan, text.split()[1:])
+      i["callback"](nick, user, hand, chan, text.split(" ", 1)[1])
     else:
       print("flagmatcher {} does not match flag record {}".format(repr(i["flags"]), repr(flags)))
   return
@@ -138,11 +157,12 @@ def on_pubm(flags, nick, user, hand, chan, text):
   print("pubm bind triggered with "+nick+" "+user+" "+hand+" "+chan+" "+text)
   for i in __allbinds.bindlist["pubm"]:
     print("mask is "+i["mask"])
-    if i["flags"].match(flags) and bindmask2re(i["cmd"]).match(text):
+    if i["flags"].match(flags) and bindmask2re(i["mask"]).match(text):
       print("flagmatcher {} matches flag record {}".format(repr(i["flags"]), repr(flags)))
       i["callback"](nick, user, hand, chan, text)
     else:
       print("flagmatcher {} does not match flag record {}".format(repr(i["flags"]), repr(flags)))
+  on_pub(flags, nick, user, hand, chan, text)
   return
 
 def on_msgm(nick, user, hand, text):
@@ -151,6 +171,24 @@ def on_msgm(nick, user, hand, text):
     print("mask is "+__allbinds.bindlist["msgm"][i]["mask"])
     __allbinds.bindlist["msgm"][i]["callback"](nick, user, hand, text)
   return
+
+def on_join(flags, nick, user, hand, chan):
+  """This method searches for binds to be triggered when a user joins a channel.
+
+        :param mask: a user hostmask, wildcards supported
+        :param flags: flags for the user
+
+        :returns: nick hostmask handle channel
+  """ 
+  print("-={ join bind triggered")
+  for i in __allbinds.bindlist["join"]:
+    if i["flags"].match(flags) and bindmask2re(i["mask"]).match(text):
+      print("flagmatcher {} matches flag record {}".format(repr(i["flags"]), repr(flags)))
+      i["callback"](nick, user, hand, chan, text)
+    else:
+      print("flagmatcher {} does not match flag record {}".format(repr(i["flags"]), repr(flags)))
+  on_pub(flags, nick, user, hand, chan, text)
+
 
 def on_event(bindtype, globalflags, chanflags, botflags, *args):
   flags = FlagRecord(globalflags, chanflags, botflags)

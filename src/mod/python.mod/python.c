@@ -59,30 +59,6 @@ static int python_expmem()
   return size;
 }
 
-int py_pub (char *nick, char *host, char *hand, char *chan, char *text) {
-  PyObject *pArgs;
-  char buf[UHOSTLEN];
-  struct chanset_t *ch;
-  struct userrec *u;
-  struct flag_record fr = { FR_CHAN | FR_ANYWH | FR_GLOBAL | FR_BOT, 0, 0, 0, 0, 0 };
-
-
-  if (!(ch = findchan(chan))) {
-    putlog(LOG_MISC, "*", "Python: Cannot find pub channel %s", chan);
-    return 1;
-  }
-
-  snprintf(buf, sizeof buf, "%s!%s", nick, host);
-  if ((u = get_user_by_host(buf))) {
-    get_user_flagrec(u, &fr, chan);
-  }
-  if (!(pArgs = Py_BuildValue("(skkksssss)", "pub", (unsigned long)fr.global, (unsigned long)fr.chan, (unsigned long)fr.bot, nick, host, hand, chan, text))) {
-    putlog(LOG_MISC, "*", "Python: Cannot convert pub arguments");
-    return 1;
-  }
-  return runPythonPyArgs("eggdroppy.binds.binds", "on_event", pArgs);
-}
-
 int py_pubm (char *nick, char *host, char *hand, char *chan, char *text) {
   PyObject *pArgs;
   char buf[UHOSTLEN];
@@ -105,6 +81,33 @@ int py_pubm (char *nick, char *host, char *hand, char *chan, char *text) {
   return runPythonPyArgs("eggdroppy.binds.binds", "on_event", pArgs);
 }
 
+int py_join (char *nick, char *host, char *hand, char *chan) {
+  PyObject *pArgs;
+  char buf[UHOSTLEN];
+  struct chanset_t *ch;
+  struct userrec *u;
+  struct flag_record fr = { FR_CHAN | FR_ANYWH | FR_GLOBAL | FR_BOT, 0, 0, 0, 0, 0 };
+
+  if (!(ch = findchan(chan))) {
+    putlog(LOG_MISC, "*", "Python: Cannot find pubm channel %s", chan);
+    return 1;
+  }
+  snprintf(buf, sizeof buf, "%s!%s", nick, host);
+  if ((u = get_user_by_host(buf))) {
+    get_user_flagrec(u, &fr, chan);
+  }
+  if (!(pArgs = Py_BuildValue("(skkkssss)", "join", (unsigned long)fr.global, (unsigned long)fr.chan, (unsigned long)fr.bot, nick, host, hand, chan))) {
+    putlog(LOG_MISC, "*", "Python: Cannot convert join arguments");
+    return 1;
+  }
+  return runPythonPyArgs("eggdroppy.binds.binds", "on_event", pArgs);
+}
+
+
+
+  return runPythonPyArgs("eggdroppy.binds.binds", "on_event", pArgs);
+}
+
 int py_msgm (char *nick, char *hand, char *host, char *text) {
 //  struct flag_record fr = { FR_CHAN | FR_ANYWH | FR_GLOBAL | FR_BOT, 0, 0, 0, 0, 0 };
   char *argv[] = {"msgm", nick, host, hand, text};
@@ -114,7 +117,7 @@ int py_msgm (char *nick, char *hand, char *host, char *text) {
 }
 
 static void init_python() {
-  PyObject *pmodule, *emodule, *bmodule, *maindict, *mainmod;
+  PyObject *pmodule;
   wchar_t *program = Py_DecodeLocale("eggdrop", NULL);
 
   if (program == NULL) {
@@ -243,13 +246,8 @@ static void runPython(char *par) {
 }
 
 static void cmd_python(struct userrec *u, int idx, char *par) {
-//  char *result;
-  PyObject *pobj;
-
   PyErr_Clear();
-
-  pobj = PyRun_String(par, Py_file_input, pglobals, pglobals);
-
+  PyRun_String(par, Py_file_input, pglobals, pglobals);
   if (PyErr_Occurred()) {
     PyErr_Print();
   }
@@ -315,14 +313,14 @@ static cmd_t mydcc[] = {
   {NULL,        NULL,   NULL,                   NULL}  /* Mark end. */
 };
 
-static cmd_t mypy_pub[] = {
-    {"*",   "",     py_pub, "python:pub"},
+static cmd_t mypy_pubm[] = {
+    {"*",   "",     py_pubm, "python:pubm"},
     {NULL,  NULL,   NULL,     NULL}
 };
 
 static cmd_t mypy_pubm[] = {
-    {"*",   "",     py_pubm, "python:pubm"},
-    {NULL,  NULL,   NULL,     NULL}
+    {"*",   "",     py_join, "python:join"},
+    {NULL,  NULL,   NULL,   NULL}
 };
 
 /*static tcl_cmds mytcl[] = {
@@ -353,7 +351,6 @@ static char *python_close()
   Context;
   kill_python();
   rem_builtins(H_dcc, mydcc);
-  rem_builtins(H_pub, mypy_pub);
   rem_builtins(H_pubm, mypy_pubm);
 //  rem_tcl_commands(mytcl);
 //  rem_tcl_ints(my_tcl_ints);
@@ -399,7 +396,6 @@ char *python_start(Function *global_funcs)
   init_python();
 
   /* Add command table to bind list */
-  add_builtins(H_pub, mypy_pub);
   add_builtins(H_pubm, mypy_pubm);
   add_builtins(H_dcc, mydcc);
 //  add_tcl_commands(mytcl);
