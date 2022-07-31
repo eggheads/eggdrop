@@ -392,6 +392,7 @@ char *python_start(Function *global_funcs)
 
   /* Add command table to bind list */
   add_builtins(H_pubm, mypy_pubm);
+  add_builtins(H_join, mypy_join);
   add_builtins(H_dcc, mydcc);
 //  add_tcl_commands(mytcl);
 //  add_tcl_ints(my_tcl_ints);
