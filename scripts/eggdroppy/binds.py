@@ -53,8 +53,8 @@ def bindmask2re(mask):
 
 def on_pub(flags, nick, user, hand, chan, text):
   print("pub bind triggered with "+nick+" "+user+" "+hand+" "+chan+" "+text)
-  print(__allbinds.bindlist["pub"])
-  for i in __allbinds.bindlist["pub"]:
+  print(repr(__allbinds.pub.all()))
+  for i in __allbinds.pub:
     if i["flags"].match(flags) and (i["cmd"] == text.split()[0]):
       print("flagmatcher {} matches flag record {}".format(repr(i["flags"]), repr(flags)))
       i["callback"](nick, user, hand, chan, text.split(" ", 1)[1])
@@ -65,7 +65,7 @@ def on_pub(flags, nick, user, hand, chan, text):
 def on_pubm(flags, nick, user, hand, chan, text):
   pprint(flags)
   print("pubm bind triggered with "+nick+" "+user+" "+hand+" "+chan+" "+text)
-  for i in __allbinds.bindlist["pubm"]:
+  for i in __allbinds.pubm:
     print("mask is "+i["mask"])
     if i["flags"].match(flags) and bindmask2re(i["mask"]).match(text):
       print("flagmatcher {} matches flag record {}".format(repr(i["flags"]), repr(flags)))
@@ -77,9 +77,9 @@ def on_pubm(flags, nick, user, hand, chan, text):
 
 def on_msgm(nick, user, hand, text):
   print("msgm bind triggered with "+" ".join([nick, user, hand, text]))
-  for i in __allbinds.bindlist["pubm"]:
-    print("mask is "+__allbinds.bindlist["msgm"][i]["mask"])
-    __allbinds.bindlist["msgm"][i]["callback"](nick, user, hand, text)
+  for i in __allbinds.pubm:
+    print("mask is "+__allbinds.msgm[i]["mask"])
+    __allbinds.msgm[i]["callback"](nick, user, hand, text)
   return
 
 def on_join(flags, nick, user, hand, chan):
@@ -91,7 +91,7 @@ def on_join(flags, nick, user, hand, chan):
         :returns: nick hostmask handle channel
   """ 
   print("-={ join bind triggered")
-  for i in __allbinds.bindlist["join"]:
+  for i in __allbinds.join:
     if i["flags"].match(flags) and bindmask2re(i["mask"]).match(text):
       print("flagmatcher {} matches flag record {}".format(repr(i["flags"]), repr(flags)))
       i["callback"](nick, user, hand, chan, text)
