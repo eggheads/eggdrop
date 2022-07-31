@@ -103,11 +103,6 @@ int py_join (char *nick, char *host, char *hand, char *chan) {
   return runPythonPyArgs("eggdroppy.binds.binds", "on_event", pArgs);
 }
 
-
-
-  return runPythonPyArgs("eggdroppy.binds.binds", "on_event", pArgs);
-}
-
 int py_msgm (char *nick, char *hand, char *host, char *text) {
 //  struct flag_record fr = { FR_CHAN | FR_ANYWH | FR_GLOBAL | FR_BOT, 0, 0, 0, 0, 0 };
   char *argv[] = {"msgm", nick, host, hand, text};
@@ -318,7 +313,7 @@ static cmd_t mypy_pubm[] = {
     {NULL,  NULL,   NULL,     NULL}
 };
 
-static cmd_t mypy_pubm[] = {
+static cmd_t mypy_join[] = {
     {"*",   "",     py_join, "python:join"},
     {NULL,  NULL,   NULL,   NULL}
 };
